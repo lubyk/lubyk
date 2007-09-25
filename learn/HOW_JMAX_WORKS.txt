@@ -1,0 +1,33 @@
+h1. call chain
+
+h2. notein --> noteout
+
+I tried to understand what happens in this simple patch:
+
+This is what I have this far:
+1. midi event arrives in ??? and @note_output@ is called (set by
+@fts_midiport_add_listener@)
+2. the message is parsed and @fts_outlet_int@ is called to set the 3 outlets
+3. an "fts_atom" is created for each value and sent out with @outlet_atom@
+4. the value is pushed through the list of connections into other objects:
+4.1. get destination with @fts_connection_get_destination@
+4.2. get input port number with @fts_connection_get_inlet@
+4.3. get handler through @fts_class_get_input_handler@
+(dest->input_handler). Finds ???
+
+
+h1. osciallators (metro, osc)
+
+h2. metro
+
+My question was "how do you 'create' inputs ?"
+
+1. You set a callback with @fts_timebase_add_call@ in the timebase (@fts_get_timebase@) to call @metro_tick@ 'period' seconds from now.
+2. When @metro_tick@ is called, you register a new event in the timebase, and so on.
+
+h1. timebase
+
+When an event is inserted with @fts_timebase_add_call@:
+1. An entry is created on the ?heap?:Dynamic_memory_allocation
+2. It is inserted in the sorted queue with @timebase_insert_entry@
+2.1. A timebase_entry consits of (double time, *object, method, atom, *next)
