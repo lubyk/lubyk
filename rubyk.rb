@@ -1,7 +1,7 @@
 require 'lib/rubyk/rubyk_server'
 app_path = File.join(File.dirname(__FILE__), 'app') + '/'
 
-$debug = true
+$debug = false
 
 opts = {
   :realm => 'Rubyk',

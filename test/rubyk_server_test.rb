@@ -31,6 +31,14 @@ class RubykServerTest < Test::Unit::TestCase
     assert_equal "hello John!", t.hello
   end
   
+  def test_load_self
+    server(:dummy)
+    assert_nil server.instance_variable_get('@my_id')
+    server.send(:load_instance, 'self', '@my_id = object_id')
+    assert t = server.instance_variable_get('@my_id')
+    assert_equal server.object_id, t
+  end
+  
   def test_update
     server(:dummy)
     preserving_files(server.basepath) do

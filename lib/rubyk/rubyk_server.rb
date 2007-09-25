@@ -6,7 +6,7 @@ class RubykServer < DavServer
   
   def initialize(basepath, *args)
     super
-    @running = true
+    @running = :run
     @files_to_load  = []
     @server_binding = nil
     
@@ -14,25 +14,39 @@ class RubykServer < DavServer
     Thread.new do
       @server_binding = binding
       while(@running)
-        runner
+        if @running == :run
+          begin
+            runner
+          rescue => err
+            puts err.inspect
+            @running = :runtime_error
+          end
+        end
       end
     end
     
     load_all(basepath)
   end
   
-  def update(fullpath)
+  def update(fullpath, content=nil)
     path = fullpath.split('/')
     filename  = path.last
     directory = path[-2]
     case directory
     when 'classes'
-      load_class(filename, File.read(fullpath))
+      load_class(filename, content || File.read(fullpath))
     when 'instances'
-      load_instance(filename, File.read(fullpath))
+      load_instance(filename, content || File.read(fullpath))
     when 'links'
-      load_links(filename, File.read(fullpath))
+      load_links(filename, content || File.read(fullpath))
     end
+    @running = :run if @running == :runtime_error
+    return true
+  rescue
+    return false
+  rescue SyntaxError
+    # compilation error
+    return false
   end
   
   def runner
@@ -85,8 +99,11 @@ class RubykServer < DavServer
     end
     
     def load_instance(filename, content)
-      if filename =~ /(@\w+)\s*-\s*(\w+)(\.rb|)\Z/
+      if filename =~ /\Aself(\.rb|)\Z/
+        instance = self
+      elsif filename =~ /\A(@\w+)\s*-\s*(\w+)(\.rb|)\Z/
         instance_name, klass_name = $1, $2
+        instance = self if instance_name == 'self'
         unless instance = instance_variable_get(instance_name)
           if self.class.const_defined?(klass_name) || (Module.const_get(klass_name) rescue nil)
             eval "#{instance_name} = #{klass_name}.new"
@@ -97,8 +114,11 @@ class RubykServer < DavServer
             return
           end
         end
-        instance.instance_eval(content)
-      end
+      else
+        # bad filename
+        return
+      end  
+      instance.instance_eval(content)
     end
     
     def load_links(filename, content)
@@ -115,9 +135,14 @@ class RubykSession < DavSession
   def do_put
     name = @fullpath.split('/').last
     return if name =~ /\A\./
-    super
-    if File.exist?(@fullpath) && name =~ /.rb\Z/
-      @server.update(@fullpath)
+    if name =~ /.rb\Z/
+      if @server.update(@fullpath, request.body)
+        super
+      else  
+        response.set_status(500, 'Compilation Error')
+      end
+    else
+      super
     end
   end
   
