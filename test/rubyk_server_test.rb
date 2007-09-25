@@ -3,10 +3,10 @@ require File.join(File.dirname(__FILE__), '../lib/rubyk/rubyk_server')
 
 class RubykServerTest < Test::Unit::TestCase
   def test_load_class
-    assert ! RubykServer.const_defined?('TestLoadClass')
+    assert ! Object.const_defined?('TestLoadClass')
     server.send(:load_class, 'TestLoadClass < Array', 'def hello; "hello #{size} times"; end')
-    assert RubykServer.const_defined?('TestLoadClass')
-    t = RubykServer::TestLoadClass.new
+    assert Object.const_defined?('TestLoadClass')
+    t = TestLoadClass.new
     assert_kind_of Array, t
     t << 'a' << 'b'
     assert_equal "hello 2 times", t.hello
@@ -14,9 +14,9 @@ class RubykServerTest < Test::Unit::TestCase
   
   def test_update_class
     server(:dummy)
-    assert RubykServer.const_defined?('Dummy')
+    assert Object.const_defined?('Dummy')
     server.send(:load_class, 'Dummy < Object', 'attr_accessor :name; def hello; "hello #{@name}!"; end')
-    t = RubykServer::Dummy.new
+    t = Dummy.new
     t.name = "Gaspard"
     assert_equal "hello Gaspard!", t.hello
   end
@@ -27,8 +27,17 @@ class RubykServerTest < Test::Unit::TestCase
     server.send(:load_class, 'Dummy < Object', 'attr_accessor :name; def hello; "hello #{@name}!"; end')
     server.send(:load_instance, '@instance1 - Dummy', '@name = "John"')
     assert t = server.instance_variable_get('@instance1')
-    assert_kind_of RubykServer::Dummy, t
+    assert_kind_of Dummy, t
     assert_equal "hello John!", t.hello
+  end
+  
+  def test_dummy_in_instance
+    server(:dummy)
+    assert_nil server.instance_variable_get('@instance1')
+    server.send(:load_class, 'Dummy < Object', 'attr_accessor :name; def hello; "hello #{@name}!"; end')
+    server.send(:load_instance, '@instance1 - Object', '@dummy = Dummy.new; @dummy.name = "Doodle"; def dummy;@dummy;end')
+    assert t = server.instance_variable_get('@instance1')
+    assert_equal "hello Doodle!", t.dummy.hello
   end
   
   def test_load_self

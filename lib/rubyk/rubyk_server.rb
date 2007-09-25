@@ -80,16 +80,16 @@ class RubykServer < DavServer
     def load_class(filename, content)
       if filename =~ /(\w+)(\s*<\s*(\w+)|)(\.rb|)\Z/
         klass_name, superklass = $1, $3
-        unless self.class.const_defined?(klass_name)
-          if superklass
+        unless Object.const_defined?(klass_name)
+          if superklass && Object.const_defined?(superklass)
             # create a class
-            eval "class #{klass_name} < #{superklass}; end"
+            Object.const_set(klass_name, Class.new(Object.const_get(superklass)))
           else
             # create a module
-            eval "module #{klass_name}; end"
+            Object.const_set(klass_name, Module.new)
           end
         end
-        klass = self.class.const_get(klass_name)
+        klass = Object.const_get(klass_name)
         if klass.kind_of?(Class)
           klass.class_eval(content)
         elsif klass.kind_of?(Module)
@@ -105,9 +105,9 @@ class RubykServer < DavServer
         instance_name, klass_name = $1, $2
         instance = self if instance_name == 'self'
         unless instance = instance_variable_get(instance_name)
-          if self.class.const_defined?(klass_name) || (Module.const_get(klass_name) rescue nil)
-            eval "#{instance_name} = #{klass_name}.new"
-            instance = instance_variable_get(instance_name)
+          if Object.const_defined?(klass_name)
+            instance = Object.const_get(klass_name).new
+            instance_variable_set(instance_name, instance)
           else
             puts "unknown class #{klass_name.inspect}"
             # error unknown class
