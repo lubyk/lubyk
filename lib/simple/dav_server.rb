@@ -1,9 +1,12 @@
 require File.join(File.dirname(__FILE__), 'server')
 require 'rexml/document'
+require 'cgi'
 
 require File.join(File.dirname(__FILE__), 'resource')
 
 class DavServer < SimpleServer
+  attr_reader :basepath
+  
   def initialize(basepath, *args)
     @basepath = basepath
     super(*args)
@@ -69,7 +72,7 @@ class DavSession < SimpleSession
     
     resource.each do |resource|
       res.out "<D:response>"
-      res.out "  <D:href>#{resource.path}</D:href>"
+      res.out "  <D:href>#{CGI.escape(resource.path).gsub('+', '%20').gsub('%2F','/')}</D:href>"
       res.out "  <D:propstat>"
       res.out "    <D:status>HTTP/1.1 200 OK</D:status>"
       res.out "    <D:prop>"
