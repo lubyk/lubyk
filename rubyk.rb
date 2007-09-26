@@ -5,7 +5,7 @@ $debug = false
 
 opts = {
   :realm => 'Rubyk',
-  :authenticator => Hash['gaspard', 'secret'],
+  :authenticator => nil, # Hash['gaspard', 'secret']
 }
 
 RubykServer.new(app_path, '127.0.0.1', 9090, opts).run

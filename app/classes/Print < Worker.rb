@@ -1,6 +1,6 @@
 
 inlet :print => :string
 
-def update!(time, conn)
-  puts conn.value.to_s
+def bang
+  puts print.to_s
 end

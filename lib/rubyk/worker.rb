@@ -1,9 +1,11 @@
 require File.join(File.dirname(__FILE__), 'connection')
+require File.join(File.dirname(__FILE__), 'event')
 
 class Worker
+  attr_accessor :time
   @@outlets = {}
   @@inlets  = {}
-  include ConnectionMethods
+  @@queue   = []
   class << self
     def output_methods
       (@@outlets[self] || {}).keys
@@ -15,7 +17,7 @@ class Worker
       hash.each do |k,v|
         self.class_eval "
           def #{k}
-            @input_cache[#{k.to_sym.inspect}] ||= get_inlet_value(#{k.to_sym.inspect})
+            @_input_cache[#{k.to_sym.inspect}] ||= get_inlet_value(#{k.to_sym.inspect})
           end"
       end
     end
@@ -24,24 +26,79 @@ class Worker
       outlets = @@outlets[self] ||= {}
       outlets.merge!(hash)
     end
-  end
-
-  def initialize
-    @output = {}
-    @input_cache = {}
+    
+    def add_to_queue(*args)
+      time  = args[0]
+      index = 0
+      while(@@queue[index] && @@queue[index].time <= time) do
+        index += 1
+      end
+      @@queue[index..index] = [Event.new(*args),@@queue[index]].compact
+    end
+    
+    def remove_from_queue(obj)
+      @@queue.reject! { |e| e.dest == obj}
+    end
+    
+    def run_queue(time)
+      while @@queue[0] && @@queue[0].time <= time
+        event = @@queue.shift
+        event.trigger!
+      end
+    end
   end
   
-  def update!(time, conn)
+  def initialize
+    @output = {}
+    @_input_cache = {}
+    @_out_connections = {}
+    @_in_connections  = {}
+  end
+  
+  def init
+  end
+  
+  def destroy
+  end
+  
+  def bang
+    :bang
+  end
+  
+  def update!(time)
     # Breadth first not working if some elements do not have any inputs nor callbacks (fixed values)
-    return unless inputs_current?(time) # only compute when all inputs are already updated
+    # return unless inputs_current?(time) # only compute when all inputs are already updated
     @time = time
-    @input_cache = {}
+    @_input_cache = {}
+    bang
     self.class.output_methods.each do |method|
       update_output(method, time)
     end
     propagate!(time)
   end
   
+  def output
+    @output || {}
+  end
+  
+  def connect_outlet(out_name, conn)
+    @_out_connections[out_name] ||= []
+    @_out_connections[out_name] << conn
+  end
+  
+  def connect_inlet(in_name, conn)
+    @_in_connections[in_name] ||= []
+    @_in_connections[in_name] << conn
+  end
+  
+  def propagate!(time)
+    @_out_connections ||= {}
+    @_out_connections.each do |k,list|
+      list.each do |c|
+        c.propagate!(time)
+      end
+    end
+  end
   
   private
     def inputs_current?(time)
@@ -60,13 +117,13 @@ class Worker
     end
     
     def update_output(method, time)
-      return unless @_out_connections[method] # do not compute output if not connected
       @output[method] = send(method)
     end
     
     def get_inlet_value(name)
+      return nil unless inlets = @_in_connections[name]
       conn = nil
-      @_in_connections[name].each do |c|
+      inlets.each do |c|
         if c.time == @time
           conn = c
           break

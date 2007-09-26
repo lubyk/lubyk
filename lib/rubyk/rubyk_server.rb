@@ -3,7 +3,6 @@ require File.join(File.dirname(__FILE__), 'worker')
 
 
 class RubykServer < DavServer
-  include ConnectionMethods
   
   def initialize(basepath, *args)
     super
@@ -12,13 +11,12 @@ class RubykServer < DavServer
     
     
     Thread.new do
-      time = 0
+      Thread.current.priority = 2
       while(@running)
         if @running == :run
           begin
-            propagate!(time)
-            sleep 0.001
-            time += 1
+            Worker.run_queue(Time.now.to_f)
+            sleep 0.0001
           rescue => err
             puts err.inspect
             puts err.backtrace.join("\n")
@@ -106,6 +104,8 @@ class RubykServer < DavServer
         unless instance = instance_variable_get(instance_name)
           if Object.const_defined?(klass_name)
             instance = Object.const_get(klass_name).new
+            instance.init
+            Worker.add_to_queue(Time.now.to_f,instance,:bang) unless instance == self
             instance_variable_set(instance_name, instance)
           else
             puts "unknown class #{klass_name.inspect}"
