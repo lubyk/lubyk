@@ -1,5 +1,11 @@
 # we are in Rubyk context.
-@total.in[:value1] = @val1.out[:value]
-@total.in[:value2] = @val2.out[:value]
+Connection.connect(@val1,  :value, @total, :value1)
+Connection.connect(@val2,  :value, @total, :value2)
 
-@rubyk.in[:print] << @total.out[:total]
+Connection.connect(@total, :total, @print, :print)
+
+Connection.connect(self, :bang, @val1, :bang)
+Connection.connect(self, :bang, @val2, :bang) # => needed or we wont have any output
+
+
+Connection.connect(self, :bang, @play, :bang)

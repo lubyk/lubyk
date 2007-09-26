@@ -3,22 +3,25 @@ require File.join(File.dirname(__FILE__), 'worker')
 
 
 class RubykServer < DavServer
+  include ConnectionMethods
   
   def initialize(basepath, *args)
     super
     @running = :run
     @files_to_load  = []
-    @server_binding = nil
     
     
     Thread.new do
-      @server_binding = binding
+      time = 0
       while(@running)
         if @running == :run
           begin
-            runner
+            propagate!(time)
+            sleep 0.001
+            time += 1
           rescue => err
             puts err.inspect
+            puts err.backtrace.join("\n")
             @running = :runtime_error
           end
         end
@@ -49,10 +52,6 @@ class RubykServer < DavServer
     return false
   end
   
-  def runner
-    # do nothing
-  end
-  
   def halt
     @running = false
   end
@@ -68,9 +67,9 @@ class RubykServer < DavServer
         ['links', :load_links]].each do |group, action|
         path = File.join(base, group)
         if File.directory?(path)
-          Dir.entries(path).reject {|d| d =~ /\A\.|\.\.\Z/}.map do |e|
-            if e =~ /.rb\Z/
-              self.send(action, e, File.read(File.join(path,e)))
+          Dir.entries(path).reject {|d| d =~ /\A\.|\.\.\Z/}.map do |filename|
+            if filename =~ /.rb\Z/
+              self.send(action, filename, File.read(File.join(path,filename)))
             end
           end
         end
@@ -122,6 +121,11 @@ class RubykServer < DavServer
     end
     
     def load_links(filename, content)
+      unless filename =~ /\A(\w+)(\.rb|)\Z/
+        # bad filename
+        return
+      end  
+      instance_eval(content)
     end
 end
 
