@@ -22,12 +22,47 @@ h2. metro
 
 My question was "how do you 'create' inputs ?"
 
-1. You set a callback with @fts_timebase_add_call@ in the timebase (@fts_get_timebase@) to call @metro_tick@ 'period' seconds from now.
-2. When @metro_tick@ is called, you register a new event in the timebase, and so on.
+# You set a callback with @fts_timebase_add_call@ in the timebase (@fts_get_timebase@) to call @metro_tick@ 'period' seconds from now.
+# When @metro_tick@ is called, you register a new event in the timebase, and so on.
 
 h1. timebase
 
 When an event is inserted with @fts_timebase_add_call@:
-1. An entry is created on the ?heap?:Dynamic_memory_allocation
-2. It is inserted in the sorted queue with @timebase_insert_entry@
-2.1. A timebase_entry consits of (double time, *object, method, atom, *next)
+# An entry is created on the ?heap?:Dynamic_memory_allocation
+# It is inserted in the sorted queue with @timebase_insert_entry@
+## A timebase_entry consits of (double time, *object, method, atom, *next)
+
+h2. @fts_timebase_advance@
+
+# moves the 'tick_time' forward 'step' (defined in throught @dsp_timebase_init@ = dsp_tick_duration)
+# trigger all events with time < tick_time, setting 'logical time' to entry->time before trigger
+
+h2. @fts_dsp_run_tick@
+
+# advance timebase with @fts_timebase_advance@
+# run DSP graph with @fts_graph_run@
+
+h2. @audio_sched_run@
+
+# for each audio port, call input function
+## get input function (@fts_audioport_get_io_fun@)
+## call the function with (port, inout buffer, tick_size)  (tick_size = vector_size = defined in @fts_kernel_dsp_init@ through @fts_dsp_graph_init@ = FTS_DSP_DEFAULT_TICK_SIZE = 64)
+# for each audio port, clear output buffers
+# call dsp with @fts_dsp_run_tick@
+# for each audio port, call output function
+# if no output port was called, @fts_sleep@
+
+h2. @fts_kernel_dsp_init@
+
+Defines the following:
+
+# dsp_tick_duration = 1000.0 * (double)FTS_DSP_DEFAULT_TICK_SIZE / FTS_DSP_DEFAULT_SAMPLE_RATE;
+
+h1. main
+
+# @fts_init@
+# @fts_sched_run@
+## while(status != halt)
+### for each callback send message @fts_s_sched_ready@ (method cached in callback->ready_meth) if flag set to FTS_SCHED_READ or FTS_SCHED_WRITE
+### for each FTS_SCHED_ALWAYS callback send message @fts_s_sched_ready@ (method cached in callback->ready_meth)
+# @fts_shutdown@
