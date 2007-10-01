@@ -1,5 +1,10 @@
 # we are in the instance @total
 require 'rtmidi'
+def sync
+  @i  = 0
+  @i1 = 0
+  @i2 = 0
+end
 
 def init
   @midi = RtMidi.new(nil)

@@ -3,6 +3,12 @@
 inlet  :tempo => :float
 outlet :out_bang  => :bang
 
+def sync
+  @i  = 0
+  @i1 = 0
+  @i2 = 0
+end
+
 def init
   @tempo = 60
 end

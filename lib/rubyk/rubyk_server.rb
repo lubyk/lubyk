@@ -13,10 +13,10 @@ class RubykServer < DavServer
     Thread.new do
       Thread.current.priority = 2
       while(@running)
+        sleep 0.0001
         if @running == :run
           begin
             Worker.run_queue(Time.now.to_f)
-            sleep 0.0001
           rescue => err
             puts err.inspect
             puts err.backtrace.join("\n")
