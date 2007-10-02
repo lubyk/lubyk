@@ -20,7 +20,7 @@
 @part = [0,0,0,0,1,1,1,1,2,2,2,2,3,3,4,3,3,5,1,1,3]
 @delta ||= 5
 def bang
-  base = 9
+  base = 6
   case @part[(@i1 / (base * 2)) % @part.size]
   when 0
     @delta_done = false

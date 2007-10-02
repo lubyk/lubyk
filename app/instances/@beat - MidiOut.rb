@@ -5,10 +5,10 @@ def bang
   base = 8
   noteOn @seq[@i % base], 10
   noteOn 42, 110, 0.1 if @i % 2 == 0
-  noteOn 36, 10, 0.1 if @i % 5 == 0
-  noteOn 42, 10, 0.1 if @i % 7 == 0
+  #noteOn 36, 10, 0.1 if @i % 5 == 0
+  noteOn 42, 10, 0.1 if @i % 8 == 0
   noteOn 36, 70, 0.1 if @i % 4 == 0
-  noteOn 63, 70, 0.1 if @i % 3 == 0
+  noteOn 63, 70, 0.1 if @i % 2 == 0
   
   @i += 1
 end

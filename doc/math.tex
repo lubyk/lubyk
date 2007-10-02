@@ -165,14 +165,98 @@ Now comes the Mahalanobis distances~:
 
 This type of distance calculation is the only one that reflect the difference between the two vectors $\vec{t_3}$ and $\vec{t_4}$ and classifies $\vec{t_4}$ as beeing further ``away'' then $\vec{t_3}$, like our eyes tell us from a quick look at the picture~!
 
+\section{Eigenvalues}
+
+Before we study \emph{Principal Component Analysis}, we need some understanding of eigenvalues. Imagine we have a transformation matrix \textbf{P}~:
+\begin{equation*}
+  \textbf{P} = \begin{bmatrix} 1 & 1 \\ 0 & 2 \end{bmatrix}.
+\end{equation*}
+
+\includegraphics{eigen.pdf}
+
+What are the vectors in this transformation that keep their direction (are not rotated)? Mathematically speaking we want to find $\vec{e}$ such that~:
+\begin{equation*}
+  \vec{e'} = \vec{e} * \textbf{P} = \lambda \vec{e}
+\end{equation*}
+
+We can see from the picture that $\vec{y}$ satisfy this as $\vec{y'}$ is just $2 * \vec{y}$. Such vectors are called \emph{eigenvectors} and their corresponding lambda values \emph{eigenvalues}. To find these vectors, we can rewrite the equation above~:
+
+\begin{equation*}
+  \vec{e'} = \vec{e} * \textbf{P} = \lambda \vec{e}
+\end{equation*}
+
+as
+
+\begin{equation*}
+  \vec{e} * \textbf{P} - \lambda \vec{e} = 0
+\end{equation*}
+
+or 
+
+\begin{equation*}
+  \vec{e} (\textbf{P} - \lambda \textbf{I}) = 0  
+\end{equation*}
+
+We know that an equation of the form~:
+\begin{equation*}
+  \vec{x} \textbf{A} = 0
+\end{equation*}
+has only the trivial solution $\vec{x} = \vec{0}$ if the determinant of $\textbf{A}$ is not null. We can therefore find the non-trivial solutions to the equation above by computing the determinant when the latter \emph{is} null. This equation is called the \emph{characteristic equation} of \textbf{P}~:
+\begin{equation*}
+  det(\textbf{P} - \lambda \textbf{I}) = 0
+\end{equation*}
+
+We can now calculate the values of $\lambda$~:
+\begin{align*}
+  det(\begin{bmatrix} 1 & 1 \\ 0 & 2\end{bmatrix} - \lambda \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}) = & 0 \\
+  det(\begin{bmatrix} 1-\lambda & 1 \\ 0 & 2-\lambda\end{bmatrix}) = & 0 \\
+  (1-\lambda)(2-\lambda) - 1 * 0 = & 0 \\
+  (1-\lambda)(2-\lambda) = & 0
+\end{align*}
+
+which has the solutions
+\begin{equation*}
+\lambda_1 = 1, \lambda_2 = 2
+\end{equation*}
+
+The corresponding \emph{eigenvectors} can be found by substituting $\lambda_1$ and $\lambda_2$ in $\vec{e} (\textbf{P} - \lambda \textbf{I}) = \vec{0}$~:
+\begin{align*}
+  \begin{bmatrix} x & y \end{bmatrix} \begin{bmatrix} 1-\lambda & 1 \\ 0 & 2-\lambda \end{bmatrix} = & 0 \\
+  \begin{bmatrix} x_1 & y_1 \end{bmatrix} \begin{bmatrix} 1-1 & 1 \\ 0 & 2-1 \end{bmatrix} = & 0 \\
+  \begin{bmatrix} x_1 & y_1 \end{bmatrix} \begin{bmatrix} 0 & 1 \\ 0 & 1 \end{bmatrix} = & 0 \\
+  x_1 + y_1 = & 0 \\
+  \vec{e_1} = & \begin{bmatrix} t & -t \end{bmatrix}
+\end{align*}
+
+and for $\lambda_2$~:
+\begin{align*}
+  \begin{bmatrix} x_2 & y_2 \end{bmatrix} \begin{bmatrix} 1-2 & 1 \\ 0 & 2-2 \end{bmatrix} = & 0 \\
+  \begin{bmatrix} x_2 & y_2 \end{bmatrix} \begin{bmatrix} -1 & 1 \\ 0 & 0 \end{bmatrix} = & 0 \\
+  -x_2  = & 0 \\
+   x_2  = & 0 \\
+  \vec{e_2} = \begin{bmatrix} 0 & t \end{bmatrix} = \vec{y}
+\end{align*}
+
+If we look at our transformation picture again, we see that the relation in the direction $\vec{e_1}$ is kept and the relation in the direction of $\vec{e_2}$ is just doubled. This reflects the eigenvalues $1$ and $2$ with the directions of the eigenvectors $\vec{e_1}$ and $\vec{e_2}$.
+
+Before moving on to the following section, we need an important propriety of \emph{symmetric} matrices~: \emph{a symmetric matrix is diagonalized by a matrix of its eigenvectors}. Aouchh, this is a long phrase. In a \emph{symmetric} matrix, all $a_{ij}$ entries are equal to $a_{ji}$ (imagine a mirror across the diagonal of the matrix). To diagonalize a matrix means transform it into another matrix where all entries not on the diagonal are 0 ($a_{ij} = 0\text{ if } i \not= j$) by multiplying it with another matrix. Stated another way, the preceding phrase says that if there is a symmetric matrix \textbf{A}, an invertible matrix \textbf{E} and a diagonal matrix \textbf{D} such that~:
+\begin{equation*}
+  \textbf{D} = \textbf{E}^{-1}\textbf{A}\textbf{E},
+\end{equation*}
+
+then \textbf{E} is a matrix of the \emph{eigenvectors} of \textbf{A}. Is this true ? Why ? First we need to prove that a symmetric matrix is orthogonally diagonizable~:
+\begin{equation*}
+  
+\end{equation*}
+
 \section{Principal Component Analysis}
 
 Principal Component Analysis is a way to extract the ``most proeminent features'' of a data set. It assumes that the data has a good signal to noise ratio which means that \emph{great variance} in the data is a synonym for \emph{relevant feature} and not \emph{big noise}.
 
 In all the calculations below, we need to use the \emph{variations} of the measures. We will thus remove the mean values from our data set and use this new set called the \emph{mean deviation form} of \textbf{S}~:
-\begin{equation}
+\begin{equation*}
   \textbf{T} = \textbf{S} - \begin{bmatrix}\vec{\mu} \\ \vdots \\ \vec{\mu}\end{bmatrix}.
-\end{equation}
+\end{equation*}
 
 In order to extract the ``most proeminent features'' of our data, a good idea would be to look at the directions in which the data varies most. Is it along the $\vec{x}$ axis ? The $\vec{y}$ axis ? Somewhere in between ?
 
