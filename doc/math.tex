@@ -197,7 +197,7 @@ Our goal is thus to find a new basis \textbf{P} that gives us great absolute val
 A simple way to find the solution would be~:
 \begin{enumerate}
   \item Find the direction $\vec{e_1}$ that shows the greatest variance in the data \textbf{T}. Normalize this vector. This is our first basis vector.
-  \item Find another normalized vector showing the greatest variance that is orthogonal to those already found ($\forall \vec{b}\in \{\text{found vectors}\}|\vec{e_n} \perp \vec{b}$).
+  \item Find another normalized vector showing the greatest variance that is orthogonal to those already found ($\forall \vec{b}\in \{\text{found vectors}\}, \vec{e_n} \perp \vec{b}$).
   \item Repeat until we have $n$ basis vectors ($n$ is the size of vector space).
 \end{enumerate}
 
@@ -205,7 +205,6 @@ The resulting ordered set of vectors are the \emph{principal components} of our 
 
 \section{computing PCA}
 
-Given
 
 
 \section{applying PCA to \textbf{S}}
@@ -232,7 +231,7 @@ Before delving any further, we must first transform our data into its \emph{mean
 
 We can now easily compute the actual SNR~:
 \begin{equation*}
-  SNR = \frac{\sum_{k=1}^l T_{1k}^2}{\sum_{k=1}^l T_{2k}^2} = \frac{0+1+1}{1+4+1} = \frac{1}{3}
+  SNR = \frac{\sum_{k=1}^l T_{k1}^2}{\sum_{k=1}^l T_{k2}^2} = \frac{0+1+1}{1+4+1} = \frac{1}{3}
 \end{equation*}
 
 How do we find the new basis that gives us the greatest SNR ? Expressed in another way, we could say~: how do we find the basis that shows greatest variance in the first dimension and mostly noise in the second ?
