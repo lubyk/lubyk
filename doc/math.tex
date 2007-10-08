@@ -8,7 +8,7 @@
 \usepackage{amssymb}
 \usepackage{epstopdf}
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
-
+\DeclareMathOperator*{\argmin}{arg\,min}
 
 % shortcuts
 \newcommand{\ve}[1]{\boldsymbol{#1}}
@@ -493,7 +493,9 @@ PCA can be used as a filter to reduce the dimensionality of the data and ease th
   \item Apply this transformation $\ma{P}$ to any test vector $\ve{t}$ before computing the normalized Euclidean distance to the mean value $\ve\mu$.
   \item The smaller the distance, the bigger the probability that $\ve{t}$ belongs to the set $\ma{S}$.
 \end{itemize}
-\section{notes on PCA}
+
+Among all the steps above, two are problematic for large matrices: finding the eigenvalues and eigenvectors. These steps imply solving the \emph{characteristic polynomial} of $\ma{A}$. If our data contains 12 measures x 100 samples per row, the dimension of our polynomial is 1200 ! To find the eigenvector we have to solve n times a system of n-1 equations. This can become daunting. That was for the bad news. The good news is that these calculations must only be done on the training set, not live. The even better news is that there exists a library written in Fortran called \emph{LAPACK} that can do the job as fast as the most clever people could make it. Thanks.
+\subsection{notes on PCA}
 
 For a deaper understanding of PCA and it's limits, one may have a look at~:
 \begin{itemize}
@@ -501,6 +503,56 @@ For a deaper understanding of PCA and it's limits, one may have a look at~:
   \item \emph{ICA} for sets of data whose distribution probabilities are not exponential (Gaussian, Exponential, etc).
   \item \emph{Central Limit Theorem} on why PCA should work most of the time in real world as probabilities usually \textbf{are} gaussian.
 \end{itemize}
+
+\section{Movement recognition}
+
+From the knowledge we have gathered above, we can now try to find a way to compare the movements. Imagine we have 3 movements (classes) labeled $a$, $b$ and $c$. Each movement has been recorded several times. We create the training sets $\ma{S_a}$, $\ma{S_b}$ and $\ma{S_c}$ with the recordings of the different movements. Each move is made of 2 measures recorded for 10 samples. We write it as a row vector of dimension 20 ($\ve{s_{ai}}$). We start by computing the mean vector for each movement. We will note the number of recordings for the current movement $r$~:
+\[
+  \ve\mu_a = \frac{1}{r}\sum_{k=1}^r \begin{m}\ve{s_{a1k}} & \ve{s_{a2k}} & \hdots & \ve{s_{a20k}} \end{m}
+\]
+We do this for each class $a$, $b$ and $c$. We then build a matrix out of these prototypes~:
+\[
+  \ma{S} = \begin{m}\ve\mu_a \\ \ve\mu_b \\ \ve\mu_c \end{m}
+\]
+
+We now find the mean deviation form of $\ma{S}$ after finding the mean value of all the prototypes ($\ve\mu$)~:
+\[
+  \ma{T} = \begin{m}\ve\mu_a - \ve\mu \\ \ve\mu_b - \ve\mu \\ \ve\mu_c - \ve\mu \end{m}
+\]
+
+Now that we have found the \emph{least varying parts} of each movement (finding the mean value for each class), we will find a transformation that shows the \emph{most varying parts} \textbf{between} these movements. We apply PCA on the matrix $\ma{T}$ and find the transformation matrix $\ma{P}$.
+\[
+  \ma{P} = \ma{E}^T \ma{I_{reduc}}
+\]
+Where $\ma{I_{reduc}}$ is a truncated identity matrix to reduce the dimensionality of the data to the principal components.
+
+We now have two options. Either we use the information contained in the eigenvalues (matrix $\ma{D}$) to compute the normalized Euclidean distances between our test vector and the prototypes in the new coordinate system defined by the transformation $\ma{P}$ or we map all our training data into the new coordinate system and compute the Mahalanobis distance to each set. This last solution loses some information from the \emph{differences between the different classes $a$, $b$ and $c$} but takes into account what is noise and what is a signal in each movement. Since we have already included the information on what makes the differences between the classes when we chose to remove the dimensions with least variance, the second solution seems to keep most of the information contained in the training data.
+
+Transforming each training set into the new coordinate system is done by
+\begin{align*}
+  \ma{S_{a}'} = & \ma{S_a}\ma{P} \\
+  \ma{S_{b}'} = & \ma{S_b}\ma{P} \\
+  \ma{S_{c}'} = & \ma{S_c}\ma{P} \\
+\end{align*}
+
+We now compute the variance-covariance for each of these matrices~:
+\begin{align*}
+  \ma\Sigma_a' = & \frac{1}{r-1}\ma{S_{a}'}^T\ma{S_{a}'} \\
+  \ma\Sigma_b' = & \frac{1}{r-1}\ma{S_{b}'}^T\ma{S_{b}'} \\
+  \ma\Sigma_c' = & \frac{1}{r-1}\ma{S_{c}'}^T\ma{S_{c}'} \\
+\end{align*}
+
+Normalization of the values in these matrices ?
+\begin{align*}
+  \ma\Sigma_{aij}' = & \frac{\ma\Sigma_{aij}'}{\sum_{k=1}^3 \ma\Sigma_{kij}'}
+\end{align*}
+
+To label an arbitrary movement $\ve{t}$, we find the minimal Mahalanobis distance to the sets in the new coordinate system.
+\begin{align*}
+  \ve{t_k'} = & \ve{t'} - \ve{\mu_k'} \\
+            = & \ve{t}\ma{P} - \ve{\mu_k'} \\
+  \argmin_{k} D_M(\ve{t}) = & \argmin_{k} \sqrt{\ve{t_k'}\Sigma_k'^{-1}\ve{t_k'}^T}
+\end{align*}
 
 \onecolumn
 
