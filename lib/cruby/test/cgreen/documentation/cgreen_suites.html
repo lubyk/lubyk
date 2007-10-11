@@ -1,0 +1,747 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>
+        Tutorial: C test suites using the Cgreen unit testing framework
+    </title>
+<link rel="stylesheet" type="text/css" href="docs.css" title="Styles">
+</head>
+<body>
+<div class="menu_back">
+<div class="menu">
+<a href="index.html">Cgreen</a>
+                |
+                <span class="chosen">Cgreen test suites</span>
+                |
+                <a href="mock_callbacks.html">Mocking functions</a>
+                |
+                <a href="cgreen_reporter.html">Cgreen reporting</a>
+</div>
+</div>
+<h1>Building Cgreen test suites</h1>
+        This page...
+        <ul>
+<li>
+            Writing a <a href="#writing">Cgreen unit test</a>.
+        </li>
+<li>
+            The <a href="#fixtures">setup() and teardown()</a> fixtures.
+        </li>
+<li>
+            <a href="#fork">Each test in it's own process</a>.
+        </li>
+<li>
+            Creating a <a href="#suites">composite test harness</a>.
+        </li>
+</ul>
+<div class="content">
+        <p>
+            Cgreen is a tool for building unit tests in the C language.
+            These are usually written alongside the production code
+            by the programmer to prevent bugs.
+            Even though the test suites are created by software developers,
+            they are intended to be human readable C code, as part of
+            their function is an executable specification.
+            Used in this way, the test harness delivers constant quality assurance.
+        </p>
+        <p>
+            In other words you'll get less bugs.
+        </p>
+        <p>
+<a class="target" name="writing">
+<h2>Writing basic tests</h2>
+</a>
+</p>
+            <p>
+                Cgreen tests are simply C functions with no parameters
+                and a <span class="new_code">void</span> return value.
+                An example might be...
+<pre>
+static void <strong>strlen_of_hello_should_be_five</strong>() {
+    <strong>assert_equal</strong>(strlen("Hello"), 5);
+}
+</pre>
+                The test function name can be anything you want.
+                The <span class="new_code">assert_equal()</span> call is an example
+                of an assertion.
+                Assertions send messages to Cgreen, which in turn
+                outputs the results.
+            </p>
+            <p>
+                Here are the standard assertions...
+                <table>
+                    <tr>
+<th>Assertion</th><th>Description</th>
+</tr>
+                    <tr>
+<td><span class="new_code">assert_true(boolean)</span></td><td>Passes if boolean evaluates true</td>
+</tr>
+                    <tr>
+<td><span class="new_code">assert_false(boolean)</span></td><td>Fails if boolean evaluates true</td>
+</tr>
+                    <tr>
+<td><span class="new_code">assert_equal(first, second)</span></td><td>Passes if <span class="new_code">first == second</span></td>
+</tr>
+                    <tr>
+<td><span class="new_code">assert_not_equal(first, second)</span></td><td>Passes if <span class="new_code">first != second</span></td>
+</tr>
+                    <tr>
+<td><span class="new_code">assert_string_equal(char *, char *)</span></td><td>Uses <span class="new_code">strcmp()</span> and passes if the strings are equal</td>
+</tr>
+                    <tr>
+<td><span class="new_code">assert_string_not_equal(char *, char *)</span></td><td>Uses <span class="new_code">strcmp()</span> and fails if the strings are equal</td>
+</tr>
+                </table>
+                The boolean assertion macros accept an <span class="new_code">int</span> value.
+                The equality assertions accept anything that can be cast to <span class="new_code">intptr_t</span>
+                and simply perform an <span class="new_code">==</span> operation.
+                The string comparisons are slightly different in that they use the
+                <span class="new_code">&lt;string.h&gt;</span> library function <span class="new_code">strcmp()</span>.
+                If <span class="new_code">assert_equal()</span> is used on <span class="new_code">char *</span> pointers
+                then the pointers have to point at the same string.
+            </p>
+            <p>
+                Each assertion has a default message comparing the two values.
+                If you want to substitute your own failure messages, then you
+                must use the <span class="new_code">*_with_message()</span> counterparts...
+                <table>
+                    <tr>
+<th>Assertion</th>
+</tr>
+                    <tr>
+<td><span class="new_code">assert_true_with_message(boolean, message, ...)</span></td>
+</tr>
+                    <tr>
+<td><span class="new_code">assert_false_with_message(boolean, message, ...)</span></td>
+</tr>
+                    <tr>
+<td><span class="new_code">assert_equal_with_message(first, second, message, ...)</span></td>
+</tr>
+                    <tr>
+<td><span class="new_code">assert_not_equal_with_message(first, second, message, ...)</span></td>
+</tr>
+                    <tr>
+<td><span class="new_code">assert_string_equal_with_message(char *, char *, message, ...)</span></td>
+</tr>
+                    <tr>
+<td><span class="new_code">assert_string_not_equal_with_message(char *, char *, message, ...)</span></td>
+</tr>
+                </table>
+                All these assertions have an additional <span class="new_code">char *</span> message parameter,
+                which is the message you wished to display on failure.
+                If this is set to <span class="new_code">NULL</span>, then the default
+                message is shown instead.
+                The most useful assertion from this group is <span class="new_code">assert_true_with_message()</span>
+                as you can use that to create your own assertion functions with your
+                own messages.
+            </p>
+            <p>
+                Actually the assertion macros have variable argument lists.
+                The failure message acts like the template in <span class="new_code">printf()</span>.
+                We could change the test above to be...
+<pre>
+static void strlen_of_hello_should_be_five() {
+    const char *greeting = "Hello";
+    int length = strlen(greeting);
+    assert_equal_with_message(length, 5,
+            <strong>"[%s] should be 5, but was %d"</strong>, greeting, length);
+}
+</pre>
+                A slightly more user friendly message when things go wrong.
+            </p>
+            <p>
+                For the test above to work there needs to be a running test suite.
+                We can create one expecially for this test like so...
+<pre>
+<strong>TestSuite *our_tests() {
+    TestSuite *suite = create_test_suite();
+    add_test(suite, strlen_of_hello_should_be_five);
+    return suite;
+}</strong>
+</pre>
+                In case you have spotted that <span class="new_code">strlen_of_hello_should_be_five()</span>
+                should have an ampersand in front of it, <span class="new_code">add_test()</span>
+                is a macro.
+                The <span class="new_code">&amp;</span> is added automatically.
+            </p>
+            <p>
+                To run the test suite, we call <span class="new_code">run_test_suite()</span> on
+                it.
+                This function cleans up the test suite after running it, so
+                we can just write...
+<pre>
+<strong>run_test_suite(our_tests(), create_text_reporter());</strong>
+</pre>
+                The results of assertions are ultimately delivered as passes and
+                failures to a collection of callbacks defined in a
+                <span class="new_code">TestReporter</span> structure.
+                The only predefined one in Cgreen is the <span class="new_code">TextReporter</span>
+                that delivers messages in plain text.
+            </p>
+            <p>
+                A full test script now looks like...
+<pre>
+<strong>#include "cgreen/cgreen.h"
+#include &lt;string.h&gt;</strong>
+
+static void strlen_of_hello_should_be_five() {
+    assert_equal(strlen("Hello"), 5);
+}
+
+TestSuite *our_tests() {
+    TestSuite *suite = create_test_suite();
+    add_test(suite, strlen_of_hello_should_be_five);
+    return suite;
+}
+
+<strong>int main(int argc, char **argv) {
+    return </strong>run_test_suite(our_tests(), create_text_reporter());<strong>
+}</strong>
+</pre>
+                The return value of <span class="new_code">run_test_suite()</span> is a
+                Unix exit code.
+            </p>
+            <p>
+                Compliling and running gives...
+<pre class="shell">
+gcc -c strlen_test.c
+gcc strlen_test.o cgreen/cgreen.a -o strlen_test
+./strlen_test<strong>
+Running "main"...
+Completed "main": 1 pass, 0 failures, 0 exceptions.</strong>
+</pre>
+                The test messages are only shown on failure.
+                If we break our test...
+<pre>
+static void strlen_of_hello_should_be_five() {
+    assert_equal(strlen(<strong>"Hiya"</strong>, 5);
+}
+</pre>
+                ...we'll get the helpful message...
+<pre class="shell">
+Running "main"...<strong>
+Failure!: strlen_of_hello_should_be_five -&gt;
+        [5] shold be [4] at [strlen_test.c] line [6]</strong>
+Completed "main": 0 passes, 1 failure, 0 exceptions.
+</pre>
+                Cgreen appends the location of the test failure to
+                our error string.
+            </p>
+            <p>
+                Once we have a basic test scaffold up, it's pretty easy to
+                add more tests.
+                Adding a test of <span class="new_code">strlen()</span> with an empty string
+                for example...
+<pre>
+...<strong>
+static void strlen_of_empty_string_should_be_zero() {
+    assert_equal(strlen("\0"), 0);
+}</strong>
+
+TestSuite *<strong>our_tests</strong>() {
+    TestSuite *suite = create_test_suite();
+    add_test(suite, strlen_of_hello_should_be_five);<strong>
+    add_test(suite, strlen_of_empty_string_should_be_zero);</strong>
+    return suite;
+}
+...
+</pre>
+                And so on.
+            </p>
+        
+        <p>
+<a class="target" name="fixtures">
+<h2>Set up and tear down</h2>
+</a>
+</p>
+            <p>
+                It's common for test suites to have a lot of duplicate code,
+                especially when setting up similar tests.
+                Take this database code for example...
+<pre>
+#include "cgreen/cgreen.h"
+#include &lt;stdlib.h&gt;
+#include &lt;mysql/mysql.h&gt;
+#include "person.h"
+<strong>
+static void create_schema() {
+    MYSQL *connection = mysql_init(NULL);
+    mysql_real_connect(connection, "localhost", "me", "secret", "test", 0, NULL, 0);
+    mysql_query(connection, "create table people (name, varchar(255) unique)");
+    mysql_close(connection);
+}
+
+static void drop_schema() {
+    MYSQL *connection = mysql_init(NULL);
+    mysql_real_connect(connection, "localhost", "me", "secret", "test", 0, NULL, 0);
+    mysql_query(connection, "drop table people");
+    mysql_close(connection);
+}</strong>
+
+static void can_add_person_to_database() {
+    <strong>create_schema();</strong>
+    Person *person = create_person();
+    set_person_name(person, "Fred");
+    save_person(person);
+    Person *found = find_person_by_name("Fred");
+    assert_string_equal(get_person_name(person), "Fred");
+    <strong>drop_schema();</strong>
+}
+
+static void cannot_add_duplicate_person() {
+    <strong>create_schema();</strong>
+    Person *person = create_person();
+    set_person_name(person, "Fred");
+    assert_true(save_person(person));
+    Person *duplicate = create_person();
+    set_person_name(duplicate, "Fred");
+    assert_false(save_person(duplicate));
+    <strong>drop_schema();</strong>
+}
+
+TestSuite *person_tests() {
+    TestSuite *suite = create_test_suite();
+    add_test(suite, can_add_person_to_database);
+    add_test(suite, cannot_add_duplicate_person);
+    return suite;
+}
+
+int main(int argc, char **argv) {
+    return run_test_suite(person_tests(), create_text_reporter());
+}
+</pre>
+                We have already factored out the duplicate code into it's
+                own functions <span class="new_code">create_scheme()</span> and <span class="new_code">drop_schema()</span>,
+                so things are not so bad.
+                At least not yet.
+                What happens when we get dozens of tests?
+                For a test subject as compicated as a database
+                <a href="http://www.martinfowler.com/eaaCatalog/activeRecord.html">ActiveRecord</a>,
+                having dozens of tests is very likely.
+            </p>
+            <p>
+                We can get Cgreen to do some of the work for us by
+                declaring these methods as <span class="new_code">setup()</span> and
+                <span class="new_code">teardown()</span> functions in the test suite.
+            </p>
+            <p>
+                Here is the new version...
+<pre>
+...
+static void <strong>create_schema()</strong> { ... }
+
+static void <strong>drop_schema()</strong> { ... }
+
+static void can_add_person_to_database() {
+    Person *person = create_person();
+    set_person_name(person, "Fred");
+    save_person(person);
+    Person *found = find_person_by_name("Fred");
+    assert_string_equal(get_person_name(person), "Fred");
+}
+
+static void cannot_add_duplicate_person() {
+    Person *person = create_person();
+    set_person_name(person, "Fred");
+    assert_true(save_person(person));
+    Person *duplicate = create_person();
+    set_person_name(duplicate, "Fred");
+    assert_false(save_person(duplicate));
+}
+
+TestSuite *person_tests() {
+    TestSuite *suite = create_test_suite();<strong>
+    setup(suite, create_schema);
+    teardown(suite, drop_schema);</strong>
+    add_test(suite, can_add_person_to_database);
+    add_test(suite, cannot_add_duplicate_person);
+    return suite;
+}
+...
+</pre>
+                With this new arrangement Cgreen runs the <span class="new_code">create_schema()</span>
+                function before each test, and the <span class="new_code">drop_schema()</span>
+                function after each test.
+                This saves some repetitive typing and reduces the chance of accidents.
+                It also makes the tests more focused.
+            </p>
+            <p>
+                The reason we try so hard to strip everything out of
+                the test functions is that that the test suite acts
+                as documentation.
+                In our <em>person.h</em> example we can easily see that
+                <span class="new_code">Person</span> has some kind of name property, and
+                that this value must be unique.
+                For the tests to act like a readable specification we have
+                to remove as much mechanical clutter as we can.
+            </p>
+            <p>
+                A couple of details.
+                Currently only one <span class="new_code">setup()</span> and <span class="new_code">teardown()</span>
+                may be added to each <span class="new_code">TestSuite</span>.
+                Also the <span class="new_code">teardown()</span> function may not be run if the
+                test crashes, causing some test interference.
+                This brings us nicely onto the next section...
+            </p>
+        
+        <p>
+<a class="target" name="fork">
+<h2>Each test in it's own process</h2>
+</a>
+</p>
+            <p>
+                Consider this test method...
+<pre>
+<strong>
+void will_seg_fault() {
+    int *p = NULL;
+    (*p)++;
+}</strong>
+</pre>
+                Crashes are not something you would normally want to have
+                in a test run.
+                Not least because it will stop you receiving the very test output
+                you need to tackle the problem.
+            </p>
+            <p>
+                To prevent segmentation faults and other problems bringing
+                down the test suites, Cgreen runs every test in it's
+                own process.
+            </p>
+            <p>
+                Just before the <span class="new_code">setup()</span> call, Cgreen <span class="new_code">fork()</span>'s.
+                The main process wait's for the test to complete normally or die.
+                This includes the <span class="new_code">teardown()</span>.
+                If the test process dies, an exception is reported and the main
+                test process carries on.
+            </p>
+            <p>
+                For example...
+<pre>
+#include "cgreen/cgreen.h"
+#include &lt;stdlib.h&gt;
+<strong>
+static void will_seg_fault() {
+    int *p = NULL;
+    (*p)++;
+}</strong>
+
+int main(int argc, char **argv) {
+    TestSuite *suite = create_test_suite();
+    add_test(suite, <strong>will_seg_fault</strong>);
+    run_test_suite(suite, create_text_reporter());
+}
+</pre>
+                When built and run, this gives...
+<pre class="shell">
+Running "main"...
+Exception!: will_seg_fault -&gt; Test "will_seg_fault" failed to complete
+Completed "main": 0 passes, 0 failures, 1 exception.
+</pre>
+                The obvious thing to do now is to fire up the debugger.
+                Unfortunately, the constant <span class="new_code">fork()</span>'ing of
+                Cgreen can be an extra complication too many when debugging.
+                It's enough of a problem to find the bug.
+            </p>
+            <p>
+                To get around this, and also to allow the running of
+                one test at a time, Cgreen has the <span class="new_code">run_single_test()</span>
+                function.
+                The signatures of the two run methods are...
+<ul class="api">
+<li>
+<span class="new_code">int run_test_suite(TestSuite *suite, TestReporter *reporter);</span>
+</li>
+<li>
+<span class="new_code">int run_single_test(TestSuite *suite, char *test, TestReporter *reporter);</span>
+</li>
+</ul>
+                The extra parameter of <span class="new_code">run_single_test()</span>, the
+                <span class="new_code">test</span> string, is the name of the test to select.
+                This could be any test, even in nested test suites (see below).
+            </p>
+            <p>
+                Here is how we would use it to debug our crashing test...
+<pre>
+int main(int argc, char **argv) {
+    TestSuite *suite = create_test_suite();
+    add_test(suite, will_seg_fault);
+    <strong>run_single_test(suite, "will_seg_fault", create_text_reporter());</strong>
+}
+</pre>
+                When run in this way, Cgreen will not <span class="new_code">fork()</span>.
+            </p>
+            <p>
+                This deals with the segmentation fault case, but what about a process that fails
+                to complete by getting stuck in a loop?
+            </p>
+            <p>
+                Well, Cgreen will wait forever too.
+                Using the C signal handlers, we can place a time limit on the
+                process by sending it an interrupt.
+                To save us writing this ourselves, Cgreen includes the
+                <span class="new_code">die_in()</span> function to help us out.
+            </p>
+            <p>
+                Here is an example of time limiting a test...
+<pre>
+...
+static void will_seg_fault() { ... }
+<strong>
+static void this_would_stall() {
+    die_in(1);
+    while(0 == 0) { }
+}</strong>
+
+int main(int argc, char **argv) {
+    TestSuite *suite = create_test_suite();
+    add_test(suite, will_seg_fault);
+    add_test(suite, <strong>this_would_stall</strong>);
+    run_test_suite(suite, create_text_reporter());
+}
+</pre>
+                When executed, the code will slow for a second, and
+                then finish with...
+<pre class="shell">
+Running "main"...
+Exception!: will_seg_fault -&gt; Test "will_seg_fault" failed to complete
+Exception!: will_stall -&gt; Test "this_would_stall" failed to complete
+Completed "main": 0 passes, 0 failures, 2 exceptions.
+</pre>
+                Note that you see the test results as they come in.
+                Cgreen streams the results as they happen, making it easier
+                to figure out where the test suite has problems.
+            </p>
+            <p>
+                Of course, if you want to set a general time limit on all
+                your tests, then you can add a <span class="new_code">die_in()</span> to
+                a <span class="new_code">setup()</span> function.
+                Cgreen will then apply the limit to all of them.
+            </p>
+        
+        <p>
+<a class="target" name="suites">
+<h2>Building composite test suites</h2>
+</a>
+</p>
+            <p>
+                The <span class="new_code">TestSuite</span> is a composite structure.
+                This means test suites can be added to test suites, building
+                a tree structure that will be executed in order.
+            </p>
+            <p>
+                Let's combine the <span class="new_code">strlen()</span> tests with the
+                <span class="new_code">Person</span> tests above.
+                Firstly we need to remove the <span class="new_code">main()</span> calls.
+                E.g...
+<pre>
+#include "cgreen/cgreen.h"
+#include &lt;string.h&gt;
+
+static void strlen_of_hello_should_be_five() { ... }
+static void strlen_of_empty_string_should_be_zero() { ... }
+
+TestSuite *our_tests() {
+    TestSuite *suite = create_test_suite();
+    add_test(suite, strlen_of_hello_should_be_five);
+    add_test(suite, strlen_of_empty_string_should_be_zero);
+    return suite;
+}
+</pre>
+                Then we can write a small runner script with a new
+                <span class="new_code">main()</span> function...
+<pre>
+#include "strlen_tests.c"
+#include "person_tests.c"
+<strong>
+TestSuite *our_tests();
+TestSuite *person_tests();</strong>
+
+int main(int argc, char **argv) {
+    TestSuite *suite = create_test_suite();
+    add_suite(suite, our_tests());
+    add_suite(suite, person_tests());<strong>
+    if (argc &gt; 1) {</strong>
+        return run_single_test(suite, <strong>argv[1]</strong>, create_text_reporter());<strong>
+    }</strong>
+    return run_test_suite(suite, create_text_reporter());
+}
+</pre>
+                It's usually easier to place the <span class="new_code">TestSuite</span>
+                prototypes in the runner
+                scripts, rather than have lot's of header files.
+                This is the same reasoning that let us drop the prototypes
+                for the test functions in the actual test scripts.
+                We can get away with this, because the tests are more about
+                documentation than encapsulation.
+            </p>
+            <p>
+                It's sometimes handy to be able to run just a single test
+                from the command line, so we added a simple <span class="new_code">if</span>
+                block to take the test name as an optional argument.
+                The entire test suite will be searched for the named
+                test.
+                This trick also saves us a recomplile when we debug.
+            </p>
+            <p>
+                We've placed each test suite in it's own file, but that
+                is not necessary.
+                We could build several test suites in the same file, even
+                nesting them.
+                We can even add mixtures of test functions and test suites
+                to the same parent test suite.
+                Loops will give trouble, however.
+            </p>
+            <p>
+                If we do place several suites in the same file, then
+                all the suites will be named the same
+                in the breadcrumb trail in the test message.
+                They will all be named after the function the create call sits in.
+                If you want to get around this, or you just like to name
+                your test suites, you can use <span class="new_code">create_named_test_suite()</span>
+                instead of <span class="new_code">create_test_suite()</span>.
+                This takes a single string parameter.
+                In fact <span class="new_code">create_test_suite()</span> is just a macro that
+                inserts the <span class="new_code">__func__</span> constant into
+                <span class="new_code">create_named_test_suite()</span>.
+            </p>
+            <p>
+                What happens to <span class="new_code">setup()</span> and <span class="new_code">teardown()</span>
+                in a <span class="new_code">TestSuite</span> that contains other
+                <span class="new_code">TestSuite</span>s?
+            </p>
+            <p>
+                Well firstly, Cgreen does not <span class="new_code">fork()</span> when running
+                a suite.
+                It leaves it up to the child suite to <span class="new_code">fork()</span>
+                the individual tests.
+                This means that a <span class="new_code">setup()</span> and <span class="new_code">teardown()</span>
+                will run in the main process.
+                They will be run once for each child suite.
+            </p>
+            <p>
+                We can use this to speed up our <span class="new_code">Person</span> tests
+                above.
+                Remember we were creating a new connection and closing it
+                again in the fixtures.
+                This means opening and closing a lot of connections.
+                At the slight risk of some test interference, we could
+                reuse the connection accross tests...
+<pre>
+...
+static MYSQL *connection;
+
+static void create_schema() {<strong>
+    mysql_query(connection, "create table people (name, varchar(255) unique)");</strong>
+}
+
+static void drop_schema() {<strong>
+    mysql_query(connection, "drop table people");</strong>
+}
+
+static void can_add_person_to_database() { ... }
+static void cannot_add_duplicate_person() { ... }
+<strong>
+void open_connection() {
+    connection = mysql_init(NULL);
+    mysql_real_connect(connection, "localhost", "me", "secret", "test", 0, NULL, 0);
+}
+
+void close_connection() {
+    mysql_close(connection);
+}
+</strong>
+TestSuite *person_tests() {
+    TestSuite *suite = create_test_suite();
+    setup(suite, create_schema);
+    teardown(suite, drop_schema);
+    add_test(suite, can_add_person_to_database);
+    add_test(suite, cannot_add_duplicate_person);
+<strong>
+    TestSuite *fixture = create_named_test_suite("Mysql fixture");
+    add_suite(fixture, suite);
+    setup(fixture, open_connection);
+    teardown(fixture, close_connection);
+    return fixture;</strong>
+}
+</pre>
+                The trick here is creating a test suite as a wrapper
+                whose sole purpose to wrap the main test suite in
+                the fixture.
+                This is our <span class="new_code">fixture</span> pointer.
+                This code is a little confusing, because we have two sets of
+                fixtures in the same test script.
+            </p>
+            <p>
+                We have the MySQL connection fixture.
+                This is runs <span class="new_code">open_connection()</span> and
+                <span class="new_code">close_connection()</span> just
+                once at the beginning and end of the person tests.
+                This is because the <span class="new_code">suite</span> pointer is the
+                only member of <span class="new_code">fixture</span>.
+            </p>
+            <p>
+                We also have the schema fixture, the <span class="new_code">create_schema()</span>
+                and <span class="new_code">drop_schema()</span>, which is run before
+                and after every test.
+                Those are still attached to the inner <span class="new_code">suite</span>.
+            </p>
+            <p>
+                In the real world we would probably place the connection
+                fixture in it's own file...
+<pre>
+static MYSQL *connection;
+
+MYSQL *get_connection() {
+    return connection;
+}
+
+static void open_connection() {
+    connection = mysql_init(NULL);
+    mysql_real_connect(connection, "localhost", "me", "secret", "test", 0, NULL, 0);
+}
+
+static void close_connection() {
+    mysql_close(connection);
+}
+<strong>
+TestSuite *connection_fixture(TestSuite *suite) {</strong>
+    TestSuite *fixture = create_named_test_suite("Mysql fixture");
+    add_suite(fixture, suite);
+    setup(fixture, open_connection);
+    teardown(fixture, close_connection);
+    return fixture;<strong>
+}</strong>
+</pre>
+                This allows the reuse of common fixtures across projects.
+            </p>
+        
+    </div>
+        References and related information...
+        <ul>
+<li>
+            The <a href="http://sourceforge.net/projects/cgreen">Cgreen SourceForge page</a>.
+        </li>
+<li>
+            Unit testing was popularised by <a href="http://extremeprogramming.org">eXtreme Programming</a>.
+        </li>
+<li>
+            Cgreen is heavily influenced by the <a href="http://check.sourceforge.net/">Check</a> unit tester.
+        </li>
+</ul>
+<div class="menu_back">
+<div class="menu">
+<a href="index.html">Cgreen</a>
+                |
+                <span class="chosen">Cgreen test suites</span>
+                |
+                <a href="mock_callbacks.html">Mocking functions</a>
+                |
+                <a href="cgreen_reporter.html">Cgreen reporting</a>
+</div>
+</div>
+<div class="copyright">
+            Copyright<br>Marcus Baker 2006
+        </div>
+</body>
+</html>
