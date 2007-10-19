@@ -4,6 +4,8 @@
 rk_event_t * gQueue;
 time_t gCurrentTime;
 
+/** Initialize the event queue (global queue).
+*/
 void
 rk_init_queue ()
 {
@@ -12,17 +14,7 @@ rk_init_queue ()
   gQueue->next = NULL;
 }
 
-
-
-/*
-def add_to_queue(*args)
-  time  = args[0]
-  index = 0
-  while(@@queue[index] && @@queue[index].time <= time) do
-    index += 1
-  end
-  @@queue[index..index] = [Event.new(*args),@@queue[index]].compact
-end
+/** Add an event to the event queue.
 */
 void 
 rk_add_to_queue (time_t when, void* receiver, void (*function)(void *))
@@ -49,10 +41,7 @@ rk_add_to_queue (time_t when, void* receiver, void (*function)(void *))
   }
 }
 
-/*
-def remove_from_queue(obj)
-  @@queue.reject! { |e| e.dest == obj}
-end
+/** Remove all events concerning a certain receiver from the queue.
 */
 void
 rk_remove_from_queue(void* receiver)
@@ -71,13 +60,7 @@ rk_remove_from_queue(void* receiver)
   }
 }
 
-/*
-def run_queue(time)
-  while @@queue[0] && @@queue[0].time <= time
-    event = @@queue.shift
-    event.trigger!
-  end
-end
+/** Trigger all the events whose trigger time is older or equal to then the current time.
 */
 void
 rk_run_queue(time_t current_time)

@@ -1,20 +1,21 @@
-CC=gcc
+CC=g++
 CFLAGS=-g
 
-test/rubyk_test: test/rubyk_test.c test/cgreen/cgreen.a test/cgreen/cgreen.h memory.o time_queue.o errors.o
-	gcc memory.o time_queue.o errors.o test/rubyk_test.c test/cgreen/cgreen.a -o test/rubyk_test
-
-test: test/rubyk_test
-	./test/rubyk_test; rm test/rubyk_test
-
-test/cgreen/cgreen.a:
-	cd test/cgreen; make
-
-memory: memory.c memory.h
-	gcc memory.c -o memory.o 
-    
-time_queue: time_queue.c time_queue.h
-	gcc time_queue.c -o time_queue.o
+test: test/runner
+	./test/runner; rm test/runner
 	
-errors: errors.c errors.h
-	gcc errors.c -o errors.o
+test/runner.cpp: test/*_test.h templates/orderedList.h classes/Slot.o
+	./test/cxxtest/cxxtestgen.pl --error-printer -o test/runner.cpp test/*_test.h
+
+test/runner: test/runner.cpp slot.o inlet.o outlet.o
+	g++ -Itest -Itemplates -Iclasses -I. test/runner.cpp slot.o inlet.o outlet.o -o test/runner
+	
+	
+slot.o: classes/Slot.cpp
+	g++ -c classes/Slot.cpp -o slot.o
+
+inlet.o: classes/Inlet.cpp classes/Slot.cpp
+	g++ -c classes/Inlet.cpp -o inlet.o
+	
+outlet.o: classes/Outlet.cpp classes/Slot.cpp
+	g++ -c classes/Outlet.cpp -o outlet.o
