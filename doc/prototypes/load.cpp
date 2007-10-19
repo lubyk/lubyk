@@ -5,6 +5,7 @@
 #include <cstdio>
 #include "load_test.h"
 
+// for help to create a portable version of this load function, read Ruby's dln.c file.
 int load(char * file, char * init_name, Dummy &master)
 {
   void *image;
