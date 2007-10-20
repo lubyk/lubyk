@@ -1,6 +1,6 @@
 // ordered_list_test.h 
 #include <cxxtest/TestSuite.h>
-#include "orderedList.h"
+#include "ordered_list.h"
 
 
 class TestOrderedList : public CxxTest::TestSuite

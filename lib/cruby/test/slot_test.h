@@ -1,6 +1,6 @@
 // ordered_list_test.h 
 #include <cxxtest/TestSuite.h>
-#include "Outlet.h"
+#include "outlet.h"
 #include "inlet.h"
 #include <cstdio>
 

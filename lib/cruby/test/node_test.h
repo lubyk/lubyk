@@ -1,8 +1,6 @@
 // ordered_list_test.h 
 #include <cxxtest/TestSuite.h>
-#include "Node.h"
-#include "Inlet.h"
-#include "Outlet.h"
+#include "node.h"
 #include <string>
 
 class Dummy : public Node
@@ -79,5 +77,57 @@ public:
                   *      4. bang --> increment d2  = 5  */
     TS_ASSERT_EQUALS( std::string("first: 4" ), std::string(d1->spy()) );
     TS_ASSERT_EQUALS( std::string("second: 5"), std::string(d2->spy()) );
+  }
+  
+  void testConnectionOrder( void ) {
+    
+    Node   * v1   = Node::create("value", "value:2");
+    Node   * v2   = Node::create("value", "value:3");
+    Node   * add  = Node::create("add", "");
+    Node   * v3   = Node::create("value", "");
+    
+    /**    v1   v2
+      *    |    |
+      *   +------+
+      *   | add  |
+      *   +------+
+      *    |
+      *    v3             */
+    v1->outlet(0)->connect(add->inlet(0));
+    v2->outlet(0)->connect(add->inlet(1));
+    
+    add->outlet(0)->connect(v3->inlet(0));
+    
+    TS_ASSERT_EQUALS( std::string("2"), std::string(v1->spy()) );
+    TS_ASSERT_EQUALS( std::string("3"), std::string(v2->spy()) );
+    TS_ASSERT_EQUALS( std::string("0"), std::string(add->spy()));
+    TS_ASSERT_EQUALS( std::string("0"), std::string(v3->spy()) );
+    
+    v2->bang(); /** ---> 1. bang --> value         = 3
+                  *      2. send new value to  add      */
+    
+    TS_ASSERT_EQUALS( std::string("2"), std::string(v1->spy()) );
+    TS_ASSERT_EQUALS( std::string("3"), std::string(v2->spy()) );
+    TS_ASSERT_EQUALS( std::string("3"), std::string(add->spy()));
+    TS_ASSERT_EQUALS( std::string("0"), std::string(v3->spy()) );
+    
+    add->bang(); /** ---> 1. bang --> value         = 3
+                   *      2. send new value to  v3  = 3  */
+    
+    TS_ASSERT_EQUALS( std::string("2"), std::string(v1->spy()) );
+    TS_ASSERT_EQUALS( std::string("3"), std::string(v2->spy()) );
+    TS_ASSERT_EQUALS( std::string("3"), std::string(add->spy()));
+    TS_ASSERT_EQUALS( std::string("3"), std::string(v3->spy()) );
+    
+    v1->bang(); /** ---> 1. bang --> value         = 2
+                  *      2. send new value to add  = 2
+                  *      3. add.bang --> value     = 5
+                  *      4. send to v3             = 5  */
+    
+    TS_ASSERT_EQUALS( std::string("2"), std::string(v1->spy()) );
+    TS_ASSERT_EQUALS( std::string("3"), std::string(v2->spy()) );
+    TS_ASSERT_EQUALS( std::string("5"), std::string(add->spy()));
+    TS_ASSERT_EQUALS( std::string("5"), std::string(v3->spy()) );
+    
   }
 };
