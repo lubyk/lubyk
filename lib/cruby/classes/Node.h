@@ -20,6 +20,8 @@ public:
   Node() : mTriggerPosition(0), mId(0) { mClassName[0] = '\0'; }
   virtual ~Node() {}
   
+  bool init() {}
+  
   /** Compute new values for each outlet and send values through connections. */
   void bang (void)
   {
@@ -29,7 +31,7 @@ public:
     
     while(i >= 0) {
       /** Send through rightmost outlet first. */
-      ((Outlet)mOutlets[i--]).compute_and_send();
+      mOutlets[i--].compute_and_send();
     }
   }
   
@@ -54,6 +56,10 @@ public:
   const char * class_name() { return mClassName.c_str(); }
   
   ////// class methods ///////
+  
+  /** Load an object stored in a dynamic library. */
+  static bool load(const char * file, const char * init_name);
+  
   static Node * create (const char * pKey, const std::string& pParams)
   { return Node::create(std::string(pKey), pParams); }
   
@@ -65,12 +71,31 @@ public:
   
   static Node * create (const std::string& pKey, const std::string& pParams)
   {
-    std::string key(pKey);
-    class_creator_function_t * func = mClasses.get(key);
+    class_creator_function_t * func = mClasses.get(pKey);
     if (func)
       return (**func)(pKey, pParams);
-    else
-      return NULL;
+    else {
+      // try to load dynamic lib
+      std::string path = mObjectsPath;
+      path.append("/").append(pKey).append(".rko");
+      //printf("Loading '%s'\n", path.c_str());
+      if (load(path.c_str(), "init")) {
+        func = mClasses.get(pKey);
+        if (func) {
+          return (**func)(pKey, pParams);
+        } else {
+          printf("Error, '%s' should declare '%s'.\n", path.c_str(), pKey.c_str());
+        }
+      } 
+      // load failed
+      // dummy object in broken mode
+      
+      Node * obj = new Node;
+      obj->set_class_name(pKey);
+      obj->set_is_ok( false ); // if init returns false, the node goes into 'broken' mode.
+      return obj;
+    }
+      
   }
   
   template<class T>
@@ -78,6 +103,12 @@ public:
   {
     mClasses.set(std::string(name), &make_class<T>);
   }
+  
+  static void set_lib_path(const char* pPath)
+  { mObjectsPath = pPath; }
+  
+  static void set_lib_path(const std::string& pPath)
+  { mObjectsPath = pPath; }
   
 protected:
   
@@ -121,6 +152,8 @@ private:
   // ================ REGISTER CLASSES =============== //
   
   static Hash<std::string, class_creator_function_t> mClasses; /**< Contains a dictionary of class names and functions to create objects of this class. For example, 'metro' => function to create a Metro. */
+  
+  static std::string mObjectsPath; /**< Where to load the librairies (objects). */
   
   /** This function is used to create an instance of class 'T'. If the instance could not be
     * properly initialized, this function returns NULL. */
