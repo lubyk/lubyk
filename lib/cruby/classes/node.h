@@ -44,8 +44,11 @@ public:
     * another node with a small trigger position, if they are both connected to the same outlet. */ 
   inline float trigger_position() { return mTriggerPosition; }
   
-  Inlet  * inlet  (int slot_id) { return &( mInlets[slot_id]); }
-  Outlet * outlet (int slot_id) { return &(mOutlets[slot_id]); }
+  /** Return inlet at the given position. First inlet is '1', not '0'. */
+  Inlet  * inlet  (int slot_id) { return &( mInlets[slot_id - 1]); }
+  
+  /** Return outlet at the given position. First outlet is '1', not '0'. */
+  Outlet * outlet (int slot_id) { return &(mOutlets[slot_id - 1]); }
   
   void set_is_ok (bool pStatus) 
   { mIsOK = pStatus; }

@@ -1,0 +1,24 @@
+Command line parser for rubyk using lemon (part of SQLite).
+
+Files :
+
+lexer.l
+	This file contains the regexp rules for the tokenizer.
+
+parser.y
+	This file contains the grammar and actions to be executed when specific elements are found.
+	
+token.h
+	Struct type definition. This type is used to pass the token from the lexer to the parser.
+	
+main.c
+	Wrapper to create the test command line.
+	
+lemon.c
+	Source code for lemon.
+	
+lempar.c
+	Template for the parser that lemon generates.
+	
+	
+That's it !

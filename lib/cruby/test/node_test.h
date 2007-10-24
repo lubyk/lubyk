@@ -61,9 +61,9 @@ public:
     Node::declare<Dummy>("dummy");
     
     Node   * d1   = Node::create("dummy", "name:first  counter:3");
-    Outlet * out1 = d1->outlet(0);
+    Outlet * out1 = d1->outlet(1); // oulets and inlets are indexed starting with '1', not '0'
     Node   * d2   = Node::create("dummy", "name:second counter:0");
-    Inlet  * in2  = d2->inlet(0);
+    Inlet  * in2  = d2->inlet(1);
     
     out1->connect(in2);
     
@@ -93,10 +93,10 @@ public:
       *   +------+
       *    |
       *    v3             */
-    v1->outlet(0)->connect(add->inlet(0));
-    v2->outlet(0)->connect(add->inlet(1));
+    v1->outlet(1)->connect(add->inlet(1));
+    v2->outlet(1)->connect(add->inlet(2));
     
-    add->outlet(0)->connect(v3->inlet(0));
+    add->outlet(1)->connect(v3->inlet(1));
     
     TS_ASSERT_EQUALS( std::string("2"), std::string(v1->spy()) );
     TS_ASSERT_EQUALS( std::string("3"), std::string(v2->spy()) );

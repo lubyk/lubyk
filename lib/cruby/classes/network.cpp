@@ -13,3 +13,8 @@ Network::~Network()
 }
  
 void Network::run();
+
+bool Network::parse_file(const std::string& pPath)
+{
+  
+}
