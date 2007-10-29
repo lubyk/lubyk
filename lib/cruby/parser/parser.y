@@ -13,6 +13,7 @@
 
 #include <string.h>  // strdup
 #include <stdlib.h>  // free
+#include "actionbuilder.h"
 
 
 #define MAX_BUFFER_SIZE 1024
@@ -30,6 +31,8 @@ void token_destructor(Token& t)
 %token_type   {Token}
 %default_type {Token}
 %token_destructor { token_destructor($$); }
+
+%extra_argument { ActionBuilder *mBuilder }
 
 %type expr {Token}
 %type id   {Token}
@@ -50,7 +53,7 @@ commands    ::= .                             /* can be empty  */
 commands    ::= commands ws command.          /* many commands */
 
 /* variable = Clase(blah:"hehe" boo:12) */            
-command     ::= variable EQUAL class parameters. { printf("[new object]\n"); }
+command     ::= variable(v) EQUAL class(c) parameters(p). { mBuilder->createInstance(v,c,p); mBuilder->print(); }
 
 /* call method: value1.spy() */
 command     ::= IDENTIFIER DOT IDENTIFIER parameters. { printf("[ call  ]\n"); }

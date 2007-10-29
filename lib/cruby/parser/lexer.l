@@ -3,6 +3,7 @@
 #include "token.h"  // type of the struct that contains values passed from the lexer to the parser
 #include <stdlib.h> // atof
 #include <stdio.h>  // printf
+#include <string.h> // strdup
 
 #define YYSTYPE Token
 
@@ -19,11 +20,11 @@ extern Token yylval; // yylval is a global declared in the parser
 quit                     { return L_QUIT;               }
 =>                       { return L_ARROW;              }
 [1-9]+[0-9]*\.[0-9]+     { return L_FLOAT;              }
-[1-9]+[0-9]*             { return L_INTEGER;            }
+[1-9]+[0-9]*             { return L_INTEGER;  yylval.str = strdup(yytext);          }
 \.                       { return L_DOT;                }
 [ \t\n]+                 { return L_WHITESPACE; /* ignore white space */     }
-[a-z][A-Za-z0-9_]*       { return L_IDENTIFIER;         }
-[A-Z][A-Za-z0-9_]*       { return L_CONST_IDENTIFIER;   }
+[a-z][A-Za-z0-9_]*       { return L_IDENTIFIER; yylval.str = strdup(yytext); }
+[A-Z][A-Za-z0-9_]*       { return L_CONST_IDENTIFIER; yylval.str = strdup(yytext);   }
 (\'([^\']|\\\')*\'|\"([^\"]|\\\")*\")     { return L_STRING; }
 =                        { return L_EQUAL;              }
 :                        { return L_DDOTS;              }

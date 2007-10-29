@@ -5,6 +5,7 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <iostream>
+#include "actionbuilder.h"
 
 #define MAX_BUFFER_SIZE 1024
 
@@ -25,7 +26,7 @@ int main(int argc,char** argv)
   int size, token_type;
   char buf[MAX_BUFFER_SIZE+1];
   void* pParser = ParseAlloc (malloc); // Create a new lemon Parser
-  
+	ActionBuilder mBuilder;
   
   // initialize global token container
   yylval.number = 0;
@@ -34,7 +35,7 @@ int main(int argc,char** argv)
   // set debugging on
   
   // uncomment to debug
-  ParseTrace(stdout, ">>");
+  // ParseTrace(stdout, ">>");
 
   printf("Parser started.");
   
@@ -50,10 +51,11 @@ int main(int argc,char** argv)
     
     while( (token_type = yylex()) != 0 && (token_type != L_QUIT)) {
       // send found tokens until end of buffer
-      Parse (pParser, token_type, yylval);
+      Parse (pParser, token_type, yylval, &mBuilder);
       fflush(stdout);
     }
     if (token_type == L_QUIT) {
+	    Parse (pParser, token_type, yylval, &mBuilder);
       printf("Bye...\n");
       break;
     } else {
@@ -63,7 +65,7 @@ int main(int argc,char** argv)
   }
   
   // send the EOF token
-  Parse (pParser, 0, yylval);
+  Parse (pParser, 0, yylval, &mBuilder);
   
   // cleanup
   ParseFree(pParser, free );
