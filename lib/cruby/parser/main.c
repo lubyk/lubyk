@@ -35,7 +35,7 @@ int main(int argc,char** argv)
   // set debugging on
   
   // uncomment to debug
-  // ParseTrace(stdout, ">>");
+  ParseTrace(stdout, ">>");
 
   printf("Parser started.");
   

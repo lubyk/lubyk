@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include "token.h"
+#include <cstdio>
 
 typedef enum action_types_ {
 	CREATE_INSTANCE,
@@ -19,17 +20,23 @@ public:
 	void setClass  (const Token c) {
 		mClass = std::string(c.str);
 	}
+	void setParameters  (const Token c) {
+		mParameters = std::string(c.str);
+	}
 	void setAction (action_types_t pAction) {
 		mAction = pAction;
 	}
 	
-	void createInstance(Token pVariable, Token pClass, Token pParams) {
-		mAction = CREATE_INSTANCE;
-		setVariable(pVariable);
-		setClass(pClass);
+	void createInstance() {
+    printf("%s // %s // %s\n", mVariable.c_str(), mClass.c_str(), mParameters.c_str());
+		//mAction = CREATE_INSTANCE;
+		//setVariable(pVariable);
+		//setClass(pClass);
 	}
 	
 	void print(void) {
+    std::cout << "out" << std::endl;
+    return;
 		switch(mAction) {
 		case CREATE_INSTANCE:
 			std::cout << '[' << mVariable << " = new " << mClass  << std::endl;

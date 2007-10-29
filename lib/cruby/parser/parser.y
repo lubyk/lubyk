@@ -23,6 +23,11 @@ static char buf[MAX_BUFFER_SIZE];
 void token_destructor(Token& t)
 {
   // free allocated memory
+  t.counter--;
+  if (t.counter <= 0) {
+    printf("KILL: %s\n", t.str);
+    free(t.str);
+  }
 }
 
 }  // %include
@@ -53,20 +58,20 @@ commands    ::= .                             /* can be empty  */
 commands    ::= commands ws command.          /* many commands */
 
 /* variable = Clase(blah:"hehe" boo:12) */            
-command     ::= variable(v) EQUAL class(c) parameters(p). { mBuilder->createInstance(v,c,p); mBuilder->print(); }
+command     ::= variable EQUAL class parameters. { mBuilder->createInstance();}
 
 /* call method: value1.spy() */
 command     ::= IDENTIFIER DOT IDENTIFIER parameters. { printf("[ call  ]\n"); }
 /* call method: value1.spy   (without params)*/
-command     ::= IDENTIFIER DOT IDENTIFIER. { printf("[ call  ]\n"); }
+command     ::= IDENTIFIER DOT IDENTIFIER.            { printf("[ call  ]\n"); }
 
 /* value2.1 => 2.sum  (link)*/
-command     ::= link_from ARROW link_to.         { printf("[new link  ]\n"); }
+command     ::= link_from ARROW link_to.              { printf("[new link  ]\n"); }
 
-variable    ::= IDENTIFIER ws.
-class       ::= ws CONST_IDENTIFIER ws.
+variable    ::= IDENTIFIER(i) ws.                     { mBuilder->setVariable(i); }
+class       ::= ws CONST_IDENTIFIER(i) ws.            { mBuilder->setClass(i);    }
 parameters  ::= OPEN_PAR ws CLOSE_PAR.
-parameters  ::= OPEN_PAR value CLOSE_PAR.
+parameters  ::= OPEN_PAR value(v) CLOSE_PAR.          { mBuilder->setParameters(v);}
 parameters  ::= OPEN_PAR param_list CLOSE_PAR.
 
 link_from   ::= IDENTIFIER DOT INTEGER ws.
@@ -76,8 +81,8 @@ link_to     ::= ws INTEGER DOT IDENTIFIER.
 /* 123.34 */
 value       ::= ws STRING ws.
 /* "some text" */
-value       ::= ws FLOAT ws.
-value       ::= ws INTEGER ws.
+value(v)       ::= ws FLOAT(f) ws.   {v = f;}
+value(v)       ::= ws INTEGER(i) ws. {v = i;}
 /* <<-HERE_STRING */
 value       ::= ws HERESTRING ws.
 
