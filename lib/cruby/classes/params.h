@@ -12,7 +12,7 @@ public:
   Params () : mParameters(20) {}
   
   template<class T>
-  T get(const char * pKey, T pDefault) // const member function ?
+  T get(const char * pKey, T pDefault) const
   {
     std::string * value = mParameters.get(std::string(pKey));
     if (value == NULL) {
@@ -47,12 +47,12 @@ private:
 };
 
 template<>
-int Params::get(const char * pKey, int pDefault);
+int Params::get(const char * pKey, int pDefault) const;
 
 template<>
-double Params::get(const char * pKey, double pDefault);
+double Params::get(const char * pKey, double pDefault) const;
 
 template<>
-float Params::get(const char * pKey, float pDefault);
+float Params::get(const char * pKey, float pDefault) const;
 
 #endif

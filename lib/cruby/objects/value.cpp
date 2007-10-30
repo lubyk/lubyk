@@ -4,7 +4,7 @@ class Value : public Node
 {
 public:
   
-  bool init (Params& p)
+  bool init (const Params& p)
   {
     mValue = p.get("value", 0);
     

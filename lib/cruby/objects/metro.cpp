@@ -3,7 +3,7 @@
 class Metro : public Node
 {
 public:
-  bool init(Params& p)
+  bool init(const Params& p)
   {
     mSpeed = p.get("speed", 0.5); // 120bmp default
     make_inlet<Metro,&Metro::set_tempo>("set tempo");

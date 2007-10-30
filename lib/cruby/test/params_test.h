@@ -8,7 +8,8 @@
 class TestParams : public CxxTest::TestSuite
 {
 public:
-  void testGet( void ) {
+  void testGet( void )
+  {
     Params p("first:1 second:2 name:\"Gaspard Buma\" joy:3.5");
     TS_ASSERT_EQUALS( (int)p.get("first",   3), 1 );
     TS_ASSERT_EQUALS( (int)p.get("default", 3), 3 );
@@ -20,7 +21,8 @@ public:
     TS_ASSERT_EQUALS( (float)p.get("bad", 1.1), (float)1.1 );
   }
   
-  void testSet( void ) {
+  void testSet( void )
+  {
     Params p;
     p.set("first","1");
     TS_ASSERT_EQUALS( (int)p.get("first",   3), 1 );
@@ -40,14 +42,16 @@ public:
     TS_ASSERT_EQUALS( (float)p.get("bad", 1.1), (float)1.1 );
   }
   
-  void testOstream( void ) {
+  void testOstream( void )
+  {
     Params p("first:1 second:2 name:\"Gaspard Buma\" joy:3.5");
     std::ostringstream res(std::ostringstream::out); // allow output operations
     res << p;
     TS_ASSERT_EQUALS( res.str(), std::string("first:1 second:2 name:\"Gaspard Buma\" joy:3.5") );
   }
   
-  void testClear( void ) {
+  void testClear( void )
+  {
     Params p("first:1 second:2 name:\"Gaspard Buma\" joy:3.5");
     std::ostringstream res1(std::ostringstream::out); // allow output operations
     std::ostringstream res2(std::ostringstream::out); // allow output operations

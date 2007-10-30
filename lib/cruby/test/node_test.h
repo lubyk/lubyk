@@ -7,7 +7,7 @@ class Dummy : public Node
 {
 public:
   // params = hash, 'port:450, baud:3200, xyz:450, title:"home of the braave"'
-  bool init (Params& p)
+  bool init (const Params& p)
   {
     mCounter = p.get("counter", 0);
     mName    = p.get("name"   , std::string("no-name"));
@@ -38,26 +38,39 @@ private:
 class TestNode : public CxxTest::TestSuite
 {
 public:
-  void testCreate( void ) {
+  void testCreate( void )
+  {
     Node::declare<Dummy>("dummy");
     
     Node * d = Node::create("dummy", "counter: 5 name:\"foo\"");
     
-    TS_ASSERT_EQUALS( std::string("foo: 5"), std::string(d->spy()) );
+    TS_ASSERT_EQUALS( std::string(d->spy()), std::string("foo: 5") );
   }
   
-  void testBang( void ) {
+  void testInspect( void )
+  {
+    Node::declare<Dummy>("dummy");
+    
+    Node * d = Node::create("dummy", "counter: 5 name:\"foo\"");
+    d->set_variable_name(std::string("d"));
+    
+    TS_ASSERT_EQUALS( std::string(d->inspect()), std::string("[dummy(d) foo: 5]") );
+  }
+  
+  void testBang( void )
+  {
     Node::declare<Dummy>("dummy");
     
     Node * d = Node::create("dummy", "");
     
-    TS_ASSERT_EQUALS( std::string("no-name: 0"), std::string(d->spy()) );
+    TS_ASSERT_EQUALS( std::string(d->spy()), std::string("no-name: 0") );
     d->bang();
     
-    TS_ASSERT_EQUALS( std::string("no-name: 1"), std::string(d->spy()) );
+    TS_ASSERT_EQUALS( std::string(d->spy()), std::string("no-name: 1") );
   }
   
-  void testConnection( void ) {
+  void testConnection( void )
+  {
     Node::declare<Dummy>("dummy");
     
     Node   * d1   = Node::create("dummy", "name:first  counter:3");
@@ -79,7 +92,8 @@ public:
     TS_ASSERT_EQUALS( std::string("second: 5"), std::string(d2->spy()) );
   }
   
-  void testConnectionOrder( void ) {
+  void testConnectionOrder( void )
+  {
     
     Node   * v1   = Node::create("value", "value:2");
     Node   * v2   = Node::create("value", "value:3");

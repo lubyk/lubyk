@@ -13,8 +13,8 @@
 
 #include <string.h>  // strdup
 #include <stdlib.h>  // free
-#include "command.h"
 
+class Command;
 
 #define MAX_BUFFER_SIZE 1024
 

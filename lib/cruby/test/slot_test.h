@@ -28,7 +28,8 @@ static void receive_value4(void * receiver, float value)
 class TestSlot : public CxxTest::TestSuite
 {
 public:
-  void testSingleConnection( void ) {
+  void testSingleConnection( void )
+  {
     float counter = 0;
     Outlet o(&counter, send_value    );
     Inlet  i(&counter, receive_value1 );
@@ -39,7 +40,8 @@ public:
     TS_ASSERT_EQUALS( 2.0, counter);
   }
   
-  void testManyConnections( void ) {
+  void testManyConnections( void )
+  {
     float counter = 0;
     Outlet o(&counter, send_value    );
     Inlet  i1(&counter, receive_value1 );

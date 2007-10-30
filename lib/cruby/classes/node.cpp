@@ -3,8 +3,9 @@
 
 // definitions of static data members
 
-Hash<std::string, class_creator_function_t> Node::mClasses(300);
-std::string Node::mObjectsPath("lib");
+Hash<std::string, class_creator_function_t> Node::sClasses(300);
+std::string Node::sObjectsPath("lib");
+unsigned int Node::sIdCounter = 0;
 
 // for help to create a portable version of this load function, read Ruby's dln.c file.
 bool Node::load(const char * file, const char * init_name)

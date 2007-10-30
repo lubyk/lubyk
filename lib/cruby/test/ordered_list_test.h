@@ -6,7 +6,8 @@
 class TestOrderedList : public CxxTest::TestSuite
 {
 public:
-  void testPushPop( void ) {
+  void testPushPop( void )
+  {
     OrderedList<int> list;
     int i1 = 1;
     int i2 = 2;

@@ -7,7 +7,8 @@
 class TestStringHash : public CxxTest::TestSuite
 {
 public:
-  void testSetGet( void ) {
+  void testSetGet( void )
+  {
     Hash<std::string, std::string> hash(10);
     
     hash.set(std::string("hello"), std::string("world"));
@@ -18,7 +19,8 @@ public:
     TS_ASSERT_EQUALS(  hash.get("money"),  (std::string*)NULL );
   }
   
-  void testKeys( void ) {
+  void testKeys( void )
+  {
     Hash<std::string, std::string> hash(10);
     const std::vector<std::string> * keys = hash.keys();
     
@@ -40,7 +42,8 @@ public:
     TS_ASSERT_EQUALS( keys->at(0), std::string("my"));
   }
   
-  void testClear( void ) {
+  void testClear( void )
+  {
     Hash<std::string, std::string> hash(10);
 
     hash.set(std::string("hello"), std::string("world"));

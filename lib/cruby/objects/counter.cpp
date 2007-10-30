@@ -5,7 +5,7 @@ class Counter : public Node
 {
 public:
   // params = hash, 'port:450, baud:3200, xyz:450, title:"home of the braave"'
-  bool init (Params& p)
+  bool init (const Params& p)
   {
     mCounter = p.get("counter", 0);
     mName    = p.get("name"   , std::string("no-name"));

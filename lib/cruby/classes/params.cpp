@@ -75,7 +75,7 @@ std::ostream& operator<<(std::ostream& pStream, const Params& pParams)
 }
 
 template<>
-int Params::get(const char * pKey, int pDefault)
+int Params::get(const char * pKey, int pDefault) const
 {  
   std::string * value = mParameters.get(std::string(pKey));
   if (value == NULL) {
@@ -86,13 +86,13 @@ int Params::get(const char * pKey, int pDefault)
 }
 
 template<>
-float Params::get(const char * pKey, float pDefault)
+float Params::get(const char * pKey, float pDefault) const
 {  
   return (float)get(pKey, (double)pDefault);
 }
 
 template<>
-double Params::get(const char * pKey, double pDefault)
+double Params::get(const char * pKey, double pDefault) const
 {  
   std::string * value = mParameters.get(std::string(pKey));
   if (value == NULL) {
