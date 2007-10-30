@@ -6,7 +6,7 @@
 #include "load_test.h"
 
 // for help to create a portable version of this load function, read Ruby's dln.c file.
-int load(char * file, char * init_name, Dummy &master)
+bool load(char * file, char * init_name, Dummy &master)
 {
   void *image;
   void (*function)(Dummy&);
@@ -19,7 +19,7 @@ int load(char * file, char * init_name, Dummy &master)
       printf(" %s\n", error);
     else
       printf("\n");
-    return 0;
+    return false;
   }
   
   // get 'init' function into the image
@@ -31,13 +31,13 @@ int load(char * file, char * init_name, Dummy &master)
       printf(" %s\n", error);
     else
       printf("\n");
-    return 0;
+    return false;
   }
   
   // call 'init', passing the registration object
   (*function)(master);
 
-  return 1;
+  return true;
 }
 
 int main ()
