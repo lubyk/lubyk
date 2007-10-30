@@ -4,8 +4,6 @@
 
 typedef struct {  
   char *str;
-  double      number;
-  int  counter; // garbage collection counter
 } Token;
 
 

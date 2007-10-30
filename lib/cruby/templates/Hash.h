@@ -5,6 +5,7 @@
 #define _HASH_H_
 #include <cstdio>
 #include <string>
+#include <vector>
 typedef unsigned int uint;
 
 template<class K, class T>
@@ -45,11 +46,23 @@ public:
   { return get(pId); }
   
   void set(const K& pId, const T& pElement);
-  T*   get(const K& pId);
+  T* get(const K& pId) const;
   void remove(const K& pId);
+  void clear() {
+    typename std::vector<K>::iterator it;
+    typename std::vector<K>::iterator end = mKeys.end();
+    for(it=mKeys.begin(); it < end; it++) {
+      remove(*it);
+    }
+    mKeys.clear();
+  }
+  const std::vector<K> * keys() { return &mKeys; }
+  typename std::vector<K>::const_iterator begin() const { return mKeys.begin(); }
+  typename std::vector<K>::const_iterator end()   const { return mKeys.end(); }
 private:  
   /* data */
   HashElement<K,T> * mHashTable;
+  std::vector<K>     mKeys;
   
   unsigned int mSize;
 };
@@ -59,7 +72,6 @@ void Hash<K,T>::set(const K& pId, const T& pElement) {
   HashElement<K,T> *  found;
   HashElement<K,T> ** set_next;
   uint key = hashId(pId) % mSize;
-  
   found    = &(mHashTable[key]);  // pointer to found element
   set_next = &(found->next);      // where to write the new inserted value if there is one
   
@@ -79,15 +91,20 @@ void Hash<K,T>::set(const K& pId, const T& pElement) {
     }
     *set_next = found;
   }
-  if (found->obj)
+  if (found->obj) {
+    // replace value for given key
     delete found->obj;
+  } else {
+    // new key
+    mKeys.push_back(pId);
+  }
   found->obj  = new T(pElement);
   found->id   = pId;
 }
 
 
 template <class K, class T>
-T* Hash<K,T>::get(const K& pId) {
+T* Hash<K,T>::get(const K& pId) const {
   HashElement<K,T> * found;
   uint key = hashId(pId) % mSize;
   
@@ -116,6 +133,15 @@ void Hash<K,T>::remove(const K& pId) {
     found    = found->next;
   }
   if (found) {
+    typename std::vector<K>::iterator it;
+    typename std::vector<K>::iterator end = mKeys.end();
+    for(it = mKeys.begin(); it < end; it++) {
+      if (*it == pId) {
+        mKeys.erase(it);
+        break;
+      }
+    }
+    
     if (set_next) {
       // link previous to next
       *set_next = found->next;

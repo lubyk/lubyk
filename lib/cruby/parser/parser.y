@@ -13,7 +13,7 @@
 
 #include <string.h>  // strdup
 #include <stdlib.h>  // free
-#include "actionbuilder.h"
+#include "command.h"
 
 
 #define MAX_BUFFER_SIZE 1024
@@ -23,10 +23,9 @@ static char buf[MAX_BUFFER_SIZE];
 void token_destructor(Token& t)
 {
   // free allocated memory
-  t.counter--;
-  if (t.counter <= 0) {
-    printf("KILL: %s\n", t.str);
+  if (t.str != NULL) {
     free(t.str);
+    t.str = NULL;
   }
 }
 
@@ -37,7 +36,7 @@ void token_destructor(Token& t)
 %default_type {Token}
 %token_destructor { token_destructor($$); }
 
-%extra_argument { ActionBuilder *mBuilder }
+%extra_argument { Command *mBuilder }
 
 %type expr {Token}
 %type id   {Token}
@@ -58,7 +57,7 @@ commands    ::= .                             /* can be empty  */
 commands    ::= commands ws command.          /* many commands */
 
 /* variable = Clase(blah:"hehe" boo:12) */            
-command     ::= variable EQUAL class parameters. { mBuilder->createInstance();}
+command     ::= variable EQUAL class parameters.      { mBuilder->createInstance();}
 
 /* call method: value1.spy() */
 command     ::= IDENTIFIER DOT IDENTIFIER parameters. { printf("[ call  ]\n"); }
@@ -71,7 +70,7 @@ command     ::= link_from ARROW link_to.              { printf("[new link  ]\n")
 variable    ::= IDENTIFIER(i) ws.                     { mBuilder->setVariable(i); }
 class       ::= ws CONST_IDENTIFIER(i) ws.            { mBuilder->setClass(i);    }
 parameters  ::= OPEN_PAR ws CLOSE_PAR.
-parameters  ::= OPEN_PAR value(v) CLOSE_PAR.          { mBuilder->setParameters(v);}
+parameters  ::= OPEN_PAR value(v) CLOSE_PAR.          { mBuilder->setClassParameter(v);}
 parameters  ::= OPEN_PAR param_list CLOSE_PAR.
 
 link_from   ::= IDENTIFIER DOT INTEGER ws.
@@ -89,7 +88,7 @@ value       ::= ws HERESTRING ws.
 param_list  ::= ws param.
 param_list  ::= param_list param.         /* id:345 name:"John Difool " */
 
-param       ::= IDENTIFIER DDOTS value. /* id:345 */
+param       ::= IDENTIFIER(k) DDOTS value(v).  { mBuilder->setParameter(k,v); }/* id:345 */
 
 /*
 command     ::= NUMBER(value). { printf("(%.0f) ", value.number); }         

@@ -8,9 +8,12 @@ LFLAGS =  -O2 -Wl,-x -pipe
 
 all: test
 
-test: parser.c lexer.o
-	g++ -o test -O2 -Wl,-x -pipe  parser.c lexer.o -lm
+test: parser.c lexer.o ../params.o command.h
+	g++ -I../classes -I../templates -o test -O2 -Wl,-x -pipe  parser.c lexer.o ../params.o -lm
 
+../params.o: ../classes/Params.cpp ../classes/params.h
+	g++ -c -I../classes -I../templates ../classes/Params.cpp -o ../params.o
+	
 lexer.o: lexer.l
 	flex lexer.l
 	test -e lex.yy.c && mv lex.yy.c lexer.c

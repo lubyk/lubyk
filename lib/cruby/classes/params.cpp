@@ -48,6 +48,32 @@ void Params::build_hash (const std::string& pParams)
   }
 }
 
+
+std::ostream& operator<<(std::ostream& pStream, const Params& pParams)
+{
+  std::string * str;
+  std::vector<std::string>::const_iterator it;
+  std::vector<std::string>::const_iterator end = pParams.mParameters.end();
+  
+  for(it = pParams.mParameters.begin(); it < end; it++) {
+    if (it != pParams.mParameters.begin()) pStream << " ";
+    pStream << *it << ":";
+    if (str = pParams.mParameters.get(*it)) {
+      if (str->find_first_of(" :\"") != std::string::npos) {
+        std::string value = "\"";
+        value.append(*str);
+        value.append("\"");
+        // TODO: escape "
+        pStream << value;
+      } else
+        pStream << *str;
+      
+    } else
+      pStream << "(null)";
+  }
+  return pStream;
+}
+
 template<>
 int Params::get(const char * pKey, int pDefault)
 {  

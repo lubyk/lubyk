@@ -5,7 +5,7 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <iostream>
-#include "actionbuilder.h"
+#include "command.h"
 
 #define MAX_BUFFER_SIZE 1024
 
@@ -26,16 +26,15 @@ int main(int argc,char** argv)
   int size, token_type;
   char buf[MAX_BUFFER_SIZE+1];
   void* pParser = ParseAlloc (malloc); // Create a new lemon Parser
-	ActionBuilder mBuilder;
+	Command mBuilder;
   
   // initialize global token container
-  yylval.number = 0;
-  yylval.str    = '\0';
+  yylval.str = NULL;
   
   // set debugging on
   
   // uncomment to debug
-  ParseTrace(stdout, ">>");
+  //ParseTrace(stdout, ">>");
 
   printf("Parser started.");
   
