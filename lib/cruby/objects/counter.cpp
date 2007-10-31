@@ -35,5 +35,5 @@ private:
 
 extern "C" void init()
 {
-  Node::declare<Counter>("counter");
+  Node::declare<Counter>("Counter");
 }

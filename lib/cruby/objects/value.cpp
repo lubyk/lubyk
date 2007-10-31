@@ -32,5 +32,5 @@ private:
 
 extern "C" void init()
 {
-  Node::declare<Value>("value");
+  Node::declare<Value>("Value");
 }

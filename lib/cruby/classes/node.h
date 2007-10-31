@@ -21,7 +21,7 @@ public:
   Node() : mTriggerPosition(0), mId(0), mClassName("") 
   { 
     sIdCounter++;
-    sprintf(mInspect,"0x%i",sIdCounter);
+    sprintf(mInspect,"_%i",sIdCounter);
     mVariableName = std::string(mInspect);  // default variable name is 'id'
     mSpy[0]     = '\0';
     mInspect[0] = '\0'; 
@@ -51,7 +51,10 @@ public:
   
   const char * inspect() {
     // FIXME: buffer overflow from mClassName...
-    sprintf(mInspect, "[%s(%s) %s]", mClassName.c_str(), mVariableName.c_str(), spy());
+    if (mIsOK)
+      sprintf(mInspect, "[%s(%s) %s]", mClassName.c_str(), mVariableName.c_str(), spy());
+    else
+      sprintf(mInspect, "[%s(%s) X]", mClassName.c_str(), mVariableName.c_str(), spy());
     return mInspect;
   }
   
@@ -74,9 +77,10 @@ public:
   void set_variable_name (const std::string& pName) 
   { mVariableName = pName; }
   
-  const char * class_name() const { return mClassName.c_str(); }
+  //const std::string& variable_name () { return mVariableName; }
+  const char *       variable_name () { return mVariableName.c_str(); }
   
-  const char * variable_name() const { return mVariableName.c_str(); }
+  const char * class_name() const { return mClassName.c_str(); }
   
   ////// class methods ///////
   

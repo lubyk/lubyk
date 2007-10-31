@@ -38,5 +38,5 @@ private:
 
 extern "C" void init()
 {
-  Node::declare<Add>("add");
+  Node::declare<Add>("Add");
 }

@@ -46,6 +46,7 @@ public:
   { return get(pId); }
   
   void set(const K& pId, const T& pElement);
+  // FIXME: replace T* get by : bool get(const K& pId, T& value)
   T* get(const K& pId) const;
   void remove(const K& pId);
   void clear() {
@@ -59,6 +60,8 @@ public:
   const std::vector<K> * keys() { return &mKeys; }
   typename std::vector<K>::const_iterator begin() const { return mKeys.begin(); }
   typename std::vector<K>::const_iterator end()   const { return mKeys.end(); }
+  typename std::vector<K>::iterator begin() { return mKeys.begin(); }
+  typename std::vector<K>::iterator end()   { return mKeys.end(); }
 private:  
   /* data */
   HashElement<K,T> * mHashTable;
