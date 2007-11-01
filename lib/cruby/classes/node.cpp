@@ -41,3 +41,12 @@ bool Node::load(const char * file, const char * init_name)
 
   return true;
 }
+
+const char * Node::inspect() {
+  // FIXME: buffer overflow from mClassName...
+  if (mIsOK)
+    sprintf(mInspect, "#<%s:%s %s>", mClassName.c_str(), mVariableName.c_str(), spy());
+  else
+    sprintf(mInspect, "#<%s:%s X>", mClassName.c_str(), mVariableName.c_str(), spy());
+  return mInspect;
+}

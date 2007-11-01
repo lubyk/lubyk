@@ -22,7 +22,6 @@ public:
   
   /** Main loop. Returns false when rubyk has to quit. */
   bool run();
-  
 private:
   void create_pending_links();
   bool mQuit;

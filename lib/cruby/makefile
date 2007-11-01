@@ -1,5 +1,6 @@
 CC=g++
 CFLAGS=-g
+DOT_CMD=/Applications/Graphviz.app/Contents/MacOS/dot
 
 test: test/runner
 	./test/runner; rm test/runner
@@ -62,6 +63,12 @@ lib/counter.rko: objects/counter.cpp
 	g++ -o lib/counter.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/counter.cpp
 
 	
+dot: classes/command.png	
+	open classes/command.png
+
+classes/command.png: classes/command.rl
+	ragel classes/command.rl | rlgen-dot -p -o classes/command.dot
+	${DOT_CMD} -Tpng classes/command.dot -o classes/command.png
 
 clean:
 	rm -rf *.o lib/*.rko rubyk classes/command.png classes/command.dot

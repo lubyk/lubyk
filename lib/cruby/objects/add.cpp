@@ -23,13 +23,13 @@ public:
   }
   
   void set_value1(float value)
-    { mValue1 = value; }
+  { mValue1 = value; }
   
   void set_value2(float value)
   { mValue2 = value; }
 
   float sum()
-    { return mValue1 + mValue2; }
+  { return mValue1 + mValue2; }
   
 private:
   float mValue1;

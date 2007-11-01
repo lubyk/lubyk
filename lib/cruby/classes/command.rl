@@ -4,10 +4,24 @@
 #include <cstdio>
 #include "rubyk.h"
 
+#undef DEBUG_PARSER
+
 %%{
   machine command;
   write data noerror;
 }%%
+
+Command::Command(Rubyk& pServer)
+{
+  int cs;
+  mAction = NO_ACTION;
+  mServer = &pServer;
+  mThread = 0;
+  mQuit   = false;
+  %% write init;
+  mCurrentState = cs;
+  mTokenIndex = 0;
+}
 
 Command::~Command()
 {
@@ -34,9 +48,10 @@ void Command::do_listen()
   clear();
   prompt();
 
-  while(!mQuit && !mInput->eof()) {
+  while(!mQuit) {
     mInput->getline(iss,1023); // '\n'
     parse(iss);
+    parse("\n");
   }
 }
 
@@ -46,7 +61,6 @@ void Command::parse(const std::string& pStr)
   const char *pe = p + pStr.size(); // past end
   int cs = mCurrentState;        // restore machine state
   
-  mTokenIndex = 0;
 
   %%{
     action a {
@@ -55,7 +69,9 @@ void Command::parse(const std::string& pStr)
         // stop parsing
         return;
       }
-      
+#ifdef DEBUG_PARSER
+      printf("_%c_",fc);
+#endif
       mToken[mTokenIndex] = fc; /* append */
       mTokenIndex++;     
     }
@@ -116,19 +132,21 @@ void Command::parse(const std::string& pStr)
     }
     
     action prompt {
-      clear();
-      prompt();
+      if (!mQuit) {
+        clear();
+        prompt();
+      }
     }
   
-    ws     = (' ' | '\n' | '\t');
+    ws     = (' ' | '\t');
   
-    identifier = 'a'..'z' @a (digit | alpha | '_')* @a;
+    identifier = lower @a (alnum | '_')* @a;
   
     var    = identifier %set_var;
     
     method = identifier %set_method;
   
-    klass  = 'A'..'Z' @a (digit | alpha | '_')* @a %set_klass;
+    klass  = upper @a (alnum | '_')* @a %set_klass;
   
     string  = '"' ([^"\\] | '\n' | ( '\\' (any | '\n') ))* @a %set_value '"';
     float   = ('1'..'9' @a digit* @a '.' @a digit+ @a) %set_value;
@@ -138,21 +156,25 @@ void Command::parse(const std::string& pStr)
   
     key    = identifier %set_key;
   
-    param  = (key ':' ws* value) %add_param;
+    param  = (key ':' ws* value) @add_param;
   
     parameters = value @set_single_param | (param ws*)+;
   
-    create_instance = var ws* @debug '=' @debug ws* klass '(' parameters? ')' @create_instance;
+    create_instance = var ws* '=' ws* klass '(' parameters? ')' ;
   
-    create_link = var '.' integer @set_from ws* '=>' ws* integer '.' var @create_link;
+    create_link = var '.' integer %set_from ws* '=>' ws* integer '.' var;
     
-    execute_method = var '.' method ( '(' parameters? ')' ) @execute_method;
+    execute_method = var '.' method ( '(' parameters? ')' )?;
+
+    execute_command = method ( '(' parameters? ')' )?;
   
-    main := (execute_method | create_instance | create_link | ws+ )+ @prompt;
-    
-    write init;
+    main := ((execute_command %execute_command | execute_method %execute_method | create_instance %create_instance | create_link %create_link | ws* )  '\n' )+ @prompt;
     write exec;
   }%%
+    
+#ifdef DEBUG_PARSER
+  printf("{%i}",cs);
+#endif
   mCurrentState = cs;
 }
 
@@ -167,7 +189,9 @@ void Command::close() {
 void Command::set_from_token (std::string& pElem)
 {
   mToken[mTokenIndex] = '\0';
-  std::cout << "[" << mToken << "]" << std::endl;
+#ifdef DEBUG_PARSER
+  std::cout << "[" << mTokenIndex << ":" << mToken << "]" << std::endl;
+#endif
   pElem = mToken;
   mTokenIndex = 0;
 }
@@ -196,7 +220,7 @@ void Command::set_single_param_from_token ()
 
 void Command::set_parameter  (const std::string& pKey, const std::string& pValue) 
 {
-	mParameters.set(pKey,pValue);
+  mParameters.set(pKey,pValue);
 }
 
 void Command::create_instance()
@@ -211,8 +235,9 @@ void Command::create_instance()
 
 
 void Command::create_link()
-{
-  *mOutput << "LINK (" << mFrom << "." << mFromPort << "=>" << mToPort << "." << mTo << ")" << std::endl;
+{  
+  mServer->create_link(mFrom, mFromPort, mToPort, mTo);
+  *mOutput << "LINK " << mFrom << "." << mFromPort << "=>" << mToPort << "." << mTo << std::endl;
 }
 
 void Command::execute_method()
@@ -226,16 +251,32 @@ void Command::execute_method()
   }
 }
 
+void Command::execute_command()
+{
+  Node * node = mServer->get_instance(mMethod);
+  // FIXME: 
+  if (node) {
+    // inspect
+    *mOutput << node->inspect() << std::endl;
+  } else if (mMethod == "quit") {
+    mServer->quit(); // not all commands should quit the server...
+    mQuit = true;
+    *mOutput << "Bye..." << std::endl;
+  } else {
+    *mOutput << "Unknown command '" << mMethod << "'" << std::endl;
+  }
+}
+
 void Command::print(void)
 {
-	switch(mAction) {
-	case CREATE_INSTANCE:
-	  *mOutput << mVariable << " = " << mClass << "(" << mParameters << ")" << std::endl;
-		break;
-	case CREATE_LINK:
-		*mOutput << "[todo]" << std::endl;
+  switch(mAction) {
+  case CREATE_INSTANCE:
+    *mOutput << mVariable << " = " << mClass << "(" << mParameters << ")" << std::endl;
     break;
-	}
+  case CREATE_LINK:
+    *mOutput << "[todo]" << std::endl;
+    break;
+  }
 }
 
 void Command::clear() 

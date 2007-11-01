@@ -59,14 +59,7 @@ public:
   }
   
   /** Display the node's class, id and current state using 'spy'. */
-  const char * inspect() {
-    // FIXME: buffer overflow from mClassName...
-    if (mIsOK)
-      sprintf(mInspect, "[%s(%s) %s]", mClassName.c_str(), mVariableName.c_str(), spy());
-    else
-      sprintf(mInspect, "[%s(%s) X]", mClassName.c_str(), mVariableName.c_str(), spy());
-    return mInspect;
-  }
+  const char * inspect ();
   
   /** Used to sort outlet connections. A node with a high trigger position receives the value before
     * another node with a small trigger position, if they are both connected to the same outlet. */ 

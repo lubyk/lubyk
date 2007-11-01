@@ -78,6 +78,6 @@ Node * Rubyk::get_instance(const std::string& pVariable)
 
 bool Rubyk::run()
 {
-  sleep(0.2);
+  sleep(0.3);
   return !mQuit;
 }

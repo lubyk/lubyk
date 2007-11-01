@@ -22,8 +22,7 @@ class Rubyk;
 class Command
 {
 public:
-  Command(Rubyk& pServer) : mAction(NO_ACTION), mServer(&pServer), mThread(0), mQuit(false)
-                           ,mCurrentState(0) {}
+  Command(Rubyk& pServer);
   
   virtual ~Command();
   
@@ -75,6 +74,9 @@ protected:
   
   /** Execute a method on an instance. */
   void execute_method ();
+
+  /** Execute a command or inspect instance. */
+  void execute_command ();
   
   /** Print the current command. */
   void print ();
