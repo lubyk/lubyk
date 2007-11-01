@@ -3,6 +3,9 @@ CFLAGS=-g
 
 test: test/runner
 	./test/runner; rm test/runner
+
+rubyk: classes/main.cpp command.o rubyk.o node.o lib/value.rko lib/add.rko lib/counter.rko
+	g++ -Itest -Itemplates -Iclasses -Iobjects -I. classes/main.cpp slot.o inlet.o outlet.o params.o node.o command.o rubyk.o -o rubyk
 	
 test/runner.cpp: test/*_test.h
 	./test/cxxtest/cxxtestgen.pl --error-printer -o test/runner.cpp test/*_test.h
@@ -57,7 +60,8 @@ lib/value.rko: objects/value.cpp
 
 lib/counter.rko: objects/counter.cpp
 	g++ -o lib/counter.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/counter.cpp
+
 	
 
 clean:
-	rm -rf *.o lib/*.rko
+	rm -rf *.o lib/*.rko rubyk classes/command.png classes/command.dot

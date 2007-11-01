@@ -31,6 +31,15 @@ public:
   
   bool init() {}
   
+  void execute_method (const std::string& pMethod, const Params& pParams)
+  {
+    if (pMethod == "bang") {
+      bang();
+    } else {
+      // FIXME....
+    }
+  }
+  
   /** Compute new values for each outlet and send values through connections. */
   void bang (void)
   {
@@ -49,6 +58,7 @@ public:
     return '\0';
   }
   
+  /** Display the node's class, id and current state using 'spy'. */
   const char * inspect() {
     // FIXME: buffer overflow from mClassName...
     if (mIsOK)
@@ -78,7 +88,7 @@ public:
   { mVariableName = pName; }
   
   //const std::string& variable_name () { return mVariableName; }
-  const char *       variable_name () { return mVariableName.c_str(); }
+  const char * variable_name () { return mVariableName.c_str(); }
   
   const char * class_name() const { return mClassName.c_str(); }
   

@@ -66,3 +66,18 @@ void Rubyk::create_pending_links()
     }
   }
 }
+
+Node * Rubyk::get_instance(const std::string& pVariable)
+{
+  Node ** node = mInstances.get(pVariable);
+  if (node)
+    return *node;
+  else
+    return NULL;
+}
+
+bool Rubyk::run()
+{
+  sleep(0.2);
+  return !mQuit;
+}

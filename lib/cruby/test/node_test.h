@@ -9,7 +9,7 @@ public:
   // params = hash, 'port:450, baud:3200, xyz:450, title:"home of the braave"'
   bool init (const Params& p)
   {
-    mCounter = p.get("counter", 0);
+    mCounter = p.get("dummy", 0);
     mName    = p.get("name"   , std::string("no-name"));
     
     make_inlet<Dummy,&Dummy::set_counter>();
@@ -42,7 +42,7 @@ public:
   {
     Node::declare<Dummy>("Dummy");
     
-    Node * d = Node::create("Dummy", "counter: 5 name:\"foo\"");
+    Node * d = Node::create("Dummy", "dummy: 5 name:\"foo\"");
     
     TS_ASSERT_EQUALS( std::string(d->spy()), std::string("foo: 5") );
   }
@@ -51,7 +51,7 @@ public:
   {
     Node::declare<Dummy>("Dummy");
     
-    Node * d = Node::create("Dummy", "counter: 5 name:\"foo\"");
+    Node * d = Node::create("Dummy", "dummy: 5 name:\"foo\"");
     d->set_variable_name(std::string("d"));
     
     TS_ASSERT_EQUALS( std::string(d->inspect()), std::string("[Dummy(d) foo: 5]") );
@@ -69,13 +69,25 @@ public:
     TS_ASSERT_EQUALS( std::string(d->spy()), std::string("no-name: 1") );
   }
   
+  void testExecuteMethod( void )
+  {
+    Node::declare<Dummy>("Dummy");
+
+    Node * d = Node::create("Dummy", "dummy:5");
+
+    TS_ASSERT_EQUALS( std::string(d->spy()), std::string("no-name: 5") );
+    d->execute_method(std::string("bang"), Params(""));
+
+    TS_ASSERT_EQUALS( std::string(d->spy()), std::string("no-name: 6") );
+  }
+  
   void testConnection( void )
   {
     Node::declare<Dummy>("Dummy");
     
-    Node   * d1   = Node::create("Dummy", "name:first  counter:3");
+    Node   * d1   = Node::create("Dummy", "name:first  dummy:3");
     Outlet * out1 = d1->outlet(1); // oulets and inlets are indexed starting with '1', not '0'
-    Node   * d2   = Node::create("Dummy", "name:second counter:0");
+    Node   * d2   = Node::create("Dummy", "name:second dummy:0");
     Inlet  * in2  = d2->inlet(1);
     
     out1->connect(in2);

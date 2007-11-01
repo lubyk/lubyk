@@ -8,17 +8,17 @@ public:
   bool init (const Params& p)
   {
     mCounter = p.get("counter", 0);
-    mName    = p.get("name"   , std::string("no-name"));
     
     make_inlet<Counter,&Counter::set_counter>();
     make_outlet<Counter,&Counter::increment_counter>();
+    // method<Counter,&Counter::increment_counter>("increment");
     
     return true;
   }
 
   virtual const char * spy() 
   { 
-    sprintf(mSpy, "%s: %i", mName.c_str(), mCounter);
+    sprintf(mSpy, "%i", mCounter);
     return mSpy;
   }
   
@@ -30,7 +30,6 @@ public:
   
 private:
   int mCounter;
-  std::string mName;
 };
 
 extern "C" void init()

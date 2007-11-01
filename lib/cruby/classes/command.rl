@@ -9,6 +9,11 @@
   write data noerror;
 }%%
 
+Command::~Command()
+{
+  if (mThread) close();
+}
+
 void Command::listen (std::istream& pInput, std::ostream& pOutput)
 {
   int ret;
@@ -24,11 +29,13 @@ void Command::listen (std::istream& pInput, std::ostream& pOutput)
 
 void Command::do_listen()
 {
-  std::string iss;
+  char iss[1024];
   *mOutput << "Welcome to rubyk !\n\n";
-  
+  clear();
+  prompt();
+
   while(!mQuit && !mInput->eof()) {
-    *mInput >> iss;
+    mInput->getline(iss,1023); // '\n'
     parse(iss);
   }
 }
@@ -37,7 +44,7 @@ void Command::parse(const std::string& pStr)
 {
   const char *p  = pStr.data(); // data pointer
   const char *pe = p + pStr.size(); // past end
-  int cs;        // machine state
+  int cs = mCurrentState;        // restore machine state
   
   mTokenIndex = 0;
 
@@ -52,28 +59,25 @@ void Command::parse(const std::string& pStr)
       mToken[mTokenIndex] = fc; /* append */
       mTokenIndex++;     
     }
+    
     action set_var {
-      setFromToken(mVariable);
+      set_from_token(mVariable);
+    }
+    
+    action set_method {
+      set_from_token(mMethod);
     }
     
     action set_key {
-      setFromToken(mKey);
+      set_from_token(mKey);
     }
   
     action set_klass {
-      setClassFromToken();
-    }
-  
-    action space {
-      printf(" ");
-    }
-  
-    action ret {
-      printf("\n");
+      set_class_from_token();
     }
   
     action set_value {
-      setFromToken(mValue);
+      set_from_token(mValue);
     }
     
     action set_from {
@@ -82,29 +86,47 @@ void Command::parse(const std::string& pStr)
     }
   
     action create_instance {
-      //std::cout << "NEW (" << mVariable << " = " << mClass << "(" << mParameters << ")" << ")" << std::endl;
-      createInstance();
+      create_instance();
     }
     
     action set_single_param {
-      setSingleParamFromToken();
+      set_single_param_from_token();
     }
     
     action add_param {
-      setParameter(mKey, mValue);
+      set_parameter(mKey, mValue);
     }
     
     action create_link {
       mToPort = atoi(mValue.c_str());
       mTo   = mVariable;
-      *mOutput << "LINK (" << mFrom << "." << mFromPort << "=>" << mToPort << "." << mTo << ")" << std::endl;
+      create_link();
+    }
+    
+    action execute_method {
+      execute_method();
+    }
+    
+    action execute_command {
+      execute_command();
+    }
+    
+    action debug {
+      printf("[%i]", cs);
+    }
+    
+    action prompt {
+      clear();
+      prompt();
     }
   
-    ws     = (' ' | '\n' | '\t')+;
+    ws     = (' ' | '\n' | '\t');
   
     identifier = 'a'..'z' @a (digit | alpha | '_')* @a;
   
     var    = identifier %set_var;
+    
+    method = identifier %set_method;
   
     klass  = 'A'..'Z' @a (digit | alpha | '_')* @a %set_klass;
   
@@ -120,15 +142,18 @@ void Command::parse(const std::string& pStr)
   
     parameters = value @set_single_param | (param ws*)+;
   
-    create_instance = var ws* '=' ws* klass '(' parameters? ')' @create_instance;
+    create_instance = var ws* @debug '=' @debug ws* klass '(' parameters? ')' @create_instance;
   
     create_link = var '.' integer @set_from ws* '=>' ws* integer '.' var @create_link;
+    
+    execute_method = var '.' method ( '(' parameters? ')' ) @execute_method;
   
-    main := ((create_instance | create_link) ws*)+  ;
+    main := (execute_method | create_instance | create_link | ws+ )+ @prompt;
     
     write init;
     write exec;
   }%%
+  mCurrentState = cs;
 }
 
 
@@ -139,18 +164,18 @@ void Command::close() {
     pthread_join( mThread, NULL); // wait for listen to finish
 }
 
-void Command::setFromToken (std::string& pElem)
+void Command::set_from_token (std::string& pElem)
 {
   mToken[mTokenIndex] = '\0';
-  //std::cout << "[" << mToken << "]" << std::endl;
+  std::cout << "[" << mToken << "]" << std::endl;
   pElem = mToken;
   mTokenIndex = 0;
 }
 
 
-void Command::setClassFromToken  () 
+void Command::set_class_from_token  () 
 {
-  setFromToken(mClass);
+  set_from_token(mClass);
   if (mSingleParam != "") {
     std::string key = mClass;
     std::transform(key.begin(), key.end(), key.begin(), tolower);
@@ -159,9 +184,9 @@ void Command::setClassFromToken  ()
   }
 }
 
-void Command::setSingleParamFromToken () 
+void Command::set_single_param_from_token () 
 {
-  setFromToken(mSingleParam);
+  set_from_token(mSingleParam);
   if (mClass != "") {
     std::string key = mClass;
     std::transform(key.begin(), key.end(), key.begin(), tolower);
@@ -169,12 +194,12 @@ void Command::setSingleParamFromToken ()
   }
 }
 
-void Command::setParameter  (const std::string& pKey, const std::string& pValue) 
+void Command::set_parameter  (const std::string& pKey, const std::string& pValue) 
 {
 	mParameters.set(pKey,pValue);
 }
 
-void Command::createInstance()
+void Command::create_instance()
 {
   Node * node = mServer->create_instance(mVariable, mClass, mParameters);
   if (node) {
@@ -182,10 +207,26 @@ void Command::createInstance()
   } else {
     *mOutput << "Error" << std::endl;      
   }
-  clear();
 }
 
-void Command::printCommand(void)
+
+void Command::create_link()
+{
+  *mOutput << "LINK (" << mFrom << "." << mFromPort << "=>" << mToPort << "." << mTo << ")" << std::endl;
+}
+
+void Command::execute_method()
+{
+  Node * node = mServer->get_instance(mVariable);
+  if (node) {
+    node->execute_method(mMethod, mParameters);
+    *mOutput << node->inspect() << std::endl;
+  } else {
+    *mOutput << "Unknown node '" << mVariable << "'" << std::endl;
+  }
+}
+
+void Command::print(void)
 {
 	switch(mAction) {
 	case CREATE_INSTANCE:

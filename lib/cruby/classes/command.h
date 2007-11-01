@@ -5,7 +5,6 @@
 #include <iostream>
 #include <cstdio>
 #include <pthread.h>
-#include "parser/token.h"
 #include "params.h"
 #include "hash.h"
 #include "node.h"
@@ -23,7 +22,10 @@ class Rubyk;
 class Command
 {
 public:
-  Command(Rubyk& pServer) : mAction(NO_ACTION), mServer(&pServer), mThread(0), mQuit(false) {}
+  Command(Rubyk& pServer) : mAction(NO_ACTION), mServer(&pServer), mThread(0), mQuit(false)
+                           ,mCurrentState(0) {}
+  
+  virtual ~Command();
   
   /** This method creates a new thread to listen for incomming commands. */
   void listen (std::istream& pInput, std::ostream& pOutput) ;
@@ -35,8 +37,11 @@ public:
   /** Stop listening for incomming commands. */
   void close ();
   
-  /** Callback used by the parser to clear the current command. */
+  /** Clear the current command. */
   void clear ();
+  
+  /** Display the prompt. */
+  virtual void prompt () {}
   
   /** Ragel parser. */
   void parse (const char * pStr) {
@@ -44,35 +49,45 @@ public:
   }
   void parse (const std::string& pStr);
 	
-private:
+protected:
   /** Code executed in a separate thread. Runs until 'mQuit' is true. */
-  void do_listen();
+  virtual void do_listen();
   
   /** PARSER RELATED CALLBACKS **/
   
-  /** Callback used by the parser to set a variable from the current token content. */
-  void setFromToken (std::string& pElem);
-  /** Callback used by the parser to set the class name. */
-  void setClassFromToken  ();
-  /** Callback used by the parser to set the 'class' parameter ('value' for Value, 'metro' for Metro, etc). */
-  void setSingleParamFromToken ();
-  /** Callback used by the parser to set a parameter. */
-  void setParameter  (const std::string& pKey, const std::string& pValue);
-  /** Callback used by the parser to create an instance. */
-  void createInstance ();
-  /** Callback used by the parser to create a link. If the link cannot be created right now because all variables aren't set yet, the link will be kept in Rubyk's link buffer until all variables are found. */
-  void createLink ();
-  /** Callback used by the parser to print the current command. */
-  void printCommand ();
+  /** Set a variable from the current token content. */
+  void set_from_token (std::string& pElem);
+  
+  /** Set the class name. */
+  void set_class_from_token  ();
+  
+  /** Set the 'class' parameter ('value' for Value, 'metro' for Metro, etc). */
+  void set_single_param_from_token ();
+  
+  /** Set a parameter. */
+  void set_parameter  (const std::string& pKey, const std::string& pValue);
+  
+  /** Create an instance. */
+  void create_instance ();
+  
+  /** Create a link. If the link cannot be created right now because all variables aren't set yet, the link will be kept in Rubyk's link buffer until all variables are found. */
+  void create_link ();
+  
+  /** Execute a method on an instance. */
+  void execute_method ();
+  
+  /** Print the current command. */
+  void print ();
   
   /** Token for the parser. */
   char mToken[MAX_TOKEN_SIZE + 1];
-  unsigned int   mTokenIndex;
+  unsigned int mTokenIndex;
+  unsigned int mCurrentState; /**< Current parser state between blocks. */
   
 	action_types_t mAction;
   
   /** Command parts. */
-	std::string    mVariable, mClass, mSingleParam, mKey, mValue, mFrom, mTo;
+	std::string    mVariable, mMethod, mClass, mSingleParam, mKey, mValue, mFrom, mTo;
 	Params         mParameters;
   int            mFromPort, mToPort;
   Rubyk *        mServer;
@@ -83,6 +98,16 @@ private:
   std::ostream * mOutput;
   /* Listen elements. */
   bool mQuit;
+};
+
+class InteractiveCommand : public Command
+{
+public:
+  InteractiveCommand(Rubyk& pServer) : Command(pServer) {}
+  virtual void prompt()
+  {
+    *mOutput << "> ";
+  }
 };
 
 #endif
