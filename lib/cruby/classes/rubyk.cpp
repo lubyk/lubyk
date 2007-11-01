@@ -16,7 +16,7 @@ Rubyk::~Rubyk()
 
 Node * Rubyk::create_instance (const std::string& pVariable, const std::string& pClass, const Params& pParams)
 {
-  Node * node = Node::create(pClass, pParams);
+  Node * node = Node::create(this, pClass, pParams);
   Node ** previous;
   std::string varName;
 

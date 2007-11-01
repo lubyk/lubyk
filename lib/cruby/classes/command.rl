@@ -11,11 +11,11 @@
   write data noerror;
 }%%
 
-Command::Command(Rubyk& pServer)
+Command::Command(Rubyk * pServer)
 {
   int cs;
   mAction = NO_ACTION;
-  mServer = &pServer;
+  mServer = pServer;
   mThread = 0;
   mQuit   = false;
   %% write init;
@@ -223,6 +223,7 @@ void Command::set_parameter  (const std::string& pKey, const std::string& pValue
   mParameters.set(pKey,pValue);
 }
 
+// FIXME: create_instance should run in server space with concurrency locks.
 void Command::create_instance()
 {
   Node * node = mServer->create_instance(mVariable, mClass, mParameters);
@@ -240,6 +241,7 @@ void Command::create_link()
   *mOutput << "LINK " << mFrom << "." << mFromPort << "=>" << mToPort << "." << mTo << std::endl;
 }
 
+// FIXME: execute_method should run in server space with concurrency locks.
 void Command::execute_method()
 {
   Node * node = mServer->get_instance(mVariable);
@@ -251,6 +253,7 @@ void Command::execute_method()
   }
 }
 
+// FIXME: execute_command should run in server space with concurrency locks.
 void Command::execute_command()
 {
   Node * node = mServer->get_instance(mMethod);

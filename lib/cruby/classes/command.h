@@ -22,7 +22,7 @@ class Rubyk;
 class Command
 {
 public:
-  Command(Rubyk& pServer);
+  Command(Rubyk * pServer);
   
   virtual ~Command();
   

@@ -9,6 +9,8 @@
 #define MAX_SPY_MESSAGE      1024
 #define MAX_CLASS_NAME       50
 
+extern long double gLogicalTime;
+
 /** Pointer to a function to create nodes. */
 typedef Node * (*class_creator_function_t)(const std::string& key, const Params& pParams);
 
@@ -18,7 +20,7 @@ typedef Node * (*class_creator_function_t)(const std::string& key, const Params&
 class Node
 {
 public:
-  Node() : mTriggerPosition(0), mId(0), mClassName("") 
+  Node(Rubyk * pServer) : mServer(pServer), mTriggerPosition(0), mId(0), mClassName("") 
   { 
     sIdCounter++;
     sprintf(mInspect,"_%i",sIdCounter);
@@ -90,22 +92,22 @@ public:
   /** Load an object stored in a dynamic library. */
   static bool load(const char * file, const char * init_name);
   
-  static Node * create (const char * pKey, const std::string& pParams)
-  { return Node::create(std::string(pKey), Params(pParams)); }
+  static Node * create (Rubyk * pServer, const char * pKey, const std::string& pParams)
+  { return Node::create(pServer, std::string(pKey), Params(pParams)); }
   
-  static Node * create (const char * pKey, const char * pParams)
-  { return Node::create(std::string(pKey), Params(pParams)); }
+  static Node * create (Rubyk * pServer, const char * pKey, const char * pParams)
+  { return Node::create(pServer, std::string(pKey), Params(pParams)); }
   
-  static Node * create (const std::string& pKey, const char * pParams)
-  { return Node::create(pKey, Params(pParams)); }
+  static Node * create (Rubyk * pServer, const std::string& pKey, const char * pParams)
+  { return Node::create(pServer, pKey, Params(pParams)); }
   
-  static Node * create (const std::string& pKey, const std::string& pParams)
-  { return Node::create(pKey, Params(pParams)); }
+  static Node * create (Rubyk * pServer, const std::string& pKey, const std::string& pParams)
+  { return Node::create(pServer, pKey, Params(pParams)); }
   
-  static Node * create (const char * pKey, const Params pParams)
-  { return Node::create(std::string(pKey), Params(pParams)); }
+  static Node * create (Rubyk * pServer, const char * pKey, const Params pParams)
+  { return Node::create(pServer, std::string(pKey), Params(pParams)); }
   
-  static Node * create (const std::string& pKey, const Params& pParams)
+  static Node * create (Rubyk * pServer, const std::string& pKey, const Params& pParams)
   {
     class_creator_function_t * func = sClasses.get(pKey);
     if (func)
@@ -126,7 +128,7 @@ public:
       // load failed
       // dummy object in broken mode
       
-      Node * obj = new Node;
+      Node * obj = new Node(pServer);
       obj->set_class_name(pKey);
       obj->set_is_ok( false ); // if init returns false, the node goes into 'broken' mode.
       return obj;
@@ -167,7 +169,7 @@ protected:
     mOutlets.push_back(s);
   }
   
-  
+  void bang_me_at (long double pTime);
   // ================ MEMBER DATA    ================= //
   
   long  mId;
@@ -176,6 +178,8 @@ protected:
                  
   float mTriggerPosition; /**< When sending signals from a particular slot, a node with a small mTriggerPosition 
                             *  will receive the signal after a node that has a greater mTriggerPosition. */
+  /** Host server. */
+  Rubyk * mServer;
   
   std::vector<Inlet>  mInlets;
   std::vector<Outlet> mOutlets;

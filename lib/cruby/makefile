@@ -42,16 +42,7 @@ command.o: classes/command.cpp classes/command.h
 command.o.bak: classes/command.cpp classes/command.h parser/parser.c lexer.o	
 	g++ -c -Iclasses -Itemplates classes/command.cpp parser/parser.c parser/lexer.o -O2 -Wl,-x -pipe -lm -o command.o
 
-lexer.c: parser/lexer.l
-	flex parser/lexer.l
-	test -e lex.yy.c && mv lex.yy.c lexer.c
 
-lexer.o: lexer.c
-	gcc -o lexer.o -c lexer.c
-
-parser.c: parser.y main.c lemon
-	./lemon parser.y
-	cat main.c >> parser.c
 
 lib/add.rko: objects/add.cpp
 	g++ -o lib/add.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/add.cpp
@@ -61,6 +52,9 @@ lib/value.rko: objects/value.cpp
 
 lib/counter.rko: objects/counter.cpp
 	g++ -o lib/counter.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/counter.cpp
+
+lib/metro.rko: objects/metro.cpp
+	g++ -o lib/metro.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/metro.cpp
 
 	
 dot: classes/command.png	
