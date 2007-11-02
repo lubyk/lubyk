@@ -10,7 +10,7 @@ public:
   void testCreate( void ) 
   {
     Rubyk server;
-    Command cmd(server);
+    Command cmd(&server);
     std::istringstream  input(std::istringstream::in);   // allow input operations
     std::ostringstream output(std::ostringstream::out);  // allow output  operations
     cmd.listen(input, output);
@@ -22,17 +22,20 @@ public:
 class TestParseCommand : public CxxTest::TestSuite
 {
 public:
-  TestParseCommand() : mServer(), mCmd(mServer), mOutput(std::ostringstream::out), mInput(std::istringstream::in)  
-  { mCmd.listen(mInput, mOutput); }
+  TestParseCommand() : mServer(), mCmd(&mServer), mOutput(std::ostringstream::out), mInput(std::istringstream::in)  
+    { mCmd.set_input(mInput); mCmd.set_output(mOutput); }
   
   void testParseCommand( void ) 
-  { assert_result("v1=Value(3)","[Value(v1) 3]\n"); }
+  { assert_result("v1=Value(1)\n","#<Value:v1 1>\n"); }
   
   void testParseCommandWithSpaces( void ) 
-  { assert_result("v1 = Value(3)\n\n","[Value(v1) 3]\n"); }
+  { assert_result("v1 = Value(2)\n\n","#<Value:v1 2>\n"); }
   
   void testExecuteCommand( void ) 
-  { assert_result("v1=Counter(7)\nv1.bang\n","[Counter(v1) 7]\n[Counter(v1) 8]\n"); }
+  { assert_result("v1=Counter(3)\nv1.bang\n","#<Counter:v1 3>\n#<Counter:v1 4>\n"); }
+  
+  void testInspectCommand( void ) 
+  { assert_result("i=Counter(14)\ni\n","#<Counter:i 14>\n#<Counter:i 14>\n"); }
   
 private:
   Rubyk mServer;

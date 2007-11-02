@@ -48,7 +48,7 @@ void Command::do_listen()
   clear();
   prompt();
 
-  while(!mQuit) {
+  while(!mQuit && !mInput->eof()) {
     mInput->getline(iss,1023); // '\n'
     parse(iss);
     parse("\n");
@@ -96,11 +96,17 @@ void Command::parse(const std::string& pStr)
       set_from_token(mValue);
     }
     
-    action set_from {
+    action set_from_port {
+      set_from_token(mValue);
       mFromPort = atoi(mValue.c_str());
       mFrom = mVariable;
     }
-  
+    
+    action set_to_port {
+      set_from_token(mTo);
+      mToPort = atoi(mValue.c_str());
+    }
+    
     action create_instance {
       create_instance();
     }
@@ -140,29 +146,29 @@ void Command::parse(const std::string& pStr)
   
     ws     = (' ' | '\t');
   
-    identifier = lower @a (alnum | '_')* @a;
+    identifier = (lower (alnum | '_')*) $a;
   
     var    = identifier %set_var;
     
     method = identifier %set_method;
   
-    klass  = upper @a (alnum | '_')* @a %set_klass;
+    klass  = (upper (alnum | '_')*) $a %set_klass;
   
-    string  = '"' ([^"\\] | '\n' | ( '\\' (any | '\n') ))* @a %set_value '"';
-    float   = ('1'..'9' @a digit* @a '.' @a digit+ @a) %set_value;
-    integer = ('1'..'9' @a digit* @a) %set_value;
+    string  = '"' ([^"\\] | '\n' | ( '\\' (any | '\n') ))* $a '"';
+    float   = ('1'..'9' digit* '.' digit+) $a;
+    integer = ('1'..'9' digit*) $a;
   
-    value  = (string | float | integer);
+    value  = (string | float | integer) %set_value ;
   
     key    = identifier %set_key;
   
-    param  = (key ':' ws* value) @add_param;
+    param  = (key ':' ws* value) %add_param;
   
-    parameters = value @set_single_param | (param ws*)+;
+    parameters = value %set_single_param | (param ws*)+;
   
     create_instance = var ws* '=' ws* klass '(' parameters? ')' ;
   
-    create_link = var '.' integer %set_from ws* '=>' ws* integer '.' var;
+    create_link = var '.' integer %set_from_port ws* '=>' ws* integer %set_value '.' var %set_to_port;
     
     execute_method = var '.' method ( '(' parameters? ')' )?;
 
@@ -171,10 +177,7 @@ void Command::parse(const std::string& pStr)
     main := ((execute_command %execute_command | execute_method %execute_method | create_instance %create_instance | create_link %create_link | ws* )  '\n' )+ @prompt;
     write exec;
   }%%
-    
-#ifdef DEBUG_PARSER
-  printf("{%i}",cs);
-#endif
+//  printf("{%s}\n",p);
   mCurrentState = cs;
 }
 
@@ -190,7 +193,9 @@ void Command::set_from_token (std::string& pElem)
 {
   mToken[mTokenIndex] = '\0';
 #ifdef DEBUG_PARSER
-  std::cout << "[" << mTokenIndex << ":" << mToken << "]" << std::endl;
+  if (&pElem == &mValue) std::cout <<    "[val " << mToken << "]" << std::endl;
+  if (&pElem == &mVariable) std::cout << "[var " << mToken << "]" << std::endl;
+  if (&pElem == &mClass) std::cout <<    "[cla " << mToken << "]" << std::endl;
 #endif
   pElem = mToken;
   mTokenIndex = 0;
@@ -210,7 +215,7 @@ void Command::set_class_from_token  ()
 
 void Command::set_single_param_from_token () 
 {
-  set_from_token(mSingleParam);
+  mSingleParam = mValue;
   if (mClass != "") {
     std::string key = mClass;
     std::transform(key.begin(), key.end(), key.begin(), tolower);
@@ -227,6 +232,9 @@ void Command::set_parameter  (const std::string& pKey, const std::string& pValue
 void Command::create_instance()
 {
   Node * node = mServer->create_instance(mVariable, mClass, mParameters);
+#ifdef DEBUG_PARSER
+  std::cout << "NEW("<< mVariable << ", " << mClass << ", " << mParameters << ")";
+#endif
   if (node) {
     *mOutput << node->inspect() << std::endl;
   } else {

@@ -5,13 +5,13 @@ DOT_CMD=/Applications/Graphviz.app/Contents/MacOS/dot
 test: test/runner
 	./test/runner; rm test/runner
 
-rubyk: classes/main.cpp command.o rubyk.o node.o lib/value.rko lib/add.rko lib/counter.rko
+rubyk: classes/main.cpp command.o rubyk.o node.o lib/value.rko lib/add.rko lib/counter.rko lib/metro.rko lib/print.rko
 	g++ -Itest -Itemplates -Iclasses -Iobjects -I. classes/main.cpp slot.o inlet.o outlet.o params.o node.o command.o rubyk.o -o rubyk
 	
 test/runner.cpp: test/*_test.h
 	./test/cxxtest/cxxtestgen.pl --error-printer -o test/runner.cpp test/*_test.h
 
-test/runner: test/runner.cpp command.o rubyk.o node.o lib/value.rko lib/add.rko lib/counter.rko
+test/runner: test/runner.cpp command.o rubyk.o node.o lib/value.rko lib/add.rko lib/counter.rko lib/print.rko
 	g++ -Itest -Itemplates -Iclasses -Iobjects -I. test/runner.cpp slot.o inlet.o outlet.o params.o node.o command.o rubyk.o -o test/runner
 	
 	
@@ -56,12 +56,17 @@ lib/counter.rko: objects/counter.cpp
 lib/metro.rko: objects/metro.cpp
 	g++ -o lib/metro.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/metro.cpp
 
+lib/print.rko: objects/print.cpp
+	g++ -o lib/print.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/print.cpp
+
 	
 dot: classes/command.png	
 	open classes/command.png
 
-classes/command.png: classes/command.rl
+classes/command.dot: classes/command.rl
 	ragel classes/command.rl | rlgen-dot -p -o classes/command.dot
+	
+classes/command.png: classes/command.dot
 	${DOT_CMD} -Tpng classes/command.dot -o classes/command.png
 
 clean:

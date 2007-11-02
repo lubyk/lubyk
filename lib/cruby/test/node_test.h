@@ -42,7 +42,7 @@ public:
   {
     Node::declare<Dummy>("Dummy");
     
-    Node * d = Node::create("Dummy", "dummy: 5 name:\"foo\"");
+    Node * d = Node::create(NULL, "Dummy", "dummy: 5 name:\"foo\"");
     
     TS_ASSERT_EQUALS( std::string(d->spy()), std::string("foo: 5") );
   }
@@ -51,17 +51,17 @@ public:
   {
     Node::declare<Dummy>("Dummy");
     
-    Node * d = Node::create("Dummy", "dummy: 5 name:\"foo\"");
+    Node * d = Node::create(NULL, "Dummy", "dummy: 5 name:\"foo\"");
     d->set_variable_name(std::string("d"));
     
-    TS_ASSERT_EQUALS( std::string(d->inspect()), std::string("[Dummy(d) foo: 5]") );
+    TS_ASSERT_EQUALS( std::string(d->inspect()), std::string("#<Dummy:d foo: 5>") );
   }
   
   void testBang( void )
   {
     Node::declare<Dummy>("Dummy");
     
-    Node * d = Node::create("Dummy", "");
+    Node * d = Node::create(NULL, "Dummy", "");
     
     TS_ASSERT_EQUALS( std::string(d->spy()), std::string("no-name: 0") );
     d->bang();
@@ -73,7 +73,7 @@ public:
   {
     Node::declare<Dummy>("Dummy");
 
-    Node * d = Node::create("Dummy", "dummy:5");
+    Node * d = Node::create(NULL, "Dummy", "dummy:5");
 
     TS_ASSERT_EQUALS( std::string(d->spy()), std::string("no-name: 5") );
     d->execute_method(std::string("bang"), Params(""));
@@ -85,9 +85,9 @@ public:
   {
     Node::declare<Dummy>("Dummy");
     
-    Node   * d1   = Node::create("Dummy", "name:first  dummy:3");
+    Node   * d1   = Node::create(NULL, "Dummy", "name:first  dummy:3");
     Outlet * out1 = d1->outlet(1); // oulets and inlets are indexed starting with '1', not '0'
-    Node   * d2   = Node::create("Dummy", "name:second dummy:0");
+    Node   * d2   = Node::create(NULL, "Dummy", "name:second dummy:0");
     Inlet  * in2  = d2->inlet(1);
     
     out1->connect(in2);
@@ -106,11 +106,10 @@ public:
   
   void testConnectionOrder( void )
   {
-    
-    Node   * v1   = Node::create("Value", "value:2");
-    Node   * v2   = Node::create("Value", "value:3");
-    Node   * add  = Node::create("Add", "");
-    Node   * v3   = Node::create("Value", "");
+    Node   * v1   = Node::create(NULL, "Value", "value:2");
+    Node   * v2   = Node::create(NULL, "Value", "value:3");
+    Node   * add  = Node::create(NULL, "Add", "");
+    Node   * v3   = Node::create(NULL, "Value", "");
     
     /**    v1   v2
       *    |    |

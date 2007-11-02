@@ -11,24 +11,24 @@
 #line 12 "classes/command.cpp"
 static const char _command_actions[] = {
 	0, 1, 0, 1, 1, 1, 2, 1, 
-	3, 1, 4, 1, 5, 1, 13, 2, 
-	0, 8, 2, 0, 9, 2, 5, 0, 
-	2, 5, 6, 2, 5, 8, 2, 5, 
-	9, 2, 7, 13, 2, 11, 13, 2, 
-	12, 13, 3, 1, 10, 13, 3, 2, 
-	11, 13, 3, 2, 12, 13
+	3, 1, 4, 1, 5, 1, 6, 1, 
+	14, 2, 5, 9, 2, 5, 10, 2, 
+	8, 14, 2, 12, 14, 2, 13, 14, 
+	3, 2, 12, 14, 3, 2, 13, 14, 
+	3, 5, 10, 0, 4, 1, 7, 11, 
+	14
 };
 
-static const unsigned char _command_key_offsets[] = {
+static const short _command_key_offsets[] = {
 	0, 0, 5, 8, 21, 24, 28, 36, 
 	42, 44, 45, 46, 46, 50, 52, 55, 
-	63, 68, 70, 75, 75, 83, 85, 92, 
-	98, 100, 101, 102, 102, 106, 108, 111, 
-	119, 124, 126, 131, 131, 139, 141, 148, 
-	152, 157, 160, 161, 165, 168, 170, 178, 
-	187, 193, 195, 196, 197, 197, 201, 203, 
-	206, 214, 219, 221, 226, 226, 234, 236, 
-	243
+	63, 68, 70, 75, 80, 80, 88, 90, 
+	97, 103, 105, 106, 107, 107, 111, 113, 
+	116, 124, 129, 131, 136, 141, 141, 149, 
+	151, 158, 162, 167, 170, 171, 175, 178, 
+	180, 188, 197, 203, 205, 206, 207, 207, 
+	211, 213, 216, 224, 229, 231, 236, 241, 
+	241, 249, 251, 258
 };
 
 static const char _command_trans_keys[] = {
@@ -41,65 +41,66 @@ static const char _command_trans_keys[] = {
 	48, 57, 48, 57, 41, 48, 57, 58, 
 	95, 48, 57, 65, 90, 97, 122, 9, 
 	32, 34, 49, 57, 34, 92, 9, 32, 
-	41, 97, 122, 9, 32, 41, 46, 48, 
-	57, 97, 122, 48, 57, 9, 32, 41, 
-	48, 57, 97, 122, 34, 41, 49, 57, 
-	97, 122, 34, 92, 41, 10, 41, 46, 
-	48, 57, 48, 57, 41, 48, 57, 58, 
-	95, 48, 57, 65, 90, 97, 122, 9, 
-	32, 34, 49, 57, 34, 92, 9, 32, 
-	41, 97, 122, 9, 32, 41, 46, 48, 
-	57, 97, 122, 48, 57, 9, 32, 41, 
-	48, 57, 97, 122, 49, 57, 97, 122, 
-	9, 32, 61, 48, 57, 9, 32, 61, 
-	62, 9, 32, 49, 57, 46, 48, 57, 
-	97, 122, 10, 95, 48, 57, 65, 90, 
-	97, 122, 10, 40, 95, 48, 57, 65, 
-	90, 97, 122, 34, 41, 49, 57, 97, 
-	122, 34, 92, 41, 10, 41, 46, 48, 
-	57, 48, 57, 41, 48, 57, 58, 95, 
-	48, 57, 65, 90, 97, 122, 9, 32, 
-	34, 49, 57, 34, 92, 9, 32, 41, 
-	97, 122, 9, 32, 41, 46, 48, 57, 
-	97, 122, 48, 57, 9, 32, 41, 48, 
-	57, 97, 122, 9, 10, 32, 97, 122, 
-	0
+	41, 97, 122, 9, 32, 41, 97, 122, 
+	9, 32, 41, 46, 48, 57, 97, 122, 
+	48, 57, 9, 32, 41, 48, 57, 97, 
+	122, 34, 41, 49, 57, 97, 122, 34, 
+	92, 41, 10, 41, 46, 48, 57, 48, 
+	57, 41, 48, 57, 58, 95, 48, 57, 
+	65, 90, 97, 122, 9, 32, 34, 49, 
+	57, 34, 92, 9, 32, 41, 97, 122, 
+	9, 32, 41, 97, 122, 9, 32, 41, 
+	46, 48, 57, 97, 122, 48, 57, 9, 
+	32, 41, 48, 57, 97, 122, 49, 57, 
+	97, 122, 9, 32, 61, 48, 57, 9, 
+	32, 61, 62, 9, 32, 49, 57, 46, 
+	48, 57, 97, 122, 10, 95, 48, 57, 
+	65, 90, 97, 122, 10, 40, 95, 48, 
+	57, 65, 90, 97, 122, 34, 41, 49, 
+	57, 97, 122, 34, 92, 41, 10, 41, 
+	46, 48, 57, 48, 57, 41, 48, 57, 
+	58, 95, 48, 57, 65, 90, 97, 122, 
+	9, 32, 34, 49, 57, 34, 92, 9, 
+	32, 41, 97, 122, 9, 32, 41, 97, 
+	122, 9, 32, 41, 46, 48, 57, 97, 
+	122, 48, 57, 9, 32, 41, 48, 57, 
+	97, 122, 9, 10, 32, 97, 122, 0
 };
 
 static const char _command_single_lengths[] = {
 	0, 3, 3, 7, 3, 2, 2, 2, 
 	2, 1, 1, 0, 2, 0, 1, 2, 
-	3, 2, 3, 0, 4, 0, 3, 2, 
-	2, 1, 1, 0, 2, 0, 1, 2, 
-	3, 2, 3, 0, 4, 0, 3, 0, 
-	3, 3, 1, 2, 1, 0, 2, 3, 
+	3, 2, 3, 3, 0, 4, 0, 3, 
 	2, 2, 1, 1, 0, 2, 0, 1, 
-	2, 3, 2, 3, 0, 4, 0, 3, 
-	3
+	2, 3, 2, 3, 3, 0, 4, 0, 
+	3, 0, 3, 3, 1, 2, 1, 0, 
+	2, 3, 2, 2, 1, 1, 0, 2, 
+	0, 1, 2, 3, 2, 3, 3, 0, 
+	4, 0, 3, 3
 };
 
 static const char _command_range_lengths[] = {
 	0, 1, 0, 3, 0, 1, 3, 2, 
 	0, 0, 0, 0, 1, 1, 1, 3, 
-	1, 0, 1, 0, 2, 1, 2, 2, 
-	0, 0, 0, 0, 1, 1, 1, 3, 
-	1, 0, 1, 0, 2, 1, 2, 2, 
-	1, 0, 0, 1, 1, 1, 3, 3, 
+	1, 0, 1, 1, 0, 2, 1, 2, 
 	2, 0, 0, 0, 0, 1, 1, 1, 
-	3, 1, 0, 1, 0, 2, 1, 2, 
-	1
+	3, 1, 0, 1, 1, 0, 2, 1, 
+	2, 2, 1, 0, 0, 1, 1, 1, 
+	3, 3, 2, 0, 0, 0, 0, 1, 
+	1, 1, 3, 1, 0, 1, 1, 0, 
+	2, 1, 2, 1
 };
 
-static const unsigned char _command_index_offsets[] = {
+static const short _command_index_offsets[] = {
 	0, 0, 5, 9, 20, 24, 28, 34, 
 	39, 42, 44, 46, 47, 51, 53, 56, 
-	62, 67, 70, 75, 76, 83, 85, 91, 
-	96, 99, 101, 103, 104, 108, 110, 113, 
-	119, 124, 127, 132, 133, 140, 142, 148, 
-	151, 156, 160, 162, 166, 169, 171, 177, 
-	184, 189, 192, 194, 196, 197, 201, 203, 
-	206, 212, 217, 220, 225, 226, 233, 235, 
-	241
+	62, 67, 70, 75, 80, 81, 88, 90, 
+	96, 101, 104, 106, 108, 109, 113, 115, 
+	118, 124, 129, 132, 137, 142, 143, 150, 
+	152, 158, 161, 166, 170, 172, 176, 179, 
+	181, 187, 194, 199, 202, 204, 206, 207, 
+	211, 213, 216, 222, 227, 230, 235, 240, 
+	241, 248, 250, 256
 };
 
 static const char _command_indicies[] = {
@@ -108,81 +109,85 @@ static const char _command_indicies[] = {
 	3, 3, 3, 1, 9, 9, 10, 1, 
 	10, 10, 11, 1, 12, 11, 11, 11, 
 	11, 1, 13, 14, 15, 16, 1, 18, 
-	19, 17, 14, 1, 20, 1, 17, 21, 
-	22, 15, 1, 23, 1, 21, 23, 1, 
+	19, 17, 20, 1, 21, 1, 17, 20, 
+	22, 15, 1, 23, 1, 20, 23, 1, 
 	24, 16, 16, 16, 16, 1, 25, 25, 
 	26, 27, 1, 29, 30, 28, 31, 31, 
-	14, 16, 1, 28, 32, 32, 21, 33, 
-	27, 34, 1, 35, 1, 32, 32, 21, 
-	35, 34, 1, 36, 37, 38, 39, 1, 
-	41, 42, 40, 37, 1, 43, 1, 40, 
-	44, 45, 38, 1, 46, 1, 44, 46, 
-	1, 47, 39, 39, 39, 39, 1, 48, 
-	48, 49, 50, 1, 52, 53, 51, 54, 
-	54, 37, 39, 1, 51, 55, 55, 44, 
-	56, 50, 57, 1, 58, 1, 55, 55, 
-	44, 58, 57, 1, 59, 60, 1, 61, 
-	61, 62, 59, 1, 63, 63, 64, 1, 
-	65, 1, 65, 65, 66, 1, 67, 66, 
-	1, 68, 1, 69, 68, 68, 68, 68, 
-	1, 70, 71, 60, 60, 60, 60, 1, 
-	72, 73, 74, 75, 1, 77, 78, 76, 
-	73, 1, 79, 1, 76, 80, 81, 74, 
-	1, 82, 1, 80, 82, 1, 83, 75, 
-	75, 75, 75, 1, 84, 84, 85, 86, 
-	1, 88, 89, 87, 90, 90, 73, 75, 
-	1, 87, 91, 91, 80, 92, 86, 93, 
-	1, 94, 1, 91, 91, 80, 94, 93, 
-	1, 0, 2, 0, 3, 1, 0
+	32, 33, 1, 34, 34, 14, 16, 1, 
+	28, 31, 31, 32, 35, 27, 33, 1, 
+	36, 1, 31, 31, 32, 36, 33, 1, 
+	37, 38, 39, 40, 1, 42, 43, 41, 
+	44, 1, 45, 1, 41, 44, 46, 39, 
+	1, 47, 1, 44, 47, 1, 48, 40, 
+	40, 40, 40, 1, 49, 49, 50, 51, 
+	1, 53, 54, 52, 55, 55, 56, 57, 
+	1, 58, 58, 38, 40, 1, 52, 55, 
+	55, 56, 59, 51, 57, 1, 60, 1, 
+	55, 55, 56, 60, 57, 1, 61, 62, 
+	1, 63, 63, 64, 61, 1, 65, 65, 
+	66, 1, 67, 1, 67, 67, 68, 1, 
+	69, 68, 1, 70, 1, 71, 70, 70, 
+	70, 70, 1, 72, 73, 62, 62, 62, 
+	62, 1, 74, 75, 76, 77, 1, 79, 
+	80, 78, 81, 1, 82, 1, 78, 81, 
+	83, 76, 1, 84, 1, 81, 84, 1, 
+	85, 77, 77, 77, 77, 1, 86, 86, 
+	87, 88, 1, 90, 91, 89, 92, 92, 
+	93, 94, 1, 95, 95, 75, 77, 1, 
+	89, 92, 92, 93, 96, 88, 94, 1, 
+	97, 1, 92, 92, 93, 97, 94, 1, 
+	0, 2, 0, 3, 1, 0
 };
 
 static const char _command_trans_targs_wi[] = {
-	2, 0, 64, 3, 4, 64, 23, 39, 
+	2, 0, 67, 3, 4, 67, 24, 41, 
 	5, 4, 5, 6, 7, 8, 10, 12, 
-	15, 8, 9, 11, 64, 10, 13, 14, 
-	16, 16, 17, 20, 17, 18, 19, 18, 
-	18, 21, 15, 22, 24, 26, 28, 31, 
-	24, 25, 27, 64, 26, 29, 30, 32, 
-	32, 33, 36, 33, 34, 35, 34, 34, 
-	37, 31, 38, 40, 47, 41, 42, 41, 
-	42, 43, 44, 45, 46, 64, 64, 48, 
-	49, 51, 53, 56, 49, 50, 52, 64, 
-	51, 54, 55, 57, 57, 58, 61, 58, 
-	59, 60, 59, 59, 62, 56, 63
+	15, 8, 9, 11, 10, 67, 13, 14, 
+	16, 16, 17, 21, 17, 18, 20, 19, 
+	10, 15, 19, 22, 23, 25, 27, 29, 
+	32, 25, 26, 28, 27, 67, 30, 31, 
+	33, 33, 34, 38, 34, 35, 37, 36, 
+	27, 32, 36, 39, 40, 42, 49, 43, 
+	44, 43, 44, 45, 46, 47, 48, 67, 
+	67, 50, 51, 53, 55, 58, 51, 52, 
+	54, 53, 67, 56, 57, 59, 59, 60, 
+	64, 60, 61, 63, 62, 53, 58, 62, 
+	65, 66
 };
 
 static const char _command_trans_actions_wi[] = {
-	0, 0, 13, 1, 3, 50, 5, 3, 
-	3, 0, 0, 1, 9, 0, 0, 15, 
-	1, 1, 27, 0, 33, 11, 1, 15, 
-	7, 0, 0, 18, 1, 30, 0, 0, 
-	11, 1, 21, 18, 0, 0, 15, 1, 
-	1, 27, 0, 39, 11, 1, 15, 7, 
-	0, 0, 18, 1, 30, 0, 0, 11, 
-	1, 21, 18, 1, 1, 24, 24, 0, 
-	0, 0, 1, 11, 1, 42, 46, 5, 
-	0, 0, 15, 1, 1, 27, 0, 36, 
-	11, 1, 15, 7, 0, 0, 18, 1, 
-	30, 0, 0, 11, 1, 21, 18
+	0, 0, 15, 1, 3, 36, 5, 3, 
+	3, 0, 0, 1, 9, 0, 0, 1, 
+	1, 1, 0, 1, 17, 23, 1, 1, 
+	7, 0, 0, 1, 1, 0, 1, 20, 
+	20, 40, 0, 1, 1, 0, 0, 1, 
+	1, 1, 0, 1, 17, 29, 1, 1, 
+	7, 0, 0, 1, 1, 0, 1, 20, 
+	20, 40, 0, 1, 1, 1, 1, 13, 
+	13, 0, 0, 0, 1, 11, 1, 44, 
+	32, 5, 0, 0, 1, 1, 1, 0, 
+	1, 17, 26, 1, 1, 7, 0, 0, 
+	1, 1, 0, 1, 20, 20, 40, 0, 
+	1, 1
 };
 
 static const int command_start = 1;
-static const int command_first_final = 64;
+static const int command_first_final = 67;
 
 static const int command_en_main = 1;
 
 #line 12 "classes/command.rl"
 
 
-Command::Command(Rubyk& pServer)
+Command::Command(Rubyk * pServer)
 {
   int cs;
   mAction = NO_ACTION;
-  mServer = &pServer;
+  mServer = pServer;
   mThread = 0;
   mQuit   = false;
   
-#line 186 "classes/command.cpp"
+#line 191 "classes/command.cpp"
 	{
 	cs = command_start;
 	}
@@ -216,7 +221,7 @@ void Command::do_listen()
   clear();
   prompt();
 
-  while(!mQuit) {
+  while(!mQuit && !mInput->eof()) {
     mInput->getline(iss,1023); // '\n'
     parse(iss);
     parse("\n");
@@ -231,7 +236,7 @@ void Command::parse(const std::string& pStr)
   
 
   
-#line 235 "classes/command.cpp"
+#line 240 "classes/command.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -353,50 +358,58 @@ _match:
 	case 6:
 #line 99 "classes/command.rl"
 	{
+      set_from_token(mValue);
       mFromPort = atoi(mValue.c_str());
       mFrom = mVariable;
     }
 	break;
 	case 7:
-#line 104 "classes/command.rl"
+#line 105 "classes/command.rl"
+	{
+      set_from_token(mTo);
+      mToPort = atoi(mValue.c_str());
+    }
+	break;
+	case 8:
+#line 110 "classes/command.rl"
 	{
       create_instance();
     }
 	break;
-	case 8:
-#line 108 "classes/command.rl"
+	case 9:
+#line 114 "classes/command.rl"
 	{
       set_single_param_from_token();
     }
 	break;
-	case 9:
-#line 112 "classes/command.rl"
+	case 10:
+#line 118 "classes/command.rl"
 	{
       set_parameter(mKey, mValue);
     }
 	break;
-	case 10:
-#line 116 "classes/command.rl"
+	case 11:
+#line 122 "classes/command.rl"
 	{
       mToPort = atoi(mValue.c_str());
       mTo   = mVariable;
       create_link();
     }
 	break;
-	case 11:
-#line 122 "classes/command.rl"
+	case 12:
+#line 128 "classes/command.rl"
 	{
       execute_method();
     }
 	break;
-	case 12:
-#line 126 "classes/command.rl"
+	case 13:
+#line 132 "classes/command.rl"
 	{
       execute_command();
     }
 	break;
-	case 13:
-#line 134 "classes/command.rl"
+	case 14:
+#line 140 "classes/command.rl"
 	{
       if (!mQuit) {
         clear();
@@ -404,7 +417,7 @@ _match:
       }
     }
 	break;
-#line 408 "classes/command.cpp"
+#line 421 "classes/command.cpp"
 		}
 	}
 
@@ -415,12 +428,9 @@ _again:
 		goto _resume;
 	_out: {}
 	}
-#line 173 "classes/command.rl"
+#line 179 "classes/command.rl"
 
-    
-#ifdef DEBUG_PARSER
-  printf("{%i}",cs);
-#endif
+//  printf("{%s}\n",p);
   mCurrentState = cs;
 }
 
@@ -436,7 +446,9 @@ void Command::set_from_token (std::string& pElem)
 {
   mToken[mTokenIndex] = '\0';
 #ifdef DEBUG_PARSER
-  std::cout << "[" << mTokenIndex << ":" << mToken << "]" << std::endl;
+  if (&pElem == &mValue) std::cout <<    "[val " << mToken << "]" << std::endl;
+  if (&pElem == &mVariable) std::cout << "[var " << mToken << "]" << std::endl;
+  if (&pElem == &mClass) std::cout <<    "[cla " << mToken << "]" << std::endl;
 #endif
   pElem = mToken;
   mTokenIndex = 0;
@@ -456,7 +468,7 @@ void Command::set_class_from_token  ()
 
 void Command::set_single_param_from_token () 
 {
-  set_from_token(mSingleParam);
+  mSingleParam = mValue;
   if (mClass != "") {
     std::string key = mClass;
     std::transform(key.begin(), key.end(), key.begin(), tolower);
@@ -469,9 +481,13 @@ void Command::set_parameter  (const std::string& pKey, const std::string& pValue
   mParameters.set(pKey,pValue);
 }
 
+// FIXME: create_instance should run in server space with concurrency locks.
 void Command::create_instance()
 {
   Node * node = mServer->create_instance(mVariable, mClass, mParameters);
+#ifdef DEBUG_PARSER
+  std::cout << "NEW("<< mVariable << ", " << mClass << ", " << mParameters << ")";
+#endif
   if (node) {
     *mOutput << node->inspect() << std::endl;
   } else {
@@ -486,6 +502,7 @@ void Command::create_link()
   *mOutput << "LINK " << mFrom << "." << mFromPort << "=>" << mToPort << "." << mTo << std::endl;
 }
 
+// FIXME: execute_method should run in server space with concurrency locks.
 void Command::execute_method()
 {
   Node * node = mServer->get_instance(mVariable);
@@ -497,6 +514,7 @@ void Command::execute_method()
   }
 }
 
+// FIXME: execute_command should run in server space with concurrency locks.
 void Command::execute_command()
 {
   Node * node = mServer->get_instance(mMethod);

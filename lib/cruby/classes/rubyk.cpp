@@ -78,6 +78,33 @@ Node * Rubyk::get_instance(const std::string& pVariable)
 
 bool Rubyk::run()
 {
-  sleep(0.3);
+  struct timespec sleeper;
+  
+  sleeper.tv_sec  = 0;
+  sleeper.tv_nsec = 500000000; // 0.5 second
+  nanosleep (&sleeper, NULL);
+  mCurrentTime = mCurrentTime + 0.5;
+  // execute events that must occur on each loop (io operations)
+  //trigger_loop_events();
+  // trigger events in the queue
+  pop_events();
   return !mQuit;
+}
+
+void Rubyk::pop_events()
+{
+  BaseEvent * e;
+  long double realTime = mCurrentTime;
+  while(((e = mEventList.top()) != NULL) && realTime >= e->mTime) {
+    mCurrentTime = e->mTime;
+    e->trigger();
+    delete e;
+    mEventList.pop();
+  }
+  mCurrentTime = realTime;
+}
+
+void Rubyk::trigger_loop_events()
+{
+  
 }

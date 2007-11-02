@@ -6,13 +6,15 @@
 #include "params.h"
 #include "hash.h"
 
+class Rubyk;
+
 #define MAX_SPY_MESSAGE      1024
 #define MAX_CLASS_NAME       50
 
 extern long double gLogicalTime;
 
 /** Pointer to a function to create nodes. */
-typedef Node * (*class_creator_function_t)(const std::string& key, const Params& pParams);
+typedef Node * (*class_creator_function_t)(Rubyk * pServer, const std::string& key, const Params& pParams);
 
 /** Nodes do the actual work.
   * They receive messages from their inlets and pass new values to their outlets.
@@ -20,7 +22,7 @@ typedef Node * (*class_creator_function_t)(const std::string& key, const Params&
 class Node
 {
 public:
-  Node(Rubyk * pServer) : mServer(pServer), mTriggerPosition(0), mId(0), mClassName("") 
+  Node() : mServer(NULL), mTriggerPosition(0), mId(0), mClassName("") 
   { 
     sIdCounter++;
     sprintf(mInspect,"_%i",sIdCounter);
@@ -29,19 +31,15 @@ public:
     mInspect[0] = '\0'; 
   }
   
-  virtual ~Node() {}
+  virtual ~Node() ;
   
   bool init() {}
   
-  void execute_method (const std::string& pMethod, const Params& pParams)
-  {
-    if (pMethod == "bang") {
-      bang();
-    } else {
-      // FIXME....
-    }
-  }
+  void set_server(Rubyk * pServer)
+  { mServer = pServer; }
   
+  void execute_method (const std::string& pMethod, const Params& pParams) ;
+
   /** Compute new values for each outlet and send values through connections. */
   void bang (void)
   {
@@ -51,7 +49,7 @@ public:
     
     while(i >= 0) {
       /** Send through rightmost outlet first. */
-      mOutlets[i--].compute_and_send();
+      mOutlets[i--]->compute_and_send();
     }
   }
   
@@ -68,10 +66,10 @@ public:
   inline float trigger_position() { return mTriggerPosition; }
   
   /** Return inlet at the given position. First inlet is '1', not '0'. */
-  Inlet  * inlet  (int slot_id) { return &( mInlets[slot_id - 1]); }
+  Inlet  * inlet  (int slot_id) { return mInlets[slot_id - 1]; }
   
   /** Return outlet at the given position. First outlet is '1', not '0'. */
-  Outlet * outlet (int slot_id) { return &(mOutlets[slot_id - 1]); }
+  Outlet * outlet (int slot_id) { return mOutlets[slot_id - 1]; }
   
   void set_is_ok (bool pStatus) 
   { mIsOK = pStatus; }
@@ -111,7 +109,7 @@ public:
   {
     class_creator_function_t * func = sClasses.get(pKey);
     if (func)
-      return (**func)(pKey, pParams);
+      return (**func)(pServer, pKey, pParams);
     else {
       // try to load dynamic lib
       std::string path = sObjectsPath;
@@ -120,7 +118,7 @@ public:
       if (load(path.c_str(), "init")) {
         func = sClasses.get(pKey);
         if (func) {
-          return (**func)(pKey, pParams);
+          return (**func)(pServer, pKey, pParams);
         } else {
           printf("Error, '%s' should declare '%s'.\n", path.c_str(), pKey.c_str());
         }
@@ -128,7 +126,7 @@ public:
       // load failed
       // dummy object in broken mode
       
-      Node * obj = new Node(pServer);
+      Node * obj = new Node;
       obj->set_class_name(pKey);
       obj->set_is_ok( false ); // if init returns false, the node goes into 'broken' mode.
       return obj;
@@ -155,8 +153,8 @@ protected:
   template <class T, void(T::*Tmethod)(float)>
   void make_inlet ()
   {
-    Inlet s(this,&cast_inlet_method<T, Tmethod>);
-    s.setId(mInlets.size()); /* first inlet has id 0 */
+    Inlet * s = new Inlet(this,&cast_inlet_method<T, Tmethod>);
+    s->setId(mInlets.size()); /* first inlet has id 0 */
     mInlets.push_back(s);
   }
   
@@ -164,12 +162,12 @@ protected:
   template <class T, float(T::*Tmethod)(void)>
   void make_outlet ()
   {
-    Outlet s(this,&cast_outlet_method<T, Tmethod>);
-    s.setId(mOutlets.size()); /* first outlet has id 0 */
+    Outlet * s = new Outlet(this,&cast_outlet_method<T, Tmethod>);
+    s->setId(mOutlets.size()); /* first outlet has id 0 */
     mOutlets.push_back(s);
   }
   
-  void bang_me_at (long double pTime);
+  void bang_me_in (long double pTime);
   // ================ MEMBER DATA    ================= //
   
   long  mId;
@@ -181,8 +179,8 @@ protected:
   /** Host server. */
   Rubyk * mServer;
   
-  std::vector<Inlet>  mInlets;
-  std::vector<Outlet> mOutlets;
+  std::vector<Inlet*>  mInlets;
+  std::vector<Outlet*> mOutlets;
   
   char mSpy[MAX_SPY_MESSAGE + 1];       /**< Buffer used to transmit node status through 'spy'. */
   char mInspect[MAX_SPY_MESSAGE + MAX_CLASS_NAME + 5 + 16 + 1]; /**< Buffer used to transmit 'inspect'. 16=ptr info, 5= characters in format. */
@@ -202,9 +200,10 @@ private:
   /** This function is used to create an instance of class 'T'. If the instance could not be
     * properly initialized, this function returns NULL. */
   template<class T>
-  static Node * make_class(const std::string& pClassName, const Params& pParams)
+  static Node * make_class(Rubyk * pServer, const std::string& pClassName, const Params& pParams)
   {
     T * obj = new T;
+    obj->set_server(pServer);
     obj->set_class_name(pClassName);
     obj->set_is_ok( obj->init(pParams) ); // if init returns false, the node goes into 'broken' mode.
     return (Node*)obj;

@@ -47,6 +47,14 @@ public:
     parse(std::string(pStr));
   }
   void parse (const std::string& pStr);
+  
+  /** Used for testing. */
+  void set_output (std::ostream& pOutput)
+  { mOutput = &pOutput; }
+  
+  /** Used for testing. */
+  void set_input (std::istream& pInput)
+  { mInput = &pInput; }
 	
 protected:
   /** Code executed in a separate thread. Runs until 'mQuit' is true. */
@@ -105,7 +113,7 @@ protected:
 class InteractiveCommand : public Command
 {
 public:
-  InteractiveCommand(Rubyk& pServer) : Command(pServer) {}
+  InteractiveCommand(Rubyk * pServer) : Command(pServer) {}
   virtual void prompt()
   {
     *mOutput << "> ";

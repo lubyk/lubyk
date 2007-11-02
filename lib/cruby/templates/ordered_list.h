@@ -24,6 +24,11 @@ class OrderedList
       mTop = new LinkedList<T>(NULL);
     }
     
+    OrderedList(const OrderedList& other)
+    {
+      printf("YOU SHOULD NOT USE REFERENCES WITH ORDEREDLIST\n");
+    }
+    
     ~OrderedList()
     {
       LinkedList<T> * tmp;
@@ -42,12 +47,13 @@ class OrderedList
       LinkedList<T> * iterator  = mTop;
       
       // make sure pObj is not in the list already
-      while(iterator->next && pObj != iterator->next->obj)
+      while(iterator->next && pObj != iterator->next->obj) {
         iterator = iterator->next;
+      }
       
       if (iterator->next && pObj == iterator->next->obj)
         return;
-        
+      
       iterator = mTop;
       
       // queue is kept sorted, smallest on top
