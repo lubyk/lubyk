@@ -16,17 +16,15 @@ public:
     return true;
   }
 
-  virtual const char * spy() 
-  { 
-    sprintf(mSpy, "%i", mCounter);
-    return mSpy;
-  }
+  virtual void spy() 
+  { spy_print("%i", mCounter );  }
   
-  void set_counter(float value)
-  { mCounter = (int)value; }
+  void set_counter(const Signal& sig)
+  { SET_INTEGER(mCounter, sig); }
+  
 
-  float increment_counter()
-  { return (float)++mCounter; }
+  void increment_counter(Signal& sig)
+  { SEND_INTEGER(sig, ++mCounter); }
   
 private:
   int mCounter;

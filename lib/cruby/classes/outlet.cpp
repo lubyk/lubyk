@@ -1,16 +1,15 @@
 #include "outlet.h"
 #include "inlet.h"
-#include <cstdio>
 
 void Outlet::compute_and_send ()
 {
-  float value;
+  Signal sig;
   LinkedList<Inlet> * iterator = (LinkedList<Inlet> *)(mConnections.begin());
   
-  value = (*mFunction)(mNode);
+  (*mFunction)(mNode, sig);
   
   while(iterator) {
-    iterator->obj->receive(value);
+    iterator->obj->receive(sig);
     iterator = iterator->next;
   }
 }

@@ -1,6 +1,8 @@
 #ifndef _EVENT_H_
 #define _EVENT_H_
 
+/** This is the base class for Events and CallEvents. The class has a field for the time at which the event should
+  * be triggered. */
 class BaseEvent
 {
 public:

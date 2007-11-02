@@ -14,17 +14,14 @@ public:
     return true;
   }
 
-  virtual const char * spy() 
-  { 
-    sprintf(mSpy, "%i", (int)mValue);
-    return mSpy;
-  }
+  virtual void spy() 
+  { spy_print("%.2f", mValue );  }
   
-  void set_value(float value)
-  { mValue = value; }
+  void set_value(const Signal& sig)
+  { SET_FLOAT(mValue, sig) }
 
-  float value()
-  { return mValue; }
+  void value(Signal& sig)
+  { SEND_FLOAT(sig, mValue) }
   
 private:
   float mValue;

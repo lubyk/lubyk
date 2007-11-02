@@ -18,17 +18,14 @@ public:
     return true;
   }
 
-  virtual const char * spy() 
-  { 
-    sprintf(mSpy, "%s: %i", mName.c_str(), mCounter);
-    return mSpy;
-  }
+  void spy() 
+  { spy_print("%s: %i", mName.c_str(), mCounter); }
   
-  void set_counter(float value)
-  { mCounter = (int)value; }
+  void set_counter(const Signal& sig)
+  { SET_INTEGER(mCounter, sig) }
 
-  float increment_counter()
-  { return (float)++mCounter; }
+  void increment_counter(Signal& sig)
+  { SEND_INTEGER(sig, ++mCounter) }
   
 private:
   int mCounter;
@@ -39,12 +36,12 @@ class TestNode : public CxxTest::TestSuite
 {
 public:
   void testCreate( void )
-  {
+  {  
     Node::declare<Dummy>("Dummy");
     
     Node * d = Node::create(NULL, "Dummy", "dummy: 5 name:\"foo\"");
     
-    TS_ASSERT_EQUALS( std::string(d->spy()), std::string("foo: 5") );
+    TS_ASSERT_EQUALS( std::string(d->get_spy()), std::string("foo: 5") );
   }
   
   void testInspect( void )
@@ -53,7 +50,7 @@ public:
     
     Node * d = Node::create(NULL, "Dummy", "dummy: 5 name:\"foo\"");
     d->set_variable_name(std::string("d"));
-    
+    printf("O\n");
     TS_ASSERT_EQUALS( std::string(d->inspect()), std::string("#<Dummy:d foo: 5>") );
   }
   
@@ -63,22 +60,22 @@ public:
     
     Node * d = Node::create(NULL, "Dummy", "");
     
-    TS_ASSERT_EQUALS( std::string(d->spy()), std::string("no-name: 0") );
+    TS_ASSERT_EQUALS( std::string(d->get_spy()), std::string("no-name: 0") );
     d->bang();
     
-    TS_ASSERT_EQUALS( std::string(d->spy()), std::string("no-name: 1") );
+    TS_ASSERT_EQUALS( std::string(d->get_spy()), std::string("no-name: 1") );
   }
   
   void testExecuteMethod( void )
   {
     Node::declare<Dummy>("Dummy");
-
+  
     Node * d = Node::create(NULL, "Dummy", "dummy:5");
-
-    TS_ASSERT_EQUALS( std::string(d->spy()), std::string("no-name: 5") );
+  
+    TS_ASSERT_EQUALS( std::string(d->get_spy()), std::string("no-name: 5") );
     d->execute_method(std::string("bang"), Params(""));
-
-    TS_ASSERT_EQUALS( std::string(d->spy()), std::string("no-name: 6") );
+  
+    TS_ASSERT_EQUALS( std::string(d->get_spy()), std::string("no-name: 6") );
   }
   
   void testConnection( void )
@@ -92,16 +89,16 @@ public:
     
     out1->connect(in2);
     
-    TS_ASSERT_EQUALS( std::string("first: 3" ), std::string(d1->spy()) );
-    TS_ASSERT_EQUALS( std::string("second: 0"), std::string(d2->spy()) );
+    TS_ASSERT_EQUALS( std::string("first: 3" ), std::string(d1->get_spy()) );
+    TS_ASSERT_EQUALS( std::string("second: 0"), std::string(d2->get_spy()) );
     
     
     d1->bang(); /** ---> 1. bang --> increment d1  = 4
                   *      2. send new value to  d2
                   *      3. set d2                 = 4
                   *      4. bang --> increment d2  = 5  */
-    TS_ASSERT_EQUALS( std::string("first: 4" ), std::string(d1->spy()) );
-    TS_ASSERT_EQUALS( std::string("second: 5"), std::string(d2->spy()) );
+    TS_ASSERT_EQUALS( std::string("first: 4" ), std::string(d1->get_spy()) );
+    TS_ASSERT_EQUALS( std::string("second: 5"), std::string(d2->get_spy()) );
   }
   
   void testConnectionOrder( void )
@@ -123,36 +120,36 @@ public:
     
     add->outlet(1)->connect(v3->inlet(1));
     
-    TS_ASSERT_EQUALS( std::string("2"), std::string(v1->spy()) );
-    TS_ASSERT_EQUALS( std::string("3"), std::string(v2->spy()) );
-    TS_ASSERT_EQUALS( std::string("0"), std::string(add->spy()));
-    TS_ASSERT_EQUALS( std::string("0"), std::string(v3->spy()) );
+    TS_ASSERT_EQUALS( std::string("2"), std::string(v1->get_spy()) );
+    TS_ASSERT_EQUALS( std::string("3"), std::string(v2->get_spy()) );
+    TS_ASSERT_EQUALS( std::string("0"), std::string(add->get_spy()));
+    TS_ASSERT_EQUALS( std::string("0"), std::string(v3->get_spy()) );
     
     v2->bang(); /** ---> 1. bang --> value         = 3
                   *      2. send new value to  add      */
     
-    TS_ASSERT_EQUALS( std::string("2"), std::string(v1->spy()) );
-    TS_ASSERT_EQUALS( std::string("3"), std::string(v2->spy()) );
-    TS_ASSERT_EQUALS( std::string("3"), std::string(add->spy()));
-    TS_ASSERT_EQUALS( std::string("0"), std::string(v3->spy()) );
+    TS_ASSERT_EQUALS( std::string("2"), std::string(v1->get_spy()) );
+    TS_ASSERT_EQUALS( std::string("3"), std::string(v2->get_spy()) );
+    TS_ASSERT_EQUALS( std::string("3"), std::string(add->get_spy()));
+    TS_ASSERT_EQUALS( std::string("0"), std::string(v3->get_spy()) );
     
     add->bang(); /** ---> 1. bang --> value         = 3
                    *      2. send new value to  v3  = 3  */
     
-    TS_ASSERT_EQUALS( std::string("2"), std::string(v1->spy()) );
-    TS_ASSERT_EQUALS( std::string("3"), std::string(v2->spy()) );
-    TS_ASSERT_EQUALS( std::string("3"), std::string(add->spy()));
-    TS_ASSERT_EQUALS( std::string("3"), std::string(v3->spy()) );
+    TS_ASSERT_EQUALS( std::string("2"), std::string(v1->get_spy()) );
+    TS_ASSERT_EQUALS( std::string("3"), std::string(v2->get_spy()) );
+    TS_ASSERT_EQUALS( std::string("3"), std::string(add->get_spy()));
+    TS_ASSERT_EQUALS( std::string("3"), std::string(v3->get_spy()) );
     
     v1->bang(); /** ---> 1. bang --> value         = 2
                   *      2. send new value to add  = 2
                   *      3. add.bang --> value     = 5
                   *      4. send to v3             = 5  */
     
-    TS_ASSERT_EQUALS( std::string("2"), std::string(v1->spy()) );
-    TS_ASSERT_EQUALS( std::string("3"), std::string(v2->spy()) );
-    TS_ASSERT_EQUALS( std::string("5"), std::string(add->spy()));
-    TS_ASSERT_EQUALS( std::string("5"), std::string(v3->spy()) );
+    TS_ASSERT_EQUALS( std::string("2"), std::string(v1->get_spy()) );
+    TS_ASSERT_EQUALS( std::string("3"), std::string(v2->get_spy()) );
+    TS_ASSERT_EQUALS( std::string("5"), std::string(add->get_spy()));
+    TS_ASSERT_EQUALS( std::string("5"), std::string(v3->get_spy()) );
     
   }
 };

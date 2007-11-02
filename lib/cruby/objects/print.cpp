@@ -1,4 +1,5 @@
 #include "node.h"
+#include "signal.h"
 
 class Print : public Node
 {
@@ -10,8 +11,8 @@ public:
     return true;
   }
   
-  void print(float value)
-  { printf("%.2f\n",value); }
+  void print(const Signal& sig)
+  { inspectSignal(stdout, sig); }
 };
 
 extern "C" void init()

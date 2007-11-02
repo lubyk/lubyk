@@ -16,20 +16,17 @@ public:
     return true;
   }
 
-  virtual const char * spy() 
-  { 
-    sprintf(mSpy, "%i",(int)( mValue1 + mValue2 ));
-    return mSpy;
-  }
+  virtual void spy() 
+  { spy_print("%.2f", mValue1 + mValue2 );  }
   
-  void set_value1(float value)
-  { mValue1 = value; }
+  void set_value1(const Signal& sig)
+  { SET_FLOAT(mValue1, sig) }
   
-  void set_value2(float value)
-  { mValue2 = value; }
+  void set_value2(const Signal& sig)
+  { SET_FLOAT(mValue2, sig) }
 
-  float sum()
-  { return mValue1 + mValue2; }
+  void sum(Signal& sig)
+  { SEND_FLOAT(sig, mValue1 + mValue2) }
   
 private:
   float mValue1;

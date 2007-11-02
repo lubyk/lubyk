@@ -2,27 +2,26 @@
 #include <cxxtest/TestSuite.h>
 #include "outlet.h"
 #include "inlet.h"
+#include "signal.h"
 #include <cstdio>
 
-static float send_value(void * receiver)
-{
-  return 1.0;
-}
+void send_value(void * receiver, Signal& sig)
+{ SEND_FLOAT(sig, 1.0) }
 
 // these receivers are complicated to make sure they work in the correct order and they are all called.
-static void receive_value1(void * receiver, float value)
+static void receive_value1(void * receiver, const Signal& sig)
 {
-  (*((float*)receiver)) = (2*(*((float*)receiver))) + value + 1;
+  (*((float*)receiver)) = (2*(*((float*)receiver))) + sig.f.value + 1;
 }
 
-static void receive_value2(void * receiver, float value)
+static void receive_value2(void * receiver, const Signal& sig)
 {
-  (*((float*)receiver)) = (2*(*((float*)receiver))) + value + 2;
+  (*((float*)receiver)) = (2*(*((float*)receiver))) + sig.f.value + 2;
 }
 
-static void receive_value4(void * receiver, float value)
+static void receive_value4(void * receiver, const Signal& sig)
 {
-  (*((float*)receiver)) = (2*(*((float*)receiver))) + value + 4;
+  (*((float*)receiver)) = (2*(*((float*)receiver))) + sig.f.value + 4;
 }
 
 class TestSlot : public CxxTest::TestSuite

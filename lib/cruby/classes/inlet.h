@@ -2,16 +2,17 @@
 #define _INLET_H_
 
 #include "slot.h"
+#include "signal.h"
 
 class Inlet : public Slot {
 public:  
-  Inlet (void* node, void(*function)(void*node, float value)) : Slot(node), mFunction(function) {}
+  Inlet (void* node, void(*function)(void*node, const Signal& sig)) : Slot(node), mFunction(function) {}
   
   /** Receive a value. */
-  void receive (float value);
+  void receive (const Signal& sig);
   
 private:
-  void (*mFunction)(void* node, float value);  /**< Function to be called when a new value is received. */
+  void (*mFunction)(void* node, const Signal& sig);  /**< Function to set a new value. */
 };
 
 #endif

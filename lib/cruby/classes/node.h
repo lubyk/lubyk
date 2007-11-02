@@ -5,11 +5,13 @@
 #include "outlet.h"
 #include "params.h"
 #include "hash.h"
+#include "signal.h"
 
 class Rubyk;
 
-#define MAX_SPY_MESSAGE      1024
+#define START_SPY_BUFFER     20
 #define MAX_CLASS_NAME       50
+#define START_INSPECT_BUFFER (START_SPY_BUFFER + MAX_CLASS_NAME + 5 + 16)
 
 extern long double gLogicalTime;
 
@@ -22,13 +24,12 @@ typedef Node * (*class_creator_function_t)(Rubyk * pServer, const std::string& k
 class Node
 {
 public:
-  Node() : mServer(NULL), mTriggerPosition(0), mId(0), mClassName("") 
+  Node() : mServer(NULL), mTriggerPosition(0), mId(0), mClassName(""), mSpySize(0), mInspectSize(0), mSpy(NULL), mInspect(NULL)
   { 
+    char buf[50];
     sIdCounter++;
-    sprintf(mInspect,"_%i",sIdCounter);
-    mVariableName = std::string(mInspect);  // default variable name is 'id'
-    mSpy[0]     = '\0';
-    mInspect[0] = '\0'; 
+    sprintf(buf,"_%i",sIdCounter);
+    mVariableName = std::string(buf);  // default variable name is 'id'
   }
   
   virtual ~Node() ;
@@ -54,8 +55,12 @@ public:
   }
   
   /** Used by 'editors' to display some information on the node. Should be overwridden by subclasses. */
-  virtual const char * spy() {
-    return '\0';
+  const char* get_spy() {
+    spy();
+    if (mSpy)
+      return mSpy;
+    else
+      return "--";
   }
   
   /** Display the node's class, id and current state using 'spy'. */
@@ -148,9 +153,20 @@ public:
   
 protected:
   
+  /** Used by 'editors' to display some information on the node. Should be overwridden by subclasses. */
+  virtual void spy() {
+    mSpy[0] = '\0';
+  }
+  
+  /** Print message for spies. */
+  void spy_print(const char *fmt, ...);
+  
+  /** Print message for spies. */
+  void inspect_print(const char *fmt, ...);
+  
   // ================ INLET / OUTLET ================= //
   /** Create a new inlet with the method as callback to set incoming value. */
-  template <class T, void(T::*Tmethod)(float)>
+  template <class T, void(T::*Tmethod)(const Signal& sig)>
   void make_inlet ()
   {
     Inlet * s = new Inlet(this,&cast_inlet_method<T, Tmethod>);
@@ -159,10 +175,10 @@ protected:
   }
   
   /** Create a new outlet with the method as callback to set compute the new value. */
-  template <class T, float(T::*Tmethod)(void)>
+  template <class T, void(T::*Tmethod)(Signal& sig)>
   void make_outlet ()
   {
-    Outlet * s = new Outlet(this,&cast_outlet_method<T, Tmethod>);
+    Outlet * s = new Outlet(this, &cast_outlet_method<T, Tmethod>);
     s->setId(mOutlets.size()); /* first outlet has id 0 */
     mOutlets.push_back(s);
   }
@@ -182,8 +198,10 @@ protected:
   std::vector<Inlet*>  mInlets;
   std::vector<Outlet*> mOutlets;
   
-  char mSpy[MAX_SPY_MESSAGE + 1];       /**< Buffer used to transmit node status through 'spy'. */
-  char mInspect[MAX_SPY_MESSAGE + MAX_CLASS_NAME + 5 + 16 + 1]; /**< Buffer used to transmit 'inspect'. 16=ptr info, 5= characters in format. */
+  char * mSpy;       /**< Buffer used to transmit node status through 'spy'. */
+  int  mSpySize;
+  char * mInspect; /**< Buffer used to transmit 'inspect'. 16=ptr info, 5= characters in format. */
+  int  mInspectSize;
   std::string mClassName; /**< Name of the current node's class (metro, counter, etc) */
   std::string mVariableName; /**< Global identifier ('v1', 'x', 'm43') */
   
@@ -211,17 +229,17 @@ private:
 
   // ================ INLET / OUTLET ================= //
   /** Return a function pointer from a pointer to method. */
-  template <class T, void(T::*Tmethod)(float)>
-  static void cast_inlet_method (void * receiver, float value)
+  template <class T, void(T::*Tmethod)(const Signal& sig)>
+  static void cast_inlet_method (void * receiver, const Signal& sig)
   {
-    (((T*)receiver)->*Tmethod)(value);
+    (((T*)receiver)->*Tmethod)(sig);
   }
   
   /** Return a function pointer from a pointer to method. */
-  template <class T, float(T::*Tmethod)(void)>
-  static float cast_outlet_method (void * receiver)
+  template <class T, void(T::*Tmethod)(Signal& sig)>
+  static void cast_outlet_method (void * receiver, Signal& sig)
   {
-    return (((T*)receiver)->*Tmethod)();
+    (((T*)receiver)->*Tmethod)(sig);
   }
 };
 
