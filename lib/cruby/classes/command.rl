@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cstdio>
 #include "rubyk.h"
+#include "class.h"
 
 #undef DEBUG_PARSER
 
@@ -79,25 +80,15 @@ void Command::parse(const std::string& pStr)
       mTokenIndex++;     
     }
     
-    action set_var {
-      set_from_token(mVariable);
-    }
+    action set_var { set_from_token(mVariable);}
     
-    action set_method {
-      set_from_token(mMethod);
-    }
+    action set_method { set_from_token(mMethod);}
     
-    action set_key {
-      set_from_token(mKey);
-    }
+    action set_key { set_from_token(mKey);}
   
-    action set_klass {
-      set_class_from_token();
-    }
+    action set_class { set_class_from_token();}
   
-    action set_value {
-      set_from_token(mValue);
-    }
+    action set_value { set_from_token(mValue);}
     
     action set_from_port {
       set_from_token(mValue);
@@ -110,35 +101,25 @@ void Command::parse(const std::string& pStr)
       mToPort = atoi(mValue.c_str());
     }
     
-    action create_instance {
-      create_instance();
-    }
+    action set_single_param { set_single_param_from_token(); }
     
-    action set_single_param {
-      set_single_param_from_token();
-    }
-    
-    action add_param {
-      set_parameter(mKey, mValue);
-    }
+    action add_param { set_parameter(mKey, mValue); }
     
     action create_link {
       mToPort = atoi(mValue.c_str());
       mTo   = mVariable;
       create_link();
     }
+
+    action create_instance { create_instance(); }
     
-    action execute_method {
-      execute_method();
-    }
+    action execute_method { execute_method(); }
     
-    action execute_command {
-      execute_command();
-    }
+    action execute_class_method { execute_class_method(); }
     
-    action debug {
-      printf("[%c]", p[0]);
-    }
+    action execute_command { execute_command(); }
+    
+    action debug { printf("[%c]", p[0]); }
     
     action prompt {
       if (!mQuit) {
@@ -164,7 +145,7 @@ void Command::parse(const std::string& pStr)
     
     method = identifier %set_method;
   
-    klass  = (upper (alnum | '_')*) $a %set_klass;
+    class  = (upper (alnum | '_')*) $a %set_class;
   
     string  = '"' ([^"\\] | '\n' | ( '\\' (any | '\n') ))* $a '"';
     float   = [\-+]? $a ('1'..'9' digit* '.' digit+) $a;
@@ -178,15 +159,22 @@ void Command::parse(const std::string& pStr)
   
     parameters = value %set_single_param | (param ws*)+;
   
-    create_instance = var ws* '=' ws* klass '(' parameters? ')' ;
+    create_instance = var ws* '=' ws* class '(' parameters? ')' ;
   
     create_link = var '.' integer %set_from_port ws* '=>' ws* integer %set_value '.' var %set_to_port;
     
-    execute_method = var '.' method ( '(' parameters? ')' )? ;
+    execute_method       = var   '.' method ( '(' parameters? ')' )? ;
+    
+    execute_class_method = class '.' method ( '(' parameters? ')' )? ;
 
     execute_command = method ( '(' parameters? ')' )?;
   
-    main := ((execute_command %execute_command | execute_method %execute_method | create_instance %create_instance | create_link %create_link | ws* )  '\n' )+ @prompt $err(error);
+    main := ((execute_command %execute_command
+            | execute_method  %execute_method
+            | execute_class_method  %execute_class_method
+            | create_instance %create_instance 
+            | create_link %create_link 
+            | ws* )  '\n' )+ @prompt $err(error);
     write exec;
   }%%
 //  printf("{%s}\n",p);
@@ -270,20 +258,30 @@ void Command::create_link()
 // FIXME: execute_method should run in server space with concurrency locks.
 void Command::execute_method()
 {
-  Node * node = mServer->get_instance(mVariable);
-  if (node) {
+  Node * node;
+  if (mServer->get_instance(&node, mVariable)) {
     node->execute_method(mMethod, mParameters, mOutput);
   } else {
     *mOutput << "Unknown node '" << mVariable << "'" << std::endl;
   }
 }
 
+// FIXME: execute_class_method should run in server space with concurrency locks.
+void Command::execute_class_method()
+{
+  Class * klass;
+  if (Class::get(&klass, mClass)) {
+    klass->execute_method(mMethod, mParameters, mOutput);
+  } else {
+    *mOutput << "Unknown class '" << mClass << "'" << std::endl;
+  }
+}
+
 // FIXME: execute_command should run in server space with concurrency locks.
 void Command::execute_command()
 {
-  Node * node = mServer->get_instance(mMethod);
-  // FIXME: 
-  if (node) {
+  Node * node;
+  if (mServer->get_instance(&node, mMethod)) {
     // inspect
     *mOutput << node->inspect() << std::endl;
   } else if (mMethod == "quit") {

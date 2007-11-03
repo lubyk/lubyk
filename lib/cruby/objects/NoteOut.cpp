@@ -11,7 +11,7 @@ public:
   virtual ~NoteOut ();
 
   // print a list of possible outputs
-  static void outputs(const Params& pParams, std::ostream * pOutput) {
+  static void outputs(const Params& p, std::ostream * pOutput) {
     VALUE res;
     RtMidiOut *tmpout = 0;
     unsigned int nPorts;

@@ -13,14 +13,14 @@ private:
 protected:  
   Node * mNode;
   
-  void assert_method_result(const char * pMethod, const char * pParams, const char * pOutput)
+  void assert_method_result(const char * pMethod, const char * p, const char * pOutput)
   {
     if (!mNode) {
       printf("Node not set !\n Test aborted.\n");
       TS_ABORT();
     }
     mOutput.str(std::string("")); // clear output
-    mNode->execute_method(pMethod, Params(pParams), &mOutput);
+    mNode->execute_method(pMethod, Params(p), &mOutput);
     TS_ASSERT_EQUALS( mOutput.str(), std::string(pOutput));
   }
   

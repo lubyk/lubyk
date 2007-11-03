@@ -82,6 +82,9 @@ protected:
   
   /** Execute a method on an instance. */
   void execute_method ();
+  
+  /** Execute a class method. */
+  void execute_class_method ();
 
   /** Execute a command or inspect instance. */
   void execute_command ();

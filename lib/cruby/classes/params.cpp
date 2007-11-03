@@ -1,72 +1,72 @@
 #include "params.h"
 #include <string>
 
-void Params::build_hash (const std::string& pParams)
+void Params::build_hash (const std::string& p)
 {
   std::string key, value;
-  unsigned int size = pParams.size();
+  unsigned int size = p.size();
   unsigned int pos,key_start,key_end,value_start,value_end;
   pos = 0;
   // 1. loop
   while(pos < size)
   {  
     //    1.1 skip whitespace
-    pos = pParams.find_first_not_of(' ',pos);
+    pos = p.find_first_not_of(' ',pos);
     if (pos == std::string::npos) return;
     key_start = pos;
     
     //    1.2 read until ':' => key
-    pos   = pParams.find(':',pos);
+    pos   = p.find(':',pos);
     if (pos == std::string::npos) return;
     key_end = pos;
     
     pos++;
     //    1.3 skip white space
-    pos   = pParams.find_first_not_of(' ',pos);
+    pos   = p.find_first_not_of(' ',pos);
     if (pos == std::string::npos) return;
     
     //    1.4 if '"'
-    if (pParams[pos] == '"') {
+    if (p[pos] == '"') {
       pos++;
       //        1.4.1 read until '"' => value
       value_start = pos;
-      pos         = pParams.find('"',pos);
+      pos         = p.find('"',pos);
       if (pos == std::string::npos) return;
       value_end = pos;
       pos++;
     } else {  
       //        1.4.2 read until ' ' or EOF => value
       value_start = pos;
-      pos         = pParams.find(' ',pos);
+      pos         = p.find(' ',pos);
       if (pos == std::string::npos)
         value_end = size; // EOF
       else
         value_end = pos;
     }
     //    1.5 mValues.set(key,value)
-    mParameters.set(pParams.substr(key_start, key_end - key_start), pParams.substr(value_start, value_end - value_start));
+    mParameters.set(p.substr(key_start, key_end - key_start), p.substr(value_start, value_end - value_start));
   }
 }
 
 
-std::ostream& operator<<(std::ostream& pStream, const Params& pParams)
+std::ostream& operator<<(std::ostream& pStream, const Params& p)
 {
-  std::string * str;
+  std::string str;
   std::vector<std::string>::const_iterator it;
-  std::vector<std::string>::const_iterator end = pParams.mParameters.end();
+  std::vector<std::string>::const_iterator end = p.mParameters.end();
   
-  for(it = pParams.mParameters.begin(); it < end; it++) {
-    if (it != pParams.mParameters.begin()) pStream << " ";
+  for(it = p.mParameters.begin(); it < end; it++) {
+    if (it != p.mParameters.begin()) pStream << " ";
     pStream << *it << ":";
-    if (str = pParams.mParameters.get(*it)) {
-      if (str->find_first_of(" :\"") != std::string::npos) {
+    if (p.mParameters.get(&str, *it)) {
+      if (str.find_first_of(" :\"") != std::string::npos) {
         std::string value = "\"";
-        value.append(*str);
+        value.append(str);
         value.append("\"");
         // TODO: escape "
         pStream << value;
       } else
-        pStream << *str;
+        pStream << str;
       
     } else
       pStream << "(null)";
@@ -77,12 +77,11 @@ std::ostream& operator<<(std::ostream& pStream, const Params& pParams)
 template<>
 int Params::get(const char * pKey, int pDefault) const
 {  
-  std::string * value = mParameters.get(std::string(pKey));
-  if (value == NULL) {
+  std::string value;
+  if (mParameters.get(&value, std::string(pKey)))
+    return atoi(value.c_str());
+  else
     return pDefault;
-  } else {  
-    return atoi(value->c_str());
-  }
 }
 
 template<>
@@ -94,10 +93,19 @@ float Params::get(const char * pKey, float pDefault) const
 template<>
 double Params::get(const char * pKey, double pDefault) const
 {  
-  std::string * value = mParameters.get(std::string(pKey));
-  if (value == NULL) {
+  std::string value;
+  if (mParameters.get(&value, std::string(pKey)))
+    return atof(value.c_str());
+  else
     return pDefault;
-  } else {  
-    return atof(value->c_str());
-  }
+}
+
+template<>
+const char * Params::get(const char * pKey, const char * pDefault) const
+{  
+  std::string value;
+  if (mParameters.get(&value, std::string(pKey)))
+    return value.c_str();
+  else
+    return pDefault;
 }

@@ -15,8 +15,6 @@ class Class;
 #define MAX_CLASS_NAME       50
 #define START_INSPECT_BUFFER (START_SPY_BUFFER + MAX_CLASS_NAME + 5 + 16)
 
-extern long double gLogicalTime;
-
 /** Nodes do the actual work.
   * They receive messages from their inlets and pass new values to their outlets.
   */  
@@ -33,7 +31,7 @@ public:
   
   virtual ~Node() ;
   
-  bool init( const Params& pParams) { return true; }
+  bool init( const Params& p) { return true; }
   
   void set_server(Rubyk * pServer)
   { mServer = pServer; }
@@ -41,7 +39,7 @@ public:
   void set_class(Class * pClass)
   { mClass = pClass; }
   
-  void execute_method (const std::string& pMethod, const Params& pParams, std::ostream * pOutput) ;
+  void execute_method (const std::string& pMethod, const Params& p, std::ostream * pOutput) ;
 
   /** Compute new values for each outlet and send values through connections. */
   void bang (void)

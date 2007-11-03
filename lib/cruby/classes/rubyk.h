@@ -16,11 +16,12 @@ public:
   
   virtual ~Rubyk();
   
-  Node * create_instance(const std::string& pVariable, const std::string& pClass, const Params& pParams);
+  Node * create_instance(const std::string& pVariable, const std::string& pClass, const Params& p);
   
   void create_link(const std::string& pFrom, unsigned int pFromPort, unsigned int pToPort, const std::string& pTo);
   
-  Node * get_instance(const std::string& pVariable);
+  /** Get a pointer to the instance with the given name. */
+  bool Rubyk::get_instance(Node ** pResult, const std::string& pName);
   
   /** Close the door and leave... */
   void quit()

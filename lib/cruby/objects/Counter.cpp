@@ -26,17 +26,12 @@ public:
   void set_increment(const Params& p)
   {
     mIncrement = p.get("set_increment", mIncrement);
-    *mOutput << "Add is now " << mIncrement << std::endl;
+    *mOutput << mIncrement << std::endl;
   }
   
   void get_increment()
   {
-    *mOutput << "Add is " << mIncrement << std::endl;
-  }
-  
-  static void hello(std::ostream * pOutput, const Params& pParam)
-  {
-    *pOutput << "Hello\n";
+    *mOutput << mIncrement << std::endl;
   }
   
   // inlet 1
@@ -62,5 +57,4 @@ extern "C" void init()
   
   klass->add_method<Counter,&Counter::get_increment>("increment");
   klass->add_method<Counter,&Counter::set_increment>("set_increment");
-  klass->add_class_method("hello", &Counter::hello);
 }

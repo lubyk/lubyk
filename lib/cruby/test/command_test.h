@@ -53,7 +53,10 @@ public:
   { assert_result("i=Counter(1)\n4\ni\n","#<Counter:i 1>\nSyntax error !\n#<Counter:i 1>\n"); }
   
   void testExecuteMethodWithParams( void ) 
-  { assert_result("i=Counter(1)\ni.set_increment(5)\n","#<Counter:i 1>\nAdd is now 5\n"); }
+  { assert_result("i=Counter(1)\ni.set_increment(5)\n","#<Counter:i 1>\n5\n"); }
+  
+  void testExecuteClassMethod( void ) 
+  { assert_result("Test.hello\n","Hello World!\n"); }
 
 private:
   Rubyk mServer;

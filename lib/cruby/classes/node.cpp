@@ -106,17 +106,17 @@ const char * Node::inspect() {
 }
 
 
-void Node::execute_method (const std::string& pMethod, const Params& pParams, std::ostream * pOutput)
+void Node::execute_method (const std::string& pMethod, const Params& p, std::ostream * pOutput)
 {
   mOutput = pOutput;
-  member_method_t * method;
+  member_method_t method;
   if (pMethod == "bang") {
     bang();
     *mOutput << inspect() << std::endl;
   } else if (pMethod == "help" ){
     help();
-  } else if (method = mClass->mMethods.get(pMethod)) {
-    (**method)(this, pParams);
+  } else if (mClass->mMethods.get(&method, pMethod)) {
+    (*method)(this, p);
   } else {
     *mOutput << "Unknown method '" << pMethod << "'\n";
   }

@@ -6,20 +6,19 @@
 class Params
 {
 public:
-  Params (const std::string& pParams) : mParameters(20) { build_hash(pParams); }
-  Params (const char * pParams)  : mParameters(20)
-  { build_hash( std::string(pParams) ); }
+  Params (const std::string& p) : mParameters(20) { build_hash(p); }
+  Params (const char * p)  : mParameters(20)
+  { build_hash( std::string(p) ); }
   Params () : mParameters(20) {}
   
   template<class T>
   T get(const char * pKey, T pDefault) const
   {
-    std::string * value = mParameters.get(std::string(pKey));
-    if (value == NULL) {
+    std::string value;
+    if (mParameters.get(&value, std::string(pKey)))
+      return (T)value;
+    else
       return pDefault;
-    } else {  
-      return (T)*value;
-    }
   }
   
   void set (const std::string& pKey, const std::string& pValue) {
@@ -38,12 +37,13 @@ public:
     mParameters.clear();
   }
   
-  friend std::ostream& operator<< (std::ostream& pStream, const Params& pParams);
+  friend std::ostream& operator<< (std::ostream& pStream, const Params& p);
   
 private:
+  // FIXME: we could store only pointers to the values...
   Hash<std::string,std::string> mParameters;
   
-  void build_hash(const std::string& pParams);
+  void build_hash(const std::string& p);
 };
 
 template<>
@@ -54,5 +54,8 @@ double Params::get(const char * pKey, double pDefault) const;
 
 template<>
 float Params::get(const char * pKey, float pDefault) const;
+
+template<>
+const char * Params::get(const char * pKey, const char * pDefault) const;
 
 #endif

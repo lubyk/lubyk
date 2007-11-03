@@ -42,14 +42,15 @@ public:
     delete[] mHashTable;
   }
   
-  T* operator[] (K pId)
-  { return get(pId); }
-  
   void set(const K& pId, const T& pElement);
   
-  // FIXME: replace T* get by : bool get(const K& pId, T& value)
-  T* get(const K& pId) const;
+  /** Get an element of the dictionary and set the pResult to this element. Returns false if no element found. */
+  bool get(T* pResult, const K& pId) const;
+  
+  /** Remove object with the given key. */
   void remove(const K& pId);
+  
+  /** Remove all objects. */
   void clear() {
     typename std::vector<K>::iterator it;
     typename std::vector<K>::iterator end = mKeys.end();
@@ -58,10 +59,20 @@ public:
     }
     mKeys.clear();
   }
+  
+  /** List of keys. */
   const std::vector<K> * keys() { return &mKeys; }
+  
+  /** Begin iterator over the keys of the dictionary (read-only). */
   typename std::vector<K>::const_iterator begin() const { return mKeys.begin(); }
+  
+  /** Past end iterator over the keys of the dictionary (read-only). */
   typename std::vector<K>::const_iterator end()   const { return mKeys.end(); }
+  
+  /** Begin iterator over the keys of the dictionary. */
   typename std::vector<K>::iterator begin() { return mKeys.begin(); }
+  
+  /** Begin iterator over the keys of the dictionary. */
   typename std::vector<K>::iterator end()   { return mKeys.end(); }
 private:  
   /* data */
@@ -106,20 +117,22 @@ void Hash<K,T>::set(const K& pId, const T& pElement) {
   found->id   = pId;
 }
 
-
 template <class K, class T>
-T* Hash<K,T>::get(const K& pId) const {
+bool Hash<K,T>::get(T* pResult, const K& pId) const 
+{
   HashElement<K,T> * found;
   uint key = hashId(pId) % mSize;
   
   found = &(mHashTable[key]);
-  while (found && found->id != pId)
+  while (found && found->obj && found->id != pId)
     found = found->next;
     
-  if (found && found->id == pId)
-    return found->obj;
-  else
-    return NULL;
+  if (found && found->obj && found->id == pId) {
+    *pResult = *(found->obj);
+    return true;
+  } else {
+    return false;
+  }
 }
 
 
@@ -132,11 +145,11 @@ void Hash<K,T>::remove(const K& pId) {
   found    = &(mHashTable[key]);  // pointer to found element
   set_next = NULL;                // where to write removed element's next if there is one
   
-  while (found && found->obj && found->id != pId) { // found->obj is for the case when pId == 0
+  while (found && found->obj && found->id != pId) {
     set_next = &(found->next);
     found    = found->next;
   }
-  if (found) {
+  if (found && found->obj) {
     typename std::vector<K>::iterator it;
     typename std::vector<K>::iterator end = mKeys.end();
     for(it = mKeys.begin(); it < end; it++) {

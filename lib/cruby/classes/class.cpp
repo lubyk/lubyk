@@ -5,39 +5,60 @@
 Hash<std::string, Class*> Class::sClasses(300);
 std::string Class::sObjectsPath("lib");
 
-Node * Class::create (Rubyk * pServer, const std::string& pKey, const Params& pParams)
+
+void Class::execute_method (const std::string& pMethodName, const Params& p, std::ostream * pOutput)
 {
-  Class ** klass_ptr = sClasses.get(pKey);
-  if (klass_ptr) {
-    return (**klass_ptr)(pServer, pParams);
+  class_method_t method;
+  if (mClassMethods.get(&method, pMethodName)) {
+    (*method)(pOutput, p);
+  } else {
+    *pOutput << "Unknown method '" << pMethodName << "'\n";
+  }
+}
+
+/////// Class methods ///////////
+
+bool Class::get (Class ** pClass, const std::string& pClassName)
+{
+  if (sClasses.get(pClass, pClassName)) {
+    return true;
   } else {
     // try to load dynamic lib
     std::string path = sObjectsPath;
-    path.append("/").append(pKey).append(".rko");
-    //printf("Loading '%s'\n", path.c_str());
+    path.append("/").append(pClassName).append(".rko");
+    
     if (load(path.c_str(), "init")) {
-      klass_ptr = sClasses.get(pKey);
-      if (klass_ptr)
-        return (**klass_ptr)(pServer, pParams);
-    } else {
-      printf("Error, '%s' should declare '%s'.\n", path.c_str(), pKey.c_str());
+      if (sClasses.get(pClass, pClassName))
+        return true;
+      else
+        printf("Error, '%s' should declare '%s'.\n", path.c_str(), pClassName.c_str());
     }
-  } 
-    // load failed
-    // dummy object in broken mode
-  if ((klass_ptr = sClasses.get("Node")) == NULL)
+  }
+  return false;
+}
+
+Node * Class::create (Rubyk * pServer, const std::string& pClassName, const Params& p)
+{
+  Class * klass;
+  if (get(&klass, pClassName))
+    return (*klass)(pServer, p);
+    
+  // load failed
+  // dummy object in broken mode
+  
+  if (! sClasses.get(&klass, "Node"))
     Class::declare<Node>("Node");
   
-  klass_ptr = sClasses.get("Node");
-  Node * obj = (**klass_ptr)(pServer, pParams);
-  obj->set_class(*klass_ptr);
+  sClasses.get(&klass, "Node");
+  Node * obj = (*klass)(pServer, p);
+  obj->set_class(klass);
   obj->set_is_ok( false ); // if init returns false, the node goes into 'broken' mode.
   return obj;
 }
 
-inline Node * Class::operator() (Rubyk * pServer, const Params& pParams)
-{
-  return (*mCreateFunction)(this, pServer, pParams);
+inline Node * Class::operator() (Rubyk * pServer, const Params& p)
+{  
+  return (*mCreateFunction)(this, pServer, p);
 }
 
 // for help to create a portable version of this load function, read Ruby's dln.c file.
