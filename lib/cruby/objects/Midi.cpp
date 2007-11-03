@@ -1,24 +1,22 @@
 #include "class.h"
 #include <iostream>
-#include "RtMidi.h"
+#include "rtmidi/RtMidi.h"
 
-class NoteOut : public Node
+class Midi : public Node
 {
 public:
-  NoteOut ()
-  {
-  }
-  virtual ~NoteOut ();
-
-  // print a list of possible outputs
-  static void outputs(const Params& p, std::ostream * pOutput) {
-    VALUE res;
-    RtMidiOut *tmpout = 0;
-    unsigned int nPorts;
+  bool init (const Params& p)
+  { }
+  
+  // print a list of possible inputs
+  static void inputs(std::ostream * pOutput, const Params& p) {
+    RtMidiIn *midiin = 0;
+    unsigned int i,nPorts;
+    std::string portName;
 
     // RtMidiOut constructor
     try {
-      tmpout = new RtMidiOut();
+      midiin = new RtMidiIn();
     }
     catch (RtError &error) {
       *pOutput << error.getMessageString() << std::endl;
@@ -26,10 +24,42 @@ public:
     }
 
     // Check outputs.
-    nPorts = tmpout->getPortCount();
+    
+    nPorts = midiin->getPortCount();
+    *pOutput << "Midi in ports (" << nPorts << "):" << std::endl;
+    
+    for ( i=0; i<nPorts; i++ ) {
+      *pOutput << "  " << i << " : " ;
+      try {
+        portName = midiin->getPortName(i);
+        *pOutput << portName << std::endl;
+      }
+      catch (RtError &error) {
+        *pOutput << error.getMessageString() << std::endl;
+      }
+    }
+  }
+  
+  // print a list of possible outputs
+  static void outputs(std::ostream * pOutput, const Params& p) {
+    RtMidiOut *midiout = 0;
+    unsigned int i,nPorts;
     std::string portName;
-    unsigned int i;
-    *pOutput << "Midi ports:" << std:endl;
+
+    // RtMidiOut constructor
+    try {
+      midiout = new RtMidiOut();
+    }
+    catch (RtError &error) {
+      *pOutput << error.getMessageString() << std::endl;
+      return;
+    }
+
+    // Check outputs.
+    
+    nPorts = midiout->getPortCount();
+    *pOutput << "Midi out ports (" << nPorts << "):" << std::endl;
+    
     for ( i=0; i<nPorts; i++ ) {
       *pOutput << "  " << i << " : " ;
       try {
@@ -41,11 +71,10 @@ public:
       }
     }
   }
-
 private:
   /* data */
 };
-
+/*
 // params: portNumber
 static VALUE t_initialize(VALUE self, VALUE rPort) {
   
@@ -118,15 +147,19 @@ static VALUE t_noteOff(VALUE self, VALUE rChannel, VALUE rNote, VALUE rVelocity)
 
   return Qtrue;
 }
-
-extern "C" void Init_rtmidi() {
-  // define the class 'Hello'
-  rk_cRtMidi = rb_define_class("RtMidi", rb_cObject);
-  rb_define_singleton_method(rk_cRtMidi, "outputs", (VALUE(*)(...))c_outputs, 0);
-  rb_define_method(rk_cRtMidi, "initialize", (VALUE(*)(...))t_initialize, 1);
-  rb_define_method(rk_cRtMidi, "close", (VALUE(*)(...))t_close, 0);
-  rb_define_method(rk_cRtMidi, "sendMessage", (VALUE(*)(...))t_sendMessage, 3);
-  rb_define_method(rk_cRtMidi, "noteOn", (VALUE(*)(...))t_noteOn, 3); // channel, note, velocity
-  rb_define_method(rk_cRtMidi, "noteOff", (VALUE(*)(...))t_noteOff, 3); // channel, note, velocity
+*/
+extern "C" void init() {
+  Class * klass = Class::declare<Midi>("Midi");
+  
+  klass->add_class_method("outputs", &Midi::outputs);
+  klass->add_class_method("inputs", &Midi::inputs);
+  
+  // rk_cRtMidi = rb_define_class("RtMidi", rb_cObject);
+  // rb_define_singleton_method(rk_cRtMidi, "outputs", (VALUE(*)(...))c_outputs, 0);
+  // rb_define_method(rk_cRtMidi, "initialize", (VALUE(*)(...))t_initialize, 1);
+  // rb_define_method(rk_cRtMidi, "close", (VALUE(*)(...))t_close, 0);
+  // rb_define_method(rk_cRtMidi, "sendMessage", (VALUE(*)(...))t_sendMessage, 3);
+  // rb_define_method(rk_cRtMidi, "noteOn", (VALUE(*)(...))t_noteOn, 3); // channel, note, velocity
+  // rb_define_method(rk_cRtMidi, "noteOff", (VALUE(*)(...))t_noteOff, 3); // channel, note, velocity
 }
 

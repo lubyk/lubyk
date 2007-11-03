@@ -47,7 +47,7 @@ command.o: classes/command.cpp classes/command.h
 command.o.bak: classes/command.cpp classes/command.h parser/parser.c lexer.o	
 	g++ -c -Iclasses -Itemplates classes/command.cpp parser/parser.c parser/lexer.o -O2 -Wl,-x -pipe -lm -o command.o
 
-objects: lib/Test.rko lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko
+objects: lib/Test.rko lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/Midi.rko
 
 
 lib/Test.rko: objects/Test.cpp classes/class.h
@@ -68,8 +68,8 @@ lib/Metro.rko: objects/Metro.cpp classes/class.h
 lib/Print.rko: objects/Print.cpp classes/class.h
 	g++ -o lib/Print.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Print.cpp
 
-lib/NoteOut.rko: objects/NoteOut.cpp classes/class.h
-	g++ -o lib/Print.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/NoteOut.cpp
+lib/Midi.rko: objects/Midi.cpp classes/class.h
+	g++ -o lib/Midi.rko -Itemplates -Iclasses -Iobjects -dynamic -bundle -undefined suppress -flat_namespace -D__MACOSX_CORE__ -L/usr/lib -lgcc -lstdc++ -framework CoreMIDI -framework CoreFoundation -framework CoreAudio  objects/rtmidi/RtMidi.cpp objects/Midi.cpp
 
 	
 dot: classes/command.png	
