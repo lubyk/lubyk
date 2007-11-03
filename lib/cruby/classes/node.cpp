@@ -127,13 +127,11 @@ void Node::inspect_print(const char *fmt, ...)
 }
 
 const char * Node::inspect() {
-  printf("A\n");
   if (mIsOK)
     inspect_print("#<%s:%s %s>", mClassName.c_str(), mVariableName.c_str(), get_spy());
   else
     inspect_print("#<%s:%s X>", mClassName.c_str(), mVariableName.c_str(), get_spy());
   
-  printf("B\n");
   if (mInspect)
     return mInspect;
   else
@@ -153,5 +151,6 @@ void Node::execute_method (const std::string& pMethod, const Params& pParams)
 void Node::bang_me_in (long double pTime)
 {
   BaseEvent * e = (BaseEvent *) new CallEvent<Node, &Node::bang>(mServer->mCurrentTime + pTime, this);
+  
   mServer->register_event( e );
 }

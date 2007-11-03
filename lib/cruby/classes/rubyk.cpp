@@ -78,12 +78,10 @@ Node * Rubyk::get_instance(const std::string& pVariable)
 
 bool Rubyk::run()
 {
-  struct timespec sleeper;
-  
-  sleeper.tv_sec  = 0;
-  sleeper.tv_nsec = 500000000; // 0.5 second
-  nanosleep (&sleeper, NULL);
-  mCurrentTime = mCurrentTime + 0.5;
+  xtime_delay(0, SLEEP_MS * 1000 * 1000);
+  xtime_get(&mTime, TIME_MONOTONIC);
+  mCurrentTime = ((float)mTime.sec / 1000) + (mTime.nsec * 1000 * 1000);
+  std::cout << "T:" << mCurrentTime << std::endl;
   // execute events that must occur on each loop (io operations)
   //trigger_loop_events();
   // trigger events in the queue

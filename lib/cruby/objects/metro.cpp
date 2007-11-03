@@ -9,7 +9,7 @@ public:
     mTempo = p.get("metro", 0.5); // 120bmp default
     make_inlet<Metro,&Metro::set_tempo>();
     make_outlet<Metro,&Metro::tic>();
-    tic();
+    bang_me_in(0.0);
     return true;
   }
 
@@ -22,7 +22,7 @@ public:
   void tic(Signal& sig)
   {
     if (mTempo != 0) {
-      bang_me_in(1.0 / mTempo);
+      bang_me_in(60000 / mTempo);
       SEND_BANG(sig);
     }
   }

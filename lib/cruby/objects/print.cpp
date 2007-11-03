@@ -12,7 +12,7 @@ public:
   }
   
   void print(const Signal& sig)
-  { inspectSignal(stdout, sig); }
+  { inspectSignal(stdout, sig); printf("\n"); }
 };
 
 extern "C" void init()

@@ -5,13 +5,13 @@ DOT_CMD=/Applications/Graphviz.app/Contents/MacOS/dot
 test: test/runner
 	./test/runner; rm test/runner
 
-rubyk: classes/main.cpp command.o rubyk.o node.o lib/value.rko lib/add.rko lib/counter.rko lib/metro.rko lib/print.rko
+rubyk: classes/main.cpp command.o rubyk.o node.o objects
 	g++ -Itest -Itemplates -Iclasses -Iobjects -I. classes/main.cpp slot.o inlet.o outlet.o params.o node.o command.o rubyk.o -o rubyk
 	
 test/runner.cpp: test/*_test.h
 	./test/cxxtest/cxxtestgen.pl --error-printer -o test/runner.cpp test/*_test.h
 
-test/runner: test/runner.cpp command.o rubyk.o node.o lib/value.rko lib/add.rko lib/counter.rko lib/print.rko
+test/runner: test/runner.cpp command.o rubyk.o node.o objects
 	g++ -Itest -Itemplates -Iclasses -Iobjects -I. test/runner.cpp slot.o inlet.o outlet.o params.o node.o command.o rubyk.o -o test/runner
 	
 	
@@ -31,7 +31,7 @@ node.o: classes/Node.cpp classes/node.h inlet.o outlet.o slot.o params.o
 	g++ -c -Itemplates classes/Node.cpp -o node.o
 
 classes/command.cpp: classes/command.rl
-	ragel classes/command.rl | rlgen-cd -o classes/command.cpp
+	/usr/local/bin/ragel classes/command.rl | /usr/local/bin/rlgen-cd -o classes/command.cpp
 
 rubyk.o: classes/rubyk.h classes/rubyk.cpp
 	g++ -c -Iclasses -Itemplates classes/rubyk.cpp -o rubyk.o
@@ -42,7 +42,7 @@ command.o: classes/command.cpp classes/command.h
 command.o.bak: classes/command.cpp classes/command.h parser/parser.c lexer.o	
 	g++ -c -Iclasses -Itemplates classes/command.cpp parser/parser.c parser/lexer.o -O2 -Wl,-x -pipe -lm -o command.o
 
-
+objects: lib/add.rko lib/value.rko lib/counter.rko lib/metro.rko lib/print.rko
 
 lib/add.rko: objects/add.cpp
 	g++ -o lib/add.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/add.cpp

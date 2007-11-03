@@ -34,7 +34,7 @@ public:
   
   virtual ~Node() ;
   
-  bool init() {}
+  bool init() { return true; }
   
   void set_server(Rubyk * pServer)
   { mServer = pServer; }
@@ -155,7 +155,7 @@ protected:
   
   /** Used by 'editors' to display some information on the node. Should be overwridden by subclasses. */
   virtual void spy() {
-    mSpy[0] = '\0';
+    // do nothing
   }
   
   /** Print message for spies. */
@@ -183,6 +183,7 @@ protected:
     mOutlets.push_back(s);
   }
   
+  // time in [ms]
   void bang_me_in (long double pTime);
   // ================ MEMBER DATA    ================= //
   

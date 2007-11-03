@@ -9,8 +9,9 @@ public:
   {
     mCounter = p.get("counter", 0);
     
+    make_inlet<Counter,&Counter::add>();
     make_inlet<Counter,&Counter::set_counter>();
-    make_outlet<Counter,&Counter::increment_counter>();
+    make_outlet<Counter,&Counter::value>();
     // method<Counter,&Counter::increment_counter>("increment");
     
     return true;
@@ -19,12 +20,19 @@ public:
   virtual void spy() 
   { spy_print("%i", mCounter );  }
   
+  
+  void add(const Signal& sig)
+  { int v;
+    SET_INTEGER(v, sig);
+    mCounter += v;
+  }
+  
   void set_counter(const Signal& sig)
   { SET_INTEGER(mCounter, sig); }
   
 
-  void increment_counter(Signal& sig)
-  { SEND_INTEGER(sig, ++mCounter); }
+  void value(Signal& sig)
+  { SEND_INTEGER(sig, mCounter); }
   
 private:
   int mCounter;

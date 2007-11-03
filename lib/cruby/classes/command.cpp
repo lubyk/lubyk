@@ -12,11 +12,11 @@
 static const char _command_actions[] = {
 	0, 1, 0, 1, 1, 1, 2, 1, 
 	3, 1, 4, 1, 5, 1, 6, 1, 
-	14, 2, 5, 9, 2, 5, 10, 2, 
-	8, 14, 2, 12, 14, 2, 13, 14, 
-	3, 2, 12, 14, 3, 2, 13, 14, 
-	3, 5, 10, 0, 4, 1, 7, 11, 
-	14
+	14, 1, 15, 1, 16, 2, 5, 9, 
+	2, 5, 10, 2, 8, 14, 2, 12, 
+	14, 2, 13, 14, 3, 2, 12, 14, 
+	3, 2, 13, 14, 3, 5, 10, 0, 
+	4, 1, 7, 11, 14
 };
 
 static const short _command_key_offsets[] = {
@@ -28,7 +28,7 @@ static const short _command_key_offsets[] = {
 	151, 158, 162, 167, 170, 171, 175, 178, 
 	180, 188, 197, 203, 205, 206, 207, 207, 
 	211, 213, 216, 224, 229, 231, 236, 241, 
-	241, 249, 251, 258
+	241, 249, 251, 258, 259, 264
 };
 
 static const char _command_trans_keys[] = {
@@ -64,7 +64,8 @@ static const char _command_trans_keys[] = {
 	32, 41, 97, 122, 9, 32, 41, 97, 
 	122, 9, 32, 41, 46, 48, 57, 97, 
 	122, 48, 57, 9, 32, 41, 48, 57, 
-	97, 122, 9, 10, 32, 97, 122, 0
+	97, 122, 10, 9, 10, 32, 97, 122, 
+	0
 };
 
 static const char _command_single_lengths[] = {
@@ -76,7 +77,7 @@ static const char _command_single_lengths[] = {
 	3, 0, 3, 3, 1, 2, 1, 0, 
 	2, 3, 2, 2, 1, 1, 0, 2, 
 	0, 1, 2, 3, 2, 3, 3, 0, 
-	4, 0, 3, 3
+	4, 0, 3, 1, 3, 0
 };
 
 static const char _command_range_lengths[] = {
@@ -88,7 +89,7 @@ static const char _command_range_lengths[] = {
 	2, 2, 1, 0, 0, 1, 1, 1, 
 	3, 3, 2, 0, 0, 0, 0, 1, 
 	1, 1, 3, 1, 0, 1, 1, 0, 
-	2, 1, 2, 1
+	2, 1, 2, 0, 1, 0
 };
 
 static const short _command_index_offsets[] = {
@@ -100,80 +101,82 @@ static const short _command_index_offsets[] = {
 	152, 158, 161, 166, 170, 172, 176, 179, 
 	181, 187, 194, 199, 202, 204, 206, 207, 
 	211, 213, 216, 222, 227, 230, 235, 240, 
-	241, 248, 250, 256
+	241, 248, 250, 256, 258, 263
 };
 
 static const char _command_indicies[] = {
-	0, 2, 0, 3, 1, 0, 2, 0, 
-	1, 4, 5, 4, 6, 7, 8, 3, 
-	3, 3, 3, 1, 9, 9, 10, 1, 
-	10, 10, 11, 1, 12, 11, 11, 11, 
-	11, 1, 13, 14, 15, 16, 1, 18, 
-	19, 17, 20, 1, 21, 1, 17, 20, 
-	22, 15, 1, 23, 1, 20, 23, 1, 
-	24, 16, 16, 16, 16, 1, 25, 25, 
-	26, 27, 1, 29, 30, 28, 31, 31, 
-	32, 33, 1, 34, 34, 14, 16, 1, 
-	28, 31, 31, 32, 35, 27, 33, 1, 
-	36, 1, 31, 31, 32, 36, 33, 1, 
-	37, 38, 39, 40, 1, 42, 43, 41, 
-	44, 1, 45, 1, 41, 44, 46, 39, 
-	1, 47, 1, 44, 47, 1, 48, 40, 
-	40, 40, 40, 1, 49, 49, 50, 51, 
-	1, 53, 54, 52, 55, 55, 56, 57, 
-	1, 58, 58, 38, 40, 1, 52, 55, 
-	55, 56, 59, 51, 57, 1, 60, 1, 
-	55, 55, 56, 60, 57, 1, 61, 62, 
-	1, 63, 63, 64, 61, 1, 65, 65, 
-	66, 1, 67, 1, 67, 67, 68, 1, 
-	69, 68, 1, 70, 1, 71, 70, 70, 
-	70, 70, 1, 72, 73, 62, 62, 62, 
-	62, 1, 74, 75, 76, 77, 1, 79, 
-	80, 78, 81, 1, 82, 1, 78, 81, 
-	83, 76, 1, 84, 1, 81, 84, 1, 
-	85, 77, 77, 77, 77, 1, 86, 86, 
-	87, 88, 1, 90, 91, 89, 92, 92, 
-	93, 94, 1, 95, 95, 75, 77, 1, 
-	89, 92, 92, 93, 96, 88, 94, 1, 
-	97, 1, 92, 92, 93, 97, 94, 1, 
-	0, 2, 0, 3, 1, 0
+	1, 2, 1, 3, 0, 1, 2, 1, 
+	0, 4, 5, 4, 6, 7, 8, 3, 
+	3, 3, 3, 0, 9, 9, 10, 0, 
+	10, 10, 11, 0, 12, 11, 11, 11, 
+	11, 0, 13, 14, 15, 16, 0, 18, 
+	19, 17, 20, 0, 21, 0, 17, 20, 
+	22, 15, 0, 23, 0, 20, 23, 0, 
+	24, 16, 16, 16, 16, 0, 25, 25, 
+	26, 27, 0, 29, 30, 28, 31, 31, 
+	32, 33, 0, 34, 34, 14, 16, 0, 
+	28, 31, 31, 32, 35, 27, 33, 0, 
+	36, 0, 31, 31, 32, 36, 33, 0, 
+	37, 38, 39, 40, 0, 42, 43, 41, 
+	44, 0, 45, 0, 41, 44, 46, 39, 
+	0, 47, 0, 44, 47, 0, 48, 40, 
+	40, 40, 40, 0, 49, 49, 50, 51, 
+	0, 53, 54, 52, 55, 55, 56, 57, 
+	0, 58, 58, 38, 40, 0, 52, 55, 
+	55, 56, 59, 51, 57, 0, 60, 0, 
+	55, 55, 56, 60, 57, 0, 61, 62, 
+	0, 63, 63, 64, 61, 0, 65, 65, 
+	66, 0, 67, 0, 67, 67, 68, 0, 
+	69, 68, 0, 70, 0, 71, 70, 70, 
+	70, 70, 0, 72, 73, 62, 62, 62, 
+	62, 0, 74, 75, 76, 77, 0, 79, 
+	80, 78, 81, 0, 82, 0, 78, 81, 
+	83, 76, 0, 84, 0, 81, 84, 0, 
+	85, 77, 77, 77, 77, 0, 86, 86, 
+	87, 88, 0, 90, 91, 89, 92, 92, 
+	93, 94, 0, 95, 95, 75, 77, 0, 
+	89, 92, 92, 93, 96, 88, 94, 0, 
+	97, 0, 92, 92, 93, 97, 94, 0, 
+	99, 98, 1, 2, 1, 3, 0, 100, 
+	0
 };
 
 static const char _command_trans_targs_wi[] = {
-	2, 0, 67, 3, 4, 67, 24, 41, 
+	0, 2, 68, 3, 4, 68, 24, 41, 
 	5, 4, 5, 6, 7, 8, 10, 12, 
-	15, 8, 9, 11, 10, 67, 13, 14, 
+	15, 8, 9, 11, 10, 68, 13, 14, 
 	16, 16, 17, 21, 17, 18, 20, 19, 
 	10, 15, 19, 22, 23, 25, 27, 29, 
-	32, 25, 26, 28, 27, 67, 30, 31, 
+	32, 25, 26, 28, 27, 68, 30, 31, 
 	33, 33, 34, 38, 34, 35, 37, 36, 
 	27, 32, 36, 39, 40, 42, 49, 43, 
-	44, 43, 44, 45, 46, 47, 48, 67, 
-	67, 50, 51, 53, 55, 58, 51, 52, 
-	54, 53, 67, 56, 57, 59, 59, 60, 
+	44, 43, 44, 45, 46, 47, 48, 68, 
+	68, 50, 51, 53, 55, 58, 51, 52, 
+	54, 53, 68, 56, 57, 59, 59, 60, 
 	64, 60, 61, 63, 62, 53, 58, 62, 
-	65, 66
+	65, 66, 67, 69, 0
 };
 
 static const char _command_trans_actions_wi[] = {
-	0, 0, 15, 1, 3, 36, 5, 3, 
+	17, 0, 15, 1, 3, 40, 5, 3, 
 	3, 0, 0, 1, 9, 0, 0, 1, 
-	1, 1, 0, 1, 17, 23, 1, 1, 
-	7, 0, 0, 1, 1, 0, 1, 20, 
-	20, 40, 0, 1, 1, 0, 0, 1, 
-	1, 1, 0, 1, 17, 29, 1, 1, 
-	7, 0, 0, 1, 1, 0, 1, 20, 
-	20, 40, 0, 1, 1, 1, 1, 13, 
-	13, 0, 0, 0, 1, 11, 1, 44, 
-	32, 5, 0, 0, 1, 1, 1, 0, 
-	1, 17, 26, 1, 1, 7, 0, 0, 
-	1, 1, 0, 1, 20, 20, 40, 0, 
-	1, 1
+	1, 1, 0, 1, 21, 27, 1, 1, 
+	7, 0, 0, 1, 1, 0, 1, 24, 
+	24, 44, 0, 1, 1, 0, 0, 1, 
+	1, 1, 0, 1, 21, 33, 1, 1, 
+	7, 0, 0, 1, 1, 0, 1, 24, 
+	24, 44, 0, 1, 1, 1, 1, 13, 
+	13, 0, 0, 0, 1, 11, 1, 48, 
+	36, 5, 0, 0, 1, 1, 1, 0, 
+	1, 21, 30, 1, 1, 7, 0, 0, 
+	1, 1, 0, 1, 24, 24, 44, 0, 
+	1, 1, 0, 19, 0
 };
 
 static const int command_start = 1;
-static const int command_first_final = 67;
+static const int command_first_final = 68;
 
+static const int command_en_eat_line = 67;
 static const int command_en_main = 1;
 
 #line 12 "classes/command.rl"
@@ -187,13 +190,15 @@ Command::Command(Rubyk * pServer)
   mThread = 0;
   mQuit   = false;
   
-#line 191 "classes/command.cpp"
+#line 194 "classes/command.cpp"
 	{
 	cs = command_start;
 	}
 #line 22 "classes/command.rl"
   mCurrentState = cs;
   mTokenIndex = 0;
+  mInput  = &std::cin;
+  mOutput = &std::cout;
 }
 
 Command::~Command()
@@ -214,7 +219,7 @@ void Command::listen (std::istream& pInput, std::ostream& pOutput)
   // FIXME: check for error from 'ret'
 }
 
-void Command::do_listen()
+int Command::do_listen()
 {
   char iss[1024];
   *mOutput << "Welcome to rubyk !\n\n";
@@ -226,6 +231,7 @@ void Command::do_listen()
     parse(iss);
     parse("\n");
   }
+  return 0; // thread return value
 }
 
 void Command::parse(const std::string& pStr)
@@ -236,7 +242,7 @@ void Command::parse(const std::string& pStr)
   
 
   
-#line 240 "classes/command.cpp"
+#line 246 "classes/command.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -311,7 +317,7 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 66 "classes/command.rl"
+#line 69 "classes/command.rl"
 	{
       if (mTokenIndex >= MAX_TOKEN_SIZE) {
         std::cerr << "Buffer overflow !" << std::endl;
@@ -326,37 +332,37 @@ _match:
     }
 	break;
 	case 1:
-#line 79 "classes/command.rl"
+#line 82 "classes/command.rl"
 	{
       set_from_token(mVariable);
     }
 	break;
 	case 2:
-#line 83 "classes/command.rl"
+#line 86 "classes/command.rl"
 	{
       set_from_token(mMethod);
     }
 	break;
 	case 3:
-#line 87 "classes/command.rl"
+#line 90 "classes/command.rl"
 	{
       set_from_token(mKey);
     }
 	break;
 	case 4:
-#line 91 "classes/command.rl"
+#line 94 "classes/command.rl"
 	{
       set_class_from_token();
     }
 	break;
 	case 5:
-#line 95 "classes/command.rl"
+#line 98 "classes/command.rl"
 	{
       set_from_token(mValue);
     }
 	break;
 	case 6:
-#line 99 "classes/command.rl"
+#line 102 "classes/command.rl"
 	{
       set_from_token(mValue);
       mFromPort = atoi(mValue.c_str());
@@ -364,32 +370,32 @@ _match:
     }
 	break;
 	case 7:
-#line 105 "classes/command.rl"
+#line 108 "classes/command.rl"
 	{
       set_from_token(mTo);
       mToPort = atoi(mValue.c_str());
     }
 	break;
 	case 8:
-#line 110 "classes/command.rl"
+#line 113 "classes/command.rl"
 	{
       create_instance();
     }
 	break;
 	case 9:
-#line 114 "classes/command.rl"
+#line 117 "classes/command.rl"
 	{
       set_single_param_from_token();
     }
 	break;
 	case 10:
-#line 118 "classes/command.rl"
+#line 121 "classes/command.rl"
 	{
       set_parameter(mKey, mValue);
     }
 	break;
 	case 11:
-#line 122 "classes/command.rl"
+#line 125 "classes/command.rl"
 	{
       mToPort = atoi(mValue.c_str());
       mTo   = mVariable;
@@ -397,19 +403,19 @@ _match:
     }
 	break;
 	case 12:
-#line 128 "classes/command.rl"
+#line 131 "classes/command.rl"
 	{
       execute_method();
     }
 	break;
 	case 13:
-#line 132 "classes/command.rl"
+#line 135 "classes/command.rl"
 	{
       execute_command();
     }
 	break;
 	case 14:
-#line 140 "classes/command.rl"
+#line 143 "classes/command.rl"
 	{
       if (!mQuit) {
         clear();
@@ -417,7 +423,21 @@ _match:
       }
     }
 	break;
-#line 421 "classes/command.cpp"
+	case 15:
+#line 149 "classes/command.rl"
+	{
+      p--; // move back one char
+      *mOutput << "Syntax error !" << std::endl;
+      clear();
+      prompt();
+      {cs = 67; goto _again;} // eat the rest of the line and continue parsing
+    }
+	break;
+	case 16:
+#line 157 "classes/command.rl"
+	{ {cs = 1; goto _again;} }
+	break;
+#line 441 "classes/command.cpp"
 		}
 	}
 
@@ -428,7 +448,7 @@ _again:
 		goto _resume;
 	_out: {}
 	}
-#line 179 "classes/command.rl"
+#line 191 "classes/command.rl"
 
 //  printf("{%s}\n",p);
   mCurrentState = cs;

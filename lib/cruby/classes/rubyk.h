@@ -4,7 +4,11 @@
 #include "link.h"
 #include "event.h"
 #include <list>
-#include <time.h>
+#include <time.h> // precise timings xtime_get, xtime_delay
+#include <stdint.h> // types for timings int_fast64_t, int_fast32_t
+
+// 50 ms wait
+#define SLEEP_MS 50
 
 class Rubyk
 {
@@ -54,6 +58,8 @@ private:
   /** Events ! */
   OrderedList<BaseEvent> mEventList; /**< Ordered event list. */
   
+  /** Precise current time */
+  struct xtime mTime;
 };
 
 #endif

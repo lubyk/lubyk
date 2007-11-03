@@ -50,7 +50,6 @@ public:
     
     Node * d = Node::create(NULL, "Dummy", "dummy: 5 name:\"foo\"");
     d->set_variable_name(std::string("d"));
-    printf("O\n");
     TS_ASSERT_EQUALS( std::string(d->inspect()), std::string("#<Dummy:d foo: 5>") );
   }
   
@@ -120,36 +119,36 @@ public:
     
     add->outlet(1)->connect(v3->inlet(1));
     
-    TS_ASSERT_EQUALS( std::string("2"), std::string(v1->get_spy()) );
-    TS_ASSERT_EQUALS( std::string("3"), std::string(v2->get_spy()) );
-    TS_ASSERT_EQUALS( std::string("0"), std::string(add->get_spy()));
-    TS_ASSERT_EQUALS( std::string("0"), std::string(v3->get_spy()) );
+    TS_ASSERT_EQUALS( std::string("2.00"), std::string(v1->get_spy()) );
+    TS_ASSERT_EQUALS( std::string("3.00"), std::string(v2->get_spy()) );
+    TS_ASSERT_EQUALS( std::string("0.00"), std::string(add->get_spy()));
+    TS_ASSERT_EQUALS( std::string("0.00"), std::string(v3->get_spy()) );
     
     v2->bang(); /** ---> 1. bang --> value         = 3
                   *      2. send new value to  add      */
     
-    TS_ASSERT_EQUALS( std::string("2"), std::string(v1->get_spy()) );
-    TS_ASSERT_EQUALS( std::string("3"), std::string(v2->get_spy()) );
-    TS_ASSERT_EQUALS( std::string("3"), std::string(add->get_spy()));
-    TS_ASSERT_EQUALS( std::string("0"), std::string(v3->get_spy()) );
+    TS_ASSERT_EQUALS( std::string("2.00"), std::string(v1->get_spy()) );
+    TS_ASSERT_EQUALS( std::string("3.00"), std::string(v2->get_spy()) );
+    TS_ASSERT_EQUALS( std::string("3.00"), std::string(add->get_spy()));
+    TS_ASSERT_EQUALS( std::string("0.00"), std::string(v3->get_spy()) );
     
     add->bang(); /** ---> 1. bang --> value         = 3
                    *      2. send new value to  v3  = 3  */
     
-    TS_ASSERT_EQUALS( std::string("2"), std::string(v1->get_spy()) );
-    TS_ASSERT_EQUALS( std::string("3"), std::string(v2->get_spy()) );
-    TS_ASSERT_EQUALS( std::string("3"), std::string(add->get_spy()));
-    TS_ASSERT_EQUALS( std::string("3"), std::string(v3->get_spy()) );
+    TS_ASSERT_EQUALS( std::string("2.00"), std::string(v1->get_spy()) );
+    TS_ASSERT_EQUALS( std::string("3.00"), std::string(v2->get_spy()) );
+    TS_ASSERT_EQUALS( std::string("3.00"), std::string(add->get_spy()));
+    TS_ASSERT_EQUALS( std::string("3.00"), std::string(v3->get_spy()) );
     
     v1->bang(); /** ---> 1. bang --> value         = 2
                   *      2. send new value to add  = 2
                   *      3. add.bang --> value     = 5
                   *      4. send to v3             = 5  */
     
-    TS_ASSERT_EQUALS( std::string("2"), std::string(v1->get_spy()) );
-    TS_ASSERT_EQUALS( std::string("3"), std::string(v2->get_spy()) );
-    TS_ASSERT_EQUALS( std::string("5"), std::string(add->get_spy()));
-    TS_ASSERT_EQUALS( std::string("5"), std::string(v3->get_spy()) );
+    TS_ASSERT_EQUALS( std::string("2.00"), std::string(v1->get_spy()) );
+    TS_ASSERT_EQUALS( std::string("3.00"), std::string(v2->get_spy()) );
+    TS_ASSERT_EQUALS( std::string("5.00"), std::string(add->get_spy()));
+    TS_ASSERT_EQUALS( std::string("5.00"), std::string(v3->get_spy()) );
     
   }
 };

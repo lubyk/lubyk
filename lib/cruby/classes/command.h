@@ -31,7 +31,7 @@ public:
   
   /** Wrapper to call member method. */
   static void * call_do_listen(void * cmd) {
-    ((Command*)cmd)->do_listen();
+    return (void*) ((Command*)cmd)->do_listen();
   }
   /** Stop listening for incomming commands. */
   void close ();
@@ -58,7 +58,7 @@ public:
 	
 protected:
   /** Code executed in a separate thread. Runs until 'mQuit' is true. */
-  virtual void do_listen();
+  virtual int do_listen();
   
   /** PARSER RELATED CALLBACKS **/
   

@@ -26,10 +26,10 @@ public:
     { mCmd.set_input(mInput); mCmd.set_output(mOutput); }
   
   void testParseCommand( void ) 
-  { assert_result("v1=Value(1)\n","#<Value:v1 1>\n"); }
+  { assert_result("v1=Value(1)\n","#<Value:v1 1.00>\n"); }
   
   void testParseCommandWithSpaces( void ) 
-  { assert_result("v1 = Value(2)\n\n","#<Value:v1 2>\n"); }
+  { assert_result("v1 = Value(2)\n\n","#<Value:v1 2.00>\n"); }
   
   void testExecuteCommand( void ) 
   { assert_result("v1=Counter(3)\nv1.bang\n","#<Counter:v1 3>\n#<Counter:v1 4>\n"); }
@@ -37,6 +37,9 @@ public:
   void testInspectCommand( void ) 
   { assert_result("i=Counter(14)\ni\n","#<Counter:i 14>\n#<Counter:i 14>\n"); }
   
+  void testSyntaxError( void ) 
+  { assert_result("i=Counter(1)\n4\ni\n","#<Counter:i 1>\nSyntax error !\n#<Counter:i 1>\n"); }
+
 private:
   Rubyk mServer;
   Command mCmd;

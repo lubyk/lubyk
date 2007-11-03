@@ -21,6 +21,8 @@ Command::Command(Rubyk * pServer)
   %% write init;
   mCurrentState = cs;
   mTokenIndex = 0;
+  mInput  = &std::cin;
+  mOutput = &std::cout;
 }
 
 Command::~Command()
@@ -41,7 +43,7 @@ void Command::listen (std::istream& pInput, std::ostream& pOutput)
   // FIXME: check for error from 'ret'
 }
 
-void Command::do_listen()
+int Command::do_listen()
 {
   char iss[1024];
   *mOutput << "Welcome to rubyk !\n\n";
@@ -53,6 +55,7 @@ void Command::do_listen()
     parse(iss);
     parse("\n");
   }
+  return 0; // thread return value
 }
 
 void Command::parse(const std::string& pStr)
@@ -143,7 +146,16 @@ void Command::parse(const std::string& pStr)
         prompt();
       }
     }
+    action error {
+      fhold; // move back one char
+      *mOutput << "Syntax error !" << std::endl;
+      clear();
+      prompt();
+      fgoto eat_line; // eat the rest of the line and continue parsing
+    }
   
+    eat_line := [^\n]* '\n' @{ fgoto main; };
+    
     ws     = (' ' | '\t');
   
     identifier = (lower (alnum | '_')*) $a;
@@ -174,7 +186,7 @@ void Command::parse(const std::string& pStr)
 
     execute_command = method ( '(' parameters? ')' )?;
   
-    main := ((execute_command %execute_command | execute_method %execute_method | create_instance %create_instance | create_link %create_link | ws* )  '\n' )+ @prompt;
+    main := ((execute_command %execute_command | execute_method %execute_method | create_instance %create_instance | create_link %create_link | ws* )  '\n' )+ @prompt $err(error);
     write exec;
   }%%
 //  printf("{%s}\n",p);

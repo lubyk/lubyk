@@ -56,7 +56,7 @@ inline void inspectSignal(FILE * pStream, const Signal& sig)
 {
   switch(sig.type) {
     case Bang:
-      fprintf(pStream, "<Bang>");
+      fprintf(pStream, "Bang!");
       break;
     case Integer:
       fprintf(pStream, "%i",sig.i.value);
