@@ -2,6 +2,11 @@
 #include "node.h"
 #include "slot.h"
 
+Rubyk::Rubyk() : mInstances(200), mQuit(false), mCurrentTime(0) 
+{
+  ftime(&mTimeRef); // set time reference to now.
+}
+
 Rubyk::~Rubyk()
 {
   std::vector<std::string>::iterator it;
@@ -77,11 +82,12 @@ Node * Rubyk::get_instance(const std::string& pVariable)
 }
 
 bool Rubyk::run()
-{
-  xtime_delay(0, SLEEP_MS * 1000 * 1000);
-  xtime_get(&mTime, TIME_MONOTONIC);
-  mCurrentTime = ((float)mTime.sec / 1000) + (mTime.nsec * 1000 * 1000);
-  std::cout << "T:" << mCurrentTime << std::endl;
+{ 
+  struct timespec sleeper;
+  sleeper.tv_sec  = 0; 
+  sleeper.tv_nsec = SLEEP_MS * 10000000;
+  nanosleep (&sleeper, NULL);
+  mCurrentTime = real_time();
   // execute events that must occur on each loop (io operations)
   //trigger_loop_events();
   // trigger events in the queue

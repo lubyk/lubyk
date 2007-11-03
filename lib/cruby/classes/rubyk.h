@@ -4,8 +4,7 @@
 #include "link.h"
 #include "event.h"
 #include <list>
-#include <time.h> // precise timings xtime_get, xtime_delay
-#include <stdint.h> // types for timings int_fast64_t, int_fast32_t
+#include <sys/timeb.h> // ftime
 
 // 50 ms wait
 #define SLEEP_MS 50
@@ -13,7 +12,7 @@
 class Rubyk
 {
 public:
-  Rubyk() : mInstances(200), mQuit(false), mCurrentTime(0) {}
+  Rubyk();
   
   virtual ~Rubyk();
   
@@ -34,7 +33,16 @@ public:
   void register_event(BaseEvent * pEvent)
   { mEventList.push(pEvent); }
   
-  long double mCurrentTime;
+  unsigned long mCurrentTime; /**< Current logical time in [ms] since reference. */
+
+  /** Get current real time in [ms] since reference. */
+  unsigned long real_time()
+  {
+    struct timeb t;
+    ftime(&t);
+    return ((t.time - mTimeRef.time) * 1000) + t.millitm - mTimeRef.millitm;
+  }
+  
   
 private:
   
@@ -58,8 +66,8 @@ private:
   /** Events ! */
   OrderedList<BaseEvent> mEventList; /**< Ordered event list. */
   
-  /** Precise current time */
-  struct xtime mTime;
+  /** Time reference. All times are [ms] from this reference. */
+  struct timeb mTimeRef;
 };
 
 #endif

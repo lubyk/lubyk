@@ -8,8 +8,9 @@ public:
   bool init (const Params& p)
   {
     mCounter = p.get("counter", 0);
+    mAdd     = p.get("add", 1);
     
-    make_inlet<Counter,&Counter::add>();
+    make_inlet<Counter,&Counter::set_add>();
     make_inlet<Counter,&Counter::set_counter>();
     make_outlet<Counter,&Counter::value>();
     // method<Counter,&Counter::increment_counter>("increment");
@@ -21,21 +22,19 @@ public:
   { spy_print("%i", mCounter );  }
   
   
-  void add(const Signal& sig)
-  { int v;
-    SET_INTEGER(v, sig);
-    mCounter += v;
-  }
+  void set_add(const Signal& sig)
+  { SET_INTEGER(mAdd, sig);     }
   
   void set_counter(const Signal& sig)
   { SET_INTEGER(mCounter, sig); }
   
 
   void value(Signal& sig)
-  { SEND_INTEGER(sig, mCounter); }
+  { SEND_INTEGER(sig, mCounter += mAdd); }
   
 private:
   int mCounter;
+  int mAdd;
 };
 
 extern "C" void init()
