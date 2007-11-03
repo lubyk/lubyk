@@ -6,7 +6,7 @@ public:
   
   void testCreate( void )
   {
-    mNode = Node::create(NULL, "Add", "");
+    mNode = Class::create(NULL, "Add", "");
     // ...
   }
 };

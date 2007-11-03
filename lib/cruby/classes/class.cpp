@@ -30,6 +30,7 @@ Node * Class::create (Rubyk * pServer, const std::string& pKey, const Params& pP
   
   klass_ptr = sClasses.get("Node");
   Node * obj = (**klass_ptr)(pServer, pParams);
+  obj->set_class(*klass_ptr);
   obj->set_is_ok( false ); // if init returns false, the node goes into 'broken' mode.
   return obj;
 }

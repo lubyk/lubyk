@@ -1,6 +1,7 @@
 #include "rubyk.h"
 #include "node.h"
 #include "slot.h"
+#include "class.h"
 
 Rubyk::Rubyk() : mInstances(200), mQuit(false), mCurrentTime(0) 
 {
@@ -21,20 +22,20 @@ Rubyk::~Rubyk()
 
 Node * Rubyk::create_instance (const std::string& pVariable, const std::string& pClass, const Params& pParams)
 {
-  Node * node = Node::create(this, pClass, pParams);
+  Node * node = Class::create(this, pClass, pParams);
   Node ** previous;
   std::string varName;
 
   if (node) {
     if (pVariable != "")
-      node->set_variable_name(pVariable);
+      node->set_name(pVariable);
     
-    previous = mInstances.get(node->variable_name());
+    previous = mInstances.get(node->name());
     
     if (previous)
       delete *previous; // kill the node pointed by variable name
       
-    mInstances.set(node->variable_name(), node);
+    mInstances.set(node->name(), node);
     create_pending_links();
   }
   return node;

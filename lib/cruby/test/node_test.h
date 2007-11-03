@@ -1,6 +1,6 @@
 // ordered_list_test.h 
 #include <cxxtest/TestSuite.h>
-#include "node.h"
+#include "class.h"
 #include <string>
 #include "test_helper.h"
 
@@ -38,22 +38,22 @@ class TestNode : public CxxTest::TestSuite, public NodeTester
 public:
   void testCreate( void )
   {  
-    Node::declare<Dummy>("Dummy"); // we cannot move this into TestNode() because we get EXC_BAD_ACCESS ???
-    mNode = Node::create(NULL, "Dummy", "dummy: 5 name:\"foo\"");
+    Class::declare<Dummy>("Dummy"); // we cannot move this into TestNode() because we get EXC_BAD_ACCESS ???
+    mNode = Class::create(NULL, "Dummy", "dummy: 5 name:\"foo\"");
     
     assert_spy("foo: 5");
   }
   
   void testInspect( void )
   { 
-    mNode = Node::create(NULL, "Dummy", "dummy: 5 name:\"foo\"");
-    mNode->set_variable_name(std::string("d"));
+    mNode = Class::create(NULL, "Dummy", "dummy: 5 name:\"foo\"");
+    mNode->set_name(std::string("d"));
     assert_inspect("#<Dummy:d foo: 5>");
   }
   
   void testBang( void )
   {
-    mNode = Node::create(NULL, "Dummy", "");
+    mNode = Class::create(NULL, "Dummy", "");
     
     assert_spy("no-name: 0");
     mNode->bang();
@@ -62,17 +62,17 @@ public:
   
   void testExecuteMethod( void )
   {
-    mNode = Node::create(NULL, "Dummy", "dummy:5");
-    
-    assert_method_result("bang","","#<Dummy:_10 no-name: 6>\n");
+    mNode = Class::create(NULL, "Dummy", "dummy:5");
+    mNode->set_name("d");
+    assert_method_result("bang","","#<Dummy:d no-name: 6>\n");
   }
   
   void testConnection( void )
   {
     
-    Node   * d1   = Node::create(NULL, "Dummy", "name:first  dummy:3");
+    Node   * d1   = Class::create(NULL, "Dummy", "name:first  dummy:3");
     Outlet * out1 = d1->outlet(1); // oulets and inlets are indexed starting with '1', not '0'
-    Node   * d2   = Node::create(NULL, "Dummy", "name:second dummy:0");
+    Node   * d2   = Class::create(NULL, "Dummy", "name:second dummy:0");
     Inlet  * in2  = d2->inlet(1);
     
     out1->connect(in2);
@@ -91,10 +91,10 @@ public:
   
   void testConnectionOrder( void )
   {
-    Node   * v1   = Node::create(NULL, "Value", "value:2");
-    Node   * v2   = Node::create(NULL, "Value", "value:3");
-    Node   * add  = Node::create(NULL, "Add", "");
-    Node   * v3   = Node::create(NULL, "Value", "");
+    Node   * v1   = Class::create(NULL, "Value", "value:2");
+    Node   * v2   = Class::create(NULL, "Value", "value:3");
+    Node   * add  = Class::create(NULL, "Add", "");
+    Node   * v3   = Class::create(NULL, "Value", "");
     
     /**    v1   v2
       *    |    |

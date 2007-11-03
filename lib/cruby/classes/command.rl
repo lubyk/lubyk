@@ -167,8 +167,8 @@ void Command::parse(const std::string& pStr)
     klass  = (upper (alnum | '_')*) $a %set_klass;
   
     string  = '"' ([^"\\] | '\n' | ( '\\' (any | '\n') ))* $a '"';
-    float   = ('1'..'9' digit* '.' digit+) $a;
-    integer = ('1'..'9' digit*) $a;
+    float   = [\-+]? $a ('1'..'9' digit* '.' digit+) $a;
+    integer = [\-+]? $a ('1'..'9' digit*) $a;
   
     value  = (string | float | integer ) %set_value ;
   
@@ -182,7 +182,7 @@ void Command::parse(const std::string& pStr)
   
     create_link = var '.' integer %set_from_port ws* '=>' ws* integer %set_value '.' var %set_to_port;
     
-    execute_method = var '.' method ( '(' parameters? ')' )?;
+    execute_method = var '.' method ( '(' parameters? ')' )? ;
 
     execute_command = method ( '(' parameters? ')' )?;
   
@@ -217,6 +217,7 @@ void Command::set_from_token (std::string& pElem)
 void Command::set_class_from_token  () 
 {
   set_from_token(mClass);
+  // FIXME: this might not be needed if class is set before param
   if (mSingleParam != "") {
     std::string key = mClass;
     std::transform(key.begin(), key.end(), key.begin(), tolower);
@@ -228,11 +229,16 @@ void Command::set_class_from_token  ()
 void Command::set_single_param_from_token () 
 {
   mSingleParam = mValue;
+  std::string key;
   if (mClass != "") {
-    std::string key = mClass;
-    std::transform(key.begin(), key.end(), key.begin(), tolower);
-    mParameters.set(key, mSingleParam);
+    key = mClass;
+  } else if (mMethod != "") {
+    key = mMethod;
+  } else {
+    key = "value";
   }
+  std::transform(key.begin(), key.end(), key.begin(), tolower);
+  mParameters.set(key, mSingleParam);
 }
 
 void Command::set_parameter  (const std::string& pKey, const std::string& pValue) 

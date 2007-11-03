@@ -28,7 +28,7 @@ public:
     char buf[50];
     sIdCounter++;
     sprintf(buf,"_%i",sIdCounter);
-    mVariableName = std::string(buf);  // default variable name is 'id'
+    mName = std::string(buf);  // default variable name is 'id'
   }
   
   virtual ~Node() ;
@@ -84,11 +84,15 @@ public:
   Class * klass () 
   { return mClass; }
   
-  void set_variable_name (const std::string& pName) 
-  { mVariableName = pName; }
+  void set_name (const char* pName) 
+  { mName = pName; }
   
-  //const std::string& variable_name () { return mVariableName; }
-  const char * variable_name () { return mVariableName.c_str(); }
+  void set_name (const std::string& pName) 
+  { mName = pName; }
+  
+  
+  //const std::string& variable_name () { return mName; }
+  const char * name () { return mName.c_str(); }
   
   const char * class_name() const;
   
@@ -152,7 +156,7 @@ protected:
   char * mInspect; /**< Buffer used to transmit 'inspect'. 16=ptr info, 5= characters in format. */
   int  mInspectSize;
   
-  std::string mVariableName; /**< Global identifier ('v1', 'x', 'm43') */
+  std::string mName; /**< Global identifier ('v1', 'x', 'm43') */
   
   std::ostream * mOutput; /**< Used to pass command result. */
   

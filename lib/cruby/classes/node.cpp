@@ -95,9 +95,9 @@ void Node::inspect_print(const char *fmt, ...)
 
 const char * Node::inspect() {
   if (mIsOK)
-    inspect_print("#<%s:%s %s>", class_name(), mVariableName.c_str(), get_spy());
+    inspect_print("#<%s:%s %s>", class_name(), mName.c_str(), get_spy());
   else
-    inspect_print("#<%s:%s X>", class_name(), mVariableName.c_str(), get_spy());
+    inspect_print("#<%s:%s X>", class_name(), mName.c_str(), get_spy());
   
   if (mInspect)
     return mInspect;

@@ -7,14 +7,14 @@ RAGEL_CD=rlgen-cd
 test: test/runner test/runner.cpp
 	./test/runner
 
-rubyk: classes/main.cpp command.o rubyk.o node.o objects
-	g++ -Itest -Itemplates -Iclasses -Iobjects -I. classes/main.cpp slot.o inlet.o outlet.o params.o node.o command.o rubyk.o -o rubyk
+rubyk: classes/main.cpp command.o rubyk.o node.o class.o objects
+	g++ -Itest -Itemplates -Iclasses -Iobjects -I. classes/main.cpp slot.o inlet.o outlet.o params.o node.o class.o command.o rubyk.o -o rubyk
 	
 test/runner.cpp: test/*_test.h
 	./test/cxxtest/cxxtestgen.pl --error-printer -o test/runner.cpp test/*_test.h
 
-test/runner: test/runner.cpp command.o rubyk.o node.o objects
-	g++ -Itest -Itemplates -Iclasses -Iobjects -I. test/runner.cpp slot.o inlet.o outlet.o params.o node.o command.o rubyk.o -o test/runner
+test/runner: test/runner.cpp command.o rubyk.o node.o class.o objects
+	g++ -Itest -Itemplates -Iclasses -Iobjects -I. test/runner.cpp slot.o inlet.o outlet.o params.o node.o class.o command.o rubyk.o -o test/runner
 	
 	
 slot.o: classes/Slot.cpp
@@ -29,8 +29,8 @@ outlet.o: classes/Outlet.cpp classes/Slot.cpp
 params.o: classes/Params.cpp classes/params.h
 	g++ -c -Itemplates classes/Params.cpp -o params.o
 	
-node.o: classes/Node.cpp classes/node.h inlet.o outlet.o slot.o params.o class.o
-	g++ -c -Itemplates classes/Node.cpp class.o -o node.o
+node.o: classes/Node.cpp classes/node.h inlet.o outlet.o slot.o params.o
+	g++ -c -Itemplates classes/Node.cpp -o node.o
 
 class.o: classes/Class.cpp classes/class.h
 	g++ -c -Itemplates classes/Class.cpp -o class.o
@@ -49,22 +49,22 @@ command.o.bak: classes/command.cpp classes/command.h parser/parser.c lexer.o
 
 objects: lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko
 
-lib/Add.rko: objects/Add.cpp
+lib/Add.rko: objects/Add.cpp classes/class.h
 	g++ -o lib/Add.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Add.cpp
 	
-lib/Value.rko: objects/Value.cpp
+lib/Value.rko: objects/Value.cpp classes/class.h
 	g++ -o lib/Value.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Value.cpp
 
-lib/Counter.rko: objects/Counter.cpp
+lib/Counter.rko: objects/Counter.cpp classes/class.h
 	g++ -o lib/Counter.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Counter.cpp
 
-lib/Metro.rko: objects/Metro.cpp
+lib/Metro.rko: objects/Metro.cpp classes/class.h
 	g++ -o lib/Metro.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Metro.cpp
 
-lib/Print.rko: objects/Print.cpp
+lib/Print.rko: objects/Print.cpp classes/class.h
 	g++ -o lib/Print.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Print.cpp
 
-lib/NoteOut.rko: objects/NoteOut.cpp
+lib/NoteOut.rko: objects/NoteOut.cpp classes/class.h
 	g++ -o lib/Print.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/NoteOut.cpp
 
 	

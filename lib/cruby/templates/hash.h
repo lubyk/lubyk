@@ -46,6 +46,7 @@ public:
   { return get(pId); }
   
   void set(const K& pId, const T& pElement);
+  
   // FIXME: replace T* get by : bool get(const K& pId, T& value)
   T* get(const K& pId) const;
   void remove(const K& pId);

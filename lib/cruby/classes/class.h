@@ -7,7 +7,7 @@
 typedef Node * (*create_function_t)(Class * pClass, Rubyk * pServer, const Params& pParams);
 
 /** Pointer to a member method that can be called from the command line with "obj.method(Params)" */
-typedef void (*member_method_t)(Node * pReceiver, const Params& pParams);
+typedef void (*member_method_t)(void * pReceiver, const Params& pParams);
 
 /** Pointer to a class method that can be called from the command line with "Value.method(Params)" */
 typedef void (*class_method_t)(std::ostream * pOutput, const Params& pParam);
@@ -16,8 +16,6 @@ class Class
 {
 public:
   Class (const char* pName, create_function_t pFunction) : mName(pName), mCreateFunction(pFunction), mMethods(10), mClassMethods(10) {}
-  virtual ~Class ();
-
 
   /** Declare a class method. */
   void add_class_method(const char* pName, class_method_t pMethod)
@@ -25,32 +23,38 @@ public:
     mClassMethods.set(pName, pMethod);
   }
   
-  /** Declare a member method. */
+  /** Declare a member method. With parameters. */
   template <class T, void(T::*Tmethod)(const Params& pParam)>
   void add_method (const char* pName)
   {
     mMethods.set(std::string(pName), &cast_member_method<T, Tmethod>);
   }
   
-  Node * create (Rubyk * pServer, const char * pKey, const std::string& pParams)
-  { return create(pServer, std::string(pKey), Params(pParams)); }
-
-  Node * create (Rubyk * pServer, const char * pKey, const char * pParams)
-  { return create(pServer, std::string(pKey), Params(pParams)); }
-
-  Node * create (Rubyk * pServer, const std::string& pKey, const char * pParams)
-  { return create(pServer, pKey, Params(pParams)); }
-
-  Node * create (Rubyk * pServer, const std::string& pKey, const std::string& pParams)
-  { return create(pServer, pKey, Params(pParams)); }
-
-  Node * create (Rubyk * pServer, const char * pKey, const Params pParams)
-  { return create(pServer, std::string(pKey), Params(pParams)); }
-
-  Node * create (Rubyk * pServer, const std::string& pKey, const Params& pParams);
-  
+  /** Declare a member method. Parameters ignored. */
+  template <class T, void(T::*Tmethod)()>
+  void add_method (const char* pName)
+  {
+    mMethods.set(std::string(pName), &cast_member_method<T, Tmethod>);
+  }
 
   ////// class methods ///////
+  
+  static Node * create (Rubyk * pServer, const char * pKey, const std::string& pParams)
+  { return create(pServer, std::string(pKey), Params(pParams)); }
+
+  static Node * create (Rubyk * pServer, const char * pKey, const char * pParams)
+  { return create(pServer, std::string(pKey), Params(pParams)); }
+
+  static Node * create (Rubyk * pServer, const std::string& pKey, const char * pParams)
+  { return create(pServer, pKey, Params(pParams)); }
+
+  static Node * create (Rubyk * pServer, const std::string& pKey, const std::string& pParams)
+  { return create(pServer, pKey, Params(pParams)); }
+
+  static Node * create (Rubyk * pServer, const char * pKey, const Params pParams)
+  { return create(pServer, std::string(pKey), Params(pParams)); }
+
+  static Node * create (Rubyk * pServer, const std::string& pKey, const Params& pParams);
 
   /** Load an object stored in a dynamic library. */
   static bool load(const char * file, const char * init_name);
@@ -91,18 +95,25 @@ private:
   static Node * cast_create(Class * pClass, Rubyk * pServer, const Params& pParams)
   {
     T * obj = new T;
+    obj->set_class(pClass);
     obj->set_server(pServer);
     obj->set_is_ok( obj->init(pParams) ); // if init returns false, the node goes into 'broken' mode.
     return (Node*)obj;
   }
   
   /** Return a function pointer to a member method. */
-  template <class T, void(T::*Tmethod)(void * receiver, const Params& p)>
-  static void cast_member_method (void * receiver, const Params& p)
+  template <class T, void(T::*Tmethod)(const Params& p)>
+  static void cast_member_method(void * receiver, const Params& p)
   {
     (((T*)receiver)->*Tmethod)(p);
   }
   
+  /** Return a function pointer to a member method. */
+  template <class T, void(T::*Tmethod)()>
+  static void cast_member_method(void * receiver, const Params& p)
+  {
+    (((T*)receiver)->*Tmethod)();
+  }
   /* class info */
   std::string                         mName;           /**< Class name. */
   create_function_t                   mCreateFunction; /**< Function to create a new instance. */
