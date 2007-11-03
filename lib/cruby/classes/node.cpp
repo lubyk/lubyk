@@ -1,12 +1,9 @@
-#include <dlfcn.h>
 #include "node.h"
 #include "event.h"
 #include "rubyk.h"
+#include "class.h"
 
-// definitions of static data members
 
-Hash<std::string, class_creator_function_t> Node::sClasses(300);
-std::string Node::sObjectsPath("lib");
 unsigned int Node::sIdCounter = 0;
 
 Node::~Node()
@@ -24,39 +21,9 @@ Node::~Node()
     free(mInspect);
 }
 
-// for help to create a portable version of this load function, read Ruby's dln.c file.
-bool Node::load(const char * file, const char * init_name)
-{
-  void *image;
-  void (*function)(void);
-  const char *error = 0;
-  
-  // load shared extension image into memory
-  if ((image = (void*)dlopen(file, RTLD_LAZY|RTLD_GLOBAL)) == 0) {
-    printf("Could not open file '%s'.", file);
-    if (error = dlerror()) 
-      printf(" %s\n", error);
-    else
-      printf("\n");
-    return false;
-  }
-  
-  // get 'init' function into the image
-  function = (void(*)(void))dlsym(image, init_name);
-  if (function == 0) {
-    dlclose(image);
-    printf("Symbol '%s' not found in '%s'.",init_name,file);
-    if (error = dlerror()) 
-      printf(" %s\n", error);
-    else
-      printf("\n");
-    return false;
-  }
-  
-  // call 'init', passing the registration object
-  (*function)();
-
-  return true;
+const char * Node::class_name() const
+{ 
+  return mClass->mName.c_str(); 
 }
 
 void Node::spy_print(const char *fmt, ...)
@@ -128,9 +95,9 @@ void Node::inspect_print(const char *fmt, ...)
 
 const char * Node::inspect() {
   if (mIsOK)
-    inspect_print("#<%s:%s %s>", mClassName.c_str(), mVariableName.c_str(), get_spy());
+    inspect_print("#<%s:%s %s>", class_name(), mVariableName.c_str(), get_spy());
   else
-    inspect_print("#<%s:%s X>", mClassName.c_str(), mVariableName.c_str(), get_spy());
+    inspect_print("#<%s:%s X>", class_name(), mVariableName.c_str(), get_spy());
   
   if (mInspect)
     return mInspect;
@@ -139,12 +106,19 @@ const char * Node::inspect() {
 }
 
 
-void Node::execute_method (const std::string& pMethod, const Params& pParams)
+void Node::execute_method (const std::string& pMethod, const Params& pParams, std::ostream * pOutput)
 {
+  mOutput = pOutput;
+  member_method_t * method;
   if (pMethod == "bang") {
     bang();
+    *mOutput << inspect() << std::endl;
+  } else if (pMethod == "help" ){
+    help();
+  } else if (method = mClass->mMethods.get(pMethod)) {
+    (**method)(this, pParams);
   } else {
-    // FIXME....
+    *mOutput << "Unknown method '" << pMethod << "'\n";
   }
 }
 

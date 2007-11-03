@@ -6,8 +6,10 @@
 #include "params.h"
 #include "hash.h"
 #include "signal.h"
+#include <iostream>
 
 class Rubyk;
+class Class;
 
 #define START_SPY_BUFFER     20
 #define MAX_CLASS_NAME       50
@@ -15,16 +17,13 @@ class Rubyk;
 
 extern long double gLogicalTime;
 
-/** Pointer to a function to create nodes. */
-typedef Node * (*class_creator_function_t)(Rubyk * pServer, const std::string& key, const Params& pParams);
-
 /** Nodes do the actual work.
   * They receive messages from their inlets and pass new values to their outlets.
   */  
 class Node
 {
 public:
-  Node() : mServer(NULL), mTriggerPosition(0), mId(0), mClassName(""), mSpySize(0), mInspectSize(0), mSpy(NULL), mInspect(NULL)
+  Node() : mClass(NULL), mServer(NULL), mTriggerPosition(0), mId(0), mSpySize(0), mInspectSize(0), mSpy(NULL), mInspect(NULL)
   { 
     char buf[50];
     sIdCounter++;
@@ -34,12 +33,15 @@ public:
   
   virtual ~Node() ;
   
-  bool init() { return true; }
+  bool init( const Params& pParams) { return true; }
   
   void set_server(Rubyk * pServer)
   { mServer = pServer; }
   
-  void execute_method (const std::string& pMethod, const Params& pParams) ;
+  void set_class(Class * pClass)
+  { mClass = pClass; }
+  
+  void execute_method (const std::string& pMethod, const Params& pParams, std::ostream * pOutput) ;
 
   /** Compute new values for each outlet and send values through connections. */
   void bang (void)
@@ -79,8 +81,8 @@ public:
   void set_is_ok (bool pStatus) 
   { mIsOK = pStatus; }
   
-  void set_class_name (const std::string& pName) 
-  { mClassName = pName; }
+  Class * klass () 
+  { return mClass; }
   
   void set_variable_name (const std::string& pName) 
   { mVariableName = pName; }
@@ -88,74 +90,19 @@ public:
   //const std::string& variable_name () { return mVariableName; }
   const char * variable_name () { return mVariableName.c_str(); }
   
-  const char * class_name() const { return mClassName.c_str(); }
-  
-  ////// class methods ///////
-  
-  /** Load an object stored in a dynamic library. */
-  static bool load(const char * file, const char * init_name);
-  
-  static Node * create (Rubyk * pServer, const char * pKey, const std::string& pParams)
-  { return Node::create(pServer, std::string(pKey), Params(pParams)); }
-  
-  static Node * create (Rubyk * pServer, const char * pKey, const char * pParams)
-  { return Node::create(pServer, std::string(pKey), Params(pParams)); }
-  
-  static Node * create (Rubyk * pServer, const std::string& pKey, const char * pParams)
-  { return Node::create(pServer, pKey, Params(pParams)); }
-  
-  static Node * create (Rubyk * pServer, const std::string& pKey, const std::string& pParams)
-  { return Node::create(pServer, pKey, Params(pParams)); }
-  
-  static Node * create (Rubyk * pServer, const char * pKey, const Params pParams)
-  { return Node::create(pServer, std::string(pKey), Params(pParams)); }
-  
-  static Node * create (Rubyk * pServer, const std::string& pKey, const Params& pParams)
-  {
-    class_creator_function_t * func = sClasses.get(pKey);
-    if (func)
-      return (**func)(pServer, pKey, pParams);
-    else {
-      // try to load dynamic lib
-      std::string path = sObjectsPath;
-      path.append("/").append(pKey).append(".rko");
-      //printf("Loading '%s'\n", path.c_str());
-      if (load(path.c_str(), "init")) {
-        func = sClasses.get(pKey);
-        if (func) {
-          return (**func)(pServer, pKey, pParams);
-        } else {
-          printf("Error, '%s' should declare '%s'.\n", path.c_str(), pKey.c_str());
-        }
-      } 
-      // load failed
-      // dummy object in broken mode
-      
-      Node * obj = new Node;
-      obj->set_class_name(pKey);
-      obj->set_is_ok( false ); // if init returns false, the node goes into 'broken' mode.
-      return obj;
-    }
-      
-  }
-  
-  template<class T>
-  static void declare(const char* name)
-  {
-    sClasses.set(std::string(name), &make_class<T>);
-  }
-  
-  static void set_lib_path(const char* pPath)
-  { sObjectsPath = pPath; }
-  
-  static void set_lib_path(const std::string& pPath)
-  { sObjectsPath = pPath; }
+  const char * class_name() const;
   
 protected:
   
   /** Used by 'editors' to display some information on the node. Should be overwridden by subclasses. */
   virtual void spy() {
     // do nothing
+  }
+  
+  /** Display help message. */
+  virtual void help() {
+    // do nothing
+    *mOutput << "Does nothing.\n";
   }
   
   /** Print message for spies. */
@@ -195,6 +142,7 @@ protected:
                             *  will receive the signal after a node that has a greater mTriggerPosition. */
   /** Host server. */
   Rubyk * mServer;
+  Class * mClass;
   
   std::vector<Inlet*>  mInlets;
   std::vector<Outlet*> mOutlets;
@@ -203,30 +151,14 @@ protected:
   int  mSpySize;
   char * mInspect; /**< Buffer used to transmit 'inspect'. 16=ptr info, 5= characters in format. */
   int  mInspectSize;
-  std::string mClassName; /**< Name of the current node's class (metro, counter, etc) */
+  
   std::string mVariableName; /**< Global identifier ('v1', 'x', 'm43') */
+  
+  std::ostream * mOutput; /**< Used to pass command result. */
   
 private:
   
-  // ================ REGISTER CLASSES =============== //
-  
-  static Hash<std::string, class_creator_function_t> sClasses; /**< Contains a dictionary of class names and functions to create objects of this class. For example, 'metro' => function to create a Metro. */
-  
   static unsigned int sIdCounter;  /**< Each object has a unique id. */
-  
-  static std::string sObjectsPath; /**< Where to load the librairies (objects). */
-  
-  /** This function is used to create an instance of class 'T'. If the instance could not be
-    * properly initialized, this function returns NULL. */
-  template<class T>
-  static Node * make_class(Rubyk * pServer, const std::string& pClassName, const Params& pParams)
-  {
-    T * obj = new T;
-    obj->set_server(pServer);
-    obj->set_class_name(pClassName);
-    obj->set_is_ok( obj->init(pParams) ); // if init returns false, the node goes into 'broken' mode.
-    return (Node*)obj;
-  }
 
   // ================ INLET / OUTLET ================= //
   /** Return a function pointer from a pointer to method. */

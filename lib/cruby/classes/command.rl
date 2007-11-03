@@ -137,7 +137,7 @@ void Command::parse(const std::string& pStr)
     }
     
     action debug {
-      printf("[%i]", cs);
+      printf("[%c]", p[0]);
     }
     
     action prompt {
@@ -170,7 +170,7 @@ void Command::parse(const std::string& pStr)
     float   = ('1'..'9' digit* '.' digit+) $a;
     integer = ('1'..'9' digit*) $a;
   
-    value  = (string | float | integer) %set_value ;
+    value  = (string | float | integer ) %set_value ;
   
     key    = identifier %set_key;
   
@@ -266,8 +266,7 @@ void Command::execute_method()
 {
   Node * node = mServer->get_instance(mVariable);
   if (node) {
-    node->execute_method(mMethod, mParameters);
-    *mOutput << node->inspect() << std::endl;
+    node->execute_method(mMethod, mParameters, mOutput);
   } else {
     *mOutput << "Unknown node '" << mVariable << "'" << std::endl;
   }

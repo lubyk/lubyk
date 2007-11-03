@@ -1,9 +1,11 @@
 CC=g++
 CFLAGS=-g
 DOT_CMD=/Applications/Graphviz.app/Contents/MacOS/dot
+RAGEL=ragel
+RAGEL_CD=rlgen-cd
 
-test: test/runner
-	./test/runner; rm test/runner
+test: test/runner test/runner.cpp
+	./test/runner
 
 rubyk: classes/main.cpp command.o rubyk.o node.o objects
 	g++ -Itest -Itemplates -Iclasses -Iobjects -I. classes/main.cpp slot.o inlet.o outlet.o params.o node.o command.o rubyk.o -o rubyk
@@ -27,11 +29,14 @@ outlet.o: classes/Outlet.cpp classes/Slot.cpp
 params.o: classes/Params.cpp classes/params.h
 	g++ -c -Itemplates classes/Params.cpp -o params.o
 	
-node.o: classes/Node.cpp classes/node.h inlet.o outlet.o slot.o params.o
-	g++ -c -Itemplates classes/Node.cpp -o node.o
+node.o: classes/Node.cpp classes/node.h inlet.o outlet.o slot.o params.o class.o
+	g++ -c -Itemplates classes/Node.cpp class.o -o node.o
+
+class.o: classes/Class.cpp classes/class.h
+	g++ -c -Itemplates classes/Class.cpp -o class.o
 
 classes/command.cpp: classes/command.rl
-	/usr/local/bin/ragel classes/command.rl | /usr/local/bin/rlgen-cd -o classes/command.cpp
+	${RAGEL} classes/command.rl | ${RAGEL_CD} -o classes/command.cpp
 
 rubyk.o: classes/rubyk.h classes/rubyk.cpp
 	g++ -c -Iclasses -Itemplates classes/rubyk.cpp -o rubyk.o
@@ -42,22 +47,25 @@ command.o: classes/command.cpp classes/command.h
 command.o.bak: classes/command.cpp classes/command.h parser/parser.c lexer.o	
 	g++ -c -Iclasses -Itemplates classes/command.cpp parser/parser.c parser/lexer.o -O2 -Wl,-x -pipe -lm -o command.o
 
-objects: lib/add.rko lib/value.rko lib/counter.rko lib/metro.rko lib/print.rko
+objects: lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko
 
-lib/add.rko: objects/add.cpp
-	g++ -o lib/add.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/add.cpp
+lib/Add.rko: objects/Add.cpp
+	g++ -o lib/Add.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Add.cpp
 	
-lib/value.rko: objects/value.cpp
-	g++ -o lib/value.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/value.cpp
+lib/Value.rko: objects/Value.cpp
+	g++ -o lib/Value.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Value.cpp
 
-lib/counter.rko: objects/counter.cpp
-	g++ -o lib/counter.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/counter.cpp
+lib/Counter.rko: objects/Counter.cpp
+	g++ -o lib/Counter.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Counter.cpp
 
-lib/metro.rko: objects/metro.cpp
-	g++ -o lib/metro.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/metro.cpp
+lib/Metro.rko: objects/Metro.cpp
+	g++ -o lib/Metro.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Metro.cpp
 
-lib/print.rko: objects/print.cpp
-	g++ -o lib/print.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/print.cpp
+lib/Print.rko: objects/Print.cpp
+	g++ -o lib/Print.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Print.cpp
+
+lib/NoteOut.rko: objects/NoteOut.cpp
+	g++ -o lib/Print.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/NoteOut.cpp
 
 	
 dot: classes/command.png	

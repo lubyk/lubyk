@@ -527,8 +527,7 @@ void Command::execute_method()
 {
   Node * node = mServer->get_instance(mVariable);
   if (node) {
-    node->execute_method(mMethod, mParameters);
-    *mOutput << node->inspect() << std::endl;
+    node->execute_method(mMethod, mParameters, mOutput);
   } else {
     *mOutput << "Unknown node '" << mVariable << "'" << std::endl;
   }

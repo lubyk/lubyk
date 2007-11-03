@@ -31,6 +31,9 @@ public:
   void testParseCommandWithSpaces( void ) 
   { assert_result("v1 = Value(2)\n\n","#<Value:v1 2.00>\n"); }
   
+  void testParseFloat( void ) 
+  { assert_result("v1 = Value(2.35)\n\n","#<Value:v1 2.35>\n"); }
+  
   void testExecuteCommand( void ) 
   { assert_result("v1=Counter(3)\nv1.bang\n","#<Counter:v1 3>\n#<Counter:v1 4>\n"); }
   

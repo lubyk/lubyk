@@ -2,6 +2,7 @@
 #include <cxxtest/TestSuite.h>
 #include "node.h"
 #include <string>
+#include "test_helper.h"
 
 class Dummy : public Node
 {
@@ -32,54 +33,42 @@ private:
   std::string mName;
 };
 
-class TestNode : public CxxTest::TestSuite
-{
+class TestNode : public CxxTest::TestSuite, public NodeTester
+{  
 public:
   void testCreate( void )
   {  
-    Node::declare<Dummy>("Dummy");
+    Node::declare<Dummy>("Dummy"); // we cannot move this into TestNode() because we get EXC_BAD_ACCESS ???
+    mNode = Node::create(NULL, "Dummy", "dummy: 5 name:\"foo\"");
     
-    Node * d = Node::create(NULL, "Dummy", "dummy: 5 name:\"foo\"");
-    
-    TS_ASSERT_EQUALS( std::string(d->get_spy()), std::string("foo: 5") );
+    assert_spy("foo: 5");
   }
   
   void testInspect( void )
-  {
-    Node::declare<Dummy>("Dummy");
-    
-    Node * d = Node::create(NULL, "Dummy", "dummy: 5 name:\"foo\"");
-    d->set_variable_name(std::string("d"));
-    TS_ASSERT_EQUALS( std::string(d->inspect()), std::string("#<Dummy:d foo: 5>") );
+  { 
+    mNode = Node::create(NULL, "Dummy", "dummy: 5 name:\"foo\"");
+    mNode->set_variable_name(std::string("d"));
+    assert_inspect("#<Dummy:d foo: 5>");
   }
   
   void testBang( void )
   {
-    Node::declare<Dummy>("Dummy");
+    mNode = Node::create(NULL, "Dummy", "");
     
-    Node * d = Node::create(NULL, "Dummy", "");
-    
-    TS_ASSERT_EQUALS( std::string(d->get_spy()), std::string("no-name: 0") );
-    d->bang();
-    
-    TS_ASSERT_EQUALS( std::string(d->get_spy()), std::string("no-name: 1") );
+    assert_spy("no-name: 0");
+    mNode->bang();
+    assert_spy("no-name: 1");
   }
   
   void testExecuteMethod( void )
   {
-    Node::declare<Dummy>("Dummy");
-  
-    Node * d = Node::create(NULL, "Dummy", "dummy:5");
-  
-    TS_ASSERT_EQUALS( std::string(d->get_spy()), std::string("no-name: 5") );
-    d->execute_method(std::string("bang"), Params(""));
-  
-    TS_ASSERT_EQUALS( std::string(d->get_spy()), std::string("no-name: 6") );
+    mNode = Node::create(NULL, "Dummy", "dummy:5");
+    
+    assert_method_result("bang","","#<Dummy:_10 no-name: 6>\n");
   }
   
   void testConnection( void )
   {
-    Node::declare<Dummy>("Dummy");
     
     Node   * d1   = Node::create(NULL, "Dummy", "name:first  dummy:3");
     Outlet * out1 = d1->outlet(1); // oulets and inlets are indexed starting with '1', not '0'
