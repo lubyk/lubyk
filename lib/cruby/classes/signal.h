@@ -76,14 +76,15 @@ inline void inspectSignal(FILE * pStream, const Signal& sig)
 }
 
 /** MACROS TO SET/GET VALUES */
-#define SET_INTEGER(lval, sig) {if (sig.type == Integer) lval = sig.i.value; \
+#define SET_INTEGER(lval) {if (sig.type == Integer) lval = sig.i.value; \
   else if (sig.type == Float) lval = (int)sig.f.value;}
 
-#define SET_FLOAT(lval, sig) {if (sig.type == Float) lval = sig.f.value; \
+#define SET_FLOAT(lval) {if (sig.type == Float) lval = sig.f.value; \
   else if (sig.type == Integer) lval = (float)sig.i.value;}
 
-#define SEND_INTEGER(sig, rval) { sig.type = Integer; sig.i.value = (rval); }
-#define SEND_FLOAT(sig, rval) { sig.type = Float; sig.f.value = (rval); }
-#define SEND_BANG(sig) { sig.type = Bang; }
+#define SEND_BANG() { sig.type = Bang; }
+#define SEND_INTEGER(rval) { sig.type = Integer; sig.i.value = (rval); }
+#define SEND_FLOAT(rval) { sig.type = Float; sig.f.value = (rval); }
+#define SEND_VOID_POINTER(rval, freeme) { sig.type = VoidPointer; sig.ptr.free_me = freeme; sig.ptr.value = (void*)rval; }
 
 #endif // _SIGNAL_H_

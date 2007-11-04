@@ -23,10 +23,10 @@ public:
   { spy_print("%s: %i", mName.c_str(), mCounter); }
   
   void set_counter(const Signal& sig)
-  { SET_INTEGER(mCounter, sig) }
+  { SET_INTEGER(mCounter) }
 
   void increment_counter(Signal& sig)
-  { SEND_INTEGER(sig, ++mCounter) }
+  { SEND_INTEGER(++mCounter) }
   
 private:
   int mCounter;

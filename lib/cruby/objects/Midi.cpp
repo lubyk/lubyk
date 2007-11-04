@@ -8,6 +8,14 @@ public:
   bool init (const Params& p)
   { }
   
+  
+  void sendMessage(const Signal& sig)
+  {
+    // set from void pointer
+    // ...
+  }
+  
+  
   // print a list of possible inputs
   static void inputs(std::ostream * pOutput, const Params& p) {
     RtMidiIn *midiin = 0;
