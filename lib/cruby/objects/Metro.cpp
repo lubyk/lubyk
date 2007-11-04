@@ -14,7 +14,7 @@ public:
   }
 
   void set_tempo(const Signal& sig)
-  { SET_FLOAT(mTempo) }
+  { sig.get(&mTempo); }
   
   virtual void spy()
   { spy_print("%.2f", mTempo );  }
@@ -23,7 +23,7 @@ public:
   {
     if (mTempo != 0) {
       bang_me_in(60000 / mTempo);
-      SEND_BANG;
+      sig.set_bang();
     }
   }
   

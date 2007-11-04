@@ -12,6 +12,8 @@ public:
     * there are no connections. */
   void compute_and_send ();
   
+  void send(const Signal& s);
+  
 private:
   void(*mFunction)(void* node, Signal& sig);  /**< Function to get the new value. */
 };

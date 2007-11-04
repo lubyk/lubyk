@@ -36,15 +36,15 @@ public:
   
   // inlet 1
   void set_counter(const Signal& sig)
-  { SET_INTEGER(mCounter); }
+  { sig.get(&mCounter); }
   
   // inlet 2
   void set_increment(const Signal& sig)
-  { SET_INTEGER(mIncrement);     }
+  { sig.get(&mIncrement);     }
   
   // outlet 1
   void value(Signal& sig)
-  { SEND_INTEGER(mCounter += mIncrement); }
+  { sig.set(mCounter += mIncrement); }
   
 private:
   int mCounter;

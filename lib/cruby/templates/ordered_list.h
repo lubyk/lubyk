@@ -1,8 +1,8 @@
 #ifndef _ORDERED_LIST_H_
 #define _ORDERED_LIST_H_
 
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 #include <vector>
 
 template <class T>

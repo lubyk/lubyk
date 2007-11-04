@@ -178,4 +178,6 @@ private:
   }
 };
 
+// FIXME: this should go into 'signal.h', but then I have to include <iostream> and it all breaks with tons of errors... 
+std::ostream& operator<< (std::ostream& pStream, const Signal& sig);
 #endif

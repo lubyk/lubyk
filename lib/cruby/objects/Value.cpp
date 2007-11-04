@@ -18,10 +18,10 @@ public:
   { spy_print("%.2f", mValue );  }
   
   void set_value(const Signal& sig)
-  { SET_FLOAT(mValue) }
+  { sig.get(&mValue); }
 
   void value(Signal& sig)
-  { SEND_FLOAT(mValue) }
+  { sig.set(mValue); }
   
 private:
   float mValue;

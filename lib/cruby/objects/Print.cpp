@@ -10,8 +10,13 @@ public:
     return true;
   }
   
+  // inlet 1
   void print(const Signal& sig)
-  { inspectSignal(stdout, sig); printf("\n"); }
+  { 
+    *mOutput << sig << std::endl;
+  }
+private:
+  char mBuffer[50];
 };
 
 extern "C" void init()

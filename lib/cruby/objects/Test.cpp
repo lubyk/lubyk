@@ -22,6 +22,6 @@ private:
 
 extern "C" void init()
 { 
-  Class * klass = Class::declare<Test>("Test"); 
+  Class * klass = Class::declare<Test>("Test");
   klass->add_class_method("hello", &Test::hello);
 }

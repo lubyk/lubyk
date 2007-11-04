@@ -20,13 +20,13 @@ public:
   { spy_print("%.2f", mValue1 + mValue2 );  }
   
   void set_value1(const Signal& sig)
-  { SET_FLOAT(mValue1) }
+  { sig.get(&mValue1); }
   
   void set_value2(const Signal& sig)
-  { SET_FLOAT(mValue2) }
+  { sig.get(&mValue2); }
 
   void sum(Signal& sig)
-  { SEND_FLOAT(mValue1 + mValue2) }
+  { sig.set(mValue1 + mValue2); }
   
 private:
   float mValue1;

@@ -17,23 +17,23 @@ test/runner: test/runner.cpp command.o rubyk.o node.o class.o objects
 	g++ -Itest -Itemplates -Iclasses -Iobjects -I. test/runner.cpp slot.o inlet.o outlet.o params.o node.o class.o command.o rubyk.o -o test/runner
 	
 	
-slot.o: classes/Slot.cpp
-	g++ -c -Itemplates classes/Slot.cpp -o slot.o
+slot.o: classes/slot.cpp
+	g++ -c -Itemplates classes/slot.cpp -o slot.o
 
-inlet.o: classes/Inlet.cpp classes/Slot.cpp
-	g++ -c -Itemplates classes/Inlet.cpp -o inlet.o
+inlet.o: classes/inlet.cpp classes/Slot.cpp
+	g++ -c -Itemplates classes/inlet.cpp -o inlet.o
 	
-outlet.o: classes/Outlet.cpp classes/Slot.cpp
-	g++ -c -Itemplates classes/Outlet.cpp -o outlet.o
+outlet.o: classes/outlet.cpp classes/Slot.cpp
+	g++ -c -Itemplates classes/outlet.cpp -o outlet.o
 	
-params.o: classes/Params.cpp classes/params.h
-	g++ -c -Itemplates classes/Params.cpp -o params.o
+params.o: classes/params.cpp classes/params.h
+	g++ -c -Itemplates classes/params.cpp -o params.o
 	
-node.o: classes/Node.cpp classes/node.h inlet.o outlet.o slot.o params.o
-	g++ -c -Itemplates classes/Node.cpp -o node.o
+node.o: classes/node.cpp classes/node.h inlet.o outlet.o slot.o params.o
+	g++ -c -Itemplates classes/node.cpp -o node.o
 
-class.o: classes/Class.cpp classes/class.h
-	g++ -c -Itemplates classes/Class.cpp -o class.o
+class.o: classes/class.cpp classes/class.h
+	g++ -c -Itemplates classes/class.cpp -o class.o
 
 classes/command.cpp: classes/command.rl
 	${RAGEL} classes/command.rl | ${RAGEL_CD} -o classes/command.cpp

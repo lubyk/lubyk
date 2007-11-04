@@ -6,7 +6,7 @@
 #include <cstdio>
 
 void send_value(void * receiver, Signal& sig)
-{ SEND_FLOAT(1.0) }
+{ sig.set(1.0); }
 
 // these receivers are complicated to make sure they work in the correct order and they are all called.
 static void receive_value1(void * receiver, const Signal& sig)

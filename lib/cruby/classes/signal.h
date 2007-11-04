@@ -1,6 +1,7 @@
 #ifndef _SIGNAL_H_
 #define _SIGNAL_H_
-#include <stdlib.h> // free
+#include <cstdlib> // free
+
 
 /** Signal types. */
 enum signal_t {
@@ -35,56 +36,117 @@ typedef struct {
 } VoidPointer_t;
 
 /** A signal is what is transmitted along the connections. It contains a signature field along with a void value. */
-typedef union {
+union Signal {
+  
+  ~Signal()
+  {
+    if (type == VoidPointer && ptr.free_me) {
+      free(ptr.value);
+    }
+  }
+  /// set methods ///
+  
+  /** Set as bang. */
+  inline void set_bang() { type = Bang; }
+  
+  /** Set as integer. */
+  inline void set(int pInt)
+  {
+    type = Integer;
+    i.value = pInt;
+  }
+  
+  /** Set as double. */
+  inline void set(double pDouble)
+  {
+    type = Float;
+    f.value = pDouble;
+  }
+  
+  /** Set as float. */
+  inline void set(float pFloat)
+  { set((double)pFloat); }
+  
+  /** Set as void *. */
+  inline void set(void * pPtr, bool pFree)
+  {
+    type = VoidPointer;
+    ptr.value = pPtr;
+    ptr.free_me = pFree;
+  }
+  
+  /** Set as void*. */
+  inline void set(void * pPtr)
+  { set(pPtr, false); }
+  
+  /// get methods ///
+  
+  /** Get as bang. */
+  inline bool is_bang() const { return type == Bang; }
+  
+  /** Get as int. */
+  inline bool get(int * pInt) const
+  {
+    switch(type) {
+      case Integer:
+        *pInt = i.value;
+        return true;
+      case Float:
+        *pInt = (int)f.value;
+        return true;
+      default:
+        return false;
+    }
+  }
+  
+  /** Get as float. */
+  inline bool get(float * pFloat) const
+  {
+    switch(type) {
+      case Integer:
+        *pFloat = (float)i.value;
+        return true;
+      case Float:
+        *pFloat = (float)f.value;
+        return true;
+      default:
+        return false;
+    }
+  }
+  
+  /** Get as double. */
+  inline bool get(double * pFloat) const
+  { 
+    switch(type) {
+      case Integer:
+        *pFloat = (double)i.value;
+        return true;
+      case Float:
+        *pFloat = f.value;
+        return true;
+      default:
+        return false;
+    }
+  }
+  
+  /** get as void* */
+  inline bool get(void ** pPtr) const
+  { 
+    switch(type) {
+      case VoidPointer:
+        *pPtr = ptr.value;
+        return true;
+      default:
+        return false;
+    }
+  }
+  
+/* data */
   signal_t      type;
   Integer_t     i;
   Float_t       f;
   FloatArray_t  floats;
   VoidPointer_t ptr;
-} Signal;
-
-/** Called this before the signal is destroyed. */
-inline void clearSignal(Signal& sig)
-{
-  if (sig.type == VoidPointer && sig.ptr.free_me) {
-    free(sig.ptr.value);
-  }
-}
-
-/** Prints some information on the signal content. */
-inline void inspectSignal(FILE * pStream, const Signal& sig)
-{
-  switch(sig.type) {
-    case Bang:
-      fprintf(pStream, "Bang!");
-      break;
-    case Integer:
-      fprintf(pStream, "%i",sig.i.value);
-      break;
-    case Float:
-      fprintf(pStream, "%.2f",sig.f.value);
-      break;
-    case FloatArray:
-      fprintf(pStream, "[%i,%i]",sig.floats.value, sig.floats.size);
-      break;
-    case VoidPointer:
-      fprintf(pStream, "[%p,%i]",sig.ptr.value, sig.ptr.free_me);
-      break;
-    default:
-      fprintf(pStream, "??");
-  }
-}
-
-/** MACROS TO SET/GET VALUES */
-#define SET_INTEGER(lval) {if (sig.type == Integer) lval = sig.i.value; \
-  else if (sig.type == Float) lval = (int)sig.f.value;}
-
-#define SET_FLOAT(lval) {if (sig.type == Float) lval = sig.f.value; \
-  else if (sig.type == Integer) lval = (float)sig.i.value;}
-
-#define SEND_BANG() { sig.type = Bang; }
-#define SEND_INTEGER(rval) { sig.type = Integer; sig.i.value = (rval); }
-#define SEND_FLOAT(rval) { sig.type = Float; sig.f.value = (rval); }
-#define SEND_VOID_POINTER(rval, freeme) { sig.type = VoidPointer; sig.ptr.free_me = freeme; sig.ptr.value = (void*)rval; }
+};
 
 #endif // _SIGNAL_H_
