@@ -14,7 +14,7 @@ public:
   inline bool operator>= (const BaseEvent& pOther) const
   { return mTime >= pOther.mTime; }
   
-  long double mTime;
+  time_t mTime;
   
 protected:
   void * mParameter;
@@ -28,7 +28,7 @@ template<class T, void(T::*Tmethod)(void)>
 class CallEvent : public BaseEvent
 {
 public:
-  CallEvent (long double pTime, T * pReceiver) {
+  CallEvent (time_t pTime, T * pReceiver) {
     mTime      = pTime;
     mReceiver  = (void*)pReceiver;
     mParameter = NULL;
@@ -48,7 +48,7 @@ template<class T, void(T::*Tmethod)(void*)>
 class Event : public BaseEvent
 {
 public:
-  Event (long double pTime, T * pReceiver, void * pParam) {
+  Event (time_t pTime, T * pReceiver, void * pParam) {
     mTime      = pTime;
     mReceiver  = (void*)pReceiver;
     mParameter = pParam;

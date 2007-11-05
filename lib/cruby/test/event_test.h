@@ -3,7 +3,6 @@
 #include "outlet.h"
 #include "inlet.h"
 #include "event.h"
-#include <cstdio>
 
 struct EventUser
 {

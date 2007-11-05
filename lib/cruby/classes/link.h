@@ -1,3 +1,5 @@
+#include <string>
+
 struct Link
 {
   Link(const std::string& pFrom, unsigned int pFromPort, unsigned int pToPort, const std::string& pTo) :

@@ -1,8 +1,6 @@
 // ordered_list_test.h 
 #include <cxxtest/TestSuite.h>
 #include "params.h"
-#include <string>
-#include <iostream>
 
 
 class TestParams : public CxxTest::TestSuite

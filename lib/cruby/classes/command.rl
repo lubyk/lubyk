@@ -1,7 +1,4 @@
 #include "command.h"
-#include <pthread.h>
-#include <iostream>
-#include <cstdio>
 #include "rubyk.h"
 #include "class.h"
 

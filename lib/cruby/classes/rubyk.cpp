@@ -1,4 +1,5 @@
 #include "rubyk.h"
+#include "node.h"
 #include "class.h"
 
 Rubyk::Rubyk() : mInstances(200), mQuit(false), mCurrentTime(0)

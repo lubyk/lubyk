@@ -1,5 +1,4 @@
 #include "params.h"
-#include <string>
 
 void Params::build_hash (const std::string& p)
 {

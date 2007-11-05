@@ -1,15 +1,12 @@
 #line 1 "classes/command.rl"
 #include "command.h"
-#include <pthread.h>
-#include <iostream>
-#include <cstdio>
 #include "rubyk.h"
 #include "class.h"
 
 #undef DEBUG_PARSER
 
 
-#line 13 "classes/command.cpp"
+#line 10 "classes/command.cpp"
 static const char _command_actions[] = {
 	0, 1, 0, 1, 1, 1, 2, 1, 
 	3, 1, 4, 1, 5, 1, 6, 1, 
@@ -236,7 +233,7 @@ static const int command_first_final = 98;
 static const int command_en_eat_line = 97;
 static const int command_en_main = 1;
 
-#line 13 "classes/command.rl"
+#line 10 "classes/command.rl"
 
 
 Command::Command(Rubyk * pServer)
@@ -247,11 +244,11 @@ Command::Command(Rubyk * pServer)
   mThread = 0;
   mQuit   = false;
   
-#line 251 "classes/command.cpp"
+#line 248 "classes/command.cpp"
 	{
 	cs = command_start;
 	}
-#line 23 "classes/command.rl"
+#line 20 "classes/command.rl"
   mCurrentState = cs;
   mTokenIndex = 0;
   mInput  = &std::cin;
@@ -299,7 +296,7 @@ void Command::parse(const std::string& pStr)
   
 
   
-#line 303 "classes/command.cpp"
+#line 300 "classes/command.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -374,7 +371,7 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 70 "classes/command.rl"
+#line 67 "classes/command.rl"
 	{
       if (mTokenIndex >= MAX_TOKEN_SIZE) {
         std::cerr << "Buffer overflow !" << std::endl;
@@ -389,27 +386,27 @@ _match:
     }
 	break;
 	case 1:
-#line 83 "classes/command.rl"
+#line 80 "classes/command.rl"
 	{ set_from_token(mVariable);}
 	break;
 	case 2:
-#line 85 "classes/command.rl"
+#line 82 "classes/command.rl"
 	{ set_from_token(mMethod);}
 	break;
 	case 3:
-#line 87 "classes/command.rl"
+#line 84 "classes/command.rl"
 	{ set_from_token(mKey);}
 	break;
 	case 4:
-#line 89 "classes/command.rl"
+#line 86 "classes/command.rl"
 	{ set_class_from_token();}
 	break;
 	case 5:
-#line 91 "classes/command.rl"
+#line 88 "classes/command.rl"
 	{ set_from_token(mValue);}
 	break;
 	case 6:
-#line 93 "classes/command.rl"
+#line 90 "classes/command.rl"
 	{
       set_from_token(mValue);
       mFromPort = atoi(mValue.c_str());
@@ -417,22 +414,22 @@ _match:
     }
 	break;
 	case 7:
-#line 99 "classes/command.rl"
+#line 96 "classes/command.rl"
 	{
       set_from_token(mTo);
       mToPort = atoi(mValue.c_str());
     }
 	break;
 	case 8:
-#line 104 "classes/command.rl"
+#line 101 "classes/command.rl"
 	{ set_single_param_from_token(); }
 	break;
 	case 9:
-#line 106 "classes/command.rl"
+#line 103 "classes/command.rl"
 	{ set_parameter(mKey, mValue); }
 	break;
 	case 10:
-#line 108 "classes/command.rl"
+#line 105 "classes/command.rl"
 	{
       mToPort = atoi(mValue.c_str());
       mTo   = mVariable;
@@ -440,23 +437,23 @@ _match:
     }
 	break;
 	case 11:
-#line 114 "classes/command.rl"
+#line 111 "classes/command.rl"
 	{ create_instance(); }
 	break;
 	case 12:
-#line 116 "classes/command.rl"
+#line 113 "classes/command.rl"
 	{ execute_method(); }
 	break;
 	case 13:
-#line 118 "classes/command.rl"
+#line 115 "classes/command.rl"
 	{ execute_class_method(); }
 	break;
 	case 14:
-#line 120 "classes/command.rl"
+#line 117 "classes/command.rl"
 	{ execute_command(); }
 	break;
 	case 15:
-#line 124 "classes/command.rl"
+#line 121 "classes/command.rl"
 	{
       if (!mQuit) {
         clear();
@@ -465,7 +462,7 @@ _match:
     }
 	break;
 	case 16:
-#line 130 "classes/command.rl"
+#line 127 "classes/command.rl"
 	{
       p--; // move back one char
       *mOutput << "Syntax error !" << std::endl;
@@ -475,10 +472,10 @@ _match:
     }
 	break;
 	case 17:
-#line 138 "classes/command.rl"
+#line 135 "classes/command.rl"
 	{ {cs = 1; goto _again;} }
 	break;
-#line 482 "classes/command.cpp"
+#line 479 "classes/command.cpp"
 		}
 	}
 
@@ -489,7 +486,7 @@ _again:
 		goto _resume;
 	_out: {}
 	}
-#line 179 "classes/command.rl"
+#line 176 "classes/command.rl"
 
 //  printf("{%s}\n",p);
   mCurrentState = cs;

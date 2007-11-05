@@ -1,5 +1,4 @@
 #include "class.h"
-#include <cstdio>
 
 class Metro : public Node
 {

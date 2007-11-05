@@ -1,7 +1,8 @@
 #ifndef _PARAMS_H_
 #define _PARAMS_H_
 #include "hash.h"
-#include <iostream>
+#include <string>
+
 
 class Params
 {

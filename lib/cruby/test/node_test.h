@@ -1,7 +1,6 @@
 // ordered_list_test.h 
 #include <cxxtest/TestSuite.h>
 #include "class.h"
-#include <string>
 #include "test_helper.h"
 
 class Dummy : public Node

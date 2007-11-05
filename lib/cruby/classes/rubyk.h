@@ -1,6 +1,7 @@
 #ifndef _RUBYK_H_
 #define _RUBYK_H_
-#include "node.h"
+#include "hash.h"
+#include "ordered_list.h"
 #include "link.h"
 #include "event.h"
 #include <list>
@@ -8,6 +9,9 @@
 
 // 50 ms wait
 #define SLEEP_MS 50
+
+class Params;
+class Node;
 
 class Rubyk
 {
@@ -34,10 +38,10 @@ public:
   void register_event(BaseEvent * pEvent)
   { mEventList.push(pEvent); }
   
-  unsigned long mCurrentTime; /**< Current logical time in [ms] since reference. */
+  time_t mCurrentTime; /**< Current logical time in [ms] since reference. */
 
   /** Get current real time in [ms] since reference. */
-  unsigned long real_time()
+  time_t real_time()
   {
     struct timeb t;
     ftime(&t);

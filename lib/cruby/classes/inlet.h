@@ -2,7 +2,8 @@
 #define _INLET_H_
 
 #include "slot.h"
-#include "signal.h"
+#include "midi_message.h"
+#include "rubyk_signal.h"
 
 class Inlet : public Slot {
 public:  

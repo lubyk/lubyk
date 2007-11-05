@@ -1,9 +1,6 @@
 #ifndef _COMMAND_H_
 #define _COMMAND_H_
 
-#include <string>
-#include <iostream>
-#include <cstdio>
 #include <pthread.h>
 #include "params.h"
 #include "hash.h"

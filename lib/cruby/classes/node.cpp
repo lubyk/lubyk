@@ -122,38 +122,3 @@ void Node::execute_method (const std::string& pMethod, const Params& p, std::ost
   }
 }
 
-void Node::bang_me_in (long double pTime)
-{
-  BaseEvent * e = (BaseEvent *) new CallEvent<Node, &Node::bang>(mServer->mCurrentTime + pTime, this);
-  
-  mServer->register_event( e );
-}
-
-
-// This would be better inside 'signal.cpp', but it breaks... when I include <iostream> in signal.h ?
-std::ostream& operator<< (std::ostream& pStream, const Signal& sig)
-{
-  char buffer[50];
-  switch(sig.type) {
-  case Bang:
-    pStream << "Bang!\n";
-    break;
-  case Integer:
-    pStream << sig.i.value << std::endl;
-    break;
-  case Float:
-    snprintf(buffer, 50, "%.2f", sig.f.value);
-    pStream << buffer << std::endl;
-    break;
-  case FloatArray:
-    snprintf(buffer, 50, "{%i,%i}",sig.floats.value, sig.floats.size);
-    pStream << buffer << std::endl;
-    break;
-  case VoidPointer:
-    snprintf(buffer, 50, "[%p,%i]",sig.ptr.value, sig.ptr.free_me);
-    pStream << buffer << std::endl;
-    break;
-  default:
-    pStream << "??\n";
-  }
-}

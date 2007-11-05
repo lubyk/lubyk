@@ -2,7 +2,6 @@
 #include <cxxtest/TestSuite.h>
 #include "command.h"
 #include "rubyk.h"
-#include <string>
 
 class TestCreateCommand : public CxxTest::TestSuite
 {

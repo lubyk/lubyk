@@ -1,14 +1,18 @@
 #include "class.h"
-#include "midi.h"
+#include "midi_message.h"
+#include <sstream>
 
 class NoteOut : public Node
 {
 public:
   bool init(const Params& p)
   {
-    
+    mMessage.type = NoteOn;
+    mMessage.set_note( p.get("note", 0) );
+    mMessage.set_velocity( p.get("velocity", 80) );
+    mLength = p.get("length", 500); // 0.5 sec.
+    mMessage.set_channel( p.get("channel", 1) );
   }
-  
   
   // inlet 1
   void set_note(const Signal& sig)
@@ -27,14 +31,13 @@ public:
   }
   
   // inlet 3
-  void set_duration(const Signal& sig)
-  { sig.set(mDuration); }
+  void set_length(const Signal& sig)
+  { sig.get(&mLength); }
   
   // inlet 4
   void set_channel(const Signal& sig)
   {
     int i;
-    sig.update(i);
     if (sig.get(&i)) mMessage.set_channel(i);
   }
   
@@ -45,9 +48,10 @@ public:
     Outlet * out;
     Signal sig;
     
-    sig.set((void*)msg);
+    sig.set(msg);
     
-    if (out = outlet(1)) out->send(s);
+    if (out = outlet(1)) out->send(sig);
+    
     delete msg;
   }
   
@@ -60,14 +64,26 @@ public:
     message->note_on_to_off();
     
     // register note off
-    register_event<NoteOut, &NoteOut::noteOff>(mDuration, (void *)message);
+    register_event<NoteOut, &NoteOut::noteOff>(mLength, (void *)message);
     
     // send note on
-    sig.set((void*)mMessage);
+    sig.set(&mMessage);
+  }
+  
+  virtual void spy()
+  { 
+    std::ostringstream oss(std::ostringstream::out);
+    oss << mMessage;
+    spy_print("%s, %i", oss.str().c_str(), mLength);
   }
   
 private:
   /* data */
-  MidiMessage   mMessage;
-  unsigned long mDuration;
+  MidiMessage  mMessage;
+  time_t mLength;
 };
+
+extern "C" void init()
+{
+  Class::declare<NoteOut>("NoteOut");
+}

@@ -1,7 +1,6 @@
 // ordered_list_test.h 
 #include <cxxtest/TestSuite.h>
 #include "hash.h"
-#include <string>
 
 
 class TestStringHash : public CxxTest::TestSuite

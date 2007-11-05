@@ -1,7 +1,6 @@
 #ifndef _CLASS_H_
 #define _CLASS_H_
 #include "node.h"
-#include <iostream>
 
 /** Pointer to a function to create nodes. */
 typedef Node * (*create_function_t)(Class * pClass, Rubyk * pServer, const Params& p);

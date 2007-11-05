@@ -1,11 +1,12 @@
 /** Dictionary. The dictionary stores a copy of the data. Pointers to the copy are returned. 
   * We return pointers so that we can return NULL if the value is not found. */
-
 #ifndef _HASH_H_
 #define _HASH_H_
+
 #include <cstdio>
 #include <string>
 #include <vector>
+
 typedef unsigned int uint;
 
 template<class K, class T>

@@ -2,7 +2,7 @@
 #define _OUTLET_H_
 
 #include "slot.h"
-#include "signal.h"
+#include "rubyk_signal.h"
 
 class Outlet : public Slot {
 public:  

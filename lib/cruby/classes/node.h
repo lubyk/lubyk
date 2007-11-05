@@ -5,10 +5,16 @@
 #include "outlet.h"
 #include "params.h"
 #include "hash.h"
-#include "signal.h"
-#include <iostream>
+#include "event.h"
+#include "rubyk.h"
+#include "rubyk_signal.h"
 
-class Rubyk;
+#include <iostream>
+#include <cstdio>
+#include <vector>
+#include <string>
+
+
 class Class;
 
 #define START_SPY_BUFFER     20
@@ -133,7 +139,19 @@ protected:
   }
   
   // time in [ms]
-  void bang_me_in (long double pTime);
+  void Node::bang_me_in (time_t pTime)
+  {
+    BaseEvent * e = (BaseEvent *) new CallEvent<Node, &Node::bang>(mServer->mCurrentTime + pTime, this);
+
+    mServer->register_event( e );
+  }
+  
+  template <class T, void(T::*Tmethod)(void *)>
+  void register_event (time_t pTime, void * data)
+  {
+    BaseEvent * e = (BaseEvent *) new Event<T, Tmethod>(mServer->mCurrentTime + pTime, (T*)this, data);
+    mServer->register_event( e );
+  }
   // ================ MEMBER DATA    ================= //
   
   long  mId;
@@ -178,6 +196,7 @@ private:
   }
 };
 
-// FIXME: this should go into 'signal.h', but then I have to include <iostream> and it all breaks with tons of errors... 
+// FIXME: this should go into 'rubyk_signal.h', but then I have to include <iostream> and it all breaks with tons of errors... 
 std::ostream& operator<< (std::ostream& pStream, const Signal& sig);
+std::ostream& operator<< (std::ostream& pStream, const MidiMessage& msg);
 #endif

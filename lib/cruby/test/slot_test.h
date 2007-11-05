@@ -2,8 +2,7 @@
 #include <cxxtest/TestSuite.h>
 #include "outlet.h"
 #include "inlet.h"
-#include "signal.h"
-#include <cstdio>
+#include "rubyk_signal.h"
 
 void send_value(void * receiver, Signal& sig)
 { sig.set(1.0); }

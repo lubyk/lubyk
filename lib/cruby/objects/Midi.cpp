@@ -1,5 +1,4 @@
 #include "class.h"
-#include <iostream>
 #include "rtmidi/RtMidi.h"
 
 class Midi : public Node
@@ -156,7 +155,8 @@ static VALUE t_noteOff(VALUE self, VALUE rChannel, VALUE rNote, VALUE rVelocity)
   return Qtrue;
 }
 */
-extern "C" void init() {
+extern "C" void init() 
+{
   Class * klass = Class::declare<Midi>("Midi");
   
   klass->add_class_method("outputs", &Midi::outputs);

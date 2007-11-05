@@ -1,5 +1,6 @@
 #ifndef _NODE_TESTER_H_
 #define _NODE_TESTER_H_
+#include <sstream>
 
 class NodeTester
 {
