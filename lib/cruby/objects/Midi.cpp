@@ -15,8 +15,7 @@ public:
       return false;
     }
     
-    port = p.get("port", -1);
-    if (port < 0) {
+    if (!p.get(&port, "port")) {
       // create a virtual port
 
       // Call function to select port.
@@ -42,14 +41,12 @@ public:
 
     }
     
-    make_inlet<Midi, &Midi::midi_out>();
-    
   }
   
   
   void midi_out(const Signal& sig)
   {
-    if (!mMidiout) return;
+    if (!mMidiout || sig.type != MidiSignal) return;
     mMidiout->sendMessage( &(sig.midi_ptr.value->data) );
   }
   
@@ -201,6 +198,8 @@ extern "C" void init()
   
   klass->add_class_method("outputs", &Midi::outputs);
   klass->add_class_method("inputs", &Midi::inputs);
+  
+  klass->add_inlet<Midi, &Midi::midi_out>("send");
   
   // rk_cRtMidi = rb_define_class("RtMidi", rb_cObject);
   // rb_define_singleton_method(rk_cRtMidi, "outputs", (VALUE(*)(...))c_outputs, 0);

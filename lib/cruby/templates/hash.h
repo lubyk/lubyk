@@ -26,7 +26,7 @@ static uint hashId(K key);
 template <class K, class T>
 class Hash {
 public:
-  Hash(unsigned int size) : mSize(size) { mHashTable = new HashElement<K,T>[size]; }
+  Hash(unsigned int size) : mSize(size), mLastKeyIndex(-1) { mHashTable = new HashElement<K,T>[size]; }
   virtual ~Hash() {
     int i;
     HashElement<K,T> * current, * next;
@@ -47,6 +47,9 @@ public:
   
   /** Get an element of the dictionary and set the pResult to this element. Returns false if no element found. */
   bool get(T* pResult, const K& pId) const;
+  
+  /** Get the default value (last value). */
+  bool get(T* pResult) const;
   
   /** Remove object with the given key. */
   void remove(const K& pId);
@@ -79,6 +82,7 @@ private:
   /* data */
   HashElement<K,T> * mHashTable;
   std::vector<K>     mKeys;
+  uint               mLastKeyIndex; /**< Used to access last value (default value). */
   
   unsigned int mSize;
 };
@@ -116,6 +120,7 @@ void Hash<K,T>::set(const K& pId, const T& pElement) {
   }
   found->obj  = new T(pElement);
   found->id   = pId;
+  mLastKeyIndex = mKeys.size() - 1;
 }
 
 template <class K, class T>
@@ -136,6 +141,14 @@ bool Hash<K,T>::get(T* pResult, const K& pId) const
   }
 }
 
+template <class K, class T>
+bool Hash<K,T>::get(T* pResult) const 
+{
+  if (mLastKeyIndex > 0 && mLastKeyIndex < mKeys.size())
+    return get(pResult, mKeys[mLastKeyIndex]);
+  else
+    return false;
+}
 
 template <class K, class T>
 void Hash<K,T>::remove(const K& pId) {

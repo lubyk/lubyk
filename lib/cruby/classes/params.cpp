@@ -73,39 +73,26 @@ std::ostream& operator<<(std::ostream& pStream, const Params& p)
   return pStream;
 }
 
-
 template<>
-int Params::get(const char * pKey, int pDefault) const
-{  
-  std::string value;
-  if (mParameters.get(&value, std::string(pKey)))
-    return atoi(value.c_str());
-  else
-    return pDefault;
+int Params::cast_param(const std::string& value) const
+{
+  return atoi(value.c_str());
 }
 
 template<>
-float Params::get(const char * pKey, float pDefault) const
-{  
-  return (float)get(pKey, (double)pDefault);
+double Params::cast_param(const std::string& value) const
+{
+  return atof(value.c_str());
 }
 
 template<>
-double Params::get(const char * pKey, double pDefault) const
-{  
-  std::string value;
-  if (mParameters.get(&value, std::string(pKey)))
-    return atof(value.c_str());
-  else
-    return pDefault;
+float Params::cast_param(const std::string& value) const
+{
+  return atof(value.c_str());
 }
 
 template<>
-const char * Params::get(const char * pKey, const char * pDefault) const
-{  
-  std::string value;
-  if (mParameters.get(&value, std::string(pKey)))
-    return value.c_str();
-  else
-    return pDefault;
+const char * Params::cast_param(const std::string& value) const
+{
+  return value.c_str();
 }

@@ -1,24 +1,22 @@
 #include "class.h"
+#include <iostream>
 
 class Test : public Node
 {
 public:
   bool init (const Params& p)
   {
-    mMessage = p.get("test", "Hello World !");
+    mMessage = p.val("test", "Hello World !");
     if (mMessage == "is output ok?")
       *mOutput << "Output set" << std::endl;
       
-    mCounter = p.get("counter", 0);
-    mName    = p.get("name"   , std::string("no-name"));
-    
-    make_inlet <Test,&Test::set_counter>();
-    make_outlet<Test,&Test::increment_counter>();
+    mCounter = p.val("counter", 0);
+    mName    = p.val("name"   , std::string("no-name"));
     
     return true;
   }
   
-  static void hello(std::ostream * pOutput, const Params& pParam)
+  static void hello(std::ostream * pOutput, const Params& p)
   {
     *pOutput << "Hello World!\n";
   }
@@ -34,6 +32,12 @@ public:
 
   void increment_counter(Signal& sig)
   { sig.set(++mCounter); }
+  
+  void info(const Params& p)
+  {
+    *mOutput << p << std::endl;
+  }
+  
 private:
   /* data */
   std::string mMessage;
@@ -42,9 +46,11 @@ private:
 };
 
 
-
 extern "C" void init()
 { 
-  Class * klass = Class::declare<Test>("Test");
-  klass->add_class_method("hello", &Test::hello);
+  Class * c = Class::declare<Test>("Test");
+  c->add_class_method("hello", &Test::hello);
+  c->add_inlet< Test, &Test::set_counter>("set_counter");
+  c->add_outlet<Test, &Test::increment_counter>("increment");
+  c->add_method<Test, &Test::info>("info");
 }

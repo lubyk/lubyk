@@ -116,6 +116,9 @@ void Node::execute_method (const std::string& pMethod, const Params& p)
   } else if (mClass->mMethods.get(&method, pMethod)) {
     (*method)(this, p);
   } else {
+    // try to use an inlet
+    
+    
     *mOutput << "Unknown method '" << pMethod << "'\n";
   }
 }

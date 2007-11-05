@@ -8,16 +8,10 @@ public:
   bool init(const Params& p)
   {
     mMessage.type = NoteOn;
-    mMessage.set_note( p.get("note", MIDI_MIDDLE_C) );
-    mMessage.set_velocity( p.get("velocity", 80) );
-    mLength = p.get("length", 500); // 0.5 sec.
-    mMessage.set_channel( p.get("channel", 1) );
-    
-    make_inlet <NoteOut,&NoteOut::set_note>();
-    make_inlet <NoteOut,&NoteOut::set_velocity>();
-    make_inlet <NoteOut,&NoteOut::set_length>();
-    make_inlet <NoteOut,&NoteOut::set_channel>();
-    make_outlet<NoteOut,&NoteOut::send_note>();
+    mMessage.set_note(     p.val("note",     MIDI_MIDDLE_C  ));
+    mMessage.set_velocity( p.val("velocity", 80             ));
+    mLength =              p.val("length",   500             ); // 0.5 sec.
+    mMessage.set_channel(  p.val("channel",  1              ));
     
     return true;
   }
@@ -26,8 +20,12 @@ public:
   void set_note(const Signal& sig)
   {
     int n = 0;
-    sig.get(&n);
-    if (n) mMessage.set_note(n);
+    if (sig.type == MidiSignal) {
+      mMessage = *(sig.midi_ptr.value);
+    } else {
+      sig.get(&n);
+      if (n) mMessage.set_note(n); 
+    }
   }
 
   // inlet 2
@@ -94,5 +92,11 @@ private:
 
 extern "C" void init()
 {
-  Class::declare<NoteOut>("NoteOut");
+  Class * klass = Class::declare<NoteOut>("NoteOut");
+  
+  klass->add_inlet <NoteOut,&NoteOut::set_note>(     "set_note");
+  klass->add_inlet <NoteOut,&NoteOut::set_velocity>( "set_velocity");
+  klass->add_inlet <NoteOut,&NoteOut::set_length>(   "set_length");
+  klass->add_inlet <NoteOut,&NoteOut::set_channel>(  "set_channel");
+  klass->add_outlet<NoteOut,&NoteOut::send_note>(    "note");
 }

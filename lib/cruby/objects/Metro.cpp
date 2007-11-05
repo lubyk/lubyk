@@ -5,9 +5,8 @@ class Metro : public Node
 public:
   bool init(const Params& p)
   {
-    mTempo = p.get("metro", 0.5); // 120bmp default
-    make_inlet<Metro,&Metro::set_tempo>();
-    make_outlet<Metro,&Metro::tic>();
+    mTempo = p.val("metro", 0.5); // 120bmp default
+    
     bang_me_in(0.0);
     return true;
   }
@@ -32,5 +31,8 @@ private:
 
 extern "C" void init()
 {
-  Class::declare<Metro>("Metro");
+  Class * klass = Class::declare<Metro>("Metro");
+  
+  klass->add_inlet<Metro,&Metro::set_tempo>( "set_tempo");
+  klass->add_outlet<Metro,&Metro::tic>(      "tic");
 }

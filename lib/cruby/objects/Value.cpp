@@ -6,10 +6,10 @@ public:
   
   bool init (const Params& p)
   {
-    mValue = p.get("value", 0.0);
-    
-    make_inlet<Value,&Value::set_value>();
-    make_outlet<Value,&Value::value>();
+    // first try 'value', then default
+    if (!p.get(&mValue, "value", true)) {
+      mValue = 0.0;
+    }
     
     return true;
   }
@@ -29,5 +29,9 @@ private:
 
 extern "C" void init()
 {
-  Class::declare<Value>("Value");
+  Class * klass = Class::declare<Value>("Value");
+  
+  klass->add_inlet<Value,&Value::set_value>( "set_value" );
+  klass->add_outlet<Value,&Value::value>(    "value"     );
+  
 }

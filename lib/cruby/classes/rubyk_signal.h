@@ -6,11 +6,11 @@
 
 /** Signal types. */
 enum rubyk_signal_t {
-  BangSignal = 0, /**< Trigger update without changing values. */
-  IntegerSignal,  /**< IntegerSignal value. */
-  FloatSignal,    /**< FloatSignal (actually double). */
-  FloatArraySignal, /**< Array of floats. Use the 'size' attribute to avoid buffer overflow. */
-  MidiPointerSignal, /**< Pointer to a midi message. */
+  BangSignal = 0,    /**< Trigger update without changing values. */
+  IntegerSignal,     /**< IntegerSignal value. */
+  FloatSignal,       /**< FloatSignal (actually double). */
+  FloatArraySignal,  /**< Array of floats. Use the 'size' attribute to avoid buffer overflow. */
+  MidiSignal,        /**< Pointer to a midi message. */
   VoidPointerSignal, /**< Void pointer. If you want a malloc allocated buffer to be freed with the signal, set 'free_me' attribute to true.*/
 };
 
@@ -35,7 +35,7 @@ typedef struct {
   rubyk_signal_t    type;
   MidiMessage * value;
   bool   free_me;
-} MidiPointerSignal_t;
+} MidiSignal_t;
 
 /** Element pointed by calue gets freed with the Signal if free_me is true. */
 typedef struct {
@@ -51,7 +51,7 @@ union Signal {
   {
     if (type == VoidPointerSignal && ptr.free_me) {
       free(ptr.value);
-    } else if (type == MidiPointerSignal && midi_ptr.free_me) {
+    } else if (type == MidiSignal && midi_ptr.free_me) {
       delete midi_ptr.value;
     }
   }
@@ -95,7 +95,7 @@ union Signal {
   /** Set as MidiMessage* . */
   inline void set(MidiMessage * pPtr, bool pFree)
   {
-    type = MidiPointerSignal;
+    type = MidiSignal;
     midi_ptr.value = pPtr;
     midi_ptr.free_me = pFree;
   }
@@ -198,7 +198,7 @@ union Signal {
   IntegerSignal_t     i;
   FloatSignal_t       f;
   FloatArraySignal_t  floats;
-  MidiPointerSignal_t midi_ptr;
+  MidiSignal_t midi_ptr;
   VoidPointerSignal_t ptr;
 };
 
@@ -226,7 +226,7 @@ inline std::ostream& operator<< (std::ostream& pStream, const Signal& sig)
     snprintf(buffer, 50, "#<ptr %p,%i>",sig.ptr.value, sig.ptr.free_me);
     pStream << buffer;
     break;
-  case MidiPointerSignal:
+  case MidiSignal:
     pStream << "#<note "<< *(sig.midi_ptr.value) << ">";
     break;
   default:

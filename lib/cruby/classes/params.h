@@ -12,15 +12,56 @@ public:
   Params () : mParameters(20) {}
   
   template<class T>
-  T get(const char * pKey, T pDefault) const
+  T val(const char * pKey, T pDefault) const
   {
     std::string value;
     if (mParameters.get(&value, std::string(pKey)))
-      return (T)value;
+      return cast_param<T>(value);
     else
       return pDefault;
   }
   
+  /** Try to get a parameter from a given key. Returns false if the key is not found. If the key is NULL, get the default value. */
+  template<class T>
+  bool get(T* pResult, const char * pKey, bool pTryDefault) const
+  {
+    std::string value;
+    if (pKey == NULL) {
+      if (mParameters.get(&value)) {
+        *pResult = cast_param<T>(value);
+        return true;
+      } else
+        return false;
+    }
+    if (mParameters.get(&value, std::string(pKey))) {
+      *pResult = cast_param<T>(value);
+      return true;
+    } else if (pTryDefault) {
+      return get(pResult, NULL, false);
+    } else
+      return false;
+  }
+  
+  /** Get default value. Return false if none found. */
+  template<class T>
+  bool get(T* pResult) const
+  {
+    return get(pResult, NULL, false);
+  }
+  
+  /** Try to get a parameter from a given key. Returns false if the key is not found (default value not used). If the key is NULL, get the default value. */
+  template<class T>
+  bool get(T* pResult, const char * pKey) const
+  {
+    return get(pResult, NULL, true);
+  }
+  
+  template<class T>
+  T cast_param(const std::string& value) const
+  {
+    return (T)value;
+  }
+
   void set (const std::string& pKey, const std::string& pValue) {
     mParameters.set(pKey,pValue);
   }
@@ -47,16 +88,16 @@ private:
 };
 
 template<>
-int Params::get(const char * pKey, int pDefault) const;
+int Params::cast_param (const std::string& value) const;
 
 template<>
-double Params::get(const char * pKey, double pDefault) const;
+double Params::cast_param (const std::string& value) const;
 
 template<>
-float Params::get(const char * pKey, float pDefault) const;
+float Params::cast_param (const std::string& value) const;
 
 template<>
-const char * Params::get(const char * pKey, const char * pDefault) const;
+const char * Params::cast_param (const std::string& value) const;
 
 std::ostream& operator<< (std::ostream& pStream, const Params& p);
 

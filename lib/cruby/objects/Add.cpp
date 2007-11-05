@@ -6,12 +6,9 @@ public:
   
   bool init (const Params& p)
   {
-    mValue1 = p.get("value1", 0);
-    mValue2 = p.get("value2", 0);
+    mValue1 = p.val("value1", 0);
+    mValue2 = p.val("value2", 0);
     
-    make_inlet<Add,&Add::set_value1>();
-    make_inlet<Add,&Add::set_value2>();
-    make_outlet<Add,&Add::sum>();
     
     return true;
   }
@@ -35,5 +32,9 @@ private:
 
 extern "C" void init()
 {
-  Class::declare<Add>("Add");
+  Class * klass = Class::declare<Add>("Add");
+  
+  klass->add_inlet<Add,&Add::set_value1>( "set_value1");
+  klass->add_inlet<Add,&Add::set_value2>( "set_value2");
+  klass->add_outlet<Add,&Add::sum>(       "sum");
 }

@@ -17,8 +17,6 @@ void Class::execute_method (const std::string& pMethodName, const Params& p, std
   }
 }
 
-/////// Class methods ///////////
-
 bool Class::get (Class ** pClass, const std::string& pClassName)
 {
   if (sClasses.get(pClass, pClassName)) {
@@ -53,6 +51,7 @@ Node * Class::create (Rubyk * pServer, const std::string& pClassName, const Para
   sClasses.get(&klass, "Node");
   Node * obj = (*klass)(pServer, p, pOutput);
   obj->set_class(klass);
+  klass->make_slots(obj);
   obj->set_is_ok( false ); // if init returns false, the node goes into 'broken' mode.
   return obj;
 }
@@ -62,6 +61,23 @@ inline Node * Class::operator() (Rubyk * pServer, const Params& p, std::ostream 
   return (*mCreateFunction)(this, pServer, p, pOutput);
 }
 
+inline void Class::make_slots (Node * node)
+{
+  std::vector<inlet_method_t>::const_iterator end_in, inl;
+  end_in = mInlets.end();
+  for(inl = mInlets.begin(); inl < end_in; inl++)
+  {
+    node->add_inlet(*inl);
+  }
+  
+  
+  std::vector<outlet_method_t>::const_iterator end_out, outl;
+  end_out = mOutlets.end();
+  for(outl = mOutlets.begin(); outl < end_out; outl++)
+  {
+    node->add_outlet(*outl);
+  }
+}
 // for help to create a portable version of this load function, read Ruby's dln.c file.
 bool Class::load(const char * file, const char * init_name)
 {

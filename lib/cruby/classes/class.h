@@ -3,19 +3,10 @@
 #include "node.h"
 #include <iostream>
 
-/** Pointer to a function to create nodes. */
-typedef Node * (*create_function_t)(Class * pClass, Rubyk * pServer, const Params& p, std::ostream * pOutput);
-
-/** Pointer to a member method that can be called from the command line with "obj.method(Params)" */
-typedef void (*member_method_t)(void * pReceiver, const Params& p);
-
-/** Pointer to a class method that can be called from the command line with "Value.method(Params)" */
-typedef void (*class_method_t)(std::ostream * pOutput, const Params& p);
-
 class Class
 {
 public:
-  Class (const char* pName, create_function_t pFunction) : mName(pName), mCreateFunction(pFunction), mMethods(10), mClassMethods(10) {}
+  Class (const char* pName, create_function_t pFunction) : mName(pName), mCreateFunction(pFunction), mMethods(10), mClassMethods(10), mOutlets(5), mInlets(5) {}
   
   /** Execute a class method. Example: Midi.outputs */
   void execute_method (const std::string& pMethod, const Params& p, std::ostream * pOutput) ;
@@ -39,7 +30,23 @@ public:
   {
     mMethods.set(std::string(pName), &cast_member_method<T, Tmethod>);
   }
-
+  
+  /** Declare an inlet, with an accessor method. */
+  template <class T, void(T::*Tmethod)(const Signal& sig)>
+  void add_inlet (const char* pName)
+  {  
+    mInlets.push_back( &cast_inlet_method<T, Tmethod>);
+    mMethods.set(std::string(pName), &cast_inlet_accessor<T, Tmethod>);
+  }
+  
+  /** Declare an inlet, with an accessor method. */
+  template <class T, void(T::*Tmethod)(Signal& sig)>
+  void add_outlet (const char* pName)
+  {
+    mOutlets.push_back( &cast_outlet_method<T, Tmethod>);
+    mMethods.set(std::string(pName), &cast_outlet_accessor<T, Tmethod>);
+  }
+  
   ////// class methods ///////
   
   /** Get a class from the class name. Returns false if the class could not be found nor loaded. */
@@ -90,6 +97,8 @@ private:
   
   inline Node * operator() (Rubyk * pServer, const Params& p, std::ostream * pOutput);
   
+  inline void make_slots (Node * node);
+  
   static Hash<std::string, Class*> sClasses; /**< Contains a dictionary of class names and Class objects. For example, 'metro' => function to create a Metro. */
   
   static std::string sObjectsPath; /**< Where to load the librairies (objects). */
@@ -114,17 +123,60 @@ private:
     (((T*)receiver)->*Tmethod)(p);
   }
   
-  /** Return a function pointer to a member method. */
+  /** Return a function pointer to a member method without parameters. */
   template <class T, void(T::*Tmethod)()>
   static void cast_member_method(void * receiver, const Params& p)
   {
     (((T*)receiver)->*Tmethod)();
   }
+  
+  
+  /** Transform an inlet callback into a 'Params' based accessor. */
+  template <class T, void(T::*Tmethod)(const Signal& sig)>
+  static void cast_inlet_accessor (void * receiver, const Params& p)
+  {
+    Signal sig;
+    double value;
+    if (p.get(&value)) {
+      sig.set(value);
+    } else {
+      sig.set_bang();
+    }
+    (((T*)receiver)->*Tmethod)(sig);
+  }
+  
+  /** Transform an outlet callback into a 'Params' based accessor. */
+  template <class T, void(T::*Tmethod)(Signal& sig)>
+  static void cast_outlet_accessor (void * receiver, const Params& p)
+  {
+    Signal sig;
+    (((T*)receiver)->*Tmethod)(sig);
+    ((T*)receiver)->output() << sig << std::endl;
+  }
+  
+  /** Create a callback for an outlet. */
+  template <class T, void(T::*Tmethod)(Signal& sig)>
+  static void cast_outlet_method (void * receiver, Signal& sig)
+  {
+    (((T*)receiver)->*Tmethod)(sig);
+  }
+  
+  /** Create a callback for an inlet. */
+  template <class T, void(T::*Tmethod)(const Signal& sig)>
+  static void cast_inlet_method (void * receiver, const Signal& sig)
+  {
+    (((T*)receiver)->*Tmethod)(sig);
+  }
+  
+  
   /* class info */
   std::string                         mName;           /**< Class name. */
   create_function_t                   mCreateFunction; /**< Function to create a new instance. */
   Hash<std::string, member_method_t>  mMethods;        /**< Member methods. */
   Hash<std::string, class_method_t>   mClassMethods;   /**< Class methods. */
+  
+  std::vector<inlet_method_t>         mInlets;         /**< Inlet prototypes.  */
+  std::vector<outlet_method_t>        mOutlets;        /**< Outlet prototypes. */
 };
 
 #endif

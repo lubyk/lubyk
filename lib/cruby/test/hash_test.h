@@ -21,6 +21,22 @@ public:
     TS_ASSERT_EQUALS(  hash.get(&res, "money"),  false );
   }
   
+  void testGetDefault( void )
+  {
+    Hash<std::string, std::string> hash(10);
+    std::string res;
+    
+    TS_ASSERT( !hash.get(&res));
+    
+    hash.set(std::string("hello"), std::string("world"));
+    TS_ASSERT(hash.get(&res));
+    TS_ASSERT_EQUALS( res,  std::string("world") );
+    
+    hash.set(std::string("my"),    std::string("mum"));
+    TS_ASSERT(hash.get(&res));
+    TS_ASSERT_EQUALS( res,  std::string("mum") );
+  }
+
   void testKeys( void )
   {
     Hash<std::string, std::string> hash(10);

@@ -21,6 +21,27 @@ class Class;
 #define MAX_CLASS_NAME       50
 #define START_INSPECT_BUFFER (START_SPY_BUFFER + MAX_CLASS_NAME + 5 + 16)
 
+
+
+/** Pointer to a function to create nodes. */
+typedef Node * (*create_function_t)(Class * pClass, Rubyk * pServer, const Params& p, std::ostream * pOutput);
+
+/** Pointer to a class method that can be called from the command line with "Value.method(Params)" */
+typedef void (*class_method_t)(std::ostream * pOutput, const Params& p);
+
+/** Pointer to a member method that can be called from the command line with "obj.method(Params)" */
+typedef void (*member_method_t)(void * pReceiver, const Params& p);
+
+/** Pointer to an inlet method that can be called from the command line with "obj.method(Params)" */
+typedef void (*inlet_method_t)(void * pReceiver, const Signal& sig);
+
+/** Pointer to an inlet method that can be called from the command line with "obj.method(Params)" */
+typedef void (*outlet_method_t)(void * pReceiver, Signal& sig);
+
+
+
+
+
 /** Nodes do the actual work.
   * They receive messages from their inlets and pass new values to their outlets.
   */  
@@ -39,6 +60,22 @@ public:
   
   bool init( const Params& p) { return true; }
   
+  /** Add an inlet with the given callback (used by Class during instantiation). */
+  void add_inlet(inlet_method_t pCallback)
+  {
+    Inlet * s = new Inlet(this,pCallback);
+    s->setId(mInlets.size()); /* first inlet has id 0 */
+    mInlets.push_back(s);
+  }
+  
+  /** Add an outlet with the given callback (used by Class during instantiation). */
+  void add_outlet(outlet_method_t pCallback)
+  {
+    Outlet * s = new Outlet(this,pCallback);
+    s->setId(mOutlets.size()); /* first inlet has id 0 */
+    mOutlets.push_back(s);
+  }
+  
   void set_server(Rubyk * pServer)
   { mServer = pServer; }
   
@@ -47,6 +84,9 @@ public:
   
   void set_output(std::ostream * pOutput)
   { mOutput = pOutput; }
+  
+  std::ostream& output()
+  { return *mOutput; }
   
   void execute_method (const std::string& pMethod, const Params& p);
   
@@ -132,25 +172,6 @@ protected:
   /** Print message for spies. */
   void inspect_print(const char *fmt, ...);
   
-  // ================ INLET / OUTLET ================= //
-  /** Create a new inlet with the method as callback to set incoming value. */
-  template <class T, void(T::*Tmethod)(const Signal& sig)>
-  void make_inlet ()
-  {
-    Inlet * s = new Inlet(this,&cast_inlet_method<T, Tmethod>);
-    s->setId(mInlets.size()); /* first inlet has id 0 */
-    mInlets.push_back(s);
-  }
-  
-  /** Create a new outlet with the method as callback to set compute the new value. */
-  template <class T, void(T::*Tmethod)(Signal& sig)>
-  void make_outlet ()
-  {
-    Outlet * s = new Outlet(this, &cast_outlet_method<T, Tmethod>);
-    s->setId(mOutlets.size()); /* first outlet has id 0 */
-    mOutlets.push_back(s);
-  }
-  
   // time in [ms]
   void Node::bang_me_in (time_t pTime)
   {
@@ -192,21 +213,6 @@ protected:
 private:
   
   static unsigned int sIdCounter;  /**< Each object has a unique id. */
-
-  // ================ INLET / OUTLET ================= //
-  /** Return a function pointer from a pointer to method. */
-  template <class T, void(T::*Tmethod)(const Signal& sig)>
-  static void cast_inlet_method (void * receiver, const Signal& sig)
-  {
-    (((T*)receiver)->*Tmethod)(sig);
-  }
-  
-  /** Return a function pointer from a pointer to method. */
-  template <class T, void(T::*Tmethod)(Signal& sig)>
-  static void cast_outlet_method (void * receiver, Signal& sig)
-  {
-    (((T*)receiver)->*Tmethod)(sig);
-  }
 };
 
 #endif

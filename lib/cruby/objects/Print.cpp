@@ -6,7 +6,6 @@ public:
   
   bool init (const Params& p)
   {
-    make_inlet<Print,&Print::print>();
     return true;
   }
   
@@ -21,5 +20,6 @@ private:
 
 extern "C" void init()
 {
-  Class::declare<Print>("Print");
+  Class * klass = Class::declare<Print>("Print");
+  klass->add_inlet<Print,&Print::print>("print");
 }
