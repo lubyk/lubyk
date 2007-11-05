@@ -22,13 +22,15 @@ class Slot
     void setId (int pId);
     
     /** Add a bi-directional connection to another slot. */
-    void connect (Slot * pOther);
+    bool connect (Slot * pOther);
     
     /** Remove a connection to another slot. */
     void disconnect (Slot * pOther);
     
     /** Sort slots by rightmost node and rightmost position in the same node. */
     inline bool operator>= (const Slot& pOther) const;
+    
+    void * node () { return mNode; }
     
   protected:
     /** Make a one-way connection to another slot. */

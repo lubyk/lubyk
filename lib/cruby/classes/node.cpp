@@ -97,7 +97,7 @@ const char * Node::inspect() {
   if (mIsOK)
     inspect_print("#<%s:%s %s>", class_name(), mName.c_str(), get_spy());
   else
-    inspect_print("#<%s:%s X>", class_name(), mName.c_str(), get_spy());
+    inspect_print("#<%s:%s ###>", class_name(), mName.c_str(), get_spy());
   
   if (mInspect)
     return mInspect;
@@ -106,13 +106,11 @@ const char * Node::inspect() {
 }
 
 
-void Node::execute_method (const std::string& pMethod, const Params& p, std::ostream * pOutput)
+void Node::execute_method (const std::string& pMethod, const Params& p)
 {
-  mOutput = pOutput;
   member_method_t method;
   if (pMethod == "bang") {
     bang();
-    *mOutput << inspect() << std::endl;
   } else if (pMethod == "help" ){
     help();
   } else if (mClass->mMethods.get(&method, pMethod)) {

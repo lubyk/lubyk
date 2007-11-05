@@ -8,8 +8,7 @@ class Params
 {
 public:
   Params (const std::string& p) : mParameters(20) { build_hash(p); }
-  Params (const char * p)  : mParameters(20)
-  { build_hash( std::string(p) ); }
+  Params (const char * p)  : mParameters(20)      { build_hash( std::string(p) ); }
   Params () : mParameters(20) {}
   
   template<class T>
@@ -58,5 +57,7 @@ float Params::get(const char * pKey, float pDefault) const;
 
 template<>
 const char * Params::get(const char * pKey, const char * pDefault) const;
+
+std::ostream& operator<< (std::ostream& pStream, const Params& p);
 
 #endif

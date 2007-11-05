@@ -1,0 +1,6 @@
+m  = Metro(120)
+m.1 => 1.no
+no = NoteOut(note:45 length:1000)
+no.1 => 1.midi
+midi = Midi()
+m.bang

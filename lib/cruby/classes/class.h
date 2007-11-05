@@ -1,9 +1,10 @@
 #ifndef _CLASS_H_
 #define _CLASS_H_
 #include "node.h"
+#include <iostream>
 
 /** Pointer to a function to create nodes. */
-typedef Node * (*create_function_t)(Class * pClass, Rubyk * pServer, const Params& p);
+typedef Node * (*create_function_t)(Class * pClass, Rubyk * pServer, const Params& p, std::ostream * pOutput);
 
 /** Pointer to a member method that can be called from the command line with "obj.method(Params)" */
 typedef void (*member_method_t)(void * pReceiver, const Params& p);
@@ -44,22 +45,22 @@ public:
   /** Get a class from the class name. Returns false if the class could not be found nor loaded. */
   static bool get (Class ** pClass, const std::string& pClassName);
   
-  static Node * create (Rubyk * pServer, const char * pClassName, const std::string& p)
-  { return create(pServer, std::string(pClassName), Params(p)); }
+  static Node * create (Rubyk * pServer, const char * pClassName, const std::string& p, std::ostream * pOutput)
+  { return create(pServer, std::string(pClassName), Params(p), pOutput); }
 
-  static Node * create (Rubyk * pServer, const char * pClassName, const char * p)
-  { return create(pServer, std::string(pClassName), Params(p)); }
+  static Node * create (Rubyk * pServer, const char * pClassName, const char * p, std::ostream * pOutput)
+  { return create(pServer, std::string(pClassName), Params(p), pOutput); }
 
-  static Node * create (Rubyk * pServer, const std::string& pClassName, const char * p)
-  { return create(pServer, pClassName, Params(p)); }
+  static Node * create (Rubyk * pServer, const std::string& pClassName, const char * p, std::ostream * pOutput)
+  { return create(pServer, pClassName, Params(p), pOutput); }
 
-  static Node * create (Rubyk * pServer, const std::string& pClassName, const std::string& p)
-  { return create(pServer, pClassName, Params(p)); }
+  static Node * create (Rubyk * pServer, const std::string& pClassName, const std::string& p, std::ostream * pOutput)
+  { return create(pServer, pClassName, Params(p), pOutput); }
 
-  static Node * create (Rubyk * pServer, const char * pClassName, const Params p)
-  { return create(pServer, std::string(pClassName), Params(p)); }
+  static Node * create (Rubyk * pServer, const char * pClassName, const Params p, std::ostream * pOutput)
+  { return create(pServer, std::string(pClassName), Params(p), pOutput); }
 
-  static Node * create (Rubyk * pServer, const std::string& pClassName, const Params& p);
+  static Node * create (Rubyk * pServer, const std::string& pClassName, const Params& p, std::ostream * pOutput);
 
   /** Load an object stored in a dynamic library. */
   static bool load(const char * file, const char * init_name);
@@ -87,7 +88,7 @@ public:
 private:
   friend class Node;
   
-  inline Node * operator() (Rubyk * pServer, const Params& p);
+  inline Node * operator() (Rubyk * pServer, const Params& p, std::ostream * pOutput);
   
   static Hash<std::string, Class*> sClasses; /**< Contains a dictionary of class names and Class objects. For example, 'metro' => function to create a Metro. */
   
@@ -96,11 +97,12 @@ private:
   /** This function is used to create an instance of class 'T'. If the instance could not be
     * properly initialized, this function returns NULL. */
   template<class T>
-  static Node * cast_create(Class * pClass, Rubyk * pServer, const Params& p)
+  static Node * cast_create(Class * pClass, Rubyk * pServer, const Params& p, std::ostream * pOutput)
   {
     T * obj = new T;
     obj->set_class(pClass);
     obj->set_server(pServer);
+    obj->set_output(pOutput);
     obj->set_is_ok( obj->init(p) ); // if init returns false, the node goes into 'broken' mode.
     return (Node*)obj;
   }

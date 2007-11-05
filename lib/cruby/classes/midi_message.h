@@ -46,7 +46,7 @@ struct MidiMessage
   inline void note_on_to_off()
   {
     if (type == NoteOn) {
-      data[0] -= 0x10;
+      data[1] -= 0x10;
       type = NoteOff;
     }
   }
@@ -153,7 +153,7 @@ inline std::ostream& operator<< (std::ostream& pStream, const MidiMessage& msg)
   if (msg.type == NoteOn || msg.type == NoteOff) {
     if (msg.type == NoteOff) pStream << "-";
     msg.get_note_name(buffer);
-    pStream << buffer << "(" << (int)msg.data[2] << "," << msg.channel() << ")";
+    pStream << msg.channel() << ":" << buffer << "(" << (int)msg.data[2] << ")";
   } else {
     pStream << "[";
     end   = msg.data.end();

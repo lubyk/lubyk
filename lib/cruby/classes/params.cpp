@@ -1,4 +1,5 @@
 #include "params.h"
+#include <sstream>
 
 void Params::build_hash (const std::string& p)
 {
@@ -53,7 +54,6 @@ std::ostream& operator<<(std::ostream& pStream, const Params& p)
   std::string str;
   std::vector<std::string>::const_iterator it;
   std::vector<std::string>::const_iterator end = p.mParameters.end();
-  
   for(it = p.mParameters.begin(); it < end; it++) {
     if (it != p.mParameters.begin()) pStream << " ";
     pStream << *it << ":";
@@ -72,6 +72,7 @@ std::ostream& operator<<(std::ostream& pStream, const Params& p)
   }
   return pStream;
 }
+
 
 template<>
 int Params::get(const char * pKey, int pDefault) const

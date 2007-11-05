@@ -548,12 +548,13 @@ void Command::set_parameter  (const std::string& pKey, const std::string& pValue
 // FIXME: create_instance should run in server space with concurrency locks.
 void Command::create_instance()
 {
-  Node * node = mServer->create_instance(mVariable, mClass, mParameters);
+  Node * node = mServer->create_instance(mVariable, mClass, mParameters, mOutput);
 #ifdef DEBUG_PARSER
   std::cout << "NEW("<< mVariable << ", " << mClass << ", " << mParameters << ")";
 #endif
   if (node) {
-    *mOutput << node->inspect() << std::endl;
+    if (!mSilent)
+      *mOutput << node->inspect() << std::endl;
   } else {
     *mOutput << "Error" << std::endl;      
   }
@@ -563,7 +564,8 @@ void Command::create_instance()
 void Command::create_link()
 {  
   mServer->create_link(mFrom, mFromPort, mToPort, mTo);
-  *mOutput << "LINK " << mFrom << "." << mFromPort << "=>" << mToPort << "." << mTo << std::endl;
+  if (!mSilent)
+    *mOutput << "LINK " << mFrom << "." << mFromPort << "=>" << mToPort << "." << mTo << std::endl;
 }
 
 // FIXME: execute_method should run in server space with concurrency locks.
@@ -571,7 +573,8 @@ void Command::execute_method()
 {
   Node * node;
   if (mServer->get_instance(&node, mVariable)) {
-    node->execute_method(mMethod, mParameters, mOutput);
+    node->execute_method(mMethod, mParameters);
+    if (!mSilent && mMethod == "bang") *mOutput << node->inspect() << std::endl;
   } else {
     *mOutput << "Unknown node '" << mVariable << "'" << std::endl;
   }

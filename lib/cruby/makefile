@@ -7,29 +7,29 @@ RAGEL_CD=rlgen-cd
 test: test/runner test/runner.cpp
 	./test/runner && rm test/runner
 
-rubyk: classes/main.cpp command.o rubyk.o node.o class.o objects
+rubyk: classes/main.cpp command.o rubyk.o node.o inlet.o outlet.o slot.o params.o class.o objects
 	g++ -Itest -Itemplates -Iclasses -Iobjects -I. classes/main.cpp slot.o inlet.o outlet.o params.o node.o class.o command.o rubyk.o -o rubyk
 	
 test/runner.cpp: test/*_test.h test/objects/*_test.h
 	./test/cxxtest/cxxtestgen.pl --error-printer -o test/runner.cpp test/*_test.h test/objects/*_test.h
 
-test/runner: test/runner.cpp command.o rubyk.o node.o class.o objects
+test/runner: test/runner.cpp command.o rubyk.o node.o inlet.o outlet.o slot.o params.o class.o objects
 	g++ -Itest -Itemplates -Iclasses -Iobjects -I. test/runner.cpp slot.o inlet.o outlet.o params.o node.o class.o command.o rubyk.o -o test/runner
 	
 	
-slot.o: classes/slot.cpp
+slot.o: classes/slot.cpp classes/slot.h
 	g++ -c -Itemplates classes/slot.cpp -o slot.o
 
-inlet.o: classes/inlet.cpp classes/Slot.cpp
+inlet.o: classes/inlet.cpp classes/inlet.h
 	g++ -c -Itemplates classes/inlet.cpp -o inlet.o
 	
-outlet.o: classes/outlet.cpp classes/Slot.cpp
+outlet.o: classes/outlet.cpp classes/outlet.h
 	g++ -c -Itemplates classes/outlet.cpp -o outlet.o
 	
 params.o: classes/params.cpp classes/params.h
 	g++ -c -Itemplates classes/params.cpp -o params.o
 	
-node.o: classes/node.cpp classes/node.h inlet.o outlet.o slot.o params.o
+node.o: classes/node.cpp classes/node.h
 	g++ -c -Itemplates classes/node.cpp -o node.o
 
 class.o: classes/class.cpp classes/class.h

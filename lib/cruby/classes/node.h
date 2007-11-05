@@ -9,7 +9,7 @@
 #include "rubyk.h"
 #include "rubyk_signal.h"
 
-#include <iostream>
+#include <sstream>
 #include <cstdio>
 #include <vector>
 #include <string>
@@ -27,7 +27,7 @@ class Class;
 class Node
 {
 public:
-  Node() : mClass(NULL), mServer(NULL), mTriggerPosition(0), mId(0), mSpySize(0), mInspectSize(0), mSpy(NULL), mInspect(NULL)
+  Node() : mClass(NULL), mServer(NULL), mTriggerPosition(0), mId(0), mSpySize(0), mInspectSize(0), mSpy(NULL), mInspect(NULL), mOutput(&std::cout)
   { 
     char buf[50];
     sIdCounter++;
@@ -45,8 +45,11 @@ public:
   void set_class(Class * pClass)
   { mClass = pClass; }
   
-  void execute_method (const std::string& pMethod, const Params& p, std::ostream * pOutput) ;
-
+  void set_output(std::ostream * pOutput)
+  { mOutput = pOutput; }
+  
+  void execute_method (const std::string& pMethod, const Params& p);
+  
   /** Compute new values for each outlet and send values through connections. */
   void bang (void)
   {
@@ -77,10 +80,20 @@ public:
   inline float trigger_position() { return mTriggerPosition; }
   
   /** Return inlet at the given position. First inlet is '1', not '0'. */
-  Inlet  * inlet  (int slot_id) { return mInlets[slot_id - 1]; }
+  Inlet  * inlet  (int slot_id) 
+  {   
+    std::vector<Inlet*>::size_type sz = mInlets.size();
+    if (slot_id < 1 || slot_id > sz) return NULL;
+    return mInlets[slot_id - 1]; 
+  }
   
   /** Return outlet at the given position. First outlet is '1', not '0'. */
-  Outlet * outlet (int slot_id) { return mOutlets[slot_id - 1]; }
+  Outlet * outlet (int slot_id) 
+  { 
+    std::vector<Outlet*>::size_type sz = mOutlets.size();
+    if (slot_id < 1 || slot_id > sz) return NULL;
+    return mOutlets[slot_id - 1];
+  }
   
   void set_is_ok (bool pStatus) 
   { mIsOK = pStatus; }
@@ -196,7 +209,4 @@ private:
   }
 };
 
-// FIXME: this should go into 'rubyk_signal.h', but then I have to include <iostream> and it all breaks with tons of errors... 
-std::ostream& operator<< (std::ostream& pStream, const Signal& sig);
-std::ostream& operator<< (std::ostream& pStream, const MidiMessage& msg);
 #endif

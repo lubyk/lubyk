@@ -19,9 +19,9 @@ Rubyk::~Rubyk()
   }
 }
 
-Node * Rubyk::create_instance (const std::string& pVariable, const std::string& pClass, const Params& p)
+Node * Rubyk::create_instance (const std::string& pVariable, const std::string& pClass, const Params& p, std::ostream * pOutput)
 {
-  Node * node = Class::create(this, pClass, p);
+  Node * node = Class::create(this, pClass, p, pOutput);
   Node * previous;
   std::string varName;
 
@@ -53,7 +53,7 @@ void Rubyk::create_pending_links()
   Node * fromNode, * toNode;
   Slot * fromPort, * toPort;
   end = mPendingLinks.end();
-  it=mPendingLinks.begin();
+  it  = mPendingLinks.begin();
   while(it != end) {
     if ((mInstances.get(&fromNode, it->mFrom)) && (mInstances.get(&toNode, it->mTo))) {
       if ((fromPort = fromNode->outlet(it->mFromPort)) && (toPort = toNode->inlet(it->mToPort))) {

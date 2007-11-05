@@ -49,6 +49,12 @@ public:
   void set_output (std::ostream& pOutput)
   { mOutput = &pOutput; }
   
+  /** Set silent to 'true' to avoid command messages. */
+  void set_silent(bool pSilent)
+  {
+    mSilent = pSilent;
+  }
+  
   /** Used for testing. */
   void set_input (std::istream& pInput)
   { mInput = &pInput; }
@@ -108,6 +114,7 @@ protected:
   std::ostream * mOutput;
   /* Listen elements. */
   bool mQuit;
+  bool mSilent;
 };
 
 class InteractiveCommand : public Command

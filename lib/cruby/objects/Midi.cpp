@@ -5,13 +5,52 @@ class Midi : public Node
 {
 public:
   bool init (const Params& p)
-  { }
-  
-  
-  void sendMessage(const Signal& sig)
   {
-    // set from void pointer
-    // ...
+    int port;
+    
+    try {
+      mMidiout = new RtMidiOut();
+    } catch (RtError &error) {
+      *mOutput << error.getMessageString() << std::endl;
+      return false;
+    }
+    
+    port = p.get("port", -1);
+    if (port < 0) {
+      // create a virtual port
+
+      // Call function to select port.
+      try {
+        mMidiout->openVirtualPort();
+      }
+      catch (RtError &error) {
+        *mOutput << error.getMessageString() << std::endl;
+        // FIXME: close();
+        return false;
+      }
+
+    } else {
+     //// Call function to select port.
+     //try {
+     //  midiout->openPort( NUM2INT(rPort) );
+     //}
+     //catch (RtError &error) {
+     //  error.printMessage();
+     //  t_close(self);
+     //  return Qnil;
+     //}
+
+    }
+    
+    make_inlet<Midi, &Midi::midi_out>();
+    
+  }
+  
+  
+  void midi_out(const Signal& sig)
+  {
+    if (!mMidiout) return;
+    mMidiout->sendMessage( &(sig.midi_ptr.value->data) );
   }
   
   
@@ -80,6 +119,7 @@ public:
   }
 private:
   /* data */
+  RtMidiOut * mMidiout;
 };
 /*
 // params: portNumber

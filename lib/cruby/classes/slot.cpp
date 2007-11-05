@@ -6,10 +6,14 @@ void Slot::setId(int pId)
   mId = pId;
 }
 
-void Slot::connect(Slot * pOther)
-{
+bool Slot::connect(Slot * pOther)
+{  
+  if (pOther == NULL) return false;
+  
   add_connection(pOther);
   pOther->add_connection(this);
+  
+  return true;
 }
 
 void Slot::disconnect(Slot * pOther)
@@ -21,7 +25,7 @@ void Slot::disconnect(Slot * pOther)
 
 /** Sort slots by rightmost node and rightmost position in the same node. */
 inline bool Slot::operator>= (const Slot& pOther) const
-{
+{  
   if (mNode == pOther.mNode) {
     // same node, sort by position in container, largest first
     return mId < pOther.mId;

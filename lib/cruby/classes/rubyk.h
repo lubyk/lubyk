@@ -6,6 +6,7 @@
 #include "event.h"
 #include <list>
 #include <sys/timeb.h> // ftime
+#include <iostream>
 
 // 50 ms wait
 #define SLEEP_MS 50
@@ -20,7 +21,7 @@ public:
   
   virtual ~Rubyk();
   
-  Node * create_instance(const std::string& pVariable, const std::string& pClass, const Params& p);
+  Node * create_instance(const std::string& pVariable, const std::string& pClass, const Params& p, std::ostream * pOutput);
   
   void create_link(const std::string& pFrom, unsigned int pFromPort, unsigned int pToPort, const std::string& pTo);
   

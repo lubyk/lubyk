@@ -8,10 +8,18 @@ public:
   bool init(const Params& p)
   {
     mMessage.type = NoteOn;
-    mMessage.set_note( p.get("note", 0) );
+    mMessage.set_note( p.get("note", MIDI_MIDDLE_C) );
     mMessage.set_velocity( p.get("velocity", 80) );
     mLength = p.get("length", 500); // 0.5 sec.
     mMessage.set_channel( p.get("channel", 1) );
+    
+    make_inlet <NoteOut,&NoteOut::set_note>();
+    make_inlet <NoteOut,&NoteOut::set_velocity>();
+    make_inlet <NoteOut,&NoteOut::set_length>();
+    make_inlet <NoteOut,&NoteOut::set_channel>();
+    make_outlet<NoteOut,&NoteOut::send_note>();
+    
+    return true;
   }
   
   // inlet 1
@@ -19,7 +27,7 @@ public:
   {
     int n = 0;
     sig.get(&n);
-    if (n) mMessage.set_velocity(n);
+    if (n) mMessage.set_note(n);
   }
 
   // inlet 2
@@ -56,7 +64,7 @@ public:
   }
   
   // outlet 1
-  void send(Signal& sig)
+  void send_note(Signal& sig)
   {
     // send note on and register note off
     MidiMessage * message = new MidiMessage(mMessage);
@@ -69,6 +77,7 @@ public:
     // send note on
     sig.set(&mMessage);
   }
+  
   
   virtual void spy()
   { 

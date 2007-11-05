@@ -212,25 +212,25 @@ inline std::ostream& operator<< (std::ostream& pStream, const Signal& sig)
     pStream << "Bang!";
     break;
   case IntegerSignal:
-    pStream << sig.i.value << std::endl;
+    pStream << sig.i.value;
     break;
   case FloatSignal:
     snprintf(buffer, 50, "%.2f", sig.f.value);
-    pStream << buffer << std::endl;
+    pStream << buffer;
     break;
   case FloatArraySignal:
-    snprintf(buffer, 50, "{%i,%i}",sig.floats.value, sig.floats.size);
-    pStream << buffer << std::endl;
+    snprintf(buffer, 50, "#<floats %i,%i>",sig.floats.value, sig.floats.size);
+    pStream << buffer;
     break;
   case VoidPointerSignal:
-    snprintf(buffer, 50, "[%p,%i]",sig.ptr.value, sig.ptr.free_me);
-    pStream << buffer << std::endl;
+    snprintf(buffer, 50, "#<ptr %p,%i>",sig.ptr.value, sig.ptr.free_me);
+    pStream << buffer;
     break;
   case MidiPointerSignal:
-    pStream << *(sig.midi_ptr.value) << std::endl;
+    pStream << "#<note "<< *(sig.midi_ptr.value) << ">";
     break;
   default:
-    pStream << "??";
+    pStream << "#<\?\?>";
   }
   return pStream;
 }

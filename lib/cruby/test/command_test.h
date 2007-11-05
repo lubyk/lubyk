@@ -2,6 +2,7 @@
 #include <cxxtest/TestSuite.h>
 #include "command.h"
 #include "rubyk.h"
+#include "test_helper.h"
 
 class TestCreateCommand : public CxxTest::TestSuite
 {
@@ -18,11 +19,9 @@ public:
   }
 };
 
-class TestParseCommand : public CxxTest::TestSuite
+class TestParseCommand : public CxxTest::TestSuite, public ParseTest
 {
 public:
-  TestParseCommand() : mServer(), mCmd(&mServer), mOutput(std::ostringstream::out), mInput(std::istringstream::in)  
-    { mCmd.set_input(mInput); mCmd.set_output(mOutput); }
   
   void testParseCommand( void ) 
   { assert_result("v1=Value(1)\n","#<Value:v1 1.00>\n"); }
@@ -57,17 +56,4 @@ public:
   void testExecuteClassMethod( void ) 
   { assert_result("Test.hello\n","Hello World!\n"); }
 
-private:
-  Rubyk mServer;
-  Command mCmd;
-  std::ostringstream mOutput;
-  std::istringstream mInput;
-  
-  
-  void assert_result(const char * pInput, const char * pOutput)
-  {
-    mOutput.str(std::string("")); // clear output
-    mCmd.parse(pInput);
-    TS_ASSERT_EQUALS( mOutput.str(), std::string(pOutput));
-  }
 };

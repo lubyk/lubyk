@@ -1,5 +1,6 @@
 #include "class.h"
 #include <dlfcn.h> // dylib load
+#include <iostream>
 
 // definitions of static data members
 Hash<std::string, Class*> Class::sClasses(300);
@@ -37,11 +38,11 @@ bool Class::get (Class ** pClass, const std::string& pClassName)
   return false;
 }
 
-Node * Class::create (Rubyk * pServer, const std::string& pClassName, const Params& p)
+Node * Class::create (Rubyk * pServer, const std::string& pClassName, const Params& p, std::ostream * pOutput)
 {
   Class * klass;
   if (get(&klass, pClassName))
-    return (*klass)(pServer, p);
+    return (*klass)(pServer, p, pOutput);
     
   // load failed
   // dummy object in broken mode
@@ -50,15 +51,15 @@ Node * Class::create (Rubyk * pServer, const std::string& pClassName, const Para
     Class::declare<Node>("Node");
   
   sClasses.get(&klass, "Node");
-  Node * obj = (*klass)(pServer, p);
+  Node * obj = (*klass)(pServer, p, pOutput);
   obj->set_class(klass);
   obj->set_is_ok( false ); // if init returns false, the node goes into 'broken' mode.
   return obj;
 }
 
-inline Node * Class::operator() (Rubyk * pServer, const Params& p)
+inline Node * Class::operator() (Rubyk * pServer, const Params& p, std::ostream * pOutput)
 {  
-  return (*mCreateFunction)(this, pServer, p);
+  return (*mCreateFunction)(this, pServer, p, pOutput);
 }
 
 // for help to create a portable version of this load function, read Ruby's dln.c file.
