@@ -243,16 +243,18 @@ Command::Command(Rubyk * pServer)
   mServer = pServer;
   mThread = 0;
   mQuit   = false;
-  
-#line 248 "classes/command.cpp"
-	{
-	cs = command_start;
-	}
-#line 20 "classes/command.rl"
-  mCurrentState = cs;
   mTokenIndex = 0;
   mInput  = &std::cin;
   mOutput = &std::cout;
+  mSilent = false;
+  
+  
+#line 253 "classes/command.cpp"
+	{
+	cs = command_start;
+	}
+#line 25 "classes/command.rl"
+  mCurrentState = cs;
 }
 
 Command::~Command()
@@ -296,7 +298,7 @@ void Command::parse(const std::string& pStr)
   
 
   
-#line 300 "classes/command.cpp"
+#line 302 "classes/command.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -371,7 +373,7 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 67 "classes/command.rl"
+#line 69 "classes/command.rl"
 	{
       if (mTokenIndex >= MAX_TOKEN_SIZE) {
         std::cerr << "Buffer overflow !" << std::endl;
@@ -386,27 +388,27 @@ _match:
     }
 	break;
 	case 1:
-#line 80 "classes/command.rl"
+#line 82 "classes/command.rl"
 	{ set_from_token(mVariable);}
 	break;
 	case 2:
-#line 82 "classes/command.rl"
+#line 84 "classes/command.rl"
 	{ set_from_token(mMethod);}
 	break;
 	case 3:
-#line 84 "classes/command.rl"
+#line 86 "classes/command.rl"
 	{ set_from_token(mKey);}
 	break;
 	case 4:
-#line 86 "classes/command.rl"
+#line 88 "classes/command.rl"
 	{ set_class_from_token();}
 	break;
 	case 5:
-#line 88 "classes/command.rl"
+#line 90 "classes/command.rl"
 	{ set_from_token(mValue);}
 	break;
 	case 6:
-#line 90 "classes/command.rl"
+#line 92 "classes/command.rl"
 	{
       set_from_token(mValue);
       mFromPort = atoi(mValue.c_str());
@@ -414,22 +416,22 @@ _match:
     }
 	break;
 	case 7:
-#line 96 "classes/command.rl"
+#line 98 "classes/command.rl"
 	{
       set_from_token(mTo);
       mToPort = atoi(mValue.c_str());
     }
 	break;
 	case 8:
-#line 101 "classes/command.rl"
+#line 103 "classes/command.rl"
 	{ set_single_param_from_token(); }
 	break;
 	case 9:
-#line 103 "classes/command.rl"
+#line 105 "classes/command.rl"
 	{ set_parameter(mKey, mValue); }
 	break;
 	case 10:
-#line 105 "classes/command.rl"
+#line 107 "classes/command.rl"
 	{
       mToPort = atoi(mValue.c_str());
       mTo   = mVariable;
@@ -437,23 +439,23 @@ _match:
     }
 	break;
 	case 11:
-#line 111 "classes/command.rl"
+#line 113 "classes/command.rl"
 	{ create_instance(); }
 	break;
 	case 12:
-#line 113 "classes/command.rl"
+#line 115 "classes/command.rl"
 	{ execute_method(); }
 	break;
 	case 13:
-#line 115 "classes/command.rl"
+#line 117 "classes/command.rl"
 	{ execute_class_method(); }
 	break;
 	case 14:
-#line 117 "classes/command.rl"
+#line 119 "classes/command.rl"
 	{ execute_command(); }
 	break;
 	case 15:
-#line 121 "classes/command.rl"
+#line 123 "classes/command.rl"
 	{
       if (!mQuit) {
         clear();
@@ -462,7 +464,7 @@ _match:
     }
 	break;
 	case 16:
-#line 127 "classes/command.rl"
+#line 129 "classes/command.rl"
 	{
       p--; // move back one char
       *mOutput << "Syntax error !" << std::endl;
@@ -472,10 +474,10 @@ _match:
     }
 	break;
 	case 17:
-#line 135 "classes/command.rl"
+#line 137 "classes/command.rl"
 	{ {cs = 1; goto _again;} }
 	break;
-#line 479 "classes/command.cpp"
+#line 481 "classes/command.cpp"
 		}
 	}
 
@@ -486,7 +488,7 @@ _again:
 		goto _resume;
 	_out: {}
 	}
-#line 176 "classes/command.rl"
+#line 178 "classes/command.rl"
 
 //  printf("{%s}\n",p);
   mCurrentState = cs;
@@ -573,8 +575,13 @@ void Command::execute_method()
 {
   Node * node;
   if (mServer->get_instance(&node, mVariable)) {
-    node->execute_method(mMethod, mParameters);
-    if (!mSilent && mMethod == "bang") *mOutput << node->inspect() << std::endl;
+    member_method_t method;
+    if (node->klass()->get_member_method(&method, mMethod)) {
+      Action * a = new CallMethodAction(node, method, mParameters, mOutput);
+      mServer->register_command( a );
+    } else {
+      *mOutput << mVariable << " of class " << node->class_name() << " does not respond to '" << mMethod << "'\n";
+    }
   } else {
     *mOutput << "Unknown node '" << mVariable << "'" << std::endl;
   }

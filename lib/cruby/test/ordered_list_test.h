@@ -9,31 +9,32 @@ public:
   void testPushPop( void )
   {
     OrderedList<int> list;
-    int i1 = 1;
-    int i2 = 2;
-    int i3 = 3;
+    int i;
     
-    list.push(&i2);
-    TS_ASSERT_EQUALS( &i2, list.top());
+    list.push(2);
+    TS_ASSERT_EQUALS( 2, list.front());
+    TS_ASSERT( list.get(&i) );
+    TS_ASSERT_EQUALS( 2, i);
     list.pop();
-    TS_ASSERT_EQUALS( (void*)NULL, list.top());
+    TS_ASSERT( list.empty() );
+    TS_ASSERT( !list.get(&i) );
     
     // adding keeps element sorted
-    list.push(&i3);
-    list.push(&i2);
-    TS_ASSERT_EQUALS( &i2, list.top());
-    list.push(&i1);
-    TS_ASSERT_EQUALS( &i1, list.top());
-    list.push(&i1);
+    list.push(3);
+    list.push(2);
+    TS_ASSERT_EQUALS( 2, list.front());
+    list.push(1);
+    TS_ASSERT_EQUALS( 1, list.front());
+    list.push(1);
     
-    TS_ASSERT_EQUALS( &i1, list.top());
+    TS_ASSERT_EQUALS( 1, list.front());
     
     // pop to make sure we have a single copy, ordered
     list.pop();
-    TS_ASSERT_EQUALS( &i2, list.top());
+    TS_ASSERT_EQUALS( 2, list.front());
     list.pop();
-    TS_ASSERT_EQUALS( &i3, list.top());
+    TS_ASSERT_EQUALS( 3, list.front());
     list.pop();
-    TS_ASSERT_EQUALS( (void*)NULL, list.top());
+    TS_ASSERT( list.empty());
   }
 };

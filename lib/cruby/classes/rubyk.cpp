@@ -1,8 +1,10 @@
 #include "rubyk.h"
+#include "action.h"
 #include "node.h"
 #include "class.h"
 
-Rubyk::Rubyk() : mInstances(200), mQuit(false), mCurrentTime(0)
+
+Rubyk::Rubyk() : mInstances(200), mQuit(false), mCurrentTime(0), mCanRegister(true)
 {
   ftime(&mTimeRef); // set time reference to now.
 }
@@ -53,7 +55,7 @@ void Rubyk::create_pending_links()
   Node * fromNode, * toNode;
   Slot * fromPort, * toPort;
   end = mPendingLinks.end();
-  it  = mPendingLinks.begin();
+  it=mPendingLinks.begin();
   while(it != end) {
     if ((mInstances.get(&fromNode, it->mFrom)) && (mInstances.get(&toNode, it->mTo))) {
       if ((fromPort = fromNode->outlet(it->mFromPort)) && (toPort = toNode->inlet(it->mToPort))) {
@@ -81,11 +83,12 @@ bool Rubyk::run()
   struct timespec sleeper;
   sleeper.tv_sec  = 0; 
   sleeper.tv_nsec = SLEEP_MS * 10000000;
-  nanosleep (&sleeper, NULL);
+  nanosleep (&sleeper, NULL); // FIXME: only if no loop events ?
   mCurrentTime = real_time();
   // execute events that must occur on each loop (io operations)
   //trigger_loop_events();
   // trigger events in the queue
+  pop_commands();
   pop_events();
   return !mQuit;
 }
@@ -94,13 +97,26 @@ void Rubyk::pop_events()
 {
   BaseEvent * e;
   long double realTime = mCurrentTime;
-  while(((e = mEventList.top()) != NULL) && realTime >= e->mTime) {
+  while( mEventsQueue.get(&e) && realTime >= e->mTime) {
     mCurrentTime = e->mTime;
     e->trigger();
     delete e;
-    mEventList.pop();
+    mEventsQueue.pop();
   }
   mCurrentTime = realTime;
+}
+
+void Rubyk::pop_commands()
+{
+  Action * a;
+  mCanRegister = false; // FIXME: should be atomic
+  while(!mCommandsQueue.empty()) {
+    a = mCommandsQueue.front();
+    a->trigger();
+    delete a;
+    mCommandsQueue.pop();
+  }
+  mCanRegister = true;
 }
 
 void Rubyk::trigger_loop_events()

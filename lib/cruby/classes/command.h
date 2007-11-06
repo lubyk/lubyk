@@ -2,9 +2,11 @@
 #define _COMMAND_H_
 
 #include <pthread.h>
+#include "action.h"
 #include "params.h"
 #include "hash.h"
 #include "node.h"
+
 
 #define MAX_TOKEN_SIZE 2048
 
@@ -49,15 +51,13 @@ public:
   void set_output (std::ostream& pOutput)
   { mOutput = &pOutput; }
   
-  /** Set silent to 'true' to avoid command messages. */
-  void set_silent(bool pSilent)
-  {
-    mSilent = pSilent;
-  }
-  
   /** Used for testing. */
   void set_input (std::istream& pInput)
   { mInput = &pInput; }
+  
+  /** Do not print command results back. */
+  void set_silent (bool pSilent)
+  { mSilent = pSilent;}
 	
 protected:
   /** Code executed in a separate thread. Runs until 'mQuit' is true. */
@@ -112,7 +112,7 @@ protected:
   pthread_t mThread;
   std::istream * mInput;
   std::ostream * mOutput;
-  /* Listen elements. */
+  
   bool mQuit;
   bool mSilent;
 };

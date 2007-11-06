@@ -16,11 +16,13 @@ Command::Command(Rubyk * pServer)
   mServer = pServer;
   mThread = 0;
   mQuit   = false;
-  %% write init;
-  mCurrentState = cs;
   mTokenIndex = 0;
   mInput  = &std::cin;
   mOutput = &std::cout;
+  mSilent = false;
+  
+  %% write init;
+  mCurrentState = cs;
 }
 
 Command::~Command()
@@ -259,8 +261,13 @@ void Command::execute_method()
 {
   Node * node;
   if (mServer->get_instance(&node, mVariable)) {
-    node->execute_method(mMethod, mParameters);
-    if (!mSilent && mMethod == "bang") *mOutput << node->inspect() << std::endl;
+    member_method_t method;
+    if (node->klass()->get_member_method(&method, mMethod)) {
+      Action * a = new CallMethodAction(node, method, mParameters, mOutput);
+      mServer->register_command( a );
+    } else {
+      *mOutput << mVariable << " of class " << node->class_name() << " does not respond to '" << mMethod << "'\n";
+    }
   } else {
     *mOutput << "Unknown node '" << mVariable << "'" << std::endl;
   }

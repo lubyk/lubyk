@@ -5,9 +5,9 @@
 #include "outlet.h"
 #include "params.h"
 #include "hash.h"
-#include "event.h"
 #include "rubyk.h"
 #include "rubyk_signal.h"
+#include "event.h"
 
 #include <sstream>
 #include <cstdio>
@@ -15,32 +15,9 @@
 #include <string>
 
 
-class Class;
-
 #define START_SPY_BUFFER     20
 #define MAX_CLASS_NAME       50
 #define START_INSPECT_BUFFER (START_SPY_BUFFER + MAX_CLASS_NAME + 5 + 16)
-
-
-
-/** Pointer to a function to create nodes. */
-typedef Node * (*create_function_t)(Class * pClass, Rubyk * pServer, const Params& p, std::ostream * pOutput);
-
-/** Pointer to a class method that can be called from the command line with "Value.method(Params)" */
-typedef void (*class_method_t)(std::ostream * pOutput, const Params& p);
-
-/** Pointer to a member method that can be called from the command line with "obj.method(Params)" */
-typedef void (*member_method_t)(void * pReceiver, const Params& p);
-
-/** Pointer to an inlet method that can be called from the command line with "obj.method(Params)" */
-typedef void (*inlet_method_t)(void * pReceiver, const Signal& sig);
-
-/** Pointer to an inlet method that can be called from the command line with "obj.method(Params)" */
-typedef void (*outlet_method_t)(void * pReceiver, Signal& sig);
-
-
-
-
 
 /** Nodes do the actual work.
   * They receive messages from their inlets and pass new values to their outlets.
@@ -101,6 +78,13 @@ public:
       /** Send through rightmost outlet first. */
       mOutlets[i--]->compute_and_send();
     }
+  }
+  
+  /** This is the method that is called from the command line with 'v1.bang'. */
+  void do_bang ()
+  {
+    bang();
+    *mOutput << inspect() << std::endl;
   }
   
   /** Used by 'editors' to display some information on the node. Should be overwridden by subclasses. */

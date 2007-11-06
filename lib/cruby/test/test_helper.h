@@ -76,6 +76,7 @@ protected:
   {
     mOutput.str(std::string("")); // clear output
     mCmd.parse(pInput);
+    mServer.run(); // run one loop to execute commands
     TS_ASSERT_EQUALS( mOutput.str(), std::string(pOutput));
   }
   

@@ -4,7 +4,7 @@
 void Outlet::compute_and_send ()
 {
   Signal sig;
-  
+  printf("COMP\n");
   (*mFunction)(mNode, sig);
   send(sig);
 }
@@ -12,7 +12,7 @@ void Outlet::compute_and_send ()
 // FIXME: inline ?
 void Outlet::send(const Signal& sig)
 {  
-  LinkedList<Inlet> * iterator = (LinkedList<Inlet> *)(mConnections.begin());
+  LinkedList<Inlet*> * iterator = (LinkedList<Inlet*> *)(mConnections.begin());
   while(iterator) {
     iterator->obj->receive(sig);
     iterator = iterator->next;

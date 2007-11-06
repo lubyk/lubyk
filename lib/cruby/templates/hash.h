@@ -144,7 +144,7 @@ bool Hash<K,T>::get(T* pResult, const K& pId) const
 template <class K, class T>
 bool Hash<K,T>::get(T* pResult) const 
 {
-  if (mLastKeyIndex > 0 && mLastKeyIndex < mKeys.size())
+  if (mLastKeyIndex >= 0 && mLastKeyIndex < mKeys.size())
     return get(pResult, mKeys[mLastKeyIndex]);
   else
     return false;

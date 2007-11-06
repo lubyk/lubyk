@@ -3,6 +3,12 @@
 #include "node.h"
 #include <iostream>
 
+/** Pointer to a member method that can be called from the command line with "obj.method(Params)" */
+typedef void (*member_method_t)(void * pReceiver, const Params& p);
+
+/** Pointer to a function to create nodes. */
+typedef Node * (*create_function_t)(Class * pClass, Rubyk * pServer, const Params& p, std::ostream * pOutput);
+
 class Class
 {
 public:
@@ -81,6 +87,7 @@ public:
     
     klass = new Class(name, &cast_create<T>);
     sClasses.set(std::string(name), klass);
+    klass->add_method<Node, &Node::do_bang>("bang");
     return klass;
   }
 
@@ -91,6 +98,9 @@ public:
   { sObjectsPath = pPath; }
 
   const std::string& name() { return mName; }
+  
+  bool get_member_method(member_method_t * pMethod, std::string& pMethodName)
+  { return mMethods.get(pMethod, pMethodName); }
   
 private:
   friend class Node;

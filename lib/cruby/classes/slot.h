@@ -43,7 +43,7 @@ class Slot
     void* mNode; /**< containing node.      */
     int   mId;   /**< position in the node. */
 
-    OrderedList<Slot> mConnections; /**< connections are kept sorted, so that we always send values to inlets
+    OrderedList<Slot*> mConnections; /**< connections are kept sorted, so that we always send values to inlets
                                          that are rightmost (less important, no bang) first. */
 };
 
