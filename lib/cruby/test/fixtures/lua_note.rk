@@ -1,0 +1,8 @@
+m  = Metro(120)
+m.1 => 1.l
+l  = Lua("g = g or 0;g = g + 1; return (60 + (g%4));")
+l.1 => 1.no
+no = NoteOut(note:60 length:200)
+no.1 => 1.midi
+midi = Midi()
+

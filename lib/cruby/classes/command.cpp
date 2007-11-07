@@ -259,6 +259,10 @@ void Command::initialize()
 int Command::do_listen()
 {
   char iss[1024];
+  
+  // set thread priority to normal
+  mServer->normal_priority();
+  
   if (!mSilent)
     *mOutput << "Welcome to rubyk !\n\n";
   clear();
@@ -280,7 +284,7 @@ void Command::parse(const std::string& pStr)
   
 
   
-#line 284 "classes/command.cpp"
+#line 288 "classes/command.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -355,7 +359,7 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 51 "classes/command.rl"
+#line 55 "classes/command.rl"
 	{
       if (mTokenIndex >= MAX_TOKEN_SIZE) {
         std::cerr << "Buffer overflow !" << std::endl;
@@ -370,27 +374,27 @@ _match:
     }
 	break;
 	case 1:
-#line 64 "classes/command.rl"
+#line 68 "classes/command.rl"
 	{ set_from_token(mVariable);}
 	break;
 	case 2:
-#line 66 "classes/command.rl"
+#line 70 "classes/command.rl"
 	{ set_from_token(mMethod);}
 	break;
 	case 3:
-#line 68 "classes/command.rl"
+#line 72 "classes/command.rl"
 	{ set_from_token(mKey);}
 	break;
 	case 4:
-#line 70 "classes/command.rl"
+#line 74 "classes/command.rl"
 	{ set_class_from_token();}
 	break;
 	case 5:
-#line 72 "classes/command.rl"
+#line 76 "classes/command.rl"
 	{ set_from_token(mValue);}
 	break;
 	case 6:
-#line 74 "classes/command.rl"
+#line 78 "classes/command.rl"
 	{
       set_from_token(mValue);
       mFromPort = atoi(mValue.c_str());
@@ -398,22 +402,22 @@ _match:
     }
 	break;
 	case 7:
-#line 80 "classes/command.rl"
+#line 84 "classes/command.rl"
 	{
       set_from_token(mTo);
       mToPort = atoi(mValue.c_str());
     }
 	break;
 	case 8:
-#line 85 "classes/command.rl"
+#line 89 "classes/command.rl"
 	{ set_single_param_from_token(); }
 	break;
 	case 9:
-#line 87 "classes/command.rl"
+#line 91 "classes/command.rl"
 	{ set_parameter(mKey, mValue); }
 	break;
 	case 10:
-#line 89 "classes/command.rl"
+#line 93 "classes/command.rl"
 	{
       mToPort = atoi(mValue.c_str());
       mTo   = mVariable;
@@ -421,23 +425,23 @@ _match:
     }
 	break;
 	case 11:
-#line 95 "classes/command.rl"
+#line 99 "classes/command.rl"
 	{ create_instance(); }
 	break;
 	case 12:
-#line 97 "classes/command.rl"
+#line 101 "classes/command.rl"
 	{ execute_method(); }
 	break;
 	case 13:
-#line 99 "classes/command.rl"
+#line 103 "classes/command.rl"
 	{ execute_class_method(); }
 	break;
 	case 14:
-#line 101 "classes/command.rl"
+#line 105 "classes/command.rl"
 	{ execute_command(); }
 	break;
 	case 15:
-#line 105 "classes/command.rl"
+#line 109 "classes/command.rl"
 	{
       if (!mQuit) {
         clear();
@@ -446,7 +450,7 @@ _match:
     }
 	break;
 	case 16:
-#line 111 "classes/command.rl"
+#line 115 "classes/command.rl"
 	{
       p--; // move back one char
       *mOutput << "Syntax error !" << std::endl;
@@ -456,10 +460,10 @@ _match:
     }
 	break;
 	case 17:
-#line 119 "classes/command.rl"
+#line 123 "classes/command.rl"
 	{ {cs = 1; goto _again;} }
 	break;
-#line 463 "classes/command.cpp"
+#line 467 "classes/command.cpp"
 		}
 	}
 
@@ -470,7 +474,7 @@ _again:
 		goto _resume;
 	_out: {}
 	}
-#line 160 "classes/command.rl"
+#line 164 "classes/command.rl"
 
 //  printf("{%s}\n",p);
   mCurrentState = cs;

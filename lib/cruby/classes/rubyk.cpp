@@ -10,16 +10,7 @@ Rubyk::Rubyk() : mInstances(200), mQuit(false), mCurrentTime(0), mCanRegister(tr
   mMutex.lock();    // we get hold of everything, releasing resources when we decide (I'm the master).
   ftime(&mTimeRef); // set time reference to now (my birthdate).
   
-  // pthread_attr_t tattr;
-  // sched_param param;
-  // 
-  // 
-  // /* set the priority; others are unchanged */
-  // param.sched_priority = 99; // doesn't seem to change anything...
-  // 
-  // /* set the new scheduling param */
-  // pthread_attr_setschedparam (&tattr, &param);
-  
+  high_priority();
 }
 
 Rubyk::~Rubyk()
@@ -40,6 +31,36 @@ Rubyk::~Rubyk()
   for(it = mInstances.begin(); it < end; it++) {
     if (mInstances.get(&node, *it))
       delete node; // destroy node
+  }
+}
+
+/** Called during startup to increase thread priority. */
+void Rubyk::high_priority()
+{
+  struct sched_param param;
+  int policy;
+  pthread_t id = pthread_self();
+
+  // save original scheduling parameters
+  pthread_getschedparam(id, &mCommandSchedPoclicy, &mCommandThreadParam);
+  
+  // set to high priority
+  param = mCommandThreadParam;
+  param.sched_priority = 47; // magick number for Mac OS X
+  policy = SCHED_RR;         // round robin
+  
+  
+  if (pthread_setschedparam(id, policy, &param)) {
+    fprintf(stderr, "Could not set thread priority to %i.\n", param.sched_priority);
+  }
+}
+
+void Rubyk::normal_priority()
+{
+  pthread_t id = pthread_self(); // this is a command thread
+
+  if (pthread_setschedparam(id, mCommandSchedPoclicy, &mCommandThreadParam)) {
+    fprintf(stderr, "Could not set command thread priority to %i.\n", mCommandThreadParam.sched_priority);
   }
 }
 
@@ -119,7 +140,7 @@ bool Rubyk::run()
 { 
   struct timespec sleeper;
   sleeper.tv_sec  = 0; 
-  sleeper.tv_nsec = SLEEP_MS * 10000000;
+  sleeper.tv_nsec = SLEEP_MICRO_S * 10000;
   
   mMutex.unlock(); // ok, others can do things while we sleep
   nanosleep (&sleeper, NULL); // FIXME: only if no loop events ?

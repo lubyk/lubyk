@@ -1,0 +1,7 @@
+v=Value(3)
+v.1=>1.l
+l=Lua("return sig+5")
+l.1=>1.p
+p=Print()
+
+v.bang

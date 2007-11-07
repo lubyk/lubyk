@@ -179,7 +179,7 @@ private:
   {
     Signal sig;
     (((T*)receiver)->*Tmethod)(sig);
-    ((T*)receiver)->output() << sig << std::endl;
+    ((Node*)receiver)->output() << sig << std::endl;
   }
   
   /** Create a callback for an outlet. */

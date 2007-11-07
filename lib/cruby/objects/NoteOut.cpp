@@ -9,7 +9,7 @@ public:
   {
     mMessage.type = NoteOn;
     mMessage.set_note(     p.val("note",     MIDI_NOTE_C0   ));
-    mMessage.set_velocity( p.val("velocity", 80             ));
+    mMessage.set_velocity( p.val("velocity", 70             ));
     mLength =              p.val("length",   500             ); // 0.5 sec.
     mMessage.set_channel(  p.val("channel",  1              ));
     

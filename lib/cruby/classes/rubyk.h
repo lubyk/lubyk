@@ -10,8 +10,8 @@
 #include <sys/timeb.h> // ftime
 #include <iostream>
 
-// 50 ms wait
-#define SLEEP_MS 1
+// 0.2 [ms]
+#define SLEEP_MICRO_S 200
 
 class Params;
 class Action;
@@ -40,9 +40,9 @@ public:
   bool run();
   
   /** Add an event to the event queue. The server is responsible for deleting the event. */
-  void register_event(BaseEvent * pEvent)
+  void register_event(BaseEvent * e)
   { 
-    if (!mQuit) mEventsQueue.push(pEvent); // do not accept new events while we are trying to quit.
+    if (!mQuit || e->mForced) mEventsQueue.push(e); // do not accept new events while we are trying to quit.
   }
   
   time_t mCurrentTime; /**< Current logical time in [ms] since reference. */
@@ -66,7 +66,12 @@ public:
   void unlock()
   { mMutex.unlock(); }
   
+  /** Set command thread to normal priority. */
+  void normal_priority ();
+  
 private:
+  /** Set rubyk thread to high priority. */
+  void high_priority ();
   
   /** Try to create links. */
   void create_pending_links ();
@@ -97,6 +102,10 @@ private:
   
   /** Time reference. All times are [ms] from this reference. */
   struct timeb mTimeRef;
+  
+  /** Thread original scheduling priority (all commands get this). */ 
+  int mCommandSchedPoclicy;
+  struct sched_param mCommandThreadParam;
   
   /** Do not mess with me mutex lock. */
   Mutex mMutex;

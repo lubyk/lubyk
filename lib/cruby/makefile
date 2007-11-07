@@ -8,7 +8,7 @@ test: test/runner test/runner.cpp
 	./test/runner && rm test/runner
 
 rubyk: classes/main.cpp command.o rubyk.o node.o inlet.o outlet.o slot.o params.o class.o objects
-	g++ -Itest -Itemplates -Iclasses -Iobjects -I. classes/main.cpp slot.o inlet.o outlet.o params.o node.o class.o command.o rubyk.o -o rubyk
+	g++ -o rubyk -Itest -Itemplates -Iclasses -Iobjects -I. classes/main.cpp slot.o inlet.o outlet.o params.o node.o class.o command.o rubyk.o
 	
 test/runner.cpp: test/*_test.h test/objects/*_test.h
 	./test/cxxtest/cxxtestgen.pl --error-printer -o test/runner.cpp test/*_test.h test/objects/*_test.h
@@ -47,7 +47,7 @@ command.o: classes/command.cpp classes/command.h classes/mutex.h
 command.o.bak: classes/command.cpp classes/command.h parser/parser.c lexer.o	
 	g++ -c -Iclasses -Itemplates classes/command.cpp parser/parser.c parser/lexer.o -O2 -Wl,-x -pipe -lm -o command.o
 
-objects: lib/Test.rko lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/Midi.rko lib/NoteOut.rko
+objects: lib/Test.rko lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/Midi.rko lib/NoteOut.rko lib/Lua.rko
 
 
 lib/Test.rko: objects/Test.cpp classes/class.h
@@ -74,6 +74,8 @@ lib/Midi.rko: objects/Midi.cpp classes/class.h
 lib/NoteOut.rko: objects/NoteOut.cpp classes/class.h
 	g++ -o lib/NoteOut.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/NoteOut.cpp
 
+lib/Lua.rko: objects/Lua.cpp classes/class.h
+	g++ -o lib/Lua.rko -Itemplates -Iclasses -I/usr/local/include -dynamic -bundle -undefined suppress -flat_namespace -lgcc -lstdc++ objects/Lua.cpp objects/lua/liblua.a
 	
 dot: classes/command.png	
 	open classes/command.png

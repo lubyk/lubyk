@@ -90,10 +90,11 @@ protected:
   { 
     
     mServer.unlock();
-      mCmd.parse("print=Print()\n");
+      mCmd.parse("print=Print()\nn.1 => 1.print\n");
       mOutput.str(std::string("")); // clear output
       mCmd.set_silent(true);
       mCmd.parse(pInput);
+      mCmd.parse("n.bang\n");
     mServer.lock();
     //mServer.run(); // loop once
     mCmd.set_silent(false);

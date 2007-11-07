@@ -27,6 +27,10 @@ void Command::initialize()
 int Command::do_listen()
 {
   char iss[1024];
+  
+  // set thread priority to normal
+  mServer->normal_priority();
+  
   if (!mSilent)
     *mOutput << "Welcome to rubyk !\n\n";
   clear();
