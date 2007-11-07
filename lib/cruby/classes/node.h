@@ -167,8 +167,19 @@ protected:
   void register_event (time_t pTime, void * data)
   {
     BaseEvent * e = (BaseEvent *) new Event<T, Tmethod>(mServer->mCurrentTime + pTime, (T*)this, data);
+    e->mForced = false;
     mServer->register_event( e );
   }
+  
+  /** Register an event that must be run when the server quits. */
+  template <class T, void(T::*Tmethod)(void *)>
+  void register_forced_event (time_t pTime, void * data)
+  {
+    BaseEvent * e = (BaseEvent *) new Event<T, Tmethod>(mServer->mCurrentTime + pTime, (T*)this, data);
+    e->mForced = true;
+    mServer->register_event( e );
+  }
+  
   // ================ MEMBER DATA    ================= //
   
   long  mId;

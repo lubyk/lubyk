@@ -41,7 +41,9 @@ public:
   
   /** Add an event to the event queue. The server is responsible for deleting the event. */
   void register_event(BaseEvent * pEvent)
-  { mEventsQueue.push(pEvent); }
+  { 
+    if (!mQuit) mEventsQueue.push(pEvent); // do not accept new events while we are trying to quit.
+  }
   
   time_t mCurrentTime; /**< Current logical time in [ms] since reference. */
 
@@ -71,6 +73,9 @@ private:
   
   /** Trigger events with a time older or equal to the current time. */
   void pop_events ();
+  
+  /** Empty events queue. */
+  void pop_all_events ();
   
   /** Trigger loop events. These are typically the IO 'read/write' of the IO nodes. */
   void trigger_loop_events ();

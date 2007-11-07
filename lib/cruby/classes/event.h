@@ -36,6 +36,7 @@ public:
   { return mTime >= pOther.mTime; }
   
   time_t mTime;
+  bool   mForced; /**< Run even if trying to quit. */
   
 protected:
   void * mParameter;

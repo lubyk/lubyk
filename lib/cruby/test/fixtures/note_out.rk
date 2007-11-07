@@ -1,6 +1,8 @@
 m  = Metro(120)
 m.1 => 1.no
-no = NoteOut(note:45 length:1000)
+no = NoteOut(note:60 length:200)
 no.1 => 1.midi
+no.1 => 1.p
+p = Print()
 midi = Midi()
-m.bang
+

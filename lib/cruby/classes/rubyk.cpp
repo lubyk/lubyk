@@ -2,12 +2,24 @@
 #include "node.h"
 #include "command.h"
 #include "class.h"
+#include <pthread.h>
 
 
 Rubyk::Rubyk() : mInstances(200), mQuit(false), mCurrentTime(0), mCanRegister(true)
 {
   mMutex.lock();    // we get hold of everything, releasing resources when we decide (I'm the master).
   ftime(&mTimeRef); // set time reference to now (my birthdate).
+  
+  // pthread_attr_t tattr;
+  // sched_param param;
+  // 
+  // 
+  // /* set the priority; others are unchanged */
+  // param.sched_priority = 99; // doesn't seem to change anything...
+  // 
+  // /* set the new scheduling param */
+  // pthread_attr_setschedparam (&tattr, &param);
+  
 }
 
 Rubyk::~Rubyk()
@@ -23,12 +35,12 @@ Rubyk::~Rubyk()
     child->close(); // joins pthread
     mCommands.pop();
   }
+  pop_all_events();
   
   for(it = mInstances.begin(); it < end; it++) {
     if (mInstances.get(&node, *it))
       delete node; // destroy node
   }
-  
 }
 
 void Rubyk::listen_to_command (Command& pCommand)
@@ -132,6 +144,18 @@ void Rubyk::pop_events()
     mEventsQueue.pop();
   }
   mCurrentTime = realTime;
+}
+
+void Rubyk::pop_all_events()
+{
+  BaseEvent * e;
+  while( mEventsQueue.get(&e)) {
+    mCurrentTime = e->mTime;
+    if (e->mForced)
+      e->trigger();
+    delete e;
+    mEventsQueue.pop();
+  }
 }
 
 void Rubyk::trigger_loop_events()

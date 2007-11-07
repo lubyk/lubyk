@@ -8,7 +8,7 @@ public:
   bool init(const Params& p)
   {
     mMessage.type = NoteOn;
-    mMessage.set_note(     p.val("note",     MIDI_MIDDLE_C  ));
+    mMessage.set_note(     p.val("note",     MIDI_NOTE_C0   ));
     mMessage.set_velocity( p.val("velocity", 80             ));
     mLength =              p.val("length",   500             ); // 0.5 sec.
     mMessage.set_channel(  p.val("channel",  1              ));
@@ -57,7 +57,6 @@ public:
     sig.set(msg);
     
     if (out = outlet(1)) out->send(sig);
-    
     delete msg;
   }
   
@@ -69,8 +68,8 @@ public:
     
     message->note_on_to_off();
     
-    // register note off
-    register_event<NoteOut, &NoteOut::noteOff>(mLength, (void *)message);
+    // register note off (forced = must be run on quit)
+    register_forced_event<NoteOut, &NoteOut::noteOff>(mLength, (void *)message);
     
     // send note on
     sig.set(&mMessage);

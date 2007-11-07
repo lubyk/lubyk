@@ -4,7 +4,7 @@
 #include <vector>
 #include <iostream>
 
-#define MIDI_MIDDLE_C 60
+#define MIDI_NOTE_C0 24
 
 /** Midi messages types. */
 enum midi_messages_t {
@@ -46,28 +46,28 @@ struct MidiMessage
   inline void note_on_to_off()
   {
     if (type == NoteOn) {
-      data[1] -= 0x10;
+      data[0] -= 0x10;
       type = NoteOff;
     }
   }
   
   inline void set_note(unsigned int pNote)
-  { data[0] = pNote % 128; }
+  { data[1] = pNote % 128; }
   
   inline void set_channel(unsigned int pChannel)
   {
     if (type == NoteOn)
-      data[1] = 0x90 + ((pChannel + 15) % 16);
+      data[0] = 0x90 + ((pChannel + 15) % 16);
     else
-      data[1] = 0x80 + ((pChannel + 15) % 16);
+      data[0] = 0x80 + ((pChannel + 15) % 16);
   }
   
   inline unsigned int channel() const
   { 
     if (type == NoteOn)
-      return data[1] - 0x90 + 1;
+      return data[0] - 0x90 + 1;
     else
-      return data[1] - 0x80 + 1;
+      return data[0] - 0x80 + 1;
   }
   
   inline void set_velocity(unsigned int pVelocity)
@@ -77,8 +77,8 @@ struct MidiMessage
   inline void get_note_name(char buffer[]) const
   {
     unsigned int i = 0;
-    int octave = (data[0] - MIDI_MIDDLE_C) / 12;
-    int note   = data[0] % 12;
+    int octave = (data[1] - MIDI_NOTE_C0) / 12;
+    int note   = data[1] % 12;
     
     if (type != NoteOn && type != NoteOff) {
       buffer[0] = '?';
