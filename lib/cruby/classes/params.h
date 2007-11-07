@@ -53,7 +53,7 @@ public:
   template<class T>
   bool get(T* pResult, const char * pKey) const
   {
-    return get(pResult, NULL, true);
+    return get(pResult, pKey, false);
   }
   
   template<class T>

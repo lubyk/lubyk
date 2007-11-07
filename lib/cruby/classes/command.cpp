@@ -2,11 +2,12 @@
 #include "command.h"
 #include "rubyk.h"
 #include "class.h"
+#include "mutex.h"
 
 #undef DEBUG_PARSER
 
 
-#line 10 "classes/command.cpp"
+#line 11 "classes/command.cpp"
 static const char _command_actions[] = {
 	0, 1, 0, 1, 1, 1, 2, 1, 
 	3, 1, 4, 1, 5, 1, 6, 1, 
@@ -233,52 +234,33 @@ static const int command_first_final = 98;
 static const int command_en_eat_line = 97;
 static const int command_en_main = 1;
 
-#line 10 "classes/command.rl"
+#line 11 "classes/command.rl"
 
 
-Command::Command(Rubyk * pServer)
+void Command::initialize()
 {
   int cs;
+  
   mAction = NO_ACTION;
-  mServer = pServer;
-  mThread = 0;
+  mServer = NULL;
   mQuit   = false;
   mTokenIndex = 0;
-  mInput  = &std::cin;
-  mOutput = &std::cout;
   mSilent = false;
   
   
-#line 253 "classes/command.cpp"
+#line 252 "classes/command.cpp"
 	{
 	cs = command_start;
 	}
-#line 25 "classes/command.rl"
+#line 24 "classes/command.rl"
   mCurrentState = cs;
-}
-
-Command::~Command()
-{
-  if (mThread) close();
-}
-
-void Command::listen (std::istream& pInput, std::ostream& pOutput)
-{
-  int ret;
-  if (mThread) {
-    close();
-    mQuit = false;
-  }
-  mOutput = &pOutput;
-  mInput  = &pInput;
-  ret = pthread_create( &mThread, NULL, &Command::call_do_listen, this);
-  // FIXME: check for error from 'ret'
 }
 
 int Command::do_listen()
 {
   char iss[1024];
-  *mOutput << "Welcome to rubyk !\n\n";
+  if (!mSilent)
+    *mOutput << "Welcome to rubyk !\n\n";
   clear();
   prompt();
 
@@ -298,7 +280,7 @@ void Command::parse(const std::string& pStr)
   
 
   
-#line 302 "classes/command.cpp"
+#line 284 "classes/command.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -373,7 +355,7 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 69 "classes/command.rl"
+#line 51 "classes/command.rl"
 	{
       if (mTokenIndex >= MAX_TOKEN_SIZE) {
         std::cerr << "Buffer overflow !" << std::endl;
@@ -388,27 +370,27 @@ _match:
     }
 	break;
 	case 1:
-#line 82 "classes/command.rl"
+#line 64 "classes/command.rl"
 	{ set_from_token(mVariable);}
 	break;
 	case 2:
-#line 84 "classes/command.rl"
+#line 66 "classes/command.rl"
 	{ set_from_token(mMethod);}
 	break;
 	case 3:
-#line 86 "classes/command.rl"
+#line 68 "classes/command.rl"
 	{ set_from_token(mKey);}
 	break;
 	case 4:
-#line 88 "classes/command.rl"
+#line 70 "classes/command.rl"
 	{ set_class_from_token();}
 	break;
 	case 5:
-#line 90 "classes/command.rl"
+#line 72 "classes/command.rl"
 	{ set_from_token(mValue);}
 	break;
 	case 6:
-#line 92 "classes/command.rl"
+#line 74 "classes/command.rl"
 	{
       set_from_token(mValue);
       mFromPort = atoi(mValue.c_str());
@@ -416,22 +398,22 @@ _match:
     }
 	break;
 	case 7:
-#line 98 "classes/command.rl"
+#line 80 "classes/command.rl"
 	{
       set_from_token(mTo);
       mToPort = atoi(mValue.c_str());
     }
 	break;
 	case 8:
-#line 103 "classes/command.rl"
+#line 85 "classes/command.rl"
 	{ set_single_param_from_token(); }
 	break;
 	case 9:
-#line 105 "classes/command.rl"
+#line 87 "classes/command.rl"
 	{ set_parameter(mKey, mValue); }
 	break;
 	case 10:
-#line 107 "classes/command.rl"
+#line 89 "classes/command.rl"
 	{
       mToPort = atoi(mValue.c_str());
       mTo   = mVariable;
@@ -439,23 +421,23 @@ _match:
     }
 	break;
 	case 11:
-#line 113 "classes/command.rl"
+#line 95 "classes/command.rl"
 	{ create_instance(); }
 	break;
 	case 12:
-#line 115 "classes/command.rl"
+#line 97 "classes/command.rl"
 	{ execute_method(); }
 	break;
 	case 13:
-#line 117 "classes/command.rl"
+#line 99 "classes/command.rl"
 	{ execute_class_method(); }
 	break;
 	case 14:
-#line 119 "classes/command.rl"
+#line 101 "classes/command.rl"
 	{ execute_command(); }
 	break;
 	case 15:
-#line 123 "classes/command.rl"
+#line 105 "classes/command.rl"
 	{
       if (!mQuit) {
         clear();
@@ -464,7 +446,7 @@ _match:
     }
 	break;
 	case 16:
-#line 129 "classes/command.rl"
+#line 111 "classes/command.rl"
 	{
       p--; // move back one char
       *mOutput << "Syntax error !" << std::endl;
@@ -474,10 +456,10 @@ _match:
     }
 	break;
 	case 17:
-#line 137 "classes/command.rl"
+#line 119 "classes/command.rl"
 	{ {cs = 1; goto _again;} }
 	break;
-#line 481 "classes/command.cpp"
+#line 463 "classes/command.cpp"
 		}
 	}
 
@@ -488,18 +470,17 @@ _again:
 		goto _resume;
 	_out: {}
 	}
-#line 178 "classes/command.rl"
+#line 160 "classes/command.rl"
 
 //  printf("{%s}\n",p);
   mCurrentState = cs;
 }
 
 
-void Command::close() {
+void Command::close()
+{
   mQuit = true;
-  // FIXME: how to force out of input (>>) ?
-  if (mThread)
-    pthread_join( mThread, NULL); // wait for listen to finish
+  pthread_join( mThread, NULL); // wait for child to finish
 }
 
 void Command::set_from_token (std::string& pElem)
@@ -550,6 +531,7 @@ void Command::set_parameter  (const std::string& pKey, const std::string& pValue
 // FIXME: create_instance should run in server space with concurrency locks.
 void Command::create_instance()
 {
+  mServer->lock();
   Node * node = mServer->create_instance(mVariable, mClass, mParameters, mOutput);
 #ifdef DEBUG_PARSER
   std::cout << "NEW("<< mVariable << ", " << mClass << ", " << mParameters << ")";
@@ -560,12 +542,16 @@ void Command::create_instance()
   } else {
     *mOutput << "Error" << std::endl;      
   }
+  mServer->unlock();
 }
 
 
 void Command::create_link()
-{  
+{ 
+  mServer->lock();
   mServer->create_link(mFrom, mFromPort, mToPort, mTo);
+  mServer->unlock();
+
   if (!mSilent)
     *mOutput << "LINK " << mFrom << "." << mFromPort << "=>" << mToPort << "." << mTo << std::endl;
 }
@@ -574,44 +560,43 @@ void Command::create_link()
 void Command::execute_method()
 {
   Node * node;
+  mServer->lock();
   if (mServer->get_instance(&node, mVariable)) {
-    member_method_t method;
-    if (node->klass()->get_member_method(&method, mMethod)) {
-      Action * a = new CallMethodAction(node, method, mParameters, mOutput);
-      mServer->register_command( a );
-    } else {
-      *mOutput << mVariable << " of class " << node->class_name() << " does not respond to '" << mMethod << "'\n";
-    }
+    node->execute_method(mMethod, mParameters); 
+    if (!mSilent && mMethod == "bang") *mOutput << node->inspect() << std::endl;
   } else {
     *mOutput << "Unknown node '" << mVariable << "'" << std::endl;
   }
+  mServer->unlock();
 }
 
-// FIXME: execute_class_method should run in server space with concurrency locks.
 void Command::execute_class_method()
 {
   Class * klass;
+  mServer->lock();
   if (Class::get(&klass, mClass)) {
     klass->execute_method(mMethod, mParameters, mOutput);
   } else {
     *mOutput << "Unknown class '" << mClass << "'" << std::endl;
   }
+  mServer->unlock();
 }
 
-// FIXME: execute_command should run in server space with concurrency locks.
 void Command::execute_command()
 {
   Node * node;
+  mServer->lock();
   if (mServer->get_instance(&node, mMethod)) {
     // inspect
     *mOutput << node->inspect() << std::endl;
   } else if (mMethod == "quit") {
-    mServer->quit(); // not all commands should quit the server...
+    mServer->quit();
     mQuit = true;
     *mOutput << "Bye..." << std::endl;
   } else {
     *mOutput << "Unknown command '" << mMethod << "'" << std::endl;
   }
+  mServer->unlock();
 }
 
 void Command::print(void)

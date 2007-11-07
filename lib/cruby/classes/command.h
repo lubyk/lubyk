@@ -2,7 +2,6 @@
 #define _COMMAND_H_
 
 #include <pthread.h>
-#include "action.h"
 #include "params.h"
 #include "hash.h"
 #include "node.h"
@@ -21,9 +20,17 @@ class Rubyk;
 class Command
 {
 public:
-  Command(Rubyk * pServer);
+  Command(std::istream& pInput, std::ostream& pOutput) : mInput(&pInput), mOutput(&pOutput)
+  { initialize(); }
   
-  virtual ~Command();
+  Command ()
+  {
+    mInput = &std::cin;
+    mOutput = &std::cout;
+    initialize();
+  }
+  
+  virtual ~Command() {}
   
   /** This method creates a new thread to listen for incomming commands. */
   void listen (std::istream& pInput, std::ostream& pOutput) ;
@@ -51,6 +58,10 @@ public:
   void set_output (std::ostream& pOutput)
   { mOutput = &pOutput; }
   
+  /** Used by rubyk server. */
+  void set_server (Rubyk& pServer)
+  { mServer = &pServer; }
+  
   /** Used for testing. */
   void set_input (std::istream& pInput)
   { mInput = &pInput; }
@@ -58,8 +69,14 @@ public:
   /** Do not print command results back. */
   void set_silent (bool pSilent)
   { mSilent = pSilent;}
+  
+  void set_thread_id(pthread_t& pId)
+  { mThread = pId; }
 	
 protected:
+  /** Constructor, set default values. */
+  void initialize();
+  
   /** Code executed in a separate thread. Runs until 'mQuit' is true. */
   virtual int do_listen();
   
@@ -120,7 +137,8 @@ protected:
 class InteractiveCommand : public Command
 {
 public:
-  InteractiveCommand(Rubyk * pServer) : Command(pServer) {}
+  InteractiveCommand(std::istream& pInput, std::ostream& pOutput) : Command(pInput,pOutput) {}
+  InteractiveCommand() {}
   virtual void prompt()
   {
     *mOutput << "> ";

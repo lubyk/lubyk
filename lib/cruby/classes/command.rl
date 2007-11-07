@@ -1,6 +1,7 @@
 #include "command.h"
 #include "rubyk.h"
 #include "class.h"
+#include "mutex.h"
 
 #undef DEBUG_PARSER
 
@@ -9,44 +10,25 @@
   write data noerror;
 }%%
 
-Command::Command(Rubyk * pServer)
+void Command::initialize()
 {
   int cs;
+  
   mAction = NO_ACTION;
-  mServer = pServer;
-  mThread = 0;
+  mServer = NULL;
   mQuit   = false;
   mTokenIndex = 0;
-  mInput  = &std::cin;
-  mOutput = &std::cout;
   mSilent = false;
   
   %% write init;
   mCurrentState = cs;
 }
 
-Command::~Command()
-{
-  if (mThread) close();
-}
-
-void Command::listen (std::istream& pInput, std::ostream& pOutput)
-{
-  int ret;
-  if (mThread) {
-    close();
-    mQuit = false;
-  }
-  mOutput = &pOutput;
-  mInput  = &pInput;
-  ret = pthread_create( &mThread, NULL, &Command::call_do_listen, this);
-  // FIXME: check for error from 'ret'
-}
-
 int Command::do_listen()
 {
   char iss[1024];
-  *mOutput << "Welcome to rubyk !\n\n";
+  if (!mSilent)
+    *mOutput << "Welcome to rubyk !\n\n";
   clear();
   prompt();
 
@@ -181,11 +163,10 @@ void Command::parse(const std::string& pStr)
 }
 
 
-void Command::close() {
+void Command::close()
+{
   mQuit = true;
-  // FIXME: how to force out of input (>>) ?
-  if (mThread)
-    pthread_join( mThread, NULL); // wait for listen to finish
+  pthread_join( mThread, NULL); // wait for child to finish
 }
 
 void Command::set_from_token (std::string& pElem)
@@ -236,6 +217,7 @@ void Command::set_parameter  (const std::string& pKey, const std::string& pValue
 // FIXME: create_instance should run in server space with concurrency locks.
 void Command::create_instance()
 {
+  mServer->lock();
   Node * node = mServer->create_instance(mVariable, mClass, mParameters, mOutput);
 #ifdef DEBUG_PARSER
   std::cout << "NEW("<< mVariable << ", " << mClass << ", " << mParameters << ")";
@@ -246,12 +228,16 @@ void Command::create_instance()
   } else {
     *mOutput << "Error" << std::endl;      
   }
+  mServer->unlock();
 }
 
 
 void Command::create_link()
-{  
+{ 
+  mServer->lock();
   mServer->create_link(mFrom, mFromPort, mToPort, mTo);
+  mServer->unlock();
+
   if (!mSilent)
     *mOutput << "LINK " << mFrom << "." << mFromPort << "=>" << mToPort << "." << mTo << std::endl;
 }
@@ -260,44 +246,43 @@ void Command::create_link()
 void Command::execute_method()
 {
   Node * node;
+  mServer->lock();
   if (mServer->get_instance(&node, mVariable)) {
-    member_method_t method;
-    if (node->klass()->get_member_method(&method, mMethod)) {
-      Action * a = new CallMethodAction(node, method, mParameters, mOutput);
-      mServer->register_command( a );
-    } else {
-      *mOutput << mVariable << " of class " << node->class_name() << " does not respond to '" << mMethod << "'\n";
-    }
+    node->execute_method(mMethod, mParameters); 
+    if (!mSilent && mMethod == "bang") *mOutput << node->inspect() << std::endl;
   } else {
     *mOutput << "Unknown node '" << mVariable << "'" << std::endl;
   }
+  mServer->unlock();
 }
 
-// FIXME: execute_class_method should run in server space with concurrency locks.
 void Command::execute_class_method()
 {
   Class * klass;
+  mServer->lock();
   if (Class::get(&klass, mClass)) {
     klass->execute_method(mMethod, mParameters, mOutput);
   } else {
     *mOutput << "Unknown class '" << mClass << "'" << std::endl;
   }
+  mServer->unlock();
 }
 
-// FIXME: execute_command should run in server space with concurrency locks.
 void Command::execute_command()
 {
   Node * node;
+  mServer->lock();
   if (mServer->get_instance(&node, mMethod)) {
     // inspect
     *mOutput << node->inspect() << std::endl;
   } else if (mMethod == "quit") {
-    mServer->quit(); // not all commands should quit the server...
+    mServer->quit();
     mQuit = true;
     *mOutput << "Bye..." << std::endl;
   } else {
     *mOutput << "Unknown command '" << mMethod << "'" << std::endl;
   }
+  mServer->unlock();
 }
 
 void Command::print(void)

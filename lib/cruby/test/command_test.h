@@ -10,11 +10,11 @@ public:
   void testCreate( void ) 
   {
     Rubyk server;
-    Command cmd(&server);
     std::istringstream  input(std::istringstream::in);   // allow input operations
     std::ostringstream output(std::ostringstream::out);  // allow output  operations
-    cmd.listen(input, output);
-    cmd.close();
+    Command cmd(input, output);
+    server.listen_to_command(cmd);
+    server.run();
     TS_ASSERT_EQUALS( output.str(), std::string("Welcome to rubyk !\n\n"));
   }
 };
@@ -51,7 +51,7 @@ public:
   { assert_result("i=Counter(1)\n4\ni\n","#<Counter:i 1>\nSyntax error !\n#<Counter:i 1>\n"); }
   
   void testExecuteMethodWithParams( void ) 
-  { assert_result("i=Counter(1)\ni.set_increment(5)\n","#<Counter:i 1>\n5\n"); }
+  { assert_result("i=Counter(1)\ni.set_increment(5)\ni.bang\n","#<Counter:i 1>\n#<Counter:i 6>\n"); }
   
   void testExecuteClassMethod( void ) 
   { assert_result("Test.hello\n","Hello World!\n"); }

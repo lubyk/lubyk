@@ -73,7 +73,6 @@ public:
     int i = mOutlets.size() - 1;
     // do not try to compute outlets if the node is in broken mode
     if (!mIsOK) return;
-    
     while(i >= 0) {
       /** Send through rightmost outlet first. */
       mOutlets[i--]->compute_and_send();

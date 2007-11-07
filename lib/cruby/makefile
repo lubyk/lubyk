@@ -38,10 +38,10 @@ class.o: classes/class.cpp classes/class.h
 classes/command.cpp: classes/command.rl
 	${RAGEL} classes/command.rl | ${RAGEL_CD} -o classes/command.cpp
 
-rubyk.o: classes/rubyk.h classes/rubyk.cpp
+rubyk.o: classes/rubyk.h classes/rubyk.cpp classes/mutex.h
 	g++ -c -Iclasses -Itemplates classes/rubyk.cpp -o rubyk.o
 
-command.o: classes/command.cpp classes/command.h	
+command.o: classes/command.cpp classes/command.h classes/mutex.h
 	g++ -c -Iclasses -Itemplates classes/command.cpp -o command.o
 
 command.o.bak: classes/command.cpp classes/command.h parser/parser.c lexer.o	

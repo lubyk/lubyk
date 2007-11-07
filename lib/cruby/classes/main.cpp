@@ -4,8 +4,7 @@
 int main()
 {
   Rubyk mServer;
-  InteractiveCommand mCmd(&mServer);
-  mCmd.listen(std::cin, std::cout);
+  InteractiveCommand mCmd(std::cin, std::cout);
+  mServer.listen_to_command(mCmd);
   while (mServer.run());
-  mCmd.close(); 
 }

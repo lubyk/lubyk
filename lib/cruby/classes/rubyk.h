@@ -4,6 +4,7 @@
 #include "ordered_list.h"
 #include "link.h"
 #include "event.h"
+#include "mutex.h"
 #include <list>
 #include <queue>
 #include <sys/timeb.h> // ftime
@@ -15,6 +16,7 @@
 class Params;
 class Action;
 class Node;
+class Command;
 
 class Rubyk
 {
@@ -41,15 +43,6 @@ public:
   void register_event(BaseEvent * pEvent)
   { mEventsQueue.push(pEvent); }
   
-  // FIXME: SHOULD BE MADE THREAD SAFE ! //
-  void register_command(Action * pAction)
-  {
-    while(!mCanRegister)
-      wait_ms(1); // busy wait
-    mCommandsQueue.push(pAction); 
-  
-  }
-  
   time_t mCurrentTime; /**< Current logical time in [ms] since reference. */
 
   /** Get current real time in [ms] since reference. */
@@ -60,14 +53,21 @@ public:
     return ((t.time - mTimeRef.time) * 1000) + t.millitm - mTimeRef.millitm;
   }
   
+  /** Starts new threads for commands. */
+  void listen_to_command(Command& pCommand);
+  
+  /** Used by commands to get hold of the server to execute commands. */
+  void lock()
+  { mMutex.lock(); }
+
+  /** Commands are finished. */
+  void unlock()
+  { mMutex.unlock(); }
   
 private:
   
   /** Try to create links. */
   void create_pending_links ();
-  
-  /** Trigger pending commands from editors / command line. */
-  void Rubyk::pop_commands ();
   
   /** Trigger events with a time older or equal to the current time. */
   void pop_events ();
@@ -90,11 +90,14 @@ private:
   /** Events ! */
   OrderedList<BaseEvent*> mEventsQueue; /**< Ordered event list. */
   
-  /** push, front, pop. */
-  std::queue<Action*> mCommandsQueue; /**< List of commands from editors waiting for execution. */
-  
   /** Time reference. All times are [ms] from this reference. */
   struct timeb mTimeRef;
+  
+  /** Do not mess with me mutex lock. */
+  Mutex mMutex;
+  
+  /** Commands. */
+  std::queue<Command *> mCommands;
 };
 
 #endif

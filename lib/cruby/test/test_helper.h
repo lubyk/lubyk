@@ -62,8 +62,13 @@ protected:
 class ParseTest
 {
 public:
-  ParseTest() : mServer(), mCmd(&mServer), mOutput(std::ostringstream::out), mInput(std::istringstream::in)  
-    { mCmd.set_input(mInput); mCmd.set_output(mOutput); }
+  ParseTest() : mServer(), 
+                mOutput(std::ostringstream::out), 
+                mInput(std::istringstream::in), 
+                mCmd(mInput, mOutput) 
+  { 
+    mCmd.set_server(mServer);
+  }
 
 private:
   Rubyk mServer;
@@ -75,17 +80,21 @@ protected:
   void assert_result(const char * pInput, const char * pOutput)
   {
     mOutput.str(std::string("")); // clear output
-    mCmd.parse(pInput);
-    mServer.run(); // run one loop to execute commands
+    mServer.unlock();
+      mCmd.parse(pInput);
+    mServer.lock();
     TS_ASSERT_EQUALS( mOutput.str(), std::string(pOutput));
   }
   
   void assert_prints(const char * pInput, const char * pOutput)
-  {  
-    mCmd.parse("print=Print()\n");
-    mOutput.str(std::string("")); // clear output
-    mCmd.set_silent(true);
-    mCmd.parse(pInput);
+  { 
+    
+    mServer.unlock();
+      mCmd.parse("print=Print()\n");
+      mOutput.str(std::string("")); // clear output
+      mCmd.set_silent(true);
+      mCmd.parse(pInput);
+    mServer.lock();
     //mServer.run(); // loop once
     mCmd.set_silent(false);
     TS_ASSERT_EQUALS( mOutput.str(), std::string(pOutput));
@@ -94,15 +103,16 @@ protected:
   void assert_run(time_t pLength, const char * pInput, const char * pOutput)
   {
     time_t start;
-    mCmd.parse("print=Print()\n");
+    mServer.unlock();
+      mCmd.parse("print=Print()\n");
+    mServer.lock();
     mOutput.str(std::string("")); // clear output
-    mOutput.str(std::string("")); // clear output
+    mInput.str(std::string(pInput)); // set input
     mCmd.set_silent(true);
-    mCmd.parse(pInput);
-    
+    mServer.listen_to_command(mCmd);
     start = mServer.mCurrentTime;
     while(mServer.mCurrentTime <= start + pLength && mServer.run()) {
-      ;
+      mServer.run();
     }
     mCmd.set_silent(false);
     

@@ -61,23 +61,6 @@ inline Node * Class::operator() (Rubyk * pServer, const Params& p, std::ostream 
   return (*mCreateFunction)(this, pServer, p, pOutput);
 }
 
-inline void Class::make_slots (Node * node)
-{
-  std::vector<inlet_method_t>::const_iterator end_in, inl;
-  end_in = mInlets.end();
-  for(inl = mInlets.begin(); inl < end_in; inl++)
-  {
-    node->add_inlet(*inl);
-  }
-  
-  
-  std::vector<outlet_method_t>::const_iterator end_out, outl;
-  end_out = mOutlets.end();
-  for(outl = mOutlets.begin(); outl < end_out; outl++)
-  {
-    node->add_outlet(*outl);
-  }
-}
 // for help to create a portable version of this load function, read Ruby's dln.c file.
 bool Class::load(const char * file, const char * init_name)
 {

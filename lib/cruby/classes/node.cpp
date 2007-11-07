@@ -23,7 +23,7 @@ Node::~Node()
 
 const char * Node::class_name() const
 { 
-  return mClass->mName.c_str(); 
+  return mClass->name().c_str(); 
 }
 
 void Node::spy_print(const char *fmt, ...)
@@ -113,7 +113,7 @@ void Node::execute_method (const std::string& pMethod, const Params& p)
     bang();
   } else if (pMethod == "help" ){
     help();
-  } else if (mClass->mMethods.get(&method, pMethod)) {
+  } else if (mClass->get_member_method(&method, pMethod)) {
     (*method)(this, p);
   } else {
     // try to use an inlet
@@ -122,4 +122,3 @@ void Node::execute_method (const std::string& pMethod, const Params& p)
     *mOutput << "Unknown method '" << pMethod << "'\n";
   }
 }
-

@@ -34,7 +34,7 @@ public:
   
   // outlet 1
   void value(Signal& sig)
-    { printf("GO(%i)\n", mIncrement); sig.set(mCounter += mIncrement); }
+  { sig.set(mCounter += mIncrement); }
   
 private:
   int mCounter;

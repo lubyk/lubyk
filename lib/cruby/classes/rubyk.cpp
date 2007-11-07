@@ -1,12 +1,13 @@
 #include "rubyk.h"
-#include "action.h"
 #include "node.h"
+#include "command.h"
 #include "class.h"
 
 
 Rubyk::Rubyk() : mInstances(200), mQuit(false), mCurrentTime(0), mCanRegister(true)
 {
-  ftime(&mTimeRef); // set time reference to now.
+  mMutex.lock();    // we get hold of everything, releasing resources when we decide (I'm the master).
+  ftime(&mTimeRef); // set time reference to now (my birthdate).
 }
 
 Rubyk::~Rubyk()
@@ -15,11 +16,35 @@ Rubyk::~Rubyk()
   std::vector<std::string>::iterator end = mInstances.end();
   Node * node;
   
+  Command * child;
+  while(!mCommands.empty()) {
+    child = mCommands.front();
+    // join
+    child->close(); // joins pthread
+    mCommands.pop();
+  }
+  
   for(it = mInstances.begin(); it < end; it++) {
     if (mInstances.get(&node, *it))
       delete node; // destroy node
   }
+  
 }
+
+void Rubyk::listen_to_command (Command& pCommand)
+{
+  int ret;
+  pthread_t id;
+  pCommand.set_server(*this);
+  
+  ret = pthread_create( &id, NULL, &Command::call_do_listen, &pCommand);
+  pCommand.set_thread_id(id);
+  // FIXME: check for error from 'ret'
+  
+  mCommands.push(&pCommand);
+}
+
+
 
 Node * Rubyk::create_instance (const std::string& pVariable, const std::string& pClass, const Params& p, std::ostream * pOutput)
 {
@@ -83,12 +108,15 @@ bool Rubyk::run()
   struct timespec sleeper;
   sleeper.tv_sec  = 0; 
   sleeper.tv_nsec = SLEEP_MS * 10000000;
+  
+  mMutex.unlock(); // ok, others can do things while we sleep
   nanosleep (&sleeper, NULL); // FIXME: only if no loop events ?
+  mMutex.lock();
+  
   mCurrentTime = real_time();
   // execute events that must occur on each loop (io operations)
   //trigger_loop_events();
   // trigger events in the queue
-  pop_commands();
   pop_events();
   return !mQuit;
 }
@@ -104,19 +132,6 @@ void Rubyk::pop_events()
     mEventsQueue.pop();
   }
   mCurrentTime = realTime;
-}
-
-void Rubyk::pop_commands()
-{
-  Action * a;
-  mCanRegister = false; // FIXME: should be atomic
-  while(!mCommandsQueue.empty()) {
-    a = mCommandsQueue.front();
-    a->trigger();
-    delete a;
-    mCommandsQueue.pop();
-  }
-  mCanRegister = true;
 }
 
 void Rubyk::trigger_loop_events()

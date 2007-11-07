@@ -9,10 +9,14 @@ typedef void (*member_method_t)(void * pReceiver, const Params& p);
 /** Pointer to a function to create nodes. */
 typedef Node * (*create_function_t)(Class * pClass, Rubyk * pServer, const Params& p, std::ostream * pOutput);
 
+/** Pointer to an inlet method that can be called from the command line with "obj.method(Params)" */
+typedef void (*outlet_method_t)(void * pReceiver, Signal& sig);
+
+
 class Class
 {
 public:
-  Class (const char* pName, create_function_t pFunction) : mName(pName), mCreateFunction(pFunction), mMethods(10), mClassMethods(10), mOutlets(5), mInlets(5) {}
+  Class (const char* pName, create_function_t pFunction) : mName(pName), mCreateFunction(pFunction), mMethods(10), mClassMethods(10) {}
   
   /** Execute a class method. Example: Midi.outputs */
   void execute_method (const std::string& pMethod, const Params& p, std::ostream * pOutput) ;
@@ -49,6 +53,7 @@ public:
   template <class T, void(T::*Tmethod)(Signal& sig)>
   void add_outlet (const char* pName)
   {
+    outlet_method_t addr = &cast_outlet_method<T,Tmethod>;
     mOutlets.push_back( &cast_outlet_method<T, Tmethod>);
     mMethods.set(std::string(pName), &cast_outlet_accessor<T, Tmethod>);
   }
@@ -99,15 +104,27 @@ public:
 
   const std::string& name() { return mName; }
   
-  bool get_member_method(member_method_t * pMethod, std::string& pMethodName)
+  bool get_member_method(member_method_t * pMethod, const std::string& pMethodName)
   { return mMethods.get(pMethod, pMethodName); }
   
 private:
-  friend class Node;
   
   inline Node * operator() (Rubyk * pServer, const Params& p, std::ostream * pOutput);
   
-  inline void make_slots (Node * node);
+  inline void Class::make_slots (Node * node)
+  {
+    int i,sz;
+    
+    sz = mInlets.size();
+    for(i = 0; i < sz; i++) {
+      node->add_inlet(mInlets[i]);
+    }
+
+    sz = mOutlets.size();
+    for(i = 0; i < sz; i++) {
+      node->add_outlet(mOutlets[i]);
+    }
+  }
   
   static Hash<std::string, Class*> sClasses; /**< Contains a dictionary of class names and Class objects. For example, 'metro' => function to create a Metro. */
   
@@ -122,6 +139,7 @@ private:
     obj->set_class(pClass);
     obj->set_server(pServer);
     obj->set_output(pOutput);
+    pClass->make_slots(obj);
     obj->set_is_ok( obj->init(p) ); // if init returns false, the node goes into 'broken' mode.
     return (Node*)obj;
   }

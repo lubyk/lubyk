@@ -4,7 +4,7 @@
 void Outlet::compute_and_send ()
 {
   Signal sig;
-  printf("COMP\n");
+  
   (*mFunction)(mNode, sig);
   send(sig);
 }
