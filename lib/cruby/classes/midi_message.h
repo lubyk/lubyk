@@ -151,7 +151,10 @@ inline std::ostream& operator<< (std::ostream& pStream, const MidiMessage& msg)
   std::vector<unsigned char>::const_iterator it,begin,end;
   char buffer[10];
   if (msg.type == NoteOn || msg.type == NoteOff) {
-    if (msg.type == NoteOff) pStream << "-";
+    if (msg.type == NoteOff) 
+      pStream << "-";
+    else
+      pStream << " ";
     msg.get_note_name(buffer);
     pStream << msg.channel() << ":" << buffer << "(" << (int)msg.data[2] << ")";
   } else {
