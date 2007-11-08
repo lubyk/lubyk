@@ -20,7 +20,7 @@ public:
   void tic(Signal& sig)
   {
     if (mTempo != 0) {
-      bang_me_in(60000 / mTempo);
+      bang_me_in(ONE_MINUTE / mTempo);
       sig.set_bang();
     }
   }
@@ -31,8 +31,7 @@ private:
 
 extern "C" void init()
 {
-  Class * klass = Class::declare<Metro>("Metro");
-  
-  klass->add_inlet<Metro,&Metro::set_tempo>( "set_tempo");
-  klass->add_outlet<Metro,&Metro::tic>(      "tic");
+  CLASS( Metro)
+  INLET( Metro,set_tempo)
+  OUTLET(Metro,tic)
 }

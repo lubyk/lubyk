@@ -48,9 +48,9 @@ private:
 
 extern "C" void init()
 { 
-  Class * c = Class::declare<Test>("Test");
-  c->add_class_method("hello", &Test::hello);
-  c->add_inlet< Test, &Test::set_counter>("set_counter");
-  c->add_outlet<Test, &Test::increment_counter>("increment");
-  c->add_method<Test, &Test::info>("info");
+  CLASS (Test)
+  INLET (Test, set_counter)
+  OUTLET(Test, increment_counter)
+  METHOD(Test, info)
+  CLASS_METHOD(Test, hello)
 }

@@ -7,7 +7,7 @@
 typedef void (*member_method_t)(void * pReceiver, const Params& p);
 
 /** Pointer to a function to create nodes. */
-typedef Node * (*create_function_t)(Class * pClass, Rubyk * pServer, const Params& p, std::ostream * pOutput);
+typedef Node * (*create_function_t)(Class * pClass, const std::string& pName, Rubyk * pServer, const Params& p, std::ostream * pOutput);
 
 /** Pointer to an inlet method that can be called from the command line with "obj.method(Params)" */
 typedef void (*outlet_method_t)(void * pReceiver, Signal& sig);
@@ -63,22 +63,36 @@ public:
   /** Get a class from the class name. Returns false if the class could not be found nor loaded. */
   static bool get (Class ** pClass, const std::string& pClassName);
   
+  static Class * find (const char * pClassName)
+  {
+    Class * res;
+    if (get(&res, std::string(pClassName))) {
+      return res;
+    } else {
+      return NULL; //fixme, this is bad
+    }
+  }
+  
   static Node * create (Rubyk * pServer, const char * pClassName, const std::string& p, std::ostream * pOutput)
-  { return create(pServer, std::string(pClassName), Params(p), pOutput); }
+  { return create(pServer, std::string(""), std::string(pClassName), Params(p), pOutput); }
+  
+  
+  static Node * create (Rubyk * pServer, const char * pName, const char * pClassName, const std::string& p, std::ostream * pOutput)
+  { return create(pServer, std::string(pName), std::string(pClassName), Params(p), pOutput); }
 
-  static Node * create (Rubyk * pServer, const char * pClassName, const char * p, std::ostream * pOutput)
-  { return create(pServer, std::string(pClassName), Params(p), pOutput); }
+  static Node * create (Rubyk * pServer, const char * pName, const char * pClassName, const char * p, std::ostream * pOutput)
+  { return create(pServer, std::string(pName), std::string(pClassName), Params(p), pOutput); }
 
-  static Node * create (Rubyk * pServer, const std::string& pClassName, const char * p, std::ostream * pOutput)
-  { return create(pServer, pClassName, Params(p), pOutput); }
+  static Node * create (Rubyk * pServer, const std::string& pName, const std::string& pClassName, const char * p, std::ostream * pOutput)
+  { return create(pServer, pName, pClassName, Params(p), pOutput); }
 
-  static Node * create (Rubyk * pServer, const std::string& pClassName, const std::string& p, std::ostream * pOutput)
-  { return create(pServer, pClassName, Params(p), pOutput); }
+  static Node * create (Rubyk * pServer, const std::string& pName, const std::string& pClassName, const std::string& p, std::ostream * pOutput)
+  { return create(pServer, pName, pClassName, Params(p), pOutput); }
 
-  static Node * create (Rubyk * pServer, const char * pClassName, const Params p, std::ostream * pOutput)
-  { return create(pServer, std::string(pClassName), Params(p), pOutput); }
+  static Node * create (Rubyk * pServer, const char * pName, const char * pClassName, const Params p, std::ostream * pOutput)
+  { return create(pServer, std::string(pName), std::string(pClassName), Params(p), pOutput); }
 
-  static Node * create (Rubyk * pServer, const std::string& pClassName, const Params& p, std::ostream * pOutput);
+  static Node * create (Rubyk * pServer, const std::string& pName, const std::string& pClassName, const Params& p, std::ostream * pOutput);
 
   /** Load an object stored in a dynamic library. */
   static bool load(const char * file, const char * init_name);
@@ -109,7 +123,7 @@ public:
   
 private:
   
-  inline Node * operator() (Rubyk * pServer, const Params& p, std::ostream * pOutput);
+  inline Node * operator() (const std::string& pName, Rubyk * pServer, const Params& p, std::ostream * pOutput);
   
   inline void Class::make_slots (Node * node)
   {
@@ -133,10 +147,11 @@ private:
   /** This function is used to create an instance of class 'T'. If the instance could not be
     * properly initialized, this function returns NULL. */
   template<class T>
-  static Node * cast_create(Class * pClass, Rubyk * pServer, const Params& p, std::ostream * pOutput)
+  static Node * cast_create(Class * pClass, const std::string& pName, Rubyk * pServer, const Params& p, std::ostream * pOutput)
   {
     T * obj = new T;
     obj->set_class(pClass);
+    obj->set_name(pName);
     obj->set_server(pServer);
     obj->set_output(pOutput);
     pClass->make_slots(obj);
@@ -206,5 +221,12 @@ private:
   std::vector<inlet_method_t>         mInlets;         /**< Inlet prototypes.  */
   std::vector<outlet_method_t>        mOutlets;        /**< Outlet prototypes. */
 };
+
+// HELPERS TO AVOID TEMPLATE SYNTAX
+#define CLASS(klass)         {Class::declare<klass>(#klass);}
+#define INLET(klass,method)  {Class::find(#klass)->add_inlet<klass, &klass::method>(#method);}
+#define OUTLET(klass,method) {Class::find(#klass)->add_outlet<klass, &klass::method>(#method);}
+#define METHOD(klass,method) {Class::find(#klass)->add_method<klass, &klass::method>(#method);}
+#define CLASS_METHOD(klass,method) {Class::find(#klass)->add_class_method(#method, &klass::method);}
 
 #endif

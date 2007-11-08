@@ -44,7 +44,7 @@ public:
   }
   
   
-  void midi_out(const Signal& sig)
+  void send(const Signal& sig)
   {
     if (!mMidiout || sig.type != MidiSignal) return;
     mMidiout->sendMessage( &(sig.midi_ptr.value->data) );
@@ -194,12 +194,8 @@ static VALUE t_noteOff(VALUE self, VALUE rChannel, VALUE rNote, VALUE rVelocity)
 */
 extern "C" void init() 
 {
-  Class * klass = Class::declare<Midi>("Midi");
-  
-  klass->add_class_method("outputs", &Midi::outputs);
-  klass->add_class_method("inputs", &Midi::inputs);
-  
-  klass->add_inlet<Midi, &Midi::midi_out>("send");
+  CLASS (Midi)
+  INLET (Midi, send)
   
   // rk_cRtMidi = rb_define_class("RtMidi", rb_cObject);
   // rb_define_singleton_method(rk_cRtMidi, "outputs", (VALUE(*)(...))c_outputs, 0);

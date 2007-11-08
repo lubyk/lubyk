@@ -125,10 +125,10 @@ public:
   { return mClass; }
   
   void set_name (const char* pName) 
-  { mName = pName; }
+  { if (pName[0] != '\0') mName = pName; }
   
   void set_name (const std::string& pName) 
-  { mName = pName; }
+  { if (pName != "") mName = pName; }
   
   
   //const std::string& variable_name () { return mName; }

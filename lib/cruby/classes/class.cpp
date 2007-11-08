@@ -36,11 +36,11 @@ bool Class::get (Class ** pClass, const std::string& pClassName)
   return false;
 }
 
-Node * Class::create (Rubyk * pServer, const std::string& pClassName, const Params& p, std::ostream * pOutput)
+Node * Class::create (Rubyk * pServer, const std::string& pName, const std::string& pClassName, const Params& p, std::ostream * pOutput)
 {
   Class * klass;
   if (get(&klass, pClassName))
-    return (*klass)(pServer, p, pOutput);
+    return (*klass)(pName, pServer, p, pOutput);
     
   // load failed
   // dummy object in broken mode
@@ -49,16 +49,17 @@ Node * Class::create (Rubyk * pServer, const std::string& pClassName, const Para
     Class::declare<Node>("Node");
   
   sClasses.get(&klass, "Node");
-  Node * obj = (*klass)(pServer, p, pOutput);
+  Node * obj = (*klass)(pName, pServer, p, pOutput);
   obj->set_class(klass);
+  obj->set_name(pName);
   klass->make_slots(obj);
   obj->set_is_ok( false ); // if init returns false, the node goes into 'broken' mode.
   return obj;
 }
 
-inline Node * Class::operator() (Rubyk * pServer, const Params& p, std::ostream * pOutput)
+inline Node * Class::operator() (const std::string& pName, Rubyk * pServer, const Params& p, std::ostream * pOutput)
 {  
-  return (*mCreateFunction)(this, pServer, p, pOutput);
+  return (*mCreateFunction)(this, pName, pServer, p, pOutput);
 }
 
 // for help to create a portable version of this load function, read Ruby's dln.c file.

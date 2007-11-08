@@ -33,8 +33,8 @@ private:
 extern "C" void init()
 {
   Class * klass = Class::declare<Add>("Add");
-  
-  klass->add_inlet<Add,&Add::set_value1>( "set_value1");
-  klass->add_inlet<Add,&Add::set_value2>( "set_value2");
-  klass->add_outlet<Add,&Add::sum>(       "sum");
+  CLASS (Add)
+  INLET (Add, set_value1)
+  INLET (Add, set_value2)
+  OUTLET(Add, sum)
 }

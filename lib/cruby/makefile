@@ -3,6 +3,7 @@ CFLAGS=-g
 DOT_CMD=/Applications/Graphviz.app/Contents/MacOS/dot
 RAGEL=ragel
 RAGEL_CD=rlgen-cd
+LUA= none
 
 test: test/runner test/runner.cpp
 	./test/runner && rm test/runner
@@ -50,32 +51,35 @@ command.o.bak: classes/command.cpp classes/command.h parser/parser.c lexer.o
 objects: lib/Test.rko lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/Midi.rko lib/NoteOut.rko lib/Lua.rko
 
 
-lib/Test.rko: objects/Test.cpp classes/class.h
+lib/Test.rko: objects/Test.cpp
 	g++ -o lib/Test.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Test.cpp
 	
-lib/Add.rko: objects/Add.cpp classes/class.h
+lib/Add.rko: objects/Add.cpp
 	g++ -o lib/Add.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Add.cpp
 	
-lib/Value.rko: objects/Value.cpp classes/class.h
+lib/Value.rko: objects/Value.cpp
 	g++ -o lib/Value.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Value.cpp
 
-lib/Counter.rko: objects/Counter.cpp classes/class.h
+lib/Counter.rko: objects/Counter.cpp
 	g++ -o lib/Counter.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Counter.cpp
 
-lib/Metro.rko: objects/Metro.cpp classes/class.h
+lib/Metro.rko: objects/Metro.cpp
 	g++ -o lib/Metro.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Metro.cpp
 
-lib/Print.rko: objects/Print.cpp classes/class.h
+lib/Print.rko: objects/Print.cpp
 	g++ -o lib/Print.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Print.cpp
 
-lib/Midi.rko: objects/Midi.cpp classes/class.h
+lib/Midi.rko: objects/Midi.cpp
 	g++ -o lib/Midi.rko -Itemplates -Iclasses -Iobjects -dynamic -bundle -undefined suppress -flat_namespace -D__MACOSX_CORE__ -L/usr/lib -lgcc -lstdc++ -framework CoreMIDI -framework CoreFoundation -framework CoreAudio  objects/rtmidi/RtMidi.cpp objects/Midi.cpp
 
-lib/NoteOut.rko: objects/NoteOut.cpp classes/class.h
+lib/NoteOut.rko: objects/NoteOut.cpp
 	g++ -o lib/NoteOut.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/NoteOut.cpp
 
-lib/Lua.rko: objects/Lua.cpp classes/class.h
-	g++ -o lib/Lua.rko -Itemplates -Iclasses -I/usr/local/include -dynamic -bundle -undefined suppress -flat_namespace -lgcc -lstdc++ objects/Lua.cpp objects/lua/liblua.a
+lib/Lua.rko: objects/Lua.cpp objects/lua/liblua.a
+	g++ -o lib/Lua.rko -Itemplates -Iclasses -Iobjects/lua -dynamic -bundle -undefined suppress -flat_namespace -lgcc -lstdc++ objects/Lua.cpp objects/lua/liblua.a
+
+objects/lua/liblua.a:
+	cd objects/lua && make $(LUA)
 	
 dot: classes/command.png	
 	open classes/command.png

@@ -5,11 +5,12 @@ class TestLua : public CxxTest::TestSuite, public ParseTest
 public:
 
   void test_return( void ) 
-  { assert_prints("n=Lua(\"return 77\")\n","77\n"); }
+  { assert_bang("n=Lua(\"return 77\")\n","77\n"); }
 
-  void _note_out( void ) 
-  { assert_prints("no=NoteOut()\n","<note  1:C0(80)>\n"); }
+  void test_create_load( void ) 
+  { assert_print("n=Lua(load:\"test/fixtures/test.lua\")\nn.script\n", "function rubyk_n(sig)\nreturn sig+12\nend\n"); }
 
-  void test_note_on_off( void ) 
-  { assert_run(100,"no=NoteOut(length:50 velocity:40)\nno.1 => 1.print\nno.bang\n","<note  1:C0(40)>\n<note -1:C0(40)>\n"); }
+  void test_load( void ) 
+  { assert_print("n=Lua()\nn.load(\"test/fixtures/test.lua\")\nn.script\n", "function rubyk_n(sig)\nreturn sig+12\nend\n"); }
+
 };

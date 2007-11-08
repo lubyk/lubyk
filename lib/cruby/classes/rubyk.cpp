@@ -81,14 +81,10 @@ void Rubyk::listen_to_command (Command& pCommand)
 
 Node * Rubyk::create_instance (const std::string& pVariable, const std::string& pClass, const Params& p, std::ostream * pOutput)
 {
-  Node * node = Class::create(this, pClass, p, pOutput);
+  Node * node = Class::create(this, pVariable, pClass, p, pOutput);
   Node * previous;
-  std::string varName;
 
   if (node) {
-    if (pVariable != "")
-      node->set_name(pVariable);
-    
     
     if (mInstances.get(&previous, node->name()))
       delete previous; // kill the node pointed by variable name

@@ -43,11 +43,9 @@ private:
 
 extern "C" void init()
 {
-  Class * klass = Class::declare<Counter>("Counter");
-  
-  klass->add_method<Counter,&Counter::increment>(   "increment"     );
-  
-  klass->add_inlet<Counter,&Counter::set_counter>(  "set_counter"   );
-  klass->add_inlet<Counter,&Counter::set_increment>("set_increment" );
-  klass->add_outlet<Counter,&Counter::value>(       "value"         );
+  CLASS (Counter)
+  INLET (Counter, set_counter)
+  INLET (Counter, set_increment)
+  OUTLET(Counter, value)
+  METHOD(Counter, increment)
 }

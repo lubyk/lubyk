@@ -19,12 +19,12 @@ protected:
   void create(const char * pClass, const char * pParams)
   {
     mClassName = pClass;
-    mNode = Class::create(NULL, pClass, pParams, &mOutput);
+    mNode = Class::create(NULL, "n", pClass, pParams, &mOutput);
   }
   
   void create(const char * pParams)
   {
-    mNode = Class::create(NULL, mClassName, pParams, &mOutput);
+    mNode = Class::create(NULL, "n", mClassName, pParams, &mOutput);
   }
   
   void assert_method_result(const char * pMethod, const char * p, const char * pOutput)
@@ -86,7 +86,7 @@ protected:
     TS_ASSERT_EQUALS( mOutput.str(), std::string(pOutput));
   }
   
-  void assert_prints(const char * pInput, const char * pOutput)
+  void assert_bang(const char * pInput, const char * pOutput)
   { 
     
     mServer.unlock();
@@ -95,12 +95,23 @@ protected:
       mCmd.set_silent(true);
       mCmd.parse(pInput);
       mCmd.parse("n.bang\n");
+      mCmd.set_silent(false);
     mServer.lock();
-    //mServer.run(); // loop once
-    mCmd.set_silent(false);
     TS_ASSERT_EQUALS( mOutput.str(), std::string(pOutput));
   }
   
+  void assert_print(const char * pInput, const char * pOutput)
+  { 
+    
+    mServer.unlock();
+      mOutput.str(std::string("")); // clear output
+      mCmd.set_silent(true);
+      mCmd.parse(pInput);
+      mCmd.set_silent(false);
+    mServer.lock();
+    //mServer.run(); // loop once
+    TS_ASSERT_EQUALS( mOutput.str(), std::string(pOutput));
+  }
   void assert_run(time_t pLength, const char * pInput, const char * pOutput)
   {
     time_t start;

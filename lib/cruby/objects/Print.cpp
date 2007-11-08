@@ -20,6 +20,6 @@ private:
 
 extern "C" void init()
 {
-  Class * klass = Class::declare<Print>("Print");
-  klass->add_inlet<Print,&Print::print>("print");
+  CLASS(Print)
+  INLET(Print,print)
 }

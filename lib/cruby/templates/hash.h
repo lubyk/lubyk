@@ -55,7 +55,8 @@ public:
   void remove(const K& pId);
   
   /** Remove all objects. */
-  void clear() {
+  void clear() 
+  {
     typename std::vector<K>::iterator it;
     typename std::vector<K>::iterator end = mKeys.end();
     for(it=mKeys.begin(); it < end; it++) {
@@ -63,6 +64,9 @@ public:
     }
     mKeys.clear();
   }
+  
+  size_t size() const
+  { return mKeys.size(); }
   
   /** List of keys. */
   const std::vector<K> * keys() { return &mKeys; }

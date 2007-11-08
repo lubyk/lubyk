@@ -1,8 +1,11 @@
-m  = Metro(120)
-m.1 => 1.l
-l  = Lua("g = g or 0;g = g + 1; return (60 + (g%4));")
-l.1 => 1.no
-no = NoteOut(note:60 length:200)
+m  = Metro(480)
+m.1 => 1.l1
+m.1 => 1.l2
+l1  = Lua(load:"test/fixtures/lua_note.lua")
+l2  = Lua(load:"test/fixtures/lua_note2.lua")
+l1.1 => 1.no
+l2.1 => 1.no
+no = NoteOut(note:60 length:50)
 no.1 => 1.midi
 midi = Midi()
 

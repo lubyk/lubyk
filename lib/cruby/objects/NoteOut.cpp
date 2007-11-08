@@ -91,11 +91,10 @@ private:
 
 extern "C" void init()
 {
-  Class * klass = Class::declare<NoteOut>("NoteOut");
-  
-  klass->add_inlet <NoteOut,&NoteOut::set_note>(     "set_note");
-  klass->add_inlet <NoteOut,&NoteOut::set_velocity>( "set_velocity");
-  klass->add_inlet <NoteOut,&NoteOut::set_length>(   "set_length");
-  klass->add_inlet <NoteOut,&NoteOut::set_channel>(  "set_channel");
-  klass->add_outlet<NoteOut,&NoteOut::send_note>(    "note");
+  CLASS (NoteOut)
+  INLET (NoteOut, set_note)
+  INLET (NoteOut, set_velocity)
+  INLET (NoteOut, set_length)
+  INLET (NoteOut, set_channel)
+  OUTLET(NoteOut, send_note)
 }

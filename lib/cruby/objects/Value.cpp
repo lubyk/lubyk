@@ -29,9 +29,7 @@ private:
 
 extern "C" void init()
 {
-  Class * klass = Class::declare<Value>("Value");
-  
-  klass->add_inlet<Value,&Value::set_value>( "set_value" );
-  klass->add_outlet<Value,&Value::value>(    "value"     );
-  
+  CLASS (Value)
+  INLET (Value, set_value)
+  OUTLET(Value, value)
 }

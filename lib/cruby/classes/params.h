@@ -74,9 +74,12 @@ public:
   void set (const char *       pKey, const char *       pValue) {
     mParameters.set(std::string(pKey), std::string(pValue));
   }
-  void clear () {
-    mParameters.clear();
-  }
+  
+  void clear () 
+  { mParameters.clear();  }
+  
+  size_t size () const
+  { return mParameters.size(); }
   
   friend std::ostream& operator<< (std::ostream& pStream, const Params& p);
   
