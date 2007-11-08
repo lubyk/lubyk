@@ -6,7 +6,8 @@ void Outlet::compute_and_send ()
   Signal sig;
   
   (*mFunction)(mNode, sig);
-  send(sig);
+  
+  if (sig.type) send(sig); // do not send NilSignals
 }
 
 // FIXME: inline ?

@@ -25,7 +25,7 @@
 class Node
 {
 public:
-  Node() : mClass(NULL), mServer(NULL), mTriggerPosition(0), mId(0), mSpySize(0), mInspectSize(0), mSpy(NULL), mInspect(NULL), mOutput(&std::cout)
+  Node() : mClass(NULL), mServer(NULL), mTriggerPosition(0), mId(0), mSpySize(0), mInspectSize(0), mSpy(NULL), mInspect(NULL), mOutput(&std::cout), mLooped(false)
   { 
     char buf[50];
     sIdCounter++;
@@ -33,7 +33,7 @@ public:
     mName = std::string(buf);  // default variable name is 'id'
   }
   
-  virtual ~Node() ;
+  virtual ~Node();
   
   bool init( const Params& p) { return true; }
   
@@ -163,6 +163,18 @@ protected:
     mServer->register_event( e );
   }
   
+  void loop_me()
+  {
+    mServer->register_looped_node(this);
+    mLooped = true;
+  }
+  
+  void unloop_me()
+  {
+    mServer->free_looped_node(this);
+    mLooped = false;
+  }
+  
   template <class T, void(T::*Tmethod)(void *)>
   void register_event (time_t pTime, void * data)
   {
@@ -183,6 +195,7 @@ protected:
   // ================ MEMBER DATA    ================= //
   
   long  mId;
+  bool  mLooped; /**< True if the node is banged on every loop. */
   bool  mIsOK; /**< If something bad arrived to the node during initialization or edit, the node goes into
                  *  broken mode and mIsOK becomes false. In 'broken' mode, the node does nothing. */
                  

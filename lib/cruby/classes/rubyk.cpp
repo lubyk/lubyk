@@ -144,7 +144,8 @@ bool Rubyk::run()
   
   mCurrentTime = real_time();
   // execute events that must occur on each loop (io operations)
-  //trigger_loop_events();
+  trigger_loop_events();
+  
   // trigger events in the queue
   pop_events();
   return !mQuit;
@@ -177,5 +178,9 @@ void Rubyk::pop_all_events()
 
 void Rubyk::trigger_loop_events()
 {
-  
+  std::deque<Node *>::iterator it;
+  std::deque<Node *>::iterator end = mLoopedNodes.end();
+  for(it = mLoopedNodes.begin(); it < end; it++) {
+    (*it)->bang();
+  }
 }

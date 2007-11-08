@@ -19,6 +19,9 @@ Node::~Node()
   
   if (mInspect != NULL)
     free(mInspect);
+  
+  if (mServer && mLooped)
+    unloop_me();
 }
 
 const char * Node::class_name() const

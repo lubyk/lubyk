@@ -48,7 +48,7 @@ command.o: classes/command.cpp classes/command.h classes/mutex.h
 command.o.bak: classes/command.cpp classes/command.h parser/parser.c lexer.o	
 	g++ -c -Iclasses -Itemplates classes/command.cpp parser/parser.c parser/lexer.o -O2 -Wl,-x -pipe -lm -o command.o
 
-objects: lib/Test.rko lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/Midi.rko lib/NoteOut.rko lib/Lua.rko
+objects: lib/Test.rko lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/Midi.rko lib/NoteOut.rko lib/Lua.rko lib/Serial.rko
 
 
 lib/Test.rko: objects/Test.cpp
@@ -77,6 +77,9 @@ lib/NoteOut.rko: objects/NoteOut.cpp
 
 lib/Lua.rko: objects/Lua.cpp objects/lua/liblua.a
 	g++ -o lib/Lua.rko -Itemplates -Iclasses -Iobjects/lua -dynamic -bundle -undefined suppress -flat_namespace -lgcc -lstdc++ objects/Lua.cpp objects/lua/liblua.a
+
+lib/Serial.rko: objects/Serial.cpp objects/serial/serial.h
+	g++ -o lib/Serial.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Serial.cpp
 
 objects/lua/liblua.a:
 	cd objects/lua && make $(LUA)

@@ -47,6 +47,23 @@ public:
     if (!mQuit || e->mForced) mEventsQueue.push(e); // do not accept new events while we are trying to quit.
   }
   
+  void register_looped_node(Node * pNode)
+  {
+    mLoopedNodes.push_back(pNode);
+  }
+  
+  void free_looped_node(Node * pNode)
+  {  
+    std::deque<Node*>::iterator it;
+    std::deque<Node*>::iterator end = mLoopedNodes.end();
+    for(it = mLoopedNodes.begin(); it < end; it++) {
+      if (*it == pNode) {
+        mLoopedNodes.erase(it);
+        break;
+      }
+    }
+  }
+  
   time_t mCurrentTime; /**< Current logical time in [ms] since reference. */
 
   /** Get current real time in [ms] since reference. */
@@ -101,6 +118,7 @@ private:
   
   /** Events ! */
   OrderedList<BaseEvent*> mEventsQueue; /**< Ordered event list. */
+  std::deque<Node*>       mLoopedNodes; /**< List of nodes to call on every loop. */
   
   /** Time reference. All times are [ms] from this reference. */
   struct timeb mTimeRef;
@@ -112,7 +130,7 @@ private:
   /** Do not mess with me mutex lock. */
   Mutex mMutex;
   
-  /** Commands. */
+  /** Command line / editors. */
   std::queue<Command *> mCommands;
 };
 

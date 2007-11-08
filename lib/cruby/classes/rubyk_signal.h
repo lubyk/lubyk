@@ -6,7 +6,8 @@
 
 /** Signal types. */
 enum rubyk_signal_t {
-  BangSignal = 0,    /**< Trigger update without changing values. */
+  NilSignal = 0,     /**< Do not send. */
+  BangSignal = 1,    /**< Trigger update without changing values. */
   IntegerSignal,     /**< IntegerSignal value. */
   FloatSignal,       /**< FloatSignal (actually double). */
   FloatArraySignal,  /**< Array of floats. Use the 'size' attribute to avoid buffer overflow. */

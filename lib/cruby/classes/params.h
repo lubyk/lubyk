@@ -102,6 +102,9 @@ float Params::cast_param (const std::string& value) const;
 template<>
 const char * Params::cast_param (const std::string& value) const;
 
+template<>
+char Params::cast_param (const std::string& value) const;
+
 std::ostream& operator<< (std::ostream& pStream, const Params& p);
 
 #endif

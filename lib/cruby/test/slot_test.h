@@ -58,4 +58,10 @@ public:
     o.compute_and_send();
     TS_ASSERT_EQUALS( 19.0, counter);
   }
+  
+  void testNilSignal( void )
+  {
+    // Nil signal should not be sent
+    TS_ASSERT( 0 ); // TODO
+  }
 };

@@ -96,3 +96,9 @@ const char * Params::cast_param(const std::string& value) const
 {
   return value.c_str();
 }
+
+template<>
+char Params::cast_param (const std::string& value) const
+{
+  return value.c_str()[0];
+}
