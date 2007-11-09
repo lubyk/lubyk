@@ -3,7 +3,7 @@ CFLAGS=-g
 DOT_CMD=/Applications/Graphviz.app/Contents/MacOS/dot
 RAGEL=ragel
 RAGEL_CD=rlgen-cd
-LUA= none
+PLAT= macosx
 
 test: test/runner test/runner.cpp
 	./test/runner && rm test/runner
@@ -75,14 +75,14 @@ lib/Midi.rko: objects/Midi.cpp
 lib/NoteOut.rko: objects/NoteOut.cpp
 	g++ -o lib/NoteOut.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/NoteOut.cpp
 
-lib/Lua.rko: objects/Lua.cpp objects/lua/liblua.a
+lib/Lua.rko: objects/Lua.cpp objects/lua/liblua.a classes/script.h
 	g++ -o lib/Lua.rko -Itemplates -Iclasses -Iobjects/lua -dynamic -bundle -undefined suppress -flat_namespace -lgcc -lstdc++ objects/Lua.cpp objects/lua/liblua.a
 
 lib/Serial.rko: objects/Serial.cpp objects/serial/serial.h
 	g++ -o lib/Serial.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Serial.cpp
 
 objects/lua/liblua.a:
-	cd objects/lua && make $(LUA)
+	cd objects/lua && make $(PLAT)
 	
 dot: classes/command.png	
 	open classes/command.png

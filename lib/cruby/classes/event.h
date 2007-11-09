@@ -27,6 +27,9 @@ typedef void (*outlet_method_t)(void * pReceiver, Signal& sig);
 class BaseEvent
 {
 public:
+  BaseEvent ()
+  { mForced = false; }
+
   virtual ~BaseEvent() {}
   
   void trigger()

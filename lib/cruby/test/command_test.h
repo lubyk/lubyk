@@ -59,4 +59,9 @@ public:
   void testExecuteClassMethod( void ) 
   { assert_result("Test.hello\n","Hello World!\n"); }
 
+  void testParseLink( void ) 
+  { assert_result("n.1=>1.p\n","Hello World!\n"); }
+
+  void testParseFirstLinks( void ) 
+  { assert_result("n=>p\n","...!\n"); }
 };

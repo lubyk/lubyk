@@ -169,8 +169,7 @@ void Rubyk::pop_all_events()
   BaseEvent * e;
   while( mEventsQueue.get(&e)) {
     mCurrentTime = e->mTime;
-    if (e->mForced)
-      e->trigger();
+    if (e->mForced) e->trigger();
     delete e;
     mEventsQueue.pop();
   }

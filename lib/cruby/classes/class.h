@@ -34,6 +34,13 @@ public:
     mMethods.set(std::string(pName), &cast_member_method<T, Tmethod>);
   }
   
+  /** Declare a member method from a superclass. With parameters. */
+  template <class T, class S, void(S::*Tmethod)(const Params& pParam)>
+  void add_super_method (const char* pName)
+  {
+    mMethods.set(std::string(pName), &cast_super_member_method<T, S, Tmethod>);
+  }
+  
   /** Declare a member method. Parameters ignored. */
   template <class T, void(T::*Tmethod)()>
   void add_method (const char* pName)
@@ -166,6 +173,13 @@ private:
     (((T*)receiver)->*Tmethod)(p);
   }
   
+  /** Return a function pointer to a superclass member method. */
+  template <class T, class S, void(S::*Tmethod)(const Params& p)>
+  static void cast_super_member_method(void * receiver, const Params& p)
+  {
+    (((T*)receiver)->*Tmethod)(p);
+  }
+  
   /** Return a function pointer to a member method without parameters. */
   template <class T, void(T::*Tmethod)()>
   static void cast_member_method(void * receiver, const Params& p)
@@ -229,4 +243,5 @@ private:
 #define METHOD(klass,method) {Class::find(#klass)->add_method<klass, &klass::method>(#method);}
 #define CLASS_METHOD(klass,method) {Class::find(#klass)->add_class_method(#method, &klass::method);}
 
+#define SUPER_METHOD(klass,super,method) {Class::find(#klass)->add_super_method<klass, super, &super::method>(#method);}
 #endif

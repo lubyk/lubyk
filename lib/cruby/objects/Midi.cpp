@@ -196,7 +196,8 @@ extern "C" void init()
 {
   CLASS (Midi)
   INLET (Midi, send)
-  
+  CLASS_METHOD(Midi, inputs)
+  CLASS_METHOD(Midi, outputs)
   // rk_cRtMidi = rb_define_class("RtMidi", rb_cObject);
   // rb_define_singleton_method(rk_cRtMidi, "outputs", (VALUE(*)(...))c_outputs, 0);
   // rb_define_method(rk_cRtMidi, "initialize", (VALUE(*)(...))t_initialize, 1);

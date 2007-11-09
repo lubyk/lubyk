@@ -11,7 +11,7 @@ public:
     return true;
   }
 
-  void set_tempo(const Signal& sig)
+  void set(const Signal& sig)
   { sig.get(&mTempo); }
   
   virtual void spy()
@@ -32,6 +32,6 @@ private:
 extern "C" void init()
 {
   CLASS( Metro)
-  INLET( Metro,set_tempo)
+  INLET( Metro,set)
   OUTLET(Metro,tic)
 }
