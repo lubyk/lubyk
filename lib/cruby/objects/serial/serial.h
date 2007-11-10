@@ -206,13 +206,30 @@ public:
   
   
   /** Read 1 char. */
-  bool read_char(char * c)
+  bool read_char(unsigned char * c)
   {
     if (!mIsOK || !mIsOpen) return false;
     
     return read(mFd, c, 1) == 1;
   }
   
+  bool read_char(int * pRes)
+  {
+    if (!mIsOK || !mIsOpen) return false;
+    unsigned char c;
+    if (read(mFd, &c, 1) == 1) {
+      *pRes = (int)c;
+      return true;
+    } else
+      return false;
+  }
+  
+  bool write_char(char c)
+  {
+    return write(mFd, &c, 1) == 1;
+  }
+  //int getchar()
+  //{ return getc(mFd); }
 
 private:
 

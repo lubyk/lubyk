@@ -71,7 +71,10 @@ public:
     /* Remove value from stack. */
     //lua_pop(mLua, 1);
     /* Send the value out. */
-    sig.set(i);
+    if (i == -1)
+      sig.set_nil();
+    else
+      sig.set(i);
   }
   
   

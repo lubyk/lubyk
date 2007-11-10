@@ -7,6 +7,11 @@ public:
   
   bool init (const Params& p)
   {
+    return serial_init(p);
+  }
+  
+  bool serial_init (const Params& p)
+  {
     mPort.set_output(*mOutput);
     
     if (!p.get(&mPortName, "port")) {
@@ -40,7 +45,7 @@ public:
   // outlet 1
   void receive(Signal& sig)
   { 
-    char c;
+    int c;
     if (mPort.read_char(&c)) {
       sig.set((int)c);
     } else
@@ -49,14 +54,17 @@ public:
     *mOutput << sig << std::endl;
   }
   
-private:
+protected:
   std::string mPortName;
   SerialPort mPort;
 };
 
+#ifdef COMPILE_SERIAL_OBJECT
+// only when making 'Serial' and not a subclass
 extern "C" void init()
 {
   CLASS (Serial)
   OUTLET(Serial,receive)
   CLASS_METHOD(Serial, list)
 }
+#endif
