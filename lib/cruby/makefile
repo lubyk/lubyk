@@ -48,7 +48,7 @@ command.o: classes/command.cpp classes/command.h classes/mutex.h
 command.o.bak: classes/command.cpp classes/command.h parser/parser.c lexer.o	
 	g++ -c -Iclasses -Itemplates classes/command.cpp parser/parser.c parser/lexer.o -O2 -Wl,-x -pipe -lm -o command.o
 
-objects: lib/Test.rko lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/Midi.rko lib/NoteOut.rko lib/Lua.rko lib/Serial.rko lib/Turing.rko
+objects: lib/Test.rko lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/Midi.rko lib/NoteOut.rko lib/Lua.rko lib/Serial.rko lib/Turing.rko lib/Keyboard.rko
 
 
 lib/Test.rko: objects/Test.cpp
@@ -83,6 +83,9 @@ lib/Serial.rko: objects/Serial.cpp objects/serial/serial.h
 
 lib/Turing.rko: objects/Turing.cpp objects/Turing.rl
 	g++ -o lib/Turing.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Turing.cpp
+
+lib/Keyboard.rko: objects/Keyboard.cpp
+	g++ -o lib/Keyboard.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Keyboard.cpp
 
 objects/Turing.cpp: objects/Turing.rl
 	${RAGEL} objects/Turing.rl | ${RAGEL_CD} -o objects/Turing.cpp

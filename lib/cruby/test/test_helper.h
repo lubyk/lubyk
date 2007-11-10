@@ -142,7 +142,6 @@ protected:
   }
   void assert_print(const char * pInput, const char * pOutput)
   { 
-    
     mServer->unlock();
       mOutput.str(std::string("")); // clear output
       mCmd->set_silent(true);

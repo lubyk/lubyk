@@ -1,0 +1,17 @@
+# x = forward C D D# G
+# z = backward
+g x-> c 60
+c x-> d 62
+d x-> e 63
+e x-> g 67
+e c-> a 68
+e d-> a 72
+a x-> c 60
+
+a c-> g 67
+a z-> e 63
+
+c z-> g 67
+g z-> e 63
+e z-> d 62
+d z-> c 60

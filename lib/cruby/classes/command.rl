@@ -19,6 +19,7 @@ void Command::initialize()
   mQuit   = false;
   mTokenIndex = 0;
   mSilent = false;
+  mThread = NULL;
   
   clear();
   
@@ -172,7 +173,8 @@ void Command::parse(const std::string& pStr)
 void Command::close()
 {
   mQuit = true;
-  pthread_join( mThread, NULL); // wait for child to finish
+  if (mThread)
+    pthread_join( mThread, NULL); // wait for child to finish
 }
 
 void Command::set_from_token (std::string& pElem)

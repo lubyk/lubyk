@@ -1,5 +1,6 @@
 #include "script.h"
 #define MAX_NAME_SIZE 200
+#define DEBUG_PARSER
 
 %%{
   machine turing;
@@ -47,6 +48,8 @@ public:
     //std::cout << "token ["<< mToken << "]" << std::endl;
     //std::cout << "state ["<< mState << "]" << std::endl;
     
+    
+    std::cout << "{" << mState << "} -" << mToken << "->";
     if (mSend = mSendTable[mState][mToken])
       ; // ok custom value
     else
@@ -56,7 +59,8 @@ public:
       mState = state;
     else
       mState = mGotoTable[mState][0]; // use default
-
+    
+    std::cout << "{" << mState << "}" << std::endl;
     /* Send the value out. */
     if (mSend == -1)
       sig.set_nil();
@@ -78,23 +82,28 @@ public:
     Hash<std::string, int> state_names(30);
     
     int state_id;
-    int token_id;
+    int token_id = 0;
     char tok;
     int send = -1;
     int source_state = 0;
     int target_state = 0;
     
     
+    printf("T 1\n");
     std::vector< std::vector<int> >::iterator it,end; // to add new tokens
     
+    printf("T 2\n");
     // init token table
     memset(mTokenTable, 0, sizeof(mTokenTable));
     
+    printf("T 3\n");
     mGotoTable.clear();
     mSendTable.clear();
     
+    printf("T 4\n");
     %% write init;
     
+    printf("T 5\n");
   %%{
     action a {
       if (name_index >= MAX_NAME_SIZE) {
@@ -124,6 +133,8 @@ public:
         // add a new line to the lookup tables
         mGotoTable.push_back( std::vector<int>(token_count, 0) );
         mSendTable.push_back( std::vector<int>(token_count, 0) );
+        if (token_count > 0)
+          mSendTable[state_count - 1][0] = -1; // default send is 'nil'
       }
       name_index = 0;
     }
@@ -133,6 +144,15 @@ public:
     action set_target { target_state = state_id; state_id = 0; }
 
     action set_tok { tok = fc; }
+    
+    action set_tok_value { 
+      name[name_index] = '\0';
+      name_index = 0;
+      #ifdef DEBUG_PARSER
+        std::cout <<    "[num " << name << "]" << std::endl;
+      #endif
+      tok = atoi(name);
+    }
     
     action set_token { 
       // FIXME: only works with letters, should also work with numbers
@@ -156,7 +176,10 @@ public:
         end = mSendTable.end();
         for (it = mSendTable.begin(); it < end; it++) {
           // enlarge all arrays in the table
-          (*it).push_back(0);
+          if (token_count == 1)
+            (*it).push_back(-1); // first value is -1 (default send is 'nil')
+          else
+            (*it).push_back(0);
         }
       }
       token_id = mTokenTable[tok % 256];
@@ -209,7 +232,7 @@ public:
     
     identifier = (alpha alnum*) $a;
     
-    tok    = ('\'' alpha @set_tok '\'' | alpha @set_tok ); # fixme: we should use 'whatever' or a-zA-Z or number
+    tok    = ('\'' any @set_tok '\'' | alpha @set_tok | digit+ $a %set_tok_value ); # fixme: we should use 'whatever' or a-zA-Z or number
 
     transition = ( '-'+ '>' | '-'* ws* tok %set_token ws* '-'+ '>');
     

@@ -1,143 +1,161 @@
 #line 1 "objects/Turing.rl"
 #include "script.h"
 #define MAX_NAME_SIZE 200
+#define DEBUG_PARSER
 
 
-#line 7 "objects/Turing.cpp"
+#line 8 "objects/Turing.cpp"
 static const char _turing_actions[] = {
-	0, 1, 0, 1, 4, 1, 5, 1, 
-	6, 1, 7, 1, 8, 1, 9, 1, 
-	10, 2, 1, 2, 2, 1, 3, 2, 
-	6, 7, 3, 1, 2, 5, 3, 1, 
-	3, 6, 4, 0, 1, 2, 4, 4, 
-	0, 1, 3, 4
+	0, 1, 0, 1, 4, 1, 6, 1, 
+	7, 1, 8, 1, 9, 1, 10, 1, 
+	11, 2, 1, 2, 2, 1, 3, 2, 
+	5, 6, 2, 5, 7, 2, 7, 8, 
+	3, 0, 1, 2, 3, 0, 1, 3, 
+	3, 1, 2, 6, 3, 1, 3, 7, 
+	3, 5, 7, 8, 4, 0, 1, 2, 
+	4, 4, 0, 1, 3, 4, 4, 1, 
+	2, 5, 6, 4, 1, 3, 5, 7
+	
 };
 
 static const unsigned char _turing_key_offsets[] = {
 	0, 0, 9, 10, 11, 12, 13, 14, 
-	15, 16, 26, 34, 38, 39, 42, 45, 
-	47, 53, 63, 71, 75, 76, 80, 84, 
-	85, 93, 97, 98, 101, 104, 116, 126, 
-	135, 142, 152, 154, 155, 157, 159, 161, 
-	162, 171
+	15, 16, 26, 36, 36, 37, 40, 43, 
+	45, 51, 61, 71, 71, 72, 76, 80, 
+	81, 87, 97, 97, 98, 101, 104, 109, 
+	121, 133, 145, 156, 165, 170, 180, 190, 
+	192, 193, 195, 197, 199, 200, 209
 };
 
 static const char _turing_trans_keys[] = {
 	9, 10, 32, 35, 61, 65, 90, 97, 
 	122, 10, 98, 101, 103, 105, 110, 10, 
 	9, 32, 39, 45, 48, 57, 65, 90, 
-	97, 122, 9, 32, 39, 45, 65, 90, 
-	97, 122, 65, 90, 97, 122, 39, 9, 
-	32, 45, 9, 32, 45, 45, 62, 9, 
-	32, 65, 90, 97, 122, 9, 32, 39, 
-	123, 48, 57, 65, 90, 97, 122, 9, 
-	32, 39, 123, 65, 90, 97, 122, 65, 
-	90, 97, 122, 39, 9, 10, 32, 35, 
-	9, 10, 32, 35, 10, 9, 32, 39, 
-	125, 65, 90, 97, 122, 65, 90, 97, 
+	97, 122, 9, 32, 39, 45, 48, 57, 
+	65, 90, 97, 122, 39, 9, 32, 45, 
+	9, 32, 45, 45, 62, 9, 32, 65, 
+	90, 97, 122, 9, 32, 39, 123, 48, 
+	57, 65, 90, 97, 122, 9, 32, 39, 
+	123, 48, 57, 65, 90, 97, 122, 39, 
+	9, 10, 32, 35, 9, 10, 32, 35, 
+	10, 9, 10, 32, 35, 48, 57, 9, 
+	32, 39, 125, 48, 57, 65, 90, 97, 
 	122, 39, 9, 32, 125, 9, 32, 125, 
-	9, 10, 32, 35, 39, 123, 48, 57, 
-	65, 90, 97, 122, 9, 10, 32, 35, 
-	39, 123, 65, 90, 97, 122, 9, 32, 
-	39, 45, 62, 65, 90, 97, 122, 9, 
-	32, 39, 65, 90, 97, 122, 9, 32, 
-	39, 45, 48, 57, 65, 90, 97, 122, 
-	10, 61, 10, 10, 101, 10, 110, 10, 
-	100, 10, 9, 10, 32, 35, 61, 65, 
-	90, 97, 122, 10, 61, 0
+	9, 32, 125, 48, 57, 9, 10, 32, 
+	35, 39, 123, 48, 57, 65, 90, 97, 
+	122, 9, 10, 32, 35, 39, 123, 48, 
+	57, 65, 90, 97, 122, 9, 10, 32, 
+	35, 39, 123, 48, 57, 65, 90, 97, 
+	122, 9, 32, 39, 45, 62, 48, 57, 
+	65, 90, 97, 122, 9, 32, 39, 48, 
+	57, 65, 90, 97, 122, 9, 32, 45, 
+	48, 57, 9, 32, 39, 45, 48, 57, 
+	65, 90, 97, 122, 9, 32, 39, 45, 
+	48, 57, 65, 90, 97, 122, 10, 61, 
+	10, 10, 101, 10, 110, 10, 100, 10, 
+	9, 10, 32, 35, 61, 65, 90, 97, 
+	122, 10, 61, 0
 };
 
 static const char _turing_single_lengths[] = {
 	0, 5, 1, 1, 1, 1, 1, 1, 
 	1, 4, 4, 0, 1, 3, 3, 2, 
 	2, 4, 4, 0, 1, 4, 4, 1, 
-	4, 0, 1, 3, 3, 6, 6, 5, 
-	3, 4, 2, 1, 2, 2, 2, 1, 
-	5, 2
+	4, 4, 0, 1, 3, 3, 3, 6, 
+	6, 6, 5, 3, 3, 4, 4, 2, 
+	1, 2, 2, 2, 1, 5, 2
 };
 
 static const char _turing_range_lengths[] = {
 	0, 2, 0, 0, 0, 0, 0, 0, 
-	0, 3, 2, 2, 0, 0, 0, 0, 
-	2, 3, 2, 2, 0, 0, 0, 0, 
-	2, 2, 0, 0, 0, 3, 2, 2, 
-	2, 3, 0, 0, 0, 0, 0, 0, 
-	2, 0
+	0, 3, 3, 0, 0, 0, 0, 0, 
+	2, 3, 3, 0, 0, 0, 0, 0, 
+	1, 3, 0, 0, 0, 0, 1, 3, 
+	3, 3, 3, 3, 1, 3, 3, 0, 
+	0, 0, 0, 0, 0, 2, 0
 };
 
 static const unsigned char _turing_index_offsets[] = {
 	0, 0, 8, 10, 12, 14, 16, 18, 
-	20, 22, 30, 37, 40, 42, 46, 50, 
-	53, 58, 66, 73, 76, 78, 83, 88, 
-	90, 97, 100, 102, 106, 110, 120, 129, 
-	137, 143, 151, 154, 156, 159, 162, 165, 
-	167, 175
+	20, 22, 30, 38, 39, 41, 45, 49, 
+	52, 57, 65, 73, 74, 76, 81, 86, 
+	88, 94, 102, 103, 105, 109, 113, 118, 
+	128, 138, 148, 157, 164, 169, 177, 185, 
+	188, 190, 193, 196, 199, 201, 209
 };
 
 static const char _turing_indicies[] = {
 	1, 2, 1, 3, 4, 5, 5, 0, 
 	2, 3, 6, 0, 7, 0, 8, 0, 
 	9, 0, 10, 0, 11, 0, 12, 12, 
-	13, 14, 5, 15, 15, 0, 16, 16, 
-	17, 18, 19, 19, 0, 20, 20, 0, 
-	21, 0, 22, 22, 23, 0, 24, 24, 
-	25, 0, 25, 26, 0, 26, 26, 27, 
-	27, 0, 28, 28, 29, 31, 27, 30, 
-	30, 0, 32, 32, 33, 35, 34, 34, 
-	0, 36, 36, 0, 37, 0, 38, 39, 
-	38, 40, 0, 41, 42, 41, 43, 0, 
-	42, 43, 35, 35, 44, 41, 45, 45, 
-	0, 46, 46, 0, 47, 0, 48, 48, 
-	38, 0, 49, 49, 41, 0, 50, 39, 
-	50, 40, 29, 31, 27, 30, 30, 0, 
-	51, 42, 51, 43, 33, 35, 34, 34, 
-	0, 52, 52, 17, 18, 26, 19, 19, 
-	0, 52, 52, 17, 19, 19, 0, 53, 
-	53, 13, 54, 5, 15, 15, 0, 56, 
-	57, 55, 56, 55, 56, 58, 55, 56, 
-	59, 55, 56, 60, 55, 61, 55, 1, 
-	2, 1, 3, 4, 5, 5, 0, 56, 
-	57, 55, 0
+	13, 14, 15, 16, 16, 0, 17, 17, 
+	18, 19, 20, 21, 21, 0, 22, 23, 
+	0, 24, 24, 25, 0, 26, 26, 27, 
+	0, 27, 28, 0, 28, 28, 29, 29, 
+	0, 30, 30, 31, 34, 32, 33, 33, 
+	0, 35, 35, 36, 39, 37, 38, 38, 
+	0, 40, 41, 0, 42, 43, 42, 44, 
+	0, 45, 46, 45, 47, 0, 46, 47, 
+	48, 49, 48, 50, 37, 0, 39, 39, 
+	51, 45, 52, 53, 53, 0, 54, 55, 
+	0, 56, 56, 42, 0, 57, 57, 45, 
+	0, 58, 58, 48, 52, 0, 59, 49, 
+	59, 50, 31, 34, 32, 33, 33, 0, 
+	60, 46, 60, 47, 36, 39, 37, 38, 
+	38, 0, 61, 43, 61, 44, 31, 34, 
+	32, 33, 33, 0, 62, 62, 18, 19, 
+	28, 20, 21, 21, 0, 62, 62, 18, 
+	20, 21, 21, 0, 63, 63, 64, 20, 
+	0, 65, 65, 13, 66, 15, 16, 16, 
+	0, 67, 67, 13, 68, 15, 16, 16, 
+	0, 70, 71, 69, 70, 69, 70, 72, 
+	69, 70, 73, 69, 70, 74, 69, 75, 
+	69, 1, 2, 1, 3, 4, 5, 5, 
+	0, 70, 71, 69, 0
 };
 
 static const char _turing_trans_targs_wi[] = {
-	0, 1, 40, 2, 3, 9, 4, 5, 
-	6, 7, 8, 40, 10, 11, 31, 33, 
-	10, 11, 31, 13, 12, 13, 14, 15, 
-	14, 15, 16, 17, 18, 19, 29, 24, 
-	18, 19, 21, 24, 20, 21, 22, 40, 
-	23, 22, 40, 23, 25, 27, 26, 27, 
-	28, 28, 30, 30, 32, 10, 31, 35, 
-	41, 36, 37, 38, 39, 41
+	0, 1, 45, 2, 3, 9, 4, 5, 
+	6, 7, 8, 45, 10, 11, 34, 37, 
+	38, 10, 11, 34, 36, 13, 12, 13, 
+	14, 15, 14, 15, 16, 17, 18, 19, 
+	31, 33, 25, 18, 19, 24, 21, 25, 
+	20, 21, 22, 45, 23, 22, 45, 23, 
+	22, 45, 23, 26, 30, 28, 27, 28, 
+	29, 29, 29, 32, 32, 32, 35, 14, 
+	15, 10, 34, 10, 34, 40, 46, 41, 
+	42, 43, 44, 46
 };
 
 static const char _turing_trans_actions_wi[] = {
 	11, 0, 0, 0, 0, 1, 0, 0, 
-	0, 0, 0, 13, 17, 17, 17, 34, 
-	0, 0, 0, 3, 3, 0, 5, 5, 
-	0, 0, 0, 1, 20, 20, 39, 20, 
-	0, 0, 3, 0, 3, 0, 7, 23, 
-	7, 0, 9, 0, 0, 3, 3, 0, 
-	7, 0, 30, 0, 0, 26, 26, 0, 
-	0, 0, 0, 0, 0, 15
+	0, 0, 0, 13, 17, 17, 17, 32, 
+	52, 0, 0, 0, 1, 3, 3, 0, 
+	5, 5, 0, 0, 0, 1, 20, 20, 
+	36, 57, 20, 0, 0, 1, 3, 0, 
+	3, 0, 7, 29, 7, 0, 9, 0, 
+	26, 48, 26, 0, 1, 3, 3, 0, 
+	7, 0, 26, 67, 0, 44, 0, 23, 
+	23, 62, 62, 40, 40, 0, 0, 0, 
+	0, 0, 0, 15
 };
 
 static const char _turing_eof_actions[] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 
 	0, 0, 0, 0, 0, 0, 0, 0, 
 	0, 0, 0, 0, 0, 9, 9, 9, 
-	0, 0, 0, 0, 0, 9, 9, 0, 
-	0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 0
+	9, 0, 0, 0, 0, 0, 0, 9, 
+	9, 9, 0, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 0, 0
 };
 
 static const int turing_start = 1;
-static const int turing_first_final = 40;
+static const int turing_first_final = 45;
 
-static const int turing_en_doc_comment = 34;
+static const int turing_en_doc_comment = 39;
 static const int turing_en_main = 1;
 
-#line 7 "objects/Turing.rl"
+#line 8 "objects/Turing.rl"
 
 
 class Turing : public Script
@@ -181,6 +199,8 @@ public:
     //std::cout << "token ["<< mToken << "]" << std::endl;
     //std::cout << "state ["<< mState << "]" << std::endl;
     
+    
+    std::cout << "{" << mState << "} -" << mToken << "->";
     if (mSend = mSendTable[mState][mToken])
       ; // ok custom value
     else
@@ -190,7 +210,8 @@ public:
       mState = state;
     else
       mState = mGotoTable[mState][0]; // use default
-
+    
+    std::cout << "{" << mState << "}" << std::endl;
     /* Send the value out. */
     if (mSend == -1)
       sig.set_nil();
@@ -212,30 +233,35 @@ public:
     Hash<std::string, int> state_names(30);
     
     int state_id;
-    int token_id;
+    int token_id = 0;
     char tok;
     int send = -1;
     int source_state = 0;
     int target_state = 0;
     
     
+    printf("T 1\n");
     std::vector< std::vector<int> >::iterator it,end; // to add new tokens
     
+    printf("T 2\n");
     // init token table
     memset(mTokenTable, 0, sizeof(mTokenTable));
     
+    printf("T 3\n");
     mGotoTable.clear();
     mSendTable.clear();
     
+    printf("T 4\n");
     
-#line 232 "objects/Turing.cpp"
+#line 257 "objects/Turing.cpp"
 	{
 	cs = turing_start;
 	}
-#line 97 "objects/Turing.rl"
+#line 105 "objects/Turing.rl"
     
+    printf("T 5\n");
   
-#line 239 "objects/Turing.cpp"
+#line 265 "objects/Turing.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -310,7 +336,7 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 99 "objects/Turing.rl"
+#line 108 "objects/Turing.rl"
 	{
       if (name_index >= MAX_NAME_SIZE) {
         *mOutput << "Name buffer overflow !\n";
@@ -325,7 +351,7 @@ _match:
     }
 	break;
 	case 1:
-#line 112 "objects/Turing.rl"
+#line 121 "objects/Turing.rl"
 	{ 
       name[name_index] = '\0';
       #ifdef DEBUG_PARSER
@@ -341,24 +367,37 @@ _match:
         // add a new line to the lookup tables
         mGotoTable.push_back( std::vector<int>(token_count, 0) );
         mSendTable.push_back( std::vector<int>(token_count, 0) );
+        if (token_count > 0)
+          mSendTable[state_count - 1][0] = -1; // default send is 'nil'
       }
       name_index = 0;
     }
 	break;
 	case 2:
-#line 131 "objects/Turing.rl"
+#line 142 "objects/Turing.rl"
 	{ source_state = state_id; state_id = 0; }
 	break;
 	case 3:
-#line 133 "objects/Turing.rl"
+#line 144 "objects/Turing.rl"
 	{ target_state = state_id; state_id = 0; }
 	break;
 	case 4:
-#line 135 "objects/Turing.rl"
+#line 146 "objects/Turing.rl"
 	{ tok = (*p); }
 	break;
 	case 5:
-#line 137 "objects/Turing.rl"
+#line 148 "objects/Turing.rl"
+	{ 
+      name[name_index] = '\0';
+      name_index = 0;
+      #ifdef DEBUG_PARSER
+        std::cout <<    "[num " << name << "]" << std::endl;
+      #endif
+      tok = atoi(name);
+    }
+	break;
+	case 6:
+#line 157 "objects/Turing.rl"
 	{ 
       // FIXME: only works with letters, should also work with numbers
       // do we know this token ?
@@ -381,14 +420,17 @@ _match:
         end = mSendTable.end();
         for (it = mSendTable.begin(); it < end; it++) {
           // enlarge all arrays in the table
-          (*it).push_back(0);
+          if (token_count == 1)
+            (*it).push_back(-1); // first value is -1 (default send is 'nil')
+          else
+            (*it).push_back(0);
         }
       }
       token_id = mTokenTable[tok % 256];
     }
 	break;
-	case 6:
-#line 165 "objects/Turing.rl"
+	case 7:
+#line 188 "objects/Turing.rl"
 	{
       // write transition
       #ifdef DEBUG_PARSER
@@ -397,8 +439,8 @@ _match:
       send = tok;
     }
 	break;
-	case 7:
-#line 173 "objects/Turing.rl"
+	case 8:
+#line 196 "objects/Turing.rl"
 	{
       // write the entry
       #ifdef DEBUG_PARSER
@@ -413,8 +455,8 @@ _match:
       target_state = 0;
     }
 	break;
-	case 8:
-#line 188 "objects/Turing.rl"
+	case 9:
+#line 211 "objects/Turing.rl"
 	{
       p--; // move back one char
       char error_buffer[10];
@@ -424,15 +466,15 @@ _match:
       return;
     }
 	break;
-	case 9:
-#line 202 "objects/Turing.rl"
-	{ {cs = 34; goto _again;} }
-	break;
 	case 10:
-#line 204 "objects/Turing.rl"
+#line 225 "objects/Turing.rl"
+	{ {cs = 39; goto _again;} }
+	break;
+	case 11:
+#line 227 "objects/Turing.rl"
 	{ {cs = 1; goto _again;} }
 	break;
-#line 436 "objects/Turing.cpp"
+#line 478 "objects/Turing.cpp"
 		}
 	}
 
@@ -444,14 +486,14 @@ _again:
 	_out: {}
 	}
 
-#line 448 "objects/Turing.cpp"
+#line 490 "objects/Turing.cpp"
 	{
 	const char *_acts = _turing_actions + _turing_eof_actions[cs];
 	unsigned int _nacts = (unsigned int) *_acts++;
 	while ( _nacts-- > 0 ) {
 		switch ( *_acts++ ) {
-	case 7:
-#line 173 "objects/Turing.rl"
+	case 8:
+#line 196 "objects/Turing.rl"
 	{
       // write the entry
       #ifdef DEBUG_PARSER
@@ -466,12 +508,12 @@ _again:
       target_state = 0;
     }
 	break;
-#line 470 "objects/Turing.cpp"
+#line 512 "objects/Turing.cpp"
 		}
 	}
 	}
 
-#line 227 "objects/Turing.rl"
+#line 250 "objects/Turing.rl"
 
     
     mScriptDead = false; // ok, we can receive and process signals (again).

@@ -23,6 +23,9 @@ public:
   void test_compile( void ) 
   { assert_result("n=Turing(\"a  x  -> b { X }\na  'y'-> b { Y }\nb  ----> b {   }\")\nn.tables\n",
                   "#<Turing:n -->\ngoto\n 0 1 1\n 1 0 0\nsend\n 0 88 89\n / 0 0\n"); }
+  void test_compile_numbers( void ) 
+  { assert_result("n=Turing(\"a  x  -> b { 23 }\na  'y'-> b { 22 }\nb  ----> b {   }\")\nn.tables\n",
+                  "#<Turing:n -->\ngoto\n 0 1 1\n 1 0 0\nsend\n 0 23 22\n / 0 0\n"); }
   /*
     a  x  -> b { X }
     a  'y'-> b { Y }
