@@ -4,6 +4,7 @@
 #include "command.h"
 #include <sstream>
 
+
 class NodeTester
 {
 public:
@@ -59,103 +60,121 @@ protected:
 };
 
 
-class SingleParseTest
+class ParseTest
 {
 public:
-  SingleParseTest(std::string& pResult) : mServer(), 
-                mOutput(std::ostringstream::out), 
-                mInput(std::istringstream::in), 
-                mCmd(mInput, mOutput),
-                mResult(&pResult)
+  ParseTest() : mOutput(std::ostringstream::out), 
+                mInput(std::istringstream::in)
+                
   { 
-    mCmd.set_server(mServer);
+    mServer = new Rubyk;
+    mCmd = new Command(mInput, mOutput);
+    mCmd->set_server(*mServer);
   }
   
-  const std::string& parse(const char * pInput, bool pSilent = false)
+  // start a new server
+  void clean_start()
   {
+    delete mServer;
+    delete mCmd;
+    
+    mServer = new Rubyk;
+    mCmd = new Command(mInput, mOutput);
+    mCmd->set_server(*mServer);
     mOutput.str(std::string("")); // clear output
-    mServer.unlock();
-      mCmd.set_silent(pSilent);
-      mCmd.parse(pInput);
-      mCmd.set_silent(false);
-    mServer.lock();
-    *mResult = mOutput.str();
-    return *mResult;
-  }
-  
-  const std::string& bang(const char * pInput)
-  {
-    mCmd.parse("\nn.bang\n");
-
-    mServer.unlock();
-      mCmd.parse("print=Print()\nn => print\n");
-      mCmd.parse(pInput);
-      mOutput.str(std::string("")); // clear output
-      mCmd.set_silent(true);
-      mCmd.parse("\nn.bang\n");
-      mCmd.set_silent(false);
-    mServer.lock();
-    *mResult = mOutput.str();
-    return *mResult;
-  }
-  
-  const std::string& run(time_t pLength, const char * pInput)
-  {
-    time_t start;
-    mServer.unlock();
-      mCmd.parse("print=Print()\n");
-    mServer.lock();
-    mOutput.str(std::string("")); // clear output
-    mInput.str(std::string(pInput)); // set input
-    mCmd.set_silent(true);
-    mServer.listen_to_command(mCmd);
-    start = mServer.mCurrentTime;
-    while(mServer.mCurrentTime <= start + pLength && mServer.run()) {
-      mServer.run();
-    }
-    *mResult = mOutput.str();
-    return *mResult;
   }
   
 private:
-  Rubyk mServer;
-  Command mCmd;
+  Rubyk * mServer;
+  Command * mCmd;
   std::ostringstream mOutput;
   std::istringstream mInput;
-  std::string *      mResult;
-};
-
-class ParseTest
-{
+  
 protected:
+  
+  void setup_with_print(const char* pInput)
+  {
+    clean_start();
+    mServer->unlock();
+      mCmd->parse("p=Print()\nn=>p\n");
+      mCmd->parse(pInput);
+      mOutput.str(std::string("")); // clear output
+    mServer->lock();
+  }
+  
+  void clean_assert_result(const char * pInput, const char * pOutput)
+  {
+    clean_start();
+    assert_result(pInput, pOutput);
+  }
   void assert_result(const char * pInput, const char * pOutput)
   {
-    std::string result;
-    SingleParseTest p(result);
-    
-    TS_ASSERT_EQUALS( p.parse(pInput), std::string(pOutput));
+    mOutput.str(std::string("")); // clear output
+    mServer->unlock();
+      mCmd->parse(pInput);
+    mServer->lock();
+    TS_ASSERT_EQUALS( mOutput.str(), std::string(pOutput));
+  }
+  
+  void clean_assert_bang(const char * pInput, const char * pOutput)
+  {
+    setup_with_print(pInput);
+    assert_bang("\n", pOutput);
   }
   
   void assert_bang(const char * pInput, const char * pOutput)
   { 
-    std::string result;
-    SingleParseTest p(result);
-    
-    TS_ASSERT_EQUALS( p.bang(pInput), std::string(pOutput));
+    mServer->unlock();
+      mOutput.str(std::string("")); // clear output
+      mCmd->set_silent(true);
+      mCmd->parse(pInput);
+      mCmd->parse("\nn.bang\n");
+      mCmd->set_silent(false);
+    mServer->lock();
+    TS_ASSERT_EQUALS( mOutput.str(), std::string(pOutput));
   }
   
+  void clean_assert_print(const char * pInput, const char * pOutput)
+  {
+    clean_start();
+    assert_print(pInput, pOutput);
+    
+  }
   void assert_print(const char * pInput, const char * pOutput)
   { 
-    std::string result;
-    SingleParseTest p(result);
-    TS_ASSERT_EQUALS( p.parse(pInput, true), std::string(pOutput));
+    
+    mServer->unlock();
+      mOutput.str(std::string("")); // clear output
+      mCmd->set_silent(true);
+      mCmd->parse(pInput);
+      mCmd->set_silent(false);
+    mServer->lock();
+    //mServer->run(); // loop once
+    TS_ASSERT_EQUALS( mOutput.str(), std::string(pOutput));
   }
   
+  void clean_assert_run(time_t pLength, const char * pInput, const char * pOutput)
+  {
+    clean_start();
+    assert_run(pLength, pInput, pOutput);
+  }
   void assert_run(time_t pLength, const char * pInput, const char * pOutput)
   {
-    std::string result;
-    SingleParseTest p(result);
-    TS_ASSERT_EQUALS( p.run(pLength, pInput), std::string(pOutput));
+    time_t start;
+    mServer->unlock();
+      mCmd->parse("print=Print()\n");
+    mServer->lock();
+    mOutput.str(std::string("")); // clear output
+    mInput.str(std::string(pInput)); // set input
+    mCmd->set_silent(true);
+    mServer->listen_to_command(*mCmd);
+    start = mServer->mCurrentTime;
+    while(mServer->mCurrentTime <= start + pLength && mServer->run()) {
+      mServer->run();
+    }
+    mCmd->set_silent(false);
+    
+    TS_ASSERT_EQUALS( mOutput.str(), std::string(pOutput));
   }
 };
 

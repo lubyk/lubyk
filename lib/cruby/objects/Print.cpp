@@ -14,8 +14,6 @@ public:
   { 
     *mOutput << sig << std::endl;
   }
-private:
-  char mBuffer[50];
 };
 
 extern "C" void init()

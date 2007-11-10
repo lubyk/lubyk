@@ -67,4 +67,7 @@ public:
   
   void testParseBadLinks( void ) 
   { assert_result("n=>\n","Syntax error !\n"); }
+  
+  void testCreateDestroy( void ) 
+  { assert_result("v=>p\nv=Value()\np=Print()\nv=Print()\np=Value()\n","#<Value:v 0.00>\n#<Print:p -->\n#<Print:v -->\n#<Value:p 0.00>\n"); }
 };

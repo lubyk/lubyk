@@ -7,7 +7,7 @@ PLAT= macosx
 TEST=test/*_test.h test/objects/*_test.h
 
 test: test/runner test/runner.cpp
-	./test/runner && rm test/runner
+	./test/runner && rm test/runner.cpp
 
 rubyk: classes/main.cpp command.o rubyk.o node.o inlet.o outlet.o slot.o params.o class.o objects
 	g++ -o rubyk -Itest -Itemplates -Iclasses -Iobjects -I. classes/main.cpp slot.o inlet.o outlet.o params.o node.o class.o command.o rubyk.o

@@ -17,6 +17,7 @@ public:
   bool init (const Params& p)
   {
     mToken = 0;
+    mState = 0;
     return init_script(p);
   }
 
@@ -38,6 +39,13 @@ public:
     reload_script();
     if (mScriptDead) return;
     
+    //std::cout << "goto\n";
+    //print(std::cout, mGotoTable);
+    //std::cout << "send\n";
+    //print(std::cout, mSendTable);
+    //
+    //std::cout << "token ["<< mToken << "]" << std::endl;
+    //std::cout << "state ["<< mState << "]" << std::endl;
     
     if (mSend = mSendTable[mState][mToken])
       ; // ok custom value
@@ -50,7 +58,10 @@ public:
       mState = mGotoTable[mState][0]; // use default
 
     /* Send the value out. */
-    sig.set(mSend);
+    if (mSend == -1)
+      sig.set_nil();
+    else
+      sig.set(mSend);
   }
 
 
@@ -69,9 +80,9 @@ public:
     int state_id;
     int token_id;
     char tok;
-    int send;
-    int source_state;
-    int target_state;
+    int send = -1;
+    int source_state = 0;
+    int target_state = 0;
     
     
     std::vector< std::vector<int> >::iterator it,end; // to add new tokens
@@ -168,7 +179,7 @@ public:
       mGotoTable[source_state][token_id] = target_state;
       mSendTable[source_state][token_id] = send;
       token_id = 0;
-      send     = 0;
+      send     = -1;
       source_state = 0;
       target_state = 0;
     }
@@ -210,7 +221,7 @@ public:
     
     entry  = identifier %set_state %set_source ws* transition ws* identifier %set_state %set_target ws* send ws* comment?;
 
-    main  := ((entry %add_entry %eof(add_entry) | comment | begin_comment | ws* )  '\n' )+ $err(error);
+    main  := ( ws* (entry %add_entry %eof(add_entry) | comment | begin_comment | ws* )  '\n' )+ $err(error);
     write exec;
     write eof;
   }%%
@@ -242,7 +253,10 @@ private:
       std::vector<int>::iterator it2,end2;
       end2 = (*it).end();
       for ( it2 = (*it).begin(); it2 < end2; it2++ ) {
-        pOutput << " " << *it2;
+        if (*it2 == -1)
+          pOutput << " /";
+        else
+          pOutput << " " << *it2;
       }
       pOutput << "\n";
     } 
