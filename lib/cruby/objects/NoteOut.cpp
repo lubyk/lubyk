@@ -55,13 +55,12 @@ public:
     Signal sig;
     
     sig.set(msg);
-    
     if (out = outlet(1)) out->send(sig);
     delete msg;
   }
   
   // outlet 1
-  void send_note(Signal& sig)
+  void send(Signal& sig)
   {
     // send note on and register note off
     MidiMessage * message = new MidiMessage(mMessage);
@@ -70,11 +69,12 @@ public:
     
     // register note off (forced = must be run on quit)
     register_forced_event<NoteOut, &NoteOut::noteOff>(mLength, (void *)message);
-    
     // send note on
     sig.set(&mMessage);
   }
   
+  void clear()
+  { remove_my_events(); }
   
   virtual void spy()
   { 
@@ -96,5 +96,6 @@ extern "C" void init()
   INLET (NoteOut, set_velocity)
   INLET (NoteOut, set_length)
   INLET (NoteOut, set_channel)
-  OUTLET(NoteOut, send_note)
+  OUTLET(NoteOut, send)
+  METHOD(NoteOut, clear)
 }

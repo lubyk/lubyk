@@ -85,6 +85,7 @@ public:
     status = luaL_loadbuffer(mLua, mScript.c_str(), mScript.size(), "script" ); // the last parameter is just used for debugging and error reporting
     if (status) {
       *mOutput << mName << ": Compilation error !\n";
+      *mOutput << lua_tostring(mLua, -1) << std::endl;
       mScriptDead = true; // stop processing events until next reload
       return;
     }
@@ -98,7 +99,7 @@ public:
       mScriptDead = true;
       return;
     }
-    mScriptDead = false; // ok, we can receive process signals (again).
+    mScriptDead = false; // ok, we can receive and process signals (again).
   }
   
 private:  

@@ -15,7 +15,7 @@ int main(int argc, char * argv[])
 {
   gServer = new Rubyk;
   
-  if (argc) {
+  if (argc > 1) {
     std::ifstream in(argv[1], std::ios::in);
     std::ostringstream oss;
     oss << in.rdbuf();
@@ -35,6 +35,7 @@ int main(int argc, char * argv[])
   signal(SIGTERM, term); // register a SIGTERM handler
   signal(SIGINT,  term);
   while (gServer->run());
+  
   delete gServer;
   
   return 0;

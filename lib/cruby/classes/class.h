@@ -96,8 +96,8 @@ public:
   static Node * create (Rubyk * pServer, const std::string& pName, const std::string& pClassName, const std::string& p, std::ostream * pOutput)
   { return create(pServer, pName, pClassName, Params(p), pOutput); }
 
-  static Node * create (Rubyk * pServer, const char * pName, const char * pClassName, const Params p, std::ostream * pOutput)
-  { return create(pServer, std::string(pName), std::string(pClassName), Params(p), pOutput); }
+  static Node * create (Rubyk * pServer, const char * pName, const char * pClassName, const Params& p, std::ostream * pOutput)
+  { return create(pServer, std::string(pName), std::string(pClassName), p, pOutput); }
 
   static Node * create (Rubyk * pServer, const std::string& pName, const std::string& pClassName, const Params& p, std::ostream * pOutput);
 

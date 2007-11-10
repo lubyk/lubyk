@@ -143,3 +143,12 @@ public:
     
   }
 };
+
+class TestParseTest : public CxxTest::TestSuite, public ParseTest
+{
+public:
+
+  void test_send_nil( void ) 
+    { assert_print("n=Test()\nn.2=>p\np=Print()\nn.bang\n","nil\n"); }
+
+};

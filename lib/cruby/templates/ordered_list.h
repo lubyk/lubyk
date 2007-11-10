@@ -84,7 +84,7 @@ class OrderedList
       }
     }
     
-    void remove(T pObj)
+    LinkedList<T> * remove(T pObj)
     {
       LinkedList<T> * iterator = mTop;
       LinkedList<T> * tmp;
@@ -98,6 +98,7 @@ class OrderedList
         tmp = iterator->next->next;
         delete iterator->next;
         iterator->next = tmp;
+        return tmp;
       }
     }
     
@@ -112,6 +113,19 @@ class OrderedList
     }
     
     LinkedList<T> * begin() { return mTop->next; }
+    
+    size_t size()
+    {
+      int i=0;
+      LinkedList<T> * it = mTop;
+
+      // find element
+      while(it->next) {
+        it = it->next;
+        i++;
+      }
+      return i;
+    }
     
   private:
     LinkedList<T> * mTop;
@@ -175,8 +189,10 @@ class OrderedList<T*>
       iterator = mTop;
       
       // queue is kept sorted, smallest on top
-      while(iterator->next && *pObj >= *(iterator->next->obj)) {
-        iterator = iterator->next;
+      if (iterator->next) {
+        while(iterator->next && *pObj >= *(iterator->next->obj)) {
+          iterator = iterator->next;
+        }
       }
       
       if (iterator->next) {
@@ -189,7 +205,7 @@ class OrderedList<T*>
       }
     }
     
-    void remove(T* pObj)
+    LinkedList<T*> * remove(T* pObj)
     {
       LinkedList<T*> * iterator = mTop;
       LinkedList<T*> * tmp;
@@ -203,6 +219,7 @@ class OrderedList<T*>
         tmp = iterator->next->next;
         delete iterator->next;
         iterator->next = tmp;
+        return tmp;
       }
     }
     
@@ -217,6 +234,19 @@ class OrderedList<T*>
     }
     
     LinkedList<T*> * begin() { return mTop->next; }
+    
+    size_t size()
+    {
+      int i=0;
+      LinkedList<T*> * it = mTop;
+
+      // find element
+      while(it->next) {
+        it = it->next;
+        i++;
+      }
+      return i;
+    }
     
   private:
     LinkedList<T*> * mTop;

@@ -73,6 +73,7 @@ public:
     int i = mOutlets.size() - 1;
     // do not try to compute outlets if the node is in broken mode
     if (!mIsOK) return;
+    
     while(i >= 0) {
       /** Send through rightmost outlet first. */
       mOutlets[i--]->compute_and_send();
@@ -171,8 +172,16 @@ protected:
   
   void unloop_me()
   {
-    mServer->free_looped_node(this);
-    mLooped = false;
+    if (mLooped && mServer) {
+      mServer->free_looped_node(this);
+      mLooped = false;
+    }
+  }
+  
+  void remove_my_events()
+  {
+    if (mServer)
+      mServer->free_events_for(this);
   }
   
   template <class T, void(T::*Tmethod)(void *)>

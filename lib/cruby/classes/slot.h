@@ -14,7 +14,7 @@ class Slot
   public:
     Slot (void* node) : mNode(node) {}
   
-    virtual ~Slot () {};
+    virtual ~Slot ();
 
     /* PUBLIC METHODS */
     
@@ -28,7 +28,7 @@ class Slot
     void disconnect (Slot * pOther);
     
     /** Sort slots by rightmost node and rightmost position in the same node. */
-    inline bool operator>= (const Slot& pOther) const;
+    bool operator>= (const Slot& pOther) const;
     
     void * node () { return mNode; }
     
@@ -38,7 +38,7 @@ class Slot
     
     /** Remove a one-way connection to another slot. */
     void remove_connection (Slot * pOther);
-    
+  public:
     /* ATTRIBUTES */
     void* mNode; /**< containing node.      */
     int   mId;   /**< position in the node. */

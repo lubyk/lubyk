@@ -26,7 +26,7 @@ static uint hashId(K key);
 template <class K, class T>
 class Hash {
 public:
-  Hash(unsigned int size) : mSize(size), mLastKeyIndex(-1) { mHashTable = new HashElement<K,T>[size]; }
+  Hash(unsigned int size) : mSize(size) { mHashTable = new HashElement<K,T>[size]; }
   virtual ~Hash() {
     int i;
     HashElement<K,T> * current, * next;
@@ -86,7 +86,6 @@ private:
   /* data */
   HashElement<K,T> * mHashTable;
   std::vector<K>     mKeys;
-  uint               mLastKeyIndex; /**< Used to access last value (default value). */
   
   unsigned int mSize;
 };
@@ -124,7 +123,6 @@ void Hash<K,T>::set(const K& pId, const T& pElement) {
   }
   found->obj  = new T(pElement);
   found->id   = pId;
-  mLastKeyIndex = mKeys.size() - 1;
 }
 
 template <class K, class T>
@@ -148,8 +146,8 @@ bool Hash<K,T>::get(T* pResult, const K& pId) const
 template <class K, class T>
 bool Hash<K,T>::get(T* pResult) const 
 {
-  if (mLastKeyIndex >= 0 && mLastKeyIndex < mKeys.size())
-    return get(pResult, mKeys[mLastKeyIndex]);
+  if (mKeys.size() > 0)
+    return get(pResult, mKeys[mKeys.size() - 1]);
   else
     return false;
 }

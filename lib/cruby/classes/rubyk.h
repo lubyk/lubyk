@@ -47,22 +47,14 @@ public:
     if (!mQuit || e->mForced) mEventsQueue.push(e); // do not accept new events while we are trying to quit.
   }
   
-  void register_looped_node(Node * pNode)
-  {
-    mLoopedNodes.push_back(pNode);
-  }
+  /** Register a node as needing constant bangs. */
+  void register_looped_node(Node * pNode);
   
-  void free_looped_node(Node * pNode)
-  {  
-    std::deque<Node*>::iterator it;
-    std::deque<Node*>::iterator end = mLoopedNodes.end();
-    for(it = mLoopedNodes.begin(); it < end; it++) {
-      if (*it == pNode) {
-        mLoopedNodes.erase(it);
-        break;
-      }
-    }
-  }
+  /** Remove a node from the 'constant bang' list. */
+  void free_looped_node(Node * pNode);
+  
+  /** Remove all events related to a given node before the node dies. */
+  void free_events_for(Node * pNode);
   
   time_t mCurrentTime; /**< Current logical time in [ms] since reference. */
 

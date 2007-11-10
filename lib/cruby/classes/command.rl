@@ -20,6 +20,8 @@ void Command::initialize()
   mTokenIndex = 0;
   mSilent = false;
   
+  clear();
+  
   %% write init;
   mCurrentState = cs;
 }
@@ -50,7 +52,6 @@ void Command::parse(const std::string& pStr)
   const char *pe = p + pStr.size(); // past end
   int cs = mCurrentState;        // restore machine state
   
-
   %%{
     action a {
       if (mTokenIndex >= MAX_TOKEN_SIZE) {
@@ -75,10 +76,11 @@ void Command::parse(const std::string& pStr)
   
     action set_value { set_from_token(mValue);}
     
+    action set_from { mFrom = mVariable; }
+    
     action set_from_port {
       set_from_token(mValue);
       mFromPort = atoi(mValue.c_str());
-      mFrom = mVariable;
     }
     
     action set_to_port {
@@ -91,7 +93,6 @@ void Command::parse(const std::string& pStr)
     action add_param { set_parameter(mKey, mValue); }
     
     action create_link {
-      mToPort = atoi(mValue.c_str());
       mTo   = mVariable;
       create_link();
     }
@@ -133,8 +134,8 @@ void Command::parse(const std::string& pStr)
     class  = (upper (alnum | '_')*) $a %set_class;
   
     string  = '"' ([^"\\] | '\n' | ( '\\' (any | '\n') ))* $a '"';
-    float   = [\-+]? $a ('1'..'9' digit* '.' digit+) $a;
-    integer = [\-+]? $a ('1'..'9' digit*) $a;
+    float   = ([\-+]? $a ('1'..'9' digit* '.' digit+) $a | '0' $a );
+    integer = ([\-+]? $a ('1'..'9' digit*) $a | '0' $a );
   
     value  = (string | float | integer ) %set_value ;
   
@@ -146,7 +147,7 @@ void Command::parse(const std::string& pStr)
   
     create_instance = var ws* '=' ws* class '(' parameters? ')' ;
   
-    create_link = var '.' integer %set_from_port ws* '=>' ws* integer %set_value '.' var %set_to_port;
+    create_link = var %set_from ('.' integer %set_from_port)? ws* '=>' ws* (integer %set_to_port '.')? var ;
     
     execute_method       = var   '.' method ( '(' parameters? ')' )? ;
     
@@ -161,6 +162,7 @@ void Command::parse(const std::string& pStr)
             | create_link %create_link 
             | ws* )  '\n' )+ @prompt $err(error);
     write exec;
+    # write eof; (add eof actions to all above before removing comment)
   }%%
 //  printf("{%s}\n",p);
   mCurrentState = cs;
@@ -224,7 +226,7 @@ void Command::create_instance()
   mServer->lock();
   Node * node = mServer->create_instance(mVariable, mClass, mParameters, mOutput);
 #ifdef DEBUG_PARSER
-  std::cout << "NEW("<< mVariable << ", " << mClass << ", " << mParameters << ")";
+  std::cout << "NEW "<< mVariable << " = " << mClass << "(" << mParameters << ")";
 #endif
   if (node) {
     if (!mSilent)
@@ -242,8 +244,8 @@ void Command::create_link()
   mServer->create_link(mFrom, mFromPort, mToPort, mTo);
   mServer->unlock();
 
-  if (!mSilent)
-    *mOutput << "LINK " << mFrom << "." << mFromPort << "=>" << mToPort << "." << mTo << std::endl;
+  // if (!mSilent)  // useless
+  //   *mOutput << "LINK " << mFrom << "." << mFromPort << "=>" << mToPort << "." << mTo << std::endl;
 }
 
 // FIXME: execute_method should run in server space with concurrency locks.
@@ -303,9 +305,12 @@ void Command::print(void)
 
 void Command::clear() 
 {
+  mTokenIndex = 0;
   mAction     = NO_ACTION;
   mVariable   = "";
   mClass      = "";
   mSingleParam = "";
   mParameters.clear();
+  mFromPort = 1;
+  mToPort   = 1;
 }

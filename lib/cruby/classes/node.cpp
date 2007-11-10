@@ -8,6 +8,10 @@ unsigned int Node::sIdCounter = 0;
 
 Node::~Node()
 {
+  // we have to do this here before ~Node, because some events have to be triggered before the node dies (note off).
+  remove_my_events();
+  unloop_me();
+  
   for(std::vector<Outlet*>::iterator it = mOutlets.begin(); it < mOutlets.end(); it++)
     delete *it;
   
@@ -19,9 +23,6 @@ Node::~Node()
   
   if (mInspect != NULL)
     free(mInspect);
-  
-  if (mServer && mLooped)
-    unloop_me();
 }
 
 const char * Node::class_name() const

@@ -60,8 +60,11 @@ public:
   { assert_result("Test.hello\n","Hello World!\n"); }
 
   void testParseLink( void ) 
-  { assert_result("n.1=>1.p\n","Hello World!\n"); }
+  { assert_result("n.1=>1.p\n",""); }
 
   void testParseFirstLinks( void ) 
-  { assert_result("n=>p\n","...!\n"); }
+  { assert_result("n=>p\n",""); }
+  
+  void testParseBadLinks( void ) 
+  { assert_result("n=>\n","Syntax error !\n"); }
 };

@@ -41,6 +41,9 @@ public:
   time_t mTime;
   bool   mForced; /**< Run even if trying to quit. */
   
+  bool uses_node(const void * pNode) const
+  { return pNode == mNode; }
+
 protected:
   void * mParameter;
   void * mNode;

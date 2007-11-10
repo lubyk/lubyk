@@ -33,10 +33,14 @@ public:
   void increment_counter(Signal& sig)
   { sig.set(++mCounter); }
   
+  void send_nil(Signal& sig)
+  { *mOutput << "nil\n"; sig.set_nil(); }
+  
   void info(const Params& p)
   {
     *mOutput << p << std::endl;
   }
+  
   
 private:
   /* data */
@@ -51,6 +55,7 @@ extern "C" void init()
   CLASS (Test)
   INLET (Test, set_counter)
   OUTLET(Test, increment_counter)
+  OUTLET(Test, send_nil)
   METHOD(Test, info)
   CLASS_METHOD(Test, hello)
 }

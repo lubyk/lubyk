@@ -4,6 +4,7 @@ DOT_CMD=/Applications/Graphviz.app/Contents/MacOS/dot
 RAGEL=ragel
 RAGEL_CD=rlgen-cd
 PLAT= macosx
+TEST=test/*_test.h test/objects/*_test.h
 
 test: test/runner test/runner.cpp
 	./test/runner && rm test/runner
@@ -12,12 +13,11 @@ rubyk: classes/main.cpp command.o rubyk.o node.o inlet.o outlet.o slot.o params.
 	g++ -o rubyk -Itest -Itemplates -Iclasses -Iobjects -I. classes/main.cpp slot.o inlet.o outlet.o params.o node.o class.o command.o rubyk.o
 	
 test/runner.cpp: test/*_test.h test/objects/*_test.h
-	./test/cxxtest/cxxtestgen.pl --error-printer -o test/runner.cpp test/*_test.h test/objects/*_test.h
-
+	./test/cxxtest/cxxtestgen.pl --error-printer -o test/runner.cpp $(TEST)
+	
 test/runner: test/runner.cpp command.o rubyk.o node.o inlet.o outlet.o slot.o params.o class.o objects
 	g++ -Itest -Itemplates -Iclasses -Iobjects -I. test/runner.cpp slot.o inlet.o outlet.o params.o node.o class.o command.o rubyk.o -o test/runner
-	
-	
+
 slot.o: classes/slot.cpp classes/slot.h
 	g++ -c -Itemplates classes/slot.cpp -o slot.o
 
@@ -48,7 +48,7 @@ command.o: classes/command.cpp classes/command.h classes/mutex.h
 command.o.bak: classes/command.cpp classes/command.h parser/parser.c lexer.o	
 	g++ -c -Iclasses -Itemplates classes/command.cpp parser/parser.c parser/lexer.o -O2 -Wl,-x -pipe -lm -o command.o
 
-objects: lib/Test.rko lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/Midi.rko lib/NoteOut.rko lib/Lua.rko lib/Serial.rko
+objects: lib/Test.rko lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/Midi.rko lib/NoteOut.rko lib/Lua.rko lib/Serial.rko lib/Turing.rko
 
 
 lib/Test.rko: objects/Test.cpp
@@ -80,6 +80,12 @@ lib/Lua.rko: objects/Lua.cpp objects/lua/liblua.a classes/script.h
 
 lib/Serial.rko: objects/Serial.cpp objects/serial/serial.h
 	g++ -o lib/Serial.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Serial.cpp
+
+lib/Turing.rko: objects/Turing.cpp objects/Turing.rl
+	g++ -o lib/Turing.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Turing.cpp
+
+objects/Turing.cpp: objects/Turing.rl
+	${RAGEL} objects/Turing.rl | ${RAGEL_CD} -o objects/Turing.cpp
 
 objects/lua/liblua.a:
 	cd objects/lua && make $(PLAT)

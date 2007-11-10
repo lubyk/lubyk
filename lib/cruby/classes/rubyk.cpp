@@ -18,19 +18,21 @@ Rubyk::~Rubyk()
   std::vector<std::string>::iterator it;
   std::vector<std::string>::iterator end = mInstances.end();
   Node * node;
+  Command * child;  
   
-  Command * child;
   while(!mCommands.empty()) {
     child = mCommands.front();
     // join
     child->close(); // joins pthread
     mCommands.pop();
   }
+  
   pop_all_events();
   
   for(it = mInstances.begin(); it < end; it++) {
-    if (mInstances.get(&node, *it))
+    if (mInstances.get(&node, *it)) {
       delete node; // destroy node
+    }
   }
 }
 
@@ -86,8 +88,9 @@ Node * Rubyk::create_instance (const std::string& pVariable, const std::string& 
 
   if (node) {
     
-    if (mInstances.get(&previous, node->name()))
-      delete previous; // kill the node pointed by variable name
+    if (mInstances.get(&previous, node->name())) {
+      delete previous; // kill the node pointed by variable name 
+    }
       
     mInstances.set(node->name(), node);
     create_pending_links();
@@ -175,11 +178,46 @@ void Rubyk::pop_all_events()
   }
 }
 
+void Rubyk::register_looped_node(Node * pNode)
+{
+  free_looped_node(pNode);
+  mLoopedNodes.push_back(pNode);
+}
+
 void Rubyk::trigger_loop_events()
 {
   std::deque<Node *>::iterator it;
   std::deque<Node *>::iterator end = mLoopedNodes.end();
   for(it = mLoopedNodes.begin(); it < end; it++) {
     (*it)->bang();
+  }
+}
+
+void Rubyk::free_looped_node(Node * pNode)
+{  
+  std::deque<Node*>::iterator it;
+  std::deque<Node*>::iterator end = mLoopedNodes.end();
+  for(it = mLoopedNodes.begin(); it < end; it++) {
+    if (*it == pNode) {
+      mLoopedNodes.erase(it);
+      break;
+    }
+  }
+}
+
+void Rubyk::free_events_for(Node * pNode)
+{  
+  BaseEvent * e;
+  LinkedList<BaseEvent*> * it   = mEventsQueue.begin();
+  LinkedList<BaseEvent*> * prev = NULL;
+  
+  // find element
+  while(it) {
+    e = it->obj;
+    if (e->uses_node(pNode)) {
+      if (e->mForced) e->trigger();
+      it = mEventsQueue.remove(e);
+    } else
+      it = it->next;
   }
 }
