@@ -12,20 +12,20 @@ public:
     goto ======
        . x y
     a  0 1 1
-    b  1 0 0
+    b  1 - -
 
     send ======
        . x y
-    a  0 X Y
-    b  / 0 0
+    a  / X Y
+    b  / - -
   */
   
   void test_compile( void ) 
   { assert_result("n=Turing(\"a  x  -> b { X }\na  'y'-> b { Y }\nb  ----> b {   }\")\nn.tables\n",
-                  "#<Turing:n -->\ngoto\n 0 1 1\n 1 0 0\nsend\n 0 88 89\n / 0 0\n"); }
+                  "#<Turing:n -->\ngoto\n 0 1 1\n 1 - -\nsend\n / 88 89\n / - -\n"); }
   void test_compile_numbers( void ) 
   { assert_result("n=Turing(\"a  x  -> b { 23 }\na  'y'-> b { 22 }\nb  ----> b {   }\")\nn.tables\n",
-                  "#<Turing:n -->\ngoto\n 0 1 1\n 1 0 0\nsend\n 0 23 22\n / 0 0\n"); }
+                  "#<Turing:n -->\ngoto\n 0 1 1\n 1 - -\nsend\n / 23 22\n / - -\n"); }
   /*
     a  x  -> b { X }
     a  'y'-> b { Y }
@@ -34,45 +34,24 @@ public:
     goto ======
        . x y
     a  0 1 1
-    b  0 1 0
+    b  1 - -
 
     send ======
        . x y
-    a  0 X Y
-    b  A / 0
+    a  / X Y
+    b  / - -
   */
   
   void test_comment( void ) 
   { assert_result("n=Turing(\"a  x  -> b { X } # this is a comment\n=begin\nmulti\nline\ncomment\n=end\na  'y'-> b { Y }\nb  ----> b {   }\")\nn.tables\n",
-                  "#<Turing:n -->\ngoto\n 0 1 1\n 1 0 0\nsend\n 0 88 89\n / 0 0\n"); }
-  /*
-    a  x  -> b { X }
-    a  'y'-> b { Y }
-    b  ----> a { A }
-    b  -x--> b {   }
-    
+                  "#<Turing:n -->\ngoto\n 0 1 1\n 1 - -\nsend\n / 88 89\n / - -\n"); }
+  /*    
     'x' = 120
     'y' = 121
 
     'X' = 88
     'Y' = 89
 
-    x : 1
-    y : 2
-
-    a : 0
-    b : 1
-
-    goto ======
-       . x y
-    a  0 1 1
-    b  0 1 0
-
-    send ======
-       . x y
-    a  0 X Y
-    b  A / 0
-    
     test sequence is:
     x => b (X)
     ? => a (A)

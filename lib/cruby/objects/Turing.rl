@@ -1,6 +1,6 @@
 #include "script.h"
 #define MAX_NAME_SIZE 200
-#define DEBUG_PARSER
+//#define DEBUG_PARSER
 
 %%{
   machine turing;
@@ -50,19 +50,19 @@ public:
     
     
     std::cout << "{" << mState << "} -" << mToken << "->";
-    if (mSend = mSendTable[mState][mToken])
+    if ((mSend = mSendTable[mState][mToken]) != -1)
       ; // ok custom value
     else
       mSend = mSendTable[mState][0]; // use default
 
-    if (state = mGotoTable[mState][mToken])
+    if ((state = mGotoTable[mState][mToken]) != -1)
       mState = state;
     else
       mState = mGotoTable[mState][0]; // use default
     
     std::cout << "{" << mState << "}" << std::endl;
     /* Send the value out. */
-    if (mSend == -1)
+    if (mSend == -2)
       sig.set_nil();
     else
       sig.set(mSend);
@@ -89,21 +89,15 @@ public:
     int target_state = 0;
     
     
-    printf("T 1\n");
     std::vector< std::vector<int> >::iterator it,end; // to add new tokens
-    
-    printf("T 2\n");
     // init token table
     memset(mTokenTable, 0, sizeof(mTokenTable));
     
-    printf("T 3\n");
     mGotoTable.clear();
     mSendTable.clear();
     
-    printf("T 4\n");
     %% write init;
     
-    printf("T 5\n");
   %%{
     action a {
       if (name_index >= MAX_NAME_SIZE) {
@@ -128,13 +122,15 @@ public:
         // new state
         state_id = state_count;
         state_names.set(std::string(name), state_id);
-        state_count++;
         
         // add a new line to the lookup tables
-        mGotoTable.push_back( std::vector<int>(token_count, 0) );
-        mSendTable.push_back( std::vector<int>(token_count, 0) );
-        if (token_count > 0)
-          mSendTable[state_count - 1][0] = -1; // default send is 'nil'
+        mGotoTable.push_back( std::vector<int>(token_count, -1) ); // -1 means use default
+        mGotoTable[state_count][0] = 0; // default move to start
+        
+        mSendTable.push_back( std::vector<int>(token_count, -1) ); // -1 means use default
+        mSendTable[state_count][0] = -2; // -2 means send 'nil'
+        
+        state_count++;
       }
       name_index = 0;
     }
@@ -170,17 +166,21 @@ public:
         end = mGotoTable.end();
         for (it = mGotoTable.begin(); it < end; it++) {
           // enlarge all arrays in the table
-          (*it).push_back(0);
+          if (token_count == 1)
+            (*it).push_back(0); // first value is 0 (go home)
+          else
+            (*it).push_back(-1); // -1 means use default
         }
         
         end = mSendTable.end();
         for (it = mSendTable.begin(); it < end; it++) {
           // enlarge all arrays in the table
           if (token_count == 1)
-            (*it).push_back(-1); // first value is -1 (default send is 'nil')
+            (*it).push_back(-2); // -2 means do not send (default send in first column)
           else
-            (*it).push_back(0);
+            (*it).push_back(-1); // -1 means use default 
         }
+        
       }
       token_id = mTokenTable[tok % 256];
     }
@@ -202,7 +202,7 @@ public:
       mGotoTable[source_state][token_id] = target_state;
       mSendTable[source_state][token_id] = send;
       token_id = 0;
-      send     = -1;
+      send     = -2;
       source_state = 0;
       target_state = 0;
     }
@@ -277,7 +277,9 @@ private:
       end2 = (*it).end();
       for ( it2 = (*it).begin(); it2 < end2; it2++ ) {
         if (*it2 == -1)
-          pOutput << " /";
+          pOutput << " -";  // default
+        else if (*it2 == -2)
+          pOutput << " /";  // do not send
         else
           pOutput << " " << *it2;
       }

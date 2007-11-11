@@ -25,7 +25,6 @@ public:
   
   virtual ~SerialPort () 
   {
-    printf("Port dying.\n");
     if (mIsOpen) close(mFd);
     mIsOpen = false;
   }
@@ -76,7 +75,12 @@ public:
       fcntl(mFd, F_SETFL, FNDELAY);
       
     // get options
-    tcgetattr(mFd, &options);
+    if (tcgetattr(mFd, &options) == -1) {
+      error("tcgetattr");
+      close(mFd);
+      mIsOpen = false;
+      return false;
+    }
     
     // set baud rate                                          BAUDS
     switch(pBauds) {
@@ -162,7 +166,9 @@ public:
       break;
     default:
       *mOutput << buf("Unknown parity(must be 'N','E','O' or 'S') '%c'.\n",pParityChecking);
-      mIsOK = false;
+      close(mFd);
+      mIsOpen = false;
+      mIsOK   = false;
       return false;
     }
     
@@ -199,7 +205,12 @@ public:
     options.c_cc[VTIME] = 0; // if VMIN is not 0, time to wait for first char
     
     // set
-    tcsetattr(mFd, TCSANOW, &options);
+    if (tcsetattr(mFd, TCSANOW, &options) == -1) {
+      error("tcsetattr");
+      close(mFd);
+      mIsOpen = false;
+      return false;
+    }
     
     return true;
   }

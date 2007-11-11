@@ -231,4 +231,20 @@ private:
   static unsigned int sIdCounter;  /**< Each object has a unique id. */
 };
 
+/** This class is used when a new object's class is not found. We return an object of type 'NotFound'. */
+class NotFound : public Node
+{
+public:
+  
+  bool update()
+  {
+    // do nothing
+  }
+  
+  void spy()
+  {
+    spy_print("not found");
+  }
+};
+
 #endif

@@ -45,10 +45,10 @@ Node * Class::create (Rubyk * pServer, const std::string& pName, const std::stri
   // load failed
   // dummy object in broken mode
   
-  if (! sClasses.get(&klass, "Node"))
-    Class::declare<Node>("Node");
+  if (! sClasses.get(&klass, "NotFound"))
+    Class::declare<NotFound>("NotFound");
   
-  sClasses.get(&klass, "Node");
+  sClasses.get(&klass, "NotFound");
   Node * obj = (*klass)(pName, pServer, p, pOutput);
   obj->set_class(klass);
   obj->set_name(pName);
