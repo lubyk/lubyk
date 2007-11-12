@@ -9,14 +9,14 @@ TEST=test/*_test.h test/objects/*_test.h
 test: test/runner test/runner.cpp
 	./test/runner && rm test/runner.cpp
 
-rubyk: classes/main.cpp command.o rubyk.o node.o inlet.o outlet.o slot.o params.o class.o objects
-	$(CC) $(CFLAGS) -o rubyk -Itest -Itemplates -Iclasses -Iobjects -I. classes/main.cpp slot.o inlet.o outlet.o params.o node.o class.o command.o rubyk.o
+rubyk: classes/main.cpp command.o rubyk.o node.o inlet.o outlet.o slot.o params.o class.o lua.o classes/lua/src/liblua.a objects
+	$(CC) $(CFLAGS) -o rubyk -Itest -Itemplates -Iclasses -Iobjects -I. classes/main.cpp slot.o inlet.o outlet.o params.o node.o class.o command.o rubyk.o lua.o classes/lua/src/liblua.a
 	
 test/runner.cpp: test/*_test.h test/objects/*_test.h
 	./test/cxxtest/cxxtestgen.pl --error-printer -o test/runner.cpp $(TEST)
 	
-test/runner: test/runner.cpp command.o rubyk.o node.o inlet.o outlet.o slot.o params.o class.o objects
-	$(CC) $(CFLAGS) -Itest -Itemplates -Iclasses -Iobjects -I. test/runner.cpp slot.o inlet.o outlet.o params.o node.o class.o command.o rubyk.o -o test/runner
+test/runner: test/runner.cpp command.o rubyk.o node.o inlet.o outlet.o slot.o params.o class.o lua.o classes/lua/src/liblua.a objects
+	$(CC) $(CFLAGS) -Itest -Itemplates -Iclasses -Iobjects -I. test/runner.cpp slot.o inlet.o outlet.o params.o node.o class.o command.o rubyk.o lua.o classes/lua/src/liblua.a -o test/runner
 
 slot.o: classes/slot.cpp classes/slot.h
 	$(CC) $(CFLAGS) -c -Itemplates classes/slot.cpp -o slot.o
@@ -75,13 +75,13 @@ lib/Midi.rko: objects/Midi.cpp
 lib/NoteOut.rko: objects/NoteOut.cpp
 	$(CC) $(CFLAGS) -o lib/NoteOut.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/NoteOut.cpp
 
-lib/Lua.rko: objects/Lua.cpp objects/lua/liblua.a classes/script.h
-	$(CC) $(CFLAGS) -o lib/Lua.rko -Itemplates -Iclasses -Iobjects/lua -dynamic -bundle -undefined suppress -flat_namespace -lgcc -lstdc++ objects/Lua.cpp objects/lua/liblua.a
-
+lib/Lua.rko: objects/Lua.cpp
+	$(CC) $(CFLAGS) -o lib/Lua.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Lua.cpp
+	
 lib/Serial.rko: objects/Serial.cpp objects/serial/serial.h
 	$(CC) $(CFLAGS) -o lib/Serial.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Serial.cpp -DCOMPILE_SERIAL_OBJECT
 
-lib/Cabox.rko: objects/Serial.cpp objects/serial/serial.h objects/Cabox.cpp
+lib/Cabox.rko: objects/serial/serial.h objects/Cabox.cpp
 	$(CC) $(CFLAGS) -o lib/Cabox.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Serial.cpp objects/Cabox.cpp
 
 lib/Turing.rko: objects/Turing.cpp objects/Turing.rl
@@ -93,8 +93,11 @@ lib/Keyboard.rko: objects/Keyboard.cpp
 objects/Turing.cpp: objects/Turing.rl
 	${RAGEL} objects/Turing.rl | ${RAGEL_CD} -o objects/Turing.cpp
 
-objects/lua/liblua.a:
-	cd objects/lua && make $(PLAT)
+lua.o: classes/lua/lua_script.cpp classes/lua_script.h classes/script.h
+	$(CC) $(CFLAGS) -c -o lua.o -Itemplates -Iclasses -Iclasses/lua/src classes/lua/lua_script.cpp
+
+classes/lua/src/liblua.a:
+	cd classes/lua/src/liblua.a && make $(PLAT)
 	
 dot: classes/command.png	
 	open classes/command.png

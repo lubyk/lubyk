@@ -3,6 +3,10 @@
 #include "node.h"
 #include <iostream>
 
+#define _TEST_OBJECTS_
+
+struct lua_State;
+
 /** Pointer to a member method that can be called from the command line with "obj.method(Params)" */
 typedef void (*member_method_t)(void * pReceiver, const Params& p);
 
@@ -12,11 +16,13 @@ typedef Node * (*create_function_t)(Class * pClass, const std::string& pName, Ru
 /** Pointer to an inlet method that can be called from the command line with "obj.method(Params)" */
 typedef void (*outlet_method_t)(void * pReceiver, Signal& sig);
 
+/** Pointer to a method callable from lua. */
+typedef int (*method_for_lua_t)(lua_State * L);
 
 class Class
 {
 public:
-  Class (const char* pName, create_function_t pFunction) : mName(pName), mCreateFunction(pFunction), mMethods(10), mClassMethods(10) {}
+  Class (const char* pName, create_function_t pFunction) : mName(pName), mCreateFunction(pFunction), mMethods(10), mMethodsForLua(10), mClassMethods(10) {}
   
   /** Execute a class method. Example: Midi.outputs */
   void execute_method (const std::string& pMethod, const Params& p, std::ostream * pOutput) ;
@@ -47,6 +53,13 @@ public:
   {
     mMethods.set(std::string(pName), &cast_member_method<T, Tmethod>);
   }
+  
+  /** Declare a method for lua. */
+  void add_method_for_lua (const char* pName, method_for_lua_t pMethod)
+  {
+    mMethodsForLua.set(std::string(pName), pMethod);
+  }
+  
   
   /** Declare an inlet, with an accessor method. */
   template <class T, void(T::*Tmethod)(const Signal& sig)>
@@ -127,6 +140,9 @@ public:
   
   bool get_member_method(member_method_t * pMethod, const std::string& pMethodName)
   { return mMethods.get(pMethod, pMethodName); }
+  
+  const Hash<std::string, method_for_lua_t> * methodsForLua ()
+  { return &mMethodsForLua;}
   
 private:
   
@@ -227,10 +243,13 @@ private:
   
   
   /* class info */
-  std::string                         mName;           /**< Class name. */
-  create_function_t                   mCreateFunction; /**< Function to create a new instance. */
-  Hash<std::string, member_method_t>  mMethods;        /**< Member methods. */
-  Hash<std::string, class_method_t>   mClassMethods;   /**< Class methods. */
+  std::string                          mName;           /**< Class name. */
+  create_function_t                    mCreateFunction; /**< Function to create a new instance. */
+  Hash<std::string, member_method_t>   mMethods;        /**< Member methods. */
+  Hash<std::string, class_method_t>    mClassMethods;   /**< Class methods. */
+  Hash<std::string, method_for_lua_t>  mMethodsForLua;  /**< Class methods. */
+  
+  
   
   std::vector<inlet_method_t>         mInlets;         /**< Inlet prototypes.  */
   std::vector<outlet_method_t>        mOutlets;        /**< Outlet prototypes. */

@@ -6,9 +6,10 @@
 
 /** Signal types. */
 enum rubyk_signal_t {
-  NilSignal = 0,     /**< Do not send. */
+  NilSignal  = 0,    /**< Do not send. */
   BangSignal = 1,    /**< Trigger update without changing values. */
   IntegerSignal,     /**< IntegerSignal value. */
+  CharSignal,        /**< IntegerSignal value. */
   FloatSignal,       /**< FloatSignal (actually double). */
   FloatArraySignal,  /**< Array of floats. Use the 'size' attribute to avoid buffer overflow. */
   MidiSignal,        /**< Pointer to a midi message. */
@@ -19,6 +20,11 @@ typedef struct {
   rubyk_signal_t    type;
   unsigned int value;
 } IntegerSignal_t;
+
+typedef struct {
+  rubyk_signal_t    type;
+  char value;
+} CharSignal_t;
 
 typedef struct {
   rubyk_signal_t    type;
@@ -70,6 +76,13 @@ union Signal {
   {
     type = IntegerSignal;
     i.value = pInt;
+  }
+  
+  /** Set as char. */
+  inline void set(char pChar)
+  {
+    type = CharSignal;
+    c.value = pChar;
   }
   
   /** Set as unsigned integer. */
@@ -140,6 +153,21 @@ union Signal {
         return false;
     }
   }
+
+  /** Get as char. */
+  inline bool get(char * pChar) const
+  {
+    switch(type) {
+      case IntegerSignal:
+        *pChar = (char)i.value;
+        return true;
+      case CharSignal:
+        *pChar = c.value;
+        return true;
+      default:
+        return false;
+    }
+  }
   
   /** Get as long. */
   inline bool get(long * pInt) const
@@ -201,6 +229,7 @@ union Signal {
 /* data */
   rubyk_signal_t      type;
   IntegerSignal_t     i;
+  CharSignal_t        c;
   FloatSignal_t       f;
   FloatArraySignal_t  floats;
   MidiSignal_t midi_ptr;
@@ -224,8 +253,20 @@ inline std::ostream& operator<< (std::ostream& pStream, const Signal& sig)
     pStream << buffer;
     break;
   case FloatArraySignal:
-    snprintf(buffer, 50, "<floats %i,%i>",sig.floats.value, sig.floats.size);
-    pStream << buffer;
+    if (sig.floats.size == 0) {
+      snprintf(buffer, 50, "<floats %p,%i>",sig.floats.value, sig.floats.size);
+      pStream << buffer;
+    } else {
+      int sz = 16;
+      if (sz > sig.floats.size) sz = sig.floats.size;
+      snprintf(buffer, 50, "<floats %p (% .2f", sig.floats.value, sig.floats.value[0]);
+      pStream << buffer;
+      for (int i= 1; i < sz; i++) {
+        snprintf(buffer, 50, ", % .2f", sig.floats.value[i]);
+        pStream << buffer;
+      }
+      pStream << ")," << sig.floats.size << ">";
+    }
     break;
   case VoidPointerSignal:
     snprintf(buffer, 50, "<ptr %p,%i>",sig.ptr.value, sig.ptr.free_me);

@@ -16,7 +16,7 @@ public:
     mOffsetOnFull = false; // do not offset when 12 values are set
     mSlowPort = false;
     
-    if (serial_init(p))
+    if (init_serial(p))
     {
       // enter read data
       
@@ -91,6 +91,7 @@ private:
   double mValues[12];
   double mOffset[12];
   int mIndex;
+  int mWindowSize;
   int mState;
   int mHigh;
   bool mOffsetOnFull;

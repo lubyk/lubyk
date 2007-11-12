@@ -9,11 +9,11 @@ class Script : public Node
 public:
   Script () : mScriptModTime(0), mReloadEvery(0), mNextReload(0), mScriptDead(true) {}
   
-  bool init_script(const Params& p)
+  bool init_script(const Params& p, const char * pLoadName = NULL, bool pUseDefault = true)
   {
     std::string str;
     
-    if (p.get(&str, "load")) {
+    if (( pLoadName && p.get(&str, pLoadName)) || p.get(&str, "load")) {
       mScriptFile = str;
       mReloadEvery = p.val("reload", 1);
       load_script_from_file(true);

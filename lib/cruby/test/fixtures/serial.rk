@@ -1,0 +1,5 @@
+s=Serial(load:"test/fixtures/serial.lua" window:2 test:"abcdefghijklmnop")
+p=Print()
+s=>p
+m=Metro(360)
+m=>s
