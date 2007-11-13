@@ -3,7 +3,7 @@ function update(sig)
 	--print(in2,in1)
 	if (in1 > 0.2) then
 		g = 0
-		if in2 == 2 then
+		if (in2 == 2 or in2 == 5) then
 			if in1 > 0.7 then
 				return in2
 			end
