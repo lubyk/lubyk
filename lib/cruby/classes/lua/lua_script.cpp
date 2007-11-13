@@ -51,7 +51,6 @@ void LuaScript::call_lua(const char * pFunctionName, Signal& sig, float f)
     sig.set_bang();
     break;
   case LUA_TNIL:
-    sig.set_nil();
     lua_pop(mLua, 1);
     break;
   case LUA_TNUMBER:
@@ -64,7 +63,6 @@ void LuaScript::call_lua(const char * pFunctionName, Signal& sig, float f)
     break;
   default:
     *mOutput << "Unsupported lua return value '" << lua_typename(mLua, i) << "'.\n";
-    sig.set_nil();
     lua_pop(mLua, 1);
   }
 }
