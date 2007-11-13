@@ -14,6 +14,12 @@ public:
   
   bool init (const Params& p)
   {
+    return init_serial(p);
+  }
+  
+  bool init_serial (const Params& p)
+  {
+    
     if (p.get(&mWindowSize, "window") && mWindowSize) {
       // use buffer
       size_t sz = mWindowSize * DEFAULT_WINDOW_COUNT; // write twice once every 10 windows
@@ -26,7 +32,6 @@ public:
         mNextWrite = mWindowSize - 1;
         mReadPosition = 0;
         mReadOffset   = 0;
-        printf("BUF: %p --> %p \n",mBuffer, mBuffer + sz);
       }
     }
     
@@ -38,11 +43,7 @@ public:
       mTestDataIndex = -1;
     }
 #endif
-    return init_serial(p) && init_lua(p);
-  }
-  
-  bool init_serial (const Params& p)
-  {
+
     mPort.set_output(*mOutput);
     
     if (!p.get(&mPortName, "port")) {
@@ -62,9 +63,8 @@ public:
       return false;
     }
     
-    // FIXME: register in loop_events
     loop_me();
-    return true;
+    return init_lua(p);
   }
   
   static void list(std::ostream * pOutput, const Params& p)
@@ -193,7 +193,6 @@ protected:
   int         mTestDataIndex;
 #endif
   SerialPort mPort;
-private:
   int      mWindowSize;
   int      mNextWrite;
   int      mReadPosition;

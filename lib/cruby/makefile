@@ -97,7 +97,7 @@ lua.o: classes/lua/lua_script.cpp classes/lua_script.h classes/script.h
 	$(CC) $(CFLAGS) -c -o lua.o -Itemplates -Iclasses -Iclasses/lua/src classes/lua/lua_script.cpp
 
 classes/lua/src/liblua.a:
-	cd classes/lua/src/liblua.a && make $(PLAT)
+	cd classes/lua/src && make $(PLAT)
 	
 dot: classes/command.png	
 	open classes/command.png

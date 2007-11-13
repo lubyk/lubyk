@@ -13,13 +13,12 @@ public:
     
     mIndex = 0;
     mState = 0; // wait for sync
-    mOffsetOnFull = false; // do not offset when 12 values are set
+    mOffsetOnFull = true; // do not offset when 12 values are set
     mSlowPort = false;
     
     if (init_serial(p))
     {
       // enter read data
-      
       return mPort.write_char('b');
     } else
       return false;
@@ -33,6 +32,7 @@ public:
     int i;
     sig.type = NilSignal; // most of the time we do not send
     bool read_count = 0;
+    bool has_data = false;
     while (mPort.read_char(&c)) {
       // empty buffer (readall)
       read_count++;
@@ -64,22 +64,57 @@ public:
       mIndex += 1;
       i = (mIndex/2) - 1;
       mValues[i] = val - mOffset[i];
-    
-      if (mIndex == 24)
-        printf("%.4f\n",mValues[1]);
       
       if (mIndex >= 24) {
-        if (mOffsetOnFull){
-          for(int i=0; i<12;i++) {
+        has_data = true;
+        if (mOffsetOnFull) {
+          for(int i=0; i<12; i++) {
             mOffset[i] = mValues[i] + mOffset[i];
           }
           mOffsetOnFull = false;
         }
+        
+        // write to buffer and find highest value/direction
+        mHighestValue = 0;
+        for(int i=0; i<12; i++) {
+          float abs_val;
+          val = mValues[i];
+          write_buf(val);
+          
+          abs_val = val < 0 ? -val : val;
+          // abs(..) casts to integer ????
+          
+          if ( abs_val > mHighestValue ) {
+            mHighestDirection = i;
+            mHighestValue = abs_val;
+          }
+
+        }
+        
+        
         mState = 0;
         mIndex = 0;
       }
     }
-    sig.set(mValues[1]);
+    if (has_data) {
+      sig.type = FloatArraySignal;
+      sig.floats.size  = mWindowSize * DEFAULT_WINDOW_COUNT;
+      sig.floats.value = mBuffer + mReadPosition;
+    } else {
+      sig.set_nil();
+    }
+  }
+  
+  // send highest value
+  void high(Signal& sig)
+  {
+    sig.set(mHighestValue);
+  }
+  
+  // send highest value's direction
+  void direction(Signal& sig)
+  {
+    sig.set(mHighestDirection);
   }
   
   void offset()
@@ -90,8 +125,9 @@ public:
 private:
   double mValues[12];
   double mOffset[12];
+  double mHighestValue;
+  int mHighestDirection;
   int mIndex;
-  int mWindowSize;
   int mState;
   int mHigh;
   bool mOffsetOnFull;
@@ -102,5 +138,10 @@ extern "C" void init()
 {
   CLASS (Cabox)
   OUTLET(Cabox,receive)
+  OUTLET(Cabox,high)
+  OUTLET(Cabox,direction)
   METHOD(Cabox,offset)
+  SUPER_METHOD(Cabox, Script, set)
+  SUPER_METHOD(Cabox, Script, load)
+  SUPER_METHOD(Cabox, Script, script)
 }

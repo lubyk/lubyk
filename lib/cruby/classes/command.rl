@@ -85,7 +85,7 @@ void Command::parse(const std::string& pStr)
     }
     
     action set_to_port {
-      set_from_token(mTo);
+      set_from_token(mValue);
       mToPort = atoi(mValue.c_str());
     }
     

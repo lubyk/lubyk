@@ -28,6 +28,7 @@ public:
     int i = -1;
     sig.get(&i);
     if (i != -1) {
+      mRealToken = i;
       mToken = mTokenTable[ i % 256 ]; // translate token in the current machine values.
     }
   }
@@ -48,8 +49,8 @@ public:
     //std::cout << "token ["<< mToken << "]" << std::endl;
     //std::cout << "state ["<< mState << "]" << std::endl;
     
-    
-    std::cout << "{" << mState << "} -" << mToken << "->";
+    if (mDebug) *mOutput << "{" << mState << "} -" << mRealToken << "->";
+      
     if ((mSend = mSendTable[mState][mToken]) != -1)
       ; // ok custom value
     else
@@ -60,7 +61,8 @@ public:
     else
       mState = mGotoTable[mState][0]; // use default
     
-    std::cout << "{" << mState << "}" << std::endl;
+    if (mDebug) *mOutput << "{" << mState << "}" << std::endl;
+    
     /* Send the value out. */
     if (mSend == -2)
       sig.set_nil();
@@ -84,7 +86,7 @@ public:
     int state_id;
     int token_id = 0;
     char tok;
-    int send = -1;
+    int send = -2;
     int source_state = 0;
     int target_state = 0;
     
@@ -156,7 +158,7 @@ public:
       if (!mTokenTable[tok % 256]) {
         // new token
         #ifdef DEBUG_PARSER
-        printf("NEW TOKEN [%i] %c\n", token_count, tok);
+        printf("new token %i: %i\n", tok, token_count);
         #endif
         
         mTokenTable[tok % 256] = token_count;
@@ -188,7 +190,7 @@ public:
     action set_send {
       // write transition
       #ifdef DEBUG_PARSER
-      printf("SEND[%c]\n",tok);
+      printf("send %i\n",tok);
       #endif
       send = tok;
     }
@@ -196,7 +198,7 @@ public:
     action add_entry {
       // write the entry
       #ifdef DEBUG_PARSER
-      printf("ADD %i %i %i %c\n", source_state, token_id, target_state, send);
+      printf("define %i - %i -> %i { %i }\n", source_state, token_id, target_state, send);
       #endif
       
       mGotoTable[source_state][token_id] = target_state;
@@ -232,7 +234,7 @@ public:
     
     identifier = (alpha alnum*) $a;
     
-    tok    = ('\'' any @set_tok '\'' | alpha @set_tok | digit+ $a %set_tok_value ); # fixme: we should use 'whatever' or a-zA-Z or number
+    tok    = ('\'' any @set_tok '\'' | digit+ $a %set_tok_value ); # fixme: we should use 'whatever' or a-zA-Z or number
 
     transition = ( '-'+ '>' | '-'* ws* tok %set_token ws* '-'+ '>');
     
@@ -242,9 +244,9 @@ public:
     
     begin_comment = '=begin' %begin_comment;
     
-    entry  = identifier %set_state %set_source ws* transition ws* identifier %set_state %set_target ws* send ws* comment?;
+    entry  = identifier %set_state %set_source ws+ transition ws+ identifier %set_state %set_target (ws+ send)? (ws* comment)?;
 
-    main  := ( ws* (entry %add_entry %eof(add_entry) | comment | begin_comment | ws* )  '\n' )+ $err(error);
+    main  := ( ws* (entry %add_entry | comment | begin_comment | ws* )  '\n' )+ $err(error);
     write exec;
     write eof;
   }%%
@@ -253,21 +255,33 @@ public:
   }
 
   void tables()
-  {
+  {  
+    *mOutput << "tokens\n";
+    for(int i=0;i<256;i++) {
+      if (mTokenTable[i] > 0)
+        printf(" %i : %i\n", i, mTokenTable[i]);
+    }
     *mOutput << "goto\n";
     print(*mOutput, mGotoTable);
     *mOutput << "send\n";
     print(*mOutput, mSendTable);
   }
+  
+  void debug()
+  {
+    mDebug = !mDebug;
+  }
 
 private:
   int  mToken;           /**< Current token value (translated). */
+  int  mRealToken;       /**< Current token value (not translated). */
   int  mSend;            /**< Send result. */
   int  mState;           /**< Current state. */
   int  mTokenTable[256]; /**< Translate chars 'x', '3', etc into the value used in this state machine. */
   std::vector< std::vector<int> > mGotoTable; /**< State transition table. */
   std::vector< std::vector<int> > mSendTable; /**< State transition table. */
   
+  bool mDebug;
   
   void print(std::ostream& pOutput, std::vector< std::vector<int> >& pTable) {  
     std::vector< std::vector<int> >::iterator it,end;
@@ -294,6 +308,7 @@ extern "C" void init()
   INLET (Turing, input)
   OUTLET(Turing, output)
   METHOD(Turing, tables)
+  METHOD(Turing, debug)
   SUPER_METHOD(Turing, Script, set)
   SUPER_METHOD(Turing, Script, load)
   SUPER_METHOD(Turing, Script, script)

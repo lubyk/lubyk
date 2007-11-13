@@ -17,7 +17,7 @@ public:
       mScriptFile = str;
       mReloadEvery = p.val("reload", 1);
       load_script_from_file(true);
-    } else if (p.get(&str, "script", true)) {
+    } else if (p.get(&str, "script", pUseDefault)) {
       eval_script(str);
     }
     return true;
@@ -71,6 +71,7 @@ public:
       std::ostringstream oss;
       oss << in.rdbuf();
     in.close();
+    oss << "\n";
     eval_script(oss.str());
   }
   
@@ -82,6 +83,7 @@ public:
       *mOutput << mName << ": No script found !\n";
       return;
     }
+    script.append("\n");
     eval_script(script);
   }
   

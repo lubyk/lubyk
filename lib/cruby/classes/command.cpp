@@ -417,7 +417,7 @@ _match:
 	case 8:
 #line 87 "classes/command.rl"
 	{
-      set_from_token(mTo);
+      set_from_token(mValue);
       mToPort = atoi(mValue.c_str());
     }
 	break;

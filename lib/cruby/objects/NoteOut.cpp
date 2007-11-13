@@ -16,7 +16,7 @@ public:
     return true;
   }
   
-  // inlet 1
+  // inlet 1 and 5 (silent set note)
   void set_note(const Signal& sig)
   {
     int n = 0;
@@ -96,6 +96,7 @@ extern "C" void init()
   INLET (NoteOut, set_velocity)
   INLET (NoteOut, set_length)
   INLET (NoteOut, set_channel)
+  INLET (NoteOut, set_note)
   OUTLET(NoteOut, send)
   METHOD(NoteOut, clear)
 }

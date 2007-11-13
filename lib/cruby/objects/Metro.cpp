@@ -5,7 +5,7 @@ class Metro : public Node
 public:
   bool init(const Params& p)
   {
-    mTempo = p.val("metro", 0.5); // 120bmp default
+    mTempo = p.val("metro", 120); // 120bmp default
     
     bang_me_in(0.0);
     return true;

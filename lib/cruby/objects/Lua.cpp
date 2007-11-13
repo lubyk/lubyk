@@ -11,11 +11,36 @@ public:
   }
   
   // inlet 1
-  void input(const Signal& sig)
+  void input1(const Signal& sig)
   { 
-    /* For now we only deal with integers. We will need to find a way to
-     * pass other types and let the script decide. */
-    sig.get(&mInput);
+    set_lua_global("in1", sig);
+  }
+  
+  // inlet 2
+  void input2(const Signal& sig)
+  { 
+    set_lua_global("in2", sig);
+  }
+  
+  // inlet 3
+  void input3(const Signal& sig)
+  { 
+    set_lua_global("in3", sig);
+  }
+  
+  // inlet 4
+  void input4(const Signal& sig)
+  { 
+    set_lua_global("in4", sig);
+  }
+  
+  void set_lua_global(const char * key, const Signal& sig)
+  {
+    float f;
+    if (sig.get(&f)) {
+      lua_pushnumber(mLua, f);
+      lua_setglobal(mLua, key);
+    }
   }
   
   // outlet 1
@@ -37,7 +62,10 @@ private:
 extern "C" void init()
 {
   CLASS (Lua)
-  INLET (Lua, input)
+  INLET (Lua, input1)
+  INLET (Lua, input2)
+  INLET (Lua, input3)
+  INLET (Lua, input4)
   OUTLET(Lua, output)
   METHOD_FOR_LUA(Lua, hello)
   SUPER_METHOD(Lua, Script, set)

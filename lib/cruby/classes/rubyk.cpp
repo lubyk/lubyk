@@ -101,6 +101,7 @@ Node * Rubyk::create_instance (const std::string& pVariable, const std::string& 
 
 void Rubyk::create_link(const std::string& pFrom, unsigned int pFromPort, unsigned int pToPort, const std::string& pTo)
 {
+  std::cout << "pending " << pFrom << "("<< pFromPort << ")" << " --> " << pTo << "("<< pToPort << ")" << std::endl;
   mPendingLinks.push_back(Link(pFrom,pFromPort,pToPort,pTo));
   create_pending_links();
 }
@@ -117,6 +118,7 @@ void Rubyk::create_pending_links()
     if ((mInstances.get(&fromNode, it->mFrom)) && (mInstances.get(&toNode, it->mTo))) {
       if ((fromPort = fromNode->outlet(it->mFromPort)) && (toPort = toNode->inlet(it->mToPort))) {
         fromPort->connect(toPort);
+        // std::cout << "link " << fromNode->name() << "("<< fromPort->mId << ")" << " --> " << toNode->name() << "("<< toPort->mId << ")" << std::endl;
         // remove from pending links
         it = mPendingLinks.erase(it);
       } else {

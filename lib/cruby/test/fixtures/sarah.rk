@@ -1,3 +1,0 @@
-c=Serial(port:"/dev/tty.HOME001-GenericSerial-1" bauds:115200 load:"test/fixtures/sarah_serial.lua" window:1200)
-p=Print()
-c=>p
