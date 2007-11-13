@@ -16,7 +16,7 @@
 \newenvironment{m}{\begin{bmatrix}}{\end{bmatrix}}
 
 
-\title{Some stuff for Rubyk}
+\title{Some stuff for \textbf{home}}
 \author{Gaspard Buma}
 %\date{}                                           % Activate to display a given date or no date
 
@@ -504,9 +504,15 @@ For a deaper understanding of PCA and it's limits, one may have a look at~:
   \item \emph{Central Limit Theorem} on why PCA should work most of the time in real world as probabilities usually \textbf{are} gaussian.
 \end{itemize}
 
+
 \section{Movement recognition}
 
-From the knowledge we have gathered above, we can now try to find a way to compare the movements. Imagine we have 3 movements (classes) labeled $a$, $b$ and $c$. Each movement has been recorded several times. We create the training sets $\ma{S_a}$, $\ma{S_b}$ and $\ma{S_c}$ with the recordings of the different movements. Each move is made of 2 measures recorded for 10 samples. We write it as a row vector of dimension 20 ($\ve{s_{ai}}$). We start by computing the mean vector for each movement. We will note the number of recordings for the current movement $r$~:
+From the knowledge we have gathered above, we can now try to find a way to compare the movements. Imagine we have 3 movements (classes) labeled $a$, $b$ and $c$. Each movement has been recorded several times. We create the training sets $\ma{S_a}$, $\ma{S_b}$ and $\ma{S_c}$ with the recordings of the different movements. Each move is made of 2 measures recorded for 10 samples. We write it as a row vector of dimension 20 ($\ve{s_{ai}}$).
+
+
+\section{Filtering (PCA)}
+
+We start by computing the mean vector for each movement. We will note the number of recordings for the current movement $r$~:
 \[
   \ve\mu_a = \frac{1}{r}\sum_{k=1}^r \begin{m}\ve{s_{a1k}} & \ve{s_{a2k}} & \hdots & \ve{s_{a20k}} \end{m}
 \]
@@ -520,11 +526,17 @@ We now find the mean deviation form of $\ma{S}$ after finding the mean value of 
   \ma{T} = \begin{m}\ve\mu_a - \ve\mu \\ \ve\mu_b - \ve\mu \\ \ve\mu_c - \ve\mu \end{m}
 \]
 
-Now that we have found the \emph{least varying parts} of each movement (finding the mean value for each class), we will find a transformation that shows the \emph{most varying parts} \textbf{between} these movements. We apply PCA on the matrix $\ma{T}$ and find the transformation matrix $\ma{P}$.
+Now that we have found the \emph{least varying parts} of each movement (the ``platonic idea'') by computing the average, we will find a transformation that shows the \emph{most varying parts} \textbf{between} these movements. We apply PCA on the matrix $\ma{T}$ and find the transformation matrix $\ma{P}$.
 \[
   \ma{P} = \ma{E}^T \ma{I_{reduc}}
 \]
 Where $\ma{I_{reduc}}$ is a truncated identity matrix to reduce the dimensionality of the data to the principal components.
+
+\section{Recognition}
+
+To label new vectors, we could use the Mahalanobis distance or Euclidean distance in the transformed vector space produced by PCA. This is the first solution discussed below. The other approach is to use \emph{Support Vector Machines}. This is the solution which we will try to use if our hardware is fast enough since it produces better results.
+
+\subsection{Distances}
 
 We now have two options. Either we use the information contained in the eigenvalues (matrix $\ma{D}$) to compute the normalized Euclidean distances between our test vector and the prototypes in the new coordinate system defined by the transformation $\ma{P}$ or we map all our training data into the new coordinate system and compute the Mahalanobis distance to each set. This last solution loses some information from the \emph{differences between the different classes $a$, $b$ and $c$} but takes into account what is noise and what is a signal in each movement. Since we have already included the information on what makes the differences between the classes when we chose to remove the dimensions with least variance, the second solution seems to keep most of the information contained in the training data.
 
@@ -552,6 +564,28 @@ To label an arbitrary movement $\ve{t}$, we find the minimal Mahalanobis distanc
   \ve{t_k'} = & \ve{t'} - \ve{\mu_k'} \\
             = & \ve{t}\ma{P} - \ve{\mu_k'} \\
   \argmin_{k} D_M(\ve{t}) = & \argmin_{k} \sqrt{\ve{t_k'}\Sigma_k'^{-1}\ve{t_k'}^T}
+\end{align*}
+
+The value returned by argmin ($k$) is the label for the test movement.
+
+\subsection{Support Vector Machines}
+
+\emph{Support Vector Machines} is a new mathematical tool for pattern recognition. Basically, it involves mapping the data into a new vector space (once more) with higher dimensions this time. The goal is to find a vector space in which the data is linearly separable (you can draw a line/plane/... between the different classes). For example, imagine you have two sets of data $a$ and $b$: all values for set $a$ are inside a circle located on the origine and all values for $b$ are outside of this circle. If we add a third dimension that is the distance to the origine, we will obtain a cone pointing downward. All points from the set $a$ are located below a certain height and all point from set $b$ are above this height. We can thus split the set using a plane that cuts the cone at this height.
+
+To apply SVM, we first filter all our data set with PCA:
+\begin{align*}
+  \ma{S_{a}'} = & \ma{S_a}\ma{P} \\
+  \ma{S_{b}'} = & \ma{S_b}\ma{P} \\
+  \ma{S_{c}'} = & \ma{S_c}\ma{P} \\
+\end{align*}
+
+We then feed the svm library\footnote{http://www.csie.ntu.edu.tw/~cjlin/libsvm} (we could never have written this code) with two arrays~: a list of labels and a list of vectors. We thus feed it with set $S_{a}'$, telling it these vectors have the label ``a'', $S_{b}'$ with label ``b'' and $S_{c}'$ with label ``c''. We then call the learn function.
+
+To test an arbitrary movement $\ve{t}$, we must first move it into the vector space defined by PCA and then send it into SVM. The SVM black box will return the label for the test vector.
+\begin{align*}
+  \ve{t_k'} = & \ve{t'} - \ve{\mu_k'} \\
+            = & \ve{t}\ma{P} - \ve{\mu_k'} \\
+  \text{label} = & \text{svmlib.predict}(\ve{t_k'})
 \end{align*}
 
 \onecolumn
