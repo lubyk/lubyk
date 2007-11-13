@@ -15,7 +15,7 @@ public:
   { sig.get(&mTempo); }
   
   virtual void spy()
-  { spy_print("%.2f", mTempo );  }
+  { bprint(mSpy, mSpySize,"%.2f", mTempo );  }
   
   void tic(Signal& sig)
   {

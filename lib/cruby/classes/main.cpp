@@ -24,6 +24,7 @@ int main(int argc, char * argv[])
     Command fCmd(std::cin, std::cout);
     fCmd.set_server(*gServer);
     gServer->unlock(); // so the commands are directly processed
+      oss << "\n";
       fCmd.parse(oss.str());
     gServer->lock();
     

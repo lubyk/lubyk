@@ -5,6 +5,7 @@
 void Outlet::compute_and_send ()
 {
   Signal sig;
+  sig.type = NilSignal;
   
   (*mFunction)(mNode, sig);
   
@@ -16,6 +17,8 @@ void Outlet::send(const Signal& sig)
 {  
   int i=1;
   LinkedList<Inlet*> * iterator = (LinkedList<Inlet*> *)(mConnections.begin());
+  
+  //printf("out: %s:%i\n", ((Node*)mNode)->name(),mId);
   
   // Be careful when casting the void* to Node (slot_test uses an int as node value)
   // printf("node: %s, outlet: %i, connections: %i\n", ((Node*)mNode)->inspect(), mId, mConnections.size());

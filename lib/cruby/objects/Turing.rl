@@ -65,7 +65,7 @@ public:
     
     /* Send the value out. */
     if (mSend == -2)
-      sig.set_nil();
+      ; // send nothing
     else
       sig.set(mSend);
   }

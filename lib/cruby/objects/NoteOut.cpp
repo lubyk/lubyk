@@ -80,7 +80,7 @@ public:
   { 
     std::ostringstream oss(std::ostringstream::out);
     oss << mMessage;
-    spy_print("%s, %i", oss.str().c_str(), mLength);
+    bprint(mSpy, mSpySize,"%s, %i", oss.str().c_str(), mLength);
   }
   
 private:

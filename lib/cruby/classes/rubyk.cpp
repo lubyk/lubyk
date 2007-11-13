@@ -118,7 +118,7 @@ void Rubyk::create_pending_links()
     if ((mInstances.get(&fromNode, it->mFrom)) && (mInstances.get(&toNode, it->mTo))) {
       if ((fromPort = fromNode->outlet(it->mFromPort)) && (toPort = toNode->inlet(it->mToPort))) {
         fromPort->connect(toPort);
-        // std::cout << "link " << fromNode->name() << "("<< fromPort->mId << ")" << " --> " << toNode->name() << "("<< toPort->mId << ")" << std::endl;
+        std::cout << "link " << fromNode->name() << "("<< fromPort->mId+1 << ")" << " --> " << toNode->name() << "("<< toPort->mId+1 << ")" << std::endl;
         // remove from pending links
         it = mPendingLinks.erase(it);
       } else {

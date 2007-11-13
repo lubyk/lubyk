@@ -11,6 +11,9 @@ public:
       mOffset[i] = 0.0;
     }
     
+    mDebug = false;
+    mNewData = false;
+    
     mIndex = 0;
     mState = 0; // wait for sync
     mOffsetOnFull = true; // do not offset when 12 values are set
@@ -25,14 +28,55 @@ public:
   }
   
   // outlet 1
-  void receive(Signal& sig)
+  void stream(Signal& sig)
+  {
+    if (mNewData) {
+      sig.type = DoubleArraySignal;
+      sig.doubles.size  = mWindowSize * DEFAULT_WINDOW_COUNT;
+      sig.doubles.value = mBuffer + mReadPosition;
+      if (mDebug)
+        *mOutput << sig << std::endl;
+    }
+  }
+  
+  // outlet 2: send highest value
+  void high(Signal& sig)
+  {
+    if (mNewData)
+      sig.set(mHighestValue);
+  }
+  
+  // outlet 3: send highest value's direction
+  void direction(Signal& sig)
+  {
+    receive();
+    if (mNewData)
+      sig.set(mHighestDirection);
+  }
+  
+  void offset()
+  {
+    mOffsetOnFull = true;
+  }
+  
+  void debug()
+  {
+    mDebug = !mDebug;
+    if (mDebug)
+      *mOutput << mName << ": debug on\n";
+    else
+      *mOutput << mName << ": debug off\n";
+  }
+  
+private:
+  
+  void receive()
   {
     int c,r;
     double val;
     int i;
-    sig.type = NilSignal; // most of the time we do not send
     bool read_count = 0;
-    bool has_data = false;
+    mNewData = false;
     while (mPort.read_char(&c)) {
       // empty buffer (readall)
       read_count++;
@@ -66,7 +110,7 @@ public:
       mValues[i] = val - mOffset[i];
       
       if (mIndex >= 24) {
-        has_data = true;
+        mNewData = true;
         if (mOffsetOnFull) {
           for(int i=0; i<12; i++) {
             mOffset[i] = mValues[i] + mOffset[i];
@@ -96,33 +140,12 @@ public:
         mIndex = 0;
       }
     }
-    if (has_data) {
-      sig.type = FloatArraySignal;
-      sig.floats.size  = mWindowSize * DEFAULT_WINDOW_COUNT;
-      sig.floats.value = mBuffer + mReadPosition;
-    } else {
-      sig.set_nil();
-    }
   }
   
-  // send highest value
-  void high(Signal& sig)
-  {
-    sig.set(mHighestValue);
-  }
   
-  // send highest value's direction
-  void direction(Signal& sig)
-  {
-    sig.set(mHighestDirection);
-  }
+  bool   mDebug;
+  bool   mNewData;
   
-  void offset()
-  {
-    mOffsetOnFull = true;
-  }
-  
-private:
   double mValues[12];
   double mOffset[12];
   double mHighestValue;
@@ -137,10 +160,11 @@ private:
 extern "C" void init()
 {
   CLASS (Cabox)
-  OUTLET(Cabox,receive)
+  OUTLET(Cabox,stream)
   OUTLET(Cabox,high)
   OUTLET(Cabox,direction)
   METHOD(Cabox,offset)
+  METHOD(Cabox,debug)
   SUPER_METHOD(Cabox, Script, set)
   SUPER_METHOD(Cabox, Script, load)
   SUPER_METHOD(Cabox, Script, script)

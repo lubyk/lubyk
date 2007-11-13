@@ -10,15 +10,15 @@ enum rubyk_signal_t {
   BangSignal = 1,    /**< Trigger update without changing values. */
   IntegerSignal,     /**< IntegerSignal value. */
   CharSignal,        /**< IntegerSignal value. */
-  FloatSignal,       /**< FloatSignal (actually double). */
-  FloatArraySignal,  /**< Array of floats. Use the 'size' attribute to avoid buffer overflow. */
+  DoubleSignal,       /**< DoubleSignal (actually double). */
+  DoubleArraySignal,  /**< Array of floats. Use the 'size' attribute to avoid buffer overflow. */
   MidiSignal,        /**< Pointer to a midi message. */
   VoidPointerSignal, /**< Void pointer. If you want a malloc allocated buffer to be freed with the signal, set 'free_me' attribute to true.*/
 };
 
 typedef struct {
   rubyk_signal_t    type;
-  unsigned int value;
+  int value;
 } IntegerSignal_t;
 
 typedef struct {
@@ -29,13 +29,13 @@ typedef struct {
 typedef struct {
   rubyk_signal_t    type;
   double value;
-} FloatSignal_t;
+} DoubleSignal_t;
 
 typedef struct {
   rubyk_signal_t    type;
   double * value;
   size_t  size;
-} FloatArraySignal_t;
+} DoubleArraySignal_t;
 
 /** Message pointed by value gets freed with the Signal if free_me is true. */
 typedef struct {
@@ -102,13 +102,13 @@ union Signal {
   /** Set as double. */
   inline void set(double pDouble)
   {
-    type = FloatSignal;
-    f.value = pDouble;
+    type = DoubleSignal;
+    d.value = pDouble;
   }
   
   /** Set as float. */
-  inline void set(float pFloat)
-  { set((double)pFloat); }
+  inline void set(float pDouble)
+  { set((double)pDouble); }
   
   /** Set as MidiMessage* . */
   inline void set(MidiMessage * pPtr, bool pFree)
@@ -146,8 +146,8 @@ union Signal {
       case IntegerSignal:
         *pInt = i.value;
         return true;
-      case FloatSignal:
-        *pInt = (int)f.value;
+      case DoubleSignal:
+        *pInt = (int)d.value;
         return true;
       default:
         return false;
@@ -176,8 +176,8 @@ union Signal {
       case IntegerSignal:
         *pInt = (long)i.value;
         return true;
-      case FloatSignal:
-        *pInt = (long)f.value;
+      case DoubleSignal:
+        *pInt = (long)d.value;
         return true;
       default:
         return false;
@@ -185,14 +185,14 @@ union Signal {
   }
   
   /** Get as float. */
-  inline bool get(float * pFloat) const
+  inline bool get(float * pDouble) const
   {
     switch(type) {
       case IntegerSignal:
-        *pFloat = (float)i.value;
+        *pDouble = (float)i.value;
         return true;
-      case FloatSignal:
-        *pFloat = (float)f.value;
+      case DoubleSignal:
+        *pDouble = (float)d.value;
         return true;
       default:
         return false;
@@ -206,8 +206,8 @@ union Signal {
       case IntegerSignal:
         *pDouble = (double)i.value;
         return true;
-      case FloatSignal:
-        *pDouble = f.value;
+      case DoubleSignal:
+        *pDouble = d.value;
         return true;
       default:
         return false;
@@ -227,13 +227,13 @@ union Signal {
   }
   
 /* data */
-  rubyk_signal_t      type;
-  IntegerSignal_t     i;
-  CharSignal_t        c;
-  FloatSignal_t       f;
-  FloatArraySignal_t  floats;
-  MidiSignal_t midi_ptr;
-  VoidPointerSignal_t ptr;
+  rubyk_signal_t       type;
+  IntegerSignal_t      i;
+  CharSignal_t         c;
+  DoubleSignal_t       d;
+  DoubleArraySignal_t  doubles;
+  MidiSignal_t         midi_ptr;
+  VoidPointerSignal_t  ptr;
 };
 
 
@@ -248,24 +248,24 @@ inline std::ostream& operator<< (std::ostream& pStream, const Signal& sig)
   case IntegerSignal:
     pStream << sig.i.value;
     break;
-  case FloatSignal:
-    snprintf(buffer, 50, "%.2f", sig.f.value);
+  case DoubleSignal:
+    snprintf(buffer, 50, "%.2f", sig.d.value);
     pStream << buffer;
     break;
-  case FloatArraySignal:
-    if (sig.floats.size == 0) {
-      snprintf(buffer, 50, "<floats %p,%i>",sig.floats.value, sig.floats.size);
+  case DoubleArraySignal:
+    if (sig.doubles.size == 0) {
+      snprintf(buffer, 50, "<floats %p,%i>",sig.doubles.value, sig.doubles.size);
       pStream << buffer;
     } else {
       int sz = 16;
-      if (sz > sig.floats.size) sz = sig.floats.size;
-      snprintf(buffer, 50, "<floats %p (% .2f", sig.floats.value, sig.floats.value[0]);
+      if (sz > sig.doubles.size) sz = sig.doubles.size;
+      snprintf(buffer, 50, "<floats %p (% .2f", sig.doubles.value, sig.doubles.value[0]);
       pStream << buffer;
       for (int i= 1; i < sz; i++) {
-        snprintf(buffer, 50, ", % .2f", sig.floats.value[i]);
+        snprintf(buffer, 50, ", % .2f", sig.doubles.value[i]);
         pStream << buffer;
       }
-      pStream << ")," << sig.floats.size << ">";
+      pStream << ")," << sig.doubles.size << ">";
     }
     break;
   case VoidPointerSignal:

@@ -10,17 +10,17 @@ void send_value(void * receiver, Signal& sig)
 // these receivers are complicated to make sure they work in the correct order and they are all called.
 static void receive_value1(void * receiver, const Signal& sig)
 {
-  (*((float*)receiver)) = (2*(*((float*)receiver))) + sig.f.value + 1;
+  (*((float*)receiver)) = (2*(*((float*)receiver))) + sig.d.value + 1;
 }
 
 static void receive_value2(void * receiver, const Signal& sig)
 {
-  (*((float*)receiver)) = (2*(*((float*)receiver))) + sig.f.value + 2;
+  (*((float*)receiver)) = (2*(*((float*)receiver))) + sig.d.value + 2;
 }
 
 static void receive_value4(void * receiver, const Signal& sig)
 {
-  (*((float*)receiver)) = (2*(*((float*)receiver))) + sig.f.value + 4;
+  (*((float*)receiver)) = (2*(*((float*)receiver))) + sig.d.value + 4;
 }
 
 class TestSlot : public CxxTest::TestSuite

@@ -22,7 +22,7 @@ public:
   }
   
   void spy() 
-  { spy_print("%s: %i", mName.c_str(), mCounter); }
+  { bprint(mSpy, mSpySize,"%s: %i", mName.c_str(), mCounter); }
   
   void help()
   { *mOutput << "Don't hit me!\n"; }

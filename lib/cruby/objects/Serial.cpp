@@ -88,9 +88,9 @@ public:
         call_lua("update", sig);
         if (sig.type == BangSignal) {
           // return pointer to array of size mWindowSize (first element = oldest)
-          sig.type = FloatArraySignal;
-          sig.floats.size  = mWindowSize;
-          sig.floats.value = mBuffer + mReadPosition;
+          sig.type = DoubleArraySignal;
+          sig.doubles.size  = mWindowSize;
+          sig.doubles.value = mBuffer + mReadPosition;
         }
       } else {
         // return value from 'update'
@@ -99,8 +99,7 @@ public:
     } else {
       if (mPort.read_char(&c)) {
         sig.set((int)c);
-      } else
-        sig.set_nil();
+      }
     }
   }
   

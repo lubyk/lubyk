@@ -14,7 +14,7 @@ public:
   }
 
   virtual void spy() 
-  { spy_print("%.2f", mValue1 + mValue2 );  }
+  { bprint(mSpy, mSpySize,"%.2f", mValue1 + mValue2 );  }
   
   void set_value1(const Signal& sig)
   { sig.get(&mValue1); }
@@ -26,8 +26,8 @@ public:
   { sig.set(mValue1 + mValue2); }
   
 private:
-  float mValue1;
-  float mValue2;
+  double mValue1;
+  double mValue2;
 };
 
 extern "C" void init()

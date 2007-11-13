@@ -15,7 +15,7 @@
 #include <string>
 
 
-#define START_SPY_BUFFER     20
+#define START_PRINT_BUFFER   20
 #define MAX_CLASS_NAME       50
 #define START_INSPECT_BUFFER (START_SPY_BUFFER + MAX_CLASS_NAME + 5 + 16)
 
@@ -25,7 +25,7 @@
 class Node
 {
 public:
-  Node() : mClass(NULL), mServer(NULL), mTriggerPosition(0), mId(0), mSpySize(0), mInspectSize(0), mSpy(NULL), mInspect(NULL), mOutput(&std::cout), mLooped(false)
+  Node() : mClass(NULL), mServer(NULL), mTriggerPosition(0), mId(0), mSpySize(0), mInspectSize(0), mBuf(NULL), mSpy(NULL), mInspect(NULL), mOutput(&std::cout), mLooped(false)
   { 
     char buf[50];
     sIdCounter++;
@@ -150,11 +150,8 @@ protected:
     *mOutput << "Does nothing.\n";
   }
   
-  /** Print message for spies. */
-  void spy_print(const char *fmt, ...);
-  
-  /** Print message for spies. */
-  void inspect_print(const char *fmt, ...);
+  /** Print message into buffer. */
+  void bprint (char * pBuffer, int& pBufferSize, const char *fmt, ...);
   
   // time in [ms]
   void Node::bang_me_in (time_t pTime)
@@ -221,6 +218,8 @@ protected:
   int  mSpySize;
   char * mInspect; /**< Buffer used to transmit 'inspect'. 16=ptr info, 5= characters in format. */
   int  mInspectSize;
+  char * mBuf; /**< Buffer helper for nodes. */
+  int  mBufSize;
   
   std::string mName; /**< Global identifier ('v1', 'x', 'm43') */
   
@@ -243,7 +242,7 @@ public:
   
   void spy()
   {
-    spy_print("not found");
+    bprint(mSpy, mSpySize,"not found");
   }
 };
 

@@ -3,6 +3,7 @@
 
 void Inlet::receive (const Signal& sig)
 {
+  //printf("in: %s:%i\n", ((Node*)mNode)->name(),mId);
   // set value using callback
   (*mFunction)(mNode, sig);
   

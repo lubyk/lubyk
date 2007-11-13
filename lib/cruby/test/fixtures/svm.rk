@@ -1,0 +1,11 @@
+c=Cabox(port:"/dev/tty.HOME001-GenericSerial-1" bauds:115200 window:1200)
+c.1=>2.svm
+svm=Svm()
+svm.2=>l
+l=Lua(load:"test/fixtures/svm.lua")
+l=>no
+no=NoteOut()
+no=>midi
+midi=Midi()
+k=Keyboard()
+k.1=>1.svm

@@ -14,7 +14,7 @@ public:
   }
 
   virtual void spy() 
-  { spy_print("%i", mCounter );  }
+  { bprint(mSpy, mSpySize,"%i", mCounter );  }
   
   virtual void help()
   { *mOutput << "Increments by 'value' each time it receives a bang.\n"; }
