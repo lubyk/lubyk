@@ -67,7 +67,7 @@ union Signal {
   /** Set as bang. */
   inline void set_bang() { type = BangSignal; }
   
-  /** Set as bang. */
+  /** Set as nil. */
   inline void set_nil() { type = NilSignal; }
   
   

@@ -7,10 +7,10 @@ class NoteOut : public Node
 public:
   bool init(const Params& p)
   {
-    mMessage.type = NoteOn;
+    mMessage.mType = NoteOn;
     mMessage.set_note(     p.val("note",     MIDI_NOTE_C0   ));
     mMessage.set_velocity( p.val("velocity", 70             ));
-    mLength =              p.val("length",   500             ); // 0.5 sec.
+    mMessage.mLength    =  p.val("length",   500             ); // 0.5 sec.
     mMessage.set_channel(  p.val("channel",  1              ));
     
     return true;
@@ -38,7 +38,7 @@ public:
   
   // inlet 3
   void set_length(const Signal& sig)
-  { sig.get(&mLength); }
+  { sig.get(&(mMessage.mLength)); }
   
   // inlet 4
   void set_channel(const Signal& sig)
@@ -59,18 +59,10 @@ public:
     delete msg;
   }
   
-  // outlet 1
-  void send(Signal& sig)
+  void bang()
   {
-    // send note on and register note off
-    MidiMessage * message = new MidiMessage(mMessage);
-    
-    message->note_on_to_off();
-    
-    // register note off (forced = must be run on quit)
-    register_forced_event<NoteOut, &NoteOut::noteOff>(mLength, (void *)message);
-    // send note on
-    sig.set(&mMessage);
+    // send midi message
+    send(mMessage);
   }
   
   void clear()
@@ -80,7 +72,7 @@ public:
   { 
     std::ostringstream oss(std::ostringstream::out);
     oss << mMessage;
-    bprint(mSpy, mSpySize,"%s, %i", oss.str().c_str(), mLength);
+    bprint(mSpy, mSpySize,"%s", oss.str().c_str());
   }
   
 private:

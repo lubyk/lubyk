@@ -52,6 +52,11 @@ public:
     return true;
   }
 
+  void bang()
+  {
+    // do nothing, work done in 'command'
+  }
+  
   // inlet 1
   void command (const Signal& sig)
   {

@@ -33,8 +33,7 @@ public:
     }
   }
 
-  // outlet 1
-  void output(Signal& sig)
+  void bang()
   {
     int state;
     
@@ -67,7 +66,7 @@ public:
     if (mSend == -2)
       ; // send nothing
     else
-      sig.set(mSend);
+      send(mSend);
   }
 
 

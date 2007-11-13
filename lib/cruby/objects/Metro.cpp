@@ -12,16 +12,20 @@ public:
   }
 
   void set(const Signal& sig)
-  { sig.get(&mTempo); }
+  { 
+    remove_my_events();
+    sig.get(&mTempo);
+    bang();
+  }
   
   virtual void spy()
   { bprint(mSpy, mSpySize,"%.2f", mTempo );  }
   
-  void tic(Signal& sig)
+  void bang()
   {
     if (mTempo != 0) {
       bang_me_in(ONE_MINUTE / mTempo);
-      sig.set_bang();
+      send(BangSignal);
     }
   }
   

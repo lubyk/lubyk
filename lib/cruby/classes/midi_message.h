@@ -16,71 +16,64 @@ enum midi_messages_t {
 /** This class encapsulates midi messages. */
 struct MidiMessage
 {
-  MidiMessage () : data(3), type(RawMidi) {}
-  MidiMessage (unsigned int pDataSize) : data(pDataSize), type(RawMidi) {}
+  MidiMessage () : mData(3), mType(RawMidi) {}
+  MidiMessage (unsigned int pDataSize) : mData(pDataSize), mType(RawMidi) {}
   
   virtual ~MidiMessage () {}
   
   // Constructors //
   
-  static MidiMessage noteOn(unsigned int pNote, unsigned int pVelocity, unsigned int pChannel) 
+  void set_as_note (unsigned char pNote, unsigned char pVelocity = 80, unsigned int pLength = 500, unsigned int pChannel = 1, time_t pTime = 0)
   {
-    MidiMessage * msg = new MidiMessage(3);
-    msg->type = NoteOn;
-    msg->set_channel(pChannel);
-    msg->set_note(pNote);
-    msg->set_velocity(pVelocity);
-    return *msg;
-  }
-  
-  static MidiMessage noteOff(unsigned int pNote, unsigned int pVelocity, unsigned int pChannel) 
-  {
-    MidiMessage * msg = new MidiMessage(3);
-    msg->type = NoteOff;
-    msg->set_channel(pChannel);
-    msg->set_note(pNote);
-    msg->set_velocity(pVelocity);
-    return *msg;
+    if (pVelocity)
+      mType = NoteOn;
+    else
+      mType = NoteOff;
+    set_note(pNote);
+    set_channel(pChannel);
+    set_velocity(pVelocity);
+    mLength = pLength;
+    mWait   = pTime;
   }
   
   inline void note_on_to_off()
   {
-    if (type == NoteOn) {
-      data[0] -= 0x10;
-      type = NoteOff;
+    if (mType == NoteOn) {
+      mData[0] -= 0x10;
+      mType   = NoteOff;
     }
   }
   
-  inline void set_note(unsigned int pNote)
-  { data[1] = pNote % 128; }
+  inline void set_note(unsigned char pNote)
+  { mData[1] = pNote % 128; }
   
-  inline void set_channel(unsigned int pChannel)
+  inline void set_channel(unsigned char pChannel)
   {
-    if (type == NoteOn)
-      data[0] = 0x90 + ((pChannel + 15) % 16);
+    if (mType == NoteOn)
+      mData[0] = 0x90 + ((pChannel + 15) % 16);
     else
-      data[0] = 0x80 + ((pChannel + 15) % 16);
+      mData[0] = 0x80 + ((pChannel + 15) % 16);
   }
   
   inline unsigned int channel() const
   { 
-    if (type == NoteOn)
-      return data[0] - 0x90 + 1;
+    if (mType == NoteOn)
+      return mData[0] - 0x90 + 1;
     else
-      return data[0] - 0x80 + 1;
+      return mData[0] - 0x80 + 1;
   }
   
-  inline void set_velocity(unsigned int pVelocity)
-  { data[2] = pVelocity % 128; }
+  inline void set_velocity(unsigned char pVelocity)
+  { mData[2] = pVelocity % 128; }
   
   /** Write the note name (as C2#, D-1, E3) into the buffer. The buffer must be min 5 chars large (C-3#\0). */
   inline void get_note_name(char buffer[]) const
   {
     unsigned int i = 0;
-    int octave = (data[1] - MIDI_NOTE_C0) / 12;
-    int note   = data[1] % 12;
+    int octave = (mData[1] - MIDI_NOTE_C0) / 12;
+    int note   = mData[1] % 12;
     
-    if (type != NoteOn && type != NoteOff) {
+    if (mType != NoteOn && mType != NoteOff) {
       buffer[0] = '?';
       buffer[1] = '?';
       buffer[2] = '\0';
@@ -142,25 +135,27 @@ struct MidiMessage
   }
   
   /* data */
-  midi_messages_t type;
-  std::vector<unsigned char> data; /**< Raw midi message (defined in RtMidi.h). */ 
+  midi_messages_t mType;
+  time_t          mWait; /**< Wait before sending this note out. */
+  time_t        mLength; /**< Note duration in milliseconds. */
+  std::vector<unsigned char> mData; /**< Raw midi message (defined in RtMidi.h). */ 
 };
 
 inline std::ostream& operator<< (std::ostream& pStream, const MidiMessage& msg)
 {
   std::vector<unsigned char>::const_iterator it,begin,end;
   char buffer[10];
-  if (msg.type == NoteOn || msg.type == NoteOff) {
-    if (msg.type == NoteOff) 
+  if (msg.mType == NoteOn || msg.mType == NoteOff) {
+    if (msg.mType == NoteOff) 
       pStream << "-";
     else
       pStream << " ";
     msg.get_note_name(buffer);
-    pStream << msg.channel() << ":" << buffer << "(" << (int)msg.data[2] << ")";
+    pStream << msg.channel() << ":" << buffer << "(" << (int)msg.mData[2] << "), " << msg.mWait << "/" << msg.mLength;
   } else {
     pStream << "[";
-    end   = msg.data.end();
-    begin = msg.data.begin();
+    end   = msg.mData.end();
+    begin = msg.mData.begin();
     for( it = begin; it < end; it++) {
       if (it != begin) pStream << ", ";
       pStream << *it << std::endl;

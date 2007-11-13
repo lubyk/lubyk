@@ -45,10 +45,11 @@ public:
     mInlets.push_back(s);
   }
   
-  /** Add an outlet with the given callback (used by Class during instantiation). */
-  void add_outlet(outlet_method_t pCallback)
+  /** Add an outlet. (used by Class during instantiation).
+    * Name not used for the moment. */
+  void add_outlet(std::string& pName)
   {
-    Outlet * s = new Outlet(this,pCallback);
+    Outlet * s = new Outlet(this);
     s->setId(mOutlets.size()); /* first inlet has id 0 */
     mOutlets.push_back(s);
   }
@@ -67,18 +68,9 @@ public:
   
   void execute_method (const std::string& pMethod, const Params& p);
   
-  /** Compute new values for each outlet and send values through connections. */
-  void bang (void)
-  {
-    int i = mOutlets.size() - 1;
-    // do not try to compute outlets if the node is in broken mode
-    if (!mIsOK) return;
-    
-    while(i >= 0) {
-      /** Send through rightmost outlet first. */
-      mOutlets[i--]->compute_and_send();
-    }
-  }
+  /** This method must be implemented in subclasses. It's the place where most
+    * of the work should be done. This method is responsible for sending the signals out. */
+  virtual void bang (void) = 0;
   
   /** This is the method that is called from the command line with 'v1.bang'. */
   void do_bang ()
@@ -96,6 +88,119 @@ public:
       return "--";
   }
   
+  ///////// send signals ///////////////
+  
+  
+  /** Send a bang. */
+  inline void send(rubyk_signal_t pType, int pPort = 1) 
+  { 
+    if (!pType) return; // do nothing if NilSignal
+    mS.type = pType;
+    send(mS, pPort);
+  }
+  
+  /** Send an integer. */
+  inline void send(int pInt, int pPort = 1)
+  {
+    mS.type = IntegerSignal;
+    mS.i.value = pInt;
+    send(mS, pPort);
+  }
+  
+  /** Send a char. */
+  inline void send(char pChar, int pPort = 1)
+  {
+    mS.type = CharSignal;
+    mS.c.value = pChar;
+    send(mS, pPort);
+  }
+  
+  /** Send an unsigned integer. */
+  inline void send(unsigned int pInt, int pPort = 1)
+  {
+    mS.type = IntegerSignal;
+    mS.i.value = pInt;
+    send(mS, pPort);
+  }
+  
+  /** Send an unsigned long. */
+  inline void send(long pInt, int pPort = 1)
+  {
+    mS.type = IntegerSignal;
+    mS.i.value = (int)pInt;
+    send(mS, pPort);
+  }
+  
+  /** Send a double. */
+  inline void send(double pDouble, int pPort = 1)
+  {
+    mS.type = DoubleSignal;
+    mS.d.value = pDouble;
+    send(mS, pPort);
+  }
+  
+  /** Send a float. */
+  inline void send(float pFloat, int pPort = 1)
+  { 
+    mS.type = DoubleSignal;
+    mS.d.value = (double)pFloat;   
+    send(mS, pPort);
+  }
+  
+  /** Send a MidiMessage ptr. */
+  inline void send(MidiMessage * pPtr, bool pFree = false, int pPort = 1)
+  {
+    mS.type = MidiSignal;
+    mS.midi_ptr.value = pPtr;
+    mS.midi_ptr.free_me = pFree;
+    send(mS, pPort);
+  }
+  
+  inline void send(const MidiMessage& pMsg, int pPort = 1)
+  {
+    MidiMessage * msg = new MidiMessage(pMsg);
+    mS.type = MidiSignal;
+    mS.midi_ptr.value = msg;
+    mS.midi_ptr.free_me = true;
+    send(mS, pPort);
+  }
+  
+  /** Send a midi note with the parameters provided.
+    * pNote: midi note from 0 to 96. 
+    * pVelocity: velocity from 0 (note off) to 127. 
+    * pLength: note duration in milliseconds. 
+    * pChannel: midi channel from 1 to 16.
+    * pTime: time to wait before playing this note.
+    * pPort: outlet id.
+    */
+  inline void send_note(unsigned char pNote, unsigned char pVelocity = 80, unsigned int pLength = 500, unsigned int pChannel = 1, time_t pTime = 0, int pPort = 1)
+  {
+    MidiMessage * msg = new MidiMessage(3);
+    msg->set_as_note(pNote, pVelocity, pLength, pChannel, pTime);
+    mS.type = MidiSignal;
+    mS.midi_ptr.value = msg;
+    mS.midi_ptr.free_me = true;
+    send(mS, pPort);
+  }
+  
+  /** Send a void ptr. */
+  inline void send(void * pPtr, bool pFree, int pPort = 1)
+  {
+    mS.type = VoidPointerSignal;
+    mS.ptr.value = pPtr;
+    mS.ptr.free_me = pFree;
+    send(mS, pPort);
+  }
+  
+  //////////////////////////////////////
+  
+  inline void send (const Signal& sig, int pOutletId = 1)
+  {
+    if (pOutletId < 1 || pOutletId > mOutlets.size() || !sig.type) return;
+    mOutlets[pOutletId - 1]->send(sig);
+  }
+  
+  
   /** Display the node's class, id and current state using 'spy'. */
   const char * inspect ();
   
@@ -104,19 +209,17 @@ public:
   inline float trigger_position() { return mTriggerPosition; }
   
   /** Return inlet at the given position. First inlet is '1', not '0'. */
-  Inlet  * inlet  (int slot_id) 
+  Inlet  * inlet  (int pInletId) 
   {   
-    std::vector<Inlet*>::size_type sz = mInlets.size();
-    if (slot_id < 1 || slot_id > sz) return NULL;
-    return mInlets[slot_id - 1]; 
+    if (pInletId < 1 || pInletId > mInlets.size()) return NULL;
+    return mInlets[pInletId - 1]; 
   }
   
   /** Return outlet at the given position. First outlet is '1', not '0'. */
-  Outlet * outlet (int slot_id) 
+  Outlet * outlet (int pOutletId) 
   { 
-    std::vector<Outlet*>::size_type sz = mOutlets.size();
-    if (slot_id < 1 || slot_id > sz) return NULL;
-    return mOutlets[slot_id - 1];
+    if (pOutletId < 1 || pOutletId > mInlets.size()) return NULL;
+    return mOutlets[pOutletId - 1];
   }
   
   void set_is_ok (bool pStatus) 
@@ -154,7 +257,7 @@ protected:
   void bprint (char * pBuffer, int& pBufferSize, const char *fmt, ...);
   
   // time in [ms]
-  void Node::bang_me_in (time_t pTime)
+  void bang_me_in (time_t pTime)
   {
     BaseEvent * e = (BaseEvent *) new CallEvent<Node, &Node::bang>(mServer->mCurrentTime + pTime, this);
 
@@ -225,8 +328,9 @@ protected:
   
   std::ostream * mOutput; /**< Used to pass command result. */
   
-private:
+  Signal mS; /**< To send through outlets when cast needed. */
   
+private:
   static unsigned int sIdCounter;  /**< Each object has a unique id. */
 };
 
@@ -235,9 +339,10 @@ class NotFound : public Node
 {
 public:
   
-  bool update()
+  void bang()
   {
     // do nothing
+    *mOutput << "I'm a dead node ! Don't hit me !\n";
   }
   
   void spy()

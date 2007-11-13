@@ -9,6 +9,11 @@ public:
     return true;
   }
   
+  void bang()
+  {
+    // do nothing
+  }
+  
   // inlet 1
   void print(const Signal& sig)
   { 

@@ -69,13 +69,10 @@ public:
     mMethods.set(std::string(pName), &cast_inlet_accessor<T, Tmethod>);
   }
   
-  /** Declare an inlet, with an accessor method. */
-  template <class T, void(T::*Tmethod)(Signal& sig)>
+  /** Declare an outlet. Outlets do not have callbacks. */
   void add_outlet (const char* pName)
   {
-    outlet_method_t addr = &cast_outlet_method<T,Tmethod>;
-    mOutlets.push_back( &cast_outlet_method<T, Tmethod>);
-    mMethods.set(std::string(pName), &cast_outlet_accessor<T, Tmethod>);
+    mOutlets.push_back( std::string(pName) );
   }
   
   ////// class methods ///////
@@ -252,13 +249,13 @@ private:
   
   
   std::vector<inlet_method_t>         mInlets;         /**< Inlet prototypes.  */
-  std::vector<outlet_method_t>        mOutlets;        /**< Outlet prototypes. */
+  std::vector<std::string>            mOutlets;        /**< Outlet prototypes (they just contain a name). */
 };
 
 // HELPERS TO AVOID TEMPLATE SYNTAX
 #define CLASS(klass)         {Class::declare<klass>(#klass);}
 #define INLET(klass,method)  {Class::find(#klass)->add_inlet<klass, &klass::method>(#method);}
-#define OUTLET(klass,method) {Class::find(#klass)->add_outlet<klass, &klass::method>(#method);}
+#define OUTLET(klass,method) {Class::find(#klass)->add_outlet(#method);}
 #define METHOD(klass,method) {Class::find(#klass)->add_method<klass, &klass::method>(#method);}
 #define CLASS_METHOD(klass,method) {Class::find(#klass)->add_class_method(#method, &klass::method);}
 

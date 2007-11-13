@@ -32,9 +32,8 @@ public:
   void set_increment(const Signal& sig)
   { sig.get(&mIncrement);     }
   
-  // outlet 1
-  void value(Signal& sig)
-  { sig.set(mCounter += mIncrement); }
+  void bang()
+  { send(mCounter += mIncrement); }
   
 private:
   int mCounter;

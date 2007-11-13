@@ -43,13 +43,44 @@ public:
     
   }
   
+  void bang()
+  {
+    // does nothing
+  }
   
+  // inlet 1
   void send(const Signal& sig)
   {
     if (!mMidiout || sig.type != MidiSignal) return;
-    mMidiout->sendMessage( &(sig.midi_ptr.value->data) );
+    
+    if (sig.midi_ptr.value->mWait) {
+      MidiMessage * msg;
+      if (sig.midi_ptr.free_me) {
+        register_event<Midi, &Midi::send_and_delete>(msg->mWait, (void*)msg);
+      } else {
+        fprintf(stderr, "We decided not to implement midimessages that are not released (free_me not true). Please change your code...\n");
+      }
+    } else if (sig.midi_ptr.free_me) {
+      send_and_delete((void*)(sig.midi_ptr.value));
+    } else {
+      fprintf(stderr, "We decided not to implement midimessages that are not released (free_me not true). Please change your code...\n");
+    }
   }
   
+  void send_and_delete(void * data)
+  {
+    MidiMessage * msg = (MidiMessage*)data;
+    mMidiout->sendMessage( &(msg->mData) );
+    if (msg->mType == NoteOn && msg->mLength) {
+      msg->note_on_to_off();
+      register_forced_event<Midi, &Midi::send_and_delete>(msg->mLength, (void*)msg);
+    } else
+      delete msg;
+  }
+  
+  
+  void clear()
+  { remove_my_events(); }
   
   // print a list of possible inputs
   static void inputs(std::ostream * pOutput, const Params& p) {
@@ -198,6 +229,7 @@ extern "C" void init()
   INLET (Midi, send)
   CLASS_METHOD(Midi, inputs)
   CLASS_METHOD(Midi, outputs)
+  METHOD(Midi, clear)
   // rk_cRtMidi = rb_define_class("RtMidi", rb_cObject);
   // rb_define_singleton_method(rk_cRtMidi, "outputs", (VALUE(*)(...))c_outputs, 0);
   // rb_define_method(rk_cRtMidi, "initialize", (VALUE(*)(...))t_initialize, 1);

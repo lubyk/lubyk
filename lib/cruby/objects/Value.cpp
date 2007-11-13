@@ -20,8 +20,8 @@ public:
   void set_value(const Signal& sig)
   { sig.get(&mValue); }
 
-  void value(Signal& sig)
-  { sig.set(mValue); }
+  void bang()
+  { send(mValue); }
   
 private:
   double mValue;

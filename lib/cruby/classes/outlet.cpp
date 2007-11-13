@@ -2,20 +2,10 @@
 #include "inlet.h"
 #include "node.h"
 
-void Outlet::compute_and_send ()
-{
-  Signal sig;
-  sig.type = NilSignal;
-  
-  (*mFunction)(mNode, sig);
-  
-  if (sig.type) send(sig); // do not send NilSignals
-}
 
 // FIXME: inline ?
 void Outlet::send(const Signal& sig)
 {  
-  int i=1;
   LinkedList<Inlet*> * iterator = (LinkedList<Inlet*> *)(mConnections.begin());
   
   //printf("out: %s:%i\n", ((Node*)mNode)->name(),mId);

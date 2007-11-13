@@ -6,16 +6,10 @@
 
 class Outlet : public Slot {
 public:  
-  Outlet (void* node, void(*function)(void*node, Signal& sig)) : Slot(node), mFunction(function) {}
+  Outlet (void* node) : Slot(node) {}
   
-  /** Compute the value using the provided function and send the result to all connections. Do nothing if
-    * there are no connections. */
-  void compute_and_send ();
-  
-  void send(const Signal& s);
-  
-private:
-  void(*mFunction)(void* node, Signal& sig);  /**< Function to get the new value. */
+  /** Send the signal to all connections. Do nothing if there are no connections. */
+  void send (const Signal& s);
 };
 
 #endif

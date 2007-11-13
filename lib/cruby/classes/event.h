@@ -58,7 +58,7 @@ class CallEvent : public BaseEvent
 public:
   CallEvent (time_t pTime, T * pReceiver) {
     mTime      = pTime;
-    mNode  = (void*)pReceiver;
+    mNode      = (void*)pReceiver;
     mParameter = NULL;
     mVoidFunction = &cast_void_method;
   }
@@ -78,7 +78,7 @@ class Event : public BaseEvent
 public:
   Event (time_t pTime, T * pReceiver, void * pParam) {
     mTime      = pTime;
-    mNode  = (void*)pReceiver;
+    mNode      = (void*)pReceiver;
     mParameter = pParam;
     mFunction  = &cast_method;
   }

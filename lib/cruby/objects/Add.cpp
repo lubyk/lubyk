@@ -9,21 +9,22 @@ public:
     mValue1 = p.val("value1", 0);
     mValue2 = p.val("value2", 0);
     
-    
     return true;
   }
 
   virtual void spy() 
   { bprint(mSpy, mSpySize,"%.2f", mValue1 + mValue2 );  }
   
-  void set_value1(const Signal& sig)
+  void value1(const Signal& sig)
   { sig.get(&mValue1); }
   
-  void set_value2(const Signal& sig)
+  void value2(const Signal& sig)
   { sig.get(&mValue2); }
 
-  void sum(Signal& sig)
-  { sig.set(mValue1 + mValue2); }
+  void bang()
+  {
+    send(mValue1 + mValue2);
+  }
   
 private:
   double mValue1;
@@ -32,9 +33,8 @@ private:
 
 extern "C" void init()
 {
-  Class * klass = Class::declare<Add>("Add");
   CLASS (Add)
-  INLET (Add, set_value1)
-  INLET (Add, set_value2)
+  INLET (Add, value1)
+  INLET (Add, value2)
   OUTLET(Add, sum)
 }

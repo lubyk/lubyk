@@ -80,10 +80,11 @@ public:
   }
   
   // outlet 1
-  void receive(Signal& sig)
+  void bang()
   { 
     int c;
     if (mLua) {
+      Signal sig;
       if (mBuffer) {
         call_lua("update", sig);
         if (sig.type == BangSignal) {
@@ -96,9 +97,10 @@ public:
         // return value from 'update'
         call_lua("update", sig);
       }
+      send(sig);
     } else {
       if (mPort.read_char(&c)) {
-        sig.set((int)c);
+        send((int)c);
       }
     }
   }
