@@ -11,6 +11,8 @@ test: test/runner test/runner.cpp
 
 rubyk: classes/main.cpp command.o rubyk.o node.o inlet.o outlet.o slot.o params.o class.o lua.o classes/lua/src/liblua.a objects
 	$(CC) $(CFLAGS) -o rubyk -Itest -Itemplates -Iclasses -Iobjects -I. classes/main.cpp slot.o inlet.o outlet.o params.o node.o class.o command.o rubyk.o lua.o classes/lua/src/liblua.a
+
+objects: lib/Test.rko lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/Midi.rko lib/NoteOut.rko lib/Lua.rko lib/Serial.rko lib/Turing.rko lib/Keyboard.rko lib/Cabox.rko lib/Svm.rko lib/Buffer.rko lib/Pack.rko
 	
 test/runner.cpp: test/*_test.h test/objects/*_test.h
 	./test/cxxtest/cxxtestgen.pl --error-printer -o test/runner.cpp $(TEST)
@@ -47,8 +49,6 @@ command.o: classes/command.cpp classes/command.h classes/mutex.h
 
 command.o.bak: classes/command.cpp classes/command.h parser/parser.c lexer.o	
 	$(CC) $(CFLAGS) -c -Iclasses -Itemplates classes/command.cpp parser/parser.c parser/lexer.o -O2 -Wl,-x -pipe -lm -o command.o
-
-objects: lib/Test.rko lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/Midi.rko lib/NoteOut.rko lib/Lua.rko lib/Serial.rko lib/Turing.rko lib/Keyboard.rko lib/Cabox.rko lib/Svm.rko lib/Buffer.rko
 
 
 lib/Test.rko: objects/Test.cpp
@@ -95,6 +95,9 @@ lib/Svm.rko: objects/Svm.cpp
 	
 lib/Buffer.rko: objects/Buffer.cpp
 	$(CC) $(CFLAGS) -o lib/Buffer.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Buffer.cpp
+
+lib/Pack.rko: objects/Pack.cpp
+	$(CC) $(CFLAGS) -o lib/Pack.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Pack.cpp
 
 objects/Turing.cpp: objects/Turing.rl
 	${RAGEL} objects/Turing.rl | ${RAGEL_CD} -o objects/Turing.cpp
