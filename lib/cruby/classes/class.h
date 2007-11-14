@@ -122,8 +122,9 @@ public:
       delete klass; // the reference will be lost
     
     klass = new Class(name, &cast_create<T>);
+    klass->add_inlet<T, &T::bang>("bang");
+    
     sClasses.set(std::string(name), klass);
-    klass->add_method<Node, &Node::do_bang>("bang");
     return klass;
   }
 

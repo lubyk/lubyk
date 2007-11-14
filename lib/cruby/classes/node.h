@@ -70,14 +70,7 @@ public:
   
   /** This method must be implemented in subclasses. It's the place where most
     * of the work should be done. This method is responsible for sending the signals out. */
-  virtual void bang (void) = 0;
-  
-  /** This is the method that is called from the command line with 'v1.bang'. */
-  void do_bang ()
-  {
-    bang();
-    *mOutput << inspect() << std::endl;
-  }
+  virtual void bang (const Signal& sig) = 0;
   
   /** Used by 'editors' to display some information on the node. Should be overwridden by subclasses. */
   const char* get_spy() {
@@ -259,7 +252,7 @@ protected:
   // time in [ms]
   void bang_me_in (time_t pTime)
   {
-    BaseEvent * e = (BaseEvent *) new CallEvent<Node, &Node::bang>(mServer->mCurrentTime + pTime, this);
+    BaseEvent * e = new BaseEvent(mServer->mCurrentTime + pTime, this); // sets mIsBang to true
 
     mServer->register_event( e );
   }
@@ -339,7 +332,7 @@ class NotFound : public Node
 {
 public:
   
-  void bang()
+  void bang(const Signal& sig)
   {
     // do nothing
     *mOutput << "I'm a dead node ! Don't hit me !\n";

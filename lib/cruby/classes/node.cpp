@@ -82,9 +82,7 @@ const char * Node::inspect() {
 void Node::execute_method (const std::string& pMethod, const Params& p)
 {
   member_method_t method;
-  if (pMethod == "bang") {
-    bang();
-  } else if (pMethod == "help" ){
+  if (pMethod == "help" ){
     help();
   } else if (mClass->get_member_method(&method, pMethod)) {
     (*method)(this, p);

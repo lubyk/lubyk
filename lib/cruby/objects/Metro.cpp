@@ -10,24 +10,23 @@ public:
     bang_me_in(0.0);
     return true;
   }
-
-  void set(const Signal& sig)
-  { 
-    remove_my_events();
-    sig.get(&mTempo);
-    bang();
-  }
   
-  virtual void spy()
-  { bprint(mSpy, mSpySize,"%.2f", mTempo );  }
-  
-  void bang()
-  {
+  // inlet 1
+  void bang(const Signal& sig)
+  {  
+    if (sig.type) { // bang_me_in class 'bang' with a NilSignal, if it's not nil, it's a resync/set bang
+      sig.get(&mTempo);
+      remove_my_events();
+    }
     if (mTempo != 0) {
       bang_me_in(ONE_MINUTE / mTempo);
       send(BangSignal);
     }
   }
+  
+  virtual void spy()
+  { bprint(mSpy, mSpySize,"%.2f", mTempo );  }
+  
   
 private:
   float mTempo;
@@ -36,6 +35,5 @@ private:
 extern "C" void init()
 {
   CLASS( Metro)
-  INLET( Metro,set)
-  OUTLET(Metro,tic)
+  OUTLET(Metro,bang)
 }

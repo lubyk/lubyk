@@ -15,16 +15,15 @@ public:
   virtual void spy() 
   { bprint(mSpy, mSpySize,"%.2f", mValue1 + mValue2 );  }
   
-  void value1(const Signal& sig)
-  { sig.get(&mValue1); }
+  void bang(const Signal& sig)
+  { 
+    sig.get(&mValue1);
+    send(mValue1 + mValue2);
+  }
   
   void value2(const Signal& sig)
   { sig.get(&mValue2); }
 
-  void bang()
-  {
-    send(mValue1 + mValue2);
-  }
   
 private:
   double mValue1;
@@ -34,7 +33,6 @@ private:
 extern "C" void init()
 {
   CLASS (Add)
-  INLET (Add, value1)
   INLET (Add, value2)
   OUTLET(Add, sum)
 }

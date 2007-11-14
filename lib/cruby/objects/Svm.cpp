@@ -52,13 +52,8 @@ public:
     return true;
   }
 
-  void bang()
-  {
-    // do nothing, work done in 'command'
-  }
-  
   // inlet 1
-  void command (const Signal& sig)
+  void bang (const Signal& sig)
   {
     int cmd;
     if (!mIsOK) return; // no recovery
@@ -114,6 +109,7 @@ public:
   }
 
   /** Send 3,2,1,0 during countdown. */
+  // outlet 2
   void countdown(Signal& sig)
   {
     switch(mState) {
@@ -276,7 +272,6 @@ private:
 extern "C" void init()
 {
   CLASS (Svm)
-  INLET (Svm,command)
   INLET (Svm,data)
   OUTLET(Svm,label)
   OUTLET(Svm,countdown)

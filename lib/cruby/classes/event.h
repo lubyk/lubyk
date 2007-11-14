@@ -7,6 +7,7 @@
 class Rubyk;
 class Class;
 class Node;
+
 union Signal;
 
 /** Pointer to a function to create nodes. */
@@ -27,8 +28,9 @@ typedef void (*outlet_method_t)(void * pReceiver, Signal& sig);
 class BaseEvent
 {
 public:
-  BaseEvent ()
-  { mForced = false; }
+  BaseEvent (time_t pTime, void * pNode, bool pIsBang = true) : mTime(pTime), mNode(pNode), mForced(false), mIsBang(pIsBang) {}
+  
+  BaseEvent () : mForced(false), mIsBang(false) {}
 
   virtual ~BaseEvent() {}
   
@@ -43,15 +45,20 @@ public:
   
   bool uses_node(const void * pNode) const
   { return pNode == mNode; }
+  
 
-protected:
-  void * mParameter;
+  // access needed by rubyk
+  bool mIsBang;
   void * mNode;
+  
+protected:
+  
+  void * mParameter;
   void (*mVoidFunction)(void * pReceiver);
   void (*mFunction)(void * pReceiver, void * pParam);
 };
 
-
+/** I think this is not used anymore. */
 template<class T, void(T::*Tmethod)(void)>
 class CallEvent : public BaseEvent
 {

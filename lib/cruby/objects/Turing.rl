@@ -23,19 +23,14 @@ public:
   }
 
   // inlet 1
-  void input(const Signal& sig)
+  void bang(const Signal& sig)
   { 
-    int i = -1;
-    sig.get(&i);
-    if (i != -1) {
+    int i;
+    int state;
+    if (sig.get(&i)) {
       mRealToken = i;
       mToken = mTokenTable[ i % 256 ]; // translate token in the current machine values.
     }
-  }
-
-  void bang()
-  {
-    int state;
     
     reload_script();
     if (mScriptDead) return;
@@ -304,7 +299,6 @@ private:
 extern "C" void init()
 {
   CLASS (Turing)
-  INLET (Turing, input)
   OUTLET(Turing, output)
   METHOD(Turing, tables)
   METHOD(Turing, debug)

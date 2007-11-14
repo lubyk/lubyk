@@ -74,30 +74,23 @@ public:
   }
   
   // inlet 1
-  void action(const Signal& sig)
-  {
-    // do nothing
-  }
-  
-  // outlet 1
-  void bang()
+  void bang(const Signal& sig)
   { 
     int c;
     if (mLua) {
-      Signal sig;
       if (mBuffer) {
-        call_lua("update", sig);
-        if (sig.type == BangSignal) {
+        call_lua("update", mS);
+        if (mS.type == BangSignal) {
           // return pointer to array of size mWindowSize (first element = oldest)
-          sig.type = DoubleArraySignal;
-          sig.doubles.size  = mWindowSize;
-          sig.doubles.value = mBuffer + mReadPosition;
+          mS.type = DoubleArraySignal;
+          mS.doubles.size  = mWindowSize;
+          mS.doubles.value = mBuffer + mReadPosition;
         }
       } else {
         // return value from 'update'
-        call_lua("update", sig);
+        call_lua("update", mS);
       }
-      send(sig);
+      send(mS);
     } else {
       if (mPort.read_char(&c)) {
         send((int)c);
@@ -205,8 +198,7 @@ protected:
 extern "C" void init()
 {
   CLASS (Serial)
-  INLET(Serial,action)
-  OUTLET(Serial,receive)
+  OUTLET(Serial,data)
   CLASS_METHOD(Serial, list)
   METHOD_FOR_LUA(Serial, read_char)
   METHOD_FOR_LUA(Serial, write)

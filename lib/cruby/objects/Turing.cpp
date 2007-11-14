@@ -142,19 +142,14 @@ public:
   }
 
   // inlet 1
-  void input(const Signal& sig)
+  void bang(const Signal& sig)
   { 
-    int i = -1;
-    sig.get(&i);
-    if (i != -1) {
+    int i;
+    int state;
+    if (sig.get(&i)) {
       mRealToken = i;
       mToken = mTokenTable[ i % 256 ]; // translate token in the current machine values.
     }
-  }
-
-  void bang()
-  {
-    int state;
     
     reload_script();
     if (mScriptDead) return;
@@ -217,14 +212,14 @@ public:
     mSendTable.clear();
     
     
-#line 221 "objects/Turing.cpp"
+#line 216 "objects/Turing.cpp"
 	{
 	cs = turing_start;
 	}
-#line 101 "objects/Turing.rl"
+#line 96 "objects/Turing.rl"
     
   
-#line 228 "objects/Turing.cpp"
+#line 223 "objects/Turing.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -299,7 +294,7 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 103 "objects/Turing.rl"
+#line 98 "objects/Turing.rl"
 	{
       if (name_index >= MAX_NAME_SIZE) {
         *mOutput << "Name buffer overflow !\n";
@@ -314,7 +309,7 @@ _match:
     }
 	break;
 	case 1:
-#line 116 "objects/Turing.rl"
+#line 111 "objects/Turing.rl"
 	{ 
       name[name_index] = '\0';
       #ifdef DEBUG_PARSER
@@ -339,19 +334,19 @@ _match:
     }
 	break;
 	case 2:
-#line 139 "objects/Turing.rl"
+#line 134 "objects/Turing.rl"
 	{ source_state = state_id; state_id = 0; }
 	break;
 	case 3:
-#line 141 "objects/Turing.rl"
+#line 136 "objects/Turing.rl"
 	{ target_state = state_id; state_id = 0; }
 	break;
 	case 4:
-#line 143 "objects/Turing.rl"
+#line 138 "objects/Turing.rl"
 	{ tok = (*p); }
 	break;
 	case 5:
-#line 145 "objects/Turing.rl"
+#line 140 "objects/Turing.rl"
 	{ 
       name[name_index] = '\0';
       name_index = 0;
@@ -362,7 +357,7 @@ _match:
     }
 	break;
 	case 6:
-#line 154 "objects/Turing.rl"
+#line 149 "objects/Turing.rl"
 	{ 
       // FIXME: only works with letters, should also work with numbers
       // do we know this token ?
@@ -399,7 +394,7 @@ _match:
     }
 	break;
 	case 7:
-#line 189 "objects/Turing.rl"
+#line 184 "objects/Turing.rl"
 	{
       // write transition
       #ifdef DEBUG_PARSER
@@ -409,7 +404,7 @@ _match:
     }
 	break;
 	case 8:
-#line 197 "objects/Turing.rl"
+#line 192 "objects/Turing.rl"
 	{
       // write the entry
       #ifdef DEBUG_PARSER
@@ -425,7 +420,7 @@ _match:
     }
 	break;
 	case 9:
-#line 212 "objects/Turing.rl"
+#line 207 "objects/Turing.rl"
 	{
       p--; // move back one char
       char error_buffer[10];
@@ -436,14 +431,14 @@ _match:
     }
 	break;
 	case 10:
-#line 226 "objects/Turing.rl"
+#line 221 "objects/Turing.rl"
 	{ {cs = 36; goto _again;} }
 	break;
 	case 11:
-#line 228 "objects/Turing.rl"
+#line 223 "objects/Turing.rl"
 	{ {cs = 1; goto _again;} }
 	break;
-#line 447 "objects/Turing.cpp"
+#line 442 "objects/Turing.cpp"
 		}
 	}
 
@@ -455,8 +450,8 @@ _again:
 	_out: {}
 	}
 
-#line 459 "objects/Turing.cpp"
-#line 251 "objects/Turing.rl"
+#line 454 "objects/Turing.cpp"
+#line 246 "objects/Turing.rl"
 
     
     mScriptDead = false; // ok, we can receive and process signals (again).
@@ -513,7 +508,6 @@ private:
 extern "C" void init()
 {
   CLASS (Turing)
-  INLET (Turing, input)
   OUTLET(Turing, output)
   METHOD(Turing, tables)
   METHOD(Turing, debug)

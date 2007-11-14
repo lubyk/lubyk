@@ -17,15 +17,14 @@ public:
   }
   
   // inlet 1 and 5 (silent set note)
-  void set_note(const Signal& sig)
+  void bang(const Signal& sig)
   {
-    int n = 0;
     if (sig.type == MidiSignal) {
       mMessage = *(sig.midi_ptr.value);
     } else {
-      sig.get(&n);
-      if (n) mMessage.set_note(n); 
+      set_note(sig);
     }
+    send(mMessage);
   }
 
   // inlet 2
@@ -47,6 +46,13 @@ public:
     if (sig.get(&i)) mMessage.set_channel(i);
   }
   
+  // inlet 5 (set note but do not send)
+  void set_note(const Signal& sig)
+  {
+    int n;
+    if (sig.get(&n)) mMessage.set_note(n);
+  }
+  
   // internal callback
   void noteOff(void * data)
   {
@@ -57,12 +63,6 @@ public:
     sig.set(msg);
     if (out = outlet(1)) out->send(sig);
     delete msg;
-  }
-  
-  void bang()
-  {
-    // send midi message
-    send(mMessage);
   }
   
   void clear()
@@ -84,7 +84,6 @@ private:
 extern "C" void init()
 {
   CLASS (NoteOut)
-  INLET (NoteOut, set_note)
   INLET (NoteOut, set_velocity)
   INLET (NoteOut, set_length)
   INLET (NoteOut, set_channel)

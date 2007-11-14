@@ -43,13 +43,8 @@ public:
     
   }
   
-  void bang()
-  {
-    // does nothing
-  }
-  
   // inlet 1
-  void send(const Signal& sig)
+  void bang(const Signal& sig)
   {
     if (!mMidiout || sig.type != MidiSignal) return;
     
@@ -226,7 +221,6 @@ static VALUE t_noteOff(VALUE self, VALUE rChannel, VALUE rNote, VALUE rVelocity)
 extern "C" void init() 
 {
   CLASS (Midi)
-  INLET (Midi, send)
   CLASS_METHOD(Midi, inputs)
   CLASS_METHOD(Midi, outputs)
   METHOD(Midi, clear)

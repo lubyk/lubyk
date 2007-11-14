@@ -5,6 +5,9 @@
 #include <pthread.h>
 
 
+Signal gNilSignal(NilSignal);   // globals defined declared in rubyk_signal.h
+Signal gBangSignal(BangSignal); // globals defined declared in rubyk_signal.h
+
 Rubyk::Rubyk() : mInstances(200), mQuit(false), mCurrentTime(0), mCanRegister(true)
 {
   mMutex.lock();    // we get hold of everything, releasing resources when we decide (I'm the master).
@@ -162,7 +165,7 @@ void Rubyk::pop_events()
   long double realTime = mCurrentTime;
   while( mEventsQueue.get(&e) && realTime >= e->mTime) {
     mCurrentTime = e->mTime;
-    e->trigger();
+    e->mIsBang ? ((Node*)e->mNode)->bang(gNilSignal) : e->trigger();
     delete e;
     mEventsQueue.pop();
   }
@@ -174,7 +177,8 @@ void Rubyk::pop_all_events()
   BaseEvent * e;
   while( mEventsQueue.get(&e)) {
     mCurrentTime = e->mTime;
-    if (e->mForced) e->trigger();
+    if (e->mForced)
+      e->mIsBang ? ((Node*)e->mNode)->bang(gNilSignal) : e->trigger();
     delete e;
     mEventsQueue.pop();
   }
@@ -191,7 +195,7 @@ void Rubyk::trigger_loop_events()
   std::deque<Node *>::iterator it;
   std::deque<Node *>::iterator end = mLoopedNodes.end();
   for(it = mLoopedNodes.begin(); it < end; it++) {
-    (*it)->bang();
+    (*it)->bang(gNilSignal);
   }
 }
 
@@ -217,7 +221,8 @@ void Rubyk::free_events_for(Node * pNode)
   while(it) {
     e = it->obj;
     if (e->uses_node(pNode)) {
-      if (e->mForced) e->trigger();
+      if (e->mForced)
+        e->mIsBang ? ((Node*)e->mNode)->bang(gNilSignal) : e->trigger();
       it = mEventsQueue.remove(e);
     } else
       it = it->next;

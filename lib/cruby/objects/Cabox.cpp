@@ -27,50 +27,8 @@ public:
       return false;
   }
   
-  // outlet 1
-  void stream(Signal& sig)
-  {
-    if (mNewData) {
-      sig.type = DoubleArraySignal;
-      sig.doubles.size  = mWindowSize * DEFAULT_WINDOW_COUNT;
-      sig.doubles.value = mBuffer + mReadPosition;
-      if (mDebug)
-        *mOutput << sig << std::endl;
-    }
-  }
   
-  // outlet 2: send highest value
-  void high(Signal& sig)
-  {
-    if (mNewData)
-      sig.set(mHighestValue);
-  }
-  
-  // outlet 3: send highest value's direction
-  void direction(Signal& sig)
-  {
-    receive();
-    if (mNewData)
-      sig.set(mHighestDirection);
-  }
-  
-  void offset()
-  {
-    mOffsetOnFull = true;
-  }
-  
-  void debug()
-  {
-    mDebug = !mDebug;
-    if (mDebug)
-      *mOutput << mName << ": debug on\n";
-    else
-      *mOutput << mName << ": debug off\n";
-  }
-  
-private:
-  
-  void receive()
+  void bang(const Signal& sig)
   {
     int c,r;
     double val;
@@ -140,9 +98,42 @@ private:
         mIndex = 0;
       }
     }
+    
+    if (mNewData) {
+      
+      // outlet 3 (highest direction)
+      send(mHighestDirection, 3);
+      
+      // outlet 2 (highest value)
+      send(mHighestValue, 2);
+      
+      // outlet 1 (stream)
+      mS.type = DoubleArraySignal;
+      mS.doubles.size  = mWindowSize * DEFAULT_WINDOW_COUNT;
+      mS.doubles.value = mBuffer + mReadPosition;
+      send(mS);
+      
+      if (mDebug)
+        *mOutput << sig << std::endl;
+    } 
   }
   
+  void offset()
+  {
+    mOffsetOnFull = true;
+  }
   
+  void debug()
+  {
+    mDebug = !mDebug;
+    if (mDebug)
+      *mOutput << mName << ": debug on\n";
+    else
+      *mOutput << mName << ": debug off\n";
+  }
+  
+private:
+
   bool   mDebug;
   bool   mNewData;
   

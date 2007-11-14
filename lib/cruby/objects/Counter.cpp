@@ -13,6 +13,18 @@ public:
     return true;
   }
 
+  // inlet 1
+  void bang(const Signal& sig)
+  { 
+    sig.get(&mCounter);
+    send(mCounter += mIncrement);
+  }
+  
+  // inlet 2
+  void set_increment(const Signal& sig)
+  { sig.get(&mIncrement);     }
+  
+  
   virtual void spy() 
   { bprint(mSpy, mSpySize,"%i", mCounter );  }
   
@@ -24,17 +36,6 @@ public:
     *mOutput << mIncrement << std::endl;
   }
   
-  // inlet 1
-  void set_counter(const Signal& sig)
-  { sig.get(&mCounter); }
-  
-  // inlet 2
-  void set_increment(const Signal& sig)
-  { sig.get(&mIncrement);     }
-  
-  void bang()
-  { send(mCounter += mIncrement); }
-  
 private:
   int mCounter;
   int mIncrement;
@@ -43,7 +44,6 @@ private:
 extern "C" void init()
 {
   CLASS (Counter)
-  INLET (Counter, set_counter)
   INLET (Counter, set_increment)
   OUTLET(Counter, value)
   METHOD(Counter, increment)

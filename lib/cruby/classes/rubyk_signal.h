@@ -4,6 +4,7 @@
 #include <iostream>
 #include "midi_message.h"
 
+
 /** Signal types. */
 enum rubyk_signal_t {
   NilSignal  = 0,    /**< Do not send. */
@@ -53,6 +54,8 @@ typedef struct {
 
 /** A signal is what is transmitted along the connections. It contains a signature field along with a void value. */
 union Signal {
+  Signal() {}
+  Signal(rubyk_signal_t pSigType) : type(pSigType) {}
   
   ~Signal()
   {
@@ -236,6 +239,8 @@ union Signal {
   VoidPointerSignal_t  ptr;
 };
 
+extern Signal gNilSignal;  // defined in rubyk.cpp
+extern Signal gBangSignal; // defined in rubyk.cpp
 
 // inline for convenience (avoid another build object)
 inline std::ostream& operator<< (std::ostream& pStream, const Signal& sig)

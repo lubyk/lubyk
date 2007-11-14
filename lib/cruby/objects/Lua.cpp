@@ -11,9 +11,11 @@ public:
   }
   
   // inlet 1
-  void input1(const Signal& sig)
-  { 
+  void bang(const Signal& sig)
+  {
     set_lua_global("in1", sig);
+    call_lua("update", mS, mInput);
+    send(mS);
   }
   
   // inlet 2
@@ -43,18 +45,6 @@ public:
     }
   }
   
-  // outlet 1
-  void output(Signal& sig)
-  {
-    call_lua("update", sig, mInput);
-  }
-  
-  int hello()
-  {
-    printf("hello lua !\n");
-    return 0;
-  }
-  
 private:
   float mInput;
 };
@@ -62,12 +52,10 @@ private:
 extern "C" void init()
 {
   CLASS (Lua)
-  INLET (Lua, input1)
   INLET (Lua, input2)
   INLET (Lua, input3)
   INLET (Lua, input4)
   OUTLET(Lua, output)
-  METHOD_FOR_LUA(Lua, hello)
   SUPER_METHOD(Lua, Script, set)
   SUPER_METHOD(Lua, Script, load)
   SUPER_METHOD(Lua, Script, script)

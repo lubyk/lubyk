@@ -13,8 +13,9 @@ public:
   }
   
   // capture method, called from a command
-  void get()
+  void bang(const Signal& sig)
   { 
+    int c;
     struct termios oldt, newt;
     mServer->unlock(); // Let the server breath. We are in a lock--unlock from Command
     
@@ -23,10 +24,10 @@ public:
     newt.c_lflag &= ~( ICANON | ECHO );
     tcsetattr ( STDIN_FILENO, TCSANOW, &newt );
     
-    while((mChar = getchar()) != '\e') { // until escape
+    while((c = getchar()) != '\e') { // until escape
       mServer->lock();
         // protected resource
-        bang_me_in(0);
+        send(c);
       mServer->unlock();
     }
     
@@ -36,17 +37,10 @@ public:
     mServer->lock();
   }
   
-  void send(Signal& sig)
-  {
-    sig.set(mChar);
-  }
-private:
-  int mChar;
 };
 
 extern "C" void init()
 {
   CLASS (Keyboard)
   OUTLET(Keyboard,send)
-  METHOD(Keyboard,get)
 }

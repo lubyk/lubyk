@@ -13,15 +13,16 @@ public:
     
     return true;
   }
+  
+  // inlet 1
+  void bang(const Signal& sig)
+  { 
+    sig.get(&mValue);
+    send(mValue); 
+  }
 
   virtual void spy() 
   { bprint(mSpy, mSpySize,"%.2f", mValue );  }
-  
-  void set_value(const Signal& sig)
-  { sig.get(&mValue); }
-
-  void bang()
-  { send(mValue); }
   
 private:
   double mValue;
@@ -30,6 +31,5 @@ private:
 extern "C" void init()
 {
   CLASS (Value)
-  INLET (Value, set_value)
   OUTLET(Value, value)
 }

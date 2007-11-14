@@ -9,13 +9,8 @@ public:
     return true;
   }
   
-  void bang()
-  {
-    // do nothing
-  }
-  
   // inlet 1
-  void print(const Signal& sig)
+  void bang(const Signal& sig)
   { 
     *mOutput << sig << std::endl;
   }
@@ -24,5 +19,4 @@ public:
 extern "C" void init()
 {
   CLASS(Print)
-  INLET(Print,print)
 }
