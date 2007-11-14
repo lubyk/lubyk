@@ -211,7 +211,7 @@ public:
   /** Return outlet at the given position. First outlet is '1', not '0'. */
   Outlet * outlet (int pOutletId) 
   { 
-    if (pOutletId < 1 || pOutletId > mInlets.size()) return NULL;
+    if (pOutletId < 1 || pOutletId > mOutlets.size()) return NULL;
     return mOutlets[pOutletId - 1];
   }
   

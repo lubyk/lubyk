@@ -48,7 +48,7 @@ command.o: classes/command.cpp classes/command.h classes/mutex.h
 command.o.bak: classes/command.cpp classes/command.h parser/parser.c lexer.o	
 	$(CC) $(CFLAGS) -c -Iclasses -Itemplates classes/command.cpp parser/parser.c parser/lexer.o -O2 -Wl,-x -pipe -lm -o command.o
 
-objects: lib/Test.rko lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/Midi.rko lib/NoteOut.rko lib/Lua.rko lib/Serial.rko lib/Turing.rko lib/Keyboard.rko lib/Cabox.rko lib/Svm.rko
+objects: lib/Test.rko lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/Midi.rko lib/NoteOut.rko lib/Lua.rko lib/Serial.rko lib/Turing.rko lib/Keyboard.rko lib/Cabox.rko lib/Svm.rko lib/Buffer.rko
 
 
 lib/Test.rko: objects/Test.cpp
@@ -92,6 +92,9 @@ lib/Keyboard.rko: objects/Keyboard.cpp
 	
 lib/Svm.rko: objects/Svm.cpp
 	$(CC) $(CFLAGS) -o lib/Svm.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Svm.cpp
+	
+lib/Buffer.rko: objects/Buffer.cpp
+	$(CC) $(CFLAGS) -o lib/Buffer.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Buffer.cpp
 
 objects/Turing.cpp: objects/Turing.rl
 	${RAGEL} objects/Turing.rl | ${RAGEL_CD} -o objects/Turing.cpp

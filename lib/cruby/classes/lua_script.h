@@ -7,6 +7,8 @@ extern "C" {
 #include "lua/src/lua.h"
 }
 
+#define LUA_RETURN_BUFFER_SIZE 32
+
 class LuaScript : public Script
 {
 public:
@@ -19,10 +21,11 @@ public:
   
   void eval_script (const std::string& pScript);
   
-  // FIXME, we could use self::get_char() syntax and get first arg as 'self' == this.
+  // FIXME, we could use self::method() syntax and get first arg as 'self' == this.
   template <class T, int (T::*Tmethod)()>
   static int cast_method_for_lua(lua_State * L)
   {
+    Signal sig;
     T * node = (T*)get_node_from_lua(L);
     if (node) {
       return (node->*Tmethod)();
@@ -45,9 +48,16 @@ public:
     }
   }
   
+  /** Define a signal from lua stack/parameters. */
+  void sig_from_lua (Signal * sig, int index);
+  
+  /** Define a signla from lua stack/parameters, with a custom buffer. */
+  void sig_from_lua (Signal * sig, int index, double * pBuffer, int pBufSize);
+  
   static Node * get_node_from_lua(lua_State * L);
 protected:  
   lua_State * mLua;
+  double      mLuaReturn[LUA_RETURN_BUFFER_SIZE]; /**< Used to return multiple values from lua. */
 };
 
 #define METHOD_FOR_LUA(klass,method) {Class::find(#klass)->add_method_for_lua(#method, &LuaScript::cast_method_for_lua<klass, &klass::method>);}

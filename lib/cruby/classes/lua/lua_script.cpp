@@ -41,30 +41,7 @@ void LuaScript::call_lua(const char * pFunctionName, Signal& sig, float f)
     mScriptDead = true;
     return;
   }
-  
-  /* Get returned value at stack top. */
-  /* LUA_TNIL, LUA_TNUMBER, LUA_TBOOLEAN, LUA_TSTRING, LUA_TTABLE, LUA_TFUNCTION, LUA_TUSERDATA, LUA_TTHREAD, and LUA_TLIGHTUSERDATA.
-  */
-  i = lua_gettop(mLua);
-  switch ( lua_type(mLua, i) ) {
-  case LUA_TNONE:
-    sig.set_bang();
-    break;
-  case LUA_TNIL:
-    lua_pop(mLua, 1);
-    break;
-  case LUA_TNUMBER:
-    sig.set(lua_tonumber(mLua, i));
-    lua_pop(mLua, 1);
-    break;
-  case LUA_TBOOLEAN:
-    sig.set(lua_toboolean(mLua, i));
-    lua_pop(mLua, 1);
-    break;
-  default:
-    *mOutput << "Unsupported lua return value '" << lua_typename(mLua, i) << "'.\n";
-    lua_pop(mLua, 1);
-  }
+  sig_from_lua(&sig, lua_gettop(mLua));
 }
 
 
@@ -125,4 +102,64 @@ Node * LuaScript::get_node_from_lua(lua_State * L)
   Node * node = (Node*)lua_touserdata(L,lua_gettop(L));
   lua_pop(L,1);
   return node;
+}
+
+void LuaScript::sig_from_lua(Signal * sig, int index)
+{
+  sig_from_lua(sig, index, mLuaReturn, LUA_RETURN_BUFFER_SIZE);
+}
+
+void LuaScript::sig_from_lua(Signal * sig, int index, double * pBuffer, int pBufSize)
+{
+  int i  = 1;
+  int sz = 0;
+  /* LUA_TNIL, LUA_TNUMBER, LUA_TBOOLEAN, LUA_TSTRING, LUA_TTABLE, LUA_TFUNCTION, LUA_TUSERDATA, LUA_TTHREAD, and LUA_TLIGHTUSERDATA.
+  */
+  switch ( lua_type(mLua, index) ) {
+  case LUA_TNONE:
+    sig->set_bang();
+    break;
+  case LUA_TNIL:
+    sig->set_nil();
+    lua_pop(mLua, 1);
+    break;
+  case LUA_TNUMBER:
+    sig->set(lua_tonumber(mLua, index));
+    lua_pop(mLua, 1);
+    break;
+  case LUA_TBOOLEAN:
+    sig->set(lua_toboolean(mLua, index));
+    lua_pop(mLua, 1);
+    break;
+  case LUA_TTABLE:
+    if (!pBuffer) {
+      fprintf(stderr, "Cannot return lua table without buffer to write values !\n");
+      sig->set_nil();
+      return;
+    }
+    while(true) {
+      lua_pushinteger(mLua, i);
+      lua_gettable(mLua, index);
+      if(!lua_isnumber(mLua, -1))
+        break;
+      if (i > pBufSize) {
+        fprintf(stderr, "Buffer too small (%i) to write all values returned by lua table !\n", pBufSize);
+        break;
+      }
+      double f = lua_tonumber(mLua, -1);
+      pBuffer[i-1] = f;
+      sz++;
+      lua_pop(mLua,1);
+      i++;
+    }    
+    lua_pop(mLua,1);
+    sig->type = DoubleArraySignal;
+    sig->doubles.value = pBuffer;
+    sig->doubles.size  = sz;
+    break;
+  default:
+    fprintf(stderr, "Unsupported lua return value '%s'.\n", lua_typename(mLua, index));
+    sig->set_nil();
+    lua_pop(mLua, 1);
+  }
 }

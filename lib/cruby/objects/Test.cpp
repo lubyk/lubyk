@@ -30,12 +30,10 @@ public:
   void set_counter(const Signal& sig)
   { sig.get(&mCounter); }
 
-  void bang()
+  void bang(const Signal& sig)
   {
-    Signal sig;
     send(++mCounter);
-    sig.set_nil();
-    send(sig, 2);
+    send(gNilSignal, 2);
   }
   
   void info(const Params& p)
