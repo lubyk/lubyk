@@ -118,10 +118,17 @@ public:
       
       // outlet 1 (stream)
       mDataSignal.array.value = mValues + mReadPosition;
-      send(mDataSignal);
       
       if (mDebug)
         *mOutput << mDataSignal << std::endl;
+        
+      // this is just to debug Plot [DEBUG
+      //mDataSignal.type = DoubleSignal;
+      //mDataSignal.d.value = mValues[mReadPosition];
+      // DEBUG]
+      
+      send(mDataSignal);
+      
     } 
   }
   

@@ -91,7 +91,9 @@ Node * Rubyk::create_instance (const std::string& pVariable, const std::string& 
 
   if (node) {
     
+      printf("Find '%s'\n",node->name());
     if (mInstances.get(&previous, node->name())) {
+      printf("kill\n");
       delete previous; // kill the node pointed by variable name 
     }
       
