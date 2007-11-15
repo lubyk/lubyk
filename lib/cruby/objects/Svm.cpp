@@ -86,8 +86,8 @@ public:
   // inlet 2
   void data (const Signal& sig)
   {
-    if (sig.type == DoubleArraySignal && sig.doubles.size >= mBufferSize) {
-      mLiveBuffer = sig.doubles.value;
+    if (sig.type == ArraySignal && sig.array.size >= mBufferSize) {
+      mLiveBuffer = sig.array.value;
     } else {
       *mOutput << mName << ": invalid signal type (should be FloatArray with a minimum size of " << mBufferSize << ") " << sig << std::endl;
     }

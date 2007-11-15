@@ -12,7 +12,7 @@ enum rubyk_signal_t {
   IntegerSignal,     /**< IntegerSignal value. */
   CharSignal,        /**< IntegerSignal value. */
   DoubleSignal,       /**< DoubleSignal (actually double). */
-  DoubleArraySignal,  /**< Array of floats. Use the 'size' attribute to avoid buffer overflow. */
+  ArraySignal,  /**< Array of floats. Use the 'size' attribute to avoid buffer overflow. */
   MidiSignal,        /**< Pointer to a midi message. */
   VoidPointerSignal, /**< Void pointer. If you want a malloc allocated buffer to be freed with the signal, set 'free_me' attribute to true.*/
 };
@@ -36,7 +36,7 @@ typedef struct {
   rubyk_signal_t    type;
   double * value;
   size_t  size;
-} DoubleArraySignal_t;
+} ArraySignal_t;
 
 /** Message pointed by value gets freed with the Signal if free_me is true. */
 typedef struct {
@@ -234,7 +234,7 @@ union Signal {
   IntegerSignal_t      i;
   CharSignal_t         c;
   DoubleSignal_t       d;
-  DoubleArraySignal_t  doubles;
+  ArraySignal_t  array;
   MidiSignal_t         midi_ptr;
   VoidPointerSignal_t  ptr;
 };
@@ -257,20 +257,22 @@ inline std::ostream& operator<< (std::ostream& pStream, const Signal& sig)
     snprintf(buffer, 50, "%.2f", sig.d.value);
     pStream << buffer;
     break;
-  case DoubleArraySignal:
-    if (sig.doubles.size == 0) {
-      snprintf(buffer, 50, "<floats %p,%i>",sig.doubles.value, sig.doubles.size);
+  case ArraySignal:
+    if (sig.array.size == 0) {
+      snprintf(buffer, 50, "<array %p,%i>",sig.array.value, sig.array.size);
       pStream << buffer;
     } else {
       int sz = 16;
-      if (sz > sig.doubles.size) sz = sig.doubles.size;
-      snprintf(buffer, 50, "<floats %p (% .2f", sig.doubles.value, sig.doubles.value[0]);
+      int start;
+      if (sz > sig.array.size) sz = sig.array.size;
+      start = sig.array.size - sz;
+      snprintf(buffer, 50, "<array %p (% .2f", sig.array.value, sig.array.value[start]);
       pStream << buffer;
-      for (int i= 1; i < sz; i++) {
-        snprintf(buffer, 50, ", % .2f", sig.doubles.value[i]);
+      for (int i= start+1; i < start+sz; i++) {
+        snprintf(buffer, 50, ", % .2f", sig.array.value[i]);
         pStream << buffer;
       }
-      pStream << ")," << sig.doubles.size << ">";
+      pStream << ")," << sig.array.size << ">";
     }
     break;
   case VoidPointerSignal:

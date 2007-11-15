@@ -18,14 +18,14 @@ public:
     if (mPackSize) {
       mBuffer = (double*)malloc(2 * mPackSize * sizeof(double));
       if (!mBuffer) {
-        *mOutput << "Could not allocate '" << (2 * mPackSize) << "' doubles.\n";
+        *mOutput << "Could not allocate '" << (2 * mPackSize) << "' array.\n";
       } else {
         for(int i= 0;i<(2*mPackSize);i++)
           mBuffer[i] = 0.0;
       }
       
-      mS.type = DoubleArraySignal;
-      mS.doubles.size  = mPackSize;
+      mS.type = ArraySignal;
+      mS.array.size  = mPackSize;
       mReadPosition = mPackSize;
       mIndex        = 0;
     }
@@ -38,9 +38,9 @@ public:
   { 
     if (mBuffer) {
       switch(sig.type) {
-      case DoubleArraySignal:
-        for(int i=0; i < sig.doubles.size;i++)
-          pack(*(sig.doubles.value + i));
+      case ArraySignal:
+        for(int i=0; i < sig.array.size;i++)
+          pack(*(sig.array.value + i));
         break;
       default:
         double d;
@@ -61,12 +61,12 @@ public:
     
     if (mIndex == mPackSize) {
       mReadPosition = 0;
-      mS.doubles.value = mBuffer + mReadPosition;
+      mS.array.value = mBuffer + mReadPosition;
       send(mS);
     } else if (mIndex >= 2 * mPackSize) {
       mIndex = 0;
       mReadPosition = mPackSize;
-      mS.doubles.value = mBuffer + mReadPosition;
+      mS.array.value = mBuffer + mReadPosition;
       send(mS);
     }
   }

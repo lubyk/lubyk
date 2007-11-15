@@ -14,7 +14,7 @@ public:
   void bang(const Signal& sig)
   {
     set_lua_global("in1", sig);
-    call_lua("update", mS, mInput);
+    call_lua("bang", mS, mInput);
     send(mS);
   }
   

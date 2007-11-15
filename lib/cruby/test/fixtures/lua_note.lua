@@ -1,4 +1,4 @@
-function update(sig)
+function bang(sig)
 	g = g or 0
 	g = g + 1
 	n = 20

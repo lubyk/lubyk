@@ -34,8 +34,8 @@ public:
         mReadOffset   = 0;
       }
       
-      mS.type = DoubleArraySignal;
-      mS.doubles.size  = mWindowSize;
+      mS.type = ArraySignal;
+      mS.array.size  = mWindowSize;
     }
     
     return true;
@@ -46,15 +46,15 @@ public:
   { 
     if (mBuffer) {
       switch(sig.type) {
-      case DoubleArraySignal:
-        for(int i=0; i < sig.doubles.size;i++)
-          write_buf(*(sig.doubles.value + i));
+      case ArraySignal:
+        for(int i=0; i < sig.array.size;i++)
+          write_buf(*(sig.array.value + i));
         break;
       default:
         double d;
         if (sig.get(&d)) write_buf(d);
       }
-      mS.doubles.value = mBuffer + mReadPosition;
+      mS.array.value = mBuffer + mReadPosition;
       send(mS);
     } else
       send(sig);

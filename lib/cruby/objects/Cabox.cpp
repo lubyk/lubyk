@@ -6,7 +6,7 @@ public:
   
   bool init (const Params& p)
   {
-    for(int i=0; i<12;i++) {
+    for(int i=0; i<24;i++) {
       mValues[i] = 0.0;
       mOffset[i] = 0.0;
     }
@@ -14,10 +14,18 @@ public:
     mDebug = false;
     mNewData = false;
     
+    mHighestValue = 0.0;
+    mHighestDirection = 0;
+    mFindHighestValue = 0.0;
+    mFindHighestDirection = 0;
+    
     mIndex = 0;
+    mReadPosition = 12;
     mState = 0; // wait for sync
     mOffsetOnFull = true; // do not offset when 12 values are set
-    mSlowPort = false;
+    
+    mDataSignal.type = ArraySignal;
+    mDataSignal.array.size  = 12;
     
     if (init_serial(p))
     {
@@ -65,37 +73,38 @@ public:
       val  = (val/1024) * (3300 - 1650) / 200; // 3300 = fullscale_mv, 1024 = fullscale_bin, 1650 = offset_mv, 200 = sensitivity_mv
       mIndex += 1;
       i = (mIndex/2) - 1;
-      mValues[i] = val - mOffset[i];
+      val -= mOffset[i];
+      mValues[i] = val;
       
-      if (mIndex >= 24) {
+      float abs_val;
+      
+      abs_val = val < 0 ? -val : val;
+      // abs(..) casts to integer ????
+      
+      if ( abs_val > mFindHighestValue ) {
+        mFindHighestDirection = i;
+        mFindHighestValue = abs_val;
+      }
+      
+      if (i == 11 || i >= 23) {
         mNewData = true;
+        mHighestValue         = mFindHighestValue;
+        mHighestDirection     = mFindHighestDirection;
+        mFindHighestValue     = 0.0;
+        mFindHighestDirection = 0;
         if (mOffsetOnFull) {
           for(int i=0; i<12; i++) {
             mOffset[i] = mValues[i] + mOffset[i];
           }
           mOffsetOnFull = false;
         }
-        
-        // write to buffer and find highest value/direction
-        mHighestValue = 0;
-        for(int i=0; i<12; i++) {
-          float abs_val;
-          val = mValues[i];
-          write_buf(val);
-          
-          abs_val = val < 0 ? -val : val;
-          // abs(..) casts to integer ????
-          
-          if ( abs_val > mHighestValue ) {
-            mHighestDirection = i;
-            mHighestValue = abs_val;
-          }
-
-        }
-        
-        
         mState = 0;
-        mIndex = 0;
+        if (i == 11) {
+          mReadPosition = 0;
+        } else {
+          mReadPosition = 12;
+          mIndex = 0;
+        }
       }
     }
     
@@ -108,13 +117,11 @@ public:
       send(mHighestValue, 2);
       
       // outlet 1 (stream)
-      mS.type = DoubleArraySignal;
-      mS.doubles.size  = mWindowSize * DEFAULT_WINDOW_COUNT;
-      mS.doubles.value = mBuffer + mReadPosition;
-      send(mS);
+      mDataSignal.array.value = mValues + mReadPosition;
+      send(mDataSignal);
       
       if (mDebug)
-        *mOutput << sig << std::endl;
+        *mOutput << mDataSignal << std::endl;
     } 
   }
   
@@ -136,16 +143,19 @@ private:
 
   bool   mDebug;
   bool   mNewData;
+  Signal mDataSignal;
   
-  double mValues[12];
+  double mValues[24];
+  int    mReadPosition;
   double mOffset[12];
   double mHighestValue;
   int mHighestDirection;
+  double mFindHighestValue;
+  int mFindHighestDirection;
   int mIndex;
   int mState;
   int mHigh;
   bool mOffsetOnFull;
-  bool mSlowPort;
 };
 
 extern "C" void init()

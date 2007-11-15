@@ -153,9 +153,9 @@ void LuaScript::sig_from_lua(Signal * sig, int index, double * pBuffer, int pBuf
       i++;
     }    
     lua_pop(mLua,1);
-    sig->type = DoubleArraySignal;
-    sig->doubles.value = pBuffer;
-    sig->doubles.size  = sz;
+    sig->type = ArraySignal;
+    sig->array.value = pBuffer;
+    sig->array.size  = sz;
     break;
   default:
     fprintf(stderr, "Unsupported lua return value '%s'.\n", lua_typename(mLua, index));
