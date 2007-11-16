@@ -229,6 +229,16 @@ union Signal {
     }
   }
   
+  /** get as double* */
+  inline bool get(double ** pArray) const
+  { 
+    if (type == ArraySignal) {
+      *pArray = array.value;
+      return true;
+    } else
+      return false;
+  }
+  
 /* data */
   rubyk_signal_t       type;
   IntegerSignal_t      i;

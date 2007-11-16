@@ -69,7 +69,10 @@ protected:
     glutInitDisplayMode(GLUT_RGB);
     glutInitWindowSize(mWindow.width, mWindow.height);
     mWindow.id = glutCreateWindow("Plot");
-
+    
+    glEnable(GL_BLEND); //Enable alpha blending
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //Set the blend function
+    
     // current window is mWin
     glClearColor(0.2,0.2,0.2,1.0);
     gluOrtho2D(0,mWindow.width,0,mWindow.height);

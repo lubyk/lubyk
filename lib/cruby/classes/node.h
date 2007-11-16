@@ -25,10 +25,11 @@
 class Node
 {
 public:
-  Node() : mClass(NULL), mServer(NULL), mTriggerPosition(0), mId(0), mSpySize(0), mInspectSize(0), mBuf(NULL), mSpy(NULL), mInspect(NULL), mOutput(&std::cout), mLooped(false)
+  Node() : mClass(NULL), mServer(NULL), mId(0), mSpySize(0), mInspectSize(0), mBuf(NULL), mSpy(NULL), mInspect(NULL), mOutput(&std::cout), mLooped(false)
   { 
     char buf[50];
     sIdCounter++;
+    mTriggerPosition = sIdCounter; // last created is further on the right
     sprintf(buf,"_%i",sIdCounter);
     mName = std::string(buf);  // default variable name is 'id'
   }
