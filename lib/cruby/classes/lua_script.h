@@ -16,21 +16,31 @@ public:
   
   bool init_lua (const Params& p);
   
-  void call_lua (const char * pFunctionName, Signal& sig, float f = 0);
-  
+  void call_lua (const char * pFunctionName);
   
   void eval_script (const std::string& pScript);
+  
+  static int send_for_lua(lua_State * L)
+  {
+    LuaScript * node = (LuaScript *)get_node_from_lua(L);
+    if (node) {
+      // value, port
+      double v;
+      double p;
+      node->double_from_lua(&v);
+      if (node->double_from_lua(&p)) node->send(v,p);
+    }
+    return 0;
+  }
   
   // FIXME, we could use self::method() syntax and get first arg as 'self' == this.
   template <class T, int (T::*Tmethod)()>
   static int cast_method_for_lua(lua_State * L)
   {
-    Signal sig;
     T * node = (T*)get_node_from_lua(L);
     if (node) {
       return (node->*Tmethod)();
     } else {
-      fprintf(stderr, "Lua error: 'rubyk_this' not set.\n");
       return 0;
     }
   }
@@ -43,13 +53,15 @@ public:
     if (node) {
       return (node->*Tmethod)();
     } else {
-      fprintf(stderr, "Lua error: 'rubyk_this' not set.\n");
       return 0;
     }
   }
   
   /** Define a signal from lua stack/parameters. */
   void sig_from_lua (Signal * sig, int index);
+  
+  /** Get a double from the current parameter list. */
+  bool double_from_lua(double *);
   
   /** Define a signla from lua stack/parameters, with a custom buffer. */
   void sig_from_lua (Signal * sig, int index, double * pBuffer, int pBufSize);

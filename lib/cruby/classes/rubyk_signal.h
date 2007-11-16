@@ -65,6 +65,14 @@ union Signal {
       delete midi_ptr.value;
     }
   }
+  /// memory management ///
+  inline void clear_free_me() const // we allow this on const objects because we get hold of memory pointer
+  {
+    Signal * s = const_cast<Signal *>(this);
+    if (s->type == MidiSignal) s->midi_ptr.free_me = false;
+    else if (s->type == VoidPointerSignal) s->ptr.free_me = false;
+  }
+  
   /// set methods ///
   
   /** Set as bang. */

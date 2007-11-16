@@ -33,14 +33,14 @@ const char * Node::class_name() const
   return mClass->name().c_str(); 
 }
 
-void Node::bprint(char * pBuffer, int& pBufferSize, const char *fmt, ...)
+void Node::bprint(char *& pBuffer, int& pBufferSize, const char *fmt, ...)
 {
   int n;
   char * np;
   va_list ap;
   
   if (pBuffer == NULL) {
-    pBuffer = (char*)malloc(START_PRINT_BUFFER);
+    pBuffer = (char*)malloc(START_PRINT_BUFFER * sizeof(char));
     if (pBuffer) pBufferSize = START_PRINT_BUFFER;
   }
   

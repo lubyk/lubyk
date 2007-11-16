@@ -1,11 +1,17 @@
-c=Cabox(port:"/dev/tty.HOME001-GenericSerial-1" bauds:115200 window:1200)
-c.1=>2.svm
-svm=Svm()
-svm.2=>l
+c = Cabox(port:"/dev/tty.HOME001-GenericSerial-1" bauds:115200)
+c => b
+b = Buffer(1800)
+b => svm
+svm = Svm(vector:768 rate:64 unit:12)
+svm.2 => l
+svm.3 => p
+svm.4 => 2.p
 l=Lua(load:"test/fixtures/svm.lua")
-l=>no
+l => no
 no=NoteOut()
-no=>midi
+no => midi
 midi=Midi()
 k=Keyboard()
-k.1=>1.svm
+k => svm
+
+p =  Plot(group:3 line:4)

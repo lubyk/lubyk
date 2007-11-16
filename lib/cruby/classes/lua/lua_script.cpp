@@ -21,27 +21,28 @@ bool LuaScript::init_lua (const Params& p)
 }
 
 
-void LuaScript::call_lua(const char * pFunctionName, Signal& sig, float f)
+void LuaScript::call_lua(const char * pFunctionName)
 {
   int status,i;
+  Signal sig;
   
   reload_script();
   
   if (mScriptDead) return;
   
-  lua_getfield(mLua, LUA_GLOBALSINDEX, pFunctionName); /* function to be called */
-  lua_pushnumber(mLua, f); /* first argument */
+  lua_getglobal(mLua, pFunctionName); /* function to be called */
   
   /* Run the function. */
-  status = lua_pcall(mLua, 1, 1, 0); // 1 arg, 1 result, no error function
+  status = lua_pcall(mLua, 0, 1, 0); // 1 arg, 1 result, no error function
   if (status) {
-    *mOutput << "Script execution failed !\n";
+    *mOutput << mName << "(error): ";
     *mOutput << lua_tostring(mLua, -1) << std::endl;
   	
     mScriptDead = true;
     return;
   }
   sig_from_lua(&sig, lua_gettop(mLua));
+  if (sig.type) send(sig);
 }
 
 
@@ -64,6 +65,10 @@ void LuaScript::eval_script(const std::string& pScript)
     std::vector<std::string>::const_iterator it,end;
     const Hash<std::string, method_for_lua_t> * method_for_lua = mClass->methodsForLua();
     end   = method_for_lua->end();
+    
+    /* register send method */
+    lua_pushcfunction(mLua, &send_for_lua);
+    lua_setglobal(mLua, "send");
     
     for(it = method_for_lua->begin(); it < end; it++) {
       method_for_lua_t method;
@@ -100,6 +105,8 @@ Node * LuaScript::get_node_from_lua(lua_State * L)
 {
   lua_getglobal(L, "rubyk_this");
   Node * node = (Node*)lua_touserdata(L,lua_gettop(L));
+  
+  if (!node) fprintf(stderr, "Lua error: 'rubyk_this' not set.\n");
   lua_pop(L,1);
   return node;
 }
@@ -107,6 +114,13 @@ Node * LuaScript::get_node_from_lua(lua_State * L)
 void LuaScript::sig_from_lua(Signal * sig, int index)
 {
   sig_from_lua(sig, index, mLuaReturn, LUA_RETURN_BUFFER_SIZE);
+}
+
+bool LuaScript::double_from_lua(double * d)
+{
+  if (!lua_isnumber(mLua, lua_gettop(mLua))) return false;
+  *d = lua_tonumber(mLua,lua_gettop(mLua));
+  lua_pop(mLua,1);
 }
 
 void LuaScript::sig_from_lua(Signal * sig, int index, double * pBuffer, int pBufSize)

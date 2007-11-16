@@ -2,14 +2,12 @@
 
 /** Svm states. */
 enum svm_states_t {
-  Waiting = 0,       /**< Initial state. Does nothing. This step is skipped for "Label" if possible. */
   ReadyToRecord,     /**< Ready to record new data. */
-  CountDownPrepare,  /**< Start countdown "ready" */
   CountDownReady,    /**< Send events to say "ready" */
   CountDownSet,      /**< Send events to say "set"   */
   Recording,         /**< Send events to say "go!" */
-  DataReceived,      /**< Send "done." */
   Validation,        /**< Waits for user confirmation (any char = save & record next, del = do not save), esc = exit. */
+  ValidationNoSnap,
   Learning,          /**< Thread launched to learn the new data. Only possible action is interrupt. */
   Label,             /**< Done learning or restored from file. Outputs labels. */
 };
@@ -27,8 +25,9 @@ public:
   {
     mVectorSize = p.val("vector", 32);
     mSampleRate = p.val("rate", 256);
-    mTempo      = p.val("tempo", 120);
-    mBufferSize = mVectorSize * 1.25;
+    mUnitSize   = p.val("unit", 1);    // number of values form a sample
+    mMargin     = 1.0 + p.val("margin", 0.25);
+    mBufferSize = mVectorSize * mMargin;
     mLiveBuffer = NULL;
     mClassLabel = 0;
     
@@ -48,7 +47,7 @@ public:
       return false;
     }
     
-    enter(ReadyToRecord);
+    enter(Label);
     return true;
   }
 
@@ -56,100 +55,122 @@ public:
   void bang (const Signal& sig)
   {
     int cmd;
+    int label;
+    time_t record_time = (time_t)(ONE_SECOND * mVectorSize / (mSampleRate * mUnitSize));
+    time_t countdown_time;
+    if (record_time > 500)
+      countdown_time = record_time;
+    else
+      countdown_time = 500;
+    
     if (!mIsOK) return; // no recovery
+    if (sig.type == ArraySignal && sig.array.size >= mBufferSize) {
+      mLiveBuffer = sig.array.value;
+      mLiveBufferSize = sig.array.size;
+    } else {
+      // receiving Bangs or command change
+      sig.get(&cmd);
+
+      switch(mState) {
+      case ReadyToRecord:
+        if (cmd == '\n')
+          enter(Label);
+        else {
+          prepare_class_for_recording(cmd);
+          enter(CountDownReady);
+          bang_me_in(countdown_time);
+          send((int)2, 2);
+        }  
+        break;
+      case CountDownReady:  
+        bang_me_in(countdown_time);
+        send((int)1, 2);
+        enter(CountDownSet);
+        break;
+      case CountDownSet:
+        bang_me_in(record_time); // 1/2 margin at the end
+        send((int)0, 2);
+        enter(Recording);
+        break;
+      case Recording:
+        send((int)-1, 2);
+        receive_data();
+        enter(Validation);
+        break;
+      case Validation:  
+      case ValidationNoSnap:
+        if (cmd == 127) {
+          // backspace ignore current vector
+          enter(ReadyToRecord);
+        } else if (cmd == '\n') {
+          // save and wait
+          store_data();
+          enter(ReadyToRecord);
+        } else if (cmd == ' ') {
+          // swap snap style
+          if (mState == Validation) {
+            mState = ValidationNoSnap;
+            *mOutput << mName << ": no-snap\n";
+          } else {
+            mState = Validation;
+            *mOutput << mName << ": snap\n";
+          }
+        } else {
+          // any character: save and continue
+          store_data();
+          prepare_class_for_recording(cmd);
+          enter(CountDownReady);
+          bang_me_in(countdown_time);
+          send((int)2, 2);
+        }
+        break;
     
-    if (!sig.get(&cmd)) return;
-    
-    switch(mState) {
-    case Validation:
-      if (cmd == 127) {
-        // backspace ignore current vector
-        enter(ReadyToRecord);
-      } else if (cmd == '\n') {
-        // save and wait
-        store_data();
-        enter(ReadyToRecord);
-      } else {
-        // any character: save and continue
-        store_data();
-        record_class(cmd);
+      case Label:
+        if (predict(&label)) {
+          send(label);
+        } else {
+          send(gBangSignal);
+        }
+        return;
       }
-      break;
-    case ReadyToRecord:
-      if (cmd == '\n')
-        try_to_label();
-      else
-        record_class(cmd);
+    }
+    
+    // send mean value
+    if (mMeanVector) {
+      mS.array.value = mMeanVector;
+      mS.array.size  = mVectorSize;
+      mS.type  = ArraySignal;
+      send(mS, 4);
+    }
+    
+    // send current signal
+    if (mState == Validation) {
+      mS.array.value = mVector;
+      mS.array.size  = mVectorSize;
+      mS.type  = ArraySignal;
+      send(mS, 3);
+    } else if (mState == ValidationNoSnap) {
+      mS.array.value = mBuffer + mBufferSize - mVectorSize;
+      mS.array.size  = mVectorSize;
+      mS.type  = ArraySignal;
+      send(mS, 3);
+    } else {
+      mS.array.value = mLiveBuffer + mLiveBufferSize - mVectorSize;
+      mS.array.size  = mVectorSize;
+      mS.type  = ArraySignal;
+      send(mS, 3);
     }
   }
   
-  // inlet 2
-  void data (const Signal& sig)
-  {
-    if (sig.type == ArraySignal && sig.array.size >= mBufferSize) {
-      mLiveBuffer = sig.array.value;
-    } else {
-      *mOutput << mName << ": invalid signal type (should be FloatArray with a minimum size of " << mBufferSize << ") " << sig << std::endl;
-    }
-  }
-
-  // outlet 1
-  void label(Signal& sig)
-  {  
-    if (!mIsOK) return; // no recovery
-    
-    switch(mState) {
-    case Label:
-      predict(sig);
-      return;
-    case DataReceived:
-      receive_data();
-      mState = Validation;
-    }
-  }
-
-  /** Send 3,2,1,0 during countdown. */
-  // outlet 2
-  void countdown(Signal& sig)
-  {
-    switch(mState) {
-    case CountDownPrepare:
-      sig.set((int)2);
-      mState = CountDownReady;
-      bang_me_in(ONE_MINUTE / mTempo);
-      break;
-    case CountDownReady:
-      sig.set((int)1);
-      mState = CountDownSet;
-      bang_me_in(ONE_MINUTE / mTempo);
-      break;
-    case CountDownSet:
-      sig.set((int)0);
-      bang_me_in((time_t)(ONE_SECOND * mVectorSize * 1.125 / mSampleRate)); // 12.5% margin at the end
-      mState = Recording;
-      break;
-    case Recording:
-      mState = DataReceived;
-      sig.set((int)-1);
-      break;
-    }
-  }
   
 private:
   
-  void predict(Signal& sig)
+  bool predict(int * pLabel)
   {
     // TODO !
+    return false;
   }
   
-  
-  void try_to_label()
-  {
-    if (mReadyToLabel)
-      mState = Label;
-    else
-      mState = Waiting;
-  }
   
   void receive_data()
   {
@@ -160,33 +181,38 @@ private:
     }
     
     // copy data into our local buffer
-    memcpy(mBuffer, mLiveBuffer, mBufferSize * sizeof(double));
+    memcpy(mBuffer, mLiveBuffer + mLiveBufferSize - mBufferSize, mBufferSize * sizeof(double));
     
-    // try to find the best bet by calculating minimal distance
-    double distance, min_distance = 0.0;
-    int   delta_used = mBufferSize - mVectorSize;
-    for(int j = mBufferSize - mVectorSize; j >= 0; j--) {
-      distance = 0.0;
-      mVector = mBuffer + j;
-      for(int i=0; i < mVectorSize; i++) {
-        if (mVector[i] > mMeanVector[i])
-          distance += mVector[i] - mMeanVector[i];
-        else
-          distance += mMeanVector[i] - mVector[i];
+    if (mVectorCount) {
+      // try to find the best bet by calculating minimal distance
+      double distance, min_distance = -1.0;
+      double d;
+      int   delta_used = mBufferSize - mVectorSize;
+      for(int j = mBufferSize - mVectorSize; j >= 0; j -= mUnitSize) {
+        distance = 0.0;
+        mVector = mBuffer + j;
+        for(int i=0; i < mVectorSize; i++) {
+          d = (mMeanVector[i] - mVector[i]) ; //* mVector[i] * mMeanVector[i]; // more importance on big signals.
+          if (d > 0)
+            distance += d;
+          else
+            distance -= d;
+        }
+        distance = distance / mVectorSize;
+        printf("D %i: %.3f\n", j, distance);
+        if (min_distance < 0 || distance < min_distance) {
+          delta_used = j;
+          min_distance = distance;
+        }
       }
-      distance = distance / mVectorSize;
-      if (distance < min_distance) {
-        delta_used = j;
-        min_distance = distance;
-      }
+      mVector = mBuffer + delta_used;
+      bprint(mBuf,mBufSize, ": distance to mean vector %.3f (delta %i/%i)\n~> Keep ? ", min_distance, delta_used, mBufferSize - mVectorSize - delta_used);
+      *mOutput << mName << mBuf << std::endl;
+    } else {
+      mVector = mBuffer + mBufferSize - mVectorSize;
+      *mOutput << mName << ":~> Keep ? " << std::endl;
     }
-    mVector = mBuffer + delta_used;
-    for(int i=0;i<12;i++)
-      printf(" % .2f", mVector[i]);
-    printf("\n");
-    printf(": distance to mean vector %.3f (delta %i)\n~> Keep ? \n", distance, mBufferSize - mVectorSize - delta_used);
-    //bprint(mBuf,mBufSize, ": distance to mean vector %.3f (delta %i)\n~> Keep ? ", distance, mBufferSize - mVectorSize - delta_used);
-    //*mOutput << mName << mBuf << std::endl;
+    //printf(": distance to mean vector %.3f (delta %i)\n~> Keep ? \n", distance, mBufferSize - mVectorSize - delta_used);
   }
   
   void store_data()
@@ -201,7 +227,7 @@ private:
     update_mean_value(mVector);
   }
   
-  void record_class(int cmd)
+  void prepare_class_for_recording(int cmd)
   {
     // record character as class id
     if (mClassLabel != cmd)
@@ -214,15 +240,25 @@ private:
       *mOutput << mName << ": learning a new sample for '" << (char)cmd << "'\n";
     else
       *mOutput << mName << ": learning a new sample for " << cmd << "\n";
-    mState = CountDownPrepare;
   }
   
-  void enter(svm_states_t state)
+  void enter(svm_states_t pState)
   {
-    mState = state;
-    switch(mState) {
+    switch(pState) {
     case ReadyToRecord:
+      mState = pState;
       *mOutput << mName << ": Ready to record\n~> ";
+      break;
+    case Label: 
+      if (mReadyToLabel) {
+        mState = pState;
+      } else {
+        *mOutput << mName << ": Cannot enter 'label' mode.\n";
+        enter(ReadyToRecord);
+      }
+      break;
+    default:
+      mState = pState;
     }
   }
   
@@ -246,9 +282,9 @@ private:
     // 1. find file
     // 2. open
     // 3. for each vector
-    //    3.1 read values into mVector
+    //    3.1 read values into mBuffer
     //    3.2 execute function
-    (this->*function)(mVector);
+    // (this->*function)(mBuffer);
   }
   
   svm_states_t mState;
@@ -259,12 +295,14 @@ private:
   double * mVector;     /**< Store a single vector. (points inside mBuffer)*/
   double * mMeanVector; /**< Store the mean value for all vectors from this class. */
   double * mLiveBuffer; /**< Pointer to the current buffer window. Content can change between calls. */
-  double * mBuffer;     /**< Store a single vector + 12.5% margin on both ends. */
+  double * mBuffer;     /**< Store a single vector +  margin. */
+  double   mMargin;     /**< Size (in %) of the margin. */
   int mVectorSize;
+  int mUnitSize;       /**< How many values form a sample (single event). */
   int mVectorCount;    /**< Number of vectors used to build the current mean value. */
   int mSampleRate; /**< How many samples per second do we receive from the 'data' inlet. */
-  int mTempo;      /**< Countdown tempo. */
   int mBufferSize; /**< Size of buffered data ( = mVectorSize + 25%). We use more then the vector size to find the best fit. */
+  int mLiveBufferSize;
   int mClassLabel; /**< Current label. Used during recording and recognition. */
 };
 
@@ -272,7 +310,8 @@ private:
 extern "C" void init()
 {
   CLASS (Svm)
-  INLET (Svm,data)
   OUTLET(Svm,label)
   OUTLET(Svm,countdown)
+  OUTLET(Svm,current)
+  OUTLET(Svm,mean)
 }

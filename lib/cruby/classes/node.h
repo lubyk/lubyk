@@ -248,7 +248,7 @@ protected:
   }
   
   /** Print message into buffer. */
-  void bprint (char * pBuffer, int& pBufferSize, const char *fmt, ...);
+  void bprint (char *& pBuffer, int& pBufferSize, const char *fmt, ...);
   
   // time in [ms]
   void bang_me_in (time_t pTime)

@@ -15,6 +15,11 @@ public:
   // capture method, called from a command
   void bang(const Signal& sig)
   { 
+    // do nothing
+  }
+  
+  void get(const Params& p)
+  {
     int c;
     struct termios oldt, newt;
     mServer->unlock(); // Let the server breath. We are in a lock--unlock from Command
@@ -42,5 +47,6 @@ public:
 extern "C" void init()
 {
   CLASS (Keyboard)
+  METHOD(Keyboard,get)
   OUTLET(Keyboard,send)
 }

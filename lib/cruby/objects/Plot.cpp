@@ -47,11 +47,15 @@ private:
     // we use mBufferSize as the main buffer size. Others are cropped.
     int value_offset = (mBufferSize - pBufferSize) / (mLineCount * mGroupSize);
     int value_count  = mBufferSize / (mLineCount * mGroupSize); 
-    
-    double width_ratio  = (double)mWindow.width  / value_count;
+    double width_ratio;
     double height_ratio = (double)mWindow.height / (2.0 * mLineCount * mMaxAmplitude); // values : [-1,1]
     double y_offset;
     double col_ratio = 1.0 / mGroupSize;
+    
+    if (value_count > 1)
+        width_ratio = (double)mWindow.width  / (value_count - 1);
+    else
+        width_ratio = (double)mWindow.width;
     
     for(int l=0; l < mLineCount; l++) {
       l_offset = l * mGroupSize;

@@ -11,9 +11,9 @@
 #include <iostream>
 
 // 0.2 [ms]
-#define SLEEP_MICRO_S 200
-#define ONE_SECOND 1000
-#define ONE_MINUTE (60*ONE_SECOND)
+#define SLEEP_MICRO_S 200.0
+#define ONE_SECOND 1000.0
+#define ONE_MINUTE (60.0*ONE_SECOND)
 
 class Params;
 class Action;

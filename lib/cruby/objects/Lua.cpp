@@ -6,7 +6,6 @@ public:
   
   bool init (const Params& p)
   {
-    mInput = 0;
     return init_lua(p);
   }
   
@@ -14,8 +13,7 @@ public:
   void bang(const Signal& sig)
   {
     set_lua_global("in1", sig);
-    call_lua("bang", mS, mInput);
-    send(mS);
+    call_lua("bang");
   }
   
   // inlet 2
@@ -38,15 +36,12 @@ public:
   
   void set_lua_global(const char * key, const Signal& sig)
   {
-    float f;
-    if (sig.get(&f)) {
-      lua_pushnumber(mLua, f);
+    double d;
+    if (sig.get(&d)) {
+      lua_pushnumber(mLua, d);
       lua_setglobal(mLua, key);
     }
   }
-  
-private:
-  float mInput;
 };
 
 extern "C" void init()
