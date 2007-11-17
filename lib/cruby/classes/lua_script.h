@@ -12,6 +12,7 @@ extern "C" {
 class LuaScript : public Script
 {
 public:
+  LuaScript() : mLua(NULL) {}
   ~LuaScript();
   
   bool init_lua (const Params& p);

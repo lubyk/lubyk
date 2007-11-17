@@ -16,7 +16,6 @@ LuaScript::~LuaScript()
 
 bool LuaScript::init_lua (const Params& p)
 {
-  mLua = NULL;
   return init_script(p,"lua", false);
 }
 

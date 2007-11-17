@@ -5,6 +5,10 @@
 
 #define _TEST_OBJECTS_
 
+/// keyboard
+#define RK_LEFT_ARROW 301
+#define RK_RIGHT_ARROW 302
+
 struct lua_State;
 
 /** Pointer to a member method that can be called from the command line with "obj.method(Params)" */
