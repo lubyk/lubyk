@@ -18,10 +18,13 @@ public:
     mHighestDirection = 0;
     mFindHighestValue = 0.0;
     mFindHighestDirection = 0;
+    mValueCount = 0;
+    mRate       = 0.0;
+    mStart      = mServer->mCurrentTime;
     
     mIndex = 0;
     mReadPosition = 12;
-    mState = 0; // wait for sync
+    mState = -3; // wait for sync
     mOffsetOnFull = true; // do not offset when 12 values are set
     
     mDataSignal.type = ArraySignal;
@@ -40,41 +43,37 @@ public:
   {
     int c,r;
     double val;
-    int i;
-    bool read_count = 0;
     mNewData = false;
     while (mPort.read_char(&c)) {
       // empty buffer (readall)
-      read_count++;
+      //printf("% i:%i [%i]\n", mState, mIndex, c);
       
-      //printf("%i[%i]\n",mState,c);
-      if (mState == 0) {
-        if (c == 255) mState = 1;
+      if (mState == -3) {
+        if (c == 255) mState++;
         continue;
       }
     
-      if (mState == 1) { // first sync received
+      if (mState == -2) { // first sync received
         if (c == 255) { // move into data mode
-          mIndex = 0;
-          mState = 2;
+          mState++;
           continue;
         } else
-          mState = 0;
+          mState--;
         continue;
       }
     
-      if (mState == 2 && ((mIndex % 2) == 0)) {
-        mIndex += 1;
+      if (mState == -1) {
         mHigh = c;
+        mState++;
         continue;
       }
-    
+      
       val  = (mHigh * 256) + c;
       val  = (val/1024) * (3300 - 1650) / 200; // 3300 = fullscale_mv, 1024 = fullscale_bin, 1650 = offset_mv, 200 = sensitivity_mv
-      mIndex += 1;
-      i = (mIndex/2) - 1;
-      val -= mOffset[i];
-      mValues[i] = val;
+      
+      val -= mOffset[mIndex % 12];
+      mValues[mIndex] = val;
+      //printf("val[%i] = %.2f  [%i,%i]\n",mIndex,val,mHigh,c);
       
       float abs_val;
       
@@ -82,29 +81,39 @@ public:
       // abs(..) casts to integer ????
       
       if ( abs_val > mFindHighestValue ) {
-        mFindHighestDirection = i;
+        mFindHighestDirection = mIndex;
         mFindHighestValue = abs_val;
       }
       
-      if (i == 11 || i >= 23) {
+      mIndex++;
+      if (mIndex == 12 || mIndex >= 24) {
+        mValueCount++;
+        mState = -3; // wait for sync
         mNewData = true;
         mHighestValue         = mFindHighestValue;
         mHighestDirection     = mFindHighestDirection;
         mFindHighestValue     = 0.0;
         mFindHighestDirection = 0;
+        if (mIndex == 12) {
+          mReadPosition = 0;
+        } else {  
+          mIndex = 0; // restart
+          mReadPosition = 12;
+          if (mValueCount > 800) {
+            mRate  = mValueCount * 1000.0 / (mServer->mCurrentTime - mStart);
+            mValueCount = 0;
+            mStart = mServer->mCurrentTime;
+          }
+        }
+        
         if (mOffsetOnFull) {
           for(int i=0; i<12; i++) {
-            mOffset[i] = mValues[i] + mOffset[i];
+            mOffset[i] = mValues[mReadPosition + i] + mOffset[i];
           }
           mOffsetOnFull = false;
         }
-        mState = 0;
-        if (i == 11) {
-          mReadPosition = 0;
-        } else {
-          mReadPosition = 12;
-          mIndex = 0;
-        }
+      } else {
+        mState--;
       }
     }
     
@@ -137,6 +146,9 @@ public:
     mOffsetOnFull = true;
   }
   
+  void spy() 
+  { bprint(mSpy, mSpySize,"%.2f /s", mRate );  }
+  
   void debug()
   {
     mDebug = !mDebug;
@@ -159,6 +171,10 @@ private:
   int mHighestDirection;
   double mFindHighestValue;
   int mFindHighestDirection;
+  
+  long int mValueCount;
+  double mRate;
+  time_t mStart;
   int mIndex;
   int mState;
   int mHigh;
