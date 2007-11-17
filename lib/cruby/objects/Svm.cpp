@@ -1,4 +1,5 @@
 #include "class.h"
+#include <errno.h>   /* Error number definitions */
 
 /** Svm states. */
 enum svm_states_t {
@@ -26,6 +27,7 @@ public:
     mSampleRate = p.val("rate", 256);
     mUnitSize   = p.val("unit", 1);    // number of values form a sample
     mMargin     = p.val("margin", 1.0);
+    mFolder     = p.val("store", std::string("svm_data"));
     mBufferSize = mVectorSize * (1.0 + mMargin);
     mLiveBuffer = NULL;
     mClassLabel = 0;
@@ -214,11 +216,24 @@ private:
     double * vector = mBuffer + mUseVectorOffset;
     
     if (!mBuffer) {
-      *mOutput << mName << ": could not save data (empty buffer)\n";
+      *mOutput << mName << "(error): could not save data (empty buffer)\n";
       return;
     }
     // 1. write to file
-    // TODO
+    FILE * file = fopen(mClassFile.c_str(), "ab");
+      if (!file) {
+        *mOutput << mName << "(error): could not write to '" << mClassFile << "' (" << strerror(errno) << ")\n";
+        return;
+      }
+      for(int i=0; i< mVectorSize; i++) {
+        fprintf(file, "% .5f", vector[i]);
+        if ((i+1)%mUnitSize == 0)
+          fprintf(file, "\n");
+        else
+          fprintf(file, " ");
+      }  
+      fprintf(file, "\n");  // two \n\n between vectors
+    fclose(file);
     // 2. update mean value
     update_mean_value(vector);
   }
@@ -276,14 +291,39 @@ private:
     for(int i=0; i < mVectorSize; i++) mMeanVector[i] = 0.0;
     
     // 1. find file
+    mClassFile = mFolder;
+    bprint(mBuf, mBufSize, "/class_%i.txt", cmd);
+    mClassFile.append(mBuf);
+    std::cout << mClassFile << std::endl;
+    
     // 2. open
-    // 3. for each vector
-    //    3.1 read values into mBuffer
-    //    3.2 execute function
-    // (this->*function)(mBuffer);
+    FILE * file;
+    float val;
+    int    value_count = 0;
+    file = fopen(mClassFile.c_str(), "rb");
+      if (!file) {
+        *mOutput << mName << ": new class\n";
+        //*mOutput << mName << "(error): could not read from '" << mClassFile << "' (" << strerror(errno) << ")\n"
+        return;
+      }
+      // read a vector
+      while(fscanf(file, " %f", &val) > 0) {
+        fscanf(file, "\n"); // ignore newline
+        mBuffer[value_count] = (double)val;
+        if (value_count >= mVectorSize) {
+          // got one vector
+          (this->*function)(mBuffer);
+          value_count = 0;
+        } else
+          value_count++;
+      }
+    fclose(file);
   }
   
   svm_states_t mState;
+  std::string mFolder; /**< Folder containing the class data. */
+  std::string mClassFile; /**< Current class data file. */
+  
   bool mReadyToLabel; /**< Set to true when svm is up to date. */
   bool mReadyToLearn; /**< Set to true when there is data to learn from. */
   
