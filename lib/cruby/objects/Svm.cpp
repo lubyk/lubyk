@@ -1,5 +1,45 @@
+/** ************ COPYRIGHT NOTICE FOR read_problem method ******************* */
+/** This file uses code adapted from svm-predict.c :
+
+Copyright (c) 2000-2007 Chih-Chung Chang and Chih-Jen Lin
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1. Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the distribution.
+
+3. Neither name of copyright holders nor the names of its contributors
+may be used to endorse or promote products derived from this software
+without specific prior written permission.
+
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+********* */
+
 #include "class.h"
 #include <errno.h>   /* Error number definitions */
+#include <sys/types.h> // directory listing
+#include <dirent.h>    // directory listing
+
+// libsvm
+#include "svm/svm.h"
 
 /** Svm states. */
 enum svm_states_t {
@@ -19,6 +59,11 @@ public:
   {
     if (mBuffer)     free(mBuffer);
     if (mMeanVector) free(mMeanVector);
+    if (mModel)      svm_destroy_model(mModel);
+    if (mNode)       free(mNode);
+    if (mProblem.y)  free(mProblem.y);
+    if (mProblem.x)  free(mProblem.x);
+    if (mXSpace)     free(mXSpace);
   }
 
   bool init(const Params& p)
@@ -28,8 +73,13 @@ public:
     mUnitSize   = p.val("unit", 1);    // number of values form a sample
     mMargin     = p.val("margin", 1.0);
     mFolder     = p.val("store", std::string("svm_data"));
+    mThreshold  = p.val("threshold", 0.0);
+    mSvmCparam  = p.val("C", 2.0);          // svm cost
+    mSvmGammaParam = p.val("g", 0.0078125); // svm gamma in RBF
+    
     mBufferSize = mVectorSize * (1.0 + mMargin);
     mLiveBuffer = NULL;
+    mTrainFile  = NULL;
     mClassLabel = 0;
     
     mVectorCount = 0; // current mean value made of '0' vectors
@@ -48,7 +98,19 @@ public:
       return false;
     }
     
-    enter(Label);
+    // max_nr_attr - 1 > mVectorSize
+    mNode = (struct svm_node *) malloc((mVectorSize + 1) * sizeof(struct svm_node));
+    if (!mNode) {
+      *mOutput << mName << ": Could not allocate " << mVectorSize+1 << " svm_nodes to store vector.\n";
+      return false;
+    }
+    
+    mProblem.y = NULL;
+    mProblem.x = NULL;
+    mXSpace    = NULL;
+    
+    
+    load_model();
     return true;
   }
 
@@ -56,7 +118,7 @@ public:
   void bang (const Signal& sig)
   {
     int cmd;
-    int label;
+    
     time_t record_time = (time_t)(ONE_SECOND * mVectorSize / (mSampleRate * mUnitSize));
     time_t record_with_margin = (time_t)(ONE_SECOND * mVectorSize * (1 + mMargin/2.0) / (mSampleRate * mUnitSize));
     time_t countdown_time;
@@ -127,12 +189,13 @@ public:
         }  
         break;
       case Label:
-        if (predict(&label)) {
-          send(label);
-        } else {
-          send(gBangSignal);
+        if (cmd == (int)'r') {
+          enter(ReadyToRecord);
+          return;
+        } else if (cmd == (int)'l') {
+          if (!do_learn()) return;
+          // no need to load model from file, it's in memory
         }
-        return;
       }
     }
     
@@ -144,26 +207,154 @@ public:
       send(mS, 4);
     }
     
-    // send current signal
     if (mState == Validation) {
+      // recorded signal
       mS.array.value = mBuffer + mUseVectorOffset;
       mS.array.size  = mVectorSize;
       mS.type  = ArraySignal;
       send(mS, 3);
     } else {
+      // live signal
       mS.array.value = mLiveBuffer + mLiveBufferSize - mVectorSize;
       mS.array.size  = mVectorSize;
       mS.type  = ArraySignal;
       send(mS, 3);
+    }
+    
+    if (mState == Label) {
+      int last_label, last_count;
+      last_count = mSameLabelCount;
+      last_label = mClassLabel;
+      if (predict()) {
+        if (mDebug)
+          std::cout << last_label << " ( stable for " << last_count << ") --> " << mClassLabel << std::endl;
+        send(mClassLabel);
+      }
+    }
+  }
+  
+  
+  /** Accessor from command line. */
+  void learn()
+  {
+    if (!do_learn()) {
+      *mOutput << mName << ": learn failed.\n";
     }
   }
   
   
 private:
   
-  bool predict(int * pLabel)
+  
+  /** Transform the raw data into the sparse format used by libsvm. Use mThreshold to fix what is considered as zero. This outputs the file 'svm.train' containing all data with labels from the classes in mFolder. */
+  void build()
   {
-    // TODO !
+    if (mTrainFile) fclose(mTrainFile);
+    mTrainFile = fopen(train_file_path().c_str(), "wb");
+      if (!mTrainFile) {
+        *mOutput << mName << ": could not open '" << train_file_path() << "' to store training data.\n";
+        return;
+      }
+      
+      DIR * directory;
+      struct dirent *elem;
+
+      directory = opendir(mFolder.c_str());
+        if (directory == NULL) {
+          *mOutput << mName << ": could not open directory '" << mFolder << "' to read class data.\n";
+          return;
+        }
+        while (elem = readdir(directory)) {
+          std::string filename(elem->d_name);
+          std::string label;
+          int start, end;
+          start = filename.find("class_");
+          end   = filename.find(".txt");
+          if (start == std::string::npos || end == std::string::npos) {
+            // bad filename, skip
+            continue;
+          }
+          label = filename.substr(start+6, end - start - 6);
+          load_class(atoi(label.c_str()), &Svm::write_as_sparse);
+        }
+      closedir(directory);
+        
+    fclose(mTrainFile);
+  }
+  
+  /** Update the model based on the current recorded samples. */
+  bool do_learn()
+  {
+    build();
+    const char * errorMsg;
+    // 1. find best params (see grid.py) (or use default...) C=2.0 gamma=0.0078125
+    // use default values
+  	mSvmParam.svm_type = C_SVC;
+  	mSvmParam.kernel_type = RBF;
+  	mSvmParam.degree = 3;
+  	mSvmParam.gamma = mSvmGammaParam;	// 1/k
+  	mSvmParam.coef0 = 0;
+  	mSvmParam.nu = 0.5;
+  	mSvmParam.cache_size = 100;
+  	mSvmParam.C = mSvmCparam;
+  	mSvmParam.eps = 1e-3;
+  	mSvmParam.p = 0.1;
+  	mSvmParam.shrinking = 1;
+  	mSvmParam.probability = 0;
+  	mSvmParam.nr_weight = 0;
+  	mSvmParam.weight_label = NULL;
+  	mSvmParam.weight = NULL;
+  	
+  	// read training dataset
+  	std::string trainFilePath(mFolder);
+    trainFilePath.append("/svm.train");
+    
+  	if (!read_problem(trainFilePath.c_str())) {
+      *mOutput << mName << ": could not use training data '" << trainFilePath << "'.\n";
+      return false;
+  	}
+  	
+  	// check param/data is ok
+  	
+  	errorMsg = svm_check_parameter(&mProblem,&mSvmParam);
+
+  	if(errorMsg) {
+      *mOutput << mName << ": " << errorMsg << "\n.";
+      return false;
+  	}
+    // 2. train with these params
+    mModel = svm_train(&mProblem, &mSvmParam);
+    svm_save_model(model_file_path().c_str(),mModel);
+    
+    return true;
+  }
+  
+  
+  bool predict()
+  {
+    int label;
+    
+    // map current vector into svm_node
+    int j = 0; // svm_node index
+    double * vector = mLiveBuffer + mLiveBufferSize - mVectorSize;
+    
+    for(int i=0;i < mVectorSize; i++) {
+      if (vector[i]) {
+        mNode[j].index = i;
+        mNode[j].value = vector[i];
+        j++;
+      }
+    }
+    mNode[j].index = -1; // end of vector definition
+    
+    label = svm_predict(mModel,mNode);
+    if (label != mClassLabel) {
+      mSameLabelCount = 1;
+      mClassLabel = label;
+      return true;
+    } else {
+      mSameLabelCount++;
+    }
     return false;
   }
   
@@ -178,7 +369,15 @@ private:
     }
     
     // copy data into our local buffer
-    memcpy(mBuffer, mLiveBuffer + mLiveBufferSize - mBufferSize, mBufferSize * sizeof(double));
+    if (mThreshold) {
+      for(int i=0; i < mBufferSize; i++) {
+        if (mLiveBuffer[i] >= mThreshold || mLiveBuffer[i] <= -mThreshold) {
+          mBuffer[i] = mLiveBuffer[i];
+        } else
+          mBuffer[i] = 0.0;
+      }
+    } else
+      memcpy(mBuffer, mLiveBuffer + mLiveBufferSize - mBufferSize, mBufferSize * sizeof(double));
     
     if (mVectorCount) {
       // try to find the best bet by calculating minimal distance
@@ -246,11 +445,10 @@ private:
       // new class
       load_class(cmd, &Svm::update_mean_value);
     }
-    mClassLabel = cmd;
     if ((cmd <= 'z' && cmd >= 'a') || (cmd <= 'Z' && cmd >= 'A') || (cmd <= '9' && cmd >= '0'))
-      *mOutput << mName << ": learning a new sample for '" << (char)cmd << "'\n";
+      *mOutput << mName << ": recording vector " << mVectorCount + 1 << " for '" << (char)cmd << "'\n";
     else
-      *mOutput << mName << ": learning a new sample for " << cmd << "\n";
+      *mOutput << mName << ": recording vector " << mVectorCount + 1 << " for " << cmd << "\n";
   }
   
   void enter(svm_states_t pState)
@@ -262,6 +460,7 @@ private:
       break;
     case Label: 
       if (mReadyToLabel) {
+        *mOutput << mName << ": Ready to label.\n";
         mState = pState;
       } else {
         *mOutput << mName << ": Cannot enter 'label' mode.\n";
@@ -286,6 +485,7 @@ private:
   /** Execute the function for each vector contained in the class. */
   void load_class(int cmd, void (Svm::*function)(double*))
   {
+    mClassLabel = cmd;
     /** reset mean value. */
     mVectorCount = 0;
     for(int i=0; i < mVectorSize; i++) mMeanVector[i] = 0.0;
@@ -294,7 +494,6 @@ private:
     mClassFile = mFolder;
     bprint(mBuf, mBufSize, "/class_%i.txt", cmd);
     mClassFile.append(mBuf);
-    std::cout << mClassFile << std::endl;
     
     // 2. open
     FILE * file;
@@ -310,7 +509,7 @@ private:
       while(fscanf(file, " %f", &val) > 0) {
         fscanf(file, "\n"); // ignore newline
         mBuffer[value_count] = (double)val;
-        if (value_count >= mVectorSize) {
+        if (value_count >= mVectorSize - 1) {
           // got one vector
           (this->*function)(mBuffer);
           value_count = 0;
@@ -320,10 +519,148 @@ private:
     fclose(file);
   }
   
+  void write_as_sparse (double * vector)
+  {
+    mVectorCount++;
+    if (!mTrainFile) return;
+    fprintf(mTrainFile, "%+i", mClassLabel);
+    for(int i=0; i < mVectorSize; i++) {
+      if (vector[i]) {
+        fprintf(mTrainFile, " %i:%.5f", i+1, (float)vector[i]);
+      }
+    }
+    fprintf(mTrainFile, "\n");
+  }
+  
+  void load_model ()
+  { 
+    if (mModel) svm_destroy_model(mModel);
+    mModel = svm_load_model(model_file_path().c_str());
+    if (!mModel) {
+      *mOutput << mName << ": Could not load model file '" << model_file_path() << "'.\n";
+      return;
+    }
+    
+    mReadyToLabel = true;
+    enter(Label);
+  }
+  
+  std::string model_file_path()
+  {
+    std::string modelFilePath(mFolder);
+    modelFilePath.append("/svm.model");
+    return modelFilePath;
+  }
+  
+  std::string train_file_path()
+  {
+    std::string trainFilePath(mFolder);
+    trainFilePath.append("/svm.train");
+    return trainFilePath;
+  }
+  
+  
+  ////////  adapted from svm-predict.c  ////////
+
+  // read in a problem (in svmlight format)
+
+  bool read_problem(const char *filename)
+  {
+  	int elements, max_index, i, j;
+  	FILE *fp = fopen(filename,"r");
+
+  	if(!fp) {
+      *mOutput << mName << ": could not open training data '" << filename << "'\n.";
+      return false;
+  	}
+
+  	mProblem.l = 0;
+  	elements = 0;
+  	while(1)
+  	{
+  		int c = fgetc(fp);
+  		switch(c)
+  		{
+  			case '\n':
+  				++mProblem.l;
+  				// fall through,
+  				// count the '-1' element
+  			case ':':
+  				++elements;
+  				break;
+  			case EOF:
+  				goto out;
+  			default:
+  				;
+  		}
+  	}
+  out:
+  	rewind(fp);
+
+    mProblem.y = (double*)            malloc(mProblem.l * sizeof(double));
+  	mProblem.x = (struct svm_node **) malloc(mProblem.l * sizeof(struct svm_node *));
+  	mXSpace    = (struct svm_node *)  malloc(elements * sizeof(struct svm_node));
+
+  	max_index = 0;
+  	j=0;
+  	for(i=0;i<mProblem.l;i++)
+  	{
+  		double label;
+  		mProblem.x[i] = &mXSpace[j];
+  		fscanf(fp,"%lf",&label);
+  		mProblem.y[i] = label;
+
+  		while(1)
+  		{
+  			int c;
+  			do {
+  				c = getc(fp);
+  				if(c=='\n') goto readpb_out2;
+  			} while(isspace(c));
+  			ungetc(c,fp);
+  			if (fscanf(fp,"%d:%lf",&(mXSpace[j].index),&(mXSpace[j].value)) < 2)
+  			{
+          *mOutput << mName << ": wrong input format at line " << i+1 << "\n";
+          goto readpb_fail;
+  			}
+  			++j;
+  		}	
+readpb_out2:
+  		if(j>=1 && mXSpace[j-1].index > max_index)
+  			max_index = mXSpace[j-1].index;
+  		mXSpace[j++].index = -1;
+  	}
+
+  	if(mSvmParam.gamma == 0)
+  		mSvmParam.gamma = 1.0/max_index;
+
+  	if(mSvmParam.kernel_type == PRECOMPUTED)
+  		for(i=0;i<mProblem.l;i++)
+  		{
+  			if (mProblem.x[i][0].index != 0)
+  			{
+  				*mOutput << mName << ": (error): wrong input format: first column must be 0:sample_serial_number\n";
+          goto readpb_fail;
+  			}
+  			if ((int)mProblem.x[i][0].value <= 0 || (int)mProblem.x[i][0].value > max_index)
+  			{
+  				*mOutput << mName << ": (error): wrong input format: sample_serial_number out of range\n";
+          goto readpb_fail;
+  			}
+  		}
+
+    fclose(fp);
+    return true;
+readpb_fail:
+    fclose(fp);
+    return false;
+  }
+
   svm_states_t mState;
   std::string mFolder; /**< Folder containing the class data. */
   std::string mClassFile; /**< Current class data file. */
-  
+  FILE * mTrainFile;
+
   bool mReadyToLabel; /**< Set to true when svm is up to date. */
   bool mReadyToLearn; /**< Set to true when there is data to learn from. */
   
@@ -341,6 +678,19 @@ private:
   int mBufferSize; /**< Size of buffered data ( = mVectorSize + 25%). We use more then the vector size to find the best fit. */
   int mLiveBufferSize;
   int mClassLabel; /**< Current label. Used during recording and recognition. */
+  int mSameLabelCount; /**< Count for how long the current label has been set. */
+  
+  double mThreshold;   /**< Values below this limit are recorded as zero in the training set. Use '0' for none. */
+  
+  /// libsvm ///
+  double mSvmCparam;
+  double mSvmGammaParam;
+  
+  struct svm_node  * mXSpace; /**< x_space (working space used for dot product during training). */
+  struct svm_model * mModel;  /**< Contains the model (training result). */
+  struct svm_node  * mNode;   /**< Contains our data in sparse format. */
+  struct svm_parameter mSvmParam;	/**< Contains settings for the learning phase of svm. */
+  struct svm_problem mProblem; /**< ??? */
 };
 
 
@@ -351,4 +701,5 @@ extern "C" void init()
   OUTLET(Svm,countdown)
   OUTLET(Svm,current)
   OUTLET(Svm,mean)
+  METHOD(Svm,learn)
 }

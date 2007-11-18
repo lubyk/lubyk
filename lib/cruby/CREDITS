@@ -1,0 +1,14 @@
+lua
+---
+	brief    : Fast embeddable scripting language used in the 'Lua' scripting object.
+	authors  : Roberto Ierusalimschy
+	website  : http://www.lua.org
+	copyright: see classes/lua/src/COPYRIGHT
+
+
+libsvm
+------
+	brief    : Machine learning library used for pattern recognition in the 'Svm' object.
+	authors  : Chih-Chung Chang and Chih-Jen Lin
+	website  : http://www.csie.ntu.edu.tw/~cjlin/libsvm
+	copyright: see objects/svm/COPYRIGHT

@@ -23,6 +23,7 @@ int main(int argc, char * argv[])
     
     Command fCmd(std::cin, std::cout);
     fCmd.set_server(*gServer);
+    fCmd.set_silent(true);
     gServer->unlock(); // so the commands are directly processed
       oss << "\n";
       fCmd.parse(oss.str());

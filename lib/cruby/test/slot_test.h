@@ -4,9 +4,6 @@
 #include "inlet.h"
 #include "rubyk_signal.h"
 
-void send_value(void * receiver, Signal& sig)
-{ sig.set(1.0); }
-
 // these receivers are complicated to make sure they work in the correct order and they are all called.
 static void receive_value1(void * receiver, const Signal& sig)
 {
@@ -29,19 +26,22 @@ public:
   void testSingleConnection( void )
   {
     float counter = 0;
-    Outlet o(&counter, send_value    );
+    Signal sig;
+    Outlet o(&counter);
     Inlet  i(&counter, receive_value1 );
     i.setId(3); // make sure it does not send a 'bang()' to our fake receiver.
     o.connect(&i);
     TS_ASSERT_EQUALS( 0.0, counter);
-    o.compute_and_send();
+    sig.set(1.0);
+    o.send(sig);
     TS_ASSERT_EQUALS( 2.0, counter);
   }
   
   void testManyConnections( void )
   {
     float counter = 0;
-    Outlet o(&counter, send_value    );
+    Signal sig;
+    Outlet o(&counter);
     Inlet  i1(&counter, receive_value1 );
     Inlet  i2(&counter, receive_value2 );
     Inlet  i3(&counter, receive_value4 );
@@ -55,7 +55,8 @@ public:
     o.connect(&i3);
     
     TS_ASSERT_EQUALS( 0.0, counter);
-    o.compute_and_send();
+    sig.set(1.0);
+    o.send(sig);
     TS_ASSERT_EQUALS( 19.0, counter);
   }
 };

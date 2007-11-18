@@ -135,8 +135,8 @@ void Command::parse(const std::string& pStr)
     class  = (upper (alnum | '_')*) $a %set_class;
   
     string  = '"' ([^"\\] | '\n' | ( '\\' (any | '\n') ))* $a '"';
-    float   = ([\-+]? $a ('1'..'9' digit* '.' digit+) $a | '0' $a );
-    integer = ([\-+]? $a ('1'..'9' digit*) $a | '0' $a );
+    float   = ([\-+]? $a ('0'..'9' digit* '.' digit+) $a );
+    integer = ([\-+]? $a ('0'..'9' digit*) $a );
   
     value  = (string | float | integer ) %set_value ;
   

@@ -25,7 +25,7 @@
 class Node
 {
 public:
-  Node() : mClass(NULL), mServer(NULL), mId(0), mSpySize(0), mInspectSize(0), mBuf(NULL), mSpy(NULL), mInspect(NULL), mOutput(&std::cout), mLooped(false)
+  Node() : mClass(NULL), mServer(NULL), mId(0), mSpySize(0), mInspectSize(0), mBuf(NULL), mSpy(NULL), mInspect(NULL), mOutput(&std::cout), mLooped(false), mDebug(false)
   { 
     char buf[50];
     sIdCounter++;
@@ -247,6 +247,15 @@ protected:
     *mOutput << "Does nothing.\n";
   }
   
+  void debug()
+  {
+    mDebug = !mDebug;
+    if (mDebug)
+      *mOutput << mName << ": debug on\n";
+    else
+      *mOutput << mName << ": debug off\n";
+  }
+  
   /** Print message into buffer. */
   void bprint (char *& pBuffer, int& pBufferSize, const char *fmt, ...);
   
@@ -323,6 +332,9 @@ protected:
   std::ostream * mOutput; /**< Used to pass command result. */
   
   Signal mS; /**< To send through outlets when cast needed. */
+  
+  
+  bool   mDebug; /**< Subclasses can implement conditional output based on debug mode (set with 'debug' command). */
   
 private:
   static unsigned int sIdCounter;  /**< Each object has a unique id. */

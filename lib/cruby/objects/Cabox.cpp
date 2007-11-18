@@ -11,7 +11,6 @@ public:
       mOffset[i] = 0.0;
     }
     
-    mDebug = false;
     mNewData = false;
     
     mHighestValue = 0.0;
@@ -149,18 +148,8 @@ public:
   void spy() 
   { bprint(mSpy, mSpySize,"%.2f /s", mRate );  }
   
-  void debug()
-  {
-    mDebug = !mDebug;
-    if (mDebug)
-      *mOutput << mName << ": debug on\n";
-    else
-      *mOutput << mName << ": debug off\n";
-  }
-  
 private:
 
-  bool   mDebug;
   bool   mNewData;
   Signal mDataSignal;
   
@@ -188,7 +177,6 @@ extern "C" void init()
   OUTLET(Cabox,high)
   OUTLET(Cabox,direction)
   METHOD(Cabox,offset)
-  METHOD(Cabox,debug)
   SUPER_METHOD(Cabox, Script, set)
   SUPER_METHOD(Cabox, Script, load)
   SUPER_METHOD(Cabox, Script, script)

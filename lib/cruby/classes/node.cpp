@@ -84,6 +84,8 @@ void Node::execute_method (const std::string& pMethod, const Params& p)
   member_method_t method;
   if (pMethod == "help" ){
     help();
+  } else if (pMethod == "debug" ){
+    debug();
   } else if (mClass->get_member_method(&method, pMethod)) {
     (*method)(this, p);
   } else {

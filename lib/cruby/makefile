@@ -94,7 +94,7 @@ lib/Keyboard.rko: objects/Keyboard.cpp
 	$(CC) $(CFLAGS) -o lib/Keyboard.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Keyboard.cpp
 	
 lib/Svm.rko: objects/Svm.cpp
-	$(CC) $(CFLAGS) -o lib/Svm.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Svm.cpp
+	$(CC) -O3 -o lib/Svm.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Svm.cpp objects/svm/svm.cpp
 	
 lib/Buffer.rko: objects/Buffer.cpp
 	$(CC) $(CFLAGS) -o lib/Buffer.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Buffer.cpp

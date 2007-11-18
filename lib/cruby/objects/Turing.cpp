@@ -469,11 +469,6 @@ _again:
     *mOutput << "send\n";
     print(*mOutput, mSendTable);
   }
-  
-  void debug()
-  {
-    mDebug = !mDebug;
-  }
 
 private:
   int  mToken;           /**< Current token value (translated). */
@@ -483,8 +478,6 @@ private:
   int  mTokenTable[256]; /**< Translate chars 'x', '3', etc into the value used in this state machine. */
   std::vector< std::vector<int> > mGotoTable; /**< State transition table. */
   std::vector< std::vector<int> > mSendTable; /**< State transition table. */
-  
-  bool mDebug;
   
   void print(std::ostream& pOutput, std::vector< std::vector<int> >& pTable) {  
     std::vector< std::vector<int> >::iterator it,end;
@@ -510,7 +503,6 @@ extern "C" void init()
   CLASS (Turing)
   OUTLET(Turing, output)
   METHOD(Turing, tables)
-  METHOD(Turing, debug)
   SUPER_METHOD(Turing, Script, set)
   SUPER_METHOD(Turing, Script, load)
   SUPER_METHOD(Turing, Script, script)

@@ -29,6 +29,9 @@ public:
   void testParseZero( void ) 
   { assert_result("v1=Value(0)\n","#<Value:v1 0.00>\n"); }
   
+  void testParseZeroDotInt( void ) 
+  { assert_result("v1=Value(0.1)\n","#<Value:v1 0.10>\n"); }
+  
   void testParseCommandWithSpaces( void ) 
   { assert_result("v1 = Value(2)\n\n","#<Value:v1 2.00>\n"); }
   
