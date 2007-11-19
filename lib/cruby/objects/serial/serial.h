@@ -61,7 +61,7 @@ public:
     
     mFd = open(mPortName.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
     if (mFd == -1) {
-      error(buf("open '%s'", mPortName.c_str()));
+      error(mPortName.c_str());
       mIsOpen = false;
       return false;
     } else
@@ -112,7 +112,7 @@ public:
     case 230400: opt = B230400; break;
 #endif
     default: 
-      *mOutput << buf("Unknown baud rate '%i'.\n",pBauds);
+    *mOutput << "Unknown baud rate '" << pBauds << "'.\n";
       mIsOK = false;
       return false;
     }
@@ -128,7 +128,7 @@ public:
     case 7: opt = CS7; break;
     case 8: opt = CS8; break;
     default:
-      *mOutput << buf("Unknown character size '%i'.\n",pCharSize);
+      *mOutput << "Unknown character size '" << pCharSize << "'.\n";
       mIsOK = false;
       return false;
     }
@@ -165,7 +165,7 @@ public:
       options.c_cflag |= CS8;
       break;
     default:
-      *mOutput << buf("Unknown parity(must be 'N','E','O' or 'S') '%c'.\n",pParityChecking);
+      *mOutput << "Unknown parity(must be 'N','E','O' or 'S') '" << pParityChecking << "'.\n";
       close(mFd);
       mIsOpen = false;
       mIsOK   = false;
@@ -250,46 +250,9 @@ private:
     *mOutput << msg << ": " << strerror(errno) << std::endl;
   }
   
-  /** Print to buffer. */
-  const char * buf(const char * fmt, ...)
-  {
-    int n;
-    char * np;
-    va_list ap;
-
-    if (mBuffer == NULL) {
-      mBuffer = (char*)malloc(START_ERROR_BUFFER);
-      if (mBuffer) mBufferSize = START_ERROR_BUFFER;
-    }
-
-    while (1) {
-       /* Try to print in the allocated space. */
-       va_start(ap, fmt);
-       n = vsnprintf (mBuffer, mBufferSize, fmt, ap);
-       va_end(ap);
-       /* If that worked, return the string. */
-       if (n > -1 && n < mBufferSize) {
-         return mBuffer;
-       }
-       /* Else try again with more space. */
-       if (n > -1)    /* glibc 2.1 */
-          mBufferSize = n+1; /* precisely what is needed */
-       else           /* glibc 2.0 */
-          mBufferSize *= 2;  /* twice the old size */
-       if ((np = (char*)realloc (mBuffer, mBufferSize)) == NULL) {
-           mBuffer[mBufferSize - 1] = '\0';
-          return "Memory allocation error. Could not print message.\n"; // no more memory. fail.
-       } else {
-          mBuffer = np;
-       }
-    }
-  }
-  
   bool mIsOpen;
   bool mIsOK;
   int mFd; /**< File descriptor. */
-  char * mBuffer; /**< Used to format print to ostream. */
-  int mBufferSize;
   std::ostream * mOutput;
   std::string mPortName;
 };

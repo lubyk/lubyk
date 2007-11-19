@@ -72,6 +72,7 @@ public:
   bool init(const Params& p)
   {
     mVectorSize = p.val("vector", 32);
+    mRecognitionWindow = mVectorSize * 0.8; // 0.5 makes huge data sets and takes long to compute...
     mSampleRate = p.val("rate", 256);
     mUnitSize   = p.val("unit", 1);    // number of values form a sample
     mMargin     = p.val("margin", 1.0);
@@ -272,7 +273,10 @@ public:
 private:
   
   
-  /** Transform the raw data into the sparse format used by libsvm. Use mThreshold to fix what is considered as zero. This outputs the file 'svm.train' containing all data with labels from the classes in mFolder. */
+  /** Transform the raw data into the sparse format used by libsvm. To recognize live streams, the
+    * window used is smaller then the actual data and we slide it across the signal.
+    * Use mThreshold to fix what is considered as zero. This outputs the file 'svm.train' containing 
+    * all data with labels from the classes in mFolder. */
   void build()
   {
     if (mTrainFile) fclose(mTrainFile);
@@ -359,12 +363,12 @@ private:
   bool predict()
   {
     int label;
-    
+    double labelProbability;
     // map current vector into svm_node
     int i,pos,j = 0; // svm_node index
     double * vector = mLiveBuffer + mLiveBufferSize - mVectorSize;
     
-    for(int i=0;i < mVectorSize; i++) {
+    for(int i=0;i < mRecognitionWindow; i++) {
       if (vector[i]) {
         mNode[j].index = i;
         mNode[j].value = vector[i];
@@ -401,19 +405,20 @@ private:
   			if(mVotes[i] > mVotes[vote_max_idx]) vote_max_idx = i;
   		}
   		label = mLabels[vote_max_idx];
-      mLabelProbability = (double)mVotes[vote_max_idx] / (double)(mLabelCount - 1);
+      labelProbability = (double)mVotes[vote_max_idx] / (double)(mLabelCount - 1);
 		} else {
       label = svm_predict(mModel,mNode);
-      mLabelProbability = 1.0;
+      labelProbability = 1.0;
     }
     
-    if (label != mClassLabel) {
-      mSameLabelCount = 1;
-      mClassLabel = label;
+    if (label == mClassLabel && labelProbability < mLabelProbability) {
+      // probability decrease: reached top ==> send value
+      mLabelProbability = labelProbability;
       return true;
-    } else {
-      mSameLabelCount++;
     }
+    
+    mClassLabel       = label;
+    mLabelProbability = labelProbability;
     return false;
   }
   
@@ -581,17 +586,20 @@ private:
     fclose(file);
   }
   
+  /** Slide each prototype along the window and write as a sparse vector. */
   void write_as_sparse (double * vector)
   {
     mVectorCount++;
     if (!mTrainFile) return;
-    fprintf(mTrainFile, "%+i", mClassLabel);
-    for(int i=0; i < mVectorSize; i++) {
-      if (vector[i]) {
-        fprintf(mTrainFile, " %i:%.5f", i+1, (float)vector[i]);
+    for(int j=0; j < mVectorSize - mRecognitionWindow; j++) {
+      fprintf(mTrainFile, "%+i", mClassLabel);
+      for(int i=0; i < mRecognitionWindow; i++) {
+        if (vector[j+i]) {
+          fprintf(mTrainFile, " %i:%.5f", i+1, (float)vector[j+i]);
+        }
       }
+      fprintf(mTrainFile, "\n");
     }
-    fprintf(mTrainFile, "\n");
   }
   
   void load_model ()
@@ -765,6 +773,7 @@ readpb_fail:
   double * mBuffer;     /**< Store a single vector +  margin. */
   double   mMargin;     /**< Size (in %) of the margin. */
   int mVectorSize;
+  int mRecognitionWindow; /**< Size of window used for recognition. Must be smaller then mVectorSize. */
   int mUnitSize;       /**< How many values form a sample (single event). */
   int mVectorCount;    /**< Number of vectors used to build the current mean value. */
   int mSampleRate; /**< How many samples per second do we receive from the 'data' inlet. */
@@ -772,7 +781,6 @@ readpb_fail:
   int mLiveBufferSize;
   int mClassLabel; /**< Current label. Used during recording and recognition. */
   double mLabelProbability; /**< Current probability for the given label. */
-  int mSameLabelCount; /**< Count for how long the current label has been set. */
   
   double mThreshold;   /**< Values below this limit are recorded as zero in the training set. Use '0' for none. */
   
