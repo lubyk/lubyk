@@ -77,8 +77,9 @@ public:
     mMargin     = p.val("margin", 1.0);
     mFolder     = p.val("store", std::string("svm_data"));
     mThreshold  = p.val("threshold", 0.0);
-    mSvmCparam  = p.val("C", 2.0);          // svm cost
-    mSvmGammaParam = p.val("g", 0.0078125); // svm gamma in RBF
+    mSvmCparam  = p.val("cost", 2.0);          // svm cost
+    mSvmGammaParam = p.val("gamma", 0.0078125); // svm gamma in RBF
+    mUseSnap    = p.val("snap", 0) == 1 ;
     mProbabilityThreshold = p.val("filter", 0.8);
     
     mBufferSize = mVectorSize * (1.0 + mMargin);
@@ -165,7 +166,7 @@ public:
         } else if (cmd == ' ') {
           // swap snap style
           if (mUseVectorOffset == mVectorOffset) {
-            mUseVectorOffset = mBufferSize - mVectorSize;
+            mUseVectorOffset = mBufferSize - mVectorSize * (1 + mMargin/2.0);
             *mOutput << mName << ": no-snap\n";
           } else {
             mUseVectorOffset = mVectorOffset;
@@ -465,7 +466,10 @@ private:
       mVectorOffset = mBufferSize - mVectorSize * (1 + mMargin/2.0);
       *mOutput << mName << ":~> Keep ? " << std::endl;
     }
-    mUseVectorOffset = mVectorOffset;
+    if (mUseSnap)
+      mUseVectorOffset = mVectorOffset;
+    else
+      mUseVectorOffset = mBufferSize - mVectorSize * (1 + mMargin/2.0);
   }
   
   void store_data()
@@ -751,7 +755,7 @@ readpb_fail:
   FILE * mTrainFile;
 
   bool mReadyToLabel; /**< Set to true when svm is up to date. */
-  bool mReadyToLearn; /**< Set to true when there is data to learn from. */
+  bool mUseSnap;      /**< True if the recording should snap to the best match. Usually better without. */
   
   int mCountDown;
   int mVectorOffset;     /**< Best match with this offset in mBuffer. */
