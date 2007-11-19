@@ -64,6 +64,9 @@ public:
     if (mProblem.y)  free(mProblem.y);
     if (mProblem.x)  free(mProblem.x);
     if (mXSpace)     free(mXSpace);
+    if (mDistances)  free(mXSpace);
+    if (mVotes)      free(mVotes);
+    if (mLabels)     free(mLabels);
   }
 
   bool init(const Params& p)
@@ -76,10 +79,14 @@ public:
     mThreshold  = p.val("threshold", 0.0);
     mSvmCparam  = p.val("C", 2.0);          // svm cost
     mSvmGammaParam = p.val("g", 0.0078125); // svm gamma in RBF
+    mProbabilityThreshold = p.val("filter", 0.8);
     
     mBufferSize = mVectorSize * (1.0 + mMargin);
     mLiveBuffer = NULL;
     mTrainFile  = NULL;
+    mDistances  = NULL;
+    mVotes      = NULL;
+    mLabels     = NULL;
     mClassLabel = 0;
     
     mVectorCount = 0; // current mean value made of '0' vectors
@@ -181,7 +188,10 @@ public:
       case ReadyToRecord:
         if (cmd == '\n')
           enter(Label);
-        else {
+        else if (cmd == 'l') {
+          if (!do_learn()) return;
+          enter(Label);
+        } else {
           prepare_class_for_recording(cmd);
           enter(CountDownReady);
           bang_me_in(countdown_time);
@@ -191,6 +201,7 @@ public:
       case Label:
         if (cmd == (int)'r') {
           enter(ReadyToRecord);
+          mClassLabel = 0;
           return;
         } else if (cmd == (int)'l') {
           if (!do_learn()) return;
@@ -198,6 +209,7 @@ public:
         }
       }
     }
+    
     
     // send mean value
     if (mMeanVector) {
@@ -208,12 +220,35 @@ public:
     }
     
     if (mState == Validation) {
+      
       // recorded signal
       mS.array.value = mBuffer + mUseVectorOffset;
       mS.array.size  = mVectorSize;
       mS.type  = ArraySignal;
       send(mS, 3);
+    } else if (mState == Label) {
+        bool change = predict();
+        
+        // send probabilities (map to mUnitSize first)
+        mS.array.value = mVotes;
+        mS.array.size  = mUnitSize;
+        mS.type  = ArraySignal;
+        send(mS, 5);
+        if (mDebug) {
+          for(int i = 0; i< mLabelCount; i++)
+            *mOutput << "  " << mLabels[i];
+          *mOutput << std::endl << mS << std::endl;
+        }
+
+        // live signal
+        mS.array.value = mLiveBuffer + mLiveBufferSize - mVectorSize;
+        mS.array.size  = mVectorSize;
+        mS.type  = ArraySignal;
+        send(mS, 3);
+        
+        if (change) send(mClassLabel);
     } else {
+
       // live signal
       mS.array.value = mLiveBuffer + mLiveBufferSize - mVectorSize;
       mS.array.size  = mVectorSize;
@@ -221,16 +256,6 @@ public:
       send(mS, 3);
     }
     
-    if (mState == Label) {
-      int last_label, last_count;
-      last_count = mSameLabelCount;
-      last_label = mClassLabel;
-      if (predict()) {
-        if (mDebug)
-          std::cout << last_label << " ( stable for " << last_count << ") --> " << mClassLabel << std::endl;
-        send(mClassLabel);
-      }
-    }
   }
   
   
@@ -335,7 +360,7 @@ private:
     int label;
     
     // map current vector into svm_node
-    int j = 0; // svm_node index
+    int i,pos,j = 0; // svm_node index
     double * vector = mLiveBuffer + mLiveBufferSize - mVectorSize;
     
     for(int i=0;i < mVectorSize; i++) {
@@ -347,7 +372,40 @@ private:
     }
     mNode[j].index = -1; // end of vector definition
     
-    label = svm_predict(mModel,mNode);
+    if (mLabelCount > 1) {
+      // use probability estimate
+  		svm_predict_values(mModel, mNode, mDistances);
+
+  		for(i=0;i<mLabelCount;i++) mVotes[i] = 0.0;
+		
+  		pos=0;
+      double sum;
+  		for(i=0; i < mLabelCount; i++)
+  			for(j = i+1; j < mLabelCount; j++)
+  			{
+          //if (mDebug) printf("%i:%i % .5f\n", i, j, mDistances[pos]);
+  				if(mDistances[pos] > 0) {
+  					mVotes[i] += mDistances[pos];
+  				} else {
+  					mVotes[j] -= mDistances[pos];
+          }
+          pos++;
+  			}
+
+  		int vote_max_idx = 0;
+  		
+      //if (mDebug) printf("================\n");
+  		for(i=1; i < mLabelCount; i++) {
+        //if (mDebug) printf("%i: %.2f\%\n",i, mVotes[i] * 100.0 / (double)(mLabelCount - 1));
+  			if(mVotes[i] > mVotes[vote_max_idx]) vote_max_idx = i;
+  		}
+  		label = mLabels[vote_max_idx];
+      mLabelProbability = (double)mVotes[vote_max_idx] / (double)(mLabelCount - 1);
+		} else {
+      label = svm_predict(mModel,mNode);
+      mLabelProbability = 1.0;
+    }
+    
     if (label != mClassLabel) {
       mSameLabelCount = 1;
       mClassLabel = label;
@@ -537,9 +595,40 @@ private:
     if (mModel) svm_destroy_model(mModel);
     mModel = svm_load_model(model_file_path().c_str());
     if (!mModel) {
-      *mOutput << mName << ": Could not load model file '" << model_file_path() << "'.\n";
+      *mOutput << mName << ": could not load model file '" << model_file_path() << "'.\n";
       return;
     }
+    
+    // prepare probability / labels buffer
+    mLabelCount = svm_get_nr_class(mModel);
+    
+    mLabels         = (int*)    malloc(mLabelCount * sizeof(int));
+    if (!mLabels) {
+      *mOutput << mName << ": could not allocate " << mLabelCount << " ints for labels.\n";
+      return;
+    }
+    svm_get_labels(mModel, mLabels);
+    
+		mDistances     = (double*) malloc((mLabelCount * (mLabelCount-1)/2) * sizeof(double));
+    if (!mDistances) {
+      *mOutput << mName << ": could not allocate " << (mLabelCount * (mLabelCount-1)/2) << " doubles for distances.\n";
+      return;
+    }
+    
+    // vote_count is just a hack because we map probability signals in the same plot as signals packed into
+    // mUnitSize elements.
+    int vote_count = 0;
+    if (mLabelCount < mUnitSize) 
+      vote_count = mUnitSize;
+    else
+      vote_count = mLabelCount;
+    mVotes         = (double*) malloc(vote_count * sizeof(double));
+    if (!mVotes) {
+      *mOutput << mName << ": could not allocate " << vote_count << " ints for votes.\n";
+      return;
+    }
+    for(int i=0;i<vote_count;i++) mVotes[i] = 0.0;
+    
     
     mReadyToLabel = true;
     enter(Label);
@@ -678,13 +767,19 @@ readpb_fail:
   int mBufferSize; /**< Size of buffered data ( = mVectorSize + 25%). We use more then the vector size to find the best fit. */
   int mLiveBufferSize;
   int mClassLabel; /**< Current label. Used during recording and recognition. */
+  double mLabelProbability; /**< Current probability for the given label. */
   int mSameLabelCount; /**< Count for how long the current label has been set. */
   
   double mThreshold;   /**< Values below this limit are recorded as zero in the training set. Use '0' for none. */
   
   /// libsvm ///
-  double mSvmCparam;
-  double mSvmGammaParam;
+  double   mSvmCparam;
+  double   mSvmGammaParam;
+  double   mProbabilityThreshold; /**< Minimal probability value for an output to be sent. */
+  int      mLabelCount;       /**< Number of different classes to recognize. */
+  double * mDistances;        /**< Computed distances from each class to other classes. */
+  double * mVotes;            /**< Count how many times class X was recognized correctly against other classes. */
+  int    * mLabels;           /**< Translate ids to our labels. */
   
   struct svm_node  * mXSpace; /**< x_space (working space used for dot product during training). */
   struct svm_model * mModel;  /**< Contains the model (training result). */
@@ -701,5 +796,6 @@ extern "C" void init()
   OUTLET(Svm,countdown)
   OUTLET(Svm,current)
   OUTLET(Svm,mean)
+  OUTLET(Svm,probabilities)
   METHOD(Svm,learn)
 }
