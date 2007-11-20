@@ -80,10 +80,22 @@ public:
       
         // sig.array.value (real) --FFT---> mFrequencies (complex)
         mProcessor->do_fft(mInterlaceFreq, mBuffer + s*mUnitSize);
-        
-        for(int i=0; i < sample_count; i++) {
-          // interlace result back (we should normalize ?)
-          mFrequencies[s + mUnitSize * i] = mInterlaceFreq[i];
+        int img_offset = sample_count/2;
+        double real, img, norm;
+        for(int i=0; i < img_offset; i++) {
+          // interlace result back and compute power spectrum (real^2 + img^2)
+          real = mInterlaceFreq[i];
+          img  = -mInterlaceFreq[img_offset + i];
+          // polar coordinates (only show)
+          /* */
+          mFrequencies[s + mUnitSize * i] = (real * real + img * img) / sample_count; // divide by sample_count to scale
+          mFrequencies[s + mUnitSize * (i + img_offset)] = 0.0; // atan(b/a)
+          /**/
+          /* show only the norm accross all page
+          norm = (real * real + img * img) / sample_count; // divide by sample_count to scale
+          mFrequencies[s + mUnitSize * 2 * i] = norm;
+          mFrequencies[s + mUnitSize * (2 * i + 1)] = norm;
+          */
         }
       }  
       
