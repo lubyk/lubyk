@@ -247,6 +247,29 @@ union Signal {
       return false;
   }
   
+  
+  /** Return the type as const char. */
+  const char * type_name () const
+  {
+    switch(type) {
+    case BangSignal:
+      return "BangSignal";
+    case IntegerSignal:
+      return "IntegerSignal";
+    case DoubleSignal:
+      return "DoubleSignal";
+    case ArraySignal:
+      return "ArraySignal";
+    case VoidPointerSignal:
+      return "VoidPointerSignal";
+    case MidiSignal:
+      return "MidiSignal";
+    default:
+      return "???";
+    }
+  }
+  
+  
 /* data */
   rubyk_signal_t       type;
   IntegerSignal_t      i;
