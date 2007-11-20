@@ -1,20 +1,60 @@
 #include "class.h"
+#include "FFTReal.h"
 
-
-// could use code from http://ldesoras.free.fr/prod.html
 class FFT : public Node
 {
 public:
   
   ~FFT()
   {
-    if (mBufferX) free(mBufferX);
-    if (mBufferY) free(mBufferY);
+    if (mFrequencies) free  (mFrequencies);
+    if (mInterlaceFreq) free(mInterlaceFreq);
+    if (mBuffer)      free  (mBuffer);
+    if (mProcessor)   delete(mProcessor);
   }
   
   bool init (const Params& p)
   {
-    mBufferSize = 0;
+    int buf_size = p.val("size", 64);
+    mUnitSize    = p.val("unit", 1);
+    
+    // make sure it is a power of 2
+    long size = 2;
+    while (size < buf_size) size *= 2;
+    if (size != buf_size) {
+      *mOutput << mName << ": wrong signal dimension " << buf_size << ". Should be a power of 2.\n";
+      mBufferSize = 0;
+      return false;
+    } else
+      mBufferSize = buf_size * mUnitSize;
+    
+    mProcessor = new FFTReal<double>(buf_size);
+    
+    // allocate buffers
+    
+    mFrequencies = (double*)malloc(mBufferSize * sizeof(double));        
+    if (!mFrequencies) {
+      *mOutput << mName << ": could not allocate " << mBufferSize << " doubles for frequency result.\n";
+      return false;
+    }
+    
+    if (mUnitSize > 1) {
+      mInterlaceFreq = (double*)malloc((mBufferSize/mUnitSize) * sizeof(double));        
+      if (!mInterlaceFreq) {
+        *mOutput << mName << ": could not allocate " << (mBufferSize/mUnitSize) << " doubles for temporary buffer.\n";
+        return false;
+      }
+      
+      mBuffer = (double*)malloc(mBufferSize * sizeof(double));        
+      if (!mBuffer) {
+        *mOutput << mName << ": could not allocate " << mBufferSize << " doubles for (deinterlace) buffer.\n";
+        return false;
+      }
+    }
+    
+    mS.type = ArraySignal;
+    mS.array.size  = mBufferSize;
+    mS.array.value = mFrequencies;
     return true;
   }
   
@@ -24,136 +64,51 @@ public:
     if (sig.type != ArraySignal) {
       *mOutput << mName << ": wrong signal type '" << sig.type_name() << "' (should be ArraySignal)\n";
       return;
-    } else if (sig.array.size / 2 != 0) {
-      *mOutput << mName << ": wrong signal dimension " << sig.array.size << ". Should be a power of 2.\n";
+    } else if (sig.array.size != mBufferSize) {
+      *mOutput << mName << ": wrong signal dimension " << sig.array.size << ". Should be " << mBufferSize << "\n";
       return;
     }
-    // copy buffer
-    allocate_buffer(sig.array.size);
-    memcpy(mBufferX, sig.array.value, mBufferSize);
-    memset(mBufferY, 0, mBufferSize);
     
-    in_place_fft(1,mBufferSize,mBufferX,mBufferY);
-    map_to_amplitude_and_phase(mBufferSize, mBufferX, mBufferY);
+    if (mUnitSize > 1) {
+      int sample_count = mBufferSize / mUnitSize;
+      // should check data format first...
+      for(int s=0; s < mUnitSize; s++) {
+        for(int i=0; i < sample_count; i++) {
+          // deinterlace the data...!!
+          mBuffer[s * mUnitSize + i] = sig.array.value[s + mUnitSize * i];
+        }
+      
+        // sig.array.value (real) --FFT---> mFrequencies (complex)
+        mProcessor->do_fft(mInterlaceFreq, mBuffer + s*mUnitSize);
+        
+        for(int i=0; i < sample_count; i++) {
+          // interlace result back (we should normalize ?)
+          mFrequencies[s + mUnitSize * i] = mInterlaceFreq[i];
+        }
+      }  
+      
+    } else {
+      // sig.array.value (real) --FFT---> mFrequencies (complex)
+      mProcessor->do_fft(mFrequencies, sig.array.value);
+    }
+    
+    send(mS);
   }
   
 private:
-  
-  void allocate_buffer(int size)
-  {
-    if (mBufferSize == size) return;
-    if (mBufferSize != size) {
-      if (mBufferX) {
-        mBufferX = (double*)realloc(mBufferX, size * sizeof(double));
-      } else {
-        mBufferX = (double*)malloc(size * sizeof(double));        
-      }
-
-      if (!mBufferX) {
-        *mOutput << mName << ": could not allocate " << size << " doubles for buffer X.\n";
-        return;
-      }
-
-      if (mBufferY) {
-        mBufferY = (double*)realloc(mBufferY, size * sizeof(double));
-      } else {
-        mBufferY = (double*)malloc(size * sizeof(double));        
-      }
-      if (!mBufferY) {
-        *mOutput << mName << ": could not allocate " << size << " doubles for buffer Y.\n";
-        return;
-      }
-    }
-    mBufferSize = size;
-  }
-
-  /*
-     This computes an in-place complex-to-complex FFT 
-     x and y are the real and imaginary arrays of 2^m points.
-     dir =  1 gives forward transform
-     dir = -1 gives reverse transform
-     
-     code from Paul Bourke (http://local.wasp.uwa.edu.au/~pbourke/other/dft/)
-  */
-  void in_place_fft(short int dir,long m,double *x,double *y)
-  {
-    long n,i,i1,j,k,i2,l,l1,l2;
-    double c1,c2,tx,ty,t1,t2,u1,u2,z;
-    
-    /* Calculate the number of points */
-    n = 1;
-    for (i=0;i<m;i++) 
-      n *= 2;
-    
-    /* Do the bit reversal */
-    i2 = n >> 1;
-    j = 0;
-    for (i=0;i<n-1;i++) {
-      if (i < j) {
-        tx = x[i];
-        ty = y[i];
-        x[i] = x[j];
-        y[i] = y[j];
-        x[j] = tx;
-        y[j] = ty;
-      }
-      k = i2;
-      while (k <= j) {
-        j -= k;
-        k >>= 1;
-      }
-      j += k;
-    }
-    
-    /* Compute the FFT */
-    c1 = -1.0; 
-    c2 = 0.0;
-    l2 = 1;
-    for (l=0;l<m;l++) {
-      l1 = l2;
-      l2 <<= 1;
-      u1 = 1.0; 
-      u2 = 0.0;
-      for (j=0;j<l1;j++) {
-        for (i=j;i<n;i+=l2) {
-          i1 = i + l1;
-          t1 = u1 * x[i1] - u2 * y[i1];
-          t2 = u1 * y[i1] + u2 * x[i1];
-          x[i1] = x[i] - t1; 
-          y[i1] = y[i] - t2;
-          x[i] += t1;
-          y[i] += t2;
-        }
-        z =  u1 * c1 - u2 * c2;
-        u2 = u1 * c2 + u2 * c1;
-        u1 = z;
-      }
-      c2 = sqrt((1.0 - c1) / 2.0);
-      if (dir == 1) 
-        c2 = -c2;
-      c1 = sqrt((1.0 + c1) / 2.0);
-    }
-    
-    /* Scaling for forward transform */
-    if (dir == 1) {
-      for (i=0;i<n;i++) {
-        x[i] /= n;
-        y[i] /= n;
-      }
-    }
-  }
    
-  map_to_amplitude_and_phase(int size, double * vectorX, double * vectorY)
-  {
-    double amp, phase;
-    for(int i=0; i < size; i++) {
-      // 
-    }
-  }
-  
-  double * mBufferX; /**< Real component of signal.    (Frequency output) */
-  double * mBufferY; /**< Complex component of signal. (Phase output)     */
-  int      mBufferSize;
+  FFTReal<double> * mProcessor; /**< FFT processor. */
+  double * mFrequencies;  /**< Frequency output up to 1/2 of the signal, phase for other half. 
+                       *  Example for a 64 samples buffer:
+                       *  mFrequencies[0]      =  0
+                       *  mFrequencies[1 ..32] =  frequency amplitude of f[1..32]
+                       *  mFrequencies[33..63] = -imaginary part of f[33..63]
+                       *
+                       *  See 'fft/readme.txt' for details. */
+  double * mBuffer; /**< Deinterlace buffer used when more then one signal is present in the incoming stream (unit size > 1). */
+  double * mInterlaceFreq; /**< Temporary buffer to store results before interlacing back when processing more then one signal at a time. */
+  int      mBufferSize; /**< Size of the buffer for the output values. */
+  int      mUnitSize; /**< How many different signals are present in the buffer. */
 };
 
 extern "C" void init()

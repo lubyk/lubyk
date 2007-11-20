@@ -90,7 +90,7 @@ private:
       printf("%i:%.0f, %i:%.0f ==> ", max_id[0], max_value[0], max_id[1], max_value[1]);
       printf("%i\n", label);
     }
-    if (max_before_scale > mThreshold && mLabel != labe) {
+    if (max_before_scale > mThreshold && mLabel != label) {
       mLabel = label;
       return true;
     } else
