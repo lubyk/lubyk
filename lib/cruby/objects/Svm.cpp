@@ -128,19 +128,19 @@ public:
   {
     int cmd;
     
-    time_t record_time = (time_t)(ONE_SECOND * mVectorSize / (mSampleRate * mUnitSize));
-    time_t record_with_margin = (time_t)(ONE_SECOND * mVectorSize * (1 + mMargin/2.0) / (mSampleRate * mUnitSize));
-    time_t countdown_time;
-    if (record_time > 500)
-      countdown_time = record_time;
-    else
-      countdown_time = 500;
-    
     if (!mIsOK) return; // no recovery
     if (sig.type == ArraySignal && sig.array.size >= mBufferSize) {
       mLiveBuffer = sig.array.value;
       mLiveBufferSize = sig.array.size;
     } else {
+      time_t record_time = (time_t)(ONE_SECOND * mVectorSize / (mSampleRate * mUnitSize));
+      time_t record_with_margin = (time_t)(ONE_SECOND * mVectorSize * (1 + mMargin/2.0) / (mSampleRate * mUnitSize));
+      time_t countdown_time;
+      if (record_time > 500)
+        countdown_time = record_time;
+      else
+        countdown_time = 500;
+
       // receiving Bangs or command change
       sig.get(&cmd);
       
@@ -589,7 +589,6 @@ private:
   /** Slide each prototype along the window and write as a sparse vector. */
   void write_as_sparse (double * vector)
   {
-    mVectorCount++;
     if (!mTrainFile) return;
     for(int j=0; j < mVectorSize - mRecognitionWindow; j++) {
       fprintf(mTrainFile, "%+i", mClassLabel);
@@ -600,6 +599,7 @@ private:
       }
       fprintf(mTrainFile, "\n");
     }
+    mVectorCount++;
   }
   
   void load_model ()

@@ -12,7 +12,7 @@ test: test/runner test/runner.cpp
 rubyk: classes/main.cpp command.o rubyk.o node.o inlet.o outlet.o slot.o params.o class.o lua.o classes/lua/src/liblua.a objects
 	$(CC) $(CFLAGS) -o rubyk -Itest -Itemplates -Iclasses -Iobjects -I. classes/main.cpp slot.o inlet.o outlet.o params.o node.o class.o command.o rubyk.o lua.o classes/lua/src/liblua.a
 
-objects: lib/Test.rko lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/Midi.rko lib/NoteOut.rko lib/Lua.rko lib/Serial.rko lib/Turing.rko lib/Keyboard.rko lib/Cabox.rko lib/Svm.rko lib/Buffer.rko lib/Pack.rko lib/Plot.rko lib/Crop.rko lib/MaxCount.rko lib/Tokenize.rko lib/FFT.rko
+objects: lib/Test.rko lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/Midi.rko lib/NoteOut.rko lib/Lua.rko lib/Serial.rko lib/Turing.rko lib/Keyboard.rko lib/Cabox.rko lib/Svm.rko lib/Buffer.rko lib/Pack.rko lib/Plot.rko lib/Crop.rko lib/MaxCount.rko lib/Tokenize.rko lib/FFT.rko lib/Quantize.rko
 	
 test/runner.cpp: test/*_test.h test/objects/*_test.h
 	./test/cxxtest/cxxtestgen.pl --error-printer -o test/runner.cpp $(TEST)
@@ -118,6 +118,9 @@ lib/Tokenize.rko: objects/Tokenize.cpp
 
 lib/FFT.rko: objects/FFT.cpp
 	$(CC) $(CFLAGS) -o lib/FFT.rko -Itemplates -Iclasses -Iobjects/fft -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/FFT.cpp
+	
+lib/Quantize.rko: objects/Quantize.cpp
+	$(CC) $(CFLAGS) -o lib/Quantize.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Quantize.cpp
 
 
 lua.o: classes/lua/lua_script.cpp classes/lua_script.h classes/script.h
