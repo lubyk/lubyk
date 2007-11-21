@@ -573,7 +573,7 @@ private:
         return;
       }
       // read a vector
-      while(fscanf(file, " %f", &val) > 0) {
+      while(fscanf(file, " %f", &val) != EOF) {
         fscanf(file, "\n"); // ignore newline
         mBuffer[value_count] = (double)val;
         if (value_count >= mVectorSize - 1) {

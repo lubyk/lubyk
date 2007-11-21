@@ -120,7 +120,7 @@ lib/FFT.rko: objects/FFT.cpp
 	$(CC) $(CFLAGS) -o lib/FFT.rko -Itemplates -Iclasses -Iobjects/fft -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/FFT.cpp
 	
 lib/Quantize.rko: objects/Quantize.cpp
-	$(CC) $(CFLAGS) -o lib/Quantize.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Quantize.cpp
+	$(CC) $(CFLAGS) -o lib/Quantize.rko -Itemplates -Iclasses -Iobjects/quantize -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Quantize.cpp objects/quantize/elbg.c objects/quantize/random.c
 
 
 lua.o: classes/lua/lua_script.cpp classes/lua_script.h classes/script.h

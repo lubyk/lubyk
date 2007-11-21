@@ -4,6 +4,7 @@ lua
 	authors  : Roberto Ierusalimschy
 	website  : http://www.lua.org
 	copyright: see classes/lua/src/COPYRIGHT
+	license  : MIT license
 
 
 libsvm
@@ -12,3 +13,13 @@ libsvm
 	authors  : Chih-Chung Chang and Chih-Jen Lin
 	website  : http://www.csie.ntu.edu.tw/~cjlin/libsvm
 	copyright: see objects/svm/COPYRIGHT
+	license  : MIT License
+
+	
+ELBG
+----
+	brief    : Enhanced LBG. Vector Quantization used in the 'Quantize' object.
+	author   : Vitor Sessak <vitor1001@gmail.com>
+	website  : http://ffmpeg.mplayerhq.hu/
+	copyright: see objects/quantize/elbg.h
+	license  : LGPL

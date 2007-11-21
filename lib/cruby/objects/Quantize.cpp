@@ -1,6 +1,6 @@
 #include "class.h"
-
-#define INITIAL_TRAINING_DATA_SIZE 1024
+#include <limits.h>  // INT_MAX
+#define INITIAL_TRAINING_DATA_SIZE 512
 
 /** Svm states. */
 enum quantize_states_t {
@@ -10,8 +10,9 @@ enum quantize_states_t {
   Label,       /**< Sends a label for each input vector. */
 };
 
-
-/** Vector Quantization (reduce large vectors to an integer representing the index in the codebook). */
+#include "quantize/elbg.h"
+/** Vector Quantization (reduce large vectors to an integer representing the index in the codebook). 
+  * Uses the Enhanced LBG Algorithm implemented by the guys of FFmpeg project. */
 class Quantize : public Node
 {
 public:
@@ -25,32 +26,34 @@ public:
       fclose(mTrainFile);
       mTrainFile = NULL;
     }
-    if (mTrainingData) free_buffer(mTrainingData, mTrainingDataSize);
-    if (mCodebook)     free_buffer(mTrainingData, mCodebookSize);
+    if (mTrainingData) free(mTrainingData);
+    if (mCodebook)     free(mCodebook);
+    if (mVector)       free(mVector);
   }
   
   bool init (const Params& p)
   {
-    mVectorSize   = p.val("size", 8);        /**< dimension of vector (number of doubles per vector). */
-    mCodebookSize = p.val("resolution", 16); /**< codebook size. The result will be an integer between [1..resolution]. */
+    mVectorSize   = p.val("size", 8);        /**< Dimension of each vector. */
+    mCodebookSize = p.val("resolution", 16); /**< Codebook size. The result will be an integer between
+                                               *  [1..resolution]. Must be a power of 2. */
+    mScale        = p.val("scale", 256.0);   /**< Value to multiply doubles before scaling to integers. */
     mFolder       = p.val("store", std::string("quantize_data"));
     
     mThread    = NULL;
     mTrainFile = NULL;
-    /** Allocate codebook array. */
-    mCodebook = (double**)malloc(mCodebookSize * sizeof(double*));
+    
+    /** Allocate codebook. */
+    mCodebook = (int*)malloc(mCodebookSize * mVectorSize * sizeof(int));
     if (!mCodebook) {
-      *mOutput << mName << ": could not allocate " << mCodebookSize << " doubles pointers for codebook.\n";
+      *mOutput << mName << ": could not allocate " << mCodebookSize * mVectorSize << " integers for codebook.\n";
       return false;
     }
     
-    /** Allocate memory for each vector in the codebook. */
-    for(int i=0; i < mCodebookSize; i++) {
-      mCodebook[i] = (double*)malloc(mVectorSize * sizeof(double));
-      if (!mCodebook[i]) {
-        *mOutput << mName << ": could not allocate " << mVectorSize << " doubles for codebook vector " << i << " .\n";
-        return false;
-      }
+    /** Allocate mVector. */
+    mVector = (int*)malloc(mVectorSize * sizeof(int));
+    if (!mCodebook) {
+      *mOutput << mName << ": could not allocate " << mVectorSize << " integers for encoding vector.\n";
+      return false;
     }
     
     mState = Waiting;
@@ -107,17 +110,46 @@ public:
         } else {
           *mOutput << mName << ": wrong signal size '" << sig.array.size << "'. Should be '" << mVectorSize << "'.\n";
         }
+      } else if (sig.get(&cmd)) {
+        do_command(cmd);
       }
     }
   }
   
 private:
   
-  int label_for(double * vector)
+  int label_for(double * pVector)
   {
+    if (!mVector) return 0;
+    
     // find best matching vector from codebook
-    // TODO
-    return 0;
+    // FIXME: there are much better algorithms then full search !
+    // Use QccPack ?
+    
+    // 1. scale to integers
+    for (int i=0; i < mVectorSize; i++)
+      mVector[i] = (int)(pVector[i] * mScale);
+      
+    // 2. match codebook
+    int match_index = 0;
+    long match_distance = INT_MAX;
+    long distance;
+    int * codeword;
+    for(int i=0; i < mCodebookSize; i++) {
+      codeword = mCodebook + mVectorSize * i;
+      distance = 0;
+      for(int j=0; j < mVectorSize; j++) {
+        distance += (mVector[j] - codeword[j]) * (mVector[j] - codeword[j]);
+        if (distance > match_distance) break;
+      }
+      if (distance < match_distance) {
+        match_index = i;
+        match_distance = distance;
+      }
+      // FIXME: add another clause to drop search if distance is small enough
+    }
+    
+    return match_index;
   }
   
   std::string codebook_path()
@@ -138,7 +170,6 @@ private:
   bool load_codebook()
   {
     FILE * file;
-    mCodebookSize = 0;
     file = fopen(codebook_path().c_str(), "rb");
       if (!file) {
         *mOutput << mName << ": could not open codebook data '" << codebook_path() << "'\n.";
@@ -150,12 +181,12 @@ private:
       while(vector_count < mCodebookSize) {
         for(int i=0; i < mVectorSize; i++) {
           // read a float
-          if(fscanf(file, " %f", &val) <= 0) {
+          if(fscanf(file, " %f", &val) == EOF) {
             *mOutput << mName << ": file format reading codebook vector " << vector_count+1 << " error.\n";
             return false;
           }
           fscanf(file, "\n"); // ignore newline
-          mCodebook[vector_count][i] = (double)val;
+          mCodebook[vector_count * mVectorSize + i] = (int)(val * mScale);
           vector_count++;
         }
       }
@@ -163,7 +194,7 @@ private:
     return true;
   }
   
-  /** Save a vector to the training database. */
+  /** Save a vector to the training database (on file and in memory). */
   void write_vector(double * vector)
   {
     if (!mTrainFile) return;
@@ -171,7 +202,8 @@ private:
       fprintf(mTrainFile, " %.5f", (float)vector[i]);
       
     fprintf(mTrainFile, "\n");
-    mTrainingSize++;    
+    
+    add_to_database(vector);
   }
   
   void enter(quantize_states_t state)
@@ -207,6 +239,7 @@ private:
       break;
     case Learning:
       mState = Learning;
+      *mOutput << mName << ": training started.\n";
       pthread_create( &mThread, NULL, &Quantize::call_train, (void*)this);
       break;
     }
@@ -219,72 +252,131 @@ private:
     ((Quantize*)node)->train();
   }
   
-  /** Compute codebook from the training database. */
+  /** Compute codebook from the training database. 
+    * FIXME: find a way to read mState in order to abort if mState is no longer Learning. */
   void train()
   {
-    // 1. open file containing data
-    if (mTrainFile) fclose(mTrainFile);
-    mTrainFile = fopen(train_file_path().c_str(), "rb");
-      if (!mTrainFile) {
-        *mOutput << mName << ": could not open '" << train_file_path() << "' to read training data.\n";
+    if (!mTrainingSize) {
+      // 1. open file containing data
+      if (mTrainFile) fclose(mTrainFile);
+      mTrainFile = fopen(train_file_path().c_str(), "rb");
+        if (!mTrainFile) {
+          *mOutput << mName << ": could not open '" << train_file_path() << "' to read training data.\n";
+          return;
+        }
+    
+        // 2. load all training vectors in memory
+        mTrainingSize = 0;
+        while(load_training_vector());
+      fclose(mTrainFile);
+      
+      mTrainFile = NULL;
+    
+    }
+    
+    if(mTrainingSize < mCodebookSize) {
+      *mOutput << mName << ": number of training vectors (" << mTrainingSize << ") too small compared to codebook size.\n";
+      return;
+    }
+    
+    *mOutput << mName << ": building codebook from " << mTrainingSize << " training vectors.\n";
+    
+    // 3. allocate nearest_cb used by ff_do_elbg. Sets the nearest codebook entry for each training vector.
+    int * nearest_cb = (int*)malloc(mVectorSize * mTrainingSize * sizeof(int));
+    if (!nearest_cb) {
+      *mOutput << mName << ": could not allocate " << mVectorSize * mTrainingSize << " integers for nearest_cb.\n";
+      return;
+    }
+    
+    memset(nearest_cb, 0, mTrainingSize);
+    // 3. build codebook
+    
+    // initialization
+    AVRandomState rand_state;
+    av_init_random(1234, &rand_state); // seed doesn't matter since we just need uniform distribution, not crypto
+    ff_init_elbg(mTrainingData, mVectorSize, mTrainingSize, mCodebook, mCodebookSize, 2, nearest_cb, &rand_state);
+    
+    // generate codebook
+    ff_do_elbg  (mTrainingData, mVectorSize, mTrainingSize, mCodebook, mCodebookSize, 2, nearest_cb, &rand_state);
+    
+    // 4. cleanup
+    free(nearest_cb);
+    
+    // 5. save to file
+    FILE * file = fopen(codebook_path().c_str(), "wb");
+      if (!file) {
+        *mOutput << mName << ": could not write codebook to '" << codebook_path() << "'\n.";
         return;
       }
+      printf("Writing %i x %i to file.\n", mCodebookSize, mVectorSize);
+      for(int i=0; i < mCodebookSize; i++)
+        for(int j=0; j < mVectorSize; j++) {
+          printf(" %i", mCodebook[i * mVectorSize + j]);
+          fprintf(file, " %.5f", ((float)mCodebook[i * mVectorSize + j]))/mScale;
+        }
+        printf("\n");
+        fprintf(file, "\n");
+      
+    fclose(file);
     
-      // 2. load all training vectors in memory
-      mTrainingSize = 0;
-      while(load_training_vector());
-    fclose(mTrainFile);
-    mTrainFile = NULL;
-    
-    // 3. train
-    
-    // 4. cleanup ?
+    if (mState == Learning)
+      *mOutput << mName << ": training complete.\n";
+    mState = Label; // training done
   }
   
   bool load_training_vector()
   {
-    // 0. allocate memory
-    if(!mTrainingData) {
-      // allocate a first vector
-      mTrainingDataSize = INITIAL_TRAINING_DATA_SIZE;
-      mTrainingData = (double**)malloc(mTrainingDataSize * sizeof(double*));
-      if (!mTrainingData) {
-        *mOutput << mName << ": could not allocate " << mTrainingDataSize << " doubles pointers for training data.\n";
-        return false;
-      }
-    } else if (mTrainingSize >= mTrainingDataSize) {
-      // training data vector too small
-      double ** new_buf;
-      mTrainingDataSize *= 2;
-      new_buf = (double**)realloc(mTrainingData, mTrainingDataSize * sizeof(double*));
-      if (!new_buf) {
-        *mOutput << mName << ": could not allocate " << mTrainingDataSize << " doubles pointers for training data.\n";
-        return false;
-      } else mTrainingData = new_buf;
-    }
+    int * vector = alloc_vector_pointer(); // write directly in training buffer
+    if (!vector) return false;
     
-    // 1. read mVectorSize doubles
-    double * vector = (double*) malloc(mVectorSize * sizeof(double));
-    if (!vector) {
-      *mOutput << mName << ": could not allocate " << mVectorSize << " doubles for training vector " << mTrainingSize+1 << ".\n";
-      return false;
-    }
     float val;
     for(int i=0; i < mVectorSize; i++) {
       // read a float
-      if(fscanf(mTrainFile, " %f", &val) <= 0) {
-        *mOutput << mName << ": file format reading training vector " << mTrainingSize+1 << " error.\n";
+      if(fscanf(mTrainFile, " %f", &val) == EOF) {
+        if (i != 0) // premature end of data
+          *mOutput << mName << ": file format reading training vector " << mTrainingSize+1 << " error.\n";
         return false;
       }
       fscanf(mTrainFile, "\n"); // ignore newline
-      vector[i] = (double)val;
+      vector[i] = (int)(mScale * val);
     }
-    
-    mTrainingData[mTrainingSize] = vector;
     mTrainingSize++;
   }
   
-  void free_buffer(double ** pBuffer, int pMajorSize)
+  void add_to_database(double * pVector)
+  {
+    int * vector = alloc_vector_pointer();
+    if (!vector) return;
+    
+    for(int i=0; i < mVectorSize; i++) vector[i] = (int)(mScale * pVector[i]);
+    
+    mTrainingSize++;
+  }
+  
+  int * alloc_vector_pointer()
+  {
+    if(!mTrainingData) {
+      // allocate a first buffer
+      mTrainingDataSize = INITIAL_TRAINING_DATA_SIZE;
+      mTrainingData = (int*)malloc(mTrainingDataSize * mVectorSize * sizeof(int));
+      if (!mTrainingData) {
+        *mOutput << mName << ": could not allocate " << mTrainingDataSize * mVectorSize << " integers for training data.\n";
+        return NULL;
+      }
+    } else if (mTrainingSize >= mTrainingDataSize) {
+      // training data buffer too small, reallocate
+      int * new_buf;
+      mTrainingDataSize *= 2;
+      new_buf = (int*)realloc(mTrainingData, mTrainingDataSize * mVectorSize * sizeof(int));
+      if (!new_buf) {
+        *mOutput << mName << ": could not reallocate " << mTrainingDataSize * mVectorSize << " integers for training data.\n";
+        return NULL;
+      } else mTrainingData = new_buf;
+    }
+    return mTrainingData + (mTrainingSize * mVectorSize);
+  }
+  
+  void free_buffer(int ** pBuffer, int pMajorSize)
   {
     for(int i=0; i < pMajorSize; i++) {
       if (!pBuffer[i]) continue;
@@ -311,8 +403,10 @@ private:
   std::string mFolder;     /**< Where to store training data, codebook vectors. */
   
   int       mVectorSize;   /**< Dimension of a vector. */
-  double ** mCodebook;     /**< Array of mCodebookSize pointers to vectors of size mVectorSize. */
-  double ** mTrainingData; /**< Array of mTrainingSize pointers to vectors of size mVectorSize. */
+  int  *    mVector;       /**< Integer version of the live vector used during encoding. */
+  double    mScale;        /**< Value to multiply doubles before conversion to integer. */
+  int  *    mCodebook;     /**< Array of mCodebookSize pointers to vectors of size mVectorSize as integers. */
+  int  *    mTrainingData; /**< Array of mTrainingSize pointers to vectors of size mVectorSize as integers. */
   FILE *    mTrainFile;    /**< Where the training vectors are stored. */
   int       mTrainingDataSize;  /**< Size of mTrainingData buffer. */
   int       mTrainingSize;  /**< Number of training vectors. */
