@@ -1,11 +1,9 @@
 c = Cabox(port:"/dev/tty.HOME001-GenericSerial-1" bauds:115200)
 c => b
-b = Buffer(384)
+b = Buffer(192)
 b => f
-f = FFT(unit:12 size:32)
-f => dc_crop
-dc_crop = Crop(-372)
-dc_crop => crop
+f = FFT(unit:12 size:16)
+f => crop
 crop = Crop(96)
 key = Keyboard()
 key => svm
