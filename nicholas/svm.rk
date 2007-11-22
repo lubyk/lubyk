@@ -13,6 +13,7 @@ svm.2 => midi
 svm.3 => plot
 svm.4 => 2.plot
 svm=>lua
+c.2 => 2.lua
 lua = Lua(load:"nicholas/record.lua")
 lua => noteout
 noteout = NoteOut()

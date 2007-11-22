@@ -1,16 +1,12 @@
 old = 0
+cooled = false
+out = 0
 function bang()
- -- print(in1)
-  if (in1 == 46) then
-    return
-  end
-	if (old ~= in1) then
-		print(in1)
+	if (in1 == 46 or old == in1) then
 		old = in1
-		if (in1 == 50) then
-			return 46
-		else
-			return in1
-		end
+		return
 	end
+	old = in1
+	print(in1)
+	return in1
 end
