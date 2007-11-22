@@ -88,14 +88,14 @@ public:
       break;
     case Learning:
       if (sig.get(&cmd)) {
-        if (cmd == '\e') {
+        if (cmd == 'a') {
           *mOutput << mName << ": aborting learn.\n";
           mState = Waiting;
           // wait for thread to finish
           if (mThread) pthread_join( mThread, NULL); // wait for child to finish
           mThread = NULL;
         } else {
-          *mOutput << mName << ": type 'ESC' to abort learning phase.\n";
+          *mOutput << mName << ": type 'a' to abort learning phase.\n";
         }
       } else {
         // ignore other inputs.
@@ -106,7 +106,7 @@ public:
         if (sig.array.size == mVectorSize) {
           int label = label_for(sig.array.value);
           if (mDebug) *mOutput << mName << ": " << label << "\n";
-          send(label);
+          send(label / (double)mCodebookSize);
         } else {
           *mOutput << mName << ": wrong signal size '" << sig.array.size << "'. Should be '" << mVectorSize << "'.\n";
         }
@@ -126,7 +126,7 @@ private:
     // FIXME: there are much better algorithms then full search !
     // Use QccPack ?
     
-    // 1. scale to integers
+    // 1. scale to integers (Could be avoided if we store the codebook in integer)
     for (int i=0; i < mVectorSize; i++)
       mVector[i] = (int)(pVector[i] * mScale);
       
@@ -187,8 +187,9 @@ private:
           }
           fscanf(file, "\n"); // ignore newline
           mCodebook[vector_count * mVectorSize + i] = (int)(val * mScale);
-          vector_count++;
         }
+        printf("Loaded %i\n", vector_count+1);
+        vector_count++;
       }
     fclose(file);
     return true;
@@ -235,6 +236,7 @@ private:
         }
       }
       mTrainingSize = 0;
+      *mOutput << mName << ": recording started.\n";
       mState = Recording;
       break;
     case Learning:
@@ -309,14 +311,14 @@ private:
         return;
       }
       printf("Writing %i x %i to file.\n", mCodebookSize, mVectorSize);
-      for(int i=0; i < mCodebookSize; i++)
+      for(int i=0; i < mCodebookSize; i++) {
         for(int j=0; j < mVectorSize; j++) {
           printf(" %i", mCodebook[i * mVectorSize + j]);
-          fprintf(file, " %.5f", ((float)mCodebook[i * mVectorSize + j]))/mScale;
+          fprintf(file, " %.5f", ((float)mCodebook[i * mVectorSize + j])/mScale);
         }
         printf("\n");
         fprintf(file, "\n");
-      
+      }
     fclose(file);
     
     if (mState == Learning)
@@ -340,7 +342,10 @@ private:
       fscanf(mTrainFile, "\n"); // ignore newline
       vector[i] = (int)(mScale * val);
     }
+    
+    printf("Loaded train %i\n", mTrainingSize+1);
     mTrainingSize++;
+    return true;
   }
   
   void add_to_database(double * pVector)

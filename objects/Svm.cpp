@@ -72,7 +72,6 @@ public:
   bool init(const Params& p)
   {
     mVectorSize = p.val("vector", 32);
-    mRecognitionWindow = mVectorSize * 0.8; // 0.5 makes huge data sets and takes long to compute...
     mSampleRate = p.val("rate", 256);
     mUnitSize   = p.val("unit", 1);    // number of values form a sample
     mMargin     = p.val("margin", 1.0);
@@ -80,7 +79,7 @@ public:
     mThreshold  = p.val("threshold", 0.0);
     mSvmCparam  = p.val("cost", 2.0);          // svm cost
     mSvmGammaParam = p.val("gamma", 0.0078125); // svm gamma in RBF
-    mUseSnap    = p.val("snap", 0) == 1 ;
+    mUseSnap    = p.val("snap", 1) == 1 ;
     mProbabilityThreshold = p.val("filter", 0.8);
     
     mBufferSize = mVectorSize * (1.0 + mMargin);
@@ -118,7 +117,6 @@ public:
     mProblem.x = NULL;
     mXSpace    = NULL;
     
-    
     load_model();
     return true;
   }
@@ -129,9 +127,13 @@ public:
     int cmd;
     
     if (!mIsOK) return; // no recovery
-    if (sig.type == ArraySignal && sig.array.size >= mBufferSize) {
-      mLiveBuffer = sig.array.value;
-      mLiveBufferSize = sig.array.size;
+    if (sig.type == ArraySignal) {
+      if (sig.array.size >= mBufferSize) {
+        mLiveBuffer = sig.array.value;
+        mLiveBufferSize = sig.array.size;
+      } else {
+        *mOutput << mName << ": wrong signal size " << sig.array.size << " should be " << mBufferSize << " (with margin)\n.";
+      }
     } else {
       time_t record_time = (time_t)(ONE_SECOND * mVectorSize / (mSampleRate * mUnitSize));
       time_t record_with_margin = (time_t)(ONE_SECOND * mVectorSize * (1 + mMargin/2.0) / (mSampleRate * mUnitSize));
@@ -222,7 +224,6 @@ public:
     }
     
     if (mState == Validation) {
-      
       // recorded signal
       mS.array.value = mBuffer + mUseVectorOffset;
       mS.array.size  = mVectorSize;
@@ -237,6 +238,7 @@ public:
         mS.type  = ArraySignal;
         send(mS, 5);
         if (mDebug) {
+          *mOutput << mLabelCount << " labels:\n";
           for(int i = 0; i< mLabelCount; i++)
             *mOutput << "  " << mLabels[i];
           *mOutput << std::endl << mS << std::endl;
@@ -250,7 +252,6 @@ public:
         
         if (change) send(mClassLabel);
     } else {
-
       // live signal
       mS.array.value = mLiveBuffer + mLiveBufferSize - mVectorSize;
       mS.array.size  = mVectorSize;
@@ -273,8 +274,7 @@ public:
 private:
   
   
-  /** Transform the raw data into the sparse format used by libsvm. To recognize live streams, the
-    * window used is smaller then the actual data and we slide it across the signal.
+  /** Transform the raw data into the sparse format used by libsvm. 
     * Use mThreshold to fix what is considered as zero. This outputs the file 'svm.train' containing 
     * all data with labels from the classes in mFolder. */
   void build()
@@ -368,7 +368,7 @@ private:
     int i,pos,j = 0; // svm_node index
     double * vector = mLiveBuffer + mLiveBufferSize - mVectorSize;
     
-    for(int i=0;i < mRecognitionWindow; i++) {
+    for(int i=0;i < mVectorSize; i++) {
       if (vector[i]) {
         mNode[j].index = i;
         mNode[j].value = vector[i];
@@ -427,7 +427,7 @@ private:
   {
     double * vector;
     if (!mLiveBuffer) {
-      *mOutput << mName << ": no data to record (nothing coming from inlet 2).\n";
+      *mOutput << mName << ": no data to record (no stream coming from inlet 1).\n";
       mBuffer = NULL;
       return;
     }
@@ -586,19 +586,18 @@ private:
     fclose(file);
   }
   
-  /** Slide each prototype along the window and write as a sparse vector. */
+  /** Write as a sparse vector. */
   void write_as_sparse (double * vector)
   {
     if (!mTrainFile) return;
-    for(int j=0; j < mVectorSize - mRecognitionWindow; j++) {
-      fprintf(mTrainFile, "%+i", mClassLabel);
-      for(int i=0; i < mRecognitionWindow; i++) {
-        if (vector[j+i]) {
-          fprintf(mTrainFile, " %i:%.5f", i+1, (float)vector[j+i]);
-        }
+    
+    fprintf(mTrainFile, "%+i", mClassLabel);
+    for(int i=0; i < mVectorSize; i++) {
+      if (vector[i] >= mThreshold || vector[i] <= -mThreshold) {
+        fprintf(mTrainFile, " %i:%.5f", i+1, (float)vector[i]);
       }
-      fprintf(mTrainFile, "\n");
     }
+    fprintf(mTrainFile, "\n");
     mVectorCount++;
   }
   
@@ -773,7 +772,6 @@ readpb_fail:
   double * mBuffer;     /**< Store a single vector +  margin. */
   double   mMargin;     /**< Size (in %) of the margin. */
   int mVectorSize;
-  int mRecognitionWindow; /**< Size of window used for recognition. Must be smaller then mVectorSize. */
   int mUnitSize;       /**< How many values form a sample (single event). */
   int mVectorCount;    /**< Number of vectors used to build the current mean value. */
   int mSampleRate; /**< How many samples per second do we receive from the 'data' inlet. */

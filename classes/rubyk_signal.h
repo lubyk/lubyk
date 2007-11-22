@@ -264,6 +264,8 @@ union Signal {
       return "VoidPointerSignal";
     case MidiSignal:
       return "MidiSignal";
+    case NilSignal:
+      return "NilSignal";    
     default:
       return "???";
     }
@@ -300,14 +302,14 @@ inline std::ostream& operator<< (std::ostream& pStream, const Signal& sig)
     break;
   case ArraySignal:
     if (sig.array.size == 0) {
-      snprintf(buffer, 50, "<array %p,%i>",sig.array.value, sig.array.size);
+      snprintf(buffer, 50, "<%s %p,%i>",sig.type_name(), sig.array.value, sig.array.size);
       pStream << buffer;
     } else {
       int sz = 16;
       int start;
       if (sz > sig.array.size) sz = sig.array.size;
       start = sig.array.size - sz;
-      snprintf(buffer, 50, "<array %p (% .2f", sig.array.value, sig.array.value[start]);
+      snprintf(buffer, 50, "<%s %p (% .2f", sig.type_name(), sig.array.value, sig.array.value[start]);
       pStream << buffer;
       for (int i= start+1; i < start+sz; i++) {
         snprintf(buffer, 50, ", % .2f", sig.array.value[i]);
@@ -317,14 +319,14 @@ inline std::ostream& operator<< (std::ostream& pStream, const Signal& sig)
     }
     break;
   case VoidPointerSignal:
-    snprintf(buffer, 50, "<ptr %p,%i>",sig.ptr.value, sig.ptr.free_me);
+    snprintf(buffer, 50, "<%s %p,%i>",sig.type_name(), sig.ptr.value, sig.ptr.free_me);
     pStream << buffer;
     break;
   case MidiSignal:
-    pStream << "<note "<< *(sig.midi_ptr.value) << ">";
+    pStream << "<" << sig.type_name() << " " << *(sig.midi_ptr.value) << ">";
     break;
   default:
-    pStream << "<\?\?>";
+    pStream << "<" << sig.type_name() << ">";
   }
   return pStream;
 }

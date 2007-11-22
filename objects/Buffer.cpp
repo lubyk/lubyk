@@ -55,9 +55,14 @@ public:
         if (sig.get(&d)) write_buf(d);
       }
       mS.array.value = mBuffer + mReadPosition;
+      if (mDebug)
+        *mOutput << mName << ": " << mS << std::endl;
       send(mS);
-    } else
+    } else {
+      if (mDebug)
+        *mOutput << mName << ": " << mS << std::endl;
       send(sig);
+    }
   }
 
   inline void write_buf(float f)

@@ -103,7 +103,8 @@ public:
       // sig.array.value (real) --FFT---> mFrequencies (complex)
       mProcessor->do_fft(mFrequencies, sig.array.value);
     }
-    
+    if (mDebug)
+      *mOutput << mName << ": " << mS << std::endl; // FIXME: send oldest values not most recent
     send(mS);
   }
   
