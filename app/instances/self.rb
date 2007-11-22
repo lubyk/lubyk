@@ -1,2 +1,0 @@
-@play.sync
-@beat.sync
