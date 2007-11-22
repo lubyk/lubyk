@@ -15,6 +15,15 @@ libsvm
 	copyright: see objects/svm/COPYRIGHT
 	license  : MIT License
 
+
+FFT
+---
+	brief    : Fast Fourier Transform used in the 'FFT' object.
+	authors  : Laurent de Soras
+	website  : http://ldesoras.free.fr/prod.html
+	copyright: see objects/fft/readme.txt
+	license  : LGPL
+
 	
 ELBG
 ----

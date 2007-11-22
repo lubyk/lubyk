@@ -11,7 +11,9 @@ be achieved for the following objects:
 ------------------------------------------------------------------
  object     | license       | source
 ------------------------------------------------------------------
+ FFT        | LGPL          | Laurent de Soras (http://ldesoras.free.fr/prod.html)
  Quantize   | LGPL          | FFmpeg (http://ffmpeg.mplayerhq.hu/)
+------------------------------------------------------------------
 
 Please read the CREDITS file for information on copyright owners of specific
 parts of the software (Lua, libsvm, ...).
