@@ -1,3 +1,5 @@
+// build with
+// gcc blas.c -framework Accelerate -o test
 #include <Accelerate/Accelerate.h>
 #include <stdlib.h>
 #include <stdio.h>
