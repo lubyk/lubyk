@@ -210,6 +210,15 @@ public:
         } else if (cmd == (int)'l') {
           if (!do_learn()) return;
           // no need to load model from file, it's in memory
+        } else if (cmd == (int)' ') {
+          // show current signal value as sparse vector
+          double * vector = mLiveBuffer + mLiveBufferSize - mVectorSize;
+          for(int i=0;i < mVectorSize; i++) {
+            if (vector[i] >= mThreshold || vector[i] <= -mThreshold) {
+              printf(" %i:%.5f", i+1, (float)vector[i]);
+            }
+          }
+          printf("\n");
         }
       }
     }
@@ -356,6 +365,7 @@ private:
     mModel = svm_train(&mProblem, &mSvmParam);
     svm_save_model(model_file_path().c_str(),mModel);
     
+    load_model();
     return true;
   }
   
@@ -369,12 +379,14 @@ private:
     double * vector = mLiveBuffer + mLiveBufferSize - mVectorSize;
     
     for(int i=0;i < mVectorSize; i++) {
-      if (vector[i]) {
-        mNode[j].index = i;
+      if (vector[i] >= mThreshold || vector[i] <= -mThreshold) {
+        //printf(" %i:%.5f", i+1, (float)vector[i]);
+        mNode[j].index = i+1;
         mNode[j].value = vector[i];
         j++;
       }
     }
+    //printf("\n");
     mNode[j].index = -1; // end of vector definition
     
     if (mLabelCount > 1) {
@@ -492,11 +504,9 @@ private:
         return;
       }
       for(int i=0; i< mVectorSize; i++) {
-        fprintf(file, "% .5f", vector[i]);
+        fprintf(file, " % .5f", vector[i]);
         if ((i+1)%mUnitSize == 0)
           fprintf(file, "\n");
-        else
-          fprintf(file, " ");
       }  
       fprintf(file, "\n");  // two \n\n between vectors
     fclose(file);

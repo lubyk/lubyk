@@ -200,7 +200,7 @@ private:
   {
     if (!mTrainFile) return;
     for(int i=0; i < mVectorSize; i++)
-      fprintf(mTrainFile, " %.5f", (float)vector[i]);
+      fprintf(mTrainFile, " % .5f", (float)vector[i]);
       
     fprintf(mTrainFile, "\n");
     
