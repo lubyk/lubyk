@@ -1,0 +1,30 @@
+Rubyk
+-----
+
+Rubyk is a patcher written in C++ for realtime signal processing.
+
+History
+-------
+
+I started this tool for the show 'home'  (first showed in Arsenic, Lausanne, Switzerland in January 2008)
+because I wanted to be able to write Ruby scripts inside a multimedia application. I never felt at home
+in the purely visual patchers where you can get lost quite quickly if you create complex works.
+
+Due to speed issues with the first prototype in Ruby, I decided to write the whole thing in C. As I quickly
+felt like reinventing object orientation I thought it would be more natural to use C++. The project now uses
+Lua for scripting for its speed and ease of integration but the name rubyk (Ruby Kontroller) was kept. In my
+country (Switzerland) rubies are used in clockworks so Rubyk is also a reference to this tradition.
+
+Design goals
+------------
+
+I made a lot of efforts so that writing new objects is very easy (look at the code for Print or Metro). This
+makes the development/wrapping of new features very lightweight. All these efforts weren't made to the detriment
+of speed which was my main concern with this tool (it was meant to run on mac minis in realtime !).
+
+Contact
+-------
+
+The website for this project is: http://rubyk.org
+
+If you have any questions, propositions, improvements, contact me (art thisisanat gaspardbuma thisisadot org).
