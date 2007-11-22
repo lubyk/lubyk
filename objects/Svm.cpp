@@ -74,7 +74,7 @@ public:
     mVectorSize = p.val("vector", 32);
     mSampleRate = p.val("rate", 256);
     mUnitSize   = p.val("unit", 1);    // number of values form a sample
-    mMargin     = p.val("margin", 1.0);
+    mMargin     = p.val("margin", 2.0);
     mFolder     = p.val("store", std::string("svm_data"));
     mThreshold  = p.val("threshold", 0.0);
     mSvmCparam  = p.val("cost", 2.0);          // svm cost

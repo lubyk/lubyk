@@ -1,14 +1,10 @@
 c = Cabox(port:"/dev/tty.HOME001-GenericSerial-1" bauds:115200)
 c => b
-b = Buffer(192)
-b => f
-f = FFT(unit:12 size:16)
-f => crop
-crop = Crop(96)
+b = Buffer(864)
 key = Keyboard()
 key => svm
-crop => svm
-svm = Svm(vector:96 rate:64 unit:12 store:"nicholas/data" cost:32.0 gamma:0.0078125 margin:0 snap:0 threshold:0.0003)
+b => svm
+svm = Svm(vector:288 rate:64 unit:12 store:"nicholas/data" cost:8.0 gamma:0.0078125 threshold:0.0003)
 svm.2 => midi
 svm.3 => plot
 svm.4 => 2.plot
