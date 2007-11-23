@@ -77,6 +77,17 @@ bool Node::alloc_doubles(double ** pBuffer, int pSize, const char * pName)
   return true;
 }
 
+bool Node::realloc_doubles(double ** pBuffer, int pSize, const char * pName)
+{
+  double * buf = (double*)realloc(*pBuffer, pSize * sizeof(double));        
+  if (!buf) {
+    *mOutput << mName << ": could not reallocate " << pSize << " doubles for " << pName << ".\n";
+    return false;
+  }
+  *pBuffer = buf;
+  return true;
+}
+
 const char * Node::inspect() {
   if (mIsOK)
     bprint(mInspect, mInspectSize, "#<%s:%s %s>", class_name(), mName.c_str(), get_spy());
@@ -95,7 +106,7 @@ void Node::execute_method (const std::string& pMethod, const Params& p)
   member_method_t method;
   if (pMethod == "help" ){
     help();
-  } else if (pMethod == "debug" ){
+  } else if (pMethod == "debug" || pMethod == "d" ){
     debug();
   } else if (mClass->get_member_method(&method, pMethod)) {
     (*method)(this, p);

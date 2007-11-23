@@ -15,7 +15,7 @@
 */
 
 // compute the eigenvectors and eigenvalues for a symmetric matrix 'source'.
-static int sym_eigen(float* source, long sourceSize, long* eigencount, float* eigenvalues, float* eigenvectors) {
+static int sym_eigen(double* source, long sourceSize, long* eigencount, double* eigenvalues, double* eigenvectors) {
   // we have to instanciate all parameters as they are passed by reference.
   char jobz  = 'V';       //  1. 'N': compute eigenvalues only, 'V': eigenvalues and eigenvectors.
   char range = 'A';       //  2. 'A': find all eigenvalues, 
@@ -25,18 +25,18 @@ static int sym_eigen(float* source, long sourceSize, long* eigencount, float* ei
   long n   = sourceSize;  //  4. Order of the matrix A (size of A is NxN).
   // (A) source           //  5.  source array
   long lda = sourceSize;  //  6. Leading dimension of A (=N).
-  float vl = 0.0;         //  7. See RANGE. (L stands for Low)
-	float vu = 0.0;         //  8. See RANGE. (U stands for Up)
+  double vl = 0.0;         //  7. See RANGE. (L stands for Low)
+	double vu = 0.0;         //  8. See RANGE. (U stands for Up)
 	long  il = 0.0;         //  9. See RANGE.
 	long  iu = 0.0;         // 10. See RANGE.
-	float abstol = 0.01;    // 11. Absolute error tolerance for the eigenvalues. If set to zero, 
+	double abstol = 0.01;    // 11. Absolute error tolerance for the eigenvalues. If set to zero, 
 													//     machine precision will be used during convergence test. Higher values = faster but less precise.
 	// (M) eigencount       // 12. Output of the number of eigenvalues found.
   // (W) eigenvalues      // 13. Output eigenvalues in ascending order.
   // (Z) eigenvector      // 14. Output array. First M columns contain the orthonormal eigenvectors. i-th column contains the eigenvector associated with the i-th eigenvalue.
 	long ldz = sourceSize;  // 15. Leading dimension of Z (=N).
  	long isuppz[2 * sourceSize];// 16. Output array of integers telling which eigenvectors are nonzero. ??
- 	float work[200];        // 17. Workspace (real array)
+ 	double work[200];        // 17. Workspace (real array)
   long lwork = 200;       // 18. Size of the workspace. Should be >= (NB+6)N where NB is the maximal blocksize for SSYTRD and SORMTR returned by ILAENV
  	long iwork[20];         // 19. Workspace (integer array)
 	long liwork = 20;       // 20. Size of IWORK array. Should be >= 10N
@@ -44,10 +44,10 @@ static int sym_eigen(float* source, long sourceSize, long* eigencount, float* ei
 	
 	
   // compute the eigenvectors of A:
-	ssyevr_( &jobz, &range, &uplo, &n, source, &lda, &vl, &vu, &il, &iu, &abstol, eigencount, eigenvalues, eigenvectors, &ldz, isuppz, work, &lwork, iwork, &liwork, &info );
+	dsyevr_( &jobz, &range, &uplo, &n, source, &lda, &vl, &vu, &il, &iu, &abstol, eigencount, eigenvalues, eigenvectors, &ldz, isuppz, work, &lwork, iwork, &liwork, &info );
 }
 
-void print_matrix(float* matrix, int m, int n, int rowMode) {
+void print_matrix(double* matrix, int m, int n, int rowMode) {
 	int i,j;
 	
   for(i=0;i<m;i++) {
@@ -62,15 +62,15 @@ void print_matrix(float* matrix, int m, int n, int rowMode) {
 }
   
 int main () {
-  float *T, *A;
+  double *T, *A;
   int i;
 	long eigencount;
-	float eigenvalues[2];
-	float eigenvectors[4];
+	double eigenvalues[2];
+	double eigenvectors[4];
 	
   // allocate space for the matrices (2x3) and (2x2)
-  T  = ( float * ) malloc ( sizeof ( float ) * 2 * 3 );
-  A  = ( float * ) malloc ( sizeof ( float ) * 2 * 2 );
+  T  = ( double * ) malloc ( sizeof ( double ) * 2 * 3 );
+  A  = ( double * ) malloc ( sizeof ( double ) * 2 * 2 );
   
   T[0+0] =  0; T[0+1] = -1;
   T[2+0] = -1; T[2+1] =  2;
@@ -81,7 +81,7 @@ int main () {
 	print_matrix(T, 3, 2, CblasRowMajor);
 	
   // compute A = T'*T
-  cblas_sgemm(CblasRowMajor, CblasTrans , CblasNoTrans , 2, 2, 3, 1, T, 2, T, 2, 0.0, A, 2);
+  cblas_dgemm(CblasRowMajor, CblasTrans , CblasNoTrans , 2, 2, 3, 1, T, 2, T, 2, 0.0, A, 2);
 	printf("\n======= A = T'*T          =======\n");
 	print_matrix(A, 2, 2, CblasRowMajor);
 	

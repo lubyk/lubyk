@@ -9,16 +9,16 @@ TEST=test/*_test.h test/objects/*_test.h
 test: test/runner test/runner.cpp
 	./test/runner && rm test/runner.cpp
 
-rubyk: classes/main.cpp command.o rubyk.o node.o inlet.o outlet.o slot.o params.o class.o lua.o classes/lua/src/liblua.a objects
-	$(CC) $(CFLAGS) -o rubyk -Itest -Itemplates -Iclasses -Iobjects -I. classes/main.cpp slot.o inlet.o outlet.o params.o node.o class.o command.o rubyk.o lua.o classes/lua/src/liblua.a
+rubyk: classes/main.cpp command.o rubyk.o node.o inlet.o outlet.o slot.o params.o class.o lua.o matrix.o classes/lua/src/liblua.a objects
+	$(CC) $(CFLAGS) -o rubyk -Itest -Itemplates -Iclasses -Iobjects -I. classes/main.cpp slot.o inlet.o outlet.o params.o node.o class.o command.o matrix.o rubyk.o lua.o classes/lua/src/liblua.a -framework Accelerate
 
-objects: lib/Test.rko lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/Midi.rko lib/NoteOut.rko lib/Lua.rko lib/Serial.rko lib/Turing.rko lib/Keyboard.rko lib/Cabox.rko lib/Svm.rko lib/Buffer.rko lib/Pack.rko lib/Plot.rko lib/Crop.rko lib/MaxCount.rko lib/Tokenize.rko lib/FFT.rko lib/VQ.rko
+objects: lib/Test.rko lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/Midi.rko lib/NoteOut.rko lib/Lua.rko lib/Serial.rko lib/Turing.rko lib/Keyboard.rko lib/Cabox.rko lib/Svm.rko lib/Buffer.rko lib/Pack.rko lib/Plot.rko lib/Crop.rko lib/MaxCount.rko lib/Tokenize.rko lib/FFT.rko lib/VQ.rko lib/ClassRecorder.rko lib/PCA.rko
 	
 test/runner.cpp: test/*_test.h test/objects/*_test.h
 	./test/cxxtest/cxxtestgen.pl --error-printer -o test/runner.cpp $(TEST)
 	
 test/runner: test/runner.cpp command.o rubyk.o node.o inlet.o outlet.o slot.o params.o class.o lua.o classes/lua/src/liblua.a objects
-	$(CC) $(CFLAGS) -Itest -Itemplates -Iclasses -Iobjects -I. test/runner.cpp slot.o inlet.o outlet.o params.o node.o class.o command.o rubyk.o lua.o classes/lua/src/liblua.a -o test/runner
+	$(CC) $(CFLAGS) -Itest -Itemplates -Iclasses -Iobjects -I. test/runner.cpp slot.o inlet.o outlet.o params.o node.o class.o command.o rubyk.o lua.o classes/lua/src/liblua.a matrix.o -o test/runner -framework Accelerate
 
 slot.o: classes/slot.cpp classes/slot.h
 	$(CC) $(CFLAGS) -c -Itemplates classes/slot.cpp -o slot.o
@@ -50,7 +50,9 @@ command.o: classes/command.cpp classes/command.h classes/mutex.h
 command.o.bak: classes/command.cpp classes/command.h parser/parser.c lexer.o	
 	$(CC) $(CFLAGS) -c -Iclasses -Itemplates classes/command.cpp parser/parser.c parser/lexer.o -O2 -Wl,-x -pipe -lm -o command.o
 
-
+matrix.o: classes/matrix.cpp
+	$(CC) $(CFLAGS) -c classes/matrix.cpp -o matrix.o
+	
 lib/Test.rko: objects/Test.cpp
 	$(CC) $(CFLAGS) -o lib/Test.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Test.cpp
 	
@@ -120,12 +122,16 @@ lib/FFT.rko: objects/FFT.cpp
 	$(CC) $(CFLAGS) -o lib/FFT.rko -Itemplates -Iclasses -Iobjects/fft -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/FFT.cpp
 	
 lib/VQ.rko: objects/VQ.cpp
-	$(CC) $(CFLAGS) -o lib/VQ.rko -Itemplates -Iclasses -Iobjects/VQ -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/VQ.cpp objects/VQ/elbg.c objects/VQ/random.c
+	$(CC) $(CFLAGS) -o lib/VQ.rko -Itemplates -Iclasses -Iobjects/vq -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/VQ.cpp objects/vq/elbg.c objects/vq/random.c
 
+lib/ClassRecorder.rko: objects/ClassRecorder.cpp
+	$(CC) $(CFLAGS) -o lib/ClassRecorder.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/ClassRecorder.cpp
+
+lib/PCA.rko: objects/PCA.cpp
+	$(CC) $(CFLAGS) -o lib/PCA.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/PCA.cpp
 
 lua.o: classes/lua/lua_script.cpp classes/lua_script.h classes/script.h
 	$(CC) $(CFLAGS) -c -o lua.o -Itemplates -Iclasses -Iclasses/lua/src classes/lua/lua_script.cpp
-
 
 classes/lua/src/liblua.a:
 	cd classes/lua/src && make $(PLAT)

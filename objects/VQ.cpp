@@ -3,14 +3,14 @@
 #define INITIAL_TRAINING_DATA_SIZE 512
 
 /** Svm states. */
-enum quantize_states_t {
+enum vq_states_t {
   Waiting,     /**< Waiting for command ('r'=Record, 'l'=Learn, '\n'=Label) */
   Recording,   /**< Writes each input vector in a file. */
   Learning,    /**< Computing codevectors in separate thread. */
   Label,       /**< Sends a label for each input vector. */
 };
 
-#include "VQ/elbg.h"
+#include "vq/elbg.h"
 /** Vector Quantization (reduce large vectors to an integer representing the index in the codebook). 
   * Uses the Enhanced LBG Algorithm implemented by the guys of FFmpeg project. */
 class VQ : public Node
@@ -37,7 +37,7 @@ public:
     mCodebookSize = p.val("resolution", 16); /**< Codebook size. The result will be an integer between
                                                *  [1..resolution]. Must be a power of 2. */
     mScale        = p.val("scale", 256.0);   /**< Value to multiply doubles before scaling to integers. */
-    mFolder       = p.val("store", std::string("quantize_data"));
+    mFolder       = p.val("data", std::string("data"));
     
     mThread    = NULL;
     mTrainFile = NULL;
@@ -155,14 +155,14 @@ private:
   std::string codebook_path()
   {
     std::string path(mFolder);
-    path.append("/quantize.book");
+    path.append("/").append(mName).append(".book");
     return path;
   }
   
   std::string train_file_path()
   {
     std::string path(mFolder);
-    path.append("/quantize.train");
+    path.append("/").append(mName).append(".train");
     return path;
   }
   
@@ -207,7 +207,7 @@ private:
     add_to_database(vector);
   }
   
-  void enter(quantize_states_t state)
+  void enter(vq_states_t state)
   {
     // cleanup
     if (mTrainFile) fclose(mTrainFile);

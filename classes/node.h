@@ -262,6 +262,9 @@ protected:
   /** Allocate doubles and print an error message if it fails. */
   bool alloc_doubles (double ** pBuffer, int pSize, const char * pName);
   
+  /** Reallocate doubles and print an error message if it fails. */
+  bool realloc_doubles (double ** pBuffer, int pSize, const char * pName);
+  
   // time in [ms]
   void bang_me_in (time_t pTime)
   {
