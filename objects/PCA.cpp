@@ -210,9 +210,10 @@ private:
     fclose(file);
     
     // we have our matrix.
-    Matrix::print_matrix(mClasses, mClassCount, mVectorSize, CblasRowMajor);
-    printf("\n");
-    
+    if (mDebug) {
+      Matrix::print_matrix(mClasses, mClassCount, mVectorSize, CblasRowMajor);
+      printf("\n");
+    }
     // 3. PCA
     
     // Compute T'T :
@@ -220,9 +221,10 @@ private:
     if(!Matrix::compute_symetric_matrix(&symmetric_matrix, mClasses, mClassCount, mVectorSize)) goto build_cleanup;
     
     
-    Matrix::print_matrix(symmetric_matrix, mVectorSize, mVectorSize, CblasRowMajor);
-    printf("\n");
-    
+    if (mDebug) {
+      Matrix::print_matrix(symmetric_matrix, mVectorSize, mVectorSize, CblasRowMajor);
+      printf("\n");
+    }
     // Find eigenvectors, eigenvalues of T'T :
     // find the eigenvectors of T'T :
     long eigen_count;
