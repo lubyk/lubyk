@@ -10,14 +10,14 @@ enum quantize_states_t {
   Label,       /**< Sends a label for each input vector. */
 };
 
-#include "quantize/elbg.h"
+#include "VQ/elbg.h"
 /** Vector Quantization (reduce large vectors to an integer representing the index in the codebook). 
   * Uses the Enhanced LBG Algorithm implemented by the guys of FFmpeg project. */
-class Quantize : public Node
+class VQ : public Node
 {
 public:
   
-  ~Quantize()
+  ~VQ()
   {
     mState = Waiting;
     if (mThread) pthread_join( mThread, NULL); // wait for child to finish
@@ -242,7 +242,7 @@ private:
     case Learning:
       mState = Learning;
       *mOutput << mName << ": training started.\n";
-      pthread_create( &mThread, NULL, &Quantize::call_train, (void*)this);
+      pthread_create( &mThread, NULL, &VQ::call_train, (void*)this);
       break;
     }
   }
@@ -251,7 +251,7 @@ private:
   static void* call_train(void * node)
   {
     // runs in new thread
-    ((Quantize*)node)->train();
+    ((VQ*)node)->train();
   }
   
   /** Compute codebook from the training database. 
@@ -420,6 +420,6 @@ private:
 
 extern "C" void init()
 {
-  CLASS(Quantize)
-  OUTLET(Quantize, label)
+  CLASS(VQ)
+  OUTLET(VQ, label)
 }

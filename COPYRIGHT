@@ -9,10 +9,10 @@ We try very hard not to include code with other licences but this could not
 be achieved for the following objects:
 
 ------------------------------------------------------------------
- object     | license       | source
+ object     | license       | source used
 ------------------------------------------------------------------
  FFT        | LGPL          | Laurent de Soras (http://ldesoras.free.fr/prod.html)
- Quantize   | LGPL          | FFmpeg (http://ffmpeg.mplayerhq.hu/)
+ VQ         | LGPL          | FFmpeg (http://ffmpeg.mplayerhq.hu/)
 ------------------------------------------------------------------
 
 Please read the CREDITS file for information on copyright owners of specific

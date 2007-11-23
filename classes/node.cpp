@@ -66,6 +66,17 @@ void Node::bprint(char *& pBuffer, int& pBufferSize, const char *fmt, ...)
   }
 }
 
+
+bool Node::alloc_doubles(double ** pBuffer, int pSize, const char * pName)
+{
+  *pBuffer = (double*)malloc(pSize * sizeof(double));        
+  if (!*pBuffer) {
+    *mOutput << mName << ": could not allocate " << pSize << " doubles for " << pName << ".\n";
+    return false;
+  }
+  return true;
+}
+
 const char * Node::inspect() {
   if (mIsOK)
     bprint(mInspect, mInspectSize, "#<%s:%s %s>", class_name(), mName.c_str(), get_spy());

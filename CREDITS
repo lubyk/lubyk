@@ -27,7 +27,7 @@ FFT
 	
 ELBG
 ----
-	brief    : Enhanced LBG. Vector Quantization used in the 'Quantize' object.
+	brief    : Enhanced LBG. Vector Quantization used in the 'VQ' object.
 	author   : Vitor Sessak <vitor1001@gmail.com>
 	website  : http://ffmpeg.mplayerhq.hu/
 	copyright: see objects/quantize/elbg.h
