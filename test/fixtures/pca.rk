@@ -1,5 +1,5 @@
 v  =Value(0.00)
 v => pca
-pca=PCA(vector:3 data:"test/fixtures/pca" keep:2)
+pca=PCA(vector:3 data:"test/fixtures/pca" processed:"test/fixtures/pca/processed" keep:2)
 pca => print
 print=Print()

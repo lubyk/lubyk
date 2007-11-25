@@ -13,12 +13,13 @@ public:
     if (mWorkBuffer)  free(mWorkBuffer);    // FIXME: replace these buffers with Buf<double>
     if (mClasses) free(mClasses);           // FIXME: replace these buffers with Buf<double>
     if (mMeanValue) free(mMeanValue);       // FIXME: replace these buffers with Buf<double>
+    if (mTransposedFile) fclose(mTransposedFile);
   }
 
   bool init(const Params& p)
   {
     if (!init_machine(p)) return false;
-    mProcessedFolder     = p.val("processed", std::string("processed")); // where to store training data transposed in new basis
+    mTransposedFolder     = p.val("processed", std::string("processed")); // where to store training data transposed in new basis
     mUnitSize   = p.val("unit", 1);
     mTargetSize = p.val("keep", 4); // target dimension
     if (mTargetSize > mVectorSize) {
@@ -26,6 +27,7 @@ public:
       mTargetSize = mVectorSize;
     }
     
+    mTransposedFile = NULL;
     
     if(!alloc_doubles(&mBuffer, mVectorSize, "output stream")) return false;
     if(!alloc_doubles(&mWorkBuffer, mVectorSize, "work buffer")) return false;
@@ -43,13 +45,7 @@ public:
         mLiveBuffer     = sig.array.value;
         mLiveBufferSize = sig.array.size;
         
-        // remove mean value
-        for(int i=0; i < mVectorSize; i++) {
-          mWorkBuffer[i] = mLiveBuffer[i] - mMeanValue[i];
-        }
-
-        // change vector basis ( S' = SP ) mBasis = P
-        cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 1, mTargetSize, mVectorSize, 1, mWorkBuffer, mVectorSize, mBasis, mVectorSize, 0.0, mBuffer, mVectorSize);
+        transpose_vector(mLiveBuffer);
 
         // send
         mS.type = ArraySignal;
@@ -86,14 +82,19 @@ public:
     }
     Matrix::print(mBasis, mTargetSize, mVectorSize, CblasRowMajor);
   }
-  
-  /** Transpose training data in new basis space. */
-  void transpose()
-  {
     
+private:
+  inline void transpose_vector(double * vector)
+  {
+    // remove mean value
+    for(int i=0; i < mVectorSize; i++) {
+      mWorkBuffer[i] = vector[i] - mMeanValue[i];
+    }
+
+    // change vector basis ( S' = SP ) mBasis = P
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 1, mTargetSize, mVectorSize, 1, mWorkBuffer, mVectorSize, mBasis, mVectorSize, 0.0, mBuffer, mVectorSize);
   }
   
-private:
   bool compute_mean_vector(const std::string& filename, double * vector)
   {
     if (vector == NULL) {
@@ -120,6 +121,32 @@ private:
     return true;
   }
   
+  bool transpose_in_new_basis(const std::string& filename, double * vector)
+  {
+    if (vector == NULL) {
+      // initialize or finished a class
+      if (mTransposedFile) fclose(mTransposedFile);
+      mTransposedFile = NULL;
+      return true;
+    }
+    if (!mTransposedFile) {
+      mTransposedFile = fopen(pca_transpose_path(filename).c_str(), "wb");
+      if (!mTransposedFile) {
+        *mOutput << mName << ": could not open '" << pca_transpose_path(filename) << "' to write transposed data.\n";
+        return false;
+      }
+    }
+    // transpose vector
+    transpose_vector(vector);
+    
+    // FIXME: write vector should be in 'Matrix'
+    for(int i=0; i< mTargetSize; i++) {
+      fprintf(mTransposedFile, " % .5f", mBuffer[i]);
+      if (mUnitSize > 1 && (i+1)%mUnitSize == 0) fprintf(mTransposedFile, "\n");
+    }
+    fprintf(mTransposedFile, "\n\n");
+    return true;
+  }
   
   void load_model()
   { 
@@ -207,6 +234,7 @@ private:
         goto build_cleanup;
       }
     
+      // FIXME: write vector should be in 'Matrix'
       for(int i=0; i< mVectorSize; i++) {
         fprintf(file, " % .5f", mMeanValue[i]);
         if (mUnitSize > 1 && (i+1)%mUnitSize == 0) fprintf(file, "\n");
@@ -290,6 +318,13 @@ private:
       *mOutput << mName << ": new basis with " << mTargetSize << " dimensions from a vectors of size " << mVectorSize << " computed.\n";
     }
     
+    if(!FOREACH_TRAIN_CLASS(PCA, transpose_in_new_basis)) {
+      *mOutput << mName << ": could not write transposed training data\n";
+      goto build_cleanup;
+    }
+    
+    *mOutput << mName << ": wrote transposed training data to '" << pca_transpose_path(std::string("")) << "'.\n"; 
+    
 build_cleanup:
     if (symmetric_matrix)    free(symmetric_matrix);
     if (eigenvectors) free(eigenvectors);
@@ -322,10 +357,17 @@ build_cleanup:
     path.append("/").append(mName).append(".pca");
     return path;
   }
+
+  std::string pca_transpose_path(const std::string& pFilename)
+  {
+    std::string path(mTransposedFolder);
+    path.append("/").append(pFilename);
+    return path;
+  }
   
   
   
-  std::string mProcessedFolder; /**< Where to store training data transposed in new basis. */
+  std::string mTransposedFolder; /**< Where to store training data transposed in new basis. */
 
   int      mClassCount;      /**< Number of different classes. */
   double * mLiveBuffer;      /**< Live input signal. */
@@ -337,6 +379,7 @@ build_cleanup:
   int      mVectorCount;     /**< Number of vectors (used during foreach class loop). */
   int      mClassesSize;     /**< Size of array of meanVectors. */
   int      mLiveBufferSize;  /**< Size of live buffer. */
+  FILE *   mTransposedFile;  /**< Where to store the transposed data for a class (FILE *). */
   int      mTargetSize;
   int      mUnitSize;
   
