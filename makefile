@@ -127,7 +127,7 @@ lib/VQ.rko: objects/VQ.cpp
 lib/ClassRecorder.rko: objects/ClassRecorder.cpp
 	$(CC) $(CFLAGS) -o lib/ClassRecorder.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/ClassRecorder.cpp
 
-lib/PCA.rko: objects/PCA.cpp
+lib/PCA.rko: objects/PCA.cpp classes/trained_machine.h
 	$(CC) $(CFLAGS) -o lib/PCA.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/PCA.cpp
 
 lua.o: classes/lua/lua_script.cpp classes/lua_script.h classes/script.h

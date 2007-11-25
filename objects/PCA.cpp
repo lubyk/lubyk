@@ -1,17 +1,10 @@
-
-#include "class.h"
+#include "trained_machine.h"
 #include "matrix.h"
-#include <errno.h>     // Error number definitions
-#include <sys/types.h> // directory listing
-#include <dirent.h>    // directory listing
-
-#include <algorithm>
-#include <vector>
 
 #define INITIAL_CLASS_COUNT 32
 
 /** Principal Component Analysis. */
-class PCA : public Node
+class PCA : public TrainedMachine
 {
 public:
   virtual ~PCA ()
@@ -24,14 +17,15 @@ public:
 
   bool init(const Params& p)
   {
-    mFolder     = p.val("data", std::string("data"));
-    mVectorSize = p.val("vector", 32);
+    if (!init_machine(p)) return false;
+    mProcessedFolder     = p.val("processed", std::string("processed")); // where to store training data transposed in new basis
     mUnitSize   = p.val("unit", 1);
     mTargetSize = p.val("keep", 4); // target dimension
     if (mTargetSize > mVectorSize) {
       *mOutput << mName << ": cannot keep more dimensions (" << mTargetSize << ") then vector size (" << mVectorSize << ").\n";
       mTargetSize = mVectorSize;
     }
+    
     
     if(!alloc_doubles(&mBuffer, mVectorSize, "output stream")) return false;
     if(!alloc_doubles(&mWorkBuffer, mVectorSize, "work buffer")) return false;
@@ -93,7 +87,40 @@ public:
     Matrix::print(mBasis, mTargetSize, mVectorSize, CblasRowMajor);
   }
   
+  /** Transpose training data in new basis space. */
+  void transpose()
+  {
+    
+  }
+  
 private:
+  bool compute_mean_vector(const std::string& filename, double * vector)
+  {
+    if (vector == NULL) {
+      // class finished // initialize
+      if (mVectorCount > 0) {
+        for(int i=0; i < mVectorSize; i++)
+          mMeanValue[i] /= (double)mVectorCount;
+        
+        if(!add_class(mMeanValue)) return false;
+        if (filename != "")
+          *mOutput << mName << ": read '" << filename << "' (" << mVectorCount << " vectors)\n";
+      }
+      
+      mVectorCount = 0;
+      for(int i=0; i < mVectorSize; i++)
+        mMeanValue[i] = 0.0;
+      return true;
+    }
+    
+    for(int i=0; i < mVectorSize; i++)
+      mMeanValue[i] += vector[i];
+    
+    mVectorCount++;
+    return true;
+  }
+  
+  
   void load_model()
   { 
     float val;
@@ -143,33 +170,14 @@ private:
     
     // 1. build a matrix with the mean vectors for each class
     mClassCount = 0;
-    
-    DIR * directory;
-    struct dirent *elem;
-    double * vector;
-    if (!alloc_doubles(&vector, mVectorSize, "work vector")) return;
+    if (mClasses)   free(mClasses);
     if (mMeanValue) free(mMeanValue);
     if (!alloc_doubles(&mMeanValue, mVectorSize, "mean value")) return;
 
-    directory = opendir(mFolder.c_str());
-      if (directory == NULL) {
-        *mOutput << mName << ": could not open directory '" << mFolder << "' to read class data.\n";
-        goto build_cleanup;
-      }
-      while (elem = readdir(directory)) {
-        std::string filename(elem->d_name);
-        std::string label;
-        int start, end;
-        start = filename.find("class_");
-        end   = filename.find(".txt");
-        if (start == std::string::npos || end == std::string::npos) {
-          // bad filename, skip
-          continue;
-        }
-        compute_mean_vector(&vector, std::string(mFolder).append("/").append(filename));
-        if (!add_class(vector)) goto build_cleanup;
-      }
-    closedir(directory);
+    if(!FOREACH_TRAIN_CLASS(PCA, compute_mean_vector)) {
+      *mOutput << mName << ": could not build model\n";
+      return;
+    }
     
     // 2.1. compute mean value for all vectors
     for(int i=0; i< mVectorSize; i++) mMeanValue[i] = 0.0;
@@ -284,52 +292,13 @@ private:
     
 build_cleanup:
     if (symmetric_matrix)    free(symmetric_matrix);
-    if (vector) free(vector);
     if (eigenvectors) free(eigenvectors);
     if (eigenvalues) free(eigenvalues);
     return;
   }
-  
-  void compute_mean_vector(double ** pMeanVector, const std::string& pPath)
-  {
-    int vector_count = 0;
-    double * vector = *pMeanVector;
-    for(int i=0; i < mVectorSize; i++) vector[i] = 0.0;
     
-    FILE * file;
-    float val;
-    int    value_count = 0;
-    file = fopen(pPath.c_str(), "rb");
-      if (!file) {
-        *mOutput << mName << "(error): could not read from '" << pPath << "' (" << strerror(errno) << ")\n";
-        return;
-      }
-      // read a vector
-      while(fscanf(file, " %f", &val) != EOF) {
-        fscanf(file, "\n"); // ignore newline
-        vector[value_count] += (double)val;
-        value_count++;
-        if (value_count >= mVectorSize) {
-          // got one vector
-          vector_count++;
-          value_count = 0;
-        }
-      }
-    fclose(file);
-    if (vector_count > 0) {
-      // compute mean value:
-      for(int i=0; i < mVectorSize; i++) {
-        vector[i] /= (double)vector_count;
-      }
-    }
-    *mOutput << mName << ": read '" << pPath << "' (" << vector_count << " vectors)\n";
-    // for(int i=0; i < mVectorSize; i++) {
-    //   printf(" % .5f", vector[i]);
-    //   if ((i+1) % 12 == 0) printf("\n");
-    // }
-  }
-  
   /** Add vector set of classes. */
+  // FIXME: Use 'Buf' or 'Buf+Matrix' merge.
   bool add_class(double * vector)
   {
     if (!mClasses) {
@@ -353,18 +322,19 @@ build_cleanup:
     path.append("/").append(mName).append(".pca");
     return path;
   }
-
   
-  std::string mFolder; /**< Folder containing the class data. */
+  
+  
+  std::string mProcessedFolder; /**< Where to store training data transposed in new basis. */
 
   int      mClassCount;      /**< Number of different classes. */
-  int      mVectorSize;      /**< Number of samples per vector. */
   double * mLiveBuffer;      /**< Live input signal. */
   double * mWorkBuffer;      /**< Input without mean value. */
   double * mBuffer;          /**< Output signal. */
   double * mClasses;         /**< Large array with all meanVectors. */
   double * mBasis;           /**< Matrix to change basis (stored in file xxx.pca). Size is mTargetSize x mVectorSize */
   double * mMeanValue;       /**< Mean value to be removed from vector before change of basis. */
+  int      mVectorCount;     /**< Number of vectors (used during foreach class loop). */
   int      mClassesSize;     /**< Size of array of meanVectors. */
   int      mLiveBufferSize;  /**< Size of live buffer. */
   int      mTargetSize;
