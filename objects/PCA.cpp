@@ -10,24 +10,6 @@
 
 #define INITIAL_CLASS_COUNT 32
 
-struct EigenVector
-{
-  EigenVector(double pValue, int pId) : eigenvalue(pValue), eigen_id(pId) {}
-  
-  int eigen_id;
-  double eigenvalue;
-};
-
-
-// descending sort
-bool operator < (const EigenVector& left, const EigenVector& right)
-{
-	if  (left.eigenvalue < right.eigenvalue)
-	  return false;
-	else
-    return true;
-}
-
 /** Principal Component Analysis. */
 class PCA : public Node
 {
@@ -46,6 +28,10 @@ public:
     mVectorSize = p.val("vector", 32);
     mUnitSize   = p.val("unit", 1);
     mTargetSize = p.val("keep", 4); // target dimension
+    if (mTargetSize > mVectorSize) {
+      *mOutput << mName << ": cannot keep more dimensions (" << mTargetSize << ") then vector size (" << mVectorSize << ").\n";
+      mTargetSize = mVectorSize;
+    }
     
     if(!alloc_doubles(&mBuffer, mVectorSize, "output stream")) return false;
     if(!alloc_doubles(&mWorkBuffer, mVectorSize, "work buffer")) return false;
@@ -68,7 +54,7 @@ public:
           mWorkBuffer[i] = mLiveBuffer[i] - mMeanValue[i];
         }
 
-        // change vector basis ( S' = SP = SP'') mBasis = P'
+        // change vector basis ( S' = SP ) mBasis = P
         cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 1, mTargetSize, mVectorSize, 1, mWorkBuffer, mVectorSize, mBasis, mVectorSize, 0.0, mBuffer, mVectorSize);
 
         // send
@@ -153,7 +139,6 @@ private:
     double * symmetric_matrix = NULL;
     double * eigenvectors = NULL;
     double * eigenvalues  = NULL;
-    std::vector<EigenVector> eig_result_list;
     FILE   * file;
     
     // 1. build a matrix with the mean vectors for each class
@@ -223,6 +208,7 @@ private:
     
     // we have our matrix.
     if (mDebug) {
+      *mOutput << mName << ": source:\n";
       Matrix::print(mClasses, mClassCount, mVectorSize, CblasRowMajor);
       printf("\n");
     }
@@ -234,6 +220,7 @@ private:
     
     
     if (mDebug) {
+      *mOutput << mName << ": symmetric:\n";
       Matrix::print(symmetric_matrix, mVectorSize, mVectorSize, CblasRowMajor);
       printf("\n");
     }
@@ -250,40 +237,50 @@ private:
     // build P out of those eigenvectors with greatest values :
     *mOutput << mName << ": calculated " << eigen_count << " eigenvalues:";
     
-    for(int i=0; i < eigen_count; i++) {
+    for(int i= 0; i< eigen_count; i++) {
       bprint(mBuf,mBufSize, " %.3f", eigenvalues[i]);
       *mOutput << mBuf;
-      eig_result_list.push_back(EigenVector(eigenvalues[i], i));
     }
     *mOutput << std::endl;
     
-    // sort eigenvectors...
-    std::sort(eig_result_list.begin(), eig_result_list.end());
+    if (mDebug) {
+      *mOutput << mName << ": eigenvectors:\n";
+      Matrix::print(eigenvectors, mVectorSize, mVectorSize, CblasColMajor);
+      printf("\n");
+    }
     
     // P = partial E'.
     
-    // write P' to file = partial E
-    
-    // EIGENVECTORS ARE COL MAJOR ?
-    /** eigenvectors:
-      *     | e11 e21 |
-      *  E =| e12 e22 |
-      *     | e13 e23 | **/
+    // write P to file
     file = fopen(pca_model_path().c_str(), "ab");
       if (!file) {
         *mOutput << mName << "(error): could not write to '" << pca_model_path() << "' (" << strerror(errno) << ")\n~> ";
         goto build_cleanup;
       }
+      // keep only the greatest eigenvectors with greatest eigenvalues.
       
+      if (mBasis) free(mBasis);
+      if (!alloc_doubles(&mBasis, mVectorSize * mTargetSize, "basis matrix")) goto build_cleanup;
+      
+      double value;
       for(int e=0; e < mTargetSize; e++) {
-        int eigen_id = eig_result_list[e].eigen_id; // position in result list
+        int eigen_id = eigen_count - e - 1; // start by greatest eigenvalue (last).
         for(int i=0; i< mVectorSize; i++) {
-          fprintf(file, " % .5f", eigenvectors[ i * eigen_count + eigen_id ]); // ColMajor
+          value = eigenvectors[ i * eigen_count + eigen_id ]; // transpose to RowMajor
+          fprintf(file, " % .5f", value);
+          mBasis[e * mVectorSize + i] = value;
           if (mUnitSize > 1 && (i+1)%mUnitSize == 0) fprintf(file, "\n");
         }  
         fprintf(file, "\n");  // two \n\n between vectors
       }
     fclose(file);
+    
+    if (mDebug) {
+      *mOutput << mName << ": basis P:\n";
+      Matrix::print(mBasis, mTargetSize, mVectorSize, CblasRowMajor);
+    } else {
+      *mOutput << mName << ": new basis with " << mTargetSize << " dimensions from a vectors of size " << mVectorSize << " computed.\n";
+    }
     
 build_cleanup:
     if (symmetric_matrix)    free(symmetric_matrix);

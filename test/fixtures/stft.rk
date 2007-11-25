@@ -1,0 +1,8 @@
+c = Cabox(port:"/dev/tty.HOME001-GenericSerial-1" bauds:115200)
+c => b
+b = Buffer(1536)
+b => 2.plot
+b => f
+f = FFT(unit:12 size:128 stft:1)
+f => plot
+plot =  Plot(group:3 line:4)
