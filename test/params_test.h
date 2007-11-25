@@ -6,7 +6,7 @@
 class TestParams : public CxxTest::TestSuite
 {
 public:
-  void testGet( void )
+  void testGetKey( void )
   {
     float res;
     Params p("first:1 second:2 name:\"Gaspard Buma\" joy:3.5");
@@ -22,9 +22,28 @@ public:
     res = 0.0;
     TS_ASSERT( p.get(&res, "first"));
     TS_ASSERT_EQUALS( res, 1.0);
+  }
+  
+  void testGetIndex( void )
+  {
+    float res;
+    Params p;
+    p.add("1");
+    p.add("5");
+    p.add("3");
+    p.add("2");
+    TS_ASSERT_EQUALS( p.size(), 4);
     
-    TS_ASSERT( p.get(&res) );
-    TS_ASSERT_EQUALS( res, 3.5);
+    TS_ASSERT(p.get(&res,0));
+    TS_ASSERT_EQUALS( res, 1.0);
+    
+    TS_ASSERT(p.get(&res,1));
+    TS_ASSERT_EQUALS( res, 5.0);
+    
+    TS_ASSERT(p.get(&res,3));
+    TS_ASSERT_EQUALS( res, 2.0);
+    
+    TS_ASSERT(!p.get(&res,4));
   }
   
   void testSet( void )

@@ -70,6 +70,16 @@ std::ostream& operator<<(std::ostream& pStream, const Params& p)
     } else
       pStream << "(null)";
   }
+  // list anonymous parameters
+  if(p.mListParams.size() > 0) {
+    pStream << "(";
+    end = p.mListParams.end();
+    for(it = p.mListParams.begin(); it < end; it++) {
+      if (it != p.mListParams.begin()) pStream << ", ";
+      pStream << *it;
+    }
+    pStream << ")";
+  }
   return pStream;
 }
 

@@ -73,7 +73,7 @@ void Command::parse(const std::string& pStr)
     
     action set_key { set_from_token(mKey);}
   
-    action set_class { set_class_from_token();}
+    action set_class { set_from_token(mClass);}
   
     action set_value { set_from_token(mValue);}
     
@@ -89,7 +89,9 @@ void Command::parse(const std::string& pStr)
       mToPort = atoi(mValue.c_str());
     }
     
-    action set_single_param { set_single_param_from_token(); }
+    action add_param_value { 
+      add_value_from_token(); 
+    }
     
     action add_param { set_parameter(mKey, mValue); }
     
@@ -144,7 +146,7 @@ void Command::parse(const std::string& pStr)
   
     param  = (key ':' ws* value) %add_param;
   
-    parameters = value %set_single_param | (param ws*)+;
+    parameters = value %add_param_value (ws* ',' ws* value %add_param_value)* | (param ws*)+;
   
     create_instance = var ws* '=' ws* class '(' parameters? ')' ;
   
@@ -189,32 +191,9 @@ void Command::set_from_token (std::string& pElem)
   mTokenIndex = 0;
 }
 
-
-void Command::set_class_from_token  () 
+void Command::add_value_from_token () 
 {
-  set_from_token(mClass);
-  // FIXME: this might not be needed if class is set before param
-  if (mSingleParam != "") {
-    std::string key = mClass;
-    std::transform(key.begin(), key.end(), key.begin(), tolower);
-    mParameters.set(key, mSingleParam);
-    mSingleParam = "";
-  }
-}
-
-void Command::set_single_param_from_token () 
-{
-  mSingleParam = mValue;
-  std::string key;
-  if (mClass != "") {
-    key = mClass;
-  } else if (mMethod != "") {
-    key = mMethod;
-  } else {
-    key = "value";
-  }
-  std::transform(key.begin(), key.end(), key.begin(), tolower);
-  mParameters.set(key, mSingleParam);
+  mParameters.add(mValue); // add to 'list' value
 }
 
 void Command::set_parameter  (const std::string& pKey, const std::string& pValue) 
@@ -311,7 +290,6 @@ void Command::clear()
   mAction     = NO_ACTION;
   mVariable   = "";
   mClass      = "";
-  mSingleParam = "";
   mParameters.clear();
   mFromPort = 1;
   mToPort   = 1;

@@ -3,6 +3,7 @@
 #include <cstdlib> // free
 #include <iostream>
 #include "midi_message.h"
+#include "buf.h"
 
 
 /** Signal types. */
@@ -132,6 +133,23 @@ union Signal {
   /** Set as MidiMessage* . */
   inline void set(MidiMessage * pPtr)
   { set(pPtr, false); }
+  
+  
+  /** Set as double *. */
+  inline void set(double * pPtr, size_t pSize)
+  {
+    type = ArraySignal;
+    array.value = pPtr;
+    array.size  = pSize;
+  }
+  
+  /** Set as double* from Buf<double>. */
+  inline void set(Buf<double>& pBuf)
+  {
+    type = ArraySignal;
+    array.value = pBuf.data;
+    array.size  = pBuf.size;
+  }
   
   /** Set as void *. */
   inline void set(void * pPtr, bool pFree)
@@ -332,4 +350,10 @@ inline std::ostream& operator<< (std::ostream& pStream, const Signal& sig)
 }
 
 
+template<>
+inline bool Buf<double>::set(const Signal& sig)
+{
+  if(sig.type != ArraySignal) return false;
+  return set(sig.array.value, sig.array.size);
+}
 #endif // _RUBYK_SIGNAL_H_

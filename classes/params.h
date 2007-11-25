@@ -27,8 +27,8 @@ public:
   {
     std::string value;
     if (pKey == NULL) {
-      if (mParameters.get(&value)) {
-        *pResult = cast_param<T>(value);
+      if (mListParams.size() > 0) {
+        *pResult = cast_param<T>(mListParams[0]);
         return true;
       } else
         return false;
@@ -42,11 +42,23 @@ public:
       return false;
   }
   
+  /** Try to get an anonymous parameter from it's index. Returns false if the key is out of range. */
+  template<class T>
+  bool get(T* pResult, int pIndex) const
+  {
+    std::string value;
+    if (pIndex < mListParams.size()) {
+      *pResult = cast_param<T>(mListParams[pIndex]);
+      return true;
+    } else
+      return false;
+  }
+  
   /** Get default value. Return false if none found. */
   template<class T>
   bool get(T* pResult) const
   {
-    return get(pResult, NULL, false);
+    return get(pResult, 0);
   }
   
   /** Try to get a parameter from a given key. Returns false if the key is not found (default value not used). If the key is NULL, get the default value. */
@@ -60,6 +72,15 @@ public:
   T cast_param(const std::string& value) const
   {
     return (T)value;
+  }
+  
+  void add (const char * str)
+  {
+    add(std::string(str));
+  }
+  
+  void add (const std::string& pValue) {
+    mListParams.push_back(pValue);
   }
 
   void set (const std::string& pKey, const std::string& pValue) {
@@ -76,16 +97,17 @@ public:
   }
   
   void clear () 
-  { mParameters.clear();  }
+  { mParameters.clear(); mListParams.clear();  }
   
   size_t size () const
-  { return mParameters.size(); }
+  { return mListParams.size(); }
   
   friend std::ostream& operator<< (std::ostream& pStream, const Params& p);
   
 private:
-  // FIXME: we could store only pointers to the values...
   Hash<std::string,std::string> mParameters;
+  
+  std::vector<std::string> mListParams;
   
   void build_hash(const std::string& p);
 };

@@ -5,6 +5,7 @@
 #include "outlet.h"
 #include "params.h"
 #include "hash.h"
+#include "buf.h"
 #include "rubyk.h"
 #include "rubyk_signal.h"
 #include "event.h"
@@ -259,11 +260,12 @@ protected:
   /** Print message into buffer. */
   void bprint (char *& pBuffer, int& pBufferSize, const char *fmt, ...);
   
+  // FIXME: replace all uses of alloc_doubles with Buf.
   /** Allocate doubles and print an error message if it fails. */
   bool alloc_doubles (double ** pBuffer, int pSize, const char * pName);
   
   /** Reallocate doubles and print an error message if it fails. */
-  bool realloc_doubles (double ** pBuffer, int pSize, const char * pName);
+  bool realloc_doubles  (double ** pBuffer, int pSize, const char * pName);
   
   // time in [ms]
   void bang_me_in (time_t pTime)

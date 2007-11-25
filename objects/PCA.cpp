@@ -28,15 +28,16 @@ bool operator < (const EigenVector& left, const EigenVector& right)
     return true;
 }
 
+/** Principal Component Analysis. */
 class PCA : public Node
 {
 public:
   virtual ~PCA ()
   {
-    if (mBuffer)  free(mBuffer);
-    if (mWorkBuffer)  free(mWorkBuffer);
-    if (mClasses) free(mClasses);
-    if (mMeanValue) free(mMeanValue);
+    if (mBuffer)  free(mBuffer);            // FIXME: replace these buffers with Buf<double>
+    if (mWorkBuffer)  free(mWorkBuffer);    // FIXME: replace these buffers with Buf<double>
+    if (mClasses) free(mClasses);           // FIXME: replace these buffers with Buf<double>
+    if (mMeanValue) free(mMeanValue);       // FIXME: replace these buffers with Buf<double>
   }
 
   bool init(const Params& p)
@@ -95,6 +96,17 @@ public:
   {
     load_model();
   }
+
+  /** Command to print the current basis. */
+  void basis()
+  {
+    if (!mBasis) {
+      *mOutput << mName << ": basis not computed.\n";
+      return;
+    }
+    Matrix::print(mBasis, mTargetSize, mVectorSize, CblasRowMajor);
+  }
+  
 private:
   void load_model()
   { 
@@ -211,7 +223,7 @@ private:
     
     // we have our matrix.
     if (mDebug) {
-      Matrix::print_matrix(mClasses, mClassCount, mVectorSize, CblasRowMajor);
+      Matrix::print(mClasses, mClassCount, mVectorSize, CblasRowMajor);
       printf("\n");
     }
     // 3. PCA
@@ -222,7 +234,7 @@ private:
     
     
     if (mDebug) {
-      Matrix::print_matrix(symmetric_matrix, mVectorSize, mVectorSize, CblasRowMajor);
+      Matrix::print(symmetric_matrix, mVectorSize, mVectorSize, CblasRowMajor);
       printf("\n");
     }
     // Find eigenvectors, eigenvalues of T'T :
@@ -370,4 +382,5 @@ extern "C" void init()
   OUTLET(PCA,scaled)
   METHOD(PCA,build)
   METHOD(PCA,load)
+  METHOD(PCA,basis)
 }

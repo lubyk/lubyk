@@ -6,9 +6,17 @@ public:
   
   bool init (const Params& p)
   {
-    // first try 'value', then default
-    if (!p.get(&mValue, "value", true)) {
-      mValue = 0.0;
+    double value;
+    if (p.size() > 0) {
+      for(int i=0; i < p.size(); i++) {
+        p.get(&value, i);
+        mBuffer.append(value);
+      }
+      mS.set(mBuffer);
+    } else if (p.get(&value, "value", true)) {
+      mS.set(value);
+    } else {
+      mS.set_bang();
     }
     
     return true;
@@ -17,15 +25,28 @@ public:
   // inlet 1
   void bang(const Signal& sig)
   { 
-    sig.get(&mValue);
-    send(mValue); 
+    double value;
+    if (sig.type == ArraySignal) {
+      // copy
+      if(mBuffer.set(sig)) {
+        mS.type = ArraySignal;
+        mS.array.value = mBuffer.data;
+        mS.array.size  = mBuffer.size;
+      }
+    } else {
+      mS = sig;
+    } 
+    send(mS);
   }
 
   virtual void spy() 
-  { bprint(mSpy, mSpySize,"%.2f", mValue );  }
+  { std::ostringstream os(std::ostringstream::out);
+    os << mS;
+    bprint(mSpy, mSpySize,"%s", os.str().c_str() );
+  }
   
 private:
-  double mValue;
+  Buf<double> mBuffer;
 };
 
 extern "C" void init()

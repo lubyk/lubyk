@@ -89,7 +89,7 @@ protected:
   void set_class_from_token  ();
   
   /** Set the 'class' parameter ('value' for Value, 'metro' for Metro, etc). */
-  void set_single_param_from_token ();
+  void add_value_from_token ();
   
   /** Set a parameter. */
   void set_parameter  (const std::string& pKey, const std::string& pValue);
@@ -120,7 +120,7 @@ protected:
 	action_types_t mAction;
   
   /** Command parts. */
-	std::string    mVariable, mMethod, mClass, mSingleParam, mKey, mValue, mFrom, mTo;
+	std::string    mVariable, mMethod, mClass, mKey, mValue, mFrom, mTo;
 	Params         mParameters;
   int            mFromPort, mToPort;
   Rubyk *        mServer;

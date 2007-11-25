@@ -20,23 +20,22 @@ public:
   {
     mWindowSize = p.val("buffer", 32);
     
-    if (mWindowSize) {
-      // use buffer
-      size_t sz = mWindowSize * DEFAULT_WINDOW_COUNT; // write twice once every 10 windows
-      mBuffer = (double*)malloc(sz * sizeof(double));
-      if (!mBuffer) {
-        *mOutput << "Could not allocate '" << sz << "' doubles.\n";
-      } else {
-        for(int i= 0;i<mWindowSize;i++)
-          mBuffer[i] = 0.0;
-        mNextWrite = mWindowSize - 1;
-        mReadPosition = 0;
-        mReadOffset   = 0;
-      }
-      
-      mS.type = ArraySignal;
-      mS.array.size  = mWindowSize;
+    // use buffer
+    size_t sz = mWindowSize * DEFAULT_WINDOW_COUNT; // write twice once every 10 windows
+    mBuffer = (double*)malloc(sz * sizeof(double));
+    if (!mBuffer) {
+      *mOutput << "Could not allocate '" << sz << "' doubles.\n";
+      return false;
+    } else {
+      for(int i= 0;i<mWindowSize;i++)
+        mBuffer[i] = 0.0;
+      mNextWrite = mWindowSize - 1;
+      mReadPosition = 0;
+      mReadOffset   = 0;
     }
+    
+    mS.type = ArraySignal;
+    mS.array.size  = mWindowSize;
     
     return true;
   }
@@ -44,33 +43,24 @@ public:
   // inlet 1
   void bang(const Signal& sig)
   { 
-    if (mBuffer) {
-      switch(sig.type) {
-      case ArraySignal:
-        for(int i=0; i < sig.array.size;i++)
-          write_buf(*(sig.array.value + i));
-        break;
-      default:
-        double d;
-        if (sig.get(&d)) write_buf(d);
-      }
-      mS.array.value = mBuffer + mReadPosition;
-      if (mDebug)
-        *mOutput << mName << ": " << mS << std::endl;
-      send(mS);
-    } else {
-      if (mDebug)
-        *mOutput << mName << ": " << mS << std::endl;
-      send(sig);
+    if (!mIsOK) return;
+    switch(sig.type) {
+    case ArraySignal:
+      for(int i=0; i < sig.array.size;i++)
+        write_buf(*(sig.array.value + i));
+      break;
+    default:
+      double d;
+      if (sig.get(&d)) write_buf(d);
     }
+    mS.array.value = mBuffer + mReadPosition;
+    if (mDebug)
+      *mOutput << mName << ": " << mS << std::endl;
+    send(mS);
   }
 
-  inline void write_buf(float f)
+  inline void write_buf(double f)
   {
-    if (!mBuffer) {
-      *mOutput << "Serial error: trying to write to buffer without window.\n";
-      return;
-    }
     mBuffer[mNextWrite] = f;
     
     if (mNextWrite >= (mWindowSize * (DEFAULT_WINDOW_COUNT - 1))) {

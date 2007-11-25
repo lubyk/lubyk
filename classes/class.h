@@ -212,7 +212,14 @@ private:
   {
     Signal sig;
     double value;
-    if (p.get(&value)) {
+    Buf<double> buf;
+    if (p.size() > 0) {
+      for(int i=0; i < p.size(); i++) {
+        p.get(&value, i);
+        buf.append(value);
+      }
+      sig.set(buf);
+    } else if (p.get(&value)) {
       sig.set(value);
     } else {
       sig.set_bang();

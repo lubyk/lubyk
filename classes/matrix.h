@@ -1,10 +1,11 @@
 #include <Accelerate/Accelerate.h>
 
+// FIXME: we could merge Matrix and Buf into a single object.
 class Matrix
 {
 public:
   /** Print a matrix. */
-  static void print_matrix(double* matrix, int pRowCount, int pColCount, int rowMode);
+  static void print(double* matrix, int pRowCount, int pColCount, int rowMode);
   
   /** Compute T'T for the given (row major) matrix. Return false on failure. pResult must be a
     * pointer to an array of pCol * pRow doubles. 

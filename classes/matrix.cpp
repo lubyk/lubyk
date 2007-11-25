@@ -3,16 +3,16 @@
 #include <cstdlib>
 #include <cstdio>
 
-void Matrix::print_matrix(double* matrix, int pRowCount, int pColCount, int rowMode) {
+void Matrix::print(double* matrix, int pRowCount, int pColCount, int rowMode) {
 	int i,j;
 
   for(i=0;i<pRowCount;i++) {
 		printf("|");
 		for(j=0;j<pColCount;j++)
 		  if (rowMode == CblasRowMajor)
-				printf(" %.2f",matrix[(i * pColCount) + j]);
+				printf(" % .2f",matrix[(i * pColCount) + j]);
 			else
-				printf(" %.2f",matrix[(j * pRowCount) + i]);
+				printf(" % .2f",matrix[(j * pRowCount) + i]);
 		printf(" |\n");
   }
 }
@@ -89,20 +89,20 @@ T[4+0] =  1; T[4+1] = -1;
 
 
 printf("======= Input matrix T    =======\n");
-print_matrix(T, 3, 2, CblasRowMajor);
+Matrix::print(T, 3, 2, CblasRowMajor);
 
 // compute A = T'*T
 compute_symetric_matrix(&A,T, 3, 2);
 printf("\n======= A = T'*T          =======\n");
-print_matrix(A, 2, 2, CblasRowMajor);
+Matrix::print(A, 2, 2, CblasRowMajor);
 
 compute_eigenvectors(&eigenvectors, &eigenvalues, &eigencount, A, 2);
 
 printf("\n======= eigenvalues of A  =======\n");
-print_matrix(eigenvalues, 1, 2, CblasColMajor);
+Matrix::print(eigenvalues, 1, 2, CblasColMajor);
 
 printf("\n======= eigenvectors of A =======\n");
-print_matrix(eigenvectors, 2, 2, CblasColMajor);
+Matrix::print(eigenvectors, 2, 2, CblasColMajor);
 return 0;
 }
 

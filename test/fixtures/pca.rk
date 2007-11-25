@@ -1,9 +1,5 @@
 v  =Value(0.00)
-v => buf
-buf=Buffer(2)
-buf=>pca
-buf=>print
-print=Print()
-pca=PCA(vector:2 data:"test/fixtures/pca_data" keep:1)
-pca.build
+v => pca
+pca=PCA(vector:2 data:"test/fixtures/pca" keep:2)
 pca => print
+print=Print()
