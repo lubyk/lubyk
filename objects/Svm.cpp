@@ -305,6 +305,7 @@ private:
     }  
     fprintf(mTrainFile, "\n");
     mVectorCount++;
+    return true;
   }
   
   bool do_load_model ()
