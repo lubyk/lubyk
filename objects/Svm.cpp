@@ -41,6 +41,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 class Svm : public TrainedMachine
 {
 public:
+  Svm() : mModel(NULL), mNode(NULL), mXSpace(NULL), mDistances(NULL), mVotes(NULL), mLabels(NULL), mTrainFile(NULL), mLiveBuffer(NULL), mClassLabel(0), mVectorCount(0)
+  {
+    mProblem.x = NULL; 
+    mProblem.y = NULL;
+  }
   virtual ~Svm ()
   {
     if (mModel)      svm_destroy_model(mModel);
@@ -63,15 +68,6 @@ public:
     mSvmCparam  = p.val("cost", 2.0);          // svm cost
     mSvmGammaParam = p.val("gamma", 0.0078125); // svm gamma in RBF
     mProbabilityThreshold = p.val("filter", 0.8);
-    
-    mLiveBuffer = NULL;
-    mTrainFile  = NULL;
-    mDistances  = NULL;
-    mVotes      = NULL;
-    mLabels     = NULL;
-    mClassLabel = 0;
-    
-    mVectorCount = 0; // current mean value made of '0' vectors
     
     // max_nr_attr - 1 > mVectorSize
     mNode = (struct svm_node *) malloc((mVectorSize + 1) * sizeof(struct svm_node));
