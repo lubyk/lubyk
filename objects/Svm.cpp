@@ -33,32 +33,16 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ********* */
 
-#include "class.h"
-#include <errno.h>   /* Error number definitions */
-#include <sys/types.h> // directory listing
-#include <dirent.h>    // directory listing
+#include "trained_machine.h"
 
 // libsvm
 #include "svm/svm.h"
 
-/** Svm states. */
-enum svm_states_t {
-  ReadyToRecord,     /**< Ready to record new data. */
-  CountDownReady,    /**< Send events to say "ready" */
-  CountDownSet,      /**< Send events to say "set"   */
-  Recording,         /**< Send events to say "go!" */
-  Validation,        /**< Waits for user confirmation (any char = save & record next, del = do not save), esc = exit. */
-  Learning,          /**< Thread launched to learn the new data. Only possible action is interrupt. */
-  Label,             /**< Done learning or restored from file. Outputs labels. */
-};
-
-class Svm : public Node
+class Svm : public TrainedMachine
 {
 public:
   virtual ~Svm ()
   {
-    if (mBuffer)     free(mBuffer);
-    if (mMeanVector) free(mMeanVector);
     if (mModel)      svm_destroy_model(mModel);
     if (mNode)       free(mNode);
     if (mProblem.y)  free(mProblem.y);
@@ -67,22 +51,19 @@ public:
     if (mDistances)  free(mXSpace);
     if (mVotes)      free(mVotes);
     if (mLabels)     free(mLabels);
+    if (mTrainFile) fclose(mTrainFile);
   }
 
   bool init(const Params& p)
   {
-    mVectorSize = p.val("vector", 32);
+    if(!init_machine(p)) return false;
     mSampleRate = p.val("rate", 256);
     mUnitSize   = p.val("unit", 1);    // number of values form a sample
-    mMargin     = p.val("margin", 2.0);
-    mFolder     = p.val("store", std::string("svm_data"));
     mThreshold  = p.val("threshold", 0.0);
     mSvmCparam  = p.val("cost", 2.0);          // svm cost
     mSvmGammaParam = p.val("gamma", 0.0078125); // svm gamma in RBF
-    mUseSnap    = p.val("snap", 1) == 1 ;
     mProbabilityThreshold = p.val("filter", 0.8);
     
-    mBufferSize = mVectorSize * (1.0 + mMargin);
     mLiveBuffer = NULL;
     mTrainFile  = NULL;
     mDistances  = NULL;
@@ -91,20 +72,6 @@ public:
     mClassLabel = 0;
     
     mVectorCount = 0; // current mean value made of '0' vectors
-    mMeanVector = (double*)malloc(mVectorSize * sizeof(double));
-    if (!mMeanVector) {
-      *mOutput << mName << ": Could not allocate " << mVectorSize << " doubles for mean vector.\n";
-      return false;
-    } else {
-      // clear mMeanVector
-      for(int i=0; i < mVectorSize; i++) mMeanVector[i] = 0.0;
-    }
-    
-    mBuffer     = (double*)malloc(mBufferSize * sizeof(double));
-    if (!mBuffer) {
-      *mOutput << mName << ": Could not allocate " << mBufferSize << " doubles for buffer.\n";
-      return false;
-    }
     
     // max_nr_attr - 1 > mVectorSize
     mNode = (struct svm_node *) malloc((mVectorSize + 1) * sizeof(struct svm_node));
@@ -117,157 +84,38 @@ public:
     mProblem.x = NULL;
     mXSpace    = NULL;
     
-    load_model();
-    return true;
+    return do_load_model();
   }
 
   // inlet 1
   void bang (const Signal& sig)
   {
-    int cmd;
+    if (!mIsOK) return; // do not use 'predict' if no model loaded
+    if (sig.type != ArraySignal) return; // ignore
     
-    if (!mIsOK) return; // no recovery
-    if (sig.type == ArraySignal) {
-      if (sig.array.size >= mBufferSize) {
-        mLiveBuffer = sig.array.value;
-        mLiveBufferSize = sig.array.size;
-      } else {
-        *mOutput << mName << ": wrong signal size " << sig.array.size << " should be " << mBufferSize << " (with margin)\n.";
-      }
+    if (sig.array.size >= mVectorSize) {
+      mLiveBuffer = sig.array.value;
+      mLiveBufferSize = sig.array.size;
     } else {
-      time_t record_time = (time_t)(ONE_SECOND * mVectorSize / (mSampleRate * mUnitSize));
-      time_t record_with_margin = (time_t)(ONE_SECOND * mVectorSize * (1 + mMargin/2.0) / (mSampleRate * mUnitSize));
-      time_t countdown_time;
-      if (record_time > 500)
-        countdown_time = record_time;
-      else
-        countdown_time = 500;
-
-      // receiving Bangs or command change
-      sig.get(&cmd);
-      
-      switch(mState) {
-      case CountDownReady:  
-        bang_me_in(countdown_time);
-        send_note(60 + (mClassLabel % 12),80,100,1,0,2);
-        enter(CountDownSet);
-        break;
-      case CountDownSet:
-        bang_me_in(record_with_margin); // 1/2 margin at the end
-        send_note(72 + (mClassLabel % 12),80,record_time,1,0,2);
-        enter(Recording);
-        break;
-      case Recording:
-        receive_data();
-        enter(Validation);
-        break;
-      case Validation:
-        if (cmd == 127) {
-          // backspace ignore current vector
-          enter(ReadyToRecord);
-          break;
-        } else if (cmd == ' ') {
-          // swap snap style
-          if (mUseVectorOffset == mVectorOffset) {
-            mUseVectorOffset = mBufferSize - mVectorSize * (1 + mMargin/2.0);
-            *mOutput << mName << ": no-snap\n";
-          } else {
-            mUseVectorOffset = mVectorOffset;
-            *mOutput << mName << ": snap\n";
-          }
-          break;
-        } else if (cmd == RK_RIGHT_ARROW) { // -> right arrow 301
-          mUseVectorOffset -= mUnitSize;
-          if (mUseVectorOffset < 0) mUseVectorOffset = 0;
-          break;
-        } else if (cmd == RK_LEFT_ARROW) { // <- left arrow  302
-          mUseVectorOffset += mUnitSize;
-          if (mUseVectorOffset > mBufferSize - mVectorSize) mUseVectorOffset = mBufferSize - mVectorSize;
-          break;
-        } else {
-          // any character: save and continue
-          store_data();
-        }
-        // no break
-      case ReadyToRecord:
-        if (cmd == '\n')
-          enter(Label);
-        else if (cmd == 'l') {
-          if (!do_learn()) return;
-          enter(Label);
-        } else {
-          prepare_class_for_recording(cmd);
-          enter(CountDownReady);
-          bang_me_in(countdown_time);
-          send_note(60 + (mClassLabel % 12),80,100,1,0,2);
-        }  
-        break;
-      case Label:
-        if (cmd == (int)'r') {
-          enter(ReadyToRecord);
-          mClassLabel = 0;
-          return;
-        } else if (cmd == (int)'l') {
-          if (!do_learn()) return;
-          // no need to load model from file, it's in memory
-        } else if (cmd == (int)' ') {
-          // show current signal value as sparse vector
-          double * vector = mLiveBuffer + mLiveBufferSize - mVectorSize;
-          for(int i=0;i < mVectorSize; i++) {
-            if (vector[i] >= mThreshold || vector[i] <= -mThreshold) {
-              printf(" %i:%.5f", i+1, (float)vector[i]);
-            }
-          }
-          printf("\n");
-        }
-      }
+      *mOutput << mName << ": wrong signal size " << sig.array.size << " should be " << mVectorSize << "\n.";
+      return;
     }
     
+    //if (mDebug) {
+    //  // show current signal value as sparse vector
+    //  double * vector = mLiveBuffer + mLiveBufferSize - mVectorSize;
+    //  for(int i=0;i < mVectorSize; i++) {
+    //    if (vector[i] >= mThreshold || vector[i] <= -mThreshold) {
+    //      printf(" %i:%.5f", i+1, (float)vector[i]);
+    //    }
+    //  }
+    //  printf("\n");
+    //}
+    bool change = predict();
     
-    // send mean value
-    if (mMeanVector) {
-      mS.array.value = mMeanVector;
-      mS.array.size  = mVectorSize;
-      mS.type  = ArraySignal;
-      send(mS, 4);
-    }
-    
-    if (mState == Validation) {
-      // recorded signal
-      mS.array.value = mBuffer + mUseVectorOffset;
-      mS.array.size  = mVectorSize;
-      mS.type  = ArraySignal;
-      send(mS, 3);
-    } else if (mState == Label) {
-        bool change = predict();
-        
-        // send probabilities (map to mUnitSize first)
-        mS.array.value = mVotes;
-        mS.array.size  = mUnitSize;
-        mS.type  = ArraySignal;
-        send(mS, 5);
-        if (mDebug) {
-          *mOutput << mLabelCount << " labels:\n";
-          for(int i = 0; i< mLabelCount; i++)
-            *mOutput << "  " << mLabels[i];
-          *mOutput << std::endl << mS << std::endl;
-        }
-
-        // live signal
-        mS.array.value = mLiveBuffer + mLiveBufferSize - mVectorSize;
-        mS.array.size  = mVectorSize;
-        mS.type  = ArraySignal;
-        send(mS, 3);
-        
-        if (change) send(mClassLabel);
-    } else {
-      // live signal
-      mS.array.value = mLiveBuffer + mLiveBufferSize - mVectorSize;
-      mS.array.size  = mVectorSize;
-      mS.type  = ArraySignal;
-      send(mS, 3);
-    }
-    
+    if (mDebug)
+      std::cout << mName << ": " << mClassLabel << std::endl;
+    if (change) send(mClassLabel);    
   }
   
   
@@ -276,55 +124,57 @@ public:
   {
     if (!do_learn()) {
       *mOutput << mName << ": learn failed.\n";
+      mIsOK = false;
+    } else {
+      mIsOK = true;
     }
   }
   
+  void build()
+  {
+    if (!do_build()) {
+      *mOutput << mName << ": could not build sparse data file.\n";
+    }
+  }
   
+  void load()
+  {
+    if (!do_load_model()) {
+      *mOutput << mName << ": could not load model.\n";
+      mIsOK = false;
+    } else {
+      mIsOK = true;
+    }
+  }
 private:
   
   
   /** Transform the raw data into the sparse format used by libsvm. 
     * Use mThreshold to fix what is considered as zero. This outputs the file 'svm.train' containing 
     * all data with labels from the classes in mFolder. */
-  void build()
+  bool do_build()
   {
     if (mTrainFile) fclose(mTrainFile);
     mTrainFile = fopen(train_file_path().c_str(), "wb");
       if (!mTrainFile) {
         *mOutput << mName << ": could not open '" << train_file_path() << "' to store training data.\n";
-        return;
+        return false;
       }
-      
-      DIR * directory;
-      struct dirent *elem;
-
-      directory = opendir(mFolder.c_str());
-        if (directory == NULL) {
-          *mOutput << mName << ": could not open directory '" << mFolder << "' to read class data.\n";
-          return;
-        }
-        while (elem = readdir(directory)) {
-          std::string filename(elem->d_name);
-          std::string label;
-          int start, end;
-          start = filename.find("class_");
-          end   = filename.find(".txt");
-          if (start == std::string::npos || end == std::string::npos) {
-            // bad filename, skip
-            continue;
-          }
-          label = filename.substr(start+6, end - start - 6);
-          load_class(atoi(label.c_str()), &Svm::write_as_sparse);
-        }
-      closedir(directory);
-        
+    
+      mVectorCount = 0;
+      if(!FOREACH_TRAIN_CLASS(Svm, write_as_sparse)) {
+        *mOutput << mName << ": could not write as sparse data.\n";
+        return false;
+      }
+    
     fclose(mTrainFile);
+    return true;
   }
   
   /** Update the model based on the current recorded samples. */
   bool do_learn()
   {
-    build();
+    if (!do_build()) return false;
     const char * errorMsg;
     // 1. find best params (see grid.py) (or use default...) C=2.0 gamma=0.0078125
     // use default values
@@ -365,8 +215,7 @@ private:
     mModel = svm_train(&mProblem, &mSvmParam);
     svm_save_model(model_file_path().c_str(),mModel);
     
-    load_model();
-    return true;
+    return do_load_model();
   }
   
   
@@ -433,191 +282,42 @@ private:
     mLabelProbability = labelProbability;
     return false;
   }
-  
-  
-  void receive_data()
-  {
-    double * vector;
-    if (!mLiveBuffer) {
-      *mOutput << mName << ": no data to record (no stream coming from inlet 1).\n";
-      mBuffer = NULL;
-      return;
-    }
     
-    // copy data into our local buffer
-    if (mThreshold) {
-      for(int i=0; i < mBufferSize; i++) {
-        if (mLiveBuffer[i] >= mThreshold || mLiveBuffer[i] <= -mThreshold) {
-          mBuffer[i] = mLiveBuffer[i];
-        } else
-          mBuffer[i] = 0.0;
-      }
-    } else
-      memcpy(mBuffer, mLiveBuffer + mLiveBufferSize - mBufferSize, mBufferSize * sizeof(double));
-    
-    if (mVectorCount) {
-      // try to find the best bet by calculating minimal distance
-      double distance, min_distance = -1.0;
-      double d;
-      int   delta_used = mBufferSize - mVectorSize;
-      for(int j = mBufferSize - mVectorSize; j >= 0; j -= mUnitSize) {
-        distance = 0.0;
-        vector = mBuffer + j;
-        for(int i=0; i < mVectorSize; i++) {
-          d = (mMeanVector[i] - vector[i]) ;
-          if (d > 0)
-            distance += d;
-          else
-            distance -= d;
-        }
-        distance = distance / mVectorSize;
-        if (min_distance < 0 || distance < min_distance) {
-          delta_used = j;
-          min_distance = distance;
-        }
-      }
-      mVectorOffset = delta_used;
-      bprint(mBuf,mBufSize, ": distance to mean vector %.3f (delta %i/%i)\n~> Keep ? ", min_distance, delta_used, mBufferSize - mVectorSize - delta_used);
-      *mOutput << mName << mBuf << std::endl;
-    } else {
-      mVectorOffset = mBufferSize - mVectorSize * (1 + mMargin/2.0);
-      *mOutput << mName << ":~> Keep ? " << std::endl;
-    }
-    if (mUseSnap)
-      mUseVectorOffset = mVectorOffset;
-    else
-      mUseVectorOffset = mBufferSize - mVectorSize * (1 + mMargin/2.0);
-  }
-  
-  void store_data()
-  {
-    double * vector = mBuffer + mUseVectorOffset;
-    
-    if (!mBuffer) {
-      *mOutput << mName << "(error): could not save data (empty buffer)\n";
-      return;
-    }
-    // 1. write to file
-    FILE * file = fopen(mClassFile.c_str(), "ab");
-      if (!file) {
-        *mOutput << mName << "(error): could not write to '" << mClassFile << "' (" << strerror(errno) << ")\n";
-        return;
-      }
-      for(int i=0; i< mVectorSize; i++) {
-        fprintf(file, " % .5f", vector[i]);
-        if ((i+1)%mUnitSize == 0)
-          fprintf(file, "\n");
-      }  
-      fprintf(file, "\n");  // two \n\n between vectors
-    fclose(file);
-    // 2. update mean value
-    update_mean_value(vector);
-  }
-  
-  void prepare_class_for_recording(int cmd)
-  {
-    // record character as class id
-    if (mClassLabel != cmd)
-    {
-      // new class
-      load_class(cmd, &Svm::update_mean_value);
-    }
-    if ((cmd <= 'z' && cmd >= 'a') || (cmd <= 'Z' && cmd >= 'A') || (cmd <= '9' && cmd >= '0'))
-      *mOutput << mName << ": recording vector " << mVectorCount + 1 << " for '" << (char)cmd << "'\n";
-    else
-      *mOutput << mName << ": recording vector " << mVectorCount + 1 << " for " << cmd << "\n";
-  }
-  
-  void enter(svm_states_t pState)
-  {
-    switch(pState) {
-    case ReadyToRecord:
-      mState = pState;
-      *mOutput << mName << ": Ready to record\n~> ";
-      break;
-    case Label: 
-      if (mReadyToLabel) {
-        *mOutput << mName << ": Ready to label.\n";
-        mState = pState;
-      } else {
-        *mOutput << mName << ": Cannot enter 'label' mode.\n";
-        enter(ReadyToRecord);
-      }
-      break;
-    default:
-      mState = pState;
-    }
-  }
-  
-  /** Update the mean value with the current vector. */
-  void update_mean_value(double* vector)
-  {
-    mVectorCount++;
-    double map = (double)(mVectorCount - 1) / (double)(mVectorCount);
-    for(int i=0; i < mVectorSize; i++) {
-      mMeanVector[i] = (mMeanVector[i] * map) + ( vector[i] / (double)mVectorCount );
-    }
-  }
-  
-  /** Execute the function for each vector contained in the class. */
-  void load_class(int cmd, void (Svm::*function)(double*))
-  {
-    mClassLabel = cmd;
-    /** reset mean value. */
-    mVectorCount = 0;
-    for(int i=0; i < mVectorSize; i++) mMeanVector[i] = 0.0;
-    
-    // 1. find file
-    mClassFile = mFolder;
-    bprint(mBuf, mBufSize, "/class_%i.txt", cmd);
-    mClassFile.append(mBuf);
-    
-    // 2. open
-    FILE * file;
-    float val;
-    int    value_count = 0;
-    file = fopen(mClassFile.c_str(), "rb");
-      if (!file) {
-        *mOutput << mName << ": new class\n";
-        //*mOutput << mName << "(error): could not read from '" << mClassFile << "' (" << strerror(errno) << ")\n"
-        return;
-      }
-      // read a vector
-      while(fscanf(file, " %f", &val) != EOF) {
-        fscanf(file, "\n"); // ignore newline
-        mBuffer[value_count] = (double)val;
-        if (value_count >= mVectorSize - 1) {
-          // got one vector
-          (this->*function)(mBuffer);
-          value_count = 0;
-        } else
-          value_count++;
-      }
-    fclose(file);
-  }
-  
   /** Write as a sparse vector. */
-  void write_as_sparse (double * vector)
+  bool write_as_sparse(const std::string& filename, double * vector)
   {
-    if (!mTrainFile) return;
-    
+    if (!vector) {
+      // class initialize // finish
+      size_t start = filename.find("class_");
+      size_t end   = filename.find(".txt");
+      if (start == std::string::npos || end == std::string::npos) {
+        *mOutput << mName << ": bad filename '" << filename << "'. Should be 'class_[...].txt'.\n";
+        return false;
+      }
+      mClassLabel = atoi(filename.substr(start+6, end - start - 6).c_str());
+      return true;
+    }
+    if (!mTrainFile) {
+      *mOutput << mName << ": train file not opened !.\n";
+      return false;
+    }
     fprintf(mTrainFile, "%+i", mClassLabel);
     for(int i=0; i < mVectorSize; i++) {
       if (vector[i] >= mThreshold || vector[i] <= -mThreshold) {
         fprintf(mTrainFile, " %i:%.5f", i+1, (float)vector[i]);
       }
-    }
+    }  
     fprintf(mTrainFile, "\n");
     mVectorCount++;
   }
   
-  void load_model ()
+  bool do_load_model ()
   { 
     if (mModel) svm_destroy_model(mModel);
     mModel = svm_load_model(model_file_path().c_str());
     if (!mModel) {
       *mOutput << mName << ": could not load model file '" << model_file_path() << "'.\n";
-      return;
+      return false;
     }
     
     // prepare probability / labels buffer
@@ -626,14 +326,14 @@ private:
     mLabels         = (int*)    malloc(mLabelCount * sizeof(int));
     if (!mLabels) {
       *mOutput << mName << ": could not allocate " << mLabelCount << " ints for labels.\n";
-      return;
+      return false;
     }
     svm_get_labels(mModel, mLabels);
     
 		mDistances     = (double*) malloc((mLabelCount * (mLabelCount-1)/2) * sizeof(double));
     if (!mDistances) {
       *mOutput << mName << ": could not allocate " << (mLabelCount * (mLabelCount-1)/2) << " doubles for distances.\n";
-      return;
+      return false;
     }
     
     // vote_count is just a hack because we map probability signals in the same plot as signals packed into
@@ -646,13 +346,11 @@ private:
     mVotes         = (double*) malloc(vote_count * sizeof(double));
     if (!mVotes) {
       *mOutput << mName << ": could not allocate " << vote_count << " ints for votes.\n";
-      return;
+      return false;
     }
     for(int i=0;i<vote_count;i++) mVotes[i] = 0.0;
     
-    
-    mReadyToLabel = true;
-    enter(Label);
+    return true;
   }
   
   std::string model_file_path()
@@ -766,26 +464,12 @@ readpb_fail:
     return false;
   }
 
-  svm_states_t mState;
-  std::string mFolder; /**< Folder containing the class data. */
-  std::string mClassFile; /**< Current class data file. */
-  FILE * mTrainFile;
+  FILE * mTrainFile;    /**< Used during foreach class loop to write sparse data. */
 
-  bool mReadyToLabel; /**< Set to true when svm is up to date. */
-  bool mUseSnap;      /**< True if the recording should snap to the best match. Usually better without. */
-  
-  int mCountDown;
-  int mVectorOffset;     /**< Best match with this offset in mBuffer. */
-  int mUseVectorOffset;  /**< Offset to use. */
-  double * mMeanVector; /**< Store the mean value for all vectors from this class. */
   double * mLiveBuffer; /**< Pointer to the current buffer window. Content can change between calls. */
-  double * mBuffer;     /**< Store a single vector +  margin. */
-  double   mMargin;     /**< Size (in %) of the margin. */
-  int mVectorSize;
   int mUnitSize;       /**< How many values form a sample (single event). */
   int mVectorCount;    /**< Number of vectors used to build the current mean value. */
   int mSampleRate; /**< How many samples per second do we receive from the 'data' inlet. */
-  int mBufferSize; /**< Size of buffered data ( = mVectorSize + 25%). We use more then the vector size to find the best fit. */
   int mLiveBufferSize;
   int mClassLabel; /**< Current label. Used during recording and recognition. */
   double mLabelProbability; /**< Current probability for the given label. */
@@ -813,9 +497,7 @@ extern "C" void init()
 {
   CLASS (Svm)
   OUTLET(Svm,label)
-  OUTLET(Svm,countdown)
-  OUTLET(Svm,current)
-  OUTLET(Svm,mean)
   OUTLET(Svm,probabilities)
   METHOD(Svm,learn)
+  METHOD(Svm,build)
 }

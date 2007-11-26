@@ -6,7 +6,7 @@ public:
   
   bool init (const Params& p)
   {
-    if (!p.get(&mCropSize, "crop"))
+    if (!p.get(&mCropSize, "crop", true))
       mCropSize = 32;
     if (mCropSize < 0) {
       mCropSize = -mCropSize;

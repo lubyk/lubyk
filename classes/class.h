@@ -212,8 +212,8 @@ private:
   {
     Signal sig;
     double value;
-    Buf<double> buf;
-    if (p.size() > 0) {
+    if (p.size() > 1) {
+      Buf<double> buf;
       for(int i=0; i < p.size(); i++) {
         p.get(&value, i);
         buf.append(value);

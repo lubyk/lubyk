@@ -153,11 +153,7 @@ public:
   
   inline void send(const MidiMessage& pMsg, int pPort = 1)
   {
-    MidiMessage * msg = new MidiMessage(pMsg);
-    mS.type = MidiSignal;
-    mS.midi_ptr.value = msg;
-    mS.midi_ptr.free_me = true;
-    send(mS, pPort);
+    send(Signal(pMsg), pPort);
   }
   
   /** Send a midi note with the parameters provided.

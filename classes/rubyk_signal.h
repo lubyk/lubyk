@@ -57,6 +57,13 @@ typedef struct {
 union Signal {
   Signal() {}
   Signal(rubyk_signal_t pSigType) : type(pSigType) {}
+  Signal(const MidiMessage& pMsg)
+  {
+    MidiMessage * msg = new MidiMessage(pMsg);
+    type = MidiSignal;
+    midi_ptr.value = msg;
+    midi_ptr.free_me = true;
+  }
   
   ~Signal()
   {

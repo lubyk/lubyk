@@ -46,6 +46,8 @@ public:
   // inlet 1
   void bang(const Signal& sig)
   {
+    if (mDebug)
+      *mOutput << mName << ": " << sig << std::endl;
     if (!mMidiout || sig.type != MidiSignal) return;
     
     if (sig.midi_ptr.value->mWait) {
@@ -54,13 +56,13 @@ public:
         sig.clear_free_me(); // we take hold of it
         register_event<Midi, &Midi::send_and_delete>(msg->mWait, (void*)msg);
       } else {
-        fprintf(stderr, "We decided not to implement midimessages that are not released (free_me not true). Please change your code...\n");
+        *mOutput << mName << ": we decided not to implement midimessages that are not released (free_me not true). Please change your code...\n";
       }
     } else if (sig.midi_ptr.free_me) {
       sig.clear_free_me(); // we take hold
       send_and_delete((void*)(sig.midi_ptr.value));
     } else {
-      fprintf(stderr, "We decided not to implement midimessages that are not released (free_me not true). Please change your code...\n");
+      *mOutput << mName << ": we decided not to implement midimessages that are not released (free_me not true). Please change your code...\n";
     }
   }
   
@@ -71,8 +73,9 @@ public:
     if (msg->mType == NoteOn && msg->mLength) {
       msg->note_on_to_off();
       register_forced_event<Midi, &Midi::send_and_delete>(msg->mLength, (void*)msg);
-    } else
+    } else {
       delete msg;
+    }
   }
   
   

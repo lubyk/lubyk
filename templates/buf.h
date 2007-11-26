@@ -12,7 +12,7 @@ template <typename T>
 class Buf
 {
 public:
-  Buf() :  storage_size(0), size(0) {}
+  Buf() :  storage_size(0), size(0), data(NULL) {}
   virtual ~Buf()
   {
     if (data) free(data);

@@ -35,8 +35,7 @@ protected:
       if (directory == NULL) {
         *mOutput << mName << ": could not open directory '" << mFolder << "' to read class data.\n";
         goto foreach_train_class_fail;
-      }  
-      if(!((((T*)this)->*Tmethod)(std::string(""), NULL))) goto foreach_train_class_fail; // send NULL vector to clear
+      }
       while (elem = readdir(directory)) {
         std::string filename(elem->d_name);
         std::string path = std::string(mFolder).append("/").append(filename);
@@ -48,6 +47,7 @@ protected:
           continue;
         }
         
+        if(!((((T*)this)->*Tmethod)(filename, NULL))) goto foreach_train_class_fail; // send NULL vector to clear
         FILE * file;
         float val;
         int    value_count = 0;

@@ -104,11 +104,11 @@ public:
           }
           break;
         } else if (cmd == RK_RIGHT_ARROW) { // -> right arrow 301
-          mUseVectorOffset -= mUnitSize;
+          mUseVectorOffset += mUnitSize;
           if (mUseVectorOffset < 0) mUseVectorOffset = 0;
           break;
         } else if (cmd == RK_LEFT_ARROW) { // <- left arrow  302
-          mUseVectorOffset += mUnitSize;
+          mUseVectorOffset -= mUnitSize;
           if (mUseVectorOffset > mBufferSize - mVectorSize) mUseVectorOffset = mBufferSize - mVectorSize;
           break;
         } else {

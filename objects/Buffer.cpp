@@ -18,7 +18,7 @@ public:
   
   bool init_buffer (const Params& p)
   {
-    mWindowSize = p.val("buffer", 32);
+    if (!p.get(&mWindowSize, "buffer", true)) mWindowSize = 32;
     
     // use buffer
     size_t sz = mWindowSize * DEFAULT_WINDOW_COUNT; // write twice once every 10 windows

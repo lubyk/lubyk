@@ -7,6 +7,8 @@
 class PCA : public TrainedMachine
 {
 public:
+  PCA() : mBuffer(NULL), mWorkBuffer(NULL), mClasses(NULL), mMeanValue(NULL), mTransposedFile(NULL) {}
+  
   virtual ~PCA ()
   {
     if (mBuffer)  free(mBuffer);            // FIXME: replace these buffers with Buf<double>
@@ -27,7 +29,6 @@ public:
       mTargetSize = mVectorSize;
     }
     
-    mTransposedFile = NULL;
     
     if(!alloc_doubles(&mBuffer, mVectorSize, "output stream")) return false;
     if(!alloc_doubles(&mWorkBuffer, mVectorSize, "work buffer")) return false;
@@ -51,6 +52,8 @@ public:
         mS.type = ArraySignal;
         mS.array.value = mBuffer;
         mS.array.size  = mTargetSize;
+        if (mDebug)
+          std::cout << mName << ": " << mS << std::endl;
         send(mS);
       } else {
         *mOutput << mName << ": wrong signal size " << sig.array.size << " should be " << mVectorSize << "\n.";
@@ -63,9 +66,11 @@ public:
   }
   
   /** Method from command line. */
-  void build()
+  void learn()
   {
-    build_model();
+    if(!do_learn()) {
+      *mOutput << mName << ": could not create a new basis from training data.\n";
+    }
   }
   
   void load()
@@ -98,7 +103,7 @@ private:
   bool compute_mean_vector(const std::string& filename, double * vector)
   {
     if (vector == NULL) {
-      // class finished // initialize
+      // class initialize // finished
       if (mVectorCount > 0) {
         for(int i=0; i < mVectorSize; i++)
           mMeanValue[i] /= (double)mVectorCount;
@@ -188,23 +193,28 @@ private:
     fclose(file);
   }
   
-  void build_model()
+  bool do_learn()
   {
     double * symmetric_matrix = NULL;
     double * eigenvectors = NULL;
     double * eigenvalues  = NULL;
     FILE   * file;
-    
+
     // 1. build a matrix with the mean vectors for each class
     mClassCount = 0;
-    if (mClasses)   free(mClasses);
+    if (mClasses) {
+      free(mClasses);
+      mClasses = NULL;
+    }
     if (mMeanValue) free(mMeanValue);
-    if (!alloc_doubles(&mMeanValue, mVectorSize, "mean value")) return;
+    if (!alloc_doubles(&mMeanValue, mVectorSize, "mean value")) return false;
 
     if(!FOREACH_TRAIN_CLASS(PCA, compute_mean_vector)) {
-      *mOutput << mName << ": could not build model\n";
-      return;
+      *mOutput << mName << ": could not build model.\n";
+      return false;
     }
+    
+    if (!mClasses) return false; // no classes loaded.
     
     // 2.1. compute mean value for all vectors
     for(int i=0; i< mVectorSize; i++) mMeanValue[i] = 0.0;
@@ -231,7 +241,7 @@ private:
     file = fopen(pca_model_path().c_str(), "wb");
       if (!file) {
         *mOutput << mName << "(error): could not write to '" << pca_model_path() << "' (" << strerror(errno) << ")\n~> ";
-        goto build_cleanup;
+        goto learn_failed;
       }
     
       // FIXME: write vector should be in 'Matrix'
@@ -251,8 +261,8 @@ private:
     // 3. PCA
     
     // Compute T'T :
-    if(!alloc_doubles(&symmetric_matrix, mVectorSize * mVectorSize, "symmetric matrix")) goto build_cleanup;
-    if(!Matrix::compute_symetric_matrix(&symmetric_matrix, mClasses, mClassCount, mVectorSize)) goto build_cleanup;
+    if(!alloc_doubles(&symmetric_matrix, mVectorSize * mVectorSize, "symmetric matrix")) goto learn_failed;
+    if(!Matrix::compute_symetric_matrix(&symmetric_matrix, mClasses, mClassCount, mVectorSize)) goto learn_failed;
     
     
     if (mDebug) {
@@ -264,9 +274,9 @@ private:
     // find the eigenvectors of T'T :
     long eigen_count;
     int * sort_index;
-    if(!alloc_doubles(&eigenvectors, mVectorSize * mVectorSize, "eigenvectors matrix")) goto build_cleanup;
-    if(!alloc_doubles(&eigenvalues,  mVectorSize, "eigenvalues")) goto build_cleanup;
-    if(!Matrix::compute_eigenvectors(&eigenvectors, &eigenvalues, &eigen_count, symmetric_matrix, mVectorSize)) goto build_cleanup;
+    if(!alloc_doubles(&eigenvectors, mVectorSize * mVectorSize, "eigenvectors matrix")) goto learn_failed;
+    if(!alloc_doubles(&eigenvalues,  mVectorSize, "eigenvalues")) goto learn_failed;
+    if(!Matrix::compute_eigenvectors(&eigenvectors, &eigenvalues, &eigen_count, symmetric_matrix, mVectorSize)) goto learn_failed;
 
     
     
@@ -291,12 +301,12 @@ private:
     file = fopen(pca_model_path().c_str(), "ab");
       if (!file) {
         *mOutput << mName << "(error): could not write to '" << pca_model_path() << "' (" << strerror(errno) << ")\n~> ";
-        goto build_cleanup;
+        goto learn_failed;
       }
       // keep only the greatest eigenvectors with greatest eigenvalues.
       
       if (mBasis) free(mBasis);
-      if (!alloc_doubles(&mBasis, mVectorSize * mTargetSize, "basis matrix")) goto build_cleanup;
+      if (!alloc_doubles(&mBasis, mVectorSize * mTargetSize, "basis matrix")) goto learn_failed;
       
       double value;
       for(int e=0; e < mTargetSize; e++) {
@@ -320,16 +330,20 @@ private:
     
     if(!FOREACH_TRAIN_CLASS(PCA, transpose_in_new_basis)) {
       *mOutput << mName << ": could not write transposed training data\n";
-      goto build_cleanup;
+      goto learn_failed;
     }
     
     *mOutput << mName << ": wrote transposed training data to '" << pca_transpose_path(std::string("")) << "'.\n"; 
     
-build_cleanup:
     if (symmetric_matrix)    free(symmetric_matrix);
     if (eigenvectors) free(eigenvectors);
     if (eigenvalues) free(eigenvalues);
-    return;
+    return true;
+learn_failed:
+    if (symmetric_matrix)    free(symmetric_matrix);
+    if (eigenvectors) free(eigenvectors);
+    if (eigenvalues) free(eigenvalues);
+    return false;
   }
     
   /** Add vector set of classes. */
@@ -390,7 +404,7 @@ extern "C" void init()
 {
   CLASS (PCA)
   OUTLET(PCA,scaled)
-  METHOD(PCA,build)
+  METHOD(PCA,learn)
   METHOD(PCA,load)
   METHOD(PCA,basis)
 }
