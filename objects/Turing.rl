@@ -69,8 +69,8 @@ public:
   {
     mScript = pScript;
     int cs;
-    const char *p  = mScript.data(); // data pointer
-    const char *pe = p + mScript.size(); // past end
+    const char * p  = mScript.data(); // data pointer
+    const char * pe = p + mScript.size(); // past end
     char name[MAX_NAME_SIZE + 1];
     int  name_index = 0;
     int state_count = 0; // first state is 0
@@ -83,6 +83,10 @@ public:
     int send = -2;
     int source_state = 0;
     int target_state = 0;
+    
+    // integrated lua script
+    const char * begin_lua_script = NULL;
+    std::string lua_script;
     
     
     std::vector< std::vector<int> >::iterator it,end; // to add new tokens
@@ -219,10 +223,24 @@ public:
     }
     
     action begin_comment { fgoto doc_comment; }
+    action end_comment   { fgoto main; }
     
-    action end_comment { fgoto main; }
+    action begin_lua     { 
+      std::cout << "begin_lua\n";
+      begin_lua_script = p;
+      fgoto lua_script; 
+    }
+    action end_lua       {
+      lua_script.append( begin_lua_script, p - begin_lua_script - 4 );
+      begin_lua_script = NULL;
+      fgoto main; 
+    }
+    
+
     
     doc_comment := (('=end' %end_comment | [^\n]*) '\n')+;
+    
+    lua_script  := (('=end' %end_lua     | [^\n]*) '\n')+;
     
     ws     = (' ' | '\t');
     
@@ -236,15 +254,21 @@ public:
 
     comment = '#' [^\n]* ;
     
-    begin_comment = '=begin' %begin_comment;
+    begin_comment = '=begin\n' @begin_comment;
     
     entry  = identifier %set_state %set_source ws+ transition ws+ identifier %set_state %set_target (ws+ send)? (ws* comment)?;
+    
+    begin_lua = '=begin' ' '+ 'lua\n' @begin_lua;
 
-    main  := ( ws* (entry %add_entry | comment | begin_comment | ws* )  '\n' )+ $err(error);
+    main  := ( ws* (entry %add_entry | comment | begin_comment | begin_lua | ws* )  '\n' )+ $err(error);
     write exec;
     write eof;
   }%%
-    
+  
+    if (begin_lua_script) {
+      lua_script.append( begin_lua_script, p - begin_lua_script );
+    }
+    std::cout << "script:\n[" << lua_script << "]\n";
     mScriptDead = false; // ok, we can receive and process signals (again).
   }
 
