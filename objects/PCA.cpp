@@ -281,17 +281,19 @@ private:
     
     
     // build P out of those eigenvectors with greatest values :
-    *mOutput << mName << ": calculated " << eigen_count << " eigenvalues:";
+    *mOutput << mName << ": calculated " << eigen_count << " eigenvalues (showing greater then zero):\n  ";
     
     for(int i= 0; i< eigen_count; i++) {
-      bprint(mBuf,mBufSize, " % .7f\n", eigenvalues[i]);
-      *mOutput << mBuf;
+      if (eigenvalues[i] < -0.0001 || eigenvalues[i] > 0.0001) {
+        bprint(mBuf,mBufSize, " % .4f", eigenvalues[i]);
+        *mOutput << mBuf;
+      }
     }
     *mOutput << std::endl;
     
     if (mDebug) {
       *mOutput << mName << ": eigenvectors:\n";
-      Matrix::print(eigenvectors, mVectorSize, mVectorSize, CblasRowMajor);
+      Matrix::print(eigenvectors, mVectorSize, mVectorSize, CblasColMajor);
       printf("\n");
     }
     
@@ -312,7 +314,7 @@ private:
       for(int e=0; e < mTargetSize; e++) {
         int eigen_id = eigen_count - e - 1; // start by greatest eigenvalue (last).
         for(int i=0; i< mVectorSize; i++) {
-          value = eigenvectors[ eigen_id * mVectorSize + i ];
+          value = eigenvectors[ eigen_id * mVectorSize + i ]; // eigenvalue is in column form, in CblasColMajor
           fprintf(file, " % .5f", value);
           mBasis[e * mVectorSize + i] = value;
           if (mUnitSize > 1 && (i+1)%mUnitSize == 0) fprintf(file, "\n");

@@ -231,7 +231,7 @@ public:
     // init token table
     memset(mTokenTable, 0, sizeof(mTokenTable));
     
-    mStateCount = 0; // first state is 0
+    mStateCount = 0;
     mTokenCount = 0;
     mGotoTable.clear();
     mSendTable.clear();

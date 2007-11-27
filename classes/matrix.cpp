@@ -7,13 +7,19 @@ void Matrix::print(double* matrix, int pRowCount, int pColCount, int rowMode) {
 	int i,j;
 
   for(i=0;i<pRowCount;i++) {
-		printf("|");
+		if (i==0)
+		  printf("[");
+    else
+      printf(" ");
 		for(j=0;j<pColCount;j++)
 		  if (rowMode == CblasRowMajor)
 				printf(" % .2f",matrix[(i * pColCount) + j]);
 			else
 				printf(" % .2f",matrix[(j * pRowCount) + i]);
-		printf(" |\n");
+    if (i == pRowCount -1)
+      printf(" ]\n");
+    else
+      printf("\n");
   }
 }
 
@@ -33,7 +39,7 @@ bool Matrix::compute_symetric_matrix(double ** pResult, const double * pMatrix, 
 /** Compute the eigenvectors and eigenvalues for a symmetric (row major) matrix. Return false on failure.
   * @param pRowCount pMatrix square matrix.
   * @param pSize size of square matrix T.
-  * @param pEigenVectors pointer to a buffer of size pColCount * pColCount to store resulting eigenvectors.
+  * @param pEigenVectors pointer to a buffer of size pColCount * pColCount to store resulting eigenvectors. First eigenvector (corresponding to smallest eigenvalue) is in the first column
   * @param pEigenValues pointer to a buffer of size pColCount to store resulting eigenvalues (in ascending order). */
 bool Matrix::compute_eigenvectors(double ** pEigenVectors, double ** pEigenValues, long * pEigenCount, double * pMatrix, int pSize)
 {
@@ -50,7 +56,7 @@ bool Matrix::compute_eigenvectors(double ** pEigenVectors, double ** pEigenValue
 	double vu = 0.0;         //  8. See RANGE. (U stands for Up)
 	long  il = 0.0;         //  9. See RANGE.
 	long  iu = 0.0;         // 10. See RANGE.
-	double abstol = 0.01;    // 11. Absolute error tolerance for the eigenvalues. If set to zero, 
+	double abstol = 0.00001;    // 11. Absolute error tolerance for the eigenvalues. If set to zero, 
 													//     machine precision will be used during convergence test. Higher values = faster but less precise.
 	// (M) eigencount       // 12. Output of the number of eigenvalues found.
   // (W) eigenvalues      // 13. Output eigenvalues in ascending order.

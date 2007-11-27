@@ -19,7 +19,7 @@ public:
     * pointer to an array of pCol * pRow doubles. 
     * @param pRowCount pMatrix square matrix.
     * @param pSize size of square matrix T.
-    * @param pEigenVectors pointer to a buffer of size pColCount * pColCount to store resulting eigenvectors.
+    * @param pEigenVectors pointer to a buffer of size pColCount * pColCount to store resulting eigenvectors. First eigenvector (corresponding to smallest eigenvalue) is in the first column
     * @param pEigenValues pointer to a buffer of size pColCount to store resulting eigenvalues (in ascending order).
     * @param pEigenCount result: number of eigenvalues found. */
   static bool compute_eigenvectors(double ** pEigenVectors, double ** pEigenValues, long * pEigenCount, double * pMatrix, int pSize);

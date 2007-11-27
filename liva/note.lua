@@ -9,7 +9,7 @@ function bang()
 	if (in1 == old) then
 		return
 	end
-	print(in1)
+	print(in1, in2)
 	old = in1
 	return in1
 	--]]

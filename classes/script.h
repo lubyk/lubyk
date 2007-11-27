@@ -73,6 +73,7 @@ public:
     in.close();
     oss << "\n";
     eval_script(oss.str());
+    *mOutput << mName << ": script loaded.\n";
   }
   
   // set script
