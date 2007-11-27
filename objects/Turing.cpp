@@ -188,7 +188,6 @@ public:
   void eval_script(const std::string& pScript) 
   {
     mScript = pScript;
-    mScript.append("\n");
     int cs;
     const char * p  = mScript.data(); // data pointer
     const char * pe = p + mScript.size(); // past end
@@ -241,14 +240,14 @@ public:
     mStateNames.clear();
     
     
-#line 245 "objects/Turing.cpp"
+#line 244 "objects/Turing.cpp"
 	{
 	cs = turing_start;
 	}
-#line 121 "objects/Turing.rl"
+#line 120 "objects/Turing.rl"
     
   
-#line 252 "objects/Turing.cpp"
+#line 251 "objects/Turing.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -323,7 +322,7 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 123 "objects/Turing.rl"
+#line 122 "objects/Turing.rl"
 	{
       if (name_index >= MAX_NAME_SIZE) {
         *mOutput << "Name buffer overflow !\n";
@@ -338,7 +337,7 @@ _match:
     }
 	break;
 	case 1:
-#line 136 "objects/Turing.rl"
+#line 135 "objects/Turing.rl"
 	{
       name[name_index] = '\0';
       identifier = name;
@@ -349,7 +348,7 @@ _match:
     }
 	break;
 	case 2:
-#line 145 "objects/Turing.rl"
+#line 144 "objects/Turing.rl"
 	{
       name[name_index] = '\0';
       name_index = 0;
@@ -360,7 +359,7 @@ _match:
     }
 	break;
 	case 3:
-#line 154 "objects/Turing.rl"
+#line 153 "objects/Turing.rl"
 	{
       source = identifier;
       #ifdef DEBUG_PARSER
@@ -369,7 +368,7 @@ _match:
     }
 	break;
 	case 4:
-#line 161 "objects/Turing.rl"
+#line 160 "objects/Turing.rl"
 	{ 
       target = identifier;
       #ifdef DEBUG_PARSER
@@ -381,7 +380,7 @@ _match:
     }
 	break;
 	case 5:
-#line 171 "objects/Turing.rl"
+#line 170 "objects/Turing.rl"
 	{ 
       if(name_index) {
         // identifier: resolve to value
@@ -400,7 +399,7 @@ _match:
     }
 	break;
 	case 6:
-#line 188 "objects/Turing.rl"
+#line 187 "objects/Turing.rl"
 	{ 
       name[name_index] = '\0';
       name_index = 0;
@@ -411,7 +410,7 @@ _match:
     }
 	break;
 	case 7:
-#line 198 "objects/Turing.rl"
+#line 197 "objects/Turing.rl"
 	{
       mTokenByName.set(identifier, tok);
       mTokenNameByValue.set(tok, identifier);
@@ -421,7 +420,7 @@ _match:
     }
 	break;
 	case 8:
-#line 206 "objects/Turing.rl"
+#line 205 "objects/Turing.rl"
 	{
       // do we know this token ?
       if (!mTokenTable[tok % 256]) {
@@ -461,7 +460,7 @@ _match:
     }
 	break;
 	case 9:
-#line 244 "objects/Turing.rl"
+#line 243 "objects/Turing.rl"
 	{
       // write the entry
       #ifdef DEBUG_PARSER
@@ -477,7 +476,7 @@ _match:
     }
 	break;
 	case 10:
-#line 259 "objects/Turing.rl"
+#line 258 "objects/Turing.rl"
 	{
       p--; // move back one char
       char error_buffer[10];
@@ -488,15 +487,15 @@ _match:
     }
 	break;
 	case 11:
-#line 273 "objects/Turing.rl"
+#line 272 "objects/Turing.rl"
 	{ {cs = 30; goto _again;} }
 	break;
 	case 12:
-#line 274 "objects/Turing.rl"
+#line 273 "objects/Turing.rl"
 	{ {cs = 1; goto _again;} }
 	break;
 	case 13:
-#line 276 "objects/Turing.rl"
+#line 275 "objects/Turing.rl"
 	{ 
       std::cout << "begin_lua\n";
       begin_lua_script = p;
@@ -504,14 +503,14 @@ _match:
     }
 	break;
 	case 14:
-#line 281 "objects/Turing.rl"
+#line 280 "objects/Turing.rl"
 	{
       lua_script.append( begin_lua_script, p - begin_lua_script - 4 );
       begin_lua_script = NULL;
       {cs = 1; goto _again;} 
     }
 	break;
-#line 515 "objects/Turing.cpp"
+#line 514 "objects/Turing.cpp"
 		}
 	}
 
@@ -523,8 +522,8 @@ _again:
 	_out: {}
 	}
 
-#line 527 "objects/Turing.cpp"
-#line 318 "objects/Turing.rl"
+#line 526 "objects/Turing.cpp"
+#line 317 "objects/Turing.rl"
 
   
     if (begin_lua_script) {
@@ -534,7 +533,7 @@ _again:
     mScriptDead = false; // ok, we can receive and process signals (again).
   }
 
-  // FIXME: use bprint (char *& pBuffer, int& pBufferSize, const char *fmt, ...);
+  /** Output transition and action tables. */
   void tables()
   {  
     *mOutput << "tokens\n";
@@ -549,6 +548,12 @@ _again:
     }
     print_table(*mOutput, "goto", mGotoTable);
     print_table(*mOutput, "send", mSendTable);
+  }
+  
+  /** Output tables in digraph format to produce graphs with graphviz. */
+  void dot()
+  {
+    make_dot_graph(*mOutput);
   }
 
 private:
@@ -614,6 +619,57 @@ private:
     } 
   }
   
+  void make_dot_graph(std::ostream& out)
+  {
+    std::string source,target,token,send;
+    
+    out << "digraph " << mName << "{";
+    out << "rankdir=LR;\n";
+  	// first node
+    out << "node [ fixedsize = true, height = 0.65, shape = doublecircle ];\n";
+    out << mStateNames[0] << ";\n";
+    // all other nodes
+    out << "node [ shape = circle ];\n";
+    // transitions
+    
+    for (int i=0; i < mStateCount; i++) {
+      source = mStateNames[i];
+      // print default action
+      token = '-';
+      target = mStateNames[mGotoTable[i][0]];
+      if (mSendTable[i][0] == -2) 
+        send = ""; // send nothing
+      else {
+        send = ":";
+        bprint(mBuf, mBufSize, "%i", mSendTable[i][0]);
+        send.append(mBuf);
+      }
+      out << source << " -> " << target << " [ label = \"" << token << send << "\"];\n";
+      
+      // print other transitions
+      for (int j=0; j < mTokenCount; j++) {
+        if (!mTokenNameByValue.get(&token, mTokenList[j])) {
+          bprint(mBuf, mBufSize, "%i", mTokenList[j]); // no token name
+          token = mBuf;
+        }
+        if (mGotoTable[i][j+1] == -1)
+          ;  // default, do not print
+        else {
+          target  = mStateNames[mGotoTable[i][j+1]];
+          // source -> target [ label = "token:send" ];
+          if (mSendTable[i][j+1] == -2) 
+            send = ""; // send nothing
+          else {
+            send = ":";
+            bprint(mBuf, mBufSize, "%i", mSendTable[i][j+1]);
+            send.append(mBuf);
+          }
+          out << source << " -> " << target << " [ label = \"" << token << send << "\"];\n";
+        }
+      }
+    }
+    out << "}\n";
+  }
   
   
   int  mToken;           /**< Current token value (translated). */
@@ -642,6 +698,7 @@ extern "C" void init()
   CLASS (Turing)
   OUTLET(Turing, output)
   METHOD(Turing, tables)
+  METHOD(Turing, dot)
   SUPER_METHOD(Turing, Script, set)
   SUPER_METHOD(Turing, Script, load)
   SUPER_METHOD(Turing, Script, script)

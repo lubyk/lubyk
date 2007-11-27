@@ -65,7 +65,6 @@ public:
   void eval_script(const std::string& pScript) 
   {
     mScript = pScript;
-    mScript.append("\n");
     int cs;
     const char * p  = mScript.data(); // data pointer
     const char * pe = p + mScript.size(); // past end
@@ -324,7 +323,7 @@ public:
     mScriptDead = false; // ok, we can receive and process signals (again).
   }
 
-  // FIXME: use bprint (char *& pBuffer, int& pBufferSize, const char *fmt, ...);
+  /** Output transition and action tables. */
   void tables()
   {  
     *mOutput << "tokens\n";
@@ -339,6 +338,12 @@ public:
     }
     print_table(*mOutput, "goto", mGotoTable);
     print_table(*mOutput, "send", mSendTable);
+  }
+  
+  /** Output tables in digraph format to produce graphs with graphviz. */
+  void dot()
+  {
+    make_dot_graph(*mOutput);
   }
 
 private:
@@ -404,6 +409,57 @@ private:
     } 
   }
   
+  void make_dot_graph(std::ostream& out)
+  {
+    std::string source,target,token,send;
+    
+    out << "digraph " << mName << "{\n";
+    out << "  rankdir=LR;\n";
+  	// first node
+    out << "  node [ fixedsize = true, height = 0.65, shape = doublecircle ];\n";
+    out << mStateNames[0] << ";\n";
+    // all other nodes
+    out << "  node [ shape = circle ];\n";
+    // transitions
+    
+    for (int i=0; i < mStateCount; i++) {
+      source = mStateNames[i];
+      // print default action
+      token = '-';
+      target = mStateNames[mGotoTable[i][0]];
+      if (mSendTable[i][0] == -2) 
+        send = ""; // send nothing
+      else {
+        send = ":";
+        bprint(mBuf, mBufSize, "%i", mSendTable[i][0]);
+        send.append(mBuf);
+      }
+      out << "  " << source << " -> " << target << " [ label = \"" << token << send << "\"];\n";
+      
+      // print other transitions
+      for (int j=0; j < mTokenCount; j++) {
+        if (!mTokenNameByValue.get(&token, mTokenList[j])) {
+          bprint(mBuf, mBufSize, "%i", mTokenList[j]); // no token name
+          token = mBuf;
+        }
+        if (mGotoTable[i][j+1] == -1)
+          ;  // default, do not print
+        else {
+          target  = mStateNames[mGotoTable[i][j+1]];
+          // source -> target [ label = "token:send" ];
+          if (mSendTable[i][j+1] == -2) 
+            send = ""; // send nothing
+          else {
+            send = ":";
+            bprint(mBuf, mBufSize, "%i", mSendTable[i][j+1]);
+            send.append(mBuf);
+          }
+          out << "  " << source << " -> " << target << " [ label = \"" << token << send << "\"];\n";
+        }
+      }
+    }
+    out << "}\n";
+  }
   
   
   int  mToken;           /**< Current token value (translated). */
@@ -432,6 +488,7 @@ extern "C" void init()
   CLASS (Turing)
   OUTLET(Turing, output)
   METHOD(Turing, tables)
+  METHOD(Turing, dot)
   SUPER_METHOD(Turing, Script, set)
   SUPER_METHOD(Turing, Script, load)
   SUPER_METHOD(Turing, Script, script)
