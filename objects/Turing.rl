@@ -1,6 +1,6 @@
 #include "script.h"
 #define MAX_NAME_SIZE 200
-//#define DEBUG_PARSER
+#define DEBUG_PARSER
 
 %%{
   machine turing;
@@ -10,11 +10,8 @@
 class Turing : public Script
 {
 public:
-  ~Turing()
-  {
-    // free...
-  }
-
+  Turing() : mStateByName(30), mTokenNameByValue(30), mTokenByName(30) {}
+  
   bool init (const Params& p)
   {
     mToken = 0;
@@ -68,19 +65,20 @@ public:
   void eval_script(const std::string& pScript) 
   {
     mScript = pScript;
+    mScript.append("\n");
     int cs;
     const char * p  = mScript.data(); // data pointer
     const char * pe = p + mScript.size(); // past end
     char name[MAX_NAME_SIZE + 1];
     int  name_index = 0;
-    int state_count = 0; // first state is 0
-    int token_count = 1; // first token is 1
-    Hash<std::string, int> state_names(30);
     
-    int state_id;
     int token_id = 0;
-    char tok;
+    int tok;
     int send = -2;
+    
+    // source state, target state
+    std::string source;
+    std::string target;
     int source_state = 0;
     int target_state = 0;
     
@@ -89,12 +87,35 @@ public:
     std::string lua_script;
     
     
-    std::vector< std::vector<int> >::iterator it,end; // to add new tokens
+    // function call id, params
+    // 1. during parse
+    // 1.1 'send' ? store 0
+    // 1.2 store i++ and push_back vector of method names (method_names)
+    // 1.3 store arguments as vector
+    // 2. during resolution
+    // 2.1 foreach i, get method_names[i], push back in method_ids
+    // 2.2 foreach 'send' in table, replace id by method_ids[id] (keep arguments)
+    
+    // a call = push args on stack, call method_id
+    
+    // get token values by identifier
+    mTokenByName.clear();
+    mTokenNameByValue.clear();
+    
+    std::string identifier;
+    
+    // to add new tokens
+    std::vector< std::vector<int> >::iterator it,end;
+    
     // init token table
     memset(mTokenTable, 0, sizeof(mTokenTable));
     
+    mStateCount = 0; // first state is 0
+    mTokenCount = 0;
     mGotoTable.clear();
     mSendTable.clear();
+    mStateByName.clear();
+    mStateNames.clear();
     
     %% write init;
     
@@ -111,35 +132,58 @@ public:
       name[name_index] = fc; /* append */
       name_index++;     
     }
-
-    action set_state { 
+    
+    action set_identifier {
       name[name_index] = '\0';
-      #ifdef DEBUG_PARSER
-        std::cout <<    "[name " << name << "]" << std::endl;
-      #endif
-      // do we know this name ?
-      if (!state_names.get(&state_id, std::string(name))) {
-        // new state
-        state_id = state_count;
-        state_names.set(std::string(name), state_id);
-        
-        // add a new line to the lookup tables
-        mGotoTable.push_back( std::vector<int>(token_count, -1) ); // -1 means use default
-        mGotoTable[state_count][0] = 0; // default move to start
-        
-        mSendTable.push_back( std::vector<int>(token_count, -1) ); // -1 means use default
-        mSendTable[state_count][0] = -2; // -2 means send 'nil'
-        
-        state_count++;
-      }
+      identifier = name;
       name_index = 0;
+      #ifdef DEBUG_PARSER
+        std::cout <<    "[identifier " << identifier << "]" << std::endl;
+      #endif
     }
     
-    action set_source { source_state = state_id; state_id = 0; }
+    action set_send {
+      name[name_index] = '\0';
+      name_index = 0;
+      #ifdef DEBUG_PARSER
+        std::cout <<    "[send " << name << "]" << std::endl;
+      #endif
+      send = (int)name[0]; //FIXME !
+    }
     
-    action set_target { target_state = state_id; state_id = 0; }
+    action set_source {
+      source = identifier;
+      #ifdef DEBUG_PARSER
+        std::cout <<    "[source " << source << "]" << std::endl;
+      #endif 
+    }
+    
+    action set_target { 
+      target = identifier;
+      #ifdef DEBUG_PARSER
+        std::cout <<    "[target " << target << "]" << std::endl;
+      #endif
+      source_state = get_state_id(source); // we postponed this to here to be sure state is not confused with token identifier
+      target_state = get_state_id(target);
+      source = target; // the last target becomes the next source
+    }
 
-    action set_tok { tok = fc; }
+    action set_token_from_identifier { 
+      if(name_index) {
+        // identifier: resolve to value
+        name[name_index] = '\0';
+        name_index = 0;
+        if (!mTokenByName.get(&tok, std::string(name))) {
+          *mOutput << "Syntax error. Unknown token '" << name << "' (missing declaration)\n";
+          mScriptDead = true;
+          return;
+        }
+      } else {
+        *mOutput << "Syntax error: no identifier set.\n";
+        mScriptDead = true;
+        return;
+      }
+    }
     
     action set_tok_value { 
       name[name_index] = '\0';
@@ -150,32 +194,44 @@ public:
       tok = atoi(name);
     }
     
-    action set_token { 
-      // FIXME: only works with letters, should also work with numbers
+    
+    action define_token {
+      mTokenByName.set(identifier, tok);
+      mTokenNameByValue.set(tok, identifier);
+      #ifdef DEBUG_PARSER
+        std::cout << identifier << " = " << tok << std::endl;
+      #endif
+    }
+    
+    action set_token {
       // do we know this token ?
       if (!mTokenTable[tok % 256]) {
         // new token
         #ifdef DEBUG_PARSER
-        printf("new token %i: %i\n", tok, token_count);
+        printf("new token %i: %i\n", tok, mTokenCount);
         #endif
         
-        mTokenTable[tok % 256] = token_count;
-        token_count++;
+        mTokenTable[tok % 256] = mTokenCount + 1;
+        mTokenList.push_back(tok);
+        mTokenCount++;
         
         // enlarge lookup tables (add new column)
         end = mGotoTable.end();
+        int counter = 0;
         for (it = mGotoTable.begin(); it < end; it++) {
           // enlarge all arrays in the table
-          if (token_count == 1)
-            (*it).push_back(0); // first value is 0 (go home)
+          if (mTokenCount == 1)
+            (*it).push_back(counter); // first value is counter (stay)
           else
             (*it).push_back(-1); // -1 means use default
+
+          counter++;
         }
         
         end = mSendTable.end();
         for (it = mSendTable.begin(); it < end; it++) {
           // enlarge all arrays in the table
-          if (token_count == 1)
+          if (mTokenCount == 1)
             (*it).push_back(-2); // -2 means do not send (default send in first column)
           else
             (*it).push_back(-1); // -1 means use default 
@@ -185,18 +241,10 @@ public:
       token_id = mTokenTable[tok % 256];
     }
     
-    action set_send {
-      // write transition
-      #ifdef DEBUG_PARSER
-      printf("send %i\n",tok);
-      #endif
-      send = tok;
-    }
-    
     action add_entry {
       // write the entry
       #ifdef DEBUG_PARSER
-      printf("define %i - %i -> %i { %i }\n", source_state, token_id, target_state, send);
+      printf("define %i - %i:%i -> %i\n", source_state, token_id, send, target_state);
       #endif
       
       mGotoTable[source_state][token_id] = target_state;
@@ -244,23 +292,25 @@ public:
     
     ws     = (' ' | '\t');
     
-    identifier = (alpha alnum*) $a;
+    identifier = (alpha alnum*) $a %set_identifier;
     
-    tok    = ('\'' any @set_tok '\'' | digit+ $a %set_tok_value ); # fixme: we should use 'whatever' or a-zA-Z or number
+    tok    = ( identifier @set_token_from_identifier | digit+ $a %set_tok_value ); # fixme: we should use 'whatever' or a-zA-Z or number
+    
+    send   = (alpha alnum*) $a %set_send;
 
-    transition = ( '-'+ '>' | '-'* ws* tok %set_token ws* '-'+ '>');
-    
-    send   = ('{' ws* (tok %set_send)? ws* '}' | tok %set_send );
+    transition = ( '-'+ '>' | '-'* ws* tok %set_token (':' send)?  ws* '-'+ '>');
 
     comment = '#' [^\n]* ;
     
     begin_comment = '=begin\n' @begin_comment;
     
-    entry  = identifier %set_state %set_source ws+ transition ws+ identifier %set_state %set_target (ws+ send)? (ws* comment)?;
+    entry  = identifier %set_source ws+ transition ws+ identifier %set_target (ws* comment)?;
     
     begin_lua = '=begin' ' '+ 'lua\n' @begin_lua;
+    
+    define_token = identifier ws* '=' ws* digit+ $a %set_tok_value;
 
-    main  := ( ws* (entry %add_entry | comment | begin_comment | begin_lua | ws* )  '\n' )+ $err(error);
+    main  := ( ws* (entry %add_entry | define_token %define_token | comment | begin_comment | begin_lua | ws* )  '\n' )+ $err(error);
     write exec;
     write eof;
   }%%
@@ -272,45 +322,108 @@ public:
     mScriptDead = false; // ok, we can receive and process signals (again).
   }
 
+  // FIXME: use bprint (char *& pBuffer, int& pBufferSize, const char *fmt, ...);
   void tables()
   {  
     *mOutput << "tokens\n";
-    for(int i=0;i<256;i++) {
-      if (mTokenTable[i] > 0)
-        printf(" %i : %i\n", i, mTokenTable[i]);
+    for(int i=0;i<mTokenCount;i++) {
+      int tok_value = mTokenList[i];
+      std::string identifier;
+      if (mTokenNameByValue.get(&identifier, tok_value)) {
+        *mOutput << " " << i << " : " << identifier << " = " << tok_value << "\n";
+      } else {
+        *mOutput << " " << i << " : " << tok_value << "\n";
+      }
     }
     *mOutput << "goto\n";
-    print(*mOutput, mGotoTable);
+    print_table(*mOutput, mGotoTable);
     *mOutput << "send\n";
-    print(*mOutput, mSendTable);
+    print_table(*mOutput, mSendTable);
   }
 
 private:
+  
+  int get_state_id(const std::string& pName)
+  {
+    int state_id;
+    // do we know this name ?
+    if (!mStateByName.get(&state_id, pName)) {
+      // new state
+      state_id = mStateCount;
+      mStateByName.set(pName, state_id);
+      mStateNames.push_back(pName);
+      // add a new line to the lookup tables
+      mGotoTable.push_back( std::vector<int>(mTokenCount+1, -1) ); // -1 means use default
+      mGotoTable[mStateCount][0] = mStateCount; // default: stay
+      
+      mSendTable.push_back( std::vector<int>(mTokenCount+1, -1) ); // -1 means use default
+      mSendTable[mStateCount][0] = -2; // -2 means send 'nil'
+      
+      mStateCount++;
+    }
+    return state_id;
+  }
+
+  void print_table(std::ostream& pOutput, std::vector< std::vector<int> >& pTable) {  
+    std::vector< std::vector<int> >::iterator it,end;
+    end = pTable.end();
+    
+    // print tokens
+    pOutput << "          -";
+    for(int i=0;i<mTokenCount;i++) {
+      int tok_value = mTokenList[i];
+      std::string identifier;
+      if (mTokenNameByValue.get(&identifier, tok_value))
+        bprint(mBuf, mBufSize, " % 3s", identifier.c_str());
+      else
+        bprint(mBuf, mBufSize, " % 3i", tok_value);
+      pOutput << mBuf;
+    }
+    pOutput << "\n";
+    
+    int state_count = 0;
+    for (it = pTable.begin(); it < end; it++) {
+      std::vector<int>::iterator it2,end2;
+      end2 = (*it).end();
+      
+      bprint(mBuf, mBufSize, " % 3s : ", mStateNames[state_count].c_str());
+      pOutput << mBuf;
+      for ( it2 = (*it).begin(); it2 < end2; it2++ ) {
+        if (*it2 == -1)
+          pOutput << "   -";  // default
+        else if (*it2 == -2)
+          pOutput << "   /";  // do not send
+        else {
+          bprint(mBuf, mBufSize, " % 3i", *it2);
+          pOutput << mBuf;
+        }
+      }
+      pOutput << "\n";
+      state_count++;
+    } 
+  }
+  
+  
+  
   int  mToken;           /**< Current token value (translated). */
   int  mRealToken;       /**< Current token value (not translated). */
   int  mSend;            /**< Send result. */
   int  mState;           /**< Current state. */
-  int  mTokenTable[256]; /**< Translate chars 'x', '3', etc into the value used in this state machine. */
+  
+  int  mTokenTable[256]; /**< Translate token values into their internal representation. */
+  int  mStateCount;      /**< Number of states in the machine. */
+  int  mTokenCount;      /**< Number of tokens recognized by the machine. */
+  
+  Hash<std::string, int>   mTokenByName;   /**< Dictionary returning token id from its identifier (used to  plot/debug). */
+  Hash<uint, std::string>  mTokenNameByValue; /**< Dictionary returning token name from its value (used to plot/debug). */
+  std::vector<int>         mTokenList;     /**< List of token values (used to plot/debug). */
+  
+  Hash<std::string, int>   mStateByName;   /**< Dictionary returning state id from its identifier. */
+  std::vector<std::string> mStateNames;    /**< List of state names (used to plot/debug). */
+  
   std::vector< std::vector<int> > mGotoTable; /**< State transition table. */
   std::vector< std::vector<int> > mSendTable; /**< State transition table. */
   
-  void print(std::ostream& pOutput, std::vector< std::vector<int> >& pTable) {  
-    std::vector< std::vector<int> >::iterator it,end;
-    end = pTable.end();
-    for (it = pTable.begin(); it < end; it++) {
-      std::vector<int>::iterator it2,end2;
-      end2 = (*it).end();
-      for ( it2 = (*it).begin(); it2 < end2; it2++ ) {
-        if (*it2 == -1)
-          pOutput << " -";  // default
-        else if (*it2 == -2)
-          pOutput << " /";  // do not send
-        else
-          pOutput << " " << *it2;
-      }
-      pOutput << "\n";
-    } 
-  }
 };
 
 extern "C" void init()

@@ -1,80 +1,76 @@
 #line 1 "objects/Turing.rl"
 #include "script.h"
 #define MAX_NAME_SIZE 200
-//#define DEBUG_PARSER
+#define DEBUG_PARSER
 
 
 #line 8 "objects/Turing.cpp"
 static const char _turing_actions[] = {
-	0, 1, 0, 1, 4, 1, 6, 1, 
-	7, 1, 8, 1, 9, 1, 10, 1, 
-	11, 1, 12, 1, 13, 2, 1, 2, 
-	2, 1, 3, 2, 5, 6, 2, 5, 
-	7, 2, 7, 8, 3, 1, 3, 8, 
-	3, 5, 7, 8
+	0, 1, 0, 1, 1, 1, 2, 1, 
+	9, 1, 10, 1, 11, 1, 12, 1, 
+	13, 1, 14, 2, 0, 5, 2, 1, 
+	3, 2, 1, 4, 2, 1, 8, 2, 
+	6, 7, 2, 6, 8, 3, 1, 4, 
+	9
 };
 
 static const unsigned char _turing_key_offsets[] = {
 	0, 0, 9, 10, 11, 12, 13, 14, 
-	15, 17, 18, 20, 21, 22, 23, 31, 
-	37, 37, 38, 41, 44, 46, 48, 54, 
-	64, 71, 72, 72, 73, 77, 80, 86, 
-	92, 92, 93, 96, 99, 103, 108, 115, 
-	120, 125, 127, 128, 130, 132, 134, 135, 
-	137, 138, 140, 142, 144, 145, 154, 156
+	15, 17, 18, 20, 21, 22, 23, 32, 
+	42, 52, 60, 66, 69, 71, 73, 79, 
+	89, 92, 93, 97, 106, 116, 120, 123, 
+	125, 126, 128, 130, 132, 133, 135, 136, 
+	138, 140, 142, 143, 152, 154
 };
 
 static const char _turing_trans_keys[] = {
 	9, 10, 32, 35, 61, 65, 90, 97, 
 	122, 10, 98, 101, 103, 105, 110, 10, 
 	32, 10, 32, 108, 117, 97, 10, 9, 
-	32, 48, 57, 65, 90, 97, 122, 9, 
-	32, 39, 45, 48, 57, 39, 9, 32, 
-	45, 9, 32, 45, 45, 62, 9, 32, 
-	9, 32, 65, 90, 97, 122, 9, 10, 
-	32, 35, 48, 57, 65, 90, 97, 122, 
-	9, 32, 35, 39, 123, 48, 57, 10, 
-	39, 9, 10, 32, 35, 9, 32, 35, 
-	9, 10, 32, 35, 48, 57, 9, 32, 
-	39, 125, 48, 57, 39, 9, 32, 125, 
-	9, 32, 125, 9, 10, 32, 35, 9, 
-	32, 125, 48, 57, 9, 32, 39, 45, 
-	62, 48, 57, 9, 32, 39, 48, 57, 
-	9, 32, 45, 48, 57, 10, 61, 10, 
-	10, 101, 10, 110, 10, 100, 10, 10, 
-	61, 10, 10, 101, 10, 110, 10, 100, 
-	10, 9, 10, 32, 35, 61, 65, 90, 
-	97, 122, 10, 61, 10, 61, 0
+	32, 61, 48, 57, 65, 90, 97, 122, 
+	9, 32, 45, 61, 48, 57, 65, 90, 
+	97, 122, 9, 32, 45, 62, 48, 57, 
+	65, 90, 97, 122, 9, 32, 48, 57, 
+	65, 90, 97, 122, 9, 32, 45, 58, 
+	48, 57, 9, 32, 45, 45, 62, 9, 
+	32, 9, 32, 65, 90, 97, 122, 9, 
+	10, 32, 35, 48, 57, 65, 90, 97, 
+	122, 9, 32, 35, 10, 65, 90, 97, 
+	122, 9, 32, 45, 48, 57, 65, 90, 
+	97, 122, 9, 32, 45, 58, 48, 57, 
+	65, 90, 97, 122, 9, 32, 48, 57, 
+	10, 48, 57, 10, 61, 10, 10, 101, 
+	10, 110, 10, 100, 10, 10, 61, 10, 
+	10, 101, 10, 110, 10, 100, 10, 9, 
+	10, 32, 35, 61, 65, 90, 97, 122, 
+	10, 61, 10, 61, 0
 };
 
 static const char _turing_single_lengths[] = {
 	0, 5, 1, 1, 1, 1, 1, 1, 
-	2, 1, 2, 1, 1, 1, 2, 4, 
-	0, 1, 3, 3, 2, 2, 2, 4, 
-	5, 1, 0, 1, 4, 3, 4, 4, 
-	0, 1, 3, 3, 4, 3, 5, 3, 
-	3, 2, 1, 2, 2, 2, 1, 2, 
-	1, 2, 2, 2, 1, 5, 2, 2
+	2, 1, 2, 1, 1, 1, 3, 4, 
+	4, 2, 4, 3, 2, 2, 2, 4, 
+	3, 1, 0, 3, 4, 2, 1, 2, 
+	1, 2, 2, 2, 1, 2, 1, 2, 
+	2, 2, 1, 5, 2, 2
 };
 
 static const char _turing_range_lengths[] = {
 	0, 2, 0, 0, 0, 0, 0, 0, 
-	0, 0, 0, 0, 0, 0, 3, 1, 
-	0, 0, 0, 0, 0, 0, 2, 3, 
-	1, 0, 0, 0, 0, 0, 1, 1, 
-	0, 0, 0, 0, 0, 1, 1, 1, 
-	1, 0, 0, 0, 0, 0, 0, 0, 
-	0, 0, 0, 0, 0, 2, 0, 0
+	0, 0, 0, 0, 0, 0, 3, 3, 
+	3, 3, 1, 0, 0, 0, 2, 3, 
+	0, 0, 2, 3, 3, 1, 1, 0, 
+	0, 0, 0, 0, 0, 0, 0, 0, 
+	0, 0, 0, 2, 0, 0
 };
 
 static const unsigned char _turing_index_offsets[] = {
 	0, 0, 8, 10, 12, 14, 16, 18, 
-	20, 23, 25, 28, 30, 32, 34, 40, 
-	46, 47, 49, 53, 57, 60, 63, 68, 
-	76, 83, 85, 86, 88, 93, 97, 103, 
-	109, 110, 112, 116, 120, 125, 130, 137, 
-	142, 147, 150, 152, 155, 158, 161, 163, 
-	166, 168, 171, 174, 177, 179, 187, 190
+	20, 23, 25, 28, 30, 32, 34, 41, 
+	49, 57, 63, 69, 73, 76, 79, 84, 
+	92, 96, 98, 101, 108, 116, 120, 123, 
+	126, 128, 131, 134, 137, 139, 142, 144, 
+	147, 150, 153, 155, 163, 166
 };
 
 static const char _turing_indicies[] = {
@@ -82,60 +78,53 @@ static const char _turing_indicies[] = {
 	2, 3, 6, 0, 7, 0, 8, 0, 
 	9, 0, 10, 0, 11, 12, 0, 2, 
 	0, 12, 13, 0, 14, 0, 15, 0, 
-	16, 0, 17, 17, 5, 5, 5, 0, 
-	18, 18, 19, 20, 21, 0, 22, 23, 
-	0, 24, 24, 25, 0, 26, 26, 27, 
-	0, 27, 28, 0, 29, 29, 0, 29, 
-	29, 30, 30, 0, 31, 32, 31, 33, 
-	30, 30, 30, 0, 34, 34, 35, 36, 
-	38, 37, 0, 39, 35, 40, 41, 0, 
-	42, 43, 42, 44, 0, 45, 45, 35, 
-	0, 46, 47, 46, 48, 37, 0, 38, 
-	38, 49, 51, 50, 0, 52, 53, 0, 
-	54, 54, 55, 0, 56, 56, 51, 0, 
-	45, 39, 45, 35, 0, 57, 57, 58, 
-	50, 0, 59, 59, 19, 20, 28, 21, 
-	0, 59, 59, 19, 21, 0, 60, 60, 
-	61, 21, 0, 63, 64, 62, 63, 62, 
-	63, 65, 62, 63, 66, 62, 63, 67, 
-	62, 68, 62, 70, 71, 69, 70, 69, 
-	70, 72, 69, 70, 73, 69, 70, 74, 
-	69, 75, 69, 1, 2, 1, 3, 4, 
-	5, 5, 0, 63, 64, 62, 70, 71, 
-	69, 0
+	16, 0, 17, 17, 18, 5, 5, 5, 
+	0, 19, 19, 20, 22, 21, 23, 23, 
+	0, 24, 24, 20, 25, 21, 23, 23, 
+	0, 24, 24, 21, 23, 23, 0, 26, 
+	26, 27, 28, 21, 0, 29, 29, 30, 
+	0, 30, 25, 0, 31, 31, 0, 31, 
+	31, 32, 32, 0, 33, 34, 33, 35, 
+	32, 32, 32, 0, 36, 36, 37, 0, 
+	38, 37, 39, 39, 0, 40, 40, 41, 
+	39, 39, 39, 0, 42, 42, 43, 44, 
+	23, 23, 23, 0, 22, 22, 45, 0, 
+	46, 45, 0, 48, 49, 47, 48, 47, 
+	48, 50, 47, 48, 51, 47, 48, 52, 
+	47, 53, 47, 55, 56, 54, 55, 54, 
+	55, 57, 54, 55, 58, 54, 55, 59, 
+	54, 60, 54, 1, 2, 1, 3, 4, 
+	5, 5, 0, 48, 49, 47, 55, 56, 
+	54, 0
 };
 
 static const char _turing_trans_targs_wi[] = {
-	0, 1, 53, 2, 3, 14, 4, 5, 
+	0, 1, 43, 2, 3, 14, 4, 5, 
 	6, 7, 8, 9, 10, 11, 12, 13, 
-	9, 15, 15, 16, 38, 40, 17, 18, 
-	19, 20, 19, 20, 21, 22, 23, 24, 
-	53, 25, 24, 25, 26, 30, 31, 53, 
-	27, 28, 29, 53, 25, 29, 29, 53, 
-	25, 32, 37, 36, 33, 34, 35, 36, 
-	35, 35, 36, 39, 19, 20, 42, 54, 
-	43, 44, 45, 46, 54, 48, 55, 49, 
-	50, 51, 52, 55
+	9, 15, 29, 15, 16, 18, 29, 28, 
+	17, 21, 19, 20, 26, 19, 20, 22, 
+	23, 24, 43, 25, 24, 25, 43, 27, 
+	19, 20, 19, 20, 26, 30, 43, 32, 
+	44, 33, 34, 35, 36, 44, 38, 45, 
+	39, 40, 41, 42, 45
 };
 
 static const char _turing_trans_actions_wi[] = {
-	11, 0, 0, 0, 0, 1, 0, 0, 
-	0, 0, 0, 13, 0, 0, 0, 0, 
-	17, 21, 0, 0, 0, 1, 3, 0, 
-	5, 5, 0, 0, 0, 0, 1, 24, 
-	36, 24, 0, 0, 0, 1, 0, 9, 
-	3, 0, 7, 33, 7, 0, 30, 40, 
-	30, 0, 1, 0, 3, 0, 7, 7, 
-	0, 30, 30, 0, 27, 27, 0, 0, 
-	0, 0, 0, 0, 15, 0, 0, 0, 
-	0, 0, 0, 19
+	9, 0, 0, 0, 0, 1, 0, 0, 
+	0, 0, 0, 11, 0, 0, 0, 0, 
+	15, 22, 3, 0, 0, 1, 0, 19, 
+	0, 0, 34, 34, 34, 0, 0, 0, 
+	1, 25, 37, 25, 0, 0, 7, 1, 
+	5, 5, 28, 28, 28, 1, 31, 0, 
+	0, 0, 0, 0, 0, 13, 0, 0, 
+	0, 0, 0, 0, 17
 };
 
 static const int turing_start = 1;
-static const int turing_first_final = 53;
+static const int turing_first_final = 43;
 
-static const int turing_en_doc_comment = 41;
-static const int turing_en_lua_script = 47;
+static const int turing_en_doc_comment = 31;
+static const int turing_en_lua_script = 37;
 static const int turing_en_main = 1;
 
 #line 8 "objects/Turing.rl"
@@ -144,11 +133,8 @@ static const int turing_en_main = 1;
 class Turing : public Script
 {
 public:
-  ~Turing()
-  {
-    // free...
-  }
-
+  Turing() : mStateByName(30), mTokenNameByValue(30), mTokenByName(30) {}
+  
   bool init (const Params& p)
   {
     mToken = 0;
@@ -202,19 +188,20 @@ public:
   void eval_script(const std::string& pScript) 
   {
     mScript = pScript;
+    mScript.append("\n");
     int cs;
     const char * p  = mScript.data(); // data pointer
     const char * pe = p + mScript.size(); // past end
     char name[MAX_NAME_SIZE + 1];
     int  name_index = 0;
-    int state_count = 0; // first state is 0
-    int token_count = 1; // first token is 1
-    Hash<std::string, int> state_names(30);
     
-    int state_id;
     int token_id = 0;
-    char tok;
+    int tok;
     int send = -2;
+    
+    // source state, target state
+    std::string source;
+    std::string target;
     int source_state = 0;
     int target_state = 0;
     
@@ -223,22 +210,45 @@ public:
     std::string lua_script;
     
     
-    std::vector< std::vector<int> >::iterator it,end; // to add new tokens
+    // function call id, params
+    // 1. during parse
+    // 1.1 'send' ? store 0
+    // 1.2 store i++ and push_back vector of method names (method_names)
+    // 1.3 store arguments as vector
+    // 2. during resolution
+    // 2.1 foreach i, get method_names[i], push back in method_ids
+    // 2.2 foreach 'send' in table, replace id by method_ids[id] (keep arguments)
+    
+    // a call = push args on stack, call method_id
+    
+    // get token values by identifier
+    mTokenByName.clear();
+    mTokenNameByValue.clear();
+    
+    std::string identifier;
+    
+    // to add new tokens
+    std::vector< std::vector<int> >::iterator it,end;
+    
     // init token table
     memset(mTokenTable, 0, sizeof(mTokenTable));
     
+    mStateCount = 0; // first state is 0
+    mTokenCount = 0;
     mGotoTable.clear();
     mSendTable.clear();
+    mStateByName.clear();
+    mStateNames.clear();
     
     
-#line 235 "objects/Turing.cpp"
+#line 245 "objects/Turing.cpp"
 	{
 	cs = turing_start;
 	}
-#line 100 "objects/Turing.rl"
+#line 121 "objects/Turing.rl"
     
   
-#line 242 "objects/Turing.cpp"
+#line 252 "objects/Turing.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -313,7 +323,7 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 102 "objects/Turing.rl"
+#line 123 "objects/Turing.rl"
 	{
       if (name_index >= MAX_NAME_SIZE) {
         *mOutput << "Name buffer overflow !\n";
@@ -328,44 +338,69 @@ _match:
     }
 	break;
 	case 1:
-#line 115 "objects/Turing.rl"
-	{ 
+#line 136 "objects/Turing.rl"
+	{
       name[name_index] = '\0';
-      #ifdef DEBUG_PARSER
-        std::cout <<    "[name " << name << "]" << std::endl;
-      #endif
-      // do we know this name ?
-      if (!state_names.get(&state_id, std::string(name))) {
-        // new state
-        state_id = state_count;
-        state_names.set(std::string(name), state_id);
-        
-        // add a new line to the lookup tables
-        mGotoTable.push_back( std::vector<int>(token_count, -1) ); // -1 means use default
-        mGotoTable[state_count][0] = 0; // default move to start
-        
-        mSendTable.push_back( std::vector<int>(token_count, -1) ); // -1 means use default
-        mSendTable[state_count][0] = -2; // -2 means send 'nil'
-        
-        state_count++;
-      }
+      identifier = name;
       name_index = 0;
+      #ifdef DEBUG_PARSER
+        std::cout <<    "[identifier " << identifier << "]" << std::endl;
+      #endif
     }
 	break;
 	case 2:
-#line 138 "objects/Turing.rl"
-	{ source_state = state_id; state_id = 0; }
+#line 145 "objects/Turing.rl"
+	{
+      name[name_index] = '\0';
+      name_index = 0;
+      #ifdef DEBUG_PARSER
+        std::cout <<    "[send " << name << "]" << std::endl;
+      #endif
+      send = (int)name[0]; //FIXME !
+    }
 	break;
 	case 3:
-#line 140 "objects/Turing.rl"
-	{ target_state = state_id; state_id = 0; }
+#line 154 "objects/Turing.rl"
+	{
+      source = identifier;
+      #ifdef DEBUG_PARSER
+        std::cout <<    "[source " << source << "]" << std::endl;
+      #endif 
+    }
 	break;
 	case 4:
-#line 142 "objects/Turing.rl"
-	{ tok = (*p); }
+#line 161 "objects/Turing.rl"
+	{ 
+      target = identifier;
+      #ifdef DEBUG_PARSER
+        std::cout <<    "[target " << target << "]" << std::endl;
+      #endif
+      source_state = get_state_id(source); // we postponed this to here to be sure state is not confused with token identifier
+      target_state = get_state_id(target);
+      source = target; // the last target becomes the next source
+    }
 	break;
 	case 5:
-#line 144 "objects/Turing.rl"
+#line 171 "objects/Turing.rl"
+	{ 
+      if(name_index) {
+        // identifier: resolve to value
+        name[name_index] = '\0';
+        name_index = 0;
+        if (!mTokenByName.get(&tok, std::string(name))) {
+          *mOutput << "Syntax error. Unknown token '" << name << "' (missing declaration)\n";
+          mScriptDead = true;
+          return;
+        }
+      } else {
+        *mOutput << "Syntax error: no identifier set.\n";
+        mScriptDead = true;
+        return;
+      }
+    }
+	break;
+	case 6:
+#line 188 "objects/Turing.rl"
 	{ 
       name[name_index] = '\0';
       name_index = 0;
@@ -375,34 +410,47 @@ _match:
       tok = atoi(name);
     }
 	break;
-	case 6:
-#line 153 "objects/Turing.rl"
-	{ 
-      // FIXME: only works with letters, should also work with numbers
+	case 7:
+#line 198 "objects/Turing.rl"
+	{
+      mTokenByName.set(identifier, tok);
+      mTokenNameByValue.set(tok, identifier);
+      #ifdef DEBUG_PARSER
+        std::cout << identifier << " = " << tok << std::endl;
+      #endif
+    }
+	break;
+	case 8:
+#line 206 "objects/Turing.rl"
+	{
       // do we know this token ?
       if (!mTokenTable[tok % 256]) {
         // new token
         #ifdef DEBUG_PARSER
-        printf("new token %i: %i\n", tok, token_count);
+        printf("new token %i: %i\n", tok, mTokenCount);
         #endif
         
-        mTokenTable[tok % 256] = token_count;
-        token_count++;
+        mTokenTable[tok % 256] = mTokenCount + 1;
+        mTokenList.push_back(tok);
+        mTokenCount++;
         
         // enlarge lookup tables (add new column)
         end = mGotoTable.end();
+        int counter = 0;
         for (it = mGotoTable.begin(); it < end; it++) {
           // enlarge all arrays in the table
-          if (token_count == 1)
-            (*it).push_back(0); // first value is 0 (go home)
+          if (mTokenCount == 1)
+            (*it).push_back(counter); // first value is counter (stay)
           else
             (*it).push_back(-1); // -1 means use default
+
+          counter++;
         }
         
         end = mSendTable.end();
         for (it = mSendTable.begin(); it < end; it++) {
           // enlarge all arrays in the table
-          if (token_count == 1)
+          if (mTokenCount == 1)
             (*it).push_back(-2); // -2 means do not send (default send in first column)
           else
             (*it).push_back(-1); // -1 means use default 
@@ -412,22 +460,12 @@ _match:
       token_id = mTokenTable[tok % 256];
     }
 	break;
-	case 7:
-#line 188 "objects/Turing.rl"
-	{
-      // write transition
-      #ifdef DEBUG_PARSER
-      printf("send %i\n",tok);
-      #endif
-      send = tok;
-    }
-	break;
-	case 8:
-#line 196 "objects/Turing.rl"
+	case 9:
+#line 244 "objects/Turing.rl"
 	{
       // write the entry
       #ifdef DEBUG_PARSER
-      printf("define %i - %i -> %i { %i }\n", source_state, token_id, target_state, send);
+      printf("define %i - %i:%i -> %i\n", source_state, token_id, send, target_state);
       #endif
       
       mGotoTable[source_state][token_id] = target_state;
@@ -438,8 +476,8 @@ _match:
       target_state = 0;
     }
 	break;
-	case 9:
-#line 211 "objects/Turing.rl"
+	case 10:
+#line 259 "objects/Turing.rl"
 	{
       p--; // move back one char
       char error_buffer[10];
@@ -449,31 +487,31 @@ _match:
       return;
     }
 	break;
-	case 10:
-#line 225 "objects/Turing.rl"
-	{ {cs = 41; goto _again;} }
-	break;
 	case 11:
-#line 226 "objects/Turing.rl"
-	{ {cs = 1; goto _again;} }
+#line 273 "objects/Turing.rl"
+	{ {cs = 31; goto _again;} }
 	break;
 	case 12:
-#line 228 "objects/Turing.rl"
+#line 274 "objects/Turing.rl"
+	{ {cs = 1; goto _again;} }
+	break;
+	case 13:
+#line 276 "objects/Turing.rl"
 	{ 
       std::cout << "begin_lua\n";
       begin_lua_script = p;
-      {cs = 47; goto _again;} 
+      {cs = 37; goto _again;} 
     }
 	break;
-	case 13:
-#line 233 "objects/Turing.rl"
+	case 14:
+#line 281 "objects/Turing.rl"
 	{
       lua_script.append( begin_lua_script, p - begin_lua_script - 4 );
       begin_lua_script = NULL;
       {cs = 1; goto _again;} 
     }
 	break;
-#line 477 "objects/Turing.cpp"
+#line 515 "objects/Turing.cpp"
 		}
 	}
 
@@ -485,8 +523,8 @@ _again:
 	_out: {}
 	}
 
-#line 489 "objects/Turing.cpp"
-#line 266 "objects/Turing.rl"
+#line 527 "objects/Turing.cpp"
+#line 316 "objects/Turing.rl"
 
   
     if (begin_lua_script) {
@@ -496,45 +534,108 @@ _again:
     mScriptDead = false; // ok, we can receive and process signals (again).
   }
 
+  // FIXME: use bprint (char *& pBuffer, int& pBufferSize, const char *fmt, ...);
   void tables()
   {  
     *mOutput << "tokens\n";
-    for(int i=0;i<256;i++) {
-      if (mTokenTable[i] > 0)
-        printf(" %i : %i\n", i, mTokenTable[i]);
+    for(int i=0;i<mTokenCount;i++) {
+      int tok_value = mTokenList[i];
+      std::string identifier;
+      if (mTokenNameByValue.get(&identifier, tok_value)) {
+        *mOutput << " " << i << " : " << identifier << " = " << tok_value << "\n";
+      } else {
+        *mOutput << " " << i << " : " << tok_value << "\n";
+      }
     }
     *mOutput << "goto\n";
-    print(*mOutput, mGotoTable);
+    print_table(*mOutput, mGotoTable);
     *mOutput << "send\n";
-    print(*mOutput, mSendTable);
+    print_table(*mOutput, mSendTable);
   }
 
 private:
+  
+  int get_state_id(const std::string& pName)
+  {
+    int state_id;
+    // do we know this name ?
+    if (!mStateByName.get(&state_id, pName)) {
+      // new state
+      state_id = mStateCount;
+      mStateByName.set(pName, state_id);
+      mStateNames.push_back(pName);
+      // add a new line to the lookup tables
+      mGotoTable.push_back( std::vector<int>(mTokenCount+1, -1) ); // -1 means use default
+      mGotoTable[mStateCount][0] = mStateCount; // default: stay
+      
+      mSendTable.push_back( std::vector<int>(mTokenCount+1, -1) ); // -1 means use default
+      mSendTable[mStateCount][0] = -2; // -2 means send 'nil'
+      
+      mStateCount++;
+    }
+    return state_id;
+  }
+
+  void print_table(std::ostream& pOutput, std::vector< std::vector<int> >& pTable) {  
+    std::vector< std::vector<int> >::iterator it,end;
+    end = pTable.end();
+    
+    // print tokens
+    pOutput << "         - ";
+    for(int i=0;i<mTokenCount;i++) {
+      int tok_value = mTokenList[i];
+      std::string identifier;
+      if (mTokenNameByValue.get(&identifier, tok_value))
+        bprint(mBuf, mBufSize, " % 3s", identifier.c_str());
+      else
+        bprint(mBuf, mBufSize, " % 3i", tok_value);
+      pOutput << mBuf;
+    }
+    pOutput << "\n";
+    
+    int state_count = 0;
+    for (it = pTable.begin(); it < end; it++) {
+      std::vector<int>::iterator it2,end2;
+      end2 = (*it).end();
+      
+      bprint(mBuf, mBufSize, " % 3s : ", mStateNames[state_count].c_str());
+      pOutput << mBuf;
+      for ( it2 = (*it).begin(); it2 < end2; it2++ ) {
+        if (*it2 == -1)
+          pOutput << "   -";  // default
+        else if (*it2 == -2)
+          pOutput << "   /";  // do not send
+        else {
+          bprint(mBuf, mBufSize, " % 3i", *it2);
+          pOutput << mBuf;
+        }
+      }
+      pOutput << "\n";
+      state_count++;
+    } 
+  }
+  
+  
+  
   int  mToken;           /**< Current token value (translated). */
   int  mRealToken;       /**< Current token value (not translated). */
   int  mSend;            /**< Send result. */
   int  mState;           /**< Current state. */
-  int  mTokenTable[256]; /**< Translate chars 'x', '3', etc into the value used in this state machine. */
+  
+  int  mTokenTable[256]; /**< Translate token values into their internal representation. */
+  int  mStateCount;      /**< Number of states in the machine. */
+  int  mTokenCount;      /**< Number of tokens recognized by the machine. */
+  
+  Hash<std::string, int>   mTokenByName;   /**< Dictionary returning token id from its identifier (used to  plot/debug). */
+  Hash<uint, std::string>  mTokenNameByValue; /**< Dictionary returning token name from its value (used to plot/debug). */
+  std::vector<int>         mTokenList;     /**< List of token values (used to plot/debug). */
+  
+  Hash<std::string, int>   mStateByName;   /**< Dictionary returning state id from its identifier. */
+  std::vector<std::string> mStateNames;    /**< List of state names (used to plot/debug). */
+  
   std::vector< std::vector<int> > mGotoTable; /**< State transition table. */
   std::vector< std::vector<int> > mSendTable; /**< State transition table. */
   
-  void print(std::ostream& pOutput, std::vector< std::vector<int> >& pTable) {  
-    std::vector< std::vector<int> >::iterator it,end;
-    end = pTable.end();
-    for (it = pTable.begin(); it < end; it++) {
-      std::vector<int>::iterator it2,end2;
-      end2 = (*it).end();
-      for ( it2 = (*it).begin(); it2 < end2; it2++ ) {
-        if (*it2 == -1)
-          pOutput << " -";  // default
-        else if (*it2 == -2)
-          pOutput << " /";  // do not send
-        else
-          pOutput << " " << *it2;
-      }
-      pOutput << "\n";
-    } 
-  }
 };
 
 extern "C" void init()
