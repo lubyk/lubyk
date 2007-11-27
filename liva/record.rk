@@ -1,0 +1,37 @@
+c = Cabox(port:"/dev/tty.HOME001-GenericSerial-1" bauds:115200)
+c => b
+b = Buffer(864)
+b => rec
+k = Keyboard()
+k => rec
+rec = ClassRecorder(vector:288 tempo:120 unit:12 data:"liva/data")
+
+# recording
+#rec => plot
+#rec.2 => 2.plot
+
+rec.3 => midi
+midi = Midi()
+plot =  Plot(group:3 line:4)
+b => crop
+crop = Crop(-288)
+crop => pca
+pca=PCA(vector:288 data:"liva/data" processed:"liva/after_pca" keep:2 unit:12)
+pca=>svm
+
+# display pca
+b => 2.plot
+pca=>buf
+buf = Buffer(864)
+buf => plot
+
+svm = Svm(vector:2 unit:12 data:"liva/after_pca" cost:8.0 gamma:0.0078125 threshold:0.0003)
+svm=>note
+note = Lua(load:"liva/note.lua")
+note => no
+
+#note => tur
+tur = Turing(load:"liva/simple.tur")
+tur => no
+no = NoteOut()
+no => midi

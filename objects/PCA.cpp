@@ -96,7 +96,7 @@ private:
       mWorkBuffer[i] = vector[i] - mMeanValue[i];
     }
 
-    // change vector basis ( S' = SP ) mBasis = P
+    // change vector basis ( S' = SP' ) mBasis = P
     cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 1, mTargetSize, mVectorSize, 1, mWorkBuffer, mVectorSize, mBasis, mVectorSize, 0.0, mBuffer, mVectorSize);
   }
   
@@ -284,14 +284,14 @@ private:
     *mOutput << mName << ": calculated " << eigen_count << " eigenvalues:";
     
     for(int i= 0; i< eigen_count; i++) {
-      bprint(mBuf,mBufSize, " %.3f", eigenvalues[i]);
+      bprint(mBuf,mBufSize, " % .7f\n", eigenvalues[i]);
       *mOutput << mBuf;
     }
     *mOutput << std::endl;
     
     if (mDebug) {
       *mOutput << mName << ": eigenvectors:\n";
-      Matrix::print(eigenvectors, mVectorSize, mVectorSize, CblasColMajor);
+      Matrix::print(eigenvectors, mVectorSize, mVectorSize, CblasRowMajor);
       printf("\n");
     }
     
@@ -312,7 +312,7 @@ private:
       for(int e=0; e < mTargetSize; e++) {
         int eigen_id = eigen_count - e - 1; // start by greatest eigenvalue (last).
         for(int i=0; i< mVectorSize; i++) {
-          value = eigenvectors[ i * eigen_count + eigen_id ]; // transpose to RowMajor
+          value = eigenvectors[ eigen_id * mVectorSize + i ];
           fprintf(file, " % .5f", value);
           mBasis[e * mVectorSize + i] = value;
           if (mUnitSize > 1 && (i+1)%mUnitSize == 0) fprintf(file, "\n");

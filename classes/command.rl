@@ -126,6 +126,8 @@ void Command::parse(const std::string& pStr)
   
     eat_line := [^\n]* '\n' @{ fgoto main; };
     
+    comment = '#' [^\n]* ;
+    
     ws     = (' ' | '\t');
   
     identifier = (lower (alnum | '_')*) $a;
@@ -163,6 +165,7 @@ void Command::parse(const std::string& pStr)
             | execute_class_method  %execute_class_method
             | create_instance %create_instance 
             | create_link %create_link 
+            | comment
             | ws* )  '\n' )+ @prompt $err(error);
     write exec;
     # write eof; (add eof actions to all above before removing comment)

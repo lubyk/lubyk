@@ -17,9 +17,9 @@ static const unsigned char _turing_key_offsets[] = {
 	0, 0, 9, 10, 11, 12, 13, 14, 
 	15, 17, 18, 20, 21, 22, 23, 32, 
 	42, 52, 60, 66, 69, 71, 73, 79, 
-	89, 99, 109, 113, 122, 126, 129, 131, 
-	132, 134, 136, 138, 139, 141, 142, 144, 
-	146, 148, 149, 158, 160
+	89, 99, 109, 115, 118, 122, 125, 127, 
+	128, 130, 132, 134, 135, 137, 138, 140, 
+	142, 144, 145, 154, 156
 };
 
 static const char _turing_trans_keys[] = {
@@ -36,14 +36,13 @@ static const char _turing_trans_keys[] = {
 	10, 32, 35, 48, 57, 65, 90, 97, 
 	122, 9, 32, 35, 45, 48, 57, 65, 
 	90, 97, 122, 9, 32, 45, 58, 48, 
-	57, 65, 90, 97, 122, 65, 90, 97, 
-	122, 9, 32, 45, 48, 57, 65, 90, 
-	97, 122, 9, 32, 48, 57, 10, 48, 
-	57, 10, 61, 10, 10, 101, 10, 110, 
-	10, 100, 10, 10, 61, 10, 10, 101, 
-	10, 110, 10, 100, 10, 9, 10, 32, 
-	35, 61, 65, 90, 97, 122, 10, 61, 
-	10, 61, 0
+	57, 65, 90, 97, 122, 48, 57, 65, 
+	90, 97, 122, 9, 32, 45, 9, 32, 
+	48, 57, 10, 48, 57, 10, 61, 10, 
+	10, 101, 10, 110, 10, 100, 10, 10, 
+	61, 10, 10, 101, 10, 110, 10, 100, 
+	10, 9, 10, 32, 35, 61, 65, 90, 
+	97, 122, 10, 61, 10, 61, 0
 };
 
 static const char _turing_single_lengths[] = {
@@ -59,7 +58,7 @@ static const char _turing_range_lengths[] = {
 	0, 2, 0, 0, 0, 0, 0, 0, 
 	0, 0, 0, 0, 0, 0, 3, 3, 
 	3, 3, 1, 0, 0, 0, 2, 3, 
-	3, 3, 2, 3, 1, 1, 0, 0, 
+	3, 3, 3, 0, 1, 1, 0, 0, 
 	0, 0, 0, 0, 0, 0, 0, 0, 
 	0, 0, 2, 0, 0
 };
@@ -68,9 +67,9 @@ static const unsigned char _turing_index_offsets[] = {
 	0, 0, 8, 10, 12, 14, 16, 18, 
 	20, 23, 25, 28, 30, 32, 34, 41, 
 	49, 57, 63, 69, 73, 76, 79, 84, 
-	92, 100, 108, 111, 118, 122, 125, 128, 
-	130, 133, 136, 139, 141, 144, 146, 149, 
-	152, 155, 157, 165, 168
+	92, 100, 108, 112, 116, 120, 123, 126, 
+	128, 131, 134, 137, 139, 142, 144, 147, 
+	150, 153, 155, 163, 166
 };
 
 static const char _turing_indicies[] = {
@@ -87,15 +86,15 @@ static const char _turing_indicies[] = {
 	31, 32, 32, 0, 33, 34, 33, 35, 
 	32, 32, 32, 0, 36, 36, 3, 20, 
 	21, 23, 23, 0, 37, 37, 38, 39, 
-	23, 23, 23, 0, 40, 40, 0, 41, 
-	41, 42, 40, 40, 40, 0, 22, 22, 
-	43, 0, 44, 43, 0, 46, 47, 45, 
-	46, 45, 46, 48, 45, 46, 49, 45, 
-	46, 50, 45, 51, 45, 53, 54, 52, 
-	53, 52, 53, 55, 52, 53, 56, 52, 
-	53, 57, 52, 58, 52, 1, 2, 1, 
-	3, 4, 5, 5, 0, 46, 47, 45, 
-	53, 54, 52, 0
+	23, 23, 23, 0, 40, 40, 40, 0, 
+	41, 41, 42, 0, 22, 22, 43, 0, 
+	44, 43, 0, 46, 47, 45, 46, 45, 
+	46, 48, 45, 46, 49, 45, 46, 50, 
+	45, 51, 45, 53, 54, 52, 53, 52, 
+	53, 55, 52, 53, 56, 52, 53, 57, 
+	52, 58, 52, 1, 2, 1, 3, 4, 
+	5, 5, 0, 46, 47, 45, 53, 54, 
+	52, 0
 };
 
 static const char _turing_trans_targs_wi[] = {
@@ -240,14 +239,14 @@ public:
     mStateNames.clear();
     
     
-#line 244 "objects/Turing.cpp"
+#line 243 "objects/Turing.cpp"
 	{
 	cs = turing_start;
 	}
 #line 120 "objects/Turing.rl"
     
   
-#line 251 "objects/Turing.cpp"
+#line 250 "objects/Turing.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -510,7 +509,7 @@ _match:
       {cs = 1; goto _again;} 
     }
 	break;
-#line 514 "objects/Turing.cpp"
+#line 513 "objects/Turing.cpp"
 		}
 	}
 
@@ -522,7 +521,7 @@ _again:
 	_out: {}
 	}
 
-#line 526 "objects/Turing.cpp"
+#line 525 "objects/Turing.cpp"
 #line 317 "objects/Turing.rl"
 
   
@@ -623,13 +622,13 @@ private:
   {
     std::string source,target,token,send;
     
-    out << "digraph " << mName << "{";
-    out << "rankdir=LR;\n";
+    out << "digraph " << mName << "{\n";
+    out << "  rankdir=LR;\n";
   	// first node
-    out << "node [ fixedsize = true, height = 0.65, shape = doublecircle ];\n";
+    out << "  node [ fixedsize = true, height = 0.65, shape = doublecircle ];\n";
     out << mStateNames[0] << ";\n";
     // all other nodes
-    out << "node [ shape = circle ];\n";
+    out << "  node [ shape = circle ];\n";
     // transitions
     
     for (int i=0; i < mStateCount; i++) {
@@ -644,7 +643,7 @@ private:
         bprint(mBuf, mBufSize, "%i", mSendTable[i][0]);
         send.append(mBuf);
       }
-      out << source << " -> " << target << " [ label = \"" << token << send << "\"];\n";
+      out << "  " << source << " -> " << target << " [ label = \"" << token << send << "\"];\n";
       
       // print other transitions
       for (int j=0; j < mTokenCount; j++) {
@@ -664,7 +663,7 @@ private:
             bprint(mBuf, mBufSize, "%i", mSendTable[i][j+1]);
             send.append(mBuf);
           }
-          out << source << " -> " << target << " [ label = \"" << token << send << "\"];\n";
+          out << "  " << source << " -> " << target << " [ label = \"" << token << send << "\"];\n";
         }
       }
     }

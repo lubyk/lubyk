@@ -1,0 +1,5 @@
+a = 49
+b = 50
+c = 51
+
+init a:0 -> C b:3 -> Eb c:7 -> G -> init
