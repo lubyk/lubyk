@@ -160,13 +160,13 @@ void Command::parse(const std::string& pStr)
 
     execute_command = method ( '(' parameters? ')' )?;
   
-    main := ((execute_command %execute_command
-            | execute_method  %execute_method
-            | execute_class_method  %execute_class_method
-            | create_instance %create_instance 
-            | create_link %create_link 
+    main := ((execute_command %execute_command # cannot put comments here :-(
+            | execute_method  %execute_method (ws comment)?
+            | execute_class_method  %execute_class_method (ws comment)?
+            | create_instance %create_instance (ws comment)?
+            | create_link %create_link (ws comment)?
             | comment
-            | ws* )  '\n' )+ @prompt $err(error);
+            | ws* ) '\n' )+ @prompt $err(error);
     write exec;
     # write eof; (add eof actions to all above before removing comment)
   }%%
