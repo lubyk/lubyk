@@ -368,7 +368,7 @@ learn_failed:
   std::string pca_model_path()
   {
     std::string path(mFolder);
-    path.append("/").append(mName).append(".pca");
+    path.append("/").append(mName).append(".model");
     return path;
   }
 
@@ -388,7 +388,7 @@ learn_failed:
   double * mWorkBuffer;      /**< Input without mean value. */
   double * mBuffer;          /**< Output signal. */
   double * mClasses;         /**< Large array with all meanVectors. */
-  double * mBasis;           /**< Matrix to change basis (stored in file xxx.pca). Size is mTargetSize x mVectorSize */
+  double * mBasis;           /**< Matrix to change basis (stored in file xxx.model). Size is mTargetSize x mVectorSize */
   double * mMeanValue;       /**< Mean value to be removed from vector before change of basis. */
   int      mVectorCount;     /**< Number of vectors (used during foreach class loop). */
   int      mClassesSize;     /**< Size of array of meanVectors. */
