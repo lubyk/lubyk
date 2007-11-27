@@ -25,7 +25,7 @@ public:
   
   void test_compile( void ) 
   { assert_result("n=Turing(\"x = 10\ny=4\na  x:X -> b\na y:Y -> b\nb  ----> b\")\nn.tables\n",
-                  "#<Turing:n -->\ngoto\n 0 1 1\n 1 - -\nsend\n / 88 89\n / - -\n"); }
+                  "#<Turing:n -->\ntokens\n 0 : x = 10\n 1 : y = 4\n\ngoto      -   x   y\n   a :    0   1   1\n   b :    1   -   -\n\nsend      -   x   y\n   a :    /  88  89\n   b :    /   -   -\n"); }
   void xcompile_numbers( void ) 
   { assert_result("n=Turing(\"a  x  -> b { 23 }\na  'y'-> b { 22 }\nb  ----> b {   }\")\nn.tables\n",
                   "#<Turing:n -->\ngoto\n 0 1 1\n 1 - -\nsend\n / 23 22\n / - -\n"); }

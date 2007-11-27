@@ -7,20 +7,19 @@
 #line 8 "objects/Turing.cpp"
 static const char _turing_actions[] = {
 	0, 1, 0, 1, 1, 1, 2, 1, 
-	9, 1, 10, 1, 11, 1, 12, 1, 
-	13, 1, 14, 2, 0, 5, 2, 1, 
-	3, 2, 1, 4, 2, 1, 8, 2, 
-	6, 7, 2, 6, 8, 3, 1, 4, 
-	9
+	10, 1, 11, 1, 12, 1, 13, 1, 
+	14, 2, 0, 5, 2, 1, 3, 2, 
+	1, 8, 2, 6, 7, 2, 6, 8, 
+	3, 1, 4, 9
 };
 
 static const unsigned char _turing_key_offsets[] = {
 	0, 0, 9, 10, 11, 12, 13, 14, 
 	15, 17, 18, 20, 21, 22, 23, 32, 
 	42, 52, 60, 66, 69, 71, 73, 79, 
-	89, 92, 93, 97, 106, 116, 120, 123, 
-	125, 126, 128, 130, 132, 133, 135, 136, 
-	138, 140, 142, 143, 152, 154
+	89, 99, 109, 113, 122, 126, 129, 131, 
+	132, 134, 136, 138, 139, 141, 142, 144, 
+	146, 148, 149, 158, 160
 };
 
 static const char _turing_trans_keys[] = {
@@ -35,42 +34,43 @@ static const char _turing_trans_keys[] = {
 	48, 57, 9, 32, 45, 45, 62, 9, 
 	32, 9, 32, 65, 90, 97, 122, 9, 
 	10, 32, 35, 48, 57, 65, 90, 97, 
-	122, 9, 32, 35, 10, 65, 90, 97, 
+	122, 9, 32, 35, 45, 48, 57, 65, 
+	90, 97, 122, 9, 32, 45, 58, 48, 
+	57, 65, 90, 97, 122, 65, 90, 97, 
 	122, 9, 32, 45, 48, 57, 65, 90, 
-	97, 122, 9, 32, 45, 58, 48, 57, 
-	65, 90, 97, 122, 9, 32, 48, 57, 
-	10, 48, 57, 10, 61, 10, 10, 101, 
-	10, 110, 10, 100, 10, 10, 61, 10, 
-	10, 101, 10, 110, 10, 100, 10, 9, 
-	10, 32, 35, 61, 65, 90, 97, 122, 
-	10, 61, 10, 61, 0
+	97, 122, 9, 32, 48, 57, 10, 48, 
+	57, 10, 61, 10, 10, 101, 10, 110, 
+	10, 100, 10, 10, 61, 10, 10, 101, 
+	10, 110, 10, 100, 10, 9, 10, 32, 
+	35, 61, 65, 90, 97, 122, 10, 61, 
+	10, 61, 0
 };
 
 static const char _turing_single_lengths[] = {
 	0, 5, 1, 1, 1, 1, 1, 1, 
 	2, 1, 2, 1, 1, 1, 3, 4, 
 	4, 2, 4, 3, 2, 2, 2, 4, 
-	3, 1, 0, 3, 4, 2, 1, 2, 
-	1, 2, 2, 2, 1, 2, 1, 2, 
-	2, 2, 1, 5, 2, 2
+	4, 4, 0, 3, 2, 1, 2, 1, 
+	2, 2, 2, 1, 2, 1, 2, 2, 
+	2, 1, 5, 2, 2
 };
 
 static const char _turing_range_lengths[] = {
 	0, 2, 0, 0, 0, 0, 0, 0, 
 	0, 0, 0, 0, 0, 0, 3, 3, 
 	3, 3, 1, 0, 0, 0, 2, 3, 
-	0, 0, 2, 3, 3, 1, 1, 0, 
+	3, 3, 2, 3, 1, 1, 0, 0, 
 	0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 0, 0, 2, 0, 0
+	0, 0, 2, 0, 0
 };
 
 static const unsigned char _turing_index_offsets[] = {
 	0, 0, 8, 10, 12, 14, 16, 18, 
 	20, 23, 25, 28, 30, 32, 34, 41, 
 	49, 57, 63, 69, 73, 76, 79, 84, 
-	92, 96, 98, 101, 108, 116, 120, 123, 
-	126, 128, 131, 134, 137, 139, 142, 144, 
-	147, 150, 153, 155, 163, 166
+	92, 100, 108, 111, 118, 122, 125, 128, 
+	130, 133, 136, 139, 141, 144, 146, 149, 
+	152, 155, 157, 165, 168
 };
 
 static const char _turing_indicies[] = {
@@ -85,46 +85,46 @@ static const char _turing_indicies[] = {
 	26, 27, 28, 21, 0, 29, 29, 30, 
 	0, 30, 25, 0, 31, 31, 0, 31, 
 	31, 32, 32, 0, 33, 34, 33, 35, 
-	32, 32, 32, 0, 36, 36, 37, 0, 
-	38, 37, 39, 39, 0, 40, 40, 41, 
-	39, 39, 39, 0, 42, 42, 43, 44, 
-	23, 23, 23, 0, 22, 22, 45, 0, 
-	46, 45, 0, 48, 49, 47, 48, 47, 
-	48, 50, 47, 48, 51, 47, 48, 52, 
-	47, 53, 47, 55, 56, 54, 55, 54, 
-	55, 57, 54, 55, 58, 54, 55, 59, 
-	54, 60, 54, 1, 2, 1, 3, 4, 
-	5, 5, 0, 48, 49, 47, 55, 56, 
-	54, 0
+	32, 32, 32, 0, 36, 36, 3, 20, 
+	21, 23, 23, 0, 37, 37, 38, 39, 
+	23, 23, 23, 0, 40, 40, 0, 41, 
+	41, 42, 40, 40, 40, 0, 22, 22, 
+	43, 0, 44, 43, 0, 46, 47, 45, 
+	46, 45, 46, 48, 45, 46, 49, 45, 
+	46, 50, 45, 51, 45, 53, 54, 52, 
+	53, 52, 53, 55, 52, 53, 56, 52, 
+	53, 57, 52, 58, 52, 1, 2, 1, 
+	3, 4, 5, 5, 0, 46, 47, 45, 
+	53, 54, 52, 0
 };
 
 static const char _turing_trans_targs_wi[] = {
-	0, 1, 43, 2, 3, 14, 4, 5, 
+	0, 1, 42, 2, 3, 14, 4, 5, 
 	6, 7, 8, 9, 10, 11, 12, 13, 
-	9, 15, 29, 15, 16, 18, 29, 28, 
+	9, 15, 28, 15, 16, 18, 28, 25, 
 	17, 21, 19, 20, 26, 19, 20, 22, 
-	23, 24, 43, 25, 24, 25, 43, 27, 
-	19, 20, 19, 20, 26, 30, 43, 32, 
-	44, 33, 34, 35, 36, 44, 38, 45, 
-	39, 40, 41, 42, 45
+	23, 24, 42, 2, 24, 19, 20, 26, 
+	27, 19, 20, 29, 42, 31, 43, 32, 
+	33, 34, 35, 43, 37, 44, 38, 39, 
+	40, 41, 44
 };
 
 static const char _turing_trans_actions_wi[] = {
-	9, 0, 0, 0, 0, 1, 0, 0, 
+	7, 0, 0, 0, 0, 1, 0, 0, 
+	0, 0, 0, 9, 0, 0, 0, 0, 
+	13, 20, 3, 0, 0, 1, 0, 17, 
+	0, 0, 29, 29, 29, 0, 0, 0, 
+	1, 32, 32, 32, 0, 23, 23, 23, 
+	1, 5, 5, 1, 26, 0, 0, 0, 
 	0, 0, 0, 11, 0, 0, 0, 0, 
-	15, 22, 3, 0, 0, 1, 0, 19, 
-	0, 0, 34, 34, 34, 0, 0, 0, 
-	1, 25, 37, 25, 0, 0, 7, 1, 
-	5, 5, 28, 28, 28, 1, 31, 0, 
-	0, 0, 0, 0, 0, 13, 0, 0, 
-	0, 0, 0, 0, 17
+	0, 0, 15
 };
 
 static const int turing_start = 1;
-static const int turing_first_final = 43;
+static const int turing_first_final = 42;
 
-static const int turing_en_doc_comment = 31;
-static const int turing_en_lua_script = 37;
+static const int turing_en_doc_comment = 30;
+static const int turing_en_lua_script = 36;
 static const int turing_en_main = 1;
 
 #line 8 "objects/Turing.rl"
@@ -489,7 +489,7 @@ _match:
 	break;
 	case 11:
 #line 273 "objects/Turing.rl"
-	{ {cs = 31; goto _again;} }
+	{ {cs = 30; goto _again;} }
 	break;
 	case 12:
 #line 274 "objects/Turing.rl"
@@ -500,7 +500,7 @@ _match:
 	{ 
       std::cout << "begin_lua\n";
       begin_lua_script = p;
-      {cs = 37; goto _again;} 
+      {cs = 36; goto _again;} 
     }
 	break;
 	case 14:
@@ -524,7 +524,7 @@ _again:
 	}
 
 #line 527 "objects/Turing.cpp"
-#line 316 "objects/Turing.rl"
+#line 318 "objects/Turing.rl"
 
   
     if (begin_lua_script) {
@@ -547,10 +547,8 @@ _again:
         *mOutput << " " << i << " : " << tok_value << "\n";
       }
     }
-    *mOutput << "goto\n";
-    print_table(*mOutput, mGotoTable);
-    *mOutput << "send\n";
-    print_table(*mOutput, mSendTable);
+    print_table(*mOutput, "goto", mGotoTable);
+    print_table(*mOutput, "send", mSendTable);
   }
 
 private:
@@ -576,12 +574,13 @@ private:
     return state_id;
   }
 
-  void print_table(std::ostream& pOutput, std::vector< std::vector<int> >& pTable) {  
+  void print_table(std::ostream& pOutput, const char * pTitle, std::vector< std::vector<int> >& pTable) {  
     std::vector< std::vector<int> >::iterator it,end;
     end = pTable.end();
     
     // print tokens
-    pOutput << "         - ";
+    bprint(mBuf, mBufSize, "\n%- 8s  -", pTitle);
+    pOutput << mBuf;
     for(int i=0;i<mTokenCount;i++) {
       int tok_value = mTokenList[i];
       std::string identifier;

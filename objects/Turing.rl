@@ -304,13 +304,15 @@ public:
     
     begin_comment = '=begin\n' @begin_comment;
     
-    entry  = identifier %set_source ws+ transition ws+ identifier %set_target (ws* comment)?;
+    sub_entry = ws+ transition ws+ identifier %set_target;
+    
+    entry     = identifier %set_source sub_entry;
     
     begin_lua = '=begin' ' '+ 'lua\n' @begin_lua;
     
     define_token = identifier ws* '=' ws* digit+ $a %set_tok_value;
 
-    main  := ( ws* (entry %add_entry | define_token %define_token | comment | begin_comment | begin_lua | ws* )  '\n' )+ $err(error);
+    main  := ( ws* (entry %add_entry (sub_entry %add_entry)* (ws* comment)? | define_token %define_token | comment | begin_comment | begin_lua | ws* )  '\n' )+ $err(error);
     write exec;
     write eof;
   }%%
@@ -335,10 +337,8 @@ public:
         *mOutput << " " << i << " : " << tok_value << "\n";
       }
     }
-    *mOutput << "goto\n";
-    print_table(*mOutput, mGotoTable);
-    *mOutput << "send\n";
-    print_table(*mOutput, mSendTable);
+    print_table(*mOutput, "goto", mGotoTable);
+    print_table(*mOutput, "send", mSendTable);
   }
 
 private:
@@ -364,12 +364,13 @@ private:
     return state_id;
   }
 
-  void print_table(std::ostream& pOutput, std::vector< std::vector<int> >& pTable) {  
+  void print_table(std::ostream& pOutput, const char * pTitle, std::vector< std::vector<int> >& pTable) {  
     std::vector< std::vector<int> >::iterator it,end;
     end = pTable.end();
     
     // print tokens
-    pOutput << "          -";
+    bprint(mBuf, mBufSize, "\n%- 8s  -", pTitle);
+    pOutput << mBuf;
     for(int i=0;i<mTokenCount;i++) {
       int tok_value = mTokenList[i];
       std::string identifier;
