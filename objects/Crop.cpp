@@ -43,8 +43,11 @@ public:
     } else {
       mS.array.size  = mBufferSize;
       mS.array.value = mBuffer;
-    };
+    }
     mS.type = ArraySignal;
+    if (mDebug) {
+      *mOutput << mName << ": " << mS << std::endl;
+    }
     send(mS);
   }
   

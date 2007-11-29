@@ -19,7 +19,7 @@ public:
     mUnitSize     = p.val("unit", 1);
     mShortTimeFFT = (p.val("stft", 0) == 1); /**< Do a short-time FFT (output peak frequency for each time t). */
     
-    if (mWindowSize % 2 == 0) mWindowSize += 1; /**< To make sure we have a 1.0 value in the center of the Hamming window. */
+    //if (mWindowSize % 2 == 0) mWindowSize += 1; /**< To make sure we have a 1.0 value in the center of the Hamming window. */
     
     
     
@@ -126,7 +126,7 @@ public:
           }
         } else {
           // not short-time FFT
-          for(int i=0; i < sample_count/2; i++) {
+          for(int i=0; i < sample_count; i++) {
             // deinterlace the data...!!
             mBuffer[s * mUnitSize + i] = vector[s + mUnitSize * i];
           }

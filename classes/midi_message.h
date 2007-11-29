@@ -10,6 +10,7 @@
 enum midi_messages_t {
   NoteOn = 1, /**< Note on message. */
   NoteOff,  /**< Note off message. */
+  Ctrl,
   RawMidi,    /**< Other midi message. */
 };
 
@@ -29,9 +30,19 @@ struct MidiMessage
       mType = NoteOn;
     else
       mType = NoteOff;
-    set_note(pNote);
+    set_key(pNote);
     set_channel(pChannel);
-    set_velocity(pVelocity);
+    set_value(pVelocity);
+    mLength = pLength;
+    mWait   = pTime;
+  }
+  
+  void set_as_ctrl (unsigned char pCtrl, unsigned char pValue, unsigned int pLength = 0, unsigned int pChannel = 1, time_t pTime = 0)
+  {
+    mType = Ctrl;
+    set_key(pCtrl);
+    set_channel(pChannel);
+    set_value(pValue);
     mLength = pLength;
     mWait   = pTime;
   }
@@ -45,12 +56,20 @@ struct MidiMessage
   }
   
   inline void set_note(unsigned char pNote)
+  { set_key(pNote); }
+
+  inline void set_ctrl(unsigned char pCtrl)
+  { set_key(pCtrl); }
+  
+  inline void set_key(unsigned char pNote)
   { mData[1] = pNote % 128; }
   
   inline void set_channel(unsigned char pChannel)
   {
     if (mType == NoteOn)
       mData[0] = 0x90 + ((pChannel + 15) % 16);
+    else if (mType == Ctrl)
+      mData[0] = 0xB0 + ((pChannel + 15) % 16);
     else
       mData[0] = 0x80 + ((pChannel + 15) % 16);
   }
@@ -64,7 +83,10 @@ struct MidiMessage
   }
   
   inline void set_velocity(unsigned char pVelocity)
-  { mData[2] = pVelocity % 128; }
+  { set_value(pVelocity); }
+  
+  inline void set_value(unsigned char pValue)
+  { mData[2] = pValue % 128; }
   
   /** Write the note name (as C2#, D-1, E3) into the buffer. The buffer must be min 5 chars large (C-3#\0). */
   inline void get_note_name(char buffer[]) const
@@ -148,8 +170,10 @@ inline std::ostream& operator<< (std::ostream& pStream, const MidiMessage& msg)
   if (msg.mType == NoteOn || msg.mType == NoteOff) {
     if (msg.mType == NoteOff) 
       pStream << "-";
-    else
-      pStream << " ";
+    else if (msg.mType == NoteOn)
+      pStream << "+";
+    else if (msg.mType == Ctrl)
+      pStream << "~";
     msg.get_note_name(buffer);
     pStream << msg.channel() << ":" << buffer << "(" << (int)msg.mData[2] << "), " << msg.mWait << "/" << msg.mLength;
   } else {

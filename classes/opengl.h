@@ -83,6 +83,17 @@ protected:
     return true;
   }
   
+  void gl_square(double x, double y, double sz)
+  {
+    glVertex2f(x - sz/2, y - sz/2);
+    glVertex2f(x + sz/2, y - sz/2);
+    glVertex2f(x + sz/2, y + sz/2);
+    glVertex2f(x - sz/2, y + sz/2);
+    glVertex2f(x - sz/2, y - sz/2);
+    glVertex2f(x, y);
+  }
+  
+  
   OglWindow  mWindow;
 
 private:

@@ -16,6 +16,7 @@ enum vq_states_t {
 class VQ : public Node
 {
 public:
+  VQ() : mTrainingData(NULL), mCodebook(NULL), mVector(NULL), mDistances(NULL) {}
   
   ~VQ()
   {
@@ -29,11 +30,12 @@ public:
     if (mTrainingData) free(mTrainingData);
     if (mCodebook)     free(mCodebook);
     if (mVector)       free(mVector);
+    if (mDistances)    free(mDistances);
   }
   
   bool init (const Params& p)
   {
-    mVectorSize   = p.val("size", 8);        /**< Dimension of each vector. */
+    mVectorSize   = p.val("vector", 8);        /**< Dimension of each vector. */
     mCodebookSize = p.val("resolution", 16); /**< Codebook size. The result will be an integer between
                                                *  [1..resolution]. Must be a power of 2. */
     mScale        = p.val("scale", 256.0);   /**< Value to multiply doubles before scaling to integers. */
@@ -48,6 +50,8 @@ public:
       *mOutput << mName << ": could not allocate " << mCodebookSize * mVectorSize << " integers for codebook.\n";
       return false;
     }
+    
+    if (!alloc_doubles(&mDistances, mCodebookSize, "distance probabilities")) return false;
     
     /** Allocate mVector. */
     mVector = (int*)malloc(mVectorSize * sizeof(int));
@@ -106,6 +110,10 @@ public:
         if (sig.array.size == mVectorSize) {
           int label = label_for(sig.array.value);
           if (mDebug) *mOutput << mName << ": " << label << "\n";
+          mS.type = ArraySignal;
+          mS.array.size = mCodebookSize;
+          mS.array.value = mDistances;
+          send(mS, 2);
           send(label / (double)mCodebookSize);
         } else {
           *mOutput << mName << ": wrong signal size '" << sig.array.size << "'. Should be '" << mVectorSize << "'.\n";
@@ -140,8 +148,11 @@ private:
       distance = 0;
       for(int j=0; j < mVectorSize; j++) {
         distance += (mVector[j] - codeword[j]) * (mVector[j] - codeword[j]);
-        if (distance > match_distance) break;
+        //if (distance > match_distance) break;
       }
+      
+      mDistances[i] = (double)distance / (mVectorSize * mCodebookSize * mCodebookSize);
+      
       if (distance < match_distance) {
         match_index = i;
         match_distance = distance;
@@ -411,6 +422,7 @@ private:
   int  *    mVector;       /**< Integer version of the live vector used during encoding. */
   double    mScale;        /**< Value to multiply doubles before conversion to integer. */
   int  *    mCodebook;     /**< Array of mCodebookSize pointers to vectors of size mVectorSize as integers. */
+  double *  mDistances;    /**< Distance to each code word. */
   int  *    mTrainingData; /**< Array of mTrainingSize pointers to vectors of size mVectorSize as integers. */
   FILE *    mTrainFile;    /**< Where the training vectors are stored. */
   int       mTrainingDataSize;  /**< Size of mTrainingData buffer. */
@@ -422,4 +434,5 @@ extern "C" void init()
 {
   CLASS(VQ)
   OUTLET(VQ, label)
+  OUTLET(VQ, probabilities)
 }

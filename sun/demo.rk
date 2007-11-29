@@ -1,0 +1,5 @@
+c = Cabox(port:"/dev/tty.HOME001-GenericSerial-1" bauds:115200)
+c => b
+b = Buffer(768)
+b => plot
+plot=Plot(line:4 group:3)

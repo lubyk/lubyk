@@ -8,7 +8,7 @@ public:
   bool init(const Params& p)
   {
     mMessage.mType = NoteOn;
-    mMessage.set_note(     p.val("note",     MIDI_NOTE_C0   ));
+    mMessage.set_key(     p.val("note",     MIDI_NOTE_C0   ));
     mMessage.set_velocity( p.val("velocity", 70             ));
     mMessage.mLength    =  p.val("length",   500             ); // 0.5 sec.
     mMessage.set_channel(  p.val("channel",  1              ));
