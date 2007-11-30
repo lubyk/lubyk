@@ -3,7 +3,7 @@
 #include "class.h"
 #include "mutex.h"
 
-#undef DEBUG_PARSER
+//#define DEBUG_PARSER
 
 %%{
   machine command;

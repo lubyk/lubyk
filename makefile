@@ -9,16 +9,16 @@ TEST=test/*_test.h test/objects/*_test.h
 test: test/runner test/runner.cpp
 	./test/runner && rm test/runner
 
-rubyk: classes/main.cpp command.o rubyk.o node.o inlet.o outlet.o slot.o params.o class.o lua.o matrix.o classes/lua/src/liblua.a objects
-	$(CC) $(CFLAGS) -o rubyk -Itest -Itemplates -Iclasses -Iobjects -I. classes/main.cpp slot.o inlet.o outlet.o params.o node.o class.o command.o matrix.o rubyk.o lua.o classes/lua/src/liblua.a -framework Accelerate
+rubyk: classes/main.cpp command.o rubyk.o signal.o node.o inlet.o outlet.o slot.o params.o class.o lua.o matrix.o classes/lua/src/liblua.a objects
+	$(CC) $(CFLAGS) -o rubyk -Itest -Itemplates -Iclasses -Iobjects -I. classes/main.cpp slot.o inlet.o outlet.o params.o signal.o node.o class.o command.o matrix.o rubyk.o lua.o classes/lua/src/liblua.a -framework Accelerate
 
-objects: lib/Test.rko lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/Midi.rko lib/NoteOut.rko lib/Lua.rko lib/Serial.rko lib/Turing.rko lib/Keyboard.rko lib/Cabox.rko lib/Svm.rko lib/Buffer.rko lib/Pack.rko lib/Plot.rko lib/Crop.rko lib/MaxCount.rko lib/Tokenize.rko lib/FFT.rko lib/VQ.rko lib/ClassRecorder.rko lib/PCA.rko lib/Average.rko
+objects: lib/Test.rko lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/Midi.rko lib/NoteOut.rko lib/Lua.rko lib/Serial.rko lib/Turing.rko lib/Keyboard.rko lib/Cabox.rko lib/Svm.rko lib/Buffer.rko lib/Pack.rko lib/Plot.rko lib/Cut.rko lib/MaxCount.rko lib/Tokenize.rko lib/FFT.rko lib/VQ.rko lib/ClassRecorder.rko lib/PCA.rko lib/Average.rko lib/Peak.rko
 	
 test/runner.cpp: test/*_test.h test/objects/*_test.h
 	./test/cxxtest/cxxtestgen.pl --error-printer -o test/runner.cpp $(TEST)
 	
-test/runner: test/runner.cpp command.o rubyk.o node.o inlet.o outlet.o slot.o params.o class.o lua.o classes/lua/src/liblua.a matrix.o objects
-	$(CC) $(CFLAGS) -Itest -Itemplates -Iclasses -Iobjects -I. test/runner.cpp slot.o inlet.o outlet.o params.o node.o class.o command.o rubyk.o lua.o classes/lua/src/liblua.a matrix.o -o test/runner -framework Accelerate
+test/runner: test/runner.cpp command.o rubyk.o signal.o node.o inlet.o outlet.o slot.o params.o class.o lua.o classes/lua/src/liblua.a matrix.o objects
+	$(CC) $(CFLAGS) -Itest -Itemplates -Iclasses -Iobjects -I. test/runner.cpp slot.o inlet.o outlet.o params.o signal.o node.o class.o command.o rubyk.o lua.o classes/lua/src/liblua.a matrix.o -o test/runner -framework Accelerate
 
 slot.o: classes/slot.cpp classes/slot.h
 	$(CC) $(CFLAGS) -c -Itemplates classes/slot.cpp -o slot.o
@@ -34,6 +34,9 @@ params.o: classes/params.cpp classes/params.h
 	
 node.o: classes/node.cpp classes/node.h
 	$(CC) $(CFLAGS) -c -Itemplates classes/node.cpp -o node.o
+	
+signal.o: classes/rubyk_signal.cpp
+	$(CC) $(CFLAGS) -c -Itemplates classes/rubyk_signal.cpp -o signal.o
 
 class.o: classes/class.cpp classes/class.h
 	$(CC) $(CFLAGS) -c -Itemplates classes/class.cpp -o class.o
@@ -108,8 +111,8 @@ lib/Plot.rko: objects/Plot.cpp classes/opengl.h
 	$(CC) $(CFLAGS) -o lib/Plot.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ -D__MACOSX_CORE__ -framework GLUT -framework OpenGL -framework Cocoa objects/Plot.cpp
 
 
-lib/Crop.rko: objects/Crop.cpp
-	$(CC) $(CFLAGS) -o lib/Crop.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Crop.cpp
+lib/Cut.rko: objects/Cut.cpp
+	$(CC) $(CFLAGS) -o lib/Cut.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Cut.cpp
 
 	
 lib/MaxCount.rko: objects/MaxCount.cpp
@@ -132,6 +135,9 @@ lib/PCA.rko: objects/PCA.cpp classes/trained_machine.h
 
 lib/Average.rko: objects/Average.cpp
 	$(CC) $(CFLAGS) -o lib/Average.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Average.cpp
+
+lib/Peak.rko: objects/Peak.cpp
+	$(CC) $(CFLAGS) -o lib/Peak.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Peak.cpp
 	
 lua.o: classes/lua/lua_script.cpp classes/lua_script.h classes/script.h
 	$(CC) $(CFLAGS) -c -o lua.o -Itemplates -Iclasses -Iclasses/lua/src classes/lua/lua_script.cpp

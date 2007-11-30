@@ -361,4 +361,12 @@ public:
   }
 };
 
+// FIXME: these, with buffer alloc could go into an "utils" header
+inline double absval(double d)
+{
+  if (d < 0)
+    return -d;
+  else
+    return d;
+}
 #endif

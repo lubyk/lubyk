@@ -17,7 +17,9 @@ public:
   {
     int buf_size  = p.val("size", 64);
     mUnitSize     = p.val("unit", 1);
-    mShortTimeFFT = (p.val("stft", 0) == 1); /**< Do a short-time FFT (output peak frequency for each time t). */
+    mShortTimeFFT = (p.val("stft", 0) == 1); /**< Do a short-time FFT (output peak frequency for each time t). 
+                                               * This takes too much CPU, it is better to do :
+                                               * small buffer -> fft -> buffer. */
     
     //if (mWindowSize % 2 == 0) mWindowSize += 1; /**< To make sure we have a 1.0 value in the center of the Hamming window. */
     

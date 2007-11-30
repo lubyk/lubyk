@@ -1,6 +1,6 @@
 #include "script.h"
 #define MAX_NAME_SIZE 200
-#define DEBUG_PARSER
+//#define DEBUG_PARSER
 
 %%{
   machine turing;
@@ -319,7 +319,6 @@ public:
     if (begin_lua_script) {
       lua_script.append( begin_lua_script, p - begin_lua_script );
     }
-    std::cout << "script:\n[" << lua_script << "]\n";
     mScriptDead = false; // ok, we can receive and process signals (again).
   }
 
@@ -417,7 +416,7 @@ private:
     out << "  rankdir=LR;\n";
   	// first node
     out << "  node [ fixedsize = true, height = 0.65, shape = doublecircle ];\n";
-    out << mStateNames[0] << ";\n";
+    out << "  " << mStateNames[0] << ";\n";
     // all other nodes
     out << "  node [ shape = circle ];\n";
     // transitions
