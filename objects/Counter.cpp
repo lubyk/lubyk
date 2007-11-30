@@ -7,7 +7,7 @@ public:
   // params = hash, 'port:450, baud:3200, xyz:450, title:"home of the braave"'
   bool init (const Params& p)
   {
-    mCounter   = p.val("counter", 0);
+    mCounter   = p.val("counter", 0, true);
     mIncrement = p.val("add", 1);
     
     return true;

@@ -40,7 +40,7 @@ std::ostream& operator<< (std::ostream& pStream, const Signal& sig)
     pStream << "<" << sig.type_name() << " " << *(sig.midi_ptr.value) << ">";
     break;
   default:
-    pStream << "<" << sig.type_name() << ">";
+    pStream << sig.type_name();
   }
   return pStream;
 }

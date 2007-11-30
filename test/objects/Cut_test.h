@@ -3,7 +3,7 @@
 class CutTest : public CxxTest::TestSuite, public ParseTest
 {
 public:
-  void test_single( void ) 
+  void test_cut_zone( void ) 
   { 
     setup_with_print("n=Cut(from:2 to:5)\n");
     

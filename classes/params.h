@@ -12,18 +12,22 @@ public:
   Params () : mParameters(20) {}
   
   template<class T>
-  T val(const char * pKey, T pDefault) const
+  T val(const char * pKey, T pDefault, bool pUseAnon = false) const
   {
     std::string value;
     if (mParameters.get(&value, std::string(pKey)))
       return cast_param<T>(value);
-    else
+    else if (pUseAnon) {
+      T value;
+      if (get(&value)) return value;
+      else return pDefault;
+    } else
       return pDefault;
   }
   
   /** Try to get a parameter from a given key. Returns false if the key is not found. If the key is NULL, get the default value. */
   template<class T>
-  bool get(T* pResult, const char * pKey, bool pTryDefault) const
+  bool get(T* pResult, const char * pKey, bool pUseAnon) const
   {
     std::string value;
     if (pKey == NULL) {
@@ -36,7 +40,7 @@ public:
     if (mParameters.get(&value, std::string(pKey))) {
       *pResult = cast_param<T>(value);
       return true;
-    } else if (pTryDefault) {
+    } else if (pUseAnon) {
       return get(pResult, NULL, false);
     } else
       return false;

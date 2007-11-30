@@ -1,0 +1,23 @@
+c=Cabox(port:"/dev/tty.HOME001-GenericSerial-1" bauds:115200)
+
+
+# =========== PEAK ====================
+c => pe
+pe = Peak(descent:0.05)
+pe => pack_buffer
+
+
+# =========== AVERAGE =================
+c => abuf
+abuf = Buffer(384) # 12 x 32
+abuf => avg
+avg = Average(vector:12)
+avg => pack_buffer
+
+
+# =========== PACK ====================
+pack_buffer = Buffer(1536) # 2 x 12 x 64
+pack_buffer => p
+
+# =========== PLOT ====================
+p = Plot(line:8 group:3 amplitude:0.25)

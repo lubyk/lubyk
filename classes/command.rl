@@ -99,6 +99,11 @@ void Command::parse(const std::string& pStr)
       mTo   = mVariable;
       create_link();
     }
+    
+    action remove_link {
+      mTo   = mVariable;
+      remove_link();
+    }
 
     action create_instance { create_instance(); }
     
@@ -118,7 +123,9 @@ void Command::parse(const std::string& pStr)
     }
     action error {
       fhold; // move back one char
-      *mOutput << "Syntax error !" << std::endl;
+      char error_buffer[10];
+      snprintf(error_buffer, 9, "%s", p);
+      *mOutput << "Syntax error near '" << error_buffer << "'." << std::endl;
       clear();
       prompt();
       fgoto eat_line; // eat the rest of the line and continue parsing
@@ -152,7 +159,11 @@ void Command::parse(const std::string& pStr)
   
     create_instance = var ws* '=' ws* class '(' parameters? ')' ;
   
-    create_link = var %set_from ('.' integer %set_from_port)? ws* '=>' ws* (integer %set_to_port '.')? var ;
+    from_link = var %set_from ('.' integer %set_from_port)?;
+    to_link   = (integer %set_to_port '.')? var;
+    create_link = from_link ws* '=>' ws* to_link;
+    
+    remove_link = from_link ws* '//' ws* to_link;
     
     execute_method       = var   '.' method ( '(' parameters? ')' )? ;
     
@@ -165,6 +176,7 @@ void Command::parse(const std::string& pStr)
             | execute_class_method  %execute_class_method (ws comment)?
             | create_instance %create_instance (ws comment)?
             | create_link %create_link (ws comment)?
+            | remove_link %remove_link (ws comment)?
             | comment
             | ws* ) '\n' )+ @prompt $err(error);
     write exec;
@@ -228,8 +240,20 @@ void Command::create_link()
   mServer->create_link(mFrom, mFromPort, mToPort, mTo);
   mServer->unlock();
 
-  // if (!mSilent)  // useless
-  //   *mOutput << "LINK " << mFrom << "." << mFromPort << "=>" << mToPort << "." << mTo << std::endl;
+#ifdef DEBUG_PARSER
+  std::cout << "LINK " << mFrom << "." << mFromPort << "=>" << mToPort << "." << mTo << std::endl;
+#endif
+}
+
+void Command::remove_link()
+{ 
+  mServer->lock();
+  mServer->remove_link(mFrom, mFromPort, mToPort, mTo);
+  mServer->unlock();
+
+#ifdef DEBUG_PARSER
+  std::cout << "UNLINK " << mFrom << "." << mFromPort << "=>" << mToPort << "." << mTo << std::endl;
+#endif
 }
 
 // FIXME: execute_method should run in server space with concurrency locks.
@@ -265,7 +289,7 @@ void Command::execute_command()
   if (mServer->get_instance(&node, mMethod)) {
     // inspect
     *mOutput << node->inspect() << std::endl;
-  } else if (mMethod == "quit") {
+  } else if (mMethod == "quit" || mMethod == "q") {
     mServer->quit();
     mQuit = true;
     *mOutput << "Bye..." << std::endl;

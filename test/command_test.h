@@ -14,7 +14,10 @@ public:
     std::ostringstream output(std::ostringstream::out);  // allow output  operations
     Command cmd(input, output);
     server.listen_to_command(cmd);
-    server.run();
+    time_t start = server.mCurrentTime;
+    while(server.mCurrentTime <= start + 10 && server.run()) {
+      ;
+    }
     TS_ASSERT_EQUALS( output.str(), std::string("Welcome to rubyk !\n\n"));
   }
 };
@@ -54,7 +57,7 @@ public:
   { assert_result("i=Counter(14)\ni\n","#<Counter:i 14>\n#<Counter:i 14>\n"); }
   
   void testSyntaxError( void ) 
-  { assert_result("i=Counter(1)\n4\ni\n","#<Counter:i 1>\nSyntax error !\n#<Counter:i 1>\n"); }
+  { assert_result("i=Counter(1)\n4\ni\n","#<Counter:i 1>\nSyntax error near '\n4\ni\n'.\n#<Counter:i 1>\n"); }
   
   void testExecuteMethodWithParams( void ) 
   { assert_result("i=Counter(1)\ni.set_increment(5)\ni.bang\n","#<Counter:i 1>\n#<Counter:i 6>\n"); }
@@ -65,12 +68,18 @@ public:
   void testParseLink( void ) 
   { assert_result("n.1=>1.p\n",""); }
 
+  void testParseUnLink( void ) 
+  { assert_print("n=Value(1)\nn // p\nn.bang()",""); }
+
   void testParseFirstLinks( void ) 
-  { assert_result("n=>p\n",""); }
+  { clean_assert_result("n=>p\n",""); }
   
   void testParseBadLinks( void ) 
-  { assert_result("n=>\n","Syntax error !\n"); }
+  { assert_result("n=>\n","Syntax error near '>\n'.\n"); }
   
   void testCreateDestroy( void ) 
-  { assert_result("v=>p\nv=Value()\np=Print()\nv=Print()\np=Value()\n","#<Value:v 0.00>\n#<Print:p -->\n#<Print:v -->\n#<Value:p 0.00>\n"); }
+  { assert_result("v=>p\nv=Value()\np=Print()\nv=Print()\np=Value()\n",
+                  "#<Value:v Nil>\n#<Print:p -->\n#<Print:v -->\n#<Value:p Nil>\n");
+
+  }
 };

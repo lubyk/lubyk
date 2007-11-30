@@ -49,17 +49,16 @@ public:
   
   void draw()
   {
-    int i=1;
-    //for(int i=PLOT_INLET_COUNT - 1; i>=0; i--) {
-    //  if (!mLiveBuffer[i]) continue;
+    for(int i=PLOT_INLET_COUNT - 1; i>=0; i--) {
+      if (!mLiveBuffer[i]) continue;
       switch(mMode[i]) {
       case XYPlot:
-        xy_plot(mLiveBuffer[i], mLiveBufferSize[i], i == 0 ? 0.6 : 0.4, i, i == 0);
+        xy_plot(mLiveBuffer[i], mLiveBufferSize[i], i == 0 ? 1.0 : 0.6, i, i == 0);
         break;
       default:
-        time_plot(mLiveBuffer[i], mLiveBufferSize[i], i == 0 ? 0.6 : 0.4, i, i == 0);
+        time_plot(mLiveBuffer[i], mLiveBufferSize[i], i == 0 ? 0.7 : 0.5, i, i == 0);
       }
-    //}
+    }
   }
   
 private:
@@ -69,9 +68,7 @@ private:
     int l, l_offset;
     int g, g_offset;
     
-    // we use mLiveBufferSize as the main buffer size. Others are cropped.
-    int value_offset = (mLiveBufferSize[0] - pBufferSize) / (mLineCount[param_index] * mGroupSize[param_index]);
-    int value_count  = mLiveBufferSize[0] / (mLineCount[param_index] * mGroupSize[param_index]); 
+    int value_count  = mLiveBufferSize[param_index] / (mLineCount[param_index] * mGroupSize[param_index]); 
     double width_ratio;
     double height_ratio = (double)mWindow.height / (2.0 * mLineCount[param_index] * mMaxAmplitude[param_index]); // values : [-1,1]
     double y_offset;
@@ -103,10 +100,10 @@ private:
         glColor4f(col_ratio * (g % mGroupSize[param_index]),col_ratio * ((g+1) % mGroupSize[param_index]),col_ratio * ((g+2) % mGroupSize[param_index]),pAlpha);
         
         glBegin(GL_LINE_STRIP);
-          for(int i=0; i < (value_count - value_offset); i++) {
-            glVertex2f((i + value_offset) * width_ratio, y_offset + pBuffer[i * mGroupSize[param_index] * mLineCount[param_index] + g + l_offset] * height_ratio);
+          for(int i=0; i < value_count; i++) {
+            glVertex2f(i * width_ratio, y_offset + pBuffer[i * mGroupSize[param_index] * mLineCount[param_index] + g + l_offset] * height_ratio);
           }
-          glVertex2f(mWindow.width, y_offset + pBuffer[(value_count - value_offset - 1) * mGroupSize[param_index] * mLineCount[param_index] + g + l_offset] * height_ratio);
+          glVertex2f(mWindow.width, y_offset + pBuffer[(value_count - 1) * mGroupSize[param_index] * mLineCount[param_index] + g + l_offset] * height_ratio);
         glEnd();
       }
     }
@@ -128,7 +125,11 @@ private:
     for(int l=0; l < mLineCount[param_index]; l++) {
       int offset_line = l * value_count;
       // element in group
-      glColor4f(col_ratio * ((l+1) / mLineCount[param_index]),col_ratio * ((l+2) / mLineCount[param_index]),col_ratio * ((l) / mLineCount[param_index]),pAlpha);
+      // 0 1 0 : 0  1  0 0 1
+      // 1 0 0 : 1  2  0 1 0
+      // 0 0 1 : 2  3  0 1 1
+      
+      glColor4f((int)((l+1)/2) % 4,(int)(l+1) % 2,(int)(l+1)/4,pAlpha);
       //glColor4f(0.0,1.0,0.0, pAlpha);
 
       glBegin(GL_LINE_STRIP);

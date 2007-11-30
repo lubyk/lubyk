@@ -100,6 +100,9 @@ protected:
   /** Create a link. If the link cannot be created right now because all variables aren't set yet, the link will be kept in Rubyk's link buffer until all variables are found. */
   void create_link ();
   
+  /** Remove a link. */
+  void remove_link ();
+  
   /** Execute a method on an instance. */
   void execute_method ();
   

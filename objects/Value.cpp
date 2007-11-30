@@ -7,7 +7,7 @@ public:
   bool init (const Params& p)
   {
     double value;
-    if (p.size() > 0) {
+    if (p.size() > 1) {
       for(int i=0; i < p.size(); i++) {
         p.get(&value, i);
         mBuffer.append(value);
@@ -16,7 +16,7 @@ public:
     } else if (p.get(&value, "value", true)) {
       mS.set(value);
     } else {
-      mS.set_bang();
+      mS.set_nil();
     }
     
     return true;

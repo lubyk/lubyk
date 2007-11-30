@@ -134,6 +134,19 @@ void Rubyk::create_pending_links()
   }
 }
 
+
+void Rubyk::remove_link(const std::string& pFrom, unsigned int pFromPort, unsigned int pToPort, const std::string& pTo)
+{
+  Node * fromNode, * toNode;
+  Slot * fromPort, * toPort;
+  if ((mInstances.get(&fromNode, pFrom)) && (mInstances.get(&toNode, pTo))) {
+    if ((fromPort = fromNode->outlet(pFromPort)) && (toPort = toNode->inlet(pToPort))) {
+      fromPort->disconnect(toPort);
+      //std::cout << "unlink " << fromNode->name() << "("<< fromPort->mId+1 << ")" << " --> " << toNode->name() << "("<< toPort->mId+1 << ")" << std::endl;
+    }
+  }
+}
+
 bool Rubyk::get_instance(Node ** pResult, const std::string& pName)
 {
   return mInstances.get(pResult, pName);

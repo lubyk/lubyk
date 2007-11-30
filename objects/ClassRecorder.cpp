@@ -61,6 +61,7 @@ public:
         mLiveBufferSize = sig.array.size;
       } else {
         *mOutput << mName << ": wrong signal size " << sig.array.size << " should be " << mBufferSize << " (with margin)\n.";
+        return;
       }
     } else {
       time_t record_time = (time_t)(ONE_SECOND * mVectorSize)/(mUnitSize * mSampleRate);
@@ -105,12 +106,12 @@ public:
           }
           break;
         } else if (cmd == RK_RIGHT_ARROW) { // -> right arrow 301
-          mUseVectorOffset += mUnitSize;
-          if (mUseVectorOffset < 0) mUseVectorOffset = 0;
+          mUseVectorOffset += mVectorSize;
+          if (mUseVectorOffset > mBufferSize - mVectorSize) mUseVectorOffset = mBufferSize - mVectorSize;
           break;
         } else if (cmd == RK_LEFT_ARROW) { // <- left arrow  302
-          mUseVectorOffset -= mUnitSize;
-          if (mUseVectorOffset > mBufferSize - mVectorSize) mUseVectorOffset = mBufferSize - mVectorSize;
+          mUseVectorOffset -= mVectorSize;
+          if (mUseVectorOffset < 0) mUseVectorOffset = 0;
           break;
         } else {
           // any character: save and continue
@@ -191,10 +192,12 @@ private:
       }
       mVectorOffset = delta_used;
       bprint(mBuf,mBufSize, ": distance to mean vector %.3f (delta %i/%i)\nKeep ? ~> ", min_distance, delta_used, mBufferSize - mVectorSize - delta_used);
-      *mOutput << mName << mBuf << std::endl;
+      *mOutput << mName << mBuf;
+      fflush(stdout); // FIXME: should be related to *mOutput
     } else {
       mVectorOffset = mBufferSize - mVectorSize * (1 + mMargin/2.0);
-      *mOutput << mName << ":~> Keep ? " << std::endl;
+      *mOutput << mName << ":~> Keep ? ";
+      fflush(stdout); // FIXME: should be related to *mOutput
     }
     if (mUseSnap)
       mUseVectorOffset = mVectorOffset;

@@ -31,6 +31,8 @@ public:
   
   void create_link(const std::string& pFrom, unsigned int pFromPort, unsigned int pToPort, const std::string& pTo);
   
+  void remove_link(const std::string& pFrom, unsigned int pFromPort, unsigned int pToPort, const std::string& pTo);
+  
   /** Get a pointer to the instance with the given name. */
   bool Rubyk::get_instance(Node ** pResult, const std::string& pName);
   

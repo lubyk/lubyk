@@ -72,6 +72,13 @@ public:
     return append(pBuf.data, pBuf.size);
   }
   
+  Buf<T>& operator-= (T& pValue)
+  {
+    for(int i=0; i < size; i++) {
+      data[i] -= pValue;
+    }
+  }
+  
 public:
   size_t size;
   T * data;

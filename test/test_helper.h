@@ -169,7 +169,7 @@ protected:
     mServer->listen_to_command(*mCmd);
     start = mServer->mCurrentTime;
     while(mServer->mCurrentTime <= start + pLength && mServer->run()) {
-      mServer->run();
+      ;
     }
     mCmd->set_silent(false);
     
