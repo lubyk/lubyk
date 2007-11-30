@@ -1,0 +1,42 @@
+c=Cabox(port:"/dev/tty.HOME001-GenericSerial-1" bauds:115200)
+
+
+# =========== PEAK ====================
+c => pe
+pe = Peak(descent:0.05)
+pe => pack_buffer
+
+
+# =========== AVERAGE =================
+c => abuf
+abuf = Buffer(384) # 12 x 32
+abuf => avg
+avg = Average(vector:12)
+avg => pack_buffer
+
+
+# =========== PACK ====================
+pack_buffer = Buffer(24) # 2 x 12 x 1
+
+
+# =========== RECORDER ================
+pack_buffer => rec
+k = Keyboard()
+k => rec
+rec = ClassRecorder(vector:24 unit:24 tempo:120 data:"gaspard/data" margin:0 rate:256)
+rec => p
+#rec.2 => 2.p
+rec.3 => midi
+
+
+# =========== PCA =====================
+pack_buffer => pca
+pca = PCA(vector:24 keep:4 data:"gaspard/data" processed:"gaspard/after_pca")
+pca => 2.p
+
+# =========== PLOT ====================
+p = Plot(line:8 group:3 mode2:"xy" line2:1)
+
+
+# =========== MIDI ====================
+midi = Midi()

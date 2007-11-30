@@ -1,5 +1,11 @@
 #include "opengl.h"
 
+#define PLOT_INLET_COUNT 2
+typedef enum {
+  XYPlot,
+  TimePlot,
+} plot_type_t;
+
 class Plot : public OpenGL
 {
 public:
@@ -7,65 +13,78 @@ public:
   
   bool init (const Params& p)
   {
-    mLineCount = p.val("line", 1);
-    mGroupSize = p.val("group", 1);
-    mMaxAmplitude = p.val("amplitude", 1.0);
-    mIsXY      = (p.val("xy", 0.0) == 1.0);
-    mRefBuffer = NULL;
-    mBuffer    = NULL;
+    std::string mode;
+    mLineCount[0] = p.val("line", 1);
+    mGroupSize[0] = p.val("group", 1);
+    mMaxAmplitude[0] = p.val("amplitude", 1.0);
+    
+    mLineCount[1] = p.val("line2", mLineCount[0]);
+    mGroupSize[1] = p.val("group2", mGroupSize[0]);
+    mMaxAmplitude[1] = p.val("amplitude2", mMaxAmplitude[0]);
+    
+    set_mode_from_string(&mMode[0], p.val("mode", std::string("time")));
+    set_mode_from_string(&mMode[1], p.val("mode2", std::string("time")));
+    for(int i=0; i< PLOT_INLET_COUNT; i++) {
+      mLiveBuffer[i]     = NULL;
+      mLiveBufferSize[i] = 0;
+    }
     return init_gl(p);
   }
   
   // inlet 1
   void bang(const Signal& sig)
   {
-    if (sig.get(&mBuffer))
-      mBufferSize = sig.array.size;
+    if (sig.get(&mLiveBuffer[0]))
+      mLiveBufferSize[0] = sig.array.size;
     glutPostRedisplay();
   }
   
   // inlet 2
   void reference(const Signal& sig)
-  {  
-    if (sig.get(&mRefBuffer)) {
-      mRefBufferSize = sig.array.size;
+  { 
+    if (sig.get(&mLiveBuffer[1])) {
+      mLiveBufferSize[1] = sig.array.size;
     }
   }
   
   void draw()
   {
-    if (mIsXY) {
-      if (mRefBuffer) draw_xy_buffer(mRefBuffer, mRefBufferSize, 0.4, false); // 0.6 = alpha, false = do not draw base line
-      if (mBuffer)    draw_xy_buffer(mBuffer, mBufferSize, 1.0);
-    } else {
-      if (mRefBuffer) draw_buffer(mRefBuffer, mRefBufferSize, 0.4, false); // 0.6 = alpha, false = do not draw base line
-      if (mBuffer)    draw_buffer(mBuffer, mBufferSize, 1.0);
-    }
+    int i=1;
+    //for(int i=PLOT_INLET_COUNT - 1; i>=0; i--) {
+    //  if (!mLiveBuffer[i]) continue;
+      switch(mMode[i]) {
+      case XYPlot:
+        xy_plot(mLiveBuffer[i], mLiveBufferSize[i], i == 0 ? 0.6 : 0.4, i, i == 0);
+        break;
+      default:
+        time_plot(mLiveBuffer[i], mLiveBufferSize[i], i == 0 ? 0.6 : 0.4, i, i == 0);
+      }
+    //}
   }
   
 private:
   
-  void draw_buffer (double * pBuffer, int pBufferSize, double pAlpha, bool pDrawBase = true)
+  void time_plot (double * pBuffer, int pBufferSize, double pAlpha, int param_index, bool pDrawBase = true)
   {
     int l, l_offset;
     int g, g_offset;
     
-    // we use mBufferSize as the main buffer size. Others are cropped.
-    int value_offset = (mBufferSize - pBufferSize) / (mLineCount * mGroupSize);
-    int value_count  = mBufferSize / (mLineCount * mGroupSize); 
+    // we use mLiveBufferSize as the main buffer size. Others are cropped.
+    int value_offset = (mLiveBufferSize[0] - pBufferSize) / (mLineCount[param_index] * mGroupSize[param_index]);
+    int value_count  = mLiveBufferSize[0] / (mLineCount[param_index] * mGroupSize[param_index]); 
     double width_ratio;
-    double height_ratio = (double)mWindow.height / (2.0 * mLineCount * mMaxAmplitude); // values : [-1,1]
+    double height_ratio = (double)mWindow.height / (2.0 * mLineCount[param_index] * mMaxAmplitude[param_index]); // values : [-1,1]
     double y_offset;
-    double col_ratio = 1.0 / mGroupSize;
+    double col_ratio = 1.0 / mGroupSize[param_index];
     
     if (value_count > 1)
         width_ratio = (double)mWindow.width  / (value_count - 1);
     else
         width_ratio = (double)mWindow.width;
     
-    for(int l=0; l < mLineCount; l++) {
-      l_offset = l * mGroupSize;
-      y_offset = (l + 0.5) * mWindow.height / mLineCount;
+    for(int l=0; l < mLineCount[param_index]; l++) {
+      l_offset = l * mGroupSize[param_index];
+      y_offset = (l + 0.5) * mWindow.height / mLineCount[param_index];
       
       // draw base line
       if (pDrawBase) {
@@ -77,39 +96,39 @@ private:
       }
       
       
-      for(int g=0; g < mGroupSize; g++) {
+      for(int g=0; g < mGroupSize[param_index]; g++) {
         g_offset = g * value_count;
         
         // element in group
-        glColor4f(col_ratio * (g % mGroupSize),col_ratio * ((g+1) % mGroupSize),col_ratio * ((g+2) % mGroupSize),pAlpha);
+        glColor4f(col_ratio * (g % mGroupSize[param_index]),col_ratio * ((g+1) % mGroupSize[param_index]),col_ratio * ((g+2) % mGroupSize[param_index]),pAlpha);
         
         glBegin(GL_LINE_STRIP);
           for(int i=0; i < (value_count - value_offset); i++) {
-            glVertex2f((i + value_offset) * width_ratio, y_offset + pBuffer[i * mGroupSize * mLineCount + g + l_offset] * height_ratio);
+            glVertex2f((i + value_offset) * width_ratio, y_offset + pBuffer[i * mGroupSize[param_index] * mLineCount[param_index] + g + l_offset] * height_ratio);
           }
-          glVertex2f(mWindow.width, y_offset + pBuffer[(value_count - value_offset - 1) * mGroupSize * mLineCount + g + l_offset] * height_ratio);
+          glVertex2f(mWindow.width, y_offset + pBuffer[(value_count - value_offset - 1) * mGroupSize[param_index] * mLineCount[param_index] + g + l_offset] * height_ratio);
         glEnd();
       }
     }
   }
   
-  void draw_xy_buffer (double * pBuffer, int pBufferSize, double pAlpha, bool pDrawBase = true)
+  void xy_plot (double * pBuffer, int pBufferSize, double pAlpha, int param_index, bool pDrawBase = true)
   {
     int l, l_offset;
     int g, g_offset;
     
-    // we use mBufferSize as the main buffer size. Others are cropped.
-    int value_count  = pBufferSize / (2 * mLineCount); 
-    double width_ratio  = (double)mWindow.width  / (2.0 * mMaxAmplitude);
-    double height_ratio = (double)mWindow.height / (2.0 * mMaxAmplitude); // values : [-1,1]
+    // we use mLiveBufferSize as the main buffer size. Others are cropped.
+    int value_count  = pBufferSize / (2 * mLineCount[param_index]); 
+    double width_ratio  = (double)mWindow.width  / (2.0 * mMaxAmplitude[param_index]);
+    double height_ratio = (double)mWindow.height / (2.0 * mMaxAmplitude[param_index]); // values : [-1,1]
     double with_offset  = (double)mWindow.width / 2.0;
     double height_offset= (double)mWindow.height / 2.0;
-    double col_ratio = 1.0 / mLineCount;
+    double col_ratio = 1.0 / mLineCount[param_index];
     
-    for(int l=0; l < mLineCount; l++) {
+    for(int l=0; l < mLineCount[param_index]; l++) {
       int offset_line = l * value_count;
       // element in group
-      glColor4f(col_ratio * ((l+1) / mLineCount),col_ratio * ((l+2) / mLineCount),col_ratio * ((l) / mLineCount),pAlpha);
+      glColor4f(col_ratio * ((l+1) / mLineCount[param_index]),col_ratio * ((l+2) / mLineCount[param_index]),col_ratio * ((l) / mLineCount[param_index]),pAlpha);
       //glColor4f(0.0,1.0,0.0, pAlpha);
 
       glBegin(GL_LINE_STRIP);
@@ -126,15 +145,20 @@ private:
     }
   }
   
+  void set_mode_from_string(plot_type_t * pMode, const std::string& pStr)
+  {
+    if (pStr == "xy")
+      *pMode = XYPlot;
+    else
+      *pMode = TimePlot;
+  }
   
-  bool     mIsXY;           /**< Plot each pair as an XY point instead of x(t). */
-  double * mBuffer;
-  int      mBufferSize;
-  double * mRefBuffer;
-  int      mRefBufferSize;
-  int      mLineCount;
-  int      mGroupSize;
-  double   mMaxAmplitude;
+  plot_type_t mMode[PLOT_INLET_COUNT]; /**< Plot mode (XYPlot, TimePlot) each pair as an XY point instead of x(t). */
+  double * mLiveBuffer[PLOT_INLET_COUNT];
+  int      mLiveBufferSize[PLOT_INLET_COUNT];
+  int      mLineCount[PLOT_INLET_COUNT];
+  int      mGroupSize[PLOT_INLET_COUNT];
+  double   mMaxAmplitude[PLOT_INLET_COUNT];
 };
 
 extern "C" void init()

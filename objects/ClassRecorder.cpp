@@ -27,6 +27,7 @@ public:
     mVectorSize = p.val("vector", 32);
     mTempo      = p.val("tempo", 120);
     mUnitSize   = p.val("unit", 1);    // number of values form a sample
+    mSampleRate = p.val("rate", 256);  // number of samples per second
     mMargin     = p.val("margin", 2.0);
     mFolder     = p.val("data", std::string("data"));
     mUseSnap    = p.val("snap", 1) == 1 ;
@@ -62,7 +63,7 @@ public:
         *mOutput << mName << ": wrong signal size " << sig.array.size << " should be " << mBufferSize << " (with margin)\n.";
       }
     } else {
-      time_t record_time = (time_t)(ONE_MINUTE / mTempo);
+      time_t record_time = (time_t)(ONE_SECOND * mVectorSize)/(mUnitSize * mSampleRate);
       time_t record_with_margin = record_time;
       time_t countdown_time;
       if (record_time > 500)
@@ -317,6 +318,7 @@ private:
   int mBufferSize;     /**< Size of buffered data ( = mVectorSize + 25%). We use more then the vector size to find the best fit. */
   int mLiveBufferSize;
   int mClassLabel; /**< Current label. Used during recording and recognition. */
+  int mSampleRate; /**< Number of samples per second (used to compute recording time). */
 };
 
 

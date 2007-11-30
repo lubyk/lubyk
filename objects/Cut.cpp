@@ -6,8 +6,8 @@ public:
   
   bool init (const Params& p)
   {
-    mCutFrom = p.val("from", 0);
-    mCutTo   = p.val("to", 32);
+    mCutFrom = p.val("from", 1) - 1;
+    mCutTo   = p.val("to", 32) - 1;
     
     mS.type = ArraySignal;
     return mCutTo >= mCutFrom && mCutFrom >= 0;
@@ -39,8 +39,8 @@ public:
 private:
   double * mLiveBuffer;      /** Live input stream. */
   int      mLiveBufferSize;  /** Original size of the input stream. */
-  int      mCutFrom;     /** First value in output buffer. */
-  int      mCutTo;       /** Last value in output buffer.  */
+  int      mCutFrom;     /** First value in output buffer. Counting from '1'. */
+  int      mCutTo;       /** Last value in output buffer. Say from:1 to:5 to get [0,1,2,3,4].  */
 };
 
 extern "C" void init()

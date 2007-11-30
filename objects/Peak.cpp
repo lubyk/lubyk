@@ -12,7 +12,7 @@ public:
   
   bool init (const Params& p)
   {
-    mDescent = p.val("descent", 0.25);
+    mDescent = p.val("descent", 0.125);
     
     mBufferSize = 0;
     mS.type = ArraySignal;
