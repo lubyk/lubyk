@@ -56,7 +56,7 @@ public:
         xy_plot(mLiveBuffer[i], mLiveBufferSize[i], i == 0 ? 1.0 : 0.6, i, i == 0);
         break;
       default:
-        time_plot(mLiveBuffer[i], mLiveBufferSize[i], i == 0 ? 0.7 : 0.5, i, i == 0);
+        time_plot(mLiveBuffer[i], mLiveBufferSize[i], i == 0 ? 1.0 : 0.5, i, i == 0);
       }
     }
   }
