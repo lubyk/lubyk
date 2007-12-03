@@ -1,4 +1,5 @@
 #include "Serial.cpp"
+#include "buffer.h"
 
 class Cabox : public Serial
 {
@@ -6,28 +7,27 @@ public:
   
   bool init (const Params& p)
   {
-    for(int i=0; i<24;i++) {
-      mValues[i] = 0.0;
-      mOffset[i] = 0.0;
-    }
+    size_t buffer_size = p.val("buffer", 1);
+    if (buffer_size < 1) buffer_size = 1;
     
-    mNewData = false;
+    mBuffer.set_sizes(buffer_size, 12);
+    mOffset.set_sizes(1,12);
+    
+    mBuffer.clear();
+    mOffset.clear();
     
     mHighestValue = 0.0;
     mHighestDirection = 0;
     mFindHighestValue = 0.0;
     mFindHighestDirection = 0;
-    mValueCount = 0;
+    mVectorRateCounter = 0;
     mRate       = 0.0;
-    mStart      = mServer->mCurrentTime;
+    mRateStart      = mServer->mCurrentTime;
     
-    mIndex = 0;
-    mReadPosition = 12;
-    mState = -3; // wait for sync
+    mIndex  = 0;
+    mVector = mBuffer.advance();
+    mState  = -3; // wait for sync
     mOffsetOnFull = true; // do not offset when 12 values are set
-    
-    mDataSignal.type = ArraySignal;
-    mDataSignal.array.size  = 12;
     
     if (init_serial(p))
     {
@@ -37,12 +37,27 @@ public:
       return false;
   }
   
+  bool set (const Params& p)
+  {
+    size_t buffer_size;
+    if (p.get(&buffer_size, "buffer")) {
+      if (buffer_size < 1) buffer_size = 1;
+      mBuffer.set_sizes(buffer_size, 12);
+      mBuffer.clear();
+      mVector = mBuffer.advance();
+      mState  = -3; // wait for sync
+    }
+    if (!set_serial(p)) return false;
+    // enter read data
+    return mPort.write_char('b');
+  }
+  
   
   void bang(const Signal& sig)
   {
     int c,r;
     double val;
-    mNewData = false;
+    bool new_data = false;
     while (mPort.read_char(&c)) {
       // empty buffer (readall)
       //printf("% i:%i [%i]\n", mState, mIndex, c);
@@ -70,8 +85,8 @@ public:
       val  = (mHigh * 256) + c;
       val  = (val/1024) * (3300 - 1650) / 200; // 3300 = fullscale_mv, 1024 = fullscale_bin, 1650 = offset_mv, 200 = sensitivity_mv
       
-      val -= mOffset[mIndex % 12];
-      mValues[mIndex] = val;
+      val -= mOffset.data[mIndex];
+      mVector[mIndex] = val;
       //printf("val[%i] = %.2f  [%i,%i]\n",mIndex,val,mHigh,c);
       
       float abs_val;
@@ -85,30 +100,23 @@ public:
       }
       
       mIndex++;
-      if (mIndex == 12 || mIndex >= 24) {
-        mValueCount++;
+      if (mIndex >= 12) {
+        mVectorRateCounter++;
         mState = -3; // wait for sync
-        mNewData = true;
+        new_data = true;
         mHighestValue         = mFindHighestValue;
         mHighestDirection     = mFindHighestDirection;
         mFindHighestValue     = 0.0;
         mFindHighestDirection = 0;
-        if (mIndex == 12) {
-          mReadPosition = 0;
-        } else {  
-          mIndex = 0; // restart
-          mReadPosition = 12;
-          if (mValueCount > 800) {
-            mRate  = mValueCount * 1000.0 / (mServer->mCurrentTime - mStart);
-            mValueCount = 0;
-            mStart = mServer->mCurrentTime;
-          }
+        mBuffer.advance(); // move loop buffer forward
+        if (mVectorRateCounter > 800) {
+          mRate  = mVectorRateCounter * 1000.0 / (mServer->mCurrentTime - mRateStart);
+          mVectorRateCounter = 0;
+          mRateStart = mServer->mCurrentTime;
         }
         
         if (mOffsetOnFull) {
-          for(int i=0; i<12; i++) {
-            mOffset[i] = mValues[mReadPosition + i] + mOffset[i];
-          }
+          mOffset += mVector;
           mOffsetOnFull = false;
         }
       } else {
@@ -116,27 +124,21 @@ public:
       }
     }
     
-    if (mNewData) {
+    if (new_data) {
       
       // outlet 3 (highest direction)
-      send(mHighestDirection, 3);
+      send((int)mHighestDirection, 3);
       
       // outlet 2 (highest value)
       send(mHighestValue, 2);
       
       // outlet 1 (stream)
-      mDataSignal.array.value = mValues + mReadPosition;
+      mS.set(mBuffer.matrix());
       
       if (mDebug)
-        *mOutput << mDataSignal << std::endl;
-        
-      // this is just to debug Plot [DEBUG
-      //mDataSignal.type = DoubleSignal;
-      //mDataSignal.d.value = mValues[mReadPosition];
-      // DEBUG]
+        *mOutput << mS << std::endl;
       
-      send(mDataSignal);
-      
+      send(mS);
     } 
   }
   
@@ -149,25 +151,22 @@ public:
   { bprint(mSpy, mSpySize,"%.2f /s", mRate );  }
   
 private:
-
-  bool   mNewData;
-  Signal mDataSignal;
   
-  double mValues[24];
-  int    mReadPosition;
-  double mOffset[12];
-  double mHighestValue;
-  int mHighestDirection;
-  double mFindHighestValue;
-  int mFindHighestDirection;
+  Buffer   mBuffer; /**< Loop buffer to store the incoming values. */
+  double * mVector; /**< Current vector to write data (points in mBuffer). */
+  Matrix   mOffset;       /**< Vector with the offset for each signal. */
+  double   mHighestValue;         /**< Last highest value of the signal. */
+  size_t   mHighestDirection;     /**< Last highest direction of the signal. */
+  double   mFindHighestValue;     /**< Current try at finding the highest value of the signal. */
+  size_t   mFindHighestDirection; /**< Current try at finding the highest direction of the signal. */
   
-  long int mValueCount;
-  double mRate;
-  time_t mStart;
-  int mIndex;
-  int mState;
-  int mHigh;
-  bool mOffsetOnFull;
+  long int mVectorRateCounter; /**< Count number of vectors to measure data rate. */
+  double   mRate;         /**< Data rate in vectors per second. */
+  time_t   mRateStart;    /**< Used to record time intervals between values to compute data rate. */
+  size_t   mIndex;        /**< Current vector's value index (next write position). */
+  int      mState;        /**< Synchronization flag. */
+  int      mHigh;         /**< High byte. */
+  bool     mOffsetOnFull; /**< If 'true', the next time we have a full vector, reset offset with these values. */
 };
 
 extern "C" void init()

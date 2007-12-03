@@ -3,70 +3,63 @@
 class Peak : public Node
 {
 public:
-  Peak() : mBuffer(NULL) {}
   
-  ~Peak()
-  {
-    if (mBuffer) free(mBuffer);
-  }
-  
-  bool init (const Params& p)
+  bool set (const Params& p)
   {
     mDescent = p.val("descent", 0.125);
-    
-    mBufferSize = 0;
-    mS.type = ArraySignal;
+    mS.set(mBuffer);
     return true;
   }
 
   void bang(const Signal& sig)
   { 
     double d = -1;
-    double * live_buffer = NULL;
+    size_t row_count, col_count;
+    const Matrix * live_buffer = NULL;
     if(sig.get(&live_buffer)) {
-      if (mBufferSize != sig.array.size) {
-        if (!realloc_doubles(&mBuffer, sig.array.size, "peak buffer")) return;
-        mBufferSize = sig.array.size;
-        mS.array.value = mBuffer;
-        mS.array.size  = mBufferSize;
-        for(int i=0; i < mBufferSize; i++)
-          mBuffer[i] = 0.0;
-      }
+      row_count = live_buffer->row_count();
+      col_count = live_buffer->col_count();
     } else if (sig.get(&d)) {
       d = absval(d);
-      // single value
-      if (mBufferSize != 1) {
-        if (!realloc_doubles(&mBuffer, 1, "peak buffer")) return;
-        mBufferSize = 1;
-        mBuffer[0] = 0.0;
-      }
+      row_count = 1;
+      col_count = 1;
+    } else {
+      row_count = mBuffer.row_count();
+      col_count = mBuffer.col_count();
     }
     
-    for(int i=0; i < mBufferSize; i++) {
+    if (mBuffer.row_count() != row_count || mBuffer.col_count() != col_count) {
+      if(!mBuffer.set_sizes(row_count, col_count)) {
+        *mOutput << mName << ": " << mBuffer.error_msg() << std::endl;
+        return;
+      }
+      mBuffer.clear();
+    }
+    
+    for(size_t i=0; i < row_count * col_count; i++) {
       if (live_buffer)
-        d = absval(live_buffer[i]);
+        d = absval(live_buffer->data[i]);
         
       // 1. descent
-      mBuffer[i] -= mDescent;
-      if (mBuffer[i] < 0) mBuffer[i] = 0;
-
+      mBuffer.data[i] -= mDescent;
+      if (mBuffer.data[i] < 0) mBuffer.data[i] = 0;
+      
       // 2. peak
-      if (d > mBuffer[i]) mBuffer[i] = d; // d == -1 when there is no new signal.
+      if (d > mBuffer.data[i]) mBuffer.data[i] = d; // d == -1 when there is no new signal.
     }
     
-    if (mBufferSize == 1) {
-      if (mDebug) *mOutput << mName << ": " << mBuffer[0] << std::endl;
-      send(mBuffer[0]);
-    } else {  
+    if (row_count == 1 && col_count == 1) {
+      if (mDebug) *mOutput << mName << ": " << mBuffer.data[0] << std::endl;
+      send(mBuffer.data[0]);
+    } else {
       if (mDebug) *mOutput << mName << ": " << mS << std::endl;
       send(mS);
     }
   }
   
 private:
-  double * mBuffer;      /** Current peak values. */
-  int      mBufferSize;  /** Size of the output stream. */
-  double   mDescent;     /** Peak decreasing speed in value/sample. */
+  Matrix mBuffer;      /** Current peak values. */
+  double mDescent;     /** Peak decreasing speed in value/sample. */
 };
 
 extern "C" void init()

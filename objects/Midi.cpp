@@ -4,6 +4,7 @@
 class Midi : public Node
 {
 public:
+  
   bool init (const Params& p)
   {
     int port;
@@ -11,7 +12,7 @@ public:
     try {
       mMidiout = new RtMidiOut();
     } catch (RtError &error) {
-      *mOutput << error.getMessageString() << std::endl;
+      *mOutput << mName << ": " << error.getMessageString() << std::endl;
       return false;
     }
     
@@ -23,7 +24,7 @@ public:
         mMidiout->openVirtualPort();
       }
       catch (RtError &error) {
-        *mOutput << error.getMessageString() << std::endl;
+        *mOutput << mName << ": " << error.getMessageString() << std::endl;
         // FIXME: close();
         return false;
       }
@@ -40,9 +41,14 @@ public:
      //}
 
     }
-    
+    return false;
   }
   
+  bool set (const Params& p)
+  {
+    *mOutput << mName << ": cannot change a Midi object during runtime, yet.\n";
+    return false;
+  }
   // inlet 1
   void bang(const Signal& sig)
   {

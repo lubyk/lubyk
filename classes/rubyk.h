@@ -57,8 +57,6 @@ public:
   
   /** Remove all events related to a given node before the node dies. */
   void free_events_for(Node * pNode);
-  
-  time_t mCurrentTime; /**< Current logical time in [ms] since reference. */
 
   /** Get current real time in [ms] since reference. */
   time_t real_time()
@@ -82,6 +80,9 @@ public:
   /** Set command thread to normal priority. */
   void normal_priority ();
   
+public:
+  time_t mCurrentTime; /**< Current logical time in [ms] since reference. */
+  
 private:
   /** Set rubyk thread to high priority. */
   void high_priority ();
@@ -98,34 +99,22 @@ private:
   /** Trigger loop events. These are typically the IO 'read/write' of the IO nodes. */
   void trigger_loop_events ();
   
-  bool mQuit;
-  
-  /** Semaphore for commands registration. */
-  bool mCanRegister;
-  
-  /** Reference to the objects in the system. */
-  Hash<std::string, Node *> mInstances;
-  
-  /** List of pending connections waiting for variable assignements. */
-  std::list<Link> mPendingLinks;
+  Hash<std::string, Node *> mInstances; /**< Reference to the objects in the system (dictionary). */
+  bool mQuit;                           /**< Internal flag to tell running threads to quit. */
+  std::list<Link> mPendingLinks;        /**< List of pending connections waiting for variable assignements. */
   //std::list<Link> mLinksSet;
   
   /** Events ! */
   OrderedList<BaseEvent*> mEventsQueue; /**< Ordered event list. */
   std::deque<Node*>       mLoopedNodes; /**< List of nodes to call on every loop. */
   
-  /** Time reference. All times are [ms] from this reference. */
-  struct timeb mTimeRef;
+  struct timeb mTimeRef;                /**< Time reference. All times are [ms] from this reference. */
   
-  /** Thread original scheduling priority (all commands get this). */ 
-  int mCommandSchedPoclicy;
-  struct sched_param mCommandThreadParam;
+  int mCommandSchedPoclicy;             /**< Thread's original scheduling priority (all commands get this). */ 
+  struct sched_param mCommandThreadParam; /**< Scheduling parameters for commands (lower then rubyk). */
   
-  /** Do not mess with me mutex lock. */
-  Mutex mMutex;
-  
-  /** Command line / editors. */
-  std::queue<Command *> mCommands;
+  Mutex mMutex;                         /**< "Do not mess with me" mutex lock. */
+  std::queue<Command *> mCommands;      /**< Command line / editors. */
 };
 
 #endif

@@ -10,13 +10,17 @@
 class Turing : public Script
 {
 public:
-  Turing() : mStateByName(30), mTokenNameByValue(30), mTokenByName(30) {}
+  Turing() : mTokenByName(30), mTokenNameByValue(30), mStateByName(30), mPrintBuffer(NULL), mPrintBufferSize(0) {}
+  ~Turing()
+  {
+    if (mPrintBuffer) free(mPrintBuffer);
+  }
   
-  bool init (const Params& p)
+  bool set (const Params& p)
   {
     mToken = 0;
     mState = 0;
-    return init_script(p);
+    return set_script(p);
   }
 
   // inlet 1
@@ -373,16 +377,16 @@ private:
     end = pTable.end();
     
     // print tokens
-    bprint(mBuf, mBufSize, "\n%- 8s  -", pTitle);
-    pOutput << mBuf;
+    bprint(mPrintBuffer, mPrintBufferSize, "\n%- 8s  -", pTitle);
+    pOutput << mPrintBuffer;
     for(int i=0;i<mTokenCount;i++) {
       int tok_value = mTokenList[i];
       std::string identifier;
       if (mTokenNameByValue.get(&identifier, tok_value))
-        bprint(mBuf, mBufSize, " % 3s", identifier.c_str());
+        bprint(mPrintBuffer, mPrintBufferSize, " % 3s", identifier.c_str());
       else
-        bprint(mBuf, mBufSize, " % 3i", tok_value);
-      pOutput << mBuf;
+        bprint(mPrintBuffer, mPrintBufferSize, " % 3i", tok_value);
+      pOutput << mPrintBuffer;
     }
     pOutput << "\n";
     
@@ -391,16 +395,16 @@ private:
       std::vector<int>::iterator it2,end2;
       end2 = (*it).end();
       
-      bprint(mBuf, mBufSize, " % 3s : ", mStateNames[state_count].c_str());
-      pOutput << mBuf;
+      bprint(mPrintBuffer, mPrintBufferSize, " % 3s : ", mStateNames[state_count].c_str());
+      pOutput << mPrintBuffer;
       for ( it2 = (*it).begin(); it2 < end2; it2++ ) {
         if (*it2 == -1)
           pOutput << "   -";  // default
         else if (*it2 == -2)
           pOutput << "   /";  // do not send
         else {
-          bprint(mBuf, mBufSize, " % 3i", *it2);
-          pOutput << mBuf;
+          bprint(mPrintBuffer, mPrintBufferSize, " % 3i", *it2);
+          pOutput << mPrintBuffer;
         }
       }
       pOutput << "\n";
@@ -430,16 +434,16 @@ private:
         send = ""; // send nothing
       else {
         send = ":";
-        bprint(mBuf, mBufSize, "%i", mSendTable[i][0]);
-        send.append(mBuf);
+        bprint(mPrintBuffer, mPrintBufferSize, "%i", mSendTable[i][0]);
+        send.append(mPrintBuffer);
       }
       out << "  " << source << " -> " << target << " [ label = \"" << token << send << "\"];\n";
       
       // print other transitions
       for (int j=0; j < mTokenCount; j++) {
         if (!mTokenNameByValue.get(&token, mTokenList[j])) {
-          bprint(mBuf, mBufSize, "%i", mTokenList[j]); // no token name
-          token = mBuf;
+          bprint(mPrintBuffer, mPrintBufferSize, "%i", mTokenList[j]); // no token name
+          token = mPrintBuffer;
         }
         if (mGotoTable[i][j+1] == -1)
           ;  // default, do not print
@@ -450,8 +454,8 @@ private:
             send = ""; // send nothing
           else {
             send = ":";
-            bprint(mBuf, mBufSize, "%i", mSendTable[i][j+1]);
-            send.append(mBuf);
+            bprint(mPrintBuffer, mPrintBufferSize, "%i", mSendTable[i][j+1]);
+            send.append(mPrintBuffer);
           }
           out << "  " << source << " -> " << target << " [ label = \"" << token << send << "\"];\n";
         }
@@ -480,6 +484,9 @@ private:
   std::vector< std::vector<int> > mGotoTable; /**< State transition table. */
   std::vector< std::vector<int> > mSendTable; /**< State transition table. */
   
+  char * mPrintBuffer;   /**< Commodity buffer to format information for printing. */
+  size_t mPrintBufferSize; /**< Size of print buffer. */
+  
 };
 
 extern "C" void init()
@@ -488,7 +495,6 @@ extern "C" void init()
   OUTLET(Turing, output)
   METHOD(Turing, tables)
   METHOD(Turing, dot)
-  SUPER_METHOD(Turing, Script, set)
   SUPER_METHOD(Turing, Script, load)
   SUPER_METHOD(Turing, Script, script)
 }

@@ -96,7 +96,7 @@ public:
     Node   * v1   = Class::create(NULL, "Value", "value:2", &mOutput);
     Node   * v2   = Class::create(NULL, "Value", "value:3", &mOutput);
     Node   * add  = Class::create(NULL, "Add", "", &mOutput);
-    Node   * v3   = Class::create(NULL, "Value", "", &mOutput);
+    Node   * v3   = Class::create(NULL, "Value", "value:0", &mOutput);
     
     /**    v1   v2
       *    |    |
@@ -149,6 +149,6 @@ class TestParseTest : public CxxTest::TestSuite, public ParseTest
 public:
 
   void test_send_nil( void ) 
-    { assert_print("n=Test()\nn.2=>p\np=Print()\nn.bang\n","nil\n"); }
+    { clean_assert_print("n=Test()\nn.2=>p\np=Print()\nn.bang\n","sending nil=><=done.\n"); }
 
 };

@@ -26,7 +26,7 @@ typedef int (*method_for_lua_t)(lua_State * L);
 class Class
 {
 public:
-  Class (const char* pName, create_function_t pFunction) : mName(pName), mCreateFunction(pFunction), mMethods(10), mMethodsForLua(10), mClassMethods(10) {}
+  Class (const char* pName, create_function_t pFunction) : mName(pName), mCreateFunction(pFunction), mMethods(10), mClassMethods(10), mMethodsForLua(10) {}
   
   /** Execute a class method. Example: Midi.outputs */
   void execute_method (const std::string& pMethod, const Params& p, std::ostream * pOutput) ;
@@ -211,12 +211,12 @@ private:
   static void cast_inlet_accessor (void * receiver, const Params& p)
   {
     Signal sig;
+    Matrix buf(1,p.size());
     double value;
     if (p.size() > 1) {
-      Buf<double> buf;
-      for(int i=0; i < p.size(); i++) {
+      for(size_t i=0; i < p.size(); i++) {
         p.get(&value, i);
-        buf.append(value);
+        buf.data[i] = value;
       }
       sig.set(buf);
     } else if (p.get(&value)) {
@@ -266,6 +266,7 @@ private:
 
 // HELPERS TO AVOID TEMPLATE SYNTAX
 #define CLASS(klass)         {Class::declare<klass>(#klass);}
+#define CLASS_NAME(klass_name, klass) {Class::declare<klass>(#klass_name);}
 #define INLET(klass,method)  {Class::find(#klass)->add_inlet<klass, &klass::method>(#method);}
 #define OUTLET(klass,method) {Class::find(#klass)->add_outlet(#method);}
 #define METHOD(klass,method) {Class::find(#klass)->add_method<klass, &klass::method>(#method);}

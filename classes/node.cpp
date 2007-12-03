@@ -24,8 +24,8 @@ Node::~Node()
   if (mInspect != NULL)
     free(mInspect);
   
-  if (mBuf != NULL)
-    free(mBuf);
+  //if (mBuf != NULL)
+  //  free(mBuf);
 }
 
 const char * Node::class_name() const
@@ -33,7 +33,7 @@ const char * Node::class_name() const
   return mClass->name().c_str(); 
 }
 
-void Node::bprint(char *& pBuffer, int& pBufferSize, const char *fmt, ...)
+void Node::bprint(char *& pBuffer, size_t& pBufferSize, const char *fmt, ...)
 {
   int n;
   char * np;
@@ -50,7 +50,7 @@ void Node::bprint(char *& pBuffer, int& pBufferSize, const char *fmt, ...)
      n = vsnprintf (pBuffer, pBufferSize, fmt, ap);
      va_end(ap);
      /* if that worked, return the string. */
-     if (n > -1 && n < pBufferSize)
+     if (n > -1 && n < (int)pBufferSize)
         return; // OK
      /* else try again with more space. */
      if (n > -1)    /* glibc 2.1 */
@@ -67,7 +67,7 @@ void Node::bprint(char *& pBuffer, int& pBufferSize, const char *fmt, ...)
 }
 
 
-bool Node::alloc_doubles(double ** pBuffer, int pSize, const char * pName)
+bool Node::alloc_doubles(double ** pBuffer, size_t pSize, const char * pName)
 {
   *pBuffer = (double*)malloc(pSize * sizeof(double));        
   if (!*pBuffer) {
@@ -77,7 +77,7 @@ bool Node::alloc_doubles(double ** pBuffer, int pSize, const char * pName)
   return true;
 }
 
-bool Node::realloc_doubles(double ** pBuffer, int pSize, const char * pName)
+bool Node::realloc_doubles(double ** pBuffer, size_t pSize, const char * pName)
 {
   double * buf = (double*)realloc(*pBuffer, pSize * sizeof(double));        
   if (!buf) {
@@ -108,6 +108,8 @@ void Node::execute_method (const std::string& pMethod, const Params& p)
     help();
   } else if (pMethod == "debug" || pMethod == "d" ){
     debug();
+  } else if (pMethod == "set" || pMethod == "s" ){
+    if(!set(p)) mIsOK = false;
   } else if (mClass->get_member_method(&method, pMethod)) {
     (*method)(this, p);
   } else {

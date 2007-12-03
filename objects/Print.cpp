@@ -4,7 +4,7 @@ class Print : public Node
 {
 public:
   
-  bool init (const Params& p)
+  bool set (const Params& p)
   {
     return true;
   }

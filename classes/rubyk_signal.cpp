@@ -14,22 +14,22 @@ std::ostream& operator<< (std::ostream& pStream, const Signal& sig)
     snprintf(buffer, 50, "%.2f", sig.d.value);
     pStream << buffer;
     break;
-  case ArraySignal:
-    if (sig.array.size == 0) {
-      snprintf(buffer, 50, "<%s %i>",sig.type_name(), sig.array.size);
+  case MatrixSignal:
+    if (sig.matrix.value->size() == 0) {
+      snprintf(buffer, 50, "<%s 0>",sig.type_name());
       pStream << buffer;
     } else {
-      int sz = 16;
-      int start;
-      if (sz > sig.array.size) sz = sig.array.size;
-      start = sig.array.size - sz;
-      snprintf(buffer, 50, "<%s [ % .2f", sig.type_name(), sig.array.value[start]);
+      size_t sz = 16;
+      size_t start;
+      if (sz > sig.matrix.value->size()) sz = sig.matrix.value->size();
+      start = sig.matrix.value->size() - sz;
+      snprintf(buffer, 50, "<%s [ % .2f", sig.type_name(), sig.matrix.value->data[start]);
       pStream << buffer;
-      for (int i= start+1; i < start+sz; i++) {
-        snprintf(buffer, 50, " % .2f", sig.array.value[i]);
+      for (size_t i= start+1; i < start+sz; i++) {
+        snprintf(buffer, 50, " % .2f", sig.matrix.value->data[i]);
         pStream << buffer;
       }
-      pStream << " ], " << sig.array.size << ">";
+      pStream << " ], " << sig.matrix.value->size() << ">";
     }
     break;
   case VoidPointerSignal:

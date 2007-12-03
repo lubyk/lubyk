@@ -4,6 +4,7 @@
 #include <iostream>
 #include "midi_message.h"
 #include "buf.h"
+#include "matrix.h"
 
 
 /** Signal types. */
@@ -12,8 +13,8 @@ enum rubyk_signal_t {
   BangSignal = 1,    /**< Trigger update without changing values. */
   IntegerSignal,     /**< IntegerSignal value. */
   CharSignal,        /**< IntegerSignal value. */
-  DoubleSignal,       /**< DoubleSignal (actually double). */
-  ArraySignal,  /**< Array of floats. Use the 'size' attribute to avoid buffer overflow. */
+  DoubleSignal,      /**< DoubleSignal (actually double). */
+  MatrixSignal,      /**< Pointer to a matrix of doubles. */
   MidiSignal,        /**< Pointer to a midi message. */
   VoidPointerSignal, /**< Void pointer. If you want a malloc allocated buffer to be freed with the signal, set 'free_me' attribute to true.*/
 };
@@ -35,9 +36,8 @@ typedef struct {
 
 typedef struct {
   rubyk_signal_t    type;
-  double * value;
-  size_t  size;
-} ArraySignal_t;
+  const Matrix * value;
+} MatrixSignal_t;
 
 /** Message pointed by value gets freed with the Signal if free_me is true. */
 typedef struct {
@@ -142,20 +142,11 @@ union Signal {
   { set(pPtr, false); }
   
   
-  /** Set as double *. */
-  inline void set(double * pPtr, size_t pSize)
+  /** Set as Matrix. */
+  inline void set(const Matrix& mat)
   {
-    type = ArraySignal;
-    array.value = pPtr;
-    array.size  = pSize;
-  }
-  
-  /** Set as double* from Buf<double>. */
-  inline void set(Buf<double>& pBuf)
-  {
-    type = ArraySignal;
-    array.value = pBuf.data;
-    array.size  = pBuf.size;
+    type = MatrixSignal;
+    matrix.value = &mat;
   }
   
   /** Set as void *. */
@@ -250,6 +241,16 @@ union Signal {
     }
   }
   
+  /** get as matrix* */
+  inline bool get(const Matrix ** pMat) const
+  { 
+    if (type == MatrixSignal) {
+      *pMat = matrix.value;
+      return true;
+    } else
+      return false;
+  }
+  
   /** get as void* */
   inline bool get(void ** pPtr) const
   { 
@@ -260,16 +261,6 @@ union Signal {
       default:
         return false;
     }
-  }
-  
-  /** get as double* */
-  inline bool get(double ** pArray) const
-  { 
-    if (type == ArraySignal) {
-      *pArray = array.value;
-      return true;
-    } else
-      return false;
   }
   
   
@@ -283,8 +274,8 @@ union Signal {
       return "Integer";
     case DoubleSignal:
       return "Double";
-    case ArraySignal:
-      return "Array";
+    case MatrixSignal:
+      return "Matrix";
     case VoidPointerSignal:
       return "VoidPointer";
     case MidiSignal:
@@ -302,7 +293,7 @@ union Signal {
   IntegerSignal_t      i;
   CharSignal_t         c;
   DoubleSignal_t       d;
-  ArraySignal_t  array;
+  MatrixSignal_t       matrix;
   MidiSignal_t         midi_ptr;
   VoidPointerSignal_t  ptr;
 };
@@ -312,10 +303,4 @@ extern Signal gBangSignal; // defined in rubyk.cpp
 
 std::ostream& operator<< (std::ostream& pStream, const Signal& sig);
 
-template<>
-inline bool Buf<double>::set(const Signal& sig)
-{
-  if(sig.type != ArraySignal) return false;
-  return set(sig.array.value, sig.array.size);
-}
 #endif // _RUBYK_SIGNAL_H_

@@ -3,10 +3,11 @@
 class Metro : public Node
 {
 public:
-  bool init(const Params& p)
+  bool set(const Params& p)
   {
     p.val("tempo", 120, true); // 120bmp default
     
+    remove_my_events();
     bang_me_in(0.0);
     return true;
   }

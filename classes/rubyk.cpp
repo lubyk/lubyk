@@ -5,10 +5,10 @@
 #include <pthread.h>
 
 
-Signal gNilSignal(NilSignal);   // globals defined declared in rubyk_signal.h
-Signal gBangSignal(BangSignal); // globals defined declared in rubyk_signal.h
+Signal gNilSignal(NilSignal);   // globals declared in rubyk_signal.h
+Signal gBangSignal(BangSignal); // globals declared in rubyk_signal.h
 
-Rubyk::Rubyk() : mInstances(200), mQuit(false), mCurrentTime(0), mCanRegister(true)
+Rubyk::Rubyk() : mCurrentTime(0), mInstances(200), mQuit(false)
 {
   mMutex.lock();    // we get hold of everything, releasing resources when we decide (I'm the master).
   ftime(&mTimeRef); // set time reference to now (my birthdate).
@@ -227,7 +227,6 @@ void Rubyk::free_events_for(Node * pNode)
 {  
   BaseEvent * e;
   LinkedList<BaseEvent*> * it   = mEventsQueue.begin();
-  LinkedList<BaseEvent*> * prev = NULL;
   
   // find element
   while(it) {

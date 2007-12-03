@@ -8,11 +8,20 @@ public:
   bool init(const Params& p)
   {
     mMessage.mType = NoteOn;
-    mMessage.set_key(     p.val("note",     MIDI_NOTE_C0   ));
+    mMessage.set_key(      p.val("note",     MIDI_NOTE_C0   ));
     mMessage.set_velocity( p.val("velocity", 70             ));
     mMessage.mLength    =  p.val("length",   500             ); // 0.5 sec.
     mMessage.set_channel(  p.val("channel",  1              ));
     
+    return true;
+  }
+  
+  bool set(const Params& p)
+  {  
+    mMessage.set_key(      p.val("note",     mMessage.note()    ));
+    mMessage.set_velocity( p.val("velocity", mMessage.velocity()));
+    mMessage.mLength    =  p.val("length",   mMessage.mLength   ); // 0.5 sec.
+    mMessage.set_channel(  p.val("channel",  mMessage.channel() ));
     return true;
   }
   
@@ -63,7 +72,7 @@ public:
     Signal sig;
     
     sig.set(msg);
-    if (out = outlet(1)) out->send(sig);
+    if ( (out = outlet(1)) ) out->send(sig);
     delete msg;
   }
   

@@ -4,9 +4,9 @@ class Lua : public LuaScript
 {
 public:
   
-  bool init (const Params& p)
+  bool set (const Params& p)
   {
-    return init_lua(p);
+    return set_lua(p);
   }
   
   // inlet 1
@@ -51,7 +51,6 @@ extern "C" void init()
   INLET (Lua, input3)
   INLET (Lua, input4)
   OUTLET(Lua, output)
-  SUPER_METHOD(Lua, Script, set)
   SUPER_METHOD(Lua, Script, load)
   SUPER_METHOD(Lua, Script, script)
 }

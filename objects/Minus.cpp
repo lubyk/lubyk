@@ -3,7 +3,7 @@
 class Minus : public Node
 {
 public:
-  bool init(const Params& p)
+  bool set(const Params& p)
   {
     mValue = p.val("minus", 1.00, true);
     return true;
@@ -13,10 +13,10 @@ public:
   void bang(const Signal& sig)
   {  
     double d;
-    if (sig.type == ArraySignal) {
-      mBuf.set(sig);
-      mBuf -= mValue;
-      mS.set(mBuf);
+    if (sig.type == MatrixSignal) {
+      mBuffer.copy(sig);
+      mBuffer -= mValue;
+      mS.set(mBuffer);
       if (mDebug) *mOutput << mName << ": " << mS << std::endl;
       send(mS);
     } else if (sig.get(&d)) {
@@ -37,7 +37,7 @@ public:
   
   
 private:
-  Buf<double> mBuf;
+  Matrix mBuffer;
   double mValue;
 };
 

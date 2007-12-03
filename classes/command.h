@@ -111,10 +111,7 @@ protected:
 
   /** Execute a command or inspect instance. */
   void execute_command ();
-  
-  /** Print the current command. */
-  void print ();
-  
+    
   /** Token for the parser. */
   char mToken[MAX_TOKEN_SIZE + 1];
   unsigned int mTokenIndex;

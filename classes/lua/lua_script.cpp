@@ -14,15 +14,15 @@ LuaScript::~LuaScript()
 }
 
 
-bool LuaScript::init_lua (const Params& p)
+bool LuaScript::set_lua (const Params& p)
 {
-  return init_script(p,"lua", false);
+  return set_script(p);
 }
 
 
 void LuaScript::call_lua(const char * pFunctionName)
 {
-  int status,i;
+  int status;
   Signal sig;
   
   reload_script();
@@ -112,7 +112,7 @@ Node * LuaScript::get_node_from_lua(lua_State * L)
 
 void LuaScript::sig_from_lua(Signal * sig, int index)
 {
-  sig_from_lua(sig, index, mLuaReturn, LUA_RETURN_BUFFER_SIZE);
+  sig_from_lua(sig, index, mLuaReturn);
 }
 
 bool LuaScript::double_from_lua(double * d)
@@ -120,12 +120,12 @@ bool LuaScript::double_from_lua(double * d)
   if (!lua_isnumber(mLua, lua_gettop(mLua))) return false;
   *d = lua_tonumber(mLua,lua_gettop(mLua));
   lua_pop(mLua,1);
+  return true;
 }
 
-void LuaScript::sig_from_lua(Signal * sig, int index, double * pBuffer, int pBufSize)
+void LuaScript::sig_from_lua(Signal * sig, int index, Matrix& pMat)
 {
   int i  = 1;
-  int sz = 0;
   /* LUA_TNIL, LUA_TNUMBER, LUA_TBOOLEAN, LUA_TSTRING, LUA_TTABLE, LUA_TFUNCTION, LUA_TUSERDATA, LUA_TTHREAD, and LUA_TLIGHTUSERDATA.
   */
   switch ( lua_type(mLua, index) ) {
@@ -145,30 +145,19 @@ void LuaScript::sig_from_lua(Signal * sig, int index, double * pBuffer, int pBuf
     lua_pop(mLua, 1);
     break;
   case LUA_TTABLE:
-    if (!pBuffer) {
-      fprintf(stderr, "Cannot return lua table without buffer to write values !\n");
-      sig->set_nil();
-      return;
-    }
+    pMat.set_sizes(1,0);
     while(true) {
       lua_pushinteger(mLua, i);
       lua_gettable(mLua, index);
       if(!lua_isnumber(mLua, -1))
         break;
-      if (i > pBufSize) {
-        fprintf(stderr, "Buffer too small (%i) to write all values returned by lua table !\n", pBufSize);
-        break;
-      }
-      double f = lua_tonumber(mLua, -1);
-      pBuffer[i-1] = f;
-      sz++;
+      double d = lua_tonumber(mLua, -1);
+      pMat.append(d);
       lua_pop(mLua,1);
       i++;
     }    
     lua_pop(mLua,1);
-    sig->type = ArraySignal;
-    sig->array.value = pBuffer;
-    sig->array.size  = sz;
+    sig->set(pMat);
     break;
   default:
     fprintf(stderr, "Unsupported lua return value '%s'.\n", lua_typename(mLua, index));

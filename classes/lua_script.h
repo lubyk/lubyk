@@ -15,7 +15,7 @@ public:
   LuaScript() : mLua(NULL) {}
   ~LuaScript();
   
-  bool init_lua (const Params& p);
+  bool set_lua (const Params& p);
   
   void call_lua (const char * pFunctionName);
   
@@ -65,12 +65,12 @@ public:
   bool double_from_lua(double *);
   
   /** Define a signla from lua stack/parameters, with a custom buffer. */
-  void sig_from_lua (Signal * sig, int index, double * pBuffer, int pBufSize);
+  void sig_from_lua (Signal * sig, int index, Matrix& pMat);
   
   static Node * get_node_from_lua(lua_State * L);
 protected:  
   lua_State * mLua;
-  double      mLuaReturn[LUA_RETURN_BUFFER_SIZE]; /**< Used to return multiple values from lua. */
+  Matrix mLuaReturn; /**< Used to return multiple values from lua. */
 };
 
 #define METHOD_FOR_LUA(klass,method) {Class::find(#klass)->add_method_for_lua(#method, &LuaScript::cast_method_for_lua<klass, &klass::method>);}

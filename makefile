@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-g
+CFLAGS=-g -Wall
 DOT_CMD=/Applications/Graphviz.app/Contents/MacOS/dot
 RAGEL=ragel
 RAGEL_CD=rlgen-cd
@@ -9,16 +9,16 @@ TEST=test/*_test.h test/objects/*_test.h
 test: test/runner test/runner.cpp
 	./test/runner && rm test/runner
 
-rubyk: classes/main.cpp command.o rubyk.o signal.o node.o inlet.o outlet.o slot.o params.o class.o lua.o matrix.o classes/lua/src/liblua.a objects
-	$(CC) $(CFLAGS) -o rubyk -Itest -Itemplates -Iclasses -Iobjects -I. classes/main.cpp slot.o inlet.o outlet.o params.o signal.o node.o class.o command.o matrix.o rubyk.o lua.o classes/lua/src/liblua.a -framework Accelerate
+rubyk: classes/main.cpp command.o rubyk.o signal.o node.o inlet.o outlet.o slot.o params.o class.o lua.o matrix.o buffer.o classes/lua/src/liblua.a objects
+	$(CC) $(CFLAGS) -o rubyk -Itest -Itemplates -Iclasses -Iobjects -I. classes/main.cpp slot.o inlet.o outlet.o params.o signal.o node.o class.o command.o matrix.o buffer.o rubyk.o lua.o classes/lua/src/liblua.a -framework Accelerate
 
 objects: lib/Test.rko lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/Midi.rko lib/NoteOut.rko lib/Lua.rko lib/Serial.rko lib/Turing.rko lib/Keyboard.rko lib/Cabox.rko lib/Svm.rko lib/Buffer.rko lib/Pack.rko lib/Plot.rko lib/Cut.rko lib/MaxCount.rko lib/Tokenize.rko lib/FFT.rko lib/VQ.rko lib/ClassRecorder.rko lib/PCA.rko lib/Average.rko lib/Peak.rko lib/Minus.rko
 	
 test/runner.cpp: test/*_test.h test/objects/*_test.h
 	./test/cxxtest/cxxtestgen.pl --error-printer -o test/runner.cpp $(TEST)
 	
-test/runner: test/runner.cpp command.o rubyk.o signal.o node.o inlet.o outlet.o slot.o params.o class.o lua.o classes/lua/src/liblua.a matrix.o objects
-	$(CC) $(CFLAGS) -Itest -Itemplates -Iclasses -Iobjects -I. test/runner.cpp slot.o inlet.o outlet.o params.o signal.o node.o class.o command.o rubyk.o lua.o classes/lua/src/liblua.a matrix.o -o test/runner -framework Accelerate
+test/runner: test/runner.cpp command.o rubyk.o signal.o node.o inlet.o outlet.o slot.o params.o class.o lua.o classes/lua/src/liblua.a matrix.o buffer.o
+	$(CC) $(CFLAGS) -Itest -Itemplates -Iclasses -Iobjects -I. test/runner.cpp slot.o inlet.o outlet.o params.o signal.o node.o class.o command.o rubyk.o lua.o classes/lua/src/liblua.a matrix.o buffer.o -o test/runner -framework Accelerate
 
 slot.o: classes/slot.cpp classes/slot.h
 	$(CC) $(CFLAGS) -c -Itemplates classes/slot.cpp -o slot.o
@@ -54,7 +54,11 @@ command.o.bak: classes/command.cpp classes/command.h parser/parser.c lexer.o
 	$(CC) $(CFLAGS) -c -Iclasses -Itemplates classes/command.cpp parser/parser.c parser/lexer.o -O2 -Wl,-x -pipe -lm -o command.o
 
 matrix.o: classes/matrix.cpp
-	$(CC) $(CFLAGS) -c classes/matrix.cpp -o matrix.o
+	$(CC) $(CFLAGS) -c -Iclasses -Itemplates classes/matrix.cpp -o matrix.o
+
+buffer.o: classes/buffer.cpp
+	$(CC) $(CFLAGS) -c -Iclasses -Itemplates classes/buffer.cpp -o buffer.o
+
 	
 lib/Test.rko: objects/Test.cpp
 	$(CC) $(CFLAGS) -o lib/Test.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Test.cpp

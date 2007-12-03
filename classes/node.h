@@ -5,6 +5,7 @@
 #include "outlet.h"
 #include "params.h"
 #include "hash.h"
+#include "matrix.h"
 #include "buf.h"
 #include "rubyk.h"
 #include "rubyk_signal.h"
@@ -26,7 +27,7 @@
 class Node
 {
 public:
-  Node() : mClass(NULL), mServer(NULL), mId(0), mSpySize(0), mInspectSize(0), mBuf(NULL), mSpy(NULL), mInspect(NULL), mOutput(&std::cout), mLooped(false), mDebug(false)
+  Node() : mClass(NULL), mServer(NULL), mId(0), mLooped(false), mIsOK(true), mSpy(NULL), mSpySize(0), mInspect(NULL), mInspectSize(0), mOutput(&std::cout), mDebug(false)
   { 
     char buf[50];
     sIdCounter++;
@@ -37,7 +38,7 @@ public:
   
   virtual ~Node();
   
-  bool init( const Params& p) { return true; }
+  bool init( const Params& p) { return set(p); }
   
   /** Add an inlet with the given callback (used by Class during instantiation). */
   void add_inlet(inlet_method_t pCallback)
@@ -74,6 +75,10 @@ public:
     * of the work should be done. This method is responsible for sending the signals out. */
   virtual void bang (const Signal& sig) = 0;
   
+  /** This method must be implemented in subclasses. It is used to set parameters that
+    * can be changed during runtime. */
+  virtual bool set (const Params& p) = 0;
+  
   /** Used by 'editors' to display some information on the node. Should be overwridden by subclasses. */
   const char* get_spy() {
     spy();
@@ -87,7 +92,7 @@ public:
   
   
   /** Send a bang. */
-  inline void send(rubyk_signal_t pType, int pPort = 1) 
+  inline void send(rubyk_signal_t pType, size_t pPort = 1) 
   { 
     if (!pType) return; // do nothing if NilSignal
     mS.type = pType;
@@ -95,7 +100,7 @@ public:
   }
   
   /** Send an integer. */
-  inline void send(int pInt, int pPort = 1)
+  inline void send(int pInt, size_t pPort = 1)
   {
     mS.type = IntegerSignal;
     mS.i.value = pInt;
@@ -103,7 +108,7 @@ public:
   }
   
   /** Send a char. */
-  inline void send(char pChar, int pPort = 1)
+  inline void send(char pChar, size_t pPort = 1)
   {
     mS.type = CharSignal;
     mS.c.value = pChar;
@@ -111,7 +116,7 @@ public:
   }
   
   /** Send an unsigned integer. */
-  inline void send(unsigned int pInt, int pPort = 1)
+  inline void send(unsigned int pInt, size_t pPort = 1)
   {
     mS.type = IntegerSignal;
     mS.i.value = pInt;
@@ -119,7 +124,7 @@ public:
   }
   
   /** Send an unsigned long. */
-  inline void send(long pInt, int pPort = 1)
+  inline void send(long pInt, size_t pPort = 1)
   {
     mS.type = IntegerSignal;
     mS.i.value = (int)pInt;
@@ -127,7 +132,7 @@ public:
   }
   
   /** Send a double. */
-  inline void send(double pDouble, int pPort = 1)
+  inline void send(double pDouble, size_t pPort = 1)
   {
     mS.type = DoubleSignal;
     mS.d.value = pDouble;
@@ -135,7 +140,7 @@ public:
   }
   
   /** Send a float. */
-  inline void send(float pFloat, int pPort = 1)
+  inline void send(float pFloat, size_t pPort = 1)
   { 
     mS.type = DoubleSignal;
     mS.d.value = (double)pFloat;   
@@ -143,7 +148,7 @@ public:
   }
   
   /** Send a MidiMessage ptr. */
-  inline void send(MidiMessage * pPtr, bool pFree = false, int pPort = 1)
+  inline void send(MidiMessage * pPtr, bool pFree = false, size_t pPort = 1)
   {
     mS.type = MidiSignal;
     mS.midi_ptr.value = pPtr;
@@ -151,7 +156,7 @@ public:
     send(mS, pPort);
   }
   
-  inline void send(const MidiMessage& pMsg, int pPort = 1)
+  inline void send(const MidiMessage& pMsg, size_t pPort = 1)
   {
     send(Signal(pMsg), pPort);
   }
@@ -164,7 +169,7 @@ public:
     * pTime: time to wait before playing this note.
     * pPort: outlet id.
     */
-  inline void send_note(unsigned char pNote, unsigned char pVelocity = 80, unsigned int pLength = 500, unsigned int pChannel = 1, time_t pTime = 0, int pPort = 1)
+  inline void send_note(unsigned char pNote, unsigned char pVelocity = 80, unsigned int pLength = 500, unsigned int pChannel = 1, time_t pTime = 0, size_t pPort = 1)
   {
     MidiMessage * msg = new MidiMessage(3);
     msg->set_as_note(pNote, pVelocity, pLength, pChannel, pTime);
@@ -175,7 +180,7 @@ public:
   }
   
   /** Send a void ptr. */
-  inline void send(void * pPtr, bool pFree, int pPort = 1)
+  inline void send(void * pPtr, bool pFree, size_t pPort = 1)
   {
     mS.type = VoidPointerSignal;
     mS.ptr.value = pPtr;
@@ -185,7 +190,7 @@ public:
   
   //////////////////////////////////////
   
-  inline void send (const Signal& sig, int pOutletId = 1)
+  inline void send (const Signal& sig, size_t pOutletId = 1)
   {
     if (pOutletId < 1 || pOutletId > mOutlets.size() || !sig.type) return;
     mOutlets[pOutletId - 1]->send(sig);
@@ -200,14 +205,14 @@ public:
   inline float trigger_position() { return mTriggerPosition; }
   
   /** Return inlet at the given position. First inlet is '1', not '0'. */
-  Inlet  * inlet  (int pInletId) 
+  Inlet  * inlet  (size_t pInletId) 
   {   
     if (pInletId < 1 || pInletId > mInlets.size()) return NULL;
     return mInlets[pInletId - 1]; 
   }
   
   /** Return outlet at the given position. First outlet is '1', not '0'. */
-  Outlet * outlet (int pOutletId) 
+  Outlet * outlet (size_t pOutletId) 
   { 
     if (pOutletId < 1 || pOutletId > mOutlets.size()) return NULL;
     return mOutlets[pOutletId - 1];
@@ -254,14 +259,14 @@ protected:
   }
   
   /** Print message into buffer. */
-  void bprint (char *& pBuffer, int& pBufferSize, const char *fmt, ...);
+  void bprint (char *& pBuffer, size_t& pBufferSize, const char *fmt, ...);
   
   // FIXME: replace all uses of alloc_doubles with Buf.
   /** Allocate doubles and print an error message if it fails. */
-  bool alloc_doubles (double ** pBuffer, int pSize, const char * pName);
+  bool alloc_doubles (double ** pBuffer, size_t pSize, const char * pName);
   
   /** Reallocate doubles and print an error message if it fails. */
-  bool realloc_doubles  (double ** pBuffer, int pSize, const char * pName);
+  bool realloc_doubles  (double ** pBuffer, size_t pSize, const char * pName);
   
   // time in [ms]
   void bang_me_in (time_t pTime)
@@ -309,27 +314,27 @@ protected:
   }
   
   // ================ MEMBER DATA    ================= //
-  
-  long  mId;
-  bool  mLooped; /**< True if the node is banged on every loop. */
-  bool  mIsOK; /**< If something bad arrived to the node during initialization or edit, the node goes into
-                 *  broken mode and mIsOK becomes false. In 'broken' mode, the node does nothing. */
+  /** Host server. */
+  Class * mClass;  /**< Pointer to the class of the node. Used by the node to know which methods it owns, etc (inspection). */
+  Rubyk * mServer; /**< Pointer to the current server. Used to register event and get information on the running application. */
+  long  mId;       /**< Unique id (in server scope). */
+  bool  mLooped;   /**< True if the node is banged on every loop. */
+  bool  mIsOK;     /**< If something bad arrived to the node during initialization or edit, the node goes into
+                     *  broken mode and mIsOK becomes false. In 'broken' mode, the node does nothing. */
                  
   float mTriggerPosition; /**< When sending signals from a particular slot, a node with a small mTriggerPosition 
                             *  will receive the signal after a node that has a greater mTriggerPosition. */
-  /** Host server. */
-  Rubyk * mServer;
-  Class * mClass;
+  
   
   std::vector<Inlet*>  mInlets;
   std::vector<Outlet*> mOutlets;
   
   char * mSpy;       /**< Buffer used to transmit node status through 'spy'. */
-  int  mSpySize;
-  char * mInspect; /**< Buffer used to transmit 'inspect'. 16=ptr info, 5= characters in format. */
-  int  mInspectSize;
-  char * mBuf; /**< Buffer helper for nodes. */
-  int  mBufSize;
+  size_t mSpySize;
+  char * mInspect;   /**< Buffer used to transmit 'inspect'. 16=ptr info, 5= characters in format. */
+  size_t mInspectSize;
+//  char * mBuf;       /**< Buffer helper for nodes. What for ? */
+//  int  mBufSize;
   
   std::string mName; /**< Global identifier ('v1', 'x', 'm43') */
   
@@ -348,6 +353,10 @@ private:
 class NotFound : public Node
 {
 public:
+  bool set(const Params& p)
+  {
+    return false;
+  }
   
   void bang(const Signal& sig)
   {

@@ -299,18 +299,6 @@ void Command::execute_command()
   mServer->unlock();
 }
 
-void Command::print(void)
-{
-  switch(mAction) {
-  case CREATE_INSTANCE:
-    *mOutput << mVariable << " = " << mClass << "(" << mParameters << ")" << std::endl;
-    break;
-  case CREATE_LINK:
-    *mOutput << "[todo]" << std::endl;
-    break;
-  }
-}
-
 void Command::clear() 
 {
   mTokenIndex = 0;

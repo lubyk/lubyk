@@ -26,10 +26,10 @@ public:
   { 
     setup_with_print("n=Peak(descent:0.5)\n");
     
-    assert_print("n.bang(1, 4)\n",   "<Array [  1.00  4.00 ], 2>\n");
-    assert_print("n.bang\n",         "<Array [  0.50  3.50 ], 2>\n");
-    assert_print("n.bang\n",         "<Array [  0.00  3.00 ], 2>\n");
-    assert_print("n.bang(3, 1)\n",   "<Array [  3.00  2.50 ], 2>\n");
+    assert_print("n.bang(1, 4)\n",   "<Matrix [  1.00  4.00 ], 2>\n");
+    assert_print("n.bang\n",         "<Matrix [  0.50  3.50 ], 2>\n");
+    assert_print("n.bang\n",         "<Matrix [  0.00  3.00 ], 2>\n");
+    assert_print("n.bang(3, 1)\n",   "<Matrix [  3.00  2.50 ], 2>\n");
   }
   
 };

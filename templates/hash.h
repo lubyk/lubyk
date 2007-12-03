@@ -28,10 +28,9 @@ class Hash {
 public:
   Hash(unsigned int size) : mSize(size) { mHashTable = new HashElement<K,T>[size]; }
   virtual ~Hash() {
-    int i;
     HashElement<K,T> * current, * next;
     // remove collisions
-    for(i=0;i<mSize;i++) {
+    for(size_t i=0;i<mSize;i++) {
       current = mHashTable[i].next;
       while (current) {
         next = current->next;
@@ -181,7 +180,7 @@ void Hash<K,T>::remove(const K& pId) {
       delete found;
     } else {
       // in table
-      if (next = found->next) {
+      if ( (next = found->next) ) {
         // There was a collision. Move chain up.
         if (found->obj) {
           delete found->obj;
@@ -225,7 +224,7 @@ inline uint hashId(const std::string& key)
   unsigned long hash = 0;
   int c;
 
-  while (c = *str++)
+  while ( (c = *str++) )
     hash = c + (hash << 6) + (hash << 16) - hash;
 
   return hash;
@@ -247,7 +246,7 @@ inline uint hashId (const char * str)
   unsigned long hash = 0;
   int c;
 
-  while (c = *str++)
+  while ( (c = *str++) )
     hash = c + (hash << 6) + (hash << 16) - hash;
 
   return hash;

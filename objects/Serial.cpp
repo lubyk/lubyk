@@ -12,6 +12,18 @@ public:
     return init_serial(p);
   }
   
+  bool set (const Params& p)
+  {
+    // cannot change parameters during runtime, yet
+    *mOutput << mName << ": Serial object has no parameters to change during runtime.\n";
+    return set_serial(p);
+  }
+  
+  bool set_serial(const Params& p)
+  {
+    return true;
+  }
+  
   bool init_serial (const Params& p)
   {
     mPort.set_output(*mOutput);
@@ -34,7 +46,7 @@ public:
     }
     
     loop_me();
-    return init_lua(p);
+    return set_lua(p);
   }
   
   static void list(std::ostream * pOutput, const Params& p)
@@ -84,7 +96,6 @@ extern "C" void init()
   OUTLET(Serial,data)
   CLASS_METHOD(Serial, list)
   METHOD_FOR_LUA(Serial, read_char)
-  SUPER_METHOD(Serial, Script, set)
   SUPER_METHOD(Serial, Script, load)
   SUPER_METHOD(Serial, Script, script)
 }

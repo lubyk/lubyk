@@ -132,13 +132,17 @@ static const int turing_en_main = 1;
 class Turing : public Script
 {
 public:
-  Turing() : mStateByName(30), mTokenNameByValue(30), mTokenByName(30) {}
+  Turing() : mTokenByName(30), mTokenNameByValue(30), mStateByName(30), mPrintBuffer(NULL), mPrintBufferSize(0) {}
+  ~Turing()
+  {
+    if (mPrintBuffer) free(mPrintBuffer);
+  }
   
-  bool init (const Params& p)
+  bool set (const Params& p)
   {
     mToken = 0;
     mState = 0;
-    return init_script(p);
+    return set_script(p);
   }
 
   // inlet 1
@@ -239,14 +243,14 @@ public:
     mStateNames.clear();
     
     
-#line 243 "objects/Turing.cpp"
+#line 247 "objects/Turing.cpp"
 	{
 	cs = turing_start;
 	}
-#line 120 "objects/Turing.rl"
+#line 124 "objects/Turing.rl"
     
   
-#line 250 "objects/Turing.cpp"
+#line 254 "objects/Turing.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -321,7 +325,7 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 122 "objects/Turing.rl"
+#line 126 "objects/Turing.rl"
 	{
       if (name_index >= MAX_NAME_SIZE) {
         *mOutput << "Name buffer overflow !\n";
@@ -336,7 +340,7 @@ _match:
     }
 	break;
 	case 1:
-#line 135 "objects/Turing.rl"
+#line 139 "objects/Turing.rl"
 	{
       name[name_index] = '\0';
       identifier = name;
@@ -347,7 +351,7 @@ _match:
     }
 	break;
 	case 2:
-#line 144 "objects/Turing.rl"
+#line 148 "objects/Turing.rl"
 	{
       name[name_index] = '\0';
       name_index = 0;
@@ -358,7 +362,7 @@ _match:
     }
 	break;
 	case 3:
-#line 153 "objects/Turing.rl"
+#line 157 "objects/Turing.rl"
 	{
       source = identifier;
       #ifdef DEBUG_PARSER
@@ -367,7 +371,7 @@ _match:
     }
 	break;
 	case 4:
-#line 160 "objects/Turing.rl"
+#line 164 "objects/Turing.rl"
 	{ 
       target = identifier;
       #ifdef DEBUG_PARSER
@@ -379,7 +383,7 @@ _match:
     }
 	break;
 	case 5:
-#line 170 "objects/Turing.rl"
+#line 174 "objects/Turing.rl"
 	{ 
       if(name_index) {
         // identifier: resolve to value
@@ -398,7 +402,7 @@ _match:
     }
 	break;
 	case 6:
-#line 187 "objects/Turing.rl"
+#line 191 "objects/Turing.rl"
 	{ 
       name[name_index] = '\0';
       name_index = 0;
@@ -409,7 +413,7 @@ _match:
     }
 	break;
 	case 7:
-#line 197 "objects/Turing.rl"
+#line 201 "objects/Turing.rl"
 	{
       mTokenByName.set(identifier, tok);
       mTokenNameByValue.set(tok, identifier);
@@ -419,7 +423,7 @@ _match:
     }
 	break;
 	case 8:
-#line 205 "objects/Turing.rl"
+#line 209 "objects/Turing.rl"
 	{
       // do we know this token ?
       if (!mTokenTable[tok % 256]) {
@@ -459,7 +463,7 @@ _match:
     }
 	break;
 	case 9:
-#line 243 "objects/Turing.rl"
+#line 247 "objects/Turing.rl"
 	{
       // write the entry
       #ifdef DEBUG_PARSER
@@ -475,7 +479,7 @@ _match:
     }
 	break;
 	case 10:
-#line 258 "objects/Turing.rl"
+#line 262 "objects/Turing.rl"
 	{
       p--; // move back one char
       char error_buffer[10];
@@ -486,15 +490,15 @@ _match:
     }
 	break;
 	case 11:
-#line 272 "objects/Turing.rl"
+#line 276 "objects/Turing.rl"
 	{ {cs = 30; goto _again;} }
 	break;
 	case 12:
-#line 273 "objects/Turing.rl"
+#line 277 "objects/Turing.rl"
 	{ {cs = 1; goto _again;} }
 	break;
 	case 13:
-#line 275 "objects/Turing.rl"
+#line 279 "objects/Turing.rl"
 	{ 
       std::cout << "begin_lua\n";
       begin_lua_script = p;
@@ -502,14 +506,14 @@ _match:
     }
 	break;
 	case 14:
-#line 280 "objects/Turing.rl"
+#line 284 "objects/Turing.rl"
 	{
       lua_script.append( begin_lua_script, p - begin_lua_script - 4 );
       begin_lua_script = NULL;
       {cs = 1; goto _again;} 
     }
 	break;
-#line 513 "objects/Turing.cpp"
+#line 517 "objects/Turing.cpp"
 		}
 	}
 
@@ -521,8 +525,8 @@ _again:
 	_out: {}
 	}
 
-#line 525 "objects/Turing.cpp"
-#line 317 "objects/Turing.rl"
+#line 529 "objects/Turing.cpp"
+#line 321 "objects/Turing.rl"
 
   
     if (begin_lua_script) {
@@ -582,16 +586,16 @@ private:
     end = pTable.end();
     
     // print tokens
-    bprint(mBuf, mBufSize, "\n%- 8s  -", pTitle);
-    pOutput << mBuf;
+    bprint(mPrintBuffer, mPrintBufferSize, "\n%- 8s  -", pTitle);
+    pOutput << mPrintBuffer;
     for(int i=0;i<mTokenCount;i++) {
       int tok_value = mTokenList[i];
       std::string identifier;
       if (mTokenNameByValue.get(&identifier, tok_value))
-        bprint(mBuf, mBufSize, " % 3s", identifier.c_str());
+        bprint(mPrintBuffer, mPrintBufferSize, " % 3s", identifier.c_str());
       else
-        bprint(mBuf, mBufSize, " % 3i", tok_value);
-      pOutput << mBuf;
+        bprint(mPrintBuffer, mPrintBufferSize, " % 3i", tok_value);
+      pOutput << mPrintBuffer;
     }
     pOutput << "\n";
     
@@ -600,16 +604,16 @@ private:
       std::vector<int>::iterator it2,end2;
       end2 = (*it).end();
       
-      bprint(mBuf, mBufSize, " % 3s : ", mStateNames[state_count].c_str());
-      pOutput << mBuf;
+      bprint(mPrintBuffer, mPrintBufferSize, " % 3s : ", mStateNames[state_count].c_str());
+      pOutput << mPrintBuffer;
       for ( it2 = (*it).begin(); it2 < end2; it2++ ) {
         if (*it2 == -1)
           pOutput << "   -";  // default
         else if (*it2 == -2)
           pOutput << "   /";  // do not send
         else {
-          bprint(mBuf, mBufSize, " % 3i", *it2);
-          pOutput << mBuf;
+          bprint(mPrintBuffer, mPrintBufferSize, " % 3i", *it2);
+          pOutput << mPrintBuffer;
         }
       }
       pOutput << "\n";
@@ -639,16 +643,16 @@ private:
         send = ""; // send nothing
       else {
         send = ":";
-        bprint(mBuf, mBufSize, "%i", mSendTable[i][0]);
-        send.append(mBuf);
+        bprint(mPrintBuffer, mPrintBufferSize, "%i", mSendTable[i][0]);
+        send.append(mPrintBuffer);
       }
       out << "  " << source << " -> " << target << " [ label = \"" << token << send << "\"];\n";
       
       // print other transitions
       for (int j=0; j < mTokenCount; j++) {
         if (!mTokenNameByValue.get(&token, mTokenList[j])) {
-          bprint(mBuf, mBufSize, "%i", mTokenList[j]); // no token name
-          token = mBuf;
+          bprint(mPrintBuffer, mPrintBufferSize, "%i", mTokenList[j]); // no token name
+          token = mPrintBuffer;
         }
         if (mGotoTable[i][j+1] == -1)
           ;  // default, do not print
@@ -659,8 +663,8 @@ private:
             send = ""; // send nothing
           else {
             send = ":";
-            bprint(mBuf, mBufSize, "%i", mSendTable[i][j+1]);
-            send.append(mBuf);
+            bprint(mPrintBuffer, mPrintBufferSize, "%i", mSendTable[i][j+1]);
+            send.append(mPrintBuffer);
           }
           out << "  " << source << " -> " << target << " [ label = \"" << token << send << "\"];\n";
         }
@@ -689,6 +693,9 @@ private:
   std::vector< std::vector<int> > mGotoTable; /**< State transition table. */
   std::vector< std::vector<int> > mSendTable; /**< State transition table. */
   
+  char * mPrintBuffer;   /**< Commodity buffer to format information for printing. */
+  size_t mPrintBufferSize; /**< Size of print buffer. */
+  
 };
 
 extern "C" void init()
@@ -697,7 +704,6 @@ extern "C" void init()
   OUTLET(Turing, output)
   METHOD(Turing, tables)
   METHOD(Turing, dot)
-  SUPER_METHOD(Turing, Script, set)
   SUPER_METHOD(Turing, Script, load)
   SUPER_METHOD(Turing, Script, script)
 }

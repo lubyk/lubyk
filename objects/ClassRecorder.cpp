@@ -65,7 +65,7 @@ public:
       }
     } else {
       time_t record_time = (time_t)(ONE_SECOND * mVectorSize)/(mUnitSize * mSampleRate);
-      time_t record_with_margin = record_time;
+      time_t record_with_margin = record_time * (1 + mMargin); //  * (1 + mMargin/2.0) ???
       time_t countdown_time;
       if (record_time > 500)
         countdown_time = record_time;
@@ -106,11 +106,11 @@ public:
           }
           break;
         } else if (cmd == RK_RIGHT_ARROW) { // -> right arrow 301
-          mUseVectorOffset += mVectorSize;
+          mUseVectorOffset += mUnitSize;
           if (mUseVectorOffset > mBufferSize - mVectorSize) mUseVectorOffset = mBufferSize - mVectorSize;
           break;
         } else if (cmd == RK_LEFT_ARROW) { // <- left arrow  302
-          mUseVectorOffset -= mVectorSize;
+          mUseVectorOffset -= mUnitSize;
           if (mUseVectorOffset < 0) mUseVectorOffset = 0;
           break;
         } else {
@@ -307,19 +307,15 @@ private:
 
   bool mUseSnap;      /**< True if the recording should snap to the best match. Usually better without. */
   
-  int mCountDown;
   int mVectorOffset;     /**< Best match with this offset in mBuffer. */
   int mUseVectorOffset;  /**< Offset to use. */
-  double * mMeanVector; /**< Store the mean value for all vectors from this class. */
-  double * mLiveBuffer; /**< Pointer to the current buffer window. Content can change between calls. */
-  double * mBuffer;     /**< Store a single vector +  margin. */
-  double   mMargin;     /**< Size (in %) of the margin. */
-  int mVectorSize;
-  int mUnitSize;       /**< How many values form a sample (single event). */
+  Matrix * mLiveBuffer; /**< Pointer to the current buffer window. Content can change between calls. */
+  Matrix mMeanVector; /**< Store the mean value for all vectors from this class. */
+  Matrix mBuffer;     /**< Store a single vector +  margin. */
+  double mMargin;     /**< Size (in %) of the margin. */
   int mVectorCount;    /**< Number of vectors used to build the current mean value. */
   int mTempo;          /**< Tempo for countdown and recording. */
-  int mBufferSize;     /**< Size of buffered data ( = mVectorSize + 25%). We use more then the vector size to find the best fit. */
-  int mLiveBufferSize;
+
   int mClassLabel; /**< Current label. Used during recording and recognition. */
   int mSampleRate; /**< Number of samples per second (used to compute recording time). */
 };

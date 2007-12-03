@@ -1,4 +1,5 @@
 #include "Matrix.h"
+#include "rubyk_signal.h"
 
 #include <cstdlib>
 #include <cstdio>
@@ -39,11 +40,23 @@ bool Matrix::copy_at(const int pRowIndex, const Matrix& pOther, int pStartRow, i
   return raw_copy(row_index, pOther.data + start_row * mColCount, (end_row - start_row + 1) * mColCount);
 }
 
+bool Matrix::copy(const Signal& sig)
+{
+  if(sig.type != MatrixSignal) return false;
+  return copy_at(0, *(sig.matrix.value));
+}
+
+bool Matrix::copy_at(int pRowIndex, const Signal& sig)
+{
+  if(sig.type != MatrixSignal) return false;
+  return copy_at(pRowIndex, *(sig.matrix.value));
+}
+
 bool Matrix::from_file(FILE * pFile)
 {
   float val;
-  for(int i=0; i < mRowCount; i++) {
-    for(int j=0; j < mColCount; j++) {
+  for(size_t i=0; i < mRowCount; i++) {
+    for(size_t j=0; j < mColCount; j++) {
       if(fscanf(pFile, " %f", &val) == EOF) {
         set_error("end of file while reading value %i,%i out of %ix%i", i, j, mRowCount, mColCount);
         return false;
@@ -55,10 +68,10 @@ bool Matrix::from_file(FILE * pFile)
   return true;
 }
 
-bool Matrix::to_file(FILE * pFile)
+bool Matrix::to_file(FILE * pFile) const
 {
-  for(int i=0; i < mRowCount; i++) {
-    for(int j=0; j < mColCount; j++) {
+  for(size_t i=0; i < mRowCount; i++) {
+    for(size_t j=0; j < mColCount; j++) {
       fprintf(pFile, " % .5f", data[i * mColCount + j]);
     }  
     fprintf(pFile, "\n");
@@ -67,9 +80,9 @@ bool Matrix::to_file(FILE * pFile)
   return true;
 }
 
-void Matrix::print(FILE * pFile)
+void Matrix::print(FILE * pFile) const
 {
-	int i,j;
+	size_t i,j;
 
   for(i=0;i<mRowCount;i++) {
 		if (i==0)
@@ -95,11 +108,24 @@ bool Matrix::append(const double * pVector, size_t pVectorSize)
   return raw_copy(mRowCount, pVector, pVectorSize);
 }
 
+/** Append a value at the end of a vector. Size increases automatically. */
+bool Matrix::append(double pValue)
+{
+  if (mRowCount != 1) {
+    set_error("could not append: matrix is not a vector (%ix%i)", mRowCount, mColCount);
+    return false;
+  }
+  if(!check_alloc(mColCount + 1)) return false;
+  data[mColCount] = pValue;
+  mColCount++;
+  return true;
+}
+
 /** Append another matrix/vector to the end of the current data. Size increases automatically. 
   * @return false if the column count of both matrices do not match. */
 bool Matrix::append(const Matrix& pOther, int pStartRow, int pEndRow)
 {
-  copy_at(mRowCount, pOther, pStartRow, pEndRow);
+  return copy_at(mRowCount, pOther, pStartRow, pEndRow);
 }
 
 /** Add elements of one matrix to another.
@@ -123,35 +149,35 @@ bool Matrix::add(const Matrix& pOther, int pStartRow, int pEndRow, double pScale
     if (row_count == mRowCount) {
       // one to one
       if (pScale == 1.0)
-        for(int i=0; i < mRowCount; i++)
-          for(int j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
+        for(size_t i=0; i < mRowCount; i++)
+          for(size_t j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
             data[i * mColCount + j] += other_data[i * mColCount + j];
             
       else if (pScale == -1.0)
-        for(int i=0; i < mRowCount; i++)
-          for(int j=0; j < mColCount; j++)
+        for(size_t i=0; i < mRowCount; i++)
+          for(size_t j=0; j < mColCount; j++)
             data[i * mColCount + j] -= other_data[i * mColCount + j];
             
       else
-        for(int i=0; i < mRowCount; i++)
-          for(int j=0; j < mColCount; j++)
+        for(size_t i=0; i < mRowCount; i++)
+          for(size_t j=0; j < mColCount; j++)
             data[i * mColCount + j] += pScale * other_data[i * mColCount + j];
         
     } else if (row_count == 1) {
       // vector
       if (pScale == 1.0)
-        for(int i=0; i < mRowCount; i++)
-          for(int j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
+        for(size_t i=0; i < mRowCount; i++)
+          for(size_t j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
             data[i * mColCount + j] += other_data[j];
             
       else if (pScale == -1.0)
-        for(int i=0; i < mRowCount; i++)
-          for(int j=0; j < mColCount; j++)
+        for(size_t i=0; i < mRowCount; i++)
+          for(size_t j=0; j < mColCount; j++)
             data[i * mColCount + j] -= other_data[j];
             
       else
-        for(int i=0; i < mRowCount; i++)
-          for(int j=0; j < mColCount; j++)
+        for(size_t i=0; i < mRowCount; i++)
+          for(size_t j=0; j < mColCount; j++)
             data[i * mColCount + j] += pScale * other_data[j];
       
     } else {
@@ -162,18 +188,18 @@ bool Matrix::add(const Matrix& pOther, int pStartRow, int pEndRow, double pScale
   } else if (pOther.mColCount == 1 && row_count == mRowCount) {
     // different value for each row
     if (pScale == 1.0)
-      for(int i=0; i < mRowCount; i++)
-        for(int j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
+      for(size_t i=0; i < mRowCount; i++)
+        for(size_t j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
           data[i * mColCount + j] += other_data[i];
           
     else if (pScale == -1.0)
-      for(int i=0; i < mRowCount; i++)
-        for(int j=0; j < mColCount; j++)
+      for(size_t i=0; i < mRowCount; i++)
+        for(size_t j=0; j < mColCount; j++)
           data[i * mColCount + j] -= other_data[i];
           
     else
-      for(int i=0; i < mRowCount; i++)
-        for(int j=0; j < mColCount; j++)
+      for(size_t i=0; i < mRowCount; i++)
+        for(size_t j=0; j < mColCount; j++)
           data[i * mColCount + j] += pScale * other_data[i];
     
   } else if (pOther.mColCount == 1 && row_count == 1) {
@@ -182,6 +208,37 @@ bool Matrix::add(const Matrix& pOther, int pStartRow, int pEndRow, double pScale
   } else {
     // bad size
     set_error("size error (add): source matrix %ix%i, target matrix %ix%i (incomptable)", row_count, pOther.mColCount, mRowCount, mColCount);
+    return false;
+  }
+  return true;
+}
+
+
+/** Add an array of doubles to each elements in the matrix. 
+  * If the size is the same as the matrix : one to one.
+  * If the size is col_size : add to each row.
+  * If the size is row_size : add corresponding value to element in the row. */
+bool Matrix::add(const double * pVector, size_t pVectorSize)
+{
+  size_t sz = size();
+  if (pVectorSize == sz) {
+    // one to one
+    for(size_t i=0; i < sz; i++)
+        data[i] += pVector[i];
+  } else if (pVectorSize == mColCount) {
+    // vector for each row
+    for(size_t i=0; i < mRowCount; i++)
+      for(size_t j=0; j < mColCount; j++) {
+          printf("%i:%i %f = %f + %f", i, j, data[i * mRowCount + j] + pVector[j], data[i * mRowCount + j], pVector[j]);
+          data[i * mRowCount + j] += pVector[j];}
+  } else if (pVectorSize == mRowCount) {
+    // 1 vector value for each row
+    for(size_t i=0; i < mRowCount; i++)
+      for(size_t j=0; j < mColCount; j++)
+          data[i * mRowCount + j] += pVector[i];
+  } else {
+    // fail
+    set_error("size error (+=): cannot add vector %i to %ix%i", pVectorSize, mRowCount, mColCount);
     return false;
   }
   return true;
@@ -208,35 +265,35 @@ bool Matrix::divide(const Matrix& pOther, int pStartRow, int pEndRow, double pSc
     if (row_count == mRowCount) {
       // one to one
       if (pScale == 1.0)
-        for(int i=0; i < mRowCount; i++)
-          for(int j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
+        for(size_t i=0; i < mRowCount; i++)
+          for(size_t j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
             data[i * mColCount + j] /= other_data[i * mColCount + j];
           
       else if (pScale == -1.0)
-        for(int i=0; i < mRowCount; i++)
-          for(int j=0; j < mColCount; j++)
+        for(size_t i=0; i < mRowCount; i++)
+          for(size_t j=0; j < mColCount; j++)
             data[i * mColCount + j] /= -other_data[i * mColCount + j];
           
       else
-        for(int i=0; i < mRowCount; i++)
-          for(int j=0; j < mColCount; j++)
+        for(size_t i=0; i < mRowCount; i++)
+          for(size_t j=0; j < mColCount; j++)
             data[i * mColCount + j] /= pScale * other_data[i * mColCount + j];
       
     } else if (row_count == 1) {
       // vector
       if (pScale == 1.0)
-        for(int i=0; i < mRowCount; i++)
-          for(int j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
+        for(size_t i=0; i < mRowCount; i++)
+          for(size_t j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
             data[i * mColCount + j] /= other_data[j];
           
       else if (pScale == -1.0)
-        for(int i=0; i < mRowCount; i++)
-          for(int j=0; j < mColCount; j++)
+        for(size_t i=0; i < mRowCount; i++)
+          for(size_t j=0; j < mColCount; j++)
             data[i * mColCount + j] /= other_data[j];
           
       else
-        for(int i=0; i < mRowCount; i++)
-          for(int j=0; j < mColCount; j++)
+        for(size_t i=0; i < mRowCount; i++)
+          for(size_t j=0; j < mColCount; j++)
             data[i * mColCount + j] /= pScale * other_data[j];
     
     } else {
@@ -247,18 +304,18 @@ bool Matrix::divide(const Matrix& pOther, int pStartRow, int pEndRow, double pSc
   } else if (pOther.mColCount == 1 && row_count == mRowCount) {
     // different value for each row
     if (pScale == 1.0)
-      for(int i=0; i < mRowCount; i++)
-        for(int j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
+      for(size_t i=0; i < mRowCount; i++)
+        for(size_t j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
           data[i * mColCount + j] /= other_data[i];
         
     else if (pScale == -1.0)
-      for(int i=0; i < mRowCount; i++)
-        for(int j=0; j < mColCount; j++)
+      for(size_t i=0; i < mRowCount; i++)
+        for(size_t j=0; j < mColCount; j++)
           data[i * mColCount + j] /= other_data[i];
         
     else
-      for(int i=0; i < mRowCount; i++)
-        for(int j=0; j < mColCount; j++)
+      for(size_t i=0; i < mRowCount; i++)
+        for(size_t j=0; j < mColCount; j++)
           data[i * mColCount + j] /= pScale * other_data[i];
   
   } else if (pOther.mColCount == 1 && row_count == 1) {
@@ -284,35 +341,35 @@ bool Matrix::multiply(const Matrix& pOther, int pStartRow, int pEndRow, double p
     if (row_count == mRowCount) {
       // one to one
       if (pScale == 1.0)
-        for(int i=0; i < mRowCount; i++)
-          for(int j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
+        for(size_t i=0; i < mRowCount; i++)
+          for(size_t j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
             data[i * mColCount + j] *= other_data[i * mColCount + j];
           
       else if (pScale == -1.0)
-        for(int i=0; i < mRowCount; i++)
-          for(int j=0; j < mColCount; j++)
+        for(size_t i=0; i < mRowCount; i++)
+          for(size_t j=0; j < mColCount; j++)
             data[i * mColCount + j] *= -other_data[i * mColCount + j];
           
       else
-        for(int i=0; i < mRowCount; i++)
-          for(int j=0; j < mColCount; j++)
+        for(size_t i=0; i < mRowCount; i++)
+          for(size_t j=0; j < mColCount; j++)
             data[i * mColCount + j] *= pScale * other_data[i * mColCount + j];
       
     } else if (row_count == 1) {
       // vector
       if (pScale == 1.0)
-        for(int i=0; i < mRowCount; i++)
-          for(int j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
+        for(size_t i=0; i < mRowCount; i++)
+          for(size_t j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
             data[i * mColCount + j] *= other_data[j];
           
       else if (pScale == -1.0)
-        for(int i=0; i < mRowCount; i++)
-          for(int j=0; j < mColCount; j++)
+        for(size_t i=0; i < mRowCount; i++)
+          for(size_t j=0; j < mColCount; j++)
             data[i * mColCount + j] *= other_data[j];
           
       else
-        for(int i=0; i < mRowCount; i++)
-          for(int j=0; j < mColCount; j++)
+        for(size_t i=0; i < mRowCount; i++)
+          for(size_t j=0; j < mColCount; j++)
             data[i * mColCount + j] *= pScale * other_data[j];
     
     } else {
@@ -323,18 +380,18 @@ bool Matrix::multiply(const Matrix& pOther, int pStartRow, int pEndRow, double p
   } else if (pOther.mColCount == 1 && row_count == mRowCount) {
     // different value for each row
     if (pScale == 1.0)
-      for(int i=0; i < mRowCount; i++)
-        for(int j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
+      for(size_t i=0; i < mRowCount; i++)
+        for(size_t j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
           data[i * mColCount + j] *= other_data[i];
         
     else if (pScale == -1.0)
-      for(int i=0; i < mRowCount; i++)
-        for(int j=0; j < mColCount; j++)
+      for(size_t i=0; i < mRowCount; i++)
+        for(size_t j=0; j < mColCount; j++)
           data[i * mColCount + j] *= other_data[i];
         
     else
-      for(int i=0; i < mRowCount; i++)
-        for(int j=0; j < mColCount; j++)
+      for(size_t i=0; i < mRowCount; i++)
+        for(size_t j=0; j < mColCount; j++)
           data[i * mColCount + j] *= pScale * other_data[i];
   
   } else if (pOther.mColCount == 1 && row_count == 1) {
@@ -365,8 +422,8 @@ bool Matrix::mat_multiply(const Matrix& A, const Matrix& B, const enum CBLAS_TRA
     m = A.mRowCount;
     k = A.mColCount;
   } else {
-    m = B.mColCount;
-    k = B.mRowCount;
+    m = A.mColCount;
+    k = A.mRowCount;
   }
   if (pTransB == CblasNoTrans) {
     if (B.mRowCount != k) {
@@ -507,7 +564,7 @@ bool Matrix::set_error(const char * fmt, ...)
      va_start(ap, fmt);
      n = vsnprintf (mErrorBuffer, mErrorBufferSize, fmt, ap);
      va_end(ap);
-     if (n > -1 && n < mErrorBufferSize) {
+     if (n > -1 && n < (int)mErrorBufferSize) {
        // OK
        mErrorMsg = mErrorBuffer;
        return true; 

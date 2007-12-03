@@ -40,18 +40,19 @@ public:
   inline bool operator>= (const BaseEvent& pOther) const
   { return mTime >= pOther.mTime; }
   
-  time_t mTime;
-  bool   mForced; /**< Run even if trying to quit. */
-  
   bool uses_node(const void * pNode) const
   { return pNode == mNode; }
   
 
-  // access needed by rubyk
-  bool mIsBang;
-  void * mNode;
-  
 protected:
+  friend class Rubyk;
+  friend class Node;
+  
+  // access needed by rubyk
+  time_t mTime;
+  void * mNode;
+  bool   mForced; /**< Run even if trying to quit. */
+  bool mIsBang;
   
   void * mParameter;
   void (*mVoidFunction)(void * pReceiver);

@@ -1,19 +1,23 @@
+#ifndef _MATRIX_H_
+#define _MATRIX_H_
+
 #include <Accelerate/Accelerate.h>
 #include <cstdlib> // fopen, etc.
 
 class CutMatrix;
-
+union Signal;
 
 class Matrix
 {
 public:
-  Matrix() : mRowCount(1), mColCount(0), mErrorBuffer(NULL), mErrorBufferSize(0), mStorageSize(0), data(NULL)
+  Matrix() :  data(NULL), mStorageSize(0), mRowCount(1), mColCount(0), mErrorBuffer(NULL), mErrorBufferSize(0)
   {
     mErrorMsg = "no error";
   }
   
-  Matrix(size_t pRowCount, size_t pColCount) : mRowCount(pRowCount), mColCount(pColCount)
+  Matrix(size_t pRowCount, size_t pColCount) :  data(NULL), mStorageSize(0), mRowCount(pRowCount), mColCount(pColCount), mErrorBuffer(NULL), mErrorBufferSize(0)
   {
+    mErrorMsg = "no error";
     reallocate(size());
   }
   
@@ -37,7 +41,7 @@ public:
   void fill(double pVal)
   {
     size_t sz = size();
-    for(int i=0; i < sz; i++)
+    for(size_t i=0; i < sz; i++)
       data[i] = pVal;
   }
   
@@ -47,17 +51,8 @@ public:
     fill(0.0);
   }
   
-  /** Return a partial (read-only) version of the matrix.
-    * Get the newest 3 vectors:
-    * cut(-3, -1)
-    *
-    * Get the 2 oldest vectors:
-    * cut(0, 1)
-    */
-  const CutMatrix& cut(int pStartRow, int pEndRow);
-  
   /** Write a matrix to a FILE pointer. */
-  bool to_file(FILE * pFile);
+  bool to_file(FILE * pFile) const;
   
   /** Fill a matrix from a FILE pointer.
     * @return false if there was not enough values to fill the matrix. */
@@ -102,6 +97,9 @@ public:
     * @return bool       returns false if allocation of new space failed. */
   bool copy_at(int pRowIndex, const Matrix& pOther, int pStartRow = 0, int pEndRow = -1);
 
+  bool copy(const Signal& sig);
+  
+  bool copy_at(int pRowIndex, const Signal& sig);
   
   /** Append a vector to the end of the current data. Size increases automatically. */
   bool append (const double * pVector, size_t pVectorSize);
@@ -113,6 +111,8 @@ public:
   bool append (const Matrix& pOther, int pStartRow = 0, int pEndRow = -1);
   
   
+  /** Append a value at the end of a vector. Size increases automatically. */
+  bool Matrix::append(double pValue);
   
   /** Add elements of one matrix to another.
     * If rows/columns match, elements are added one by one.
@@ -127,6 +127,12 @@ public:
     *
     * @return true (never fails). */
   bool add (const Matrix& pOther, int pStartRow = 0, int pEndRow = -1, double pScale = 1.0);
+  
+  /** Add an array of doubles to each elements in the matrix. 
+    * If the size is the same as the matrix : one to one.
+    * If the size is col_size : add to each row.
+    * If the size is row_size : add corresponding value to element in the row. */
+  bool add (const double * pVector, size_t pVectorSize);
   
   /** Divide all elements by the values in another matrix. a.divide(b) (a/b) is NOT the matrix division (a-1b)
     * If rows/columns match, elements are divided one by one.
@@ -155,7 +161,7 @@ public:
   bool operator/= (double pValue)
   {
     size_t sz = size();
-    for(int i=0; i < sz; i++)
+    for(size_t i=0; i < sz; i++)
       data[i] /= pValue;
     return true;
   }
@@ -187,7 +193,7 @@ public:
   bool operator*= (double pValue)
   {
     size_t sz = size();
-    for(int i=0; i < sz; i++)
+    for(size_t i=0; i < sz; i++)
       data[i] *= pValue;
     return true;
   }
@@ -203,7 +209,7 @@ public:
   bool operator-= (double pValue)
   {
     size_t sz = size();
-    for(int i=0; i < sz; i++)
+    for(size_t i=0; i < sz; i++)
       data[i] -= pValue;
     return true;
   }
@@ -218,19 +224,19 @@ public:
   bool operator+= (double pValue)
   {
     size_t sz = size();
-    for(int i=0; i < sz; i++)
+    for(size_t i=0; i < sz; i++)
       data[i] += pValue;
     return true;
   }
   
   /** Return the message for the last error. */
-  const char * error_msg()
+  const char * error_msg() const
   {
     return mErrorMsg;
   }
   
   /** Print the matrix (usefull for debugging). Use 'to_file' to serialize. */
-  void print(FILE * file = stdout);
+  void print(FILE * file = stdout) const;
   
   ////////////////  MATRIX OPERATIONS ////////////////////////
   /** Matrix multiplication.
@@ -315,13 +321,12 @@ protected:
 
   bool set_error(const char * fmt, ...);
   
-  const char * mErrorMsg; /**< Pointer to the last error message. */
-  char * mErrorBuffer; /**< Can be used to print custom messages. */
-  size_t mErrorBufferSize;
   size_t mStorageSize; /**< Storage size is greater or equal to mRowCount * mColCount. */
   size_t    mRowCount; /**< Number of rows in the matrix. */
   size_t    mColCount; /**< Number of columns in the matrix. mRowCount x mColCount can be greater then mSize during partial append. */
-
+  const char * mErrorMsg; /**< Pointer to the last error message. */
+  char * mErrorBuffer; /**< Can be used to print custom messages. */
+  size_t mErrorBufferSize;
 };
 
 
@@ -354,6 +359,8 @@ public:
     mColCount = pColCount;
   }
   
+  CutMatrix() {}
+  
   virtual ~CutMatrix()
   {
     data = NULL; // make sure it is never freed.
@@ -365,8 +372,39 @@ public:
     mColCount = pColCount;
   }
   
+  bool set_view(const Matrix& pOther, int pStartRow, int pEndRow)
+  {
+    if (pOther.mRowCount == 1) {
+      // vector
+      size_t end_col   = pEndRow   < 0 ? pOther.mColCount + pEndRow   : pEndRow;
+      size_t start_col = pStartRow < 0 ? pOther.mColCount + pStartRow : pStartRow;
+      if (start_col >= pOther.mColCount || start_col < 0) {
+        set_error("size error (set_view): bad start column %i (%i) of vector %ix%i", pStartRow, start_col, pOther.mRowCount, pOther.mColCount);
+        return false;
+      } else if (end_col >= pOther.mColCount || end_col < 0) {
+        set_error("size error (set_view): bad end column %i (%i) of vector %ix%i", pEndRow, end_col, pOther.mRowCount, pOther.mColCount);
+        return false;
+      }
+      mRowCount = 1;
+      mColCount = end_col - start_col + 1;
+      data = pOther.data + start_col;
+    } else {
+      // matrix
+      size_t end_row;   
+      size_t start_row;
+      if (!check_sizes("set_view", &start_row, &end_row, pOther, pStartRow, pEndRow, true)) return false;
+      mRowCount = end_row - start_row + 1;
+      mColCount = pOther.mColCount;
+      data = pOther.data + start_row * mColCount;
+    }
+    return true;
+  }
+  
   void set_data(double * pData)
   {
     data = pData;
   }
 };
+
+
+#endif // _MATRIX_H_

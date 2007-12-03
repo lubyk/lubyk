@@ -48,7 +48,7 @@ public:
   
   /** Try to get an anonymous parameter from it's index. Returns false if the key is out of range. */
   template<class T>
-  bool get(T* pResult, int pIndex) const
+  bool get(T* pResult, size_t pIndex) const
   {
     std::string value;
     if (pIndex < mListParams.size()) {
@@ -62,7 +62,7 @@ public:
   template<class T>
   bool get(T* pResult) const
   {
-    return get(pResult, 0);
+    return get(pResult, (size_t)0);
   }
   
   /** Try to get a parameter from a given key. Returns false if the key is not found (default value not used). If the key is NULL, get the default value. */
@@ -118,6 +118,15 @@ private:
 
 template<>
 int Params::cast_param (const std::string& value) const;
+
+template<>
+unsigned int Params::cast_param (const std::string& value) const;
+
+template<>
+unsigned char Params::cast_param (const std::string& value) const;
+
+template<>
+time_t Params::cast_param (const std::string& value) const;
 
 template<>
 double Params::cast_param (const std::string& value) const;

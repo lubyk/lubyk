@@ -118,6 +118,34 @@ public:
     TS_ASSERT_EQUALS(m2[2][2], 30.0);
   }
   
+  void test_append_single_value_to_vector( void )
+  {
+    Matrix m2;
+    m2.set_sizes(1,3);
+    m2.fill(4.0);
+    
+    TS_ASSERT_EQUALS(m2.col_count(), 3);
+    TS_ASSERT(m2.append(3.5));
+    TS_ASSERT_EQUALS(m2.col_count(), 4);
+    TS_ASSERT(m2.append(9.0));
+    TS_ASSERT_EQUALS(m2.col_count(), 5);
+    
+    
+    TS_ASSERT_EQUALS(m2[0][0], 4.0);
+    TS_ASSERT_EQUALS(m2[0][1], 4.0);
+    TS_ASSERT_EQUALS(m2[0][2], 4.0);
+    TS_ASSERT_EQUALS(m2[0][3], 3.5);
+    TS_ASSERT_EQUALS(m2[0][4], 9.0);
+  }
+  
+  void test_append_single_fail_if_not_vector( void )
+  {
+    Matrix m2;
+    m2.set_sizes(2,3);
+
+    TS_ASSERT(!m2.append(3.5));
+  }
+  
   void test_append_more_doubles( void )
   {
     Matrix m2;
@@ -225,6 +253,70 @@ public:
     TS_ASSERT_EQUALS(m2[1][0], 27.0);
     TS_ASSERT_EQUALS(m2[1][1], 28.0);
     TS_ASSERT_EQUALS(m2[1][2], 29.5);
+  }
+  
+  void test_add_doubles( void )
+  {
+    Matrix m2;
+    double d[6] = {1, 2, 3, 4, 5, 6};
+    m2.set_sizes(2,3);
+    m2.fill(0.5);
+    
+    TS_ASSERT(m2.add(d, 6));
+    TS_ASSERT_EQUALS(m2.row_count(), 2);
+    TS_ASSERT_EQUALS(m2.col_count(), 3);
+    
+    TS_ASSERT_EQUALS(m2[0][0], 1.5);
+    TS_ASSERT_EQUALS(m2[0][1], 2.5);
+    TS_ASSERT_EQUALS(m2[0][2], 3.5);
+    
+    TS_ASSERT_EQUALS(m2[1][0], 4.5);
+    TS_ASSERT_EQUALS(m2[1][1], 5.5);
+    TS_ASSERT_EQUALS(m2[1][2], 6.5);
+  }
+  
+  void test_add_doubles_vector( void )
+  {
+    Matrix m2;
+    double d[3] = {0.5, 1, 0.5};
+    m2.set_sizes(2,3);
+    m2.fill(1.0);
+    m2.data[3] = 2.5;
+    m2.data[4] = 3.5;
+    
+    TS_ASSERT(m2.add(d, 3));
+    TS_ASSERT_EQUALS(m2.row_count(), 2);
+    TS_ASSERT_EQUALS(m2.col_count(), 3);
+    
+    TS_ASSERT_EQUALS(m2[0][0], 1.5);
+    TS_ASSERT_EQUALS(m2[0][1], 2.0);
+    TS_ASSERT_EQUALS(m2[0][2], 1.5);
+    
+    TS_ASSERT_EQUALS(m2[1][0], 3.0);
+    TS_ASSERT_EQUALS(m2[1][1], 4.5);
+    TS_ASSERT_EQUALS(m2[1][2], 1.5);
+  }
+  
+  void test_add_doubles_column( void )
+  {
+    Matrix m2;
+    double d[2] = {10, 20};
+    m2.set_sizes(2,3);
+    m2.fill(0.5);
+    m2.data[2] = 3.5;
+    m2.data[4] = 7.0;
+    
+    TS_ASSERT(m2.add(d, 2));
+    TS_ASSERT_EQUALS(m2.row_count(), 2);
+    TS_ASSERT_EQUALS(m2.col_count(), 3);
+    
+    TS_ASSERT_EQUALS(m2[0][0], 10.5);
+    TS_ASSERT_EQUALS(m2[0][1], 10.5);
+    TS_ASSERT_EQUALS(m2[0][2], 13.5);
+    
+    TS_ASSERT_EQUALS(m2[1][0], 20.5);
+    TS_ASSERT_EQUALS(m2[1][1], 27.0);
+    TS_ASSERT_EQUALS(m2[1][2], 20.5);
   }
   
   void test_divide( void )
@@ -451,6 +543,56 @@ public:
     TS_ASSERT_EQUALS(c[0][0], 8.0);
     TS_ASSERT_EQUALS(c[0][1], 15.0);
   }
+  
+  void test_mat_multiply_transA( void )
+  {
+    Matrix a,b,c;
+    a.set_sizes(3,1);
+    a[0][0] = 1.0; a[1][0] = 2.0; a[2][0] = 3.0;
+    
+    b.set_sizes(3,2);
+    b[0][0] = 1.0; b[0][1] = 2.0;
+    b[1][0] = 0.5; b[1][1] = 2.0;
+    b[2][0] = 2.0; b[2][1] = 3.0;
+    
+    /*                  | 1   2 |
+       A'B =  [ 1 2 3 ] | 0.5 2 | = [8 15]
+                        | 2   3 |
+    */
+    TS_ASSERT( c.mat_multiply(a, b, CblasTrans));
+
+    TS_ASSERT_EQUALS(c.row_count(), 1);
+    TS_ASSERT_EQUALS(c.col_count(), 2);
+    
+    TS_ASSERT_EQUALS(c[0][0], 8.0);
+    TS_ASSERT_EQUALS(c[0][1], 15.0);
+  }
+  
+  void test_mat_multiply_transA_transB( void )
+  {
+    Matrix a,b,c;
+    a.set_sizes(3,1);
+    a[0][0] = 1.0; a[1][0] = 2.0; a[2][0] = 3.0;
+    
+    b.set_sizes(2,3);
+    b[0][0] = 1.0; b[1][0] = 2.0;
+    b[0][1] = 0.5; b[1][1] = 2.0;
+    b[0][2] = 2.0; b[1][2] = 3.0;
+    
+    /*                   | 1   2 |
+       A'B' =  [ 1 2 3 ] | 0.5 2 | = [8 15]
+                         | 2   3 |
+    */
+    TS_ASSERT( c.mat_multiply(a, b, CblasTrans, CblasTrans));
+
+    TS_ASSERT_EQUALS(c.row_count(), 1);
+    TS_ASSERT_EQUALS(c.col_count(), 2);
+    
+    TS_ASSERT_EQUALS(c[0][0], 8.0);
+    TS_ASSERT_EQUALS(c[0][1], 15.0);
+  }
+
+
 private:
   void set_fixture(Matrix& m)
   {
@@ -468,8 +610,8 @@ private:
     TS_ASSERT_EQUALS(m2.row_count(), m1.row_count());
     TS_ASSERT_EQUALS(m2.col_count(), m1.col_count());
     if (m2.row_count() == m1.row_count() && m2.col_count() == m1.col_count()) {
-      for(int i=0; i < m1.row_count(); i++) {
-        for(int j=0; j < m1.col_count(); j++) TS_ASSERT_EQUALS( (int)(10000 * m2[i][j]), (int)(10000 * m1[i][j]));
+      for(size_t i=0; i < m1.row_count(); i++) {
+        for(size_t j=0; j < m1.col_count(); j++) TS_ASSERT_EQUALS( (int)(10000 * m2[i][j]), (int)(10000 * m1[i][j]));
       }
     }
   }

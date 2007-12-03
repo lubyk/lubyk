@@ -17,8 +17,8 @@ enum midi_messages_t {
 /** This class encapsulates midi messages. */
 struct MidiMessage
 {
-  MidiMessage () : mData(3), mType(RawMidi) {}
-  MidiMessage (unsigned int pDataSize) : mData(pDataSize), mType(RawMidi) {}
+  MidiMessage () : mType(RawMidi), mData(3) {}
+  MidiMessage (unsigned int pDataSize) : mType(RawMidi), mData(pDataSize) {}
   
   virtual ~MidiMessage () {}
   
@@ -55,6 +55,9 @@ struct MidiMessage
     }
   }
   
+  inline unsigned char note()
+  { return mData[1]; }
+  
   inline void set_note(unsigned char pNote)
   { set_key(pNote); }
 
@@ -81,6 +84,9 @@ struct MidiMessage
     else
       return mData[0] - 0x80 + 1;
   }
+  
+  inline unsigned char velocity()
+  { return mData[2]; }
   
   inline void set_velocity(unsigned char pVelocity)
   { set_value(pVelocity); }

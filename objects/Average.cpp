@@ -3,22 +3,12 @@
 class Average : public Node
 {
 public:
-  Average() : mBuffer(NULL) {}
+  Average() : mMatrix(NULL) {}
   
-  ~Average()
-  {
-    if (mBuffer) free(mBuffer);
-  }
+  ~Average() {}
   
   bool init (const Params& p)
   {  
-    mVectorSize   = p.val("vector", 32);    // number of values form a sample
-    
-    if (!alloc_doubles(&mBuffer, mVectorSize, "average buffer")) return false;
-    
-    mS.type = ArraySignal;
-    mS.array.size = mVectorSize;
-    mS.array.value = mBuffer;
     return true;
   }
   
@@ -26,27 +16,25 @@ public:
   void bang(const Signal& sig)
   { 
     if (sig.type == ArraySignal) {
-      if (sig.array.size < mVectorSize) {
-        *mOutput << mName << ": input stream too small (" << sig.array.size << ") should be " << mVectorSize << std::endl;
-        return;
-      }
-      int val_count = (int)sig.array.size / mVectorSize;
-      for(int i=0; i< mVectorSize; i++) {
-        double sum = 0;
-        for(int j=0; j< val_count; j++) {
-          sum += sig.array.value[j*mVectorSize + i];
-        }
-        mBuffer[i] = sum / val_count;
-      }
-      send(mS);
-      if (mDebug) {
-        *mOutput << mName << ": " << mS << std::endl;
-      }
+      Matrix * mat = sig.array.value;
+      
+      size_t row_count = sig.array.value->row_count();
+      if (!row_count) return;
+      
+      mMatrix.copy(mat,0,0);
+      
+      for(int i=1; i < row_count; i++)
+          mMatrix.add(mat,i,i);
+      
+      mMatrix /= row_count;
+      
+      send(mMatrix);
+      if (mDebug) *mOutput << mName << ": " << mMatrix << std::endl;
+      
     }
   }
 private:
-  double * mBuffer; /**< Average of incoming live stream. */
-  int mVectorSize;
+  Matrix mMatrix; /**< Average of incoming live stream. */
 };
 
 extern "C" void init()

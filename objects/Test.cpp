@@ -4,15 +4,15 @@
 class Test : public Node
 {
 public:
-  bool init (const Params& p)
+  
+  bool set (const Params& p)
   {
-    mMessage = p.val("test", "Hello World !");
+    mMessage = p.val("test", "Hello World !", true);
     if (mMessage == "is output ok?")
       *mOutput << "Output set" << std::endl;
       
     mCounter = p.val("counter", 0);
     mName    = p.val("name"   , std::string("no-name"));
-    
     return true;
   }
   
@@ -26,14 +26,16 @@ public:
   
   void help()
   { *mOutput << "Don't hit me!\n"; }
-  
-  void set_counter(const Signal& sig)
-  { sig.get(&mCounter); }
 
+  // inlet 1
   void bang(const Signal& sig)
   {
+    sig.get(&mCounter);
     send(++mCounter);
+    
+    *mOutput << "sending nil=>";
     send(gNilSignal, 2);
+    *mOutput << "<=done.\n";
   }
   
   void info(const Params& p)
@@ -53,7 +55,6 @@ private:
 extern "C" void init()
 { 
   CLASS (Test)
-  INLET (Test, set_counter)
   OUTLET(Test, increment_counter)
   OUTLET(Test, send_nil)
   METHOD(Test, info)

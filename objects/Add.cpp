@@ -1,10 +1,13 @@
 #include "class.h"
 
+//////////  Used for testing. Do not modify (Use 'Plus' object). ///////////
+
+
 class Add : public Node
 {
 public:
   
-  bool init (const Params& p)
+  bool set (const Params& p)
   {
     mValue1 = p.val("value1", 0);
     mValue2 = p.val("value2", 0);

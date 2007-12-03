@@ -11,11 +11,11 @@ public:
   NodeTester () : mOutput(std::ostringstream::out), mInput(std::istringstream::in)  {}
   NodeTester (const char * pClassName) : mClassName(pClassName), mOutput(std::ostringstream::out), mInput(std::istringstream::in)  {}
   
-protected:
+protected:  
+  Node * mNode;
+  std::string mClassName;
   std::ostringstream mOutput;
   std::istringstream mInput;
-  std::string mClassName;
-  Node * mNode;
   
   void create(const char * pClass, const char * pParams)
   {

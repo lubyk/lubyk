@@ -4,15 +4,16 @@ class Value : public Node
 {
 public:
   
-  bool init (const Params& p)
+  bool set (const Params& p)
   {
     double value;
     if (p.size() > 1) {
-      for(int i=0; i < p.size(); i++) {
+      if (!mMatrix.set_sizes(1, p.size())) return false;
+      for(size_t i=0; i < p.size(); i++) {
         p.get(&value, i);
-        mBuffer.append(value);
+        mMatrix.data[i] = value;
       }
-      mS.set(mBuffer);
+      mS.set(mMatrix);
     } else if (p.get(&value, "value", true)) {
       mS.set(value);
     } else {
@@ -25,15 +26,12 @@ public:
   // inlet 1
   void bang(const Signal& sig)
   { 
-    double value;
-    if (sig.type == ArraySignal) {
+    if (sig.type == MatrixSignal) {
       // copy
-      if(mBuffer.set(sig)) {
-        mS.type = ArraySignal;
-        mS.array.value = mBuffer.data;
-        mS.array.size  = mBuffer.size;
+      if(mMatrix.copy(sig)) {
+        mS.set(mMatrix);
       }
-    } else {
+    } else if (sig.type) {
       mS = sig;
     } 
     send(mS);
@@ -46,7 +44,7 @@ public:
   }
   
 private:
-  Buf<double> mBuffer;
+  Matrix mMatrix;
 };
 
 extern "C" void init()
