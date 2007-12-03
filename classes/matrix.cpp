@@ -3,24 +3,171 @@
 #include <cstdlib>
 #include <cstdio>
 
-void Matrix::print(double* matrix, int pRowCount, int pColCount, int rowMode) {
+
+#define BUF_INITIAL_SIZE 16
+#define BUF_START_ERROR_MSG_SIZE 80
+
+/** Make a partial copy of another matrix starting at a specific row index. The size of the matrix automatically
+  * grows to receive the copied data.
+  * to copy the second row into the last row, you would write:
+  * copy_at(-1, matrix, 1, 1)
+  * 
+  * to copy the third line into the first row:
+  * copy_at(0, matrix, 2, 2)
+  *
+  * to copy the last (most recent) 3 lines of matrix at the beginning:
+  * copy_at(0, matrix, -3)
+  *
+  * @param pRowIndex   index of the row to start copying data into.
+  * @param pOther      other matrix to copy the data from.
+  * @param pStartRow   where to start copying the data from (default is 0).
+  * @param pEndRow     last row to copy (default is -1 = last row).
+  *
+  * @return bool       returns false if allocation of new space failed. */
+bool Matrix::copy_at(const int pRowIndex, const Matrix& pOther, int pStartRow, int pEndRow)
+{
+  size_t row_index = pRowIndex < 0 ? mRowCount + pRowIndex : pRowIndex;
+  size_t start_row, end_row;
+  if (!check_sizes("copy", &start_row, &end_row, pOther, pStartRow, pEndRow, pRowIndex == 0)) return false;
+  
+  if (row_index > mRowCount || row_index < 0) {
+    // copy can start at most at the end of the current matrix
+    set_error("cannot start copying at %i in matrix %ix%i", pRowIndex, mRowCount, mColCount);
+    return false;
+  }
+  mColCount = pOther.mColCount;
+  return raw_copy(row_index, pOther.data + start_row * mColCount, (end_row - start_row + 1) * mColCount);
+}
+
+bool Matrix::from_file(FILE * pFile)
+{
+  float val;
+  for(int i=0; i < mRowCount; i++) {
+    for(int j=0; j < mColCount; j++) {
+      if(fscanf(pFile, " %f", &val) == EOF) {
+        set_error("end of file while reading value %i,%i out of %ix%i", i, j, mRowCount, mColCount);
+        return false;
+      }
+      fscanf(pFile, "\n"); // ignore newline
+      data[i * mColCount + j] = (double)val;
+    }
+  }
+  return true;
+}
+
+bool Matrix::to_file(FILE * pFile)
+{
+  for(int i=0; i < mRowCount; i++) {
+    for(int j=0; j < mColCount; j++) {
+      fprintf(pFile, " % .5f", data[i * mColCount + j]);
+    }  
+    fprintf(pFile, "\n");
+  }  
+  fprintf(pFile, "\n");  // two \n\n between vectors
+  return true;
+}
+
+void Matrix::print(FILE * pFile)
+{
 	int i,j;
 
-  for(i=0;i<pRowCount;i++) {
+  for(i=0;i<mRowCount;i++) {
 		if (i==0)
-		  printf("[");
+		  fprintf(pFile, "[");
     else
-      printf(" ");
-		for(j=0;j<pColCount;j++)
-		  if (rowMode == CblasRowMajor)
-				printf(" % .2f",matrix[(i * pColCount) + j]);
-			else
-				printf(" % .2f",matrix[(j * pRowCount) + i]);
-    if (i == pRowCount -1)
-      printf(" ]\n");
+      fprintf(pFile, " ");
+		for(j=0;j<mColCount;j++)
+				fprintf(pFile, " % .2f",data[(i * mColCount) + j]);
+    if (i == mRowCount -1)
+      fprintf(pFile, " ]\n");
     else
-      printf("\n");
+      fprintf(pFile, "\n");
   }
+}
+
+/** Append a vector to the end of the current data. Size increases automatically. */
+bool Matrix::append(const double * pVector, size_t pVectorSize)
+{
+  if (pVectorSize % mColCount != 0) {
+    set_error("could not append vector: column count not matching (%i is not a multiple of %i)", pVectorSize, mColCount);
+    return false;
+  }
+  return raw_copy(mRowCount, pVector, pVectorSize);
+}
+
+/** Append another matrix/vector to the end of the current data. Size increases automatically. 
+  * @return false if the column count of both matrices do not match. */
+bool Matrix::append(const Matrix& pOther, int pStartRow, int pEndRow)
+{
+  copy_at(mRowCount, pOther, pStartRow, pEndRow);
+}
+
+/** Add elements of one matrix to another.
+  * If rows/columns match, elements are added one by one.
+  * If the other matrix is a vector and columns sizes match, the vector is added to each row.
+  * If the other matrix is a scalar, add the value to all elements.
+  *
+  * @param pOther other matrix whose elements will be added.
+  * @param pStartRow if you want to use only part of the other matrix, start row. Default 0 (first row).
+  * @param pEndRow   when using only part of the other matrix. Default -1 (last row).
+  *
+  * @return true (never fails). */
+bool Matrix::add(const Matrix& pOther, int pStartRow, int pEndRow, double pScale)
+{
+  size_t start_row, end_row;
+  if (!check_sizes("add", &start_row, &end_row, pOther, pStartRow, pEndRow, true)) return false;
+  size_t row_count = end_row - start_row + 1;
+  double * other_data = pOther.data + start_row * pOther.mColCount;
+  
+  if (pOther.mColCount == mColCount) {
+    if (row_count == mRowCount) {
+      // one to one
+      if (pScale == 1.0)
+        for(int i=0; i < mRowCount; i++)
+          for(int j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
+            data[i * mColCount + j] += other_data[i * mColCount + j];
+            
+      else if (pScale == -1.0)
+        for(int i=0; i < mRowCount; i++)
+          for(int j=0; j < mColCount; j++)
+            data[i * mColCount + j] -= other_data[i * mColCount + j];
+            
+      else
+        for(int i=0; i < mRowCount; i++)
+          for(int j=0; j < mColCount; j++)
+            data[i * mColCount + j] += pScale * other_data[i * mColCount + j];
+        
+    } else if (row_count == 1) {
+      // vector
+      if (pScale == 1.0)
+        for(int i=0; i < mRowCount; i++)
+          for(int j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
+            data[i * mColCount + j] += other_data[j];
+            
+      else if (pScale == -1.0)
+        for(int i=0; i < mRowCount; i++)
+          for(int j=0; j < mColCount; j++)
+            data[i * mColCount + j] -= other_data[j];
+            
+      else
+        for(int i=0; i < mRowCount; i++)
+          for(int j=0; j < mColCount; j++)
+            data[i * mColCount + j] += pScale * other_data[j];
+      
+    } else {
+      // bad size
+      set_error("size error (add): source matrix %ix%i, target matrix %ix%i (bad vector count)", row_count, pOther.mColCount, mRowCount, mColCount);
+      return false;
+    }
+  } else if (pOther.mColCount == 1 && row_count == 1) {
+    // scalar
+    return *this += pScale * other_data[0];
+  } else {
+    // bad size
+    set_error("size error (add): source matrix %ix%i, target matrix %ix%i (incomptable)", row_count, pOther.mColCount, mRowCount, mColCount);
+    return false;
+  }
+  return true;
 }
 
 /** Compute T'T for the given (row major) matrix. Return false on failure. pResult must be a
@@ -76,40 +223,107 @@ bool Matrix::compute_eigenvectors(double ** pEigenVectors, double ** pEigenValue
 	dsyevr_( &jobz, &range, &uplo, &n, pMatrix, &lda, &vl, &vu, &il, &iu, &abstol, pEigenCount, *pEigenValues, *pEigenVectors, &ldz, isuppz, work, &lwork, iwork, &liwork, &info );
   return true;
 }
-/*
-int main () 
+
+/** Manage memory allocation (make sure there is enough space for matrix of size pSize). 
+  * @return false on memory allocation failure. */
+bool Matrix::check_alloc(size_t pSize)
 {
-double *T, *A;
-int i;
-long eigencount;
-double * eigenvalues = (double*) malloc(2 * sizeof(double));
-double * eigenvectors= (double*) malloc(4 * sizeof(double));
-
-// allocate space for the matrices (2x3) and (2x2)
-T  = ( double * ) malloc ( sizeof ( double ) * 2 * 3 );
-A  = ( double * ) malloc ( sizeof ( double ) * 2 * 2 );
-
-T[0+0] =  0; T[0+1] = -1;
-T[2+0] = -1; T[2+1] =  2;
-T[4+0] =  1; T[4+1] = -1;
-
-
-printf("======= Input matrix T    =======\n");
-Matrix::print(T, 3, 2, CblasRowMajor);
-
-// compute A = T'*T
-compute_symetric_matrix(&A,T, 3, 2);
-printf("\n======= A = T'*T          =======\n");
-Matrix::print(A, 2, 2, CblasRowMajor);
-
-compute_eigenvectors(&eigenvectors, &eigenvalues, &eigencount, A, 2);
-
-printf("\n======= eigenvalues of A  =======\n");
-Matrix::print(eigenvalues, 1, 2, CblasColMajor);
-
-printf("\n======= eigenvectors of A =======\n");
-Matrix::print(eigenvectors, 2, 2, CblasColMajor);
-return 0;
+  if (!mStorageSize) {
+    size_t storage;
+    if (pSize < BUF_INITIAL_SIZE)
+      storage = BUF_INITIAL_SIZE;
+    else
+      storage = pSize;
+    
+    data = (double*)malloc(storage * sizeof(double));
+    if (!data) {
+      if (!set_error("could not allocate %ix%i", storage, sizeof(double)))
+        mErrorMsg = "error during allocation (plus could not allocate buffer for error message)";
+      return false;
+    }
+    mStorageSize = storage;
+  } else if (pSize > mStorageSize) {
+    return reallocate(pSize);
+  }  
+  return true;
 }
 
-*/
+/** The size of the matrix changed. We need to increase/decrease memory usage.
+  * @return false on memory allocation failure. */
+bool Matrix::reallocate(size_t pSize)
+{
+  double * tmp = (double*)realloc(data, pSize * sizeof(double));
+  if (!tmp) {
+    if(!set_error("could not reallocate %i to %i", mStorageSize, pSize))
+      mErrorMsg = "error during reallocation (plus could not allocate buffer for error message)";
+    return false;
+  }
+  data = tmp;
+  mStorageSize = pSize;
+  return true;
+}
+
+/** Copy data using memcpy. (Update size if needed).
+  * @param pRowOffset where to start copying (set to mRowCount to append at end). */
+bool Matrix::raw_copy(size_t pRowOffset, const double * pData, size_t pDataSize)
+{
+  size_t current_size = pRowOffset * mColCount;
+  if(!check_alloc(current_size + pDataSize)) return false;
+  // use memcpy
+  memcpy(data + current_size, pData, pDataSize * sizeof(double));
+  mRowCount = pRowOffset + pDataSize / mColCount;
+  return true;
+}
+
+bool Matrix::set_error(const char * fmt, ...)
+{
+  int n;
+  char * np;
+  va_list ap;
+
+  if (mErrorBuffer == NULL) {
+    mErrorBuffer = (char*)malloc(BUF_START_ERROR_MSG_SIZE * sizeof(char));
+    if (mErrorBuffer) mErrorBufferSize = BUF_START_ERROR_MSG_SIZE;
+  }
+
+  while (1) {
+     /* try to print in the allocated space. */
+     va_start(ap, fmt);
+     n = vsnprintf (mErrorBuffer, mErrorBufferSize, fmt, ap);
+     va_end(ap);
+     if (n > -1 && n < mErrorBufferSize) {
+       // OK
+       mErrorMsg = mErrorBuffer;
+       return true; 
+     }
+     // try with more space
+     if (n > -1)    // glibc 2.1
+        mErrorBufferSize = n+1; // precisely what is needed
+     else           // glibc 2.0
+        mErrorBufferSize *= 2;  // twice the old size
+     if ((np = (char*)realloc (mErrorBuffer, mErrorBufferSize)) == NULL) {
+         mErrorBuffer[mErrorBufferSize - 1] = '\0';
+         mErrorMsg = "failed to allocate memory for error message !";
+        return false; // no more memory... bad
+     } else {
+        mErrorBuffer = np;
+     }
+  }
+}
+
+inline bool Matrix::check_sizes(const char * pMsg, size_t * start_row, size_t * end_row, const Matrix& pOther, int pStartRow, int pEndRow, bool pAllowColCountChange)
+{
+  *end_row   = pEndRow   < 0 ? pOther.mRowCount + pEndRow   : pEndRow;
+  *start_row = pStartRow < 0 ? pOther.mRowCount + pStartRow : pStartRow;
+  if (*start_row >= pOther.mRowCount || *start_row < 0) {
+    set_error("size error (%s): bad start row %i (%i) of matrix %ix%i", pMsg, pStartRow, *start_row, pOther.mRowCount, pOther.mColCount);
+    return false;
+  } else if (*end_row >= pOther.mRowCount || *end_row < 0) {
+    set_error("size error (%s): bad end row %i (%i) of matrix %ix%i", pMsg, pEndRow, *end_row, pOther.mRowCount, pOther.mColCount);
+    return false;
+  } else if (pOther.mColCount != mColCount && !pAllowColCountChange) {
+    set_error("size error (%s): source matrix %ix%i, target matrix %ix%i (bad column count)", pOther.mRowCount, pOther.mColCount, mRowCount, mColCount);
+    return false;
+  }
+  return true;
+}
