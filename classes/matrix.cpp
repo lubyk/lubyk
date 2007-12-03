@@ -159,6 +159,23 @@ bool Matrix::add(const Matrix& pOther, int pStartRow, int pEndRow, double pScale
       set_error("size error (add): source matrix %ix%i, target matrix %ix%i (bad vector count)", row_count, pOther.mColCount, mRowCount, mColCount);
       return false;
     }
+  } else if (pOther.mColCount == 1 && row_count == mRowCount) {
+    // different value for each row
+    if (pScale == 1.0)
+      for(int i=0; i < mRowCount; i++)
+        for(int j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
+          data[i * mColCount + j] += other_data[i];
+          
+    else if (pScale == -1.0)
+      for(int i=0; i < mRowCount; i++)
+        for(int j=0; j < mColCount; j++)
+          data[i * mColCount + j] -= other_data[i];
+          
+    else
+      for(int i=0; i < mRowCount; i++)
+        for(int j=0; j < mColCount; j++)
+          data[i * mColCount + j] += pScale * other_data[i];
+    
   } else if (pOther.mColCount == 1 && row_count == 1) {
     // scalar
     return *this += pScale * other_data[0];
@@ -169,6 +186,205 @@ bool Matrix::add(const Matrix& pOther, int pStartRow, int pEndRow, double pScale
   }
   return true;
 }
+
+/** Divide all elements by the values in another matrix.
+  * If rows/columns match, elements are divided one by one.
+  * If the other matrix is a vector and columns sizes match, each row is divided by the vector.
+  * If the other matrix is a column vector and row counts match, corresponding rows are divided by the scalar.
+  * If the other matrix is a scalar, divide all element by this value.
+  *
+  * @param pOther other matrix by which the elements of this matrix will be divided.
+  * @param pStartRow if you want to use only part of the other matrix, start row. Default 0 (first row).
+  * @param pEndRow   when using only part of the other matrix. Default -1 (last row).
+  * @return true (never fails). */
+bool Matrix::divide(const Matrix& pOther, int pStartRow, int pEndRow, double pScale)
+{
+  size_t start_row, end_row;
+  if (!check_sizes("divide", &start_row, &end_row, pOther, pStartRow, pEndRow, true)) return false;
+  size_t row_count = end_row - start_row + 1;
+  double * other_data = pOther.data + start_row * pOther.mColCount;
+
+  if (pOther.mColCount == mColCount) {
+    if (row_count == mRowCount) {
+      // one to one
+      if (pScale == 1.0)
+        for(int i=0; i < mRowCount; i++)
+          for(int j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
+            data[i * mColCount + j] /= other_data[i * mColCount + j];
+          
+      else if (pScale == -1.0)
+        for(int i=0; i < mRowCount; i++)
+          for(int j=0; j < mColCount; j++)
+            data[i * mColCount + j] /= -other_data[i * mColCount + j];
+          
+      else
+        for(int i=0; i < mRowCount; i++)
+          for(int j=0; j < mColCount; j++)
+            data[i * mColCount + j] /= pScale * other_data[i * mColCount + j];
+      
+    } else if (row_count == 1) {
+      // vector
+      if (pScale == 1.0)
+        for(int i=0; i < mRowCount; i++)
+          for(int j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
+            data[i * mColCount + j] /= other_data[j];
+          
+      else if (pScale == -1.0)
+        for(int i=0; i < mRowCount; i++)
+          for(int j=0; j < mColCount; j++)
+            data[i * mColCount + j] /= other_data[j];
+          
+      else
+        for(int i=0; i < mRowCount; i++)
+          for(int j=0; j < mColCount; j++)
+            data[i * mColCount + j] /= pScale * other_data[j];
+    
+    } else {
+      // bad size
+      set_error("size error (divide): source matrix %ix%i, target matrix %ix%i (bad vector count)", row_count, pOther.mColCount, mRowCount, mColCount);
+      return false;
+    }
+  } else if (pOther.mColCount == 1 && row_count == mRowCount) {
+    // different value for each row
+    if (pScale == 1.0)
+      for(int i=0; i < mRowCount; i++)
+        for(int j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
+          data[i * mColCount + j] /= other_data[i];
+        
+    else if (pScale == -1.0)
+      for(int i=0; i < mRowCount; i++)
+        for(int j=0; j < mColCount; j++)
+          data[i * mColCount + j] /= other_data[i];
+        
+    else
+      for(int i=0; i < mRowCount; i++)
+        for(int j=0; j < mColCount; j++)
+          data[i * mColCount + j] /= pScale * other_data[i];
+  
+  } else if (pOther.mColCount == 1 && row_count == 1) {
+    // scalar
+    return *this /= pScale * other_data[0];
+  } else {
+    // bad size
+    set_error("size error (divide): source matrix %ix%i, target matrix %ix%i (incomptable)", row_count, pOther.mColCount, mRowCount, mColCount);
+    return false;
+  }
+  return true;
+}
+
+/** Multiply all elements by the values in another matrix. a.divide(b) (a/b) is NOT the matrix multiplication (ab). See 'mat_multiply'. */
+bool Matrix::multiply(const Matrix& pOther, int pStartRow, int pEndRow, double pScale)
+{
+  size_t start_row, end_row;
+  if (!check_sizes("multiply", &start_row, &end_row, pOther, pStartRow, pEndRow, true)) return false;
+  size_t row_count = end_row - start_row + 1;
+  double * other_data = pOther.data + start_row * pOther.mColCount;
+
+  if (pOther.mColCount == mColCount) {
+    if (row_count == mRowCount) {
+      // one to one
+      if (pScale == 1.0)
+        for(int i=0; i < mRowCount; i++)
+          for(int j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
+            data[i * mColCount + j] *= other_data[i * mColCount + j];
+          
+      else if (pScale == -1.0)
+        for(int i=0; i < mRowCount; i++)
+          for(int j=0; j < mColCount; j++)
+            data[i * mColCount + j] *= -other_data[i * mColCount + j];
+          
+      else
+        for(int i=0; i < mRowCount; i++)
+          for(int j=0; j < mColCount; j++)
+            data[i * mColCount + j] *= pScale * other_data[i * mColCount + j];
+      
+    } else if (row_count == 1) {
+      // vector
+      if (pScale == 1.0)
+        for(int i=0; i < mRowCount; i++)
+          for(int j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
+            data[i * mColCount + j] *= other_data[j];
+          
+      else if (pScale == -1.0)
+        for(int i=0; i < mRowCount; i++)
+          for(int j=0; j < mColCount; j++)
+            data[i * mColCount + j] *= other_data[j];
+          
+      else
+        for(int i=0; i < mRowCount; i++)
+          for(int j=0; j < mColCount; j++)
+            data[i * mColCount + j] *= pScale * other_data[j];
+    
+    } else {
+      // bad size
+      set_error("size error (multiply): source matrix %ix%i, target matrix %ix%i (bad vector count)", row_count, pOther.mColCount, mRowCount, mColCount);
+      return false;
+    }
+  } else if (pOther.mColCount == 1 && row_count == mRowCount) {
+    // different value for each row
+    if (pScale == 1.0)
+      for(int i=0; i < mRowCount; i++)
+        for(int j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
+          data[i * mColCount + j] *= other_data[i];
+        
+    else if (pScale == -1.0)
+      for(int i=0; i < mRowCount; i++)
+        for(int j=0; j < mColCount; j++)
+          data[i * mColCount + j] *= other_data[i];
+        
+    else
+      for(int i=0; i < mRowCount; i++)
+        for(int j=0; j < mColCount; j++)
+          data[i * mColCount + j] *= pScale * other_data[i];
+  
+  } else if (pOther.mColCount == 1 && row_count == 1) {
+    // scalar
+    return *this *= pScale * other_data[0];
+  } else {
+    // bad size
+    set_error("size error (multiply): source matrix %ix%i, target matrix %ix%i (incomptable)", row_count, pOther.mColCount, mRowCount, mColCount);
+    return false;
+  }
+  return true;
+}
+////////////////  MATRIX OPERATIONS ////////////////////////
+
+/** Matrix multiplication.
+  * Write C.mat_multiply(A, B) for C = AB
+  *
+  * @param A matrix A.
+  * @param B matrix B.
+  * @param pTransA transposition mode for matrix A (CblasNoTrans/CblasTrans).
+  * @param pTransB transposition mode for matrix B.
+  * @param pScale  scale factor. Default is 1.0 (no scaling). */
+bool Matrix::mat_multiply(const Matrix& A, const Matrix& B, const enum CBLAS_TRANSPOSE pTransA, const enum CBLAS_TRANSPOSE pTransB, double pScale)
+{
+  /** MxK  *  KxN */
+  size_t m, k, n;
+  if (pTransA == CblasNoTrans) { 
+    m = A.mRowCount;
+    k = A.mColCount;
+  } else {
+    m = B.mColCount;
+    k = B.mRowCount;
+  }
+  if (pTransB == CblasNoTrans) {
+    if (B.mRowCount != k) {
+      set_error("size error (%s): cannot multiply matrix %ix%i with matrix %ix%i", m, k, B.mRowCount, B.mColCount);
+      return false;
+    } else
+      n = B.mColCount;
+  } else if (B.mColCount != k) {  
+    set_error("size error (%s): cannot multiply matrix %ix%i with matrix %ix%i", m, k, B.mColCount, B.mRowCount);
+    return false;
+  } else
+    n = B.mRowCount;
+  
+  if (!set_sizes(m,n)) return false;
+  cblas_dgemm(CblasRowMajor, pTransA, pTransB, m, n, k, pScale, A.data, A.mColCount, B.data, B.mColCount, 0.0, data, mColCount);
+  return true;
+}
+
 
 /** Compute T'T for the given (row major) matrix. Return false on failure. pResult must be a
   * pointer to an array of pCol * pRow doubles. 

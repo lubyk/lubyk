@@ -104,19 +104,20 @@ public:
 
   
   /** Append a vector to the end of the current data. Size increases automatically. */
-  bool append(const double * pVector, size_t pVectorSize);
+  bool append (const double * pVector, size_t pVectorSize);
   
   /** Append another matrix/vector to the end of the current data. Size increases automatically. 
     * @param pStartRow   where to start copying the data from (default is 0).
     * @param pEndRow     last row to copy (default is -1 = last row).
     * @return false if the column count of both matrices do not match. */
-  bool append(const Matrix& pOther, int pStartRow = 0, int pEndRow = -1);
+  bool append (const Matrix& pOther, int pStartRow = 0, int pEndRow = -1);
   
   
   
   /** Add elements of one matrix to another.
     * If rows/columns match, elements are added one by one.
     * If the other matrix is a vector and columns sizes match, the vector is added to each row.
+    * If the other matrix is a column vector and row counts match, the scalar is used against the corresponding row.
     * If the other matrix is a scalar, add the value to all elements.
     *
     * @param pOther other matrix whose elements will be added.
@@ -125,25 +126,71 @@ public:
     * @param pScale    amount to multiply each value before adding.
     *
     * @return true (never fails). */
-  bool add(const Matrix& pOther, int pStartRow = 0, int pEndRow = -1, double pScale = 1.0);
+  bool add (const Matrix& pOther, int pStartRow = 0, int pEndRow = -1, double pScale = 1.0);
   
-  /** Divide all elements by the values in another matrix.
+  /** Divide all elements by the values in another matrix. a.divide(b) (a/b) is NOT the matrix division (a-1b)
     * If rows/columns match, elements are divided one by one.
     * If the other matrix is a vector and columns sizes match, each row is divided by the vector.
+    * If the other matrix is a column vector and row counts match, corresponding rows are divided by the scalar.
     * If the other matrix is a scalar, divide all element by this value.
     *
     * @param pOther other matrix by which the elements of this matrix will be divided.
     * @param pStartRow if you want to use only part of the other matrix, start row. Default 0 (first row).
     * @param pEndRow   when using only part of the other matrix. Default -1 (last row).
     * @return true (never fails). */
-  bool divide (const Matrix& pOther, int pStartRow = 0, int pEndRow = -1);
+  bool divide (const Matrix& pOther, int pStartRow = 0, int pEndRow = -1, double pScale = 1.0);
+  
+  /** Divide all elements by the values in another matrix.
+    * See 'divide' for details. */
+  bool operator/= (const Matrix& pOther)
+  {
+    return divide(pOther);
+  }
   
   /** Divide all elements by a scalar.
     *
     * @param pValue  value by which to divide all elements of the current matrix.
     *
     * @return true (never fails). */
-  bool operator/= (double pValue);
+  bool operator/= (double pValue)
+  {
+    size_t sz = size();
+    for(int i=0; i < sz; i++)
+      data[i] /= pValue;
+    return true;
+  }
+  
+  /** Multiply all elements by the values in another matrix. a.divide(b) (a/b) is NOT the matrix multiplication (ab). See 'mat_multiply'.
+    * If rows/columns match, elements are multiplied one by one.
+    * If the other matrix is a vector and columns sizes match, each row is multiplied by the vector.
+    * If the other matrix is a column vector and row counts match, corresponding rows are multiplied by the scalar.
+    * If the other matrix is a scalar, multiply all element by this value.
+    *
+    * @param pOther other matrix by which the elements of this matrix will be divided.
+    * @param pStartRow if you want to use only part of the other matrix, start row. Default 0 (first row).
+    * @param pEndRow   when using only part of the other matrix. Default -1 (last row).
+    * @return true (never fails). */
+  bool multiply (const Matrix& pOther, int pStartRow = 0, int pEndRow = -1, double pScale = 1.0);
+  
+  /** Divide all elements by the values in another matrix.
+    * See 'divide' for details. */
+  bool operator*= (const Matrix& pOther)
+  {
+    return multiply(pOther);
+  }
+  
+  /** Divide all elements by a scalar.
+    *
+    * @param pValue  value by which to divide all elements of the current matrix.
+    *
+    * @return true (never fails). */
+  bool operator*= (double pValue)
+  {
+    size_t sz = size();
+    for(int i=0; i < sz; i++)
+      data[i] *= pValue;
+    return true;
+  }
   
   /** Substract all elements by the values in another matrix.
     * See 'add' for details. */
@@ -158,6 +205,7 @@ public:
     size_t sz = size();
     for(int i=0; i < sz; i++)
       data[i] -= pValue;
+    return true;
   }
   
   /** Add elements of another matrix. See 'add' for details. */
@@ -183,6 +231,17 @@ public:
   
   /** Print the matrix (usefull for debugging). Use 'to_file' to serialize. */
   void print(FILE * file = stdout);
+  
+  ////////////////  MATRIX OPERATIONS ////////////////////////
+  /** Matrix multiplication.
+    * Write C.mat_multiply(A, B) for C = AB
+    *
+    * @param A matrix A.
+    * @param B matrix B.
+    * @param pTransA transposition mode for matrix A (CblasNoTrans/CblasTrans).
+    * @param pTransB transposition mode for matrix B.
+    * @param pScale  scale factor. Default is 1.0 (no scaling). */
+  bool mat_multiply(const Matrix& A, const Matrix& B, const enum CBLAS_TRANSPOSE pTransA = CblasNoTrans, const enum CBLAS_TRANSPOSE pTransB = CblasNoTrans, double pScale = 1.0);
   
   ////////////////  static methods  //////////////////////////
   
