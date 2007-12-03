@@ -5,19 +5,19 @@
 class MaxCount : public Node
 {
 public:
-  bool init (const Params& p)
+  bool set (const Params& p)
   {
     return true;
   }
   
   void bang(const Signal& sig)
   {
-    if (sig.type != ArraySignal) {
+    if (sig.type != MatrixSignal) {
       *mOutput << mName << ": filter only works with array signals. Use a buffer.\n";
       return;
     }
-    double * vector = sig.array.value;
-    int      size   = sig.array.size;
+    const Matrix * vector = sig.matrix.value;
+    size_t size = vector->col_count();
     
     for(int i=0; i < 256; i++) {
       mLabelVote[i] = 0;
@@ -25,8 +25,8 @@ public:
     
     int max_vote  = 0;
     int max_label = 0;
-    for(int i=0; i < size; i++) {
-      int label = ((unsigned int)vector[i]) % 256;
+    for(size_t i=0; i < size; i++) {
+      int label = ((unsigned int)vector->data[i]) % 256; // very simple vector quantization
       mLabelVote[label]++;
       if (mLabelVote[label] > max_vote) {
         max_vote  = mLabelVote[label];

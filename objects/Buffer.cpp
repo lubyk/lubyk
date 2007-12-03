@@ -1,4 +1,5 @@
 #include "class.h"
+#include "buffer.h"
 
 #define DEFAULT_WINDOW_COUNT 5
 
@@ -6,7 +7,7 @@ class BufferNode : public Node
 {
 public:
   
-  bool init (const Params& p)
+  bool set (const Params& p)
   {
     size_t window_size = p.val("buffer", 32, true);
     size_t vector_size = p.val("vector", 8);
@@ -15,7 +16,7 @@ public:
       return false;
     }
     mVector   = mBuffer.advance();
-    mColCount = mBuffer.col_count();
+    mColCount = vector_size;
     mIndex    = 0;
     return true;
   }
@@ -26,9 +27,9 @@ public:
     if (!mIsOK) return;
     
     switch(sig.type) {
-    case ArraySignal:
-      double * data = sig.array.value->data;
-      for(int i=0; i < sig.array.value->col_count()) {
+    case MatrixSignal:
+      double * data = sig.matrix.value->data;
+      for(size_t i=0; i < sig.matrix.value->col_count(); i++) {
         mVector[mIndex] = data[i];
         mIndex++;
         if (mIndex >= mColCount) {
@@ -41,7 +42,7 @@ public:
       double d;
       mVector[mIndex] = d;
       mIndex++;
-      if (mIndex >= mBuffer.col_count()) {
+      if (mIndex >= mColCount) {
         mVector = mBuffer.advance();
         mIndex = 0;
       }

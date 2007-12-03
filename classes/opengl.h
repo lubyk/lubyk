@@ -116,6 +116,7 @@ private:
   {
     // runs in new thread
     glutMainLoop();
+    return NULL;
   }
   
   

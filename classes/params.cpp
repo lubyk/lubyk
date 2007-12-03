@@ -84,11 +84,10 @@ std::ostream& operator<<(std::ostream& pStream, const Params& p)
 }
 
 template<>
-time_t Params::cast_param(const std::string& value) const
+int Params::cast_param(const std::string& value) const
 {
   return atoi(value.c_str());
 }
-
 template<>
 unsigned int Params::cast_param(const std::string& value) const
 {
@@ -102,7 +101,13 @@ unsigned char Params::cast_param(const std::string& value) const
 }
 
 template<>
-int Params::cast_param(const std::string& value) const
+time_t Params::cast_param(const std::string& value) const
+{
+  return atoi(value.c_str());
+}
+
+template<>
+size_t Params::cast_param(const std::string& value) const
 {
   return atoi(value.c_str());
 }

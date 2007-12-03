@@ -12,12 +12,12 @@ test: test/runner test/runner.cpp
 rubyk: classes/main.cpp command.o rubyk.o signal.o node.o inlet.o outlet.o slot.o params.o class.o lua.o matrix.o buffer.o classes/lua/src/liblua.a objects
 	$(CC) $(CFLAGS) -o rubyk -Itest -Itemplates -Iclasses -Iobjects -I. classes/main.cpp slot.o inlet.o outlet.o params.o signal.o node.o class.o command.o matrix.o buffer.o rubyk.o lua.o classes/lua/src/liblua.a -framework Accelerate
 
-objects: lib/Test.rko lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/Midi.rko lib/NoteOut.rko lib/Lua.rko lib/Serial.rko lib/Turing.rko lib/Keyboard.rko lib/Cabox.rko lib/Svm.rko lib/Buffer.rko lib/Pack.rko lib/Plot.rko lib/Cut.rko lib/MaxCount.rko lib/Tokenize.rko lib/FFT.rko lib/VQ.rko lib/ClassRecorder.rko lib/PCA.rko lib/Average.rko lib/Peak.rko lib/Minus.rko
+objects: lib/Test.rko lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/Midi.rko lib/NoteOut.rko lib/Lua.rko lib/Serial.rko lib/Turing.rko lib/Keyboard.rko lib/Cabox.rko lib/Svm.rko lib/Buffer.rko lib/Plot.rko lib/Cut.rko lib/MaxCount.rko lib/Tokenize.rko lib/FFT.rko lib/VQ.rko lib/ClassRecorder.rko lib/PCA.rko lib/Average.rko lib/Peak.rko lib/Minus.rko
 	
 test/runner.cpp: test/*_test.h test/objects/*_test.h
 	./test/cxxtest/cxxtestgen.pl --error-printer -o test/runner.cpp $(TEST)
 	
-test/runner: test/runner.cpp command.o rubyk.o signal.o node.o inlet.o outlet.o slot.o params.o class.o lua.o classes/lua/src/liblua.a matrix.o buffer.o
+test/runner: test/runner.cpp command.o rubyk.o signal.o node.o inlet.o outlet.o slot.o params.o class.o lua.o classes/lua/src/liblua.a matrix.o buffer.o objects
 	$(CC) $(CFLAGS) -Itest -Itemplates -Iclasses -Iobjects -I. test/runner.cpp slot.o inlet.o outlet.o params.o signal.o node.o class.o command.o rubyk.o lua.o classes/lua/src/liblua.a matrix.o buffer.o -o test/runner -framework Accelerate
 
 slot.o: classes/slot.cpp classes/slot.h
@@ -103,13 +103,10 @@ lib/Keyboard.rko: objects/Keyboard.cpp
 	$(CC) $(CFLAGS) -o lib/Keyboard.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Keyboard.cpp
 	
 lib/Svm.rko: objects/Svm.cpp
-	$(CC) -o lib/Svm.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Svm.cpp objects/svm/svm.cpp
+	$(CC) $(CFLAGS) -o lib/Svm.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Svm.cpp objects/svm/svm.cpp
 	
 lib/Buffer.rko: objects/Buffer.cpp
 	$(CC) $(CFLAGS) -o lib/Buffer.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Buffer.cpp
-
-lib/Pack.rko: objects/Pack.cpp
-	$(CC) $(CFLAGS) -o lib/Pack.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Pack.cpp
 
 lib/Plot.rko: objects/Plot.cpp classes/opengl.h
 	$(CC) $(CFLAGS) -o lib/Plot.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ -D__MACOSX_CORE__ -framework GLUT -framework OpenGL -framework Cocoa objects/Plot.cpp

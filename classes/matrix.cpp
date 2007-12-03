@@ -228,14 +228,13 @@ bool Matrix::add(const double * pVector, size_t pVectorSize)
   } else if (pVectorSize == mColCount) {
     // vector for each row
     for(size_t i=0; i < mRowCount; i++)
-      for(size_t j=0; j < mColCount; j++) {
-          printf("%i:%i %f = %f + %f", i, j, data[i * mRowCount + j] + pVector[j], data[i * mRowCount + j], pVector[j]);
-          data[i * mRowCount + j] += pVector[j];}
+      for(size_t j=0; j < mColCount; j++)
+          data[i * mColCount + j] += pVector[j];
   } else if (pVectorSize == mRowCount) {
     // 1 vector value for each row
     for(size_t i=0; i < mRowCount; i++)
       for(size_t j=0; j < mColCount; j++)
-          data[i * mRowCount + j] += pVector[i];
+          data[i * mColCount + j] += pVector[i];
   } else {
     // fail
     set_error("size error (+=): cannot add vector %i to %ix%i", pVectorSize, mRowCount, mColCount);

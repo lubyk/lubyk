@@ -232,7 +232,9 @@ public:
   
   
   //const std::string& variable_name () { return mName; }
-  const char * name () { return mName.c_str(); }
+  const char * c_name () { return mName.c_str(); }
+  
+  const std::string& name () { return mName; }
   
   const char * class_name() const;
   
@@ -261,12 +263,30 @@ protected:
   /** Print message into buffer. */
   void bprint (char *& pBuffer, size_t& pBufferSize, const char *fmt, ...);
   
-  // FIXME: replace all uses of alloc_doubles with Buf.
-  /** Allocate doubles and print an error message if it fails. */
-  bool alloc_doubles (double ** pBuffer, size_t pSize, const char * pName);
+  /** Allocate/Reallocate T and print an error message if it fails. */
+  template<class T>
+  bool allocate (T ** pBuffer, size_t pSize, const char * pName, const char * pTypeName)
+  {
+    T * buf = (T*)realloc(*pBuffer, pSize * sizeof(T));        
+    if (!buf) {
+      *mOutput << mName << ": could not allocate " << pSize << " " << pTypeName << " for " << pName << ".\n";
+      return false;
+    }
+    *pBuffer = buf;
+    return true;
+  }
   
-  /** Reallocate doubles and print an error message if it fails. */
-  bool realloc_doubles  (double ** pBuffer, size_t pSize, const char * pName);
+  /** Allocate/reallocate doubles. Print an error on failure. */
+  bool alloc_doubles(double ** pBuffer, size_t pSize, const char * pName)
+  {
+    return allocate<double>(pBuffer, pSize, pName, "doubles");
+  }
+  
+  /** Allocate/reallocate doubles. Print an error on failure. */
+  bool alloc_ints(int ** pBuffer, size_t pSize, const char * pName)
+  {
+    return allocate<int>(pBuffer, pSize, pName, "ints");
+  }
   
   // time in [ms]
   void bang_me_in (time_t pTime)

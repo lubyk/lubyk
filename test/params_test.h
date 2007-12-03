@@ -8,7 +8,7 @@ class TestParams : public CxxTest::TestSuite
 public:
   void testGetKey( void )
   {
-    float res;
+    double res;
     Params p("first:1 second:2 name:\"Gaspard Buma\" joy:3.5");
     TS_ASSERT_EQUALS( (int)p.val("first",   3), 1 );
     TS_ASSERT_EQUALS( (int)p.val("default", 3), 3 );
@@ -16,8 +16,8 @@ public:
     TS_ASSERT_EQUALS( p.val("name", std::string("no-name"))    , std::string("Gaspard Buma"));
     TS_ASSERT_EQUALS( p.val("surnname", std::string("no-name")), std::string("no-name")     );
     
-    TS_ASSERT_EQUALS( (float)p.val("joy", 1.1), (float)3.5 );
-    TS_ASSERT_EQUALS( (float)p.val("bad", 1.1), (float)1.1 );
+    TS_ASSERT_EQUALS( (double)p.val("joy", 1.1), (double)3.5 );
+    TS_ASSERT_EQUALS( (double)p.val("bad", 1.1), (double)1.1 );
     
     res = 0.0;
     TS_ASSERT( p.get(&res, "first"));
@@ -26,7 +26,7 @@ public:
   
   void testGetIndex( void )
   {
-    float res;
+    double res;
     Params p;
     p.add("1");
     p.add("5");
@@ -63,8 +63,8 @@ public:
     TS_ASSERT_EQUALS( p.val("name", std::string("no-name"))    , std::string("Gaspard Buma"));
     TS_ASSERT_EQUALS( p.val("surnname", std::string("no-name")), std::string("no-name")     );
     
-    TS_ASSERT_EQUALS( (float)p.val("joy", 1.1), (float)3.5 );
-    TS_ASSERT_EQUALS( (float)p.val("bad", 1.1), (float)1.1 );
+    TS_ASSERT_EQUALS( (double)p.val("joy", 1.1), (double)3.5 );
+    TS_ASSERT_EQUALS( (double)p.val("bad", 1.1), (double)1.1 );
   }
   
   void testOstream( void )

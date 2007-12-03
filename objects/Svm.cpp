@@ -38,10 +38,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // libsvm
 #include "svm/svm.h"
 
+
+
+// declarations not in svm.h
+double sigmoid_predict(double decision_value, double A, double B);
+#ifndef min
+template <class T> inline T min(T x,T y) { return (x<y)?x:y; }
+#endif
+#ifndef max
+template <class T> inline T max(T x,T y) { return (x>y)?x:y; }
+#endif
+
+
 class Svm : public TrainedMachine
 {
 public:
-  Svm() : mModel(NULL), mNode(NULL), mXSpace(NULL), mDistances(NULL), mVotes(NULL), mLabels(NULL), mTrainFile(NULL), mLiveBuffer(NULL), mClassLabel(0), mVectorCount(0)
+  Svm() : mModel(NULL), mNode(NULL), mXSpace(NULL), mPairwiseProb(NULL), mVotes(NULL), mLabels(NULL), mTrainFile(NULL), mLiveBuffer(NULL), mClassLabel(0), mVectorCount(0)
   {
     mProblem.x = NULL; 
     mProblem.y = NULL;
@@ -53,32 +65,45 @@ public:
     if (mProblem.y)  free(mProblem.y);
     if (mProblem.x)  free(mProblem.x);
     if (mXSpace)     free(mXSpace);
-    if (mDistances)  free(mXSpace);
+    if (mDistances)  free(mDistances);
+    if (mPairwiseProb)  free(mPairwiseProb);
     if (mVotes)      free(mVotes);
     if (mLabels)     free(mLabels);
-    if (mTrainFile) fclose(mTrainFile);
+    if (mTrainFile)  fclose(mTrainFile);
   }
 
   bool init(const Params& p)
   {
-    if(!init_machine(p)) return false;
-    mSampleRate = p.val("rate", 256);
-    mUnitSize   = p.val("unit", 1);    // number of values form a sample
-    mThreshold  = p.val("threshold", 0.0);
-    mSvmCparam  = p.val("cost", 2.0);          // svm cost
-    mSvmGammaParam = p.val("gamma", 0.0078125); // svm gamma in RBF
-    mProbabilityThreshold = p.val("filter", 0.8);
-    
-    // max_nr_attr - 1 > mVectorSize
-    mNode = (struct svm_node *) malloc((mVectorSize + 1) * sizeof(struct svm_node));
-    if (!mNode) {
-      *mOutput << mName << ": Could not allocate " << mVectorSize+1 << " svm_nodes to store vector.\n";
-      return false;
-    }
-    
     mProblem.y = NULL;
     mProblem.x = NULL;
     mXSpace    = NULL;
+    mThreshold  = 0.0;
+    mSvmCparam  = 2.0; // svm cost
+    mSvmGammaParam = 0.0078125; // svm gamma in RBF
+    mProbabilityThreshold = 0.8;
+    return set(p);
+  }
+  
+  bool set (const Params& p)
+  {
+    size_t vector_size = mVector.col_count();
+    if(!set_machine(p)) return false;
+    p.get(&mThreshold, "threshold");
+    p.get(&mSvmCparam, "cost"); // svm cost
+    p.get(&mSvmGammaParam, "gamma"); // svm gamma in RBF
+    p.get(&mProbabilityThreshold, "filter");
+    
+    // max_nr_attr - 1 > mVectorSize
+    if (!mNode)
+      mNode = (struct svm_node *) malloc((mVector.col_count() + 1) * sizeof(struct svm_node));
+    else if (vector_size != mVector.col_count()) {
+      void * tmp = realloc(mNode, (mVector.col_count() + 1) * sizeof(struct svm_node));
+      if (!tmp) {
+        *mOutput << mName << ": could not reallocate " << mVector.col_count() + 1 << " nodes.\n";
+        return false;
+      }
+      mNode = (struct svm_node *) tmp;
+    }
     
     return do_load_model();
   }
@@ -87,26 +112,15 @@ public:
   void bang (const Signal& sig)
   {
     if (!mIsOK) return; // do not use 'predict' if no model loaded
-    if (sig.type != ArraySignal) return; // ignore
+    if (sig.type != MatrixSignal) return; // ignore
     
-    if (sig.array.size >= mVectorSize) {
-      mLiveBuffer = sig.array.value;
-      mLiveBufferSize = sig.array.size;
+    if (sig.matrix.value->col_count() >= mVector.col_count()) {
+      mLiveBuffer = sig.matrix.value;
     } else {
-      *mOutput << mName << ": wrong signal size " << sig.array.size << " should be " << mVectorSize << "\n.";
+      *mOutput << mName << ": wrong signal size " << sig.matrix.value->col_count() << " should be " << mVector.col_count() << "\n.";
       return;
     }
     
-    //if (mDebug) {
-    //  // show current signal value as sparse vector
-    //  double * vector = mLiveBuffer + mLiveBufferSize - mVectorSize;
-    //  for(int i=0;i < mVectorSize; i++) {
-    //    if (vector[i] >= mThreshold || vector[i] <= -mThreshold) {
-    //      printf(" %i:%.5f", i+1, (float)vector[i]);
-    //    }
-    //  }
-    //  printf("\n");
-    //}
     bool change = predict();
     
     if (mDebug)
@@ -218,12 +232,14 @@ private:
   bool predict()
   {
     int label;
-    double labelProbability;
-    // map current vector into svm_node
-    int i,pos,j = 0; // svm_node index
-    double * vector = mLiveBuffer + mLiveBufferSize - mVectorSize;
+    size_t vector_size = mVector.col_count();
+    double labelProbability = 1.0;
     
-    for(int i=0;i < mVectorSize; i++) {
+    // map current vector into svm_node
+    size_t j = 0; // svm_node index
+    double * vector = mLiveBuffer->data + mLiveBuffer->size() - vector_size;
+    
+    for(size_t i=0;i < vector_size; i++) {
       if (vector[i] >= mThreshold || vector[i] <= -mThreshold) {
         //printf(" %i:%.5f", i+1, (float)vector[i]);
         mNode[j].index = i+1;
@@ -235,52 +251,23 @@ private:
     mNode[j].index = -1; // end of vector definition
     
     if (mLabelCount > 1) {
-      // use probability estimate
-  		svm_predict_values(mModel, mNode, mDistances);
-
-  		for(i=0;i<mLabelCount;i++) mVotes[i] = 0.0;
-		
-  		pos=0;
-      double sum;
-  		for(i=0; i < mLabelCount; i++)
-  			for(j = i+1; j < mLabelCount; j++)
-  			{
-          //if (mDebug) printf("%i:%i % .5f\n", i, j, mDistances[pos]);
-  				if(mDistances[pos] > 0) {
-  					mVotes[i] += mDistances[pos];
-  				} else {
-  					mVotes[j] -= mDistances[pos];
-          }
-          pos++;
-  			}
-
-  		int vote_max_idx = 0;
-  		
-      //if (mDebug) printf("================\n");
-  		for(i=1; i < mLabelCount; i++) {
-        //if (mDebug) printf("%i: %.2f\%\n",i, mVotes[i] * 100.0 / (double)(mLabelCount - 1));
-  			if(mVotes[i] > mVotes[vote_max_idx]) vote_max_idx = i;
-  		}
-  		label = mLabels[vote_max_idx];
-      labelProbability = (double)mVotes[vote_max_idx] / (double)(mLabelCount - 1);
+      // use probability threshold
+      get_label(&label, &labelProbability);
 		} else {
       label = svm_predict(mModel,mNode);
-      labelProbability = 1.0;
     }
     
-    if (label == mClassLabel && labelProbability < mLabelProbability) {
-      // probability decrease: reached top ==> send value
+    if (labelProbability > mProbabilityThreshold) {
+      // confident enough, use this label
+      mClassLabel = label;
       mLabelProbability = labelProbability;
       return true;
     }
-    
-    mClassLabel       = label;
-    mLabelProbability = labelProbability;
     return false;
   }
     
   /** Write as a sparse vector. */
-  bool write_as_sparse(const std::string& filename, double * vector)
+  bool write_as_sparse(const std::string& filename, Matrix * vector)
   {
     if (!vector) {
       // class initialize // finish
@@ -298,9 +285,9 @@ private:
       return false;
     }
     fprintf(mTrainFile, "%+i", mClassLabel);
-    for(int i=0; i < mVectorSize; i++) {
-      if (vector[i] >= mThreshold || vector[i] <= -mThreshold) {
-        fprintf(mTrainFile, " %i:%.5f", i+1, (float)vector[i]);
+    for(size_t i=0; i < vector->col_count(); i++) {
+      if (vector->data[i] >= mThreshold || vector->data[i] <= -mThreshold) {
+        fprintf(mTrainFile, " %i:%.5f", (int)i+1, (float)vector->data[i]);
       }
     }  
     fprintf(mTrainFile, "\n");
@@ -317,35 +304,17 @@ private:
       return false;
     }
     
-    // prepare probability / labels buffer
+    // prepare probability / label buffers
     mLabelCount = svm_get_nr_class(mModel);
     
-    mLabels         = (int*)    malloc(mLabelCount * sizeof(int));
-    if (!mLabels) {
-      *mOutput << mName << ": could not allocate " << mLabelCount << " ints for labels.\n";
-      return false;
-    }
+    if (!allocate<size_t>(&mVotes,  mLabelCount, "votes", "sizes"))  return false;
+    if (!alloc_ints(&mLabels, mLabelCount, "labels")) return false;
+    
     svm_get_labels(mModel, mLabels);
     
-		mDistances     = (double*) malloc((mLabelCount * (mLabelCount-1)/2) * sizeof(double));
-    if (!mDistances) {
-      *mOutput << mName << ": could not allocate " << (mLabelCount * (mLabelCount-1)/2) << " doubles for distances.\n";
-      return false;
-    }
+    if (!alloc_doubles(&mDistances,    mLabelCount * (mLabelCount-1)/2, "pairwise distances")) return false;
+    if (!alloc_doubles(&mPairwiseProb, mLabelCount * mLabelCount,   "pairwise probabilities")) return false;
     
-    // vote_count is just a hack because we map probability signals in the same plot as signals packed into
-    // mUnitSize elements.
-    int vote_count = 0;
-    if (mLabelCount < mUnitSize) 
-      vote_count = mUnitSize;
-    else
-      vote_count = mLabelCount;
-    mVotes         = (double*) malloc(vote_count * sizeof(double));
-    if (!mVotes) {
-      *mOutput << mName << ": could not allocate " << vote_count << " ints for votes.\n";
-      return false;
-    }
-    for(int i=0;i<vote_count;i++) mVotes[i] = 0.0;
     
     return true;
   }
@@ -402,9 +371,13 @@ private:
   out:
   	rewind(fp);
 
-    mProblem.y = (double*)            malloc(mProblem.l * sizeof(double));
-  	mProblem.x = (struct svm_node **) malloc(mProblem.l * sizeof(struct svm_node *));
-  	mXSpace    = (struct svm_node *)  malloc(elements * sizeof(struct svm_node));
+    
+    if (!alloc_doubles(&mProblem.y, mProblem.l, "problem.y")) goto readpb_fail;
+    if (!allocate<struct svm_node *>(&mProblem.x, mProblem.l, "problem.x", "svm_node pointers")) goto readpb_fail;
+    if (!allocate<struct svm_node>(  &mXSpace, elements, "mXSpace", "svm_nodes")) goto readpb_fail;
+    //mProblem.y = (double*)            malloc(mProblem.l * sizeof(double));
+  	//mProblem.x = (struct svm_node **) malloc(mProblem.l * sizeof(struct svm_node *));
+  	//mXSpace    = (struct svm_node *)  malloc(elements * sizeof(struct svm_node));
 
   	max_index = 0;
   	j=0;
@@ -461,32 +434,100 @@ readpb_fail:
     return false;
   }
 
-  FILE * mTrainFile;    /**< Used during foreach class loop to write sparse data. */
+  ////////  adapted from svm.cpp, svm_predict_probability  ////////
 
-  double * mLiveBuffer; /**< Pointer to the current buffer window. Content can change between calls. */
-  int mUnitSize;       /**< How many values form a sample (single event). */
-  int mVectorCount;    /**< Number of vectors used to build the current mean value. */
-  int mSampleRate; /**< How many samples per second do we receive from the 'data' inlet. */
-  int mLiveBufferSize;
-  int mClassLabel; /**< Current label. Used during recording and recognition. */
-  double mLabelProbability; /**< Current probability for the given label. */
-  
-  double mThreshold;   /**< Values below this limit are recorded as zero in the training set. Use '0' for none. */
+  /** Finds the best label in a multiclass problem. Returns some kind of confidence value with
+    * the worst pairwize probability for this label against the other classes. */
+  void get_label(int * pLabel, double * pProbability)
+  {
+  	if (svm_get_svm_type(mModel) == C_SVC || svm_get_svm_type(mModel) == NU_SVC)
+  	{
+      double uniform_probability = 1.0 / mLabelCount;
+  		svm_predict_values(mModel, mXSpace, mDistances);
+
+  		double min_prob=1e-7;
+      double prob;
+  		
+  		int k=0;
+  		memset(mVotes, 0, mLabelCount);
+      
+  		for(size_t i=0;i<mLabelCount;i++)
+  			for(size_t j=i+1;j<mLabelCount;j++)
+  			{
+  			  // the min(max( sigmoid )) thing is to force the range to be in [min_prob..1-min_prob]
+  			  prob = min( max( sigmoid_predict( mDistances[k], uniform_probability, uniform_probability),
+  				                         min_prob), 1-min_prob);
+  				
+          mPairwiseProb[i*mLabelCount + j] = prob;
+  				mPairwiseProb[j*mLabelCount + i] = 1 - prob;
+  				
+  				if (mDistances[k] > 0)
+            mVotes[i]++;
+          else
+            mVotes[j]++;
+            
+  				k++;
+  			}
+  		
+      size_t vote_id = 0;
+      for(size_t i=1; i < mLabelCount; i++)
+        if (mVotes[i] > mVotes[vote_id]) vote_id = i;
+      
+      // our label id is 'vote_id'
+      // Let's find it's worst pairwise probability:
+      double bad_prob = 1.0; // we start by beeing optimistic
+      double * probs = mPairwiseProb + vote_id * mLabelCount;
+      size_t row_index = vote_id * mLabelCount;
+      for(size_t i = 0; i < mLabelCount; i++) {
+        if (i == vote_id) continue;
+        if (probs[row_index + i] < bad_prob) bad_prob = probs[row_index + i];
+      }
+
+      *pLabel = mLabels[vote_id];
+      *pProbability = bad_prob;
+      
+  		// compute 'prob_estimates' (see http://citeseer.ist.psu.edu/wu03probability.html)
+  		//multiclass_probability(mLabelCount,pairwise_prob,prob_estimates);
+      //
+      //int prob_max_idx = 0;
+      //for(i=1;i<mLabelCount;i++)
+      //  if(prob_estimates[i] > prob_estimates[prob_max_idx])
+      //    prob_max_idx = i;
+      //return mModel->label[prob_max_idx];
+      
+  	} else {
+  	  // cannot use probabilities
+      *pLabel = svm_predict(mModel, mXSpace);
+      // *pProbability not set
+  	}
+  }
   
   /// libsvm ///
   double   mSvmCparam;
   double   mSvmGammaParam;
   double   mProbabilityThreshold; /**< Minimal probability value for an output to be sent. */
-  int      mLabelCount;       /**< Number of different classes to recognize. */
-  double * mDistances;        /**< Computed distances from each class to other classes. */
-  double * mVotes;            /**< Count how many times class X was recognized correctly against other classes. */
-  int    * mLabels;           /**< Translate ids to our labels. */
+  size_t   mLabelCount;       /**< Number of different classes to recognize. */
   
-  struct svm_node  * mXSpace; /**< x_space (working space used for dot product during training). */
   struct svm_model * mModel;  /**< Contains the model (training result). */
   struct svm_node  * mNode;   /**< Contains our data in sparse format. */
+  struct svm_node  * mXSpace; /**< x_space (working space used for dot product during training). */
   struct svm_parameter mSvmParam;	/**< Contains settings for the learning phase of svm. */
-  struct svm_problem mProblem; /**< ??? */
+  struct svm_problem mProblem; /**< Packaging of the problem definition, training data and parameters. */
+  
+  double * mPairwiseProb;     /**< Pairwise probabilities between classes. */
+  double * mDistances;        /**< Pairwise distances to the hyper-plane. */
+  size_t * mVotes;            /**< Used to compute the label out of the distances. */
+  int    * mLabels;           /**< Translation from 'ids' to 'labels'. */
+  
+  FILE * mTrainFile;          /**< Used during foreach class loop to write sparse data. */
+
+  const Matrix * mLiveBuffer; /**< Pointer to the current buffer window. Content can change between calls. */
+  int    mClassLabel;         /**< Current label. Used during recording and recognition. */
+  size_t mVectorCount;        /**< Number of vectors used to build the current mean value. */
+  
+  double mLabelProbability;   /**< Current probability for the given label. */
+  
+  double mThreshold;          /**< Values below this limit are recorded as zero in the training set. Use '0' for none. */
 };
 
 

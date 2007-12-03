@@ -58,6 +58,18 @@ public:
       return false;
   }
   
+  /** Try to get an anonymous parameter from it's index. Returns false if the key is out of range. */
+  template<class T>
+  bool get(T* pResult, int pIndex) const
+  {
+    std::string value;
+    if ((size_t)pIndex < mListParams.size()) {
+      *pResult = cast_param<T>(mListParams[pIndex]);
+      return true;
+    } else
+      return false;
+  }
+  
   /** Get default value. Return false if none found. */
   template<class T>
   bool get(T* pResult) const
@@ -127,6 +139,9 @@ unsigned char Params::cast_param (const std::string& value) const;
 
 template<>
 time_t Params::cast_param (const std::string& value) const;
+
+template<>
+size_t Params::cast_param (const std::string& value) const;
 
 template<>
 double Params::cast_param (const std::string& value) const;

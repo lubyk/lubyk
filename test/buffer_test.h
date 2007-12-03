@@ -22,7 +22,7 @@ private:
   
   void assert_equal(const Buffer& b, const double * data, size_t dataSize)
   {
-    const Matrix mat = b.matrix();
+    const CutMatrix mat = b.matrix();
     TS_ASSERT_EQUALS(mat.size(), dataSize);
     if (mat.size() == dataSize) {
       for(size_t i=0; i < mat.row_count(); i++) {

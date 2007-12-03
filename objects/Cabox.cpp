@@ -55,7 +55,7 @@ public:
   
   void bang(const Signal& sig)
   {
-    int c,r;
+    int c;
     double val;
     bool new_data = false;
     while (mPort.read_char(&c)) {
@@ -116,7 +116,7 @@ public:
         }
         
         if (mOffsetOnFull) {
-          mOffset += mVector;
+          mOffset.add(mVector, 12);
           mOffsetOnFull = false;
         }
       } else {
@@ -176,7 +176,6 @@ extern "C" void init()
   OUTLET(Cabox,high)
   OUTLET(Cabox,direction)
   METHOD(Cabox,offset)
-  SUPER_METHOD(Cabox, Script, set)
   SUPER_METHOD(Cabox, Script, load)
   SUPER_METHOD(Cabox, Script, script)
 }
