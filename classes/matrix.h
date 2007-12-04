@@ -7,21 +7,22 @@
 class CutMatrix;
 union Signal;
 
-class Matrix
+template<typename T>
+class TMatrix
 {
 public:
-  Matrix() :  data(NULL), mStorageSize(0), mRowCount(1), mColCount(0), mErrorBuffer(NULL), mErrorBufferSize(0)
+  TMatrix() :  data(NULL), mStorageSize(0), mRowCount(1), mColCount(0), mErrorBuffer(NULL), mErrorBufferSize(0)
   {
     mErrorMsg = "no error";
   }
   
-  Matrix(size_t pRowCount, size_t pColCount) :  data(NULL), mStorageSize(0), mRowCount(pRowCount), mColCount(pColCount), mErrorBuffer(NULL), mErrorBufferSize(0)
+  TMatrix(size_t pRowCount, size_t pColCount) :  data(NULL), mStorageSize(0), mRowCount(pRowCount), mColCount(pColCount), mErrorBuffer(NULL), mErrorBufferSize(0)
   {
     mErrorMsg = "no error";
     reallocate(size());
   }
   
-  virtual ~Matrix()
+  virtual ~TMatrix()
   {
     if (mErrorBuffer) free(mErrorBuffer);
     if (data) free(data);
@@ -38,7 +39,7 @@ public:
   }
   
   /** Set all values to 'pVal'. */
-  void fill(double pVal)
+  void fill(T pVal)
   {
     size_t sz = size();
     for(size_t i=0; i < sz; i++)
@@ -71,7 +72,7 @@ public:
     * @param pOther      other matrix to copy the data from.
     * @param pStartRow   where to start copying the data from (default is 0).
     * @param pEndRow     last row to copy (default is -1 = last row). */
-  bool copy(const Matrix& pOther, int pStartRow = 0, int pEndRow = -1)
+  bool copy(const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1)
   {
     return copy_at(0, pOther, pStartRow, pEndRow);
   }
@@ -95,24 +96,24 @@ public:
     * @param pEndRow     last row to copy (default is -1 = last row).
     *
     * @return bool       returns false if allocation of new space failed. */
-  bool copy_at(int pRowIndex, const Matrix& pOther, int pStartRow = 0, int pEndRow = -1);
+  bool copy_at(int pRowIndex, const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1);
 
   bool copy(const Signal& sig);
   
   bool copy_at(int pRowIndex, const Signal& sig);
   
   /** Append a vector to the end of the current data. Size increases automatically. */
-  bool append (const double * pVector, size_t pVectorSize);
+  bool append (const T * pVector, size_t pVectorSize);
   
   /** Append another matrix/vector to the end of the current data. Size increases automatically. 
     * @param pStartRow   where to start copying the data from (default is 0).
     * @param pEndRow     last row to copy (default is -1 = last row).
     * @return false if the column count of both matrices do not match. */
-  bool append (const Matrix& pOther, int pStartRow = 0, int pEndRow = -1);
+  bool append (const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1);
   
   
   /** Append a value at the end of a vector. Size increases automatically. */
-  bool Matrix::append(double pValue);
+  bool append (T pValue);
   
   /** Add elements of one matrix to another.
     * If rows/columns match, elements are added one by one.
@@ -126,13 +127,13 @@ public:
     * @param pScale    amount to multiply each value before adding.
     *
     * @return true (never fails). */
-  bool add (const Matrix& pOther, int pStartRow = 0, int pEndRow = -1, double pScale = 1.0);
+  bool add (const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1, double pScale = 1.0);
   
   /** Add an array of doubles to each elements in the matrix. 
     * If the size is the same as the matrix : one to one.
     * If the size is col_size : add to each row.
     * If the size is row_size : add corresponding value to element in the row. */
-  bool add (const double * pVector, size_t pVectorSize);
+  bool add (const T * pVector, size_t pVectorSize);
   
   /** Divide all elements by the values in another matrix. a.divide(b) (a/b) is NOT the matrix division (a-1b)
     * If rows/columns match, elements are divided one by one.
@@ -144,11 +145,11 @@ public:
     * @param pStartRow if you want to use only part of the other matrix, start row. Default 0 (first row).
     * @param pEndRow   when using only part of the other matrix. Default -1 (last row).
     * @return true (never fails). */
-  bool divide (const Matrix& pOther, int pStartRow = 0, int pEndRow = -1, double pScale = 1.0);
+  bool divide (const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1, double pScale = 1.0);
   
   /** Divide all elements by the values in another matrix.
     * See 'divide' for details. */
-  bool operator/= (const Matrix& pOther)
+  bool operator/= (const TMatrix& pOther)
   {
     return divide(pOther);
   }
@@ -158,7 +159,7 @@ public:
     * @param pValue  value by which to divide all elements of the current matrix.
     *
     * @return true (never fails). */
-  bool operator/= (double pValue)
+  bool operator/= (T pValue)
   {
     size_t sz = size();
     for(size_t i=0; i < sz; i++)
@@ -176,11 +177,11 @@ public:
     * @param pStartRow if you want to use only part of the other matrix, start row. Default 0 (first row).
     * @param pEndRow   when using only part of the other matrix. Default -1 (last row).
     * @return true (never fails). */
-  bool multiply (const Matrix& pOther, int pStartRow = 0, int pEndRow = -1, double pScale = 1.0);
+  bool multiply (const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1, double pScale = 1.0);
   
   /** Divide all elements by the values in another matrix.
     * See 'divide' for details. */
-  bool operator*= (const Matrix& pOther)
+  bool operator*= (const TMatrix& pOther)
   {
     return multiply(pOther);
   }
@@ -190,7 +191,7 @@ public:
     * @param pValue  value by which to divide all elements of the current matrix.
     *
     * @return true (never fails). */
-  bool operator*= (double pValue)
+  bool operator*= (T pValue)
   {
     size_t sz = size();
     for(size_t i=0; i < sz; i++)
@@ -200,13 +201,13 @@ public:
   
   /** Substract all elements by the values in another matrix.
     * See 'add' for details. */
-  bool operator-= (const Matrix& pOther)
+  bool operator-= (const TMatrix& pOther)
   {
     return add(pOther, 0, -1, -1.0);
   }
   
   /** Substract a value to all elements in the matrix. */
-  bool operator-= (double pValue)
+  bool operator-= (T pValue)
   {
     size_t sz = size();
     for(size_t i=0; i < sz; i++)
@@ -215,13 +216,13 @@ public:
   }
   
   /** Add elements of another matrix. See 'add' for details. */
-  bool operator+= (const Matrix& pOther)
+  bool operator+= (const TMatrix& pOther)
   {
     return add(pOther);
   }
   
   /** Add a value to all elements in the matrix. */
-  bool operator+= (double pValue)
+  bool operator+= (T pValue)
   {
     size_t sz = size();
     for(size_t i=0; i < sz; i++)
@@ -247,17 +248,13 @@ public:
     * @param pTransA transposition mode for matrix A (CblasNoTrans/CblasTrans).
     * @param pTransB transposition mode for matrix B.
     * @param pScale  scale factor. Default is 1.0 (no scaling). */
-  bool mat_multiply(const Matrix& A, const Matrix& B, const enum CBLAS_TRANSPOSE pTransA = CblasNoTrans, const enum CBLAS_TRANSPOSE pTransB = CblasNoTrans, double pScale = 1.0);
+  bool mat_multiply(const TMatrix& A, const TMatrix& B, const enum CBLAS_TRANSPOSE pTransA = CblasNoTrans, const enum CBLAS_TRANSPOSE pTransB = CblasNoTrans, double pScale = 1.0);
   
-  ////////////////  static methods  //////////////////////////
   
-  /** Compute T'T for the given (row major) matrix. Return false on failure. pResult must be a
-    * pointer to an array of pCol * pRow doubles. 
-    * @param pRowCount number of rows in T.
-    * @param pColCount number of columns in T.
-    * @param pResult (pColCount * pColCount) buffer for result. */
-  static bool compute_symetric_matrix(double ** pResult, const double * pMatrix, int pRowCount, int pColCount);
+  /** Compute A'A for the given (row major) matrix. Return false on failure. */
+  bool symetric(const TMatrix& A);
 
+  ////////////////  static methods  //////////////////////////
 
   /** Compute T'T for the given (row major) matrix. Return false on failure. pResult must be a
     * pointer to an array of pCol * pRow doubles. 
@@ -270,14 +267,14 @@ public:
   
   /** Return a pointer to the first element in the row pointed to by 'pIndex'. 
     * You have to make sure pIndex is smaller the mRowCount. Ne verification is done here. */
-  double * operator[] (size_t pIndex)
+  T * operator[] (size_t pIndex)
   {
     return data + mColCount * pIndex;
   }
   
   /** Return a pointer to the first element in the row pointed to by 'pIndex'. 
     * You have to make sure pIndex is smaller the mRowCount. Ne verification is done here. */
-  const double * operator[] (size_t pIndex) const
+  const T * operator[] (size_t pIndex) const
   {
     return data + mColCount * pIndex;
   }
@@ -300,7 +297,7 @@ public:
   }
   
 public:
-  double * data; /**< Pointer to the data. Public for performance, handle with care. */
+  T * data; /**< Pointer to the data. Public for performance, handle with care. */
   
 protected:
   friend class CutMatrix;
@@ -309,7 +306,7 @@ protected:
   bool check_alloc(size_t pSize);
   
   /** Verify sizes before operations. */
-  bool check_sizes(const char * pMsg, size_t * start_row, size_t * end_row, const Matrix& pOther, int pStartRow, int pEndRow, bool pAllowColCountChange = false);
+  bool check_sizes(const char * pMsg, size_t * start_row, size_t * end_row, const TMatrix& pOther, int pStartRow, int pEndRow, bool pAllowColCountChange = false);
 
   /** The size of the matrix changed. We need to increase/decrease memory usage.
     * @return false on memory allocation failure. */
@@ -317,7 +314,10 @@ protected:
   
   /** Copy data using memcpy. (Update size if needed).
     * @param pRowOffset where to start copying (set to mRowCount to append at end). */
-  bool raw_copy(size_t pRowOffset, const double * pVector, size_t pVectorSize);
+  bool raw_copy(size_t pRowOffset, const T * pVector, size_t pVectorSize);
+  
+  /** Do multiplication (wrapper around Cblas) */
+  inline void do_gemm(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA, const enum CBLAS_TRANSPOSE TransB, const int M, const int N, const int K, const double alpha, const T *A, const int lda, const T *B, const int ldb, const double beta, T *C, const int ldc);
 
   bool set_error(const char * fmt, ...);
   
@@ -329,6 +329,8 @@ protected:
   size_t mErrorBufferSize;
 };
 
+typedef TMatrix<double> Matrix;
+typedef TMatrix<int>    IntMatrix;
 
 /** Read-only matrix showing part of another matrix. */
 class CutMatrix : public Matrix

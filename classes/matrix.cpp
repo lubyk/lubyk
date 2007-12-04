@@ -25,7 +25,8 @@
   * @param pEndRow     last row to copy (default is -1 = last row).
   *
   * @return bool       returns false if allocation of new space failed. */
-bool Matrix::copy_at(const int pRowIndex, const Matrix& pOther, int pStartRow, int pEndRow)
+template<typename T>
+bool TMatrix<T>::copy_at(const int pRowIndex, const TMatrix& pOther, int pStartRow, int pEndRow)
 {
   size_t row_index = pRowIndex < 0 ? mRowCount + pRowIndex : pRowIndex;
   size_t start_row, end_row;
@@ -40,19 +41,22 @@ bool Matrix::copy_at(const int pRowIndex, const Matrix& pOther, int pStartRow, i
   return raw_copy(row_index, pOther.data + start_row * mColCount, (end_row - start_row + 1) * mColCount);
 }
 
-bool Matrix::copy(const Signal& sig)
+template<>
+bool TMatrix<double>::copy(const Signal& sig)
 {
   if(sig.type != MatrixSignal) return false;
   return copy_at(0, *(sig.matrix.value));
 }
 
-bool Matrix::copy_at(int pRowIndex, const Signal& sig)
+template<>
+bool TMatrix<double>::copy_at(int pRowIndex, const Signal& sig)
 {
   if(sig.type != MatrixSignal) return false;
   return copy_at(pRowIndex, *(sig.matrix.value));
 }
 
-bool Matrix::from_file(FILE * pFile)
+template<>
+bool TMatrix<double>::from_file(FILE * pFile)
 {
   float val;
   for(size_t i=0; i < mRowCount; i++) {
@@ -68,7 +72,25 @@ bool Matrix::from_file(FILE * pFile)
   return true;
 }
 
-bool Matrix::to_file(FILE * pFile) const
+template<>
+bool TMatrix<int>::from_file(FILE * pFile)
+{
+  int val;
+  for(size_t i=0; i < mRowCount; i++) {
+    for(size_t j=0; j < mColCount; j++) {
+      if(fscanf(pFile, " %i", &val) == EOF) {
+        set_error("end of file while reading value %i,%i out of %ix%i", i, j, mRowCount, mColCount);
+        return false;
+      }
+      fscanf(pFile, "\n"); // ignore newline
+      data[i * mColCount + j] = (double)val;
+    }
+  }
+  return true;
+}
+
+template<>
+bool TMatrix<double>::to_file(FILE * pFile) const
 {
   for(size_t i=0; i < mRowCount; i++) {
     for(size_t j=0; j < mColCount; j++) {
@@ -80,7 +102,21 @@ bool Matrix::to_file(FILE * pFile) const
   return true;
 }
 
-void Matrix::print(FILE * pFile) const
+template<>
+bool TMatrix<int>::to_file(FILE * pFile) const
+{
+  for(size_t i=0; i < mRowCount; i++) {
+    for(size_t j=0; j < mColCount; j++) {
+      fprintf(pFile, " %i", data[i * mColCount + j]);
+    }  
+    fprintf(pFile, "\n");
+  }  
+  fprintf(pFile, "\n");  // two \n\n between vectors
+  return true;
+}
+
+template<>
+void TMatrix<double>::print(FILE * pFile) const
 {
 	size_t i,j;
 
@@ -98,8 +134,28 @@ void Matrix::print(FILE * pFile) const
   }
 }
 
+template<>
+void TMatrix<int>::print(FILE * pFile) const
+{
+	size_t i,j;
+
+  for(i=0;i<mRowCount;i++) {
+		if (i==0)
+		  fprintf(pFile, "[");
+    else
+      fprintf(pFile, " ");
+		for(j=0;j<mColCount;j++)
+				fprintf(pFile, " %i",data[(i * mColCount) + j]);
+    if (i == mRowCount -1)
+      fprintf(pFile, " ]\n");
+    else
+      fprintf(pFile, "\n");
+  }
+}
+
 /** Append a vector to the end of the current data. Size increases automatically. */
-bool Matrix::append(const double * pVector, size_t pVectorSize)
+template<typename T>
+bool TMatrix<T>::append(const T * pVector, size_t pVectorSize)
 {
   if (pVectorSize % mColCount != 0) {
     set_error("could not append vector: column count not matching (%i is not a multiple of %i)", pVectorSize, mColCount);
@@ -109,7 +165,8 @@ bool Matrix::append(const double * pVector, size_t pVectorSize)
 }
 
 /** Append a value at the end of a vector. Size increases automatically. */
-bool Matrix::append(double pValue)
+template<typename T>
+bool TMatrix<T>::append(T pValue)
 {
   if (mRowCount != 1) {
     set_error("could not append: matrix is not a vector (%ix%i)", mRowCount, mColCount);
@@ -123,7 +180,8 @@ bool Matrix::append(double pValue)
 
 /** Append another matrix/vector to the end of the current data. Size increases automatically. 
   * @return false if the column count of both matrices do not match. */
-bool Matrix::append(const Matrix& pOther, int pStartRow, int pEndRow)
+template<typename T>
+bool TMatrix<T>::append(const TMatrix& pOther, int pStartRow, int pEndRow)
 {
   return copy_at(mRowCount, pOther, pStartRow, pEndRow);
 }
@@ -138,12 +196,13 @@ bool Matrix::append(const Matrix& pOther, int pStartRow, int pEndRow)
   * @param pEndRow   when using only part of the other matrix. Default -1 (last row).
   *
   * @return true (never fails). */
-bool Matrix::add(const Matrix& pOther, int pStartRow, int pEndRow, double pScale)
+template<typename T>
+bool TMatrix<T>::add(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale)
 {
   size_t start_row, end_row;
   if (!check_sizes("add", &start_row, &end_row, pOther, pStartRow, pEndRow, true)) return false;
   size_t row_count = end_row - start_row + 1;
-  double * other_data = pOther.data + start_row * pOther.mColCount;
+  T * other_data = pOther.data + start_row * pOther.mColCount;
   
   if (pOther.mColCount == mColCount) {
     if (row_count == mRowCount) {
@@ -218,7 +277,8 @@ bool Matrix::add(const Matrix& pOther, int pStartRow, int pEndRow, double pScale
   * If the size is the same as the matrix : one to one.
   * If the size is col_size : add to each row.
   * If the size is row_size : add corresponding value to element in the row. */
-bool Matrix::add(const double * pVector, size_t pVectorSize)
+template<typename T>
+bool TMatrix<T>::add(const T * pVector, size_t pVectorSize)
 {
   size_t sz = size();
   if (pVectorSize == sz) {
@@ -253,12 +313,13 @@ bool Matrix::add(const double * pVector, size_t pVectorSize)
   * @param pStartRow if you want to use only part of the other matrix, start row. Default 0 (first row).
   * @param pEndRow   when using only part of the other matrix. Default -1 (last row).
   * @return true (never fails). */
-bool Matrix::divide(const Matrix& pOther, int pStartRow, int pEndRow, double pScale)
+template<typename T>
+bool TMatrix<T>::divide(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale)
 {
   size_t start_row, end_row;
   if (!check_sizes("divide", &start_row, &end_row, pOther, pStartRow, pEndRow, true)) return false;
   size_t row_count = end_row - start_row + 1;
-  double * other_data = pOther.data + start_row * pOther.mColCount;
+  T * other_data = pOther.data + start_row * pOther.mColCount;
 
   if (pOther.mColCount == mColCount) {
     if (row_count == mRowCount) {
@@ -329,12 +390,13 @@ bool Matrix::divide(const Matrix& pOther, int pStartRow, int pEndRow, double pSc
 }
 
 /** Multiply all elements by the values in another matrix. a.divide(b) (a/b) is NOT the matrix multiplication (ab). See 'mat_multiply'. */
-bool Matrix::multiply(const Matrix& pOther, int pStartRow, int pEndRow, double pScale)
+template<typename T>
+bool TMatrix<T>::multiply(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale)
 {
   size_t start_row, end_row;
   if (!check_sizes("multiply", &start_row, &end_row, pOther, pStartRow, pEndRow, true)) return false;
   size_t row_count = end_row - start_row + 1;
-  double * other_data = pOther.data + start_row * pOther.mColCount;
+  T * other_data = pOther.data + start_row * pOther.mColCount;
 
   if (pOther.mColCount == mColCount) {
     if (row_count == mRowCount) {
@@ -413,7 +475,8 @@ bool Matrix::multiply(const Matrix& pOther, int pStartRow, int pEndRow, double p
   * @param pTransA transposition mode for matrix A (CblasNoTrans/CblasTrans).
   * @param pTransB transposition mode for matrix B.
   * @param pScale  scale factor. Default is 1.0 (no scaling). */
-bool Matrix::mat_multiply(const Matrix& A, const Matrix& B, const enum CBLAS_TRANSPOSE pTransA, const enum CBLAS_TRANSPOSE pTransB, double pScale)
+template<typename T>
+bool TMatrix<T>::mat_multiply(const TMatrix& A, const TMatrix& B, const enum CBLAS_TRANSPOSE pTransA, const enum CBLAS_TRANSPOSE pTransB, double pScale)
 {
   /** MxK  *  KxN */
   size_t m, k, n;
@@ -437,21 +500,41 @@ bool Matrix::mat_multiply(const Matrix& A, const Matrix& B, const enum CBLAS_TRA
     n = B.mRowCount;
   
   if (!set_sizes(m,n)) return false;
-  cblas_dgemm(CblasRowMajor, pTransA, pTransB, m, n, k, pScale, A.data, A.mColCount, B.data, B.mColCount, 0.0, data, mColCount);
+  do_gemm(CblasRowMajor, pTransA, pTransB, m, n, k, pScale, A.data, A.mColCount, B.data, B.mColCount, 0.0, data, mColCount);
   return true;
 }
 
-
-/** Compute T'T for the given (row major) matrix. Return false on failure. pResult must be a
-  * pointer to an array of pCol * pRow doubles. 
-  * @param pRowCount number of rows in T.
-  * @param pColCount number of columns in T.
-  * @param pResult (pColCount * pColCount) buffer for result. */
-bool Matrix::compute_symetric_matrix(double ** pResult, const double * pMatrix, int pRowCount, int pColCount)
+template<>
+void TMatrix<double>::do_gemm(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA, const enum CBLAS_TRANSPOSE TransB, const int M, const int N, const int K, const double alpha, const double *A, const int lda, const double *B, const int ldb, const double beta, double *C, const int ldc)
 {
-  // you wan to understand this line ?
+  cblas_dgemm(Order, TransA, TransB, M, N, K, alpha, A, lda, B, ldb, beta, C, ldc);
+}
+
+template<>
+void TMatrix<float>::do_gemm(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA, const enum CBLAS_TRANSPOSE TransB, const int M, const int N, const int K, const double alpha, const float *A, const int lda, const float *B, const int ldb, const double beta, float *C, const int ldc)
+{
+  cblas_sgemm(Order, TransA, TransB, M, N, K, alpha, A, lda, B, ldb, beta, C, ldc);
+}
+
+/** Compute A'A for the given (row major) matrix. Return false on failure. */
+template<>
+bool TMatrix<double>::symetric(const TMatrix<double>& A)
+{
+  if(!set_sizes(A.col_count(), A.col_count())) return false;
+  // you want to understand this line ?
   // visit: http://dev.gaspardbuma.org/en/post191.html
-  cblas_dgemm(CblasRowMajor, CblasTrans , CblasNoTrans , pColCount, pColCount, pRowCount, 1, pMatrix, pColCount, pMatrix, pColCount, 0.0, *pResult, pColCount);
+  cblas_dgemm(CblasRowMajor, CblasTrans , CblasNoTrans , A.col_count(), A.col_count(), A.row_count(), 1, A.data, A.col_count(), A.data, A.col_count(), 0.0, data, mColCount);
+  return true;
+}
+
+/** Compute A'A for the given (row major) matrix. Return false on failure. */
+template<>
+bool TMatrix<float>::symetric(const TMatrix<float>& A)
+{
+  if(!set_sizes(A.col_count(), A.col_count())) return false;
+  // you want to understand this line ?
+  // visit: http://dev.gaspardbuma.org/en/post191.html
+  cblas_sgemm(CblasRowMajor, CblasTrans , CblasNoTrans , A.col_count(), A.col_count(), A.row_count(), 1, A.data, A.col_count(), A.data, A.col_count(), 0.0, data, mColCount);
   return true;
 }
 
@@ -460,7 +543,8 @@ bool Matrix::compute_symetric_matrix(double ** pResult, const double * pMatrix, 
   * @param pSize size of square matrix T.
   * @param pEigenVectors pointer to a buffer of size pColCount * pColCount to store resulting eigenvectors. First eigenvector (corresponding to smallest eigenvalue) is in the first column
   * @param pEigenValues pointer to a buffer of size pColCount to store resulting eigenvalues (in ascending order). */
-bool Matrix::compute_eigenvectors(double ** pEigenVectors, double ** pEigenValues, long * pEigenCount, double * pMatrix, int pSize)
+template<>
+bool TMatrix<double>::compute_eigenvectors(double ** pEigenVectors, double ** pEigenValues, long * pEigenCount, double * pMatrix, int pSize)
 {
   // we have to instanciate all parameters as they are passed by reference.
   char jobz  = 'V';       //  1. 'N': compute eigenvalues only, 'V': eigenvalues and eigenvectors.
@@ -498,7 +582,8 @@ bool Matrix::compute_eigenvectors(double ** pEigenVectors, double ** pEigenValue
 
 /** Manage memory allocation (make sure there is enough space for matrix of size pSize). 
   * @return false on memory allocation failure. */
-bool Matrix::check_alloc(size_t pSize)
+template<typename T>
+bool TMatrix<T>::check_alloc(size_t pSize)
 {
   if (!mStorageSize) {
     size_t storage;
@@ -507,9 +592,9 @@ bool Matrix::check_alloc(size_t pSize)
     else
       storage = pSize;
     
-    data = (double*)malloc(storage * sizeof(double));
+    data = (T*)malloc(storage * sizeof(T));
     if (!data) {
-      if (!set_error("could not allocate %ix%i", storage, sizeof(double)))
+      if (!set_error("could not allocate %ix%i", storage, sizeof(T)))
         mErrorMsg = "error during allocation (plus could not allocate buffer for error message)";
       return false;
     }
@@ -522,9 +607,10 @@ bool Matrix::check_alloc(size_t pSize)
 
 /** The size of the matrix changed. We need to increase/decrease memory usage.
   * @return false on memory allocation failure. */
-bool Matrix::reallocate(size_t pSize)
+template<typename T>
+bool TMatrix<T>::reallocate(size_t pSize)
 {
-  double * tmp = (double*)realloc(data, pSize * sizeof(double));
+  T * tmp = (T*)realloc(data, pSize * sizeof(T));
   if (!tmp) {
     if(!set_error("could not reallocate %i to %i", mStorageSize, pSize))
       mErrorMsg = "error during reallocation (plus could not allocate buffer for error message)";
@@ -537,17 +623,19 @@ bool Matrix::reallocate(size_t pSize)
 
 /** Copy data using memcpy. (Update size if needed).
   * @param pRowOffset where to start copying (set to mRowCount to append at end). */
-bool Matrix::raw_copy(size_t pRowOffset, const double * pData, size_t pDataSize)
+template<typename T>
+bool TMatrix<T>::raw_copy(size_t pRowOffset, const T * pData, size_t pDataSize)
 {
   size_t current_size = pRowOffset * mColCount;
   if(!check_alloc(current_size + pDataSize)) return false;
   // use memcpy
-  memcpy(data + current_size, pData, pDataSize * sizeof(double));
+  memcpy(data + current_size, pData, pDataSize * sizeof(T));
   mRowCount = pRowOffset + pDataSize / mColCount;
   return true;
 }
 
-bool Matrix::set_error(const char * fmt, ...)
+template<typename T>
+bool TMatrix<T>::set_error(const char * fmt, ...)
 {
   int n;
   char * np;
@@ -583,7 +671,8 @@ bool Matrix::set_error(const char * fmt, ...)
   }
 }
 
-inline bool Matrix::check_sizes(const char * pMsg, size_t * start_row, size_t * end_row, const Matrix& pOther, int pStartRow, int pEndRow, bool pAllowColCountChange)
+template<typename T>
+inline bool TMatrix<T>::check_sizes(const char * pMsg, size_t * start_row, size_t * end_row, const TMatrix<T>& pOther, int pStartRow, int pEndRow, bool pAllowColCountChange)
 {
   *end_row   = pEndRow   < 0 ? pOther.mRowCount + pEndRow   : pEndRow;
   *start_row = pStartRow < 0 ? pOther.mRowCount + pStartRow : pStartRow;
@@ -599,3 +688,22 @@ inline bool Matrix::check_sizes(const char * pMsg, size_t * start_row, size_t * 
   }
   return true;
 }
+
+
+/// explicit instanciation for doubles and integers //////
+template bool TMatrix<double>::add(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale);
+template bool TMatrix< int  >::add(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale);
+template bool TMatrix<double>::add(const double * pVector, size_t pVectorSize);
+template bool TMatrix< int  >::add(const int    * pVector, size_t pVectorSize);
+template bool TMatrix<double>::append(const double * pVector, size_t pVectorSize);
+template bool TMatrix< int  >::append(const int    * pVector, size_t pVectorSize);
+template bool TMatrix<double>::append(double pValue);
+template bool TMatrix< int  >::append(int    pValue);
+template bool TMatrix<double>::append(const TMatrix& pOther, int pStartRow, int pEndRow);
+template bool TMatrix< int  >::append(const TMatrix& pOther, int pStartRow, int pEndRow);
+template bool TMatrix<double>::multiply(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale);
+template bool TMatrix< int  >::multiply(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale);
+template bool TMatrix<double>::mat_multiply(const TMatrix& A, const TMatrix& B, const enum CBLAS_TRANSPOSE pTransA, const enum CBLAS_TRANSPOSE pTransB, double pScale);
+// no mat_multiply for integers
+template bool TMatrix<double>::divide(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale);
+template bool TMatrix< int  >::divide(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale);
