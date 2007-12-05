@@ -16,7 +16,7 @@ enum vq_states_t {
 class VQ : public Node
 {
 public:
-  VQ() : mTrainingData(NULL), mCodebook(NULL), mVector(NULL), mDistances(NULL) {}
+  VQ() : mCodebook(NULL), mTrainingData(NULL), mVector(NULL), mDistances(NULL) {}
   
   ~VQ()
   {
@@ -421,9 +421,9 @@ private:
   int       mVectorSize;   /**< Dimension of a vector. */
   int  *    mVector;       /**< Integer version of the live vector used during encoding. */
   double    mScale;        /**< Value to multiply doubles before conversion to integer. */
-  int  *    mCodebook;     /**< Array of mCodebookSize pointers to vectors of size mVectorSize as integers. */
+  int  *    mCodebook;     /**< Array of mCodebookSize pointers to vectors of size mVectorSize of integers. */
   double *  mDistances;    /**< Distance to each code word. */
-  int  *    mTrainingData; /**< Array of mTrainingSize pointers to vectors of size mVectorSize as integers. */
+  int  *    mTrainingData; /**< Array of mTrainingSize pointers to vectors of size mVectorSize of integers. */
   FILE *    mTrainFile;    /**< Where the training vectors are stored. */
   int       mTrainingDataSize;  /**< Size of mTrainingData buffer. */
   int       mTrainingSize;  /**< Number of training vectors. */

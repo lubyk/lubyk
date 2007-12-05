@@ -1,0 +1,42 @@
+\documentclass[11pt,twocolumn]{amsart} % twocolumn
+\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
+\geometry{a4paper}                   % ... or a4paper or a5paper or ... 
+\usepackage{layout}
+%\geometry{landscape}                % Activate rotated page geometry
+%\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+% shortcuts
+\newcommand{\ve}[1]{\boldsymbol{#1}}
+\newcommand{\ma}[1]{\boldsymbol{#1}}
+\newenvironment{m}{\begin{bmatrix}}{\end{bmatrix}}
+\def\argmax{\operatornamewithlimits{arg\,max}}
+
+\title{Some stuff for \textbf{home}}
+\author{Gaspard Buma}
+%\date{}                                           % Activate to display a given date or no date
+
+\begin{document}
+
+\twocolumn[
+\maketitle
+]
+\section{Notations}
+Data set
+\[
+	\ve{s_t} = \begin{m} s_{t1} & \hdots & s_{t12} \end{m}
+\]
+\begin{align*}
+	\ve{t_t} = & \begin{m} \ve{s_{t-24}} & \hdots & \ve{s_t} \end{m} \\
+	\ve{t_t} = & \begin{m} s_{(t-24)1} & \hdots & s_{(t-24)12} \hdots s_{t1} & \hdots & s_{t12} \end{m}
+\end{align*}
+
+\begin{align*}
+	\ve{u_t} = & \begin{m} f_{t1} & \hdots & f_{t12} \hdots a_{t1} & \hdots & a_{t12} & \hdots & \hat{s_{t1}} & \hdots & \hat{s_{t12}} \end{m}
+\end{align*}
+
+\end{document}
