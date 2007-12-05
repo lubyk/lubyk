@@ -11,7 +11,7 @@ template<typename T>
 class TMatrix
 {
 public:
-  TMatrix() :  data(NULL), mStorageSize(0), mRowCount(1), mColCount(0), mErrorBuffer(NULL), mErrorBufferSize(0)
+  TMatrix() :  data(NULL), mStorageSize(0), mRowCount(0), mColCount(0), mErrorBuffer(NULL), mErrorBufferSize(0)
   {
     mErrorMsg = "no error";
   }
@@ -330,7 +330,14 @@ protected:
 };
 
 typedef TMatrix<double> Matrix;
-typedef TMatrix<int>    IntMatrix;
+
+class IntMatrix : public TMatrix<int>
+{
+public:
+  
+  /** Convert and append a vector of doubles to the end of the current data. Size increases automatically. */
+  bool append (const double * pVector, size_t pVectorSize, double pScale = 1.0);
+};
 
 /** Read-only matrix showing part of another matrix. */
 class CutMatrix : public Matrix

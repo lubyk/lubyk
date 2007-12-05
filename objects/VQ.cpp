@@ -16,8 +16,6 @@ enum vq_states_t {
 class VQ : public Node
 {
 public:
-  VQ() : mCodebook(NULL), mTrainingData(NULL), mVector(NULL), mDistances(NULL) {}
-  
   ~VQ()
   {
     mState = Waiting;
@@ -27,38 +25,59 @@ public:
       fclose(mTrainFile);
       mTrainFile = NULL;
     }
-    if (mTrainingData) free(mTrainingData);
-    if (mCodebook)     free(mCodebook);
-    if (mVector)       free(mVector);
-    if (mDistances)    free(mDistances);
   }
   
   bool init (const Params& p)
   {
-    mVectorSize   = p.val("vector", 8);        /**< Dimension of each vector. */
-    mCodebookSize = p.val("resolution", 16); /**< Codebook size. The result will be an integer between
-                                               *  [1..resolution]. Must be a power of 2. */
-    mScale        = p.val("scale", 256.0);   /**< Value to multiply doubles before scaling to integers. */
-    mFolder       = p.val("data", std::string("data"));
+    mVector.set_sizes(1,8);
+    mTrainingData.set_sizes(0,8);
+    mCodebook.set_sizes(8,8);
+    mFolder = "data";
     
     mThread    = NULL;
     mTrainFile = NULL;
     
-    /** Allocate codebook. */
-    mCodebook = (int*)malloc(mCodebookSize * mVectorSize * sizeof(int));
-    if (!mCodebook) {
-      *mOutput << mName << ": could not allocate " << mCodebookSize * mVectorSize << " integers for codebook.\n";
-      return false;
+    return set(p);
+  }
+  
+  bool set (const Params& p)
+  {
+    size_t size;
+    bool code_book_needs_resize = false;
+    if (p.get(&size, "vector")) {
+      if (size != mVector.col_count()) {
+        code_book_needs_resize = true;
+        if(!mVector.set_sizes(1,size)) {
+          *mOutput << mName << ": could not allocate vector (" << mVector.error_msg() << ").\n";
+          return false;
+        }
+      
+        if(!mTrainingData.set_sizes(0,mVector.col_count()) {
+          *mOutput << mName << ": could not allocate training matrix (" << mTrainingData.error_msg() << ").\n";
+          return false;
+        }
+      }
     }
     
-    if (!alloc_doubles(&mDistances, mCodebookSize, "distance probabilities")) return false;
-    
-    /** Allocate mVector. */
-    mVector = (int*)malloc(mVectorSize * sizeof(int));
-    if (!mCodebook) {
-      *mOutput << mName << ": could not allocate " << mVectorSize << " integers for encoding vector.\n";
-      return false;
+    if (p.get(&size, "resolution")) {/**< Codebook size. The result will be an integer between [1..resolution]. Must be a power of 2. */
+      size_t i = 1;
+      while(i < size) i *= 2;
+      if (i != size) {
+        *mOutput << mName << ": incorrect resolution size " << size << " should be a power of 2 (" << i << ").\n";
+        return false;
+      }
+      if(!mCodebook.set_sizes(size,mVector.col_count())) {
+        *mOutput << mName << ": could not allocate codebook (" << mCodebook.error_msg() << ").\n";
+        return false;
+      }
+    } else if (code_book_needs_resize) {
+      if(!mCodebook.set_sizes(mCodebook.row_count(), mVector.col_count())) {
+        *mOutput << mName << ": could not allocate codebook (" << mCodebook.error_msg() << ").\n";
+        return false;
+      }
     }
+    mScale        = p.val("scale", mCodebook.col_count());   /**< Value to multiply doubles before scaling to integers. */
+    mFolder       = p.val("data", mFolder);
     
     mState = Waiting;
     enter(Label);
@@ -70,7 +89,7 @@ public:
   void bang(const Signal& sig)
   { 
     int cmd;
-    if (!mIsOK) return; // no recovery
+    if (!mIsOK) return; // only recover after 'set'
     
     switch(mState) {
     case Waiting:
@@ -81,12 +100,19 @@ public:
     case Recording:
       if (sig.get(&cmd)) {
         do_command(cmd);
-      } else if (sig.type == ArraySignal) {
-        if (sig.array.size == mVectorSize) {
-          write_vector(sig.array.value);
-          if (mDebug) *mOutput << mName << ": recorded vector '" << mTrainingSize << "'.\n";
+      } else if (sig.type == MatrixSignal) {
+        if (sig.matrix.value->col_count() == mVector.col_count()) {
+          if (!mTrainFile) return;
+          
+          sig.matrix.value->to_file(mTrainFile);
+          mTrainingData.append(sig.matrix.value->data, sig.matrix.value->size(), mScale);
+          if (mDebug) *mOutput << mName << ": recorded vector '" << mTrainingData.row_count() << "'.\n";
+          
+          
+          /// UPDATE UP TO HERE
+          
         } else {
-          *mOutput << mName << ": wrong signal size '" << sig.array.size << "'. Should be '" << mVectorSize << "'.\n";
+          *mOutput << mName << ": wrong signal size '" << sig.matrix.value->col_count() << "'. Should be '" << mVector.col_count() << "'.\n";
         }
       }
       break;
@@ -204,18 +230,6 @@ private:
       }
     fclose(file);
     return true;
-  }
-  
-  /** Save a vector to the training database (on file and in memory). */
-  void write_vector(double * vector)
-  {
-    if (!mTrainFile) return;
-    for(int i=0; i < mVectorSize; i++)
-      fprintf(mTrainFile, " % .5f", (float)vector[i]);
-      
-    fprintf(mTrainFile, "\n");
-    
-    add_to_database(vector);
   }
   
   void enter(vq_states_t state)
@@ -418,16 +432,12 @@ private:
   pthread_t mThread;       /**< Used for learning. */
   std::string mFolder;     /**< Where to store training data, codebook vectors. */
   
-  int       mVectorSize;   /**< Dimension of a vector. */
-  int  *    mVector;       /**< Integer version of the live vector used during encoding. */
+  IntMatrix mVector;       /**< Integer version of the live vector used during encoding. */
   double    mScale;        /**< Value to multiply doubles before conversion to integer. */
-  int  *    mCodebook;     /**< Array of mCodebookSize pointers to vectors of size mVectorSize of integers. */
-  double *  mDistances;    /**< Distance to each code word. */
-  int  *    mTrainingData; /**< Array of mTrainingSize pointers to vectors of size mVectorSize of integers. */
+  IntMatrix mCodebook;     /**< Matrix of mCodebookSize x mVectorSize. */
+  Matrix    mDistances;    /**< Distance to each code word. */
+  IntMatrix mTrainingData; /**< Matrix of mTrainingSize x mVectorSize. Used during training. */
   FILE *    mTrainFile;    /**< Where the training vectors are stored. */
-  int       mTrainingDataSize;  /**< Size of mTrainingData buffer. */
-  int       mTrainingSize;  /**< Number of training vectors. */
-  int       mCodebookSize; /**< Number of prototypes. */
 };
 
 extern "C" void init()

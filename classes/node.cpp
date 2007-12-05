@@ -87,7 +87,7 @@ void Node::execute_method (const std::string& pMethod, const Params& p)
   } else if (pMethod == "debug" || pMethod == "d" ){
     debug();
   } else if (pMethod == "set" || pMethod == "s" ){
-    if(!set(p)) mIsOK = false;
+    mIsOK = set(p);
   } else if (mClass->get_member_method(&method, pMethod)) {
     (*method)(this, p);
   } else {

@@ -690,6 +690,22 @@ inline bool TMatrix<T>::check_sizes(const char * pMsg, size_t * start_row, size_
 }
 
 
+bool IntMatrix::append (const double * pVector, size_t pVectorSize, double pScale)
+{
+  if (pVectorSize % mColCount != 0) {
+    set_error("could not append vector: column count not matching (%i is not a multiple of %i)", pVectorSize, mColCount);
+    return false;
+  }
+  size_t current_size = mRowCount * mColCount;
+  if(!check_alloc(current_size + pVectorSize)) return false;
+  // copy
+  for(size_t i=0; i< pVectorSize; i++)
+    data[current_size + i] = (int)(pVector[i] * pScale);
+  
+  mRowCount += pVectorSize / mColCount;
+  return true;
+}
+
 /// explicit instanciation for doubles and integers //////
 template bool TMatrix<double>::add(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale);
 template bool TMatrix< int  >::add(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale);
