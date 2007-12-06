@@ -24,6 +24,8 @@ public:
     TS_ASSERT_EQUALS( res, 1.0);
   }
   
+  // FIXME: test bool
+  
   void testGetIndex( void )
   {
     double res;

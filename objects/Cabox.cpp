@@ -6,35 +6,29 @@ class Cabox : public Serial
 public:
   
   bool init (const Params& p)
-  {
-    size_t buffer_size = p.val("buffer", 1);
-    if (buffer_size < 1) buffer_size = 1;
-    
-    mBuffer.set_sizes(buffer_size, 12);
+  { 
+    mBuffer.set_sizes(1, 12);
     mOffset.set_sizes(1,12);
     
     mBuffer.clear();
     mOffset.clear();
     
-    mHighestValue = 0.0;
-    mHighestDirection = 0;
-    mFindHighestValue = 0.0;
+    mHighestValue         = 0.0;
+    mHighestDirection     = 0;
+    mFindHighestValue     = 0.0;
     mFindHighestDirection = 0;
-    mVectorRateCounter = 0;
-    mRate       = 0.0;
-    mRateStart      = mServer->mCurrentTime;
+    mVectorRateCounter    = 0;
+    mRate                 = 0.0;
+    mRateStart            = mServer->mCurrentTime;
     
+
     mIndex  = 0;
     mVector = mBuffer.advance();
     mState  = -3; // wait for sync
     mOffsetOnFull = true; // do not offset when 12 values are set
     
-    if (init_serial(p))
-    {
-      // enter read data
-      return mPort.write_char('b');
-    } else
-      return false;
+    if (!init_serial(p)) return false;
+    return true;
   }
   
   bool set (const Params& p)

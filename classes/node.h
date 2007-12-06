@@ -38,7 +38,7 @@ public:
   
   virtual ~Node();
   
-  bool init( const Params& p) { return set(p); }
+  bool init(const Params& p) { return true; }
   
   /** Add an inlet with the given callback (used by Class during instantiation). */
   void add_inlet(inlet_method_t pCallback)
@@ -156,6 +156,14 @@ public:
     send(mS, pPort);
   }
   
+  /** Send a Matrix. */
+  inline void send(const Matrix& pMat, size_t pPort = 1)
+  {
+    mS.type = MatrixSignal;
+    mS.matrix.value = &pMat;
+    send(mS, pPort);
+  }
+  
   inline void send(const MidiMessage& pMsg, size_t pPort = 1)
   {
     send(Signal(pMsg), pPort);
@@ -262,6 +270,9 @@ protected:
   
   /** Print message into buffer. */
   void bprint (char *& pBuffer, size_t& pBufferSize, const char *fmt, ...);
+  
+  /** Print message into string. */
+  void bprint (std::string& pStr, const char *fmt, ...);
   
   /** Allocate/Reallocate T and print an error message if it fails. */
   template<class T>

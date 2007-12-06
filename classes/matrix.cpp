@@ -1,6 +1,7 @@
 #include "Matrix.h"
 #include "rubyk_signal.h"
 
+#include <errno.h>     // Error number definitions
 #include <cstdlib>
 #include <cstdio>
 
@@ -88,6 +89,27 @@ bool TMatrix<int>::from_file(FILE * pFile)
   }
   return true;
 }
+
+
+/** Write a matrix to a filepath. */
+template<typename T>
+bool TMatrix<T>::to_file(const std::string& pPath, const char * pMode) const
+{
+  // 1. write to file
+  FILE * file = fopen(pPath.c_str(), pMode);
+    if (!file) {
+      // too bad, we need this to be 'const' so we cannot use set_error...
+      // set_error("could not write to '%s' (%s)", pPath.c_str(), strerror(errno));
+      return false;
+    }
+    if (!to_file(file)) {
+      fclose(file);
+      return false;
+    }
+  fclose(file);
+  return true;
+}
+
 
 template<>
 bool TMatrix<double>::to_file(FILE * pFile) const
@@ -709,6 +731,8 @@ bool TMatrix<T>::cast_append (const V * pVector, size_t pVectorSize, double pSca
 
 
 /// explicit instanciation for doubles and integers //////
+template bool TMatrix<double>::to_file(const std::string& pPath, const char * pMode) const;
+template bool TMatrix< int  >::to_file(const std::string& pPath, const char * pMode) const;
 template bool TMatrix<double>::add(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale);
 template bool TMatrix< int  >::add(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale);
 template bool TMatrix<double>::add(const double * pVector, size_t pVectorSize);

@@ -3,14 +3,6 @@
 class Average : public Node
 {
 public:
-  Average() : mMatrix(NULL) {}
-  
-  ~Average() {}
-  
-  bool init (const Params& p)
-  {  
-    return true;
-  }
   
   // inlet 1
   void bang(const Signal& sig)

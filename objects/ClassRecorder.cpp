@@ -1,6 +1,5 @@
 
 #include "class.h"
-#include <errno.h>     // Error number definitions
 #include <sys/types.h> // directory listing
 #include <dirent.h>    // directory listing
 
@@ -16,35 +15,37 @@ enum class_recorder_states_t {
 class ClassRecorder : public Node
 {
 public:
-  virtual ~ClassRecorder ()
-  {
-    if (mBuffer)     free(mBuffer);
-    if (mMeanVector) free(mMeanVector);
-  }
-
+  
   bool init(const Params& p)
   {
-    mVectorSize = p.val("vector", 32);
-    mTempo      = p.val("tempo", 120);
-    mUnitSize   = p.val("unit", 1);    // number of values form a sample
-    mSampleRate = p.val("rate", 256);  // number of samples per second
-    mMargin     = p.val("margin", 2.0);
-    mFolder     = p.val("data", std::string("data"));
-    mUseSnap    = p.val("snap", 1) == 1 ;
-    
-    mBufferSize = mVectorSize * (1.0 + mMargin);
-    mLiveBuffer = NULL;
-    mTrainFile  = NULL;
-    mClassLabel = 0;
-    
-    mVectorCount = 0; // current mean value made of '0' vectors
-    if (!alloc_doubles(&mMeanVector, mVectorSize, "mean vector")) return false;
-    // clear mMeanVector
-    for(int i=0; i < mVectorSize; i++) mMeanVector[i] = 0.0;
-    
-    if (!alloc_doubles(&mBuffer, mBufferSize, "buffer")) return false;
+    // defaults
+    mTempo       = 120;
+    mSampleRate  = 256;
+    mMargin      = 2.0;
+    mFolder      = "data";
+    mUseSnap     = true;
+    mClassLabel  = 0;
+    mVectorCount = 0;
+    mTrainFile   = NULL;
+    mMeanSignal.set(mMeanVector);
+    mLiveSignal.set(mLiveView);
+    mS.set(mView);
+
+    if (!resize(4,8)) return false;
     
     enter(ReadyToRecord);
+    return true;
+  }
+
+  bool set(const Params& p)
+  {
+    // vector sizes is set from incomming stream
+    p.get(&mTempo     ,"tempo");
+    p.get(&mSampleRate,"rate");
+    p.get(&mMargin    ,"margin");
+    p.get(&mFolder    ,"data");
+    p.get(&mUseSnap   ,"snap");
+    
     return true;
   }
 
@@ -55,16 +56,11 @@ public:
     
     if (!mIsOK) return; // no recovery
     
-    if (sig.type == ArraySignal) {
-      if (sig.array.size >= mBufferSize) {
-        mLiveBuffer     = sig.array.value;
-        mLiveBufferSize = sig.array.size;
-      } else {
-        *mOutput << mName << ": wrong signal size " << sig.array.size << " should be " << mBufferSize << " (with margin)\n.";
-        return;
-      }
+    if (sig.type == MatrixSignal) {
+      if (!resize(sig.matrix.value->row_count(), sig.matrix.value->col_count())) return;
+      sig.get(&mLiveBuffer);
     } else {
-      time_t record_time = (time_t)(ONE_SECOND * mVectorSize)/(mUnitSize * mSampleRate);
+      time_t record_time = (time_t)(ONE_SECOND * mBuffer.row_count())/(mBuffer.col_count() * mSampleRate);
       time_t record_with_margin = record_time * (1 + mMargin); //  * (1 + mMargin/2.0) ???
       time_t countdown_time;
       if (record_time > 500)
@@ -97,21 +93,37 @@ public:
           break;
         } else if (cmd == ' ') {
           // swap snap style
-          if (mUseVectorOffset == mVectorOffset) {
-            mUseVectorOffset = mBufferSize - mVectorSize * (1 + mMargin/2.0);
+          if (mView.data != mBuffer.data) {
+            if (!mView.set_view(mBuffer, mRowMargin, mRowMargin + mMeanVector.row_count() - 1)) {
+              *mOutput << mName << ": mView (" << mView.error_msg() << ").\n";
+              return;
+            }
             *mOutput << mName << ": no-snap\n~> ";
           } else {
-            mUseVectorOffset = mVectorOffset;
+            if (!mView.set_view(mBuffer, mVectorOffset, mVectorOffset + mMeanVector.row_count() - 1)) {
+              *mOutput << mName << ": mView (" << mView.error_msg() << ").\n";
+              return;
+            }
             *mOutput << mName << ": snap\n~> ";
           }
           break;
         } else if (cmd == RK_RIGHT_ARROW) { // -> right arrow 301
-          mUseVectorOffset += mUnitSize;
-          if (mUseVectorOffset > mBufferSize - mVectorSize) mUseVectorOffset = mBufferSize - mVectorSize;
+          mVectorOffset += mBuffer.col_count();
+          if (mVectorOffset > mBuffer.row_count() - mMeanVector.row_count()) mVectorOffset = mBuffer.row_count() - mMeanVector.row_count();
+          
+          if (!mView.set_view(mBuffer, mVectorOffset, mVectorOffset + mMeanVector.row_count() - 1)) {
+            *mOutput << mName << ": mView (" << mView.error_msg() << ").\n";
+            return;
+          }
           break;
         } else if (cmd == RK_LEFT_ARROW) { // <- left arrow  302
-          mUseVectorOffset -= mUnitSize;
-          if (mUseVectorOffset < 0) mUseVectorOffset = 0;
+          mVectorOffset -= mBuffer.col_count();
+          if (mVectorOffset < 0) mVectorOffset = 0;
+          
+          if (!mView.set_view(mBuffer, mVectorOffset, mVectorOffset + mMeanVector.row_count() - 1)) {
+            *mOutput << mName << ": mView (" << mView.error_msg() << ").\n";
+            return;
+          }
           break;
         } else {
           // any character: save and continue
@@ -132,102 +144,81 @@ public:
     }
     
     // send mean value
-    if (mMeanVector) {
-      mS.array.value = mMeanVector;
-      mS.array.size  = mVectorSize;
-      mS.type  = ArraySignal;
-      send(mS, 2);
-    }
+    send(mMeanSignal, 2);
     
-    if (mState == Validation) {
-      // recorded signal
-      mS.array.value = mBuffer + mUseVectorOffset;
-      mS.array.size  = mVectorSize;
-      mS.type  = ArraySignal;
-      send(mS);
-    } else {
-      // live signal
-      mS.array.value = mLiveBuffer + mLiveBufferSize - mVectorSize;
-      mS.array.size  = mVectorSize;
-      mS.type  = ArraySignal;
-      send(mS);
-    }
-    
+    if (mState == Validation)
+      send(mS);        // recorded signal
+    else
+      send(mLiveSignal); // live signal
   }
   
 private:
   
   void receive_data()
   {
-    double * vector;
-    if (!mLiveBuffer) {
+    if (!mHasLiveData) {
       *mOutput << mName << ": no data to record (no stream coming from inlet 1).\n";
-      mBuffer = NULL;
       return;
     }
     
     // copy data into our local buffer
-    memcpy(mBuffer, mLiveBuffer + mLiveBufferSize - mBufferSize, mBufferSize * sizeof(double));
+    mBuffer.copy(*mLiveBuffer);
     
-    if (mVectorCount) {
+    if (mRowMargin) {
       // try to find the best bet by calculating minimal distance
       double distance, min_distance = -1.0;
       double d;
-      int   delta_used = mBufferSize - mVectorSize;
-      for(int j = mBufferSize - mVectorSize; j >= 0; j -= mUnitSize) {
+      double * vector;
+      double * mean = mMeanVector.data;
+      int   delta_used = mBuffer.row_count() - mMeanVector.row_count();
+      for(size_t j = mBuffer.row_count() - mMeanVector.row_count(); j >= 0; j--) {
         distance = 0.0;
-        vector = mBuffer + j;
-        for(int i=0; i < mVectorSize; i++) {
-          d = (mMeanVector[i] - vector[i]) ;
+        vector = mBuffer[j];
+        for(size_t i=0; i < mBuffer.col_count(); i++) {
+          d = (mean[i] - vector[i]) ;
           if (d > 0)
             distance += d;
           else
             distance -= d;
         }
-        distance = distance / mVectorSize;
+        distance = distance / mBuffer.col_count();
         if (min_distance < 0 || distance < min_distance) {
           delta_used = j;
           min_distance = distance;
         }
       }
       mVectorOffset = delta_used;
-      bprint(mBuf,mBufSize, ": distance to mean vector %.3f (delta %i/%i)\nKeep ? ~> ", min_distance, delta_used, mBufferSize - mVectorSize - delta_used);
-      *mOutput << mName << mBuf;
+      *mOutput << mName << ": distance to mean vector " << min_distance << " (delta " << delta_used << "/" << mBuffer.row_count() - mMeanVector.row_count() << ")\nKeep ? ~> ";
       fflush(stdout); // FIXME: should be related to *mOutput
     } else {
-      mVectorOffset = mBufferSize - mVectorSize * (1 + mMargin/2.0);
+      mVectorOffset = mBuffer.row_count() - mMeanVector.row_count();
       *mOutput << mName << ":~> Keep ? ";
       fflush(stdout); // FIXME: should be related to *mOutput
     }
-    if (mUseSnap)
-      mUseVectorOffset = mVectorOffset;
-    else
-      mUseVectorOffset = mBufferSize - mVectorSize * (1 + mMargin/2.0);
+    
+    if (mUseSnap) {
+      if (!mView.set_view(mBuffer, mVectorOffset, mVectorOffset + mMeanVector.row_count() - 1)) {
+        *mOutput << mName << ": mView (" << mView.error_msg() << ").\n";
+        return;
+      }
+    } else {
+      
+      if (!mView.set_view(mBuffer, mRowMargin, mRowMargin + mMeanVector.row_count() - 1)) {
+        *mOutput << mName << ": mView (" << mView.error_msg() << ").\n";
+        return;
+      }
+    }
   }
   
   void store_data()
   {
-    double * vector = mBuffer + mUseVectorOffset;
-    
-    if (!mBuffer) {
-      *mOutput << mName << "(error): could not save data (empty buffer)\n~> ";
-      return;
-    }
     // 1. write to file
-    FILE * file = fopen(mClassFile.c_str(), "ab");
-      if (!file) {
-        *mOutput << mName << "(error): could not write to '" << mClassFile << "' (" << strerror(errno) << ")\n~> ";
-        return;
-      }
-      for(int i=0; i< mVectorSize; i++) {
-        fprintf(file, " % .5f", vector[i]);
-        if ((i+1)%mUnitSize == 0)
-          fprintf(file, "\n");
-      }  
-      fprintf(file, "\n");  // two \n\n between vectors
-    fclose(file);
+    if (!mView.to_file(mClassFile, "ab")) {
+      *mOutput << mName << ": could not write vector (" << mView.error_msg() << ")\n";
+    }
+    
     // 2. update mean value
-    update_mean_value(vector);
+    update_mean_value(mView);
   }
   
   void prepare_class_for_recording(int cmd)
@@ -248,76 +239,108 @@ private:
       mState = pState;
       *mOutput << mName << ": Ready to record\n~> ";
       break;
+    case Recording:
+      mHasLiveData = false;
+      break;
     default:
       mState = pState;
     }
   }
   
   /** Update the mean value with the current vector. */
-  void update_mean_value(double* vector)
+  void update_mean_value(const Matrix& pVector)
   {
     mVectorCount++;
-    double map = (double)(mVectorCount - 1) / (double)(mVectorCount);
-    for(int i=0; i < mVectorSize; i++) {
-      mMeanVector[i] = (mMeanVector[i] * map) + ( vector[i] / (double)mVectorCount );
-    }
+    double map = (double)(mVectorCount - 1) / (double)(mVectorCount);  // avg = (avg * (n-1)/n) + value/n
+    mMeanVector *= map;
+    mMeanVector.add(pVector, 0, -1, 1.0 / mVectorCount);
   }
   
   /** Execute the function for each vector contained in the class. */
-  void load_class(int cmd, void (ClassRecorder::*function)(double*))
+  void load_class(int cmd, void (ClassRecorder::*function)(const Matrix& pVector))
   {
+    Matrix vector;
+    vector.set_sizes(1, mMeanVector.col_count());
+    
     mClassLabel = cmd;
     /** reset mean value. */
     mVectorCount = 0;
-    for(int i=0; i < mVectorSize; i++) mMeanVector[i] = 0.0;
+    mMeanVector.clear();
     
     // 1. find file
     mClassFile = mFolder;
-    bprint(mBuf, mBufSize, "/class_%i.txt", cmd);
-    mClassFile.append(mBuf);
+    std::string str;
+    bprint(str,"/class_%i.txt", cmd);
+    mClassFile.append(str);
     
     // 2. open
-    FILE * file;
-    float val;
-    int    value_count = 0;
-    file = fopen(mClassFile.c_str(), "rb");
+    FILE * file = fopen(mClassFile.c_str(), "rb");
       if (!file) {
         *mOutput << mName << ": new class\n";
-        //*mOutput << mName << "(error): could not read from '" << mClassFile << "' (" << strerror(errno) << ")\n"
         return;
       }
       // read a vector
-      while(fscanf(file, " %f", &val) != EOF) {
-        fscanf(file, "\n"); // ignore newline
-        mBuffer[value_count] = (double)val;
-        if (value_count >= mVectorSize - 1) {
-          // got one vector
-          (this->*function)(mBuffer);
-          value_count = 0;
-        } else
-          value_count++;
-      }
+      while(vector.from_file(file)) (this->*function)(vector);
+    
     fclose(file);
   }
   
+  // resize internal buffers from incomming stream
+  bool resize(size_t pRowCount, size_t pColCount)
+  {
+    if (mBuffer.row_count() != pRowCount || mBuffer.col_count() != pColCount) {
+      size_t vector_size = pRowCount / (1.0 + mMargin);
+      mRowMargin = (pRowCount - vector_size) / 2;
+      
+      if(!mBuffer.set_sizes(pRowCount, pColCount)) {
+        *mOutput << mName << ": mBuffer (" << mBuffer.error_msg() << ").\n";
+        return false;
+      }
+      if (!mMeanVector.set_sizes(vector_size, pColCount)) {
+        *mOutput << mName << ": mMeanVector (" << mMeanVector.error_msg() << ").\n";
+        return false;
+      }
+      if (!mView.set_view(mBuffer, mRowMargin, mRowMargin + mMeanVector.row_count() - 1)) {
+        *mOutput << mName << ": mView (" << mView.error_msg() << ").\n";
+        return false;
+      }
+      if (!mLiveView.set_view(*mLiveBuffer, -mMeanVector.row_count(), -1)) {
+        *mOutput << mName << ": mLiveView (" << mLiveView.error_msg() << ").\n";
+        return false;
+      }
+      *mOutput << mName << ": resized to " << mMeanVector.row_count() << "x" << mMeanVector.col_count() << " (removed margin).\n";
+      mMeanVector.clear();
+    }
+    return true;
+  }
+  
   class_recorder_states_t mState;
-  std::string mFolder; /**< Folder containing the class data. */
-  std::string mClassFile; /**< Current class data file. */
+  
+  std::string mFolder;        /**< Folder containing the class data.   */
+  std::string mClassFile;     /**< Current class data file.            */
   FILE * mTrainFile;
 
-  bool mUseSnap;      /**< True if the recording should snap to the best match. Usually better without. */
+  bool mUseSnap;              /**< True if the recording should snap to the best match. Usually better without. */
   
-  int mVectorOffset;     /**< Best match with this offset in mBuffer. */
-  int mUseVectorOffset;  /**< Offset to use. */
-  Matrix * mLiveBuffer; /**< Pointer to the current buffer window. Content can change between calls. */
-  Matrix mMeanVector; /**< Store the mean value for all vectors from this class. */
-  Matrix mBuffer;     /**< Store a single vector +  margin. */
-  double mMargin;     /**< Size (in %) of the margin. */
-  int mVectorCount;    /**< Number of vectors used to build the current mean value. */
-  int mTempo;          /**< Tempo for countdown and recording. */
+  size_t mVectorOffset;       /**< Best match with this offset in mBuffer.                                      */
+  
+  bool      mHasLiveData;     /**< Make sure we record new data. */
+  const Matrix * mLiveBuffer; /**< Pointer to the current buffer window. Content can change between calls.      */
+  CutMatrix mLiveView;        /**< Live stream view. Points inside mLiveBuffer.                                 */
+  Signal    mLiveSignal;      /**< Used to send mLiveView                                                       */
+  
+  Signal mMeanSignal;         /**< Used to send mean value.                                                     */
+  Matrix mMeanVector;         /**< Store the mean value for all vectors from this class.                        */
+  
+  Matrix mBuffer;             /**< Store a single vector +  margin.                                             */
+  CutMatrix mView;            /**< Resulting view of the data (points inside mBuffer).                          */
+  double mMargin;             /**< Size (in %) of the margin.                                                   */
+  size_t mRowMargin;          /**< Number of rows on each side of the vector (mBuffer.row_count() * margin/2).  */
+  size_t mVectorCount;        /**< Number of vectors used to build the current mean value.                      */
+  int mTempo;                 /**< Tempo for countdown and recording.                                           */
 
-  int mClassLabel; /**< Current label. Used during recording and recognition. */
-  int mSampleRate; /**< Number of samples per second (used to compute recording time). */
+  int mClassLabel;            /**< Current label. Used during recording and recognition.                        */
+  int mSampleRate;            /**< Number of samples per second (used to compute recording time).               */
 };
 
 

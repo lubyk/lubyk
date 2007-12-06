@@ -132,6 +132,9 @@ template<>
 int Params::cast_param (const std::string& value) const;
 
 template<>
+bool Params::cast_param (const std::string& value) const;
+
+template<>
 unsigned int Params::cast_param (const std::string& value) const;
 
 template<>

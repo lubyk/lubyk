@@ -52,7 +52,7 @@ public:
         return false;
       }
       if(!mCodebook.set_sizes(row_count,col_count)) {
-        *mOutput << mName << ": could not allocate codebook (" << mCodebook.error_msg() << ").\n";
+        *mOutput << mName << ": codebook (" << mCodebook.error_msg() << ").\n";
         return false;
       }
     }
@@ -216,7 +216,7 @@ private:
         }
       }  
       if(!mTrainingData.set_sizes(0,mCodebook.col_count())) {
-        *mOutput << mName << ": could not allocate training matrix (" << mTrainingData.error_msg() << ").\n";
+        *mOutput << mName << ": training matrix (" << mTrainingData.error_msg() << ").\n";
         return;
       }
       *mOutput << mName << ": recording started.\n";
@@ -258,7 +258,7 @@ private:
         }
         
         if(!mTrainingData.set_sizes(0,mCodebook.col_count())) {
-          *mOutput << mName << ": could not allocate training matrix (" << mTrainingData.error_msg() << ").\n";
+          *mOutput << mName << ": training matrix (" << mTrainingData.error_msg() << ").\n";
           return;
         }
         // 2. load all training vectors in memory
@@ -282,7 +282,7 @@ private:
     if(!alloc_ints(&nearest_cb, mTrainingData.row_count(), "nearest codebook")) return;
     
     if(!int_codebook.set_sizes(mCodebook.row_count(), mCodebook.col_count())) {
-      *mOutput << mName << ": could not set size of 'integer codebook' (" << mCodebook.error_msg() << ")\n";
+      *mOutput << mName << ": integer codebook (" << mCodebook.error_msg() << ")\n";
       return;
     }
     
@@ -303,7 +303,7 @@ private:
     
     // 5. copy integer codebook to double codebook
     if (!mCodebook.set_sizes(0, int_codebook.col_count())) {
-      *mOutput << mName << ": could not reset mCodebook sizes (" << mCodebook.error_msg() << ")\n";
+      *mOutput << mName << ": mCodebook (" << mCodebook.error_msg() << ")\n";
       return;
     }
     

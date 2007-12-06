@@ -84,6 +84,12 @@ std::ostream& operator<<(std::ostream& pStream, const Params& p)
 }
 
 template<>
+bool Params::cast_param (const std::string& value) const
+{
+  return (value == "true" || value == "yes" || value == "y" || atoi(value.c_str()) != 0);
+}
+
+template<>
 int Params::cast_param(const std::string& value) const
 {
   return atoi(value.c_str());

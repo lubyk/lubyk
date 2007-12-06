@@ -57,13 +57,56 @@ void Node::bprint(char *& pBuffer, size_t& pBufferSize, const char *fmt, ...)
         pBufferSize = n+1; /* precisely what is needed */
      else           /* glibc 2.0 */
         pBufferSize *= 2;  /* twice the old size */
-     if ((np = (char*)realloc (pBuffer, pBufferSize)) == NULL) {
+     if ((np = (char*)realloc (pBuffer, pBufferSize * sizeof(char))) == NULL) {
          pBuffer[pBufferSize - 1] = '\0';
         return; // no more memory. fail.
      } else {
         pBuffer = np;
      }
   }
+}
+
+/** Print message into string. */
+void bprint (std::string& pStr, const char *fmt, ...)
+{
+  int n;
+  char * np;
+  va_list ap;
+
+  size_t buf_size;
+  char * buf = (char*)malloc(START_PRINT_BUFFER * sizeof(char));
+  if (buf) buf_size = START_PRINT_BUFFER;
+  else {
+    pStr = "no more memory!";
+    return;
+  }
+  
+  while (1) {
+     /* try to print in the allocated space. */
+     va_start(ap, fmt);
+     n = vsnprintf (buf, buf_size, fmt, ap);
+     va_end(ap);
+     /* if that worked, return the string. */
+     if (n > -1 && n < (int)buf_size) {
+       pStr = buf;
+       free(buf);
+       return; // OK
+     }
+     /* else try again with more space. */
+     if (n > -1)    /* glibc 2.1 */
+        buf_size = n+1; /* precisely what is needed */
+     else           /* glibc 2.0 */
+        buf_size *= 2;  /* twice the old size */
+     if ((np = (char*)realloc (buf, buf_size * sizeof(char))) == NULL) {
+       if (buf) free(buf);
+       pStr = "no more memory!";
+       return; // no more memory. fail.
+     } else {
+       buf = np;
+     }
+  }
+  pStr = buf;
+  free(buf);
 }
 
 const char * Node::inspect() {

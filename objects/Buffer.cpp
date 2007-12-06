@@ -7,17 +7,29 @@ class BufferNode : public Node
 {
 public:
   
+  bool init (const Params& p)
+  {
+    if(!mBuffer.set_sizes(32, 8)) return false;
+    mVector   = mBuffer.advance();
+    mColCount = mBuffer.col_count();
+    mIndex    = 0;
+    return true;
+  }
+  
+  
   bool set (const Params& p)
   {
-    size_t window_size = p.val("buffer", 32, true);
-    size_t vector_size = p.val("vector", 8);
-    if (!mBuffer.set_sizes(window_size, vector_size)) {
-      *mOutput << mName << ": " << mBuffer.error_msg() << std::endl;
-      return false;
+    size_t window_size = mBuffer.row_count();
+    size_t vector_size = mBuffer.col_count();
+    if (p.get(&window_size, "buffer", true) || p.get(&vector_size, "vector")) {
+      if (!mBuffer.set_sizes(window_size, vector_size)) {
+        *mOutput << mName << ": " << mBuffer.error_msg() << std::endl;
+        return false;
+      }
+      mVector   = mBuffer.advance();
+      mColCount = vector_size;
+      mIndex    = 0;
     }
-    mVector   = mBuffer.advance();
-    mColCount = vector_size;
-    mIndex    = 0;
     return true;
   }
   

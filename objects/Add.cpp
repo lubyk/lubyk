@@ -6,12 +6,17 @@
 class Add : public Node
 {
 public:
+  bool init (const Params& p)
+  {
+    mValue1 = 0;
+    mValue2 = 0;
+    return true;
+  }
   
   bool set (const Params& p)
   {
-    mValue1 = p.val("value1", 0);
-    mValue2 = p.val("value2", 0);
-    
+    p.get(&mValue1, "value1");
+    p.get(&mValue2, "value2");   
     return true;
   }
 

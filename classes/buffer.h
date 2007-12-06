@@ -37,6 +37,16 @@ public:
   {
     return mBuffer.error_msg();
   }
+  
+  size_t col_count()
+  {
+    return mBuffer.col_count();
+  }
+  
+  size_t row_count()
+  {
+    return mWindowSize;
+  }
 
 private:
   Matrix mBuffer;      /**< Contains N x window matrices. */

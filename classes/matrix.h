@@ -55,6 +55,9 @@ public:
   /** Write a matrix to a FILE pointer. */
   bool to_file(FILE * pFile) const;
   
+  /** Write a matrix to a filepath. */
+  bool to_file(const std::string& pPath, const char * pMode) const;
+  
   /** Fill a matrix from a FILE pointer.
     * @return false if there was not enough values to fill the matrix. */
   bool from_file(FILE * pFile);
@@ -379,7 +382,7 @@ public:
     mColCount = pColCount;
   }
   
-  bool set_view(const Matrix& pOther, int pStartRow, int pEndRow)
+  bool set_view(const Matrix& pOther, int pStartRow = 0, int pEndRow = -1)
   {
     if (pOther.mRowCount == 1) {
       // vector
