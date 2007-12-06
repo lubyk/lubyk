@@ -105,6 +105,10 @@ public:
   /** Append a vector to the end of the current data. Size increases automatically. */
   bool append (const T * pVector, size_t pVectorSize);
   
+  /** Cast & append a vector. Size increases automatically. */
+  template<typename V>
+  bool cast_append (const V * pVector, size_t pVectorSize, double pScale = 1.0);
+  
   /** Append another matrix/vector to the end of the current data. Size increases automatically. 
     * @param pStartRow   where to start copying the data from (default is 0).
     * @param pEndRow     last row to copy (default is -1 = last row).
@@ -329,15 +333,9 @@ protected:
   size_t mErrorBufferSize;
 };
 
-typedef TMatrix<double> Matrix;
+typedef TMatrix< int  > IntMatrix;
 
-class IntMatrix : public TMatrix<int>
-{
-public:
-  
-  /** Convert and append a vector of doubles to the end of the current data. Size increases automatically. */
-  bool append (const double * pVector, size_t pVectorSize, double pScale = 1.0);
-};
+typedef TMatrix<double> Matrix;
 
 /** Read-only matrix showing part of another matrix. */
 class CutMatrix : public Matrix

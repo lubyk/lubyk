@@ -32,7 +32,7 @@ class OrderedList
     ~OrderedList()
     {
       LinkedList<T> * tmp;
-      while(tmp = mTop->next) {
+      while( (tmp = mTop->next) ) {
         delete mTop;
         mTop = tmp;
       }

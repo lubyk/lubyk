@@ -689,8 +689,9 @@ inline bool TMatrix<T>::check_sizes(const char * pMsg, size_t * start_row, size_
   return true;
 }
 
-
-bool IntMatrix::append (const double * pVector, size_t pVectorSize, double pScale)
+template<typename T>
+template<typename V>
+bool TMatrix<T>::cast_append (const V * pVector, size_t pVectorSize, double pScale)
 {
   if (pVectorSize % mColCount != 0) {
     set_error("could not append vector: column count not matching (%i is not a multiple of %i)", pVectorSize, mColCount);
@@ -700,11 +701,12 @@ bool IntMatrix::append (const double * pVector, size_t pVectorSize, double pScal
   if(!check_alloc(current_size + pVectorSize)) return false;
   // copy
   for(size_t i=0; i< pVectorSize; i++)
-    data[current_size + i] = (int)(pVector[i] * pScale);
+    data[current_size + i] = (T)(pVector[i] * pScale);
   
   mRowCount += pVectorSize / mColCount;
   return true;
 }
+
 
 /// explicit instanciation for doubles and integers //////
 template bool TMatrix<double>::add(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale);
@@ -720,6 +722,15 @@ template bool TMatrix< int  >::append(const TMatrix& pOther, int pStartRow, int 
 template bool TMatrix<double>::multiply(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale);
 template bool TMatrix< int  >::multiply(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale);
 template bool TMatrix<double>::mat_multiply(const TMatrix& A, const TMatrix& B, const enum CBLAS_TRANSPOSE pTransA, const enum CBLAS_TRANSPOSE pTransB, double pScale);
+
+// cast append
+template bool TMatrix< int  >::cast_append<double> (const double * pVector, size_t pVectorSize, double pScale);
+template bool TMatrix<double>::cast_append< int  > (const int * pVector, size_t pVectorSize, double pScale);
+
+// we instanciate those as they can be used to 'scale & copy':
+template bool TMatrix<double>::cast_append<double> (const double * pVector, size_t pVectorSize, double pScale);
+template bool TMatrix< int  >::cast_append< int  > (const int * pVector, size_t pVectorSize, double pScale);
+
 // no mat_multiply for integers
 template bool TMatrix<double>::divide(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale);
 template bool TMatrix< int  >::divide(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale);
