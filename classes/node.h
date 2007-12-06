@@ -287,6 +287,16 @@ protected:
     return true;
   }
   
+  /** Helper to set a matrix size with error handling. */
+  bool set_size(Matrix& mat, size_t pRowCount, size_t pColCount, const char * pMsg)
+  {
+    if (!mat.set_sizes(pRowCount, pColCount)) {
+      *mOutput << mName << ": " << pMsg << " (" << mat.error_msg() << ")\n";
+      return false;
+    }
+    return true;
+  }
+  
   /** Allocate/reallocate doubles. Print an error on failure. */
   bool alloc_doubles(double ** pBuffer, size_t pSize, const char * pName)
   {

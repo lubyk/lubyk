@@ -260,7 +260,8 @@ private:
   void load_class(int cmd, void (ClassRecorder::*function)(const Matrix& pVector))
   {
     Matrix vector;
-    vector.set_sizes(1, mMeanVector.col_count());
+    
+    if (!set_size(vector, 1, mMeanVector.col_count(), "temporary vector")) return;
     
     mClassLabel = cmd;
     /** reset mean value. */
@@ -292,14 +293,9 @@ private:
       size_t vector_size = pRowCount / (1.0 + mMargin);
       mRowMargin = (pRowCount - vector_size) / 2;
       
-      if(!mBuffer.set_sizes(pRowCount, pColCount)) {
-        *mOutput << mName << ": mBuffer (" << mBuffer.error_msg() << ").\n";
-        return false;
-      }
-      if (!mMeanVector.set_sizes(vector_size, pColCount)) {
-        *mOutput << mName << ": mMeanVector (" << mMeanVector.error_msg() << ").\n";
-        return false;
-      }
+      if (!set_size(mBuffer,     pRowCount,   pColCount, "mBuffer")) return false;
+      if (!set_size(mMeanVector, vector_size, pColCount, "mMeanVector")) return false;
+      
       if (!mView.set_view(mBuffer, mRowMargin, mRowMargin + mMeanVector.row_count() - 1)) {
         *mOutput << mName << ": mView (" << mView.error_msg() << ").\n";
         return false;

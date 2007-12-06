@@ -3,39 +3,39 @@
 
 #define INITIAL_CLASS_COUNT 32
 
-/** Principal Component Analysis. */
+/** Principal Component Analysis. Input matrix is considered as a single vector of size row x col. */
 class PCA : public TrainedMachine
 {
 public:
-  PCA() : mBuffer(NULL), mWorkBuffer(NULL), mClasses(NULL), mMeanValue(NULL), mTransposedFile(NULL) {}
-  
-  virtual ~PCA ()
-  {
-    if (mBuffer)  free(mBuffer);            // FIXME: replace these buffers with Buf<double>
-    if (mWorkBuffer)  free(mWorkBuffer);    // FIXME: replace these buffers with Buf<double>
-    if (mClasses) free(mClasses);           // FIXME: replace these buffers with Buf<double>
-    if (mMeanValue) free(mMeanValue);       // FIXME: replace these buffers with Buf<double>
-    if (mTransposedFile) fclose(mTransposedFile);
-  }
 
   bool init(const Params& p)
   {
     if (!init_machine(p)) return false;
-    mTransposedFolder     = p.val("processed", std::string("processed")); // where to store training data transposed in new basis
-    mUnitSize   = p.val("unit", 1);
-    mTargetSize = p.val("keep", 4); // target dimension
-    if (mTargetSize > mVectorSize) {
-      *mOutput << mName << ": cannot keep more dimensions (" << mTargetSize << ") then vector size (" << mVectorSize << ").\n";
-      mTargetSize = mVectorSize;
-    }
+    mTransposedFolder = "processed"; // where to store training data transposed in new basis
     
-    
-    if(!alloc_doubles(&mBuffer, mVectorSize, "output stream")) return false;
-    if(!alloc_doubles(&mWorkBuffer, mVectorSize, "work buffer")) return false;
+    if (!set_size(mBuffer, 1, 32, "mBuffer")) return false;
+    if (!set_size(mWorkBuffer, 1, 32, "mWorkBuffer")) return false;
+
     load_model();
     return true;
   }
 
+  bool set(const Params& p)
+  {
+    size_t size;
+    p.get(&mTransposedFolder, "processed");
+    if (p.get(&size, "keep"))
+      if (!set_sizes(mBuffer, 1, 32, "mBuffer")) return false;
+    
+    return true;
+  }
+  
+  
+  ////// rewrite up to here /////////
+  
+  
+  
+  
   // inlet 1
   void bang (const Signal& sig)
   {
