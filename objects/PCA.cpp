@@ -13,53 +13,55 @@ public:
     if (!init_machine(p)) return false;
     mTransposedFolder = "processed"; // where to store training data transposed in new basis
     
-    if (!set_size(mBuffer, 1, 32, "mBuffer")) return false;
+    if (!set_size(mBuffer, 1, 8, "mBuffer")) return false;
     if (!set_size(mWorkBuffer, 1, 32, "mWorkBuffer")) return false;
-
+    if (!set_size(mMeanValue,  1, 32, "mMeanValue" )) return false;
+    if (!set_size(mBasis,      8, 32, "mMeanValue" )) return false;
+    mS.set(mBuffer);
     load_model();
     return true;
   }
 
   bool set(const Params& p)
   {
-    size_t size;
-    p.get(&mTransposedFolder, "processed");
-    if (p.get(&size, "keep"))
-      if (!set_sizes(mBuffer, 1, 32, "mBuffer")) return false;
+    size_t input_size  = mMeanValue.col_count();
+    size_t output_size = mBuffer.col_count();
     
+    p.get(&mTransposedFolder, "processed");
+    if (p.get(&output_size, "keep"))
+      if (!set_sizes(mBuffer, 1, output_size, "mBuffer")) return false;
+    
+    if (p.get(&input_size, "vector")) {
+      if (!set_sizes(mWorkBuffer, 1, size, "mWorkBuffer")) return false;
+      if (!set_sizes(mMeanValue,  1, size, "mMeanValue" )) return false;
+    }
+    
+    if (mBasis.col_count() != input_size || mBasis.row_count() != output_size) {
+      if (!set_size(mBasis, input_size, output_size, "mBasis" )) return false;
+    }
     return true;
   }
-  
-  
-  ////// rewrite up to here /////////
-  
-  
-  
   
   // inlet 1
   void bang (const Signal& sig)
   {
     if (!mIsOK) return; // no recovery
     
-    if (sig.type == ArraySignal) {
-      if (sig.array.size >= mVectorSize) {
-        mLiveBuffer     = sig.array.value;
-        mLiveBufferSize = sig.array.size;
-        
-        transpose_vector(mLiveBuffer);
-
-        // send
-        mS.type = ArraySignal;
-        mS.array.value = mBuffer;
-        mS.array.size  = mTargetSize;
-        if (mDebug)
-          std::cout << mName << ": " << mS << std::endl;
-        send(mS);
-      } else {
-        *mOutput << mName << ": wrong signal size " << sig.array.size << " should be " << mVectorSize << "\n.";
+    if (sig.type == MatrixSignal) {
+      if (sig.matrix.value->size() != mMeanValue.size()) {
+        *mOutput << mName << ": wrong signal size " << sig.matrix.value->size() << " should be " << mMeanValue.size() << "\n.";
+        return;
       }
+      sig.get(&mLiveBuffer);
+      
+      transpose_vector(mLiveBuffer);
+
+      // send
+      if (mDebug) std::cout << mName << ": " << mS << std::endl;
+      send(mS);
+      
     } else {
-      *mOutput << mName << ": wrong signal type (" << sig.type_name() << ") should be ArraySignal\n";
+      *mOutput << mName << ": wrong signal type (" << sig.type_name() << ") should be MatrixSignal\n";
       return;
     }
     
@@ -81,23 +83,18 @@ public:
   /** Command to print the current basis. */
   void basis()
   {
-    if (!mBasis) {
-      *mOutput << mName << ": basis not computed.\n";
-      return;
-    }
-    Matrix::print(mBasis, mTargetSize, mVectorSize, CblasRowMajor);
+    *mOutput << mName << ": " << mBasis << std::endl;
   }
     
 private:
-  inline void transpose_vector(double * vector)
+  inline void transpose_vector(const Matrix& pMat)
   {
     // remove mean value
-    for(int i=0; i < mVectorSize; i++) {
-      mWorkBuffer[i] = vector[i] - mMeanValue[i];
-    }
+    if(!mWorkBuffer.add(pMat, mMeanValue, 1.0, -1.0)) return;
 
     // change vector basis ( S' = SP' ) mBasis = P
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 1, mTargetSize, mVectorSize, 1, mWorkBuffer, mVectorSize, mBasis, mVectorSize, 0.0, mBuffer, mVectorSize);
+    mBuffer.mat_multiply(mWorkBuffer, mBasis, CblasNoTrans, CblasTrans);
+    //cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 1, mTargetSize, mVectorSize, 1, mWorkBuffer, mVectorSize, mBasis, mVectorSize, 0.0, mBuffer, mVectorSize);
   }
   
   bool compute_mean_vector(const std::string& filename, double * vector)

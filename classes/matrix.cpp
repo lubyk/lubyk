@@ -175,6 +175,57 @@ void TMatrix<int>::print(FILE * pFile) const
   }
 }
 
+
+template<>
+std::ostream& operator<< (std::ostream& pStream, const TMatrix<double>& mat)
+{
+  char buf[200];
+  size_t row_count = mat.row_count();
+  size_t col_count = mat.col_count();
+	size_t i,j;
+
+  for(i=0;i<row_count;i++) {
+		if (i==0)
+		  pStream << "[";
+    else
+      pStream << " ";
+		for(j=0;j<col_count;j++) {
+			snprintf(buf, 200, " % .2f", mat.data[(i * col_count) + j]);
+      pStream << buf;
+		}
+    if (i == row_count -1)
+      pStream << " ]\n";
+    else
+      pStream << "\n";
+  }
+  return pStream;
+}
+
+template<>
+std::ostream& operator<< (std::ostream& pStream, const TMatrix<int>& mat)
+{
+  char buf[200];
+  size_t row_count = mat.row_count();
+  size_t col_count = mat.col_count();
+	size_t i,j;
+
+  for(i=0;i<row_count;i++) {
+		if (i==0)
+		  pStream << "[";
+    else
+      pStream << " ";
+		for(j=0;j<col_count;j++) {
+			snprintf(buf, 200, " %i", mat.data[(i * col_count) + j]);
+      pStream << buf;
+		}
+    if (i == row_count -1)
+      pStream << " ]\n";
+    else
+      pStream << "\n";
+  }
+  return pStream;
+}
+
 /** Append a vector to the end of the current data. Size increases automatically. */
 template<typename T>
 bool TMatrix<T>::append(const T * pVector, size_t pVectorSize)
@@ -324,6 +375,24 @@ bool TMatrix<T>::add(const T * pVector, size_t pVectorSize)
   }
   return true;
 }
+
+template<typename T>
+bool TMatrix<T>::add (const TMatrix& A, const TMatrix& B, double pScaleA, double pScaleB)
+{
+  if (A.mRowCount != B.mRowCount || A.mColCount != B.mColCount) {
+    set_error("size error (add): matrix A %ix%i, matrix B %ix%i (incompatible)", A.mRowCount, A.mColCount, B.mRowCount, B.mColCount);
+    return false;
+  }
+  if (!set_sizes(A.mRowCount, A.mColCount)) return false;
+  
+  for(size_t i=0; i < mRowCount; i++) {
+    size_t offset = i * mColCount;
+    for(size_t j=0; j < mColCount; j++)
+      data[offset + j] = pScaleA * A.data[offset + j] + pScaleB * B.data[offset + j];
+  }
+  return true;
+}
+
 
 /** Divide all elements by the values in another matrix.
   * If rows/columns match, elements are divided one by one.
@@ -737,6 +806,8 @@ template bool TMatrix<double>::add(const TMatrix& pOther, int pStartRow, int pEn
 template bool TMatrix< int  >::add(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale);
 template bool TMatrix<double>::add(const double * pVector, size_t pVectorSize);
 template bool TMatrix< int  >::add(const int    * pVector, size_t pVectorSize);
+template bool TMatrix<double>::add(const TMatrix& A, const TMatrix& B, double pScaleA, double pScaleB);
+template bool TMatrix< int  >::add(const TMatrix& A, const TMatrix& B, double pScaleA, double pScaleB);
 template bool TMatrix<double>::append(const double * pVector, size_t pVectorSize);
 template bool TMatrix< int  >::append(const int    * pVector, size_t pVectorSize);
 template bool TMatrix<double>::append(double pValue);

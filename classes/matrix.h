@@ -142,6 +142,9 @@ public:
     * If the size is row_size : add corresponding value to element in the row. */
   bool add (const T * pVector, size_t pVectorSize);
   
+  /** Add two matrices. */
+  bool add (const TMatrix& A, const TMatrix& B, double pScaleA = 1.0, double pScaleB = 1.0);
+  
   /** Divide all elements by the values in another matrix. a.divide(b) (a/b) is NOT the matrix division (a-1b)
     * If rows/columns match, elements are divided one by one.
     * If the other matrix is a vector and columns sizes match, each row is divided by the vector.
@@ -416,5 +419,8 @@ public:
   }
 };
 
+template<typename T>
+std::ostream& operator<< (std::ostream& pStream, const TMatrix<T>& mat);
+std::ostream& operator<< (std::ostream& pStream, const Matrix& mat);
 
 #endif // _MATRIX_H_

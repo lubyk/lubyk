@@ -195,6 +195,30 @@ public:
     TS_ASSERT_EQUALS(m2[1][2], 10.5);
   }
   
+  void test_add_AB( void )
+  {
+    Matrix m, A, B;
+    A.set_sizes(2,3);
+    B.set_sizes(2,3);
+    A.data[0] = 0; A.data[1] = 1; A.data[2] = 2;
+    A.data[3] = 2; A.data[4] = 3; A.data[5] = 5;
+    
+    B.data[0] = 4; B.data[1] = 6; B.data[2] = 5;
+    B.data[3] = 2; B.data[4] = 8; B.data[5] = 3;
+    
+    TS_ASSERT(m.add(A,B,-1.0,0.5));
+    TS_ASSERT_EQUALS(m.row_count(), 2);
+    TS_ASSERT_EQUALS(m.col_count(), 3);
+    
+    TS_ASSERT_EQUALS(m[0][0], 2.0);
+    TS_ASSERT_EQUALS(m[0][1], 2.0);
+    TS_ASSERT_EQUALS(m[0][2], 0.5);
+    
+    TS_ASSERT_EQUALS(m[1][0], -1.0);
+    TS_ASSERT_EQUALS(m[1][1], 1.0);
+    TS_ASSERT_EQUALS(m[1][2], -3.5);
+  }
+  
   void test_add_scale( void )
   {
     Matrix m1, m2;
