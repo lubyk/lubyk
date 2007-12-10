@@ -629,23 +629,37 @@ bool TMatrix<float>::symetric(const TMatrix<float>& A)
   return true;
 }
 
-/** Compute the eigenvectors and eigenvalues for a symmetric (row major) matrix. Return false on failure.
-  * @param pRowCount pMatrix square matrix.
-  * @param pSize size of square matrix T.
-  * @param pEigenVectors pointer to a buffer of size pColCount * pColCount to store resulting eigenvectors. First eigenvector (corresponding to smallest eigenvalue) is in the first column
-  * @param pEigenValues pointer to a buffer of size pColCount to store resulting eigenvalues (in ascending order). */
+
+/** Set the matrix to the eigenvectors of a symmetric (row major) matrix. Return false on failure.
+  * @param pEigenValues will contain the eigenvalues (in ascending order).
+  * @param pMatrix source symmetric matrix (will be altered during processing. Send a copy if you want it kept clean).
+  */
 template<>
-bool TMatrix<double>::compute_eigenvectors(double ** pEigenVectors, double ** pEigenValues, long * pEigenCount, double * pMatrix, int pSize)
+bool TMatrix<double>::eigenvectors(TMatrix<double>& pEigenValues, TMatrix<double>& pMatrix)
+//bool TMatrix<double>::compute_eigenvectors(double ** pEigenVectors, double ** pEigenValues, long * pEigenCount, double * pMatrix, int pSize)
 {
+  if (pMatrix.col_count() != pMatrix.row_count()) {
+    set_error("Cannot compute eigenvectors if source matrix is not symmetric. It is %ix%i.", pMatrix.row_count(), pMatrix.col_count());
+    return false;
+  }
+  
+  size_t col_count = pMatrix.col_count();
+  
+  if (!set_sizes(col_count, col_count)) return false;
+  if (!pEigenValues.set_sizes(col_count, 1)) {
+    set_error("eigenvalues matrix: %s", pEigenValues.error_msg());
+    return false;
+  }
+  
   // we have to instanciate all parameters as they are passed by reference.
   char jobz  = 'V';       //  1. 'N': compute eigenvalues only, 'V': eigenvalues and eigenvectors.
   char range = 'A';       //  2. 'A': find all eigenvalues, 
                           //     'V': find all eigenvalues in the interval ]VL,VU]
                           //     'I': find the eigenvalues with index in [IL,IU]
   char uplo  = 'U';       //  3. symmetric matrix is only stored in the upper triangle. 'L': for lower.
-  long n   = pSize;  //  4. Order of the matrix A (size of A is NxN).
+  long n   = col_count;  //  4. Order of the matrix A (size of A is NxN).
   // (A) source           //  5.  source array
-  long lda = pSize;  //  6. Leading dimension of A (=N).
+  long lda = col_count;  //  6. Leading dimension of A (=N).
   double vl = 0.0;         //  7. See RANGE. (L stands for Low)
 	double vu = 0.0;         //  8. See RANGE. (U stands for Up)
 	long  il = 0.0;         //  9. See RANGE.
@@ -655,19 +669,24 @@ bool TMatrix<double>::compute_eigenvectors(double ** pEigenVectors, double ** pE
 	// (M) eigencount       // 12. Output of the number of eigenvalues found.
   // (W) eigenvalues      // 13. Output eigenvalues in ascending order.
   // (Z) eigenvector      // 14. Output array. First M columns contain the orthonormal eigenvectors. i-th column contains the eigenvector associated with the i-th eigenvalue.
-	long ldz = pSize;  // 15. Leading dimension of Z (=N).
- 	long isuppz[2 * pSize];// 16. Output array of integers telling which eigenvectors are nonzero. ??
- 	double work[pSize * 40];        // 17. Workspace (real array)
-  long lwork = pSize * 40;       // 18. Size of the workspace. Should be >= (NB+6)N where NB is the maximal blocksize for SSYTRD and SORMTR returned by ILAENV
- 	long iwork[15 * pSize];         // 19. Workspace (integer array)
-	long liwork = 15 * pSize;       // 20. Size of IWORK array. Should be >= 10N
+	long ldz = col_count;  // 15. Leading dimension of Z (=N).
+ 	long isuppz[2 * col_count];// 16. Output array of integers telling which eigenvectors are nonzero. ??
+ 	double work[col_count * 40];        // 17. Workspace (real array)
+  long lwork = col_count * 40;       // 18. Size of the workspace. Should be >= (NB+6)N where NB is the maximal blocksize for SSYTRD and SORMTR returned by ILAENV
+ 	long iwork[15 * col_count];         // 19. Workspace (integer array)
+	long liwork = 15 * col_count;       // 20. Size of IWORK array. Should be >= 10N
 	long info = 0;          // 21. Result information. 0 = success, -i: i-th argument had an illegal value, > 0 internal error
-
+  
+  long eigen_count;
 
   // compute the eigenvectors of pMatrix:
   // you want to understand this line ?
   // visit: http://dev.gaspardbuma.org/en/post191.html
-	dsyevr_( &jobz, &range, &uplo, &n, pMatrix, &lda, &vl, &vu, &il, &iu, &abstol, pEigenCount, *pEigenValues, *pEigenVectors, &ldz, isuppz, work, &lwork, iwork, &liwork, &info );
+	dsyevr_( &jobz, &range, &uplo, &n, pMatrix.data, &lda, &vl, &vu, &il, &iu, &abstol, &eigen_count, pEigenValues.data, data, &ldz, isuppz, work, &lwork, iwork, &liwork, &info );
+	
+	if ((size_t)eigen_count != mRowCount) {
+	  /// ignore
+	}
   return true;
 }
 

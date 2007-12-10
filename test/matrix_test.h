@@ -616,6 +616,41 @@ public:
     TS_ASSERT_EQUALS(c[0][1], 15.0);
   }
 
+  
+  void test_eigenvectors( void )
+  {
+    Matrix a,b,c;
+    a.set_sizes(3,3);
+    a[0][0] = 1.0; a[0][1] = 2.0; a[0][2] = 3.0;
+    a[1][0] = 2.0; a[1][1] = 4.0; a[1][2] = 2.0;
+    a[2][0] = 3.0; a[2][1] = 2.0; a[2][2] = 1.0;
+    
+    a.print();
+    TS_ASSERT(c.eigenvectors(b, a));
+
+    TS_ASSERT_EQUALS(c.row_count(), 3);
+    TS_ASSERT_EQUALS(c.col_count(), 3);
+    TS_ASSERT_EQUALS(b.row_count(), 3);
+    
+    // eigenvalues
+    TS_ASSERT_EQUALS(round(b[0][0] * 100000)/100000, -2.0);
+    TS_ASSERT_EQUALS(round(b[1][0] * 100000)/100000, 1.17157);
+    TS_ASSERT_EQUALS(round(b[2][0] * 100000)/100000, 6.82843);
+    
+    // eigenvectors
+    TS_ASSERT_EQUALS(round(c[0][0] * 100)/100, -0.71);
+    TS_ASSERT_EQUALS(round(c[0][1] * 100)/100, 0.00);
+    TS_ASSERT_EQUALS(round(c[0][2] * 100)/100, 0.71);
+    
+    TS_ASSERT_EQUALS(round(c[1][0] * 100)/100, 0.50);
+    TS_ASSERT_EQUALS(round(c[1][1] * 100)/100, -0.71);
+    TS_ASSERT_EQUALS(round(c[1][2] * 100)/100, 0.50);
+    
+    TS_ASSERT_EQUALS(round(c[2][0] * 100)/100, -0.50);
+    TS_ASSERT_EQUALS(round(c[2][1] * 100)/100, -0.71);
+    TS_ASSERT_EQUALS(round(c[2][2] * 100)/100, -0.50);
+    
+  }
 
 private:
   void set_fixture(Matrix& m)

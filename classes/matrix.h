@@ -264,16 +264,11 @@ public:
   /** Compute A'A for the given (row major) matrix. Return false on failure. */
   bool symetric(const TMatrix& A);
 
-  ////////////////  static methods  //////////////////////////
-
-  /** Compute T'T for the given (row major) matrix. Return false on failure. pResult must be a
-    * pointer to an array of pCol * pRow doubles. 
-    * @param pRowCount pMatrix square matrix.
-    * @param pSize size of square matrix T.
-    * @param pEigenVectors pointer to a buffer of size pColCount * pColCount to store resulting eigenvectors. First eigenvector (corresponding to smallest eigenvalue) is in the first column
-    * @param pEigenValues pointer to a buffer of size pColCount to store resulting eigenvalues (in ascending order).
-    * @param pEigenCount result: number of eigenvalues found. */
-  static bool compute_eigenvectors(double ** pEigenVectors, double ** pEigenValues, long * pEigenCount, double * pMatrix, int pSize);
+  /** Set the matrix to the eigenvectors of a symmetric (row major) matrix. Return false on failure.
+    * @param pEigenValues will contain the eigenvalues (in ascending order).
+    * @param pMatrix source symmetric matrix (will be altered during processing. Send a copy if you want it kept clean).
+    */
+  bool eigenvectors(TMatrix& pEigenValues, TMatrix& pMatrix);
   
   /** Return a pointer to the first element in the row pointed to by 'pIndex'. 
     * You have to make sure pIndex is smaller the mRowCount. Ne verification is done here. */

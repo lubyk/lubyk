@@ -10,10 +10,10 @@ public:
 
   bool init(const Params& p)
   {
-    if (!init_machine(p)) return false;
+    if (!set_machine(p)) return false;
     mTransposedFolder = "processed"; // where to store training data transposed in new basis
     
-    if (!set_size(mBuffer, 1, 8, "mBuffer")) return false;
+    if (!set_size(mBuffer,     1,  8, "mBuffer")) return false;
     if (!set_size(mWorkBuffer, 1, 32, "mWorkBuffer")) return false;
     if (!set_size(mMeanValue,  1, 32, "mMeanValue" )) return false;
     if (!set_size(mBasis,      8, 32, "mMeanValue" )) return false;
@@ -32,12 +32,12 @@ public:
       if (!set_sizes(mBuffer, 1, output_size, "mBuffer")) return false;
     
     if (p.get(&input_size, "vector")) {
-      if (!set_sizes(mWorkBuffer, 1, size, "mWorkBuffer")) return false;
-      if (!set_sizes(mMeanValue,  1, size, "mMeanValue" )) return false;
+      if (!set_sizes(mWorkBuffer, 1, input_size, "mWorkBuffer")) return false;
+      if (!set_sizes(mMeanValue,  1, input_size, "mMeanValue" )) return false;
     }
     
-    if (mBasis.col_count() != input_size || mBasis.row_count() != output_size) {
-      if (!set_size(mBasis, input_size, output_size, "mBasis" )) return false;
+    if (mBasis.row_count() != output_size || mBasis.col_count() != input_size) {
+      if (!set_size(mBasis, output_size, input_size, "mBasis" )) return false;
     }
     return true;
   }
@@ -97,33 +97,34 @@ private:
     //cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 1, mTargetSize, mVectorSize, 1, mWorkBuffer, mVectorSize, mBasis, mVectorSize, 0.0, mBuffer, mVectorSize);
   }
   
-  bool compute_mean_vector(const std::string& filename, double * vector)
+  bool compute_mean_vector(const std::string& filename, Matrix * vector)
   {
     if (vector == NULL) {
       // class initialize // finished
       if (mVectorCount > 0) {
-        for(int i=0; i < mVectorSize; i++)
-          mMeanValue[i] /= (double)mVectorCount;
+        mMeanValue /= (double)mVectorCount;
         
-        if(!add_class(mMeanValue)) return false;
+        if(!mClasses.append(mMeanValue)) {
+          *mOutput << mName << ": append class (" << mClasses.error_msg() << ").\n";
+          return false;
+        }
+        
         if (filename != "")
           *mOutput << mName << ": read '" << filename << "' (" << mVectorCount << " vectors)\n";
       }
       
       mVectorCount = 0;
-      for(int i=0; i < mVectorSize; i++)
-        mMeanValue[i] = 0.0;
+      mMeanValue.clear();
       return true;
     }
     
-    for(int i=0; i < mVectorSize; i++)
-      mMeanValue[i] += vector[i];
+    mMeanValue += vector;
     
     mVectorCount++;
     return true;
   }
   
-  bool transpose_in_new_basis(const std::string& filename, double * vector)
+  bool transpose_in_new_basis(const std::string& filename, Matrix * vector)
   {
     if (vector == NULL) {
       // initialize or finished a class
@@ -131,6 +132,7 @@ private:
       mTransposedFile = NULL;
       return true;
     }
+    
     if (!mTransposedFile) {
       mTransposedFile = fopen(pca_transpose_path(filename).c_str(), "wb");
       if (!mTransposedFile) {
@@ -138,53 +140,44 @@ private:
         return false;
       }
     }
+    
     // transpose vector
     transpose_vector(vector);
     
-    // FIXME: write vector should be in 'Matrix'
-    for(int i=0; i< mTargetSize; i++) {
-      fprintf(mTransposedFile, " % .5f", mBuffer[i]);
-      if (mUnitSize > 1 && (i+1)%mUnitSize == 0) fprintf(mTransposedFile, "\n");
+    if(!vector.to_file(mTransposedFile)) {
+      *mOutput << mName << ": write transposed vector (" << vector.error_msg() << ")";
+      return false;
     }
-    fprintf(mTransposedFile, "\n\n");
+    
     return true;
   }
   
   void load_model()
   { 
-    float val;
-    int vector_count = 0;
-    int value_count  = 0;
-    if (mMeanValue) free(mMeanValue);
-    if (!alloc_doubles(&mMeanValue, mVectorSize, "mean value")) return;
+    Matrix vector;
+    size_t target_size = mBuffer.col_count();
     
-    if (mBasis) free(mBasis);
-    if (!alloc_doubles(&mBasis, mVectorSize * mTargetSize, "basis matrix")) return;
+    if (!set_size(mBasis, 0, mMeanValue.col_count(), "mBasis" )) return;
     
     FILE * file = fopen(pca_model_path().c_str(), "rb");
       if (!file) {
-        *mOutput << mName << "(error): could not read from '" << pca_model_path() << "' (" << strerror(errno) << ")\n";
+        *mOutput << mName << ": could not read from '" << pca_model_path() << "' (" << strerror(errno) << ")\n";
         return;
       }
       // read mMeanValue vector
-      while(fscanf(file, " %f", &val) != EOF) {
-        fscanf(file, "\n"); // ignore newline
-        if(vector_count == 0) {
-          mMeanValue[value_count] = (double)val;
-        } else {
-          if ((vector_count-1) >= mTargetSize || value_count >= mVectorSize ) {
-            *mOutput << mName << ": wrong dimension of pca basis.\n";
-            free(mBasis);
-            mBasis = NULL;
-            return;
-          }
-          mBasis[(vector_count - 1) * mVectorSize + value_count] = (double)val;
+      if(!mMeanValue.from_file(file)) {
+        *mOutput << mName << ": mMeanValue (" << mMeanValue.error_msg() << ").\n";
+        return;
+      }
+      
+      while(vector.from_file(file)) {
+        if(!mBasis.append(vector)) {
+          *mOutput << mName << ": mBasis append (" << mBasis.error_msg() << ").\n";
+          return;
         }
-        value_count++;
-        if (value_count >= mVectorSize) {
-          // got one vector
-          vector_count++;
-          value_count = 0;
+        if (mBasis.row_count() > target_size ) {
+          *mOutput << mName << ": wrong dimension of pca basis. Found " << mBasis.row_count() << "x" << mBasis.col_count() << " when matrix should be " << target_size << "x" << mMeanValue.col_count() << "\n";
+          return;
         }
       }
     fclose(file);
@@ -192,7 +185,10 @@ private:
   
   bool do_learn()
   {
-    double * symmetric_matrix = NULL;
+    Matrix symmetric_matrix;
+    
+    ///////// REWRITE TO HERE ///////////
+    
     double * eigenvectors = NULL;
     double * eigenvalues  = NULL;
     FILE   * file;
@@ -382,7 +378,6 @@ learn_failed:
   
   std::string mTransposedFolder; /**< Where to store training data transposed in new basis. */
 
-  int      mClassCount;      /**< Number of different classes. */
   double * mLiveBuffer;      /**< Live input signal. */
   double * mWorkBuffer;      /**< Input without mean value. */
   double * mBuffer;          /**< Output signal. */
