@@ -43,8 +43,22 @@ public:
     *mOutput << p << std::endl;
   }
   
+  void test_fail(const Params& p)
+  {
+    if (!test_try()) {
+      *mOutput << "try failed";
+    }
+  }
+  
   
 private:
+  void test_try() {
+    Matrix m,n;
+    m.set_sizes(5,1);
+    m.fill(2.0);
+    TRY(n, copy(m, 10, 10));
+  }
+  
   /* data */
   std::string mMessage;
   int mCounter;
@@ -58,5 +72,6 @@ extern "C" void init()
   OUTLET(Test, increment_counter)
   OUTLET(Test, send_nil)
   METHOD(Test, info)
+  METHOD(Test, test_fail)
   CLASS_METHOD(Test, hello)
 }

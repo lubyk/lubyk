@@ -136,6 +136,11 @@ public:
     * @return true (never fails). */
   bool add (const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1, double pScale = 1.0);
   
+  /** Subtract elements of one matrix to another.
+    * See 'add' for details. */
+  inline bool subtract(const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1, double pScale = 1.0)
+  { return add(pOther, pStartRow, pEndRow, -pScale); }
+  
   /** Add an array of doubles to each elements in the matrix. 
     * If the size is the same as the matrix : one to one.
     * If the size is col_size : add to each row.

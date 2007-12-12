@@ -142,6 +142,11 @@ public:
     TS_ASSERT_EQUALS( std::string(v3->get_spy()) , std::string("5.00"));
     
   }
+  
+  void test_try( void )
+  {
+    assert_print("n=Test()\nn.test_fail()\n", "t: n (size error (copy): bad start row 10 (10) of matrix 5x1).\ntry failed");
+  }
 };
 
 class TestParseTest : public CxxTest::TestSuite, public ParseTest

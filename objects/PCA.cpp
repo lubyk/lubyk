@@ -13,10 +13,11 @@ public:
     if (!set_machine(p)) return false;
     mTransposedFolder = "processed"; // where to store training data transposed in new basis
     
-    if (!set_size(mBuffer,     1,  8, "mBuffer")) return false;
-    if (!set_size(mWorkBuffer, 1, 32, "mWorkBuffer")) return false;
-    if (!set_size(mMeanValue,  1, 32, "mMeanValue" )) return false;
-    if (!set_size(mBasis,      8, 32, "mMeanValue" )) return false;
+    TRY(mBuffer,     set_sizes(1,8));
+    TRY(mWorkBuffer, set_sizes(1,32));
+    TRY(mMeanValue,  set_sizes(1,32));
+    TRY(mBasis,      set_sizes(8,32));
+    
     mS.set(mBuffer);
     load_model();
     return true;
@@ -29,15 +30,15 @@ public:
     
     p.get(&mTransposedFolder, "processed");
     if (p.get(&output_size, "keep"))
-      if (!set_sizes(mBuffer, 1, output_size, "mBuffer")) return false;
+      TRY(mBuffer, set_sizes(1, output_size));
     
     if (p.get(&input_size, "vector")) {
-      if (!set_sizes(mWorkBuffer, 1, input_size, "mWorkBuffer")) return false;
-      if (!set_sizes(mMeanValue,  1, input_size, "mMeanValue" )) return false;
+      TRY(mWorkBuffer, set_sizes(1, input_size));
+      TRY(mMeanValue,  set_sizes(1, input_size));
     }
     
     if (mBasis.row_count() != output_size || mBasis.col_count() != input_size) {
-      if (!set_size(mBasis, output_size, input_size, "mBasis" )) return false;
+      TRY(mBasis, set_sizes(output_size, input_size));
     }
     return true;
   }
@@ -90,10 +91,10 @@ private:
   inline void transpose_vector(const Matrix& pMat)
   {
     // remove mean value
-    if(!mWorkBuffer.add(pMat, mMeanValue, 1.0, -1.0)) return;
+    TRY_RET(mWorkBuffer, add(pMat, mMeanValue, 1.0, -1.0));
 
     // change vector basis ( S' = SP' ) mBasis = P
-    mBuffer.mat_multiply(mWorkBuffer, mBasis, CblasNoTrans, CblasTrans);
+    TRY_RET(mBuffer, mat_multiply(mWorkBuffer, mBasis, CblasNoTrans, CblasTrans));
     //cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 1, mTargetSize, mVectorSize, 1, mWorkBuffer, mVectorSize, mBasis, mVectorSize, 0.0, mBuffer, mVectorSize);
   }
   
@@ -105,7 +106,7 @@ private:
         mMeanValue /= (double)mVectorCount;
         
         if(!mClasses.append(mMeanValue)) {
-          *mOutput << mName << ": append class (" << mClasses.error_msg() << ").\n";
+          ERROR(mClasses);
           return false;
         }
         
@@ -145,7 +146,7 @@ private:
     transpose_vector(vector);
     
     if(!vector.to_file(mTransposedFile)) {
-      *mOutput << mName << ": write transposed vector (" << vector.error_msg() << ")";
+      error(vector, "write transposed vector");
       return false;
     }
     
@@ -157,7 +158,7 @@ private:
     Matrix vector;
     size_t target_size = mBuffer.col_count();
     
-    if (!set_size(mBasis, 0, mMeanValue.col_count(), "mBasis" )) return;
+    TRY_RET(mBasis, set_sizes(0, mMeanValue.col_count()));
     
     FILE * file = fopen(pca_model_path().c_str(), "rb");
       if (!file) {
@@ -165,16 +166,11 @@ private:
         return;
       }
       // read mMeanValue vector
-      if(!mMeanValue.from_file(file)) {
-        *mOutput << mName << ": mMeanValue (" << mMeanValue.error_msg() << ").\n";
-        return;
-      }
+      TRY_RET(mMeanValue, from_file(file));
       
       while(vector.from_file(file)) {
-        if(!mBasis.append(vector)) {
-          *mOutput << mName << ": mBasis append (" << mBasis.error_msg() << ").\n";
-          return;
-        }
+        TRY_RET(mBasis, append(vector));
+        
         if (mBasis.row_count() > target_size ) {
           *mOutput << mName << ": wrong dimension of pca basis. Found " << mBasis.row_count() << "x" << mBasis.col_count() << " when matrix should be " << target_size << "x" << mMeanValue.col_count() << "\n";
           return;
@@ -185,136 +181,72 @@ private:
   
   bool do_learn()
   {
-    Matrix symmetric_matrix;
+    Matrix symmetric_matrix, eigenvectors, eigenvalues;
     
-    ///////// REWRITE TO HERE ///////////
-    
-    double * eigenvectors = NULL;
-    double * eigenvalues  = NULL;
-    FILE   * file;
-
     // 1. build a matrix with the mean vectors for each class
     mClassCount = 0;
-    if (mClasses) {
-      free(mClasses);
-      mClasses = NULL;
-    }
-    if (mMeanValue) free(mMeanValue);
-    if (!alloc_doubles(&mMeanValue, mVectorSize, "mean value")) return false;
-
+    TRY(mClasses, set_sizes(0, mMeanValue.col_count()));
+    
     if(!FOREACH_TRAIN_CLASS(PCA, compute_mean_vector)) {
       *mOutput << mName << ": could not build model.\n";
       return false;
     }
     
-    if (!mClasses) return false; // no classes loaded.
+    if (mClasses.row_count() == 0) {
+      *mOutput << mName << ": no class file.\n";
+      return false;
+    }
     
     // 2.1. compute mean value for all vectors
-    for(int i=0; i< mVectorSize; i++) mMeanValue[i] = 0.0;
+    mMeanValue.clear();
     
-    for(int c=0; c < mClassCount; c++) {
-      for(int i=0; i < mVectorSize; i++) {
-        mMeanValue[i] += mClasses[c * mVectorSize + i];
-      }
-    }
+    for(int c=0; c < mClasses.row_count(); c++)
+      if (!mMeanValue.add(mClasses, c, c)) return false;
     
-    for(int i=0; i < mVectorSize; i++) {
-      mMeanValue[i] /= (double)mClassCount;
-    }
+    mMeanValue /= mClasses.row_count();
     
     // 2.2 remove from each element
-    for(int c=0; c < mClassCount; c++) {
-      for(int i=0; i < mVectorSize; i++) {
-        mClasses[c * mVectorSize + i] -= mMeanValue[i];
-      }
-    }
+    TRY(mClasses, subtract(mMeanValue));
     
     // write mean value to model file
-    
-    file = fopen(pca_model_path().c_str(), "wb");
-      if (!file) {
-        *mOutput << mName << "(error): could not write to '" << pca_model_path() << "' (" << strerror(errno) << ")\n~> ";
-        goto learn_failed;
-      }
-    
-      // FIXME: write vector should be in 'Matrix'
-      for(int i=0; i< mVectorSize; i++) {
-        fprintf(file, " % .5f", mMeanValue[i]);
-        if (mUnitSize > 1 && (i+1)%mUnitSize == 0) fprintf(file, "\n");
-      }  
-      fprintf(file, "\n\n");  // two \n\n between vectors
-    fclose(file);
+    TRY(mMeanValue, to_file(pca_model_path(), "wb"));
     
     // we have our matrix.
-    if (mDebug) {
-      *mOutput << mName << ": source:\n";
-      Matrix::print(mClasses, mClassCount, mVectorSize, CblasRowMajor);
-      printf("\n");
-    }
+    if (mDebug) *mOutput << mName << ": source:\n" << mClasses << "\n";
+    
     // 3. PCA
     
     // Compute T'T :
-    if(!alloc_doubles(&symmetric_matrix, mVectorSize * mVectorSize, "symmetric matrix")) goto learn_failed;
-    if(!Matrix::compute_symetric_matrix(&symmetric_matrix, mClasses, mClassCount, mVectorSize)) goto learn_failed;
+    TRY(symmetric_matrix, symmetric(mClasses));
     
+    if (mDebug) *mOutput << mName << ": symmetric:\n" << symmetric_matrix << "\n";
     
-    if (mDebug) {
-      *mOutput << mName << ": symmetric:\n";
-      Matrix::print(symmetric_matrix, mVectorSize, mVectorSize, CblasRowMajor);
-      printf("\n");
-    }
     // Find eigenvectors, eigenvalues of T'T :
-    // find the eigenvectors of T'T :
-    long eigen_count;
-    int * sort_index;
-    if(!alloc_doubles(&eigenvectors, mVectorSize * mVectorSize, "eigenvectors matrix")) goto learn_failed;
-    if(!alloc_doubles(&eigenvalues,  mVectorSize, "eigenvalues")) goto learn_failed;
-    if(!Matrix::compute_eigenvectors(&eigenvectors, &eigenvalues, &eigen_count, symmetric_matrix, mVectorSize)) goto learn_failed;
-
-    
+    TRY(eigenvectors, eigenvectors(eigenvalues, symmetric_matrix));
     
     // build P out of those eigenvectors with greatest values :
-    *mOutput << mName << ": calculated " << eigen_count << " eigenvalues (showing greater then zero):\n  ";
+    *mOutput << mName << ": calculated " << eigenvalues.col_count() << " eigenvalues (showing greater then zero):\n  ";
     
-    for(int i= 0; i< eigen_count; i++) {
-      if (eigenvalues[i] < -0.0001 || eigenvalues[i] > 0.0001) {
-        bprint(mBuf,mBufSize, " % .4f", eigenvalues[i]);
-        *mOutput << mBuf;
-      }
-    }
-    *mOutput << std::endl;
+    for(int i= 0; i < eigenvalues.col_count(); i++) {
+      if (eigenvalues[0][i] < -0.0001 || eigenvalues[0][i] > 0.0001)
+        *mOutput << " " << eigenvalues[0][i];
+        
+    *mOutput << "\n";
     
-    if (mDebug) {
-      *mOutput << mName << ": eigenvectors:\n";
-      Matrix::print(eigenvectors, mVectorSize, mVectorSize, CblasColMajor);
-      printf("\n");
-    }
+    if (mDebug) *mOutput << mName << ": eigenvectors:\n" << eigenvectors << "\n";
     
     // P = partial E'.
     
     // write P to file
-    file = fopen(pca_model_path().c_str(), "ab");
-      if (!file) {
-        *mOutput << mName << "(error): could not write to '" << pca_model_path() << "' (" << strerror(errno) << ")\n~> ";
-        goto learn_failed;
-      }
-      // keep only the greatest eigenvectors with greatest eigenvalues.
-      
-      if (mBasis) free(mBasis);
-      if (!alloc_doubles(&mBasis, mVectorSize * mTargetSize, "basis matrix")) goto learn_failed;
-      
-      double value;
-      for(int e=0; e < mTargetSize; e++) {
-        int eigen_id = eigen_count - e - 1; // start by greatest eigenvalue (last).
-        for(int i=0; i< mVectorSize; i++) {
-          value = eigenvectors[ eigen_id * mVectorSize + i ]; // eigenvalue is in column form, in CblasColMajor
-          fprintf(file, " % .5f", value);
-          mBasis[e * mVectorSize + i] = value;
-          if (mUnitSize > 1 && (i+1)%mUnitSize == 0) fprintf(file, "\n");
-        }  
-        fprintf(file, "\n");  // two \n\n between vectors
-      }
-    fclose(file);
+    // build basis P
+    TRY(mBasis, copy(eigenvectors, - mBuffer.col_count(), - 1)); // take last vectors (greatest eigenvalues)
+    
+    TRY(mBasis, to_file(pca_model_path(), "ab"));
+    
+    
+    ////////// WRITE TO HERE //////////
+    
+    
     
     if (mDebug) {
       *mOutput << mName << ": basis P:\n";

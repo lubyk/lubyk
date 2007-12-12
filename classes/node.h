@@ -291,10 +291,16 @@ protected:
   bool set_size(Matrix& mat, size_t pRowCount, size_t pColCount, const char * pMsg)
   {
     if (!mat.set_sizes(pRowCount, pColCount)) {
-      *mOutput << mName << ": " << pMsg << " (" << mat.error_msg() << ")\n";
+      error(mat, pMsg);
       return false;
     }
     return true;
+  }
+  
+  /** Helper to display error messages. */
+  void error(Matrix& pMat, const char * pMsg)
+  {
+    *mOutput << mName << ": " << pMsg << " (" << pMat.error_msg() << ").\n";
   }
   
   /** Allocate/reallocate doubles. Print an error on failure. */
@@ -419,4 +425,8 @@ inline double absval(double d)
   else
     return d;
 }
+
+#define ERROR(name) {error(name, #name)}
+#define TRY(obj, meth) { if (!obj.meth) {error(obj,#obj); return false;}}
+#define TRY_RET(obj, meth) { if (!obj.meth) {error(obj,#obj); return;}}
 #endif
