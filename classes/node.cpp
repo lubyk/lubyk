@@ -33,7 +33,7 @@ const char * Node::class_name() const
   return mClass->name().c_str(); 
 }
 
-void Node::bprint(char *& pBuffer, size_t& pBufferSize, const char *fmt, ...)
+const char * Node::bprint(char *& pBuffer, size_t& pBufferSize, const char *fmt, ...)
 {
   int n;
   char * np;
@@ -51,7 +51,7 @@ void Node::bprint(char *& pBuffer, size_t& pBufferSize, const char *fmt, ...)
      va_end(ap);
      /* if that worked, return the string. */
      if (n > -1 && n < (int)pBufferSize)
-        return; // OK
+        return pBuffer; // OK
      /* else try again with more space. */
      if (n > -1)    /* glibc 2.1 */
         pBufferSize = n+1; /* precisely what is needed */
@@ -59,7 +59,7 @@ void Node::bprint(char *& pBuffer, size_t& pBufferSize, const char *fmt, ...)
         pBufferSize *= 2;  /* twice the old size */
      if ((np = (char*)realloc (pBuffer, pBufferSize * sizeof(char))) == NULL) {
          pBuffer[pBufferSize - 1] = '\0';
-        return; // no more memory. fail.
+        return "could not print (no more memory)"; // no more memory. fail.
      } else {
         pBuffer = np;
      }

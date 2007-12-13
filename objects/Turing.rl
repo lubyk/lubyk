@@ -36,14 +36,6 @@ public:
     reload_script();
     if (mScriptDead) return;
     
-    //std::cout << "goto\n";
-    //print(std::cout, mGotoTable);
-    //std::cout << "send\n";
-    //print(std::cout, mSendTable);
-    //
-    //std::cout << "token ["<< mToken << "]" << std::endl;
-    //std::cout << "state ["<< mState << "]" << std::endl;
-    
     if (mDebug) *mOutput << "{" << mState << "} -" << mRealToken << "->";
       
     if ((mSend = mSendTable[mState][mToken]) != -1)
@@ -151,7 +143,7 @@ public:
       #ifdef DEBUG_PARSER
         std::cout <<    "[send " << name << "]" << std::endl;
       #endif
-      send = (int)name[0]; //FIXME !
+      send = (int)atoi(name);
     }
     
     action set_source {
@@ -172,17 +164,8 @@ public:
     }
 
     action set_token_from_identifier { 
-      if(name_index) {
-        // identifier: resolve to value
-        name[name_index] = '\0';
-        name_index = 0;
-        if (!mTokenByName.get(&tok, std::string(name))) {
-          *mOutput << "Syntax error. Unknown token '" << name << "' (missing declaration)\n";
-          mScriptDead = true;
-          return;
-        }
-      } else {
-        *mOutput << "Syntax error: no identifier set.\n";
+      if (!mTokenByName.get(&tok, std::string(name))) {
+        *mOutput << "Syntax error. Unknown token '" << name << "' (missing declaration)\n";
         mScriptDead = true;
         return;
       }
@@ -211,7 +194,7 @@ public:
       if (!mTokenTable[tok % 256]) {
         // new token
         #ifdef DEBUG_PARSER
-        printf("new token %i: %i\n", tok, mTokenCount);
+        printf("new token %i: %i\n", mTokenCount, tok);
         #endif
         
         mTokenTable[tok % 256] = mTokenCount + 1;
@@ -299,7 +282,7 @@ public:
     
     tok    = ( identifier @set_token_from_identifier | digit+ $a %set_tok_value ); # fixme: we should use 'whatever' or a-zA-Z or number
     
-    send   = alnum $a %set_send;
+    send   = alnum+ $a %set_send;
 
     transition = ( '-'+ '>' | '-'* ws* tok %set_token (':' send)?  ws* '-'+ '>');
 
@@ -334,9 +317,12 @@ public:
       int tok_value = mTokenList[i];
       std::string identifier;
       if (mTokenNameByValue.get(&identifier, tok_value)) {
-        *mOutput << " " << i << " : " << identifier << " = " << tok_value << "\n";
+        bprint(mPrintBuffer, mPrintBufferSize, "% 4i: %s = %i\n", i, identifier.c_str(), tok_value);
+        *mOutput << mPrintBuffer;
+        //*mOutput << " " << i << " : " << identifier << " = " << tok_value << "\n";
       } else {
-        *mOutput << " " << i << " : " << tok_value << "\n";
+        *mOutput << bprint(mPrintBuffer, mPrintBufferSize, "% 3i : %i\n", i, tok_value);
+        //*mOutput << " " << i << " : " << tok_value << "\n";
       }
     }
     print_table(*mOutput, "goto", mGotoTable);
@@ -377,16 +363,14 @@ private:
     end = pTable.end();
     
     // print tokens
-    bprint(mPrintBuffer, mPrintBufferSize, "\n%- 8s  -", pTitle);
-    pOutput << mPrintBuffer;
+    pOutput << bprint(mPrintBuffer, mPrintBufferSize, "\n%- 7s -", pTitle);
     for(int i=0;i<mTokenCount;i++) {
       int tok_value = mTokenList[i];
       std::string identifier;
       if (mTokenNameByValue.get(&identifier, tok_value))
-        bprint(mPrintBuffer, mPrintBufferSize, " % 3s", identifier.c_str());
+        pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 3s", identifier.c_str());
       else
-        bprint(mPrintBuffer, mPrintBufferSize, " % 3i", tok_value);
-      pOutput << mPrintBuffer;
+        pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 3i", tok_value);
     }
     pOutput << "\n";
     
@@ -395,16 +379,14 @@ private:
       std::vector<int>::iterator it2,end2;
       end2 = (*it).end();
       
-      bprint(mPrintBuffer, mPrintBufferSize, " % 3s : ", mStateNames[state_count].c_str());
-      pOutput << mPrintBuffer;
+      pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 3s:", mStateNames[state_count].c_str());
       for ( it2 = (*it).begin(); it2 < end2; it2++ ) {
         if (*it2 == -1)
           pOutput << "   -";  // default
         else if (*it2 == -2)
           pOutput << "   /";  // do not send
         else {
-          bprint(mPrintBuffer, mPrintBufferSize, " % 3i", *it2);
-          pOutput << mPrintBuffer;
+          pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 3i", *it2);
         }
       }
       pOutput << "\n";
@@ -464,6 +446,8 @@ private:
     out << "}\n";
   }
   
+  virtual void spy()
+  { bprint(mSpy, mSpySize,"%i, %i", mTokenCount, mStateCount );  }
   
   int  mToken;           /**< Current token value (translated). */
   int  mRealToken;       /**< Current token value (not translated). */

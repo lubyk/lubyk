@@ -11,7 +11,7 @@ public:
     Command cmd(input, output);
     server.listen_to_command(cmd);
     time_t start = server.mCurrentTime;
-    while(server.mCurrentTime <= start + 10 && server.run()) {
+    while(server.mCurrentTime <= start + 50 && server.run()) {
       ;
     }
     TS_ASSERT_EQUALS( output.str(), std::string("Welcome to rubyk !\n\n"));

@@ -31,7 +31,8 @@ public:
   {
     std::string value;
     if (pKey == NULL) {
-      if (mListParams.size() > 0) {
+      if (mListParams.size() == 1) {
+        // 'default' parameter
         *pResult = cast_param<T>(mListParams[0]);
         return true;
       } else

@@ -277,7 +277,7 @@ protected:
   }
   
   /** Print message into buffer. */
-  void bprint (char *& pBuffer, size_t& pBufferSize, const char *fmt, ...);
+  const char * bprint (char *& pBuffer, size_t& pBufferSize, const char *fmt, ...);
   
   /** Print message into string. */
   void bprint (std::string& pStr, const char *fmt, ...);

@@ -17,7 +17,7 @@ public:
       mScriptFile  = str;
       mReloadEvery = p.val("reload", 1);
       load_script_from_file(true);
-    } else if (p.get(&str, "script")) {
+    } else if (p.get(&str, "script", true)) {
       eval_script(str);
     }
     return true;

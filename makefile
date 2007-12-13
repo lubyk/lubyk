@@ -96,7 +96,7 @@ lib/Cabox.rko: objects/serial/serial.h objects/Cabox.cpp
 objects/Turing.cpp: objects/Turing.rl
 	${RAGEL} objects/Turing.rl | ${RAGEL_CD} -o objects/Turing.cpp
 
-lib/Turing.rko: objects/Turing.cpp objects/Turing.rl
+lib/Turing.rko: objects/Turing.cpp objects/Turing.rl classes/script.h
 	$(CC) $(CFLAGS) -o lib/Turing.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Turing.cpp
 
 lib/Keyboard.rko: objects/Keyboard.cpp
