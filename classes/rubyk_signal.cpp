@@ -1,4 +1,6 @@
 #include "rubyk_signal.h"
+#include "matrix.h"
+#include "params.h"
 
 std::ostream& operator<< (std::ostream& pStream, const Signal& sig)
 {
@@ -43,4 +45,21 @@ std::ostream& operator<< (std::ostream& pStream, const Signal& sig)
     pStream << sig.type_name();
   }
   return pStream;
+}
+
+void Signal::set (const Params& p, Matrix& pBuffer)
+{  
+  double value;
+  if (p.size() > 1) {
+    if (!pBuffer.set_sizes(1,p.size())) return;
+    for(size_t i=0; i < p.size(); i++) {
+      p.get(&value, i);
+      pBuffer.data[i] = value;
+    }
+    set(pBuffer);
+  } else if (p.get(&value)) {
+    set(value);
+  } else {
+    set_bang();
+  }
 }

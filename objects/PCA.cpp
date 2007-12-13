@@ -8,6 +8,11 @@ class PCA : public TrainedMachine
 {
 public:
 
+  ~PCA()
+  {
+    if (mTransposedFile) fclose(mTransposedFile);
+  }
+  
   bool init(const Params& p)
   {
     if (!set_machine(p)) return false;
@@ -55,7 +60,7 @@ public:
       }
       sig.get(&mLiveBuffer);
       
-      transpose_vector(mLiveBuffer);
+      transpose_vector(*mLiveBuffer);
 
       // send
       if (mDebug) std::cout << mName << ": " << mS << std::endl;
@@ -71,9 +76,8 @@ public:
   /** Method from command line. */
   void learn()
   {
-    if(!do_learn()) {
+    if(!do_learn())
       *mOutput << mName << ": could not create a new basis from training data.\n";
-    }
   }
   
   void load()
@@ -105,10 +109,7 @@ private:
       if (mVectorCount > 0) {
         mMeanValue /= (double)mVectorCount;
         
-        if(!mClasses.append(mMeanValue)) {
-          ERROR(mClasses);
-          return false;
-        }
+        TRY(mClasses, append(mMeanValue));
         
         if (filename != "")
           *mOutput << mName << ": read '" << filename << "' (" << mVectorCount << " vectors)\n";
@@ -119,7 +120,7 @@ private:
       return true;
     }
     
-    mMeanValue += vector;
+    mMeanValue += *vector;
     
     mVectorCount++;
     return true;
@@ -143,12 +144,9 @@ private:
     }
     
     // transpose vector
-    transpose_vector(vector);
+    transpose_vector(*vector);
     
-    if(!vector.to_file(mTransposedFile)) {
-      error(vector, "write transposed vector");
-      return false;
-    }
+    TRY(mBuffer, to_file(mTransposedFile));
     
     return true;
   }
@@ -184,7 +182,6 @@ private:
     Matrix symmetric_matrix, eigenvectors, eigenvalues;
     
     // 1. build a matrix with the mean vectors for each class
-    mClassCount = 0;
     TRY(mClasses, set_sizes(0, mMeanValue.col_count()));
     
     if(!FOREACH_TRAIN_CLASS(PCA, compute_mean_vector)) {
@@ -200,7 +197,7 @@ private:
     // 2.1. compute mean value for all vectors
     mMeanValue.clear();
     
-    for(int c=0; c < mClasses.row_count(); c++)
+    for(size_t c=0; c < mClasses.row_count(); c++)
       if (!mMeanValue.add(mClasses, c, c)) return false;
     
     mMeanValue /= mClasses.row_count();
@@ -227,7 +224,7 @@ private:
     // build P out of those eigenvectors with greatest values :
     *mOutput << mName << ": calculated " << eigenvalues.col_count() << " eigenvalues (showing greater then zero):\n  ";
     
-    for(int i= 0; i < eigenvalues.col_count(); i++) {
+    for(size_t i= 0; i < eigenvalues.col_count(); i++)
       if (eigenvalues[0][i] < -0.0001 || eigenvalues[0][i] > 0.0001)
         *mOutput << " " << eigenvalues[0][i];
         
@@ -243,52 +240,19 @@ private:
     
     TRY(mBasis, to_file(pca_model_path(), "ab"));
     
-    
-    ////////// WRITE TO HERE //////////
-    
-    
-    
     if (mDebug) {
-      *mOutput << mName << ": basis P:\n";
-      Matrix::print(mBasis, mTargetSize, mVectorSize, CblasRowMajor);
+      *mOutput << mName << ": basis P:\n" << mBasis << "\n";
     } else {
-      *mOutput << mName << ": new basis with " << mTargetSize << " dimensions from a vectors of size " << mVectorSize << " computed.\n";
+      *mOutput << mName << ": new basis with " << mBasis.row_count() << " dimensions from a vectors of size " << mBasis.col_count() << " computed.\n";
     }
     
     if(!FOREACH_TRAIN_CLASS(PCA, transpose_in_new_basis)) {
       *mOutput << mName << ": could not write transposed training data\n";
-      goto learn_failed;
+      return false;
     }
     
     *mOutput << mName << ": wrote transposed training data to '" << pca_transpose_path(std::string("")) << "'.\n"; 
     
-    if (symmetric_matrix)    free(symmetric_matrix);
-    if (eigenvectors) free(eigenvectors);
-    if (eigenvalues) free(eigenvalues);
-    return true;
-learn_failed:
-    if (symmetric_matrix)    free(symmetric_matrix);
-    if (eigenvectors) free(eigenvectors);
-    if (eigenvalues) free(eigenvalues);
-    return false;
-  }
-    
-  /** Add vector set of classes. */
-  // FIXME: Use 'Buf' or 'Buf+Matrix' merge.
-  bool add_class(double * vector)
-  {
-    if (!mClasses) {
-      mClassesSize = INITIAL_CLASS_COUNT * mVectorSize;
-      if (!alloc_doubles(&mClasses, mClassesSize, "class matrix")) return false;
-    } else if (mClassCount + 1 >= mClassesSize) {
-      // realloc
-      mClassesSize *= 2;
-      if (!realloc_doubles(&mClasses, mClassesSize, "class matrix")) return false;
-    }
-    for(int i=0; i < mVectorSize; i++)
-      mClasses[mClassCount * mVectorSize + i] = vector[i];
-      
-    mClassCount++;
     return true;
   }
   
@@ -310,18 +274,14 @@ learn_failed:
   
   std::string mTransposedFolder; /**< Where to store training data transposed in new basis. */
 
-  double * mLiveBuffer;      /**< Live input signal. */
-  double * mWorkBuffer;      /**< Input without mean value. */
-  double * mBuffer;          /**< Output signal. */
-  double * mClasses;         /**< Large array with all meanVectors. */
-  double * mBasis;           /**< Matrix to change basis (stored in file xxx.model). Size is mTargetSize x mVectorSize */
-  double * mMeanValue;       /**< Mean value to be removed from vector before change of basis. */
+  const Matrix * mLiveBuffer;      /**< Live input signal. */
+  Matrix   mWorkBuffer;      /**< Input, mean value removed. */
+  Matrix   mBuffer;          /**< Output signal. */
+  Matrix   mClasses;         /**< Large array with all mean values for each class. */
+  Matrix   mBasis;           /**< Matrix to change basis (stored in file xxx.model). Size is mTargetSize x mVectorSize */
+  Matrix   mMeanValue;       /**< Mean value to be removed from vector before change of basis. */
   int      mVectorCount;     /**< Number of vectors (used during foreach class loop). */
-  int      mClassesSize;     /**< Size of array of meanVectors. */
-  int      mLiveBufferSize;  /**< Size of live buffer. */
   FILE *   mTransposedFile;  /**< Where to store the transposed data for a class (FILE *). */
-  int      mTargetSize;
-  int      mUnitSize;
   
 };
 

@@ -267,7 +267,7 @@ public:
   
   
   /** Compute A'A for the given (row major) matrix. Return false on failure. */
-  bool symetric(const TMatrix& A);
+  bool symmetric(const TMatrix& A);
 
   /** Set the matrix to the eigenvectors of a symmetric (row major) matrix. Return false on failure.
     * @param pEigenValues will contain the eigenvalues (in ascending order).

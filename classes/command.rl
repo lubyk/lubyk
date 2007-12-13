@@ -262,8 +262,7 @@ void Command::execute_method()
   Node * node;
   mServer->lock();
   if (mServer->get_instance(&node, mVariable)) {
-    node->execute_method(mMethod, mParameters); 
-    if (!mSilent && mMethod == "bang") *mOutput << node->inspect() << std::endl;
+    node->execute_method(mMethod, mParameters);
   } else {
     *mOutput << "Unknown node '" << mVariable << "'" << std::endl;
   }

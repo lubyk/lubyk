@@ -1,13 +1,9 @@
-// ordered_list_test.h 
-#include <cxxtest/TestSuite.h>
-#include "command.h"
-#include "rubyk.h"
 #include "test_helper.h"
 
-class TestCreateCommand : public CxxTest::TestSuite
+class testCreateCommand : public CxxTest::TestSuite
 {
 public:
-  void testCreate( void ) 
+  void test_create( void ) 
   {
     Rubyk server;
     std::istringstream  input(std::istringstream::in);   // allow input operations
@@ -22,62 +18,71 @@ public:
   }
 };
 
-class TestParseCommand : public CxxTest::TestSuite, public ParseTest
+class testParseCommand : public CxxTest::TestSuite, public ParseTest
 {
 public:
   
-  void testParseCommand( void ) 
+  void test_parse_command( void ) 
   { assert_result("v1=Value(1)\n","#<Value:v1 1.00>\n"); }
   
-  void testParseZero( void ) 
+  void test_parse_zero( void ) 
   { assert_result("v1=Value(0)\n","#<Value:v1 0.00>\n"); }
   
-  void testParseZeroDotInt( void ) 
+  void test_parse_zero_dot_int( void ) 
   { assert_result("v1=Value(0.1)\n","#<Value:v1 0.10>\n"); }
   
-  void testParseCommandWithSpaces( void ) 
+  void test_parse_command_with_spaces( void ) 
   { assert_result("v1 = Value(2)\n\n","#<Value:v1 2.00>\n"); }
   
-  void testParseInteger( void ) 
+  void test_parse_integer( void ) 
   { assert_result("v1 = Value(2.35)\n\n","#<Value:v1 2.35>\n"); }
   
-  void testParseFloat( void ) 
+  void test_parse_double( void ) 
   { assert_result("v1 = Value(2.35)\n\n","#<Value:v1 2.35>\n"); }
   
-  void testParseNegativeInteger( void ) 
+  void test_parse_negative_integer( void ) 
   { assert_result("v1 = Value(-5)\n\n","#<Value:v1 -5.00>\n"); }
   
-  void testParseNegativeFloat( void ) 
+  void test_parse_negative_double( void ) 
   { assert_result("v1 = Value(-2.35)\n\n","#<Value:v1 -2.35>\n"); }
   
-  void testExecuteCommand( void ) 
-  { assert_result("v1=Counter(3)\nv1.bang\n","#<Counter:v1 3>\n#<Counter:v1 4>\n"); }
+  void test_execute_command( void ) 
+  { assert_result("v1=Counter(3)\nv1.bang\nv1\n","#<Counter:v1 3 (+1)>\n#<Counter:v1 4 (+1)>\n"); }
   
-  void testInspectCommand( void ) 
-  { assert_result("i=Counter(14)\ni\n","#<Counter:i 14>\n#<Counter:i 14>\n"); }
+  void test_inspect_command( void ) 
+  { assert_print("i=Counter(14)\ni\n","#<Counter:i 14 (+1)>\n"); }
   
-  void testSyntaxError( void ) 
-  { assert_result("i=Counter(1)\n4\ni\n","#<Counter:i 1>\nSyntax error near '\n4\ni\n'.\n#<Counter:i 1>\n"); }
+  void test_syntax_error( void ) 
+  { assert_result("i=Counter(1)\n4\ni\n","#<Counter:i 1 (+1)>\nSyntax error near '\n4\ni\n'.\n#<Counter:i 1 (+1)>\n"); }
   
-  void testExecuteMethodWithParams( void ) 
-  { assert_result("i=Counter(1)\ni.set_increment(5)\ni.bang\n","#<Counter:i 1>\n#<Counter:i 6>\n"); }
+  void test_execute_inlet_with_params( void ) 
+  { assert_result("i=Counter(1)\ni.set_increment(5)\ni.bang\ni\n","#<Counter:i 1 (+1)>\n#<Counter:i 6 (+5)>\n"); }
   
-  void testExecuteClassMethod( void ) 
+  void test_execute_set( void ) 
+  { assert_result("i=Counter(1)\ni.set(counter:4 increment:5)\ni.bang\ni\n","#<Counter:i 1 (+1)>\n#<Counter:i 9 (+5)>\n"); }
+  
+  void test_execute_set_value( void ) 
+  { assert_result("i=Counter(1)\ni.set(5)\ni.bang\ni\n","#<Counter:i 1 (+1)>\n#<Counter:i 6 (+1)>\n"); }
+  
+  void test_bang_shortcut( void ) 
+  { assert_result("i=Counter(1)\ni.b\ni\n","#<Counter:i 1 (+1)>\n#<Counter:i 2 (+1)>\n"); }
+  
+  void test_execute_class_method( void ) 
   { assert_result("Test.hello\n","Hello World!\n"); }
 
-  void testParseLink( void ) 
+  void test_parse_link( void ) 
   { assert_result("n.1=>1.p\n",""); }
 
-  void testParseUnLink( void ) 
+  void test_parse_unLink( void ) 
   { assert_print("n=Value(1)\nn // p\nn.bang()",""); }
 
-  void testParseFirstLinks( void ) 
+  void test_parse_first_links( void ) 
   { clean_assert_result("n=>p\n",""); }
   
-  void testParseBadLinks( void ) 
+  void test_parse_bad_links( void ) 
   { assert_result("n=>\n","Syntax error near '>\n'.\n"); }
   
-  void testCreateDestroy( void ) 
+  void test_create_destroy( void ) 
   { assert_result("v=>p\nv=Value()\np=Print()\nv=Print()\np=Value()\n",
                   "#<Value:v Nil>\n#<Print:p -->\n#<Print:v -->\n#<Value:p Nil>\n");
 

@@ -28,6 +28,9 @@ public:
     }
   }
   
+  void spy() 
+  { bprint(mSpy, mSpySize, "[%i,%i]", mCutFrom < 0 ? mCutFrom : mCutFrom + 1, mCutTo < 0 ? mCutTo : mCutTo + 1); }
+  
 private:
   const Matrix * mLiveBuffer;      /** Live input stream. */
   CutMatrix mCutMatrix;      /** Stores the cut context. */

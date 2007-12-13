@@ -616,6 +616,30 @@ public:
     TS_ASSERT_EQUALS(c[0][1], 15.0);
   }
 
+  void test_symmetric( void )
+  {
+    Matrix a,b;
+    a.set_sizes(2,3);
+    a[0][0] = 1.0; a[0][1] = 2.0; a[0][2] = 3.0;
+    a[1][0] = 4.0; a[1][1] = 5.0; a[1][2] = 6.0;
+    
+    TS_ASSERT(b.symmetric(a));
+    
+    TS_ASSERT_EQUALS(b.row_count(), 3);
+    TS_ASSERT_EQUALS(b.col_count(), 3);
+    
+    TS_ASSERT_EQUALS(b[0][0], 17.0);
+    TS_ASSERT_EQUALS(b[0][1], 22.0);
+    TS_ASSERT_EQUALS(b[0][2], 27.0);
+    
+    TS_ASSERT_EQUALS(b[1][0], 22.0);
+    TS_ASSERT_EQUALS(b[1][1], 29.0);
+    TS_ASSERT_EQUALS(b[1][2], 36.0);
+    
+    TS_ASSERT_EQUALS(b[2][0], 27.0);
+    TS_ASSERT_EQUALS(b[2][1], 36.0);
+    TS_ASSERT_EQUALS(b[2][2], 45.0);
+  }
   
   void test_eigenvectors( void )
   {
@@ -625,7 +649,6 @@ public:
     a[1][0] = 2.0; a[1][1] = 4.0; a[1][2] = 2.0;
     a[2][0] = 3.0; a[2][1] = 2.0; a[2][2] = 1.0;
     
-    a.print();
     TS_ASSERT(c.eigenvectors(b, a));
 
     TS_ASSERT_EQUALS(c.row_count(), 3);

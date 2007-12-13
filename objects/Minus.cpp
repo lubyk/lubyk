@@ -27,6 +27,7 @@ public:
     }
   }
   
+  // inlet 2
   void set_minus(const Signal& sig)
   {
     sig.get(&mValue);

@@ -75,6 +75,14 @@ public:
     * of the work should be done. This method is responsible for sending the signals out. */
   virtual void bang (const Signal& sig) = 0;
   
+  void bang (const Params& p)
+  {
+    Signal sig;
+    Matrix buf;
+    sig.set(p, buf);
+    bang(sig);
+  }
+  
   /** This method must be implemented in subclasses. It is used to set parameters that
     * can be changed during runtime. */
   virtual bool set (const Params& p) = 0;

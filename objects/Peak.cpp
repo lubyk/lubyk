@@ -6,7 +6,7 @@ public:
   
   bool set (const Params& p)
   {
-    mDescent = p.val("descent", 0.125);
+    mDescent = p.val("descent", 0.125, true);
     mS.set(mBuffer);
     return true;
   }
@@ -56,6 +56,9 @@ public:
       send(mS);
     }
   }
+  
+  virtual void spy()
+  { bprint(mSpy, mSpySize,"%.2f", mDescent );  }
   
 private:
   Matrix mBuffer;      /** Current peak values. */

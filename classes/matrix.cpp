@@ -609,7 +609,7 @@ void TMatrix<float>::do_gemm(const enum CBLAS_ORDER Order, const enum CBLAS_TRAN
 
 /** Compute A'A for the given (row major) matrix. Return false on failure. */
 template<>
-bool TMatrix<double>::symetric(const TMatrix<double>& A)
+bool TMatrix<double>::symmetric(const TMatrix<double>& A)
 {
   if(!set_sizes(A.col_count(), A.col_count())) return false;
   // you want to understand this line ?
@@ -620,7 +620,7 @@ bool TMatrix<double>::symetric(const TMatrix<double>& A)
 
 /** Compute A'A for the given (row major) matrix. Return false on failure. */
 template<>
-bool TMatrix<float>::symetric(const TMatrix<float>& A)
+bool TMatrix<float>::symmetric(const TMatrix<float>& A)
 {
   if(!set_sizes(A.col_count(), A.col_count())) return false;
   // you want to understand this line ?

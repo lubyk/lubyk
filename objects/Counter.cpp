@@ -4,11 +4,17 @@
 class Counter : public Node
 {
 public:
-  // params = hash, 'port:450, baud:3200, xyz:450, title:"home of the braave"'
+  bool init (const Params& p)
+  {
+    mCounter = 0;
+    mIncrement = 1;
+    return true;
+  }
+  
   bool set (const Params& p)
   {
-    mCounter   = p.val("counter", 0, true);
-    mIncrement = p.val("add", 1);
+    mCounter   = p.val("counter",   mCounter, true);
+    mIncrement = p.val("increment", mIncrement);
     
     return true;
   }
@@ -17,6 +23,8 @@ public:
   void bang(const Signal& sig)
   { 
     sig.get(&mCounter);
+    
+    if (mDebug) *mOutput << mName << ": " << mCounter + mIncrement << ".\n";
     send(mCounter += mIncrement);
   }
   
@@ -26,7 +34,7 @@ public:
   
   
   virtual void spy() 
-  { bprint(mSpy, mSpySize,"%i", mCounter );  }
+  { bprint(mSpy, mSpySize,"%i (%+i)", mCounter, mIncrement );  }
   
   virtual void help()
   { *mOutput << "Increments by 'value' each time it receives a bang.\n"; }

@@ -211,37 +211,27 @@ private:
   static void cast_inlet_accessor (void * receiver, const Params& p)
   {
     Signal sig;
-    Matrix buf(1,p.size());
-    double value;
-    if (p.size() > 1) {
-      for(size_t i=0; i < p.size(); i++) {
-        p.get(&value, i);
-        buf.data[i] = value;
-      }
-      sig.set(buf);
-    } else if (p.get(&value)) {
-      sig.set(value);
-    } else {
-      sig.set_bang();
-    }
+    Matrix buf;
+    sig.set(p, buf);
     (((T*)receiver)->*Tmethod)(sig);
   }
   
-  /** Transform an outlet callback into a 'Params' based accessor. */
-  template <class T, void(T::*Tmethod)(Signal& sig)>
-  static void cast_outlet_accessor (void * receiver, const Params& p)
-  {
-    Signal sig;
-    (((T*)receiver)->*Tmethod)(sig);
-    ((Node*)receiver)->output() << sig << std::endl;
-  }
   
-  /** Create a callback for an outlet. */
-  template <class T, void(T::*Tmethod)(Signal& sig)>
-  static void cast_outlet_method (void * receiver, Signal& sig)
-  {
-    (((T*)receiver)->*Tmethod)(sig);
-  }
+  // NOT USED /** Transform an outlet callback into a 'Params' based accessor. */
+  // NOT USED template <class T, void(T::*Tmethod)(Signal& sig)>
+  // NOT USED static void cast_outlet_accessor (void * receiver, const Params& p)
+  // NOT USED {
+  // NOT USED   Signal sig;
+  // NOT USED   (((T*)receiver)->*Tmethod)(sig);
+  // NOT USED   ((Node*)receiver)->output() << sig << std::endl;
+  // NOT USED }
+  // NOT USED 
+  // NOT USED /** Create a callback for an outlet. */
+  // NOT USED template <class T, void(T::*Tmethod)(Signal& sig)>
+  // NOT USED static void cast_outlet_method (void * receiver, Signal& sig)
+  // NOT USED {
+  // NOT USED   (((T*)receiver)->*Tmethod)(sig);
+  // NOT USED }
   
   /** Create a callback for an inlet. */
   template <class T, void(T::*Tmethod)(const Signal& sig)>

@@ -6,6 +6,7 @@
 #include "buf.h"
 #include "matrix.h"
 
+class Params;
 
 /** Signal types. */
 enum rubyk_signal_t {
@@ -148,6 +149,12 @@ union Signal {
     type = MatrixSignal;
     matrix.value = &mat;
   }
+  
+  /** Set from params. 
+    * @param p parameters from command line.
+    * @param pBuffer used to write list values from p.
+    */
+  void set (const Params& p, Matrix& pBuffer);
   
   /** Set as void *. */
   inline void set(void * pPtr, bool pFree)

@@ -7,12 +7,11 @@ public:
   
   bool set (const Params& p)
   {
-    mMessage = p.val("test", "Hello World !", true);
+    mMessage = p.val("message", "Hello World !", true);
     if (mMessage == "is output ok?")
       *mOutput << "Output set" << std::endl;
       
     mCounter = p.val("counter", 0);
-    mName    = p.val("name"   , std::string("no-name"));
     return true;
   }
   
@@ -22,7 +21,7 @@ public:
   }
   
   void spy() 
-  { bprint(mSpy, mSpySize,"%s: %i", mName.c_str(), mCounter); }
+  { bprint(mSpy, mSpySize,"'%s' %i", mMessage.c_str(), mCounter); }
   
   void help()
   { *mOutput << "Don't hit me!\n"; }
@@ -52,17 +51,17 @@ public:
   
   
 private:
-  void test_try() {
+  bool test_try() {
     Matrix m,n;
     m.set_sizes(5,1);
     m.fill(2.0);
     TRY(n, copy(m, 10, 10));
+    return true;
   }
   
   /* data */
   std::string mMessage;
   int mCounter;
-  std::string mName;
 };
 
 
