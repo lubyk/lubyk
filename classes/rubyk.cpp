@@ -149,7 +149,11 @@ void Rubyk::remove_link(const std::string& pFrom, unsigned int pFromPort, unsign
 
 bool Rubyk::get_instance(Node ** pResult, const std::string& pName)
 {
-  return mInstances.get(pResult, pName);
+  Node * n;
+  if(!mInstances.get(&n, pName)) return false;
+  if(!n) return false; /// FIXME: why does this happen ???
+  *pResult = n;
+  return true;
 }
 
 bool Rubyk::run()
