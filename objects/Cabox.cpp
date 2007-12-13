@@ -8,7 +8,7 @@ public:
   bool init (const Params& p)
   { 
     mBuffer.set_sizes(1, 12);
-    mOffset.set_sizes(1,12);
+    mOffset.set_sizes(1, 12);
     
     mBuffer.clear();
     mOffset.clear();
@@ -54,7 +54,7 @@ public:
     bool new_data = false;
     while (mPort.read_char(&c)) {
       // empty buffer (readall)
-      // printf("% i:%i [%i]\n", mState, mIndex, c);
+      // printf("% i:%i ", mIndex, c);
       
       if (mState == -3) {
         if (c == 255) mState++;
@@ -81,6 +81,7 @@ public:
       
       val -= mOffset.data[mIndex];
       mVector[mIndex] = val;
+      
       //printf("val[%i] = %.2f  [%i,%i]\n",mIndex,val,mHigh,c);
       
       float abs_val;
@@ -96,13 +97,14 @@ public:
       mIndex++;
       if (mIndex >= 12) {
         mVectorRateCounter++;
+        mIndex = 0;
         mState = -3; // wait for sync
         new_data = true;
         mHighestValue         = mFindHighestValue;
         mHighestDirection     = mFindHighestDirection;
         mFindHighestValue     = 0.0;
         mFindHighestDirection = 0;
-        mBuffer.advance(); // move loop buffer forward
+        mVector = mBuffer.advance(); // move loop buffer forward
         if (mVectorRateCounter > 800) {
           mRate  = mVectorRateCounter * 1000.0 / (mServer->mCurrentTime - mRateStart);
           mVectorRateCounter = 0;
@@ -121,10 +123,10 @@ public:
     if (new_data) {
       
       // outlet 3 (highest direction)
-      send((int)mHighestDirection, 3);
+      send(3, (int)mHighestDirection);
       
       // outlet 2 (highest value)
-      send(mHighestValue, 2);
+      send(2, mHighestValue);
       
       // outlet 1 (stream)
       mS.set(mBuffer.matrix());

@@ -56,14 +56,12 @@ public:
   void bang(const Signal& sig)
   {
     sig.get(&(mLiveBuffer[0]));
-    printf(" bang(%p) %p, %p\n", this, mLiveBuffer[0], mLiveBuffer[1]);
     glutPostRedisplay();
   }
   
   // inlet 2
   void reference(const Signal& sig)
-  {   
-    printf(" ref %p, %p\n", mLiveBuffer[0], mLiveBuffer[1]);
+  {
     sig.get(&(mLiveBuffer[1]));
   }
   
