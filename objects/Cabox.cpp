@@ -54,7 +54,7 @@ public:
     bool new_data = false;
     while (mPort.read_char(&c)) {
       // empty buffer (readall)
-      //printf("% i:%i [%i]\n", mState, mIndex, c);
+      // printf("% i:%i [%i]\n", mState, mIndex, c);
       
       if (mState == -3) {
         if (c == 255) mState++;

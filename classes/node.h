@@ -272,6 +272,9 @@ protected:
   
   void debug()
   {
+    if (!this) {
+      printf("BAD: debug\n");
+    }
     mDebug = !mDebug;
     if (mDebug)
       *mOutput << mName << ": debug on\n";

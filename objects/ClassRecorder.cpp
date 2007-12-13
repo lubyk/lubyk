@@ -15,7 +15,6 @@ enum class_recorder_states_t {
 class ClassRecorder : public Node
 {
 public:
-  
   bool init(const Params& p)
   {
     // defaults
@@ -59,6 +58,8 @@ public:
     if (sig.type == MatrixSignal) {
       if (!resize(sig.matrix.value->row_count(), sig.matrix.value->col_count())) return;
       sig.get(&mLiveBuffer);
+      if (mLiveBuffer)
+        TRY_RET(mLiveView, set_view(*mLiveBuffer, -mMeanVector.row_count(), -1));
     } else {
       time_t record_time = (time_t)(ONE_SECOND * mBuffer.row_count())/(mBuffer.col_count() * mSampleRate);
       time_t record_with_margin = record_time * (1 + mMargin); //  * (1 + mMargin/2.0) ???
@@ -297,8 +298,6 @@ private:
       TRY(mMeanVector, set_sizes(vector_size, pColCount));
       
       TRY(mView,     set_view(mBuffer, mRowMargin, mRowMargin + mMeanVector.row_count() - 1));
-      
-      TRY(mLiveView, set_view(*mLiveBuffer, -mMeanVector.row_count(), -1));
       
       *mOutput << mName << ": resized to " << mMeanVector.row_count() << "x" << mMeanVector.col_count() << " (removed margin).\n";
       mMeanVector.clear();

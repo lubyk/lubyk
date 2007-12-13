@@ -9,7 +9,11 @@ typedef enum {
 class Plot : public OpenGL
 {
 public:
-  virtual ~Plot () {}
+  Plot()
+  {
+    for(size_t i=0; i< PLOT_INLET_COUNT; i++)
+      mLiveBuffer[i] = NULL;
+  }
   
   bool init (const Params& p)
   {
@@ -24,9 +28,7 @@ public:
     
     set_mode_from_string(&mMode[0], p.val("mode", std::string("time")));
     set_mode_from_string(&mMode[1], p.val("mode2", std::string("time")));
-    for(size_t i=0; i< PLOT_INLET_COUNT; i++) {
-      mLiveBuffer[i]     = NULL;
-    }
+    
     return init_gl(p);
   }
   
@@ -53,20 +55,23 @@ public:
   // inlet 1
   void bang(const Signal& sig)
   {
-    sig.get(&mLiveBuffer[0]);
+    sig.get(&(mLiveBuffer[0]));
+    printf(" bang(%p) %p, %p\n", this, mLiveBuffer[0], mLiveBuffer[1]);
     glutPostRedisplay();
   }
   
   // inlet 2
   void reference(const Signal& sig)
-  { 
-    sig.get(&mLiveBuffer[1]);
+  {   
+    printf(" ref %p, %p\n", mLiveBuffer[0], mLiveBuffer[1]);
+    sig.get(&(mLiveBuffer[1]));
   }
   
   void draw()
-  {
-    for(size_t i=PLOT_INLET_COUNT - 1; i>=0; i--) {
-      if (!mLiveBuffer[i]) continue;
+  { 
+    // do not replace by size_t or i == -1 will never get caught !
+    for(int i=PLOT_INLET_COUNT - 1; i>=0; i--) {
+      if (mLiveBuffer[i] == NULL) continue;
       switch(mMode[i]) {
       case XYPlot:
         xy_plot(*mLiveBuffer[i], i == 0 ? 1.0 : 0.6, i, i == 0);
