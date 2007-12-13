@@ -56,49 +56,93 @@ bool TMatrix<double>::copy_at(int pRowIndex, const Signal& sig)
   return copy_at(pRowIndex, *(sig.matrix.value));
 }
 
-template<>
-bool TMatrix<double>::from_file(FILE * pFile)
+template<typename T>
+bool TMatrix<T>::from_file(FILE * pFile)
 {
-  float val;
-  for(size_t i=0; i < mRowCount; i++) {
-    for(size_t j=0; j < mColCount; j++) {
-      if(fscanf(pFile, " %f", &val) == EOF) {
-        set_error("end of file while reading value %i,%i out of %ix%i", i, j, mRowCount, mColCount);
+  bool read_all = mRowCount == 0;
+  size_t i = 0;
+  
+  // if mColCount == 0, get row_size from first row
+  if (!mColCount) { 
+    TMatrix tmp;
+    T val;
+    tmp.set_sizes(1,1);
+    
+    while(do_fscanf(pFile, &val) > 0) {
+      tmp.append(val);
+      if (fscanf(pFile, "\n") > 0) break;
+    }
+    copy(tmp);
+    mColCount = size();
+    mRowCount = 1;
+    i = 1;
+  }
+  
+  if (read_all) {
+    TMatrix tmp;
+    if(!tmp.set_sizes(1, mColCount)) {
+      set_error("tmp (%s)", tmp.error_msg());
+      return false;
+    }
+    while (true) {
+      for(size_t j=0; j < mColCount; j++) {
+        if(do_fscanf(pFile, tmp.data + j) == EOF) {
+          if (j == 0) {
+            // ok. end of file
+            return true;
+          } else {
+            set_error("end of file in middle of vector %i", mRowCount + 1);
+            return false;
+          }
+        }
+        fscanf(pFile, "\n"); // ignore newline
+      }
+      if (!append(tmp)) {
+        set_error("could not append vector %i", mRowCount + 1);
         return false;
       }
-      fscanf(pFile, "\n"); // ignore newline
-      data[i * mColCount + j] = (double)val;
+    }
+  } else {
+    for(size_t i=0; i < mRowCount; i++) {
+      for(size_t j=0; j < mColCount; j++) {
+        if(do_fscanf(pFile, data + i * mColCount + j) == EOF) {
+          set_error("end of file while reading value %i,%i out of %ix%i", i+1, j+1, mRowCount, mColCount);
+          return false;
+        }
+        fscanf(pFile, "\n"); // ignore newline
+      }
     }
   }
+  
   return true;
 }
 
-template<>
-bool TMatrix<int>::from_file(FILE * pFile)
+
+/** Read a matrix from a filepath. */
+template<typename T>
+bool TMatrix<T>::from_file(const std::string& pPath, const char * pMode)
 {
-  int val;
-  for(size_t i=0; i < mRowCount; i++) {
-    for(size_t j=0; j < mColCount; j++) {
-      if(fscanf(pFile, " %i", &val) == EOF) {
-        set_error("end of file while reading value %i,%i out of %ix%i", i, j, mRowCount, mColCount);
-        return false;
-      }
-      fscanf(pFile, "\n"); // ignore newline
-      data[i * mColCount + j] = (double)val;
+  FILE * file = fopen(pPath.c_str(), pMode);
+    if (!file) {
+      set_error("could not read from '%s' (%s)", pPath.c_str(), strerror(errno));
+      return false;
     }
-  }
+    if (!from_file(file)) {
+      fclose(file);
+      return false;
+    }
+  fclose(file);
   return true;
 }
-
 
 /** Write a matrix to a filepath. */
 template<typename T>
 bool TMatrix<T>::to_file(const std::string& pPath, const char * pMode) const
 {
-  // 1. write to file
   FILE * file = fopen(pPath.c_str(), pMode);
     if (!file) {
       // too bad, we need this to be 'const' so we cannot use set_error...
+      // FIXME: remove const and use CutMatrix (maybe rename to ViewMatrix)
       // set_error("could not write to '%s' (%s)", pPath.c_str(), strerror(errno));
       return false;
     }
@@ -110,26 +154,12 @@ bool TMatrix<T>::to_file(const std::string& pPath, const char * pMode) const
   return true;
 }
 
-
-template<>
-bool TMatrix<double>::to_file(FILE * pFile) const
+template<typename T>
+bool TMatrix<T>::to_file(FILE * pFile) const
 {
   for(size_t i=0; i < mRowCount; i++) {
     for(size_t j=0; j < mColCount; j++) {
-      fprintf(pFile, " % .5f", data[i * mColCount + j]);
-    }  
-    fprintf(pFile, "\n");
-  }  
-  fprintf(pFile, "\n");  // two \n\n between vectors
-  return true;
-}
-
-template<>
-bool TMatrix<int>::to_file(FILE * pFile) const
-{
-  for(size_t i=0; i < mRowCount; i++) {
-    for(size_t j=0; j < mColCount; j++) {
-      fprintf(pFile, " %i", data[i * mColCount + j]);
+      do_fprintf(pFile, data[i * mColCount + j]);
     }  
     fprintf(pFile, "\n");
   }  
@@ -821,6 +851,14 @@ bool TMatrix<T>::cast_append (const V * pVector, size_t pVectorSize, double pSca
 /// explicit instanciation for doubles and integers //////
 template bool TMatrix<double>::to_file(const std::string& pPath, const char * pMode) const;
 template bool TMatrix< int  >::to_file(const std::string& pPath, const char * pMode) const;
+template bool TMatrix<double>::to_file(FILE * pFile) const;
+template bool TMatrix< int  >::to_file(FILE * pFile) const;
+
+template bool TMatrix<double>::from_file(const std::string& pPath, const char * pMode);
+template bool TMatrix< int  >::from_file(const std::string& pPath, const char * pMode);
+template bool TMatrix<double>::from_file(FILE * pFile);
+template bool TMatrix< int  >::from_file(FILE * pFile);
+
 template bool TMatrix<double>::add(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale);
 template bool TMatrix< int  >::add(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale);
 template bool TMatrix<double>::add(const double * pVector, size_t pVectorSize);

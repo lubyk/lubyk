@@ -59,8 +59,15 @@ public:
   bool to_file(const std::string& pPath, const char * pMode) const;
   
   /** Fill a matrix from a FILE pointer.
+    * If the matrix has '0' rows, all the file is loaded into the matrix. If
+    * the matrix has '0' columns, the size is built from the number of values until
+    * the next newline.
+    *
     * @return false if there was not enough values to fill the matrix. */
   bool from_file(FILE * pFile);
+  
+  /** Read a matrix from a filepath. */
+  bool from_file(const std::string& pPath, const char * pMode);
   
   /** Make a partial copy of another matrix (copy all contents).
     * to copy the first vector:
@@ -328,7 +335,31 @@ protected:
   
   /** Do multiplication (wrapper around Cblas) */
   inline void do_gemm(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA, const enum CBLAS_TRANSPOSE TransB, const int M, const int N, const int K, const double alpha, const T *A, const int lda, const T *B, const int ldb, const double beta, T *C, const int ldc);
+  
+  /** Read an integer from a file. */
+  inline int do_fscanf (FILE * pFile, int * pValue) const
+  {
+    return fscanf(pFile, " %i", pValue);
+  }
+  
+  /** Read a double from a file. */
+  inline int do_fscanf (FILE * pFile, double * pValue) const
+  {
+    return fscanf(pFile, " %lf", pValue);
+  }
+  
+  /** Write an integer to a file. */
+  inline void do_fprintf (FILE * pFile, int pValue) const
+  {  
+    fprintf(pFile, " %i", pValue);
+  }
 
+  /** Write a double to a file. */
+  inline void do_fprintf (FILE * pFile, double pValue) const
+  {  
+    fprintf(pFile, " % .5f", pValue);
+  }
+  
   bool set_error(const char * fmt, ...);
   
   size_t mStorageSize; /**< Storage size is greater or equal to mRowCount * mColCount. */
@@ -342,6 +373,7 @@ protected:
 typedef TMatrix< int  > IntMatrix;
 
 typedef TMatrix<double> Matrix;
+
 
 /** Read-only matrix showing part of another matrix. */
 class CutMatrix : public Matrix
