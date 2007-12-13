@@ -144,7 +144,7 @@ public:
     }
     
     // send mean value
-    send(mMeanSignal, 2);
+    send(2, mMeanSignal);
     
     if (mState == Validation)
       send(mS);        // recorded signal
@@ -261,7 +261,7 @@ private:
   {
     Matrix vector;
     
-    if (!set_size(vector, 1, mMeanVector.col_count(), "temporary vector")) return;
+    TRY_RET(vector, set_sizes(1, mMeanVector.col_count()));
     
     mClassLabel = cmd;
     /** reset mean value. */
@@ -293,17 +293,13 @@ private:
       size_t vector_size = pRowCount / (1.0 + mMargin);
       mRowMargin = (pRowCount - vector_size) / 2;
       
-      if (!set_size(mBuffer,     pRowCount,   pColCount, "mBuffer")) return false;
-      if (!set_size(mMeanVector, vector_size, pColCount, "mMeanVector")) return false;
+      TRY(mBuffer,     set_sizes(pRowCount,   pColCount));
+      TRY(mMeanVector, set_sizes(vector_size, pColCount));
       
-      if (!mView.set_view(mBuffer, mRowMargin, mRowMargin + mMeanVector.row_count() - 1)) {
-        *mOutput << mName << ": mView (" << mView.error_msg() << ").\n";
-        return false;
-      }
-      if (!mLiveView.set_view(*mLiveBuffer, -mMeanVector.row_count(), -1)) {
-        *mOutput << mName << ": mLiveView (" << mLiveView.error_msg() << ").\n";
-        return false;
-      }
+      TRY(mView,     set_view(mBuffer, mRowMargin, mRowMargin + mMeanVector.row_count() - 1));
+      
+      TRY(mLiveView, set_view(*mLiveBuffer, -mMeanVector.row_count(), -1));
+      
       *mOutput << mName << ": resized to " << mMeanVector.row_count() << "x" << mMeanVector.col_count() << " (removed margin).\n";
       mMeanVector.clear();
     }

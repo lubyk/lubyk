@@ -20,8 +20,6 @@ public:
     sig.get(&mLiveBuffer);
     
     if(mCutMatrix.set_view(*mLiveBuffer, mCutFrom, mCutTo)) {
-      if (mDebug)
-        *mOutput << mName << ": " << mS << std::endl;
       send(mS);
     } else {
       *mOutput << mName << ": " << mCutMatrix.error_msg() << std::endl;

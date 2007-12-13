@@ -40,7 +40,7 @@ void LuaScript::call_lua(const char * pFunctionName)
     mScriptDead = true;
     return;
   }
-  sig_from_lua(&sig, lua_gettop(mLua));
+  sig_from_lua(&sig);
   if (sig.type) send(sig);
 }
 
@@ -105,25 +105,29 @@ Node * LuaScript::get_node_from_lua(lua_State * L)
   lua_getglobal(L, "rubyk_this");
   Node * node = (Node*)lua_touserdata(L,lua_gettop(L));
   
-  if (!node) fprintf(stderr, "Lua error: 'rubyk_this' not set.\n");
+  if (!node) printf("Lua error: 'rubyk_this' not set.\n");
   lua_pop(L,1);
   return node;
 }
 
-void LuaScript::sig_from_lua(Signal * sig, int index)
+bool LuaScript::sig_from_lua(Signal * sig, int index)
 {
-  sig_from_lua(sig, index, mLuaReturn);
+  return sig_from_lua(sig, index, mLuaReturn);
 }
 
 bool LuaScript::double_from_lua(double * d)
 {
-  if (!lua_isnumber(mLua, lua_gettop(mLua))) return false;
-  *d = lua_tonumber(mLua,lua_gettop(mLua));
+  int index = lua_gettop(mLua);
+  if (!lua_isnumber(mLua, index)) {
+    *mOutput << mName << ": wrong value type to get double (" << lua_typename(mLua, index) << " at " << index << ").\n";
+    return false;
+  }
+  *d = lua_tonumber(mLua,index);
   lua_pop(mLua,1);
   return true;
 }
 
-void LuaScript::sig_from_lua(Signal * sig, int index, Matrix& pMat)
+bool LuaScript::sig_from_lua(Signal * sig, int index, Matrix& pMat)
 {
   int i  = 1;
   /* LUA_TNIL, LUA_TNUMBER, LUA_TBOOLEAN, LUA_TSTRING, LUA_TTABLE, LUA_TFUNCTION, LUA_TUSERDATA, LUA_TTHREAD, and LUA_TLIGHTUSERDATA.
@@ -160,8 +164,9 @@ void LuaScript::sig_from_lua(Signal * sig, int index, Matrix& pMat)
     sig->set(pMat);
     break;
   default:
-    fprintf(stderr, "Unsupported lua return value '%s'.\n", lua_typename(mLua, index));
-    sig->set_nil();
+    *mOutput << mName << ": wrong value type to build signal (" << lua_typename(mLua, index) << " at " << index << ").\n";
     lua_pop(mLua, 1);
+    return false;
   }
+  return true;
 }

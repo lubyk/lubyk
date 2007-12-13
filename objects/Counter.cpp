@@ -24,7 +24,6 @@ public:
   { 
     sig.get(&mCounter);
     
-    if (mDebug) *mOutput << mName << ": " << mCounter + mIncrement << ".\n";
     send(mCounter += mIncrement);
   }
   

@@ -60,7 +60,6 @@ public:
       }
     }
     mS.set(mBuffer.matrix());
-    if (mDebug) *mOutput << mName << ": " << mS << std::endl;
     send(mS);
   }
   

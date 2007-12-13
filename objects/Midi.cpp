@@ -52,8 +52,8 @@ public:
   // inlet 1
   void bang(const Signal& sig)
   {
-    if (mDebug)
-      *mOutput << mName << ": " << sig << std::endl;
+    if (mDebug) *mOutput << mName << ": " << sig << std::endl;
+    
     if (!mMidiout || sig.type != MidiSignal) return;
     
     if (sig.midi_ptr.value->mWait) {

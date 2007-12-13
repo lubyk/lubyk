@@ -49,10 +49,8 @@ public:
     }
     
     if (row_count == 1 && col_count == 1) {
-      if (mDebug) *mOutput << mName << ": " << mBuffer.data[0] << std::endl;
       send(mBuffer.data[0]);
     } else {
-      if (mDebug) *mOutput << mName << ": " << mS << std::endl;
       send(mS);
     }
   }

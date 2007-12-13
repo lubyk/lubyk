@@ -17,12 +17,10 @@ public:
       mBuffer.copy(sig);
       mBuffer -= mValue;
       mS.set(mBuffer);
-      if (mDebug) *mOutput << mName << ": " << mS << std::endl;
       send(mS);
     } else if (sig.get(&d)) {
       // single value
       d -= mValue;
-      if (mDebug) *mOutput << mName << ": " << d << std::endl;
       send(d);
     }
   }

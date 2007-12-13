@@ -70,7 +70,6 @@ public:
       mProcessor->do_fft(mFrequencies.data, mBuffer.data);
       // FIXME: polar coordinates for FFT on single signal
     }
-    if (mDebug) *mOutput << mName << ": " << mS << std::endl;
     send(mS);
   }
   

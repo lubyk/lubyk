@@ -33,7 +33,7 @@ public:
     send(++mCounter);
     
     *mOutput << "sending nil=>";
-    send(gNilSignal, 2);
+    send(2, gNilSignal);
     *mOutput << "<=done.\n";
   }
   

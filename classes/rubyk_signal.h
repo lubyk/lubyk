@@ -3,7 +3,6 @@
 #include <cstdlib> // free
 #include <iostream>
 #include "midi_message.h"
-#include "buf.h"
 #include "matrix.h"
 
 class Params;

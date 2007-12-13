@@ -29,7 +29,6 @@ public:
       
       mMatrix /= (double)mat->row_count();
       
-      if (mDebug) *mOutput << mName << ": " << mMatrix << std::endl;
       send(mMatrix);
     }
   }

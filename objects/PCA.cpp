@@ -63,7 +63,6 @@ public:
       transpose_vector(*mLiveBuffer);
 
       // send
-      if (mDebug) std::cout << mName << ": " << mS << std::endl;
       send(mS);
       
     } else {

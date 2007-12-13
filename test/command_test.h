@@ -34,6 +34,9 @@ public:
   void test_parse_command_with_spaces( void ) 
   { assert_result("v1 = Value(2)\n\n","#<Value:v1 2.00>\n"); }
   
+  void test_parse_multiline_string( void ) 
+  { assert_result("t=Test(\"I love you (a lot)\nwhen you're naked...\")\n","#<Test:t \'I love you (a lot)\nwhen you\'re naked...\' 0>\n"); }
+  
   void test_parse_integer( void ) 
   { assert_result("v1 = Value(2.35)\n\n","#<Value:v1 2.35>\n"); }
   

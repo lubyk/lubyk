@@ -112,7 +112,6 @@ public:
       if (sig.type == MatrixSignal) {
         if (sig.matrix.value->col_count() == mCodebook.col_count()) {
           int label = label_for(*sig.matrix.value);
-          if (mDebug) *mOutput << mName << ": " << label << "\n";
           send(label / (double)mCodebook.row_count());
         } else {
           *mOutput << mName << ": wrong signal size '" << sig.matrix.value->col_count() << "'. Should be '" << mCodebook.col_count() << "'.\n";

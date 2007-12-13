@@ -33,8 +33,6 @@ public:
     } else {
       set_note(sig);
     }
-    if(mDebug)
-      *mOutput << mName << ": " << Signal(mMessage) << std::endl;
     send(mMessage);
   }
 

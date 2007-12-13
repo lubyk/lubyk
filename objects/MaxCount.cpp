@@ -33,7 +33,8 @@ public:
         max_label = label;
       }
     }
-    if (mDebug) *mOutput << mName << ": " << max_label << ": " << mLabelVote[max_label] << std::endl;
+    
+    send(2, mLabelVote[max_label]);
     send(max_label);
   }
 
@@ -46,4 +47,5 @@ extern "C" void init()
 { 
   CLASS (MaxCount)
   OUTLET(MaxCount, value)
+  OUTLET(MaxCount, votes)
 }

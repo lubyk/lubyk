@@ -6,7 +6,6 @@
 #include "params.h"
 #include "hash.h"
 #include "matrix.h"
-#include "buf.h"
 #include "rubyk.h"
 #include "rubyk_signal.h"
 #include "event.h"
@@ -98,83 +97,86 @@ public:
   
   ///////// send signals ///////////////
   
+  template<typename T>
+  inline void send(T data)
+  { send(1, data); }
   
   /** Send a bang. */
-  inline void send(rubyk_signal_t pType, size_t pPort = 1) 
+  inline void send(size_t pPort, rubyk_signal_t pType) 
   { 
     if (!pType) return; // do nothing if NilSignal
     mS.type = pType;
-    send(mS, pPort);
+    send(pPort, mS);
   }
   
   /** Send an integer. */
-  inline void send(int pInt, size_t pPort = 1)
+  inline void send(size_t pPort, int pInt)
   {
     mS.type = IntegerSignal;
     mS.i.value = pInt;
-    send(mS, pPort);
+    send(pPort, mS);
   }
   
   /** Send a char. */
-  inline void send(char pChar, size_t pPort = 1)
+  inline void send(size_t pPort, char pChar)
   {
     mS.type = CharSignal;
     mS.c.value = pChar;
-    send(mS, pPort);
+    send(pPort, mS);
   }
   
   /** Send an unsigned integer. */
-  inline void send(unsigned int pInt, size_t pPort = 1)
+  inline void send(size_t pPort, unsigned int pInt)
   {
     mS.type = IntegerSignal;
     mS.i.value = pInt;
-    send(mS, pPort);
+    send(pPort, mS);
   }
   
   /** Send an unsigned long. */
-  inline void send(long pInt, size_t pPort = 1)
+  inline void send(size_t pPort, long pInt)
   {
     mS.type = IntegerSignal;
     mS.i.value = (int)pInt;
-    send(mS, pPort);
+    send(pPort, mS);
   }
   
   /** Send a double. */
-  inline void send(double pDouble, size_t pPort = 1)
+  inline void send(size_t pPort, double pDouble)
   {
     mS.type = DoubleSignal;
     mS.d.value = pDouble;
-    send(mS, pPort);
+    send(pPort, mS);
   }
   
   /** Send a float. */
-  inline void send(float pFloat, size_t pPort = 1)
+  inline void send(size_t pPort, float pFloat)
   { 
     mS.type = DoubleSignal;
     mS.d.value = (double)pFloat;   
-    send(mS, pPort);
+    send(pPort, mS);
   }
   
   /** Send a MidiMessage ptr. */
-  inline void send(MidiMessage * pPtr, bool pFree = false, size_t pPort = 1)
+  inline void send(size_t pPort, MidiMessage * pPtr, bool pFree = false)
   {
     mS.type = MidiSignal;
     mS.midi_ptr.value = pPtr;
     mS.midi_ptr.free_me = pFree;
-    send(mS, pPort);
+    send(pPort, mS);
   }
   
   /** Send a Matrix. */
-  inline void send(const Matrix& pMat, size_t pPort = 1)
+  inline void send(size_t pPort, const Matrix& pMat)
   {
     mS.type = MatrixSignal;
     mS.matrix.value = &pMat;
-    send(mS, pPort);
+    send(pPort, mS);
   }
   
-  inline void send(const MidiMessage& pMsg, size_t pPort = 1)
+  inline void send(size_t pPort, const MidiMessage& pMsg)
   {
-    send(Signal(pMsg), pPort);
+    send(pPort, Signal(pMsg));
   }
   
   /** Send a midi note with the parameters provided.
@@ -185,31 +187,32 @@ public:
     * pTime: time to wait before playing this note.
     * pPort: outlet id.
     */
-  inline void send_note(unsigned char pNote, unsigned char pVelocity = 80, unsigned int pLength = 500, unsigned int pChannel = 1, time_t pTime = 0, size_t pPort = 1)
+  inline void send_note(size_t pPort, unsigned char pNote, unsigned char pVelocity = 80, unsigned int pLength = 500, unsigned int pChannel = 1, time_t pTime = 0)
   {
     MidiMessage * msg = new MidiMessage(3);
     msg->set_as_note(pNote, pVelocity, pLength, pChannel, pTime);
     mS.type = MidiSignal;
     mS.midi_ptr.value = msg;
     mS.midi_ptr.free_me = true;
-    send(mS, pPort);
+    send(pPort, mS);
   }
   
   /** Send a void ptr. */
-  inline void send(void * pPtr, bool pFree, size_t pPort = 1)
+  inline void send(size_t pPort, void * pPtr, bool pFree)
   {
     mS.type = VoidPointerSignal;
     mS.ptr.value = pPtr;
     mS.ptr.free_me = pFree;
-    send(mS, pPort);
+    send(pPort, mS);
   }
   
   //////////////////////////////////////
   
-  inline void send (const Signal& sig, size_t pOutletId = 1)
-  {
-    if (pOutletId < 1 || pOutletId > mOutlets.size() || !sig.type) return;
-    mOutlets[pOutletId - 1]->send(sig);
+  inline void send (size_t pPort, const Signal& sig)
+  {  
+    if (mDebug) *mOutput << "[" << mName << ":" << pPort << "] " << sig << std::endl;
+    if (pPort < 1 || pPort > mOutlets.size() || !sig.type) return;
+    mOutlets[pPort - 1]->send(sig);
   }
   
   
@@ -295,20 +298,16 @@ protected:
     return true;
   }
   
-  /** Helper to set a matrix size with error handling. */
-  bool set_size(Matrix& mat, size_t pRowCount, size_t pColCount, const char * pMsg)
-  {
-    if (!mat.set_sizes(pRowCount, pColCount)) {
-      error(mat, pMsg);
-      return false;
-    }
-    return true;
-  }
-  
   /** Helper to display error messages. */
   void error(Matrix& pMat, const char * pMsg)
   {
     *mOutput << mName << ": " << pMsg << " (" << pMat.error_msg() << ").\n";
+  }
+  
+  /** Helper to display error messages. */
+  void error(const char * pMsg)
+  {
+    *mOutput << mName << ": " << pMsg << ".\n";
   }
   
   /** Allocate/reallocate doubles. Print an error on failure. */

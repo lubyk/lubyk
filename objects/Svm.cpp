@@ -123,8 +123,6 @@ public:
     
     bool change = predict();
     
-    if (mDebug)
-      std::cout << mName << ": " << mClassLabel << std::endl;
     if (change) send(mClassLabel);    
   }
   

@@ -129,9 +129,6 @@ public:
       // outlet 1 (stream)
       mS.set(mBuffer.matrix());
       
-      if (mDebug)
-        *mOutput << mS << std::endl;
-      
       send(mS);
     } 
   }

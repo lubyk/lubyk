@@ -83,6 +83,11 @@ public:
     *mOutput << mScript << std::endl;
   }
   
+  virtual void spy() 
+  { 
+    bprint(mSpy, mSpySize,"%s", mScriptFile.c_str() );
+  }
+  
 protected:
   std::string mScript;         /**< Script text. */
   std::string mScriptFile;     /**< Script file path. */
