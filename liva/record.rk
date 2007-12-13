@@ -1,39 +1,41 @@
-c = Cabox(port:"/dev/tty.HOME001-GenericSerial-1" bauds:115200)
-c => b
-b = Buffer(864)
-b => rec
+c=Cabox(port:"/dev/tty.usbserial-FTHOME4" bauds:115200)
+c => pack_buffer
+pack_buffer = Buffer(720)
+
+# =========== RECORDER ================
+pack_buffer => rec
 k = Keyboard()
 k => rec
-rec = ClassRecorder(vector:288 tempo:120 unit:12 data:"liva/data")
-
-# recording
-#rec => plot
-#rec.2 => 2.plot
-
+rec = ClassRecorder(vector:240 unit:12 tempo:120 data:"liva/data" rate:256)
+######
+rec => p
+rec.2 => 2.p
+#####
 rec.3 => midi
+
+
+# =========== PCA =====================
+# pack_buffer => cut
+# cut = Cut(from:480 to:720)
+# cut => pca
+# pca = PCA(vector:240 keep:6 data:"gaspard/data" processed:"gaspard/after_pca")
+# pca => 2.p
+#
+
+# =========== SVM =====================
+# pca => svm
+# svm = Svm(vector:6 unit:6 data:"gaspard/after_pca" cost:8.0 gamma:0.0078125 threshold:0.0003)
+# svm => minus
+# minus = Minus(46)
+# minus => svm_buff
+# svm_buff = Buffer(128)
+
+
+######
+#svm_buff => p
+#p = Plot(amplitude:15.0 amplitude2:1.0 mode2:"xy")
+######
+p = Plot(line:3 group:4)
+######
+# =========== MIDI ====================
 midi = Midi()
-plot =  Plot(group:3 line:4)
-b => crop
-crop = Crop(-288)
-crop => pca
-pca=PCA(vector:288 data:"liva/data" processed:"liva/after_pca" keep:6 unit:12)
-pca=>svm
-
-# display pca
-b => 2.plot
-pca=>buf
-buf = Buffer(864)
-buf => plot
-
-svm = Svm(vector:6 unit:12 data:"liva/after_pca" cost:8.0 gamma:0.0078125 threshold:0.0003)
-svm=>note
-
-c.2 => 2.note # high signal from cabox
-note = Lua(load:"liva/note.lua")
-#note => no
-
-note => tur
-tur = Turing(load:"liva/simple.tur")
-tur => no
-no = NoteOut()
-no => midi

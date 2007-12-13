@@ -387,6 +387,13 @@ public:
   
   bool set_view(const Matrix& pOther, int pStartRow = 0, int pEndRow = -1)
   {
+    if (!&pOther) {
+      mRowCount = 0;
+      mColCount = 0;
+      data = NULL;
+      return true;
+    }
+    
     if (pOther.mRowCount == 1) {
       // vector
       size_t end_col   = pEndRow   < 0 ? pOther.mColCount + pEndRow   : pEndRow;
