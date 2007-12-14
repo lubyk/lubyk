@@ -1,7 +1,5 @@
-c=Cabox(port:"/dev/tty.usbserial-FTHOME5" bauds:115200)
-c => pack_buffer
-pack_buffer = Buffer(720)
-pack_buffer => p
+c=Cabox(port:"/dev/tty.usbserial-FTHOME5" bauds:115200 buffer:64)
+
 #    
 #    # =========== RECORDER ================
 #    pack_buffer => rec
@@ -36,7 +34,7 @@ pack_buffer => p
 #    #svm_buff => p
 #    #p = Plot(amplitude:15.0 amplitude2:1.0 mode2:"xy")
 #    ######
-p = Plot(line:4 group:3)
+#p = Plot(line:4 group:3)
 #    ######
 #    # =========== MIDI ====================
 #    midi = Midi()

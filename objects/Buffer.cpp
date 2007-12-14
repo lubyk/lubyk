@@ -9,7 +9,7 @@ public:
   
   bool init (const Params& p)
   {
-    if(!mBuffer.set_sizes(0, 0)) return false;
+    if(!mBuffer.set_sizes(8, 0)) return false;
     mVector   = NULL;
     mIndex    = 0;
     return true;
@@ -44,6 +44,7 @@ public:
         // get buffer size from incoming signal
         TRY_RET(mBuffer, set_sizes(mBuffer.row_count(), sig.matrix.value->col_count()));
         mVector = mBuffer.advance();
+        if (!mVector) return;
         mIndex  = 0;
       }
       for(size_t i=0; i < sig.matrix.value->col_count(); i++) {
@@ -59,6 +60,7 @@ public:
         // get buffer size from incoming signal
         TRY_RET(mBuffer, set_sizes(mBuffer.row_count(), 1));
         mVector = mBuffer.advance();
+        if (!mVector) return;
         mIndex  = 0;
       }
       mVector[mIndex] = d;

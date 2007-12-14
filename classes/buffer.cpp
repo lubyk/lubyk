@@ -36,11 +36,12 @@ void Buffer::clear()
   * @return pointer to the write position for the next vector. */
 double * Buffer::advance()
 {
-  
+  if (!mWindowSize) return NULL;
   if (mWriteRow >= (mWindowSize * (DEFAULT_WINDOW_COUNT - 1) + 1)) {
     // copy vector for loop head
     if(!mBuffer.copy_at((int)(mWriteRow - mWindowSize * (DEFAULT_WINDOW_COUNT - 1) - 1), mBuffer, mWriteRow, mWriteRow)) {
       printf("could not copy. (%s)\n", mBuffer.error_msg());
+      return NULL;
     }
 
   }

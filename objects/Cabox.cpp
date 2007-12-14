@@ -39,6 +39,7 @@ public:
       mBuffer.set_sizes(buffer_size, 12);
       mBuffer.clear();
       mVector = mBuffer.advance();
+      if (!mVector) return false;
       mState  = -3; // wait for sync
     }
     if (!set_serial(p)) return false;
@@ -49,6 +50,8 @@ public:
   
   void bang(const Signal& sig)
   {
+    if (!mIsOK) return;
+    
     int c;
     double val;
     bool new_data = false;
