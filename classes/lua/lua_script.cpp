@@ -127,8 +127,9 @@ bool LuaScript::double_from_lua(double * d)
   return true;
 }
 
-bool LuaScript::sig_from_lua(Signal * sig, int index, Matrix& pMat)
+bool LuaScript::sig_from_lua(Signal * sig, int pIndex, Matrix& pMat)
 {
+  int index = pIndex < 0 ? lua_gettop(mLua) + pIndex + 1 : pIndex;
   int i  = 1;
   /* LUA_TNIL, LUA_TNUMBER, LUA_TBOOLEAN, LUA_TSTRING, LUA_TTABLE, LUA_TFUNCTION, LUA_TUSERDATA, LUA_TTHREAD, and LUA_TLIGHTUSERDATA.
   */
@@ -153,8 +154,10 @@ bool LuaScript::sig_from_lua(Signal * sig, int index, Matrix& pMat)
     while(true) {
       lua_pushinteger(mLua, i);
       lua_gettable(mLua, index);
-      if(!lua_isnumber(mLua, -1))
+      if(!lua_isnumber(mLua, -1)) {
+        lua_pop(mLua,1);
         break;
+      }
       double d = lua_tonumber(mLua, -1);
       pMat.append(d);
       lua_pop(mLua,1);
@@ -164,7 +167,7 @@ bool LuaScript::sig_from_lua(Signal * sig, int index, Matrix& pMat)
     sig->set(pMat);
     break;
   default:
-    *mOutput << mName << ": wrong value type to build signal (" << lua_typename(mLua, index) << " at " << index << ").\n";
+    *mOutput << mName << ": wrong value type to build signal (" << lua_typename(mLua, lua_type(mLua, index)) << " at " << index << ").\n";
     lua_pop(mLua, 1);
     return false;
   }

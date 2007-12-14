@@ -260,10 +260,10 @@ std::ostream& operator<< (std::ostream& pStream, const TMatrix<int>& mat)
 template<typename T>
 bool TMatrix<T>::append(const T * pVector, size_t pVectorSize)
 {
-  if (pVectorSize % mColCount != 0) {
-    set_error("could not append vector: column count not matching (%i is not a multiple of %i)", pVectorSize, mColCount);
-    return false;
-  }
+  //if (pVectorSize % mColCount != 0) {
+  //  set_error("could not append vector: column count not matching (%i is not a multiple of %i)", pVectorSize, mColCount);
+  //  return false;
+  //}
   return raw_copy(mRowCount, pVector, pVectorSize);
 }
 

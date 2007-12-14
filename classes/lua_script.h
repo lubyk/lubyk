@@ -28,7 +28,6 @@ public:
       // value, port
       Signal sig;
       double p;
-      
       if (!node->sig_from_lua(&sig)) {
         node->error("could not get signal");
         return 0;
@@ -68,13 +67,8 @@ public:
     }
   }
   
-  /** Define a signal from lua stack/parameters. */
-  bool sig_from_lua (Signal * sig, int index);
-  
-  bool sig_from_lua (Signal * sig)
-  {
-    return sig_from_lua(sig,lua_gettop(mLua));
-  }
+  /** Define a signal from lua stack/parameters. Default get from top. */
+  bool sig_from_lua (Signal * sig, int index = -1);
   
   /** Get a double from the current parameter list. */
   bool double_from_lua(double *);

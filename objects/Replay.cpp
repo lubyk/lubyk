@@ -2,7 +2,7 @@
 
 enum replay_modes_t {
   WaitingMode = 0, /**< No data to playback, recording not started. */
-  PlayBackMode,   /**< Playback. */
+  PlaybackMode,   /**< Playback. */
   RecordingMode,  /**< Recording. */
 };
 
@@ -35,7 +35,7 @@ public:
     p.get(&mIsLoop, "loop");
     
     if (p.get(&mFilePath, "file")) {
-      if (!reload_data()) return false;
+      if (reload_data(true)) enter(PlaybackMode);
     }
     return true;
   }
@@ -48,7 +48,7 @@ public:
       if (cmd == (int)'r') {
         enter(RecordingMode);
       } else if (cmd == (int)'p') {
-        enter(PlayBackMode);
+        enter(PlaybackMode);
       }
     } else if (mState == RecordingMode && sig.get(&mLiveBuffer)) {
       // record
@@ -57,7 +57,7 @@ public:
       TRY_RET(mPlaybackView, set_view(*mLiveBuffer));
       record_matrix(mPlaybackView);
       send(mS);
-    } else if (mState == PlayBackMode) {
+    } else if (mState == PlaybackMode) {
       if (!mData.size()) send(gNilSignal);
       if (mIndex >= mData.row_count()) {
         if (mIsLoop) mIndex = 0;
@@ -70,10 +70,13 @@ public:
   }
   
   void play(const Params& p)
-  { enter(PlayBackMode); }
+  { enter(PlaybackMode); }
   
   void record(const Params& p)
   { enter(RecordingMode); }
+  
+  void reload(const Params& p)
+  { reload_data(); }
   
   virtual void spy()
   {
@@ -87,13 +90,13 @@ private:
     if (mFileHandle && pMode != RecordingMode) fclose(mFileHandle);
     
     switch(pMode) {
-    case PlayBackMode:
+    case PlaybackMode:
       *mOutput << mName << ": starting playback (buffer " << mData.row_count() << "x" << mData.col_count() << ").\n";
-      mState = PlayBackMode;
+      mState = PlaybackMode;
       break;
     case RecordingMode:
       if (mState == RecordingMode) return;
-      TRY_RET(mData, set_sizes(0,mData.col_count()));
+      TRY_RET(mData, set_sizes(0, mData.col_count()));
       mData.clear();
       *mOutput << mName << ": ready to record.\n";
       mState = RecordingMode;
@@ -107,8 +110,9 @@ private:
   {
     if (!mFileHandle) {
       // start recording
-      if (!mData.col_count()) // set vector size
+      if (!mData.col_count()) {// set vector size
         TRY(mData, set_sizes(0, mLiveBuffer->col_count()));
+      }
       
       *mOutput << mName << ": recording started (vector size " << mData.col_count() << ").\n";
       // open file handle
@@ -118,15 +122,19 @@ private:
         return false;
       }
     }
-    TRY(mData,     append(pLiveView));
+    TRY(mData,     append(pLiveView.data, pLiveView.size()));
     TRY(pLiveView, to_file(mFileHandle));
     return true;
   }
   
-  bool reload_data()
+  bool reload_data(bool accept_no_file = false)
   {
     TRY(mData, set_sizes(0, mData.col_count()));
-    TRY(mData, from_file(mFilePath, "rb"));
+    if (accept_no_file) {
+      mData.from_file(mFilePath, "rb");
+    } else {
+      TRY(mData, from_file(mFilePath, "rb"));
+    }
     mIndex = 0;
     return mData.row_count() != 0;
   }
@@ -150,4 +158,5 @@ extern "C" void init()
   OUTLET(Replay,stream)
   METHOD(Replay,play)
   METHOD(Replay,record)
+  METHOD(Replay,reload)
 }

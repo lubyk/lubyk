@@ -1,3 +1,3 @@
-function update(sig)
-	return sig+12
+function bang()
+	return in1+12
 end

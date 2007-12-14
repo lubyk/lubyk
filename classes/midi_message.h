@@ -17,7 +17,7 @@ enum midi_messages_t {
 /** This class encapsulates midi messages. */
 struct MidiMessage
 {
-  MidiMessage () : mType(RawMidi), mData(3) {}
+  MidiMessage () : mType(RawMidi), mWait(0), mData(3) {}
   MidiMessage (unsigned int pDataSize) : mType(RawMidi), mData(pDataSize) {}
   
   virtual ~MidiMessage () {}

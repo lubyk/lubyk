@@ -216,23 +216,6 @@ private:
     (((T*)receiver)->*Tmethod)(sig);
   }
   
-  
-  // NOT USED /** Transform an outlet callback into a 'Params' based accessor. */
-  // NOT USED template <class T, void(T::*Tmethod)(Signal& sig)>
-  // NOT USED static void cast_outlet_accessor (void * receiver, const Params& p)
-  // NOT USED {
-  // NOT USED   Signal sig;
-  // NOT USED   (((T*)receiver)->*Tmethod)(sig);
-  // NOT USED   ((Node*)receiver)->output() << sig << std::endl;
-  // NOT USED }
-  // NOT USED 
-  // NOT USED /** Create a callback for an outlet. */
-  // NOT USED template <class T, void(T::*Tmethod)(Signal& sig)>
-  // NOT USED static void cast_outlet_method (void * receiver, Signal& sig)
-  // NOT USED {
-  // NOT USED   (((T*)receiver)->*Tmethod)(sig);
-  // NOT USED }
-  
   /** Create a callback for an inlet. */
   template <class T, void(T::*Tmethod)(const Signal& sig)>
   static void cast_inlet_method (void * receiver, const Signal& sig)

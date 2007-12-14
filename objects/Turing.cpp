@@ -17,9 +17,9 @@ static const unsigned char _turing_key_offsets[] = {
 	0, 0, 9, 10, 11, 12, 13, 14, 
 	15, 17, 18, 20, 21, 22, 23, 32, 
 	42, 52, 60, 66, 69, 71, 73, 79, 
-	89, 99, 109, 115, 124, 128, 131, 133, 
-	134, 136, 138, 140, 141, 143, 144, 146, 
-	148, 150, 151, 160, 162
+	89, 99, 109, 115, 124, 128, 134, 137, 
+	139, 140, 142, 144, 146, 147, 149, 150, 
+	152, 154, 156, 157, 166, 168
 };
 
 static const char _turing_trans_keys[] = {
@@ -39,20 +39,21 @@ static const char _turing_trans_keys[] = {
 	57, 65, 90, 97, 122, 48, 57, 65, 
 	90, 97, 122, 9, 32, 45, 48, 57, 
 	65, 90, 97, 122, 9, 32, 48, 57, 
-	10, 48, 57, 10, 61, 10, 10, 101, 
-	10, 110, 10, 100, 10, 10, 61, 10, 
-	10, 101, 10, 110, 10, 100, 10, 9, 
-	10, 32, 35, 61, 65, 90, 97, 122, 
-	10, 61, 10, 61, 0
+	9, 10, 32, 35, 48, 57, 9, 32, 
+	35, 10, 61, 10, 10, 101, 10, 110, 
+	10, 100, 10, 10, 61, 10, 10, 101, 
+	10, 110, 10, 100, 10, 9, 10, 32, 
+	35, 61, 65, 90, 97, 122, 10, 61, 
+	10, 61, 0
 };
 
 static const char _turing_single_lengths[] = {
 	0, 5, 1, 1, 1, 1, 1, 1, 
 	2, 1, 2, 1, 1, 1, 3, 4, 
 	4, 2, 4, 3, 2, 2, 2, 4, 
-	4, 4, 0, 3, 2, 1, 2, 1, 
-	2, 2, 2, 1, 2, 1, 2, 2, 
-	2, 1, 5, 2, 2
+	4, 4, 0, 3, 2, 4, 3, 2, 
+	1, 2, 2, 2, 1, 2, 1, 2, 
+	2, 2, 1, 5, 2, 2
 };
 
 static const char _turing_range_lengths[] = {
@@ -61,16 +62,16 @@ static const char _turing_range_lengths[] = {
 	3, 3, 1, 0, 0, 0, 2, 3, 
 	3, 3, 3, 3, 1, 1, 0, 0, 
 	0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 0, 2, 0, 0
+	0, 0, 0, 2, 0, 0
 };
 
 static const unsigned char _turing_index_offsets[] = {
 	0, 0, 8, 10, 12, 14, 16, 18, 
 	20, 23, 25, 28, 30, 32, 34, 41, 
 	49, 57, 63, 69, 73, 76, 79, 84, 
-	92, 100, 108, 112, 119, 123, 126, 129, 
-	131, 134, 137, 140, 142, 145, 147, 150, 
-	153, 156, 158, 166, 169
+	92, 100, 108, 112, 119, 123, 129, 133, 
+	136, 138, 141, 144, 147, 149, 152, 154, 
+	157, 160, 163, 165, 173, 176
 };
 
 static const char _turing_indicies[] = {
@@ -89,24 +90,25 @@ static const char _turing_indicies[] = {
 	21, 23, 23, 0, 37, 37, 38, 39, 
 	23, 23, 23, 0, 40, 40, 40, 0, 
 	41, 41, 42, 40, 40, 40, 0, 22, 
-	22, 43, 0, 44, 43, 0, 46, 47, 
-	45, 46, 45, 46, 48, 45, 46, 49, 
-	45, 46, 50, 45, 51, 45, 53, 54, 
-	52, 53, 52, 53, 55, 52, 53, 56, 
-	52, 53, 57, 52, 58, 52, 1, 2, 
-	1, 3, 4, 5, 5, 0, 46, 47, 
-	45, 53, 54, 52, 0
+	22, 43, 0, 44, 45, 44, 46, 43, 
+	0, 47, 47, 3, 0, 49, 50, 48, 
+	49, 48, 49, 51, 48, 49, 52, 48, 
+	49, 53, 48, 54, 48, 56, 57, 55, 
+	56, 55, 56, 58, 55, 56, 59, 55, 
+	56, 60, 55, 61, 55, 1, 2, 1, 
+	3, 4, 5, 5, 0, 49, 50, 48, 
+	56, 57, 55, 0
 };
 
 static const char _turing_trans_targs_wi[] = {
-	0, 1, 42, 2, 3, 14, 4, 5, 
+	0, 1, 43, 2, 3, 14, 4, 5, 
 	6, 7, 8, 9, 10, 11, 12, 13, 
 	9, 15, 28, 15, 16, 18, 28, 25, 
 	17, 21, 19, 20, 26, 19, 20, 22, 
-	23, 24, 42, 2, 24, 19, 20, 26, 
-	27, 19, 20, 29, 42, 31, 43, 32, 
-	33, 34, 35, 43, 37, 44, 38, 39, 
-	40, 41, 44
+	23, 24, 43, 2, 24, 19, 20, 26, 
+	27, 19, 20, 29, 30, 43, 2, 30, 
+	32, 44, 33, 34, 35, 36, 44, 38, 
+	45, 39, 40, 41, 42, 45
 };
 
 static const char _turing_trans_actions_wi[] = {
@@ -115,16 +117,16 @@ static const char _turing_trans_actions_wi[] = {
 	13, 20, 3, 0, 0, 1, 0, 17, 
 	0, 0, 29, 29, 29, 0, 0, 0, 
 	1, 32, 32, 32, 0, 23, 23, 23, 
-	1, 5, 5, 1, 26, 0, 0, 0, 
-	0, 0, 0, 11, 0, 0, 0, 0, 
-	0, 0, 15
+	1, 5, 5, 1, 26, 26, 26, 0, 
+	0, 0, 0, 0, 0, 0, 11, 0, 
+	0, 0, 0, 0, 0, 15
 };
 
 static const int turing_start = 1;
-static const int turing_first_final = 42;
+static const int turing_first_final = 43;
 
-static const int turing_en_doc_comment = 30;
-static const int turing_en_lua_script = 36;
+static const int turing_en_doc_comment = 31;
+static const int turing_en_lua_script = 37;
 static const int turing_en_main = 1;
 
 #line 8 "objects/Turing.rl"
@@ -184,6 +186,7 @@ public:
   void eval_script(const std::string& pScript) 
   {
     mScript = pScript;
+    mScript.append("\n");
     int cs;
     const char * p  = mScript.data(); // data pointer
     const char * pe = p + mScript.size(); // past end
@@ -236,14 +239,14 @@ public:
     mStateNames.clear();
     
     
-#line 240 "objects/Turing.cpp"
+#line 243 "objects/Turing.cpp"
 	{
 	cs = turing_start;
 	}
-#line 116 "objects/Turing.rl"
+#line 117 "objects/Turing.rl"
     
   
-#line 247 "objects/Turing.cpp"
+#line 250 "objects/Turing.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -318,7 +321,7 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 118 "objects/Turing.rl"
+#line 119 "objects/Turing.rl"
 	{
       if (name_index >= MAX_NAME_SIZE) {
         *mOutput << "Name buffer overflow !\n";
@@ -333,7 +336,7 @@ _match:
     }
 	break;
 	case 1:
-#line 131 "objects/Turing.rl"
+#line 132 "objects/Turing.rl"
 	{
       name[name_index] = '\0';
       identifier = name;
@@ -344,7 +347,7 @@ _match:
     }
 	break;
 	case 2:
-#line 140 "objects/Turing.rl"
+#line 141 "objects/Turing.rl"
 	{
       name[name_index] = '\0';
       name_index = 0;
@@ -355,7 +358,7 @@ _match:
     }
 	break;
 	case 3:
-#line 149 "objects/Turing.rl"
+#line 150 "objects/Turing.rl"
 	{
       source = identifier;
       #ifdef DEBUG_PARSER
@@ -364,7 +367,7 @@ _match:
     }
 	break;
 	case 4:
-#line 156 "objects/Turing.rl"
+#line 157 "objects/Turing.rl"
 	{ 
       target = identifier;
       #ifdef DEBUG_PARSER
@@ -376,7 +379,7 @@ _match:
     }
 	break;
 	case 5:
-#line 166 "objects/Turing.rl"
+#line 167 "objects/Turing.rl"
 	{ 
       if (!mTokenByName.get(&tok, std::string(name))) {
         *mOutput << "Syntax error. Unknown token '" << name << "' (missing declaration)\n";
@@ -386,7 +389,7 @@ _match:
     }
 	break;
 	case 6:
-#line 174 "objects/Turing.rl"
+#line 175 "objects/Turing.rl"
 	{ 
       name[name_index] = '\0';
       name_index = 0;
@@ -397,7 +400,7 @@ _match:
     }
 	break;
 	case 7:
-#line 184 "objects/Turing.rl"
+#line 185 "objects/Turing.rl"
 	{
       mTokenByName.set(identifier, tok);
       mTokenNameByValue.set(tok, identifier);
@@ -407,7 +410,7 @@ _match:
     }
 	break;
 	case 8:
-#line 192 "objects/Turing.rl"
+#line 193 "objects/Turing.rl"
 	{
       // do we know this token ?
       if (!mTokenTable[tok % 256]) {
@@ -447,7 +450,7 @@ _match:
     }
 	break;
 	case 9:
-#line 230 "objects/Turing.rl"
+#line 231 "objects/Turing.rl"
 	{
       // write the entry
       #ifdef DEBUG_PARSER
@@ -463,7 +466,7 @@ _match:
     }
 	break;
 	case 10:
-#line 245 "objects/Turing.rl"
+#line 246 "objects/Turing.rl"
 	{
       p--; // move back one char
       char error_buffer[10];
@@ -474,30 +477,30 @@ _match:
     }
 	break;
 	case 11:
-#line 259 "objects/Turing.rl"
-	{ {cs = 30; goto _again;} }
+#line 260 "objects/Turing.rl"
+	{ {cs = 31; goto _again;} }
 	break;
 	case 12:
-#line 260 "objects/Turing.rl"
+#line 261 "objects/Turing.rl"
 	{ {cs = 1; goto _again;} }
 	break;
 	case 13:
-#line 262 "objects/Turing.rl"
+#line 263 "objects/Turing.rl"
 	{ 
       std::cout << "begin_lua\n";
       begin_lua_script = p;
-      {cs = 36; goto _again;} 
+      {cs = 37; goto _again;} 
     }
 	break;
 	case 14:
-#line 267 "objects/Turing.rl"
+#line 268 "objects/Turing.rl"
 	{
       lua_script.append( begin_lua_script, p - begin_lua_script - 4 );
       begin_lua_script = NULL;
       {cs = 1; goto _again;} 
     }
 	break;
-#line 501 "objects/Turing.cpp"
+#line 504 "objects/Turing.cpp"
 		}
 	}
 
@@ -509,8 +512,8 @@ _again:
 	_out: {}
 	}
 
-#line 513 "objects/Turing.cpp"
-#line 304 "objects/Turing.rl"
+#line 516 "objects/Turing.cpp"
+#line 305 "objects/Turing.rl"
 
   
     if (begin_lua_script) {

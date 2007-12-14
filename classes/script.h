@@ -20,7 +20,7 @@ public:
     } else if (p.get(&str, "script", true)) {
       eval_script(str);
     }
-    return true;
+    return !mScriptDead;
   }
   
   // load script from file.

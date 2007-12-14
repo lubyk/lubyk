@@ -61,6 +61,7 @@ public:
   void eval_script(const std::string& pScript) 
   {
     mScript = pScript;
+    mScript.append("\n");
     int cs;
     const char * p  = mScript.data(); // data pointer
     const char * pe = p + mScript.size(); // past end
@@ -298,7 +299,7 @@ public:
     
     define_token = identifier ws* '=' ws* digit+ $a %set_tok_value;
 
-    main  := ( ws* (entry %add_entry (sub_entry %add_entry)* (ws* comment)? | define_token %define_token | comment | begin_comment | begin_lua | ws* )  '\n' )+ $err(error);
+    main  := ( ws* (entry %add_entry (sub_entry %add_entry)* (ws* comment)? | define_token %define_token (ws* comment)? | comment | begin_comment | begin_lua | ws* )  '\n' )+ $err(error);
     write exec;
     write eof;
   }%%
