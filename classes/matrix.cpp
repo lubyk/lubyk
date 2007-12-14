@@ -66,11 +66,16 @@ bool TMatrix<T>::from_file(FILE * pFile)
   if (!mColCount) { 
     TMatrix tmp;
     T val;
-    tmp.set_sizes(1,1);
+    tmp.set_sizes(0,0);
+    char c;
     
     while(do_fscanf(pFile, &val) > 0) {
       tmp.append(val);
-      if (fscanf(pFile, "\n") > 0) break;
+      if ( (c=getc(pFile)) == '\n') {
+        break;
+      } else {
+        ungetc(c, pFile);
+      }
     }
     copy(tmp);
     mColCount = size();
@@ -271,10 +276,11 @@ bool TMatrix<T>::append(const T * pVector, size_t pVectorSize)
 template<typename T>
 bool TMatrix<T>::append(T pValue)
 {
-  if (mRowCount != 1) {
+  if (mRowCount > 1) {
     set_error("could not append: matrix is not a vector (%ix%i)", mRowCount, mColCount);
     return false;
   }
+  mRowCount = 1;
   if(!check_alloc(mColCount + 1)) return false;
   data[mColCount] = pValue;
   mColCount++;

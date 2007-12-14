@@ -543,6 +543,25 @@ public:
     assert_equal(m2, m1);
     remove("matrix_test_tmp.txt");
   }
+  
+  void test_from_file_readall( void )
+  {
+    Matrix m1, m2;
+    set_fixture(m1);
+    TS_ASSERT_EQUALS(m2.row_count(), 0);
+    TS_ASSERT_EQUALS(m2.col_count(), 0);
+    
+    FILE * file = fopen("matrix_test_tmp.txt", "wb");
+      m1.to_file(file);
+    fclose(file);
+    
+    file = fopen("matrix_test_tmp.txt", "rb");
+      m2.from_file(file);
+    fclose(file);
+    
+    assert_equal(m2, m1);
+    remove("matrix_test_tmp.txt");
+  }
 
   void test_mat_multiply( void )
   {
