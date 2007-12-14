@@ -120,6 +120,21 @@ private:
         
         glBegin(GL_LINE_STRIP);
           for(size_t i=0; i < value_count; i++) {
+            
+            
+            
+            //////////////////////////////////////
+            ////// BAD BAD BAD: the data is   ////
+            ////// changed during draw since  ////
+            ////// drawing is done in another ////
+            ////// thread !!                  ////
+            ////// possible fix: copy data in ////
+            ////// 'server' thread            ////
+            //////////////////////////////////////
+            
+            
+            
+            
             glVertex2f(i * width_ratio, y_offset + mat.data[i * mGroupSize[param_index] * mLineCount[param_index] + g + l_offset] * height_ratio);
           }
           glVertex2f(mWindow.width, y_offset + mat.data[(value_count - 1) * mGroupSize[param_index] * mLineCount[param_index] + g + l_offset] * height_ratio);

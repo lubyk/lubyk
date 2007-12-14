@@ -26,7 +26,7 @@ public:
     mVector = mBuffer.advance();
     mState  = -3; // wait for sync
     
-    REGISTER_EVENT(Cabox, initial_offset, 500, NULL);
+    REGISTER_EVENT(Cabox, initial_offset, 200, NULL);
     
     // we accept serial init failures to use 'pseudo serial' with 'bang'
     init_serial(p);
@@ -120,6 +120,12 @@ public:
         mIndex = 0;
         mState = -3; // wait for sync
         new_data = true;
+        
+        if (mOffsetOnFull) {
+          mOffset.add(mVector, 12);
+          mOffsetOnFull = false;
+        }
+        
         mHighestValue         = mFindHighestValue;
         mHighestDirection     = mFindHighestDirection;
         mFindHighestValue     = 0.0;
@@ -131,10 +137,6 @@ public:
           mRateStart = mServer->mCurrentTime;
         }
         
-        if (mOffsetOnFull) {
-          mOffset.add(mVector, 12);
-          mOffsetOnFull = false;
-        }
       } else {
         mState--;
       }

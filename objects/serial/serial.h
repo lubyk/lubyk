@@ -56,6 +56,7 @@ public:
     struct termios options;
     
     if (mIsOpen) close(mFd);
+    mIsOpen = false;
     
     mPortName = pPortName;
     

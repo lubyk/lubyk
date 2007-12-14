@@ -35,7 +35,7 @@ public:
   virtual ~BaseEvent() {}
   
   void trigger()
-  { mParameter ? (*mFunction)(mNode,mParameter) : (*mVoidFunction)(mNode); }
+  { mHasParameter ? (*mFunction)(mNode,mParameter) : (*mVoidFunction)(mNode); }
 
   inline bool operator>= (const BaseEvent& pOther) const
   { return mTime >= pOther.mTime; }
@@ -53,6 +53,7 @@ protected:
   void * mNode;
   bool   mForced; /**< Run even if trying to quit. */
   bool mIsBang;
+  bool mHasParameter;
   
   void * mParameter;
   void (*mVoidFunction)(void * pReceiver);
@@ -67,7 +68,7 @@ public:
   CallEvent (time_t pTime, T * pReceiver) {
     mTime      = pTime;
     mNode      = (void*)pReceiver;
-    mParameter = NULL;
+    mHasParameter = false;
     mVoidFunction = &cast_void_method;
   }
   
@@ -88,6 +89,7 @@ public:
     mTime      = pTime;
     mNode      = (void*)pReceiver;
     mParameter = pParam;
+    mHasParameter = true;
     mFunction  = &cast_method;
   }
 private:

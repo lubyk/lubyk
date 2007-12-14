@@ -173,7 +173,7 @@ private:
       double * vector;
       double * mean = mMeanVector.data;
       int   delta_used = mBuffer.row_count() - mMeanVector.row_count();
-      for(size_t j = mBuffer.row_count() - mMeanVector.row_count(); j >= 0; j--) {
+      for(int j = (int)mBuffer.row_count() - (int)mMeanVector.row_count(); j >= 0; j--) {
         distance = 0.0;
         vector = mBuffer[j];
         for(size_t i=0; i < mBuffer.col_count(); i++) {
