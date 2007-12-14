@@ -16,7 +16,7 @@ public:
       return false;
     }
     
-    if (!p.get(&port, "port")) {
+    if (!p.get(&port, "port", true)) {
       // create a virtual port
 
       // Call function to select port.
@@ -30,25 +30,26 @@ public:
       }
 
     } else {
-     //// Call function to select port.
-     //try {
-     //  midiout->openPort( NUM2INT(rPort) );
-     //}
-     //catch (RtError &error) {
-     //  error.printMessage();
-     //  t_close(self);
-     //  return Qnil;
-     //}
+     // Call function to select port.
+     try {
+       mMidiout->openPort( port );
+     }
+     catch (RtError &error) {
+       *mOutput << mName << ": " << error.getMessageString() << std::endl;
+       // FIXME: close ?
+       return false;
+     }
 
     }
-    return false;
+    return true;
   }
   
   bool set (const Params& p)
   {
     *mOutput << mName << ": cannot change a Midi object during runtime, yet.\n";
-    return false;
+    return true;
   }
+  
   // inlet 1
   void bang(const Signal& sig)
   {

@@ -437,4 +437,7 @@ inline double absval(double d)
 #define ERROR(name) {error(name, #name)}
 #define TRY(obj, meth) { if (!obj.meth) {error(obj,#obj); return false;}}
 #define TRY_RET(obj, meth) { if (!obj.meth) {error(obj,#obj); return;}}
+
+
+#define REGISTER_EVENT(klass, method, time, param) { register_event<klass,&klass::method>(time, param); }
 #endif

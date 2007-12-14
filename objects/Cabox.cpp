@@ -25,7 +25,8 @@ public:
     mIndex  = 0;
     mVector = mBuffer.advance();
     mState  = -3; // wait for sync
-    mOffsetOnFull = true; // do not offset when 12 values are set
+    
+    REGISTER_EVENT(Cabox, initial_offset, 500, NULL);
     
     // we accept serial init failures to use 'pseudo serial' with 'bang'
     init_serial(p);
@@ -155,6 +156,11 @@ public:
   }
   
   void offset()
+  {
+    mOffsetOnFull = true;
+  }
+  
+  void initial_offset(void * data)
   {
     mOffsetOnFull = true;
   }
