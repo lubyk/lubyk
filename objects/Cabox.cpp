@@ -27,7 +27,8 @@ public:
     mState  = -3; // wait for sync
     mOffsetOnFull = true; // do not offset when 12 values are set
     
-    if (!init_serial(p)) return false;
+    // we accept serial init failures to use 'pseudo serial' with 'bang'
+    init_serial(p);
     return true;
   }
   
@@ -42,9 +43,10 @@ public:
       if (!mVector) return false;
       mState  = -3; // wait for sync
     }
-    if (!set_serial(p)) return false;
-    // enter read data
-    return mPort.write_char('b');
+    // we accept serial init failures to use 'pseudo serial' with 'bang'
+    set_serial(p);
+
+    return true;
   }
   
   
@@ -53,11 +55,25 @@ public:
     if (!mIsOK) return;
     
     int c;
+    int sig_i, sig_max = 0;
     double val;
+    double * sig_buf = NULL;
+    double sig_val;
     bool new_data = false;
-    while (mPort.read_char(&c)) {
+    
+    if (sig.type == MatrixSignal) {
+      sig_max = sig.matrix.value->size();
+      sig_i   = 0;
+      sig_buf = sig.matrix.value->data;
+    } else if (sig.get(&sig_val)) {
+      sig_max = 1;
+      sig_i   = 0;
+      sig_buf = &sig_val;
+    }
+    //printf("%p %i %i %i\n", sig_buf, sig_i, sig_max, (int)sig_buf[sig_i]);
+    while (mPort.read_char(&c) || (sig_buf && sig_i < sig_max && (c=(int)sig_buf[sig_i++]) >= 0 )) {
       // empty buffer (readall)
-      // printf("% i:%i ", mIndex, c);
+      printf("%i:%i (%i)\n", mState, c, mIndex);
       
       if (mState == -3) {
         if (c == 255) mState++;

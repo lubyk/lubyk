@@ -14,7 +14,7 @@ public:
   { 
     setup_with_print("n=Minus(2)\n");
     
-    assert_print("n.bang(1,2,3,4)\n",   "<Matrix [ -1.00  0.00  1.00  2.00 ], 4>\n");
+    assert_print("n.bang(1,2,3,4)\n",   "<Matrix [ -1.00  0.00  1.00  2.00 ], 1x4>\n");
   }
   
 };

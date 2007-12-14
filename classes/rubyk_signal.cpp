@@ -31,7 +31,7 @@ std::ostream& operator<< (std::ostream& pStream, const Signal& sig)
         snprintf(buffer, 50, " % .2f", sig.matrix.value->data[i]);
         pStream << buffer;
       }
-      pStream << " ], " << sig.matrix.value->size() << ">";
+      pStream << " ], " << sig.matrix.value->row_count() << "x" << sig.matrix.value->col_count() << ">";
     }
     break;
   case VoidPointerSignal:
