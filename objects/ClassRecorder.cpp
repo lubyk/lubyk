@@ -61,7 +61,7 @@ public:
       if (mLiveBuffer)
         TRY_RET(mLiveView, set_view(*mLiveBuffer, -mMeanVector.row_count(), -1));
     } else {
-      time_t record_time = (time_t)(ONE_SECOND * mBuffer.row_count())/(mBuffer.col_count() * mSampleRate);
+      time_t record_time = (time_t)(ONE_SECOND * mBuffer.row_count())/(mSampleRate);
       time_t record_with_margin = record_time * (1 + mMargin); //  * (1 + mMargin/2.0) ???
       time_t countdown_time;
       if (record_time > 500)
@@ -75,12 +75,12 @@ public:
       switch(mState) {
       case CountDownReady:  
         bang_me_in(countdown_time);
-        send_note(60 + (mClassLabel % 12),80,100,1,0,3);
+        send_note(3, 60 + (mClassLabel % 12),80,100);
         enter(CountDownSet);
         break;
       case CountDownSet:
         bang_me_in(record_with_margin); // 1/2 margin at the end
-        send_note(72 + (mClassLabel % 12),80,record_time,1,0,3);
+        send_note(3, 72 + (mClassLabel % 12),80,record_time);
         enter(Recording);
         break;
       case Recording:
@@ -138,7 +138,7 @@ public:
           prepare_class_for_recording(cmd);
           enter(CountDownReady);
           bang_me_in(countdown_time);
-          send_note(60 + (mClassLabel % 12),80,100,1,0,3);
+          send_note(3, 60 + (mClassLabel % 12),80,100);
         }  
         break;
       }
@@ -148,7 +148,7 @@ public:
     send(2, mMeanSignal);
     
     if (mState == Validation)
-      send(mS);        // recorded signal
+      send(mView);       // recorded signal
     else
       send(mLiveSignal); // live signal
   }
@@ -237,15 +237,15 @@ private:
   {
     switch(pState) {
     case ReadyToRecord:
-      mState = pState;
       *mOutput << mName << ": Ready to record\n~> ";
       break;
     case Recording:
       mHasLiveData = false;
       break;
     default:
-      mState = pState;
+      ;// do nothing
     }
+    mState = pState;
   }
   
   /** Update the mean value with the current vector. */

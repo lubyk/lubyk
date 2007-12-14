@@ -67,7 +67,7 @@ const char * Node::bprint(char *& pBuffer, size_t& pBufferSize, const char *fmt,
 }
 
 /** Print message into string. */
-void bprint (std::string& pStr, const char *fmt, ...)
+void Node::bprint (std::string& pStr, const char *fmt, ...) const
 {
   int n;
   char * np;

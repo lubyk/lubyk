@@ -284,7 +284,7 @@ protected:
   const char * bprint (char *& pBuffer, size_t& pBufferSize, const char *fmt, ...);
   
   /** Print message into string. */
-  void bprint (std::string& pStr, const char *fmt, ...);
+  void bprint (std::string& pStr, const char *fmt, ...) const;
   
   /** Allocate/Reallocate T and print an error message if it fails. */
   template<class T>
