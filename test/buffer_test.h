@@ -11,22 +11,30 @@ public:
   {
     Buffer b;
     b.set_sizes(2, 2);
-    double v[14] = { 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    double * vector = b.advance();
-    vector[0] = 1;
-    vector[1] = 2;
-    assert_equal(b, v, 4);
+    double * vector;
+    
+    for(size_t i = 0; i < 100; i += 2){
+      vector = b.advance();
+      vector[0] = i+1;
+      vector[1] = i+2;
+      assert_correct_values(b, i);
+    }
   }
 
 private:
   
-  void assert_equal(const Buffer& b, const double * data, size_t dataSize)
+  void assert_correct_values(const Buffer& b, size_t counter)
   {
     const CutMatrix mat = b.matrix();
-    TS_ASSERT_EQUALS(mat.size(), dataSize);
-    if (mat.size() == dataSize) {
+    TS_ASSERT_EQUALS(mat.size(), 2 * 2);
+    if (mat.size() == 2 * 2) {
       for(size_t i=0; i < mat.row_count(); i++) {
-        for(size_t j=0; j < mat.col_count(); j++) TS_ASSERT_EQUALS( (int)(10000 * mat[i][j]), (int)(10000 * data[i * mat.row_count() + j]));
+        for(size_t j=0; j < mat.col_count(); j++) {
+          int val = counter - 3 + i * mat.row_count() + j;
+          if (val < 0) val = 0;
+          
+          TS_ASSERT_EQUALS( (int)(mat[i][j]), val );
+        }
       }
     }
   }

@@ -9,52 +9,61 @@ public:
   
   bool init (const Params& p)
   {
-    if(!mBuffer.set_sizes(32, 8)) return false;
-    mVector   = mBuffer.advance();
-    mColCount = mBuffer.col_count();
+    if(!mBuffer.set_sizes(0, 0)) return false;
+    mVector   = NULL;
     mIndex    = 0;
     return true;
   }
-  
   
   bool set (const Params& p)
   {
     size_t window_size = mBuffer.row_count();
     size_t vector_size = mBuffer.col_count();
-    if (p.get(&window_size, "buffer", true) || p.get(&vector_size, "vector")) {
-      if (!mBuffer.set_sizes(window_size, vector_size)) {
-        *mOutput << mName << ": " << mBuffer.error_msg() << std::endl;
-        return false;
-      }
-      mVector   = mBuffer.advance();
-      mColCount = vector_size;
-      mIndex    = 0;
+    if (p.get(&window_size, "buffer", true)) {
+      TRY(mBuffer, set_sizes(window_size, mBuffer.col_count()));
+    } 
+    
+    if (p.get(&vector_size, "vector")) {
+      TRY(mBuffer, set_sizes(mBuffer.row_count(), vector_size));
     }
+    
+    if (mBuffer.size()) mVector = mBuffer.advance();
+    mIndex  = 0;
+    
     return true;
   }
   
   // inlet 1
   void bang(const Signal& sig)
-  { 
+  {   
+    double d;
     if (!mIsOK) return;
-    
-    switch(sig.type) {
-    case MatrixSignal:
+    if(sig.type == MatrixSignal) {
       double * data = sig.matrix.value->data;
+      if (!mVector) {
+        // get buffer size from incoming signal
+        TRY_RET(mBuffer, set_sizes(mBuffer.row_count(), sig.matrix.value->col_count()));
+        mVector = mBuffer.advance();
+        mIndex  = 0;
+      }
       for(size_t i=0; i < sig.matrix.value->col_count(); i++) {
         mVector[mIndex] = data[i];
         mIndex++;
-        if (mIndex >= mColCount) {
+        if (mIndex >= mBuffer.col_count()) {
           mVector = mBuffer.advance();
           mIndex = 0;
         }
       }
-      break;
-    default:
-      double d;
+    } else if (sig.get(&d)) {
+      if (!mVector) {
+        // get buffer size from incoming signal
+        TRY_RET(mBuffer, set_sizes(mBuffer.row_count(), 1));
+        mVector = mBuffer.advance();
+        mIndex  = 0;
+      }
       mVector[mIndex] = d;
       mIndex++;
-      if (mIndex >= mColCount) {
+      if (mIndex >= mBuffer.col_count()) {
         mVector = mBuffer.advance();
         mIndex = 0;
       }
@@ -64,10 +73,15 @@ public:
   }
   
 private:
+  
+  void error(Buffer& pBuf, const char * pMsg)
+  {
+    *mOutput << mName << ": " << pMsg << " (" << pBuf.error_msg() << ").\n";
+  }
+  
   Buffer mBuffer;
   double * mVector; /**< Vector pointing into mBuffer to write the data. */
   size_t   mIndex;  /**< Current write position into the 'write' vector. */
-  size_t   mColCount; /**< Size of a vector. */
 };
 
 extern "C" void init()

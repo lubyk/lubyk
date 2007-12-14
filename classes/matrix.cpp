@@ -27,7 +27,7 @@
   *
   * @return bool       returns false if allocation of new space failed. */
 template<typename T>
-bool TMatrix<T>::copy_at(const int pRowIndex, const TMatrix& pOther, int pStartRow, int pEndRow)
+bool TMatrix<T>::copy_at(const int pRowIndex, const TMatrix& pOther, int pStartRow, int pEndRow, bool pResize)
 {
   size_t row_index = pRowIndex < 0 ? mRowCount + pRowIndex : pRowIndex;
   size_t start_row, end_row;
@@ -39,7 +39,7 @@ bool TMatrix<T>::copy_at(const int pRowIndex, const TMatrix& pOther, int pStartR
     return false;
   }
   mColCount = pOther.mColCount;
-  return raw_copy(row_index, pOther.data + start_row * mColCount, (end_row - start_row + 1) * mColCount);
+  return raw_copy(row_index, pOther.data + start_row * mColCount, (end_row - start_row + 1) * mColCount, pResize && pRowIndex == 0);
 }
 
 template<>
@@ -770,13 +770,15 @@ bool TMatrix<T>::reallocate(size_t pSize)
 /** Copy data using memcpy. (Update size if needed).
   * @param pRowOffset where to start copying (set to mRowCount to append at end). */
 template<typename T>
-bool TMatrix<T>::raw_copy(size_t pRowOffset, const T * pData, size_t pDataSize)
+bool TMatrix<T>::raw_copy(size_t pRowOffset, const T * pData, size_t pDataSize, bool pResize)
 {
   size_t current_size = pRowOffset * mColCount;
   if(!check_alloc(current_size + pDataSize)) return false;
   // use memcpy
   memcpy(data + current_size, pData, pDataSize * sizeof(T));
-  mRowCount = pRowOffset + pDataSize / mColCount;
+  if (mRowCount < pRowOffset + pDataSize / mColCount || pResize) {
+    mRowCount = pRowOffset + pDataSize / mColCount;
+  }
   return true;
 }
 

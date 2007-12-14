@@ -84,7 +84,7 @@ public:
     * @param pEndRow     last row to copy (default is -1 = last row). */
   bool copy(const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1)
   {
-    return copy_at(0, pOther, pStartRow, pEndRow);
+    return copy_at(0, pOther, pStartRow, pEndRow, true);
   }
   
   /** Make a partial copy of another matrix starting at a specific row index. The size of the matrix automatically
@@ -104,9 +104,10 @@ public:
     * @param pOther      other matrix to copy the data from.
     * @param pStartRow   where to start copying the data from (default is 0).
     * @param pEndRow     last row to copy (default is -1 = last row).
+    * @param pResize     if true and pRowIndex is '0', the matrix is resized to the copied data.
     *
     * @return bool       returns false if allocation of new space failed. */
-  bool copy_at(int pRowIndex, const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1);
+  bool copy_at(int pRowIndex, const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1, bool pResize = false);
 
   bool copy(const Signal& sig);
   
@@ -330,8 +331,10 @@ protected:
   bool reallocate(size_t pSize);  
   
   /** Copy data using memcpy. (Update size if needed).
-    * @param pRowOffset where to start copying (set to mRowCount to append at end). */
-  bool raw_copy(size_t pRowOffset, const T * pVector, size_t pVectorSize);
+    * @param pRowOffset where to start copying (set to mRowCount to append at end). 
+    * @param pResize    size can reduce if this is true.
+    */
+  bool raw_copy(size_t pRowOffset, const T * pVector, size_t pVectorSize, bool pResize = false);
   
   /** Do multiplication (wrapper around Cblas) */
   inline void do_gemm(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA, const enum CBLAS_TRANSPOSE TransB, const int M, const int N, const int K, const double alpha, const T *A, const int lda, const T *B, const int ldb, const double beta, T *C, const int ldc);
@@ -411,10 +414,11 @@ public:
     data = NULL; // make sure it is never freed.
   }
   
-  void set_sizes(size_t pRowCount, size_t pColCount)
+  bool set_sizes(size_t pRowCount, size_t pColCount)
   {
     mRowCount = pRowCount;
     mColCount = pColCount;
+    return true;
   }
   
   bool set_view(const Matrix& pOther, int pStartRow = 0, int pEndRow = -1)

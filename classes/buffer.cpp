@@ -5,14 +5,24 @@
 Buffer::Buffer (size_t pRowCount, size_t pColCount)
 {
   set_sizes(pRowCount, pColCount);
+  mWriteRow = 0;
 }
 
 bool Buffer::set_sizes(size_t pRowCount, size_t pColCount)
 {
-  if (!mBuffer.set_sizes(pRowCount * DEFAULT_WINDOW_COUNT, pColCount)) return false;
+  if (!mBuffer.set_sizes(pRowCount * DEFAULT_WINDOW_COUNT, pColCount)) {
+    mErrorMsg = mBuffer.error_msg();
+    return false;
+  }
+  
   mWindowSize = pRowCount;
   mWriteRow = mWindowSize;
-  mWindow.set_sizes(mWindowSize, mBuffer.col_count());
+  if (!mWindow.set_sizes(mWindowSize, mBuffer.col_count())) {
+    mErrorMsg = mWindow.error_msg();
+    return false;
+  }
+  
+  clear();
   return true;
 }
 
@@ -27,15 +37,19 @@ void Buffer::clear()
 double * Buffer::advance()
 {
   
-  if (mWriteRow >= (mWindowSize * (DEFAULT_WINDOW_COUNT - 1))) {
+  if (mWriteRow >= (mWindowSize * (DEFAULT_WINDOW_COUNT - 1) + 1)) {
     // copy vector for loop head
-    mBuffer.copy_at(mWriteRow - (mWindowSize * (DEFAULT_WINDOW_COUNT - 1)), mBuffer, mWriteRow, mWriteRow);
+    if(!mBuffer.copy_at((int)(mWriteRow - mWindowSize * (DEFAULT_WINDOW_COUNT - 1) - 1), mBuffer, mWriteRow, mWriteRow)) {
+      printf("could not copy. (%s)\n", mBuffer.error_msg());
+    }
+
   }
   
   mWriteRow++;
-  if (mWriteRow >= (mWindowSize * DEFAULT_WINDOW_COUNT))
-    mWriteRow = mWindowSize;
-  
   mWindow.data = mBuffer[mWriteRow - mWindowSize];
+  
+  if (mWriteRow >= (mWindowSize * DEFAULT_WINDOW_COUNT))
+    mWriteRow = mWindowSize - 1;
+  
   return mBuffer[mWriteRow];
 }

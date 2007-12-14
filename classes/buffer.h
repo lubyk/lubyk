@@ -9,7 +9,7 @@
 class Buffer
 {
 public:
-  Buffer () {}
+  Buffer () { mErrorMsg = ""; }
   Buffer (size_t pRowCount, size_t pColCount);
   
   /** Set row/column count and window size.
@@ -35,7 +35,7 @@ public:
   /** Return last error message. */
   const char * error_msg()
   {
-    return mBuffer.error_msg();
+    return mErrorMsg;
   }
   
   size_t col_count()
@@ -47,8 +47,14 @@ public:
   {
     return mWindowSize;
   }
+  
+  size_t size()
+  {
+    return mWindowSize * mBuffer.col_count();
+  }
 
 private:
+  const char * mErrorMsg; /**< Used to display errors from mBuffer or mWindow. */
   Matrix mBuffer;      /**< Contains N x window matrices. */
   CutMatrix mWindow;   /**< Current view on the data. */
   size_t mWindowSize;  /**< Size of the window (number of rows). */
