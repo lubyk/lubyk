@@ -191,9 +191,7 @@ public:
   {
     MidiMessage * msg = new MidiMessage(3);
     msg->set_as_note(pNote, pVelocity, pLength, pChannel, pTime);
-    mS.type = MidiSignal;
-    mS.midi_ptr.value = msg;
-    mS.midi_ptr.free_me = true;
+    mS.set(msg, true);
     send(pPort, mS);
   }
   

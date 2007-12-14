@@ -73,7 +73,7 @@ public:
     //printf("%p %i %i %i\n", sig_buf, sig_i, sig_max, (int)sig_buf[sig_i]);
     while (mPort.read_char(&c) || (sig_buf && sig_i < sig_max && (c=(int)sig_buf[sig_i++]) >= 0 )) {
       // empty buffer (readall)
-      printf("%i:%i (%i)\n", mState, c, mIndex);
+      //printf("%i:%i (%i)\n", mState, c, mIndex);
       
       if (mState == -3) {
         if (c == 255) mState++;

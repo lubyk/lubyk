@@ -55,14 +55,14 @@ typedef struct {
 
 /** A signal is what is transmitted along the connections. It contains a signature field along with a void value. */
 union Signal {
-  Signal() {}
+  Signal() : type(NilSignal) { }
   Signal(rubyk_signal_t pSigType) : type(pSigType) {}
   Signal(const MidiMessage& pMsg)
   {
     MidiMessage * msg = new MidiMessage(pMsg);
     type = MidiSignal;
     midi_ptr.value = msg;
-    midi_ptr.free_me = true;
+    midi_ptr.free_me = false;
   }
   
   ~Signal()
