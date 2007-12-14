@@ -60,6 +60,7 @@ public:
       sig.get(&mLiveBuffer);
       if (mLiveBuffer)
         TRY_RET(mLiveView, set_view(*mLiveBuffer, -mMeanVector.row_count(), -1));
+      mHasLiveData = true;
     } else {
       time_t record_time = (time_t)(ONE_SECOND * mBuffer.row_count())/(mSampleRate);
       time_t record_with_margin = record_time * (1 + mMargin); //  * (1 + mMargin/2.0) ???
@@ -101,7 +102,7 @@ public:
             }
             *mOutput << mName << ": no-snap\n~> ";
           } else {
-            if (!mView.set_view(mBuffer, mVectorOffset, mVectorOffset + mMeanVector.row_count() - 1)) {
+            if (!mView.set_view(mBuffer, mRowOffset, mRowOffset + mMeanVector.row_count() - 1)) {
               *mOutput << mName << ": mView (" << mView.error_msg() << ").\n";
               return;
             }
@@ -109,19 +110,19 @@ public:
           }
           break;
         } else if (cmd == RK_RIGHT_ARROW) { // -> right arrow 301
-          mVectorOffset += mBuffer.col_count();
-          if (mVectorOffset > mBuffer.row_count() - mMeanVector.row_count()) mVectorOffset = mBuffer.row_count() - mMeanVector.row_count();
+          mRowOffset ++;
+          if (mRowOffset > mBuffer.row_count() - mMeanVector.row_count()) mRowOffset = mBuffer.row_count() - mMeanVector.row_count();
           
-          if (!mView.set_view(mBuffer, mVectorOffset, mVectorOffset + mMeanVector.row_count() - 1)) {
+          if (!mView.set_view(mBuffer, mRowOffset, mRowOffset + mMeanVector.row_count() - 1)) {
             *mOutput << mName << ": mView (" << mView.error_msg() << ").\n";
             return;
           }
           break;
         } else if (cmd == RK_LEFT_ARROW) { // <- left arrow  302
-          mVectorOffset -= mBuffer.col_count();
-          if (mVectorOffset < 0) mVectorOffset = 0;
+          mRowOffset --;
+          if (mRowOffset < 0) mRowOffset = 0;
           
-          if (!mView.set_view(mBuffer, mVectorOffset, mVectorOffset + mMeanVector.row_count() - 1)) {
+          if (!mView.set_view(mBuffer, mRowOffset, mRowOffset + mMeanVector.row_count() - 1)) {
             *mOutput << mName << ": mView (" << mView.error_msg() << ").\n";
             return;
           }
@@ -188,17 +189,17 @@ private:
           min_distance = distance;
         }
       }
-      mVectorOffset = delta_used;
+      mRowOffset = delta_used;
       *mOutput << mName << ": distance to mean vector " << min_distance << " (delta " << delta_used << "/" << mBuffer.row_count() - mMeanVector.row_count() << ")\nKeep ? ~> ";
       fflush(stdout); // FIXME: should be related to *mOutput
     } else {
-      mVectorOffset = mBuffer.row_count() - mMeanVector.row_count();
+      mRowOffset = mBuffer.row_count() - mMeanVector.row_count();
       *mOutput << mName << ":~> Keep ? ";
       fflush(stdout); // FIXME: should be related to *mOutput
     }
     
     if (mUseSnap) {
-      if (!mView.set_view(mBuffer, mVectorOffset, mVectorOffset + mMeanVector.row_count() - 1)) {
+      if (!mView.set_view(mBuffer, mRowOffset, mRowOffset + mMeanVector.row_count() - 1)) {
         *mOutput << mName << ": mView (" << mView.error_msg() << ").\n";
         return;
       }
@@ -313,7 +314,7 @@ private:
 
   bool mUseSnap;              /**< True if the recording should snap to the best match. Usually better without. */
   
-  size_t mVectorOffset;       /**< Best match with this offset in mBuffer.                                      */
+  size_t mRowOffset;       /**< Best match with this offset in mBuffer.                                      */
   
   bool      mHasLiveData;     /**< Make sure we record new data. */
   const Matrix * mLiveBuffer; /**< Pointer to the current buffer window. Content can change between calls.      */
