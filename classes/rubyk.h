@@ -49,6 +49,11 @@ public:
     if (!mQuit || e->mForced) mEventsQueue.push(e); // do not accept new events while we are trying to quit.
   }
   
+  /** Create a new thread that will start by executing the BaseEvent. 
+    * @return pthread_t of the new thread (NULL if it fails).
+    */
+  pthread_t create_thread(BaseEvent * e);
+  
   /** Register a node as needing constant bangs. */
   void register_looped_node(Node * pNode);
   
@@ -79,6 +84,9 @@ public:
   
   /** Set command thread to normal priority. */
   void normal_priority ();
+  
+  /** Passed as argument to thread creation (executed in new thread). */
+  static void * start_thread(void * pEvent);
   
 public:
   time_t mCurrentTime; /**< Current logical time in [ms] since reference. */

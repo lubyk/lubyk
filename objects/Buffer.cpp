@@ -74,6 +74,10 @@ public:
     send(mS);
   }
   
+  virtual void spy() 
+  { 
+    bprint(mSpy, mSpySize,"%ix%i", mBuffer.row_count(), mBuffer.col_count() );
+  }
 private:
   
   void error(Buffer& pBuf, const char * pMsg)

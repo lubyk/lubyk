@@ -43,7 +43,9 @@ public:
   bool uses_node(const void * pNode) const
   { return pNode == mNode; }
   
-
+  const void * node() const
+  { return mNode; }
+  
 protected:
   friend class Rubyk;
   friend class Node;
@@ -51,7 +53,7 @@ protected:
   // access needed by rubyk
   time_t mTime;
   void * mNode;
-  bool   mForced; /**< Run even if trying to quit. */
+  bool mForced; /**< Run even if trying to quit. */
   bool mIsBang;
   bool mHasParameter;
   
@@ -60,7 +62,7 @@ protected:
   void (*mFunction)(void * pReceiver, void * pParam);
 };
 
-/** I think this is not used anymore. */
+/** This is used by thread creating. */
 template<class T, void(T::*Tmethod)(void)>
 class CallEvent : public BaseEvent
 {

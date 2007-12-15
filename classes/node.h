@@ -255,6 +255,26 @@ public:
   
   const char * class_name() const;
   
+  /** Halt all running threads for the node. */
+  virtual void stop_my_threads()
+  {
+    std::list<pthread_t>::iterator it  = mThreadIds.begin();
+    std::list<pthread_t>::iterator end = mThreadIds.end();
+
+    int i = 0;
+    while(it != end) {
+      pthread_t id = *it;
+      it = mThreadIds.erase(it); // tell thread to stop
+      pthread_join(id, NULL);  // wait
+      i++;
+    }
+  }
+  
+  /** Set 'this' value for the current thread (used by Rubyk when starting a new thread). */
+  void set_thread_this() const
+  {
+    pthread_setspecific(sThisKey, (void*)this);
+  }
 protected:
   
   /** Used by 'editors' to display some information on the node. Should be overwridden by subclasses. */
@@ -351,6 +371,20 @@ protected:
       mServer->free_events_for(this);
   }
   
+  /** Used by sub-threads to detect if they should stop. */
+  bool run_thread()
+  {
+    pthread_t id = pthread_self();
+    std::list<pthread_t>::iterator it  = mThreadIds.begin();
+    std::list<pthread_t>::iterator end = mThreadIds.end();
+
+    while(it != end) {
+      if (id == *it) return true; // if thread_id is in mThreadIds, it means it can stay alive
+      it++;
+    }
+    return false; // current thread id is not in mThreadIds. It should stop.
+  }
+  
   template <class T, void(T::*Tmethod)(void *)>
   void register_event (time_t pTime, void * data)
   {
@@ -367,6 +401,37 @@ protected:
     e->mForced = true;
     mServer->register_event( e );
   }
+  
+  /** Create a new thread that will run the method given as template parameter. Use NEW_THREAD(klass, method) if you prefer. */
+  template <class T, void(T::*Tmethod)(void)>
+  pthread_t new_thread ()
+  {
+    pthread_t id;
+    BaseEvent * e = (BaseEvent*)new CallEvent<T, Tmethod>(mServer->mCurrentTime, (T*)this);
+    if (!mServer) {
+      error("you need an attached Rubyk server to create threads");
+      return false;
+    }
+    id = mServer->create_thread(e);
+    if (id) {
+      // store thread id so rubyk server can later access running threads
+      mThreadIds.push_back(id);
+      return id;
+    }
+    return NULL;
+  }
+  
+  void join_thread (pthread_t pId)
+  {
+    pthread_join( pId, NULL);
+    mThreadIds.remove(pId);
+  }
+  
+  static void * thread_this()
+  {
+    return pthread_getspecific(sThisKey);
+  }
+  
   
   // ================ MEMBER DATA    ================= //
   /** Host server. */
@@ -397,11 +462,14 @@ protected:
   
   Signal mS; /**< To send through outlets when cast needed. */
   
+  std::list<pthread_t> mThreadIds; /**< Store running thread ids (used by rubyk server on quit). */
   
   bool   mDebug; /**< Subclasses can implement conditional output based on debug mode (set with 'debug' command). */
   
 private:
   static unsigned int sIdCounter;  /**< Each object has a unique id. */
+public:
+  static pthread_key_t sThisKey;   /**< Key to retrieve 'this' value from a running thread. */
 };
 
 /** This class is used when a new object's class is not found. We return an object of type 'NotFound'. */
@@ -440,4 +508,5 @@ inline double absval(double d)
 
 
 #define REGISTER_EVENT(klass, method, time, param) { register_event<klass,&klass::method>(time, param); }
+#define NEW_THREAD(klass, method) { new_thread<klass,&klass::method>(); }
 #endif

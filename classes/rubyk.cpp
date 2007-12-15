@@ -34,6 +34,13 @@ Rubyk::~Rubyk()
   
   for(it = mInstances.begin(); it < end; it++) {
     if (mInstances.get(&node, *it)) {
+      // halt threads
+      node->stop_my_threads();
+    }
+  }
+  
+  for(it = mInstances.begin(); it < end; it++) {
+    if (mInstances.get(&node, *it)) {
       delete node; // destroy node
     }
   }
@@ -67,6 +74,14 @@ void Rubyk::normal_priority()
   if (pthread_setschedparam(id, mCommandSchedPoclicy, &mCommandThreadParam)) {
     fprintf(stderr, "Could not set command thread priority to %i.\n", mCommandThreadParam.sched_priority);
   }
+}
+
+void * Rubyk::start_thread(void * pEvent)
+{
+  BaseEvent * e = (BaseEvent*)pEvent;
+  ((Node*)e->node())->set_thread_this();
+  e->trigger();
+  return NULL;
 }
 
 void Rubyk::listen_to_command (Command& pCommand)
@@ -194,6 +209,15 @@ void Rubyk::pop_all_events()
     delete e;
     mEventsQueue.pop();
   }
+}
+
+
+pthread_t Rubyk::create_thread(BaseEvent * e)
+{
+  pthread_t id = NULL;
+  if (!Node::sThisKey) pthread_key_create(&Node::sThisKey, NULL);
+  pthread_create( &id, NULL, &Rubyk::start_thread, (void*)e);
+  return id;
 }
 
 void Rubyk::register_looped_node(Node * pNode)

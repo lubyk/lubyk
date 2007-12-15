@@ -5,12 +5,14 @@
 
 
 unsigned int Node::sIdCounter = 0;
+pthread_key_t Node::sThisKey  = NULL;
 
 Node::~Node()
 {
   // we have to do this here before ~Node, because some events have to be triggered before the node dies (note off).
   remove_my_events();
   unloop_me();
+  stop_my_threads();
   
   for(std::vector<Outlet*>::iterator it = mOutlets.begin(); it < mOutlets.end(); it++)
     delete *it;

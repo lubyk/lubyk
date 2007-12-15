@@ -34,7 +34,7 @@ public:
     if (p.get(&size, "vector")) TRY(mData, set_sizes(0,size));
     p.get(&mIsLoop, "loop");
     
-    if (p.get(&mFilePath, "file")) {
+    if (p.get(&mFilePath, "file", true)) {
       if (reload_data(true)) enter(PlaybackMode);
     }
     return true;

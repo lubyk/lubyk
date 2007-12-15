@@ -17,20 +17,9 @@ struct OglWindow
 
 class OpenGL;
 
-/** Until we know how to make multiple windows and keep them into each C++ object, we use globals... */
-OpenGL * gOp;
-
 class OpenGL : public Node
 {
-public:  
-  virtual ~OpenGL () {
-    if (mThread) {
-      mQuitGL = true;
-      glutPostRedisplay(); // so 'cast_draw' gets called in the other thread
-      pthread_join( mThread, NULL);
-    }
-  }
-  
+public:
   virtual void draw()
   {
     glColor3f(1.0, 1.0, 1.0);
@@ -54,16 +43,9 @@ protected:
     int argc = 0;
     char *argv[] = {"hello"};
     
-    // this is really bad
-    gOp = this;
-    
-    
     mWindow.height = p.val("height", 600);
     mWindow.width = p.val("width", 800);
     
-    
-    mThread = NULL;
-    mQuitGL = false;
     glutInit(&argc, argv);
 
     glutInitDisplayMode(GLUT_RGB);
@@ -78,7 +60,7 @@ protected:
     gluOrtho2D(0,mWindow.width,0,mWindow.height);
     glutDisplayFunc(&OpenGL::cast_draw); // use templates...
 
-    pthread_create( &mThread, NULL, &OpenGL::start_loop, this);
+    NEW_THREAD(OpenGL,start_loop);
 
     return true;
   }
@@ -95,28 +77,44 @@ protected:
   
   
   OglWindow  mWindow;
+  
+  
+  virtual void stop_my_threads()
+  {
+    std::list<pthread_t>::iterator it  = mThreadIds.begin();
+    std::list<pthread_t>::iterator end = mThreadIds.end();
+
+    int i = 0;
+    while(it != end) {
+      pthread_t id = *it;
+      it = mThreadIds.erase(it); // tell thread to stop
+      glutPostRedisplay();     // needed by opengl threads so they run one last time
+      pthread_join(id, NULL);  // wait
+      i++;
+    }
+  }
 
 private:
   
   /** How could we get 'this' pointer back ? */
   static void cast_draw (void)
   {
-    if (gOp->mQuitGL)  {
-      //glutDestroyWindow(gOp->mWindow.id);
-      exit(0);
+    OpenGL * node = (OpenGL*)thread_this();
+    if (!node->run_thread()) {
+      pthread_exit(0);
+      //glutDestroyWindow(node->mWindow.id);
       /* glutDestroyWindow makes rubyk die. Bad, bad, bad. */
       return;
     }
     glClear(GL_COLOR_BUFFER_BIT);
-    gOp->draw();
+    node->draw();
     glFlush();
   }
   
-  static void * start_loop(void * data)
+  void start_loop()
   {
     // runs in new thread
     glutMainLoop();
-    return NULL;
   }
   
   

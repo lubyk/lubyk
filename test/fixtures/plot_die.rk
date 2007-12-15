@@ -1,0 +1,7 @@
+m   = Metro(10000)
+m   => rep
+rep = Replay("test/fixtures/plot_die.rec")
+rep => buf
+buf = Buffer(200)
+buf => p
+p   = Plot(mode:"xy" group:4 amplitude:2.0)
