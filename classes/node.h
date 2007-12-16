@@ -98,7 +98,7 @@ public:
   ///////// send signals ///////////////
   
   template<typename T>
-  inline void send(T data)
+  inline void send(const T& data)
   { send(1, data); }
   
   /** Send a bang. */

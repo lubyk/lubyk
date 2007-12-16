@@ -28,6 +28,7 @@ public:
     mTrainFile   = NULL;
     mMeanSignal.set(mMeanVector);
     mLiveSignal.set(mLiveView);
+    mViewSignal.set(mView);
     mS.set(mView);
 
     if (!resize(4,8)) return false;
@@ -87,6 +88,8 @@ public:
       case Recording:
         receive_data();
         enter(Validation);
+        send(2, mMeanSignal);
+        send(mViewSignal);       // recorded signal
         break;
       case Validation:
         if (cmd == 127) {
@@ -108,6 +111,7 @@ public:
             }
             *mOutput << mName << ": snap\n~> ";
           }
+          send(mViewSignal);       // recorded signal
           break;
         } else if (cmd == RK_RIGHT_ARROW) { // -> right arrow 301
           mRowOffset ++;
@@ -117,6 +121,7 @@ public:
             *mOutput << mName << ": mView (" << mView.error_msg() << ").\n";
             return;
           }
+          send(mViewSignal);       // recorded signal
           break;
         } else if (cmd == RK_LEFT_ARROW) { // <- left arrow  302
           mRowOffset --;
@@ -126,6 +131,7 @@ public:
             *mOutput << mName << ": mView (" << mView.error_msg() << ").\n";
             return;
           }
+          send(mViewSignal);       // recorded signal
           break;
         } else {
           // any character: save and continue
@@ -144,14 +150,13 @@ public:
         break;
       }
     }
-    
+
     // send mean value
-    send(2, mMeanSignal);
     
-    if (mState == Validation)
-      send(mView);       // recorded signal
-    else
+    if (mState != Validation) {
+      send(2, mMeanSignal);
       send(mLiveSignal); // live signal
+    }
   }
   
 private:
@@ -164,7 +169,7 @@ private:
     }
     
     // copy data into our local buffer
-    mBuffer.copy(*mLiveBuffer);
+    TRY_RET(mBuffer, copy(*mLiveBuffer));
     
     if (mRowMargin) {
       // try to find the best bet by calculating minimal distance
@@ -199,16 +204,9 @@ private:
     }
     
     if (mUseSnap) {
-      if (!mView.set_view(mBuffer, mRowOffset, mRowOffset + mMeanVector.row_count() - 1)) {
-        *mOutput << mName << ": mView (" << mView.error_msg() << ").\n";
-        return;
-      }
+      TRY_RET(mView, set_view(mBuffer, mRowOffset, mRowOffset + mMeanVector.row_count() - 1));
     } else {
-      
-      if (!mView.set_view(mBuffer, mRowMargin, mRowMargin + mMeanVector.row_count() - 1)) {
-        *mOutput << mName << ": mView (" << mView.error_msg() << ").\n";
-        return;
-      }
+      TRY_RET(mView, set_view(mBuffer, mRowMargin, mRowMargin + mMeanVector.row_count() - 1));
     }
   }
   
@@ -321,11 +319,12 @@ private:
   CutMatrix mLiveView;        /**< Live stream view. Points inside mLiveBuffer.                                 */
   Signal    mLiveSignal;      /**< Used to send mLiveView                                                       */
   
-  Signal mMeanSignal;         /**< Used to send mean value.                                                     */
   Matrix mMeanVector;         /**< Store the mean value for all vectors from this class.                        */
+  Signal mMeanSignal;         /**< Used to send mean value.                                                     */
   
   Matrix mBuffer;             /**< Store a single vector +  margin.                                             */
   CutMatrix mView;            /**< Resulting view of the data (points inside mBuffer).                          */
+  Signal mViewSignal;         /**< Used to send view matrix.                                                    */
   double mMargin;             /**< Size (in %) of the margin.                                                   */
   size_t mRowMargin;          /**< Number of rows on each side of the vector (mBuffer.row_count() * margin/2).  */
   size_t mVectorCount;        /**< Number of vectors used to build the current mean value.                      */

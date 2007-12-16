@@ -36,7 +36,7 @@ rec.3 => midi
 #svm_buff => p
 #p = Plot(amplitude:15.0 amplitude2:1.0 mode2:"xy")
 ######
-p = Plot(line:4 group:3)
+p = Plot(line:4 group:3 line2:4 group2:3)
 ######
 # =========== MIDI ====================
 midi = Midi()
