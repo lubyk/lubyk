@@ -24,7 +24,6 @@ public:
     TRY(mBasis,      set_sizes(8,32));
     
     mS.set(mBuffer);
-    load_model();
     return true;
   }
 
@@ -45,6 +44,7 @@ public:
     if (mBasis.row_count() != output_size || mBasis.col_count() != input_size) {
       TRY(mBasis, set_sizes(output_size, input_size));
     }
+    load_model();
     return true;
   }
   

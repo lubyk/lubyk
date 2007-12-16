@@ -11,18 +11,22 @@ k = Keyboard()
 k => rec
 rec = ClassRecorder(tempo:120 data:"gaspard/data" rate:250)
 ######
-rec => p
-rec.2 => 2.p
+#rec => p
+#rec.2 => 2.p
 #####
 rec.3 => midi
 
 
 # =========== PCA =====================
-#c => cut
-#cut = Cut(from:-64 to:-1)
-#cut => pca
-#pca = PCA(vector:768 keep:6 data:"gaspard/data" processed:"gaspard/after_pca")
-#pca => 2.p
+c => cut
+cut = Cut(from:-64 to:-1 flat:1)
+cut => pca
+pca = PCA(vector:768 keep:6 data:"gaspard/data" processed:"gaspard/after_pca")
+pca => pca_buff
+pca_buff = Buffer(30)
+pca_buff => avg
+avg = Average()
+avg => p
 # 
 # 
 # # =========== SVM =====================
@@ -37,7 +41,8 @@ rec.3 => midi
 #svm_buff => p
 #p = Plot(amplitude:15.0 amplitude2:1.0 mode2:"xy")
 ######
-p = Plot(line:4 group:3 line2:4 group2:3)
+#p = Plot(line:4 group:3 line2:4 group2:3)
+p = Plot(mode:"xy")
 ######
 # =========== MIDI ====================
 midi = Midi()

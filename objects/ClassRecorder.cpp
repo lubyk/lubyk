@@ -107,8 +107,11 @@ public:
           }
           send(mViewSignal);       // recorded signal
           break;
-        } else if (cmd == RK_RIGHT_ARROW) { // -> right arrow 301
-          mRowOffset ++;
+        } else if (cmd == RK_LEFT_ARROW) { // <- left arrow  302
+          if (mView.data != mBuffer[mRowOffset])
+            mRowOffset = mRowMargin + 1;
+          else
+            mRowOffset++;
           if (mRowOffset >= mBuffer.row_count() - mMeanVector.row_count()) mRowOffset = mBuffer.row_count() - mMeanVector.row_count() - 1;
           
           if (!mView.set_view(mBuffer, mRowOffset, mRowOffset + mMeanVector.row_count() - 1)) {
@@ -117,8 +120,11 @@ public:
           }
           send(mViewSignal);       // recorded signal
           break;
-        } else if (cmd == RK_LEFT_ARROW) { // <- left arrow  302
-          if (mRowOffset != 0) mRowOffset --;
+        } else if (cmd == RK_RIGHT_ARROW) { // -> right arrow 301
+          if (mView.data != mBuffer[mRowOffset])
+            mRowOffset = mRowMargin > 0 ? mRowMargin - 1 : 0;
+          else if (mRowOffset != 0)
+            mRowOffset --;
           
           if (!mView.set_view(mBuffer, mRowOffset, mRowOffset + mMeanVector.row_count() - 1)) {
             *mOutput << mName << ": mView (" << mView.error_msg() << ").\n";
@@ -170,18 +176,18 @@ private:
       double d;
       double * vector;
       double * mean = mMeanVector.data;
-      int   delta_used = mBuffer.row_count() - mMeanVector.row_count();
+      int   delta_used = mBuffer.row_count() - (int)mMeanVector.row_count();
       for(int j = (int)mBuffer.row_count() - (int)mMeanVector.row_count(); j >= 0; j--) {
         distance = 0.0;
         vector = mBuffer[j];
-        for(size_t i=0; i < mBuffer.col_count(); i++) {
+        for(size_t i=0; i < mMeanVector.size(); i++) {
           d = (mean[i] - vector[i]) ;
           if (d > 0)
             distance += d;
           else
             distance -= d;
         }
-        distance = distance / mBuffer.col_count();
+        distance = distance / mMeanVector.size();
         if (min_distance < 0 || distance < min_distance) {
           delta_used = j;
           min_distance = distance;
