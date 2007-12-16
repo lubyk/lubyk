@@ -19,7 +19,6 @@ bool LuaScript::set_lua (const Params& p)
   return set_script(p);
 }
 
-
 void LuaScript::call_lua(const char * pFunctionName)
 {
   int status;
@@ -27,7 +26,7 @@ void LuaScript::call_lua(const char * pFunctionName)
   
   reload_script();
   
-  if (mScriptDead) return;
+  if (!mScriptOK) return;
   
   lua_getglobal(mLua, pFunctionName); /* function to be called */
   
@@ -37,7 +36,7 @@ void LuaScript::call_lua(const char * pFunctionName)
     *mOutput << mName << "(error): ";
     *mOutput << lua_tostring(mLua, -1) << std::endl;
   	
-    mScriptDead = true;
+    mScriptOK = false;
     return;
   }
   sig_from_lua(&sig);
@@ -45,12 +44,16 @@ void LuaScript::call_lua(const char * pFunctionName)
 }
 
 
-void LuaScript::eval_script(const std::string& pScript) 
+bool LuaScript::eval_script(const std::string& pScript) 
 {
-  int status;
-  
   mScript = pScript;
   
+  return eval_lua_script(mScript);
+}
+
+bool LuaScript::eval_lua_script(const std::string& pScript)
+{
+  int status;
   if (!mLua) {
     /* Our own lua context. We might decide to share the context between lua objects some day. */
     mLua = lua_open();
@@ -79,12 +82,11 @@ void LuaScript::eval_script(const std::string& pScript)
   }
   
   /* compile script (as long as we maintain 1 context per object, we could release the mutex for long compilations since they are done inside the 'command' space) */
-  status = luaL_loadbuffer(mLua, mScript.c_str(), mScript.size(), "script" ); // the last parameter is just used for debugging and error reporting
+  status = luaL_loadbuffer(mLua, pScript.c_str(), pScript.size(), "script" ); // the last parameter is just used for debugging and error reporting
   if (status) {
     *mOutput << mName << ": Compilation error !\n";
     *mOutput << lua_tostring(mLua, -1) << std::endl;
-    mScriptDead = true; // stop processing events until next reload
-    return;
+    return false;
   }
   
   /* Run the script to create the functions. */
@@ -92,13 +94,10 @@ void LuaScript::eval_script(const std::string& pScript)
   if (status) {
     *mOutput << mName << ": Function creation failed !\n";
     *mOutput << lua_tostring(mLua, -1) << std::endl;
-  	
-    mScriptDead = true;
-    return;
+  	return false;
   }
-  mScriptDead = false; // ok, we can receive and process signals (again).
+  return true; // ok, we can receive and process signals (again).
 }
-
 
 Node * LuaScript::get_node_from_lua(lua_State * L)
 {

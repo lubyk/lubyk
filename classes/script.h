@@ -7,7 +7,7 @@
 class Script : public Node
 {
 public:
-  Script () : mScriptModTime(0), mReloadEvery(0), mNextReload(0), mScriptDead(true) {}
+  Script () : mScriptModTime(0), mReloadEvery(0), mNextReload(0), mScriptOK(false) {}
   
   bool set_script(const Params& p)
   {
@@ -16,11 +16,11 @@ public:
     if (p.get(&str, "load")) {
       mScriptFile  = str;
       mReloadEvery = p.val("reload", 1);
-      load_script_from_file(true);
+      mScriptOK = load_script_from_file(true);
     } else if (p.get(&str, "script", true)) {
-      eval_script(str);
+      mScriptOK = eval_script(str);
     }
-    return !mScriptDead;
+    return mScriptOK;
   }
   
   // load script from file.
@@ -36,7 +36,7 @@ public:
     if (!p.get(&mReloadEvery, "reload") && !mReloadEvery)
       mReloadEvery = 5;
     
-    load_script_from_file(true);
+    mScriptOK = load_script_from_file(true);
   }
   
   void reload_script()
@@ -47,21 +47,21 @@ public:
     
     mNextReload = mServer->mCurrentTime + (mReloadEvery * ONE_SECOND);
      
-    load_script_from_file(false);
+    mScriptOK = load_script_from_file(false);
   }
   
-  void load_script_from_file(bool isNewFile)
+  bool load_script_from_file(bool isNewFile)
   {
     struct stat info;
     
     if (stat(mScriptFile.c_str(), &info)) {
       *mOutput << "Could not stat '" << mScriptFile << "'." << std::endl;
-      return;
+      return false;
     }
     
     if (!isNewFile && info.st_mtime == mScriptModTime) {
       // file did not change, skip
-      return;
+      return true;
     }
     
     mScriptModTime = info.st_mtime;
@@ -71,11 +71,12 @@ public:
       oss << in.rdbuf();
     in.close();
     oss << "\n";
-    eval_script(oss.str());
+    if (!eval_script(oss.str())) return false;
     *mOutput << mName << ": script loaded.\n";
+    return true;
   }
   
-  virtual void eval_script(const std::string& pScript) = 0;
+  virtual bool eval_script(const std::string& pScript) = 0;
   
   void script(const Params& p)
   {  
@@ -94,6 +95,6 @@ protected:
   time_t      mScriptModTime;  /**< Script file's modification time on last load. */
   time_t      mReloadEvery;    /**< How often should we check for a modification in the source file (in seconds). */
   time_t      mNextReload;     /**< Compute time for the next check to reload the script. */
-  bool        mScriptDead;     /**< Script compilation failed. Might change on next reload. */
+  bool        mScriptOK;       /**< Script compilation status. Might change on next reload. */
   
 };

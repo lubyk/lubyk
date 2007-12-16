@@ -5,6 +5,7 @@
 extern "C" {
 // we compiled as C code
 #include "lua/src/lua.h"
+#include "lua/src/lauxlib.h"  // luaL_ref, luaL_unref
 }
 
 #define LUA_RETURN_BUFFER_SIZE 32
@@ -19,7 +20,9 @@ public:
   
   void call_lua (const char * pFunctionName);
   
-  void eval_script (const std::string& pScript);
+  bool eval_script (const std::string& pScript);
+  
+  bool eval_lua_script(const std::string& pScript);
   
   static int send_for_lua(lua_State * L)
   {

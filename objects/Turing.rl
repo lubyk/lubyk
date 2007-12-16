@@ -1,4 +1,4 @@
-#include "script.h"
+#include "lua_script.h"
 
 #define MAX_NAME_SIZE 200
 //#define DEBUG_PARSER
@@ -21,7 +21,7 @@ struct TuringSend
 
 TuringSend gSendNothing;
 
-class Turing : public Script
+class Turing : public LuaScript
 {
 public:
   Turing() : mTokenByName(30), mTokenNameByValue(30), mStateByName(30), mPrintBuffer(NULL), mPrintBufferSize(0) {}
@@ -43,13 +43,15 @@ public:
   { 
     int i;
     int state;
+    int status;
+    
     if (sig.get(&i)) {
       mRealToken = i;
       mToken = mTokenTable[ i % 256 ]; // translate token in the current machine values.
     }
     
     reload_script();
-    if (mScriptDead) return;
+    if (!mScriptOK) return;
     
     if (mDebug) *mOutput << "{" << mState << "} -" << mRealToken << "->";
       
@@ -69,13 +71,20 @@ public:
     if (mSend == &gSendNothing)
       ; // send nothing
     else if (mSend->mLuaMethod) {
-      ; // trigger lua method
+      // trigger lua function
+      lua_rawgeti(mLua, LUA_REGISTRYINDEX, mSend->mLuaMethod);
+      /* Run the function. */
+      status = lua_pcall(mLua, 0, 0, 0); // 0 arg, 1 result, no error function
+      if (status) {
+        *mOutput << mName << ": trigger [" << mSend->mMethod << "] failed !\n";
+        *mOutput << lua_tostring(mLua, -1) << std::endl;
+      }
     } else
       send(mSend->mValue);
   }
 
 
-  void eval_script(const std::string& pScript) 
+  bool eval_script(const std::string& pScript) 
   {
     mScript = pScript;
     mScript.append("\n");
@@ -97,7 +106,7 @@ public:
     
     // integrated lua script
     const char * begin_lua_script = NULL;
-    std::string lua_script;
+    mLuaScript = "";
     
     
     // function call id, params
@@ -133,8 +142,7 @@ public:
     action a {
       if (name_index >= MAX_NAME_SIZE) {
         *mOutput << "Name buffer overflow !\n";
-        mScriptDead = true;
-        return;
+        return false;
       }
       #ifdef DEBUG_PARSER
         printf("_%c_",fc);
@@ -162,6 +170,16 @@ public:
       mSendList.push_back(send);
     }
     
+    action set_lua_send {
+      name[name_index] = '\0';
+      name_index = 0;
+      #ifdef DEBUG_PARSER
+        std::cout <<    "[send " << name << "]" << std::endl;
+      #endif
+      send = new TuringSend(std::string(name));
+      mSendList.push_back(send);
+    }
+    
     action set_source {
       source = identifier;
       #ifdef DEBUG_PARSER
@@ -182,8 +200,7 @@ public:
     action set_token_from_identifier { 
       if (!mTokenByName.get(&tok, std::string(name))) {
         *mOutput << "Syntax error. Unknown token '" << name << "' (missing declaration)\n";
-        mScriptDead = true;
-        return;
+        return false;
       }
     }
     
@@ -264,8 +281,7 @@ public:
       char error_buffer[10];
       snprintf(error_buffer, 9, "%s", p);
       *mOutput << "Syntax error near '" << error_buffer << "'." << std::endl;
-      mScriptDead = true;
-      return;
+      return false;
     }
     
     action debug {
@@ -276,13 +292,12 @@ public:
     action begin_comment { fgoto doc_comment; }
     action end_comment   { fgoto main; }
     
-    action begin_lua     { 
-      std::cout << "begin_lua\n";
+    action begin_lua     {
       begin_lua_script = p;
       fgoto lua_script; 
     }
     action end_lua       {
-      lua_script.append( begin_lua_script, p - begin_lua_script - 4 );
+      mLuaScript.append( begin_lua_script, p - begin_lua_script - 4 );
       begin_lua_script = NULL;
       fgoto main; 
     }
@@ -299,7 +314,7 @@ public:
     
     tok    = ( identifier @set_token_from_identifier | digit+ $a %set_tok_value ); # fixme: we should use 'whatever' or a-zA-Z or number
     
-    send   = alnum+ $a %set_send;
+    send   = alnum+ $a %set_send | (alpha alnum* '(' [^\)]* ')') $a %set_lua_send;
 
     transition = ( '-'+ '>' | '-'* ws* tok %set_token (':' send)?  ws* '-'+ '>');
 
@@ -321,9 +336,44 @@ public:
   }%%
   
     if (begin_lua_script) {
-      lua_script.append( begin_lua_script, p - begin_lua_script );
+      mLuaScript.append( begin_lua_script, p - begin_lua_script );
     }
-    mScriptDead = false; // ok, we can receive and process signals (again).
+    // 1. for each mSendList with mMethod
+    int met_count = 0;
+    for(std::vector< TuringSend* >::iterator it = mSendList.begin(); it != mSendList.end(); it++) {
+      if ((*it)->mMethod != "") {
+        // 1.1 create function
+        met_count++;
+        mLuaScript.append(bprint(mPrintBuffer, mPrintBufferSize, "\nfunction trigger_%i()\n",met_count));
+        mLuaScript.append((*it)->mMethod);
+        mLuaScript.append("\nend\n");
+      }
+    }
+    
+    // 2. compile lua script
+    if (!eval_lua_script(mLuaScript)) {
+      *mOutput << mName << ": script [\n" << mLuaScript << "]\n";
+      return false;
+    }
+    
+    // 3. store lua function ids
+    const char * met_function;
+    met_count = 0;
+    for(std::vector< TuringSend* >::iterator it = mSendList.begin(); it != mSendList.end(); it++) {
+      if ((*it)->mMethod != "") {
+        met_count++;
+        met_function = bprint(mPrintBuffer, mPrintBufferSize, "trigger_%i",met_count);
+        
+        lua_getglobal(mLua, met_function); /* function to be called */
+
+        /* take func from top of stack and store it in the Registry */
+        (*it)->mLuaMethod = luaL_ref(mLua, LUA_REGISTRYINDEX);
+        if ((*it)->mLuaMethod == LUA_REFNIL)
+          *mOutput << mName << ": could not get lua reference for function '" << met_function << "'.\n";
+        
+      }
+    }
+    return true;
   }
 
   /** Output transition and action tables. */
@@ -334,11 +384,11 @@ public:
       int tok_value = mTokenList[i];
       std::string identifier;
       if (mTokenNameByValue.get(&identifier, tok_value)) {
-        bprint(mPrintBuffer, mPrintBufferSize, "% 4i: %s = %i\n", i, identifier.c_str(), tok_value);
+        bprint(mPrintBuffer, mPrintBufferSize, "% 4i: %s = %i\n", i+1, identifier.c_str(), tok_value);
         *mOutput << mPrintBuffer;
         //*mOutput << " " << i << " : " << identifier << " = " << tok_value << "\n";
       } else {
-        *mOutput << bprint(mPrintBuffer, mPrintBufferSize, "% 3i : %i\n", i, tok_value);
+        *mOutput << bprint(mPrintBuffer, mPrintBufferSize, "% 4i: %i\n", i+1, tok_value);
         //*mOutput << " " << i << " : " << tok_value << "\n";
       }
     }
@@ -351,7 +401,7 @@ public:
     for(std::vector< TuringSend* >::iterator it = mSendList.begin(); it != mSendList.end(); it++) {
       if ((*it)->mLuaMethod) {
         met_count++;
-        *mOutput << bprint(mPrintBuffer, mPrintBufferSize, "% 3i : %s\n", met_count, (*it)->mMethod.c_str());
+        *mOutput << bprint(mPrintBuffer, mPrintBufferSize, "% 4i: %s\n", met_count, (*it)->mMethod.c_str());
       }
     }
   }
@@ -371,8 +421,12 @@ private:
     std::vector< TuringSend* >::iterator it,end;
     
     end   = mSendList.end();
-    for (it = mSendList.begin(); it < end; it++)
+    for (it = mSendList.begin(); it < end; it++) {
+      if ((*it)->mLuaMethod) {
+        luaL_unref(mLua, LUA_REGISTRYINDEX, (*it)->mLuaMethod);
+      }
       delete *it;
+    }
     
     mSendTable.clear();
   }
@@ -563,6 +617,8 @@ private:
   int  mTokenTable[256]; /**< Translate token values into their internal representation. */
   int  mStateCount;      /**< Number of states in the machine. */
   int  mTokenCount;      /**< Number of tokens recognized by the machine. */
+  
+  std::string mLuaScript; /**< Lua script for method calls. */
   
   Hash<std::string, int>   mTokenByName;   /**< Dictionary returning token id from its identifier (used to  plot/debug). */
   Hash<uint, std::string>  mTokenNameByValue; /**< Dictionary returning token name from its value (used to plot/debug). */

@@ -1,5 +1,5 @@
 #line 1 "objects/Turing.rl"
-#include "script.h"
+#include "lua_script.h"
 
 #define MAX_NAME_SIZE 200
 //#define DEBUG_PARSER
@@ -19,19 +19,20 @@ struct TuringSend
 #line 20 "objects/Turing.cpp"
 static const char _turing_actions[] = {
 	0, 1, 0, 1, 1, 1, 2, 1, 
-	10, 1, 11, 1, 12, 1, 13, 1, 
-	14, 2, 0, 5, 2, 1, 3, 2, 
-	1, 8, 2, 6, 7, 2, 6, 8, 
-	3, 1, 4, 9
+	3, 1, 11, 1, 12, 1, 13, 1, 
+	14, 1, 15, 2, 0, 6, 2, 1, 
+	4, 2, 1, 9, 2, 7, 8, 2, 
+	7, 9, 3, 1, 5, 10
 };
 
 static const unsigned char _turing_key_offsets[] = {
 	0, 0, 9, 10, 11, 12, 13, 14, 
 	15, 17, 18, 20, 21, 22, 23, 32, 
 	42, 52, 60, 66, 69, 71, 73, 79, 
-	89, 99, 109, 115, 124, 128, 134, 137, 
-	139, 140, 142, 144, 146, 147, 149, 150, 
-	152, 154, 156, 157, 166, 168
+	89, 99, 109, 115, 124, 134, 135, 138, 
+	142, 148, 151, 153, 154, 156, 158, 160, 
+	161, 163, 164, 166, 168, 170, 171, 180, 
+	182
 };
 
 static const char _turing_trans_keys[] = {
@@ -50,40 +51,45 @@ static const char _turing_trans_keys[] = {
 	90, 97, 122, 9, 32, 45, 58, 48, 
 	57, 65, 90, 97, 122, 48, 57, 65, 
 	90, 97, 122, 9, 32, 45, 48, 57, 
-	65, 90, 97, 122, 9, 32, 48, 57, 
-	9, 10, 32, 35, 48, 57, 9, 32, 
-	35, 10, 61, 10, 10, 101, 10, 110, 
-	10, 100, 10, 10, 61, 10, 10, 101, 
-	10, 110, 10, 100, 10, 9, 10, 32, 
-	35, 61, 65, 90, 97, 122, 10, 61, 
-	10, 61, 0
+	65, 90, 97, 122, 9, 32, 40, 45, 
+	48, 57, 65, 90, 97, 122, 41, 9, 
+	32, 45, 9, 32, 48, 57, 9, 10, 
+	32, 35, 48, 57, 9, 32, 35, 10, 
+	61, 10, 10, 101, 10, 110, 10, 100, 
+	10, 10, 61, 10, 10, 101, 10, 110, 
+	10, 100, 10, 9, 10, 32, 35, 61, 
+	65, 90, 97, 122, 10, 61, 10, 61, 
+	0
 };
 
 static const char _turing_single_lengths[] = {
 	0, 5, 1, 1, 1, 1, 1, 1, 
 	2, 1, 2, 1, 1, 1, 3, 4, 
 	4, 2, 4, 3, 2, 2, 2, 4, 
-	4, 4, 0, 3, 2, 4, 3, 2, 
-	1, 2, 2, 2, 1, 2, 1, 2, 
-	2, 2, 1, 5, 2, 2
+	4, 4, 0, 3, 4, 1, 3, 2, 
+	4, 3, 2, 1, 2, 2, 2, 1, 
+	2, 1, 2, 2, 2, 1, 5, 2, 
+	2
 };
 
 static const char _turing_range_lengths[] = {
 	0, 2, 0, 0, 0, 0, 0, 0, 
 	0, 0, 0, 0, 0, 0, 3, 3, 
 	3, 3, 1, 0, 0, 0, 2, 3, 
-	3, 3, 3, 3, 1, 1, 0, 0, 
-	0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 0, 0, 2, 0, 0
+	3, 3, 3, 3, 3, 0, 0, 1, 
+	1, 0, 0, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 0, 2, 0, 
+	0
 };
 
 static const unsigned char _turing_index_offsets[] = {
 	0, 0, 8, 10, 12, 14, 16, 18, 
 	20, 23, 25, 28, 30, 32, 34, 41, 
 	49, 57, 63, 69, 73, 76, 79, 84, 
-	92, 100, 108, 112, 119, 123, 129, 133, 
-	136, 138, 141, 144, 147, 149, 152, 154, 
-	157, 160, 163, 165, 173, 176
+	92, 100, 108, 112, 119, 127, 129, 133, 
+	137, 143, 147, 150, 152, 155, 158, 161, 
+	163, 166, 168, 171, 174, 177, 179, 187, 
+	190
 };
 
 static const char _turing_indicies[] = {
@@ -100,45 +106,49 @@ static const char _turing_indicies[] = {
 	31, 32, 32, 0, 33, 34, 33, 35, 
 	32, 32, 32, 0, 36, 36, 3, 20, 
 	21, 23, 23, 0, 37, 37, 38, 39, 
-	23, 23, 23, 0, 40, 40, 40, 0, 
-	41, 41, 42, 40, 40, 40, 0, 22, 
-	22, 43, 0, 44, 45, 44, 46, 43, 
-	0, 47, 47, 3, 0, 49, 50, 48, 
-	49, 48, 49, 51, 48, 49, 52, 48, 
-	49, 53, 48, 54, 48, 56, 57, 55, 
-	56, 55, 56, 58, 55, 56, 59, 55, 
-	56, 60, 55, 61, 55, 1, 2, 1, 
-	3, 4, 5, 5, 0, 49, 50, 48, 
-	56, 57, 55, 0
+	23, 23, 23, 0, 40, 41, 41, 0, 
+	42, 42, 43, 40, 40, 40, 0, 42, 
+	42, 44, 43, 41, 41, 41, 0, 45, 
+	44, 46, 46, 47, 0, 22, 22, 48, 
+	0, 49, 50, 49, 51, 48, 0, 52, 
+	52, 3, 0, 54, 55, 53, 54, 53, 
+	54, 56, 53, 54, 57, 53, 54, 58, 
+	53, 59, 53, 61, 62, 60, 61, 60, 
+	61, 63, 60, 61, 64, 60, 61, 65, 
+	60, 66, 60, 1, 2, 1, 3, 4, 
+	5, 5, 0, 54, 55, 53, 61, 62, 
+	60, 0
 };
 
 static const char _turing_trans_targs_wi[] = {
-	0, 1, 43, 2, 3, 14, 4, 5, 
+	0, 1, 46, 2, 3, 14, 4, 5, 
 	6, 7, 8, 9, 10, 11, 12, 13, 
-	9, 15, 28, 15, 16, 18, 28, 25, 
+	9, 15, 31, 15, 16, 18, 31, 25, 
 	17, 21, 19, 20, 26, 19, 20, 22, 
-	23, 24, 43, 2, 24, 19, 20, 26, 
-	27, 19, 20, 29, 30, 43, 2, 30, 
-	32, 44, 33, 34, 35, 36, 44, 38, 
-	45, 39, 40, 41, 42, 45
+	23, 24, 46, 2, 24, 19, 20, 26, 
+	27, 28, 19, 20, 29, 30, 19, 20, 
+	32, 33, 46, 2, 33, 35, 47, 36, 
+	37, 38, 39, 47, 41, 48, 42, 43, 
+	44, 45, 48
 };
 
 static const char _turing_trans_actions_wi[] = {
-	7, 0, 0, 0, 0, 1, 0, 0, 
-	0, 0, 0, 9, 0, 0, 0, 0, 
-	13, 20, 3, 0, 0, 1, 0, 17, 
-	0, 0, 29, 29, 29, 0, 0, 0, 
-	1, 32, 32, 32, 0, 23, 23, 23, 
-	1, 5, 5, 1, 26, 26, 26, 0, 
-	0, 0, 0, 0, 0, 0, 11, 0, 
-	0, 0, 0, 0, 0, 15
+	9, 0, 0, 0, 0, 1, 0, 0, 
+	0, 0, 0, 11, 0, 0, 0, 0, 
+	15, 22, 3, 0, 0, 1, 0, 19, 
+	0, 0, 31, 31, 31, 0, 0, 0, 
+	1, 34, 34, 34, 0, 25, 25, 25, 
+	1, 1, 5, 5, 1, 1, 7, 7, 
+	1, 28, 28, 28, 0, 0, 0, 0, 
+	0, 0, 0, 13, 0, 0, 0, 0, 
+	0, 0, 17
 };
 
 static const int turing_start = 1;
-static const int turing_first_final = 43;
+static const int turing_first_final = 46;
 
-static const int turing_en_doc_comment = 31;
-static const int turing_en_lua_script = 37;
+static const int turing_en_doc_comment = 34;
+static const int turing_en_lua_script = 40;
 static const int turing_en_main = 1;
 
 #line 20 "objects/Turing.rl"
@@ -146,7 +156,7 @@ static const int turing_en_main = 1;
 
 TuringSend gSendNothing;
 
-class Turing : public Script
+class Turing : public LuaScript
 {
 public:
   Turing() : mTokenByName(30), mTokenNameByValue(30), mStateByName(30), mPrintBuffer(NULL), mPrintBufferSize(0) {}
@@ -168,13 +178,15 @@ public:
   { 
     int i;
     int state;
+    int status;
+    
     if (sig.get(&i)) {
       mRealToken = i;
       mToken = mTokenTable[ i % 256 ]; // translate token in the current machine values.
     }
     
     reload_script();
-    if (mScriptDead) return;
+    if (!mScriptOK) return;
     
     if (mDebug) *mOutput << "{" << mState << "} -" << mRealToken << "->";
       
@@ -194,13 +206,20 @@ public:
     if (mSend == &gSendNothing)
       ; // send nothing
     else if (mSend->mLuaMethod) {
-      ; // trigger lua method
+      // trigger lua function
+      lua_rawgeti(mLua, LUA_REGISTRYINDEX, mSend->mLuaMethod);
+      /* Run the function. */
+      status = lua_pcall(mLua, 0, 0, 0); // 0 arg, 1 result, no error function
+      if (status) {
+        *mOutput << mName << ": trigger [" << mSend->mMethod << "] failed !\n";
+        *mOutput << lua_tostring(mLua, -1) << std::endl;
+      }
     } else
       send(mSend->mValue);
   }
 
 
-  void eval_script(const std::string& pScript) 
+  bool eval_script(const std::string& pScript) 
   {
     mScript = pScript;
     mScript.append("\n");
@@ -222,7 +241,7 @@ public:
     
     // integrated lua script
     const char * begin_lua_script = NULL;
-    std::string lua_script;
+    mLuaScript = "";
     
     
     // function call id, params
@@ -253,14 +272,14 @@ public:
     mStateNames.clear();
     
     
-#line 257 "objects/Turing.cpp"
+#line 276 "objects/Turing.cpp"
 	{
 	cs = turing_start;
 	}
-#line 131 "objects/Turing.rl"
+#line 140 "objects/Turing.rl"
     
   
-#line 264 "objects/Turing.cpp"
+#line 283 "objects/Turing.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -335,12 +354,11 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 133 "objects/Turing.rl"
+#line 142 "objects/Turing.rl"
 	{
       if (name_index >= MAX_NAME_SIZE) {
         *mOutput << "Name buffer overflow !\n";
-        mScriptDead = true;
-        return;
+        return false;
       }
       #ifdef DEBUG_PARSER
         printf("_%c_",(*p));
@@ -350,7 +368,7 @@ _match:
     }
 	break;
 	case 1:
-#line 146 "objects/Turing.rl"
+#line 154 "objects/Turing.rl"
 	{
       name[name_index] = '\0';
       identifier = name;
@@ -361,7 +379,7 @@ _match:
     }
 	break;
 	case 2:
-#line 155 "objects/Turing.rl"
+#line 163 "objects/Turing.rl"
 	{
       name[name_index] = '\0';
       name_index = 0;
@@ -373,7 +391,19 @@ _match:
     }
 	break;
 	case 3:
-#line 165 "objects/Turing.rl"
+#line 173 "objects/Turing.rl"
+	{
+      name[name_index] = '\0';
+      name_index = 0;
+      #ifdef DEBUG_PARSER
+        std::cout <<    "[send " << name << "]" << std::endl;
+      #endif
+      send = new TuringSend(std::string(name));
+      mSendList.push_back(send);
+    }
+	break;
+	case 4:
+#line 183 "objects/Turing.rl"
 	{
       source = identifier;
       #ifdef DEBUG_PARSER
@@ -381,8 +411,8 @@ _match:
       #endif 
     }
 	break;
-	case 4:
-#line 172 "objects/Turing.rl"
+	case 5:
+#line 190 "objects/Turing.rl"
 	{ 
       target = identifier;
       #ifdef DEBUG_PARSER
@@ -393,18 +423,17 @@ _match:
       source = target; // the last target becomes the next source
     }
 	break;
-	case 5:
-#line 182 "objects/Turing.rl"
+	case 6:
+#line 200 "objects/Turing.rl"
 	{ 
       if (!mTokenByName.get(&tok, std::string(name))) {
         *mOutput << "Syntax error. Unknown token '" << name << "' (missing declaration)\n";
-        mScriptDead = true;
-        return;
+        return false;
       }
     }
 	break;
-	case 6:
-#line 190 "objects/Turing.rl"
+	case 7:
+#line 207 "objects/Turing.rl"
 	{ 
       name[name_index] = '\0';
       name_index = 0;
@@ -414,8 +443,8 @@ _match:
       tok = atoi(name);
     }
 	break;
-	case 7:
-#line 200 "objects/Turing.rl"
+	case 8:
+#line 217 "objects/Turing.rl"
 	{
       mTokenByName.set(identifier, tok);
       mTokenNameByValue.set(tok, identifier);
@@ -424,8 +453,8 @@ _match:
       #endif
     }
 	break;
-	case 8:
-#line 208 "objects/Turing.rl"
+	case 9:
+#line 225 "objects/Turing.rl"
 	{
       // do we know this token ?
       if (!mTokenTable[tok % 256]) {
@@ -462,8 +491,8 @@ _match:
       token_id = mTokenTable[tok % 256];
     }
 	break;
-	case 9:
-#line 244 "objects/Turing.rl"
+	case 10:
+#line 261 "objects/Turing.rl"
 	{
       // write the entry
       #ifdef DEBUG_PARSER
@@ -481,42 +510,40 @@ _match:
       target_state = 0;
     }
 	break;
-	case 10:
-#line 262 "objects/Turing.rl"
+	case 11:
+#line 279 "objects/Turing.rl"
 	{
       p--; // move back one char
       char error_buffer[10];
       snprintf(error_buffer, 9, "%s", p);
       *mOutput << "Syntax error near '" << error_buffer << "'." << std::endl;
-      mScriptDead = true;
-      return;
+      return false;
     }
-	break;
-	case 11:
-#line 276 "objects/Turing.rl"
-	{ {cs = 31; goto _again;} }
 	break;
 	case 12:
-#line 277 "objects/Turing.rl"
-	{ {cs = 1; goto _again;} }
+#line 292 "objects/Turing.rl"
+	{ {cs = 34; goto _again;} }
 	break;
 	case 13:
-#line 279 "objects/Turing.rl"
-	{ 
-      std::cout << "begin_lua\n";
-      begin_lua_script = p;
-      {cs = 37; goto _again;} 
-    }
+#line 293 "objects/Turing.rl"
+	{ {cs = 1; goto _again;} }
 	break;
 	case 14:
-#line 284 "objects/Turing.rl"
+#line 295 "objects/Turing.rl"
 	{
-      lua_script.append( begin_lua_script, p - begin_lua_script - 4 );
+      begin_lua_script = p;
+      {cs = 40; goto _again;} 
+    }
+	break;
+	case 15:
+#line 299 "objects/Turing.rl"
+	{
+      mLuaScript.append( begin_lua_script, p - begin_lua_script - 4 );
       begin_lua_script = NULL;
       {cs = 1; goto _again;} 
     }
 	break;
-#line 520 "objects/Turing.cpp"
+#line 547 "objects/Turing.cpp"
 		}
 	}
 
@@ -528,14 +555,49 @@ _again:
 	_out: {}
 	}
 
-#line 532 "objects/Turing.cpp"
-#line 321 "objects/Turing.rl"
+#line 559 "objects/Turing.cpp"
+#line 336 "objects/Turing.rl"
 
   
     if (begin_lua_script) {
-      lua_script.append( begin_lua_script, p - begin_lua_script );
+      mLuaScript.append( begin_lua_script, p - begin_lua_script );
     }
-    mScriptDead = false; // ok, we can receive and process signals (again).
+    // 1. for each mSendList with mMethod
+    int met_count = 0;
+    for(std::vector< TuringSend* >::iterator it = mSendList.begin(); it != mSendList.end(); it++) {
+      if ((*it)->mMethod != "") {
+        // 1.1 create function
+        met_count++;
+        mLuaScript.append(bprint(mPrintBuffer, mPrintBufferSize, "\nfunction trigger_%i()\n",met_count));
+        mLuaScript.append((*it)->mMethod);
+        mLuaScript.append("\nend\n");
+      }
+    }
+    
+    // 2. compile lua script
+    if (!eval_lua_script(mLuaScript)) {
+      *mOutput << mName << ": script [\n" << mLuaScript << "]\n";
+      return false;
+    }
+    
+    // 3. store lua function ids
+    const char * met_function;
+    met_count = 0;
+    for(std::vector< TuringSend* >::iterator it = mSendList.begin(); it != mSendList.end(); it++) {
+      if ((*it)->mMethod != "") {
+        met_count++;
+        met_function = bprint(mPrintBuffer, mPrintBufferSize, "trigger_%i",met_count);
+        
+        lua_getglobal(mLua, met_function); /* function to be called */
+
+        /* take func from top of stack and store it in the Registry */
+        (*it)->mLuaMethod = luaL_ref(mLua, LUA_REGISTRYINDEX);
+        if ((*it)->mLuaMethod == LUA_REFNIL)
+          *mOutput << mName << ": could not get lua reference for function '" << met_function << "'.\n";
+        
+      }
+    }
+    return true;
   }
 
   /** Output transition and action tables. */
@@ -546,11 +608,11 @@ _again:
       int tok_value = mTokenList[i];
       std::string identifier;
       if (mTokenNameByValue.get(&identifier, tok_value)) {
-        bprint(mPrintBuffer, mPrintBufferSize, "% 4i: %s = %i\n", i, identifier.c_str(), tok_value);
+        bprint(mPrintBuffer, mPrintBufferSize, "% 4i: %s = %i\n", i+1, identifier.c_str(), tok_value);
         *mOutput << mPrintBuffer;
         //*mOutput << " " << i << " : " << identifier << " = " << tok_value << "\n";
       } else {
-        *mOutput << bprint(mPrintBuffer, mPrintBufferSize, "% 3i : %i\n", i, tok_value);
+        *mOutput << bprint(mPrintBuffer, mPrintBufferSize, "% 4i: %i\n", i+1, tok_value);
         //*mOutput << " " << i << " : " << tok_value << "\n";
       }
     }
@@ -563,7 +625,7 @@ _again:
     for(std::vector< TuringSend* >::iterator it = mSendList.begin(); it != mSendList.end(); it++) {
       if ((*it)->mLuaMethod) {
         met_count++;
-        *mOutput << bprint(mPrintBuffer, mPrintBufferSize, "% 3i : %s\n", met_count, (*it)->mMethod.c_str());
+        *mOutput << bprint(mPrintBuffer, mPrintBufferSize, "% 4i: %s\n", met_count, (*it)->mMethod.c_str());
       }
     }
   }
@@ -583,8 +645,12 @@ private:
     std::vector< TuringSend* >::iterator it,end;
     
     end   = mSendList.end();
-    for (it = mSendList.begin(); it < end; it++)
+    for (it = mSendList.begin(); it < end; it++) {
+      if ((*it)->mLuaMethod) {
+        luaL_unref(mLua, LUA_REGISTRYINDEX, (*it)->mLuaMethod);
+      }
       delete *it;
+    }
     
     mSendTable.clear();
   }
@@ -775,6 +841,8 @@ private:
   int  mTokenTable[256]; /**< Translate token values into their internal representation. */
   int  mStateCount;      /**< Number of states in the machine. */
   int  mTokenCount;      /**< Number of tokens recognized by the machine. */
+  
+  std::string mLuaScript; /**< Lua script for method calls. */
   
   Hash<std::string, int>   mTokenByName;   /**< Dictionary returning token id from its identifier (used to  plot/debug). */
   Hash<uint, std::string>  mTokenNameByValue; /**< Dictionary returning token name from its value (used to plot/debug). */
