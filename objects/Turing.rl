@@ -1,11 +1,25 @@
 #include "script.h"
+
 #define MAX_NAME_SIZE 200
 //#define DEBUG_PARSER
+
+struct TuringSend
+{
+  TuringSend() {}
+  TuringSend(int pValue) : mValue(pValue), mLuaMethod(0) {}
+  TuringSend(std::string pMethod) : mMethod(pMethod), mLuaMethod(0) {}
+  
+  int mValue;          /**< Send a direct integer value. */
+  std::string mMethod; /**< Lua method definition. */
+  int mLuaMethod;      /**< Compiled lua method. */
+};
 
 %%{
   machine turing;
   write data noerror;
 }%%
+
+TuringSend gSendNothing;
 
 class Turing : public Script
 {
@@ -13,6 +27,7 @@ public:
   Turing() : mTokenByName(30), mTokenNameByValue(30), mStateByName(30), mPrintBuffer(NULL), mPrintBufferSize(0) {}
   ~Turing()
   {
+    clear_send_table();
     if (mPrintBuffer) free(mPrintBuffer);
   }
   
@@ -38,7 +53,7 @@ public:
     
     if (mDebug) *mOutput << "{" << mState << "} -" << mRealToken << "->";
       
-    if ((mSend = mSendTable[mState][mToken]) != -1)
+    if ( (mSend = mSendTable[mState][mToken]) )
       ; // ok custom value
     else
       mSend = mSendTable[mState][0]; // use default
@@ -51,10 +66,12 @@ public:
     if (mDebug) *mOutput << "{" << mState << "}" << std::endl;
     
     /* Send the value out. */
-    if (mSend == -2)
+    if (mSend == &gSendNothing)
       ; // send nothing
-    else
-      send(mSend);
+    else if (mSend->mLuaMethod) {
+      ; // trigger lua method
+    } else
+      send(mSend->mValue);
   }
 
 
@@ -70,7 +87,7 @@ public:
     
     int token_id = 0;
     int tok;
-    int send = -2;
+    TuringSend * send = &gSendNothing;
     
     // source state, target state
     std::string source;
@@ -100,16 +117,13 @@ public:
     
     std::string identifier;
     
-    // to add new tokens
-    std::vector< std::vector<int> >::iterator it,end;
-    
     // init token table
     memset(mTokenTable, 0, sizeof(mTokenTable));
     
     mStateCount = 0;
     mTokenCount = 0;
     mGotoTable.clear();
-    mSendTable.clear();
+    clear_send_table();
     mStateByName.clear();
     mStateNames.clear();
     
@@ -144,7 +158,8 @@ public:
       #ifdef DEBUG_PARSER
         std::cout <<    "[send " << name << "]" << std::endl;
       #endif
-      send = (int)atoi(name);
+      send = new TuringSend((int)atoi(name));
+      mSendList.push_back(send);
     }
     
     action set_source {
@@ -203,9 +218,8 @@ public:
         mTokenCount++;
         
         // enlarge lookup tables (add new column)
-        end = mGotoTable.end();
         int counter = 0;
-        for (it = mGotoTable.begin(); it < end; it++) {
+        for (std::vector< std::vector<int> >::iterator it = mGotoTable.begin(); it < mGotoTable.end(); it++) {
           // enlarge all arrays in the table
           if (mTokenCount == 1)
             (*it).push_back(counter); // first value is counter (stay)
@@ -215,13 +229,12 @@ public:
           counter++;
         }
         
-        end = mSendTable.end();
-        for (it = mSendTable.begin(); it < end; it++) {
+        for (std::vector< std::vector<TuringSend*> >::iterator it = mSendTable.begin(); it < mSendTable.end(); it++) {
           // enlarge all arrays in the table
-          if (mTokenCount == 1)
-            (*it).push_back(-2); // -2 means do not send (default send in first column)
-          else
-            (*it).push_back(-1); // -1 means use default 
+          if (mTokenCount == 1) {
+            (*it).push_back(&gSendNothing);
+          } else
+            (*it).push_back(NULL); // use default 
         }
         
       }
@@ -231,13 +244,16 @@ public:
     action add_entry {
       // write the entry
       #ifdef DEBUG_PARSER
-      printf("define %i - %i:%i -> %i\n", source_state, token_id, send, target_state);
+      if (send->mMethod != "")
+        printf("define %i - %i:%s -> %i\n", source_state, token_id, send->mMethod, target_state);
+      else
+        printf("define %i - %i:%i -> %i\n", source_state, token_id, send->mValue, target_state);
       #endif
       
       mGotoTable[source_state][token_id] = target_state;
       mSendTable[source_state][token_id] = send;
       token_id = 0;
-      send     = -2;
+      send     = &gSendNothing;
       source_state = 0;
       target_state = 0;
     }
@@ -328,6 +344,16 @@ public:
     }
     print_table(*mOutput, "goto", mGotoTable);
     print_table(*mOutput, "send", mSendTable);
+    
+    
+    *mOutput << bprint(mPrintBuffer, mPrintBufferSize, "\n%- 7s", "methods\n");
+    int met_count = 0;
+    for(std::vector< TuringSend* >::iterator it = mSendList.begin(); it != mSendList.end(); it++) {
+      if ((*it)->mLuaMethod) {
+        met_count++;
+        *mOutput << bprint(mPrintBuffer, mPrintBufferSize, "% 3i : %s\n", met_count, (*it)->mMethod.c_str());
+      }
+    }
   }
   
   /** Output tables in digraph format to produce graphs with graphviz. */
@@ -336,7 +362,20 @@ public:
     make_dot_graph(*mOutput);
   }
 
+  virtual void spy()
+  { bprint(mSpy, mSpySize,"%i, %i", mTokenCount, mStateCount );  }
+
 private:
+  void clear_send_table()
+  {
+    std::vector< TuringSend* >::iterator it,end;
+    
+    end   = mSendList.end();
+    for (it = mSendList.begin(); it < end; it++)
+      delete *it;
+    
+    mSendTable.clear();
+  }
   
   int get_state_id(const std::string& pName)
   {
@@ -351,16 +390,18 @@ private:
       mGotoTable.push_back( std::vector<int>(mTokenCount+1, -1) ); // -1 means use default
       mGotoTable[mStateCount][0] = mStateCount; // default: stay
       
-      mSendTable.push_back( std::vector<int>(mTokenCount+1, -1) ); // -1 means use default
-      mSendTable[mStateCount][0] = -2; // -2 means send 'nil'
+      mSendTable.push_back( std::vector<TuringSend*>(mTokenCount+1, (TuringSend*)NULL) ); // NULL means use default
+      mSendTable[mStateCount][0] = &gSendNothing;
       
       mStateCount++;
     }
     return state_id;
   }
 
-  void print_table(std::ostream& pOutput, const char * pTitle, std::vector< std::vector<int> >& pTable) {  
-    std::vector< std::vector<int> >::iterator it,end;
+  // FIXME: why is this not working ? template<typename T>
+  void print_table(std::ostream& pOutput, const char * pTitle, std::vector< std::vector<int> >& pTable)
+  {  
+    std::vector< std::vector<int> >::iterator it, end;
     end = pTable.end();
     
     // print tokens
@@ -382,23 +423,84 @@ private:
       
       pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 3s:", mStateNames[state_count].c_str());
       for ( it2 = (*it).begin(); it2 < end2; it2++ ) {
-        if (*it2 == -1)
-          pOutput << "   -";  // default
-        else if (*it2 == -2)
-          pOutput << "   /";  // do not send
-        else {
-          pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 3i", *it2);
-        }
+        print_table_value(pOutput, *it2);
       }
       pOutput << "\n";
       state_count++;
     } 
   }
   
+  //template<typename T>
+  void print_table(std::ostream& pOutput, const char * pTitle, std::vector< std::vector<TuringSend*> >& pTable)
+  {  
+    std::vector< std::vector<TuringSend*> >::iterator it, end;
+    end = pTable.end();
+    
+    // print tokens
+    pOutput << bprint(mPrintBuffer, mPrintBufferSize, "\n%- 7s -", pTitle);
+    for(int i=0;i<mTokenCount;i++) {
+      int tok_value = mTokenList[i];
+      std::string identifier;
+      if (mTokenNameByValue.get(&identifier, tok_value))
+        pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 3s", identifier.c_str());
+      else
+        pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 3i", tok_value);
+    }
+    pOutput << "\n";
+    
+    int state_count = 0;
+    for (it = pTable.begin(); it < end; it++) {
+      std::vector<TuringSend*>::iterator it2,end2;
+      end2 = (*it).end();
+      
+      pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 3s:", mStateNames[state_count].c_str());
+      for ( it2 = (*it).begin(); it2 < end2; it2++ ) {
+        print_table_value(pOutput, *it2);
+      }
+      pOutput << "\n";
+      state_count++;
+    } 
+  }
+  
+  
+  void print_table_value(std::ostream& pOutput, TuringSend * pVal)
+  {
+    if (pVal == NULL)
+      pOutput << "   -";  // default
+    else if (pVal == &gSendNothing)
+      pOutput << "   /";  // do not send
+    else if (pVal->mLuaMethod) {
+      // find method id
+      std::vector<TuringSend*>::iterator it = mSendList.begin();
+      int met_count = 0;
+      for ( ; it != mSendList.end(); it++) {
+        if ((*it)->mLuaMethod) met_count++;
+        if (*it == pVal) break;
+      }
+      
+      if (it == mSendList.end()) {
+        std::cout << "turing send not in mSendList ! (" << pVal->mMethod << ", " << pVal->mValue << ").\n";
+        return;
+      }
+      pOutput << bprint(mPrintBuffer, mPrintBufferSize, " (%i)", met_count);
+    } else
+      pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 3i", pVal->mValue);
+  }
+  
+  void print_table_value(std::ostream& pOutput, int pVal)
+  {
+    if (pVal == -1)
+      pOutput << "   -";  // default
+    else if (pVal == -2)
+      pOutput << "   /";  // do not send
+    else
+      pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 3i", pVal);
+  }
+  
   void make_dot_graph(std::ostream& out)
   {
     std::string source,target,token,send;
-    
+    TuringSend * tsend;
     out << "digraph " << mName << "{\n";
     out << "  rankdir=LR;\n";
   	// first node
@@ -413,12 +515,15 @@ private:
       // print default action
       token = '-';
       target = mStateNames[mGotoTable[i][0]];
-      if (mSendTable[i][0] == -2) 
+      tsend = mSendTable[i][0];
+      if (tsend == &gSendNothing) 
         send = ""; // send nothing
       else {
         send = ":";
-        bprint(mPrintBuffer, mPrintBufferSize, "%i", mSendTable[i][0]);
-        send.append(mPrintBuffer);
+        if (tsend->mLuaMethod)
+          send.append(tsend->mMethod);
+        else
+          send.append(bprint(mPrintBuffer, mPrintBufferSize, "%i", mSendTable[i][0]));
       }
       out << "  " << source << " -> " << target << " [ label = \"" << token << send << "\"];\n";
       
@@ -433,12 +538,15 @@ private:
         else {
           target  = mStateNames[mGotoTable[i][j+1]];
           // source -> target [ label = "token:send" ];
-          if (mSendTable[i][j+1] == -2) 
+          tsend = mSendTable[i][j+1];
+          if (tsend == &gSendNothing) 
             send = ""; // send nothing
           else {
             send = ":";
-            bprint(mPrintBuffer, mPrintBufferSize, "%i", mSendTable[i][j+1]);
-            send.append(mPrintBuffer);
+            if (tsend->mLuaMethod)
+              send.append(tsend->mMethod);
+            else
+              send.append(bprint(mPrintBuffer, mPrintBufferSize, "%i", mSendTable[i][0]));
           }
           out << "  " << source << " -> " << target << " [ label = \"" << token << send << "\"];\n";
         }
@@ -447,12 +555,9 @@ private:
     out << "}\n";
   }
   
-  virtual void spy()
-  { bprint(mSpy, mSpySize,"%i, %i", mTokenCount, mStateCount );  }
-  
   int  mToken;           /**< Current token value (translated). */
   int  mRealToken;       /**< Current token value (not translated). */
-  int  mSend;            /**< Send result. */
+  TuringSend * mSend;    /**< Send result. */
   int  mState;           /**< Current state. */
   
   int  mTokenTable[256]; /**< Translate token values into their internal representation. */
@@ -467,7 +572,8 @@ private:
   std::vector<std::string> mStateNames;    /**< List of state names (used to plot/debug). */
   
   std::vector< std::vector<int> > mGotoTable; /**< State transition table. */
-  std::vector< std::vector<int> > mSendTable; /**< State transition table. */
+  std::vector< std::vector<TuringSend*> > mSendTable; /**< State transition table. */
+  std::vector< TuringSend*> mSendList;     /**< List of sending methods. */
   
   char * mPrintBuffer;   /**< Commodity buffer to format information for printing. */
   size_t mPrintBufferSize; /**< Size of print buffer. */
