@@ -63,7 +63,7 @@ public:
         TRY_RET(mLiveView, set_view(*mLiveBuffer, -mMeanVector.row_count(), -1));
       mHasLiveData = true;
     } else {
-      time_t record_time = (time_t)(ONE_SECOND * mBuffer.row_count())/(mSampleRate);
+      time_t record_time = (time_t)(ONE_SECOND * mMeanVector.row_count())/(mSampleRate);
       time_t record_with_margin = record_time * (1 + mMargin/2.0);
       time_t countdown_time;
       if (record_time > 500)
@@ -254,7 +254,7 @@ private:
   {
     Matrix vector;
     
-    TRY_RET(vector, set_sizes(1, mMeanVector.col_count()));
+    TRY_RET(vector, set_sizes(mMeanVector.row_count(), mMeanVector.col_count()));
     
     mClassLabel = cmd;
     /** reset mean value. */

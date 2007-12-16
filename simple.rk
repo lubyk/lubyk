@@ -1,9 +1,10 @@
-#c=Cabox(port:"/dev/tty.usbserial-FTHOME6" bauds:115200 buffer:192)
-m=Metro(15000)
-m=>l
-l=Lua(load:"12_sig.lua")
-l=>c
-c=Buffer(192)
+c=Cabox(port:"/dev/tty.usbserial-FTHOME6" bauds:115200 buffer:192)
+# m=Metro(15000)
+# m=>l
+# l=Lua(load:"12_sig.lua")
+# l=>c
+# c=Buffer(192)
+
 # =========== RECORDER ================
 c => rec
 k = Keyboard()
@@ -17,11 +18,11 @@ rec.3 => midi
 
 
 # =========== PCA =====================
-# pack_buffer => cut
-# cut = Cut(from:480 to:720)
-# cut => pca
-# pca = PCA(vector:240 keep:6 data:"gaspard/data" processed:"gaspard/after_pca")
-# pca => 2.p
+#c => cut
+#cut = Cut(from:-64 to:-1)
+#cut => pca
+#pca = PCA(vector:768 keep:6 data:"gaspard/data" processed:"gaspard/after_pca")
+#pca => 2.p
 # 
 # 
 # # =========== SVM =====================
