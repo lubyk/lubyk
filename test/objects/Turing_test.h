@@ -143,4 +143,14 @@ public:
     assert_print("n.b(4)\n", ""); // b --> a
     assert_print("n.b(4)\n", "<Matrix [  1.00  2.00  3.00 ], 1x3>\n"); // a y:send(1,{1,2,3}) -> b
   }
+  
+  void test_lua_raw( void )
+  {
+    setup_with_print("n=Turing(\"x = 10\ny=4\n\na  x:{n = n or 0; n = n + 1; send(1,n)} -> b\na y:send(1,{1,2,3}) -> b\nb  ----> a\n\n=begin lua\nfunction bip(v)\nsend(1,1)\nend\n=end\n\")\nn.tables\n");
+    assert_print("n.b(10)\n", "1.00\n"); // a  x:bip(1) -> b
+    assert_print("n.b(4)\n", ""); // b --> a
+    assert_print("n.b(10)\n", "2.00\n"); // a  x:bip(1) -> b
+    assert_print("n.b(4)\n", ""); // b --> a
+    assert_print("n.b(10)\n", "3.00\n"); // a  x:bip(1) -> b
+  }
 };

@@ -314,7 +314,7 @@ public:
     
     tok    = ( identifier @set_token_from_identifier | digit+ $a %set_tok_value ); # fixme: we should use 'whatever' or a-zA-Z or number
     
-    send   = alnum+ $a %set_send | (alpha alnum* '(' [^\)]* ')') $a %set_lua_send;
+    send   = alnum+ $a %set_send | (alpha alnum* '(' [^\)]* ')') $a %set_lua_send | '{' [^\}]* $a '}' %set_lua_send;
 
     transition = ( '-'+ '>' | '-'* ws* tok %set_token (':' send)?  ws* '-'+ '>');
 
