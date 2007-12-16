@@ -124,7 +124,7 @@ private:
             
             
             //////////////////////////////////////
-            ////// BAD BAD BAD: the data is   ////
+            ////// FIXME: the data is         ////
             ////// changed during draw since  ////
             ////// drawing is done in another ////
             ////// thread !!                  ////
