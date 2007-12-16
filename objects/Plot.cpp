@@ -146,31 +146,32 @@ private:
   void xy_plot (const Matrix& mat, double pAlpha, size_t param_index, bool pDrawBase = true)
   {    
     // we use mLiveBufferSize as the main buffer size. Others are cropped.
-    size_t value_count  = mat.size() / (2 * mLineCount[param_index]); 
+    size_t line_count   = mLineCount[param_index];
+    size_t value_count  = mat.size() / (2 * line_count); 
     double width_ratio  = (double)mWindow.width  / (2.0 * mMaxAmplitude[param_index]);
     double height_ratio = (double)mWindow.height / (2.0 * mMaxAmplitude[param_index]); // values : [-1,1]
-    double with_offset  = (double)mWindow.width / 2.0;
+    double width_offset = (double)mWindow.width  / 2.0;
     double height_offset= (double)mWindow.height / 2.0;
     
-    for(size_t l=0; l < mLineCount[param_index]; l++) {
-      size_t offset_line = l * value_count;
+    for(size_t l=0; l < line_count; l++) {
       // element in group
       // 0 1 0 : 0  1  0 0 1
       // 1 0 0 : 1  2  0 1 0
       // 0 0 1 : 2  3  0 1 1
       
       glColor4f((int)((l+1)/2) % 4,(int)(l+1) % 2,(int)(l+1)/4,pAlpha);
+      //glColor4f(1.0,1.0,1.0,1.0);
       //glColor4f(0.0,1.0,0.0, pAlpha);
 
       glBegin(GL_LINE_STRIP);
       if (value_count > 0) {
 
-        gl_square(with_offset   + mat.data[offset_line * 2]     * width_ratio,
-                  height_offset + mat.data[offset_line * 2 + 1] * height_ratio, 4.0);
+        gl_square(width_offset  + mat.data[l * 2    ] * width_ratio,
+                  height_offset + mat.data[l * 2 + 1] * height_ratio, 4.0);
       }
       for(size_t i=1; i < value_count; i++) {
-        glVertex2f(with_offset   + mat.data[(offset_line + i) * 2    ] * width_ratio,
-                   height_offset + mat.data[(offset_line + i) * 2 + 1] * height_ratio);
+        glVertex2f(width_offset  + mat.data[(line_count * i * 2) + l * 2   ] * width_ratio,
+                   height_offset + mat.data[(line_count * i * 2) + l * 2 + 1] * height_ratio);
       }      
       glEnd(); 
     }

@@ -1,5 +1,9 @@
-c=Cabox(port:"/dev/tty.usbserial-FTHOME6" bauds:115200 buffer:192)
-
+#c=Cabox(port:"/dev/tty.usbserial-FTHOME6" bauds:115200 buffer:192)
+m=Metro(15000)
+m=>l
+l=Lua(load:"12_sig.lua")
+l=>c
+c=Buffer(192)
 # =========== RECORDER ================
 c => rec
 k = Keyboard()

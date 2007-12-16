@@ -680,9 +680,15 @@ public:
     TS_ASSERT_EQUALS(round(b[2][0] * 100000)/100000, 6.82843);
     
     // eigenvectors
-    TS_ASSERT_EQUALS(round(c[0][0] * 100)/100, -0.71);
-    TS_ASSERT_EQUALS(round(c[0][1] * 100)/100, 0.00);
-    TS_ASSERT_EQUALS(round(c[0][2] * 100)/100, 0.71);
+    if (c[0][0] < 0) {
+      TS_ASSERT_EQUALS(round(c[0][0] * 100)/100, -0.71);
+      TS_ASSERT_EQUALS(round(c[0][1] * 100)/100, 0.00);
+      TS_ASSERT_EQUALS(round(c[0][2] * 100)/100, 0.71);
+    } else {
+      TS_ASSERT_EQUALS(round(c[0][0] * 100)/100, 0.71);
+      TS_ASSERT_EQUALS(round(c[0][1] * 100)/100, 0.00);
+      TS_ASSERT_EQUALS(round(c[0][2] * 100)/100, -0.71);
+    }
     
     TS_ASSERT_EQUALS(round(c[1][0] * 100)/100, 0.50);
     TS_ASSERT_EQUALS(round(c[1][1] * 100)/100, -0.71);

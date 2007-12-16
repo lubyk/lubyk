@@ -4,4 +4,4 @@ lua = Lua(load:"test/fixtures/plot_die.lua")
 lua => buf
 buf = Buffer(200)
 buf => p
-p   = Plot(mode:"xy" line:2 amplitude:2.0)
+p   = Plot(mode:"xy" line:4 amplitude:2.0)
