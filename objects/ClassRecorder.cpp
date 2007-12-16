@@ -64,7 +64,7 @@ public:
       mHasLiveData = true;
     } else {
       time_t record_time = (time_t)(ONE_SECOND * mBuffer.row_count())/(mSampleRate);
-      time_t record_with_margin = record_time * (1 + mMargin); //  * (1 + mMargin/2.0) ???
+      time_t record_with_margin = record_time * (1 + mMargin/2.0);
       time_t countdown_time;
       if (record_time > 500)
         countdown_time = record_time;
@@ -98,24 +98,18 @@ public:
           break;
         } else if (cmd == ' ') {
           // swap snap style
-          if (mView.data != mBuffer.data) {
-            if (!mView.set_view(mBuffer, mRowMargin, mRowMargin + mMeanVector.row_count() - 1)) {
-              *mOutput << mName << ": mView (" << mView.error_msg() << ").\n";
-              return;
-            }
-            *mOutput << mName << ": no-snap\n~> ";
-          } else {
-            if (!mView.set_view(mBuffer, mRowOffset, mRowOffset + mMeanVector.row_count() - 1)) {
-              *mOutput << mName << ": mView (" << mView.error_msg() << ").\n";
-              return;
-            }
+          if (mView.data != mBuffer[mRowOffset]) {
+            TRY_RET(mView, set_view(mBuffer, mRowOffset, mRowOffset + mMeanVector.row_count() - 1));
             *mOutput << mName << ": snap\n~> ";
+          } else {
+            TRY_RET(mView, set_view(mBuffer, mRowMargin, mRowMargin + mMeanVector.row_count() - 1));
+            *mOutput << mName << ": no-snap\n~> ";
           }
           send(mViewSignal);       // recorded signal
           break;
         } else if (cmd == RK_RIGHT_ARROW) { // -> right arrow 301
           mRowOffset ++;
-          if (mRowOffset > mBuffer.row_count() - mMeanVector.row_count()) mRowOffset = mBuffer.row_count() - mMeanVector.row_count();
+          if (mRowOffset >= mBuffer.row_count() - mMeanVector.row_count()) mRowOffset = mBuffer.row_count() - mMeanVector.row_count() - 1;
           
           if (!mView.set_view(mBuffer, mRowOffset, mRowOffset + mMeanVector.row_count() - 1)) {
             *mOutput << mName << ": mView (" << mView.error_msg() << ").\n";
@@ -124,8 +118,7 @@ public:
           send(mViewSignal);       // recorded signal
           break;
         } else if (cmd == RK_LEFT_ARROW) { // <- left arrow  302
-          mRowOffset --;
-          if (mRowOffset < 0) mRowOffset = 0;
+          if (mRowOffset != 0) mRowOffset --;
           
           if (!mView.set_view(mBuffer, mRowOffset, mRowOffset + mMeanVector.row_count() - 1)) {
             *mOutput << mName << ": mView (" << mView.error_msg() << ").\n";
