@@ -774,6 +774,10 @@ bool TMatrix<T>::raw_copy(size_t pRowOffset, const T * pData, size_t pDataSize, 
 {
   size_t current_size = pRowOffset * mColCount;
   if(!check_alloc(current_size + pDataSize)) return false;
+  if(!mColCount) {
+    mColCount = pDataSize;
+    mRowCount = 1;
+  }
   // use memcpy
   memcpy(data + current_size, pData, pDataSize * sizeof(T));
   if (mRowCount < pRowOffset + pDataSize / mColCount || pResize) {
@@ -832,6 +836,9 @@ inline bool TMatrix<T>::check_sizes(const char * pMsg, size_t * start_row, size_
     return false;
   } else if (pOther.mColCount != mColCount && !pAllowColCountChange) {
     set_error("size error (%s): source matrix %ix%i, target matrix %ix%i (bad column count)", pOther.mRowCount, pOther.mColCount, mRowCount, mColCount);
+    return false;
+  } else if (!pOther.mColCount) {
+    set_error("size error (%s): source matrix %ix%i is empty.", pMsg, pOther.mRowCount, pOther.mColCount);
     return false;
   }
   return true;

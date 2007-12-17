@@ -464,6 +464,5 @@ public:
 
 template<typename T>
 std::ostream& operator<< (std::ostream& pStream, const TMatrix<T>& mat);
-std::ostream& operator<< (std::ostream& pStream, const Matrix& mat);
 
 #endif // _MATRIX_H_
