@@ -60,7 +60,7 @@ template<typename T>
 bool TMatrix<T>::from_file(FILE * pFile)
 {
   bool read_all = mRowCount == 0;
-  size_t i = 0;
+  size_t start_i = 0;
   
   // if mColCount == 0, get row_size from first row
   if (!mColCount) { 
@@ -77,10 +77,10 @@ bool TMatrix<T>::from_file(FILE * pFile)
         ungetc(c, pFile);
       }
     }
-    copy(tmp);
+    if(!copy(tmp)) return false;
     mColCount = size();
     mRowCount = 1;
-    i = 1;
+    start_i = 1;
   }
   
   if (read_all) {
@@ -108,7 +108,7 @@ bool TMatrix<T>::from_file(FILE * pFile)
       }
     }
   } else {
-    for(size_t i=0; i < mRowCount; i++) {
+    for(size_t i=start_i; i < mRowCount; i++) {
       for(size_t j=0; j < mColCount; j++) {
         if(do_fscanf(pFile, data + i * mColCount + j) == EOF) {
           set_error("end of file while reading value %i,%i out of %ix%i", i+1, j+1, mRowCount, mColCount);

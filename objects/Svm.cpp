@@ -82,7 +82,7 @@ public:
     mSvmCparam  = 2.0; // svm cost
     mSvmGammaParam = 0.0078125; // svm gamma in RBF
     mProbabilityThreshold = 0.8;
-    return true;
+    return init_machine(p);
   }
   
   bool set (const Params& p)
@@ -97,17 +97,17 @@ public:
     
     // max_nr_attr - 1 > mVectorSize
     if (!mNode)
-      mNode = (struct svm_node *) malloc((mVector.col_count() + 1) * sizeof(struct svm_node));
+      mNode = (struct svm_node *) malloc((vector_size + 1) * sizeof(struct svm_node));
     else if (vector_size != mVector.col_count()) {
-      void * tmp = realloc(mNode, (mVector.col_count() + 1) * sizeof(struct svm_node));
+      void * tmp = realloc(mNode, (vector_size + 1) * sizeof(struct svm_node));
       if (!tmp) {
-        *mOutput << mName << ": could not reallocate " << mVector.col_count() + 1 << " nodes.\n";
+        *mOutput << mName << ": could not reallocate " << vector_size + 1 << " nodes.\n";
         return false;
       }
       mNode = (struct svm_node *) tmp;
     }
     
-    return do_load_model();
+    return set_machine(p);
   }
 
   // inlet 1
@@ -132,18 +132,6 @@ public:
     //}
   }
   
-  
-  /** Accessor from command line. */
-  void learn()
-  {
-    if (!do_learn()) {
-      *mOutput << mName << ": learn failed.\n";
-      mIsOK = false;
-    } else {
-      mIsOK = true;
-    }
-  }
-  
   void build()
   {
     if (!do_build()) {
@@ -151,15 +139,7 @@ public:
     }
   }
   
-  void load()
-  {
-    if (!do_load_model()) {
-      *mOutput << mName << ": could not load model.\n";
-      mIsOK = false;
-    } else {
-      mIsOK = true;
-    }
-  }
+  
 private:
   
   
@@ -250,7 +230,7 @@ private:
   }
   
   /** Update the model based on the current recorded samples. */
-  bool do_learn()
+  bool learn_from_data()
   {
     if (!do_build()) return false;
     const char * errorMsg;
@@ -293,7 +273,7 @@ private:
     mModel = svm_train(&mProblem, &mSvmParam);
     svm_save_model(model_file_path().c_str(),mModel);
     
-    return do_load_model();
+    return true;
   }
   
   
@@ -336,17 +316,11 @@ private:
   }
     
   /** Write as a sparse vector. */
-  bool write_as_sparse(const std::string& filename, Matrix * vector)
+  bool write_as_sparse(const std::string& pFilename, Matrix * pVector)
   {
-    if (!vector) {
+    if (!pVector) {
       // class initialize // finish
-      size_t start = filename.find("class_");
-      size_t end   = filename.find(".txt");
-      if (start == std::string::npos || end == std::string::npos) {
-        *mOutput << mName << ": bad filename '" << filename << "'. Should be 'class_[...].txt'.\n";
-        return false;
-      }
-      mClassLabel = atoi(filename.substr(start+6, end - start - 6).c_str());
+      if (!get_label_from_filename(&mClassLabel, pFilename)) return false;
       return true;
     }
     if (!mTrainFile) {
@@ -354,9 +328,9 @@ private:
       return false;
     }
     fprintf(mTrainFile, "%+i", mClassLabel);
-    for(size_t i=0; i < vector->col_count(); i++) {
-      if (vector->data[i] >= mThreshold || vector->data[i] <= -mThreshold) {
-        fprintf(mTrainFile, " %i:%.5f", (int)i+1, (float)vector->data[i]);
+    for(size_t i=0; i < pVector->col_count(); i++) {
+      if (pVector->data[i] >= mThreshold || pVector->data[i] <= -mThreshold) {
+        fprintf(mTrainFile, " %i:%.5f", (int)i+1, (float)pVector->data[i]);
       }
     }  
     fprintf(mTrainFile, "\n");
@@ -364,7 +338,7 @@ private:
     return true;
   }
   
-  bool do_load_model ()
+  bool load_model ()
   { 
     if (mModel) svm_destroy_model(mModel);
     mModel = svm_load_model(model_file_path().c_str());
@@ -391,14 +365,7 @@ private:
     
     return true;
   }
-  
-  std::string model_file_path()
-  {
-    std::string modelFilePath(mFolder);
-    modelFilePath.append("/svm.model");
-    return modelFilePath;
-  }
-  
+    
   std::string train_file_path()
   {
     std::string trainFilePath(mFolder);
@@ -615,7 +582,8 @@ extern "C" void init()
 {
   CLASS (Svm)
   OUTLET(Svm,label)
-  OUTLET(Svm,probabilities)
-  METHOD(Svm,learn)
+  OUTLET(Svm,probability)
+  SUPER_METHOD(Svm, TrainedMachine, learn)
+  SUPER_METHOD(Svm, TrainedMachine, load)
   METHOD(Svm,build)
 }

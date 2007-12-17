@@ -56,7 +56,7 @@ public:
   bool to_file(FILE * pFile) const;
   
   /** Write a matrix to a filepath. */
-  bool to_file(const std::string& pPath, const char * pMode) const;
+  bool to_file(const std::string& pPath, const char * pMode = "wb") const;
   
   /** Fill a matrix from a FILE pointer.
     * If the matrix has '0' rows, all the file is loaded into the matrix. If
@@ -67,7 +67,7 @@ public:
   bool from_file(FILE * pFile);
   
   /** Read a matrix from a filepath. */
-  bool from_file(const std::string& pPath, const char * pMode);
+  bool from_file(const std::string& pPath, const char * pMode = "rb");
   
   /** Make a partial copy of another matrix (copy all contents).
     * to copy the first vector:

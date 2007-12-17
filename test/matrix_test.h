@@ -544,6 +544,54 @@ public:
     remove("matrix_test_tmp.txt");
   }
   
+  void test_from_file_integer( void )
+  {
+    IntMatrix m1, m2;
+    m1.set_sizes(1,3);
+    m2.set_sizes(1,0); // detect column count
+    
+    m1.data[0] = 1;
+    m1.data[1] = 5;
+    m1.data[2] = 7;
+    TS_ASSERT(m1.to_file("matrix_test_tmp.txt"));
+    
+    TS_ASSERT(m2.from_file("matrix_test_tmp.txt"));
+    
+    assert_equal(m2, m1);
+    remove("matrix_test_tmp.txt");
+  }
+  
+  void test_many_from_file_integer( void )
+  {
+    IntMatrix m1, m2, m3, m4;
+    m1.set_sizes(1,3);
+    m2.set_sizes(1,0); // detect column count
+    
+    m3.set_sizes(1,3);
+    m4.set_sizes(1,0); // detect column count
+    
+    m1.data[0] = 1;
+    m1.data[1] = 5;
+    m1.data[2] = 7;
+    
+    m3.data[0] = 4;
+    m3.data[1] = 2;
+    m3.data[2] = 12;
+    
+    TS_ASSERT(m1.to_file("matrix_test_tmp.txt"));
+    TS_ASSERT(m3.to_file("matrix_test_tmp.txt", "ab"));
+    
+    FILE * file = fopen("matrix_test_tmp.txt", "rb");
+      TS_ASSERT(m2.from_file(file));
+      TS_ASSERT(m4.from_file(file));
+    fclose(file);
+    
+    assert_equal(m2, m1);
+    assert_equal(m4, m3);
+    
+    remove("matrix_test_tmp.txt");
+  }
+  
   void test_from_file_readall( void )
   {
     Matrix m1, m2;
@@ -712,7 +760,8 @@ private:
     m.data[3] = 7; m.data[4] = 8;     m.data[5] = 9.5;
   }
   
-  void assert_equal(const Matrix& m2, const Matrix& m1)
+  template<typename T>
+  void assert_equal(const TMatrix<T>& m2, const TMatrix<T>& m1)
   {
     TS_ASSERT_EQUALS(m2.row_count(), m1.row_count());
     TS_ASSERT_EQUALS(m2.col_count(), m1.col_count());

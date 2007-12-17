@@ -15,7 +15,6 @@ public:
   
   bool init(const Params& p)
   {
-    if (!set_machine(p)) return false;
     mTransposedFolder = "processed"; // where to store training data transposed in new basis
     
     TRY(mBuffer,     set_sizes(1,8));
@@ -24,7 +23,7 @@ public:
     TRY(mBasis,      set_sizes(8,32));
     
     mS.set(mBuffer);
-    return true;
+    return init_machine(p);
   }
 
   bool set(const Params& p)
@@ -44,8 +43,7 @@ public:
     if (mBasis.row_count() != output_size || mBasis.col_count() != input_size) {
       TRY(mBasis, set_sizes(output_size, input_size));
     }
-    load_model();
-    return true;
+    return set_machine(p);
   }
   
   // inlet 1
@@ -70,18 +68,6 @@ public:
       return;
     }
     
-  }
-  
-  /** Method from command line. */
-  void learn()
-  {
-    if(!do_learn())
-      *mOutput << mName << ": could not create a new basis from training data.\n";
-  }
-  
-  void load()
-  {
-    load_model();
   }
 
   /** Command to print the current basis. */
@@ -150,33 +136,35 @@ private:
     return true;
   }
   
-  void load_model()
+  bool load_model()
   { 
     Matrix vector;
     size_t target_size = mBuffer.col_count();
     
-    TRY_RET(mBasis, set_sizes(0, mMeanValue.col_count()));
+    TRY(mBasis, set_sizes(0, mMeanValue.col_count()));
     
     FILE * file = fopen(pca_model_path().c_str(), "rb");
       if (!file) {
         *mOutput << mName << ": could not read from '" << pca_model_path() << "' (" << strerror(errno) << ")\n";
-        return;
+        return false;
       }
       // read mMeanValue vector
-      TRY_RET(mMeanValue, from_file(file));
+      TRY(mMeanValue, from_file(file));
       
       while(vector.from_file(file)) {
-        TRY_RET(mBasis, append(vector));
+        TRY(mBasis, append(vector));
         
         if (mBasis.row_count() > target_size ) {
           *mOutput << mName << ": wrong dimension of pca basis. Found " << mBasis.row_count() << "x" << mBasis.col_count() << " when matrix should be " << target_size << "x" << mMeanValue.col_count() << "\n";
-          return;
+          fclose(file);
+          return false;
         }
       }
     fclose(file);
+    return true;
   }
   
-  bool do_learn()
+  bool learn_from_data()
   {
     Matrix symmetric_matrix, eigenvectors, eigenvalues;
     
@@ -289,7 +277,7 @@ extern "C" void init()
 {
   CLASS (PCA)
   OUTLET(PCA,scaled)
-  METHOD(PCA,learn)
-  METHOD(PCA,load)
+  SUPER_METHOD(PCA, TrainedMachine, learn)
+  SUPER_METHOD(PCA, TrainedMachine, load)
   METHOD(PCA,basis)
 }

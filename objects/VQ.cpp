@@ -36,7 +36,7 @@ public:
     mThread    = NULL;
     mTrainFile = NULL;
     
-    return set(p);
+    return true;
   }
   
   bool set (const Params& p)
@@ -124,6 +124,13 @@ public:
   
 private:
   
+  virtual std::string model_file_path()
+  {
+    std::string path(mFolder);
+    path.append("/").append(mName).append(".model");
+    return path;
+  }
+  
   int label_for(const Matrix& pVector)
   {
     // find best matching vector from codebook
@@ -153,13 +160,6 @@ private:
     return match_index;
   }
   
-  std::string codebook_path()
-  {
-    std::string path(mFolder);
-    path.append("/").append(mName).append(".book");
-    return path;
-  }
-  
   std::string train_file_path()
   {
     std::string path(mFolder);
@@ -168,17 +168,17 @@ private:
   }
   
   /** Load codebook from file. */
-  bool load_codebook()
+  bool load_model()
   {
     FILE * file;
-    file = fopen(codebook_path().c_str(), "rb");
+    file = fopen(model_file_path().c_str(), "rb");
       if (!file) {
-        *mOutput << mName << ": could not open codebook data '" << codebook_path() << "'\n.";
+        *mOutput << mName << ": could not open codebook data '" << model_file_path() << "'\n.";
         return false;
       }
       
       if(!mCodebook.from_file(file)) {
-        *mOutput << mName << ": could not load codebook from '" << codebook_path() << "' (" << mCodebook.error_msg() << ")\n";
+        *mOutput << mName << ": could not load codebook from '" << model_file_path() << "' (" << mCodebook.error_msg() << ")\n";
         fclose(file);
         return false;
       }
@@ -199,7 +199,7 @@ private:
     
     switch(state) {
     case Label:
-      if (load_codebook()) {
+      if (load_model()) {
         mState = Label;
       } else {
         *mOutput << mName << ": could not start to label (could not load codebook).\n";
@@ -312,9 +312,9 @@ private:
     }
     
     // 5. save to file
-    FILE * file = fopen(codebook_path().c_str(), "wb");
+    FILE * file = fopen(model_file_path().c_str(), "wb");
       if (!file) {
-        *mOutput << mName << ": could not write codebook to '" << codebook_path() << "'\n.";
+        *mOutput << mName << ": could not write codebook to '" << model_file_path() << "'\n.";
         return;
       }
       *mOutput << mName << ": writing " << mCodebook.row_count() << " x " << mCodebook.col_count() << " to file.\n";

@@ -51,6 +51,13 @@ public:
     mMethods.set(std::string(pName), &cast_super_member_method<T, S, Tmethod>);
   }
   
+  /** Declare a member method from a superclass. Without parameters. */
+  template <class T, class S, void(S::*Tmethod)()>
+  void add_super_method (const char* pName)
+  {
+    mMethods.set(std::string(pName), &cast_super_member_method<T, S, Tmethod>);
+  }
+  
   /** Declare a member method. Parameters ignored. */
   template <class T, void(T::*Tmethod)()>
   void add_method (const char* pName)
@@ -191,12 +198,20 @@ private:
     (((T*)receiver)->*Tmethod)(p);
   }
   
-  /** Return a function pointer to a superclass member method. */
+  /** Return a function pointer to a superclass member method. With parameters. */
   template <class T, class S, void(S::*Tmethod)(const Params& p)>
   static void cast_super_member_method(void * receiver, const Params& p)
   {
     (((T*)receiver)->*Tmethod)(p);
   }
+  
+  /** Return a function pointer to a superclass member method. Without parameters. */
+  template <class T, class S, void(S::*Tmethod)()>
+  static void cast_super_member_method(void * receiver, const Params& p)
+  {
+    (((T*)receiver)->*Tmethod)();
+  }
+  
   
   /** Return a function pointer to a member method without parameters. */
   template <class T, void(T::*Tmethod)()>

@@ -144,3 +144,13 @@ void Node::execute_method (const std::string& pMethod, const Params& p)
     *mOutput << "Unknown method '" << pMethod << "'\n";
   }
 }
+
+
+template<typename T>
+void Node::error(TMatrix<T>& pMat, const char * pMsg, const char * pFilename, int pLine)
+{
+  *mOutput << mName << ": " << pMsg << " " << pMat.error_msg() << " in " << pFilename << ":" << pLine << ".\n";
+}
+
+template void Node::error<int>(TMatrix<int>& pMat, const char * pMsg, const char * pFilename, int pLine);
+template void Node::error<double>(TMatrix<double>& pMat, const char * pMsg, const char * pFilename, int pLine);

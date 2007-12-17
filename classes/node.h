@@ -320,10 +320,8 @@ protected:
   }
   
   /** Helper to display error messages. */
-  void error(Matrix& pMat, const char * pMsg)
-  {
-    *mOutput << mName << ": " << pMsg << " (" << pMat.error_msg() << ").\n";
-  }
+  template<typename T>
+  void error(TMatrix<T>& pMat, const char * pMsg, const char * pFilename, int pLine);
   
   /** Helper to display error messages. */
   void error(const char * pMsg)
@@ -503,8 +501,9 @@ inline double absval(double d)
 }
 
 #define ERROR(name) {error(name, #name)}
-#define TRY(obj, meth) { if (!obj.meth) {error(obj,#obj); return false;}}
-#define TRY_RET(obj, meth) { if (!obj.meth) {error(obj,#obj); return;}}
+#define TRY(obj, meth) { if (!obj.meth) {error(obj,#obj,__FILE__,__LINE__); return false;}}
+#define TRY_RET(obj, meth) { if (!obj.meth) {error(obj,#obj,__FILE__,__LINE__); return;}}
+#define TRY_OR(obj, meth, action) { if (!obj.meth) {error(obj,#obj,__FILE__,__LINE__); action;}}
 
 
 #define REGISTER_EVENT(klass, method, time, param) { register_event<klass,&klass::method>(time, param); }
