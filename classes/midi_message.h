@@ -17,6 +17,13 @@ enum midi_messages_t {
 /** This class encapsulates midi messages. */
 struct MidiMessage
 {
+  //MidiMessage (const MidiMessage& pMsg)
+  //{
+  //  mData = pMsg.data;
+  //  mWait = pMsg.mWait;
+  //  mLength = pMsg.mLength;
+  //}
+  
   MidiMessage () : mType(RawMidi), mWait(0), mData(3) {}
   MidiMessage (unsigned int pDataSize) : mType(RawMidi), mData(pDataSize) {}
   

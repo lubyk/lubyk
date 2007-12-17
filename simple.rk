@@ -1,4 +1,4 @@
-c=Cabox(port:"/dev/tty.usbserial-FTHOME6" bauds:115200 buffer:192)
+c=Cabox(port:"/dev/tty.usbserial-FTHOME5" bauds:115200 buffer:192)
 # m=Metro(15000)
 # m=>l
 # l=Lua(load:"12_sig.lua")
@@ -9,7 +9,7 @@ c=Cabox(port:"/dev/tty.usbserial-FTHOME6" bauds:115200 buffer:192)
 c => rec
 k = Keyboard()
 k => rec
-rec = ClassRecorder(tempo:120 data:"gaspard/data" rate:250)
+rec = ClassRecorder(tempo:120 data:"data/raw" rate:250)
 ######
 #rec => p
 #rec.2 => 2.p
@@ -21,7 +21,7 @@ rec.3 => midi
 c => cut
 cut = Cut(from:-64 to:-1 flat:1)
 cut => pca
-pca = PCA(vector:768 keep:6 data:"gaspard/data" processed:"gaspard/after_pca")
+pca = PCA(vector:768 keep:100 data:"data/raw" processed:"data/after_pca")
 pca => pca_buff
 pca_buff = Buffer(30)
 pca_buff => avg
@@ -30,19 +30,26 @@ avg => p
 # 
 # 
 # # =========== SVM =====================
-# pca => svm
-# svm = Svm(vector:6 unit:6 data:"gaspard/after_pca" cost:8.0 gamma:0.0078125 threshold:0.0003)
-# svm => minus
-# minus = Minus(46)
-# minus => svm_buff
-# svm_buff = Buffer(128)
+pca => svm
+svm = Svm(vector:100 data:"data/after_pca" cost:8.0 gamma:0.0078125 threshold:0.0003)
+svm => lua
+svm.2 => 2.lua
+lua = Lua(load:"simple.lua")
+lua => no
+no  = NoteOut()
+no => midi
+#svm => minus
+#minus = Minus(46)
+#minus => svm_buff
+#svm_buff = Buffer(128)
+
 
 ######
 #svm_buff => p
 #p = Plot(amplitude:15.0 amplitude2:1.0 mode2:"xy")
 ######
 #p = Plot(line:4 group:3 line2:4 group2:3)
-p = Plot(mode:"xy")
+p = Plot(mode:"xy" amplitude:10)
 ######
 # =========== MIDI ====================
 midi = Midi()

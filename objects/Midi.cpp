@@ -63,13 +63,18 @@ public:
         sig.clear_free_me(); // we take hold of it
         register_event<Midi, &Midi::send_and_delete>(msg->mWait, (void*)msg);
       } else {
-        *mOutput << mName << ": we decided not to implement midimessages that are not released (free_me not true). Please change your code...\n";
+        // copy
+        msg = new MidiMessage(*(sig.midi_ptr.value));
+        register_event<Midi, &Midi::send_and_delete>(msg->mWait, (void*)msg);
+        //*mOutput << mName << ": we decided not to implement midimessages that are not released (free_me not true). Please change your code...\n";
       }
     } else if (sig.midi_ptr.free_me) {
       sig.clear_free_me(); // we take hold
       send_and_delete((void*)(sig.midi_ptr.value));
-    } else {
-      *mOutput << mName << ": we decided not to implement midimessages that are not released (free_me not true). Please change your code...\n";
+    } else {  
+      MidiMessage * msg = new MidiMessage(*(sig.midi_ptr.value));
+      send_and_delete((void*)(msg));
+      //*mOutput << mName << ": we decided not to implement midimessages that are not released (free_me not true). Please change your code...\n";
     }
   }
   

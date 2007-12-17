@@ -81,13 +81,14 @@ public:
     mSvmCparam  = 2.0; // svm cost
     mSvmGammaParam = 0.0078125; // svm gamma in RBF
     mProbabilityThreshold = 0.8;
-    return set(p);
+    return true;
   }
   
   bool set (const Params& p)
   {
     size_t vector_size = mVector.col_count();
     if(!set_machine(p)) return false;
+    p.get(&vector_size, "vector");
     p.get(&mThreshold, "threshold");
     p.get(&mSvmCparam, "cost"); // svm cost
     p.get(&mSvmGammaParam, "gamma"); // svm gamma in RBF
@@ -121,9 +122,13 @@ public:
       return;
     }
     
-    bool change = predict();
+    //bool change = 
+    predict();
     
-    if (change) send(mClassLabel);    
+    //if (change) {
+    send(2, mLabelProbability);
+    send(mClassLabel);
+    //}
   }
   
   
@@ -252,10 +257,11 @@ private:
       // use probability threshold
       get_label(&label, &labelProbability);
 		} else {
-      label = svm_predict(mModel,mNode);
+      mClassLabel = svm_predict(mModel,mNode);
+      return true;
     }
     
-    if (labelProbability > mProbabilityThreshold) {
+    if (true || labelProbability > mProbabilityThreshold) {
       // confident enough, use this label
       mClassLabel = label;
       mLabelProbability = labelProbability;
@@ -309,10 +315,14 @@ private:
     if (!alloc_ints(&mLabels, mLabelCount, "labels")) return false;
     
     svm_get_labels(mModel, mLabels);
+    *mOutput << mName << ": " << mLabelCount << " labels:\n";
+    for(size_t i=0; i < mLabelCount; i++) {
+      *mOutput << " " << mLabels[i];
+    }
+    *mOutput << "\n";
     
     if (!alloc_doubles(&mDistances,    mLabelCount * (mLabelCount-1)/2, "pairwise distances")) return false;
     if (!alloc_doubles(&mPairwiseProb, mLabelCount * mLabelCount,   "pairwise probabilities")) return false;
-    
     
     return true;
   }
@@ -441,13 +451,15 @@ readpb_fail:
   	if (svm_get_svm_type(mModel) == C_SVC || svm_get_svm_type(mModel) == NU_SVC)
   	{
       double uniform_probability = 1.0 / mLabelCount;
-  		svm_predict_values(mModel, mXSpace, mDistances);
+  		svm_predict_values(mModel, mNode, mDistances);
+  		
+  		int k=0;
 
   		double min_prob=1e-7;
       double prob;
   		
-  		int k=0;
-  		memset(mVotes, 0, mLabelCount);
+      k=0;
+  		memset(mVotes, 0, mLabelCount * sizeof(size_t));
       
   		for(size_t i=0;i<mLabelCount;i++)
   			for(size_t j=i+1;j<mLabelCount;j++)
@@ -456,8 +468,10 @@ readpb_fail:
   			  prob = min( max( sigmoid_predict( mDistances[k], uniform_probability, uniform_probability),
   				                         min_prob), 1-min_prob);
   				
-          mPairwiseProb[i*mLabelCount + j] = prob;
-  				mPairwiseProb[j*mLabelCount + i] = 1 - prob;
+  				// i = 0
+  				// j = 1
+          mPairwiseProb[i*mLabelCount + j] = prob;       // 0 + 1
+  				mPairwiseProb[j*mLabelCount + i] = 1 - prob;   // 2 + 0
   				
   				if (mDistances[k] > 0)
             mVotes[i]++;
@@ -475,10 +489,9 @@ readpb_fail:
       // Let's find it's worst pairwise probability:
       double bad_prob = 1.0; // we start by beeing optimistic
       double * probs = mPairwiseProb + vote_id * mLabelCount;
-      size_t row_index = vote_id * mLabelCount;
       for(size_t i = 0; i < mLabelCount; i++) {
         if (i == vote_id) continue;
-        if (probs[row_index + i] < bad_prob) bad_prob = probs[row_index + i];
+        if (probs[i] < bad_prob) bad_prob = probs[i];
       }
 
       *pLabel = mLabels[vote_id];
