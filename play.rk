@@ -6,27 +6,15 @@ c=Cabox(port:"/dev/tty.usbserial-FTHOME5" bauds:115200 buffer:192)
 # c=Buffer(192)
 
 # =========== RECORDER ================
-c => rec
-k = Keyboard()
-k => rec
-rec = ClassRecorder(tempo:120 data:"data/raw" rate:250)
-######
-rec => p
-rec.2 => 2.p
-#####
-rec.3 => midi
-
-
-# =========== PCA =====================
-#c => cut
+c => cut
 cut = Cut(from:-64 to:-1 flat:1)
 cut => pca
 pca = PCA(vector:768 keep:10 data:"data/raw" processed:"data/after_pca")
 pca => pca_buff
-pca_buff = Buffer(30)
-pca_buff => avg
+pca_buff = Buffer(64)
+pca_buff => p
 avg = Average()
-avg => p
+#avg => p
 # 
 # 
 # # =========== SVM =====================
@@ -48,8 +36,8 @@ no => midi
 #svm_buff => p
 #p = Plot(amplitude:15.0 amplitude2:1.0 mode2:"xy")
 ######
-p = Plot(line:4 group:3 line2:4 group2:3)
-#p = Plot(mode:"xy" amplitude:10)
+p = Plot(line:5 group:2 amplitude:10 amplitude2:10 line2:5 group2:2)
+#p = Plot(mode:"xy" amplitude:10 amplitude2:10 line2:5 group2:2)
 ######
 # =========== MIDI ====================
 midi = Midi()

@@ -39,6 +39,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "svm/svm.h"
 
 
+#define Malloc(type,n) (type *)malloc((n)*sizeof(type))
 
 // declarations not in svm.h
 double sigmoid_predict(double decision_value, double A, double B);
@@ -161,6 +162,70 @@ public:
   }
 private:
   
+  
+  // Method 2 from the multiclass_prob paper by Wu, Lin, and Weng
+  void multiclass_probability(int k, double *r, double *p)
+  {
+  	int t,j;
+  	int iter = 0, max_iter=max(100,k);
+  	double **Q=Malloc(double *,k);
+  	double *Qp=Malloc(double,k);
+  	double pQp, eps=0.005/k;
+
+  	for (t=0;t<k;t++)
+  	{
+  		p[t]=1.0/k;  // Valid if k = 1
+  		Q[t]=Malloc(double,k);
+  		Q[t][t]=0;
+  		for (j=0;j<t;j++)
+  		{
+  			Q[t][t]+=r[j * mLabelCount + t]*r[j * mLabelCount + t];
+  			Q[t][j]=Q[j][t];
+  		}
+  		for (j=t+1;j<k;j++)
+  		{
+  			Q[t][t]+=r[j* mLabelCount + t]*r[j * mLabelCount + t];
+  			Q[t][j]=-r[j* mLabelCount + t]*r[t * mLabelCount + j];
+  		}
+  	}
+  	for (iter=0;iter<max_iter;iter++)
+  	{
+  		// stopping condition, recalculate QP,pQP for numerical accuracy
+  		pQp=0;
+  		for (t=0;t<k;t++)
+  		{
+  			Qp[t]=0;
+  			for (j=0;j<k;j++)
+  				Qp[t]+=Q[t][j]*p[j];
+  			pQp+=p[t]*Qp[t];
+  		}
+  		double max_error=0;
+  		for (t=0;t<k;t++)
+  		{
+  			double error=fabs(Qp[t]-pQp);
+  			if (error>max_error)
+  				max_error=error;
+  		}
+  		if (max_error<eps) break;
+
+  		for (t=0;t<k;t++)
+  		{
+  			double diff=(-Qp[t]+pQp)/Q[t][t];
+  			p[t]+=diff;
+  			pQp=(pQp+diff*(diff*Q[t][t]+2*Qp[t]))/(1+diff)/(1+diff);
+  			for (j=0;j<k;j++)
+  			{
+  				Qp[j]=(Qp[j]+diff*Q[t][j])/(1+diff);
+  				p[j]/=(1+diff);
+  			}
+  		}
+  	}
+  	if (iter>=max_iter)
+  		error("Exceeds max_iter in multiclass_prob\n");
+  	for(t=0;t<k;t++) free(Q[t]);
+  	free(Q);
+  	free(Qp);
+  }
   
   /** Transform the raw data into the sparse format used by libsvm. 
     * Use mThreshold to fix what is considered as zero. This outputs the file 'svm.train' containing 
@@ -498,7 +563,11 @@ readpb_fail:
       *pProbability = bad_prob;
       
   		// compute 'prob_estimates' (see http://citeseer.ist.psu.edu/wu03probability.html)
-  		//multiclass_probability(mLabelCount,pairwise_prob,prob_estimates);
+  		
+      // Matrix prob_vector;
+      // TRY_RET(prob_vector, set_sizes(1, mLabelCount));
+      // prob_vector.fill(0.0);
+  		// multiclass_probability(mLabelCount,mPairwiseProb,prob_vector.data);
       //
       //int prob_max_idx = 0;
       //for(i=1;i<mLabelCount;i++)
