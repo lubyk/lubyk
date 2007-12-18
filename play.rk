@@ -1,4 +1,4 @@
-c=Cabox(port:"/dev/tty.usbserial-FTHOME5" bauds:115200 buffer:192)
+c=Cabox(port:"/dev/tty.usbserial-FTHOME4" bauds:115200 buffer:192)
 # m=Metro(15000)
 # m=>l
 # l=Lua(load:"12_sig.lua")
@@ -17,14 +17,14 @@ avg = Average()
 #avg => p
 # 
 # 
-# # =========== SVM =====================
-pca => svm
-svm = Svm(vector:10 data:"data/after_pca" cost:8.0 gamma:0.0078125 threshold:0.0003)
-svm => lua
-svm.2 => 2.lua
+# # =========== km =====================
+pca => km
+km = Kmeans(vector:10 data:"data/after_pca")
+km => lua
+km.2 => 2.lua
 lua = Lua(load:"simple.lua")
 lua => no
-no  = NoteOut()
+no  = NoteOut(channel:4)
 no => midi
 #svm => minus
 #minus = Minus(46)
@@ -36,8 +36,8 @@ no => midi
 #svm_buff => p
 #p = Plot(amplitude:15.0 amplitude2:1.0 mode2:"xy")
 ######
-p = Plot(line:5 group:2 amplitude:10 amplitude2:10 line2:5 group2:2)
-#p = Plot(mode:"xy" amplitude:10 amplitude2:10 line2:5 group2:2)
+#p = Plot(line:5 group:2 amplitude:10 amplitude2:10 line2:5 group2:2)
+p = Plot(mode:"xy" amplitude:5 line:10)
 ######
 # =========== MIDI ====================
 midi = Midi()
