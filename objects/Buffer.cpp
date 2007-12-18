@@ -80,11 +80,6 @@ public:
   }
 private:
   
-  void error(Buffer& pBuf, const char * pMsg)
-  {
-    *mOutput << mName << ": " << pMsg << " (" << pBuf.error_msg() << ").\n";
-  }
-  
   Buffer mBuffer;
   double * mVector; /**< Vector pointing into mBuffer to write the data. */
   size_t   mIndex;  /**< Current write position into the 'write' vector. */

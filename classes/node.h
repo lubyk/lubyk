@@ -321,7 +321,7 @@ protected:
   
   /** Helper to display error messages. */
   template<typename T>
-  void error(TMatrix<T>& pMat, const char * pMsg, const char * pFilename, int pLine);
+  void error(T& pMat, const char * pMsg, const char * pFilename, int pLine);
   
   /** Helper to display error messages. */
   void error(const char * pMsg)

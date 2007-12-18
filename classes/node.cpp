@@ -2,7 +2,7 @@
 #include "event.h"
 #include "rubyk.h"
 #include "class.h"
-
+#include "buffer.h"
 
 unsigned int Node::sIdCounter = 0;
 pthread_key_t Node::sThisKey  = NULL;
@@ -147,10 +147,11 @@ void Node::execute_method (const std::string& pMethod, const Params& p)
 
 
 template<typename T>
-void Node::error(TMatrix<T>& pMat, const char * pMsg, const char * pFilename, int pLine)
+void Node::error(T& obj, const char * pMsg, const char * pFilename, int pLine)
 {
-  *mOutput << mName << ": " << pMsg << " " << pMat.error_msg() << " in " << pFilename << ":" << pLine << ".\n";
+  *mOutput << mName << ": " << pMsg << " " << obj.error_msg() << " in " << pFilename << ":" << pLine << ".\n";
 }
 
-template void Node::error<int>(TMatrix<int>& pMat, const char * pMsg, const char * pFilename, int pLine);
-template void Node::error<double>(TMatrix<double>& pMat, const char * pMsg, const char * pFilename, int pLine);
+template void Node::error<TMatrix<int> >(TMatrix<int>& obj, const char * pMsg, const char * pFilename, int pLine);
+template void Node::error<TMatrix<double> >(TMatrix<double>& obj, const char * pMsg, const char * pFilename, int pLine);
+template void Node::error<Buffer>(Buffer& obj, const char * pMsg, const char * pFilename, int pLine);
