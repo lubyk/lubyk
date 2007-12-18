@@ -24,7 +24,10 @@ TuringSend gSendNothing;
 class Turing : public LuaScript
 {
 public:
-  Turing() : mTokenByName(30), mTokenNameByValue(30), mStateByName(30), mPrintBuffer(NULL), mPrintBufferSize(0) {}
+  Turing() : mTokenByName(30), mTokenNameByValue(30), mStateByName(30), mPrintBuffer(NULL), mPrintBufferSize(0) 
+  {
+    memset(mTokenTable, 0, 256 * sizeof(int));
+  }
   ~Turing()
   {
     clear_send_table();
@@ -427,7 +430,7 @@ private:
       }
       delete *it;
     }
-    
+    mSendList.clear();
     mSendTable.clear();
   }
   

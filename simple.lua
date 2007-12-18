@@ -11,19 +11,19 @@ token[54] = 6
 token[55] = 7
 token[56] = 8
 token[57] = 9
-token[113] = 10
+token[48] = 10
 token[114] = 11
 token[119] = 12
 
 t = {}
 t[0] = -0.8
 t[1] = 1.5
-t[2] = 1.5
+t[2] = 1.8
 t[3] = 1.5
 t[4] = 1.5
-t[5] = 1.5
-t[6] = 1.5
-t[7] = 1.5
+t[5] = 1.2
+t[6] = 1.0
+t[7] = 1.0
 t[8]  = 1.5
 t[9]  = 1.5
 t[10] = 1.5
@@ -49,7 +49,6 @@ n[12] = 71
 
 function bang()
   tok = token[in1]
-  if (tok == 8) then print(tok, in2) end
   if ((tok ~= old or wait > 100) and in2 < t[tok]) then
   print(tok, in2)
     wait = 0

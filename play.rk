@@ -1,4 +1,4 @@
-c=Cabox(port:"/dev/tty.usbserial-FTHOME4" bauds:115200 buffer:192)
+c=Cabox(port:"/dev/tty.usbserial-FTHOME7" bauds:115200 buffer:192)
 # m=Metro(15000)
 # m=>l
 # l=Lua(load:"12_sig.lua")
@@ -9,7 +9,7 @@ c=Cabox(port:"/dev/tty.usbserial-FTHOME4" bauds:115200 buffer:192)
 c => cut
 cut = Cut(from:-64 to:-1 flat:1)
 cut => pca
-pca = PCA(vector:768 keep:10 data:"data/raw" processed:"data/after_pca")
+pca = PCA(vector:768 keep:20 data:"data/raw" processed:"data/after_pca")
 pca => pca_buff
 pca_buff = Buffer(64)
 pca_buff => p
@@ -19,7 +19,7 @@ avg = Average()
 # 
 # # =========== km =====================
 pca => km
-km = Kmeans(vector:10 data:"data/after_pca")
+km = Kmeans(vector:20 data:"data/after_pca")
 km => lua
 km.2 => 2.lua
 lua = Lua(load:"simple.lua")
@@ -40,4 +40,7 @@ no => midi
 p = Plot(mode:"xy" amplitude:5 line:10)
 ######
 # =========== MIDI ====================
-midi = Midi()
+midi = Midi(0)
+
+pca.learn
+km.learn

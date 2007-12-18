@@ -110,7 +110,7 @@ public:
       // abs(..) casts to integer ????
       
       if ( abs_val > mFindHighestValue ) {
-        mFindHighestDirection = mIndex;
+        mFindHighestDirection = val < 0 ? mIndex + 6 : mIndex;
         mFindHighestValue = abs_val;
       }
       
