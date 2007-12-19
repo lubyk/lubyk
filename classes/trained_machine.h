@@ -71,7 +71,7 @@ protected:
       *mOutput << mName << ": bad filename '" << pFilename << "'. Should be 'class_[...].txt'.\n";
       return false;
     }
-    *pRes = atoi(pFilename.substr(start+6, end - start - 6).c_str());
+    *pRes = pFilename.substr(start+6, end - start - 6).c_str()[0];
     return true;
   }
   

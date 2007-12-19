@@ -270,7 +270,7 @@ private:
     // 1. find file
     mClassFile = mFolder;
     std::string str;
-    bprint(str,"/class_%i.txt", cmd);
+    bprint(str,"/class_%c.txt", cmd);
     mClassFile.append(str);
     
     // 2. open

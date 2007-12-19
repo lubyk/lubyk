@@ -119,6 +119,7 @@ private:
     }
     
     *mOutput << mName << ": built codebook of size " << mCodeBook.row_count() << "x" << mCodeBook.col_count() << ".\n";
+    *mOutput << mName << ": labels = " << mLabels << ".\n";
     TRY(mLabels,   to_file(model_file_path()));
     TRY(mCodeBook, to_file(model_file_path(), "ab"));
     return true;
