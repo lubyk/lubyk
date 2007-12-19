@@ -649,10 +649,20 @@ void Command::execute_command()
   if (mServer->get_instance(&node, mMethod)) {
     // inspect
     *mOutput << node->inspect() << std::endl;
+    
   } else if (mMethod == "quit" || mMethod == "q") {
     mServer->quit();
     mQuit = true;
     *mOutput << "Bye..." << std::endl;
+    
+  } else if (mMethod == "set_lib_path") {
+    std::string path;
+    if (!mParameters.get(&path)) {
+      *mOutput << "Could not set library path (no parameter).\n";
+      return;
+    }
+    Class::set_lib_path(path);
+    *mOutput << "Library path set to '" << path << "'.\n";
   } else {
     *mOutput << "Unknown command '" << mMethod << "'" << std::endl;
   }

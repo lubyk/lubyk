@@ -4,7 +4,9 @@
 
 // definitions of static data members
 Hash<std::string, Class*> Class::sClasses(300);
-std::string Class::sObjectsPath("lib");
+
+// FIXME: change this for other platforms:
+std::string Class::sObjectsPath("/usr/local/lib/rubyk");
 
 
 void Class::execute_method (const std::string& pMethodName, const Params& p, std::ostream * pOutput)
