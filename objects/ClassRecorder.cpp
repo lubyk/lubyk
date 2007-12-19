@@ -24,6 +24,7 @@ public:
     mFolder      = "data";
     mUseSnap     = true;
     mClassLabel  = 0;
+	mChannel     = 1;
     mVectorCount = 0;
     mTrainFile   = NULL;
     mMeanSignal.set(mMeanVector);
@@ -45,6 +46,7 @@ public:
     p.get(&mMargin    ,"margin");
     p.get(&mFolder    ,"data");
     p.get(&mUseSnap   ,"snap");
+    p.get(&mChannel   ,"channel");
     
     return true;
   }
@@ -77,12 +79,12 @@ public:
       switch(mState) {
       case CountDownReady:  
         bang_me_in(countdown_time);
-        send_note(3, 60 + (mClassLabel % 12),80,100);
+        send_note(3, 60 + (mClassLabel % 12),80,100,mChannel);
         enter(CountDownSet);
         break;
       case CountDownSet:
         bang_me_in(record_with_margin); // 1/2 margin at the end
-        send_note(3, 72 + (mClassLabel % 12),80,record_time);
+        send_note(3, 72 + (mClassLabel % 12),80,record_time,mChannel);
         enter(Recording);
         break;
       case Recording:
@@ -144,7 +146,7 @@ public:
           prepare_class_for_recording(cmd);
           enter(CountDownReady);
           bang_me_in(countdown_time);
-          send_note(3, 60 + (mClassLabel % 12),80,100);
+          send_note(3, 60 + (mClassLabel % 12),80,100,mChannel);
         }  
         break;
       }
@@ -228,7 +230,7 @@ private:
       // new class
       load_class(cmd, &ClassRecorder::update_mean_value);
     }
-    *mOutput << mName << ": recording vector " << mVectorCount + 1 << " for " << cmd << "\n~> ";
+    *mOutput << mName << ": recording vector " << mVectorCount + 1 << " for " << (char)cmd << "\n~> ";
   }
   
   void enter(class_recorder_states_t pState)
@@ -331,6 +333,7 @@ private:
 
   int mClassLabel;            /**< Current label. Used during recording and recognition.                        */
   int mSampleRate;            /**< Number of samples per second (used to compute recording time).               */
+  int mChannel;               /**< Midi channel used to send notes. */
 };
 
 
