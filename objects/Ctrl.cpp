@@ -2,7 +2,7 @@
 #include "midi_message.h"
 #include <sstream>
 
-#define CTRL_MIN_TIME_STEP 10  // [ms]
+#define CTRL_MIN_TIME_STEP 100  // [ms]
 class Ctrl : public Node
 {
 public:
@@ -29,13 +29,15 @@ public:
   // inlet 1 (set ctrl value)
   void bang(const Signal& sig)
   {
-    int i;
+	std::cout << sig << "<<<<\n";
+    double i;
     if (sig.type == MidiSignal && sig.midi_ptr.value->mType == CtrlChange) {
       mMessage = *(sig.midi_ptr.value);
       send(mMessage);
     } else if (sig.get(&i)) {
       if (mSlope) {
         mTarget = i;
+		printf("got %i\n", i);
         remove_my_events(); // restart triggers
         move();
       } else {
