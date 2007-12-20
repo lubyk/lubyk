@@ -205,7 +205,7 @@ public:
   inline void send_ctrl(size_t pPort, unsigned char pCtrl, unsigned char pCtrlValue, unsigned int pChannel = 1, time_t pTime = 0)
   {
     MidiMessage * msg = new MidiMessage(3);
-    msg->set_as_note(pCtrl, pCtrlValue, pChannel, pTime);
+    msg->set_as_ctrl(pCtrl, pCtrlValue, pChannel, pTime);
     mS.set(msg, true);
     send(pPort, mS);
   }

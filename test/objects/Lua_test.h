@@ -23,4 +23,21 @@ public:
     assert_print("n.bang(1,2,3,4)\n",   "<Matrix [  1.00  3.00 ], 1x2>\n");
     assert_print("n.bang(-1,5,0)\n",    "<Matrix [ -1.00  0.00 ], 1x2>\n");
   }
+  
+  void test_send_note( void ) 
+  { 
+    setup_with_print("n=Lua(\"function bang()\nsend_note(1,in1,66,500,1,3)\nend\")\n");
+    
+    assert_print("n.bang(60)\n",   "<Midi +1:C3(66), 3/500>\n");
+    assert_print("n.bang(61)\n",   "<Midi +1:C#3(66), 3/500>\n");
+  }
+  
+  void test_send_ctrl( void ) 
+  { 
+    setup_with_print("n=Lua(\"function bang()\nsend_ctrl(1,20,in1,7,5)\nend\")\n");
+
+    assert_print("n.bang(60)\n",   "<Midi ~7:20(60), 5>\n");
+    assert_print("n.bang(61)\n",   "<Midi ~7:20(61), 5>\n");
+  }
+  
 };

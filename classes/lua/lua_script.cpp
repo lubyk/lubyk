@@ -163,6 +163,114 @@ bool LuaScript::sig_from_lua(Signal * sig, int pIndex, Matrix& pMat)
 }
 
 
+int LuaScript::send_for_lua(lua_State * L)
+{
+  LuaScript * node = (LuaScript *)get_node_from_lua(L);
+  if (node) {
+    // value, port
+    Signal sig;
+    double p;
+    if (!node->sig_from_lua(&sig)) {
+      node->error("could not get signal");
+      return 0;
+    }
+    if (!node->double_from_lua(&p)) {
+      node->error("could not get port from lua in 'send'");
+      return 0;
+    }
+    node->send((int)p, sig);
+  } else {
+    printf("send_for_lua error: no node\n");
+  }
+  return 0;
+}
+
+int LuaScript::send_note_for_lua(lua_State * L)
+{
+  LuaScript * node = (LuaScript *)get_node_from_lua(L);
+  if (node) {
+    double d;
+    size_t port;
+    int note, velocity, length, channel;
+    time_t when;
+    if (!node->double_from_lua(&d)) {
+      node->error("could not get time from lua in 'send_note'");
+      return 0;
+    }
+    when = d;
+    if (!node->double_from_lua(&d)) {
+      node->error("could not get channel from lua in 'send_note'");
+      return 0;
+    }
+    channel = d;
+    if (!node->double_from_lua(&d)) {
+      node->error("could not get length from lua in 'send_note'");
+      return 0;
+    }
+    length = d;
+    if (!node->double_from_lua(&d)) {
+      node->error("could not get velocity from lua in 'send_note'");
+      return 0;
+    }
+    velocity = d;
+    if (!node->double_from_lua(&d)) {
+      node->error("could not get note from lua in 'send_note'");
+      return 0;
+    }
+    note = d;
+    if (!node->double_from_lua(&d)) {
+      node->error("could not get port from lua in 'send_note'");
+      return 0;
+    }
+    port = d;
+    node->send_note(port, note, velocity, length, channel, when);
+  } else {
+    printf("send_note_for_lua error: no node\n");
+  }
+  return 0;
+}
+
+int LuaScript::send_ctrl_for_lua(lua_State * L)
+{
+  LuaScript * node = (LuaScript *)get_node_from_lua(L);
+  if (node) {
+    double d;
+    size_t port;
+    int ctrl, value, channel;
+    time_t when;
+    if (!node->double_from_lua(&d)) {
+      node->error("could not get time from lua in 'send_ctrl'");
+      return 0;
+    }
+    when = d;
+    if (!node->double_from_lua(&d)) {
+      node->error("could not get channel from lua in 'send_ctrl'");
+      return 0;
+    }
+    channel = d;
+    if (!node->double_from_lua(&d)) {
+      node->error("could not get value from lua in 'send_ctrl'");
+      return 0;
+    }
+    value = d;
+    if (!node->double_from_lua(&d)) {
+      node->error("could not get ctrl from lua in 'send_ctrl'");
+      return 0;
+    }
+    ctrl = d;
+    if (!node->double_from_lua(&d)) {
+      node->error("could not get port from lua in 'send_ctrl'");
+      return 0;
+    }
+    port = d;
+    node->send_ctrl(port, ctrl, value, channel, when);
+  } else {
+    printf("send_ctrl_for_lua error: no node\n");
+  }
+  return 0;
+}
+
+
 bool LuaScript::matrix_from_lua (lua_State *L, Matrix ** pMat, int pIndex)
 {
   Matrix ** mat_ptr, * mat;
@@ -236,9 +344,15 @@ void LuaScript::register_lua_methods()
   const Hash<std::string, method_for_lua_t> * method_for_lua = mClass->methodsForLua();
   end   = method_for_lua->end();
   
-  /* register send method */
+  /* register send methods */
   lua_pushcfunction(mLua, &send_for_lua);
   lua_setglobal(mLua, "send");
+  
+  lua_pushcfunction(mLua, &send_note_for_lua);
+  lua_setglobal(mLua, "send_note");
+  
+  lua_pushcfunction(mLua, &send_ctrl_for_lua);
+  lua_setglobal(mLua, "send_ctrl");
   
   for(it = method_for_lua->begin(); it < end; it++) {
     method_for_lua_t method;
