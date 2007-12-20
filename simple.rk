@@ -1,56 +1,36 @@
-c=Cabox(port:"/dev/tty.usbserial-FTHOME7" bauds:115200 buffer:192)
-
-# m=Metro(15000)
-# m=>l
-# l=Lua(load:"12_sig.lua")
-# l=>c
-# c=Buffer(192)
+c=Cabox(port:"/dev/tty.usbserial-FTHOME4" bauds:115200 buffer:1)
 
 # =========== RECORDER ================
-c => rec
+#c => cut1
+#k => rec1
+c => cut2
+k => rec2
+
+
+cut1 = Cut(from:1 to:6)
+cut2 = Cut(from:7 to:12)
+cut1 => buf1
+cut2 => buf2
+buf1 = Buffer(192) # 64 * 6 * 3 (margin)
+buf1 => rec1
+buf2 = Buffer(192) # 64 * 6 * 3 (margin)
+buf2 => rec2
 k = Keyboard()
-k => rec
-rec = ClassRecorder(tempo:120 data:"data/raw" rate:250)
+
+rec1 = ClassRecorder(tempo:120 data:"data1/raw" rate:250 channel:16)
+rec2 = ClassRecorder(tempo:120 data:"data2/raw" rate:250 channel:16)
 ######
-rec => p
-rec.2 => 2.p
+rec1 => p
+rec1.2 => 2.p
+rec1.3 => midi
+######
+rec2 => p
+rec2.2 => 2.p
+rec2.3 => midi
 #####
-rec.3 => midi
 
 
-# =========== PCA =====================
-#c => cut
-cut = Cut(from:-64 to:-1 flat:1)
-cut => pca
-pca = PCA(vector:768 keep:20 data:"data/raw" processed:"data/after_pca")
-pca => pca_buff
-pca_buff = Buffer(30)
-pca_buff => avg
-avg = Average()
-avg => p
-# 
-# 
-# # =========== km =====================
-pca => km
-km = Kmeans(vector:20 data:"data/after_pca")
-km => lua
-km.2 => 2.lua
-lua = Lua(load:"simple.lua")
-lua => no
-no  = NoteOut()
-no => midi
-#km => minus
-#minus = Minus(46)
-#minus => km_buff
-#km_buff = Buffer(128)
-
-
-######
-#km_buff => p
-#p = Plot(amplitude:15.0 amplitude2:1.0 mode2:"xy")
-######
-p = Plot(line:4 group:3 line2:4 group2:3)
-#p = Plot(mode:"xy" amplitude:10)
+p = Plot(line:2 group:3 line2:2 group2:3)
 ######
 # =========== MIDI ====================
-midi = Midi()
+midi = Midi(0)

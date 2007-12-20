@@ -1,46 +1,65 @@
-c=Cabox(port:"/dev/tty.usbserial-FTHOME7" bauds:115200 buffer:192)
-# m=Metro(15000)
-# m=>l
-# l=Lua(load:"12_sig.lua")
-# l=>c
-# c=Buffer(192)
+c=Cabox(port:"/dev/tty.usbserial-FTHOME4" bauds:115200 buffer:1) # 32 * 3
 
-# =========== RECORDER ================
-c => cut
-cut = Cut(from:-64 to:-1 flat:1)
-cut => pca
-pca = PCA(vector:768 keep:20 data:"data/raw" processed:"data/after_pca")
-pca => pca_buff
-pca_buff = Buffer(64)
-pca_buff => p
-avg = Average()
-#avg => p
-# 
-# 
-# # =========== km =====================
-pca => km
-km = Kmeans(vector:20 data:"data/after_pca")
-km => lua
-km.2 => 2.lua
-lua = Lua(load:"simple.lua")
-lua => no
+c => cut1
+c => cut2
+# ========= CUT 1 ==========
+cut1 = Cut(from:1 to:6)
+cut1 => buf1
+buf1 = Buffer(vector:6 buffer:64) # 64 * 6 
+buf1 => cut11
+cut11 = Cut(from:1 to:-1 flat:1)
+cut11 => pca1
+
+# ========= CUT 2 ==========
+cut2 = Cut(from:7 to:12)
+cut2 => buf2
+buf2 = Buffer(vector:6 buffer:64) # 64 * 6 
+buf2 => cut21
+cut21 = Cut(from:1 to:-1 flat:1)
+cut21 => pca2
+
+# =========== PCA 1 ================
+pca1 = PCA(vector:384 keep:10 data:"data1/raw" processed:"data1/after_pca")
+pca1 => km1
+pca1 => pca_buf1
+pca_buf1 = Buffer(10)
+pca_buf1 => p
+
+# =========== Kmeans 1 ================
+km1 = Kmeans(vector:10 data:"data1/after_pca")
+km1 => lua1
+km1.2 => 2.lua1
+
+# =========== Lua 1 ================
+lua1 = Lua(load:"simple1.lua")
+lua1 => no
+
+# =========== PCA 2 ================
+pca2 = PCA(vector:384 keep:10 data:"data2/raw" processed:"data2/after_pca")
+pca2 => km2
+pca2 => pca_buf2
+pca_buf2 = Buffer(10)
+pca_buf2 => 2.p
+
+# =========== Kmeans 2 ================
+km2 = Kmeans(vector:10 data:"data2/after_pca")
+km2 => lua2
+km2.2 => 2.lua2
+
+# =========== Lua 2 ================
+lua2 = Lua(load:"simple2.lua")
+lua2 => no
 no  = NoteOut(channel:4)
 no => midi
-#svm => minus
-#minus = Minus(46)
-#minus => svm_buff
-#svm_buff = Buffer(128)
 
+# =========== PLOT ====================
+p = Plot(mode:"xy" amplitude:5 line:5 mode2:"xy" amplitude2:5 line2:5)
 
-######
-#svm_buff => p
-#p = Plot(amplitude:15.0 amplitude2:1.0 mode2:"xy")
-######
-#p = Plot(line:5 group:2 amplitude:10 amplitude2:10 line2:5 group2:2)
-p = Plot(mode:"xy" amplitude:5 line:10)
-######
 # =========== MIDI ====================
 midi = Midi(0)
 
-pca.learn
-km.learn
+pca1.learn
+km1.learn
+
+pca2.learn
+km2.learn

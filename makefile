@@ -89,11 +89,12 @@ classes/command.png: classes/command.dot
 install: install_rubyk install_libs
 
 install_rubyk:
-	$(INSTALL) rubyk $(BINDIR)/rubyk
+	$(MKDIR) $(BINDIR)
+	$(INSTALL) rubyk $(BINDIR)
 
 install_libs:
 	$(MKDIR) $(RUBYK_LIBDIR)
-	cd lib && for e in *.rko ; do echo $(RUBYK_LIBDIR)/$$e && $(INSTALL) $$e $(RUBYK_LIBDIR)/$$e ; done
+	cd lib && for e in *.rko ; do echo $(RUBYK_LIBDIR)/$$e && $(INSTALL) $$e $(RUBYK_LIBDIR) ; done
 
 clean:
 	rm -rf *.o lib/*.rko rubyk classes/command.png classes/command.dot test/runner
