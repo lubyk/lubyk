@@ -17,23 +17,24 @@ public:
       mBuffer.copy(sig);
       for(size_t i = 0; i < mBuffer.size(); i++)
         mBuffer.data[i] = mBuffer.data[i] < 0 ? -mBuffer.data[i] : mBuffer.data[i];
-      mS.set(mBuffer);
-      send(mS);
+      send(mBuffer);
     } else if (sig.type == IntegerSignal) {
       sig.get(&i);
       i < 0 ? send(-i) : send(i);
     } else if (sig.type == DoubleSignal) {
       sig.get(&d);
       d < 0 ? send(-d) : send(d);
+    } else {
+      // pass through
+      send(sig);
     }
   }
   
   virtual void spy()
-  { bprint(mSpy, mSpySize,"");  }
+  { bprint(mSpy, mSpySize, "");  }
   
 private:
   Matrix mBuffer;
-  double mValue;
 };
 
 extern "C" void init()

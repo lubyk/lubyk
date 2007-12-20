@@ -7,7 +7,7 @@ public:
   bool set (const Params& p)
   {
     mCutFrom = p.val("from", 1) ;
-    mCutTo   = p.val("to", 32) ;
+    mCutTo   = p.val("to", -1 ) ;
     mFlatten = p.val("flat", false);
     if (mCutFrom > 0) mCutFrom--;
     if (mCutTo > 0) mCutTo--;

@@ -16,12 +16,14 @@ public:
     if (sig.type == MatrixSignal) {
       mBuffer.copy(sig);
       mBuffer -= mValue;
-      mS.set(mBuffer);
-      send(mS);
+      send(mBuffer);
     } else if (sig.get(&d)) {
       // single value
       d -= mValue;
       send(d);
+    } else {
+      // pass through
+      send(sig);
     }
   }
   
