@@ -16,4 +16,11 @@ public:
   void test_load( void ) 
   { assert_print("n=Lua()\nn.load(\"test/fixtures/test.lua\")\nn.script\n", "n: script loaded.\nfunction bang()\n\treturn in1+12\nend\n\n"); }
 
+  void test_input_matrix( void ) 
+  { 
+    setup_with_print("n=Lua(\"function bang()\nsend(1,{in1[1],in1[3]})\nend\")\n");
+    
+    assert_print("n.bang(1,2,3,4)\n",   "<Matrix [  1.00  3.00 ], 1x2>\n");
+    assert_print("n.bang(-1,5,0)\n",    "<Matrix [ -1.00  0.00 ], 1x2>\n");
+  }
 };

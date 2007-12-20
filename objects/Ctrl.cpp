@@ -29,7 +29,6 @@ public:
   // inlet 1 (set ctrl value)
   void bang(const Signal& sig)
   {
-	std::cout << sig << "<<<<\n";
     double i;
     if (sig.type == MidiSignal && sig.midi_ptr.value->mType == CtrlChange) {
       mMessage = *(sig.midi_ptr.value);
@@ -37,7 +36,6 @@ public:
     } else if (sig.get(&i)) {
       if (mSlope) {
         mTarget = i;
-		printf("got %i\n", i);
         remove_my_events(); // restart triggers
         move();
       } else {

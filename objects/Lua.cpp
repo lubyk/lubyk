@@ -37,9 +37,15 @@ public:
   void set_lua_global(const char * key, const Signal& sig)
   {
     double d;
-    if (sig.get(&d)) {
+    const Matrix * live;
+    if (sig.get(&live)) {
+      lua_pushmatrix(*live);
+      lua_setglobal(mLua, key);
+    } else if (sig.get(&d)) {
       lua_pushnumber(mLua, d);
       lua_setglobal(mLua, key);
+    } else if (sig.type && sig.type != BangSignal) {
+      *mOutput << mName << ": cannot set '" << key << "' to " << sig << " (type not yet suported in Lua).\n";
     }
   }
 };

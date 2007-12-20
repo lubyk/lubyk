@@ -9,6 +9,7 @@ extern "C" {
 }
 
 #define LUA_RETURN_BUFFER_SIZE 32
+#define LUA_MATRIX_NAME "Matrix"
 
 class LuaScript : public Script
 {
@@ -79,8 +80,35 @@ public:
   /** Define a signla from lua stack/parameters, with a custom buffer. */
   bool sig_from_lua (Signal * sig, int index, Matrix& pMat);
   
-  static Node * get_node_from_lua(lua_State * L);
+  static Node * get_node_from_lua (lua_State * L);
+  
+  /** Push a matrix on top of the lua stack. */
+  void lua_pushmatrix (const Matrix& pMat);
+  
+  /** Get a matrix pointer from lua. */
+  static bool matrix_from_lua (lua_State *L, Matrix ** pMat, int pIndex);
+
+private:
+  static const luaL_reg sMatrix_methods[];
+  static const luaL_reg sMatrix_meta[];
+  
+  /** Get value at index. */
+  static int Matrix_get (lua_State *L);
+  
+  /** Garbage collect. */
+  static int Matrix_gc (lua_State *L);
+
+  /** Printout. */
+  static int Matrix_tostring (lua_State *L);
+  
+  /* register methods */
+  void register_lua_methods ();
+  
+  /* register matrix */
+  void register_lua_Matrix ();
+  
 protected:  
+  
   lua_State * mLua;
   Matrix mLuaReturn; /**< Used to return multiple values from lua. */
 };

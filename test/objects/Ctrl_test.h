@@ -17,11 +17,10 @@ public:
 
   void test_ctrl_slope( void ) 
   { 
-    setup_with_print("n=Ctrl(slope:1000)\n"); // 1000 increments in 1 second
+    setup_with_print("n=Ctrl(slope:100)\n"); // 100 increments in 1 second
 
-    // defaults
+    // 100 [ms] minimum * 100 / 1000 => 10 steps ==> 64 + 10 = 74
     assert_print("n.bang(100)\n", "<Midi ~1:1(74), 0>\n");
-    // 10 [ms] second * 1000 = 10 steps ==> 64 + 10 = 74
     assert_print("n.move()\n",    "<Midi ~1:1(84), 0>\n");
     assert_print("n.move()\n",    "<Midi ~1:1(94), 0>\n");
     assert_print("n.move()\n",    "<Midi ~1:1(100), 0>\n");
