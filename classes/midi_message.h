@@ -10,7 +10,7 @@
 enum midi_messages_t {
   NoteOn = 1, /**< Note on message. */
   NoteOff,  /**< Note off message. */
-  Ctrl,
+  CtrlChange,
   RawMidi,    /**< Other midi message. */
 };
 
@@ -44,13 +44,12 @@ struct MidiMessage
     mWait   = pTime;
   }
   
-  void set_as_ctrl (unsigned char pCtrl, unsigned char pValue, unsigned int pLength = 0, unsigned int pChannel = 1, time_t pTime = 0)
+  void set_as_ctrl (unsigned char pCtrl, unsigned char pCtrlValue, unsigned int pChannel = 1, time_t pTime = 0)
   {
-    mType = Ctrl;
+    mType = CtrlChange;
     set_key(pCtrl);
     set_channel(pChannel);
-    set_value(pValue);
-    mLength = pLength;
+    set_value(pCtrlValue);
     mWait   = pTime;
   }
   
@@ -62,8 +61,6 @@ struct MidiMessage
     }
   }
   
-  inline unsigned char note()
-  { return mData[1]; }
   
   inline void set_note(unsigned char pNote)
   { set_key(pNote); }
@@ -78,28 +75,51 @@ struct MidiMessage
   {
     if (mType == NoteOn)
       mData[0] = 0x90 + ((pChannel + 15) % 16);
-    else if (mType == Ctrl)
+    else if (mType == NoteOff)
+      mData[0] = 0x80 + ((pChannel + 15) % 16);
+    else if (mType == CtrlChange)
       mData[0] = 0xB0 + ((pChannel + 15) % 16);
     else
-      mData[0] = 0x80 + ((pChannel + 15) % 16);
+      fprintf(stderr, "set channel for type %i not implemented yet.\n", mType);
   }
+  
+  inline void set_velocity(unsigned char pVelocity)
+  { set_value(pVelocity); }
+  
+  inline void set_length(time_t pLength)
+  { mLength = pLength; }
+  
+  inline void set_value(unsigned char pValue)
+  { mData[2] = pValue % 128; }
+  
+  inline unsigned int note() const
+  { return mData[1]; }
+  
+  inline unsigned int ctrl() const
+  { return mData[1]; }
+  
+  inline unsigned int value() const
+  { return mData[2]; }
   
   inline unsigned int channel() const
   { 
     if (mType == NoteOn)
       return mData[0] - 0x90 + 1;
-    else
+    else if (mType == NoteOff)
       return mData[0] - 0x80 + 1;
+    else if (mType == CtrlChange)
+      return mData[0] - 0xB0 + 1;
+    else {
+      fprintf(stderr, "get channel for type %i not implemented yet.\n", mType);
+      return 0;
+    }
   }
   
-  inline unsigned char velocity()
+  inline unsigned int velocity() const
   { return mData[2]; }
   
-  inline void set_velocity(unsigned char pVelocity)
-  { set_value(pVelocity); }
-  
-  inline void set_value(unsigned char pValue)
-  { mData[2] = pValue % 128; }
+  inline time_t length() const
+  { return mLength; }
   
   /** Write the note name (as C2#, D-1, E3) into the buffer. The buffer must be min 5 chars large (C-3#\0). */
   inline void get_note_name(char buffer[]) const
@@ -183,19 +203,21 @@ inline std::ostream& operator<< (std::ostream& pStream, const MidiMessage& msg)
   if (msg.mType == NoteOn || msg.mType == NoteOff) {
     if (msg.mType == NoteOff) 
       pStream << "-";
-    else if (msg.mType == NoteOn)
+    else
       pStream << "+";
-    else if (msg.mType == Ctrl)
-      pStream << "~";
     msg.get_note_name(buffer);
-    pStream << msg.channel() << ":" << buffer << "(" << (int)msg.mData[2] << "), " << msg.mWait << "/" << msg.mLength;
+    pStream << msg.channel() << ":" << buffer << "(" << (int)msg.mData[2] << "), ";
+    pStream << msg.mWait << "/" << msg.mLength;
+  } else if (msg.mType == CtrlChange) {
+    pStream << "~" << (int)msg.channel() << ":" << (int)msg.ctrl() << "(" << (int)msg.value() << "), ";
+    pStream << msg.mWait;
   } else {
     pStream << "[";
     end   = msg.mData.end();
     begin = msg.mData.begin();
     for( it = begin; it < end; it++) {
       if (it != begin) pStream << ", ";
-      pStream << *it << std::endl;
+      pStream << (int)*it << std::endl;
     }
     pStream << "]";
   }

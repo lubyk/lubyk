@@ -71,6 +71,10 @@ public:
     mServer->lock();
   }
   
+  virtual void spy()
+  {  
+    bprint(mSpy, mSpySize,"");    
+  }
 };
 
 extern "C" void init()

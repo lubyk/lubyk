@@ -7,7 +7,7 @@ public:
   
   bool init (const Params& p)
   {
-    int port;
+    mPortId = -1;
     
     try {
       mMidiout = new RtMidiOut();
@@ -16,7 +16,7 @@ public:
       return false;
     }
     
-    if (!p.get(&port, "port", true)) {
+    if (!p.get(&mPortId, "port", true)) {
       // create a virtual port
 
       // Call function to select port.
@@ -32,7 +32,7 @@ public:
     } else {
      // Call function to select port.
      try {
-       mMidiout->openPort( port );
+       mMidiout->openPort( mPortId );
      }
      catch (RtError &error) {
        *mOutput << mName << ": " << error.getMessageString() << std::endl;
@@ -127,38 +127,63 @@ public:
   }
   
   // print a list of possible outputs
-  static void outputs(std::ostream * pOutput, const Params& p) {
+  static void outputs(std::ostream * pOutput, const Params& p)
+  {
+    std::vector<std::string> ports;
+    if (!output_list(pOutput, ports)) return;
+    size_t nPorts;
+    
+    *pOutput << "Midi out ports (" << nPorts << "):" << std::endl;
+
+    for (size_t i=0; i<nPorts; i++ ) {
+      *pOutput << "  " << i << ": " << ports[i] << std::endl;
+    }
+  }
+  
+  virtual void spy()
+  { 
+    std::vector<std::string> portList;
+    if (mPortId < 0)
+      bprint(mSpy, mSpySize, "-virtual-");
+    else if (output_list(mOutput, portList) && (size_t)mPortId < portList.size())
+      bprint(mSpy, mSpySize,"%i: %s", mPortId, portList[mPortId].c_str());
+    else
+      bprint(mSpy, mSpySize,"could not read port name for %i", mPortId);
+  }
+private:
+  
+  static bool output_list(std::ostream * pOutput, std::vector<std::string>& pPorts)
+  {
     RtMidiOut *midiout = 0;
     unsigned int i,nPorts;
     std::string portName;
 
-    // RtMidiOut constructor
     try {
       midiout = new RtMidiOut();
     }
     catch (RtError &error) {
       *pOutput << error.getMessageString() << std::endl;
-      return;
+      return false;
     }
 
-    // Check outputs.
+    pPorts.clear();
     
     nPorts = midiout->getPortCount();
-    *pOutput << "Midi out ports (" << nPorts << "):" << std::endl;
     
     for ( i=0; i<nPorts; i++ ) {
-      *pOutput << "  " << i << " : " ;
       try {
         portName = midiout->getPortName(i);
-        *pOutput << portName << std::endl;
+        pPorts.push_back(portName);
       }
       catch (RtError &error) {
         *pOutput << error.getMessageString() << std::endl;
+        return false;
       }
     }
+    return true;
   }
-private:
-  /* data */
+  
+  int mPortId;
   RtMidiOut * mMidiout;
 };
 /*

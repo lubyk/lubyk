@@ -8,10 +8,10 @@ public:
   bool init(const Params& p)
   {
     mMessage.mType = NoteOn;
-    mMessage.set_key(      p.val("note",     MIDI_NOTE_C0   ));
-    mMessage.set_velocity( p.val("velocity", 70             ));
-    mMessage.mLength    =  p.val("length",   500             ); // 0.5 sec.
-    mMessage.set_channel(  p.val("channel",  1              ));
+    mMessage.set_key(     MIDI_NOTE_C0);
+    mMessage.set_velocity(70);
+    mMessage.set_length(  500); // 0.5 sec.
+    mMessage.set_channel( 1);
     
     return true;
   }
@@ -20,7 +20,7 @@ public:
   {  
     mMessage.set_key(      p.val("note",     mMessage.note()    ));
     mMessage.set_velocity( p.val("velocity", mMessage.velocity()));
-    mMessage.mLength    =  p.val("length",   mMessage.mLength   ); // 0.5 sec.
+    mMessage.set_length(   p.val("length",   mMessage.length()  )); // 0.5 sec.
     mMessage.set_channel(  p.val("channel",  mMessage.channel() ));
     return true;
   }
@@ -28,7 +28,7 @@ public:
   // inlet 1 and 5 (silent set note)
   void bang(const Signal& sig)
   {
-    if (sig.type == MidiSignal) {
+    if (sig.type == MidiSignal && sig.midi_ptr.value->mType == NoteOn) {
       mMessage = *(sig.midi_ptr.value);
     } else {
       set_note(sig);
@@ -46,7 +46,10 @@ public:
   
   // inlet 3
   void set_length(const Signal& sig)
-  { sig.get(&(mMessage.mLength)); }
+  { 
+    time_t l;
+    if (sig.get(&l)) mMessage.set_length(l); 
+  }
   
   // inlet 4
   void set_channel(const Signal& sig)
@@ -87,7 +90,6 @@ public:
 private:
   /* data */
   MidiMessage  mMessage;
-  time_t mLength;
 };
 
 extern "C" void init()

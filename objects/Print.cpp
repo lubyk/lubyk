@@ -14,6 +14,12 @@ public:
   { 
     *mOutput << sig << std::endl;
   }
+  
+  virtual void spy()
+  { 
+    bprint(mSpy, mSpySize,"");
+  }
+  
 };
 
 extern "C" void init()

@@ -180,17 +180,32 @@ public:
   }
   
   /** Send a midi note with the parameters provided.
+    * pPort: outlet id.
     * pNote: midi note from 0 to 96. 
     * pVelocity: velocity from 0 (note off) to 127. 
     * pLength: note duration in milliseconds. 
     * pChannel: midi channel from 1 to 16.
     * pTime: time to wait before playing this note.
-    * pPort: outlet id.
     */
   inline void send_note(size_t pPort, unsigned char pNote, unsigned char pVelocity = 80, unsigned int pLength = 500, unsigned int pChannel = 1, time_t pTime = 0)
   {
     MidiMessage * msg = new MidiMessage(3);
     msg->set_as_note(pNote, pVelocity, pLength, pChannel, pTime);
+    mS.set(msg, true);
+    send(pPort, mS);
+  }
+  
+  /** Send a midi control change with the parameters provided.
+    * pPort: outlet id.
+    * pCtrl: control number from 0 to 127. (see http://tomscarff.tripod.com/midi_analyser/control_and_mode_changes.htm)
+    * pCtrlValue: velocity from 0 (note off) to 127.
+    * pChannel: midi channel from 1 to 16.
+    * pTime: time to wait before playing this note.
+    */
+  inline void send_ctrl(size_t pPort, unsigned char pCtrl, unsigned char pCtrlValue, unsigned int pChannel = 1, time_t pTime = 0)
+  {
+    MidiMessage * msg = new MidiMessage(3);
+    msg->set_as_note(pCtrl, pCtrlValue, pChannel, pTime);
     mS.set(msg, true);
     send(pPort, mS);
   }

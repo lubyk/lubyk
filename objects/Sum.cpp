@@ -36,7 +36,9 @@ public:
   }
   
   virtual void spy()
-  { bprint(mSpy, mSpySize, "");  }
+  {
+    bprint(mSpy, mSpySize,"%ix%i", mBuffer.col_count(), mBuffer.row_count());
+  }
   
 private:
   Matrix mBuffer;

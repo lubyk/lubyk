@@ -140,6 +140,11 @@ public:
   }
   
   
+  virtual void spy()
+  {  
+    bprint(mSpy, mSpySize,"C:%.1f g:%.6f", mSvmCparam, mSvmGammaParam);    
+  }
+  
 private:
   
   

@@ -160,6 +160,11 @@ public:
     }
   }
   
+  virtual void spy()
+  {  
+    bprint(mSpy, mSpySize,"%s", mFolder.c_str());    
+  }
+  
 private:
   
   void receive_data()

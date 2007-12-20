@@ -80,6 +80,11 @@ public:
     }
   }
   
+  virtual void spy()
+  {  
+    bprint(mSpy, mSpySize,"");    
+  }
+  
 private:
   
   void time_plot (const Matrix& mat, double pAlpha, size_t param_index, bool pDrawBase = true)

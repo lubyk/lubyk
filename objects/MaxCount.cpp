@@ -37,6 +37,11 @@ public:
     send(2, mLabelVote[max_label]);
     send(max_label);
   }
+  
+  virtual void spy()
+  {  
+    bprint(mSpy, mSpySize,"");    
+  }
 
 private:
   int mLabelVote[256];

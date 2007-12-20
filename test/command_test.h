@@ -87,7 +87,7 @@ public:
   
   void test_create_destroy( void ) 
   { assert_result("v=>p\nv=Value()\np=Print()\nv=Print()\np=Value()\n",
-                  "#<Value:v Nil>\n#<Print:p -->\n#<Print:v -->\n#<Value:p Nil>\n");
+                  "#<Value:v Nil>\n#<Print:p >\n#<Print:v >\n#<Value:p Nil>\n");
 
   }
 };

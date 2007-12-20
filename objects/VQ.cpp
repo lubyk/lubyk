@@ -122,6 +122,10 @@ public:
     }
   }
   
+  virtual void spy()
+  {  
+    bprint(mSpy, mSpySize,"%ix%i", mCodebook.row_count(), mCodebook.col_count());    
+  }
 private:
   
   virtual std::string model_file_path()

@@ -75,7 +75,11 @@ public:
   {
     *mOutput << mName << ": " << mBasis << std::endl;
   }
-    
+  
+  virtual void spy()
+  {  
+    bprint(mSpy, mSpySize,"%ix%i", mBasis.col_count(), mBasis.row_count());    
+  }
 private:
   inline void transpose_vector(const Matrix& pMat)
   {

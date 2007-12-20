@@ -113,6 +113,7 @@ private:
     TRY(mMeanValue, set_sizes(1, mVector.col_count()));
     TRY(mLabels,   set_sizes(1,0));
     
+    mVectorCount = 0;
     if(!FOREACH_TRAIN_CLASS(Kmeans, compute_mean_vector)) {
       *mOutput << mName << ": could not build model.\n";
       return false;

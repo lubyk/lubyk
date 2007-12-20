@@ -73,6 +73,11 @@ public:
     send(mS);
   }
   
+  virtual void spy()
+  {  
+    bprint(mSpy, mSpySize,"");    
+  }
+  
 private:
   
   bool set_sizes(size_t pRowCount, size_t pColCount)
