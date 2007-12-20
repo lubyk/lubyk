@@ -59,7 +59,6 @@ protected:
   }
 };
 
-
 class ParseTest
 {
 public:
@@ -70,8 +69,7 @@ public:
     mServer = new Rubyk;
     mCmd = new Command(mInput, mOutput);
     mCmd->set_server(*mServer);
-    mCmd->parse("set_lib_path(\"lib\")\n"); // local 'lib' for testing !
-    mOutput.str(std::string("")); //clear
+    // cannot set class lib path here (not yet initialized).
   }
   
   // start a new server

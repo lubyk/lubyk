@@ -277,10 +277,8 @@ public:
   }
 protected:
   
-  /** Used by 'editors' to display some information on the node. Should be overwridden by subclasses. */
-  virtual void spy() {
-    // do nothing
-  }
+  /** Used to display some information on the current node. Should be overwridden by subclasses. */
+  virtual void spy() = 0;
   
   /** Display help message. */
   virtual void help() {
@@ -474,7 +472,7 @@ public:
 class NotFound : public Node
 {
 public:
-  bool set(const Params& p)
+  virtual bool set(const Params& p)
   {
     return false;
   }

@@ -139,11 +139,11 @@ public:
     return klass;
   }
 
-  static void set_lib_path(const char* pPath)
-  { sObjectsPath = pPath; }
+  static void set_lib_path (const char* pPath);
 
-  static void set_lib_path(const std::string& pPath)
-  { sObjectsPath = pPath; }
+  static void set_lib_path (const std::string& pPath);
+  
+  static std::string get_lib_path ();
 
   const std::string& name() { return mName; }
   
@@ -157,7 +157,7 @@ private:
   
   inline Node * operator() (const std::string& pName, Rubyk * pServer, const Params& p, std::ostream * pOutput);
   
-  inline void Class::make_slots (Node * node)
+  inline void make_slots (Node * node)
   {
     int i,sz;
     

@@ -8,6 +8,14 @@ Hash<std::string, Class*> Class::sClasses(300);
 // FIXME: change this for other platforms:
 std::string Class::sObjectsPath("/usr/local/lib/rubyk");
 
+void Class::set_lib_path(const char* pPath)
+{ sObjectsPath = pPath; }
+
+void Class::set_lib_path(const std::string& pPath)
+{ sObjectsPath = pPath; }
+
+std::string Class::get_lib_path()
+{ return sObjectsPath; }
 
 void Class::execute_method (const std::string& pMethodName, const Params& p, std::ostream * pOutput)
 {
