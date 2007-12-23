@@ -1,14 +1,26 @@
 #include "trained_machine.h"
 #include <float.h> // DBL_MAX
 
+/** Distance calculation algorithms. */
+enum kmeans_distance_types_t {
+  EuclideanDistance,
+  MahalanobisDistance,
+};
+
 class Kmeans : public TrainedMachine
 {
 public:
+  ~Kmeans()
+  {
+    clear_icov();
+  }
+  
   bool init(const Params& p)
   {
     mCodeBook.set_sizes(0,8); // arbitrary: 0 classes of 8 values
     mDistances.set_sizes(1,8);
     mDistanceThreshold = DBL_MAX;
+    mDistanceType = EuclideanDistance;
     return true;
   }
   
@@ -17,6 +29,13 @@ public:
     size_t vector_size = mVector.col_count();
     if (p.get(&vector_size, "vector")) {
       TRY(mCodeBook, set_sizes(0,vector_size));
+    }
+    std::string dist;
+    if (p.get(&dist, "distance")) {
+      if (dist == "Mahalanobis")
+        mDistanceType = MahalanobisDistance;
+      else
+        mDistanceType = EuclideanDistance;
     }
     
     p.get(&mDistanceThreshold, "threshold");
@@ -34,7 +53,8 @@ public:
         *mOutput << mName << ": bad input matrix " << live->row_count() << "x" << live->col_count() << " should be 1x" << mCodeBook.col_count() << ".\n";
         return;
       }
-      if (get_label(*live)) {
+      mView.set_data(live->data); // flatten matrix to vector (FIXME: do not know if this is useful, maybe we should just break if the input is not a vector)
+      if (get_label(mView)) {
         send(2, mDistance);
         send(mLabel);
       }
@@ -58,11 +78,20 @@ private:
     
     for (size_t i = 0; i < row_count; i++) {
       double d = 0.0;
-      for (size_t j = 0; j < col_count; j++)
-        d += (mCodeBook.data[i * col_count + j] - live.data[j]) * (mCodeBook.data[i * col_count + j] - live.data[j]);
-      d /= col_count;
+      if (mDistanceType == EuclideanDistance) {
+        for (size_t j = 0; j < col_count; j++)
+          d += (mCodeBook.data[i * col_count + j] - live.data[j]) * (mCodeBook.data[i * col_count + j] - live.data[j]);
+        d /= col_count;
+      } else {
+        // Mahalanobis distance d = V * C^{-1} * V'
+        mWork1.copy(live);
+        mWork1.subtract(mCodeBook, i, i); // remove mean value
+        mWork2.mat_multiply(mWork1, *mICov[i]); // w2 = w1 * C^{-1}
+        mWork3.mat_multiply(mWork2, mWork1, CblasNoTrans, CblasTrans); // w3 = w2 * w1'
+        d = mWork3.data[0] / col_count;
+      }
       mDistances.data[i] = d;
-      total_distance        += d;
+      total_distance    += d;
       if (d < closest_distance) {
         closest_id = i;
         closest_distance = d;
@@ -87,7 +116,8 @@ private:
   bool load_model()
   {
     TRY(mLabels, set_sizes(1,0));  // 1 row, 0 = get column count from first row
-    TRY(mCodeBook, set_sizes(0,0)); // read all
+    TRY(mCodeBook, set_sizes(0,0)); // read all until \n\n
+    clear_icov();
     
     FILE * file = fopen(model_file_path().c_str(), "rb");
       if (!file) {
@@ -96,10 +126,20 @@ private:
       }
       TRY_OR(mLabels,   from_file(file), goto load_model_failed);
       TRY_OR(mCodeBook, from_file(file), goto load_model_failed);
+      Matrix * tmp;
+      for (size_t i = 0; i < mCodeBook.row_count(); i++) {
+        tmp = new Matrix;
+        TRY_OR((*tmp), from_file(file), goto load_model_failed);
+        mICov.push_back(tmp);
+      }
     fclose(file);
     
     TRY(mDistances, set_sizes(1,mCodeBook.row_count()));
     
+    TRY(mWork1, set_sizes(1, mCodeBook.col_count()));
+    TRY(mWork2, set_sizes(1, mCodeBook.col_count()));
+    TRY(mWork3, set_sizes(1, 1));
+    TRY(mView, set_sizes(1, mCodeBook.col_count()));
     return true;
     
     load_model_failed:
@@ -110,11 +150,12 @@ private:
   bool learn_from_data()
   {
     TRY(mCodeBook, set_sizes(0, mVector.col_count()));
+    clear_icov();
     TRY(mMeanValue, set_sizes(1, mVector.col_count()));
     TRY(mLabels,   set_sizes(1,0));
     
     mVectorCount = 0;
-    if(!FOREACH_TRAIN_CLASS(Kmeans, compute_mean_vector)) {
+    if(!FOREACH_TRAIN_CLASS(Kmeans, load_training_sample)) {
       *mOutput << mName << ": could not build model.\n";
       return false;
     }
@@ -123,10 +164,14 @@ private:
     *mOutput << mName << ": labels = " << mLabels << ".\n";
     TRY(mLabels,   to_file(model_file_path()));
     TRY(mCodeBook, to_file(model_file_path(), "ab"));
+    
+    for (size_t i = 0; i < mICov.size(); i++) {
+      TRY((*(mICov[i])), to_file(model_file_path(), "ab"));
+    }
     return true;
   }
   
-  bool compute_mean_vector(const std::string& pFilename, Matrix * vector)
+  bool load_training_sample(const std::string& pFilename, Matrix * vector)
   {
     if (vector == NULL) {
       // class initialize // finished
@@ -140,26 +185,49 @@ private:
         mMeanValue /= (double)mVectorCount;
         
         TRY(mCodeBook, append(mMeanValue));
+        // compute C-1
+        // 1. remove mean value
+        TRY(mTrainingSet, subtract(mMeanValue));
+        
+        // 2. compute S'S
+        Matrix * tmp = new Matrix;
+        TRY((*tmp), symmetric(mTrainingSet)); // tmp = S'S
+        // 3. find inverse of covariance matrix tmp
+        if (!tmp->inverse()) {
+          *mOutput << mName << ": warning. Not enough training data (" << mVectorCount << ") to build covariance matrix for class '" << pFilename << "'. Using identity matix.\n";
+          TRY((*tmp), identity(tmp->col_count()));
+        }
+        mICov.push_back(tmp);
         
         if (pFilename != "")
           *mOutput << mName << ": read '" << pFilename << "' (" << mVectorCount << " vectors)\n";
       }
-      
+      TRY(mTrainingSet, set_sizes(0,0));
       mVectorCount = 0;
       mMeanValue.clear();
       return true;
     }
     
     mMeanValue += *vector;
+    TRY(mTrainingSet, append(*vector));
     
     mVectorCount++;
     return true;
+  }
+  
+  void clear_icov()
+  {
+    for (size_t i = 0; i < mICov.size(); i++)
+      delete mICov[i];
+    mICov.clear();
   }
   
   virtual void spy()
   { 
     bprint(mSpy, mSpySize,"%ix%i", mCodeBook.row_count(), mCodeBook.col_count());  
   }
+  
+  kmeans_distance_types_t mDistanceType; /**< Kind of distance calculation. Default is Euclidean. */
   
   int    mLabel;       /**< Current label. */
   double mDistance; /**< Probability for current label. */
@@ -169,6 +237,10 @@ private:
   size_t mVectorCount; /**< Number of vectors to compute the current mean value. */
   Matrix mMeanValue; /**< Mean value for the current class. */
   Matrix mCodeBook;  /**< List of prototypes (one row per class). */
+  std::vector<Matrix*> mICov; /**< List of inverses of the covariance matrices (one per class) used to compute Mahalanobis distance. */
+  Matrix mTrainingSet;   /**< Used during 'learn'. Contains all the training data for one class. */
+  Matrix mWork1, mWork2, mWork3; /**< Temporary matrices used to compute Mahalanobis distance. */
+  CutMatrix mView;       /**< Flat view of the incomming matrix. */
 };
 
 

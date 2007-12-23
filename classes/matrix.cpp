@@ -61,13 +61,13 @@ bool TMatrix<T>::from_file(FILE * pFile)
 {
   bool read_all = mRowCount == 0;
   size_t start_i = 0;
+  char c;
   
   // if mColCount == 0, get row_size from first row
   if (!mColCount) { 
     TMatrix tmp;
     T val;
     tmp.set_sizes(0,0);
-    char c;
     
     while(do_fscanf(pFile, &val) > 0) {
       tmp.append(val);
@@ -91,6 +91,23 @@ bool TMatrix<T>::from_file(FILE * pFile)
     }
     while (true) {
       for(size_t j=0; j < mColCount; j++) {
+        
+        if ( (c=getc(pFile)) == '\n') {
+          // end of line
+          if ( (c=getc(pFile)) == '\n') {
+            // end of matrix
+            if (j == 0) {
+              // ok.
+              return true;
+            } else {
+              set_error("end of matrix in middle of vector %i", mRowCount + 1);
+              return false;
+            }
+          } else
+            ungetc(c, pFile);
+        } else
+          ungetc(c, pFile);
+          
         if(do_fscanf(pFile, tmp.data + j) == EOF) {
           if (j == 0) {
             // ok. end of file
@@ -100,7 +117,6 @@ bool TMatrix<T>::from_file(FILE * pFile)
             return false;
           }
         }
-        fscanf(pFile, "\n"); // ignore newline
       }
       if (!append(tmp)) {
         set_error("could not append vector %i", mRowCount + 1);
