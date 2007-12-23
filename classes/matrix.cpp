@@ -862,8 +862,54 @@ bool TMatrix<T>::cast_append (const V * pVector, size_t pVectorSize, double pSca
   return true;
 }
 
+template<>
+bool TMatrix<double>::inverse()
+{
+  TMatrix<long> pivot;
+  long info;
+  
+  if (!pivot.set_sizes(1, mColCount)) {
+    set_error("could not allocate pivot array (%s)", pivot.error_msg());
+    return false;
+  }
+  // LU decomposition (using LAPACK)
+  long M = mRowCount;
+  long N = mColCount;
+  long LDA = mColCount;
+  dgetrf_(&M, &N, data, &LDA, pivot.data, &info);
+  if (info < 0) {
+    set_error("bad argument %i for dgetrf in 'inverse'", -info);
+    return false;
+  } else if (info > 0) {
+    set_error("value %i,%i is zero. Cannot compute inverse.",info,info);
+    return false;
+  }
+  // inverse
+  long sz = (__CLPK_integer)size();
+  Matrix work;
+  if (!work.set_sizes(1, 32 * sz)) {
+    set_error("could not allocate workspace array (%s)", work.error_msg());
+    return false;
+  }
+  // (using LAPACK)
+  long lwork = 32 * mColCount;
+  dgetri_(&LDA, data, &LDA, pivot.data, work.data, &lwork, &info);
+  if (info < 0) {
+    set_error("bad argument %i for dgetri in 'inverse'", -info);
+    return false;
+  } else if (info > 0) {
+    set_error("value %i,%i is zero. Cannot compute inverse.",info,info);
+    return false;
+  }
+  return true;
+}
+
+
+
+
 
 /// explicit instanciation for doubles and integers //////
+
 template bool TMatrix<double>::to_file(const std::string& pPath, const char * pMode) const;
 template bool TMatrix< int  >::to_file(const std::string& pPath, const char * pMode) const;
 template bool TMatrix<double>::to_file(FILE * pFile) const;

@@ -747,7 +747,38 @@ public:
     TS_ASSERT_EQUALS(round(c[2][2] * 100)/100, -0.50);
     
   }
+  
+  void test_inverse( void )
+  {
+    Matrix a, b;
+    a.set_sizes(3,3);
+    b.set_sizes(3,3);
+    a[0][0] =  1.0; a[0][1] =  1.0; a[0][2] =  3.0;
+    a[1][0] =  2.0; a[1][1] =  4.0; a[1][2] =  2.0;
+    a[2][0] =  1.0; a[2][1] =  3.0; a[2][2] =  1.0;
+    
+    b[0][0] = -0.5; b[0][1] =  2.0; b[0][2] = -2.5;
+    b[1][0] =  0.0; b[1][1] = -0.5; b[1][2] =  1.0;
+    b[2][0] =  0.5; b[2][1] = -0.5; b[2][2] =  0.5;
+    
+    TS_ASSERT(a.inverse());
 
+    assert_equal(a,b);
+  }
+  
+  void test_identity( void )
+  {
+    Matrix a, b;
+    b.set_sizes(3,3);
+    
+    b[0][0] =  1.0; b[0][1] =  0.0; b[0][2] =  0.0;
+    b[1][0] =  0.0; b[1][1] =  1.0; b[1][2] =  0.0;
+    b[2][0] =  0.0; b[2][1] =  0.0; b[2][2] =  1.0;
+    
+    TS_ASSERT(a.identity(3));
+
+    assert_equal(a,b);
+  }
 private:
   void set_fixture(Matrix& m)
   {

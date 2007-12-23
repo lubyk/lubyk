@@ -274,7 +274,7 @@ public:
   bool mat_multiply(const TMatrix& A, const TMatrix& B, const enum CBLAS_TRANSPOSE pTransA = CblasNoTrans, const enum CBLAS_TRANSPOSE pTransB = CblasNoTrans, double pScale = 1.0);
   
   
-  /** Compute A'A for the given (row major) matrix. Return false on failure. */
+  /** Compute A'A for the given (row major) matrix. Return false on failure. Write C.symmetric(A) for C = A'A. */
   bool symmetric(const TMatrix& A);
 
   /** Set the matrix to the eigenvectors of a symmetric (row major) matrix. Return false on failure.
@@ -283,6 +283,23 @@ public:
     */
   bool eigenvectors(TMatrix& pEigenValues, TMatrix& pMatrix);
   
+  
+  /** Compute in-place inverse of a square matrix.
+    * @eturn false on failure.
+    */
+  bool inverse();
+  
+  /** Create an identity matrix of size 'n'.
+    * @param n size of identity matrix. */
+  bool identity(size_t pRowCount)
+  {
+    if (!set_sizes(pRowCount, pRowCount)) return false;
+    clear();
+    for(size_t i = 0; i < pRowCount; i++)
+      data[i * mColCount + i] = 1;
+    return true;
+  }
+
   /** Return a pointer to the first element in the row pointed to by 'pIndex'. 
     * You have to make sure pIndex is smaller the mRowCount. Ne verification is done here. */
   T * operator[] (size_t pIndex)
