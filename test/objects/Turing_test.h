@@ -17,10 +17,12 @@ public:
        1: y = 4
 
     goto    -   x   y
+       -:
        a:   0   1   1
        b:   1   -   -
 
     send    -   x   y
+       -:
        a:   /  15  53
        b:   /   -   -
 
@@ -28,7 +30,7 @@ public:
   
   void test_compile( void ) 
   { assert_result("n=Turing(\"x = 10\ny=4\na  x:15 -> b\na y:53 -> b\nb  ----> b\")\nn.tables\n",
-                  "#<Turing:n 2, 2>\ntokens\n   1: x = 10\n   2: y = 4\n\ngoto    -   x   y\n   a:   0   1   1\n   b:   1   -   -\n\nsend    -   x   y\n   a:   /  15  53\n   b:   /   -   -\n\nmethods\n"); }
+                  "#<Turing:n 2, 2>\ntokens\n   1: x = 10\n   2: y = 4\n\ngoto    -   x   y\n   -:            \n   a:   1   2   2\n   b:   2   -   -\n\nsend    -   x   y\n   -:            \n   a:   /  15  53\n   b:   /   -   -\n\nmethods\n"); }
   
   /*
 
@@ -41,17 +43,19 @@ public:
       1 : 4
 
     goto    -  10   4
+       -:
        a:   0   1   1
        b:   1   -   -
 
     send    -  10   4
+       -:
        a:   /  15  53
        b:   /   -   -
     
   */
   void test_compile_val_tokens( void )
   { assert_result("n=Turing(\"a  10:15 -> b\na 4:53 -> b\nb  ----> b\")\nn.tables\n",
-                  "#<Turing:n 2, 2>\ntokens\n   1: 10\n   2: 4\n\ngoto    -  10   4\n   a:   0   1   1\n   b:   1   -   -\n\nsend    -  10   4\n   a:   /  15  53\n   b:   /   -   -\n\nmethods\n"); }
+                  "#<Turing:n 2, 2>\ntokens\n   1: 10\n   2: 4\n\ngoto    -  10   4\n   -:            \n   a:   1   2   2\n   b:   2   -   -\n\nsend    -  10   4\n   -:            \n   a:   /  15  53\n   b:   /   -   -\n\nmethods\n"); }
  /*
     x = 10
     y = 4 #this is a comment
@@ -70,10 +74,12 @@ public:
        1: y = 4
 
     goto    -   x   y
+       -:
        a:   0   1   1
        b:   1   -   -
 
     send    -   x   y
+       -:
        a:   /  15  53
        b:   /   -   -
 
@@ -81,7 +87,7 @@ public:
   
   void test_comment( void ) 
   { assert_result("n=Turing(\"x = 10\ny=4 # this is a comment\n\na  x:15 -> b\n\n\n=begin\nmulti line\ncomment\n\n=end\na y:53 -> b\nb  ----> b\")\nn.tables\n",
-                  "#<Turing:n 2, 2>\ntokens\n   1: x = 10\n   2: y = 4\n\ngoto    -   x   y\n   a:   0   1   1\n   b:   1   -   -\n\nsend    -   x   y\n   a:   /  15  53\n   b:   /   -   -\n\nmethods\n"); }
+                  "#<Turing:n 2, 2>\ntokens\n   1: x = 10\n   2: y = 4\n\ngoto    -   x   y\n   -:            \n   a:   1   2   2\n   b:   2   -   -\n\nsend    -   x   y\n   -:            \n   a:   /  15  53\n   b:   /   -   -\n\nmethods\n"); }
   /*    
     x = 10
     y = 20
@@ -118,10 +124,12 @@ public:
        1: y = 4
 
     goto    -   x   y
+       -:
        a:   0   1   1
        b:   1   -   -
 
     send    -   x   y
+       -:
        a:   / (1) (2)
        b:   /   -   -
     
@@ -133,7 +141,7 @@ public:
   void test_lua_calls( void )
   {
     assert_result("n=Turing(\"x = 10\ny=4\n\na  x:bip(1) -> b\na y:send(1,{1,2,3}) -> b\nb  ----> b\n\n=begin lua\nfunction bip(v)\nprint('lua',v)\nend\n=end\n\")\nn.tables\n",
-                    "#<Turing:n 2, 2>\ntokens\n   1: x = 10\n   2: y = 4\n\ngoto    -   x   y\n   a:   0   1   1\n   b:   1   -   -\n\nsend    -   x   y\n   a:   / (1) (2)\n   b:   /   -   -\n\nmethods\n   1: bip(1)\n   2: send(1,{1,2,3})\n");
+                    "#<Turing:n 2, 2>\ntokens\n   1: x = 10\n   2: y = 4\n\ngoto    -   x   y\n   -:            \n   a:   1   2   2\n   b:   2   -   -\n\nsend    -   x   y\n   -:            \n   a:   / (1) (2)\n   b:   /   -   -\n\nmethods\n   1: bip(1)\n   2: send(1,{1,2,3})\n");
   }
   
   void test_lua_run( void )
@@ -146,11 +154,61 @@ public:
   
   void test_lua_raw( void )
   {
-    setup_with_print("n=Turing(\"x = 10\ny=4\n\na  x:{n = n or 0; n = n + 1; send(1,n)} -> b\na y:send(1,{1,2,3}) -> b\nb  ----> a\n\n=begin lua\nfunction bip(v)\nsend(1,1)\nend\n=end\n\")\nn.tables\n");
+    setup_with_print("n=Turing(\"x = 10\ny=4\n\na  x:{n = n or 0; n = n + 1; send(1,n)} -> b\na y:send(1,{1,2,3}) -> b\nb  ----> a\n\n=begin lua\nfunction bip(v)\nsend(1,1)\nend\n=end\n\")\n");
     assert_print("n.b(10)\n", "1.00\n"); // a  x:bip(1) -> b
     assert_print("n.b(4)\n", ""); // b --> a
     assert_print("n.b(10)\n", "2.00\n"); // a  x:bip(1) -> b
     assert_print("n.b(4)\n", ""); // b --> a
     assert_print("n.b(10)\n", "3.00\n"); // a  x:bip(1) -> b
+  }
+  
+  /*
+    x = 10
+    y = 4
+    
+    . y:33 -> a  # default action for token 'x'
+    a  x:15 -> b
+    a  y:53 -> b
+    b  ----> b
+    
+    tokens
+       0: x = 10
+       1: y = 4
+
+    goto    -   x   y
+       -:       0
+       a:   0   1   1
+       b:   1   |   -
+
+    send    -   x   y
+       -:      33
+       a:   /  15  53
+       b:   /   |   -
+
+  */
+  
+  void test_default_token_action( void ) 
+  { assert_result("n=Turing(\"x = 10\ny=4\n. y:33 -> a\na  x:15 -> b\na y:53 -> b\nb  ----> b\")\nn.tables\n",
+                  "#<Turing:n 2, 2>\ntokens\n   1: y = 4\n   2: x = 10\n\ngoto    -   y   x\n   -:       1    \n   a:   1   2   2\n   b:   2   |   -\n\nsend    -   y   x\n   -:      33    \n   a:   /  53  15\n   b:   /   |   -\n\nmethods\n"); }
+  
+  
+  void test_default_token_sequence( void )
+  {
+    setup_with_print("n=Turing(\"x = 10\ny=4\n. y:33 -> a\na  x:15 -> b\na y:53 -> b\nb  ----> b\")\nn.tables\n");
+    assert_print("n.b(13)\n", ""); // a  ---> a
+    assert_print("n.b(4)\n", "53\n");  // a y:53 -> b
+    assert_print("n.b(10)\n", ""); // b ---> b
+    assert_print("n.b(4)\n", "33\n"); // . y:33 --> a
+    assert_print("n.b(10)\n", "15\n");  // a x:15 -> b
+  }
+  
+  void test_default_send( void )
+  {
+    setup_with_print("n=Turing(\"x = 10\ny=4\na :33->b\na  x:15 -> b\na y:53 -> b\nb---->a\")\nn.tables\n");
+    assert_print("n.b(13)\n", "33\n"); // a  :33 --> b
+    assert_print("n.b(13)\n", "");     // b  --> a
+    assert_print("n.b(4)\n", "53\n");  // a y:53 -> b
+    assert_print("n.b(10)\n", "");     // b ---> a
+    assert_print("n.b(10)\n", "15\n"); // a x:15 --> b
   }
 };
