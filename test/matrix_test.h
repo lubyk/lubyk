@@ -602,19 +602,20 @@ public:
     TS_ASSERT_EQUALS(m4.row_count(), 0);
     TS_ASSERT_EQUALS(m4.col_count(), 0);
     
-    FILE * file = fopen("matrix__test_tmp.txt", "wb");
+    FILE * file = fopen("matrix_test_tmp.txt", "wb");
       m1.to_file(file);
       m3.to_file(file);
     fclose(file);
     
-    file = fopen("matrix__test_tmp.txt", "rb");
+    file = fopen("matrix_test_tmp.txt", "rb");
       m2.from_file(file);
       m4.from_file(file);
     fclose(file);
     
     assert_equal(m2, m1);
     assert_equal(m4, m3);
-    //remove("matrix__test_tmp.txt");
+    
+	remove("matrix_test_tmp.txt");
   }
 
   void test_mat_multiply( void )
