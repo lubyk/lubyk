@@ -1,3 +1,0 @@
-c = Cabox(port:"/dev/tty.HOME001-GenericSerial-1" bauds:115200)
-c => b
-b = Buffer()

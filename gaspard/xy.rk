@@ -1,8 +1,0 @@
-c = Cabox(port:"/dev/tty.HOME001-GenericSerial-1" bauds:115200)
-c => buf
-buf = Buffer(240) # 12 x 20
-buf => avg
-avg = Average(vector:12)
-avg => plot
-c => 2.plot
-plot=Plot(mode:"xy" mode2:"xy")

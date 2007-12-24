@@ -1,9 +1,0 @@
-c = Cabox(port:"/dev/tty.HOME001-GenericSerial-1" bauds:115200)
-c => b
-b = Buffer(768)
-b => crop2
-f = FFT(unit:12 size:64)
-f => crop2
-crop2 = Crop(384)
-crop2 => plot
-plot=Plot(line:4 group:3)
