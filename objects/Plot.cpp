@@ -112,7 +112,7 @@ private:
     double width_ratio;
     double height_ratio = (double)mWindow.height / (2.0 * mLineCount[param_index] * mMaxAmplitude[param_index]); // values : [-1,1]
     double y_offset;
-    double col_ratio = 1.0 / mGroupSize[param_index];
+    //double col_ratio = 1.0 / mGroupSize[param_index];
     
     if (value_count > 1)
         width_ratio = (double)mWindow.width  / (value_count - 1);
@@ -137,7 +137,8 @@ private:
         g_offset = g * value_count;
         
         // element in group
-        glColor4f(col_ratio * (g % mGroupSize[param_index]),col_ratio * ((g+1) % mGroupSize[param_index]),col_ratio * ((g+2) % mGroupSize[param_index]),pAlpha);
+        //glColor4f(col_ratio * (g % mGroupSize[param_index]),col_ratio * ((g+1) % mGroupSize[param_index]),col_ratio * ((g+2) % mGroupSize[param_index]),pAlpha);
+        set_color_from_int(g % mGroupSize[param_index], pAlpha);
         
         glBegin(GL_LINE_STRIP);
           for(size_t i=0; i < value_count; i++) {
@@ -179,9 +180,10 @@ private:
       // 1 0 0 : 1  2  0 1 0
       // 0 0 1 : 2  3  0 1 1
       
-      glColor4f((int)((l+1)/2) % 4,(int)(l+1) % 2,(int)(l+1)/4,pAlpha);
-      //glColor4f(1.0,1.0,1.0,1.0);
-      //glColor4f(0.0,1.0,0.0, pAlpha);
+      // build color from integer
+      set_color_from_int(l, pAlpha);
+      
+      //glColor4f((int)((l+1)/2) % 4,(int)(l+1) % 2,(int)(l+1)/4,pAlpha);
 
       if (value_count > 0) {
         glBegin(GL_POINTS);
@@ -243,6 +245,16 @@ private:
       *pMode = DotsPlot;
     else
       *pMode = TimePlot;
+  }
+  
+  /*** Set RGB colors from an integer. */
+  inline void set_color_from_int(int pId, double pAlpha)
+  {
+    uint col_id = hashId((uint)pId); // hashId defined in Hash template
+    glColor4f(0.2 + 0.8 * (col_id % 100) / 100.0, // red color
+              0.2 + 0.8 * (col_id % 60)  / 60.0,  // green color
+              0.2 + 0.8 * (col_id % 20)  / 20.0,  // blue color
+              pAlpha);
   }
   
   plot_type_t    mMode[PLOT_INLET_COUNT];       /**< Plot mode (XYPlot, TimePlot) each pair as an XY point instead of x(t). */

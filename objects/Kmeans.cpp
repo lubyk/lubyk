@@ -55,11 +55,15 @@ public:
       }
       mView.set_data(live->data); // flatten matrix to vector (FIXME: do not know if this is useful, maybe we should just break if the input is not a vector)
       if (get_label(mView)) {
-        label_vector_from(mView);
+        label_vector_from(mView, mLabel);
         send(4, mFullTrainingData);
         send(3, mLabelVector); // input value with current color from label
         send(2, mDistance);
         send(mLabel);
+      } else {
+        label_vector_from(mView, -1); // out of distance threshold
+        send(4, mFullTrainingData);
+        send(3, mLabelVector);
       }
     }
   }
@@ -96,10 +100,7 @@ private:
         mWork1.copy(live);
         mWork1.subtract(mCodeBook, i, i); // remove mean value
         mWork2.mat_multiply(mWork1, *mICov[i]); // w2 = w1 * C^{-1}
-        std::cout << "work2\n";
-        mWork2.print();
         mWork3.mat_multiply(mWork2, mWork1, CblasNoTrans, CblasTrans); // w3 = w2 * w1'
-        mWork3.print();
         d = mWork3.data[0] / col_count;
       }
       mDistances.data[i] = d;
@@ -206,15 +207,22 @@ private:
         mMeanValue /= (double)mVectorCount;
         
         TRY(mCodeBook, append(mMeanValue));
-        // compute C-1
-        // 1. remove mean value
-        TRY(mTrainingSet, subtract(mMeanValue));
         
-        // 2. compute S'S
         Matrix * tmp = new Matrix;
-        TRY((*tmp), symmetric(mTrainingSet)); // tmp = S'S
-        // 3. find inverse of covariance matrix tmp
-        if (!tmp->inverse()) {
+        if (mTrainingSet.row_count() > 1) {
+          // compute C-1
+          // 1. remove mean value
+          TRY(mTrainingSet, subtract(mMeanValue));
+        
+          // 2. compute S'S
+          TRY((*tmp), symmetric(mTrainingSet)); // tmp = S'S
+          *tmp /= (mTrainingSet.row_count() - 1);
+          // 3. find inverse of covariance matrix tmp
+          if (!tmp->inverse()) {
+            *mOutput << mName << ": warning. Not enough training data (" << mVectorCount << ") to build covariance matrix for class '" << pFilename << "'. Using identity matix.\n";
+            TRY((*tmp), identity(tmp->col_count()));
+          }
+        } else {
           *mOutput << mName << ": warning. Not enough training data (" << mVectorCount << ") to build covariance matrix for class '" << pFilename << "'. Using identity matix.\n";
           TRY((*tmp), identity(tmp->col_count()));
         }
@@ -244,7 +252,7 @@ private:
       if (!get_label_from_filename(&mLabel, pFilename)) return false;
       return true;
     }
-    label_vector_from(*vector);
+    label_vector_from(*vector, mLabel);
     TRY(mFullTrainingData, append(mLabelVector));
     return true;
   }
@@ -261,13 +269,20 @@ private:
     bprint(mSpy, mSpySize,"%ix%i", mCodeBook.row_count(), mCodeBook.col_count());  
   }
   
-  inline void label_vector_from(const Matrix& pMat)
+  inline void label_vector_from(const Matrix& pMat, int pLabel)
   {
-    uint col_id = hashId((uint)mLabel); // hashId defined in Hash template
-    mLabelVector.data[0] = (col_id % 100) / 100.0; // red color
-    mLabelVector.data[1] = (col_id % 60)  / 60.0;  // green color
-    mLabelVector.data[2] = (col_id % 20)  / 20.0;  // blue color
-  
+    if (pLabel < 0) {
+      // grey (no class)
+      mLabelVector.data[0] = 0.5;
+      mLabelVector.data[1] = 0.5;
+      mLabelVector.data[2] = 0.5;
+    } else {
+      uint col_id = hashId((uint)mLabel); // hashId defined in Hash template
+      mLabelVector.data[0] = 0.2 + 0.8 * (col_id % 100) / 100.0; // red color
+      mLabelVector.data[1] = 0.2 + 0.8 * (col_id % 60)  / 60.0;  // green color
+      mLabelVector.data[2] = 0.2 + 0.8 * (col_id % 20)  / 20.0;  // blue color
+    }
+    
     for(size_t i=0; i < pMat.size(); i++)
       mLabelVector.data[3+i] = pMat.data[i];
   }
