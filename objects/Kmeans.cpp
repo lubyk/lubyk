@@ -55,6 +55,9 @@ public:
       }
       mView.set_data(live->data); // flatten matrix to vector (FIXME: do not know if this is useful, maybe we should just break if the input is not a vector)
       if (get_label(mView)) {
+        label_vector_from(mView);
+        send(4, mFullTrainingData);
+        send(3, mLabelVector); // input value with current color from label
         send(2, mDistance);
         send(mLabel);
       }
@@ -64,6 +67,12 @@ public:
   void probabilities()
   {
     *mOutput << mDistances << std::endl;
+  }
+  
+  /**< Send out training data points. */
+  void plot()
+  {
+    send(4, mFullTrainingData);
   }
 private:
   
@@ -87,7 +96,10 @@ private:
         mWork1.copy(live);
         mWork1.subtract(mCodeBook, i, i); // remove mean value
         mWork2.mat_multiply(mWork1, *mICov[i]); // w2 = w1 * C^{-1}
+        std::cout << "work2\n";
+        mWork2.print();
         mWork3.mat_multiply(mWork2, mWork1, CblasNoTrans, CblasTrans); // w3 = w2 * w1'
+        mWork3.print();
         d = mWork3.data[0] / col_count;
       }
       mDistances.data[i] = d;
@@ -140,6 +152,15 @@ private:
     TRY(mWork2, set_sizes(1, mCodeBook.col_count()));
     TRY(mWork3, set_sizes(1, 1));
     TRY(mView, set_sizes(1, mCodeBook.col_count()));
+    
+    
+    TRY(mLabelVector, set_sizes(1, mCodeBook.col_count() + 3));
+    TRY(mFullTrainingData, set_sizes(0, mCodeBook.col_count() + 3));
+    
+    if(!FOREACH_TRAIN_CLASS(Kmeans, load_training_samples)) {
+      *mOutput << mName << ": could not load training data (to plot points).\n";
+    }
+    
     return true;
     
     load_model_failed:
@@ -155,7 +176,7 @@ private:
     TRY(mLabels,   set_sizes(1,0));
     
     mVectorCount = 0;
-    if(!FOREACH_TRAIN_CLASS(Kmeans, load_training_sample)) {
+    if(!FOREACH_TRAIN_CLASS(Kmeans, train_from_samples)) {
       *mOutput << mName << ": could not build model.\n";
       return false;
     }
@@ -171,7 +192,7 @@ private:
     return true;
   }
   
-  bool load_training_sample(const std::string& pFilename, Matrix * vector)
+  bool train_from_samples(const std::string& pFilename, Matrix * vector)
   {
     if (vector == NULL) {
       // class initialize // finished
@@ -197,6 +218,7 @@ private:
           *mOutput << mName << ": warning. Not enough training data (" << mVectorCount << ") to build covariance matrix for class '" << pFilename << "'. Using identity matix.\n";
           TRY((*tmp), identity(tmp->col_count()));
         }
+        //
         mICov.push_back(tmp);
         
         if (pFilename != "")
@@ -215,6 +237,18 @@ private:
     return true;
   }
   
+  bool load_training_samples(const std::string& pFilename, Matrix * vector)
+  {
+    if (vector == NULL) {
+      // class initialize // finished
+      if (!get_label_from_filename(&mLabel, pFilename)) return false;
+      return true;
+    }
+    label_vector_from(*vector);
+    TRY(mFullTrainingData, append(mLabelVector));
+    return true;
+  }
+  
   void clear_icov()
   {
     for (size_t i = 0; i < mICov.size(); i++)
@@ -225,6 +259,17 @@ private:
   virtual void spy()
   { 
     bprint(mSpy, mSpySize,"%ix%i", mCodeBook.row_count(), mCodeBook.col_count());  
+  }
+  
+  inline void label_vector_from(const Matrix& pMat)
+  {
+    uint col_id = hashId((uint)mLabel); // hashId defined in Hash template
+    mLabelVector.data[0] = (col_id % 100) / 100.0; // red color
+    mLabelVector.data[1] = (col_id % 60)  / 60.0;  // green color
+    mLabelVector.data[2] = (col_id % 20)  / 20.0;  // blue color
+  
+    for(size_t i=0; i < pMat.size(); i++)
+      mLabelVector.data[3+i] = pMat.data[i];
   }
   
   kmeans_distance_types_t mDistanceType; /**< Kind of distance calculation. Default is Euclidean. */
@@ -239,7 +284,9 @@ private:
   Matrix mCodeBook;  /**< List of prototypes (one row per class). */
   std::vector<Matrix*> mICov; /**< List of inverses of the covariance matrices (one per class) used to compute Mahalanobis distance. */
   Matrix mTrainingSet;   /**< Used during 'learn'. Contains all the training data for one class. */
+  Matrix mFullTrainingData; /**< First 3 columns = color from label. */
   Matrix mWork1, mWork2, mWork3; /**< Temporary matrices used to compute Mahalanobis distance. */
+  Matrix mLabelVector;   /**< Input vector with color from current label. */
   CutMatrix mView;       /**< Flat view of the incomming matrix. */
 };
 
@@ -249,7 +296,10 @@ extern "C" void init()
   CLASS (Kmeans)
   OUTLET(Kmeans,label)
   OUTLET(Kmeans,probability)
+  OUTLET(Kmeans,label_vector)
+  OUTLET(Kmeans,plot)
   METHOD(Kmeans,probabilities)
+  METHOD(Kmeans,plot)
   SUPER_METHOD(Kmeans, TrainedMachine, learn)
   SUPER_METHOD(Kmeans, TrainedMachine, load)
 }

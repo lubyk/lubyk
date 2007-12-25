@@ -52,6 +52,7 @@ protected:
     glutInitWindowSize(mWindow.width, mWindow.height);
     mWindow.id = glutCreateWindow("Plot");
     
+    glEnable(GL_POINT_SMOOTH);
     glEnable(GL_BLEND); //Enable alpha blending
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //Set the blend function
     
