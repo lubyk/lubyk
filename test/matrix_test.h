@@ -773,6 +773,40 @@ public:
     assert_equal(a,b);
   }
   
+  void test_inverse_tiny_det( void )
+  {
+    Matrix a, b;
+    a.set_sizes(2,2);
+    b.set_sizes(2,2);
+    a[0][0] =  1.28; a[0][1] =  1.599999999;
+    a[1][0] =  1.6;  a[1][1] =  2.0;
+    
+    // abs(det) = abs(1.6e-9) > 1e-13 (MATRIX_MIN_DET)
+    TS_ASSERT(a.inverse());
+    
+    a[0][0] =  -1.28; a[0][1] =  -1.599999999999;
+    a[1][0] =  1.6;  a[1][1] =  2.0;
+    
+    // abs(det) = abs(-1.6e-12) > 1e-13 (MATRIX_MIN_DET)
+    TS_ASSERT(a.inverse());
+    
+    a[0][0] =  1.28; a[0][1] =  1.59999999999999;
+    a[1][0] =  1.6;  a[1][1] =  2.0;
+    
+    // abs(det) = abs(-1.6e-14) < 1e-13 (MATRIX_MIN_DET)
+    TS_ASSERT(!a.inverse());
+  }
+  
+  void test_inverse_null_det( void )
+  {
+    Matrix a;
+    a.set_sizes(2,2);
+    a[0][0] =  1.28; a[0][1] =  1.6;
+    a[1][0] =  1.6;  a[1][1] =  2.0;
+    
+    TS_ASSERT(!a.inverse());
+  }
+  
   void test_identity( void )
   {
     Matrix a, b;

@@ -4,8 +4,22 @@
 #include <Accelerate/Accelerate.h>
 #include <cstdlib> // fopen, etc.
 
+#define MATRIX_MIN_DET 1e-12 // minimal determinant to compute matrix inversion
+
 class CutMatrix;
 union Signal;
+
+
+// taken from Quake
+inline float fast_sqrt(const float val) {
+  float x = val;
+  float xhalf = 0.5f * x;
+  int i = *(int*)&x; // store floating-point bits in integer
+  i = 0x5f3759d5 - (i >> 1); // initial guess for Newton's method
+  x = *(float*)&i; // convert new bits into float
+  x = x*(1.5f - xhalf*x*x); // One round of Newton's method
+  return val * x;  // x = 1/sqrt(val)
+}
 
 template<typename T>
 class TMatrix

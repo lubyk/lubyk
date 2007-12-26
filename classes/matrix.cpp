@@ -899,6 +899,16 @@ bool TMatrix<double>::inverse()
   } else if (info > 0) {
     set_error("value %i,%i is zero. Cannot compute inverse.",info,info);
     return false;
+  } else {
+    // make sure determinant is greater then MATRIX_MIN_DET
+    double det = 1.0;
+    for (size_t i = 0; i < (size_t)M; i++) {
+      det *= data[i * N + i]; // diagonal entries of LU factors
+    }
+    if (det > -MATRIX_MIN_DET && det < MATRIX_MIN_DET) {
+      set_error("determinant is %.2e. Smaller then MATRIX_MIN_DET (%.1e). Cannot compute inverse.", det, MATRIX_MIN_DET);
+      return false;
+    }
   }
   // inverse
   long sz = (__CLPK_integer)size();

@@ -94,14 +94,14 @@ private:
       if (mDistanceType == EuclideanDistance) {
         for (size_t j = 0; j < col_count; j++)
           d += (mCodeBook.data[i * col_count + j] - live.data[j]) * (mCodeBook.data[i * col_count + j] - live.data[j]);
-        d /= col_count;
       } else {
-        // Mahalanobis distance d = V * C^{-1} * V'
-        mWork1.copy(live);
-        mWork1.subtract(mCodeBook, i, i); // remove mean value
-        mWork2.mat_multiply(mWork1, *mICov[i]); // w2 = w1 * C^{-1}
-        mWork3.mat_multiply(mWork2, mWork1, CblasNoTrans, CblasTrans); // w3 = w2 * w1'
-        d = mWork3.data[0] / col_count;
+        // Mahalanobis distance                                           % Octave source code
+        mWork1.copy(live); //                                             t  = live    
+        mWork1.subtract(mCodeBook, i, i); // remove mean value            tc = t - M
+        mWork2.mat_multiply(mWork1, *mICov[i]); //                        d  = tc * C
+        mWork3.mat_multiply(mWork2, mWork1, CblasNoTrans, CblasTrans); // d  = d * tc'
+        d = mWork3.data[0];               // square of distance
+        //d = fast_sqrt(mWork3.data[0]);  // real distance
       }
       mDistances.data[i] = d;
       total_distance    += d;
@@ -210,14 +210,17 @@ private:
         
         Matrix * tmp = new Matrix;
         if (mTrainingSet.row_count() > 1) {
-          // compute C-1
-          // 1. remove mean value
+          // compute C-1                                % Octave source code
+          //                                            [mx,nx] = size(X)
+          //                                            M = sum(X,1)/mx     % mean value
+          
+          // 1. remove mean value                       Xc = X - M(ones(mx,1),:)
           TRY(mTrainingSet, subtract(mMeanValue));
         
-          // 2. compute S'S
-          TRY((*tmp), symmetric(mTrainingSet)); // tmp = S'S
+          // 2. compute S'S                             C  = (Xc' * Xc) / (mx - 1)
+          TRY((*tmp), symmetric(mTrainingSet));
           *tmp /= (mTrainingSet.row_count() - 1);
-          // 3. find inverse of covariance matrix tmp
+          // 3. find inverse of covariance matrix tmp   C = inv(C)
           if (!tmp->inverse()) {
             *mOutput << mName << ": warning. Not enough training data (" << mVectorCount << ") to build covariance matrix for class '" << pFilename << "'. Using identity matix.\n";
             TRY((*tmp), identity(tmp->col_count()));
