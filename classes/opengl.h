@@ -59,7 +59,7 @@ protected:
     // current window is mWin
     glClearColor(0.2,0.2,0.2,1.0);
     gluOrtho2D(0,mWindow.width,0,mWindow.height);
-    glutDisplayFunc(&OpenGL::cast_draw); // use templates...
+    glutDisplayFunc(&OpenGL::cast_draw);
 
     NEW_THREAD(OpenGL,start_loop);
 

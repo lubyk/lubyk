@@ -4,7 +4,7 @@
 #include <Accelerate/Accelerate.h>
 #include <cstdlib> // fopen, etc.
 
-#define MATRIX_MIN_DET 1e-12 // minimal determinant to compute matrix inversion
+#define MATRIX_MIN_DET 1e-10 // minimal determinant to compute matrix inversion
 
 class CutMatrix;
 union Signal;

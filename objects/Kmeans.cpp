@@ -105,7 +105,9 @@ private:
       }
       mDistances.data[i] = d;
       total_distance    += d;
-      if (d < closest_distance) {
+      if (d < 0) {
+        *mOutput << mName << ": error, corrupt covariance matrix for label '" << (char)mLabels.data[i] << "' (negative distance).\n";
+      } else if (d < closest_distance) {
         closest_id = i;
         closest_distance = d;
       }
