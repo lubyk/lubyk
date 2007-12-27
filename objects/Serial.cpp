@@ -61,7 +61,7 @@ public:
     int c;
     if (mLua) {
       // return value from 'update'
-      call_lua("bang");
+      call_lua(&mS, "bang");
     } else {
       if (mPort.read_char(&c)) {
         send((int)c);

@@ -194,14 +194,22 @@ public:
     
     if (sig.get(&i)) {
       mRealToken = i;
-      mToken = mTokenTable[ i % 256 ]; // translate token in the current machine values.
+      mToken = mTokenTable[ mRealToken % 256 ]; // translate token in the current machine values.
     }
     
     reload_script();
     if (!mScriptOK) return;
     
+    set_lua_global("in1", sig);
+    call_lua(&mS, "bang");
+    if (!mS.type) return; // bang returned nil, abort
+    else if (mS.type != BangSignal) {
+      if (mS.get(&mRealToken)) // use token from returned value
+        mToken = mTokenTable[ mRealToken % 256 ]; // translate token in the current machine values.
+    }
+    
     if (mDebug) *mOutput << "{" << mState << "} -" << mRealToken << "->";
-      
+    
     if ( !(mSend = mSendTable[mState][mToken]) ) {
       if ( (mSend = mSendTable[0][mToken]) )
         ; // ok use token default send
@@ -235,7 +243,24 @@ public:
     } else
       send(mSend->mValue);
   }
-
+  
+  // inlet 2
+  void input2(const Signal& sig)
+  { 
+    set_lua_global("in2", sig);
+  }
+  
+  // inlet 3
+  void input3(const Signal& sig)
+  { 
+    set_lua_global("in3", sig);
+  }
+  
+  // inlet 4
+  void input4(const Signal& sig)
+  { 
+    set_lua_global("in4", sig);
+  }
 
   bool eval_script(const std::string& pScript) 
   {
@@ -259,7 +284,7 @@ public:
     
     // integrated lua script
     const char * begin_lua_script = NULL;
-    mLuaScript = "";
+    mLuaScript = "function bang() return in1 end\n\n";
     
     
     // function call id, params
@@ -287,14 +312,14 @@ public:
     clear_tables();
     
     
-#line 291 "objects/Turing.cpp"
+#line 316 "objects/Turing.cpp"
 	{
 	cs = turing_start;
 	}
-#line 148 "objects/Turing.rl"
+#line 173 "objects/Turing.rl"
     
   
-#line 298 "objects/Turing.cpp"
+#line 323 "objects/Turing.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -369,7 +394,7 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 150 "objects/Turing.rl"
+#line 175 "objects/Turing.rl"
 	{
       if (name_index >= MAX_NAME_SIZE) {
         *mOutput << "Name buffer overflow !\n";
@@ -383,7 +408,7 @@ _match:
     }
 	break;
 	case 1:
-#line 162 "objects/Turing.rl"
+#line 187 "objects/Turing.rl"
 	{
       name[name_index] = '\0';
       identifier = name;
@@ -394,7 +419,7 @@ _match:
     }
 	break;
 	case 2:
-#line 171 "objects/Turing.rl"
+#line 196 "objects/Turing.rl"
 	{
       name[name_index] = '\0';
       name_index = 0;
@@ -406,7 +431,7 @@ _match:
     }
 	break;
 	case 3:
-#line 181 "objects/Turing.rl"
+#line 206 "objects/Turing.rl"
 	{
       name[name_index] = '\0';
       name_index = 0;
@@ -418,7 +443,7 @@ _match:
     }
 	break;
 	case 4:
-#line 191 "objects/Turing.rl"
+#line 216 "objects/Turing.rl"
 	{
       source = identifier;
       #ifdef DEBUG_PARSER
@@ -427,7 +452,7 @@ _match:
     }
 	break;
 	case 5:
-#line 198 "objects/Turing.rl"
+#line 223 "objects/Turing.rl"
 	{ 
       target = identifier;
       #ifdef DEBUG_PARSER
@@ -440,7 +465,7 @@ _match:
     }
 	break;
 	case 6:
-#line 209 "objects/Turing.rl"
+#line 234 "objects/Turing.rl"
 	{ 
       if (!mTokenByName.get(&tok, std::string(name))) {
         *mOutput << "Syntax error. Unknown token '" << name << "' (missing declaration)\n";
@@ -449,7 +474,7 @@ _match:
     }
 	break;
 	case 7:
-#line 216 "objects/Turing.rl"
+#line 241 "objects/Turing.rl"
 	{ 
       name[name_index] = '\0';
       name_index = 0;
@@ -460,7 +485,7 @@ _match:
     }
 	break;
 	case 8:
-#line 226 "objects/Turing.rl"
+#line 251 "objects/Turing.rl"
 	{
       mTokenByName.set(identifier, tok);
       mTokenNameByValue.set(tok, identifier);
@@ -470,7 +495,7 @@ _match:
     }
 	break;
 	case 9:
-#line 234 "objects/Turing.rl"
+#line 259 "objects/Turing.rl"
 	{
       // do we know this token ?
       if (!mTokenTable[tok % 256]) {
@@ -508,7 +533,7 @@ _match:
     }
 	break;
 	case 10:
-#line 270 "objects/Turing.rl"
+#line 295 "objects/Turing.rl"
 	{
       // write the entry
       #ifdef DEBUG_PARSER
@@ -528,7 +553,7 @@ _match:
     }
 	break;
 	case 11:
-#line 288 "objects/Turing.rl"
+#line 313 "objects/Turing.rl"
 	{
       p--; // move back one char
       char error_buffer[10];
@@ -538,29 +563,29 @@ _match:
     }
 	break;
 	case 12:
-#line 301 "objects/Turing.rl"
+#line 326 "objects/Turing.rl"
 	{ {cs = 37; goto _again;} }
 	break;
 	case 13:
-#line 302 "objects/Turing.rl"
+#line 327 "objects/Turing.rl"
 	{ {cs = 1; goto _again;} }
 	break;
 	case 14:
-#line 304 "objects/Turing.rl"
+#line 329 "objects/Turing.rl"
 	{
       begin_lua_script = p;
       {cs = 43; goto _again;} 
     }
 	break;
 	case 15:
-#line 308 "objects/Turing.rl"
+#line 333 "objects/Turing.rl"
 	{
       mLuaScript.append( begin_lua_script, p - begin_lua_script - 4 );
       begin_lua_script = NULL;
       {cs = 1; goto _again;} 
     }
 	break;
-#line 564 "objects/Turing.cpp"
+#line 589 "objects/Turing.cpp"
 		}
 	}
 
@@ -572,8 +597,8 @@ _again:
 	_out: {}
 	}
 
-#line 576 "objects/Turing.cpp"
-#line 345 "objects/Turing.rl"
+#line 601 "objects/Turing.cpp"
+#line 370 "objects/Turing.rl"
 
   // token_default %add_token_default |
     if (begin_lua_script) {
@@ -887,7 +912,13 @@ private:
 extern "C" void init()
 {
   CLASS (Turing)
+  INLET (Turing, input2)
+  INLET (Turing, input3)
+  INLET (Turing, input4)
   OUTLET(Turing, output)
+  OUTLET(Turing, output2)
+  OUTLET(Turing, output3)
+  OUTLET(Turing, output4)
   METHOD(Turing, tables)
   METHOD(Turing, dot)
   SUPER_METHOD(Turing, Script, load)

@@ -162,6 +162,14 @@ public:
     assert_print("n.b(10)\n", "3.00\n"); // a  x:bip(1) -> b
   }
   
+  void test_lua_bang( void )
+  {
+    setup_with_print("n=Turing(\"x = 10\ny=4\n\na  x:bip(1) -> b\na y:send(1,{1,2,3}) -> b\nb  ----> a\n\n=begin lua\nfunction bip(v)\nsend(1,1)\nend\nfunction bang()\nif(in1 == 100) then\nreturn 10\nelse\nreturn in1\nend\nend\n=end\n\")\n");
+    assert_print("n.b(100)\n", "1.00\n"); // a  x:bip(1) -> b
+    assert_print("n.b(4)\n", ""); // b --> a
+    assert_print("n.b(4)\n", "<Matrix [  1.00  2.00  3.00 ], 1x3>\n"); // a y:send(1,{1,2,3}) -> b
+  }
+  
   /*
     x = 10
     y = 4

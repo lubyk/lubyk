@@ -19,7 +19,7 @@ public:
   
   bool set_lua (const Params& p);
   
-  void call_lua (const char * pFunctionName);
+  void call_lua (Signal * sig, const char * pFunctionName);
   
   bool eval_script (const std::string& pScript);
   
@@ -71,7 +71,10 @@ public:
   
   /** Get a matrix pointer from lua. */
   static bool matrix_from_lua (lua_State *L, Matrix ** pMat, int pIndex);
-
+  
+  
+  void set_lua_global(const char * key, const Signal& sig);
+  
 private:
   static const luaL_reg sMatrix_methods[];
   static const luaL_reg sMatrix_meta[];

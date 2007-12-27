@@ -52,14 +52,22 @@ public:
     
     if (sig.get(&i)) {
       mRealToken = i;
-      mToken = mTokenTable[ i % 256 ]; // translate token in the current machine values.
+      mToken = mTokenTable[ mRealToken % 256 ]; // translate token in the current machine values.
     }
     
     reload_script();
     if (!mScriptOK) return;
     
+    set_lua_global("in1", sig);
+    call_lua(&mS, "bang");
+    if (!mS.type) return; // bang returned nil, abort
+    else if (mS.type != BangSignal) {
+      if (mS.get(&mRealToken)) // use token from returned value
+        mToken = mTokenTable[ mRealToken % 256 ]; // translate token in the current machine values.
+    }
+    
     if (mDebug) *mOutput << "{" << mState << "} -" << mRealToken << "->";
-      
+    
     if ( !(mSend = mSendTable[mState][mToken]) ) {
       if ( (mSend = mSendTable[0][mToken]) )
         ; // ok use token default send
@@ -93,7 +101,24 @@ public:
     } else
       send(mSend->mValue);
   }
-
+  
+  // inlet 2
+  void input2(const Signal& sig)
+  { 
+    set_lua_global("in2", sig);
+  }
+  
+  // inlet 3
+  void input3(const Signal& sig)
+  { 
+    set_lua_global("in3", sig);
+  }
+  
+  // inlet 4
+  void input4(const Signal& sig)
+  { 
+    set_lua_global("in4", sig);
+  }
 
   bool eval_script(const std::string& pScript) 
   {
@@ -117,7 +142,7 @@ public:
     
     // integrated lua script
     const char * begin_lua_script = NULL;
-    mLuaScript = "";
+    mLuaScript = "function bang() return in1 end\n\n";
     
     
     // function call id, params
@@ -655,7 +680,13 @@ private:
 extern "C" void init()
 {
   CLASS (Turing)
+  INLET (Turing, input2)
+  INLET (Turing, input3)
+  INLET (Turing, input4)
   OUTLET(Turing, output)
+  OUTLET(Turing, output2)
+  OUTLET(Turing, output3)
+  OUTLET(Turing, output4)
   METHOD(Turing, tables)
   METHOD(Turing, dot)
   SUPER_METHOD(Turing, Script, load)

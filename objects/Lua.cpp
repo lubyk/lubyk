@@ -13,7 +13,8 @@ public:
   void bang(const Signal& sig)
   {
     set_lua_global("in1", sig);
-    call_lua("bang");
+    call_lua(&mS, "bang");
+    if (mS.type) send(mS);
   }
   
   // inlet 2
@@ -34,20 +35,6 @@ public:
     set_lua_global("in4", sig);
   }
   
-  void set_lua_global(const char * key, const Signal& sig)
-  {
-    double d;
-    const Matrix * live;
-    if (sig.get(&live)) {
-      lua_pushmatrix(*live);
-      lua_setglobal(mLua, key);
-    } else if (sig.get(&d)) {
-      lua_pushnumber(mLua, d);
-      lua_setglobal(mLua, key);
-    } else if (sig.type && sig.type != BangSignal) {
-      *mOutput << mName << ": cannot set '" << key << "' to " << sig << " (type not yet suported in Lua).\n";
-    }
-  }
 };
 
 extern "C" void init()

@@ -19,10 +19,9 @@ bool LuaScript::set_lua (const Params& p)
   return set_script(p);
 }
 
-void LuaScript::call_lua(const char * pFunctionName)
+void LuaScript::call_lua(Signal * sig, const char * pFunctionName)
 {
   int status;
-  Signal sig;
   
   reload_script();
   
@@ -39,8 +38,7 @@ void LuaScript::call_lua(const char * pFunctionName)
     mScriptOK = false;
     return;
   }
-  sig_from_lua(&sig);
-  if (sig.type) send(sig);
+  sig_from_lua(sig);
 }
 
 
@@ -286,6 +284,21 @@ bool LuaScript::matrix_from_lua (lua_State *L, Matrix ** pMat, int pIndex)
     }
     *pMat = mat;
     return true;
+  }
+}
+
+void LuaScript::set_lua_global (const char * key, const Signal& sig)
+{
+  double d;
+  const Matrix * live;
+  if (sig.get(&live)) {
+    lua_pushmatrix(*live);
+    lua_setglobal(mLua, key);
+  } else if (sig.get(&d)) {
+    lua_pushnumber(mLua, d);
+    lua_setglobal(mLua, key);
+  } else if (sig.type && sig.type != BangSignal) {
+    std::cout << "lua: cannot set '" << key << "' to " << sig << " (type not yet suported in Lua).\n";
   }
 }
 
