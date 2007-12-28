@@ -1,6 +1,6 @@
 CC=g++
-CFLAGS=-g -Wall
-
+CFLAGS=-g -Wall -DUSE_READLINE
+LFLAGS=-framework Accelerate -lreadline
 PREFIX=/usr/local
 LIBDIR=$(PREFIX)/lib
 BINDIR=$(PREFIX)/bin
@@ -13,6 +13,7 @@ RAGEL_CD=rlgen-cd
 PLAT= macosx
 TEST=test/*_test.h test/objects/*_test.h
 
+
 # Utilities.
 INSTALL= install -C
 MKDIR= mkdir -p
@@ -21,7 +22,7 @@ test: test/runner test/runner.cpp
 	./test/runner && rm test/runner
 
 rubyk: classes/main.cpp command.o rubyk.o signal.o node.o inlet.o outlet.o slot.o params.o class.o lua.o matrix.o buffer.o classes/lua/src/liblua.a objects
-	$(CC) $(CFLAGS) -o rubyk -Itest -Itemplates -Iclasses -Iobjects -I. classes/main.cpp slot.o inlet.o outlet.o params.o signal.o node.o class.o command.o matrix.o buffer.o rubyk.o lua.o classes/lua/src/liblua.a -framework Accelerate
+	$(CC) $(CFLAGS) $(LFLAGS) -o rubyk -Itest -Itemplates -Iclasses -Iobjects -I. classes/main.cpp slot.o inlet.o outlet.o params.o signal.o node.o class.o command.o matrix.o buffer.o rubyk.o lua.o classes/lua/src/liblua.a
 
 objects: lib/Test.rko lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/Midi.rko lib/NoteOut.rko lib/Lua.rko lib/Serial.rko lib/Turing.rko lib/Keyboard.rko lib/Cabox.rko lib/Svm.rko lib/Buffer.rko lib/Plot.rko lib/Cut.rko lib/MaxCount.rko lib/FFT.rko lib/VQ.rko lib/ClassRecorder.rko lib/PCA.rko lib/Average.rko lib/Peak.rko lib/Minus.rko lib/Replay.rko lib/Kmeans.rko lib/Abs.rko lib/Sum.rko lib/Ctrl.rko lib/Diff.rko
 	
@@ -29,7 +30,7 @@ test/runner.cpp: test/*_test.h test/objects/*_test.h
 	./test/cxxtest/cxxtestgen.pl --error-printer -o test/runner.cpp $(TEST)
 	
 test/runner: test/runner.cpp command.o rubyk.o signal.o node.o inlet.o outlet.o slot.o params.o class.o lua.o classes/lua/src/liblua.a matrix.o buffer.o objects
-	$(CC) $(CFLAGS) -Itest -Itemplates -Iclasses -Iobjects -I. test/runner.cpp slot.o inlet.o outlet.o params.o signal.o node.o class.o command.o rubyk.o lua.o classes/lua/src/liblua.a matrix.o buffer.o -o test/runner -framework Accelerate
+	$(CC) $(CFLAGS) $(LFLAGS) -Itest -Itemplates -Iclasses -Iobjects -I. test/runner.cpp slot.o inlet.o outlet.o params.o signal.o node.o class.o command.o rubyk.o lua.o classes/lua/src/liblua.a matrix.o buffer.o -o test/runner
 	
 signal.o: classes/rubyk_signal.cpp
 	$(CC) $(CFLAGS) -c -Itemplates classes/rubyk_signal.cpp -o signal.o

@@ -39,14 +39,12 @@ public:
   static void * call_do_listen(void * cmd) {
     return (void*) ((Command*)cmd)->do_listen();
   }
+  
   /** Stop listening for incomming commands. */
   void close ();
   
   /** Clear the current command. */
   void clear ();
-  
-  /** Display the prompt. */
-  virtual void prompt () {}
   
   /** Ragel parser. */
   void parse (const char * pStr) {
@@ -111,6 +109,20 @@ protected:
 
   /** Execute a command or inspect instance. */
   void execute_command ();
+  
+  /** Read a line from input stream. */
+  virtual bool getline(char ** pBuffer, size_t pSize)
+  {
+    if (mInput->eof()) return false;
+    mInput->getline(*pBuffer,pSize);
+    return true;
+  }
+  
+  /** Save a line in edit history. */
+  virtual void saveline(const char * pLine) {}
+  
+  /** Free a line. */
+  virtual void freeline(char * pLine) {}
     
   /** Token for the parser. */
   char mToken[MAX_TOKEN_SIZE + 1];
@@ -134,15 +146,77 @@ protected:
   bool mSilent;
 };
 
+#ifdef USE_READLINE
+extern "C" {
+#include <stdio.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+}
+
+class InteractiveCommand : public Command
+{
+public:
+  InteractiveCommand(std::istream& pInput, std::ostream& pOutput) : Command(pInput,pOutput)
+  {
+    read_history(history_path().c_str());
+  }
+  
+  InteractiveCommand() 
+  {
+    // read readline history
+    read_history(history_path().c_str());
+  }
+  
+  ~InteractiveCommand()
+  {
+    // save readline history
+    write_history(history_path().c_str());
+  }
+  
+  virtual bool getline(char ** pBuffer, size_t pSize)
+  {
+    *pBuffer = readline("> "); // FIXME: this would not work if input is not stdin...
+    return *pBuffer != NULL;
+  }
+  
+  virtual void saveline(const char * pLine)
+  {
+    if (strlen(pLine) > 0) {
+      add_history(pLine);
+    }
+  }
+  
+  virtual void freeline(char * pLine)
+  {
+    free(pLine);
+  }
+  
+private:
+  std::string history_path()
+  {
+    std::string home(getenv("HOME"));
+    home.append("/.rubyk_history");
+    return home;
+  }
+};
+
+#else
+
 class InteractiveCommand : public Command
 {
 public:
   InteractiveCommand(std::istream& pInput, std::ostream& pOutput) : Command(pInput,pOutput) {}
   InteractiveCommand() {}
-  virtual void prompt()
+  
+  virtual bool getline(char ** pBuffer, size_t pSize)
   {
     *mOutput << "> ";
+    if (mInput->eof()) return false;
+    mInput->getline(*pBuffer,pSize);
+    return true;
   }
 };
 
-#endif
+#endif // USE_READLINE
+
+#endif // _COMMAND_H_

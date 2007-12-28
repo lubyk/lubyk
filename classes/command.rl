@@ -29,7 +29,8 @@ void Command::initialize()
 
 int Command::do_listen()
 {
-  char iss[1024];
+  char buffer[1024];
+  char * line = buffer;
   
   // set thread priority to normal
   mServer->normal_priority();
@@ -37,12 +38,12 @@ int Command::do_listen()
   if (!mSilent)
     *mOutput << "Welcome to rubyk !\n\n";
   clear();
-  prompt();
 
-  while(!mQuit && !mInput->eof()) {
-    mInput->getline(iss,1023); // '\n'
-    parse(iss);
+  while(!mQuit && getline(&line,1023)) {
+    parse(line);
     parse("\n");
+    saveline(line);
+    freeline(line);
   }
   return 0; // thread return value
 }
@@ -118,7 +119,6 @@ void Command::parse(const std::string& pStr)
     action prompt {
       if (!mQuit) {
         clear();
-        prompt();
       }
     }
     action error {
@@ -127,7 +127,6 @@ void Command::parse(const std::string& pStr)
       snprintf(error_buffer, 9, "%s", p);
       *mOutput << "Syntax error near '" << error_buffer << "'." << std::endl;
       clear();
-      prompt();
       fgoto eat_line; // eat the rest of the line and continue parsing
     }
   
