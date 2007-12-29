@@ -64,6 +64,7 @@ public:
         label_vector_from(mView, -1); // out of distance threshold
         send(4, mFullTrainingData);
         send(3, mLabelVector);
+        if (mDebug) send(2, mDistance);
       }
     }
   }
@@ -120,9 +121,9 @@ private:
     //   for (size_t i = 0; i < row_count; i++)
     //     mDistances.data[i] = (total_distance - mDistances.data[i]) / ((row_count - 1) * total_distance);
     
-    if (mDistances.data[closest_id] < mDistanceThreshold) {
+     mDistance = mDistances.data[closest_id];
+    if (mDistanceThreshold == 0 || mDistances.data[closest_id] < mDistanceThreshold) {
       mLabel = mLabels.data[closest_id];
-      mDistance = mDistances.data[closest_id];
       return true;
     }
     return false;
@@ -315,7 +316,7 @@ extern "C" void init()
 {
   CLASS (Kmeans)
   OUTLET(Kmeans,label)
-  OUTLET(Kmeans,probability)
+  OUTLET(Kmeans,distance)
   OUTLET(Kmeans,label_vector)
   OUTLET(Kmeans,plot)
   METHOD(Kmeans,probabilities)

@@ -35,6 +35,11 @@ public:
     set_lua_global("in4", sig);
   }
   
+  // inlet 5
+  void input5(const Signal& sig)
+  { 
+    set_lua_global("in5", sig);
+  }
 };
 
 extern "C" void init()
@@ -43,10 +48,12 @@ extern "C" void init()
   INLET (Lua, input2)
   INLET (Lua, input3)
   INLET (Lua, input4)
+  INLET (Lua, input5)
   OUTLET(Lua, output)
   OUTLET(Lua, output2)
   OUTLET(Lua, output3)
   OUTLET(Lua, output4)
+  OUTLET(Lua, output5)
   SUPER_METHOD(Lua, Script, load)
   SUPER_METHOD(Lua, Script, script)
 }

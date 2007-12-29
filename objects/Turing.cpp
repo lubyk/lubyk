@@ -262,6 +262,12 @@ public:
     set_lua_global("in4", sig);
   }
 
+  // inlet 5
+  void input5(const Signal& sig)
+  { 
+    set_lua_global("in5", sig);
+  }
+
   bool eval_script(const std::string& pScript) 
   {
     mScript = pScript;
@@ -915,10 +921,12 @@ extern "C" void init()
   INLET (Turing, input2)
   INLET (Turing, input3)
   INLET (Turing, input4)
+  INLET (Turing, input5)
   OUTLET(Turing, output)
   OUTLET(Turing, output2)
   OUTLET(Turing, output3)
   OUTLET(Turing, output4)
+  OUTLET(Turing, output5)
   METHOD(Turing, tables)
   METHOD(Turing, dot)
   SUPER_METHOD(Turing, Script, load)

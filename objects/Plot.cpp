@@ -112,7 +112,7 @@ private:
     double width_ratio;
     double height_ratio = (double)mWindow.height / (2.0 * mLineCount[param_index] * mMaxAmplitude[param_index]); // values : [-1,1]
     double y_offset;
-    //double col_ratio = 1.0 / mGroupSize[param_index];
+    double col_ratio = 1.0 / mGroupSize[param_index];
     
     if (value_count > 1)
         width_ratio = (double)mWindow.width  / (value_count - 1);
@@ -137,8 +137,8 @@ private:
         g_offset = g * value_count;
         
         // element in group
-        //glColor4f(col_ratio * (g % mGroupSize[param_index]),col_ratio * ((g+1) % mGroupSize[param_index]),col_ratio * ((g+2) % mGroupSize[param_index]),pAlpha);
-        set_color_from_int(g % mGroupSize[param_index], pAlpha);
+        glColor4f(col_ratio * (g % mGroupSize[param_index]),col_ratio * ((g+1) % mGroupSize[param_index]),col_ratio * ((g+2) % mGroupSize[param_index]),pAlpha);
+        //set_color_from_int(g, pAlpha);
         
         glBegin(GL_LINE_STRIP);
           for(size_t i=0; i < value_count; i++) {
