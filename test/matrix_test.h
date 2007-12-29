@@ -544,6 +544,37 @@ public:
     remove("matrix_test_tmp.txt");
   }
   
+  
+  void test_to_file_not_isMatrix( void )
+  {
+    Matrix m1, m2, m3;
+    m1.set_sizes(1,3);
+    m1.fill(2);
+    m2.set_sizes(3,3);
+    m2.fill(5);
+    
+    FILE * file = fopen("matrix_test_11tmp.txt", "wb");
+      m1.to_file(file, false);
+      m2.to_file(file, true);
+    fclose(file);
+    
+    
+    file = fopen("matrix_test_11tmp.txt", "rb");
+      m3.from_file(file);
+    fclose(file);
+    
+    TS_ASSERT_EQUALS(m3.row_count(), 4);
+    TS_ASSERT_EQUALS(m3.col_count(), 3);
+    
+    TS_ASSERT_EQUALS(m3.data[0], 2.0);
+    TS_ASSERT_EQUALS(m3.data[1], 2.0);
+    TS_ASSERT_EQUALS(m3.data[2], 2.0);
+    for(size_t i = 3; i < 12; i++)
+      TS_ASSERT_EQUALS(m3.data[i], 5.0);
+    
+    remove("matrix_test_11tmp.txt");
+  }
+  
   void test_from_file_integer( void )
   {
     IntMatrix m1, m2;
@@ -833,13 +864,13 @@ private:
   }
   
   template<typename T>
-  void assert_equal(const TMatrix<T>& m2, const TMatrix<T>& m1)
+  void assert_equal(const TMatrix<T>& m2, const TMatrix<T>& m1, int p = 10000) // p = precision
   {
     TS_ASSERT_EQUALS(m2.row_count(), m1.row_count());
     TS_ASSERT_EQUALS(m2.col_count(), m1.col_count());
     if (m2.row_count() == m1.row_count() && m2.col_count() == m1.col_count()) {
       for(size_t i=0; i < m1.row_count(); i++) {
-        for(size_t j=0; j < m1.col_count(); j++) TS_ASSERT_EQUALS( (int)(10000 * m2[i][j]), (int)(10000 * m1[i][j]));
+        for(size_t j=0; j < m1.col_count(); j++) TS_ASSERT_EQUALS( round(p * m2[i][j])/p, round(p * m1[i][j])/p);
       }
     }
   }

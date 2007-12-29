@@ -158,7 +158,7 @@ bool TMatrix<T>::from_file(const std::string& pPath, const char * pMode)
 
 /** Write a matrix to a filepath. */
 template<typename T>
-bool TMatrix<T>::to_file(const std::string& pPath, const char * pMode) const
+bool TMatrix<T>::to_file(const std::string& pPath, const char * pMode, bool isMatrix) const
 {
   FILE * file = fopen(pPath.c_str(), pMode);
     if (!file) {
@@ -167,7 +167,7 @@ bool TMatrix<T>::to_file(const std::string& pPath, const char * pMode) const
       // set_error("could not write to '%s' (%s)", pPath.c_str(), strerror(errno));
       return false;
     }
-    if (!to_file(file)) {
+    if (!to_file(file, isMatrix)) {
       fclose(file);
       return false;
     }
@@ -176,15 +176,16 @@ bool TMatrix<T>::to_file(const std::string& pPath, const char * pMode) const
 }
 
 template<typename T>
-bool TMatrix<T>::to_file(FILE * pFile) const
+bool TMatrix<T>::to_file(FILE * pFile, bool isMatrix) const
 {
   for(size_t i=0; i < mRowCount; i++) {
     for(size_t j=0; j < mColCount; j++) {
       do_fprintf(pFile, data[i * mColCount + j]);
     }  
     fprintf(pFile, "\n");
-  }  
-  fprintf(pFile, "\n");  // two \n\n between vectors
+  }
+  if (isMatrix)
+    fprintf(pFile, "\n");  // two \n\n between matrix
   return true;
 }
 
@@ -936,10 +937,10 @@ bool TMatrix<double>::inverse()
 
 /// explicit instanciation for doubles and integers //////
 
-template bool TMatrix<double>::to_file(const std::string& pPath, const char * pMode) const;
-template bool TMatrix< int  >::to_file(const std::string& pPath, const char * pMode) const;
-template bool TMatrix<double>::to_file(FILE * pFile) const;
-template bool TMatrix< int  >::to_file(FILE * pFile) const;
+template bool TMatrix<double>::to_file(const std::string& pPath, const char * pMode, bool isMatrix) const;
+template bool TMatrix< int  >::to_file(const std::string& pPath, const char * pMode, bool isMatrix) const;
+template bool TMatrix<double>::to_file(FILE * pFile, bool isMatrix) const;
+template bool TMatrix< int  >::to_file(FILE * pFile, bool isMatrix) const;
 
 template bool TMatrix<double>::from_file(const std::string& pPath, const char * pMode);
 template bool TMatrix< int  >::from_file(const std::string& pPath, const char * pMode);

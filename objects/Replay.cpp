@@ -66,6 +66,9 @@ public:
       TRY_RET(mPlaybackView, set_view(mData, mIndex, mIndex));
       send(mS);
       mIndex++;
+    } else {
+      // pass through
+      send(sig);
     }
   }
   
@@ -123,7 +126,7 @@ private:
       }
     }
     TRY(mData,     append(pLiveView.data, pLiveView.size()));
-    TRY(pLiveView, to_file(mFileHandle));
+    TRY(pLiveView, to_file(mFileHandle, false));
     return true;
   }
   

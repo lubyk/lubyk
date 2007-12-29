@@ -66,11 +66,14 @@ public:
     fill(0.0);
   }
   
-  /** Write a matrix to a FILE pointer. */
-  bool to_file(FILE * pFile) const;
+  /** Write a matrix to a FILE pointer. 
+      @param iMatrix if true, will write to return after write. Set to 
+             false to record a partial matrix.
+    */
+  bool to_file(FILE * pFile, bool isMatrix = true) const;
   
   /** Write a matrix to a filepath. */
-  bool to_file(const std::string& pPath, const char * pMode = "wb") const;
+  bool to_file(const std::string& pPath, const char * pMode = "wb", bool isMatrix = true) const;
   
   /** Fill a matrix from a FILE pointer.
     * If the matrix has '0' rows, all the file is loaded into the matrix. If
