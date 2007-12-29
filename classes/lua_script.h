@@ -61,6 +61,12 @@ public:
   /** Get a double from the current parameter list. */
   bool double_from_lua(double *);
   
+  /** Get a matrix from a lua table. */
+  bool matrix_from_lua_table(Matrix * pMat, int pIndex);
+  
+  /** Get a matrix from lua table at top index. */
+  bool matrix_from_lua_table(Matrix * pMat);
+  
   /** Define a signal from lua stack/parameters, with a custom buffer. */
   bool sig_from_lua (Signal * sig, int index, Matrix& pMat);
   

@@ -113,10 +113,38 @@ bool LuaScript::double_from_lua(double * d)
   return true;
 }
 
+bool LuaScript::matrix_from_lua_table(Matrix * pMat)
+{
+  return matrix_from_lua_table(pMat, lua_gettop(mLua));
+}
+
+bool LuaScript::matrix_from_lua_table(Matrix * pMat, int pIndex)
+{ 
+  int i  = 1;
+  if (!pMat->set_sizes(1,0)) return false;
+  if (!lua_istable(mLua, pIndex)) {
+    *mOutput << mName << ": wrong value type to get table (" << lua_typename(mLua, pIndex) << " at " << pIndex << ").\n";
+    return false;
+  }
+  while(true) {
+    lua_pushinteger(mLua, i);
+    lua_gettable(mLua, pIndex);
+    if(!lua_isnumber(mLua, -1)) {
+      lua_pop(mLua,1);
+      break;
+    }
+    double d = lua_tonumber(mLua, -1);
+    pMat->append(d);
+    lua_pop(mLua,1);
+    i++;
+  }    
+  lua_pop(mLua,1);
+  return true;
+}
+
 bool LuaScript::sig_from_lua(Signal * sig, int pIndex, Matrix& pMat)
 {
   int index = pIndex < 0 ? lua_gettop(mLua) + pIndex + 1 : pIndex;
-  int i  = 1;
   /* LUA_TNIL, LUA_TNUMBER, LUA_TBOOLEAN, LUA_TSTRING, LUA_TTABLE, LUA_TFUNCTION, LUA_TUSERDATA, LUA_TTHREAD, and LUA_TLIGHTUSERDATA.
   */
   switch ( lua_type(mLua, index) ) {
@@ -136,20 +164,7 @@ bool LuaScript::sig_from_lua(Signal * sig, int pIndex, Matrix& pMat)
     lua_pop(mLua, 1);
     break;
   case LUA_TTABLE:
-    pMat.set_sizes(1,0);
-    while(true) {
-      lua_pushinteger(mLua, i);
-      lua_gettable(mLua, index);
-      if(!lua_isnumber(mLua, -1)) {
-        lua_pop(mLua,1);
-        break;
-      }
-      double d = lua_tonumber(mLua, -1);
-      pMat.append(d);
-      lua_pop(mLua,1);
-      i++;
-    }    
-    lua_pop(mLua,1);
+    matrix_from_lua_table(&pMat, index);
     sig->set(pMat);
     break;
   default:
@@ -211,17 +226,32 @@ int LuaScript::send_note_for_lua(lua_State * L)
       return 0;
     }
     velocity = d;
-    if (!node->double_from_lua(&d)) {
-      node->error("could not get note from lua in 'send_note'");
-      return 0;
+    if (lua_istable(node->mLua, lua_gettop(node->mLua))) {
+      if (!node->matrix_from_lua_table(&(node->mLuaReturn))) {  
+        node->error("could not get note from lua table in 'send_note'");
+        return 0;
+      } else {
+        note = -1;
+      }
+    } else {
+      if (!node->double_from_lua(&d)) {
+        node->error("could not get note from lua in 'send_note'");
+        return 0;
+      } else {
+        note = d;
+      }
     }
-    note = d;
     if (!node->double_from_lua(&d)) {
       node->error("could not get port from lua in 'send_note'");
       return 0;
     }
     port = d;
-    node->send_note(port, note, velocity, length, channel, when);
+    if (note == -1) {
+      // chord (lua table as notes)
+      for (size_t i = 0; i < node->mLuaReturn.size(); i++)
+        node->send_note(port, node->mLuaReturn.data[i], velocity, length, channel, when);
+    } else
+      node->send_note(port, note, velocity, length, channel, when);
   } else {
     printf("send_note_for_lua error: no node\n");
   }

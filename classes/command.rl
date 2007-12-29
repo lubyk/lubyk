@@ -42,7 +42,8 @@ int Command::do_listen()
   while(!mQuit && getline(&line,1023)) {
     parse(line);
     parse("\n");
-    saveline(line);
+    if (!mQuit)
+      saveline(line);
     freeline(line);
   }
   return 0; // thread return value

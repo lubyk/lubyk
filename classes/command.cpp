@@ -326,7 +326,8 @@ int Command::do_listen()
   while(!mQuit && getline(&line,1023)) {
     parse(line);
     parse("\n");
-    saveline(line);
+    if (!mQuit)
+      saveline(line);
     freeline(line);
   }
   return 0; // thread return value
@@ -339,7 +340,7 @@ void Command::parse(const std::string& pStr)
   int cs = mCurrentState;        // restore machine state
   
   
-#line 343 "classes/command.cpp"
+#line 344 "classes/command.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -414,7 +415,7 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 58 "classes/command.rl"
+#line 59 "classes/command.rl"
 	{
       if (mTokenIndex >= MAX_TOKEN_SIZE) {
         std::cerr << "Buffer overflow !" << std::endl;
@@ -429,85 +430,85 @@ _match:
     }
 	break;
 	case 1:
-#line 71 "classes/command.rl"
+#line 72 "classes/command.rl"
 	{ set_from_token(mVariable);}
 	break;
 	case 2:
-#line 73 "classes/command.rl"
+#line 74 "classes/command.rl"
 	{ set_from_token(mMethod);}
 	break;
 	case 3:
-#line 75 "classes/command.rl"
+#line 76 "classes/command.rl"
 	{ set_from_token(mKey);}
 	break;
 	case 4:
-#line 77 "classes/command.rl"
+#line 78 "classes/command.rl"
 	{ set_from_token(mClass);}
 	break;
 	case 5:
-#line 79 "classes/command.rl"
+#line 80 "classes/command.rl"
 	{ set_from_token(mValue);}
 	break;
 	case 6:
-#line 81 "classes/command.rl"
+#line 82 "classes/command.rl"
 	{ mFrom = mVariable; }
 	break;
 	case 7:
-#line 83 "classes/command.rl"
+#line 84 "classes/command.rl"
 	{
       set_from_token(mValue);
       mFromPort = atoi(mValue.c_str());
     }
 	break;
 	case 8:
-#line 88 "classes/command.rl"
+#line 89 "classes/command.rl"
 	{
       set_from_token(mValue);
       mToPort = atoi(mValue.c_str());
     }
 	break;
 	case 9:
-#line 93 "classes/command.rl"
+#line 94 "classes/command.rl"
 	{ 
       add_value_from_token(); 
     }
 	break;
 	case 10:
-#line 97 "classes/command.rl"
+#line 98 "classes/command.rl"
 	{ set_parameter(mKey, mValue); }
 	break;
 	case 11:
-#line 99 "classes/command.rl"
+#line 100 "classes/command.rl"
 	{
       mTo   = mVariable;
       create_link();
     }
 	break;
 	case 12:
-#line 104 "classes/command.rl"
+#line 105 "classes/command.rl"
 	{
       mTo   = mVariable;
       remove_link();
     }
 	break;
 	case 13:
-#line 109 "classes/command.rl"
+#line 110 "classes/command.rl"
 	{ create_instance(); }
 	break;
 	case 14:
-#line 111 "classes/command.rl"
+#line 112 "classes/command.rl"
 	{ execute_method(); }
 	break;
 	case 15:
-#line 113 "classes/command.rl"
+#line 114 "classes/command.rl"
 	{ execute_class_method(); }
 	break;
 	case 16:
-#line 115 "classes/command.rl"
+#line 116 "classes/command.rl"
 	{ execute_command(); }
 	break;
 	case 17:
-#line 119 "classes/command.rl"
+#line 120 "classes/command.rl"
 	{
       if (!mQuit) {
         clear();
@@ -515,7 +516,7 @@ _match:
     }
 	break;
 	case 18:
-#line 124 "classes/command.rl"
+#line 125 "classes/command.rl"
 	{
       p--; // move back one char
       char error_buffer[10];
@@ -526,10 +527,10 @@ _match:
     }
 	break;
 	case 19:
-#line 133 "classes/command.rl"
+#line 134 "classes/command.rl"
 	{ {cs = 1; goto _again;} }
 	break;
-#line 533 "classes/command.cpp"
+#line 534 "classes/command.cpp"
 		}
 	}
 
@@ -540,7 +541,7 @@ _again:
 		goto _resume;
 	_out: {}
 	}
-#line 183 "classes/command.rl"
+#line 184 "classes/command.rl"
 
 //  printf("{%s}\n",p);
   mCurrentState = cs;
