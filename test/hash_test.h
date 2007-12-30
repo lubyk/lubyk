@@ -60,26 +60,52 @@ public:
     TS_ASSERT_EQUALS( keys->at(0), std::string("my"));
   }
   
-  void testClear( void )
+  void test_clear( void )
   {
     Hash<std::string, std::string> hash(10);
     std::string res;
     
-    hash.set(std::string("hello"), std::string("world"));
-    hash.set(std::string("my"),    std::string("mum"));
+    hash.set(std::string("a"), std::string("world"));
+    hash.set(std::string("b"), std::string("mum"));
 
     
     
     TS_ASSERT_EQUALS( 2,  hash.keys()->size());
     
-    TS_ASSERT(hash.get(&res, "hello"));
+    TS_ASSERT(hash.get(&res, "a"));
     TS_ASSERT_EQUALS( res,  std::string("world") );
-    TS_ASSERT(hash.get(&res, "my"));
+    TS_ASSERT(hash.get(&res, "b"));
     TS_ASSERT_EQUALS( res,  std::string("mum"  ) );
     
     hash.clear();
     TS_ASSERT_EQUALS( 0,  hash.keys()->size());
-    TS_ASSERT_EQUALS( hash.get(&res, "hello"), false);
-    TS_ASSERT_EQUALS( hash.get(&res, "my"   ), false);
+    TS_ASSERT( !hash.get(&res, "a"));
+    TS_ASSERT( !hash.get(&res, "b"));
+  }
+  
+  void test_clear_int( void )
+  {
+    Hash<std::string, int> hash(10);
+    int res;
+    
+    hash.set(std::string("a"), 1);
+    hash.set(std::string("b"), 2);
+    hash.set(std::string("c"), 3);
+
+    
+    TS_ASSERT_EQUALS( 3,  hash.keys()->size());
+    
+    TS_ASSERT(hash.get(&res, "a"));
+    TS_ASSERT_EQUALS( res,  1);
+    TS_ASSERT(hash.get(&res, "b"));
+    TS_ASSERT_EQUALS( res,  2);
+    TS_ASSERT(hash.get(&res, "c"));
+    TS_ASSERT_EQUALS( res,  3);
+    
+    hash.clear();
+    TS_ASSERT_EQUALS( 0,  hash.keys()->size());
+    TS_ASSERT( !hash.get(&res, "a"));
+    TS_ASSERT( !hash.get(&res, "b"));
+    TS_ASSERT( !hash.get(&res, "c"));
   }
 };

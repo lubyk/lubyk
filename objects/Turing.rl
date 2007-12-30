@@ -1,6 +1,7 @@
 #include "lua_script.h"
 
 #define MAX_NAME_SIZE 200
+#define TUR_MAX_TOKEN_COUNT 256
 //#define DEBUG_PARSER
 
 struct TuringSend
@@ -36,8 +37,6 @@ public:
   
   bool set (const Params& p)
   {
-    mToken = 0;
-    mState = 1;
     return set_script(p);
   }
 
@@ -52,7 +51,7 @@ public:
     
     if (sig.get(&i)) {
       mRealToken = i;
-      mToken = mTokenTable[ mRealToken % 256 ]; // translate token in the current machine values.
+      mToken = mTokenTable[ mRealToken % TUR_MAX_TOKEN_COUNT ]; // translate token in the current machine values.
     }
     
     reload_script();
@@ -63,7 +62,7 @@ public:
     if (!mS.type) return; // bang returned nil, abort
     else if (mS.type != BangSignal) {
       if (mS.get(&mRealToken)) // use token from returned value
-        mToken = mTokenTable[ mRealToken % 256 ]; // translate token in the current machine values.
+        mToken = mTokenTable[ mRealToken % TUR_MAX_TOKEN_COUNT ]; // translate token in the current machine values.
     }
     
     if (mDebug) *mOutput << "{" << mState << "} -" << mRealToken << "->";
@@ -128,6 +127,8 @@ public:
 
   bool eval_script(const std::string& pScript) 
   {
+    mToken = 0;
+    mState = 1;
     mScript = pScript;
     mScript.append("\n");
     int cs;
@@ -162,15 +163,7 @@ public:
     
     // a call = push args on stack, call method_id
     
-    // get token values by identifier
-    mTokenByName.clear();
-    mTokenNameByValue.clear();
-    
     std::string identifier;
-    
-    
-    mStateCount = 1; // first state = token default
-    mTokenCount = 1; // first token (token '0') = default action/send
     
     // init token table
     clear_tables();
@@ -264,13 +257,13 @@ public:
     
     action set_token {
       // do we know this token ?
-      if (!mTokenTable[tok % 256]) {
+      if (!mTokenTable[tok % TUR_MAX_TOKEN_COUNT]) {
         // new token
         #ifdef DEBUG_PARSER
         printf("new token %i: %i\n", (int)mTokenCount, tok);
         #endif
         
-        mTokenTable[tok % 256] = mTokenCount;
+        mTokenTable[tok % TUR_MAX_TOKEN_COUNT] = mTokenCount;
         mTokenList.push_back(tok);
         
         // enlarge lookup tables (add new column)
@@ -295,7 +288,7 @@ public:
         
         mTokenCount++;
       }
-      token_id = mTokenTable[tok % 256];
+      token_id = mTokenTable[tok % TUR_MAX_TOKEN_COUNT];
     }
     
     action add_entry {
@@ -458,8 +451,8 @@ public:
 
 private:
   void clear_tables()
-  {
-    memset(mTokenTable, 0, sizeof(mTokenTable));
+  { 
+    memset(mTokenTable, 0, TUR_MAX_TOKEN_COUNT * sizeof(int));
       
     mGotoTable.clear();
     mGotoTable.push_back( std::vector<int>(1, -1) ); // -1 means use default
@@ -485,8 +478,13 @@ private:
     mTokenList.clear();
     mTokenList.push_back(0);
     
+    mTokenByName.clear();
+    
     mTokenNameByValue.clear();
     mTokenNameByValue.set(0, "-");
+    
+    mStateCount = 1; // first state = token default
+    mTokenCount = 1; // first token (token '0') = default action/send
   }
   
   int get_state_id(const std::string& pName)
@@ -661,7 +659,7 @@ private:
   TuringSend * mSend;    /**< Send result. */
   int  mState;           /**< Current state. */
   
-  int     mTokenTable[256]; /**< Translate token values into their internal representation. */
+  int     mTokenTable[TUR_MAX_TOKEN_COUNT]; /**< Translate token values into their internal representation. */
   size_t  mStateCount;      /**< Number of states in the machine. */
   size_t  mTokenCount;      /**< Number of tokens recognized by the machine. */
   

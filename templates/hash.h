@@ -56,12 +56,9 @@ public:
   /** Remove all objects. */
   void clear() 
   {
-    typename std::vector<K>::iterator it;
-    typename std::vector<K>::iterator end = mKeys.end();
-    for(it=mKeys.begin(); it < end; it++) {
-      remove(*it);
+    while(mKeys.begin() != mKeys.end()) {
+      remove(*mKeys.begin());
     }
-    mKeys.clear();
   }
   
   size_t size() const
@@ -156,7 +153,6 @@ void Hash<K,T>::remove(const K& pId) {
   HashElement<K,T> *  found, * next;
   HashElement<K,T> ** set_next;
   uint key = hashId(pId) % mSize;
-  
   found    = &(mHashTable[key]);  // pointer to found element
   set_next = NULL;                // where to write removed element's next if there is one
   
@@ -197,6 +193,26 @@ void Hash<K,T>::remove(const K& pId) {
       }
     }
   }
+}
+
+
+template <class K, class T>
+std::ostream& operator<< (std::ostream& pStream, const Hash<K,T>& hash)
+{
+  typename std::vector<K>::const_iterator it,begin,end;
+  end   = hash.end();
+  begin = hash.begin();
+  T value;
+  pStream << "{";
+  for( it = begin; it < end; it++) {
+    if (it != begin) pStream << ", ";
+    if (hash.get(&value, *it))
+      pStream << *it << " => " << value;
+    else
+      pStream << *it << " => " << "/error/";
+  }
+  pStream << "}";
+  return pStream;
 }
 
 /////// HASH FUNCTIONS  ////////
