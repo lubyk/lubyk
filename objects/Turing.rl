@@ -3,7 +3,7 @@
 
 #define MAX_NAME_SIZE 200
 #define TUR_MAX_TOKEN_COUNT 256
-#define DEBUG_PARSER
+//#define DEBUG_PARSER
 
 struct TuringSend
 {
