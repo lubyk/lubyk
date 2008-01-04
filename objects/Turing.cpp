@@ -1,9 +1,10 @@
 #line 1 "objects/Turing.rl"
 #include "lua_script.h"
+#include <sstream>
 
 #define MAX_NAME_SIZE 200
 #define TUR_MAX_TOKEN_COUNT 256
-//#define DEBUG_PARSER
+#define DEBUG_PARSER
 
 struct TuringSend
 {
@@ -17,7 +18,7 @@ struct TuringSend
 };
 
 
-#line 21 "objects/Turing.cpp"
+#line 22 "objects/Turing.cpp"
 static const char _turing_actions[] = {
 	0, 1, 0, 1, 1, 1, 2, 1, 
 	3, 1, 11, 1, 12, 1, 13, 1, 
@@ -28,12 +29,12 @@ static const char _turing_actions[] = {
 
 static const unsigned char _turing_key_offsets[] = {
 	0, 0, 10, 11, 15, 27, 39, 50, 
-	52, 59, 64, 76, 78, 85, 94, 97, 
-	107, 108, 111, 112, 116, 124, 135, 139, 
-	145, 148, 149, 150, 151, 152, 153, 155, 
-	156, 158, 159, 160, 161, 171, 173, 174, 
-	176, 178, 180, 181, 183, 184, 186, 188, 
-	190, 191, 201, 203
+	52, 59, 64, 76, 80, 83, 90, 99, 
+	109, 110, 113, 114, 120, 130, 141, 145, 
+	151, 154, 155, 156, 157, 158, 159, 161, 
+	162, 164, 165, 166, 167, 177, 179, 180, 
+	182, 184, 186, 187, 189, 190, 192, 194, 
+	196, 197, 207, 209
 };
 
 static const char _turing_trans_keys[] = {
@@ -46,29 +47,30 @@ static const char _turing_trans_keys[] = {
 	97, 122, 45, 62, 9, 32, 46, 65, 
 	90, 97, 122, 9, 10, 32, 35, 45, 
 	9, 32, 35, 45, 46, 58, 48, 57, 
-	65, 90, 97, 122, 45, 58, 123, 48, 
-	57, 65, 90, 97, 122, 9, 32, 45, 
-	48, 57, 65, 90, 97, 122, 9, 32, 
-	45, 9, 32, 40, 45, 48, 57, 65, 
-	90, 97, 122, 41, 9, 32, 45, 125, 
-	45, 58, 48, 57, 45, 58, 48, 57, 
-	65, 90, 97, 122, 9, 10, 32, 35, 
-	45, 48, 57, 65, 90, 97, 122, 9, 
-	32, 48, 57, 9, 10, 32, 35, 48, 
-	57, 9, 32, 35, 98, 101, 103, 105, 
-	110, 10, 32, 10, 32, 108, 117, 97, 
-	10, 9, 32, 45, 61, 48, 57, 65, 
-	90, 97, 122, 10, 61, 10, 10, 101, 
-	10, 110, 10, 100, 10, 10, 61, 10, 
-	10, 101, 10, 110, 10, 100, 10, 9, 
-	10, 32, 35, 46, 61, 65, 90, 97, 
-	122, 10, 61, 10, 61, 0
+	65, 90, 97, 122, 9, 32, 45, 58, 
+	9, 32, 45, 123, 48, 57, 65, 90, 
+	97, 122, 9, 32, 45, 48, 57, 65, 
+	90, 97, 122, 9, 32, 40, 45, 48, 
+	57, 65, 90, 97, 122, 41, 9, 32, 
+	45, 125, 9, 32, 45, 58, 48, 57, 
+	9, 32, 45, 58, 48, 57, 65, 90, 
+	97, 122, 9, 10, 32, 35, 45, 48, 
+	57, 65, 90, 97, 122, 9, 32, 48, 
+	57, 9, 10, 32, 35, 48, 57, 9, 
+	32, 35, 98, 101, 103, 105, 110, 10, 
+	32, 10, 32, 108, 117, 97, 10, 9, 
+	32, 45, 61, 48, 57, 65, 90, 97, 
+	122, 10, 61, 10, 10, 101, 10, 110, 
+	10, 100, 10, 10, 61, 10, 10, 101, 
+	10, 110, 10, 100, 10, 9, 10, 32, 
+	35, 46, 61, 65, 90, 97, 122, 10, 
+	61, 10, 61, 0
 };
 
 static const char _turing_single_lengths[] = {
 	0, 6, 1, 4, 6, 6, 5, 2, 
-	3, 5, 6, 2, 1, 3, 3, 4, 
-	1, 3, 1, 2, 2, 5, 2, 4, 
+	3, 5, 6, 4, 3, 1, 3, 4, 
+	1, 3, 1, 4, 4, 5, 2, 4, 
 	3, 1, 1, 1, 1, 1, 2, 1, 
 	2, 1, 1, 1, 4, 2, 1, 2, 
 	2, 2, 1, 2, 1, 2, 2, 2, 
@@ -77,7 +79,7 @@ static const char _turing_single_lengths[] = {
 
 static const char _turing_range_lengths[] = {
 	0, 2, 0, 0, 3, 3, 3, 0, 
-	2, 0, 3, 0, 3, 3, 0, 3, 
+	2, 0, 3, 0, 0, 3, 3, 3, 
 	0, 0, 0, 1, 3, 3, 1, 1, 
 	0, 0, 0, 0, 0, 0, 0, 0, 
 	0, 0, 0, 0, 3, 0, 0, 0, 
@@ -87,12 +89,12 @@ static const char _turing_range_lengths[] = {
 
 static const unsigned char _turing_index_offsets[] = {
 	0, 0, 9, 11, 16, 26, 36, 45, 
-	48, 54, 60, 70, 73, 78, 85, 89, 
-	97, 99, 103, 105, 109, 115, 124, 128, 
-	134, 138, 140, 142, 144, 146, 148, 151, 
-	153, 156, 158, 160, 162, 170, 173, 175, 
-	178, 181, 184, 186, 189, 191, 194, 197, 
-	200, 202, 211, 214
+	48, 54, 60, 70, 75, 79, 84, 91, 
+	99, 101, 105, 107, 113, 121, 130, 134, 
+	140, 144, 146, 148, 150, 152, 154, 157, 
+	159, 162, 164, 166, 168, 176, 179, 181, 
+	184, 187, 190, 192, 195, 197, 200, 203, 
+	206, 208, 217, 220
 };
 
 static const char _turing_indicies[] = {
@@ -104,52 +106,52 @@ static const char _turing_indicies[] = {
 	14, 13, 16, 16, 0, 18, 19, 0, 
 	19, 19, 20, 21, 21, 0, 22, 23, 
 	22, 24, 25, 0, 26, 26, 3, 11, 
-	12, 14, 13, 16, 16, 0, 27, 28, 
-	0, 31, 29, 30, 30, 0, 32, 32, 
-	33, 29, 29, 29, 0, 34, 34, 18, 
-	0, 32, 32, 35, 33, 30, 30, 30, 
-	0, 36, 35, 37, 37, 38, 0, 40, 
-	39, 41, 42, 13, 0, 27, 28, 16, 
-	16, 16, 0, 22, 23, 22, 24, 25, 
-	21, 21, 21, 0, 15, 15, 43, 0, 
-	44, 45, 44, 46, 43, 0, 47, 47, 
-	3, 0, 48, 0, 49, 0, 50, 0, 
-	51, 0, 52, 0, 53, 54, 0, 2, 
-	0, 54, 55, 0, 56, 0, 57, 0, 
-	58, 0, 7, 7, 8, 9, 6, 6, 
-	6, 0, 60, 61, 59, 60, 59, 60, 
-	62, 59, 60, 63, 59, 60, 64, 59, 
-	65, 59, 67, 68, 66, 67, 66, 67, 
-	69, 66, 67, 70, 66, 67, 71, 66, 
-	72, 66, 1, 2, 1, 3, 4, 5, 
-	6, 6, 0, 60, 61, 59, 67, 68, 
-	66, 0
+	12, 14, 13, 16, 16, 0, 27, 27, 
+	28, 29, 0, 30, 30, 18, 0, 33, 
+	31, 32, 32, 0, 34, 34, 35, 31, 
+	31, 31, 0, 34, 34, 36, 35, 32, 
+	32, 32, 0, 37, 36, 38, 38, 39, 
+	0, 41, 40, 42, 42, 43, 44, 13, 
+	0, 27, 27, 28, 29, 16, 16, 16, 
+	0, 22, 23, 22, 24, 25, 21, 21, 
+	21, 0, 15, 15, 45, 0, 46, 47, 
+	46, 48, 45, 0, 49, 49, 3, 0, 
+	50, 0, 51, 0, 52, 0, 53, 0, 
+	54, 0, 55, 56, 0, 2, 0, 56, 
+	57, 0, 58, 0, 59, 0, 60, 0, 
+	7, 7, 8, 9, 6, 6, 6, 0, 
+	62, 63, 61, 62, 61, 62, 64, 61, 
+	62, 65, 61, 62, 66, 61, 67, 61, 
+	69, 70, 68, 69, 68, 69, 71, 68, 
+	69, 72, 68, 69, 73, 68, 74, 68, 
+	1, 2, 1, 3, 4, 5, 6, 6, 
+	0, 62, 63, 61, 69, 70, 68, 0
 };
 
 static const char _turing_trans_targs_wi[] = {
 	0, 1, 49, 2, 3, 25, 36, 4, 
-	6, 22, 4, 5, 11, 19, 12, 22, 
+	6, 22, 4, 5, 11, 19, 13, 22, 
 	20, 6, 7, 8, 9, 21, 10, 49, 
-	2, 6, 10, 7, 12, 13, 15, 18, 
-	14, 7, 14, 16, 17, 14, 7, 18, 
-	17, 7, 12, 23, 24, 49, 2, 24, 
-	26, 27, 28, 29, 30, 31, 32, 33, 
-	34, 35, 31, 38, 50, 39, 40, 41, 
-	42, 50, 44, 51, 45, 46, 47, 48, 
-	51
+	2, 6, 10, 12, 7, 13, 12, 14, 
+	15, 18, 12, 7, 16, 17, 12, 7, 
+	18, 17, 12, 7, 13, 23, 24, 49, 
+	2, 24, 26, 27, 28, 29, 30, 31, 
+	32, 33, 34, 35, 31, 38, 50, 39, 
+	40, 41, 42, 50, 44, 51, 45, 46, 
+	47, 48, 51
 };
 
 static const char _turing_trans_actions_wi[] = {
 	9, 0, 0, 0, 1, 0, 1, 22, 
 	22, 3, 0, 0, 19, 1, 0, 0, 
 	19, 0, 0, 0, 1, 1, 34, 34, 
-	34, 34, 0, 25, 25, 1, 1, 0, 
-	5, 5, 0, 1, 1, 7, 7, 1, 
-	0, 31, 31, 1, 28, 28, 28, 0, 
-	0, 0, 0, 0, 0, 11, 0, 0, 
-	0, 0, 15, 0, 0, 0, 0, 0, 
-	0, 13, 0, 0, 0, 0, 0, 0, 
-	17
+	34, 34, 0, 25, 25, 25, 0, 1, 
+	1, 0, 5, 5, 1, 1, 7, 7, 
+	1, 0, 31, 31, 31, 1, 28, 28, 
+	28, 0, 0, 0, 0, 0, 0, 11, 
+	0, 0, 0, 0, 15, 0, 0, 0, 
+	0, 0, 0, 13, 0, 0, 0, 0, 
+	0, 0, 17
 };
 
 static const int turing_start = 1;
@@ -159,7 +161,7 @@ static const int turing_en_doc_comment = 37;
 static const int turing_en_lua_script = 43;
 static const int turing_en_main = 1;
 
-#line 21 "objects/Turing.rl"
+#line 22 "objects/Turing.rl"
 
 
 TuringSend gSendNothing;
@@ -311,14 +313,14 @@ public:
     clear_tables();
     
     
-#line 315 "objects/Turing.cpp"
+#line 317 "objects/Turing.cpp"
 	{
 	cs = turing_start;
 	}
-#line 172 "objects/Turing.rl"
+#line 173 "objects/Turing.rl"
     
   
-#line 322 "objects/Turing.cpp"
+#line 324 "objects/Turing.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -393,7 +395,7 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 174 "objects/Turing.rl"
+#line 175 "objects/Turing.rl"
 	{
       if (name_index >= MAX_NAME_SIZE) {
         *mOutput << "Name buffer overflow !\n";
@@ -407,7 +409,7 @@ _match:
     }
 	break;
 	case 1:
-#line 186 "objects/Turing.rl"
+#line 187 "objects/Turing.rl"
 	{
       name[name_index] = '\0';
       identifier = name;
@@ -418,7 +420,7 @@ _match:
     }
 	break;
 	case 2:
-#line 195 "objects/Turing.rl"
+#line 196 "objects/Turing.rl"
 	{
       name[name_index] = '\0';
       name_index = 0;
@@ -430,7 +432,7 @@ _match:
     }
 	break;
 	case 3:
-#line 205 "objects/Turing.rl"
+#line 206 "objects/Turing.rl"
 	{
       name[name_index] = '\0';
       name_index = 0;
@@ -442,7 +444,7 @@ _match:
     }
 	break;
 	case 4:
-#line 215 "objects/Turing.rl"
+#line 216 "objects/Turing.rl"
 	{
       source = identifier;
       #ifdef DEBUG_PARSER
@@ -451,7 +453,7 @@ _match:
     }
 	break;
 	case 5:
-#line 222 "objects/Turing.rl"
+#line 223 "objects/Turing.rl"
 	{ 
       target = identifier;
       #ifdef DEBUG_PARSER
@@ -464,7 +466,7 @@ _match:
     }
 	break;
 	case 6:
-#line 233 "objects/Turing.rl"
+#line 234 "objects/Turing.rl"
 	{ 
       if (!mTokenByName.get(&tok, std::string(name))) {
         *mOutput << "Syntax error. Unknown token '" << name << "' (missing declaration)\n";
@@ -473,7 +475,7 @@ _match:
     }
 	break;
 	case 7:
-#line 240 "objects/Turing.rl"
+#line 241 "objects/Turing.rl"
 	{ 
       name[name_index] = '\0';
       name_index = 0;
@@ -484,7 +486,7 @@ _match:
     }
 	break;
 	case 8:
-#line 250 "objects/Turing.rl"
+#line 251 "objects/Turing.rl"
 	{
       mTokenByName.set(identifier, tok);
       mTokenNameByValue.set(tok, identifier);
@@ -494,7 +496,7 @@ _match:
     }
 	break;
 	case 9:
-#line 258 "objects/Turing.rl"
+#line 259 "objects/Turing.rl"
 	{
       // do we know this token ?
       if (!mTokenTable[tok % TUR_MAX_TOKEN_COUNT]) {
@@ -532,7 +534,7 @@ _match:
     }
 	break;
 	case 10:
-#line 294 "objects/Turing.rl"
+#line 295 "objects/Turing.rl"
 	{
       // write the entry
       #ifdef DEBUG_PARSER
@@ -552,7 +554,7 @@ _match:
     }
 	break;
 	case 11:
-#line 312 "objects/Turing.rl"
+#line 313 "objects/Turing.rl"
 	{
       p--; // move back one char
       char error_buffer[10];
@@ -562,29 +564,29 @@ _match:
     }
 	break;
 	case 12:
-#line 325 "objects/Turing.rl"
+#line 326 "objects/Turing.rl"
 	{ {cs = 37; goto _again;} }
 	break;
 	case 13:
-#line 326 "objects/Turing.rl"
+#line 327 "objects/Turing.rl"
 	{ {cs = 1; goto _again;} }
 	break;
 	case 14:
-#line 328 "objects/Turing.rl"
+#line 329 "objects/Turing.rl"
 	{
       begin_lua_script = p;
       {cs = 43; goto _again;} 
     }
 	break;
 	case 15:
-#line 332 "objects/Turing.rl"
+#line 333 "objects/Turing.rl"
 	{
       mLuaScript.append( begin_lua_script, p - begin_lua_script - 4 );
       begin_lua_script = NULL;
       {cs = 1; goto _again;} 
     }
 	break;
-#line 588 "objects/Turing.cpp"
+#line 590 "objects/Turing.cpp"
 		}
 	}
 
@@ -596,8 +598,8 @@ _again:
 	_out: {}
 	}
 
-#line 600 "objects/Turing.cpp"
-#line 369 "objects/Turing.rl"
+#line 602 "objects/Turing.cpp"
+#line 370 "objects/Turing.rl"
 
   // token_default %add_token_default |
     if (begin_lua_script) {
@@ -673,9 +675,21 @@ _again:
   }
   
   /** Output tables in digraph format to produce graphs with graphviz. */
-  void dot()
+  void dot(const Params& p)
   {
-    make_dot_graph(*mOutput);
+    std::string path;
+    if (p.get(&path, "file", true)) {
+      std::ofstream out(path.c_str(), std::ios::out | std::ios::binary);
+      if (!out) {
+        *mOutput << mName << ": could not write graph to file '" << path << "'.\n";
+        return;
+      }
+      make_dot_graph(out);
+      out.close();
+      *mOutput << mName << ": graph content written to '" << path << "'.\n";
+    } else {
+      make_dot_graph(*mOutput);
+    }
   }
 
   virtual void spy()
@@ -746,9 +760,9 @@ private:
       int tok_value = mTokenList[i];
       std::string identifier;
       if (mTokenNameByValue.get(&identifier, tok_value))
-        pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 3s", identifier.c_str());
+        pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 5s", identifier.c_str());
       else
-        pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 3i", tok_value);
+        pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 5i", tok_value);
     }
     pOutput << "\n";
   }
@@ -757,11 +771,11 @@ private:
   void print_table(std::ostream& pOutput, const char * pTitle, std::vector< std::vector<int> >& pTable)
   { 
     // print tokens
-    pOutput << bprint(mPrintBuffer, mPrintBufferSize, "\n%- 5s", pTitle);
+    pOutput << bprint(mPrintBuffer, mPrintBufferSize, "\n%- 7s", pTitle);
     print_tokens(pOutput);
     
     for (size_t i=0; i < pTable.size(); i++) {
-      pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 3s:", mStateNames[i].c_str());
+      pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 5s:", mStateNames[i].c_str());
       for (size_t j=0; j < mTokenCount; j++)
         print_table_value(pOutput, pTable[i][j], pTable[0][j], i);
       pOutput << "\n";
@@ -772,11 +786,11 @@ private:
   void print_table(std::ostream& pOutput, const char * pTitle, std::vector< std::vector<TuringSend*> >& pTable)
   {  
     // print tokens
-    pOutput << bprint(mPrintBuffer, mPrintBufferSize, "\n%- 5s", pTitle);
+    pOutput << bprint(mPrintBuffer, mPrintBufferSize, "\n%- 7s", pTitle);
     print_tokens(pOutput);
 
     for (size_t i=0; i < pTable.size(); i++) {
-      pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 3s:", mStateNames[i].c_str());
+      pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 5s:", mStateNames[i].c_str());
       for (size_t j=0; j < mTokenCount; j++)
         print_table_value(pOutput, pTable[i][j], pTable[0][j], i);
       pOutput << "\n";
@@ -788,13 +802,13 @@ private:
   {
     if (pVal == NULL) {
       if (pIndex == 0)
-        pOutput << "    ";
+        pOutput << "      ";
       else if (pTokenDefault != NULL)
-        pOutput << "   |";  // default
+        pOutput << "     |";  // default
       else
-        pOutput << "   -";  // default
+        pOutput << "     -";  // default
     } else if (pVal == &gSendNothing)
-      pOutput << "   /";  // do not send
+      pOutput << "     /";  // do not send
     else if (pVal->mLuaMethod) {
       // find method id
       std::vector<TuringSend*>::iterator it = mSendList.begin();
@@ -808,24 +822,24 @@ private:
         std::cout << "turing send not in mSendList ! (" << pVal->mMethod << ", " << pVal->mValue << ").\n";
         return;
       }
-      pOutput << bprint(mPrintBuffer, mPrintBufferSize, " (%i)", met_count);
+      pOutput << bprint(mPrintBuffer, mPrintBufferSize, " (% 3i)", met_count);
     } else
-      pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 3i", pVal->mValue);
+      pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 5i", pVal->mValue);
   }
   
   void print_table_value(std::ostream& pOutput, int pVal, int pTokenDefault, int pIndex)
   {
     if (pVal == -1) {
       if (pIndex == 0)
-        pOutput << "    ";
+        pOutput << "      ";
       else if (pTokenDefault != -1)
-        pOutput << "   |";  // default
+        pOutput << "     |";  // default
       else
-        pOutput << "   -";  // default
+        pOutput << "     -";  // default
     } else if (pVal == -2)
-      pOutput << "   /";  // do not send
+      pOutput << "     /";  // do not send
     else
-      pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 3i", pVal);
+      pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 5i", pVal);
   }
   
   void make_dot_graph(std::ostream& out)
@@ -834,42 +848,42 @@ private:
     TuringSend * tsend;
     out << "digraph " << mName << "{\n";
     out << "  rankdir=LR;\n";
+    out << "  node [ style = bold, fontsize = 12];\n";
   	// first node
-    out << "  node [ fixedsize = true, height = 0.65, shape = doublecircle ];\n";
-    out << "  " << mStateNames[0] << ";\n";
-    // all other nodes
+  	if (mStateCount > 1) {
+      out << "  node [ fixedsize = true, height = 0.5, shape = doublecircle ];\n";
+      out << "  " << mStateNames[1] << ";\n";
+  	}
+  	
     out << "  node [ shape = circle ];\n";
-    // transitions
+    out << "  edge [ color = dimgrey];\n";
     
-    for (size_t i=1; i < mStateCount; i++) {
+    // transitions
+    for (size_t i=0; i < mStateCount; i++) { // loop into each state (row)
       source = mStateNames[i];
-      // print default action
-      token = '-';
-      target = mStateNames[mGotoTable[i][0]];
-      tsend = mSendTable[i][0];
-      if (tsend == &gSendNothing) 
-        send = ""; // send nothing
-      else {
-        send = ":";
-        if (tsend->mLuaMethod)
-          send.append(tsend->mMethod);
-        else
-          send.append(bprint(mPrintBuffer, mPrintBufferSize, "%i", mSendTable[i][0]));
-      }
-      out << "  " << source << " -> " << target << " [ label = \"" << token << send << "\"];\n";
       
-      // print other transitions
-      for (size_t j=0; j < mTokenCount; j++) {
+      for (size_t j=0; j < mTokenCount; j++) { // loop into each token (column).
+        if (i == 0 && j == 0) continue; // no default_default
+        
         if (!mTokenNameByValue.get(&token, mTokenList[j])) {
           bprint(mPrintBuffer, mPrintBufferSize, "%i", mTokenList[j]); // no token name
           token = mPrintBuffer;
         }
-        if (mGotoTable[i][j+1] == -1)
+        if (mGotoTable[i][j] == -1)
           ;  // default, do not print
         else {
-          target  = mStateNames[mGotoTable[i][j+1]];
+          if (i == 0) {
+            // change source name for default token actions
+            // set source name as 'any__1234' for token default (name not shown but must be unique)
+            source = bprint(mPrintBuffer, mPrintBufferSize, "any__%i", j);
+            out << "  node [ fixedsize = true, height = 0.15, shape = point ];\n";
+            out << "  " << source << ";\n";
+            out << "  node [ fixedsize = true, height = 0.5, shape = circle ];\n";
+          }
+          
+          target  = mStateNames[mGotoTable[i][j]];
           // source -> target [ label = "token:send" ];
-          tsend = mSendTable[i][j+1];
+          tsend = mSendTable[i][j];
           if (tsend == &gSendNothing) 
             send = ""; // send nothing
           else {
@@ -879,7 +893,7 @@ private:
             else
               send.append(bprint(mPrintBuffer, mPrintBufferSize, "%i", mSendTable[i][0]));
           }
-          out << "  " << source << " -> " << target << " [ label = \"" << token << send << "\"];\n";
+          out << "  " << source << " -> " << target << " [ label = \"" << token << send << "\", fontsize = 12];\n";   
         }
       }
     }
