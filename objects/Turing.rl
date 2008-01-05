@@ -102,29 +102,32 @@ public:
       send(mSend->mValue);
   }
   
-  // inlet 2
-  void input2(const Signal& sig)
-  { 
-    set_lua_global("in2", sig);
-  }
+  void in2(const Signal& sig)
+  { set_lua_global("in2", sig); }
   
-  // inlet 3
-  void input3(const Signal& sig)
-  { 
-    set_lua_global("in3", sig);
-  }
+  void in3(const Signal& sig)
+  { set_lua_global("in3", sig); }
   
-  // inlet 4
-  void input4(const Signal& sig)
-  { 
-    set_lua_global("in4", sig);
-  }
-
-  // inlet 5
-  void input5(const Signal& sig)
-  { 
-    set_lua_global("in5", sig);
-  }
+  void in4(const Signal& sig)
+  { set_lua_global("in4", sig); }
+  
+  void in5(const Signal& sig)
+  { set_lua_global("in5", sig);}
+  
+  void in6(const Signal& sig)
+  { set_lua_global("in6", sig);}
+  
+  void in7(const Signal& sig)
+  { set_lua_global("in7", sig);}
+  
+  void in8(const Signal& sig)
+  { set_lua_global("in8", sig);}
+  
+  void in9(const Signal& sig)
+  { set_lua_global("in9", sig);}
+  
+  void in10(const Signal& sig)
+  { set_lua_global("in10", sig);}
 
   bool eval_script(const std::string& pScript) 
   {
@@ -697,15 +700,25 @@ private:
 extern "C" void init()
 {
   CLASS (Turing)
-  INLET (Turing, input2)
-  INLET (Turing, input3)
-  INLET (Turing, input4)
-  INLET (Turing, input5)
-  OUTLET(Turing, output)
-  OUTLET(Turing, output2)
-  OUTLET(Turing, output3)
-  OUTLET(Turing, output4)
-  OUTLET(Turing, output5)
+  INLET (Turing, in2)
+  INLET (Turing, in3)
+  INLET (Turing, in4)
+  INLET (Turing, in5)
+  INLET (Turing, in6)
+  INLET (Turing, in7)
+  INLET (Turing, in8)
+  INLET (Turing, in9)
+  INLET (Turing, in10)
+  OUTLET(Turing, out)
+  OUTLET(Turing, out2)
+  OUTLET(Turing, out3)
+  OUTLET(Turing, out4)
+  OUTLET(Turing, out5)
+  OUTLET(Turing, out6)
+  OUTLET(Turing, out7)
+  OUTLET(Turing, out8)
+  OUTLET(Turing, out9)
+  OUTLET(Turing, out10)
   METHOD(Turing, tables)
   METHOD(Turing, dot)
   SUPER_METHOD(Turing, Script, load)

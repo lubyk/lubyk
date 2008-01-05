@@ -245,29 +245,32 @@ public:
       send(mSend->mValue);
   }
   
-  // inlet 2
-  void input2(const Signal& sig)
-  { 
-    set_lua_global("in2", sig);
-  }
+  void in2(const Signal& sig)
+  { set_lua_global("in2", sig); }
   
-  // inlet 3
-  void input3(const Signal& sig)
-  { 
-    set_lua_global("in3", sig);
-  }
+  void in3(const Signal& sig)
+  { set_lua_global("in3", sig); }
   
-  // inlet 4
-  void input4(const Signal& sig)
-  { 
-    set_lua_global("in4", sig);
-  }
-
-  // inlet 5
-  void input5(const Signal& sig)
-  { 
-    set_lua_global("in5", sig);
-  }
+  void in4(const Signal& sig)
+  { set_lua_global("in4", sig); }
+  
+  void in5(const Signal& sig)
+  { set_lua_global("in5", sig);}
+  
+  void in6(const Signal& sig)
+  { set_lua_global("in6", sig);}
+  
+  void in7(const Signal& sig)
+  { set_lua_global("in7", sig);}
+  
+  void in8(const Signal& sig)
+  { set_lua_global("in8", sig);}
+  
+  void in9(const Signal& sig)
+  { set_lua_global("in9", sig);}
+  
+  void in10(const Signal& sig)
+  { set_lua_global("in10", sig);}
 
   bool eval_script(const std::string& pScript) 
   {
@@ -313,14 +316,14 @@ public:
     clear_tables();
     
     
-#line 317 "objects/Turing.cpp"
+#line 320 "objects/Turing.cpp"
 	{
 	cs = turing_start;
 	}
-#line 173 "objects/Turing.rl"
+#line 176 "objects/Turing.rl"
     
   
-#line 324 "objects/Turing.cpp"
+#line 327 "objects/Turing.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -395,7 +398,7 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 175 "objects/Turing.rl"
+#line 178 "objects/Turing.rl"
 	{
       if (name_index >= MAX_NAME_SIZE) {
         *mOutput << "Name buffer overflow !\n";
@@ -409,7 +412,7 @@ _match:
     }
 	break;
 	case 1:
-#line 187 "objects/Turing.rl"
+#line 190 "objects/Turing.rl"
 	{
       name[name_index] = '\0';
       identifier = name;
@@ -420,7 +423,7 @@ _match:
     }
 	break;
 	case 2:
-#line 196 "objects/Turing.rl"
+#line 199 "objects/Turing.rl"
 	{
       name[name_index] = '\0';
       name_index = 0;
@@ -432,7 +435,7 @@ _match:
     }
 	break;
 	case 3:
-#line 206 "objects/Turing.rl"
+#line 209 "objects/Turing.rl"
 	{
       name[name_index] = '\0';
       name_index = 0;
@@ -444,7 +447,7 @@ _match:
     }
 	break;
 	case 4:
-#line 216 "objects/Turing.rl"
+#line 219 "objects/Turing.rl"
 	{
       source = identifier;
       #ifdef DEBUG_PARSER
@@ -453,7 +456,7 @@ _match:
     }
 	break;
 	case 5:
-#line 223 "objects/Turing.rl"
+#line 226 "objects/Turing.rl"
 	{ 
       target = identifier;
       #ifdef DEBUG_PARSER
@@ -466,7 +469,7 @@ _match:
     }
 	break;
 	case 6:
-#line 234 "objects/Turing.rl"
+#line 237 "objects/Turing.rl"
 	{ 
       if (!mTokenByName.get(&tok, std::string(name))) {
         *mOutput << "Syntax error. Unknown token '" << name << "' (missing declaration)\n";
@@ -475,7 +478,7 @@ _match:
     }
 	break;
 	case 7:
-#line 241 "objects/Turing.rl"
+#line 244 "objects/Turing.rl"
 	{ 
       name[name_index] = '\0';
       name_index = 0;
@@ -486,7 +489,7 @@ _match:
     }
 	break;
 	case 8:
-#line 251 "objects/Turing.rl"
+#line 254 "objects/Turing.rl"
 	{
       mTokenByName.set(identifier, tok);
       mTokenNameByValue.set(tok, identifier);
@@ -496,7 +499,7 @@ _match:
     }
 	break;
 	case 9:
-#line 259 "objects/Turing.rl"
+#line 262 "objects/Turing.rl"
 	{
       // do we know this token ?
       if (!mTokenTable[tok % TUR_MAX_TOKEN_COUNT]) {
@@ -534,7 +537,7 @@ _match:
     }
 	break;
 	case 10:
-#line 295 "objects/Turing.rl"
+#line 298 "objects/Turing.rl"
 	{
       // write the entry
       #ifdef DEBUG_PARSER
@@ -554,7 +557,7 @@ _match:
     }
 	break;
 	case 11:
-#line 313 "objects/Turing.rl"
+#line 316 "objects/Turing.rl"
 	{
       p--; // move back one char
       char error_buffer[10];
@@ -564,29 +567,29 @@ _match:
     }
 	break;
 	case 12:
-#line 326 "objects/Turing.rl"
+#line 329 "objects/Turing.rl"
 	{ {cs = 37; goto _again;} }
 	break;
 	case 13:
-#line 327 "objects/Turing.rl"
+#line 330 "objects/Turing.rl"
 	{ {cs = 1; goto _again;} }
 	break;
 	case 14:
-#line 329 "objects/Turing.rl"
+#line 332 "objects/Turing.rl"
 	{
       begin_lua_script = p;
       {cs = 43; goto _again;} 
     }
 	break;
 	case 15:
-#line 333 "objects/Turing.rl"
+#line 336 "objects/Turing.rl"
 	{
       mLuaScript.append( begin_lua_script, p - begin_lua_script - 4 );
       begin_lua_script = NULL;
       {cs = 1; goto _again;} 
     }
 	break;
-#line 590 "objects/Turing.cpp"
+#line 593 "objects/Turing.cpp"
 		}
 	}
 
@@ -598,8 +601,8 @@ _again:
 	_out: {}
 	}
 
-#line 602 "objects/Turing.cpp"
-#line 370 "objects/Turing.rl"
+#line 605 "objects/Turing.cpp"
+#line 373 "objects/Turing.rl"
 
   // token_default %add_token_default |
     if (begin_lua_script) {
@@ -930,15 +933,25 @@ private:
 extern "C" void init()
 {
   CLASS (Turing)
-  INLET (Turing, input2)
-  INLET (Turing, input3)
-  INLET (Turing, input4)
-  INLET (Turing, input5)
-  OUTLET(Turing, output)
-  OUTLET(Turing, output2)
-  OUTLET(Turing, output3)
-  OUTLET(Turing, output4)
-  OUTLET(Turing, output5)
+  INLET (Turing, in2)
+  INLET (Turing, in3)
+  INLET (Turing, in4)
+  INLET (Turing, in5)
+  INLET (Turing, in6)
+  INLET (Turing, in7)
+  INLET (Turing, in8)
+  INLET (Turing, in9)
+  INLET (Turing, in10)
+  OUTLET(Turing, out)
+  OUTLET(Turing, out2)
+  OUTLET(Turing, out3)
+  OUTLET(Turing, out4)
+  OUTLET(Turing, out5)
+  OUTLET(Turing, out6)
+  OUTLET(Turing, out7)
+  OUTLET(Turing, out8)
+  OUTLET(Turing, out9)
+  OUTLET(Turing, out10)
   METHOD(Turing, tables)
   METHOD(Turing, dot)
   SUPER_METHOD(Turing, Script, load)

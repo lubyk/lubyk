@@ -129,7 +129,7 @@ bool LuaScript::matrix_from_lua_table(Matrix * pMat, int pIndex)
   while(true) {
     lua_pushinteger(mLua, i);
     lua_gettable(mLua, pIndex);
-    if(!lua_isnumber(mLua, -1)) {
+    if (!lua_isnumber(mLua, -1)) {
       lua_pop(mLua,1);
       break;
     }

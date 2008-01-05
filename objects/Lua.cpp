@@ -17,43 +17,56 @@ public:
     if (mS.type) send(mS);
   }
   
-  // inlet 2
-  void input2(const Signal& sig)
-  { 
-    set_lua_global("in2", sig);
-  }
+  void in2(const Signal& sig)
+  { set_lua_global("in2", sig); }
   
-  // inlet 3
-  void input3(const Signal& sig)
-  { 
-    set_lua_global("in3", sig);
-  }
+  void in3(const Signal& sig)
+  { set_lua_global("in3", sig); }
   
-  // inlet 4
-  void input4(const Signal& sig)
-  { 
-    set_lua_global("in4", sig);
-  }
+  void in4(const Signal& sig)
+  { set_lua_global("in4", sig); }
   
-  // inlet 5
-  void input5(const Signal& sig)
-  { 
-    set_lua_global("in5", sig);
-  }
+  void in5(const Signal& sig)
+  { set_lua_global("in5", sig);}
+  
+  void in6(const Signal& sig)
+  { set_lua_global("in6", sig);}
+  
+  void in7(const Signal& sig)
+  { set_lua_global("in7", sig);}
+  
+  void in8(const Signal& sig)
+  { set_lua_global("in8", sig);}
+  
+  void in9(const Signal& sig)
+  { set_lua_global("in9", sig);}
+  
+  void in10(const Signal& sig)
+  { set_lua_global("in10", sig);}
 };
 
 extern "C" void init()
 {
   CLASS (Lua)
-  INLET (Lua, input2)
-  INLET (Lua, input3)
-  INLET (Lua, input4)
-  INLET (Lua, input5)
-  OUTLET(Lua, output)
-  OUTLET(Lua, output2)
-  OUTLET(Lua, output3)
-  OUTLET(Lua, output4)
-  OUTLET(Lua, output5)
+  INLET (Lua, in2)
+  INLET (Lua, in3)
+  INLET (Lua, in4)
+  INLET (Lua, in5)
+  INLET (Lua, in6)
+  INLET (Lua, in7)
+  INLET (Lua, in8)
+  INLET (Lua, in9)
+  INLET (Lua, in10)
+  OUTLET(Lua, out)
+  OUTLET(Lua, out2)
+  OUTLET(Lua, out3)
+  OUTLET(Lua, out4)
+  OUTLET(Lua, out5)
+  OUTLET(Lua, out6)
+  OUTLET(Lua, out7)
+  OUTLET(Lua, out8)
+  OUTLET(Lua, out9)
+  OUTLET(Lua, out10)
   SUPER_METHOD(Lua, Script, load)
   SUPER_METHOD(Lua, Script, script)
 }
