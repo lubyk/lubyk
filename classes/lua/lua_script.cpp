@@ -327,7 +327,10 @@ void LuaScript::set_lua_global (const char * key, const Signal& sig)
   } else if (sig.get(&d)) {
     lua_pushnumber(mLua, d);
     lua_setglobal(mLua, key);
-  } else if (sig.type && sig.type != BangSignal) {
+  } else if (sig.is_bang()) {
+    lua_pushnil(mLua);
+    lua_setglobal(mLua, key);
+  } else if (sig.type) {
     std::cout << "lua: cannot set '" << key << "' to " << sig << " (type not yet suported in Lua).\n";
   }
 }

@@ -21,7 +21,7 @@ public:
     }
     if (mTempo != 0) {
       bang_me_in(ONE_MINUTE / mTempo);
-      send(BangSignal);
+      send(gBangSignal);
     }
   }
   
