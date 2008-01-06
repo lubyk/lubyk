@@ -53,12 +53,12 @@ public:
   // inlet 1
   void bang(const Signal& sig)
   {
+    MidiMessage * msg;
     if (mDebug) *mOutput << mName << ": " << sig << std::endl;
     
     if (!mMidiout || sig.type != MidiSignal) return;
     
     if (sig.midi_ptr.value->mWait) {
-      MidiMessage * msg;
       if (sig.midi_ptr.free_me) {
         sig.clear_free_me(); // we take hold of it
         register_event<Midi, &Midi::send_and_delete>(msg->mWait, (void*)msg);
@@ -66,15 +66,13 @@ public:
         // copy
         msg = new MidiMessage(*(sig.midi_ptr.value));
         register_event<Midi, &Midi::send_and_delete>(msg->mWait, (void*)msg);
-        //*mOutput << mName << ": we decided not to implement midimessages that are not released (free_me not true). Please change your code...\n";
       }
     } else if (sig.midi_ptr.free_me) {
       sig.clear_free_me(); // we take hold
       send_and_delete((void*)(sig.midi_ptr.value));
     } else {  
-      MidiMessage * msg = new MidiMessage(*(sig.midi_ptr.value));
+      msg = new MidiMessage(*(sig.midi_ptr.value));
       send_and_delete((void*)(msg));
-      //*mOutput << mName << ": we decided not to implement midimessages that are not released (free_me not true). Please change your code...\n";
     }
   }
   
