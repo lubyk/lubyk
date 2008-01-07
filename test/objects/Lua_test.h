@@ -71,4 +71,13 @@ public:
     
     assert_print("n.b(123.34)\n",              "123.34\n");
   }
+  
+  void test_current_time( void )
+  { 
+    setup_with_print("n=Lua(\"function bang()\nsend(1,current_time)\nend\")\n");
+    
+    assert_print("n.b\n",              "0.00\n");
+    mServer->mCurrentTime = 1234;
+    assert_print("n.b\n",              "1234.00\n");
+  }
 };

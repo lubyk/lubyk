@@ -27,6 +27,9 @@ void LuaScript::call_lua(Signal * sig, const char * pFunctionName)
   
   if (!mScriptOK) return;
   
+  lua_pushnumber(mLua, mServer->mCurrentTime);
+  lua_setglobal(mLua, "current_time");
+  
   lua_getglobal(mLua, pFunctionName); /* function to be called */
   
   /* Run the function. */

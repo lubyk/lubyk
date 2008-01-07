@@ -84,7 +84,7 @@ public:
     mOutput.str(std::string("")); // clear output
   }
   
-private:
+protected:
   Rubyk * mServer;
   Command * mCmd;
   std::ostringstream mOutput;
