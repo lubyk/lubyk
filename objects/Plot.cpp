@@ -63,9 +63,7 @@ public:
   void bang(const Signal& sig)
   {
     sig.get(&(mLiveBuffer[0]));
-    printf("pre post\n");
     glutPostRedisplay();
-    printf("post post\n");
   }
   
   // inlet 2
