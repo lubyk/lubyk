@@ -1,4 +1,4 @@
-#include "Matrix.h"
+#include "matrix.h"
 #include "rubyk_signal.h"
 
 #include <errno.h>     // Error number definitions
