@@ -84,10 +84,9 @@ public:
   {
     // do not replace by size_t or i == -1 will never get caught !
     for(int i=PLOT_INLET_COUNT - 1; i>=0; i--) {
-	    //mServer->lock();
-      //printf("lock plot\n");
-	      // protected resource
-	      if (mLiveBuffer[i] == NULL) continue;
+      // protected resource
+      if (mLiveBuffer[i] == NULL) continue;
+	    mServer->lock();
 	      switch(mMode[i]) {
 	      case XYPlot:
 	        xy_plot(*mLiveBuffer[i], i == 0 ? 1.0 : 0.6, i, i == 0);
@@ -98,8 +97,7 @@ public:
 	      default:
 	        time_plot(*mLiveBuffer[i], i == 0 ? 1.0 : 0.5, i, i == 0);
 	      }
-      //  printf("unlock plot\n");
-	    //mServer->unlock();
+	    mServer->unlock();
     }
   }
   
@@ -149,20 +147,6 @@ private:
         
         glBegin(GL_LINE_STRIP);
           for(size_t i=0; i < value_count; i++) {
-            
-            
-            
-            //////////////////////////////////////
-            ////// FIXME: the data is         ////
-            ////// changed during draw since  ////
-            ////// drawing is done in another ////
-            ////// thread !!                  ////
-            ////// possible fix: copy data in ////
-            ////// 'server' thread            ////
-            //////////////////////////////////////
-            
-            
-            
             
             glVertex2f(i * width_ratio, y_offset + mat.data[i * mGroupSize[param_index] * mLineCount[param_index] + g + l_offset] * height_ratio);
           }
