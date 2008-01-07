@@ -66,7 +66,7 @@ public:
         mToken = mTokenTable[ mRealToken % TUR_MAX_TOKEN_COUNT ]; // translate token in the current machine values.
     }
     
-    if (mDebug) *mOutput << "{" << mState << "} -" << mRealToken << "->";
+    if (mDebug) *mOutput << "{" << mStateNames[mState] << "} -" << mRealToken << "->";
     
     if ( !(mSend = mSendTable[mState][mToken]) ) {
       if ( (mSend = mSendTable[0][mToken]) )
@@ -84,7 +84,7 @@ public:
     } else
       mState = state;
     
-    if (mDebug) *mOutput << "{" << mState << "}" << std::endl;
+    if (mDebug) *mOutput << "{" << mStateNames[mState] << "}" << std::endl;
     
     /* Send the value out. */
     if (mSend == &gSendNothing)
