@@ -213,7 +213,7 @@ int LuaScript::send_note_for_lua(lua_State * L)
       node->error("could not get time from lua in 'send_note'");
       return 0;
     }
-    when = d;
+    when = (time_t)d;
     if (!node->double_from_lua(&d)) {
       node->error("could not get channel from lua in 'send_note'");
       return 0;

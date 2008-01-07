@@ -63,7 +63,9 @@ public:
   void bang(const Signal& sig)
   {
     sig.get(&(mLiveBuffer[0]));
+    printf("pre post\n");
     glutPostRedisplay();
+    printf("post post\n");
   }
   
   // inlet 2
@@ -79,20 +81,25 @@ public:
   }
   
   void draw()
-  { 
+  {
     // do not replace by size_t or i == -1 will never get caught !
     for(int i=PLOT_INLET_COUNT - 1; i>=0; i--) {
-      if (mLiveBuffer[i] == NULL) continue;
-      switch(mMode[i]) {
-      case XYPlot:
-        xy_plot(*mLiveBuffer[i], i == 0 ? 1.0 : 0.6, i, i == 0);
-        break;
-      case DotsPlot:
-        dots_plot(*mLiveBuffer[i], 1.0, i,  i == 0);
-        break;
-      default:
-        time_plot(*mLiveBuffer[i], i == 0 ? 1.0 : 0.5, i, i == 0);
-      }
+	    //mServer->lock();
+      //printf("lock plot\n");
+	      // protected resource
+	      if (mLiveBuffer[i] == NULL) continue;
+	      switch(mMode[i]) {
+	      case XYPlot:
+	        xy_plot(*mLiveBuffer[i], i == 0 ? 1.0 : 0.6, i, i == 0);
+	        break;
+	      case DotsPlot:
+	        dots_plot(*mLiveBuffer[i], 1.0, i,  i == 0);
+	        break;
+	      default:
+	        time_plot(*mLiveBuffer[i], i == 0 ? 1.0 : 0.5, i, i == 0);
+	      }
+      //  printf("unlock plot\n");
+	    //mServer->unlock();
     }
   }
   

@@ -61,7 +61,7 @@ public:
     if (sig.midi_ptr.value->mWait) {
       if (sig.midi_ptr.free_me) {
         sig.clear_free_me(); // we take hold of it
-        register_event<Midi, &Midi::send_and_delete>(msg->mWait, (void*)msg);
+        register_event<Midi, &Midi::send_and_delete>(sig.midi_ptr.value->mWait, (void*)(sig.midi_ptr.value));
       } else {
         // copy
         msg = new MidiMessage(*(sig.midi_ptr.value));

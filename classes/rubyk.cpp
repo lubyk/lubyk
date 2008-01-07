@@ -189,7 +189,7 @@ bool Rubyk::run()
 void Rubyk::pop_events()
 {
   BaseEvent * e;
-  long double realTime = mCurrentTime;
+  time_t realTime = mCurrentTime;
   while( mEventsQueue.get(&e) && realTime >= e->mTime) {
     mCurrentTime = e->mTime;
     e->mIsBang ? ((Node*)e->mNode)->bang(gNilSignal) : e->trigger();
