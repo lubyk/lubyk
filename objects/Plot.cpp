@@ -23,6 +23,7 @@ public:
       mLineCount[i] = 1;
       mGroupSize[i] = 1;
       mPointSize[i] = 4.0;
+      mLineWidth[i] = 1.0;
       mMaxAmplitude[i] = 1.0;
       mMode[i] = TimePlot;
     }
@@ -35,16 +36,19 @@ public:
     p.get(&mLineCount[0],"line");
     p.get(&mGroupSize[0],"group");
     p.get(&mPointSize[0],"point");
+    p.get( &mLineWidth[0],"thick");
     p.get(&mMaxAmplitude[0], "amplitude");
     
     p.get(&mLineCount[1],"line2");
     p.get(&mGroupSize[1],"group2");
     p.get(&mPointSize[1],"point2");
+    p.get( &mLineWidth[1],"thick2");
     p.get(&mMaxAmplitude[1], "amplitude2");
     
     p.get(&mLineCount[2],"line3");
     p.get(&mGroupSize[2],"group3");
     p.get(&mPointSize[2],"point3");
+    p.get( &mLineWidth[2],"thick3");
     p.get(&mMaxAmplitude[2], "amplitude3");
     
     if (p.get(&mode, "mode"))
@@ -63,7 +67,7 @@ public:
   void bang(const Signal& sig)
   {
     sig.get(&(mLiveBuffer[0]));
-    glutPostRedisplay();
+    mNeedRedisplay = true;
   }
   
   // inlet 2
@@ -122,6 +126,9 @@ private:
     else
         width_ratio = (double)mWindow.width;
     
+    glPointSize(mPointSize[param_index]);
+    glLineWidth(mLineWidth[param_index]);
+    
     for(size_t l=0; l < mLineCount[param_index]; l++) {
       l_offset = l * mGroupSize[param_index];
       y_offset = (l + 0.5) * mWindow.height / mLineCount[param_index];
@@ -163,6 +170,9 @@ private:
     double width_offset = (double)mWindow.width  / 2.0;
     double height_offset= (double)mWindow.height / 2.0;
     
+    glPointSize(mPointSize[param_index]);
+    glLineWidth(mLineWidth[param_index]);
+    
     for(size_t l=0; l < line_count; l++) {
       // element in group
       // 0 1 0 : 0  1  0 0 1
@@ -200,6 +210,7 @@ private:
     double height_offset= (double)mWindow.height / 2.0;
     
     glPointSize(mPointSize[param_index]);
+    glLineWidth(mLineWidth[param_index]);
     
     for(size_t g=0; g < group_count; g++) {
       const double * row = mat[g];
@@ -251,6 +262,7 @@ private:
   size_t         mLineCount[PLOT_INLET_COUNT];
   size_t         mGroupSize[PLOT_INLET_COUNT];
   double         mPointSize[PLOT_INLET_COUNT];
+  double         mLineWidth[PLOT_INLET_COUNT];
   double         mMaxAmplitude[PLOT_INLET_COUNT];
 };
 

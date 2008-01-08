@@ -190,8 +190,9 @@ void Command::parse(const std::string& pStr)
 void Command::close()
 {
   mQuit = true;
-  if (mThread)
+  if (mThread) {
     pthread_join( mThread, NULL); // wait for child to finish
+  }
 }
 
 void Command::set_from_token (std::string& pElem)
@@ -293,7 +294,6 @@ void Command::execute_command()
     mServer->quit();
     mQuit = true;
     *mOutput << "Bye..." << std::endl;
-    
   } else if (mMethod == "set_lib_path") {
     std::string path;
     if (!mParameters.get(&path)) {

@@ -21,7 +21,7 @@ Rubyk::~Rubyk()
   std::vector<std::string>::iterator it;
   std::vector<std::string>::iterator end = mInstances.end();
   Node * node;
-  Command * child;  
+  Command * child;
   
   while(!mCommands.empty()) {
     child = mCommands.front();
@@ -44,6 +44,7 @@ Rubyk::~Rubyk()
       delete node; // destroy node
     }
   }
+  
 }
 
 /** Called during startup to increase thread priority. */
@@ -215,7 +216,7 @@ void Rubyk::pop_all_events()
 pthread_t Rubyk::create_thread(BaseEvent * e)
 {
   pthread_t id = NULL;
-  if (!Node::sThisKey) pthread_key_create(&Node::sThisKey, NULL);
+  if (!Node::sThisKey) pthread_key_create(&Node::sThisKey, NULL); // create a key to find 'this' object in new thread
   pthread_create( &id, NULL, &Rubyk::start_thread, (void*)e);
   return id;
 }

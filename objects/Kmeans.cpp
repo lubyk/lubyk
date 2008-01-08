@@ -278,10 +278,10 @@ private:
   inline void label_vector_from(const Matrix& pMat, int pLabel)
   {
     if (pLabel < 0) {
-      // grey (no class)
-      mLabelVector.data[0] = 0.5;
-      mLabelVector.data[1] = 0.5;
-      mLabelVector.data[2] = 0.5;
+      // white (no class)
+      mLabelVector.data[0] = 1.0;
+      mLabelVector.data[1] = 1.0;
+      mLabelVector.data[2] = 1.0;
     } else {
       uint col_id = hashId((uint)mLabel); // hashId defined in Hash template
       mLabelVector.data[0] = 0.2 + 0.8 * (col_id % 100) / 100.0; // red color

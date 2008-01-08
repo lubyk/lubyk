@@ -92,6 +92,7 @@ public:
   time_t mCurrentTime; /**< Current logical time in [ms] since reference. */
   
 private:
+  
   /** Set rubyk thread to high priority. */
   void high_priority ();
   
