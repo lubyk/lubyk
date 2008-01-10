@@ -192,7 +192,7 @@ private:
       }
       
       glBegin(GL_LINE_STRIP);
-      for(size_t i=1; i < value_count; i++) {
+      for(size_t i=0; i < value_count; i++) {
         glVertex2f(width_offset  + mat.data[(line_count * i * 2) + l * 2   ] * width_ratio,
                    height_offset + mat.data[(line_count * i * 2) + l * 2 + 1] * height_ratio);
       }      
