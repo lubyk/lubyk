@@ -7,6 +7,12 @@ typedef enum {
   DotsPlot, // uses 'dot' vectors with color information (first 3 columns = RGB)
 } plot_type_t;
 
+typedef enum {
+  AutoColorMode, // set from group index
+  BufferColorMode, // uses vectors with color information (first 3 columns = RGB)
+  FixedColorMode, 
+} plot_color_t;
+
 class Plot : public OpenGL
 {
 public:
@@ -26,6 +32,12 @@ public:
       mLineWidth[i] = 1.0;
       mMaxAmplitude[i] = 1.0;
       mMode[i] = TimePlot;
+      
+      mColorMode[i] = FixedColorMode;
+      mFixedColorAlpha[i] = 1.0;
+      mFixedColorRed[i] = 1.0;
+      mFixedColorGreen[i] = 1.0;
+      mFixedColorBlue[i] = 1.0;
     }
     return init_gl(p);
   }
@@ -38,18 +50,30 @@ public:
     p.get(&mPointSize[0],"point");
     p.get( &mLineWidth[0],"thick");
     p.get(&mMaxAmplitude[0], "amplitude");
+    p.get(&mFixedColorAlpha[0], "alpha");
+    p.get(&mFixedColorRed[0] , "red");
+    p.get(&mFixedColorGreen[0], "green");
+    p.get(&mFixedColorBlue[0] , "blue");
     
     p.get(&mLineCount[1],"line2");
     p.get(&mGroupSize[1],"group2");
     p.get(&mPointSize[1],"point2");
     p.get( &mLineWidth[1],"thick2");
     p.get(&mMaxAmplitude[1], "amplitude2");
+    p.get(&mFixedColorAlpha[1], "alpha2");
+    p.get(&mFixedColorRed[1] , "red2");
+    p.get(&mFixedColorGreen[1], "green2");
+    p.get(&mFixedColorBlue[1] , "blue2");
     
     p.get(&mLineCount[2],"line3");
     p.get(&mGroupSize[2],"group3");
     p.get(&mPointSize[2],"point3");
     p.get( &mLineWidth[2],"thick3");
     p.get(&mMaxAmplitude[2], "amplitude3");
+    p.get(&mFixedColorAlpha[2], "alpha3");
+    p.get(&mFixedColorRed[2] , "red3");
+    p.get(&mFixedColorGreen[2], "green3");
+    p.get(&mFixedColorBlue[2] , "blue3");
     
     if (p.get(&mode, "mode"))
       set_mode_from_string(&mMode[0], mode);
@@ -59,6 +83,15 @@ public:
     
     if (p.get(&mode, "mode3"))
       set_mode_from_string(&mMode[2], mode);
+      
+    if (p.get(&mode, "color"))
+      set_color_mode_from_string(&mColorMode[0], mode);
+    
+    if (p.get(&mode, "color2"))
+      set_color_mode_from_string(&mColorMode[1], mode);
+    
+    if (p.get(&mode, "color3"))
+      set_color_mode_from_string(&mColorMode[2], mode);
     
     return true;
   }
@@ -180,7 +213,12 @@ private:
       // 0 0 1 : 2  3  0 1 1
       
       // build color from integer
-      set_color_from_int(l, pAlpha);
+      if (mColorMode[param_index] == AutoColorMode)
+        set_color_from_int(l, pAlpha);
+      else if (mColorMode[param_index] == FixedColorMode)
+        glColor4f(mFixedColorRed[param_index], mFixedColorGreen[param_index], mFixedColorBlue[param_index], mFixedColorAlpha[param_index]);
+      else
+        set_color_from_int(l, pAlpha); // FIXME: set color from buffer
       
       //glColor4f((int)((l+1)/2) % 4,(int)(l+1) % 2,(int)(l+1)/4,pAlpha);
 
@@ -199,6 +237,7 @@ private:
       glEnd(); 
     }
   }
+  
   
   void dots_plot (const Matrix& mat, double pAlpha, size_t param_index, bool pDrawBase = true)
   {      
@@ -247,6 +286,16 @@ private:
       *pMode = TimePlot;
   }
   
+  void set_color_mode_from_string(plot_color_t * pMode, const std::string& pStr)
+  {
+    if (pStr == "fixed")
+      *pMode = FixedColorMode;
+    else if (pStr == "buffer")
+      *pMode = BufferColorMode;
+    else
+      *pMode = AutoColorMode;
+  }
+  
   /*** Set RGB colors from an integer. */
   inline void set_color_from_int(int pId, double pAlpha)
   {
@@ -264,6 +313,11 @@ private:
   double         mPointSize[PLOT_INLET_COUNT];
   double         mLineWidth[PLOT_INLET_COUNT];
   double         mMaxAmplitude[PLOT_INLET_COUNT];
+  plot_color_t   mColorMode[PLOT_INLET_COUNT];
+  double         mFixedColorAlpha[PLOT_INLET_COUNT];
+  double         mFixedColorRed[PLOT_INLET_COUNT];
+  double         mFixedColorGreen[PLOT_INLET_COUNT];
+  double         mFixedColorBlue[PLOT_INLET_COUNT];
 };
 
 extern "C" void init()
