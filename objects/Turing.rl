@@ -29,7 +29,6 @@ public:
   Turing() : mTokenByName(30), mTokenNameByValue(30), mStateByName(30), mPrintBuffer(NULL), mPrintBufferSize(0) 
   {
     clear_tables();
-    mState = 1;
   }
   ~Turing()
   {
@@ -133,6 +132,7 @@ public:
   bool eval_script(const std::string& pScript) 
   {
     mToken = 0;
+    mState = 1;
     mScript = pScript;
     mScript.append("\n");
     int cs;
@@ -410,7 +410,7 @@ public:
         
       }
     }
-    mState = mState % mStateCount;
+    mState = 1;
     return mStateCount > 1;
   }
 
