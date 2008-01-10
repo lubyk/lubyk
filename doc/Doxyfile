@@ -85,7 +85,11 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 INPUT                  = /Users/gaspard/svk/rubyk/classes \
                          /Users/gaspard/svk/rubyk/objects \
-                         /Users/gaspard/svk/rubyk/templates
+                         /Users/gaspard/svk/rubyk/templates \
+                         /Users/gaspard/svk/rubyk/test \
+                         /Users/gaspard/svk/rubyk/makefile \
+                         /Users/gaspard/svk/rubyk/COPYRIGHT \
+                         /Users/gaspard/svk/rubyk/classes/lua/lua_script.cpp
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.c \
                          *.cc \
@@ -131,7 +135,7 @@ FILTER_SOURCE_FILES    = NO
 #---------------------------------------------------------------------------
 SOURCE_BROWSER         = NO
 INLINE_SOURCES         = NO
-STRIP_CODE_COMMENTS    = YES
+STRIP_CODE_COMMENTS    = NO
 REFERENCED_BY_RELATION = NO
 REFERENCES_RELATION    = NO
 REFERENCES_LINK_SOURCE = YES

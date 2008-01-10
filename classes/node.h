@@ -120,8 +120,8 @@ public:
   /** Send a char. */
   inline void send(size_t pPort, char pChar)
   {
-    mS.type = CharSignal;
-    mS.c.value = pChar;
+    mS.type = IntegerSignal;
+    mS.i.value = (int)pChar;
     send(pPort, mS);
   }
   

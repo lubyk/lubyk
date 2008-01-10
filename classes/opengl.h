@@ -31,6 +31,11 @@ class OpenGL;
 class OpenGL : public Node
 {
 public:
+  OpenGL()
+  {
+    mMouseMatrix.set_sizes(1,2);
+  }
+  
   ///////////// PLOT HACK ////////////////
   virtual ~OpenGL()
   {
@@ -51,8 +56,19 @@ public:
   virtual void key_press(unsigned char pKey, int x, int y)
   {
     if (!handle_default_keys(pKey)) {
-      send(1, (int)pKey);
+      mServer->lock();
+        send(1, (int)pKey);
+      mServer->unlock();
     }
+  }
+  
+  virtual void mouse_move(int x, int y)
+  {
+    mMouseMatrix.data[0] = (double)x;
+    mMouseMatrix.data[1] = (double)y;
+    mServer->lock();
+      send(2, mMouseMatrix);
+    mServer->unlock();
   }
   
   bool init(const Params& p)
@@ -181,6 +197,12 @@ private:
     OpenGL * node = (OpenGL*)thread_this();
     node->key_press(pKey, x, y);
   }
+  
+  static void cast_mouse_move (int x, int y)
+  {
+    OpenGL * node = (OpenGL*)thread_this();
+    node->mouse_move(x,y);
+  }
 
   
   void start_loop()
@@ -206,6 +228,7 @@ private:
     glutDisplayFunc(&OpenGL::cast_draw);
     glutIdleFunc(&OpenGL::cast_idle);
     glutKeyboardFunc(&OpenGL::cast_key_press);
+    glutMotionFunc(&OpenGL::cast_mouse_move);
 
     resize_window();
     mServer->normal_priority();
@@ -214,6 +237,7 @@ private:
   
   double mClearColor;
   pthread_t mThread;
+  Matrix mMouseMatrix;
 protected:
   
   bool mNeedRedisplay;

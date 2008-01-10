@@ -167,7 +167,7 @@ public:
     read_history(history_path().c_str());
   }
   
-  ~InteractiveCommand()
+  virtual ~InteractiveCommand()
   {
     // save readline history
     write_history(history_path().c_str());

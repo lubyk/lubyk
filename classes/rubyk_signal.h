@@ -12,7 +12,6 @@ enum rubyk_signal_t {
   NilSignal  = 0,    /**< Do not send. */
   BangSignal = 1,    /**< Trigger update without changing values. */
   IntegerSignal,     /**< IntegerSignal value. */
-  CharSignal,        /**< IntegerSignal value. */
   DoubleSignal,      /**< DoubleSignal (actually double). */
   MatrixSignal,      /**< Pointer to a matrix of doubles. */
   MidiSignal,        /**< Pointer to a midi message. */
@@ -23,11 +22,6 @@ typedef struct {
   rubyk_signal_t    type;
   int value;
 } IntegerSignal_t;
-
-typedef struct {
-  rubyk_signal_t    type;
-  char value;
-} CharSignal_t;
 
 typedef struct {
   rubyk_signal_t    type;
@@ -95,13 +89,6 @@ union Signal {
   {
     type = IntegerSignal;
     i.value = pInt;
-  }
-  
-  /** Set as char. */
-  inline void set(char pChar)
-  {
-    type = CharSignal;
-    c.value = pChar;
   }
   
   /** Set as unsigned integer. */
@@ -181,21 +168,6 @@ union Signal {
         return true;
       case DoubleSignal:
         *pInt = (int)d.value;
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  /** Get as char. */
-  inline bool get(char * pChar) const
-  {
-    switch(type) {
-      case IntegerSignal:
-        *pChar = (char)i.value;
-        return true;
-      case CharSignal:
-        *pChar = c.value;
         return true;
       default:
         return false;
@@ -297,7 +269,6 @@ union Signal {
 /* data */
   rubyk_signal_t       type;
   IntegerSignal_t      i;
-  CharSignal_t         c;
   DoubleSignal_t       d;
   MatrixSignal_t       matrix;
   MidiSignal_t         midi_ptr;

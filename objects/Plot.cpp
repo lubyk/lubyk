@@ -323,6 +323,8 @@ private:
 extern "C" void init()
 {
   CLASS(Plot)
+  OUTLET(Plot, keys)
+  OUTLET(Plot, mousexy)
   INLET(Plot,reference)
   INLET(Plot,dots)
 }

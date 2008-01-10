@@ -367,7 +367,7 @@ public:
     
     define_token = identifier ws* '=' ws* digit+ $a %set_tok_value;
 
-    main  := ( ws* (entry %add_entry (sub_entry %add_entry)* (ws* comment)? | define_token %define_token (ws* comment)? | comment | begin_comment | begin_lua | ws* )  '\n' )+ $err(error);
+    main  := ( ws* (entry %add_entry (sub_entry %add_entry)* ws* comment? | define_token %define_token (ws* comment)? | comment | begin_comment | begin_lua | ws* )  '\n' )+ $err(error);
     write exec;
     write eof;
   }%%
