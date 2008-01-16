@@ -29,6 +29,7 @@ public:
   Turing() : mTokenByName(30), mTokenNameByValue(30), mStateByName(30), mPrintBuffer(NULL), mPrintBufferSize(0) 
   {
     clear_tables();
+    mState = 1;
   }
   ~Turing()
   {
@@ -66,7 +67,7 @@ public:
         mToken = mTokenTable[ mRealToken % TUR_MAX_TOKEN_COUNT ]; // translate token in the current machine values.
     }
     
-    if (mDebug) *mOutput << "{" << mStateNames[mState] << "} -" << mRealToken << "-> ";
+    if (mDebug) *mOutput << mName << ": {" << mStateNames[mState] << "} -" << mRealToken << "-> ";
     
     if ( !(mSend = mSendTable[mState][mToken]) ) {
       if ( (mSend = mSendTable[0][mToken]) )
@@ -132,7 +133,6 @@ public:
   bool eval_script(const std::string& pScript) 
   {
     mToken = 0;
-    mState = 1;
     mScript = pScript;
     mScript.append("\n");
     int cs;
@@ -144,6 +144,9 @@ public:
     int token_id = 0;
     int tok;
     TuringSend * send = &gSendNothing;
+    std::string old_state_name = "";
+    if (mStateCount > 1)
+      old_state_name = mStateNames[mState % mStateCount];
     
     // source state, target state
     std::string source;
@@ -410,7 +413,10 @@ public:
         
       }
     }
-    mState = 1;
+    if (old_state_name == "" || !mStateByName.get(&mState, old_state_name)) {
+      // old name does not exist
+      set_state(1);
+    }
     return mStateCount > 1;
   }
 
@@ -465,7 +471,49 @@ public:
   virtual void spy()
   { bprint(mSpy, mSpySize,"%i, %i", mTokenCount - 1, mStateCount - 1 );  }
 
+  
+  /** Set state from lua. */
+  int jump()
+  {
+    std::string str;
+    if (string_from_lua(&str)) {
+      set_state(str);
+    }
+    return 0;
+  }
+  
+  /** Set state from command line. */
+  void jump(const Params& p)
+  {
+    std::string str;
+    if (p.get(&str)) {
+      set_state(str);
+    } else {
+      *mOutput << mName << ": could not get state name from parameters.\n";
+    }
+  }
 private:
+  
+  /** Set state from state id. */
+  void set_state(int pState)
+  {
+    mState = 1 + (pState - 1) % (mStateCount - 1);
+  }
+  
+  /** Set state by state name. */
+  bool set_state(std::string& pStateName)
+  {
+    int state_id;
+    if (mStateByName.get(&state_id, pStateName)) {
+      set_state(state_id);
+      if (mDebug) *mOutput << mName << ": jump {" << pStateName << "}\n";
+      return true;
+    } else {
+      return false;      
+      *mOutput << mName << ": unknown state name '" << pStateName << "'.\n";
+    }
+  }
+  
   void clear_tables()
   { 
     memset(mTokenTable, 0, TUR_MAX_TOKEN_COUNT * sizeof(int));
@@ -721,6 +769,8 @@ extern "C" void init()
   OUTLET(Turing, out10)
   METHOD(Turing, tables)
   METHOD(Turing, dot)
+  METHOD(Turing, jump)
+  METHOD_FOR_LUA(Turing, jump)
   SUPER_METHOD(Turing, Script, load)
   SUPER_METHOD(Turing, Script, script)
 }

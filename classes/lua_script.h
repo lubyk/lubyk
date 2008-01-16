@@ -61,6 +61,9 @@ public:
   /** Get a double from the current parameter list. */
   bool double_from_lua(double *);
   
+  /** Get a string from the current parameter list. */
+  bool string_from_lua(std::string *);
+  
   /** Get a matrix from a lua table. */
   bool matrix_from_lua_table(Matrix * pMat, int pIndex);
   

@@ -116,6 +116,18 @@ bool LuaScript::double_from_lua(double * d)
   return true;
 }
 
+bool LuaScript::string_from_lua(std::string * pStr)
+{
+  int index = lua_gettop(mLua);
+  if (!lua_isstring(mLua, index)) {
+    *mOutput << mName << ": wrong value type to get string (" << lua_typename(mLua, index) << " at " << index << ").\n";
+    return false;
+  }
+  *pStr = lua_tostring(mLua,index);
+  lua_pop(mLua,1);
+  return true;
+}
+
 bool LuaScript::matrix_from_lua_table(Matrix * pMat)
 {
   return matrix_from_lua_table(pMat, lua_gettop(mLua));

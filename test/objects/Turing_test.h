@@ -252,4 +252,47 @@ public:
     
     assert_print("n.b(123.34)\n",              "123.34\n");
   }
+  
+  void test_keep_state( void ) 
+  { 
+    setup_with_print("n=Turing(\"a -> b\nb -> b\n\")\nn.d\n");
+    assert_print("n.b(1)\n",              "n: {a} -1-> {b}\n");
+    assert_print("n.b(1)\n",              "n: {b} -1-> {b}\n");
+    assert_print("n.b(2)\n",              "n: {b} -2-> {b}\n");
+    assert_print("n.set(\"a :2 -> b\nb :20 -> a\n\")\n","");
+    assert_print("n.b(2)\n",              "n: {b} -2-> {a}\n[n:1] 20\n20\n");
+  }
+  
+  void test_keep_state_id_changed( void ) 
+  { 
+    setup_with_print("n=Turing(\"a -> b\nb -> b\n\")\nn.d\n");
+    assert_print("n.b(1)\n",              "n: {a} -1-> {b}\n");
+    assert_print("n.b(1)\n",              "n: {b} -1-> {b}\n");
+    assert_print("n.b(2)\n",              "n: {b} -2-> {b}\n");
+    assert_print("n.set(\"b :20 -> a\na :2 -> b\n\")\n","");
+    assert_print("n.b(2)\n",              "n: {b} -2-> {a}\n[n:1] 20\n20\n");
+  }
+  
+  void test_keep_state_name_changed( void ) 
+  { 
+    setup_with_print("n=Turing(\"a -> b\nb -> b\n\")\nn.d\n");
+    assert_print("n.b(1)\n",              "n: {a} -1-> {b}\n");
+    assert_print("n.b(1)\n",              "n: {b} -1-> {b}\n");
+    assert_print("n.b(2)\n",              "n: {b} -2-> {b}\n");
+    assert_print("n.set(\"a :2 -> bob\nbob :20 -> a\n\")\n","");
+    assert_print("n.b(2)\n",              "n: {a} -2-> {bob}\n[n:1] 2\n2\n");
+  }
+  
+  void test_set_state_from_lua( void ) 
+  { 
+    setup_with_print("n=Turing(\"a -> b\nb -> c\nc -> a\n=begin lua\nfunction bang()\njump('b')\nreturn in1\nend\n=end\")\nn.d\n");
+    assert_print("n.b(1)\n",              "n: jump {b}\nn: {b} -1-> {c}\n");
+  }
+  
+  void test_set_state( void ) 
+  { 
+    setup_with_print("n=Turing(\"a -> b\nb -> c\nc -> a\n\")\nn.d\n");
+    assert_print("n.jump(\"b\")\n",    "n: jump {b}\n");
+    assert_print("n.b(1)\n",           "n: {b} -1-> {c}\n");
+  }
 };
