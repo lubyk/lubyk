@@ -26,4 +26,17 @@ public:
     assert_print("n.b(1.0,2.5)\n", "0.75\n49\n"); // 0.75
     assert_print("n.b(2.5,0.5)\n", "0.00\n51\n");
   }
+  
+  /*
+    data means : [0.5, 2.5], [2.5, 0.5], [2.5, 2.5]
+  */
+  void test_closest( void ) 
+  { 
+    setup_with_print("n=Kmeans(vector:2 data:\"test/fixtures/kmeans\" distance:\"Closest\")\nn.learn\nn.2=>p\n");
+    
+    assert_print("n.b(0.5,2.0)\n", "1.25\n49\n"); // FIXME: verify !
+    assert_print("n.b(1.0,2.5)\n", "1.25\n49\n"); // FIXME: verify !
+    assert_print("n.b(2.5,0.5)\n", "0.50\n51\n"); // FIXME: verify !
+    TS_ASSERT(false); // verify
+  }
 };

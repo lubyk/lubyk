@@ -3,8 +3,9 @@
 
 /** Distance calculation algorithms. */
 enum kmeans_distance_types_t {
-  EuclideanDistance,
-  MahalanobisDistance,
+  EuclideanDistance,        /**< Use distance to mean value. */
+  EuclideanClosestDistance, /**< Use distance to closest sample point. */
+  MahalanobisDistance,      /**< Distance to mean value divided by size of sample data ellipsoid in the direction of the distance. */
 };
 
 class Kmeans : public TrainedMachine
@@ -34,6 +35,8 @@ public:
     if (p.get(&dist, "distance")) {
       if (dist == "Mahalanobis")
         mDistanceType = MahalanobisDistance;
+      else if (dist == "Closest")
+        mDistanceType = EuclideanClosestDistance;
       else
         mDistanceType = EuclideanDistance;
     }
@@ -57,7 +60,7 @@ public:
       if (get_label(mView)) {
         label_vector_from(mView, mLabel);
         send(4, mFullTrainingData);
-        send(3, mLabelVector); // input value with current color from label
+        send(3, mLabelVector); // input value with current label
         send(2, mDistance);
         send(mLabel);
       } else {
@@ -88,42 +91,59 @@ private:
     size_t row_count = mCodeBook.row_count();
     size_t col_count = mCodeBook.col_count();
     mDistances.clear();
-    size_t closest_id = -1;
+    int closest_label = 0;
     
-    for (size_t i = 0; i < row_count; i++) {
-      double d = 0.0;
-      if (mDistanceType == EuclideanDistance) {
-        for (size_t j = 0; j < col_count; j++)
-          d += (mCodeBook.data[i * col_count + j] - live.data[j]) * (mCodeBook.data[i * col_count + j] - live.data[j]);
-      } else {
-        // Mahalanobis distance                                           % Octave source code
-        mWork1.copy(live); //                                             t  = live    
-        mWork1.subtract(mCodeBook, i, i); // remove mean value            tc = t - M
-        mWork2.mat_multiply(mWork1, *mICov[i]); //                        d  = tc * C
-        mWork3.mat_multiply(mWork2, mWork1, CblasNoTrans, CblasTrans); // d  = d * tc'
-        d = mWork3.data[0];               // square of distance
-        //d = fast_sqrt(mWork3.data[0]);  // real distance
+    if (mDistanceType == EuclideanClosestDistance) {
+      row_count = mFullTrainingData.row_count();
+      col_count = mFullTrainingData.col_count();
+      for (size_t i = 0; i < row_count; i++) {
+        double d = 0.0;
+        for (size_t j = 1; j < col_count; j++)
+          d += (mFullTrainingData.data[i * col_count + j] - live.data[j-1]) * (mFullTrainingData.data[i * col_count + j] - live.data[j-1]);
+        if (d < closest_distance) {
+          closest_label = mFullTrainingData.data[i * col_count];
+          closest_distance = d;
+          // FIXME: set mDistances[i], find i from label.
+        }
       }
-      mDistances.data[i] = d;
-      total_distance    += d;
-      if (d < 0) {
-        *mOutput << mName << ": error, corrupt covariance matrix for label '" << (char)mLabels.data[i] << "' (negative distance).\n";
-      } else if (d < closest_distance) {
-        closest_id = i;
-        closest_distance = d;
+      mDistance = closest_distance;
+    } else {
+      // Distances to mean value (Mahalanobis or Euclidean)
+      for (size_t i = 0; i < row_count; i++) {
+        double d = 0.0;
+        if (mDistanceType == EuclideanDistance) {
+          for (size_t j = 0; j < col_count; j++)
+            d += (mCodeBook.data[i * col_count + j] - live.data[j]) * (mCodeBook.data[i * col_count + j] - live.data[j]);
+        } else {
+          // Mahalanobis distance                                           % Octave source code
+          mWork1.copy(live); //                                             t  = live    
+          mWork1.subtract(mCodeBook, i, i); // remove mean value            tc = t - M
+          mWork2.mat_multiply(mWork1, *mICov[i]); //                        d  = tc * C
+          mWork3.mat_multiply(mWork2, mWork1, CblasNoTrans, CblasTrans); // d  = d * tc'
+          d = mWork3.data[0];               // square of distance
+          //d = fast_sqrt(mWork3.data[0]);  // real distance
+        }
+        mDistances.data[i] = d;
+        total_distance    += d;
+        if (d < 0) {
+          *mOutput << mName << ": error, corrupt covariance matrix for label '" << (char)mLabels.data[i] << "' (negative distance).\n";
+        } else if (d < closest_distance) {
+          closest_label = mLabels.data[i];
+          closest_distance = d;
+        }
       }
+      // compute normalized probabilities:
+      // not a good idea. Without normalization, 'on the spot' is 100% but 'in the middle' is (n-1)/n
+      // probabilities change when the number of classes change. Distances are a safer indicator of the accuracy.
+      //
+      // if (row_count > 1)
+      //   for (size_t i = 0; i < row_count; i++)
+      //     mDistances.data[i] = (total_distance - mDistances.data[i]) / ((row_count - 1) * total_distance);
+    
+      mDistance = closest_distance;
     }
-    // compute normalized probabilities:
-    // not a good idea. Without normalization, 'on the spot' is 100% but 'in the middle' is (n-1)/n
-    // probabilities change when the number of classes change. Distances are a safer indicator of the accuracy.
-    //
-    // if (row_count > 1)
-    //   for (size_t i = 0; i < row_count; i++)
-    //     mDistances.data[i] = (total_distance - mDistances.data[i]) / ((row_count - 1) * total_distance);
-    
-     mDistance = mDistances.data[closest_id];
-    if (mDistanceThreshold == 0 || mDistances.data[closest_id] < mDistanceThreshold) {
-      mLabel = mLabels.data[closest_id];
+    if (mDistanceThreshold == 0 || mDistance < mDistanceThreshold) {
+      mLabel = closest_label;
       return true;
     }
     return false;
@@ -158,8 +178,8 @@ private:
     TRY(mView, set_sizes(1, mCodeBook.col_count()));
     
     
-    TRY(mLabelVector, set_sizes(1, mCodeBook.col_count() + 3));
-    TRY(mFullTrainingData, set_sizes(0, mCodeBook.col_count() + 3));
+    TRY(mLabelVector, set_sizes(1, mCodeBook.col_count() + 1));
+    TRY(mFullTrainingData, set_sizes(0, mCodeBook.col_count() + 1));
     
     if(!FOREACH_TRAIN_CLASS(Kmeans, load_training_samples)) {
       *mOutput << mName << ": could not load training data (to plot points).\n";
@@ -272,25 +292,26 @@ private:
   
   virtual void spy()
   { 
-    bprint(mSpy, mSpySize,"%ix%i", mCodeBook.row_count(), mCodeBook.col_count());  
+    const char * cstr;
+    if (mDistanceType == EuclideanDistance)
+      cstr = "Euclidean";
+    else if (mDistanceType == EuclideanClosestDistance)
+      cstr = "Closest";
+    else
+      cstr = "Mahalanobis";
+    bprint(mSpy, mSpySize,"%s %ix%i", cstr, mCodeBook.row_count(), mCodeBook.col_count());  
   }
   
   inline void label_vector_from(const Matrix& pMat, int pLabel)
   {
-    if (pLabel < 0) {
+    if (pLabel < 0)
       // white (no class)
-      mLabelVector.data[0] = 1.0;
-      mLabelVector.data[1] = 1.0;
-      mLabelVector.data[2] = 1.0;
-    } else {
-      uint col_id = hashId((uint)mLabel); // hashId defined in Hash template
-      mLabelVector.data[0] = 0.2 + 0.8 * (col_id % 100) / 100.0; // red color
-      mLabelVector.data[1] = 0.2 + 0.8 * (col_id % 60)  / 60.0;  // green color
-      mLabelVector.data[2] = 0.2 + 0.8 * (col_id % 20)  / 20.0;  // blue color
-    }
+      mLabelVector.data[0] = 0.0;
+    else
+      mLabelVector.data[0] = mLabel;
     
     for(size_t i=0; i < pMat.size(); i++)
-      mLabelVector.data[3+i] = pMat.data[i];
+      mLabelVector.data[1+i] = pMat.data[i];
   }
   
   kmeans_distance_types_t mDistanceType; /**< Kind of distance calculation. Default is Euclidean. */

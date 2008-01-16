@@ -4,11 +4,12 @@
 typedef enum {
   XYPlot,
   TimePlot,
-  DotsPlot, // uses 'dot' vectors with color information (first 3 columns = RGB)
+  DotsPlot,       // uses 'dot' vectors with color information (first 3 columns = RGB)
+  LabelDotsPlot,  // first column = int label
 } plot_type_t;
 
 typedef enum {
-  AutoColorMode, // set from group index
+  AutoColorMode,   // set from group index / label id
   BufferColorMode, // uses vectors with color information (first 3 columns = RGB)
   FixedColorMode, 
 } plot_color_t;
@@ -127,6 +128,7 @@ public:
 	        xy_plot(*mLiveBuffer[i], i == 0 ? 1.0 : 0.6, i, i == 0);
 	        break;
 	      case DotsPlot:
+	      case LabelDotsPlot:
 	        dots_plot(*mLiveBuffer[i], 1.0, i,  i == 0);
 	        break;
 	      default:
@@ -137,8 +139,20 @@ public:
   }
   
   virtual void spy()
-  {  
-    bprint(mSpy, mSpySize,"");    
+  { 
+    std::string str;
+    for (size_t i = 0; i < PLOT_INLET_COUNT; i++) {
+      if (i > 0) str.append(" ");
+      if (mMode[i] == TimePlot)
+        str.append(bprint(mSpy, mSpySize, "%i:time", i));
+      else if (mMode[i] == DotsPlot)
+        str.append(bprint(mSpy, mSpySize, "%i:dots", i));
+      else if (mMode[i] == LabelDotsPlot)
+        str.append(bprint(mSpy, mSpySize, "%i:label_dots", i));
+      else
+        str.append(bprint(mSpy, mSpySize, "%i:???", i));
+    }
+    bprint(mSpy, mSpySize,"%s", str.c_str());    
   }
   
 private:
@@ -242,7 +256,7 @@ private:
   void dots_plot (const Matrix& mat, double pAlpha, size_t param_index, bool pDrawBase = true)
   {      
     size_t group_count  = mat.row_count();
-    size_t value_count  = (mat.col_count() - 3) / 2;
+    size_t value_count;
     double width_ratio  = (double)mWindow.width  / (2.0 * mMaxAmplitude[param_index]);
     double height_ratio = (double)mWindow.height / (2.0 * mMaxAmplitude[param_index]); // values : [-1,1]
     double width_offset = (double)mWindow.width  / 2.0;
@@ -253,14 +267,23 @@ private:
     
     for(size_t g=0; g < group_count; g++) {
       const double * row = mat[g];
+      size_t start_index;
       
-      glColor4f(row[0],row[1],row[2],pAlpha);
+      if (mMode[param_index] == DotsPlot) {
+        glColor4f(row[0],row[1],row[2],pAlpha);
+        start_index = 3;
+      } else {
+        set_color_from_int((int)row[0], pAlpha);
+        start_index = 1;
+      }
+      
+      value_count = (mat.col_count() - start_index) / 2;
 
       if (value_count > 0) {
         glBegin(GL_POINTS);
         for(size_t i=0; i < value_count; i++) {
-          glVertex2f(width_offset  + row[3] * width_ratio,
-                     height_offset + row[4] * height_ratio);
+          glVertex2f(width_offset  + row[start_index] * width_ratio,
+                     height_offset + row[start_index+1] * height_ratio);
         }      
         glEnd();
       }
@@ -268,8 +291,8 @@ private:
       if (value_count > 1) {
         glBegin(GL_LINE_STRIP);
         for(size_t i=0; i < value_count; i++) {
-          glVertex2f(width_offset  + row[3 + i * 2   ] * width_ratio,
-                     height_offset + row[3 + i * 2 + 1] * height_ratio);
+          glVertex2f(width_offset  + row[start_index + i * 2   ] * width_ratio,
+                     height_offset + row[start_index + i * 2 + 1] * height_ratio);
         }      
         glEnd();
       }
@@ -282,6 +305,8 @@ private:
       *pMode = XYPlot;
     else if (pStr == "dots")
       *pMode = DotsPlot;
+    else if (pStr == "label_dots")
+      *pMode = LabelDotsPlot;
     else
       *pMode = TimePlot;
   }
