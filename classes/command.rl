@@ -191,7 +191,7 @@ void Command::close()
 {
   mQuit = true;
   if (mThread) {
-    pthread_join( mThread, NULL); // wait for child to finish
+    pthread_kill(mThread, SIGINT);
   }
 }
 

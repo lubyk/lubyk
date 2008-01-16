@@ -114,6 +114,12 @@ protected:
       mWindow.fullscreen = !mWindow.fullscreen;
       resize_window();
       return true;
+    case 'q':
+      mServer->lock();
+        mServer->quit();
+        gQuitGl = true;
+      mServer->unlock();
+      return true;
     default:
       return false;
     }
