@@ -654,7 +654,6 @@ void Command::execute_command()
   } else if (mMethod == "quit" || mMethod == "q") {
     mServer->quit();
     mQuit = true;
-    *mOutput << "Bye..." << std::endl;
   } else if (mMethod == "set_lib_path") {
     std::string path;
     if (!mParameters.get(&path)) {

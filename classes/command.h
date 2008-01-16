@@ -170,6 +170,7 @@ public:
   virtual ~InteractiveCommand()
   {
     // save readline history
+    *mOutput << "\nBye..." << std::endl;
     write_history(history_path().c_str());
   }
   
