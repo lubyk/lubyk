@@ -114,7 +114,7 @@ protected:
       mWindow.fullscreen = !mWindow.fullscreen;
       resize_window();
       return true;
-    case 'q':
+    case '\e':
       mServer->lock();
         mServer->quit();
         gQuitGl = true;
