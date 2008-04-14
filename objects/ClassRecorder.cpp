@@ -90,7 +90,7 @@ public:
       case Recording:
         receive_data();
         enter(Validation);
-        send(2, mMeanSignal);
+        send(2, mMeanSignal);    // reference signal
         send(mViewSignal);       // recorded signal
         break;
       case Validation:

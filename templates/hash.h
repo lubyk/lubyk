@@ -8,6 +8,30 @@
 #include <vector>
 #include <iostream>
 
+///////////// MACRO FOR STATIC STRING HASH ////////////////
+// macro hashing function taken from http://chrissavoie.com/index.php?option=com_content&task=view&id=14&Itemid=1
+// the constant value to return at the end of the hashing
+#define HASH_CONSTANT 5381
+ 
+// the depth of the hashing
+#define HASH_DEPTH 4
+ 
+// The following is the guts of the compile-time hasher
+#define HASH_RECURSE_00(string, value) HASH_FUNCTION((*(string+1) == 0 ? HASH_CONSTANT : HASH_RECURSE_01(string+1, *(string+1))), value)
+#define HASH_RECURSE_01(string, value) HASH_FUNCTION((*(string+1) == 0 ? HASH_CONSTANT : HASH_RECURSE_02(string+1, *(string+1))), value)
+#define HASH_RECURSE_02(string, value) HASH_FUNCTION((*(string+1) == 0 ? HASH_CONSTANT : HASH_RECURSE_03(string+1, *(string+1))), value)
+#define HASH_RECURSE_03(string, value) HASH_FUNCTION((*(string+1) == 0 ? HASH_CONSTANT : HASH_RECURSE_04(string+1, *(string+1))), value)
+#define HASH_RECURSE_04(string, value) HASH_CONSTANT
+ 
+// The following is the function used for hashing
+// Do NOT use NEXTHASH more than once, it will cause
+// N-Squared expansion and make compilation very slow
+// If not impossible
+#define HASH_FUNCTION(NEXTHASH, VALUE) VALUE + (NEXTHASH << 5)
+ 
+// finally the macro used to generate the hash
+#define H(string) HASH_RECURSE_00(string, *string)
+
 typedef unsigned int uint;
 
 template<class K, class T>
@@ -232,19 +256,35 @@ inline uint hashId(const uint key) {
   return res;
 }
 
+// ===== char *      =====
+// sdbm function: taken from http://www.cse.yorku.ca/~oz/hash.html
+// template<>
+// inline uint hashId (const char * str)
+// {
+//   unsigned long hash = 0;
+//   int c;
+// 
+//   while ( (c = *str++) )
+//     hash = c + (hash << 6) + (hash << 16) - hash;
+// 
+//   return hash;
+// }
+//
+// We use the simpler hash to avoid too long compile times in the static string hash macro.
+
+template<>
+inline uint hashId (const char * str)
+{
+  return H(str);
+}
+
 // ===== std::string& =====
 // sdbm function: taken from http://www.cse.yorku.ca/~oz/hash.html
 template<>
 inline uint hashId(const std::string& key)
 {
   const char *str = key.c_str();
-  unsigned long hash = 0;
-  int c;
-
-  while ( (c = *str++) )
-    hash = c + (hash << 6) + (hash << 16) - hash;
-
-  return hash;
+  return hashId(str);
 }
 
 // ===== std::string =====
@@ -255,18 +295,5 @@ inline uint hashId(const std::string key)
   return hashId<const std::string&>(key);
 }
 
-// ===== char *      =====
-// sdbm function: taken from http://www.cse.yorku.ca/~oz/hash.html
-template<>
-inline uint hashId (const char * str)
-{
-  unsigned long hash = 0;
-  int c;
-
-  while ( (c = *str++) )
-    hash = c + (hash << 6) + (hash << 16) - hash;
-
-  return hash;
-}
 
 #endif

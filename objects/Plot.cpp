@@ -49,7 +49,7 @@ public:
     p.get(&mLineCount[0],"line");
     p.get(&mGroupSize[0],"group");
     p.get(&mPointSize[0],"point");
-    p.get( &mLineWidth[0],"thick");
+    p.get(&mLineWidth[0],"thick");
     p.get(&mMaxAmplitude[0], "amplitude");
     p.get(&mFixedColorAlpha[0], "alpha");
     p.get(&mFixedColorRed[0] , "red");
@@ -69,7 +69,7 @@ public:
     p.get(&mLineCount[2],"line3");
     p.get(&mGroupSize[2],"group3");
     p.get(&mPointSize[2],"point3");
-    p.get( &mLineWidth[2],"thick3");
+    p.get(&mLineWidth[2],"thick3");
     p.get(&mMaxAmplitude[2], "amplitude3");
     p.get(&mFixedColorAlpha[2], "alpha3");
     p.get(&mFixedColorRed[2] , "red3");
@@ -156,7 +156,11 @@ public:
   }
   
 private:
-  
+  /** Plot input matrix as a set of time based values. 
+    * For example if we have m samples of n values, the values should be (all values for sample 1 then all values
+    * for sample two, etc): (v_{1,1}, v_{1,2}, .., v_{1,n}, .., v_{m,n}).
+    * The values can be grouped in 'line' groups of 'group' values. (4 lines of 3 values for 4 accelerometers 3D for example.)
+    */
   void time_plot (const Matrix& mat, double pAlpha, size_t param_index, bool pDrawBase = true)
   {
     size_t l_offset;
@@ -208,6 +212,9 @@ private:
     }
   }
   
+  /** Plot input matrix as a set of xy coordinates values. 
+    * For example if we have two lines (A,B) of 3 points each the values would be: {Ax1,Ay1,Ax2,Ay2,Ax3,Ay3,Bx1,By1,Bx2,By2,Bx3,By3}
+    */
   void xy_plot (const Matrix& mat, double pAlpha, size_t param_index, bool pDrawBase = true)
   {    
     size_t line_count   = mLineCount[param_index];
@@ -253,6 +260,10 @@ private:
   }
   
   
+  /** Plot input matrix as a set of xy coordinate values with color information.
+    * The format is {color_info, data}. 'data' is the same as xy_plot. 'color_info' can be either an integer
+    * used to create an arbitrary color (color:auto) or three values to define an RGB value.
+    */
   void dots_plot (const Matrix& mat, double pAlpha, size_t param_index, bool pDrawBase = true)
   {      
     size_t group_count  = mat.row_count();

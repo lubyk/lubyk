@@ -34,6 +34,10 @@ std::ostream& operator<< (std::ostream& pStream, const Signal& sig)
       pStream << " ], " << sig.matrix.value->row_count() << "x" << sig.matrix.value->col_count() << ">";
     }
     break;
+  case StringSignal:
+    snprintf(buffer, 50, "<%s %s>",sig.type_name(), sig.str_ptr.value->c_str());
+    pStream << buffer;
+    break;
   case VoidPointerSignal:
     snprintf(buffer, 50, "<%s %p, %i>",sig.type_name(), sig.ptr.value, sig.ptr.free_me);
     pStream << buffer;
@@ -50,6 +54,8 @@ std::ostream& operator<< (std::ostream& pStream, const Signal& sig)
 void Signal::set (const Params& p, Matrix& pBuffer)
 {  
   double value;
+  clear();
+  
   if (p.size() > 1) {
     if (!pBuffer.set_sizes(1,p.size())) return;
     for(size_t i=0; i < p.size(); i++) {
