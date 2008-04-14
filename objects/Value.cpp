@@ -34,10 +34,6 @@ public:
     } else if (sig.type) {
       mS = sig;
     }
-    mS.set_meta(H("foo"), std::string("Bar"));
-    std::string s;
-    
-    mS.get_meta(&s, H("foo"));
     send(mS);
   }
 

@@ -95,7 +95,6 @@ union Signal {
   /// memory management ///
   void clear()
   {
-    printf("clear %p\n", this);
     if (type == VoidPointerSignal && ptr.free_me) {
       free(ptr.value);
     } else if (type == StringSignal) {
