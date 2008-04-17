@@ -72,7 +72,7 @@ public:
       mHasLiveData = true;
     } else {
       time_t record_time = (time_t)(ONE_SECOND * mMeanVector.row_count())/(mSampleRate);
-      time_t record_with_margin = record_time * (1 + mMargin/2.0);
+      time_t record_with_margin = record_time * (mMargin/2.0);
       time_t countdown_time;
       if (record_time > 500)
         countdown_time = record_time;
