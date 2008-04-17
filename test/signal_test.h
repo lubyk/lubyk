@@ -17,6 +17,20 @@ public:
     TS_ASSERT_EQUALS(sig.type, DoubleSignal);
   }
   
+  void testBool( void )
+  {
+    Signal sig;
+    bool res = false;
+    
+    sig.set(true);
+    sig.get(&res);
+    TS_ASSERT(res);
+    
+    sig.set(false);
+    sig.get(&res);
+    TS_ASSERT(!res);
+  }
+  
   void testString( void )
   {
     Signal sig;
@@ -31,16 +45,20 @@ public:
     // FIXME: string meta values crash !
     // std::string name;
     double age;
+    int    year;
     Signal sig;
     
     sig.set(34.0);
     //sig.set_meta(H("name"), "John");
     sig.set_meta(H("age"), 32.0);
+    sig.set_meta(H("year"), 1975);
 
     //TS_ASSERT(sig.get_meta(&name, H("name")));
     TS_ASSERT(sig.get_meta(&age, H("age")));
+    TS_ASSERT(sig.get_meta(&year, H("year")));
 
     //TS_ASSERT_EQUALS(name, std::string("John"));
     TS_ASSERT_EQUALS(age, 32.0);
+    TS_ASSERT_EQUALS(year, 1975);
   }
 };

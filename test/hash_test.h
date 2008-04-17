@@ -108,4 +108,12 @@ public:
     TS_ASSERT( !hash.get(&res, "b"));
     TS_ASSERT( !hash.get(&res, "c"));
   }
+  
+  void test_H( void )
+  {
+    TS_ASSERT_DIFFERS(H("a"), H("b"));
+    TS_ASSERT_DIFFERS(H("one"), H("two"));
+    TS_ASSERT_DIFFERS(H("longname_a"), H("longname_b"));
+    TS_ASSERT_DIFFERS(H("longname_a"), H("longname_c"));
+  }
 };

@@ -100,20 +100,23 @@ public:
   // inlet 1
   void bang(const Signal& sig)
   {
+    mSignal[0] = &sig;
     sig.get(&(mLiveBuffer[0]));
     mNeedRedisplay = true;
   }
   
   // inlet 2
-  void reference(const Signal& sig)
+  void signal2(const Signal& sig)
   {
+    mSignal[1] = &sig;
     sig.get(&(mLiveBuffer[1]));
   }
   
   // inlet 3
-  void dots(const Signal& sig)
+  void signal3(const Signal& sig)
   {
-    sig.get(&(mLiveBuffer[1]));
+    mSignal[2] = &sig;
+    sig.get(&(mLiveBuffer[2]));
   }
   
   void draw()
@@ -122,19 +125,19 @@ public:
     for(int i=PLOT_INLET_COUNT - 1; i>=0; i--) {
       // protected resource
       if (mLiveBuffer[i] == NULL) continue;
-	    mServer->lock();
-	      switch(mMode[i]) {
-	      case XYPlot:
-	        xy_plot(*mLiveBuffer[i], i == 0 ? 1.0 : 0.6, i, i == 0);
-	        break;
-	      case DotsPlot:
-	      case LabelDotsPlot:
-	        dots_plot(*mLiveBuffer[i], 1.0, i,  i == 0);
-	        break;
-	      default:
-	        time_plot(*mLiveBuffer[i], i == 0 ? 1.0 : 0.5, i, i == 0);
-	      }
-	    mServer->unlock();
+      mServer->lock();
+        switch(mMode[i]) {
+        case XYPlot:
+          xy_plot(*mLiveBuffer[i], i == 0 ? 1.0 : 0.6, i, i == 0);
+          break;
+        case DotsPlot:
+        case LabelDotsPlot:
+          dots_plot(*mLiveBuffer[i], 1.0, i,  i == 0);
+          break;
+        default:
+          time_plot(*mLiveBuffer[i], i == 0 ? 1.0 : 0.5, i, i == 0);
+        }
+      mServer->unlock();
     }
   }
   
@@ -167,18 +170,37 @@ private:
     size_t g_offset;
     
     size_t value_count  = mat.size() / (mLineCount[param_index] * mGroupSize[param_index]); 
+    size_t sample_count = value_count;
+    
     double width_ratio;
     double height_ratio = (double)mWindow.height / (2.0 * mLineCount[param_index] * mMaxAmplitude[param_index]); // values : [-1,1]
     double y_offset;
+    
+    size_t sample_offset = 0; // move all points to the left (shift view to the right)
+    double x_offset      = 0;
+    bool   draw_box      = false;
+    
+    ///// set x_offset, width_zoom with sig.get_meta(...) /////
+    mSignal[param_index]->get_meta(&sample_offset, H("sample_offset")); // shift display window right / left
+    mSignal[param_index]->get_meta(&sample_count,  H("sample_count"));  // total number of samples per window when computing width_ratio
+    mSignal[param_index]->get_meta(&draw_box,      H("draw_box"));      // draw a surrounding box
+    
     double col_ratio = 1.0 / mGroupSize[param_index];
     
-    if (value_count > 1)
-        width_ratio = (double)mWindow.width  / (value_count - 1);
+    if (sample_count > 1)
+        width_ratio = (double)mWindow.width  / (sample_count - 1);
     else
         width_ratio = (double)mWindow.width;
     
+    x_offset = sample_offset * width_ratio;
+    
     glPointSize(mPointSize[param_index]);
     glLineWidth(mLineWidth[param_index]);
+    
+    if (draw_box) {
+      glColor4f(0.6,0.6,0.0,0.3);
+      glRectd(x_offset, 0.0, x_offset + value_count * width_ratio, mWindow.height);
+    }
     
     for(size_t l=0; l < mLineCount[param_index]; l++) {
       l_offset = l * mGroupSize[param_index];
@@ -188,8 +210,8 @@ private:
       if (pDrawBase) {
         glColor4f(0.3,0.3,0.3,0.9);
         glBegin(GL_LINE_STRIP);
-          glVertex2f(0,y_offset);
-          glVertex2f(mWindow.width,y_offset);
+          glVertex2d(0,y_offset);
+          glVertex2d(mWindow.width,y_offset);
         glEnd();
       }
       
@@ -204,9 +226,9 @@ private:
         glBegin(GL_LINE_STRIP);
           for(size_t i=0; i < value_count; i++) {
             
-            glVertex2f(i * width_ratio, y_offset + mat.data[i * mGroupSize[param_index] * mLineCount[param_index] + g + l_offset] * height_ratio);
+            glVertex2d(x_offset + i * width_ratio, y_offset + mat.data[i * mGroupSize[param_index] * mLineCount[param_index] + g + l_offset] * height_ratio);
           }
-          glVertex2f(mWindow.width, y_offset + mat.data[(value_count - 1) * mGroupSize[param_index] * mLineCount[param_index] + g + l_offset] * height_ratio);
+          glVertex2d(x_offset + value_count * width_ratio, y_offset + mat.data[(value_count - 1) * mGroupSize[param_index] * mLineCount[param_index] + g + l_offset] * height_ratio);
         glEnd();
       }
     }
@@ -245,14 +267,14 @@ private:
 
       if (value_count > 0) {
         glBegin(GL_POINTS);
-          glVertex2f(width_offset  + mat.data[l * 2    ] * width_ratio,
+          glVertex2d(width_offset  + mat.data[l * 2    ] * width_ratio,
                     height_offset + mat.data[l * 2 + 1] * height_ratio);
         glEnd();
       }
       
       glBegin(GL_LINE_STRIP);
       for(size_t i=0; i < value_count; i++) {
-        glVertex2f(width_offset  + mat.data[(line_count * i * 2) + l * 2   ] * width_ratio,
+        glVertex2d(width_offset  + mat.data[(line_count * i * 2) + l * 2   ] * width_ratio,
                    height_offset + mat.data[(line_count * i * 2) + l * 2 + 1] * height_ratio);
       }      
       glEnd(); 
@@ -293,7 +315,7 @@ private:
       if (value_count > 0) {
         glBegin(GL_POINTS);
         for(size_t i=0; i < value_count; i++) {
-          glVertex2f(width_offset  + row[start_index] * width_ratio,
+          glVertex2d(width_offset  + row[start_index] * width_ratio,
                      height_offset + row[start_index+1] * height_ratio);
         }      
         glEnd();
@@ -302,7 +324,7 @@ private:
       if (value_count > 1) {
         glBegin(GL_LINE_STRIP);
         for(size_t i=0; i < value_count; i++) {
-          glVertex2f(width_offset  + row[start_index + i * 2   ] * width_ratio,
+          glVertex2d(width_offset  + row[start_index + i * 2   ] * width_ratio,
                      height_offset + row[start_index + i * 2 + 1] * height_ratio);
         }      
         glEnd();
@@ -344,6 +366,7 @@ private:
   
   plot_type_t    mMode[PLOT_INLET_COUNT];       /**< Plot mode (XYPlot, TimePlot) each pair as an XY point instead of x(t). */
   const Matrix * mLiveBuffer[PLOT_INLET_COUNT]; /**< Pointer to the live stream (one matrix for each inlet). */
+  const Signal * mSignal[PLOT_INLET_COUNT];     /**< Live signal received on each inlet. */
   size_t         mLineCount[PLOT_INLET_COUNT];
   size_t         mGroupSize[PLOT_INLET_COUNT];
   double         mPointSize[PLOT_INLET_COUNT];
@@ -361,6 +384,6 @@ extern "C" void init()
   CLASS(Plot)
   OUTLET(Plot, keys)
   OUTLET(Plot, mousexy)
-  INLET(Plot,reference)
-  INLET(Plot,dots)
+  INLET(Plot,signal2)
+  INLET(Plot,signal3)
 }

@@ -144,9 +144,24 @@ union Signal {
   /** Set as nil. */
   inline void set_nil() { clear(); type = NilSignal; }
   
+  /** Set as boolean. */
+  inline void set(bool pBool)
+  {
+    clear();
+    type = IntegerSignal;
+    i.value = pBool ? 1 : 0;
+  }
   
   /** Set as integer. */
   inline void set(int pInt)
+  {
+    clear();
+    type = IntegerSignal;
+    i.value = pInt;
+  }
+  
+  /** Set as size_t. */
+  inline void set(size_t pInt)
   {
     clear();
     type = IntegerSignal;
@@ -239,6 +254,21 @@ union Signal {
   /** Get as bang. */
   inline bool is_bang() const { return type == BangSignal; }
   
+  /** Get as boolean. */
+  inline bool get(bool * pBool) const
+  {
+    switch(type) {
+      case IntegerSignal:
+        *pBool = (i.value != 0);
+        return true;
+      case DoubleSignal:
+        *pBool = (d.value != 0);
+        return true;
+      default:
+        return false;
+    }
+  }
+  
   /** Get as int. */
   inline bool get(int * pInt) const
   {
@@ -248,6 +278,21 @@ union Signal {
         return true;
       case DoubleSignal:
         *pInt = (int)d.value;
+        return true;
+      default:
+        return false;
+    }
+  }
+  
+  /** Get as size_t. */
+  inline bool get(size_t * pInt) const
+  {
+    switch(type) {
+      case IntegerSignal:
+        *pInt = (size_t)i.value;
+        return true;
+      case DoubleSignal:
+        *pInt = (size_t)d.value;
         return true;
       default:
         return false;

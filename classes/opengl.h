@@ -134,16 +134,11 @@ protected:
     }
   }
   
-  void gl_square(double x, double y, double sz)
+  void gl_square(GLdouble  x, GLdouble  y, GLdouble sz)
   {
-    glVertex2f(x - sz/2, y - sz/2);
-    glVertex2f(x + sz/2, y - sz/2);
-    glVertex2f(x + sz/2, y + sz/2);
-    glVertex2f(x - sz/2, y + sz/2);
-    glVertex2f(x - sz/2, y - sz/2);
-    glVertex2f(x, y);
+    glRectd(x - sz/2, y - sz/2, x + sz/2, y + sz/2);
+    glVertex2d(x, y);
   }
-  
   
   OglWindow  mWindow;
   
