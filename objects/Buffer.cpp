@@ -15,6 +15,7 @@ public:
     return true;
   }
   
+  // TODO: add 'flat' option.
   bool set (const Params& p)
   {
     size_t window_size = mBuffer.row_count();

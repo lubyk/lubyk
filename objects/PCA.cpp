@@ -16,7 +16,7 @@ public:
   bool init(const Params& p)
   {
     mTransposedFolder = "processed"; // where to store training data transposed in new basis
-    
+    mTransposedFile   = NULL;
     TRY(mBuffer,     set_sizes(1,8));
     TRY(mWorkBuffer, set_sizes(1,32));
     TRY(mMeanValue,  set_sizes(1,32));
