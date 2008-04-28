@@ -69,7 +69,12 @@ bool LuaScript::eval_lua_script(const std::string& pScript)
     
     /* register matrix */
     register_lua_Matrix();
+    
   }
+  
+  /* set 'current_time' */
+  lua_pushnumber(mLua, mServer->mCurrentTime);
+  lua_setglobal(mLua, "current_time");
   
   /* compile script (as long as we maintain 1 context per object, we could release the mutex for long compilations since they are done inside the 'command' space) */
   status = luaL_loadbuffer(mLua, pScript.c_str(), pScript.size(), "script" ); // the last parameter is just used for debugging and error reporting
