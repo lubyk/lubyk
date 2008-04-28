@@ -468,7 +468,8 @@ _match:
       #endif
       if (source != ".")
         source_state = get_state_id(source); // we postponed this to here to be sure state is not confused with token identifier
-      target_state = get_state_id(target);
+      if (target != ".")
+        target_state = get_state_id(target);
       source = target; // the last target becomes the next source
     }
 	break;
