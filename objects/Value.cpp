@@ -17,7 +17,7 @@ public:
     } else if (p.get(&value, "value", true)) {
       mS.set(value);
     } else {
-      mS.set_nil();
+      mS.set_bang();
     }
     
     return true;
@@ -31,7 +31,7 @@ public:
       if(mMatrix.copy(sig)) {
         mS.set(mMatrix);
       }
-    } else if (sig.type) {
+    } else if (sig.type != BangSignal) {
       mS = sig;
     }
     send(mS);

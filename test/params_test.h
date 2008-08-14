@@ -88,4 +88,15 @@ public:
     res2 << p;
     TS_ASSERT_EQUALS( res2.str(), std::string("") );
   }
+  
+  void testCastParam( void )
+  {
+    int i = 0;
+    double d = 0.0;
+    Params p;
+    i = p.cast_param<int>(std::string("1"));
+    TS_ASSERT_EQUALS( i, 1);
+    d = p.cast_param<double>(std::string("1.234"));
+    TS_ASSERT_EQUALS( d, 1.234);
+  }
 };

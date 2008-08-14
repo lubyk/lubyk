@@ -33,7 +33,7 @@ public:
     create("");
     
     assert_spy("'Hello World !' 0");
-    mNode->bang(gNilSignal);
+    mNode->bang(gBangSignal);
     assert_spy("'Hello World !' 1");
   }
   
@@ -57,7 +57,7 @@ public:
     TS_ASSERT_EQUALS( std::string("'second' 0"), std::string(d2->get_spy()) );
     
     
-    d1->bang(gNilSignal); /** ---> 1. bang --> increment d1  = 4
+    d1->bang(gBangSignal); /** ---> 1. bang --> increment d1  = 4
                   *      2. send new value to  d2
                   *      3. set d2                 = 4
                   *      4. bang --> increment d2  = 5  */
@@ -79,7 +79,7 @@ public:
     TS_ASSERT_EQUALS( std::string(d2->get_spy()), std::string("'second' 0"));
     
     
-    d1->bang(gNilSignal); /** ---> 1. bang --> increment d1  = 4
+    d1->bang(gBangSignal); /** ---> 1. bang --> increment d1  = 4
                   *      2. send new value to  d2
                   *      3. set d2                 = 4
                   *      4. bang --> increment d2  = 5  */
@@ -111,7 +111,7 @@ public:
     TS_ASSERT_EQUALS( std::string(add->get_spy()), std::string("0.00"));
     TS_ASSERT_EQUALS( std::string(v3->get_spy()) , std::string("0.00"));
     
-    v2->bang(gNilSignal); /** ---> 1. bang --> value         = 3
+    v2->bang(gBangSignal); /** ---> 1. bang --> value         = 3
                   *      2. send new value to  add      */
     
     TS_ASSERT_EQUALS( std::string(v1->get_spy()) , std::string("2.00"));
@@ -119,7 +119,7 @@ public:
     TS_ASSERT_EQUALS( std::string(add->get_spy()), std::string("3.00"));
     TS_ASSERT_EQUALS( std::string(v3->get_spy()) , std::string("0.00"));
     
-    add->bang(gNilSignal); /** ---> 1. bang --> value         = 3
+    add->bang(gBangSignal); /** ---> 1. bang --> value         = 3
                    *      2. send new value to  v3  = 3  */
     
     TS_ASSERT_EQUALS( std::string(v1->get_spy()) , std::string("2.00"));
@@ -127,7 +127,7 @@ public:
     TS_ASSERT_EQUALS( std::string(add->get_spy()), std::string("3.00"));
     TS_ASSERT_EQUALS( std::string(v3->get_spy()) , std::string("3.00"));
     
-    v1->bang(gNilSignal); /** ---> 1. bang --> value         = 2
+    v1->bang(gBangSignal); /** ---> 1. bang --> value         = 2
                   *      2. send new value to add  = 2
                   *      3. add.bang --> value     = 5
                   *      4. send to v3             = 5  */

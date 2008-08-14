@@ -1,0 +1,25 @@
+#!/usr/local/bin/rubyk
+bang = Metro(5000)
+bang => c
+c=Lua(load:"12_sig.lua")
+c => buf
+buf = Buffer(256) # 64 * 4
+buf => rec
+
+# =========== RECORDER ================
+k = Keyboard()
+k => rec
+
+rec = ClassRecorder(tempo:120 data:"raw" rate:250 channel:16)
+
+rec => p
+rec.2 => 2.p
+#rec.2 => p
+
+rec.3 => midi
+
+# =========== PLOT ====================
+p = Plot(line:4 group:3 line2:4 group2:3)
+
+# =========== MIDI ====================
+midi = Midi()
