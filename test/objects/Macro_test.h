@@ -6,7 +6,7 @@ public:
 
   void test_parse_command( void ) 
   { 
-    setup_with_print("n=Macro(\"function bang()\nparse_command('v=Value()\\nv=>p\\nv.bang(3)\\n')\nend\")\n");
+    setup_with_print("n=Macro(\"v=Value()\nv=>p\nv.bang(3)\")\n");
     assert_print("n.bang\n","3.00\n");
   }
   

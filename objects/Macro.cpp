@@ -20,6 +20,18 @@ public:
     return set_lua(p);
   }
   
+  
+  bool eval_script(const std::string& pScript) 
+  {
+    if (pScript.find("function bang()") != std::string::npos) {
+      mScript = pScript;
+    } else {
+      mScript = std::string("function bang()\nparse_command([[").append(pScript).append("\n]])\nend\n");
+    }
+    
+    return eval_lua_script(mScript);
+  }
+
   // inlet 1
   void bang(const Signal& sig)
   {
