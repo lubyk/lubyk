@@ -78,6 +78,9 @@ public:
   /** Push a matrix on top of the lua stack. */
   void lua_pushmatrix (const Matrix& pMat);
   
+  /** Push a midi message on top of the lua stack. */
+  void lua_pushmidi (const MidiMessage& pMessage);
+  
   /** Get a matrix pointer from lua. */
   static bool matrix_from_lua (lua_State *L, Matrix ** pMat, int pIndex);
   

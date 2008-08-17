@@ -1,7 +1,7 @@
 #include "class.h"
 #include "rtmidi/RtMidi.h"
 
-class Midi : public Node
+class MidiOut : public Node
 {
 public:
   
@@ -10,7 +10,7 @@ public:
     mPortId = -1;
     
     try {
-      mMidiout = new RtMidiOut();
+      mMidiOut = new RtMidiOut();
     } catch (RtError &error) {
       *mOutput << mName << ": " << error.getMessageString() << std::endl;
       return false;
@@ -21,7 +21,7 @@ public:
 
       // Call function to select port.
       try {
-        mMidiout->openVirtualPort();
+        mMidiOut->openVirtualPort();
       }
       catch (RtError &error) {
         *mOutput << mName << ": " << error.getMessageString() << std::endl;
@@ -32,7 +32,7 @@ public:
     } else {
      // Call function to select port.
      try {
-       mMidiout->openPort( mPortId );
+       mMidiOut->openPort( mPortId );
      }
      catch (RtError &error) {
        *mOutput << mName << ": " << error.getMessageString() << std::endl;
@@ -56,16 +56,16 @@ public:
     MidiMessage * msg;
     if (mDebug) *mOutput << mName << ": " << sig << std::endl;
     
-    if (!mMidiout || sig.type != MidiSignal) return;
+    if (!mMidiOut || sig.type != MidiSignal) return;
     
     if (sig.midi_ptr.value->mWait) {
       if (sig.midi_ptr.free_me) {
         sig.clear_free_me(); // we take hold of it
-        register_event<Midi, &Midi::send_and_delete>(sig.midi_ptr.value->mWait, (void*)(sig.midi_ptr.value));
+        register_event<MidiOut, &MidiOut::send_and_delete>(sig.midi_ptr.value->mWait, (void*)(sig.midi_ptr.value));
       } else {
         // copy
         msg = new MidiMessage(*(sig.midi_ptr.value));
-        register_event<Midi, &Midi::send_and_delete>(msg->mWait, (void*)msg);
+        register_event<MidiOut, &MidiOut::send_and_delete>(msg->mWait, (void*)msg);
       }
     } else if (sig.midi_ptr.free_me) {
       sig.clear_free_me(); // we take hold
@@ -79,10 +79,10 @@ public:
   void send_and_delete(void * data)
   {
     MidiMessage * msg = (MidiMessage*)data;
-    mMidiout->sendMessage( &(msg->mData) );
+    mMidiOut->sendMessage( &(msg->mData) );
     if (msg->mType == NoteOn && msg->mLength) {
       msg->note_on_to_off();
-      register_forced_event<Midi, &Midi::send_and_delete>(msg->mLength, (void*)msg);
+      register_forced_event<MidiOut, &MidiOut::send_and_delete>(msg->mLength, (void*)msg);
     } else {
       delete msg;
     }
@@ -92,44 +92,12 @@ public:
   void clear()
   { remove_my_events(); }
   
-  // print a list of possible inputs
-  static void inputs(std::ostream * pOutput, const Params& p) {
-    RtMidiIn *midiin = 0;
-    unsigned int i,nPorts;
-    std::string portName;
-
-    // RtMidiOut constructor
-    try {
-      midiin = new RtMidiIn();
-    }
-    catch (RtError &error) {
-      *pOutput << error.getMessageString() << std::endl;
-      return;
-    }
-
-    // Check outputs.
-    
-    nPorts = midiin->getPortCount();
-    *pOutput << "Midi in ports (" << nPorts << "):" << std::endl;
-    
-    for ( i=0; i<nPorts; i++ ) {
-      *pOutput << "  " << i << " : " ;
-      try {
-        portName = midiin->getPortName(i);
-        *pOutput << portName << std::endl;
-      }
-      catch (RtError &error) {
-        *pOutput << error.getMessageString() << std::endl;
-      }
-    }
-  }
-  
   // print a list of possible outputs
-  static void outputs(std::ostream * pOutput, const Params& p)
+  static void list(std::ostream * pOutput, const Params& p)
   {
     std::vector<std::string> ports;
     if (!output_list(pOutput, ports)) return;
-    size_t nPorts;
+    size_t nPorts = ports.size();
     
     *pOutput << "Midi out ports (" << nPorts << "):" << std::endl;
 
@@ -182,7 +150,7 @@ private:
   }
   
   int mPortId;
-  RtMidiOut * mMidiout;
+  RtMidiOut * mMidiOut;
 };
 /*
 // params: portNumber
@@ -260,10 +228,9 @@ static VALUE t_noteOff(VALUE self, VALUE rChannel, VALUE rNote, VALUE rVelocity)
 */
 extern "C" void init() 
 {
-  CLASS (Midi)
-  CLASS_METHOD(Midi, inputs)
-  CLASS_METHOD(Midi, outputs)
-  METHOD(Midi, clear)
+  CLASS (MidiOut)
+  CLASS_METHOD(MidiOut, list)
+  METHOD(MidiOut, clear)
   // rk_cRtMidi = rb_define_class("RtMidi", rb_cObject);
   // rb_define_singleton_method(rk_cRtMidi, "outputs", (VALUE(*)(...))c_outputs, 0);
   // rb_define_method(rk_cRtMidi, "initialize", (VALUE(*)(...))t_initialize, 1);

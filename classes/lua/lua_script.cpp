@@ -344,6 +344,9 @@ void LuaScript::set_lua_global (const char * key, const Signal& sig)
   if (sig.get(&live)) {
     lua_pushmatrix(*live);
     lua_setglobal(mLua, key);
+  } else if (sig.type == MidiSignal) {
+    lua_pushmidi(*(sig.midi_ptr.value));
+    lua_setglobal(mLua, key);
   } else if (sig.get(&d)) {
     lua_pushnumber(mLua, d);
     lua_setglobal(mLua, key);
@@ -352,6 +355,30 @@ void LuaScript::set_lua_global (const char * key, const Signal& sig)
     lua_setglobal(mLua, key);
   } else if (sig.type) {
     std::cout << "lua: cannot set '" << key << "' to " << sig << " (type not yet suported in Lua).\n";
+  }
+}
+
+void LuaScript::lua_pushmidi (const MidiMessage& pMessage)
+{
+  // fixme create a new 'midi' table class...
+  lua_newtable(mLua);
+  if (pMessage.mType == NoteOff || pMessage.mType == NoteOn) {
+    lua_pushstring(mLua, "type");
+    lua_pushstring(mLua, pMessage.mType == NoteOn ? "NoteOn" : "NoteOff");
+    lua_settable(mLua, -3);
+    lua_pushstring(mLua, "note");
+    lua_pushnumber(mLua, pMessage.note());
+    lua_settable(mLua, -3);
+    lua_pushstring(mLua, "channel");
+    lua_pushnumber(mLua, pMessage.channel());
+    lua_settable(mLua, -3);
+    lua_pushstring(mLua, "velocity");
+    lua_pushnumber(mLua, pMessage.velocity());
+    lua_settable(mLua, -3);
+  } else {
+    lua_pushstring(mLua, "type");
+    lua_pushstring(mLua, "RawMidi");
+    lua_settable(mLua, -3);
   }
 }
 

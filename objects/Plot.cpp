@@ -185,7 +185,7 @@ private:
     mSignal[param_index]->get_meta(&sample_count,  H("sample_count"));  // total number of samples per window when computing width_ratio
     mSignal[param_index]->get_meta(&draw_box,      H("draw_box"));      // draw a surrounding box
     
-    double col_ratio = 1.0 / mGroupSize[param_index];
+    double col_ratio = 0.8; //1.0 / mGroupSize[param_index];
     
     if (sample_count > 1)
         width_ratio = (double)mWindow.width  / (sample_count - 1);

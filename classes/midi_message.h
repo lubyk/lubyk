@@ -9,8 +9,12 @@
 /** Midi messages types. */
 enum midi_messages_t {
   NoteOn = 1, /**< Note on message. */
-  NoteOff,  /**< Note off message. */
+  NoteOff,    /**< Note off message. */
   CtrlChange,
+  ClockStart, /**< Start sequencer. */
+  ClockStop,  /**< Stop sequencer. */
+  ClockTick,  /**< Tick 24 times for every 1/4 note. */ 
+  ClockContinue, /**< Continue sequencer after 'pause'. */
   RawMidi,    /**< Other midi message. */
 };
 
@@ -30,6 +34,47 @@ struct MidiMessage
   virtual ~MidiMessage () {}
   
   // Constructors //
+  
+  // Set message from raw midi data. Return false if message could not be set.
+  bool set (std::vector<unsigned char>& pMessage, time_t pWait = 0)
+  {  
+    unsigned char channel;
+    if (pMessage.size() == 0) return false; // no message
+    switch(pMessage[0])
+    {
+      case 0xfa:
+        mType = ClockStart;
+        break;
+      case 0xfc:
+        mType = ClockStop;
+        break;
+      case 0xf8:
+        mType = ClockTick;
+        break;
+      case 0xfb:
+        mType = ClockContinue;
+        break;
+      default:
+        // FIXME: other messages not implemented yet.
+        channel = pMessage[0];
+        if (channel >= 0x90) {
+          mType = NoteOn;
+          mData = pMessage;
+          if (velocity() == 0) mType = NoteOff;
+        } else if (channel >= 0x80) {
+          mType = NoteOff;
+          mData = pMessage;
+        } else if (channel >= 0xB0) {
+          mType = CtrlChange;
+          mData = pMessage;
+        } else {  
+          fprintf(stderr, "unknown message type %i.\n", (int)channel);
+          return false;
+        }
+    }
+    mWait = pWait;
+    return true;
+  }
   
   void set_as_note (unsigned char pNote, unsigned char pVelocity = 80, unsigned int pLength = 500, unsigned int pChannel = 1, time_t pTime = 0)
   {
@@ -191,7 +236,7 @@ struct MidiMessage
   
   /* data */
   midi_messages_t mType;
-  time_t          mWait; /**< Wait before sending this note out. */
+  time_t          mWait; /**< Wait before sending this note out (ms). */
   time_t        mLength; /**< Note duration in milliseconds. */
   std::vector<unsigned char> mData; /**< Raw midi message (defined in RtMidi.h). */ 
 };
@@ -211,7 +256,7 @@ inline std::ostream& operator<< (std::ostream& pStream, const MidiMessage& msg)
   } else if (msg.mType == CtrlChange) {
     pStream << "~" << (int)msg.channel() << ":" << (int)msg.ctrl() << "(" << (int)msg.value() << "), ";
     pStream << msg.mWait;
-  } else {
+  } else if (msg.mType == RawMidi) {
     pStream << "[";
     end   = msg.mData.end();
     begin = msg.mData.begin();
@@ -220,6 +265,25 @@ inline std::ostream& operator<< (std::ostream& pStream, const MidiMessage& msg)
       pStream << (int)*it << std::endl;
     }
     pStream << "]";
+  } else {
+    switch (msg.mType)
+    {
+      case ClockStart:
+        pStream << "Start";
+        break;
+      case ClockStop:
+        pStream << "Stop";
+        break;
+      case ClockTick:
+        pStream << ".";
+        break;
+      case ClockContinue:
+        pStream << "Continue";
+        break;
+      default:
+        pStream << "?";
+        break;
+    }
   }
   return pStream;
 }

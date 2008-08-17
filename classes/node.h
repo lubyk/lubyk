@@ -362,6 +362,8 @@ protected:
     mServer->register_event( e );
   }
   
+  // Registers this object as needing independant runtime (Serial input, Midi input, etc).
+  // It will receive a gNilSignal in the 'bang' method on every tick.
   void loop_me()
   {
     mServer->register_looped_node(this);
