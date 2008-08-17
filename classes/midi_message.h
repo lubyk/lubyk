@@ -234,6 +234,29 @@ struct MidiMessage
     buffer[i] = '\0';
   }
   
+  /** Return midi message type as a const char. */
+  const char * type_name() const
+  {
+    switch (mType)
+    {
+      case NoteOn:
+        return "NoteOn";
+      case NoteOff:
+        return "NoteOff";
+      case CtrlChange:
+        return "Ctrl";
+      case ClockStart:
+        return "Start";
+      case ClockStop:
+        return "Stop";
+      case ClockTick:
+        return ".";
+      case ClockContinue:
+        return "Continue";
+      default:
+        return "?";
+    }
+  }
   /* data */
   midi_messages_t mType;
   time_t          mWait; /**< Wait before sending this note out (ms). */
@@ -266,24 +289,7 @@ inline std::ostream& operator<< (std::ostream& pStream, const MidiMessage& msg)
     }
     pStream << "]";
   } else {
-    switch (msg.mType)
-    {
-      case ClockStart:
-        pStream << "Start";
-        break;
-      case ClockStop:
-        pStream << "Stop";
-        break;
-      case ClockTick:
-        pStream << ".";
-        break;
-      case ClockContinue:
-        pStream << "Continue";
-        break;
-      default:
-        pStream << "?";
-        break;
-    }
+    pStream << msg.type_name();
   }
   return pStream;
 }

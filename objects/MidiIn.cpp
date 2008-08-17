@@ -143,10 +143,29 @@ private:
 
       if (mMidiMessage.set(message, (time_t)(wait * 1000))) {
         // send message out
-        if (mMidiMessage.mType == NoteOn || mMidiMessage.mType == NoteOff)
-          send(mMidiMessage);
-        else
-          send(2, mMidiMessage);
+        switch(mMidiMessage.mType)
+        {
+          case NoteOn:
+            send(2, mMidiMessage);
+            break;
+          case NoteOff:
+            send(2, mMidiMessage);
+            break;
+          case CtrlChange:
+            send(3, mMidiMessage);
+            break;
+          case RawMidi:
+            break;
+          default:
+            // clock event
+            if (mMidiMessage.mType == ClockTick) {
+              send(5, mMidiMessage);
+            }
+            send(4, mMidiMessage);
+        }
+        
+        // all messages through outlet 1
+        send(mMidiMessage);
       } else {
         // no more messages.
         return;
@@ -240,8 +259,11 @@ static VALUE t_noteOff(VALUE self, VALUE rChannel, VALUE rNote, VALUE rVelocity)
 extern "C" void init() 
 {
   CLASS (MidiIn)
-  OUTLET(MidiIn,notes)
-  OUTLET(MidiIn,clock)
+  OUTLET(MidiIn,all)    // 1
+  OUTLET(MidiIn,notes)  // 2
+  OUTLET(MidiIn,ctrl)   // 3
+  OUTLET(MidiIn,clock)  // 4
+  OUTLET(MidiIn,tick)   // 5
   CLASS_METHOD(MidiIn, list)
   METHOD(MidiIn, clear)
   // rk_cRtMidi = rb_define_class("RtMidi", rb_cObject);
