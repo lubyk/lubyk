@@ -53,6 +53,7 @@ void Command::parse(const std::string& pStr)
 {
   const char *p  = pStr.data(); // data pointer
   const char *pe = p + pStr.size(); // past end
+  const char *eof = NULL;  // FIXME: this should be set to 'pe' on the last pStr block...
   int cs = mCurrentState;        // restore machine state
   
   %%{
@@ -172,11 +173,11 @@ void Command::parse(const std::string& pStr)
     execute_command = method ( '(' parameters? ')' )?;
   
     main := ((execute_command %execute_command # cannot put comments here :-(
-            | execute_method  %execute_method (ws comment)?
-            | execute_class_method  %execute_class_method (ws comment)?
-            | create_instance %create_instance (ws comment)?
-            | create_link %create_link (ws comment)?
-            | remove_link %remove_link (ws comment)?
+            | execute_method  %execute_method (ws* comment)?
+            | execute_class_method  %execute_class_method (ws* comment)?
+            | create_instance %create_instance (ws* comment)?
+            | create_link %create_link (ws* comment)?
+            | remove_link %remove_link (ws* comment)?
             | comment
             | ws* ) '\n' )+ @prompt $err(error);
     write exec;

@@ -36,7 +36,7 @@ signal.o: classes/rubyk_signal.cpp
 	$(CC) $(CFLAGS) -c -Itemplates classes/rubyk_signal.cpp -o signal.o
 
 classes/command.cpp: classes/command.rl
-	${RAGEL} classes/command.rl | ${RAGEL_CD} -o classes/command.cpp
+	${RAGEL} classes/command.rl -o classes/command.cpp
 
 rubyk.o: classes/rubyk.h classes/rubyk.cpp classes/mutex.h
 	$(CC) $(CFLAGS) -c -Iclasses -Itemplates classes/rubyk.cpp -o rubyk.o

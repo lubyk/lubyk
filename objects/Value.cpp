@@ -26,6 +26,13 @@ public:
   // inlet 1
   void bang(const Signal& sig)
   { 
+    set_value(sig);
+    send(mS);
+  }
+  
+  // inlet 2: set value
+  void set_value(const Signal& sig)
+  {
     if (sig.type == MatrixSignal) {
       // copy
       if(mMatrix.copy(sig)) {
@@ -34,9 +41,8 @@ public:
     } else if (sig.type != BangSignal) {
       mS = sig;
     }
-    send(mS);
   }
-
+  
   virtual void spy() 
   { std::ostringstream os(std::ostringstream::out);
     os << mS;
@@ -50,5 +56,6 @@ private:
 extern "C" void init()
 {
   CLASS (Value)
+  INLET (Value, set_value)
   OUTLET(Value, value)
 }

@@ -90,4 +90,10 @@ public:
                   "#<Value:v Bang!>\n#<Print:p >\n#<Print:v >\n#<Value:p Bang!>\n");
 
   }
+  
+  void test_comment( void )
+  { assert_result("v1=Value()    # this is a comment\n",     "#<Value:v1 Bang!>\n");
+    assert_result("v2=Value()    #this is a comment\n",      "#<Value:v2 Bang!>\n");
+    assert_result("v3=Value()#this is a comment\n# bobob\n", "#<Value:v3 Bang!>\n");
+  }
 };
