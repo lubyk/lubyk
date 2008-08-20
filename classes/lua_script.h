@@ -70,8 +70,14 @@ public:
   /** Get a matrix from lua table at top index. */
   bool matrix_from_lua_table(Matrix * pMat);
   
+  /** Get a midi message from a lua table. */
+  bool midi_message_from_lua_table(MidiMessage * pMsg, int pIndex);
+  
+  /** Get a midi message at top index. */
+  bool midi_message_from_lua_table(MidiMessage * pMsg);
+  
   /** Define a signal from lua stack/parameters, with a custom buffer. */
-  bool sig_from_lua (Signal * sig, int index, Matrix& pMat);
+  bool sig_from_lua (Signal * sig, int index, Matrix& pMat, MidiMessage& pMsg);
   
   static Node * get_node_from_lua (lua_State * L);
   
@@ -81,9 +87,8 @@ public:
   /** Push a midi message on top of the lua stack. */
   void lua_pushmidi (const MidiMessage& pMessage);
   
-  /** Get a matrix pointer from lua. */
+  /** Get a matrix from lua. */
   static bool matrix_from_lua (lua_State *L, Matrix ** pMat, int pIndex);
-  
   
   void set_lua_global(const char * key, const Signal& sig);
   
@@ -109,7 +114,8 @@ private:
 protected:  
   
   lua_State * mLua;
-  Matrix mLuaReturn; /**< Used to return multiple values from lua. */
+  Matrix      mLuaMatrix;       /**< Used to return multiple values from lua. */
+  MidiMessage mLuaMidiMessage;  /**< Used to return midi messages from lua. */
 };
 
 #define METHOD_FOR_LUA(klass,method) {Class::find(#klass)->add_method_for_lua(#method, &LuaScript::cast_method_for_lua<klass, &klass::method>);}

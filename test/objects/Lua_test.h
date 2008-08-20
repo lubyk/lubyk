@@ -32,6 +32,14 @@ public:
     assert_print("n.bang(61)\n",   "<Midi +1:C#3(66), 3/500>\n");
   }
   
+  void test_send_note_through( void ) 
+  { 
+    setup_with_print("no=NoteOut(note:29 velocity:66 channel:3 length:300)\nno=>n\nn=Lua(\"function bang()\nsend(1,in1)\nend\")\n");
+    
+    assert_print("no.bang(60)\n",   "<Midi +3:C3(66), 0/300>\n");
+    assert_print("no.bang(61)\n",   "<Midi +3:C#3(66), 0/300>\n");
+  }
+  
   void test_send_chord( void ) 
   { 
     setup_with_print("n=Lua(\"function bang()\nsend_note(1,{in1,in1+7},66,500,1,3)\nend\")\n");

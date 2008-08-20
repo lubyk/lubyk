@@ -106,6 +106,8 @@ struct MidiMessage
     }
   }
   
+  void set_type(midi_messages_t type)
+  { mType = type; }
   
   inline void set_note(unsigned char pNote)
   { set_key(pNote); }

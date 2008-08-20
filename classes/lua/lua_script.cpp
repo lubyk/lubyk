@@ -106,7 +106,7 @@ Node * LuaScript::get_node_from_lua(lua_State * L)
 
 bool LuaScript::sig_from_lua(Signal * sig, int index)
 {
-  return sig_from_lua(sig, index, mLuaReturn);
+  return sig_from_lua(sig, index, mLuaMatrix, mLuaMidiMessage);
 }
 
 bool LuaScript::double_from_lua(double * d)
@@ -143,7 +143,7 @@ bool LuaScript::matrix_from_lua_table(Matrix * pMat, int pIndex)
   int i  = 1;
   if (!pMat->set_sizes(1,0)) return false;
   if (!lua_istable(mLua, pIndex)) {
-    *mOutput << mName << ": wrong value type to get table (" << lua_typename(mLua, pIndex) << " at " << pIndex << ").\n";
+    *mOutput << mName << ": wrong value type to get matrix (" << lua_typename(mLua, pIndex) << " at " << pIndex << ").\n";
     return false;
   }
   while(true) {
@@ -162,7 +162,84 @@ bool LuaScript::matrix_from_lua_table(Matrix * pMat, int pIndex)
   return true;
 }
 
-bool LuaScript::sig_from_lua(Signal * sig, int pIndex, Matrix& pMat)
+bool LuaScript::midi_message_from_lua_table(MidiMessage * pMsg)
+{
+  return midi_message_from_lua_table(pMsg, lua_gettop(mLua));
+}
+
+bool LuaScript::midi_message_from_lua_table(MidiMessage * pMsg, int pIndex)
+{ 
+  std::string type;
+  if (!lua_istable(mLua, pIndex)) {
+    *mOutput << mName << ": wrong value type to get midi message (" << lua_typename(mLua, pIndex) << " at " << pIndex << ").\n";
+    return false;
+  }
+  // type
+  lua_getfield(mLua, pIndex, "type");
+  if (!lua_isstring(mLua, -1)) {
+    *mOutput << mName << ": could not get type of midi message (" << lua_typename(mLua, -1) << " at " << pIndex << ").\n";
+    lua_pop(mLua,1);
+    return false;
+  }
+  type = lua_tostring(mLua, -1);
+  lua_pop(mLua,1);
+  
+  if (type == "NoteOff" || type == "NoteOn") {
+    pMsg->set_type(type == "NoteOff" ? NoteOff : NoteOn);
+    
+    // get note
+    lua_getfield(mLua, pIndex, "note");
+    if (lua_type(mLua, -1) == LUA_TNUMBER)
+      pMsg->set_note(lua_tonumber(mLua, -1));
+    else
+      pMsg->set_note(MIDI_NOTE_C0);
+    lua_pop(mLua,1);
+    
+    // get channel
+    lua_getfield(mLua, pIndex, "channel");
+    if (lua_type(mLua, -1) == LUA_TNUMBER)
+      pMsg->set_channel(lua_tonumber(mLua, -1));
+    else
+      pMsg->set_channel(1);
+    lua_pop(mLua,1);
+    
+    // get velocity
+    lua_getfield(mLua, pIndex, "velocity");
+    if (lua_type(mLua, -1) == LUA_TNUMBER)
+      pMsg->set_velocity(lua_tonumber(mLua, -1));
+    else
+      pMsg->set_velocity(70);
+    lua_pop(mLua,1);
+    
+    // get length
+    lua_getfield(mLua, pIndex, "length");
+    if (lua_type(mLua, -1) == LUA_TNUMBER)
+      pMsg->set_length(lua_tonumber(mLua, -1));
+    else
+      pMsg->set_length(500);
+    lua_pop(mLua,1);
+    
+  } else if (type == "CtrlChange") {
+    *mOutput << mName << ": CtrlChange from lua not implemented yet...\n";
+    return false;
+    //lua_pushstring(mLua, "ctrl");
+    //lua_pushnumber(mLua, pMessage.ctrl());
+    //lua_settable(mLua, -3);
+    //lua_pushstring(mLua, "channel");
+    //lua_pushnumber(mLua, pMessage.channel());
+    //lua_settable(mLua, -3);
+    //lua_pushstring(mLua, "value");
+    //lua_pushnumber(mLua, pMessage.value());
+    //lua_settable(mLua, -3);
+  } else {
+    // FIXME: raw midi...
+  }
+  lua_pop(mLua,1);
+  return true;
+}
+
+
+bool LuaScript::sig_from_lua(Signal * sig, int pIndex, Matrix& pMat, MidiMessage& pMsg)
 {
   int index = pIndex < 0 ? lua_gettop(mLua) + pIndex + 1 : pIndex;
   /* LUA_TNIL, LUA_TNUMBER, LUA_TBOOLEAN, LUA_TSTRING, LUA_TTABLE, LUA_TFUNCTION, LUA_TUSERDATA, LUA_TTHREAD, and LUA_TLIGHTUSERDATA.
@@ -184,8 +261,18 @@ bool LuaScript::sig_from_lua(Signal * sig, int pIndex, Matrix& pMat)
     lua_pop(mLua, 1);
     break;
   case LUA_TTABLE:
-    matrix_from_lua_table(&pMat, index);
-    sig->set(pMat);
+    // matrix or midi message ?
+    lua_pushstring(mLua, "type");
+    lua_gettable(mLua, index);
+    if (lua_isstring(mLua, -1)) {
+      lua_pop(mLua,1);
+      midi_message_from_lua_table(&pMsg, index);
+      sig->set(&pMsg);
+    } else {
+      lua_pop(mLua,1);
+      matrix_from_lua_table(&pMat, index);
+      sig->set(pMat);
+    }
     break;
   default:
     *mOutput << mName << ": wrong value type to build signal (" << lua_typename(mLua, lua_type(mLua, index)) << " at " << index << ").\n";
@@ -200,7 +287,7 @@ int LuaScript::send_for_lua(lua_State * L)
 {
   LuaScript * node = (LuaScript *)get_node_from_lua(L);
   if (node) {
-    // value, port
+    // port, value
     Signal sig;
     double p;
     if (!node->sig_from_lua(&sig)) {
@@ -247,7 +334,7 @@ int LuaScript::send_note_for_lua(lua_State * L)
     }
     velocity = d;
     if (lua_istable(node->mLua, lua_gettop(node->mLua))) {
-      if (!node->matrix_from_lua_table(&(node->mLuaReturn))) {  
+      if (!node->matrix_from_lua_table(&(node->mLuaMatrix))) {  
         node->error("could not get note from lua table in 'send_note'");
         return 0;
       } else {
@@ -268,8 +355,8 @@ int LuaScript::send_note_for_lua(lua_State * L)
     port = d;
     if (note == -1) {
       // chord (lua table as notes)
-      for (size_t i = 0; i < node->mLuaReturn.size(); i++)
-        node->send_note(port, node->mLuaReturn.data[i], velocity, length, channel, when);
+      for (size_t i = 0; i < node->mLuaMatrix.size(); i++)
+        node->send_note(port, node->mLuaMatrix.data[i], velocity, length, channel, when);
     } else
       node->send_note(port, note, velocity, length, channel, when);
   } else {
@@ -362,29 +449,31 @@ void LuaScript::lua_pushmidi (const MidiMessage& pMessage)
 {
   // fixme create a new 'midi' table class...
   lua_newtable(mLua);
-  lua_pushstring(mLua, "type");
   lua_pushstring(mLua, pMessage.type_name());
-  lua_settable(mLua, -3);
+  lua_setfield(mLua, -2, "type");
+  
   if (pMessage.mType == NoteOff || pMessage.mType == NoteOn) {
-    lua_pushstring(mLua, "note");
     lua_pushnumber(mLua, pMessage.note());
-    lua_settable(mLua, -3);
-    lua_pushstring(mLua, "channel");
+    lua_setfield(mLua, -2, "note");
+    
     lua_pushnumber(mLua, pMessage.channel());
-    lua_settable(mLua, -3);
-    lua_pushstring(mLua, "velocity");
+    lua_setfield(mLua, -2, "channel");
+    
     lua_pushnumber(mLua, pMessage.velocity());
-    lua_settable(mLua, -3);
+    lua_setfield(mLua, -2, "velocity");
+    
+    lua_pushnumber(mLua, pMessage.length());
+    lua_setfield(mLua, -2, "length");
+    
   } else if (pMessage.mType == CtrlChange) {
-    lua_pushstring(mLua, "ctrl");
     lua_pushnumber(mLua, pMessage.ctrl());
-    lua_settable(mLua, -3);
-    lua_pushstring(mLua, "channel");
+    lua_setfield(mLua, -2, "ctrl");
+    
     lua_pushnumber(mLua, pMessage.channel());
-    lua_settable(mLua, -3);
-    lua_pushstring(mLua, "value");
+    lua_setfield(mLua, -2, "channel");
+    
     lua_pushnumber(mLua, pMessage.value());
-    lua_settable(mLua, -3);
+    lua_setfield(mLua, -2, "value");
   } else {
     // FIXME: raw midi...
   }
