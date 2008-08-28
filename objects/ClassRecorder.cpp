@@ -20,7 +20,7 @@ public:
     // defaults
     mTempo       = 120;
     mSampleRate  = 256;
-    mMargin      = 3.0;
+    mMargin      = 1.5;
     mFolder      = "data";
     mUseSnap     = true;
     mClassLabel  = 0;
@@ -72,21 +72,28 @@ public:
       mHasLiveData = true;
     } else {
       time_t record_time = (time_t)(ONE_SECOND * mMeanVector.row_count())/(mSampleRate);
-      time_t record_with_margin = record_time * (mMargin/2.0);
+      time_t record_with_margin = record_time * (1 + mMargin);
       time_t countdown_time;
-      if (record_time > 500)
-        countdown_time = record_time;
+      if (mTempo > 0)
+        countdown_time = 60000.0 / mTempo;
       else
-        countdown_time = 500;
+        countdown_time = 0;
 
       // receiving Bangs or command change
       sig.get(&cmd);
       
       switch(mState) {
-      case CountDownReady:  
-        bang_me_in(countdown_time);
-        send_note(3, 60 + (mClassLabel % 12),80,100,mChannel);
-        enter(CountDownSet);
+      case CountDownReady:
+        if (mTempo == 0) {
+          // record directly
+          bang_me_in(record_with_margin);
+          send_note(3, 72 + (mClassLabel % 12),80,record_time,mChannel);
+          enter(Recording);
+        } else {
+          bang_me_in(countdown_time);
+          send_note(3, 60 + (mClassLabel % 12),80,100,mChannel);
+          enter(CountDownSet);
+        }
         break;
       case CountDownSet:
         bang_me_in(record_with_margin); // 1/2 margin at the end
@@ -304,7 +311,7 @@ private:
   bool resize(size_t pRowCount, size_t pColCount)
   {
     if (mBuffer.row_count() != pRowCount || mBuffer.col_count() != pColCount) {
-      size_t vector_size = pRowCount / (1.0 + mMargin);
+      size_t vector_size = pRowCount / (1.0 + (2.0 * mMargin));
       mRowMargin = (pRowCount - vector_size) / 2;
       
       TRY(mBuffer,     set_sizes(pRowCount,   pColCount));
