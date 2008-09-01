@@ -151,6 +151,11 @@ public:
         
         if (cmd == '\n') {
           enter(ReadyToRecord);
+        } else if (cmd == 127) {
+          // clear mean vector
+          mVectorCount = 0;
+          mMeanVector.clear();
+          enter(ReadyToRecord);
         } else {
           prepare_class_for_recording(cmd);
           enter(CountDownReady);
