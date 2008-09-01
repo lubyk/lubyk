@@ -153,6 +153,7 @@ public:
           enter(ReadyToRecord);
         } else if (cmd == 127) {
           // clear mean vector
+          mClassLabel  = 0;
           mVectorCount = 0;
           mMeanVector.clear();
           enter(ReadyToRecord);
