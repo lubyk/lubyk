@@ -151,6 +151,6 @@ public:
   
   void test_try( void )
   {
-    clean_assert_print("n=Test()\nn.test_fail()\n", "n: n size error (copy): bad start row 10 (10) of matrix 5x1 in objects/Test.cpp:58.\ntry failed");
+    clean_assert_print("n=Test()\nn.test_fail()\n", "n: n size error (copy): bad start row 10 (10) of matrix 5x1 in src/objects/Test.cpp:58.\ntry failed");
   }
 };

@@ -1,6 +1,8 @@
 rubyk/lib/*
 *.o
 *.a
+*.dSYM
 .DS_Store
-rubyk/lua/lua
-rubyk/lua/luac
+rubyk/src/lib/lua/lua
+rubyk/src/lib/lua/luac
+rubyk/test/runner.cpp

@@ -21,78 +21,78 @@ MKDIR= mkdir -p
 test: test/runner test/runner.cpp
 	./test/runner && rm test/runner
 
-rubyk: classes/main.cpp command.o rubyk.o signal.o node.o inlet.o outlet.o slot.o params.o class.o lua.o matrix.o buffer.o classes/lua/src/liblua.a objects
-	$(CC) $(CFLAGS) $(LFLAGS) -o rubyk -Itest -Itemplates -Iclasses -Iobjects -I. classes/main.cpp slot.o inlet.o outlet.o params.o signal.o node.o class.o command.o matrix.o buffer.o rubyk.o lua.o classes/lua/src/liblua.a
+rubyk: src/core/main.cpp command.o rubyk.o signal.o node.o inlet.o outlet.o slot.o params.o class.o lua_script.o matrix.o buffer.o src/lib/lua/liblua.a objects
+	$(CC) $(CFLAGS) $(LFLAGS) -o rubyk -Itest -Isrc/templates -Isrc/core -Isrc/objects -I. src/core/main.cpp slot.o inlet.o outlet.o params.o signal.o node.o class.o command.o matrix.o buffer.o rubyk.o lua_script.o src/lib/lua/liblua.a
 
 objects: lib/Test.rko lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/MidiOut.rko lib/NoteOut.rko lib/Lua.rko lib/Serial.rko lib/Turing.rko lib/Keyboard.rko lib/Cabox.rko lib/Svm.rko lib/Buffer.rko lib/Plot.rko lib/Cut.rko lib/MaxCount.rko lib/FFT.rko lib/VQ.rko lib/ClassRecorder.rko lib/PCA.rko lib/Average.rko lib/Peak.rko lib/Minus.rko lib/Replay.rko lib/Kmeans.rko lib/Abs.rko lib/Sum.rko lib/Ctrl.rko lib/Diff.rko lib/Bang.rko lib/Macro.rko lib/MidiIn.rko
 	
-test/runner.cpp: test/*_test.h test/objects/*_test.h
+test/runner.cpp: $(TEST)
 	./test/cxxtest/cxxtestgen.pl --error-printer -o test/runner.cpp $(TEST)
 	
-test/runner: test/runner.cpp command.o rubyk.o signal.o node.o inlet.o outlet.o slot.o params.o class.o lua.o classes/lua/src/liblua.a matrix.o buffer.o objects
-	$(CC) $(CFLAGS) $(LFLAGS) -Itest -Itemplates -Iclasses -Iobjects -I. test/runner.cpp slot.o inlet.o outlet.o params.o signal.o node.o class.o command.o rubyk.o lua.o classes/lua/src/liblua.a matrix.o buffer.o -o test/runner
+test/runner: test/runner.cpp command.o rubyk.o signal.o node.o inlet.o outlet.o slot.o params.o class.o lua_script.o src/lib/lua/liblua.a matrix.o buffer.o objects
+	$(CC) $(CFLAGS) $(LFLAGS) -Itest -Isrc/templates -Isrc/core -Isrc/objects -I. test/runner.cpp slot.o inlet.o outlet.o params.o signal.o node.o class.o command.o rubyk.o lua_script.o src/lib/lua/liblua.a matrix.o buffer.o -o test/runner
 	
-signal.o: classes/rubyk_signal.cpp
-	$(CC) $(CFLAGS) -c -Itemplates classes/rubyk_signal.cpp -o signal.o
+signal.o: src/core/rubyk_signal.cpp
+	$(CC) $(CFLAGS) -c -Isrc/templates src/core/rubyk_signal.cpp -o signal.o
 
-classes/command.cpp: classes/command.rl
-	${RAGEL} classes/command.rl -o classes/command.cpp
+src/core/command.cpp: src/core/command.rl
+	${RAGEL} src/core/command.rl -o src/core/command.cpp
 
-rubyk.o: classes/rubyk.h classes/rubyk.cpp classes/mutex.h
-	$(CC) $(CFLAGS) -c -Iclasses -Itemplates classes/rubyk.cpp -o rubyk.o
+rubyk.o: src/core/rubyk.h src/core/rubyk.cpp src/core/mutex.h
+	$(CC) $(CFLAGS) -c -Isrc/core -Isrc/templates src/core/rubyk.cpp -o rubyk.o
 
-command.o: classes/command.cpp classes/command.h classes/mutex.h
-	$(CC) $(CFLAGS) -c -Iclasses -Itemplates classes/command.cpp -o command.o
+command.o: src/core/command.cpp src/core/command.h src/core/mutex.h
+	$(CC) $(CFLAGS) -c -Isrc/core -Isrc/templates src/core/command.cpp -o command.o
 
-%.o: classes/%.cpp
-	$(CC) $(CFLAGS) -c -Iclasses -Itemplates $< -o $@
+%.o: src/core/%.cpp
+	$(CC) $(CFLAGS) -c -Isrc/core -Isrc/templates $< -o $@
 	
-lib/MidiOut.rko: objects/MidiOut.cpp
-	$(CC) $(CFLAGS) -o lib/MidiOut.rko -Itemplates -Iclasses -Iobjects -dynamic -bundle -undefined suppress -flat_namespace -D__MACOSX_CORE__ -L/usr/lib -lgcc -lstdc++ -framework CoreMIDI -framework CoreFoundation -framework CoreAudio  objects/rtmidi/RtMidi.cpp objects/MidiOut.cpp
+lib/MidiOut.rko: src/objects/MidiOut.cpp
+	$(CC) $(CFLAGS) -o lib/MidiOut.rko -Isrc/templates -Isrc/core -Isrc/objects -dynamic -bundle -undefined suppress -flat_namespace -D__MACOSX_CORE__ -L/usr/lib -lgcc -lstdc++ -framework CoreMIDI -framework CoreFoundation -framework CoreAudio  src/objects/rtmidi/RtMidi.cpp src/objects/MidiOut.cpp
 	
   
-lib/MidiIn.rko: objects/MidiIn.cpp
-	$(CC) $(CFLAGS) -o lib/MidiIn.rko -Itemplates -Iclasses -Iobjects -dynamic -bundle -undefined suppress -flat_namespace -D__MACOSX_CORE__ -L/usr/lib -lgcc -lstdc++ -framework CoreMIDI -framework CoreFoundation -framework CoreAudio  objects/rtmidi/RtMidi.cpp objects/MidiIn.cpp
+lib/MidiIn.rko: src/objects/MidiIn.cpp
+	$(CC) $(CFLAGS) -o lib/MidiIn.rko -Isrc/templates -Isrc/core -Isrc/objects -dynamic -bundle -undefined suppress -flat_namespace -D__MACOSX_CORE__ -L/usr/lib -lgcc -lstdc++ -framework CoreMIDI -framework CoreFoundation -framework CoreAudio  src/objects/rtmidi/RtMidi.cpp src/objects/MidiIn.cpp
 
-lib/Serial.rko: objects/Serial.cpp objects/serial/serial.h
-	$(CC) $(CFLAGS) -o lib/Serial.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Serial.cpp -DCOMPILE_SERIAL_OBJECT
+lib/Serial.rko: src/objects/Serial.cpp src/objects/serial/serial.h
+	$(CC) $(CFLAGS) -o lib/Serial.rko -Isrc/templates -Isrc/core -Isrc/lib/lua -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ src/objects/Serial.cpp -DCOMPILE_SERIAL_OBJECT
 
-objects/Turing.cpp: objects/Turing.rl
-	${RAGEL} objects/Turing.rl | ${RAGEL_CD} -o objects/Turing.cpp
+src/objects/Turing.cpp: src/objects/Turing.rl
+	${RAGEL} src/objects/Turing.rl | ${RAGEL_CD} -o src/objects/Turing.cpp
 	
-lib/Svm.rko: objects/Svm.cpp
-	$(CC) $(CFLAGS) -o lib/Svm.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/Svm.cpp objects/svm/svm.cpp
+lib/Svm.rko: src/objects/Svm.cpp
+	$(CC) $(CFLAGS) -o lib/Svm.rko -Isrc/templates -Isrc/core -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ src/objects/Svm.cpp src/objects/svm/svm.cpp
 	
-lib/Plot.rko: objects/Plot.cpp classes/opengl.h
-	$(CC) $(CFLAGS) -o lib/Plot.rko -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ -D__MACOSX_CORE__ -framework GLUT -framework OpenGL -framework Cocoa objects/Plot.cpp
+lib/Plot.rko: src/objects/Plot.cpp src/core/opengl.h
+	$(CC) $(CFLAGS) -o lib/Plot.rko -Isrc/templates -Isrc/core -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ -D__MACOSX_CORE__ -framework GLUT -framework OpenGL -framework Cocoa src/objects/Plot.cpp
 
-lib/FFT.rko: objects/FFT.cpp
-	$(CC) $(CFLAGS) -o lib/FFT.rko -Itemplates -Iclasses -Iobjects/fft -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/FFT.cpp
+lib/FFT.rko: src/objects/FFT.cpp
+	$(CC) $(CFLAGS) -o lib/FFT.rko -Isrc/templates -Isrc/core -Isrc/objects/fft -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ src/objects/FFT.cpp
 	
-lib/VQ.rko: objects/VQ.cpp
-	$(CC) $(CFLAGS) -o lib/VQ.rko -Itemplates -Iclasses -Iobjects/vq -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/VQ.cpp objects/vq/elbg.c objects/vq/random.c
+lib/VQ.rko: src/objects/VQ.cpp
+	$(CC) $(CFLAGS) -o lib/VQ.rko -Isrc/templates -Isrc/core -Isrc/objects/vq -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ src/objects/VQ.cpp src/objects/vq/elbg.c src/objects/vq/random.c
 
-lib/%.rko: objects/%.cpp
-	$(CC) $(CFLAGS) -o $@ -Itemplates -Iclasses -Iclasses/lua/src -Iclasses/lua/LuaGL -D__MACOSX_CORE__ -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ $<
+lib/%.rko: src/objects/%.cpp
+	$(CC) $(CFLAGS) -o $@ -Isrc/templates -Isrc/core -Isrc/lib/lua -Isrc/lib/luagl -D__MACOSX_CORE__ -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ $<
 
 
-lua.o: classes/lua/lua_script.cpp classes/lua_script.h classes/script.h
-	$(CC) $(CFLAGS) -c -o lua.o -Itemplates -Iclasses -Iclasses/lua/src classes/lua/lua_script.cpp
+lua_script.o: src/core/lua_script.cpp src/core/lua_script.h src/core/script.h
+	$(CC) $(CFLAGS) -c -o lua_script.o -Isrc/templates -Isrc/core -Isrc/lib/lua src/core/lua_script.cpp
 
-luagl.o: classes/lua/luagl_script.cpp classes/lua_script.h classes/script.h
-	$(CC) $(CFLAGS) -c -o luagl.o -Itemplates -D__MACOSX_CORE__ -Iclasses -Iclasses/lua/src -Iclasses/lua/LuaGL classes/lua/luagl_script.cpp
+luagl_script.o: src/core/luagl_script.cpp src/core/lua_script.h src/core/script.h
+	$(CC) $(CFLAGS) -c -o luagl_script.o -Isrc/templates -D__MACOSX_CORE__ -Isrc/core -Isrc/lib/lua -Isrc/lib/luagl src/lib/luagl_script.cpp
 
-classes/lua/src/liblua.a:
-	cd classes/lua/src && make $(PLAT)
+src/lib/lua/liblua.a:
+	cd src/lib/lua && make $(PLAT)
 	
-dot: classes/command.png	
-	open classes/command.png
+dot: src/core/command.png	
+	open src/core/command.png
 
-classes/command.dot: classes/command.rl
-	ragel classes/command.rl | rlgen-dot -p -o classes/command.dot
+src/core/command.dot: src/core/command.rl
+	ragel src/core/command.rl | rlgen-dot -p -o src/core/command.dot
 	
-classes/command.png: classes/command.dot
-	${DOT_CMD} -Tpng classes/command.dot -o classes/command.png
+src/core/command.png: src/core/command.dot
+	${DOT_CMD} -Tpng src/core/command.dot -o src/core/command.png
 
 install: install_rubyk install_libs
 
@@ -105,13 +105,13 @@ install_libs:
 	cd lib && for e in *.rko ; do echo $(RUBYK_LIBDIR)/$$e && $(INSTALL) $$e $(RUBYK_LIBDIR) ; done
 
 clean:
-	rm -rf *.o lib/*.rko rubyk classes/command.png classes/command.dot test/runner
+	rm -rf *.o lib/*.rko rubyk src/core/command.png src/core/command.dot test/runner
 
-lua_gl.o: classes/lua/LuaGL/LuaGL.c classes/lua/LuaGl/LuaGlut.c
-	gcc $(CFLAGS) -c -o lua_gl.o -L/usr/lib -D__MACOSX_CORE__ -Itemplates -Iclasses -Iclasses/lua/src -Iclasses/lua/LuaGL classes/lua/LuaGL/LuaGL.c
+lua_gl.o: src/lib/luagl/LuaGL.c src/lib/luagl/LuaGlut.c
+	gcc $(CFLAGS) -c -o lua_gl.o -L/usr/lib -D__MACOSX_CORE__ -Isrc/templates -Isrc/core -Isrc/lib/lua -Isrc/lib/luagl src/lib/luagl/LuaGL.c
 
-lua_glut.o: classes/lua/LuaGL/LuaGlut.c
-	gcc $(CFLAGS) -c -o lua_glut.o -L/usr/lib -D__MACOSX_CORE__ -Itemplates -Iclasses -Iclasses/lua/src -Iclasses/lua/LuaGL classes/lua/LuaGL/LuaGlut.c
+lua_glut.o: src/lib/luagl/LuaGlut.c
+	gcc $(CFLAGS) -c -o lua_glut.o -L/usr/lib -D__MACOSX_CORE__ -Isrc/templates -Isrc/core -Isrc/lib/lua -Isrc/lib/luagl src/lib/luagl/LuaGlut.c
 
-luagl_test: lua_gl.o lua_glut.o classes/lua/src/liblua.a classes/lua/LuaGl/Interpreter.c
-	gcc $(CFLAGS) -o luagl -L/usr/lib -lgcc -lstdc++ -D__MACOSX_CORE__ -framework GLUT -framework OpenGL -framework Cocoa -Itemplates -Iclasses -Iclasses/lua/src -Iclasses/lua/LuaGL classes/lua/src/liblua.a lua_gl.o lua_glut.o classes/lua/LuaGl/Interpreter.c
+luagl_test: lua_gl.o lua_glut.o src/lib/lua/liblua.a src/lib/luagl/Interpreter.c
+	gcc $(CFLAGS) -o luagl -L/usr/lib -lgcc -lstdc++ -D__MACOSX_CORE__ -framework GLUT -framework OpenGL -framework Cocoa -Isrc/templates -Isrc/core -Isrc/lib/lua -Isrc/lib/luagl src/lib/lua/liblua.a lua_gl.o lua_glut.o src/lib/luagl/Interpreter.c

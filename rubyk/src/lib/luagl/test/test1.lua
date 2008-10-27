@@ -8,29 +8,29 @@ function ShowArray(v)
 end
 function Compare(n1, n2)
   if(n1 == nil or n2 == nil) then
-     f:write('Test Error!\n')
+     f:write('Compare Error (nil value)!\n')
   elseif(n1 == n2) then
      f:write('Ok.\n')
   else
-     f:write('Test Error!\n')
+     f:write('Compare Error!\n')
   end
 end
 function CompareF(n1, n2)
   if(n1 == nil or n2 == nil) then
-     f:write('Test Error!\n')
+     f:write('CompareF Error!\n')
   elseif( math.abs(n1 - n2) < 0.000001) then
      f:write('Ok.\n')
   else
-     f:write('Test Error!\n')
+     f:write('CompareF Error!\n')
   end
 end
 function CompareC(n1, n2)
   if(n1 == nil or n2 == nil) then
-     f:write('Test Error!\n')
+     f:write('CompareC Error!\n')
   elseif( math.abs(n1 - n2) < 0.05) then
      f:write('Ok.\n')
   else
-     f:write('Test Error!\n')
+     f:write('CompareC Error!\n')
   end
 end
 function CompareArrayF(v1, v2)
@@ -109,7 +109,7 @@ function TestTexture(image, n, target, iformat, format, level, priorities)
 
   for i=1,n do
     if(gl.IsTexture(test[i]) == true) then
-      f:write('Test Error!\n')
+      f:write('Test Error (1)!\n')
       return
     end
 
@@ -155,7 +155,7 @@ function TestTexture(image, n, target, iformat, format, level, priorities)
       CompareArrayC(image2, testimage)
     end
     if(gl.IsTexture(test[i]) == false) then
-      f:write('Test Error!\n')
+      f:write('Test Error (2)!\n')
       return
     end
 
@@ -169,7 +169,7 @@ function TestTexture(image, n, target, iformat, format, level, priorities)
   gl.DeleteTextures(test)
   for i=1,n do
     if(gl.IsTexture(test[i]) == true) then
-      f:write('Test Error!\n')
+      f:write('Test Error (3)!\n')
       return
     end
   end

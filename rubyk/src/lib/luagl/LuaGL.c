@@ -13,7 +13,12 @@
 *************************************************/
 
 #include <string.h>
+
+#ifdef __MACOSX_CORE__
+#include <stdlib.h>
+#else
 #include <malloc.h>
+#endif
 
 #include <lauxlib.h>
 

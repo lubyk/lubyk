@@ -162,12 +162,3 @@ function DrawFrame()
   gl.Flush()
 
 end
-
-glut.Init()
-glut.InitDisplayMode()
-glut.InitWindowSize(640, 480)
-glut.CreateWindow('Lua GL Test Application')
-glut.DisplayFunc('DrawFrame')
-glut.ReshapeFunc('Reshape')
-
-glut.MainLoop()

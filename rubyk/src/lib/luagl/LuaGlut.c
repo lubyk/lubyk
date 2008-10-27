@@ -18,8 +18,6 @@
 #include <lauxlib.h>
 #include <lualib.h>
 
-#include <glut.h>
-
 #define BUILDING_LUAGLUT_DLL
 
 #include "LuaGlut.h"
