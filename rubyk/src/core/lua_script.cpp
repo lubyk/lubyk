@@ -1,13 +1,5 @@
 #include "lua_script.h"
 
-extern "C" {
-// we compiled as C code
-// FIXME: include lua lib compilation in the makefile as C++ code.
-#include <lua.h>
-#include <lauxlib.h>
-#include <lualib.h>
-}
-
 LuaScript::~LuaScript()
 {
   if (mLua) lua_close(mLua);
@@ -70,6 +62,8 @@ bool LuaScript::eval_lua_script(const std::string& pScript)
     /* register matrix */
     register_lua_Matrix();
     
+    /* open std libs */
+    open_lua_libs();
   }
   
   /* set 'current_time' */
@@ -585,4 +579,25 @@ void LuaScript::register_lua_Matrix()
   //  lua_rawset(mLua, -3);                  /* hide metatable:
   //                                         metatable.__metatable = methods */
   //  lua_pop(mLua, 1);                      /* drop metatable */
+}
+
+void LuaScript::open_lua_lib(const char* pName, lua_CFunction pFunc)  
+{  
+  lua_pushcfunction(mLua, pFunc) ;  
+  lua_pushstring(mLua, pName) ;  
+  lua_call(mLua, 1, 0) ;  
+}
+
+void LuaScript::open_lua_libs()
+{
+  open_base_lua_libs();
+}
+
+void LuaScript::open_base_lua_libs()
+{
+  open_lua_lib("", luaopen_base);
+  open_lua_lib(LUA_TABLIBNAME, luaopen_table);
+  open_lua_lib(LUA_IOLIBNAME, luaopen_io);
+  open_lua_lib(LUA_STRLIBNAME, luaopen_string);
+  open_lua_lib(LUA_MATHLIBNAME, luaopen_math);
 }

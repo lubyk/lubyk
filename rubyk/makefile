@@ -73,11 +73,14 @@ lib/VQ.rko: objects/VQ.cpp
 	$(CC) $(CFLAGS) -o lib/VQ.rko -Itemplates -Iclasses -Iobjects/vq -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ objects/VQ.cpp objects/vq/elbg.c objects/vq/random.c
 
 lib/%.rko: objects/%.cpp
-	$(CC) $(CFLAGS) -o $@ -Itemplates -Iclasses -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ $<
+	$(CC) $(CFLAGS) -o $@ -Itemplates -Iclasses -Iclasses/lua/src -Iclasses/lua/LuaGL -D__MACOSX_CORE__ -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ $<
 
 
 lua.o: classes/lua/lua_script.cpp classes/lua_script.h classes/script.h
 	$(CC) $(CFLAGS) -c -o lua.o -Itemplates -Iclasses -Iclasses/lua/src classes/lua/lua_script.cpp
+
+luagl.o: classes/lua/luagl_script.cpp classes/lua_script.h classes/script.h
+	$(CC) $(CFLAGS) -c -o luagl.o -Itemplates -D__MACOSX_CORE__ -Iclasses -Iclasses/lua/src -Iclasses/lua/LuaGL classes/lua/luagl_script.cpp
 
 classes/lua/src/liblua.a:
 	cd classes/lua/src && make $(PLAT)
@@ -103,3 +106,12 @@ install_libs:
 
 clean:
 	rm -rf *.o lib/*.rko rubyk classes/command.png classes/command.dot test/runner
+
+lua_gl.o: classes/lua/LuaGL/LuaGL.c classes/lua/LuaGl/LuaGlut.c
+	gcc $(CFLAGS) -c -o lua_gl.o -L/usr/lib -D__MACOSX_CORE__ -Itemplates -Iclasses -Iclasses/lua/src -Iclasses/lua/LuaGL classes/lua/LuaGL/LuaGL.c
+
+lua_glut.o: classes/lua/LuaGL/LuaGlut.c
+	gcc $(CFLAGS) -c -o lua_glut.o -L/usr/lib -D__MACOSX_CORE__ -Itemplates -Iclasses -Iclasses/lua/src -Iclasses/lua/LuaGL classes/lua/LuaGL/LuaGlut.c
+
+luagl_test: lua_gl.o lua_glut.o classes/lua/src/liblua.a classes/lua/LuaGl/Interpreter.c
+	gcc $(CFLAGS) -o luagl -L/usr/lib -lgcc -lstdc++ -D__MACOSX_CORE__ -framework GLUT -framework OpenGL -framework Cocoa -Itemplates -Iclasses -Iclasses/lua/src -Iclasses/lua/LuaGL classes/lua/src/liblua.a lua_gl.o lua_glut.o classes/lua/LuaGl/Interpreter.c

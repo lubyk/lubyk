@@ -4,8 +4,9 @@
 
 extern "C" {
 // we compiled as C code
-#include "lua/src/lua.h"
-#include "lua/src/lauxlib.h"  // luaL_ref, luaL_unref
+#include <lua.h>
+#include <lauxlib.h>
+#include <lualib.h>
 }
 
 #define LUA_RETURN_BUFFER_SIZE 32
@@ -111,7 +112,16 @@ private:
   /* register matrix */
   void register_lua_Matrix ();
   
-protected:  
+  /* open all standard libraries for this lua script type */
+  virtual void open_lua_libs ();
+
+protected:
+  
+  /* open a lua library */
+  void open_lua_lib (const char* pName, lua_CFunction pFunc);
+  
+  /* open base lua libraries */
+  void open_base_lua_libs ();
   
   lua_State * mLua;
   Matrix      mLuaMatrix;       /**< Used to return multiple values from lua. */

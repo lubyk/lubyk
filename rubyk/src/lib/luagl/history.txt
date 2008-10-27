@@ -1,0 +1,10 @@
+Version 1.01
+============
+
+ - Applied minor changes on LuaGL.h and LuaGLUT.h to make it compile correctly under Linux. Thanks to Marcus Geelnard.
+
+
+Version 1.0
+===========
+
+ - First Release of LuaGL.

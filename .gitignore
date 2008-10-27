@@ -1,0 +1,6 @@
+rubyk/lib/*
+*.o
+*.a
+.DS_Store
+rubyk/lua/lua
+rubyk/lua/luac
