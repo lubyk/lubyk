@@ -1,5 +1,5 @@
 #include "class.h"
-#include "rtmidi/RtMidi.h"
+#include "midi/RtMidi.h"
 
 class MidiIn : public Node
 {

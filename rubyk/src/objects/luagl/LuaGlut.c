@@ -22,7 +22,9 @@
 
 #include "LuaGlut.h"
 
+#ifdef _WIN32
 #pragma warning(disable:4100)
+#endif
 
 typedef struct callbackFunc_typ {
   const char *name;

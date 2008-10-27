@@ -1,6 +1,12 @@
-#include "luagl_script.h"
+#include "lua_script.h"
 
-class LuaGL : public LuaGLScript
+extern "C" {
+// we compiled as C code
+#include <LuaGL.h>
+#include <LuaGLUT.h>
+}
+
+class LuaGL : public LuaScript
 {
 public:
   
@@ -43,6 +49,24 @@ public:
   
   void in10(const Signal& sig)
   { set_lua_global("in10", sig);}
+  
+private:
+  
+  /* open all standard libraries and openGL libraries (called by LuaScript on init) */
+  void open_lua_libs()
+  {
+    open_base_lua_libs();
+    open_opengl_lua_libs();
+  }
+  
+protected:
+  
+  /* open base lua libraries */
+  void open_opengl_lua_libs()
+  {
+    open_lua_lib("opengl", luaopen_opengl);
+    open_lua_lib("glut", luaopen_glut); 
+  }
 };
 
 extern "C" void init()
