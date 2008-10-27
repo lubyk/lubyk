@@ -59,8 +59,7 @@ public:
     reload_script();
     if (!mScriptOK) return;
     
-    set_lua_global("in1", sig);
-    call_lua(&mS, "bang");
+    call_lua(&mS, "bang", sig);
     if (!mS.type) return; // bang returned nil, abort
     else if (mS.type != BangSignal) {
       if (mS.get(&mRealToken)) // use token from returned value
@@ -138,6 +137,7 @@ public:
     int cs;
     const char * p  = mScript.data(); // data pointer
     const char * pe = p + mScript.size(); // past end
+    const char *eof = NULL;  // FIXME: this should be set to 'pe' on the last pStr block...
     char name[MAX_NAME_SIZE + 1];
     int  name_index = 0;
     
@@ -156,7 +156,7 @@ public:
     
     // integrated lua script
     const char * begin_lua_script = NULL;
-    mLuaScript = "function bang() return in1 end\n\n";
+    mLuaScript = "function bang(sig) return sig end\n\n";
     
     
     // function call id, params
@@ -373,7 +373,6 @@ public:
 
     main  := ( ws* (entry %add_entry (sub_entry %add_entry)* ws* comment? | define_token %define_token (ws* comment)? | comment | begin_comment | begin_lua | ws* )  '\n' )+ $err(error);
     write exec;
-    write eof;
   }%%
   // token_default %add_token_default |
     if (begin_lua_script) {
@@ -470,7 +469,10 @@ public:
   }
 
   virtual void spy()
-  { bprint(mSpy, mSpySize,"%i, %i", mTokenCount - 1, mStateCount - 1 );  }
+  { 
+    const std::string state = (mState > 0 && (uint)mState < mStateNames.size()) ? mStateNames[(uint)mState] : "?";
+    bprint(mSpy, mSpySize,"[%s] %ix%i", state.c_str(), mStateCount - 1, mTokenCount - 1);  
+  }
 
   
   /** Set state from lua. */

@@ -20,7 +20,24 @@ public:
   
   bool set_lua (const Params& p);
   
-  void call_lua (Signal * sig, const char * pFunctionName);
+  /* call lua function without parameters */
+  void call_lua (const char * pFunctionName)
+  { call_lua(NULL, pFunctionName, NULL); }
+  
+  /* call lua function with one parameter */
+  void call_lua (const char * pFunctionName, const Signal& sig)
+  { call_lua(NULL, pFunctionName, &sig); }
+  
+  /* call lua function without parameters, one value returned */
+  void call_lua (Signal * retSig, const char * pFunctionName)
+  { call_lua(retSig, pFunctionName, NULL); }
+  
+  /* call lua function with one parameter, one value returned */
+  void call_lua (Signal * retSig, const char * pFunctionName, const Signal& sig)
+  { call_lua(retSig, pFunctionName, &sig); }
+  
+  /* call lua function with one parameter, one value returned: prototype */
+  void call_lua (Signal * retSig, const char * pFunctionName, const Signal * sig);
   
   bool eval_script (const std::string& pScript);
   
@@ -57,30 +74,33 @@ public:
   }
   
   /** Define a signal from lua stack/parameters. Default get from top. */
-  bool sig_from_lua (Signal * sig, int index = -1);
-  
-  /** Get a double from the current parameter list. */
-  bool double_from_lua(double *);
-  
-  /** Get a string from the current parameter list. */
-  bool string_from_lua(std::string *);
-  
-  /** Get a matrix from a lua table. */
-  bool matrix_from_lua_table(Matrix * pMat, int pIndex);
-  
-  /** Get a matrix from lua table at top index. */
-  bool matrix_from_lua_table(Matrix * pMat);
-  
-  /** Get a midi message from a lua table. */
-  bool midi_message_from_lua_table(MidiMessage * pMsg, int pIndex);
-  
-  /** Get a midi message at top index. */
-  bool midi_message_from_lua_table(MidiMessage * pMsg);
+  bool signal_from_lua (Signal * sig, int index = -1);
   
   /** Define a signal from lua stack/parameters, with a custom buffer. */
-  bool sig_from_lua (Signal * sig, int index, Matrix& pMat, MidiMessage& pMsg);
+  bool signal_from_lua (Signal * sig, int index, Matrix& pMat, MidiMessage& pMsg);
+  
+  /** Get a double from the current parameter list. */
+  bool double_from_lua (double *);
+  
+  /** Get a string from the current parameter list. */
+  bool string_from_lua (std::string *);
+  
+  /** Get a matrix from a lua table. */
+  bool matrix_from_lua_table (Matrix * pMat, int pIndex);
+  
+  /** Get a matrix from lua table at top index. */
+  bool matrix_from_lua_table (Matrix * pMat);
+  
+  /** Get a midi message from a lua table. */
+  bool midi_message_from_lua_table (MidiMessage * pMsg, int pIndex);
+  
+  /** Get a midi message at top index. */
+  bool midi_message_from_lua_table (MidiMessage * pMsg);
   
   static Node * get_node_from_lua (lua_State * L);
+  
+  /** Push a matrix on top of the lua stack. */
+  bool lua_pushsignal (const Signal& sig);
   
   /** Push a matrix on top of the lua stack. */
   void lua_pushmatrix (const Matrix& pMat);

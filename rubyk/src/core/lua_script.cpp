@@ -11,7 +11,7 @@ bool LuaScript::set_lua (const Params& p)
   return set_script(p);
 }
 
-void LuaScript::call_lua(Signal * sig, const char * pFunctionName)
+void LuaScript::call_lua (Signal * retSig, const char * pFunctionName, const Signal * sig)
 {
   int status;
   
@@ -23,9 +23,16 @@ void LuaScript::call_lua(Signal * sig, const char * pFunctionName)
   lua_setglobal(mLua, "current_time");
   
   lua_getglobal(mLua, pFunctionName); /* function to be called */
+  if (sig) {
+    if (!lua_pushsignal(*sig)) {
+      *mOutput << mName << "(error): ";
+      *mOutput << "cannot call '" << pFunctionName << "' with argument " << *sig << " (type not yet suported in Lua).\n";
+      return;
+    } 
+  }
   
   /* Run the function. */
-  status = lua_pcall(mLua, 0, 1, 0); // 1 arg, 1 result, no error function
+  status = lua_pcall(mLua, (sig ? 1 : 0), (retSig ? 1 : 0), 0); // 1 arg, 1 result, no error function
   if (status) {
     *mOutput << mName << "(error): ";
     *mOutput << lua_tostring(mLua, -1) << std::endl;
@@ -33,9 +40,8 @@ void LuaScript::call_lua(Signal * sig, const char * pFunctionName)
     mScriptOK = false;
     return;
   }
-  sig_from_lua(sig);
+  if (retSig) signal_from_lua(retSig);
 }
-
 
 bool LuaScript::eval_script(const std::string& pScript) 
 {
@@ -98,9 +104,9 @@ Node * LuaScript::get_node_from_lua(lua_State * L)
   return node;
 }
 
-bool LuaScript::sig_from_lua(Signal * sig, int index)
+bool LuaScript::signal_from_lua(Signal * sig, int index)
 {
-  return sig_from_lua(sig, index, mLuaMatrix, mLuaMidiMessage);
+  return signal_from_lua(sig, index, mLuaMatrix, mLuaMidiMessage);
 }
 
 bool LuaScript::double_from_lua(double * d)
@@ -233,7 +239,7 @@ bool LuaScript::midi_message_from_lua_table(MidiMessage * pMsg, int pIndex)
 }
 
 
-bool LuaScript::sig_from_lua(Signal * sig, int pIndex, Matrix& pMat, MidiMessage& pMsg)
+bool LuaScript::signal_from_lua(Signal * sig, int pIndex, Matrix& pMat, MidiMessage& pMsg)
 {
   int index = pIndex < 0 ? lua_gettop(mLua) + pIndex + 1 : pIndex;
   /* LUA_TNIL, LUA_TNUMBER, LUA_TBOOLEAN, LUA_TSTRING, LUA_TTABLE, LUA_TFUNCTION, LUA_TUSERDATA, LUA_TTHREAD, and LUA_TLIGHTUSERDATA.
@@ -284,7 +290,7 @@ int LuaScript::send_for_lua(lua_State * L)
     // port, value
     Signal sig;
     double p;
-    if (!node->sig_from_lua(&sig)) {
+    if (!node->signal_from_lua(&sig)) {
       node->error("could not get signal");
       return 0;
     }
@@ -420,23 +426,30 @@ bool LuaScript::matrix_from_lua (lua_State *L, Matrix ** pMat, int pIndex)
 
 void LuaScript::set_lua_global (const char * key, const Signal& sig)
 {
+  if (lua_pushsignal(sig)) {
+    lua_setglobal(mLua, key);
+  } else if (sig.type) {
+    *mOutput << mName << "(error): ";
+    *mOutput << "cannot set '" << key << "' to " << sig << " (type not yet suported in Lua).\n";
+  }
+}
+
+bool LuaScript::lua_pushsignal (const Signal& sig)
+{
   double d;
   const Matrix * live;
   if (sig.get(&live)) {
     lua_pushmatrix(*live);
-    lua_setglobal(mLua, key);
   } else if (sig.type == MidiSignal) {
     lua_pushmidi(*(sig.midi_ptr.value));
-    lua_setglobal(mLua, key);
   } else if (sig.get(&d)) {
     lua_pushnumber(mLua, d);
-    lua_setglobal(mLua, key);
   } else if (sig.is_bang()) {
     lua_pushnil(mLua);
-    lua_setglobal(mLua, key);
-  } else if (sig.type) {
-    std::cout << "lua: cannot set '" << key << "' to " << sig << " (type not yet suported in Lua).\n";
+  } else {
+    return false;
   }
+  return true;
 }
 
 void LuaScript::lua_pushmidi (const MidiMessage& pMessage)

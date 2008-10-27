@@ -1,3 +1,3 @@
-function bang()
-	return in1+12
+function bang(sig)
+	return sig+12
 end

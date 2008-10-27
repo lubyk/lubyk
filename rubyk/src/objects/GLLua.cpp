@@ -1,12 +1,12 @@
 #include "lua_script.h"
+#include "gl_node.h"
 
 extern "C" {
-// we compiled as C code
 #include <LuaGL.h>
 #include <LuaGLUT.h>
 }
 
-class LuaGL : public LuaScript
+class GLLua : public LuaScript, public GLNode
 {
 public:
   
@@ -18,13 +18,14 @@ public:
   // inlet 1
   void bang(const Signal& sig)
   {
-    set_lua_global("in1", sig);
-    call_lua(&mS, "bang");
-    if (mS.type) send(mS);
+    call_lua("bang", sig);
   }
   
-  void in2(const Signal& sig)
-  { set_lua_global("in2", sig); }
+  // inlet 2
+  void draw(const Signal& sig)
+  { 
+    call_lua("draw", sig);
+  }
   
   void in3(const Signal& sig)
   { set_lua_global("in3", sig); }
@@ -71,26 +72,26 @@ protected:
 
 extern "C" void init()
 {
-  CLASS (LuaGL)
-  INLET (LuaGL, in2)
-  INLET (LuaGL, in3)
-  INLET (LuaGL, in4)
-  INLET (LuaGL, in5)
-  INLET (LuaGL, in6)
-  INLET (LuaGL, in7)
-  INLET (LuaGL, in8)
-  INLET (LuaGL, in9)
-  INLET (LuaGL, in10)
-  OUTLET(LuaGL, out)
-  OUTLET(LuaGL, out2)
-  OUTLET(LuaGL, out3)
-  OUTLET(LuaGL, out4)
-  OUTLET(LuaGL, out5)
-  OUTLET(LuaGL, out6)
-  OUTLET(LuaGL, out7)
-  OUTLET(LuaGL, out8)
-  OUTLET(LuaGL, out9)
-  OUTLET(LuaGL, out10)
-  SUPER_METHOD(LuaGL, Script, load)
-  SUPER_METHOD(LuaGL, Script, script)
+  CLASS (GLLua)
+  INLET (GLLua, draw)
+  INLET (GLLua, in3)
+  INLET (GLLua, in4)
+  INLET (GLLua, in5)
+  INLET (GLLua, in6)
+  INLET (GLLua, in7)
+  INLET (GLLua, in8)
+  INLET (GLLua, in9)
+  INLET (GLLua, in10)
+  OUTLET(GLLua, out)
+  OUTLET(GLLua, draw)
+  OUTLET(GLLua, out3)
+  OUTLET(GLLua, out4)
+  OUTLET(GLLua, out5)
+  OUTLET(GLLua, out6)
+  OUTLET(GLLua, out7)
+  OUTLET(GLLua, out8)
+  OUTLET(GLLua, out9)
+  OUTLET(GLLua, out10)
+  SUPER_METHOD(GLLua, Script, load)
+  SUPER_METHOD(GLLua, Script, script)
 }

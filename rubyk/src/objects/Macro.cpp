@@ -35,9 +35,7 @@ public:
   // inlet 1
   void bang(const Signal& sig)
   {
-    set_lua_global("in1", sig);
-    call_lua(&mS, "bang");
-    if (mS.type) send(mS);
+    call_lua("bang", sig);
   }
   
   void in2(const Signal& sig)

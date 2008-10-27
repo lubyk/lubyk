@@ -30,7 +30,7 @@ public:
   
   void test_compile( void ) 
   { assert_result("n=Turing(\"x = 10\ny=4\na  x:15 -> b\na y:53 -> b\nb  ----> b\")\nn.tables\n",
-                  "#<Turing:n 2, 2>\ntokens\n   1: x = 10\n   2: y = 4\n\ngoto        -     x     y\n     -:                  \n     a:     1     2     2\n     b:     2     -     -\n\nsend        -     x     y\n     -:                  \n     a:     /    15    53\n     b:     /     -     -\n\nmethods\n"); }
+                  "#<Turing:n [a] 2x2>\ntokens\n   1: x = 10\n   2: y = 4\n\ngoto        -     x     y\n     -:                  \n     a:     1     2     2\n     b:     2     -     -\n\nsend        -     x     y\n     -:                  \n     a:     /    15    53\n     b:     /     -     -\n\nmethods\n"); }
   
   /*
 
@@ -55,7 +55,7 @@ public:
   */
   void test_compile_val_tokens( void )
   { assert_result("n=Turing(\"a  10:15 -> b\na 4:53 -> b\nb  ----> b\")\nn.tables\n",
-                  "#<Turing:n 2, 2>\ntokens\n   1: 10\n   2: 4\n\ngoto        -    10     4\n     -:                  \n     a:     1     2     2\n     b:     2     -     -\n\nsend        -    10     4\n     -:                  \n     a:     /    15    53\n     b:     /     -     -\n\nmethods\n"); }
+                  "#<Turing:n [a] 2x2>\ntokens\n   1: 10\n   2: 4\n\ngoto        -    10     4\n     -:                  \n     a:     1     2     2\n     b:     2     -     -\n\nsend        -    10     4\n     -:                  \n     a:     /    15    53\n     b:     /     -     -\n\nmethods\n"); }
  /*
     x = 10
     y = 4 #this is a comment
@@ -87,7 +87,7 @@ public:
   
   void test_comment( void ) 
   { assert_result("n=Turing(\"x = 10\ny=4 # this is a comment\n\na  x:15 -> b\n\n\n=begin\nmulti line\ncomment\n\n=end\na y:53 -> b\nb  ----> b\")\nn.tables\n",
-                  "#<Turing:n 2, 2>\ntokens\n   1: x = 10\n   2: y = 4\n\ngoto        -     x     y\n     -:                  \n     a:     1     2     2\n     b:     2     -     -\n\nsend        -     x     y\n     -:                  \n     a:     /    15    53\n     b:     /     -     -\n\nmethods\n"); }
+                  "#<Turing:n [a] 2x2>\ntokens\n   1: x = 10\n   2: y = 4\n\ngoto        -     x     y\n     -:                  \n     a:     1     2     2\n     b:     2     -     -\n\nsend        -     x     y\n     -:                  \n     a:     /    15    53\n     b:     /     -     -\n\nmethods\n"); }
   /*    
     x = 10
     y = 20
@@ -141,7 +141,7 @@ public:
   void test_lua_calls( void )
   {
     assert_result("n=Turing(\"x = 10\ny=4\n\na  x:bip(1) -> b\na y:send(1,{1,2,3}) -> b\nb  ----> b\n\n=begin lua\nfunction bip(v)\nprint('lua',v)\nend\n=end\n\")\nn.tables\n",
-                  "#<Turing:n 2, 2>\ntokens\n   1: x = 10\n   2: y = 4\n\ngoto        -     x     y\n     -:                  \n     a:     1     2     2\n     b:     2     -     -\n\nsend        -     x     y\n     -:                  \n     a:     / (  1) (  2)\n     b:     /     -     -\n\nmethods\n   1: bip(1)\n   2: send(1,{1,2,3})\n");
+                  "#<Turing:n [a] 2x2>\ntokens\n   1: x = 10\n   2: y = 4\n\ngoto        -     x     y\n     -:                  \n     a:     1     2     2\n     b:     2     -     -\n\nsend        -     x     y\n     -:                  \n     a:     / (  1) (  2)\n     b:     /     -     -\n\nmethods\n   1: bip(1)\n   2: send(1,{1,2,3})\n");
   }
   
   void test_lua_run( void )
@@ -164,7 +164,7 @@ public:
   
   void test_lua_bang( void )
   {
-    setup_with_print("n=Turing(\"x = 10\ny=4\n\na  x:bip(1) -> b\na y:send(1,{1,2,3}) -> b\nb  ----> a\n\n=begin lua\nfunction bip(v)\nsend(1,1)\nend\nfunction bang()\nif(in1 == 100) then\nreturn 10\nelse\nreturn in1\nend\nend\n=end\n\")\n");
+    setup_with_print("n=Turing(\"x = 10\ny=4\n\na  x:bip(1) -> b\na y:send(1,{1,2,3}) -> b\nb  ----> a\n\n=begin lua\nfunction bip(v)\nsend(1,1)\nend\nfunction bang(sig)\nif(sig == 100) then\nreturn 10\nelse\nreturn sig\nend\nend\n=end\n\")\n");
     assert_print("n.b(100)\n", "1.00\n"); // a  x:bip(1) -> b
     assert_print("n.b(4)\n", ""); // b --> a
     assert_print("n.b(4)\n", "<Matrix [  1.00  2.00  3.00 ], 1x3>\n"); // a y:send(1,{1,2,3}) -> b
@@ -197,7 +197,7 @@ public:
   
   void test_default_token_action( void ) 
   { assert_result("n=Turing(\"x = 10\ny=4\n. y:33 -> a\na  x:15 -> b\na y:53 -> b\nb  ----> b\")\nn.tables\n",
-                  "#<Turing:n 2, 2>\ntokens\n   1: y = 4\n   2: x = 10\n\ngoto        -     y     x\n     -:           1      \n     a:     1     2     2\n     b:     2     |     -\n\nsend        -     y     x\n     -:          33      \n     a:     /    53    15\n     b:     /     |     -\n\nmethods\n"); }
+                  "#<Turing:n [a] 2x2>\ntokens\n   1: y = 4\n   2: x = 10\n\ngoto        -     y     x\n     -:           1      \n     a:     1     2     2\n     b:     2     |     -\n\nsend        -     y     x\n     -:          33      \n     a:     /    53    15\n     b:     /     |     -\n\nmethods\n"); }
   
   
   void test_default_token_sequence( void )
@@ -232,7 +232,7 @@ public:
   
   void test_inputs( void ) 
   { 
-    setup_with_print("n=Turing(\"p -> p\n=begin lua\nfunction bang()\nsend(1,{in1 or 0,in2 or 0,in3 or 0,in4 or 0,in5 or 0,in6 or 0,in7 or 0,in8 or 0,in9 or 0,in10 or 0})\nend\n=end\")\n");
+    setup_with_print("n=Turing(\"p -> p\n=begin lua\nfunction bang(sig)\nsend(1,{sig or 0,in2 or 0,in3 or 0,in4 or 0,in5 or 0,in6 or 0,in7 or 0,in8 or 0,in9 or 0,in10 or 0})\nend\n=end\")\n");
     
     assert_print("n.b(11)\n",              "<Matrix [  11.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00 ], 1x10>\n");
     assert_print("n.in2(22)\nn.b(11)\n",   "<Matrix [  11.00  22.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00 ], 1x10>\n");
@@ -248,7 +248,7 @@ public:
   
   void test_outputs( void ) 
   { 
-    setup_with_print("n=Turing(\"p -> p\n=begin lua\nfunction bang()\nsend(6,in1)\nend\n=end\")\nn.6 => v\nv = Value()\nn // p\nv => p\n");
+    setup_with_print("n=Turing(\"p -> p\n=begin lua\nfunction bang(sig)\nsend(6,sig)\nend\n=end\")\nn.6 => v\nv = Value()\nn // p\nv => p\n");
     
     assert_print("n.b(123.34)\n",              "123.34\n");
   }
@@ -285,7 +285,7 @@ public:
   
   void test_set_state_from_lua( void ) 
   { 
-    setup_with_print("n=Turing(\"a -> b\nb -> c\nc -> a\n=begin lua\nfunction bang()\njump('b')\nreturn in1\nend\n=end\")\nn.d\n");
+    setup_with_print("n=Turing(\"a -> b\nb -> c\nc -> a\n=begin lua\nfunction bang(sig)\njump('b')\nreturn sig\nend\n=end\")\nn.d\n");
     assert_print("n.b(1)\n",              "n: jump {b}\nn: {b} -1-> {c}\n");
   }
   

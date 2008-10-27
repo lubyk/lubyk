@@ -6,3 +6,4 @@ rubyk/lib/*
 rubyk/src/lib/lua/lua
 rubyk/src/lib/lua/luac
 rubyk/test/runner.cpp
+rubyk/rubyk

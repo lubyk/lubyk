@@ -1,4 +1,4 @@
-#line 1 "objects/Turing.rl"
+#line 1 "src/objects/Turing.rl"
 #include "lua_script.h"
 #include <sstream>
 
@@ -18,7 +18,7 @@ struct TuringSend
 };
 
 
-#line 22 "objects/Turing.cpp"
+#line 22 "src/objects/Turing.cpp"
 static const char _turing_actions[] = {
 	0, 1, 0, 1, 1, 1, 2, 1, 
 	3, 1, 11, 1, 12, 1, 13, 1, 
@@ -87,7 +87,7 @@ static const char _turing_range_lengths[] = {
 	0, 2, 0, 0
 };
 
-static const unsigned char _turing_index_offsets[] = {
+static const short _turing_index_offsets[] = {
 	0, 0, 9, 11, 16, 26, 36, 45, 
 	48, 54, 60, 71, 76, 80, 85, 92, 
 	100, 102, 106, 108, 114, 122, 131, 135, 
@@ -129,7 +129,7 @@ static const char _turing_indicies[] = {
 	0
 };
 
-static const char _turing_trans_targs_wi[] = {
+static const char _turing_trans_targs[] = {
 	0, 1, 49, 2, 3, 25, 36, 4, 
 	6, 22, 4, 5, 11, 19, 13, 22, 
 	20, 6, 7, 8, 9, 21, 10, 49, 
@@ -142,7 +142,7 @@ static const char _turing_trans_targs_wi[] = {
 	47, 48, 51
 };
 
-static const char _turing_trans_actions_wi[] = {
+static const char _turing_trans_actions[] = {
 	9, 0, 0, 0, 1, 0, 1, 22, 
 	22, 3, 0, 0, 19, 1, 0, 0, 
 	19, 0, 0, 0, 1, 1, 34, 34, 
@@ -155,6 +155,16 @@ static const char _turing_trans_actions_wi[] = {
 	0, 0, 17
 };
 
+static const char _turing_eof_actions[] = {
+	0, 9, 9, 9, 9, 9, 9, 9, 
+	9, 9, 9, 9, 9, 9, 9, 9, 
+	9, 9, 9, 9, 9, 9, 9, 9, 
+	9, 9, 9, 9, 9, 9, 9, 9, 
+	9, 9, 9, 9, 9, 0, 0, 0, 
+	0, 0, 0, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0
+};
+
 static const int turing_start = 1;
 static const int turing_first_final = 49;
 
@@ -162,7 +172,7 @@ static const int turing_en_doc_comment = 37;
 static const int turing_en_lua_script = 43;
 static const int turing_en_main = 1;
 
-#line 22 "objects/Turing.rl"
+#line 22 "src/objects/Turing.rl"
 
 
 TuringSend gSendNothing;
@@ -203,8 +213,7 @@ public:
     reload_script();
     if (!mScriptOK) return;
     
-    set_lua_global("in1", sig);
-    call_lua(&mS, "bang");
+    call_lua(&mS, "bang", sig);
     if (!mS.type) return; // bang returned nil, abort
     else if (mS.type != BangSignal) {
       if (mS.get(&mRealToken)) // use token from returned value
@@ -282,6 +291,7 @@ public:
     int cs;
     const char * p  = mScript.data(); // data pointer
     const char * pe = p + mScript.size(); // past end
+    const char *eof = NULL;  // FIXME: this should be set to 'pe' on the last pStr block...
     char name[MAX_NAME_SIZE + 1];
     int  name_index = 0;
     
@@ -300,7 +310,7 @@ public:
     
     // integrated lua script
     const char * begin_lua_script = NULL;
-    mLuaScript = "function bang() return in1 end\n\n";
+    mLuaScript = "function bang(sig) return sig end\n\n";
     
     
     // function call id, params
@@ -320,14 +330,14 @@ public:
     clear_tables();
     
     
-#line 324 "objects/Turing.cpp"
+#line 334 "src/objects/Turing.cpp"
 	{
 	cs = turing_start;
 	}
-#line 179 "objects/Turing.rl"
+#line 179 "src/objects/Turing.rl"
     
   
-#line 331 "objects/Turing.cpp"
+#line 341 "src/objects/Turing.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -336,7 +346,7 @@ public:
 	const char *_keys;
 
 	if ( p == pe )
-		goto _out;
+		goto _test_eof;
 	if ( cs == 0 )
 		goto _out;
 _resume:
@@ -390,19 +400,19 @@ _resume:
 
 _match:
 	_trans = _turing_indicies[_trans];
-	cs = _turing_trans_targs_wi[_trans];
+	cs = _turing_trans_targs[_trans];
 
-	if ( _turing_trans_actions_wi[_trans] == 0 )
+	if ( _turing_trans_actions[_trans] == 0 )
 		goto _again;
 
-	_acts = _turing_actions + _turing_trans_actions_wi[_trans];
+	_acts = _turing_actions + _turing_trans_actions[_trans];
 	_nacts = (unsigned int) *_acts++;
 	while ( _nacts-- > 0 )
 	{
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 181 "objects/Turing.rl"
+#line 181 "src/objects/Turing.rl"
 	{
       if (name_index >= MAX_NAME_SIZE) {
         *mOutput << "Name buffer overflow !\n";
@@ -416,7 +426,7 @@ _match:
     }
 	break;
 	case 1:
-#line 193 "objects/Turing.rl"
+#line 193 "src/objects/Turing.rl"
 	{
       name[name_index] = '\0';
       identifier = name;
@@ -427,7 +437,7 @@ _match:
     }
 	break;
 	case 2:
-#line 202 "objects/Turing.rl"
+#line 202 "src/objects/Turing.rl"
 	{
       name[name_index] = '\0';
       name_index = 0;
@@ -439,7 +449,7 @@ _match:
     }
 	break;
 	case 3:
-#line 212 "objects/Turing.rl"
+#line 212 "src/objects/Turing.rl"
 	{
       name[name_index] = '\0';
       name_index = 0;
@@ -451,7 +461,7 @@ _match:
     }
 	break;
 	case 4:
-#line 222 "objects/Turing.rl"
+#line 222 "src/objects/Turing.rl"
 	{
       source = identifier;
       #ifdef DEBUG_PARSER
@@ -460,7 +470,7 @@ _match:
     }
 	break;
 	case 5:
-#line 229 "objects/Turing.rl"
+#line 229 "src/objects/Turing.rl"
 	{ 
       target = identifier;
       #ifdef DEBUG_PARSER
@@ -474,7 +484,7 @@ _match:
     }
 	break;
 	case 6:
-#line 240 "objects/Turing.rl"
+#line 241 "src/objects/Turing.rl"
 	{ 
       if (!mTokenByName.get(&tok, std::string(name))) {
         *mOutput << "Syntax error. Unknown token '" << name << "' (missing declaration)\n";
@@ -483,7 +493,7 @@ _match:
     }
 	break;
 	case 7:
-#line 247 "objects/Turing.rl"
+#line 248 "src/objects/Turing.rl"
 	{ 
       name[name_index] = '\0';
       name_index = 0;
@@ -494,7 +504,7 @@ _match:
     }
 	break;
 	case 8:
-#line 257 "objects/Turing.rl"
+#line 258 "src/objects/Turing.rl"
 	{
       mTokenByName.set(identifier, tok);
       mTokenNameByValue.set(tok, identifier);
@@ -504,7 +514,7 @@ _match:
     }
 	break;
 	case 9:
-#line 265 "objects/Turing.rl"
+#line 266 "src/objects/Turing.rl"
 	{
       // do we know this token ?
       if (!mTokenTable[tok % TUR_MAX_TOKEN_COUNT]) {
@@ -542,7 +552,7 @@ _match:
     }
 	break;
 	case 10:
-#line 301 "objects/Turing.rl"
+#line 302 "src/objects/Turing.rl"
 	{
       // write the entry
       #ifdef DEBUG_PARSER
@@ -562,7 +572,7 @@ _match:
     }
 	break;
 	case 11:
-#line 319 "objects/Turing.rl"
+#line 320 "src/objects/Turing.rl"
 	{
       p--; // move back one char
       char error_buffer[10];
@@ -572,29 +582,29 @@ _match:
     }
 	break;
 	case 12:
-#line 332 "objects/Turing.rl"
+#line 333 "src/objects/Turing.rl"
 	{ {cs = 37; goto _again;} }
 	break;
 	case 13:
-#line 333 "objects/Turing.rl"
+#line 334 "src/objects/Turing.rl"
 	{ {cs = 1; goto _again;} }
 	break;
 	case 14:
-#line 335 "objects/Turing.rl"
+#line 336 "src/objects/Turing.rl"
 	{
       begin_lua_script = p;
       {cs = 43; goto _again;} 
     }
 	break;
 	case 15:
-#line 339 "objects/Turing.rl"
+#line 340 "src/objects/Turing.rl"
 	{
       mLuaScript.append( begin_lua_script, p - begin_lua_script - 4 );
       begin_lua_script = NULL;
       {cs = 1; goto _again;} 
     }
 	break;
-#line 597 "objects/Turing.cpp"
+#line 608 "src/objects/Turing.cpp"
 		}
 	}
 
@@ -603,11 +613,31 @@ _again:
 		goto _out;
 	if ( ++p != pe )
 		goto _resume;
-	_out: {}
+	_test_eof: {}
+	if ( p == eof )
+	{
+	const char *__acts = _turing_actions + _turing_eof_actions[cs];
+	unsigned int __nacts = (unsigned int) *__acts++;
+	while ( __nacts-- > 0 ) {
+		switch ( *__acts++ ) {
+	case 11:
+#line 320 "src/objects/Turing.rl"
+	{
+      p--; // move back one char
+      char error_buffer[10];
+      snprintf(error_buffer, 9, "%s", p);
+      *mOutput << "Syntax error near '" << error_buffer << "'." << std::endl;
+      return false;
+    }
+	break;
+#line 634 "src/objects/Turing.cpp"
+		}
+	}
 	}
 
-#line 609 "objects/Turing.cpp"
-#line 376 "objects/Turing.rl"
+	_out: {}
+	}
+#line 376 "src/objects/Turing.rl"
 
   // token_default %add_token_default |
     if (begin_lua_script) {
@@ -704,7 +734,10 @@ _again:
   }
 
   virtual void spy()
-  { bprint(mSpy, mSpySize,"%i, %i", mTokenCount - 1, mStateCount - 1 );  }
+  { 
+    const std::string state = (mState > 0 && (uint)mState < mStateNames.size()) ? mStateNames[(uint)mState] : "?";
+    bprint(mSpy, mSpySize,"[%s] %ix%i", state.c_str(), mStateCount - 1, mTokenCount - 1);  
+  }
 
   
   /** Set state from lua. */

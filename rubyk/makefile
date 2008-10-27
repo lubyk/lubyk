@@ -24,7 +24,7 @@ test: test/runner test/runner.cpp
 rubyk: src/core/main.cpp command.o rubyk.o signal.o node.o inlet.o outlet.o slot.o params.o class.o lua_script.o matrix.o buffer.o src/lib/lua/liblua.a objects
 	$(CC) $(CFLAGS) $(LFLAGS) -o rubyk -Itest -Isrc/templates -Isrc/core -Isrc/objects -I. src/core/main.cpp slot.o inlet.o outlet.o params.o signal.o node.o class.o command.o matrix.o buffer.o rubyk.o lua_script.o src/lib/lua/liblua.a
 
-objects: lib/Test.rko lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/MidiOut.rko lib/NoteOut.rko lib/Lua.rko lib/Serial.rko lib/Turing.rko lib/Keyboard.rko lib/Cabox.rko lib/Svm.rko lib/Buffer.rko lib/Plot.rko lib/Cut.rko lib/MaxCount.rko lib/FFT.rko lib/VQ.rko lib/ClassRecorder.rko lib/PCA.rko lib/Average.rko lib/Peak.rko lib/Minus.rko lib/Replay.rko lib/Kmeans.rko lib/Abs.rko lib/Sum.rko lib/Ctrl.rko lib/Diff.rko lib/Bang.rko lib/Macro.rko lib/MidiIn.rko lib/LuaGL.rko
+objects: lib/Test.rko lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/MidiOut.rko lib/NoteOut.rko lib/Lua.rko lib/Serial.rko lib/Turing.rko lib/Keyboard.rko lib/Cabox.rko lib/Svm.rko lib/Buffer.rko lib/Plot.rko lib/Cut.rko lib/MaxCount.rko lib/FFT.rko lib/VQ.rko lib/ClassRecorder.rko lib/PCA.rko lib/Average.rko lib/Peak.rko lib/Minus.rko lib/Replay.rko lib/Kmeans.rko lib/Abs.rko lib/Sum.rko lib/Ctrl.rko lib/Diff.rko lib/Bang.rko lib/Macro.rko lib/MidiIn.rko lib/GLLua.rko
 	
 test/runner.cpp: $(TEST)
 	./test/cxxtest/cxxtestgen.pl --error-printer -o test/runner.cpp $(TEST)
@@ -57,7 +57,7 @@ lib/Serial.rko: src/objects/Serial.cpp src/objects/serial/serial.h
 	$(CC) $(CFLAGS) -o lib/Serial.rko -Isrc/templates -Isrc/core -Isrc/lib/lua -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ src/objects/Serial.cpp -DCOMPILE_SERIAL_OBJECT
 
 src/objects/Turing.cpp: src/objects/Turing.rl
-	${RAGEL} src/objects/Turing.rl | ${RAGEL_CD} -o src/objects/Turing.cpp
+	${RAGEL} src/objects/Turing.rl -o src/objects/Turing.cpp
 	
 lib/Svm.rko: src/objects/Svm.cpp
 	$(CC) $(CFLAGS) -o lib/Svm.rko -Isrc/templates -Isrc/core -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ src/objects/Svm.cpp src/objects/svm/svm.cpp
@@ -71,8 +71,8 @@ lib/FFT.rko: src/objects/FFT.cpp
 lib/VQ.rko: src/objects/VQ.cpp
 	$(CC) $(CFLAGS) -o lib/VQ.rko -Isrc/templates -Isrc/core -Isrc/objects/vq -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ src/objects/VQ.cpp src/objects/vq/elbg.c src/objects/vq/random.c
 	
-lib/LuaGL.rko: src/objects/LuaGL.cpp src/objects/luagl/LuaGL.c src/objects/luagl/LuaGlut.c
-	$(CC) $(CFLAGS) -o lib/LuaGL.rko -D__MACOSX_CORE__ -Isrc/templates -Isrc/core -Isrc/lib/lua -Isrc/objects/luagl -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ src/objects/LuaGL.cpp src/objects/luagl/LuaGL.c src/objects/luagl/LuaGlut.c
+lib/GLLua.rko: src/objects/GLLua.cpp src/objects/gllua/LuaGL.c src/objects/gllua/LuaGlut.c
+	$(CC) $(CFLAGS) -o lib/GLLua.rko -D__MACOSX_CORE__ -Isrc/templates -Isrc/core -Isrc/lib/lua -Isrc/objects/gllua -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ src/objects/GLLua.cpp src/objects/gllua/LuaGL.c src/objects/gllua/LuaGlut.c
 	
 lib/%.rko: src/objects/%.cpp
 	$(CC) $(CFLAGS) -o $@ -Isrc/templates -Isrc/core -Isrc/lib/lua -D__MACOSX_CORE__ -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ $<
@@ -105,6 +105,3 @@ install_libs:
 
 clean:
 	rm -rf *.o lib/*.rko rubyk src/core/command.png src/core/command.dot test/runner
-
-luagl_test: lua_gl.o lua_glut.o src/lib/lua/liblua.a src/lib/luagl/Interpreter.c
-	gcc $(CFLAGS) -o luagl -L/usr/lib -lgcc -lstdc++ -D__MACOSX_CORE__ -framework GLUT -framework OpenGL -framework Cocoa -Isrc/templates -Isrc/core -Isrc/lib/lua -Isrc/lib/luagl src/lib/lua/liblua.a lua_gl.o lua_glut.o src/lib/luagl/Interpreter.c
