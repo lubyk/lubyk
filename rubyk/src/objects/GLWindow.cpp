@@ -1,6 +1,7 @@
-#include "gl_node.h"
+#include "class.h"
 #include <stdlib.h>  // exit
 #include <stdio.h>
+#include "opengl.h"
 
 /////////////// GLWINDOW HACK ///////////
 
@@ -12,7 +13,7 @@ extern bool   gRunning; /**< Used to tell when server has stopped running. */
 
 /////////////////////////////////////
 /** Draw an openGL window. It's a pity we need multiple inheritance here... */
-class GLWindow : public GLNode, public Node
+class GLWindow : public Node
 {
 public:
   GLWindow()
@@ -35,7 +36,7 @@ public:
     mFullscreen = false;
     mClearGrey  = 0.2;
     mTitle      = "GLWindow";
-    TRY(mSize, set_sizes(1, 2));
+    TRY(mDisplaySize, set_sizes(1, 2));
     
     ////////////// GLWINDOW HACK ////////////
     gGLWindowNode = (void*)this;
@@ -53,9 +54,7 @@ public:
     mFullscreen = p.val("fullscreen", mFullscreen);
     mClearGrey  = p.val("clear", mClearGrey);
     mTitle      = p.val("title", mTitle);
-    
-    mSize.data[0] = mWidth;
-    mSize.data[1] = mHeight;
+    resize_window();
     return true;
   }
   
@@ -66,9 +65,11 @@ public:
     send(1, sig);
   }
   
-  // never used. Dummy so that GLWindow compiles.
   virtual void draw(const Signal& sig)
-  {}
+  {
+//    gluOrtho2D(0,mDisplaySize.data[0],0,mDisplaySize.data[1]);
+    send(2, mDisplaySize);
+  }
   
   virtual void key_press(unsigned char pKey, int x, int y)
   {
@@ -126,10 +127,29 @@ protected:
   void resize_window()
   {
     if (mFullscreen) {
-     glutFullScreen(); 
+      glutFullScreen();
+      mDisplaySize.data[0] = glutGet(GLUT_SCREEN_WIDTH);
+      mDisplaySize.data[1] = glutGet(GLUT_SCREEN_HEIGHT);
     } else {
-     glutReshapeWindow(mWidth, mHeight);
+      glutReshapeWindow(mWidth, mHeight);
+      mDisplaySize.data[0] = mWidth;
+      mDisplaySize.data[1] = mHeight;
     }
+  }
+  
+  void reshape_window(int w, int h)
+  {
+    if (!mFullscreen) {
+      mWidth  = w;
+      mHeight = h;
+      resize_window();
+    }
+    
+    glViewport(0, 0, w, h);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(0, w, 0, h);
+    glMatrixMode(GL_MODELVIEW);
   }
   
   virtual void stop_my_threads()
@@ -171,7 +191,7 @@ private:
       return;
     }
     glClear(GL_COLOR_BUFFER_BIT);
-    node->send(2, node->mSize);
+    node->draw(node->mS);
     glFlush();
   }
   
@@ -192,6 +212,12 @@ private:
   {
     GLWindow * node = (GLWindow*)thread_this();
     node->mouse_move(x,y);
+  }
+  
+  static void cast_reshape_window (int pWidth, int pHeight)
+  {
+    GLWindow * node = (GLWindow*)thread_this();
+    node->reshape_window(pWidth,pHeight);
   }
 
   /* Init and start openGL thread. */
@@ -214,11 +240,13 @@ private:
     
     glClearColor(mClearGrey,mClearGrey,mClearGrey,1.0);
     
-    gluOrtho2D(0,mWidth,0,mHeight);
+    //gluOrtho2D(0,mWidth,0,mHeight);
+    
     glutDisplayFunc(&GLWindow::cast_draw);
     glutIdleFunc(&GLWindow::cast_idle);
     glutKeyboardFunc(&GLWindow::cast_key_press);
     glutMotionFunc(&GLWindow::cast_mouse_move);
+    glutReshapeFunc(&GLWindow::cast_reshape_window);
 
     resize_window();
     
@@ -228,7 +256,7 @@ private:
   }
   
   std::string mTitle;        /**< Window title. */
-  Matrix      mSize;         /**< Window size. */
+  Matrix      mDisplaySize;         /**< Window size. */
   int         mHeight;       /**< Window height (in pixels). */
   int         mWidth;        /**< Window width (in pixels). */
   int         mId;           /**< Window id. */

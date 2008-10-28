@@ -69,9 +69,11 @@ int main(int argc, char * argv[])
     delete fCmd;
   }
   
+  if (!Node::sThisKey)     pthread_key_create(&Node::sThisKey,     NULL); // create a key to find 'this' object in new thread
+  if (!Node::sGLThreadKey) pthread_key_create(&Node::sGLThreadKey, NULL); // create a key to find 'this' object in new thread
+  
   ////// GLWINDOW HACK /////
   // this is a hack to put GLWindow inside thread 0
-  if (!Node::sThisKey) pthread_key_create(&Node::sThisKey, NULL); // create a key to find 'this' object in new thread
   pthread_create( &gRubykThread, NULL, start_thread, NULL);
   while (gRunning) {
     if (gGLWindowStartThread) {

@@ -4,8 +4,9 @@
 #include "class.h"
 #include "buffer.h"
 
-unsigned int Node::sIdCounter = 0;
-pthread_key_t Node::sThisKey  = NULL;
+unsigned int Node::sIdCounter    = 0;
+pthread_key_t Node::sThisKey     = NULL;
+pthread_key_t Node::sGLThreadKey = NULL;
 
 Node::~Node()
 {

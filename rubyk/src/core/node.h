@@ -446,6 +446,15 @@ protected:
     return pthread_getspecific(sThisKey);
   }
   
+  inline bool is_opengl_thread ()
+  {
+    return pthread_getspecific(sGLThreadKey) != NULL;
+  }
+  
+  static void set_is_opengl_thread ()
+  {
+    pthread_setspecific(sGLThreadKey, (void*)true);
+  }
   
   // ================ MEMBER DATA    ================= //
   /** Host server. */
@@ -476,14 +485,15 @@ protected:
   
   Signal mS; /**< To send through outlets when cast needed. */
   
-  std::list<pthread_t> mThreadIds; /**< Store running thread ids (used by rubyk server on quit). */
+  std::list<pthread_t> mThreadIds;    /**< Store running thread ids (used by rubyk server on quit). */
   
   bool   mDebug; /**< Subclasses can implement conditional output based on debug mode (set with 'debug' command). */
   
 private:
-  static unsigned int sIdCounter;  /**< Each object has a unique id. */
+  static unsigned int sIdCounter;     /**< Each object has a unique id. */
 public:
-  static pthread_key_t sThisKey;   /**< Key to retrieve 'this' value from a running thread. */
+  static pthread_key_t sThisKey;      /**< Key to retrieve 'this' value from a running thread. */
+  static pthread_key_t sGLThreadKey;  /**< Key to test if the running thread is an OpenGL thread. */  
 };
 
 /** This class is used when a new object's class is not found. We return an object of type 'NotFound'. */

@@ -1,12 +1,11 @@
 #include "lua_script.h"
-#include "gl_node.h"
 
 extern "C" {
 #include <LuaGL.h>
 #include <LuaGLUT.h>
 }
 
-class GLLua : public GLNode, public LuaScript
+class GLLua : public LuaScript
 {
 public:
   
@@ -24,8 +23,13 @@ public:
   // inlet 2
   void draw(const Signal& sig)
   { 
-    *mOutput << mName << ": " << "draw called." << std::endl;
+    if (!is_opengl_thread()) {
+      *mOutput << mName << ": " << "not an openGL thread." << std::endl;
+      return;
+    }
+    glPushMatrix();
     call_lua("draw", sig);
+    glPopMatrix();
   }
   
   void in3(const Signal& sig)
@@ -73,7 +77,8 @@ protected:
 
 extern "C" void init()
 {
-  GL_CLASS (GLLua)
+  CLASS (GLLua)
+  INLET (GLLua, draw)
   INLET (GLLua, in3)
   INLET (GLLua, in4)
   INLET (GLLua, in5)

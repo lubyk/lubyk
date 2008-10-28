@@ -1,4 +1,5 @@
-#include "gl_node.h"
+#include "class.h"
+#include "opengl.h"
 
 typedef enum {
   XYPlot,
@@ -13,7 +14,7 @@ typedef enum {
   FixedColorMode, 
 } plot_color_t;
 
-class GLPlot : public GLNode, public Node
+class GLPlot : public Node
 {
 public:
   

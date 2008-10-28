@@ -12,7 +12,7 @@ RAGEL=ragel
 RAGEL_CD=rlgen-cd
 PLAT= macosx
 TEST=test/*_test.h test/objects/*_test.h
-LINKER_OBJECTS=slot.o inlet.o outlet.o params.o signal.o node.o class.o gl_node.o command.o matrix.o buffer.o rubyk.o lua_script.o src/lib/lua/liblua.a globals.o
+LINKER_OBJECTS=slot.o inlet.o outlet.o params.o signal.o node.o class.o command.o matrix.o buffer.o rubyk.o lua_script.o src/lib/lua/liblua.a globals.o
 
 # Utilities.
 INSTALL= install -C
@@ -34,9 +34,6 @@ test/runner: test/runner.cpp $(LINKER_OBJECTS) objects
 	
 signal.o: src/core/rubyk_signal.cpp
 	$(CC) $(CFLAGS) -c -Isrc/templates src/core/rubyk_signal.cpp -o signal.o
-	
-gl_node.o: src/core/gl_node.cpp src/core/gl_node.h
-	$(CC) $(CFLAGS) -c -D__MACOSX_CORE__ -Isrc/templates src/core/gl_node.cpp -o gl_node.o
 
 src/core/command.cpp: src/core/command.rl
 	${RAGEL} src/core/command.rl -o src/core/command.cpp
