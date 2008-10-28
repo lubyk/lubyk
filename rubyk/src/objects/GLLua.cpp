@@ -17,7 +17,10 @@ public:
   // inlet 1
   void bang(const Signal& sig)
   {
-    call_lua("bang", sig);
+    mMutex.lock();
+      // protected resource
+      call_lua("bang", sig);
+    mMutex.unlock();
   }
   
   // inlet 2
@@ -28,7 +31,10 @@ public:
       return;
     }
     glPushMatrix();
-    call_lua("draw", sig);
+    mMutex.lock();
+      // protected resource
+      call_lua("draw", sig);
+    mMutex.unlock();
     glPopMatrix();
   }
   
@@ -65,6 +71,7 @@ private:
     open_opengl_lua_libs();
   }
   
+  Mutex mMutex;
 protected:
   
   /* open base lua libraries */

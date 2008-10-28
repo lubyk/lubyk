@@ -1,13 +1,13 @@
 x = 200
 y = 200
 n = 0.0
-s = 10
+s = 8
 in3 = in3 or {200,200}
 
 function bang(sig)
-  n = n + math.pi / 40
-  x = in3[1] + math.cos(n) * 10
-  y = in3[2] + math.sin(n) * 10
+  n = n + math.pi / 30
+  x = in3[1] + math.cos(n) * 20
+  y = in3[2] + math.sin(n) * 20
 end
 
 function draw(sig)
