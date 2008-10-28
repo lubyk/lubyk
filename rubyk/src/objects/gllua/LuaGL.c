@@ -12,19 +12,8 @@
 *  See Copyright Notice in LuaGL.h
 *************************************************/
 
-#include <string.h>
-
-#ifdef __MACOSX_CORE__
-#include <stdlib.h>
-#else
-#include <malloc.h>
-#endif
-
-#include <lauxlib.h>
-
-#define BUILDING_LUAGL_DLL
-
 #include "LuaGL.h"
+#define BUILDING_LUAGL_DLL
 
 /* set field of a lua table with a number */
 static void set_field(lua_State *L, unsigned int index, lua_Number value)

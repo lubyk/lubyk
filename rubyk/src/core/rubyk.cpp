@@ -172,7 +172,7 @@ bool Rubyk::run()
 { 
   struct timespec sleeper;
   sleeper.tv_sec  = 0; 
-  sleeper.tv_nsec = SLEEP_MICRO_S * 10000;
+  sleeper.tv_nsec = RUBYK_SLEEP_MS * 1000000;
   
   mMutex.unlock(); // ok, others can do things while we sleep
   nanosleep (&sleeper, NULL); // FIXME: only if no loop events ?

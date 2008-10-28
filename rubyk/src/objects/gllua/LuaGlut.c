@@ -12,15 +12,8 @@
 *  See Copyright Notice in LuaGL.h
 *************************************************/
 
-#include <stdlib.h>
-
-#include <lua.h>
-#include <lauxlib.h>
-#include <lualib.h>
-
-#define BUILDING_LUAGLUT_DLL
-
 #include "LuaGlut.h"
+#define BUILDING_LUAGLUT_DLL
 
 #ifdef _WIN32
 #pragma warning(disable:4100)

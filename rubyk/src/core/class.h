@@ -71,13 +71,20 @@ public:
     mMethodsForLua.set(std::string(pName), pMethod);
   }
   
-  
   /** Declare an inlet, with an accessor method. */
   template <class T, void(T::*Tmethod)(const Signal& sig)>
   void add_inlet (const char* pName)
   {  
     mInlets.push_back( &cast_inlet_method<T, Tmethod>);
     mMethods.set(std::string(pName), &cast_inlet_accessor<T, Tmethod>);
+  }
+  
+  /** Declare an inlet that uses a super class method. Also set an accessor method. */
+  template <class T, class S, void(S::*Tmethod)(const Signal& sig)>
+  void add_super_inlet (const char* pName)
+  {  
+    mInlets.push_back( &cast_super_inlet_method<T, S, Tmethod>);
+    mMethods.set(std::string(pName), &cast_super_inlet_accessor<T, S, Tmethod>);
   }
   
   /** Declare an outlet. Outlets do not have callbacks. */
@@ -231,6 +238,16 @@ private:
     (((T*)receiver)->*Tmethod)(sig);
   }
   
+  /** Transform an inlet from a super class method callback into a 'Params' based accessor. */
+  template <class T, class S, void(S::*Tmethod)(const Signal& sig)>
+  static void cast_super_inlet_accessor (void * receiver, const Params& p)
+  {
+    Signal sig;
+    Matrix buf;
+    sig.set(p, buf);
+    (((T*)receiver)->*Tmethod)(sig);
+  }
+  
   /** Create a callback for an inlet. */
   template <class T, void(T::*Tmethod)(const Signal& sig)>
   static void cast_inlet_method (void * receiver, const Signal& sig)
@@ -238,6 +255,12 @@ private:
     (((T*)receiver)->*Tmethod)(sig);
   }
   
+  /** Create a callback for an inlet using a super class' method. */
+  template <class T, class S, void(S::*Tmethod)(const Signal& sig)>
+  static void cast_super_inlet_method (void * receiver, const Signal& sig)
+  {
+    (((T*)receiver)->*Tmethod)(sig);
+  }
   
   /* class info */
   std::string                          mName;           /**< Class name. */
@@ -256,6 +279,7 @@ private:
 #define CLASS(klass)         {Class::declare<klass>(#klass);}
 #define CLASS_NAME(klass_name, klass) {Class::declare<klass>(#klass_name);}
 #define INLET(klass,method)  {Class::find(#klass)->add_inlet<klass, &klass::method>(#method);}
+#define SUPER_INLET(klass,super,method)  {Class::find(#klass)->add_super_inlet<klass, super, &super::method>(#method);}
 #define OUTLET(klass,method) {Class::find(#klass)->add_outlet(#method);}
 #define METHOD(klass,method) {Class::find(#klass)->add_method<klass, &klass::method>(#method);}
 #define CLASS_METHOD(klass,method) {Class::find(#klass)->add_class_method(#method, &klass::method);}

@@ -1,0 +1,6 @@
+set_lib_path("lib")
+m = Metro()
+m => win
+win = GLWindow()
+win.2 => 2.l
+l = GLLua(load:"test/fixtures/lua/gllua.lua")

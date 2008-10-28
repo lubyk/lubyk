@@ -14,6 +14,7 @@
 #include <cstdio>
 #include <vector>
 #include <string>
+#include <pthread.h>
 
 
 #define START_PRINT_BUFFER   20

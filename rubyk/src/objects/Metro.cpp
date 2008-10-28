@@ -28,6 +28,15 @@ public:
   virtual void spy()
   { bprint(mSpy, mSpySize,"%.2f", mTempo );  }
   
+  void stop(const Signal& sig)
+  {
+    remove_my_events();
+  }
+  
+  void start(const Signal& sig)
+  {
+    bang(sig);
+  }
   
 private:
   double mTempo;
@@ -36,5 +45,7 @@ private:
 extern "C" void init()
 {
   CLASS( Metro)
+  INLET(Metro,start)
+  INLET(Metro,stop)
   OUTLET(Metro,bang)
 }

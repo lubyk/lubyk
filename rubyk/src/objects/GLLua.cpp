@@ -6,7 +6,7 @@ extern "C" {
 #include <LuaGLUT.h>
 }
 
-class GLLua : public LuaScript, public GLNode
+class GLLua : public GLNode, public LuaScript
 {
 public:
   
@@ -24,6 +24,7 @@ public:
   // inlet 2
   void draw(const Signal& sig)
   { 
+    *mOutput << mName << ": " << "draw called." << std::endl;
     call_lua("draw", sig);
   }
   
@@ -72,8 +73,7 @@ protected:
 
 extern "C" void init()
 {
-  CLASS (GLLua)
-  INLET (GLLua, draw)
+  GL_CLASS (GLLua)
   INLET (GLLua, in3)
   INLET (GLLua, in4)
   INLET (GLLua, in5)

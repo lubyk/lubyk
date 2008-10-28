@@ -44,12 +44,19 @@ extern "C" {
   #endif
 #endif
 
-#include <lualib.h>
+#include <string.h>
+
 #ifdef __MACOSX_CORE__
 #include <GLUT/glut.h>
+#include <stdlib.h>
 #else
 #include <GL/gl.h>
+#include <malloc.h>
 #endif
+
+#include <lualib.h>
+#include <lauxlib.h>
+
 
 LUAGL_API int luaopen_opengl (lua_State *L);
 

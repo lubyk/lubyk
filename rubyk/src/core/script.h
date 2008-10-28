@@ -34,7 +34,7 @@ public:
     
     mReloadEvery = p.val("reload", mReloadEvery);
     if (!p.get(&mReloadEvery, "reload") && !mReloadEvery)
-      mReloadEvery = 5;
+      mReloadEvery = 1;
     
     mScriptOK = load_script_from_file(true);
   }

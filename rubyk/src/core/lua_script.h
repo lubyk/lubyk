@@ -111,7 +111,7 @@ public:
   /** Get a matrix from lua. */
   static bool matrix_from_lua (lua_State *L, Matrix ** pMat, int pIndex);
   
-  void set_lua_global(const char * key, const Signal& sig);
+  void set_lua_global (const char * key, const Signal& sig);
   
 private:
   static const luaL_reg sMatrix_methods[];

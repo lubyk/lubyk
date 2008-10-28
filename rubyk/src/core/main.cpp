@@ -11,13 +11,15 @@ void term(int sig)
   gServer->quit();
 }
 
-////// PLOT HACK /////
-bool gRunning;
+////// GLWINDOW HACK /////
+// instanciated in globals.o
+extern bool gRunning;
 
 typedef void (*plot_thread)(void * pEvent);
 
-plot_thread gPlotThread;
-void * gPlotThreadData;
+extern plot_thread gGLWindowStartThread;
+extern void * gGLWindowNode;
+extern bool   gQuitGl;
 
 pthread_t gRubykThread;
 
@@ -39,8 +41,14 @@ static void * start_thread(void * data)
 int main(int argc, char * argv[])
 {
   gServer = new Rubyk;
-  gPlotThread = NULL;
-  gRunning = true; /////// PLOT HACK
+  gGLWindowStartThread = NULL;
+  gGLWindowNode = NULL; /////// GLWINDOW HACK
+  gQuitGl  = false;
+  gRunning = true;
+  
+  struct timespec sleeper;
+  sleeper.tv_sec  = 0; 
+  sleeper.tv_nsec = 100 * 1000000; // 100 ms
   
   if (argc > 1) {
     std::ifstream in(argv[1], std::ios::in);
@@ -61,17 +69,17 @@ int main(int argc, char * argv[])
     delete fCmd;
   }
   
-  ////// PLOT HACK /////
-  // this is a hack to put Plot opengl inside thread 0
+  ////// GLWINDOW HACK /////
+  // this is a hack to put GLWindow inside thread 0
   if (!Node::sThisKey) pthread_key_create(&Node::sThisKey, NULL); // create a key to find 'this' object in new thread
   pthread_create( &gRubykThread, NULL, start_thread, NULL);
   while (gRunning) {
-    if (gPlotThread) {
-      (*gPlotThread)(gPlotThreadData);
+    if (gGLWindowStartThread) {
+      (*gGLWindowStartThread)(gGLWindowNode);
       // never reaches here...
       break;
     }
-    sleep(1);
+    nanosleep (&sleeper, NULL);
   }
   pthread_join( gRubykThread, NULL);
   /////////////////////

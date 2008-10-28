@@ -24,13 +24,18 @@ extern "C" {
     #define LUAGLUT_API extern
   #endif
 #endif
+#include <stdlib.h>
 
-#include <lualib.h>
 #ifdef __MACOSX_CORE__
 #include <GLUT/glut.h>
 #else
 #include <GL/gl.h>
 #endif
+
+#include <lua.h>
+#include <lauxlib.h>
+#include <lualib.h>
+
 
 LUAGLUT_API int luaopen_glut (lua_State *L);
 

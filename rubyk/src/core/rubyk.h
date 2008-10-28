@@ -11,7 +11,7 @@
 #include <iostream>
 
 // 0.2 [ms]
-#define SLEEP_MICRO_S 200.0
+#define RUBYK_SLEEP_MS 20.0
 #define ONE_SECOND 1000.0
 #define ONE_MINUTE (60.0*ONE_SECOND)
 
@@ -19,6 +19,10 @@ class Params;
 class Action;
 class Node;
 class Command;
+
+/////////////// GLWINDOW HACK ///////////
+extern bool   gQuitGl; /**< Used to tell thread to exit. */
+/////////////////////////////////////
 
 class Rubyk
 {
@@ -38,7 +42,7 @@ public:
   
   /** Close the door and leave... */
   void quit()
-  { mQuit = true; }
+  { mQuit = true; gQuitGl = true; }
   
   /** Main loop. Returns false when rubyk has to quit. */
   bool run();
