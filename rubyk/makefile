@@ -68,6 +68,9 @@ lib/FFT.rko: src/objects/FFT.cpp
 lib/VQ.rko: src/objects/VQ.cpp
 	$(CC) $(CFLAGS) -o lib/VQ.rko -Isrc/templates -Isrc/core -Isrc/objects/vq -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ src/objects/VQ.cpp src/objects/vq/elbg.c src/objects/vq/random.c
 	
+lib/GLWindow.rko: src/objects/GLWindow.cpp src/objects/gllua/LuaGL.c src/objects/gllua/LuaGlut.c
+	$(CC) $(CFLAGS) -o lib/GLWindow.rko -Isrc/templates -Isrc/core -Isrc/lib/lua -Isrc/objects/gllua -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ -D__MACOSX_CORE__ -framework GLUT -framework OpenGL -framework Cocoa src/objects/GLWindow.cpp src/objects/gllua/LuaGL.c src/objects/gllua/LuaGlut.c
+
 lib/GLLua.rko: src/objects/GLLua.cpp src/objects/gllua/LuaGL.c src/objects/gllua/LuaGlut.c
 	$(CC) $(CFLAGS) -o lib/GLLua.rko -Isrc/templates -Isrc/core -Isrc/lib/lua -Isrc/objects/gllua -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ -D__MACOSX_CORE__ -framework GLUT -framework OpenGL -framework Cocoa src/objects/GLLua.cpp src/objects/gllua/LuaGL.c src/objects/gllua/LuaGlut.c
   

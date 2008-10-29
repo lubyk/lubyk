@@ -2899,6 +2899,21 @@ static int gl_ortho(lua_State *L)
    return 0;
 }
 
+/*Ortho2D (left, right, bottom, top) -> none*/
+static int gl_ortho2D(lua_State *L)
+{
+   /* test arguments type */
+   if(!( lua_isnumber(L, 1) && lua_isnumber(L, 2) && 
+         lua_isnumber(L, 3) && lua_isnumber(L, 4)))
+      luaL_error(L, "incorrect string argument to function 'gl.Ortho2D'");
+
+   /* call opengl function */
+   gluOrtho2D((GLdouble)lua_tonumber(L, 1), (GLdouble)lua_tonumber(L, 2),
+              (GLdouble)lua_tonumber(L, 3), (GLdouble)lua_tonumber(L, 4));
+
+   return 0;
+}
+
 /*PassThrough (token) -> none*/
 static int gl_pass_through(lua_State *L)
 {
@@ -3939,6 +3954,32 @@ static int gl_viewport(lua_State *L)
    return 0;
 }
 
+/*Perspective ( fovy, aspect, zNear, zFar ) -> none*/
+static int gl_perspective(lua_State *L)
+{
+   /* test arguments type */
+   if(!( lua_isnumber(L, 1) && lua_isnumber(L, 2) &&
+         lua_isnumber(L, 3) && lua_isnumber(L, 4) ))
+      luaL_error(L, "incorrect argument to function 'gl.Perspective'");
+
+   GLdouble fovy   = (GLdouble)lua_tonumber(L, 1);
+   GLdouble aspect = (GLdouble)lua_tonumber(L, 2);
+   GLdouble zNear  = (GLdouble)lua_tonumber(L, 3);
+   GLdouble zFar   = (GLdouble)lua_tonumber(L, 4);
+   
+   gluPerspective(fovy,aspect,zNear,zFar);
+   /*
+   GLdouble xmin, xmax, ymin, ymax;
+   ymax = zNear * tan(fovy * M_PI / 360.0);
+   ymin = -ymax;
+   xmin = ymin * aspect;
+   xmax = ymax * aspect;
+
+   glFrustum(xmin, xmax, ymin, ymax, zNear, zFar);
+   */
+   return 0;
+}
+
 static const luaL_reg gllib[] = {
   {"Accum", gl_accum},
   {"AlphaFunc", gl_alpha_func},
@@ -4036,7 +4077,9 @@ static const luaL_reg gllib[] = {
   {"Normal", gl_normal},
   {"NormalPointer", gl_normal_pointer},
   {"Ortho", gl_ortho},
+  {"Ortho2D", gl_ortho2D},
   {"PassThrough", gl_pass_through},
+  {"Perspective", gl_perspective},
   {"PixelMap", gl_pixel_map},
   {"PixelStore", gl_pixel_store},
   {"PixelTransfer", gl_pixel_transfer},

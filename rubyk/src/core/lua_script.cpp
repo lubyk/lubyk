@@ -434,6 +434,16 @@ void LuaScript::set_lua_global (const char * key, const Signal& sig)
   }
 }
 
+
+bool LuaScript::lua_has_function (const char * key)
+{
+  bool res;
+  lua_getglobal(mLua, key);
+  res = lua_isfunction(mLua, -1);
+  lua_pop(mLua,-1);
+  return res;
+}
+
 bool LuaScript::lua_pushsignal (const Signal& sig)
 {
   double d;

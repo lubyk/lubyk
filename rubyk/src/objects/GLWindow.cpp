@@ -1,7 +1,12 @@
-#include "class.h"
+#include "lua_script.h"
 #include <stdlib.h>  // exit
 #include <stdio.h>
 #include "opengl.h"
+
+extern "C" {
+#include <LuaGL.h>
+#include <LuaGLUT.h>
+}
 
 /////////////// GLWINDOW HACK ///////////
 
@@ -12,15 +17,10 @@ extern bool   gQuitGl;  /**< Used to tell thread to exit. */
 extern bool   gRunning; /**< Used to tell when server has stopped running. */
 
 /////////////////////////////////////
-/** Draw an openGL window. It's a pity we need multiple inheritance here... */
-class GLWindow : public Node
+
+class GLWindow : public LuaScript
 {
 public:
-  GLWindow()
-  {
-    mMouseMatrix.set_sizes(1,2);
-  }
-  
   virtual ~GLWindow()
   {
     ///////////// GLWINDOW HACK ////////////////
@@ -31,12 +31,24 @@ public:
   
   bool init(const Params& p)
   { 
-    mHeight     = 600;
-    mWidth      = 800;
-    mFullscreen = false;
-    mClearGrey  = 0.2;
-    mTitle      = "GLWindow";
+    mHeight           = 600;
+    mWidth            = 800;
+    mNeedRedisplay    = false;
+    mNeedScriptReload = false;
+    mFullscreen       = false;
+    mLuaInit          = false;
+    mLuaReshape       = false;
+    mLuaDraw          = false;
+    mLuaMouseMove     = false;
+    mLuaKeyPress      = false;
+    mFPS              = 30.0;
+    
+    mTitle        = "GLWindow";
     TRY(mDisplaySize, set_sizes(1, 2));
+    mDisplaySizeSignal.set(mDisplaySize);
+    
+    TRY(mMouseMatrix, set_sizes(1,2));
+    mMouseMatrixSignal.set(mMouseMatrix);
     
     ////////////// GLWINDOW HACK ////////////
     gGLWindowNode = (void*)this;
@@ -49,33 +61,57 @@ public:
   
   bool set (const Params& p)
   {
+    std::string s;
     mHeight     = p.val("height", mHeight);
     mWidth      = p.val("width", mWidth);
     mFullscreen = p.val("fullscreen", mFullscreen);
-    mClearGrey  = p.val("clear", mClearGrey);
     mTitle      = p.val("title", mTitle);
-    resize_window();
+    mFPS        = p.val("fps", mFPS);
+    
+    set_lua(p);
+    
+    bang(gBangSignal);
+    
     return true;
   }
   
   // inlet 1
   virtual void bang(const Signal& sig)
   {
+    if (mFPS > 0) {
+      bang_me_in(ONE_SECOND / mFPS);
+    }
     mNeedRedisplay = true;
     send(1, sig);
   }
   
   virtual void draw(const Signal& sig)
   {
-//    gluOrtho2D(0,mDisplaySize.data[0],0,mDisplaySize.data[1]);
-    send(2, mDisplaySize);
+    if (mNeedScriptReload) {
+      mMutex.lock();
+        mScriptOK = eval_gl_script(mScript);
+      mMutex.unlock();
+      
+      mNeedScriptReload = false;
+    }
+    if (mLuaDraw) {
+      protected_call_lua("draw",sig);
+    } else {
+      send(2, mDisplaySizeSignal);
+    }
   }
   
   virtual void key_press(unsigned char pKey, int x, int y)
   {
+    Signal s;
+    s.set(pKey);
     if (!handle_default_keys(pKey)) {
       mServer->lock();
-        send(3, (int)pKey);
+        if (mLuaKeyPress) {
+          protected_call_lua("key_press",s);
+        } else {
+          send(3, (int)pKey);
+        }
       mServer->unlock();
     }
   }
@@ -83,10 +119,15 @@ public:
   virtual void mouse_move(int x, int y)
   {
     mMouseMatrix.data[0] = (double)x;
-    mMouseMatrix.data[1] = (double)y;
+    mMouseMatrix.data[1] = mDisplaySize.data[1] - (double)y;
     mServer->lock();
-      send(4, mMouseMatrix);
+      if (mLuaMouseMove) {
+        protected_call_lua("mouse_move",mMouseMatrixSignal);
+      } else {
+        send(4, mMouseMatrix);
+      }
     mServer->unlock();
+    mNeedRedisplay = true;
   }
   
   virtual void spy()
@@ -112,7 +153,7 @@ protected:
     switch(pKey) {
     case ' ':
       mFullscreen = !mFullscreen;
-      resize_window();
+      update_window_size();
       return true;
     case '\e':
       mServer->lock();
@@ -124,32 +165,45 @@ protected:
     }
   }
   
-  void resize_window()
+  void update_window_size()
   {
     if (mFullscreen) {
       glutFullScreen();
-      mDisplaySize.data[0] = glutGet(GLUT_SCREEN_WIDTH);
-      mDisplaySize.data[1] = glutGet(GLUT_SCREEN_HEIGHT);
     } else {
       glutReshapeWindow(mWidth, mHeight);
-      mDisplaySize.data[0] = mWidth;
-      mDisplaySize.data[1] = mHeight;
     }
   }
   
-  void reshape_window(int w, int h)
+  /** Window size has changed. */
+  void reshape(int w, int h)
   {
+    
+    mDisplaySize.data[0] = w;
+    mDisplaySize.data[1] = h;
+    
     if (!mFullscreen) {
       mWidth  = w;
       mHeight = h;
-      resize_window();
     }
     
-    glViewport(0, 0, w, h);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluOrtho2D(0, w, 0, h);
-    glMatrixMode(GL_MODELVIEW);
+    if (mLuaReshape) {
+      protected_call_lua("reshape",mDisplaySizeSignal);  
+    } else {
+      glViewport(0, 0, w, h);
+      glMatrixMode(GL_PROJECTION);
+      glLoadIdentity();
+      gluOrtho2D(0, w, 0, h);
+      glMatrixMode(GL_MODELVIEW);
+      glLoadIdentity();
+    }
+  }
+  
+  void idle()
+  {  
+    if (mNeedRedisplay) {
+      glutPostRedisplay();
+      mNeedRedisplay = false;
+    }
   }
   
   virtual void stop_my_threads()
@@ -190,16 +244,15 @@ private:
       /* glutDestroyWindow makes rubyk die. Bad, bad, bad. */
       return;
     }
-    glClear(GL_COLOR_BUFFER_BIT);
-    node->draw(node->mS);
-    glFlush();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    node->draw(node->mDisplaySizeSignal);
+    glutSwapBuffers ( );
   }
   
   static void cast_idle (void)
   {
     GLWindow * node = (GLWindow*)thread_this();
-    if (node->mNeedRedisplay) glutPostRedisplay();
-    node->mNeedRedisplay = false;
+    node->idle();
   }
   
   static void cast_key_press (unsigned char pKey, int x, int y)
@@ -214,10 +267,10 @@ private:
     node->mouse_move(x,y);
   }
   
-  static void cast_reshape_window (int pWidth, int pHeight)
+  static void cast_reshape (int pWidth, int pHeight)
   {
     GLWindow * node = (GLWindow*)thread_this();
-    node->reshape_window(pWidth,pHeight);
+    node->reshape(pWidth,pHeight);
   }
 
   /* Init and start openGL thread. */
@@ -230,44 +283,138 @@ private:
     
     glutInit(&argc, const_cast<char**>(argv));
 
-    glutInitDisplayMode(GLUT_RGB);
+    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
     glutInitWindowSize(mWidth, mHeight);
     mId = glutCreateWindow(mTitle.c_str());
     
-    glEnable(GL_POINT_SMOOTH);
-    glEnable(GL_BLEND);                                // Enable alpha blending
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Set the blend function
-    
-    glClearColor(mClearGrey,mClearGrey,mClearGrey,1.0);
-    
+    init_gl();
     //gluOrtho2D(0,mWidth,0,mHeight);
     
     glutDisplayFunc(&GLWindow::cast_draw);
     glutIdleFunc(&GLWindow::cast_idle);
     glutKeyboardFunc(&GLWindow::cast_key_press);
     glutMotionFunc(&GLWindow::cast_mouse_move);
-    glutReshapeFunc(&GLWindow::cast_reshape_window);
+    glutReshapeFunc(&GLWindow::cast_reshape);
 
-    resize_window();
+    update_window_size();
     
     /* This thread runs with a lower priority. */
     mServer->normal_priority();
     glutMainLoop();
   }
   
+  void init_gl ()
+  {
+    if (mLuaInit) {
+      protected_call_lua("init");
+    } else {
+      glEnable(GL_POINT_SMOOTH);
+      glEnable(GL_SMOOTH);
+      glEnable(GL_BLEND);                                // Enable alpha blending
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Set blend function 
+      
+      glClearDepth(1.0);
+      glDepthFunc(GL_LEQUAL);
+
+      // glEnable(GL_CULL_FACE);
+      // glEnable(GL_DEPTH_TEST);
+
+      glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST); // Really nice perspective
+      glClearColor(0.2,0.2,0.2,0.5);
+    }
+  }
+  
+  bool eval_script(const std::string& pScript) 
+  {
+    // this is run inside a call to lua (protected).
+    // except when run from "set_lua"
+    if (!is_opengl_thread()) {
+      mScript = pScript;
+      mNeedScriptReload = true;
+      return true;
+    } else {
+      return eval_gl_script(pScript);
+    }
+  }
+  
+  bool eval_gl_script(const std::string& pScript)
+  {
+    // this is always run inside a call to lua (protected).
+    mScriptOK = eval_lua_script(pScript);
+  
+    if (mScriptOK) {
+      mLuaInit      = lua_has_function("init");
+      mLuaReshape   = lua_has_function("reshape");
+      mLuaDraw      = lua_has_function("draw");
+      mLuaMouseMove = lua_has_function("mouse_move");
+      mLuaKeyPress  = lua_has_function("key_press");
+    } else {
+      mLuaInit      = false;
+      mLuaReshape   = false;
+      mLuaDraw      = false;
+      mLuaMouseMove = false;
+      mLuaKeyPress  = false;
+    }
+    // draw lock
+    mMutex.unlock();
+    // unlock for init lock
+    init_gl();
+    mMutex.lock();
+    // back in draw lock
+    update_window_size();
+    return mScriptOK;
+  }
+  
+  inline void protected_call_lua(const char * key, const Signal& sig)
+  {
+    mMutex.lock();
+      call_lua(key, sig);
+    mMutex.unlock();
+  }
+  
+  inline void protected_call_lua(const char * key)
+  {
+    mMutex.lock();
+      call_lua(key);
+    mMutex.unlock();
+  }
+
+  /* open all standard libraries and openGL libraries (called by LuaScript on init) */
+  void open_lua_libs()
+  {
+    open_base_lua_libs();
+    open_opengl_lua_libs();
+  }
+
+  /* open base lua libraries */
+  void open_opengl_lua_libs()
+  {
+    open_lua_lib("opengl", luaopen_opengl);
+    open_lua_lib("glut", luaopen_glut); 
+  }
+  
   std::string mTitle;        /**< Window title. */
   Matrix      mDisplaySize;         /**< Window size. */
+  Signal      mDisplaySizeSignal;   /**< Wrapper around display size. */
   int         mHeight;       /**< Window height (in pixels). */
   int         mWidth;        /**< Window width (in pixels). */
   int         mId;           /**< Window id. */
   bool        mFullscreen;   /**< True if fullscreen is enabled. */
-  double      mClearGrey;   /**< Shades of grey to clear screen. */
+  bool        mLuaInit;      /**< True if there is a Lua "init" function. */
+  bool        mLuaReshape;   /**< True if there is a Lua "reshape" function. */
+  bool        mLuaDraw;      /**< True if there is a Lua "draw" function. */
+  bool        mLuaMouseMove; /**< True if there is a Lua "mouse_move" function. */
+  bool        mLuaKeyPress;  /**< True if there is a Lua "key_press" function. */
   pthread_t   mThread;       /**< Thread running all openGL stuff. */
   Matrix      mMouseMatrix;  /**< Mouse position matrix. */
+  Signal      mMouseMatrixSignal; /**< Wrapper around mMouseMatrix. */
+  Mutex       mMutex;
+  double      mFPS;          /**< Frames per second. */
   
 protected:
   
   bool mNeedRedisplay;
+  bool mNeedScriptReload;
 };
 
 
@@ -278,4 +425,6 @@ extern "C" void init()
   OUTLET(GLWindow, draw)
   OUTLET(GLWindow, keys)
   OUTLET(GLWindow, mousexy)
+  SUPER_METHOD(GLWindow, Script, load)
+  SUPER_METHOD(GLWindow, Script, script)
 }

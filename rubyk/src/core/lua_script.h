@@ -113,6 +113,9 @@ public:
   
   void set_lua_global (const char * key, const Signal& sig);
   
+  /** Return true if the function named 'key' is defined in Lua. */
+  bool lua_has_function (const char * key);
+  
 private:
   static const luaL_reg sMatrix_methods[];
   static const luaL_reg sMatrix_meta[];

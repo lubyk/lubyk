@@ -50,6 +50,10 @@ int main(int argc, char * argv[])
   sleeper.tv_sec  = 0; 
   sleeper.tv_nsec = 100 * 1000000; // 100 ms
   
+  if (!Node::sThisKey)     pthread_key_create(&Node::sThisKey,     NULL); // create a key to find 'this' object in new thread
+  if (!Node::sGLThreadKey) pthread_key_create(&Node::sGLThreadKey, NULL); // create a key to find 'this' object in new thread
+  pthread_setspecific(Node::sGLThreadKey,NULL);
+  
   if (argc > 1) {
     std::ifstream in(argv[1], std::ios::in);
     std::ostringstream oss;
@@ -68,9 +72,6 @@ int main(int argc, char * argv[])
     fCmd->close();
     delete fCmd;
   }
-  
-  if (!Node::sThisKey)     pthread_key_create(&Node::sThisKey,     NULL); // create a key to find 'this' object in new thread
-  if (!Node::sGLThreadKey) pthread_key_create(&Node::sGLThreadKey, NULL); // create a key to find 'this' object in new thread
   
   ////// GLWINDOW HACK /////
   // this is a hack to put GLWindow inside thread 0

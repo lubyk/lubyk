@@ -30,12 +30,21 @@ public:
       *mOutput << mName << ": " << "not an openGL thread." << std::endl;
       return;
     }
+    
+    glMatrixMode(GL_PROJECTION);
     glPushMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    
     mMutex.lock();
       // protected resource
       call_lua("draw", sig);
     mMutex.unlock();
+    
     glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
   }
   
   void in3(const Signal& sig)
