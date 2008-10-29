@@ -47,7 +47,8 @@ public:
     TRY(mDisplaySize, set_sizes(1, 2));
     mDisplaySizeSignal.set(mDisplaySize);
     
-    TRY(mMouseMatrix, set_sizes(1,2));
+    TRY(mMouseMatrix, set_sizes(1, 4));
+    mMouseMatrix.data[3] = 1.0; // mouseUp
     mMouseMatrixSignal.set(mMouseMatrix);
     
     ////////////// GLWINDOW HACK ////////////
@@ -94,6 +95,10 @@ public:
       
       mNeedScriptReload = false;
     }
+    
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    
     if (mLuaDraw) {
       protected_call_lua("draw",sig);
     } else {
@@ -128,6 +133,13 @@ public:
       }
     mServer->unlock();
     mNeedRedisplay = true;
+  }
+  
+  virtual void mouse_click(int button, int state, int x, int y)
+  {
+    mMouseMatrix.data[2] = (double)button;
+    mMouseMatrix.data[3] = (double)state;
+    mouse_move(x,y);
   }
   
   virtual void spy()
@@ -267,6 +279,12 @@ private:
     node->mouse_move(x,y);
   }
   
+  static void cast_mouse_click (int button, int state, int x, int y)
+  {
+    GLWindow * node = (GLWindow*)thread_this();
+    node->mouse_click(button, state, x, y);
+  }
+  
   static void cast_reshape (int pWidth, int pHeight)
   {
     GLWindow * node = (GLWindow*)thread_this();
@@ -287,13 +305,12 @@ private:
     glutInitWindowSize(mWidth, mHeight);
     mId = glutCreateWindow(mTitle.c_str());
     
-    init_gl();
-    //gluOrtho2D(0,mWidth,0,mHeight);
-    
     glutDisplayFunc(&GLWindow::cast_draw);
     glutIdleFunc(&GLWindow::cast_idle);
     glutKeyboardFunc(&GLWindow::cast_key_press);
     glutMotionFunc(&GLWindow::cast_mouse_move);
+    glutPassiveMotionFunc(&GLWindow::cast_mouse_move);
+    glutMouseFunc(&GLWindow::cast_mouse_click);
     glutReshapeFunc(&GLWindow::cast_reshape);
 
     update_window_size();

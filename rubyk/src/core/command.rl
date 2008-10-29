@@ -298,10 +298,10 @@ void Command::execute_command()
     std::string path;
     if (!mParameters.get(&path)) {
       *mOutput << "Could not set library path (no parameter).\n";
-      return;
+    } else {
+      Class::set_lib_path(path);
+      *mOutput << "Library path set to '" << path << "'.\n";
     }
-    Class::set_lib_path(path);
-    *mOutput << "Library path set to '" << path << "'.\n";
   } else {
     *mOutput << "Unknown command '" << mMethod << "'" << std::endl;
   }

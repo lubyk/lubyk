@@ -1,4 +1,4 @@
-#line 1 "classes/command.rl"
+#line 1 "src/core/command.rl"
 #include "command.h"
 #include "rubyk.h"
 #include "class.h"
@@ -7,7 +7,7 @@
 //#define DEBUG_PARSER
 
 
-#line 11 "classes/command.cpp"
+#line 11 "src/core/command.cpp"
 static const char _command_actions[] = {
 	0, 1, 0, 1, 2, 1, 3, 1, 
 	4, 1, 7, 1, 8, 1, 13, 1, 
@@ -232,7 +232,7 @@ static const unsigned char _command_indicies[] = {
 	4, 5, 0, 181, 0
 };
 
-static const char _command_trans_targs_wi[] = {
+static const char _command_trans_targs[] = {
 	0, 2, 115, 3, 4, 29, 5, 6, 
 	7, 115, 3, 8, 7, 9, 15, 13, 
 	14, 19, 9, 10, 18, 11, 15, 12, 
@@ -258,7 +258,7 @@ static const char _command_trans_targs_wi[] = {
 	108, 112, 113, 114, 116, 0
 };
 
-static const char _command_trans_actions_wi[] = {
+static const char _command_trans_actions[] = {
 	21, 0, 19, 0, 1, 1, 7, 1, 
 	37, 70, 37, 3, 0, 0, 0, 1, 
 	1, 1, 1, 0, 1, 40, 40, 40, 
@@ -308,7 +308,7 @@ static const int command_first_final = 115;
 static const int command_en_eat_line = 114;
 static const int command_en_main = 1;
 
-#line 11 "classes/command.rl"
+#line 11 "src/core/command.rl"
 
 
 void Command::initialize()
@@ -325,11 +325,11 @@ void Command::initialize()
   clear();
   
   
-#line 329 "classes/command.cpp"
+#line 329 "src/core/command.cpp"
 	{
 	cs = command_start;
 	}
-#line 27 "classes/command.rl"
+#line 27 "src/core/command.rl"
   mCurrentState = cs;
 }
 
@@ -363,7 +363,7 @@ void Command::parse(const std::string& pStr)
   int cs = mCurrentState;        // restore machine state
   
   
-#line 367 "classes/command.cpp"
+#line 367 "src/core/command.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -426,19 +426,19 @@ _resume:
 
 _match:
 	_trans = _command_indicies[_trans];
-	cs = _command_trans_targs_wi[_trans];
+	cs = _command_trans_targs[_trans];
 
-	if ( _command_trans_actions_wi[_trans] == 0 )
+	if ( _command_trans_actions[_trans] == 0 )
 		goto _again;
 
-	_acts = _command_actions + _command_trans_actions_wi[_trans];
+	_acts = _command_actions + _command_trans_actions[_trans];
 	_nacts = (unsigned int) *_acts++;
 	while ( _nacts-- > 0 )
 	{
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 60 "classes/command.rl"
+#line 60 "src/core/command.rl"
 	{
       if (mTokenIndex >= MAX_TOKEN_SIZE) {
         std::cerr << "Buffer overflow !" << std::endl;
@@ -453,85 +453,85 @@ _match:
     }
 	break;
 	case 1:
-#line 73 "classes/command.rl"
+#line 73 "src/core/command.rl"
 	{ set_from_token(mVariable);}
 	break;
 	case 2:
-#line 75 "classes/command.rl"
+#line 75 "src/core/command.rl"
 	{ set_from_token(mMethod);}
 	break;
 	case 3:
-#line 77 "classes/command.rl"
+#line 77 "src/core/command.rl"
 	{ set_from_token(mKey);}
 	break;
 	case 4:
-#line 79 "classes/command.rl"
+#line 79 "src/core/command.rl"
 	{ set_from_token(mClass);}
 	break;
 	case 5:
-#line 81 "classes/command.rl"
+#line 81 "src/core/command.rl"
 	{ set_from_token(mValue);}
 	break;
 	case 6:
-#line 83 "classes/command.rl"
+#line 83 "src/core/command.rl"
 	{ mFrom = mVariable; }
 	break;
 	case 7:
-#line 85 "classes/command.rl"
+#line 85 "src/core/command.rl"
 	{
       set_from_token(mValue);
       mFromPort = atoi(mValue.c_str());
     }
 	break;
 	case 8:
-#line 90 "classes/command.rl"
+#line 90 "src/core/command.rl"
 	{
       set_from_token(mValue);
       mToPort = atoi(mValue.c_str());
     }
 	break;
 	case 9:
-#line 95 "classes/command.rl"
+#line 95 "src/core/command.rl"
 	{ 
       add_value_from_token(); 
     }
 	break;
 	case 10:
-#line 99 "classes/command.rl"
+#line 99 "src/core/command.rl"
 	{ set_parameter(mKey, mValue); }
 	break;
 	case 11:
-#line 101 "classes/command.rl"
+#line 101 "src/core/command.rl"
 	{
       mTo   = mVariable;
       create_link();
     }
 	break;
 	case 12:
-#line 106 "classes/command.rl"
+#line 106 "src/core/command.rl"
 	{
       mTo   = mVariable;
       remove_link();
     }
 	break;
 	case 13:
-#line 111 "classes/command.rl"
+#line 111 "src/core/command.rl"
 	{ create_instance(); }
 	break;
 	case 14:
-#line 113 "classes/command.rl"
+#line 113 "src/core/command.rl"
 	{ execute_method(); }
 	break;
 	case 15:
-#line 115 "classes/command.rl"
+#line 115 "src/core/command.rl"
 	{ execute_class_method(); }
 	break;
 	case 16:
-#line 117 "classes/command.rl"
+#line 117 "src/core/command.rl"
 	{ execute_command(); }
 	break;
 	case 17:
-#line 121 "classes/command.rl"
+#line 121 "src/core/command.rl"
 	{
       if (!mQuit) {
         clear();
@@ -539,7 +539,7 @@ _match:
     }
 	break;
 	case 18:
-#line 126 "classes/command.rl"
+#line 126 "src/core/command.rl"
 	{
       p--; // move back one char
       char error_buffer[10];
@@ -550,10 +550,10 @@ _match:
     }
 	break;
 	case 19:
-#line 135 "classes/command.rl"
+#line 135 "src/core/command.rl"
 	{ {cs = 1; goto _again;} }
 	break;
-#line 557 "classes/command.cpp"
+#line 557 "src/core/command.cpp"
 		}
 	}
 
@@ -570,7 +570,7 @@ _again:
 	while ( __nacts-- > 0 ) {
 		switch ( *__acts++ ) {
 	case 18:
-#line 126 "classes/command.rl"
+#line 126 "src/core/command.rl"
 	{
       p--; // move back one char
       char error_buffer[10];
@@ -580,14 +580,14 @@ _again:
       {cs = 114; goto _again;} // eat the rest of the line and continue parsing
     }
 	break;
-#line 584 "classes/command.cpp"
+#line 584 "src/core/command.cpp"
 		}
 	}
 	}
 
 	_out: {}
 	}
-#line 185 "classes/command.rl"
+#line 185 "src/core/command.rl"
 
 //  printf("{%s}\n",p);
   mCurrentState = cs;
@@ -704,10 +704,10 @@ void Command::execute_command()
     std::string path;
     if (!mParameters.get(&path)) {
       *mOutput << "Could not set library path (no parameter).\n";
-      return;
+    } else {
+      Class::set_lib_path(path);
+      *mOutput << "Library path set to '" << path << "'.\n";
     }
-    Class::set_lib_path(path);
-    *mOutput << "Library path set to '" << path << "'.\n";
   } else {
     *mOutput << "Unknown command '" << mMethod << "'" << std::endl;
   }

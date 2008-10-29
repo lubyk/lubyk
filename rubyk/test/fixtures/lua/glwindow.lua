@@ -15,11 +15,15 @@ function init()
 end
 
 function mouse_move(sig)
-	mouse = sig
+	if (sig[4] == 0) then
+		-- mouseDown
+		mouse[1] = sig[1]
+		mouse[2] = sig[2]
+	end
 end
 
 function draw(sig)
-	n = n + math.pi / 30
+	n = current_time / 500
 	x = mouse[1] + math.cos(n * 1.2) * 10
 	y = mouse[2] + math.sin(n) * 20
   gl.MatrixMode('PROJECTION')
@@ -90,7 +94,7 @@ function draw(sig)
   gl.LoadIdentity()
 
   
-  gl.Translate(x,y,  0)
+  gl.Translate(mouse[1] + math.cos(n*6)*15,mouse[2] + math.sin(n*6)*15,  0)
   gl.Color( {1, 1, 0, 0.8} )
   gl.Rect(-s,-s,s,s)
 end
