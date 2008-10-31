@@ -1,11 +1,11 @@
 #include "test_helper.h"
 
-class SumTest : public CxxTest::TestSuite, public ParseTest
+class SumTest : public ParseTest
 {
 public:
   void test_sum( void ) 
   { 
-    setup_with_print("n=Sum()\n");
+    parse("n=Sum()\nn=>p\n");
     
     // value  ==> value
     assert_print("n.bang(4.0)\n", "4.00\n");

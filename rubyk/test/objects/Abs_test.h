@@ -1,12 +1,12 @@
 #include "test_helper.h"
 
 
-class AbsTest : public CxxTest::TestSuite, public ParseTest
+class AbsTest : public ParseTest
 {
 public:
   void test_abs( void ) 
   { 
-    setup_with_print("n=Abs()\n");
+    parse("n=Abs()\nn=>p\n");
     
     // doubles
     assert_print("n.bang(4.0)\n", "4.00\n");

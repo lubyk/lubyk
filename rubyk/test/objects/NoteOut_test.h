@@ -1,6 +1,6 @@
 #include "test_helper.h"
 
-class NoteOutTest : public CxxTest::TestSuite, public ParseTest
+class NoteOutTest : public ParseTest
 {
 public:
   

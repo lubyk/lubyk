@@ -1,6 +1,6 @@
 #include "test_helper.h"
 
-class KeyboardTest : public CxxTest::TestSuite, public ParseTest
+class KeyboardTest : public ParseTest
 {
 public:
 

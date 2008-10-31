@@ -163,7 +163,9 @@ sub scanLineForStandardLibrary($) {
 
 sub scanLineForSuiteStart($$$) {
   my ($fileName, $lineNo, $line) = @_;
-  if ( $line =~ m/\bclass\s+(\w+)\s*:\s*public\s+((::)?\s*CxxTest\s*::\s*)?TestSuite\b/ ) {
+  # changed regexp for rubyk
+  # gaspard
+  if ( $line =~ m/\bclass\s+(\w+Test)/ ) {
     startSuite( $1, $fileName, $lineNo, 0 );
   }
   if ( $line =~ m/\bCXXTEST_SUITE\s*\(\s*(\w*)\s*\)/ ) {

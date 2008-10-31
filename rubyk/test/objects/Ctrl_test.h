@@ -1,12 +1,12 @@
 #include "test_helper.h"
 
-class CtrlTest : public CxxTest::TestSuite, public ParseTest
+class CtrlTest : public ParseTest
 {
 public:
   
   void test_send_ctrl( void ) 
   { 
-    setup_with_print("n=Ctrl(channel:2)\n");
+    parse("n=Ctrl(channel:2)\nn=>p\n");
 
     // defaults
     assert_print("n.bang()\n",    "<Midi ~2:1(64), 0>\n");
@@ -17,7 +17,7 @@ public:
 
   void test_ctrl_slope( void ) 
   { 
-    setup_with_print("n=Ctrl(slope:100)\n"); // 100 increments in 1 second
+    parse("n=Ctrl(slope:100)\nn=>p\n"); // 100 increments in 1 second
 
     // 100 [ms] minimum * 100 / 1000 => 10 steps ==> 64 + 10 = 74
     assert_print("n.bang(100)\n", "<Midi ~1:1(74), 0>\n");

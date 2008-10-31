@@ -1,12 +1,12 @@
 #include "test_helper.h"
 
-class MacroTest : public CxxTest::TestSuite, public ParseTest
+class MacroTest : public ParseTest
 {
 public:
 
   void test_parse_command( void ) 
   { 
-    setup_with_print("n=Macro(\"v=Value()\nv=>p\nv.bang(3)\")\n");
+    parse("n=Macro(\"v=Value()\nv=>p\nv.bang(3)\")\nn=>p\n");
     assert_print("n.bang\n","3.00\n");
   }
   
@@ -24,7 +24,7 @@ public:
   */
   void test_switch( void ) 
   { 
-    setup_with_print("n=Macro(\"state = state or 'left'\nfunction bang()\nif (state == 'left') then\nparse_command('left // p\\nright => p\\n')\nstate = 'right'\nelse\nparse_command('right // p\\nleft => p\\n')\nstate='left'\nend\nend\")\nleft=Value(1)\nright=Value(2)\nleft=>p\n");
+    parse("n=Macro(\"state = state or 'left'\nfunction bang()\nif (state == 'left') then\nparse_command('left // p\\nright => p\\n')\nstate = 'right'\nelse\nparse_command('right // p\\nleft => p\\n')\nstate='left'\nend\nend\")\nleft=Value(1)\nright=Value(2)\nleft=>p\nn=>p\n");
     assert_print("left.b\n", "1.00\n");
     assert_print("right.b\n",""      );
     // switch

@@ -1,19 +1,19 @@
 #include "test_helper.h"
 
-class DiffTest : public CxxTest::TestSuite, public ParseTest
+class DiffTest : public ParseTest
 {
 public:
   
   void test_diff_values( void ) 
   { 
-    setup_with_print("n=Diff(3)\n");
+    parse("n=Diff(3)\nn=>p\n");
 
     assert_print("n.bang(1,2,3,4,5,6)\n",    "3.00\n");
   }
 
   void test_diff_vector( void ) 
   { 
-    setup_with_print("b=Buffer(4)\nb=>n\nn=Diff(2)\n"); // 100 increments in 1 second
+    parse("b=Buffer(4)\nb=>n\nn=Diff(2)\nn=>p\n"); // 100 increments in 1 second
 
     // 100 [ms] minimum * 100 / 1000 => 10 steps ==> 64 + 10 = 74
     assert_print("b.bang(1,2,3)\n",  "<Matrix [  1.00  2.00  3.00 ], 1x3>\n");

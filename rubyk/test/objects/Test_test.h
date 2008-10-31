@@ -140,17 +140,19 @@ public:
   }
 };
 
-class TestParseTest : public CxxTest::TestSuite, public ParseTest
+class TestParseTest : public ParseTest
 {
 public:
 
   void test_send_nil( void ) 
   { 
-    clean_assert_print("n=Test()\nn.2=>p\np=Print()\nn.bang\n","sending nil=><=done.\n");
+    parse("n=Test()\nn.2=>p\n");
+    assert_print("n.b\n","sending nil=><=done.\n");
   }
   
   void test_try( void )
   {
-    clean_assert_print("n=Test()\nn.test_fail()\n", "n: n size error (copy): bad start row 10 (10) of matrix 5x1 in src/objects/Test.cpp:58.\ntry failed");
+    parse("n=Test()\nn=>p\n");
+    assert_print("n.test_fail\n", "n: n size error (copy): bad start row 10 (10) of matrix 5x1 in src/objects/Test.cpp:58.\ntry failed");
   }
 };

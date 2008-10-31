@@ -5,6 +5,17 @@
 #include <sstream>
 
 
+#define assert_print(x,y) _assert_print(__FILE__,__LINE__,x,y)
+
+#define ___ERK_ASSERT_EQUALS(f,l,cmd,x,y,m) CxxTest::doAssertEquals( (f), (l), (cmd), (x), #y, (y), (m) )
+#define ___RK_ASSERT_EQUALS(f,l,cmd,x,y,m) { _TS_TRY { ___ERK_ASSERT_EQUALS(f,l,cmd,x,y,m); } __TS_CATCH(f,l) }
+#define _RK_ASSERT_EQUALS(f,l,cmd,x,y) ___RK_ASSERT_EQUALS(f,l,cmd,x,y,0)
+
+/** Usage:
+* setup: creates an initial state with a Print node called 'p'.
+* parse: parse commands.
+
+*/
 class NodeTester
 {
 public:
@@ -59,7 +70,7 @@ protected:
   }
 };
 
-class ParseTest
+class ParseTest : public CxxTest::TestSuite
 {
 public:
   ParseTest() : mOutput(std::ostringstream::out), 
@@ -73,15 +84,20 @@ public:
   }
   
   // start a new server
-  void clean_start()
+  void setUp()
   {
-    delete mServer;
-    delete mCmd;
-    
     mServer = new Rubyk;
     mCmd = new Command(mInput, mOutput);
     mCmd->set_server(*mServer);
     mOutput.str(std::string("")); // clear output
+    parse("p=Print()\n");
+  }
+  
+  // cleanup
+  void tearDown()
+  {
+    delete mServer;
+    delete mCmd;
   }
   
 protected:
@@ -91,22 +107,14 @@ protected:
   std::istringstream mInput;
   
 protected:
-  
-  void setup_with_print(const char* pInput)
+  void parse(const char* pCommands)
   {
-    clean_start();
     mServer->unlock();
-      mCmd->parse("p=Print()\nn=>p\n");
-      mCmd->parse(pInput);
+      mCmd->parse(pCommands);
       mOutput.str(std::string("")); // clear output
     mServer->lock();
   }
   
-  void clean_assert_result(const char * pInput, const char * pOutput)
-  {
-    clean_start();
-    assert_result(pInput, pOutput);
-  }
   void assert_result(const char * pInput, const char * pOutput)
   {
     mOutput.str(std::string("")); // clear output
@@ -116,65 +124,29 @@ protected:
     TS_ASSERT_EQUALS( mOutput.str(), std::string(pOutput));
   }
   
-  void clean_assert_bang(const char * pInput, const char * pOutput)
-  {
-    setup_with_print(pInput);
-    assert_bang("\n", pOutput);
-  }
-  
-  void assert_bang(const char * pInput, const char * pOutput)
+  void _assert_print(const char * file, int lineno, const char * pCommands, const char * pResult)
   { 
     mServer->unlock();
       mOutput.str(std::string("")); // clear output
       mCmd->set_silent(true);
-      mCmd->parse(pInput);
-      mCmd->parse("\nn.bang\n");
+      mCmd->parse(pCommands);
       mCmd->set_silent(false);
     mServer->lock();
-    TS_ASSERT_EQUALS( mOutput.str(), std::string(pOutput));
-  }
-  
-  void clean_assert_print(const char * pInput, const char * pOutput)
-  {
-    clean_start();
-    assert_print(pInput, pOutput);
     
-  }
-  void assert_print(const char * pInput, const char * pOutput)
-  { 
-    mServer->unlock();
-      mOutput.str(std::string("")); // clear output
-      mCmd->set_silent(true);
-      mCmd->parse(pInput);
-      mCmd->set_silent(false);
-    mServer->lock();
-    //mServer->run(); // loop once
-    TS_ASSERT_EQUALS( mOutput.str(), std::string(pOutput));
+    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string(pCommands)), mOutput.str(), std::string(pResult));
   }
   
-  void clean_assert_run(time_t pLength, const char * pInput, const char * pOutput)
-  {
-    clean_start();
-    assert_run(pLength, pInput, pOutput);
-  }
-  void assert_run(time_t pLength, const char * pInput, const char * pOutput)
+  void assert_run(time_t pLength, const char * pResult)
   {
     time_t start;
-    mServer->unlock();
-      mCmd->parse("print=Print()\n");
-    mServer->lock();
     mOutput.str(std::string("")); // clear output
-    mInput.str(std::string(pInput)); // set input
     mCmd->set_silent(true);
-    mServer->listen_to_command(*mCmd);
-    start = mServer->mCurrentTime;
-    while(mServer->mCurrentTime <= start + pLength && mServer->run()) {
-      ;
-    }
+      start = mServer->mCurrentTime;
+      while(mServer->mCurrentTime <= start + pLength && mServer->run())
+        ;
     mCmd->set_silent(false);
     
-    TS_ASSERT_EQUALS( mOutput.str(), std::string(pOutput));
+    TS_ASSERT_EQUALS( mOutput.str(), std::string(pResult));
   }
 };
-
 #endif

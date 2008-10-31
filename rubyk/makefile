@@ -18,11 +18,11 @@ LINKER_OBJECTS=slot.o inlet.o outlet.o params.o signal.o node.o class.o command.
 INSTALL= install -C
 MKDIR= mkdir -p
 
-test: test/runner test/runner.cpp rubyk
-	./test/runner && rm test/runner
-
-rubyk: src/core/main.cpp $(LINKER_OBJECTS) objects
+rubyk: src/core/main.cpp $(LINKER_OBJECTS) objects test
 	$(CC) $(CFLAGS) $(LFLAGS) -o rubyk -Itest -Isrc/templates -Isrc/core -Isrc/objects -I. src/core/main.cpp $(LINKER_OBJECTS)
+
+test: test/runner test/runner.cpp
+	./test/runner && rm test/runner
 
 objects: lib/Test.rko lib/Add.rko lib/Value.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/MidiOut.rko lib/NoteOut.rko lib/Lua.rko lib/Serial.rko lib/Turing.rko lib/Keyboard.rko lib/Cabox.rko lib/Svm.rko lib/Buffer.rko lib/GLWindow.rko lib/Cut.rko lib/MaxCount.rko lib/FFT.rko lib/VQ.rko lib/ClassRecorder.rko lib/PCA.rko lib/Average.rko lib/Peak.rko lib/Minus.rko lib/Replay.rko lib/Kmeans.rko lib/Abs.rko lib/Sum.rko lib/Ctrl.rko lib/Diff.rko lib/Bang.rko lib/Macro.rko lib/MidiIn.rko lib/GLLua.rko lib/GLPlot.rko
 	

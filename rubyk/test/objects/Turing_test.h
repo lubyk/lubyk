@@ -1,7 +1,7 @@
 #include "test_helper.h"
 
 /** Test Turing class.... not the 'Turing test' ;-)  */
-class TuringTest : public CxxTest::TestSuite, public ParseTest
+class TuringTest : public ParseTest
 {
 public:
   /*
@@ -97,7 +97,7 @@ public:
   
   void test_sequence( void )
   {
-    setup_with_print("n=Turing(\"x = 10\ny = 20\na  x:15 -> b x:14 -> c y:13 -> a\")\n");
+    parse("n=Turing(\"x = 10\ny = 20\na  x:15 -> b x:14 -> c y:13 -> a\")\nn=>p\n");
     assert_print("n.bang(10)\n", "15\n");
     assert_print("n.bang(20)\n", "");
     assert_print("n.bang(10)\n", "14\n");
@@ -146,7 +146,7 @@ public:
   
   void test_lua_run( void )
   {
-    setup_with_print("n=Turing(\"x = 10\ny=4\n\na  x:bip(1) -> b\na y:send(1,{1,2,3}) -> b\nb  ----> a\n\n=begin lua\nfunction bip(v)\nsend(1,1)\nend\n=end\n\")\nn.tables\n");
+    parse("n=Turing(\"x = 10\ny=4\n\na  x:bip(1) -> b\na y:send(1,{1,2,3}) -> b\nb  ----> a\n\n=begin lua\nfunction bip(v)\nsend(1,1)\nend\n=end\n\")\nn.tables\nn=>p\n");
     assert_print("n.b(10)\n", "1.00\n"); // a  x:bip(1) -> b
     assert_print("n.b(4)\n", ""); // b --> a
     assert_print("n.b(4)\n", "<Matrix [  1.00  2.00  3.00 ], 1x3>\n"); // a y:send(1,{1,2,3}) -> b
@@ -154,7 +154,7 @@ public:
   
   void test_lua_raw( void )
   {
-    setup_with_print("n=Turing(\"x = 10\ny=4\n\na  x:{n = n or 0; n = n + 1; send(1,n)} -> b\na y:send(1,{1,2,3}) -> b\nb  ----> a\n\n=begin lua\nfunction bip(v)\nsend(1,1)\nend\n=end\n\")\n");
+    parse("n=Turing(\"x = 10\ny=4\n\na  x:{n = n or 0; n = n + 1; send(1,n)} -> b\na y:send(1,{1,2,3}) -> b\nb  ----> a\n\n=begin lua\nfunction bip(v)\nsend(1,1)\nend\n=end\n\")\nn=>p\n");
     assert_print("n.b(10)\n", "1.00\n"); // a  x:bip(1) -> b
     assert_print("n.b(4)\n", ""); // b --> a
     assert_print("n.b(10)\n", "2.00\n"); // a  x:bip(1) -> b
@@ -164,7 +164,7 @@ public:
   
   void test_lua_bang( void )
   {
-    setup_with_print("n=Turing(\"x = 10\ny=4\n\na  x:bip(1) -> b\na y:send(1,{1,2,3}) -> b\nb  ----> a\n\n=begin lua\nfunction bip(v)\nsend(1,1)\nend\nfunction bang(sig)\nif(sig == 100) then\nreturn 10\nelse\nreturn sig\nend\nend\n=end\n\")\n");
+    parse("n=Turing(\"x = 10\ny=4\n\na  x:bip(1) -> b\na y:send(1,{1,2,3}) -> b\nb  ----> a\n\n=begin lua\nfunction bip(v)\nsend(1,1)\nend\nfunction bang(sig)\nif(sig == 100) then\nreturn 10\nelse\nreturn sig\nend\nend\n=end\n\")\nn=>p\n");
     assert_print("n.b(100)\n", "1.00\n"); // a  x:bip(1) -> b
     assert_print("n.b(4)\n", ""); // b --> a
     assert_print("n.b(4)\n", "<Matrix [  1.00  2.00  3.00 ], 1x3>\n"); // a y:send(1,{1,2,3}) -> b
@@ -202,7 +202,7 @@ public:
   
   void test_default_token_sequence( void )
   {
-    setup_with_print("n=Turing(\"x = 10\ny=4\n. y:33 -> a\na  x:15 -> b\na y:53 -> b\nb  ----> b\")\nn.tables\n");
+    parse("n=Turing(\"x = 10\ny=4\n. y:33 -> a\na  x:15 -> b\na y:53 -> b\nb  ----> b\")\nn.tables\nn=>p\n");
     assert_print("n.b(13)\n", ""); // a  ---> a
     assert_print("n.b(4)\n", "53\n");  // a y:53 -> b
     assert_print("n.b(10)\n", ""); // b ---> b
@@ -212,7 +212,7 @@ public:
   
   void test_default_token_sequence_no_send( void )
   {
-    setup_with_print("n=Turing(\"x = 10\ny=4\n. y -> a\na  x:15 -> b\na y:53 -> b\nb  ----> b\")\nn.tables\n");
+    parse("n=Turing(\"x = 10\ny=4\n. y -> a\na  x:15 -> b\na y:53 -> b\nb  ----> b\")\nn.tables\nn=>p\n");
     assert_print("n.b(13)\n", ""); // a  ---> a
     assert_print("n.b(4)\n", "53\n");  // a y:53 -> b
     assert_print("n.b(10)\n", ""); // b ---> b
@@ -222,7 +222,7 @@ public:
   
   void test_default_send( void )
   {
-    setup_with_print("n=Turing(\"x = 10\ny=4\na :33->b\na  x:15 -> b\na y:53 -> b\nb---->a\")\nn.tables\n");
+    parse("n=Turing(\"x = 10\ny=4\na :33->b\na  x:15 -> b\na y:53 -> b\nb---->a\")\nn.tables\nn=>p\n");
     assert_print("n.b(13)\n", "33\n"); // a  :33 --> b
     assert_print("n.b(13)\n", "");     // b  --> a
     assert_print("n.b(4)\n", "53\n");  // a y:53 -> b
@@ -232,7 +232,7 @@ public:
   
   void test_inputs( void ) 
   { 
-    setup_with_print("n=Turing(\"p -> p\n=begin lua\nfunction bang(sig)\nsend(1,{sig or 0,in2 or 0,in3 or 0,in4 or 0,in5 or 0,in6 or 0,in7 or 0,in8 or 0,in9 or 0,in10 or 0})\nend\n=end\")\n");
+    parse("n=Turing(\"p -> p\n=begin lua\nfunction bang(sig)\nsend(1,{sig or 0,in2 or 0,in3 or 0,in4 or 0,in5 or 0,in6 or 0,in7 or 0,in8 or 0,in9 or 0,in10 or 0})\nend\n=end\")\nn=>p\n");
     
     assert_print("n.b(11)\n",              "<Matrix [  11.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00 ], 1x10>\n");
     assert_print("n.in2(22)\nn.b(11)\n",   "<Matrix [  11.00  22.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00 ], 1x10>\n");
@@ -248,14 +248,14 @@ public:
   
   void test_outputs( void ) 
   { 
-    setup_with_print("n=Turing(\"p -> p\n=begin lua\nfunction bang(sig)\nsend(6,sig)\nend\n=end\")\nn.6 => v\nv = Value()\nn // p\nv => p\n");
+    parse("n=Turing(\"p -> p\n=begin lua\nfunction bang(sig)\nsend(6,sig)\nend\n=end\")\nn.6 => v\nv = Value()\nn // p\nv => p\nn=>p\n");
     
     assert_print("n.b(123.34)\n",              "123.34\n");
   }
   
   void test_keep_state( void ) 
   { 
-    setup_with_print("n=Turing(\"a -> b\nb -> b\n\")\nn.d\n");
+    parse("n=Turing(\"a -> b\nb -> b\n\")\nn.d\nn=>p\n");
     assert_print("n.b(1)\n",              "n: {a} -1-> {b}\n");
     assert_print("n.b(1)\n",              "n: {b} -1-> {b}\n");
     assert_print("n.b(2)\n",              "n: {b} -2-> {b}\n");
@@ -265,7 +265,7 @@ public:
   
   void test_keep_state_id_changed( void ) 
   { 
-    setup_with_print("n=Turing(\"a -> b\nb -> b\n\")\nn.d\n");
+    parse("n=Turing(\"a -> b\nb -> b\n\")\nn.d\nn=>p\n");
     assert_print("n.b(1)\n",              "n: {a} -1-> {b}\n");
     assert_print("n.b(1)\n",              "n: {b} -1-> {b}\n");
     assert_print("n.b(2)\n",              "n: {b} -2-> {b}\n");
@@ -275,7 +275,7 @@ public:
   
   void test_keep_state_name_changed( void ) 
   { 
-    setup_with_print("n=Turing(\"a -> b\nb -> b\n\")\nn.d\n");
+    parse("n=Turing(\"a -> b\nb -> b\n\")\nn.d\nn=>p\n");
     assert_print("n.b(1)\n",              "n: {a} -1-> {b}\n");
     assert_print("n.b(1)\n",              "n: {b} -1-> {b}\n");
     assert_print("n.b(2)\n",              "n: {b} -2-> {b}\n");
@@ -285,13 +285,13 @@ public:
   
   void test_set_state_from_lua( void ) 
   { 
-    setup_with_print("n=Turing(\"a -> b\nb -> c\nc -> a\n=begin lua\nfunction bang(sig)\njump('b')\nreturn sig\nend\n=end\")\nn.d\n");
+    parse("n=Turing(\"a -> b\nb -> c\nc -> a\n=begin lua\nfunction bang(sig)\njump('b')\nreturn sig\nend\n=end\")\nn.d\nn=>p\n");
     assert_print("n.b(1)\n",              "n: jump {b}\nn: {b} -1-> {c}\n");
   }
   
   void test_set_state( void ) 
   { 
-    setup_with_print("n=Turing(\"a -> b\nb -> c\nc -> a\n\")\nn.d\n");
+    parse("n=Turing(\"a -> b\nb -> c\nc -> a\n\")\nn.d\nn=>p\n");
     assert_print("n.jump(\"b\")\n",    "n: jump {b}\n");
     assert_print("n.b(1)\n",           "n: {b} -1-> {c}\n");
   }

@@ -1,12 +1,12 @@
 #include "test_helper.h"
 
 
-class BufferObjectTest : public CxxTest::TestSuite, public ParseTest
+class BufferObjectTest : public ParseTest
 {
 public:
   void test_single( void ) 
   { 
-    setup_with_print("n=Buffer(3)\n");
+    parse("n=Buffer(3)\nn=>p\n");
     
     assert_print("n.b(1)\n", "<Matrix [  0.00  0.00  1.00 ], 3x1>\n");
     assert_print("n.b(2)\n", "<Matrix [  0.00  1.00  2.00 ], 3x1>\n");
@@ -19,7 +19,7 @@ public:
   
  // void test_array( void )
  // { 
- //   setup_with_print("n=Peak(descent:0.5)\n");
+ //   parse("n=Peak(descent:0.5)\nn=>p\n");
  //   
  //   assert_print("n.bang(1, 4)\n",   "<Matrix [  1.00  4.00 ], 2>\n");
  //   assert_print("n.bang\n",         "<Matrix [  0.50  3.50 ], 2>\n");

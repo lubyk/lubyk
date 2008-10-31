@@ -116,16 +116,16 @@ namespace CxxTest
             stop( file, line ) << "Error: Assertion failed: " <<
                 expression << endl;
         }
-
+        
+        // adapted for rubyk
+        // gaspard
         void failedAssertEquals( const char *file, unsigned line,
                                  const char *xStr, const char *yStr,
                                  const char *x, const char *y )
         {
-            stop( file, line ) << "Error: Expected (" <<
-                xStr << " == " << yStr << "), found (" <<
-                x << " != " << y << ")" << endl;
+            stop( file, line ) << xStr << " ==> " << x << " != " << y << "" << endl;
         }
-
+        
         void failedAssertSameData( const char *file, unsigned line,
                                    const char *xStr, const char *yStr,
                                    const char *sizeStr, const void *x,

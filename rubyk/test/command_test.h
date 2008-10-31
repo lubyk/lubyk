@@ -18,7 +18,7 @@ public:
   }
 };
 
-class testParseCommand : public CxxTest::TestSuite, public ParseTest
+class ParseCommandTest : public ParseTest
 {
 public:
   
@@ -80,7 +80,7 @@ public:
   { assert_print("n=Value(1)\nn // p\nn.bang()",""); }
 
   void test_parse_first_links( void ) 
-  { clean_assert_result("n=>p\n",""); }
+  { assert_result("n=>p\n",""); }
   
   void test_parse_bad_links( void ) 
   { assert_result("n=>\n","Syntax error near '>\n'.\n"); }
