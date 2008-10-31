@@ -1,8 +1,4 @@
-#include "node.h"
-#include "event.h"
-#include "rubyk.h"
 #include "class.h"
-#include "buffer.h"
 
 unsigned int Node::sIdCounter    = 0;
 pthread_key_t Node::sThisKey     = NULL;
@@ -146,7 +142,6 @@ void Node::execute_method (const std::string& pMethod, const Params& p)
   }
 }
 
-
 template<typename T>
 void Node::error(T& obj, const char * pMsg, const char * pFilename, int pLine)
 {
@@ -156,3 +151,21 @@ void Node::error(T& obj, const char * pMsg, const char * pFilename, int pLine)
 template void Node::error<TMatrix<int> >(TMatrix<int>& obj, const char * pMsg, const char * pFilename, int pLine);
 template void Node::error<TMatrix<double> >(TMatrix<double>& obj, const char * pMsg, const char * pFilename, int pLine);
 template void Node::error<Buffer>(Buffer& obj, const char * pMsg, const char * pFilename, int pLine);
+
+template <class T, void(T::*Tmethod)(void)>
+pthread_t Node::new_thread ()
+{
+  pthread_t id;
+  BaseEvent * e = (BaseEvent*)new CallEvent<T, Tmethod>(mServer->mCurrentTime, (T*)this);
+  if (!mServer) {
+    error("you need an attached Rubyk server to create threads");
+    return false;
+  }
+  id = mServer->create_thread(e);
+  if (id) {
+    // store thread id so rubyk server can later access running threads
+    mThreadIds.push_back(id);
+    return id;
+  }
+  return NULL;
+}

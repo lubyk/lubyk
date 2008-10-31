@@ -1,20 +1,21 @@
 #ifndef _NODE_H_
 #define _NODE_H_
-
+#include "event.h"
+#include "params.h"
 #include "inlet.h"
 #include "outlet.h"
-#include "params.h"
 #include "hash.h"
 #include "matrix.h"
-#include "rubyk.h"
 #include "rubyk_signal.h"
-#include "event.h"
 
 #include <sstream>
 #include <cstdio>
 #include <vector>
 #include <string>
+#include <list>
 #include <pthread.h>
+
+class Rubyk;
 
 
 #define START_PRINT_BUFFER   20
@@ -355,35 +356,17 @@ protected:
     return allocate<int>(pBuffer, pSize, pName, "ints");
   }
   
-  // time in [ms]
-  void bang_me_in (time_t pTime)
-  {
-    BaseEvent * e = new BaseEvent(mServer->mCurrentTime + pTime, this); // sets mIsBang to true
-
-    mServer->register_event( e );
-  }
+  /** Send be a bang in pTime in [ms]. */
+  inline void bang_me_in (time_t pTime);
   
-  // Registers this object as needing independant runtime (Serial input, Midi input, etc).
-  // It will receive a gNilSignal in the 'bang' method on every tick.
-  void loop_me()
-  {
-    mServer->register_looped_node(this);
-    mLooped = true;
-  }
+  /** Registers this object as needing independant runtime (Serial input, Midi input, etc).
+   * It will receive a gNilSignal in the 'bang' method on every tick.
+  */
+  inline void loop_me ();
   
-  void unloop_me()
-  {
-    if (mLooped && mServer) {
-      mServer->free_looped_node(this);
-      mLooped = false;
-    }
-  }
+  inline void unloop_me ();
   
-  void remove_my_events()
-  {
-    if (mServer)
-      mServer->free_events_for(this);
-  }
+  inline void remove_my_events ();
   
   /** Used by sub-threads to detect if they should stop. */
   bool run_thread()
@@ -400,40 +383,15 @@ protected:
   }
   
   template <class T, void(T::*Tmethod)(void *)>
-  void register_event (time_t pTime, void * data)
-  {
-    BaseEvent * e = (BaseEvent *) new Event<T, Tmethod>(mServer->mCurrentTime + pTime, (T*)this, data);
-    e->mForced = false;
-    mServer->register_event( e );
-  }
+  inline void register_event (time_t pTime, void * data);
   
   /** Register an event that must be run when the server quits. */
   template <class T, void(T::*Tmethod)(void *)>
-  void register_forced_event (time_t pTime, void * data)
-  {
-    BaseEvent * e = (BaseEvent *) new Event<T, Tmethod>(mServer->mCurrentTime + pTime, (T*)this, data);
-    e->mForced = true;
-    mServer->register_event( e );
-  }
+  inline void register_forced_event (time_t pTime, void * data);
   
   /** Create a new thread that will run the method given as template parameter. Use NEW_THREAD(klass, method) if you prefer. */
   template <class T, void(T::*Tmethod)(void)>
-  pthread_t new_thread ()
-  {
-    pthread_t id;
-    BaseEvent * e = (BaseEvent*)new CallEvent<T, Tmethod>(mServer->mCurrentTime, (T*)this);
-    if (!mServer) {
-      error("you need an attached Rubyk server to create threads");
-      return false;
-    }
-    id = mServer->create_thread(e);
-    if (id) {
-      // store thread id so rubyk server can later access running threads
-      mThreadIds.push_back(id);
-      return id;
-    }
-    return NULL;
-  }
+  pthread_t new_thread ();
   
   void join_thread (pthread_t pId)
   {
@@ -517,7 +475,7 @@ public:
   }
 };
 
-// FIXME: these, with buffer alloc could go into an "utils" header
+////////// FIXME: these, with buffer alloc could go into an "utils" header
 inline double absval(double d)
 {
   if (d < 0)

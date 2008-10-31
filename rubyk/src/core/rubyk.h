@@ -3,28 +3,27 @@
 #include "hash.h"
 #include "ordered_list.h"
 #include "link.h"
-#include "event.h"
 #include "mutex.h"
+#include "group.h"
 #include <list>
 #include <queue>
 #include <sys/timeb.h> // ftime
 #include <iostream>
 
-// 0.2 [ms]
+// is 20 [ms] too long ? Testing needed.
 #define RUBYK_SLEEP_MS 20.0
 #define ONE_SECOND 1000.0
 #define ONE_MINUTE (60.0*ONE_SECOND)
 
 class Params;
 class Action;
-class Node;
 class Command;
 
 /////////////// GLWINDOW HACK ///////////
 extern bool   gQuitGl; /**< Used to tell thread to exit. */
 /////////////////////////////////////
 
-class Rubyk
+class Rubyk : public Group
 {
 public:
   Rubyk();
@@ -46,6 +45,15 @@ public:
   
   /** Main loop. Returns false when rubyk has to quit. */
   bool run();
+  
+  virtual void bang (const Signal& sig)
+  {}
+  
+  virtual bool set (const Params& p)
+  { return true; }
+  
+  virtual void spy()
+  { bprint(mSpy, mSpySize, "rubyk");  }
   
   /** Add an event to the event queue. The server is responsible for deleting the event. */
   void register_event(BaseEvent * e)

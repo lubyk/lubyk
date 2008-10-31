@@ -1,9 +1,7 @@
 #ifndef _SLOT_H_
 #define _SLOT_H_
-
 #include "ordered_list.h"
 
-class Node;
 /** Inlets and outlets of nodes are Slots. 
   * 
   * Slots are responsible for managing connections and passing values between objects. When a slot is created,

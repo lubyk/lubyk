@@ -1,6 +1,10 @@
 #ifndef _CLASS_H_
 #define _CLASS_H_
-#include "node.h"
+#include "rubyk.h"
+#include "params.h"
+#include "command.h"
+#include "buffer.h"
+#include "node.hpp" // templates, inlines
 #include <iostream>
 
 #define _TEST_OBJECTS_
