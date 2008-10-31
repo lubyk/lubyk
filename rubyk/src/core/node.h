@@ -1,5 +1,6 @@
 #ifndef _NODE_H_
 #define _NODE_H_
+#include "addressable.h"
 #include "event.h"
 #include "params.h"
 #include "inlet.h"
@@ -25,7 +26,7 @@ class Planet;
 /** Nodes do the actual work.
   * They receive messages from their inlets and pass new values to their outlets.
   */  
-class Node
+class Node : public Addressable
 {
 public:
   Node() : mClass(NULL), mServer(NULL), mId(0), mLooped(false), mIsOK(true), mSpy(NULL), mSpySize(0), mInspect(NULL), mInspectSize(0), mOutput(&std::cout), mDebug(false)

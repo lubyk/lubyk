@@ -1,13 +1,14 @@
 #ifndef _SLOT_H_
 #define _SLOT_H_
 #include "ordered_list.h"
+#include "addressable.h"
 
 /** Inlets and outlets of nodes are Slots. 
   * 
   * Slots are responsible for managing connections and passing values between objects. When a slot is created,
   * it holds a reference to it's master node 'receiver' and to a pointer to a member method that should be
   * triggered to set/get the value for the given in/out let. */
-class Slot
+class Slot : public Addressable
 {
   public:
     Slot (void* node) : mNode(node) {}

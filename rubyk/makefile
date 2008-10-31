@@ -12,7 +12,9 @@ RAGEL=ragel
 RAGEL_CD=rlgen-cd
 PLAT= macosx
 TEST=test/*_test.h test/objects/*_test.h
-LINKER_OBJECTS=slot.o inlet.o outlet.o params.o signal.o node.o class.o command.o matrix.o buffer.o planet.o lua_script.o src/lib/lua/liblua.a globals.o group.o
+LINKER_OBJECTS=slot.o inlet.o outlet.o params.o rubyk_signal.o node.o class.o command.o matrix.o buffer.o planet.o lua_script.o src/lib/lua/liblua.a globals.o group.o addressable.o src/lib/osc/liboscpack.a
+INCLUDE_HEADERS=-Isrc/templates -Isrc/core -Isrc/objects -Isrc/lib/lua -Isrc/lib/osc/osc
+OBJECT_COMPILE=$(INCLUDE_HEADERS) -D__$(PLAT)__ -dynamic -bundle -undefined suppress -flat_namespace -L/usr/lib -lgcc -lstdc++
 OBJECT_DEPENDS=src/core/node.hpp src/core/class.h
 
 # Utilities.
@@ -20,7 +22,7 @@ INSTALL= install -C
 MKDIR= mkdir -p
 
 rubyk: src/core/main.cpp $(LINKER_OBJECTS) objects test
-	$(CC) $(CFLAGS) $(LFLAGS) -o rubyk -Itest -Isrc/templates -Isrc/core -Isrc/objects -I. src/core/main.cpp $(LINKER_OBJECTS)
+	$(CC) $(CFLAGS) $(LFLAGS) -o rubyk $(INCLUDE_HEADERS) -I. src/core/main.cpp $(LINKER_OBJECTS)
 
 test: test/runner test/runner.cpp
 	./test/runner && rm test/runner
@@ -31,61 +33,55 @@ test/runner.cpp: $(TEST)
 	./test/cxxtest/cxxtestgen.pl --error-printer -o test/runner.cpp $(TEST)
 	
 test/runner: test/runner.cpp $(LINKER_OBJECTS) objects
-	$(CC) $(CFLAGS) $(LFLAGS) -Itest -Isrc/templates -Isrc/core -Isrc/objects -I. test/runner.cpp $(LINKER_OBJECTS) -o test/runner
-	
-signal.o: src/core/rubyk_signal.cpp
-	$(CC) $(CFLAGS) -c -Isrc/templates src/core/rubyk_signal.cpp -o signal.o
+	$(CC) $(CFLAGS) $(LFLAGS) -Itest $(INCLUDE_HEADERS) -I. test/runner.cpp $(LINKER_OBJECTS) -o test/runner
 
 src/core/command.cpp: src/core/command.rl
 	${RAGEL} src/core/command.rl -o src/core/command.cpp
 
-planet.o: src/core/planet.h src/core/planet.cpp src/core/mutex.h
-	$(CC) $(CFLAGS) -c -Isrc/core -Isrc/templates src/core/planet.cpp -o planet.o
+globals.o: src/core/globals.cpp
+	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 
-command.o: src/core/command.cpp src/core/command.h src/core/mutex.h
-	$(CC) $(CFLAGS) -c -Isrc/core -Isrc/templates src/core/command.cpp -o command.o
-
-%.o: src/core/%.cpp
-	$(CC) $(CFLAGS) -c -Isrc/core -Isrc/templates $< -o $@
+%.o: src/core/%.cpp src/core/%.h
+	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 	
 lib/MidiOut.rko: src/objects/MidiOut.cpp $(OBJECT_DEPENDS)
-	$(CC) $(CFLAGS) -o lib/MidiOut.rko -Isrc/templates -Isrc/core -Isrc/objects -dynamic -bundle -undefined suppress -flat_namespace -D__MACOSX_CORE__ -L/usr/lib -lgcc -lstdc++ -framework CoreMIDI -framework CoreFoundation -framework CoreAudio  src/objects/midi/RtMidi.cpp src/objects/MidiOut.cpp
+	$(CC) $(CFLAGS) $(OBJECT_COMPILE) -framework CoreMIDI -framework CoreFoundation -framework CoreAudio  src/objects/midi/RtMidi.cpp src/objects/MidiOut.cpp -o $@
 	
 lib/MidiIn.rko: src/objects/MidiIn.cpp $(OBJECT_DEPENDS)
-	$(CC) $(CFLAGS) -o lib/MidiIn.rko -Isrc/templates -Isrc/core -Isrc/objects -dynamic -bundle -undefined suppress -flat_namespace -D__MACOSX_CORE__ -L/usr/lib -lgcc -lstdc++ -framework CoreMIDI -framework CoreFoundation -framework CoreAudio  src/objects/midi/RtMidi.cpp src/objects/MidiIn.cpp
+	$(CC) $(CFLAGS) $(OBJECT_COMPILE)  -framework CoreMIDI -framework CoreFoundation -framework CoreAudio  src/objects/midi/RtMidi.cpp src/objects/MidiIn.cpp -o $@
 
 lib/Serial.rko: src/objects/Serial.cpp src/objects/serial/serial.h $(OBJECT_DEPENDS)
-	$(CC) $(CFLAGS) -o lib/Serial.rko -Isrc/templates -Isrc/core -Isrc/lib/lua -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ src/objects/Serial.cpp -DCOMPILE_SERIAL_OBJECT
+	$(CC) $(CFLAGS) $(OBJECT_COMPILE) -DCOMPILE_SERIAL_OBJECT src/objects/Serial.cpp -o $@
 
 src/objects/Turing.cpp: src/objects/Turing.rl
 	${RAGEL} src/objects/Turing.rl -o src/objects/Turing.cpp
 	
 lib/Svm.rko: src/objects/Svm.cpp $(OBJECT_DEPENDS)
-	$(CC) $(CFLAGS) -o lib/Svm.rko -Isrc/templates -Isrc/core -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ src/objects/Svm.cpp src/objects/svm/svm.cpp
+	$(CC) $(CFLAGS) $(OBJECT_COMPILE) src/objects/Svm.cpp src/objects/svm/svm.cpp -o $@
 
 lib/FFT.rko: src/objects/FFT.cpp $(OBJECT_DEPENDS)
-	$(CC) $(CFLAGS) -o lib/FFT.rko -Isrc/templates -Isrc/core -Isrc/objects/fft -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ src/objects/FFT.cpp
+	$(CC) $(CFLAGS) $(OBJECT_COMPILE) -Isrc/objects/fft src/objects/FFT.cpp -o $@
 	
 lib/VQ.rko: src/objects/VQ.cpp $(OBJECT_DEPENDS)
-	$(CC) $(CFLAGS) -o lib/VQ.rko -Isrc/templates -Isrc/core -Isrc/objects/vq -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ src/objects/VQ.cpp src/objects/vq/elbg.c src/objects/vq/random.c
+	$(CC) $(CFLAGS) $(OBJECT_COMPILE) -Isrc/objects/vq src/objects/VQ.cpp src/objects/vq/elbg.c src/objects/vq/random.c -o $@
 	
 lib/GLWindow.rko: src/objects/GLWindow.cpp src/objects/gllua/LuaGL.c src/objects/gllua/LuaGlut.c $(OBJECT_DEPENDS)
-	$(CC) $(CFLAGS) -o lib/GLWindow.rko -Isrc/templates -Isrc/core -Isrc/lib/lua -Isrc/objects/gllua -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ -D__MACOSX_CORE__ -framework GLUT -framework OpenGL -framework Cocoa src/objects/GLWindow.cpp src/objects/gllua/LuaGL.c src/objects/gllua/LuaGlut.c
+	$(CC) $(CFLAGS) $(OBJECT_COMPILE) -Isrc/objects/gllua -framework GLUT -framework OpenGL -framework Cocoa src/objects/GLWindow.cpp src/objects/gllua/LuaGL.c src/objects/gllua/LuaGlut.c -o $@
 
 lib/GLLua.rko: src/objects/GLLua.cpp src/objects/gllua/LuaGL.c src/objects/gllua/LuaGlut.c $(OBJECT_DEPENDS)
-	$(CC) $(CFLAGS) -o lib/GLLua.rko -Isrc/templates -Isrc/core -Isrc/lib/lua -Isrc/objects/gllua -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ -D__MACOSX_CORE__ -framework GLUT -framework OpenGL -framework Cocoa src/objects/GLLua.cpp src/objects/gllua/LuaGL.c src/objects/gllua/LuaGlut.c
+	$(CC) $(CFLAGS) $(OBJECT_COMPILE) -Isrc/objects/gllua -framework GLUT -framework OpenGL -framework Cocoa src/objects/GLLua.cpp src/objects/gllua/LuaGL.c src/objects/gllua/LuaGlut.c -o $@
   
 lib/GL%.rko: src/objects/GL%.cpp $(OBJECT_DEPENDS)
-	$(CC) $(CFLAGS) -o $@ -Isrc/templates -Isrc/core -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ -D__MACOSX_CORE__ -framework GLUT -framework OpenGL -framework Cocoa $<
+	$(CC) $(CFLAGS) $(OBJECT_COMPILE) -framework GLUT -framework OpenGL -framework Cocoa $< -o $@
 	
 lib/%.rko: src/objects/%.cpp $(OBJECT_DEPENDS)
-	$(CC) $(CFLAGS) -o $@ -Isrc/templates -Isrc/core -Isrc/lib/lua -D__MACOSX_CORE__ -dynamic -bundle -undefined suppress -flat_namespace  -L/usr/lib -lgcc -lstdc++ $<
-
-lua_script.o: src/core/lua_script.cpp src/core/lua_script.h src/core/script.h
-	$(CC) $(CFLAGS) -c -o lua_script.o -Isrc/templates -Isrc/core -Isrc/lib/lua src/core/lua_script.cpp
+	$(CC) $(CFLAGS) $(OBJECT_COMPILE) $< -o $@
 
 src/lib/lua/liblua.a:
 	cd src/lib/lua && make $(PLAT)
+
+src/lib/osc/liboscpack.a:
+	cd src/lib/osc && make liboscpack.a
 	
 dot: src/core/command.png	
 	open src/core/command.png

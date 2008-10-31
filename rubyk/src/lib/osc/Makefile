@@ -23,6 +23,9 @@ INCLUDEDIR = oscpack
 LIBNAME = liboscpack
 LIBSONAME = $(LIBNAME).so
 LIBFILENAME = $(LIBSONAME).1.0.2
+LIB_A = $(LIBNAME).a
+AR = ar rcu
+RANLIB= ranlib
 
 #Test and example source
 SENDSOURCES = ./tests/OscSendTests.cpp ./osc/OscOutboundPacketStream.cpp ./osc/OscTypes.cpp ./ip/posix/NetworkingUtils.cpp ./ip/posix/UdpSocket.cpp ./ip/IpEndpointName.cpp
@@ -63,9 +66,14 @@ clean:
 
 $(LIBFILENAME): $(LIBOBJECTS)
 	@#GNU/Linux case
-	$(CXX) -shared -Wl,-soname,$(LIBSONAME) -o $(LIBFILENAME) $(LIBOBJECTS) -lc
+	@#$(CXX) -shared -Wl,-soname,$(LIBSONAME) -o $(LIBFILENAME) $(LIBOBJECTS) -lc
 	@#Mac OS X case
-	@#$(CXX) -dynamiclib -Wl,-install_name,$(LIBSONAME) -o $(LIBFILENAME) $(LIBOBJECTS) -lc
+	$(CXX) -dynamiclib -Wl,-install_name,$(LIBSONAME) -o $(LIBFILENAME) $(LIBOBJECTS) -lc
+
+# rubyk compilation
+$(LIB_A): $(LIBOBJECTS)
+	$(AR) $@ $?
+	$(RANLIB) $@
 	
 lib: $(LIBFILENAME)
 

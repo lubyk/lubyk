@@ -26,7 +26,7 @@ extern "C" {
 #endif
 #include <stdlib.h>
 
-#ifdef __MACOSX_CORE__
+#ifdef __macosx__
 #include <GLUT/glut.h>
 #else
 #include <GL/gl.h>

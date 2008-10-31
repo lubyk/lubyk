@@ -46,7 +46,7 @@ extern "C" {
 
 #include <string.h>
 
-#ifdef __MACOSX_CORE__
+#ifdef __macosx__
 #include <GLUT/glut.h>
 #include <stdlib.h>
 #else
