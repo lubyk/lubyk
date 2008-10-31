@@ -12,7 +12,7 @@ RAGEL=ragel
 RAGEL_CD=rlgen-cd
 PLAT= macosx
 TEST=test/*_test.h test/objects/*_test.h
-LINKER_OBJECTS=slot.o inlet.o outlet.o params.o signal.o node.o class.o command.o matrix.o buffer.o rubyk.o lua_script.o src/lib/lua/liblua.a globals.o group.o
+LINKER_OBJECTS=slot.o inlet.o outlet.o params.o signal.o node.o class.o command.o matrix.o buffer.o planet.o lua_script.o src/lib/lua/liblua.a globals.o group.o
 OBJECT_DEPENDS=src/core/node.hpp src/core/class.h
 
 # Utilities.
@@ -39,8 +39,8 @@ signal.o: src/core/rubyk_signal.cpp
 src/core/command.cpp: src/core/command.rl
 	${RAGEL} src/core/command.rl -o src/core/command.cpp
 
-rubyk.o: src/core/rubyk.h src/core/rubyk.cpp src/core/mutex.h
-	$(CC) $(CFLAGS) -c -Isrc/core -Isrc/templates src/core/rubyk.cpp -o rubyk.o
+planet.o: src/core/planet.h src/core/planet.cpp src/core/mutex.h
+	$(CC) $(CFLAGS) -c -Isrc/core -Isrc/templates src/core/planet.cpp -o planet.o
 
 command.o: src/core/command.cpp src/core/command.h src/core/mutex.h
 	$(CC) $(CFLAGS) -c -Isrc/core -Isrc/templates src/core/command.cpp -o command.o

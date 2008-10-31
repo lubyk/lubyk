@@ -77,7 +77,7 @@ public:
                 mInput(std::istringstream::in)
                 
   { 
-    mServer = new Rubyk;
+    mServer = new Planet;
     mCmd = new Command(mInput, mOutput);
     mCmd->set_server(*mServer);
     // cannot set class lib path here (not yet initialized).
@@ -86,7 +86,7 @@ public:
   // start a new server
   void setUp()
   {
-    mServer = new Rubyk;
+    mServer = new Planet;
     mCmd = new Command(mInput, mOutput);
     mCmd->set_server(*mServer);
     mOutput.str(std::string("")); // clear output
@@ -101,7 +101,7 @@ public:
   }
   
 protected:
-  Rubyk * mServer;
+  Planet * mServer;
   Command * mCmd;
   std::ostringstream mOutput;
   std::istringstream mInput;

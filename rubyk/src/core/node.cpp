@@ -158,7 +158,7 @@ pthread_t Node::new_thread ()
   pthread_t id;
   BaseEvent * e = (BaseEvent*)new CallEvent<T, Tmethod>(mServer->mCurrentTime, (T*)this);
   if (!mServer) {
-    error("you need an attached Rubyk server to create threads");
+    error("you need an attached Planet server to create threads");
     return false;
   }
   id = mServer->create_thread(e);

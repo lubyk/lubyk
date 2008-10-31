@@ -15,7 +15,7 @@
 #include <list>
 #include <pthread.h>
 
-class Rubyk;
+class Planet;
 
 
 #define START_PRINT_BUFFER   20
@@ -58,7 +58,7 @@ public:
     mOutlets.push_back(s);
   }
   
-  void set_server(Rubyk * pServer)
+  void set_server(Planet * pServer)
   { mServer = pServer; }
   
   void set_class(Class * pClass)
@@ -287,7 +287,7 @@ public:
     }
   }
   
-  /** Set 'this' value for the current thread (used by Rubyk when starting a new thread). */
+  /** Set 'this' value for the current thread (used by Planet when starting a new thread). */
   void set_thread_this() const
   {
     pthread_setspecific(sThisKey, (void*)this);
@@ -417,7 +417,7 @@ protected:
   // ================ MEMBER DATA    ================= //
   /** Host server. */
   Class * mClass;  /**< Pointer to the class of the node. Used by the node to know which methods it owns, etc (inspection). */
-  Rubyk * mServer; /**< Pointer to the current server. Used to register event and get information on the running application. */
+  Planet * mServer; /**< Pointer to the current server. Used to register event and get information on the running application. */
   long  mId;       /**< Unique id (in server scope). */
   bool  mLooped;   /**< True if the node is banged on every loop. */
   bool  mIsOK;     /**< If something bad arrived to the node during initialization or edit, the node goes into

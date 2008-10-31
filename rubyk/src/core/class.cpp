@@ -46,7 +46,7 @@ bool Class::get (Class ** pClass, const std::string& pClassName)
   return false;
 }
 
-Node * Class::create (Rubyk * pServer, const std::string& pName, const std::string& pClassName, const Params& p, std::ostream * pOutput)
+Node * Class::create (Planet * pServer, const std::string& pName, const std::string& pClassName, const Params& p, std::ostream * pOutput)
 {
   Class * klass;
   if (get(&klass, pClassName))
@@ -67,7 +67,7 @@ Node * Class::create (Rubyk * pServer, const std::string& pName, const std::stri
   return obj;
 }
 
-inline Node * Class::operator() (const std::string& pName, Rubyk * pServer, const Params& p, std::ostream * pOutput)
+inline Node * Class::operator() (const std::string& pName, Planet * pServer, const Params& p, std::ostream * pOutput)
 {  
   return (*mCreateFunction)(this, pName, pServer, p, pOutput);
 }

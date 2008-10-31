@@ -23,12 +23,12 @@ class Command;
 extern bool   gQuitGl; /**< Used to tell thread to exit. */
 /////////////////////////////////////
 
-class Rubyk : public Group
+class Planet : public Group
 {
 public:
-  Rubyk();
+  Planet();
   
-  virtual ~Rubyk();
+  virtual ~Planet();
   
   Node * create_instance(const std::string& pVariable, const std::string& pClass, const Params& p, std::ostream * pOutput);
   
@@ -37,7 +37,7 @@ public:
   void remove_link(const std::string& pFrom, unsigned int pFromPort, unsigned int pToPort, const std::string& pTo);
   
   /** Get a pointer to the instance with the given name. */
-  bool Rubyk::get_instance(Node ** pResult, const std::string& pName);
+  bool Planet::get_instance(Node ** pResult, const std::string& pName);
   
   /** Close the door and leave... */
   void quit()

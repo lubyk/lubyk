@@ -1,6 +1,6 @@
 #ifndef _CLASS_H_
 #define _CLASS_H_
-#include "rubyk.h"
+#include "planet.h"
 #include "params.h"
 #include "command.h"
 #include "buffer.h"
@@ -19,7 +19,7 @@ struct lua_State;
 typedef void (*member_method_t)(void * pReceiver, const Params& p);
 
 /** Pointer to a function to create nodes. */
-typedef Node * (*create_function_t)(Class * pClass, const std::string& pName, Rubyk * pServer, const Params& p, std::ostream * pOutput);
+typedef Node * (*create_function_t)(Class * pClass, const std::string& pName, Planet * pServer, const Params& p, std::ostream * pOutput);
 
 /** Pointer to an inlet method that can be called from the command line with "obj.method(Params)" */
 typedef void (*outlet_method_t)(void * pReceiver, Signal& sig);
@@ -112,26 +112,26 @@ public:
     }
   }
   
-  static Node * create (Rubyk * pServer, const char * pClassName, const std::string& p, std::ostream * pOutput)
+  static Node * create (Planet * pServer, const char * pClassName, const std::string& p, std::ostream * pOutput)
   { return create(pServer, std::string(""), std::string(pClassName), Params(p), pOutput); }
   
   
-  static Node * create (Rubyk * pServer, const char * pName, const char * pClassName, const std::string& p, std::ostream * pOutput)
+  static Node * create (Planet * pServer, const char * pName, const char * pClassName, const std::string& p, std::ostream * pOutput)
   { return create(pServer, std::string(pName), std::string(pClassName), Params(p), pOutput); }
 
-  static Node * create (Rubyk * pServer, const char * pName, const char * pClassName, const char * p, std::ostream * pOutput)
+  static Node * create (Planet * pServer, const char * pName, const char * pClassName, const char * p, std::ostream * pOutput)
   { return create(pServer, std::string(pName), std::string(pClassName), Params(p), pOutput); }
 
-  static Node * create (Rubyk * pServer, const std::string& pName, const std::string& pClassName, const char * p, std::ostream * pOutput)
+  static Node * create (Planet * pServer, const std::string& pName, const std::string& pClassName, const char * p, std::ostream * pOutput)
   { return create(pServer, pName, pClassName, Params(p), pOutput); }
 
-  static Node * create (Rubyk * pServer, const std::string& pName, const std::string& pClassName, const std::string& p, std::ostream * pOutput)
+  static Node * create (Planet * pServer, const std::string& pName, const std::string& pClassName, const std::string& p, std::ostream * pOutput)
   { return create(pServer, pName, pClassName, Params(p), pOutput); }
 
-  static Node * create (Rubyk * pServer, const char * pName, const char * pClassName, const Params& p, std::ostream * pOutput)
+  static Node * create (Planet * pServer, const char * pName, const char * pClassName, const Params& p, std::ostream * pOutput)
   { return create(pServer, std::string(pName), std::string(pClassName), p, pOutput); }
 
-  static Node * create (Rubyk * pServer, const std::string& pName, const std::string& pClassName, const Params& p, std::ostream * pOutput);
+  static Node * create (Planet * pServer, const std::string& pName, const std::string& pClassName, const Params& p, std::ostream * pOutput);
 
   /** Load an object stored in a dynamic library. */
   static bool load(const char * file, const char * init_name);
@@ -166,7 +166,7 @@ public:
   
 private:
   
-  inline Node * operator() (const std::string& pName, Rubyk * pServer, const Params& p, std::ostream * pOutput);
+  inline Node * operator() (const std::string& pName, Planet * pServer, const Params& p, std::ostream * pOutput);
   
   inline void make_slots (Node * node)
   {
@@ -190,7 +190,7 @@ private:
   /** This function is used to create an instance of class 'T'. If the instance could not be
     * properly initialized, this function returns NULL. */
   template<class T>
-  static Node * cast_create(Class * pClass, const std::string& pName, Rubyk * pServer, const Params& p, std::ostream * pOutput)
+  static Node * cast_create(Class * pClass, const std::string& pName, Planet * pServer, const Params& p, std::ostream * pOutput)
   {
     T * obj = new T;
     obj->set_class(pClass);

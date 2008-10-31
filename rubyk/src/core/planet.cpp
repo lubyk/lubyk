@@ -1,4 +1,4 @@
-#include "rubyk.h"
+#include "planet.h"
 #include "node.h"
 #include "command.h"
 #include "class.h"
@@ -8,7 +8,7 @@
 Signal gNilSignal(NilSignal);   // globals declared in rubyk_signal.h
 Signal gBangSignal(BangSignal); // globals declared in rubyk_signal.h
 
-Rubyk::Rubyk() : mCurrentTime(0), mInstances(200), mQuit(false)
+Planet::Planet() : mCurrentTime(0), mInstances(200), mQuit(false)
 {
   mMutex.lock();    // we get hold of everything, releasing resources when we decide (I'm the master).
   ftime(&mTimeRef); // set time reference to now (my birthdate).
@@ -16,7 +16,7 @@ Rubyk::Rubyk() : mCurrentTime(0), mInstances(200), mQuit(false)
   high_priority();
 }
 
-Rubyk::~Rubyk()
+Planet::~Planet()
 {
   std::vector<std::string>::iterator it;
   std::vector<std::string>::iterator end = mInstances.end();
@@ -48,7 +48,7 @@ Rubyk::~Rubyk()
 }
 
 /** Called during startup to increase thread priority. */
-void Rubyk::high_priority()
+void Planet::high_priority()
 {
   struct sched_param param;
   int policy;
@@ -68,7 +68,7 @@ void Rubyk::high_priority()
   }
 }
 
-void Rubyk::normal_priority()
+void Planet::normal_priority()
 {
   pthread_t id = pthread_self(); // this is a command thread
 
@@ -77,7 +77,7 @@ void Rubyk::normal_priority()
   }
 }
 
-void * Rubyk::start_thread(void * pEvent)
+void * Planet::start_thread(void * pEvent)
 {
   BaseEvent * e = (BaseEvent*)pEvent;
   ((Node*)e->node())->set_thread_this();
@@ -85,7 +85,7 @@ void * Rubyk::start_thread(void * pEvent)
   return NULL;
 }
 
-void Rubyk::listen_to_command (Command& pCommand)
+void Planet::listen_to_command (Command& pCommand)
 {
   int ret;
   pthread_t id;
@@ -100,7 +100,7 @@ void Rubyk::listen_to_command (Command& pCommand)
 
 
 
-Node * Rubyk::create_instance (const std::string& pVariable, const std::string& pClass, const Params& p, std::ostream * pOutput)
+Node * Planet::create_instance (const std::string& pVariable, const std::string& pClass, const Params& p, std::ostream * pOutput)
 {
   Node * node = Class::create(this, pVariable, pClass, p, pOutput);
   Node * previous;
@@ -117,7 +117,7 @@ Node * Rubyk::create_instance (const std::string& pVariable, const std::string& 
 }
 
 
-void Rubyk::create_link(const std::string& pFrom, unsigned int pFromPort, unsigned int pToPort, const std::string& pTo)
+void Planet::create_link(const std::string& pFrom, unsigned int pFromPort, unsigned int pToPort, const std::string& pTo)
 {
   //std::cout << "pending " << pFrom << "("<< pFromPort << ")" << " --> " << pTo << "("<< pToPort << ")" << std::endl;
   mPendingLinks.push_back(Link(pFrom,pFromPort,pToPort,pTo));
@@ -125,7 +125,7 @@ void Rubyk::create_link(const std::string& pFrom, unsigned int pFromPort, unsign
 }
 
 // FIXME: on node deletion/replacement, remove all pending links related to this node ?.
-void Rubyk::create_pending_links()
+void Planet::create_pending_links()
 {
   std::list<Link>::iterator it,end;
   Node * fromNode, * toNode;
@@ -151,7 +151,7 @@ void Rubyk::create_pending_links()
 }
 
 
-void Rubyk::remove_link(const std::string& pFrom, unsigned int pFromPort, unsigned int pToPort, const std::string& pTo)
+void Planet::remove_link(const std::string& pFrom, unsigned int pFromPort, unsigned int pToPort, const std::string& pTo)
 {
   Node * fromNode, * toNode;
   Slot * fromPort, * toPort;
@@ -163,12 +163,12 @@ void Rubyk::remove_link(const std::string& pFrom, unsigned int pFromPort, unsign
   }
 }
 
-bool Rubyk::get_instance(Node ** pResult, const std::string& pName)
+bool Planet::get_instance(Node ** pResult, const std::string& pName)
 {
   return mInstances.get(pResult, pName);
 }
 
-bool Rubyk::run()
+bool Planet::run()
 { 
   struct timespec sleeper;
   sleeper.tv_sec  = 0; 
@@ -187,7 +187,7 @@ bool Rubyk::run()
   return !mQuit;
 }
 
-void Rubyk::pop_events()
+void Planet::pop_events()
 {
   BaseEvent * e;
   time_t realTime = mCurrentTime;
@@ -200,7 +200,7 @@ void Rubyk::pop_events()
   mCurrentTime = realTime;
 }
 
-void Rubyk::pop_all_events()
+void Planet::pop_all_events()
 {
   BaseEvent * e;
   while( mEventsQueue.get(&e)) {
@@ -213,21 +213,21 @@ void Rubyk::pop_all_events()
 }
 
 
-pthread_t Rubyk::create_thread(BaseEvent * e)
+pthread_t Planet::create_thread(BaseEvent * e)
 {
   pthread_t id = NULL;
   if (!Node::sThisKey) pthread_key_create(&Node::sThisKey, NULL); // create a key to find 'this' object in new thread
-  pthread_create( &id, NULL, &Rubyk::start_thread, (void*)e);
+  pthread_create( &id, NULL, &Planet::start_thread, (void*)e);
   return id;
 }
 
-void Rubyk::register_looped_node(Node * pNode)
+void Planet::register_looped_node(Node * pNode)
 {
   free_looped_node(pNode);
   mLoopedNodes.push_back(pNode);
 }
 
-void Rubyk::trigger_loop_events()
+void Planet::trigger_loop_events()
 {
   std::deque<Node *>::iterator it;
   std::deque<Node *>::iterator end = mLoopedNodes.end();
@@ -236,7 +236,7 @@ void Rubyk::trigger_loop_events()
   }
 }
 
-void Rubyk::free_looped_node(Node * pNode)
+void Planet::free_looped_node(Node * pNode)
 {  
   std::deque<Node*>::iterator it;
   std::deque<Node*>::iterator end = mLoopedNodes.end();
@@ -248,7 +248,7 @@ void Rubyk::free_looped_node(Node * pNode)
   }
 }
 
-void Rubyk::free_events_for(Node * pNode)
+void Planet::free_events_for(Node * pNode)
 {  
   BaseEvent * e;
   LinkedList<BaseEvent*> * it   = mEventsQueue.begin();

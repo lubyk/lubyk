@@ -1,10 +1,10 @@
-#include "rubyk.h"
+#include "planet.h"
 #include "command.h"
 #include <csignal>
 #include <iostream>
 #include <fstream>
 
-Rubyk * gServer;
+Planet * gServer;
 
 void term(int sig)
 {
@@ -21,7 +21,7 @@ extern plot_thread gGLWindowStartThread;
 extern void * gGLWindowNode;
 extern bool   gQuitGl;
 
-pthread_t gRubykThread;
+pthread_t gPlanetThread;
 
 static void * start_thread(void * data)
 {  
@@ -40,7 +40,7 @@ static void * start_thread(void * data)
 
 int main(int argc, char * argv[])
 {
-  gServer = new Rubyk;
+  gServer = new Planet;
   gGLWindowStartThread = NULL;
   gGLWindowNode = NULL; /////// GLWINDOW HACK
   gQuitGl  = false;
@@ -75,7 +75,7 @@ int main(int argc, char * argv[])
   
   ////// GLWINDOW HACK /////
   // this is a hack to put GLWindow inside thread 0
-  pthread_create( &gRubykThread, NULL, start_thread, NULL);
+  pthread_create( &gPlanetThread, NULL, start_thread, NULL);
   while (gRunning) {
     if (gGLWindowStartThread) {
       (*gGLWindowStartThread)(gGLWindowNode);
@@ -84,7 +84,7 @@ int main(int argc, char * argv[])
     }
     nanosleep (&sleeper, NULL);
   }
-  pthread_join( gRubykThread, NULL);
+  pthread_join( gPlanetThread, NULL);
   /////////////////////
   // while (gServer->run());  
   // delete gServer;

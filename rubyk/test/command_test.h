@@ -5,7 +5,7 @@ class testCreateCommand : public CxxTest::TestSuite
 public:
   void test_create( void ) 
   {
-    Rubyk server;
+    Planet server;
     std::istringstream  input(std::istringstream::in);   // allow input operations
     std::ostringstream output(std::ostringstream::out);  // allow output  operations
     Command cmd(input, output);

@@ -4,14 +4,14 @@
 #include "params.h"
 #include <ostream>
 
-class Rubyk;
+class Planet;
 class Class;
 class Node;
 
 union Signal;
 
 /** Pointer to a function to create nodes. */
-typedef Node * (*create_function_t)(Class * pClass, const std::string& pName, Rubyk * pServer, const Params& p, std::ostream * pOutput);
+typedef Node * (*create_function_t)(Class * pClass, const std::string& pName, Planet * pServer, const Params& p, std::ostream * pOutput);
 
 /** Pointer to a class method that can be called from the command line with "Value.method(Params)" */
 typedef void (*class_method_t)(std::ostream * pOutput, const Params& p);
@@ -47,7 +47,7 @@ public:
   { return mNode; }
   
 protected:
-  friend class Rubyk;
+  friend class Planet;
   friend class Node;
   
   // access needed by rubyk

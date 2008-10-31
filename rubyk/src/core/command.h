@@ -15,7 +15,7 @@ typedef enum action_types_ {
 	CREATE_LINK
 } action_types_t;
 
-class Rubyk;
+class Planet;
 
 class Command
 {
@@ -57,7 +57,7 @@ public:
   { mOutput = &pOutput; }
   
   /** Used by rubyk server. */
-  void set_server (Rubyk& pServer)
+  void set_server (Planet& pServer)
   { mServer = &pServer; }
   
   /** Used for testing. */
@@ -95,7 +95,7 @@ protected:
   /** Create an instance. */
   void create_instance ();
   
-  /** Create a link. If the link cannot be created right now because all variables aren't set yet, the link will be kept in Rubyk's link buffer until all variables are found. */
+  /** Create a link. If the link cannot be created right now because all variables aren't set yet, the link will be kept in Planet's link buffer until all variables are found. */
   void create_link ();
   
   /** Remove a link. */
@@ -135,7 +135,7 @@ protected:
 	std::string    mVariable, mMethod, mClass, mKey, mValue, mFrom, mTo;
 	Params         mParameters;
   int            mFromPort, mToPort;
-  Rubyk *        mServer;
+  Planet *        mServer;
   
   /** IO management. */
   pthread_t mThread;
