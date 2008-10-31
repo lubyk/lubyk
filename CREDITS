@@ -6,6 +6,13 @@ lua
 	copyright: see classes/lua/src/COPYRIGHT
 	license  : MIT license
 
+oscpack
+-------
+  brief    : Oscpack is simply a set of C++ classes for packing and unpacking Open Sound Control packets.
+  author   : Ross Bencina <rossb@audiomulch.com>
+  website  : http://www.audiomulch.com/~rossb/code/oscpack/
+  copyright: see rubyk/src/lib/osc/LICENSE
+  license  : MIT license
 
 libsvm
 ------
@@ -15,7 +22,6 @@ libsvm
 	copyright: see objects/svm/COPYRIGHT
 	license  : MIT License
 
-
 FFT
 ---
 	brief    : Fast Fourier Transform used in the 'FFT' object.
@@ -24,7 +30,6 @@ FFT
 	copyright: see objects/fft/readme.txt
 	license  : LGPL
 
-	
 ELBG
 ----
 	brief    : Enhanced LBG. Vector Quantization used in the 'VQ' object.
