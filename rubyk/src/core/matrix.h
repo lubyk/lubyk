@@ -149,7 +149,7 @@ public:
   
   /** Add elements of one matrix to another.
     * If rows/columns match, elements are added one by one.
-    * If the other matrix is a vector and columns sizes match, the vector is added to each row.
+    * If the other matrix is a vector and column sizes match, the vector is added to each row.
     * If the other matrix is a column vector and row counts match, the scalar is used against the corresponding row.
     * If the other matrix is a scalar, add the value to all elements.
     *
