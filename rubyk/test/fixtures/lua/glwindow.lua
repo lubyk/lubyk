@@ -2,6 +2,8 @@ x = 200
 y = 200
 n = n or 0.0
 s = 8
+fps_i = 0
+fps_t = 0
 mouse  = mouse or {409,223}
 rtri = 0
 
@@ -24,6 +26,13 @@ end
 
 function draw(sig)
 	n = current_time / 500
+	if ((fps_t + 1000) < current_time) then
+	  print('fps', fps_i)
+	  fps_i = 0
+	  fps_t = current_time
+  end
+  
+  fps_i = fps_i + 1
 	x = mouse[1] + math.cos(n * 1.2) * 10
 	y = mouse[2] + math.sin(n) * 20
   gl.MatrixMode('PROJECTION')
@@ -34,7 +43,7 @@ function draw(sig)
   gl.LoadIdentity()
   gl.ClearDepth(1)
   
-  gl.Translate(-1.5,0.0,-6.0)
+  gl.Translate(-1.5,0.0,-10.0)
   gl.Rotate(x,0,1.0,0.0)
   gl.Rotate(y,1.0,0.0,0.0)
   gl.Rotate(mouse[2] / 2,1.0,0,0.0)

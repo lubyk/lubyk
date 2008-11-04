@@ -42,6 +42,7 @@ public:
     mLuaMouseMove     = false;
     mLuaKeyPress      = false;
     mFPS              = 30.0;
+    mLastDraw         = 0;
     
     mTitle        = "GLWindow";
     TRY(mDisplaySize, set_sizes(1, 2));
@@ -211,10 +212,11 @@ protected:
   }
   
   void idle()
-  {  
-    if (mNeedRedisplay) {
+  { 
+    if (mNeedRedisplay && (mFPS == 0 || (mLastDraw + (ONE_SECOND / mFPS) <= mServer->mCurrentTime))) {
       glutPostRedisplay();
       mNeedRedisplay = false;
+      mLastDraw = mServer->mCurrentTime;
     }
   }
   
@@ -426,7 +428,8 @@ private:
   Matrix      mMouseMatrix;  /**< Mouse position matrix. */
   Signal      mMouseMatrixSignal; /**< Wrapper around mMouseMatrix. */
   Mutex       mMutex;
-  double      mFPS;          /**< Frames per second. */
+  double      mFPS;          /**< Limit number of frames per second. (0 = no limit). */
+  time_t      mLastDraw;     /**< Last time the draw command was called. */
   
 protected:
   

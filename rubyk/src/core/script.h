@@ -15,11 +15,16 @@ public:
     
     if (p.get(&str, "load")) {
       mScriptFile  = str;
-      mReloadEvery = p.val("reload", 1);
-      mScriptOK = load_script_from_file(true);
+      mScriptOK    = load_script_from_file(true);
+      mReloadEvery = 1;
     } else if (p.get(&str, "script", true)) {
+      mScriptFile  = "";
+      mReloadEvery = 0;
       mScriptOK = eval_script(str);
     }
+    if (mScriptFile != "")
+      mReloadEvery = p.val("reload", mReloadEvery);
+    
     return mScriptOK;
   }
   
@@ -93,7 +98,7 @@ protected:
   std::string mScript;         /**< Script text. */
   std::string mScriptFile;     /**< Script file path. */
   time_t      mScriptModTime;  /**< Script file's modification time on last load. */
-  time_t      mReloadEvery;    /**< How often should we check for a modification in the source file (in seconds). */
+  double      mReloadEvery;    /**< How often should we check for a modification in the source file (in seconds). */
   time_t      mNextReload;     /**< Compute time for the next check to reload the script. */
   bool        mScriptOK;       /**< Script compilation status. Might change on next reload. */
   
