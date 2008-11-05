@@ -41,8 +41,11 @@ public:
     mLuaDraw          = false;
     mLuaMouseMove     = false;
     mLuaKeyPress      = false;
-    mFPS              = 30.0;
+    mMaxFPS           = 30.0;
     mLastDraw         = 0;
+    mFPS_start        = mServer->mCurrentTime;
+    mFPS_i            = 0;
+    mFPS              = 0;
     
     mTitle        = "GLWindow";
     TRY(mDisplaySize, set_sizes(1, 2));
@@ -68,8 +71,12 @@ public:
     mWidth      = p.val("width", mWidth);
     mFullscreen = p.val("fullscreen", mFullscreen);
     mTitle      = p.val("title", mTitle);
-    mFPS        = p.val("fps", mFPS);
-    
+    mMaxFPS     = p.val("fps", mMaxFPS);
+    if (mMaxFPS > 0)
+      mMinFPSTime = (time_t)((double)ONE_SECOND / mMaxFPS);
+    else
+      mMinFPSTime = 0;
+      
     set_lua(p);
     
     bang(gBangSignal);
@@ -80,9 +87,6 @@ public:
   // inlet 1
   virtual void bang(const Signal& sig)
   {
-    if (mFPS > 0) {
-      bang_me_in(ONE_SECOND / mFPS);
-    }
     mNeedRedisplay = true;
     send(1, sig);
   }
@@ -99,6 +103,10 @@ public:
     
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+    
+    compute_fps();
+    
+    mLastDraw = mServer->mCurrentTime;
     
     if (mLuaDraw) {
       protected_call_lua("draw",sig);
@@ -133,7 +141,6 @@ public:
         send(4, mMouseMatrix);
       }
     mServer->unlock();
-    mNeedRedisplay = true;
   }
   
   virtual void mouse_click(int button, int state, int x, int y)
@@ -145,7 +152,7 @@ public:
   
   virtual void spy()
   { 
-    bprint(mSpy, mSpySize,"%s %ix%i", mTitle.c_str(), mWidth, mHeight);  
+    bprint(mSpy, mSpySize,"%s %ix%i %.1ffps", mTitle.c_str(), mWidth, mHeight, mFPS);  
   }
   
 protected:
@@ -213,10 +220,9 @@ protected:
   
   void idle()
   { 
-    if (mNeedRedisplay && (mFPS == 0 || (mLastDraw + (ONE_SECOND / mFPS) <= mServer->mCurrentTime))) {
+    if (mNeedRedisplay || mMaxFPS == 0 || (mServer->mCurrentTime >= mLastDraw + mMinFPSTime)) {
       glutPostRedisplay();
       mNeedRedisplay = false;
-      mLastDraw = mServer->mCurrentTime;
     }
   }
   
@@ -412,6 +418,16 @@ private:
     open_lua_lib("glut", luaopen_glut); 
   }
   
+  void compute_fps()
+  {
+    mFPS_i++;
+    if (mServer->mCurrentTime >= mFPS_start + ONE_SECOND) {
+      mFPS = (double)mFPS_i * ONE_SECOND / (mServer->mCurrentTime - mFPS_start);
+      mFPS_i = 0;
+      mFPS_start = mServer->mCurrentTime;
+    }
+  }
+  
   std::string mTitle;        /**< Window title. */
   Matrix      mDisplaySize;         /**< Window size. */
   Signal      mDisplaySizeSignal;   /**< Wrapper around display size. */
@@ -428,7 +444,11 @@ private:
   Matrix      mMouseMatrix;  /**< Mouse position matrix. */
   Signal      mMouseMatrixSignal; /**< Wrapper around mMouseMatrix. */
   Mutex       mMutex;
-  double      mFPS;          /**< Limit number of frames per second. (0 = no limit). */
+  double      mMaxFPS;       /**< Limit number of frames per second. (0 = no limit). */
+  time_t      mMinFPSTime;   /**< Minimal time interval between two draws (computed from mMaxFPS). */
+  size_t      mFPS_i;        /**< Frame counter (used to compute fps). */
+  double      mFPS;          /**< Last computed number of frames per second. */
+  time_t      mFPS_start;    /**< Time when the last fps counter reset was called (used to compute fps). */
   time_t      mLastDraw;     /**< Last time the draw command was called. */
   
 protected:

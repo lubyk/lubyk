@@ -10,8 +10,8 @@
 #include <sys/timeb.h> // ftime
 #include <iostream>
 
-// is 20 [ms] too long ? Testing needed.
-#define RUBYK_SLEEP_MS 20.0
+// is 2 [ms] too long ? Testing needed.
+#define RUBYK_SLEEP_MS 2.0
 #define ONE_SECOND 1000.0
 #define ONE_MINUTE (60.0*ONE_SECOND)
 
