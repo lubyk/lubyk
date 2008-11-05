@@ -59,7 +59,11 @@ static uint hashId(K key);
 template <class K, class T>
 class Hash {
 public:
-  Hash(unsigned int size) : mSize(size) { mHashTable = new HashElement<K,T>[size]; }
+  Hash(unsigned int size) : mSize(size)
+  { 
+    mHashTable = new HashElement<K,T>[size];
+  }
+  
   virtual ~Hash() {
     HashElement<K,T> * current, * next;
     // remove collisions
@@ -75,16 +79,22 @@ public:
     delete[] mHashTable;
   }
   
-  void set(const K& pId, const T& pElement);
+  void set (const K& pId, const T& pElement);
   
   /** Get an element of the dictionary and set the pResult to this element. Returns false if no element found. */
-  bool get(T* pResult, const K& pId) const;
+  bool get (T* pResult, const K& pId) const;
+  
+  /** Get an element's key. Returns false if the element could not be found. */
+  bool get_key (K* pResult, const T& pElement) const;
   
   /** Get the default value (last value). */
-  bool get(T* pResult) const;
+  bool get (T* pResult) const;
   
   /** Remove object with the given key. */
-  void remove(const K& pId);
+  void remove (const K& pId);
+  
+  /** Remove the given element. */
+  void remove_element (const T& pElement);
   
   /** Remove all objects. */
   void clear() 
@@ -182,6 +192,24 @@ bool Hash<K,T>::get(T* pResult) const
 }
 
 template <class K, class T>
+bool Hash<K,T>::get_key(K* pResult, const T& pElement) const
+{
+  typename std::vector<K>::const_iterator it;
+  typename std::vector<K>::const_iterator end = mKeys.end();
+  
+  T element;
+  
+  for(it = mKeys.begin(); it < end; it++) {
+    if (get(&element, *it) && element == pElement) {
+      *pResult = *it;
+      return true;
+    }
+  }
+  return false;
+}
+
+
+template <class K, class T>
 void Hash<K,T>::remove(const K& pId) {
   HashElement<K,T> *  found, * next;
   HashElement<K,T> ** set_next;
@@ -228,6 +256,14 @@ void Hash<K,T>::remove(const K& pId) {
   }
 }
 
+
+template <class K, class T>
+void Hash<K,T>::remove_element(const T& pElement) {
+  K key;
+  if (get_key(&key, pElement)) {
+    remove(key);
+  }
+}
 
 template <class K, class T>
 std::ostream& operator<< (std::ostream& pStream, const Hash<K,T>& hash)

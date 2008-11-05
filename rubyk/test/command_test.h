@@ -1,6 +1,6 @@
 #include "test_helper.h"
 
-class testCreateCommand : public CxxTest::TestSuite
+class CreateCommandTest : public CxxTest::TestSuite
 {
 public:
   void test_create( void ) 

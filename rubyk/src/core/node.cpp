@@ -1,9 +1,5 @@
 #include "class.h"
 
-unsigned int Node::sIdCounter    = 0;
-pthread_key_t Node::sThisKey     = NULL;
-pthread_key_t Node::sGLThreadKey = NULL;
-
 Node::~Node()
 {
   // we have to do this here before ~Node, because some events have to be triggered before the node dies (note off).

@@ -3,7 +3,7 @@
 #include "params.h"
 
 
-class TestParams : public CxxTest::TestSuite
+class ParamsTest : public CxxTest::TestSuite
 {
 public:
   void testGetKey( void )

@@ -1,6 +1,6 @@
 #ifndef _NODE_H_
 #define _NODE_H_
-#include "addressable.h"
+#include "object.h"
 #include "event.h"
 #include "params.h"
 #include "inlet.h"
@@ -26,16 +26,12 @@ class Planet;
 /** Nodes do the actual work.
   * They receive messages from their inlets and pass new values to their outlets.
   */  
-class Node : public Addressable
+class Node : public Object
 {
 public:
   Node() : mClass(NULL), mServer(NULL), mId(0), mLooped(false), mIsOK(true), mSpy(NULL), mSpySize(0), mInspect(NULL), mInspectSize(0), mOutput(&std::cout), mDebug(false)
   { 
-    char buf[50];
-    sIdCounter++;
     mTriggerPosition = sIdCounter; // last created is further on the right
-    sprintf(buf,"_%i",sIdCounter);
-    mName = std::string(buf);  // default variable name is 'id'
   }
   
   virtual ~Node();
@@ -259,13 +255,6 @@ public:
   Class * klass () 
   { return mClass; }
   
-  void set_name (const char* pName) 
-  { if (pName[0] != '\0') mName = pName; }
-  
-  void set_name (const std::string& pName) 
-  { if (pName != "") mName = pName; }
-  
-  
   //const std::string& variable_name () { return mName; }
   const char * c_name () { return mName.c_str(); }
   
@@ -438,8 +427,6 @@ protected:
 //  char * mBuf;       /**< Buffer helper for nodes. What for ? */
 //  int  mBufSize;
   
-  std::string mName; /**< Global identifier ('v1', 'x', 'm43') */
-  
   std::ostream * mOutput; /**< Used to pass command result. */
   
   Signal mS; /**< To send through outlets when cast needed. */
@@ -448,8 +435,6 @@ protected:
   
   bool   mDebug; /**< Subclasses can implement conditional output based on debug mode (set with 'debug' command). */
   
-private:
-  static unsigned int sIdCounter;     /**< Each object has a unique id. */
 public:
   static pthread_key_t sThisKey;      /**< Key to retrieve 'this' value from a running thread. */
   static pthread_key_t sGLThreadKey;  /**< Key to test if the running thread is an OpenGL thread. */  

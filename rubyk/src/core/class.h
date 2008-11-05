@@ -166,7 +166,7 @@ public:
   
 private:
   
-  inline Node * operator() (const std::string& pName, Planet * pServer, const Params& p, std::ostream * pOutput);
+  inline Node * new_obj (const std::string& pName, Planet * pServer, const Params& p, std::ostream * pOutput);
   
   inline void make_slots (Node * node)
   {

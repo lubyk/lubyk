@@ -20,7 +20,7 @@ static void receive_value4(void * receiver, const Signal& sig)
   (*((float*)receiver)) = (2*(*((float*)receiver))) + sig.d.value + 4;
 }
 
-class TestSlot : public CxxTest::TestSuite
+class SlotTest : public CxxTest::TestSuite
 {
 public:
   void testSingleConnection( void )

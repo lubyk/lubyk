@@ -2,6 +2,7 @@
 #define _NODE_TESTER_H_
 #include "class.h"
 #include "command.h"
+#include "globals.cpp"
 #include <sstream>
 
 

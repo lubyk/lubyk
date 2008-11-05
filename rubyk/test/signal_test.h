@@ -3,7 +3,7 @@
 #include "rubyk_signal.h"
 
 
-class TestSignal : public CxxTest::TestSuite
+class SignalTest : public CxxTest::TestSuite
 {
 public:
   void testType( void )

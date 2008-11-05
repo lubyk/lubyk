@@ -15,7 +15,7 @@ struct EventUser
 };
 
 
-class TestEvent : public CxxTest::TestSuite
+class EventTest : public CxxTest::TestSuite
 {
 public:
   void test_create( void )

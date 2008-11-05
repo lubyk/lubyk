@@ -3,6 +3,7 @@
 #include <csignal>
 #include <iostream>
 #include <fstream>
+#include "globals.cpp"
 
 Planet * gServer;
 
@@ -13,13 +14,13 @@ void term(int sig)
 
 ////// GLWINDOW HACK /////
 // instanciated in globals.o
-extern bool gRunning;
-
-typedef void (*plot_thread)(void * pEvent);
-
-extern plot_thread gGLWindowStartThread;
-extern void * gGLWindowNode;
-extern bool   gQuitGl;
+/// extern bool gRunning;
+/// 
+/// typedef void (*plot_thread)(void * pEvent);
+/// 
+/// extern plot_thread gGLWindowStartThread;
+/// extern void * gGLWindowNode;
+/// extern bool   gQuitGl;
 
 pthread_t gPlanetThread;
 

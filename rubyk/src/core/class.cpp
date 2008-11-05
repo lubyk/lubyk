@@ -50,7 +50,7 @@ Node * Class::create (Planet * pServer, const std::string& pName, const std::str
 {
   Class * klass;
   if (get(&klass, pClassName))
-    return (*klass)(pName, pServer, p, pOutput);
+    return klass->new_obj(pName, pServer, p, pOutput);
     
   // load failed
   // dummy object in broken mode
@@ -59,7 +59,7 @@ Node * Class::create (Planet * pServer, const std::string& pName, const std::str
     Class::declare<NotFound>("NotFound");
   
   sClasses.get(&klass, "NotFound");
-  Node * obj = (*klass)(pName, pServer, p, pOutput);
+  Node * obj = klass->new_obj(pName, pServer, p, pOutput);
   obj->set_class(klass);
   obj->set_name(pName);
   klass->make_slots(obj);
@@ -67,7 +67,7 @@ Node * Class::create (Planet * pServer, const std::string& pName, const std::str
   return obj;
 }
 
-inline Node * Class::operator() (const std::string& pName, Planet * pServer, const Params& p, std::ostream * pOutput)
+inline Node * Class::new_obj (const std::string& pName, Planet * pServer, const Params& p, std::ostream * pOutput)
 {  
   return (*mCreateFunction)(this, pName, pServer, p, pOutput);
 }

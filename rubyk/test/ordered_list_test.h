@@ -3,7 +3,7 @@
 #include "ordered_list.h"
 
 
-class TestOrderedList : public CxxTest::TestSuite
+class OrderedListTest : public CxxTest::TestSuite
 {
 public:
   void testPushPop( void )
