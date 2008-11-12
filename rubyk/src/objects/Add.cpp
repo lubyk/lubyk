@@ -1,17 +1,36 @@
 #include "class.h"
 
-//////////  Used for testing. Do not modify (Use 'Plus' object). ///////////
-
-
 class Add : public Node
 {
 public:
-  bool init (const Params& p)
+  void init ()
   {
     mValue1 = 0;
     mValue2 = 0;
-    return true;
   }
+  
+  void set_value1 (const Signal& sig)
+  {
+    sig.get(&mValue1);
+  }
+  
+  void get_value1 (Signal& sig)
+  {
+    sig.set(mValue1)
+  }
+  
+  void tempo (VALUE d)
+  {
+    mValue1 = d;
+  }
+  
+  const VALUE tempo () const
+  {
+    return mValue1;
+  }
+  
+  ATTR_ACCESSOR(mValue1)
+  
   
   bool set (const Params& p)
   {

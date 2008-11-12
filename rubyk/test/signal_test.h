@@ -2,6 +2,10 @@
 #include <cxxtest/TestSuite.h>
 #include "rubyk_signal.h"
 
+static double cast_tester(double v)
+{
+  return v;
+}
 
 class SignalTest : public CxxTest::TestSuite
 {
@@ -60,5 +64,12 @@ public:
     //TS_ASSERT_EQUALS(name, std::string("John"));
     TS_ASSERT_EQUALS(age, 32.0);
     TS_ASSERT_EQUALS(year, 1975);
+  }
+  
+  void test_cast( void )
+  {
+    Signal sig;
+    sig.set(345);
+    TS_ASSERT_EQUALS(cast_tester(sig), 345.0);
   }
 };

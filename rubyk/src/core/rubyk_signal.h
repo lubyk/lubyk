@@ -250,6 +250,17 @@ union Signal {
   { set(pPtr, false); }
   
   /// get methods ///
+  inline operator double() const
+  {
+    switch(type) {
+      case IntegerSignal:
+        return (double)i.value;
+      case DoubleSignal:
+        return d.value;
+      default:
+        return 0;
+    }
+  }
   
   /** Get as bang. */
   inline bool is_bang() const { return type == BangSignal; }
