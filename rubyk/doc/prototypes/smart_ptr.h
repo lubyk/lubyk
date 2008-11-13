@@ -27,34 +27,47 @@ public:
   }
   
   /** This could blow up if mPtr is NULL... */
-  const T* operator->() const
-  {
-    return mPtr->mDataPtr;
-  }
-  
-  /** Return a const pointer to the data in the SmartPointer. */
-  const T * data() const
-  {
-    return mPtr ? mPtr->mDataPtr : NULL;
-  }
-  
-  /** Return a pointer to mutable data contained in the SmartPointer. Makes a copy if needed. */
-  T * mutable_data()
-  {
-    if (!mPtr)
-      return NULL;
-      
-    if (mPtr->mRefCount > 1)
-      copy();
-    
-    return mPtr->mDataPtr;
-  }
+  // template<class U>
+  // const U* operator->() const
+  // {
+  //   return (U*)(mPtr->mDataPtr);
+  // }
+  // 
+  // /** Return a const pointer to the data in the SmartPointer. */
+  // template<class U>
+  // const U * data() const
+  // {
+  //   return mPtr ? (U*)(mPtr->mDataPtr) : NULL;
+  // }
+  // 
+  // /** Return a pointer to mutable data contained in the SmartPointer. Makes a copy if needed. */
+  // template<class U>
+  // U * mutable_data()
+  // {
+  //   if (!mPtr)
+  //     return NULL;
+  //     
+  //   if (mPtr->mRefCount > 1)
+  //     copy();
+  //   
+  //   return data();
+  // }
   
   size_t ref_count() const
   {
     return mPtr ? mPtr->mRefCount : 0;
   }
-private:
+  
+  // set to some native type (double *, double, int, etc)
+  template<class U>
+  bool set (U pResult)
+  {
+    if (!mPtr) return false;
+    return mPtr->mDataPtr->set(pResult);
+  }
+  
+protected:
+  
   struct Ptr 
   {
     Ptr(T* p = 0, size_t c = 1) : mDataPtr(p), mRefCount(c) {}
@@ -84,7 +97,7 @@ private:
   {
     if (mPtr) {
       Ptr * p = new Ptr(NULL,0);
-      p->mDataPtr = new T(*(mPtr->mDataPtr)); // copy content
+      p->mDataPtr = mPtr->mDataPtr->clone(); // copy content
       release();  // release old content
       acquire(p); // acquire new copy
     }
