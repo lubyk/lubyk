@@ -81,6 +81,10 @@ public:
     TS_ASSERT(sig.set(&v3));
     assert_log(""); // no object created
     assert_id(1, v3);
-    assert_ref_count(3, v1);
+    assert_ref_count(3, v3);
+    // make sure we can alter the object
+    v3.mutable_data();
+    assert_ref_count(1, v3);
+    assert_log("[1] clone, [2] copy");
   }
 };
