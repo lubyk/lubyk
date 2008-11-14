@@ -2,6 +2,15 @@
 #define _DATA_H_
 #include "value.h"
 
+/** Sub-classes of Data should implement:
+
+// FIXME: can we template this ?
+virtual Data * clone()
+{
+  return new SuperData(*this);
+}
+
+*/
 class Data
 {
 public:

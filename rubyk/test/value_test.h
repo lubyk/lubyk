@@ -10,16 +10,16 @@ public:
   TestData()
   {
     mId = ++sIdCounter;
-    log("create");
+    log("new");
   }
   
   virtual ~TestData()
   {
-    log("destroy");
+    log("dead");
   }
   
   // copy constructor
-  TestData(const Data& v)
+  TestData(const TestData& v)
   {
     mId    = ++sIdCounter;
     log("copy");
@@ -28,7 +28,7 @@ public:
   virtual Data * clone()
   {
     log("clone");
-    return new Data(*this);
+    return new TestData(*this);
   }
   
   static std::ostringstream sOut;
@@ -38,7 +38,8 @@ public:
 protected:
   void log(const char * msg)
   {
-    sOut << "[" << mId << "] " << msg << "\n";
+    if (sOut.str().size() > 0) sOut << ", ";
+    sOut << "[" << mId << "] " << msg;
   }
   
 };
@@ -57,28 +58,62 @@ public:
       return 0;
     }
   }
+  
+  // FIXME: is it possible to use a template for these two methods ?
+  
+  /** Return a const pointer to the data in the SmartPointer. */
+  const TestData * data () const
+  {
+    return mPtr ? (TestData*)(mPtr->mDataPtr) : NULL;
+  }
+  
+  /** Return a pointer to mutable data contained in the SmartPointer. Makes a copy if needed. */
+  TestData * mutable_data ()
+  {
+    if (!mPtr)
+      return NULL;
+
+    if (mPtr->mRefCount > 1)
+      copy();
+
+    return (TestData*)(mPtr->mDataPtr);
+  }
 };
 
 std::ostringstream TestData::sOut(std::ostringstream::out);
 size_t TestData::sIdCounter = 0;
 
 class ValueTest : public CxxTest::TestSuite
-{
+{  
+public:
   void setUp()
   {
     TestData::sIdCounter = 0;
     TestData::sOut.str(std::string(""));
   }
   
-public:
   void test_create_destroy( void )
   {
     TestValue v1(new TestData);
-    assert_log("[1] create\n");
+    assert_log("[1] new");
     TestValue v2;
     v1 = v2;
-    assert_log("[1] create\n[1] destroy\n");
+    assert_log("[1] new, [1] dead");
   }
+  
+  void test_clone( void )
+  {
+    TestValue v1(new TestData);
+    assert_log("[1] new");
+    TestValue v2;
+    v2 = v1;
+    assert_log("[1] new");
+    TestData * d;
+    d = v1.mutable_data();
+    assert_log("[1] new, [1] clone, [2] copy");
+  }
+  
+  
 private:
   void assert_log(const char * pLog)
   {
