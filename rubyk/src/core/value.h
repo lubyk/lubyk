@@ -17,12 +17,44 @@ enum value_t {
 
 This class has some knowledge on its real self and content through the virtual methods "data_type" (content-type) and "value_type" (wrapper-type). For all subclasses of +Value+, the +data_type+ can be either +NilValue+ or the same as the +value_type+.
 
-For the wrapper class +Value+, the +value_type+ is always +AnonymousValue+ and the +data_type+ can be any valid data type. */
+For the wrapper class +Value+, the +value_type+ is always +AnonymousValue+ and the +data_type+ can be any valid data type. 
+
+
+To implement in sub-classes:
+
+
+virtual value_t value_type() const
+{ return SuperValue; }
+
+// FIXME: is it possible to use a template for these 3 methods ?
+
+SuperValue(const Value& pOther)
+{ pOther->set(this); }
+
+const SuperData * data () const
+{
+  return mPtr ? (SuperData*)(mPtr->mDataPtr) : NULL;
+}
+
+SuperData * mutable_data ()
+{
+  if (!mPtr)
+    return NULL;
+
+  if (mPtr->mRefCount > 1)
+    copy();
+
+  return (SuperData*)(mPtr->mDataPtr);
+}
+*/
 class Value : public SmartPtr<Data>
 {
 public:
   Value()
   {}
+  
+  Value(const Value& pOther)
+  { pOther.set(this); }
   
   /** Anonymization of the content to the ancestor class +Data+. */
   Value(Data * p) : SmartPtr<Data>(p) 
@@ -58,8 +90,9 @@ public:
         switch (pOther->value_type())
         {
           // what does the "other" wrapper expect ?
+          case AnonymousValue: // anything
           case NumberValue:
-            *pOther = *this; // pOther acquires our content
+            *pOther = *this;   // pOther acquires our content
             return true;
           default:
             return false;

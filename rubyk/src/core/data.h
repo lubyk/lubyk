@@ -10,6 +10,9 @@ virtual Data * clone()
   return new SuperData(*this);
 }
 
+virtual value_t type() const
+{ return BangValue; }
+
 */
 class Data
 {

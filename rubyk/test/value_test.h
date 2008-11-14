@@ -3,102 +3,23 @@
 #include <cxxtest/TestSuite.h>
 #include "values.h"
 #include <sstream>
+#include "value_test_helper.h"
 
-class TestData : public Data
-{
-public:
-  TestData()
-  {
-    mId = ++sIdCounter;
-    log("new");
-  }
-  
-  virtual ~TestData()
-  {
-    log("dead");
-  }
-  
-  // copy constructor
-  TestData(const TestData& v)
-  {
-    mId    = ++sIdCounter;
-    log("copy");
-  }
-  
-  virtual Data * clone()
-  {
-    log("clone");
-    return new TestData(*this);
-  }
-  
-  static std::ostringstream sOut;
-  static size_t sIdCounter;
-  size_t        mId;
-  
-protected:
-  void log(const char * msg)
-  {
-    if (sOut.str().size() > 0) sOut << ", ";
-    sOut << "[" << mId << "] " << msg;
-  }
-  
-};
-
-class TestValue : public Value
-{
-public:
-  TestValue(TestData* p) : Value(p) {}
-  TestValue() {}
-  
-  size_t data_id()
-  {
-    if (mPtr) {
-      return ((TestData*)mPtr->mDataPtr)->mId;
-    } else {
-      return 0;
-    }
-  }
-  
-  // FIXME: is it possible to use a template for these two methods ?
-  
-  /** Return a const pointer to the data in the SmartPointer. */
-  const TestData * data () const
-  {
-    return mPtr ? (TestData*)(mPtr->mDataPtr) : NULL;
-  }
-  
-  /** Return a pointer to mutable data contained in the SmartPointer. Makes a copy if needed. */
-  TestData * mutable_data ()
-  {
-    if (!mPtr)
-      return NULL;
-
-    if (mPtr->mRefCount > 1)
-      copy();
-
-    return (TestData*)(mPtr->mDataPtr);
-  }
-};
-
-std::ostringstream TestData::sOut(std::ostringstream::out);
-size_t TestData::sIdCounter = 0;
-
-class ValueTest : public CxxTest::TestSuite
+class ValueTest : public ValueTestHelper
 {  
 public:
-  void setUp()
-  {
-    TestData::sIdCounter = 0;
-    TestData::sOut.str(std::string(""));
-  }
   
   void test_create_destroy( void )
   {
     TestValue v1(new TestData);
     assert_log("[1] new");
+    
     TestValue v2;
+    // nothing created
+    assert_log("");
+    // deletes last reference on [1]
     v1 = v2;
-    assert_log("[1] new, [1] dead");
+    assert_log("[1] dead");
   }
   
   void test_clone( void )
@@ -106,27 +27,60 @@ public:
     TestValue v1(new TestData);
     assert_log("[1] new");
     TestValue v2;
+    assert_ref_count(1, v1);
+    
+    // increase reference count
     v2 = v1;
-    assert_log("[1] new");
-    TestData * d;
+    assert_log("");
+    // v1 and v2 share the same object
+    assert_id(1, v1);
+    assert_id(1, v2);
+    assert_ref_count(2, v1);
+    assert_ref_count(2, v2);
+    
+    const TestData * d;
+    // const: no copy
+    d = v1.data();
+    assert_log("");
+    // copy on write
     d = v1.mutable_data();
-    assert_log("[1] new, [1] clone, [2] copy");
+    assert_log("[1] clone, [2] copy");
   }
   
-  
-private:
-  void assert_log(const char * pLog)
+  void test_type_conversion( void )
   {
-    TS_ASSERT_EQUALS(std::string(pLog), TestData::sOut.str());
+    TestValue v1(new TestData);
+    assert_log("[1] new");
+    assert_ref_count(1, v1);
+    
+    // anonymize & share data
+    Value sig(v1);
+    assert_log("");
+    assert_id(1, sig);
+    assert_ref_count(2, v1);
+    // type conversion & share data
+    TestValue v3(sig);
+    assert_log(""); // no object created
+    assert_id(1, v3);
+    assert_ref_count(3, v1);
   }
   
-  void assert_ref_count(size_t count, Value& v)
+  void test_set( void )
   {
-    TS_ASSERT_EQUALS(count, v.ref_count());
-  }
-  
-  void assert_id(size_t id, TestValue& v)
-  {
-    TS_ASSERT_EQUALS(id, v.data_id());
+    TestValue v1(new TestData);
+    assert_log("[1] new");
+    assert_ref_count(1, v1);
+    
+    // anonymize & share data
+    Value sig(v1);
+    assert_log("");
+    assert_id(1, sig);
+    assert_ref_count(2, v1);
+    // type conversion & share data
+    TestValue v3;
+    TS_ASSERT(sig.set(&v3));
+    assert_log(""); // no object created
+    assert_id(1, v3);
+    assert_ref_count(3, v1);
   }
 };
