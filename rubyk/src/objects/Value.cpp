@@ -1,6 +1,6 @@
 #include "class.h"
 
-class Value : public Node
+class ValueObj : public Node
 {
 public:
   
@@ -55,7 +55,7 @@ private:
 
 extern "C" void init()
 {
-  CLASS (Value)
-  INLET (Value, set_value)
+  Class::declare<ValueObj>("Value");
+  Class::find("Value")->add_inlet<ValueObj, &ValueObj::set_value>("set_value");
   OUTLET(Value, value)
 }

@@ -1,6 +1,6 @@
 #include "test_helper.h"
 
-class ValueTest : public ParseTest
+class ValueObjTest : public ParseTest
 {
 public:
   
