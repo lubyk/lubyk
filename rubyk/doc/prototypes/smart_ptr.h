@@ -58,14 +58,6 @@ public:
     return mPtr ? mPtr->mRefCount : 0;
   }
   
-  // set to some native type (double *, double, int, etc)
-  template<class U>
-  bool set (U pResult)
-  {
-    if (!mPtr) return false;
-    return mPtr->mDataPtr->set(pResult);
-  }
-  
 protected:
   
   struct Ptr 

@@ -234,7 +234,15 @@ public:
   }
 };
 
+class Double : public Value
+{
+  double f;
+};
 
+class Int : public Value
+{
+  int f;
+};
 
 int main()
 {
@@ -292,4 +300,10 @@ int main()
   }
   
   v1.print("    v1 =",v1.ref_count());
+  
+  printf("sizeof(Value): %i\n", sizeof(Value));
+  printf("sizeof(Double): %i\n", sizeof(Double));
+  printf("sizeof(double): %i\n", sizeof(double));
+  printf("sizeof(double*): %i\n", sizeof(double*));
+  printf("sizeof(Data): %i\n", sizeof(Data));
 }
