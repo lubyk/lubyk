@@ -46,15 +46,15 @@ protected:
   
 };
 
-class TestValue : public Value
+class TestValue : public ValueTemplate<NumberValue, TestData>
 {
 public:
-  TestValue(TestData* p) : Value(p) {}
-  
-  TestValue() {}
+  TestValue(TestData* p) : ValueTemplate<NumberValue, TestData>(p) {}
   
   TestValue(const Value& pOther)
   { pOther.set(this); }
+  
+  TestValue() {}
   
   size_t data_id()
   {
@@ -65,28 +65,6 @@ public:
     }
   }
   
-  virtual value_t value_type() const
-  { return NumberValue; }
-
-  // FIXME: is it possible to use a template for these two methods ?
-  
-  /** Return a const pointer to the data in the SmartPointer. */
-  const TestData * data () const
-  {
-    return mPtr ? (TestData*)(mPtr->mDataPtr) : NULL;
-  }
-  
-  /** Return a pointer to mutable data contained in the SmartPointer. Makes a copy if needed. */
-  TestData * mutable_data ()
-  {
-    if (!mPtr)
-      return NULL;
-
-    if (mPtr->mRefCount > 1)
-      copy();
-
-    return (TestData*)(mPtr->mDataPtr);
-  }
 };
 
 std::ostringstream TestData::sOut(std::ostringstream::out);
