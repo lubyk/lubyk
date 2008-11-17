@@ -15,37 +15,9 @@ enum value_t {
 
 /** Generic wrapper for all values passed between objects through outlets and to/from methods called through osc or the command line.
 
-This class has some knowledge on its real self and content through the virtual methods "data_type" (content-type) and "value_type" (wrapper-type). For all subclasses of +Value+, the +data_type+ can be either +NilValue+ or the same as the +value_type+.
+This class has some knowledge on its real self and content through the virtual methods "data_type" (content-type) and "type" (wrapper-type). For all subclasses of +Value+, the +data_type+ can be either +NilValue+ or the same as the +type+.
 
-For the wrapper class +Value+, the +value_type+ is always +AnonymousValue+ and the +data_type+ can be any valid data type. 
-
-
-To implement in sub-classes:
-
-
-virtual value_t value_type() const
-{ return SuperValue; }
-
-// FIXME: is it possible to use a template for these 3 methods ?
-
-SuperValue(const Value& pOther)
-{ pOther->set(this); }
-
-const SuperData * data () const
-{
-  return mPtr ? (SuperData*)(mPtr->mDataPtr) : NULL;
-}
-
-SuperData * mutable_data ()
-{
-  if (!mPtr)
-    return NULL;
-
-  if (mPtr->mRefCount > 1)
-    copy();
-
-  return (SuperData*)(mPtr->mDataPtr);
-}
+For the wrapper class +Value+, the +type+ is always +AnonymousValue+ and the +data_type+ can be any valid data type. 
 */
 class Value : public SmartPtr<Data>
 {
@@ -65,12 +37,12 @@ public:
   { return mPtr ? mPtr->mDataPtr->type() : NilValue; }
   
   /** Returns the value-type (type of the pointer itself). */
-  virtual value_t value_type() const
+  virtual value_t type() const
   { return AnonymousValue; }
   
   /** Textual representation of the value-type. */
-  const char* value_type_name() const
-  { return name_from_type(value_type()); }
+  const char* type_name() const
+  { return name_from_type(type()); }
   
   /** Textual representation of the data-type. */
   const char* data_type_name() const
@@ -87,7 +59,7 @@ public:
     {
       // what do I contain ?
       case NumberValue:
-        switch (pOther->value_type())
+        switch (pOther->type())
         {
           // what does the "other" wrapper expect ?
           case AnonymousValue: // anything
@@ -141,6 +113,10 @@ private:
   { pOther.set(this); } \
   const data_type * data () const \
   { return mPtr ? data_pointer() : NULL; } \
+  const data_type * operator->() const \
+  { return data(); } \
+  const data_type& operator*() const \
+  { return *data(); } \
   data_type * mutable_data () \
   { if (!mPtr) return NULL; \
     copy_if_shared(); \

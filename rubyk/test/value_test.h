@@ -87,4 +87,38 @@ public:
     assert_ref_count(1, v3);
     assert_log("[1] clone, [2] copy");
   }
+  
+  void test_accessor( void )
+  {
+    TestValue v1(new TestData);
+    assert_log("[1] new");
+    assert_ref_count(1, v1);
+    
+    // share data
+    TestValue v2(v1);
+    assert_log("");
+    assert_id(1, v2);
+    assert_ref_count(2, v1);
+    
+    // const accessor on shared data
+    TS_ASSERT_EQUALS(1, v1->id());
+    TS_ASSERT_EQUALS(1, (*v1).id());
+    assert_log("");
+    assert_id(1, v2);
+    assert_ref_count(2, v1);
+    
+    // non-const accessor on shared
+    TS_ASSERT_EQUALS(2, v1.mutable_data()->id());
+    assert_log("[1] clone, [2] copy");
+    assert_id(2, v1);
+    assert_id(1, v2);
+    assert_ref_count(1, v1);
+    assert_ref_count(1, v2);
+    
+    // non-const accessor on non-shared
+    TS_ASSERT_EQUALS(2, v1.mutable_data()->id());
+    assert_log("");
+    assert_id(2, v1);
+    assert_ref_count(1, v1);
+  }
 };

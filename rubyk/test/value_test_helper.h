@@ -33,6 +33,9 @@ public:
   virtual value_t type() const
   { return NumberValue; }
   
+  size_t id() const
+  { return mId; }
+
   static std::ostringstream sOut;
   static size_t sIdCounter;
   size_t        mId;
