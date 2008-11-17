@@ -2,18 +2,7 @@
 #define _DATA_H_
 #include "value.h"
 
-/** Sub-classes of Data should implement:
-
-// FIXME: can we template this ?
-virtual Data * clone()
-{
-  return new SuperData(*this);
-}
-
-virtual value_t type() const
-{ return BangValue; }
-
-*/
+/** Base class for all data transmitted along objects or used as parameter/return for methods. */
 class Data
 {
 public:
@@ -33,5 +22,14 @@ public:
   { return false; }
   
 };
+
+/** Macro to ease Data specialization. */
+#define DATA_METHODS(klass,signature) \
+  klass() {} \
+  virtual Data * clone() \
+  { return new NumberData(*this); } \
+  virtual value_t type() const \
+  { return signature; } \
+
 
 #endif // _DATA_H_

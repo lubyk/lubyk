@@ -131,4 +131,25 @@ private:
     }
   }
 };
+
+/** Macro to ease Value specialization. */
+#define VALUE_METHODS(klass,data_type,signature) \
+  klass() {} \
+  klass(data_type* p) : Value(p) {} \
+  virtual ~klass() {} \
+  klass(const Value& pOther) \
+  { pOther.set(this); } \
+  const data_type * data () const \
+  { return mPtr ? data_pointer() : NULL; } \
+  data_type * mutable_data () \
+  { if (!mPtr) return NULL; \
+    copy_if_shared(); \
+    return (data_type*)(mPtr->mDataPtr); } \
+  virtual value_t type() const \
+  { return signature; } \
+protected: \
+  inline data_type * data_pointer() const \
+  { return (data_type*)(mPtr->mDataPtr); } \
+public: \
+
 #endif // _VALUE_H_

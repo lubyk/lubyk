@@ -46,15 +46,10 @@ protected:
   
 };
 
-class TestValue : public ValueTemplate<NumberValue, TestData>
+class TestValue : public Value
 {
 public:
-  TestValue(TestData* p) : ValueTemplate<NumberValue, TestData>(p) {}
-  
-  TestValue(const Value& pOther)
-  { pOther.set(this); }
-  
-  TestValue() {}
+  VALUE_METHODS(TestValue, TestData, NumberValue)
   
   size_t data_id()
   {

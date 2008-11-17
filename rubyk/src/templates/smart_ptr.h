@@ -47,6 +47,12 @@ protected:
     size_t mRefCount;
   };
   
+  /** Create a (writteable) copy if the content is shared. */
+  inline void copy_if_shared()
+  {
+    if (mPtr->mRefCount > 1) copy();
+  }
+  
   /** Copy before alteration. Only called if the content is not shared. */
   void copy()
   {

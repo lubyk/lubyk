@@ -1,13 +1,14 @@
 #ifndef _NUMBER_H_
 #define _NUMBER_H_
-#include "value_template.h"
+#include "value.h"
 
 class Number;
 
+/* Holds the actual data of the Number class. This is a wrapper around a double. */
 class NumberData : public Data
 {
 public:
-  NumberData() {}
+  DATA_METHODS(NumberData, NumberValue)
   
   NumberData(const double& d) : mValue(d) {}
   
@@ -17,43 +18,34 @@ public:
     mValue = v.mValue;
   }
   
-  virtual Data * clone()
-  {
-    return new NumberData(*this);
-  }
-  
-  /** This method needs to be specialized for each template instanciation. */
-  virtual value_t type() const
-  { return NumberValue; }
+  virtual ~NumberData() {}
   
 private:
   friend class Number;
   double mValue;
 };
 
-class Number : public ValueTemplate<NumberValue, NumberData>
+/** Value class to hold a single number (double). */
+class Number : public Value
 {
 public:
-  // FIXME: can we avoid these 4 constructors ?
-  Number(double d) : ValueTemplate<NumberValue, NumberData>(new NumberData(d)) {}
+  VALUE_METHODS(Number, NumberData, NumberValue)
   
-  Number(NumberData* p) : ValueTemplate<NumberValue, NumberData>(p) {}
+  Number(double d) : Value(new NumberData(d)) {}
   
-  Number(const Value& pOther)
-  { pOther.set(this); }
-  
-  Number() {}
-  
+  /** Set Number from double. */
   double operator= (double d)
   {
     if (!mPtr) {
       mPtr = new Ptr(new NumberData(d));
     } else {
+      copy_if_shared();
       ((NumberData*)(mPtr->mDataPtr))->mValue = d;
     }
     return d;
   }
   
+  /** Return the value. */
   double value()
   {
     if (mPtr) {
