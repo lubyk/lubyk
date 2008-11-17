@@ -1,7 +1,7 @@
 // loop buffer test
 // ordered_list_test.h 
 #include <cxxtest/TestSuite.h>
-#include "number.h"
+#include "number_value.h"
 
 
 class NumberTest : public CxxTest::TestSuite
