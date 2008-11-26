@@ -113,7 +113,7 @@ bool LuaScript::real_from_lua(real_t * d)
 {
   int index = lua_gettop(mLua);
   if (!lua_isnumber(mLua, index)) {
-    *mOutput << mName << ": wrong value type to get real_t (" << lua_typename(mLua, index) << " at " << index << ").\n";
+    *mOutput << mName << ": wrong value type to get number (" << lua_typename(mLua, index) << " at " << index << ").\n";
     return false;
   }
   *d = lua_tonumber(mLua,index);

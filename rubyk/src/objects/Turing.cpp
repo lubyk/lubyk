@@ -937,7 +937,7 @@ private:
     out << "  node [ style = bold, fontsize = 12];\n";
   	// first node
   	if (mStateCount > 1) {
-      out << "  node [ fixedsize = true, height = 0.5, shape = real_tcircle ];\n";
+      out << "  node [ fixedsize = true, height = 0.5, shape = doublecircle ];\n";
       out << "  " << mStateNames[1] << ";\n";
   	}
   	
