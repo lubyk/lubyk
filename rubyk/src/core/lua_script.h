@@ -80,7 +80,7 @@ public:
   bool signal_from_lua (Signal * sig, int index, Matrix& pMat, MidiMessage& pMsg);
   
   /** Get a real_t from the current parameter list. */
-  bool real_t_from_lua (real_t *);
+  bool real_from_lua (real_t *);
   
   /** Get a string from the current parameter list. */
   bool string_from_lua (std::string *);

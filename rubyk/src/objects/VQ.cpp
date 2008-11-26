@@ -57,7 +57,7 @@ public:
       }
     }
 
-    mScale        = p.val("scale", (real_t)mCodebook.col_count());   /**< Value to multiply real_ts before scaling to integers. */
+    mScale        = p.val("scale", (real_t)mCodebook.col_count());   /**< Value to multiply reals before scaling to integers. */
     mFolder       = p.val("data", mFolder);
     
     mState = Waiting;
@@ -311,7 +311,7 @@ private:
     }
     
     if(!mCodebook.cast_append(int_codebook.data, int_codebook.size(), 1.0 / mScale)) {
-      *mOutput << mName << ": could not copy integer codebook to real_ts codebook (" << mCodebook.error_msg() << ")\n";
+      *mOutput << mName << ": could not copy integer codebook to reals codebook (" << mCodebook.error_msg() << ")\n";
       return;
     }
     
@@ -350,7 +350,7 @@ private:
   pthread_t mThread;       /**< Used for learning. */
   std::string mFolder;     /**< Where to store training data, codebook vectors. */
   
-  real_t    mScale;        /**< Value to multiply real_ts before conversion to integer. */
+  real_t    mScale;        /**< Value to multiply reals before conversion to integer. */
   Matrix    mCodebook;     /**< Matrix of mCodebookSize x mVectorSize. */
   IntMatrix mTrainingData; /**< Matrix of mTrainingSize x mVectorSize. Used during training. */
   FILE *    mTrainFile;    /**< Where the training vectors are stored. */

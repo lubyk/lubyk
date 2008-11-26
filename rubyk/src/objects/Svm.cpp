@@ -365,8 +365,8 @@ private:
     }
     *mOutput << "\n";
     
-    if (!alloc_real_ts(&mDistances,    mLabelCount * (mLabelCount-1)/2, "pairwise distances")) return false;
-    if (!alloc_real_ts(&mPairwiseProb, mLabelCount * mLabelCount,   "pairwise probabilities")) return false;
+    if (!alloc_reals(&mDistances,    mLabelCount * (mLabelCount-1)/2, "pairwise distances")) return false;
+    if (!alloc_reals(&mPairwiseProb, mLabelCount * mLabelCount,   "pairwise probabilities")) return false;
     
     return true;
   }
@@ -417,7 +417,7 @@ private:
   	rewind(fp);
 
     
-    if (!alloc_real_ts(&mProblem.y, mProblem.l, "problem.y")) goto readpb_fail;
+    if (!alloc_reals(&mProblem.y, mProblem.l, "problem.y")) goto readpb_fail;
     if (!allocate<struct svm_node *>(&mProblem.x, mProblem.l, "problem.x", "svm_node pointers")) goto readpb_fail;
     if (!allocate<struct svm_node>(  &mXSpace, elements, "mXSpace", "svm_nodes")) goto readpb_fail;
     //mProblem.y = (real_t*)            malloc(mProblem.l * sizeof(real_t));

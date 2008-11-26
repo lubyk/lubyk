@@ -166,7 +166,7 @@ public:
   inline bool subtract(const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1, real_t pScale = 1.0)
   { return add(pOther, pStartRow, pEndRow, -pScale); }
   
-  /** Add an array of real_ts to each elements in the matrix. 
+  /** Add an array of reals to each elements in the matrix. 
     * If the size is the same as the matrix : one to one.
     * If the size is col_size : add to each row.
     * If the size is row_size : add corresponding value to element in the row. */

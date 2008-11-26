@@ -96,7 +96,7 @@ public:
     TS_ASSERT_EQUALS(m2[2][2], m1[1][2]);
   }
   
-  void test_append_real_ts( void )
+  void test_append_reals( void )
   {
     Matrix m2;
     m2.set_sizes(2,3);
@@ -149,7 +149,7 @@ public:
     TS_ASSERT(!m2.append(3.5));
   }
   
-  void test_append_more_real_ts( void )
+  void test_append_more_reals( void )
   {
     Matrix m2;
     m2.set_sizes(2,3);
@@ -285,7 +285,7 @@ public:
     TS_ASSERT_EQUALS(m2[1][2], 29.5);
   }
   
-  void test_add_real_ts( void )
+  void test_add_reals( void )
   {
     Matrix m2;
     real_t d[6] = {1, 2, 3, 4, 5, 6};
@@ -305,7 +305,7 @@ public:
     TS_ASSERT_EQUALS(m2[1][2], 6.5);
   }
   
-  void test_add_real_ts_vector( void )
+  void test_add_reals_vector( void )
   {
     Matrix m2;
     real_t d[3] = {0.5, 1, 0.5};
@@ -327,7 +327,7 @@ public:
     TS_ASSERT_EQUALS(m2[1][2], 1.5);
   }
   
-  void test_add_real_ts_column( void )
+  void test_add_reals_column( void )
   {
     Matrix m2;
     real_t d[2] = {10, 20};

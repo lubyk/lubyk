@@ -109,7 +109,7 @@ bool LuaScript::signal_from_lua(Signal * sig, int index)
   return signal_from_lua(sig, index, mLuaMatrix, mLuaMidiMessage);
 }
 
-bool LuaScript::real_t_from_lua(real_t * d)
+bool LuaScript::real_from_lua(real_t * d)
 {
   int index = lua_gettop(mLua);
   if (!lua_isnumber(mLua, index)) {
@@ -294,7 +294,7 @@ int LuaScript::send_for_lua(lua_State * L)
       node->error("could not get signal");
       return 0;
     }
-    if (!node->real_t_from_lua(&p)) {
+    if (!node->real_from_lua(&p)) {
       node->error("could not get port from lua in 'send'");
       return 0;
     }
@@ -313,22 +313,22 @@ int LuaScript::send_note_for_lua(lua_State * L)
     size_t port;
     int note, velocity, length, channel;
     time_t when;
-    if (!node->real_t_from_lua(&d)) {
+    if (!node->real_from_lua(&d)) {
       node->error("could not get time from lua in 'send_note'");
       return 0;
     }
     when = (time_t)d;
-    if (!node->real_t_from_lua(&d)) {
+    if (!node->real_from_lua(&d)) {
       node->error("could not get channel from lua in 'send_note'");
       return 0;
     }
     channel = d;
-    if (!node->real_t_from_lua(&d)) {
+    if (!node->real_from_lua(&d)) {
       node->error("could not get length from lua in 'send_note'");
       return 0;
     }
     length = d;
-    if (!node->real_t_from_lua(&d)) {
+    if (!node->real_from_lua(&d)) {
       node->error("could not get velocity from lua in 'send_note'");
       return 0;
     }
@@ -341,14 +341,14 @@ int LuaScript::send_note_for_lua(lua_State * L)
         note = -1;
       }
     } else {
-      if (!node->real_t_from_lua(&d)) {
+      if (!node->real_from_lua(&d)) {
         node->error("could not get note from lua in 'send_note'");
         return 0;
       } else {
         note = d;
       }
     }
-    if (!node->real_t_from_lua(&d)) {
+    if (!node->real_from_lua(&d)) {
       node->error("could not get port from lua in 'send_note'");
       return 0;
     }
@@ -373,27 +373,27 @@ int LuaScript::send_ctrl_for_lua(lua_State * L)
     size_t port;
     int ctrl, value, channel;
     time_t when;
-    if (!node->real_t_from_lua(&d)) {
+    if (!node->real_from_lua(&d)) {
       node->error("could not get time from lua in 'send_ctrl'");
       return 0;
     }
     when = d;
-    if (!node->real_t_from_lua(&d)) {
+    if (!node->real_from_lua(&d)) {
       node->error("could not get channel from lua in 'send_ctrl'");
       return 0;
     }
     channel = d;
-    if (!node->real_t_from_lua(&d)) {
+    if (!node->real_from_lua(&d)) {
       node->error("could not get value from lua in 'send_ctrl'");
       return 0;
     }
     value = d;
-    if (!node->real_t_from_lua(&d)) {
+    if (!node->real_from_lua(&d)) {
       node->error("could not get ctrl from lua in 'send_ctrl'");
       return 0;
     }
     ctrl = d;
-    if (!node->real_t_from_lua(&d)) {
+    if (!node->real_from_lua(&d)) {
       node->error("could not get port from lua in 'send_ctrl'");
       return 0;
     }

@@ -18,7 +18,7 @@ enum rubyk_signal_t {
   BangSignal = 1,    /**< Trigger update without changing values. */
   IntegerSignal,     /**< IntegerSignal value. */
   DoubleSignal,      /**< DoubleSignal (actually real_t). */
-  MatrixSignal,      /**< Pointer to a matrix of real_ts. */
+  MatrixSignal,      /**< Pointer to a matrix of reals. */
   StringSignal,      /**< Pointer to a std::string. */
   MidiSignal,        /**< Pointer to a midi message. */
   VoidPointerSignal, /**< Void pointer. If you want a malloc allocated buffer to be freed with the signal, set 'free_me' attribute to true.*/

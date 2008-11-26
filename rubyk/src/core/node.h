@@ -334,13 +334,13 @@ protected:
     *mOutput << mName << ": " << pMsg << ".\n";
   }
   
-  /** Allocate/reallocate real_ts. Print an error on failure. */
-  bool alloc_real_ts(real_t ** pBuffer, size_t pSize, const char * pName)
+  /** Allocate/reallocate reals. Print an error on failure. */
+  bool alloc_reals(real_t ** pBuffer, size_t pSize, const char * pName)
   {
-    return allocate<real_t>(pBuffer, pSize, pName, "real_ts");
+    return allocate<real_t>(pBuffer, pSize, pName, "reals");
   }
   
-  /** Allocate/reallocate real_ts. Print an error on failure. */
+  /** Allocate/reallocate reals. Print an error on failure. */
   bool alloc_ints(int ** pBuffer, size_t pSize, const char * pName)
   {
     return allocate<int>(pBuffer, pSize, pName, "ints");

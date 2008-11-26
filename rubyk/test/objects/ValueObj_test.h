@@ -8,7 +8,7 @@ public:
   { parse("n=Value()\nn=>p\n");
     assert_print("n.b\n","Bang!\n"); }
   
-  void test_real_t( void ) 
+  void test_real( void ) 
   { parse("n=Value(1.23)\nn=>p\n");
     assert_print("n.b\n","1.23\n"); }
   
