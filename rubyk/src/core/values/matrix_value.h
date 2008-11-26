@@ -9,34 +9,37 @@
 #define _MATRIX_VALUE_H_
 #include "value.h"
 
-class Matrixx; // naming Matrixx to avoid name class with legacy Matrix. When Matrix is removed, this will be renamed.
+template<class T>
+class TMatrixx; // naming Matrixx to avoid name class with legacy Matrix. When Matrix is removed, this will be renamed.
 
 /* Holds the actual data of the Matrix class. */
-class MatrixData : public Data, public TMatrix<double>
+template<class T>
+class TMatrixData : public Data, public TMatrix<T>
 {
 public:
-  MatrixData() : TMatrix<double>() {}
+  TMatrixData() : TMatrix<T>() {}
   
-  MatrixData(size_t pRowCount, size_t pColCount) : TMatrix<double>(pRowCount, pColCount) {}
+  TMatrixData(size_t pRowCount, size_t pColCount) : TMatrix<T>(pRowCount, pColCount) {}
   
   virtual Data * clone()
-  { return new MatrixData(*this); }
+  { return new TMatrixData(*this); }
   
   virtual value_t type() const
-  { return MatrixValue; }
+  { return AnonymousValue; }         // Should be specialized in IntMatrix template.
 protected:
-  friend class Matrixx;
+  friend class TMatrixx<T>;
 };
 
-/** Value class to hold a single number (double). */
-class Matrixx : public Value
+/** Value class to hold a matrix of elements of type 'T'. */
+template<class T>
+class TMatrixx : public Value
 {
 public:
-  VALUE_METHODS(Matrixx, MatrixData, MatrixValue)
+  VALUE_METHODS(TMatrixx, TMatrixData<T>, AnonymousValue)
   
-  Matrixx(size_t pRowCount, size_t pColCount) : Value(new MatrixData(pRowCount, pColCount)) {}
+  TMatrixx(size_t pRowCount, size_t pColCount) : Value(new TMatrixData<T>(pRowCount, pColCount)) {}
   
-  const double * raw_data () const
+  const T * raw_data () const
   {
     if (mPtr) {
       return data_pointer()->data;
@@ -64,7 +67,7 @@ public:
   }
   
   /** Set all values to 'pVal'. */
-  void fill(double pVal)
+  void fill(T pVal)
   {
     return mutable_data()->fill(pVal);
   }
@@ -81,7 +84,7 @@ public:
     */
   bool to_file(FILE * pFile, bool isMatrix = true) const
   {
-    const MatrixData * d = data();
+    const TMatrixData<T> * d = data();
     if (!d) return false;
     return d->to_file(pFile, isMatrix);
   }
@@ -89,7 +92,7 @@ public:
   /** Write a matrix to a filepath. */
   bool to_file(const std::string& pPath, const char * pMode = "wb", bool isMatrix = true) const
   {
-    const MatrixData * d = data();
+    const TMatrixData<T> * d = data();
     if (!d) return false;
     return d->to_file(pPath, pMode, isMatrix);
   }
@@ -124,9 +127,9 @@ public:
     * @param pOther      other matrix to copy the data from.
     * @param pStartRow   where to start copying the data from (default is 0).
     * @param pEndRow     last row to copy (default is -1 = last row). */
-  bool copy(const Matrixx& pOther, int pStartRow = 0, int pEndRow = -1)
+  bool copy(const TMatrixx& pOther, int pStartRow = 0, int pEndRow = -1)
   {
-    const MatrixData * other_data = pOther.data();
+    const TMatrixData<T> * other_data = pOther.data();
     if (!other_data) return false;
     return mutable_data()->copy_at(0, *other_data, pStartRow, pEndRow, true);
   }
@@ -151,9 +154,9 @@ public:
     * @param pResize     if true and pRowIndex is '0', the matrix is resized to the copied data.
     *
     * @return bool       returns false if allocation of new space failed. */
-  bool copy_at(int pRowIndex, const Matrixx& pOther, int pStartRow = 0, int pEndRow = -1, bool pResize = false)
+  bool copy_at(int pRowIndex, const TMatrixx& pOther, int pStartRow = 0, int pEndRow = -1, bool pResize = false)
   {
-    const MatrixData * other_data = pOther.data();
+    const TMatrixData<T> * other_data = pOther.data();
     if (!other_data) return false;
     return mutable_data()->copy_at(pRowIndex, *other_data, pStartRow, pEndRow, pResize);
   }
@@ -163,7 +166,7 @@ public:
   // FIXME: what is this ? bool copy_at(int pRowIndex, const Signal& sig);
   
   /** Append a vector to the end of the current data. Size increases automatically. */
-  bool append (const double * pVector, size_t pVectorSize)
+  bool append (const T * pVector, size_t pVectorSize)
   {
     return mutable_data()->append(pVector, pVectorSize);
   }
@@ -176,15 +179,15 @@ public:
     * @param pStartRow   where to start copying the data from (default is 0).
     * @param pEndRow     last row to copy (default is -1 = last row).
     * @return false if the column count of both matrices do not match. */
-  bool append (const Matrixx& pOther, int pStartRow = 0, int pEndRow = -1)
+  bool append (const TMatrixx& pOther, int pStartRow = 0, int pEndRow = -1)
   {
-    const MatrixData * other_data = pOther.data();
+    const TMatrixData<T> * other_data = pOther.data();
     if (!other_data) return false;
     return mutable_data()->append(*other_data, pStartRow, pEndRow);
   }
   
   /** Append a value at the end of a vector. Size increases automatically. */
-  bool append (double pValue)
+  bool append (T pValue)
   {
     return mutable_data()->append(pValue);
   }
@@ -208,25 +211,45 @@ public:
   
   /** Return a pointer to the first element in the row pointed to by 'pIndex'. 
     * You have to make sure pIndex is smaller the mRowCount. No verification is done here. */
-  double * operator[] (size_t pIndex)
+  T * operator[] (size_t pIndex)
   {
     return (*data_pointer())[pIndex];
   }
   
   /** Return a pointer to the first element in the row pointed to by 'pIndex'. 
     * You have to make sure pIndex is smaller the mRowCount. No verification is done here. */
-  const double * operator[] (size_t pIndex) const
+  const T * operator[] (size_t pIndex) const
   {
     return (*data_pointer())[pIndex];
   }
   
   /** Return the element in the row pointed to by 'pRowIndex' at the column 'pColIndex'. 
     * You have to make sure indexes are valid. No verification is done here. */
-  const double value_at (size_t pRowIndex, size_t pColIndex) const
+  const T& value_at (size_t pRowIndex, size_t pColIndex) const
   {
     return mPtr ? data_pointer()->value_at(pRowIndex, pColIndex) : 0;
   }
   
 };
+
+
+template<>
+value_t TMatrixData<double>::type() const
+{ return MatrixValue; }
+
+template<>
+value_t TMatrixx<double>::type() const
+{ return MatrixValue; }
+
+template<>
+value_t TMatrixData<char>::type() const
+{ return CharMatrixValue; }
+
+template<>
+value_t TMatrixx<char>::type() const
+{ return CharMatrixValue; }
+
+typedef TMatrixx<double> Matrixx;
+typedef TMatrixData<double> MatrixData;
 
 #endif // _MATRIX_VALUE_H_

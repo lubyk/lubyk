@@ -7,6 +7,7 @@ enum value_t {
   AnonymousValue,
   NumberValue,
   MatrixValue,
+  CharMatrixValue,
 };
 
 #include "smart_ptr.h"
