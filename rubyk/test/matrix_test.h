@@ -22,35 +22,36 @@ public:
     TS_ASSERT_EQUALS( 6, n2->size());
   }
   
-  //void test_append( void )
-  //{
-  //  Matrixx m1, m2;
-  //  MatrixData * m1_data = m1.mutable_data();
-  //  set_fixture(m1_data);
-  //  m2->set_sizes(2,3);
-  //  m2->clear();
-  //  
-  //  TS_ASSERT_EQUALS(m2.row_count(), 2);
-  //  TS_ASSERT(m2.append(m1));
-  //  TS_ASSERT_EQUALS(m2.row_count(), 4);
-  //  TS_ASSERT_EQUALS(m2.col_count(), 3);
-  //  
-  //  TS_ASSERT_EQUALS(m2[0][0], 0.0);
-  //  TS_ASSERT_EQUALS(m2[0][1], 0.0);
-  //  TS_ASSERT_EQUALS(m2[0][2], 0.0);
-  //  
-  //  TS_ASSERT_EQUALS(m2[1][0], 0.0);
-  //  TS_ASSERT_EQUALS(m2[1][1], 0.0);
-  //  TS_ASSERT_EQUALS(m2[1][2], 0.0);
-  //  
-  //  TS_ASSERT_EQUALS(m2[2][0], m1[0][0]);
-  //  TS_ASSERT_EQUALS(m2[2][1], m1[0][1]);
-  //  TS_ASSERT_EQUALS(m2[2][2], m1[0][2]);
-  //  
-  //  TS_ASSERT_EQUALS(m2[3][0], m1[1][0]);
-  //  TS_ASSERT_EQUALS(m2[3][1], m1[1][1]);
-  //  TS_ASSERT_EQUALS(m2[3][2], m1[1][2]);
-  //}
+  void test_append( void )
+  {
+    Matrixx m1, m2;
+    set_fixture(m1);
+    TS_ASSERT(m2.set_sizes(2,3));
+    m2.clear();
+    
+    TS_ASSERT_EQUALS(m2.row_count(), 2);
+    /*
+    TS_ASSERT(m2.append(m1));
+    TS_ASSERT_EQUALS(m2.row_count(), 4);
+    TS_ASSERT_EQUALS(m2.col_count(), 3);
+    
+    TS_ASSERT_EQUALS(m2[0][0], 0.0);
+    TS_ASSERT_EQUALS(m2[0][1], 0.0);
+    TS_ASSERT_EQUALS(m2[0][2], 0.0);
+    
+    TS_ASSERT_EQUALS(m2[1][0], 0.0);
+    TS_ASSERT_EQUALS(m2[1][1], 0.0);
+    TS_ASSERT_EQUALS(m2[1][2], 0.0);
+    
+    TS_ASSERT_EQUALS(m2[2][0], m1[0][0]);
+    TS_ASSERT_EQUALS(m2[2][1], m1[0][1]);
+    TS_ASSERT_EQUALS(m2[2][2], m1[0][2]);
+    
+    TS_ASSERT_EQUALS(m2[3][0], m1[1][0]);
+    TS_ASSERT_EQUALS(m2[3][1], m1[1][1]);
+    TS_ASSERT_EQUALS(m2[3][2], m1[1][2]);
+    */
+  }
   
   /*
   void _operator_equal( void )

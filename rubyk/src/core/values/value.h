@@ -129,7 +129,9 @@ private:
   }
 };
 
-/** Macro to ease Value specialization. */
+/** Macro to ease Value specialization. 
+   *mutable_data* never returns NULL. New data is created on demand.
+   */
 #define VALUE_METHODS(klass,data_type,signature) \
   klass() {} \
   klass(data_type* p) : Value(p) {} \
@@ -143,12 +145,15 @@ private:
   const data_type& operator*() const \
   { return *data(); } \
   data_type * mutable_data () \
-  { if (!mPtr) return NULL; \
+  { if (!mPtr) make_data_ptr(); \
     copy_if_shared(); \
     return (data_type*)(mPtr->mDataPtr); } \
   virtual value_t type() const \
   { return signature; } \
 protected: \
+  inline Ptr * make_data_ptr () \
+  { mPtr = new Ptr(new data_type()); \
+    return mPtr; } \
   inline data_type * data_pointer() const \
   { return (data_type*)(mPtr->mDataPtr); } \
 public: \

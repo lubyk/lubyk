@@ -24,6 +24,8 @@ public:
   
   virtual value_t type() const
   { return MatrixValue; }
+protected:
+  friend class Matrixx;
 };
 
 /** Value class to hold a single number (double). */
@@ -37,12 +39,31 @@ public:
   const double * raw_data () const
   {
     if (mPtr) {
-      return ((MatrixData*)mPtr->mDataPtr)->data;
+      return data_pointer()->data;
     } else {
       return NULL;
     }
   }
   
+  bool set_sizes(size_t pRowCount, size_t pColCount)
+  {
+    return mutable_data()->set_sizes(pRowCount, pColCount);
+  }
+  
+  void clear()
+  {
+    return mutable_data()->clear();
+  }
+  
+  size_t row_count()
+  {
+    return mutable_data()->mRowCount;
+  }
+  
+  size_t col_count()
+  {
+    return mutable_data()->mColCount;
+  }
 };
 
 #endif // _MATRIX_VALUE_H_
