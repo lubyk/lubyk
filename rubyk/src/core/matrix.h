@@ -333,13 +333,6 @@ public:
   
   /** Return the element in the row pointed to by 'pRowIndex' at the column 'pColIndex'. 
     * You have to make sure indexes are valid. No verification is done here. */
-  T value_at (size_t pRowIndex, size_t pColIndex)
-  {
-    return data + mColCount * pRowIndex + pColIndex;
-  }
-  
-  /** Return the element in the row pointed to by 'pRowIndex' at the column 'pColIndex'. 
-    * You have to make sure indexes are valid. No verification is done here. */
   const T value_at (size_t pRowIndex, size_t pColIndex) const
   {
     return *(data + mColCount * pRowIndex + pColIndex);

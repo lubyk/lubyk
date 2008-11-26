@@ -134,7 +134,6 @@ private:
    */
 #define VALUE_METHODS(klass,data_type,signature) \
   klass() {} \
-  klass(data_type* p) : Value(p) {} \
   virtual ~klass() {} \
   klass(const Value& pOther) \
   { pOther.set(this); } \
@@ -151,9 +150,8 @@ private:
   virtual value_t type() const \
   { return signature; } \
 protected: \
-  inline Ptr * make_data_ptr () \
-  { mPtr = new Ptr(new data_type()); \
-    return mPtr; } \
+  inline void make_data_ptr () \
+  { mPtr = new Ptr(new data_type()); } \
   inline data_type * data_pointer() const \
   { return (data_type*)(mPtr->mDataPtr); } \
 public: \

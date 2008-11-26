@@ -9,7 +9,7 @@ public:
   void test_create( void )
   {
     Matrixx n(2,3);
-    TS_ASSERT_EQUALS( 6, n->size());
+    TS_ASSERT_EQUALS( 6, n.size());
     assert_id(1, n);
     // anonymize
     Value v(n);
@@ -18,9 +18,49 @@ public:
     Matrixx n2;
     TS_ASSERT(v.set(&n2));
     assert_id(1, n2);
-    TS_ASSERT_EQUALS( 1, n2->id());
-    TS_ASSERT_EQUALS( 6, n2->size());
+    TS_ASSERT_EQUALS( 6, n2.size());
   }
+  
+  void test_size( void )
+  {
+    Matrixx m;
+    TS_ASSERT_EQUALS(0, m.size());
+    Matrixx m2(1,1);
+    assert_id(1, m2); // first object created
+  }
+  
+  void test_copy( void )
+  {
+    Matrixx m1, m2;
+    set_fixture(m1);
+    TS_ASSERT(m2.copy(m1));
+    assert_matrix_equal(m2, m1);
+  }
+  
+  //void _copy_at( void )
+  //{
+  //  Matrix m1, m2;
+  //  set_fixture(m1);
+  //  m2.set_sizes(1,3);
+  //  m2.clear();
+  //  
+  //  TS_ASSERT_EQUALS(m2.row_count(), 1);
+  //  TS_ASSERT(m2.copy_at(1, m1));
+  //  TS_ASSERT_EQUALS(m2.row_count(), 3);
+  //  TS_ASSERT_EQUALS(m2.col_count(), 3);
+  //  
+  //  TS_ASSERT_EQUALS(m2[0][0], 0.0);
+  //  TS_ASSERT_EQUALS(m2[0][1], 0.0);
+  //  TS_ASSERT_EQUALS(m2[0][2], 0.0);
+  //  
+  //  TS_ASSERT_EQUALS(m2[1][0], m1[0][0]);
+  //  TS_ASSERT_EQUALS(m2[1][1], m1[0][1]);
+  //  TS_ASSERT_EQUALS(m2[1][2], m1[0][2]);
+  //  
+  //  TS_ASSERT_EQUALS(m2[2][0], m1[1][0]);
+  //  TS_ASSERT_EQUALS(m2[2][1], m1[1][1]);
+  //  TS_ASSERT_EQUALS(m2[2][2], m1[1][2]);
+  //}
   
   void test_append( void )
   {
@@ -30,7 +70,7 @@ public:
     m2.clear();
     
     TS_ASSERT_EQUALS(m2.row_count(), 2);
-    /*
+    
     TS_ASSERT(m2.append(m1));
     TS_ASSERT_EQUALS(m2.row_count(), 4);
     TS_ASSERT_EQUALS(m2.col_count(), 3);
@@ -50,41 +90,8 @@ public:
     TS_ASSERT_EQUALS(m2[3][0], m1[1][0]);
     TS_ASSERT_EQUALS(m2[3][1], m1[1][1]);
     TS_ASSERT_EQUALS(m2[3][2], m1[1][2]);
-    */
   }
   
-  /*
-  void _operator_equal( void )
-  {
-    Number n;
-    n = 123.456;
-    TS_ASSERT_EQUALS( 123.456, n.value());
-    n = 456.789;
-    TS_ASSERT_EQUALS( 456.789, n.value());
-  }
-  
-  void _data( void )
-  {
-    Number n1(123.45);
-    const NumberData * d1 = n1.data();
-    TS_ASSERT_EQUALS( d1, n1.data());
-    // alter n1 (no need to copy)
-    n1 = 555.23;
-    TS_ASSERT_EQUALS( d1, n1.data());
-    
-    Number n2(n1); // light copy
-    const NumberData * d2 = n2.data();
-    TS_ASSERT_EQUALS( d1, d2);
-    TS_ASSERT_EQUALS( 555.23, n1.value());
-    TS_ASSERT_EQUALS( 555.23, n2.value());
-    // alter n1
-    n1 = 888.12;
-    d1 = n1.data(); // pointer to new data
-    TS_ASSERT_EQUALS( 888.12, n1.value());
-    TS_ASSERT_EQUALS( 555.23, n2.value());
-    TS_ASSERT_DIFFERS( d1, d2);
-  }
-  */
   
 private:
   
