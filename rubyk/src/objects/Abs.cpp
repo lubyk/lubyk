@@ -11,7 +11,7 @@ public:
   // inlet 1
   void bang(const Signal& sig)
   {  
-    double d;
+    real_t d;
     int i;
     if (sig.type == MatrixSignal) {
       mBuffer.copy(sig);

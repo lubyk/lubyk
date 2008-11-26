@@ -140,8 +140,8 @@ public:
     send(pPort, mS);
   }
   
-  /** Send a double. */
-  inline void send(size_t pPort, double pDouble)
+  /** Send a real_t. */
+  inline void send(size_t pPort, real_t pDouble)
   {
     mS.type = DoubleSignal;
     mS.d.value = pDouble;
@@ -152,7 +152,7 @@ public:
   inline void send(size_t pPort, float pFloat)
   { 
     mS.type = DoubleSignal;
-    mS.d.value = (double)pFloat;   
+    mS.d.value = (real_t)pFloat;   
     send(pPort, mS);
   }
   
@@ -334,13 +334,13 @@ protected:
     *mOutput << mName << ": " << pMsg << ".\n";
   }
   
-  /** Allocate/reallocate doubles. Print an error on failure. */
-  bool alloc_doubles(double ** pBuffer, size_t pSize, const char * pName)
+  /** Allocate/reallocate real_ts. Print an error on failure. */
+  bool alloc_real_ts(real_t ** pBuffer, size_t pSize, const char * pName)
   {
-    return allocate<double>(pBuffer, pSize, pName, "doubles");
+    return allocate<real_t>(pBuffer, pSize, pName, "real_ts");
   }
   
-  /** Allocate/reallocate doubles. Print an error on failure. */
+  /** Allocate/reallocate real_ts. Print an error on failure. */
   bool alloc_ints(int ** pBuffer, size_t pSize, const char * pName)
   {
     return allocate<int>(pBuffer, pSize, pName, "ints");
@@ -462,7 +462,7 @@ public:
 };
 
 ////////// FIXME: these, with buffer alloc could go into an "utils" header
-inline double absval(double d)
+inline real_t absval(real_t d)
 {
   if (d < 0)
     return -d;

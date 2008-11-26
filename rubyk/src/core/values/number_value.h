@@ -4,13 +4,13 @@
 
 class Number;
 
-/* Holds the actual data of the Number class. This is a wrapper around a double. */
+/* Holds the actual data of the Number class. This is a wrapper around a real_t. */
 class NumberData : public Data
 {
 public:
   DATA_METHODS(NumberData, NumberValue)
   
-  NumberData(const double& d) : mValue(d) {}
+  NumberData(const real_t& d) : mValue(d) {}
   
   // copy constructor
   NumberData(const NumberData& v)
@@ -22,19 +22,19 @@ public:
   
 private:
   friend class Number;
-  double mValue;
+  real_t mValue;
 };
 
-/** Value class to hold a single number (double). */
+/** Value class to hold a single number (real_t). */
 class Number : public Value
 {
 public:
   VALUE_METHODS(Number, NumberData, NumberValue)
   
-  Number(double d) : Value(new NumberData(d)) {}
+  Number(real_t d) : Value(new NumberData(d)) {}
   
-  /** Set Number from double. */
-  double operator= (double d)
+  /** Set Number from real_t. */
+  real_t operator= (real_t d)
   {
     if (!mPtr) {
       mPtr = new Ptr(new NumberData(d));
@@ -46,7 +46,7 @@ public:
   }
   
   /** Return the value. */
-  double value()
+  real_t value()
   {
     if (mPtr) {
       return data_pointer()->mValue;

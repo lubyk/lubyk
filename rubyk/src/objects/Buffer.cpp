@@ -37,10 +37,10 @@ public:
   // inlet 1
   void bang(const Signal& sig)
   {   
-    double d;
+    real_t d;
     if (!mIsOK) return;
     if(sig.type == MatrixSignal) {
-      double * data = sig.matrix.value->data;
+      real_t * data = sig.matrix.value->data;
       if (!mVector) {
         // get buffer size from incoming signal
         TRY_RET(mBuffer, set_sizes(mBuffer.row_count(), sig.matrix.value->col_count()));
@@ -82,7 +82,7 @@ public:
 private:
   
   Buffer mBuffer;
-  double * mVector; /**< Vector pointing into mBuffer to write the data. */
+  real_t * mVector; /**< Vector pointing into mBuffer to write the data. */
   size_t   mIndex;  /**< Current write position into the 'write' vector. */
 };
 

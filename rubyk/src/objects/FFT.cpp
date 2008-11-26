@@ -45,7 +45,7 @@ public:
         // mBuffer.data (real) --- FFT ---> mFreqResult.data (complex)
         mProcessor->do_fft(mFreqResult.data, mBuffer.data + s*col_count);
         
-        double real, img;
+        real_t real, img;
         for(size_t i=0; i < row_count/2; i++) {
           // interlace result back and compute power spectrum (real^2 + img^2)
           real =  mFreqResult.data[i];
@@ -93,7 +93,7 @@ private:
     }
     
     if (mProcessor) delete mProcessor;
-    mProcessor = new FFTReal<double>(pRowCount);
+    mProcessor = new FFTReal<real_t>(pRowCount);
     
     // allocate buffers
     
@@ -108,7 +108,7 @@ private:
     return true;
   }
    
-  FFTReal<double> * mProcessor; /**< FFT processor. */
+  FFTReal<real_t> * mProcessor; /**< FFT processor. */
   Matrix mFrequencies;          /**< Frequency output up to 1/2 of the signal, phase for other half. 
                                   *  Example for a 64 samples buffer:
                                   *  mFrequencies[0]      =  0

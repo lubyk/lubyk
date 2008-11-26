@@ -136,7 +136,7 @@ private:
   void get_messages()
   {
     std::vector<unsigned char> message;
-    double wait;
+    real_t wait;
     while (true)
     {
       wait = mMidiIn->getMessage( &message );

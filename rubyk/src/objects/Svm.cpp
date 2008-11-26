@@ -42,7 +42,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define Malloc(type,n) (type *)malloc((n)*sizeof(type))
 
 // declarations not in svm.h
-double sigmoid_predict(double decision_value, double A, double B);
+real_t sigmoid_predict(real_t decision_value, real_t A, real_t B);
 #ifndef min
 template <class T> inline T min(T x,T y) { return (x<y)?x:y; }
 #endif
@@ -149,18 +149,18 @@ private:
   
   
   // Method 2 from the multiclass_prob paper by Wu, Lin, and Weng
-  void multiclass_probability(int k, double *r, double *p)
+  void multiclass_probability(int k, real_t *r, real_t *p)
   {
   	int t,j;
   	int iter = 0, max_iter=max(100,k);
-  	double **Q=Malloc(double *,k);
-  	double *Qp=Malloc(double,k);
-  	double pQp, eps=0.005/k;
+  	real_t **Q=Malloc(real_t *,k);
+  	real_t *Qp=Malloc(real_t,k);
+  	real_t pQp, eps=0.005/k;
 
   	for (t=0;t<k;t++)
   	{
   		p[t]=1.0/k;  // Valid if k = 1
-  		Q[t]=Malloc(double,k);
+  		Q[t]=Malloc(real_t,k);
   		Q[t][t]=0;
   		for (j=0;j<t;j++)
   		{
@@ -184,10 +184,10 @@ private:
   				Qp[t]+=Q[t][j]*p[j];
   			pQp+=p[t]*Qp[t];
   		}
-  		double max_error=0;
+  		real_t max_error=0;
   		for (t=0;t<k;t++)
   		{
-  			double error=fabs(Qp[t]-pQp);
+  			real_t error=fabs(Qp[t]-pQp);
   			if (error>max_error)
   				max_error=error;
   		}
@@ -195,7 +195,7 @@ private:
 
   		for (t=0;t<k;t++)
   		{
-  			double diff=(-Qp[t]+pQp)/Q[t][t];
+  			real_t diff=(-Qp[t]+pQp)/Q[t][t];
   			p[t]+=diff;
   			pQp=(pQp+diff*(diff*Q[t][t]+2*Qp[t]))/(1+diff)/(1+diff);
   			for (j=0;j<k;j++)
@@ -286,11 +286,11 @@ private:
   {
     int label;
     size_t vector_size = mVector.col_count();
-    double labelProbability = 1.0;
+    real_t labelProbability = 1.0;
     
     // map current vector into svm_node
     size_t j = 0; // svm_node index
-    double * vector = mLiveBuffer->data + mLiveBuffer->size() - vector_size;
+    real_t * vector = mLiveBuffer->data + mLiveBuffer->size() - vector_size;
     
     for(size_t i=0;i < vector_size; i++) {
       if (vector[i] >= mThreshold || vector[i] <= -mThreshold) {
@@ -365,8 +365,8 @@ private:
     }
     *mOutput << "\n";
     
-    if (!alloc_doubles(&mDistances,    mLabelCount * (mLabelCount-1)/2, "pairwise distances")) return false;
-    if (!alloc_doubles(&mPairwiseProb, mLabelCount * mLabelCount,   "pairwise probabilities")) return false;
+    if (!alloc_real_ts(&mDistances,    mLabelCount * (mLabelCount-1)/2, "pairwise distances")) return false;
+    if (!alloc_real_ts(&mPairwiseProb, mLabelCount * mLabelCount,   "pairwise probabilities")) return false;
     
     return true;
   }
@@ -417,10 +417,10 @@ private:
   	rewind(fp);
 
     
-    if (!alloc_doubles(&mProblem.y, mProblem.l, "problem.y")) goto readpb_fail;
+    if (!alloc_real_ts(&mProblem.y, mProblem.l, "problem.y")) goto readpb_fail;
     if (!allocate<struct svm_node *>(&mProblem.x, mProblem.l, "problem.x", "svm_node pointers")) goto readpb_fail;
     if (!allocate<struct svm_node>(  &mXSpace, elements, "mXSpace", "svm_nodes")) goto readpb_fail;
-    //mProblem.y = (double*)            malloc(mProblem.l * sizeof(double));
+    //mProblem.y = (real_t*)            malloc(mProblem.l * sizeof(real_t));
   	//mProblem.x = (struct svm_node **) malloc(mProblem.l * sizeof(struct svm_node *));
   	//mXSpace    = (struct svm_node *)  malloc(elements * sizeof(struct svm_node));
 
@@ -428,7 +428,7 @@ private:
   	j=0;
   	for(i=0;i<mProblem.l;i++)
   	{
-  		double label;
+  		real_t label;
   		mProblem.x[i] = &mXSpace[j];
   		fscanf(fp,"%lf",&label);
   		mProblem.y[i] = label;
@@ -483,17 +483,17 @@ readpb_fail:
 
   /** Finds the best label in a multiclass problem. Returns some kind of confidence value with
     * the worst pairwize probability for this label against the other classes. */
-  void get_label(int * pLabel, double * pProbability)
+  void get_label(int * pLabel, real_t * pProbability)
   {
   	if (svm_get_svm_type(mModel) == C_SVC || svm_get_svm_type(mModel) == NU_SVC)
   	{
-      double uniform_probability = 1.0 / mLabelCount;
+      real_t uniform_probability = 1.0 / mLabelCount;
   		svm_predict_values(mModel, mNode, mDistances);
   		
   		int k=0;
 
-  		double min_prob=1e-7;
-      double prob;
+  		real_t min_prob=1e-7;
+      real_t prob;
   		
       k=0;
   		memset(mVotes, 0, mLabelCount * sizeof(size_t));
@@ -524,8 +524,8 @@ readpb_fail:
       
       // our label id is 'vote_id'
       // Let's find it's worst pairwise probability:
-      double bad_prob = 1.0; // we start by beeing optimistic
-      double * probs = mPairwiseProb + vote_id * mLabelCount;
+      real_t bad_prob = 1.0; // we start by beeing optimistic
+      real_t * probs = mPairwiseProb + vote_id * mLabelCount;
       for(size_t i = 0; i < mLabelCount; i++) {
         if (i == vote_id) continue;
         if (probs[i] < bad_prob) bad_prob = probs[i];
@@ -555,9 +555,9 @@ readpb_fail:
   }
   
   /// libsvm ///
-  double   mSvmCparam;
-  double   mSvmGammaParam;
-  double   mProbabilityThreshold; /**< Minimal probability value for an output to be sent. */
+  real_t   mSvmCparam;
+  real_t   mSvmGammaParam;
+  real_t   mProbabilityThreshold; /**< Minimal probability value for an output to be sent. */
   size_t   mLabelCount;       /**< Number of different classes to recognize. */
   
   struct svm_model * mModel;  /**< Contains the model (training result). */
@@ -566,8 +566,8 @@ readpb_fail:
   struct svm_parameter mSvmParam;	/**< Contains settings for the learning phase of svm. */
   struct svm_problem mProblem; /**< Packaging of the problem definition, training data and parameters. */
   
-  double * mPairwiseProb;     /**< Pairwise probabilities between classes. */
-  double * mDistances;        /**< Pairwise distances to the hyper-plane. */
+  real_t * mPairwiseProb;     /**< Pairwise probabilities between classes. */
+  real_t * mDistances;        /**< Pairwise distances to the hyper-plane. */
   size_t * mVotes;            /**< Used to compute the label out of the distances. */
   int    * mLabels;           /**< Translation from 'ids' to 'labels'. */
   
@@ -577,9 +577,9 @@ readpb_fail:
   int    mClassLabel;         /**< Current label. Used during recording and recognition. */
   size_t mVectorCount;        /**< Number of vectors used to build the current mean value. */
   
-  double mLabelProbability;   /**< Current probability for the given label. */
+  real_t mLabelProbability;   /**< Current probability for the given label. */
   
-  double mThreshold;          /**< Values below this limit are recorded as zero in the training set. Use '0' for none. */
+  real_t mThreshold;          /**< Values below this limit are recorded as zero in the training set. Use '0' for none. */
 };
 
 

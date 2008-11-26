@@ -119,7 +119,7 @@ size_t Params::cast_param(const std::string& value) const
 }
 
 template<>
-double Params::cast_param(const std::string& value) const
+real_t Params::cast_param(const std::string& value) const
 {
   return atof(value.c_str());
 }

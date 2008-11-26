@@ -1,15 +1,6 @@
 #ifndef _VALUE_H_
 #define _VALUE_H_
-/** Value types. */
-enum value_t {
-  NilValue  = 0,
-  BangValue = 1,
-  AnonymousValue,
-  NumberValue,
-  MatrixValue,
-  CharMatrixValue,
-};
-
+#include "rubyk_types.h"
 #include "smart_ptr.h"
 #include "data.h"
 
@@ -52,7 +43,7 @@ public:
   /** Type conversion ("this" sets "pOther").
   
   If you wonder why we haven't implemented it the other way around like: "pOther.from(this)", the reason is that we wanted a
-  consistant interface for Values and native types. You cannot write "double d; d.from(this)" so we use "set". For the same reason,
+  consistant interface for Values and native types. You cannot write "real_t d; d.from(this)" so we use "set". For the same reason,
   we use a pointer instead of a reference (clearly show what is updated). */
   bool set (Value * pOther) const
   {
@@ -102,10 +93,10 @@ public:
     }
   }
   
-  /** Set a double from the content. Return false on failure. 
+  /** Set a real_t from the content. Return false on failure. 
   
   FIXME: we should use a template here, but it seems to break on compilation... */
-  bool set (double * pResult) const
+  bool set (real_t * pResult) const
   {
     if (!mPtr) return false;
     return mPtr->mDataPtr->set(pResult);

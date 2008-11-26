@@ -34,8 +34,8 @@ public:
 
   
 private:
-  double mValue1;
-  double mValue2;
+  real_t mValue1;
+  real_t mValue2;
 };
 
 extern "C" void init()

@@ -194,10 +194,10 @@ private:
     
     if (mRowMargin) {
       // try to find the best bet by calculating minimal distance
-      double distance, min_distance = -1.0;
-      double d;
-      double * vector;
-      double * mean = mMeanVector.data;
+      real_t distance, min_distance = -1.0;
+      real_t d;
+      real_t * vector;
+      real_t * mean = mMeanVector.data;
       int   delta_used = mBuffer.row_count() - (int)mMeanVector.row_count();
       for(int j = (int)mBuffer.row_count() - (int)mMeanVector.row_count(); j >= 0; j--) {
         distance = 0.0;
@@ -277,7 +277,7 @@ private:
   void update_mean_value(const Matrix& pVector)
   {
     mVectorCount++;
-    double map = (double)(mVectorCount - 1) / (double)(mVectorCount);  // avg = (avg * (n-1)/n) + value/n
+    real_t map = (real_t)(mVectorCount - 1) / (real_t)(mVectorCount);  // avg = (avg * (n-1)/n) + value/n
     mMeanVector *= map;
     mMeanVector.add(pVector, 0, -1, 1.0 / mVectorCount);
   }
@@ -355,7 +355,7 @@ private:
   Matrix mBuffer;             /**< Store a single vector +  margin.                                             */
   CutMatrix mView;            /**< Resulting view of the data used to record to file (points inside mBuffer).   */
   Signal mBufferSignal;       /**< Used to send view matrix.                                                    */
-  double mMargin;             /**< Size (in %) of the margin.                                                   */
+  real_t mMargin;             /**< Size (in %) of the margin.                                                   */
   size_t mRowMargin;          /**< Number of rows on each side of the vector (mBuffer.row_count() * margin/2).  */
   size_t mVectorCount;        /**< Number of vectors used to build the current mean value.                      */
   int mTempo;                 /**< Tempo for countdown and recording.                                           */

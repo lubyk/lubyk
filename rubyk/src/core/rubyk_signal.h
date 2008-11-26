@@ -17,8 +17,8 @@ enum rubyk_signal_t {
   NilSignal  = 0,    /**< Do not send. */
   BangSignal = 1,    /**< Trigger update without changing values. */
   IntegerSignal,     /**< IntegerSignal value. */
-  DoubleSignal,      /**< DoubleSignal (actually double). */
-  MatrixSignal,      /**< Pointer to a matrix of doubles. */
+  DoubleSignal,      /**< DoubleSignal (actually real_t). */
+  MatrixSignal,      /**< Pointer to a matrix of real_ts. */
   StringSignal,      /**< Pointer to a std::string. */
   MidiSignal,        /**< Pointer to a midi message. */
   VoidPointerSignal, /**< Void pointer. If you want a malloc allocated buffer to be freed with the signal, set 'free_me' attribute to true.*/
@@ -33,7 +33,7 @@ typedef struct {
 typedef struct {
   rubyk_signal_t    type;
   Hash<uint, Signal> * meta;
-  double value;
+  real_t value;
 } DoubleSignal_t;
 
 typedef struct {
@@ -184,8 +184,8 @@ union Signal {
     i.value = (int)pInt;
   }
   
-  /** Set as double. */
-  inline void set(double pDouble)
+  /** Set as real_t. */
+  inline void set(real_t pDouble)
   {
     clear();
     type = DoubleSignal;
@@ -194,7 +194,7 @@ union Signal {
   
   /** Set as float. */
   inline void set(float pDouble)
-  { set((double)pDouble); }
+  { set((real_t)pDouble); }
   
   /** Set as MidiMessage* . */
   inline void set(MidiMessage * pPtr, bool pFree)
@@ -250,11 +250,11 @@ union Signal {
   { set(pPtr, false); }
   
   /// get methods ///
-  inline operator double() const
+  inline operator real_t() const
   {
     switch(type) {
       case IntegerSignal:
-        return (double)i.value;
+        return (real_t)i.value;
       case DoubleSignal:
         return d.value;
       default:
@@ -340,12 +340,12 @@ union Signal {
     }
   }
   
-  /** Get as double. */
-  inline bool get(double * pDouble) const
+  /** Get as real_t. */
+  inline bool get(real_t * pDouble) const
   { 
     switch(type) {
       case IntegerSignal:
-        *pDouble = (double)i.value;
+        *pDouble = (real_t)i.value;
         return true;
       case DoubleSignal:
         *pDouble = d.value;

@@ -13,7 +13,7 @@ public:
 
   void bang(const Signal& sig)
   { 
-    double d = -1;
+    real_t d = -1;
     size_t row_count, col_count;
     const Matrix * live_buffer = NULL;
     if(sig.get(&live_buffer)) {
@@ -60,7 +60,7 @@ public:
   
 private:
   Matrix mBuffer;      /** Current peak values. */
-  double mDescent;     /** Peak decreasing speed in value/sample. */
+  real_t mDescent;     /** Peak decreasing speed in value/sample. */
 };
 
 extern "C" void init()

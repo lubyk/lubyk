@@ -98,7 +98,7 @@ protected:
   std::string mScript;         /**< Script text. */
   std::string mScriptFile;     /**< Script file path. */
   time_t      mScriptModTime;  /**< Script file's modification time on last load. */
-  double      mReloadEvery;    /**< How often should we check for a modification in the source file (in seconds). */
+  real_t      mReloadEvery;    /**< How often should we check for a modification in the source file (in seconds). */
   time_t      mNextReload;     /**< Compute time for the next check to reload the script. */
   bool        mScriptOK;       /**< Script compilation status. Might change on next reload. */
   

@@ -57,7 +57,7 @@ public:
       }
     }
 
-    mScale        = p.val("scale", (double)mCodebook.col_count());   /**< Value to multiply doubles before scaling to integers. */
+    mScale        = p.val("scale", (real_t)mCodebook.col_count());   /**< Value to multiply real_ts before scaling to integers. */
     mFolder       = p.val("data", mFolder);
     
     mState = Waiting;
@@ -112,7 +112,7 @@ public:
       if (sig.type == MatrixSignal) {
         if (sig.matrix.value->col_count() == mCodebook.col_count()) {
           int label = label_for(*sig.matrix.value);
-          send(label / (double)mCodebook.row_count());
+          send(label / (real_t)mCodebook.row_count());
         } else {
           *mOutput << mName << ": wrong signal size '" << sig.matrix.value->col_count() << "'. Should be '" << mCodebook.col_count() << "'.\n";
         }
@@ -143,10 +143,10 @@ private:
       
     // 2. match codebook
     size_t match_index = 0;
-    double match_distance = DBL_MAX;
-    double distance;
-    double * codeword;
-    double * vector = pVector.data;
+    real_t match_distance = DBL_MAX;
+    real_t distance;
+    real_t * codeword;
+    real_t * vector = pVector.data;
     for(size_t i=0; i < mCodebook.row_count(); i++) {
       codeword = mCodebook[i];
       distance = 0;
@@ -304,14 +304,14 @@ private:
     // 4. cleanup
     free(nearest_cb);
     
-    // 5. copy integer codebook to double codebook
+    // 5. copy integer codebook to real_t codebook
     if (!mCodebook.set_sizes(0, int_codebook.col_count())) {
       *mOutput << mName << ": mCodebook (" << mCodebook.error_msg() << ")\n";
       return;
     }
     
     if(!mCodebook.cast_append(int_codebook.data, int_codebook.size(), 1.0 / mScale)) {
-      *mOutput << mName << ": could not copy integer codebook to doubles codebook (" << mCodebook.error_msg() << ")\n";
+      *mOutput << mName << ": could not copy integer codebook to real_ts codebook (" << mCodebook.error_msg() << ")\n";
       return;
     }
     
@@ -350,7 +350,7 @@ private:
   pthread_t mThread;       /**< Used for learning. */
   std::string mFolder;     /**< Where to store training data, codebook vectors. */
   
-  double    mScale;        /**< Value to multiply doubles before conversion to integer. */
+  real_t    mScale;        /**< Value to multiply real_ts before conversion to integer. */
   Matrix    mCodebook;     /**< Matrix of mCodebookSize x mVectorSize. */
   IntMatrix mTrainingData; /**< Matrix of mTrainingSize x mVectorSize. Used during training. */
   FILE *    mTrainFile;    /**< Where the training vectors are stored. */

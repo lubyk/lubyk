@@ -12,7 +12,7 @@ public:
   // inlet 1
   void bang(const Signal& sig)
   {  
-    double d;
+    real_t d;
     if (sig.type == MatrixSignal) {
       mBuffer.copy(sig);
       mBuffer -= mValue;
@@ -39,7 +39,7 @@ public:
   
 private:
   Matrix mBuffer;
-  double mValue;
+  real_t mValue;
 };
 
 extern "C" void init()

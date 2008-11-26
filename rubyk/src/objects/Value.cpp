@@ -6,7 +6,7 @@ public:
   
   bool set (const Params& p)
   {
-    double value;
+    real_t value;
     if (p.size() > 1) {
       if (!mMatrix.set_sizes(1, p.size())) return false;
       for(size_t i=0; i < p.size(); i++) {

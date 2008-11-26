@@ -40,13 +40,13 @@ public:
   void test_parse_integer( void ) 
   { assert_result("v1 = Value(2.35)\n\n","#<Value:v1 2.35>\n"); }
   
-  void test_parse_double( void ) 
+  void test_parse_real_t( void ) 
   { assert_result("v1 = Value(2.35)\n\n","#<Value:v1 2.35>\n"); }
   
   void test_parse_negative_integer( void ) 
   { assert_result("v1 = Value(-5)\n\n","#<Value:v1 -5.00>\n"); }
   
-  void test_parse_negative_double( void ) 
+  void test_parse_negative_real_t( void ) 
   { assert_result("v1 = Value(-2.35)\n\n","#<Value:v1 -2.35>\n"); }
   
   void test_execute_command( void ) 

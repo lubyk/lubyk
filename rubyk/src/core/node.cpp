@@ -145,7 +145,7 @@ void Node::error(T& obj, const char * pMsg, const char * pFilename, int pLine)
 }
 
 template void Node::error<TMatrix<int> >(TMatrix<int>& obj, const char * pMsg, const char * pFilename, int pLine);
-template void Node::error<TMatrix<double> >(TMatrix<double>& obj, const char * pMsg, const char * pFilename, int pLine);
+template void Node::error<TMatrix<real_t> >(TMatrix<real_t>& obj, const char * pMsg, const char * pFilename, int pLine);
 template void Node::error<Buffer>(Buffer& obj, const char * pMsg, const char * pFilename, int pLine);
 
 template <class T, void(T::*Tmethod)(void)>

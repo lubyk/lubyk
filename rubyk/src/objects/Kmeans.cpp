@@ -86,8 +86,8 @@ private:
   
   bool get_label(const Matrix& live)
   {
-    double closest_distance = DBL_MAX;
-    double total_distance   = 0;
+    real_t closest_distance = DBL_MAX;
+    real_t total_distance   = 0;
     size_t row_count = mCodeBook.row_count();
     size_t col_count = mCodeBook.col_count();
     mDistances.clear();
@@ -97,7 +97,7 @@ private:
       row_count = mFullTrainingData.row_count();
       col_count = mFullTrainingData.col_count();
       for (size_t i = 0; i < row_count; i++) {
-        double d = 0.0;
+        real_t d = 0.0;
         for (size_t j = 1; j < col_count; j++)
           d += (mFullTrainingData.data[i * col_count + j] - live.data[j-1]) * (mFullTrainingData.data[i * col_count + j] - live.data[j-1]);
         if (d < closest_distance) {
@@ -110,7 +110,7 @@ private:
     } else {
       // Distances to mean value (Mahalanobis or Euclidean)
       for (size_t i = 0; i < row_count; i++) {
-        double d = 0.0;
+        real_t d = 0.0;
         if (mDistanceType == EuclideanDistance) {
           for (size_t j = 0; j < col_count; j++)
             d += (mCodeBook.data[i * col_count + j] - live.data[j]) * (mCodeBook.data[i * col_count + j] - live.data[j]);
@@ -227,7 +227,7 @@ private:
         mLabels.append(label);
       } else {
         // finish
-        mMeanValue /= (double)mVectorCount;
+        mMeanValue /= (real_t)mVectorCount;
         
         TRY(mCodeBook, append(mMeanValue));
         
@@ -317,10 +317,10 @@ private:
   kmeans_distance_types_t mDistanceType; /**< Kind of distance calculation. Default is Euclidean. */
   
   int    mLabel;       /**< Current label. */
-  double mDistance; /**< Probability for current label. */
+  real_t mDistance; /**< Probability for current label. */
   IntMatrix mLabels; /**< List of labels. */
   Matrix mDistances;   /**< Distance to each prototype. */
-  double mDistanceThreshold;   /**< Minimal distance to send values out. */
+  real_t mDistanceThreshold;   /**< Minimal distance to send values out. */
   size_t mVectorCount; /**< Number of vectors to compute the current mean value. */
   Matrix mMeanValue; /**< Mean value for the current class. */
   Matrix mCodeBook;  /**< List of prototypes (one row per class). */

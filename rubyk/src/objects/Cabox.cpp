@@ -57,9 +57,9 @@ public:
     
     int c;
     int sig_i, sig_max = 0;
-    double val;
-    double * sig_buf = NULL;
-    double sig_val;
+    real_t val;
+    real_t * sig_buf = NULL;
+    real_t sig_val;
     bool new_data = false;
     
     if (sig.type == MatrixSignal) {
@@ -173,15 +173,15 @@ public:
 private:
   
   Buffer   mBuffer; /**< Loop buffer to store the incoming values. */
-  double * mVector; /**< Current vector to write data (points in mBuffer). */
+  real_t * mVector; /**< Current vector to write data (points in mBuffer). */
   Matrix   mOffset;       /**< Vector with the offset for each signal. */
-  double   mHighestValue;         /**< Last highest value of the signal. */
+  real_t   mHighestValue;         /**< Last highest value of the signal. */
   size_t   mHighestDirection;     /**< Last highest direction of the signal. */
-  double   mFindHighestValue;     /**< Current try at finding the highest value of the signal. */
+  real_t   mFindHighestValue;     /**< Current try at finding the highest value of the signal. */
   size_t   mFindHighestDirection; /**< Current try at finding the highest direction of the signal. */
   
   long int mVectorRateCounter; /**< Count number of vectors to measure data rate. */
-  double   mRate;         /**< Data rate in vectors per second. */
+  real_t   mRate;         /**< Data rate in vectors per second. */
   time_t   mRateStart;    /**< Used to record time intervals between values to compute data rate. */
   size_t   mIndex;        /**< Current vector's value index (next write position). */
   int      mState;        /**< Synchronization flag. */

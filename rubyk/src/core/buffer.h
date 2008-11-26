@@ -24,7 +24,7 @@ public:
   /** Move read/write position forward. 
     *
     * @return pointer to the write position (inside mBuffer) for the next vector. */
-  double * advance ();
+  real_t * advance ();
   
   /** Return a (read-only) matrix for the current window. */
   const CutMatrix& matrix() const

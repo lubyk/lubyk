@@ -73,7 +73,7 @@ public:
     mTitle      = p.val("title", mTitle);
     mMaxFPS     = p.val("fps", mMaxFPS);
     if (mMaxFPS > 0)
-      mMinFPSTime = (time_t)((double)ONE_SECOND / mMaxFPS);
+      mMinFPSTime = (time_t)((real_t)ONE_SECOND / mMaxFPS);
     else
       mMinFPSTime = 0;
       
@@ -132,8 +132,8 @@ public:
   
   virtual void mouse_move(int x, int y)
   {
-    mMouseMatrix.data[0] = (double)x;
-    mMouseMatrix.data[1] = mDisplaySize.data[1] - (double)y;
+    mMouseMatrix.data[0] = (real_t)x;
+    mMouseMatrix.data[1] = mDisplaySize.data[1] - (real_t)y;
     mServer->lock();
       if (mLuaMouseMove) {
         protected_call_lua("mouse_move",mMouseMatrixSignal);
@@ -145,8 +145,8 @@ public:
   
   virtual void mouse_click(int button, int state, int x, int y)
   {
-    mMouseMatrix.data[2] = (double)button;
-    mMouseMatrix.data[3] = (double)state;
+    mMouseMatrix.data[2] = (real_t)button;
+    mMouseMatrix.data[3] = (real_t)state;
     mouse_move(x,y);
   }
   
@@ -422,7 +422,7 @@ private:
   {
     mFPS_i++;
     if (mServer->mCurrentTime >= mFPS_start + ONE_SECOND) {
-      mFPS = (double)mFPS_i * ONE_SECOND / (mServer->mCurrentTime - mFPS_start);
+      mFPS = (real_t)mFPS_i * ONE_SECOND / (mServer->mCurrentTime - mFPS_start);
       mFPS_i = 0;
       mFPS_start = mServer->mCurrentTime;
     }
@@ -444,10 +444,10 @@ private:
   Matrix      mMouseMatrix;  /**< Mouse position matrix. */
   Signal      mMouseMatrixSignal; /**< Wrapper around mMouseMatrix. */
   Mutex       mMutex;
-  double      mMaxFPS;       /**< Limit number of frames per second. (0 = no limit). */
+  real_t      mMaxFPS;       /**< Limit number of frames per second. (0 = no limit). */
   time_t      mMinFPSTime;   /**< Minimal time interval between two draws (computed from mMaxFPS). */
   size_t      mFPS_i;        /**< Frame counter (used to compute fps). */
-  double      mFPS;          /**< Last computed number of frames per second. */
+  real_t      mFPS;          /**< Last computed number of frames per second. */
   time_t      mFPS_start;    /**< Time when the last fps counter reset was called (used to compute fps). */
   time_t      mLastDraw;     /**< Last time the draw command was called. */
   

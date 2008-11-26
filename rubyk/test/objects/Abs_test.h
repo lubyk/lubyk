@@ -8,7 +8,7 @@ public:
   { 
     parse("n=Abs()\nn=>p\n");
     
-    // doubles
+    // real_ts
     assert_print("n.bang(4.0)\n", "4.00\n");
     assert_print("n.bang(-3.5)\n", "3.50\n");
     assert_print("n.bang(-1.0)\n", "1.00\n");

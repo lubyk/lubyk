@@ -1,5 +1,6 @@
 #ifndef _CLASS_H_
 #define _CLASS_H_
+#include "rubyk_types.h"
 #include "planet.h"
 #include "params.h"
 #include "command.h"

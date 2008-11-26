@@ -96,7 +96,7 @@ private:
     if (vector == NULL) {
       // class initialize // finished
       if (mVectorCount > 0) {
-        mMeanValue /= (double)mVectorCount;
+        mMeanValue /= (real_t)mVectorCount;
         
         TRY(mClasses, append(mMeanValue));
         

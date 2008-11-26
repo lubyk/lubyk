@@ -23,7 +23,7 @@ class Foo : public Node
   }
   
 private:
-  double mMult;
+  real_t mMult;
 }
 
 extern "C" void init()

@@ -17,7 +17,7 @@ a x:60 -> b # initial element
 a x:ctrl(34,45) -> b # call lua method 'ctrl' with parameters 34 and 45
 a x:67          -> e # call lua method 'send' with parameter 67
 
-# in the 'send' table, we store the actions as 'int lua_method_id, buf<double> * args'
+# in the 'send' table, we store the actions as 'int lua_method_id, buf<real_t> * args'
 
 =begin lua
 @import ...

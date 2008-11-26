@@ -132,12 +132,12 @@ private:
     size_t value_count  = mat.size() / (mLineCount * mGroupSize); 
     size_t sample_count = value_count;
 
-    double width_ratio;
-    double height_ratio = (double)mHeight / (2.0 * mLineCount * mMaxAmplitude); // values : [-1,1]
-    double y_offset;
+    real_t width_ratio;
+    real_t height_ratio = (real_t)mHeight / (2.0 * mLineCount * mMaxAmplitude); // values : [-1,1]
+    real_t y_offset;
 
     size_t sample_offset = 0; // move all points to the left (shift view to the right)
-    double x_offset      = 0;
+    real_t x_offset      = 0;
     bool   draw_box      = false;
 
     ///// set x_offset, width_zoom with sig.get_meta(...) /////
@@ -145,12 +145,12 @@ private:
     mSignal->get_meta(&sample_count,  H("sample_count"));  // total number of samples per window when computing width_ratio
     mSignal->get_meta(&draw_box,      H("draw_box"));      // draw a surrounding box
 
-    double col_ratio = 0.8; //1.0 / mGroupSize;
+    real_t col_ratio = 0.8; //1.0 / mGroupSize;
 
     if (sample_count > 1)
-      width_ratio = (double)mWidth  / (sample_count - 1);
+      width_ratio = (real_t)mWidth  / (sample_count - 1);
     else
-      width_ratio = (double)mWidth;
+      width_ratio = (real_t)mWidth;
 
     x_offset = sample_offset * width_ratio;
 
@@ -200,10 +200,10 @@ private:
   {    
     size_t line_count   = mLineCount;
     size_t value_count  = mat.size() / (2 * line_count); 
-    double width_ratio  = (double)mWidth  / (2.0 * mMaxAmplitude);
-    double height_ratio = (double)mHeight / (2.0 * mMaxAmplitude); // values : [-1,1]
-    double width_offset = (double)mWidth  / 2.0;
-    double height_offset= (double)mHeight / 2.0;
+    real_t width_ratio  = (real_t)mWidth  / (2.0 * mMaxAmplitude);
+    real_t height_ratio = (real_t)mHeight / (2.0 * mMaxAmplitude); // values : [-1,1]
+    real_t width_offset = (real_t)mWidth  / 2.0;
+    real_t height_offset= (real_t)mHeight / 2.0;
 
     glPointSize(mPointSize);
     glLineWidth(mLineWidth);
@@ -247,16 +247,16 @@ private:
   {      
     size_t group_count  = mat.row_count();
     size_t value_count;
-    double width_ratio  = (double)mWidth  / (2.0 * mMaxAmplitude);
-    double height_ratio = (double)mHeight / (2.0 * mMaxAmplitude); // values : [-1,1]
-    double width_offset = (double)mWidth  / 2.0;
-    double height_offset= (double)mHeight / 2.0;
+    real_t width_ratio  = (real_t)mWidth  / (2.0 * mMaxAmplitude);
+    real_t height_ratio = (real_t)mHeight / (2.0 * mMaxAmplitude); // values : [-1,1]
+    real_t width_offset = (real_t)mWidth  / 2.0;
+    real_t height_offset= (real_t)mHeight / 2.0;
 
     glPointSize(mPointSize);
     glLineWidth(mLineWidth);
 
     for(size_t g=0; g < group_count; g++) {
-      const double * row = mat[g];
+      const real_t * row = mat[g];
       size_t start_index;
 
       if (mMode == DotsPlot) {
@@ -312,7 +312,7 @@ private:
   }
   
   /*** Set RGB colors from an integer. */
-  inline void set_color_from_int(int pId, double pAlpha)
+  inline void set_color_from_int(int pId, real_t pAlpha)
   {
     uint col_id = hashId((uint)pId); // hashId defined in Hash template
     glColor4f(0.2 + 0.8 * (col_id % 100) / 100.0, // red color
@@ -326,16 +326,16 @@ private:
   const Signal * mSignal;     /**< Live signal received on each inlet. */
   size_t         mLineCount;
   size_t         mGroupSize;
-  double         mPointSize;
-  double         mLineWidth;
-  double         mMaxAmplitude;
+  real_t         mPointSize;
+  real_t         mLineWidth;
+  real_t         mMaxAmplitude;
   plot_color_t   mColorMode;
-  double         mAlpha;
-  double         mFixedColorRed;
-  double         mFixedColorGreen;
-  double         mFixedColorBlue;
-  double         mHeight;
-  double         mWidth;
+  real_t         mAlpha;
+  real_t         mFixedColorRed;
+  real_t         mFixedColorGreen;
+  real_t         mFixedColorBlue;
+  real_t         mHeight;
+  real_t         mWidth;
   bool           mDrawBase;
 };
 

@@ -1,5 +1,6 @@
 #ifndef _MATRIX_H_
 #define _MATRIX_H_
+#include "rubyk_types.h"
 #include <Accelerate/Accelerate.h>
 #include <cstdlib> // fopen, etc.
 
@@ -134,7 +135,7 @@ public:
   
   /** Cast & append a vector. Size increases automatically. */
   template<typename V>
-  bool cast_append (const V * pVector, size_t pVectorSize, double pScale = 1.0);
+  bool cast_append (const V * pVector, size_t pVectorSize, real_t pScale = 1.0);
   
   /** Append another matrix/vector to the end of the current data. Size increases automatically. 
     * @param pStartRow   where to start copying the data from (default is 0).
@@ -158,21 +159,21 @@ public:
     * @param pScale    amount to multiply each value before adding.
     *
     * @return true (never fails). */
-  bool add (const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1, double pScale = 1.0);
+  bool add (const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1, real_t pScale = 1.0);
   
   /** Subtract elements of one matrix to another.
     * See 'add' for details. */
-  inline bool subtract(const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1, double pScale = 1.0)
+  inline bool subtract(const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1, real_t pScale = 1.0)
   { return add(pOther, pStartRow, pEndRow, -pScale); }
   
-  /** Add an array of doubles to each elements in the matrix. 
+  /** Add an array of real_ts to each elements in the matrix. 
     * If the size is the same as the matrix : one to one.
     * If the size is col_size : add to each row.
     * If the size is row_size : add corresponding value to element in the row. */
   bool add (const T * pVector, size_t pVectorSize);
   
   /** Add two matrices. */
-  bool add (const TMatrix& A, const TMatrix& B, double pScaleA = 1.0, double pScaleB = 1.0);
+  bool add (const TMatrix& A, const TMatrix& B, real_t pScaleA = 1.0, real_t pScaleB = 1.0);
   
   /** Divide all elements by the values in another matrix. a.divide(b) (a/b) is NOT the matrix division (a-1b)
     * If rows/columns match, elements are divided one by one.
@@ -184,7 +185,7 @@ public:
     * @param pStartRow if you want to use only part of the other matrix, start row. Default 0 (first row).
     * @param pEndRow   when using only part of the other matrix. Default -1 (last row).
     * @return true (never fails). */
-  bool divide (const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1, double pScale = 1.0);
+  bool divide (const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1, real_t pScale = 1.0);
   
   /** Divide all elements by the values in another matrix.
     * See 'divide' for details. */
@@ -216,7 +217,7 @@ public:
     * @param pStartRow if you want to use only part of the other matrix, start row. Default 0 (first row).
     * @param pEndRow   when using only part of the other matrix. Default -1 (last row).
     * @return true (never fails). */
-  bool multiply (const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1, double pScale = 1.0);
+  bool multiply (const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1, real_t pScale = 1.0);
   
   /** Divide all elements by the values in another matrix.
     * See 'divide' for details. */
@@ -287,7 +288,7 @@ public:
     * @param pTransA transposition mode for matrix A (CblasNoTrans/CblasTrans).
     * @param pTransB transposition mode for matrix B.
     * @param pScale  scale factor. Default is 1.0 (no scaling). */
-  bool mat_multiply(const TMatrix& A, const TMatrix& B, const enum CBLAS_TRANSPOSE pTransA = CblasNoTrans, const enum CBLAS_TRANSPOSE pTransB = CblasNoTrans, double pScale = 1.0);
+  bool mat_multiply(const TMatrix& A, const TMatrix& B, const enum CBLAS_TRANSPOSE pTransA = CblasNoTrans, const enum CBLAS_TRANSPOSE pTransB = CblasNoTrans, real_t pScale = 1.0);
   
   
   /** Compute A'A for the given (row major) matrix. Return false on failure. Write C.symmetric(A) for C = A'A. */
@@ -391,7 +392,7 @@ protected:
   bool raw_copy(size_t pRowOffset, const T * pVector, size_t pVectorSize, bool pResize = false);
   
   /** Do multiplication (wrapper around Cblas) */
-  inline void do_gemm(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA, const enum CBLAS_TRANSPOSE TransB, const int M, const int N, const int K, const double alpha, const T *A, const int lda, const T *B, const int ldb, const double beta, T *C, const int ldc);
+  inline void do_gemm(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA, const enum CBLAS_TRANSPOSE TransB, const int M, const int N, const int K, const real_t alpha, const T *A, const int lda, const T *B, const int ldb, const real_t beta, T *C, const int ldc);
   
   
   /** Read a char from a file. */
@@ -406,8 +407,8 @@ protected:
     return fscanf(pFile, " %i", pValue);
   }
   
-  /** Read a double from a file. */
-  inline int do_fscanf (FILE * pFile, double * pValue) const
+  /** Read a real_t from a file. */
+  inline int do_fscanf (FILE * pFile, real_t * pValue) const
   {
     return fscanf(pFile, " %lf", pValue);
   }
@@ -424,8 +425,8 @@ protected:
     fprintf(pFile, " %i", pValue);
   }
 
-  /** Write a double to a file. */
-  inline void do_fprintf (FILE * pFile, double pValue) const
+  /** Write a real_t to a file. */
+  inline void do_fprintf (FILE * pFile, real_t pValue) const
   {  
     fprintf(pFile, " % .5f", pValue);
   }
@@ -443,7 +444,7 @@ protected:
 
 typedef TMatrix< int  > IntMatrix;
 
-typedef TMatrix<double> Matrix;
+typedef TMatrix<real_t> Matrix;
 
 
 /** Read-only matrix showing part of another matrix. */
@@ -472,7 +473,7 @@ public:
     mColCount = pOther.mColCount;
   }
   
-  CutMatrix(double * pData, size_t pRowCount, size_t pColCount) {
+  CutMatrix(real_t * pData, size_t pRowCount, size_t pColCount) {
     data = pData;
     mRowCount = pRowCount;
     mColCount = pColCount;
@@ -527,7 +528,7 @@ public:
     return true;
   }
   
-  void set_data(double * pData)
+  void set_data(real_t * pData)
   {
     data = pData;
   }

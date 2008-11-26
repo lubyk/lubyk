@@ -34,7 +34,7 @@ void Buffer::clear()
 /** Move read/write position forward. 
   *
   * @return pointer to the write position for the next vector. */
-double * Buffer::advance()
+real_t * Buffer::advance()
 {
   if (!mWindowSize) return NULL;
   if (mWriteRow >= (mWindowSize * (DEFAULT_WINDOW_COUNT - 1) + 1)) {

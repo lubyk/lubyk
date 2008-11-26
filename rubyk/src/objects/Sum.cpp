@@ -11,7 +11,7 @@ public:
   // inlet 1
   void bang(const Signal& sig)
   {  
-    double d;
+    real_t d;
     const Matrix * live;
     if (sig.type == MatrixSignal) {
       if (!sig.get(&live) || live->size() == 0) return;

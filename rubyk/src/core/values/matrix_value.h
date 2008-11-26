@@ -157,7 +157,7 @@ public:
   
   /** Cast & append a vector. Size increases automatically. */
   // template<typename V>
-  // bool cast_append (const V * pVector, size_t pVectorSize, double pScale = 1.0);
+  // bool cast_append (const V * pVector, size_t pVectorSize, real_t pScale = 1.0);
   
   /** Append another matrix/vector to the end of the current data. Size increases automatically. 
     * @param pStartRow   where to start copying the data from (default is 0).
@@ -188,7 +188,7 @@ public:
     * @param pScale    amount to multiply each value before adding.
     *
     * @return true (never fails). */
-  bool add (const TMatrixx& A, int pStartRow = 0, int pEndRow = -1, double pScale = 1.0)
+  bool add (const TMatrixx& A, int pStartRow = 0, int pEndRow = -1, real_t pScale = 1.0)
   {
     GET_DATA(A)
     return mutable_data()->add(*A_data, pStartRow, pEndRow, pScale);
@@ -196,13 +196,13 @@ public:
   
   /** Subtract elements of one matrix to another.
     * See 'add' for details. */
-  inline bool subtract(const TMatrixx& A, int pStartRow = 0, int pEndRow = -1, double pScale = 1.0)
+  inline bool subtract(const TMatrixx& A, int pStartRow = 0, int pEndRow = -1, real_t pScale = 1.0)
   { 
     GET_DATA(A)
     return mutable_data()->add(*A_data, pStartRow, pEndRow, -pScale);
   }
   
-  /** Add an array of doubles to each elements in the matrix. 
+  /** Add an array of real_ts to each elements in the matrix. 
     * If the size is the same as the matrix : one to one.
     * If the size is col_size : add to each row.
     * If the size is row_size : add corresponding value to element in the row. */
@@ -212,7 +212,7 @@ public:
   }
   
   /** Add two matrices. */
-  bool add (const TMatrixx& A, const TMatrixx& B, double pScaleA = 1.0, double pScaleB = 1.0)
+  bool add (const TMatrixx& A, const TMatrixx& B, real_t pScaleA = 1.0, real_t pScaleB = 1.0)
   {
     GET_DATA(A)
     GET_DATA(B)
@@ -229,7 +229,7 @@ public:
     * @param pStartRow if you want to use only part of the other matrix, start row. Default 0 (first row).
     * @param pEndRow   when using only part of the other matrix. Default -1 (last row).
     * @return true (never fails). */
-  bool divide (const TMatrixx& A, int pStartRow = 0, int pEndRow = -1, double pScale = 1.0)
+  bool divide (const TMatrixx& A, int pStartRow = 0, int pEndRow = -1, real_t pScale = 1.0)
   {
     GET_DATA(A)
     return mutable_data()->divide(*A_data, pStartRow, pEndRow, pScale);
@@ -264,7 +264,7 @@ public:
     * @param pStartRow if you want to use only part of the other matrix, start row. Default 0 (first row).
     * @param pEndRow   when using only part of the other matrix. Default -1 (last row).
     * @return true (never fails). */
-  bool multiply (const TMatrixx& A, int pStartRow = 0, int pEndRow = -1, double pScale = 1.0)
+  bool multiply (const TMatrixx& A, int pStartRow = 0, int pEndRow = -1, real_t pScale = 1.0)
   {
     GET_DATA(A)
     return mutable_data()->multiply(*A_data, pStartRow, pEndRow, pScale);
@@ -340,7 +340,7 @@ public:
     * @param pTransA transposition mode for matrix A (CblasNoTrans/CblasTrans).
     * @param pTransB transposition mode for matrix B.
     * @param pScale  scale factor. Default is 1.0 (no scaling). */
-  bool mat_multiply(const TMatrixx& A, const TMatrixx& B, const enum CBLAS_TRANSPOSE pTransA = CblasNoTrans, const enum CBLAS_TRANSPOSE pTransB = CblasNoTrans, double pScale = 1.0)
+  bool mat_multiply(const TMatrixx& A, const TMatrixx& B, const enum CBLAS_TRANSPOSE pTransA = CblasNoTrans, const enum CBLAS_TRANSPOSE pTransB = CblasNoTrans, real_t pScale = 1.0)
   {
     GET_DATA(A)
     GET_DATA(B)
@@ -443,17 +443,17 @@ public:
   
 };
 
-/////// double ///////
+/////// real_t ///////
 
-typedef TMatrixData<double> MatrixData;
-typedef TMatrixx<double>    Matrixx;
+typedef TMatrixData<real_t> MatrixData;
+typedef TMatrixx<real_t>    Matrixx;
 
 template<>
-value_t TMatrixData<double>::type() const
+value_t TMatrixData<real_t>::type() const
 { return MatrixValue; }
 
 template<>
-value_t TMatrixx<double>::type() const
+value_t TMatrixx<real_t>::type() const
 { return MatrixValue; }
 
 

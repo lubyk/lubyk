@@ -39,7 +39,7 @@ public:
   }
   
 private:
-  double mTempo;
+  real_t mTempo;
 };
 
 extern "C" void init()

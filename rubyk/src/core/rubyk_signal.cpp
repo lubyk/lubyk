@@ -53,7 +53,7 @@ std::ostream& operator<< (std::ostream& pStream, const Signal& sig)
 
 void Signal::set (const Params& p, Matrix& pBuffer)
 {  
-  double value;
+  real_t value;
   clear();
   
   if (p.size() > 1) {

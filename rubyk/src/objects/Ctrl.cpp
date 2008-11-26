@@ -29,7 +29,7 @@ public:
   // inlet 1 (set ctrl value)
   void bang(const Signal& sig)
   {
-    double i;
+    real_t i;
     if (sig.type == MidiSignal && sig.midi_ptr.value->mType == CtrlChange) {
       mMessage = *(sig.midi_ptr.value);
       send(mMessage);

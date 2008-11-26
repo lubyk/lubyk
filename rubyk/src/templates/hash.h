@@ -243,7 +243,7 @@ void Hash<K,T>::remove(const K& pId) {
           delete found->obj;
         }
         found->obj  = next->obj;
-        next->obj   = NULL;  // to avoid double delete
+        next->obj   = NULL;  // to avoid real_t delete
         found->id   = next->id;
         found->next = next->next;
         delete next;

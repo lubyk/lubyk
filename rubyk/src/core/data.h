@@ -23,7 +23,7 @@ public:
   virtual value_t type() const
   { return BangValue; }
   
-  virtual bool set (double * pResult)
+  virtual bool set (real_t * pResult)
   { return false; }
   
 #ifdef _TESTING_
