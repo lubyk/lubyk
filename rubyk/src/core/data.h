@@ -6,7 +6,12 @@
 class Data
 {
 public:
-  Data() {}
+  Data() 
+  {
+#ifdef _TESTING_
+  mId = ++sIdCounter;
+#endif
+  }
   
   virtual ~Data() {}
   
@@ -21,13 +26,20 @@ public:
   virtual bool set (double * pResult)
   { return false; }
   
+#ifdef _TESTING_
+ size_t id() const
+ { return mId; }
+
+ static size_t sIdCounter;
+ size_t        mId;
+#endif
 };
 
 /** Macro to ease Data specialization. */
 #define DATA_METHODS(klass,signature) \
   klass() {} \
   virtual Data * clone() \
-  { return new NumberData(*this); } \
+  { return new klass(*this); } \
   virtual value_t type() const \
   { return signature; } \
 

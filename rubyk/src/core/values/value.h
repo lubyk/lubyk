@@ -69,6 +69,18 @@ public:
           default:
             return false;
         }
+      case MatrixValue:
+        switch (pOther->type())
+        {
+          // what does the "other" wrapper expect ?
+          case AnonymousValue: // anything
+          case MatrixValue:
+            *pOther = *this;   // pOther acquires our content
+            return true;
+          case NumberValue:    // first value in matrix ?
+          default:
+            return false;
+        }
       default:
         return false;
     }
@@ -83,6 +95,17 @@ public:
     return mPtr->mDataPtr->set(pResult);
   }
   
+#ifdef _TESTING_
+  size_t data_id()
+  {
+    if (mPtr) {
+      return mPtr->mDataPtr->mId;
+    } else {
+      return 0;
+    }
+  }
+#endif
+  
 private:
   
   /** Return the textual representation of a value from a value type. */
@@ -96,6 +119,8 @@ private:
       return "Bang  ";
       case NumberValue:
       return "Number";
+      case MatrixValue:
+      return "Matrix";
       case AnonymousValue:
       return "Anonymous";
       default:

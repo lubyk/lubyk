@@ -1,10 +1,8 @@
-// loop buffer test
-// ordered_list_test.h 
-#include <cxxtest/TestSuite.h>
+#include "value_test_helper.h"
 #include "number_value.h"
 
 
-class NumberTest : public CxxTest::TestSuite
+class NumberTest : public ValueTestHelper
 {
 public:
   void test_create( void )
