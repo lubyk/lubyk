@@ -25,7 +25,7 @@ template<typename T>
 class TMatrix
 {
 public:
-  TMatrix() :  data(NULL), mStorageSize(0), mRowCount(0), mColCount(0), mErrorBuffer(NULL), mErrorBufferSize(0)
+  TMatrix() :  data(NULL), mStorageSize(0), mRowCount(0), mColCount(0), mPlaneCount(1), mErrorBuffer(NULL), mErrorBufferSize(0)
   {
     mErrorMsg = "no error";
   }
@@ -402,6 +402,7 @@ protected:
   size_t mStorageSize; /**< Storage size is greater or equal to mRowCount * mColCount. */
   size_t    mRowCount; /**< Number of rows in the matrix. */
   size_t    mColCount; /**< Number of columns in the matrix. mRowCount x mColCount can be greater then mSize during partial append. */
+  size_t  mPlaneCount; /**< Number of planes (for multiple-values cell content). All planes have the same size. */
   const char * mErrorMsg; /**< Pointer to the last error message. */
   char * mErrorBuffer; /**< Can be used to print custom messages. */
   size_t mErrorBufferSize;
@@ -430,6 +431,9 @@ public:
       mRowCount = 0;
       return;
     }
+    // FIXME: update code to handle multiple planes and reference counting.
+    // 1. alloc data pointers: data = new ...
+    // 2. for(i=0;i<mPlaneCount;i++) data[i] = pOther.data[i];
     data = pOther.data + pStartRow * pOther.mColCount;
     mRowCount = end_row - pStartRow + 1;
     mColCount = pOther.mColCount;
