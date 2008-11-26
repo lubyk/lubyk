@@ -1,6 +1,5 @@
 #ifndef _MATRIX_H_
 #define _MATRIX_H_
-
 #include <Accelerate/Accelerate.h>
 #include <cstdlib> // fopen, etc.
 
@@ -277,7 +276,7 @@ public:
   }
   
   /** Print the matrix (usefull for debugging). Use 'to_file' to serialize. */
-  void print(FILE * file = stdout) const;
+  void print(FILE * pFile = stdout) const;
   
   ////////////////  MATRIX OPERATIONS ////////////////////////
   /** Matrix multiplication.
@@ -318,14 +317,16 @@ public:
   }
 
   /** Return a pointer to the first element in the row pointed to by 'pIndex'. 
-    * You have to make sure pIndex is smaller the mRowCount. No verification is done here. */
+    * You have to make sure pIndex is smaller the mRowCount. No verification is done here.
+    * First index value is 0. */
   T * operator[] (size_t pIndex)
   {
     return data + mColCount * pIndex;
   }
   
   /** Return a pointer to the first element in the row pointed to by 'pIndex'. 
-    * You have to make sure pIndex is smaller the mRowCount. No verification is done here. */
+    * You have to make sure pIndex is smaller the mRowCount. No verification is done here.
+    * First index value is 0. */
   const T * operator[] (size_t pIndex) const
   {
     return data + mColCount * pIndex;
@@ -338,14 +339,26 @@ public:
     return *(data + mColCount * pRowIndex + pColIndex);
   }
   
+  /** Return a pointer to the data buffer. Return NULL if there is no data. */
+  const T * raw_data() const
+  {
+    return data;
+  }
+  
+  /** Return a pointer to the data buffer. Return NULL if there is no data. */
+  T * raw_data()
+  {
+    return data;
+  }
+  
   /** Return the number of columns in the matrix. */
-  const size_t& row_count() const
+  const size_t row_count() const
   {
     return mRowCount;
   }
   
   /** Return the number of columns in the matrix. */
-  const size_t& col_count() const
+  const size_t col_count() const
   {
     return mColCount;
   }

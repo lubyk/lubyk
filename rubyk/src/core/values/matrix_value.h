@@ -30,6 +30,11 @@ protected:
   friend class TMatrixx<T>;
 };
 
+#define GET_DATA(x) const TMatrixData<T> * x ## _data = x.data(); \
+  if (!x ## _data) return false;
+#define GET_THIS_DATA() const TMatrixData<T> * this_data = data(); \
+    if (!this_data) return false;
+  
 /** Value class to hold a matrix of elements of type 'T'. */
 template<class T>
 class TMatrixx : public Value
@@ -39,25 +44,8 @@ public:
   
   TMatrixx(size_t pRowCount, size_t pColCount) : Value(new TMatrixData<T>(pRowCount, pColCount)) {}
   
-  const T * raw_data () const
-  {
-    if (mPtr) {
-      return data_pointer()->data;
-    } else {
-      return NULL;
-    }
-  }
-  
-  
-  
-  
-  
-  
-  
-  
   
   ///////////////// Proxy methods for TMatrix //////////
-  
   
   /** Define and allocate the number of rows and columns for the matrix.
     * @return false on allocation failure. */
@@ -84,17 +72,15 @@ public:
     */
   bool to_file(FILE * pFile, bool isMatrix = true) const
   {
-    const TMatrixData<T> * d = data();
-    if (!d) return false;
-    return d->to_file(pFile, isMatrix);
+    GET_THIS_DATA()
+    return this_data->to_file(pFile, isMatrix);
   }
   
   /** Write a matrix to a filepath. */
   bool to_file(const std::string& pPath, const char * pMode = "wb", bool isMatrix = true) const
   {
-    const TMatrixData<T> * d = data();
-    if (!d) return false;
-    return d->to_file(pPath, pMode, isMatrix);
+    GET_THIS_DATA()
+    return this_data->to_file(pPath, pMode, isMatrix);
   }
   
   /** Fill a matrix from a FILE pointer.
@@ -124,14 +110,13 @@ public:
     * to copy the last (most recent) 3 lines in the matrix:
     * copy(matrix, -3)
     *
-    * @param pOther      other matrix to copy the data from.
+    * @param A      other matrix to copy the data from.
     * @param pStartRow   where to start copying the data from (default is 0).
     * @param pEndRow     last row to copy (default is -1 = last row). */
-  bool copy(const TMatrixx& pOther, int pStartRow = 0, int pEndRow = -1)
+  bool copy(const TMatrixx& A, int pStartRow = 0, int pEndRow = -1)
   {
-    const TMatrixData<T> * other_data = pOther.data();
-    if (!other_data) return false;
-    return mutable_data()->copy_at(0, *other_data, pStartRow, pEndRow, true);
+    GET_DATA(A)
+    return mutable_data()->copy_at(0, *A_data, pStartRow, pEndRow, true);
   }
   
   /** Make a partial copy of another matrix starting at a specific row index. The size of the matrix automatically
@@ -148,17 +133,16 @@ public:
     * if you need to append at the end of the current matrix, use 'append'.
     *
     * @param pRowIndex   index of the row to start copying data into.
-    * @param pOther      other matrix to copy the data from.
+    * @param A      other matrix to copy the data from.
     * @param pStartRow   where to start copying the data from (default is 0).
     * @param pEndRow     last row to copy (default is -1 = last row).
     * @param pResize     if true and pRowIndex is '0', the matrix is resized to the copied data.
     *
     * @return bool       returns false if allocation of new space failed. */
-  bool copy_at(int pRowIndex, const TMatrixx& pOther, int pStartRow = 0, int pEndRow = -1, bool pResize = false)
+  bool copy_at(int pRowIndex, const TMatrixx& A, int pStartRow = 0, int pEndRow = -1, bool pResize = false)
   {
-    const TMatrixData<T> * other_data = pOther.data();
-    if (!other_data) return false;
-    return mutable_data()->copy_at(pRowIndex, *other_data, pStartRow, pEndRow, pResize);
+    GET_DATA(A)
+    return mutable_data()->copy_at(pRowIndex, *A_data, pStartRow, pEndRow, pResize);
   }
 
   // FIXME: what is this ? bool copy(const Signal& sig);
@@ -179,11 +163,10 @@ public:
     * @param pStartRow   where to start copying the data from (default is 0).
     * @param pEndRow     last row to copy (default is -1 = last row).
     * @return false if the column count of both matrices do not match. */
-  bool append (const TMatrixx& pOther, int pStartRow = 0, int pEndRow = -1)
+  bool append (const TMatrixx& A, int pStartRow = 0, int pEndRow = -1)
   {
-    const TMatrixData<T> * other_data = pOther.data();
-    if (!other_data) return false;
-    return mutable_data()->append(*other_data, pStartRow, pEndRow);
+    GET_DATA(A)
+    return mutable_data()->append(*A_data, pStartRow, pEndRow);
   }
   
   /** Append a value at the end of a vector. Size increases automatically. */
@@ -192,22 +175,218 @@ public:
     return mutable_data()->append(pValue);
   }
   
-  //////////////////////////////////////////////////////
   
-  size_t row_count()
+  /** Add elements of one matrix to another.
+    * If rows/columns match, elements are added one by one.
+    * If the other matrix is a vector and column sizes match, the vector is added to each row.
+    * If the other matrix is a column vector and row counts match, the scalar is used against the corresponding row.
+    * If the other matrix is a scalar, add the value to all elements.
+    *
+    * @param A other matrix whose elements will be added.
+    * @param pStartRow if you want to use only part of the other matrix, start row. Default 0 (first row).
+    * @param pEndRow   when using only part of the other matrix. Default -1 (last row).
+    * @param pScale    amount to multiply each value before adding.
+    *
+    * @return true (never fails). */
+  bool add (const TMatrixx& A, int pStartRow = 0, int pEndRow = -1, double pScale = 1.0)
   {
-    return mutable_data()->mRowCount;
+    GET_DATA(A)
+    return mutable_data()->add(*A_data, pStartRow, pEndRow, pScale);
   }
   
-  size_t col_count()
-  {
-    return mutable_data()->mColCount;
+  /** Subtract elements of one matrix to another.
+    * See 'add' for details. */
+  inline bool subtract(const TMatrixx& A, int pStartRow = 0, int pEndRow = -1, double pScale = 1.0)
+  { 
+    GET_DATA(A)
+    return mutable_data()->add(*A_data, pStartRow, pEndRow, -pScale);
   }
   
-  size_t size()
+  /** Add an array of doubles to each elements in the matrix. 
+    * If the size is the same as the matrix : one to one.
+    * If the size is col_size : add to each row.
+    * If the size is row_size : add corresponding value to element in the row. */
+  bool add (const T * pVector, size_t pVectorSize)
   {
-    return mPtr ? data_pointer()->size() : 0;
+    return mutable_data()->add(pVector, pVectorSize);
   }
+  
+  /** Add two matrices. */
+  bool add (const TMatrixx& A, const TMatrixx& B, double pScaleA = 1.0, double pScaleB = 1.0)
+  {
+    GET_DATA(A)
+    GET_DATA(B)
+    return mutable_data()->add(*A_data, *B_data, pScaleA, pScaleB);
+  }
+  
+  /** Divide all elements by the values in another matrix. a.divide(b) (a/b) is NOT the matrix division (a-1b)
+    * If rows/columns match, elements are divided one by one.
+    * If the other matrix is a vector and columns sizes match, each row is divided by the vector.
+    * If the other matrix is a column vector and row counts match, corresponding rows are divided by the scalar.
+    * If the other matrix is a scalar, divide all element by this value.
+    *
+    * @param A other matrix by which the elements of this matrix will be divided.
+    * @param pStartRow if you want to use only part of the other matrix, start row. Default 0 (first row).
+    * @param pEndRow   when using only part of the other matrix. Default -1 (last row).
+    * @return true (never fails). */
+  bool divide (const TMatrixx& A, int pStartRow = 0, int pEndRow = -1, double pScale = 1.0)
+  {
+    GET_DATA(A)
+    return mutable_data()->divide(*A_data, pStartRow, pEndRow, pScale);
+  }
+  
+  /** Divide all elements by the values in another matrix.
+    * See 'divide' for details. */
+  bool operator/= (const TMatrixx& A)
+  {
+    GET_DATA(A)
+    return mutable_data()->divide(*A_data);
+  }
+  
+  /** Divide all elements by a scalar.
+    *
+    * @param pValue  value by which to divide all elements of the current matrix.
+    *
+    * @return true (never fails). */
+  bool operator/= (T pValue)
+  {
+    (*mutable_data()) /= pValue;
+    return true;
+  }
+  
+  /** Multiply all elements by the values in another matrix. a.divide(b) (a/b) is NOT the matrix multiplication (ab). See 'mat_multiply'.
+    * If rows/columns match, elements are multiplied one by one.
+    * If the other matrix is a vector and columns sizes match, each row is multiplied by the vector.
+    * If the other matrix is a column vector and row counts match, corresponding rows are multiplied by the scalar.
+    * If the other matrix is a scalar, multiply all element by this value.
+    *
+    * @param A other matrix by which the elements of this matrix will be divided.
+    * @param pStartRow if you want to use only part of the other matrix, start row. Default 0 (first row).
+    * @param pEndRow   when using only part of the other matrix. Default -1 (last row).
+    * @return true (never fails). */
+  bool multiply (const TMatrixx& A, int pStartRow = 0, int pEndRow = -1, double pScale = 1.0)
+  {
+    GET_DATA(A)
+    return mutable_data()->multiply(*A_data, pStartRow, pEndRow, pScale);
+  }
+  
+  /** Divide all elements by the values in another matrix.
+    * See 'divide' for details. */
+  bool operator*= (const TMatrixx& A)
+  {
+    GET_DATA(A)
+    return mutable_data()->multiply(*A_data);
+  }
+  
+  /** Divide all elements by a scalar.
+    *
+    * @param pValue  value by which to divide all elements of the current matrix.
+    *
+    * @return true (never fails). */
+  bool operator*= (T pValue)
+  {
+    (*mutable_data()) *= pValue;
+    return true;
+  }
+  
+  /** Substract all elements by the values in another matrix.
+    * See 'add' for details. */
+  bool operator-= (const TMatrixx& A)
+  {
+    GET_DATA(A)
+    return mutable_data->add(*A_data, 0, -1, -1.0);
+  }
+  
+  /** Substract a value to all elements in the matrix. */
+  bool operator-= (T pValue)
+  {
+    (*mutable_data()) -= pValue;
+    return true;
+  }
+  
+  /** Add elements of another matrix. See 'add' for details. */
+  bool operator+= (const TMatrixx& A)
+  {
+    GET_DATA(A)
+    return mutable_data()->add(*A_data);
+  }
+  
+  /** Add a value to all elements in the matrix. */
+  bool operator+= (T pValue)
+  {
+    (*mutable_data()) += pValue;
+    return true;
+  }
+  
+  /** Return the message for the last error. */
+  const char * error_msg() const
+  {
+    return mPtr ? data_pointer()->mErrorMsg : "";
+  }
+  
+  /** Print the matrix (usefull for debugging). Use 'to_file' to serialize. */
+  void print(FILE * pFile = stdout) const
+  {
+    GET_THIS_DATA()
+    this_data->print(pFile);
+  }
+  
+  ////////////////  MATRIX OPERATIONS ////////////////////////
+  /** Matrix multiplication.
+    * Write C.mat_multiply(A, B) for C = AB
+    *
+    * @param A matrix A.
+    * @param B matrix B.
+    * @param pTransA transposition mode for matrix A (CblasNoTrans/CblasTrans).
+    * @param pTransB transposition mode for matrix B.
+    * @param pScale  scale factor. Default is 1.0 (no scaling). */
+  bool mat_multiply(const TMatrixx& A, const TMatrixx& B, const enum CBLAS_TRANSPOSE pTransA = CblasNoTrans, const enum CBLAS_TRANSPOSE pTransB = CblasNoTrans, double pScale = 1.0)
+  {
+    GET_DATA(A)
+    GET_DATA(B)
+    return mutable_data()->mat_multiply(*A_data, *B_data, pTransA, pTransB, pScale);
+  }
+  
+  
+  /** Compute A'A for the given (row major) matrix. Return false on failure. Write C.symmetric(A) for C = A'A. */
+  bool symmetric(const TMatrixx& A)
+  {
+    GET_DATA(A)
+    return mutable_data()->symmetric(*A_data);
+  }
+
+  /** Set the matrix to the eigenvectors of a symmetric (row major) matrix. Return false on failure.
+    * @param pEigenValues will contain the eigenvalues (in ascending order).
+    * @param pMatrix source symmetric matrix (will be altered during processing. Send a copy if you want it kept clean).
+    */
+  bool eigenvectors(TMatrixx& pEigenValues, TMatrixx& pMatrix)
+  {
+    TMatrixData<T> * pEigenValues_data = pEigenValues.mutable_data();
+    if (!pEigenValues_data) return false;
+    
+    TMatrixData<T> * pMatrix_data = pMatrix.mutable_data();
+    if (!pMatrix_data) return false;
+    
+    return mutable_data()->eigenvectors(*pEigenValues_data, *pMatrix_data);
+  }
+  
+  
+  /** Compute in-place inverse of a square matrix.
+    * @eturn false on failure.
+    */
+  bool inverse()
+  {
+    if (!data()) return false;
+    return mutable_data()->inverse();
+  }
+  
+  /** Create an identity matrix of size 'n'.
+    * @param n size of identity matrix. */
+  bool identity(size_t pRowCount)
+  {
+    return mutable_data()->identity(pRowCount);
+  }
+
   
   /** Return a pointer to the first element in the row pointed to by 'pIndex'. 
     * You have to make sure pIndex is smaller the mRowCount. No verification is done here. */
@@ -225,10 +404,42 @@ public:
   
   /** Return the element in the row pointed to by 'pRowIndex' at the column 'pColIndex'. 
     * You have to make sure indexes are valid. No verification is done here. */
-  const T& value_at (size_t pRowIndex, size_t pColIndex) const
+  const T value_at (size_t pRowIndex, size_t pColIndex) const
   {
     return mPtr ? data_pointer()->value_at(pRowIndex, pColIndex) : 0;
   }
+  
+  /** Return a pointer to the data buffer. Return NULL if there is no data. */
+  const T * raw_data() const
+  {
+    return mPtr ? data_pointer()->data : NULL;    
+  }
+  
+  /** Return a pointer to the data buffer. Return NULL if there is no data. */
+  T * raw_data()
+  {
+    return mPtr ? data_pointer()->data : NULL;
+  }
+  
+  /** Return the number of columns in the matrix. */
+  const size_t row_count() const
+  {
+    return mPtr ? data_pointer()->mRowCount : 0;
+  }
+  
+  /** Return the number of columns in the matrix. */
+  const size_t col_count() const
+  {
+    return mPtr ? data_pointer()->mColCount : 0;
+  }
+  
+  size_t size() const
+  {
+    return mPtr ? data_pointer()->size() : 0;
+  }
+  
+  //////////////////////////////////////////////////////
+  
   
 };
 

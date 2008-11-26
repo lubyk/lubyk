@@ -203,11 +203,14 @@ public:
     Matrix m, A, B;
     A.set_sizes(2,3);
     B.set_sizes(2,3);
-    A.data[0] = 0; A.data[1] = 1; A.data[2] = 2;
-    A.data[3] = 2; A.data[4] = 3; A.data[5] = 5;
+    double * A_raw = A.raw_data();
+    double * B_raw = B.raw_data();
     
-    B.data[0] = 4; B.data[1] = 6; B.data[2] = 5;
-    B.data[3] = 2; B.data[4] = 8; B.data[5] = 3;
+    A_raw[0] = 0; A_raw[1] = 1; A_raw[2] = 2;
+    A_raw[3] = 2; A_raw[4] = 3; A_raw[5] = 5;
+    
+    B_raw[0] = 4; B_raw[1] = 6; B_raw[2] = 5;
+    B_raw[3] = 2; B_raw[4] = 8; B_raw[5] = 3;
     
     TS_ASSERT(m.add(A,B,-1.0,0.5));
     TS_ASSERT_EQUALS(m.row_count(), 2);
@@ -266,8 +269,8 @@ public:
     Matrix m1, m2;
     set_fixture(m2);
     m1.set_sizes(2,1);
-    m1.data[0] = 10.0;
-    m1.data[1] = 20.0;
+    m1.raw_data()[0] = 10.0;
+    m1.raw_data()[1] = 20.0;
     
     TS_ASSERT(m2 += m1);
     TS_ASSERT_EQUALS(m2.row_count(), 2);
@@ -308,8 +311,8 @@ public:
     double d[3] = {0.5, 1, 0.5};
     m2.set_sizes(2,3);
     m2.fill(1.0);
-    m2.data[3] = 2.5;
-    m2.data[4] = 3.5;
+    m2[1][0] = 2.5;
+    m2[1][1] = 3.5;
     
     TS_ASSERT(m2.add(d, 3));
     TS_ASSERT_EQUALS(m2.row_count(), 2);
@@ -330,8 +333,8 @@ public:
     double d[2] = {10, 20};
     m2.set_sizes(2,3);
     m2.fill(0.5);
-    m2.data[2] = 3.5;
-    m2.data[4] = 7.0;
+    m2.raw_data()[2] = 3.5;
+    m2.raw_data()[4] = 7.0;
     
     TS_ASSERT(m2.add(d, 2));
     TS_ASSERT_EQUALS(m2.row_count(), 2);
@@ -409,8 +412,8 @@ public:
     Matrix m1, m2;
     set_fixture(m2);
     m1.set_sizes(2,1);
-    m1.data[0] = 2.0;
-    m1.data[1] = 4.0;
+    m1[0][0] = 2.0;
+    m1[0][1] = 4.0;
     
     TS_ASSERT(m2 /= m1);
     TS_ASSERT_EQUALS(m2.row_count(), 2);
@@ -431,8 +434,8 @@ public:
     Matrix m1, m2;
     set_fixture(m1);
     m2.set_sizes(2,3);
-    m2.data[0] = 2;  m2.data[1] = 1;   m2.data[2] = 7;
-    m2.data[3] = 4;  m2.data[4] = 0.5; m2.data[5] = 2;
+    m2[0][0] = 2;  m2[0][1] = 1;   m2[0][2] = 7;
+    m2[1][0] = 4;  m2[1][1] = 0.5; m2[1][2] = 2;
     
     TS_ASSERT(m2.multiply(m1));
     TS_ASSERT_EQUALS(m2.row_count(), 2);
@@ -452,8 +455,8 @@ public:
     Matrix m1, m2;
     set_fixture(m1);
     m2.set_sizes(2,3);
-    m2.data[0] = 2;  m2.data[1] = 1;   m2.data[2] = 7;
-    m2.data[3] = 4;  m2.data[4] = 0.5; m2.data[5] = 2;
+    m2[0][0] = 2;  m2[0][1] = 1;   m2[0][2] = 7;
+    m2[1][0] = 4;  m2[1][1] = 0.5; m2[1][2] = 2;
 
     TS_ASSERT(m2.multiply(m1, 0, -1, 0.5));
     TS_ASSERT_EQUALS(m2.row_count(), 2);
@@ -491,8 +494,8 @@ public:
     Matrix m1, m2;
     set_fixture(m2);
     m1.set_sizes(2,1);
-    m1.data[0] = 0.5;
-    m1.data[1] = 0.25;
+    m1[0][0] = 0.5;
+    m1[0][1] = 0.25;
     
     TS_ASSERT(m2 *= m1);
     TS_ASSERT_EQUALS(m2.row_count(), 2);
@@ -569,11 +572,11 @@ public:
     TS_ASSERT_EQUALS(m3.row_count(), 4);
     TS_ASSERT_EQUALS(m3.col_count(), 3);
     
-    TS_ASSERT_EQUALS(m3.data[0], 2.0);
-    TS_ASSERT_EQUALS(m3.data[1], 2.0);
-    TS_ASSERT_EQUALS(m3.data[2], 2.0);
+    TS_ASSERT_EQUALS(m3[0][0], 2.0);
+    TS_ASSERT_EQUALS(m3[0][1], 2.0);
+    TS_ASSERT_EQUALS(m3[0][2], 2.0);
     for(size_t i = 3; i < 12; i++)
-      TS_ASSERT_EQUALS(m3.data[i], 5.0);
+      TS_ASSERT_EQUALS(m3.raw_data()[i], 5.0);
     
     remove("matrix_test_11tmp.txt");
   }
@@ -584,9 +587,9 @@ public:
     m1.set_sizes(1,3);
     m2.set_sizes(1,0); // detect column count
     
-    m1.data[0] = 1;
-    m1.data[1] = 5;
-    m1.data[2] = 7;
+    m1[0][0] = 1;
+    m1[0][1] = 5;
+    m1[0][2] = 7;
     TS_ASSERT(m1.to_file("matrix_test_tmp.txt"));
     
     TS_ASSERT(m2.from_file("matrix_test_tmp.txt"));
@@ -604,13 +607,13 @@ public:
     m3.set_sizes(1,3);
     m4.set_sizes(1,0); // detect column count
     
-    m1.data[0] = 1;
-    m1.data[1] = 5;
-    m1.data[2] = 7;
+    m1[0][0] = 1;
+    m1[0][1] = 5;
+    m1[0][2] = 7;
     
-    m3.data[0] = 4;
-    m3.data[1] = 2;
-    m3.data[2] = 12;
+    m3[0][0] = 4;
+    m3[0][1] = 2;
+    m3[0][2] = 12;
     
     TS_ASSERT(m1.to_file("matrix_test_tmp.txt"));
     TS_ASSERT(m3.to_file("matrix_test_tmp.txt", "ab"));
@@ -863,12 +866,12 @@ private:
   void set_fixture(Matrix& m)
   {
     m.set_sizes(2,3);
-    
+    double * data = m.raw_data();
     /*
     1 2.4 3
     7 8   9.5 */
-    m.data[0] = 1; m.data[1] = 2.4; m.data[2] = 3;
-    m.data[3] = 7; m.data[4] = 8;     m.data[5] = 9.5;
+    data[0] = 1; data[1] = 2.4; data[2] = 3;
+    data[3] = 7; data[4] = 8;   data[5] = 9.5;
   }
   
   template<typename T>
