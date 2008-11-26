@@ -78,7 +78,22 @@ public:
           case MatrixValue:
             *pOther = *this;   // pOther acquires our content
             return true;
-          case NumberValue:    // first value in matrix ?
+          case NumberValue:     // first value in matrix ?
+          case CharMatrixValue: // cast ?
+          default:
+            return false;
+        }
+        
+      case CharMatrixValue:
+        switch (pOther->type())
+        {
+          // what does the "other" wrapper expect ?
+          case AnonymousValue: // anything
+          case CharMatrixValue:
+            *pOther = *this;   // pOther acquires our content
+            return true;
+          case NumberValue:    // first value in matrix ?  
+          case MatrixValue:    // cast ?
           default:
             return false;
         }
@@ -122,6 +137,8 @@ private:
       return "Number";
       case MatrixValue:
       return "Matrix";
+      case CharMatrixValue:
+      return "CharMatrix";
       case AnonymousValue:
       return "Anonymous";
       default:

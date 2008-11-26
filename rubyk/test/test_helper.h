@@ -1,5 +1,5 @@
-#ifndef _NODE_TESTER_H_
-#define _NODE_TESTER_H_
+#ifndef _TEST_HELPER_H_
+#define _TEST_HELPER_H_
 #include "class.h"
 #include "command.h"
 #include "globals.cpp"
@@ -150,4 +150,4 @@ protected:
     TS_ASSERT_EQUALS( mOutput.str(), std::string(pResult));
   }
 };
-#endif
+#endif // _TEST_HELPER_H_

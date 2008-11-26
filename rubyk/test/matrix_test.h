@@ -1,8 +1,6 @@
 #include "value_test_helper.h"
 #include "matrix_value.h"
 
-#define assert_matrix_equal(x,y) _assert_matrix_equal(__FILE__,__LINE__,x,y)
-
 class MatrixxTest : public ValueTestHelper
 {
 public:
@@ -29,69 +27,8 @@ public:
     assert_id(1, m2); // first object created
   }
   
-  void test_copy( void )
-  {
-    Matrixx m1, m2;
-    set_fixture(m1);
-    TS_ASSERT(m2.copy(m1));
-    assert_matrix_equal(m2, m1);
-  }
-  
-  //void _copy_at( void )
-  //{
-  //  Matrix m1, m2;
-  //  set_fixture(m1);
-  //  m2.set_sizes(1,3);
-  //  m2.clear();
-  //  
-  //  TS_ASSERT_EQUALS(m2.row_count(), 1);
-  //  TS_ASSERT(m2.copy_at(1, m1));
-  //  TS_ASSERT_EQUALS(m2.row_count(), 3);
-  //  TS_ASSERT_EQUALS(m2.col_count(), 3);
-  //  
-  //  TS_ASSERT_EQUALS(m2[0][0], 0.0);
-  //  TS_ASSERT_EQUALS(m2[0][1], 0.0);
-  //  TS_ASSERT_EQUALS(m2[0][2], 0.0);
-  //  
-  //  TS_ASSERT_EQUALS(m2[1][0], m1[0][0]);
-  //  TS_ASSERT_EQUALS(m2[1][1], m1[0][1]);
-  //  TS_ASSERT_EQUALS(m2[1][2], m1[0][2]);
-  //  
-  //  TS_ASSERT_EQUALS(m2[2][0], m1[1][0]);
-  //  TS_ASSERT_EQUALS(m2[2][1], m1[1][1]);
-  //  TS_ASSERT_EQUALS(m2[2][2], m1[1][2]);
-  //}
-  
-  void test_append( void )
-  {
-    Matrixx m1, m2;
-    set_fixture(m1);
-    TS_ASSERT(m2.set_sizes(2,3));
-    m2.clear();
-    
-    TS_ASSERT_EQUALS(m2.row_count(), 2);
-    
-    TS_ASSERT(m2.append(m1));
-    TS_ASSERT_EQUALS(m2.row_count(), 4);
-    TS_ASSERT_EQUALS(m2.col_count(), 3);
-    
-    TS_ASSERT_EQUALS(m2[0][0], 0.0);
-    TS_ASSERT_EQUALS(m2[0][1], 0.0);
-    TS_ASSERT_EQUALS(m2[0][2], 0.0);
-    
-    TS_ASSERT_EQUALS(m2[1][0], 0.0);
-    TS_ASSERT_EQUALS(m2[1][1], 0.0);
-    TS_ASSERT_EQUALS(m2[1][2], 0.0);
-    
-    TS_ASSERT_EQUALS(m2[2][0], m1[0][0]);
-    TS_ASSERT_EQUALS(m2[2][1], m1[0][1]);
-    TS_ASSERT_EQUALS(m2[2][2], m1[0][2]);
-    
-    TS_ASSERT_EQUALS(m2[3][0], m1[1][0]);
-    TS_ASSERT_EQUALS(m2[3][1], m1[1][1]);
-    TS_ASSERT_EQUALS(m2[3][2], m1[1][2]);
-  }
-  
+  // the following tests are copied from tmatrix_test.h, replacing Matrixx by Matrixx
+
   
 private:
   

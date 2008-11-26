@@ -1,10 +1,12 @@
 #ifndef _VALUE_TEST_HELPER_H_
 #define _VALUE_TEST_HELPER_H_
+#include "test_helper.h"
 #include "value.h"
 
 #define assert_log(x) _assert_log(__FILE__,__LINE__,x)
 #define assert_ref_count(x,y) _assert_ref_count(__FILE__,__LINE__,x,y)
 #define assert_id(x,y) _assert_id(__FILE__,__LINE__,x,y)
+#define assert_matrix_equal(x,y) _assert_matrix_equal(__FILE__,__LINE__,x,y)
 
 class TestData : public Data
 {

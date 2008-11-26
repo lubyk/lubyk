@@ -232,6 +232,10 @@ public:
   
 };
 
+/////// double ///////
+
+typedef TMatrixData<double> MatrixData;
+typedef TMatrixx<double>    Matrixx;
 
 template<>
 value_t TMatrixData<double>::type() const
@@ -241,6 +245,12 @@ template<>
 value_t TMatrixx<double>::type() const
 { return MatrixValue; }
 
+
+/////// char ///////
+
+typedef TMatrixData<char> CharMatrixData;
+typedef TMatrixx<char>    CharMatrix;
+
 template<>
 value_t TMatrixData<char>::type() const
 { return CharMatrixValue; }
@@ -249,7 +259,5 @@ template<>
 value_t TMatrixx<char>::type() const
 { return CharMatrixValue; }
 
-typedef TMatrixx<double> Matrixx;
-typedef TMatrixData<double> MatrixData;
 
 #endif // _MATRIX_VALUE_H_

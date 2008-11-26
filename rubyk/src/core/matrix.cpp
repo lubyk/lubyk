@@ -227,6 +227,24 @@ void TMatrix<int>::print(FILE * pFile) const
   }
 }
 
+template<>
+void TMatrix<char>::print(FILE * pFile) const
+{
+	size_t i,j;
+
+  for(i=0;i<mRowCount;i++) {
+		if (i==0)
+		  fprintf(pFile, "[");
+    else
+      fprintf(pFile, " ");
+		for(j=0;j<mColCount;j++)
+				fprintf(pFile, " %i",(int)data[(i * mColCount) + j]);
+    if (i == mRowCount -1)
+      fprintf(pFile, " ]\n");
+    else
+      fprintf(pFile, "\n");
+  }
+}
 
 template<>
 std::ostream& operator<< (std::ostream& pStream, const TMatrix<double>& mat)
@@ -268,6 +286,31 @@ std::ostream& operator<< (std::ostream& pStream, const TMatrix<int>& mat)
       pStream << " ";
 		for(j=0;j<col_count;j++) {
 			snprintf(buf, 200, " %i", mat.data[(i * col_count) + j]);
+      pStream << buf;
+		}
+    if (i == row_count -1)
+      pStream << " ]\n";
+    else
+      pStream << "\n";
+  }
+  return pStream;
+}
+
+template<>
+std::ostream& operator<< (std::ostream& pStream, const TMatrix<char>& mat)
+{
+  char buf[200];
+  size_t row_count = mat.row_count();
+  size_t col_count = mat.col_count();
+	size_t i,j;
+
+  for(i=0;i<row_count;i++) {
+		if (i==0)
+		  pStream << "[";
+    else
+      pStream << " ";
+		for(j=0;j<col_count;j++) {
+			snprintf(buf, 200, " %i", (int)mat.data[(i * col_count) + j]);
       pStream << buf;
 		}
     if (i == row_count -1)
@@ -937,30 +980,24 @@ bool TMatrix<double>::inverse()
 
 /// explicit instanciation for doubles and integers //////
 
-template bool TMatrix<double>::to_file(const std::string& pPath, const char * pMode, bool isMatrix) const;
-template bool TMatrix< int  >::to_file(const std::string& pPath, const char * pMode, bool isMatrix) const;
-template bool TMatrix<double>::to_file(FILE * pFile, bool isMatrix) const;
-template bool TMatrix< int  >::to_file(FILE * pFile, bool isMatrix) const;
+#define TMATRIX_EXPLICIT(T) \
+  template bool TMatrix<T>::to_file(const std::string& pPath, const char * pMode, bool isMatrix) const; \
+  template bool TMatrix<T>::to_file(FILE * pFile, bool isMatrix) const; \
+  template bool TMatrix<T>::from_file(const std::string& pPath, const char * pMode); \
+  template bool TMatrix<T>::from_file(FILE * pFile); \
+  template bool TMatrix<T>::add(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale); \
+  template bool TMatrix<T>::add(const T * pVector, size_t pVectorSize); \
+  template bool TMatrix<T>::add(const TMatrix& A, const TMatrix& B, double pScaleA, double pScaleB); \
+  template bool TMatrix<T>::append(const T * pVector, size_t pVectorSize); \
+  template bool TMatrix<T>::append(T pValue); \
+  template bool TMatrix<T>::append(const TMatrix& pOther, int pStartRow, int pEndRow); \
+  template bool TMatrix<T>::multiply(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale); \
+  template bool TMatrix<T>::divide(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale);
 
-template bool TMatrix<double>::from_file(const std::string& pPath, const char * pMode);
-template bool TMatrix< int  >::from_file(const std::string& pPath, const char * pMode);
-template bool TMatrix<double>::from_file(FILE * pFile);
-template bool TMatrix< int  >::from_file(FILE * pFile);
+TMATRIX_EXPLICIT(char)
+TMATRIX_EXPLICIT(int)
+TMATRIX_EXPLICIT(double)
 
-template bool TMatrix<double>::add(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale);
-template bool TMatrix< int  >::add(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale);
-template bool TMatrix<double>::add(const double * pVector, size_t pVectorSize);
-template bool TMatrix< int  >::add(const int    * pVector, size_t pVectorSize);
-template bool TMatrix<double>::add(const TMatrix& A, const TMatrix& B, double pScaleA, double pScaleB);
-template bool TMatrix< int  >::add(const TMatrix& A, const TMatrix& B, double pScaleA, double pScaleB);
-template bool TMatrix<double>::append(const double * pVector, size_t pVectorSize);
-template bool TMatrix< int  >::append(const int    * pVector, size_t pVectorSize);
-template bool TMatrix<double>::append(double pValue);
-template bool TMatrix< int  >::append(int    pValue);
-template bool TMatrix<double>::append(const TMatrix& pOther, int pStartRow, int pEndRow);
-template bool TMatrix< int  >::append(const TMatrix& pOther, int pStartRow, int pEndRow);
-template bool TMatrix<double>::multiply(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale);
-template bool TMatrix< int  >::multiply(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale);
 template bool TMatrix<double>::mat_multiply(const TMatrix& A, const TMatrix& B, const enum CBLAS_TRANSPOSE pTransA, const enum CBLAS_TRANSPOSE pTransB, double pScale);
 
 // cast append
@@ -972,5 +1009,3 @@ template bool TMatrix<double>::cast_append<double> (const double * pVector, size
 template bool TMatrix< int  >::cast_append< int  > (const int * pVector, size_t pVectorSize, double pScale);
 
 // no mat_multiply for integers
-template bool TMatrix<double>::divide(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale);
-template bool TMatrix< int  >::divide(const TMatrix& pOther, int pStartRow, int pEndRow, double pScale);

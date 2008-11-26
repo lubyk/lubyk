@@ -380,6 +380,13 @@ protected:
   /** Do multiplication (wrapper around Cblas) */
   inline void do_gemm(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA, const enum CBLAS_TRANSPOSE TransB, const int M, const int N, const int K, const double alpha, const T *A, const int lda, const T *B, const int ldb, const double beta, T *C, const int ldc);
   
+  
+  /** Read a char from a file. */
+  inline char do_fscanf (FILE * pFile, char * pValue) const
+  {
+    return fscanf(pFile, " %c", pValue);
+  }
+  
   /** Read an integer from a file. */
   inline int do_fscanf (FILE * pFile, int * pValue) const
   {
@@ -390,6 +397,12 @@ protected:
   inline int do_fscanf (FILE * pFile, double * pValue) const
   {
     return fscanf(pFile, " %lf", pValue);
+  }
+  
+  /** Write a char to a file. */
+  inline void do_fprintf (FILE * pFile, char pValue) const
+  {  
+    fprintf(pFile, " %c", pValue);
   }
   
   /** Write an integer to a file. */

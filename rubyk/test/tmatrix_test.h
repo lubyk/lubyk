@@ -6,12 +6,15 @@
 class MatrixTest : public CxxTest::TestSuite
 {
 public:
+
+///// [TESTS_FOR_MATRIX]
+// the following tests are used for Matrixx as well as Matrix. (When changing these tests, please copy/paste into matrix_test.h).
   void test_copy( void )
   {
     Matrix m1, m2;
     set_fixture(m1);
     TS_ASSERT(m2.copy(m1));
-    assert_equal(m2, m1);
+    assert_matrix_equal(m2, m1);
   }
   
   void test_copy_at( void )
@@ -540,7 +543,7 @@ public:
       m2.from_file(file);
     fclose(file);
     
-    assert_equal(m2, m1);
+    assert_matrix_equal(m2, m1);
     remove("matrix_test_tmp.txt");
   }
   
@@ -588,7 +591,7 @@ public:
     
     TS_ASSERT(m2.from_file("matrix_test_tmp.txt"));
     
-    assert_equal(m2, m1);
+    assert_matrix_equal(m2, m1);
     remove("matrix_test_tmp.txt");
   }
   
@@ -617,8 +620,8 @@ public:
       TS_ASSERT(m4.from_file(file));
     fclose(file);
     
-    assert_equal(m2, m1);
-    assert_equal(m4, m3);
+    assert_matrix_equal(m2, m1);
+    assert_matrix_equal(m4, m3);
     
     remove("matrix_test_tmp.txt");
   }
@@ -643,8 +646,8 @@ public:
       m4.from_file(file);
     fclose(file);
     
-    assert_equal(m2, m1);
-    assert_equal(m4, m3);
+    assert_matrix_equal(m2, m1);
+    assert_matrix_equal(m4, m3);
     
 	remove("matrix_test_tmp.txt");
   }
@@ -801,7 +804,7 @@ public:
     
     TS_ASSERT(a.inverse());
 
-    assert_equal(a,b);
+    assert_matrix_equal(a,b);
   }
   
   void test_inverse_tiny_det( void )
@@ -849,9 +852,14 @@ public:
     
     TS_ASSERT(a.identity(3));
 
-    assert_equal(a,b);
+    assert_matrix_equal(a,b);
   }
+
+///// [/TESTS_FOR_MATRIX]
 private:
+  
+  char mBuf[256];
+  
   void set_fixture(Matrix& m)
   {
     m.set_sizes(2,3);
@@ -864,13 +872,16 @@ private:
   }
   
   template<typename T>
-  void assert_equal(const TMatrix<T>& m2, const TMatrix<T>& m1, int p = 10000) // p = precision
+  void _assert_matrix_equal(const char * file, int lineno, const TMatrix<T>& m1, const TMatrix<T>& m2, int p = 10000) // p = precision
   {
     TS_ASSERT_EQUALS(m2.row_count(), m1.row_count());
     TS_ASSERT_EQUALS(m2.col_count(), m1.col_count());
     if (m2.row_count() == m1.row_count() && m2.col_count() == m1.col_count()) {
       for(size_t i=0; i < m1.row_count(); i++) {
-        for(size_t j=0; j < m1.col_count(); j++) TS_ASSERT_EQUALS( round(p * m2[i][j])/p, round(p * m1[i][j])/p);
+        for(size_t j=0; j < m1.col_count(); j++) {
+          snprintf(mBuf, 256, "value[%lu][%lu]", i, j);
+          _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string(mBuf)), round(p * m2[i][j])/p, round(p * m1[i][j])/p);
+        }
       }
     }
   }
