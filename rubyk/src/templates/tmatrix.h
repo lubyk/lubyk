@@ -7,7 +7,7 @@
 #define MATRIX_MIN_DET 1e-10 // minimal determinant to compute matrix inversion
 
 class CutMatrix;
-union Value;
+//FIX class Value;
 
 
 // taken from Quake
@@ -126,9 +126,9 @@ public:
     * @return bool       returns false if allocation of new space failed. */
   bool copy_at(int pRowIndex, const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1, bool pResize = false);
 
-  bool copy(const Value& sig);
+  //FIX bool copy(const Value& sig);
   
-  bool copy_at(int pRowIndex, const Value& sig);
+  //FIX bool copy_at(int pRowIndex, const Value& sig);
   
   /** Append a vector to the end of the current data. Size increases automatically. */
   bool append (const T * pVector, size_t pVectorSize);

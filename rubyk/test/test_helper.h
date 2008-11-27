@@ -1,7 +1,7 @@
 #ifndef _TEST_HELPER_H_
 #define _TEST_HELPER_H_
-#include "class.h"
-#include "command.h"
+// #include "class.h"
+// #include "command.h"
 #include "globals.cpp"
 #include <sstream>
 

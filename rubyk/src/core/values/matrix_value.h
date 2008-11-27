@@ -8,8 +8,9 @@
 #ifndef _MATRIX_VALUE_H_
 #define _MATRIX_VALUE_H_
 #include "value.h"
+#include "tmatrix.h"
 
-template<class T>
+template<typename T>
 class TMatrixx; // naming Matrixx to avoid name class with legacy Matrix. When Matrix is removed, this will be renamed.
 
 /* Holds the actual data of the Matrix class. */

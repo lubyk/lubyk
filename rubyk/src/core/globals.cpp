@@ -1,7 +1,8 @@
 #ifndef _GLOBALS_CPP_
 #define _GLOBALS_CPP_
 
-#include "class.h"
+//FIX #include "class.h"
+#include "object.h"
 
 ////// GLWINDOW HACK /////
 bool gRunning;
@@ -13,8 +14,8 @@ void * gGLWindowNode;
 bool   gQuitGl;
 
 // Node
-pthread_key_t Node::sThisKey     = NULL;
-pthread_key_t Node::sGLThreadKey = NULL;
+//FIX pthread_key_t Node::sThisKey     = NULL;
+//FIX pthread_key_t Node::sGLThreadKey = NULL;
 
 // Object
 Hash<std::string, Object*> Object::sObjects(OBJECT_HASH_SIZE);

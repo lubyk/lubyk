@@ -1,29 +1,29 @@
 // ordered_list_test.h 
 #include <cxxtest/TestSuite.h>
-#include "values.h"
+#include "rubyk_signal.h"
 
 static real_t cast_tester(real_t v)
 {
   return v;
 }
 
-class ValueTest : public CxxTest::TestSuite
+class SignalTest : public CxxTest::TestSuite
 {
 public:
   void testType( void )
   {
-    Value sig;
+    Signal sig;
 
-    TS_ASSERT_EQUALS(sig.type, NilValue);
+    TS_ASSERT_EQUALS(sig.type, NilSignal);
 
     sig.set(34.0);
 
-    TS_ASSERT_EQUALS(sig.type, DoubleValue);
+    TS_ASSERT_EQUALS(sig.type, DoubleSignal);
   }
   
   void testBool( void )
   {
-    Value sig;
+    Signal sig;
     bool res = false;
     
     sig.set(true);
@@ -37,10 +37,10 @@ public:
   
   void testString( void )
   {
-    Value sig;
+    Signal sig;
     sig.set(std::string("Foo"));
     
-    TS_ASSERT_EQUALS(StringValue, sig.type);
+    TS_ASSERT_EQUALS(StringSignal, sig.type);
     TS_ASSERT_EQUALS(*(sig.str_ptr.value), std::string("Foo"));
   }
   
@@ -50,7 +50,7 @@ public:
     // std::string name;
     real_t age;
     int    year;
-    Value sig;
+    Signal sig;
     
     sig.set(34.0);
     //sig.set_meta(H("name"), "John");
@@ -68,7 +68,7 @@ public:
   
   void test_cast( void )
   {
-    Value sig;
+    Signal sig;
     sig.set(345);
     TS_ASSERT_EQUALS(cast_tester(sig), 345.0);
   }

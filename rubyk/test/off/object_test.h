@@ -100,7 +100,7 @@ public:
     Object one(root,"one");
     Object two(root,"two");
     Object sub(two,"sub");
-    Value res, param;
+    Signal res, param;
     std::string str;
 
     TS_ASSERT_EQUALS( root.url(),    std::string("/root") );
