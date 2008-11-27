@@ -18,7 +18,7 @@ class GLPlot : public Node
 {
 public:
   
-  bool init (const Params& p)
+  bool init (const Value& p)
   {
     mLiveBuffer      = NULL;
     mLineCount       = 1;
@@ -43,7 +43,7 @@ public:
     return true;
   }
   
-  bool set (const Params& p)
+  bool set (const Value& p)
   {
     std::string mode;
     p.get(&mLineCount,"line");
@@ -68,15 +68,15 @@ public:
   }
   
   // inlet 1
-  void bang(const Signal& sig)
+  void bang(const Value& sig)
   {
-    mSignal = &sig;
+    mValue = &sig;
     sig.get(&(mLiveBuffer));
     send(1, sig);
   }
   
   // inlet 2 (draw)
-  void draw(const Signal& sig)
+  void draw(const Value& sig)
   {
     const Matrix * mat;
     if (!is_opengl_thread()) return;
@@ -141,9 +141,9 @@ private:
     bool   draw_box      = false;
 
     ///// set x_offset, width_zoom with sig.get_meta(...) /////
-    mSignal->get_meta(&sample_offset, H("sample_offset")); // shift display window right / left
-    mSignal->get_meta(&sample_count,  H("sample_count"));  // total number of samples per window when computing width_ratio
-    mSignal->get_meta(&draw_box,      H("draw_box"));      // draw a surrounding box
+    mValue->get_meta(&sample_offset, H("sample_offset")); // shift display window right / left
+    mValue->get_meta(&sample_count,  H("sample_count"));  // total number of samples per window when computing width_ratio
+    mValue->get_meta(&draw_box,      H("draw_box"));      // draw a surrounding box
 
     real_t col_ratio = 0.8; //1.0 / mGroupSize;
 
@@ -323,7 +323,7 @@ private:
   
   plot_type_t    mMode;       /**< Plot mode (XYPlot, TimePlot) each pair as an XY point instead of x(t). */
   const Matrix * mLiveBuffer; /**< Pointer to the live stream (one matrix for each inlet). */
-  const Signal * mSignal;     /**< Live signal received on each inlet. */
+  const Value * mValue;     /**< Live signal received on each inlet. */
   size_t         mLineCount;
   size_t         mGroupSize;
   real_t         mPointSize;

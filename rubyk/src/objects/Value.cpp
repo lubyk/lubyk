@@ -4,7 +4,7 @@ class ValueObj : public Node
 {
 public:
   
-  bool set (const Params& p)
+  bool set (const Value& p)
   {
     real_t value;
     if (p.size() > 1) {
@@ -24,21 +24,21 @@ public:
   }
   
   // inlet 1
-  void bang(const Signal& sig)
+  void bang(const Value& sig)
   { 
     set_value(sig);
     send(mS);
   }
   
   // inlet 2: set value
-  void set_value(const Signal& sig)
+  void set_value(const Value& sig)
   {
-    if (sig.type == MatrixSignal) {
+    if (sig.type == MatrixValue) {
       // copy
       if(mMatrix.copy(sig)) {
         mS.set(mMatrix);
       }
-    } else if (sig.type != BangSignal) {
+    } else if (sig.type != BangValue) {
       mS = sig;
     }
   }

@@ -5,7 +5,7 @@ class MidiIn : public Node
 {
 public:
   
-  bool init (const Params& p)
+  bool init (const Value& p)
   {
     mPortId = -1;
     
@@ -52,16 +52,16 @@ public:
     return true;
   }
   
-  bool set (const Params& p)
+  bool set (const Value& p)
   {
     *mOutput << mName << ": cannot change a Midi object during runtime, yet.\n";
     return true;
   }
   
   // inlet 1
-  void bang(const Signal& sig)
+  void bang(const Value& sig)
   {
-    if (sig.type == NilSignal && mMidiIn)
+    if (sig.type == NilValue && mMidiIn)
       get_messages();
   }
   
@@ -76,7 +76,7 @@ public:
   { remove_my_events(); }
   
   // print a list of possible inputs
-  static void list(std::ostream * pOutput, const Params& p) {
+  static void list(std::ostream * pOutput, const Value& p) {
     std::vector<std::string> ports;
     if (!input_list(pOutput, ports)) return;
     size_t nPorts = ports.size();

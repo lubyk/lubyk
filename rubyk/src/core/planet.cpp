@@ -5,8 +5,8 @@
 #include <pthread.h>
 
 
-Signal gNilSignal(NilSignal);   // globals declared in rubyk_signal.h
-Signal gBangSignal(BangSignal); // globals declared in rubyk_signal.h
+Value gNilValue(NilValue);   // globals declared in values.h
+Value gBangValue(BangValue); // globals declared in values.h
 
 Planet::Planet() : mCurrentTime(0), mInstances(200), mQuit(false)
 {
@@ -100,7 +100,7 @@ void Planet::listen_to_command (Command& pCommand)
 
 
 
-Node * Planet::create_instance (const std::string& pVariable, const std::string& pClass, const Params& p, std::ostream * pOutput)
+Node * Planet::create_instance (const std::string& pVariable, const std::string& pClass, const Value& p, std::ostream * pOutput)
 {
   Node * node = Class::create(this, pVariable, pClass, p, pOutput);
   Node * previous;
@@ -193,7 +193,7 @@ void Planet::pop_events()
   time_t realTime = mCurrentTime;
   while( mEventsQueue.get(&e) && realTime >= e->mTime) {
     mCurrentTime = e->mTime;
-    e->mIsBang ? ((Node*)e->mNode)->bang(gNilSignal) : e->trigger();
+    e->mIsBang ? ((Node*)e->mNode)->bang(gNilValue) : e->trigger();
     delete e;
     mEventsQueue.pop();
   }
@@ -206,7 +206,7 @@ void Planet::pop_all_events()
   while( mEventsQueue.get(&e)) {
     mCurrentTime = e->mTime;
     if (e->mForced)
-      e->mIsBang ? ((Node*)e->mNode)->bang(gNilSignal) : e->trigger();
+      e->mIsBang ? ((Node*)e->mNode)->bang(gNilValue) : e->trigger();
     delete e;
     mEventsQueue.pop();
   }
@@ -232,7 +232,7 @@ void Planet::trigger_loop_events()
   std::deque<Node *>::iterator it;
   std::deque<Node *>::iterator end = mLoopedNodes.end();
   for(it = mLoopedNodes.begin(); it < end; it++) {
-    (*it)->bang(gNilSignal);
+    (*it)->bang(gNilValue);
   }
 }
 
@@ -258,7 +258,7 @@ void Planet::free_events_for(Node * pNode)
     e = it->obj;
     if (e->uses_node(pNode)) {
       if (e->mForced)
-        e->mIsBang ? ((Node*)e->mNode)->bang(gNilSignal) : e->trigger();
+        e->mIsBang ? ((Node*)e->mNode)->bang(gNilValue) : e->trigger();
       it = mEventsQueue.remove(e);
     } else
       it = it->next;

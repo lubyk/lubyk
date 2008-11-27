@@ -1,9 +1,9 @@
 
 //typedef struct {
 //  rubyk_signal_t    type;
-//  Hash<uint, Signal> * meta;
+//  Hash<uint, Value> * meta;
 //  const Matrix * value;
-//} MatrixSignal_t;
+//} MatrixValue_t;
 //
 #ifndef _MATRIX_VALUE_H_
 #define _MATRIX_VALUE_H_
@@ -145,9 +145,9 @@ public:
     return mutable_data()->copy_at(pRowIndex, *A_data, pStartRow, pEndRow, pResize);
   }
 
-  // FIXME: what is this ? bool copy(const Signal& sig);
+  // FIXME: what is this ? bool copy(const Value& sig);
   
-  // FIXME: what is this ? bool copy_at(int pRowIndex, const Signal& sig);
+  // FIXME: what is this ? bool copy_at(int pRowIndex, const Value& sig);
   
   /** Append a vector to the end of the current data. Size increases automatically. */
   bool append (const T * pVector, size_t pVectorSize)

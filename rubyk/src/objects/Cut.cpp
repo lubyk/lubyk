@@ -4,7 +4,7 @@ class Cut : public Node
 {
 public:
   
-  bool set (const Params& p)
+  bool set (const Value& p)
   {
     mCutFrom = p.val("from", 1) ;
     mCutTo   = p.val("to", -1 ) ;
@@ -16,7 +16,7 @@ public:
     return true;
   }
 
-  void bang(const Signal& sig)
+  void bang(const Value& sig)
   { 
     sig.get(&mLiveBuffer);
     

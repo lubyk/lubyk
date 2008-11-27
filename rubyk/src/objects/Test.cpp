@@ -5,7 +5,7 @@ class Test : public Node
 {
 public:
   
-  bool set (const Params& p)
+  bool set (const Value& p)
   {
     mMessage = p.val("message", "Hello World !", true);
     if (mMessage == "is output ok?")
@@ -15,7 +15,7 @@ public:
     return true;
   }
   
-  static void hello(std::ostream * pOutput, const Params& p)
+  static void hello(std::ostream * pOutput, const Value& p)
   {
     *pOutput << "Hello World!\n";
   }
@@ -27,22 +27,22 @@ public:
   { *mOutput << "Don't hit me!\n"; }
 
   // inlet 1
-  void bang(const Signal& sig)
+  void bang(const Value& sig)
   {
     sig.get(&mCounter);
     send(++mCounter);
     
     *mOutput << "sending nil=>";
-    send(2, gNilSignal);
+    send(2, gNilValue);
     *mOutput << "<=done.\n";
   }
   
-  void info(const Params& p)
+  void info(const Value& p)
   {
     *mOutput << p << std::endl;
   }
   
-  void test_fail(const Params& p)
+  void test_fail(const Value& p)
   {
     if (!test_try()) {
       *mOutput << "try failed";

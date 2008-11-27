@@ -3,23 +3,23 @@
 class Diff : public Node
 {
 public:
-  bool init(const Params& p)
+  bool init(const Value& p)
   {
     mDistance = 8;
     return true;
   }
   
-  bool set(const Params& p)
+  bool set(const Value& p)
   {
     p.get(&mDistance, "distance", true);
     return true;
   }
   
   // inlet 1
-  void bang(const Signal& sig)
+  void bang(const Value& sig)
   {  
     const Matrix * live;
-    if (sig.type == MatrixSignal) {
+    if (sig.type == MatrixValue) {
       if (!sig.get(&live) || live->size() == 0) return;
       if (live->row_count() == 1) {
         // vector ==> value distance

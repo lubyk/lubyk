@@ -2,7 +2,7 @@
 #define _OBJECT_H_
 #include <list>
 #include <string>
-#include "rubyk_signal.h"
+#include "values.h"
 #include "hash.h"
 
 #define OBJECT_HASH_SIZE 10000
@@ -55,7 +55,7 @@ public:
   }
   
   /** The operation to be executed on call (method for Method class / object listing for Nodes) */
-  virtual bool trigger (Signal * pReturnSignal, const Signal& sig)
+  virtual bool trigger (Value * pReturnValue, const Value& sig)
   {
     if (mChildrenStrList == "") {
       std::list<Object *>::iterator it  = mChildren.begin();
@@ -72,24 +72,24 @@ public:
       }
     }
     
-    pReturnSignal->set(mChildrenStrList);
+    pReturnValue->set(mChildrenStrList);
     return true;
   }
   
   /** Execute a method / call the default operation for an object. */
-  static bool call (const char* pUrl, Signal * pReturnSignal, const Signal& sig)
+  static bool call (const char* pUrl, Value * pReturnValue, const Value& sig)
   {
-    return call(std::string(pUrl), pReturnSignal, sig);
+    return call(std::string(pUrl), pReturnValue, sig);
   }
   
   /** Execute a method / call the default operation for an object. */
-  static bool call (const std::string& pUrl, Signal * pReturnSignal, const Signal& sig)
+  static bool call (const std::string& pUrl, Value * pReturnValue, const Value& sig)
   {
     Object * target;
     // 1. find object from url
     if (get(&target, pUrl)) {
       // 2. call
-      return target->trigger(pReturnSignal, sig);
+      return target->trigger(pReturnValue, sig);
       return true;
     } else {
       return false;

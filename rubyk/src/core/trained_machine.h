@@ -12,13 +12,13 @@ class TrainedMachine : public Node
 public:
   virtual ~TrainedMachine () {}
   
-  bool init_machine(const Params& p)
+  bool init_machine(const Value& p)
   {
     TRY(mVector, set_sizes(1,8));
     return true;
   }
   
-  bool set_machine(const Params& p)
+  bool set_machine(const Value& p)
   {
     std::string str;
     if (p.get(&str, "data"))

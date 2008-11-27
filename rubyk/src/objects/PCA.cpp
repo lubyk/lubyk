@@ -13,7 +13,7 @@ public:
     if (mTransposedFile) fclose(mTransposedFile);
   }
   
-  bool init(const Params& p)
+  bool init(const Value& p)
   {
     mTransposedFolder = "processed"; // where to store training data transposed in new basis
     mTransposedFile   = NULL;
@@ -26,7 +26,7 @@ public:
     return init_machine(p);
   }
 
-  bool set(const Params& p)
+  bool set(const Value& p)
   {
     size_t input_size  = mMeanValue.col_count();
     size_t output_size = mBuffer.col_count();
@@ -47,11 +47,11 @@ public:
   }
   
   // inlet 1
-  void bang (const Signal& sig)
+  void bang (const Value& sig)
   {
     if (!mIsOK) return; // no recovery
     
-    if (sig.type == MatrixSignal) {
+    if (sig.type == MatrixValue) {
       if (sig.matrix.value->size() != mMeanValue.size()) {
         *mOutput << mName << ": wrong signal size " << sig.matrix.value->size() << " should be " << mMeanValue.size() << "\n.";
         return;
@@ -64,7 +64,7 @@ public:
       send(mS);
       
     } else {
-      *mOutput << mName << ": wrong signal type (" << sig.type_name() << ") should be MatrixSignal\n";
+      *mOutput << mName << ": wrong signal type (" << sig.type_name() << ") should be MatrixValue\n";
       return;
     }
     

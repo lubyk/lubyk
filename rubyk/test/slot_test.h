@@ -2,20 +2,20 @@
 #include <cxxtest/TestSuite.h>
 #include "outlet.h"
 #include "inlet.h"
-#include "rubyk_signal.h"
+#include "values.h"
 
 // these receivers are complicated to make sure they work in the correct order and they are all called.
-static void receive_value1(void * receiver, const Signal& sig)
+static void receive_value1(void * receiver, const Value& sig)
 {
   (*((float*)receiver)) = (2*(*((float*)receiver))) + sig.d.value + 1;
 }
 
-static void receive_value2(void * receiver, const Signal& sig)
+static void receive_value2(void * receiver, const Value& sig)
 {
   (*((float*)receiver)) = (2*(*((float*)receiver))) + sig.d.value + 2;
 }
 
-static void receive_value4(void * receiver, const Signal& sig)
+static void receive_value4(void * receiver, const Value& sig)
 {
   (*((float*)receiver)) = (2*(*((float*)receiver))) + sig.d.value + 4;
 }
@@ -26,7 +26,7 @@ public:
   void testSingleConnection( void )
   {
     float counter = 0;
-    Signal sig;
+    Value sig;
     Outlet o(&counter);
     Inlet  i(&counter, receive_value1 );
     i.setId(3); // make sure it does not send a 'bang()' to our fake receiver.
@@ -40,7 +40,7 @@ public:
   void testManyConnections( void )
   {
     float counter = 0;
-    Signal sig;
+    Value sig;
     Outlet o(&counter);
     Inlet  i1(&counter, receive_value1 );
     Inlet  i2(&counter, receive_value2 );

@@ -7,18 +7,18 @@ class Keyboard : public Node
 {
 public:
   
-  bool set (const Params& p)
+  bool set (const Value& p)
   {
     return true;
   }
   
   // capture method, called from a command
-  void bang(const Signal& sig)
+  void bang(const Value& sig)
   { 
     // do nothing
   }
   
-  void get(const Params& p)
+  void get(const Value& p)
   {
     int c;
     int mode = 2;

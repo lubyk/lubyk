@@ -5,7 +5,7 @@
 class NoteOut : public Node
 {
 public:
-  bool init(const Params& p)
+  bool init(const Value& p)
   {
     mMessage.mType = NoteOn;
     mMessage.set_key(     MIDI_NOTE_C0);
@@ -16,7 +16,7 @@ public:
     return true;
   }
   
-  bool set(const Params& p)
+  bool set(const Value& p)
   {  
     mMessage.set_key(      p.val("note",     mMessage.note()    ));
     mMessage.set_velocity( p.val("velocity", mMessage.velocity()));
@@ -26,9 +26,9 @@ public:
   }
   
   // inlet 1 and 5 (silent set note)
-  void bang(const Signal& sig)
+  void bang(const Value& sig)
   {
-    if (sig.type == MidiSignal && sig.midi_ptr.value->mType == NoteOn) {
+    if (sig.type == MidiValue && sig.midi_ptr.value->mType == NoteOn) {
       mMessage = *(sig.midi_ptr.value);
     } else {
       set_note(sig);
@@ -37,7 +37,7 @@ public:
   }
 
   // inlet 2
-  void set_velocity(const Signal& sig)
+  void set_velocity(const Value& sig)
   {
     int v = 0;
     sig.get(&v);
@@ -45,21 +45,21 @@ public:
   }
   
   // inlet 3
-  void set_length(const Signal& sig)
+  void set_length(const Value& sig)
   { 
     time_t l;
     if (sig.get(&l)) mMessage.set_length(l); 
   }
   
   // inlet 4
-  void set_channel(const Signal& sig)
+  void set_channel(const Value& sig)
   {
     int i;
     if (sig.get(&i)) mMessage.set_channel(i);
   }
   
   // inlet 5 (set note but do not send)
-  void set_note(const Signal& sig)
+  void set_note(const Value& sig)
   {
     int n;
     if (sig.get(&n)) mMessage.set_note(n);
@@ -70,7 +70,7 @@ public:
   {
     MidiMessage * msg = (MidiMessage*)data;
     Outlet * out;
-    Signal sig;
+    Value sig;
     
     sig.set(msg);
     if ( (out = outlet(1)) ) out->send(sig);

@@ -15,7 +15,7 @@ enum class_recorder_states_t {
 class ClassRecorder : public Node
 {
 public:
-  bool init(const Params& p)
+  bool init(const Value& p)
   {
     // defaults
     mTempo       = 120;
@@ -27,14 +27,14 @@ public:
     mChannel     = 1;
     mVectorCount = 0;
     mTrainFile   = NULL;
-    mMeanSignal.set(mMeanVector);
+    mMeanValue.set(mMeanVector);
     
-    mMeanSignal.set_meta(H("sample_offset"), 0); // shift display window right / left
-    mMeanSignal.set_meta(H("sample_count"),  0); // total number of samples per window when computing width_ratio
-    mMeanSignal.set_meta(H("draw_box"), true);   // draw a surrounding box
+    mMeanValue.set_meta(H("sample_offset"), 0); // shift display window right / left
+    mMeanValue.set_meta(H("sample_count"),  0); // total number of samples per window when computing width_ratio
+    mMeanValue.set_meta(H("draw_box"), true);   // draw a surrounding box
     
-    mLiveSignal.set(mLiveView);
-    mBufferSignal.set(mBuffer);
+    mLiveValue.set(mLiveView);
+    mBufferValue.set(mBuffer);
     mS.set(mBuffer);
 
     if (!resize(4,8)) return false;
@@ -43,7 +43,7 @@ public:
     return true;
   }
 
-  bool set(const Params& p)
+  bool set(const Value& p)
   {
     // vector sizes is set from incomming stream
     p.get(&mTempo     ,"tempo");
@@ -57,13 +57,13 @@ public:
   }
 
   // inlet 1
-  void bang (const Signal& sig)
+  void bang (const Value& sig)
   {
     int cmd;
     
     if (!mIsOK) return; // no recovery
     
-    if (sig.type == MatrixSignal) {
+    if (sig.type == MatrixValue) {
       if (!resize(sig.matrix.value->row_count(), sig.matrix.value->col_count())) return;
       sig.get(&mLiveBuffer);
       if (mLiveBuffer) {
@@ -103,8 +103,8 @@ public:
       case Recording:
         receive_data();
         enter(Validation);
-        send(2, mMeanSignal);    // reference signal
-        send(mBufferSignal);       // recorded signal
+        send(2, mMeanValue);    // reference signal
+        send(mBufferValue);       // recorded signal
         break;
       case Validation:
         if (cmd == 127) {
@@ -121,24 +121,24 @@ public:
             *mOutput << mName << ": snap\n~> ";
           }
           
-          mMeanSignal.set_meta(H("sample_offset"), mRowOffset);
-          send(mBufferSignal);       // recorded signal
+          mMeanValue.set_meta(H("sample_offset"), mRowOffset);
+          send(mBufferValue);       // recorded signal
           break;
         } else if (cmd == RK_RIGHT_ARROW) { // -> right arrow  301
           mRowOffset++;
           if (mRowOffset >= mBuffer.row_count() - mMeanVector.row_count())
             mRowOffset = mBuffer.row_count() - mMeanVector.row_count() - 1;
           
-          mMeanSignal.set_meta(H("sample_offset"), mRowOffset);
-          send(mBufferSignal);       // recorded signal
+          mMeanValue.set_meta(H("sample_offset"), mRowOffset);
+          send(mBufferValue);       // recorded signal
           break;
         } else if (cmd == RK_LEFT_ARROW) { // <- left arrow 302
           mRowOffset --;
           if (mRowOffset < 0)
             mRowOffset = 0;
           
-          mMeanSignal.set_meta(H("sample_offset"), mRowOffset);
-          send(mBufferSignal);       // recorded signal
+          mMeanValue.set_meta(H("sample_offset"), mRowOffset);
+          send(mBufferValue);       // recorded signal
           break;
         } else {
           // any character: save and continue
@@ -147,7 +147,7 @@ public:
         // no break
       case ReadyToRecord:
         mRowOffset = mRowMargin;
-        mMeanSignal.set_meta(H("sample_offset"), mRowOffset);
+        mMeanValue.set_meta(H("sample_offset"), mRowOffset);
         
         if (cmd == '\n') {
           enter(ReadyToRecord);
@@ -170,8 +170,8 @@ public:
     // send mean value
     
     if (mState != Validation) {
-      send(2, mMeanSignal);
-      send(mLiveSignal); // live signal
+      send(2, mMeanValue);
+      send(mLiveValue); // live signal
     }
   }
   
@@ -230,7 +230,7 @@ private:
       mRowOffset = mRowMargin;
     }
     
-    mMeanSignal.set_meta(H("sample_offset"), mRowOffset);
+    mMeanValue.set_meta(H("sample_offset"), mRowOffset);
   }
   
   void store_data()
@@ -310,7 +310,7 @@ private:
       while(vector.from_file(file)) (this->*function)(vector);
     
     fclose(file);  
-    mMeanSignal.set_meta(H("sample_offset"), mRowMargin);
+    mMeanValue.set_meta(H("sample_offset"), mRowMargin);
   }
   
   // resize internal buffers from incomming stream
@@ -326,8 +326,8 @@ private:
       *mOutput << mName << ": resized to " << mMeanVector.row_count() << "x" << mMeanVector.col_count() << " (removed margin).\n";
       mMeanVector.clear();
       
-      mMeanSignal.set_meta(H("sample_offset"), mRowMargin); // shift display window right / left
-      mMeanSignal.set_meta(H("sample_count"),  pRowCount);  // total number of samples per window when computing width_ratio
+      mMeanValue.set_meta(H("sample_offset"), mRowMargin); // shift display window right / left
+      mMeanValue.set_meta(H("sample_count"),  pRowCount);  // total number of samples per window when computing width_ratio
     }
     
     return true;
@@ -347,14 +347,14 @@ private:
   bool      mHasLiveData;     /**< Make sure we record new data. */
   const Matrix * mLiveBuffer; /**< Pointer to the current buffer window. Content can change between calls.      */
   CutMatrix mLiveView;        /**< Live stream view. Points inside mLiveBuffer.                                 */
-  Signal    mLiveSignal;      /**< Used to send mLiveView                                                       */
+  Value    mLiveValue;      /**< Used to send mLiveView                                                       */
   
   Matrix mMeanVector;         /**< Store the mean value for all vectors from this class.                        */
-  Signal mMeanSignal;         /**< Used to send mean value.                                                     */
+  Value mMeanValue;         /**< Used to send mean value.                                                     */
   
   Matrix mBuffer;             /**< Store a single vector +  margin.                                             */
   CutMatrix mView;            /**< Resulting view of the data used to record to file (points inside mBuffer).   */
-  Signal mBufferSignal;       /**< Used to send view matrix.                                                    */
+  Value mBufferValue;       /**< Used to send view matrix.                                                    */
   real_t mMargin;             /**< Size (in %) of the margin.                                                   */
   size_t mRowMargin;          /**< Number of rows on each side of the vector (mBuffer.row_count() * margin/2).  */
   size_t mVectorCount;        /**< Number of vectors used to build the current mean value.                      */

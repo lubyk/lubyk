@@ -9,7 +9,7 @@ class Script : public Node
 public:
   Script () : mScriptModTime(0), mReloadEvery(0), mNextReload(0), mScriptOK(false) {}
   
-  bool set_script(const Params& p)
+  bool set_script(const Value& p)
   {
     std::string str;
     
@@ -29,7 +29,7 @@ public:
   }
   
   // load script from file.
-  void load(const Params& p)
+  void load(const Value& p)
   {
     
     if (!p.get(&mScriptFile) && mScriptFile == "") {
@@ -83,7 +83,7 @@ public:
   
   virtual bool eval_script(const std::string& pScript) = 0;
   
-  void script(const Params& p)
+  void script(const Value& p)
   {  
     if (mScript == "" && mReloadEvery) reload_script();
     *mOutput << mScript << std::endl;

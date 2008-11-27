@@ -17,7 +17,7 @@ void Class::set_lib_path(const std::string& pPath)
 std::string Class::get_lib_path()
 { return sObjectsPath; }
 
-void Class::execute_method (const std::string& pMethodName, const Params& p, std::ostream * pOutput)
+void Class::execute_method (const std::string& pMethodName, const Value& p, std::ostream * pOutput)
 {
   class_method_t method;
   if (mClassMethods.get(&method, pMethodName)) {
@@ -46,7 +46,7 @@ bool Class::get (Class ** pClass, const std::string& pClassName)
   return false;
 }
 
-Node * Class::create (Planet * pServer, const std::string& pName, const std::string& pClassName, const Params& p, std::ostream * pOutput)
+Node * Class::create (Planet * pServer, const std::string& pName, const std::string& pClassName, const Value& p, std::ostream * pOutput)
 {
   Class * klass;
   if (get(&klass, pClassName))
@@ -67,7 +67,7 @@ Node * Class::create (Planet * pServer, const std::string& pName, const std::str
   return obj;
 }
 
-inline Node * Class::new_obj (const std::string& pName, Planet * pServer, const Params& p, std::ostream * pOutput)
+inline Node * Class::new_obj (const std::string& pName, Planet * pServer, const Value& p, std::ostream * pOutput)
 {  
   return (*mCreateFunction)(this, pName, pServer, p, pOutput);
 }

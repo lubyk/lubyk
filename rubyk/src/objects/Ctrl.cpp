@@ -6,7 +6,7 @@
 class Ctrl : public Node
 {
 public:
-  bool init(const Params& p)
+  bool init(const Value& p)
   {
     mMessage.mType = CtrlChange;
     mMessage.set_ctrl(   1    );
@@ -17,7 +17,7 @@ public:
     return true;
   }
   
-  bool set(const Params& p)
+  bool set(const Value& p)
   {  
     mMessage.set_ctrl(      p.val("ctrl",   mMessage.ctrl()    ));
     mMessage.set_value(     p.val("value",  mMessage.velocity()));
@@ -27,10 +27,10 @@ public:
   }
   
   // inlet 1 (set ctrl value)
-  void bang(const Signal& sig)
+  void bang(const Value& sig)
   {
     real_t i;
-    if (sig.type == MidiSignal && sig.midi_ptr.value->mType == CtrlChange) {
+    if (sig.type == MidiValue && sig.midi_ptr.value->mType == CtrlChange) {
       mMessage = *(sig.midi_ptr.value);
       send(mMessage);
     } else if (sig.get(&i)) {
@@ -48,20 +48,20 @@ public:
   }
   
   // inlet 2
-  void set_ctrl(const Signal& sig)
+  void set_ctrl(const Value& sig)
   {
     int n;
     if (sig.get(&n)) mMessage.set_note(n);
   }
   
   // inlet 3
-  void set_slope(const Signal& sig)
+  void set_slope(const Value& sig)
   {
     sig.get(&mSlope);
   }
   
   // inlet 4
-  void set_channel(const Signal& sig)
+  void set_channel(const Value& sig)
   {
     int i;
     if (sig.get(&i)) mMessage.set_channel(i);

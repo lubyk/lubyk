@@ -4,13 +4,13 @@ class Print : public Node
 {
 public:
   
-  bool set (const Params& p)
+  bool set (const Value& p)
   {
     return true;
   }
   
   // inlet 1
-  void bang(const Signal& sig)
+  void bang(const Value& sig)
   { 
     *mOutput << sig << std::endl;
   }

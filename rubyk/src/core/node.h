@@ -7,7 +7,7 @@
 #include "outlet.h"
 #include "hash.h"
 #include "matrix.h"
-#include "rubyk_signal.h"
+#include "values.h"
 
 #include <sstream>
 #include <cstdio>
@@ -36,7 +36,7 @@ public:
   
   virtual ~Node();
   
-  bool init(const Params& p) { return true; }
+  bool init(const Value& p) { return true; }
   
   /** Add an inlet with the given callback (used by Class during instantiation). */
   void add_inlet(inlet_method_t pCallback)
@@ -67,15 +67,15 @@ public:
   std::ostream& output()
   { return *mOutput; }
   
-  void execute_method (const std::string& pMethod, const Params& p);
+  void execute_method (const std::string& pMethod, const Value& p);
   
   /** This method must be implemented in subclasses. It's the place where most
     * of the work should be done. This method is responsible for sending the signals out. */
-  virtual void bang (const Signal& sig) = 0;
+  virtual void bang (const Value& sig) = 0;
   
-  void bang (const Params& p)
+  void bang (const Value& p)
   {
-    Signal sig;
+    Value sig;
     Matrix buf;
     sig.set(p, buf);
     bang(sig);
@@ -83,7 +83,7 @@ public:
   
   /** This method must be implemented in subclasses. It is used to set parameters that
     * can be changed during runtime. */
-  virtual bool set (const Params& p) = 0;
+  virtual bool set (const Value& p) = 0;
   
   /** Used by 'editors' to display some information on the node. Should be overwridden by subclasses. */
   const char* get_spy() {
@@ -103,7 +103,7 @@ public:
   /** Send a bang. */
   inline void send(size_t pPort, rubyk_signal_t pType) 
   { 
-    if (!pType) return; // do nothing if NilSignal
+    if (!pType) return; // do nothing if NilValue
     mS.type = pType;
     send(pPort, mS);
   }
@@ -111,7 +111,7 @@ public:
   /** Send an integer. */
   inline void send(size_t pPort, int pInt)
   {
-    mS.type = IntegerSignal;
+    mS.type = IntegerValue;
     mS.i.value = pInt;
     send(pPort, mS);
   }
@@ -119,7 +119,7 @@ public:
   /** Send a char. */
   inline void send(size_t pPort, char pChar)
   {
-    mS.type = IntegerSignal;
+    mS.type = IntegerValue;
     mS.i.value = (int)pChar;
     send(pPort, mS);
   }
@@ -127,7 +127,7 @@ public:
   /** Send an unsigned integer. */
   inline void send(size_t pPort, unsigned int pInt)
   {
-    mS.type = IntegerSignal;
+    mS.type = IntegerValue;
     mS.i.value = pInt;
     send(pPort, mS);
   }
@@ -135,7 +135,7 @@ public:
   /** Send an unsigned long. */
   inline void send(size_t pPort, long pInt)
   {
-    mS.type = IntegerSignal;
+    mS.type = IntegerValue;
     mS.i.value = (int)pInt;
     send(pPort, mS);
   }
@@ -143,7 +143,7 @@ public:
   /** Send a real_t. */
   inline void send(size_t pPort, real_t pDouble)
   {
-    mS.type = DoubleSignal;
+    mS.type = DoubleValue;
     mS.d.value = pDouble;
     send(pPort, mS);
   }
@@ -151,7 +151,7 @@ public:
   /** Send a float. */
   inline void send(size_t pPort, float pFloat)
   { 
-    mS.type = DoubleSignal;
+    mS.type = DoubleValue;
     mS.d.value = (real_t)pFloat;   
     send(pPort, mS);
   }
@@ -159,7 +159,7 @@ public:
   /** Send a MidiMessage ptr. */
   inline void send(size_t pPort, MidiMessage * pPtr, bool pFree = false)
   {
-    mS.type = MidiSignal;
+    mS.type = MidiValue;
     mS.midi_ptr.value = pPtr;
     mS.midi_ptr.free_me = pFree;
     send(pPort, mS);
@@ -168,14 +168,14 @@ public:
   /** Send a Matrix. */
   inline void send(size_t pPort, const Matrix& pMat)
   {
-    mS.type = MatrixSignal;
+    mS.type = MatrixValue;
     mS.matrix.value = &pMat;
     send(pPort, mS);
   }
   
   inline void send(size_t pPort, const MidiMessage& pMsg)
   {
-    send(pPort, Signal(pMsg));
+    send(pPort, Value(pMsg));
   }
   
   /** Send a midi note with the parameters provided.
@@ -212,7 +212,7 @@ public:
   /** Send a void ptr. */
   inline void send(size_t pPort, void * pPtr, bool pFree)
   {
-    mS.type = VoidPointerSignal;
+    mS.type = VoidPointerValue;
     mS.ptr.value = pPtr;
     mS.ptr.free_me = pFree;
     send(pPort, mS);
@@ -220,7 +220,7 @@ public:
   
   //////////////////////////////////////
   
-  inline void send (size_t pPort, const Signal& sig)
+  inline void send (size_t pPort, const Value& sig)
   {  
     if (mDebug) *mOutput << "[" << mName << ":" << pPort << "] " << sig << std::endl;
     if (pPort < 1 || pPort > mOutlets.size() || !sig.type) return;
@@ -350,7 +350,7 @@ protected:
   inline void bang_me_in (time_t pTime);
   
   /** Registers this object as needing independant runtime (Serial input, Midi input, etc).
-   * It will receive a gNilSignal in the 'bang' method on every tick.
+   * It will receive a gNilValue in the 'bang' method on every tick.
   */
   inline void loop_me ();
   
@@ -429,7 +429,7 @@ protected:
   
   std::ostream * mOutput; /**< Used to pass command result. */
   
-  Signal mS; /**< To send through outlets when cast needed. */
+  Value mS; /**< To send through outlets when cast needed. */
   
   std::list<pthread_t> mThreadIds;    /**< Store running thread ids (used by rubyk server on quit). */
   
@@ -444,12 +444,12 @@ public:
 class NotFound : public Node
 {
 public:
-  virtual bool set(const Params& p)
+  virtual bool set(const Value& p)
   {
     return false;
   }
   
-  void bang(const Signal& sig)
+  void bang(const Value& sig)
   {
     // do nothing
     *mOutput << "I'm a dead node ! Don't hit me !\n";

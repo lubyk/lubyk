@@ -14,7 +14,7 @@ public:
     if (mFileHandle) fclose(mFileHandle);
   }
   
-  bool init(const Params& p)
+  bool init(const Value& p)
   {
     mFileHandle = NULL;
     mState      = WaitingMode;
@@ -28,7 +28,7 @@ public:
     return true;
   }
   
-  bool set(const Params& p)
+  bool set(const Value& p)
   {
     size_t size;
     if (p.get(&size, "vector")) TRY(mData, set_sizes(0,size));
@@ -40,7 +40,7 @@ public:
     return true;
   }
   
-  void bang(const Signal& sig)
+  void bang(const Value& sig)
   {
     int cmd;
     if (sig.get(&cmd)) {
@@ -58,7 +58,7 @@ public:
       record_matrix(mPlaybackView);
       send(mS);
     } else if (mState == PlaybackMode) {
-      if (!mData.size()) send(gNilSignal);
+      if (!mData.size()) send(gNilValue);
       if (mIndex >= mData.row_count()) {
         if (mIsLoop) mIndex = 0;
         else return;
@@ -72,13 +72,13 @@ public:
     }
   }
   
-  void play(const Params& p)
+  void play(const Value& p)
   { enter(PlaybackMode); }
   
-  void record(const Params& p)
+  void record(const Value& p)
   { enter(RecordingMode); }
   
-  void reload(const Params& p)
+  void reload(const Value& p)
   { reload_data(); }
   
   virtual void spy()

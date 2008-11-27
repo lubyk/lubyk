@@ -73,7 +73,7 @@ public:
     if (mTrainFile)  fclose(mTrainFile);
   }
 
-  bool init(const Params& p)
+  bool init(const Value& p)
   {
     mProblem.y = NULL;
     mProblem.x = NULL;
@@ -85,7 +85,7 @@ public:
     return init_machine(p);
   }
   
-  bool set (const Params& p)
+  bool set (const Value& p)
   {
     size_t vector_size = mVector.col_count();
     if(!set_machine(p)) return false;
@@ -111,10 +111,10 @@ public:
   }
 
   // inlet 1
-  void bang (const Signal& sig)
+  void bang (const Value& sig)
   {
     if (!mIsOK) return; // do not use 'predict' if no model loaded
-    if (sig.type != MatrixSignal) return; // ignore
+    if (sig.type != MatrixValue) return; // ignore
     
     if (sig.matrix.value->col_count() >= mVector.col_count()) {
       mLiveBuffer = sig.matrix.value;

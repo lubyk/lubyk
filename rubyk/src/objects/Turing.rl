@@ -37,13 +37,13 @@ public:
     if (mPrintBuffer) free(mPrintBuffer);
   }
   
-  bool set (const Params& p)
+  bool set (const Value& p)
   {
     return set_script(p);
   }
 
   // inlet 1
-  void bang(const Signal& sig)
+  void bang(const Value& sig)
   { 
     if (!mIsOK) return;
     
@@ -61,7 +61,7 @@ public:
     
     call_lua(&mS, "bang", sig);
     if (!mS.type) return; // bang returned nil, abort
-    else if (mS.type != BangSignal) {
+    else if (mS.type != BangValue) {
       if (mS.get(&mRealToken)) // use token from returned value
         mToken = mTokenTable[ mRealToken % TUR_MAX_TOKEN_COUNT ]; // translate token in the current machine values.
     }
@@ -102,31 +102,31 @@ public:
       send(mSend->mValue);
   }
   
-  void in2(const Signal& sig)
+  void in2(const Value& sig)
   { set_lua_global("in2", sig); }
   
-  void in3(const Signal& sig)
+  void in3(const Value& sig)
   { set_lua_global("in3", sig); }
   
-  void in4(const Signal& sig)
+  void in4(const Value& sig)
   { set_lua_global("in4", sig); }
   
-  void in5(const Signal& sig)
+  void in5(const Value& sig)
   { set_lua_global("in5", sig);}
   
-  void in6(const Signal& sig)
+  void in6(const Value& sig)
   { set_lua_global("in6", sig);}
   
-  void in7(const Signal& sig)
+  void in7(const Value& sig)
   { set_lua_global("in7", sig);}
   
-  void in8(const Signal& sig)
+  void in8(const Value& sig)
   { set_lua_global("in8", sig);}
   
-  void in9(const Signal& sig)
+  void in9(const Value& sig)
   { set_lua_global("in9", sig);}
   
-  void in10(const Signal& sig)
+  void in10(const Value& sig)
   { set_lua_global("in10", sig);}
 
   bool eval_script(const std::string& pScript) 
@@ -451,7 +451,7 @@ public:
   }
   
   /** Output tables in digraph format to produce graphs with graphviz. */
-  void dot(const Params& p)
+  void dot(const Value& p)
   {
     std::string path;
     if (p.get(&path, "file", true)) {
@@ -486,7 +486,7 @@ public:
   }
   
   /** Set state from command line. */
-  void jump(const Params& p)
+  void jump(const Value& p)
   {
     std::string str;
     if (p.get(&str)) {

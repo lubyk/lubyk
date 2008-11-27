@@ -6,14 +6,14 @@
 class Add : public Node
 {
 public:
-  bool init (const Params& p)
+  bool init (const Value& p)
   {
     mValue1 = 0;
     mValue2 = 0;
     return true;
   }
   
-  bool set (const Params& p)
+  bool set (const Value& p)
   {
     p.get(&mValue1, "value1");
     p.get(&mValue2, "value2");   
@@ -23,13 +23,13 @@ public:
   virtual void spy() 
   { bprint(mSpy, mSpySize,"%.2f", mValue1 + mValue2 );  }
   
-  void bang(const Signal& sig)
+  void bang(const Value& sig)
   { 
     sig.get(&mValue1);
     send(mValue1 + mValue2);
   }
   
-  void value2(const Signal& sig)
+  void value2(const Value& sig)
   { sig.get(&mValue2); }
 
   

@@ -117,7 +117,7 @@ const char * Node::inspect() {
 }
 
 
-void Node::execute_method (const std::string& pMethod, const Params& p)
+void Node::execute_method (const std::string& pMethod, const Value& p)
 {
   member_method_t method;
   if (pMethod == "help" ){

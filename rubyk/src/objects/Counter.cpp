@@ -4,14 +4,14 @@
 class Counter : public Node
 {
 public:
-  bool init (const Params& p)
+  bool init (const Value& p)
   {
     mCounter = 0;
     mIncrement = 1;
     return true;
   }
   
-  bool set (const Params& p)
+  bool set (const Value& p)
   {
     mCounter   = p.val("counter",   mCounter, true);
     mIncrement = p.val("increment", mIncrement);
@@ -20,7 +20,7 @@ public:
   }
 
   // inlet 1
-  void bang(const Signal& sig)
+  void bang(const Value& sig)
   { 
     sig.get(&mCounter);
     
@@ -28,7 +28,7 @@ public:
   }
   
   // inlet 2
-  void set_increment(const Signal& sig)
+  void set_increment(const Value& sig)
   { sig.get(&mIncrement);     }
   
   

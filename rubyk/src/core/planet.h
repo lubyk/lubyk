@@ -15,7 +15,7 @@
 #define ONE_SECOND 1000.0
 #define ONE_MINUTE (60.0*ONE_SECOND)
 
-class Params;
+class Value;
 class Action;
 class Command;
 
@@ -30,7 +30,7 @@ public:
   
   virtual ~Planet();
   
-  Node * create_instance(const std::string& pVariable, const std::string& pClass, const Params& p, std::ostream * pOutput);
+  Node * create_instance(const std::string& pVariable, const std::string& pClass, const Value& p, std::ostream * pOutput);
   
   void create_link(const std::string& pFrom, unsigned int pFromPort, unsigned int pToPort, const std::string& pTo);
   
@@ -46,10 +46,10 @@ public:
   /** Main loop. Returns false when rubyk has to quit. */
   bool run();
   
-  virtual void bang (const Signal& sig)
+  virtual void bang (const Value& sig)
   {}
   
-  virtual bool set (const Params& p)
+  virtual bool set (const Value& p)
   { return true; }
   
   virtual void spy()

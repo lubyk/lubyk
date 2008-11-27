@@ -6,12 +6,12 @@ LuaScript::~LuaScript()
 }
 
 
-bool LuaScript::set_lua (const Params& p)
+bool LuaScript::set_lua (const Value& p)
 {
   return set_script(p);
 }
 
-void LuaScript::call_lua (Signal * retSig, const char * pFunctionName, const Signal * sig)
+void LuaScript::call_lua (Value * retSig, const char * pFunctionName, const Value * sig)
 {
   int status;
   
@@ -104,7 +104,7 @@ Node * LuaScript::get_node_from_lua(lua_State * L)
   return node;
 }
 
-bool LuaScript::signal_from_lua(Signal * sig, int index)
+bool LuaScript::signal_from_lua(Value * sig, int index)
 {
   return signal_from_lua(sig, index, mLuaMatrix, mLuaMidiMessage);
 }
@@ -239,7 +239,7 @@ bool LuaScript::midi_message_from_lua_table(MidiMessage * pMsg, int pIndex)
 }
 
 
-bool LuaScript::signal_from_lua(Signal * sig, int pIndex, Matrix& pMat, MidiMessage& pMsg)
+bool LuaScript::signal_from_lua(Value * sig, int pIndex, Matrix& pMat, MidiMessage& pMsg)
 {
   int index = pIndex < 0 ? lua_gettop(mLua) + pIndex + 1 : pIndex;
   /* LUA_TNIL, LUA_TNUMBER, LUA_TBOOLEAN, LUA_TSTRING, LUA_TTABLE, LUA_TFUNCTION, LUA_TUSERDATA, LUA_TTHREAD, and LUA_TLIGHTUSERDATA.
@@ -288,7 +288,7 @@ int LuaScript::send_for_lua(lua_State * L)
   LuaScript * node = (LuaScript *)get_node_from_lua(L);
   if (node) {
     // port, value
-    Signal sig;
+    Value sig;
     real_t p;
     if (!node->signal_from_lua(&sig)) {
       node->error("could not get signal");
@@ -424,7 +424,7 @@ bool LuaScript::matrix_from_lua (lua_State *L, Matrix ** pMat, int pIndex)
   }
 }
 
-void LuaScript::set_lua_global (const char * key, const Signal& sig)
+void LuaScript::set_lua_global (const char * key, const Value& sig)
 {
   if (lua_pushsignal(sig)) {
     lua_setglobal(mLua, key);
@@ -444,13 +444,13 @@ bool LuaScript::lua_has_function (const char * key)
   return res;
 }
 
-bool LuaScript::lua_pushsignal (const Signal& sig)
+bool LuaScript::lua_pushsignal (const Value& sig)
 {
   real_t d;
   const Matrix * live;
   if (sig.get(&live)) {
     lua_pushmatrix(*live);
-  } else if (sig.type == MidiSignal) {
+  } else if (sig.type == MidiValue) {
     lua_pushmidi(*(sig.midi_ptr.value));
   } else if (sig.get(&d)) {
     lua_pushnumber(mLua, d);

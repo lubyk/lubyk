@@ -6,7 +6,7 @@ class Macro : public LuaScript
 {
 public:
   
-  bool init (const Params& p)
+  bool init (const Value& p)
   {
     mCmd.set_output(std::cout);
     mCmd.set_input(std::cin);
@@ -15,7 +15,7 @@ public:
     return true;
   }
   
-  bool set (const Params& p)
+  bool set (const Value& p)
   { 
     return set_lua(p);
   }
@@ -33,36 +33,36 @@ public:
   }
 
   // inlet 1
-  void bang(const Signal& sig)
+  void bang(const Value& sig)
   {
     call_lua("bang", sig);
   }
   
-  void in2(const Signal& sig)
+  void in2(const Value& sig)
   { set_lua_global("in2", sig); }
   
-  void in3(const Signal& sig)
+  void in3(const Value& sig)
   { set_lua_global("in3", sig); }
   
-  void in4(const Signal& sig)
+  void in4(const Value& sig)
   { set_lua_global("in4", sig); }
   
-  void in5(const Signal& sig)
+  void in5(const Value& sig)
   { set_lua_global("in5", sig);}
   
-  void in6(const Signal& sig)
+  void in6(const Value& sig)
   { set_lua_global("in6", sig);}
   
-  void in7(const Signal& sig)
+  void in7(const Value& sig)
   { set_lua_global("in7", sig);}
   
-  void in8(const Signal& sig)
+  void in8(const Value& sig)
   { set_lua_global("in8", sig);}
   
-  void in9(const Signal& sig)
+  void in9(const Value& sig)
   { set_lua_global("in9", sig);}
   
-  void in10(const Signal& sig)
+  void in10(const Value& sig)
   { set_lua_global("in10", sig);}
   
   /** Execute macro from lua. */

@@ -3,17 +3,17 @@
 class Minus : public Node
 {
 public:
-  bool set(const Params& p)
+  bool set(const Value& p)
   {
     mValue = p.val("minus", 1.00, true);
     return true;
   }
   
   // inlet 1
-  void bang(const Signal& sig)
+  void bang(const Value& sig)
   {  
     real_t d;
-    if (sig.type == MatrixSignal) {
+    if (sig.type == MatrixValue) {
       mBuffer.copy(sig);
       mBuffer -= mValue;
       send(mBuffer);
@@ -28,7 +28,7 @@ public:
   }
   
   // inlet 2
-  void set_minus(const Signal& sig)
+  void set_minus(const Value& sig)
   {
     sig.get(&mValue);
   }

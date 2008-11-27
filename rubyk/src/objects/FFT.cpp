@@ -11,7 +11,7 @@ public:
     if (mProcessor)   delete(mProcessor);
   }
   
-  bool set (const Params& p)
+  bool set (const Value& p)
   {
     size_t row_count = p.val("row", 64);
     size_t col_count = p.val("col", 1);
@@ -19,11 +19,11 @@ public:
   }
   
   // inlet 1
-  void bang(const Signal& sig)
+  void bang(const Value& sig)
   { 
     const Matrix * mat;
     if (!sig.get(&mat)) {
-      *mOutput << mName << ": wrong signal type '" << sig.type_name() << "' (should be ArraySignal)\n";
+      *mOutput << mName << ": wrong signal type '" << sig.type_name() << "' (should be ArrayValue)\n";
       return;
     } else if (mat->row_count() != mFrequencies.row_count() || mat->col_count() != mFrequencies.col_count()) {
       if(!set_sizes(mat->row_count(), mat->col_count())) {

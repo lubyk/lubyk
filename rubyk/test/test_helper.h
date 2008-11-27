@@ -29,15 +29,15 @@ protected:
   std::ostringstream mOutput;
   std::istringstream mInput;
   
-  void create(const char * pClass, const char * pParams)
+  void create(const char * pClass, const char * pValue)
   {
     mClassName = pClass;
-    mNode = Class::create(NULL, "n", pClass, pParams, &mOutput);
+    mNode = Class::create(NULL, "n", pClass, pValue, &mOutput);
   }
   
-  void create(const char * pParams)
+  void create(const char * pValue)
   {
-    mNode = Class::create(NULL, "n", mClassName, pParams, &mOutput);
+    mNode = Class::create(NULL, "n", mClassName, pValue, &mOutput);
   }
   
   void assert_method_result(const char * pMethod, const char * p, const char * pOutput)
@@ -48,7 +48,7 @@ protected:
     }
     mNode->set_output(&mOutput);
     mOutput.str(std::string("")); // clear output
-    mNode->execute_method(pMethod, Params(p));
+    mNode->execute_method(pMethod, Value(p));
     TS_ASSERT_EQUALS( mOutput.str(), std::string(pOutput));
   }
   

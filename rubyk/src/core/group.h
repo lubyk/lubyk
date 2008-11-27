@@ -5,12 +5,12 @@
 class Group : public Node
 {
 public:
-  virtual bool init (const Params& p);
+  virtual bool init (const Value& p);
   
-  virtual bool set (const Params& p);
+  virtual bool set (const Value& p);
 
   virtual void spy();
   
-  virtual void bang(const Signal& sig);
+  virtual void bang(const Value& sig);
 };
 #endif

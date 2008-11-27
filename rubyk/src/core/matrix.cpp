@@ -1,5 +1,5 @@
 #include "matrix.h"
-#include "rubyk_signal.h"
+#include "values.h"
 
 #include <errno.h>     // Error number definitions
 #include <cstdlib>
@@ -43,16 +43,16 @@ bool TMatrix<T>::copy_at(const int pRowIndex, const TMatrix& pOther, int pStartR
 }
 
 template<>
-bool TMatrix<real_t>::copy(const Signal& sig)
+bool TMatrix<real_t>::copy(const Value& sig)
 {
-  if(sig.type != MatrixSignal) return false;
+  if(sig.type != MatrixValue) return false;
   return copy_at(0, *(sig.matrix.value));
 }
 
 template<>
-bool TMatrix<real_t>::copy_at(int pRowIndex, const Signal& sig)
+bool TMatrix<real_t>::copy_at(int pRowIndex, const Value& sig)
 {
-  if(sig.type != MatrixSignal) return false;
+  if(sig.type != MatrixValue) return false;
   return copy_at(pRowIndex, *(sig.matrix.value));
 }
 

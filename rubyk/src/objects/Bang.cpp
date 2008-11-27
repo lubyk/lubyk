@@ -3,18 +3,18 @@
 class Bang : public Node
 {
 public:
-  bool set (const Params& p)
+  bool set (const Value& p)
   {
     return true;
   }
   
   // inlet 1
-  void bang(const Signal& sig)
+  void bang(const Value& sig)
   {
-    send(4,gBangSignal);
-    send(3,gBangSignal);
-    send(2,gBangSignal);
-    send(1,gBangSignal);
+    send(4,gBangValue);
+    send(3,gBangValue);
+    send(2,gBangValue);
+    send(1,gBangValue);
   }
   
   virtual void spy()

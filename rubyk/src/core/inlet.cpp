@@ -1,7 +1,7 @@
 #include "inlet.h"
 #include "node.h"
 
-void Inlet::receive (const Signal& sig)
+void Inlet::receive (const Value& sig)
 {
   //printf("in: %s:%i\n", ((Node*)mNode)->name(),mId);
   if (&sig == NULL) {

@@ -3,7 +3,7 @@
 class Metro : public Node
 {
 public:
-  bool set(const Params& p)
+  bool set(const Value& p)
   {
     mTempo = p.val("tempo", 120, true); // 120bmp default
     
@@ -13,27 +13,27 @@ public:
   }
   
   // inlet 1
-  void bang(const Signal& sig)
+  void bang(const Value& sig)
   {  
-    if (sig.type) { // bang_me_in class 'bang' with a NilSignal, if it's not nil, it's a resync/set bang
+    if (sig.type) { // bang_me_in class 'bang' with a NilValue, if it's not nil, it's a resync/set bang
       sig.get(&mTempo);
       remove_my_events();
     }
     if (mTempo != 0) {
       bang_me_in(ONE_MINUTE / mTempo);
-      send(gBangSignal);
+      send(gBangValue);
     }
   }
   
   virtual void spy()
   { bprint(mSpy, mSpySize,"%.2f", mTempo );  }
   
-  void stop(const Signal& sig)
+  void stop(const Value& sig)
   {
     remove_my_events();
   }
   
-  void start(const Signal& sig)
+  void start(const Value& sig)
   {
     bang(sig);
   }

@@ -133,7 +133,7 @@ protected:
   
   /** Command parts. */
 	std::string    mVariable, mMethod, mClass, mKey, mValue, mFrom, mTo;
-	Params         mParameters;
+	Value         mParameters;
   int            mFromPort, mToPort;
   Planet *        mServer;
   

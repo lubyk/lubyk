@@ -5,14 +5,14 @@
 class MaxCount : public Node
 {
 public:
-  bool set (const Params& p)
+  bool set (const Value& p)
   {
     return true;
   }
   
-  void bang(const Signal& sig)
+  void bang(const Value& sig)
   {
-    if (sig.type != MatrixSignal) {
+    if (sig.type != MatrixValue) {
       *mOutput << mName << ": filter only works with array signals. Use a buffer.\n";
       return;
     }

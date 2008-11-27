@@ -16,14 +16,14 @@
 
 struct lua_State;
 
-/** Pointer to a member method that can be called from the command line with "obj.method(Params)" */
-typedef void (*member_method_t)(void * pReceiver, const Params& p);
+/** Pointer to a member method that can be called from the command line with "obj.method(Value)" */
+typedef void (*member_method_t)(void * pReceiver, const Value& p);
 
 /** Pointer to a function to create nodes. */
-typedef Node * (*create_function_t)(Class * pClass, const std::string& pName, Planet * pServer, const Params& p, std::ostream * pOutput);
+typedef Node * (*create_function_t)(Class * pClass, const std::string& pName, Planet * pServer, const Value& p, std::ostream * pOutput);
 
-/** Pointer to an inlet method that can be called from the command line with "obj.method(Params)" */
-typedef void (*outlet_method_t)(void * pReceiver, Signal& sig);
+/** Pointer to an inlet method that can be called from the command line with "obj.method(Value)" */
+typedef void (*outlet_method_t)(void * pReceiver, Value& sig);
 
 /** Pointer to a method callable from lua. */
 typedef int (*method_for_lua_t)(lua_State * L);
@@ -34,7 +34,7 @@ public:
   Class (const char* pName, create_function_t pFunction) : mName(pName), mCreateFunction(pFunction), mMethods(10), mClassMethods(10), mMethodsForLua(10) {}
   
   /** Execute a class method. Example: Midi.outputs */
-  void execute_method (const std::string& pMethod, const Params& p, std::ostream * pOutput) ;
+  void execute_method (const std::string& pMethod, const Value& p, std::ostream * pOutput) ;
 
   /** Declare a class method. */
   void add_class_method(const char* pName, class_method_t pMethod)
@@ -43,14 +43,14 @@ public:
   }
   
   /** Declare a member method. With parameters. */
-  template <class T, void(T::*Tmethod)(const Params& pParam)>
+  template <class T, void(T::*Tmethod)(const Value& pParam)>
   void add_method (const char* pName)
   {
     mMethods.set(std::string(pName), &cast_member_method<T, Tmethod>);
   }
   
   /** Declare a member method from a superclass. With parameters. */
-  template <class T, class S, void(S::*Tmethod)(const Params& pParam)>
+  template <class T, class S, void(S::*Tmethod)(const Value& pParam)>
   void add_super_method (const char* pName)
   {
     mMethods.set(std::string(pName), &cast_super_member_method<T, S, Tmethod>);
@@ -77,7 +77,7 @@ public:
   }
   
   /** Declare an inlet, with an accessor method. */
-  template <class T, void(T::*Tmethod)(const Signal& sig)>
+  template <class T, void(T::*Tmethod)(const Value& sig)>
   void add_inlet (const char* pName)
   {  
     mInlets.push_back( &cast_inlet_method<T, Tmethod>);
@@ -85,7 +85,7 @@ public:
   }
   
   /** Declare an inlet that uses a super class method. Also set an accessor method. */
-  template <class T, class S, void(S::*Tmethod)(const Signal& sig)>
+  template <class T, class S, void(S::*Tmethod)(const Value& sig)>
   void add_super_inlet (const char* pName)
   {  
     mInlets.push_back( &cast_super_inlet_method<T, S, Tmethod>);
@@ -114,25 +114,25 @@ public:
   }
   
   static Node * create (Planet * pServer, const char * pClassName, const std::string& p, std::ostream * pOutput)
-  { return create(pServer, std::string(""), std::string(pClassName), Params(p), pOutput); }
+  { return create(pServer, std::string(""), std::string(pClassName), Value(p), pOutput); }
   
   
   static Node * create (Planet * pServer, const char * pName, const char * pClassName, const std::string& p, std::ostream * pOutput)
-  { return create(pServer, std::string(pName), std::string(pClassName), Params(p), pOutput); }
+  { return create(pServer, std::string(pName), std::string(pClassName), Value(p), pOutput); }
 
   static Node * create (Planet * pServer, const char * pName, const char * pClassName, const char * p, std::ostream * pOutput)
-  { return create(pServer, std::string(pName), std::string(pClassName), Params(p), pOutput); }
+  { return create(pServer, std::string(pName), std::string(pClassName), Value(p), pOutput); }
 
   static Node * create (Planet * pServer, const std::string& pName, const std::string& pClassName, const char * p, std::ostream * pOutput)
-  { return create(pServer, pName, pClassName, Params(p), pOutput); }
+  { return create(pServer, pName, pClassName, Value(p), pOutput); }
 
   static Node * create (Planet * pServer, const std::string& pName, const std::string& pClassName, const std::string& p, std::ostream * pOutput)
-  { return create(pServer, pName, pClassName, Params(p), pOutput); }
+  { return create(pServer, pName, pClassName, Value(p), pOutput); }
 
-  static Node * create (Planet * pServer, const char * pName, const char * pClassName, const Params& p, std::ostream * pOutput)
+  static Node * create (Planet * pServer, const char * pName, const char * pClassName, const Value& p, std::ostream * pOutput)
   { return create(pServer, std::string(pName), std::string(pClassName), p, pOutput); }
 
-  static Node * create (Planet * pServer, const std::string& pName, const std::string& pClassName, const Params& p, std::ostream * pOutput);
+  static Node * create (Planet * pServer, const std::string& pName, const std::string& pClassName, const Value& p, std::ostream * pOutput);
 
   /** Load an object stored in a dynamic library. */
   static bool load(const char * file, const char * init_name);
@@ -167,7 +167,7 @@ public:
   
 private:
   
-  inline Node * new_obj (const std::string& pName, Planet * pServer, const Params& p, std::ostream * pOutput);
+  inline Node * new_obj (const std::string& pName, Planet * pServer, const Value& p, std::ostream * pOutput);
   
   inline void make_slots (Node * node)
   {
@@ -191,7 +191,7 @@ private:
   /** This function is used to create an instance of class 'T'. If the instance could not be
     * properly initialized, this function returns NULL. */
   template<class T>
-  static Node * cast_create(Class * pClass, const std::string& pName, Planet * pServer, const Params& p, std::ostream * pOutput)
+  static Node * cast_create(Class * pClass, const std::string& pName, Planet * pServer, const Value& p, std::ostream * pOutput)
   {
     T * obj = new T;
     obj->set_class(pClass);
@@ -204,22 +204,22 @@ private:
   }
   
   /** Return a function pointer to a member method. */
-  template <class T, void(T::*Tmethod)(const Params& p)>
-  static void cast_member_method(void * receiver, const Params& p)
+  template <class T, void(T::*Tmethod)(const Value& p)>
+  static void cast_member_method(void * receiver, const Value& p)
   {
     (((T*)receiver)->*Tmethod)(p);
   }
   
   /** Return a function pointer to a superclass member method. With parameters. */
-  template <class T, class S, void(S::*Tmethod)(const Params& p)>
-  static void cast_super_member_method(void * receiver, const Params& p)
+  template <class T, class S, void(S::*Tmethod)(const Value& p)>
+  static void cast_super_member_method(void * receiver, const Value& p)
   {
     (((T*)receiver)->*Tmethod)(p);
   }
   
   /** Return a function pointer to a superclass member method. Without parameters. */
   template <class T, class S, void(S::*Tmethod)()>
-  static void cast_super_member_method(void * receiver, const Params& p)
+  static void cast_super_member_method(void * receiver, const Value& p)
   {
     (((T*)receiver)->*Tmethod)();
   }
@@ -227,42 +227,42 @@ private:
   
   /** Return a function pointer to a member method without parameters. */
   template <class T, void(T::*Tmethod)()>
-  static void cast_member_method(void * receiver, const Params& p)
+  static void cast_member_method(void * receiver, const Value& p)
   {
     (((T*)receiver)->*Tmethod)();
   }
   
   
-  /** Transform an inlet callback into a 'Params' based accessor. */
-  template <class T, void(T::*Tmethod)(const Signal& sig)>
-  static void cast_inlet_accessor (void * receiver, const Params& p)
+  /** Transform an inlet callback into a 'Value' based accessor. */
+  template <class T, void(T::*Tmethod)(const Value& sig)>
+  static void cast_inlet_accessor (void * receiver, const Value& p)
   {
-    Signal sig;
+    Value sig;
     Matrix buf;
     sig.set(p, buf);
     (((T*)receiver)->*Tmethod)(sig);
   }
   
-  /** Transform an inlet from a super class method callback into a 'Params' based accessor. */
-  template <class T, class S, void(S::*Tmethod)(const Signal& sig)>
-  static void cast_super_inlet_accessor (void * receiver, const Params& p)
+  /** Transform an inlet from a super class method callback into a 'Value' based accessor. */
+  template <class T, class S, void(S::*Tmethod)(const Value& sig)>
+  static void cast_super_inlet_accessor (void * receiver, const Value& p)
   {
-    Signal sig;
+    Value sig;
     Matrix buf;
     sig.set(p, buf);
     (((T*)receiver)->*Tmethod)(sig);
   }
   
   /** Create a callback for an inlet. */
-  template <class T, void(T::*Tmethod)(const Signal& sig)>
-  static void cast_inlet_method (void * receiver, const Signal& sig)
+  template <class T, void(T::*Tmethod)(const Value& sig)>
+  static void cast_inlet_method (void * receiver, const Value& sig)
   {
     (((T*)receiver)->*Tmethod)(sig);
   }
   
   /** Create a callback for an inlet using a super class' method. */
-  template <class T, class S, void(S::*Tmethod)(const Signal& sig)>
-  static void cast_super_inlet_method (void * receiver, const Signal& sig)
+  template <class T, class S, void(S::*Tmethod)(const Value& sig)>
+  static void cast_super_inlet_method (void * receiver, const Value& sig)
   {
     (((T*)receiver)->*Tmethod)(sig);
   }

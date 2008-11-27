@@ -1,11 +1,11 @@
 #include "class.h"
 
-bool Group::init (const Params& p)
+bool Group::init (const Value& p)
 {
   return true;
 }
 
-bool Group::set (const Params& p)
+bool Group::set (const Value& p)
 {
   return true;
 }
@@ -13,5 +13,5 @@ bool Group::set (const Params& p)
 void Group::spy() 
 { bprint(mSpy, mSpySize,"");  }
 
-void Group::bang(const Signal& sig)
+void Group::bang(const Value& sig)
 { }

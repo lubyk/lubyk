@@ -16,7 +16,7 @@ public:
     clear_icov();
   }
   
-  bool init(const Params& p)
+  bool init(const Value& p)
   {
     mCodeBook.set_sizes(0,8); // arbitrary: 0 classes of 8 values
     mDistances.set_sizes(1,8);
@@ -25,7 +25,7 @@ public:
     return true;
   }
   
-  bool set(const Params& p)
+  bool set(const Value& p)
   {
     size_t vector_size = mVector.col_count();
     if (p.get(&vector_size, "vector")) {
@@ -47,7 +47,7 @@ public:
   }
   
   // inlet 1
-  void bang(const Signal& sig)
+  void bang(const Value& sig)
   {
     const Matrix * live;
     if (sig.get(&live)) {

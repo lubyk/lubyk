@@ -27,7 +27,7 @@ public:
     }
   }
   
-  bool init (const Params& p)
+  bool init (const Value& p)
   {
     mTrainingData.set_sizes(0,8);
     mCodebook.set_sizes(8,8);
@@ -39,7 +39,7 @@ public:
     return true;
   }
   
-  bool set (const Params& p)
+  bool set (const Value& p)
   {
     size_t col_count = p.val("vector", mCodebook.col_count());
     size_t row_count = p.val("resolution", mCodebook.row_count());
@@ -67,7 +67,7 @@ public:
   }
   
   // inlet 1
-  void bang(const Signal& sig)
+  void bang(const Value& sig)
   { 
     int cmd;
     if (!mIsOK) return; // only recover after 'set'
@@ -81,7 +81,7 @@ public:
     case Recording:
       if (sig.get(&cmd)) {
         do_command(cmd);
-      } else if (sig.type == MatrixSignal) {
+      } else if (sig.type == MatrixValue) {
         if (sig.matrix.value->col_count() == mCodebook.col_count()) {
           if (!mTrainFile) return;
           
@@ -109,7 +109,7 @@ public:
       }
       break;
     case Label:
-      if (sig.type == MatrixSignal) {
+      if (sig.type == MatrixValue) {
         if (sig.matrix.value->col_count() == mCodebook.col_count()) {
           int label = label_for(*sig.matrix.value);
           send(label / (real_t)mCodebook.row_count());

@@ -7,7 +7,7 @@ class BufferNode : public Node
 {
 public:
   
-  bool init (const Params& p)
+  bool init (const Value& p)
   {
     if(!mBuffer.set_sizes(8, 0)) return false;
     mVector   = NULL;
@@ -16,7 +16,7 @@ public:
   }
   
   // TODO: add 'flat' option.
-  bool set (const Params& p)
+  bool set (const Value& p)
   {
     size_t window_size = mBuffer.row_count();
     size_t vector_size = mBuffer.col_count();
@@ -35,11 +35,11 @@ public:
   }
   
   // inlet 1
-  void bang(const Signal& sig)
+  void bang(const Value& sig)
   {   
     real_t d;
     if (!mIsOK) return;
-    if(sig.type == MatrixSignal) {
+    if(sig.type == MatrixValue) {
       real_t * data = sig.matrix.value->data;
       if (!mVector) {
         // get buffer size from incoming signal

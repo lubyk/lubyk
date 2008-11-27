@@ -5,7 +5,7 @@ class MidiOut : public Node
 {
 public:
   
-  bool init (const Params& p)
+  bool init (const Value& p)
   {
     mPortId = -1;
     
@@ -44,19 +44,19 @@ public:
     return true;
   }
   
-  bool set (const Params& p)
+  bool set (const Value& p)
   {
     *mOutput << mName << ": cannot change a Midi object during runtime, yet.\n";
     return true;
   }
   
   // inlet 1
-  void bang(const Signal& sig)
+  void bang(const Value& sig)
   {
     MidiMessage * msg;
     if (mDebug) *mOutput << mName << ": " << sig << std::endl;
     
-    if (!mMidiOut || sig.type != MidiSignal) return;
+    if (!mMidiOut || sig.type != MidiValue) return;
     
     if (sig.midi_ptr.value->mWait) {
       if (sig.midi_ptr.free_me) {
@@ -93,7 +93,7 @@ public:
   { remove_my_events(); }
   
   // print a list of possible outputs
-  static void list(std::ostream * pOutput, const Params& p)
+  static void list(std::ostream * pOutput, const Value& p)
   {
     std::vector<std::string> ports;
     if (!output_list(pOutput, ports)) return;

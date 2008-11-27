@@ -4,14 +4,14 @@ class Peak : public Node
 {
 public:
   
-  bool set (const Params& p)
+  bool set (const Value& p)
   {
     mDescent = p.val("descent", 0.125, true);
     mS.set(mBuffer);
     return true;
   }
 
-  void bang(const Signal& sig)
+  void bang(const Value& sig)
   { 
     real_t d = -1;
     size_t row_count, col_count;

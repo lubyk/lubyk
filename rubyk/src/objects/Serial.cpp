@@ -7,24 +7,24 @@ class Serial : public LuaScript
 {
 public:
 
-  bool init (const Params& p)
+  bool init (const Value& p)
   {
     return init_serial(p);
   }
   
-  bool set (const Params& p)
+  bool set (const Value& p)
   {
     // cannot change parameters during runtime, yet
     *mOutput << mName << ": Serial object has no parameters to change during runtime.\n";
     return set_serial(p);
   }
   
-  bool set_serial(const Params& p)
+  bool set_serial(const Value& p)
   {
     return true;
   }
   
-  bool init_serial (const Params& p)
+  bool init_serial (const Value& p)
   {
     mPort.set_output(*mOutput);
     
@@ -49,14 +49,14 @@ public:
     return set_lua(p);
   }
   
-  static void list(std::ostream * pOutput, const Params& p)
+  static void list(std::ostream * pOutput, const Value& p)
   {
     // todo
     *pOutput << "todo\n";
   }
   
   // inlet 1
-  void bang(const Signal& sig)
+  void bang(const Value& sig)
   { 
     int c;
     if (mLua) {

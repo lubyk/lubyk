@@ -29,7 +29,7 @@ public:
     ////////////////
   }
   
-  bool init(const Params& p)
+  bool init(const Value& p)
   { 
     mHeight           = 600;
     mWidth            = 800;
@@ -49,11 +49,11 @@ public:
     
     mTitle        = "GLWindow";
     TRY(mDisplaySize, set_sizes(1, 2));
-    mDisplaySizeSignal.set(mDisplaySize);
+    mDisplaySizeValue.set(mDisplaySize);
     
     TRY(mMouseMatrix, set_sizes(1, 4));
     mMouseMatrix.data[3] = 1.0; // mouseUp
-    mMouseMatrixSignal.set(mMouseMatrix);
+    mMouseMatrixValue.set(mMouseMatrix);
     
     ////////////// GLWINDOW HACK ////////////
     gGLWindowNode = (void*)this;
@@ -64,7 +64,7 @@ public:
     return true;
   }
   
-  bool set (const Params& p)
+  bool set (const Value& p)
   {
     std::string s;
     mHeight     = p.val("height", mHeight);
@@ -79,19 +79,19 @@ public:
       
     set_lua(p);
     
-    bang(gBangSignal);
+    bang(gBangValue);
     
     return true;
   }
   
   // inlet 1
-  virtual void bang(const Signal& sig)
+  virtual void bang(const Value& sig)
   {
     mNeedRedisplay = true;
     send(1, sig);
   }
   
-  virtual void draw(const Signal& sig)
+  virtual void draw(const Value& sig)
   {
     if (mNeedScriptReload) {
       mMutex.lock();
@@ -111,13 +111,13 @@ public:
     if (mLuaDraw) {
       protected_call_lua("draw",sig);
     } else {
-      send(2, mDisplaySizeSignal);
+      send(2, mDisplaySizeValue);
     }
   }
   
   virtual void key_press(unsigned char pKey, int x, int y)
   {
-    Signal s;
+    Value s;
     s.set(pKey);
     if (!handle_default_keys(pKey)) {
       mServer->lock();
@@ -136,7 +136,7 @@ public:
     mMouseMatrix.data[1] = mDisplaySize.data[1] - (real_t)y;
     mServer->lock();
       if (mLuaMouseMove) {
-        protected_call_lua("mouse_move",mMouseMatrixSignal);
+        protected_call_lua("mouse_move",mMouseMatrixValue);
       } else {
         send(4, mMouseMatrix);
       }
@@ -207,7 +207,7 @@ protected:
     }
     
     if (mLuaReshape) {
-      protected_call_lua("reshape",mDisplaySizeSignal);  
+      protected_call_lua("reshape",mDisplaySizeValue);  
     } else {
       glViewport(0, 0, w, h);
       glMatrixMode(GL_PROJECTION);
@@ -265,7 +265,7 @@ private:
       return;
     }
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    node->draw(node->mDisplaySizeSignal);
+    node->draw(node->mDisplaySizeValue);
     glutSwapBuffers ( );
   }
   
@@ -390,7 +390,7 @@ private:
     return mScriptOK;
   }
   
-  inline void protected_call_lua(const char * key, const Signal& sig)
+  inline void protected_call_lua(const char * key, const Value& sig)
   {
     mMutex.lock();
       call_lua(key, sig);
@@ -430,7 +430,7 @@ private:
   
   std::string mTitle;        /**< Window title. */
   Matrix      mDisplaySize;         /**< Window size. */
-  Signal      mDisplaySizeSignal;   /**< Wrapper around display size. */
+  Value      mDisplaySizeValue;   /**< Wrapper around display size. */
   int         mHeight;       /**< Window height (in pixels). */
   int         mWidth;        /**< Window width (in pixels). */
   int         mId;           /**< Window id. */
@@ -442,7 +442,7 @@ private:
   bool        mLuaKeyPress;  /**< True if there is a Lua "key_press" function. */
   pthread_t   mThread;       /**< Thread running all openGL stuff. */
   Matrix      mMouseMatrix;  /**< Mouse position matrix. */
-  Signal      mMouseMatrixSignal; /**< Wrapper around mMouseMatrix. */
+  Value      mMouseMatrixValue; /**< Wrapper around mMouseMatrix. */
   Mutex       mMutex;
   real_t      mMaxFPS;       /**< Limit number of frames per second. (0 = no limit). */
   time_t      mMinFPSTime;   /**< Minimal time interval between two draws (computed from mMaxFPS). */
