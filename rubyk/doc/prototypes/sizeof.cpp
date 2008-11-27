@@ -1,12 +1,21 @@
 #include <iostream>
 
 using namespace std;
-
+enum value_t {
+  NilValue  = 0,
+  BangValue = 1,
+  AnonymousValue = 2,
+  NumberValue = 4,
+  MatrixValue = 8,
+  StringValue = 16,
+  CharMatrixValue = 32,
+};
 int main()
 {  
   cout
        << "bool: "   << 8 * sizeof(bool)           << " bits" << endl
        << "char: "   << 8 * sizeof(char)           << " bits" << endl
+       << "value_t: "<< 8 * sizeof(value_t)        << " bits" << endl
        << "int: "    << 8 * sizeof(int)            << " bits" << endl
        << "size_t: " << 8 * sizeof(size_t)         << " bits" << endl
        << "time_t: " << 8 * sizeof(time_t)         << " bits" << endl
