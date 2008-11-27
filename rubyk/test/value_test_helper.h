@@ -72,14 +72,14 @@ protected:
     TestData::sOut.str(std::string(""));
   }
   
-  void _assert_ref_count(const char * file, int lineno, size_t count, Value& v)
+  void _assert_ref_count(const char * file, int lineno, Value& v, size_t count)
   {
-    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("ref count")), count, v.ref_count());
+    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("ref count")), v.ref_count(), count);
   }
   
-  void _assert_id(const char * file, int lineno, size_t id, Value& v)
+  void _assert_id(const char * file, int lineno, Value& v, size_t id)
   {
-    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("id")), id, v.data_id());
+    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("id")), v.data_id(), id);
   }
 };
 #endif // _VALUE_TEST_HELPER_H_

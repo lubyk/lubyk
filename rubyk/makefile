@@ -23,11 +23,12 @@ OBJECT_DEPENDS=src/core/node.hpp src/core/class.h
 INSTALL= install -C
 MKDIR= mkdir -p
 
+test: test/runner test/runner.cpp
+	./test/runner && rm test/runner
+
 rubyk: src/core/main.cpp $(LINKER_OBJECTS) objects test
 	$(CC) $(CFLAGS) $(LFLAGS) -o rubyk $(INCLUDE_HEADERS) -I. src/core/main.cpp $(LINKER_OBJECTS)
 
-test: test/runner test/runner.cpp
-	./test/runner && rm test/runner
 
 objects:
 

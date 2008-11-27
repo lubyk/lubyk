@@ -17,6 +17,7 @@
 * parse: parse commands.
 
 */
+/*
 class NodeTester
 {
 public:
@@ -150,4 +151,5 @@ protected:
     TS_ASSERT_EQUALS( mOutput.str(), std::string(pResult));
   }
 };
+*/
 #endif // _TEST_HELPER_H_

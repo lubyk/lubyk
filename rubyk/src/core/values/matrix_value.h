@@ -419,7 +419,7 @@ public:
   /** Return a pointer to the data buffer. Return NULL if there is no data. */
   T * raw_data()
   {
-    return mPtr ? data_pointer()->data : NULL;
+    return mPtr ? data_pointer()->data : NULL; // FIXME: shouldn't we use mutable_data() here ?
   }
   
   /** Return the number of columns in the matrix. */
@@ -472,4 +472,6 @@ value_t TMatrixx<char>::type() const
 { return CharMatrixValue; }
 
 
+#undef GET_THIS_DATA
+#undef GET_DATA
 #endif // _MATRIX_VALUE_H_

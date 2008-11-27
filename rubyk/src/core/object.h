@@ -1,7 +1,6 @@
 #ifndef _OBJECT_H_
 #define _OBJECT_H_
 #include <list>
-#include <string>
 #include "values.h"
 #include "hash.h"
 
@@ -55,7 +54,7 @@ public:
   }
   
   /** The operation to be executed on call (method for Method class / object listing for Nodes) */
-  virtual bool trigger (Value * pReturnValue, const Value& sig)
+  virtual const Value trigger (const Value& sig)
   {
     if (mChildrenStrList == "") {
       std::list<Object *>::iterator it  = mChildren.begin();
@@ -72,27 +71,25 @@ public:
       }
     }
     
-    pReturnValue->set(mChildrenStrList);
-    return true;
+    return mChildrenStrList;
   }
   
   /** Execute a method / call the default operation for an object. */
-  static bool call (const char* pUrl, Value * pReturnValue, const Value& sig)
+  static Value call (const char* pUrl, const Value& sig)
   {
-    return call(std::string(pUrl), pReturnValue, sig);
+    return call(std::string(pUrl), sig);
   }
   
   /** Execute a method / call the default operation for an object. */
-  static bool call (const std::string& pUrl, Value * pReturnValue, const Value& sig)
+  static Value call (const std::string& pUrl, const Value& sig)
   {
     Object * target;
     // 1. find object from url
     if (get(&target, pUrl)) {
       // 2. call
-      return target->trigger(pReturnValue, sig);
-      return true;
+      return target->trigger(sig);
     } else {
-      return false;
+      return Error("object not found");
     }
   }
   
@@ -263,7 +260,7 @@ private:
   
   Object * mParent;              /**< Pointer to parent object. */
   std::list<Object *> mChildren; /**< Pointer to sub-objects / methods */
-  std::string mChildrenStrList;  /**< Comma separated list of children (cached). */
+  String       mChildrenStrList;  /**< Comma separated list of children (cached). */
   std::string mUrl;              /**< Absolute path to object (cached). */
 protected:  
   std::string mName;                  /**< Unique name in parent's context. */

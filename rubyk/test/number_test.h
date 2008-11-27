@@ -13,7 +13,7 @@ public:
     Value v(n);
     
     Number n2;
-    TS_ASSERT(v.set(&n2));
+    TS_ASSERT(v.set(n2));
     TS_ASSERT_EQUALS( 123.456, n2.value());
   }
   
@@ -46,5 +46,13 @@ public:
     TS_ASSERT_EQUALS( 888.12, n1.value());
     TS_ASSERT_EQUALS( 555.23, n2.value());
     TS_ASSERT_DIFFERS( d1, d2);
+  }
+  
+  void test_set( void )
+  {
+    real_t d = 0;
+    Number n(3.45);
+    TS_ASSERT(n.set(d));
+    TS_ASSERT_EQUALS(d, 3.45);
   }
 };

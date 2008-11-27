@@ -1,5 +1,5 @@
-#ifndef _NUMBER_H_
-#define _NUMBER_H_
+#ifndef _NUMBER_VALUE_H_
+#define _NUMBER_VALUE_H_
 #include "value.h"
 
 class Number;
@@ -10,19 +10,25 @@ class NumberData : public Data
 public:
   DATA_METHODS(NumberData, NumberValue)
   
-  NumberData(const real_t& d) : mValue(d) {}
+  NumberData(const real_t& d) : mReal(d) {}
   
   // copy constructor
   NumberData(const NumberData& v)
   {
-    mValue = v.mValue;
+    mReal = v.mReal;
   }
   
   virtual ~NumberData() {}
   
+  virtual bool set (real_t& pResult)
+  { 
+    pResult = mReal;
+    return true;
+  }
+  
 private:
   friend class Number;
-  real_t mValue;
+  real_t mReal;
 };
 
 /** Value class to hold a single number (real_t). */
@@ -40,7 +46,7 @@ public:
       mPtr = new Ptr(new NumberData(d));
     } else {
       copy_if_shared();
-      ((NumberData*)(mPtr->mDataPtr))->mValue = d;
+      data_pointer()->mReal = d;
     }
     return d;
   }
@@ -49,11 +55,11 @@ public:
   real_t value()
   {
     if (mPtr) {
-      return data_pointer()->mValue;
+      return data_pointer()->mReal;
     } else {
       return 0;
     }
   }
 };
 
-#endif // _NUMBER_H_
+#endif // _NUMBER_VALUE_H_

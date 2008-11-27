@@ -18,7 +18,7 @@ public:
   {}
   
   Value(const Value& pOther)
-  { pOther.set(this); }
+  { pOther.set(*this); }
   
   /** Anonymization of the content to the ancestor class +Data+. */
   Value(Data * p) : SmartPtr<Data>(p) 
@@ -45,29 +45,30 @@ public:
   If you wonder why we haven't implemented it the other way around like: "pOther.from(this)", the reason is that we wanted a
   consistant interface for Values and native types. You cannot write "real_t d; d.from(this)" so we use "set". For the same reason,
   we use a pointer instead of a reference (clearly show what is updated). */
-  bool set (Value * pOther) const
+  bool set (Value& pOther) const
   {
     switch (data_type())
     {
       // what do I contain ?
       case NumberValue:
-        switch (pOther->type())
+        switch (pOther.type())
         {
           // what does the "other" wrapper expect ?
           case AnonymousValue: // anything
           case NumberValue:
-            *pOther = *this;   // pOther acquires our content
+            pOther = *this;   // pOther acquires our content
             return true;
           default:
             return false;
         }
+        
       case MatrixValue:
-        switch (pOther->type())
+        switch (pOther.type())
         {
           // what does the "other" wrapper expect ?
           case AnonymousValue: // anything
           case MatrixValue:
-            *pOther = *this;   // pOther acquires our content
+            pOther = *this;   // pOther acquires our content
             return true;
           case NumberValue:     // first value in matrix ?
           case CharMatrixValue: // cast ?
@@ -75,13 +76,25 @@ public:
             return false;
         }
         
+      case StringValue:
+        switch (pOther.type())
+        {
+          // what does the "other" wrapper expect ?
+          case AnonymousValue: // anything
+          case StringValue:
+            pOther = *this;   // pOther acquires our content
+            return true;
+          default:
+            return false;
+        }
+        
       case CharMatrixValue:
-        switch (pOther->type())
+        switch (pOther.type())
         {
           // what does the "other" wrapper expect ?
           case AnonymousValue: // anything
           case CharMatrixValue:
-            *pOther = *this;   // pOther acquires our content
+            pOther = *this;   // pOther acquires our content
             return true;
           case NumberValue:    // first value in matrix ?  
           case MatrixValue:    // cast ?
@@ -96,7 +109,7 @@ public:
   /** Set a real_t from the content. Return false on failure. 
   
   FIXME: we should use a template here, but it seems to break on compilation... */
-  bool set (real_t * pResult) const
+  bool set (real_t& pResult) const
   {
     if (!mPtr) return false;
     return mPtr->mDataPtr->set(pResult);
@@ -124,14 +137,20 @@ private:
       return "Nil   ";
       case BangValue:
       return "Bang  ";
+      case AnonymousValue:
+      return "Anonymous";
       case NumberValue:
       return "Number";
       case MatrixValue:
       return "Matrix";
+      case StringValue:
+      return "String";
       case CharMatrixValue:
       return "CharMatrix";
-      case AnonymousValue:
-      return "Anonymous";
+      case CommandValue:
+      return "Command";
+      case ErrorValue:
+      return "Error";
       default:
       return "???";
     }
@@ -145,7 +164,7 @@ private:
   klass() {} \
   virtual ~klass() {} \
   klass(const Value& pOther) \
-  { pOther.set(this); } \
+  { pOther.set(*this); } \
   const data_type * data () const \
   { return mPtr ? data_pointer() : NULL; } \
   const data_type * operator->() const \
