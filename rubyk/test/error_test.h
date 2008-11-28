@@ -30,4 +30,16 @@ public:
     TS_ASSERT( n == "Something bad happened.");
     TS_ASSERT( n == std::string("Something bad happened."));
   }
+  
+  void test_stream( void )
+  {
+    std::ostringstream out(std::ostringstream::out);
+    Error v;
+    out << v;
+    TS_ASSERT_EQUALS(out.str(), "Nil");
+    v = "Bad things happen.";
+    out.str(std::string(""));
+    out << v;
+    TS_ASSERT_EQUALS(out.str(), "<Error[1] \"Bad things happen.\">");
+  }
 };

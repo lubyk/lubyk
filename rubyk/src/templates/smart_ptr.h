@@ -1,3 +1,6 @@
+#ifndef _SMART_PTR_H_
+#define _SMART_PTR_H_
+#include <stdlib.h> // size_t
 
 /** The SmartPtr class implements a simple Smart Pointer with reference counting and copy-on-write. It is intentional that this class does not contain any dereferencement mechanism. These should be implemented in sub-classes. This enables us to have a generic "wrapper" which can only be used after type conversion. */
 template <class T>
@@ -89,3 +92,5 @@ private:
   }
 
 };
+
+#endif // _SMART_PTR_H_

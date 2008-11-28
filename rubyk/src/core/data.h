@@ -1,6 +1,7 @@
 #ifndef _DATA_H_
 #define _DATA_H_
 #include "value.h"
+#include <ostream>
 
 /** Base class for all data transmitted along objects or used as parameter/return for methods. */
 class Data
@@ -23,8 +24,45 @@ public:
   virtual value_t type() const
   { return BangValue; }
   
+  const char * type_name() const
+  { return name_from_type(type()); }
+  
   virtual bool set (real_t& pResult)
   { return false; }
+  
+  /** String representation of data into stream. */
+  virtual void to_stream(std::ostream& pStream) const
+  {
+    pStream << type_name();
+  }
+  
+  /** Return the textual representation of a value from a value type. */
+  static const char* name_from_type(value_t pType)
+  {  
+    switch (pType)
+    {
+      case NilValue:
+      return "Nil";
+      case BangValue:
+      return "Bang!";
+      case AnonymousValue:
+      return "Anonymous";
+      case NumberValue:
+      return "Number";
+      case MatrixValue:
+      return "Matrix";
+      case StringValue:
+      return "String";
+      case CharMatrixValue:
+      return "CharMatrix";
+      case CommandValue:
+      return "Command";
+      case ErrorValue:
+      return "Error";
+      default:
+      return "???";
+    }
+  }
   
 #ifdef _TESTING_
  size_t id() const

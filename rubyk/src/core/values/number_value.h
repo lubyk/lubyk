@@ -26,6 +26,19 @@ public:
     return true;
   }
   
+  /** Display number inside stream. */
+  virtual void to_stream(std::ostream& pStream) const
+  { 
+#ifdef _TESTING_
+    char buffer[200];
+    snprintf(buffer, 200, "[%lu] %.2f", mId, mReal);
+#else
+    char buffer[20];
+    snprintf(buffer, 20, "%.2f", mReal);
+#endif
+    pStream << buffer;
+  }
+  
 private:
   friend class Number;
   real_t mReal;

@@ -121,4 +121,12 @@ public:
     assert_id(v1, 2);
     assert_ref_count(v1, 1);
   }
+  
+  void test_stream( void )
+  {
+    std::ostringstream out(std::ostringstream::out);
+    Value v;
+    out << v;
+    TS_ASSERT_EQUALS(out.str(), "Nil");
+  }
 };

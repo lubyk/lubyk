@@ -20,6 +20,15 @@ public:
   
   virtual ~StringData() {}
   
+  virtual void to_stream(std::ostream& pStream) const
+  {
+#ifdef _TESTING_
+    pStream << "<" << type_name() << "[" << mId << "]" << " \"" << mString << "\">";
+#else
+    pStream << "<" << type_name() << " \"" << mString << "\">";
+#endif
+  }
+  
 protected:
   friend class String;
   std::string mString;

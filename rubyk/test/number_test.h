@@ -55,4 +55,16 @@ public:
     TS_ASSERT(n.set(d));
     TS_ASSERT_EQUALS(d, 3.45);
   }
+  
+  void test_stream( void )
+  {
+    std::ostringstream out(std::ostringstream::out);
+    Number v;
+    out << v;
+    TS_ASSERT_EQUALS(out.str(), "Nil");
+    v = 1.23;
+    out.str(std::string(""));
+    out << v;
+    TS_ASSERT_EQUALS(out.str(), "[1] 1.23");
+  }
 };

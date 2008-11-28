@@ -3,6 +3,7 @@
 #include "rubyk_types.h"
 #include "smart_ptr.h"
 #include "data.h"
+#include <ostream>
 
 class Error;
 /** Generic wrapper for all values passed between objects through outlets and to/from methods called through osc or the command line.
@@ -34,20 +35,20 @@ public:
   
   
   /** Return true if the object's data is an ErrorValue. */
-  bool error() const
+  inline bool error() const
   { return data_type() == ErrorValue; }
   
   /** Return true if the object's data is a NilValue. */
-  bool nil() const
+  inline bool nil() const
   { return !mPtr; }
   
   /** Textual representation of the value-type. */
   const char* type_name() const
-  { return name_from_type(type()); }
+  { return Data::name_from_type(type()); }
   
   /** Textual representation of the data-type. */
   const char* data_type_name() const
-  { return name_from_type(data_type()); }
+  { return Data::name_from_type(data_type()); }
   
   /** Type conversion ("this" sets "pOther").
   
@@ -147,36 +148,8 @@ public:
     }
   }
 #endif
-  
 private:
-  
-  /** Return the textual representation of a value from a value type. */
-  static const char* name_from_type(value_t pType)
-  {  
-    switch (pType)
-    {
-      case NilValue:
-      return "Nil   ";
-      case BangValue:
-      return "Bang  ";
-      case AnonymousValue:
-      return "Anonymous";
-      case NumberValue:
-      return "Number";
-      case MatrixValue:
-      return "Matrix";
-      case StringValue:
-      return "String";
-      case CharMatrixValue:
-      return "CharMatrix";
-      case CommandValue:
-      return "Command";
-      case ErrorValue:
-      return "Error";
-      default:
-      return "???";
-    }
-  }
+  friend std::ostream& operator<< (std::ostream& os, const Value& val);
 };
 
 /** Macro to ease Value specialization. 
@@ -207,4 +180,5 @@ protected: \
   { return (data_type*)(mPtr->mDataPtr); } \
 public: \
 
+std::ostream& operator<< (std::ostream& pStream, const Value& val);
 #endif // _VALUE_H_

@@ -6,3 +6,8 @@ typedef struct {
   MidiMessage * value;
   bool   free_me;
 } MidiValue_t;
+
+
+//  case MidiValue:
+//    pStream << "<" << val.data_type_name() << " " << *(val.midi_ptr.value) << ">";
+//    break;

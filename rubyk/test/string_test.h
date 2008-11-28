@@ -52,6 +52,7 @@ public:
     String n4("lala"); // fourth StringData created
     assert_id(n4, 4);
   }
+  
   // 
   // void test_data( void )
   // {
@@ -74,4 +75,16 @@ public:
   //   TS_ASSERT_EQUALS( 555.23, n2.value());
   //   TS_ASSERT_DIFFERS( d1, d2);
   // }
+  
+  void test_stream( void )
+  {
+    std::ostringstream out(std::ostringstream::out);
+    String v;
+    out << v;
+    TS_ASSERT_EQUALS(out.str(), "Nil");
+    v = "Good day, Sir !";
+    out.str(std::string(""));
+    out << v;
+    TS_ASSERT_EQUALS(out.str(), "<String[1] \"Good day, Sir !\">");
+  }
 };

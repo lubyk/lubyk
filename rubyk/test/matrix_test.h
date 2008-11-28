@@ -8,14 +8,14 @@ public:
   {
     Matrixx n(2,3);
     TS_ASSERT_EQUALS( 6, n.size());
-    assert_id(1, n);
+    assert_id(n, 1);
     // anonymize
     Value v(n);
-    assert_id(1, v);
+    assert_id(v, 1);
     
     Matrixx n2;
-    TS_ASSERT(v.set(&n2));
-    assert_id(1, n2);
+    TS_ASSERT(v.set(n2));
+    assert_id(n2, 1);
     TS_ASSERT_EQUALS( 6, n2.size());
   }
   
@@ -23,8 +23,12 @@ public:
   {
     Matrixx m;
     TS_ASSERT_EQUALS(0, m.size());
-    Matrixx m2(1,1);
-    assert_id(1, m2); // first object created
+    Matrixx m2(3,1);
+    assert_id(m2, 1); // first object created
+    TS_ASSERT_EQUALS(3, m2.size());
+    m2.set_sizes(4,2);
+    TS_ASSERT_EQUALS(8, m2.size());
+    TS_ASSERT_EQUALS(8, m2.data()->size());
   }
   
   // the following tests are copied from tmatrix_test.h, replacing Matrixx by Matrixx
@@ -879,6 +883,24 @@ public:
   }
 
 ///// [/TESTS_FOR_MATRIX]
+  
+  void test_stream( void )
+  {
+    std::ostringstream out(std::ostringstream::out);
+    Matrixx v;
+    out << v;
+    TS_ASSERT_EQUALS(out.str(), "Nil");
+    v.set_sizes(2,1);
+    v[0][0] = 1;
+    v[1][0] = 2.13;
+    TS_ASSERT_EQUALS(v.size(), 2);
+    assert_id(v, 1);
+    
+    out.str(std::string(""));
+    
+    out << v;
+    TS_ASSERT_EQUALS(out.str(), "<Matrix[1] [  1.00  2.13 ], 2x1>");
+  }
   
 private:
   

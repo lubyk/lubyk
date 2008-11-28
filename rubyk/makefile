@@ -13,8 +13,8 @@ RAGEL_CD=rlgen-cd
 PLAT= macosx
 TEST=test/*_test.h
 TEST_OFF=test/objects/*_test.h
-LINKER_OBJECTS= tmatrix.o
-OFF_OBJ= object.o slot.o inlet.o outlet.o node.o class.o command.o tmatrix.o buffer.o planet.o lua_script.o src/lib/lua/liblua.a group.o src/lib/osc/liboscpack.a
+LINKER_OBJECTS= tmatrix.o object.o
+OFF_OBJ= slot.o inlet.o outlet.o node.o class.o command.o tmatrix.o buffer.o planet.o lua_script.o src/lib/lua/liblua.a group.o src/lib/osc/liboscpack.a
 INCLUDE_HEADERS=-Isrc/templates -Isrc/core -Isrc/objects -Isrc/lib/lua -Isrc/lib/osc/osc -Isrc/core/values
 OBJECT_COMPILE=$(INCLUDE_HEADERS) -D__$(PLAT)__ -dynamic -bundle -undefined suppress -flat_namespace -L/usr/lib -lgcc -lstdc++
 OBJECT_DEPENDS=src/core/node.hpp src/core/class.h
@@ -28,7 +28,7 @@ all: test
 test: test/runner test/runner.cpp
 	./test/runner && rm test/runner
 
-rubyk: src/core/main.cpp $(LINKER_OBJECTS) objects test
+rubyk: src/core/main.cpp $(LINKER_OBJECTS) value.o objects test
 	$(CC) $(CFLAGS) $(LFLAGS) -o rubyk $(INCLUDE_HEADERS) -I. src/core/main.cpp $(LINKER_OBJECTS)
 
 
@@ -39,8 +39,9 @@ off: lib/Test.rko lib/Value.rko lib/Add.rko lib/Counter.rko lib/Metro.rko lib/Pr
 test/runner.cpp: $(TEST)
 	./test/cxxtest/cxxtestgen.pl --error-printer -o test/runner.cpp $(TEST)
 	
-test/runner: test/runner.cpp $(LINKER_OBJECTS) objects
-	$(CC) $(CFLAGS) $(LFLAGS) -D_TESTING_ -Itest $(INCLUDE_HEADERS) -I. test/runner.cpp $(LINKER_OBJECTS) -o test/runner
+# special case for value.cpp (not in LINKER_OBJECTS) because of _TESTING_ #define.
+test/runner: test/runner.cpp $(LINKER_OBJECTS) src/core/values/value.cpp objects
+	$(CC) $(CFLAGS) $(LFLAGS) -D_TESTING_ -Itest $(INCLUDE_HEADERS) -I. test/runner.cpp $(LINKER_OBJECTS) src/core/values/value.cpp -o test/runner
 
 src/core/command.cpp: src/core/command.rl
 	${RAGEL} src/core/command.rl -o src/core/command.cpp
@@ -49,6 +50,9 @@ globals.o: src/core/globals.cpp
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 
 tmatrix.o: src/core/tmatrix.cpp src/templates/tmatrix.h
+	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
+
+value.o: src/core/values/value.cpp src/core/values/value.h
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 	
 %.o: src/core/%.cpp src/core/%.h

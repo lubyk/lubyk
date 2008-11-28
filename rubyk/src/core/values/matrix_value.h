@@ -27,6 +27,11 @@ public:
   
   virtual value_t type() const
   { return AnonymousValue; }         // Should be specialized in IntMatrix template.
+  
+  
+  /** Display matrix inside stream. */
+  virtual void to_stream(std::ostream& pStream) const;
+  
 protected:
   friend class TMatrixx<T>;
 };

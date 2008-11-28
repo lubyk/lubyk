@@ -2,11 +2,9 @@
 #define _NODE_H_
 #include "object.h"
 #include "event.h"
-#include "params.h"
 #include "inlet.h"
 #include "outlet.h"
 #include "hash.h"
-#include "matrix.h"
 #include "values.h"
 
 #include <sstream>
@@ -100,130 +98,110 @@ public:
   inline void send(const T& data)
   { send(1, data); }
   
-  /** Send a bang. */
-  inline void send(size_t pPort, rubyk_signal_t pType) 
-  { 
-    if (!pType) return; // do nothing if NilValue
-    mS.type = pType;
-    send(pPort, mS);
-  }
-  
   /** Send an integer. */
   inline void send(size_t pPort, int pInt)
   {
-    mS.type = IntegerValue;
-    mS.i.value = pInt;
-    send(pPort, mS);
+    send(pPort, Number((real_t)pInt));
   }
   
   /** Send a char. */
   inline void send(size_t pPort, char pChar)
   {
-    mS.type = IntegerValue;
-    mS.i.value = (int)pChar;
-    send(pPort, mS);
+    send(pPort, Number((real_t)pChar);
   }
   
   /** Send an unsigned integer. */
   inline void send(size_t pPort, unsigned int pInt)
   {
-    mS.type = IntegerValue;
-    mS.i.value = pInt;
-    send(pPort, mS);
+      send(pPort, Number((real_t)pInt);
   }
   
   /** Send an unsigned long. */
   inline void send(size_t pPort, long pInt)
   {
-    mS.type = IntegerValue;
-    mS.i.value = (int)pInt;
-    send(pPort, mS);
+      send(pPort, Number((real_t)pInt);
   }
   
   /** Send a real_t. */
-  inline void send(size_t pPort, real_t pDouble)
+  inline void send(size_t pPort, real_t pReal)
   {
-    mS.type = DoubleValue;
-    mS.d.value = pDouble;
-    send(pPort, mS);
+    send(pPort, Number(pReal));
   }
   
   /** Send a float. */
   inline void send(size_t pPort, float pFloat)
   { 
-    mS.type = DoubleValue;
-    mS.d.value = (real_t)pFloat;   
-    send(pPort, mS);
+    send(pPort, Number((real_t)pFloat));
   }
   
-  /** Send a MidiMessage ptr. */
-  inline void send(size_t pPort, MidiMessage * pPtr, bool pFree = false)
-  {
-    mS.type = MidiValue;
-    mS.midi_ptr.value = pPtr;
-    mS.midi_ptr.free_me = pFree;
-    send(pPort, mS);
-  }
-  
-  /** Send a Matrix. */
-  inline void send(size_t pPort, const Matrix& pMat)
-  {
-    mS.type = MatrixValue;
-    mS.matrix.value = &pMat;
-    send(pPort, mS);
-  }
-  
-  inline void send(size_t pPort, const MidiMessage& pMsg)
-  {
-    send(pPort, Value(pMsg));
-  }
-  
-  /** Send a midi note with the parameters provided.
-    * pPort: outlet id.
-    * pNote: midi note from 0 to 96. 
-    * pVelocity: velocity from 0 (note off) to 127. 
-    * pLength: note duration in milliseconds. 
-    * pChannel: midi channel from 1 to 16.
-    * pTime: time to wait before playing this note.
-    */
-  inline void send_note(size_t pPort, unsigned char pNote, unsigned char pVelocity = 80, unsigned int pLength = 500, unsigned int pChannel = 1, time_t pTime = 0)
-  {
-    MidiMessage * msg = new MidiMessage(3);
-    msg->set_as_note(pNote, pVelocity, pLength, pChannel, pTime);
-    mS.set(msg, true);
-    send(pPort, mS);
-  }
-  
-  /** Send a midi control change with the parameters provided.
-    * pPort: outlet id.
-    * pCtrl: control number from 0 to 127. (see http://tomscarff.tripod.com/midi_analyser/control_and_mode_changes.htm)
-    * pCtrlValue: velocity from 0 (note off) to 127.
-    * pChannel: midi channel from 1 to 16.
-    * pTime: time to wait before playing this note.
-    */
-  inline void send_ctrl(size_t pPort, unsigned char pCtrl, unsigned char pCtrlValue, unsigned int pChannel = 1, time_t pTime = 0)
-  {
-    MidiMessage * msg = new MidiMessage(3);
-    msg->set_as_ctrl(pCtrl, pCtrlValue, pChannel, pTime);
-    mS.set(msg, true);
-    send(pPort, mS);
-  }
-  
-  /** Send a void ptr. */
-  inline void send(size_t pPort, void * pPtr, bool pFree)
-  {
-    mS.type = VoidPointerValue;
-    mS.ptr.value = pPtr;
-    mS.ptr.free_me = pFree;
-    send(pPort, mS);
-  }
+//FIX  /** Send a MidiMessage ptr. */
+//FIX  inline void send(size_t pPort, MidiMessage * pPtr, bool pFree = false)
+//FIX  {
+//FIX    mS.type = MidiValue;
+//FIX    mS.midi_ptr.value = pPtr;
+//FIX    mS.midi_ptr.free_me = pFree;
+//FIX    send(pPort, mS);
+//FIX  }
+//FIX  
+//FIX  /** Send a Matrix. */
+//FIX  inline void send(size_t pPort, const Matrix& pMat)
+//FIX  {
+//FIX    mS.type = MatrixValue;
+//FIX    mS.matrix.value = &pMat;
+//FIX    send(pPort, mS);
+//FIX  }
+//FIX  
+//FIX  inline void send(size_t pPort, const MidiMessage& pMsg)
+//FIX  {
+//FIX    send(pPort, Value(pMsg));
+//FIX  }
+//FIX  
+//FIX  /** Send a midi note with the parameters provided.
+//FIX    * pPort: outlet id.
+//FIX    * pNote: midi note from 0 to 96. 
+//FIX    * pVelocity: velocity from 0 (note off) to 127. 
+//FIX    * pLength: note duration in milliseconds. 
+//FIX    * pChannel: midi channel from 1 to 16.
+//FIX    * pTime: time to wait before playing this note.
+//FIX    */
+//FIX  inline void send_note(size_t pPort, unsigned char pNote, unsigned char pVelocity = 80, unsigned int pLength = 500, unsigned int pChannel = 1, time_t pTime = 0)
+//FIX  {
+//FIX    MidiMessage * msg = new MidiMessage(3);
+//FIX    msg->set_as_note(pNote, pVelocity, pLength, pChannel, pTime);
+//FIX    mS.set(msg, true);
+//FIX    send(pPort, mS);
+//FIX  }
+//FIX  
+//FIX  /** Send a midi control change with the parameters provided.
+//FIX    * pPort: outlet id.
+//FIX    * pCtrl: control number from 0 to 127. (see http://tomscarff.tripod.com/midi_analyser/control_and_mode_changes.htm)
+//FIX    * pCtrlValue: velocity from 0 (note off) to 127.
+//FIX    * pChannel: midi channel from 1 to 16.
+//FIX    * pTime: time to wait before playing this note.
+//FIX    */
+//FIX  inline void send_ctrl(size_t pPort, unsigned char pCtrl, unsigned char pCtrlValue, unsigned int pChannel = 1, time_t pTime = 0)
+//FIX  {
+//FIX    MidiMessage * msg = new MidiMessage(3);
+//FIX    msg->set_as_ctrl(pCtrl, pCtrlValue, pChannel, pTime);
+//FIX    mS.set(msg, true);
+//FIX    send(pPort, mS);
+//FIX  }
+//FIX  
+//FIX  /** Send a void ptr. */
+//FIX  inline void send(size_t pPort, void * pPtr, bool pFree)
+//FIX  {
+//FIX    mS.type = VoidPointerValue;
+//FIX    mS.ptr.value = pPtr;
+//FIX    mS.ptr.free_me = pFree;
+//FIX    send(pPort, mS);
+//FIX  }
   
   //////////////////////////////////////
   
-  inline void send (size_t pPort, const Value& sig)
+  inline void send (size_t pPort, const Value& val)
   {  
-    if (mDebug) *mOutput << "[" << mName << ":" << pPort << "] " << sig << std::endl;
-    if (pPort < 1 || pPort > mOutlets.size() || !sig.type) return;
+    if (mDebug) *mOutput << "[" << mName << ":" << pPort << "] " << val << std::endl;
+    if (pPort < 1 || pPort > mOutlets.size() || val.nil()) return;
     mOutlets[pPort - 1]->send(sig);
   }
   
