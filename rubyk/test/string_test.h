@@ -15,6 +15,10 @@ public:
     String n2;
     TS_ASSERT(v.set(n2));
     TS_ASSERT_EQUALS( *n2.string(), "Hello World!");
+    
+    n2 = "foo";
+    TS_ASSERT_EQUALS( *n2.string(), "foo");
+    TS_ASSERT(n.set(n2));
   }
   
   void test_operator_equal( void )

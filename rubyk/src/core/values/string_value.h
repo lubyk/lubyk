@@ -20,7 +20,7 @@ public:
   
   virtual ~StringData() {}
   
-private:
+protected:
   friend class String;
   std::string mString;
 };

@@ -4,7 +4,7 @@
 #include "smart_ptr.h"
 #include "data.h"
 
-
+class Error;
 /** Generic wrapper for all values passed between objects through outlets and to/from methods called through osc or the command line.
 
 This class has some knowledge on its real self and content through the virtual methods "data_type" (content-type) and "type" (wrapper-type). For all subclasses of +Value+, the +data_type+ can be either +NilValue+ or the same as the +type+.
@@ -31,6 +31,15 @@ public:
   /** Returns the value-type (type of the pointer itself). */
   virtual value_t type() const
   { return AnonymousValue; }
+  
+  
+  /** Return true if the object's data is an ErrorValue. */
+  bool error() const
+  { return data_type() == ErrorValue; }
+  
+  /** Return true if the object's data is a NilValue. */
+  bool nil() const
+  { return !mPtr; }
   
   /** Textual representation of the value-type. */
   const char* type_name() const

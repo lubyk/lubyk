@@ -9,8 +9,8 @@ public:
   {
     Error n("Something bad happened.");
     assert_id(n,1);
-    TS_ASSERT(n.string());
-    TS_ASSERT_EQUALS( *n.string(), "Something bad happened.");
+    TS_ASSERT(n.message());
+    TS_ASSERT_EQUALS( std::string(n.message()), "Something bad happened.");
     // anonymize
     Value sig(n);
     
@@ -21,7 +21,7 @@ public:
     // can get as error
     Error e;
     TS_ASSERT(sig.set(e));
-    TS_ASSERT_EQUALS( *e.string(), "Something bad happened.");
+    TS_ASSERT_EQUALS( std::string(e.message()), "Something bad happened.");
   }
   
   void test_operator_equal( void )

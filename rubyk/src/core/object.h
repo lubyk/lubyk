@@ -89,7 +89,7 @@ public:
       // 2. call
       return target->trigger(sig);
     } else {
-      return Error("object not found");
+      return Error("Object not found.");
     }
   }
   

@@ -1,9 +1,10 @@
 // ordered_list_test.h 
 #include <cxxtest/TestSuite.h>
 #include "object.h"
+#include "value_test_helper.h"
 
 
-class ObjectTest : public CxxTest::TestSuite
+class ObjectTest : public ValueTestHelper
 {
 public:
   void test_set_parent( void )
@@ -100,24 +101,41 @@ public:
     Object one(root,"one");
     Object two(root,"two");
     Object sub(two,"sub");
-    Signal res, param;
-    std::string str;
+    Value res, param;
+    String str;
 
     TS_ASSERT_EQUALS( root.url(),    std::string("/root") );
     TS_ASSERT_EQUALS( one.url(),     std::string("/root/one") );
     TS_ASSERT_EQUALS( two.url(),     std::string("/root/two") );
     TS_ASSERT_EQUALS( sub.url(),     std::string("/root/two/sub") );
     
-    TS_ASSERT(Object::call("/root",&res,param));
-    TS_ASSERT(res.get(&str));
-    TS_ASSERT_EQUALS( str, std::string("one,two/"));
+    res = Object::call("/root",param);
+    TS_ASSERT(!res.error());
+    TS_ASSERT(res.set(str));
+    TS_ASSERT( str == "one,two/" );
     
-    TS_ASSERT(Object::call("/root/one",&res,param));
-    TS_ASSERT(res.get(&str));
-    TS_ASSERT_EQUALS( str, std::string(""));
+    res = Object::call("/root/one",param);
+    TS_ASSERT(res.nil());
     
-    TS_ASSERT(Object::call("/root/two",&res,param));
-    TS_ASSERT(res.get(&str));
-    TS_ASSERT_EQUALS( str, std::string("sub"));
+    res = Object::call("/root/two",param);
+    TS_ASSERT(!res.error());
+    TS_ASSERT(res.set(str));
+    TS_ASSERT( str == "sub" );
+  }
+  
+  void test_call_bad_object( void )
+  {
+    Object root("root");
+    Value res, param;
+    
+    Number n1(4);
+    assert_id(n1, 1);
+    assert_id(res, 0);
+    
+    res = Object::call("/foo",param);
+    assert_id(res, 2);
+    
+    TS_ASSERT(res.error());
+    TS_ASSERT_EQUALS( Error(res).message(), std::string("Object not found.") );
   }
 };

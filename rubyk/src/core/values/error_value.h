@@ -18,6 +18,8 @@ public:
   ErrorData(const ErrorData& v) : StringData(v) {}
   
   virtual ~ErrorData() {}
+private:
+  friend class Error;
 };
 
 /** Value class to hold an error message (sub-class of String). */
@@ -29,6 +31,15 @@ public:
   Error(const std::string& s) : String(new ErrorData(s)) {}
 
   Error(const char * s)       : String(new ErrorData(s)) {}
+  
+  const char * message() const
+  {
+    if (mPtr) {
+      return data_pointer()->mString.c_str();
+    } else {
+      return "";
+    }
+  }
 };
 
 #endif // _ERROR_VALUE_H_
