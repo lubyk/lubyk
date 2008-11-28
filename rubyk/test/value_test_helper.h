@@ -50,7 +50,7 @@ protected:
 class TestValue : public Value
 {
 public:
-  VALUE_METHODS(TestValue, TestData, NumberValue)
+  VALUE_METHODS(TestValue, TestData, NumberValue, Value)
 };
 
 std::ostringstream TestData::sOut(std::ostringstream::out);

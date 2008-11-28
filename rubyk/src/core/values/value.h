@@ -101,6 +101,19 @@ public:
           default:
             return false;
         }
+        
+      case ErrorValue:
+        switch (pOther.type())
+        {
+          // what does the "other" wrapper expect ?
+          case AnonymousValue: // anything
+          case ErrorValue:
+            pOther = *this;   // pOther acquires our content
+            return true;
+          default:
+            return false;
+        }
+      
       default:
         return false;
     }
@@ -160,8 +173,9 @@ private:
 /** Macro to ease Value specialization. 
    *mutable_data* never returns NULL. New data is created on demand.
    */
-#define VALUE_METHODS(klass,data_type,signature) \
+#define VALUE_METHODS(klass,data_type,signature,super) \
   klass() {} \
+  klass(data_type * d) : super(d) {} \
   virtual ~klass() {} \
   klass(const Value& pOther) \
   { pOther.set(*this); } \

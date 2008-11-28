@@ -24,7 +24,7 @@ public:
 class Error : public String
 {
 public:
-  VALUE_METHODS(Error, ErrorData, ErrorValue)
+  VALUE_METHODS(Error, ErrorData, ErrorValue, String)
   
   Error(const std::string& s) : String(new ErrorData(s)) {}
 

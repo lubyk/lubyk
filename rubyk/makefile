@@ -23,6 +23,8 @@ OBJECT_DEPENDS=src/core/node.hpp src/core/class.h
 INSTALL= install -C
 MKDIR= mkdir -p
 
+all: test
+
 test: test/runner test/runner.cpp
 	./test/runner && rm test/runner
 
@@ -108,4 +110,4 @@ install_libs:
 	cd lib && for e in *.rko ; do echo $(RUBYK_LIBDIR)/$$e && $(INSTALL) $$e $(RUBYK_LIBDIR) ; done
 
 clean:
-	rm -rf *.o lib/*.rko rubyk src/core/command.png src/core/command.dot test/runner
+	rm -rf *.o *.dSYM lib/*.rko lib/*.dSYM rubyk src/core/command.png src/core/command.dot test/runner test/*.dSYM

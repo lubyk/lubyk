@@ -6,22 +6,23 @@
 class String;
 
 /* Holds the actual data of the StringValue class. This is a wrapper around an std::string. */
-class StringData : public Data, public std::string
+class StringData : public Data
 {
 public:
   DATA_METHODS(StringData, StringValue)
   
-  StringData(const std::string& s) : std::string(s) {}
+  StringData(const std::string& s) : mString(s) {}
   
-  StringData(const char * s) : std::string(s) {}
+  StringData(const char * s) : mString(s) {}
   
   // copy constructor
-  StringData(const StringData& v) : std::string(v) {}
+  StringData(const StringData& v) : mString(v.mString) {}
   
   virtual ~StringData() {}
   
 private:
   friend class String;
+  std::string mString;
 };
 
 #define GET_DATA(x) const StringData * x ## _data = x.data(); \
@@ -34,7 +35,7 @@ private:
 class String : public Value
 {
 public:
-  VALUE_METHODS(String, StringData, StringValue)
+  VALUE_METHODS(String, StringData, StringValue, Value)
   
   String(const std::string& s) : Value(new StringData(s)) {}
   
@@ -43,41 +44,47 @@ public:
   /** Set String from std::string. */
   const std::string& operator= (const std::string& s)
   {
-    *mutable_data() = s;
+    mutable_data()->mString = s;
     return s;
   }
   
   /** Set String from const char *. */
   const char * operator= (const char * s)
   {
-    *mutable_data() = s;
+    mutable_data()->mString = s;
     return s;
   }
   
   void append(const std::string& s)
   {
-    mutable_data()->append(s);
+    mutable_data()->mString.append(s);
   }
   
   void append(const char * s)
   {
-    mutable_data()->append(s);
+    mutable_data()->mString.append(s);
   }
   
   bool operator==(const char * s)
   {
     GET_THIS_DATA()
-    return *this_data == s;    
+    return this_data->mString == s;    
+  }
+  
+  bool operator==(const std::string& s)
+  {
+    GET_THIS_DATA()
+    return this_data->mString == s;    
   }
   
   std::string * string() // FIXME: maybe we should return a reference...
   {
-    return mPtr ? (std::string*)data_pointer() : NULL; // FIXME: shouldn't we use mutable_data() here ?
+    return mPtr ? &data_pointer()->mString : NULL; // FIXME: shouldn't we use mutable_data() here ?
   }
   
   const std::string * string() const
   {
-    return mPtr ? (std::string*)data_pointer() : NULL;
+    return mPtr ? &data_pointer()->mString : NULL;
   }
 };
 

@@ -35,7 +35,7 @@ private:
 class Number : public Value
 {
 public:
-  VALUE_METHODS(Number, NumberData, NumberValue)
+  VALUE_METHODS(Number, NumberData, NumberValue, Value)
   
   Number(real_t d) : Value(new NumberData(d)) {}
   

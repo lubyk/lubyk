@@ -42,7 +42,7 @@ public:
     
     TS_ASSERT_EQUALS( "My name is Bob.", *n.string());
     n.append(" My friend is Joe.");
-    assert_id(n, 1); // same old id
+    assert_id(n, 2); // same old id
     TS_ASSERT_EQUALS( "My name is Bob. My friend is Joe.", *n.string());
     
     String n4("lala"); // fourth StringData created
