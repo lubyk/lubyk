@@ -1,6 +1,6 @@
 // ordered_list_test.h 
 #include <cxxtest/TestSuite.h>
-#include "matrix.h"
+#include "tmatrix.h"
 
 
 class MatrixTest : public CxxTest::TestSuite

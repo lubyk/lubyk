@@ -13,8 +13,8 @@ RAGEL_CD=rlgen-cd
 PLAT= macosx
 TEST=test/*_test.h
 TEST_OFF=test/objects/*_test.h
-LINKER_OBJECTS=
-OFF_OBJ=tmatrix.o object.o slot.o inlet.o outlet.o node.o class.o command.o tmatrix.o buffer.o planet.o lua_script.o src/lib/lua/liblua.a group.o src/lib/osc/liboscpack.a
+LINKER_OBJECTS= tmatrix.o
+OFF_OBJ= object.o slot.o inlet.o outlet.o node.o class.o command.o tmatrix.o buffer.o planet.o lua_script.o src/lib/lua/liblua.a group.o src/lib/osc/liboscpack.a
 INCLUDE_HEADERS=-Isrc/templates -Isrc/core -Isrc/objects -Isrc/lib/lua -Isrc/lib/osc/osc -Isrc/core/values
 OBJECT_COMPILE=$(INCLUDE_HEADERS) -D__$(PLAT)__ -dynamic -bundle -undefined suppress -flat_namespace -L/usr/lib -lgcc -lstdc++
 OBJECT_DEPENDS=src/core/node.hpp src/core/class.h
@@ -48,6 +48,9 @@ src/core/command.cpp: src/core/command.rl
 globals.o: src/core/globals.cpp
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 
+tmatrix.o: src/core/tmatrix.cpp src/templates/tmatrix.h
+	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
+	
 %.o: src/core/%.cpp src/core/%.h
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 	

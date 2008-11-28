@@ -1,4 +1,4 @@
-#include "matrix.h"
+#include "tmatrix.h"
 #include "values.h"
 
 #include <errno.h>     // Error number definitions
@@ -40,20 +40,6 @@ bool TMatrix<T>::copy_at(const int pRowIndex, const TMatrix& pOther, int pStartR
   }
   mColCount = pOther.mColCount;
   return raw_copy(row_index, pOther.data + start_row * mColCount, (end_row - start_row + 1) * mColCount, pResize && pRowIndex == 0);
-}
-
-template<>
-bool TMatrix<real_t>::copy(const Value& sig)
-{
-  if(sig.type != MatrixValue) return false;
-  return copy_at(0, *(sig.matrix.value));
-}
-
-template<>
-bool TMatrix<real_t>::copy_at(int pRowIndex, const Value& sig)
-{
-  if(sig.type != MatrixValue) return false;
-  return copy_at(pRowIndex, *(sig.matrix.value));
 }
 
 template<typename T>

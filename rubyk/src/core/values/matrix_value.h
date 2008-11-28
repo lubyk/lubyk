@@ -450,11 +450,11 @@ typedef TMatrixData<real_t> MatrixData;
 typedef TMatrixx<real_t>    Matrixx;
 
 template<>
-value_t TMatrixData<real_t>::type() const
+inline value_t TMatrixData<real_t>::type() const
 { return MatrixValue; }
 
 template<>
-value_t TMatrixx<real_t>::type() const
+inline value_t TMatrixx<real_t>::type() const
 { return MatrixValue; }
 
 
@@ -464,11 +464,11 @@ typedef TMatrixData<char> CharMatrixData;
 typedef TMatrixx<char>    CharMatrix;
 
 template<>
-value_t TMatrixData<char>::type() const
+inline value_t TMatrixData<char>::type() const
 { return CharMatrixValue; }
 
 template<>
-value_t TMatrixx<char>::type() const
+inline value_t TMatrixx<char>::type() const
 { return CharMatrixValue; }
 
 
