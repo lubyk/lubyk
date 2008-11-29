@@ -3,7 +3,7 @@
 #include <cxxtest/TestSuite.h>
 #include "buffer.h"
 
-
+// FIXME: complete tests !
 class BufferTest : public CxxTest::TestSuite
 {
 public:

@@ -14,7 +14,7 @@ struct EventUser
   int mValue;
 };
 
-
+// FIXME: complete tests !
 class EventTest : public CxxTest::TestSuite
 {
 public:

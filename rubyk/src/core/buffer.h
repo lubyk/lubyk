@@ -1,6 +1,6 @@
 #ifndef _BUFFER_H_
 #define _BUFFER_H_
-#include "matrix.h"
+#include "tmatrix.h"
 
 /** The Buffer class gives a buffered 'window' on streaming data. Every new vector
   * that is appended to the matrix becomes the most recent (index -1) and pushes the
