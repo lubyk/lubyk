@@ -9,24 +9,24 @@ public:
   void test_create( void )
   {
     CharMatrix n(2,3);
-    TS_ASSERT_EQUALS( 6, n.size());
-    assert_id(1, n);
+    TS_ASSERT_EQUALS(n.size(), 6);
+    assert_id(n, 1);
     // anonymize
     Value v(n);
-    assert_id(1, v);
+    assert_id(v, 1);
     
     CharMatrix n2;
-    TS_ASSERT(v.set(&n2));
-    assert_id(1, n2);
-    TS_ASSERT_EQUALS( 6, n2.size());
+    TS_ASSERT(v.set(n2));
+    assert_id(n2, 1);
+    TS_ASSERT_EQUALS(n2.size(), 6);
   }
   
   void test_size( void )
   {
     CharMatrix m;
-    TS_ASSERT_EQUALS(0, m.size());
+    TS_ASSERT_EQUALS(m.size(), 0);
     CharMatrix m2(1,1);
-    assert_id(1, m2); // first object created
+    assert_id(m2, 1); // first object created
   }
   
   void test_copy( void )
