@@ -4,10 +4,6 @@
 #include "class.h"
 #include <pthread.h>
 
-
-Value gNilValue(NilValue);   // globals declared in values.h
-Value gBangValue(BangValue); // globals declared in values.h
-
 Planet::Planet() : mCurrentTime(0), mInstances(200), mQuit(false)
 {
   mMutex.lock();    // we get hold of everything, releasing resources when we decide (I'm the master).

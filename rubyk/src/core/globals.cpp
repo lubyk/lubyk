@@ -21,6 +21,8 @@ bool   gQuitGl;
 Hash<std::string, Object*> Object::sObjects(OBJECT_HASH_SIZE);
 unsigned int Object::sIdCounter    = 0;
 
-// Matri
+// Values
+Value gNilValue;        // globals declared in values.h
+Bang  gBangValue(true); // globals declared in values.h
 
 #endif // _GLOBALS_CPP_

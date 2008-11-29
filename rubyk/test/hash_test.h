@@ -6,7 +6,7 @@
 class StringHashTest : public CxxTest::TestSuite
 {
 public:
-  void testSetGet( void )
+  void test_set_get( void )
   {
     Hash<std::string, std::string> hash(10);
     std::string res;
@@ -21,7 +21,7 @@ public:
     TS_ASSERT_EQUALS(  hash.get(&res, "money"),  false );
   }
   
-  void testGetDefault( void )
+  void test_get_default( void )
   {
     Hash<std::string, std::string> hash(10);
     std::string res;
@@ -37,7 +37,7 @@ public:
     TS_ASSERT_EQUALS( res,  std::string("mum") );
   }
   
-  void testGetKey( void )
+  void test_get_key( void )
   {
     Hash<std::string, std::string> hash(10);
     std::string res;
@@ -52,7 +52,7 @@ public:
     TS_ASSERT_EQUALS(  hash.get_key(&res, "money"),  false );
   }
   
-  void testKeys( void )
+  void test_keys( void )
   {
     Hash<std::string, std::string> hash(10);
     const std::vector<std::string> * keys = hash.keys();
@@ -130,5 +130,31 @@ public:
     TS_ASSERT_DIFFERS(H("one"), H("two"));
     TS_ASSERT_DIFFERS(H("longname_a"), H("longname_b"));
     TS_ASSERT_DIFFERS(H("longname_a"), H("longname_c"));
+  }
+  
+  void test_copy( void )
+  {
+    Hash<std::string, std::string> hash(10);
+    Hash<std::string, std::string> hash2(10);
+    std::string res;
+
+    hash.set(std::string("hello"), std::string("world"));
+    hash.set(std::string("my"),    std::string("mum"));
+    
+    // copy
+    hash2 = hash;
+    
+    // change hash
+    hash.set(std::string("hello"), std::string("planet"));
+
+    TS_ASSERT(hash.get(&res, "hello"));
+    TS_ASSERT_EQUALS( res,  std::string("planet") );
+    TS_ASSERT(hash.get(&res, "my"));
+    TS_ASSERT_EQUALS( res,  std::string("mum"  ) );
+    
+    TS_ASSERT(hash2.get(&res, "hello"));
+    TS_ASSERT_EQUALS( res,  std::string("world") );
+    TS_ASSERT(hash2.get(&res, "my"));
+    TS_ASSERT_EQUALS( res,  std::string("mum"  ) );
   }
 };

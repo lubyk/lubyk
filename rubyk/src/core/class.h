@@ -114,7 +114,7 @@ public:
   }
   
   static Node * create (Planet * pServer, const char * pClassName, const std::string& p, std::ostream * pOutput)
-  { return create(pServer, std::string(""), std::string(pClassName), Value(p), pOutput); }
+  { return create(pServer, std::string(""), std::string(pClassName), Params(p), pOutput); }
   
   
   static Node * create (Planet * pServer, const char * pName, const char * pClassName, const std::string& p, std::ostream * pOutput)

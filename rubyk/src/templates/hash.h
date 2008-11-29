@@ -64,6 +64,37 @@ public:
     mHashTable = new HashElement<K,T>[size];
   }
   
+  // copy constructor
+  Hash(const Hash& pOther)
+  {  
+    std::vector<std::string>::const_iterator it;
+    std::vector<std::string>::const_iterator end = pOther.end();
+    T value;
+    
+    mSize = pOther.mSize;
+    mHashTable = new HashElement<K,T>[mSize];
+    
+    for(it = pOther.begin(); it < end; it++) {
+      if (pOther.get(&value, *it)) {
+        set(*it, value);
+      }
+    }
+  }
+  
+  Hash& operator=(const Hash& pOther)
+  {
+    std::vector<std::string>::const_iterator it;
+    std::vector<std::string>::const_iterator end = pOther.end();
+    T value;
+
+    for(it = pOther.begin(); it < end; it++) {
+      if (pOther.get(&value, *it)) {
+        set(*it, value);
+      }
+    }
+    return *this;
+  }
+  
   virtual ~Hash() {
     HashElement<K,T> * current, * next;
     // remove collisions
@@ -104,8 +135,13 @@ public:
     }
   }
   
+  /** Return number of elements (distinct keys). */
   size_t size() const
   { return mKeys.size(); }
+  
+  /** Return size of storage (main hash table). */
+  unsigned int storage_size() const
+  { return mSize; }
   
   /** List of keys. */
   const std::vector<K> * keys() { return &mKeys; }

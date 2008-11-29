@@ -13,7 +13,7 @@ RAGEL_CD=rlgen-cd
 PLAT= macosx
 TEST=test/*_test.h
 TEST_OFF=test/objects/*_test.h
-LINKER_OBJECTS= tmatrix.o object.o slot.o inlet.o outlet.o buffer.o
+LINKER_OBJECTS= tmatrix.o object.o slot.o inlet.o outlet.o buffer.o src/core/values/dictionary_value.cpp src/core/values/value.cpp
 OFF_OBJ=node.o class.o command.o planet.o lua_script.o src/lib/lua/liblua.a group.o src/lib/osc/liboscpack.a
 INCLUDE_HEADERS=-Isrc/templates -Isrc/core -Isrc/objects -Isrc/lib/lua -Isrc/lib/osc/osc -Isrc/core/values
 OBJECT_COMPILE=$(INCLUDE_HEADERS) -D__$(PLAT)__ -dynamic -bundle -undefined suppress -flat_namespace -L/usr/lib -lgcc -lstdc++
@@ -28,7 +28,7 @@ all: test
 test: test/runner test/runner.cpp
 	./test/runner && rm test/runner
 
-rubyk: src/core/main.cpp $(LINKER_OBJECTS) value.o objects test
+rubyk: src/core/main.cpp $(LINKER_OBJECTS) objects test
 	$(CC) $(CFLAGS) $(LFLAGS) -o rubyk $(INCLUDE_HEADERS) -I. src/core/main.cpp $(LINKER_OBJECTS)
 
 
@@ -40,8 +40,8 @@ test/runner.cpp: $(TEST)
 	./test/cxxtest/cxxtestgen.pl --error-printer -o test/runner.cpp $(TEST)
 	
 # special case for value.cpp (not in LINKER_OBJECTS) because of _TESTING_ #define.
-test/runner: test/runner.cpp $(LINKER_OBJECTS) src/core/values/value.cpp objects
-	$(CC) $(CFLAGS) $(LFLAGS) -D_TESTING_ -Itest $(INCLUDE_HEADERS) -I. test/runner.cpp $(LINKER_OBJECTS) src/core/values/value.cpp -o test/runner
+test/runner: test/runner.cpp $(LINKER_OBJECTS) objects
+	$(CC) $(CFLAGS) $(LFLAGS) -D_TESTING_ -Itest $(INCLUDE_HEADERS) -I. test/runner.cpp $(LINKER_OBJECTS) -o test/runner
 
 src/core/command.cpp: src/core/command.rl
 	${RAGEL} src/core/command.rl -o src/core/command.cpp
@@ -52,9 +52,6 @@ globals.o: src/core/globals.cpp
 tmatrix.o: src/core/tmatrix.cpp src/templates/tmatrix.h
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 
-value.o: src/core/values/value.cpp src/core/values/value.h
-	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
-	
 %.o: src/core/%.cpp src/core/%.h
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 	

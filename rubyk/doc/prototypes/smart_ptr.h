@@ -19,6 +19,7 @@ public:
       release();
       acquire(v.mPtr);
     }
+    return *this;
   }
   
   virtual ~SmartPtr()

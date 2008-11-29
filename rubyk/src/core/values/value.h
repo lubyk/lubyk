@@ -34,16 +34,17 @@ public:
   { return AnonymousValue; }
   
   
-  /** Return true if the object's data is an ErrorValue. */
+  /** Return true if the object's data is a BangData. */
+  inline bool is_bang() const
+  { return data_type() == BangValue; }
+  
+  /** Return true if the object's data is an ErrorData. */
   inline bool is_error() const
   { return data_type() == ErrorValue; }
   
-  /** Return true if the object's data is a NilValue. */
+  /** Return true if the object's data is Nil. */
   inline bool is_nil() const
   { return !mPtr; }
-  
-  inline bool is_bang() const
-  { return data_type() == BangValue; }
   
   /** Textual representation of the value-type. */
   const char* type_name() const
@@ -62,6 +63,19 @@ public:
   {
     switch (data_type())
     {
+      // what do I contain ?
+      case BangValue:
+        switch (pOther.type())
+        {
+          // what does the "other" wrapper expect ?
+          case AnonymousValue: // anything
+          case BangValue:
+            pOther = *this;   // pOther acquires our content
+            return true;
+          default:
+            return false;
+        }
+
       // what do I contain ?
       case NumberValue:
         switch (pOther.type())
