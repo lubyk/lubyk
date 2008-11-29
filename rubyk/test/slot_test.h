@@ -5,19 +5,22 @@
 #include "values.h"
 
 // these receivers are complicated to make sure they work in the correct order and they are all called.
-static void receive_value1(void * receiver, const Value& sig)
+// x = 2*x + y + 1
+static void receive_value1(void * receiver, const Value& val)
 {
-  (*((float*)receiver)) = (2*(*((float*)receiver))) + sig.d.value + 1;
+  (*((real_t*)receiver)) = (2*(*((real_t*)receiver))) + Number(val).value() + 1;
 }
 
-static void receive_value2(void * receiver, const Value& sig)
+// x = 2*x + y + 2
+static void receive_value2(void * receiver, const Value& val)
 {
-  (*((float*)receiver)) = (2*(*((float*)receiver))) + sig.d.value + 2;
+  (*((real_t*)receiver)) = (2*(*((real_t*)receiver))) + Number(val).value() + 2;
 }
 
-static void receive_value4(void * receiver, const Value& sig)
+// x = 2*x + y + 4
+static void receive_value4(void * receiver, const Value& val)
 {
-  (*((float*)receiver)) = (2*(*((float*)receiver))) + sig.d.value + 4;
+  (*((real_t*)receiver)) = (2*(*((real_t*)receiver))) + Number(val).value() + 4;
 }
 
 class SlotTest : public CxxTest::TestSuite
@@ -25,22 +28,19 @@ class SlotTest : public CxxTest::TestSuite
 public:
   void testSingleConnection( void )
   {
-    float counter = 0;
-    Value sig;
-    Outlet o(&counter);
+    real_t counter = 0;
+    Outlet o(&counter); // counter behaves as the receiver ()
     Inlet  i(&counter, receive_value1 );
     i.setId(3); // make sure it does not send a 'bang()' to our fake receiver.
     o.connect(&i);
     TS_ASSERT_EQUALS( 0.0, counter);
-    sig.set(1.0);
-    o.send(sig);
+    o.send(Number(1.0));
     TS_ASSERT_EQUALS( 2.0, counter);
   }
   
   void testManyConnections( void )
   {
-    float counter = 0;
-    Value sig;
+    real_t counter = 0;
     Outlet o(&counter);
     Inlet  i1(&counter, receive_value1 );
     Inlet  i2(&counter, receive_value2 );
@@ -55,8 +55,8 @@ public:
     o.connect(&i3);
     
     TS_ASSERT_EQUALS( 0.0, counter);
-    sig.set(1.0);
-    o.send(sig);
+    
+    o.send(Number(1.0));
     TS_ASSERT_EQUALS( 19.0, counter);
   }
 };

@@ -35,12 +35,15 @@ public:
   
   
   /** Return true if the object's data is an ErrorValue. */
-  inline bool error() const
+  inline bool is_error() const
   { return data_type() == ErrorValue; }
   
   /** Return true if the object's data is a NilValue. */
-  inline bool nil() const
+  inline bool is_nil() const
   { return !mPtr; }
+  
+  inline bool is_bang() const
+  { return data_type() == BangValue; }
   
   /** Textual representation of the value-type. */
   const char* type_name() const

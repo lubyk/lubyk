@@ -276,7 +276,7 @@ private:
   
   
   
-  std::vector<inlet_method_t>         mInlets;         /**< Inlet prototypes.  */
+  std::vector<obj_method_t>         mInlets;         /**< Inlet prototypes.  */
   std::vector<std::string>            mOutlets;        /**< Outlet prototypes (they just contain a name). */
 };
 

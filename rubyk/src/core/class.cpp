@@ -82,7 +82,7 @@ bool Class::load(const char * file, const char * init_name)
   // load shared extension image into memory
   if ((image = (void*)dlopen(file, RTLD_LAZY|RTLD_GLOBAL)) == 0) {
     printf("Could not open file '%s'.", file);
-    if ( (error = dlerror()) ) 
+    if ( (error = dlis_error()) ) 
       printf(" %s\n", error);
     else
       printf("\n");
@@ -94,7 +94,7 @@ bool Class::load(const char * file, const char * init_name)
   if (function == 0) {
     dlclose(image);
     printf("Symbol '%s' not found in '%s'.",init_name,file);
-    if ( (error = dlerror()) ) 
+    if ( (error = dlis_error()) ) 
       printf(" %s\n", error);
     else
       printf("\n");

@@ -8,7 +8,7 @@ class Planet;
 class Class;
 class Node;
 
-union Value;
+class Value;
 
 /** Pointer to a function to create nodes. */
 typedef Node * (*create_function_t)(Class * pClass, const std::string& pName, Planet * pServer, const Value& p, std::ostream * pOutput);
@@ -17,10 +17,7 @@ typedef Node * (*create_function_t)(Class * pClass, const std::string& pName, Pl
 typedef void (*class_method_t)(std::ostream * pOutput, const Value& p);
 
 /** Pointer to an inlet method that can be called from the command line with "obj.method(Value)" */
-typedef void (*inlet_method_t)(void * pReceiver, const Value& sig);
-
-/** Pointer to an inlet method that can be called from the command line with "obj.method(Value)" */
-typedef void (*outlet_method_t)(void * pReceiver, Value& sig);
+typedef void (*obj_method_t)(void * pReceiver, const Value& sig);
 
 
 /** This is the base class for Events and CallEvents. The class has a field for the time at which the event should

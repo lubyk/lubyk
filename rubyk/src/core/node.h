@@ -37,7 +37,7 @@ public:
   bool init(const Value& p) { return true; }
   
   /** Add an inlet with the given callback (used by Class during instantiation). */
-  void add_inlet(inlet_method_t pCallback)
+  void add_inlet(obj_method_t pCallback)
   {
     Inlet * s = new Inlet(this,pCallback);
     s->setId(mInlets.size()); /* first inlet has id 0 */
@@ -69,15 +69,7 @@ public:
   
   /** This method must be implemented in subclasses. It's the place where most
     * of the work should be done. This method is responsible for sending the signals out. */
-  virtual void bang (const Value& sig) = 0;
-  
-  void bang (const Value& p)
-  {
-    Value sig;
-    Matrix buf;
-    sig.set(p, buf);
-    bang(sig);
-  }
+  virtual void bang (const Value& val) = 0;
   
   /** This method must be implemented in subclasses. It is used to set parameters that
     * can be changed during runtime. */
@@ -107,19 +99,19 @@ public:
   /** Send a char. */
   inline void send(size_t pPort, char pChar)
   {
-    send(pPort, Number((real_t)pChar);
+    send(pPort, Number((real_t)pChar));
   }
   
   /** Send an unsigned integer. */
   inline void send(size_t pPort, unsigned int pInt)
   {
-      send(pPort, Number((real_t)pInt);
+      send(pPort, Number((real_t)pInt));
   }
   
   /** Send an unsigned long. */
   inline void send(size_t pPort, long pInt)
   {
-      send(pPort, Number((real_t)pInt);
+      send(pPort, Number((real_t)pInt));
   }
   
   /** Send a real_t. */
@@ -201,8 +193,8 @@ public:
   inline void send (size_t pPort, const Value& val)
   {  
     if (mDebug) *mOutput << "[" << mName << ":" << pPort << "] " << val << std::endl;
-    if (pPort < 1 || pPort > mOutlets.size() || val.nil()) return;
-    mOutlets[pPort - 1]->send(sig);
+    if (pPort < 1 || pPort > mOutlets.size() || val.is_nil()) return;
+    mOutlets[pPort - 1]->send(val);
   }
   
   
@@ -427,7 +419,7 @@ public:
     return false;
   }
   
-  void bang(const Value& sig)
+  void bang(const Value& val)
   {
     // do nothing
     *mOutput << "I'm a dead node ! Don't hit me !\n";

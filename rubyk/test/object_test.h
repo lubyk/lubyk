@@ -110,15 +110,15 @@ public:
     TS_ASSERT_EQUALS( sub.url(),     std::string("/root/two/sub") );
     
     res = Object::call("/root",param);
-    TS_ASSERT(!res.error());
+    TS_ASSERT(!res.is_error());
     TS_ASSERT(res.set(str));
     TS_ASSERT( str == "one,two/" );
     
     res = Object::call("/root/one",param);
-    TS_ASSERT(res.nil());
+    TS_ASSERT(res.is_nil());
     
     res = Object::call("/root/two",param);
-    TS_ASSERT(!res.error());
+    TS_ASSERT(!res.is_error());
     TS_ASSERT(res.set(str));
     TS_ASSERT( str == "sub" );
   }
@@ -135,7 +135,7 @@ public:
     res = Object::call("/foo",param);
     assert_id(res, 2);
     
-    TS_ASSERT(res.error());
+    TS_ASSERT(res.is_error());
     TS_ASSERT_EQUALS( Error(res).message(), std::string("Object not found.") );
   }
 };

@@ -2,7 +2,7 @@
 #define _METHOD_H_
 
 /** Pointer to an inlet method that can be called from the command line with "obj.method(Value)" */
-typedef void (*inlet_method_t)(void * pReceiver, const Value& sig);
+typedef void (*obj_method_t)(void * pReceiver, const Value& sig);
 
 /** Pointer to an inlet method that can be called from the command line with "obj.method(Value)" */
 typedef void (*outlet_method_t)(void * pReceiver, Value& sig);
