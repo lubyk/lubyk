@@ -5,7 +5,7 @@
 #include "error_value.h"
 // #include "midi_value.h"
 #include "matrix_value.h"
-#include "dictionary_value.h"
+#include "hash_value.h"
 
 extern Value gNilValue;  // instanciated in globals.cpp
 extern Bang  gBangValue; // instanciated in globals.cpp

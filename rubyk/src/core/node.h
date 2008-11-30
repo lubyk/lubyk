@@ -4,7 +4,7 @@
 #include "event.h"
 #include "inlet.h"
 #include "outlet.h"
-#include "hash.h"
+#include "thash.h"
 #include "values.h"
 
 #include <sstream>

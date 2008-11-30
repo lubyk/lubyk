@@ -1,7 +1,7 @@
 #ifndef _VALUE_TEST_HELPER_H_
 #define _VALUE_TEST_HELPER_H_
 #include "test_helper.h"
-#include "value.h"
+#include "values.h"
 
 #define assert_log(x) _assert_log(__FILE__,__LINE__,x)
 #define assert_ref_count(x,y) _assert_ref_count(__FILE__,__LINE__,x,y)

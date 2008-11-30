@@ -43,13 +43,13 @@
 typedef unsigned int uint;
 
 template<class K, class T>
-struct HashElement {
-  HashElement() : obj(0), next(0) {}
-  ~HashElement() { if (obj) delete obj; }
+struct THashElement {
+  THashElement() : obj(0), next(0) {}
+  ~THashElement() { if (obj) delete obj; }
   K     id; 
   T*    obj;
   /// lookup collision chain
-  HashElement<K,T> * next;
+  THashElement<K,T> * next;
 };
 
 template<class K>
@@ -57,22 +57,22 @@ static uint hashId(K key);
 
 // K is the key class, T is the object class
 template <class K, class T>
-class Hash {
+class THash {
 public:
-  Hash(unsigned int size) : mSize(size)
+  THash(unsigned int size) : mSize(size)
   { 
-    mHashTable = new HashElement<K,T>[size];
+    mTHashTable = new THashElement<K,T>[size];
   }
   
   // copy constructor
-  Hash(const Hash& pOther)
+  THash(const THash& pOther)
   {  
     std::vector<std::string>::const_iterator it;
     std::vector<std::string>::const_iterator end = pOther.end();
     T value;
     
     mSize = pOther.mSize;
-    mHashTable = new HashElement<K,T>[mSize];
+    mTHashTable = new THashElement<K,T>[mSize];
     
     for(it = pOther.begin(); it < end; it++) {
       if (pOther.get(&value, *it)) {
@@ -81,7 +81,7 @@ public:
     }
   }
   
-  Hash& operator=(const Hash& pOther)
+  THash& operator=(const THash& pOther)
   {
     std::vector<std::string>::const_iterator it;
     std::vector<std::string>::const_iterator end = pOther.end();
@@ -95,11 +95,11 @@ public:
     return *this;
   }
   
-  virtual ~Hash() {
-    HashElement<K,T> * current, * next;
+  virtual ~THash() {
+    THashElement<K,T> * current, * next;
     // remove collisions
     for(size_t i=0;i<mSize;i++) {
-      current = mHashTable[i].next;
+      current = mTHashTable[i].next;
       while (current) {
         next = current->next;
         delete current;
@@ -107,7 +107,7 @@ public:
       }
     }
     // remove table
-    delete[] mHashTable;
+    delete[] mTHashTable;
   }
   
   void set (const K& pId, const T& pElement);
@@ -159,18 +159,18 @@ public:
   typename std::vector<K>::iterator end()   { return mKeys.end(); }
 private:  
   /* data */
-  HashElement<K,T> * mHashTable;
+  THashElement<K,T> * mTHashTable;
   std::vector<K>     mKeys;
   
   unsigned int mSize;
 };
 
 template <class K, class T>
-void Hash<K,T>::set(const K& pId, const T& pElement) {
-  HashElement<K,T> *  found;
-  HashElement<K,T> ** set_next;
+void THash<K,T>::set(const K& pId, const T& pElement) {
+  THashElement<K,T> *  found;
+  THashElement<K,T> ** set_next;
   uint key = hashId(pId) % mSize;
-  found    = &(mHashTable[key]);  // pointer to found element
+  found    = &(mTHashTable[key]);  // pointer to found element
   set_next = &(found->next);      // where to write the new inserted value if there is one
   
   while (found && found->obj && found->id != pId) { // found->obj is for the case where pId == 0
@@ -181,7 +181,7 @@ void Hash<K,T>::set(const K& pId, const T& pElement) {
     // in table value
   } else if (!found) {
     // collision
-    found = new HashElement<K,T>;
+    found = new THashElement<K,T>;
     if (!found) {
       // FIXME: alloc error. Raise ?
       fprintf(stderr, "Could not allocate new hash pointer.\n");
@@ -201,12 +201,12 @@ void Hash<K,T>::set(const K& pId, const T& pElement) {
 }
 
 template <class K, class T>
-bool Hash<K,T>::get(T* pResult, const K& pId) const 
+bool THash<K,T>::get(T* pResult, const K& pId) const 
 {
-  HashElement<K,T> * found;
+  THashElement<K,T> * found;
   uint key = hashId(pId) % mSize;
   
-  found = &(mHashTable[key]);
+  found = &(mTHashTable[key]);
   while (found && found->obj && found->id != pId)
     found = found->next;
     
@@ -219,7 +219,7 @@ bool Hash<K,T>::get(T* pResult, const K& pId) const
 }
 
 template <class K, class T>
-bool Hash<K,T>::get(T* pResult) const 
+bool THash<K,T>::get(T* pResult) const 
 {
   if (mKeys.size() > 0)
     return get(pResult, mKeys[mKeys.size() - 1]);
@@ -228,7 +228,7 @@ bool Hash<K,T>::get(T* pResult) const
 }
 
 template <class K, class T>
-bool Hash<K,T>::get_key(K* pResult, const T& pElement) const
+bool THash<K,T>::get_key(K* pResult, const T& pElement) const
 {
   typename std::vector<K>::const_iterator it;
   typename std::vector<K>::const_iterator end = mKeys.end();
@@ -246,11 +246,11 @@ bool Hash<K,T>::get_key(K* pResult, const T& pElement) const
 
 
 template <class K, class T>
-void Hash<K,T>::remove(const K& pId) {
-  HashElement<K,T> *  found, * next;
-  HashElement<K,T> ** set_next;
+void THash<K,T>::remove(const K& pId) {
+  THashElement<K,T> *  found, * next;
+  THashElement<K,T> ** set_next;
   uint key = hashId(pId) % mSize;
-  found    = &(mHashTable[key]);  // pointer to found element
+  found    = &(mTHashTable[key]);  // pointer to found element
   set_next = NULL;                // where to write removed element's next if there is one
   
   while (found && found->obj && found->id != pId) {
@@ -294,7 +294,7 @@ void Hash<K,T>::remove(const K& pId) {
 
 
 template <class K, class T>
-void Hash<K,T>::remove_element(const T& pElement) {
+void THash<K,T>::remove_element(const T& pElement) {
   K key;
   if (get_key(&key, pElement)) {
     remove(key);
@@ -302,7 +302,7 @@ void Hash<K,T>::remove_element(const T& pElement) {
 }
 
 template <class K, class T>
-std::ostream& operator<< (std::ostream& pStream, const Hash<K,T>& hash)
+std::ostream& operator<< (std::ostream& pStream, const THash<K,T>& hash)
 {
   typename std::vector<K>::const_iterator it,begin,end;
   end   = hash.end();

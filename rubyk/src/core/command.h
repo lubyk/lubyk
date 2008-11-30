@@ -3,7 +3,7 @@
 
 #include <pthread.h>
 #include "params.h"
-#include "hash.h"
+#include "thash.h"
 #include "node.h"
 
 

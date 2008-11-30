@@ -18,7 +18,7 @@ bool   gQuitGl;
 //FIX pthread_key_t Node::sGLThreadKey = NULL;
 
 // Object
-Hash<std::string, Object*> Object::sObjects(OBJECT_HASH_SIZE);
+THash<std::string, Object*> Object::sObjects(OBJECT_HASH_SIZE);
 unsigned int Object::sIdCounter    = 0;
 
 // Values

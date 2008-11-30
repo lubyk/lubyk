@@ -19,7 +19,7 @@ enum value_t {
   CommandValue = 64,      // contains a string with the method name "tempo" and another value as parameter like Number(123)
                           // when the command reaches the "command" inlet (on the left side) => build url "/nodes/foo/tempo" 
                           //                                                                 => Object::trigger(url, param)
-  DictionaryValue = 128,
+  HashValue = 128,
   ErrorValue = 32768,     // 2^15
 };
 

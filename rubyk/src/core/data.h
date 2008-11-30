@@ -57,8 +57,8 @@ public:
       return "CharMatrix";
       case CommandValue:
       return "Command";
-      case DictionaryValue:
-      return "Dictionary";
+      case HashValue:
+      return "Hash";
       case ErrorValue:
       return "Error";
       default:

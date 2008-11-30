@@ -1,34 +1,34 @@
 #ifndef _DICTIONARY_H_
 #define _DICTIONARY_H_
 #include "rubyk_types.h"
-#include "hash.h"
+#include "thash.h"
 #include "value.h"
 #include <string>
 
-class Dictionary;
+class Hash;
 
-/* Holds the actual data of the Dictionary class. This is a wrapper around a Hash. */
-class DictionaryData : public Data
+/* Holds the actual data of the Hash class. This is a wrapper around a THash. */
+class HashData : public Data
 {
 public:
-  DictionaryData (const std::string& p) : mParameters(20) { build_hash(p); }
-  DictionaryData (const char * p)  : mParameters(20)      { build_hash( std::string(p) ); }
-  DictionaryData () : mParameters(20) {}
-  DictionaryData (unsigned int size) : mParameters(size)  {}
+  HashData (const std::string& p) : mParameters(20) { build_hash(p); }
+  HashData (const char * p)  : mParameters(20)      { build_hash( std::string(p) ); }
+  HashData () : mParameters(20) {}
+  HashData (unsigned int size) : mParameters(size)  {}
   
   virtual Data * clone()
-  { return new DictionaryData(*this); }
+  { return new HashData(*this); }
   virtual value_t type() const
-  { return DictionaryValue; }
+  { return HashValue; }
 
   // copy constructor
-  DictionaryData(const DictionaryData& pOther) : mParameters(pOther.storage_size())
+  HashData(const HashData& pOther) : mParameters(pOther.storage_size())
   {
     mParameters = pOther.mParameters;
     mListValues = pOther.mListValues; // FIXME: what is this ?
   }
 
-  virtual ~DictionaryData() {}
+  virtual ~HashData() {}
   
   /** Display dictionary inside stream. */
   virtual void to_stream(std::ostream& pStream) const
@@ -163,11 +163,11 @@ public:
     return mParameters.storage_size();
   }
   
-  friend std::ostream& operator<< (std::ostream& pStream, const DictionaryData& p);
+  friend std::ostream& operator<< (std::ostream& pStream, const HashData& p);
   
 private:  
-  friend class Dictionary;
-  Hash<std::string,std::string> mParameters;
+  friend class Hash;
+  THash<std::string,std::string>  mParameters; /** Hash of std::string => Value. */
   
   std::vector<std::string> mListValues; //TODO: remove this and store values in a matrix as first element in dictionary.
   
@@ -175,18 +175,18 @@ private:
 };
 
 /** Value class to hold a single number (real_t). */
-class Dictionary : public Value
+class Hash : public Value
 {
 public:
-  VALUE_METHODS(Dictionary, DictionaryData, DictionaryValue, Value)
+  VALUE_METHODS(Hash, HashData, HashValue, Value)
   
-  Dictionary(const std::string& s) : Value(new DictionaryData(s)) {}
+  Hash(const std::string& s) : Value(new HashData(s)) {}
   
-  /** Set Dictionary from a string. */
-  Dictionary& operator= (const std::string& s)
+  /** Set Hash from a string. */
+  Hash& operator= (const std::string& s)
   {
     if (!mPtr) {
-      mPtr = new Ptr(new DictionaryData(s));
+      mPtr = new Ptr(new HashData(s));
     } else {
       copy_if_shared();
       *(data_pointer()) = s;
@@ -222,35 +222,35 @@ public:
 };
 
 template<>
-int Dictionary::cast_param (const std::string& value);
+int Hash::cast_param (const std::string& value);
 
 template<>
-bool Dictionary::cast_param (const std::string& value);
+bool Hash::cast_param (const std::string& value);
 
 template<>
-unsigned int Dictionary::cast_param (const std::string& value);
+unsigned int Hash::cast_param (const std::string& value);
 
 template<>
-unsigned char Dictionary::cast_param (const std::string& value);
+unsigned char Hash::cast_param (const std::string& value);
 
 template<>
-time_t Dictionary::cast_param (const std::string& value);
+time_t Hash::cast_param (const std::string& value);
 
 template<>
-size_t Dictionary::cast_param (const std::string& value);
+size_t Hash::cast_param (const std::string& value);
 
 template<>
-real_t Dictionary::cast_param (const std::string& value);
+real_t Hash::cast_param (const std::string& value);
 
 template<>
-float Dictionary::cast_param (const std::string& value);
+float Hash::cast_param (const std::string& value);
 
 template<>
-const char * Dictionary::cast_param (const std::string& value);
+const char * Hash::cast_param (const std::string& value);
 
 template<>
-char Dictionary::cast_param (const std::string& value);
+char Hash::cast_param (const std::string& value);
 
-std::ostream& operator<< (std::ostream& pStream, const DictionaryData& p);
+std::ostream& operator<< (std::ostream& pStream, const HashData& p);
 
 #endif // _DICTIONARY_H_

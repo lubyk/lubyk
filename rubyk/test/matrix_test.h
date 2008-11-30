@@ -1,5 +1,4 @@
 #include "value_test_helper.h"
-#include "matrix_value.h"
 
 class MatrixxTest : public ValueTestHelper
 {

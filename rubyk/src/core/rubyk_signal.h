@@ -5,7 +5,7 @@
 #include <string>
 #include "midi_message.h"
 #include "matrix.h"
-#include "hash.h"
+#include "thash.h"
 
 class Params;
 union Signal;
@@ -26,26 +26,26 @@ enum rubyk_signal_t {
 
 typedef struct {
   rubyk_signal_t    type;
-  Hash<uint, Signal> * meta; /**< Meta values. Values are signals defined by key->value pairs. Use sig.meta(HASH("name")) to get element "name". */
+  THash<uint, Signal> * meta; /**< Meta values. Values are signals defined by key->value pairs. Use sig.meta(HASH("name")) to get element "name". */
   int value;
 } IntegerSignal_t;
 
 typedef struct {
   rubyk_signal_t    type;
-  Hash<uint, Signal> * meta;
+  THash<uint, Signal> * meta;
   real_t value;
 } DoubleSignal_t;
 
 typedef struct {
   rubyk_signal_t    type;
-  Hash<uint, Signal> * meta;
+  THash<uint, Signal> * meta;
   const Matrix * value;
 } MatrixSignal_t;
 
 /** StringValue contains a std::string (makes a copy). */
 typedef struct {
   rubyk_signal_t    type;
-  Hash<uint, Signal> * meta;
+  THash<uint, Signal> * meta;
   std::string * value;
   bool   free_me;
 } StringSignal_t;
@@ -53,7 +53,7 @@ typedef struct {
 /** Message pointed by value gets freed with the Signal if free_me is true. */
 typedef struct {
   rubyk_signal_t    type;
-  Hash<uint, Signal> * meta;
+  THash<uint, Signal> * meta;
   MidiMessage * value;
   bool   free_me;
 } MidiSignal_t;
@@ -61,7 +61,7 @@ typedef struct {
 /** Element pointed by calue gets freed with the Signal if free_me is true. */
 typedef struct {
   rubyk_signal_t    type;
-  Hash<uint, Signal> * meta;
+  THash<uint, Signal> * meta;
   void * value;
   bool   free_me;
 } VoidPointerSignal_t;
@@ -128,7 +128,7 @@ union Signal {
   void set_meta(uint pId, const T& value)
   {
     if (!i.meta) {
-      i.meta = new Hash<uint, Signal>(SIG_DEFAULT_META_TABLE_SIZE);
+      i.meta = new THash<uint, Signal>(SIG_DEFAULT_META_TABLE_SIZE);
     }
     
     Signal sig;

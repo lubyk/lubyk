@@ -1,6 +1,4 @@
 #include "value_test_helper.h"
-#include "number_value.h"
-
 
 class NumberTest : public ValueTestHelper
 {

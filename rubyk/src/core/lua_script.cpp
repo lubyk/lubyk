@@ -548,7 +548,7 @@ void LuaScript::register_lua_methods()
 {
   /* register methods for lua */
   std::vector<std::string>::const_iterator it,end;
-  const Hash<std::string, method_for_lua_t> * method_for_lua = mClass->methodsForLua();
+  const THash<std::string, method_for_lua_t> * method_for_lua = mClass->methodsForLua();
   end   = method_for_lua->end();
   
   /* register send methods */

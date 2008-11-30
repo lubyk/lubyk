@@ -1,6 +1,6 @@
 #ifndef _RUBYK_H_
 #define _RUBYK_H_
-#include "hash.h"
+#include "thash.h"
 #include "ordered_list.h"
 #include "link.h"
 #include "mutex.h"
@@ -120,7 +120,7 @@ private:
   /** Trigger loop events. These are typically the IO 'read/write' of the IO nodes. */
   void trigger_loop_events ();
   
-  Hash<std::string, Node *> mInstances; /**< Reference to the objects in the system (dictionary). */
+  THash<std::string, Node *> mInstances; /**< Reference to the objects in the system (dictionary). */
   bool mQuit;                           /**< Internal flag to tell running threads to quit. */
   std::list<Link> mPendingLinks;        /**< List of pending connections waiting for variable assignements. */
   //std::list<Link> mLinksSet;

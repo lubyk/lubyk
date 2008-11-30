@@ -1,5 +1,4 @@
 #include "value_test_helper.h"
-#include "bang_value.h"
 
 
 class BangTest : public ValueTestHelper

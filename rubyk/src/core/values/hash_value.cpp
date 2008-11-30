@@ -2,7 +2,7 @@
 #include <sstream>
 #include <iostream>
 
-void DictionaryData::build_hash (const std::string& p)
+void HashData::build_hash (const std::string& p)
 { 
   std::string key, value;
   unsigned int size = p.size();
@@ -49,7 +49,7 @@ void DictionaryData::build_hash (const std::string& p)
   }
 }
 
-const Value Dictionary::operator[] (const std::string& pKey) const
+const Value Hash::operator[] (const std::string& pKey) const
 {
   if (!mPtr) return gNilValue;
   std::string str;
@@ -74,65 +74,65 @@ const Value Dictionary::operator[] (const std::string& pKey) const
 }
 
 template<>
-bool Dictionary::cast_param (const std::string& value)
+bool Hash::cast_param (const std::string& value)
 {
   return (value == "true" || value == "yes" || value == "y" || atoi(value.c_str()) != 0);
 }
 
 template<>
-int Dictionary::cast_param(const std::string& value)
+int Hash::cast_param(const std::string& value)
 {
   return atoi(value.c_str());
 }
 template<>
-unsigned int Dictionary::cast_param(const std::string& value)
-{
-  return atoi(value.c_str());
-}
-
-template<>
-unsigned char Dictionary::cast_param(const std::string& value)
+unsigned int Hash::cast_param(const std::string& value)
 {
   return atoi(value.c_str());
 }
 
 template<>
-time_t Dictionary::cast_param(const std::string& value)
+unsigned char Hash::cast_param(const std::string& value)
 {
   return atoi(value.c_str());
 }
 
 template<>
-size_t Dictionary::cast_param(const std::string& value)
+time_t Hash::cast_param(const std::string& value)
 {
   return atoi(value.c_str());
 }
 
 template<>
-real_t Dictionary::cast_param(const std::string& value)
+size_t Hash::cast_param(const std::string& value)
+{
+  return atoi(value.c_str());
+}
+
+template<>
+real_t Hash::cast_param(const std::string& value)
 {
   return atof(value.c_str());
 }
 
 template<>
-float Dictionary::cast_param(const std::string& value)
+float Hash::cast_param(const std::string& value)
 {
   return atof(value.c_str());
 }
 
 template<>
-const char * Dictionary::cast_param(const std::string& value)
+const char * Hash::cast_param(const std::string& value)
 {
   return value.c_str();
 }
 
 template<>
-char Dictionary::cast_param (const std::string& value)
+char Hash::cast_param (const std::string& value)
 {
   return value.c_str()[0];
 }
 
-std::ostream& operator<<(std::ostream& pStream, const DictionaryData& p)
+std::ostream& operator<<(std::ostream& pStream, const HashData& p)
 {
   std::string str;
   std::vector<std::string>::const_iterator it;

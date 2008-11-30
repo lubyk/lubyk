@@ -3,7 +3,7 @@
 #include <iostream>
 
 // definitions of static data members
-Hash<std::string, Class*> Class::sClasses(300);
+THash<std::string, Class*> Class::sClasses(300);
 
 // FIXME: change this for other platforms:
 std::string Class::sObjectsPath("/usr/local/lib/rubyk");

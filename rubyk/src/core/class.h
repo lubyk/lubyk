@@ -162,7 +162,7 @@ public:
   bool get_member_method(member_method_t * pMethod, const std::string& pMethodName)
   { return mMethods.get(pMethod, pMethodName); }
   
-  const Hash<std::string, method_for_lua_t> * methodsForLua ()
+  const THash<std::string, method_for_lua_t> * methodsForLua ()
   { return &mMethodsForLua;}
   
 private:
@@ -184,7 +184,7 @@ private:
     }
   }
   
-  static Hash<std::string, Class*> sClasses; /**< Contains a dictionary of class names and Class objects. For example, 'metro' => function to create a Metro. */
+  static THash<std::string, Class*> sClasses; /**< Contains a dictionary of class names and Class objects. For example, 'metro' => function to create a Metro. */
   
   static std::string sObjectsPath; /**< Where to load the librairies (objects). */
   
@@ -270,9 +270,9 @@ private:
   /* class info */
   std::string                          mName;           /**< Class name. */
   create_function_t                    mCreateFunction; /**< Function to create a new instance. */
-  Hash<std::string, member_method_t>   mMethods;        /**< Member methods. */
-  Hash<std::string, class_method_t>    mClassMethods;   /**< Class methods. */
-  Hash<std::string, method_for_lua_t>  mMethodsForLua;  /**< Class methods. */
+  THash<std::string, member_method_t>   mMethods;        /**< Member methods. */
+  THash<std::string, class_method_t>    mClassMethods;   /**< Class methods. */
+  THash<std::string, method_for_lua_t>  mMethodsForLua;  /**< Class methods. */
   
   
   

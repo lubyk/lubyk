@@ -1,7 +1,7 @@
 
 //typedef struct {
 //  rubyk_signal_t    type;
-//  Hash<uint, Value> * meta;
+//  THash<uint, Value> * meta;
 //  const Matrix * value;
 //} MatrixValue_t;
 //

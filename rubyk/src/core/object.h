@@ -2,7 +2,7 @@
 #define _OBJECT_H_
 #include <list>
 #include "values.h"
-#include "hash.h"
+#include "thash.h"
 
 #define OBJECT_HASH_SIZE 10000
 #define NEXT_NAME_BUFFER_SIZE 20
@@ -256,7 +256,7 @@ private:
     // child not found. ignore
   }
   
-  static Hash<std::string, Object*> sObjects;  /**< Dictionary to find objects from their url. */
+  static THash<std::string, Object*> sObjects;  /**< Hash to find objects from their url. */
   
   Object * mParent;              /**< Pointer to parent object. */
   std::list<Object *> mChildren; /**< Pointer to sub-objects / methods */

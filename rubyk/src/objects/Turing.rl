@@ -732,11 +732,11 @@ private:
   
   std::string mLuaScript; /**< Lua script for method calls. */
   
-  Hash<std::string, int>   mTokenByName;   /**< Dictionary returning token id from its identifier (used to  plot/debug). */
-  Hash<uint, std::string>  mTokenNameByValue; /**< Dictionary returning token name from its value (used to plot/debug). */
+  THash<std::string, int>   mTokenByName;   /**< Dictionary returning token id from its identifier (used to  plot/debug). */
+  THash<uint, std::string>  mTokenNameByValue; /**< Dictionary returning token name from its value (used to plot/debug). */
   std::vector<int>         mTokenList;     /**< List of token values (used to plot/debug). */
   
-  Hash<std::string, int>   mStateByName;   /**< Dictionary returning state id from its identifier. */
+  THash<std::string, int>   mStateByName;   /**< Dictionary returning state id from its identifier. */
   std::vector<std::string> mStateNames;    /**< List of state names (used to plot/debug). */
   
   std::vector< std::vector<int> > mGotoTable;         /**< State transition table. */
