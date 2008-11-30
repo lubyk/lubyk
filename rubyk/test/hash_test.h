@@ -24,6 +24,21 @@ public:
     assert_id(s2,4);
   }
   
+  void test_iterator( void )
+  {
+    Hash h("one:1 two:2");
+    Hash empty;
+    Hash_iterator it;
+    Hash_iterator end = h.end();
+    real_t d = 0;
+    Number b;
+    TS_ASSERT_EQUALS(empty.begin(), empty.end());
+    for(it = h.begin(); it != end; it++) {
+      TS_ASSERT(h[*it].set(b));
+      TS_ASSERT_EQUALS(b.value(), ++d);
+    }
+  }
+  
 //  void test_dictionary_data_type( void )
 //  {
 //    HashData dict("first:1 second:2 name:\"yoba\"");

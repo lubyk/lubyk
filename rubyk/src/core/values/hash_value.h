@@ -6,6 +6,7 @@
 #include <string>
 
 class Hash;
+typedef std::vector<std::string>::const_iterator Hash_iterator;
 
 /* Holds the actual data of the Hash class. This is a wrapper around a THash. */
 class HashData : public Data
@@ -208,7 +209,21 @@ public:
   {
     return (*this)[std::string(c)];
   }
+  
   // ADD PROXY METHODS HERE...
+  
+  /** Return an iterator pointing at the first key in the dictionary. */
+  Hash_iterator begin() const
+  {
+    return mPtr ? (Hash_iterator)data_pointer()->mParameters.begin() : (Hash_iterator)NULL;
+  }
+  
+  /** Return an iterator pointing at the past-end key in the dictionary. */
+  Hash_iterator end() const
+  {
+    return mPtr ? (Hash_iterator)data_pointer()->mParameters.end() : (Hash_iterator)NULL;
+  }
+  
   
   template<class T>
   static T cast_param(const std::string& value)

@@ -2,7 +2,7 @@
 #define _CLASS_H_
 #include "rubyk_types.h"
 #include "planet.h"
-#include "params.h"
+#include "values.h"
 #include "command.h"
 #include "buffer.h"
 #include "node.hpp" // templates, inlines
@@ -20,7 +20,7 @@ struct lua_State;
 typedef void (*member_method_t)(void * pReceiver, const Value& p);
 
 /** Pointer to a function to create nodes. */
-typedef Node * (*create_function_t)(Class * pClass, const std::string& pName, Planet * pServer, const Value& p, std::ostream * pOutput);
+typedef Node * (*create_function_t)(Class * pClass, const std::string& pName, Planet * pServer, const Hash& p, std::ostream * pOutput);
 
 /** Pointer to an inlet method that can be called from the command line with "obj.method(Value)" */
 typedef void (*outlet_method_t)(void * pReceiver, Value& sig);
@@ -114,25 +114,25 @@ public:
   }
   
   static Node * create (Planet * pServer, const char * pClassName, const std::string& p, std::ostream * pOutput)
-  { return create(pServer, std::string(""), std::string(pClassName), Params(p), pOutput); }
+  { return create(pServer, std::string(""), std::string(pClassName), Hash(p), pOutput); }
   
   
   static Node * create (Planet * pServer, const char * pName, const char * pClassName, const std::string& p, std::ostream * pOutput)
-  { return create(pServer, std::string(pName), std::string(pClassName), Value(p), pOutput); }
+  { return create(pServer, std::string(pName), std::string(pClassName), Hash(p), pOutput); }
 
   static Node * create (Planet * pServer, const char * pName, const char * pClassName, const char * p, std::ostream * pOutput)
-  { return create(pServer, std::string(pName), std::string(pClassName), Value(p), pOutput); }
+  { return create(pServer, std::string(pName), std::string(pClassName), Hash(p), pOutput); }
 
   static Node * create (Planet * pServer, const std::string& pName, const std::string& pClassName, const char * p, std::ostream * pOutput)
-  { return create(pServer, pName, pClassName, Value(p), pOutput); }
+  { return create(pServer, pName, pClassName, Hash(p), pOutput); }
 
   static Node * create (Planet * pServer, const std::string& pName, const std::string& pClassName, const std::string& p, std::ostream * pOutput)
-  { return create(pServer, pName, pClassName, Value(p), pOutput); }
+  { return create(pServer, pName, pClassName, Hash(p), pOutput); }
 
-  static Node * create (Planet * pServer, const char * pName, const char * pClassName, const Value& p, std::ostream * pOutput)
+  static Node * create (Planet * pServer, const char * pName, const char * pClassName, const Hash& p, std::ostream * pOutput)
   { return create(pServer, std::string(pName), std::string(pClassName), p, pOutput); }
 
-  static Node * create (Planet * pServer, const std::string& pName, const std::string& pClassName, const Value& p, std::ostream * pOutput);
+  static Node * create (Planet * pServer, const std::string& pName, const std::string& pClassName, const Hash& p, std::ostream * pOutput);
 
   /** Load an object stored in a dynamic library. */
   static bool load(const char * file, const char * init_name);
@@ -167,7 +167,7 @@ public:
   
 private:
   
-  inline Node * new_obj (const std::string& pName, Planet * pServer, const Value& p, std::ostream * pOutput);
+  inline Node * new_obj (const std::string& pName, Planet * pServer, const Hash& p, std::ostream * pOutput);
   
   inline void make_slots (Node * node)
   {
@@ -191,7 +191,7 @@ private:
   /** This function is used to create an instance of class 'T'. If the instance could not be
     * properly initialized, this function returns NULL. */
   template<class T>
-  static Node * cast_create(Class * pClass, const std::string& pName, Planet * pServer, const Value& p, std::ostream * pOutput)
+  static Node * cast_create(Class * pClass, const std::string& pName, Planet * pServer, const Hash& p, std::ostream * pOutput)
   {
     T * obj = new T;
     obj->set_class(pClass);
@@ -199,7 +199,7 @@ private:
     obj->set_server(pServer);
     obj->set_output(pOutput);
     pClass->make_slots(obj);
-    obj->set_is_ok( obj->init(p) && obj->set(p) ); // if init returns false, the node goes into 'broken' mode.
+    obj->set_is_ok( obj->init() && obj->set(p) ); // if init returns false, the node goes into 'broken' mode.
     return (Node*)obj;
   }
   
@@ -268,16 +268,16 @@ private:
   }
   
   /* class info */
-  std::string                          mName;           /**< Class name. */
-  create_function_t                    mCreateFunction; /**< Function to create a new instance. */
+  std::string                           mName;           /**< Class name. */
+  create_function_t                     mCreateFunction; /**< Function to create a new instance. */
   THash<std::string, member_method_t>   mMethods;        /**< Member methods. */
   THash<std::string, class_method_t>    mClassMethods;   /**< Class methods. */
-  THash<std::string, method_for_lua_t>  mMethodsForLua;  /**< Class methods. */
+  THash<std::string, method_for_lua_t>  mMethodsForLua;  /**< Class methods for lua. */
   
   
   
-  std::vector<obj_method_t>         mInlets;         /**< Inlet prototypes.  */
-  std::vector<std::string>            mOutlets;        /**< Outlet prototypes (they just contain a name). */
+  std::vector<obj_method_t>             mInlets;         /**< Inlet prototypes.  */
+  std::vector<std::string>              mOutlets;        /**< Outlet prototypes (they just contain a name). */
 };
 
 // HELPERS TO AVOID TEMPLATE SYNTAX

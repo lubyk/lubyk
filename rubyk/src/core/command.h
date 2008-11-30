@@ -2,7 +2,7 @@
 #define _COMMAND_H_
 
 #include <pthread.h>
-#include "params.h"
+#include "values.h"
 #include "thash.h"
 #include "node.h"
 

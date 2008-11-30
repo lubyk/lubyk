@@ -46,7 +46,7 @@ bool Class::get (Class ** pClass, const std::string& pClassName)
   return false;
 }
 
-Node * Class::create (Planet * pServer, const std::string& pName, const std::string& pClassName, const Value& p, std::ostream * pOutput)
+Node * Class::create (Planet * pServer, const std::string& pName, const std::string& pClassName, const Hash& p, std::ostream * pOutput)
 {
   Class * klass;
   if (get(&klass, pClassName))
@@ -67,7 +67,7 @@ Node * Class::create (Planet * pServer, const std::string& pName, const std::str
   return obj;
 }
 
-inline Node * Class::new_obj (const std::string& pName, Planet * pServer, const Value& p, std::ostream * pOutput)
+inline Node * Class::new_obj (const std::string& pName, Planet * pServer, const Hash& p, std::ostream * pOutput)
 {  
   return (*mCreateFunction)(this, pName, pServer, p, pOutput);
 }
@@ -82,7 +82,7 @@ bool Class::load(const char * file, const char * init_name)
   // load shared extension image into memory
   if ((image = (void*)dlopen(file, RTLD_LAZY|RTLD_GLOBAL)) == 0) {
     printf("Could not open file '%s'.", file);
-    if ( (error = dlis_error()) ) 
+    if ( (error = dlerror()) ) 
       printf(" %s\n", error);
     else
       printf("\n");
@@ -94,7 +94,7 @@ bool Class::load(const char * file, const char * init_name)
   if (function == 0) {
     dlclose(image);
     printf("Symbol '%s' not found in '%s'.",init_name,file);
-    if ( (error = dlis_error()) ) 
+    if ( (error = dlerror()) ) 
       printf(" %s\n", error);
     else
       printf("\n");
