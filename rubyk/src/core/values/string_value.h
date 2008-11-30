@@ -23,9 +23,9 @@ public:
   virtual void to_stream(std::ostream& pStream) const
   {
 #ifdef _TESTING_
-    pStream << "<" << type_name() << "[" << mId << "]" << " \"" << mString << "\">";
+    pStream << "[" << mId << "]" << " \"" << mString << "\"";
 #else
-    pStream << "<" << type_name() << " \"" << mString << "\">";
+    pStream << "\"" << mString << "\"";
 #endif
   }
   

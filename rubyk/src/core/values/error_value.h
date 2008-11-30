@@ -18,6 +18,15 @@ public:
   ErrorData(const ErrorData& v) : StringData(v) {}
   
   virtual ~ErrorData() {}
+  
+  virtual void to_stream(std::ostream& pStream) const
+  {
+#ifdef _TESTING_
+    pStream << "[" << mId << "]" << " #\"" << mString << "\"";
+#else
+    pStream << "#\"" << mString << "\"";
+#endif
+  }
 private:
   friend class Error;
 };

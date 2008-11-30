@@ -84,6 +84,6 @@ public:
     v = "Good day, Sir !";
     out.str(std::string(""));
     out << v;
-    TS_ASSERT_EQUALS(out.str(), "<String[1] \"Good day, Sir !\">");
+    TS_ASSERT_EQUALS(out.str(), "[1] \"Good day, Sir !\"");
   }
 };

@@ -41,7 +41,7 @@ public:
 #else
     pStream << "<" << type_name() << " ";
 #endif
-    pStream << *this << ">";
+    pStream << *this << ">"; // FIXME: replace by << mParameters << ">";
   }
   
   void rebuild(const std::string& s)
@@ -169,7 +169,7 @@ private:
   friend class Hash;
   THash<std::string,std::string>  mParameters; /** Hash of std::string => Value. */
   
-  std::vector<std::string> mListValues; //TODO: remove this and store values in a matrix as first element in dictionary.
+  std::vector<std::string>  mListValues; //TODO: remove this and store values in a matrix as first element in dictionary.
   
   void build_hash (const std::string& p);
 };
