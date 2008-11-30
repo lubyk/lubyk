@@ -39,7 +39,6 @@ public:
     TS_ASSERT_EQUALS( child1.url(),  std::string("/root/foo") );
     TS_ASSERT_EQUALS( child2.url(),  std::string("/root/foo/bar") );
     TS_ASSERT_EQUALS( child3.url(),  std::string("/root/foo-1") );
-    
   }
   
   void test_rename( void )
@@ -65,11 +64,11 @@ public:
     Object foo(root,"foo");
     Object bar(foo,"bar");
     Object * res;
-
+  
     TS_ASSERT_EQUALS( root.url(),    std::string("/root") );
     TS_ASSERT_EQUALS( foo.url(),     std::string("/root/foo") );
     TS_ASSERT_EQUALS( bar.url(),     std::string("/root/foo/bar") );
-
+  
     TS_ASSERT(Object::get(&res, "/root"));
     TS_ASSERT_EQUALS( res, &root );
     
@@ -103,7 +102,7 @@ public:
     Object sub(two,"sub");
     Value res, param;
     String str;
-
+  
     TS_ASSERT_EQUALS( root.url(),    std::string("/root") );
     TS_ASSERT_EQUALS( one.url(),     std::string("/root/one") );
     TS_ASSERT_EQUALS( two.url(),     std::string("/root/two") );
@@ -121,6 +120,26 @@ public:
     TS_ASSERT(!res.is_error());
     TS_ASSERT(res.set(str));
     TS_ASSERT( str == "sub" );
+  }
+  
+  void test_child( void )
+  {
+    Object root("root");
+    Object one(root,"one");
+    Object sub(one,"sub");
+  
+    TS_ASSERT_EQUALS( root.url(),    std::string("/root") );
+    TS_ASSERT_EQUALS( one.url(),     std::string("/root/one") );
+    TS_ASSERT_EQUALS( sub.url(),     std::string("/root/one/sub") );
+    
+    TS_ASSERT_EQUALS( root.child("one"), &one);
+    TS_ASSERT_EQUALS( root.child("foo"), (Object*)NULL);
+    
+    one.set_name("foo");
+    TS_ASSERT_EQUALS( root.child("one"), (Object*)NULL);
+    TS_ASSERT_EQUALS( root.child("foo"), &one);
+    TS_ASSERT_EQUALS( Object::find("/root/one/sub"), (Object*)NULL);
+    TS_ASSERT_EQUALS( Object::find("/root/foo/sub"), &sub);
   }
   
   void test_call_bad_object( void )

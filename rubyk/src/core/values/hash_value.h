@@ -33,8 +33,8 @@ public:
   /** Display dictionary inside stream. */
   virtual void to_stream(std::ostream& pStream) const
   { 
-    std::vector<std::string>::const_iterator it;
-    std::vector<std::string>::const_iterator end = mParameters.end();
+    const_string_iterator it;
+    const_string_iterator end = mParameters.end();
     std::string value;
 #ifdef _TESTING_
     pStream << "[" << mId << "] ";

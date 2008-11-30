@@ -1,12 +1,12 @@
-# Doxyfile 1.5.2
+# Doxyfile 1.5.7.1
 
 #---------------------------------------------------------------------------
 # Project related configuration options
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = rubyk
-PROJECT_NUMBER         = 0.0.1
-OUTPUT_DIRECTORY       = /Users/gaspard/svk/rubyk/doc
+PROJECT_NUMBER         = 
+OUTPUT_DIRECTORY       = /Users/gaspard/git/rubyk/rubyk/doc
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
 BRIEF_MEMBER_DESC      = YES
@@ -29,28 +29,35 @@ STRIP_FROM_PATH        = /Applications/
 STRIP_FROM_INC_PATH    = 
 SHORT_NAMES            = NO
 JAVADOC_AUTOBRIEF      = NO
+QT_AUTOBRIEF           = NO
 MULTILINE_CPP_IS_BRIEF = NO
-DETAILS_AT_TOP         = NO
 INHERIT_DOCS           = YES
 SEPARATE_MEMBER_PAGES  = NO
 TAB_SIZE               = 8
 ALIASES                = 
 OPTIMIZE_OUTPUT_FOR_C  = NO
 OPTIMIZE_OUTPUT_JAVA   = NO
+OPTIMIZE_FOR_FORTRAN   = NO
+OPTIMIZE_OUTPUT_VHDL   = NO
 BUILTIN_STL_SUPPORT    = NO
 CPP_CLI_SUPPORT        = NO
+SIP_SUPPORT            = NO
+IDL_PROPERTY_SUPPORT   = YES
 DISTRIBUTE_GROUP_DOC   = NO
 SUBGROUPING            = YES
+TYPEDEF_HIDES_STRUCT   = NO
+SYMBOL_CACHE_SIZE      = 0
 #---------------------------------------------------------------------------
 # Build related configuration options
 #---------------------------------------------------------------------------
-EXTRACT_ALL            = NO
-EXTRACT_PRIVATE        = NO
-EXTRACT_STATIC         = NO
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
 EXTRACT_LOCAL_CLASSES  = YES
 EXTRACT_LOCAL_METHODS  = NO
-HIDE_UNDOC_MEMBERS     = YES
-HIDE_UNDOC_CLASSES     = YES
+EXTRACT_ANON_NSPACES   = NO
+HIDE_UNDOC_MEMBERS     = NO
+HIDE_UNDOC_CLASSES     = NO
 HIDE_FRIEND_COMPOUNDS  = NO
 HIDE_IN_BODY_DOCS      = NO
 INTERNAL_DOCS          = NO
@@ -60,6 +67,7 @@ SHOW_INCLUDE_FILES     = YES
 INLINE_INFO            = YES
 SORT_MEMBER_DOCS       = YES
 SORT_BRIEF_DOCS        = NO
+SORT_GROUP_NAMES       = NO
 SORT_BY_SCOPE_NAME     = NO
 GENERATE_TODOLIST      = YES
 GENERATE_TESTLIST      = YES
@@ -69,7 +77,10 @@ ENABLED_SECTIONS       =
 MAX_INITIALIZER_LINES  = 30
 SHOW_USED_FILES        = YES
 SHOW_DIRECTORIES       = NO
+SHOW_FILES             = YES
+SHOW_NAMESPACES        = YES
 FILE_VERSION_FILTER    = 
+LAYOUT_FILE            = 
 #---------------------------------------------------------------------------
 # configuration options related to warning and progress messages
 #---------------------------------------------------------------------------
@@ -83,13 +94,9 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = /Users/gaspard/svk/rubyk/classes \
-                         /Users/gaspard/svk/rubyk/objects \
-                         /Users/gaspard/svk/rubyk/templates \
-                         /Users/gaspard/svk/rubyk/test \
-                         /Users/gaspard/svk/rubyk/makefile \
-                         /Users/gaspard/svk/rubyk/COPYRIGHT \
-                         /Users/gaspard/svk/rubyk/classes/lua/lua_script.cpp
+INPUT                  = /Users/gaspard/git/rubyk/rubyk/src/core \
+                         /Users/gaspard/git/rubyk/rubyk/src/templates \
+                         /Users/gaspard/git/rubyk/rubyk/src/core/values
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.c \
                          *.cc \
@@ -117,7 +124,11 @@ FILE_PATTERNS          = *.c \
                          *.m \
                          *.mm \
                          *.dox \
-                         *.py
+                         *.py \
+                         *.f90 \
+                         *.f \
+                         *.vhd \
+                         *.vhdl
 RECURSIVE              = NO
 EXCLUDE                = 
 EXCLUDE_SYMLINKS       = NO
@@ -133,14 +144,14 @@ FILTER_SOURCE_FILES    = NO
 #---------------------------------------------------------------------------
 # configuration options related to source browsing
 #---------------------------------------------------------------------------
-SOURCE_BROWSER         = NO
+SOURCE_BROWSER         = YES
 INLINE_SOURCES         = NO
-STRIP_CODE_COMMENTS    = NO
-REFERENCED_BY_RELATION = NO
-REFERENCES_RELATION    = NO
+STRIP_CODE_COMMENTS    = YES
+REFERENCED_BY_RELATION = YES
+REFERENCES_RELATION    = YES
 REFERENCES_LINK_SOURCE = YES
 USE_HTAGS              = NO
-VERBATIM_HEADERS       = NO
+VERBATIM_HEADERS       = YES
 #---------------------------------------------------------------------------
 # configuration options related to the alphabetical class index
 #---------------------------------------------------------------------------
@@ -157,16 +168,27 @@ HTML_HEADER            =
 HTML_FOOTER            = 
 HTML_STYLESHEET        = 
 HTML_ALIGN_MEMBERS     = YES
+HTML_DYNAMIC_SECTIONS  = NO
+GENERATE_DOCSET        = NO
+DOCSET_FEEDNAME        = "Doxygen generated docs"
+DOCSET_BUNDLE_ID       = org.doxygen.Project
 GENERATE_HTMLHELP      = NO
 CHM_FILE               = 
 HHC_LOCATION           = 
 GENERATE_CHI           = NO
+CHM_INDEX_ENCODING     = 
 BINARY_TOC             = NO
 TOC_EXPAND             = NO
+GENERATE_QHP           = NO
+QCH_FILE               = 
+QHP_NAMESPACE          = org.doxygen.Project
+QHP_VIRTUAL_FOLDER     = doc
+QHG_LOCATION           = 
 DISABLE_INDEX          = NO
 ENUM_VALUES_PER_LINE   = 4
-GENERATE_TREEVIEW      = NO
+GENERATE_TREEVIEW      = NONE
 TREEVIEW_WIDTH         = 250
+FORMULA_FONTSIZE       = 10
 #---------------------------------------------------------------------------
 # configuration options related to the LaTeX output
 #---------------------------------------------------------------------------
@@ -178,8 +200,8 @@ COMPACT_LATEX          = NO
 PAPER_TYPE             = a4wide
 EXTRA_PACKAGES         = 
 LATEX_HEADER           = 
-PDF_HYPERLINKS         = NO
-USE_PDFLATEX           = NO
+PDF_HYPERLINKS         = YES
+USE_PDFLATEX           = YES
 LATEX_BATCHMODE        = NO
 LATEX_HIDE_INDICES     = NO
 #---------------------------------------------------------------------------
@@ -240,10 +262,13 @@ PERL_PATH              = /usr/bin/perl
 #---------------------------------------------------------------------------
 # Configuration options related to the dot tool   
 #---------------------------------------------------------------------------
-CLASS_DIAGRAMS         = YES
+CLASS_DIAGRAMS         = NO
 MSCGEN_PATH            = /Applications/Doxygen.app/Contents/Resources/
 HIDE_UNDOC_RELATIONS   = YES
 HAVE_DOT               = YES
+DOT_FONTNAME           = Arial
+DOT_FONTSIZE           = 10
+DOT_FONTPATH           = 
 CLASS_GRAPH            = YES
 COLLABORATION_GRAPH    = YES
 GROUP_GRAPHS           = YES
@@ -252,13 +277,14 @@ TEMPLATE_RELATIONS     = NO
 INCLUDE_GRAPH          = YES
 INCLUDED_BY_GRAPH      = YES
 CALL_GRAPH             = YES
-CALLER_GRAPH           = YES
+CALLER_GRAPH           = NO
 GRAPHICAL_HIERARCHY    = YES
 DIRECTORY_GRAPH        = YES
 DOT_IMAGE_FORMAT       = png
-DOT_PATH               = /Applications/Doxygen.app/Contents/Resources/
+DOT_PATH               = /Applications/Graphviz.app/Contents/MacOS/
 DOTFILE_DIRS           = 
 DOT_GRAPH_MAX_NODES    = 50
+MAX_DOT_GRAPH_DEPTH    = 1000
 DOT_TRANSPARENT        = NO
 DOT_MULTI_TARGETS      = NO
 GENERATE_LEGEND        = YES

@@ -14,8 +14,8 @@ Planet::Planet() : mCurrentTime(0), mInstances(200), mQuit(false)
 
 Planet::~Planet()
 {
-  std::vector<std::string>::iterator it;
-  std::vector<std::string>::iterator end = mInstances.end();
+  string_iterator it;
+  string_iterator end = mInstances.end();
   Node * node;
   Command * child;
   

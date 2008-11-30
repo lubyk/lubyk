@@ -11,45 +11,47 @@ class Object
 {
 public:
   // FIXME: remove this constructor !
-  Object() : mParent(NULL)
+  Object() : mParent(NULL), mChildren(20)
   {
     init_object(NULL, std::string(""));
   }
   
-  Object(const char * pName) : mParent(NULL)
+  Object(const char * pName) : mParent(NULL), mChildren(20)
   {
     init_object(NULL, std::string(pName));
   }
   
-  Object(const std::string& pName) : mParent(NULL)
+  Object(const std::string& pName) : mParent(NULL), mChildren(20)
   {
     init_object(NULL, pName);
   }
   
-  Object(Object * pParent, const std::string &pName) : mParent(NULL)
+  Object(Object * pParent, const std::string &pName) : mParent(NULL), mChildren(20)
   {
     init_object(pParent, pName);
   }
   
-  Object(Object& pParent, const std::string &pName) : mParent(NULL)
+  Object(Object& pParent, const std::string &pName) : mParent(NULL), mChildren(20)
   {
     init_object(&pParent, pName);
   }
   
   virtual ~Object()
   {
+    string_iterator it;
+    string_iterator end = mChildren.end();
     // notify parent
     if (mParent) mParent->remove_child(this);
     
     // notify global list
     remove_object(this);
     
-    // destroy children
-    while (!mChildren.empty())
-    {
-      Object * child = mChildren.front();
-      child->mParent = NULL;
-      mChildren.pop_front();
+    // remove parent reference in all children
+    for(it = mChildren.begin(); it != end; it++) {
+      Object * child;
+      if (mChildren.get(&child, *it)) {
+        child->mParent = NULL;
+      }
     }
   }
   
@@ -57,16 +59,18 @@ public:
   virtual const Value trigger (const Value& sig)
   {
     if (mChildrenStrList == "") {
-      std::list<Object *>::iterator it  = mChildren.begin();
-      std::list<Object *>::iterator end = mChildren.end();
+      string_iterator it  = mChildren.begin();
+      string_iterator end = mChildren.end();
       bool start = true;
     
       while(it != end) {
-        Object * obj = *it;
-        if (!start) mChildrenStrList.append(",");
-        mChildrenStrList.append(obj->mName);
-        if (!(obj->mChildren.empty())) mChildrenStrList.append("/");
-        start = false;
+        Object * obj;
+        if (mChildren.get(&obj, *it)) {
+          if (!start) mChildrenStrList.append(",");
+          mChildrenStrList.append(obj->mName);
+          if (!(obj->mChildren.empty())) mChildrenStrList.append("/");
+          start = false;
+        }
         it++;
       }
     }
@@ -101,6 +105,20 @@ public:
   static bool get (Object ** pResult, const char* pUrl)
   {
     return sObjects.get(pResult, std::string(pUrl));
+  }
+  
+  /** Return a pointer to the object located at pUrl. NULL if not found. */
+  static Object * find(const std::string& pUrl)
+  {
+    Object * res = NULL;
+    get(&res, pUrl);
+    return res;
+  }
+  
+  /** Return a pointer to the object located at pUrl. NULL if not found. */
+  static Object * find(const char * pUrl)
+  {
+    return find(std::string(pUrl));
   }
   
   void set_parent(Object& parent)
@@ -147,9 +165,20 @@ public:
     if (mParent) set_parent(mParent);
   }
   
-  const std::list<Object *> children() const
+  const THash<std::string,Object *> children() const
   {
     return mChildren;
+  }
+  
+  /** Return the direct child named 'pName'. */
+  Object * child(const std::string& pName)
+  {
+    Object * child;
+    if (mChildren.get(&child, pName)) {
+      return child;
+    } else {
+      return NULL;
+    }
   }
 
 protected:
@@ -174,12 +203,15 @@ protected:
   
   void moved()
   {
-    std::list<Object *>::iterator it  = mChildren.begin();
-    std::list<Object *>::iterator end = mChildren.end();
+    string_iterator it;
+    string_iterator end = mChildren.end();
+    Object * obj;
     
     mUrl = "";
     
-    while(it != end) (*it++)->moved();
+    for(it = mChildren.begin(); it != end; it++) {
+      if (mChildren.get(&obj, *it)) obj->moved();
+    }
     
     object_moved(this);
   }
@@ -219,52 +251,32 @@ private:
   }
   
   /** Add a child to the children list, updating 'child' to make sure the name is unique. Called by child's set_parent method. */
-  void add_child(Object * child)
+  void add_child(Object * pChild)
   { 
-    std::list<Object *>::iterator it  = mChildren.begin();
-    std::list<Object *>::iterator end = mChildren.end();
+    while (child(pChild->mName))
+      pChild->next_name();
     
-    while (it != end) {
-      Object * obj = *it;
-      if (obj == child) return;
-      if (obj->mName == child->mName) {
-        // name conflict. Change child name.
-        child->next_name();
-        add_child(child);
-        return;
-      }
-      it++;
-    }
-    mChildren.push_back(child);
+    mChildren.set(pChild->mName,pChild);
     mChildrenStrList = ""; // reset cached list
   }
   
   /** Remove the child from the list of children. Called by child's set_parent method. */
-  void remove_child(Object * child)
+  void remove_child(Object * pChild)
   {
-    std::list<Object *>::iterator it  = mChildren.begin();
-    std::list<Object *>::iterator end = mChildren.end();
-
-    while (it != end) {
-      if (*it == child) {
-        mChildren.erase(it);
-        mChildrenStrList = ""; // reset cached list
-        return;
-      }
-      it++;
-    }
-    // child not found. ignore
+    mChildren.remove_element(pChild);
+    mChildrenStrList = ""; // reset cached list
   }
   
-  static THash<std::string, Object*> sObjects;  /**< Hash to find objects from their url. */
+  static THash<std::string, Object*> sObjects;   /**< Hash to find objects from their url. */
   
-  Object * mParent;              /**< Pointer to parent object. */
-  std::list<Object *> mChildren; /**< Pointer to sub-objects / methods */
-  String       mChildrenStrList;  /**< Comma separated list of children (cached). */
-  std::string mUrl;              /**< Absolute path to object (cached). */
+  Object *                    mParent;           /**< Pointer to parent object. */
+  THash<std::string,Object *> mChildren;         /**< Hash with pointers to sub-objects / methods */
+  String                      mChildrenStrList;  /**< Comma separated list of children (cached). */
+  std::string                 mUrl;              /**< Absolute path to object (cached). */
 protected:  
-  std::string mName;                  /**< Unique name in parent's context. */
-  static unsigned int sIdCounter;     /**< Use to set a default id and position. */
+  std::string                 mName;             /**< Unique name in parent's context. */
+  static unsigned int         sIdCounter;        /**< Use to set a default id and position. */
+
 };
 
 #endif

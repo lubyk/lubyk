@@ -42,6 +42,9 @@
 
 typedef unsigned int uint;
 
+typedef std::vector<std::string>::iterator string_iterator;
+typedef std::vector<std::string>::const_iterator const_string_iterator;
+
 template<class K, class T>
 struct THashElement {
   THashElement() : obj(0), next(0) {}
@@ -67,8 +70,8 @@ public:
   // copy constructor
   THash(const THash& pOther)
   {  
-    std::vector<std::string>::const_iterator it;
-    std::vector<std::string>::const_iterator end = pOther.end();
+    const_string_iterator it;
+    const_string_iterator end = pOther.end();
     T value;
     
     mSize = pOther.mSize;
@@ -83,8 +86,8 @@ public:
   
   THash& operator=(const THash& pOther)
   {
-    std::vector<std::string>::const_iterator it;
-    std::vector<std::string>::const_iterator end = pOther.end();
+    const_string_iterator it;
+    const_string_iterator end = pOther.end();
     T value;
 
     for(it = pOther.begin(); it < end; it++) {
@@ -134,6 +137,10 @@ public:
       remove(*mKeys.begin());
     }
   }
+  
+  /** Return true if the dictionary is empty. */
+  bool empty() const
+  { return size() == 0; }
   
   /** Return number of elements (distinct keys). */
   size_t size() const
