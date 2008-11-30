@@ -37,11 +37,9 @@ public:
     std::vector<std::string>::const_iterator end = mParameters.end();
     std::string value;
 #ifdef _TESTING_
-    pStream << "<" << type_name() << "[" << mId << "] ";
-#else
-    pStream << "<" << type_name() << " ";
+    pStream << "[" << mId << "] ";
 #endif
-    pStream << *this << ">"; // FIXME: replace by << mParameters << ">";
+    pStream << mParameters;
   }
   
   void rebuild(const std::string& s)
@@ -50,107 +48,107 @@ public:
     build_hash(s);
   }
   
-  template<class T>
-  T val(const char * pKey, T pDefault, bool pUseAnon = false) const
-  {
-    std::string value;
-    if (mParameters.get(&value, std::string(pKey)))
-      return cast_param<T>(value);
-    else if (pUseAnon) {
-      T value;
-      if (get(&value)) return value;
-      else return pDefault;
-    } else
-      return pDefault;
-  }
-  
-  /** Try to get a parameter from a given key. Returns false if the key is not found. If the key is NULL, get the default value. */
-  template<class T>
-  bool get(T* pResult, const char * pKey, bool pUseAnon) const
-  {
-    std::string value;
-    if (pKey == NULL) {
-      if (mListValues.size() == 1) {
-        // 'default' parameter
-        *pResult = cast_param<T>(mListValues[0]);
-        return true;
-      } else
-        return false;
-    }
-    if (mParameters.get(&value, std::string(pKey))) {
-      *pResult = cast_param<T>(value);
-      return true;
-    } else if (pUseAnon) {
-      return get(pResult, NULL, false);
-    } else
-      return false;
-  }
-  
-  /** Try to get an anonymous parameter from it's index. Returns false if the key is out of range. */
-  template<class T>
-  bool get(T* pResult, size_t pIndex) const
-  {
-    std::string value;
-    if (pIndex < mListValues.size()) {
-      *pResult = cast_param<T>(mListValues[pIndex]);
-      return true;
-    } else
-      return false;
-  }
-  
-  /** Try to get an anonymous parameter from it's index. Returns false if the key is out of range. */
-  template<class T>
-  bool get(T* pResult, int pIndex) const
-  {
-    std::string value;
-    if ((size_t)pIndex < mListValues.size()) {
-      *pResult = cast_param<T>(mListValues[pIndex]);
-      return true;
-    } else
-      return false;
-  }
-  
-  /** Get default value. Return false if none found. */
-  template<class T>
-  bool get(T* pResult) const
-  {
-    return get(pResult, (size_t)0);
-  }
-  
-  /** Try to get a parameter from a given key. Returns false if the key is not found (default value not used). If the key is NULL, get the default value. */
-  template<class T>
-  bool get(T* pResult, const char * pKey) const
-  {
-    return get(pResult, pKey, false);
-  }
-  // FIX: remove
-  template<class T>
-  T cast_param(const std::string& value) const
-  {
-    return (T)value;
-  }
-  
-  void add (const char * str)
-  {
-    add(std::string(str));
-  }
-  
-  void add (const std::string& pValue) {
-    mListValues.push_back(pValue);
-  }
-
-  void set (const std::string& pKey, const std::string& pValue) {
-    mParameters.set(pKey,pValue);
-  }
-  void set (const std::string& pKey, const char *       pValue) {
-    mParameters.set(pKey, std::string(pValue));
-  }
-  void set (const char *       pKey, const std::string& pValue) {
-    mParameters.set(std::string(pKey), pValue);
-  }
-  void set (const char *       pKey, const char *       pValue) {
-    mParameters.set(std::string(pKey), std::string(pValue));
-  }
+  //FIX template<class T>
+  //FIX T val(const char * pKey, T pDefault, bool pUseAnon = false) const
+  //FIX {
+  //FIX   std::string value;
+  //FIX   if (mParameters.get(&value, std::string(pKey)))
+  //FIX     return cast_param<T>(value);
+  //FIX   else if (pUseAnon) {
+  //FIX     T value;
+  //FIX     if (get(&value)) return value;
+  //FIX     else return pDefault;
+  //FIX   } else
+  //FIX     return pDefault;
+  //FIX }
+  //FIX 
+  //FIX /** Try to get a parameter from a given key. Returns false if the key is not found. If the key is NULL, get the default value. */
+  //FIX template<class T>
+  //FIX bool get(T* pResult, const char * pKey, bool pUseAnon) const
+  //FIX {
+  //FIX   std::string value;
+  //FIX   if (pKey == NULL) {
+  //FIX     if (mListValues.size() == 1) {
+  //FIX       // 'default' parameter
+  //FIX       *pResult = cast_param<T>(mListValues[0]);
+  //FIX       return true;
+  //FIX     } else
+  //FIX       return false;
+  //FIX   }
+  //FIX   if (mParameters.get(&value, std::string(pKey))) {
+  //FIX     *pResult = cast_param<T>(value);
+  //FIX     return true;
+  //FIX   } else if (pUseAnon) {
+  //FIX     return get(pResult, NULL, false);
+  //FIX   } else
+  //FIX     return false;
+  //FIX }
+  //FIX 
+  //FIX /** Try to get an anonymous parameter from it's index. Returns false if the key is out of range. */
+  //FIX template<class T>
+  //FIX bool get(T* pResult, size_t pIndex) const
+  //FIX {
+  //FIX   std::string value;
+  //FIX   if (pIndex < mListValues.size()) {
+  //FIX     *pResult = cast_param<T>(mListValues[pIndex]);
+  //FIX     return true;
+  //FIX   } else
+  //FIX     return false;
+  //FIX }
+  //FIX 
+  //FIX /** Try to get an anonymous parameter from it's index. Returns false if the key is out of range. */
+  //FIX template<class T>
+  //FIX bool get(T* pResult, int pIndex) const
+  //FIX {
+  //FIX   std::string value;
+  //FIX   if ((size_t)pIndex < mListValues.size()) {
+  //FIX     *pResult = cast_param<T>(mListValues[pIndex]);
+  //FIX     return true;
+  //FIX   } else
+  //FIX     return false;
+  //FIX }
+  //FIX 
+  //FIX /** Get default value. Return false if none found. */
+  //FIX template<class T>
+  //FIX bool get(T* pResult) const
+  //FIX {
+  //FIX   return get(pResult, (size_t)0);
+  //FIX }
+  //FIX 
+  //FIX /** Try to get a parameter from a given key. Returns false if the key is not found (default value not used). If the key is NULL, get the default value. */
+  //FIX template<class T>
+  //FIX bool get(T* pResult, const char * pKey) const
+  //FIX {
+  //FIX   return get(pResult, pKey, false);
+  //FIX }
+  //FIX // FIX: remove
+  //FIX template<class T>
+  //FIX T cast_param(const std::string& value) const
+  //FIX {
+  //FIX   return (T)value;
+  //FIX }
+  //FIX 
+  //FIX void add (const char * str)
+  //FIX {
+  //FIX   add(std::string(str));
+  //FIX }
+  //FIX 
+  //FIX void add (const std::string& pValue) {
+  //FIX   mListValues.push_back(pValue);
+  //FIX }
+  //FIX 
+  //FIX void set (const std::string& pKey, const std::string& pValue) {
+  //FIX   mParameters.set(pKey,pValue);
+  //FIX }
+  //FIX void set (const std::string& pKey, const char *       pValue) {
+  //FIX   mParameters.set(pKey, std::string(pValue));
+  //FIX }
+  //FIX void set (const char *       pKey, const std::string& pValue) {
+  //FIX   mParameters.set(std::string(pKey), pValue);
+  //FIX }
+  //FIX void set (const char *       pKey, const char *       pValue) {
+  //FIX   mParameters.set(std::string(pKey), std::string(pValue));
+  //FIX }
   
   void clear () 
   { mParameters.clear(); mListValues.clear();  }
@@ -167,7 +165,7 @@ public:
   
 private:  
   friend class Hash;
-  THash<std::string,std::string>  mParameters; /** Hash of std::string => Value. */
+  THash<std::string,Value>  mParameters; /** Hash of std::string => Value. */
   
   std::vector<std::string>  mListValues; //TODO: remove this and store values in a matrix as first element in dictionary.
   
@@ -179,9 +177,7 @@ class Hash : public Value
 {
 public:
   VALUE_METHODS(Hash, HashData, HashValue, Value)
-  
-  Hash(const std::string& s) : Value(new HashData(s)) {}
-  
+    
   /** Set Hash from a string. */
   Hash& operator= (const std::string& s)
   {
@@ -250,7 +246,5 @@ const char * Hash::cast_param (const std::string& value);
 
 template<>
 char Hash::cast_param (const std::string& value);
-
-std::ostream& operator<< (std::ostream& pStream, const HashData& p);
 
 #endif // _DICTIONARY_H_

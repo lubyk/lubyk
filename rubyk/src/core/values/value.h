@@ -175,6 +175,8 @@ private:
 #define VALUE_METHODS(klass,data_type,signature,super) \
   klass() {} \
   klass(data_type * d) : super(d) {} \
+  klass(const std::string& s) : super(new data_type(s)) {} \
+  klass(const char * s) : super(new data_type(std::string(s))) {} \
   virtual ~klass() {} \
   klass(const Value& pOther) \
   { pOther.set(*this); } \

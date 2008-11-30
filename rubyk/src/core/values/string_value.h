@@ -46,10 +46,6 @@ class String : public Value
 public:
   VALUE_METHODS(String, StringData, StringValue, Value)
   
-  String(const std::string& s) : Value(new StringData(s)) {}
-  
-  String(const char * s)       : Value(new StringData(s)) {}
-  
   /** Set String from std::string. */
   const std::string& operator= (const std::string& s)
   {

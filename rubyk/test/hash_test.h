@@ -16,6 +16,12 @@ public:
     TS_ASSERT_EQUALS( dict["first"].data_type(), NumberValue);
     TS_ASSERT( dict["bad key"].is_nil());
     TS_ASSERT_EQUALS( dict["name"].data_type(), StringValue);
+    String s(dict["name"]), s2;
+    TS_ASSERT(dict["name"].set(s2));
+    TS_ASSERT_EQUALS( *s.string(), "foo");
+    TS_ASSERT_EQUALS( *s2.string(), "foo");
+    assert_id(s, 4); // 1 = Hash, 2 = 'first', 3 = 'second', 4 = 'foo'
+    assert_id(s2,4);
   }
   
 //  void test_dictionary_data_type( void )
@@ -129,7 +135,7 @@ public:
     v.rebuild("first:1 second:2 name:\"Gaspard Buma\" joy:3.5");
     out.str(std::string(""));
     out << v;
-    TS_ASSERT_EQUALS(out.str(), "<Hash[1] first:1 second:2 name:\"Gaspard Buma\" joy:3.5>");
+    TS_ASSERT_EQUALS(out.str(), "[1] first:[2] 1.00 second:[3] 2.00 name:[4] \"Gaspard Buma\" joy:[5] 3.50");
   }
 
 };

@@ -9,6 +9,8 @@ class NumberData : public Data
 {
 public:
   DATA_METHODS(NumberData, NumberValue)
+
+  NumberData(const std::string& s) : mReal(atof(s.c_str())) {}
   
   NumberData(const real_t& d) : mReal(d) {}
   

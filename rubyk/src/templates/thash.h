@@ -308,15 +308,13 @@ std::ostream& operator<< (std::ostream& pStream, const THash<K,T>& hash)
   end   = hash.end();
   begin = hash.begin();
   T value;
-  pStream << "{";
   for( it = begin; it < end; it++) {
-    if (it != begin) pStream << ", ";
+    if (it != begin) pStream << " ";
     if (hash.get(&value, *it))
-      pStream << *it << " => " << value;
+      pStream << *it << ":" << value;
     else
-      pStream << *it << " => " << "/error/";
+      pStream << *it << ":" << "/error/";
   }
-  pStream << "}";
   return pStream;
 }
 

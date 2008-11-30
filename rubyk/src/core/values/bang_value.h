@@ -9,6 +9,8 @@ class BangData : public Data
 {
 public:
   DATA_METHODS(BangData, BangValue)
+
+  BangData(const std::string& s) {}
   
   virtual ~BangData() {}
 };

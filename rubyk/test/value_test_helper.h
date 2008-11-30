@@ -16,6 +16,12 @@ public:
     log("new");
   }
   
+  TestData(const std::string& s)
+  {
+    if (sOut.str().size() > 0) sOut << ", ";
+    sOut << "[" << mId << "] " << "new from \"" << s << "\"";
+  }
+  
   virtual ~TestData()
   {
     log("dead");

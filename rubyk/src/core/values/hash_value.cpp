@@ -4,7 +4,8 @@
 
 void HashData::build_hash (const std::string& p)
 { 
-  std::string key, value;
+  std::string key;
+  Value value;
   unsigned int size = p.size();
   unsigned int pos,key_start,key_end,value_start,value_end;
   pos = 0;
@@ -26,51 +27,50 @@ void HashData::build_hash (const std::string& p)
     pos   = p.find_first_not_of(' ',pos);
     if (pos == std::string::npos) return;
     
-    //    1.4 if '"'
-    if (p[pos] == '"') {
-      pos++;
-      //        1.4.1 read until '"' => value
-      value_start = pos;
-      pos         = p.find('"',pos);
-      if (pos == std::string::npos) return;
-      value_end = pos;
-      pos++;
-    } else {  
-      //        1.4.2 read until ' ' or EOF => value
-      value_start = pos;
-      pos         = p.find(' ',pos);
-      if (pos == std::string::npos)
-        value_end = size; // EOF
-      else
+    value_start = pos;
+
+    //    1.4 switch type
+    switch (p[pos]) {
+      case '1':
+      case '2':
+      case '3':
+      case '4':
+      case '5':
+      case '6':
+      case '7':
+      case '8':
+      case '9':
+      case '0':
+        // Number
+        pos = p.find(' ',pos);
+        value_end = (pos == std::string::npos) ? size : pos;
+        Number(p.substr(value_start, value_end - value_start)).set(value);
+        break;
+      case '"':
+        // String
+        pos++;
+        value_start = pos;
+        pos         = p.find('"',pos);
+        if (pos == std::string::npos) return; // bad format, abort
         value_end = pos;
+        String(p.substr(value_start, value_end - value_start)).set(value);
+        pos++;
+        break;
+        // FIXME: matrix, error, nil, bang, etc
+      default:
+        return; // abort, error
     }
     //    1.5 mValues.set(key,value)
-    mParameters.set(p.substr(key_start, key_end - key_start), p.substr(value_start, value_end - value_start));
+    mParameters.set(p.substr(key_start, key_end - key_start), value);
   }
 }
 
 const Value Hash::operator[] (const std::string& pKey) const
 {
   if (!mPtr) return gNilValue;
-  std::string str;
-  if (!data_pointer()->mParameters.get(&str, pKey)) return gNilValue;
-  // FIXME: this is not very robust ! (store "\"blah\"" for strings instead of "blah").
-  switch (str.at(0)) {
-    case '0':
-    case '1':
-    case '2':
-    case '3':
-    case '4':
-    case '5':
-    case '6':
-    case '7':
-    case '8':
-    case '9':
-      return Number(cast_param<real_t>(str));
-    default:
-      return String(str);
-  }
-  // Matrix ?
+  Value res;
+  if (!data_pointer()->mParameters.get(&res, pKey)) return gNilValue;
+  return res;
 }
 
 template<>
@@ -130,38 +130,4 @@ template<>
 char Hash::cast_param (const std::string& value)
 {
   return value.c_str()[0];
-}
-
-std::ostream& operator<<(std::ostream& pStream, const HashData& p)
-{
-  std::string str;
-  std::vector<std::string>::const_iterator it;
-  std::vector<std::string>::const_iterator end = p.mParameters.end();
-  for(it = p.mParameters.begin(); it < end; it++) {
-    if (it != p.mParameters.begin()) pStream << " ";
-    pStream << *it << ":";
-    if (p.mParameters.get(&str, *it)) {
-      if (str.find_first_of(" :\"") != std::string::npos) {
-        std::string value = "\"";
-        value.append(str);
-        value.append("\"");
-        // TODO: escape "
-        pStream << value;
-      } else
-        pStream << str;
-      
-    } else
-      pStream << "(null)";
-  }
-  // list anonymous parameters
-  if(p.mListValues.size() > 0) {
-    pStream << "(";
-    end = p.mListValues.end();
-    for(it = p.mListValues.begin(); it < end; it++) {
-      if (it != p.mListValues.begin()) pStream << ", ";
-      pStream << *it;
-    }
-    pStream << ")";
-  }
-  return pStream;
 }
