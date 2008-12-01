@@ -37,7 +37,7 @@ public:
 #ifdef _TESTING_
     pStream << "[" << mId << "] ";
 #endif
-    pStream << mParameters;
+    pStream << "{ " << mParameters << " }";
   }
   
   void rebuild(const std::string& s)

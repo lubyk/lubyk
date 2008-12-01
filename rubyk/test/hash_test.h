@@ -162,7 +162,7 @@ public:
     v.rebuild("first:1 second:2 name:\"Gaspard Buma\" joy:3.5");
     out.str(std::string(""));
     out << v;
-    TS_ASSERT_EQUALS(out.str(), "[1] first:[2] 1.00 second:[3] 2.00 name:[4] \"Gaspard Buma\" joy:[5] 3.50");
+    TS_ASSERT_EQUALS(out.str(), "[1] { first:[2] 1.00 second:[3] 2.00 name:[4] \"Gaspard Buma\" joy:[5] 3.50 }");
   }
 
 };
