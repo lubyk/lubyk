@@ -56,36 +56,36 @@ public:
   }
   
   /** The operation to be executed on call (method for Method class / object listing for Nodes) */
-  virtual const Value trigger (const Value& sig)
+  virtual const Value trigger (const Value& val)
   {
-    if (mChildrenStrList == "") {
-      string_iterator it  = mChildren.begin();
-      string_iterator end = mChildren.end();
-      bool start = true;
-    
-      while(it != end) {
-        Object * obj;
-        if (mChildren.get(&obj, *it)) {
-          if (!start) mChildrenStrList.append(",");
-          mChildrenStrList.append(obj->mName);
-          if (!(obj->mChildren.empty())) mChildrenStrList.append("/");
-          start = false;
-        }
-        it++;
+    std::string res;
+    string_iterator it  = mChildren.begin();
+    string_iterator end = mChildren.end();
+    bool start = true;
+    if (it == end) return gNilValue;
+  
+    while(it != end) {
+      Object * obj;
+      if (mChildren.get(&obj, *it)) {
+        if (!start) res.append(",");
+        res.append(obj->mName);
+        if (!(obj->mChildren.empty())) res.append("/");
+        start = false;
       }
+      it++;
     }
     
-    return mChildrenStrList;
+    return String(res);
   }
   
   /** Execute a method / call the default operation for an object. */
-  static Value call (const char* pUrl, const Value& sig)
+  static Value call (const char* pUrl, const Value& val)
   {
-    return call(std::string(pUrl), sig);
+    return call(std::string(pUrl), val);
   }
   
   /** Execute a method / call the default operation for an object. */
-  static Value call (const std::string& pUrl, const Value& sig)
+  static Value call (const std::string& pUrl, const Value& val)
   {
     Object * target;
     size_t info_pos = pUrl.rfind("/#info");
@@ -103,7 +103,7 @@ public:
       // find object from url
       if (get(&target, pUrl)) {
         // call
-        return target->trigger(sig);
+        return target->trigger(val);
       } else {
         return Error(std::string("Object '").append(pUrl).append("' not found."));
       }
@@ -263,18 +263,18 @@ protected:
   }
   
 private:
-  void use_default_name()
+  std::string default_name()
   {
     char buf[50];
     sIdCounter++;
     sprintf(buf,"_%i",sIdCounter);
-    mName = std::string(buf);  // default variable name is 'id'
+    return std::string(buf);  // default variable name is 'id'
   }
   
-  void init_object(Object * pParent, const std::string &pName)
+  virtual void init_object(Object * pParent, const std::string &pName)
   { 
     if (pName == "")
-      use_default_name();
+      mName = default_name();
     else
       mName = pName;
     
@@ -288,21 +288,18 @@ private:
       pChild->next_name();
     
     mChildren.set(pChild->mName,pChild);
-    mChildrenStrList = ""; // reset cached list
   }
   
   /** Remove the child from the list of children. Called by child's set_parent method. */
   void remove_child(Object * pChild)
   {
     mChildren.remove_element(pChild);
-    mChildrenStrList = ""; // reset cached list
   }
   
   static THash<std::string, Object*> sObjects;   /**< Hash to find objects from their url. */
   
   Object *                    mParent;           /**< Pointer to parent object. */
   THash<std::string,Object *> mChildren;         /**< Hash with pointers to sub-objects / methods */
-  String                      mChildrenStrList;  /**< Comma separated list of children (cached). */
   std::string                 mUrl;              /**< Absolute path to object (cached). TODO: this cache is not really needed. */
 protected:  
   std::string                 mName;             /**< Unique name in parent's context. */

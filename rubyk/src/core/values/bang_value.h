@@ -22,7 +22,7 @@ public:
   VALUE_METHODS(Bang, BangData, BangValue, Value)
   
   // this is the only way to instanciate a bang
-  Bang(bool whatever) : Value(new BangData()) {}
+  Bang(bool whatever) : Value(new BangData()) {} // TODO: replace by gBangValue.data_pointer() ?
 };
 
 #endif // _BANG_VALUE_H_

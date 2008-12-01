@@ -13,7 +13,7 @@ class Value;
 typedef Node * (*create_function_t)(Class * pClass, const std::string& pName, Planet * pServer, const Hash& p, std::ostream * pOutput);
 
 /** Pointer to a class method that can be called from the command line with "Value.method(Value)" */
-typedef void (*class_method_t)(std::ostream * pOutput, const Value& p);
+//FIX typedef void (*class_method_t)(std::ostream * pOutput, const Value& p);
 
 /** Pointer to an inlet method that can be called from the command line with "obj.method(Value)" */
 typedef void (*obj_method_t)(void * pReceiver, const Value& sig);
