@@ -18,13 +18,6 @@ public:
     return mMessage;
   }
   
-  /** Example to set an attribute stored as a native type (an int here). This is also an accessor (used by sending a nil value). */
-  const Value counter (const Value& val)
-  {
-    mCounter = val || mCounter;
-    return Number(mCounter);
-  }
-  
   /** Test output. */
   const Value out_message (const Value& val)
   {
@@ -38,7 +31,7 @@ public:
   void spy() 
   { bprint(mSpy, mSpySize,"'%s' %i", mMessage.c_str(), mCounter); }
   
-  // inlet 1. Increments mCounter on bang.
+  // [1]. Increments mCounter on bang.
   void bang(const Value& val)
   {
     if (val.is_number())
@@ -52,11 +45,16 @@ public:
     *mOutput << "<=done.\n";
   }
   
-  /** (inlet 2). Displays the values sent. */
-  const Value info(const Value& val)
+  /** [2]. Example to set an attribute stored as a native type (an int here). This is also an accessor (used by sending a nil value). */
+  void counter (const Value& val)
+  {
+    mCounter = val || mCounter;
+  }
+  
+  /** [3]. Displays the values sent. */
+  void info(const Value& val)
   {
     *mOutput << val << std::endl;
-    return gNilValue;
   }
   
   /** Another method to test the "TRY" macro. */
@@ -90,25 +88,25 @@ private:
 
 extern "C" void init()
 { 
-  // define class
+  // Define class.
   CLASS (   Test, "Object used for testing. Does not do anything really useful.")
   
-  // define bang  (class, method, accepted types, message)
-  INLET (   Test, bang,      NumberValue | BangValue, "Set counter | increment and send." )
+  // Define inlets.
+  // This also creates "/nodes/t/info" set/get methods and "nodes/t/inlets/info" to link, unlink, ...).
+  // The get method of an inlet always returns the code defined in the inlet definition.
+  //        class  inlet     accept type              info                                  return value for accessor
+  INLET (   Test,  bang,     NumberValue | BangValue, "Set counter | increment and send.",  Number(mCounter))
+  INLET (   Test,  counter,  NumberValue,             "Example of value storage (real_t).", Number(mCounter))
+  INLET (   Test,  info,     AnyValue,                "Printout value.",                    gNilValue)
   
-  // define 'info' inlet (also creates "/nodes/foo/multiplier" set/get methods and "nodes/foo/inlets/multiplier" to link, unlink, ...)
-  INLET (   Test,  info,     AnyValue, "Printout value." )
-  
-  // define an outlet (also creates "/nodes/Test/outlets/result" to link, unlink, etc)
-  // to "spy" on the outlet's result by hovering connection/outlet, we must register as observer on the outlet (=osc connection).
+  // Define an outlet (also creates "/nodes/Test/outlets/result" to link, unlink, etc).
+  // To "spy" on the outlet's result by hovering connection/outlet, we must register as observer on the outlet (=osc connection).
   OUTLET(   Test, counter,   NumberValue, "Increasing counter.")
   OUTLET(   Test, nil,       NilValue,    "Sends nil values.")
   
-  // define accessors for attributes not used as inlets
+  // Define accessors for attributes not used as inlets.
   ACCESSOR( Test, message,   "Example of value storage (String)." )
-  ACCESSOR( Test, counter,   "Example of value storage (real_t)." )
   
-  // define a class method
-  //            class  method  info message
+  // Define a class method.
   CLASS_METHOD( Test,  hello,  "If the input value is 0: stop. If it is greater the 0: start. Bang toggles on/off." )
 }
