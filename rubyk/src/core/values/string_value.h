@@ -82,15 +82,13 @@ public:
     return this_data->mString == s;    
   }
   
-  std::string * string() // FIXME: maybe we should return a reference...
+  /** Return a const version of the std::string storage. */
+  const std::string& string() const
   {
-    return mPtr ? &data_pointer()->mString : NULL; // FIXME: shouldn't we use mutable_data() here ?
+    return mPtr ? data_pointer()->mString : sNoString;
   }
   
-  const std::string * string() const
-  {
-    return mPtr ? &data_pointer()->mString : NULL;
-  }
+  const static std::string sNoString;  /**< Empty string used as return value when no data is available. */
 };
 
 #undef GET_THIS_DATA

@@ -45,9 +45,6 @@ test/runner: test/runner.cpp $(LINKER_OBJECTS) objects
 src/core/command.cpp: src/core/command.rl
 	${RAGEL} src/core/command.rl -o src/core/command.cpp
 
-globals.o: src/core/globals.cpp
-	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
-
 tmatrix.o: src/core/tmatrix.cpp src/templates/tmatrix.h
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 

@@ -7,16 +7,16 @@ public:
   void test_create( void )
   {
     String n("Hello World!");
-    TS_ASSERT_EQUALS( *n.string(), "Hello World!");
+    TS_ASSERT_EQUALS( n.string(), "Hello World!");
     // anonymize
     Value v(n);
     
     String n2;
     TS_ASSERT(v.set(n2));
-    TS_ASSERT_EQUALS( *n2.string(), "Hello World!");
+    TS_ASSERT_EQUALS( n2.string(), "Hello World!");
     
     n2 = "foo";
-    TS_ASSERT_EQUALS( *n2.string(), "foo");
+    TS_ASSERT_EQUALS( n2.string(), "foo");
     TS_ASSERT(n.set(n2));
   }
   
@@ -36,9 +36,9 @@ public:
   {
     String n;
     n = "My name is Bob.";
-    TS_ASSERT_EQUALS( *n.string(), "My name is Bob.");
+    TS_ASSERT_EQUALS( n.string(), "My name is Bob.");
     n = "My name is Joe.";
-    TS_ASSERT_EQUALS( *n.string(), "My name is Joe.");
+    TS_ASSERT_EQUALS( n.string(), "My name is Joe.");
   }
   
   void test_append( void )
@@ -55,10 +55,10 @@ public:
     String n3("lala"); // third StringData created
     assert_id(n3, 3);
     
-    TS_ASSERT_EQUALS( "My name is Bob.", *n.string());
+    TS_ASSERT_EQUALS( "My name is Bob.", n.string());
     n.append(" My friend is Joe.");
     assert_id(n, 2); // same old id
-    TS_ASSERT_EQUALS( "My name is Bob. My friend is Joe.", *n.string());
+    TS_ASSERT_EQUALS( "My name is Bob. My friend is Joe.", n.string());
     
     String n4("lala"); // fourth StringData created
     assert_id(n4, 4);

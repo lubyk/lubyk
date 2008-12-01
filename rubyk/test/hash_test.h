@@ -30,8 +30,8 @@ public:
     TS_ASSERT_EQUALS( dict["name"].data_type(), StringValue);
     String s(dict["name"]), s2;
     TS_ASSERT(dict["name"].set(s2));
-    TS_ASSERT_EQUALS( *s.string(), "foo");
-    TS_ASSERT_EQUALS( *s2.string(), "foo");
+    TS_ASSERT_EQUALS( s.string(), "foo");
+    TS_ASSERT_EQUALS( s2.string(), "foo");
     assert_id(s, 4); // 1 = Hash, 2 = 'first', 3 = 'second', 4 = 'foo'
     assert_id(s2,4);
   }

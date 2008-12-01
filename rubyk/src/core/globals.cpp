@@ -3,6 +3,7 @@
 
 //FIX #include "class.h"
 #include "object.h"
+#include "values.h"
 
 ////// GLWINDOW HACK /////
 bool gRunning;
@@ -24,5 +25,8 @@ unsigned int Object::sIdCounter    = 0;
 // Values
 Value gNilValue;        // globals declared in values.h
 Bang  gBangValue(true); // globals declared in values.h
+
+// StringValue
+const  std::string String::sNoString("");
 
 #endif // _GLOBALS_CPP_
