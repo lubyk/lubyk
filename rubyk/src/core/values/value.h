@@ -15,15 +15,21 @@ For the wrapper class +Value+, the +type+ is always +AnonymousValue+ and the +da
 class Value : public SmartPtr<Data>
 {
 public:
-  Value()
-  {}
+  Value() {}
+  
+  Value(const std::string& s)
+  {
+    from_string(s);
+  }
   
   Value(const Value& pOther)
   { pOther.set(*this); }
   
   /** Anonymization of the content to the ancestor class +Data+. */
-  Value(Data * p) : SmartPtr<Data>(p) 
-  {}
+  Value(Data * p) : SmartPtr<Data>(p) {}
+  
+  /** Parse string to build a value (String, Hash, Number, etc). */
+  size_t from_string(const std::string& s);
   
   /** Returns the value-type (type of the pointer itself). */
   virtual value_t type() const

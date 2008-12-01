@@ -1,5 +1,50 @@
 #include "values.h"
 
+size_t Value::from_string(const std::string& p)
+{
+  unsigned int size = p.size();
+  unsigned int pos = 0;
+  unsigned int value_end;
+  Hash h;
+  
+  switch (p[0]) {
+    case '1':
+    case '2':
+    case '3':
+    case '4':
+    case '5':
+    case '6':
+    case '7':
+    case '8':
+    case '9':
+    case '0':
+      // Number
+      pos = p.find(' ',pos);
+      value_end = (pos == std::string::npos) ? size : pos;
+      Number(p.substr(0, value_end)).set(*this);
+      return value_end;
+    case '"':
+      // String
+      pos++;
+      value_end = p.find('"',pos); // FIXME: parse escaped \"
+      if (pos == std::string::npos) {
+        gNilValue.set(*this);
+        return size; // bad format, abort
+      }
+      String(p.substr(pos, value_end - pos)).set(*this);
+      return value_end + 1;
+    case '{':
+      // Hash
+      pos++;
+      pos += h.mutable_data()->build_hash(p.substr(pos, size - pos));
+      h.set(*this);
+      return pos;
+      // FIXME: matrix, error, nil, bang, etc
+    default:
+      return size; // abort, error
+  }
+}
+
 std::ostream& operator<< (std::ostream& pStream, const Value& val)
 {
   if (val.mPtr && val.mPtr->mDataPtr) {

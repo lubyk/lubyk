@@ -161,13 +161,15 @@ public:
   
   friend std::ostream& operator<< (std::ostream& pStream, const HashData& p);
   
+  /** Build a hash from a string. */
+  size_t build_hash (const std::string& p);
+  
 private:  
   friend class Hash;
   THash<std::string,Value>  mParameters; /** Hash of std::string => Value. */
   
   std::vector<std::string>  mListValues; //TODO: remove this and store values in a matrix as first element in dictionary.
   
-  void build_hash (const std::string& p);
 };
 
 /** Value class to hold a single number (real_t). */

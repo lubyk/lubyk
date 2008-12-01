@@ -11,12 +11,6 @@
 #define ___ERK_ASSERT_EQUALS(f,l,cmd,x,y,m) CxxTest::doAssertEquals( (f), (l), (cmd), (x), #y, (y), (m) )
 #define ___RK_ASSERT_EQUALS(f,l,cmd,x,y,m) { _TS_TRY { ___ERK_ASSERT_EQUALS(f,l,cmd,x,y,m); } __TS_CATCH(f,l) }
 #define _RK_ASSERT_EQUALS(f,l,cmd,x,y) ___RK_ASSERT_EQUALS(f,l,cmd,x,y,0)
-
-/** Usage:
-* setup: creates an initial state with a Print node called 'p'.
-* parse: parse commands.
-
-*/
 /*
 class NodeTester
 {
@@ -36,42 +30,43 @@ protected:
     mNode = Class::create(NULL, "n", pClass, pValue, &mOutput);
   }
   
-  void create(const char * pValue)
-  {
-    mNode = Class::create(NULL, "n", mClassName, pValue, &mOutput);
-  }
-  
-  void assert_method_result(const char * pMethod, const char * p, const char * pOutput)
-  {
-    if (!mNode) {
-      printf("Node not set !\n Test aborted.\n");
-      TS_ABORT();
-    }
-    mNode->set_output(&mOutput);
-    mOutput.str(std::string("")); // clear output
-    mNode->execute_method(pMethod, Value(p));
-    TS_ASSERT_EQUALS( mOutput.str(), std::string(pOutput));
-  }
-  
-  void assert_spy(const char* pSpy)
-  {
-    if (!mNode) {
-      printf("Node not set !\n Test aborted.\n");
-      TS_ABORT();
-    }
-    TS_ASSERT_EQUALS( std::string(mNode->get_spy()), std::string(pSpy) );
-  }
-  
-  void assert_inspect(const char* pSpy)
-  {
-    if (!mNode) {
-      printf("Node not set !\n Test aborted.\n");
-      TS_ABORT();
-    }
-    TS_ASSERT_EQUALS( std::string(mNode->inspect()), std::string(pSpy) );
-  }
+//  void create(const char * pValue)
+//  {
+//    mNode = Class::create(NULL, "n", mClassName, pValue, &mOutput);
+//  }
+//  
+//  void assert_method_result(const char * pMethod, const char * p, const char * pOutput)
+//  {
+//    if (!mNode) {
+//      printf("Node not set !\n Test aborted.\n");
+//      TS_ABORT();
+//    }
+//    mNode->set_output(&mOutput);
+//    mOutput.str(std::string("")); // clear output
+//    mNode->execute_method(pMethod, Value(p));
+//    TS_ASSERT_EQUALS( mOutput.str(), std::string(pOutput));
+//  }
+//  
+//  void assert_spy(const char* pSpy)
+//  {
+//    if (!mNode) {
+//      printf("Node not set !\n Test aborted.\n");
+//      TS_ABORT();
+//    }
+//    TS_ASSERT_EQUALS( std::string(mNode->get_spy()), std::string(pSpy) );
+//  }
+//  
+//  void assert_inspect(const char* pSpy)
+//  {
+//    if (!mNode) {
+//      printf("Node not set !\n Test aborted.\n");
+//      TS_ABORT();
+//    }
+//    TS_ASSERT_EQUALS( std::string(mNode->inspect()), std::string(pSpy) );
+//  }
 };
-
+*/
+/*
 class ParseTest : public CxxTest::TestSuite
 {
 public:

@@ -22,6 +22,16 @@ public:
     TS_ASSERT(v.is_hash());
   }
   
+  void test_dictionary_create_hash_in_hash( void )
+  {
+    Hash dict("first:1 second:{ blue:\"melon\"}");
+    TS_ASSERT_EQUALS( dict.size(), 2);
+    Hash h = dict["second"];
+    TS_ASSERT(h.is_hash());
+    TS_ASSERT(h["blue"].is_string());
+    TS_ASSERT_EQUALS( dict.to_string(), "[1] { first:[2] 1.00 second:[3] { blue:[4] \"melon\" } }");
+  }
+  
   void test_dictionary_get( void )
   {
     Hash dict("first:1 second:2 name:\"foo\"");

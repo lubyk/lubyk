@@ -22,6 +22,12 @@ public:
     assert_log("[1] dead");
   }
   
+  void test_from_string( void )
+  {
+    Value s("\"Hello\"");
+    TS_ASSERT(s.is_string());
+  }
+  
   void test_clone( void )
   {
     TestValue v1(new TestData);
