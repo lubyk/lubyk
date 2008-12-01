@@ -155,6 +155,13 @@ public:
     return mPtr->mDataPtr->set(pResult);
   }
   
+  /** Try to convert the data to 'U', returning default on failure. */
+  template<typename U>
+  const U operator|| (const U& pDefault) const
+  {
+    return is_nil() ? pDefault : mPtr->mDataPtr->convert(pDefault);
+  }
+  
 #ifdef _TESTING_
   size_t data_id()
   {

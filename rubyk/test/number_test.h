@@ -54,6 +54,32 @@ public:
     TS_ASSERT_EQUALS(d, 3.45);
   }
   
+  void test_or_default( void )
+  {
+    Number n(3.45);
+    Number nothing;
+    Value  niet;
+    real_t d = nothing || 1.2;
+    TS_ASSERT_EQUALS(d, 1.2);
+    d = n || 8.9;
+    TS_ASSERT_EQUALS(d, 3.45);
+    
+    int i = niet || 12;
+    TS_ASSERT_EQUALS(i, 12);
+    i = n || 89;
+    TS_ASSERT_EQUALS(i, 3);
+  
+  }
+  
+  void test_type_conversion( void )
+  {
+    Number n(3.45);
+    double d2 = n;
+    int    i2 = n;
+    TS_ASSERT_EQUALS(d2, 3.45);
+    TS_ASSERT_EQUALS(i2, 3);
+  }
+  
   void test_stream( void )
   {
     std::ostringstream out(std::ostringstream::out);

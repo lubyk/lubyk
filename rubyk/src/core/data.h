@@ -66,6 +66,26 @@ public:
     }
   }
   
+  /** Explicit conversion to a 'real_t'. Returns the default value if not implemented in the specialized Data. */
+  virtual real_t convert(const real_t& pDefault) const
+  {
+    printf("Data (real_t) version in [%s]\n", type_name());
+    return pDefault;
+  }
+  
+  /** Explicit conversion to a 'real_t'. Returns the default value if not implemented in the specialized Data. */
+  virtual int convert(const int& pDefault) const
+  {
+    printf("Data (int) version.\n");
+    return pDefault;
+  }
+  
+  /** Explicit conversion to a 'std::string'. Returns the default value if not implemented in the specialized Data. */
+  virtual std::string convert(const std::string& pDefault) const
+  {
+    return pDefault;
+  }
+  
 #ifdef _TESTING_
  size_t id() const
  { return mId; }

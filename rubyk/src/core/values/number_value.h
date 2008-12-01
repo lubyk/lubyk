@@ -28,6 +28,18 @@ public:
     return true;
   }
   
+  /** Explicit conversion to a 'real_t'. */
+  virtual real_t convert(const real_t& pDefault) const
+  {
+    return mReal;
+  }
+  
+  /** Explicit conversion to a 'int'. */
+  virtual int convert(const int& pDefault) const
+  {
+    return (int)mReal;
+  }
+  
   /** Display number inside stream. */
   virtual void to_stream(std::ostream& pStream) const
   { 
@@ -75,6 +87,15 @@ public:
       return 0;
     }
   }
+  
+  /** Type conversion to real_t. */
+  operator real_t()
+  { return value(); }
+  
+  /** Type conversion to real_t. */
+  operator int()
+  { return (int)value(); }
+  
 };
 
 #endif // _NUMBER_VALUE_H_
