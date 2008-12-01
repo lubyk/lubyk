@@ -272,13 +272,7 @@ protected:
   
   /** Used to display some information on the current node. Should be overwridden by subclasses. */
   virtual void spy() = 0;
-  
-  /** Display help message. */
-  virtual void help() {
-    // do nothing
-    *mOutput << "Does nothing.\n";
-  }
-  
+    
   void debug()
   {
     if (!this) {

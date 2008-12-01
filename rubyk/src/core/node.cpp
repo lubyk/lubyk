@@ -121,7 +121,7 @@ void Node::execute_method (const std::string& pMethod, const Value& p)
 {
   member_method_t method;
   if (pMethod == "help" ){
-    help();
+    //FIX help();
   } else if (pMethod == "debug" || pMethod == "d") {
     debug();
   } else if (pMethod == "set" || pMethod == "s") {

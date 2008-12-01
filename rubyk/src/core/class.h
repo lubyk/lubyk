@@ -199,7 +199,7 @@ private:
     obj->set_server(pServer);
     obj->set_output(pOutput);
     pClass->make_slots(obj);
-    obj->set_is_ok( obj->init() && obj->set(p) ); // if init returns false, the node goes into 'broken' mode.
+    obj->set_is_ok( obj->init() && obj->set(p) ); // if init or set returns false, the node goes into 'broken' mode.
     return (Node*)obj;
   }
   

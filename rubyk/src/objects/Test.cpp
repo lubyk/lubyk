@@ -4,51 +4,74 @@
 class Test : public Node
 {
 public:
-  
-  bool set (const Value& p)
+  /** Initialization code. The init code is run after the node is properly initialized. */
+  bool init()
   {
-    mMessage = p.val("message", "Hello World !", true);
-    if (mMessage == "is output ok?")
-      *mOutput << "Output set" << std::endl;
-      
-    mCounter = p.val("counter", 0);
+    mMessage = "Hello World !";
     return true;
   }
   
-  static void hello(std::ostream * pOutput, const Value& p)
+  /** Example to set an attribute stored as a Value (a String here). This is also an accessor (used by sending a nil value). */
+  const Value message (const Value& val)
   {
-    *pOutput << "Hello World!\n";
+    mMessage = val;
+    return mMessage;
   }
   
+  /** Example to set an attribute stored as a native type (an int here). This is also an accessor (used by sending a nil value). */
+  const Value counter (const Value& val)
+  {
+    mCounter = val || mCounter;
+    return Number(mCounter);
+  }
+  
+  /** Test output. */
+  const Value out_message (const Value& val)
+  {
+    if (String(val) == "is output ok?")
+      *mOutput << "Output set" << std::endl;
+    
+    return gNilValue;
+  }
+  
+  //FIX ????
   void spy() 
   { bprint(mSpy, mSpySize,"'%s' %i", mMessage.c_str(), mCounter); }
   
-  void help()
-  { *mOutput << "Don't hit me!\n"; }
-
-  // inlet 1
-  void bang(const Value& sig)
+  // inlet 1. Increments mCounter on bang.
+  void bang(const Value& val)
   {
-    sig.get(&mCounter);
-    send(++mCounter);
+    if (val.is_number())
+      mCounter = val || mCounter;
+    else if (val.is_bang())
+      send(++mCounter);
     
+    // special nil sending test
     *mOutput << "sending nil=>";
     send(2, gNilValue);
     *mOutput << "<=done.\n";
   }
   
-  void info(const Value& p)
+  /** (inlet 2). Displays the values sent. */
+  const Value info(const Value& val)
   {
-    *mOutput << p << std::endl;
+    *mOutput << val << std::endl;
+    return gNilValue;
   }
   
-  void test_fail(const Value& p)
+  /** Another method to test the "TRY" macro. */
+  const Value test_fail(const Value& p)
   {
     if (!test_try()) {
       *mOutput << "try failed";
     }
   }
   
+  /** Class method that displays 'Hello: <parameter>'. */
+  static const Value hello(const Value& val)
+  {
+    return String(std::string("Hello: ").append(val.to_string());
+  }
   
 private:
   bool test_try() {
@@ -60,17 +83,32 @@ private:
   }
   
   /* data */
-  std::string mMessage;
+  String mMessage;
   int mCounter;
 };
 
 
 extern "C" void init()
 { 
-  CLASS (Test)
-  OUTLET(Test, increment_counter)
-  OUTLET(Test, send_nil)
-  METHOD(Test, info)
-  METHOD(Test, test_fail)
-  CLASS_METHOD(Test, hello)
+  // define class
+  CLASS (   Test, "Object used for testing. Does not do anything really useful.")
+  
+  // define bang  (class, method, accepted types, message)
+  INLET (   Test, bang,      NumberValue | BangValue, "Set counter | increment and send." )
+  
+  // define 'info' inlet (also creates "/nodes/foo/multiplier" set/get methods and "nodes/foo/inlets/multiplier" to link, unlink, ...)
+  INLET (   Test,  info,     AnyValue, "Printout value." )
+  
+  // define an outlet (also creates "/nodes/Test/outlets/result" to link, unlink, etc)
+  // to "spy" on the outlet's result by hovering connection/outlet, we must register as observer on the outlet (=osc connection).
+  OUTLET(   Test, counter,   NumberValue, "Increasing counter.")
+  OUTLET(   Test, nil,       NilValue,    "Sends nil values.")
+  
+  // define accessors for attributes not used as inlets
+  ACCESSOR( Test, message,   "Example of value storage (String)." )
+  ACCESSOR( Test, counter,   "Example of value storage (real_t)." )
+  
+  // define a class method
+  //            class  method  info message
+  CLASS_METHOD( Test,  hello,  "If the input value is 0: stop. If it is greater the 0: start. Bang toggles on/off." )
 }

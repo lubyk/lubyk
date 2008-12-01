@@ -199,6 +199,11 @@ public:
     return is_nil() ? pDefault : mPtr->mDataPtr->convert(pDefault);
   }
   
+  std::string to_string() const
+  {
+    return mPtr ? mPtr->mDataPtr->to_string() : std::string("Nil");
+  }
+  
 #ifdef _TESTING_
   size_t data_id()
   {

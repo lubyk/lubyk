@@ -21,6 +21,7 @@ enum value_t {
                           //                                                                 => Object::trigger(url, param)
   HashValue = 128,
   ErrorValue = 32768,     // 2^15
+  AnyValue = ErrorValue | HashValue | CommandValue | CharMatrixValue | StringValue | MatrixValue | NumberValue | AnonymousValue | BangValue | NilValue,
 };
 
 #endif // _RUBYK_TYPES_H_

@@ -1,7 +1,7 @@
 #ifndef _DATA_H_
 #define _DATA_H_
 #include "value.h"
-#include <ostream>
+#include <sstream>
 
 /** Base class for all data transmitted along objects or used as parameter/return for methods. */
 class Data
@@ -34,6 +34,13 @@ public:
   virtual void to_stream(std::ostream& pStream) const
   {
     pStream << type_name();
+  }
+  
+  std::string to_string() const
+  {
+    std::ostringstream os(std::ostringstream::out);
+    to_stream(os);
+    return os.str();
   }
   
   /** Return the textual representation of a value from a value type. */
