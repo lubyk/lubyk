@@ -25,26 +25,50 @@ public:
   Value(Data * p) : SmartPtr<Data>(p) 
   {}
   
-  /** Returns the data-type (type of the content pointed by the smart pointer). */
-  value_t data_type() const
-  { return mPtr ? mPtr->mDataPtr->type() : NilValue; }
-  
   /** Returns the value-type (type of the pointer itself). */
   virtual value_t type() const
   { return AnonymousValue; }
   
+  /** Returns the data-type (type of the content pointed by the smart pointer). */
+  value_t data_type() const
+  { return mPtr ? mPtr->mDataPtr->type() : NilValue; }
+  
+  /** Return true if the object's data is Nil. */
+  inline bool is_nil() const
+  { return !mPtr; }
   
   /** Return true if the object's data is a BangData. */
   inline bool is_bang() const
   { return data_type() == BangValue; }
   
+  /** Return true if the object's data is a NumberData. */
+  inline bool is_number() const
+  { return data_type() == NumberValue; }
+  
+  /** Return true if the object's data is a MatrixData. */
+  inline bool is_matrix() const
+  { return data_type() == MatrixValue; }
+  
+  /** Return true if the object's data is a StringData. */
+  inline bool is_string() const
+  { return data_type() == StringValue; }
+  
+  /** Return true if the object's data is a CharMatrixData. */
+  inline bool is_char_matrix() const
+  { return data_type() == CharMatrixValue; }
+  
+  /** Return true if the object's data is a CommandData. */
+  inline bool is_command() const
+  { return data_type() == CommandValue; }
+  
+  /** Return true if the object's data is a HashData. */
+  inline bool is_hash() const
+  { return data_type() == HashValue; }
+  
   /** Return true if the object's data is an ErrorData. */
   inline bool is_error() const
   { return data_type() == ErrorValue; }
   
-  /** Return true if the object's data is Nil. */
-  inline bool is_nil() const
-  { return !mPtr; }
   
   /** Textual representation of the value-type. */
   const char* type_name() const
@@ -129,6 +153,19 @@ public:
             return false;
         }
         
+      case HashValue:
+        switch (pOther.type())
+        {
+          // what does the "other" wrapper expect ?
+          case AnonymousValue: // anything
+          case HashValue:
+            pOther = *this;   // pOther acquires our content
+            return true;
+          case StringValue:    // convert to hash ?
+          default:
+            return false;
+        }
+      
       case ErrorValue:
         switch (pOther.type())
         {

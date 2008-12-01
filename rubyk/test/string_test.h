@@ -20,6 +20,18 @@ public:
     TS_ASSERT(n.set(n2));
   }
   
+  void test_is_a( void )
+  {
+    String e;
+    String e2("Blah");
+    Value v;
+    TS_ASSERT(!e.is_string());
+    TS_ASSERT(e2.is_string());
+    TS_ASSERT(!v.is_string());
+    e2.set(v);
+    TS_ASSERT(v.is_string());
+  }
+  
   void test_operator_equal( void )
   {
     String n;

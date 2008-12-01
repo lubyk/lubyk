@@ -23,6 +23,18 @@ public:
     TS_ASSERT_EQUALS( std::string(e.message()), "Something bad happened.");
   }
   
+  void test_is_a( void )
+  {
+    Error e;
+    Error e2("Bad");
+    Value v;
+    TS_ASSERT(!e.is_error());
+    TS_ASSERT(e2.is_error());
+    TS_ASSERT(!v.is_error());
+    e2.set(v);
+    TS_ASSERT(v.is_error());
+  }
+  
   void test_operator_equal( void )
   {
     Error n("Something bad happened.");

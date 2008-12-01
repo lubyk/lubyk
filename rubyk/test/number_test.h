@@ -15,6 +15,18 @@ public:
     TS_ASSERT_EQUALS( 123.456, n2.value());
   }
   
+  void test_is_a( void )
+  {
+    Number e;
+    Number e2(1.2);
+    Value v;
+    TS_ASSERT(!e.is_number());
+    TS_ASSERT(e2.is_number());
+    TS_ASSERT(!v.is_number());
+    e2.set(v);
+    TS_ASSERT(v.is_number());
+  }
+  
   void test_operator_equal( void )
   {
     Number n;

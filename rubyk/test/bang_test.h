@@ -16,6 +16,18 @@ public:
     TS_ASSERT( v.is_bang());
   }
   
+  void test_is_a( void )
+  {
+    Bang e;
+    Bang e2(true);
+    Value v;
+    TS_ASSERT(!e.is_bang());
+    TS_ASSERT(e2.is_bang());
+    TS_ASSERT(!v.is_bang());
+    e2.set(v);
+    TS_ASSERT(v.is_bang());
+  }
+  
   void test_stream( void )
   {
     std::ostringstream out(std::ostringstream::out);

@@ -10,6 +10,18 @@ public:
     TS_ASSERT_EQUALS( dict.size(), 2);
   }
   
+  void test_is_a( void )
+  {
+    Hash e;
+    Hash e2("one:1 two:2");
+    Value v;
+    TS_ASSERT(!e.is_hash());
+    TS_ASSERT(e2.is_hash());
+    TS_ASSERT(!v.is_hash());
+    e2.set(v);
+    TS_ASSERT(v.is_hash());
+  }
+  
   void test_dictionary_get( void )
   {
     Hash dict("first:1 second:2 name:\"foo\"");

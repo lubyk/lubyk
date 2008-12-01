@@ -20,6 +20,18 @@ public:
     TS_ASSERT_EQUALS(n2.size(), 6);
   }
   
+  void test_is_a( void )
+  {
+    CharMatrix e;
+    CharMatrix e2(1,1);
+    Value v;
+    TS_ASSERT(!e.is_char_matrix());
+    TS_ASSERT(e2.is_char_matrix());
+    TS_ASSERT(!v.is_char_matrix());
+    e2.set(v);
+    TS_ASSERT(v.is_char_matrix());
+  }
+  
   void test_size( void )
   {
     CharMatrix m;

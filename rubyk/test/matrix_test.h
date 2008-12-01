@@ -18,6 +18,18 @@ public:
     TS_ASSERT_EQUALS( 6, n2.size());
   }
   
+  void test_is_a( void )
+  {
+    Matrixx e;
+    Matrixx e2(1,1);
+    Value v;
+    TS_ASSERT(!e.is_matrix());
+    TS_ASSERT(e2.is_matrix());
+    TS_ASSERT(!v.is_matrix());
+    e2.set(v);
+    TS_ASSERT(v.is_matrix());
+  }
+  
   void test_size( void )
   {
     Matrixx m;
