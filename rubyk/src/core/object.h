@@ -298,10 +298,10 @@ private:
   
   static THash<std::string, Object*> sObjects;   /**< Hash to find objects from their url. */
   
+protected:
   Object *                    mParent;           /**< Pointer to parent object. */
   THash<std::string,Object *> mChildren;         /**< Hash with pointers to sub-objects / methods */
   std::string                 mUrl;              /**< Absolute path to object (cached). TODO: this cache is not really needed. */
-protected:  
   std::string                 mName;             /**< Unique name in parent's context. */
   std::string                 mInfo;             /**< Help/information string. */
   static unsigned int         sIdCounter;        /**< Use to set a default id and position. */

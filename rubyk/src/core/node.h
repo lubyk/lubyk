@@ -27,7 +27,7 @@ class Planet;
 class Node : public Object
 {
 public:
-  Node() : mClass(NULL), mServer(NULL), mId(0), mLooped(false), mIsOK(true), mSpy(NULL), mSpySize(0), mInspect(NULL), mInspectSize(0), mOutput(&std::cout), mDebug(false)
+  Node() : mServer(NULL), mId(0), mLooped(false), mIsOK(true), mSpy(NULL), mSpySize(0), mInspect(NULL), mInspectSize(0), mOutput(&std::cout), mDebug(false)
   { 
     mTriggerPosition = sIdCounter; // last created is further on the right
   }
@@ -76,8 +76,8 @@ public:
   void set_server(Planet * pServer)
   { mServer = pServer; }
   
-  void set_class(Class * pClass)
-  { mClass = pClass; }
+  void set_class_url(const std::string& pClass)
+  { mClassUrl = pClass; }
   
   void set_output(std::ostream * pOutput)
   { mOutput = pOutput; }
@@ -238,8 +238,8 @@ public:
   void set_is_ok (bool pStatus) 
   { mIsOK = pStatus; }
   
-  Class * klass () 
-  { return mClass; }
+  const String klass () const
+  { return mClassUrl; }
   
   //const std::string& variable_name () { return mName; }
   const char * c_name () { return mName.c_str(); }
@@ -386,7 +386,7 @@ protected:
   
   // ================ MEMBER DATA    ================= //
   /** Host server. */
-  Class * mClass;  /**< Pointer to the class of the node. Used by the node to know which methods it owns, etc (inspection). */
+  String mClassUrl; /**< String representation of the url to the node's class. Only used by osc. Inspection is done through the Object tree. */
   Planet * mServer; /**< Pointer to the current server. Used to register event and get information on the running application. */
   long  mId;       /**< Unique id (in server scope). */
   bool  mLooped;   /**< True if the node is banged on every loop. */
