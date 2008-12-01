@@ -155,6 +155,22 @@ public:
     assert_id(res, 2);
     
     TS_ASSERT(res.is_error());
-    TS_ASSERT_EQUALS( Error(res).message(), std::string("Object not found.") );
+    TS_ASSERT_EQUALS( Error(res).message(), std::string("Object '/foo' not found.") );
+  }
+  
+  void test_get_info( void )
+  {
+    Object root("root");
+    Object no_info("foo");
+    Value res, param;
+    
+    root.set_info("This is the root node.");
+    res = Object::call("/root/#info",param);
+    TS_ASSERT_EQUALS( res.to_string(), "[1] \"This is the root node.\"");
+    res = Object::call("/foo/#info",param);
+    TS_ASSERT_EQUALS( res.to_string(), "[2] \"\"");
+    
+    res = Object::call("/blah/#info",param);
+    TS_ASSERT_EQUALS( Error(res).message(), std::string("Object '/blah' not found.") );
   }
 };

@@ -88,12 +88,25 @@ public:
   static Value call (const std::string& pUrl, const Value& sig)
   {
     Object * target;
-    // 1. find object from url
-    if (get(&target, pUrl)) {
-      // 2. call
-      return target->trigger(sig);
+    size_t info_pos = pUrl.rfind("/#info");
+    // 1. does the url end with '/#info' ?
+    if (info_pos != std::string::npos) {
+      // return info string
+      // find object from url
+      if (get(&target, pUrl.substr(0, info_pos))) {
+        return String(target->mInfo);
+      } else {
+        return Error(std::string("Object '").append(pUrl.substr(0, info_pos)).append("' not found."));
+      }
     } else {
-      return Error("Object not found.");
+      // call
+      // find object from url
+      if (get(&target, pUrl)) {
+        // call
+        return target->trigger(sig);
+      } else {
+        return Error(std::string("Object '").append(pUrl).append("' not found."));
+      }
     }
   }
   
@@ -163,6 +176,24 @@ public:
     
     // this forces the name to sync in the parent's scope
     if (mParent) set_parent(mParent);
+  }
+  
+  /** Get information/help string. */
+  const std::string& info() const
+  {
+    return mInfo;
+  }
+  
+  /** Define information/help string. */
+  void set_info (const char* pInfo)
+  {
+    mInfo = pInfo;
+  }
+  
+  /** Define information/help string. */
+  void set_info (const std::string& pInfo)
+  {
+    mInfo = pInfo;
   }
   
   const THash<std::string,Object *> children() const
@@ -272,9 +303,10 @@ private:
   Object *                    mParent;           /**< Pointer to parent object. */
   THash<std::string,Object *> mChildren;         /**< Hash with pointers to sub-objects / methods */
   String                      mChildrenStrList;  /**< Comma separated list of children (cached). */
-  std::string                 mUrl;              /**< Absolute path to object (cached). */
+  std::string                 mUrl;              /**< Absolute path to object (cached). TODO: this cache is not really needed. */
 protected:  
   std::string                 mName;             /**< Unique name in parent's context. */
+  std::string                 mInfo;             /**< Help/information string. */
   static unsigned int         sIdCounter;        /**< Use to set a default id and position. */
 
 };

@@ -41,7 +41,7 @@ public:
   }
   
   /** Display number inside stream. */
-  virtual std::string to_string() const
+  virtual void to_stream(std::ostream& pStream) const
   { 
 #ifdef _TESTING_
     char buffer[200];
@@ -50,7 +50,7 @@ public:
     char buffer[20];
     snprintf(buffer, 20, "%.2f", mReal);
 #endif
-    return std::string(buffer);
+    pStream << buffer;
   }
   
 private:
