@@ -20,6 +20,7 @@ class Bang : public Value
 {
 public:
   VALUE_METHODS(Bang, BangData, BangValue, Value)
+  VALUE_FROM_STRING(Bang)
   
   // this is the only way to instanciate a bang
   Bang(bool whatever) : Value(new BangData()) {} // TODO: replace by gBangValue.data_pointer() ?

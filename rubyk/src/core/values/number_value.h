@@ -10,8 +10,6 @@ class NumberData : public Data
 public:
   DATA_METHODS(NumberData, NumberValue)
 
-  NumberData(const std::string& s) : mReal(atof(s.c_str())) {}
-  
   NumberData(const real_t& d) : mReal(d) {}
   
   // copy constructor
@@ -63,6 +61,7 @@ class Number : public Value
 {
 public:
   VALUE_METHODS(Number, NumberData, NumberValue, Value)
+  VALUE_FROM_STRING(Number)
   
   Number(real_t d) : Value(new NumberData(d)) {}
   

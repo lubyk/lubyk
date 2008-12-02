@@ -51,6 +51,9 @@ tmatrix.o: src/core/tmatrix.cpp src/templates/tmatrix.h
 %.o: src/core/%.cpp src/core/%.h
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 	
+%.cpp: %.rl
+	$(RAGEL) $< -o $@
+	
 lib/MidiOut.rko: src/objects/MidiOut.cpp $(OBJECT_DEPENDS)
 	$(CC) $(CFLAGS) $(OBJECT_COMPILE) -framework CoreMIDI -framework CoreFoundation -framework CoreAudio  src/objects/midi/RtMidi.cpp src/objects/MidiOut.cpp -o $@
 	

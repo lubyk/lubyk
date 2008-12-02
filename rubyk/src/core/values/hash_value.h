@@ -177,6 +177,7 @@ class Hash : public Value
 {
 public:
   VALUE_METHODS(Hash, HashData, HashValue, Value)
+  VALUE_FROM_STRING(Hash)
     
   /** Set Hash from a string. */
   Hash& operator= (const std::string& s)
@@ -196,6 +197,9 @@ public:
     mutable_data()->rebuild(s);
   }
   
+  
+  // ADD PROXY METHODS HERE...
+  
   size_t size() const
   {
     return mPtr ? data_pointer()->mParameters.size() : 0;
@@ -204,12 +208,17 @@ public:
   /** Return a Value or Nil from a string key. */
   const Value operator[] (const std::string& pKey) const;
   
+  /** Return a Value or Nil from a string key. */
   const Value operator[] (const char * c) const
   {
     return (*this)[std::string(c)];
   }
   
-  // ADD PROXY METHODS HERE...
+  /** Set Value for string key. */
+  void set_key (const std::string& pKey, const Value& val) // FIXME: replace by 'set' and change Value.set for something else.
+  {
+    mutable_data()->mParameters.set(pKey, val);
+  }
   
   /** Return an iterator pointing at the first key in the dictionary. */
   Hash_iterator begin() const

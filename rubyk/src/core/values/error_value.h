@@ -36,6 +36,8 @@ class Error : public String
 {
 public:
   VALUE_METHODS(Error, ErrorData, ErrorValue, String)
+  Error(const std::string& s) : String(new ErrorData(s)) {}
+  Error(const char* s) : String(new ErrorData(std::string(s))) {}
   
   const char * message() const
   {

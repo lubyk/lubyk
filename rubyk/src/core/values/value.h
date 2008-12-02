@@ -22,14 +22,23 @@ public:
     from_string(s);
   }
   
+  Value(const char * s)
+  {
+    from_string(std::string(s));
+  }
+  
   Value(const Value& pOther)
   { pOther.set(*this); }
   
   /** Anonymization of the content to the ancestor class +Data+. */
   Value(Data * p) : SmartPtr<Data>(p) {}
   
-  /** Parse string to build a value (String, Hash, Number, etc). */
-  size_t from_string(const std::string& s);
+  /** Parse string to build a value from a json representation. */
+  size_t from_string(const std::string& s)
+  { return from_string(s.c_str()); }
+  
+  /** Parse string to build a value from a json representation. */
+  size_t from_string(const char * s);
   
   /** Returns the value-type (type of the pointer itself). */
   virtual value_t type() const
@@ -227,32 +236,38 @@ private:
 /** Macro to ease Value specialization. 
    *mutable_data* never returns NULL. New data is created on demand.
    */
-#define VALUE_METHODS(klass,data_type,signature,super) \
-  klass() {} \
-  klass(data_type * d) : super(d) {} \
-  klass(const std::string& s) : super(new data_type(s)) {} \
-  klass(const char * s) : super(new data_type(std::string(s))) {} \
-  virtual ~klass() {} \
-  klass(const Value& pOther) \
-  { pOther.set(*this); } \
-  const data_type * data () const \
-  { return mPtr ? data_pointer() : NULL; } \
-  const data_type * operator->() const \
-  { return data(); } \
-  const data_type& operator*() const \
-  { return *data(); } \
-  data_type * mutable_data () \
-  { if (!mPtr) make_data_ptr(); \
-    copy_if_shared(); \
-    return (data_type*)(mPtr->mDataPtr); } \
-  virtual value_t type() const \
-  { return signature; } \
-protected: \
-  inline void make_data_ptr () \
-  { mPtr = new Ptr(new data_type()); } \
-  inline data_type * data_pointer() const \
-  { return (data_type*)(mPtr->mDataPtr); } \
+#define VALUE_METHODS(klass,data_type,signature,super)              \
+  klass() {}                                                        \
+  klass(data_type * d) : super(d) {}                                \
+  virtual ~klass() {}                                               \
+  klass(const Value& pOther)                                        \
+  { pOther.set(*this); }                                            \
+  const data_type * data () const                                   \
+  { return mPtr ? data_pointer() : NULL; }                          \
+  const data_type * operator->() const                              \
+  { return data(); }                                                \
+  const data_type& operator*() const                                \
+  { return *data(); }                                               \
+  data_type * mutable_data ()                                       \
+  { if (!mPtr) make_data_ptr();                                     \
+    copy_if_shared();                                               \
+    return (data_type*)(mPtr->mDataPtr); }                          \
+  virtual value_t type() const                                      \
+  { return signature; }                                             \
+protected:                                                          \
+  inline void make_data_ptr ()                                      \
+  { mPtr = new Ptr(new data_type()); }                              \
+  inline data_type * data_pointer() const                           \
+  { return (data_type*)(mPtr->mDataPtr); }                          \
 public: \
 
+#define VALUE_FROM_STRING(klass)                                    \
+  klass(const std::string& s)                                       \
+  { Value v(s);                                                     \
+    v.set(*this); }                                                 \
+  klass(const char * s)                                             \
+  { Value v(s);                                                     \
+    v.set(*this); }                                                 \
+    
 std::ostream& operator<< (std::ostream& pStream, const Value& val);
 #endif // _VALUE_H_

@@ -47,6 +47,7 @@ class TMatrixx : public Value
 {
 public:
   VALUE_METHODS(TMatrixx, TMatrixData<T>, AnonymousValue, Value)
+  VALUE_FROM_STRING(TMatrixx)
   
   TMatrixx(size_t pRowCount, size_t pColCount) : Value(new TMatrixData<T>(pRowCount, pColCount)) {}
   

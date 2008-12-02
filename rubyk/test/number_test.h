@@ -6,13 +6,20 @@ public:
   void test_create( void )
   {
     Number n(123.456);
-    TS_ASSERT_EQUALS( 123.456, n.value());
+    TS_ASSERT_EQUALS( n.value(), 123.456);
     // anonymize
     Value v(n);
     
     Number n2;
     TS_ASSERT(v.set(n2));
-    TS_ASSERT_EQUALS( 123.456, n2.value());
+    TS_ASSERT_EQUALS( n2.value(), 123.456);
+  }
+  
+  void test_from_string( void )
+  {
+    Value n("1.45");
+    TS_ASSERT(n.is_number());
+    TS_ASSERT_EQUALS( Number(n).value(), 1.45);
   }
   
   void test_is_a( void )
@@ -31,9 +38,9 @@ public:
   {
     Number n;
     n = 123.456;
-    TS_ASSERT_EQUALS( 123.456, n.value());
+    TS_ASSERT_EQUALS( n.value(), 123.456);
     n = 456.789;
-    TS_ASSERT_EQUALS( 456.789, n.value());
+    TS_ASSERT_EQUALS( n.value(), 456.789);
   }
   
   void test_data( void )
@@ -48,13 +55,13 @@ public:
     Number n2(n1); // light copy
     const NumberData * d2 = n2.data();
     TS_ASSERT_EQUALS( d1, d2);
-    TS_ASSERT_EQUALS( 555.23, n1.value());
-    TS_ASSERT_EQUALS( 555.23, n2.value());
+    TS_ASSERT_EQUALS( n1.value(), 555.23);
+    TS_ASSERT_EQUALS( n2.value(), 555.23);
     // alter n1
     n1 = 888.12;
     d1 = n1.data(); // pointer to new data
-    TS_ASSERT_EQUALS( 888.12, n1.value());
-    TS_ASSERT_EQUALS( 555.23, n2.value());
+    TS_ASSERT_EQUALS( n1.value(), 888.12);
+    TS_ASSERT_EQUALS( n2.value(), 555.23);
     TS_ASSERT_DIFFERS( d1, d2);
   }
   
