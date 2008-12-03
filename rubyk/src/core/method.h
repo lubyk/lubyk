@@ -12,10 +12,8 @@ typedef const Value (*class_method_t )(const Value& p);
 class ClassMethod : public Object
 {
 public:
-  ClassMethod(Object * pParent, const std::string &pName, class_method_t pMethod) : Object(pParent, pName), mMethod(pMethod) {}
-  ClassMethod(Object&  pParent, const std::string &pName, class_method_t pMethod) : Object(pParent, pName), mMethod(pMethod) {}
-  ClassMethod(Object * pParent, const char * pName, class_method_t pMethod) : Object(pParent, pName), mMethod(pMethod) {}
-  ClassMethod(Object&  pParent, const char * pName, class_method_t pMethod) : Object(pParent, pName), mMethod(pMethod) {}
+  ClassMethod(const std::string &pName, class_method_t pMethod) : Object(pName), mMethod(pMethod) {}
+  ClassMethod(const char * pName, class_method_t pMethod) : Object(pName), mMethod(pMethod) {}
   
   virtual const Value trigger (const Value& val)
   {
@@ -31,10 +29,8 @@ private:
 class Method : public Object
 {
 public:
-  Method(Object * pParent, const std::string &pName, void * pReceiver, member_method_t pMethod) : Object(pParent, pName), mReceiver(pReceiver), mMethod(pMethod) {}
-  Method(Object&  pParent, const std::string &pName, void * pReceiver, member_method_t pMethod) : Object(pParent, pName), mReceiver(pReceiver), mMethod(pMethod) {}
-  Method(Object * pParent, const char * pName, void * pReceiver, member_method_t pMethod) : Object(pParent, pName), mReceiver(pReceiver), mMethod(pMethod) {}
-  Method(Object&  pParent, const char * pName, void * pReceiver, member_method_t pMethod) : Object(pParent, pName), mReceiver(pReceiver), mMethod(pMethod) {}
+  Method(const std::string &pName, void * pReceiver, member_method_t pMethod) : Object(pName), mReceiver(pReceiver), mMethod(pMethod) {}
+  Method(const char * pName, void * pReceiver, member_method_t pMethod) : Object(pName), mReceiver(pReceiver), mMethod(pMethod) {}
   
   virtual const Value trigger (const Value& val)
   {

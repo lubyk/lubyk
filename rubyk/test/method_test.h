@@ -30,7 +30,7 @@ public:
   void test_trigger_class_method( void )
   {
     Object root("root");
-    ClassMethod cm(root, "hello", &Person::class_method);
+    root.adopt(new ClassMethod("hello", &Person::class_method));
     Value res;
     Object * obj;
     TS_ASSERT(Object::get(&obj, "/root/hello"));
@@ -46,7 +46,7 @@ public:
   {
     Object root("root");
     Person p("Paul"); // [1]
-    Method paul_name(root, "paul_name", &p, &Method::cast_method<Person, &Person::name>);
+    root.adopt(new Method("paul_name", &p, &Method::cast_method<Person, &Person::name>));
     Value res;
     Object * obj;
     TS_ASSERT(Object::get(&obj, "/root/paul_name"));

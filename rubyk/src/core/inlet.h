@@ -21,7 +21,7 @@ public:
   Inlet (void* node, inlet_method_t pMethod) : Slot(node), mMethod(pMethod) {}
   
   /** Prototype based constructor. */
-  Inlet (Object * pParent, void * pNode, const InletPrototype& pProto) : Slot(pParent, pProto.mName, pNode), mMethod(pProto.mMethod)
+  Inlet (void * pNode, const InletPrototype& pProto) : Slot(pProto.mName, pNode), mMethod(pProto.mMethod)
   {
     set_info(pProto.mInfo);
   }

@@ -13,61 +13,57 @@ public:
   // FIXME: remove this constructor !
   Object() : mParent(NULL), mChildren(20)
   {
-    init_object(NULL, std::string(""));
+    mName = default_name();
+    object_moved(this);
   }
   
   Object(const char * pName) : mParent(NULL), mChildren(20)
   {
-    init_object(NULL, std::string(pName));
+    std::string name = pName;
+    mName = (name == "") ? default_name() : name;
+    object_moved(this);
   }
   
   Object(const std::string& pName) : mParent(NULL), mChildren(20)
   {
-    init_object(NULL, pName);
+    mName = (pName == "") ? default_name() : pName;
+    object_moved(this);
   }
   
-  Object(Object * pParent, const std::string &pName) : mParent(NULL), mChildren(20)
+  
+  /** This is the prefered way to insert new objects in the tree since it clearly highlights ownership in the parent. */
+  Object * adopt(Object * pObj)
   {
-    init_object(pParent, pName);
+    Object * oldParent = pObj->mParent;
+    
+    if (oldParent) oldParent->release(pObj);
+    
+    while (child(pObj->mName))
+      pObj->next_name();
+    
+    mChildren.set(pObj->mName,pObj);
+    pObj->mParent = this;
+    pObj->moved();
+    return pObj;
   }
-  
-  Object(Object& pParent, const std::string &pName) : mParent(NULL), mChildren(20)
-  {
-    init_object(&pParent, pName);
-  }
-  
-  /** This is the prefered way to create new objects since it clearly highlights ownership in the parent. */
-  template<class T>
-  T * new_child(const std::string& pName)
-  {
-    T * obj = new T(this, pName);
-    return obj;
-  }
-  
-  /** This is the prefered way to create new objects since it clearly highlights ownership in the parent. */
-  template<class T>
-  T * new_child(const char* pName)
-  {
-    T * obj = new T(this, std::string(pName));
-    return obj;
-  }
-  
   
   virtual ~Object()
   {
     string_iterator it;
     string_iterator end = mChildren.end();
     // notify parent
-    if (mParent) mParent->remove_child(this);
+    if (mParent) mParent->release(this);
     
     // notify global list
     remove_object(this);
     
-    // remove parent reference in all children
+    // destroy all children
     for(it = mChildren.begin(); it != end; it++) {
       Object * child;
       if (mChildren.get(&child, *it)) {
+        // to avoid 'release' call
         child->mParent = NULL;
+        delete child;
       }
     }
   }
@@ -157,17 +153,13 @@ public:
   /** Define the object's container (parent). */
   void set_parent(Object * parent)
   {
-    if (mParent) {
-      mParent->remove_child(this);
+    if (!parent) {
+      if (mParent) mParent->release(this);
+      mParent = NULL;
+      moved();
+    } else {
+      parent->adopt(this);
     }
-    
-    mParent = parent;
-    
-    if (mParent) {
-      mParent->add_child(this);
-    }
-    
-    moved();
   }
   
   const std::string& url()
@@ -287,28 +279,9 @@ private:
     sprintf(buf,"_%i",sIdCounter);
     return std::string(buf);  // default variable name is 'id'
   }
-  
-  virtual void init_object(Object * pParent, const std::string &pName)
-  { 
-    if (pName == "")
-      mName = default_name();
-    else
-      mName = pName;
     
-    set_parent(pParent);
-  }
-  
-  /** Add a child to the children list, updating 'child' to make sure the name is unique. Called by child's set_parent method. */
-  void add_child(Object * pChild)
-  { 
-    while (child(pChild->mName))
-      pChild->next_name();
-    
-    mChildren.set(pChild->mName,pChild);
-  }
-  
-  /** Remove the child from the list of children. Called by child's set_parent method. */
-  void remove_child(Object * pChild)
+  /** Free the child from the list of children. */
+  void release(Object * pChild)
   {
     mChildren.remove_element(pChild);
   }
