@@ -1,13 +1,73 @@
 // loop buffer test
 // ordered_list_test.h 
-#include <cxxtest/TestSuite.h>
-#include "values.h"
-#include <sstream>
-#include "value_test_helper.h"
+#include "test_helper.h"
+
+#define assert_log(x) _assert_log(__FILE__,__LINE__,x)
+
+/** Define a simple Value for testing called TestValue. */
+class TestData : public Data
+{
+public:
+  TestData()
+  {
+    log("new");
+  }
+  
+  TestData(const std::string& s)
+  {
+    if (sOut.str().size() > 0) sOut << ", ";
+    sOut << "[" << mId << "] " << "new from \"" << s << "\"";
+  }
+  
+  virtual ~TestData()
+  {
+    log("dead");
+  }
+  
+  // copy constructor
+  TestData(const TestData& v)
+  {
+    log("copy");
+  }
+  
+  virtual Data * clone()
+  {
+    log("clone");
+    return new TestData(*this);
+  }
+  
+  virtual value_t type() const
+  { return NumberValue; }
+  
+  static std::ostringstream sOut;
+  
+protected:
+  void log(const char * msg)
+  {
+    if (sOut.str().size() > 0) sOut << ", ";
+    sOut << "[" << mId << "] " << msg;
+  }
+  
+};
+
+/** Define a simple Value for testing called TestValue. */
+class TestValue : public Value
+{
+public:
+  VALUE_METHODS(TestValue, TestData, NumberValue, Value)
+};
+
+std::ostringstream TestData::sOut(std::ostringstream::out);
 
 class ValueTest : public ValueTestHelper
 {  
 public:
+  
+  virtual void setUp()
+  {
+    this->ValueTestHelper::setUp();
+    TestData::sOut.str(std::string(""));
+  }
   
   void test_create_destroy( void )
   {
@@ -134,5 +194,12 @@ public:
     Value v;
     out << v;
     TS_ASSERT_EQUALS(out.str(), "Nil");
+  }
+  
+protected:
+  void _assert_log(const char * file, int lineno, const char * pLog)
+  {
+    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("log")), TestData::sOut.str(), std::string(pLog));
+    TestData::sOut.str(std::string(""));
   }
 };

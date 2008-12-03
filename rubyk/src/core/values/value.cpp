@@ -3,77 +3,96 @@
 
 /** Ragel parser definition to create Values from JSON. */
 #define MAX_NUM_BUFFER_SIZE 50
+// #define DEBUG_PARSER
 
-#line 69 "src/core/values/value.rl"
+#line 74 "src/core/values/value.rl"
 
 
 // transition table
 
-#line 13 "src/core/values/value.cpp"
+#line 14 "src/core/values/value.cpp"
 static const char _json_actions[] = {
-	0, 1, 0, 1, 1, 1, 3, 1, 
-	4, 2, 0, 2, 2, 1, 3, 2, 
-	5, 4
+	0, 1, 0, 1, 1, 1, 2, 1, 
+	3, 1, 4, 1, 5, 2, 1, 3
+	
 };
 
 static const char _json_key_offsets[] = {
-	0, 0, 2, 4, 5, 5, 9, 9, 
-	11, 13, 26, 27, 35, 35, 38, 40
+	0, 0, 13, 15, 21, 31, 33, 34, 
+	34, 38, 38, 40, 48, 50, 57, 63, 
+	72, 77, 77, 87, 92
 };
 
 static const char _json_trans_keys[] = {
-	34, 92, 34, 92, 58, 32, 58, 9, 
-	10, 48, 57, 48, 57, 9, 32, 34, 
-	43, 45, 123, 125, 48, 57, 65, 90, 
-	97, 122, 58, 9, 32, 34, 125, 65, 
-	90, 97, 122, 46, 48, 57, 48, 57, 
-	32, 58, 9, 10, 0
+	32, 34, 43, 45, 123, 9, 10, 48, 
+	57, 65, 90, 97, 122, 34, 92, 0, 
+	32, 58, 125, 9, 10, 0, 32, 34, 
+	125, 9, 10, 65, 90, 97, 122, 34, 
+	92, 58, 32, 58, 9, 10, 48, 57, 
+	0, 32, 46, 125, 9, 10, 48, 57, 
+	48, 57, 0, 32, 125, 9, 10, 48, 
+	57, 0, 32, 58, 125, 9, 10, 32, 
+	34, 125, 9, 10, 65, 90, 97, 122, 
+	0, 32, 125, 9, 10, 0, 32, 34, 
+	125, 9, 10, 65, 90, 97, 122, 0, 
+	32, 125, 9, 10, 0, 32, 58, 125, 
+	9, 10, 0
 };
 
 static const char _json_single_lengths[] = {
-	0, 2, 2, 1, 0, 2, 0, 0, 
-	0, 7, 1, 4, 0, 1, 0, 2
+	0, 5, 2, 4, 4, 2, 1, 0, 
+	2, 0, 0, 4, 0, 3, 4, 3, 
+	3, 0, 4, 3, 4
 };
 
 static const char _json_range_lengths[] = {
-	0, 0, 0, 0, 0, 1, 0, 1, 
-	1, 3, 0, 2, 0, 1, 1, 1
+	0, 4, 0, 1, 3, 0, 0, 0, 
+	1, 0, 1, 2, 1, 2, 1, 3, 
+	1, 0, 3, 1, 1
 };
 
 static const char _json_index_offsets[] = {
-	0, 0, 3, 6, 8, 9, 13, 14, 
-	16, 18, 29, 31, 38, 39, 42, 44
+	0, 0, 10, 13, 19, 27, 30, 32, 
+	33, 37, 38, 40, 47, 49, 55, 61, 
+	68, 73, 74, 82, 87
 };
 
 static const char _json_indicies[] = {
-	1, 2, 0, 4, 5, 3, 6, 7, 
-	3, 7, 6, 7, 8, 0, 9, 7, 
-	10, 7, 11, 11, 12, 13, 13, 15, 
-	16, 9, 14, 14, 7, 6, 7, 15, 
-	15, 17, 16, 8, 8, 7, 7, 18, 
-	9, 7, 10, 7, 7, 6, 7, 14, 
-	0
+	0, 2, 3, 3, 6, 0, 4, 5, 
+	5, 1, 8, 9, 7, 10, 10, 11, 
+	10, 10, 1, 12, 13, 14, 16, 13, 
+	15, 15, 1, 18, 19, 17, 11, 1, 
+	17, 1, 11, 1, 15, 7, 4, 1, 
+	20, 20, 21, 20, 20, 4, 1, 22, 
+	1, 20, 20, 20, 20, 22, 1, 23, 
+	10, 11, 23, 10, 5, 6, 14, 24, 
+	6, 15, 15, 1, 12, 12, 12, 12, 
+	1, 1, 12, 13, 14, 16, 13, 15, 
+	15, 1, 12, 12, 12, 12, 1, 23, 
+	10, 11, 23, 10, 5, 0
 };
 
 static const char _json_trans_targs[] = {
-	1, 10, 6, 2, 3, 4, 11, 0, 
-	5, 13, 14, 9, 1, 7, 15, 11, 
-	12, 2, 8
+	1, 0, 2, 10, 11, 14, 15, 2, 
+	3, 9, 17, 4, 17, 18, 5, 8, 
+	19, 5, 6, 7, 17, 12, 13, 20, 
+	16
 };
 
 static const char _json_trans_actions[] = {
-	3, 5, 3, 3, 0, 3, 15, 0, 
-	3, 9, 9, 7, 0, 1, 12, 7, 
-	7, 0, 1
+	0, 0, 0, 1, 1, 3, 0, 3, 
+	0, 3, 7, 11, 9, 9, 0, 3, 
+	9, 3, 0, 3, 5, 1, 1, 13, 
+	0
 };
 
-static const int json_start = 9;
-static const int json_first_final = 9;
+static const int json_start = 1;
+static const int json_first_final = 17;
 static const int json_error = 0;
 
-static const int json_en_main = 9;
+static const int json_en_main = 1;
 
-#line 73 "src/core/values/value.rl"
+#line 78 "src/core/values/value.rl"
 
 /** This is a crude JSON parser. */
 size_t Value::from_string(const char * pStr)
@@ -91,13 +110,13 @@ size_t Value::from_string(const char * pStr)
   const char * pe = pStr + strlen(p) + 1;
   
   
-#line 95 "src/core/values/value.cpp"
+#line 114 "src/core/values/value.cpp"
 	{
 	cs = json_start;
 	}
-#line 90 "src/core/values/value.rl"
+#line 95 "src/core/values/value.rl"
   
-#line 101 "src/core/values/value.cpp"
+#line 120 "src/core/values/value.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -172,7 +191,7 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 9 "src/core/values/value.rl"
+#line 10 "src/core/values/value.rl"
 	{
      // append a char to number buffer
     if (num_buf_i >= MAX_NUM_BUFFER_SIZE) {
@@ -180,55 +199,58 @@ _match:
       // stop parsing
       return strlen(pStr);
     }
-    #ifdef DEBUG_PARSER
-      printf("_%c_",(*p));
-    #endif
-      num_buf[num_buf_i] = (*p); /* append */
-    num_buf_i++;     
+#ifdef DEBUG_PARSER
+printf("%c_",(*p));
+#endif
+    num_buf[num_buf_i] = (*p); /* append */
+    num_buf_i++;
   }
 	break;
 	case 1:
-#line 23 "src/core/values/value.rl"
+#line 24 "src/core/values/value.rl"
 	{
      // append a char to build a std::string
 #ifdef DEBUG_PARSER
-    printf("_%c_",(*p));
+    printf("%c-",(*p));
 #endif
     str_buf.append(&(*p), 1); /* append */
   }
 	break;
 	case 2:
-#line 31 "src/core/values/value.rl"
+#line 32 "src/core/values/value.rl"
 	{
     num_buf[num_buf_i+1] = '\0';
     Number(atof(num_buf)).set(*this);
   }
 	break;
 	case 3:
-#line 36 "src/core/values/value.rl"
+#line 37 "src/core/values/value.rl"
 	{
     String(str_buf).set(*this);
     str_buf = "";
   }
 	break;
 	case 4:
-#line 41 "src/core/values/value.rl"
+#line 42 "src/core/values/value.rl"
 	{
     tmp_h.set(*this);
   }
 	break;
 	case 5:
-#line 45 "src/core/values/value.rl"
+#line 46 "src/core/values/value.rl"
 	{
     // Build tmp_val from string and move p forward
     p++;
     p += tmp_val.from_string(p);
     tmp_h.set_key(str_buf, tmp_val);
+    if (p == pe)
+      tmp_h.set(*this);
+    
     str_buf = "";
     p--;
   }
 	break;
-#line 232 "src/core/values/value.cpp"
+#line 254 "src/core/values/value.cpp"
 		}
 	}
 
@@ -240,7 +262,7 @@ _again:
 	_test_eof: {}
 	_out: {}
 	}
-#line 91 "src/core/values/value.rl"
+#line 96 "src/core/values/value.rl"
   
   return p - pStr;
 }

@@ -12,8 +12,6 @@ typedef std::vector<std::string>::const_iterator Hash_iterator;
 class HashData : public Data
 {
 public:
-  HashData (const std::string& p) : mParameters(20) { build_hash(p); }
-  HashData (const char * p)  : mParameters(20)      { build_hash( std::string(p) ); }
   HashData () : mParameters(20) {}
   HashData (unsigned int size) : mParameters(size)  {}
   
@@ -38,12 +36,6 @@ public:
     pStream << "[" << mId << "] ";
 #endif
     pStream << "{ " << mParameters << " }";
-  }
-  
-  void rebuild(const std::string& s)
-  {
-    clear();
-    build_hash(s);
   }
   
   //FIX template<class T>
@@ -161,9 +153,6 @@ public:
   
   friend std::ostream& operator<< (std::ostream& pStream, const HashData& p);
   
-  /** Build a hash from a string. */
-  size_t build_hash (const std::string& p);
-  
 private:  
   friend class Hash;
   THash<std::string,Value>  mParameters; /** Hash of std::string => Value. */
@@ -178,23 +167,11 @@ class Hash : public Value
 public:
   VALUE_METHODS(Hash, HashData, HashValue, Value)
   VALUE_FROM_STRING(Hash)
-    
-  /** Set Hash from a string. */
-  Hash& operator= (const std::string& s)
-  {
-    if (!mPtr) {
-      mPtr = new Ptr(new HashData(s));
-    } else {
-      copy_if_shared();
-      *(data_pointer()) = s;
-    }
-    return *this;
-  }
   
   /** Rebuild the whole dictionary from a single string. */
   void rebuild(const std::string& s)
   {
-    mutable_data()->rebuild(s);
+    *this = Value(s);
   }
   
   

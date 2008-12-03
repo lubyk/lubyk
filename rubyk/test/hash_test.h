@@ -1,15 +1,17 @@
-#include "value_test_helper.h"
+#include "test_helper.h"
 
 
 class HashTest : public ValueTestHelper
 {
 public:
-  //void test_dictionary_create( void )
-  //{
-  //  Hash dict("first:1 second:2");
-  //  TS_ASSERT_EQUALS( dict.size(), 2);
-  //}
-  //
+  void test_dictionary_create( void )
+  {
+    Hash dict("first:1 second:\"La la la\""); // [1] first, [2] dict, [3] second
+    assert_id(dict, 2);
+    assert_id(dict["second"], 3);
+    TS_ASSERT_EQUALS( dict.size(), 2);
+  }
+  
   //void test_is_a( void )
   //{
   //  Hash e;

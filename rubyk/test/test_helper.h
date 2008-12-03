@@ -1,11 +1,13 @@
-#ifndef _TEST_HELPER_H_
-#define _TEST_HELPER_H_
-// #include "class.h"
-// #include "command.h"
+#ifndef _VALUE_TEST_HELPER_H_
+#define _VALUE_TEST_HELPER_H_
 #include "globals.cpp"
 #include "class.h"
 #include <sstream>
 
+#define assert_log(x) _assert_log(__FILE__,__LINE__,x)
+#define assert_ref_count(x,y) _assert_ref_count(__FILE__,__LINE__,x,y)
+#define assert_id(x,y) _assert_id(__FILE__,__LINE__,x,y)
+#define assert_matrix_equal(x,y) _assert_matrix_equal(__FILE__,__LINE__,x,y)
 
 #define assert_print(x,y) _assert_print(__FILE__,__LINE__,x,y)
 #define assert_inspect(x,y) _assert_inspect(__FILE__,__LINE__,x,y)
@@ -15,6 +17,35 @@
 #define ___RK_ASSERT_EQUALS(f,l,cmd,x,y,m) { _TS_TRY { ___ERK_ASSERT_EQUALS(f,l,cmd,x,y,m); } __TS_CATCH(f,l) }
 #define _RK_ASSERT_EQUALS(f,l,cmd,x,y) ___RK_ASSERT_EQUALS(f,l,cmd,x,y,0)
 
+// ========================== Values ====================== //
+
+size_t Data::sIdCounter = 0;
+
+/** Helper class to test Values. */
+class ValueTestHelper : public CxxTest::TestSuite
+{
+public:
+  
+  void setUp()
+  {
+    Data::sIdCounter = 0;
+  }
+protected:
+  
+  void _assert_ref_count(const char * file, int lineno, const Value& v, size_t count)
+  {
+    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("ref count")), v.ref_count(), count);
+  }
+  
+  void _assert_id(const char * file, int lineno, const Value& v, size_t id)
+  {
+    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("id")), v.data_id(), id);
+  }
+};
+
+// ========================== Nodes  ====================== //
+
+/** Helper class to test Nodes. */
 class NodeTestHelper : public CxxTest::TestSuite
 {
 public:
@@ -44,140 +75,4 @@ protected:
   }
 };
 
-/*
-class NodeTester
-{
-public:
-  NodeTester () : mOutput(std::ostringstream::out), mInput(std::istringstream::in)  {}
-  NodeTester (const char * pClassName) : mClassName(pClassName), mOutput(std::ostringstream::out), mInput(std::istringstream::in)  {}
-  
-protected:  
-  Node * mNode;
-  std::string mClassName;
-  std::ostringstream mOutput;
-  std::istringstream mInput;
-  
-  void create(const char * pClass, const char * pValue)
-  {
-    mClassName = pClass;
-    mNode = Class::create(NULL, "n", pClass, pValue, &mOutput);
-  }
-  
-//  void create(const char * pValue)
-//  {
-//    mNode = Class::create(NULL, "n", mClassName, pValue, &mOutput);
-//  }
-//  
-//  void assert_method_result(const char * pMethod, const char * p, const char * pOutput)
-//  {
-//    if (!mNode) {
-//      printf("Node not set !\n Test aborted.\n");
-//      TS_ABORT();
-//    }
-//    mNode->set_output(&mOutput);
-//    mOutput.str(std::string("")); // clear output
-//    mNode->execute_method(pMethod, Value(p));
-//    TS_ASSERT_EQUALS( mOutput.str(), std::string(pOutput));
-//  }
-//  
-//  void assert_spy(const char* pSpy)
-//  {
-//    if (!mNode) {
-//      printf("Node not set !\n Test aborted.\n");
-//      TS_ABORT();
-//    }
-//    TS_ASSERT_EQUALS( std::string(mNode->get_spy()), std::string(pSpy) );
-//  }
-//  
-//  void assert_inspect(const char* pSpy)
-//  {
-//    if (!mNode) {
-//      printf("Node not set !\n Test aborted.\n");
-//      TS_ABORT();
-//    }
-//    TS_ASSERT_EQUALS( std::string(mNode->inspect()), std::string(pSpy) );
-//  }
-};
-*/
-/*
-class ParseTest : public CxxTest::TestSuite
-{
-public:
-  ParseTest() : mOutput(std::ostringstream::out), 
-                mInput(std::istringstream::in)
-                
-  { 
-    mServer = new Planet;
-    mCmd = new Command(mInput, mOutput);
-    mCmd->set_server(*mServer);
-    // cannot set class lib path here (not yet initialized).
-  }
-  
-  // start a new server
-  void setUp()
-  {
-    mServer = new Planet;
-    mCmd = new Command(mInput, mOutput);
-    mCmd->set_server(*mServer);
-    mOutput.str(std::string("")); // clear output
-    parse("p=Print()\n");
-  }
-  
-  // cleanup
-  void tearDown()
-  {
-    delete mServer;
-    delete mCmd;
-  }
-  
-protected:
-  Planet * mServer;
-  Command * mCmd;
-  std::ostringstream mOutput;
-  std::istringstream mInput;
-  
-protected:
-  void parse(const char* pCommands)
-  {
-    mServer->unlock();
-      mCmd->parse(pCommands);
-      mOutput.str(std::string("")); // clear output
-    mServer->lock();
-  }
-  
-  void assert_result(const char * pInput, const char * pOutput)
-  {
-    mOutput.str(std::string("")); // clear output
-    mServer->unlock();
-      mCmd->parse(pInput);
-    mServer->lock();
-    TS_ASSERT_EQUALS( mOutput.str(), std::string(pOutput));
-  }
-  
-  void _assert_print(const char * file, int lineno, const char * pCommands, const char * pResult)
-  { 
-    mServer->unlock();
-      mOutput.str(std::string("")); // clear output
-      mCmd->set_silent(true);
-      mCmd->parse(pCommands);
-      mCmd->set_silent(false);
-    mServer->lock();
-    
-    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string(pCommands)), mOutput.str(), std::string(pResult));
-  }
-  
-  void assert_run(time_t pLength, const char * pResult)
-  {
-    time_t start;
-    mOutput.str(std::string("")); // clear output
-    mCmd->set_silent(true);
-      start = mServer->mCurrentTime;
-      while(mServer->mCurrentTime <= start + pLength && mServer->run())
-        ;
-    mCmd->set_silent(false);
-    
-    TS_ASSERT_EQUALS( mOutput.str(), std::string(pResult));
-  }
-};
-*/
-#endif // _TEST_HELPER_H_
+#endif // _VALUE_TEST_HELPER_H_

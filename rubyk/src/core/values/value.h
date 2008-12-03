@@ -220,7 +220,7 @@ public:
   }
   
 #ifdef _TESTING_
-  size_t data_id()
+  size_t data_id() const
   {
     if (mPtr) {
       return mPtr->mDataPtr->mId;
@@ -254,6 +254,9 @@ private:
     return (data_type*)(mPtr->mDataPtr); }                          \
   virtual value_t type() const                                      \
   { return signature; }                                             \
+  klass& operator= (const Value& val)                               \
+  { val.set(*this);                                                 \
+    return *this; }                                                 \
 protected:                                                          \
   inline void make_data_ptr ()                                      \
   { mPtr = new Ptr(new data_type()); }                              \
@@ -268,6 +271,9 @@ public: \
   klass(const char * s)                                             \
   { Value v(s);                                                     \
     v.set(*this); }                                                 \
+  klass& operator= (const std::string& s)                           \
+  { Value(s).set(*this);                                            \
+    return *this; }                                                 \
     
 std::ostream& operator<< (std::ostream& pStream, const Value& val);
 #endif // _VALUE_H_

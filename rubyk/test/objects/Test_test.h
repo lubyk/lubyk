@@ -1,6 +1,3 @@
-// ordered_list_test.h 
-#include <cxxtest/TestSuite.h>
-#include "class.h"
 #include "test_helper.h"
 
 
@@ -9,9 +6,7 @@ class TestTest : public NodeTestHelper
 public:
   
   void test_create( void )
-  {  
-    Number n(12.3);
-    TS_ASSERT_EQUALS(n.data_id(), 1);
+  { 
     create("Test", "n", "counter: 5 message:\"foo\"");
     assert_inspect("n", "'foo' 5");
   }

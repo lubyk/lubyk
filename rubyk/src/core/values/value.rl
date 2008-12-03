@@ -2,6 +2,7 @@
 
 /** Ragel parser definition to create Values from JSON. */
 #define MAX_NUM_BUFFER_SIZE 50
+// #define DEBUG_PARSER
 
 %%{
   machine json;
@@ -13,17 +14,17 @@
       // stop parsing
       return strlen(pStr);
     }
-    #ifdef DEBUG_PARSER
-      printf("_%c_",fc);
-    #endif
-      num_buf[num_buf_i] = fc; /* append */
-    num_buf_i++;     
+#ifdef DEBUG_PARSER
+printf("%c_",fc);
+#endif
+    num_buf[num_buf_i] = fc; /* append */
+    num_buf_i++;
   }
 
   action str_a {
      // append a char to build a std::string
 #ifdef DEBUG_PARSER
-    printf("_%c_",fc);
+    printf("%c-",fc);
 #endif
     str_buf.append(&fc, 1); /* append */
   }
@@ -47,13 +48,17 @@
     p++;
     p += tmp_val.from_string(p);
     tmp_h.set_key(str_buf, tmp_val);
+    if (p == pe)
+      tmp_h.set(*this);
+    
     str_buf = "";
     fhold;
   }
 
 
   
-  ws        = (' ' | '\t');
+  ws        = ' ' | '\t' | '\n';
+  end       = ws  | '\0' | '}';  # we need '}' to finish value when embedded in hash: {one:1.34}
   char      = ([^"\\] | '\n' | ( '\\' (any | '\n') )) $str_a;
   word      = (alpha [^ \t\n:]*) $str_a;
   real      = ([\-+]? $num_a ('0'..'9' digit* '.' digit+) $num_a );
@@ -61,10 +66,10 @@
             
   number    = real | integer;
   string    = ('"' char* '"') | word;
-  hash      = '{'? (ws* string ':' >hash_value)* ws* '}'?;
+  hash      = '{'? (ws* string ':' >hash_value)+ ws* '}'? | '{' ws* '}';
 #  array   = '[]' | '[' ($value)* $array_element ']';
   
-  main     := ws* (string @string | number @number | hash @hash); # | array | true | false | null;
+  main     := ws* (string %string | number %number | hash %hash) end; # | array | true | false | null;
   
 }%%
 

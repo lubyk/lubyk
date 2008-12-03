@@ -39,6 +39,20 @@ public:
   Error(const std::string& s) : String(new ErrorData(s)) {}
   Error(const char* s) : String(new ErrorData(std::string(s))) {}
   
+  /** Set Error from std::string. */
+  const std::string& operator= (const std::string& s)
+  {
+    mutable_data()->mString = s;
+    return s;
+  }
+  
+  /** Set Error from const char *. */
+  const char * operator= (const char * s)
+  {
+    mutable_data()->mString = s;
+    return s;
+  }
+  
   const char * message() const
   {
     if (mPtr) {

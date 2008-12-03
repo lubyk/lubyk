@@ -1,7 +1,7 @@
 // ordered_list_test.h 
 #include <cxxtest/TestSuite.h>
 #include "method.h"
-#include "value_test_helper.h"
+#include "test_helper.h"
 
 // FIXME: !!!! destroy methods on object destroy !!!!
 

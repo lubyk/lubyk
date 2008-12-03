@@ -1,4 +1,4 @@
-#include "value_test_helper.h"
+#include "test_helper.h"
 
 
 class StringTest : public ValueTestHelper
