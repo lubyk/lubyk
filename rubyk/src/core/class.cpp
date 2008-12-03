@@ -1,4 +1,5 @@
 #include "class.h"
+#include <dlfcn.h> // dylib load
 
 const Value NewMethod::trigger (const Value& val)
 {
@@ -45,4 +46,81 @@ const Value NewMethod::trigger (const Value& val)
   // initialize
   obj->set_is_ok( obj->init() && obj->set(params) ); // if init or set returns false, the node goes into 'broken' mode.
   return url;
+}
+
+
+/** This trigger implements "/classes". It returns the list of objects in mObjectsPath. */
+const Value ClassListing::trigger (const Value& val)
+{
+  return String(""); // TODO: 'lib' directory listing !
+}
+
+const Value ClassListing::not_found (const std::string& pUrl, const Value& val)
+{
+  std::string className = pUrl.substr(url().length() + 1);
+  std::cout << "---> " << className << std::endl;
+  className = className.substr(0, className.find("/"));
+  Object * obj;
+  
+  // try to load dynamic lib
+  std::string path = mObjectsPath;
+  path.append("/").append(className).append(".rko");
+  
+  std::cout << "load lib from '" << path << "'" << std::endl;
+  
+  if (load(path.c_str(), "init")) {
+    // FIXME: we should handle '#info' and '#inspect' here
+    if (Object::get(&obj, pUrl)) {
+      // Found object, we can trigger it.
+      return obj->trigger(val);
+    } else
+      return Error("'").append(path).append("' should declare '").append(className).append("'.");
+  } else
+    return Error("Could not load '").append(path).append("'.");
+}
+
+// for help to create a portable version of this load function, read Ruby's dln.c file.
+bool ClassListing::load(const char * file, const char * init_name)
+{
+  void *image;
+  void (*function)(void);
+  const char *error = 0;
+  
+  // load shared extension image into memory
+  if ((image = (void*)dlopen(file, RTLD_LAZY|RTLD_GLOBAL)) == 0) {
+    printf("Could not open file '%s'.", file);
+    if ( (error = dlerror()) ) 
+      printf(" %s\n", error);
+    else
+      printf("\n");
+    return false;
+  }
+  
+  // get 'init' function into the image
+  function = (void(*)(void))dlsym(image, init_name);
+  if (function == 0) {
+    dlclose(image);
+    printf("Symbol '%s' not found in '%s'.",init_name,file);
+    if ( (error = dlerror()) ) 
+      printf(" %s\n", error);
+    else
+      printf("\n");
+    return false;
+  }
+  
+  // call 'init', passing the registration object
+  (*function)();
+
+  return true;
+}
+
+/** Get a Class object from it's std::string name ("Metro"). */
+bool Class::get_class (Class ** pResult, const std::string& pName)
+{
+  Object * obj;
+  if (Object::get(&obj, std::string(CLASS_ROOT).append("/").append(pName))) {
+    *pResult = (Class*)obj; // FIXME: type checking !!
+    return true;
+  }
+  return false;
 }

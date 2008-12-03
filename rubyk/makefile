@@ -32,9 +32,9 @@ rubyk: src/core/main.cpp $(LINKER_OBJECTS) objects test
 	$(CC) $(CFLAGS) $(LFLAGS) -o rubyk $(INCLUDE_HEADERS) -I. src/core/main.cpp $(LINKER_OBJECTS)
 
 
-objects:
+objects: lib/Test.rko
 
-off: lib/Test.rko lib/Value.rko lib/Add.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/MidiOut.rko lib/NoteOut.rko lib/Lua.rko lib/Serial.rko lib/Turing.rko lib/Keyboard.rko lib/Cabox.rko lib/Svm.rko lib/Buffer.rko lib/GLWindow.rko lib/Cut.rko lib/MaxCount.rko lib/FFT.rko lib/VQ.rko lib/ClassRecorder.rko lib/PCA.rko lib/Average.rko lib/Peak.rko lib/Minus.rko lib/Replay.rko lib/Kmeans.rko lib/Abs.rko lib/Sum.rko lib/Ctrl.rko lib/Diff.rko lib/Bang.rko lib/Macro.rko lib/MidiIn.rko lib/GLLua.rko lib/GLPlot.rko lib/Group.rko lib/System.rko
+off: lib/Value.rko lib/Add.rko lib/Counter.rko lib/Metro.rko lib/Print.rko lib/MidiOut.rko lib/NoteOut.rko lib/Lua.rko lib/Serial.rko lib/Turing.rko lib/Keyboard.rko lib/Cabox.rko lib/Svm.rko lib/Buffer.rko lib/GLWindow.rko lib/Cut.rko lib/MaxCount.rko lib/FFT.rko lib/VQ.rko lib/ClassRecorder.rko lib/PCA.rko lib/Average.rko lib/Peak.rko lib/Minus.rko lib/Replay.rko lib/Kmeans.rko lib/Abs.rko lib/Sum.rko lib/Ctrl.rko lib/Diff.rko lib/Bang.rko lib/Macro.rko lib/MidiIn.rko lib/GLLua.rko lib/GLPlot.rko lib/Group.rko lib/System.rko
 	
 test/runner.cpp: $(TEST)
 	./test/cxxtest/cxxtestgen.pl --error-printer -o test/runner.cpp $(TEST)

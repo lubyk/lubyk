@@ -6,11 +6,12 @@ class SetupTest : public CxxTest::TestSuite
 {
   virtual void setUp()
   {
-    Class::set_lib_path("lib");
+    ClassListing::set_lib_path("lib");
   }
 public:
   void test_lib_path( void ) 
   {
-    TS_ASSERT_EQUALS(Class::get_lib_path(), std::string("lib"));
+    TS_ASSERT_EQUALS(ClassListing::sClasses.url(), std::string(CLASS_ROOT));
+    TS_ASSERT_EQUALS(ClassListing::get_lib_path(), std::string("lib"));
   }
 };

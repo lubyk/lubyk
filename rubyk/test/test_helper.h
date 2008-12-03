@@ -64,7 +64,7 @@ protected:
     Value res = Object::call(std::string(CLASS_ROOT).append("/").append(pClass).append("/new"), h);
     _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("create")),
                        res.to_string(), 
-                       std::string("\"").append(pName).append("\""));
+                       std::string("\"/").append(pName).append("\""));
   }
   
   void _assert_inspect(const char * file, int lineno, const char * pName, const char * pInfo)

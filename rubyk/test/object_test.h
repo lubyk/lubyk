@@ -8,7 +8,7 @@ class DummyObject : public Object
 public:
   DummyObject(const char * pName, int pCounter) : Object(pName), mCounter(pCounter) {}
   
-  virtual const Value inspect()
+  virtual const Value inspect(const Value& val)
   {
     std::ostringstream os(std::ostringstream::out);
     os << mName << ": " << mCounter;
@@ -205,7 +205,7 @@ public:
     TS_ASSERT_EQUALS( res.to_string(), "[2] \"\"");
     
     res = Object::call("/blah/#info",param);
-    TS_ASSERT_EQUALS( Error(res).message(), std::string("Could not get info on '/blah' (not found).") );
+    TS_ASSERT_EQUALS( Error(res).message(), std::string("Object '/blah/#info' not found.") );
   }
   
   void test_inspect( void )
@@ -221,6 +221,6 @@ public:
     TS_ASSERT_EQUALS( res.to_string(), "[2] \"foo: 23\"");
     
     res = Object::call("/blah/#inspect");
-    TS_ASSERT_EQUALS( Error(res).message(), std::string("Could not inspect '/blah' (not found).") );
+    TS_ASSERT_EQUALS( Error(res).message(), std::string("Object '/blah/#inspect' not found.") );
   }
 };

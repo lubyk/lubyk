@@ -1,6 +1,5 @@
 #include "test_helper.h"
 
-
 class TestTest : public NodeTestHelper
 {    
 public:

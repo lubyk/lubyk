@@ -7,6 +7,15 @@
 #define OBJECT_HASH_SIZE 10000
 #define NEXT_NAME_BUFFER_SIZE 20
 
+
+/** Value types. */
+enum call_action_t {
+  CallTrigger  = 1,
+  CallInfo     = 2,
+  CallInspect  = 4,
+  CallNotFound = 8,
+};
+
 class Object
 {
 public:
@@ -32,7 +41,8 @@ public:
   
   
   /** This is the prefered way to insert new objects in the tree since it clearly highlights ownership in the parent. */
-  Object * adopt(Object * pObj)
+  template<class T>
+  T * adopt(T * pObj)
   {
     Object * oldParent = pObj->mParent;
     
@@ -91,8 +101,14 @@ public:
     return String(res);
   }
   
+  /** This method is called whenever a sub-node or branch is not found and this is the last found object along the path. */
+  virtual const Value not_found (const std::string& pUrl, const Value& val)
+  {
+    return object_not_found(pUrl);
+  }
+  
   /** Inspection method. Called as a response to #inspect.*/
-  virtual const Value inspect()
+  virtual const Value inspect(const Value& val)
   {
     return String(mInfo);
   }
@@ -118,36 +134,54 @@ public:
   /** Execute the default operation for an object. */
   static Value call (const std::string& pUrl, const Value& val)
   {
-    Object * target;
+    Object * target = NULL;
     size_t pos;
+    std::string url = pUrl;
+    call_action_t act;
+    Value res;
     
     // FIXME: move the #info and #inspect into the method space ?
     
-    // 1. does the url end with '/#info' ?
-    if ( (pos = pUrl.rfind("/#info")) != std::string::npos) {
-      // return info string
-      // find object from url
-      if (get(&target, pUrl.substr(0, pos))) {
-        return String(target->mInfo);
-      } else {
-        return Error(std::string("Could not get info on '").append(pUrl.substr(0, pos)).append("' (not found)."));
-      }
-    } else if ( (pos = pUrl.rfind("/#inspect")) != std::string::npos) {  
-      if (get(&target, pUrl.substr(0, pos))) {
-        return target->inspect();
-      } else {
-        return Error(std::string("Could not inspect '").append(pUrl.substr(0, pos)).append("' (not found)."));
-      }
+    if ( (pos = url.rfind("/#info")) != std::string::npos) {
+      url = pUrl.substr(0, pos);
+      act = CallInfo;
+    } else if ( (pos = pUrl.rfind("/#inspect")) != std::string::npos) {
+      url = pUrl.substr(0, pos);
+      act = CallInspect;
     } else {
-      // call
-      // find object from url
-      if (get(&target, pUrl)) {
-        // call
-        return target->trigger(val);
-      } else {
-        return Error(std::string("Object '").append(pUrl).append("' not found."));
-      }
+      act = CallTrigger;
     }
+    
+    std::cout << "A: " << url << std::endl;
+    while (url != "" && !get(&target, url)) {
+      act = CallNotFound;
+      pos = url.rfind("/");
+      if (pos == std::string::npos)
+        url = "";
+      else
+        url = url.substr(0, pos);
+      
+      std::cout << "B: " << url << std::endl;
+    }
+    
+    std::cout << "C: " << url << std::endl;
+    if (!target) return object_not_found(pUrl);
+    
+    switch (act) {
+      case CallTrigger:
+        return target->trigger(val);
+      case CallInfo:
+        return String(target->mInfo);
+      case CallInspect:
+        return target->inspect(val);
+      default:
+        return target->not_found(pUrl, val);
+    }
+  }
+  
+  static const Value object_not_found(const std::string& pUrl)
+  {
+    return Error(std::string("Object '").append(pUrl).append("' not found."));
   }
   
   static bool get (Object ** pResult, const std::string& pUrl)

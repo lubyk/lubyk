@@ -19,7 +19,9 @@
 class Node : public Object
 {
 public:
-  virtual ~Node();
+  Node() {}
+  
+  virtual ~Node() {}
   
   /** This method must be implemented in subclasses. It is used to do a basic setup with default parameters before these
     * are changed during runtime. */

@@ -1,5 +1,5 @@
 #include "class.h"
-#include <iostream>
+#include <sstream>
 
 class Test : public Node
 {
@@ -27,22 +27,26 @@ public:
     return gNilValue;
   }
   
-  //FIX ????
-  void spy() 
-  { bprint(mSpy, mSpySize,"'%s' %i", mMessage.c_str(), mCounter); }
+  virtual const Value inspect(const Value& val) 
+  { 
+    // TODO: optimize (maybe).
+    std::ostringstream os(std::ostringstream::out);
+    os << "'" << mMessage << "' " << mCounter;
+    return String(os.str());
+  }
   
   // [1]. Increments mCounter on bang.
   void bang(const Value& val)
   {
-    if (val.is_number())
-      mCounter = val || mCounter;
-    else if (val.is_bang())
-      send(++mCounter);
-    
-    // special nil sending test
-    //*mOutput << "sending nil=>";
-    send(2, gNilValue);
-    //*mOutput << "<=done.\n";
+   // if (val.is_number())
+   //   mCounter = val || mCounter;
+   // else if (val.is_bang())
+   //   send(++mCounter);
+   // 
+   // // special nil sending test
+   // *mOutput << "sending nil=>";
+   // send(2, gNilValue);
+   // *mOutput << "<=done.\n";
   }
   
   /** [2]. Example to set an attribute stored as a native type (an int here). This is also an accessor (used by sending a nil value). */
@@ -61,21 +65,15 @@ public:
   const Value test_fail(const Value& p)
   {
     if (!test_try()) {
-      //*mOutput << "try failed";
+      return Error("try failed");
     }
+    return gNilValue;
   }
   
   /** Class method that displays 'Hello: <parameter>'. */
   static const Value hello(const Value& val)
   {
-    return String(std::string("Hello: ").append(val.to_string());
-  }
-  
-  virtual const Value inspect()
-  {
-    std::ostringstream os(std::ostringstream::out);
-    os << mMessage << " " << mCounter;
-    return String(os.str());
+    return String("Hello: ").append(val.to_string());
   }
   
   
@@ -84,7 +82,7 @@ private:
     Matrix m,n;
     m.set_sizes(5,1);
     m.fill(2.0);
-    TRY(n, copy(m, 10, 10));
+//    TRY(n, copy(m, 10, 10));
     return true;
   }
   
@@ -98,7 +96,7 @@ extern "C" void init()
 { 
   // Define class.
   CLASS (   Test, "Object used for testing. Does not do anything really useful.")
-  
+/*  
   // Define inlets.
   // This also creates "/nodes/t/info" set/get methods and "nodes/t/inlets/info" to link, unlink, ...).
   // The get method of an inlet always returns the code defined in the inlet definition.
@@ -117,4 +115,5 @@ extern "C" void init()
   
   // Define a class method.
   CLASS_METHOD( Test,  hello,  "If the input value is 0: stop. If it is greater the 0: start. Bang toggles on/off." )
+*/
 }

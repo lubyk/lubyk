@@ -4,6 +4,7 @@
 //FIX #include "class.h"
 #include "object.h"
 #include "values.h"
+#include "class.h"
 
 ////// GLWINDOW HACK /////
 bool gRunning;
@@ -28,5 +29,9 @@ Bang  gBangValue(true); // globals declared in values.h
 
 // StringValue
 const  std::string String::sNoString("");
+
+// Class
+ClassListing ClassListing::sClasses(std::string(CLASS_ROOT).substr(1, std::string::npos));
+std::string Class::sObjectsPath("/usr/local/lib/rubyk");
 
 #endif // _GLOBALS_CPP_

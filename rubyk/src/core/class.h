@@ -1,6 +1,5 @@
 #ifndef _CLASS_H_
 #define _CLASS_H_
-
 #include "node.h"
 #include "method.h"
 #include <list>
@@ -9,14 +8,52 @@
 typedef Node * (*create_method_t)(Class * pClass, const std::string& pName, Planet * pServer, const Hash& p, std::ostream * pOutput);
 
 #define CLASS_ROOT "/classes"
+#define DEFAULT_OBJECTS_LIB_PATH "/usr/local/lib/rubyk"
 
 class NewMethod : public ClassMethod
 {
+public:
+  NewMethod(const std::string &pName, class_method_t pMethod) : ClassMethod(pName, pMethod) {}
+  NewMethod(const char * pName, class_method_t pMethod) : ClassMethod(pName, pMethod) {}
   virtual ~NewMethod() {}
   
   /** This trigger method actually implements "new". The parameter can be either a String containing the url of the new object or
     * a Hash containing the "url" and "params": {url: "foo" params:{ bar:1 pico:2 }}. */
   virtual const Value trigger (const Value& val);
+};
+
+/** Special class to handle class listing from a directory. This usually responds at to the '/classes' url. */
+class ClassListing : public Object
+{
+public:
+  ClassListing(const std::string &pName) : Object(pName), mObjectsPath(DEFAULT_OBJECTS_LIB_PATH) {
+    std::cout << "ClassListing: " << url() << std::endl;
+  }
+  ClassListing(const char * pName) : Object(pName), mObjectsPath(DEFAULT_OBJECTS_LIB_PATH) {}
+  virtual ~ClassListing() {}
+  
+  /** This trigger implements "/classes". It returns the list of objects in mObjectsPath. */
+  virtual const Value trigger (const Value& val);
+  
+  virtual const Value not_found (const std::string& pUrl, const Value& val);
+  
+  static ClassListing sClasses;
+  
+  static void set_lib_path(const char* pPath)
+  { sClasses.mObjectsPath = pPath; }
+ 
+  static void set_lib_path(const std::string& pPath)
+  { sClasses.mObjectsPath = pPath; }
+ 
+  static std::string get_lib_path()
+  { return sClasses.mObjectsPath; }
+   
+private:
+  
+  /** Load an object stored in a dynamic library. */
+  static bool load(const char * file, const char * init_name);
+  
+  std::string mObjectsPath; /**< Where to find objects in the filesystem. */
 };
 
 /** This is a helper to prepare prototypes to:
@@ -27,6 +64,11 @@ class NewMethod : public ClassMethod
 class Class : public Object
 {
 public:
+  Class(const char* pName, const char* pInfo) : Object(pName) 
+  {
+    set_info(pInfo);
+  }
+  
   virtual ~Class()
   {
     std::list<InletPrototype*>::iterator it;
@@ -43,45 +85,30 @@ public:
     mInletPrototypes.push_back( new InletPrototype(pName, pAcceptTypes, pInfo, &cast_inlet_method<T, Tmethod>) );
   }
   
-  
-  /** Get a Class object from it's std::string name ("Metro"). */
-  static bool get_class (Class ** pResult, const std::string& pName)
-  {
-    Object * obj;
-    if (Object::get(&obj, std::string(CLASS_ROOT).append(pName))) {
-      *pResult = (Class*)obj; // FIXME: type checking !!
-      return true;
-    }
-    return false;
-  }
-  
   /** Get a Class object from it's name ("Metro"). */
   static bool get_class (Class ** pResult, const char* pName)
   {
     return get_class(pResult, std::string(pName));
   }
   
+  /** Get a Class object from it's std::string name ("Metro"). */
+  static bool get_class (Class ** pResult, const std::string& pName);
+  
   /** Declare a new class. This template is responsible for generating the "new" method. */
   template<class T>
-  static Class * declare(const char* name)
+  static void declare(const char* pName, const char* pInfo)
   {
     Class * klass;
-    if (get_class(&klass, name))
+    std::cout << "declare " << pName << " '" << pInfo << "'" << std::endl;
+    if (get_class(&klass, pName))
       delete klass; // remove existing class with same name.
     
-    Object * class_folder;
-    if (!Object::get(&class_folder, CLASS_ROOT)) {
-      // create default class folder
-      class_folder = new Object(CLASS_ROOT);
-      if (!class_folder) return;
-    }
+    klass = ClassListing::sClasses.adopt(new Class(pName, pInfo));
     
-    klass = new Class(class_folder, name);
+    if (!klass) return;
     
     // build "new" method for this class
     klass->adopt(new NewMethod("new", &cast_create<T>));
-    
-    return klass;
   }
   
   /** Template used as a method to create new nodes. */
@@ -93,19 +120,29 @@ public:
     std::string name;
     if (url.is_nil()) return Error("Invalid 'url' parameter.");
     
-    // get parent ["/met", "met"] => NULL, "/venus/grp/met" => "/venus/grp"
+    // get parent ["/met", "met"] => "/", "/venus/grp/met" => "/venus/grp"
     std::string str = url.string();
     if (str.at(0) == '/') {
       size_t pos = url.rfind("/");
       parent = Object::find( url.substr(0, pos) );
       if (!parent) return Error("Invalid parent '").append(url.substr(0,pos)).append("'.");
-      name = url.substr(pos + 1, url.length);
+      name = url.substr(pos + 1, url.length());
     } else {
       parent = NULL;
       name = str;
     }
     
-    T * obj = new T(parent, name);
+    //FIXME, there should be a "root" responding to "/".
+    
+    T * obj;
+    
+    if (parent)
+      obj = parent->adopt(new T());
+    else
+      obj = new T();
+      
+    obj->set_name(name);
+    
     return String(obj->url());
   }
   
@@ -116,8 +153,11 @@ public:
     (((T*)receiver)->*Tmethod)(val);
   }
   
+  
 private:
   friend class NewMethod;
+  
+  static std::string sObjectsPath; /**< Where to load the librairies (objects). */
   
   const Value make_inlets(Node * pObj)
   {
@@ -136,4 +176,7 @@ private:
   std::list<InletPrototype*> mInletPrototypes;  /**< Prototypes to create inlets. */
 };
 
+
+// HELPERS TO AVOID TEMPLATE SYNTAX
+#define CLASS(klass, info)         {Class::declare<klass>(#klass, info);}
 #endif // _CLASS_H_
