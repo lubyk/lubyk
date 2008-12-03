@@ -1,5 +1,6 @@
 CC=g++
-CFLAGS=-g -Wall -DUSE_READLINE
+TESTING=-D_TESTING_
+CFLAGS=-g -Wall -DUSE_READLINE $(TESTING)
 LFLAGS=-framework Accelerate -lreadline
 PREFIX=/usr/local
 LIBDIR=$(PREFIX)/lib
@@ -12,7 +13,7 @@ RAGEL=ragel
 RAGEL_CD=rlgen-cd
 PLAT= macosx
 TEST=test/*_test.h test/objects/*_test.h
-LINKER_OBJECTS=tmatrix.o src/core/values/hash_value.cpp src/core/values/value.cpp object.o slot.o inlet.o outlet.o buffer.o node.o class.o
+LINKER_OBJECTS=tmatrix.o value.o hash_value.o object.o slot.o inlet.o outlet.o buffer.o node.o class.o
 OFF_OBJ=command.o planet.o lua_script.o src/lib/lua/liblua.a group.o src/lib/osc/liboscpack.a
 INCLUDE_HEADERS=-Isrc/templates -Isrc/core -Isrc/objects -Isrc/lib/lua -Isrc/lib/osc/osc -Isrc/core/values
 OBJECT_COMPILE=$(INCLUDE_HEADERS) -D__$(PLAT)__ -dynamic -bundle -undefined suppress -flat_namespace -L/usr/lib -lgcc -lstdc++
@@ -38,16 +39,21 @@ off: lib/Test.rko lib/Value.rko lib/Add.rko lib/Counter.rko lib/Metro.rko lib/Pr
 test/runner.cpp: $(TEST)
 	./test/cxxtest/cxxtestgen.pl --error-printer -o test/runner.cpp $(TEST)
 	
-# special case for value.cpp (not in LINKER_OBJECTS) because of _TESTING_ #define.
 test/runner: test/runner.cpp $(LINKER_OBJECTS) objects
-	$(CC) $(CFLAGS) $(LFLAGS) -D_TESTING_ -Itest $(INCLUDE_HEADERS) -I. test/runner.cpp $(LINKER_OBJECTS) -o test/runner
+	$(CC) $(CFLAGS) $(LFLAGS) -Itest $(INCLUDE_HEADERS) -I. test/runner.cpp $(LINKER_OBJECTS) -o test/runner
 
 src/core/command.cpp: src/core/command.rl
 	${RAGEL} src/core/command.rl -o src/core/command.cpp
 
 tmatrix.o: src/core/tmatrix.cpp src/templates/tmatrix.h
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
-
+	
+hash_value.o: src/core/values/hash_value.cpp src/core/values/hash_value.h src/core/values/value.h
+	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
+  
+value.o: src/core/values/value.cpp src/core/values/value.h
+	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
+	
 %.o: src/core/%.cpp src/core/%.h
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 	
