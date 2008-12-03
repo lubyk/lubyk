@@ -11,5 +11,5 @@ void Inlet::receive (const Value& sig)
   if (mId == 0 || sig.is_bang()) 
     ((Node*)mNode)->bang(sig);   // use virtual (faster)
   else
-    (*mFunction)(mNode, sig);    // use functor
+    (*mMethod)(mNode, sig);    // use functor
 }

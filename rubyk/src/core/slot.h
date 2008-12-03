@@ -11,7 +11,8 @@
 class Slot : public Object
 {
   public:
-    Slot (void* node) : mNode(node) {}
+    Slot (void* pNode) : mNode(pNode) {}
+    Slot (Object * pParent, const char * pName, void * pNode) : Object(pParent, pName), mNode(pNode) {}
   
     virtual ~Slot ();
 

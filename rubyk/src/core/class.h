@@ -1,34 +1,62 @@
+#include "node.h"
+#include <list>
 
 /** Pointer to a function to create nodes. */
 typedef Node * (*create_method_t)(Class * pClass, const std::string& pName, Planet * pServer, const Hash& p, std::ostream * pOutput);
+
 #define CLASS_ROOT CLASS_ROOT
 
 
 class NewMethod : public ClassMethod
 {
+  /** This trigger method actually implements "new". The parameter can be either a String containing the url of the new object or
+    * a Hash containing the "url" and "params": {url: "foo" params:{ bar:1 pico:2 }}. */
   virtual Value trigger(const Value& val)
   {
-    Value res = (*mMethod)(val);
+    String url;
+    Hash params;
+    Value res;
+    if (val.is_hash()) {
+      url    = val["url"];
+      params = val["params"];
+    } else {
+      url = val;
+    }
+    
+    if (url.is_nil()) return Error("Invalid parameters (missing 'url').");
+    
+    res = (*mMethod)(url);
     
     if (!res.is_string()) return res;
+    url = res;
     
+    Node * obj = (Node*)Object::find(url.string()); // FIXME: test type (= virtual for type signature) of returned Object before casting to Node * !!!
+    if (!obj) {
+      return Error("New Object at '").append(url.string()).append("' not found !");
+    }
     
     obj->set_class_url(mParent->url());  // used by osc (using url instead of name because we might have class folders/subfolders some day).
-    obj->set_server(pServer);  // ??? where do we find this one ?
-    obj->set_output(pOutput);  // ??? I think we won't need this anymore once we have implemented notifications ?
+    
+    //FIX obj->set_server(pServer);  // ??? where do we find this one ?
+    //FIX obj->set_output(pOutput);  // ??? I think we won't need this anymore once we have implemented notifications ?
     
     // make inlets
-    pClass->make_slots(obj);
+    res = mParent->make_inlets(obj);
+    if (res.is_error()) return res;
+    
     // make outlets
+    res = mParent->make_outlets(obj);
+    if (res.is_error()) return res;
+    
     // make accessors
+    res = mParent->make_accessors(obj);
+    if (res.is_error()) return res;
     
     // initialize
-    
-    // ??? How do we get parameters ? Should val be a hash {url:"/one/two" params:{tempo:290 rubato:99}} ?
-    obj->set_is_ok( obj->init() && obj->set(p) ); // if init or set returns false, the node goes into 'broken' mode.
-    return (Node*)obj;
+    obj->set_is_ok( obj->init() && obj->set(params) ); // if init or set returns false, the node goes into 'broken' mode.
+    return url;
   }
-}
+};
 
 
 /** This is a helper to prepare prototypes to:
@@ -39,6 +67,22 @@ class NewMethod : public ClassMethod
 class Class : public Object
 {
 public:
+  virtual ~Class()
+  {
+    std::list<InletPrototype*>::iterator it;
+    std::list<InletPrototype*>::iterator end = mInletPrototypes.end();
+    for (it = mInletPrototypes.begin(); it != end; it++) {
+      delete *it;
+    }
+  }
+  
+  /** Declare an inlet, with an accessor method. */
+  template <class T, void(T::*Tmethod)(const Signal& sig)>
+  void add_inlet (const char * pName, value_t pAcceptTypes, const char * pInfo)
+  { 
+    mInletPrototypes.push_back( new InletPrototype(pName, pAcceptTypes, pInfo, &cast_inlet_method<T, Tmethod>) );
+  }
+  
   
   /** Get a Class object from it's std::string name ("Metro"). */
   static bool get_class (Class ** pResult, const std::string& pName)
@@ -100,4 +144,25 @@ public:
     return String(obj->url());
   }
   
+  /** Create a callback for an inlet. */
+  template <class T, void(T::*Tmethod)(const Signal& sig)>
+  static void cast_inlet_method (void * receiver, const Signal& sig)
+  {
+    (((T*)receiver)->*Tmethod)(sig);
+  }
+  
+private:
+  
+  const Value make_inlets(Node * pObj)
+  {
+    std::list<InletPrototype*>::iterator it;
+    std::list<InletPrototype*>::iterator end = mInletPrototypes.end();
+    Object * inlets = pObj->new_child<Object>("inlets");
+    if (!inlets) return Error("Could not create 'inlets' folder for'").append(pObj->url).append("'.");
+    for (it = mInletPrototypes.begin(); it != end; it++) {
+      Inlet * inl = new Inlet (Object * pParent, void * pNode, const InletPrototype& pProto)
+    }
+  }
+  
+  std::list<InletPrototype*> mInletPrototypes;  /**< Prototypes to create inlets. */
 };

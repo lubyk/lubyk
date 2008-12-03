@@ -122,6 +122,26 @@ public:
     TS_ASSERT( str == "sub" );
   }
   
+  void test_new_child( void )
+  {
+    Object root("root");
+    Object * one = root.new_child<Object>("one");
+    Object * sub = one->new_child<Object>("sub");
+  
+    TS_ASSERT_EQUALS( root.url(),     std::string("/root") );
+    TS_ASSERT_EQUALS( one->url(),     std::string("/root/one") );
+    TS_ASSERT_EQUALS( sub->url(),     std::string("/root/one/sub") );
+    
+    TS_ASSERT_EQUALS( root.child("one"), one);
+    TS_ASSERT_EQUALS( root.child("foo"), (Object*)NULL);
+    
+    one->set_name("foo");
+    TS_ASSERT_EQUALS( root.child("one"), (Object*)NULL);
+    TS_ASSERT_EQUALS( root.child("foo"), one);
+    TS_ASSERT_EQUALS( Object::find("/root/one/sub"), (Object*)NULL);
+    TS_ASSERT_EQUALS( Object::find("/root/foo/sub"), sub);
+  }
+  
   void test_child( void )
   {
     Object root("root");

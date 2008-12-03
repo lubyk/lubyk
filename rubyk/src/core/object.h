@@ -36,6 +36,23 @@ public:
     init_object(&pParent, pName);
   }
   
+  /** This is the prefered way to create new objects since it clearly highlights ownership in the parent. */
+  template<class T>
+  T * new_child(const std::string& pName)
+  {
+    T * obj = new T(this, pName);
+    return obj;
+  }
+  
+  /** This is the prefered way to create new objects since it clearly highlights ownership in the parent. */
+  template<class T>
+  T * new_child(const char* pName)
+  {
+    T * obj = new T(this, std::string(pName));
+    return obj;
+  }
+  
+  
   virtual ~Object()
   {
     string_iterator it;
