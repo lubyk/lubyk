@@ -62,14 +62,31 @@ public:
     return s;
   }
   
-  void append(const std::string& s)
+  String& append(const std::string& s)
   {
     mutable_data()->mString.append(s);
+    return *this;
   }
   
-  void append(const char * s)
+  String& append(const char * s)
   {
     mutable_data()->mString.append(s);
+    return *this;
+  }
+  
+  size_t length () const
+  {
+    return string().length();
+  }
+  
+  size_t rfind ( const std::string& str, size_t pos = std::string::npos ) const
+  {
+    return string().rfind(str, pos);
+  }
+  
+  std::string substr ( size_t pos = 0, size_t n = std::string::npos ) const
+  {
+    return string().substr(pos, n);
   }
   
   bool operator==(const char * s)
@@ -85,7 +102,7 @@ public:
   }
   
   /** Return a const version of the std::string storage. */
-  const std::string& string() const
+  inline const std::string& string() const
   {
     return mPtr ? data_pointer()->mString : sNoString;
   }

@@ -68,13 +68,13 @@ public:
   
   void setUp()
   {
-    TestData::sIdCounter = 0;
+    Data::sIdCounter = 0;
     TestData::sOut.str(std::string(""));
   }
 protected:
   void _assert_log(const char * file, int lineno, const char * pLog)
   {
-    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("log")), std::string(pLog), TestData::sOut.str());
+    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("log")), TestData::sOut.str(), std::string(pLog));
     TestData::sOut.str(std::string(""));
   }
   

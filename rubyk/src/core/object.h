@@ -91,25 +91,52 @@ public:
     return String(res);
   }
   
-  /** Execute a method / call the default operation for an object. */
+  /** Inspection method. Called as a response to #inspect.*/
+  virtual const Value inspect()
+  {
+    return String(mInfo);
+  }
+  
+  /** Execute the default operation for an object. */
+  static Value call (const char* pUrl)
+  {
+    return call(std::string(pUrl), gNilValue);
+  }
+  
+  /** Execute the default operation for an object. */
+  static Value call (std::string& pUrl)
+  {
+    return call(pUrl, gNilValue);
+  }
+  
+  /** Execute the default operation for an object. */
   static Value call (const char* pUrl, const Value& val)
   {
     return call(std::string(pUrl), val);
   }
   
-  /** Execute a method / call the default operation for an object. */
+  /** Execute the default operation for an object. */
   static Value call (const std::string& pUrl, const Value& val)
   {
     Object * target;
-    size_t info_pos = pUrl.rfind("/#info");
+    size_t pos;
+    
+    // FIXME: move the #info and #inspect into the method space ?
+    
     // 1. does the url end with '/#info' ?
-    if (info_pos != std::string::npos) {
+    if ( (pos = pUrl.rfind("/#info")) != std::string::npos) {
       // return info string
       // find object from url
-      if (get(&target, pUrl.substr(0, info_pos))) {
+      if (get(&target, pUrl.substr(0, pos))) {
         return String(target->mInfo);
       } else {
-        return Error(std::string("Object '").append(pUrl.substr(0, info_pos)).append("' not found."));
+        return Error(std::string("Could not get info on '").append(pUrl.substr(0, pos)).append("' (not found)."));
+      }
+    } else if ( (pos = pUrl.rfind("/#inspect")) != std::string::npos) {  
+      if (get(&target, pUrl.substr(0, pos))) {
+        return target->inspect();
+      } else {
+        return Error(std::string("Could not inspect '").append(pUrl.substr(0, pos)).append("' (not found)."));
       }
     } else {
       // call

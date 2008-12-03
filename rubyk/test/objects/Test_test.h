@@ -4,14 +4,16 @@
 #include "test_helper.h"
 
 
-class TestTest : public CxxTest::TestSuite, public NodeTester
+class TestTest : public NodeTestHelper
 {    
 public:
   
   void test_create( void )
   {  
-    create("counter: 5 message:\"foo\"");
-    assert_spy("'foo' 5");
+    Number n(12.3);
+    TS_ASSERT_EQUALS(n.data_id(), 1);
+    create("Test", "n", "counter: 5 message:\"foo\"");
+    assert_inspect("n", "'foo' 5");
   }
   
 //  void test_init_message( void )
@@ -137,12 +139,6 @@ public:
 //    TS_ASSERT_EQUALS( std::string(v3->get_spy()) , std::string("5.00"));
 //    
 //  }
-private:
-  void create(const char* pParams)
-  {
-    Value res = Object::call("/classes/Test/new", Hash(std::string("url:n params:").append(Hash(pParams).to_string)));
-    TS_ASSERT_EQUALS(res.to_string(), "\"/n\"");
-  }
 };
 
 // class TestParseTest : public ParseTest

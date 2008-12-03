@@ -3,6 +3,20 @@
 #include "object.h"
 #include "value_test_helper.h"
 
+class DummyObject : public Object
+{
+public:
+  DummyObject(const char * pName, int pCounter) : Object(pName), mCounter(pCounter) {}
+  
+  virtual const Value inspect()
+  {
+    std::ostringstream os(std::ostringstream::out);
+    os << mName << ": " << mCounter;
+    return String(os.str());
+  }
+private:
+  int mCounter;
+};
 
 class ObjectTest : public ValueTestHelper
 {
@@ -191,6 +205,22 @@ public:
     TS_ASSERT_EQUALS( res.to_string(), "[2] \"\"");
     
     res = Object::call("/blah/#info",param);
-    TS_ASSERT_EQUALS( Error(res).message(), std::string("Object '/blah' not found.") );
+    TS_ASSERT_EQUALS( Error(res).message(), std::string("Could not get info on '/blah' (not found).") );
+  }
+  
+  void test_inspect( void )
+  {
+    Object root("root");
+    DummyObject insp("foo", 23);
+    Value res;
+    
+    root.set_info("This is the root node.");
+    res = Object::call("/root/#inspect");
+    TS_ASSERT_EQUALS( res.to_string(), "[1] \"This is the root node.\"");
+    res = Object::call("/foo/#inspect");
+    TS_ASSERT_EQUALS( res.to_string(), "[2] \"foo: 23\"");
+    
+    res = Object::call("/blah/#inspect");
+    TS_ASSERT_EQUALS( Error(res).message(), std::string("Could not inspect '/blah' (not found).") );
   }
 };

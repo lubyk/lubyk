@@ -20,7 +20,7 @@ public:
     return (*mMethod)(val);
   }
   
-private:
+protected:
   class_method_t mMethod;   /**< Pointer on the class method. */ 
 };
 

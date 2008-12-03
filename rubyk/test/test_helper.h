@@ -3,14 +3,47 @@
 // #include "class.h"
 // #include "command.h"
 #include "globals.cpp"
+#include "class.h"
 #include <sstream>
 
 
 #define assert_print(x,y) _assert_print(__FILE__,__LINE__,x,y)
+#define assert_inspect(x,y) _assert_inspect(__FILE__,__LINE__,x,y)
+#define create(x,y,z) _create(__FILE__,__LINE__,x,y,z)
 
 #define ___ERK_ASSERT_EQUALS(f,l,cmd,x,y,m) CxxTest::doAssertEquals( (f), (l), (cmd), (x), #y, (y), (m) )
 #define ___RK_ASSERT_EQUALS(f,l,cmd,x,y,m) { _TS_TRY { ___ERK_ASSERT_EQUALS(f,l,cmd,x,y,m); } __TS_CATCH(f,l) }
 #define _RK_ASSERT_EQUALS(f,l,cmd,x,y) ___RK_ASSERT_EQUALS(f,l,cmd,x,y,0)
+
+class NodeTestHelper : public CxxTest::TestSuite
+{
+public:
+  
+  void setUp()
+  {
+    Data::sIdCounter = 0;
+  }
+  
+protected:
+  void _create(const char * file, int lineno, const char * pClass, const char * pName, const char* pParams)
+  {
+    Hash h;
+    h.set_key("url", String(pName));
+    h.set_key("params", Hash(pParams));
+    Value res = Object::call(std::string(CLASS_ROOT).append("/").append(pClass).append("/new"), h);
+    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("create")),
+                       res.to_string(), 
+                       std::string("\"").append(pName).append("\""));
+  }
+  
+  void _assert_inspect(const char * file, int lineno, const char * pName, const char * pInfo)
+  {
+    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("inspect")),
+                       Object::call(std::string("/").append(pName).append("/#inspect")).to_string(), 
+                       std::string("\"").append(std::string(pInfo)).append("\""));
+  }
+};
+
 /*
 class NodeTester
 {
