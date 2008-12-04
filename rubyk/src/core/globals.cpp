@@ -22,6 +22,7 @@ bool   gQuitGl;
 // Object
 THash<std::string, Object*> Object::sObjects(OBJECT_HASH_SIZE);
 unsigned int Object::sIdCounter    = 0;
+Object Object::sRoot(true);
 
 // Values
 Value gNilValue;        // globals declared in values.h

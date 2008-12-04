@@ -78,6 +78,14 @@ public:
     }
   }
   
+  /** Add a new class method to the class. */
+  void add_class_method(const char * pName, class_method_t pMethod, const char * pInfo)
+  {
+    ClassMethod * m = adopt(new ClassMethod(pName, pMethod));
+    m->set_info(pInfo);
+  }
+  
+  
   /** Declare an inlet, with an accessor method. */
   template <class T, void(T::*Tmethod)(const Value& val)>
   void add_inlet (const char * pName, value_t pAcceptTypes, const char * pInfo)
@@ -86,21 +94,23 @@ public:
   }
   
   /** Get a Class object from it's name ("Metro"). */
-  static bool get_class (Class ** pResult, const char* pName)
+  static Class * find (const char* pName)
   {
-    return get_class(pResult, std::string(pName));
+    return (Class*)ClassListing::sClasses.child(pName); // FIXME: type checking !!
   }
   
   /** Get a Class object from it's std::string name ("Metro"). */
-  static bool get_class (Class ** pResult, const std::string& pName);
+  static Class * find (const std::string& pName)
+  {
+    return (Class*)ClassListing::sClasses.child(pName);
+  }
   
   /** Declare a new class. This template is responsible for generating the "new" method. */
   template<class T>
   static void declare(const char* pName, const char* pInfo)
   {
     Class * klass;
-    std::cout << "declare " << pName << " '" << pInfo << "'" << std::endl;
-    if (get_class(&klass, pName))
+    if (Class::find(pName))
       delete klass; // remove existing class with same name.
     
     klass = ClassListing::sClasses.adopt(new Class(pName, pInfo));
@@ -120,7 +130,7 @@ public:
     std::string name;
     if (url.is_nil()) return Error("Invalid 'url' parameter.");
     
-    // get parent ["/met", "met"] => "/", "/venus/grp/met" => "/venus/grp"
+    // get parent ["/met", "met"] => "", "/grp/met" => "/grp"
     std::string str = url.string();
     if (str.at(0) == '/') {
       size_t pos = url.rfind("/");
@@ -131,8 +141,6 @@ public:
       parent = NULL;
       name = str;
     }
-    
-    //FIXME, there should be a "root" responding to "/".
     
     T * obj;
     
@@ -179,4 +187,5 @@ private:
 
 // HELPERS TO AVOID TEMPLATE SYNTAX
 #define CLASS(klass, info)         {Class::declare<klass>(#klass, info);}
+#define CLASS_METHOD(klass,method, info) {Class::find(#klass)->add_class_method(#method, &klass::method, info);}
 #endif // _CLASS_H_

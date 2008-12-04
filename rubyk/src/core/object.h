@@ -23,20 +23,32 @@ public:
   Object() : mParent(NULL), mChildren(20)
   {
     mName = default_name();
-    object_moved(this);
+    sRoot.adopt(this);
   }
   
   Object(const char * pName) : mParent(NULL), mChildren(20)
   {
-    std::string name = pName;
-    mName = (name == "") ? default_name() : name;
-    object_moved(this);
+    mName = pName;
+    sRoot.adopt(this);
   }
   
   Object(const std::string& pName) : mParent(NULL), mChildren(20)
   {
-    mName = (pName == "") ? default_name() : pName;
-    object_moved(this);
+    mName = pName;
+    sRoot.adopt(this);
+  }
+  
+  /** TODO: Fix. This is a little hackish... */
+  Object(bool isRoot) : mParent(NULL), mChildren(20)
+  {
+    if (isRoot) {
+      // creating root node.
+      mName = "";
+      moved();
+    } else {
+      mName = default_name();
+      sRoot.adopt(this);
+    }
   }
   
   
@@ -152,8 +164,7 @@ public:
       act = CallTrigger;
     }
     
-    std::cout << "A: " << url << std::endl;
-    while (url != "" && !get(&target, url)) {
+    while (!get(&target, url) && url != "") {
       act = CallNotFound;
       pos = url.rfind("/");
       if (pos == std::string::npos)
@@ -161,10 +172,8 @@ public:
       else
         url = url.substr(0, pos);
       
-      std::cout << "B: " << url << std::endl;
     }
     
-    std::cout << "C: " << url << std::endl;
     if (!target) return object_not_found(pUrl);
     
     switch (act) {
@@ -191,7 +200,7 @@ public:
   
   static bool get (Object ** pResult, const char* pUrl)
   {
-    return sObjects.get(pResult, std::string(pUrl));
+    return get(pResult, std::string(pUrl));
   }
   
   /** Return a pointer to the object located at pUrl. NULL if not found. */
@@ -225,13 +234,9 @@ public:
   
   const std::string& url()
   {
-    if (mUrl == "") {
+    if (mParent && mUrl == "") {
       // build fullpath
-      if (mParent) {
-        mUrl = std::string(mParent->url()).append("/").append(mName);
-      } else {
-        mUrl = std::string("/").append(mName);
-      }
+      mUrl = std::string(mParent->url()).append("/").append(mName);
     }
     return mUrl;
   }
@@ -281,7 +286,8 @@ public:
       return NULL;
     }
   }
-
+  
+  static Object sRoot; /**< Root object. */
 protected:
   static void object_moved(Object * pObj)
   {

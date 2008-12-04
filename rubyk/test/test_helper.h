@@ -11,7 +11,9 @@
 
 #define assert_print(x,y) _assert_print(__FILE__,__LINE__,x,y)
 #define assert_inspect(x,y) _assert_inspect(__FILE__,__LINE__,x,y)
-#define create(x,y,z) _create(__FILE__,__LINE__,x,y,z)
+#define assert_info(x,y) _assert_inspect(__FILE__,__LINE__,x,y)
+#define create(a,b,c,d) _create(__FILE__,__LINE__,a,b,c,d)
+#define assert_call(a,b,c) _assert_call(__FILE__,__LINE__,a,b,c)
 
 #define ___ERK_ASSERT_EQUALS(f,l,cmd,x,y,m) CxxTest::doAssertEquals( (f), (l), (cmd), (x), #y, (y), (m) )
 #define ___RK_ASSERT_EQUALS(f,l,cmd,x,y,m) { _TS_TRY { ___ERK_ASSERT_EQUALS(f,l,cmd,x,y,m); } __TS_CATCH(f,l) }
@@ -56,22 +58,35 @@ public:
   }
   
 protected:
-  void _create(const char * file, int lineno, const char * pClass, const char * pName, const char* pParams)
+  void _create(const char * file, int lineno, const char * pClass, const char * pName, const char* pParams, const char* pUrl)
   {
     Hash h;
     h.set_key("url", String(pName));
     h.set_key("params", Hash(pParams));
     Value res = Object::call(std::string(CLASS_ROOT).append("/").append(pClass).append("/new"), h);
     _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("create")),
-                       res.to_string(), 
-                       std::string("\"/").append(pName).append("\""));
+                       res.to_string(), std::string(pUrl));
+  }
+  
+  void _assert_call(const char * file, int lineno, const char * pUrl, const char * pVal, const char * pResult)
+  {
+    Value res = Object::call(pUrl, Value(pVal));
+    std::string str = res.is_string() ? String(res).string() : res.to_string();
+    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("call")), str, std::string(pResult));
   }
   
   void _assert_inspect(const char * file, int lineno, const char * pName, const char * pInfo)
   {
-    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("inspect")),
-                       Object::call(std::string("/").append(pName).append("/#inspect")).to_string(), 
-                       std::string("\"").append(std::string(pInfo)).append("\""));
+    Value res = Object::call(std::string(pName).append("/#inspect"));
+    std::string str = res.is_string() ? String(res).string() : res.to_string();
+    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("inspect")), str, std::string(pInfo));
+  }
+  
+  void _assert_info(const char * file, int lineno, const char * pName, const char * pInfo)
+  {
+    Value res = Object::call(std::string(pName).append("/#info"));
+    std::string str = res.is_string() ? String(res).string() : res.to_string();
+    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("inspect")), str, std::string(pInfo));
   }
 };
 

@@ -6,10 +6,18 @@ public:
   
   void test_create( void )
   { 
-    create("Test", "n", "counter: 5 message:\"foo\"");
-    assert_inspect("n", "'foo' 5");
+    // create always produces 3 values ([2] {url:[1] params:[3]})
+    create("Test", "n", "counter: 5 message:\"foo\"", "[6] \"/n\""); // 2 values + 3 => 5 + 1 => [6]. Ok !
+    assert_inspect("/n", "\'[8] \"Hello World !\"\' 0"); // [7] ?
+    assert_info("/classes/Test", "Object used for testing. Does not do anything really useful.");
   }
   
+  void test_class_method( void )
+  { 
+    assert_call("/classes/Test/hello", "", "Hello: Nil");
+    assert_call("/classes/Test/hello", "1.35", "Hello: [2] 1.35");
+    assert_info("/classes/Test/hello", "If the input value is 0: stop. If it is greater the 0: start. Bang toggles on/off.");
+  }
 //  void test_init_message( void )
 //  {
 //    create("message:\"is output ok?\"");

@@ -21,6 +21,16 @@ private:
 class ObjectTest : public ValueTestHelper
 {
 public:
+  void test_root( void )
+  {
+    Object * root = NULL;
+    Object a("a"); // automatically adopted by sRoot
+    Object * a2   = NULL;
+    TS_ASSERT( Object::get(&root, "") );
+    TS_ASSERT_EQUALS( root, &Object::sRoot );
+    TS_ASSERT( Object::get(&a2, "/a") );
+    TS_ASSERT_EQUALS( a2, &a );
+  }
   void test_adopt( void )
   {
     Object root("root");
@@ -51,9 +61,10 @@ public:
     TS_ASSERT_EQUALS( root.url(),    std::string("/root") );
     TS_ASSERT_EQUALS( child1->url(),  std::string("/foo") );
     TS_ASSERT_EQUALS( child2->url(),  std::string("/bar") );
-    TS_ASSERT_EQUALS( child3->url(),  std::string("/foo") );
+    TS_ASSERT_EQUALS( child3->url(),  std::string("/foo-1") );
     
     child1->set_parent(root);
+    child3->set_name("foo");
     
     TS_ASSERT_EQUALS( root.url(),    std::string("/root") );
     TS_ASSERT_EQUALS( child1->url(),  std::string("/root/foo") );

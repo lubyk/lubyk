@@ -58,15 +58,12 @@ const Value ClassListing::trigger (const Value& val)
 const Value ClassListing::not_found (const std::string& pUrl, const Value& val)
 {
   std::string className = pUrl.substr(url().length() + 1);
-  std::cout << "---> " << className << std::endl;
   className = className.substr(0, className.find("/"));
   Object * obj;
   
   // try to load dynamic lib
   std::string path = mObjectsPath;
   path.append("/").append(className).append(".rko");
-  
-  std::cout << "load lib from '" << path << "'" << std::endl;
   
   if (load(path.c_str(), "init")) {
     // FIXME: we should handle '#info' and '#inspect' here
@@ -112,15 +109,4 @@ bool ClassListing::load(const char * file, const char * init_name)
   (*function)();
 
   return true;
-}
-
-/** Get a Class object from it's std::string name ("Metro"). */
-bool Class::get_class (Class ** pResult, const std::string& pName)
-{
-  Object * obj;
-  if (Object::get(&obj, std::string(CLASS_ROOT).append("/").append(pName))) {
-    *pResult = (Class*)obj; // FIXME: type checking !!
-    return true;
-  }
-  return false;
 }

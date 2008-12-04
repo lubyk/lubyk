@@ -96,6 +96,10 @@ extern "C" void init()
 { 
   // Define class.
   CLASS (   Test, "Object used for testing. Does not do anything really useful.")
+  
+  // Define a class method.
+  CLASS_METHOD( Test,  hello,  "If the input value is 0: stop. If it is greater the 0: start. Bang toggles on/off." )
+  
 /*  
   // Define inlets.
   // This also creates "/nodes/t/info" set/get methods and "nodes/t/inlets/info" to link, unlink, ...).
@@ -113,7 +117,5 @@ extern "C" void init()
   // Define accessors for attributes not used as inlets.
   ACCESSOR( Test, message,   "Example of value storage (String)." )
   
-  // Define a class method.
-  CLASS_METHOD( Test,  hello,  "If the input value is 0: stop. If it is greater the 0: start. Bang toggles on/off." )
 */
 }
