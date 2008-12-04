@@ -60,14 +60,19 @@ public:
   
   /** Execute an applescript from lua. */
   int sys_system()
-  {    
-    std::string str;
-    if (string_from_lua(&str)) {
-      system(str.c_str());
+  { 
+    if (string_from_lua(&mSystCall)) {
+      NEW_THREAD(System, do_system)
     }
     return 0;
   }
   
+  void do_system()
+  {  
+    system(mSystCall.c_str());
+  }
+private:
+  std::string mSystCall; // FIXME: this is not thread safe !
 };
 
 extern "C" void init()
