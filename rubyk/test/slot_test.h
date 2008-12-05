@@ -26,7 +26,28 @@ static void receive_value4(void * receiver, const Value& val)
 class SlotTest : public CxxTest::TestSuite
 {
 public:
-  void testSingleConnection( void )
+  
+  void test_types( void )
+  {
+    real_t counter = 0;
+    Outlet o_num(&counter, NumberValue);
+    Outlet o_str(&counter, StringValue);
+    Inlet  i_mat(&counter, receive_value1, MatrixValue );
+    Inlet  i_any(&counter, receive_value1, AnyValue );
+    Inlet  i_str_mat(&counter, receive_value1, StringValue | MatrixValue );
+    Inlet  i_num(&counter, receive_value1, NumberValue );
+    
+    TS_ASSERT(!o_num.connect(&i_mat));
+    TS_ASSERT( o_num.connect(&i_num) );
+    TS_ASSERT( o_num.connect(&i_any) );
+    
+    TS_ASSERT(!o_str.connect(&i_num) );
+    TS_ASSERT(!o_str.connect(&i_mat) );
+    TS_ASSERT( o_str.connect(&i_any) );
+    TS_ASSERT( o_str.connect(&i_str_mat) );
+  }
+  
+  void test_single_connection( void )
   {
     real_t counter = 0;
     Outlet o(&counter); // counter behaves as the receiver ()
@@ -38,7 +59,7 @@ public:
     TS_ASSERT_EQUALS( 2.0, counter);
   }
   
-  void testManyConnections( void )
+  void test_many_connections( void )
   {
     real_t counter = 0;
     Outlet o(&counter);

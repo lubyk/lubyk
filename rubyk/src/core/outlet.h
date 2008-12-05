@@ -7,6 +7,7 @@
 class Outlet : public Slot {
 public:  
   Outlet (void* node) : Slot(node) {}
+  Outlet (void* node, uint pType) : Slot(node, pType) {}
   
   /** Send the signal to all connections. Do nothing if there are no connections. */
   void send (const Value& s);

@@ -8,9 +8,9 @@ typedef void(*inlet_method_t)(void * node, const Value& val);
 /** Prototype constructor for Inlets. */
 struct InletPrototype
 {
-  InletPrototype(const char * pName, value_t pAcceptTypes, const char * pInfo, inlet_method_t pMethod) : mName(pName), mAcceptTypes(pAcceptTypes), mMethod(pMethod), mInfo(pInfo) {}
+  InletPrototype(const char * pName, uint pType, inlet_method_t pMethod, const char * pInfo) : mName(pName), mType(pType), mMethod(pMethod), mInfo(pInfo) {}
   const char *   mName;
-  value_t        mAcceptTypes;
+  uint           mType;
   inlet_method_t mMethod;
   const char *   mInfo;
 };
@@ -18,10 +18,11 @@ struct InletPrototype
 class Inlet : public Slot {
 public:
   /** Constructor used for testing. */
+  Inlet (void* node, inlet_method_t pMethod, uint pType) : Slot(node, pType), mMethod(pMethod) {}
   Inlet (void* node, inlet_method_t pMethod) : Slot(node), mMethod(pMethod) {}
   
   /** Prototype based constructor. */
-  Inlet (void * pNode, const InletPrototype& pProto) : Slot(pProto.mName, pNode), mMethod(pProto.mMethod)
+  Inlet (void * pNode, const InletPrototype& pProto) : Slot(pProto.mName, pNode, pProto.mType), mMethod(pProto.mMethod)
   {
     set_info(pProto.mInfo);
   }
@@ -37,7 +38,7 @@ public:
   }
   
 private:
-  inlet_method_t mMethod;  /**< Method to set a new value. */
+  inlet_method_t mMethod;        /**< Method to set a new value. */
 };
 
 #endif

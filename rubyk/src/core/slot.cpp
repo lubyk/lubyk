@@ -20,11 +20,12 @@ void Slot::setId(int pId)
 bool Slot::connect(Slot * pOther)
 {  
   if (pOther == NULL) return false;
-  
-  add_connection(pOther);
-  pOther->add_connection(this);
-  
-  return true;
+  // outlet --> inlet
+  if (add_connection(pOther)) { 
+    pOther->add_connection(this);
+    return true;
+  }
+  return false;
 }
 
 void Slot::disconnect(Slot * pOther)
@@ -47,9 +48,16 @@ bool Slot::operator>= (const Slot& pOther) const
 }
 
 
-void Slot::add_connection(Slot * pOther)
-{  
-  mConnections.push(pOther); /** OrderedList makes sure the link is not created again if it already exists. */
+bool Slot::add_connection(Slot * pOther)
+{ 
+  if (mType & pOther->mType) {
+    // only create a link if the slot type signature are compatible
+    // OrderedList makes sure the link is not created again if it already exists.
+    mConnections.push(pOther); 
+    return true;
+  } else {
+    return false;
+  }
 }
 
 void Slot::remove_connection(Slot * pOther)

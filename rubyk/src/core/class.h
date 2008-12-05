@@ -39,9 +39,9 @@ public:
   
   /** Declare an inlet, with an accessor method. */
   template <class T, void(T::*Tmethod)(const Value& val)>
-  void add_inlet (const char * pName, value_t pAcceptTypes, const char * pInfo)
+  void add_inlet (const char * pName, uint pType, const char * pInfo)
   { 
-    mInletPrototypes.push_back( InletPrototype(pName, pAcceptTypes, &Inlet::cast_method<T, Tmethod>, pInfo) );
+    mInletPrototypes.push_back( InletPrototype(pName, pType, &Inlet::cast_method<T, Tmethod>, pInfo) );
   }
   
   /** Build all inlets for an object from prototypes. */
@@ -73,8 +73,14 @@ private:
   std::list<MethodPrototype> mMethodPrototypes;  /**< Prototypes to create methods. */
 };
 
+// HELPER FOR FAST AND EASY ACCESSOR CREATION
+#define ACCESSOR(var, name) const Value message (const Value& val)  \
+{ var = val;                                                        \
+  return var; }                                                     \
+
 // HELPERS TO AVOID TEMPLATE SYNTAX
 #define CLASS(klass, info)                Class * c = root.classes()->declare<klass>(#klass, info);
 #define CLASS_METHOD(klass, method, info) c->add_class_method(#method, &klass::method, info);
 #define METHOD(klass, method, info)       c->add_method<klass, &klass::method>(#method, info);
+#define INLET(klass, method, types, info) c->add_inlet<klass, &klass::method>(#method, types, info);
 #endif // _CLASS_H_

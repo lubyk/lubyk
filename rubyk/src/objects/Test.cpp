@@ -12,11 +12,7 @@ public:
   }
   
   /** Example to set an attribute stored as a Value (a String here). This is also an accessor (used by sending a nil value). */
-  const Value message (const Value& val)
-  {
-    mMessage = val;
-    return mMessage;
-  }
+  ACCESSOR(mMessage, message)
   
   /** Test output. */
   const Value out_message (const Value& val)
@@ -104,15 +100,15 @@ extern "C" void init(Root& root)
   // Define an accessor for an attribute not used as inlet.
   METHOD( Test, message,   "Example of value storage (String)." )
   
-/*  
   // Define inlets.
   // This also creates "/nodes/t/info" set/get methods and "nodes/t/inlets/info" to link, unlink, ...).
   // The get method of an inlet always returns the code defined in the inlet definition.
   //        class  inlet     accept type              info                                  return value for accessor
-  INLET (   Test,  bang,     NumberValue | BangValue, "Set counter | increment and send.",  Number(mCounter))
-  INLET (   Test,  counter,  NumberValue,             "Example of value storage (real_t).", Number(mCounter))
-  INLET (   Test,  info,     AnyValue,                "Printout value.",                    gNilValue)
-  
+  INLET (   Test,  bang,     NumberValue | BangValue, "Set counter | increment and send.")
+  INLET (   Test,  counter,  NumberValue,             "Example of value storage (real_t).")
+  INLET (   Test,  info,     AnyValue,                "Printout value.")
+
+/*  
   // Define an outlet (also creates "/nodes/Test/outlets/result" to link, unlink, etc).
   // To "spy" on the outlet's result by hovering connection/outlet, we must register as observer on the outlet (=osc connection).
   OUTLET(   Test, counter,   NumberValue, "Increasing counter.")

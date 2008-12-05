@@ -1,7 +1,6 @@
 #ifndef _RUBYK_TYPES_H_
 #define _RUBYK_TYPES_H_
 
-
 // type for real numbers
 #ifndef real_t
 #define real_t double

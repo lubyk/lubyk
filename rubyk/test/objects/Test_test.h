@@ -22,12 +22,13 @@ public:
   void test_method( void )
   {   
     create("Test", "t", "counter: 5 message:\"hopla\"", "[6] \"/t\""); // 2 values + 3 => 5 + 1 => [6]. Ok !
-    assert_call("/t", ""     , "inlets,message");     // get method list
+    assert_call("/t", ""     , "inlets/,message");     // get method list
     assert_call("/t/message", ""     , "hopla"); // get
     assert_call("/t/message", "yoba" , "yoba"); // set
     assert_call("/t/message", ""     , "yoba"); // get again
     assert_call("/t/message/#info","", "Example of value storage (String)."); // get info on method
   }
+  
 //  void test_init_message( void )
 //  {
 //    create("message:\"is output ok?\"");
