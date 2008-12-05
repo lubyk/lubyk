@@ -26,7 +26,8 @@ printf("%c_",fc);
 #ifdef DEBUG_PARSER
     printf("%c-",fc);
 #endif
-    str_buf.append(&fc, 1); /* append */
+    if (fc)
+      str_buf.append(&fc, 1); /* append */
   }
 
   action number {

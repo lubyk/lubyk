@@ -5,7 +5,7 @@
 #define MAX_NUM_BUFFER_SIZE 50
 // #define DEBUG_PARSER
 
-#line 74 "src/core/values/value.rl"
+#line 75 "src/core/values/value.rl"
 
 
 // transition table
@@ -92,7 +92,7 @@ static const int json_error = 0;
 
 static const int json_en_main = 1;
 
-#line 78 "src/core/values/value.rl"
+#line 79 "src/core/values/value.rl"
 
 /** This is a crude JSON parser. */
 size_t Value::from_string(const char * pStr)
@@ -114,7 +114,7 @@ size_t Value::from_string(const char * pStr)
 	{
 	cs = json_start;
 	}
-#line 95 "src/core/values/value.rl"
+#line 96 "src/core/values/value.rl"
   
 #line 120 "src/core/values/value.cpp"
 	{
@@ -213,31 +213,32 @@ printf("%c_",(*p));
 #ifdef DEBUG_PARSER
     printf("%c-",(*p));
 #endif
-    str_buf.append(&(*p), 1); /* append */
+    if ((*p))
+      str_buf.append(&(*p), 1); /* append */
   }
 	break;
 	case 2:
-#line 32 "src/core/values/value.rl"
+#line 33 "src/core/values/value.rl"
 	{
     num_buf[num_buf_i+1] = '\0';
     Number(atof(num_buf)).set(*this);
   }
 	break;
 	case 3:
-#line 37 "src/core/values/value.rl"
+#line 38 "src/core/values/value.rl"
 	{
     String(str_buf).set(*this);
     str_buf = "";
   }
 	break;
 	case 4:
-#line 42 "src/core/values/value.rl"
+#line 43 "src/core/values/value.rl"
 	{
     tmp_h.set(*this);
   }
 	break;
 	case 5:
-#line 46 "src/core/values/value.rl"
+#line 47 "src/core/values/value.rl"
 	{
     // Build tmp_val from string and move p forward
     p++;
@@ -250,7 +251,7 @@ printf("%c_",(*p));
     p--;
   }
 	break;
-#line 254 "src/core/values/value.cpp"
+#line 255 "src/core/values/value.cpp"
 		}
 	}
 
@@ -262,7 +263,7 @@ _again:
 	_test_eof: {}
 	_out: {}
 	}
-#line 96 "src/core/values/value.rl"
+#line 97 "src/core/values/value.rl"
   
   return p - pStr;
 }

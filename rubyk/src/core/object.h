@@ -4,55 +4,69 @@
 #include "values.h"
 #include "thash.h"
 
-#define OBJECT_HASH_SIZE 10000
 #define NEXT_NAME_BUFFER_SIZE 20
 
-
-/** Value types. */
-enum call_action_t {
-  CallTrigger  = 1,
-  CallInfo     = 2,
-  CallInspect  = 4,
-  CallNotFound = 8,
-};
+class Root;
 
 class Object
 {
 public:
-  // FIXME: remove this constructor !
-  Object() : mParent(NULL), mChildren(20)
+  Object() : mRoot(NULL), mParent(NULL), mChildren(20)
   {
     mName = default_name();
-    sRoot.adopt(this);
+    rebuild_url();
   }
   
-  Object(const char * pName) : mParent(NULL), mChildren(20)
+  Object(const char * pName) : mRoot(NULL), mParent(NULL), mChildren(20)
   {
     mName = pName;
-    sRoot.adopt(this);
+    rebuild_url();
   }
   
-  Object(const std::string& pName) : mParent(NULL), mChildren(20)
+  Object(const std::string& pName) : mRoot(NULL), mParent(NULL), mChildren(20)
   {
     mName = pName;
-    sRoot.adopt(this);
+    rebuild_url();
   }
   
-  /** TODO: Fix. This is a little hackish... */
-  Object(bool isRoot) : mParent(NULL), mChildren(20)
+  Object(Object * pParent) : mRoot(NULL), mParent(NULL), mChildren(20)
   {
-    if (isRoot) {
-      // creating root node.
-      mName = "";
-      moved();
-    } else {
-      mName = default_name();
-      sRoot.adopt(this);
-    }
+    mName = default_name();
+    pParent->adopt(this);
   }
   
+  Object(Object * pParent, const char * pName) : mRoot(NULL), mParent(NULL), mChildren(20)
+  {
+    mName = pName;
+    pParent->adopt(this);
+  }
   
-  /** This is the prefered way to insert new objects in the tree since it clearly highlights ownership in the parent. */
+  Object(Object * pParent, const std::string& pName) : mRoot(NULL), mParent(NULL), mChildren(20)
+  {
+    mName = pName;
+    pParent->adopt(this);
+  }
+  
+  Object(Object& pParent) : mRoot(NULL), mParent(NULL), mChildren(20)
+  {
+    mName = default_name();
+    pParent.adopt(this);
+  }
+  
+  Object(Object& pParent, const char * pName) : mRoot(NULL), mParent(NULL), mChildren(20)
+  {
+    mName = pName;
+    pParent.adopt(this);
+  }
+  
+  Object(Object& pParent, const std::string& pName) : mRoot(NULL), mParent(NULL), mChildren(20)
+  {
+    mName = pName;
+    pParent.adopt(this);
+  }
+  
+  /** This is the prefered way to insert new objects in the tree since it clearly highlights ownership in the parent. 
+    * TODO: make sure a parent is not adopted by it's child. */
   template<class T>
   T * adopt(T * pObj)
   {
@@ -60,35 +74,23 @@ public:
     
     if (oldParent) oldParent->release(pObj);
     
-    while (child(pObj->mName))
-      pObj->next_name();
-    
-    mChildren.set(pObj->mName,pObj);
     pObj->mParent = this;
+    pObj->mRoot   = mRoot;
+    
     pObj->moved();
     return pObj;
   }
   
+  
   virtual ~Object()
-  {
-    string_iterator it;
-    string_iterator end = mChildren.end();
-    // notify parent
+  {  
+    // notify parent and root
     if (mParent) mParent->release(this);
-    
-    // notify global list
-    remove_object(this);
-    
-    // destroy all children
-    for(it = mChildren.begin(); it != end; it++) {
-      Object * child;
-      if (mChildren.get(&child, *it)) {
-        // to avoid 'release' call
-        child->mParent = NULL;
-        delete child;
-      }
-    }
+    clear();
   }
+  
+  /** Clear all children (delete). */
+  void clear();
   
   /** The operation to be executed on call (method for Method class / object listing for Nodes) */
   virtual const Value trigger (const Value& val)
@@ -116,105 +118,13 @@ public:
   /** This method is called whenever a sub-node or branch is not found and this is the last found object along the path. */
   virtual const Value not_found (const std::string& pUrl, const Value& val)
   {
-    return object_not_found(pUrl);
+    return Error(std::string("Object '").append(pUrl).append("' not found."));
   }
   
   /** Inspection method. Called as a response to #inspect.*/
   virtual const Value inspect(const Value& val)
   {
     return String(mInfo);
-  }
-  
-  /** Execute the default operation for an object. */
-  static Value call (const char* pUrl)
-  {
-    return call(std::string(pUrl), gNilValue);
-  }
-  
-  /** Execute the default operation for an object. */
-  static Value call (std::string& pUrl)
-  {
-    return call(pUrl, gNilValue);
-  }
-  
-  /** Execute the default operation for an object. */
-  static Value call (const char* pUrl, const Value& val)
-  {
-    return call(std::string(pUrl), val);
-  }
-  
-  /** Execute the default operation for an object. */
-  static Value call (const std::string& pUrl, const Value& val)
-  {
-    Object * target = NULL;
-    size_t pos;
-    std::string url = pUrl;
-    call_action_t act;
-    Value res;
-    
-    // FIXME: move the #info and #inspect into the method space ?
-    
-    if ( (pos = url.rfind("/#info")) != std::string::npos) {
-      url = pUrl.substr(0, pos);
-      act = CallInfo;
-    } else if ( (pos = pUrl.rfind("/#inspect")) != std::string::npos) {
-      url = pUrl.substr(0, pos);
-      act = CallInspect;
-    } else {
-      act = CallTrigger;
-    }
-    
-    while (!get(&target, url) && url != "") {
-      act = CallNotFound;
-      pos = url.rfind("/");
-      if (pos == std::string::npos)
-        url = "";
-      else
-        url = url.substr(0, pos);
-      
-    }
-    
-    if (!target) return object_not_found(pUrl);
-    
-    switch (act) {
-      case CallTrigger:
-        return target->trigger(val);
-      case CallInfo:
-        return String(target->mInfo);
-      case CallInspect:
-        return target->inspect(val);
-      default:
-        return target->not_found(pUrl, val);
-    }
-  }
-  
-  static const Value object_not_found(const std::string& pUrl)
-  {
-    return Error(std::string("Object '").append(pUrl).append("' not found."));
-  }
-  
-  static bool get (Object ** pResult, const std::string& pUrl)
-  {
-    return sObjects.get(pResult, pUrl);
-  }
-  
-  static bool get (Object ** pResult, const char* pUrl)
-  {
-    return get(pResult, std::string(pUrl));
-  }
-  
-  /** Return a pointer to the object located at pUrl. NULL if not found. */
-  static Object * find(const std::string& pUrl)
-  {
-    Object * res = NULL;
-    get(&res, pUrl);
-    return res;
-  }
-  
-  /** Return a pointer to the object located at pUrl. NULL if not found. */
-  static Object * find(const char * pUrl)
-  {
-    return find(std::string(pUrl));
   }
   
   void set_parent(Object& parent)
@@ -234,11 +144,18 @@ public:
   
   const std::string& url()
   {
-    if (mParent && mUrl == "") {
+    return mUrl;
+  }
+  
+  void rebuild_url()
+  {
+    if (mParent) {
       // build fullpath
       mUrl = std::string(mParent->url()).append("/").append(mName);
+    } else {
+      // no parent
+      mUrl = mName;
     }
-    return mUrl;
   }
   
   void set_name (const char* pName) 
@@ -249,8 +166,7 @@ public:
     if (pName == "") return;
     mName = pName; // FIXME: gsub(/[^a-zA-Z\-0-9_],"")
     
-    // this forces the name to sync in the parent's scope
-    if (mParent) set_parent(mParent);
+    moved();
   }
   
   /** Get information/help string. */
@@ -287,41 +203,12 @@ public:
     }
   }
   
-  static Object sRoot; /**< Root object. */
 protected:
-  static void object_moved(Object * pObj)
-  {
-    // url changed, make sure dict is in sync
-    // 1. remove object
-    // 2. add with new key
-    add_object(pObj);
-  }
+  /** Child sends a notification to the parent when it's name changes so that the parent/root keep their url hash in sync. */
+  void child_moved(Object * pChild);
   
-  static void remove_object(Object * pObj)
-  {
-    sObjects.remove_element(pObj);
-  }
-  
-  static void add_object(Object * pObj)
-  {
-    remove_object(pObj);
-    sObjects.set(pObj->url(), pObj);
-  }
-  
-  void moved()
-  {
-    string_iterator it;
-    string_iterator end = mChildren.end();
-    Object * obj;
-    
-    mUrl = "";
-    
-    for(it = mChildren.begin(); it != end; it++) {
-      if (mChildren.get(&obj, *it)) obj->moved();
-    }
-    
-    object_moved(this);
-  }
+  /** Update cached url, notify mRoot of the position change. */
+  void moved();
   
   /** Add '-1', '-2', ... at the end of the current name. bob --> bob-1 */
   void next_name()
@@ -348,19 +235,18 @@ private:
   }
     
   /** Free the child from the list of children. */
-  void release(Object * pChild)
-  {
-    mChildren.remove_element(pChild);
-  }
-  
-  static THash<std::string, Object*> sObjects;   /**< Hash to find objects from their url. */
+  void release(Object * pChild);
   
 protected:
+  friend class Root;
+  
+  Root   *                    mRoot;             /**< Root object. */
   Object *                    mParent;           /**< Pointer to parent object. */
   THash<std::string,Object *> mChildren;         /**< Hash with pointers to sub-objects / methods */
   std::string                 mUrl;              /**< Absolute path to object (cached). TODO: this cache is not really needed. */
   std::string                 mName;             /**< Unique name in parent's context. */
   std::string                 mInfo;             /**< Help/information string. */
+  
   static unsigned int         sIdCounter;        /**< Use to set a default id and position. */
 
 };

@@ -8,7 +8,7 @@ public:
   { 
     // create always produces 3 values ([2] {url:[1] params:[3]})
     create("Test", "n", "counter: 5 message:\"foo\"", "[6] \"/n\""); // 2 values + 3 => 5 + 1 => [6]. Ok !
-    assert_inspect("/n", "\'[8] \"Hello World !\"\' 0"); // [7] ?
+    assert_inspect("/n", "\'[5] \"foo\"\' counter:0");
     assert_info("/classes/Test", "Object used for testing. Does not do anything really useful.");
   }
   
@@ -17,6 +17,16 @@ public:
     assert_call("/classes/Test/hello", "", "Hello: Nil");
     assert_call("/classes/Test/hello", "1.35", "Hello: [2] 1.35");
     assert_info("/classes/Test/hello", "If the input value is 0: stop. If it is greater the 0: start. Bang toggles on/off.");
+  }
+  
+  void test_method( void )
+  {   
+    create("Test", "t", "counter: 5 message:\"hopla\"", "[6] \"/t\""); // 2 values + 3 => 5 + 1 => [6]. Ok !
+    assert_call("/t", ""     , "inlets,message");     // get method list
+    assert_call("/t/message", ""     , "hopla"); // get
+    assert_call("/t/message", "yoba" , "yoba"); // set
+    assert_call("/t/message", ""     , "yoba"); // get again
+    assert_call("/t/message/#info","", "Example of value storage (String)."); // get info on method
   }
 //  void test_init_message( void )
 //  {

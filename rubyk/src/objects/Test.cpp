@@ -1,4 +1,4 @@
-#include "class.h"
+#include "rubyk.h"
 #include <sstream>
 
 class Test : public Node
@@ -31,7 +31,7 @@ public:
   { 
     // TODO: optimize (maybe).
     std::ostringstream os(std::ostringstream::out);
-    os << "'" << mMessage << "' " << mCounter;
+    os << "'" << mMessage << "' counter:" << mCounter;
     return String(os.str());
   }
   
@@ -71,7 +71,7 @@ public:
   }
   
   /** Class method that displays 'Hello: <parameter>'. */
-  static const Value hello(const Value& val)
+  static const Value hello(Root& root, const Value& val)
   {
     return String("Hello: ").append(val.to_string());
   }
@@ -92,13 +92,17 @@ private:
 };
 
 
-extern "C" void init()
+extern "C" void init(Root& root)
 { 
+  
   // Define class.
   CLASS (   Test, "Object used for testing. Does not do anything really useful.")
   
   // Define a class method.
   CLASS_METHOD( Test,  hello,  "If the input value is 0: stop. If it is greater the 0: start. Bang toggles on/off." )
+  
+  // Define an accessor for an attribute not used as inlet.
+  METHOD( Test, message,   "Example of value storage (String)." )
   
 /*  
   // Define inlets.
@@ -114,8 +118,6 @@ extern "C" void init()
   OUTLET(   Test, counter,   NumberValue, "Increasing counter.")
   OUTLET(   Test, nil,       NilValue,    "Sends nil values.")
   
-  // Define accessors for attributes not used as inlets.
-  ACCESSOR( Test, message,   "Example of value storage (String)." )
   
 */
 }

@@ -10,7 +10,7 @@ class Person
 public:
   Person(const char * pName) : mName(pName) {}
   
-  static const Value class_method(const Value& val)
+  static const Value class_method(Root& root, const Value& val)
   {
     return val.is_string() ? val : Error("Not a string");
   }
@@ -29,11 +29,12 @@ class MethodTest : public ValueTestHelper
 public:
   void test_trigger_class_method( void )
   {
-    Object root("root");
-    root.adopt(new ClassMethod("hello", &Person::class_method));
+    Root root;
+    Object * cm = root.adopt(new ClassMethod("hello", &Person::class_method));
     Value res;
     Object * obj;
-    TS_ASSERT(Object::get(&obj, "/root/hello"));
+    TS_ASSERT_EQUALS(cm->url(), "/hello");
+    TS_ASSERT(root.get(&obj, "/hello"));
     
     res = obj->trigger(Bang(true)); // [1]
     TS_ASSERT_EQUALS(res.to_string(), "[2] #\"Not a string\"");
@@ -44,12 +45,12 @@ public:
   
   void test_trigger_method( void )
   {
-    Object root("root");
+    Root root;
     Person p("Paul"); // [1]
     root.adopt(new Method("paul_name", &p, &Method::cast_method<Person, &Person::name>));
     Value res;
     Object * obj;
-    TS_ASSERT(Object::get(&obj, "/root/paul_name"));
+    TS_ASSERT(root.get(&obj, "/paul_name"));
     
     res = obj->trigger(gNilValue); 
     TS_ASSERT_EQUALS(res.to_string(), "[1] \"Paul\"");

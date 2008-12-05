@@ -8,11 +8,11 @@ typedef void(*inlet_method_t)(void * node, const Value& val);
 /** Prototype constructor for Inlets. */
 struct InletPrototype
 {
-  InletPrototype(const char * pName, value_t pAcceptTypes, const char * pInfo, inlet_method_t pMethod) : mName(pName), mAcceptTypes(pAcceptTypes), mInfo(pInfo), mMethod(pMethod) {}
+  InletPrototype(const char * pName, value_t pAcceptTypes, const char * pInfo, inlet_method_t pMethod) : mName(pName), mAcceptTypes(pAcceptTypes), mMethod(pMethod), mInfo(pInfo) {}
   const char *   mName;
   value_t        mAcceptTypes;
-  const char *   mInfo;
   inlet_method_t mMethod;
+  const char *   mInfo;
 };
 
 class Inlet : public Slot {
@@ -28,6 +28,13 @@ public:
   
   /** Receive a value. */
   void receive (const Value& sig);
+  
+  /** Create a callback for an inlet. */
+  template <class T, void(T::*Tmethod)(const Value& val)>
+  static void cast_method (void * receiver, const Value& val)
+  {
+    (((T*)receiver)->*Tmethod)(val);
+  }
   
 private:
   inlet_method_t mMethod;  /**< Method to set a new value. */

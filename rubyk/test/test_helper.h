@@ -1,7 +1,7 @@
 #ifndef _VALUE_TEST_HELPER_H_
 #define _VALUE_TEST_HELPER_H_
 #include "globals.cpp"
-#include "class.h"
+#include "rubyk.h"
 #include <sstream>
 
 #define assert_log(x) _assert_log(__FILE__,__LINE__,x)
@@ -32,8 +32,8 @@ public:
   {
     Data::sIdCounter = 0;
   }
-protected:
   
+protected:
   void _assert_ref_count(const char * file, int lineno, const Value& v, size_t count)
   {
     _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("ref count")), v.ref_count(), count);
@@ -55,36 +55,40 @@ public:
   void setUp()
   {
     Data::sIdCounter = 0;
+    mRoot.clear();
+    mRoot.classes()->set_lib_path("lib");
   }
   
 protected:
+  Root mRoot;
+  
   void _create(const char * file, int lineno, const char * pClass, const char * pName, const char* pParams, const char* pUrl)
   {
     Hash h;
     h.set_key("url", String(pName));
     h.set_key("params", Hash(pParams));
-    Value res = Object::call(std::string(CLASS_ROOT).append("/").append(pClass).append("/new"), h);
+    Value res = mRoot.classes()->new_node(pName, pClass, h);
     _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("create")),
                        res.to_string(), std::string(pUrl));
   }
   
   void _assert_call(const char * file, int lineno, const char * pUrl, const char * pVal, const char * pResult)
   {
-    Value res = Object::call(pUrl, Value(pVal));
+    Value res = mRoot.call(pUrl, Value(pVal));
     std::string str = res.is_string() ? String(res).string() : res.to_string();
     _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("call")), str, std::string(pResult));
   }
   
   void _assert_inspect(const char * file, int lineno, const char * pName, const char * pInfo)
   {
-    Value res = Object::call(std::string(pName).append("/#inspect"));
+    Value res = mRoot.call(std::string(pName).append("/#inspect"));
     std::string str = res.is_string() ? String(res).string() : res.to_string();
     _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("inspect")), str, std::string(pInfo));
   }
   
   void _assert_info(const char * file, int lineno, const char * pName, const char * pInfo)
   {
-    Value res = Object::call(std::string(pName).append("/#info"));
+    Value res = mRoot.call(std::string(pName).append("/#info"));
     std::string str = res.is_string() ? String(res).string() : res.to_string();
     _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("inspect")), str, std::string(pInfo));
   }
