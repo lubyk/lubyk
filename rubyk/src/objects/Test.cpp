@@ -42,10 +42,10 @@ public:
   // [1]. Increments mCounter on bang.
   void bang(const Value& val)
   {
-  //  if (val.is_number())
-  //    mCounter = val || mCounter;
-  //  else if (val.is_bang())
-  //    send(++mCounter);
+    if (val.is_number())
+      mCounter = val || mCounter;
+    else if (val.is_bang())
+      send(Number(++mCounter));
    // 
    // // special nil sending test
    // *mOutput << "sending nil=>";
@@ -110,19 +110,15 @@ extern "C" void init(Root& root)
   METHOD_NAMED( Test, "counter", counter_,  "Set counter value (Number)." )
   
   // Define inlets.
-  // This also creates "/nodes/t/info" set/get methods and "nodes/t/inlets/info" to link, unlink, ...).
-  // The get method of an inlet always returns the code defined in the inlet definition.
-  //        class  inlet     accept type              info                                  return value for accessor
+  // This creates "/t/inlets/LINK_NAME"
+  //        class  inlet     accept type              info
   INLET (   Test,  bang,     NumberValue | BangValue, "Set counter | increment and send.")
   INLET (   Test,  counter,  NumberValue,             "Example of value storage (real_t).")
   INLET (   Test,  info,     AnyValue,                "Printout value.")
 
-/*  
-  // Define an outlet (also creates "/nodes/Test/outlets/result" to link, unlink, etc).
+  // Define an outlets.
+  // This creates "/t/outlets/LINK_NAME"
   // To "spy" on the outlet's result by hovering connection/outlet, we must register as observer on the outlet (=osc connection).
   OUTLET(   Test, counter,   NumberValue, "Increasing counter.")
   OUTLET(   Test, nil,       NilValue,    "Sends nil values.")
-  
-  
-*/
 }

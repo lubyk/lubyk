@@ -21,6 +21,12 @@ public:
   
   virtual ~Class() {}
   
+  /** Class signature. */
+  virtual uint type()
+  {
+    return H("Class");
+  }
+  
   /** Add a new class method to the class. */
   void add_class_method(const char * pName, class_method_t pMethod, const char * pInfo)
   {
@@ -35,11 +41,17 @@ public:
     mMethodPrototypes.push_back( MethodPrototype(pName, &Method::cast_method<T, Tmethod>, pInfo) );
   }
   
-  /** Declare an inlet, with an accessor method. */
+  /** Declare an inlet. */
   template <class T, void(T::*Tmethod)(const Value& val)>
   void add_inlet (const char * pName, uint pType, const char * pInfo)
   { 
     mInletPrototypes.push_back( InletPrototype(pName, pType, &Inlet::cast_method<T, Tmethod>, pInfo) );
+  }
+  
+  /** Declare an outlet. */
+  void add_outlet(const char * pName, uint pType, const char * pInfo)
+  {
+    mOutletPrototypes.push_back( OutletPrototype(pName, pType, pInfo) );    
   }
   
   /** Build all inlets for an object from prototypes. */
@@ -51,6 +63,19 @@ public:
     
     for (it = mInletPrototypes.begin(); it != end; it++) {
       inlets->adopt(new Inlet(pObj, *it));
+    }
+  }
+  
+  /** Build all inlets for an object from prototypes. */
+  void make_outlets(Node * pObj)
+  {
+    std::list<OutletPrototype>::iterator it;
+    std::list<OutletPrototype>::iterator end = mOutletPrototypes.end();
+    Object * outlets = pObj->adopt(new Object("outlets"));
+    Outlet * o;
+    
+    for (it = mOutletPrototypes.begin(); it != end; it++) {
+      o = outlets->adopt(new Outlet(pObj, *it));
     }
   }
   
@@ -67,7 +92,8 @@ public:
   
 private:
   
-  std::list<InletPrototype>  mInletPrototypes;  /**< Prototypes to create inlets. */
+  std::list<InletPrototype>  mInletPrototypes;   /**< Prototypes to create inlets. */
+  std::list<OutletPrototype> mOutletPrototypes;  /**< Prototypes to create outlets. */
   std::list<MethodPrototype> mMethodPrototypes;  /**< Prototypes to create methods. */
 };
 
@@ -82,4 +108,5 @@ private:
 #define METHOD(klass, method, info)       c->add_method<klass, &klass::method>(#method, info);
 #define METHOD_NAMED(klass, name, method, info)       c->add_method<klass, &klass::method>(name, info);
 #define INLET(klass,  method, types, info) c->add_inlet<klass, &klass::method>(#method, types, info);
+#define OUTLET(klass, name,   types, info) c->add_outlet(#name, types, info);
 #endif // _CLASS_H_

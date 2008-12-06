@@ -13,9 +13,6 @@
 // the constant value to return at the end of the hashing
 #define HASH_CONSTANT 5381
  
-// the depth of the hashing
-#define HASH_DEPTH 4
- 
 // The following is the guts of the compile-time hasher
 #define HASH_RECURSE_00(string, value) HASH_FUNCTION((*(string+1) == 0 ? HASH_CONSTANT : HASH_RECURSE_01(string+1, *(string+1))), value)
 #define HASH_RECURSE_01(string, value) HASH_FUNCTION((*(string+1) == 0 ? HASH_CONSTANT : HASH_RECURSE_02(string+1, *(string+1))), value)
@@ -38,7 +35,7 @@
 #define HASH_FUNCTION(NEXTHASH, VALUE) VALUE + (NEXTHASH << 2)
  
 // finally the macro used to generate the hash
-#define H(string) HASH_RECURSE_00(string, *string)
+#define H(string) (uint)HASH_RECURSE_00(string, *string)
 
 typedef unsigned int uint;
 

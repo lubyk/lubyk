@@ -5,6 +5,8 @@
 #include "method.h"
 #include "rubyk_types.h"
 
+class Node;
+
 /** Inlets and outlets of nodes are Slots. 
   * 
   * Slots are responsible for managing connections and passing values between objects. When a slot is created,
@@ -13,17 +15,17 @@
 class Slot : public Object
 {
 public:
-  Slot (void* pNode) : mNode(pNode), mType(AnyValue) 
+  Slot (Node * pNode) : mNode(pNode), mType(AnyValue) 
   {
     create_methods();
   }
   
-  Slot (void* pNode, uint pType) : mNode(pNode), mType(pType)
+  Slot (Node * pNode, uint pType) : mNode(pNode), mType(pType)
   {
     create_methods();
   }
   
-  Slot (const char * pName, void * pNode, uint pType) : Object(pName), mNode(pNode), mType(pType) 
+  Slot (const char * pName, Node * pNode, uint pType) : Object(pName), mNode(pNode), mType(pType) 
   {
     create_methods();
   }
@@ -63,7 +65,7 @@ protected:
   const Value link(const Value& val);
   
 protected:
-  void * mNode; /**< Containing node.      */
+  Node * mNode; /**< Containing node.      */
   int    mId;   /**< Position in the node. */
   uint  mType;  /**< slot type signature.  */
   

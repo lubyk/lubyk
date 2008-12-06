@@ -82,9 +82,16 @@ const Value Slot::link(const Value& val)
     // create a new link
     // TODO: make sure it does not already exist.
     Object * target = mRoot->find(String(val));
-    if (!target) return Error("Could not create link (").append(val.to_string()).append(" not found).");
-
-    // FIXME: make sure it is an Inlet if this = Outlet. Type checking !!
+    if (!target) return Error("Could not create link (").append(val.to_string()).append(": not found).");
+    
+    if (type() == H("Outlet")) {
+      target = (Slot*)TYPE_CAST(Inlet,target);
+    } else {
+      target = (Slot*)TYPE_CAST(Outlet,target);
+    }
+    
+    if (!target) return Error("Could not create link (").append(val.to_string()).append(": incompatible).");
+    
     if (connect((Slot*)target))
       return String(val);
     else

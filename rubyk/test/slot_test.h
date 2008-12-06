@@ -4,23 +4,34 @@
 #include "inlet.h"
 #include "values.h"
 
+class DummyNode : public Node
+{
+public:
+  DummyNode(real_t pVal) : mValue(pVal) {}
+  
+  virtual void bang(const Value& val)
+  {}
+  
+  real_t mValue;
+};
+
 // these receivers are complicated to make sure they work in the correct order and they are all called.
 // x = 2*x + y + 1
-static void receive_value1(void * receiver, const Value& val)
+static void receive_value1(Node * receiver, const Value& val)
 {
-  (*((real_t*)receiver)) = (2*(*((real_t*)receiver))) + Number(val).value() + 1;
+  ((DummyNode*)receiver)->mValue = (2*(((DummyNode*)receiver)->mValue)) + Number(val).value() + 1;
 }
 
 // x = 2*x + y + 2
-static void receive_value2(void * receiver, const Value& val)
+static void receive_value2(Node * receiver, const Value& val)
 {
-  (*((real_t*)receiver)) = (2*(*((real_t*)receiver))) + Number(val).value() + 2;
+  ((DummyNode*)receiver)->mValue = (2*(((DummyNode*)receiver)->mValue)) + Number(val).value() + 2;
 }
 
 // x = 2*x + y + 4
-static void receive_value4(void * receiver, const Value& val)
+static void receive_value4(Node * receiver, const Value& val)
 {
-  (*((real_t*)receiver)) = (2*(*((real_t*)receiver))) + Number(val).value() + 4;
+  ((DummyNode*)receiver)->mValue = (2*(((DummyNode*)receiver)->mValue)) + Number(val).value() + 4;
 }
 
 class SlotTest : public CxxTest::TestSuite
@@ -29,7 +40,7 @@ public:
   
   void test_types( void )
   {
-    real_t counter = 0;
+    DummyNode counter(0);
     Outlet o_num(&counter, NumberValue);
     Outlet o_str(&counter, StringValue);
     Inlet  i_mat(&counter, receive_value1, MatrixValue );
@@ -49,19 +60,19 @@ public:
   
   void test_single_connection( void )
   {
-    real_t counter = 0;
+    DummyNode counter(0);
     Outlet o(&counter); // counter behaves as the receiver ()
     Inlet  i(&counter, receive_value1 );
     i.setId(3); // make sure it does not send a 'bang()' to our fake receiver.
     o.connect(&i);
-    TS_ASSERT_EQUALS( 0.0, counter);
+    TS_ASSERT_EQUALS( 0.0, counter.mValue);
     o.send(Number(1.0));
-    TS_ASSERT_EQUALS( 2.0, counter);
+    TS_ASSERT_EQUALS( 2.0, counter.mValue);
   }
   
   void test_many_connections( void )
   {
-    real_t counter = 0;
+    DummyNode counter(0);
     Outlet o(&counter);
     Inlet  i1(&counter, receive_value1 );
     Inlet  i2(&counter, receive_value2 );
@@ -75,9 +86,9 @@ public:
     o.connect(&i1);
     o.connect(&i3);
     
-    TS_ASSERT_EQUALS( 0.0, counter);
+    TS_ASSERT_EQUALS( 0.0, counter.mValue);
     
     o.send(Number(1.0));
-    TS_ASSERT_EQUALS( 19.0, counter);
+    TS_ASSERT_EQUALS( 19.0, counter.mValue);
   }
 };

@@ -19,7 +19,7 @@ const Value NewMethod::trigger (const Value& val)
   if (!res.is_string()) return res;
   url = res;
   
-  Node * obj = (Node*)mRoot->find(url.string()); // FIXME: type checking !!
+  Node * obj = TYPE_CAST(Node,mRoot->find(url.string()));
   
   if (!obj) {
     return Error("New Object at '").append(url.string()).append("' not found !");
@@ -30,17 +30,16 @@ const Value NewMethod::trigger (const Value& val)
   //FIX obj->set_server(pServer);  // ??? where do we find this one ?
   //FIX obj->set_output(pOutput);  // ??? I think we won't need this anymore once we have implemented notifications ?
   
-  Class * klass = (Class*)mParent;  // FIXME: type checking !!
+  Class * klass = TYPE_CAST(Class,mParent);
   
   // make inlets
   klass->make_inlets(obj);
   
+  // make outlets
+  klass->make_outlets(obj);
+  
   // make methods
   klass->make_methods(obj);
-  
-//FIX    // make outlets
-//FIX    res = parent->make_outlets(obj);
-//FIX    if (res.is_error()) return res;
   
   // initialize
   obj->set_is_ok( obj->init() && obj->set(params) ); // if init or set returns false, the node goes into 'broken' mode.

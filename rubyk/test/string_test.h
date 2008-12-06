@@ -20,6 +20,27 @@ public:
     TS_ASSERT(n.set(n2));
   }
   
+  void test_from_word( void )
+  {
+    Value s("one");
+    TS_ASSERT(s.is_string());
+    TS_ASSERT_EQUALS( String(s).string(), "one");
+  }
+    
+  void test_from_string( void )
+  {
+    Value s("\"one blah blah\"");
+    TS_ASSERT(s.is_string());
+    TS_ASSERT_EQUALS( String(s).string(), "one blah blah");
+  }
+  
+  void test_from_url( void )
+  {
+    Value s("/this/is/an/url/*/#foo");
+    TS_ASSERT(s.is_string());
+    TS_ASSERT_EQUALS( String(s).string(), "/this/is/an/url/*/#foo");
+  }
+  
   void test_is_a( void )
   {
     String e;

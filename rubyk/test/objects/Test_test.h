@@ -21,8 +21,8 @@ public:
   
   void test_method( void )
   {   
-    create("Test", "t", "counter: 5 message:\"hopla\"", "[6] \"/t\""); // 2 values + 3 => 5 + 1 => [6]. Ok !
-    assert_call("/t", ""     , "inlets/,message,counter");     // get method list
+    create("Test", "t", "counter: 5 message:\"hopla\"", "[6] \"/t\"");
+    assert_call("/t", ""     , "inlets/,outlets/,message,counter");     // get method list
     assert_call("/t/message", ""     , "hopla"); // get
     assert_call("/t/message", "yoba" , "yoba"); // set
     assert_call("/t/message", ""     , "yoba"); // get again
@@ -31,18 +31,50 @@ public:
   
   void test_inlet( void )
   {   
-    create("Test", "t", "counter: 5 message:\"hopla\"", "[6] \"/t\""); // 2 values + 3 => 5 + 1 => [6]. Ok !
+    create("Test", "t", "counter: 5 message:\"hopla\"", "[6] \"/t\"");
     assert_call("/t/inlets", ""      , "bang/,counter/,info/");
     assert_call("/t/inlets/bang", ""      , "link");
     assert_call("/t/inlets/bang/#info","", "Set counter | increment and send.");
   }
   
-  void test_inlet_link( void )
+  void test_outlet( void )
   {   
-    create("Test", "t", "counter: 5 message:\"hopla\"", "[6] \"/t\""); // 2 values + 3 => 5 + 1 => [6]. Ok !
-    assert_call("/t/inlets/bang/link/#info", ""      , "Create a link / list links.");
-    // test creating a link...
+    create("Test", "t", "counter: 5 message:\"hopla\"", "[6] \"/t\"");
+    assert_call("/t/outlets", ""      , "counter/,nil/");
+    assert_call("/t/outlets/counter", ""      , "link");
+    assert_call("/t/outlets/counter/#info","", "Increasing counter.");
   }
+  
+  void test_link( void )
+  {   
+    create("Test", "t", "counter: 5 message:\"hopla\"",  "[6] \"/t\"");
+    create("Test", "t2","counter: 2 message:\"second\"", "[15] \"/t2\"");
+    assert_call("/t/inlets/bang/link/#info", ""      , "Create a link / list links.");
+    
+    // should not allow creating a link from inlet to inlet:
+    assert_call("/t/inlets/bang/link", "/t2/inlets/bang", "[21] #\"Could not create link ([20] \"/t2/inlets/bang\": incompatible).\"");
+    
+    // should allow creating a link from an inlet to an outlet
+    assert_call("/t/inlets/bang/link", "/t2/outlets/counter", "/t2/outlets/counter");
+    // should allow creating a link from an outlet to an inlet
+    assert_call("/t/outlets/counter/link", "/t2/inlets/bang", "/t2/inlets/bang");
+  }
+  
+  void test_link_and_bang( void )
+  {   
+    create("Test", "t", "counter: 5 message:\"hopla\"",  "[6] \"/t\"");
+    create("Test", "t2","counter: 2 message:\"second\"", "[15] \"/t2\"");
+    
+    // should allow creating a link from an outlet to an inlet
+    assert_call("/t/outlets/counter/link", "/t2/inlets/bang", "/t2/inlets/bang");
+    assert_call("/t2/counter", "", "[20] 2.00");
+    assert_call("/t/inlets/bang", "Bang!", "Nil"); // t++ --> t2
+    assert_call("/t2/counter", "", "[23] 6.00");
+  }
+  
+  // TODO: test loop (t => t2 => t).
+  // TODO: make sure links cannot be made twice.
+  
 //  void test_init_message( void )
 //  {
 //    create("message:\"is output ok?\"");

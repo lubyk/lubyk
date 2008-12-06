@@ -16,6 +16,12 @@ public:
     TS_ASSERT( v.is_bang());
   }
   
+  void test_from_string( void )
+  {
+    Value b("Bang!");
+    TS_ASSERT(b.is_bang());
+  }
+  
   void test_is_a( void )
   {
     Bang e;

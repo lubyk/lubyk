@@ -15,6 +15,12 @@ public:
   
   virtual ~ClassListing() {}
   
+  /** Class signature. */
+  virtual uint type()
+  {
+    return H("ClassListing");
+  }
+  
   /** This trigger implements "/classes". It returns the list of objects in mObjectsPath. */
   virtual const Value trigger (const Value& val);
   
@@ -51,13 +57,13 @@ public:
   /** Get a Class object from it's name ("Metro"). */
   Class * find_class (const char* pName)
   {
-    return (Class*)child(pName); // FIXME: type checking !!
+    return TYPE_CAST(Class, child(pName));
   }
   
   /** Get a Class object from it's std::string name ("Metro"). */
   Class * find_class (const std::string& pName)
   {
-    return (Class*)child(pName); // FIXME: type checking !!
+    return TYPE_CAST(Class, child(pName));
   }
   
   /** Helper to call "/classes/ClassName/new". */

@@ -17,3 +17,13 @@ void Outlet::send(const Value& sig)
     iterator = iterator->next;
   }
 }
+
+void Outlet::register_in_node()
+{
+  mNode->register_outlet(this);
+}
+
+void Outlet::unregister_in_node()
+{
+  mNode->unregister_outlet(this);
+}

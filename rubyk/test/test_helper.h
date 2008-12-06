@@ -76,7 +76,7 @@ protected:
   {
     Value res = mRoot.call(pUrl, Value(pVal));
     std::string str = res.is_string() ? String(res).string() : res.to_string();
-    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("call")), str, std::string(pResult));
+    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string(pUrl)), str, std::string(pResult));
   }
   
   void _assert_inspect(const char * file, int lineno, const char * pName, const char * pInfo)

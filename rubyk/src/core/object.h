@@ -89,6 +89,18 @@ public:
     clear();
   }
   
+  /** Class signature. */
+  virtual uint type()
+  {
+    return H("Object");
+  }
+  
+  template<class T>
+  inline T * type_cast(uint pType, Object * obj)
+  {
+    return obj && obj->type() == pType ? (T*)obj : NULL;
+  }
+  
   /** Clear all children (delete). */
   void clear();
   
@@ -251,4 +263,5 @@ protected:
 
 };
 
+#define TYPE_CAST(klass, op) type_cast<klass>(H(#klass), op);
 #endif

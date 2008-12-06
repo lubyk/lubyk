@@ -40,10 +40,6 @@ printf("%c_",fc);
     str_buf = "";
   }
 
-  action hash {
-    tmp_h.set(*this);
-  }
-
   action hash_value {
     // Build tmp_val from string and move p forward
     p++;
@@ -56,6 +52,13 @@ printf("%c_",fc);
     fhold;
   }
 
+  action hash {
+    tmp_h.set(*this);
+  }
+
+  action bang {
+    gBangValue.set(*this);
+  }
 
   
   ws        = ' ' | '\t' | '\n';
@@ -66,11 +69,12 @@ printf("%c_",fc);
   integer   = ([\-+]? $num_a ('0'..'9' digit*) $num_a );
             
   number    = real | integer;
-  string    = ('"' char* '"') | word;
+  string    = ('"' char* '"') | word | '/' $str_a char*; # special case for urls
   hash      = '{'? (ws* string ':' >hash_value)+ ws* '}'? | '{' ws* '}';
+  bang      = 'Bang!';
 #  array   = '[]' | '[' ($value)* $array_element ']';
   
-  main     := ws* (string %string | number %number | hash %hash) end; # | array | true | false | null;
+  main     := ws* (string %string | number %number | hash %hash | bang %bang) end; # | array | true | false | null;
   
 }%%
 

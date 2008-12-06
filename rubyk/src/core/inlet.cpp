@@ -3,13 +3,19 @@
 
 void Inlet::receive (const Value& sig)
 {
-  //printf("in: %s:%i\n", ((Node*)mNode)->name(),mId);
-  if (&sig == NULL) {
-    printf("Inlet bug !\n");
-    return;
-  }
   if (mId == 0 || sig.is_bang()) 
     ((Node*)mNode)->bang(sig);   // use virtual (faster)
   else
     (*mMethod)(mNode, sig);    // use functor
+}
+
+
+void Inlet::register_in_node()
+{
+  mNode->register_inlet(this);
+}
+
+void Inlet::unregister_in_node()
+{
+  mNode->unregister_inlet(this);
 }
