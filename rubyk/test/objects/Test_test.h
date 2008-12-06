@@ -72,6 +72,36 @@ public:
     assert_call("/t2/counter", "", "[23] 6.00");
   }
   
+  void test_unregister_inlet( void )
+  {
+    create("Test", "t", "counter: 5 message:\"hopla\"",  "[6] \"/t\"");
+    create("Test", "t2","counter: 2 message:\"second\"", "[15] \"/t2\"");
+
+    // should allow creating a link from an outlet to an inlet
+    assert_call("/t/outlets/counter/link", "/t2/inlets/bang", "/t2/inlets/bang");
+    assert_call("/t/counter",  "", "[20] 5.00");
+    assert_call("/t2/counter", "", "[21] 2.00");
+    assert_call("/t/inlets/bang", "Bang!", "Nil"); // t++ --> t2
+    assert_call("/t2/counter", "", "[24] 6.00");
+    
+    Object * obj;
+    TS_ASSERT( mRoot.get(&obj, "/t/outlets/counter") );
+    // destroy first outlet ===> [2] becomes [1] ==> first output is now /outlets/nil
+    // this is not a normal situation but it needs testing (dynamic outlets may be used with Lua and Group).
+    delete obj;
+    TS_ASSERT( !mRoot.get(&obj, "/t/outlets/counter") );
+    TS_ASSERT( !mRoot.get(&obj, "/t/outlets/counter/link") );
+    TS_ASSERT(  mRoot.get(&obj, "/t/outlets/nil") );
+    
+    assert_call("/t/inlets/bang", "Bang!", "Nil"); // t++ --> nil outlet
+    assert_call("/t/counter",  "", "[27] 7.00");
+    assert_call("/t2/counter", "", "[28] 6.00");
+    // destroy 'nil' outlet
+    delete obj;
+    TS_ASSERT( !mRoot.get(&obj, "/t/outlets/nil") );
+    TS_ASSERT( !mRoot.get(&obj, "/t/outlets/nil/link") );
+    assert_call("/t/inlets/bang", "Bang!", "Nil"); // t++ --> not send (no more outlets).
+  }
   // TODO: test loop (t => t2 => t).
   // TODO: make sure links cannot be made twice.
   

@@ -47,18 +47,29 @@ public:
   /** Remove inlet from mInlets list of callbacks. */
   void unregister_inlet(Inlet * pInlet)
   {
-    
+    std::vector<Inlet*>::iterator it;
+    std::vector<Inlet*>::iterator end = mInlets.end();
+
+    for(it = mInlets.begin(); it != end; it++) {
+      if (*it == pInlet) {
+        mInlets.erase(it);
+        break;
+      }
+    }
   }
   
   /** Remove outlet from mOutlets list of callbacks. */
   void unregister_outlet(Outlet * pOutlet)
   {
-    // std::vector<Outlet*>::iterator it;
-    // std::vector<Outlet*>::iterator end = mOutlets.end();
+    std::vector<Outlet*>::iterator it;
+    std::vector<Outlet*>::iterator end = mOutlets.end();
     
-    // FIXME: write the code !
-    // pop element out and move outlets or set to NULL ?
-    
+    for(it = mOutlets.begin(); it != end; it++) {
+      if (*it == pOutlet) {
+        mOutlets.erase(it);
+        break;
+      }
+    }
   }
   
   /** This method must be implemented in subclasses. It is used to do a basic setup with default parameters before these
