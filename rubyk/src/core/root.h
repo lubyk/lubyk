@@ -150,6 +150,12 @@ public:
     return find(std::string(pUrl));
   }
   
+  /** Return a pointer to the object located at pUrl. NULL if not found. */
+  Object * find(const String& pUrl)
+  {
+    return find(pUrl.string());
+  }
+  
   /** Return the class listing Object (create one if needed). */
   ClassListing * classes();
   

@@ -41,6 +41,7 @@ class Method : public Object
 {
 public:
   Method(const std::string &pName, void * pReceiver, member_method_t pMethod) : Object(pName), mReceiver(pReceiver), mMethod(pMethod) {}
+  
   Method(const char * pName, void * pReceiver, member_method_t pMethod) : Object(pName), mReceiver(pReceiver), mMethod(pMethod) {}
   
   /** Prototype based constructor. */

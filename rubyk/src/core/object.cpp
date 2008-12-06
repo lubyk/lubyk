@@ -50,7 +50,7 @@ void Object::clear()
     if (mChildren.get(&child, *it)) {
       // to avoid 'release' call (would alter mChildren)
       child->mParent = NULL;
-      mRoot->remove_object(child);
+      if (mRoot) mRoot->remove_object(child);
       delete child;
     }
   }

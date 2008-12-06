@@ -1,5 +1,6 @@
 #include "slot.h"
 #include "node.h"
+#include "root.h"
 
 Slot::~Slot()
 {
@@ -63,4 +64,30 @@ bool Slot::add_connection(Slot * pOther)
 void Slot::remove_connection(Slot * pOther)
 {
   mConnections.remove(pOther);
+}
+
+const Value Slot::link(const Value& val)
+{
+  if (val.is_nil()) {
+    // return list of links
+    LinkedList<Slot*> * iterator = mConnections.begin();
+    std::string res = "";
+    while(iterator) {
+      if (res != "") res.append(",");
+      res.append(iterator->obj->url());
+      iterator = iterator->next;
+    }
+    return String(res);
+  } else {
+    // create a new link
+    // TODO: make sure it does not already exist.
+    Object * target = mRoot->find(String(val));
+    if (!target) return Error("Could not create link (").append(val.to_string()).append(" not found).");
+
+    // FIXME: make sure it is an Inlet if this = Outlet. Type checking !!
+    if (connect((Slot*)target))
+      return String(val);
+    else
+      return Error("Could not make the connection with (").append(val.to_string()).append(").");
+  }
 }

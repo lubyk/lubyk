@@ -8,7 +8,7 @@ public:
   { 
     // create always produces 3 values ([2] {url:[1] params:[3]})
     create("Test", "n", "counter: 5 message:\"foo\"", "[6] \"/n\""); // 2 values + 3 => 5 + 1 => [6]. Ok !
-    assert_inspect("/n", "\'[5] \"foo\"\' counter:0");
+    assert_inspect("/n", "\'[5] \"foo\"\' counter:5");
     assert_info("/classes/Test", "Object used for testing. Does not do anything really useful.");
   }
   
@@ -22,13 +22,27 @@ public:
   void test_method( void )
   {   
     create("Test", "t", "counter: 5 message:\"hopla\"", "[6] \"/t\""); // 2 values + 3 => 5 + 1 => [6]. Ok !
-    assert_call("/t", ""     , "inlets/,message");     // get method list
+    assert_call("/t", ""     , "inlets/,message,counter");     // get method list
     assert_call("/t/message", ""     , "hopla"); // get
     assert_call("/t/message", "yoba" , "yoba"); // set
     assert_call("/t/message", ""     , "yoba"); // get again
     assert_call("/t/message/#info","", "Example of value storage (String)."); // get info on method
   }
   
+  void test_inlet( void )
+  {   
+    create("Test", "t", "counter: 5 message:\"hopla\"", "[6] \"/t\""); // 2 values + 3 => 5 + 1 => [6]. Ok !
+    assert_call("/t/inlets", ""      , "bang/,counter/,info/");
+    assert_call("/t/inlets/bang", ""      , "link");
+    assert_call("/t/inlets/bang/#info","", "Set counter | increment and send.");
+  }
+  
+  void test_inlet_link( void )
+  {   
+    create("Test", "t", "counter: 5 message:\"hopla\"", "[6] \"/t\""); // 2 values + 3 => 5 + 1 => [6]. Ok !
+    assert_call("/t/inlets/bang/link/#info", ""      , "Create a link / list links.");
+    // test creating a link...
+  }
 //  void test_init_message( void )
 //  {
 //    create("message:\"is output ok?\"");

@@ -19,6 +19,7 @@ class Inlet : public Slot {
 public:
   /** Constructor used for testing. */
   Inlet (void* node, inlet_method_t pMethod, uint pType) : Slot(node, pType), mMethod(pMethod) {}
+  
   Inlet (void* node, inlet_method_t pMethod) : Slot(node), mMethod(pMethod) {}
   
   /** Prototype based constructor. */

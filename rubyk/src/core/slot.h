@@ -2,6 +2,7 @@
 #define _SLOT_H_
 #include "ordered_list.h"
 #include "object.h"
+#include "method.h"
 #include "rubyk_types.h"
 
 /** Inlets and outlets of nodes are Slots. 
@@ -12,9 +13,20 @@
 class Slot : public Object
 {
 public:
-  Slot (void* pNode) : mNode(pNode), mType(AnyValue) {}
-  Slot (void* pNode, uint pType) : mNode(pNode), mType(pType) {}
-  Slot (const char * pName, void * pNode, uint pType) : Object(pName), mNode(pNode), mType(pType) {}
+  Slot (void* pNode) : mNode(pNode), mType(AnyValue) 
+  {
+    create_methods();
+  }
+  
+  Slot (void* pNode, uint pType) : mNode(pNode), mType(pType)
+  {
+    create_methods();
+  }
+  
+  Slot (const char * pName, void * pNode, uint pType) : Object(pName), mNode(pNode), mType(pType) 
+  {
+    create_methods();
+  }
 
   virtual ~Slot ();
 
@@ -40,10 +52,20 @@ protected:
   /** Remove a one-way connection to another slot. */
   void remove_connection (Slot * pOther);
   
+  void create_methods()
+  {
+    Method * m = adopt(new Method("link", this, &Method::cast_method<Slot, &Slot::link>));
+    m->set_info("Create a link / list links.");
+  }
+  
+  // /m/outlets/counter/link  --> list links
+  // /m/outlets/counter/link /n/inlets/tempo  --> create a link
+  const Value link(const Value& val);
+  
 protected:
-  void* mNode; /**< Containing node.      */
-  int   mId;   /**< Position in the node. */
-  uint mType;  /**< slot type signature.  */
+  void * mNode; /**< Containing node.      */
+  int    mId;   /**< Position in the node. */
+  uint  mType;  /**< slot type signature.  */
   
   OrderedList<Slot*> mConnections; /**< connections are kept sorted, so that we always send values to inlets
     that are rightmost (less important, no bang) first. */

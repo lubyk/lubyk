@@ -8,11 +8,19 @@ public:
   bool init()
   {
     mMessage = "Hello World !";
+    mCounter = 0;
     return true;
   }
   
   /** Example to set an attribute stored as a Value (a String here). This is also an accessor (used by sending a nil value). */
   ACCESSOR(mMessage, message)
+  
+  const Value counter_ (const Value& val)
+  {
+    Number n;
+    if (val.set(n)) mCounter = n;
+    return Number(mCounter);
+  }
   
   /** Test output. */
   const Value out_message (const Value& val)
@@ -34,10 +42,10 @@ public:
   // [1]. Increments mCounter on bang.
   void bang(const Value& val)
   {
-   // if (val.is_number())
-   //   mCounter = val || mCounter;
-   // else if (val.is_bang())
-   //   send(++mCounter);
+  //  if (val.is_number())
+  //    mCounter = val || mCounter;
+  //  else if (val.is_bang())
+  //    send(++mCounter);
    // 
    // // special nil sending test
    // *mOutput << "sending nil=>";
@@ -98,7 +106,8 @@ extern "C" void init(Root& root)
   CLASS_METHOD( Test,  hello,  "If the input value is 0: stop. If it is greater the 0: start. Bang toggles on/off." )
   
   // Define an accessor for an attribute not used as inlet.
-  METHOD( Test, message,   "Example of value storage (String)." )
+  METHOD(       Test, message,  "Example of value storage (String)." )
+  METHOD_NAMED( Test, "counter", counter_,  "Set counter value (Number)." )
   
   // Define inlets.
   // This also creates "/nodes/t/info" set/get methods and "nodes/t/inlets/info" to link, unlink, ...).

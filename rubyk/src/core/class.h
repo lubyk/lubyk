@@ -19,9 +19,7 @@ public:
     set_info(pInfo);
   }
   
-  virtual ~Class()
-  {
-  }
+  virtual ~Class() {}
   
   /** Add a new class method to the class. */
   void add_class_method(const char * pName, class_method_t pMethod, const char * pInfo)
@@ -74,7 +72,7 @@ private:
 };
 
 // HELPER FOR FAST AND EASY ACCESSOR CREATION
-#define ACCESSOR(var, name) const Value message (const Value& val)  \
+#define ACCESSOR(var, name) const Value name (const Value& val)  \
 { var = val;                                                        \
   return var; }                                                     \
 
@@ -82,5 +80,6 @@ private:
 #define CLASS(klass, info)                Class * c = root.classes()->declare<klass>(#klass, info);
 #define CLASS_METHOD(klass, method, info) c->add_class_method(#method, &klass::method, info);
 #define METHOD(klass, method, info)       c->add_method<klass, &klass::method>(#method, info);
-#define INLET(klass, method, types, info) c->add_inlet<klass, &klass::method>(#method, types, info);
+#define METHOD_NAMED(klass, name, method, info)       c->add_method<klass, &klass::method>(name, info);
+#define INLET(klass,  method, types, info) c->add_inlet<klass, &klass::method>(#method, types, info);
 #endif // _CLASS_H_
