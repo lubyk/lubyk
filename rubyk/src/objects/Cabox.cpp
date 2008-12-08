@@ -51,7 +51,7 @@ public:
   }
   
   
-  void bang(const Value& sig)
+  void bang(const Value& val)
   {
     if (!mIsOK) return;
     

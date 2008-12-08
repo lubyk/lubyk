@@ -7,7 +7,7 @@ public:
   void test_create( void )
   { 
     // create always produces 3 values ([2] {url:[1] params:[3]})
-    create("Test", "n", "counter: 5 message:\"foo\"", "[6] \"/n\""); // 2 values + 3 => 5 + 1 => [6]. Ok !
+    create("n", "Test", "counter: 5 message:\"foo\"", "[6] \"/n\""); // 2 values + 3 => 5 + 1 => [6]. Ok !
     assert_inspect("/n", "\'[5] \"foo\"\' counter:5");
     assert_info("/classes/Test", "Object used for testing. Does not do anything really useful.");
   }
@@ -21,7 +21,7 @@ public:
   
   void test_method( void )
   {   
-    create("Test", "t", "counter: 5 message:\"hopla\"", "[6] \"/t\"");
+    create("t", "Test", "counter: 5 message:\"hopla\"", "[6] \"/t\"");
     assert_call("/t", ""     , "inlets/,outlets/,message,counter");     // get method list
     assert_call("/t/message", ""     , "hopla"); // get
     assert_call("/t/message", "yoba" , "yoba"); // set
@@ -31,7 +31,7 @@ public:
   
   void test_inlet( void )
   {   
-    create("Test", "t", "counter: 5 message:\"hopla\"", "[6] \"/t\"");
+    create("t", "Test", "counter: 5 message:\"hopla\"", "[6] \"/t\"");
     assert_call("/t/inlets", ""      , "bang/,counter/,info/");
     assert_call("/t/inlets/bang", ""      , "link");
     assert_call("/t/inlets/bang/#info","", "Set counter | increment and send.");
@@ -39,7 +39,7 @@ public:
   
   void test_outlet( void )
   {   
-    create("Test", "t", "counter: 5 message:\"hopla\"", "[6] \"/t\"");
+    create("t", "Test", "counter: 5 message:\"hopla\"", "[6] \"/t\"");
     assert_call("/t/outlets", ""      , "counter/,nil/");
     assert_call("/t/outlets/counter", ""      , "link");
     assert_call("/t/outlets/counter/#info","", "Increasing counter.");
@@ -47,8 +47,8 @@ public:
   
   void test_link( void )
   {   
-    create("Test", "t", "counter: 5 message:\"hopla\"",  "[6] \"/t\"");
-    create("Test", "t2","counter: 2 message:\"second\"", "[15] \"/t2\"");
+    create("t",  "Test", "counter: 5 message:\"hopla\"",  "[6] \"/t\"");
+    create("t2", "Test", "counter: 2 message:\"second\"", "[15] \"/t2\"");
     assert_call("/t/inlets/bang/link/#info", ""      , "Create a link / list links.");
     
     // should not allow creating a link from inlet to inlet:
@@ -62,8 +62,8 @@ public:
   
   void test_link_and_bang( void )
   {   
-    create("Test", "t", "counter: 5 message:\"hopla\"",  "[6] \"/t\"");
-    create("Test", "t2","counter: 2 message:\"second\"", "[15] \"/t2\"");
+    create("t",  "Test", "counter: 5 message:\"hopla\"",  "[6] \"/t\"");
+    create("t2", "Test", "counter: 2 message:\"second\"", "[15] \"/t2\"");
     
     // should allow creating a link from an outlet to an inlet
     assert_call("/t/outlets/counter/link", "/t2/inlets/bang", "/t2/inlets/bang");
@@ -74,8 +74,8 @@ public:
   
   void test_unregister_inlet( void )
   {
-    create("Test", "t", "counter: 5 message:\"hopla\"",  "[6] \"/t\"");
-    create("Test", "t2","counter: 2 message:\"second\"", "[15] \"/t2\"");
+    create("t",  "Test", "counter: 5 message:\"hopla\"",  "[6] \"/t\"");
+    create("t2", "Test", "counter: 2 message:\"second\"", "[15] \"/t2\"");
 
     // should allow creating a link from an outlet to an inlet
     assert_call("/t/outlets/counter/link", "/t2/inlets/bang", "/t2/inlets/bang");
@@ -104,130 +104,6 @@ public:
   }
   // TODO: test loop (t => t2 => t).
   // TODO: make sure links cannot be made twice.
-  
-//  void test_init_message( void )
-//  {
-//    create("message:\"is output ok?\"");
-//    TS_ASSERT_EQUALS( mOutput.str(), std::string("Output set\n"));
-//  }
-//  
-//  void test_inspect( void )
-//  { 
-//    create("counter: 5 message:\"foo\"");
-//    mNode->set_name(std::string("d"));
-//    assert_inspect("#<Test:d 'foo' 5>");
-//  }
-//  
-//  void test_bang( void )
-//  {
-//    create("");
-//    
-//    assert_spy("'Hello World !' 0");
-//    mNode->bang(gBangValue);
-//    assert_spy("'Hello World !' 1");
-//  }
-//  
-//  void test_execute_method( void )
-//  {
-//    create("counter:5");
-//    mNode->set_name("d");
-//    assert_method_result("help","","Don't hit me!\n");
-//  }
-//  
-//  void test_connection( void )
-//  {
-//    Node   * d1   = Class::create(NULL, "Test", "message:first  counter:3", &mOutput);
-//    Outlet * out1 = d1->outlet(1); // oulets and inlets are indexed starting with '1', not '0'
-//    Node   * d2   = Class::create(NULL, "Test", "message:second counter:0", &mOutput);
-//    Inlet  * in2  = d2->inlet(1);
-//    
-//    out1->connect(in2);
-//    
-//    TS_ASSERT_EQUALS( std::string("'first' 3" ), std::string(d1->get_spy()) );
-//    TS_ASSERT_EQUALS( std::string("'second' 0"), std::string(d2->get_spy()) );
-//    
-//    
-//    d1->bang(gBangValue); /** ---> 1. bang --> increment d1  = 4
-//                  *      2. send new value to  d2
-//                  *      3. set d2                 = 4
-//                  *      4. bang --> increment d2  = 5  */
-//    TS_ASSERT_EQUALS( std::string("'first' 4" ), std::string(d1->get_spy()) );
-//    TS_ASSERT_EQUALS( std::string("'second' 5"), std::string(d2->get_spy()) );
-//  }
-//  
-//  void test_bad_connection( void )
-//  {
-//    
-//    Node   * d1   = Class::create(NULL, "Test", "message:first  counter:3", &mOutput);
-//    Outlet * out1 = d1->outlet(2); // oulets and inlets are indexed starting with '1', not '0'
-//    Node   * d2   = Class::create(NULL, "Test", "message:second counter:0", &mOutput);
-//    
-//    out1 = d1->outlet(1);
-//    TS_ASSERT(!out1->connect(NULL)); // should fail
-//    
-//    TS_ASSERT_EQUALS( std::string(d1->get_spy()), std::string("'first' 3" ));
-//    TS_ASSERT_EQUALS( std::string(d2->get_spy()), std::string("'second' 0"));
-//    
-//    
-//    d1->bang(gBangValue); /** ---> 1. bang --> increment d1  = 4
-//                  *      2. send new value to  d2
-//                  *      3. set d2                 = 4
-//                  *      4. bang --> increment d2  = 5  */
-//    TS_ASSERT_EQUALS( std::string(d1->get_spy()), std::string("'first' 4" ));
-//    TS_ASSERT_EQUALS( std::string(d2->get_spy()), std::string("'second' 0"));
-//  }
-//  
-//  void test_connection_order( void )
-//  {
-//    Node   * v1   = Class::create(NULL, "Value", "value:2", &mOutput);
-//    Node   * v2   = Class::create(NULL, "Value", "value:3", &mOutput);
-//    Node   * add  = Class::create(NULL, "Add", "", &mOutput);
-//    Node   * v3   = Class::create(NULL, "Value", "value:0", &mOutput);
-//    
-//    /**    v1   v2
-//      *    |    |
-//      *   +------+
-//      *   | add  |
-//      *   +------+
-//      *    |
-//      *    v3             */
-//    v1->outlet(1)->connect(add->inlet(1));
-//    v2->outlet(1)->connect(add->inlet(2));
-//    
-//    add->outlet(1)->connect(v3->inlet(1));
-//    
-//    TS_ASSERT_EQUALS( std::string(v1->get_spy()) , std::string("2.00"));
-//    TS_ASSERT_EQUALS( std::string(v2->get_spy()) , std::string("3.00"));
-//    TS_ASSERT_EQUALS( std::string(add->get_spy()), std::string("0.00"));
-//    TS_ASSERT_EQUALS( std::string(v3->get_spy()) , std::string("0.00"));
-//    
-//    v2->bang(gBangValue); /** ---> 1. bang --> value         = 3
-//                  *      2. send new value to  add      */
-//    
-//    TS_ASSERT_EQUALS( std::string(v1->get_spy()) , std::string("2.00"));
-//    TS_ASSERT_EQUALS( std::string(v2->get_spy()) , std::string("3.00"));
-//    TS_ASSERT_EQUALS( std::string(add->get_spy()), std::string("3.00"));
-//    TS_ASSERT_EQUALS( std::string(v3->get_spy()) , std::string("0.00"));
-//    
-//    add->bang(gBangValue); /** ---> 1. bang --> value         = 3
-//                   *      2. send new value to  v3  = 3  */
-//    
-//    TS_ASSERT_EQUALS( std::string(v1->get_spy()) , std::string("2.00"));
-//    TS_ASSERT_EQUALS( std::string(v2->get_spy()) , std::string("3.00"));
-//    TS_ASSERT_EQUALS( std::string(add->get_spy()), std::string("3.00"));
-//    TS_ASSERT_EQUALS( std::string(v3->get_spy()) , std::string("3.00"));
-//    
-//    v1->bang(gBangValue); /** ---> 1. bang --> value         = 2
-//                  *      2. send new value to add  = 2
-//                  *      3. add.bang --> value     = 5
-//                  *      4. send to v3             = 5  */
-//    
-//    TS_ASSERT_EQUALS( std::string(v1->get_spy()) , std::string("2.00"));
-//    TS_ASSERT_EQUALS( std::string(v2->get_spy()) , std::string("3.00"));
-//    TS_ASSERT_EQUALS( std::string(add->get_spy()), std::string("5.00"));
-//    TS_ASSERT_EQUALS( std::string(v3->get_spy()) , std::string("5.00"));
-//    
-//  }
 };
 
 // class TestParseTest : public ParseTest

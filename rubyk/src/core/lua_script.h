@@ -25,7 +25,7 @@ public:
   { call_lua(NULL, pFunctionName, NULL); }
   
   /* call lua function with one parameter */
-  void call_lua (const char * pFunctionName, const Value& sig)
+  void call_lua (const char * pFunctionName, const Value& val)
   { call_lua(NULL, pFunctionName, &sig); }
   
   /* call lua function without parameters, one value returned */
@@ -33,7 +33,7 @@ public:
   { call_lua(retSig, pFunctionName, NULL); }
   
   /* call lua function with one parameter, one value returned */
-  void call_lua (Value * retSig, const char * pFunctionName, const Value& sig)
+  void call_lua (Value * retSig, const char * pFunctionName, const Value& val)
   { call_lua(retSig, pFunctionName, &sig); }
   
   /* call lua function with one parameter, one value returned: prototype */
@@ -100,7 +100,7 @@ public:
   static Node * get_node_from_lua (lua_State * L);
   
   /** Push a matrix on top of the lua stack. */
-  bool lua_pushsignal (const Value& sig);
+  bool lua_pushsignal (const Value& val);
   
   /** Push a matrix on top of the lua stack. */
   void lua_pushmatrix (const Matrix& pMat);
@@ -111,7 +111,7 @@ public:
   /** Get a matrix from lua. */
   static bool matrix_from_lua (lua_State *L, Matrix ** pMat, int pIndex);
   
-  void set_lua_global (const char * key, const Value& sig);
+  void set_lua_global (const char * key, const Value& val);
   
   /** Return true if the function named 'key' is defined in Lua. */
   bool lua_has_function (const char * key);

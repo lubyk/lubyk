@@ -1,4 +1,4 @@
-#include "class.h"
+#include "rubyk.h"
 #include "midi/RtMidi.h"
 
 class MidiIn : public Node
@@ -59,7 +59,7 @@ public:
   }
   
   // inlet 1
-  void bang(const Value& sig)
+  void bang(const Value& val)
   {
     if (sig.type == NilValue && mMidiIn)
       get_messages();
@@ -88,7 +88,7 @@ public:
     }
   }
   
-  virtual void spy()
+  virtual const Value inspect(const Value& val) 
   { 
     std::vector<std::string> portList;
     if (mPortId < 0)

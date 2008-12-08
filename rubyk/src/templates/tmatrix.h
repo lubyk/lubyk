@@ -126,9 +126,9 @@ public:
     * @return bool       returns false if allocation of new space failed. */
   bool copy_at(int pRowIndex, const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1, bool pResize = false);
 
-  //FIX bool copy(const Value& sig);
+  //FIX bool copy(const Value& val);
   
-  //FIX bool copy_at(int pRowIndex, const Value& sig);
+  //FIX bool copy_at(int pRowIndex, const Value& val);
   
   /** Append a vector to the end of the current data. Size increases automatically. */
   bool append (const T * pVector, size_t pVectorSize);

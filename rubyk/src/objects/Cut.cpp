@@ -1,4 +1,4 @@
-#include "class.h"
+#include "rubyk.h"
 
 class Cut : public Node
 {
@@ -16,7 +16,7 @@ public:
     return true;
   }
 
-  void bang(const Value& sig)
+  void bang(const Value& val)
   { 
     sig.get(&mLiveBuffer);
     

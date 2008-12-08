@@ -1,4 +1,4 @@
-#include "class.h"
+#include "rubyk.h"
 
 class Average : public Node
 {
@@ -11,7 +11,7 @@ public:
   
   
   // inlet 1
-  void bang(const Value& sig)
+  void bang(const Value& val)
   { 
     real_t d;
     const Matrix * live;
@@ -38,7 +38,7 @@ public:
     }
   }
   
-  virtual void spy()
+  virtual const Value inspect(const Value& val) 
   {  
     bprint(mSpy, mSpySize,"%ix%i", mBuffer.col_count(), mBuffer.row_count());    
   }

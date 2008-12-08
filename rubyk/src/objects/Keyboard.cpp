@@ -1,4 +1,4 @@
-#include "class.h"
+#include "rubyk.h"
 #include <stdio.h>
 #include <termios.h>
 #include <unistd.h>
@@ -13,7 +13,7 @@ public:
   }
   
   // capture method, called from a command
-  void bang(const Value& sig)
+  void bang(const Value& val)
   { 
     // do nothing
   }
@@ -71,7 +71,7 @@ public:
     mServer->lock();
   }
   
-  virtual void spy()
+  virtual const Value inspect(const Value& val) 
   {  
     bprint(mSpy, mSpySize,"");    
   }

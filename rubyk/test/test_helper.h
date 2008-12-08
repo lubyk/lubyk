@@ -62,7 +62,7 @@ public:
 protected:
   Root mRoot;
   
-  void _create(const char * file, int lineno, const char * pClass, const char * pName, const char* pParams, const char* pUrl)
+  void _create(const char * file, int lineno, const char * pName, const char * pClass, const char* pParams, const char* pUrl)
   {
     Hash h;
     h.set_key("url", String(pName));
@@ -79,18 +79,44 @@ protected:
     _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string(pUrl)), str, std::string(pResult));
   }
   
+  void _assert_call(const char * file, int lineno, const char * pUrl, const char * pVal, real_t pResult)
+  {
+    Value res = mRoot.call(pUrl, Value(pVal));
+    Number n(res);
+    if (n.is_nil()) {
+      _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string(pUrl)), res.to_string(), TS_AS_STRING(pResult));
+    } else {
+      _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string(pUrl)), n.value(), pResult);
+    }
+  }
+  
   void _assert_inspect(const char * file, int lineno, const char * pName, const char * pInfo)
   {
-    Value res = mRoot.call(std::string(pName).append("/#inspect"));
+    std::string url = std::string(pName).append("/#inspect");
+    Value res = mRoot.call(url);
     std::string str = res.is_string() ? String(res).string() : res.to_string();
-    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("inspect")), str, std::string(pInfo));
+    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(url), str, std::string(pInfo));
+  }
+  
+  
+  void _assert_inspect(const char * file, int lineno, const char * pName, real_t pInfo)
+  {
+    std::string url = std::string(pName).append("/#inspect");
+    Value res = mRoot.call(url);
+    Number n(res);
+    if (n.is_nil()) {
+      _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(url), res.to_string(), TS_AS_STRING(pInfo));
+    } else {
+      _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(url), n.value(), pInfo);
+    }
   }
   
   void _assert_info(const char * file, int lineno, const char * pName, const char * pInfo)
   {
-    Value res = mRoot.call(std::string(pName).append("/#info"));
+    std::string url = std::string(pName).append("/#info");
+    Value res = mRoot.call(url);
     std::string str = res.is_string() ? String(res).string() : res.to_string();
-    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("inspect")), str, std::string(pInfo));
+    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(url), str, std::string(pInfo));
   }
 };
 

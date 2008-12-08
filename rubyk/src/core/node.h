@@ -32,7 +32,7 @@ public:
   /** Add an inlet with the given callback (used by Class during instantiation). */
   void register_inlet(Inlet * pInlet)
   {
-    pInlet->setId(mInlets.size()); /* first inlet has id 0 */
+    pInlet->set_id(mInlets.size()); /* first inlet has id 0 */
     mInlets.push_back(pInlet);
   }
   
@@ -40,7 +40,7 @@ public:
     * Name not used for the moment. */
   void register_outlet(Outlet * pOutlet)
   {
-    pOutlet->setId(mOutlets.size()); /* first inlet has id 0 */
+    pOutlet->set_id(mOutlets.size()); /* first inlet has id 0 */
     mOutlets.push_back(pOutlet);
   }
   

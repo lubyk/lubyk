@@ -1,4 +1,4 @@
-#include "class.h"
+#include "rubyk.h"
 #include "midi_message.h"
 #include <sstream>
 
@@ -27,7 +27,7 @@ public:
   }
   
   // inlet 1 (set ctrl value)
-  void bang(const Value& sig)
+  void bang(const Value& val)
   {
     real_t i;
     if (sig.type == MidiValue && sig.midi_ptr.value->mType == CtrlChange) {
@@ -48,20 +48,20 @@ public:
   }
   
   // inlet 2
-  void set_ctrl(const Value& sig)
+  void set_ctrl(const Value& val)
   {
     int n;
     if (sig.get(&n)) mMessage.set_note(n);
   }
   
   // inlet 3
-  void set_slope(const Value& sig)
+  void set_slope(const Value& val)
   {
     sig.get(&mSlope);
   }
   
   // inlet 4
-  void set_channel(const Value& sig)
+  void set_channel(const Value& val)
   {
     int i;
     if (sig.get(&i)) mMessage.set_channel(i);
@@ -75,7 +75,7 @@ public:
   void clear()
   { remove_my_events(); }
   
-  virtual void spy()
+  virtual const Value inspect(const Value& val) 
   { 
     std::ostringstream oss(std::ostringstream::out);
     oss << mMessage;

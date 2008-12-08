@@ -1,4 +1,4 @@
-#include "class.h"
+#include "rubyk.h"
 
 enum replay_modes_t {
   WaitingMode = 0, /**< No data to playback, recording not started. */
@@ -40,7 +40,7 @@ public:
     return true;
   }
   
-  void bang(const Value& sig)
+  void bang(const Value& val)
   {
     int cmd;
     if (sig.get(&cmd)) {
@@ -81,7 +81,7 @@ public:
   void reload(const Value& p)
   { reload_data(); }
   
-  virtual void spy()
+  virtual const Value inspect(const Value& val) 
   {
     bprint(mSpy, mSpySize, "%u / %ux%u", mIndex, mData.row_count(), mData.col_count());
   }

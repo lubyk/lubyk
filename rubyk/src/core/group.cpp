@@ -13,5 +13,5 @@ bool Group::set (const Value& p)
 void Group::spy() 
 { bprint(mSpy, mSpySize,"");  }
 
-void Group::bang(const Value& sig)
+void Group::bang(const Value& val)
 { }

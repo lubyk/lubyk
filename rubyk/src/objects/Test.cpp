@@ -13,7 +13,7 @@ public:
   }
   
   /** Example to set an attribute stored as a Value (a String here). This is also an accessor (used by sending a nil value). */
-  ACCESSOR(mMessage, message)
+  ATTR_ACCESSOR(mMessage, message)
   
   const Value counter_ (const Value& val)
   {
@@ -106,8 +106,8 @@ extern "C" void init(Root& root)
   CLASS_METHOD( Test,  hello,  "If the input value is 0: stop. If it is greater the 0: start. Bang toggles on/off." )
   
   // Define an accessor for an attribute not used as inlet.
-  METHOD(       Test, message,  "Example of value storage (String)." )
-  METHOD_NAMED( Test, "counter", counter_,  "Set counter value (Number)." )
+  ACCESSOR(Test, message,  "Example of value storage (String)." )
+  ACCESSOR(Test, counter,  "Set counter value (Number)." )
   
   // Define inlets.
   // This creates "/t/inlets/LINK_NAME"

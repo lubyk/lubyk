@@ -31,9 +31,9 @@ public:
   }
 
   virtual ~Slot ();
-
+  
   /** Set slot id (position in containing node) */
-  void setId (int pId);
+  void set_id (int pId);
   
   /** Add a bi-directional connection to another slot. */
   bool connect (Slot * pOther);

@@ -1,4 +1,4 @@
-#include "class.h"
+#include "rubyk.h"
 
 class Metro : public Node
 {
@@ -13,7 +13,7 @@ public:
   }
   
   // inlet 1
-  void bang(const Value& sig)
+  void bang(const Value& val)
   {  
     if (sig.type) { // bang_me_in class 'bang' with a NilValue, if it's not nil, it's a resync/set bang
       sig.get(&mTempo);
@@ -25,15 +25,15 @@ public:
     }
   }
   
-  virtual void spy()
+  virtual const Value inspect(const Value& val) 
   { bprint(mSpy, mSpySize,"%.2f", mTempo );  }
   
-  void stop(const Value& sig)
+  void stop(const Value& val)
   {
     remove_my_events();
   }
   
-  void start(const Value& sig)
+  void start(const Value& val)
   {
     bang(sig);
   }

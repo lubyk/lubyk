@@ -1,4 +1,4 @@
-#include "class.h"
+#include "rubyk.h"
 /** This is a very basic object to see what an object definition could look like. */
 
 class Counter : public Node
@@ -20,7 +20,7 @@ public:
   }
 
   // inlet 1
-  void bang(const Value& sig)
+  void bang(const Value& val)
   { 
     sig.get(&mCounter);
     
@@ -28,11 +28,11 @@ public:
   }
   
   // inlet 2
-  void set_increment(const Value& sig)
+  void set_increment(const Value& val)
   { sig.get(&mIncrement);     }
   
   
-  virtual void spy() 
+  virtual const Value inspect(const Value& val)  
   { bprint(mSpy, mSpySize,"%i (%+i)", mCounter, mIncrement );  }
   
   virtual void help()

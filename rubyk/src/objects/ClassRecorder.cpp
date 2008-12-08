@@ -1,5 +1,5 @@
 
-#include "class.h"
+#include "rubyk.h"
 #include <sys/types.h> // directory listing
 #include <dirent.h>    // directory listing
 
@@ -57,7 +57,7 @@ public:
   }
 
   // inlet 1
-  void bang (const Value& sig)
+  void bang (const Value& val)
   {
     int cmd;
     
@@ -175,7 +175,7 @@ public:
     }
   }
   
-  virtual void spy()
+  virtual const Value inspect(const Value& val) 
   {  
     bprint(mSpy, mSpySize,"%s", mFolder.c_str());    
   }

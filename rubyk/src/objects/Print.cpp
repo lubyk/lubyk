@@ -1,4 +1,4 @@
-#include "class.h"
+#include "rubyk.h"
 
 class Print : public Node
 {
@@ -10,12 +10,12 @@ public:
   }
   
   // inlet 1
-  void bang(const Value& sig)
+  void bang(const Value& val)
   { 
     *mOutput << sig << std::endl;
   }
   
-  virtual void spy()
+  virtual const Value inspect(const Value& val) 
   { 
     bprint(mSpy, mSpySize,"");
   }

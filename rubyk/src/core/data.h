@@ -21,6 +21,11 @@ public:
     return new Data(*this);
   }
   
+  virtual void copy(Data * pOther)
+  {
+    // do nothing
+  }
+  
   virtual value_t type() const
   { return BangValue; }
   

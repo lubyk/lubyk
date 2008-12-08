@@ -1,4 +1,4 @@
-#include "class.h"
+#include "rubyk.h"
 
 class Minus : public Node
 {
@@ -10,7 +10,7 @@ public:
   }
   
   // inlet 1
-  void bang(const Value& sig)
+  void bang(const Value& val)
   {  
     real_t d;
     if (sig.type == MatrixValue) {
@@ -28,12 +28,12 @@ public:
   }
   
   // inlet 2
-  void set_minus(const Value& sig)
+  void set_minus(const Value& val)
   {
     sig.get(&mValue);
   }
   
-  virtual void spy()
+  virtual const Value inspect(const Value& val) 
   { bprint(mSpy, mSpySize,"-%.2f", mValue );  }
   
   

@@ -89,7 +89,7 @@ public:
     *mOutput << mScript << std::endl;
   }
   
-  virtual void spy() 
+  virtual const Value inspect(const Value& val)  
   { 
     bprint(mSpy, mSpySize,"%s", mScriptFile.c_str() );
   }

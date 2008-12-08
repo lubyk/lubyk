@@ -21,7 +21,7 @@ public:
   /** Light copy of the data contained in the other SmartPtr. */
   SmartPtr& operator=(const SmartPtr& v)
   {
-    if (this != &v) {
+    if (this != &v) {  // FIXME: instead of release/acquire just copy real_t for Number ? Use object pool ?
       release();
       acquire(v.mPtr);
     }
@@ -40,6 +40,10 @@ public:
     return mPtr ? mPtr->mRefCount : 0;
   }
   
+  void acquire(const SmartPtr& s)
+  {
+    acquire(s.mPtr);
+  }
 protected:
   
   /** Structure shared by all smart pointers pointing to the same data. Holds the pointer to the "content" and the reference count. */

@@ -1,4 +1,4 @@
-#include "class.h"
+#include "rubyk.h"
 #include "midi_message.h"
 #include <sstream>
 
@@ -26,7 +26,7 @@ public:
   }
   
   // inlet 1 and 5 (silent set note)
-  void bang(const Value& sig)
+  void bang(const Value& val)
   {
     if (sig.type == MidiValue && sig.midi_ptr.value->mType == NoteOn) {
       mMessage = *(sig.midi_ptr.value);
@@ -37,7 +37,7 @@ public:
   }
 
   // inlet 2
-  void set_velocity(const Value& sig)
+  void set_velocity(const Value& val)
   {
     int v = 0;
     sig.get(&v);
@@ -45,21 +45,21 @@ public:
   }
   
   // inlet 3
-  void set_length(const Value& sig)
+  void set_length(const Value& val)
   { 
     time_t l;
     if (sig.get(&l)) mMessage.set_length(l); 
   }
   
   // inlet 4
-  void set_channel(const Value& sig)
+  void set_channel(const Value& val)
   {
     int i;
     if (sig.get(&i)) mMessage.set_channel(i);
   }
   
   // inlet 5 (set note but do not send)
-  void set_note(const Value& sig)
+  void set_note(const Value& val)
   {
     int n;
     if (sig.get(&n)) mMessage.set_note(n);
@@ -80,7 +80,7 @@ public:
   void clear()
   { remove_my_events(); }
   
-  virtual void spy()
+  virtual const Value inspect(const Value& val) 
   { 
     std::ostringstream oss(std::ostringstream::out);
     oss << mMessage;

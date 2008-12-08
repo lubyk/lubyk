@@ -1,4 +1,4 @@
-#include "class.h"
+#include "rubyk.h"
 
 class Diff : public Node
 {
@@ -16,7 +16,7 @@ public:
   }
   
   // inlet 1
-  void bang(const Value& sig)
+  void bang(const Value& val)
   {  
     const Matrix * live;
     if (sig.type == MatrixValue) {
@@ -46,7 +46,7 @@ public:
     }
   }
   
-  virtual void spy()
+  virtual const Value inspect(const Value& val) 
   {
     bprint(mSpy, mSpySize,"%ix%i", mBuffer.col_count(), mBuffer.row_count());
   }

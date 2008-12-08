@@ -1,4 +1,4 @@
-#include "class.h"
+#include "rubyk.h"
 #include "midi/RtMidi.h"
 
 class MidiOut : public Node
@@ -51,7 +51,7 @@ public:
   }
   
   // inlet 1
-  void bang(const Value& sig)
+  void bang(const Value& val)
   {
     MidiMessage * msg;
     if (mDebug) *mOutput << mName << ": " << sig << std::endl;
@@ -106,7 +106,7 @@ public:
     }
   }
   
-  virtual void spy()
+  virtual const Value inspect(const Value& val) 
   { 
     std::vector<std::string> portList;
     if (mPortId < 0)

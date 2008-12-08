@@ -13,7 +13,7 @@ Slot::~Slot()
 }
 
 
-void Slot::setId(int pId)
+void Slot::set_id(int pId)
 {
   mId = pId;
 }

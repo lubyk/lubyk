@@ -1,4 +1,4 @@
-#include "class.h"
+#include "rubyk.h"
 #include <float.h>  // DBL_MAX
 #define INITIAL_TRAINING_DATA_SIZE 512
 
@@ -67,7 +67,7 @@ public:
   }
   
   // inlet 1
-  void bang(const Value& sig)
+  void bang(const Value& val)
   { 
     int cmd;
     if (!mIsOK) return; // only recover after 'set'
@@ -122,7 +122,7 @@ public:
     }
   }
   
-  virtual void spy()
+  virtual const Value inspect(const Value& val) 
   {  
     bprint(mSpy, mSpySize,"%ix%i", mCodebook.row_count(), mCodebook.col_count());    
   }

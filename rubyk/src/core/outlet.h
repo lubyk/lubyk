@@ -16,7 +16,7 @@ struct OutletPrototype
 
 class Outlet : public Slot {
 public:  
-  Outlet (Node * pNode) : Slot(pNode)
+  Outlet (Node * pNode) : Slot(pNode) 
   {
     register_in_node();
   }
@@ -33,7 +33,7 @@ public:
     register_in_node();
   }
   
-  virtual ~Outlet()
+  virtual ~Outlet() 
   {
     unregister_in_node();
   }

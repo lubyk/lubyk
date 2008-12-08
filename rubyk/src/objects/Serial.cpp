@@ -56,7 +56,7 @@ public:
   }
   
   // inlet 1
-  void bang(const Value& sig)
+  void bang(const Value& val)
   { 
     int c;
     if (mLua) {

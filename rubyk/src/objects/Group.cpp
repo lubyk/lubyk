@@ -1,4 +1,4 @@
-#include "class.h"
+#include "rubyk.h"
 
 // implementation is in "src/core/group.cpp"
 

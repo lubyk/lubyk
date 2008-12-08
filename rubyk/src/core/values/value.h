@@ -198,6 +198,11 @@ public:
     }
   }
   
+  inline Data * data_pointer() const
+  { 
+    return mPtr->mDataPtr; 
+  }
+  
   /** Set a real_t from the content. Return false on failure. 
   
   FIXME: we should use a template here, but it seems to break on compilation... */
@@ -254,9 +259,6 @@ private:
     return (data_type*)(mPtr->mDataPtr); }                          \
   virtual value_t type() const                                      \
   { return signature; }                                             \
-  klass& operator= (const Value& val)                               \
-  { val.set(*this);                                                 \
-    return *this; }                                                 \
 protected:                                                          \
   inline void make_data_ptr ()                                      \
   { mPtr = new Ptr(new data_type()); }                              \

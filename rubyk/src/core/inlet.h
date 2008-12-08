@@ -20,14 +20,21 @@ struct InletPrototype
 class Inlet : public Slot {
 public:
   /** Constructor used for testing. */
-  Inlet (Node * node, inlet_method_t pMethod, uint pType) : Slot(node, pType), mMethod(pMethod) {}
+  Inlet (Node * node, inlet_method_t pMethod, uint pType) : Slot(node, pType), mMethod(pMethod) 
+  {
+    register_in_node();
+  }
   
-  Inlet (Node * node, inlet_method_t pMethod) : Slot(node), mMethod(pMethod) {}
+  Inlet (Node * node, inlet_method_t pMethod) : Slot(node), mMethod(pMethod) 
+  {
+    register_in_node();
+  }
   
   /** Prototype based constructor. */
   Inlet (Node * pNode, const InletPrototype& pProto) : Slot(pProto.mName, pNode, pProto.mType), mMethod(pProto.mMethod)
   {
     set_info(pProto.mInfo);
+    register_in_node();
   }
   
   virtual ~Inlet()
@@ -59,7 +66,7 @@ public:
   }
   
   /** Receive a value. */
-  void receive (const Value& sig);
+  void receive (const Value& val);
   
   /** Create a callback for an inlet. */
   template <class T, void(T::*Tmethod)(const Value& val)>

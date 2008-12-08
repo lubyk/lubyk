@@ -47,7 +47,7 @@ public:
   }
   
   // inlet 1
-  void bang (const Value& sig)
+  void bang (const Value& val)
   {
     if (!mIsOK) return; // no recovery
     
@@ -76,7 +76,7 @@ public:
     *mOutput << mName << ": " << mBasis << std::endl;
   }
   
-  virtual void spy()
+  virtual const Value inspect(const Value& val) 
   {  
     bprint(mSpy, mSpySize,"%ix%i", mBasis.col_count(), mBasis.row_count());    
   }

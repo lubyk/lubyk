@@ -1,4 +1,4 @@
-#include "class.h"
+#include "rubyk.h"
 #include "opengl.h"
 
 typedef enum {
@@ -68,7 +68,7 @@ public:
   }
   
   // inlet 1
-  void bang(const Value& sig)
+  void bang(const Value& val)
   {
     mValue = &sig;
     sig.get(&(mLiveBuffer));
@@ -76,7 +76,7 @@ public:
   }
   
   // inlet 2 (draw)
-  void draw(const Value& sig)
+  void draw(const Value& val)
   {
     const Matrix * mat;
     if (!is_opengl_thread()) return;
@@ -103,7 +103,7 @@ public:
     mServer->unlock();
   }
   
-  virtual void spy()
+  virtual const Value inspect(const Value& val) 
   { 
     std::string str;
     

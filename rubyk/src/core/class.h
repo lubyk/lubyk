@@ -98,15 +98,15 @@ private:
 };
 
 // HELPER FOR FAST AND EASY ACCESSOR CREATION
-#define ACCESSOR(var, name) const Value name (const Value& val)  \
+#define ATTR_ACCESSOR(var, name) const Value name ## _ (const Value& val)    \
 { var = val;                                                        \
   return var; }                                                     \
 
 // HELPERS TO AVOID TEMPLATE SYNTAX
 #define CLASS(klass, info)                Class * c = root.classes()->declare<klass>(#klass, info);
 #define CLASS_METHOD(klass, method, info) c->add_class_method(#method, &klass::method, info);
-#define METHOD(klass, method, info)       c->add_method<klass, &klass::method>(#method, info);
-#define METHOD_NAMED(klass, name, method, info)       c->add_method<klass, &klass::method>(name, info);
+#define ACCESSOR(klass, method, info)       ACCESSOR_NAMED(klass, #method, method ## _, info);
+#define ACCESSOR_NAMED(klass, name, method, info)       c->add_method<klass, &klass::method>(name, info);
 #define INLET(klass,  method, types, info) c->add_inlet<klass, &klass::method>(#method, types, info);
 #define OUTLET(klass, name,   types, info) c->add_outlet(#name, types, info);
 #endif // _CLASS_H_

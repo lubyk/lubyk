@@ -16,7 +16,7 @@ typedef Node * (*create_function_t)(Class * pClass, const std::string& pName, Pl
 //FIX typedef void (*class_method_t)(std::ostream * pOutput, const Value& p);
 
 /** Pointer to an inlet method that can be called from the command line with "obj.method(Value)" */
-typedef void (*obj_method_t)(void * pReceiver, const Value& sig);
+typedef void (*obj_method_t)(void * pReceiver, const Value& val);
 
 
 /** This is the base class for Events and CallEvents. The class has a field for the time at which the event should

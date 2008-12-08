@@ -9,8 +9,8 @@ public:
   
   virtual bool set (const Value& p);
 
-  virtual void spy();
+  virtual const Value inspect(const Value& val) ;
   
-  virtual void bang(const Value& sig);
+  virtual void bang(const Value& val);
 };
 #endif

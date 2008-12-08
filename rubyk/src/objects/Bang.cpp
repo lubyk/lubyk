@@ -1,4 +1,4 @@
-#include "class.h"
+#include "rubyk.h"
 
 class Bang : public Node
 {
@@ -9,7 +9,7 @@ public:
   }
   
   // inlet 1
-  void bang(const Value& sig)
+  void bang(const Value& val)
   {
     send(4,gBangValue);
     send(3,gBangValue);
@@ -17,7 +17,7 @@ public:
     send(1,gBangValue);
   }
   
-  virtual void spy()
+  virtual const Value inspect(const Value& val) 
   { bprint(mSpy, mSpySize,"");  }
   
 };

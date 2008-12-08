@@ -1,6 +1,7 @@
 #ifndef _NUMBER_VALUE_H_
 #define _NUMBER_VALUE_H_
 #include "value.h"
+#include <iostream>
 
 class Number;
 
@@ -65,9 +66,26 @@ public:
   
   Number(real_t d) : Value(new NumberData(d)) {}
   
+  /** Set Number from Value. */
+  const Value& operator= (const Value& val)
+  {
+    // std::cout << "[" << data_id() << "/" << ref_count() << "] operator=" << val << std::endl;
+    if (val.data_type() == NumberValue) {
+      if (!mPtr) {
+        acquire(val);
+        // std::cout << "acquired: [" << data_id() << "/" << ref_count() << "]" << std::endl;
+      } else {
+        copy_if_shared();
+        data_pointer()->mReal = ((NumberData*)(val.data_pointer()))->mReal; // copy instead of acquire.
+      }
+    }
+    return val;
+  }
+  
   /** Set Number from real_t. */
   real_t operator= (real_t d)
   {
+    // std::cout << "[" << data_id() << "/" << ref_count() << "] operator=" << d << std::endl;
     if (!mPtr) {
       mPtr = new Ptr(new NumberData(d));
     } else {
@@ -77,8 +95,14 @@ public:
     return d;
   }
   
+  /** Add two Numbers together. */
+  real_t operator+(const Number& n) const
+  {
+    return value() + n.value();
+  }
+  
   /** Return the value. */
-  real_t value()
+  real_t value() const
   {
     if (mPtr) {
       return data_pointer()->mReal;

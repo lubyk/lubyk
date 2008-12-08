@@ -47,7 +47,7 @@ public:
   }
   
   // inlet 1
-  void bang(const Value& sig)
+  void bang(const Value& val)
   {
     const Matrix * live;
     if (sig.get(&live)) {
@@ -290,7 +290,7 @@ private:
     mICov.clear();
   }
   
-  virtual void spy()
+  virtual const Value inspect(const Value& val) 
   { 
     const char * cstr;
     if (mDistanceType == EuclideanDistance)

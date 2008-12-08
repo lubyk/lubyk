@@ -1,4 +1,4 @@
-#include "class.h"
+#include "rubyk.h"
 #include <iostream>
 
 /** Filter char values. */
@@ -10,7 +10,7 @@ public:
     return true;
   }
   
-  void bang(const Value& sig)
+  void bang(const Value& val)
   {
     if (sig.type != MatrixValue) {
       *mOutput << mName << ": filter only works with array signals. Use a buffer.\n";
@@ -38,7 +38,7 @@ public:
     send(max_label);
   }
   
-  virtual void spy()
+  virtual const Value inspect(const Value& val) 
   {  
     bprint(mSpy, mSpySize,"");    
   }

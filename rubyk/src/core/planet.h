@@ -46,13 +46,13 @@ public:
   /** Main loop. Returns false when rubyk has to quit. */
   bool run();
   
-  virtual void bang (const Value& sig)
+  virtual void bang (const Value& val)
   {}
   
   virtual bool set (const Value& p)
   { return true; }
   
-  virtual void spy()
+  virtual const Value inspect(const Value& val) 
   { bprint(mSpy, mSpySize, "rubyk");  }
   
   /** Add an event to the event queue. The server is responsible for deleting the event. */

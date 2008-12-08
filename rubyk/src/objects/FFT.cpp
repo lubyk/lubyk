@@ -1,4 +1,4 @@
-#include "class.h"
+#include "rubyk.h"
 #include "FFTReal.h"
 
 class FFT : public Node
@@ -19,7 +19,7 @@ public:
   }
   
   // inlet 1
-  void bang(const Value& sig)
+  void bang(const Value& val)
   { 
     const Matrix * mat;
     if (!sig.get(&mat)) {
@@ -73,7 +73,7 @@ public:
     send(mS);
   }
   
-  virtual void spy()
+  virtual const Value inspect(const Value& val) 
   {  
     bprint(mSpy, mSpySize,"");    
   }

@@ -48,6 +48,12 @@ public:
   String(const std::string& s) : Value(new StringData(s)) {}
   String(const char* s) : Value(new StringData(std::string(s))) {}
   
+  const Value& operator= (const Value& val)
+  { 
+    val.set(*this);
+    return val; 
+  }
+  
   /** Set String from std::string. */
   const std::string& operator= (const std::string& s)
   {

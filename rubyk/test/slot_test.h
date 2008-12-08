@@ -63,7 +63,7 @@ public:
     DummyNode counter(0);
     Outlet o(&counter); // counter behaves as the receiver ()
     Inlet  i(&counter, receive_value1 );
-    i.setId(3); // make sure it does not send a 'bang()' to our fake receiver.
+    i.set_id(3); // make sure it does not send a 'bang()' to our fake receiver.
     o.connect(&i);
     TS_ASSERT_EQUALS( 0.0, counter.mValue);
     o.send(Number(1.0));
@@ -78,9 +78,9 @@ public:
     Inlet  i2(&counter, receive_value2 );
     Inlet  i3(&counter, receive_value4 );
     // from their ids, these should be called starting by i1, then i2 and i3 as they share the same receiver (counter)
-    i1.setId(4); //         value + 1 = 2
-    i2.setId(2); // 2 * 2 + value + 2 = 7
-    i3.setId(1); // 2 * 7 + value + 4 = 19
+    i1.set_id(4); //         value + 1 = 2
+    i2.set_id(2); // 2 * 2 + value + 2 = 7
+    i3.set_id(1); // 2 * 7 + value + 4 = 19
     
     o.connect(&i2);
     o.connect(&i1);

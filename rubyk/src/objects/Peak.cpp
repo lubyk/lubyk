@@ -1,4 +1,4 @@
-#include "class.h"
+#include "rubyk.h"
 
 class Peak : public Node
 {
@@ -11,7 +11,7 @@ public:
     return true;
   }
 
-  void bang(const Value& sig)
+  void bang(const Value& val)
   { 
     real_t d = -1;
     size_t row_count, col_count;
@@ -55,7 +55,7 @@ public:
     }
   }
   
-  virtual void spy()
+  virtual const Value inspect(const Value& val) 
   { bprint(mSpy, mSpySize,"%.2f", mDescent );  }
   
 private:

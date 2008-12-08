@@ -1,9 +1,9 @@
-#include "class.h"
+#include "rubyk.h"
 
 class Foo : public Node
 {
   // default inlet
-  void bang (const Value& sig)
+  void bang (const Value& val)
   {
     Matrix m;
     if (!sig.set(&m)) return; // light copy (shares memory with "sig")
@@ -18,7 +18,7 @@ class Foo : public Node
   }
 
   // inlet 2: set mMult (also used as param)
-  void multiplier (const Value& sig)
+  void multiplier (const Value& val)
   {
     sig.set(mMult);
   }
