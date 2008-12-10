@@ -3,20 +3,6 @@
 #include "alias.h"
 #include "test_helper.h"
 
-class DummyObject2 : public Object
-{
-public:
-  DummyObject2(const char * pName, int pCounter) : Object(pName), mCounter(pCounter) {}
-  
-  virtual const Value trigger (const Value& val)
-  {
-    mCounter = val;
-    return mCounter;
-  }
-  
-  Number mCounter;
-};
-
 class AliasTest : public ValueTestHelper
 {
 public:
@@ -24,7 +10,7 @@ public:
   {
     Root root;
     Object       * one = root.adopt(new Object("one")); //   [/one]
-    DummyObject2 * sub = one->adopt(new DummyObject2("sub", 3)); //   [/one/sub]
+    DummyNumber  * sub = one->adopt(new DummyNumber("sub", 3)); //   [/one/sub]
     Alias        * ali = root.adopt(new Alias("ali", sub));
     Value res;
     
@@ -59,7 +45,7 @@ public:
   {
     Root root;
     Object       * one = root.adopt(new Object("one")); //   [/one]
-    DummyObject2 * sub = one->adopt(new DummyObject2("sub", 3)); //   [/one/sub]
+    DummyNumber  * sub = one->adopt(new DummyNumber("sub", 3)); //   [/one/sub]
     Alias        * ali = root.adopt(new Alias("ali", sub));
     Value res;
     

@@ -3,9 +3,13 @@
 #include "root.h"
 #include "alias.h"
 
-class Group : public Root
+class Group : public Object
 {
 public:
+  Group(const char *       pName) : Object(pName) {}
+  
+  Group(const std::string& pName) : Object(pName) {}
+
   bool init (const Value& p);
   
   virtual const Value inspect(const Value& val) ;
@@ -22,6 +26,11 @@ public:
     alias->mRoot   = mRoot;
 
     alias->moved();
+  }
+  
+  Root * root()
+  {
+    return &mBranch;
   }
   
 protected:

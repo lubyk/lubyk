@@ -120,4 +120,18 @@ protected:
   }
 };
 
+class DummyNumber : public Object
+{
+public:
+  DummyNumber(const char * pName, int pCounter) : Object(pName), mCounter(pCounter) {}
+  
+  virtual const Value trigger (const Value& val)
+  {
+    mCounter = val;
+    return mCounter;
+  }
+  
+  Number mCounter;
+};
+
 #endif // _VALUE_TEST_HELPER_H_
