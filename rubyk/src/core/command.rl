@@ -1,7 +1,5 @@
 #include "command.h"
-#include "planet.h"
-#include "class.h"
-#include "mutex.h"
+#include "rubyk.h"
 
 //#define DEBUG_PARSER
 
@@ -221,7 +219,8 @@ void Command::set_parameter  (const std::string& pKey, const std::string& pValue
 // FIXME: create_instance should run in server space with concurrency locks.
 void Command::create_instance()
 {
-  mServer->lock();
+  // mServer->lock();
+  // mRoot.classes()->new_node(pName, pClass, h);
   Node * node = mServer->create_instance(mVariable, mClass, mParameters, mOutput);
 #ifdef DEBUG_PARSER
   std::cout << "NEW "<< mVariable << " = " << mClass << "(" << mParameters << ")";

@@ -59,7 +59,7 @@ public:
   {
     std::list<InletPrototype>::iterator it;
     std::list<InletPrototype>::iterator end = mInletPrototypes.end();
-    Object * inlets = pObj->adopt(new Object("inlets"));
+    Object * inlets = pObj->adopt(new Object("in"));
     
     for (it = mInletPrototypes.begin(); it != end; it++) {
       inlets->adopt(new Inlet(pObj, *it));
@@ -71,7 +71,7 @@ public:
   {
     std::list<OutletPrototype>::iterator it;
     std::list<OutletPrototype>::iterator end = mOutletPrototypes.end();
-    Object * outlets = pObj->adopt(new Object("outlets"));
+    Object * outlets = pObj->adopt(new Object("out"));
     Outlet * o;
     
     for (it = mOutletPrototypes.begin(); it != end; it++) {

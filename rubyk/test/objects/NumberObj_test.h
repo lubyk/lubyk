@@ -18,9 +18,9 @@ public:
       *   +------+
       *    |
       *    v3             */
-    assert_call("/v1/outlets/value/link", "/add/inlets/bang",  "/add/inlets/bang");
-    assert_call("/v2/outlets/value/link", "/add/inlets/adder", "/add/inlets/adder");
-    assert_call("/add/outlets/sum/link",  "/v3/inlets/bang", "/v3/inlets/bang");
+    assert_call("/v1/out/value/link", "/add/in/bang",  "/add/in/bang");
+    assert_call("/v2/out/value/link", "/add/in/adder", "/add/in/adder");
+    assert_call("/add/out/sum/link",  "/v3/in/bang", "/v3/in/bang");
     
     
     assert_inspect("/v1", "[3] 2.00");
@@ -30,7 +30,7 @@ public:
     
     /** ---> 1. bang --> value         = 3
       *      2. send new value to add      */
-    assert_call("/v2/inlets/bang", "Bang!", "Nil");
+    assert_call("/v2/in/bang", "Bang!", "Nil");
     
     
     assert_inspect("/v1", "[3] 2.00");
@@ -40,7 +40,7 @@ public:
     
     /** ---> 1. bang --> value         = 3
       *      2. send new value to  v3  = 3  */
-    assert_call("/add/inlets/bang", "Bang!", "Nil");
+    assert_call("/add/in/bang", "Bang!", "Nil");
     
     assert_inspect("/v1", "[3] 2.00");
     assert_inspect("/v2", "[9] 3.00");
@@ -51,7 +51,7 @@ public:
       *      2. send new value to add  = 2
       *      3. add.bang --> value     = 5
       *      4. send to v3             = 5  */
-    assert_call("/v1/inlets/bang", "Bang!", "Nil");
+    assert_call("/v1/in/bang", "Bang!", "Nil");
     
     assert_inspect("/v1", "[3] 2.00");
     assert_inspect("/v2", "[9] 3.00");

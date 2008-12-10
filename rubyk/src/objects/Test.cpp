@@ -110,14 +110,14 @@ extern "C" void init(Root& root)
   ACCESSOR(Test, counter,  "Set counter value (Number)." )
   
   // Define inlets.
-  // This creates "/t/inlets/LINK_NAME"
+  // This creates "/t/in/LINK_NAME"
   //        class  inlet     accept type              info
   INLET (   Test,  bang,     NumberValue | BangValue, "Set counter | increment and send.")
   INLET (   Test,  counter,  NumberValue,             "Example of value storage (real_t).")
   INLET (   Test,  info,     AnyValue,                "Printout value.")
 
   // Define an outlets.
-  // This creates "/t/outlets/LINK_NAME"
+  // This creates "/t/out/LINK_NAME"
   // To "spy" on the outlet's result by hovering connection/outlet, we must register as observer on the outlet (=osc connection).
   OUTLET(   Test, counter,   NumberValue, "Increasing counter.")
   OUTLET(   Test, nil,       NilValue,    "Sends nil values.")

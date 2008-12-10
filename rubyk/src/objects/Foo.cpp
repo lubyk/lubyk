@@ -45,10 +45,10 @@ extern "C" void init()
   // define bang  (class, method, accepted types, message)
   INLET (   Foo, bang,       NumberValue | MatrixValue, "Multiply by right inlet." )
   
-  // define multiplier inlet (also creates "/nodes/foo/multiplier" set/get methods and "nodes/foo/inlets/multiplier" to link, unlink, ...)
+  // define multiplier inlet (also creates "/nodes/foo/multiplier" set/get methods and "nodes/foo/in/multiplier" to link, unlink, ...)
   INLET (   Foo, multiplier, NumberValue | MatrixValue, "Multiply left inlet." )
   
-  // define an outlet (also creates "/nodes/foo/outlets/result" to link, unlink, etc)
+  // define an outlet (also creates "/nodes/foo/out/result" to link, unlink, etc)
   // to "spy" on the outlet's result by hovering connection/outlet, we must register as observer on the outlet (=osc connection).
   OUTLET(   Foo, result,     MatrixValue,               "Multiplication result.")
   

@@ -4,7 +4,7 @@
 #include "new_method.h"
 #include "class.h"
 
-/** Special class to handle class listing from a directory. This usually responds at to the '/classes' url. */
+/** Special class to handle class listing from a directory. This usually responds at to the '/class' url. */
 class ClassListing : public Object
 {
 public:
@@ -21,7 +21,7 @@ public:
     return H("ClassListing");
   }
   
-  /** This trigger implements "/classes". It returns the list of objects in mObjectsPath. */
+  /** This trigger implements "/class". It returns the list of objects in mObjectsPath. */
   virtual const Value trigger (const Value& val);
   
   virtual const Value not_found (const std::string& pUrl, const Value& val);
@@ -66,13 +66,13 @@ public:
     return TYPE_CAST(Class, child(pName));
   }
   
-  /** Helper to call "/classes/ClassName/new". */
+  /** Helper to call "/class/ClassName/new". */
   const Value new_node(const char * pName, const char * pClass, const Value& val)
   {
     return mRoot->call(std::string(url()).append("/").append(pClass).append("/new"), val);
   }
   
-  /** Helper to call "/classes/ClassName/new". */
+  /** Helper to call "/class/ClassName/new". */
   const Value new_node(const std::string& pName, const std::string& pClass, const Value& val)
   {
     return mRoot->call(std::string(url()).append("/").append(pClass).append("/new"), val);

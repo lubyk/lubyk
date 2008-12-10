@@ -2,7 +2,7 @@
 #include <dlfcn.h> // dylib load
 
 
-/** This trigger implements "/classes". It returns the list of objects in mObjectsPath. */
+/** This trigger implements "/class". It returns the list of objects in mObjectsPath. */
 const Value ClassListing::trigger (const Value& val)
 {
   return String(""); // TODO: 'lib' directory listing !

@@ -60,8 +60,8 @@ protected:
     m->set_info("Create a link / list links.");
   }
   
-  // /m/outlets/counter/link  --> list links
-  // /m/outlets/counter/link /n/inlets/tempo  --> create a link
+  // /m/out/counter/link  --> list links
+  // /m/out/counter/link /n/in/tempo  --> create a link
   const Value link(const Value& val);
   
 protected:
