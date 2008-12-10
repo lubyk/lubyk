@@ -1,17 +1,14 @@
-#include "class.h"
+#include "group.h"
 
 bool Group::init (const Value& p)
 {
   return true;
 }
 
-bool Group::set (const Value& p)
-{
-  return true;
+const Value Group::inspect(const Value& val)
+{ 
+  return String("Group");
 }
-
-void Group::spy() 
-{ bprint(mSpy, mSpySize,"");  }
 
 void Group::bang(const Value& val)
 { }

@@ -159,6 +159,12 @@ public:
   /** Return the class listing Object (create one if needed). */
   ClassListing * classes();
   
+  /** Expose an internal url as a method of the group object. */
+  virtual void expose(const char * pName, const Object * pObject)
+  {
+    // do nothing (overwritten in Group)
+  }
+  
 protected:
   THash<std::string, Object*> mObjects;   /**< Hash to find any object in the tree from its url. */
 };

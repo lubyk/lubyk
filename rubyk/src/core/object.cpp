@@ -1,5 +1,33 @@
 #include "object.h"
 #include "root.h"
+#include "alias.h"
+
+Object::~Object()
+{  
+  // notify parent and root
+  if (mParent) mParent->release(this);
+  
+  for(std::list<Alias*>::iterator it = mAliases.begin(); it != mAliases.end(); it++) {
+    // to avoid notification to this dying object
+    (*it)->clear_original();
+    delete *it;
+  }
+  
+  clear();
+}
+
+
+/** Inform the object of an alias to be destroyed on destruction. */
+void Object::register_alias(Alias * pAlias)
+{
+  mAliases.push_back(pAlias);
+}
+
+/** Inform the object that an alias no longer exists. */
+void Object::unregister_alias(Alias * pAlias)
+{
+  mAliases.remove(pAlias);
+}
 
 /** Free the child from the list of children. */
 void Object::release(Object * pChild)

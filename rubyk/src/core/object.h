@@ -7,6 +7,7 @@
 #define NEXT_NAME_BUFFER_SIZE 20
 
 class Root;
+class Alias;
 
 class Object
 {
@@ -70,24 +71,11 @@ public:
   template<class T>
   T * adopt(T * pObj)
   {
-    Object * oldParent = pObj->mParent;
-    
-    if (oldParent) oldParent->release(pObj);
-    
-    pObj->mParent = this;
-    pObj->mRoot   = mRoot;
-    
-    pObj->moved();
+    do_adopt((Object*) pObj);
     return pObj;
   }
   
-  
-  virtual ~Object()
-  {  
-    // notify parent and root
-    if (mParent) mParent->release(this);
-    clear();
-  }
+  virtual ~Object();
   
   /** Class signature. */
   virtual uint type()
@@ -154,6 +142,12 @@ public:
     }
   }
   
+  /** Inform the object of an alias to be destroyed on destruction. */
+  void register_alias(Alias * pAlias);
+  
+  /** Inform the object that an alias no longer exists. */
+  void unregister_alias(Alias * pAlias);
+  
   const std::string& url()
   {
     return mUrl;
@@ -216,6 +210,19 @@ public:
   }
   
 protected:
+  /** Actual adoption. Overwritten by Group to manage tree separation. */
+  virtual void do_adopt(Object * pObject)
+  {
+    Object * oldParent = pObject->mParent;
+
+    if (oldParent) oldParent->release(pObject);
+
+    pObject->mParent = this;
+    pObject->mRoot   = mRoot;
+
+    pObject->moved();
+  }
+  
   /** Child sends a notification to the parent when it's name changes so that the parent/root keep their url hash in sync. */
   void child_moved(Object * pChild);
   
@@ -249,8 +256,11 @@ private:
   /** Free the child from the list of children. */
   void release(Object * pChild);
   
+  std::list<Alias *>          mAliases;          /**< List of aliases to destroy when this node disappears. */
+  
 protected:
   friend class Root;
+  friend class Group;
   
   Root   *                    mRoot;             /**< Root object. */
   Object *                    mParent;           /**< Pointer to parent object. */
@@ -258,7 +268,6 @@ protected:
   std::string                 mUrl;              /**< Absolute path to object (cached). TODO: this cache is not really needed. */
   std::string                 mName;             /**< Unique name in parent's context. */
   std::string                 mInfo;             /**< Help/information string. */
-  
   static unsigned int         sIdCounter;        /**< Use to set a default id and position. */
 
 };

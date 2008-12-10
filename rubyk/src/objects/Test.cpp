@@ -40,7 +40,7 @@ public:
   }
   
   // [1]. Increments mCounter on bang.
-  void bang(const Value& val)
+  virtual void bang(const Value& val)
   {
     if (val.is_number())
       mCounter = val || mCounter;
