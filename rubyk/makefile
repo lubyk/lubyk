@@ -32,7 +32,7 @@ rubyk: src/core/main.cpp $(LINKER_OBJECTS) objects test
 	$(CC) $(CFLAGS) $(LFLAGS) -o rubyk $(INCLUDE_HEADERS) -I. src/core/main.cpp $(LINKER_OBJECTS)
 
 
-objects: lib lib/Test.rko lib/Number.rko lib/Add.rko lib/Inlet.rko lib/Group.rko lib/Alias.rko
+objects: lib lib/Test.rko lib/Number.rko lib/Add.rko lib/Inlet.rko lib/Group.rko lib/Alias.rko lib/Outlet.rko
 
 lib:
 	mkdir lib

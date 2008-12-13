@@ -26,6 +26,11 @@ public:
     register_in_node();
   }
   
+  Outlet (const std::string& pName, Node * node, uint pType) : Slot(pName, node, pType)
+  {
+    register_in_node();
+  }
+  
   /** Prototype based constructor. */
   Outlet (Node * pNode, const OutletPrototype& pProto) : Slot(pProto.mName, pNode, pProto.mType)
   {

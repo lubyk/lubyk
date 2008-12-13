@@ -30,5 +30,5 @@ public:
 extern "C" void init(Root& root)
 {
   Class * c = root.classes()->declare<InletNode>("Inlet", "Create an inlet in the parent object. Sends values received in the parent's inlet.");
-  OUTLET(Inlet, port, AnyValue, "Value received in parent's inlet.")
+  OUTLET(InletNode, port, AnyValue, "Value received in parent's inlet.")
 }

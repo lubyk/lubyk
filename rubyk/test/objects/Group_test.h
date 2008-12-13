@@ -22,6 +22,15 @@ public:
   
   void test_new_outlet( void )
   {
-    // FIXME
+    create("/one", "Number", "value: 1"    , "[5] \"/one\"");
+    create("/grp", "Group",  ""            , "[9] \"/grp\"");
+    create("/grp/two", "Number", "value: 2", "[15] \"/grp/two\"");
+    create("/grp/res", "Outlet",  ""        , "[19] \"/grp/res\""); // /grp/res, /grp/out/res
+    assert_call("/grp/two/out/value/link", "/grp/res/in/bang", "/grp/res/in/bang"); // /grp/two ---> /grp/res
+    assert_call("/grp/out/res/link",       "/one/in/bang", "/one/in/bang");    // /grp/out/res ---> /one
+
+    assert_call("/one/value", "", "[3] 1.00");
+    assert_call("/grp/two/in/bang", "Bang!", "Nil"); // /grp/two ---> /grp/res ---> Outlet (res) --> /one
+    assert_call("/one/value", "", "[3] 2.00");
   }
 };
