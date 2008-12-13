@@ -1,11 +1,13 @@
-#ifndef _PROXY_METHOD_H_
-#define _PROXY_METHOD_H_
-#include "object.h"
+#ifndef _ALIAS_H_
+#define _ALIAS_H_
+#include "root.h"
 
 /** This object triggers another object's trigger when called. It's used in Group to expose functionalities. */
 class Alias : public Object
 {
 public:
+  Alias() : mOriginal(NULL) {}
+  
   Alias(const char *       pName, Object * pObject) : Object(pName), mOriginal(pObject) 
   {
     // We register so that the alias dies with the original object.
@@ -26,7 +28,7 @@ public:
   
   virtual const Value trigger (const Value& val)
   {
-    return mOriginal->trigger(val);
+    return mOriginal ? mOriginal->trigger(val) : gNilValue;
   }
   
   void clear_original()
@@ -34,8 +36,22 @@ public:
     mOriginal = NULL;
   }
   
-private:
+  /** Set new original object from url. */
+  void set_original(const std::string& pUrl)
+  {
+    Object * original = mRoot->find(pUrl);
+    if (original) set_original(original);
+  }
+  
+  /** Set new original object from an object pointer. */
+  void set_original(Object * pObject)
+  {
+    if (mOriginal) mOriginal->unregister_alias(this);
+    mOriginal = pObject;
+    if (mOriginal) mOriginal->register_alias(this);
+  }
+protected:
   Object * mOriginal; /**< Original object pointed to by the alias. */
 };
 
-#endif // _PROXY_METHOD_H_
+#endif // _ALIAS_H_

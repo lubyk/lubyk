@@ -22,7 +22,7 @@ public:
   void test_method( void )
   {   
     create("/t", "Test", "counter: 5 message:\"hopla\"", "[6] \"/t\"");
-    assert_call("/t", ""     , "in/,out/,message,counter");     // get method list
+    assert_call("/t", ""     , "message,counter,in/,out/");     // get method list
     assert_call("/t/message", ""     , "hopla"); // get
     assert_call("/t/message", "yoba" , "yoba"); // set
     assert_call("/t/message", ""     , "yoba"); // get again

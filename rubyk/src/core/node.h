@@ -77,23 +77,6 @@ public:
   virtual bool init()
   { return true; }
   
-  /** Shortcut to call multiple methods on an object.
-    * Using "obj.set(foo:4 bar:5)" is equivalent to calling "obj.foo(4)" and "obj.bar(5)". */
-  bool set(const Hash& pParams)
-  {
-    Hash p(pParams);
-    Object * obj;
-    Hash_iterator it;
-    Hash_iterator end = p.end();
-    
-    for(it = p.begin(); it != end; it++) {
-      if ( (obj = child(*it)) ) {
-        obj->trigger(p[*it]);
-      }
-    }
-    return true;
-  }
-  
   /** Set mIsOK flag. If this flag is not true, the node is considered "broken" and usually does not do any processing. */
   void set_is_ok (bool pStatus) 
   { mIsOK = pStatus; }

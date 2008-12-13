@@ -12,6 +12,7 @@ public:
     Object       * one = root.adopt(new Object("one")); //   [/one]
     DummyNumber  * sub = one->adopt(new DummyNumber("sub", 3)); //   [/one/sub]
     Alias        * ali = root.adopt(new Alias("ali", sub));
+    DummyNumber  * two = root.adopt(new DummyNumber("two", 2)); //  [/two]
     Value res;
     
     TS_ASSERT_EQUALS( one->url(),     std::string("/one") );
@@ -30,15 +31,27 @@ public:
     TS_ASSERT_EQUALS(Number(res).value(), 4.50);
     res = root.call("/ali");
     TS_ASSERT_EQUALS(Number(res).value(), 4.50);
+    res = root.call("/two");
+    TS_ASSERT_EQUALS(Number(res).value(), 2.00);
     
     res = root.call("/ali", "23");
     TS_ASSERT_EQUALS(Number(res).value(), 23.00);
     res = root.call("/one/sub");
     TS_ASSERT_EQUALS(Number(res).value(), 23.00);
     
-    delete sub; // delete original first
+    
+    ali->set_original(std::string("/two"));
+    
+    res = root.call("/ali", "7");
+    TS_ASSERT_EQUALS(Number(res).value(), 7.00);
+    res = root.call("/two");
+    TS_ASSERT_EQUALS(Number(res).value(), 7.00);
+    res = root.call("/one/sub");
+    TS_ASSERT_EQUALS(Number(res).value(), 23.00);
+    
+    delete two; // delete original first
     res = root.call("/ali", "23");
-    TS_ASSERT_EQUALS(res.to_string(), "[7] #\"Object \'/ali\' not found.\"");
+    TS_ASSERT_EQUALS(res.to_string(), "[8] #\"Object \'/ali\' not found.\"");
   }
   
   void test_delete_alias_first( void )
@@ -69,4 +82,5 @@ public:
     res = root.call("/one/sub");
     TS_ASSERT_EQUALS(res.to_string(), "[3] #\"Object \'/one/sub\' not found.\"");
   }
+  
 };

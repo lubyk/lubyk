@@ -33,6 +33,6 @@ public:
   
   void test_socket( void )
   {
-    TS_ASSERT( false ); // TODO
+    // FIXME
   }
 };

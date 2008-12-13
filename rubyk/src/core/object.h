@@ -67,6 +67,23 @@ public:
     pParent.adopt(this);
   }
   
+  /** Shortcut to call multiple methods on an object.
+    * Using "obj.set(foo:4 bar:5)" is equivalent to calling "obj.foo(4)" and "obj.bar(5)". */
+  bool set(const Hash& pParams)
+  {
+    Hash p(pParams);
+    Object * obj;
+    Hash_iterator it;
+    Hash_iterator end = p.end();
+    
+    for(it = p.begin(); it != end; it++) {
+      if ( (obj = child(*it)) ) {
+        obj->trigger(p[*it]);
+      }
+    }
+    return true;
+  }
+  
   /** This is the prefered way to insert new objects in the tree since it clearly highlights ownership in the parent. 
     * TODO: make sure a parent is not adopted by it's child. */
   template<class T>

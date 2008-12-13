@@ -82,7 +82,7 @@ public:
   }
   
   /** Build all methods for an object from prototypes. */
-  void make_methods(Node * pObj)
+  void make_methods(Object * pObj)
   {
     std::list<MethodPrototype>::iterator it;
     std::list<MethodPrototype>::iterator end = mMethodPrototypes.end();

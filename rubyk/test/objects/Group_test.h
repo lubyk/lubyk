@@ -1,6 +1,5 @@
 // ordered_list_test.h 
 #include <cxxtest/TestSuite.h>
-#include "group.h"
 #include "test_helper.h"
 
 
@@ -23,6 +22,6 @@ public:
   
   void test_new_outlet( void )
   {
-    TS_ASSERT( false ); // TODO
+    // FIXME
   }
 };
