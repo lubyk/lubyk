@@ -10,6 +10,7 @@
 #define assert_matrix_equal(x,y) _assert_matrix_equal(__FILE__,__LINE__,x,y)
 
 #define assert_print(x,y) _assert_print(__FILE__,__LINE__,x,y)
+#define assert_result(x,y) _assert_result(__FILE__,__LINE__,x,y)
 #define assert_inspect(x,y) _assert_inspect(__FILE__,__LINE__,x,y)
 #define assert_info(x,y) _assert_inspect(__FILE__,__LINE__,x,y)
 #define create(a,b,c,d) _create(__FILE__,__LINE__,a,b,c,d)
@@ -62,14 +63,11 @@ public:
 protected:
   Root mRoot;
   
-  void _create(const char * file, int lineno, const char * pName, const char * pClass, const char* pParams, const char* pUrl)
+  void _create(const char * file, int lineno, const char * pUrl, const char * pClass, const char* pParams, const char* pResult)
   {
-    Hash h;
-    h.set_key("url", String(pName));
-    h.set_key("params", Hash(pParams));
-    Value res = mRoot.new_object(pName, pClass, h);
+    Value res = mRoot.new_object(pUrl, pClass, pParams);
     _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("create")),
-                       res.to_string(), std::string(pUrl));
+                       res.to_string(), std::string(pResult));
   }
   
   void _assert_call(const char * file, int lineno, const char * pUrl, const char * pVal, const char * pResult)
@@ -132,6 +130,126 @@ public:
   }
   
   Number mCounter;
+};
+
+
+// ========================== ParseHelper  ====================== //
+
+class ParseHelper : public CxxTest::TestSuite
+{
+public:
+  ParseHelper() : mOutput(std::ostringstream::out), mInput(std::istringstream::in)
+  { 
+    mRoot.clear();
+    mCmd  = new Command(mInput, mOutput);
+    mCmd->set_server(&mRoot);
+    mRoot.classes()->set_lib_path("lib");
+  }
+  
+  // start a new server
+  void clean_start()
+  {
+    mRoot.clear();
+    mRoot.classes()->set_lib_path("lib");
+    delete mCmd;
+    mCmd = new Command(mInput, mOutput);
+    mCmd->set_server(&mRoot);
+    mOutput.str(std::string("")); // clear output
+  }
+  
+protected:
+  Root mRoot;
+  Command * mCmd;
+  std::ostringstream mOutput;
+  std::istringstream mInput;
+  
+protected:
+  
+//FIX  void setup_with_print(const char* pInput)
+//FIX  {
+//FIX    clean_start();
+//FIX    mRoot.unlock();
+//FIX      mCmd->parse("p=Print()\nn=>p\n");
+//FIX      mCmd->parse(pInput);
+//FIX      mOutput.str(std::string("")); // clear output
+//FIX    mRoot.lock();
+//FIX  }
+//FIX  
+//FIX  void clean_assert_result(const char * pInput, const char * pOutput)
+//FIX  {
+//FIX    clean_start();
+//FIX    assert_result(pInput, pOutput);
+//FIX  }
+
+  void _assert_result(const char * file, int lineno, const char * pInput, const char * pOutput)
+  {
+    mOutput.str(std::string("")); // clear output
+    mRoot.unlock();
+      mCmd->parse(pInput);
+    mRoot.lock();
+    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string(pInput)), mOutput.str(), std::string(pOutput));
+  }
+  
+//FIX  void clean_assert_bang(const char * pInput, const char * pOutput)
+//FIX  {
+//FIX    setup_with_print(pInput);
+//FIX    assert_bang("\n", pOutput);
+//FIX  }
+//FIX  
+//FIX  void assert_bang(const char * pInput, const char * pOutput)
+//FIX  { 
+//FIX    mRoot.unlock();
+//FIX      mOutput.str(std::string("")); // clear output
+//FIX      mCmd->set_silent(true);
+//FIX      mCmd->parse(pInput);
+//FIX      mCmd->parse("\nn.bang\n");
+//FIX      mCmd->set_silent(false);
+//FIX    mRoot.lock();
+//FIX    TS_ASSERT_EQUALS( mOutput.str(), std::string(pOutput));
+//FIX  }
+//FIX  
+//FIX  void clean_assert_print(const char * pInput, const char * pOutput)
+//FIX  {
+//FIX    clean_start();
+//FIX    assert_print(pInput, pOutput);
+//FIX    
+//FIX  }
+  
+  void _assert_print(const char * file, int lineno, const char * pInput, const char * pOutput)
+  { 
+    mRoot.unlock();
+      mOutput.str(std::string("")); // clear output
+      mCmd->set_silent(true);
+      mCmd->parse(pInput);
+      mCmd->set_silent(false);
+    mRoot.lock();
+    //mRoot.run(); // loop once
+    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string(pInput)), mOutput.str(), std::string(pOutput));
+  }
+  
+//FIX  void clean_assert_run(time_t pLength, const char * pInput, const char * pOutput)
+//FIX  {
+//FIX    clean_start();
+//FIX    assert_run(pLength, pInput, pOutput);
+//FIX  }
+//FIX  void assert_run(time_t pLength, const char * pInput, const char * pOutput)
+//FIX  {
+//FIX    time_t start;
+//FIX    mRoot.unlock();
+//FIX      mCmd->parse("print=Print()\n");
+//FIX    mRoot.lock();
+//FIX    mOutput.str(std::string("")); // clear output
+//FIX    mInput.str(std::string(pInput)); // set input
+//FIX    mCmd->set_silent(true);
+//FIX    mRoot.listen_to_command(*mCmd);
+//FIX    start = mRoot.mCurrentTime;
+//FIX    while(mRoot.mCurrentTime <= start + pLength && mRoot.run()) {
+//FIX      ;
+//FIX    }
+//FIX    mCmd->set_silent(false);
+//FIX    
+//FIX    TS_ASSERT_EQUALS( mOutput.str(), std::string(pOutput));
+//FIX  }
 };
 
 #endif // _TEST_HELPER_H_

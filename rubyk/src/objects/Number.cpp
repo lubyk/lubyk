@@ -22,10 +22,12 @@ public:
     mValue = val;
   }
   
-  // #info
+  // #inspect
   virtual const Value inspect(const Value& val) 
   { 
-    return mValue;
+    std::ostringstream oss;
+    oss << "#<Number:" << url() << " " << mValue << ">";
+    return String(oss.str());
   }
   
 private:

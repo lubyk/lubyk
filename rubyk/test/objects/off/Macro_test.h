@@ -1,6 +1,6 @@
 #include "test_helper.h"
 
-class MacroTest : public ParseTest
+class MacroTest : public ParseHelper
 {
 public:
 

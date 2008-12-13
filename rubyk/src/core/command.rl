@@ -229,6 +229,10 @@ void Command::create_instance()
     // FIXME: Group scope
     // FIXME: should be new_object(mVar, mClass, Value(mParams))
     Value res = mTree->new_object(mVar, mClass, mParameters);
+    if (res.is_string()) {
+      std::string url = String(res).string();
+      res = mTree->call(url.append("/#inspect"));
+    }
   mTree->unlock();
 
 #ifdef DEBUG_PARSER

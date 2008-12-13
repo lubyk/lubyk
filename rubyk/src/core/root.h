@@ -45,7 +45,9 @@ public:
   /** Code run on root creation. */
   void init()
   {
-    // TODO: mutex lock, etc (see old/planet.h)
+    // TODO: time ref (see old/planet.h)
+    
+    mMutex.lock();    // we get hold of everything, releasing resources when we decide (I'm the master).
     high_priority();
   }
   
@@ -185,10 +187,10 @@ public:
   { mMutex.unlock(); }
   
   /** Create a new object from a class name. Calls "/class/ClassName/new". */
-  const Value new_object(const char * pName, const char * pClass, const Value& val);
+  const Value new_object(const char *       pUrl, const char *       pClass, const Value& pParams);
   
   /** Create a new object from a class name. Calls "/class/ClassName/new". */
-  const Value new_object(const std::string& pName, const std::string& pClass, const Value& val);
+  const Value new_object(const std::string& pUrl, const std::string& pClass, const Value& pParams);
   
   /** Create a new link between two slots. */
   const Value create_link(const std::string& pFrom, const std::string& pFromPort, const std::string& pToPort, const std::string& pTo);

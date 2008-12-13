@@ -23,29 +23,29 @@ public:
     assert_call("/add/out/sum/link",  "/v3/in/bang", "/v3/in/bang");
     
     
-    assert_inspect("/v1", "[3] 2.00");
-    assert_inspect("/v2", "[9] 3.00");
-    assert_inspect("/add","[19] 0.00");
-    assert_inspect("/v3", "[22] 0.00");
+    assert_call("/v1", "[1] 2.00");
+    assert_call("/v2", "[7] 3.00");
+    assert_call("/add","[19] 0.00");
+    assert_call("/v3", "[20] 0.00");
     
     /** ---> 1. bang --> value         = 3
       *      2. send new value to add      */
     assert_call("/v2/in/bang", "Bang!", "Nil");
     
     
-    assert_inspect("/v1", "[3] 2.00");
-    assert_inspect("/v2", "[9] 3.00");
+    assert_inspect("/v1", "[1] 2.00");
+    assert_inspect("/v2", "[7] 3.00");
     assert_inspect("/add","[19] 3.00");
-    assert_inspect("/v3", "[22] 0.00");
+    assert_inspect("/v3", "[20] 0.00");
     
     /** ---> 1. bang --> value         = 3
       *      2. send new value to  v3  = 3  */
     assert_call("/add/in/bang", "Bang!", "Nil");
     
-    assert_inspect("/v1", "[3] 2.00");
-    assert_inspect("/v2", "[9] 3.00");
+    assert_inspect("/v1", "[1] 2.00");
+    assert_inspect("/v2", "[7] 3.00");
     assert_inspect("/add","[19] 3.00");
-    assert_inspect("/v3", "[22] 3.00");
+    assert_inspect("/v3", "[20] 3.00");
     
     /** ---> 1. bang --> value         = 2
       *      2. send new value to add  = 2
@@ -53,10 +53,10 @@ public:
       *      4. send to v3             = 5  */
     assert_call("/v1/in/bang", "Bang!", "Nil");
     
-    assert_inspect("/v1", "[3] 2.00");
-    assert_inspect("/v2", "[9] 3.00");
+    assert_inspect("/v1", "[1] 2.00");
+    assert_inspect("/v2", "[7] 3.00");
     assert_inspect("/add","[19] 5.00");
-    assert_inspect("/v3", "[22] 5.00");
+    assert_inspect("/v3", "[20] 5.00");
   }
 //  
 //  void test_empty( void ) 

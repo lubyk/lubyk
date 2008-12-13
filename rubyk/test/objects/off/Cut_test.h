@@ -1,6 +1,6 @@
 #include "test_helper.h"
 
-class CutTest : public ParseTest
+class CutTest : public ParseHelper
 {
 public:
   void test_cut_zone( void ) 

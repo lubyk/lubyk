@@ -14,17 +14,23 @@ ClassFinder * Root::classes()
 
 
 /** Create a new object from a class name. Calls "/class/ClassName/new". */
-const Value Root::new_object(const char * pName, const char * pClass, const Value& val)
+const Value Root::new_object(const char * pUrl, const char * pClass, const Value& pParams)
 {
-  Value res = call(std::string(classes()->url()).append("/").append(pClass).append("/new"), val);
+  Hash h;
+  h.set_key("url", String(pUrl));
+  h.set_key("params", Hash(pParams));
+  Value res = call(std::string(classes()->url()).append("/").append(pClass).append("/new"), h);
   if (!res.is_error()) create_pending_links();
   return res;
 }
 
 /** Create a new object from a class name. Calls "/class/ClassName/new". */
-const Value Root::new_object(const std::string& pName, const std::string& pClass, const Value& val)
-{
-  Value res = call(std::string(classes()->url()).append("/").append(pClass).append("/new"), val);
+const Value Root::new_object(const std::string& pUrl, const std::string& pClass, const Value& pParams)
+{  
+  Hash h;
+  h.set_key("url", String(pUrl));
+  h.set_key("params", Hash(pParams));
+  Value res = call(std::string(classes()->url()).append("/").append(pClass).append("/new"), h);
   if (!res.is_error()) create_pending_links();
   return res;
 }

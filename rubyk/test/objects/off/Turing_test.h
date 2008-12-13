@@ -1,7 +1,7 @@
 #include "test_helper.h"
 
 /** Test Turing class.... not the 'Turing test' ;-)  */
-class TuringTest : public ParseTest
+class TuringTest : public ParseHelper
 {
 public:
   /*

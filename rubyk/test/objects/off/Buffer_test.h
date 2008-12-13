@@ -1,7 +1,7 @@
 #include "test_helper.h"
 
 
-class BufferObjectTest : public ParseTest
+class BufferObjectTest : public ParseHelper
 {
 public:
   void test_single( void ) 

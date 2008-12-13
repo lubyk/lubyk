@@ -8,7 +8,7 @@ public:
   { 
     // create always produces 3 values ([2] {url:[1] params:[3]})
     create("/n", "Test", "counter: 5 message:\"foo\"", "[6] \"/n\""); // 2 values + 3 => 5 + 1 => [6]. Ok !
-    assert_inspect("/n", "\'[5] \"foo\"\' counter:5");
+    assert_inspect("/n", "\'[3] \"foo\"\' counter:5");
     assert_info("/class/Test", "Object used for testing. Does not do anything really useful.");
   }
   
@@ -106,7 +106,7 @@ public:
   // TODO: make sure links cannot be made twice.
 };
 
-// class TestParseTest : public ParseTest
+// class TestParseHelper : public ParseHelper
 // {
 // public:
 // 

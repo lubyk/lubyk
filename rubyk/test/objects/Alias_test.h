@@ -12,9 +12,9 @@ public:
     create("/grp/one", "Number", "value: 1", "[9] \"/grp/one\"");
     create("/grp/ali", "Alias",  "original: /grp/one/value", "[15] \"/grp/ali\"");
     
-    assert_call("/grp/one/value", "", "[7] 1.00");
-    assert_call("/grp/ali", "3.45",   "[7] 3.45"); // /grp/ali ---> /grp/one/value
-    assert_call("/grp/one/value", "", "[7] 3.45");
+    assert_call("/grp/one/value", "", "[5] 1.00");
+    assert_call("/grp/ali", "3.45",   "[5] 3.45"); // /grp/ali ---> /grp/one/value
+    assert_call("/grp/one/value", "", "[5] 3.45");
   }
   
   void test_alias_of_node( void )

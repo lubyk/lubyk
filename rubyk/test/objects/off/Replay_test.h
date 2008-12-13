@@ -1,6 +1,6 @@
 #include "test_helper.h"
 
-class ReplayTest : public ParseTest
+class ReplayTest : public ParseHelper
 {
 public:
   void test_play( void ) 

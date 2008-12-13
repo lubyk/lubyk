@@ -1,6 +1,6 @@
 #include "test_helper.h"
 
-class SumTest : public ParseTest
+class SumTest : public ParseHelper
 {
 public:
   void test_sum( void ) 

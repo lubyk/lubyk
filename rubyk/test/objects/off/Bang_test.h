@@ -1,7 +1,7 @@
 #include "test_helper.h"
 
 
-class BangTest : public ParseTest
+class BangTest : public ParseHelper
 {
 public:
   void test_abs( void ) 

@@ -1,6 +1,6 @@
 #include "test_helper.h"
 
-class KmeansTest : public ParseTest
+class KmeansTest : public ParseHelper
 {
 public:
   /*

@@ -1,6 +1,6 @@
 #include "test_helper.h"
 
-class LuaTest : public ParseTest
+class LuaTest : public ParseHelper
 {
 public:
   

@@ -1,6 +1,6 @@
 #include "test_helper.h"
 
-class DiffTest : public ParseTest
+class DiffTest : public ParseHelper
 {
 public:
   

@@ -1,6 +1,6 @@
 #include "test_helper.h"
 
-class NoteOutTest : public ParseTest
+class NoteOutTest : public ParseHelper
 {
 public:
   

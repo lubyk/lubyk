@@ -1,7 +1,7 @@
 #include "test_helper.h"
 
 
-class PeakTest : public ParseTest
+class PeakTest : public ParseHelper
 {
 public:
   void test_single( void ) 

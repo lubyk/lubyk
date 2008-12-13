@@ -1,6 +1,6 @@
 #include "test_helper.h"
 
-class CtrlTest : public ParseTest
+class CtrlTest : public ParseHelper
 {
 public:
   

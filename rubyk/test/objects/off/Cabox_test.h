@@ -1,7 +1,7 @@
 #include "test_helper.h"
 
 
-class CaboxTest : public ParseTest
+class CaboxTest : public ParseHelper
 {
 public:
   void test_get_frame( void ) 
