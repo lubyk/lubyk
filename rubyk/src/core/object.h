@@ -105,7 +105,7 @@ public:
   template<class T>
   inline T * type_cast(uint pType, Object * obj)
   {
-    return obj && obj->type() == pType ? (T*)obj : NULL;
+    return (obj && obj->type() == pType) ? (T*)obj : NULL;
   }
   
   /** Clear all children (delete). */

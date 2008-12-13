@@ -1,5 +1,5 @@
-#ifndef _VALUE_TEST_HELPER_H_
-#define _VALUE_TEST_HELPER_H_
+#ifndef _TEST_HELPER_H_
+#define _TEST_HELPER_H_
 #include "globals.cpp"
 #include "rubyk.h"
 #include <sstream>
@@ -67,7 +67,7 @@ protected:
     Hash h;
     h.set_key("url", String(pName));
     h.set_key("params", Hash(pParams));
-    Value res = mRoot.classes()->new_node(pName, pClass, h);
+    Value res = mRoot.new_object(pName, pClass, h);
     _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("create")),
                        res.to_string(), std::string(pUrl));
   }
@@ -134,4 +134,4 @@ public:
   Number mCounter;
 };
 
-#endif // _VALUE_TEST_HELPER_H_
+#endif // _TEST_HELPER_H_

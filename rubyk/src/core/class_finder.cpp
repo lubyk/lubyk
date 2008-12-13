@@ -3,12 +3,12 @@
 
 
 /** This trigger implements "/class". It returns the list of objects in mObjectsPath. */
-const Value ClassListing::trigger (const Value& val)
+const Value ClassFinder::trigger (const Value& val)
 {
   return String(""); // TODO: 'lib' directory listing !
 }
 
-const Value ClassListing::not_found (const std::string& pUrl, const Value& val)
+const Value ClassFinder::not_found (const std::string& pUrl, const Value& val)
 {
   std::string className = pUrl.substr(url().length() + 1);
   className = className.substr(0, className.find("/"));
@@ -30,7 +30,7 @@ const Value ClassListing::not_found (const std::string& pUrl, const Value& val)
 }
 
 // for help to create a portable version of this load function, read Ruby's dln.c file.
-bool ClassListing::load(const char * file, const char * init_name)
+bool ClassFinder::load(const char * file, const char * init_name)
 {
   void *image;
   void (*function)(Root&);

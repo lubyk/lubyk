@@ -1,8 +1,10 @@
 #ifndef _ROOT_H_
 #define _ROOT_H_
 #include "object.h"
+#include "mutex.h"
+#include "call.h"
 
-class ClassListing;
+class ClassFinder;
 
 #define OBJECT_HASH_SIZE 10000
 #define CLASS_ROOT "/class"
@@ -24,18 +26,27 @@ public:
   {
     mRoot = this;
     mObjects.set(std::string(""), this);
+    init();
   }
   
   Root(size_t pHashSize) : mObjects(pHashSize)
   {
     mRoot = this;
     mObjects.set(std::string(""), this);
+    init();
   }
   
   /** We need to do this before ~Object so that mObjects is still availlable. */
   virtual ~Root()
   {
     clear();
+  }
+  
+  /** Code run on root creation. */
+  void init()
+  {
+    // TODO: mutex lock, etc (see old/planet.h)
+    high_priority();
   }
   
   /** Execute the default operation for an object. */
@@ -157,7 +168,7 @@ public:
   }
   
   /** Return the class listing Object (create one if needed). */
-  ClassListing * classes();
+  ClassFinder * classes();
   
   /** Expose an internal url as a method of the group object. */
   virtual void expose(const char * pName, const Object * pObject)
@@ -165,8 +176,45 @@ public:
     // do nothing (overwritten in Group)
   }
   
+  /** Used by commands to get hold of the server to execute commands. */
+  void lock()
+  { mMutex.lock(); }
+
+  /** Commands are finished. */
+  void unlock()
+  { mMutex.unlock(); }
+  
+  /** Create a new object from a class name. Calls "/class/ClassName/new". */
+  const Value new_object(const char * pName, const char * pClass, const Value& val);
+  
+  /** Create a new object from a class name. Calls "/class/ClassName/new". */
+  const Value new_object(const std::string& pName, const std::string& pClass, const Value& val);
+  
+  /** Create a new link between two slots. */
+  const Value create_link(const std::string& pFrom, const std::string& pFromPort, const std::string& pToPort, const std::string& pTo);
+  
+  /** Remove a link between two slots. */
+  const Value remove_link(const std::string& pFrom, const std::string& pFromPort, const std::string& pToPort, const std::string& pTo);
+  
+  /** Create pending links (called on new object creation). */
+  const Value create_pending_links ();
+  
+  /** Set command thread to normal priority. */
+  void normal_priority ();
+  
 protected:
   THash<std::string, Object*> mObjects;   /**< Hash to find any object in the tree from its url. */
+  
+private:
+  
+  /** Set rubyk thread to high priority. */
+  void high_priority ();
+  
+  Mutex mMutex;                         /**< "Do not mess with me" mutex lock. */
+  std::list<Call> mPendingLinks;        /**< List of pending connections waiting for variable assignements. */
+  
+  int mCommandSchedPoclicy;             /**< Thread's original scheduling priority (all commands get this). */ 
+  struct sched_param mCommandThreadParam; /**< Scheduling parameters for commands (lower then rubyk). */
 };
 
 #endif // _ROOT_H_

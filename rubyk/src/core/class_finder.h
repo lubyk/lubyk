@@ -1,24 +1,24 @@
-#ifndef _CLASS_LISTING_H_
-#define _CLASS_LISTING_H_
+#ifndef _CLASS_FINDER_H_
+#define _CLASS_FINDER_H_
 #include "object.h"
 #include "new_method.h"
 #include "class.h"
 
 /** Special class to handle class listing from a directory. This usually responds at to the '/class' url. */
-class ClassListing : public Object
+class ClassFinder : public Object
 {
 public:
-  ClassListing(const std::string &pName, const char * pObjPath) : Object(pName), mObjectsPath(pObjPath) {}
-  ClassListing(const std::string &pName, std::string& pObjPath) : Object(pName), mObjectsPath(pObjPath) {}
-  ClassListing(const char * pName,       const char * pObjPath) : Object(pName), mObjectsPath(pObjPath) {}
-  ClassListing(const char * pName,       std::string& pObjPath) : Object(pName), mObjectsPath(pObjPath) {}
+  ClassFinder(const std::string &pName, const char * pObjPath) : Object(pName), mObjectsPath(pObjPath) {}
+  ClassFinder(const std::string &pName, std::string& pObjPath) : Object(pName), mObjectsPath(pObjPath) {}
+  ClassFinder(const char * pName,       const char * pObjPath) : Object(pName), mObjectsPath(pObjPath) {}
+  ClassFinder(const char * pName,       std::string& pObjPath) : Object(pName), mObjectsPath(pObjPath) {}
   
-  virtual ~ClassListing() {}
+  virtual ~ClassFinder() {}
   
   /** Class signature. */
   virtual uint type()
   {
-    return H("ClassListing");
+    return H("ClassFinder");
   }
   
   /** This trigger implements "/class". It returns the list of objects in mObjectsPath. */
@@ -66,21 +66,6 @@ public:
     return TYPE_CAST(Class, child(pName));
   }
   
-  /** Helper to call "/class/ClassName/new". */
-  const Value new_node(const char * pName, const char * pClass, const Value& val)
-  {
-    return mRoot->call(std::string(url()).append("/").append(pClass).append("/new"), val);
-  }
-  
-  /** Helper to call "/class/ClassName/new". */
-  const Value new_node(const std::string& pName, const std::string& pClass, const Value& val)
-  {
-    return mRoot->call(std::string(url()).append("/").append(pClass).append("/new"), val);
-  }
-  
-  // TODO: virtual adopt = type checking... ?
-  
-  
 private:
   
   /** Load an object stored in a dynamic library. */
@@ -89,4 +74,4 @@ private:
   std::string mObjectsPath; /**< Where to find objects in the filesystem. */
 };
 
-#endif // _CLASS_LISTING_H_
+#endif // _CLASS_FINDER_H_

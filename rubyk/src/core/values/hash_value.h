@@ -12,8 +12,8 @@ typedef std::vector<std::string>::const_iterator Hash_iterator;
 class HashData : public Data
 {
 public:
-  HashData () : mParameters(20) {}
-  HashData (unsigned int size) : mParameters(size)  {}
+  HashData () : mHash(20) {}
+  HashData (unsigned int size) : mHash(size)  {}
   
   virtual Data * clone()
   { return new HashData(*this); }
@@ -21,9 +21,9 @@ public:
   { return HashValue; }
 
   // copy constructor
-  HashData(const HashData& pOther) : mParameters(pOther.storage_size())
+  HashData(const HashData& pOther) : mHash(pOther.storage_size())
   {
-    mParameters = pOther.mParameters;
+    mHash = pOther.mHash;
     mListValues = pOther.mListValues; // FIXME: what is this ?
   }
 
@@ -35,14 +35,14 @@ public:
 #ifdef _TESTING_
     pStream << "[" << mId << "] ";
 #endif
-    pStream << "{ " << mParameters << " }";
+    pStream << "{ " << mHash << " }";
   }
   
   //FIX template<class T>
   //FIX T val(const char * pKey, T pDefault, bool pUseAnon = false) const
   //FIX {
   //FIX   std::string value;
-  //FIX   if (mParameters.get(&value, std::string(pKey)))
+  //FIX   if (mHash.get(&value, std::string(pKey)))
   //FIX     return cast_param<T>(value);
   //FIX   else if (pUseAnon) {
   //FIX     T value;
@@ -65,7 +65,7 @@ public:
   //FIX     } else
   //FIX       return false;
   //FIX   }
-  //FIX   if (mParameters.get(&value, std::string(pKey))) {
+  //FIX   if (mHash.get(&value, std::string(pKey))) {
   //FIX     *pResult = cast_param<T>(value);
   //FIX     return true;
   //FIX   } else if (pUseAnon) {
@@ -128,34 +128,34 @@ public:
   //FIX }
   //FIX 
   //FIX void set (const std::string& pKey, const std::string& pValue) {
-  //FIX   mParameters.set(pKey,pValue);
+  //FIX   mHash.set(pKey,pValue);
   //FIX }
   //FIX void set (const std::string& pKey, const char *       pValue) {
-  //FIX   mParameters.set(pKey, std::string(pValue));
+  //FIX   mHash.set(pKey, std::string(pValue));
   //FIX }
   //FIX void set (const char *       pKey, const std::string& pValue) {
-  //FIX   mParameters.set(std::string(pKey), pValue);
+  //FIX   mHash.set(std::string(pKey), pValue);
   //FIX }
   //FIX void set (const char *       pKey, const char *       pValue) {
-  //FIX   mParameters.set(std::string(pKey), std::string(pValue));
+  //FIX   mHash.set(std::string(pKey), std::string(pValue));
   //FIX }
   
   void clear () 
-  { mParameters.clear(); mListValues.clear();  }
+  { mHash.clear(); mListValues.clear();  }
   
   //FIX size_t size () const
   //FIX { return mListValues.size(); }
   
   unsigned int storage_size() const
   {
-    return mParameters.storage_size();
+    return mHash.storage_size();
   }
   
   friend std::ostream& operator<< (std::ostream& pStream, const HashData& p);
   
 private:  
   friend class Hash;
-  THash<std::string,Value>  mParameters; /** Hash of std::string => Value. */
+  THash<std::string,Value>  mHash; /** Hash of std::string => Value. */
   
   std::vector<std::string>  mListValues; //TODO: remove this and store values in a matrix as first element in dictionary.
   
@@ -179,7 +179,7 @@ public:
   
   size_t size() const
   {
-    return mPtr ? data_pointer()->mParameters.size() : 0;
+    return mPtr ? data_pointer()->mHash.size() : 0;
   }
   
   /** Return a Value or Nil from a string key. */
@@ -194,21 +194,26 @@ public:
   /** Set Value for string key. */
   void set_key (const std::string& pKey, const Value& val) // FIXME: replace by 'set' and change Value.set for something else.
   {
-    mutable_data()->mParameters.set(pKey, val);
+    mutable_data()->mHash.set(pKey, val);
   }
   
   /** Return an iterator pointing at the first key in the dictionary. */
   Hash_iterator begin() const
   {
-    return mPtr ? (Hash_iterator)data_pointer()->mParameters.begin() : (Hash_iterator)NULL;
+    return mPtr ? (Hash_iterator)data_pointer()->mHash.begin() : (Hash_iterator)NULL;
   }
   
   /** Return an iterator pointing at the past-end key in the dictionary. */
   Hash_iterator end() const
   {
-    return mPtr ? (Hash_iterator)data_pointer()->mParameters.end() : (Hash_iterator)NULL;
+    return mPtr ? (Hash_iterator)data_pointer()->mHash.end() : (Hash_iterator)NULL;
   }
   
+  /** Clear hash (empty). */
+  void clear()
+  {
+    mutable_data()->clear();
+  }
   
   template<class T>
   static T cast_param(const std::string& value)

@@ -9,11 +9,12 @@
 
 #define MAX_TOKEN_SIZE 2048
 
-typedef enum action_types_ {
-  NO_ACTION,
-	CREATE_INSTANCE,
-	CREATE_LINK
-} action_types_t;
+typedef enum command_actions_ {
+  CmdNoAction,
+	CmdCreateNode,
+	CmdCreateLink,
+	CmdOpenGroup,
+} command_action_t;
 
 class Planet;
 
@@ -25,7 +26,7 @@ public:
   
   Command ()
   {
-    mInput = &std::cin;
+    mInput  = &std::cin;
     mOutput = &std::cout;
     initialize();
   }
@@ -35,7 +36,7 @@ public:
   /** This method creates a new thread to listen for incomming commands. */
   void listen (std::istream& pInput, std::ostream& pOutput) ;
   
-  /** Wrapper to call member method. */
+  /** Wrapper to call member method during thread initialization. */
   static void * call_do_listen(void * cmd) {
     return (void*) ((Command*)cmd)->do_listen();
   }
@@ -50,15 +51,17 @@ public:
   void parse (const char * pStr) {
     parse(std::string(pStr));
   }
+  
+  /** Ragel parser. */
   void parse (const std::string& pStr);
   
   /** Used for testing. */
   void set_output (std::ostream& pOutput)
   { mOutput = &pOutput; }
   
-  /** Used by rubyk server. */
-  void set_server (Planet& pServer)
-  { mServer = &pServer; }
+  /** The tree to work on. */
+  void set_server (Root * pTree)
+  { mTree = pTree; }
   
   /** Used for testing. */
   void set_input (std::istream& pInput)
@@ -78,7 +81,7 @@ protected:
   /** Code executed in a separate thread. Runs until 'mQuit' is true. */
   virtual int do_listen();
   
-  /** PARSER RELATED CALLBACKS **/
+  /** RAGEL PARSER RELATED CALLBACKS **/
   
   /** Set a variable from the current token content. */
   void set_from_token (std::string& pElem);
@@ -129,13 +132,13 @@ protected:
   unsigned int mTokenIndex;
   unsigned int mCurrentState; /**< Current parser state between blocks. */
   
-	action_types_t mAction;
+	command_action_t mAction;
   
   /** Command parts. */
-	std::string    mVariable, mMethod, mClass, mKey, mValue, mFrom, mTo;
-	Value         mParameters;
-  int            mFromPort, mToPort;
-  Planet *        mServer;
+	std::string     mVar, mMethod, mClass, mKey, mValue, mFrom, mTo;
+	Hash            mParameters;
+  std::string     mFromPort, mToPort;
+  Root *          mTree; /**< Tree to work on. */
   
   /** IO management. */
   pthread_t mThread;

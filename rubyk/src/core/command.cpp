@@ -1,25 +1,24 @@
 #line 1 "src/core/command.rl"
 #include "command.h"
-#include "planet.h"
-#include "class.h"
-#include "mutex.h"
+#include "rubyk.h"
 
 //#define DEBUG_PARSER
 
 
-#line 11 "src/core/command.cpp"
+#line 9 "src/core/command.cpp"
 static const char _command_actions[] = {
 	0, 1, 0, 1, 2, 1, 3, 1, 
-	4, 1, 7, 1, 8, 1, 13, 1, 
-	14, 1, 15, 1, 17, 1, 18, 1, 
-	19, 2, 1, 6, 2, 1, 11, 2, 
-	1, 12, 2, 2, 14, 2, 2, 15, 
-	2, 5, 9, 2, 5, 10, 2, 13, 
-	17, 2, 14, 17, 2, 15, 17, 2, 
-	16, 17, 3, 1, 11, 17, 3, 1, 
-	12, 17, 3, 2, 14, 17, 3, 2, 
-	15, 17, 3, 2, 16, 17, 3, 5, 
-	10, 0
+	4, 1, 13, 1, 14, 1, 15, 1, 
+	17, 1, 18, 1, 19, 2, 1, 6, 
+	2, 1, 7, 2, 1, 8, 2, 1, 
+	11, 2, 1, 12, 2, 2, 14, 2, 
+	2, 15, 2, 5, 9, 2, 5, 10, 
+	2, 13, 17, 2, 14, 17, 2, 15, 
+	17, 2, 16, 17, 3, 1, 11, 17, 
+	3, 1, 12, 17, 3, 2, 14, 17, 
+	3, 2, 15, 17, 3, 2, 16, 17, 
+	3, 5, 10, 0, 4, 2, 14, 1, 
+	7
 };
 
 static const short _command_key_offsets[] = {
@@ -27,17 +26,17 @@ static const short _command_key_offsets[] = {
 	37, 45, 47, 51, 54, 61, 63, 70, 
 	74, 76, 82, 82, 90, 97, 99, 104, 
 	109, 109, 111, 119, 121, 128, 142, 146, 
-	147, 155, 157, 160, 162, 173, 178, 182, 
-	190, 198, 200, 204, 207, 214, 216, 223, 
-	227, 229, 235, 235, 243, 250, 252, 257, 
-	262, 262, 264, 272, 274, 281, 289, 291, 
-	294, 296, 307, 315, 317, 321, 324, 331, 
-	333, 340, 341, 343, 349, 349, 357, 364, 
-	366, 371, 376, 376, 378, 386, 388, 395, 
-	401, 403, 409, 413, 414, 426, 434, 436, 
-	440, 443, 450, 452, 459, 463, 465, 471, 
-	471, 479, 486, 488, 493, 498, 498, 500, 
-	508, 510, 517, 518, 526
+	147, 151, 163, 165, 176, 181, 185, 193, 
+	201, 203, 207, 210, 217, 219, 226, 230, 
+	232, 238, 238, 246, 253, 255, 260, 265, 
+	265, 267, 275, 277, 284, 288, 300, 302, 
+	313, 321, 323, 327, 330, 337, 339, 346, 
+	347, 349, 355, 355, 363, 370, 372, 377, 
+	382, 382, 384, 392, 394, 401, 403, 417, 
+	422, 423, 431, 433, 437, 440, 447, 449, 
+	456, 460, 462, 468, 468, 476, 483, 485, 
+	490, 495, 495, 497, 505, 507, 514, 515, 
+	523
 };
 
 static const char _command_trans_keys[] = {
@@ -59,54 +58,54 @@ static const char _command_trans_keys[] = {
 	57, 9, 32, 41, 48, 57, 97, 122, 
 	9, 10, 32, 40, 46, 47, 61, 95, 
 	48, 57, 65, 90, 97, 122, 9, 32, 
-	47, 61, 47, 9, 32, 43, 45, 48, 
-	57, 97, 122, 48, 57, 46, 48, 57, 
-	97, 122, 9, 10, 32, 35, 95, 48, 
-	57, 65, 90, 97, 122, 9, 32, 62, 
-	65, 90, 9, 32, 65, 90, 40, 95, 
-	48, 57, 65, 90, 97, 122, 34, 41, 
-	43, 45, 48, 57, 97, 122, 34, 92, 
-	9, 32, 41, 44, 9, 32, 44, 9, 
-	32, 34, 43, 45, 48, 57, 48, 57, 
-	9, 32, 41, 44, 46, 48, 57, 9, 
-	10, 32, 35, 48, 57, 9, 32, 41, 
+	47, 61, 47, 9, 32, 97, 122, 9, 
+	10, 32, 35, 46, 95, 48, 57, 65, 
+	90, 97, 122, 97, 122, 9, 10, 32, 
+	35, 95, 48, 57, 65, 90, 97, 122, 
+	9, 32, 62, 65, 90, 9, 32, 65, 
+	90, 40, 95, 48, 57, 65, 90, 97, 
+	122, 34, 41, 43, 45, 48, 57, 97, 
+	122, 34, 92, 9, 32, 41, 44, 9, 
+	32, 44, 9, 32, 34, 43, 45, 48, 
+	57, 48, 57, 9, 32, 41, 44, 46, 
+	48, 57, 9, 10, 32, 35, 48, 57, 
+	9, 32, 41, 44, 48, 57, 58, 95, 
+	48, 57, 65, 90, 97, 122, 9, 32, 
+	34, 43, 45, 48, 57, 34, 92, 9, 
+	32, 41, 97, 122, 9, 32, 41, 97, 
+	122, 48, 57, 9, 32, 41, 46, 48, 
+	57, 97, 122, 48, 57, 9, 32, 41, 
+	48, 57, 97, 122, 9, 32, 97, 122, 
+	9, 10, 32, 35, 46, 95, 48, 57, 
+	65, 90, 97, 122, 97, 122, 9, 10, 
+	32, 35, 95, 48, 57, 65, 90, 97, 
+	122, 34, 41, 43, 45, 48, 57, 97, 
+	122, 34, 92, 9, 32, 41, 44, 9, 
+	32, 44, 9, 32, 34, 43, 45, 48, 
+	57, 48, 57, 9, 32, 41, 44, 46, 
+	48, 57, 10, 48, 57, 9, 32, 41, 
 	44, 48, 57, 58, 95, 48, 57, 65, 
 	90, 97, 122, 9, 32, 34, 43, 45, 
 	48, 57, 34, 92, 9, 32, 41, 97, 
 	122, 9, 32, 41, 97, 122, 48, 57, 
 	9, 32, 41, 46, 48, 57, 97, 122, 
 	48, 57, 9, 32, 41, 48, 57, 97, 
-	122, 9, 32, 43, 45, 48, 57, 97, 
-	122, 48, 57, 46, 48, 57, 97, 122, 
-	9, 10, 32, 35, 95, 48, 57, 65, 
-	90, 97, 122, 34, 41, 43, 45, 48, 
-	57, 97, 122, 34, 92, 9, 32, 41, 
-	44, 9, 32, 44, 9, 32, 34, 43, 
-	45, 48, 57, 48, 57, 9, 32, 41, 
-	44, 46, 48, 57, 10, 48, 57, 9, 
-	32, 41, 44, 48, 57, 58, 95, 48, 
-	57, 65, 90, 97, 122, 9, 32, 34, 
-	43, 45, 48, 57, 34, 92, 9, 32, 
-	41, 97, 122, 9, 32, 41, 97, 122, 
-	48, 57, 9, 32, 41, 46, 48, 57, 
-	97, 122, 48, 57, 9, 32, 41, 48, 
-	57, 97, 122, 43, 45, 48, 57, 97, 
-	122, 48, 57, 9, 32, 47, 61, 48, 
-	57, 9, 32, 47, 61, 62, 9, 10, 
-	32, 35, 40, 95, 48, 57, 65, 90, 
-	97, 122, 34, 41, 43, 45, 48, 57, 
-	97, 122, 34, 92, 9, 32, 41, 44, 
-	9, 32, 44, 9, 32, 34, 43, 45, 
-	48, 57, 48, 57, 9, 32, 41, 44, 
-	46, 48, 57, 9, 10, 32, 35, 48, 
-	57, 9, 32, 41, 44, 48, 57, 58, 
-	95, 48, 57, 65, 90, 97, 122, 9, 
-	32, 34, 43, 45, 48, 57, 34, 92, 
-	9, 32, 41, 97, 122, 9, 32, 41, 
-	97, 122, 48, 57, 9, 32, 41, 46, 
-	48, 57, 97, 122, 48, 57, 9, 32, 
-	41, 48, 57, 97, 122, 10, 9, 10, 
-	32, 35, 65, 90, 97, 122, 0
+	122, 97, 122, 9, 10, 32, 35, 40, 
+	47, 61, 95, 48, 57, 65, 90, 97, 
+	122, 9, 32, 35, 47, 61, 62, 34, 
+	41, 43, 45, 48, 57, 97, 122, 34, 
+	92, 9, 32, 41, 44, 9, 32, 44, 
+	9, 32, 34, 43, 45, 48, 57, 48, 
+	57, 9, 32, 41, 44, 46, 48, 57, 
+	9, 10, 32, 35, 48, 57, 9, 32, 
+	41, 44, 48, 57, 58, 95, 48, 57, 
+	65, 90, 97, 122, 9, 32, 34, 43, 
+	45, 48, 57, 34, 92, 9, 32, 41, 
+	97, 122, 9, 32, 41, 97, 122, 48, 
+	57, 9, 32, 41, 46, 48, 57, 97, 
+	122, 48, 57, 9, 32, 41, 48, 57, 
+	97, 122, 10, 9, 10, 32, 35, 65, 
+	90, 97, 122, 0
 };
 
 static const char _command_single_lengths[] = {
@@ -114,17 +113,17 @@ static const char _command_single_lengths[] = {
 	4, 2, 4, 3, 5, 0, 5, 4, 
 	0, 4, 0, 2, 5, 2, 3, 3, 
 	0, 0, 4, 0, 3, 8, 4, 1, 
-	4, 0, 1, 0, 5, 3, 2, 2, 
-	4, 2, 4, 3, 5, 0, 5, 4, 
+	2, 6, 0, 5, 3, 2, 2, 4, 
+	2, 4, 3, 5, 0, 5, 4, 0, 
+	4, 0, 2, 5, 2, 3, 3, 0, 
+	0, 4, 0, 3, 2, 6, 0, 5, 
+	4, 2, 4, 3, 5, 0, 5, 1, 
 	0, 4, 0, 2, 5, 2, 3, 3, 
-	0, 0, 4, 0, 3, 4, 0, 1, 
-	0, 5, 4, 2, 4, 3, 5, 0, 
-	5, 1, 0, 4, 0, 2, 5, 2, 
-	3, 3, 0, 0, 4, 0, 3, 2, 
-	0, 4, 4, 1, 6, 4, 2, 4, 
-	3, 5, 0, 5, 4, 0, 4, 0, 
-	2, 5, 2, 3, 3, 0, 0, 4, 
-	0, 3, 1, 4, 0
+	0, 0, 4, 0, 3, 0, 8, 5, 
+	1, 4, 2, 4, 3, 5, 0, 5, 
+	4, 0, 4, 0, 2, 5, 2, 3, 
+	3, 0, 0, 4, 0, 3, 1, 4, 
+	0
 };
 
 static const char _command_range_lengths[] = {
@@ -132,17 +131,17 @@ static const char _command_range_lengths[] = {
 	2, 0, 0, 0, 1, 1, 1, 0, 
 	1, 1, 0, 3, 1, 0, 1, 1, 
 	0, 1, 2, 1, 2, 3, 0, 0, 
-	2, 1, 1, 1, 3, 1, 1, 3, 
+	1, 3, 1, 3, 1, 1, 3, 2, 
+	0, 0, 0, 1, 1, 1, 0, 1, 
+	1, 0, 3, 1, 0, 1, 1, 0, 
+	1, 2, 1, 2, 1, 3, 1, 3, 
 	2, 0, 0, 0, 1, 1, 1, 0, 
 	1, 1, 0, 3, 1, 0, 1, 1, 
-	0, 1, 2, 1, 2, 2, 1, 1, 
-	1, 3, 2, 0, 0, 0, 1, 1, 
-	1, 0, 1, 1, 0, 3, 1, 0, 
-	1, 1, 0, 1, 2, 1, 2, 2, 
-	1, 1, 0, 0, 3, 2, 0, 0, 
-	0, 1, 1, 1, 0, 1, 1, 0, 
-	3, 1, 0, 1, 1, 0, 1, 2, 
-	1, 2, 0, 2, 0
+	0, 1, 2, 1, 2, 1, 3, 0, 
+	0, 2, 0, 0, 0, 1, 1, 1, 
+	0, 1, 1, 0, 3, 1, 0, 1, 
+	1, 0, 1, 2, 1, 2, 0, 2, 
+	0
 };
 
 static const short _command_index_offsets[] = {
@@ -150,17 +149,17 @@ static const short _command_index_offsets[] = {
 	35, 42, 45, 50, 54, 61, 63, 70, 
 	75, 77, 83, 84, 90, 97, 100, 105, 
 	110, 111, 113, 120, 122, 128, 140, 145, 
-	147, 154, 156, 159, 161, 170, 175, 179, 
-	185, 192, 195, 200, 204, 211, 213, 220, 
-	225, 227, 233, 234, 240, 247, 250, 255, 
-	260, 261, 263, 270, 272, 278, 285, 287, 
-	290, 292, 301, 308, 311, 316, 320, 327, 
-	329, 336, 338, 340, 346, 347, 353, 360, 
-	363, 368, 373, 374, 376, 383, 385, 391, 
-	396, 398, 404, 409, 411, 421, 428, 431, 
-	436, 440, 447, 449, 456, 461, 463, 469, 
-	470, 476, 483, 486, 491, 496, 497, 499, 
-	506, 508, 514, 516, 523
+	147, 151, 161, 163, 172, 177, 181, 187, 
+	194, 197, 202, 206, 213, 215, 222, 227, 
+	229, 235, 236, 242, 249, 252, 257, 262, 
+	263, 265, 272, 274, 280, 284, 294, 296, 
+	305, 312, 315, 320, 324, 331, 333, 340, 
+	342, 344, 350, 351, 357, 364, 367, 372, 
+	377, 378, 380, 387, 389, 395, 397, 409, 
+	415, 417, 424, 427, 432, 436, 443, 445, 
+	452, 457, 459, 465, 466, 472, 479, 482, 
+	487, 492, 493, 495, 502, 504, 510, 512, 
+	519
 };
 
 static const unsigned char _command_indicies[] = {
@@ -182,154 +181,163 @@ static const unsigned char _command_indicies[] = {
 	44, 0, 39, 39, 40, 44, 41, 0, 
 	45, 46, 45, 47, 48, 49, 50, 5, 
 	5, 5, 5, 0, 51, 51, 52, 53, 
-	0, 54, 0, 54, 54, 55, 55, 56, 
-	57, 0, 56, 0, 58, 56, 0, 57, 
-	0, 59, 60, 59, 61, 57, 57, 57, 
-	57, 0, 62, 62, 63, 64, 0, 62, 
-	62, 64, 0, 65, 64, 64, 64, 64, 
-	0, 66, 67, 68, 68, 69, 70, 0, 
-	72, 73, 71, 74, 74, 75, 76, 0, 
-	77, 77, 78, 0, 78, 78, 66, 68, 
-	68, 69, 0, 69, 0, 74, 74, 75, 
-	76, 79, 69, 0, 80, 81, 80, 82, 
-	0, 83, 0, 74, 74, 75, 76, 83, 
-	0, 71, 84, 70, 70, 70, 70, 0, 
-	85, 85, 86, 87, 87, 88, 0, 90, 
-	91, 89, 92, 92, 93, 94, 0, 95, 
-	95, 67, 70, 0, 89, 88, 0, 92, 
-	92, 93, 96, 88, 94, 0, 97, 0, 
-	92, 92, 93, 97, 94, 0, 63, 63, 
-	98, 98, 99, 100, 0, 99, 0, 101, 
-	99, 0, 100, 0, 102, 103, 102, 104, 
-	100, 100, 100, 100, 0, 105, 106, 107, 
-	107, 108, 109, 0, 111, 112, 110, 113, 
-	113, 114, 115, 0, 116, 116, 117, 0, 
-	117, 117, 105, 107, 107, 108, 0, 108, 
-	0, 113, 113, 114, 115, 118, 108, 0, 
-	119, 0, 120, 0, 113, 113, 114, 115, 
-	120, 0, 110, 121, 109, 109, 109, 109, 
-	0, 122, 122, 123, 124, 124, 125, 0, 
-	127, 128, 126, 129, 129, 130, 131, 0, 
-	132, 132, 106, 109, 0, 126, 125, 0, 
-	129, 129, 130, 133, 125, 131, 0, 134, 
-	0, 129, 129, 130, 134, 131, 0, 135, 
-	135, 136, 137, 0, 136, 0, 138, 138, 
-	139, 140, 136, 0, 141, 141, 52, 142, 
-	0, 63, 0, 143, 144, 143, 145, 146, 
-	137, 137, 137, 137, 0, 147, 148, 149, 
-	149, 150, 151, 0, 153, 154, 152, 155, 
-	155, 156, 157, 0, 158, 158, 159, 0, 
-	159, 159, 147, 149, 149, 150, 0, 150, 
-	0, 155, 155, 156, 157, 160, 150, 0, 
-	161, 162, 161, 163, 0, 164, 0, 155, 
-	155, 156, 157, 164, 0, 152, 165, 151, 
-	151, 151, 151, 0, 166, 166, 167, 168, 
-	168, 169, 0, 171, 172, 170, 173, 173, 
-	174, 175, 0, 176, 176, 148, 151, 0, 
-	170, 169, 0, 173, 173, 174, 177, 169, 
-	175, 0, 178, 0, 173, 173, 174, 178, 
-	175, 0, 180, 179, 1, 2, 1, 3, 
-	4, 5, 0, 181, 0
+	0, 54, 0, 54, 54, 55, 0, 56, 
+	57, 56, 58, 59, 55, 55, 55, 55, 
+	0, 60, 0, 56, 57, 56, 58, 60, 
+	60, 60, 60, 0, 61, 61, 62, 63, 
+	0, 61, 61, 63, 0, 64, 63, 63, 
+	63, 63, 0, 65, 66, 67, 67, 68, 
+	69, 0, 71, 72, 70, 73, 73, 74, 
+	75, 0, 76, 76, 77, 0, 77, 77, 
+	65, 67, 67, 68, 0, 68, 0, 73, 
+	73, 74, 75, 78, 68, 0, 79, 80, 
+	79, 81, 0, 82, 0, 73, 73, 74, 
+	75, 82, 0, 70, 83, 69, 69, 69, 
+	69, 0, 84, 84, 85, 86, 86, 87, 
+	0, 89, 90, 88, 91, 91, 92, 93, 
+	0, 94, 94, 66, 69, 0, 88, 87, 
+	0, 91, 91, 92, 95, 87, 93, 0, 
+	96, 0, 91, 91, 92, 96, 93, 0, 
+	62, 62, 97, 0, 98, 99, 98, 100, 
+	101, 97, 97, 97, 97, 0, 102, 0, 
+	98, 99, 98, 100, 102, 102, 102, 102, 
+	0, 103, 104, 105, 105, 106, 107, 0, 
+	109, 110, 108, 111, 111, 112, 113, 0, 
+	114, 114, 115, 0, 115, 115, 103, 105, 
+	105, 106, 0, 106, 0, 111, 111, 112, 
+	113, 116, 106, 0, 117, 0, 118, 0, 
+	111, 111, 112, 113, 118, 0, 108, 119, 
+	107, 107, 107, 107, 0, 120, 120, 121, 
+	122, 122, 123, 0, 125, 126, 124, 127, 
+	127, 128, 129, 0, 130, 130, 104, 107, 
+	0, 124, 123, 0, 127, 127, 128, 131, 
+	123, 129, 0, 132, 0, 127, 127, 128, 
+	132, 129, 0, 133, 0, 134, 135, 134, 
+	136, 137, 138, 139, 133, 133, 133, 133, 
+	0, 140, 140, 3, 52, 141, 0, 62, 
+	0, 142, 143, 144, 144, 145, 146, 0, 
+	148, 149, 147, 150, 150, 151, 152, 0, 
+	153, 153, 154, 0, 154, 154, 142, 144, 
+	144, 145, 0, 145, 0, 150, 150, 151, 
+	152, 155, 145, 0, 156, 157, 156, 158, 
+	0, 159, 0, 150, 150, 151, 152, 159, 
+	0, 147, 160, 146, 146, 146, 146, 0, 
+	161, 161, 162, 163, 163, 164, 0, 166, 
+	167, 165, 168, 168, 169, 170, 0, 171, 
+	171, 143, 146, 0, 165, 164, 0, 168, 
+	168, 169, 172, 164, 170, 0, 173, 0, 
+	168, 168, 169, 173, 170, 0, 175, 174, 
+	1, 2, 1, 3, 4, 5, 0, 176, 
+	0
 };
 
 static const char _command_trans_targs[] = {
-	0, 2, 115, 3, 4, 29, 5, 6, 
-	7, 115, 3, 8, 7, 9, 15, 13, 
+	0, 2, 111, 3, 4, 29, 5, 6, 
+	7, 111, 3, 8, 7, 9, 15, 13, 
 	14, 19, 9, 10, 18, 11, 15, 12, 
-	11, 12, 16, 7, 115, 3, 17, 20, 
+	11, 12, 16, 7, 111, 3, 17, 20, 
 	20, 21, 25, 26, 21, 22, 24, 23, 
-	15, 19, 23, 27, 28, 30, 115, 66, 
-	87, 31, 37, 30, 31, 37, 32, 33, 
-	34, 36, 35, 7, 115, 3, 38, 61, 
-	39, 40, 41, 47, 45, 46, 51, 41, 
-	42, 50, 43, 47, 44, 43, 44, 48, 
-	7, 115, 3, 49, 52, 52, 53, 57, 
-	58, 53, 54, 56, 55, 47, 51, 55, 
-	59, 60, 62, 63, 65, 64, 7, 115, 
-	3, 67, 73, 71, 72, 77, 67, 68, 
-	76, 69, 73, 70, 69, 70, 74, 115, 
-	75, 78, 78, 79, 83, 84, 79, 80, 
-	82, 81, 73, 77, 81, 85, 86, 88, 
-	89, 92, 90, 31, 91, 90, 91, 7, 
-	115, 3, 93, 94, 100, 98, 99, 104, 
-	94, 95, 103, 96, 100, 97, 96, 97, 
-	101, 7, 115, 3, 102, 105, 105, 106, 
-	110, 111, 106, 107, 109, 108, 100, 104, 
-	108, 112, 113, 114, 116, 0
+	15, 19, 23, 27, 28, 30, 111, 64, 
+	85, 31, 36, 30, 31, 36, 32, 33, 
+	7, 111, 3, 34, 35, 37, 60, 38, 
+	39, 40, 46, 44, 45, 50, 40, 41, 
+	49, 42, 46, 43, 42, 43, 47, 7, 
+	111, 3, 48, 51, 51, 52, 56, 57, 
+	52, 53, 55, 54, 46, 50, 54, 58, 
+	59, 61, 7, 111, 3, 62, 63, 65, 
+	71, 69, 70, 75, 65, 66, 74, 67, 
+	71, 68, 67, 68, 72, 111, 73, 76, 
+	76, 77, 81, 82, 77, 78, 80, 79, 
+	71, 75, 79, 83, 84, 86, 87, 111, 
+	3, 89, 31, 88, 87, 88, 90, 96, 
+	94, 95, 100, 90, 91, 99, 92, 96, 
+	93, 92, 93, 97, 7, 111, 3, 98, 
+	101, 101, 102, 106, 107, 102, 103, 105, 
+	104, 96, 100, 104, 108, 109, 110, 112, 
+	0
 };
 
 static const char _command_trans_actions[] = {
-	21, 0, 19, 0, 1, 1, 7, 1, 
-	37, 70, 37, 3, 0, 0, 0, 1, 
-	1, 1, 1, 0, 1, 40, 40, 40, 
-	0, 0, 1, 17, 52, 17, 1, 5, 
-	0, 0, 1, 1, 1, 0, 1, 43, 
-	43, 78, 0, 1, 1, 25, 74, 3, 
-	25, 25, 25, 0, 0, 0, 0, 1, 
-	1, 1, 11, 31, 62, 31, 0, 0, 
-	1, 7, 0, 0, 1, 1, 1, 1, 
-	0, 1, 40, 40, 40, 0, 0, 1, 
-	13, 46, 13, 1, 5, 0, 0, 1, 
-	1, 1, 0, 1, 43, 43, 78, 0, 
-	1, 1, 1, 1, 1, 11, 28, 58, 
-	28, 0, 0, 1, 1, 1, 1, 0, 
-	1, 40, 40, 40, 0, 0, 1, 55, 
-	1, 5, 0, 0, 1, 1, 1, 0, 
-	1, 43, 43, 78, 0, 1, 1, 1, 
-	1, 1, 9, 9, 9, 0, 0, 34, 
-	66, 34, 3, 0, 0, 1, 1, 1, 
-	1, 0, 1, 40, 40, 40, 0, 0, 
-	1, 15, 49, 15, 1, 5, 0, 0, 
-	1, 1, 1, 0, 1, 43, 43, 78, 
-	0, 1, 1, 0, 23, 0
+	17, 0, 15, 0, 1, 1, 7, 1, 
+	39, 72, 39, 3, 0, 0, 0, 1, 
+	1, 1, 1, 0, 1, 42, 42, 42, 
+	0, 0, 1, 13, 54, 13, 1, 5, 
+	0, 0, 1, 1, 1, 0, 1, 45, 
+	45, 80, 0, 1, 1, 21, 76, 3, 
+	21, 21, 21, 0, 0, 0, 0, 1, 
+	33, 64, 33, 27, 1, 0, 0, 1, 
+	7, 0, 0, 1, 1, 1, 1, 0, 
+	1, 42, 42, 42, 0, 0, 1, 9, 
+	48, 9, 1, 5, 0, 0, 1, 1, 
+	1, 0, 1, 45, 45, 80, 0, 1, 
+	1, 1, 30, 60, 30, 27, 1, 0, 
+	0, 1, 1, 1, 1, 0, 1, 42, 
+	42, 42, 0, 0, 1, 57, 1, 5, 
+	0, 0, 1, 1, 1, 0, 1, 45, 
+	45, 80, 0, 1, 1, 1, 84, 68, 
+	36, 3, 24, 24, 0, 0, 0, 0, 
+	1, 1, 1, 1, 0, 1, 42, 42, 
+	42, 0, 0, 1, 11, 51, 11, 1, 
+	5, 0, 0, 1, 1, 1, 0, 1, 
+	45, 45, 80, 0, 1, 1, 0, 19, 
+	0
 };
 
 static const char _command_eof_actions[] = {
-	0, 21, 21, 21, 21, 21, 21, 21, 
-	21, 21, 21, 21, 21, 21, 21, 21, 
-	21, 21, 21, 21, 21, 21, 21, 21, 
-	21, 21, 21, 21, 21, 21, 21, 21, 
-	21, 21, 21, 21, 21, 21, 21, 21, 
-	21, 21, 21, 21, 21, 21, 21, 21, 
-	21, 21, 21, 21, 21, 21, 21, 21, 
-	21, 21, 21, 21, 21, 21, 21, 21, 
-	21, 21, 21, 21, 21, 21, 21, 21, 
-	21, 21, 21, 21, 21, 21, 21, 21, 
-	21, 21, 21, 21, 21, 21, 21, 21, 
-	21, 21, 21, 21, 21, 21, 21, 21, 
-	21, 21, 21, 21, 21, 21, 21, 21, 
-	21, 21, 21, 21, 21, 21, 21, 21, 
-	21, 21, 0, 0, 0
+	0, 17, 17, 17, 17, 17, 17, 17, 
+	17, 17, 17, 17, 17, 17, 17, 17, 
+	17, 17, 17, 17, 17, 17, 17, 17, 
+	17, 17, 17, 17, 17, 17, 17, 17, 
+	17, 17, 17, 17, 17, 17, 17, 17, 
+	17, 17, 17, 17, 17, 17, 17, 17, 
+	17, 17, 17, 17, 17, 17, 17, 17, 
+	17, 17, 17, 17, 17, 17, 17, 17, 
+	17, 17, 17, 17, 17, 17, 17, 17, 
+	17, 17, 17, 17, 17, 17, 17, 17, 
+	17, 17, 17, 17, 17, 17, 17, 17, 
+	17, 17, 17, 17, 17, 17, 17, 17, 
+	17, 17, 17, 17, 17, 17, 17, 17, 
+	17, 17, 17, 17, 17, 17, 0, 0, 
+	0
 };
 
 static const int command_start = 1;
-static const int command_first_final = 115;
+static const int command_first_final = 111;
 
-static const int command_en_eat_line = 114;
+static const int command_en_eat_line = 110;
 static const int command_en_main = 1;
 
-#line 11 "src/core/command.rl"
+#line 9 "src/core/command.rl"
 
+
+/*
+  typedef enum command_actions_ {
+    CmdNoAction,
+  	CmdCreateNode,
+  	CmdCreateLink,
+  	CmdOpenGroup,
+  } command_action_t;
+*/
 
 void Command::initialize()
 {
   int cs;
   
-  mAction = NO_ACTION;
-  mServer = NULL;
-  mQuit   = false;
+  mAction = CmdNoAction;
+  mTree       = NULL;
+  mQuit       = false;
   mTokenIndex = 0;
-  mSilent = false;
-  mThread = NULL;
+  mSilent     = false;
+  mThread     = NULL;
   
   clear();
   
   
-#line 329 "src/core/command.cpp"
+#line 337 "src/core/command.cpp"
 	{
 	cs = command_start;
 	}
-#line 27 "src/core/command.rl"
+#line 34 "src/core/command.rl"
   mCurrentState = cs;
 }
 
@@ -339,7 +347,7 @@ int Command::do_listen()
   char * line = buffer;
   
   // set thread priority to normal
-  mServer->normal_priority();
+  mTree->normal_priority();
   
   if (!mSilent)
     *mOutput << "Welcome to rubyk !\n\n";
@@ -363,7 +371,7 @@ void Command::parse(const std::string& pStr)
   int cs = mCurrentState;        // restore machine state
   
   
-#line 367 "src/core/command.cpp"
+#line 375 "src/core/command.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -438,7 +446,7 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 60 "src/core/command.rl"
+#line 67 "src/core/command.rl"
 	{
       if (mTokenIndex >= MAX_TOKEN_SIZE) {
         std::cerr << "Buffer overflow !" << std::endl;
@@ -453,85 +461,79 @@ _match:
     }
 	break;
 	case 1:
-#line 73 "src/core/command.rl"
-	{ set_from_token(mVariable);}
+#line 80 "src/core/command.rl"
+	{ set_from_token(mVar);}
 	break;
 	case 2:
-#line 75 "src/core/command.rl"
+#line 82 "src/core/command.rl"
 	{ set_from_token(mMethod);}
 	break;
 	case 3:
-#line 77 "src/core/command.rl"
+#line 84 "src/core/command.rl"
 	{ set_from_token(mKey);}
 	break;
 	case 4:
-#line 79 "src/core/command.rl"
+#line 86 "src/core/command.rl"
 	{ set_from_token(mClass);}
 	break;
 	case 5:
-#line 81 "src/core/command.rl"
+#line 88 "src/core/command.rl"
 	{ set_from_token(mValue);}
 	break;
 	case 6:
-#line 83 "src/core/command.rl"
-	{ mFrom = mVariable; }
+#line 90 "src/core/command.rl"
+	{ mFrom     = mVar; }
 	break;
 	case 7:
-#line 85 "src/core/command.rl"
-	{
-      set_from_token(mValue);
-      mFromPort = atoi(mValue.c_str());
-    }
+#line 92 "src/core/command.rl"
+	{ mFromPort = mVar; }
 	break;
 	case 8:
-#line 90 "src/core/command.rl"
-	{
-      set_from_token(mValue);
-      mToPort = atoi(mValue.c_str());
-    }
+#line 94 "src/core/command.rl"
+	{ mToPort   = mVar; }
 	break;
 	case 9:
-#line 95 "src/core/command.rl"
+#line 96 "src/core/command.rl"
 	{ 
       add_value_from_token(); 
     }
 	break;
 	case 10:
-#line 99 "src/core/command.rl"
+#line 100 "src/core/command.rl"
 	{ set_parameter(mKey, mValue); }
 	break;
 	case 11:
-#line 101 "src/core/command.rl"
+#line 102 "src/core/command.rl"
 	{
-      mTo   = mVariable;
+      mTo   = mVar;
       create_link();
     }
 	break;
 	case 12:
-#line 106 "src/core/command.rl"
+#line 107 "src/core/command.rl"
 	{
-      mTo   = mVariable;
+      mTo   = mVar;
       remove_link();
     }
 	break;
 	case 13:
-#line 111 "src/core/command.rl"
+#line 112 "src/core/command.rl"
 	{ create_instance(); }
 	break;
 	case 14:
-#line 113 "src/core/command.rl"
+#line 114 "src/core/command.rl"
 	{ execute_method(); }
 	break;
 	case 15:
-#line 115 "src/core/command.rl"
+#line 116 "src/core/command.rl"
 	{ execute_class_method(); }
 	break;
 	case 16:
-#line 117 "src/core/command.rl"
+#line 118 "src/core/command.rl"
 	{ execute_command(); }
 	break;
 	case 17:
-#line 121 "src/core/command.rl"
+#line 122 "src/core/command.rl"
 	{
       if (!mQuit) {
         clear();
@@ -539,21 +541,21 @@ _match:
     }
 	break;
 	case 18:
-#line 126 "src/core/command.rl"
+#line 127 "src/core/command.rl"
 	{
       p--; // move back one char
       char error_buffer[10];
       snprintf(error_buffer, 9, "%s", p);
       *mOutput << "Syntax error near '" << error_buffer << "'." << std::endl;
       clear();
-      {cs = 114; goto _again;} // eat the rest of the line and continue parsing
+      {cs = 110; goto _again;} // eat the rest of the line and continue parsing
     }
 	break;
 	case 19:
-#line 135 "src/core/command.rl"
+#line 136 "src/core/command.rl"
 	{ {cs = 1; goto _again;} }
 	break;
-#line 557 "src/core/command.cpp"
+#line 559 "src/core/command.cpp"
 		}
 	}
 
@@ -570,24 +572,24 @@ _again:
 	while ( __nacts-- > 0 ) {
 		switch ( *__acts++ ) {
 	case 18:
-#line 126 "src/core/command.rl"
+#line 127 "src/core/command.rl"
 	{
       p--; // move back one char
       char error_buffer[10];
       snprintf(error_buffer, 9, "%s", p);
       *mOutput << "Syntax error near '" << error_buffer << "'." << std::endl;
       clear();
-      {cs = 114; goto _again;} // eat the rest of the line and continue parsing
+      {cs = 110; goto _again;} // eat the rest of the line and continue parsing
     }
 	break;
-#line 584 "src/core/command.cpp"
+#line 586 "src/core/command.cpp"
 		}
 	}
 	}
 
 	_out: {}
 	}
-#line 185 "src/core/command.rl"
+#line 188 "src/core/command.rl"
 
 //  printf("{%s}\n",p);
   mCurrentState = cs;
@@ -606,9 +608,9 @@ void Command::set_from_token (std::string& pElem)
 {
   mToken[mTokenIndex] = '\0';
 #ifdef DEBUG_PARSER
-  if (&pElem == &mValue) std::cout <<    "[val " << mToken << "]" << std::endl;
-  if (&pElem == &mVariable) std::cout << "[var " << mToken << "]" << std::endl;
-  if (&pElem == &mClass) std::cout <<    "[cla " << mToken << "]" << std::endl;
+  if (&pElem == &mValue) std::cout << "[val " << mToken << "]" << std::endl;
+  if (&pElem == &mVar)   std::cout << "[var " << mToken << "]" << std::endl;
+  if (&pElem == &mClass) std::cout << "[cla " << mToken << "]" << std::endl;
 #endif
   pElem = mToken;
   mTokenIndex = 0;
@@ -616,37 +618,39 @@ void Command::set_from_token (std::string& pElem)
 
 void Command::add_value_from_token () 
 {
-  mParameters.add(mValue); // add to 'list' value
+  // FIXME: what do we do here ? 
+  // mParameters.add(mValue); // add to 'list' value
 }
 
 void Command::set_parameter  (const std::string& pKey, const std::string& pValue) 
 {
-  mParameters.set(pKey,pValue);
+  mParameters.set_key(pKey,Value(pValue));
 }
 
 // FIXME: create_instance should run in server space with concurrency locks.
 void Command::create_instance()
 {
-  mServer->lock();
-  Node * node = mServer->create_instance(mVariable, mClass, mParameters, mOutput);
+  mTree->lock();
+    // FIXME: Group scope
+    // FIXME: should be new_object(mVar, mClass, Value(mParams))
+    Value res = mTree->new_object(mVar, mClass, mParameters);
+  mTree->unlock();
+
 #ifdef DEBUG_PARSER
-  std::cout << "NEW "<< mVariable << " = " << mClass << "(" << mParameters << ")";
+  std::cout << "NEW "<< mVar << " = " << mClass << "(" << mParameters << ")";
 #endif
-  if (node) {
-    if (!mSilent)
-      *mOutput << node->inspect() << std::endl;
-  } else {
-    *mOutput << "Error" << std::endl;      
-  }
-  mServer->unlock();
+
+  if (!mSilent)
+    *mOutput << res << std::endl;
 }
 
 
 void Command::create_link()
 { 
-  mServer->lock();
-  mServer->create_link(mFrom, mFromPort, mToPort, mTo);
-  mServer->unlock();
+  mTree->lock();
+    // FIXME: Group scope
+    mTree->create_link(mFrom, mFromPort, mToPort, mTo);
+  mTree->unlock();
 
 #ifdef DEBUG_PARSER
   std::cout << "LINK " << mFrom << "." << mFromPort << "=>" << mToPort << "." << mTo << std::endl;
@@ -655,9 +659,10 @@ void Command::create_link()
 
 void Command::remove_link()
 { 
-  mServer->lock();
-  mServer->remove_link(mFrom, mFromPort, mToPort, mTo);
-  mServer->unlock();
+  mTree->lock();
+    // FIXME: Group scope
+    mTree->remove_link(mFrom, mFromPort, mToPort, mTo);
+  mTree->unlock();
 
 #ifdef DEBUG_PARSER
   std::cout << "UNLINK " << mFrom << "." << mFromPort << "=>" << mToPort << "." << mTo << std::endl;
@@ -667,38 +672,42 @@ void Command::remove_link()
 // FIXME: execute_method should run in server space with concurrency locks.
 void Command::execute_method()
 {
-  Node * node;
-  mServer->lock();
-  if (mServer->get_instance(&node, mVariable)) {
-    node->execute_method(mMethod, mParameters);
-  } else {
-    *mOutput << "Unknown node '" << mVariable << "'" << std::endl;
-  }
-  mServer->unlock();
+  Value res;
+  mTree->lock();
+    // FIXME: Group scope
+    res = mTree->call(std::string("/").append(mVar).append("/").append(mMethod), mParameters);
+  mTree->unlock();
+  
+  *mOutput << res << std::endl;
 }
 
 void Command::execute_class_method()
 {
-  Class * klass;
-  mServer->lock();
-  if (Class::get(&klass, mClass)) {
-    klass->execute_method(mMethod, mParameters, mOutput);
-  } else {
-    *mOutput << "Unknown class '" << mClass << "'" << std::endl;
-  }
-  mServer->unlock();
+  Value res;
+  mTree->lock();
+    res = mTree->call(std::string(CLASS_ROOT).append("/").append(mClass).append("/").append(mMethod), mParameters);
+  mTree->unlock();
+  
+  *mOutput << res << std::endl;
 }
 
 void Command::execute_command()
 {
-  Node * node;
-  mServer->lock();
-  if (mServer->get_instance(&node, mMethod)) {
+  Value res;
+  mTree->lock();
+    // FIXME: Group scope
+    res = mTree->call(std::string("/").append(mMethod));
+  mTree->unlock();
+  *mOutput << res << std::endl;
+  /*
+  TODO: these methods should exist in root...
+  
+  if (mTree->get_instance(&node, mMethod)) {
     // inspect
     *mOutput << node->inspect() << std::endl;
     
   } else if (mMethod == "quit" || mMethod == "q") {
-    mServer->quit();
+    mTree->quit();
     mQuit = true;
   } else if (mMethod == "set_lib_path") {
     std::string path;
@@ -711,14 +720,14 @@ void Command::execute_command()
   } else {
     *mOutput << "Unknown command '" << mMethod << "'" << std::endl;
   }
-  mServer->unlock();
+  */
 }
 
 void Command::clear() 
 {
   mTokenIndex = 0;
-  mAction     = NO_ACTION;
-  mVariable   = "";
+  mAction     = CmdNoAction;
+  mVar        = "";
   mClass      = "";
   mParameters.clear();
   mFromPort = 1;

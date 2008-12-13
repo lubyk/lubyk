@@ -8,16 +8,25 @@
   write data noerror;
 }%%
 
+/*
+  typedef enum command_actions_ {
+    CmdNoAction,
+  	CmdCreateNode,
+  	CmdCreateLink,
+  	CmdOpenGroup,
+  } command_action_t;
+*/
+
 void Command::initialize()
 {
   int cs;
   
-  mAction = NO_ACTION;
-  mServer = NULL;
-  mQuit   = false;
+  mAction = CmdNoAction;
+  mTree       = NULL;
+  mQuit       = false;
   mTokenIndex = 0;
-  mSilent = false;
-  mThread = NULL;
+  mSilent     = false;
+  mThread     = NULL;
   
   clear();
   
@@ -31,7 +40,7 @@ int Command::do_listen()
   char * line = buffer;
   
   // set thread priority to normal
-  mServer->normal_priority();
+  mTree->normal_priority();
   
   if (!mSilent)
     *mOutput << "Welcome to rubyk !\n\n";
@@ -68,27 +77,21 @@ void Command::parse(const std::string& pStr)
       mTokenIndex++;     
     }
     
-    action set_var { set_from_token(mVariable);}
+    action set_var    { set_from_token(mVar);}
     
     action set_method { set_from_token(mMethod);}
     
-    action set_key { set_from_token(mKey);}
+    action set_key    { set_from_token(mKey);}
   
-    action set_class { set_from_token(mClass);}
+    action set_class  { set_from_token(mClass);}
   
-    action set_value { set_from_token(mValue);}
+    action set_value  { set_from_token(mValue);}
     
-    action set_from { mFrom = mVariable; }
+    action set_from      { mFrom     = mVar; }
     
-    action set_from_port {
-      set_from_token(mValue);
-      mFromPort = atoi(mValue.c_str());
-    }
+    action set_from_port { mFromPort = mVar; }
     
-    action set_to_port {
-      set_from_token(mValue);
-      mToPort = atoi(mValue.c_str());
-    }
+    action set_to_port   { mToPort   = mVar; }
     
     action add_param_value { 
       add_value_from_token(); 
@@ -97,12 +100,12 @@ void Command::parse(const std::string& pStr)
     action add_param { set_parameter(mKey, mValue); }
     
     action create_link {
-      mTo   = mVariable;
+      mTo   = mVar;
       create_link();
     }
     
     action remove_link {
-      mTo   = mVariable;
+      mTo   = mVar;
       remove_link();
     }
 
@@ -154,12 +157,14 @@ void Command::parse(const std::string& pStr)
   
     param  = (key ':' ws* value) %add_param;
   
+    # FIXME: replace this by a string and let Value parse it into a Hash, or better, move control to Value...
+    # but before fixing this, we need Value to accept mutliline content (one block after the other...): this is not easy.
     parameters = value %add_param_value (ws* ',' ws* value %add_param_value)* | (param ws*)+;
   
     create_instance = var ws* '=' ws* class '(' parameters? ')' ;
   
-    from_link = var %set_from ('.' integer %set_from_port)?;
-    to_link   = (integer %set_to_port '.')? var;
+    from_link = var %set_from ('.' var %set_from_port)?;
+    to_link   = (var %set_to_port '.')? var;
     create_link = from_link ws* '=>' ws* to_link;
     
     remove_link = from_link ws* '//' ws* to_link;
@@ -198,9 +203,9 @@ void Command::set_from_token (std::string& pElem)
 {
   mToken[mTokenIndex] = '\0';
 #ifdef DEBUG_PARSER
-  if (&pElem == &mValue) std::cout <<    "[val " << mToken << "]" << std::endl;
-  if (&pElem == &mVariable) std::cout << "[var " << mToken << "]" << std::endl;
-  if (&pElem == &mClass) std::cout <<    "[cla " << mToken << "]" << std::endl;
+  if (&pElem == &mValue) std::cout << "[val " << mToken << "]" << std::endl;
+  if (&pElem == &mVar)   std::cout << "[var " << mToken << "]" << std::endl;
+  if (&pElem == &mClass) std::cout << "[cla " << mToken << "]" << std::endl;
 #endif
   pElem = mToken;
   mTokenIndex = 0;
@@ -208,38 +213,39 @@ void Command::set_from_token (std::string& pElem)
 
 void Command::add_value_from_token () 
 {
-  mParameters.add(mValue); // add to 'list' value
+  // FIXME: what do we do here ? 
+  // mParameters.add(mValue); // add to 'list' value
 }
 
 void Command::set_parameter  (const std::string& pKey, const std::string& pValue) 
 {
-  mParameters.set(pKey,pValue);
+  mParameters.set_key(pKey,Value(pValue));
 }
 
 // FIXME: create_instance should run in server space with concurrency locks.
 void Command::create_instance()
 {
-  // mServer->lock();
-  // mRoot.classes()->new_node(pName, pClass, h);
-  Node * node = mServer->create_instance(mVariable, mClass, mParameters, mOutput);
+  mTree->lock();
+    // FIXME: Group scope
+    // FIXME: should be new_object(mVar, mClass, Value(mParams))
+    Value res = mTree->new_object(mVar, mClass, mParameters);
+  mTree->unlock();
+
 #ifdef DEBUG_PARSER
-  std::cout << "NEW "<< mVariable << " = " << mClass << "(" << mParameters << ")";
+  std::cout << "NEW "<< mVar << " = " << mClass << "(" << mParameters << ")";
 #endif
-  if (node) {
-    if (!mSilent)
-      *mOutput << node->inspect() << std::endl;
-  } else {
-    *mOutput << "Error" << std::endl;      
-  }
-  mServer->unlock();
+
+  if (!mSilent)
+    *mOutput << res << std::endl;
 }
 
 
 void Command::create_link()
 { 
-  mServer->lock();
-  mServer->create_link(mFrom, mFromPort, mToPort, mTo);
-  mServer->unlock();
+  mTree->lock();
+    // FIXME: Group scope
+    mTree->create_link(mFrom, mFromPort, mToPort, mTo);
+  mTree->unlock();
 
 #ifdef DEBUG_PARSER
   std::cout << "LINK " << mFrom << "." << mFromPort << "=>" << mToPort << "." << mTo << std::endl;
@@ -248,9 +254,10 @@ void Command::create_link()
 
 void Command::remove_link()
 { 
-  mServer->lock();
-  mServer->remove_link(mFrom, mFromPort, mToPort, mTo);
-  mServer->unlock();
+  mTree->lock();
+    // FIXME: Group scope
+    mTree->remove_link(mFrom, mFromPort, mToPort, mTo);
+  mTree->unlock();
 
 #ifdef DEBUG_PARSER
   std::cout << "UNLINK " << mFrom << "." << mFromPort << "=>" << mToPort << "." << mTo << std::endl;
@@ -260,38 +267,42 @@ void Command::remove_link()
 // FIXME: execute_method should run in server space with concurrency locks.
 void Command::execute_method()
 {
-  Node * node;
-  mServer->lock();
-  if (mServer->get_instance(&node, mVariable)) {
-    node->execute_method(mMethod, mParameters);
-  } else {
-    *mOutput << "Unknown node '" << mVariable << "'" << std::endl;
-  }
-  mServer->unlock();
+  Value res;
+  mTree->lock();
+    // FIXME: Group scope
+    res = mTree->call(std::string("/").append(mVar).append("/").append(mMethod), mParameters);
+  mTree->unlock();
+  
+  *mOutput << res << std::endl;
 }
 
 void Command::execute_class_method()
 {
-  Class * klass;
-  mServer->lock();
-  if (Class::get(&klass, mClass)) {
-    klass->execute_method(mMethod, mParameters, mOutput);
-  } else {
-    *mOutput << "Unknown class '" << mClass << "'" << std::endl;
-  }
-  mServer->unlock();
+  Value res;
+  mTree->lock();
+    res = mTree->call(std::string(CLASS_ROOT).append("/").append(mClass).append("/").append(mMethod), mParameters);
+  mTree->unlock();
+  
+  *mOutput << res << std::endl;
 }
 
 void Command::execute_command()
 {
-  Node * node;
-  mServer->lock();
-  if (mServer->get_instance(&node, mMethod)) {
+  Value res;
+  mTree->lock();
+    // FIXME: Group scope
+    res = mTree->call(std::string("/").append(mMethod));
+  mTree->unlock();
+  *mOutput << res << std::endl;
+  /*
+  TODO: these methods should exist in root...
+  
+  if (mTree->get_instance(&node, mMethod)) {
     // inspect
     *mOutput << node->inspect() << std::endl;
     
   } else if (mMethod == "quit" || mMethod == "q") {
-    mServer->quit();
+    mTree->quit();
     mQuit = true;
   } else if (mMethod == "set_lib_path") {
     std::string path;
@@ -304,14 +315,14 @@ void Command::execute_command()
   } else {
     *mOutput << "Unknown command '" << mMethod << "'" << std::endl;
   }
-  mServer->unlock();
+  */
 }
 
 void Command::clear() 
 {
   mTokenIndex = 0;
-  mAction     = NO_ACTION;
-  mVariable   = "";
+  mAction     = CmdNoAction;
+  mVar        = "";
   mClass      = "";
   mParameters.clear();
   mFromPort = 1;

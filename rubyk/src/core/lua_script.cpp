@@ -19,7 +19,7 @@ void LuaScript::call_lua (Value * retSig, const char * pFunctionName, const Valu
   
   if (!mScriptOK) return;
   
-  lua_pushnumber(mLua, mServer->mCurrentTime);
+  lua_pushnumber(mLua, mRoot->mCurrentTime);
   lua_setglobal(mLua, "current_time");
   
   lua_getglobal(mLua, pFunctionName); /* function to be called */
@@ -73,7 +73,7 @@ bool LuaScript::eval_lua_script(const std::string& pScript)
   }
   
   /* set 'current_time' */
-  lua_pushnumber(mLua, mServer->mCurrentTime);
+  lua_pushnumber(mLua, mRoot->mCurrentTime);
   lua_setglobal(mLua, "current_time");
   
   /* compile script (as long as we maintain 1 context per object, we could release the mutex for long compilations since they are done inside the 'command' space) */
