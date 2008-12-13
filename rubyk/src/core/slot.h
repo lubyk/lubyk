@@ -29,7 +29,12 @@ public:
   {
     create_methods();
   }
-
+  
+  Slot (const std::string& pName, Node * pNode, uint pType) : Object(pName), mNode(pNode), mType(pType) 
+  {
+    create_methods();
+  }
+  
   virtual ~Slot ();
   
   /** Set slot id (position in containing node) */

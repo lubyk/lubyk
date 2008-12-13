@@ -25,6 +25,11 @@ public:
     register_in_node();
   }
   
+  Inlet (const std::string& pName, Node * node, inlet_method_t pMethod, uint pType) : Slot(pName, node, pType), mMethod(pMethod) 
+  {
+    register_in_node();
+  }
+  
   Inlet (Node * node, inlet_method_t pMethod) : Slot(node), mMethod(pMethod) 
   {
     register_in_node();

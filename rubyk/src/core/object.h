@@ -8,6 +8,7 @@
 
 class Root;
 class Alias;
+class Planet;
 
 class Object
 {
@@ -71,6 +72,7 @@ public:
   template<class T>
   T * adopt(T * pObj)
   {
+    // we have to use a second method here since a template cannot be virtual
     do_adopt((Object*) pObj);
     return pObj;
   }
@@ -260,7 +262,7 @@ private:
   
 protected:
   friend class Root;
-  friend class Group;
+  friend class Planet;
   
   Root   *                    mRoot;             /**< Root object. */
   Object *                    mParent;           /**< Pointer to parent object. */

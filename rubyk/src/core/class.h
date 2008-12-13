@@ -66,6 +66,8 @@ public:
     }
   }
   
+  
+  
   /** Build all inlets for an object from prototypes. */
   void make_outlets(Node * pObj)
   {

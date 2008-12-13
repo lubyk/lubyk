@@ -22,7 +22,7 @@ const Value NewMethod::trigger (const Value& val)
   Node * obj = TYPE_CAST(Node,mRoot->find(url.string()));
   
   if (!obj) {
-    return Error("New Object at '").append(url.string()).append("' not found !");
+    return Error("New Node at '").append(url.string()).append("' not found !");
   }
   
   obj->set_class_url(mParent->url());  // used by osc (using url instead of name because we might have class folders/subfolders some day).

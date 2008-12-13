@@ -6,10 +6,10 @@ public:
   
   void test_connection_order( void )
   {
-    create("v1",  "Number", "value:2",  "[5] \"/v1\"");
-    create("v2",  "Number", "value:3",  "[11] \"/v2\"");
-    create("add", "Add",   "",          "[15] \"/add\""); 
-    create("v3",  "Number", "value:0",  "[24] \"/v3\"");
+    create("/v1",  "Number", "value:2",  "[5] \"/v1\"");
+    create("/v2",  "Number", "value:3",  "[11] \"/v2\"");
+    create("/add", "Add",   "",          "[15] \"/add\""); 
+    create("/v3",  "Number", "value:0",  "[24] \"/v3\"");
     
     /**    v1   v2
       *    |    |
