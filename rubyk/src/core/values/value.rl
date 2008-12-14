@@ -120,20 +120,24 @@ void MatrixData::to_stream(std::ostream& pStream) const
   char buffer[20];
   if (size() == 0) {
 #ifdef _TESTING_
-    pStream << "<" << type_name() << "[" << mId << "] 0>";
-#else
-    pStream << "<" << type_name() << " 0>";
+    if (sShowId)
+      pStream << "<" << type_name() << "[" << mId << "] 0>";
+    else
 #endif
+    pStream << "<" << type_name() << " 0>";
+
   } else {
     size_t sz = 16;
     size_t start;
     if (sz > size()) sz = size();
     start = size() - sz;
 #ifdef _TESTING_
-    snprintf(buffer, 20, "<%s[%lu] [ % .2f", type_name(), mId, data[start]);
-#else
-    snprintf(buffer, 20, "<%s [ % .2f", type_name(), data[start]);
+    if (sShowId)
+      snprintf(buffer, 20, "<%s[%lu] [ % .2f", type_name(), mId, data[start]);
+    else
 #endif
+    snprintf(buffer, 20, "<%s [ % .2f", type_name(), data[start]);
+
     pStream << buffer;
     for (size_t i= start+1; i < start+sz; i++) {
       snprintf(buffer, 20, " % .2f", data[i]);
@@ -149,20 +153,24 @@ void CharMatrixData::to_stream(std::ostream& pStream) const
 {
   if (size() == 0) {
 #ifdef _TESTING_
-    pStream << "<" << type_name() << "[" << mId << "] 0>";
-#else
-    pStream << "<" << type_name() << " 0>";
+    if (sShowId)
+      pStream << "<" << type_name() << "[" << mId << "] 0>";
+    else
 #endif
+    pStream << "<" << type_name() << " 0>";
+
   } else {
     size_t sz = 16;
     size_t start;
     if (sz > size()) sz = size();
     start = size() - sz;
 #ifdef _TESTING_
-    pStream << "<" << type_name() << "[" << mId << "]" << " [ " << data[start];
-#else
-    pStream << "<" << type_name() << "[" << mId << "]" << " [ " << data[start];
+    if (sShowId)
+      pStream << "<" << type_name() << "[" << mId << "]" << " [ " << data[start];
+    else
 #endif
+    pStream << "<" << type_name() << " [ " << data[start];
+
     for (size_t i= start+1; i < start+sz; i++) {
       pStream << " " << data[i];
     }

@@ -24,11 +24,11 @@ public:
     res = root.call("/one");
     TS_ASSERT_EQUALS( Number(res).value(), 1.00);
     res = root.call("/two");
-    TS_ASSERT_EQUALS(res.to_string(), "[3] #\"Object \'/two\' not found.\"");
+    TS_ASSERT_EQUALS(res.to_string(), "[3] #Object '/two' not found.");
     res = venus->tree()->call("/two");
     TS_ASSERT_EQUALS( Number(res).value(), 2.00);
     res = venus->tree()->call("/one");
-    TS_ASSERT_EQUALS(res.to_string(), "[4] #\"Object \'/one\' not found.\"");
+    TS_ASSERT_EQUALS(res.to_string(), "[4] #Object '/one' not found.");
   }
   
   void test_socket( void )

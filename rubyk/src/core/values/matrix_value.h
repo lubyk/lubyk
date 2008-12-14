@@ -32,6 +32,9 @@ public:
   /** Display matrix inside stream. */
   virtual void to_stream(std::ostream& pStream) const;
   
+  /** JSON representation of data into stream. */
+  virtual void to_json(std::ostream& pStream) const;
+  
 protected:
   friend class TMatrixx<T>;
 };

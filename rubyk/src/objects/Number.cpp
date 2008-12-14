@@ -26,7 +26,7 @@ public:
   virtual const Value inspect(const Value& val) 
   { 
     std::ostringstream oss;
-    oss << "#<Number:" << url() << " " << mValue << ">";
+    oss << "<Number:" << url() << " " << mValue << ">";
     return String(oss.str());
   }
   

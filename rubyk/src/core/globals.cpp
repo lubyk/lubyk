@@ -22,6 +22,11 @@ bool   gQuitGl;
 // Object
 unsigned int Object::sIdCounter    = 0;
 
+#ifdef _TESTING_
+size_t Data::sIdCounter = 0;
+bool   Data::sShowId = true;
+#endif
+
 // Values
 Value gNilValue;        // globals declared in values.h
 Bang  gBangValue(true); // globals declared in values.h

@@ -22,8 +22,6 @@
 
 // ========================== Values ====================== //
 
-size_t Data::sIdCounter = 0;
-
 /** Helper class to test Values. */
 class ValueTestHelper : public CxxTest::TestSuite
 {
@@ -31,6 +29,7 @@ public:
   
   void setUp()
   {
+    Data::sShowId    = true;
     Data::sIdCounter = 0;
   }
   
@@ -56,6 +55,7 @@ public:
   void setUp()
   {
     Data::sIdCounter = 0;
+    Data::sShowId    = true;
     mRoot.clear();
     mRoot.classes()->set_lib_path("lib");
   }
@@ -140,20 +140,16 @@ class ParseHelper : public CxxTest::TestSuite
 public:
   ParseHelper() : mOutput(std::ostringstream::out), mInput(std::istringstream::in)
   { 
-    mRoot.clear();
     mCmd  = new Command(mInput, mOutput);
     mCmd->set_server(&mRoot);
-    mRoot.classes()->set_lib_path("lib");
   }
   
-  // start a new server
-  void clean_start()
+  void setUp()
   {
+    Data::sIdCounter = 0;
+    Data::sShowId    = false;
     mRoot.clear();
     mRoot.classes()->set_lib_path("lib");
-    delete mCmd;
-    mCmd = new Command(mInput, mOutput);
-    mCmd->set_server(&mRoot);
     mOutput.str(std::string("")); // clear output
   }
   

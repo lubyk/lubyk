@@ -23,12 +23,18 @@ public:
   virtual void to_stream(std::ostream& pStream) const
   {
 #ifdef _TESTING_
-    pStream << "[" << mId << "]" << " \"" << mString << "\"";
-#else
-    pStream << "\"" << mString << "\"";
+    if (sShowId)
+      pStream << "[" << mId << "] " << mString;
+    else
 #endif
+    pStream << mString;
   }
   
+  /** JSON representation of data into stream. */
+  virtual void to_json(std::ostream& pStream) const
+  {
+    pStream << "\"" << mString << "\""; // TODO: escape "
+  }
 protected:
   friend class String;
   std::string mString;

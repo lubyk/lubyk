@@ -35,7 +35,7 @@ public:
   { 
     // TODO: optimize (maybe).
     std::ostringstream os(std::ostringstream::out);
-    os << "'" << mMessage << "' counter:" << mCounter;
+    os << "<Test:" << url() << " '" << mMessage << "' counter:" << mCounter << ">";
     return String(os.str());
   }
   

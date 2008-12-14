@@ -33,8 +33,14 @@ public:
   virtual void to_stream(std::ostream& pStream) const
   { 
 #ifdef _TESTING_
-    pStream << "[" << mId << "] ";
+    if (sShowId) pStream << "[" << mId << "] ";
 #endif
+    pStream << "{ " << mHash << " }";
+  }
+  
+  /** JSON representation of data into stream. */
+  virtual void to_json(std::ostream& pStream) const
+  {
     pStream << "{ " << mHash << " }";
   }
   

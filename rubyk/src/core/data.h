@@ -41,6 +41,21 @@ public:
     pStream << type_name();
   }
   
+  /** JSON representation of data into stream. */
+  virtual void to_json(std::ostream& pStream) const
+  {
+    pStream << type_name();
+  }
+  
+  /** JSON representation of data. */
+  std::string to_json() const
+  {
+    std::ostringstream os(std::ostringstream::out);
+    to_json(os);
+    return os.str();
+  }
+  
+  /** String representation of data. */
   std::string to_string() const
   {
     std::ostringstream os(std::ostringstream::out);
@@ -103,6 +118,7 @@ public:
  { return mId; }
 
  static size_t sIdCounter;
+ static bool   sShowId;
  size_t        mId;
 #endif
 };

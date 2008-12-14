@@ -230,9 +230,9 @@ public:
     
     root.set_info("This is the root node.");
     res = root.call("/#info",param);
-    TS_ASSERT_EQUALS( res.to_string(), "[1] \"This is the root node.\"");
+    TS_ASSERT_EQUALS( res.to_string(), "[1] This is the root node.");
     res = root.call("/foo/#info",param);
-    TS_ASSERT_EQUALS( res.to_string(), "[2] \"\"");
+    TS_ASSERT_EQUALS( res.to_string(), "[2] ");
     
     res = root.call("/blah/#info",param);
     TS_ASSERT_EQUALS( Error(res).message(), std::string("Object '/blah/#info' not found.") );
@@ -246,9 +246,9 @@ public:
     
     root.set_info("This is the root node.");
     res = root.call("/#inspect");
-    TS_ASSERT_EQUALS( res.to_string(), "[1] \"This is the root node.\"");
+    TS_ASSERT_EQUALS( res.to_string(), "[1] This is the root node.");
     res = root.call("/foo/#inspect");
-    TS_ASSERT_EQUALS( res.to_string(), "[2] \"foo: 23\"");
+    TS_ASSERT_EQUALS( res.to_string(), "[2] foo: 23");
     
     res = root.call("/blah/#inspect");
     TS_ASSERT_EQUALS( Error(res).message(), std::string("Object '/blah/#inspect' not found.") );

@@ -37,10 +37,10 @@ public:
     TS_ASSERT(root.get(&obj, "/hello"));
     
     res = obj->trigger(Bang(true)); // [1]
-    TS_ASSERT_EQUALS(res.to_string(), "[2] #\"Not a string\"");
+    TS_ASSERT_EQUALS(res.to_string(), "[2] #Not a string");
     
     res = obj->trigger(String("Yoba"));
-    TS_ASSERT_EQUALS(res.to_string(), "[3] \"Yoba\"");
+    TS_ASSERT_EQUALS(res.to_string(), "[3] Yoba");
   }
   
   void test_trigger_method( void )
@@ -53,10 +53,10 @@ public:
     TS_ASSERT(root.get(&obj, "/paul_name"));
     
     res = obj->trigger(gNilValue); 
-    TS_ASSERT_EQUALS(res.to_string(), "[1] \"Paul\"");
+    TS_ASSERT_EQUALS(res.to_string(), "[1] Paul");
     
     res = obj->trigger(String("John")); // [2]
-    TS_ASSERT_EQUALS(res.to_string(), "[2] \"John\"");
+    TS_ASSERT_EQUALS(res.to_string(), "[2] John");
     
     TS_ASSERT_EQUALS(p.mName.string(), "John");
   }

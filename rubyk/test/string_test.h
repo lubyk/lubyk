@@ -31,7 +31,7 @@ public:
   {
     Value s("\"one blah blah\"");
     TS_ASSERT(s.is_string());
-    TS_ASSERT_EQUALS( String(s).string(), "one blah blah");
+    TS_ASSERT_EQUALS( s.to_string(), "[1] one blah blah");
   }
   
   void test_from_url( void )
@@ -117,6 +117,6 @@ public:
     v = "Good day, Sir !";
     out.str(std::string(""));
     out << v;
-    TS_ASSERT_EQUALS(out.str(), "[1] \"Good day, Sir !\"");
+    TS_ASSERT_EQUALS(out.str(), "[1] Good day, Sir !");
   }
 };

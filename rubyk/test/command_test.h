@@ -23,7 +23,7 @@ class ParseCommandTest : public ParseHelper
 public:
   
   void test_parse_command( void ) 
-  { assert_result("v1=Number(value:1)\n","[8] \"#<Number:/v1 [3] 1.00>\"\n"); }
+  { assert_result("v1=Number(value:1)\n","<Number:/v1 1.00>\n"); }
   
 //FIX  void test_parse_zero( void ) 
 //FIX  { assert_result("v1=Value(0)\n","#<Value:v1 0.00>\n"); }

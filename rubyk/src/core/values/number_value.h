@@ -44,11 +44,22 @@ public:
   { 
 #ifdef _TESTING_
     char buffer[200];
-    snprintf(buffer, 200, "[%lu] %.2f", mId, mReal);
+    if (sShowId)
+      snprintf(buffer, 200, "[%lu] %.2f", mId, mReal);
+    else
+      snprintf(buffer, 200, "%.2f", mReal);
 #else
     char buffer[20];
     snprintf(buffer, 20, "%.2f", mReal);
 #endif
+    pStream << buffer;
+  }
+  
+  /** JSON representation of data into stream. */
+  virtual void to_json(std::ostream& pStream) const
+  {
+    char buffer[20];
+    snprintf(buffer, 20, "%.2f", mReal);
     pStream << buffer;
   }
   

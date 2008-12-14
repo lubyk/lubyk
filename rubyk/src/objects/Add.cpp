@@ -18,8 +18,12 @@ public:
   ATTR_ACCESSOR(mValue2, value2)
   
   virtual const Value inspect(const Value& val)  
-  { mResult = mValue1 + mValue2;
-    return mResult; }
+  { 
+    std::ostringstream oss;
+    mResult = mValue1 + mValue2;
+    oss << "<Add:" << url() << " " << mResult << ">";
+    return String(oss.str());
+  }
   
   // [1]
   void bang(const Value& val)

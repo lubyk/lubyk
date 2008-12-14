@@ -51,6 +51,6 @@ public:
     v = "Bad things happen.";
     out.str(std::string(""));
     out << v;
-    TS_ASSERT_EQUALS(out.str(), "[1] #\"Bad things happen.\"");
+    TS_ASSERT_EQUALS(out.str(), "[1] #Bad things happen.");
   }
 };
