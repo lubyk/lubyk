@@ -5,7 +5,7 @@
 
 #include <cstdio>
 #include <string>
-#include <vector>
+#include <list>
 #include <iostream>
 
 ///////////// MACRO FOR STATIC STRING HASH ////////////////
@@ -39,8 +39,8 @@
 
 typedef unsigned int uint;
 
-typedef std::vector<std::string>::iterator string_iterator;
-typedef std::vector<std::string>::const_iterator const_string_iterator;
+typedef std::list<std::string>::iterator string_iterator;
+typedef std::list<std::string>::const_iterator const_string_iterator;
 
 template<class K, class T>
 struct THashElement {
@@ -74,7 +74,7 @@ public:
     mSize = pOther.mSize;
     mTHashTable = new THashElement<K,T>[mSize];
     
-    for(it = pOther.begin(); it < end; it++) {
+    for(it = pOther.begin(); it != end; it++) {
       if (pOther.get(&value, *it)) {
         set(*it, value);
       }
@@ -87,7 +87,7 @@ public:
     const_string_iterator end = pOther.end();
     T value;
 
-    for(it = pOther.begin(); it < end; it++) {
+    for(it = pOther.begin(); it != end; it++) {
       if (pOther.get(&value, *it)) {
         set(*it, value);
       }
@@ -130,6 +130,7 @@ public:
   /** Remove all objects. */
   void clear() 
   {
+    // TODO: optimize...
     while(mKeys.begin() != mKeys.end()) {
       remove(*mKeys.begin());
     }
@@ -148,23 +149,23 @@ public:
   { return mSize; }
   
   /** List of keys. */
-  const std::vector<K> * keys() { return &mKeys; }
+  const std::list<K> * keys() { return &mKeys; }
   
   /** Begin iterator over the keys of the dictionary (read-only). */
-  typename std::vector<K>::const_iterator begin() const { return mKeys.begin(); }
+  typename std::list<K>::const_iterator begin() const { return mKeys.begin(); }
   
   /** Past end iterator over the keys of the dictionary (read-only). */
-  typename std::vector<K>::const_iterator end()   const { return mKeys.end(); }
+  typename std::list<K>::const_iterator end()   const { return mKeys.end(); }
   
   /** Begin iterator over the keys of the dictionary. */
-  typename std::vector<K>::iterator begin() { return mKeys.begin(); }
+  typename std::list<K>::iterator begin() { return mKeys.begin(); }
   
   /** Begin iterator over the keys of the dictionary. */
-  typename std::vector<K>::iterator end()   { return mKeys.end(); }
+  typename std::list<K>::iterator end()   { return mKeys.end(); }
 private:  
   /* data */
   THashElement<K,T> * mTHashTable;
-  std::vector<K>     mKeys;
+  std::list<K>        mKeys;  // FIXME: this should be a list !
   
   unsigned int mSize;
 };
@@ -223,23 +224,14 @@ bool THash<K,T>::get(T* pResult, const K& pId) const
 }
 
 template <class K, class T>
-bool THash<K,T>::get(T* pResult) const 
-{
-  if (mKeys.size() > 0)
-    return get(pResult, mKeys[mKeys.size() - 1]);
-  else
-    return false;
-}
-
-template <class K, class T>
 bool THash<K,T>::get_key(K* pResult, const T& pElement) const
 {
-  typename std::vector<K>::const_iterator it;
-  typename std::vector<K>::const_iterator end = mKeys.end();
+  typename std::list<K>::const_iterator it;
+  typename std::list<K>::const_iterator end = mKeys.end();
   
   T element;
   
-  for(it = mKeys.begin(); it < end; it++) {
+  for(it = mKeys.begin(); it != end; it++) {
     if (get(&element, *it) && element == pElement) {
       *pResult = *it;
       return true;
@@ -262,13 +254,13 @@ void THash<K,T>::remove(const K& pId) {
     found    = found->next;
   }
   if (found && found->obj) {
-    typename std::vector<K>::iterator it;
-    typename std::vector<K>::iterator end = mKeys.end();
-    for(it = mKeys.begin(); it < end; it++) {
-      if (*it == pId) {
-        mKeys.erase(it);
-        break;
-      }
+    typename std::list<K>::iterator it  = mKeys.begin();
+    typename std::list<K>::iterator end = mKeys.end();
+    while(it != end) {
+      if (*it == pId)
+        it = mKeys.erase(it);
+      else
+        it++;
     }
     
     if (set_next) {
@@ -300,7 +292,7 @@ void THash<K,T>::remove(const K& pId) {
 template <class K, class T>
 void THash<K,T>::remove_element(const T& pElement) {
   K key;
-  if (get_key(&key, pElement)) {
+  while (get_key(&key, pElement)) {
     remove(key);
   }
 }
@@ -308,11 +300,11 @@ void THash<K,T>::remove_element(const T& pElement) {
 template <class K, class T>
 std::ostream& operator<< (std::ostream& pStream, const THash<K,T>& hash)
 {
-  typename std::vector<K>::const_iterator it,begin,end;
+  typename std::list<K>::const_iterator it,begin,end;
   end   = hash.end();
   begin = hash.begin();
   T value;
-  for( it = begin; it < end; it++) {
+  for( it = begin; it != end; it++) {
     if (it != begin) pStream << " ";
     if (hash.get(&value, *it))
       pStream << *it << ":" << value;

@@ -5,7 +5,7 @@
 #include <fstream>
 #include "globals.cpp"
 
-Planet * gServer;
+Root * gServer;
 
 void term(int sig)
 {
@@ -41,7 +41,7 @@ static void * start_thread(void * data)
 
 int main(int argc, char * argv[])
 {
-  gServer = new Planet;
+  gServer = new Root;
   gGLWindowStartThread = NULL;
   gGLWindowNode = NULL; /////// GLWINDOW HACK
   gQuitGl  = false;

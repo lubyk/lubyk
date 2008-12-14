@@ -12,6 +12,13 @@ public:
     assert_info("/class/Test", "Object used for testing. Does not do anything really useful.");
   }
   
+  void test_set_default_argument( void )
+  { 
+    create("/n", "Test", "\"Single text argument\"", "[4] /n"); // 2 values + 3 => 5 + 1 => [6]. Ok !
+    assert_call("/n/message", "", "Single text argument");
+    assert_inspect("/n", "<Test:/n '[1] Single text argument' counter:0>");
+  }
+  
   void test_class_method( void )
   { 
     assert_call("/class/Test/hello", "", "Hello: Nil");
@@ -33,7 +40,7 @@ public:
   {   
     create("/t", "Test", "counter: 5 message:hopla", "[6] /t");
     assert_call("/t/in",           "", "bang/,counter/,info/");
-    assert_call("/t/in/bang",      "", "link");
+    assert_call("/t/in/bang",      "", "link,unlink");
     assert_call("/t/in/bang/#info","", "Set counter | increment and send.");
   }
   
@@ -41,7 +48,7 @@ public:
   {   
     create("/t", "Test", "counter: 5 message:hopla", "[6] /t");
     assert_call("/t/out", ""      , "counter/,nil/");
-    assert_call("/t/out/counter", ""      , "link");
+    assert_call("/t/out/counter", ""      , "link,unlink");
     assert_call("/t/out/counter/#info","", "Increasing counter.");
   }
   
@@ -52,7 +59,7 @@ public:
     assert_call("/t/in/bang/link/#info", ""      , "Create a link / list links.");
     
     // should not allow creating a link from inlet to inlet:
-    assert_call("/t/in/bang/link", "/t2/in/bang", "[21] #Could not create link ([20] /t2/in/bang: incompatible).");
+    assert_call("/t/in/bang/link", "/t2/in/bang", "[21] #Could not update link ([20] /t2/in/bang: incompatible).");
     
     // should allow creating a link from an inlet to an outlet
     assert_call("/t/in/bang/link", "/t2/out/counter", "/t2/out/counter");

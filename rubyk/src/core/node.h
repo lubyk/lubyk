@@ -14,14 +14,14 @@
 #include <list>
 #include <pthread.h>
 
-
+class Observer;
 
 class Node : public Object
 {
 public:
   Node() {}
   
-  virtual ~Node() {}
+  virtual ~Node();
   
   /** Class signature. */
   virtual uint type()
@@ -72,6 +72,21 @@ public:
     }
   }
   
+  /** Add an observer that will be notified of node changes. */
+  void register_observer(Observer * pObs)
+  {
+    mObservers.push_back(pObs);
+  }
+  
+  /** Stop notifying an observer of node changes. */
+  void unregister_observer(Observer * pObs)
+  {
+    std::list<Observer*>::iterator end = mObservers.end();
+    for(std::list<Observer*>::iterator it = mObservers.begin(); it != end; it++) {
+      if (*it == pObs) it = mObservers.erase(it);
+    }
+  }
+  
   /** This method must be implemented in subclasses. It is used to do a basic setup with default parameters before these
     * are changed during runtime. */
   virtual bool init()
@@ -105,6 +120,9 @@ public:
     mOutlets[pPort - 1]->send(val);
   }
   
+  /** Notify observers of a change. */
+  void notify(uint key, const Value& pValue);
+  
 private:
   
   bool  mIsOK;     /**< If something bad arrived to the node during initialization or edit, the node goes into
@@ -114,10 +132,9 @@ private:
                             *  will receive the signal after a node that has a greater mTriggerPosition. */
   String mClassUrl;        /**< Url for the node's class. */
   
-  std::vector<Inlet*>  mInlets; /**< List of inlets. FIXME: is this used ? */
-  std::vector<Outlet*> mOutlets; /**< List of outlets. */
+  std::vector<Inlet*>  mInlets;    /**< List of inlets. FIXME: is this used ? */
+  std::vector<Outlet*> mOutlets;   /**< List of outlets. */
+  std::list<Observer*> mObservers; /**< Observers to notify of node changes (observing satellites/commands). */
 };
-
-
 
 #endif // _NODE_H_

@@ -42,6 +42,12 @@ public:
     clear();
   }
   
+  virtual void clear()
+  {
+    this->Object::clear();
+    mPendingLinks.clear();
+  }
+  
   /** Code run on root creation. */
   void init()
   {
@@ -129,6 +135,12 @@ public:
     
     // 4. this is the new root
     pObj->mRoot = this;
+  }
+  
+  /** Add an alias url for an object. */
+  void set_alias(const std::string& pUrl, Object * pObj)
+  {
+    mObjects.set(pUrl, pObj);
   }
   
   /** Remove object from tree. */

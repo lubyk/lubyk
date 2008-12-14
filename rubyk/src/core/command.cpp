@@ -7,18 +7,18 @@
 
 #line 9 "src/core/command.cpp"
 static const char _command_actions[] = {
-	0, 1, 0, 1, 2, 1, 3, 1, 
-	4, 1, 13, 1, 14, 1, 15, 1, 
-	17, 1, 18, 1, 19, 2, 1, 6, 
-	2, 1, 7, 2, 1, 8, 2, 1, 
-	11, 2, 1, 12, 2, 2, 14, 2, 
-	2, 15, 2, 5, 9, 2, 5, 10, 
-	2, 13, 17, 2, 14, 17, 2, 15, 
-	17, 2, 16, 17, 3, 1, 11, 17, 
-	3, 1, 12, 17, 3, 2, 14, 17, 
-	3, 2, 15, 17, 3, 2, 16, 17, 
-	3, 5, 10, 0, 4, 2, 14, 1, 
-	7
+	0, 1, 0, 1, 1, 1, 3, 1, 
+	4, 1, 5, 1, 11, 1, 12, 1, 
+	13, 1, 15, 1, 16, 1, 17, 2, 
+	0, 1, 2, 2, 6, 2, 2, 7, 
+	2, 2, 8, 2, 2, 9, 2, 2, 
+	10, 2, 3, 12, 2, 3, 13, 2, 
+	5, 1, 2, 11, 15, 2, 12, 15, 
+	2, 13, 15, 2, 14, 15, 3, 2, 
+	9, 15, 3, 2, 10, 15, 3, 3, 
+	12, 15, 3, 3, 13, 15, 3, 3, 
+	14, 15, 3, 5, 0, 1, 4, 3, 
+	12, 2, 7
 };
 
 static const short _command_key_offsets[] = {
@@ -174,60 +174,60 @@ static const unsigned char _command_indicies[] = {
 	21, 22, 23, 26, 16, 0, 27, 28, 
 	27, 29, 0, 30, 0, 21, 21, 22, 
 	23, 30, 0, 18, 31, 17, 17, 17, 
-	17, 0, 32, 32, 33, 34, 34, 35, 
-	0, 37, 38, 36, 39, 39, 40, 41, 
-	0, 42, 42, 14, 17, 0, 36, 35, 
-	0, 39, 39, 40, 43, 35, 41, 0, 
-	44, 0, 39, 39, 40, 44, 41, 0, 
-	45, 46, 45, 47, 48, 49, 50, 5, 
-	5, 5, 5, 0, 51, 51, 52, 53, 
-	0, 54, 0, 54, 54, 55, 0, 56, 
-	57, 56, 58, 59, 55, 55, 55, 55, 
-	0, 60, 0, 56, 57, 56, 58, 60, 
-	60, 60, 60, 0, 61, 61, 62, 63, 
-	0, 61, 61, 63, 0, 64, 63, 63, 
-	63, 63, 0, 65, 66, 67, 67, 68, 
-	69, 0, 71, 72, 70, 73, 73, 74, 
-	75, 0, 76, 76, 77, 0, 77, 77, 
-	65, 67, 67, 68, 0, 68, 0, 73, 
-	73, 74, 75, 78, 68, 0, 79, 80, 
-	79, 81, 0, 82, 0, 73, 73, 74, 
-	75, 82, 0, 70, 83, 69, 69, 69, 
-	69, 0, 84, 84, 85, 86, 86, 87, 
-	0, 89, 90, 88, 91, 91, 92, 93, 
-	0, 94, 94, 66, 69, 0, 88, 87, 
-	0, 91, 91, 92, 95, 87, 93, 0, 
-	96, 0, 91, 91, 92, 96, 93, 0, 
-	62, 62, 97, 0, 98, 99, 98, 100, 
-	101, 97, 97, 97, 97, 0, 102, 0, 
-	98, 99, 98, 100, 102, 102, 102, 102, 
-	0, 103, 104, 105, 105, 106, 107, 0, 
-	109, 110, 108, 111, 111, 112, 113, 0, 
-	114, 114, 115, 0, 115, 115, 103, 105, 
-	105, 106, 0, 106, 0, 111, 111, 112, 
-	113, 116, 106, 0, 117, 0, 118, 0, 
-	111, 111, 112, 113, 118, 0, 108, 119, 
-	107, 107, 107, 107, 0, 120, 120, 121, 
-	122, 122, 123, 0, 125, 126, 124, 127, 
-	127, 128, 129, 0, 130, 130, 104, 107, 
-	0, 124, 123, 0, 127, 127, 128, 131, 
-	123, 129, 0, 132, 0, 127, 127, 128, 
-	132, 129, 0, 133, 0, 134, 135, 134, 
-	136, 137, 138, 139, 133, 133, 133, 133, 
-	0, 140, 140, 3, 52, 141, 0, 62, 
-	0, 142, 143, 144, 144, 145, 146, 0, 
-	148, 149, 147, 150, 150, 151, 152, 0, 
-	153, 153, 154, 0, 154, 154, 142, 144, 
-	144, 145, 0, 145, 0, 150, 150, 151, 
-	152, 155, 145, 0, 156, 157, 156, 158, 
-	0, 159, 0, 150, 150, 151, 152, 159, 
-	0, 147, 160, 146, 146, 146, 146, 0, 
-	161, 161, 162, 163, 163, 164, 0, 166, 
-	167, 165, 168, 168, 169, 170, 0, 171, 
-	171, 143, 146, 0, 165, 164, 0, 168, 
-	168, 169, 172, 164, 170, 0, 173, 0, 
-	168, 168, 169, 173, 170, 0, 175, 174, 
-	1, 2, 1, 3, 4, 5, 0, 176, 
+	17, 0, 31, 31, 32, 33, 33, 34, 
+	0, 36, 37, 35, 38, 38, 22, 39, 
+	0, 40, 40, 14, 17, 0, 35, 34, 
+	0, 38, 38, 22, 41, 34, 39, 0, 
+	42, 0, 38, 38, 22, 42, 39, 0, 
+	43, 44, 43, 45, 46, 47, 48, 5, 
+	5, 5, 5, 0, 49, 49, 50, 51, 
+	0, 52, 0, 52, 52, 53, 0, 54, 
+	55, 54, 56, 57, 53, 53, 53, 53, 
+	0, 58, 0, 54, 55, 54, 56, 58, 
+	58, 58, 58, 0, 59, 59, 60, 61, 
+	0, 59, 59, 61, 0, 62, 61, 61, 
+	61, 61, 0, 63, 64, 65, 65, 66, 
+	67, 0, 69, 70, 68, 71, 71, 72, 
+	73, 0, 74, 74, 75, 0, 75, 75, 
+	63, 65, 65, 66, 0, 66, 0, 71, 
+	71, 72, 73, 76, 66, 0, 77, 78, 
+	77, 79, 0, 80, 0, 71, 71, 72, 
+	73, 80, 0, 68, 81, 67, 67, 67, 
+	67, 0, 81, 81, 82, 83, 83, 84, 
+	0, 86, 87, 85, 88, 88, 72, 89, 
+	0, 90, 90, 64, 67, 0, 85, 84, 
+	0, 88, 88, 72, 91, 84, 89, 0, 
+	92, 0, 88, 88, 72, 92, 89, 0, 
+	60, 60, 93, 0, 94, 95, 94, 96, 
+	97, 93, 93, 93, 93, 0, 98, 0, 
+	94, 95, 94, 96, 98, 98, 98, 98, 
+	0, 99, 100, 101, 101, 102, 103, 0, 
+	105, 106, 104, 107, 107, 108, 109, 0, 
+	110, 110, 111, 0, 111, 111, 99, 101, 
+	101, 102, 0, 102, 0, 107, 107, 108, 
+	109, 112, 102, 0, 113, 0, 114, 0, 
+	107, 107, 108, 109, 114, 0, 104, 115, 
+	103, 103, 103, 103, 0, 115, 115, 116, 
+	117, 117, 118, 0, 120, 121, 119, 122, 
+	122, 108, 123, 0, 124, 124, 100, 103, 
+	0, 119, 118, 0, 122, 122, 108, 125, 
+	118, 123, 0, 126, 0, 122, 122, 108, 
+	126, 123, 0, 127, 0, 128, 129, 128, 
+	130, 131, 132, 133, 127, 127, 127, 127, 
+	0, 134, 134, 3, 50, 135, 0, 60, 
+	0, 136, 137, 138, 138, 139, 140, 0, 
+	142, 143, 141, 144, 144, 145, 146, 0, 
+	147, 147, 148, 0, 148, 148, 136, 138, 
+	138, 139, 0, 139, 0, 144, 144, 145, 
+	146, 149, 139, 0, 150, 151, 150, 152, 
+	0, 153, 0, 144, 144, 145, 146, 153, 
+	0, 141, 154, 140, 140, 140, 140, 0, 
+	154, 154, 155, 156, 156, 157, 0, 159, 
+	160, 158, 161, 161, 145, 162, 0, 163, 
+	163, 137, 140, 0, 158, 157, 0, 161, 
+	161, 145, 164, 157, 162, 0, 165, 0, 
+	161, 161, 145, 165, 162, 0, 167, 166, 
+	1, 2, 1, 3, 4, 5, 0, 168, 
 	0
 };
 
@@ -236,68 +236,66 @@ static const char _command_trans_targs[] = {
 	7, 111, 3, 8, 7, 9, 15, 13, 
 	14, 19, 9, 10, 18, 11, 15, 12, 
 	11, 12, 16, 7, 111, 3, 17, 20, 
-	20, 21, 25, 26, 21, 22, 24, 23, 
-	15, 19, 23, 27, 28, 30, 111, 64, 
-	85, 31, 36, 30, 31, 36, 32, 33, 
-	7, 111, 3, 34, 35, 37, 60, 38, 
-	39, 40, 46, 44, 45, 50, 40, 41, 
-	49, 42, 46, 43, 42, 43, 47, 7, 
-	111, 3, 48, 51, 51, 52, 56, 57, 
-	52, 53, 55, 54, 46, 50, 54, 58, 
-	59, 61, 7, 111, 3, 62, 63, 65, 
-	71, 69, 70, 75, 65, 66, 74, 67, 
-	71, 68, 67, 68, 72, 111, 73, 76, 
-	76, 77, 81, 82, 77, 78, 80, 79, 
-	71, 75, 79, 83, 84, 86, 87, 111, 
-	3, 89, 31, 88, 87, 88, 90, 96, 
-	94, 95, 100, 90, 91, 99, 92, 96, 
-	93, 92, 93, 97, 7, 111, 3, 98, 
-	101, 101, 102, 106, 107, 102, 103, 105, 
-	104, 96, 100, 104, 108, 109, 110, 112, 
+	21, 25, 26, 21, 22, 24, 23, 19, 
+	23, 27, 28, 30, 111, 64, 85, 31, 
+	36, 30, 31, 36, 32, 33, 7, 111, 
+	3, 34, 35, 37, 60, 38, 39, 40, 
+	46, 44, 45, 50, 40, 41, 49, 42, 
+	46, 43, 42, 43, 47, 7, 111, 3, 
+	48, 51, 52, 56, 57, 52, 53, 55, 
+	54, 50, 54, 58, 59, 61, 7, 111, 
+	3, 62, 63, 65, 71, 69, 70, 75, 
+	65, 66, 74, 67, 71, 68, 67, 68, 
+	72, 111, 73, 76, 77, 81, 82, 77, 
+	78, 80, 79, 75, 79, 83, 84, 86, 
+	87, 111, 3, 89, 31, 88, 87, 88, 
+	90, 96, 94, 95, 100, 90, 91, 99, 
+	92, 96, 93, 92, 93, 97, 7, 111, 
+	3, 98, 101, 102, 106, 107, 102, 103, 
+	105, 104, 100, 104, 108, 109, 110, 112, 
 	0
 };
 
 static const char _command_trans_actions[] = {
-	17, 0, 15, 0, 1, 1, 7, 1, 
-	39, 72, 39, 3, 0, 0, 0, 1, 
-	1, 1, 1, 0, 1, 42, 42, 42, 
-	0, 0, 1, 13, 54, 13, 1, 5, 
-	0, 0, 1, 1, 1, 0, 1, 45, 
-	45, 80, 0, 1, 1, 21, 76, 3, 
-	21, 21, 21, 0, 0, 0, 0, 1, 
-	33, 64, 33, 27, 1, 0, 0, 1, 
-	7, 0, 0, 1, 1, 1, 1, 0, 
-	1, 42, 42, 42, 0, 0, 1, 9, 
-	48, 9, 1, 5, 0, 0, 1, 1, 
-	1, 0, 1, 45, 45, 80, 0, 1, 
-	1, 1, 30, 60, 30, 27, 1, 0, 
-	0, 1, 1, 1, 1, 0, 1, 42, 
-	42, 42, 0, 0, 1, 57, 1, 5, 
-	0, 0, 1, 1, 1, 0, 1, 45, 
-	45, 80, 0, 1, 1, 1, 84, 68, 
-	36, 3, 24, 24, 0, 0, 0, 0, 
-	1, 1, 1, 1, 0, 1, 42, 42, 
-	42, 0, 0, 1, 11, 51, 11, 1, 
-	5, 0, 0, 1, 1, 1, 0, 1, 
-	45, 45, 80, 0, 1, 1, 0, 19, 
+	19, 0, 17, 0, 1, 1, 7, 1, 
+	44, 74, 44, 5, 0, 3, 0, 23, 
+	23, 23, 23, 3, 23, 47, 9, 47, 
+	3, 3, 23, 15, 56, 15, 23, 3, 
+	3, 23, 23, 23, 3, 23, 47, 82, 
+	3, 23, 23, 26, 78, 5, 26, 26, 
+	26, 0, 0, 0, 0, 1, 38, 66, 
+	38, 32, 1, 0, 0, 1, 7, 3, 
+	0, 23, 23, 23, 23, 3, 23, 47, 
+	9, 47, 3, 3, 23, 11, 50, 11, 
+	23, 3, 3, 23, 23, 23, 3, 23, 
+	47, 82, 3, 23, 23, 1, 35, 62, 
+	35, 32, 1, 3, 0, 23, 23, 23, 
+	23, 3, 23, 47, 9, 47, 3, 3, 
+	23, 59, 23, 3, 3, 23, 23, 23, 
+	3, 23, 47, 82, 3, 23, 23, 1, 
+	86, 70, 41, 5, 29, 29, 0, 0, 
+	3, 0, 23, 23, 23, 23, 3, 23, 
+	47, 9, 47, 3, 3, 23, 13, 53, 
+	13, 23, 3, 3, 23, 23, 23, 3, 
+	23, 47, 82, 3, 23, 23, 0, 21, 
 	0
 };
 
 static const char _command_eof_actions[] = {
-	0, 17, 17, 17, 17, 17, 17, 17, 
-	17, 17, 17, 17, 17, 17, 17, 17, 
-	17, 17, 17, 17, 17, 17, 17, 17, 
-	17, 17, 17, 17, 17, 17, 17, 17, 
-	17, 17, 17, 17, 17, 17, 17, 17, 
-	17, 17, 17, 17, 17, 17, 17, 17, 
-	17, 17, 17, 17, 17, 17, 17, 17, 
-	17, 17, 17, 17, 17, 17, 17, 17, 
-	17, 17, 17, 17, 17, 17, 17, 17, 
-	17, 17, 17, 17, 17, 17, 17, 17, 
-	17, 17, 17, 17, 17, 17, 17, 17, 
-	17, 17, 17, 17, 17, 17, 17, 17, 
-	17, 17, 17, 17, 17, 17, 17, 17, 
-	17, 17, 17, 17, 17, 17, 0, 0, 
+	0, 19, 19, 19, 19, 19, 19, 19, 
+	19, 19, 19, 19, 19, 19, 19, 19, 
+	19, 19, 19, 19, 19, 19, 19, 19, 
+	19, 19, 19, 19, 19, 19, 19, 19, 
+	19, 19, 19, 19, 19, 19, 19, 19, 
+	19, 19, 19, 19, 19, 19, 19, 19, 
+	19, 19, 19, 19, 19, 19, 19, 19, 
+	19, 19, 19, 19, 19, 19, 19, 19, 
+	19, 19, 19, 19, 19, 19, 19, 19, 
+	19, 19, 19, 19, 19, 19, 19, 19, 
+	19, 19, 19, 19, 19, 19, 19, 19, 
+	19, 19, 19, 19, 19, 19, 19, 19, 
+	19, 19, 19, 19, 19, 19, 19, 19, 
+	19, 19, 19, 19, 19, 19, 0, 0, 
 	0
 };
 
@@ -333,7 +331,7 @@ void Command::initialize()
   clear();
   
   
-#line 337 "src/core/command.cpp"
+#line 335 "src/core/command.cpp"
 	{
 	cs = command_start;
 	}
@@ -370,8 +368,11 @@ void Command::parse(const std::string& pStr)
   const char *eof = NULL;  // FIXME: this should be set to 'pe' on the last pStr block...
   int cs = mCurrentState;        // restore machine state
   
+#ifdef DEBUG_PARSER
+  printf("parse:\"%s\"\n",pStr.c_str());
+#endif
   
-#line 375 "src/core/command.cpp"
+#line 376 "src/core/command.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -446,7 +447,7 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 67 "src/core/command.rl"
+#line 70 "src/core/command.rl"
 	{
       if (mTokenIndex >= MAX_TOKEN_SIZE) {
         std::cerr << "Buffer overflow !" << std::endl;
@@ -461,87 +462,80 @@ _match:
     }
 	break;
 	case 1:
-#line 80 "src/core/command.rl"
-	{ set_from_token(mVar);}
+#line 83 "src/core/command.rl"
+	{
+      // FIXME: this is a temporary hack until we sub parse with Value...
+      mParamString += (*p);
+    }
 	break;
 	case 2:
-#line 82 "src/core/command.rl"
-	{ set_from_token(mMethod);}
+#line 88 "src/core/command.rl"
+	{ set_from_token(mVar);}
 	break;
 	case 3:
-#line 84 "src/core/command.rl"
-	{ set_from_token(mKey);}
+#line 90 "src/core/command.rl"
+	{ set_from_token(mMethod);}
 	break;
 	case 4:
-#line 86 "src/core/command.rl"
+#line 92 "src/core/command.rl"
 	{ set_from_token(mClass);}
 	break;
 	case 5:
-#line 88 "src/core/command.rl"
+#line 94 "src/core/command.rl"
 	{ set_from_token(mValue);}
 	break;
 	case 6:
-#line 90 "src/core/command.rl"
+#line 96 "src/core/command.rl"
 	{ mFrom     = mVar; }
 	break;
 	case 7:
-#line 92 "src/core/command.rl"
+#line 98 "src/core/command.rl"
 	{ mFromPort = mVar; }
 	break;
 	case 8:
-#line 94 "src/core/command.rl"
+#line 100 "src/core/command.rl"
 	{ mToPort   = mVar; }
 	break;
 	case 9:
-#line 96 "src/core/command.rl"
-	{ 
-      add_value_from_token(); 
-    }
-	break;
-	case 10:
-#line 100 "src/core/command.rl"
-	{ set_parameter(mKey, mValue); }
-	break;
-	case 11:
-#line 102 "src/core/command.rl"
+#line 106 "src/core/command.rl"
 	{
       mTo   = mVar;
       create_link();
     }
 	break;
-	case 12:
-#line 107 "src/core/command.rl"
+	case 10:
+#line 111 "src/core/command.rl"
 	{
       mTo   = mVar;
       remove_link();
     }
 	break;
-	case 13:
-#line 112 "src/core/command.rl"
+	case 11:
+#line 116 "src/core/command.rl"
 	{ create_instance(); }
 	break;
-	case 14:
-#line 114 "src/core/command.rl"
+	case 12:
+#line 118 "src/core/command.rl"
 	{ execute_method(); }
 	break;
-	case 15:
-#line 116 "src/core/command.rl"
+	case 13:
+#line 120 "src/core/command.rl"
 	{ execute_class_method(); }
 	break;
-	case 16:
-#line 118 "src/core/command.rl"
+	case 14:
+#line 122 "src/core/command.rl"
 	{ execute_command(); }
 	break;
-	case 17:
-#line 122 "src/core/command.rl"
+	case 15:
+#line 126 "src/core/command.rl"
 	{
       if (!mQuit) {
         clear();
       }
     }
 	break;
-	case 18:
-#line 127 "src/core/command.rl"
+	case 16:
+#line 131 "src/core/command.rl"
 	{
       p--; // move back one char
       char error_buffer[10];
@@ -551,11 +545,11 @@ _match:
       {cs = 110; goto _again;} // eat the rest of the line and continue parsing
     }
 	break;
-	case 19:
-#line 136 "src/core/command.rl"
+	case 17:
+#line 140 "src/core/command.rl"
 	{ {cs = 1; goto _again;} }
 	break;
-#line 559 "src/core/command.cpp"
+#line 553 "src/core/command.cpp"
 		}
 	}
 
@@ -571,8 +565,8 @@ _again:
 	unsigned int __nacts = (unsigned int) *__acts++;
 	while ( __nacts-- > 0 ) {
 		switch ( *__acts++ ) {
-	case 18:
-#line 127 "src/core/command.rl"
+	case 16:
+#line 131 "src/core/command.rl"
 	{
       p--; // move back one char
       char error_buffer[10];
@@ -582,14 +576,14 @@ _again:
       {cs = 110; goto _again;} // eat the rest of the line and continue parsing
     }
 	break;
-#line 586 "src/core/command.cpp"
+#line 580 "src/core/command.cpp"
 		}
 	}
 	}
 
 	_out: {}
 	}
-#line 188 "src/core/command.rl"
+#line 192 "src/core/command.rl"
 
 //  printf("{%s}\n",p);
   mCurrentState = cs;
@@ -604,6 +598,13 @@ void Command::close()
   }
 }
 
+const Value Command::get_params ()
+{
+  Value params(mParamString);
+  mParamString = "";
+  return params;
+}
+
 void Command::set_from_token (std::string& pElem)
 {
   mToken[mTokenIndex] = '\0';
@@ -616,32 +617,25 @@ void Command::set_from_token (std::string& pElem)
   mTokenIndex = 0;
 }
 
-void Command::add_value_from_token () 
-{
-  // FIXME: what do we do here ? 
-  // mParameters.add(mValue); // add to 'list' value
-}
-
-void Command::set_parameter  (const std::string& pKey, const std::string& pValue) 
-{
-  mParameters.set_key(pKey,Value(pValue));
-}
-
 // FIXME: create_instance should run in server space with concurrency locks.
 void Command::create_instance()
 {
+  Value params = get_params();
+  
   mTree->lock();
     // FIXME: Group scope
     // FIXME: should be new_object(mVar, mClass, Value(mParams))
-    Value res = mTree->new_object(mVar, mClass, mParameters);
-    if (res.is_string()) {
-      std::string url = String(res).string();
-      res = mTree->call(url.append("/#inspect"));
-    }
+    Value res = mTree->new_object(mVar, mClass, params);
   mTree->unlock();
-
+  
+  if (res.is_string()) {
+    std::string url = String(res).string();
+    res = mTree->call(url.append("/#inspect"));
+  }
+  
+  
 #ifdef DEBUG_PARSER
-  std::cout << "NEW "<< mVar << " = " << mClass << "(" << mParameters << ")";
+  std::cout << "NEW "<< mVar << " = " << mClass << "(" << params << ")";
 #endif
 
   if (!mSilent)
@@ -653,7 +647,7 @@ void Command::create_link()
 { 
   mTree->lock();
     // FIXME: Group scope
-    mTree->create_link(mFrom, mFromPort, mToPort, mTo);
+    mTree->create_link(std::string("/").append(mFrom), mFromPort, mToPort, std::string("/").append(mTo));
   mTree->unlock();
 
 #ifdef DEBUG_PARSER
@@ -665,7 +659,7 @@ void Command::remove_link()
 { 
   mTree->lock();
     // FIXME: Group scope
-    mTree->remove_link(mFrom, mFromPort, mToPort, mTo);
+    mTree->remove_link(std::string("/").append(mFrom), mFromPort, mToPort, std::string("/").append(mTo));
   mTree->unlock();
 
 #ifdef DEBUG_PARSER
@@ -677,19 +671,31 @@ void Command::remove_link()
 void Command::execute_method()
 {
   Value res;
+  Value params = get_params();
+  
+  if (params.is_nil()) params = gBangValue;
+  
   mTree->lock();
     // FIXME: Group scope
-    res = mTree->call(std::string("/").append(mVar).append("/").append(mMethod), mParameters);
+    if (mMethod == "b") mMethod = "bang";
+    Object * meth = mTree->find(std::string("/").append(mVar).append("/").append(mMethod));
+    if (meth) {
+      res = meth->trigger(params);
+    } else {
+      res = mTree->call(std::string("/").append(mVar).append("/in/").append(mMethod), params);
+    }
   mTree->unlock();
-  
-  *mOutput << res << std::endl;
+  if (!res.is_nil()) *mOutput << res << std::endl;
 }
 
 void Command::execute_class_method()
 {
   Value res;
+  Value params = get_params();
+  if (params.is_nil()) params = gBangValue;
+  
   mTree->lock();
-    res = mTree->call(std::string(CLASS_ROOT).append("/").append(mClass).append("/").append(mMethod), mParameters);
+    res = mTree->call(std::string(CLASS_ROOT).append("/").append(mClass).append("/").append(mMethod), params);
   mTree->unlock();
   
   *mOutput << res << std::endl;
@@ -698,6 +704,9 @@ void Command::execute_class_method()
 void Command::execute_command()
 {
   Value res;
+  Value params = get_params();
+  if (params.is_nil()) params = gBangValue;
+  
   mTree->lock();
     // FIXME: Group scope
     res = mTree->call(std::string("/").append(mMethod));
@@ -733,7 +742,7 @@ void Command::clear()
   mAction     = CmdNoAction;
   mVar        = "";
   mClass      = "";
-  mParameters.clear();
-  mFromPort = 1;
-  mToPort   = 1;
+  mParamString = "";
+  mFromPort = "";
+  mToPort   = "";
 }

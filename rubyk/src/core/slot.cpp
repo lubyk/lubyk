@@ -66,7 +66,7 @@ void Slot::remove_connection(Slot * pOther)
   mConnections.remove(pOther);
 }
 
-const Value Slot::link(const Value& val)
+const Value Slot::change_link(const Value& val, bool pCreate)
 {
   if (val.is_nil()) {
     // return list of links
@@ -79,10 +79,12 @@ const Value Slot::link(const Value& val)
     }
     return String(res);
   } else {
-    // create a new link
+    // update a link (create/destroy)
+    
     // TODO: make sure it does not already exist.
+    
     Object * target = mRoot->find(String(val));
-    if (!target) return Error("Could not create link (").append(val.to_string()).append(": not found).");
+    if (!target) return Error("Could not update link (").append(val.to_string()).append(": not found).");
     
     if (type() == H("Outlet")) {
       target = (Slot*)TYPE_CAST(Inlet,target);
@@ -90,11 +92,19 @@ const Value Slot::link(const Value& val)
       target = (Slot*)TYPE_CAST(Outlet,target);
     }
     
-    if (!target) return Error("Could not create link (").append(val.to_string()).append(": incompatible).");
+    if (!target) return Error("Could not update link (").append(val.to_string()).append(": incompatible).");
     
-    if (connect((Slot*)target))
+    if (pCreate){
+      // connect
+      if (connect((Slot*)target)) {
+        //std::cout << "LINKED: " << url() << " with " << val << std::endl;
+        return String(val);
+      } else
+        return Error("Could not make the connection with (").append(val.to_string()).append(").");
+    } else {
+      // disconnect
+      disconnect((Slot*)target);
       return String(val);
-    else
-      return Error("Could not make the connection with (").append(val.to_string()).append(").");
+    }
   }
 }

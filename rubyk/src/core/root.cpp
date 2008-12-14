@@ -18,9 +18,8 @@ const Value Root::new_object(const char * pUrl, const char * pClass, const Value
 {
   Hash h;
   h.set_key("url", String(pUrl));
-  h.set_key("params", Hash(pParams));
+  h.set_key("params", pParams);
   Value res = call(std::string(classes()->url()).append("/").append(pClass).append("/new"), h);
-  if (!res.is_error()) create_pending_links();
   return res;
 }
 
@@ -29,20 +28,27 @@ const Value Root::new_object(const std::string& pUrl, const std::string& pClass,
 {  
   Hash h;
   h.set_key("url", String(pUrl));
-  h.set_key("params", Hash(pParams));
+  h.set_key("params", pParams);
   Value res = call(std::string(classes()->url()).append("/").append(pClass).append("/new"), h);
-  if (!res.is_error()) create_pending_links();
   return res;
 }
 
 const Value Root::create_link(const std::string& pFrom, const std::string& pFromPort, const std::string& pToPort, const std::string& pTo)
 {
-  //std::cout << "pending " << pFrom << "("<< pFromPort << ")" << " --> " << pTo << "("<< pToPort << ")" << std::endl;
+  //std::cout << "pending " << pFrom << "("<< pFromPort << ":" << pFromPort.length() << ")" << " --> " << pTo << "("<< pToPort << ")" << std::endl;
   
   std::string url(pFrom);
-  url.append("/out/").append(pFromPort).append("/link");
+  if (pFromPort != "")
+    url.append("/out/").append(pFromPort).append("/link");
+  else
+    url.append("/out/1/link"); // all outlets have an alias with their id
+    
   String param(pTo);
-  param.append("/in/").append(pToPort);
+  
+  if (pToPort != "")
+    param.append("/in/").append(pToPort);
+  else
+    param.append("/in/1"); // all inlets have an alias with their id
   
   // try to create link
   Value res = call(url, param);
@@ -51,12 +57,21 @@ const Value Root::create_link(const std::string& pFrom, const std::string& pFrom
 }
 
 const Value Root::remove_link(const std::string& pFrom, const std::string& pFromPort, const std::string& pToPort, const std::string& pTo)
-{  
-  std::string url(pFrom);
-  url.append("/out/").append(pFromPort).append("/unlink");
-  String param(pTo);
-  param.append("/in/").append(pToPort);
+{ 
   
+  std::string url(pFrom);
+  if (pFromPort != "")
+    url.append("/out/").append(pFromPort).append("/unlink");
+  else
+    url.append("/out/1/unlink"); // all outlets have an alias with their id
+    
+  String param(pTo);
+  
+  if (pToPort != "")
+    param.append("/in/").append(pToPort);
+  else
+    param.append("/in/1"); // all inlets have an alias with their id
+    
   // try to remove link
   Value res = call(url, param);
   return res;
@@ -71,10 +86,11 @@ const Value Root::create_pending_links()
   Value res;
   
   while(it != end) {
+    //std::cout << "PENDING " << it->mUrl << " => " << it->mParam << std::endl;
     res = call(it->mUrl, it->mParam);
-    if (res.is_string()) 
+    if (res.is_string()) {
       it = mPendingLinks.erase(it);  // call succeeded
-    else
+    } else
       it++;
   }
   // return list of created links ?

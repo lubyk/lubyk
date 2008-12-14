@@ -6,7 +6,7 @@
 #include <string>
 
 class Hash;
-typedef std::vector<std::string>::const_iterator Hash_iterator;
+typedef std::list<std::string>::const_iterator Hash_iterator;
 
 /* Holds the actual data of the Hash class. This is a wrapper around a THash. */
 class HashData : public Data
@@ -24,7 +24,6 @@ public:
   HashData(const HashData& pOther) : mHash(pOther.storage_size())
   {
     mHash = pOther.mHash;
-    mListValues = pOther.mListValues; // FIXME: what is this ?
   }
 
   virtual ~HashData() {}
@@ -147,10 +146,7 @@ public:
   //FIX }
   
   void clear () 
-  { mHash.clear(); mListValues.clear();  }
-  
-  //FIX size_t size () const
-  //FIX { return mListValues.size(); }
+  { mHash.clear(); }
   
   unsigned int storage_size() const
   {
@@ -162,8 +158,6 @@ public:
 private:  
   friend class Hash;
   THash<std::string,Value>  mHash; /** Hash of std::string => Value. */
-  
-  std::vector<std::string>  mListValues; //TODO: remove this and store values in a matrix as first element in dictionary.
   
 };
 

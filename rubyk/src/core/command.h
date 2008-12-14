@@ -5,7 +5,7 @@
 #include "values.h"
 #include "thash.h"
 #include "node.h"
-
+#include "observer.h"
 
 #define MAX_TOKEN_SIZE 2048
 
@@ -18,7 +18,7 @@ typedef enum command_actions_ {
 
 class Planet;
 
-class Command
+class Command : public Observer
 {
 public:
   Command(std::istream& pInput, std::ostream& pOutput) : mInput(&pInput), mOutput(&pOutput)
@@ -73,7 +73,16 @@ public:
   
   void set_thread_id(pthread_t& pId)
   { mThread = pId; }
-	
+  
+  /** Notification trigger. */
+  virtual void changed(Node * node, uint key, const Value& pVal)
+  {
+    if (key == H("print"))
+      *mOutput << pVal << std::endl;
+    else
+      *mOutput << "unknown notification " << pVal << std::endl;
+  }
+  
 protected:
   /** Constructor, set default values. */
   void initialize();
@@ -82,18 +91,13 @@ protected:
   virtual int do_listen();
   
   /** RAGEL PARSER RELATED CALLBACKS **/
+  const Value get_params ();
   
   /** Set a variable from the current token content. */
   void set_from_token (std::string& pElem);
   
   /** Set the class name. */
   void set_class_from_token  ();
-  
-  /** Set the 'class' parameter ('value' for Value, 'metro' for Metro, etc). */
-  void add_value_from_token ();
-  
-  /** Set a parameter. */
-  void set_parameter  (const std::string& pKey, const std::string& pValue);
   
   /** Create an instance. */
   void create_instance ();
@@ -135,8 +139,8 @@ protected:
 	command_action_t mAction;
   
   /** Command parts. */
-	std::string     mVar, mMethod, mClass, mKey, mValue, mFrom, mTo;
-	Hash            mParameters;
+	std::string     mVar, mMethod, mClass, mKey, mValue, mFrom, mTo,;
+	std::string     mParamString;
   std::string     mFromPort, mToPort;
   Root *          mTree; /**< Tree to work on. */
   

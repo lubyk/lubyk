@@ -67,18 +67,29 @@ public:
     pParent.adopt(this);
   }
   
+  virtual ~Object();
+  
   /** Shortcut to call multiple methods on an object.
     * Using "obj.set(foo:4 bar:5)" is equivalent to calling "obj.foo(4)" and "obj.bar(5)". */
-  bool set(const Hash& pParams)
+  bool set(const Value& pParams)
   {
-    Hash p(pParams);
     Object * obj;
-    Hash_iterator it;
-    Hash_iterator end = p.end();
+    if (pParams.is_hash()) {
+      Hash p(pParams);
+      Hash_iterator it;
+      Hash_iterator end = p.end();
     
-    for(it = p.begin(); it != end; it++) {
-      if ( (obj = child(*it)) ) {
-        obj->trigger(p[*it]);
+      for(it = p.begin(); it != end; it++) {
+        if ( (obj = child(*it)) ) {
+          obj->trigger(p[*it]);
+        }
+      }
+    } else {
+      // use first method as default
+      string_iterator it  = mChildren.begin();
+      string_iterator end = mChildren.end();
+      if (it != end && (obj = child(*it))) {
+        obj->trigger(pParams);
       }
     }
     return true;
@@ -94,8 +105,6 @@ public:
     return pObj;
   }
   
-  virtual ~Object();
-  
   /** Class signature. */
   virtual uint type()
   {
@@ -103,13 +112,13 @@ public:
   }
   
   template<class T>
-  inline T * type_cast(uint pType, Object * obj)
+  static inline T * type_cast(uint pType, Object * obj)
   {
     return (obj && obj->type() == pType) ? (T*)obj : NULL;
   }
   
   /** Clear all children (delete). */
-  void clear();
+  virtual void clear();
   
   /** The operation to be executed on call (method for Method class / object listing for Nodes) */
   virtual const Value trigger (const Value& val)
@@ -291,5 +300,5 @@ protected:
 
 };
 
-#define TYPE_CAST(klass, op) type_cast<klass>(H(#klass), op);
+#define TYPE_CAST(klass, op) Object::type_cast<klass>(H(#klass), op);
 #endif

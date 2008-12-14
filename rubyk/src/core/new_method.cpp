@@ -3,7 +3,7 @@
 const Value NewMethod::trigger (const Value& val)
 {
   String url;
-  Hash params;
+  Value params;
   Value res;
   if (val.is_hash()) {
     url    = Hash(val)["url"];
@@ -31,7 +31,7 @@ const Value NewMethod::trigger (const Value& val)
     return Error("Object at '").append(mParent->url()).append("' is not a Class !");
   }
   
-  // make methods
+  // make methods (must happen first so that the first child called as anonymous "set" method is a method)
   klass->make_methods(obj);
   
   Node * node = TYPE_CAST(Node,obj);
@@ -56,5 +56,9 @@ const Value NewMethod::trigger (const Value& val)
   
   // initialize
   node->set_is_ok( node->init() && node->set(params) ); // if init or set returns false, the node goes into 'broken' mode.
+  
+  // create pending links
+  mRoot->create_pending_links();
+  
   return url;
 }

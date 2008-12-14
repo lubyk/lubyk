@@ -55,31 +55,10 @@ public:
   }
   
   /** Build all inlets for an object from prototypes. */
-  void make_inlets(Node * pObj)
-  {
-    std::list<InletPrototype>::iterator it;
-    std::list<InletPrototype>::iterator end = mInletPrototypes.end();
-    Object * inlets = pObj->adopt(new Object("in"));
-    
-    for (it = mInletPrototypes.begin(); it != end; it++) {
-      inlets->adopt(new Inlet(pObj, *it));
-    }
-  }
-  
-  
+  void make_inlets(Node * pObj);
   
   /** Build all inlets for an object from prototypes. */
-  void make_outlets(Node * pObj)
-  {
-    std::list<OutletPrototype>::iterator it;
-    std::list<OutletPrototype>::iterator end = mOutletPrototypes.end();
-    Object * outlets = pObj->adopt(new Object("out"));
-    Outlet * o;
-    
-    for (it = mOutletPrototypes.begin(); it != end; it++) {
-      o = outlets->adopt(new Outlet(pObj, *it));
-    }
-  }
+  void make_outlets(Node * pObj);
   
   /** Build all methods for an object from prototypes. */
   void make_methods(Object * pObj)

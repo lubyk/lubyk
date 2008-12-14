@@ -4,25 +4,22 @@ class Print : public Node
 {
 public:
   
-  bool set (const Value& p)
-  {
-    return true;
-  }
-  
-  // inlet 1
+  // [1]
   void bang(const Value& val)
   { 
-    *mOutput << sig << std::endl;
+    // std::cout << "received " << val << std::endl;
+    notify(H("print"), val);
   }
   
   virtual const Value inspect(const Value& val) 
   { 
-    bprint(mSpy, mSpySize,"");
+    return String("<Print:").append(url()).append(" >");
   }
   
 };
 
-extern "C" void init()
+extern "C" void init(Root& root)
 {
-  CLASS(Print)
+  CLASS(Print, "Print any value received in bang inlet.")
+  INLET(Print, bang, AnyValue, "Received values are printed out to listening notifiers.")
 }

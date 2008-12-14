@@ -253,4 +253,19 @@ public:
     res = root.call("/blah/#inspect");
     TS_ASSERT_EQUALS( Error(res).message(), std::string("Object '/blah/#inspect' not found.") );
   }
+  
+  void test_alias_url( void )
+  {
+    Root root;
+    DummyObject * dum = root.adopt(new DummyObject("foo", 23));
+    Value res;
+    
+    root.set_alias("/ali", dum);
+    
+    res = root.call("/foo/#inspect");
+    TS_ASSERT_EQUALS( res.to_string(), "[1] foo: 23");
+    
+    res = root.call("/ali/#inspect");
+    TS_ASSERT_EQUALS( res.to_string(), "[2] foo: 23");
+  }
 };

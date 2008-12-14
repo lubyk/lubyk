@@ -144,6 +144,11 @@ public:
     mCmd->set_server(&mRoot);
   }
   
+  ~ParseHelper()
+  {
+    delete mCmd;
+  }
+  
   void setUp()
   {
     Data::sIdCounter = 0;
@@ -161,16 +166,18 @@ protected:
   
 protected:
   
-//FIX  void setup_with_print(const char* pInput)
-//FIX  {
-//FIX    clean_start();
-//FIX    mRoot.unlock();
-//FIX      mCmd->parse("p=Print()\nn=>p\n");
-//FIX      mCmd->parse(pInput);
-//FIX      mOutput.str(std::string("")); // clear output
-//FIX    mRoot.lock();
-//FIX  }
-//FIX  
+  void setup_with_print(const char* pInput)
+  {
+    Node * print;
+    mRoot.unlock();
+      mCmd->parse("p=Print()\nn=>p\n");
+      print = TYPE_CAST(Node, mRoot.find("/p"));
+      if (print) mCmd->observe(print);
+      mCmd->parse(pInput);
+      mOutput.str(std::string("")); // clear output
+    mRoot.lock();
+  }
+  
 //FIX  void clean_assert_result(const char * pInput, const char * pOutput)
 //FIX  {
 //FIX    clean_start();

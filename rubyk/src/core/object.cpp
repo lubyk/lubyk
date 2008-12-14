@@ -38,16 +38,17 @@ void Object::release(Object * pChild)
 
 void Object::moved()
 {
-  string_iterator it;
-  string_iterator end = mChildren.end();
   Object * obj;
+  THash<std::string,Object *> children(mChildren); // copy because mChildren is modified in for loop...
+  string_iterator it;
+  string_iterator end = children.end();
   
   if (mParent)
     mParent->child_moved(this);
   else
     rebuild_url();
   
-  for(it = mChildren.begin(); it != end; it++) {
+  for(it = children.begin(); it != end; it++) {
     if (mChildren.get(&obj, *it)) obj->moved();
   }
   

@@ -12,6 +12,7 @@ public:
   { 
     // std::cout << mName << ".bang: mValue [" << mValue.data_id() << "/" << mValue.ref_count() << "] = " << val << std::endl;
     mValue = val;
+    // std::cout << mName << " send " << mValue << std::endl;
     send(mValue);
   }
   

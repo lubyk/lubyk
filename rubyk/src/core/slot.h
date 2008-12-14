@@ -61,15 +61,30 @@ protected:
   
   void create_methods()
   {
-    Method * m = adopt(new Method("link", this, &Method::cast_method<Slot, &Slot::link>));
+    Method * m = adopt(new Method("link",   this, &Method::cast_method<Slot, &Slot::link>));
     m->set_info("Create a link / list links.");
+    m = adopt(new Method("unlink", this, &Method::cast_method<Slot, &Slot::unlink>));
+    m->set_info("Remove a link / list links.");
   }
   
   // /m/out/counter/link  --> list links
   // /m/out/counter/link /n/in/tempo  --> create a link
-  const Value link(const Value& val);
+  const Value link(const Value& val)
+  {
+    return change_link(val, true);
+  }
   
-protected:
+  const Value unlink(const Value& val)
+  {
+    return change_link(val, false);
+  }
+  
+  
+protected:  
+  
+  /** If pCreate is true: create a new link, if false unlink. */
+  const Value change_link(const Value& val, bool pCreate);
+  
   Node * mNode; /**< Containing node.      */
   int    mId;   /**< Position in the node. */
   uint  mType;  /**< slot type signature.  */

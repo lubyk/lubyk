@@ -35,22 +35,6 @@ public:
     TS_ASSERT_EQUALS( res,  std::string("string"  ) );
   }
   
-  void test_get_default( void )
-  {
-    THash<std::string, std::string> hash(10);
-    std::string res;
-    
-    TS_ASSERT( !hash.get(&res));
-    
-    hash.set(std::string("hello"), std::string("world"));
-    TS_ASSERT(hash.get(&res));
-    TS_ASSERT_EQUALS( res,  std::string("world") );
-    
-    hash.set(std::string("my"),    std::string("mum"));
-    TS_ASSERT(hash.get(&res));
-    TS_ASSERT_EQUALS( res,  std::string("mum") );
-  }
-  
   void test_get_key( void )
   {
     THash<std::string, std::string> hash(10);
@@ -69,24 +53,24 @@ public:
   void test_keys( void )
   {
     THash<std::string, std::string> hash(10);
-    const std::vector<std::string> * keys = hash.keys();
+    const std::list<std::string> * keys = hash.keys();
     
     hash.set(std::string("hello"), std::string("world"));
     TS_ASSERT_EQUALS( 1, keys->size());
-    TS_ASSERT_EQUALS( keys->at(0), std::string("hello"));
+    TS_ASSERT_EQUALS( keys->front(), std::string("hello"));
     
     hash.set(std::string("my"),    std::string("mum"));
     TS_ASSERT_EQUALS( 2, keys->size());
-    TS_ASSERT_EQUALS( keys->at(0), std::string("hello"));
-    TS_ASSERT_EQUALS( keys->at(1), std::string("my"));
+    TS_ASSERT_EQUALS( keys->front(), std::string("hello"));
+    TS_ASSERT_EQUALS( keys->back(), std::string("my"));
     
     hash.remove(std::string("bob")); // does nothing
-    TS_ASSERT_EQUALS( keys->at(0), std::string("hello"));
-    TS_ASSERT_EQUALS( keys->at(1), std::string("my"));
+    TS_ASSERT_EQUALS( keys->front(), std::string("hello"));
+    TS_ASSERT_EQUALS( keys->back(), std::string("my"));
     
     hash.remove(std::string("hello"));
     TS_ASSERT_EQUALS( 1, keys->size());
-    TS_ASSERT_EQUALS( keys->at(0), std::string("my"));
+    TS_ASSERT_EQUALS( keys->front(), std::string("my"));
   }
   
   void test_clear( void )

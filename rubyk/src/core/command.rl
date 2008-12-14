@@ -63,6 +63,9 @@ void Command::parse(const std::string& pStr)
   const char *eof = NULL;  // FIXME: this should be set to 'pe' on the last pStr block...
   int cs = mCurrentState;        // restore machine state
   
+#ifdef DEBUG_PARSER
+  printf("parse:\"%s\"\n",pStr.c_str());
+#endif
   %%{
     action a {
       if (mTokenIndex >= MAX_TOKEN_SIZE) {
@@ -77,11 +80,14 @@ void Command::parse(const std::string& pStr)
       mTokenIndex++;     
     }
     
+    action params {
+      // FIXME: this is a temporary hack until we sub parse with Value...
+      mParamString += fc;
+    }
+    
     action set_var    { set_from_token(mVar);}
     
     action set_method { set_from_token(mMethod);}
-    
-    action set_key    { set_from_token(mKey);}
   
     action set_class  { set_from_token(mClass);}
   
@@ -96,8 +102,6 @@ void Command::parse(const std::string& pStr)
     action add_param_value { 
       add_value_from_token(); 
     }
-    
-    action add_param { set_parameter(mKey, mValue); }
     
     action create_link {
       mTo   = mVar;
@@ -153,13 +157,13 @@ void Command::parse(const std::string& pStr)
   
     value  = (string | float | integer ) %set_value ;
   
-    key    = identifier %set_key;
+    key    = identifier;
   
-    param  = (key ':' ws* value) %add_param;
+    param  = (key ':' ws* value);
   
     # FIXME: replace this by a string and let Value parse it into a Hash, or better, move control to Value...
     # but before fixing this, we need Value to accept mutliline content (one block after the other...): this is not easy.
-    parameters = value %add_param_value (ws* ',' ws* value %add_param_value)* | (param ws*)+;
+    parameters = (value (ws* ',' ws* value)* | (param ws*)+) $params;
   
     create_instance = var ws* '=' ws* class '(' parameters? ')' ;
   
@@ -199,6 +203,13 @@ void Command::close()
   }
 }
 
+const Value Command::get_params ()
+{
+  Value params(mParamString);
+  mParamString = "";
+  return params;
+}
+
 void Command::set_from_token (std::string& pElem)
 {
   mToken[mTokenIndex] = '\0';
@@ -211,32 +222,25 @@ void Command::set_from_token (std::string& pElem)
   mTokenIndex = 0;
 }
 
-void Command::add_value_from_token () 
-{
-  // FIXME: what do we do here ? 
-  // mParameters.add(mValue); // add to 'list' value
-}
-
-void Command::set_parameter  (const std::string& pKey, const std::string& pValue) 
-{
-  mParameters.set_key(pKey,Value(pValue));
-}
-
 // FIXME: create_instance should run in server space with concurrency locks.
 void Command::create_instance()
 {
+  Value params = get_params();
+  
   mTree->lock();
     // FIXME: Group scope
     // FIXME: should be new_object(mVar, mClass, Value(mParams))
-    Value res = mTree->new_object(mVar, mClass, mParameters);
-    if (res.is_string()) {
-      std::string url = String(res).string();
-      res = mTree->call(url.append("/#inspect"));
-    }
+    Value res = mTree->new_object(mVar, mClass, params);
   mTree->unlock();
-
+  
+  if (res.is_string()) {
+    std::string url = String(res).string();
+    res = mTree->call(url.append("/#inspect"));
+  }
+  
+  
 #ifdef DEBUG_PARSER
-  std::cout << "NEW "<< mVar << " = " << mClass << "(" << mParameters << ")";
+  std::cout << "NEW "<< mVar << " = " << mClass << "(" << params << ")";
 #endif
 
   if (!mSilent)
@@ -248,7 +252,7 @@ void Command::create_link()
 { 
   mTree->lock();
     // FIXME: Group scope
-    mTree->create_link(mFrom, mFromPort, mToPort, mTo);
+    mTree->create_link(std::string("/").append(mFrom), mFromPort, mToPort, std::string("/").append(mTo));
   mTree->unlock();
 
 #ifdef DEBUG_PARSER
@@ -260,7 +264,7 @@ void Command::remove_link()
 { 
   mTree->lock();
     // FIXME: Group scope
-    mTree->remove_link(mFrom, mFromPort, mToPort, mTo);
+    mTree->remove_link(std::string("/").append(mFrom), mFromPort, mToPort, std::string("/").append(mTo));
   mTree->unlock();
 
 #ifdef DEBUG_PARSER
@@ -272,19 +276,31 @@ void Command::remove_link()
 void Command::execute_method()
 {
   Value res;
+  Value params = get_params();
+  
+  if (params.is_nil()) params = gBangValue;
+  
   mTree->lock();
     // FIXME: Group scope
-    res = mTree->call(std::string("/").append(mVar).append("/").append(mMethod), mParameters);
+    if (mMethod == "b") mMethod = "bang";
+    Object * meth = mTree->find(std::string("/").append(mVar).append("/").append(mMethod));
+    if (meth) {
+      res = meth->trigger(params);
+    } else {
+      res = mTree->call(std::string("/").append(mVar).append("/in/").append(mMethod), params);
+    }
   mTree->unlock();
-  
-  *mOutput << res << std::endl;
+  if (!res.is_nil()) *mOutput << res << std::endl;
 }
 
 void Command::execute_class_method()
 {
   Value res;
+  Value params = get_params();
+  if (params.is_nil()) params = gBangValue;
+  
   mTree->lock();
-    res = mTree->call(std::string(CLASS_ROOT).append("/").append(mClass).append("/").append(mMethod), mParameters);
+    res = mTree->call(std::string(CLASS_ROOT).append("/").append(mClass).append("/").append(mMethod), params);
   mTree->unlock();
   
   *mOutput << res << std::endl;
@@ -293,6 +309,9 @@ void Command::execute_class_method()
 void Command::execute_command()
 {
   Value res;
+  Value params = get_params();
+  if (params.is_nil()) params = gBangValue;
+  
   mTree->lock();
     // FIXME: Group scope
     res = mTree->call(std::string("/").append(mMethod));
@@ -328,7 +347,7 @@ void Command::clear()
   mAction     = CmdNoAction;
   mVar        = "";
   mClass      = "";
-  mParameters.clear();
-  mFromPort = 1;
-  mToPort   = 1;
+  mParamString = "";
+  mFromPort = "";
+  mToPort   = "";
 }
