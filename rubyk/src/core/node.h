@@ -19,7 +19,11 @@ class Observer;
 class Node : public Object
 {
 public:
-  Node() {}
+  Node() 
+  {
+    // create a key to find 'this' object in a new thread
+    if (!Node::sThisKey) pthread_key_create(&Node::sThisKey, NULL);
+  }
   
   virtual ~Node();
   
@@ -122,6 +126,9 @@ public:
   
   /** Notify observers of a change. */
   void notify(uint key, const Value& pValue);
+
+public:
+  static pthread_key_t sThisKey;   /**< Key to retrieve 'this' value from a running thread. */
   
 private:
   
@@ -135,6 +142,7 @@ private:
   std::vector<Inlet*>  mInlets;    /**< List of inlets. FIXME: is this used ? */
   std::vector<Outlet*> mOutlets;   /**< List of outlets. */
   std::list<Observer*> mObservers; /**< Observers to notify of node changes (observing satellites/commands). */
+
 };
 
 #endif // _NODE_H_

@@ -16,7 +16,7 @@ void * gGLWindowNode;
 bool   gQuitGl;
 
 // Node
-//FIX pthread_key_t Node::sThisKey     = NULL;
+pthread_key_t Node::sThisKey     = NULL;
 //FIX pthread_key_t Node::sGLThreadKey = NULL;
 
 // Object

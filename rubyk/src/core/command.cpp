@@ -709,16 +709,26 @@ void Command::execute_command()
   Object * obj;
   Value res;
   Value params = get_params();
-  
-  mTree->lock();
-    // FIXME: Group scope
-    obj = mTree->find(std::string("/").append(mMethod));
-    if (params.is_nil() && obj->type() == H("Node"))
-      res = mTree->call(std::string("/").append(mMethod).append("/#inspect"));
-    else
-      res = obj->trigger(params);
-  mTree->unlock();
-  *mOutput << res << std::endl;
+  if (mMethod == "set_lib_path") {
+    mTree->lock();
+      res = mTree->call(std::string(CLASS_ROOT).append("/lib_path"),params);
+    mTree->unlock();
+  } else if (mMethod == "quit" || mMethod == "q") {
+    mTree->lock();
+      mTree->quit();
+      mQuit = true;
+    mTree->unlock();    
+  } else {
+    mTree->lock();
+      // FIXME: Group scope
+      obj = mTree->find(std::string("/").append(mMethod));
+      if (params.is_nil() && obj->type() == H("Node"))
+        res = mTree->call(std::string("/").append(mMethod).append("/#inspect"));
+      else
+        res = obj->trigger(params);
+    mTree->unlock();
+  }
+  if (!res.is_nil()) *mOutput << res << std::endl;
   /*
   TODO: these methods should exist in root...
   

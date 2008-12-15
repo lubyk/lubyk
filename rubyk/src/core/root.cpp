@@ -7,7 +7,6 @@ void Root::init ()
 {
   ftime(&mTimeRef); // set time reference to now (my birthdate).
   mCurrentTime = real_time();
-  
   high_priority();
   lock();           // we get hold of everything, releasing resources when we decide (Planet is the master).
   mQuit = false;

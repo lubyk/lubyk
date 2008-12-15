@@ -42,6 +42,9 @@ static void * start_thread(void * data)
 int main(int argc, char * argv[])
 {
   gServer = new Root;
+  // force build of "/class"
+  gServer->classes();
+  
   gGLWindowStartThread = NULL;
   gGLWindowNode = NULL; /////// GLWINDOW HACK
   gQuitGl  = false;
@@ -51,9 +54,8 @@ int main(int argc, char * argv[])
   sleeper.tv_sec  = 0; 
   sleeper.tv_nsec = 100 * 1000000; // 100 ms
   
-  if (!Node::sThisKey)     pthread_key_create(&Node::sThisKey,     NULL); // create a key to find 'this' object in new thread
-  if (!Node::sGLThreadKey) pthread_key_create(&Node::sGLThreadKey, NULL); // create a key to find 'this' object in new thread
-  pthread_setspecific(Node::sGLThreadKey,NULL);
+  //FIX if (!Node::sGLThreadKey) pthread_key_create(&Node::sGLThreadKey, NULL); // create a key to find 'this' object in new thread
+  //FIX pthread_setspecific(Node::sGLThreadKey,NULL);
   
   if (argc > 1) {
     std::ifstream in(argv[1], std::ios::in);
@@ -63,7 +65,7 @@ int main(int argc, char * argv[])
     
     Command  * fCmd;
     fCmd = new Command(std::cin, std::cout); // we use new because cleanup code is not executed for this thread due to opengl glutMainLoop
-    fCmd->set_server(*gServer);
+    fCmd->set_server(gServer);
     fCmd->set_silent(true);
     gServer->unlock(); // so the commands are directly processed
       oss << "\n";

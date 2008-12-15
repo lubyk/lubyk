@@ -6,29 +6,29 @@ public:
   
   void test_create( void )
   { 
-    // create always produces 3 values ([2] {url:[1] params:[3]})
-    create("/n", "Test", "counter: 5 message:foo", "[6] /n"); // 2 values + 3 => 5 + 1 => [6]. Ok !
-    assert_inspect("/n", "<Test:/n '[3] foo' counter:5>");
+    // create always produces 3 values ([3] {url:[2] params:[4]})
+    create("/n", "Test", "counter: 5 message:foo", "[7] /n"); // 2 values + 3 => 5 + 1 => [7]. Ok !
+    assert_inspect("/n", "<Test:/n '[4] foo' counter:5>");
     assert_info("/class/Test", "Object used for testing. Does not do anything really useful.");
   }
   
   void test_set_default_argument( void )
   { 
-    create("/n", "Test", "\"Single text argument\"", "[4] /n"); // 2 values + 3 => 5 + 1 => [6]. Ok !
+    create("/n", "Test", "\"Single text argument\"", "[5] /n"); // 2 values + 3 => 5 + 1 => [7]. Ok !
     assert_call("/n/message", "", "Single text argument");
-    assert_inspect("/n", "<Test:/n '[1] Single text argument' counter:0>");
+    assert_inspect("/n", "<Test:/n '[2] Single text argument' counter:0>");
   }
   
   void test_class_method( void )
   { 
     assert_call("/class/Test/hello", "", "Hello: Nil");
-    assert_call("/class/Test/hello", "1.35", "Hello: [2] 1.35");
+    assert_call("/class/Test/hello", "1.35", "Hello: [3] 1.35");
     assert_info("/class/Test/hello", "If the input value is 0: stop. If it is greater the 0: start. Bang toggles on/off.");
   }
   
   void test_method( void )
   {   
-    create("/t", "Test", "counter: 5 message:hopla", "[6] /t");
+    create("/t", "Test", "counter: 5 message:hopla", "[7] /t");
     assert_call("/t", ""     , "message,counter,in/,out/");     // get method list
     assert_call("/t/message", ""     , "hopla"); // get
     assert_call("/t/message", "yoba" , "yoba"); // set
@@ -38,7 +38,7 @@ public:
   
   void test_inlet( void )
   {   
-    create("/t", "Test", "counter: 5 message:hopla", "[6] /t");
+    create("/t", "Test", "counter: 5 message:hopla", "[7] /t");
     assert_call("/t/in",           "", "bang/,counter/,info/");
     assert_call("/t/in/bang",      "", "link,unlink");
     assert_call("/t/in/bang/#info","", "Set counter | increment and send.");
@@ -46,7 +46,7 @@ public:
   
   void test_outlet( void )
   {   
-    create("/t", "Test", "counter: 5 message:hopla", "[6] /t");
+    create("/t", "Test", "counter: 5 message:hopla", "[7] /t");
     assert_call("/t/out", ""      , "counter/,nil/");
     assert_call("/t/out/counter", ""      , "link,unlink");
     assert_call("/t/out/counter/#info","", "Increasing counter.");
@@ -54,12 +54,12 @@ public:
   
   void test_link( void )
   {   
-    create("/t",  "Test", "counter: 5 message:hopla",  "[6] /t");
-    create("/t2", "Test", "counter: 2 message:second", "[15] /t2");
+    create("/t",  "Test", "counter: 5 message:hopla",  "[7] /t");
+    create("/t2", "Test", "counter: 2 message:second", "[16] /t2");
     assert_call("/t/in/bang/link/#info", ""      , "Create a link / list links.");
     
     // should not allow creating a link from inlet to inlet:
-    assert_call("/t/in/bang/link", "/t2/in/bang", "[21] #Could not update link ([20] /t2/in/bang: incompatible).");
+    assert_call("/t/in/bang/link", "/t2/in/bang", "[22] #Could not update link ([21] /t2/in/bang: incompatible).");
     
     // should allow creating a link from an inlet to an outlet
     assert_call("/t/in/bang/link", "/t2/out/counter", "/t2/out/counter");
@@ -69,31 +69,31 @@ public:
   
   void test_link_and_bang( void )
   {   
-    create("/t",  "Test", "counter: 5 message:hopla",  "[6] /t");
-    create("/t2", "Test", "counter: 2 message:second", "[15] /t2");
+    create("/t",  "Test", "counter: 5 message:hopla",  "[7] /t");
+    create("/t2", "Test", "counter: 2 message:second", "[16] /t2");
     
     // should allow creating a link from an outlet to an inlet
     assert_call("/t/out/counter/link", "/t2/in/bang", "/t2/in/bang");
-    assert_call("/t2/counter", "", "[20] 2.00");
+    assert_call("/t2/counter", "", "[21] 2.00");
     assert_call("/t/in/bang", "Bang!", "Nil"); // t++ --> t2
-    assert_call("/t2/counter", "", "[23] 6.00");
+    assert_call("/t2/counter", "", "[24] 6.00");
   }
   
   void test_unregister_inlet( void )
   {
-    create("/t",  "Test", "counter: 5 message:hopla",  "[6] /t");
-    create("/t2", "Test", "counter: 2 message:second", "[15] /t2");
+    create("/t",  "Test", "counter: 5 message:hopla",  "[7] /t");
+    create("/t2", "Test", "counter: 2 message:second", "[16] /t2");
 
     // should allow creating a link from an outlet to an inlet
     assert_call("/t/out/counter/link", "/t2/in/bang", "/t2/in/bang");
-    assert_call("/t/counter",  "", "[20] 5.00");
-    assert_call("/t2/counter", "", "[21] 2.00");
+    assert_call("/t/counter",  "", "[21] 5.00");
+    assert_call("/t2/counter", "", "[22] 2.00");
     assert_call("/t/in/bang", "Bang!", "Nil"); // t++ --> t2
-    assert_call("/t2/counter", "", "[24] 6.00");
+    assert_call("/t2/counter", "", "[25] 6.00");
     
     Object * obj;
     TS_ASSERT( mRoot.get(&obj, "/t/out/counter") );
-    // destroy first outlet ===> [2] becomes [1] ==> first output is now /out/nil
+    // destroy first outlet ===> [3] becomes [2] ==> first output is now /out/nil
     // this is not a normal situation but it needs testing (dynamic outlets may be used with Lua and Group).
     delete obj;
     TS_ASSERT( !mRoot.get(&obj, "/t/out/counter") );
@@ -101,8 +101,8 @@ public:
     TS_ASSERT(  mRoot.get(&obj, "/t/out/nil") );
     
     assert_call("/t/in/bang", "Bang!", "Nil"); // t++ --> nil outlet
-    assert_call("/t/counter",  "", "[27] 7.00");
-    assert_call("/t2/counter", "", "[28] 6.00");
+    assert_call("/t/counter",  "", "[28] 7.00");
+    assert_call("/t2/counter", "", "[29] 6.00");
     // destroy 'nil' outlet
     delete obj;
     TS_ASSERT( !mRoot.get(&obj, "/t/out/nil") );

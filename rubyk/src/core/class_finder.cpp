@@ -15,7 +15,7 @@ const Value ClassFinder::not_found (const std::string& pUrl, const Value& val)
   Object * obj;
   
   // try to load dynamic lib
-  std::string path = mObjectsPath;
+  std::string path = mObjectsPath.string();
   path.append("/").append(className).append(".rko");
   
   if (load(path.c_str(), "init")) {

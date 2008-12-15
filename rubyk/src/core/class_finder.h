@@ -8,10 +8,30 @@
 class ClassFinder : public Object
 {
 public:
-  ClassFinder(const std::string &pName, const char * pObjPath) : Object(pName), mObjectsPath(pObjPath) {}
-  ClassFinder(const std::string &pName, std::string& pObjPath) : Object(pName), mObjectsPath(pObjPath) {}
-  ClassFinder(const char * pName,       const char * pObjPath) : Object(pName), mObjectsPath(pObjPath) {}
-  ClassFinder(const char * pName,       std::string& pObjPath) : Object(pName), mObjectsPath(pObjPath) {}
+  ClassFinder(const std::string &pName, const char * pObjPath) : Object(pName), mObjectsPath(pObjPath) 
+  {
+    init();
+  }
+  
+  ClassFinder(const std::string &pName, std::string& pObjPath) : Object(pName), mObjectsPath(pObjPath) 
+  {
+    init();
+  }
+  
+  ClassFinder(const char * pName,       const char * pObjPath) : Object(pName), mObjectsPath(pObjPath) 
+  {
+    init();
+  }
+  
+  ClassFinder(const char * pName,       std::string& pObjPath) : Object(pName), mObjectsPath(pObjPath) 
+  {
+    init();
+  }
+  
+  void init()
+  {
+    adopt(new Method("lib_path", this, &Method::cast_method<ClassFinder, &ClassFinder::lib_path>));
+  }
   
   virtual ~ClassFinder() {}
   
@@ -26,14 +46,14 @@ public:
   
   virtual const Value not_found (const std::string& pUrl, const Value& val);
   
-  void set_lib_path(const char* pPath)
-  { mObjectsPath = pPath; }
+  const Value lib_path(const Value& val)
+  { 
+    mObjectsPath = val;
+    return mObjectsPath;
+  }
  
   void set_lib_path(const std::string& pPath)
   { mObjectsPath = pPath; }
- 
-  std::string get_lib_path()
-  { return mObjectsPath; }
   
   /** Declare a new class. This template is responsible for generating the "new" method. */
   template<class T>
@@ -71,7 +91,7 @@ private:
   /** Load an object stored in a dynamic library. */
   bool load(const char * file, const char * init_name);
   
-  std::string mObjectsPath; /**< Where to find objects in the filesystem. */
+  String mObjectsPath; /**< Where to find objects in the filesystem. */
 };
 
 #endif // _CLASS_FINDER_H_
