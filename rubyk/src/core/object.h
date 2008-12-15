@@ -8,7 +8,6 @@
 
 class Root;
 class Alias;
-class Planet;
 
 class Object
 {
@@ -98,12 +97,12 @@ public:
   /** This is the prefered way to insert new objects in the tree since it clearly highlights ownership in the parent. 
     * TODO: make sure a parent is not adopted by it's child. */
   template<class T>
-  T * adopt(T * pObj)
+  T * adopt(T * pObject)
   {
-    // we have to use a second method here since a template cannot be virtual
-    do_adopt((Object*) pObj);
-    return pObj;
+    do_adopt(pObject);
+    return pObject;
   }
+  
   
   /** Class signature. */
   virtual uint type()
@@ -238,7 +237,8 @@ public:
   }
   
 protected:
-  /** Actual adoption. Overwritten by Planet to manage tree separation. */
+  
+  /** Actual adoption. Adopt objects in the new namespace (branch). */
   virtual void do_adopt(Object * pObject)
   {
     Object * oldParent = pObject->mParent;

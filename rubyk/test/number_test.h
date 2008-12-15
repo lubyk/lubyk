@@ -34,6 +34,15 @@ public:
     TS_ASSERT(v.is_number());
   }
   
+  void test_operator_plus_plus( void )
+  {
+    Number n;
+    n = 123.12;
+    TS_ASSERT_EQUALS( n.value(), 123.12);
+    n++;
+    TS_ASSERT_EQUALS( n.value(), 124.12);
+  }
+  
   void test_operator_equal( void )
   {
     Number n;
@@ -41,6 +50,44 @@ public:
     TS_ASSERT_EQUALS( n.value(), 123.456);
     n = 456.789;
     TS_ASSERT_EQUALS( n.value(), 456.789);
+  }
+  
+  void test_operator_plus_equal( void )
+  {
+    Number n;
+    Number n2(5);
+    n = 123.45;
+    TS_ASSERT_EQUALS( n.value(), 123.45);
+    n += 1.0;
+    TS_ASSERT_EQUALS( n.value(), 124.45);
+    n += n2;
+    TS_ASSERT_EQUALS( n.value(), 129.45);
+  }
+  
+  void test_operator_greater( void )
+  {
+    Number n;
+    Number n2(5);
+    
+    TS_ASSERT(n2 > n);
+    TS_ASSERT(n2 < 10.0);
+    TS_ASSERT(15.0 > n2);
+    TS_ASSERT(3.0  < n2);
+    
+    TS_ASSERT(n2 >= n);
+    TS_ASSERT(n2 <= 10.0);
+    TS_ASSERT(15.0 >= n2);
+    TS_ASSERT(3.0  <= n2);
+    
+    TS_ASSERT(n2 > n);
+    TS_ASSERT(n2 < 10);
+    TS_ASSERT(15 > n2);
+    TS_ASSERT(3  < n2);
+    
+    TS_ASSERT(n2 >= n);
+    TS_ASSERT(n2 <= 10);
+    TS_ASSERT(15 >= n2);
+    TS_ASSERT(3  <= n2);
   }
   
   void test_data( void )

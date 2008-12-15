@@ -97,12 +97,7 @@ public:
   real_t operator= (real_t d)
   {
     // std::cout << "[" << data_id() << "/" << ref_count() << "] operator=" << d << std::endl;
-    if (!mPtr) {
-      mPtr = new Ptr(new NumberData(d));
-    } else {
-      copy_if_shared();
-      data_pointer()->mReal = d;
-    }
+    mutable_data()->mReal = d;
     return d;
   }
   
@@ -110,6 +105,106 @@ public:
   real_t operator+(const Number& n) const
   {
     return value() + n.value();
+  }
+
+  /** Add one to number. Prefix ++n. */
+  real_t operator++()
+  {
+    mutable_data()->mReal++;
+    return value();
+  }
+                       
+  /** Add one to number. Postfix n++. */
+  real_t operator++(int)
+  {
+    mutable_data()->mReal++;
+    return value() - 1;
+  }
+  
+  /** Add two Numbers together. */
+  Number& operator+=(const Number& n)
+  {
+    mutable_data()->mReal += n.value();
+    return *this;
+  }
+  
+  /** Add two Numbers together. */
+  Number& operator+=(real_t d)
+  {  
+    mutable_data()->mReal += d;
+    return *this;
+  }
+  
+  /** Greater then operator. */
+  bool operator>(const Number& n) const
+  {
+    return value() > n.value();
+  }
+  
+  /** Smaller then operator. */
+  bool operator<(const Number& n) const
+  {
+    return value() < n.value();
+  }
+  
+  /** Greater or equal operator. */
+  bool operator>=(const Number& n) const
+  {
+    return value() >= n.value();
+  }
+  
+  /** Smaller or equal operator. */
+  bool operator<=(const Number& n) const
+  {
+    return value() <= n.value();
+  }
+  
+  /** Greater then operator. */
+  bool operator>(real_t d) const
+  {
+    return value() > d;
+  }
+  
+  /** Smaller then operator. */
+  bool operator<(real_t d) const
+  {
+    return value() < d;
+  }
+  
+  /** Greater or equal operator. */
+  bool operator>=(real_t d) const
+  {
+    return value() >= d;
+  }
+  
+  /** Smaller or equal operator. */
+  bool operator<=(real_t d) const
+  {
+    return value() <= d;
+  }
+  
+  /** Greater then operator. */
+  bool operator>(int d) const
+  {
+    return value() > ((real_t)d);
+  }
+  
+  /** Smaller then operator. */
+  bool operator<(int d) const
+  {
+    return value() < ((real_t)d);
+  }
+  
+  /** Greater or equal operator. */
+  bool operator>=(int d) const
+  {
+    return value() >= ((real_t)d);
+  }
+  
+  /** Smaller or equal operator. */
+  bool operator<=(int d) const
+  {
+    return value() <= ((real_t)d);
   }
   
   /** Return the value. */
@@ -130,6 +225,49 @@ public:
   operator int()
   { return (int)value(); }
   
+private:
+  friend bool operator> (real_t d, const Number& n);
+  friend bool operator>= (real_t d, const Number& n);
+  friend bool operator<= (real_t d, const Number& n);
+  friend bool operator< (real_t d, const Number& n);
+  friend bool operator> (int d, const Number& n);
+  friend bool operator>= (int d, const Number& n);
+  friend bool operator<= (int d, const Number& n);
+  friend bool operator< (int d, const Number& n);
 };
+
+inline bool operator> (real_t d, const Number& n)
+{
+  return d > n.value();
+}
+inline bool operator>= (real_t d, const Number& n)
+{
+  return d >= n.value();
+}
+inline bool operator<= (real_t d, const Number& n)
+{
+  return d <= n.value();
+}
+inline bool operator< (real_t d, const Number& n)
+{
+  return d < n.value();
+}
+
+inline bool operator> (int d, const Number& n)
+{
+  return ((real_t)d) > n.value();
+}
+inline bool operator>= (int d, const Number& n)
+{
+  return ((real_t)d) >= n.value();
+}
+inline bool operator<= (int d, const Number& n)
+{
+  return ((real_t)d) <= n.value();
+}
+inline bool operator< (int d, const Number& n)
+{
+  return ((real_t)d) < n.value();
+}
 
 #endif // _NUMBER_VALUE_H_

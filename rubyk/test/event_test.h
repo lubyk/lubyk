@@ -22,8 +22,8 @@ public:
   {
     EventUser u(1);
     int val = 5;
-    CallEvent<EventUser, &EventUser::increment> e1(345, &u);
-    Event<EventUser, &EventUser::add> e2(333, &u, (void *)&val);
+    TCallEvent<EventUser, &EventUser::increment> e1(345, &u);
+    TEvent<EventUser, &EventUser::add> e2(333, &u, (void *)&val);
     
     
     TS_ASSERT_EQUALS( u.mValue, 1);

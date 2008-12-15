@@ -96,8 +96,7 @@ public:
   /** Type conversion ("this" sets "pOther").
   
   If you wonder why we haven't implemented it the other way around like: "pOther.from(this)", the reason is that we wanted a
-  consistant interface for Values and native types. You cannot write "real_t d; d.from(this)" so we use "set". For the same reason,
-  we use a pointer instead of a reference (clearly show what is updated). */
+  consistant interface for Values and native types. You cannot write "real_t d; d.from(this)" so we use "set". */
   bool set (Value& pOther) const
   {
     switch (data_type())

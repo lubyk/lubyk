@@ -278,16 +278,20 @@ void Command::execute_method()
   Value res;
   Value params = get_params();
   
-  if (params.is_nil()) params = gBangValue;
-  
   mTree->lock();
     // FIXME: Group scope
-    if (mMethod == "b") mMethod = "bang";
-    Object * meth = mTree->find(std::string("/").append(mVar).append("/").append(mMethod));
-    if (meth) {
-      res = meth->trigger(params);
+    if (mMethod == "set") {
+      Object * obj = mTree->find(std::string("/").append(mVar));
+      if (obj) obj->set(params);
     } else {
-      res = mTree->call(std::string("/").append(mVar).append("/in/").append(mMethod), params);
+      if (mMethod == "b") mMethod = "bang";
+      Object * meth = mTree->find(std::string("/").append(mVar).append("/").append(mMethod));
+      if (meth) {
+        res = meth->trigger(params);
+      } else {
+        if (params.is_nil()) params = gBangValue;
+        res = mTree->call(std::string("/").append(mVar).append("/in/").append(mMethod), params);
+      }
     }
   mTree->unlock();
   if (!res.is_nil()) *mOutput << res << std::endl;
@@ -297,7 +301,6 @@ void Command::execute_class_method()
 {
   Value res;
   Value params = get_params();
-  if (params.is_nil()) params = gBangValue;
   
   mTree->lock();
     res = mTree->call(std::string(CLASS_ROOT).append("/").append(mClass).append("/").append(mMethod), params);
@@ -308,13 +311,17 @@ void Command::execute_class_method()
 
 void Command::execute_command()
 {
+  Object * obj;
   Value res;
   Value params = get_params();
-  if (params.is_nil()) params = gBangValue;
   
   mTree->lock();
     // FIXME: Group scope
-    res = mTree->call(std::string("/").append(mMethod));
+    obj = mTree->find(std::string("/").append(mMethod));
+    if (params.is_nil() && obj->type() == H("Node"))
+      res = mTree->call(std::string("/").append(mMethod).append("/#inspect"));
+    else
+      res = obj->trigger(params);
   mTree->unlock();
   *mOutput << res << std::endl;
   /*

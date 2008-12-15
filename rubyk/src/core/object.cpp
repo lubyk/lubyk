@@ -1,5 +1,5 @@
 #include "object.h"
-#include "root.h"
+#include "planet.h"
 #include "alias.h"
 
 Object::~Object()

@@ -1,5 +1,30 @@
 #include "root.h"
 #include "class_finder.h"
+#include "node.h"
+#include "command.h"
+
+void Root::init ()
+{
+  ftime(&mTimeRef); // set time reference to now (my birthdate).
+  mCurrentTime = real_time();
+  
+  high_priority();
+  lock();           // we get hold of everything, releasing resources when we decide (Planet is the master).
+  mQuit = false;
+}
+
+Root::~Root ()
+{
+  Command * child;
+
+  while(!mCommands.empty()) {
+    child = mCommands.front();
+    // join
+    child->close(); // joins pthread
+    mCommands.pop();
+  }
+  clear();
+}
 
 /** Return the class listing Object (create one if needed). */
 ClassFinder * Root::classes()
@@ -97,6 +122,7 @@ const Value Root::create_pending_links()
   return gNilValue;
 }
 
+
 /** Called by commands and other low priority threads. */
 void Root::normal_priority()
 {
@@ -125,5 +151,73 @@ void Root::high_priority()
   
   if (pthread_setschedparam(id, policy, &param)) {
     fprintf(stderr, "Could not set thread priority to %i.\n", param.sched_priority);
+  }
+}
+
+
+/** Start listening to a command. */
+void Root::listen_to_command (Command& pCommand)
+{
+  int ret;
+  pthread_t id;
+  pCommand.set_server(this);
+
+  ret = pthread_create( &id, NULL, &Command::call_do_listen, &pCommand);
+  pCommand.set_thread_id(id);
+  // FIXME: check for error from 'ret'
+
+  mCommands.push(&pCommand);
+}
+
+bool Root::run()
+{ 
+  struct timespec sleeper;
+  sleeper.tv_sec  = 0; 
+  sleeper.tv_nsec = RUBYK_SLEEP_MS * 1000000;
+  
+  mMutex.unlock(); // ok, others can do things while we sleep
+  nanosleep (&sleeper, NULL); // FIXME: only if no loop events ?
+  mMutex.lock();
+  
+  mCurrentTime = real_time();
+  
+  // execute events that must occur on each loop (io operations)
+  trigger_loop_events();
+  
+  // trigger events in the queue
+  pop_events();
+  return !mQuit;
+}
+
+void Root::pop_events()
+{
+  Event * e;
+  time_t realTime = mCurrentTime;
+  while( mEventsQueue.get(&e) && realTime >= e->mTime) {
+    mCurrentTime = e->mTime;
+    e->trigger();
+    delete e;
+    mEventsQueue.pop();
+  }
+  mCurrentTime = realTime;
+}
+
+void Root::pop_all_events()
+{
+  Event * e;
+  while( mEventsQueue.get(&e)) {
+    mCurrentTime = e->mTime;
+    if (e->mForced) e->trigger();
+    delete e;
+    mEventsQueue.pop();
+  }
+}
+
+void Root::trigger_loop_events()
+{
+  std::deque<Node *>::iterator it;
+  std::deque<Node *>::iterator end = mLoopedNodes.end();
+  for(it = mLoopedNodes.begin(); it < end; it++) {
+    (*it)->bang(gBangValue);
   }
 }

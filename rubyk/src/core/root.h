@@ -1,14 +1,26 @@
 #ifndef _ROOT_H_
 #define _ROOT_H_
 #include "object.h"
-#include "mutex.h"
 #include "call.h"
+#include "mutex.h"
+#include <sys/timeb.h> // ftime
+#include <queue>
+#include "ordered_list.h"
 
 class ClassFinder;
+class Command;
+class Event;
+class Node;
 
 #define OBJECT_HASH_SIZE 10000
 #define CLASS_ROOT "/class"
 #define DEFAULT_OBJECTS_LIB_PATH "/usr/local/lib/rubyk"
+
+// is 2 [ms] too long ? Testing needed.
+#define RUBYK_SLEEP_MS 2.0
+#define ONE_SECOND 1000.0
+#define ONE_MINUTE (60.0*ONE_SECOND)
+
 
 /** Call types. */
 enum call_action_t {
@@ -36,25 +48,14 @@ public:
     init();
   }
   
-  /** We need to do this before ~Object so that mObjects is still availlable. */
-  virtual ~Root()
-  {
-    clear();
-  }
+  virtual ~Root();
+  
+  void init();
   
   virtual void clear()
   {
     this->Object::clear();
     mPendingLinks.clear();
-  }
-  
-  /** Code run on root creation. */
-  void init()
-  {
-    // TODO: time ref (see old/planet.h)
-    
-    mMutex.lock();    // we get hold of everything, releasing resources when we decide (I'm the master).
-    high_priority();
   }
   
   /** Execute the default operation for an object. */
@@ -176,20 +177,6 @@ public:
   /** Return the class listing Object (create one if needed). */
   ClassFinder * classes();
   
-  /** Expose an internal url as a method of the group object. */
-  virtual void expose(const char * pName, const Object * pObject)
-  {
-    // do nothing (overwritten in Group)
-  }
-  
-  /** Used by commands to get hold of the server to execute commands. */
-  void lock()
-  { mMutex.lock(); }
-
-  /** Commands are finished. */
-  void unlock()
-  { mMutex.unlock(); }
-  
   /** Create a new object from a class name. Calls "/class/ClassName/new". */
   const Value new_object(const char *       pUrl, const char *       pClass, const Value& pParams);
   
@@ -205,22 +192,74 @@ public:
   /** Create pending links (called on new object creation). */
   const Value create_pending_links ();
   
+  /** Runtime related methods. */
+  
+  
+  /** Used by commands to get hold of the server to execute commands. */
+  void lock()
+  { mMutex.lock(); }
+
+  /** Commands are finished. */
+  void unlock()
+  { mMutex.unlock(); }
+  
+  /** Get current real time in [ms] since reference. */
+  time_t real_time()
+  {
+    struct timeb t;
+    ftime(&t);
+    return ((t.time - mTimeRef.time) * 1000) + t.millitm - mTimeRef.millitm;
+  }
+  
   /** Set command thread to normal priority. */
   void normal_priority ();
+  
+  /** Start listening to a command. */
+  void listen_to_command (Command& pCommand);
+  
+  /** Main loop, returns false when quit loop should stop (quit). */
+  bool run ();
+  
+  /** Close the door and leave... */
+  void quit()
+  { 
+    mQuit = true; //gQuitGl = true; 
+  }
+  
+public:
+  time_t mCurrentTime;                    /**< Current logical time in [ms] since reference. */
   
 protected:
   THash<std::string, Object*> mObjects;   /**< Hash to find any object in the tree from its url. */
   
 private:
+  std::list<Call> mPendingLinks;        /**< List of pending connections waiting for variable assignements. */
+  
+  /** Realtime related stuff. */
   
   /** Set rubyk thread to high priority. */
   void high_priority ();
+    
+  /** Trigger events with a time older or equal to the current time. */
+  void pop_events ();
   
-  Mutex mMutex;                         /**< "Do not mess with me" mutex lock. */
-  std::list<Call> mPendingLinks;        /**< List of pending connections waiting for variable assignements. */
+  /** Empty events queue. */
+  void pop_all_events ();
   
-  int mCommandSchedPoclicy;             /**< Thread's original scheduling priority (all commands get this). */ 
+  /** Trigger loop events. These are typically the IO 'read/write' of the IO nodes. */
+  void trigger_loop_events ();
+  
+  Mutex mMutex;                           /**< "Do not mess with me" mutex lock. */
+  int mCommandSchedPoclicy;               /**< Thread's original scheduling priority (all commands get this). */ 
   struct sched_param mCommandThreadParam; /**< Scheduling parameters for commands (lower then rubyk). */
+  struct timeb mTimeRef;                  /**< Time reference. All times are [ms] from this reference. It's the root's birthdate ! */
+  bool mQuit;                             /**< Internal flag to tell running threads to quit. */
+  
+  std::queue<Command *> mCommands;        /**< Command line / editors. */
+  
+  /** Events ! */
+  OrderedList<Event*>     mEventsQueue;   /**< Ordered event list. */
+  std::deque<Node*>       mLoopedNodes;   /**< List of methods to call on every loop. */
 };
 
 #endif // _ROOT_H_

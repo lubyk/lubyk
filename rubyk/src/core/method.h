@@ -55,7 +55,7 @@ public:
     return (*mMethod)(mReceiver,val);
   }
   
-private:
+protected:
   /** Make a pointer to a member method. */
   template<class T, const Value(T::*Tmethod)(const Value&)>
   static const Value cast_method (void * pReceiver, const Value& val)
