@@ -53,7 +53,7 @@ public:
   void test_keys( void )
   {
     THash<std::string, std::string> hash(10);
-    const std::list<std::string> * keys = hash.keys();
+    const std::list<std::string> * keys = &hash.keys();
     
     hash.set(std::string("hello"), std::string("world"));
     TS_ASSERT_EQUALS( 1, keys->size());
@@ -83,7 +83,7 @@ public:
   
     
     
-    TS_ASSERT_EQUALS( 2,  hash.keys()->size());
+    TS_ASSERT_EQUALS( 2,  hash.keys().size());
     
     TS_ASSERT(hash.get(&res, "a"));
     TS_ASSERT_EQUALS( res,  std::string("world") );
@@ -91,7 +91,7 @@ public:
     TS_ASSERT_EQUALS( res,  std::string("mum"  ) );
     
     hash.clear();
-    TS_ASSERT_EQUALS( 0,  hash.keys()->size());
+    TS_ASSERT_EQUALS( 0,  hash.keys().size());
     TS_ASSERT( !hash.get(&res, "a"));
     TS_ASSERT( !hash.get(&res, "b"));
   }
@@ -106,7 +106,7 @@ public:
     hash.set(std::string("c"), 3);
   
     
-    TS_ASSERT_EQUALS( 3,  hash.keys()->size());
+    TS_ASSERT_EQUALS( 3,  hash.size());
     
     TS_ASSERT(hash.get(&res, "a"));
     TS_ASSERT_EQUALS( res,  1);
@@ -116,7 +116,7 @@ public:
     TS_ASSERT_EQUALS( res,  3);
     
     hash.clear();
-    TS_ASSERT_EQUALS( 0,  hash.keys()->size());
+    TS_ASSERT_EQUALS( 0,  hash.size());
     TS_ASSERT( !hash.get(&res, "a"));
     TS_ASSERT( !hash.get(&res, "b"));
     TS_ASSERT( !hash.get(&res, "c"));

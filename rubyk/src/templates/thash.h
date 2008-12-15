@@ -149,7 +149,7 @@ public:
   { return mSize; }
   
   /** List of keys. */
-  const std::list<K> * keys() { return &mKeys; }
+  const std::list<K>& keys() { return mKeys; }
   
   /** Begin iterator over the keys of the dictionary (read-only). */
   typename std::list<K>::const_iterator begin() const { return mKeys.begin(); }
