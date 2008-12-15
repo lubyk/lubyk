@@ -121,14 +121,12 @@ public:
   }
   
   /** Notification of name/parent change from an object. */
-  void object_moved(Object * pObj)
+  void register_object(Object * pObj)
   {
     // url/tree changed, make sure dict is in sync
     
     // 1. remove object
-    if (pObj->mRoot) pObj->mRoot->remove_object(pObj);
-    
-    // 1.2 FIXME: remove children !
+    if (pObj->mRoot) pObj->mRoot->unregister_object(pObj);
     
     // 2. add with new key
     mObjects.set(pObj->url(), pObj);
@@ -143,8 +141,8 @@ public:
     mObjects.set(pUrl, pObj);
   }
   
-  /** Remove object from tree. */
-  void remove_object(Object * pObj)
+  /** Unregister an object from tree. */
+  void unregister_object(Object * pObj)
   {
     mObjects.remove_element(pObj);
   }

@@ -16,19 +16,19 @@ public:
   Object() : mRoot(NULL), mParent(NULL), mChildren(20)
   {
     mName = default_name();
-    rebuild_url();
+    mUrl  = mName;
   }
   
   Object(const char * pName) : mRoot(NULL), mParent(NULL), mChildren(20)
   {
     mName = pName;
-    rebuild_url();
+    mUrl  = mName;
   }
   
   Object(const std::string& pName) : mRoot(NULL), mParent(NULL), mChildren(20)
   {
     mName = pName;
-    rebuild_url();
+    mUrl  = mName;
   }
   
   Object(Object * pParent) : mRoot(NULL), mParent(NULL), mChildren(20)
@@ -171,26 +171,17 @@ public:
   }
   
   /** Inform the object of an alias to be destroyed on destruction. */
-  void register_alias(Alias * pAlias);
+  void register_alias (Alias * pAlias);
   
   /** Inform the object that an alias no longer exists. */
-  void unregister_alias(Alias * pAlias);
+  void unregister_alias (Alias * pAlias);
   
-  const std::string& url()
+  const std::string& url ()
   {
     return mUrl;
   }
   
-  void rebuild_url()
-  {
-    if (mParent) {
-      // build fullpath
-      mUrl = std::string(mParent->url()).append("/").append(mName);
-    } else {
-      // no parent
-      mUrl = mName;
-    }
-  }
+  void register_url ();
   
   void set_name (const char* pName) 
   { set_name(std::string(pName)); }
@@ -238,7 +229,7 @@ public:
   }
   
 protected:
-  /** Actual adoption. Overwritten by Group to manage tree separation. */
+  /** Actual adoption. Overwritten by Planet to manage tree separation. */
   virtual void do_adopt(Object * pObject)
   {
     Object * oldParent = pObject->mParent;
@@ -252,7 +243,7 @@ protected:
   }
   
   /** Child sends a notification to the parent when it's name changes so that the parent/root keep their url hash in sync. */
-  void child_moved(Object * pChild);
+  void register_child(Object * pChild);
   
   /** Update cached url, notify mRoot of the position change. */
   void moved();

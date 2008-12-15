@@ -33,39 +33,51 @@ void Object::unregister_alias(Alias * pAlias)
 void Object::release(Object * pChild)
 {
   mChildren.remove_element(pChild);
-  if (mRoot) mRoot->remove_object(pChild);
+  if (mRoot) mRoot->unregister_object(pChild);
 }
 
 void Object::moved()
-{
-  Object * obj;
-  std::list<std::string> keys = mChildren.keys(); // copy keys because mChildren is modified in for loop...
-  string_iterator it;
-  string_iterator end = keys.end();
+{ 
+  // 1. get new name from parent, register as child
+  if (mParent) mParent->register_child(this);
   
-  if (mParent)
-    mParent->child_moved(this);
-  else
-    rebuild_url();
-  
-  for(it = keys.begin(); it != end; it++) {
-    if (mChildren.get(&obj, *it)) obj->moved();
-  }
-  
+  register_url();
 }
 
-void Object::child_moved(Object * pChild)
+void Object::register_child(Object * pChild)
 {
+  // 1. reset hash
   mChildren.remove_element(pChild);
   
+  // 2. get valid name
   while (child(pChild->mName))
     pChild->next_name();
   
+  // 3. set hash back
   mChildren.set(pChild->mName,pChild);
+}
+
+void Object::register_url()
+{
+  Object * obj;
+  string_iterator it;
+  string_iterator end = mChildren.end();
   
-  pChild->rebuild_url();
+  // 1. rebuild url
+  if (mParent) {
+    // build fullpath
+    mUrl = std::string(mParent->url()).append("/").append(mName);
+    if (mParent->mRoot) mParent->mRoot->register_object(this);
+  } else {
+    // no parent
+    mUrl = mName;
+    if (mRoot) mRoot->unregister_object(this);
+  }
   
-  if (mRoot) mRoot->object_moved(pChild);
+  // 3. update children
+  for(it = mChildren.begin(); it != end; it++) {
+    if (mChildren.get(&obj, *it)) obj->register_url();
+  }
 }
 
 void Object::clear()
@@ -79,7 +91,7 @@ void Object::clear()
     if (mChildren.get(&child, *it)) {
       // to avoid 'release' call (would alter mChildren)
       child->mParent = NULL;
-      if (mRoot) mRoot->remove_object(child);
+      if (mRoot) mRoot->unregister_object(child);
       delete child;
     }
   }
