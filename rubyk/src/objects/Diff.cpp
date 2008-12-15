@@ -19,8 +19,8 @@ public:
   void bang(const Value& val)
   {  
     const Matrix * live;
-    if (sig.type == MatrixValue) {
-      if (!sig.get(&live) || live->size() == 0) return;
+    if (val.type == MatrixValue) {
+      if (!val.get(&live) || live->size() == 0) return;
       if (live->row_count() == 1) {
         // vector ==> value distance
         size_t col_count = live->col_count();

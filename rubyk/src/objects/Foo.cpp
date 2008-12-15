@@ -6,7 +6,7 @@ class Foo : public Node
   void bang (const Value& val)
   {
     Matrix m;
-    if (!sig.set(&m)) return; // light copy (shares memory with "sig")
+    if (!val.set(&m)) return; // light copy (shares memory with "sig")
     m *= mMult;     // real copy (with multiplication)
     send(1,m);      // "m" is automatically deallocated (this is an example: in a real object, 'm' would be a member so that it is reused.)
   }
@@ -20,7 +20,7 @@ class Foo : public Node
   // inlet 2: set mMult (also used as param)
   void multiplier (const Value& val)
   {
-    sig.set(mMult);
+    val.set(mMult);
   }
   
   // These two methods could be abstracted with

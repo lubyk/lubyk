@@ -27,7 +27,7 @@ public:
     }
   }
   
-  bool init (const Value& p)
+  bool init ()
   {
     mTrainingData.set_sizes(0,8);
     mCodebook.set_sizes(8,8);
@@ -74,27 +74,27 @@ public:
     
     switch(mState) {
     case Waiting:
-      if (sig.get(&cmd)) {
+      if (val.get(&cmd)) {
         do_command(cmd);
       }  
       break;
     case Recording:
-      if (sig.get(&cmd)) {
+      if (val.get(&cmd)) {
         do_command(cmd);
-      } else if (sig.type == MatrixValue) {
-        if (sig.matrix.value->col_count() == mCodebook.col_count()) {
+      } else if (val.type == MatrixValue) {
+        if (val.matrix.value->col_count() == mCodebook.col_count()) {
           if (!mTrainFile) return;
           
-          sig.matrix.value->to_file(mTrainFile);
-          mTrainingData.cast_append(sig.matrix.value->data, sig.matrix.value->size(), mScale);
+          val.matrix.value->to_file(mTrainFile);
+          mTrainingData.cast_append(val.matrix.value->data, val.matrix.value->size(), mScale);
           if (mDebug) *mOutput << mName << ": recorded vector '" << mTrainingData.row_count() << "'.\n";
         } else {
-          *mOutput << mName << ": wrong signal size '" << sig.matrix.value->col_count() << "'. Should be '" << mCodebook.col_count() << "'.\n";
+          *mOutput << mName << ": wrong signal size '" << val.matrix.value->col_count() << "'. Should be '" << mCodebook.col_count() << "'.\n";
         }
       }
       break;
     case Learning:
-      if (sig.get(&cmd)) {
+      if (val.get(&cmd)) {
         if (cmd == 'a') {
           *mOutput << mName << ": aborting learn.\n";
           mState = Waiting;
@@ -109,14 +109,14 @@ public:
       }
       break;
     case Label:
-      if (sig.type == MatrixValue) {
-        if (sig.matrix.value->col_count() == mCodebook.col_count()) {
-          int label = label_for(*sig.matrix.value);
+      if (val.type == MatrixValue) {
+        if (val.matrix.value->col_count() == mCodebook.col_count()) {
+          int label = label_for(*val.matrix.value);
           send(label / (real_t)mCodebook.row_count());
         } else {
-          *mOutput << mName << ": wrong signal size '" << sig.matrix.value->col_count() << "'. Should be '" << mCodebook.col_count() << "'.\n";
+          *mOutput << mName << ": wrong signal size '" << val.matrix.value->col_count() << "'. Should be '" << mCodebook.col_count() << "'.\n";
         }
-      } else if (sig.get(&cmd)) {
+      } else if (val.get(&cmd)) {
         do_command(cmd);
       }
     }

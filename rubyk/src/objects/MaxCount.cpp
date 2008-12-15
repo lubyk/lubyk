@@ -12,11 +12,11 @@ public:
   
   void bang(const Value& val)
   {
-    if (sig.type != MatrixValue) {
+    if (val.type != MatrixValue) {
       *mOutput << mName << ": filter only works with array signals. Use a buffer.\n";
       return;
     }
-    const Matrix * vector = sig.matrix.value;
+    const Matrix * vector = val.matrix.value;
     size_t size = vector->col_count();
     
     for(int i=0; i < 256; i++) {

@@ -63,9 +63,9 @@ public:
     
     if (!mIsOK) return; // no recovery
     
-    if (sig.type == MatrixValue) {
-      if (!resize(sig.matrix.value->row_count(), sig.matrix.value->col_count())) return;
-      sig.get(&mLiveBuffer);
+    if (val.type == MatrixValue) {
+      if (!resize(val.matrix.value->row_count(), val.matrix.value->col_count())) return;
+      val.get(&mLiveBuffer);
       if (mLiveBuffer) {
         TRY_RET(mLiveView, set_view(*mLiveBuffer, 0, -1));
       }
@@ -80,7 +80,7 @@ public:
         countdown_time = 0;
 
       // receiving Bangs or command change
-      sig.get(&cmd);
+      val.get(&cmd);
       
       switch(mState) {
       case CountDownReady:

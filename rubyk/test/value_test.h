@@ -138,13 +138,13 @@ public:
     assert_ref_count(v1, 1);
     
     // anonymize & share data
-    Value sig(v1);
+    Value val(v1);
     assert_log("");
-    assert_id(sig, 1);
+    assert_id(val, 1);
     assert_ref_count(v1, 2);
     // type conversion & share data
     TestValue v3;
-    TS_ASSERT(sig.set(v3));
+    TS_ASSERT(val.set(v3));
     assert_log(""); // no object created
     assert_id(v3, 1);
     assert_ref_count(v3, 3);

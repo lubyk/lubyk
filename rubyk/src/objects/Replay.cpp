@@ -43,14 +43,14 @@ public:
   void bang(const Value& val)
   {
     int cmd;
-    if (sig.get(&cmd)) {
+    if (val.get(&cmd)) {
       // execute command
       if (cmd == (int)'r') {
         enter(RecordingMode);
       } else if (cmd == (int)'p') {
         enter(PlaybackMode);
       }
-    } else if (mState == RecordingMode && sig.get(&mLiveBuffer)) {
+    } else if (mState == RecordingMode && val.get(&mLiveBuffer)) {
       // record
       // we set our view on this buffer because we need to print it (cannot print a const matrix since it can
       // alter the matrix by setting an error message)

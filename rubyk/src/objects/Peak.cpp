@@ -16,10 +16,10 @@ public:
     real_t d = -1;
     size_t row_count, col_count;
     const Matrix * live_buffer = NULL;
-    if(sig.get(&live_buffer)) {
+    if(val.get(&live_buffer)) {
       row_count = live_buffer->row_count();
       col_count = live_buffer->col_count();
-    } else if (sig.get(&d)) {
+    } else if (val.get(&d)) {
       d = absval(d);
       row_count = 1;
       col_count = 1;

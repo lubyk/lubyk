@@ -428,7 +428,7 @@ void LuaScript::set_lua_global (const char * key, const Value& val)
 {
   if (lua_pushsignal(sig)) {
     lua_setglobal(mLua, key);
-  } else if (sig.type) {
+  } else if (val.type) {
     *mOutput << mName << "(error): ";
     *mOutput << "cannot set '" << key << "' to " << sig << " (type not yet suported in Lua).\n";
   }
@@ -448,13 +448,13 @@ bool LuaScript::lua_pushsignal (const Value& val)
 {
   real_t d;
   const Matrix * live;
-  if (sig.get(&live)) {
+  if (val.get(&live)) {
     lua_pushmatrix(*live);
-  } else if (sig.type == MidiValue) {
-    lua_pushmidi(*(sig.midi_ptr.value));
-  } else if (sig.get(&d)) {
+  } else if (val.type == MidiValue) {
+    lua_pushmidi(*(val.midi_ptr.value));
+  } else if (val.get(&d)) {
     lua_pushnumber(mLua, d);
-  } else if (sig.is_bang()) {
+  } else if (val.is_bang()) {
     lua_pushnil(mLua);
   } else {
     return false;

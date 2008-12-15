@@ -6,7 +6,7 @@ class Macro : public LuaScript
 {
 public:
   
-  bool init (const Value& p)
+  bool init ()
   {
     mCmd.set_output(std::cout);
     mCmd.set_input(std::cin);

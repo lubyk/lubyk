@@ -28,8 +28,8 @@ public:
   // inlet 1 and 5 (silent set note)
   void bang(const Value& val)
   {
-    if (sig.type == MidiValue && sig.midi_ptr.value->mType == NoteOn) {
-      mMessage = *(sig.midi_ptr.value);
+    if (val.type == MidiValue && val.midi_ptr.value->mType == NoteOn) {
+      mMessage = *(val.midi_ptr.value);
     } else {
       set_note(sig);
     }
@@ -40,7 +40,7 @@ public:
   void set_velocity(const Value& val)
   {
     int v = 0;
-    sig.get(&v);
+    val.get(&v);
     if (v) mMessage.set_velocity(v); 
   }
   
@@ -48,21 +48,21 @@ public:
   void set_length(const Value& val)
   { 
     time_t l;
-    if (sig.get(&l)) mMessage.set_length(l); 
+    if (val.get(&l)) mMessage.set_length(l); 
   }
   
   // inlet 4
   void set_channel(const Value& val)
   {
     int i;
-    if (sig.get(&i)) mMessage.set_channel(i);
+    if (val.get(&i)) mMessage.set_channel(i);
   }
   
   // inlet 5 (set note but do not send)
   void set_note(const Value& val)
   {
     int n;
-    if (sig.get(&n)) mMessage.set_note(n);
+    if (val.get(&n)) mMessage.set_note(n);
   }
   
   // internal callback
@@ -72,7 +72,7 @@ public:
     Outlet * out;
     Value sig;
     
-    sig.set(msg);
+    val.set(msg);
     if ( (out = outlet(1)) ) out->send(sig);
     delete msg;
   }

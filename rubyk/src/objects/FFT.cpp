@@ -22,8 +22,8 @@ public:
   void bang(const Value& val)
   { 
     const Matrix * mat;
-    if (!sig.get(&mat)) {
-      *mOutput << mName << ": wrong signal type '" << sig.type_name() << "' (should be ArrayValue)\n";
+    if (!val.get(&mat)) {
+      *mOutput << mName << ": wrong signal type '" << val.type_name() << "' (should be ArrayValue)\n";
       return;
     } else if (mat->row_count() != mFrequencies.row_count() || mat->col_count() != mFrequencies.col_count()) {
       if(!set_sizes(mat->row_count(), mat->col_count())) {

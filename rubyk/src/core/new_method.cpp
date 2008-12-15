@@ -46,8 +46,6 @@ const Value NewMethod::trigger (const Value& val)
   
   node->set_class_url(mParent->url());  // used by osc (using url instead of name because we might have class folders/subfolders some day).
   
-  //FIX node->set_output(pOutput);  // ??? I think we won't need this anymore once we have implemented notifications ?
-  
   // make inlets
   klass->make_inlets(node);
   

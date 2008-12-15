@@ -7,7 +7,7 @@ class Serial : public LuaScript
 {
 public:
 
-  bool init (const Value& p)
+  bool init ()
   {
     return init_serial(p);
   }

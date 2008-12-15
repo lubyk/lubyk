@@ -5,7 +5,7 @@ class MidiOut : public Node
 {
 public:
   
-  bool init (const Value& p)
+  bool init ()
   {
     mPortId = -1;
     
@@ -56,22 +56,22 @@ public:
     MidiMessage * msg;
     if (mDebug) *mOutput << mName << ": " << sig << std::endl;
     
-    if (!mMidiOut || sig.type != MidiValue) return;
+    if (!mMidiOut || val.type != MidiValue) return;
     
-    if (sig.midi_ptr.value->mWait) {
-      if (sig.midi_ptr.free_me) {
-        sig.clear_free_me(); // we take hold of it
-        register_event<MidiOut, &MidiOut::send_and_delete>(sig.midi_ptr.value->mWait, (void*)(sig.midi_ptr.value));
+    if (val.midi_ptr.value->mWait) {
+      if (val.midi_ptr.free_me) {
+        val.clear_free_me(); // we take hold of it
+        register_event<MidiOut, &MidiOut::send_and_delete>(val.midi_ptr.value->mWait, (void*)(val.midi_ptr.value));
       } else {
         // copy
-        msg = new MidiMessage(*(sig.midi_ptr.value));
+        msg = new MidiMessage(*(val.midi_ptr.value));
         register_event<MidiOut, &MidiOut::send_and_delete>(msg->mWait, (void*)msg);
       }
-    } else if (sig.midi_ptr.free_me) {
-      sig.clear_free_me(); // we take hold
-      send_and_delete((void*)(sig.midi_ptr.value));
+    } else if (val.midi_ptr.free_me) {
+      val.clear_free_me(); // we take hold
+      send_and_delete((void*)(val.midi_ptr.value));
     } else {  
-      msg = new MidiMessage(*(sig.midi_ptr.value));
+      msg = new MidiMessage(*(val.midi_ptr.value));
       send_and_delete((void*)(msg));
     }
   }

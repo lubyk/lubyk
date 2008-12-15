@@ -51,12 +51,12 @@ public:
   {
     if (!mIsOK) return; // no recovery
     
-    if (sig.type == MatrixValue) {
-      if (sig.matrix.value->size() != mMeanValue.size()) {
-        *mOutput << mName << ": wrong signal size " << sig.matrix.value->size() << " should be " << mMeanValue.size() << "\n.";
+    if (val.type == MatrixValue) {
+      if (val.matrix.value->size() != mMeanValue.size()) {
+        *mOutput << mName << ": wrong signal size " << val.matrix.value->size() << " should be " << mMeanValue.size() << "\n.";
         return;
       }
-      sig.get(&mLiveBuffer);
+      val.get(&mLiveBuffer);
       
       transpose_vector(*mLiveBuffer);
 
@@ -64,7 +64,7 @@ public:
       send(mS);
       
     } else {
-      *mOutput << mName << ": wrong signal type (" << sig.type_name() << ") should be MatrixValue\n";
+      *mOutput << mName << ": wrong signal type (" << val.type_name() << ") should be MatrixValue\n";
       return;
     }
     

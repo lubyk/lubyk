@@ -5,7 +5,7 @@ class Cabox : public Serial
 {
 public:
   
-  bool init (const Value& p)
+  bool init ()
   { 
     mBuffer.set_sizes(1, 12);
     mOffset.set_sizes(1, 12);
@@ -62,11 +62,11 @@ public:
     real_t sig_val;
     bool new_data = false;
     
-    if (sig.type == MatrixValue) {
-      sig_max = sig.matrix.value->size();
+    if (val.type == MatrixValue) {
+      sig_max = val.matrix.value->size();
       sig_i   = 0;
-      sig_buf = sig.matrix.value->data;
-    } else if (sig.get(&sig_val)) {
+      sig_buf = val.matrix.value->data;
+    } else if (val.get(&sig_val)) {
       sig_max = 1;
       sig_i   = 0;
       sig_buf = &sig_val;

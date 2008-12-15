@@ -7,7 +7,7 @@ class BufferNode : public Node
 {
 public:
   
-  bool init (const Value& p)
+  bool init ()
   {
     if(!mBuffer.set_sizes(8, 0)) return false;
     mVector   = NULL;
@@ -39,16 +39,16 @@ public:
   {   
     real_t d;
     if (!mIsOK) return;
-    if(sig.type == MatrixValue) {
-      real_t * data = sig.matrix.value->data;
+    if(val.type == MatrixValue) {
+      real_t * data = val.matrix.value->data;
       if (!mVector) {
         // get buffer size from incoming signal
-        TRY_RET(mBuffer, set_sizes(mBuffer.row_count(), sig.matrix.value->col_count()));
+        TRY_RET(mBuffer, set_sizes(mBuffer.row_count(), val.matrix.value->col_count()));
         mVector = mBuffer.advance();
         if (!mVector) return;
         mIndex  = 0;
       }
-      for(size_t i=0; i < sig.matrix.value->col_count(); i++) {
+      for(size_t i=0; i < val.matrix.value->col_count(); i++) {
         mVector[mIndex] = data[i];
         mIndex++;
         if (mIndex >= mBuffer.col_count()) {
@@ -56,7 +56,7 @@ public:
           mIndex = 0;
         }
       }
-    } else if (sig.get(&d)) {
+    } else if (val.get(&d)) {
       if (!mVector) {
         // get buffer size from incoming signal
         TRY_RET(mBuffer, set_sizes(mBuffer.row_count(), 1));

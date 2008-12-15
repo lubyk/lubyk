@@ -18,7 +18,7 @@ public:
 
   void bang(const Value& val)
   { 
-    sig.get(&mLiveBuffer);
+    val.get(&mLiveBuffer);
     
     TRY_RET(mCutMatrix, set_view(*mLiveBuffer, mCutFrom, mCutTo));
     if (mFlatten) mCutMatrix.set_sizes(1, mCutMatrix.size());

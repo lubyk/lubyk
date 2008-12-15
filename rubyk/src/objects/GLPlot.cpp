@@ -18,7 +18,7 @@ class GLPlot : public Node
 {
 public:
   
-  bool init (const Value& p)
+  bool init ()
   {
     mLiveBuffer      = NULL;
     mLineCount       = 1;
@@ -71,7 +71,7 @@ public:
   void bang(const Value& val)
   {
     mValue = &sig;
-    sig.get(&(mLiveBuffer));
+    val.get(&(mLiveBuffer));
     send(1, sig);
   }
   
@@ -82,7 +82,7 @@ public:
     if (!is_opengl_thread()) return;
     if (mLiveBuffer == NULL) return;
     
-    if (sig.get(&mat) && mat->size() > 1) {
+    if (val.get(&mat) && mat->size() > 1) {
       mWidth  = mat->data[0];
       mHeight = mat->data[1];
     }
@@ -140,7 +140,7 @@ private:
     real_t x_offset      = 0;
     bool   draw_box      = false;
 
-    ///// set x_offset, width_zoom with sig.get_meta(...) /////
+    ///// set x_offset, width_zoom with val.get_meta(...) /////
     mValue->get_meta(&sample_offset, H("sample_offset")); // shift display window right / left
     mValue->get_meta(&sample_count,  H("sample_count"));  // total number of samples per window when computing width_ratio
     mValue->get_meta(&draw_box,      H("draw_box"));      // draw a surrounding box

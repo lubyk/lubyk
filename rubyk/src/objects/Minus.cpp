@@ -13,11 +13,11 @@ public:
   void bang(const Value& val)
   {  
     real_t d;
-    if (sig.type == MatrixValue) {
+    if (val.type == MatrixValue) {
       mBuffer.copy(sig);
       mBuffer -= mValue;
       send(mBuffer);
-    } else if (sig.get(&d)) {
+    } else if (val.get(&d)) {
       // single value
       d -= mValue;
       send(d);
@@ -30,7 +30,7 @@ public:
   // inlet 2
   void set_minus(const Value& val)
   {
-    sig.get(&mValue);
+    val.get(&mValue);
   }
   
   virtual const Value inspect(const Value& val) 

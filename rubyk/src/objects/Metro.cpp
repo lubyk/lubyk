@@ -15,8 +15,8 @@ public:
   // inlet 1
   void bang(const Value& val)
   {  
-    if (sig.type) { // bang_me_in class 'bang' with a NilValue, if it's not nil, it's a resync/set bang
-      sig.get(&mTempo);
+    if (val.type) { // bang_me_in class 'bang' with a NilValue, if it's not nil, it's a resync/set bang
+      val.get(&mTempo);
       remove_my_events();
     }
     if (mTempo != 0) {

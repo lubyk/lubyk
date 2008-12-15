@@ -114,12 +114,12 @@ public:
   void bang (const Value& val)
   {
     if (!mIsOK) return; // do not use 'predict' if no model loaded
-    if (sig.type != MatrixValue) return; // ignore
+    if (val.type != MatrixValue) return; // ignore
     
-    if (sig.matrix.value->col_count() >= mVector.col_count()) {
-      mLiveBuffer = sig.matrix.value;
+    if (val.matrix.value->col_count() >= mVector.col_count()) {
+      mLiveBuffer = val.matrix.value;
     } else {
-      *mOutput << mName << ": wrong signal size " << sig.matrix.value->col_count() << " should be " << mVector.col_count() << "\n.";
+      *mOutput << mName << ": wrong signal size " << val.matrix.value->col_count() << " should be " << mVector.col_count() << "\n.";
       return;
     }
     

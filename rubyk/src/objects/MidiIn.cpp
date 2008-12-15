@@ -5,7 +5,7 @@ class MidiIn : public Node
 {
 public:
   
-  bool init (const Value& p)
+  bool init ()
   {
     mPortId = -1;
     
@@ -61,7 +61,7 @@ public:
   // inlet 1
   void bang(const Value& val)
   {
-    if (sig.type == NilValue && mMidiIn)
+    if (val.type == NilValue && mMidiIn)
       get_messages();
   }
   

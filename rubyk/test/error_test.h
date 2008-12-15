@@ -11,15 +11,15 @@ public:
     TS_ASSERT(n.message());
     TS_ASSERT_EQUALS( std::string(n.message()), "Something bad happened.");
     // anonymize
-    Value sig(n);
+    Value val(n);
     
     // cannot get as string
     String n2;
-    TS_ASSERT(!sig.set(n2));
+    TS_ASSERT(!val.set(n2));
     
     // can get as error
     Error e;
-    TS_ASSERT(sig.set(e));
+    TS_ASSERT(val.set(e));
     TS_ASSERT_EQUALS( std::string(e.message()), "Something bad happened.");
   }
   

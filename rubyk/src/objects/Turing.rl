@@ -51,7 +51,7 @@ public:
     int state;
     int status;
     
-    if (sig.get(&i)) {
+    if (val.get(&i)) {
       mRealToken = i;
       mToken = mTokenTable[ mRealToken % TUR_MAX_TOKEN_COUNT ]; // translate token in the current machine values.
     }

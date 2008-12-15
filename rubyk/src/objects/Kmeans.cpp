@@ -50,7 +50,7 @@ public:
   void bang(const Value& val)
   {
     const Matrix * live;
-    if (sig.get(&live)) {
+    if (val.get(&live)) {
       // we automatically flatten (size()) matrix to vector.
       if (live->size() != mCodeBook.col_count()) {
         *mOutput << mName << ": bad input matrix " << live->row_count() << "x" << live->col_count() << " should be 1x" << mCodeBook.col_count() << ".\n";

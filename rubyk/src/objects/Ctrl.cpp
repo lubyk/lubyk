@@ -30,10 +30,10 @@ public:
   void bang(const Value& val)
   {
     real_t i;
-    if (sig.type == MidiValue && sig.midi_ptr.value->mType == CtrlChange) {
-      mMessage = *(sig.midi_ptr.value);
+    if (val.type == MidiValue && val.midi_ptr.value->mType == CtrlChange) {
+      mMessage = *(val.midi_ptr.value);
       send(mMessage);
-    } else if (sig.get(&i)) {
+    } else if (val.get(&i)) {
       if (mSlope) {
         mTarget = i;
         remove_my_events(); // restart triggers
@@ -51,20 +51,20 @@ public:
   void set_ctrl(const Value& val)
   {
     int n;
-    if (sig.get(&n)) mMessage.set_note(n);
+    if (val.get(&n)) mMessage.set_note(n);
   }
   
   // inlet 3
   void set_slope(const Value& val)
   {
-    sig.get(&mSlope);
+    val.get(&mSlope);
   }
   
   // inlet 4
   void set_channel(const Value& val)
   {
     int i;
-    if (sig.get(&i)) mMessage.set_channel(i);
+    if (val.get(&i)) mMessage.set_channel(i);
   }
   
   void move ()

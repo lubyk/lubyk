@@ -4,54 +4,54 @@
 class Counter : public Node
 {
 public:
-  bool init (const Value& p)
+  bool init ()
   {
     mCounter = 0;
     mIncrement = 1;
     return true;
   }
   
-  bool set (const Value& p)
-  {
-    mCounter   = p.val("counter",   mCounter, true);
-    mIncrement = p.val("increment", mIncrement);
-    
-    return true;
-  }
-
-  // inlet 1
+  ATTR_ACCESSOR(mCounter, counter)
+  ATTR_ACCESSOR(mIncrement, increment)
+  
+  // [1] set / increment counter
   void bang(const Value& val)
   { 
-    sig.get(&mCounter);
-    
-    send(mCounter += mIncrement);
+    if (val.is_bang()) {
+      mCounter += mIncrement;
+    } else {
+      mCounter = val;
+    }  
+    send(mCounter);
   }
   
-  // inlet 2
-  void set_increment(const Value& val)
-  { sig.get(&mIncrement);     }
+  // [2] set increment
+  void increment(const Value& val)
+  { 
+    mIncrement = val;
+  }
   
   
   virtual const Value inspect(const Value& val)  
-  { bprint(mSpy, mSpySize,"%i (%+i)", mCounter, mIncrement );  }
-  
-  virtual void help()
-  { *mOutput << "Increments by 'value' each time it receives a bang.\n"; }
-  
-  void increment()
-  {
-    *mOutput << mIncrement << std::endl;
+  { 
+    std::ostringstream oss; // <Counter:/v1 3 (+1)>
+    oss << "<Counter:" << url() << " " << mCounter << " (";
+    if (mIncrement > 0.0) oss << "+";
+    oss << mIncrement << ")" << ">";
+    return String(oss.str());
   }
   
 private:
-  int mCounter;
-  int mIncrement;
+  Number mCounter;
+  Number mIncrement;
 };
 
-extern "C" void init()
+extern "C" void init(Root& root)
 {
-  CLASS (Counter)
-  INLET (Counter, set_increment)
-  OUTLET(Counter, value)
-  METHOD(Counter, increment)
+  CLASS (Counter, "Increment counter on each bang.")
+  INLET (Counter, bang, BangValue | NumberValue, "Increment counter | set counter.")
+  INLET (Counter, increment, NumberValue, "Value to increment counter on each bang.")
+  OUTLET(Counter, value, NumberValue, "Counter value.")
+  ACCESSOR(Counter, counter, "Counter value.")
+  ACCESSOR(Counter, increment, "Increment value.")
 }
