@@ -135,12 +135,6 @@ public:
     pObj->mRoot = this;
   }
   
-  /** Add an alias url for an object. */
-  void set_alias(const std::string& pUrl, Object * pObj)
-  {
-    mObjects.set(pUrl, pObj);
-  }
-  
   /** Unregister an object from tree. */
   void unregister_object(Object * pObj)
   {

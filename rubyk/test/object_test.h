@@ -71,6 +71,18 @@ public:
     TS_ASSERT_EQUALS( root.find("/foo/sub"), sub);
   }
   
+  void test_first_child( void )
+  {
+    Root root;
+    Object * one = root.adopt(new Object("one"));
+    Object * two = root.adopt(new Object("aaa"));
+    
+    TS_ASSERT_EQUALS( root.first_child(), one);
+    
+    delete one;
+    TS_ASSERT_EQUALS( root.first_child(), two);
+  }
+  
   void test_set_parent( void )
   {
     Root root;
@@ -252,20 +264,5 @@ public:
     
     res = root.call("/blah/#inspect");
     TS_ASSERT_EQUALS( Error(res).message(), std::string("Object '/blah/#inspect' not found.") );
-  }
-  
-  void test_alias_url( void )
-  {
-    Root root;
-    DummyObject * dum = root.adopt(new DummyObject("foo", 23));
-    Value res;
-    
-    root.set_alias("/ali", dum);
-    
-    res = root.call("/foo/#inspect");
-    TS_ASSERT_EQUALS( res.to_string(), "[1] foo: 23");
-    
-    res = root.call("/ali/#inspect");
-    TS_ASSERT_EQUALS( res.to_string(), "[2] foo: 23");
   }
 };

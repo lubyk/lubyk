@@ -26,6 +26,12 @@ public:
     if (mOriginal) mOriginal->unregister_alias(this);
   }
   
+  /** Class signature. */
+  virtual uint type()
+  {
+    return H("Alias");
+  }
+  
   virtual const Value trigger (const Value& val)
   {
     return mOriginal ? mOriginal->trigger(val) : gNilValue;

@@ -132,10 +132,13 @@ public:
     while(it != end) {
       Object * obj;
       if (mChildren.get(&obj, *it)) {
-        if (!start) res.append(",");
-        res.append(obj->mName);
-        if (!(obj->mChildren.empty())) res.append("/");
-        start = false;
+        if (obj->type() != H("Alias")) {
+            // do not list alias (Alias are used as internal helpers and do not need to be advertised)
+          if (!start) res.append(",");
+          res.append(obj->mName);
+          if (!(obj->mChildren.empty())) res.append("/");
+          start = false;
+        }
       }
       it++;
     }
@@ -215,6 +218,12 @@ public:
   const THash<std::string,Object *> children() const
   {
     return mChildren;
+  }
+  
+  /** Return first child. */
+  Object * first_child()
+  {
+    return mChildren.size() > 0 ? child(mChildren.keys().front()) : NULL;
   }
   
   /** Return the direct child named 'pName'. */

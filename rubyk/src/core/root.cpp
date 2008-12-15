@@ -41,14 +41,14 @@ const Value Root::create_link(const std::string& pFrom, const std::string& pFrom
   if (pFromPort != "")
     url.append("/out/").append(pFromPort).append("/link");
   else
-    url.append("/out/1/link"); // all outlets have an alias with their id
+    url.append("/out/link"); // link from first outlet
     
   String param(pTo);
   
   if (pToPort != "")
     param.append("/in/").append(pToPort);
   else
-    param.append("/in/1"); // all inlets have an alias with their id
+    param.append("/in"); // link to first inlet
   
   // try to create link
   Value res = call(url, param);
@@ -63,14 +63,14 @@ const Value Root::remove_link(const std::string& pFrom, const std::string& pFrom
   if (pFromPort != "")
     url.append("/out/").append(pFromPort).append("/unlink");
   else
-    url.append("/out/1/unlink"); // all outlets have an alias with their id
+    url.append("/out/unlink"); // unlink first outlet
     
   String param(pTo);
   
   if (pToPort != "")
     param.append("/in/").append(pToPort);
   else
-    param.append("/in/1"); // all inlets have an alias with their id
+    param.append("/in"); // unlink first inlet
     
   // try to remove link
   Value res = call(url, param);

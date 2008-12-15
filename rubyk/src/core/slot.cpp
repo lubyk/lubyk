@@ -86,6 +86,11 @@ const Value Slot::change_link(const Value& val, bool pCreate)
     Object * target = mRoot->find(String(val));
     if (!target) return Error("Could not update link (").append(val.to_string()).append(": not found).");
     
+    if (target->type() == H("Object")) {
+      target = target->first_child();
+      if (!target) return Error("Could not update link (").append(val.to_string()).append(": Slot not found).");
+    }
+    
     if (type() == H("Outlet")) {
       target = (Slot*)TYPE_CAST(Inlet,target);
     } else {
