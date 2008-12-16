@@ -60,8 +60,8 @@ public:
   { mOutput = &pOutput; }
   
   /** The tree to work on. */
-  void set_server (Root * pTree)
-  { mTree = pTree; }
+  void set_root (Root * pRoot)
+  { mRoot = pRoot; }
   
   /** Used for testing. */
   void set_input (std::istream& pInput)
@@ -142,7 +142,7 @@ protected:
 	std::string     mVar, mMethod, mClass, mKey, mValue, mFrom, mTo,;
 	std::string     mParamString;
   std::string     mFromPort, mToPort;
-  Root *          mTree; /**< Tree to work on. */
+  Root *          mRoot; /**< Tree to work on. */
   
   /** IO management. */
   pthread_t mThread;

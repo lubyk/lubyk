@@ -1,16 +1,10 @@
 #include "planet.h"
 #include "command.h"
-#include <csignal>
 #include <iostream>
-#include <fstream>
 #include "globals.cpp"
 
-Root * gServer;
 
-void term(int sig)
-{
-  gServer->quit();
-}
+
 
 ////// GLWINDOW HACK /////
 // instanciated in globals.o
@@ -22,75 +16,56 @@ void term(int sig)
 /// extern void * gGLWindowNode;
 /// extern bool   gQuitGl;
 
-pthread_t gPlanetThread;
-
-static void * start_thread(void * data)
-{  
-  InteractiveCommand mCmd(std::cin, std::cout);
-  gServer->listen_to_command(mCmd);
-  
-  signal(SIGTERM, term); // register a SIGTERM handler
-  signal(SIGINT,  term);
-  
-  while (gServer->run());
-  delete gServer;
-  gRunning = false;
-  return NULL;
-}
+//OPENGL_HACK Planet * gPlanet;
+//OPENGL_HACK pthread_t gPlanetThread;
+//OPENGL_HACK 
+//OPENGL_HACK static void * start_thread(void * data)
+//OPENGL_HACK { 
+//OPENGL_HACK   InteractiveCommand cmd(std::cin, std::cout);
+//OPENGL_HACK   gPlanet->listen_to_command(cmd);
+//OPENGL_HACK   
+//OPENGL_HACK   gPlanet->run();
+//OPENGL_HACK   
+//OPENGL_HACK   delete gPlanet;
+//OPENGL_HACK   gRunning = false;
+//OPENGL_HACK   return NULL;
+//OPENGL_HACK }
 /////////////////////
 
 int main(int argc, char * argv[])
-{
-  gServer = new Root;
-  // force build of "/class"
-  gServer->classes();
-  
-  gGLWindowStartThread = NULL;
-  gGLWindowNode = NULL; /////// GLWINDOW HACK
-  gQuitGl  = false;
-  gRunning = true;
-  
-  struct timespec sleeper;
-  sleeper.tv_sec  = 0; 
-  sleeper.tv_nsec = 100 * 1000000; // 100 ms
-  
-  //FIX if (!Node::sGLThreadKey) pthread_key_create(&Node::sGLThreadKey, NULL); // create a key to find 'this' object in new thread
-  //FIX pthread_setspecific(Node::sGLThreadKey,NULL);
-  
-  if (argc > 1) {
-    std::ifstream in(argv[1], std::ios::in);
-    std::ostringstream oss;
-    oss << in.rdbuf();
-    in.close();
-    
-    Command  * fCmd;
-    fCmd = new Command(std::cin, std::cout); // we use new because cleanup code is not executed for this thread due to opengl glutMainLoop
-    fCmd->set_server(gServer);
-    fCmd->set_silent(true);
-    gServer->unlock(); // so the commands are directly processed
-      oss << "\n";
-      fCmd->parse(oss.str());
-    gServer->lock();
-    
-    fCmd->close();
-    delete fCmd;
-  }
-  
-  ////// GLWINDOW HACK /////
-  // this is a hack to put GLWindow inside thread 0
-  pthread_create( &gPlanetThread, NULL, start_thread, NULL);
-  while (gRunning) {
-    if (gGLWindowStartThread) {
-      (*gGLWindowStartThread)(gGLWindowNode);
-      // never reaches here...
-      break;
-    }
-    nanosleep (&sleeper, NULL);
-  }
-  pthread_join( gPlanetThread, NULL);
-  /////////////////////
-  // while (gServer->run());  
-  // delete gServer;
+{  
+  Planet venus(argc, argv);
+  InteractiveCommand cmd(std::cin, std::cout);
+  venus.listen_to_command(cmd);
+  venus.run();
+  //OPENGL_HACK gGLWindowStartThread = NULL;
+  //OPENGL_HACK gGLWindowNode = NULL; /////// GLWINDOW HACK
+  //OPENGL_HACK gQuitGl  = false;
+  //OPENGL_HACK gRunning = true;
+  //OPENGL_HACK 
+  //OPENGL_HACK struct timespec sleeper;
+  //OPENGL_HACK sleeper.tv_sec  = 0; 
+  //OPENGL_HACK sleeper.tv_nsec = 100 * 1000000; // 100 ms
+  //OPENGL_HACK 
+  //OPENGL_HACK //FIX if (!Node::sGLThreadKey) pthread_key_create(&Node::sGLThreadKey, NULL); // create a key to find 'this' object in new thread
+  //OPENGL_HACK //FIX pthread_setspecific(Node::sGLThreadKey,NULL);
+  //OPENGL_HACK 
+  //OPENGL_HACK 
+  //OPENGL_HACK ////// GLWINDOW HACK /////
+  //OPENGL_HACK // this is a hack to put GLWindow inside thread 0
+  //OPENGL_HACK pthread_create( &gPlanetThread, NULL, start_thread, NULL);
+  //OPENGL_HACK while (gRunning) {
+  //OPENGL_HACK   if (gGLWindowStartThread) {
+  //OPENGL_HACK     (*gGLWindowStartThread)(gGLWindowNode);
+  //OPENGL_HACK     // never reaches here...
+  //OPENGL_HACK     break;
+  //OPENGL_HACK   }
+  //OPENGL_HACK   nanosleep (&sleeper, NULL);
+  //OPENGL_HACK }
+  //OPENGL_HACK pthread_join( gPlanetThread, NULL);
+  //OPENGL_HACK /////////////////////
+  //OPENGL_HACK // while (gPlanet->run());  
+  //OPENGL_HACK // delete gPlanet;
   
   return 0;
 }

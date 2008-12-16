@@ -250,8 +250,53 @@ public:
     }
   }
   
+  /** Create a new thread that will run the method given as template parameter. Use NEW_THREAD(klass, method) if you prefer. */
+  template <class T, void(T::*Tmethod)(void)>
+  pthread_t new_thread (T * pReceiver)
+  {
+    Event * e = (Event*)new TCallEvent<T, Tmethod>(mRoot->mCurrentTime, pReceiver);
+    return create_thread(e);
+  }
+  
+  /** Create a new thread that will start by executing the BaseEvent. 
+    * @return pthread_t of the new thread (NULL if it fails).
+    */
+  pthread_t create_thread(Event * e)
+  {
+    pthread_t id = NULL;
+    if (!sThisKey) pthread_key_create(&sThisKey, NULL); // create a key to find 'this' object in new thread
+    pthread_create( &id, NULL, &start_thread, (void*)e);
+    return id;
+  }
+  
+  /** Get "this" (used in static callbacks). */
+  static void * thread_this()
+  {
+    return pthread_getspecific(sThisKey);
+  }
+  
+  /** Set 'this' value for the current thread (used by Rubyk when starting a new thread). */
+  static void set_thread_this(void * pObj)
+  {
+    pthread_setspecific(sThisKey, pObj);
+  }
+  
+  /** Static method called in new thread. */
+  static void * start_thread(void * pEvent)
+  {
+    // in new thread...
+    
+    Event * e = (Event*)pEvent;
+    
+    // Set receiver as "this" for new thread.
+    set_thread_this(e->receiver());
+    e->trigger();
+    return NULL;
+  }
+  
 public:
   time_t mCurrentTime;                    /**< Current logical time in [ms] since reference. */
+  static pthread_key_t sThisKey;   /**< Key to retrieve 'this' value from a running thread. */
   
 protected:
   THash<std::string, Object*> mObjects;   /**< Hash to find any object in the tree from its url. */

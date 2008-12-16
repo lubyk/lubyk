@@ -19,11 +19,6 @@ class Observer;
 class Node : public Object
 {
 public:
-  Node() 
-  {
-    // create a key to find 'this' object in a new thread
-    if (!Node::sThisKey) pthread_key_create(&Node::sThisKey, NULL);
-  }
   
   virtual ~Node();
   
@@ -138,10 +133,6 @@ public:
   {
     mRoot->register_event( new BangEvent(mRoot->mCurrentTime + pTime, this) );
   }
-  
-
-public:
-  static pthread_key_t sThisKey;   /**< Key to retrieve 'this' value from a running thread. */
   
 private:
   

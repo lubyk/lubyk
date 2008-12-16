@@ -159,7 +159,7 @@ void Root::listen_to_command (Command& pCommand)
 {
   int ret;
   pthread_t id;
-  pCommand.set_server(this);
+  pCommand.set_root(this);
 
   ret = pthread_create( &id, NULL, &Command::call_do_listen, &pCommand);
   pCommand.set_thread_id(id);

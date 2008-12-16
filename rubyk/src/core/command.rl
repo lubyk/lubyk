@@ -22,7 +22,7 @@ void Command::initialize()
   int cs;
   
   mAction = CmdNoAction;
-  mTree       = NULL;
+  mRoot       = NULL;
   mQuit       = false;
   mTokenIndex = 0;
   mSilent     = false;
@@ -40,7 +40,7 @@ int Command::do_listen()
   char * line = buffer;
   
   // set thread priority to normal
-  mTree->normal_priority();
+  mRoot->normal_priority();
   
   if (!mSilent)
     *mOutput << "Welcome to rubyk !\n\n";
@@ -227,15 +227,15 @@ void Command::create_instance()
 {
   Value params = get_params();
   
-  mTree->lock();
+  mRoot->lock();
     // FIXME: Group scope
     // FIXME: should be new_object(mVar, mClass, Value(mParams))
-    Value res = mTree->new_object(mVar, mClass, params);
-  mTree->unlock();
+    Value res = mRoot->new_object(mVar, mClass, params);
+  mRoot->unlock();
   
   if (res.is_string()) {
     std::string url = String(res).string();
-    res = mTree->call(url.append("/#inspect"));
+    res = mRoot->call(url.append("/#inspect"));
   }
   
   
@@ -250,10 +250,10 @@ void Command::create_instance()
 
 void Command::create_link()
 { 
-  mTree->lock();
+  mRoot->lock();
     // FIXME: Group scope
-    mTree->create_link(std::string("/").append(mFrom), mFromPort, mToPort, std::string("/").append(mTo));
-  mTree->unlock();
+    mRoot->create_link(std::string("/").append(mFrom), mFromPort, mToPort, std::string("/").append(mTo));
+  mRoot->unlock();
 
 #ifdef DEBUG_PARSER
   std::cout << "LINK " << mFrom << "." << mFromPort << "=>" << mToPort << "." << mTo << std::endl;
@@ -262,10 +262,10 @@ void Command::create_link()
 
 void Command::remove_link()
 { 
-  mTree->lock();
+  mRoot->lock();
     // FIXME: Group scope
-    mTree->remove_link(std::string("/").append(mFrom), mFromPort, mToPort, std::string("/").append(mTo));
-  mTree->unlock();
+    mRoot->remove_link(std::string("/").append(mFrom), mFromPort, mToPort, std::string("/").append(mTo));
+  mRoot->unlock();
 
 #ifdef DEBUG_PARSER
   std::cout << "UNLINK " << mFrom << "." << mFromPort << "=>" << mToPort << "." << mTo << std::endl;
@@ -278,22 +278,22 @@ void Command::execute_method()
   Value res;
   Value params = get_params();
   
-  mTree->lock();
+  mRoot->lock();
     // FIXME: Group scope
     if (mMethod == "set") {
-      Object * obj = mTree->find(std::string("/").append(mVar));
+      Object * obj = mRoot->find(std::string("/").append(mVar));
       if (obj) obj->set(params);
     } else {
       if (mMethod == "b") mMethod = "bang";
-      Object * meth = mTree->find(std::string("/").append(mVar).append("/").append(mMethod));
+      Object * meth = mRoot->find(std::string("/").append(mVar).append("/").append(mMethod));
       if (meth) {
         res = meth->trigger(params);
       } else {
         if (params.is_nil()) params = gBangValue;
-        res = mTree->call(std::string("/").append(mVar).append("/in/").append(mMethod), params);
+        res = mRoot->call(std::string("/").append(mVar).append("/in/").append(mMethod), params);
       }
     }
-  mTree->unlock();
+  mRoot->unlock();
   if (!res.is_nil()) *mOutput << res << std::endl;
 }
 
@@ -302,9 +302,9 @@ void Command::execute_class_method()
   Value res;
   Value params = get_params();
   
-  mTree->lock();
-    res = mTree->call(std::string(CLASS_ROOT).append("/").append(mClass).append("/").append(mMethod), params);
-  mTree->unlock();
+  mRoot->lock();
+    res = mRoot->call(std::string(CLASS_ROOT).append("/").append(mClass).append("/").append(mMethod), params);
+  mRoot->unlock();
   
   *mOutput << res << std::endl;
 }
@@ -315,34 +315,34 @@ void Command::execute_command()
   Value res;
   Value params = get_params();
   if (mMethod == "set_lib_path") {
-    mTree->lock();
-      res = mTree->call(std::string(CLASS_ROOT).append("/lib_path"),params);
-    mTree->unlock();
+    mRoot->lock();
+      res = mRoot->call(std::string(CLASS_ROOT).append("/lib_path"),params);
+    mRoot->unlock();
   } else if (mMethod == "quit" || mMethod == "q") {
-    mTree->lock();
-      mTree->quit();
+    mRoot->lock();
+      mRoot->quit();
       mQuit = true;
-    mTree->unlock();    
+    mRoot->unlock();    
   } else {
-    mTree->lock();
+    mRoot->lock();
       // FIXME: Group scope
-      obj = mTree->find(std::string("/").append(mMethod));
+      obj = mRoot->find(std::string("/").append(mMethod));
       if (params.is_nil() && obj->type() == H("Node"))
-        res = mTree->call(std::string("/").append(mMethod).append("/#inspect"));
+        res = mRoot->call(std::string("/").append(mMethod).append("/#inspect"));
       else
         res = obj->trigger(params);
-    mTree->unlock();
+    mRoot->unlock();
   }
   if (!res.is_nil()) *mOutput << res << std::endl;
   /*
   TODO: these methods should exist in root...
   
-  if (mTree->get_instance(&node, mMethod)) {
+  if (mRoot->get_instance(&node, mMethod)) {
     // inspect
     *mOutput << node->inspect() << std::endl;
     
   } else if (mMethod == "quit" || mMethod == "q") {
-    mTree->quit();
+    mRoot->quit();
     mQuit = true;
   } else if (mMethod == "set_lib_path") {
     std::string path;

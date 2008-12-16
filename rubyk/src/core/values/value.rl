@@ -1,4 +1,5 @@
 #include "values.h"
+#include "osc.h"
 
 /** Ragel parser definition to create Values from JSON. */
 #define MAX_NUM_BUFFER_SIZE 50

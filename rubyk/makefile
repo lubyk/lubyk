@@ -13,9 +13,9 @@ RAGEL=ragel
 RAGEL_CD=rlgen-cd
 PLAT= macosx
 TEST=test/*_test.h test/objects/*_test.h
-LINKER_OBJECTS=tmatrix.o value.o hash_value.o object.o slot.o inlet.o outlet.o buffer.o class.o node.o root.o new_method.o class_finder.o group.o planet.o command.o event.o
-OFF_OBJ=lua_script.o src/lib/lua/liblua.a src/lib/osc/liboscpack.a
-INCLUDE_HEADERS=-Isrc/templates -Isrc/core -Isrc/objects -Isrc/lib/lua -Isrc/lib/osc/osc -Isrc/core/values
+LINKER_OBJECTS=tmatrix.o value.o hash_value.o object.o slot.o inlet.o outlet.o buffer.o class.o node.o root.o new_method.o class_finder.o group.o planet.o command.o event.o src/lib/osc/liboscpack.a
+OFF_OBJ=lua_script.o src/lib/lua/liblua.a 
+INCLUDE_HEADERS=-Isrc/templates -Isrc/core -Isrc/objects -Isrc/lib/lua -Isrc/lib/osc/osc -Isrc/core/values -Isrc/lib/osc
 OBJECT_COMPILE=$(INCLUDE_HEADERS) -D__$(PLAT)__ -dynamic -bundle -undefined suppress -flat_namespace -L/usr/lib -lgcc -lstdc++
 OBJECT_DEPENDS=src/core/node.hpp src/core/class.h
 
@@ -28,7 +28,7 @@ all: test
 test: test/runner test/runner.cpp
 	./test/runner && rm test/runner
 
-rubyk: src/core/main.cpp $(LINKER_OBJECTS) objects test
+rubyk: src/core/main.cpp $(LINKER_OBJECTS) objects
 	$(CC) $(CFLAGS) $(LFLAGS) -o rubyk $(INCLUDE_HEADERS) -I. src/core/main.cpp $(LINKER_OBJECTS)
 
 lib:

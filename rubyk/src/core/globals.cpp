@@ -15,8 +15,8 @@ plot_thread gGLWindowStartThread;
 void * gGLWindowNode;
 bool   gQuitGl;
 
-// Node
-pthread_key_t Node::sThisKey     = NULL;
+// Root
+pthread_key_t Root::sThisKey     = NULL;
 //FIX pthread_key_t Node::sGLThreadKey = NULL;
 
 // Object

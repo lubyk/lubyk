@@ -142,7 +142,7 @@ public:
   ParseHelper() : mOutput(std::ostringstream::out), mInput(std::istringstream::in)
   { 
     mCmd  = new Command(mInput, mOutput);
-    mCmd->set_server(&mRoot);
+    mCmd->set_root(&mRoot);
   }
   
   ~ParseHelper()

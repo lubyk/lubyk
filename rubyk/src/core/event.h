@@ -26,7 +26,7 @@ public:
   inline bool uses_receiver(const void * pNode) const
   { return pNode == mReceiver; }
   
-  const void * node() const
+  void * receiver()
   { return mReceiver; }
   
 protected:
