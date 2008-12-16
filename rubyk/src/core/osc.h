@@ -37,6 +37,9 @@ public:
   {
     std::string url(pMsg.AddressPattern());
     Value res, params = value_from_osc(pMsg);
+    
+    std::cout << "\n>> " << url << " " << params << "\n> ";
+    
     if (params.is_error()) {
       res = params;
     } else {
@@ -87,7 +90,7 @@ private:
     case osc::DOUBLE_TYPE_TAG:
       return Number((arg++)->AsDoubleUnchecked());
     case osc::STRING_TYPE_TAG:
-      return Error("String OSC type not supported."); // TODO
+      return String((arg++)->AsStringUnchecked());
     case osc::SYMBOL_TYPE_TAG:
       return Error("Symbol OSC type not supported.");
     case osc::BLOB_TYPE_TAG:
