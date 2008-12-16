@@ -6,6 +6,7 @@
 #include <sys/timeb.h> // ftime
 #include <queue>
 #include "ordered_list.h"
+#include "event.h"
 
 class ClassFinder;
 class Command;
@@ -224,6 +225,29 @@ public:
   void quit()
   { 
     mQuit = true; //gQuitGl = true; 
+  }
+  
+  /** Add an event to the event queue. The server is responsible for deleting the event. */
+  void register_event(Event * e)
+  { 
+    if (!mQuit || e->mForced) mEventsQueue.push(e); // do not accept new events while we are trying to quit.
+  }
+  
+  /** Remove all events related to a given node before the node dies. */
+  void free_events_for(Node * pNode)
+  {  
+    Event * e;
+    LinkedList<Event*> * it   = mEventsQueue.begin();
+
+    // find element
+    while(it) {
+      e = it->obj;
+      if (e->uses_receiver(pNode)) {
+        if (e->mForced) e->trigger();
+        it = mEventsQueue.remove(e);
+      } else
+        it = it->next;
+    }
   }
   
 public:

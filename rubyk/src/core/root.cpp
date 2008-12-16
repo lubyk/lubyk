@@ -220,3 +220,5 @@ void Root::trigger_loop_events()
     (*it)->bang(gBangValue);
   }
 }
+
+

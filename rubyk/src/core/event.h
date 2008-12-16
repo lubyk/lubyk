@@ -23,7 +23,7 @@ public:
   inline bool operator>= (const Event& pOther) const
   { return mTime >= pOther.mTime; }
   
-  bool uses_receiver(const void * pNode) const
+  inline bool uses_receiver(const void * pNode) const
   { return pNode == mReceiver; }
   
   const void * node() const
@@ -42,6 +42,23 @@ protected:
   void * mParameter;
   void (*mVoidFunction)(void * pReceiver);
   void (*mFunction)(void * pReceiver, void * pParam);
+};
+
+/** This is an event that sends a bang to a node. */
+class BangEvent : public Event
+{
+public:
+  BangEvent (time_t pTime, Object * pReceiver)
+  {
+    mTime      = pTime;
+    mReceiver  = (void*)pReceiver;
+    mHasParameter = false;
+    mVoidFunction = &cast_bang_method;
+  }
+  
+private:
+  /** Make pointer to the bang method. */
+  static void cast_bang_method (void * pReceiver);
 };
 
 /** This is an event for void method. */

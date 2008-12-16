@@ -106,7 +106,19 @@ public:
   {
     return value() + n.value();
   }
-
+  
+  /** Add a Number and a real_t. */
+  real_t operator+(real_t d) const
+  {
+    return value() + d;
+  }
+  
+  /** Divide a Number by a real_t. */
+  real_t operator/(real_t d) const
+  {
+    return value() / d;
+  }
+  
   /** Add one to number. Prefix ++n. */
   real_t operator++()
   {
@@ -135,6 +147,18 @@ public:
     return *this;
   }
   
+  /** Compare equality of Number with real_t. */
+  bool operator== (const Number& n) const
+  {
+    return value() == n.value();
+  }
+  
+  /** Compare inequality of Number with real_t. */
+  bool operator!= (const Number& n) const
+  {
+    return value() != n.value();
+  }
+  
   /** Greater then operator. */
   bool operator>(const Number& n) const
   {
@@ -159,6 +183,18 @@ public:
     return value() <= n.value();
   }
   
+  /** Compare equality of Number with real_t. */
+  bool operator== (real_t d) const
+  {
+    return value() == d;
+  }
+  
+  /** Compare inequality of Number with real_t. */
+  bool operator!= (real_t d) const
+  {
+    return value() != d;
+  }
+  
   /** Greater then operator. */
   bool operator>(real_t d) const
   {
@@ -181,6 +217,18 @@ public:
   bool operator<=(real_t d) const
   {
     return value() <= d;
+  }
+  
+  /** Compare equality of Number with real_t. */
+  inline bool operator== (int d) const
+  {
+    return value() == ((real_t)d);
+  }
+  
+  /** Compare inequality of Number with real_t. */
+  inline bool operator!= (int d) const
+  {
+    return value() != ((real_t)d);
   }
   
   /** Greater then operator. */
@@ -226,16 +274,43 @@ public:
   { return (int)value(); }
   
 private:
+  friend real_t operator/ (real_t d, const Number& n);
+  
+  
+  friend bool operator== (real_t d, const Number& n);
+  friend bool operator!= (real_t d, const Number& n);
   friend bool operator> (real_t d, const Number& n);
   friend bool operator>= (real_t d, const Number& n);
   friend bool operator<= (real_t d, const Number& n);
   friend bool operator< (real_t d, const Number& n);
+  friend bool operator== (int d, const Number& n);
+  friend bool operator!= (int d, const Number& n);
+  friend bool operator< (int d, const Number& n);
   friend bool operator> (int d, const Number& n);
   friend bool operator>= (int d, const Number& n);
   friend bool operator<= (int d, const Number& n);
-  friend bool operator< (int d, const Number& n);
 };
 
+
+inline real_t operator/ (real_t d, const Number& n)
+{
+  return d / n.value();
+}
+
+inline real_t operator/ (int d, const Number& n)
+{
+  return ((real_t)d) / n.value();
+}
+
+
+inline bool operator== (real_t d, const Number& n)
+{
+  return d == n.value();
+}
+inline bool operator!= (real_t d, const Number& n)
+{
+  return d != n.value();
+}
 inline bool operator> (real_t d, const Number& n)
 {
   return d > n.value();
@@ -253,6 +328,15 @@ inline bool operator< (real_t d, const Number& n)
   return d < n.value();
 }
 
+
+inline bool operator== (int d, const Number& n)
+{
+  return ((real_t)d) == n.value();
+}
+inline bool operator!= (int d, const Number& n)
+{
+  return ((real_t)d) != n.value();
+}
 inline bool operator> (int d, const Number& n)
 {
   return ((real_t)d) > n.value();

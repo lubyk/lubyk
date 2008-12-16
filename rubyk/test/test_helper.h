@@ -10,6 +10,7 @@
 #define assert_matrix_equal(x,y) _assert_matrix_equal(__FILE__,__LINE__,x,y)
 
 #define assert_print(x,y) _assert_print(__FILE__,__LINE__,x,y)
+#define assert_run(x,y) _assert_run(__FILE__,__LINE__,x,y)
 #define assert_result(x,y) _assert_result(__FILE__,__LINE__,x,y)
 #define assert_inspect(x,y) _assert_inspect(__FILE__,__LINE__,x,y)
 #define assert_info(x,y) _assert_inspect(__FILE__,__LINE__,x,y)
@@ -226,7 +227,7 @@ protected:
       mCmd->parse(pInput);
       mCmd->set_silent(false);
     mRoot.lock();
-    //mRoot.run(); // loop once
+    
     _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string(pInput)), mOutput.str(), std::string(pOutput));
   }
   
@@ -235,24 +236,17 @@ protected:
 //FIX    clean_start();
 //FIX    assert_run(pLength, pInput, pOutput);
 //FIX  }
-//FIX  void assert_run(time_t pLength, const char * pInput, const char * pOutput)
-//FIX  {
-//FIX    time_t start;
-//FIX    mRoot.unlock();
-//FIX      mCmd->parse("print=Print()\n");
-//FIX    mRoot.lock();
-//FIX    mOutput.str(std::string("")); // clear output
-//FIX    mInput.str(std::string(pInput)); // set input
-//FIX    mCmd->set_silent(true);
-//FIX    mRoot.listen_to_command(*mCmd);
-//FIX    start = mRoot.mCurrentTime;
-//FIX    while(mRoot.mCurrentTime <= start + pLength && mRoot.run()) {
-//FIX      ;
-//FIX    }
-//FIX    mCmd->set_silent(false);
-//FIX    
-//FIX    TS_ASSERT_EQUALS( mOutput.str(), std::string(pOutput));
-//FIX  }
+
+  void _assert_run(const char * file, int lineno, time_t pLength, const char * pOutput)
+  {
+    time_t start = mRoot.mCurrentTime;
+    mOutput.str(std::string("")); // clear output
+    mCmd->set_silent(true);
+    while(mRoot.mCurrentTime <= start + pLength && mRoot.run())
+      ;
+    mCmd->set_silent(false);
+    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING("running"), mOutput.str(), std::string(pOutput));
+  }
 };
 
 #endif // _TEST_HELPER_H_

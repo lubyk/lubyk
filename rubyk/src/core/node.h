@@ -6,7 +6,7 @@
 #include "outlet.h"
 #include "thash.h"
 #include "values.h"
-
+#include "root.h"
 #include <sstream>
 #include <cstdio>
 #include <vector>
@@ -126,6 +126,19 @@ public:
   
   /** Notify observers of a change. */
   void notify(uint key, const Value& pValue);
+  
+  /** Remove all events concerning this node for the events queue. */
+  inline void remove_my_events()
+  {
+    if (mRoot) mRoot->free_events_for(this);
+  }
+  
+  // time in [ms]
+  inline void bang_me_in (time_t pTime)
+  {
+    mRoot->register_event( new BangEvent(mRoot->mCurrentTime + pTime, this) );
+  }
+  
 
 public:
   static pthread_key_t sThisKey;   /**< Key to retrieve 'this' value from a running thread. */

@@ -3,49 +3,70 @@
 class Metro : public Node
 {
 public:
-  bool set(const Value& p)
+  
+  bool init()
   {
-    mTempo = p.val("tempo", 120, true); // 120bmp default
-    
+    mTempo = 120;
+
     remove_my_events();
-    bang_me_in(0.0);
+    bang_me_in(0);
+    //bang_me_in(0); // start loop
     return true;
   }
   
-  // inlet 1
-  void bang(const Value& val)
-  {  
-    if (val.type) { // bang_me_in class 'bang' with a NilValue, if it's not nil, it's a resync/set bang
-      val.get(&mTempo);
+  /** Set/get tempo. Set to 0 to stop. */
+  const Value tempo_ (const Value& val)
+  {
+    real_t old_tempo = mTempo.value();
+    mTempo = val;
+    if (mTempo < 0) mTempo = 0;
+    
+    if (old_tempo != mTempo) {
+      // tempo changed
       remove_my_events();
+      if (mTempo != 0) bang_me_in(ONE_MINUTE / mTempo);
     }
+    
+    return Number(mTempo);
+  }
+  
+  // [1] restart metronome / set tempo
+  void bang(const Value& val)
+  { 
+    if (val.is_number()) {
+      mTempo = val;
+      remove_my_events();
+      if (mTempo < 0) mTempo = 0;
+    }
+    
     if (mTempo != 0) {
-      bang_me_in(ONE_MINUTE / mTempo);
+      bang_me_in(ONE_MINUTE / mTempo.value());
       send(gBangValue);
     }
   }
   
-  virtual const Value inspect(const Value& val) 
-  { bprint(mSpy, mSpySize,"%.2f", mTempo );  }
-  
+  // [2] stop metronome
   void stop(const Value& val)
   {
     remove_my_events();
   }
   
-  void start(const Value& val)
-  {
-    bang(sig);
+  virtual const Value inspect(const Value& val)  
+  { 
+    std::ostringstream oss; // <Counter:/v1 3 (+1)>
+    oss << "<Metro:" << url() << " " << mTempo << ">";
+    return String(oss.str());
   }
   
 private:
-  real_t mTempo;
+  Number mTempo;
 };
 
-extern "C" void init()
+extern "C" void init(Root& root)
 {
-  CLASS( Metro)
-  INLET(Metro,start)
-  INLET(Metro,stop)
-  OUTLET(Metro,bang)
+  CLASS(   Metro, "Metronome that sends bangs at regular intervals.")
+  INLET(   Metro, bang, BangValue | NumberValue, "Restart metronome | set tempo value.")
+  INLET(   Metro, stop, AnyValue, "Stop metronome.")
+  OUTLET(  Metro, bang, BangValue, "Regular bangs.")
+  ACCESSOR(Metro, tempo, "Set tempo.")
 }
