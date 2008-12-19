@@ -13,6 +13,7 @@ class Command;
 class Event;
 class Node;
 
+
 #define OBJECT_HASH_SIZE 10000
 #define CLASS_ROOT "/class"
 #define DEFAULT_OBJECTS_LIB_PATH "/usr/local/lib/rubyk"

@@ -60,7 +60,9 @@ private:
     osc::ReceivedMessage::const_iterator arg = pMsg.ArgumentsBegin();
     osc::ReceivedMessage::const_iterator end = pMsg.ArgumentsEnd();
     
-    // currently only receive floats/ints/strings (single type)
+    // TODO: receive multiple values and put them in Array.
+    if (arg == end) return gNilValue;
+    
     switch (*type) {
     case osc::TRUE_TYPE_TAG:
       return Number(1.0);
