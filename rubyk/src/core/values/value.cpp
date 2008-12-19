@@ -1,17 +1,16 @@
 #line 1 "src/core/values/value.rl"
 #include "values.h"
-#include "osc.h"
 
 /** Ragel parser definition to create Values from JSON. */
 #define MAX_NUM_BUFFER_SIZE 50
 // #define DEBUG_PARSER
 
-#line 80 "src/core/values/value.rl"
+#line 79 "src/core/values/value.rl"
 
 
 // transition table
 
-#line 15 "src/core/values/value.cpp"
+#line 14 "src/core/values/value.cpp"
 static const char _json_actions[] = {
 	0, 1, 0, 1, 1, 1, 2, 1, 
 	3, 1, 4, 1, 5, 2, 1, 3, 
@@ -151,7 +150,7 @@ static const int json_error = 0;
 
 static const int json_en_main = 1;
 
-#line 84 "src/core/values/value.rl"
+#line 83 "src/core/values/value.rl"
 
 /** This is a crude JSON parser. */
 size_t Value::from_string(const char * pStr)
@@ -169,13 +168,13 @@ size_t Value::from_string(const char * pStr)
   const char * pe = pStr + strlen(p) + 1;
   
   
-#line 173 "src/core/values/value.cpp"
+#line 172 "src/core/values/value.cpp"
 	{
 	cs = json_start;
 	}
-#line 101 "src/core/values/value.rl"
+#line 100 "src/core/values/value.rl"
   
-#line 179 "src/core/values/value.cpp"
+#line 178 "src/core/values/value.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -250,7 +249,7 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 11 "src/core/values/value.rl"
+#line 10 "src/core/values/value.rl"
 	{
      // append a char to number buffer
     if (num_buf_i >= MAX_NUM_BUFFER_SIZE) {
@@ -266,7 +265,7 @@ printf("%c_",(*p));
   }
 	break;
 	case 1:
-#line 25 "src/core/values/value.rl"
+#line 24 "src/core/values/value.rl"
 	{
      // append a char to build a std::string
 #ifdef DEBUG_PARSER
@@ -277,21 +276,21 @@ printf("%c_",(*p));
   }
 	break;
 	case 2:
-#line 34 "src/core/values/value.rl"
+#line 33 "src/core/values/value.rl"
 	{
     num_buf[num_buf_i+1] = '\0';
     Number(atof(num_buf)).set(*this);
   }
 	break;
 	case 3:
-#line 39 "src/core/values/value.rl"
+#line 38 "src/core/values/value.rl"
 	{
     String(str_buf).set(*this);
     str_buf = "";
   }
 	break;
 	case 4:
-#line 44 "src/core/values/value.rl"
+#line 43 "src/core/values/value.rl"
 	{
     // Build tmp_val from string and move p forward
     p++;
@@ -305,18 +304,18 @@ printf("%c_",(*p));
   }
 	break;
 	case 5:
-#line 56 "src/core/values/value.rl"
+#line 55 "src/core/values/value.rl"
 	{
     tmp_h.set(*this);
   }
 	break;
 	case 6:
-#line 60 "src/core/values/value.rl"
+#line 59 "src/core/values/value.rl"
 	{
     gBangValue.set(*this);
   }
 	break;
-#line 320 "src/core/values/value.cpp"
+#line 319 "src/core/values/value.cpp"
 		}
 	}
 
@@ -328,7 +327,7 @@ _again:
 	_test_eof: {}
 	_out: {}
 	}
-#line 102 "src/core/values/value.rl"
+#line 101 "src/core/values/value.rl"
   
   return p - pStr;
 }
@@ -409,7 +408,7 @@ void CharMatrixData::to_stream(std::ostream& pStream) const
   }
 }
 
-/** Display number inside stream. */
+/** Display MatrixData as json. */
 template<>
 void MatrixData::to_json(std::ostream& pStream) const
 {
@@ -427,7 +426,7 @@ void MatrixData::to_json(std::ostream& pStream) const
   pStream << "]";
 }
 
-/** Display number inside stream. */
+/** Display CharMatrixData as json. */
 template<>
 void CharMatrixData::to_json(std::ostream& pStream) const
 {

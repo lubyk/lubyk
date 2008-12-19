@@ -1,5 +1,4 @@
 #include "values.h"
-#include "osc.h"
 
 /** Ragel parser definition to create Values from JSON. */
 #define MAX_NUM_BUFFER_SIZE 50
@@ -177,4 +176,37 @@ void CharMatrixData::to_stream(std::ostream& pStream) const
     }
     pStream << " ], " << mRowCount << "x" << mColCount << ">";
   }
+}
+
+/** Display MatrixData as json. */
+template<>
+void MatrixData::to_json(std::ostream& pStream) const
+{
+  char buffer[20];
+  
+  size_t sz = size();
+  pStream << "[";
+
+  for (size_t i = 0; i < sz; i++) {
+    if (i > 0) pStream << ",";
+    snprintf(buffer, 20, "%.2f", data[i]);
+    pStream << buffer;
+  }
+
+  pStream << "]";
+}
+
+/** Display CharMatrixData as json. */
+template<>
+void CharMatrixData::to_json(std::ostream& pStream) const
+{
+  size_t sz = size();
+  pStream << "[";
+
+  for (size_t i = 0; i < sz; i++) {
+    if (i > 0) pStream << ",";
+    pStream << data[i];
+  }
+
+  pStream << "]";
 }
