@@ -1,5 +1,12 @@
-Rubyk License
--------------
+Copyright and Licences
+----------------------
+
+This distribution contains two software: "rubyk" and "mimas" with
+different copyright licenses. Mimas is a graphical interface to "rubyk"
+and is licensed under the GPL. See below for the license of the core
+processor "rubyk".
+
+===============================================================================
 
 Rubyk is licensed under the terms of the MIT license reproduced below.
 This means that Rubyk is free software and can be used for both academic

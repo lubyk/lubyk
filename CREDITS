@@ -1,10 +1,10 @@
-lua
----
-	brief    : Fast embeddable scripting language used in the 'Lua' scripting object.
-	authors  : Roberto Ierusalimschy
-	website  : http://www.lua.org
-	copyright: see classes/lua/src/COPYRIGHT
-	license  : MIT license
+juce
+----
+	brief    : JUCE is an all-encompassing C++ class library for developing cross-platform applications.
+	authors  : Raw Material Software Ltd
+	website  : http://www.rawmaterialsoftware.com/juce/
+	copyright: see mimas/lib/juce/docs/JUCE readme.html
+	license  : GPL license
 
 oscpack
 -------
