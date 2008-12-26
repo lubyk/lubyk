@@ -1,4 +1,5 @@
 #include "class_finder.h"
+#include "planet.h"
 #include <dlfcn.h> // dylib load
 
 
@@ -12,7 +13,7 @@ const Value ClassFinder::not_found (const std::string& pUrl, const Value& val)
 {
   std::string className = pUrl.substr(url().length() + 1);
   className = className.substr(0, className.find("/"));
-  Object * obj;
+  oscit::Object * obj;
   
   // try to load dynamic lib
   std::string path = mObjectsPath.string();
@@ -33,7 +34,7 @@ const Value ClassFinder::not_found (const std::string& pUrl, const Value& val)
 bool ClassFinder::load(const char * file, const char * init_name)
 {
   void *image;
-  void (*function)(Root&);
+  void (*function)(oscit::Root&);
   const char *error = 0;
   
   // load shared extension image into memory
@@ -48,7 +49,7 @@ bool ClassFinder::load(const char * file, const char * init_name)
   }
   
   // get 'init' function into the image
-  function = (void(*)(Root&))dlsym(image, init_name);
+  function = (void(*)(oscit::Root&))dlsym(image, init_name);
   if (function == 0) {
     dlclose(image);
     printf("Symbol '%s' not found in '%s'.",init_name,file);

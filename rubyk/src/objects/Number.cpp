@@ -35,9 +35,9 @@ private:
   Number mValue;
 };
 
-extern "C" void init(Root& root)
+extern "C" void init(Planet& planet)
 {
-  Class * c = root.classes()->declare<NumberObj>("Number", "Store a number which can be sent again through Bang!.");
+  Class * c = planet.classes()->declare<NumberObj>("Number", "Store a number which can be sent again through Bang!.");
   
   INLET (  NumberObj, bang,  NumberValue, "Send current value on bang. Set and send for number.")
   OUTLET(  NumberObj, value, NumberValue, "Current value.")

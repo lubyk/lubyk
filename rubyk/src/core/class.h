@@ -1,7 +1,7 @@
 #ifndef _CLASS_H_
 #define _CLASS_H_
 #include "node.h"
-#include "root.h"
+#include "planet.h"
 #include "method.h"
 #include <list>
 
@@ -11,10 +11,10 @@
   * 2. create node methods
   * 3. create node inlets / outlets
   */
-class Class : public Object
+class Class : public RObject
 {
 public:
-  Class(const char* pName, const char* pInfo) : Object(pName) 
+  Class(const char* pName, const char* pInfo) : RObject(pName) 
   {
     set_info(pInfo);
   }
@@ -61,7 +61,7 @@ public:
   void make_outlets(Node * pObj);
   
   /** Build all methods for an object from prototypes. */
-  void make_methods(Object * pObj)
+  void make_methods(oscit::Object * pObj)
   {
     std::list<MethodPrototype>::iterator it;
     std::list<MethodPrototype>::iterator end = mMethodPrototypes.end();
@@ -84,7 +84,7 @@ private:
   return var; }                                                     \
 
 // HELPERS TO AVOID TEMPLATE SYNTAX
-#define CLASS(klass, info)                Class * c = root.classes()->declare<klass>(#klass, info);
+#define CLASS(klass, info)                Class * c = planet.classes()->declare<klass>(#klass, info);
 #define CLASS_METHOD(klass, method, info) c->add_class_method(#method, &klass::method, info);
 #define ACCESSOR(klass, method, info)       ACCESSOR_NAMED(klass, #method, method ## _, info);
 #define ACCESSOR_NAMED(klass, name, method, info)       c->add_method<klass, &klass::method>(name, info);

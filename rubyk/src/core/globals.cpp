@@ -2,7 +2,7 @@
 #define _GLOBALS_CPP_
 
 //FIX #include "class.h"
-#include "object.h"
+#include "robject.h"
 #include "values.h"
 #include "class.h"
 
@@ -16,11 +16,11 @@ void * gGLWindowNode;
 bool   gQuitGl;
 
 // Root
-pthread_key_t Root::sThisKey     = NULL;
+pthread_key_t Planet::sThisKey     = NULL;
 //FIX pthread_key_t Node::sGLThreadKey = NULL;
 
 // Object
-unsigned int Object::sIdCounter    = 0;
+unsigned int oscit::Object::sIdCounter    = 0;
 
 #ifdef _TESTING_
 size_t Data::sIdCounter = 0;

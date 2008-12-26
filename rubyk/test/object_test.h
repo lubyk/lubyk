@@ -1,12 +1,14 @@
 // ordered_list_test.h 
 #include <cxxtest/TestSuite.h>
-#include "object.h"
+#include "oscit/object.h"
 #include "test_helper.h"
 
-class DummyObject : public Object
+class DummyObject : public oscit::Object
 {
 public:
   DummyObject(const char * pName, int pCounter) : Object(pName), mCounter(pCounter) {}
+  
+  virtual ~DummyObject() {}
   
   virtual const Value inspect(const Value& val)
   {
@@ -23,10 +25,10 @@ class ObjectTest : public ValueTestHelper
 public:
   void test_root( void )
   {
-    Root root;
-    Object * a  = new Object("a");
-    Object * a2 = new Object("a");
-    Object * res;
+    oscit::Root root;
+    oscit::Object * a  = new oscit::Object("a");
+    oscit::Object * a2 = new oscit::Object("a");
+    oscit::Object * res;
     
     TS_ASSERT( root.get(&res, "") );
     TS_ASSERT_EQUALS( res, &root );
@@ -53,29 +55,29 @@ public:
   
   void test_adopt( void )
   {
-    Root root;
-    Object * one = root.adopt(new Object("one")); // This is the prefered way of creating sub-objects.
-    Object * sub = one->adopt(new Object("sub"));
+    oscit::Root root;
+    oscit::Object * one = root.adopt(new oscit::Object("one")); // This is the prefered way of creating sub-objects.
+    oscit::Object * sub = one->adopt(new oscit::Object("sub"));
   
     TS_ASSERT_EQUALS( root.url(),     std::string("") );
     TS_ASSERT_EQUALS( one->url(),     std::string("/one") );
     TS_ASSERT_EQUALS( sub->url(),     std::string("/one/sub") );
     
     TS_ASSERT_EQUALS( root.child("one"), one);
-    TS_ASSERT_EQUALS( root.child("foo"), (Object*)NULL);
+    TS_ASSERT_EQUALS( root.child("foo"), (oscit::Object*)NULL);
     
     one->set_name("foo");
-    TS_ASSERT_EQUALS( root.child("one"), (Object*)NULL);
+    TS_ASSERT_EQUALS( root.child("one"), (oscit::Object*)NULL);
     TS_ASSERT_EQUALS( root.child("foo"), one);
-    TS_ASSERT_EQUALS( root.find("/one/sub"), (Object*)NULL);
+    TS_ASSERT_EQUALS( root.find("/one/sub"), (oscit::Object*)NULL);
     TS_ASSERT_EQUALS( root.find("/foo/sub"), sub);
   }
   
   void test_first_child( void )
   {
-    Root root;
-    Object * one = root.adopt(new Object("one"));
-    Object * two = root.adopt(new Object("aaa"));
+    oscit::Root root;
+    oscit::Object * one = root.adopt(new oscit::Object("one"));
+    oscit::Object * two = root.adopt(new oscit::Object("aaa"));
     
     TS_ASSERT_EQUALS( root.first_child(), one);
     
@@ -85,10 +87,10 @@ public:
   
   void test_set_parent( void )
   {
-    Root root;
-    Object * child1 = new Object("foo");
-    Object * child2 = new Object("bar");
-    Object * child3 = new Object("foo");
+    oscit::Root root;
+    oscit::Object * child1 = new oscit::Object("foo");
+    oscit::Object * child2 = new oscit::Object("bar");
+    oscit::Object * child3 = new oscit::Object("foo");
     
     TS_ASSERT_EQUALS( root.url(),     std::string("") );
     TS_ASSERT_EQUALS( child1->url(),  std::string("foo") );
@@ -119,9 +121,9 @@ public:
   
   void test_rename( void )
   {
-    Root root;
-    Object * foo = root.adopt(new Object("foo"));
-    Object * bar = foo->adopt(new Object("bar"));
+    oscit::Root root;
+    oscit::Object * foo = root.adopt(new oscit::Object("foo"));
+    oscit::Object * bar = foo->adopt(new oscit::Object("bar"));
     
     TS_ASSERT_EQUALS( root.url(),    std::string("") );
     TS_ASSERT_EQUALS( foo->url(),     std::string("/foo") );
@@ -136,10 +138,10 @@ public:
   
   void test_get_object( void )
   {
-    Root root;
-    Object * foo = root.adopt(new Object("foo"));
-    Object * bar = foo->adopt(new Object("bar"));
-    Object * res;
+    oscit::Root root;
+    oscit::Object * foo = root.adopt(new oscit::Object("foo"));
+    oscit::Object * bar = foo->adopt(new oscit::Object("bar"));
+    oscit::Object * res;
   
     TS_ASSERT_EQUALS( root.url(),     std::string("") );
     TS_ASSERT_EQUALS( foo->url(),     std::string("/foo") );
@@ -172,10 +174,10 @@ public:
   
   void test_call( void )
   {
-    Root root;
-    Object * one = root.adopt(new Object("one"));
-    Object * two = root.adopt(new Object("two"));
-    Object * sub = two->adopt(new Object("sub"));
+    oscit::Root root;
+    oscit::Object * one = root.adopt(new oscit::Object("one"));
+    oscit::Object * two = root.adopt(new oscit::Object("two"));
+    oscit::Object * sub = two->adopt(new oscit::Object("sub"));
     Value res, param;
     String str;
   
@@ -200,27 +202,27 @@ public:
   
   void test_child( void )
   {
-    Root root;
-    Object * one = root.adopt(new Object("one"));
-    Object * sub = one->adopt(new Object("sub"));
+    oscit::Root root;
+    oscit::Object * one = root.adopt(new oscit::Object("one"));
+    oscit::Object * sub = one->adopt(new oscit::Object("sub"));
   
     TS_ASSERT_EQUALS( root.url(),    std::string("") );
     TS_ASSERT_EQUALS( one->url(),     std::string("/one") );
     TS_ASSERT_EQUALS( sub->url(),     std::string("/one/sub") );
     
     TS_ASSERT_EQUALS( root.child("one"), one);
-    TS_ASSERT_EQUALS( root.child("foo"), (Object*)NULL);
+    TS_ASSERT_EQUALS( root.child("foo"), (oscit::Object*)NULL);
     
     one->set_name("foo");
-    TS_ASSERT_EQUALS( root.child("one"), (Object*)NULL);
+    TS_ASSERT_EQUALS( root.child("one"), (oscit::Object*)NULL);
     TS_ASSERT_EQUALS( root.child("foo"), one);
-    TS_ASSERT_EQUALS( root.find("/one/sub"), (Object*)NULL);
+    TS_ASSERT_EQUALS( root.find("/one/sub"), (oscit::Object*)NULL);
     TS_ASSERT_EQUALS( root.find("/foo/sub"), sub);
   }
   
   void test_call_bad_object( void )
   {
-    Root root;
+    oscit::Root root;
     Value res, param;
     
     Number n1(4);
@@ -236,8 +238,8 @@ public:
   
   void test_get_info( void )
   {
-    Root root;
-    Object no_info(root,"foo");
+    oscit::Root root;
+    oscit::Object no_info(root,"foo");
     Value res, param;
     
     root.set_info("This is the root node.");
@@ -252,7 +254,7 @@ public:
   
   void test_inspect( void )
   {
-    Root root;
+    oscit::Root root;
     root.adopt(new DummyObject("foo", 23));
     Value res;
     

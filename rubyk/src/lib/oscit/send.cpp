@@ -1,8 +1,15 @@
-#include "osc_send.h"
+#include "oscit/send.h"
 #include "osc/OscOutboundPacketStream.h"
 #include "ip/UdpSocket.h"
 
+namespace oscit {
+
 #define OSC_OUT_BUFFER_SIZE 2048
+
+OscSend::OscSend(const IpEndpointName& pRemoteEndpoint)
+{
+  mSocket = new UdpTransmitSocket( pRemoteEndpoint );
+}
 
 OscSend::OscSend(const IpEndpointName& pRemoteEndpoint, const Number& pParams)
 { 
@@ -78,3 +85,5 @@ osc::OutboundPacketStream& operator<< (osc::OutboundPacketStream& pOut, const Va
   }
   return pOut;
 }
+
+} // namespace oscit

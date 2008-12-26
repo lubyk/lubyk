@@ -5,13 +5,13 @@ class CreateCommandTest : public CxxTest::TestSuite
 public:
   void test_create( void ) 
   {
-    Root root;
+    Planet planet;
     std::istringstream  input(std::istringstream::in);   // allow input operations
     std::ostringstream output(std::ostringstream::out);  // allow output  operations
     Command cmd(input, output);
-    root.listen_to_command(cmd);
-    time_t start = root.mCurrentTime;
-    while((root.mCurrentTime <= start + 50) && root.run())
+    planet.listen_to_command(cmd);
+    time_t start = planet.mCurrentTime;
+    while((planet.mCurrentTime <= start + 50) && planet.do_run())
       ;
     
     TS_ASSERT_EQUALS( output.str(), std::string("Welcome to rubyk !\n\n"));

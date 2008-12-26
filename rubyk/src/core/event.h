@@ -1,7 +1,9 @@
 #ifndef _EVENT_H_
 #define _EVENT_H_
-#include "object.h"
+#include "robject.h"
 #include <ostream>
+
+class Node;
 
 /** Pointer to a method. */
 typedef void (*obj_method_t)(void * pReceiver, const Value& val);
@@ -30,7 +32,7 @@ public:
   { return mReceiver; }
   
 protected:
-  friend class Root;
+  friend class Planet;
   friend class Node;
   
   // access needed by root
@@ -48,7 +50,7 @@ protected:
 class BangEvent : public Event
 {
 public:
-  BangEvent (time_t pTime, Object * pReceiver)
+  BangEvent (time_t pTime, RObject * pReceiver)
   {
     mTime      = pTime;
     mReceiver  = (void*)pReceiver;

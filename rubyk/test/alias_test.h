@@ -1,6 +1,6 @@
 // ordered_list_test.h 
 #include <cxxtest/TestSuite.h>
-#include "alias.h"
+#include "oscit/alias.h"
 #include "test_helper.h"
 
 class AliasTest : public ValueTestHelper
@@ -8,10 +8,10 @@ class AliasTest : public ValueTestHelper
 public:
   void test_trigger( void )
   {
-    Root root;
-    Object       * one = root.adopt(new Object("one")); //   [/one]
+    oscit::Root root;
+    oscit::Object       * one = root.adopt(new oscit::Object("one")); //   [/one]
     DummyNumber  * sub = one->adopt(new DummyNumber("sub", 3)); //   [/one/sub]
-    Alias        * ali = root.adopt(new Alias("ali", sub));
+    oscit::Alias        * ali = root.adopt(new oscit::Alias("ali", sub));
     DummyNumber  * two = root.adopt(new DummyNumber("two", 2)); //  [/two]
     Value res;
     
@@ -56,10 +56,10 @@ public:
   
   void test_delete_alias_first( void )
   {
-    Root root;
-    Object       * one = root.adopt(new Object("one")); //   [/one]
+    oscit::Root root;
+    oscit::Object       * one = root.adopt(new oscit::Object("one")); //   [/one]
     DummyNumber  * sub = one->adopt(new DummyNumber("sub", 3)); //   [/one/sub]
-    Alias        * ali = root.adopt(new Alias("ali", sub));
+    oscit::Alias        * ali = root.adopt(new oscit::Alias("ali", sub));
     Value res;
     
     TS_ASSERT_EQUALS( one->url(),     std::string("/one") );

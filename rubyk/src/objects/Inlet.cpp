@@ -10,7 +10,7 @@ public:
     
     if (!mParent) return false;
     
-    Object * in = mParent->child("in");
+    oscit::Object * in = mParent->child("in");
     if (!in) return false;
     
     Inlet * inlet = in->adopt(new Inlet(mName, this, &Inlet::cast_method<InletNode, &InletNode::bang>, AnyValue));
@@ -27,8 +27,8 @@ public:
   }
 };
 
-extern "C" void init(Root& root)
+extern "C" void init(Planet& planet)
 {
-  Class * c = root.classes()->declare<InletNode>("Inlet", "Create an inlet in the parent object. Sends values received in the parent's inlet.");
+  Class * c = planet.classes()->declare<InletNode>("Inlet", "Create an inlet in the parent object. Sends values received in the parent's inlet.");
   OUTLET(InletNode, port, AnyValue, "Value received in parent's inlet.")
 }

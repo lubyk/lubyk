@@ -18,7 +18,7 @@ public:
   
 };
 
-extern "C" void init(Root& root)
+extern "C" void init(Planet& planet)
 {
   CLASS(Print, "Print any value received in bang inlet.")
   INLET(Print, bang, AnyValue, "Received values are printed out to listening notifiers.")

@@ -75,7 +75,7 @@ public:
   }
   
   /** Class method that displays 'Hello: <parameter>'. */
-  static const Value hello(Root& root, const Value& val)
+  static const Value hello(Planet& planet, const Value& val)
   {
     return String("Hello: ").append(val.to_string());
   }
@@ -96,7 +96,7 @@ private:
 };
 
 
-extern "C" void init(Root& root)
+extern "C" void init(Planet& planet)
 { 
   
   // Define class.

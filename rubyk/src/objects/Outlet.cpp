@@ -10,7 +10,7 @@ public:
     
     if (!mParent) return false;
     
-    Object * out = mParent->child("out");
+    oscit::Object * out = mParent->child("out");
     
     Node * node = TYPE_CAST(Node,mParent);
     
@@ -33,8 +33,8 @@ private:
   Outlet * mOutlet;
 };
 
-extern "C" void init(Root& root)
+extern "C" void init(Planet& planet)
 {
-  Class * c = root.classes()->declare<OutletNode>("Outlet", "Create an inlet in the parent object. Sends values received in the parent's inlet.");
+  Class * c = planet.classes()->declare<OutletNode>("Outlet", "Create an inlet in the parent object. Sends values received in the parent's inlet.");
   INLET(OutletNode, bang, AnyValue, "Send value received out of parent's outlet.")
 }

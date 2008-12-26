@@ -1,11 +1,12 @@
 #ifndef _GROUP_H_
 #define _GROUP_H_
-#include "root.h"
 #include "node.h"
 
 class Group : public Node
 {
 public:
+  virtual ~Group() {}
+  
   bool init (const Value& p);
   
   virtual const Value inspect(const Value& val) ;
@@ -13,4 +14,5 @@ public:
   virtual void bang(const Value& val);
   
 };
-#endif
+
+#endif // _GROUP_H_

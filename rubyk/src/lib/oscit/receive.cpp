@@ -1,16 +1,19 @@
-#include "osc_receive.h"
-#include "osc_send.h"
-#include "planet.h"
+#include "oscit/receive.h"
+#include "oscit/send.h"
+#include "oscit/root.h"
+
 #include "osc/OscReceivedElements.h"
-#include "osc/OscPacketListener.h"
 #include "ip/UdpSocket.h"
 
-OscReceive::OscReceive(Planet * pPlanet, uint pPort) : mPlanet(pPlanet)
+namespace oscit {
+
+OscReceive::OscReceive(Root * pRoot, uint pPort) : mRoot(pRoot)
 { 
   mSocket = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, pPort ), this );
   
   std::cout << "Listening for OSC messages on port " << pPort << ".\n";
-  mListenThreadId = mPlanet->root()->new_thread<OscReceive, &OscReceive::start_thread>(this);
+  mListenThreadId = NULL;
+  pthread_create( &mListenThreadId, NULL, &start_thread, (void*)this);
 }
   
 OscReceive::~OscReceive()
@@ -20,7 +23,13 @@ OscReceive::~OscReceive()
   delete mSocket;
 }
   
-void OscReceive::start_thread()
+void * OscReceive::start_thread(void * pThis)
+{
+  ((OscReceive*)pThis)->run();
+  return NULL;
+}
+
+void OscReceive::run()
 {
   // Run until break.
   mSocket->Run();
@@ -35,11 +44,19 @@ void OscReceive::ProcessMessage( const osc::ReceivedMessage& pMsg, const IpEndpo
   
   if (url == "/reply_to") {
     std::cout << "registering satellite\n";
-    mPlanet->register_satellite(new OscSend(remoteEndpoint, params));
+    mRoot->register_satellite(new OscSend(remoteEndpoint, params));
   } else
-    mPlanet->receive(url, params);
+    res = mRoot->call(url, params);
   
-  // TODO send return value
+  // send return
+  // TODO: notify...
+  
+  // debugging
+  char hostIpAddress[ IpEndpointName::ADDRESS_STRING_LENGTH ];
+  // get host ip as string
+  remoteEndpoint.AddressAsString(hostIpAddress);
+  std::cout << "Reply to " << hostIpAddress << ":" << remoteEndpoint.port << ".\n";
+  OscSend(remoteEndpoint).send(url, res);
 }
 
 Value OscReceive::value_from_osc(const osc::ReceivedMessage& pMsg)
@@ -90,3 +107,4 @@ Value OscReceive::value_from_osc(const osc::ReceivedMessage& pMsg)
     return Error("Unknown OSC type tag.");
   }
 }
+} // namespace oscit

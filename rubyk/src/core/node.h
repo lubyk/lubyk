@@ -1,12 +1,11 @@
 #ifndef _NODE_H_
 #define _NODE_H_
-#include "object.h"
+#include "robject.h"
 #include "event.h"
 #include "inlet.h"
 #include "outlet.h"
 #include "thash.h"
 #include "values.h"
-#include "root.h"
 #include <sstream>
 #include <cstdio>
 #include <vector>
@@ -16,7 +15,7 @@
 
 class Observer;
 
-class Node : public Object
+class Node : public RObject
 {
 public:
   
@@ -123,16 +122,28 @@ public:
   void notify(uint key, const Value& pValue);
   
   /** Remove all events concerning this node for the events queue. */
-  inline void remove_my_events()
-  {
-    if (mRoot) mRoot->free_events_for(this);
-  }
+  void remove_my_events();
   
   // time in [ms]
-  inline void bang_me_in (time_t pTime)
+  void bang_me_in (time_t pTime);
+  
+  ///** Incarnation on a planet. Normally this is done by providing an ancestry tree by using: 'set_parent'. */
+  //void set_planet(Planet * pPlanet)
+  //{
+  //  mPlanet = pPlanet;
+  //}
+  
+protected:
+  
+  /** Actual adoption. Adopt objects in the new namespace (branch). */
+  virtual void do_adopt(oscit::Object * pObject)
   {
-    mRoot->register_event( new BangEvent(mRoot->mCurrentTime + pTime, this) );
+    oscit::Object::do_adopt(pObject);
+    Node * node = TYPE_CAST(Node,pObject);
+    if (node) node->mPlanet = mPlanet;
   }
+  
+  Planet * mPlanet;  /**< Running planet. */
   
 private:
   

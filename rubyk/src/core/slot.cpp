@@ -1,6 +1,6 @@
 #include "slot.h"
 #include "node.h"
-#include "root.h"
+#include "planet.h"
 
 Slot::~Slot()
 {
@@ -83,10 +83,10 @@ const Value Slot::change_link(const Value& val, bool pCreate)
     
     // TODO: make sure it does not already exist.
     
-    Object * target = mRoot->find(String(val));
+    oscit::Object * target = mRoot->find(String(val));
     if (!target) return Error("Could not update link (").append(val.to_string()).append(": not found).");
     
-    if (target->type() == H("Object")) {
+    if (target->type() == H("oscit::Object")) {
       target = target->first_child();
       if (!target) return Error("Could not update link (").append(val.to_string()).append(": Slot not found).");
     }

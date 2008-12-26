@@ -1,7 +1,8 @@
-#include "object.h"
-#include "planet.h"
+#include "robject.h"
+#include "root.h"
 #include "alias.h"
-
+namespace oscit {
+  
 Object::~Object()
 {  
   // notify parent and root
@@ -97,3 +98,4 @@ void Object::clear()
   }
   mChildren.clear();
 }
+} // namespace oscit

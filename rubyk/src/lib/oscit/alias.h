@@ -1,7 +1,9 @@
-#ifndef _ALIAS_H_
-#define _ALIAS_H_
-#include "root.h"
+#ifndef _OSCIT_ALIAS_H_
+#define _OSCIT_ALIAS_H_
 
+#include "oscit/root.h"
+
+namespace oscit {
 /** This object triggers another object's trigger when called. It's used in Group to expose functionalities. */
 class Alias : public Object
 {
@@ -59,5 +61,5 @@ public:
 protected:
   Object * mOriginal; /**< Original object pointed to by the alias. */
 };
-
-#endif // _ALIAS_H_
+} // namespace oscit
+#endif // _OSCIT_ALIAS_H_

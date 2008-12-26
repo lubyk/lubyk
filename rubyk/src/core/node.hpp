@@ -3,11 +3,14 @@
 
 /* Inline methods that could not live in the class to avoid circular definition */
 
+inline void Node::remove_my_events ()
+{
+  if (mPlanet) mPlanet->free_events_for(this);
+}
+
 inline void Node::bang_me_in (time_t pTime)
 {
-  BaseEvent * e = new BaseEvent(mServer->mCurrentTime + pTime, this); // sets mIsBang to true
-
-  mServer->register_event( e );
+  mPlanet->register_event( new BangEvent(mPlanet->mCurrentTime + pTime, this) );
 }
 
 inline void Node::loop_me ()

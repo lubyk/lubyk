@@ -1,7 +1,7 @@
 #ifndef _NEW_METHOD_H_
 #define _NEW_METHOD_H_
 #include "method.h"
-#include "root.h"
+#include "planet.h"
 
 class NewMethod : public ClassMethod
 {
@@ -16,9 +16,9 @@ public:
   
   /** Template used as a method to create new nodes. */
   template<class T>
-  static const Value cast_create(Root& pRoot, const Value& val)
+  static const Value cast_create(Planet& pPlanet, const Value& val)
   {
-    Object * parent;
+    oscit::Object * parent;
     String url(val);
     std::string name;
     if (url.is_nil()) return Error("Invalid 'url' parameter.");
@@ -27,7 +27,7 @@ public:
     std::string str = url.string();
     if (str.at(0) == '/') {
       size_t pos = url.rfind("/");
-      parent = pRoot.find( url.substr(0, pos) );
+      parent = pPlanet.find( url.substr(0, pos) );
       if (!parent) return Error("Invalid parent '").append(url.substr(0,pos)).append("'.");
       name = url.substr(pos + 1, url.length());
     } else {
@@ -40,7 +40,7 @@ public:
     if (parent)
       obj = parent->adopt(new T());
     else
-      obj = pRoot.adopt(new T());
+      obj = pPlanet.root()->adopt(new T());
       
     obj->set_name(name);
     

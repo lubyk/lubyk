@@ -62,7 +62,7 @@ private:
   Number mTempo;
 };
 
-extern "C" void init(Root& root)
+extern "C" void init(Planet& planet)
 {
   CLASS(   Metro, "Metronome that sends bangs at regular intervals.")
   INLET(   Metro, bang, BangValue | NumberValue, "Restart metronome | set tempo value.")

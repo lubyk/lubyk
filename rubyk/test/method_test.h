@@ -10,7 +10,7 @@ class Person
 public:
   Person(const char * pName) : mName(pName) {}
   
-  static const Value class_method(Root& root, const Value& val)
+  static const Value class_method(Planet& planet, const Value& val)
   {
     return val.is_string() ? val : Error("Not a string");
   }
@@ -29,10 +29,10 @@ class MethodTest : public ValueTestHelper
 public:
   void test_trigger_class_method( void )
   {
-    Root root;
-    Object * cm = root.adopt(new ClassMethod("hello", &Person::class_method));
+    oscit::Root root;
+    oscit::Object * cm = root.adopt(new ClassMethod("hello", &Person::class_method));
     Value res;
-    Object * obj;
+    oscit::Object * obj;
     TS_ASSERT_EQUALS(cm->url(), "/hello");
     TS_ASSERT(root.get(&obj, "/hello"));
     
@@ -45,11 +45,11 @@ public:
   
   void test_trigger_method( void )
   {
-    Root root;
+    oscit::Root root;
     Person p("Paul"); // [1]
     root.adopt(new Method("paul_name", &p, &Method::cast_method<Person, &Person::name>));
     Value res;
-    Object * obj;
+    oscit::Object * obj;
     TS_ASSERT(root.get(&obj, "/paul_name"));
     
     res = obj->trigger(gNilValue); 

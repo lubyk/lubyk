@@ -1,7 +1,7 @@
 juce
 ----
 	brief    : JUCE is an all-encompassing C++ class library for developing cross-platform applications.
-	authors  : Raw Material Software Ltd
+	authors  : Julian Storer
 	website  : http://www.rawmaterialsoftware.com/juce/
 	copyright: see mimas/lib/juce/docs/JUCE readme.html
 	license  : GPL license

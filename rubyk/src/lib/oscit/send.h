@@ -1,5 +1,5 @@
-#ifndef _OSC_SEND_H_
-#define _OSC_SEND_H_
+#ifndef _OSCIT_SEND_H_
+#define _OSCIT_SEND_H_
 #include "values.h"
 #include <list>
 
@@ -10,10 +10,13 @@ namespace osc {
 class UdpTransmitSocket;
 class IpEndpointName;
 
+namespace oscit {
+
 /** Sends osc messages through UDP. */
 class OscSend
 {
 public:
+  OscSend(const IpEndpointName& pRemoteEndpoint);
   
   OscSend(const IpEndpointName& remoteEndpoint, const Number& pParams);
   
@@ -34,4 +37,5 @@ private:
   friend osc::OutboundPacketStream& operator<< (osc::OutboundPacketStream& os, const Value& val);
 };
 
-#endif // _OSC_SEND_H_
+} // namespace oscit
+#endif // _OSCIT_SEND_H_
