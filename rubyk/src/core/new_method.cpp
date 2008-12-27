@@ -51,7 +51,7 @@ const Value NewMethod::trigger (const Value& val)
   
   // make outlets
   klass->make_outlets(node);
-  
+    
   // initialize
   node->set_is_ok( node->init() && node->set(params) ); // if init or set returns false, the node goes into 'broken' mode.
   

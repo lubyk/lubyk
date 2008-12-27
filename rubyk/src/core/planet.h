@@ -28,17 +28,18 @@ class ClassFinder;
 class Planet : public Group
 {
 public:
-  Planet()
+  Planet() : mRoot(this)
   {
     init(gNilValue);
   }
   
-  Planet(uint pPort) : mRoot(10000, pPort) // FIXME: oscit::OBJECT_HASH_SIZE does not compile, why ?
+  Planet(uint pPort) : mRoot(this)
   {
     init(gNilValue);
+    mRoot.open_port(pPort);
   }
   
-  Planet(int argc, char * argv[]) : mRoot(10000, 7000) // FIXME: oscit::DEFAULT_RECEIVE_PORT does not compile, why ?
+  Planet(int argc, char * argv[]) : mRoot(this)
   {
     // TODO: get port from command line
     init(gNilValue);
@@ -73,6 +74,10 @@ public:
     mPendingLinks.clear();
   }
   
+  void open_port(uint pPort)
+  {
+    mRoot.open_port(pPort);
+  }
   
   /** ======== META ========= */
   

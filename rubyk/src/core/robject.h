@@ -1,6 +1,7 @@
 #ifndef _OBJECT_H_
 #define _OBJECT_H_
 #include "oscit/object.h"
+#include "oscit/root.h"
 
 class Planet;
 
@@ -27,21 +28,13 @@ public:
 
   RObject(Object& pParent, const std::string& pName) : oscit::Object(pParent, pName) {}
   
-  /** Incarnation on a planet. Normally this is done by providing an ancestry tree by using: 'set_parent'. */
-  void set_planet(Planet * pPlanet)
-  {
-    mPlanet = pPlanet;
+  virtual void set_root(oscit::Root * pRoot)
+  {  
+    oscit::Object::set_root(pRoot);
+    if (pRoot) mPlanet = (Planet*)(pRoot->mGround);
   }
   
-protected:  
-  //friend class Planet;
-  
-  /** Actual adoption. Adopt objects in the new namespace (branch). */
-  virtual void do_adopt(RObject * pObject)
-  {
-    oscit::Object::do_adopt(pObject);
-    pObject->mPlanet = mPlanet;
-  }
+protected:
   
   Planet * mPlanet;  /**< Running planet. */
 };

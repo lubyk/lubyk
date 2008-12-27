@@ -28,27 +28,45 @@ enum call_action_t {
 class Root : public Object
 {
 public:
-  Root() : Object(""), mObjects(OBJECT_HASH_SIZE)
+  Root() : Object(""), mGround(NULL), mObjects(OBJECT_HASH_SIZE), mOscIn(NULL)
   {
-    mOscIn = new OscReceive(this, DEFAULT_RECEIVE_PORT);
     mRoot = this;
+    register_object(this);
     mObjects.set(std::string(""), this);
   }
 
-  Root(size_t pHashSize, uint pPort) : mObjects(pHashSize)
+  Root(size_t pHashSize) : mGround(NULL), mObjects(pHashSize), mOscIn(NULL)
   {
-    mOscIn = new OscReceive(this, pPort);
     mRoot = this;
     mObjects.set(std::string(""), this);
   }
+  
+  Root(void * pGround) : Object(""), mGround(pGround), mObjects(OBJECT_HASH_SIZE), mOscIn(NULL)
+  {
+    mRoot = this;
+    register_object(this);
+    mObjects.set(std::string(""), this);
+  }
 
+  Root(void * pGround, size_t pHashSize) : mGround(pGround), mObjects(pHashSize), mOscIn(NULL)
+  {
+    mRoot = this;
+    mObjects.set(std::string(""), this);
+  }
+  
   virtual ~Root();
 
   virtual void clear()
   {
     this->Object::clear();
   }
-
+  
+  void open_port(uint pPort)
+  {
+    if (mOscIn) delete mOscIn;
+    mOscIn = new OscReceive(this, pPort);
+  }
+  
   /** Execute the default operation for an object. */
   Value call (const char* pUrl)
   {
@@ -124,7 +142,7 @@ public:
     mObjects.set(pObj->url(), pObj);
   
     // 4. this is the new root
-    pObj->mRoot = this;
+    pObj->set_root(this);
   }
 
   /** Unregister an object from tree. */
@@ -188,7 +206,7 @@ public:
     mControllers.push_back(pSatellite);
   }
   
-
+  void * mGround;                   /**< Any data that objects in the tree might use. */
 protected:
   THash<std::string, Object*> mObjects;   /**< Hash to find any object in the tree from its url. */
 

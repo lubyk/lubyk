@@ -34,7 +34,7 @@ const Value ClassFinder::not_found (const std::string& pUrl, const Value& val)
 bool ClassFinder::load(const char * file, const char * init_name)
 {
   void *image;
-  void (*function)(oscit::Root&);
+  void (*function)(Planet&);
   const char *error = 0;
   
   // load shared extension image into memory
@@ -49,7 +49,7 @@ bool ClassFinder::load(const char * file, const char * init_name)
   }
   
   // get 'init' function into the image
-  function = (void(*)(oscit::Root&))dlsym(image, init_name);
+  function = (void(*)(Planet&))dlsym(image, init_name);
   if (function == 0) {
     dlclose(image);
     printf("Symbol '%s' not found in '%s'.",init_name,file);
@@ -61,7 +61,7 @@ bool ClassFinder::load(const char * file, const char * init_name)
   }
   
   // call 'init', passing the registration object
-  (*function)(*mRoot);
+  (*function)(*mPlanet);
 
   return true;
 }

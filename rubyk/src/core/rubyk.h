@@ -5,3 +5,5 @@
 #include "mutex.h"
 #include "command.h"
 #include "event.h"
+
+#include "node.hpp"

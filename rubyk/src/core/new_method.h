@@ -41,7 +41,7 @@ public:
       obj = parent->adopt(new T());
     else
       obj = pPlanet.root()->adopt(new T());
-      
+    
     obj->set_name(name);
     
     return String(obj->url());

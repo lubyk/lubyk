@@ -7,10 +7,9 @@ public:
   bool init()
   {
     mTempo = 120;
-
+    
     remove_my_events();
-    bang_me_in(0);
-    //bang_me_in(0); // start loop
+    bang_me_in(0); // start loop
     return true;
   }
   

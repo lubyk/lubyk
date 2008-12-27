@@ -6,6 +6,7 @@
 bool Planet::init (const Value& p)
 {   
   // force build of "/class"
+  mPlanet = this;
   classes();
   ftime(&mTimeRef); // set time reference to now (my birthdate).
   mCurrentTime = real_time();
@@ -32,10 +33,11 @@ Planet::~Planet ()
 /** Return the class listing Object (create one if needed). */
 ClassFinder * Planet::classes()
 {
-  Object * obj = find(CLASS_ROOT);
+  oscit::Object * obj = find(CLASS_ROOT);
   if (!obj) {
     // create ClassFinder
-    obj = adopt(new ClassFinder(std::string(CLASS_ROOT).substr(1, std::string::npos), DEFAULT_OBJECTS_LIB_PATH));
+    ClassFinder * cf = mRoot.adopt(new ClassFinder(std::string(CLASS_ROOT).substr(1, std::string::npos), DEFAULT_OBJECTS_LIB_PATH));
+    return cf;
   }
   return TYPE_CAST(ClassFinder, obj);
 }

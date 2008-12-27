@@ -722,10 +722,14 @@ void Command::execute_command()
     mPlanet->lock();
       // FIXME: Group scope
       obj = mPlanet->find(std::string("/").append(mMethod));
-      if (params.is_nil() && obj->type() == H("Node"))
-        res = mPlanet->call(std::string("/").append(mMethod).append("/#inspect"));
-      else
-        res = obj->trigger(params);
+      if (obj) {
+        if (params.is_nil() && obj->type() == H("Node"))
+          res = mPlanet->call(std::string("/").append(mMethod).append("/#inspect"));
+        else
+          res = obj->trigger(params);
+      } else {
+        res = Error("Object/method not found '").append(mMethod).append("'.");
+      }
     mPlanet->unlock();
   }
   if (!res.is_nil()) *mOutput << res << std::endl;

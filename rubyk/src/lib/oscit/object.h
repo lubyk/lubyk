@@ -259,11 +259,20 @@ public:
     if (oldParent) oldParent->release(pObject);
 
     pObject->mParent = this;
-    pObject->mRoot   = mRoot;
 
     pObject->moved();
   }
-
+  
+  Object * parent()
+  {
+    return mParent;
+  }
+  
+  virtual void set_root(Root * pRoot)
+  {
+    mRoot = pRoot;
+  }
+  
 protected:
 
   /** Child sends a notification to the parent when it's name changes so that the parent/root keep their url hash in sync. */

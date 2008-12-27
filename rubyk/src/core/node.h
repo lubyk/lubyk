@@ -127,12 +127,6 @@ public:
   // time in [ms]
   void bang_me_in (time_t pTime);
   
-  ///** Incarnation on a planet. Normally this is done by providing an ancestry tree by using: 'set_parent'. */
-  //void set_planet(Planet * pPlanet)
-  //{
-  //  mPlanet = pPlanet;
-  //}
-  
 protected:
   
   /** Actual adoption. Adopt objects in the new namespace (branch). */
@@ -142,8 +136,6 @@ protected:
     Node * node = TYPE_CAST(Node,pObject);
     if (node) node->mPlanet = mPlanet;
   }
-  
-  Planet * mPlanet;  /**< Running planet. */
   
 private:
   
