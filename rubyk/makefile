@@ -29,7 +29,7 @@ test: test/runner test/runner.cpp
 	./test/runner && rm test/runner
 
 rubyk: src/core/main.cpp $(LINKER_OBJECTS) objects
-	$(CC) $(CFLAGS) $(LFLAGS) -o rubyk $(INCLUDE_HEADERS) -I. src/core/main.cpp $(LINKER_OBJECTS)
+	$(CC) $(CFLAGS) $(LFLAGS) $(INCLUDE_HEADERS) src/core/main.cpp $(LINKER_OBJECTS) -o rubyk
 
 lib:
 	mkdir lib

@@ -26,19 +26,21 @@ public:
       if (mTempo != 0) bang_me_in(ONE_MINUTE / mTempo);
     }
     
-    return Number(mTempo);
+    return mTempo;
   }
   
   // [1] restart metronome / set tempo
   void bang(const Value& val)
   { 
     if (val.is_number()) {
+      std::cout << val << " is_number" << std::endl;
       mTempo = val;
       remove_my_events();
       if (mTempo < 0) mTempo = 0;
     }
     
     if (mTempo != 0) {
+      // TODO: optimize: reuse previous event (send it in Value& val as EventValue ?)
       bang_me_in(ONE_MINUTE / mTempo.value());
       send(gBangValue);
     }

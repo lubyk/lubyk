@@ -50,7 +50,7 @@ protected:
 class BangEvent : public Event
 {
 public:
-  BangEvent (time_t pTime, RObject * pReceiver)
+  BangEvent (time_t pTime, Node * pReceiver)
   {
     mTime      = pTime;
     mReceiver  = (void*)pReceiver;

@@ -96,7 +96,6 @@ public:
   /** Set Number from real_t. */
   real_t operator= (real_t d)
   {
-    // std::cout << "[" << data_id() << "/" << ref_count() << "] operator=" << d << std::endl;
     mutable_data()->mReal = d;
     return d;
   }

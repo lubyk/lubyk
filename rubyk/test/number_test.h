@@ -52,6 +52,15 @@ public:
     TS_ASSERT_EQUALS( n.value(), 456.789);
   }
   
+  void test_operator_equal_integer( void )
+  {
+    Number n;
+    n = 123;
+    TS_ASSERT_EQUALS( n.value(), 123.0);
+    n = 456.789;
+    TS_ASSERT_EQUALS( n.value(), 456.789);
+  }
+  
   void test_operator_plus_equal( void )
   {
     Number n;
