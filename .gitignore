@@ -3,6 +3,7 @@ rubyk/lib/*
 *.a
 *.dSYM
 *.pbxuser
+*.mode1v3
 .DS_Store
 rubyk/src/lib/lua/lua
 rubyk/src/lib/lua/luac
