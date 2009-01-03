@@ -10,7 +10,7 @@ liboscit.a: $(OBJECTS)
 	$(LIBTOOL) $(OBJECTS) -o $@
 
 oscpack/liboscpack.a:
-	cd osc && make liboscpack.a
+	cd oscpack && make liboscpack.a
 	
 %.o: %.cpp %.h
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
