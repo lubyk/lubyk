@@ -15,6 +15,7 @@ class IpEndpointName;
 namespace oscit {
 
 class Root;
+class ZeroConfRegister;
 
 class OscReceive : public osc::OscPacketListener
 {
@@ -36,6 +37,8 @@ private:
   pthread_t mListenThreadId;
   
   UdpListeningReceiveSocket * mSocket;
+  
+  ZeroConfRegister * mRegisterZeroConf; /** Zeroconf registration thread. */
   
   Value value_from_osc(const osc::ReceivedMessage& pMsg);
   

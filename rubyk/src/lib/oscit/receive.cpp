@@ -1,6 +1,7 @@
 #include "oscit/receive.h"
 #include "oscit/send.h"
 #include "oscit/root.h"
+#include "oscit/zeroconf.h"
 
 #include "osc/OscReceivedElements.h"
 #include "ip/UdpSocket.h"
@@ -10,6 +11,7 @@ namespace oscit {
 OscReceive::OscReceive(Root * pRoot, uint pPort) : mRoot(pRoot)
 { 
   mSocket = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, pPort ), this );
+  mRegisterZeroConf = new ZeroConfRegister("oscit", "_oscit._udp", pPort);
   
   std::cout << "Listening for OSC messages on port " << pPort << ".\n";
   mListenThreadId = NULL;
@@ -21,6 +23,7 @@ OscReceive::~OscReceive()
   mSocket->AsynchronousBreak();
   pthread_join(mListenThreadId, NULL);  // wait
   delete mSocket;
+  delete mRegisterZeroConf;
 }
   
 void * OscReceive::start_thread(void * pThis)

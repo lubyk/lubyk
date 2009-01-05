@@ -2,7 +2,7 @@ INCLUDE_HEADERS=-I../../templates -I../../core -I../../core/values -Ioscpack -I.
 TESTING=-D_TESTING_
 AR = ar rcu
 LIBTOOL=libtool -static
-OBJECTS=object.o receive.o send.o root.o oscpack/liboscpack.a
+OBJECTS=object.o receive.o send.o root.o zeroconf.o oscpack/liboscpack.a
 CFLAGS=-g -Wall $(TESTING)
 
 # TODO: archive (ar ..)

@@ -37,6 +37,7 @@ int main(int argc, char * argv[])
   Planet venus(argc, argv);
   InteractiveCommand cmd(std::cin, std::cout);
   venus.listen_to_command(cmd);
+  venus.open_port(7000);
   venus.run();
   //OPENGL_HACK gGLWindowStartThread = NULL;
   //OPENGL_HACK gGLWindowNode = NULL; /////// GLWINDOW HACK
