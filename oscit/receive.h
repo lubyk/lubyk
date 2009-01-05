@@ -1,7 +1,7 @@
 #ifndef _OSCIT_RECEIVE_H_
 #define _OSCIT_RECEIVE_H_
 
-#include "value.h"
+#include "new_value.h"
 typedef unsigned int uint;
 
 namespace osc {

@@ -1,6 +1,6 @@
 #ifndef _OSCIT_SEND_H_
 #define _OSCIT_SEND_H_
-#include "values.h"
+#include "new_value.h"
 #include <list>
 
 namespace osc {
@@ -18,7 +18,7 @@ class OscSend
 public:
   OscSend(const IpEndpointName& pRemoteEndpoint);
   
-  OscSend(const IpEndpointName& remoteEndpoint, const Number& pParams);
+  OscSend(const IpEndpointName& remoteEndpoint, int pPort);
   
   ~OscSend();
   
@@ -29,7 +29,7 @@ public:
   void send (const std::string& pUrl, const Value& pVal);
   
   /** Build osc message and send it to all recipients of the provided list. */
-  static void send_all(std::list<OscSend*>& pRecipients, const std::string& pUrl, const Value& pVal);
+  static void send_all(std::list<OscSend*>& pRecipients, const std::string& pUrl, const char * pTypeTag, const Values pVal);
   
 private:
   UdpTransmitSocket * mSocket;

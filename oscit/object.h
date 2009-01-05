@@ -1,69 +1,78 @@
 #ifndef _OSC_OBJECT_H_
 #define _OSC_OBJECT_H_
 #include <list>
-#include "values.h"
+#include "new_value.h"
 #include "thash.h"
 
 
 namespace oscit {
 #define OSC_NEXT_NAME_BUFFER_SIZE 20
-
+#define NO_TYPE_TAG H("")
 class Root;
 class Alias;
 
 class Object
 {
 public:
-  Object() : mRoot(NULL), mParent(NULL), mChildren(20)
+  Object(const char * pTypeTag) : mRoot(NULL), mParent(NULL), mChildren(20)
   {
+    set_type_tag(pTypeTag);
     mName = default_name();
     mUrl  = mName;
   }
 
-  Object(const char * pName) : mRoot(NULL), mParent(NULL), mChildren(20)
+  Object(const char * pName, const char * pTypeTag) : mRoot(NULL), mParent(NULL), mChildren(20)
   {
+    set_type_tag(pTypeTag);
     mName = pName;
     mUrl  = mName;
   }
 
-  Object(const std::string& pName) : mRoot(NULL), mParent(NULL), mChildren(20)
+  Object(const std::string& pName, const char * pTypeTag) : mRoot(NULL), mParent(NULL), mChildren(20)
   {
+    set_type_tag(pTypeTag);
     mName = pName;
     mUrl  = mName;
   }
 
-  Object(Object * pParent) : mRoot(NULL), mParent(NULL), mChildren(20)
+  Object(Object * pParent, const char * pTypeTag) : mRoot(NULL), mParent(NULL), mChildren(20)
   {
+    set_type_tag(pTypeTag);
     mName = default_name();
     pParent->adopt(this);
   }
 
-  Object(Object * pParent, const char * pName) : mRoot(NULL), mParent(NULL), mChildren(20)
+  Object(Object * pParent, const char * pName, const char * pTypeTag) : mRoot(NULL), mParent(NULL), mChildren(20)
   {
+    set_type_tag(pTypeTag);
     mName = pName;
     pParent->adopt(this);
   }
 
-  Object(Object * pParent, const std::string& pName) : mRoot(NULL), mParent(NULL), mChildren(20)
+  Object(Object * pParent, const std::string& pName, const char * pTypeTag) : mRoot(NULL), mParent(NULL), mChildren(20)
   {
+    set_type_tag(pTypeTag);
     mName = pName;
     pParent->adopt(this);
   }
 
-  Object(Object& pParent) : mRoot(NULL), mParent(NULL), mChildren(20)
+  Object(Object& pParent, const char * pTypeTag) : mRoot(NULL), mParent(NULL), mChildren(20)
   {
+    set_type_tag(pTypeTag);
     mName = default_name();
     pParent.adopt(this);
   }
 
-  Object(Object& pParent, const char * pName) : mRoot(NULL), mParent(NULL), mChildren(20)
+  Object(Object& pParent, const char * pName, const char * pTypeTag) : mRoot(NULL), mParent(NULL), mChildren(20)
   {
+    set_type_tag(pTypeTag);
     mName = pName;
     pParent.adopt(this);
   }
 
-  Object(Object& pParent, const std::string& pName) : mRoot(NULL), mParent(NULL), mChildren(20)
+  Object(Object& pParent, const std::string& pName, const char * pTypeTag) : mRoot(NULL), mParent(NULL), mChildren(20)
   {
+    set_type_tag(pTypeTag);
     mName = pName;
     pParent.adopt(this);
   }
@@ -72,26 +81,34 @@ public:
 
   /** Shortcut to call multiple methods on an object.
     * Using "obj.set(foo:4 bar:5)" is equivalent to calling "obj.foo(4)" and "obj.bar(5)". */
-  bool set(const Value& pParams)
+  bool set(const Hash& pParams)
   {
     Object * obj;
-    if (pParams.is_hash()) {
-      Hash p(pParams);
-      Hash_iterator it;
-      Hash_iterator end = p.end();
+    
+    Hash_iterator it;
+    Hash_iterator end = pParams.end();
+
+    for(it = pParams.begin(); it != end; it++) {
+      TypedValue tval;
+      if ( (obj = child(*it)) && pParams.get(&tval, *it) ) {
+        if (obj->mTypeTag == hashId(tval.type)) obj->trigger(&tval.value);
+        // TODO: else ?
+      }
+    }
+    return true;
+  }
   
-      for(it = p.begin(); it != end; it++) {
-        if ( (obj = child(*it)) ) {
-          obj->trigger(p[*it]);
-        }
-      }
-    } else {
-      // use first method as default
-      string_iterator it  = mChildren.begin();
-      string_iterator end = mChildren.end();
-      if (it != end && (obj = child(*it))) {
-        obj->trigger(pParams);
-      }
+  /** Shortcut to call first method on an object.
+    * Using "obj.set('waga',3.4,1)" is equivalent to calling "obj.first_method(['waga',3.4,1])". */
+  bool set(const char * pTypeTag, const Values val)
+  {
+    Object * obj;
+    // use first method as default
+    string_iterator it  = mChildren.begin();
+    string_iterator end = mChildren.end();
+    if (it != end && (obj = child(*it)) && obj->mTypeTag == hashId(pTypeTag)) {
+      // TODO: if the object type is "M" (matrix) ===> build a matrix from first "ffff" into a values.
+      obj->trigger(val);
     }
     return true;
   }
@@ -120,35 +137,16 @@ public:
   /** Clear all children (delete). */
   virtual void clear();
 
-  /** The operation to be executed on call (method for Method class / object listing for Nodes).
-    * TODO: default is "return gNilValue" in new oscit definition. */
-  virtual const Value trigger (const Value& val)
+  /** This is the operation executed when the object is called.
+    * @param val The parameters either respect the object's or the list of values is set to NULL.
+    * @return This method *MUST* return the exact value types that it has advertised. */
+  virtual const Values trigger (const Values val)
   {
-    std::string res;
-    string_iterator it  = mChildren.begin();
-    string_iterator end = mChildren.end();
-    bool start = true;
-    if (it == end) return gNilValue;
-
-    while(it != end) {
-      Object * obj;
-      if (mChildren.get(&obj, *it)) {
-        if (obj->type() != H("Alias")) {
-            // do not list alias (Alias are used as internal helpers and do not need to be advertised)
-          if (!start) res.append(",");
-          res.append(obj->mName);
-          if (!(obj->mChildren.empty())) res.append("/");
-          start = false;
-        }
-      }
-      it++;
-    }
-  
-    return String(res);
+    return NULL;
   }
 
   /** This method is called whenever a sub-node or branch is not found and this is the last found object along the path. */
-  virtual const Value not_found (const std::string& pUrl, const Value& val)
+  virtual const Values not_found (const std::string& pUrl, const char * pTypeTag, const Values val)
   {
     return Error(std::string("Object '").append(pUrl).append("' not found."));
   }
@@ -205,9 +203,9 @@ public:
   /* meaningful information / content.                                              */
   
   /** Inspection method. Called as a response to "/.inspect '/this/url'". */
-  virtual const Value inspect(const Value& val)
+  virtual const std::string inspect() const
   {
-    return String(mInfo);
+    return mInfo;
   }
   
   /** Human readable information method. Called as a response to "/.info '/this/url'". */
@@ -216,6 +214,35 @@ public:
     return mInfo;
   }
 
+  
+  /** List sub-nodes. */
+  const std::string list () const
+  {
+    std::string res;
+    const_string_iterator it  = mChildren.begin();
+    const_string_iterator end = mChildren.end();
+    bool start = true;
+    if (it == end) return NULL;
+
+    while(it != end) {
+      Object * obj;
+      if (mChildren.get(&obj, *it)) {
+        if (obj->type() != H("Alias")) {
+            // do not list alias (Alias are used as internal helpers and do not need to be advertised)
+          if (!start) res.append(",");
+          res.append(obj->mName);
+          if (!(obj->mChildren.empty())) res.append("/");
+          start = false;
+        }
+      }
+      it++;
+    }
+  
+    return res;
+  }
+  
+  /** Set type tag. */
+  
   /** Set info string. */
   void set_info (const char* pInfo)
   {
@@ -295,8 +322,21 @@ protected:
       mName = baseName.append(buffer);
     }
   }
-
+  
+  void set_type_tag(const char * pTypeTag)
+  {
+    mTypeTag = hashId(pTypeTag);
+    mTypeTagString = pTypeTag;
+  }
+  
 private:
+  
+  // FIXME: this is a temporary fix for error handling. DO NOT LEAVE THIS AS IS !
+  const Values Error(const std::string& pMessage)
+  {
+    fprintf(stderr, "Error in '%s': %s\n", url().c_str(), pMessage.c_str());
+    return NULL;
+  }
   
   // TODO: this could be replaced by "o" ("o-1", "o-2", "o-3") ? 
   std::string default_name()
@@ -314,6 +354,7 @@ private:
 
 protected:
   friend class Root;
+  friend class Alias;
 
   Root   *                    mRoot;             /**< Root object. */
   Object *                    mParent;           /**< Pointer to parent object. */
@@ -321,6 +362,8 @@ protected:
   std::string                 mUrl;              /**< Absolute path to object (cached). TODO: this cache is not really needed. */
   std::string                 mName;             /**< Unique name in parent's context. */
   std::string                 mInfo;             /**< Help/information string. */
+  uint                        mTypeTag;          /**< OSC type tag hash. */
+  std::string                 mTypeTagString;    /**< String representation of the type tag in the form of "ffi" for "array of two floats and an integer".. */
   static unsigned int         sIdCounter;        /**< Use to set a default id and position. */
 
 };

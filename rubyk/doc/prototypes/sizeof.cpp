@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 
 using namespace std;
 enum value_t {
@@ -11,7 +12,9 @@ enum value_t {
   CharMatrixValue = 32,
 };
 int main()
-{  
+{ 
+  string s;
+  string s2 = "foo";
   cout
        << "bool: "   << 8 * sizeof(bool)           << " bits" << endl
        << "char: "   << 8 * sizeof(char)           << " bits" << endl
@@ -24,5 +27,7 @@ int main()
        << "double*: "  << 8*sizeof(double*)        << " bits" << endl
        << "double: " << 8*sizeof(double)           << " bits" << endl
        << "long double: " << 8*sizeof(long double) << " bits" << endl
+       << "empty string: " << 8*sizeof(s) << " bits" << endl
+       << "foo string: " << 8*sizeof(s2) << " bits" << endl
        ;
 }

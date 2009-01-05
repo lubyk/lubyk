@@ -347,6 +347,12 @@ inline uint hashId(const uint key) {
 // We use the simpler hash to avoid too long compile times in the static string hash macro.
 
 template<>
+inline uint hashId (const char c)
+{
+  return HASH_FUNCTION(HASH_CONSTANT, c);
+}
+
+template<>
 inline uint hashId (const char * str)
 {
   return H(str);

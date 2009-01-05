@@ -11,9 +11,9 @@ OscSend::OscSend(const IpEndpointName& pRemoteEndpoint)
   mSocket = new UdpTransmitSocket( pRemoteEndpoint );
 }
 
-OscSend::OscSend(const IpEndpointName& pRemoteEndpoint, const Number& pParams)
+OscSend::OscSend(const IpEndpointName& pRemoteEndpoint, int pPort)
 { 
-	mSocket = new UdpTransmitSocket( IpEndpointName( pRemoteEndpoint.address, (int)pParams.value() ));
+	mSocket = new UdpTransmitSocket( IpEndpointName( pRemoteEndpoint.address, pPort ));
   
   // debugging
   char hostIpAddress[ IpEndpointName::ADDRESS_STRING_LENGTH ];
@@ -40,7 +40,7 @@ void OscSend::send(const std::string& pUrl, const Value& pVal)
   send(oss);
 }
 
-void OscSend::send_all(std::list<OscSend*>& pRecipients, const std::string& pUrl, const Value& pVal)
+void OscSend::send_all(std::list<OscSend*>& pRecipients, const std::string& pUrl, const char * pTypeTag, const Value& pVal)
 { 
   std::list<OscSend*>::iterator it  = pRecipients.begin();
   std::list<OscSend*>::iterator end = pRecipients.end();

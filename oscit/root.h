@@ -10,19 +10,9 @@ class Event;
 class Node;
 
 namespace oscit {
+  
+/** Size of the object hash table. */
 #define OBJECT_HASH_SIZE 10000
-
-// TODO: this should not be needed when zeroconf is up and running
-#define DEFAULT_RECEIVE_PORT 7000
-
-
-/** Call types. */
-enum call_action_t {
-  CallTrigger  = 1,
-  CallInfo     = 2,
-  CallInspect  = 4,
-  CallNotFound = 8,
-};
 
 /** Root object. You can only start new trees with root objects. */
 class Root : public Object
@@ -35,7 +25,7 @@ public:
     mObjects.set(std::string(""), this);
   }
 
-  Root(size_t pHashSize) : mGround(NULL), mObjects(pHashSize), mOscIn(NULL)
+  Root(size_t pHashSize) : Object(""), mGround(NULL), mObjects(pHashSize), mOscIn(NULL)
   {
     mRoot = this;
     mObjects.set(std::string(""), this);
@@ -48,7 +38,7 @@ public:
     mObjects.set(std::string(""), this);
   }
 
-  Root(void * pGround, size_t pHashSize) : mGround(pGround), mObjects(pHashSize), mOscIn(NULL)
+  Root(void * pGround, size_t pHashSize) : Object(""), mGround(pGround), mObjects(pHashSize), mOscIn(NULL)
   {
     mRoot = this;
     mObjects.set(std::string(""), this);
@@ -68,46 +58,34 @@ public:
   }
   
   /** Execute the default operation for an object. */
-  Value call (const char* pUrl)
+  const Values call (const char* pUrl)
   {
-    return call(std::string(pUrl), gNilValue);
+    return call(std::string(pUrl), "", NULL);
   }
 
   /** Execute the default operation for an object. */
-  Value call (std::string& pUrl)
+  const Values call (std::string& pUrl)
   {
-    return call(pUrl, gNilValue);
+    return call(pUrl, "", NULL);
   }
 
   /** Execute the default operation for an object. */
-  Value call (const char* pUrl, const Value& val)
+  const Values call (const char* pUrl, const char * pTypeTag, const Values val)
   {
-    return call(std::string(pUrl), val);
+    return call(std::string(pUrl), pTypeTag, val);
   }
 
   /** Execute the default operation for an object. */
-  Value call (const std::string& pUrl, const Value& val)
+  const Values call (const std::string& pUrl, const char * pTypeTag, const Values val)
   {
     Object * target = NULL;
     size_t pos;
     std::string url = pUrl;
-    call_action_t act;
-    Value res;
-  
-    // FIXME: move the #info and #inspect into the method space ?
-  
-    if ( (pos = url.rfind("/#info")) != std::string::npos) {
-      url = pUrl.substr(0, pos);
-      act = CallInfo;
-    } else if ( (pos = pUrl.rfind("/#inspect")) != std::string::npos) {
-      url = pUrl.substr(0, pos);
-      act = CallInspect;
-    } else {
-      act = CallTrigger;
-    }
-  
+    
+    bool notFound = false;
+    
     while (!get(&target, url) && url != "") {
-      act = CallNotFound;
+      notFound = true;
       pos = url.rfind("/");
       if (pos == std::string::npos)
         url = "";
@@ -116,18 +94,11 @@ public:
     
     }
   
-    if (!target) return not_found(pUrl, val);
-  
-    switch (act) {
-      case CallTrigger:
-        return target->trigger(val);
-      case CallInfo:
-        return String(target->mInfo);
-      case CallInspect:
-        return target->inspect(val);
-      default:
-        return target->not_found(pUrl, val);
-    }
+    if (!target) return not_found(pUrl, pTypeTag, val);
+    
+    if (notFound) return target->not_found(pUrl, pTypeTag, val);
+    
+    return target->mTypeTag == hashId(pTypeTag) ? target->trigger(val) : target->trigger(NULL);
   }
 
   /** Notification of name/parent change from an object. */
@@ -176,28 +147,22 @@ public:
   {
     return find(std::string(pUrl));
   }
-
-  /** Return a pointer to the object located at pUrl. NULL if not found. */
-  Object * find(const String& pUrl)
-  {
-    return find(pUrl.string());
-  }
   
-  void receive(const std::string& pUrl, const Value& pParams)
+  void receive(const std::string& pUrl, const char * pTypeTag, const Values pParams)
   {
-    Value res;
+    //FIX Values res;
     
-    if (pParams.is_error()) {
-      res = pParams;
-    } else {
-      res = call(pUrl,pParams);
-    }
-    send_reply(pUrl, res);
+    //FIX if (pParams.is_error()) {
+    //FIX   res = pParams;
+    //FIX } else {
+    //FIX   res = call(pUrl,pParams);
+    //FIX }
+    //FIX send_reply(pUrl, res);
   }
   
-  inline void send_reply(const std::string& pUrl, const Value& pVal)
+  inline void send_reply(const std::string& pUrl, const char * pTypeTag, const Values pVal)
   {
-    OscSend::send_all(mControllers, pUrl, pVal);
+    OscSend::send_all(mControllers, pUrl, pTypeTag, pVal);
   }
   
   void register_satellite(OscSend * pSatellite)
@@ -206,7 +171,7 @@ public:
     mControllers.push_back(pSatellite);
   }
   
-  void * mGround;                   /**< Any data that objects in the tree might use. */
+  void * mGround;                   /**< Context pointer for objects in the tree. */
 protected:
   THash<std::string, Object*> mObjects;   /**< Hash to find any object in the tree from its url. */
 

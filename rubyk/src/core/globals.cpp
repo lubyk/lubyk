@@ -15,12 +15,12 @@ plot_thread gGLWindowStartThread;
 void * gGLWindowNode;
 bool   gQuitGl;
 
-// Root
+// Planet
 pthread_key_t Planet::sThisKey     = NULL;
 //FIX pthread_key_t Node::sGLThreadKey = NULL;
 
 // Object
-unsigned int oscit::Object::sIdCounter    = 0;
+#include "oscit/globals.cpp"
 
 #ifdef _TESTING_
 size_t Data::sIdCounter = 0;
