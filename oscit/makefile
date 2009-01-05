@@ -1,4 +1,4 @@
-INCLUDE_HEADERS=-I../../templates -I../../core -I../../core/values -Ioscpack -I..
+INCLUDE_HEADERS=-I../rubyk/src/templates -I../rubyk/src/core -I../rubyk/src/core/values -Ioscpack -I..
 TESTING=-D_TESTING_
 AR = ar rcu
 LIBTOOL=libtool -static

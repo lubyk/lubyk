@@ -127,6 +127,7 @@
 			isa = PBXGroup;
 			children = (
 				2BD2491F0F0B455500AAA8C7 /* core */,
+				2BA19D260F1249DA003B0C27 /* lib */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
@@ -160,6 +161,13 @@
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		2BA19D260F1249DA003B0C27 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = lib;
 			sourceTree = "<group>";
 		};
 		2BD2491F0F0B455500AAA8C7 /* core */ = {
