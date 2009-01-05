@@ -5,6 +5,7 @@ rubyk/lib/*
 *.pbxuser
 *.mode1v3
 .DS_Store
+oscit/test/runner.cpp
 rubyk/src/lib/lua/lua
 rubyk/src/lib/lua/luac
 rubyk/test/runner.cpp
