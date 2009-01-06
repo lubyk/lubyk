@@ -18,27 +18,27 @@ namespace oscit {
 class Root : public Object
 {
 public:
-  Root() : Object(""), mGround(NULL), mObjects(OBJECT_HASH_SIZE), mOscIn(NULL)
+  Root() : Object("",""), mGround(NULL), mObjects(OBJECT_HASH_SIZE), mOscIn(NULL)
   {
     mRoot = this;
     register_object(this);
     mObjects.set(std::string(""), this);
   }
 
-  Root(size_t pHashSize) : Object(""), mGround(NULL), mObjects(pHashSize), mOscIn(NULL)
+  Root(size_t pHashSize) : Object("",""), mGround(NULL), mObjects(pHashSize), mOscIn(NULL)
   {
     mRoot = this;
     mObjects.set(std::string(""), this);
   }
   
-  Root(void * pGround) : Object(""), mGround(pGround), mObjects(OBJECT_HASH_SIZE), mOscIn(NULL)
+  Root(void * pGround) : Object("",""), mGround(pGround), mObjects(OBJECT_HASH_SIZE), mOscIn(NULL)
   {
     mRoot = this;
     register_object(this);
     mObjects.set(std::string(""), this);
   }
 
-  Root(void * pGround, size_t pHashSize) : Object(""), mGround(pGround), mObjects(pHashSize), mOscIn(NULL)
+  Root(void * pGround, size_t pHashSize) : Object("",""), mGround(pGround), mObjects(pHashSize), mOscIn(NULL)
   {
     mRoot = this;
     mObjects.set(std::string(""), this);
@@ -58,25 +58,25 @@ public:
   }
   
   /** Execute the default operation for an object. */
-  const Values call (const char* pUrl)
+  const Value call (const char* pUrl)
   {
     return call(std::string(pUrl), "", NULL);
   }
 
   /** Execute the default operation for an object. */
-  const Values call (std::string& pUrl)
+  const Value call (std::string& pUrl)
   {
     return call(pUrl, "", NULL);
   }
 
   /** Execute the default operation for an object. */
-  const Values call (const char* pUrl, const char * pTypeTag, const Values val)
+  const Value call (const char* pUrl, const char * pTypeTag, const Value val)
   {
     return call(std::string(pUrl), pTypeTag, val);
   }
 
   /** Execute the default operation for an object. */
-  const Values call (const std::string& pUrl, const char * pTypeTag, const Values val)
+  const Value call (const std::string& pUrl, const char * pTypeTag, const Value val)
   {
     Object * target = NULL;
     size_t pos;
@@ -98,6 +98,7 @@ public:
     
     if (notFound) return target->not_found(pUrl, pTypeTag, val);
     
+    // FIXME: return type... target->mTypeTagString.c_str()
     return target->mTypeTag == hashId(pTypeTag) ? target->trigger(val) : target->trigger(NULL);
   }
 
@@ -105,6 +106,7 @@ public:
   void register_object(Object * pObj)
   {
     // url/tree changed, make sure dict is in sync
+    // std::cout << pObj->url() << " registered !\n";
   
     // 1. remove object
     if (pObj->mRoot) pObj->mRoot->unregister_object(pObj);
@@ -148,9 +150,19 @@ public:
     return find(std::string(pUrl));
   }
   
-  void receive(const std::string& pUrl, const char * pTypeTag, const Values pParams)
+  /* ======================= META METHODS ===================== */
+  
+  /** This method responds to /.reply_to 
+    * TODO: how to get the IP without checking for "/.reply_to" in the 'receive' method ?*/
+  void reply_to(OscSend * pSatellite)
   {
-    //FIX Values res;
+    // FIXME: avoid duplicates, implement TTL...
+    mControllers.push_back(pSatellite);
+  }
+  
+  void receive(const std::string& pUrl, const char * pTypeTag, const Value pParams)
+  {
+    //FIX Value res;
     
     //FIX if (pParams.is_error()) {
     //FIX   res = pParams;
@@ -160,15 +172,9 @@ public:
     //FIX send_reply(pUrl, res);
   }
   
-  inline void send_reply(const std::string& pUrl, const char * pTypeTag, const Values pVal)
+  inline void send_reply(const std::string& pUrl, const char * pTypeTag, const Value pVal)
   {
     OscSend::send_all(mControllers, pUrl, pTypeTag, pVal);
-  }
-  
-  void register_satellite(OscSend * pSatellite)
-  {
-    // FIXME: avoid duplicates, implement TTL...
-    mControllers.push_back(pSatellite);
   }
   
   void * mGround;                   /**< Context pointer for objects in the tree. */

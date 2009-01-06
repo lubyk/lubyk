@@ -44,7 +44,7 @@ public:
   /** This trigger implements "/class". It returns the list of objects in mObjectsPath. */
   virtual const Value trigger (const Value& val);
   
-  virtual const Value not_found (const std::string& pUrl, const Value& val);
+  virtual const Values not_found (const std::string& pUrl, uint pTypeTag, const osc::ReceivedMessage& pMsg);
   
   const Value lib_path(const Value& val)
   { 

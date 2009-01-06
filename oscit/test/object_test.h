@@ -1,6 +1,4 @@
 #include "test_helper.h"
-#include "oscit/object.h"
-#include "oscit/root.h"
 
 class DummyObject : public oscit::Object
 {
@@ -25,8 +23,8 @@ public:
   void test_root( void )
   {
     oscit::Root root;
-    oscit::Object * a  = new oscit::Object("a");
-    oscit::Object * a2 = new oscit::Object("a");
+    DoubleObject * a  = new DoubleObject("a", 1);
+    DoubleObject * a2 = new DoubleObject("a", 2);
     oscit::Object * res;
     
     TS_ASSERT( root.get(&res, "") );

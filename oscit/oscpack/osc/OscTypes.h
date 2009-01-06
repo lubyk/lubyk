@@ -63,7 +63,7 @@ typedef unsigned long uint32;
 
 
 
-enum TypeTagValues {
+enum TypeTagValue {
     TRUE_TYPE_TAG = 'T',
     FALSE_TYPE_TAG = 'F',
     NIL_TYPE_TAG = 'N',

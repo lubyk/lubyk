@@ -26,15 +26,14 @@ public:
   void send (const osc::OutboundPacketStream& pMsg);
   
   /** Send url with parameter. */
-  void send (const std::string& pUrl, const Value& pVal);
+  void send (const std::string& pUrl, const Value val);
   
   /** Build osc message and send it to all recipients of the provided list. */
-  static void send_all(std::list<OscSend*>& pRecipients, const std::string& pUrl, const char * pTypeTag, const Values pVal);
+  static void send_all(std::list<OscSend*>& pRecipients, const std::string& pUrl, const char * pTypeTags, const Value pVal);
   
 private:
   UdpTransmitSocket * mSocket;
-  
-  friend osc::OutboundPacketStream& operator<< (osc::OutboundPacketStream& os, const Value& val);
+  static void values_to_stream (osc::OutboundPacketStream& pOut, const char * pTypeTags, const Value val);
 };
 
 } // namespace oscit

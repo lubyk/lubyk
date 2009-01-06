@@ -14,6 +14,8 @@ class IpEndpointName;
 
 namespace oscit {
 
+#define MAX_TYPE_TAGS_LENGTH 10
+
 class Root;
 class ZeroConfRegister;
 
@@ -23,6 +25,7 @@ public:
   OscReceive(Root * pRoot, uint pPort);
   
   virtual ~OscReceive();
+  
   
 private:  
   /** Process incoming messages. */
@@ -40,8 +43,16 @@ private:
   
   ZeroConfRegister * mRegisterZeroConf; /** Zeroconf registration thread. */
   
-  Value value_from_osc(const osc::ReceivedMessage& pMsg);
+  /** Type tags as they are used in the application with automatic type casting from int/float to real, etc.
+    * @param[out] retTypes transposed types.
+    * @param  pTypes list of typetags characters.
+    * @return hash value of the casted type tags. */
+  static uint casted_type_tags(char * retTypes, const char * pTypes);
   
+  /** Write osc values inside the Value. 
+    * @param pRes storage the value / multi value (allready allocated, type checked). 
+    * @param pMsg osc message. */
+  static void values_from_osc(Value * pRes, const osc::ReceivedMessage& pMsg);
   Root * mRoot;
 };
 } // namespace oscit

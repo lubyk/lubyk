@@ -4,18 +4,20 @@
 #include "thash.h"
 
 union Value
-{
+{  
+  Value() : s("") {}
   Value(real_t pR) : r(pR) {}
   Value(int    pI) : r((real_t)pI) {}
   Value(char * pS) : s(pS) {}
+  Value(Value * pValues) : values(pValues) {}
   
-  char * s;
+  const char * s;
   real_t r;
   real_t f; // alias for r
   real_t i; // alias for r
+  real_t d; // alias for r
+  Value * values; // multi-value
 };
-
-typedef Value* Values;
 
 struct TypedValue
 {

@@ -10,13 +10,13 @@ class Alias : public Object
 public:
   Alias() : Object(""), mOriginal(NULL) {}
   
-  Alias(const char *       pName, Object * pObject) : Object(pName, pObject->mTypeTagString.c_str()), mOriginal(pObject) 
+  Alias(const char *       pName, Object * pObject) : Object(pObject->mTypeTagString.c_str(), pName), mOriginal(pObject) 
   {
     // We register so that the alias dies with the original object.
     mOriginal->register_alias(this);
   }
   
-  Alias(const std::string& pName, Object * pObject) : Object(pName, pObject->mTypeTagString.c_str()), mOriginal(pObject) 
+  Alias(const std::string& pName, Object * pObject) : Object(pObject->mTypeTagString.c_str(), pName), mOriginal(pObject) 
   {
     // We register so that the alias dies with the original object.
     mOriginal->register_alias(this);
@@ -34,7 +34,7 @@ public:
     return H("Alias");
   }
   
-  virtual const Values trigger (const Values val)
+  virtual const Value trigger (const Value val)
   {
     return mOriginal ? mOriginal->trigger(val) : NULL;
   }

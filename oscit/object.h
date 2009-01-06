@@ -8,6 +8,11 @@
 namespace oscit {
 #define OSC_NEXT_NAME_BUFFER_SIZE 20
 #define NO_TYPE_TAG H("")
+#define REAL_TYPE 'd'
+#define STRING_TYPE 's'
+#define MULTI_SIGNATURE H("*")
+#define REAL_SIGNATURE H("d")
+#define STRING_SIGNATURE H("s")
 class Root;
 class Alias;
 
@@ -21,56 +26,56 @@ public:
     mUrl  = mName;
   }
 
-  Object(const char * pName, const char * pTypeTag) : mRoot(NULL), mParent(NULL), mChildren(20)
+  Object(const char * pTypeTag, const char * pName) : mRoot(NULL), mParent(NULL), mChildren(20)
   {
     set_type_tag(pTypeTag);
     mName = pName;
     mUrl  = mName;
   }
 
-  Object(const std::string& pName, const char * pTypeTag) : mRoot(NULL), mParent(NULL), mChildren(20)
+  Object(const char * pTypeTag, const std::string& pName) : mRoot(NULL), mParent(NULL), mChildren(20)
   {
     set_type_tag(pTypeTag);
     mName = pName;
     mUrl  = mName;
   }
 
-  Object(Object * pParent, const char * pTypeTag) : mRoot(NULL), mParent(NULL), mChildren(20)
+  Object(const char * pTypeTag, Object * pParent) : mRoot(NULL), mParent(NULL), mChildren(20)
   {
     set_type_tag(pTypeTag);
     mName = default_name();
     pParent->adopt(this);
   }
 
-  Object(Object * pParent, const char * pName, const char * pTypeTag) : mRoot(NULL), mParent(NULL), mChildren(20)
+  Object(const char * pTypeTag, Object * pParent, const char * pName) : mRoot(NULL), mParent(NULL), mChildren(20)
   {
     set_type_tag(pTypeTag);
     mName = pName;
     pParent->adopt(this);
   }
 
-  Object(Object * pParent, const std::string& pName, const char * pTypeTag) : mRoot(NULL), mParent(NULL), mChildren(20)
+  Object(const char * pTypeTag, Object * pParent, const std::string& pName) : mRoot(NULL), mParent(NULL), mChildren(20)
   {
     set_type_tag(pTypeTag);
     mName = pName;
     pParent->adopt(this);
   }
 
-  Object(Object& pParent, const char * pTypeTag) : mRoot(NULL), mParent(NULL), mChildren(20)
+  Object(const char * pTypeTag, Object& pParent) : mRoot(NULL), mParent(NULL), mChildren(20)
   {
     set_type_tag(pTypeTag);
     mName = default_name();
     pParent.adopt(this);
   }
 
-  Object(Object& pParent, const char * pName, const char * pTypeTag) : mRoot(NULL), mParent(NULL), mChildren(20)
+  Object(const char * pTypeTag, Object& pParent, const char * pName) : mRoot(NULL), mParent(NULL), mChildren(20)
   {
     set_type_tag(pTypeTag);
     mName = pName;
     pParent.adopt(this);
   }
 
-  Object(Object& pParent, const std::string& pName, const char * pTypeTag) : mRoot(NULL), mParent(NULL), mChildren(20)
+  Object(const char * pTypeTag, Object& pParent, const std::string& pName) : mRoot(NULL), mParent(NULL), mChildren(20)
   {
     set_type_tag(pTypeTag);
     mName = pName;
@@ -100,7 +105,7 @@ public:
   
   /** Shortcut to call first method on an object.
     * Using "obj.set('waga',3.4,1)" is equivalent to calling "obj.first_method(['waga',3.4,1])". */
-  bool set(const char * pTypeTag, const Values val)
+  bool set(const char * pTypeTag, const Value val)
   {
     Object * obj;
     // use first method as default
@@ -140,13 +145,13 @@ public:
   /** This is the operation executed when the object is called.
     * @param val The parameters either respect the object's or the list of values is set to NULL.
     * @return This method *MUST* return the exact value types that it has advertised. */
-  virtual const Values trigger (const Values val)
+  virtual const Value trigger (const Value val)
   {
     return NULL;
   }
 
   /** This method is called whenever a sub-node or branch is not found and this is the last found object along the path. */
-  virtual const Values not_found (const std::string& pUrl, const char * pTypeTag, const Values val)
+  virtual const Value not_found (const std::string& pUrl, const char * pTypeTag, const Value val)
   {
     return Error(std::string("Object '").append(pUrl).append("' not found."));
   }
@@ -323,16 +328,26 @@ protected:
     }
   }
   
+  /** Define object signature. This not be changed during runtime.
+    * @param pTypeTag a string with the type signature (should be static since it is not copied).
+    */
   void set_type_tag(const char * pTypeTag)
   {
+    if (mTypeTag == MULTI_SIGNATURE) {
+      free(mParam.values);
+    }
     mTypeTag = hashId(pTypeTag);
-    mTypeTagString = pTypeTag;
+    mTypeTagString = pTypeTag; // could be optimized to const char * storage.
+    
+    if (mTypeTag == MULTI_SIGNATURE) {
+      mParam.values = (Value*)malloc(sizeof(Value) * strlen(pTypeTag));
+    }
   }
   
 private:
   
   // FIXME: this is a temporary fix for error handling. DO NOT LEAVE THIS AS IS !
-  const Values Error(const std::string& pMessage)
+  const Value Error(const std::string& pMessage)
   {
     fprintf(stderr, "Error in '%s': %s\n", url().c_str(), pMessage.c_str());
     return NULL;
@@ -366,6 +381,9 @@ protected:
   std::string                 mTypeTagString;    /**< String representation of the type tag in the form of "ffi" for "array of two floats and an integer".. */
   static unsigned int         sIdCounter;        /**< Use to set a default id and position. */
 
+private:
+  friend class OscReceive;
+  Value                       mParam;           /**< Allocated memory to build the parameters from osc message. */
 };
 } // namespace osc
 

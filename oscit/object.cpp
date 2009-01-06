@@ -13,6 +13,10 @@ Object::~Object()
     delete *it;
   }
   
+  if (mTypeTag == MULTI_SIGNATURE) {
+    free(mParam.values);
+  }
+  
   clear();
 }
 

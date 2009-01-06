@@ -3,8 +3,7 @@ TESTING=-D_TESTING_
 AR = ar rcu
 LIBTOOL=libtool -static
 TEST=test/*_test.h
-OBJECTS=object.o
-#receive.o send.o root.o zeroconf.o oscpack/liboscpack.a
+OBJECTS=object.o receive.o send.o root.o zeroconf.o oscpack/liboscpack.a
 CFLAGS=-g -Wall $(TESTING)
 
 
