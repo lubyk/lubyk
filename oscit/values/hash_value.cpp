@@ -4,7 +4,7 @@
 
 const Value Hash::operator[] (const std::string& pKey) const
 {
-  if (!mPtr) return gNilValue;
+  if (!ptr_) return gNilValue;
   Value res;
   if (!data_pointer()->mHash.get(&res, pKey)) return gNilValue;
   return res;

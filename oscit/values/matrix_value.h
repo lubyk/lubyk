@@ -336,7 +336,7 @@ public:
   /** Return the message for the last error. */
   const char * error_msg() const
   {
-    return mPtr ? data_pointer()->mErrorMsg : "";
+    return ptr_ ? data_pointer()->mErrorMsg : "";
   }
   
   /** Print the matrix (usefull for debugging). Use 'to_file' to serialize. */
@@ -421,36 +421,36 @@ public:
     * You have to make sure indexes are valid. No verification is done here. */
   const T value_at (size_t pRowIndex, size_t pColIndex) const
   {
-    return mPtr ? data_pointer()->value_at(pRowIndex, pColIndex) : 0;
+    return ptr_ ? data_pointer()->value_at(pRowIndex, pColIndex) : 0;
   }
   
   /** Return a pointer to the data buffer. Return NULL if there is no data. */
   const T * raw_data() const
   {
-    return mPtr ? data_pointer()->data : NULL;    
+    return ptr_ ? data_pointer()->data : NULL;    
   }
   
   /** Return a pointer to the data buffer. Return NULL if there is no data. */
   T * raw_data()
   {
-    return mPtr ? data_pointer()->data : NULL; // FIXME: shouldn't we use mutable_data() here ?
+    return ptr_ ? data_pointer()->data : NULL; // FIXME: shouldn't we use mutable_data() here ?
   }
   
   /** Return the number of columns in the matrix. */
   const size_t row_count() const
   {
-    return mPtr ? data_pointer()->mRowCount : 0;
+    return ptr_ ? data_pointer()->mRowCount : 0;
   }
   
   /** Return the number of columns in the matrix. */
   const size_t col_count() const
   {
-    return mPtr ? data_pointer()->mColCount : 0;
+    return ptr_ ? data_pointer()->mColCount : 0;
   }
   
   size_t size() const
   {
-    return mPtr ? data_pointer()->size() : 0;
+    return ptr_ ? data_pointer()->size() : 0;
   }
   
   //////////////////////////////////////////////////////

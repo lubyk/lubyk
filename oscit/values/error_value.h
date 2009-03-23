@@ -62,7 +62,7 @@ public:
   
   const char * message() const
   {
-    if (mPtr) {
+    if (ptr_) {
       return data_pointer()->mString.c_str();
     } else {
       return "";

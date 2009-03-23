@@ -21,9 +21,9 @@ public:
   { return HashValue; }
 
   // copy constructor
-  HashData(const HashData& pOther) : mHash(pOther.storage_size())
+  HashData(const HashData& other) : mHash(other.storage_size())
   {
-    mHash = pOther.mHash;
+    mHash = other.mHash;
   }
 
   virtual ~HashData() {}
@@ -179,7 +179,7 @@ public:
   
   size_t size() const
   {
-    return mPtr ? data_pointer()->mHash.size() : 0;
+    return ptr_ ? data_pointer()->mHash.size() : 0;
   }
   
   /** Return a Value or Nil from a string key. */
@@ -200,13 +200,13 @@ public:
   /** Return an iterator pointing at the first key in the dictionary. */
   Hash_iterator begin() const
   {
-    return mPtr ? (Hash_iterator)data_pointer()->mHash.begin() : (Hash_iterator)NULL;
+    return ptr_ ? (Hash_iterator)data_pointer()->mHash.begin() : (Hash_iterator)NULL;
   }
   
   /** Return an iterator pointing at the past-end key in the dictionary. */
   Hash_iterator end() const
   {
-    return mPtr ? (Hash_iterator)data_pointer()->mHash.end() : (Hash_iterator)NULL;
+    return ptr_ ? (Hash_iterator)data_pointer()->mHash.end() : (Hash_iterator)NULL;
   }
   
   /** Clear hash (empty). */

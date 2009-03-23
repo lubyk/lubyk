@@ -116,7 +116,7 @@ public:
   /** Return a const version of the std::string storage. */
   inline const std::string& string() const
   {
-    return mPtr ? data_pointer()->mString : sNoString;
+    return ptr_ ? data_pointer()->mString : sNoString;
   }
   
   const static std::string sNoString;  /**< Empty string used as return value when no data is available. */

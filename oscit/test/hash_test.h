@@ -1,5 +1,8 @@
 #include "test_helper.h"
 
+//Value v;
+//Hash * h = v.h->data();
+//Hash * h = v.hash();
 
 class HashTest : public ValueTestHelper
 {

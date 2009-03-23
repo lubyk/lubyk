@@ -27,8 +27,8 @@ public:
     from_string(std::string(s));
   }
   
-  Value(const Value& pOther)
-  { pOther.set(*this); }
+  Value(const Value& other)
+  { other.set(*this); }
   
   /** Anonymization of the content to the ancestor class +Data+. */
   Value(Data * p) : SmartPtr<Data>(p) {}
@@ -46,11 +46,11 @@ public:
   
   /** Returns the data-type (type of the content pointed by the smart pointer). */
   value_t data_type() const
-  { return mPtr ? mPtr->mDataPtr->type() : NilValue; }
+  { return ptr_ ? ptr_->dataPtr_->type() : NilValue; }
   
   /** Return true if the object's data is Nil. */
   inline bool is_nil() const
-  { return !mPtr; }
+  { return !ptr_; }
   
   /** Return true if the object's data is a BangData. */
   inline bool is_bang() const
@@ -93,22 +93,22 @@ public:
   const char* data_type_name() const
   { return Data::name_from_type(data_type()); }
   
-  /** Type conversion ("this" sets "pOther").
+  /** Type conversion ("this" sets "other").
   
-  If you wonder why we haven't implemented it the other way around like: "pOther.from(this)", the reason is that we wanted a
+  If you wonder why we haven't implemented it the other way around like: "other.from(this)", the reason is that we wanted a
   consistant interface for Values and native types. You cannot write "real_t d; d.from(this)" so we use "set". */
-  bool set (Value& pOther) const
+  bool set (Value& other) const
   {
     switch (data_type())
     {
       // what do I contain ?
       case BangValue:
-        switch (pOther.type())
+        switch (other.type())
         {
           // what does the "other" wrapper expect ?
           case AnonymousValue: // anything
           case BangValue:
-            pOther = *this;   // pOther acquires our content
+            other = *this;   // other acquires our content
             return true;
           default:
             return false;
@@ -116,24 +116,24 @@ public:
 
       // what do I contain ?
       case NumberValue:
-        switch (pOther.type())
+        switch (other.type())
         {
           // what does the "other" wrapper expect ?
           case AnonymousValue: // anything
           case NumberValue:
-            pOther = *this;   // pOther acquires our content
+            other = *this;   // other acquires our content
             return true;
           default:
             return false;
         }
         
       case MatrixValue:
-        switch (pOther.type())
+        switch (other.type())
         {
           // what does the "other" wrapper expect ?
           case AnonymousValue: // anything
           case MatrixValue:
-            pOther = *this;   // pOther acquires our content
+            other = *this;   // other acquires our content
             return true;
           case NumberValue:     // first value in matrix ?
           case CharMatrixValue: // cast ?
@@ -142,24 +142,24 @@ public:
         }
         
       case StringValue:
-        switch (pOther.type())
+        switch (other.type())
         {
           // what does the "other" wrapper expect ?
           case AnonymousValue: // anything
           case StringValue:
-            pOther = *this;   // pOther acquires our content
+            other = *this;   // other acquires our content
             return true;
           default:
             return false;
         }
         
       case CharMatrixValue:
-        switch (pOther.type())
+        switch (other.type())
         {
           // what does the "other" wrapper expect ?
           case AnonymousValue: // anything
           case CharMatrixValue:
-            pOther = *this;   // pOther acquires our content
+            other = *this;   // other acquires our content
             return true;
           case NumberValue:    // first value in matrix ?  
           case MatrixValue:    // cast ?
@@ -168,12 +168,12 @@ public:
         }
         
       case HashValue:
-        switch (pOther.type())
+        switch (other.type())
         {
           // what does the "other" wrapper expect ?
           case AnonymousValue: // anything
           case HashValue:
-            pOther = *this;   // pOther acquires our content
+            other = *this;   // other acquires our content
             return true;
           case StringValue:    // convert to hash ?
           default:
@@ -181,12 +181,12 @@ public:
         }
       
       case ErrorValue:
-        switch (pOther.type())
+        switch (other.type())
         {
           // what does the "other" wrapper expect ?
           case AnonymousValue: // anything
           case ErrorValue:
-            pOther = *this;   // pOther acquires our content
+            other = *this;   // other acquires our content
             return true;
           default:
             return false;
@@ -199,7 +199,7 @@ public:
   
   inline Data * data_pointer() const
   { 
-    return mPtr->mDataPtr; 
+    return ptr_->dataPtr_; 
   }
   
   /** Set a real_t from the content. Return false on failure. 
@@ -207,27 +207,27 @@ public:
   FIXME: we should use a template here, but it seems to break on compilation... */
   bool set (real_t& pResult) const
   {
-    if (!mPtr) return false;
-    return mPtr->mDataPtr->set(pResult);
+    if (!ptr_) return false;
+    return ptr_->dataPtr_->set(pResult);
   }
   
   /** Try to convert the data to 'U', returning default on failure. */
   template<typename U>
   const U operator|| (const U& pDefault) const
   {
-    return is_nil() ? pDefault : mPtr->mDataPtr->convert(pDefault);
+    return is_nil() ? pDefault : ptr_->dataPtr_->convert(pDefault);
   }
   
   std::string to_string() const
   {
-    return mPtr ? mPtr->mDataPtr->to_string() : std::string("Nil");
+    return ptr_ ? ptr_->dataPtr_->to_string() : std::string("Nil");
   }
   
 #ifdef _TESTING_
   size_t data_id() const
   {
-    if (mPtr) {
-      return mPtr->mDataPtr->mId;
+    if (ptr_) {
+      return ptr_->dataPtr_->mId;
     } else {
       return 0;
     }
@@ -244,25 +244,25 @@ private:
   klass() {}                                                        \
   klass(data_type * d) : super(d) {}                                \
   virtual ~klass() {}                                               \
-  klass(const Value& pOther)                                        \
-  { pOther.set(*this); }                                            \
+  klass(const Value& other)                                        \
+  { other.set(*this); }                                            \
   const data_type * data () const                                   \
-  { return mPtr ? data_pointer() : NULL; }                          \
+  { return ptr_ ? data_pointer() : NULL; }                          \
   const data_type * operator->() const                              \
   { return data(); }                                                \
   const data_type& operator*() const                                \
   { return *data(); }                                               \
   data_type * mutable_data ()                                       \
-  { if (!mPtr) make_data_ptr();                                     \
+  { if (!ptr_) make_data_ptr();                                     \
     copy_if_shared();                                               \
-    return (data_type*)(mPtr->mDataPtr); }                          \
+    return (data_type*)(ptr_->dataPtr_); }                          \
   virtual value_t type() const                                      \
   { return signature; }                                             \
 protected:                                                          \
   inline void make_data_ptr ()                                      \
-  { mPtr = new Ptr(new data_type()); }                              \
+  { ptr_ = new Ptr(new data_type()); }                              \
   inline data_type * data_pointer() const                           \
-  { return (data_type*)(mPtr->mDataPtr); }                          \
+  { return (data_type*)(ptr_->dataPtr_); }                          \
 public: \
 
 #define VALUE_FROM_STRING(klass)                                    \

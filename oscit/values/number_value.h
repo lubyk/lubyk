@@ -80,11 +80,11 @@ public:
   /** Set Number from Value. */
   const Value& operator= (const Value val)
   {
-    // std::cout << "[" << data_id() << "/" << ref_count() << "] operator=" << val << std::endl;
+    // std::cout << "[" << data_id() << "/" << getRefCount() << "] operator=" << val << std::endl;
     if (val.data_type() == NumberValue) {
-      if (!mPtr) {
+      if (!ptr_) {
         acquire(val);
-        // std::cout << "acquired: [" << data_id() << "/" << ref_count() << "]" << std::endl;
+        // std::cout << "acquired: [" << data_id() << "/" << getRefCount() << "]" << std::endl;
       } else {
         copy_if_shared();
         data_pointer()->mReal = ((NumberData*)(val.data_pointer()))->mReal; // copy instead of acquire.
@@ -257,7 +257,7 @@ public:
   /** Return the value. */
   real_t value() const
   {
-    if (mPtr) {
+    if (ptr_) {
       return data_pointer()->mReal;
     } else {
       return 0;

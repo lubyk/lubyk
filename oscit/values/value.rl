@@ -104,8 +104,8 @@ size_t Value::from_string(const char * pStr)
 
 std::ostream& operator<< (std::ostream& pStream, const Value val)
 {
-  if (val.mPtr && val.mPtr->mDataPtr) {
-    val.mPtr->mDataPtr->to_stream(pStream);
+  if (val.ptr_ && val.ptr_->dataPtr_) {
+    val.ptr_->dataPtr_->to_stream(pStream);
   } else {
     pStream << "Nil";
   }
