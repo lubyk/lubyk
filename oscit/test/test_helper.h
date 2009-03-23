@@ -36,6 +36,11 @@ protected:
     _OSCIT_ASSERT_EQUALS( file, lineno, TS_AS_STRING(expected), found, std::string(expected));
   }
   
+  void _assertEqual(const char * file, int lineno, const std::string& expected, const std::string& found)
+  {
+    _OSCIT_ASSERT_EQUALS( file, lineno, TS_AS_STRING(expected), found, expected);
+  }
+  
   void _assertEqual(const char * file, int lineno, void * expected, void * found)
   {
     _OSCIT_ASSERT_EQUALS( file, lineno, TS_AS_STRING(expected), found, expected);
