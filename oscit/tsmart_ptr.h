@@ -2,24 +2,24 @@
 #define _SMART_PTR_H_
 #include <stdlib.h> // size_t
 
-/** The SmartPtr class implements a simple Smart Pointer with reference counting. */
+/** The TSmartPtr class implements a simple Smart Pointer with reference counting. */
 template <class T>
-class SmartPtr
+class TSmartPtr
 {
 public:
-  SmartPtr (T * p = 0) : ptr_(0)
+  TSmartPtr (T * p = 0) : ptr_(0)
   {
     if (p) ptr_ = new Ptr(p);
   }
   
-  /** Initialize with another SmartPtr: light copy of content. */
-  SmartPtr(const SmartPtr& other)
+  /** Initialize with another TSmartPtr: light copy of content. */
+  TSmartPtr(const TSmartPtr& other)
   {
     acquire(other.ptr_);
   }
   
-  /** Light copy of the data contained in the other SmartPtr. */
-  SmartPtr& operator=(const SmartPtr& v)
+  /** Light copy of the data contained in the other TSmartPtr. */
+  TSmartPtr& operator=(const TSmartPtr& v)
   {
     if (this != &v) {
       release();
@@ -28,8 +28,8 @@ public:
     return *this;
   }
   
-  /** When the SmartPtr dies, it releases the content (decrement refcount). */
-  virtual ~SmartPtr()
+  /** When the TSmartPtr dies, it releases the content (decrement refcount). */
+  virtual ~TSmartPtr()
   {
     release();
   }
@@ -45,7 +45,7 @@ public:
     return ptr_ ? ptr_->refCount_ : 0;
   }
   
-  void acquire(const SmartPtr& s)
+  void acquire(const TSmartPtr& s)
   {
     acquire(s.ptr_);
   }
@@ -63,7 +63,7 @@ protected:
   
 private:
   
-  /** Get hold of a pointer (the SmartPtr is in charge of calling 'delete'). */
+  /** Get hold of a pointer (the TSmartPtr is in charge of calling 'delete'). */
   void acquire(Ptr * p)
   {  
     ptr_ = p;

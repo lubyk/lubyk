@@ -1,5 +1,5 @@
 #include "test_helper.h"
-#include "oscit/smart_ptr.h"
+#include "oscit/tsmart_ptr.h"
 
 /** Simple class to test the smart pointer template. */
 class TestSmartData
@@ -21,11 +21,11 @@ public:
   const char ** statusNotification_;
 };
 
-class TestSmart : public SmartPtr<TestSmartData>
+class TestSmart : public TSmartPtr<TestSmartData>
 {
 public:
-  TestSmart(int value) : SmartPtr<TestSmartData>(new TestSmartData(value)) {}
-  TestSmart(int value, const char ** notification) : SmartPtr<TestSmartData>(new TestSmartData(value, notification)) {}
+  TestSmart(int value) : TSmartPtr<TestSmartData>(new TestSmartData(value)) {}
+  TestSmart(int value, const char ** notification) : TSmartPtr<TestSmartData>(new TestSmartData(value, notification)) {}
 };
 
 class SmartPointerTest : public TestHelper
