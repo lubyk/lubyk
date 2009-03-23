@@ -54,7 +54,7 @@ public:
   String(const std::string& s) : Value(new StringData(s)) {}
   String(const char* s) : Value(new StringData(std::string(s))) {}
   
-  const Value& operator= (const Value& val)
+  const Value& operator= (const Value val)
   { 
     val.set(*this);
     return val; 

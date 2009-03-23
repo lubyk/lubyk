@@ -1,7 +1,7 @@
 #include "inlet.h"
 #include "node.h"
 
-void Inlet::receive (const Value& val)
+void Inlet::receive (const Value val)
 {
   // std::cout << mId << "receive " << val << std::endl;
   // TODO: test speed and replace by functor if there is no real gain...

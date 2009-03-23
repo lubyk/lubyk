@@ -6,7 +6,7 @@ class AliasNode : public oscit::Alias
 {
 public:
   
-  const Value original_(const Value& val)
+  const Value original_(const Value val)
   {
     String url(val);
     if (!url.is_nil()) {

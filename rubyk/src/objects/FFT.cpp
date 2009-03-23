@@ -19,7 +19,7 @@ public:
   }
   
   // inlet 1
-  void bang(const Value& val)
+  void bang(const Value val)
   { 
     const Matrix * mat;
     if (!val.get(&mat)) {
@@ -73,7 +73,7 @@ public:
     send(mS);
   }
   
-  virtual const Value inspect(const Value& val) 
+  virtual const Value inspect(const Value val) 
   {  
     bprint(mSpy, mSpySize,"");    
   }

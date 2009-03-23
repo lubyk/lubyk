@@ -1,9 +1,9 @@
-INCLUDE_HEADERS=-I../rubyk/src/templates -I../rubyk/src/core -I../rubyk/src/core/values -Ioscpack -I..
+INCLUDE_HEADERS=-I../rubyk/src/templates -Ivalues -Ioscpack -I..
 TESTING=-D_TESTING_
 AR = ar rcu
 LIBTOOL=libtool -static
 TEST=test/*_test.h
-OBJECTS=object.o receive.o send.o root.o zeroconf.o oscpack/liboscpack.a
+OBJECTS=#object.o receive.o send.o root.o zeroconf.o oscpack/liboscpack.a
 CFLAGS=-g -Wall $(TESTING)
 
 

@@ -96,7 +96,7 @@ public:
   
   /** This method must be implemented in subclasses. It's the place where most
     * of the work should be done. This method is responsible for sending the signals out. */
-  virtual void bang (const Value& val) = 0;
+  virtual void bang (const Value val) = 0;
   
   /** Set url for class. TODO: Maybe we should pass a pointer to the class in case it moves ? But then if it is removed ? */
   void set_class_url(const std::string& pClass)
@@ -107,11 +107,11 @@ public:
   inline real_t trigger_position() { return mTriggerPosition; }
   
   /** Send a Value out of the first outlet. */
-  inline void send(const Value& val)
+  inline void send(const Value val)
   { send(1, val); }
   
   /** Send a Value out of an outlet. */
-  inline void send (size_t pPort, const Value& val)
+  inline void send (size_t pPort, const Value val)
   { 
 //FIX    if (mDebug) *mOutput << "[" << mName << ":" << pPort << "] " << val << std::endl;
     if (pPort < 1 || pPort > mOutlets.size() || val.is_nil()) return;

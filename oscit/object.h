@@ -1,18 +1,23 @@
 #ifndef _OSC_OBJECT_H_
 #define _OSC_OBJECT_H_
 #include <list>
-#include "new_value.h"
+#include "values.h"
 #include "thash.h"
 
 
 namespace oscit {
 #define OSC_NEXT_NAME_BUFFER_SIZE 20
 #define NO_TYPE_TAG H("")
+
 #define REAL_TYPE 'd'
-#define STRING_TYPE 's'
-#define MULTI_SIGNATURE H("*")
 #define REAL_SIGNATURE H("d")
+#define RealValue "d"
+
+#define STRING_TYPE 's'
 #define STRING_SIGNATURE H("s")
+#define StringValue "s"
+
+#define MULTI_SIGNATURE H("*")
 class Root;
 class Alias;
 
@@ -337,7 +342,7 @@ protected:
       free(mParam.values);
     }
     mTypeTag = hashId(pTypeTag);
-    mTypeTagString = pTypeTag; // could be optimized to const char * storage.
+    mTypeTagStr = pTypeTag; // could be optimized to const char * storage.
     
     if (mTypeTag == MULTI_SIGNATURE) {
       mParam.values = (Value*)malloc(sizeof(Value) * strlen(pTypeTag));
@@ -378,7 +383,7 @@ protected:
   std::string                 mName;             /**< Unique name in parent's context. */
   std::string                 mInfo;             /**< Help/information string. */
   uint                        mTypeTag;          /**< OSC type tag hash. */
-  std::string                 mTypeTagString;    /**< String representation of the type tag in the form of "ffi" for "array of two floats and an integer".. */
+  const char *                mTypeTagStr;       /**< C String representation of the type tag in the form of "ffi" for "array of two floats and an integer".. This should only be set to point to a static char *. */
   static unsigned int         sIdCounter;        /**< Use to set a default id and position. */
 
 private:

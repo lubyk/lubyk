@@ -16,7 +16,7 @@ public:
     return true;
   }
 
-  void bang(const Value& val)
+  void bang(const Value val)
   { 
     val.get(&mLiveBuffer);
     

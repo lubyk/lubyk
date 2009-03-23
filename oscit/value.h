@@ -1,24 +1,27 @@
-#ifndef _NEW_VALUE_H_
-#define _NEW_VALUE_H_
-#include "rubyk_types.h"
-#include "thash.h"
+#ifndef _VALUE_H_
+#define _VALUE_H_
+#include "oscit/conf.h"
 
 union Value
 {  
-  Value() : s("") {}
-  Value(real_t pR) : r(pR) {}
-  Value(int    pI) : r((real_t)pI) {}
-  Value(char * pS) : s(pS) {}
-  Value(Value * pValues) : values(pValues) {}
+  Value() : r(0) {}
+  explicit Value(real_t pR) : r(pR) {}
+  explicit Value(int    pI) : r((real_t)pI) {}
   
-  const char * s;
   real_t r;
   real_t f; // alias for r
-  real_t i; // alias for r
   real_t d; // alias for r
-  Value * values; // multi-value
 };
 
+/*
+
+explicit Value(char * pS) : s(pS) {}
+explicit Value(Value * pValues) : values(pValues) {}
+const char * s;
+Value * values; // multi-value
+
+#include "rubyk_types.h"
+#include "thash.h"
 struct TypedValue
 {
   TypedValue() : type('\0'), value(0.0) {}
@@ -30,7 +33,7 @@ struct TypedValue
 typedef THash<std::string,TypedValue> Hash;
 typedef std::list<std::string>::const_iterator Hash_iterator;
 
-/*
+
 // how about reference counting ?
 
 val->f ===> float
@@ -43,4 +46,4 @@ acquire(mat);
 ...
 release(mat); // deleted if reference count reaches 0
 */
-#endif // _NEW_VALUE_H_
+#endif // _VALUE_H_

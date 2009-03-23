@@ -81,12 +81,12 @@ public:
   
   /** ======== META ========= */
   
-  virtual const Value inspect(const Value& val)
+  virtual const Value inspect(const Value val)
   { 
     return String("Planet");
   }
   
-  virtual void bang(const Value& val) {}
+  virtual void bang(const Value val) {}
   
   /** Run until quit (through a command or signal). */
   void run()
@@ -236,13 +236,13 @@ public:
   }
 
   /** Execute the default operation for an object. */
-  Value call (const char* pUrl, const Value& val)
+  Value call (const char* pUrl, const Value val)
   {
     return mRoot.call(std::string(pUrl), val);
   }
 
   /** Execute the default operation for an object. */
-  Value call (const std::string& pUrl, const Value& val)
+  Value call (const std::string& pUrl, const Value val)
   {
     return mRoot.call(pUrl, val);
   }

@@ -12,11 +12,11 @@ public:
   
   /** This trigger method actually implements "new". The parameter can be either a String containing the url of the new object or
     * a Hash containing the "url" and "params": {url: "foo" params:{ bar:1 pico:2 }}. */
-  virtual const Value trigger (const Value& val);
+  virtual const Value trigger (const Value val);
   
   /** Template used as a method to create new nodes. */
   template<class T>
-  static const Value cast_create(Planet& pPlanet, const Value& val)
+  static const Value cast_create(Planet& pPlanet, const Value val)
   {
     oscit::Object * parent;
     String url(val);

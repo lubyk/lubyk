@@ -9,7 +9,7 @@ public:
   }
   
   // inlet 1
-  void bang(const Value& val)
+  void bang(const Value val)
   {  
     real_t d;
     int i;
@@ -30,7 +30,7 @@ public:
     }
   }
   
-  virtual const Value inspect(const Value& val) 
+  virtual const Value inspect(const Value val) 
   { bprint(mSpy, mSpySize, "");  }
   
 private:

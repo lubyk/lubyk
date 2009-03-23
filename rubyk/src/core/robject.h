@@ -8,25 +8,25 @@ class Planet;
 class RObject : public oscit::Object
 {
 public:
-  RObject() : mPlanet(NULL) {}
+  RObject(const char * pTypeTagStr) : oscit::Object(pTypeTagStr), mPlanet(NULL) {}
   
-  RObject(Planet * pPlanet) : mPlanet(pPlanet) {}
+  RObject(const char * pTypeTagStr, Planet * pPlanet) : oscit::Object(pTypeTagStr), mPlanet(pPlanet) {}
 
-  RObject(const char * pName) : oscit::Object(pName), mPlanet(NULL) {}
+  RObject(const char * pTypeTagStr, const char * pName) : oscit::Object(pTypeTagStr, pName), mPlanet(NULL) {}
 
-  RObject(const std::string& pName) : oscit::Object(pName), mPlanet(NULL) {}
+  RObject(const char * pTypeTagStr, const std::string& pName) : oscit::Object(pTypeTagStr, pName), mPlanet(NULL) {}
 
-  RObject(Object * pParent) : oscit::Object(pParent) {}
+  RObject(const char * pTypeTagStr, Object * pParent) : oscit::Object(pTypeTagStr, pParent) {}
 
-  RObject(Object * pParent, const char * pName) : oscit::Object(pParent, pName) {}
+  RObject(const char * pTypeTagStr, Object * pParent, const char * pName) : oscit::Object(pTypeTagStr, pParent, pName) {}
 
-  RObject(Object * pParent, const std::string& pName) : oscit::Object(pParent, pName) {}
+  RObject(const char * pTypeTagStr, Object * pParent, const std::string& pName) : oscit::Object(pTypeTagStr, pParent, pName) {}
 
-  RObject(Object& pParent) : oscit::Object(pParent) {}
+  RObject(const char * pTypeTagStr, Object& pParent) : oscit::Object(pTypeTagStr, pParent) {}
 
-  RObject(Object& pParent, const char * pName) : oscit::Object(pParent, pName) {}
+  RObject(const char * pTypeTagStr, Object& pParent, const char * pName) : oscit::Object(pTypeTagStr, pParent, pName) {}
 
-  RObject(Object& pParent, const std::string& pName) : oscit::Object(pParent, pName) {}
+  RObject(const char * pTypeTagStr, Object& pParent, const std::string& pName) : oscit::Object(pTypeTagStr, pParent, pName) {}
   
   virtual void set_root(oscit::Root * pRoot)
   {  

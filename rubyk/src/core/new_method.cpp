@@ -1,6 +1,6 @@
 #include "rubyk.h"
 
-const Value NewMethod::trigger (const Value& val)
+const Value NewMethod::trigger (const Value val)
 {
   String url;
   Value params;

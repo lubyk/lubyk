@@ -10,7 +10,7 @@ public:
     return true;
   }
   
-  void bang(const Value& val)
+  void bang(const Value val)
   {
     if (val.type != MatrixValue) {
       *mOutput << mName << ": filter only works with array signals. Use a buffer.\n";
@@ -38,7 +38,7 @@ public:
     send(max_label);
   }
   
-  virtual const Value inspect(const Value& val) 
+  virtual const Value inspect(const Value val) 
   {  
     bprint(mSpy, mSpySize,"");    
   }

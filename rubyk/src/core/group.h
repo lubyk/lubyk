@@ -9,9 +9,9 @@ public:
   
   bool init (const Value& p);
   
-  virtual const Value inspect(const Value& val) ;
+  virtual const Value inspect(const Value val) ;
   
-  virtual void bang(const Value& val);
+  virtual void bang(const Value val);
   
 };
 

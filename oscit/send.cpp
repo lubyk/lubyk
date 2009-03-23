@@ -41,7 +41,7 @@ void OscSend::send(const std::string& pUrl, const Value val)
   // send(oss);
 }
 
-void OscSend::send_all(std::list<OscSend*>& pRecipients, const std::string& pUrl, const char * pTypeTags, const Value pVal)
+void OscSend::send_all(std::list<OscSend*>& pRecipients, const std::string& pUrl, const char * pTypeTags, const Value val)
 { 
   std::list<OscSend*>::iterator it  = pRecipients.begin();
   std::list<OscSend*>::iterator end = pRecipients.end();
@@ -51,29 +51,29 @@ void OscSend::send_all(std::list<OscSend*>& pRecipients, const std::string& pUrl
   char buffer[OSC_OUT_BUFFER_SIZE]; // TODO: reuse buffer
   osc::OutboundPacketStream oss( buffer, OSC_OUT_BUFFER_SIZE );
   oss << osc::BeginBundleImmediate << osc::BeginMessage(pUrl.c_str());
-  values_to_stream(oss, pTypeTags, pVal);
+  values_to_stream(oss, pTypeTags, val);
   oss << osc::EndMessage << osc::EndBundle;
   
   while (it != end) (*it++)->send(oss);
 }
 
-void OscSend::values_to_stream (osc::OutboundPacketStream& pOut, const char * pTypeTags, const Value pVal)
+void OscSend::values_to_stream (osc::OutboundPacketStream& pOut, const char * pTypeTags, const Value val)
 { 
   uint i = 0;
   char c;
-  const Value * val = &pVal;
+  const Value * value = val;
   if (strlen(pTypeTags) > 1) {
-    val = val->values;
+    value = value->values;
   }
   
   while ( (c = pTypeTags[i]) ) {
     switch (c)
     {
       case REAL_TYPE:
-        pOut << val[i].r;
+        pOut << value[i].r;
         break;
       case STRING_TYPE:
-        pOut << val[i].s;
+        pOut << value[i].s;
         break;
       default:  
         fprintf(stderr, "Unknown value type '%c'. Cannot send to osc.\n", c);

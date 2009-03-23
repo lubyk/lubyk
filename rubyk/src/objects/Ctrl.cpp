@@ -27,7 +27,7 @@ public:
   }
   
   // inlet 1 (set ctrl value)
-  void bang(const Value& val)
+  void bang(const Value val)
   {
     real_t i;
     if (val.type == MidiValue && val.midi_ptr.value->mType == CtrlChange) {
@@ -48,20 +48,20 @@ public:
   }
   
   // inlet 2
-  void set_ctrl(const Value& val)
+  void set_ctrl(const Value val)
   {
     int n;
     if (val.get(&n)) mMessage.set_note(n);
   }
   
   // inlet 3
-  void set_slope(const Value& val)
+  void set_slope(const Value val)
   {
     val.get(&mSlope);
   }
   
   // inlet 4
-  void set_channel(const Value& val)
+  void set_channel(const Value val)
   {
     int i;
     if (val.get(&i)) mMessage.set_channel(i);
@@ -75,7 +75,7 @@ public:
   void clear()
   { remove_my_events(); }
   
-  virtual const Value inspect(const Value& val) 
+  virtual const Value inspect(const Value val) 
   { 
     std::ostringstream oss(std::ostringstream::out);
     oss << mMessage;

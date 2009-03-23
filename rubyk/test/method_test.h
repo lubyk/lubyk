@@ -10,12 +10,12 @@ class Person
 public:
   Person(const char * pName) : mName(pName) {}
   
-  static const Value class_method(Planet& planet, const Value& val)
+  static const Value class_method(Planet& planet, const Value val)
   {
     return val.is_string() ? val : Error("Not a string");
   }
   
-  const Value name(const Value& val)
+  const Value name(const Value val)
   {
     val.set(mName);
     return mName;

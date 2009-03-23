@@ -5,14 +5,14 @@
 
 class Node;
 
-typedef void(*inlet_method_t)(Node * node, const Value& val);
+typedef void(*inlet_method_t)(Node * node, const Value val);
 
 /** Prototype constructor for Inlets. */
 struct InletPrototype
 {
-  InletPrototype(const char * pName, uint pType, inlet_method_t pMethod, const char * pInfo) : mName(pName), mType(pType), mMethod(pMethod), mInfo(pInfo) {}
+  InletPrototype(const char * pTagTypeStr, const char * pName, inlet_method_t pMethod, const char * pInfo) : mName(pName), mTagTypeStr(pTagTypeStr), mMethod(pMethod), mInfo(pInfo) {}
   const char *   mName;
-  uint           mType;
+  const char *   mTagTypeStr;
   inlet_method_t mMethod;
   const char *   mInfo;
 };
@@ -20,23 +20,23 @@ struct InletPrototype
 class Inlet : public Slot {
 public:
   /** Constructor used for testing. */
-  Inlet (Node * node, inlet_method_t pMethod, uint pType) : Slot(node, pType), mMethod(pMethod) 
+  Inlet (const char * pTagTypeStr, Node * node, inlet_method_t pMethod, uint pType) : Slot(pTagTypeStr, node, pType), mMethod(pMethod) 
   {
     register_in_node();
   }
   
-  Inlet (const std::string& pName, Node * node, inlet_method_t pMethod, uint pType) : Slot(pName, node, pType), mMethod(pMethod) 
+  Inlet (const char * pTagTypeStr, const std::string& pName, Node * node, inlet_method_t pMethod, uint pType) : Slot(pTagTypeStr, pName, node, pType), mMethod(pMethod) 
   {
     register_in_node();
   }
   
-  Inlet (Node * node, inlet_method_t pMethod) : Slot(node), mMethod(pMethod) 
+  Inlet (const char * pTagTypeStr, Node * node, inlet_method_t pMethod) : Slot(pTagTypeStr, node), mMethod(pMethod) 
   {
     register_in_node();
   }
   
   /** Prototype based constructor. */
-  Inlet (Node * pNode, const InletPrototype& pProto) : Slot(pProto.mName, pNode, pProto.mType), mMethod(pProto.mMethod)
+  Inlet (Node * pNode, const InletPrototype& pProto) : Slot(pProto.mTagTypeStr, pProto.mName, pNode, pProto.mType), mMethod(pProto.mMethod)
   {
     set_info(pProto.mInfo);
     register_in_node();
@@ -54,14 +54,10 @@ public:
   void unregister_in_node();
   
   /** The operation to be executed on call. If 'val' is not Nil, send to inlet. */
-  virtual const Value trigger (const Value& val)
+  virtual const Value trigger (const Value val)
   {
-    if (val.is_nil())
-      return this->Object::trigger(val);
-    else {
-      receive(val);
-      return gNilValue;
-    }
+    receive(val);
+    return gNilValue;
   }
   
   /** Class signature. */
@@ -71,11 +67,11 @@ public:
   }
   
   /** Receive a value. */
-  void receive (const Value& val);
+  void receive (const Value val);
   
   /** Create a callback for an inlet. */
-  template <class T, void(T::*Tmethod)(const Value& val)>
-  static void cast_method (Node * receiver, const Value& val)
+  template <class T, void(T::*Tmethod)(const Value val)>
+  static void cast_method (Node * receiver, const Value val)
   {
     (((T*)receiver)->*Tmethod)(val);
   }

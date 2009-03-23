@@ -6,7 +6,7 @@
 class Node;
 
 /** Pointer to a method. */
-typedef void (*obj_method_t)(void * pReceiver, const Value& val);
+typedef void (*obj_method_t)(void * pReceiver, const Value val);
 
 /** This is the base class for Events and CallEvents. The class has a field for the time at which the event should
   * be triggered. */

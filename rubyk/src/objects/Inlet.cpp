@@ -17,11 +17,11 @@ public:
     return inlet != NULL;
   }
   
-  virtual const Value inspect(const Value& val)  
+  virtual const Value inspect(const Value val)  
   { return String("Inlet"); }
   
   // [1]
-  void bang(const Value& val)
+  void bang(const Value val)
   { 
     send(val);
   }

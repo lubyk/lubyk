@@ -26,7 +26,7 @@ public:
   }
   
   // inlet 1 and 5 (silent set note)
-  void bang(const Value& val)
+  void bang(const Value val)
   {
     if (val.type == MidiValue && val.midi_ptr.value->mType == NoteOn) {
       mMessage = *(val.midi_ptr.value);
@@ -37,7 +37,7 @@ public:
   }
 
   // inlet 2
-  void set_velocity(const Value& val)
+  void set_velocity(const Value val)
   {
     int v = 0;
     val.get(&v);
@@ -45,21 +45,21 @@ public:
   }
   
   // inlet 3
-  void set_length(const Value& val)
+  void set_length(const Value val)
   { 
     time_t l;
     if (val.get(&l)) mMessage.set_length(l); 
   }
   
   // inlet 4
-  void set_channel(const Value& val)
+  void set_channel(const Value val)
   {
     int i;
     if (val.get(&i)) mMessage.set_channel(i);
   }
   
   // inlet 5 (set note but do not send)
-  void set_note(const Value& val)
+  void set_note(const Value val)
   {
     int n;
     if (val.get(&n)) mMessage.set_note(n);
@@ -80,7 +80,7 @@ public:
   void clear()
   { remove_my_events(); }
   
-  virtual const Value inspect(const Value& val) 
+  virtual const Value inspect(const Value val) 
   { 
     std::ostringstream oss(std::ostringstream::out);
     oss << mMessage;

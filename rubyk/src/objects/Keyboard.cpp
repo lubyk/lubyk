@@ -13,7 +13,7 @@ public:
   }
   
   // capture method, called from a command
-  void bang(const Value& val)
+  void bang(const Value val)
   { 
     // do nothing
   }
@@ -71,7 +71,7 @@ public:
     mServer->lock();
   }
   
-  virtual const Value inspect(const Value& val) 
+  virtual const Value inspect(const Value val) 
   {  
     bprint(mSpy, mSpySize,"");    
   }

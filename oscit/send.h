@@ -29,7 +29,7 @@ public:
   void send (const std::string& pUrl, const Value val);
   
   /** Build osc message and send it to all recipients of the provided list. */
-  static void send_all(std::list<OscSend*>& pRecipients, const std::string& pUrl, const char * pTypeTags, const Value pVal);
+  static void send_all(std::list<OscSend*>& pRecipients, const std::string& pUrl, const char * pTypeTags, const Value val);
   
 private:
   UdpTransmitSocket * mSocket;

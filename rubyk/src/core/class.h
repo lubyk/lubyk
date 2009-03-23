@@ -28,30 +28,30 @@ public:
   }
   
   /** Add a new class method to the class. */
-  void add_class_method(const char * pName, class_method_t pMethod, const char * pInfo)
+  void add_class_method(const char * pTagTypeStr, const char * pName, class_method_t pMethod, const char * pInfo)
   {
-    ClassMethod * m = adopt(new ClassMethod(pName, pMethod));
+    ClassMethod * m = adopt(new ClassMethod(pTagTypeStr, pName, pMethod));
     m->set_info(pInfo);
   }
   
   /** Declare a method. */
-  template <class T, const Value(T::*Tmethod)(const Value& val)>
-  void add_method (const char * pName, const char * pInfo)
+  template <class T, const Value(T::*Tmethod)(const Value val)>
+  void add_method (const char * pTagTypeStr, const char * pName, const char * pInfo)
   { 
-    mMethodPrototypes.push_back( MethodPrototype(pName, &Method::cast_method<T, Tmethod>, pInfo) );
+    mMethodPrototypes.push_back( MethodPrototype(pTagTypeStr, pName, &Method::cast_method<T, Tmethod>, pInfo) );
   }
   
   /** Declare an inlet. */
-  template <class T, void(T::*Tmethod)(const Value& val)>
-  void add_inlet (const char * pName, uint pType, const char * pInfo)
+  template <class T, void(T::*Tmethod)(const Value val)>
+  void add_inlet (const char * pTagTypeStr, const char * pName, const char * pInfo)
   { 
-    mInletPrototypes.push_back( InletPrototype(pName, pType, &Inlet::cast_method<T, Tmethod>, pInfo) );
+    mInletPrototypes.push_back( InletPrototype(pTagTypeStr, pName, &Inlet::cast_method<T, Tmethod>, pInfo) );
   }
   
   /** Declare an outlet. */
-  void add_outlet(const char * pName, uint pType, const char * pInfo)
+  void add_outlet(const char * pTagTypeStr, const char * pName, const char * pInfo)
   {
-    mOutletPrototypes.push_back( OutletPrototype(pName, pType, pInfo) );    
+    mOutletPrototypes.push_back( OutletPrototype(pTagTypeStr, pName, pInfo) );    
   }
   
   /** Build all inlets for an object from prototypes. */
@@ -79,7 +79,7 @@ private:
 };
 
 // HELPER FOR FAST AND EASY ACCESSOR CREATION
-#define ATTR_ACCESSOR(var, name) const Value name ## _ (const Value& val)    \
+#define ATTR_ACCESSOR(var, name) const Value name ## _ (const Value val)    \
 { var = val;                                                        \
   return var; }                                                     \
 
@@ -88,6 +88,6 @@ private:
 #define CLASS_METHOD(klass, method, info) c->add_class_method(#method, &klass::method, info);
 #define ACCESSOR(klass, method, info)       ACCESSOR_NAMED(klass, #method, method ## _, info);
 #define ACCESSOR_NAMED(klass, name, method, info)       c->add_method<klass, &klass::method>(name, info);
-#define INLET(klass,  method, types, info) c->add_inlet<klass, &klass::method>(#method, types, info);
-#define OUTLET(klass, name,   types, info) c->add_outlet(#name, types, info);
+#define INLET(klass,  method, type, info) c->add_inlet<klass, &klass::method>(type, #method, info);
+#define OUTLET(klass, name,   type, info) c->add_outlet(type, #name, info);
 #endif // _CLASS_H_

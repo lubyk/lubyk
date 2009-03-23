@@ -14,7 +14,7 @@ public:
   }
   
   /** Set/get tempo. Set to 0 to stop. */
-  const Value tempo_ (const Value& val)
+  const Value tempo_ (const Value val)
   {
     real_t old_tempo = mTempo.value();
     mTempo = val;
@@ -30,7 +30,7 @@ public:
   }
   
   // [1] restart metronome / set tempo
-  void bang(const Value& val)
+  void bang(const Value val)
   { 
     if (val.is_number()) {
       std::cout << val << " is_number" << std::endl;
@@ -47,12 +47,12 @@ public:
   }
   
   // [2] stop metronome
-  void stop(const Value& val)
+  void stop(const Value val)
   {
     remove_my_events();
   }
   
-  virtual const Value inspect(const Value& val)  
+  virtual const Value inspect(const Value val)  
   { 
     std::ostringstream oss; // <Counter:/v1 3 (+1)>
     oss << "<Metro:" << url() << " " << mTempo << ">";

@@ -40,7 +40,7 @@ public:
     return true;
   }
   
-  void bang(const Value& val)
+  void bang(const Value val)
   {
     int cmd;
     if (val.get(&cmd)) {
@@ -81,7 +81,7 @@ public:
   void reload(const Value& p)
   { reload_data(); }
   
-  virtual const Value inspect(const Value& val) 
+  virtual const Value inspect(const Value val) 
   {
     bprint(mSpy, mSpySize, "%u / %ux%u", mIndex, mData.row_count(), mData.col_count());
   }

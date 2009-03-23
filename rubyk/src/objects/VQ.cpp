@@ -67,7 +67,7 @@ public:
   }
   
   // inlet 1
-  void bang(const Value& val)
+  void bang(const Value val)
   { 
     int cmd;
     if (!mIsOK) return; // only recover after 'set'
@@ -122,7 +122,7 @@ public:
     }
   }
   
-  virtual const Value inspect(const Value& val) 
+  virtual const Value inspect(const Value val) 
   {  
     bprint(mSpy, mSpySize,"%ix%i", mCodebook.row_count(), mCodebook.col_count());    
   }

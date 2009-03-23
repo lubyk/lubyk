@@ -57,7 +57,7 @@ public:
   }
 
   // inlet 1
-  void bang (const Value& val)
+  void bang (const Value val)
   {
     int cmd;
     
@@ -175,7 +175,7 @@ public:
     }
   }
   
-  virtual const Value inspect(const Value& val) 
+  virtual const Value inspect(const Value val) 
   {  
     bprint(mSpy, mSpySize,"%s", mFolder.c_str());    
   }

@@ -15,7 +15,7 @@ public:
   ATTR_ACCESSOR(mIncrement, increment)
   
   // [1] set / increment counter
-  void bang(const Value& val)
+  void bang(const Value val)
   { 
     if (val.is_bang()) {
       mCounter += mIncrement;
@@ -26,13 +26,13 @@ public:
   }
   
   // [2] set increment
-  void increment(const Value& val)
+  void increment(const Value val)
   { 
     mIncrement = val;
   }
   
   
-  virtual const Value inspect(const Value& val)  
+  virtual const Value inspect(const Value val)  
   { 
     std::ostringstream oss; // <Counter:/v1 3 (+1)>
     oss << "<Counter:" << url() << " " << mCounter << " (";

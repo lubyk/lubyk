@@ -15,22 +15,22 @@ class Node;
 class Slot : public RObject
 {
 public:
-  Slot (Node * pNode) : mNode(pNode), mType(AnyValue) 
+  Slot (const char * pTagTypeStr, Node * pNode) : RObject(pTagTypeStr), mNode(pNode), mType(AnyValue) 
   {
     create_methods();
   }
   
-  Slot (Node * pNode, uint pType) : mNode(pNode), mType(pType)
+  Slot (const char * pTagTypeStr, Node * pNode, uint pType) : RObject(pTagTypeStr), mNode(pNode), mType(pType)
   {
     create_methods();
   }
   
-  Slot (const char * pName, Node * pNode, uint pType) : RObject(pName), mNode(pNode), mType(pType) 
+  Slot (const char * pTagTypeStr, const char * pName, Node * pNode, uint pType) : RObject(pTagTypeStr, pName), mNode(pNode), mType(pType) 
   {
     create_methods();
   }
   
-  Slot (const std::string& pName, Node * pNode, uint pType) : RObject(pName), mNode(pNode), mType(pType) 
+  Slot (const char * pTagTypeStr, const std::string& pName, Node * pNode, uint pType) : RObject(pTagTypeStr, pName), mNode(pNode), mType(pType) 
   {
     create_methods();
   }
@@ -69,12 +69,12 @@ protected:
   
   // /m/out/counter/link  --> list links
   // /m/out/counter/link /n/in/tempo  --> create a link
-  const Value link(const Value& val)
+  const Value link(const Value val)
   {
     return change_link(val, true);
   }
   
-  const Value unlink(const Value& val)
+  const Value unlink(const Value val)
   {
     return change_link(val, false);
   }
@@ -83,7 +83,7 @@ protected:
 protected:  
   
   /** If pCreate is true: create a new link, if false unlink. */
-  const Value change_link(const Value& val, bool pCreate);
+  const Value change_link(const Value val, bool pCreate);
   
   Node * mNode; /**< Containing node.      */
   int    mId;   /**< Position in the node. */

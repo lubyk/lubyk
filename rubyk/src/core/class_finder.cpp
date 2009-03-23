@@ -4,12 +4,12 @@
 
 
 /** This trigger implements "/class". It returns the list of objects in mObjectsPath. */
-const Value ClassFinder::trigger (const Value& val)
+const Value ClassFinder::trigger (const Value val)
 {
   return String(""); // TODO: 'lib' directory listing !
 }
 
-const Value ClassFinder::not_found (const std::string& pUrl, const Value& val)
+const Value ClassFinder::not_found (const std::string& pUrl, const Value val)
 {
   std::string className = pUrl.substr(url().length() + 1);
   className = className.substr(0, className.find("/"));

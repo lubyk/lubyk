@@ -9,7 +9,7 @@ public:
   }
   
   // inlet 1
-  void bang(const Value& val)
+  void bang(const Value val)
   {
     send(4,gBangValue);
     send(3,gBangValue);
@@ -17,7 +17,7 @@ public:
     send(1,gBangValue);
   }
   
-  virtual const Value inspect(const Value& val) 
+  virtual const Value inspect(const Value val) 
   { bprint(mSpy, mSpySize,"");  }
   
 };

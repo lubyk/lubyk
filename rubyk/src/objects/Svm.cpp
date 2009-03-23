@@ -111,7 +111,7 @@ public:
   }
 
   // inlet 1
-  void bang (const Value& val)
+  void bang (const Value val)
   {
     if (!mIsOK) return; // do not use 'predict' if no model loaded
     if (val.type != MatrixValue) return; // ignore
@@ -140,7 +140,7 @@ public:
   }
   
   
-  virtual const Value inspect(const Value& val) 
+  virtual const Value inspect(const Value val) 
   {  
     bprint(mSpy, mSpySize,"C:%.1f g:%.6f", mSvmCparam, mSvmGammaParam);    
   }

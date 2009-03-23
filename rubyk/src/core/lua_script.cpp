@@ -424,7 +424,7 @@ bool LuaScript::matrix_from_lua (lua_State *L, Matrix ** pMat, int pIndex)
   }
 }
 
-void LuaScript::set_lua_global (const char * key, const Value& val)
+void LuaScript::set_lua_global (const char * key, const Value val)
 {
   if (lua_pushsignal(sig)) {
     lua_setglobal(mLua, key);
@@ -444,7 +444,7 @@ bool LuaScript::lua_has_function (const char * key)
   return res;
 }
 
-bool LuaScript::lua_pushsignal (const Value& val)
+bool LuaScript::lua_pushsignal (const Value val)
 {
   real_t d;
   const Matrix * live;

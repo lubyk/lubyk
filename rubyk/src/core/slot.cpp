@@ -66,7 +66,7 @@ void Slot::remove_connection(Slot * pOther)
   mConnections.remove(pOther);
 }
 
-const Value Slot::change_link(const Value& val, bool pCreate)
+const Value Slot::change_link(const Value val, bool pCreate)
 {
   if (val.is_nil()) {
     // return list of links

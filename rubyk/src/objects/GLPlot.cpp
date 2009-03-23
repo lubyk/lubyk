@@ -68,7 +68,7 @@ public:
   }
   
   // inlet 1
-  void bang(const Value& val)
+  void bang(const Value val)
   {
     mValue = &sig;
     val.get(&(mLiveBuffer));
@@ -76,7 +76,7 @@ public:
   }
   
   // inlet 2 (draw)
-  void draw(const Value& val)
+  void draw(const Value val)
   {
     const Matrix * mat;
     if (!is_opengl_thread()) return;
@@ -103,7 +103,7 @@ public:
     mServer->unlock();
   }
   
-  virtual const Value inspect(const Value& val) 
+  virtual const Value inspect(const Value val) 
   { 
     std::string str;
     

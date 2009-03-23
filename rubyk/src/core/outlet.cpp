@@ -4,7 +4,7 @@
 
 
 // FIXME: inline ?
-void Outlet::send(const Value& val)
+void Outlet::send(const Value val)
 {  
   LinkedList<Inlet*> * iterator = (LinkedList<Inlet*> *)(mConnections.begin());
   

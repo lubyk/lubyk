@@ -16,7 +16,7 @@ public:
   }
   
   // inlet 1
-  void bang(const Value& val)
+  void bang(const Value val)
   {  
     const Matrix * live;
     if (val.type == MatrixValue) {
@@ -46,7 +46,7 @@ public:
     }
   }
   
-  virtual const Value inspect(const Value& val) 
+  virtual const Value inspect(const Value val) 
   {
     bprint(mSpy, mSpySize,"%ix%i", mBuffer.col_count(), mBuffer.row_count());
   }

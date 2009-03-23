@@ -85,13 +85,13 @@ public:
   }
   
   // inlet 1
-  virtual void bang(const Value& val)
+  virtual void bang(const Value val)
   {
     mNeedRedisplay = true;
     send(1, sig);
   }
   
-  virtual void draw(const Value& val)
+  virtual void draw(const Value val)
   {
     if (mNeedScriptReload) {
       mMutex.lock();
@@ -150,7 +150,7 @@ public:
     mouse_move(x,y);
   }
   
-  virtual const Value inspect(const Value& val) 
+  virtual const Value inspect(const Value val) 
   { 
     bprint(mSpy, mSpySize,"%s %ix%i %.1ffps", mTitle.c_str(), mWidth, mHeight, mFPS);  
   }
@@ -390,7 +390,7 @@ private:
     return mScriptOK;
   }
   
-  inline void protected_call_lua(const char * key, const Value& val)
+  inline void protected_call_lua(const char * key, const Value val)
   {
     mMutex.lock();
       call_lua(key, sig);

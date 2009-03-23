@@ -126,7 +126,7 @@ public:
   
   virtual ~DummyNumber() {}
   
-  virtual const Value trigger (const Value& val)
+  virtual const Value trigger (const Value val)
   {
     mCounter = val;
     return mCounter;

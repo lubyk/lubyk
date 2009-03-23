@@ -51,7 +51,7 @@ public:
   }
   
   // inlet 1
-  void bang(const Value& val)
+  void bang(const Value val)
   {
     MidiMessage * msg;
     if (mDebug) *mOutput << mName << ": " << sig << std::endl;
@@ -106,7 +106,7 @@ public:
     }
   }
   
-  virtual const Value inspect(const Value& val) 
+  virtual const Value inspect(const Value val) 
   { 
     std::vector<std::string> portList;
     if (mPortId < 0)

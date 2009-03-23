@@ -102,7 +102,7 @@ size_t Value::from_string(const char * pStr)
   return p - pStr;
 }
 
-std::ostream& operator<< (std::ostream& pStream, const Value& val)
+std::ostream& operator<< (std::ostream& pStream, const Value val)
 {
   if (val.mPtr && val.mPtr->mDataPtr) {
     val.mPtr->mDataPtr->to_stream(pStream);

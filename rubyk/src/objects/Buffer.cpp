@@ -35,7 +35,7 @@ public:
   }
   
   // inlet 1
-  void bang(const Value& val)
+  void bang(const Value val)
   {   
     real_t d;
     if (!mIsOK) return;
@@ -75,7 +75,7 @@ public:
     send(mS);
   }
   
-  virtual const Value inspect(const Value& val)  
+  virtual const Value inspect(const Value val)  
   { 
     bprint(mSpy, mSpySize,"%ix%i", mBuffer.row_count(), mBuffer.col_count() );
   }

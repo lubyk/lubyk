@@ -78,7 +78,7 @@ public:
   Number(real_t d) : Value(new NumberData(d)) {}
   
   /** Set Number from Value. */
-  const Value& operator= (const Value& val)
+  const Value& operator= (const Value val)
   {
     // std::cout << "[" << data_id() << "/" << ref_count() << "] operator=" << val << std::endl;
     if (val.data_type() == NumberValue) {

@@ -14,10 +14,10 @@ typedef const Value (*class_method_t )(Planet& pPlanet, const Value& p);
 class ClassMethod : public RObject
 {
 public:
-  ClassMethod(const std::string &pName, class_method_t pMethod) : RObject(pName), mMethod(pMethod) {}
-  ClassMethod(const char * pName, class_method_t pMethod) : RObject(pName), mMethod(pMethod) {}
+  ClassMethod(const char * pTypeTagStr, const std::string &pName, class_method_t pMethod) : RObject(pTypeTagStr, pName), mMethod(pMethod) {}
+  ClassMethod(const char * pTypeTagStr, const char * pName, class_method_t pMethod) : RObject(pTypeTagStr, pName), mMethod(pMethod) {}
   
-  virtual const Value trigger (const Value& val)
+  virtual const Value trigger (const Value val)
   {
     return (*mMethod)(*mPlanet, val);
   }
@@ -30,7 +30,8 @@ protected:
 /** Prototype constructor for Method. */
 struct MethodPrototype
 {
-  MethodPrototype(const char * pName, member_method_t pMethod, const char * pInfo) : mName(pName), mMethod(pMethod), mInfo(pInfo) {}
+  MethodPrototype(const char * pTypeTagStr, const char * pName, member_method_t pMethod, const char * pInfo) : mTypeTagStr(pTypeTagStr), mName(pName), mMethod(pMethod), mInfo(pInfo) {}
+  const char *    mTypeTagStr;
   const char *    mName;
   member_method_t mMethod;
   const char *    mInfo;
@@ -40,17 +41,17 @@ struct MethodPrototype
 class Method : public RObject
 {
 public:
-  Method(const std::string &pName, void * pReceiver, member_method_t pMethod) : RObject(pName), mReceiver(pReceiver), mMethod(pMethod) {}
+  Method(const char * pTypeTagStr, const std::string &pName, void * pReceiver, member_method_t pMethod) : RObject(pTypeTagStr, pName), mReceiver(pReceiver), mMethod(pMethod) {}
   
-  Method(const char * pName, void * pReceiver, member_method_t pMethod) : RObject(pName), mReceiver(pReceiver), mMethod(pMethod) {}
+  Method(const char * pTypeTagStr, const char * pName, void * pReceiver, member_method_t pMethod) : RObject(pTypeTagStr, pName), mReceiver(pReceiver), mMethod(pMethod) {}
   
   /** Prototype based constructor. */
-  Method (void * pReceiver, const MethodPrototype& pProto) : RObject(pProto.mName), mReceiver(pReceiver), mMethod(pProto.mMethod)
+  Method (void * pReceiver, const MethodPrototype& pProto) : RObject(pProto.mTypeTagStr, pProto.mName), mReceiver(pReceiver), mMethod(pProto.mMethod)
   {
     set_info(pProto.mInfo);
   }
   
-  virtual const Value trigger (const Value& val)
+  virtual const Value trigger (const Value val)
   {
     return (*mMethod)(mReceiver,val);
   }
@@ -58,7 +59,7 @@ public:
 protected:
   /** Make a pointer to a member method. */
   template<class T, const Value(T::*Tmethod)(const Value&)>
-  static const Value cast_method (void * pReceiver, const Value& val)
+  static const Value cast_method (void * pReceiver, const Value val)
   {
     return (((T*)pReceiver)->*Tmethod)(val);
   }

@@ -10,7 +10,7 @@ public:
   }
   
   // inlet 1
-  void bang(const Value& val)
+  void bang(const Value val)
   {  
     real_t d;
     if (val.type == MatrixValue) {
@@ -28,12 +28,12 @@ public:
   }
   
   // inlet 2
-  void set_minus(const Value& val)
+  void set_minus(const Value val)
   {
     val.get(&mValue);
   }
   
-  virtual const Value inspect(const Value& val) 
+  virtual const Value inspect(const Value val) 
   { bprint(mSpy, mSpySize,"-%.2f", mValue );  }
   
   

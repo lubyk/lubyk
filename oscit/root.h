@@ -160,7 +160,7 @@ public:
     mControllers.push_back(pSatellite);
   }
   
-  void receive(const std::string& pUrl, const char * pTypeTag, const Value pParams)
+  void receive(const std::string& pUrl, const char * pTypeTag, const Value val)
   {
     //FIX Value res;
     
@@ -172,9 +172,9 @@ public:
     //FIX send_reply(pUrl, res);
   }
   
-  inline void send_reply(const std::string& pUrl, const char * pTypeTag, const Value pVal)
+  inline void send_reply(const std::string& pUrl, const char * pTypeTag, const Value val)
   {
-    OscSend::send_all(mControllers, pUrl, pTypeTag, pVal);
+    OscSend::send_all(mControllers, pUrl, pTypeTag, val);
   }
   
   void * mGround;                   /**< Context pointer for objects in the tree. */

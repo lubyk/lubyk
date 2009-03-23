@@ -21,11 +21,11 @@ public:
     return mOutlet != NULL;
   }
   
-  virtual const Value inspect(const Value& val)  
+  virtual const Value inspect(const Value val)  
   { return String("Outlet"); }
   
   // [1] pass value to the related parent outlet
-  void bang(const Value& val)
+  void bang(const Value val)
   { 
     mOutlet->send(val);
   }
