@@ -83,7 +83,7 @@ namespace CxxTest
         }
 
     private:
-        const char *_programName;
+        const char *_prograname_;
         Display *_display;
         Window _window;
         unsigned _numTotalTests, _testsDone;
@@ -102,7 +102,7 @@ namespace CxxTest
 
         void parseCommandLine( int &argc, char **argv )
         {
-            _programName = argv[0];
+            _prograname_ = argv[0];
 
             _fontName = 0;
             _foregroundName = "Black";
@@ -113,7 +113,7 @@ namespace CxxTest
 
             for ( int i = 1; i + 1 < argc; ++ i ) {
                 if ( !strcmp( argv[i], "-title" ) )
-                    _programName = argv[++ i];
+                    _prograname_ = argv[++ i];
                 else if ( !strcmp( argv[i], "-fn" ) || !strcmp( argv[i], "-font" ) )
                     _fontName = argv[++ i];
                 else if ( !strcmp( argv[i], "-fg" ) || !strcmp( argv[i], "-foreground" ) )
@@ -242,9 +242,9 @@ namespace CxxTest
 
         void setWindowName( const char *suiteName, const char *testName )
         {
-            unsigned length = strlen( _programName ) + strlen( suiteName ) + strlen( testName ) + sizeof( " - ::()" );
+            unsigned length = strlen( _prograname_ ) + strlen( suiteName ) + strlen( testName ) + sizeof( " - ::()" );
             char *name = (char *)malloc( length );
-            sprintf( name, "%s - %s::%s()", _programName, suiteName, testName );
+            sprintf( name, "%s - %s::%s()", _prograname_, suiteName, testName );
             XSetStandardProperties( _display, _window, name, 0, 0, 0, 0, 0 );
             free( name );
         }

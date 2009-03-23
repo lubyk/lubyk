@@ -20,27 +20,27 @@ class Root : public Object
 public:
   Root() : Object("",""), mGround(NULL), mObjects(OBJECT_HASH_SIZE), mOscIn(NULL)
   {
-    mRoot = this;
+    root_ = this;
     register_object(this);
     mObjects.set(std::string(""), this);
   }
 
   Root(size_t pHashSize) : Object("",""), mGround(NULL), mObjects(pHashSize), mOscIn(NULL)
   {
-    mRoot = this;
+    root_ = this;
     mObjects.set(std::string(""), this);
   }
   
   Root(void * pGround) : Object("",""), mGround(pGround), mObjects(OBJECT_HASH_SIZE), mOscIn(NULL)
   {
-    mRoot = this;
+    root_ = this;
     register_object(this);
     mObjects.set(std::string(""), this);
   }
 
   Root(void * pGround, size_t pHashSize) : Object("",""), mGround(pGround), mObjects(pHashSize), mOscIn(NULL)
   {
-    mRoot = this;
+    root_ = this;
     mObjects.set(std::string(""), this);
   }
   
@@ -70,13 +70,13 @@ public:
   }
 
   /** Execute the default operation for an object. */
-  const Value call (const char* pUrl, const char * pTypeTag, const Value val)
+  const Value call (const char* pUrl, const char * typeTag, const Value val)
   {
-    return call(std::string(pUrl), pTypeTag, val);
+    return call(std::string(pUrl), typeTag, val);
   }
 
   /** Execute the default operation for an object. */
-  const Value call (const std::string& pUrl, const char * pTypeTag, const Value val)
+  const Value call (const std::string& pUrl, const char * typeTag, const Value val)
   {
     Object * target = NULL;
     size_t pos;
@@ -94,12 +94,12 @@ public:
     
     }
   
-    if (!target) return not_found(pUrl, pTypeTag, val);
+    if (!target) return not_found(pUrl, typeTag, val);
     
-    if (notFound) return target->not_found(pUrl, pTypeTag, val);
+    if (notFound) return target->not_found(pUrl, typeTag, val);
     
     // FIXME: return type... target->mTypeTagString.c_str()
-    return target->mTypeTag == hashId(pTypeTag) ? target->trigger(val) : target->trigger(NULL);
+    return target->mTypeTag == hashId(typeTag) ? target->trigger(val) : target->trigger(NULL);
   }
 
   /** Notification of name/parent change from an object. */
@@ -109,13 +109,13 @@ public:
     // std::cout << pObj->url() << " registered !\n";
   
     // 1. remove object
-    if (pObj->mRoot) pObj->mRoot->unregister_object(pObj);
+    if (pObj->root_) pObj->root_->unregister_object(pObj);
   
     // 2. add with new key
     mObjects.set(pObj->url(), pObj);
   
     // 4. this is the new root
-    pObj->set_root(this);
+    pObj->setRoot(this);
   }
 
   /** Unregister an object from tree. */
@@ -160,7 +160,7 @@ public:
     mControllers.push_back(pSatellite);
   }
   
-  void receive(const std::string& pUrl, const char * pTypeTag, const Value val)
+  void receive(const std::string& pUrl, const char * typeTag, const Value val)
   {
     //FIX Value res;
     
@@ -172,9 +172,9 @@ public:
     //FIX send_reply(pUrl, res);
   }
   
-  inline void send_reply(const std::string& pUrl, const char * pTypeTag, const Value val)
+  inline void send_reply(const std::string& pUrl, const char * typeTag, const Value val)
   {
-    OscSend::send_all(mControllers, pUrl, pTypeTag, val);
+    OscSend::send_all(mControllers, pUrl, typeTag, val);
   }
   
   void * mGround;                   /**< Context pointer for objects in the tree. */

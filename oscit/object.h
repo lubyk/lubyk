@@ -24,67 +24,67 @@ class Alias;
 class Object
 {
 public:
-  Object(const char * pTypeTag) : mRoot(NULL), mParent(NULL), mChildren(20)
+  Object(const char * typeTag) : root_(NULL), parent_(NULL), children_(20)
   {
-    set_type_tag(pTypeTag);
-    mName = default_name();
-    mUrl  = mName;
+    setTypeTag(typeTag);
+    name_ = getDefaultName();
+    url_  = name_;
   }
 
-  Object(const char * pTypeTag, const char * pName) : mRoot(NULL), mParent(NULL), mChildren(20)
+  Object(const char * typeTag, const char * name) : root_(NULL), parent_(NULL), children_(20)
   {
-    set_type_tag(pTypeTag);
-    mName = pName;
-    mUrl  = mName;
+    setTypeTag(typeTag);
+    name_ = name;
+    url_  = name_;
   }
 
-  Object(const char * pTypeTag, const std::string& pName) : mRoot(NULL), mParent(NULL), mChildren(20)
+  Object(const char * typeTag, const std::string& name) : root_(NULL), parent_(NULL), children_(20)
   {
-    set_type_tag(pTypeTag);
-    mName = pName;
-    mUrl  = mName;
+    setTypeTag(typeTag);
+    name_ = name;
+    url_  = name_;
   }
 
-  Object(const char * pTypeTag, Object * pParent) : mRoot(NULL), mParent(NULL), mChildren(20)
+  Object(const char * typeTag, Object * parent) : root_(NULL), parent_(NULL), children_(20)
   {
-    set_type_tag(pTypeTag);
-    mName = default_name();
-    pParent->adopt(this);
+    setTypeTag(typeTag);
+    name_ = getDefaultName();
+    parent->adopt(this);
   }
 
-  Object(const char * pTypeTag, Object * pParent, const char * pName) : mRoot(NULL), mParent(NULL), mChildren(20)
+  Object(const char * typeTag, Object * parent, const char * name) : root_(NULL), parent_(NULL), children_(20)
   {
-    set_type_tag(pTypeTag);
-    mName = pName;
-    pParent->adopt(this);
+    setTypeTag(typeTag);
+    name_ = name;
+    parent->adopt(this);
   }
 
-  Object(const char * pTypeTag, Object * pParent, const std::string& pName) : mRoot(NULL), mParent(NULL), mChildren(20)
+  Object(const char * typeTag, Object * parent, const std::string& name) : root_(NULL), parent_(NULL), children_(20)
   {
-    set_type_tag(pTypeTag);
-    mName = pName;
-    pParent->adopt(this);
+    setTypeTag(typeTag);
+    name_ = name;
+    parent->adopt(this);
   }
 
-  Object(const char * pTypeTag, Object& pParent) : mRoot(NULL), mParent(NULL), mChildren(20)
+  Object(const char * typeTag, Object& parent) : root_(NULL), parent_(NULL), children_(20)
   {
-    set_type_tag(pTypeTag);
-    mName = default_name();
-    pParent.adopt(this);
+    setTypeTag(typeTag);
+    name_ = getDefaultName();
+    parent.adopt(this);
   }
 
-  Object(const char * pTypeTag, Object& pParent, const char * pName) : mRoot(NULL), mParent(NULL), mChildren(20)
+  Object(const char * typeTag, Object& parent, const char * name) : root_(NULL), parent_(NULL), children_(20)
   {
-    set_type_tag(pTypeTag);
-    mName = pName;
-    pParent.adopt(this);
+    setTypeTag(typeTag);
+    name_ = name;
+    parent.adopt(this);
   }
 
-  Object(const char * pTypeTag, Object& pParent, const std::string& pName) : mRoot(NULL), mParent(NULL), mChildren(20)
+  Object(const char * typeTag, Object& parent, const std::string& name) : root_(NULL), parent_(NULL), children_(20)
   {
-    set_type_tag(pTypeTag);
-    mName = pName;
-    pParent.adopt(this);
+    setTypeTag(typeTag);
+    name_ = name;
+    parent.adopt(this);
   }
 
   virtual ~Object();
@@ -110,13 +110,13 @@ public:
   
   /** Shortcut to call first method on an object.
     * Using "obj.set('waga',3.4,1)" is equivalent to calling "obj.first_method(['waga',3.4,1])". */
-  bool set(const char * pTypeTag, const Value val)
+  bool set(const char * typeTag, const Value val)
   {
     Object * obj;
     // use first method as default
-    string_iterator it  = mChildren.begin();
-    string_iterator end = mChildren.end();
-    if (it != end && (obj = child(*it)) && obj->mTypeTag == hashId(pTypeTag)) {
+    string_iterator it  = children_.begin();
+    string_iterator end = children_.end();
+    if (it != end && (obj = child(*it)) && obj->mTypeTag == hashId(typeTag)) {
       // TODO: if the object type is "M" (matrix) ===> build a matrix from first "ffff" into a values.
       obj->trigger(val);
     }
@@ -126,10 +126,10 @@ public:
   /** This is the prefered way to insert new objects in the tree since it clearly highlights ownership in the parent. 
     * TODO: make sure a parent is not adopted by it's child. */
   template<class T>
-  T * adopt(T * pObject)
+  T * adopt(T * object)
   {
-    do_adopt(pObject);
-    return pObject;
+    doAdopt(object);
+    return object;
   }
   
   /** Class signature. */
@@ -156,21 +156,21 @@ public:
   }
 
   /** This method is called whenever a sub-node or branch is not found and this is the last found object along the path. */
-  virtual const Value not_found (const std::string& pUrl, const char * pTypeTag, const Value val)
+  virtual const Value not_found (const std::string& pUrl, const char * typeTag, const Value val)
   {
     return Error(std::string("Object '").append(pUrl).append("' not found."));
   }
   
   /** Define the object's container (parent). */
-  void set_parent(Object& parent)
-  { set_parent(&parent); }
+  void setParent(Object& parent)
+  { setParent(&parent); }
 
   /** Define the object's container (parent). */
-  void set_parent(Object * parent)
+  void setParent(Object * parent)
   {
     if (!parent) {
-      if (mParent) mParent->release(this);
-      mParent = NULL;
+      if (parent_) parent_->release(this);
+      parent_ = NULL;
       moved();
     } else {
       parent->adopt(this);
@@ -178,30 +178,30 @@ public:
   }
 
   /** Inform the object of an alias linked to this object (has to be deleted on destruction). */
-  void register_alias (Alias * pAlias);
+  void registerAlias (Alias * pAlias);
 
   /** Inform the object that an alias no longer exists. */
-  void unregister_alias (Alias * pAlias);
+  void unregisterAlias (Alias * pAlias);
 
   /** Return the object's unique url. */
   inline const std::string& url ()
   {
-    return mUrl;
+    return url_;
   }
   
   /** Register unique url in the Root object so that methods addressed to this url actually end in this object. */
-  void register_url ();
+  void registerUrl ();
   
   /** Set name from string. If the name is not unique in the parent's scope, the name is changed as "name-1", "name-2", etc. */
-  void set_name (const char* pName) 
-  { set_name(std::string(pName)); }
+  void setName (const char* name) 
+  { setName(std::string(name)); }
 
 
   /** Set name from string. If the name is not unique in the parent's scope, the name is changed as "name-1", "name-2", etc. */
-  void set_name (const std::string& pName) 
+  void setName (const std::string& name) 
   { 
-    if (pName == "") return;
-    mName = pName; // FIXME: gsub(/[^a-zA-Z\-0-9_],"")
+    if (name == "") return;
+    name_ = name; // FIXME: gsub(/[^a-zA-Z\-0-9_],"")
   
     moved();
   }
@@ -229,19 +229,19 @@ public:
   const std::string list () const
   {
     std::string res;
-    const_string_iterator it  = mChildren.begin();
-    const_string_iterator end = mChildren.end();
+    const_string_iterator it  = children_.begin();
+    const_string_iterator end = children_.end();
     bool start = true;
     if (it == end) return NULL;
 
     while(it != end) {
       Object * obj;
-      if (mChildren.get(&obj, *it)) {
+      if (children_.get(&obj, *it)) {
         if (obj->type() != H("Alias")) {
             // do not list alias (Alias are used as internal helpers and do not need to be advertised)
           if (!start) res.append(",");
-          res.append(obj->mName);
-          if (!(obj->mChildren.empty())) res.append("/");
+          res.append(obj->name_);
+          if (!(obj->children_.empty())) res.append("/");
           start = false;
         }
       }
@@ -254,13 +254,13 @@ public:
   /** Set type tag. */
   
   /** Set info string. */
-  void set_info (const char* pInfo)
+  void setInfo (const char* pInfo)
   {
     mInfo = pInfo;
   }
 
   /** Set info string. */
-  void set_info (const std::string& pInfo)
+  void setInfo (const std::string& pInfo)
   {
     mInfo = pInfo;
   }
@@ -268,20 +268,20 @@ public:
   /** Return the list of children as a hash. */
   const THash<std::string,Object *> children() const
   {
-    return mChildren;
+    return children_;
   }
 
   /** Return first child. */
-  Object * first_child()
+  Object * getFirstChild()
   {
-    return mChildren.size() > 0 ? child(mChildren.keys().front()) : NULL;
+    return children_.size() > 0 ? child(children_.keys().front()) : NULL;
   }
 
-  /** Return the direct child named 'pName'. */
-  Object * child(const std::string& pName)
+  /** Return the direct child named 'name'. */
+  Object * child(const std::string& name)
   {
     Object * child;
-    if (mChildren.get(&child, pName)) {
+    if (children_.get(&child, name)) {
       return child;
     } else {
       return NULL;
@@ -289,63 +289,63 @@ public:
   }
 
   /** Actual adoption. Adopt objects in the new namespace (branch). */
-  virtual void do_adopt(Object * pObject)
+  virtual void doAdopt(Object * object)
   {
-    Object * oldParent = pObject->mParent;
+    Object * oldParent = object->parent_;
 
-    if (oldParent) oldParent->release(pObject);
+    if (oldParent) oldParent->release(object);
 
-    pObject->mParent = this;
+    object->parent_ = this;
 
-    pObject->moved();
+    object->moved();
   }
   
   Object * parent()
   {
-    return mParent;
+    return parent_;
   }
   
-  virtual void set_root(Root * pRoot)
+  virtual void setRoot(Root * root)
   {
-    mRoot = pRoot;
+    root_ = root;
   }
   
 protected:
 
   /** Child sends a notification to the parent when it's name changes so that the parent/root keep their url hash in sync. */
-  void register_child(Object * pChild);
+  void registerChild(Object * pChild);
 
-  /** Update cached url, notify mRoot of the position change. */
+  /** Update cached url, notify root_ of the position change. */
   void moved();
 
   /** Add '-1', '-2', ... at the end of the current name. bob --> bob-1 */
-  void next_name()
+  void findNextName()
   {
-    size_t pos = mName.find('-');
+    size_t pos = name_.find('-');
     char buffer[OSC_NEXT_NAME_BUFFER_SIZE];
     if (pos == std::string::npos) {
-      mName.append("-1");
+      name_.append("-1");
     } else {
-      std::string baseName = mName.substr(0,pos - 1);
-      int i = atoi(mName.substr(pos + 1, std::string::npos).c_str());
+      std::string baseName = name_.substr(0,pos - 1);
+      int i = atoi(name_.substr(pos + 1, std::string::npos).c_str());
       snprintf(buffer, OSC_NEXT_NAME_BUFFER_SIZE, "%i", i+1);
-      mName = baseName.append(buffer);
+      name_ = baseName.append(buffer);
     }
   }
   
   /** Define object signature. This not be changed during runtime.
-    * @param pTypeTag a string with the type signature (should be static since it is not copied).
+    * @param typeTag a string with the type signature (should be static since it is not copied).
     */
-  void set_type_tag(const char * pTypeTag)
+  void setTypeTag(const char * typeTag)
   {
     if (mTypeTag == MULTI_SIGNATURE) {
       free(mParam.values);
     }
-    mTypeTag = hashId(pTypeTag);
-    mTypeTagStr = pTypeTag; // could be optimized to const char * storage.
+    mTypeTag = hashId(typeTag);
+    mTypeTagStr = typeTag; // could be optimized to const char * storage.
     
     if (mTypeTag == MULTI_SIGNATURE) {
-      mParam.values = (Value*)malloc(sizeof(Value) * strlen(pTypeTag));
+      mParam.values = (Value*)malloc(sizeof(Value) * strlen(typeTag));
     }
   }
   
@@ -359,7 +359,7 @@ private:
   }
   
   // TODO: this could be replaced by "o" ("o-1", "o-2", "o-3") ? 
-  std::string default_name()
+  std::string getDefaultName()
   {
     char buf[50];
     sIdCounter++;
@@ -376,11 +376,11 @@ protected:
   friend class Root;
   friend class Alias;
 
-  Root   *                    mRoot;             /**< Root object. */
-  Object *                    mParent;           /**< Pointer to parent object. */
-  THash<std::string,Object *> mChildren;         /**< Hash with pointers to sub-objects / methods */
-  std::string                 mUrl;              /**< Absolute path to object (cached). TODO: this cache is not really needed. */
-  std::string                 mName;             /**< Unique name in parent's context. */
+  Root   *                    root_;             /**< Root object. */
+  Object *                    parent_;           /**< Pointer to parent object. */
+  THash<std::string,Object *> children_;         /**< Hash with pointers to sub-objects / methods */
+  std::string                 url_;              /**< Absolute path to object (cached). TODO: this cache is not really needed. */
+  std::string                 name_;             /**< Unique name in parent's context. */
   std::string                 mInfo;             /**< Help/information string. */
   uint                        mTypeTag;          /**< OSC type tag hash. */
   const char *                mTypeTagStr;       /**< C String representation of the type tag in the form of "ffi" for "array of two floats and an integer".. This should only be set to point to a static char *. */

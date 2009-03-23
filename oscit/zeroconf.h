@@ -37,16 +37,16 @@ protected:
 class ZeroConfRegister : public ZeroConf
 {
 public:
-  ZeroConfRegister(const std::string& pName, const std::string& pServiceType, uint pPort) : mName(pName), mServiceType(pServiceType), mPort(pPort) {}
+  ZeroConfRegister(const std::string& name, const std::string& pServiceType, uint pPort) : name_(name), mServiceType(pServiceType), mPort(pPort) {}
   
   /** Callback */
-  void register_callback (DNSServiceErrorType pError, const char * pName, const char * pServiceType, const char * pDomain);
+  void register_callback (DNSServiceErrorType pError, const char * name, const char * pServiceType, const char * pDomain);
   
 private:
   /** Registration setup. */
   virtual void start ();
   
-  std::string mName;
+  std::string name_;
   std::string mServiceType;
   uint16_t    mPort;
 };

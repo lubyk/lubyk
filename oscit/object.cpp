@@ -5,7 +5,7 @@ namespace oscit {
 Object::~Object()
 {  
   // notify parent and root
-  if (mParent) mParent->release(this);
+  if (parent_) parent_->release(this);
   
   for(std::list<Alias*>::iterator it = mAliases.begin(); it != mAliases.end(); it++) {
     // to avoid notification to this dying object
@@ -22,13 +22,13 @@ Object::~Object()
 
 
 /** Inform the object of an alias to be destroyed on destruction. */
-void Object::register_alias(Alias * pAlias)
+void Object::registerAlias(Alias * pAlias)
 {
   mAliases.push_back(pAlias);
 }
 
 /** Inform the object that an alias no longer exists. */
-void Object::unregister_alias(Alias * pAlias)
+void Object::unregisterAlias(Alias * pAlias)
 {
   mAliases.remove(pAlias);
 }
@@ -36,69 +36,69 @@ void Object::unregister_alias(Alias * pAlias)
 /** Free the child from the list of children. */
 void Object::release(Object * pChild)
 {
-  mChildren.remove_element(pChild);
-  if (mRoot) mRoot->unregister_object(pChild);
+  children_.remove_element(pChild);
+  if (root_) root_->unregister_object(pChild);
 }
 
 void Object::moved()
 { 
   // 1. get new name from parent, register as child
-  if (mParent) mParent->register_child(this);
+  if (parent_) parent_->registerChild(this);
   
-  register_url();
+  registerUrl();
 }
 
-void Object::register_child(Object * pChild)
+void Object::registerChild(Object * pChild)
 {
   // 1. reset hash
-  mChildren.remove_element(pChild);
+  children_.remove_element(pChild);
   
   // 2. get valid name
-  while (child(pChild->mName))
-    pChild->next_name();
+  while (child(pChild->name_))
+    pChild->findNextName();
   
   // 3. set hash back
-  mChildren.set(pChild->mName,pChild);
+  children_.set(pChild->name_,pChild);
 }
 
-void Object::register_url()
+void Object::registerUrl()
 {
   Object * obj;
   string_iterator it;
-  string_iterator end = mChildren.end();
+  string_iterator end = children_.end();
   
   // 1. rebuild url
-  if (mParent) {
+  if (parent_) {
     // build fullpath
-    mUrl = std::string(mParent->url()).append("/").append(mName);
-    if (mParent->mRoot) mParent->mRoot->register_object(this);
+    url_ = std::string(parent_->url()).append("/").append(name_);
+    if (parent_->root_) parent_->root_->register_object(this);
   } else {
     // no parent
-    mUrl = mName;
-    if (mRoot) mRoot->unregister_object(this);
+    url_ = name_;
+    if (root_) root_->unregister_object(this);
   }
   
   // 3. update children
-  for(it = mChildren.begin(); it != end; it++) {
-    if (mChildren.get(&obj, *it)) obj->register_url();
+  for(it = children_.begin(); it != end; it++) {
+    if (children_.get(&obj, *it)) obj->registerUrl();
   }
 }
 
 void Object::clear()
 {
   string_iterator it;
-  string_iterator end = mChildren.end();
+  string_iterator end = children_.end();
 
   // destroy all children
-  for(it = mChildren.begin(); it != end; it++) {
+  for(it = children_.begin(); it != end; it++) {
     Object * child;
-    if (mChildren.get(&child, *it)) {
-      // to avoid 'release' call (would alter mChildren)
-      child->mParent = NULL;
-      if (mRoot) mRoot->unregister_object(child);
+    if (children_.get(&child, *it)) {
+      // to avoid 'release' call (would alter children_)
+      child->parent_ = NULL;
+      if (root_) root_->unregister_object(child);
       delete child;
     }
   }
-  mChildren.clear();
+  children_.clear();
 }
 } // namespace oscit

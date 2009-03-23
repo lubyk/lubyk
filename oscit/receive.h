@@ -22,7 +22,7 @@ class ZeroConfRegister;
 class OscReceive : public osc::OscPacketListener
 {
 public:
-  OscReceive(Root * pRoot, uint pPort);
+  OscReceive(Root * root, uint pPort);
   
   virtual ~OscReceive();
   
@@ -53,7 +53,7 @@ private:
     * @param pRes storage the value / multi value (allready allocated, type checked). 
     * @param pMsg osc message. */
   static void values_from_osc(Value * pRes, const osc::ReceivedMessage& pMsg);
-  Root * mRoot;
+  Root * root_;
 };
 } // namespace oscit
 #endif // _OSCIT_RECEIVE_H_

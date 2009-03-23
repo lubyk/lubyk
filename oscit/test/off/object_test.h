@@ -3,18 +3,18 @@
 class DummyObject : public oscit::Object
 {
 public:
-  DummyObject(const char * pName, int pCounter) : Object(pName), mCounter(pCounter) {}
+  DummyObject(const char * name, int pCounter) : Object(name), counter_(pCounter) {}
   
   virtual ~DummyObject() {}
   
   virtual const std::string inspect()
   {
     std::ostringstream os(std::ostringstream::out);
-    os << mName << ": " << mCounter;
+    os << name_ << ": " << counter_;
     return os.str();
   }
 private:
-  int mCounter;
+  int counter_;
 };
 
 class ObjectTest : public TestHelper
@@ -63,26 +63,26 @@ public:
 //    TS_ASSERT_EQUALS( root.child("one"), one);
 //    TS_ASSERT_EQUALS( root.child("foo"), (oscit::Object*)NULL);
 //    
-//    one->set_name("foo");
+//    one->setName("foo");
 //    TS_ASSERT_EQUALS( root.child("one"), (oscit::Object*)NULL);
 //    TS_ASSERT_EQUALS( root.child("foo"), one);
 //    TS_ASSERT_EQUALS( root.find("/one/sub"), (oscit::Object*)NULL);
 //    TS_ASSERT_EQUALS( root.find("/foo/sub"), sub);
 //  }
 //  
-//  void test_first_child( void )
+//  void test_getFirstChild( void )
 //  {
 //    oscit::Root root;
 //    oscit::Object * one = root.adopt(new oscit::Object("one"));
 //    oscit::Object * two = root.adopt(new oscit::Object("aaa"));
 //    
-//    TS_ASSERT_EQUALS( root.first_child(), one);
+//    TS_ASSERT_EQUALS( root.getFirstChild(), one);
 //    
 //    delete one;
-//    TS_ASSERT_EQUALS( root.first_child(), two);
+//    TS_ASSERT_EQUALS( root.getFirstChild(), two);
 //  }
 //  
-//  void test_set_parent( void )
+//  void test_setParent( void )
 //  {
 //    oscit::Root root;
 //    oscit::Object * child1 = new oscit::Object("foo");
@@ -94,21 +94,21 @@ public:
 //    TS_ASSERT_EQUALS( child2->url(),  std::string("bar") );
 //    TS_ASSERT_EQUALS( child3->url(),  std::string("foo") );
 //    
-//    child1->set_parent(root);
+//    child1->setParent(root);
 //    
 //    TS_ASSERT_EQUALS( root.url(),     std::string("") );
 //    TS_ASSERT_EQUALS( child1->url(),  std::string("/foo") );
 //    TS_ASSERT_EQUALS( child2->url(),  std::string("bar") );
 //    TS_ASSERT_EQUALS( child3->url(),  std::string("foo") );
 //    
-//    child2->set_parent(child1);
+//    child2->setParent(child1);
 //    
 //    TS_ASSERT_EQUALS( root.url(),     std::string("") );
 //    TS_ASSERT_EQUALS( child1->url(),  std::string("/foo") );
 //    TS_ASSERT_EQUALS( child2->url(),  std::string("/foo/bar") );
 //    TS_ASSERT_EQUALS( child3->url(),  std::string("foo") );
 //    
-//    child3->set_parent(root);
+//    child3->setParent(root);
 //    
 //    TS_ASSERT_EQUALS( root.url(),     std::string("") );
 //    TS_ASSERT_EQUALS( child1->url(),  std::string("/foo") );
@@ -126,7 +126,7 @@ public:
 //    TS_ASSERT_EQUALS( foo->url(),     std::string("/foo") );
 //    TS_ASSERT_EQUALS( bar->url(),     std::string("/foo/bar") );
 //    
-//    foo->set_name("super");
+//    foo->setName("super");
 //    
 //    TS_ASSERT_EQUALS( root.url(),    std::string("") );
 //    TS_ASSERT_EQUALS( foo->url(),     std::string("/super") );
@@ -157,7 +157,7 @@ public:
 //    TS_ASSERT( ! root.get(&res, "/super"));
 //    TS_ASSERT( ! root.get(&res, "/super/bar"));
 //    
-//    foo->set_name("super");
+//    foo->setName("super");
 //    
 //    TS_ASSERT(root.get(&res, "/super"));
 //    TS_ASSERT_EQUALS( res, foo );
@@ -210,7 +210,7 @@ public:
 //    TS_ASSERT_EQUALS( root.child("one"), one);
 //    TS_ASSERT_EQUALS( root.child("foo"), (oscit::Object*)NULL);
 //    
-//    one->set_name("foo");
+//    one->setName("foo");
 //    TS_ASSERT_EQUALS( root.child("one"), (oscit::Object*)NULL);
 //    TS_ASSERT_EQUALS( root.child("foo"), one);
 //    TS_ASSERT_EQUALS( root.find("/one/sub"), (oscit::Object*)NULL);
@@ -239,7 +239,7 @@ public:
 //    oscit::Object no_info(root,"foo");
 //    Value res, param;
 //    
-//    root.set_info("This is the root node.");
+//    root.setInfo("This is the root node.");
 //    res = root.call("/.info","");
 //    TS_ASSERT_EQUALS( res.to_string(), "[1] This is the root node.");
 //    res = root.call("/foo/#info",param);
@@ -255,7 +255,7 @@ public:
 //    root.adopt(new DummyObject("foo", 23));
 //    Value res;
 //    
-//    root.set_info("This is the root node.");
+//    root.setInfo("This is the root node.");
 //    res = root.call("/#inspect");
 //    TS_ASSERT_EQUALS( res.to_string(), "[1] This is the root node.");
 //    res = root.call("/foo/#inspect");

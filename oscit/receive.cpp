@@ -8,7 +8,7 @@
 
 namespace oscit {
 
-OscReceive::OscReceive(Root * pRoot, uint pPort) : mRoot(pRoot)
+OscReceive::OscReceive(Root * root, uint pPort) : root_(root)
 { 
   mSocket = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, pPort ), this );
   mRegisterZeroConf = new ZeroConfRegister("oscit", "_oscit._udp", pPort);
@@ -54,9 +54,9 @@ void OscReceive::ProcessMessage( const osc::ReceivedMessage& pMsg, const IpEndpo
     std::cout << "registering satellite\n";
     Value param;
     values_from_osc(&param, pMsg);
-    mRoot->reply_to(new OscSend(remoteEndpoint, (int)param.f));
+    root_->reply_to(new OscSend(remoteEndpoint, (int)param.f));
     // ??? res = 
-  } else if (mRoot->get(&obj, url)) {  
+  } else if (root_->get(&obj, url)) {  
     // The code here is a speedup to avoid allocation of params.
     if (typeTags == obj->mTypeTag) {
       Value param = obj->mParam;

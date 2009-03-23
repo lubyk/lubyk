@@ -41,7 +41,7 @@ void OscSend::send(const std::string& pUrl, const Value val)
   // send(oss);
 }
 
-void OscSend::send_all(std::list<OscSend*>& pRecipients, const std::string& pUrl, const char * pTypeTags, const Value val)
+void OscSend::send_all(std::list<OscSend*>& pRecipients, const std::string& pUrl, const char * typeTags, const Value val)
 { 
   std::list<OscSend*>::iterator it  = pRecipients.begin();
   std::list<OscSend*>::iterator end = pRecipients.end();
@@ -51,22 +51,22 @@ void OscSend::send_all(std::list<OscSend*>& pRecipients, const std::string& pUrl
   char buffer[OSC_OUT_BUFFER_SIZE]; // TODO: reuse buffer
   osc::OutboundPacketStream oss( buffer, OSC_OUT_BUFFER_SIZE );
   oss << osc::BeginBundleImmediate << osc::BeginMessage(pUrl.c_str());
-  values_to_stream(oss, pTypeTags, val);
+  values_to_stream(oss, typeTags, val);
   oss << osc::EndMessage << osc::EndBundle;
   
   while (it != end) (*it++)->send(oss);
 }
 
-void OscSend::values_to_stream (osc::OutboundPacketStream& pOut, const char * pTypeTags, const Value val)
+void OscSend::values_to_stream (osc::OutboundPacketStream& pOut, const char * typeTags, const Value val)
 { 
   uint i = 0;
   char c;
   const Value * value = val;
-  if (strlen(pTypeTags) > 1) {
+  if (strlen(typeTags) > 1) {
     value = value->values;
   }
   
-  while ( (c = pTypeTags[i]) ) {
+  while ( (c = typeTags[i]) ) {
     switch (c)
     {
       case REAL_TYPE:

@@ -81,19 +81,19 @@ void ZeroConf::listen(DNSServiceRef pServiceRef)
 }
 
 /** Callback called after registration. */
-static void registerCallBack(DNSServiceRef pRef, DNSServiceFlags pFlags, DNSServiceErrorType pError, const char * pName, const char * pServiceType, const char * pDomain, void * pContext)
+static void registerCallBack(DNSServiceRef pRef, DNSServiceFlags pFlags, DNSServiceErrorType pError, const char * name, const char * pServiceType, const char * pDomain, void * pContext)
 {
-  ((ZeroConfRegister*)pContext)->register_callback(pError, pName, pServiceType, pDomain);
+  ((ZeroConfRegister*)pContext)->register_callback(pError, name, pServiceType, pDomain);
 }
 
-void ZeroConfRegister::register_callback(DNSServiceErrorType pError, const char * pName, const char * pServiceType, const char * pDomain)
+void ZeroConfRegister::register_callback(DNSServiceErrorType pError, const char * name, const char * pServiceType, const char * pDomain)
 {
   if (pError != kDNSServiceErr_NoError)
     fprintf(stderr, "registerCallBack returned error %d.\n", pError);
   else {
     // Registration succeeded.
-    mName = pName; // in case name clash
-    fprintf(stdout,"Registration ok for %s.%s\n", mName.c_str(), mServiceType.c_str());
+    name_ = name; // in case name clash
+    fprintf(stdout,"Registration ok for %s.%s\n", name_.c_str(), mServiceType.c_str());
   }
 }
 
@@ -105,7 +105,7 @@ void ZeroConfRegister::start()
   error = DNSServiceRegister(&serviceRef,
     0,                    // no flags
     0,                    // all network interfaces
-    mName.c_str(),        // name
+    name_.c_str(),        // name
     mServiceType.c_str(), // service type
     "",                   // register in default domain(s)
     NULL,                 // use default host name
@@ -118,7 +118,7 @@ void ZeroConfRegister::start()
   if (error == kDNSServiceErr_NoError)
     listen(serviceRef);
   else
-    fprintf(stderr,"Could not register service %s.%s on port %u (error %d)\n", mName.c_str(), mServiceType.c_str(), mPort, errno);//, strerror(errno));
+    fprintf(stderr,"Could not register service %s.%s on port %u (error %d)\n", name_.c_str(), mServiceType.c_str(), mPort, errno);//, strerror(errno));
   
   
   DNSServiceRefDeallocate(serviceRef);

@@ -7,8 +7,8 @@ namespace oscit {
 /** This is a simple struct to store a call (url and parameter). */
 struct Call
 {
-  Call(const std::string& pUrl, const Value& param) : mUrl(pUrl), mParam(param) {}
-  std::string mUrl;
+  Call(const std::string& pUrl, const Value& param) : url_(pUrl), mParam(param) {}
+  std::string url_;
   Value mParam;
 };
 } // namespace oscit

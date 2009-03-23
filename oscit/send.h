@@ -29,11 +29,11 @@ public:
   void send (const std::string& pUrl, const Value val);
   
   /** Build osc message and send it to all recipients of the provided list. */
-  static void send_all(std::list<OscSend*>& pRecipients, const std::string& pUrl, const char * pTypeTags, const Value val);
+  static void send_all(std::list<OscSend*>& pRecipients, const std::string& pUrl, const char * typeTags, const Value val);
   
 private:
   UdpTransmitSocket * mSocket;
-  static void values_to_stream (osc::OutboundPacketStream& pOut, const char * pTypeTags, const Value val);
+  static void values_to_stream (osc::OutboundPacketStream& pOut, const char * typeTags, const Value val);
 };
 
 } // namespace oscit
