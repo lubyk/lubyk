@@ -12,7 +12,7 @@ This class has some knowledge on its real self and content through the virtual m
 
 For the wrapper class +Value+, the +type+ is always +AnonymousValue+ and the +data_type+ can be any valid data type. 
 */
-class Value : public SmartPtr<Data>
+class Value : public TSmartPtr<Data>
 {
 public:
   Value() {}
@@ -31,7 +31,7 @@ public:
   { other.set(*this); }
   
   /** Anonymization of the content to the ancestor class +Data+. */
-  Value(Data * p) : SmartPtr<Data>(p) {}
+  Value(Data * p) : TSmartPtr<Data>(p) {}
   
   /** Parse string to build a value from a json representation. */
   size_t from_string(const std::string& s)

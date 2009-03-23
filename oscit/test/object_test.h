@@ -1,87 +1,94 @@
 #include "test_helper.h"
+#include "oscit/root.h"
 
 class DummyObject : public oscit::Object
 {
 public:
-  DummyObject(const char * name, int pCounter) : Object(name), counter_(pCounter) {}
+  DummyObject(const char * name, int value) : oscit::Object(name), value_(value) {}
   
   virtual ~DummyObject() {}
   
   virtual const std::string inspect()
   {
     std::ostringstream os(std::ostringstream::out);
-    os << name_ << ": " << counter_;
+    os << name_ << ": " << value_;
     return os.str();
   }
 private:
-  int counter_;
+  int value_;
 };
 
 class ObjectTest : public TestHelper
 {
 public:
-  void test_root( void )
+  void testCreate( void )
+  {
+    DummyObject a("a", 1);
+    assertEqual("a", a.getName());
+  }
+  
+  void testRoot( void )
   {
     oscit::Root root;
-    DoubleObject * a  = new DoubleObject("a", 1);
-    DoubleObject * a2 = new DoubleObject("a", 2);
+    DummyObject * a  = new DummyObject("a", 1);
+    DummyObject * a2 = new DummyObject("a", 2);
     oscit::Object * res;
     
-    TS_ASSERT( root.get(&res, "") );
-    TS_ASSERT_EQUALS( res, &root );
+    assertTrue( root.get(&res, "") );
+    assertEqual( &root, res );
     
-    TS_ASSERT( !root.get(&res, "/a") );
+    assertFalse( root.get(&res, "/a") );
     
     root.adopt(a);
-    TS_ASSERT( root.get(&res, "/a") );
-    TS_ASSERT_EQUALS( res, a );
+    assertTrue( root.get(&res, "/a") );
+    assertEqual( a, res );
     
     root.adopt(a2);
-    TS_ASSERT( root.get(&res, "/a") );
-    TS_ASSERT_EQUALS( res, a );
+    assertTrue( root.get(&res, "/a") );
+    assertEqual( a, res );
     
-    TS_ASSERT( root.get(&res, "/a-1") );
-    TS_ASSERT_EQUALS( res, a2 );
+    assertTrue( root.get(&res, "/a-1") );
+    assertEqual( a2, res );
     
     root.clear();
-    TS_ASSERT( !root.get(&res, "/a") );
-    TS_ASSERT( !root.get(&res, "/a-1") );
-    TS_ASSERT( root.get(&res, "") );
-    TS_ASSERT_EQUALS( res, &root );
+    assertTrue( !root.get(&res, "/a") );
+    assertTrue( !root.get(&res, "/a-1") );
+    assertTrue( root.get(&res, "") );
+    assertEqual( &root, res );
   }
-//  
-//  void test_adopt( void )
-//  {
-//    oscit::Root root;
-//    oscit::Object * one = root.adopt(new oscit::Object("one")); // This is the prefered way of creating sub-objects.
-//    oscit::Object * sub = one->adopt(new oscit::Object("sub"));
-//  
-//    TS_ASSERT_EQUALS( root.url(),     std::string("") );
-//    TS_ASSERT_EQUALS( one->url(),     std::string("/one") );
-//    TS_ASSERT_EQUALS( sub->url(),     std::string("/one/sub") );
-//    
-//    TS_ASSERT_EQUALS( root.child("one"), one);
-//    TS_ASSERT_EQUALS( root.child("foo"), (oscit::Object*)NULL);
-//    
-//    one->setName("foo");
-//    TS_ASSERT_EQUALS( root.child("one"), (oscit::Object*)NULL);
-//    TS_ASSERT_EQUALS( root.child("foo"), one);
-//    TS_ASSERT_EQUALS( root.find("/one/sub"), (oscit::Object*)NULL);
-//    TS_ASSERT_EQUALS( root.find("/foo/sub"), sub);
-//  }
-//  
-//  void test_getFirstChild( void )
-//  {
-//    oscit::Root root;
-//    oscit::Object * one = root.adopt(new oscit::Object("one"));
-//    oscit::Object * two = root.adopt(new oscit::Object("aaa"));
-//    
-//    TS_ASSERT_EQUALS( root.getFirstChild(), one);
-//    
-//    delete one;
-//    TS_ASSERT_EQUALS( root.getFirstChild(), two);
-//  }
-//  
+  
+  void testAdopt( void )
+  {
+    oscit::Root root;
+    oscit::Object * one = root.adopt(new oscit::Object("one")); // This is the prefered way of creating sub-objects.
+    oscit::Object * sub = one->adopt(new oscit::Object("sub"));
+  
+    TS_ASSERT_EQUALS( root.url(),     std::string("") );
+    TS_ASSERT_EQUALS( one->url(),     std::string("/one") );
+    TS_ASSERT_EQUALS( sub->url(),     std::string("/one/sub") );
+    
+    TS_ASSERT_EQUALS( root.child("one"), one);
+    TS_ASSERT_EQUALS( root.child("foo"), (oscit::Object*)NULL);
+    
+    one->setName("foo");
+    TS_ASSERT_EQUALS( root.child("one"), (oscit::Object*)NULL);
+    TS_ASSERT_EQUALS( root.child("foo"), one);
+    TS_ASSERT_EQUALS( root.find("/one/sub"), (oscit::Object*)NULL);
+    TS_ASSERT_EQUALS( root.find("/foo/sub"), sub);
+  }
+  
+  void test_getFirstChild( void )
+  {
+    oscit::Root root;
+    oscit::Object * one = root.adopt(new oscit::Object("one"));
+    oscit::Object * two = root.adopt(new oscit::Object("aaa"));
+    
+    TS_ASSERT_EQUALS( root.getFirstChild(), one);
+    
+    delete one;
+    TS_ASSERT_EQUALS( root.getFirstChild(), two);
+  }
+  
 //  void test_setParent( void )
 //  {
 //    oscit::Root root;

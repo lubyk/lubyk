@@ -9,12 +9,12 @@ Object::~Object()
   
   for(std::list<Alias*>::iterator it = mAliases.begin(); it != mAliases.end(); it++) {
     // to avoid notification to this dying object
-    (*it)->clear_original();
+    (*it)->unlinkOriginal();
     delete *it;
   }
   
-  if (mTypeTag == MULTI_SIGNATURE) {
-    free(mParam.values);
+  if (typeTag_ == MULTI_SIGNATURE) {
+    free(param_.list);
   }
   
   clear();
@@ -37,7 +37,7 @@ void Object::unregisterAlias(Alias * pAlias)
 void Object::release(Object * pChild)
 {
   children_.remove_element(pChild);
-  if (root_) root_->unregister_object(pChild);
+  if (root_) root_->unregisterObject(pChild);
 }
 
 void Object::moved()
@@ -71,11 +71,11 @@ void Object::registerUrl()
   if (parent_) {
     // build fullpath
     url_ = std::string(parent_->url()).append("/").append(name_);
-    if (parent_->root_) parent_->root_->register_object(this);
+    if (parent_->root_) parent_->root_->registerObject(this);
   } else {
     // no parent
     url_ = name_;
-    if (root_) root_->unregister_object(this);
+    if (root_) root_->unregisterObject(this);
   }
   
   // 3. update children
@@ -95,7 +95,7 @@ void Object::clear()
     if (children_.get(&child, *it)) {
       // to avoid 'release' call (would alter children_)
       child->parent_ = NULL;
-      if (root_) root_->unregister_object(child);
+      if (root_) root_->unregisterObject(child);
       delete child;
     }
   }

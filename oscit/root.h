@@ -18,30 +18,30 @@ namespace oscit {
 class Root : public Object
 {
 public:
-  Root() : Object("",""), mGround(NULL), mObjects(OBJECT_HASH_SIZE), mOscIn(NULL)
+  Root() : Object("",""), ground_(NULL), objectsHash_(OBJECT_HASH_SIZE), mOscIn(NULL)
   {
     root_ = this;
-    register_object(this);
-    mObjects.set(std::string(""), this);
+    registerObject(this);
+    objectsHash_.set(std::string(""), this);
   }
 
-  Root(size_t pHashSize) : Object("",""), mGround(NULL), mObjects(pHashSize), mOscIn(NULL)
+  Root(size_t hashSize) : Object("",""), ground_(NULL), objectsHash_(hashSize), mOscIn(NULL)
   {
     root_ = this;
-    mObjects.set(std::string(""), this);
+    objectsHash_.set(std::string(""), this);
   }
   
-  Root(void * pGround) : Object("",""), mGround(pGround), mObjects(OBJECT_HASH_SIZE), mOscIn(NULL)
+  Root(void * ground) : Object("",""), ground_(ground), objectsHash_(OBJECT_HASH_SIZE), mOscIn(NULL)
   {
     root_ = this;
-    register_object(this);
-    mObjects.set(std::string(""), this);
+    registerObject(this);
+    objectsHash_.set(std::string(""), this);
   }
 
-  Root(void * pGround, size_t pHashSize) : Object("",""), mGround(pGround), mObjects(pHashSize), mOscIn(NULL)
+  Root(void * ground, size_t hashSize) : Object("",""), ground_(ground), objectsHash_(hashSize), mOscIn(NULL)
   {
     root_ = this;
-    mObjects.set(std::string(""), this);
+    objectsHash_.set(std::string(""), this);
   }
   
   virtual ~Root();
@@ -51,22 +51,22 @@ public:
     this->Object::clear();
   }
   
-  void open_port(uint pPort)
+  void openPort(uint port)
   {
     if (mOscIn) delete mOscIn;
-    mOscIn = new OscReceive(this, pPort);
+    mOscIn = new OscReceive(this, port);
   }
   
   /** Execute the default operation for an object. */
   const Value call (const char* pUrl)
   {
-    return call(std::string(pUrl), "", NULL);
+    return call(std::string(pUrl), "", gNilValue);
   }
 
   /** Execute the default operation for an object. */
   const Value call (std::string& pUrl)
   {
-    return call(pUrl, "", NULL);
+    return call(pUrl, "", gNilValue);
   }
 
   /** Execute the default operation for an object. */
@@ -82,10 +82,10 @@ public:
     size_t pos;
     std::string url = pUrl;
     
-    bool notFound = false;
+    bool not_found = false;
     
     while (!get(&target, url) && url != "") {
-      notFound = true;
+      not_found = true;
       pos = url.rfind("/");
       if (pos == std::string::npos)
         url = "";
@@ -94,46 +94,46 @@ public:
     
     }
   
-    if (!target) return not_found(pUrl, typeTag, val);
+    if (!target) return notFound(pUrl, typeTag, val);
     
-    if (notFound) return target->not_found(pUrl, typeTag, val);
+    if (not_found) return target->notFound(pUrl, typeTag, val);
     
-    // FIXME: return type... target->mTypeTagString.c_str()
-    return target->mTypeTag == hashId(typeTag) ? target->trigger(val) : target->trigger(NULL);
+    // FIXME: return type... target->typeTagStr_ing.c_str()
+    return target->typeTag_ == hashId(typeTag) ? target->trigger(val) : target->trigger(gNilValue);
   }
 
   /** Notification of name/parent change from an object. */
-  void register_object(Object * pObj)
+  void registerObject(Object * pObj)
   {
     // url/tree changed, make sure dict is in sync
     // std::cout << pObj->url() << " registered !\n";
   
     // 1. remove object
-    if (pObj->root_) pObj->root_->unregister_object(pObj);
+    if (pObj->root_) pObj->root_->unregisterObject(pObj);
   
     // 2. add with new key
-    mObjects.set(pObj->url(), pObj);
+    objectsHash_.set(pObj->url(), pObj);
   
     // 4. this is the new root
     pObj->setRoot(this);
   }
 
   /** Unregister an object from tree. */
-  void unregister_object(Object * pObj)
+  void unregisterObject(Object * pObj)
   {
-    mObjects.remove_element(pObj);
+    objectsHash_.remove_element(pObj);
   }
 
   /** Find a pointer to an Object from its url. Return false if the object is not found. */
   bool get (Object ** pResult, const std::string& pUrl)
   {
-    return mObjects.get(pResult, pUrl);
+    return objectsHash_.get(pResult, pUrl);
   }
 
   /** Find a pointer to an Object from its url. Return false if the object is not found. */
   bool get (Object ** pResult, const char* pUrl)
   {
-    return mObjects.get(pResult, std::string(pUrl));
+    return objectsHash_.get(pResult, std::string(pUrl));
   }
   
   /** Return a pointer to the object located at pUrl. NULL if not found. */
@@ -177,9 +177,9 @@ public:
     OscSend::send_all(mControllers, pUrl, typeTag, val);
   }
   
-  void * mGround;                   /**< Context pointer for objects in the tree. */
+  void * ground_;                   /**< Context pointer for objects in the tree. */
 protected:
-  THash<std::string, Object*> mObjects;   /**< Hash to find any object in the tree from its url. */
+  THash<std::string, Object*> objectsHash_;   /**< Hash to find any object in the tree from its url. */
 
 private:
   OscReceive * mOscIn;              /**< Listening socket. */

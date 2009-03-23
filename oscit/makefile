@@ -3,12 +3,12 @@ TESTING=-D_TESTING_
 AR = ar rcu
 LIBTOOL=libtool -static
 TEST=test/*_test.h
-OBJECTS=#object.o receive.o send.o root.o zeroconf.o oscpack/liboscpack.a
+OBJECTS=object.o root.o #receive.o send.o root.o zeroconf.o oscpack/liboscpack.a
 CFLAGS=-g -Wall $(TESTING)
 
 
 test: test/runner test/runner.cpp
-	./test/runner && rm test/runner
+	./test/runner; rm test/runner
 	
 # TODO: archive (ar ..)
 liboscit.a: $(OBJECTS)

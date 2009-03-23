@@ -58,15 +58,15 @@ void OscReceive::ProcessMessage( const osc::ReceivedMessage& pMsg, const IpEndpo
     // ??? res = 
   } else if (root_->get(&obj, url)) {  
     // The code here is a speedup to avoid allocation of params.
-    if (typeTags == obj->mTypeTag) {
-      Value param = obj->mParam;
+    if (typeTags == obj->typeTag_) {
+      Value param = obj->param_;
       values_from_osc(&param, pMsg);
       res = obj->trigger(&param);
     } else {
       // invalid, use NULL
       res = obj->trigger(NULL);
       // return type is now
-      retTypes = obj->mTypeTagString.c_str();
+      retTypes = obj->typeTagStr_ing.c_str();
     }
   } else {
     // not found

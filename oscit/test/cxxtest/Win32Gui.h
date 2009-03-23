@@ -271,7 +271,7 @@ namespace CxxTest
 
         bool getScreenAreaWithoutTaskbar( RECT &area )
         {
-            return (SystemParametersInfo( SPI_GETWORKAREA, sizeof(RECT), &area, 0 ) != 0);
+            return (Systeparam_etersInfo( SPI_GETWORKAREA, sizeof(RECT), &area, 0 ) != 0);
         }
 
         void getWholeScreenArea( RECT &area )

@@ -38,6 +38,7 @@ union Value
   Value * list; // multi-value
 };
 
+extern Value gNilValue;
 /*
 
 explicit Value(char * pS) : s(pS) {}

@@ -1,6 +1,6 @@
 #ifndef _OSCIT_SEND_H_
 #define _OSCIT_SEND_H_
-#include "new_value.h"
+#include "values.h"
 #include <list>
 
 namespace osc {
@@ -20,7 +20,7 @@ public:
   
   OscSend(const IpEndpointName& remoteEndpoint, int pPort);
   
-  ~OscSend();
+  ~OscSend() {} // FIXME: remove {}: implementation is in send.cpp
   
   /** Send prepared message out. */
   void send (const osc::OutboundPacketStream& pMsg);

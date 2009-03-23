@@ -10,6 +10,6 @@ Root::~Root()
   
   if (mOscIn) delete mOscIn;
   clear();
-  root_ = NULL; // avoid call to unregister_object in ~Object
+  root_ = NULL; // avoid call to unregisterObject in ~Object
 }
 } // namespace oscit

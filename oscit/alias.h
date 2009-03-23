@@ -8,24 +8,24 @@ namespace oscit {
 class Alias : public Object
 {
 public:
-  Alias() : Object(""), mOriginal(NULL) {}
+  Alias() : Object(""), original_(NULL) {}
   
-  Alias(const char *       name, Object * object) : Object(object->mTypeTagStr, name), mOriginal(object) 
+  Alias(const char * name, Object * object) : Object(name, object->typeTagStr_.c_str()), original_(object) 
   {
     // We register so that the alias dies with the original object.
-    mOriginal->registerAlias(this);
+    original_->registerAlias(this);
   }
   
-  Alias(const std::string& name, Object * object) : Object(object->mTypeTagStr, name), mOriginal(object) 
+  Alias(const std::string& name, Object * object) : Object(name, object->typeTagStr_.c_str()), original_(object) 
   {
     // We register so that the alias dies with the original object.
-    mOriginal->registerAlias(this);
+    original_->registerAlias(this);
   }
   
   virtual ~Alias()
   {
     // We unregister to tell the object that it should not delete this alias on destruction.
-    if (mOriginal) mOriginal->unregisterAlias(this);
+    if (original_) original_->unregisterAlias(this);
   }
   
   /** Class signature. */
@@ -36,12 +36,12 @@ public:
   
   virtual const Value trigger (const Value val)
   {
-    return mOriginal ? mOriginal->trigger(val) : NULL;
+    return original_ ? original_->trigger(val) : gNilValue;
   }
   
-  void clear_original()
+  void unlinkOriginal()
   {
-    mOriginal = NULL;
+    original_ = NULL;
   }
   
   /** Set new original object from url. */
@@ -54,12 +54,12 @@ public:
   /** Set new original object from an object pointer. */
   void set_original(Object * object)
   {
-    if (mOriginal) mOriginal->unregisterAlias(this);
-    mOriginal = object;
-    if (mOriginal) mOriginal->registerAlias(this);
+    if (original_) original_->unregisterAlias(this);
+    original_ = object;
+    if (original_) original_->registerAlias(this);
   }
 protected:
-  Object * mOriginal; /**< Original object pointed to by the alias. */
+  Object * original_; /**< Original object pointed to by the alias. */
 };
 } // namespace oscit
 #endif // _OSCIT_ALIAS_H_
