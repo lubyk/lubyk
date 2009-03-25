@@ -19,7 +19,7 @@ class TestHelper : public CxxTest::TestSuite
 {
 protected:
   
-  void _assertEqual(const char * file, int lineno, const char * descr, real_t expected, real_t found)
+  void _assertEqual(const char * file, int lineno, const char * descr, Real expected, Real found)
   {
     _OSCIT_ASSERT_EQUALS( file, lineno, TS_AS_STRING(descr), found, expected);
   }

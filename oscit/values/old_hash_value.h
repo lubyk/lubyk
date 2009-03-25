@@ -161,7 +161,7 @@ private:
   
 };
 
-/** Value class to hold a single number (real_t). */
+/** Value class to hold a single number (Real). */
 class Hash : public Value
 {
 public:
@@ -241,7 +241,7 @@ template<>
 size_t Hash::cast_param (const std::string& value);
 
 template<>
-real_t Hash::cast_param (const std::string& value);
+Real Hash::cast_param (const std::string& value);
 
 template<>
 float Hash::cast_param (const std::string& value);

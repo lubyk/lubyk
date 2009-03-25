@@ -12,7 +12,7 @@ public:
     
     assertEqual("foo", v.s);
     
-    assertEqual("s", v.getTypeTag());
+    assertEqual("s", v.type_tag());
   }
   
   void testCreateStdString( void )
@@ -31,7 +31,7 @@ public:
     assertEqual("foobar", str);
     assertEqual("foo", v.s);
     
-    assertEqual("s", v.getTypeTag());
+    assertEqual("s", v.type_tag());
   }
   
   void testCreateChar( void )
@@ -80,7 +80,7 @@ public:
   {
     Value v;
     
-    v.setTypeTag("s");
+    v.set_type_tag("s");
     assertTrue(v.isString());
     assertEqual("", v.s);
   }
@@ -89,7 +89,7 @@ public:
   {
     Value v;
     
-    v.setType(StringValueType);
+    v.setType(STRING_VALUE);
     assertTrue(v.isString());
     assertEqual("", v.s);
   }

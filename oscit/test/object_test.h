@@ -1,5 +1,6 @@
 #include "test_helper.h"
 #include "oscit/root.h"
+#include "mock/dummy_object.h"
 
 class ObjectTest : public TestHelper
 {
@@ -7,7 +8,7 @@ public:
   void testCreate( void )
   {
     DummyObject a("a", 1);
-    assertEqual("a", a.getName());
+    assertEqual("a", a.name());
   }
   
   void testRoot( void )
@@ -23,6 +24,7 @@ public:
     assertFalse( root.get(&res, "/a") );
     
     root.adopt(a);
+    
     assertTrue( root.get(&res, "/a") );
     assertEqual( a, res );
     

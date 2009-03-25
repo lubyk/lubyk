@@ -8,15 +8,15 @@ namespace oscit {
 class Alias : public Object
 {
 public:
-  Alias() : Object(""), original_(NULL) {}
+  Alias() : original_(NULL) {}
   
-  Alias(const char * name, Object * object) : Object(name, object->typeTagStr_.c_str()), original_(object) 
+  Alias(const char *name, Object *object) : Object(name, object->type_tag_id_), original_(object) 
   {
     // We register so that the alias dies with the original object.
     original_->registerAlias(this);
   }
   
-  Alias(const std::string& name, Object * object) : Object(name, object->typeTagStr_.c_str()), original_(object) 
+  Alias(const std::string& name, Object * object) : Object(name, object->type_tag_id_), original_(object) 
   {
     // We register so that the alias dies with the original object.
     original_->registerAlias(this);

@@ -8,9 +8,9 @@ namespace oscit {
 class StringValue : public Value
 { 
 public:
-  StringValue() : Value(StringValueType, "") {}
+  StringValue() : Value(STRING_VALUE, "") {}
   
-  StringValue(const char * string) : Value(StringValueType, string) {}
+  StringValue(const char * string) : Value(STRING_VALUE, string) {}
 };
 
 } // oscit

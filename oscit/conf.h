@@ -1,7 +1,7 @@
 #ifndef _OSCIT_CONF_H_
 #define _OSCIT_CONF_H_
 
-#define real_t double
+#define Real double
 
 // A macro to disallow the copy constructor and operator= functions
 // This should be used in the private: declarations for a class

@@ -13,7 +13,7 @@ public:
     assertFalse(v.isString());
     assertFalse(v.isError());
     
-    assertEqual("N", v.getTypeTag());
+    assertEqual("N", v.type_tag());
   }
   
   void testCreateChar( void )
@@ -50,7 +50,7 @@ public:
   {
     Value v(1.2);
     
-    v.setTypeTag("N");
+    v.set_type_tag("N");
     assertTrue(v.isNil());
   }
   
@@ -58,7 +58,7 @@ public:
   {
     Value v(1.2);
     
-    v.setType(NilValueType);
+    v.setType(NIL_VALUE);
     assertTrue(v.isNil());
   }
 };

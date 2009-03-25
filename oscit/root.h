@@ -18,27 +18,27 @@ namespace oscit {
 class Root : public Object
 {
 public:
-  Root() : Object("",""), ground_(NULL), objectsHash_(OBJECT_HASH_SIZE), mOscIn(NULL)
+  Root() : ground_(NULL), objectsHash_(OBJECT_HASH_SIZE), mOscIn(NULL)
   {
     root_ = this;
     registerObject(this);
     objectsHash_.set(std::string(""), this);
   }
 
-  Root(size_t hashSize) : Object("",""), ground_(NULL), objectsHash_(hashSize), mOscIn(NULL)
+  Root(size_t hashSize) : ground_(NULL), objectsHash_(hashSize), mOscIn(NULL)
   {
     root_ = this;
     objectsHash_.set(std::string(""), this);
   }
   
-  Root(void * ground) : Object("",""), ground_(ground), objectsHash_(OBJECT_HASH_SIZE), mOscIn(NULL)
+  Root(void * ground) : ground_(ground), objectsHash_(OBJECT_HASH_SIZE), mOscIn(NULL)
   {
     root_ = this;
     registerObject(this);
     objectsHash_.set(std::string(""), this);
   }
 
-  Root(void * ground, size_t hashSize) : Object("",""), ground_(ground), objectsHash_(hashSize), mOscIn(NULL)
+  Root(void * ground, size_t hashSize) : ground_(ground), objectsHash_(hashSize), mOscIn(NULL)
   {
     root_ = this;
     objectsHash_.set(std::string(""), this);
@@ -58,34 +58,34 @@ public:
   }
   
   /** Execute the default operation for an object. */
-  const Value call (const char* pUrl)
+  const Value call (const char *url)
   {
-    return call(std::string(pUrl), "", gNilValue);
+    return call(std::string(url), gNilValue);
   }
 
   /** Execute the default operation for an object. */
-  const Value call (std::string& pUrl)
+  const Value call (std::string &url)
   {
-    return call(pUrl, "", gNilValue);
+    return call(url, gNilValue);
   }
 
   /** Execute the default operation for an object. */
-  const Value call (const char* pUrl, const char * typeTag, const Value& val)
+  const Value call (const char *url, const Value &val)
   {
-    return call(std::string(pUrl), typeTag, val);
+    return call(std::string(url), val);
   }
 
   /** Execute the default operation for an object. */
-  const Value call (const std::string& pUrl, const char * typeTag, const Value& val)
+  const Value call (const std::string &pUrl, const Value& val)
   {
     Object * target = NULL;
     size_t pos;
     std::string url = pUrl;
     
-    bool not_found = false;
+    bool is_not_found = false;
     
     while (!get(&target, url) && url != "") {
-      not_found = true;
+      is_not_found = true;
       pos = url.rfind("/");
       if (pos == std::string::npos)
         url = "";
@@ -94,12 +94,11 @@ public:
     
     }
   
-    if (!target) return notFound(pUrl, typeTag, val);
+    if (!target) return not_found(pUrl, val);
     
-    if (not_found) return target->notFound(pUrl, typeTag, val);
+    if (is_not_found) return target->not_found(pUrl, val);
     
-    // FIXME: return type... target->typeTagStr_ing.c_str()
-    return target->typeTag_ == hashId(typeTag) ? target->trigger(val) : target->trigger(gNilValue);
+    return val.type_tag_id() == target->type_tag_id() ? target->trigger(val) : target->trigger(gNilValue);
   }
 
   /** Notification of name/parent change from an object. */
@@ -119,21 +118,21 @@ public:
   }
 
   /** Unregister an object from tree. */
-  void unregisterObject(Object * pObj)
+  void unregisterObject(Object *obj)
   {
-    objectsHash_.remove_element(pObj);
+    objectsHash_.remove_element(obj);
   }
 
   /** Find a pointer to an Object from its url. Return false if the object is not found. */
-  bool get (Object ** pResult, const std::string& pUrl)
+  bool get (Object **retval, const std::string &url)
   {
-    return objectsHash_.get(pResult, pUrl);
+    return objectsHash_.get(retval, url);
   }
 
   /** Find a pointer to an Object from its url. Return false if the object is not found. */
-  bool get (Object ** pResult, const char* pUrl)
+  bool get (Object **retval, const char *url)
   {
-    return objectsHash_.get(pResult, std::string(pUrl));
+    return objectsHash_.get(retval, std::string(url));
   }
   
   /** Return a pointer to the object located at pUrl. NULL if not found. */
@@ -160,7 +159,7 @@ public:
     mControllers.push_back(pSatellite);
   }
   
-  void receive(const std::string& pUrl, const char * typeTag, const Value& val)
+  void receive(const std::string& pUrl, const Value &val)
   {
     //FIX Value res;
     
@@ -172,9 +171,9 @@ public:
     //FIX send_reply(pUrl, res);
   }
   
-  inline void send_reply(const std::string& pUrl, const char * typeTag, const Value& val)
+  inline void send_reply(const std::string &url, const Value &val)
   {
-    OscSend::send_all(mControllers, pUrl, typeTag, val);
+    OscSend::send_all(mControllers, url, val);
   }
   
   void * ground_;                   /**< Context pointer for objects in the tree. */

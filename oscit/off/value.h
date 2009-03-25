@@ -96,7 +96,7 @@ public:
   /** Type conversion ("this" sets "other").
   
   If you wonder why we haven't implemented it the other way around like: "other.from(this)", the reason is that we wanted a
-  consistant interface for Values and native types. You cannot write "real_t d; d.from(this)" so we use "set". */
+  consistant interface for Values and native types. You cannot write "Real d; d.from(this)" so we use "set". */
   bool set (Value& other) const
   {
     switch (data_type())
@@ -202,10 +202,10 @@ public:
     return ptr_->dataPtr_; 
   }
   
-  /** Set a real_t from the content. Return false on failure. 
+  /** Set a Real from the content. Return false on failure. 
   
   FIXME: we should use a template here, but it seems to break on compilation... */
-  bool set (real_t& pResult) const
+  bool set (Real& pResult) const
   {
     if (!ptr_) return false;
     return ptr_->dataPtr_->set(pResult);

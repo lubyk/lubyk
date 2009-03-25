@@ -41,7 +41,7 @@ void OscSend::send(const std::string& pUrl, const Value& val)
   // send(oss);
 }
 
-void OscSend::send_all(std::list<OscSend*>& pRecipients, const std::string& pUrl, const char * typeTags, const Value& val)
+void OscSend::send_all(std::list<OscSend*>& pRecipients, const std::string& pUrl, TypeTagID type_tag_ids, const Value& val)
 { 
   std::list<OscSend*>::iterator it  = pRecipients.begin();
   std::list<OscSend*>::iterator end = pRecipients.end();
@@ -57,7 +57,7 @@ void OscSend::send_all(std::list<OscSend*>& pRecipients, const std::string& pUrl
   while (it != end) (*it++)->send(oss);
 }
 
-void OscSend::values_to_stream (osc::OutboundPacketStream& pOut, const char * typeTags, const Value& val)
+void OscSend::values_to_stream (osc::OutboundPacketStream& pOut, TypeTagID type_tag_ids, const Value& val)
 { 
   uint i = 0;
   char c;

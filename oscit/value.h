@@ -1,55 +1,60 @@
 #ifndef _VALUE_H_
 #define _VALUE_H_
-#include "oscit/conf.h"
+#include <string>
 
 namespace oscit {
   
 class List;
   
-enum value_t
+enum ValueType
 {
-  NilValueType = 0,
-  RealValueType,
-  StringValueType,
-  ErrorValueType,
-  ListValueType,
+  NIL_VALUE = 0,
+  REAL_VALUE,
+  STRING_VALUE,
+  ERROR_VALUE,
+  LIST_VALUE,
 };
 
-enum value_type_tag_t
+enum ValueTypeTag
 {
-  NilTypeTag =  'N',
-  RealTypeTag = 'f',
-  StringTypeTag = 's',
-  ErrorTypeTag  = 's',
+  NIL_TYPE_TAG    = 'N',
+  REAL_TYPE_TAG   = 'f',
+  STRING_TYPE_TAG = 's',
+  ERROR_TYPE_TAG  = 's',
 };
+
+/** Unique identifier for osc type tags strings. */
+typedef uint TypeTagID;
+
+#define EMPTY_TAG_ID hashId("")
 
 /** Value is the base type of all data transmitted between objects or used as parameters
 and return values for osc messages. */
 class Value
 { 
 public:
-  Value() : type_(NilValueType) {}
+  Value() : type_(NIL_VALUE) {}
   
-  explicit Value(real_t real) : type_(RealValueType), r(real) {}
+  explicit Value(Real real) : type_(REAL_VALUE), r(real) {}
   
-  explicit Value(const char * string) : type_(StringValueType)
+  explicit Value(const char * string) : type_(STRING_VALUE)
   {
     setString(string);
   }
   
-  explicit Value(std::string& string) : type_(StringValueType)
+  explicit Value(std::string& string) : type_(STRING_VALUE)
   {
     setString(string.c_str());
   }
   
-  explicit Value(List * list) : type_(ListValueType)
+  explicit Value(List * list) : type_(LIST_VALUE)
   {
     setList(list);
   }
   
-  Value(value_t type, const char * typeTag) : type_(NilValueType)
+  Value(ValueType type, const char * type_tag) : type_(NIL_VALUE)
   {
-    setTypeTag(typeTag);
+    set_type_tag(type_tag);
   }
   
   /** Create a default value from a type char. */
@@ -59,20 +64,20 @@ public:
   }
   
   /** Copy constructor (needed since many methods return a Value). */
-  Value(const Value& value) : type_(NilValueType) {
+  Value(const Value& value) : type_(NIL_VALUE) {
     *this = value;
   }
   
   /** Copy the content of the other value. */
   void operator=(const Value& value) {
     switch(value.type_) {
-    case RealValueType:
+    case REAL_VALUE:
       set(value.r);
       break;
-    case StringValueType:
+    case STRING_VALUE:
       set(value.s);
       break;
-    case ListValueType:
+    case LIST_VALUE:
       set(value.list);
       break;
     default:
@@ -86,64 +91,66 @@ public:
   }
   
   bool isNil() const
-  { return type_ == NilValueType; }
+  { return type_ == NIL_VALUE; }
   
   bool isReal() const
-  { return type_ == RealValueType; }
+  { return type_ == REAL_VALUE; }
   
   bool isString() const
-  { return type_ == StringValueType; }
+  { return type_ == STRING_VALUE; }
   
   bool isError() const
-  { return type_ == ErrorValueType; }
+  { return type_ == ERROR_VALUE; }
   
-  inline const char * getTypeTag() const;
+  inline const char * type_tag() const;
+  
+  inline TypeTagID type_tag_id() const;
   
   /** Change the value to nil. */
   void set()
   {
-    setTypeNoDefault(NilValueType);
+    setTypeNoDefault(NIL_VALUE);
   }
   
   /** Change the Value into a RealValue. */
-  void set(real_t real)
+  void set(Real real)
   {  
-    setTypeNoDefault(RealValueType);
+    setTypeNoDefault(REAL_VALUE);
     r = real;
   }
   
   /** Change the Value into a StringValue. */
   void set(const char * string)
   {  
-    setTypeNoDefault(StringValueType);
+    setTypeNoDefault(STRING_VALUE);
     setString(string);
   }
   
   /** Change the Value into a StringValue. */
   void set(const List * pList)
   {  
-    setTypeNoDefault(ListValueType);
+    setTypeNoDefault(LIST_VALUE);
     setList(pList);
   }
   
   /** Change the Value into the specific type. Since a default value must be set,
     * it is better to use 'set'. */
-  void setType(value_t type)
+  void setType(ValueType type)
   {
     setTypeNoDefault(type);
     setDefault();
   }
   
   /** Change the Value into something defined in a typeTag. */
-  inline void setTypeTag(const char * typeTag);
+  inline void set_type_tag(const char *type_tag);
   
-  static value_t typeFromChar(char c)
+  static ValueType typeFromChar(char c)
   {
     switch(c) {
-      case RealTypeTag:   return RealValueType;
-      case StringTypeTag: return StringValueType;
-      case NilTypeTag:    return NilValueType;
-      default:            return NilValueType;
+      case REAL_TYPE_TAG:   return REAL_VALUE;
+      case STRING_TYPE_TAG: return STRING_VALUE;
+      case NIL_TYPE_TAG:    return NIL_VALUE;
+      default:            return NIL_VALUE;
     }
   }
   
@@ -156,7 +163,7 @@ private:
   
   /** Change the Value into the specific type. Does not set any default value
     * so the object must be considered uninitialized. */
-  void setTypeNoDefault(value_t type)
+  void setTypeNoDefault(ValueType type)
   {
     clear();
     type_ = type;
@@ -174,13 +181,13 @@ private:
   
   inline void setList(const List * pList);
   
-  uint type_;
+  ValueType type_;
   
 public:
   union {
-    real_t r;
-    real_t f; // alias for r
-    real_t d; // alias for r
+    Real r;
+    Real f; // alias for r
+    Real d; // alias for r
     char * s; // string
     List * list; // multi-value
   };
@@ -193,22 +200,32 @@ extern Value gNilValue;
 #include "oscit/values/list.h"
 
 namespace oscit {
-const char * Value::getTypeTag() const {
+const char * Value::type_tag() const {
   switch(type_) {
-  case RealValueType:   return "f";
-  case StringValueType: return "s";
-  case NilValueType:    return "N";
-  case ListValueType:   return list->getTypeTag();
-  default:              return "N";
+    case REAL_VALUE:   return "f";
+    case STRING_VALUE: return "s";
+    case NIL_VALUE:    return "N";
+    case LIST_VALUE:   return list->type_tag();
+    default:           return "N";
   }
 }
 
-void Value::setTypeTag(const char * typeTag) {
-  if (strlen(typeTag) > 1) {
-    setTypeNoDefault(ListValueType);
-    list = new List(typeTag);
+TypeTagID Value::type_tag_id() const {
+  switch(type_) {
+    case REAL_VALUE:   return hashId("f");
+    case STRING_VALUE: return hashId("s");
+    case NIL_VALUE:    return hashId("N");
+    case LIST_VALUE:   return list->type_tag_id();
+    default:           return hashId("N");
+  }
+}
+
+void Value::set_type_tag(const char *type_tag) {
+  if (strlen(type_tag) > 1) {
+    setTypeNoDefault(LIST_VALUE);
+    list = new List(type_tag);
   } else {
-    setType(typeFromChar(typeTag[0]));
+    setType(typeFromChar(type_tag[0]));
   }
 }
 
@@ -222,28 +239,32 @@ Value& Value::operator[](size_t pos) {
 
 void Value::clear() {
   switch(type_) {
-  case ListValueType:
+  case LIST_VALUE:
     if (list != NULL) delete list;
     list = NULL;
     break;
-  case StringValueType:
+  case STRING_VALUE:
     if (s != NULL) free(s);
     s = NULL;
     break;
+  default:
+    ; // nothing to clear
   }
 }
 
 void Value::setDefault() {
   switch(type_) {
-  case RealValueType:
+  case REAL_VALUE:
     r = 0.0;
     break;
-  case StringValueType:
+  case STRING_VALUE:
     setString("");
     break;
-  case ListValueType:
+  case LIST_VALUE:
     list = new List;
     break;
+  default:
+    ; // nothing to set 
   }
   
 }

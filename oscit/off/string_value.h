@@ -46,7 +46,7 @@ protected:
 #define GET_THIS_DATA() const StringData * this_data = data(); \
     if (!this_data) return false;
   
-/** Value class to hold a single number (real_t). */
+/** Value class to hold a single number (Real). */
 class String : public Value
 {
 public:

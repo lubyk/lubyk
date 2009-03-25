@@ -5,7 +5,7 @@ class ListValueTest : public TestHelper
 {  
 public:
   void test_read( void ) {
-    Value v(ListValueType, "ff");
+    Value v(LIST_VALUE, "ff");
     List &l = *v.list;
     
     assertEqual(0.0, l[0].f);
@@ -16,7 +16,7 @@ public:
   }
   
   void test_should_not_share( void ) {
-    Value v(ListValueType, "ff");
+    Value v(LIST_VALUE, "ff");
     Value v2;
     List &l = *v.list;
     

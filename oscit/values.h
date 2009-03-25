@@ -1,6 +1,7 @@
 #ifndef _VALUES_H_
 #define _VALUES_H_
-
+#include "oscit/conf.h"
+#include "oscit/thash.h"
 #include "oscit/value.h"
 #include "oscit/values/real_value.h"
 // #include "oscit/values/string_value.h"

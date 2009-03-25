@@ -13,67 +13,44 @@ class Alias;
 
 class Object
 {
-public:
-  Object(const char * name) : root_(NULL), parent_(NULL), children_(20)
-  {
-    setTypeTag("");
-    name_ = name;
+ public:
+  Object() : root_(NULL), parent_(NULL), children_(20), type_tag_id_(EMPTY_TAG_ID) {
+   name_ = "";
+   url_  = name_;
+  }
+  
+  Object(const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), type_tag_id_(EMPTY_TAG_ID) {}
+  
+  Object(TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), type_tag_id_(type_tag_id) {
+    name_ = "";
     url_  = name_;
   }
 
-  Object(const char * name, const char * typeTag) : root_(NULL), parent_(NULL), children_(20)
-  {
-    setTypeTag(typeTag);
-    name_ = name;
-    url_  = name_;
-  }
+  Object(const char *name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), type_tag_id_(type_tag_id) {}
 
-  Object(const std::string& name, const char * typeTag) : root_(NULL), parent_(NULL), children_(20)
-  {
-    setTypeTag(typeTag);
-    name_ = name;
-    url_  = name_;
-  }
+  Object(const std::string &name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), type_tag_id_(type_tag_id) {}
 
-  Object(Object * parent, const char * name) : root_(NULL), parent_(NULL), children_(20)
-  {
-    setTypeTag("");
-    name_ = name;
+  Object(Object *parent, const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(EMPTY_TAG_ID) {
     parent->adopt(this);
   }
 
-  Object(Object * parent, const char * name, const char * typeTag) : root_(NULL), parent_(NULL), children_(20)
-  {
-    setTypeTag(typeTag);
-    name_ = name;
+  Object(Object *parent, const char *name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(type_tag_id) {
     parent->adopt(this);
   }
 
-  Object(Object * parent, const std::string& name, const char * typeTag) : root_(NULL), parent_(NULL), children_(20)
-  {
-    setTypeTag(typeTag);
-    name_ = name;
+  Object(Object *parent, const std::string &name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(type_tag_id) {
     parent->adopt(this);
   }
 
-  Object(Object& parent, const char * name) : root_(NULL), parent_(NULL), children_(20)
-  {
-    setTypeTag("");
-    name_ = name;
+  Object(Object &parent, const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(EMPTY_TAG_ID) {
     parent.adopt(this);
   }
 
-  Object(Object& parent, const char * name, const char * typeTag) : root_(NULL), parent_(NULL), children_(20)
-  {
-    setTypeTag(typeTag);
-    name_ = name;
+  Object(Object &parent, const char *name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(type_tag_id) {
     parent.adopt(this);
   }
 
-  Object(Object& parent, const std::string& name, const char * typeTag) : root_(NULL), parent_(NULL), children_(20)
-  {
-    setTypeTag(typeTag);
-    name_ = name;
+  Object(Object& parent, const std::string& name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(type_tag_id) {
     parent.adopt(this);
   }
 
@@ -100,13 +77,13 @@ public:
   
   /** Shortcut to call first method on an object.
     * Using "obj.set('waga',3.4,1)" is equivalent to calling "obj.first_method(['waga',3.4,1])". */
-  bool set(const char * typeTag, const Value& val)
+  bool set(const Value& val)
   {
     Object * obj;
     // use first method as default
     string_iterator it  = children_.begin();
     string_iterator end = children_.end();
-    if (it != end && (obj = child(*it)) && obj->typeTagID_ == hashId(typeTag)) {
+    if (it != end && (obj = child(*it)) && obj->type_tag_id_ == val.type_tag_id()) {
       // TODO: if the object type is "M" (matrix) ===> build a matrix from first "ffff" into a values.
       obj->trigger(val);
     }
@@ -122,7 +99,7 @@ public:
     return object;
   }
   
-  /** Class signature. */
+  /** Class type_tag_id. */
   virtual uint type()
   {
     return H("oscit::Object");
@@ -146,7 +123,7 @@ public:
   }
 
   /** This method is called whenever a sub-node or branch is not found and this is the last found object along the path. */
-  virtual const Value notFound (const std::string& pUrl, const char * typeTag, const Value& val)
+  virtual const Value not_found (const std::string& pUrl, const Value &val)
   {
     raiseError(std::string("Object '").append(pUrl).append("' not found."));
     return gNilValue;
@@ -198,16 +175,10 @@ public:
   }
   
   /** Return name of object. */
-  const std::string getName() const
+  const std::string name() const
   {
     return name_;
   }
-  
-  /** Return the type tag string. */
-  //const std::string getTypeTag() const
-  //{
-  //  return param_.getTypeTag();
-  //}
   
   /* ========================== REPLIES TO META METHODS =========================== */
   /* The replies to meta methods are implemented as virtuals so that objects that   */
@@ -335,34 +306,29 @@ protected:
     }
   }
   
-  /** Define object signature. This not be changed during runtime.
-    * @param typeTag a string with the type signature (should be static since it is not copied).
+  /** Define object type_tag_id. This cannot be changed during runtime.
+    * @param typeTag a string with the osc type type_tag_id.
     */
-  void setTypeTag(const char * typeTag)
+  void set_type_tag_id(TypeTagID type_tag_id)
   {
-    typeTagID_ = hashId(typeTag);
-    param_.setTypeTag(typeTag);
+    type_tag_id_ = type_tag_id;
+  }
+  
+  /** Return the type tag signature id as an unsigned int. */
+  TypeTagID type_tag_id() {
+    return type_tag_id_;
   }
   
 private:
   
   // FIXME: this is a temporary fix for error handling. DO NOT LEAVE THIS AS IS !
-  void raiseError(const std::string& pMessage)
+  void raiseError(const std::string &message)
   {
-    fprintf(stderr, "Error in '%s': %s\n", url().c_str(), pMessage.c_str());
-  }
-  
-  // TODO: this could be replaced by "o" ("o-1", "o-2", "o-3") ? 
-  std::string getDefaultName()
-  {
-    char buf[50];
-    sIdCounter++;
-    sprintf(buf,"_%i",(int)sIdCounter);
-    return std::string(buf);  // default variable name is 'id'
+    fprintf(stderr, "Error in '%s': %s\n", url().c_str(), message.c_str());
   }
   
   /** Free the child from the list of children. */
-  void release(Object * pChild);
+  void release(Object *pChild);
 
   std::list<Alias *>          mAliases;          /**< List of aliases to destroy when this node disappears. */
 
@@ -370,18 +336,17 @@ protected:
   friend class Root;
   friend class Alias;
 
-  Root   *                    root_;             /**< Root object. */
-  Object *                    parent_;           /**< Pointer to parent object. */
+  Root                        *root_;             /**< Root object. */
+  Object                      *parent_;           /**< Pointer to parent object. */
   THash<std::string,Object *> children_;         /**< Hash with pointers to sub-objects / methods */
-  std::string                 url_;              /**< Absolute path to object (cached). TODO: this cache is not really needed. */
   std::string                 name_;             /**< Unique name in parent's context. */
+  std::string                 url_;              /**< Absolute path to object (cached). TODO: this cache is not really needed. */
   std::string                 mInfo;             /**< Help/information string. */
-  uint                        typeTagID_;          /**< OSC type tag id. */
   static size_t               sIdCounter;        /**< Use to set a default id and position. */
 
 private:
   friend class OscReceive;
-  Value                       param_;           /**< Allocated memory to build the parameters from osc message. */
+  TypeTagID                   type_tag_id_;        /**< OSC type tag type_tag_id. */
 };
 } // namespace osc
 

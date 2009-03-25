@@ -4,13 +4,13 @@
 
 namespace oscit {
   
-/** RealValue is just a wrapper around a real_t.*/
+/** RealValue is just a wrapper around a Real.*/
 class RealValue : public Value
 { 
 public:
   RealValue() : Value(0.0) {}
   
-  RealValue(real_t real) : Value(real) {}
+  RealValue(Real real) : Value(real) {}
 };
 
 } // oscit

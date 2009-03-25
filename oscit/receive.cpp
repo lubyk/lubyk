@@ -140,16 +140,16 @@ void OscReceive::values_from_osc(Value * pRes, const osc::ReceivedMessage& pMsg)
     // zero length
 
     case osc::INT32_TYPE_TAG:
-      res[i].r = (real_t)(arg->AsInt32Unchecked());
+      res[i].r = (Real)(arg->AsInt32Unchecked());
       break;
     case osc::FLOAT_TYPE_TAG:
-      res[i].r = (real_t)(arg->AsFloatUnchecked());
+      res[i].r = (Real)(arg->AsFloatUnchecked());
       break;
     case osc::CHAR_TYPE_TAG:
-      res[i].r = (real_t)(arg->AsCharUnchecked());
+      res[i].r = (Real)(arg->AsCharUnchecked());
       break;
     case osc::DOUBLE_TYPE_TAG:
-      res[i].r = (real_t)(arg->AsDoubleUnchecked());
+      res[i].r = (Real)(arg->AsDoubleUnchecked());
       break;
     case osc::STRING_TYPE_TAG:
       res[i].s = arg->AsStringUnchecked();

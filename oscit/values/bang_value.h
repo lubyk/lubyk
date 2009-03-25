@@ -4,7 +4,7 @@
 
 class Bang;
 
-/* Holds the actual data of the Bang class. This is a wrapper around a real_t. */
+/* Holds the actual data of the Bang class. This is a wrapper around a Real. */
 class BangData : public Data
 {
 public:
@@ -15,7 +15,7 @@ public:
   virtual ~BangData() {}
 };
 
-/** Value class to hold a single number (real_t). */
+/** Value class to hold a single number (Real). */
 class Bang : public Value
 {
 public:

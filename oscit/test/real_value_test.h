@@ -18,7 +18,7 @@ public:
     assertEqual(3.5, v.f); // alias as float
     assertEqual(3.5, v.d); // alias as double
     
-    assertEqual("f", v.getTypeTag());
+    assertEqual("f", v.type_tag());
   }
   
   void testCreateChar( void )
@@ -65,7 +65,7 @@ public:
   {
     Value v;
     
-    v.setTypeTag("f");
+    v.set_type_tag("f");
     assertTrue(v.isReal());
     assertEqual(0.0, v.r);
   }
@@ -74,7 +74,7 @@ public:
   {
     Value v;
     
-    v.setType(RealValueType);
+    v.setType(REAL_VALUE);
     assertTrue(v.isReal());
     assertEqual(0.0, v.r);
   }

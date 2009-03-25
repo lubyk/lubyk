@@ -277,7 +277,7 @@ void THash<K,T>::remove(const K& pId) {
           delete found->obj;
         }
         found->obj  = next->obj;
-        next->obj   = NULL;  // to avoid real_t delete
+        next->obj   = NULL;  // to avoid Real delete
         found->id   = next->id;
         found->next = next->next;
         delete next;

@@ -5,13 +5,13 @@
 
 class Number;
 
-/* Holds the actual data of the Number class. This is a wrapper around a real_t. */
+/* Holds the actual data of the Number class. This is a wrapper around a Real. */
 class NumberData : public Data
 {
 public:
   DATA_METHODS(NumberData, NumberValue)
 
-  NumberData(const real_t& d) : mReal(d) {}
+  NumberData(const Real& d) : mReal(d) {}
   
   // copy constructor
   NumberData(const NumberData& v)
@@ -21,14 +21,14 @@ public:
   
   virtual ~NumberData() {}
   
-  virtual bool set (real_t& pResult)
+  virtual bool set (Real& pResult)
   { 
     pResult = mReal;
     return true;
   }
   
-  /** Explicit conversion to a 'real_t'. */
-  virtual real_t convert(const real_t& pDefault) const
+  /** Explicit conversion to a 'Real'. */
+  virtual Real convert(const Real& pDefault) const
   {
     return mReal;
   }
@@ -65,17 +65,17 @@ public:
   
 private:
   friend class Number;
-  real_t mReal;
+  Real mReal;
 };
 
-/** Value class to hold a single number (real_t). */
+/** Value class to hold a single number (Real). */
 class Number : public Value
 {
 public:
   VALUE_METHODS(Number, NumberData, NumberValue, Value)
   VALUE_FROM_STRING(Number)
   
-  Number(real_t d) : Value(new NumberData(d)) {}
+  Number(Real d) : Value(new NumberData(d)) {}
   
   /** Set Number from Value. */
   const Value& operator= (const Value& val)
@@ -93,40 +93,40 @@ public:
     return val;
   }
   
-  /** Set Number from real_t. */
-  real_t operator= (real_t d)
+  /** Set Number from Real. */
+  Real operator= (Real d)
   {
     mutable_data()->mReal = d;
     return d;
   }
   
   /** Add two Numbers together. */
-  real_t operator+(const Number& n) const
+  Real operator+(const Number& n) const
   {
     return value() + n.value();
   }
   
-  /** Add a Number and a real_t. */
-  real_t operator+(real_t d) const
+  /** Add a Number and a Real. */
+  Real operator+(Real d) const
   {
     return value() + d;
   }
   
-  /** Divide a Number by a real_t. */
-  real_t operator/(real_t d) const
+  /** Divide a Number by a Real. */
+  Real operator/(Real d) const
   {
     return value() / d;
   }
   
   /** Add one to number. Prefix ++n. */
-  real_t operator++()
+  Real operator++()
   {
     mutable_data()->mReal++;
     return value();
   }
                        
   /** Add one to number. Postfix n++. */
-  real_t operator++(int)
+  Real operator++(int)
   {
     mutable_data()->mReal++;
     return value() - 1;
@@ -140,19 +140,19 @@ public:
   }
   
   /** Add two Numbers together. */
-  Number& operator+=(real_t d)
+  Number& operator+=(Real d)
   {  
     mutable_data()->mReal += d;
     return *this;
   }
   
-  /** Compare equality of Number with real_t. */
+  /** Compare equality of Number with Real. */
   bool operator== (const Number& n) const
   {
     return value() == n.value();
   }
   
-  /** Compare inequality of Number with real_t. */
+  /** Compare inequality of Number with Real. */
   bool operator!= (const Number& n) const
   {
     return value() != n.value();
@@ -182,80 +182,80 @@ public:
     return value() <= n.value();
   }
   
-  /** Compare equality of Number with real_t. */
-  bool operator== (real_t d) const
+  /** Compare equality of Number with Real. */
+  bool operator== (Real d) const
   {
     return value() == d;
   }
   
-  /** Compare inequality of Number with real_t. */
-  bool operator!= (real_t d) const
+  /** Compare inequality of Number with Real. */
+  bool operator!= (Real d) const
   {
     return value() != d;
   }
   
   /** Greater then operator. */
-  bool operator>(real_t d) const
+  bool operator>(Real d) const
   {
     return value() > d;
   }
   
   /** Smaller then operator. */
-  bool operator<(real_t d) const
+  bool operator<(Real d) const
   {
     return value() < d;
   }
   
   /** Greater or equal operator. */
-  bool operator>=(real_t d) const
+  bool operator>=(Real d) const
   {
     return value() >= d;
   }
   
   /** Smaller or equal operator. */
-  bool operator<=(real_t d) const
+  bool operator<=(Real d) const
   {
     return value() <= d;
   }
   
-  /** Compare equality of Number with real_t. */
+  /** Compare equality of Number with Real. */
   inline bool operator== (int d) const
   {
-    return value() == ((real_t)d);
+    return value() == ((Real)d);
   }
   
-  /** Compare inequality of Number with real_t. */
+  /** Compare inequality of Number with Real. */
   inline bool operator!= (int d) const
   {
-    return value() != ((real_t)d);
+    return value() != ((Real)d);
   }
   
   /** Greater then operator. */
   bool operator>(int d) const
   {
-    return value() > ((real_t)d);
+    return value() > ((Real)d);
   }
   
   /** Smaller then operator. */
   bool operator<(int d) const
   {
-    return value() < ((real_t)d);
+    return value() < ((Real)d);
   }
   
   /** Greater or equal operator. */
   bool operator>=(int d) const
   {
-    return value() >= ((real_t)d);
+    return value() >= ((Real)d);
   }
   
   /** Smaller or equal operator. */
   bool operator<=(int d) const
   {
-    return value() <= ((real_t)d);
+    return value() <= ((Real)d);
   }
   
   /** Return the value. */
-  real_t value() const
+  Real value() const
   {
     if (ptr_) {
       return data_pointer()->mReal;
@@ -264,24 +264,24 @@ public:
     }
   }
   
-  /** Type conversion to real_t. */
-  operator real_t()
+  /** Type conversion to Real. */
+  operator Real()
   { return value(); }
   
-  /** Type conversion to real_t. */
+  /** Type conversion to Real. */
   operator int()
   { return (int)value(); }
   
 private:
-  friend real_t operator/ (real_t d, const Number& n);
+  friend Real operator/ (Real d, const Number& n);
   
   
-  friend bool operator== (real_t d, const Number& n);
-  friend bool operator!= (real_t d, const Number& n);
-  friend bool operator> (real_t d, const Number& n);
-  friend bool operator>= (real_t d, const Number& n);
-  friend bool operator<= (real_t d, const Number& n);
-  friend bool operator< (real_t d, const Number& n);
+  friend bool operator== (Real d, const Number& n);
+  friend bool operator!= (Real d, const Number& n);
+  friend bool operator> (Real d, const Number& n);
+  friend bool operator>= (Real d, const Number& n);
+  friend bool operator<= (Real d, const Number& n);
+  friend bool operator< (Real d, const Number& n);
   friend bool operator== (int d, const Number& n);
   friend bool operator!= (int d, const Number& n);
   friend bool operator< (int d, const Number& n);
@@ -291,38 +291,38 @@ private:
 };
 
 
-inline real_t operator/ (real_t d, const Number& n)
+inline Real operator/ (Real d, const Number& n)
 {
   return d / n.value();
 }
 
-inline real_t operator/ (int d, const Number& n)
+inline Real operator/ (int d, const Number& n)
 {
-  return ((real_t)d) / n.value();
+  return ((Real)d) / n.value();
 }
 
 
-inline bool operator== (real_t d, const Number& n)
+inline bool operator== (Real d, const Number& n)
 {
   return d == n.value();
 }
-inline bool operator!= (real_t d, const Number& n)
+inline bool operator!= (Real d, const Number& n)
 {
   return d != n.value();
 }
-inline bool operator> (real_t d, const Number& n)
+inline bool operator> (Real d, const Number& n)
 {
   return d > n.value();
 }
-inline bool operator>= (real_t d, const Number& n)
+inline bool operator>= (Real d, const Number& n)
 {
   return d >= n.value();
 }
-inline bool operator<= (real_t d, const Number& n)
+inline bool operator<= (Real d, const Number& n)
 {
   return d <= n.value();
 }
-inline bool operator< (real_t d, const Number& n)
+inline bool operator< (Real d, const Number& n)
 {
   return d < n.value();
 }
@@ -330,27 +330,27 @@ inline bool operator< (real_t d, const Number& n)
 
 inline bool operator== (int d, const Number& n)
 {
-  return ((real_t)d) == n.value();
+  return ((Real)d) == n.value();
 }
 inline bool operator!= (int d, const Number& n)
 {
-  return ((real_t)d) != n.value();
+  return ((Real)d) != n.value();
 }
 inline bool operator> (int d, const Number& n)
 {
-  return ((real_t)d) > n.value();
+  return ((Real)d) > n.value();
 }
 inline bool operator>= (int d, const Number& n)
 {
-  return ((real_t)d) >= n.value();
+  return ((Real)d) >= n.value();
 }
 inline bool operator<= (int d, const Number& n)
 {
-  return ((real_t)d) <= n.value();
+  return ((Real)d) <= n.value();
 }
 inline bool operator< (int d, const Number& n)
 {
-  return ((real_t)d) < n.value();
+  return ((Real)d) < n.value();
 }
 
 #endif // _NUMBER_VALUE_H_

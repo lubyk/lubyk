@@ -73,7 +73,7 @@ public:
   //  Hash empty;
   //  Hash_iterator it;
   //  Hash_iterator end = h.end();
-  //  real_t d = 0;
+  //  Real d = 0;
   //  Number b;
   //  TS_ASSERT_EQUALS(empty.begin(), empty.end());
   //  for(it = h.begin(); it != end; it++) {
@@ -92,7 +92,7 @@ public:
   
 //  void testGetKey( void )
 //  {
-//    real_t res;
+//    Real res;
 //    Params p("first:1 second:2 name:\"Gaspard Buma\" joy:3.5");
 //    TS_ASSERT_EQUALS( (int)p.val("first",   3), 1 );
 //    TS_ASSERT_EQUALS( (int)p.val("default", 3), 3 );
@@ -100,8 +100,8 @@ public:
 //    TS_ASSERT_EQUALS( p.val("name", std::string("no-name"))    , std::string("Gaspard Buma"));
 //    TS_ASSERT_EQUALS( p.val("surnname", std::string("no-name")), std::string("no-name")     );
 //    
-//    TS_ASSERT_EQUALS( (real_t)p.val("joy", 1.1), (real_t)3.5 );
-//    TS_ASSERT_EQUALS( (real_t)p.val("bad", 1.1), (real_t)1.1 );
+//    TS_ASSERT_EQUALS( (Real)p.val("joy", 1.1), (Real)3.5 );
+//    TS_ASSERT_EQUALS( (Real)p.val("bad", 1.1), (Real)1.1 );
 //    
 //    res = 0.0;
 //    TS_ASSERT( p.get(&res, "first"));
@@ -112,7 +112,7 @@ public:
 //  
 //  void testGetIndex( void )
 //  {
-//    real_t res;
+//    Real res;
 //    Params p;
 //    p.add("1");
 //    p.add("5");
@@ -149,8 +149,8 @@ public:
 //    TS_ASSERT_EQUALS( p.val("name", std::string("no-name"))    , std::string("Gaspard Buma"));
 //    TS_ASSERT_EQUALS( p.val("surnname", std::string("no-name")), std::string("no-name")     );
 //    
-//    TS_ASSERT_EQUALS( (real_t)p.val("joy", 1.1), (real_t)3.5 );
-//    TS_ASSERT_EQUALS( (real_t)p.val("bad", 1.1), (real_t)1.1 );
+//    TS_ASSERT_EQUALS( (Real)p.val("joy", 1.1), (Real)3.5 );
+//    TS_ASSERT_EQUALS( (Real)p.val("bad", 1.1), (Real)1.1 );
 //  }
 //  
 //  void testOstream( void )
@@ -176,11 +176,11 @@ public:
 //  void testCastParam( void )
 //  {
 //    int i = 0;
-//    real_t d = 0.0;
+//    Real d = 0.0;
 //    Params p;
 //    i = p.cast_param<int>(std::string("1"));
 //    TS_ASSERT_EQUALS( i, 1);
-//    d = p.cast_param<real_t>(std::string("1.234"));
+//    d = p.cast_param<Real>(std::string("1.234"));
 //    TS_ASSERT_EQUALS( d, 1.234);
 //  }
   

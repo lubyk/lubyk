@@ -46,7 +46,7 @@ size_t Hash::cast_param(const std::string& value)
 }
 
 template<>
-real_t Hash::cast_param(const std::string& value)
+Real Hash::cast_param(const std::string& value)
 {
   return atof(value.c_str());
 }
