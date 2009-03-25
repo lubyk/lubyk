@@ -234,7 +234,7 @@ public:
   }
 #endif
 private:
-  friend std::ostream& operator<< (std::ostream& os, const Value val);
+  friend std::ostream& operator<< (std::ostream& os, const Value& val);
 };
 
 /** Macro to ease Value specialization. 
@@ -276,5 +276,5 @@ public: \
   { Value(s).set(*this);                                            \
     return *this; }                                                 \
     
-std::ostream& operator<< (std::ostream& pStream, const Value val);
+std::ostream& operator<< (std::ostream& pStream, const Value& val);
 #endif // _VALUE_H_

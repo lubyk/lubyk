@@ -7,17 +7,7 @@
 
 namespace oscit {
 #define OSC_NEXT_NAME_BUFFER_SIZE 20
-#define NO_TYPE_TAG H("")
 
-#define REAL_TYPE 'd'
-#define REAL_SIGNATURE H("d")
-#define RealValue "d"
-
-#define STRING_TYPE 's'
-#define STRING_SIGNATURE H("s")
-#define StringValue "s"
-
-#define MULTI_SIGNATURE H("*")
 class Root;
 class Alias;
 
@@ -101,7 +91,7 @@ public:
   //FIX   for(it = pParams.begin(); it != end; it++) {
   //FIX     TypedValue tval;
   //FIX     if ( (obj = child(*it)) && pParams.get(&tval, *it) ) {
-  //FIX       if (obj->typeTag_ == hashId(tval.type)) obj->trigger(&tval.value);
+  //FIX       if (obj->typeTagID_ == hashId(tval.type)) obj->trigger(&tval.value);
   //FIX       // TODO: else ?
   //FIX     }
   //FIX   }
@@ -110,13 +100,13 @@ public:
   
   /** Shortcut to call first method on an object.
     * Using "obj.set('waga',3.4,1)" is equivalent to calling "obj.first_method(['waga',3.4,1])". */
-  bool set(const char * typeTag, const Value val)
+  bool set(const char * typeTag, const Value& val)
   {
     Object * obj;
     // use first method as default
     string_iterator it  = children_.begin();
     string_iterator end = children_.end();
-    if (it != end && (obj = child(*it)) && obj->typeTag_ == hashId(typeTag)) {
+    if (it != end && (obj = child(*it)) && obj->typeTagID_ == hashId(typeTag)) {
       // TODO: if the object type is "M" (matrix) ===> build a matrix from first "ffff" into a values.
       obj->trigger(val);
     }
@@ -148,15 +138,15 @@ public:
   virtual void clear();
 
   /** This is the operation executed when the object is called.
-    * @param val The parameters either respect the object's or the list of values is set to NULL.
-    * @return This method *MUST* return the exact value types that it has advertised. */
-  virtual const Value trigger (const Value val)
+   *  In order to benefit from return value optimization and avoid too many copy
+   *  you have to use Value v = xxx.trigger(val). */
+  virtual const Value trigger (const Value& val)
   {
-    return Value();
+    return gNilValue;
   }
 
   /** This method is called whenever a sub-node or branch is not found and this is the last found object along the path. */
-  virtual const Value notFound (const std::string& pUrl, const char * typeTag, const Value val)
+  virtual const Value notFound (const std::string& pUrl, const char * typeTag, const Value& val)
   {
     raiseError(std::string("Object '").append(pUrl).append("' not found."));
     return gNilValue;
@@ -214,10 +204,11 @@ public:
   }
   
   /** Return the type tag string. */
-  const std::string getTypeTag() const
-  {
-    return typeTagStr_;
-  }
+  //const std::string getTypeTag() const
+  //{
+  //  return param_.getTypeTag();
+  //}
+  
   /* ========================== REPLIES TO META METHODS =========================== */
   /* The replies to meta methods are implemented as virtuals so that objects that   */
   /* inherit from osc::Object just need to overwrite these in order to return more  */
@@ -349,15 +340,8 @@ protected:
     */
   void setTypeTag(const char * typeTag)
   {
-    if (typeTag_ == MULTI_SIGNATURE) {
-      free(param_.list);
-    }
-    typeTag_ = hashId(typeTag);
-    typeTagStr_ = typeTag; // TODO: is there any risk here that the string will blow away ? Should we use std::string and point inside instead ?
-    
-    if (typeTag_ == MULTI_SIGNATURE) {
-      param_.list = Value::alloc(strlen(typeTag));
-    }
+    typeTagID_ = hashId(typeTag);
+    param_.setTypeTag(typeTag);
   }
   
 private:
@@ -392,8 +376,7 @@ protected:
   std::string                 url_;              /**< Absolute path to object (cached). TODO: this cache is not really needed. */
   std::string                 name_;             /**< Unique name in parent's context. */
   std::string                 mInfo;             /**< Help/information string. */
-  uint                        typeTag_;          /**< OSC type tag id. */
-  std::string                 typeTagStr_;       /**< C String representation of the type tag in the form of "ffi" for "array of two floats and an integer". */
+  uint                        typeTagID_;          /**< OSC type tag id. */
   static size_t               sIdCounter;        /**< Use to set a default id and position. */
 
 private:

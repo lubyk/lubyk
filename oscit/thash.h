@@ -37,7 +37,9 @@
 // finally the macro used to generate the hash
 #define H(string) (uint)HASH_RECURSE_00(string, *string)
 
+#ifndef uint
 typedef unsigned int uint;
+#endif
 
 typedef std::list<std::string>::iterator string_iterator;
 typedef std::list<std::string>::const_iterator const_string_iterator;

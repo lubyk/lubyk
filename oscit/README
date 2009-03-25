@@ -1,0 +1,5 @@
+=== developers
+
+The code written here conforms to http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml. Please follow these guidelines if you want to contribute.
+
+As an addition to these guidelines, please write tests.

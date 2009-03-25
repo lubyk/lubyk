@@ -192,7 +192,7 @@ public:
   }
   
   /** Set Value for string key. */
-  void set_key (const std::string& pKey, const Value val) // FIXME: replace by 'set' and change Value.set for something else.
+  void set_key (const std::string& pKey, const Value& val) // FIXME: replace by 'set' and change Value.set for something else.
   {
     mutable_data()->mHash.set(pKey, val);
   }

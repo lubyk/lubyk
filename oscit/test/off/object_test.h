@@ -1,23 +1,6 @@
 #include "test_helper.h"
 #include "oscit/root.h"
 
-class DummyObject : public oscit::Object
-{
-public:
-  DummyObject(const char * name, int value) : oscit::Object(name), value_(value) {}
-  
-  virtual ~DummyObject() {}
-  
-  virtual const std::string inspect()
-  {
-    std::ostringstream os(std::ostringstream::out);
-    os << name_ << ": " << value_;
-    return os.str();
-  }
-private:
-  int value_;
-};
-
 class ObjectTest : public TestHelper
 {
 public:

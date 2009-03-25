@@ -332,7 +332,7 @@ _again:
   return p - pStr;
 }
 
-std::ostream& operator<< (std::ostream& pStream, const Value val)
+std::ostream& operator<< (std::ostream& pStream, const Value& val)
 {
   if (val.ptr_ && val.ptr_->dataPtr_) {
     val.ptr_->dataPtr_->to_stream(pStream);

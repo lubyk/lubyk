@@ -70,13 +70,13 @@ public:
   }
 
   /** Execute the default operation for an object. */
-  const Value call (const char* pUrl, const char * typeTag, const Value val)
+  const Value call (const char* pUrl, const char * typeTag, const Value& val)
   {
     return call(std::string(pUrl), typeTag, val);
   }
 
   /** Execute the default operation for an object. */
-  const Value call (const std::string& pUrl, const char * typeTag, const Value val)
+  const Value call (const std::string& pUrl, const char * typeTag, const Value& val)
   {
     Object * target = NULL;
     size_t pos;
@@ -160,7 +160,7 @@ public:
     mControllers.push_back(pSatellite);
   }
   
-  void receive(const std::string& pUrl, const char * typeTag, const Value val)
+  void receive(const std::string& pUrl, const char * typeTag, const Value& val)
   {
     //FIX Value res;
     
@@ -172,7 +172,7 @@ public:
     //FIX send_reply(pUrl, res);
   }
   
-  inline void send_reply(const std::string& pUrl, const char * typeTag, const Value val)
+  inline void send_reply(const std::string& pUrl, const char * typeTag, const Value& val)
   {
     OscSend::send_all(mControllers, pUrl, typeTag, val);
   }

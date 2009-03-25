@@ -54,7 +54,7 @@ public:
   
   TMatrixx(size_t pRowCount, size_t pColCount) : Value(new TMatrixData<T>(pRowCount, pColCount)) {}
   
-  const Value& operator= (const Value val)
+  const Value& operator= (const Value& val)
   { 
     val.set(*this);
     return val; 
@@ -160,9 +160,9 @@ public:
     return mutable_data()->copy_at(pRowIndex, *A_data, pStartRow, pEndRow, pResize);
   }
 
-  // FIXME: what is this ? bool copy(const Value val);
+  // FIXME: what is this ? bool copy(const Value& val);
   
-  // FIXME: what is this ? bool copy_at(int pRowIndex, const Value val);
+  // FIXME: what is this ? bool copy_at(int pRowIndex, const Value& val);
   
   /** Append a vector to the end of the current data. Size increases automatically. */
   bool append (const T * pVector, size_t pVectorSize)

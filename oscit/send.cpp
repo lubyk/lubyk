@@ -33,7 +33,7 @@ void OscSend::send(const osc::OutboundPacketStream& pMsg)
   mSocket->Send(pMsg.Data(), pMsg.Size());
 }
 
-void OscSend::send(const std::string& pUrl, const Value val)
+void OscSend::send(const std::string& pUrl, const Value& val)
 {
   // char buffer[OSC_OUT_BUFFER_SIZE]; // TODO: reuse buffer
   // osc::OutboundPacketStream oss( buffer, OSC_OUT_BUFFER_SIZE );
@@ -41,7 +41,7 @@ void OscSend::send(const std::string& pUrl, const Value val)
   // send(oss);
 }
 
-void OscSend::send_all(std::list<OscSend*>& pRecipients, const std::string& pUrl, const char * typeTags, const Value val)
+void OscSend::send_all(std::list<OscSend*>& pRecipients, const std::string& pUrl, const char * typeTags, const Value& val)
 { 
   std::list<OscSend*>::iterator it  = pRecipients.begin();
   std::list<OscSend*>::iterator end = pRecipients.end();
@@ -57,7 +57,7 @@ void OscSend::send_all(std::list<OscSend*>& pRecipients, const std::string& pUrl
   while (it != end) (*it++)->send(oss);
 }
 
-void OscSend::values_to_stream (osc::OutboundPacketStream& pOut, const char * typeTags, const Value val)
+void OscSend::values_to_stream (osc::OutboundPacketStream& pOut, const char * typeTags, const Value& val)
 { 
   uint i = 0;
   char c;

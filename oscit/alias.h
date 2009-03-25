@@ -34,7 +34,7 @@ public:
     return H("Alias");
   }
   
-  virtual const Value trigger (const Value val)
+  virtual const Value trigger (const Value& val)
   {
     return original_ ? original_->trigger(val) : gNilValue;
   }

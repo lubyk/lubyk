@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 
+typedef unsigned int uint;
+
 using namespace std;
 enum value_t {
   NilValue  = 0,
@@ -16,18 +18,20 @@ int main()
   string s;
   string s2 = "foo";
   cout
-       << "bool: "   << 8 * sizeof(bool)           << " bits" << endl
-       << "char: "   << 8 * sizeof(char)           << " bits" << endl
-       << "value_t: "<< 8 * sizeof(value_t)        << " bits" << endl
-       << "int: "    << 8 * sizeof(int)            << " bits" << endl
-       << "size_t: " << 8 * sizeof(size_t)         << " bits" << endl
-       << "time_t: " << 8 * sizeof(time_t)         << " bits" << endl
-       << "long: "   << 8 * sizeof(long)           << " bits" << endl
-       << "float: "  << 8 * sizeof(float)          << " bits" << endl
-       << "double*: "  << 8*sizeof(double*)        << " bits" << endl
-       << "double: " << 8*sizeof(double)           << " bits" << endl
-       << "long double: " << 8*sizeof(long double) << " bits" << endl
-       << "empty string: " << 8*sizeof(s) << " bits" << endl
-       << "foo string: " << 8*sizeof(s2) << " bits" << endl
+       << "bool: "   << sizeof(bool)           << " bytes" << endl
+       << "char: "   << sizeof(char)           << " bytes" << endl
+       << "short: "   << sizeof(short)           << " bytes" << endl
+       << "uint: "   << sizeof(uint)           << " bytes" << endl
+       << "value_t: "<< sizeof(value_t)        << " bytes" << endl
+       << "int: "    << sizeof(int)            << " bytes" << endl
+       << "size_t: " << sizeof(size_t)         << " bytes" << endl
+       << "time_t: " << sizeof(time_t)         << " bytes" << endl
+       << "long: "   << sizeof(long)           << " bytes" << endl
+       << "float: "  << sizeof(float)          << " bytes" << endl
+       << "double*: "  << sizeof(double*)        << " bytes" << endl
+       << "double: " << sizeof(double)           << " bytes" << endl
+       << "long double: " << sizeof(long double) << " bytes" << endl
+       << "empty string: " << sizeof(s) << " bytes" << endl
+       << "foo string: " << sizeof(s2) << " bytes" << endl
        ;
 }

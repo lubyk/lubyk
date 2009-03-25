@@ -2,72 +2,254 @@
 #define _VALUE_H_
 #include "oscit/conf.h"
 
-/** Value is a union which can contain real_t values or pointers to other types of values.
+namespace oscit {
+  
+class List;
+  
+enum value_t
+{
+  NilValueType = 0,
+  RealValueType,
+  StringValueType,
+  ErrorValueType,
+  ListValueType,
+};
 
-This type is very simple for efficiency reasons and so that it can be easily shared with 'C' as a POD.
-There is no 'append', 'type' or 'size' or anything that would require some knowledge of the actual content of
-the union. If you need these functionalities, it should not be too hard to write a TypedValue wrapper. */
-union Value
+enum value_type_tag_t
+{
+  NilTypeTag =  'N',
+  RealTypeTag = 'f',
+  StringTypeTag = 's',
+  ErrorTypeTag  = 's',
+};
+
+/** Value is the base type of all data transmitted between objects or used as parameters
+and return values for osc messages. */
+class Value
 { 
-  Value() : r(0) {}
-  explicit Value(real_t pR) : r(pR) {}
-  explicit Value(int    pI) : r((real_t)pI) {}
-  explicit Value(Value * pValues) : list(pValues) {}
+public:
+  Value() : type_(NilValueType) {}
   
-  /** Allocate space for a list of values. */
-  static Value * alloc(size_t pSize)
+  explicit Value(real_t real) : type_(RealValueType), r(real) {}
+  
+  explicit Value(const char * string) : type_(StringValueType)
   {
-    Value * list = (Value*)malloc(pSize * sizeof(Value));
-    if (list == NULL)
-      return NULL;
-    
-    for (size_t i = 0; i < pSize; i++)
-      list[i].f = 0.0;
-    return list;
+    setString(string);
   }
   
-  /** Free memory allocated for list. */
-  void dealloc()
+  explicit Value(std::string& string) : type_(StringValueType)
   {
-    free(list);
+    setString(string.c_str());
   }
   
-  real_t r;
-  real_t f; // alias for r
-  real_t d; // alias for r
-  Value * list; // multi-value
+  explicit Value(List * list) : type_(ListValueType)
+  {
+    setList(list);
+  }
+  
+  Value(value_t type, const char * typeTag) : type_(NilValueType)
+  {
+    setTypeTag(typeTag);
+  }
+  
+  /** Create a default value from a type char. */
+  explicit Value(char typeChar)
+  {
+    setType(typeFromChar(typeChar));
+  }
+  
+  /** Copy constructor (needed since many methods return a Value). */
+  Value(const Value& value) : type_(NilValueType) {
+    *this = value;
+  }
+  
+  /** Copy the content of the other value. */
+  void operator=(const Value& value) {
+    switch(value.type_) {
+    case RealValueType:
+      set(value.r);
+      break;
+    case StringValueType:
+      set(value.s);
+      break;
+    case ListValueType:
+      set(value.list);
+      break;
+    default:
+      set();
+    }
+  }
+  
+  ~Value()
+  {
+    clear();
+  }
+  
+  bool isNil() const
+  { return type_ == NilValueType; }
+  
+  bool isReal() const
+  { return type_ == RealValueType; }
+  
+  bool isString() const
+  { return type_ == StringValueType; }
+  
+  bool isError() const
+  { return type_ == ErrorValueType; }
+  
+  inline const char * getTypeTag() const;
+  
+  /** Change the value to nil. */
+  void set()
+  {
+    setTypeNoDefault(NilValueType);
+  }
+  
+  /** Change the Value into a RealValue. */
+  void set(real_t real)
+  {  
+    setTypeNoDefault(RealValueType);
+    r = real;
+  }
+  
+  /** Change the Value into a StringValue. */
+  void set(const char * string)
+  {  
+    setTypeNoDefault(StringValueType);
+    setString(string);
+  }
+  
+  /** Change the Value into a StringValue. */
+  void set(const List * pList)
+  {  
+    setTypeNoDefault(ListValueType);
+    setList(pList);
+  }
+  
+  /** Change the Value into the specific type. Since a default value must be set,
+    * it is better to use 'set'. */
+  void setType(value_t type)
+  {
+    setTypeNoDefault(type);
+    setDefault();
+  }
+  
+  /** Change the Value into something defined in a typeTag. */
+  inline void setTypeTag(const char * typeTag);
+  
+  static value_t typeFromChar(char c)
+  {
+    switch(c) {
+      case RealTypeTag:   return RealValueType;
+      case StringTypeTag: return StringValueType;
+      case NilTypeTag:    return NilValueType;
+      default:            return NilValueType;
+    }
+  }
+  
+  inline const Value& operator[](size_t pos) const;
+  
+  inline Value& operator[](size_t pos);
+private:
+  /** Set the value to nil and release/free contained data. */
+  inline void clear();
+  
+  /** Change the Value into the specific type. Does not set any default value
+    * so the object must be considered uninitialized. */
+  void setTypeNoDefault(value_t type)
+  {
+    clear();
+    type_ = type;
+  }
+  
+  /** Properly initialize the type with a default value. */
+  inline void setDefault();
+  
+  void setString(const char * string)
+  {
+    size_t len = strlen(string) + 1;
+    s = (char*)malloc(sizeof(char) * len);
+    memcpy(s,string,len);
+  }
+  
+  inline void setList(const List * pList);
+  
+  uint type_;
+  
+public:
+  union {
+    real_t r;
+    real_t f; // alias for r
+    real_t d; // alias for r
+    char * s; // string
+    List * list; // multi-value
+  };
 };
 
 extern Value gNilValue;
-/*
 
-explicit Value(char * pS) : s(pS) {}
-const char * s;
+} // oscit
 
-#include "rubyk_types.h"
-#include "thash.h"
-struct TypedValue
-{
-  TypedValue() : type('\0'), value(0.0) {}
-  TypedValue(char pType, Value& pVal) : type(pType), value(pVal) {}
-  char  type;
-  Value value;
-};
+#include "oscit/values/list.h"
 
-typedef THash<std::string,TypedValue> Hash;
-typedef std::list<std::string>::const_iterator Hash_iterator;
+namespace oscit {
+const char * Value::getTypeTag() const {
+  switch(type_) {
+  case RealValueType:   return "f";
+  case StringValueType: return "s";
+  case NilValueType:    return "N";
+  case ListValueType:   return list->getTypeTag();
+  default:              return "N";
+  }
+}
 
+void Value::setTypeTag(const char * typeTag) {
+  if (strlen(typeTag) > 1) {
+    setTypeNoDefault(ListValueType);
+    list = new List(typeTag);
+  } else {
+    setType(typeFromChar(typeTag[0]));
+  }
+}
 
-// how about reference counting ?
+const Value& Value::operator[](size_t pos) const {
+  return (*list)[pos];
+}
 
-val->f ===> float
-val->mat => matrix
+Value& Value::operator[](size_t pos) {
+  return (*list)[pos];
+}
 
-// reference counting implemented in the matrix:
+void Value::clear() {
+  switch(type_) {
+  case ListValueType:
+    if (list != NULL) delete list;
+    list = NULL;
+    break;
+  case StringValueType:
+    if (s != NULL) free(s);
+    s = NULL;
+    break;
+  }
+}
 
-Matrix * mat = val->mat;
-acquire(mat);
-...
-release(mat); // deleted if reference count reaches 0
-*/
+void Value::setDefault() {
+  switch(type_) {
+  case RealValueType:
+    r = 0.0;
+    break;
+  case StringValueType:
+    setString("");
+    break;
+  case ListValueType:
+    list = new List;
+    break;
+  }
+  
+}
+
+void Value::setList(const List * pList) {
+  list = new List(*pList);
+}
+} // oscit
 #endif // _VALUE_H_
