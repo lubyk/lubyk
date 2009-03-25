@@ -92,7 +92,7 @@ public:
   }
   
   /** Write a matrix to a filepath. */
-  bool to_file(const std::string& pPath, const char * pMode = "wb", bool isMatrix = true) const
+  bool to_file(const std::string &pPath, const char * pMode = "wb", bool isMatrix = true) const
   {
     GET_THIS_DATA()
     return this_data->to_file(pPath, pMode, isMatrix);
@@ -110,7 +110,7 @@ public:
   }
   
   /** Read a matrix from a filepath. */
-  bool from_file(const std::string& pPath, const char * pMode = "rb")
+  bool from_file(const std::string &pPath, const char * pMode = "rb")
   {
     return mutable_data()->from_file(pPath, pMode);
   }

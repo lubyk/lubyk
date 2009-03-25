@@ -5,214 +5,214 @@
 class ObjectTest : public TestHelper
 {
 public:
-  void testCreate( void )
+  void test_create( void )
   {
     DummyObject a("a", 1);
-    assertEqual("a", a.name());
+    assert_equal("a", a.name());
   }
   
-  void testRoot( void )
+  void test_root( void )
   {
-    oscit::Root root;
+    Root root;
     DummyObject * a  = new DummyObject("a", 1);
     DummyObject * a2 = new DummyObject("a", 2);
-    oscit::Object * res;
+    Object * res;
     
-    assertTrue( root.get(&res, "") );
-    assertEqual( &root, res );
+    assert_true( root.get_object_at("", &res) );
+    assert_equal(&root, res );
     
-    assertFalse( root.get(&res, "/a") );
+    assert_false( root.get_object_at("/a", &res) );
     
     root.adopt(a);
     
-    assertTrue( root.get(&res, "/a") );
-    assertEqual( a, res );
+    assert_true( root.get_object_at("/a", &res) );
+    assert_equal(a, res );
     
     root.adopt(a2);
-    assertTrue( root.get(&res, "/a") );
-    assertEqual( a, res );
+    assert_true( root.get_object_at("/a", &res) );
+    assert_equal(a, res );
     
-    assertTrue( root.get(&res, "/a-1") );
-    assertEqual( a2, res );
+    assert_true( root.get_object_at("/a-1", &res) );
+    assert_equal(a2, res );
     
     root.clear();
-    assertTrue( !root.get(&res, "/a") );
-    assertTrue( !root.get(&res, "/a-1") );
-    assertTrue( root.get(&res, "") );
-    assertEqual( &root, res );
+    assert_true( !root.get_object_at("/a", &res) );
+    assert_true( !root.get_object_at("/a-1", &res) );
+    assert_true( root.get_object_at("", &res) );
+    assert_equal(&root, res );
   }
   
-  void testAdopt( void )
+  void test_adopt( void )
   {
-    oscit::Root root;
-    oscit::Object * one = root.adopt(new oscit::Object("one")); // This is the prefered way of creating sub-objects.
-    oscit::Object * sub = one->adopt(new oscit::Object("sub"));
+    Root root;
+    Object * one = root.adopt(new Object("one")); // This is the prefered way of creating sub-objects.
+    Object * sub = one->adopt(new Object("sub"));
   
-    assertEqual( root.url(),     std::string("") );
-    assertEqual( one->url(),     std::string("/one") );
-    assertEqual( sub->url(),     std::string("/one/sub") );
+    assert_equal(root.url(),     std::string("") );
+    assert_equal(one->url(),     std::string("/one") );
+    assert_equal(sub->url(),     std::string("/one/sub") );
     
-    assertEqual( root.child("one"), one);
-    assertEqual( root.child("foo"), (oscit::Object*)NULL);
+    assert_equal(root.child("one"), one);
+    assert_equal(root.child("foo"), (Object*)NULL);
     
-    one->setName("foo");
-    assertEqual( root.child("one"), (oscit::Object*)NULL);
-    assertEqual( root.child("foo"), one);
-    assertEqual( root.find("/one/sub"), (oscit::Object*)NULL);
-    assertEqual( root.find("/foo/sub"), sub);
+    one->set_name("foo");
+    assert_equal(root.child("one"), (Object*)NULL);
+    assert_equal(root.child("foo"), one);
+    assert_equal(root.object_at("/one/sub"), (Object*)NULL);
+    assert_equal(root.object_at("/foo/sub"), sub);
   }
   
-  void testGetFirstChild( void )
+  void test_first_child( void )
   {
-    oscit::Root root;
-    oscit::Object * one = root.adopt(new oscit::Object("one"));
-    oscit::Object * two = root.adopt(new oscit::Object("aaa"));
+    Root root;
+    Object * one = root.adopt(new Object("one"));
+    Object * two = root.adopt(new Object("aaa"));
     
-    assertEqual( one, root.getFirstChild());
+    assert_equal(one, root.first_child());
     
     delete one;
-    assertEqual( two, root.getFirstChild());
+    assert_equal(two, root.first_child());
   }
   
-  void testSetParent( void )
+  void test_set_parent( void )
   {
-    oscit::Root root;
-    oscit::Object * child1 = new oscit::Object("foo");
-    oscit::Object * child2 = new oscit::Object("bar");
-    oscit::Object * child3 = new oscit::Object("foo");
+    Root root;
+    Object * child1 = new Object("foo");
+    Object * child2 = new Object("bar");
+    Object * child3 = new Object("foo");
     
-    assertEqual( std::string("")   , root.url()    );
-    assertEqual( std::string("foo"), child1->url() );
-    assertEqual( std::string("bar"), child2->url() );
-    assertEqual( std::string("foo"), child3->url() );
+    assert_equal(std::string("")   , root.url()    );
+    assert_equal(std::string("foo"), child1->url() );
+    assert_equal(std::string("bar"), child2->url() );
+    assert_equal(std::string("foo"), child3->url() );
     
-    child1->setParent(root);
+    child1->set_parent(root);
     
-    assertEqual( std::string("")    , root.url()    );
-    assertEqual( std::string("/foo"), child1->url() );
-    assertEqual( std::string("bar") , child2->url() );
-    assertEqual( std::string("foo") , child3->url() );
+    assert_equal(std::string("")    , root.url()    );
+    assert_equal(std::string("/foo"), child1->url() );
+    assert_equal(std::string("bar") , child2->url() );
+    assert_equal(std::string("foo") , child3->url() );
     
-    child2->setParent(child1);
+    child2->set_parent(child1);
     
-    assertEqual( std::string("")        , root.url()    );
-    assertEqual( std::string("/foo")    , child1->url() );
-    assertEqual( std::string("/foo/bar"), child2->url() );
-    assertEqual( std::string("foo")     , child3->url() );
+    assert_equal(std::string("")        , root.url()    );
+    assert_equal(std::string("/foo")    , child1->url() );
+    assert_equal(std::string("/foo/bar"), child2->url() );
+    assert_equal(std::string("foo")     , child3->url() );
     
-    child3->setParent(root);
+    child3->set_parent(root);
     
-    assertEqual( std::string("")        , root.url()    );
-    assertEqual( std::string("/foo")    , child1->url() );
-    assertEqual( std::string("/foo/bar"), child2->url() );
-    assertEqual( std::string("/foo-1")  , child3->url() );
+    assert_equal(std::string("")        , root.url()    );
+    assert_equal(std::string("/foo")    , child1->url() );
+    assert_equal(std::string("/foo/bar"), child2->url() );
+    assert_equal(std::string("/foo-1")  , child3->url() );
   }
   
-  void testRename( void )
+  void test_rename( void )
   {
-    oscit::Root root;
-    oscit::Object * foo = root.adopt(new oscit::Object("foo"));
-    oscit::Object * bar = foo->adopt(new oscit::Object("bar"));
+    Root root;
+    Object * foo = root.adopt(new Object("foo"));
+    Object * bar = foo->adopt(new Object("bar"));
     
-    assertEqual( std::string("")        , root.url() );
-    assertEqual( std::string("/foo")    , foo->url() );
-    assertEqual( std::string("/foo/bar"), bar->url() );
+    assert_equal(std::string("")        , root.url() );
+    assert_equal(std::string("/foo")    , foo->url() );
+    assert_equal(std::string("/foo/bar"), bar->url() );
     
-    foo->setName("super");
+    foo->set_name("super");
     
-    assertEqual( std::string("")          , root.url() );
-    assertEqual( std::string("/super")    , foo->url() );
-    assertEqual( std::string("/super/bar"), bar->url() );
+    assert_equal(std::string("")          , root.url() );
+    assert_equal(std::string("/super")    , foo->url() );
+    assert_equal(std::string("/super/bar"), bar->url() );
   }
   
-  void testGetObject( void )
+  void test_get( void )
   {
-    oscit::Root root;
-    oscit::Object * foo = root.adopt(new oscit::Object("foo"));
-    oscit::Object * bar = foo->adopt(new oscit::Object("bar"));
-    oscit::Object * res;
+    Root root;
+    Object * foo = root.adopt(new Object("foo"));
+    Object * bar = foo->adopt(new Object("bar"));
+    Object * res;
   
-    assertEqual( std::string("")        , root.url() );
-    assertEqual( std::string("/foo")    , foo->url() );
-    assertEqual( std::string("/foo/bar"), bar->url() );
+    assert_equal(std::string("")        , root.url() );
+    assert_equal(std::string("/foo")    , foo->url() );
+    assert_equal(std::string("/foo/bar"), bar->url() );
   
-    assertTrue(root.get(&res, ""));
-    assertEqual( &root, res );
+    assert_true(root.get_object_at("", &res));
+    assert_equal(&root, res );
     
-    assertTrue(root.get(&res, "/foo"));
-    assertEqual( foo, res );
+    assert_true(root.get_object_at("/foo", &res));
+    assert_equal(foo, res );
     
-    assertTrue(root.get(&res, "/foo/bar"));
-    assertEqual( bar, res );
+    assert_true(root.get_object_at("/foo/bar", &res));
+    assert_equal(bar, res );
     
     
-    assertFalse( root.get(&res, "/super"));
-    assertFalse( root.get(&res, "/super/bar"));
+    assert_false( root.get_object_at("/super", &res));
+    assert_false( root.get_object_at("/super/bar", &res));
     
-    foo->setName("super");
+    foo->set_name("super");
     
-    assertTrue(root.get(&res, "/super"));
-    assertEqual( foo, res );
+    assert_true(root.get_object_at("/super", &res));
+    assert_equal(foo, res );
     
-    assertTrue(root.get(&res, "/super/bar"));
-    assertEqual( bar, res );
+    assert_true(root.get_object_at("/super/bar", &res));
+    assert_equal(bar, res );
     
-    assertFalse( root.get(&res, "/foo"));
-    assertFalse( root.get(&res, "/foo/bar"));
+    assert_false( root.get_object_at("/foo", &res));
+    assert_false( root.get_object_at("/foo/bar", &res));
   }
   
 //  void testCall( void )
 //  {
-//    oscit::Root root;
-//    oscit::Object * one = root.adopt(new oscit::Object("one"));
-//    oscit::Object * two = root.adopt(new oscit::Object("two"));
-//    oscit::Object * sub = two->adopt(new oscit::Object("sub"));
+//    Root root;
+//    Object * one = root.adopt(new Object("one"));
+//    Object * two = root.adopt(new Object("two"));
+//    Object * sub = two->adopt(new Object("sub"));
 //    Value res, param;
 //    String str;
 //  
-//    assertEqual( std::string("")        , root.url() );
-//    assertEqual( std::string("/one")    , one->url() );
-//    assertEqual( std::string("/two")    , two->url() );
-//    assertEqual( std::string("/two/sub"), sub->url() );
+//    assert_equal(std::string("")        , root.url() );
+//    assert_equal(std::string("/one")    , one->url() );
+//    assert_equal(std::string("/two")    , two->url() );
+//    assert_equal(std::string("/two/sub"), sub->url() );
 //    
 //    res = root.call("",param);
-//    assertTrue(!res.is_error());
-//    assertTrue(res.set(str));
-//    assertTrue( str == "one,two/" );
+//    assert_true(!res.is_error());
+//    assert_true(res.set(str));
+//    assert_true( str == "one,two/" );
 //    
 //    res = root.call("/one",param);
-//    assertTrue(res.is_nil());
+//    assert_true(res.is_nil());
 //    
 //    res = root.call("/two",param);
-//    assertFalse(res.is_error());
-//    assertTrue(res.set(str));
-//    assertTrue( str == "sub" );
+//    assert_false(res.is_error());
+//    assert_true(res.set(str));
+//    assert_true( str == "sub" );
 //  }
   
 //  
 //  void test_child( void )
 //  {
-//    oscit::Root root;
-//    oscit::Object * one = root.adopt(new oscit::Object("one"));
-//    oscit::Object * sub = one->adopt(new oscit::Object("sub"));
+//    Root root;
+//    Object * one = root.adopt(new Object("one"));
+//    Object * sub = one->adopt(new Object("sub"));
 //  
-//    assertEqual( root.url(),    std::string("") );
-//    assertEqual( one->url(),     std::string("/one") );
-//    assertEqual( sub->url(),     std::string("/one/sub") );
+//    assert_equal(root.url(),    std::string("") );
+//    assert_equal(one->url(),     std::string("/one") );
+//    assert_equal(sub->url(),     std::string("/one/sub") );
 //    
-//    assertEqual( root.child("one"), one);
-//    assertEqual( root.child("foo"), (oscit::Object*)NULL);
+//    assert_equal(root.child("one"), one);
+//    assert_equal(root.child("foo"), (Object*)NULL);
 //    
-//    one->setName("foo");
-//    assertEqual( root.child("one"), (oscit::Object*)NULL);
-//    assertEqual( root.child("foo"), one);
-//    assertEqual( root.find("/one/sub"), (oscit::Object*)NULL);
-//    assertEqual( root.find("/foo/sub"), sub);
+//    one->set_name("foo");
+//    assert_equal(root.child("one"), (Object*)NULL);
+//    assert_equal(root.child("foo"), one);
+//    assert_equal(root.object_at("/one/sub"), (Object*)NULL);
+//    assert_equal(root.object_at("/foo/sub"), sub);
 //  }
 //  
 //  void test_call_bad_object( void )
 //  {
-//    oscit::Root root;
+//    Root root;
 //    Value res, param;
 //    
 //    Number n1(4);
@@ -222,39 +222,39 @@ public:
 //    res = root.call("/foo",param);
 //    assert_id(res, 2);
 //    
-//    assertTrue(res.is_error());
-//    assertEqual( Error(res).message(), std::string("Object '/foo' not found.") );
+//    assert_true(res.is_error());
+//    assert_equal(Error(res).message(), std::string("Object '/foo' not found.") );
 //  }
 //  
 //  void test_get_info( void )
 //  {
-//    oscit::Root root;
-//    oscit::Object no_info(root,"foo");
+//    Root root;
+//    Object no_info(root,"foo");
 //    Value res, param;
 //    
 //    root.setInfo("This is the root node.");
 //    res = root.call("/.info","");
-//    assertEqual( res.to_string(), "[1] This is the root node.");
+//    assert_equal(res.to_string(), "[1] This is the root node.");
 //    res = root.call("/foo/#info",param);
-//    assertEqual( res.to_string(), "[2] ");
+//    assert_equal(res.to_string(), "[2] ");
 //    
 //    res = root.call("/blah/#info",param);
-//    assertEqual( Error(res).message(), std::string("Object '/blah/#info' not found.") );
+//    assert_equal(Error(res).message(), std::string("Object '/blah/#info' not found.") );
 //  }
 //  
 //  void test_inspect( void )
 //  {
-//    oscit::Root root;
+//    Root root;
 //    root.adopt(new DummyObject("foo", 23));
 //    Value res;
 //    
 //    root.setInfo("This is the root node.");
 //    res = root.call("/#inspect");
-//    assertEqual( res.to_string(), "[1] This is the root node.");
+//    assert_equal(res.to_string(), "[1] This is the root node.");
 //    res = root.call("/foo/#inspect");
-//    assertEqual( res.to_string(), "[2] foo: 23");
+//    assert_equal(res.to_string(), "[2] foo: 23");
 //    
 //    res = root.call("/blah/#inspect");
-//    assertEqual( Error(res).message(), std::string("Object '/blah/#inspect' not found.") );
+//    assert_equal(Error(res).message(), std::string("Object '/blah/#inspect' not found.") );
 //  }
 };

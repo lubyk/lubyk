@@ -17,7 +17,7 @@ class Value : public TSmartPtr<Data>
 public:
   Value() {}
   
-  Value(const std::string& s)
+  Value(const std::string &s)
   {
     from_string(s);
   }
@@ -34,7 +34,7 @@ public:
   Value(Data * p) : TSmartPtr<Data>(p) {}
   
   /** Parse string to build a value from a json representation. */
-  size_t from_string(const std::string& s)
+  size_t from_string(const std::string &s)
   { return from_string(s.c_str()); }
   
   /** Parse string to build a value from a json representation. */
@@ -266,13 +266,13 @@ protected:                                                          \
 public: \
 
 #define VALUE_FROM_STRING(klass)                                    \
-  klass(const std::string& s)                                       \
+  klass(const std::string &s)                                       \
   { Value v(s);                                                     \
     v.set(*this); }                                                 \
   klass(const char * s)                                             \
   { Value v(s);                                                     \
     v.set(*this); }                                                 \
-  klass& operator= (const std::string& s)                           \
+  klass& operator= (const std::string &s)                           \
   { Value(s).set(*this);                                            \
     return *this; }                                                 \
     

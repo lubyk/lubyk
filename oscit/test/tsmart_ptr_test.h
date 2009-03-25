@@ -31,44 +31,44 @@ public:
 class SmartPointerTest : public TestHelper
 {  
 public:
-  void testCreate( void )
+  void test_create( void )
   { 
     TestSmart s(5);
-    assertEqual(5, s.getData()->value_);
+    assert_equal(5, s.getData()->value_);
   }
   
   void testRefCount( void )
   {
     TestSmart s(5);
-    assertEqual(1, s.getRefCount());
-    assertEqual(5, s.getData()->value_);
+    assert_equal(1, s.getRefCount());
+    assert_equal(5, s.getData()->value_);
     
     TestSmart * s2 =  new TestSmart(s);
-    assertEqual(2, s.getRefCount());
-    assertEqual(2, s2->getRefCount());
-    assertEqual(5, s2->getData()->value_);
+    assert_equal(2, s.getRefCount());
+    assert_equal(2, s2->getRefCount());
+    assert_equal(5, s2->getData()->value_);
     
     s2->getData()->value_ = 3;
-    assertEqual(3, s2->getData()->value_);
-    assertEqual(3, s.getData()->value_);
+    assert_equal(3, s2->getData()->value_);
+    assert_equal(3, s.getData()->value_);
     
     delete s2;
-    assertEqual(1, s.getRefCount());
+    assert_equal(1, s.getRefCount());
   }
   
   void testDelete( void )
   {
     const char * notification;
     TestSmart * s = new TestSmart(3, &notification);
-    assertEqual("created", notification);
+    assert_equal("created", notification);
     notification = "";
     // should not create a new TestSmartData
     TestSmart * s2 = new TestSmart(*s);
-    assertEqual("", notification);
+    assert_equal("", notification);
     delete s;
     // should not delete the TestSmartData
-    assertEqual("", notification);
+    assert_equal("", notification);
     delete s2;
-    assertEqual("deleted", notification);
+    assert_equal("deleted", notification);
   }
 };

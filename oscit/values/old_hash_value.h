@@ -118,7 +118,7 @@ public:
   //FIX }
   //FIX // FIX: remove
   //FIX template<class T>
-  //FIX T cast_param(const std::string& value) const
+  //FIX T cast_param(const std::string &value) const
   //FIX {
   //FIX   return (T)value;
   //FIX }
@@ -128,17 +128,17 @@ public:
   //FIX   add(std::string(str));
   //FIX }
   //FIX 
-  //FIX void add (const std::string& pValue) {
+  //FIX void add (const std::string &pValue) {
   //FIX   mListValues.push_back(pValue);
   //FIX }
   //FIX 
-  //FIX void set (const std::string& pKey, const std::string& pValue) {
+  //FIX void set (const std::string &pKey, const std::string &pValue) {
   //FIX   mHash.set(pKey,pValue);
   //FIX }
-  //FIX void set (const std::string& pKey, const char *       pValue) {
+  //FIX void set (const std::string &pKey, const char *       pValue) {
   //FIX   mHash.set(pKey, std::string(pValue));
   //FIX }
-  //FIX void set (const char *       pKey, const std::string& pValue) {
+  //FIX void set (const char *       pKey, const std::string &pValue) {
   //FIX   mHash.set(std::string(pKey), pValue);
   //FIX }
   //FIX void set (const char *       pKey, const char *       pValue) {
@@ -169,7 +169,7 @@ public:
   VALUE_FROM_STRING(Hash)
   
   /** Rebuild the whole dictionary from a single string. */
-  void rebuild(const std::string& s)
+  void rebuild(const std::string &s)
   {
     *this = Value(s);
   }
@@ -183,7 +183,7 @@ public:
   }
   
   /** Return a Value or Nil from a string key. */
-  const Value operator[] (const std::string& pKey) const;
+  const Value operator[] (const std::string &pKey) const;
   
   /** Return a Value or Nil from a string key. */
   const Value operator[] (const char * c) const
@@ -192,7 +192,7 @@ public:
   }
   
   /** Set Value for string key. */
-  void set_key (const std::string& pKey, const Value& val) // FIXME: replace by 'set' and change Value.set for something else.
+  void set_key (const std::string &pKey, const Value& val) // FIXME: replace by 'set' and change Value.set for something else.
   {
     mutable_data()->mHash.set(pKey, val);
   }
@@ -216,40 +216,40 @@ public:
   }
   
   template<class T>
-  static T cast_param(const std::string& value)
+  static T cast_param(const std::string &value)
   {
     return (T)value;
   }
 };
 
 template<>
-int Hash::cast_param (const std::string& value);
+int Hash::cast_param (const std::string &value);
 
 template<>
-bool Hash::cast_param (const std::string& value);
+bool Hash::cast_param (const std::string &value);
 
 template<>
-unsigned int Hash::cast_param (const std::string& value);
+unsigned int Hash::cast_param (const std::string &value);
 
 template<>
-unsigned char Hash::cast_param (const std::string& value);
+unsigned char Hash::cast_param (const std::string &value);
 
 template<>
-time_t Hash::cast_param (const std::string& value);
+time_t Hash::cast_param (const std::string &value);
 
 template<>
-size_t Hash::cast_param (const std::string& value);
+size_t Hash::cast_param (const std::string &value);
 
 template<>
-Real Hash::cast_param (const std::string& value);
+Real Hash::cast_param (const std::string &value);
 
 template<>
-float Hash::cast_param (const std::string& value);
+float Hash::cast_param (const std::string &value);
 
 template<>
-const char * Hash::cast_param (const std::string& value);
+const char * Hash::cast_param (const std::string &value);
 
 template<>
-char Hash::cast_param (const std::string& value);
+char Hash::cast_param (const std::string &value);
 
 #endif // _DICTIONARY_H_

@@ -13,19 +13,19 @@ public:
   Alias(const char *name, Object *object) : Object(name, object->type_tag_id_), original_(object) 
   {
     // We register so that the alias dies with the original object.
-    original_->registerAlias(this);
+    original_->register_alias(this);
   }
   
-  Alias(const std::string& name, Object * object) : Object(name, object->type_tag_id_), original_(object) 
+  Alias(const std::string &name, Object *object) : Object(name, object->type_tag_id_), original_(object) 
   {
     // We register so that the alias dies with the original object.
-    original_->registerAlias(this);
+    original_->register_alias(this);
   }
   
   virtual ~Alias()
   {
     // We unregister to tell the object that it should not delete this alias on destruction.
-    if (original_) original_->unregisterAlias(this);
+    if (original_) original_->unregister_alias(this);
   }
   
   /** Class signature. */
@@ -34,29 +34,26 @@ public:
     return H("Alias");
   }
   
-  virtual const Value trigger (const Value& val)
+  virtual const Value trigger(const Value &val)
   {
     return original_ ? original_->trigger(val) : gNilValue;
   }
   
-  void unlinkOriginal()
-  {
+  void unlink_original() {
     original_ = NULL;
   }
   
   /** Set new original object from url. */
-  void set_original(const std::string& pUrl)
-  {
-    Object * original = root_->find(pUrl);
+  void set_original(const std::string &url) {
+    Object *original = root_->object_at(url);
     if (original) set_original(original);
   }
   
   /** Set new original object from an object pointer. */
-  void set_original(Object * object)
-  {
-    if (original_) original_->unregisterAlias(this);
+  void set_original(Object *object) {
+    if (original_) original_->unregister_alias(this);
     original_ = object;
-    if (original_) original_->registerAlias(this);
+    if (original_) original_->register_alias(this);
   }
 protected:
   Object * original_; /**< Original object pointed to by the alias. */

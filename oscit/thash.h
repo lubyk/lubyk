@@ -363,7 +363,7 @@ inline uint hashId (const char * str)
 // ===== std::string& =====
 // sdbm function: taken from http://www.cse.yorku.ca/~oz/hash.html
 template<>
-inline uint hashId(const std::string& key)
+inline uint hashId(const std::string &key)
 {
   const char *str = key.c_str();
   return hashId(str);

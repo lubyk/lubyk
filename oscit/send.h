@@ -26,7 +26,7 @@ public:
   void send (const osc::OutboundPacketStream& pMsg);
   
   /** Send url with parameter. */
-  void send (const std::string& pUrl, const Value& val);
+  void send (const std::string &url, const Value& val);
   
   /** Build osc message and send it to all recipients of the provided list. */
   static void send_all(std::list<OscSend*>& pRecipients, const std::string &url, const Value &val);

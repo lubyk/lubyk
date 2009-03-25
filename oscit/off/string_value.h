@@ -11,7 +11,7 @@ class StringData : public Data
 public:
   DATA_METHODS(StringData, StringValue)
   
-  StringData(const std::string& s) : mString(s) {}
+  StringData(const std::string &s) : mString(s) {}
   
   StringData(const char * s) : mString(s) {}
   
@@ -51,7 +51,7 @@ class String : public Value
 {
 public:
   VALUE_METHODS(String, StringData, StringValue, Value)
-  String(const std::string& s) : Value(new StringData(s)) {}
+  String(const std::string &s) : Value(new StringData(s)) {}
   String(const char* s) : Value(new StringData(std::string(s))) {}
   
   const Value& operator= (const Value& val)
@@ -61,7 +61,7 @@ public:
   }
   
   /** Set String from std::string. */
-  const std::string& operator= (const std::string& s)
+  const std::string &operator= (const std::string &s)
   {
     mutable_data()->mString = s;
     return s;
@@ -74,7 +74,7 @@ public:
     return s;
   }
   
-  String& append(const std::string& s)
+  String& append(const std::string &s)
   {
     mutable_data()->mString.append(s);
     return *this;
@@ -91,7 +91,7 @@ public:
     return string().length();
   }
   
-  size_t rfind ( const std::string& str, size_t pos = std::string::npos ) const
+  size_t rfind ( const std::string &str, size_t pos = std::string::npos ) const
   {
     return string().rfind(str, pos);
   }
@@ -107,14 +107,14 @@ public:
     return this_data->mString == s;    
   }
   
-  bool operator==(const std::string& s)
+  bool operator==(const std::string &s)
   {
     GET_THIS_DATA()
     return this_data->mString == s;    
   }
   
   /** Return a const version of the std::string storage. */
-  inline const std::string& string() const
+  inline const std::string &string() const
   {
     return ptr_ ? data_pointer()->mString : sNoString;
   }

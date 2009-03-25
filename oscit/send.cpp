@@ -33,15 +33,15 @@ void OscSend::send(const osc::OutboundPacketStream& pMsg)
   mSocket->Send(pMsg.Data(), pMsg.Size());
 }
 
-void OscSend::send(const std::string& pUrl, const Value& val)
+void OscSend::send(const std::string &url, const Value& val)
 {
   // char buffer[OSC_OUT_BUFFER_SIZE]; // TODO: reuse buffer
   // osc::OutboundPacketStream oss( buffer, OSC_OUT_BUFFER_SIZE );
-  // oss << osc::BeginBundleImmediate << osc::BeginMessage(pUrl.c_str()) << val << osc::EndMessage << osc::EndBundle;
+  // oss << osc::BeginBundleImmediate << osc::BeginMessage(url.c_str()) << val << osc::EndMessage << osc::EndBundle;
   // send(oss);
 }
 
-void OscSend::send_all(std::list<OscSend*>& pRecipients, const std::string& pUrl, TypeTagID type_tag_ids, const Value& val)
+void OscSend::send_all(std::list<OscSend*>& pRecipients, const std::string &url, TypeTagID type_tag_ids, const Value& val)
 { 
   std::list<OscSend*>::iterator it  = pRecipients.begin();
   std::list<OscSend*>::iterator end = pRecipients.end();
@@ -50,7 +50,7 @@ void OscSend::send_all(std::list<OscSend*>& pRecipients, const std::string& pUrl
   // TODO: optimize: keep this thing between queries (make this not a static and let the first recipient send to all others).
   char buffer[OSC_OUT_BUFFER_SIZE]; // TODO: reuse buffer
   osc::OutboundPacketStream oss( buffer, OSC_OUT_BUFFER_SIZE );
-  oss << osc::BeginBundleImmediate << osc::BeginMessage(pUrl.c_str());
+  oss << osc::BeginBundleImmediate << osc::BeginMessage(url.c_str());
   values_to_stream(oss, typeTags, val);
   oss << osc::EndMessage << osc::EndBundle;
   

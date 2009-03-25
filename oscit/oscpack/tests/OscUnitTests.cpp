@@ -59,7 +59,7 @@ void fail_equality( const char *slhs, const char *srhs, const char *file, int li
 }
 
 template <typename T>
-void assertEqual_( const T& lhs, const T& rhs, const char *slhs, const char *srhs, const char *file, int line )
+void assert_equal_( const T& lhs, const T& rhs, const char *slhs, const char *srhs, const char *file, int line )
 {
     if( lhs == rhs )
         pass_equality( slhs, srhs, file, line );
@@ -68,7 +68,7 @@ void assertEqual_( const T& lhs, const T& rhs, const char *slhs, const char *srh
 }
 
 template <typename T>
-void assertEqual_( const T* lhs, const T* rhs, const char *slhs, const char *srhs, const char *file, int line )
+void assert_equal_( const T* lhs, const T* rhs, const char *slhs, const char *srhs, const char *file, int line )
 {
     if( lhs == rhs )
         pass_equality( slhs, srhs, file, line );
@@ -77,7 +77,7 @@ void assertEqual_( const T* lhs, const T* rhs, const char *slhs, const char *srh
 }
 
 template <>
-void assertEqual_( const char* lhs, const char* rhs, const char *slhs, const char *srhs, const char *file, int line )
+void assert_equal_( const char* lhs, const char* rhs, const char *slhs, const char *srhs, const char *file, int line )
 {
     if( strcmp( lhs, rhs ) == 0 )
         pass_equality( slhs, srhs, file, line );
@@ -86,7 +86,7 @@ void assertEqual_( const char* lhs, const char* rhs, const char *slhs, const cha
 }
 
 
-#define assertEqual( a, b ) assertEqual_( (a), (b), #a, #b, __FILE__, __LINE__ )
+#define assert_equal( a, b ) assert_equal_( (a), (b), #a, #b, __FILE__, __LINE__ )
 
 //---------------------------------------------------------------------------
 char * AllocateAligned4( unsigned long size )
@@ -113,14 +113,14 @@ void test1()
     try{
         ReceivedMessage m( ReceivedPacket(buffer, sizeof(s)-1) );
 
-        assertEqual( strcmp( m.AddressPattern(), "/test" ), 0 );
-        assertEqual( strcmp( m.TypeTags(), "fiT" ), 0 );
+        assert_equal( strcmp( m.AddressPattern(), "/test" ), 0 );
+        assert_equal( strcmp( m.TypeTags(), "fiT" ), 0 );
         
         ReceivedMessage::const_iterator i = m.ArgumentsBegin();
         ++i;
         ++i;
         ++i;
-        assertEqual( i, m.ArgumentsEnd() );
+        assert_equal( i, m.ArgumentsEnd() );
 
         i = m.ArgumentsBegin();
         float f = (i++)->AsFloat();
@@ -138,13 +138,13 @@ void test1()
         }catch( Exception& ){
             exceptionThrown = true;
         }
-        assertEqual( exceptionThrown, true );
+        assert_equal( exceptionThrown, true );
 
     }catch( Exception& e ){
         std::cout << "unexpected exception: " << e.what() << "\n";
         unexpectedExceptionCaught = true;
     }
-    assertEqual( unexpectedExceptionCaught, false );
+    assert_equal( unexpectedExceptionCaught, false );
 
 
     // test argument stream interface
@@ -152,7 +152,7 @@ void test1()
     try{
         ReceivedMessage m( ReceivedPacket(buffer, sizeof(s)-1) );
         ReceivedMessageArgumentStream args = m.ArgumentStream();
-        assertEqual( args.Eos(), false );
+        assert_equal( args.Eos(), false );
 
         float f;
         long n;
@@ -163,13 +163,13 @@ void test1()
         (void) n;
         (void) b;
         
-        assertEqual( args.Eos(), true );
+        assert_equal( args.Eos(), true );
 
     }catch( Exception& e ){
         std::cout << "unexpected exception: " << e.what() << "\n";
         unexpectedExceptionCaught = true;
     }
-    assertEqual( unexpectedExceptionCaught, false );
+    assert_equal( unexpectedExceptionCaught, false );
 }
 
 //---------------------------------------------------------------------------
@@ -233,13 +233,13 @@ void test2()
         }catch( Exception& ){
             exceptionThrown = true;
         }
-        assertEqual( exceptionThrown, true );
+        assert_equal( exceptionThrown, true );
         
     }catch( Exception& e ){
         std::cout << "unexpected exception: " << e.what() << "\n";
         unexpectedExceptionCaught = true;
     }
-    assertEqual( unexpectedExceptionCaught, false );
+    assert_equal( unexpectedExceptionCaught, false );
 }
 
 //-----------------------------------------------------------------------
@@ -255,10 +255,10 @@ void test2()
         ps << BeginMessage( addressPattern )  \
             << argument \
             << EndMessage;\
-        assertEqual( ps.IsReady(), true );\
+        assert_equal( ps.IsReady(), true );\
         ReceivedMessage m( ReceivedPacket(ps.Data(), ps.Size()) );\
         std::cout << m << "\n";\
-        assertEqual( m.ArgumentsBegin()-> recieveGetter () , value );\
+        assert_equal( m.ArgumentsBegin()-> recieveGetter () , value );\
     }  \
     {                                    \
         memset( buffer, 0x74, bufferSize );   \
@@ -268,11 +268,11 @@ void test2()
             << argument \
             << EndMessage \
             << EndBundle;\
-        assertEqual( ps.IsReady(), true );\
+        assert_equal( ps.IsReady(), true );\
         ReceivedBundle b( ReceivedPacket(ps.Data(), ps.Size()) );\
         ReceivedMessage m( *b.ElementsBegin() );\
         std::cout << m << "\n";\
-        assertEqual( m.ArgumentsBegin()-> recieveGetter () , value );\
+        assert_equal( m.ArgumentsBegin()-> recieveGetter () , value );\
     }
     
 #define TEST_PACK_UNPACK( addressPattern, argument, type, recieveGetter ) \
@@ -282,10 +282,10 @@ void test2()
         ps << BeginMessage( addressPattern )  \
             << argument \
             << EndMessage;\
-        assertEqual( ps.IsReady(), true );\
+        assert_equal( ps.IsReady(), true );\
         ReceivedMessage m( ReceivedPacket(ps.Data(), ps.Size()) );\
         std::cout << m << "\n";\
-        assertEqual( m.ArgumentsBegin()-> recieveGetter () , ( type ) argument );\
+        assert_equal( m.ArgumentsBegin()-> recieveGetter () , ( type ) argument );\
     }  \
     {                                    \
         memset( buffer, 0x74, bufferSize );   \
@@ -295,11 +295,11 @@ void test2()
             << argument \
             << EndMessage \
             << EndBundle;\
-        assertEqual( ps.IsReady(), true );\
+        assert_equal( ps.IsReady(), true );\
         ReceivedBundle b( ReceivedPacket(ps.Data(), ps.Size()) );\
         ReceivedMessage m( *b.ElementsBegin() );\
         std::cout << m << "\n";\
-        assertEqual( m.ArgumentsBegin()-> recieveGetter () , ( type ) argument );\
+        assert_equal( m.ArgumentsBegin()-> recieveGetter () , ( type ) argument );\
     }
 
 void test3()
@@ -314,7 +314,7 @@ void test3()
         OutboundPacketStream ps( buffer, bufferSize );
         ps << BeginMessage( "/no_arguments" )
             << EndMessage;
-        assertEqual( ps.IsReady(), true );
+        assert_equal( ps.IsReady(), true );
         ReceivedMessage m( ReceivedPacket(ps.Data(), ps.Size()) );
         std::cout << m << "\n";\
     }
@@ -350,15 +350,15 @@ void test3()
         ps << BeginMessage( "/a_blob" )
             << Blob( blobData, 4 )
             << EndMessage;
-        assertEqual( ps.IsReady(), true );
+        assert_equal( ps.IsReady(), true );
         ReceivedMessage m( ReceivedPacket(ps.Data(), ps.Size()) );
         std::cout << m << "\n";
 
         const void *value;
         unsigned long size;
         m.ArgumentsBegin()->AsBlob( value, size );
-        assertEqual( size, (unsigned long)4 );
-        assertEqual( (memcmp( value, blobData, 4 ) == 0), true );
+        assert_equal( size, (unsigned long)4 );
+        assert_equal( (memcmp( value, blobData, 4 ) == 0), true );
     }
 
 
@@ -378,7 +378,7 @@ void test3()
             << BeginMessage( "/message_three" ) << 1 << 2 << 3 << 4 << EndMessage
             << BeginMessage( "/message_four" ) << 1 << 2 << 3 << 4 << EndMessage
             << EndBundle;
-        assertEqual( ps.IsReady(), true );
+        assert_equal( ps.IsReady(), true );
         ReceivedBundle b( ReceivedPacket(ps.Data(), ps.Size()) );
         std::cout << b << "\n";
     }

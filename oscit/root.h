@@ -17,172 +17,158 @@ namespace oscit {
 /** Root object. You can only start new trees with root objects. */
 class Root : public Object
 {
-public:
-  Root() : ground_(NULL), objectsHash_(OBJECT_HASH_SIZE), mOscIn(NULL)
-  {
+ public:
+  Root() : ground_(NULL), objects_(OBJECT_HASH_SIZE), osc_in_(NULL) {
     root_ = this;
-    registerObject(this);
-    objectsHash_.set(std::string(""), this);
+    register_object(this);
+    objects_.set(std::string(""), this);
   }
 
-  Root(size_t hashSize) : ground_(NULL), objectsHash_(hashSize), mOscIn(NULL)
-  {
+  Root(size_t hashSize) : ground_(NULL), objects_(hashSize), osc_in_(NULL) {
     root_ = this;
-    objectsHash_.set(std::string(""), this);
+    objects_.set(std::string(""), this);
   }
   
-  Root(void * ground) : ground_(ground), objectsHash_(OBJECT_HASH_SIZE), mOscIn(NULL)
-  {
+  Root(void *ground) : ground_(ground), objects_(OBJECT_HASH_SIZE), osc_in_(NULL) {
     root_ = this;
-    registerObject(this);
-    objectsHash_.set(std::string(""), this);
+    register_object(this);
+    objects_.set(std::string(""), this);
   }
 
-  Root(void * ground, size_t hashSize) : ground_(ground), objectsHash_(hashSize), mOscIn(NULL)
-  {
+  Root(void *ground, size_t hashSize) : ground_(ground), objects_(hashSize), osc_in_(NULL) {
     root_ = this;
-    objectsHash_.set(std::string(""), this);
+    objects_.set(std::string(""), this);
   }
   
   virtual ~Root();
 
-  virtual void clear()
-  {
+  virtual void clear() {
     this->Object::clear();
   }
   
-  void openPort(uint port)
-  {
-    if (mOscIn) delete mOscIn;
-    mOscIn = new OscReceive(this, port);
+  void openPort(uint port) {
+    if (osc_in_) delete osc_in_;
+    osc_in_ = new OscReceive(this, port);
   }
   
-  /** Execute the default operation for an object. */
-  const Value call (const char *url)
-  {
+  /** Trigger the object located at the given url, passing nil as parameter. */
+  const Value call(const char *url) {
     return call(std::string(url), gNilValue);
   }
 
-  /** Execute the default operation for an object. */
-  const Value call (std::string &url)
-  {
+  /** Trigger the object located at the given url, passing nil as parameter. */
+  const Value call(std::string &url) {
     return call(url, gNilValue);
   }
 
-  /** Execute the default operation for an object. */
-  const Value call (const char *url, const Value &val)
-  {
+  /** Trigger the object located at the given url with the given parameters. */
+  const Value call(const char *url, const Value &val) {
     return call(std::string(url), val);
   }
 
-  /** Execute the default operation for an object. */
-  const Value call (const std::string &pUrl, const Value& val)
-  {
+  /** Trigger the object located at the given url with the given parameters. */
+  const Value call(const std::string &url, const Value &val) {
     Object * target = NULL;
     size_t pos;
-    std::string url = pUrl;
+    std::string tmp_url(url);
     
     bool is_not_found = false;
     
-    while (!get(&target, url) && url != "") {
+    while (!get_object_at(tmp_url, &target) && tmp_url != "") {
+      // Before raising a 404 error, we try to find a '404' handler that
+      // could build the resource or do something better then just sending
+      // an error back.
       is_not_found = true;
-      pos = url.rfind("/");
-      if (pos == std::string::npos)
-        url = "";
-      else
-        url = url.substr(0, pos);
+      pos = tmp_url.rfind("/");
+      if (pos == std::string::npos) {
+        tmp_url = "";
+      } else {
+        tmp_url = tmp_url.substr(0, pos);
+      }
     
     }
   
-    if (!target) return not_found(pUrl, val);
+    if (!target) return not_found(url, val);
     
-    if (is_not_found) return target->not_found(pUrl, val);
+    if (is_not_found) return target->not_found(url, val);
     
     return val.type_tag_id() == target->type_tag_id() ? target->trigger(val) : target->trigger(gNilValue);
   }
 
-  /** Notification of name/parent change from an object. */
-  void registerObject(Object * pObj)
-  {
-    // url/tree changed, make sure dict is in sync
-    // std::cout << pObj->url() << " registered !\n";
-  
+  /** Notification of name/parent change from an object. This method
+   *  keeps the objects dictionary in sync. */
+  void register_object(Object *obj) {
     // 1. remove object
-    if (pObj->root_) pObj->root_->unregisterObject(pObj);
+    if (obj->root_) obj->root_->unregister_object(obj);
   
     // 2. add with new key
-    objectsHash_.set(pObj->url(), pObj);
+    objects_.set(obj->url(), obj);
   
-    // 4. this is the new root
-    pObj->setRoot(this);
+    // 4. set 'this' as the object's new root
+    obj->set_root(this);
   }
 
-  /** Unregister an object from tree. */
-  void unregisterObject(Object *obj)
-  {
-    objectsHash_.remove_element(obj);
+  /** Unregister an object from tree (forget about it). */
+  void unregister_object(Object *obj) {
+    objects_.remove_element(obj);
   }
 
   /** Find a pointer to an Object from its url. Return false if the object is not found. */
-  bool get (Object **retval, const std::string &url)
-  {
-    return objectsHash_.get(retval, url);
+  bool get_object_at(const std::string &url, Object **retval) {
+    return objects_.get(retval, url);
   }
 
   /** Find a pointer to an Object from its url. Return false if the object is not found. */
-  bool get (Object **retval, const char *url)
-  {
-    return objectsHash_.get(retval, std::string(url));
+  bool get_object_at(const char *url, Object **retval) {
+    return objects_.get(retval, std::string(url));
   }
   
-  /** Return a pointer to the object located at pUrl. NULL if not found. */
-  Object * find(const std::string& pUrl)
-  {
-    Object * res = NULL;
-    get(&res, pUrl);
+  /** Return a pointer to the object located at a given url. NULL if not found. */
+  Object * object_at(const std::string &url) {
+    Object *res = NULL;
+    get_object_at(url, &res);
     return res;
   }
 
-  /** Return a pointer to the object located at pUrl. NULL if not found. */
-  Object * find(const char * pUrl)
-  {
-    return find(std::string(pUrl));
+  /** Return a pointer to the object located at a given url. NULL if not found. */
+  Object * object_at(const char *url) {
+    return object_at(std::string(url));
   }
   
   /* ======================= META METHODS ===================== */
   
-  /** This method responds to /.reply_to 
-    * TODO: how to get the IP without checking for "/.reply_to" in the 'receive' method ?*/
-  void reply_to(OscSend * pSatellite)
-  {
-    // FIXME: avoid duplicates, implement TTL...
-    mControllers.push_back(pSatellite);
+  /** Add a new satellite to the list of observers. This method is the implementation
+   *  of "/.register".
+   * TODO: how to get the IP without checking for "/.register" in the 'receive' method ?
+   * FIXME: implement TTL (time to live)
+   * FIXME: avoid duplicates (??)
+   */
+  void register_observer(OscSend *observer) {
+    observers_.push_back(observer);
   }
   
-  void receive(const std::string& pUrl, const Value &val)
-  {
+  void receive(const std::string &url, const Value &val) {
     //FIX Value res;
     
     //FIX if (pParams.is_error()) {
     //FIX   res = pParams;
     //FIX } else {
-    //FIX   res = call(pUrl,pParams);
+    //FIX   res = call(url,pParams);
     //FIX }
-    //FIX send_reply(pUrl, res);
+    //FIX send_reply(url, res);
   }
   
-  inline void send_reply(const std::string &url, const Value &val)
-  {
-    OscSend::send_all(mControllers, url, val);
+  inline void send_reply(const std::string &url, const Value &val) {
+    OscSend::send_all(observers_, url, val);
   }
   
-  void * ground_;                   /**< Context pointer for objects in the tree. */
-protected:
-  THash<std::string, Object*> objectsHash_;   /**< Hash to find any object in the tree from its url. */
+  void * ground_;                 /**< Context pointer for objects in the tree. */
+ protected:
+  THash<std::string, Object*> objects_;   /**< Hash to find any object in the tree from its url. */
 
-private:
-  OscReceive * mOscIn;              /**< Listening socket. */
-  std::list<OscSend*> mControllers; /**< List of satellites that have registered to get return values back. */
+ private:
+  OscReceive * osc_in_;           /**< Listening socket. */
+  std::list<OscSend*> observers_; /**< List of satellites that have registered to get return values back. */
 };
   
 } // namespace oscit

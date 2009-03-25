@@ -9,7 +9,7 @@ Object::~Object()
   
   for(std::list<Alias*>::iterator it = mAliases.begin(); it != mAliases.end(); it++) {
     // to avoid notification to this dying object
-    (*it)->unlinkOriginal();
+    (*it)->unlink_original();
     delete *it;
   }
   
@@ -18,13 +18,13 @@ Object::~Object()
 
 
 /** Inform the object of an alias to be destroyed on destruction. */
-void Object::registerAlias(Alias * pAlias)
+void Object::register_alias(Alias * pAlias)
 {
   mAliases.push_back(pAlias);
 }
 
 /** Inform the object that an alias no longer exists. */
-void Object::unregisterAlias(Alias * pAlias)
+void Object::unregister_alias(Alias * pAlias)
 {
   mAliases.remove(pAlias);
 }
@@ -33,7 +33,7 @@ void Object::unregisterAlias(Alias * pAlias)
 void Object::release(Object * pChild)
 {
   children_.remove_element(pChild);
-  if (root_) root_->unregisterObject(pChild);
+  if (root_) root_->unregister_object(pChild);
 }
 
 void Object::moved()
@@ -67,11 +67,11 @@ void Object::registerUrl()
   if (parent_) {
     // build fullpath
     url_ = std::string(parent_->url()).append("/").append(name_);
-    if (parent_->root_) parent_->root_->registerObject(this);
+    if (parent_->root_) parent_->root_->register_object(this);
   } else {
     // no parent
     url_ = name_;
-    if (root_) root_->unregisterObject(this);
+    if (root_) root_->unregister_object(this);
   }
   
   // 3. update children
@@ -91,7 +91,7 @@ void Object::clear()
     if (children_.get(&child, *it)) {
       // to avoid 'release' call (would alter children_)
       child->parent_ = NULL;
-      if (root_) root_->unregisterObject(child);
+      if (root_) root_->unregister_object(child);
       delete child;
     }
   }

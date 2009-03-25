@@ -10,7 +10,7 @@ class ErrorData : public StringData
 public:
   DATA_METHODS(ErrorData, ErrorValue)
   
-  ErrorData(const std::string& s) : StringData(s) {}
+  ErrorData(const std::string &s) : StringData(s) {}
 
   ErrorData(const char * s) : StringData(s) {}
   
@@ -43,11 +43,11 @@ class Error : public String
 {
 public:
   VALUE_METHODS(Error, ErrorData, ErrorValue, String)
-  Error(const std::string& s) : String(new ErrorData(s)) {}
+  Error(const std::string &s) : String(new ErrorData(s)) {}
   Error(const char* s) : String(new ErrorData(std::string(s))) {}
   
   /** Set Error from std::string. */
-  const std::string& operator= (const std::string& s)
+  const std::string &operator= (const std::string &s)
   {
     mutable_data()->mString = s;
     return s;

@@ -50,7 +50,7 @@ class Object
     parent.adopt(this);
   }
 
-  Object(Object& parent, const std::string& name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(type_tag_id) {
+  Object(Object& parent, const std::string &name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(type_tag_id) {
     parent.adopt(this);
   }
 
@@ -77,8 +77,7 @@ class Object
   
   /** Shortcut to call first method on an object.
     * Using "obj.set('waga',3.4,1)" is equivalent to calling "obj.first_method(['waga',3.4,1])". */
-  bool set(const Value& val)
-  {
+  bool set(const Value& val) {
     Object * obj;
     // use first method as default
     string_iterator it  = children_.begin();
@@ -93,21 +92,18 @@ class Object
   /** This is the prefered way to insert new objects in the tree since it clearly highlights ownership in the parent. 
     * TODO: make sure a parent is not adopted by it's child. */
   template<class T>
-  T * adopt(T * object)
-  {
+  T * adopt(T * object) {
     doAdopt(object);
     return object;
   }
   
   /** Class type_tag_id. */
-  virtual uint type()
-  {
+  virtual uint type() {
     return H("oscit::Object");
   }
 
   template<class T>
-  static inline T * type_cast(uint pType, Object * obj)
-  {
+  static inline T * type_cast(uint pType, Object * obj) {
     return (obj && obj->type() == pType) ? (T*)obj : NULL;
   }
 
@@ -117,25 +113,22 @@ class Object
   /** This is the operation executed when the object is called.
    *  In order to benefit from return value optimization and avoid too many copy
    *  you have to use Value v = xxx.trigger(val). */
-  virtual const Value trigger (const Value& val)
-  {
+  virtual const Value trigger (const Value& val) {
     return gNilValue;
   }
 
   /** This method is called whenever a sub-node or branch is not found and this is the last found object along the path. */
-  virtual const Value not_found (const std::string& pUrl, const Value &val)
-  {
-    raiseError(std::string("Object '").append(pUrl).append("' not found."));
+  virtual const Value not_found (const std::string &url, const Value &val) {
+    raiseError(std::string("Object '").append(url).append("' not found."));
     return gNilValue;
   }
   
   /** Define the object's container (parent). */
-  void setParent(Object& parent)
-  { setParent(&parent); }
+  void set_parent(Object& parent)
+  { set_parent(&parent); }
 
   /** Define the object's container (parent). */
-  void setParent(Object * parent)
-  {
+  void set_parent(Object * parent) {
     if (!parent) {
       if (parent_) parent_->release(this);
       parent_ = NULL;
@@ -146,14 +139,13 @@ class Object
   }
 
   /** Inform the object of an alias linked to this object (has to be deleted on destruction). */
-  void registerAlias (Alias * pAlias);
+  void register_alias (Alias * pAlias);
 
   /** Inform the object that an alias no longer exists. */
-  void unregisterAlias (Alias * pAlias);
+  void unregister_alias (Alias * pAlias);
 
   /** Return the object's unique url. */
-  inline const std::string& url ()
-  {
+  inline const std::string &url () {
     return url_;
   }
   
@@ -161,12 +153,12 @@ class Object
   void registerUrl ();
   
   /** Set name from string. If the name is not unique in the parent's scope, the name is changed as "name-1", "name-2", etc. */
-  void setName (const char* name) 
-  { setName(std::string(name)); }
+  void set_name (const char* name) 
+  { set_name(std::string(name)); }
 
 
   /** Set name from string. If the name is not unique in the parent's scope, the name is changed as "name-1", "name-2", etc. */
-  void setName (const std::string& name) 
+  void set_name (const std::string &name) 
   { 
     if (name == "") return;
     name_ = name; // FIXME: gsub(/[^a-zA-Z\-0-9_],"")
@@ -175,8 +167,7 @@ class Object
   }
   
   /** Return name of object. */
-  const std::string name() const
-  {
+  const std::string name() const {
     return name_;
   }
   
@@ -186,21 +177,18 @@ class Object
   /* meaningful information / content.                                              */
   
   /** Inspection method. Called as a response to "/.inspect '/this/url'". */
-  virtual const std::string inspect() const
-  {
+  virtual const std::string inspect() const {
     return mInfo;
   }
   
   /** Human readable information method. Called as a response to "/.info '/this/url'". */
-  const std::string& info() const
-  {
+  const std::string &info() const {
     return mInfo;
   }
 
   
   /** List sub-nodes. */
-  const std::string list () const
-  {
+  const std::string list () const {
     std::string res;
     const_string_iterator it  = children_.begin();
     const_string_iterator end = children_.end();
@@ -227,32 +215,27 @@ class Object
   /** Set type tag. */
   
   /** Set info string. */
-  void setInfo (const char* pInfo)
-  {
+  void setInfo (const char* pInfo) {
     mInfo = pInfo;
   }
 
   /** Set info string. */
-  void setInfo (const std::string& pInfo)
-  {
+  void setInfo (const std::string &pInfo) {
     mInfo = pInfo;
   }
   
   /** Return the list of children as a hash. */
-  const THash<std::string,Object *> children() const
-  {
+  const THash<std::string,Object *> children() const {
     return children_;
   }
 
   /** Return first child. */
-  Object * getFirstChild()
-  {
+  Object * first_child() {
     return children_.size() > 0 ? child(children_.keys().front()) : NULL;
   }
 
   /** Return the direct child named 'name'. */
-  Object * child(const std::string& name)
-  {
+  Object * child(const std::string &name) {
     Object * child;
     if (children_.get(&child, name)) {
       return child;
@@ -262,8 +245,7 @@ class Object
   }
 
   /** Actual adoption. Adopt objects in the new namespace (branch). */
-  virtual void doAdopt(Object * object)
-  {
+  virtual void doAdopt(Object * object) {
     Object * oldParent = object->parent_;
 
     if (oldParent) oldParent->release(object);
@@ -273,13 +255,11 @@ class Object
     object->moved();
   }
   
-  Object * parent()
-  {
+  Object * parent() {
     return parent_;
   }
   
-  virtual void setRoot(Root * root)
-  {
+  virtual void set_root(Root * root) {
     root_ = root;
   }
   
@@ -292,8 +272,7 @@ protected:
   void moved();
 
   /** Add '-1', '-2', ... at the end of the current name. bob --> bob-1 */
-  void findNextName()
-  {
+  void findNextName() {
     size_t pos = name_.find('-');
     char buffer[OSC_NEXT_NAME_BUFFER_SIZE];
     if (pos == std::string::npos) {
@@ -309,8 +288,7 @@ protected:
   /** Define object type_tag_id. This cannot be changed during runtime.
     * @param typeTag a string with the osc type type_tag_id.
     */
-  void set_type_tag_id(TypeTagID type_tag_id)
-  {
+  void set_type_tag_id(TypeTagID type_tag_id) {
     type_tag_id_ = type_tag_id;
   }
   
@@ -319,11 +297,10 @@ protected:
     return type_tag_id_;
   }
   
-private:
+ private:
   
   // FIXME: this is a temporary fix for error handling. DO NOT LEAVE THIS AS IS !
-  void raiseError(const std::string &message)
-  {
+  void raiseError(const std::string &message) {
     fprintf(stderr, "Error in '%s': %s\n", url().c_str(), message.c_str());
   }
   

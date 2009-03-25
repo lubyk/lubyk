@@ -4,23 +4,23 @@
 class ValueTest : public TestHelper
 {  
 public:
-  void testCreate( void )
+  void test_create( void )
   {
     Value v;
     
-    assertTrue (v.isNil());
-    assertFalse(v.isReal());
-    assertFalse(v.isString());
-    assertFalse(v.isError());
+    assert_true (v.isNil());
+    assert_false(v.isReal());
+    assert_false(v.isString());
+    assert_false(v.isError());
     
-    assertEqual("N", v.type_tag());
+    assert_equal("N", v.type_tag());
   }
   
-  void testCreateChar( void )
+  void test_createChar( void )
   {
     Value v('N');
     
-    assertTrue(v.isNil());
+    assert_true(v.isNil());
   }
   
   void testCopy( void )
@@ -29,21 +29,21 @@ public:
     Value v2(v);
     Value v3(1.2);
     
-    assertTrue(v3.isReal());
+    assert_true(v3.isReal());
     
     v3 = v;
     
-    assertTrue(v3.isNil());
-    assertTrue(v2.isNil());
+    assert_true(v3.isNil());
+    assert_true(v2.isNil());
   }
   
   void testSet( void )
   {
     Value v(1.2);
     
-    assertTrue(v.isReal());
+    assert_true(v.isReal());
     v.set();
-    assertTrue(v.isNil());
+    assert_true(v.isNil());
   }
   
   void testSetTag( void )
@@ -51,7 +51,7 @@ public:
     Value v(1.2);
     
     v.set_type_tag("N");
-    assertTrue(v.isNil());
+    assert_true(v.isNil());
   }
   
   void testSetType( void )
@@ -59,6 +59,6 @@ public:
     Value v(1.2);
     
     v.setType(NIL_VALUE);
-    assertTrue(v.isNil());
+    assert_true(v.isNil());
   }
 };

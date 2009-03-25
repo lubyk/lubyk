@@ -26,7 +26,7 @@ enum ValueTypeTag
 /** Unique identifier for osc type tags strings. */
 typedef uint TypeTagID;
 
-#define EMPTY_TAG_ID hashId("")
+#define EMPTY_TAG_ID H("")
 
 /** Value is the base type of all data transmitted between objects or used as parameters
 and return values for osc messages. */

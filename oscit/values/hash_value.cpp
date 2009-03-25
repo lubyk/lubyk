@@ -2,7 +2,7 @@
 #include <sstream>
 #include <iostream>
 
-const Value Hash::operator[] (const std::string& pKey) const
+const Value Hash::operator[] (const std::string &pKey) const
 {
   if (!ptr_) return gNilValue;
   Value res;
@@ -11,60 +11,60 @@ const Value Hash::operator[] (const std::string& pKey) const
 }
 
 template<>
-bool Hash::cast_param (const std::string& value)
+bool Hash::cast_param (const std::string &value)
 {
   return (value == "true" || value == "yes" || value == "y" || atoi(value.c_str()) != 0);
 }
 
 template<>
-int Hash::cast_param(const std::string& value)
+int Hash::cast_param(const std::string &value)
 {
   return atoi(value.c_str());
 }
 template<>
-unsigned int Hash::cast_param(const std::string& value)
-{
-  return atoi(value.c_str());
-}
-
-template<>
-unsigned char Hash::cast_param(const std::string& value)
+unsigned int Hash::cast_param(const std::string &value)
 {
   return atoi(value.c_str());
 }
 
 template<>
-time_t Hash::cast_param(const std::string& value)
+unsigned char Hash::cast_param(const std::string &value)
 {
   return atoi(value.c_str());
 }
 
 template<>
-size_t Hash::cast_param(const std::string& value)
+time_t Hash::cast_param(const std::string &value)
 {
   return atoi(value.c_str());
 }
 
 template<>
-Real Hash::cast_param(const std::string& value)
+size_t Hash::cast_param(const std::string &value)
+{
+  return atoi(value.c_str());
+}
+
+template<>
+Real Hash::cast_param(const std::string &value)
 {
   return atof(value.c_str());
 }
 
 template<>
-float Hash::cast_param(const std::string& value)
+float Hash::cast_param(const std::string &value)
 {
   return atof(value.c_str());
 }
 
 template<>
-const char * Hash::cast_param(const std::string& value)
+const char * Hash::cast_param(const std::string &value)
 {
   return value.c_str();
 }
 
 template<>
-char Hash::cast_param (const std::string& value)
+char Hash::cast_param (const std::string &value)
 {
   return value.c_str()[0];
 }
