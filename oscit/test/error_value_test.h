@@ -45,51 +45,47 @@ public:
     assert_equal(BAD_REQUEST_ERROR, v.error_code());
     assert_equal(BAD_REQUEST_ERROR, v2.error_code());
   }
-//  void test_copy( void ) {
-//    Value v("foo");
-//    Value v2(v);
-//    Value v3;
-//    
-//    assert_true(v2.is_string());
-//    assert_true(v3.is_nil());
-//    
-//    v3 = v;
-//    
-//    assert_true(v3.is_string());
-//    
-//    assert_equal("foo", v.s);
-//    assert_equal("foo", v2.s);
-//    assert_equal("foo", v3.s);
-//    
-//    // WARNING: never use v.s = "some string" (crash guaranteed !).
-//    v.set("bar");
-//    assert_equal("bar", v.s);
-//    assert_equal("foo", v2.s);
-//    assert_equal("foo", v3.s);
-//  }
-//  
-//  void test_set( void ) {
-//    Value v;
-//    
-//    assert_true(v.is_nil());
-//    v.set("foobar");
-//    assert_true(v.is_string());
-//    assert_equal("foobar", v.s);
-//  }
-//  
-//  void test_set_type_tag( void ) {
-//    Value v;
-//    
-//    v.set_type_tag("s");
-//    assert_true(v.is_string());
-//    assert_equal("", v.s);
-//  }
-//  
-//  void test_set_type( void ) {
-//    Value v;
-//    
-//    v.set_type(STRING_VALUE);
-//    assert_true(v.is_string());
-//    assert_equal("", v.s);
-//  }
+
+  void test_copy( void ) {
+    Value v(BAD_REQUEST_ERROR, "foo");
+    Value v2(v);
+    Value v3;
+    
+    assert_true(v2.is_error());
+    assert_true(v3.is_nil());
+    
+    v3 = v;
+    
+    assert_true(v3.is_error());
+    
+    assert_equal("foo", v2.error_message());
+    assert_equal(BAD_REQUEST_ERROR, v2.error_code());
+    assert_equal("foo", v3.error_message());
+    assert_equal(BAD_REQUEST_ERROR, v3.error_code());
+    
+    v.error_->set_message("bar");
+    assert_equal("bar", v.error_message());
+    assert_equal("foo", v2.error_message());
+    assert_equal("foo", v3.error_message());
+  }
+  
+  void test_set( void ) {
+    Value v;
+    
+    assert_true(v.is_nil());
+    v.set(BAD_REQUEST_ERROR, "foobar");
+    assert_true(v.is_error());
+    assert_equal("foobar", v.error_message());
+  }
+  
+  // set_type_tag does not exist for errors.
+  // void test_set_type_tag( void ) {}
+  
+  void test_set_type( void ) {
+    Value v;
+    
+    v.set_type(ERROR_VALUE);
+    assert_true(v.is_error());
+    assert_equal(UNKNOWN_ERROR, v.error_code());
+  }
 };

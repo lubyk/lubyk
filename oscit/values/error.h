@@ -31,9 +31,15 @@ class Error
   
   ErrorCode code() const { return code_; }
   
+  void set_code(ErrorCode code) { code_ = code; }
+  
   const char * str() const { return message_.c_str(); }
   
   const std::string& message() const { return message_; }
+  
+  void set_message(const char *string) { message_ = string; }
+  
+  void set_message(const std::string &string) { message_ = string; }
   
  private:
   
