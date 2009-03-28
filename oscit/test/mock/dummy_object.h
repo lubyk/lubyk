@@ -18,7 +18,7 @@ public:
   
   virtual const Value trigger (const Value& val)
   {
-    if (val.isReal())
+    if (val.is_real())
       value_ = val.r;
     return Value();
   }

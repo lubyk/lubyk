@@ -8,19 +8,27 @@ public:
   {
     Value v;
     
-    assert_true (v.isNil());
-    assert_false(v.isReal());
-    assert_false(v.isString());
-    assert_false(v.isError());
+    assert_true (v.is_nil());
+    assert_false(v.is_real());
+    assert_false(v.is_string());
+    assert_false(v.is_list());
+    assert_false(v.is_error());
     
     assert_equal("N", v.type_tag());
   }
   
-  void test_createChar( void )
-  {
+  void test_create_with_char( void ) {
     Value v('N');
     
-    assert_true(v.isNil());
+    assert_true(v.is_nil());
+  }
+  
+  void test_create_with_TypeTag( void ) {
+    Value v(TypeTag(""));
+    Value v2(TypeTag("N"));
+    
+    assert_true(v.is_nil());
+    assert_true(v2.is_nil());
   }
   
   void testCopy( void )
@@ -29,21 +37,21 @@ public:
     Value v2(v);
     Value v3(1.2);
     
-    assert_true(v3.isReal());
+    assert_true(v3.is_real());
     
     v3 = v;
     
-    assert_true(v3.isNil());
-    assert_true(v2.isNil());
+    assert_true(v3.is_nil());
+    assert_true(v2.is_nil());
   }
   
   void testSet( void )
   {
     Value v(1.2);
     
-    assert_true(v.isReal());
+    assert_true(v.is_real());
     v.set();
-    assert_true(v.isNil());
+    assert_true(v.is_nil());
   }
   
   void testSetTag( void )
@@ -51,7 +59,7 @@ public:
     Value v(1.2);
     
     v.set_type_tag("N");
-    assert_true(v.isNil());
+    assert_true(v.is_nil());
   }
   
   void testSetType( void )
@@ -59,6 +67,6 @@ public:
     Value v(1.2);
     
     v.setType(NIL_VALUE);
-    assert_true(v.isNil());
+    assert_true(v.is_nil());
   }
 };

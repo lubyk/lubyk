@@ -8,10 +8,11 @@ public:
   {
     Value v(3.5);
     
-    assert_false(v.isNil());
-    assert_true (v.isReal());
-    assert_false(v.isString());
-    assert_false(v.isError());
+    assert_false(v.is_nil());
+    assert_true (v.is_real());
+    assert_false(v.is_string());
+    assert_false(v.is_list());
+    assert_false(v.is_error());
     
     
     assert_equal(3.5, v.r); // real
@@ -21,11 +22,17 @@ public:
     assert_equal("f", v.type_tag());
   }
   
-  void test_createChar( void )
-  {
+  void test_create_with_char( void ) {
     Value v('f');
     
-    assert_true(v.isReal());
+    assert_true(v.is_real());
+    assert_equal(0.0, v.r);
+  }
+  
+  void test_create_with_TypeTag( void ) {
+    Value v(TypeTag("f"));
+    
+    assert_true(v.is_real());
     assert_equal(0.0, v.r);
   }
   
@@ -35,12 +42,12 @@ public:
     Value v2(v);
     Value v3;
     
-    assert_true(v2.isReal());
-    assert_true(v3.isNil());
+    assert_true(v2.is_real());
+    assert_true(v3.is_nil());
     
     v3 = v;
     
-    assert_true(v3.isReal());
+    assert_true(v3.is_real());
     
     assert_equal(3.2, v.r);
     assert_equal(3.2, v2.r);
@@ -55,9 +62,9 @@ public:
   {
     Value v;
     
-    assert_true(v.isNil());
+    assert_true(v.is_nil());
     v.set(3.5);
-    assert_true(v.isReal());
+    assert_true(v.is_real());
     assert_equal(3.5, v.r);
   }
   
@@ -66,7 +73,7 @@ public:
     Value v;
     
     v.set_type_tag("f");
-    assert_true(v.isReal());
+    assert_true(v.is_real());
     assert_equal(0.0, v.r);
   }
   
@@ -75,7 +82,7 @@ public:
     Value v;
     
     v.setType(REAL_VALUE);
-    assert_true(v.isReal());
+    assert_true(v.is_real());
     assert_equal(0.0, v.r);
   }
 };

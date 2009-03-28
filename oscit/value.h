@@ -23,6 +23,13 @@ enum ValueTypeTag
   ERROR_TYPE_TAG  = 's',
 };
 
+/** Wrapper around a string identifying an osc type list. */
+struct TypeTag
+{
+  TypeTag(const char * str) : str_(str) {}
+  const char * str_;
+};
+
 /** Unique identifier for osc type tags strings. */
 typedef uint TypeTagID;
 
@@ -52,15 +59,15 @@ public:
     setList(list);
   }
   
-  Value(ValueType type, const char * type_tag) : type_(NIL_VALUE)
+  explicit Value(TypeTag type_tag) : type_(NIL_VALUE)
   {
-    set_type_tag(type_tag);
+    set_type_tag(type_tag.str_);
   }
   
-  /** Create a default value from a type char. */
-  explicit Value(char typeChar)
+  /** Create a default value from a type character like 'f'. */
+  explicit Value(char type_char) : type_(NIL_VALUE)
   {
-    setType(typeFromChar(typeChar));
+    setType(typeFromChar(type_char));
   }
   
   /** Copy constructor (needed since many methods return a Value). */
@@ -90,17 +97,15 @@ public:
     clear();
   }
   
-  bool isNil() const
-  { return type_ == NIL_VALUE; }
+  bool is_nil() const    { return type_ == NIL_VALUE; }
   
-  bool isReal() const
-  { return type_ == REAL_VALUE; }
+  bool is_real() const   { return type_ == REAL_VALUE; }
   
-  bool isString() const
-  { return type_ == STRING_VALUE; }
+  bool is_string() const { return type_ == STRING_VALUE; }
   
-  bool isError() const
-  { return type_ == ERROR_VALUE; }
+  bool is_list() const   { return type_ == LIST_VALUE; }
+  
+  bool is_error() const  { return type_ == ERROR_VALUE; }
   
   inline const char * type_tag() const;
   

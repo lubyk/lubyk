@@ -5,10 +5,11 @@ public:
   {
     Value v("foo");
     
-    assert_false(v.isNil());
-    assert_false(v.isReal());
-    assert_true (v.isString());
-    assert_false(v.isError());
+    assert_false(v.is_nil());
+    assert_false(v.is_real());
+    assert_true (v.is_string());
+    assert_false(v.is_list());
+    assert_false(v.is_error());
     
     assert_equal("foo", v.s);
     
@@ -20,10 +21,10 @@ public:
     std::string str("foo");
     Value v(str);
     
-    assert_false(v.isNil());
-    assert_false(v.isReal());
-    assert_true (v.isString());
-    assert_false(v.isError());
+    assert_false(v.is_nil());
+    assert_false(v.is_real());
+    assert_true (v.is_string());
+    assert_false(v.is_error());
     
     assert_equal("foo", v.s);
     
@@ -34,11 +35,17 @@ public:
     assert_equal("s", v.type_tag());
   }
   
-  void test_createChar( void )
-  {
+  void test_create_with_char( void ) {
     Value v('s');
     
-    assert_true(v.isString());
+    assert_true(v.is_string());
+    assert_equal("", v.s);
+  }
+  
+  void test_create_with_TypeTag( void ) {
+    Value v(TypeTag("s"));
+    
+    assert_true(v.is_string());
     assert_equal("", v.s);
   }
   
@@ -48,12 +55,12 @@ public:
     Value v2(v);
     Value v3;
     
-    assert_true(v2.isString());
-    assert_true(v3.isNil());
+    assert_true(v2.is_string());
+    assert_true(v3.is_nil());
     
     v3 = v;
     
-    assert_true(v3.isString());
+    assert_true(v3.is_string());
     
     assert_equal("foo", v.s);
     assert_equal("foo", v2.s);
@@ -70,9 +77,9 @@ public:
   {
     Value v;
     
-    assert_true(v.isNil());
+    assert_true(v.is_nil());
     v.set("foobar");
-    assert_true(v.isString());
+    assert_true(v.is_string());
     assert_equal("foobar", v.s);
   }
   
@@ -81,7 +88,7 @@ public:
     Value v;
     
     v.set_type_tag("s");
-    assert_true(v.isString());
+    assert_true(v.is_string());
     assert_equal("", v.s);
   }
   
@@ -90,7 +97,7 @@ public:
     Value v;
     
     v.setType(STRING_VALUE);
-    assert_true(v.isString());
+    assert_true(v.is_string());
     assert_equal("", v.s);
   }
 };
