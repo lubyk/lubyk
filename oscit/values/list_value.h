@@ -12,7 +12,9 @@ class ListValue : public Value
  public:
   explicit ListValue(const TypeTag &type_tag) : Value(type_tag) {}
   explicit ListValue(const char *type_tag) : Value(TypeTag(type_tag)) {}
-  explicit ListValue() : Value(List()) {}
+  explicit ListValue() {
+    set_type(LIST_VALUE);
+  }
 };
 
 } // oscit

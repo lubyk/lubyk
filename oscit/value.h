@@ -1,6 +1,7 @@
 #ifndef _VALUE_H_
 #define _VALUE_H_
 #include <string>
+#include "oscit/values/error.h"
 
 namespace oscit {
   
@@ -44,34 +45,37 @@ public:
   
   explicit Value(Real real) : type_(REAL_VALUE), r(real) {}
   
-  explicit Value(const char * string) : type_(STRING_VALUE)
-  {
+  explicit Value(const char * string) : type_(STRING_VALUE) {
     set_string(string);
   }
   
-  explicit Value(const std::string& string) : type_(STRING_VALUE)
-  {
+  explicit Value(const std::string& string) : type_(STRING_VALUE) {
     set_string(string.c_str());
   }
   
-  explicit Value(const List *list) : type_(LIST_VALUE)
-  {
+  explicit Value(const List *list) : type_(LIST_VALUE) {
     set_list(list);
   }
   
-  explicit Value(const List &list) : type_(LIST_VALUE)
-  {
+  explicit Value(const List &list) : type_(LIST_VALUE) {
     set_list(&list);
   }
   
-  explicit Value(TypeTag type_tag) : type_(NIL_VALUE)
-  {
+  explicit Value(ErrorCode code, const char *str) : type_(ERROR_VALUE) {
+    set_error(code, str);
+  }
+  
+  explicit Value(ErrorCode code, std::string& str) : type_(ERROR_VALUE) {
+    set_error(code, str.c_str());
+  }
+  
+  /** Create a value from a TypeTag string. */
+  explicit Value(TypeTag type_tag) : type_(NIL_VALUE) {
     set_type_tag(type_tag.str_);
   }
   
   /** Create a default value from a type character like 'f'. */
-  explicit Value(char type_char) : type_(NIL_VALUE)
-  {
+  explicit Value(char type_char) : type_(NIL_VALUE) {
     set_type(type_from_char(type_char));
   }
   
@@ -91,6 +95,9 @@ public:
       break;
     case LIST_VALUE:
       set(value.list_);
+      break;
+    case ERROR_VALUE:
+      set(value.error_);
       break;
     default:
       set();
@@ -133,12 +140,6 @@ public:
     set_string(string);
   }
   
-  /** Change the Value into an ErrorValue. */
-  void set_error(const char *string) {
-    set_type_without_default(ERROR_VALUE);
-    set_string(string);
-  }
-  
   /** Change the Value into a List by copying the content of the argument. */
   void set(const List *list) {
     set_type_without_default(LIST_VALUE);
@@ -149,6 +150,24 @@ public:
   void set(const List &list) {
     set_type_without_default(LIST_VALUE);
     set_list(&list);
+  }
+  
+  /** Change the Value into an ErrorValue. */
+  void set(ErrorCode code, const char *string) {
+    set_type_without_default(ERROR_VALUE);
+    set_error(code, string);
+  }
+  
+  /** Change the Value into a List by copying the content of the argument. */
+  void set(const Error *error) {
+    set_type_without_default(ERROR_VALUE);
+    set_error(error);
+  }
+  
+  /** Change the Value into a List by copying the content of the argument. */
+  void set(const Error &error) {
+    set_type_without_default(ERROR_VALUE);
+    set_error(&error);
   }
   
   /** Change the Value into the specific type. Since a default value must be set,
@@ -173,6 +192,14 @@ public:
   }
   
   inline void append(const Value& val);
+  
+  const std::string& error_message() {
+    return error_->message();
+  }
+  
+  ErrorCode error_code() {
+    return error_->code();
+  }
   
   static ValueType type_from_char(char c) {
     switch(c) {
@@ -204,8 +231,18 @@ public:
     memcpy(s,string,len);
   }
   
-  /** Set value to list by making a copy. */
+  /** Set List content by making a copy. */
   inline void set_list(const List * list);
+  
+  /** Set error content. */
+  void set_error(ErrorCode code, const char *string) {
+    error_ = new Error(code, string);
+  }
+  
+  /** Set error content. */
+  void set_error(const Error *error) {
+    error_ = new Error(*error);
+  }
   
   ValueType type_;
   
@@ -215,8 +252,8 @@ public:
     Real f; // alias for r
     Real d; // alias for r
     char * s; // string
-    char * e; // error string
-    List * list_; // multi-value
+    List  * list_; // multi-value
+    Error * error_; // error definition
   };
 };
 
@@ -230,6 +267,7 @@ namespace oscit {
 const char * Value::type_tag() const {
   switch(type_) {
     case REAL_VALUE:   return "f";
+    case ERROR_VALUE: // continue
     case STRING_VALUE: return "s";
     case NIL_VALUE:    return "N";
     case LIST_VALUE:   return list_->type_tag();
@@ -239,11 +277,12 @@ const char * Value::type_tag() const {
 
 TypeTagID Value::type_tag_id() const {
   switch(type_) {
-    case REAL_VALUE:   return hashId("f");
-    case STRING_VALUE: return hashId("s");
-    case NIL_VALUE:    return hashId("N");
+    case REAL_VALUE:   return H("f");
+    case ERROR_VALUE:  // continue
+    case STRING_VALUE: return H("s");
+    case NIL_VALUE:    return H("N");
     case LIST_VALUE:   return list_->type_tag_id();
-    default:           return hashId("N");
+    default:           return H("N");
   }
 }
 
@@ -283,6 +322,10 @@ void Value::clear() {
     if (s != NULL) free(s);
     s = NULL;
     break;
+  case ERROR_VALUE:
+    if (error_ != NULL) delete error_;
+    error_ = NULL;
+    break;
   default:
     ; // nothing to clear
   }
@@ -299,14 +342,18 @@ void Value::set_default() {
   case LIST_VALUE:
     list_ = new List;
     break;
+  case ERROR_VALUE:
+    error_ = new Error;
+    break;
   default:
     ; // nothing to set 
   }
   
 }
 
-void Value::set_list(const List * list) {
+void Value::set_list(const List *list) {
   list_ = new List(*list);
 }
+
 } // oscit
 #endif // _VALUE_H_

@@ -76,34 +76,24 @@ public:
     assert_equal(&root, res );
   }
   
-//  void testCall( void )
-//  {
+  void test_call_without_arguments_should_return_current_value( void ) {
+    Root root;
+    root.adopt(new DummyObject("zorglub", 9.87));
+    Value res = root.call("/zorglub");
+    assert_true(res.is_real());
+    assert_equal(9.87, res.r);
+  }
+  
+//  void test_call_with_bad_arguments_should_return_an_error( void ) {
 //    Root root;
-//    Object * one = root.adopt(new Object("one"));
-//    Object * two = root.adopt(new Object("two"));
-//    Object * sub = two->adopt(new Object("sub"));
-//    Value res, param;
-//    String str;
-//  
-//    assert_equal(std::string("")        , root.url() );
-//    assert_equal(std::string("/one")    , one->url() );
-//    assert_equal(std::string("/two")    , two->url() );
-//    assert_equal(std::string("/two/sub"), sub->url() );
-//    
-//    res = root.call("",param);
-//    assert_true(!res.is_error());
-//    assert_true(res.set(str));
-//    assert_true( str == "one,two/" );
-//    
-//    res = root.call("/one",param);
-//    assert_true(res.is_nil());
-//    
-//    res = root.call("/two",param);
-//    assert_false(res.is_error());
-//    assert_true(res.set(str));
-//    assert_true( str == "sub" );
+//    root.adopt(new DummyObject("zorglub", 9.87));
+//    Value param(TypeTag("ff"));
+//    Value res = root.call("/zorglub", param);
+//    assert_true(res.is_error());
+//    assert_equal("", res.error_message());
+//    assert_equal(400, res.error_code());
 //  }
-//  
+  
 //  void test_call_bad_object( void )
 //  {
 //    Root root;

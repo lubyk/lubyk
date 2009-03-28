@@ -9,12 +9,10 @@ class ErrorValue : public Value
 { 
 public:
   explicit ErrorValue() {
-    set_error("");
+    set_type(ERROR_VALUE);
   }
   
-  explicit ErrorValue(const char *string) {
-    set_error(string);
-  }
+  explicit ErrorValue(ErrorCode code, const char *string) : Value(code, string) {}
 };
 
 } // oscit
