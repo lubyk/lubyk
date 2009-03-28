@@ -92,7 +92,11 @@ class Root : public Object
     
     if (is_not_found) return target->not_found(url, val);
     
-    return val.type_tag_id() == target->type_tag_id() ? target->trigger(val) : target->trigger(gNilValue);
+    if (val.is_nil() || val.type_tag_id() == target->type_tag_id()) {
+      return target->trigger(val);
+    } else {
+      return ErrorValue(BAD_REQUEST_ERROR, target->info());
+    }
   }
 
   /** Notification of name/parent change from an object. This method

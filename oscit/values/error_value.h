@@ -13,6 +13,8 @@ public:
   }
   
   explicit ErrorValue(ErrorCode code, const char *string) : Value(code, string) {}
+  
+  explicit ErrorValue(ErrorCode code, const std::string &string) : Value(code, string) {}
 };
 
 } // oscit

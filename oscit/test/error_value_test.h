@@ -5,7 +5,7 @@ class ErrorValueTest : public TestHelper
 {  
 public:
   void test_create( void ) {
-    Value v(BAD_REQUEST, "foo");
+    Value v(BAD_REQUEST_ERROR, "foo");
     
     assert_false(v.is_nil());
     assert_false(v.is_real());
@@ -14,13 +14,13 @@ public:
     assert_true(v.is_error());
     
     assert_equal("foo", v.error_message());
-    assert_equal(BAD_REQUEST, v.error_code());
+    assert_equal(BAD_REQUEST_ERROR, v.error_code());
     
     assert_equal("s", v.type_tag());
   }
   
   void test_create_error_value( void ) {
-    ErrorValue v(BAD_REQUEST, "bad");
+    ErrorValue v(BAD_REQUEST_ERROR, "bad");
     ErrorValue v2;
     
     assert_true(v.is_error());
@@ -31,7 +31,20 @@ public:
     assert_equal("unknown error", v2.error_message());
     assert_equal(UNKNOWN_ERROR, v2.error_code());
   }
-
+  
+  void test_create_error_value_std_string( void ) {
+    ErrorValue v(BAD_REQUEST_ERROR, std::string("bad"));
+    Value v2(BAD_REQUEST_ERROR, std::string("bad2"));
+    
+    assert_true(v.is_error());
+    assert_true(v2.is_error());
+    
+    
+    assert_equal("bad", v.error_message());
+    assert_equal("bad2", v2.error_message());
+    assert_equal(BAD_REQUEST_ERROR, v.error_code());
+    assert_equal(BAD_REQUEST_ERROR, v2.error_code());
+  }
 //  void test_copy( void ) {
 //    Value v("foo");
 //    Value v2(v);

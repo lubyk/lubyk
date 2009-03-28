@@ -10,8 +10,8 @@ namespace oscit {
 typedef uint TypeTagID;
 
 enum ErrorCode {  
-  BAD_REQUEST = 400,
-  NOT_FOUND   = 404,
+  BAD_REQUEST_ERROR = 400,
+  NOT_FOUND_ERROR   = 404,
   UNKNOWN_ERROR,
 };
 

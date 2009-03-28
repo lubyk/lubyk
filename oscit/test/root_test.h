@@ -84,15 +84,15 @@ public:
     assert_equal(9.87, res.r);
   }
   
-//  void test_call_with_bad_arguments_should_return_an_error( void ) {
-//    Root root;
-//    root.adopt(new DummyObject("zorglub", 9.87));
-//    Value param(TypeTag("ff"));
-//    Value res = root.call("/zorglub", param);
-//    assert_true(res.is_error());
-//    assert_equal("", res.error_message());
-//    assert_equal(400, res.error_code());
-//  }
+  void test_call_with_bad_arguments_should_return_an_error( void ) {
+    Root root;
+    root.adopt(new DummyObject("zorglub", 9.87));
+    Value param(TypeTag("ff"));
+    Value res = root.call("/zorglub", param);
+    assert_true(res.is_error());
+    assert_equal(DUMMY_OBJECT_INFO, res.error_message());
+    assert_equal(BAD_REQUEST_ERROR, res.error_code());
+  }
   
 //  void test_call_bad_object( void )
 //  {
@@ -116,7 +116,7 @@ public:
 //    Object no_info(root,"foo");
 //    Value res, param;
 //    
-//    root.setInfo("This is the root node.");
+//    root.set_info("This is the root node.");
 //    res = root.call("/.info","");
 //    assert_equal(res.to_string(), "[1] This is the root node.");
 //    res = root.call("/foo/#info",param);
@@ -132,7 +132,7 @@ public:
 //    root.adopt(new DummyObject("foo", 23));
 //    Value res;
 //    
-//    root.setInfo("This is the root node.");
+//    root.set_info("This is the root node.");
 //    res = root.call("/#inspect");
 //    assert_equal(res.to_string(), "[1] This is the root node.");
 //    res = root.call("/foo/#inspect");

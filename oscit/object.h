@@ -178,12 +178,12 @@ class Object
   
   /** Inspection method. Called as a response to "/.inspect '/this/url'". */
   virtual const std::string inspect() const {
-    return mInfo;
+    return info_;
   }
   
   /** Human readable information method. Called as a response to "/.info '/this/url'". */
   const std::string &info() const {
-    return mInfo;
+    return info_;
   }
 
   
@@ -215,13 +215,13 @@ class Object
   /** Set type tag. */
   
   /** Set info string. */
-  void setInfo (const char* pInfo) {
-    mInfo = pInfo;
+  void set_info (const char* pInfo) {
+    info_ = pInfo;
   }
 
   /** Set info string. */
-  void setInfo (const std::string &pInfo) {
-    mInfo = pInfo;
+  void set_info (const std::string &pInfo) {
+    info_ = pInfo;
   }
   
   /** Return the list of children as a hash. */
@@ -318,7 +318,7 @@ protected:
   THash<std::string,Object *> children_;         /**< Hash with pointers to sub-objects / methods */
   std::string                 name_;             /**< Unique name in parent's context. */
   std::string                 url_;              /**< Absolute path to object (cached). TODO: this cache is not really needed. */
-  std::string                 mInfo;             /**< Help/information string. */
+  std::string                 info_;             /**< Help/information string. */
   static size_t               sIdCounter;        /**< Use to set a default id and position. */
 
 private:

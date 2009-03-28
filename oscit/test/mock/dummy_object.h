@@ -2,10 +2,14 @@
 #define _DUMMY_OBJECT_H_
 #include "oscit/object.h"
 
+#define DUMMY_OBJECT_INFO "The dummy object simply stores a single real number. Call with a single 'f' argument."
+
 class DummyObject : public oscit::Object
 {
 public:
-  DummyObject(const char * name, Real value) : oscit::Object(name, hashId("f")), value_(value) {}
+  DummyObject(const char * name, Real value) : oscit::Object(name, hashId("f")), value_(value) {
+    set_info(DUMMY_OBJECT_INFO);
+  }
   
   virtual ~DummyObject() {}
   

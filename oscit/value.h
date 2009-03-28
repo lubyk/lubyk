@@ -65,7 +65,7 @@ public:
     set_error(code, str);
   }
   
-  explicit Value(ErrorCode code, std::string& str) : type_(ERROR_VALUE) {
+  explicit Value(ErrorCode code, const std::string& str) : type_(ERROR_VALUE) {
     set_error(code, str.c_str());
   }
   
