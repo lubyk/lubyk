@@ -66,7 +66,7 @@ public:
   {
     Value v(1.2);
     
-    v.setType(NIL_VALUE);
+    v.set_type(NIL_VALUE);
     assert_true(v.is_nil());
   }
 };

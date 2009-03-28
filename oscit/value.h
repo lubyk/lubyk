@@ -46,17 +46,22 @@ public:
   
   explicit Value(const char * string) : type_(STRING_VALUE)
   {
-    setString(string);
+    set_string(string);
   }
   
-  explicit Value(std::string& string) : type_(STRING_VALUE)
+  explicit Value(const std::string& string) : type_(STRING_VALUE)
   {
-    setString(string.c_str());
+    set_string(string.c_str());
   }
   
-  explicit Value(List * list) : type_(LIST_VALUE)
+  explicit Value(const List *list) : type_(LIST_VALUE)
   {
-    setList(list);
+    set_list(list);
+  }
+  
+  explicit Value(const List &list) : type_(LIST_VALUE)
+  {
+    set_list(&list);
   }
   
   explicit Value(TypeTag type_tag) : type_(NIL_VALUE)
@@ -67,7 +72,7 @@ public:
   /** Create a default value from a type character like 'f'. */
   explicit Value(char type_char) : type_(NIL_VALUE)
   {
-    setType(typeFromChar(type_char));
+    set_type(type_from_char(type_char));
   }
   
   /** Copy constructor (needed since many methods return a Value). */
@@ -85,7 +90,7 @@ public:
       set(value.s);
       break;
     case LIST_VALUE:
-      set(value.list);
+      set(value.list_);
       break;
     default:
       set();
@@ -112,79 +117,89 @@ public:
   inline TypeTagID type_tag_id() const;
   
   /** Change the value to nil. */
-  void set()
-  {
-    setTypeNoDefault(NIL_VALUE);
+  void set() {
+    set_type_without_default(NIL_VALUE);
   }
   
   /** Change the Value into a RealValue. */
-  void set(Real real)
-  {  
-    setTypeNoDefault(REAL_VALUE);
+  void set(Real real) {  
+    set_type_without_default(REAL_VALUE);
     r = real;
   }
   
   /** Change the Value into a StringValue. */
-  void set(const char * string)
-  {  
-    setTypeNoDefault(STRING_VALUE);
-    setString(string);
+  void set(const char *string) {  
+    set_type_without_default(STRING_VALUE);
+    set_string(string);
   }
   
-  /** Change the Value into a StringValue. */
-  void set(const List * pList)
-  {  
-    setTypeNoDefault(LIST_VALUE);
-    setList(pList);
+  /** Change the Value into a List by copying the content of the argument. */
+  void set(const List *list) {  
+    set_type_without_default(LIST_VALUE);
+    set_list(list);
+  }
+  
+  /** Change the Value into a List by copying the content of the argument. */
+  void set(const List &list) {  
+    set_type_without_default(LIST_VALUE);
+    set_list(&list);
   }
   
   /** Change the Value into the specific type. Since a default value must be set,
     * it is better to use 'set'. */
-  void setType(ValueType type)
-  {
-    setTypeNoDefault(type);
-    setDefault();
+  void set_type(ValueType type) {
+    set_type_without_default(type);
+    set_default();
   }
   
   /** Change the Value into something defined in a typeTag. */
   inline void set_type_tag(const char *type_tag);
   
-  static ValueType typeFromChar(char c)
-  {
+  inline const Value& operator[](size_t pos) const;
+  
+  inline Value& operator[](size_t pos);
+  
+  inline size_t size() const;
+  
+  template<class T>
+  void append(const T& elem) {
+    append(Value(elem));
+  }
+  
+  inline void append(const Value& val);
+  
+  static ValueType type_from_char(char c) {
     switch(c) {
       case REAL_TYPE_TAG:   return REAL_VALUE;
       case STRING_TYPE_TAG: return STRING_VALUE;
       case NIL_TYPE_TAG:    return NIL_VALUE;
-      default:            return NIL_VALUE;
+      default:              return NIL_VALUE;
     }
   }
   
-  inline const Value& operator[](size_t pos) const;
   
-  inline Value& operator[](size_t pos);
-private:
+ private:
   /** Set the value to nil and release/free contained data. */
   inline void clear();
   
   /** Change the Value into the specific type. Does not set any default value
     * so the object must be considered uninitialized. */
-  void setTypeNoDefault(ValueType type)
-  {
+  void set_type_without_default(ValueType type) {
     clear();
     type_ = type;
   }
   
   /** Properly initialize the type with a default value. */
-  inline void setDefault();
+  inline void set_default();
   
-  void setString(const char * string)
-  {
+  void set_string(const char * string) {
     size_t len = strlen(string) + 1;
     s = (char*)malloc(sizeof(char) * len);
     memcpy(s,string,len);
   }
   
-  inline void setList(const List * pList);
+  /** Set value to list by making a copy. */
+  inline void set_list(const List * list);
   
   ValueType type_;
   
@@ -194,7 +209,7 @@ public:
     Real f; // alias for r
     Real d; // alias for r
     char * s; // string
-    List * list; // multi-value
+    List * list_; // multi-value
   };
 };
 
@@ -210,7 +225,7 @@ const char * Value::type_tag() const {
     case REAL_VALUE:   return "f";
     case STRING_VALUE: return "s";
     case NIL_VALUE:    return "N";
-    case LIST_VALUE:   return list->type_tag();
+    case LIST_VALUE:   return list_->type_tag();
     default:           return "N";
   }
 }
@@ -220,33 +235,42 @@ TypeTagID Value::type_tag_id() const {
     case REAL_VALUE:   return hashId("f");
     case STRING_VALUE: return hashId("s");
     case NIL_VALUE:    return hashId("N");
-    case LIST_VALUE:   return list->type_tag_id();
+    case LIST_VALUE:   return list_->type_tag_id();
     default:           return hashId("N");
   }
 }
 
 void Value::set_type_tag(const char *type_tag) {
   if (strlen(type_tag) > 1) {
-    setTypeNoDefault(LIST_VALUE);
-    list = new List(type_tag);
+    set_type_without_default(LIST_VALUE);
+    list_ = new List(type_tag);
   } else {
-    setType(typeFromChar(type_tag[0]));
+    set_type(type_from_char(type_tag[0]));
   }
 }
 
 const Value& Value::operator[](size_t pos) const {
-  return (*list)[pos];
+  return (*list_)[pos];
 }
 
 Value& Value::operator[](size_t pos) {
-  return (*list)[pos];
+  return (*list_)[pos];
+}
+
+size_t Value::size() const { 
+  return type_ == LIST_VALUE ? list_->size() : 0;
+}
+
+void Value::append(const Value& val) {
+  if (!is_list()) set_type(LIST_VALUE);
+  list_->append(Value(val));
 }
 
 void Value::clear() {
   switch(type_) {
   case LIST_VALUE:
-    if (list != NULL) delete list;
-    list = NULL;
+    if (list_ != NULL) delete list_;
+    list_ = NULL;
     break;
   case STRING_VALUE:
     if (s != NULL) free(s);
@@ -257,16 +281,16 @@ void Value::clear() {
   }
 }
 
-void Value::setDefault() {
+void Value::set_default() {
   switch(type_) {
   case REAL_VALUE:
     r = 0.0;
     break;
   case STRING_VALUE:
-    setString("");
+    set_string("");
     break;
   case LIST_VALUE:
-    list = new List;
+    list_ = new List;
     break;
   default:
     ; // nothing to set 
@@ -274,8 +298,8 @@ void Value::setDefault() {
   
 }
 
-void Value::setList(const List * pList) {
-  list = new List(*pList);
+void Value::set_list(const List * list) {
+  list_ = new List(*list);
 }
 } // oscit
 #endif // _VALUE_H_

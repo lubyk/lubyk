@@ -81,7 +81,7 @@ public:
   {
     Value v;
     
-    v.setType(REAL_VALUE);
+    v.set_type(REAL_VALUE);
     assert_true(v.is_real());
     assert_equal(0.0, v.r);
   }

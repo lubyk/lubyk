@@ -96,7 +96,7 @@ public:
   {
     Value v;
     
-    v.setType(STRING_VALUE);
+    v.set_type(STRING_VALUE);
     assert_true(v.is_string());
     assert_equal("", v.s);
   }
