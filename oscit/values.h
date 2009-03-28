@@ -3,7 +3,9 @@
 #include "oscit/conf.h"
 #include "oscit/thash.h"
 #include "oscit/value.h"
+#include "oscit/values/list_value.h"
 #include "oscit/values/real_value.h"
-// #include "oscit/values/string_value.h"
+#include "oscit/values/string_value.h"
+#include "oscit/values/error_value.h"
 
 #endif // _VALUES_H_

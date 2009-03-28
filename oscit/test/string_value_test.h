@@ -1,8 +1,10 @@
+#include "test_helper.h"
+#include "oscit/values.h"
+
 class StringValueTest : public TestHelper
 {  
 public:
-  void test_create( void )
-  {
+  void test_create( void ) {
     Value v("foo");
     
     assert_false(v.is_nil());
@@ -16,8 +18,19 @@ public:
     assert_equal("s", v.type_tag());
   }
   
-  void test_createStdString( void )
-  {
+  void test_create_string_value( void ) {
+    StringValue v("hello");
+    StringValue v2;
+    
+    assert_true(v.is_string());
+    assert_true(v2.is_string());
+    
+    
+    assert_equal("hello", v.s);
+    assert_equal("", v2.s);
+  }
+  
+  void test_create_std_string( void ) {
     std::string str("foo");
     Value v(str);
     
@@ -49,8 +62,7 @@ public:
     assert_equal("", v.s);
   }
   
-  void testCopy( void )
-  {
+  void test_copy( void ) {
     Value v("foo");
     Value v2(v);
     Value v3;
@@ -73,8 +85,7 @@ public:
     assert_equal("foo", v3.s);
   }
   
-  void testSet( void )
-  {
+  void test_set( void ) {
     Value v;
     
     assert_true(v.is_nil());
@@ -83,8 +94,7 @@ public:
     assert_equal("foobar", v.s);
   }
   
-  void testSetTag( void )
-  {
+  void test_set_type_tag( void ) {
     Value v;
     
     v.set_type_tag("s");
@@ -92,8 +102,7 @@ public:
     assert_equal("", v.s);
   }
   
-  void testSetType( void )
-  {
+  void test_set_type( void ) {
     Value v;
     
     v.set_type(STRING_VALUE);

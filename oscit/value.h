@@ -26,7 +26,7 @@ enum ValueTypeTag
 /** Wrapper around a string identifying an osc type list. */
 struct TypeTag
 {
-  TypeTag(const char * str) : str_(str) {}
+  explicit TypeTag(const char * str) : str_(str) {}
   const char * str_;
 };
 
@@ -122,25 +122,31 @@ public:
   }
   
   /** Change the Value into a RealValue. */
-  void set(Real real) {  
+  void set(Real real) {
     set_type_without_default(REAL_VALUE);
     r = real;
   }
   
   /** Change the Value into a StringValue. */
-  void set(const char *string) {  
+  void set(const char *string) {
     set_type_without_default(STRING_VALUE);
     set_string(string);
   }
   
+  /** Change the Value into an ErrorValue. */
+  void set_error(const char *string) {
+    set_type_without_default(ERROR_VALUE);
+    set_string(string);
+  }
+  
   /** Change the Value into a List by copying the content of the argument. */
-  void set(const List *list) {  
+  void set(const List *list) {
     set_type_without_default(LIST_VALUE);
     set_list(list);
   }
   
   /** Change the Value into a List by copying the content of the argument. */
-  void set(const List &list) {  
+  void set(const List &list) {
     set_type_without_default(LIST_VALUE);
     set_list(&list);
   }
@@ -209,6 +215,7 @@ public:
     Real f; // alias for r
     Real d; // alias for r
     char * s; // string
+    char * e; // error string
     List * list_; // multi-value
   };
 };

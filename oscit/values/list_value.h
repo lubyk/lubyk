@@ -9,7 +9,10 @@ namespace oscit {
 and return values for osc messages.*/
 class ListValue : public Value
 { 
-  ListValue(TypeTagID type_tag_id) : Value(LIST_VALUE, typeTag) {}
+ public:
+  explicit ListValue(const TypeTag &type_tag) : Value(type_tag) {}
+  explicit ListValue(const char *type_tag) : Value(TypeTag(type_tag)) {}
+  explicit ListValue() : Value(List()) {}
 };
 
 } // oscit

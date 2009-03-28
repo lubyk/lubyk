@@ -4,9 +4,8 @@
 class ListValueTest : public TestHelper
 {  
 public:
-  void test_create( void )
-  {
-    Value v((TypeTag)"fsf");
+  void test_create( void ) {
+    Value v(TypeTag("fsf"));
     
     assert_false(v.is_nil());
     assert_false(v.is_real());
@@ -27,6 +26,17 @@ public:
     assert_equal(0.0, v[2].r);
     
     assert_equal("fsf", v.type_tag());
+  }
+  
+  void test_create_list_value( void ) {
+    ListValue v("ffs");
+    ListValue v2;
+    
+    assert_true(v.is_list());
+    assert_true(v2.is_list());
+    
+    assert_equal("ffs", v.type_tag());
+    assert_equal("", v2.type_tag());
   }
   
   void test_copy( void ) {

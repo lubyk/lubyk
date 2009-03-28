@@ -7,10 +7,10 @@ namespace oscit {
 /** StringValue is just a wrapper around an immutable const char*.*/
 class StringValue : public Value
 { 
-public:
-  StringValue() : Value(STRING_VALUE, "") {}
+ public:
+  StringValue() : Value("") {}
   
-  StringValue(const char * string) : Value(STRING_VALUE, string) {}
+  StringValue(const char *string) : Value(string) {}
 };
 
 } // oscit

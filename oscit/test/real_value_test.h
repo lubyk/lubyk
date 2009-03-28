@@ -4,8 +4,7 @@
 class RealValueTest : public TestHelper
 {  
 public:
-  void test_create( void )
-  {
+  void test_create( void ) {
     Value v(3.5);
     
     assert_false(v.is_nil());
@@ -20,6 +19,18 @@ public:
     assert_equal(3.5, v.d); // alias as double
     
     assert_equal("f", v.type_tag());
+  }
+  
+  void test_create_real_value( void ) {
+    RealValue v(3.5);
+    RealValue v2;
+    
+    assert_true(v.is_real());
+    assert_true(v2.is_real());
+    
+    
+    assert_equal(3.5, v.r);
+    assert_equal(0.0, v2.r);
   }
   
   void test_create_with_char( void ) {
