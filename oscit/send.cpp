@@ -7,19 +7,19 @@ namespace oscit {
 
 #define OSC_OUT_BUFFER_SIZE 2048
 
-OscSend::OscSend(const IpEndpointName &remoteEndpoint) {
-  remote_endpoint_ = new IpEndpointName(remoteEndpoint);
+OscSend::OscSend(const IpEndpointName &remote_endpoint) {
+  remote_endpoint_ = new IpEndpointName(remote_endpoint);
   socket_ = new UdpTransmitSocket(*remote_endpoint_);
 }
 
-OscSend::OscSend(const IpEndpointName &remoteEndpoint, int port) { 
-  remote_endpoint_ = new IpEndpointName(remoteEndpoint.address, port);
+OscSend::OscSend(const IpEndpointName &remote_endpoint, int port) { 
+  remote_endpoint_ = new IpEndpointName(remote_endpoint.address, port);
 	socket_ = new UdpTransmitSocket(*remote_endpoint_);
   
   // debugging
   char hostIpAddress[ IpEndpointName::ADDRESS_STRING_LENGTH ];
   // get host ip as string
-  remoteEndpoint.AddressAsString(hostIpAddress);
+  remote_endpoint.AddressAsString(hostIpAddress);
   std::cout << "Reply to " << hostIpAddress << ":" << port << ".\n";
 }
 
@@ -47,10 +47,10 @@ void OscSend::send(const char *url, const Value& val)
   
   
   // debugging
-  char host_ip[ IpEndpointName::ADDRESS_STRING_LENGTH ];
-  // get host ip as string
-  remote_endpoint_->AddressAsString(host_ip);
-  std::cout << "[" << host_ip << ":" << remote_endpoint_->port << "] << " << val << std::endl;
+  // char host_ip[ IpEndpointName::ADDRESS_STRING_LENGTH ];
+  // // get host ip as string
+  // remote_endpoint_->AddressAsString(host_ip);
+  // std::cout << "send: " << host_ip << ":" << remote_endpoint_->port << url << " " << val << std::endl;
 
   send(oss);
 }

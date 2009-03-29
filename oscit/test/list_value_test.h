@@ -131,13 +131,14 @@ public:
   void test_push_back_real( void ) {
     Value v;
     v.push_back(1.34);
-    assert_true(v.is_list());
-    assert_true(v[0].is_real());
-    assert_equal(1.34, v[0].r);
+    assert_true(v.is_real());
+    assert_equal(1.34, v.r);
     
     v.push_back(3.45);
-    assert_equal(2, v.size());
+    assert_true(v.is_list());
+    assert_true(v[0].is_real());
     assert_true(v[1].is_real());
+    assert_equal(2, v.size());
     assert_equal(1.34, v[0].r);
     assert_equal(3.45, v[1].r);
   }
@@ -160,9 +161,10 @@ public:
     l[1].set("one");
     l[2].set("two");
     v.push_back(1.34);
-    assert_true(v.is_list());
+    assert_true(v.is_real());
     assert_equal("f", v.type_tag());
     v.push_back(l);
+    assert_true(v.is_list());
     assert_equal("ffss", v.type_tag());
     assert_equal("two", v[3].s);
   }
@@ -170,12 +172,11 @@ public:
   void test_push_front_real( void ) {
     Value v;
     v.push_front(1.34);
-    assert_true(v.is_list());
-    assert_equal(1, v.size());
-    assert_true(v[0].is_real());
-    assert_equal(1.34, v[0].r);
+    assert_true(v.is_real());
+    assert_equal(1.34, v.r);
     
     v.push_front(3.45);
+    assert_true(v.is_list());
     assert_equal(2, v.size());
     assert_true(v[0].is_real());
     assert_equal(3.45, v[0].r);
@@ -199,9 +200,10 @@ public:
     l[0].set("one");
     l[1].set("two");
     v.push_front(1.34);
-    assert_true(v.is_list());
+    assert_true(v.is_real());
     assert_equal("f", v.type_tag());
     v.push_front(l);
+    assert_true(v.is_list());
     assert_equal("ssf", v.type_tag());
     assert_equal("one", v[0].s);
     assert_equal("two", v[1].s);

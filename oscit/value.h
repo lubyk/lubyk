@@ -127,6 +127,11 @@ public:
     return type_;
   }
   
+  /** Copy the content of another Value. */
+  void set(const Value &other) {
+    *this = other;
+  }
+  
   /** Change the value to nil. */
   void set() {
     set_type_without_default(NIL_VALUE);
@@ -326,24 +331,32 @@ size_t Value::size() const {
 }
 
 Value &Value::push_back(const Value& val) {
-  if (!is_list()) {
-    Value tmp(*this);
-    set_type(LIST_VALUE);
-    if (!tmp.is_nil()) push_back(tmp);
+  if (is_nil()) {
+    set(val);
+  } else {
+    if (!is_list()) {
+      Value tmp(*this);
+      set_type(LIST_VALUE);
+      if (!tmp.is_nil()) push_back(tmp);
+    }
+
+    list_->push_back(Value(val));
   }
-  
-  list_->push_back(Value(val));
   return *this;
 }
 
 Value &Value::push_front(const Value& val) {
-  if (!is_list()) {
-    Value tmp(*this);
-    set_type(LIST_VALUE);
-    if (!tmp.is_nil()) push_back(tmp);
+  if (is_nil()) {
+    set(val);
+  } else {
+    if (!is_list()) {
+      Value tmp(*this);
+      set_type(LIST_VALUE);
+      if (!tmp.is_nil()) push_back(tmp);
+    }
+
+    list_->push_front(Value(val));
   }
-  
-  list_->push_front(Value(val));
   return *this;
 }
 

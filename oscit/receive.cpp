@@ -13,7 +13,7 @@ OscReceive::OscReceive(Root * root, uint port) : root_(root)
   socket_ = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, port ), this );
   mRegisterZeroConf = new ZeroConfRegister("oscit", "_oscit._udp", port);
   
-  std::cout << "Listening for OSC messages on port " << port << ".\n";
+  // std::cout << "Listening for OSC messages on port " << port << ".\n";
   listen_thread_id_ = NULL;
   pthread_create( &listen_thread_id_, NULL, &start_thread, (void*)this);
 }
@@ -38,7 +38,7 @@ void OscReceive::run()
   socket_->Run();
 }
   
-void OscReceive::ProcessMessage(const osc::ReceivedMessage &message, const IpEndpointName &remoteEndpoint) {
+void OscReceive::ProcessMessage(const osc::ReceivedMessage &message, const IpEndpointName &remote_endpoint) {
   Value res;
   std::string url(message.AddressPattern());
   
@@ -46,14 +46,21 @@ void OscReceive::ProcessMessage(const osc::ReceivedMessage &message, const IpEnd
     // TODO: implement register
     // Can we avoid this exception ?
     // std::cout << "registering satellite\n";
-    // root_->adopt_observer(new OscSend(remoteEndpoint));
+    // root_->adopt_observer(new OscSend(remote_endpoint));
     // return value ??
   } else {
-    res = root_->call(url, value_from_osc(message));
+    Value val(value_from_osc(message));
+    
+    // debugging
+    // char host_ip[ IpEndpointName::ADDRESS_STRING_LENGTH ];
+    // // get host ip as string
+    // remote_endpoint.AddressAsString(host_ip);
+    // std::cout << url << " " << val << " (" << host_ip << ":" << remote_endpoint.port << ")" << std::endl;
+    res = root_->call(url, val);
   }
   
   // send return
-  root_->send_reply(&remoteEndpoint, url, res);
+  root_->send_reply(&remote_endpoint, url, res);
 }
 
 Value OscReceive::value_from_osc(const osc::ReceivedMessage &message) {
@@ -66,10 +73,10 @@ Value OscReceive::value_from_osc(const osc::ReceivedMessage &message) {
   while (arg != end) {
     switch (type_tags[i]) {
       case osc::TRUE_TYPE_TAG:
-        res.push_back(Value(1.0));
+        res.push_back(1.0);
         break;
       case osc::FALSE_TYPE_TAG:
-        res.push_back(Value(0.0));
+        res.push_back(0.0);
         break;
       // case osc::NIL_TYPE_TAG:
       //   ??

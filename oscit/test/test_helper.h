@@ -4,8 +4,15 @@
 #include "oscit/values.h"
 #include "oscit/object.h"
 #include "oscit/globals.cpp"
-//#include "oscit/test/dummy.h"
-//#include "oscit/root.h"
+#include "oscit/root.h"
+#include <sys/timeb.h> // ftime
+
+void microsleep(size_t microseconds) {
+  struct timespec sleeper;
+  sleeper.tv_sec  = 0; 
+  sleeper.tv_nsec = microseconds * 1000000;
+  nanosleep (&sleeper, NULL);
+}
 
 using namespace oscit;
 

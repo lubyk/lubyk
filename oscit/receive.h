@@ -27,7 +27,7 @@ public:
   
 private:  
   /** Process incoming messages. */
-  virtual void ProcessMessage(const osc::ReceivedMessage &message, const IpEndpointName &remoteEndpoint);
+  virtual void ProcessMessage(const osc::ReceivedMessage &message, const IpEndpointName &remote_endpoint);
   
   /** Start "run" loop in new thread. */
   static void * start_thread(void *);

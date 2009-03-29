@@ -160,9 +160,9 @@ class Root : public Object
   }
   
   /** Send reply to received message. 
-   *  @param remoteEndpoint can be NULL if this is triggered by an internal call.
+   *  @param remote_endpoint can be NULL if this is triggered by an internal call.
    */
-  void send_reply(const IpEndpointName *remoteEndpoint, const std::string &url, const Value &val);
+  void send_reply(const IpEndpointName *remote_endpoint, const std::string &url, const Value &val);
   
   void * ground_;                 /**< Context pointer for objects in the tree. */
  protected:

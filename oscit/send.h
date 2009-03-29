@@ -16,9 +16,9 @@ namespace oscit {
 class OscSend
 {
 public:
-  OscSend(const IpEndpointName &remoteEndpoint);
+  OscSend(const IpEndpointName &remote_endpoint);
   
-  OscSend(const IpEndpointName &remoteEndpoint, int port);
+  OscSend(const IpEndpointName &remote_endpoint, int port);
 
   OscSend(const char *remote, int port);
   

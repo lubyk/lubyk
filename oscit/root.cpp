@@ -22,18 +22,18 @@ void Root::build_meta_methods() {
   adopt(new TypeMetaMethod(".type"));
 }
 
-void Root::send_reply(const IpEndpointName *remoteEndpoint, const std::string &url, const Value &val) {
+void Root::send_reply(const IpEndpointName *remote_endpoint, const std::string &url, const Value &val) {
   
   if (val.is_error()) {
-    if (remoteEndpoint) OscSend(*remoteEndpoint).send("/.error", val);
+    if (remote_endpoint) OscSend(*remote_endpoint).send("/.error", val);
   } else {
     // prepare reply depending on value
     Value res(url);
     res.push_back(val);
     
-    if (remoteEndpoint) {
+    if (remote_endpoint) {
       // TODO: check that the sender is not in the list of observers_.
-      OscSend(*remoteEndpoint).send("/.reply", res);
+      OscSend(*remote_endpoint).send("/.reply", res);
     }
     OscSend::send_all(observers_, "/.reply", res);
   }
