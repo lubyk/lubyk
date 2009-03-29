@@ -12,6 +12,7 @@ typedef uint TypeTagID;
 enum ErrorCode {  
   BAD_REQUEST_ERROR = 400,
   NOT_FOUND_ERROR   = 404,
+  INTERNAL_SERVER_ERROR = 500,
   UNKNOWN_ERROR,
 };
 

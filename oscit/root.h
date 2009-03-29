@@ -19,25 +19,19 @@ class Root : public Object
 {
  public:
   Root() : ground_(NULL), objects_(OBJECT_HASH_SIZE), osc_in_(NULL) {
-    root_ = this;
-    register_object(this);
-    objects_.set(std::string(""), this);
+    init();
   }
 
   Root(size_t hashSize) : ground_(NULL), objects_(hashSize), osc_in_(NULL) {
-    root_ = this;
-    objects_.set(std::string(""), this);
+    init();
   }
   
   Root(void *ground) : ground_(ground), objects_(OBJECT_HASH_SIZE), osc_in_(NULL) {
-    root_ = this;
-    register_object(this);
-    objects_.set(std::string(""), this);
+    init();
   }
 
   Root(void *ground, size_t hashSize) : ground_(ground), objects_(hashSize), osc_in_(NULL) {
-    root_ = this;
-    objects_.set(std::string(""), this);
+    init();
   }
   
   virtual ~Root();
@@ -68,29 +62,9 @@ class Root : public Object
 
   /** Trigger the object located at the given url with the given parameters. */
   const Value call(const std::string &url, const Value &val) {
-    Object * target = NULL;
-    size_t pos;
-    std::string tmp_url(url);
+    Object * target = find_or_build_object_at(url);
     
-    bool is_not_found = false;
-    
-    while (!get_object_at(tmp_url, &target) && tmp_url != "") {
-      // Before raising a 404 error, we try to find a '404' handler that
-      // could build the resource or do something better then just sending
-      // an error back.
-      is_not_found = true;
-      pos = tmp_url.rfind("/");
-      if (pos == std::string::npos) {
-        tmp_url = "";
-      } else {
-        tmp_url = tmp_url.substr(0, pos);
-      }
-    
-    }
-  
-    if (!target) return not_found(url, val);
-    
-    if (is_not_found) return target->not_found(url, val);
+    if (!target) return ErrorValue(NOT_FOUND_ERROR, url);
     
     if (val.is_nil() || val.type_tag_id() == target->type_tag_id()) {
       return target->trigger(val);
@@ -139,7 +113,33 @@ class Root : public Object
     return object_at(std::string(url));
   }
   
-  /* ======================= META METHODS ===================== */
+  /** Find the object at the given url. Before raising a 404 error, we try to find a 'not_found'
+   *  handler that could build the resource.
+   */
+  Object * find_or_build_object_at(const std::string &url) {
+    Object * object = object_at(url);
+    
+    if (object == NULL) {
+      size_t pos = url.rfind("/");
+      if (pos != std::string::npos) {
+        /** call 'not_found' handler in parent. */
+        Object * parent = find_or_build_object_at(url.substr(0, pos));
+        if (parent != NULL) {
+          return parent->build_child(url.substr(pos+1));
+        }
+      }
+    }
+    return object;
+  }
+  
+  /** Find the object at the given url. Before raising a 404 error, we try to find a 'not_found'
+   *  handler that could build the resource.
+   */
+  Object * find_or_build_object_at(const char *url) {
+    return find_or_build_object_at(std::string(url));
+  }
+  
+  /* ======================= META METHODS HELPERS ===================== */
   
   /** Add a new satellite to the list of observers. This method is the implementation
    *  of "/.register".
@@ -171,6 +171,14 @@ class Root : public Object
   THash<std::string, Object*> objects_;   /**< Hash to find any object in the tree from its url. */
 
  private:
+  void init() {
+    root_ = NULL;
+    register_object(this);
+    build_meta_methods();
+  }
+  
+  void build_meta_methods();
+   
   OscReceive * osc_in_;           /**< Listening socket. */
   std::list<OscSend*> observers_; /**< List of satellites that have registered to get return values back. */
 };

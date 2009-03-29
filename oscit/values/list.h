@@ -43,6 +43,17 @@ class List
     return values_[pos];
   }
   
+  /** Replace a value at a given position, checking for range and making sure
+   *  the type_tag of the list remains in sync. */
+  void set_value_at(size_t pos, const Value &val) {
+    if (pos >= size()) return;
+    if (val.is_list()) return; // NOT SUPPORTED YET (probably never needed)
+    values_[pos] = val;
+    type_tag_storage_.replace(pos,1,val.type_tag());
+    type_tag_ = type_tag_storage_.c_str();
+    type_tag_id_ = hashId(type_tag_);
+  }
+  
   size_t size() const {
     return values_.size();
   }

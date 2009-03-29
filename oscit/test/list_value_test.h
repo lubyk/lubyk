@@ -80,6 +80,14 @@ public:
     assert_true(v.is_list());
   }
   
+  void test_set_value_at( void ) {
+    Value v(3.4);
+    ListValue l("sss");
+    l.set_value_at(1,Value(3.5));
+    assert_equal("sfs", l.type_tag());
+    assert_equal(3.5, l[1].r);
+  }
+  
   void test_set_tag( void ) {
     Value v;
     

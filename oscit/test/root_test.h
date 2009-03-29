@@ -93,45 +93,98 @@ public:
     assert_equal(DUMMY_OBJECT_INFO, res.error_message());
     assert_equal(BAD_REQUEST_ERROR, res.error_code());
   }
+
+  void test_call_bad_url_should_return_missing_error( void ) {
+    Root root;
+    Value res = root.call("/foo");
+
+    assert_true(res.is_error());
+    assert_equal("/foo", res.error_message());
+    assert_equal(NOT_FOUND_ERROR, res.error_code());
+  }
   
- void test_call_bad_url_should_return_missing_error( void ) {
-   Root root;
-   Value res = root.call("/foo");
-   
-   assert_true(res.is_error());
-   assert_equal("/foo", res.error_message());
-   assert_equal(NOT_FOUND_ERROR, res.error_code());
- }
- 
-//  void test_get_info( void )
-//  {
-//    Root root;
-//    Object no_info(root,"foo");
-//    Value res, param;
-//    
-//    root.set_info("This is the root node.");
-//    res = root.call("/.info","");
-//    assert_equal(res.to_string(), "[1] This is the root node.");
-//    res = root.call("/foo/#info",param);
-//    assert_equal(res.to_string(), "[2] ");
-//    
-//    res = root.call("/blah/#info",param);
-//    assert_equal(Error(res).message(), std::string("Object '/blah/#info' not found.") );
-//  }
-//  
-//  void test_inspect( void )
-//  {
-//    Root root;
-//    root.adopt(new DummyObject("foo", 23));
-//    Value res;
-//    
-//    root.set_info("This is the root node.");
-//    res = root.call("/#inspect");
-//    assert_equal(res.to_string(), "[1] This is the root node.");
-//    res = root.call("/foo/#inspect");
-//    assert_equal(res.to_string(), "[2] foo: 23");
-//    
-//    res = root.call("/blah/#inspect");
-//    assert_equal(Error(res).message(), std::string("Object '/blah/#inspect' not found.") );
-//  }
+  void test_find_or_build_object_at_should_call_build_child( void ) {
+    Root root;
+    root.adopt(new DummyObject("dummy", 0.0));
+    assert_equal((Object*)NULL, root.find_or_build_object_at("whatever"));
+    assert_equal((Object*)NULL, root.find_or_build_object_at("/whatever"));
+    assert_equal((Object*)NULL, root.find_or_build_object_at("/dummy/foo"));
+    Object * special = root.find_or_build_object_at("/dummy/special");
+    assert_true( special != NULL );
+    assert_equal("/dummy/special", special->url());
+  }
+  
+  ////////////////////// OSCIT META METHODS TESTS ///////////////////////////////////////
+  
+  void test_info( void ) {
+    Root root;
+    root.adopt(new Object("foo"));
+    Value res;
+
+    root.set_info("This is the root node.");
+    res = root.call("/.info", Value(""));
+    assert_true(res.is_string());
+    assert_equal("This is the root node.", res.s);
+    
+    res = root.call("/.info", Value("/foo"));
+    assert_true(res.is_string());
+    assert_equal(DEFAULT_INFO, res.s);
+
+    res = root.call("/.info", Value("/blah"));
+    assert_true(res.is_error());
+    assert_equal(NOT_FOUND_ERROR, res.error_code());
+  }
+  
+  void test_slider_type( void ) {
+    Root root;
+    root.adopt(new DummyObject("foo", 4.25));
+    Value res;
+
+    root.set_info("This is the root node.");
+    res = root.call("/.type", Value(""));
+    assert_true(res.is_nil());
+    
+    res = root.call("/.type", Value("/foo"));
+    assert_true(res.is_list());
+    assert_equal("fffs", res.type_tag());
+    assert_equal(4.25,  res[0].r); // current
+    assert_equal(0.0,   res[1].r); // min
+    assert_equal(127.0, res[2].r); // max
+    assert_equal("lux", res[3].s); // unit
+
+    res = root.call("/.type", Value("/blah"));
+    assert_true(res.is_error());
+    assert_equal(NOT_FOUND_ERROR, res.error_code());
+  }
+  
+  void test_menu_type( void ) {
+    Root root;
+    Dummy2Object * foo = root.adopt(new Dummy2Object("foo", "yuv"));
+    Value res;
+    
+    // set wrong current to make sure current value is retrieved
+    foo->set_type("", "rgb,rgba,yuv", "color mode");
+
+    res = root.call("/.type", Value("/foo"));
+    assert_true(res.is_list());
+    assert_equal("sss", res.type_tag());
+    assert_equal("yuv",  res[0].s); // current
+    assert_equal("rgb,rgba,yuv",  res[1].s); // current
+    assert_equal("color mode", res[2].s); // unit
+  }
+  
+  void test_any_real_type( void ) {
+    Root root;
+    DummyObject * foo = root.adopt(new DummyObject("foo", 1.23));
+    Value res;
+    
+    // set wrong current to make sure current value is retrieved
+    foo->set_type(1.99,"Hz");
+    
+    res = root.call("/.type", Value("/foo"));
+    assert_true(res.is_list());
+    assert_equal("fs", res.type_tag());
+    assert_equal(1.23,  res[0].r); // current
+    assert_equal("Hz", res[1].s); // unit
+  }
 };

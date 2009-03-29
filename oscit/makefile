@@ -23,6 +23,9 @@ test/runner.cpp: $(TEST)
 test/runner: test/runner.cpp liboscit.a
 	$(CC) $(CFLAGS) $(LFLAGS) -Itest $(INCLUDE_HEADERS) -I. test/runner.cpp liboscit.a -lgcc -lstdc++ -o test/runner
 
+root.o: root.cpp root.h meta_methods/*
+	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
+
 %.o: %.cpp %.h
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 

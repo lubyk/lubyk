@@ -85,12 +85,13 @@ public:
     assert_equal("/foo-1"  , child3->url() );
   }
   
-  void test_not_found( void ) {
+  void test_build_child( void ) {
     Object base;
-    Object * carrot = base.adopt(new Object("carrot"));
-    Value res = carrot->not_found(std::string("/carrot/something"), gNilValue);
-    assert_true(res.is_error());
-    assert_equal(NOT_FOUND_ERROR, res.error_code());
-    assert_equal("/carrot/something", res.error_message());
+    Object * carrot = base.adopt(new DummyObject("dummy", 0.0));
+    Object * foo    = carrot->build_child(std::string("something"));
+    assert_equal((Object*)NULL, foo);
+    foo = carrot->build_child(std::string("special"));
+    assert_true( foo != NULL );
+    assert_equal("/dummy/special", foo->url());
   }
 };

@@ -7,6 +7,7 @@
 
 namespace oscit {
 #define OSC_NEXT_NAME_BUFFER_SIZE 20
+#define DEFAULT_INFO "no information defined for this object"
 
 class Root;
 class Alias;
@@ -14,43 +15,43 @@ class Alias;
 class Object
 {
  public:
-  Object() : root_(NULL), parent_(NULL), children_(20), type_tag_id_(EMPTY_TAG_ID) {
+  Object() : root_(NULL), parent_(NULL), children_(20), type_tag_id_(EMPTY_TAG_ID), info_(DEFAULT_INFO) {
    name_ = "";
    url_  = name_;
   }
   
-  Object(const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), type_tag_id_(EMPTY_TAG_ID) {}
+  Object(const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), type_tag_id_(EMPTY_TAG_ID), info_(DEFAULT_INFO) {}
   
-  Object(TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), type_tag_id_(type_tag_id) {
+  Object(TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
     name_ = "";
     url_  = name_;
   }
 
-  Object(const char *name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), type_tag_id_(type_tag_id) {}
+  Object(const char *name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {}
 
-  Object(const std::string &name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), type_tag_id_(type_tag_id) {}
+  Object(const std::string &name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {}
 
-  Object(Object *parent, const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(EMPTY_TAG_ID) {
+  Object(Object *parent, const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(EMPTY_TAG_ID), info_(DEFAULT_INFO) {
     parent->adopt(this);
   }
 
-  Object(Object *parent, const char *name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(type_tag_id) {
+  Object(Object *parent, const char *name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
     parent->adopt(this);
   }
 
-  Object(Object *parent, const std::string &name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(type_tag_id) {
+  Object(Object *parent, const std::string &name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
     parent->adopt(this);
   }
 
-  Object(Object &parent, const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(EMPTY_TAG_ID) {
+  Object(Object &parent, const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(EMPTY_TAG_ID), info_(DEFAULT_INFO) {
     parent.adopt(this);
   }
 
-  Object(Object &parent, const char *name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(type_tag_id) {
+  Object(Object &parent, const char *name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
     parent.adopt(this);
   }
 
-  Object(Object& parent, const std::string &name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(type_tag_id) {
+  Object(Object& parent, const std::string &name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
     parent.adopt(this);
   }
 
@@ -97,8 +98,8 @@ class Object
     return object;
   }
   
-  /** Class type_tag_id. */
-  virtual uint type() {
+  /** Class type id. */
+  virtual uint class_type() {
     return H("oscit::Object");
   }
 
@@ -116,10 +117,11 @@ class Object
   virtual const Value trigger(const Value &val) {
     return gNilValue;
   }
-
-  /** This method is called whenever a sub-node or branch is not found and this is the last found object along the path. */
-  virtual const Value not_found(const std::string &url, const Value &val) {
-    return Value(NOT_FOUND_ERROR, url);
+  
+  /** Dynamically build a child from the given name. This method is called whenever
+   *  a sub-node or branch is not found and this is the last found object along the path. */
+  virtual Object * build_child(const std::string &name) {
+    return NULL;
   }
   
   /** Define the object's container (parent). */
@@ -175,17 +177,6 @@ class Object
   /* inherit from osc::Object just need to overwrite these in order to return more  */
   /* meaningful information / content.                                              */
   
-  /** Inspection method. Called as a response to "/.inspect '/this/url'". */
-  virtual const std::string inspect() const {
-    return info_;
-  }
-  
-  /** Human readable information method. Called as a response to "/.info '/this/url'". */
-  const std::string &info() const {
-    return info_;
-  }
-
-  
   /** List sub-nodes. */
   const std::string list () const {
     std::string res;
@@ -197,7 +188,7 @@ class Object
     while(it != end) {
       Object * obj;
       if (children_.get(&obj, *it)) {
-        if (obj->type() != H("Alias")) {
+        if (obj->class_type() != H("Alias")) {
             // do not list alias (Alias are used as internal helpers and do not need to be advertised)
           if (!start) res.append(",");
           res.append(obj->name_);
@@ -211,7 +202,12 @@ class Object
     return res;
   }
   
-  /** Set type tag. */
+  /** Human readable information method.
+   *  Called as a response to "/.info '/this/url'". 
+   */
+  const std::string &info() const {
+    return info_;
+  }
   
   /** Set info string. */
   void set_info (const char* pInfo) {
@@ -223,18 +219,51 @@ class Object
     info_ = pInfo;
   }
   
+  /** Type information on node (used to automatically generate the correct control). 
+   *  Called during response to "/.type '/this/url'".
+   */
+  const Value &type() const {
+    return type_;
+  }
+  
+  /** Set meta type. */
+  void set_type(const Value &type) {
+    type_ = type;
+  }
+  
+  /** Set meta type as range (slider). */
+  void set_type(Real current, Real min, Real max, const char *unit) {
+    Value type;
+    type.append(current).append(min).append(max).append(unit);
+    set_type(type);
+  }
+  
+  /** Set meta type as list (menu). */
+  void set_type(const char *current, const char *values, const char *unit) {
+    Value type;
+    type.append(current).append(values).append(unit);
+    set_type(type);
+  }
+  
+  /** Set meta type as any real (entry field). */
+  void set_type(Real current, const char *unit) {
+    Value type;
+    type.append(current).append(unit);
+    set_type(type);
+  }
+  
   /** Return the list of children as a hash. */
   const THash<std::string,Object *> children() const {
     return children_;
   }
 
   /** Return first child. */
-  Object * first_child() {
+  Object *first_child() {
     return children_.size() > 0 ? child(children_.keys().front()) : NULL;
   }
 
   /** Return the direct child named 'name'. */
-  Object * child(const std::string &name) {
+  Object *child(const std::string &name) {
     Object * child;
     if (children_.get(&child, name)) {
       return child;
@@ -254,7 +283,7 @@ class Object
     object->moved();
   }
   
-  Object * parent() {
+  Object *parent() {
     return parent_;
   }
   
@@ -312,12 +341,13 @@ protected:
   THash<std::string,Object *> children_;         /**< Hash with pointers to sub-objects / methods */
   std::string                 name_;             /**< Unique name in parent's context. */
   std::string                 url_;              /**< Absolute path to object (cached). TODO: this cache is not really needed. */
-  std::string                 info_;             /**< Help/information string. */
   static size_t               sIdCounter;        /**< Use to set a default id and position. */
+  Value                       type_;
 
 private:
   friend class OscReceive;
   TypeTagID                   type_tag_id_;        /**< OSC type tag type_tag_id. */
+  std::string                 info_;             /**< Help/information string. */
 };
 } // namespace osc
 

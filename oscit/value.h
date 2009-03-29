@@ -86,7 +86,7 @@ public:
   
   /** Copy the content of the other value. */
   void operator=(const Value& value) {
-    switch(value.type_) {
+    switch (value.type_) {
     case REAL_VALUE:
       set(value.r);
       break;
@@ -184,14 +184,16 @@ public:
   
   inline Value& operator[](size_t pos);
   
+  inline void set_value_at(size_t pos, const Value &val);
+  
   inline size_t size() const;
   
   template<class T>
-  void append(const T& elem) {
-    append(Value(elem));
+  Value &append(const T& elem) {
+    return append(Value(elem));
   }
   
-  inline void append(const Value& val);
+  inline Value &append(const Value& val);
   
   const std::string& error_message() {
     return error_->message();
@@ -202,7 +204,7 @@ public:
   }
   
   static ValueType type_from_char(char c) {
-    switch(c) {
+    switch (c) {
       case REAL_TYPE_TAG:   return REAL_VALUE;
       case STRING_TYPE_TAG: return STRING_VALUE;
       case NIL_TYPE_TAG:    return NIL_VALUE;
@@ -265,7 +267,7 @@ extern Value gNilValue;
 
 namespace oscit {
 const char * Value::type_tag() const {
-  switch(type_) {
+  switch (type_) {
     case REAL_VALUE:   return "f";
     case ERROR_VALUE: // continue
     case STRING_VALUE: return "s";
@@ -276,7 +278,7 @@ const char * Value::type_tag() const {
 }
 
 TypeTagID Value::type_tag_id() const {
-  switch(type_) {
+  switch (type_) {
     case REAL_VALUE:   return H("f");
     case ERROR_VALUE:  // continue
     case STRING_VALUE: return H("s");
@@ -303,17 +305,23 @@ Value& Value::operator[](size_t pos) {
   return (*list_)[pos];
 }
 
+void Value::set_value_at(size_t pos, const Value &val) {
+  if (!is_list()) return;
+  list_->set_value_at(pos, val);
+}
+
 size_t Value::size() const { 
   return type_ == LIST_VALUE ? list_->size() : 0;
 }
 
-void Value::append(const Value& val) {
+Value &Value::append(const Value& val) {
   if (!is_list()) set_type(LIST_VALUE);
   list_->append(Value(val));
+  return *this;
 }
 
 void Value::clear() {
-  switch(type_) {
+  switch (type_) {
   case LIST_VALUE:
     if (list_ != NULL) delete list_;
     list_ = NULL;
@@ -332,7 +340,7 @@ void Value::clear() {
 }
 
 void Value::set_default() {
-  switch(type_) {
+  switch (type_) {
   case REAL_VALUE:
     r = 0.0;
     break;
