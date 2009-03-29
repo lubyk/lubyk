@@ -85,22 +85,22 @@ public:
   }
   
   /** Copy the content of the other value. */
-  void operator=(const Value& value) {
-    switch (value.type_) {
-    case REAL_VALUE:
-      set(value.r);
-      break;
-    case STRING_VALUE:
-      set(value.s);
-      break;
-    case LIST_VALUE:
-      set(value.list_);
-      break;
-    case ERROR_VALUE:
-      set(value.error_);
-      break;
-    default:
-      set();
+  void operator=(const Value& other) {
+    switch (other.type_) {
+      case REAL_VALUE:
+        set(other.r);
+        break;
+      case STRING_VALUE:
+        set(other.s);
+        break;
+      case LIST_VALUE:
+        set(other.list_);
+        break;
+      case ERROR_VALUE:
+        set(other.error_);
+        break;
+      default:
+        set();
     }
   }
   
@@ -122,6 +122,10 @@ public:
   inline const char * type_tag() const;
   
   inline TypeTagID type_tag_id() const;
+  
+  ValueType type() const {
+    return type_;
+  }
   
   /** Change the value to nil. */
   void set() {
@@ -189,11 +193,18 @@ public:
   inline size_t size() const;
   
   template<class T>
-  Value &append(const T& elem) {
-    return append(Value(elem));
+  Value &push_back(const T& elem) {
+    return push_back(Value(elem));
   }
   
-  inline Value &append(const Value& val);
+  inline Value &push_back(const Value& val);
+  
+  template<class T>
+  Value &push_front(const T& elem) {
+    return push_front(Value(elem));
+  }
+  
+  inline Value &push_front(const Value& val);
   
   const std::string& error_message() {
     return error_->message();
@@ -314,47 +325,63 @@ size_t Value::size() const {
   return type_ == LIST_VALUE ? list_->size() : 0;
 }
 
-Value &Value::append(const Value& val) {
-  if (!is_list()) set_type(LIST_VALUE);
-  list_->append(Value(val));
+Value &Value::push_back(const Value& val) {
+  if (!is_list()) {
+    Value tmp(*this);
+    set_type(LIST_VALUE);
+    if (!tmp.is_nil()) push_back(tmp);
+  }
+  
+  list_->push_back(Value(val));
+  return *this;
+}
+
+Value &Value::push_front(const Value& val) {
+  if (!is_list()) {
+    Value tmp(*this);
+    set_type(LIST_VALUE);
+    if (!tmp.is_nil()) push_back(tmp);
+  }
+  
+  list_->push_front(Value(val));
   return *this;
 }
 
 void Value::clear() {
   switch (type_) {
-  case LIST_VALUE:
-    if (list_ != NULL) delete list_;
-    list_ = NULL;
-    break;
-  case STRING_VALUE:
-    if (s != NULL) free(s);
-    s = NULL;
-    break;
-  case ERROR_VALUE:
-    if (error_ != NULL) delete error_;
-    error_ = NULL;
-    break;
-  default:
-    ; // nothing to clear
+    case LIST_VALUE:
+      if (list_ != NULL) delete list_;
+      list_ = NULL;
+      break;
+    case STRING_VALUE:
+      if (s != NULL) free(s);
+      s = NULL;
+      break;
+    case ERROR_VALUE:
+      if (error_ != NULL) delete error_;
+      error_ = NULL;
+      break;
+    default:
+      ; // nothing to clear
   }
 }
 
 void Value::set_default() {
   switch (type_) {
-  case REAL_VALUE:
-    r = 0.0;
-    break;
-  case STRING_VALUE:
-    set_string("");
-    break;
-  case LIST_VALUE:
-    list_ = new List;
-    break;
-  case ERROR_VALUE:
-    error_ = new Error;
-    break;
-  default:
-    ; // nothing to set 
+    case REAL_VALUE:
+      r = 0.0;
+      break;
+    case STRING_VALUE:
+      set_string("");
+      break;
+    case LIST_VALUE:
+      list_ = new List;
+      break;
+    case ERROR_VALUE:
+      error_ = new Error;
+      break;
+    default:
+      ; // nothing to set 
   }
   
 }
@@ -362,6 +389,8 @@ void Value::set_default() {
 void Value::set_list(const List *list) {
   list_ = new List(*list);
 }
+
+std::ostream &operator<< (std::ostream &out_stream, const Value &val);
 
 } // oscit
 #endif // _VALUE_H_

@@ -128,30 +128,83 @@ public:
     assert_equal(0.0, l[1].f);
   }
   
-  void test_append_real( void ) {
+  void test_push_back_real( void ) {
     Value v;
-    v.append(1.34);
+    v.push_back(1.34);
     assert_true(v.is_list());
     assert_true(v[0].is_real());
     assert_equal(1.34, v[0].r);
     
-    v.append(3.45);
+    v.push_back(3.45);
     assert_equal(2, v.size());
     assert_true(v[1].is_real());
+    assert_equal(1.34, v[0].r);
     assert_equal(3.45, v[1].r);
   }
   
-  void test_append_list( void ) {
+  void test_push_back_real_to_real( void ) {
+    Value v(1.0);
+    v.push_back(2.0);
+    assert_true(v.is_list());
+    assert_equal(2, v.size());
+    assert_true(v[0].is_real());
+    assert_true(v[1].is_real());
+    assert_equal(1.0, v[0].r);
+    assert_equal(2.0, v[1].r);
+  }
+  
+  void test_push_back_list( void ) {
     Value v;
     Value l(TypeTag("fss"));
     l[0].r = 10.0;
     l[1].set("one");
     l[2].set("two");
-    v.append(1.34);
+    v.push_back(1.34);
     assert_true(v.is_list());
     assert_equal("f", v.type_tag());
-    v.append(l);
+    v.push_back(l);
     assert_equal("ffss", v.type_tag());
     assert_equal("two", v[3].s);
+  }
+  
+  void test_push_front_real( void ) {
+    Value v;
+    v.push_front(1.34);
+    assert_true(v.is_list());
+    assert_equal(1, v.size());
+    assert_true(v[0].is_real());
+    assert_equal(1.34, v[0].r);
+    
+    v.push_front(3.45);
+    assert_equal(2, v.size());
+    assert_true(v[0].is_real());
+    assert_equal(3.45, v[0].r);
+    assert_equal(1.34, v[1].r);
+  }
+  
+  void test_push_front_real_to_real( void ) {
+    Value v(1.0);
+    v.push_front(2.0);
+    assert_true(v.is_list());
+    assert_equal(2, v.size());
+    assert_true(v[0].is_real());
+    assert_true(v[1].is_real());
+    assert_equal(2.0, v[0].r);
+    assert_equal(1.0, v[1].r);
+  }
+  
+  void test_push_front_list( void ) {
+    Value v;
+    Value l(TypeTag("ss"));
+    l[0].set("one");
+    l[1].set("two");
+    v.push_front(1.34);
+    assert_true(v.is_list());
+    assert_equal("f", v.type_tag());
+    v.push_front(l);
+    assert_equal("ssf", v.type_tag());
+    assert_equal("one", v[0].s);
+    assert_equal("two", v[1].s);
+    assert_equal(1.34,  v[2].r);
   }
 };

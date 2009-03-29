@@ -58,11 +58,11 @@ class List
     return values_.size();
   }
   
-  void append(const Value &val) {
+  void push_back(const Value &val) {
     if (val.is_list()) {
       size_t sz = val.size();
       for(size_t i = 0; i < sz; ++i) {
-        append(val[i]);
+        push_back(val[i]);
       }
     } else {
       values_.push_back(val);
@@ -72,6 +72,20 @@ class List
     }
   }
   
+  void push_front(const Value &val) {
+    if (val.is_list()) {
+      size_t sz = val.size();
+      values_.insert(values_.begin(), sz, gNilValue);
+      for(size_t i = 0; i < sz; ++i) {
+        values_[i] = val[i];
+      }
+    } else {
+      values_.insert(values_.begin(), 1, val);
+    }
+    type_tag_storage_.insert(0, val.type_tag());
+    type_tag_ = type_tag_storage_.c_str();
+    type_tag_id_ = hashId(type_tag_);
+  }
  private:
   
   void init(const char *type_tag) {
