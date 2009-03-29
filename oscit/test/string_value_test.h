@@ -109,4 +109,11 @@ public:
     assert_true(v.is_string());
     assert_equal("", v.s);
   }
+
+  void test_stream( void ) {
+    Value v("cake");
+    std::ostringstream os(std::ostringstream::out);
+    os << v;
+    assert_equal("\"cake\"", os.str());
+  }
 };

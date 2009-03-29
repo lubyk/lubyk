@@ -109,7 +109,7 @@ class Object
   }
 
   /** Clear all children (delete). */
-  virtual void clear();
+  void clear();
 
   /** This is the operation executed when the object is called.
    *  In order to benefit from return value optimization and avoid too many copy
@@ -234,21 +234,21 @@ class Object
   /** Set meta type as range (slider). */
   void set_type(Real current, Real min, Real max, const char *unit) {
     Value type;
-    type.append(current).append(min).append(max).append(unit);
+    type.push_back(current).push_back(min).push_back(max).push_back(unit);
     set_type(type);
   }
   
   /** Set meta type as list (menu). */
   void set_type(const char *current, const char *values, const char *unit) {
     Value type;
-    type.append(current).append(values).append(unit);
+    type.push_back(current).push_back(values).push_back(unit);
     set_type(type);
   }
   
   /** Set meta type as any real (entry field). */
   void set_type(Real current, const char *unit) {
     Value type;
-    type.append(current).append(unit);
+    type.push_back(current).push_back(unit);
     set_type(type);
   }
   

@@ -3,7 +3,7 @@ TESTING=-D_TESTING_
 AR = ar rcu
 LIBTOOL=libtool -static
 TEST=test/*_test.h
-OBJECTS=object.o root.o #receive.o send.o root.o zeroconf.o oscpack/liboscpack.a
+OBJECTS=object.o root.o receive.o send.o zeroconf.o value.o oscpack/liboscpack.a
 CFLAGS=-g -Wall $(TESTING)
 
 
@@ -24,6 +24,9 @@ test/runner: test/runner.cpp liboscit.a
 	$(CC) $(CFLAGS) $(LFLAGS) -Itest $(INCLUDE_HEADERS) -I. test/runner.cpp liboscit.a -lgcc -lstdc++ -o test/runner
 
 root.o: root.cpp root.h meta_methods/*
+	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
+
+value.o: values/value.cpp value.h
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 
 %.o: %.cpp %.h

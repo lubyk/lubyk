@@ -7,80 +7,93 @@ namespace oscit {
 
 #define OSC_OUT_BUFFER_SIZE 2048
 
-OscSend::OscSend(const IpEndpointName& pRemoteEndpoint)
-{
-  mSocket = new UdpTransmitSocket( pRemoteEndpoint );
+OscSend::OscSend(const IpEndpointName &remoteEndpoint) {
+  remote_endpoint_ = new IpEndpointName(remoteEndpoint);
+  socket_ = new UdpTransmitSocket(*remote_endpoint_);
 }
 
-OscSend::OscSend(const IpEndpointName& pRemoteEndpoint, int pPort)
-{ 
-	mSocket = new UdpTransmitSocket( IpEndpointName( pRemoteEndpoint.address, pPort ));
+OscSend::OscSend(const IpEndpointName &remoteEndpoint, int port) { 
+  remote_endpoint_ = new IpEndpointName(remoteEndpoint.address, port);
+	socket_ = new UdpTransmitSocket(*remote_endpoint_);
   
   // debugging
   char hostIpAddress[ IpEndpointName::ADDRESS_STRING_LENGTH ];
   // get host ip as string
-  pRemoteEndpoint.AddressAsString(hostIpAddress);
-  std::cout << "Reply to " << hostIpAddress << ":" << pPort << ".\n";
+  remoteEndpoint.AddressAsString(hostIpAddress);
+  std::cout << "Reply to " << hostIpAddress << ":" << port << ".\n";
+}
+
+OscSend::OscSend(const char *remote, int port) {
+  remote_endpoint_ = new IpEndpointName(remote, port);
+  socket_ = new UdpTransmitSocket(*remote_endpoint_); 
 }
 
 OscSend::~OscSend()
 {
-  delete mSocket;
+  delete socket_;
+  delete remote_endpoint_;
 }
 
-void OscSend::send(const osc::OutboundPacketStream& pMsg)
+void OscSend::send(const osc::OutboundPacketStream &message)
 {
-  mSocket->Send(pMsg.Data(), pMsg.Size());
+  socket_->Send(message.Data(), message.Size());
 }
 
-void OscSend::send(const std::string &url, const Value& val)
+void OscSend::send(const char *url, const Value& val)
 {
-  // char buffer[OSC_OUT_BUFFER_SIZE]; // TODO: reuse buffer
-  // osc::OutboundPacketStream oss( buffer, OSC_OUT_BUFFER_SIZE );
-  // oss << osc::BeginBundleImmediate << osc::BeginMessage(url.c_str()) << val << osc::EndMessage << osc::EndBundle;
-  // send(oss);
+  char buffer[OSC_OUT_BUFFER_SIZE]; // TODO: reuse buffer
+  osc::OutboundPacketStream oss( buffer, OSC_OUT_BUFFER_SIZE );
+  oss << osc::BeginBundleImmediate << osc::BeginMessage(url) << val << osc::EndMessage << osc::EndBundle;
+  
+  
+  // debugging
+  char host_ip[ IpEndpointName::ADDRESS_STRING_LENGTH ];
+  // get host ip as string
+  remote_endpoint_->AddressAsString(host_ip);
+  std::cout << "[" << host_ip << ":" << remote_endpoint_->port << "] << " << val << std::endl;
+
+  send(oss);
 }
 
-void OscSend::send_all(std::list<OscSend*>& pRecipients, const std::string &url, TypeTagID type_tag_ids, const Value& val)
+void OscSend::send_all(std::list<OscSend*> &recipients, const char *url, const Value& val)
 { 
-  std::list<OscSend*>::iterator it  = pRecipients.begin();
-  std::list<OscSend*>::iterator end = pRecipients.end();
+  std::list<OscSend*>::iterator it  = recipients.begin();
+  std::list<OscSend*>::iterator end = recipients.end();
   
   //if (it == end) return;
   // TODO: optimize: keep this thing between queries (make this not a static and let the first recipient send to all others).
   char buffer[OSC_OUT_BUFFER_SIZE]; // TODO: reuse buffer
   osc::OutboundPacketStream oss( buffer, OSC_OUT_BUFFER_SIZE );
-  oss << osc::BeginBundleImmediate << osc::BeginMessage(url.c_str());
-  values_to_stream(oss, typeTags, val);
-  oss << osc::EndMessage << osc::EndBundle;
+  oss << osc::BeginBundleImmediate << osc::BeginMessage(url) << val << osc::EndMessage << osc::EndBundle;
   
   while (it != end) (*it++)->send(oss);
 }
 
-void OscSend::values_to_stream (osc::OutboundPacketStream& pOut, TypeTagID type_tag_ids, const Value& val)
-{ 
-  uint i = 0;
-  char c;
-  const Value * value = val;
-  if (strlen(typeTags) > 1) {
-    value = value->values;
+osc::OutboundPacketStream &operator<<(osc::OutboundPacketStream &out_stream, const Value &val) {
+  switch (val.type()) {
+    case REAL_VALUE:
+      out_stream << val.r;
+      break;
+    case ERROR_VALUE:
+      out_stream << val.error_code() << val.error_message().c_str();
+      break;
+    case STRING_VALUE:
+      out_stream << val.s;
+      break;
+    case NIL_VALUE:
+      out_stream << osc::Nil;
+      break;
+    case LIST_VALUE:
+      size_t sz = val.size();
+      for (size_t i = 0; i < sz; ++i) {
+        out_stream << val[i];
+      }
+      break;
+    default:
+      ;// ????
   }
-  
-  while ( (c = typeTags[i]) ) {
-    switch (c)
-    {
-      case REAL_TYPE:
-        pOut << value[i].r;
-        break;
-      case STRING_TYPE:
-        pOut << value[i].s;
-        break;
-      default:  
-        fprintf(stderr, "Unknown value type '%c'. Cannot send to osc.\n", c);
-        break;
-    }
-    i++;
-  }
+  return out_stream;
 }
+
 
 } // namespace oscit

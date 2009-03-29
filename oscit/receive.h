@@ -20,14 +20,14 @@ class ZeroConfRegister;
 class OscReceive : public osc::OscPacketListener
 {
 public:
-  OscReceive(Root * root, uint pPort);
+  OscReceive(Root * root, uint port);
   
   virtual ~OscReceive();
   
   
 private:  
   /** Process incoming messages. */
-  virtual void ProcessMessage( const osc::ReceivedMessage& pMsg, const IpEndpointName& remoteEndpoint );
+  virtual void ProcessMessage(const osc::ReceivedMessage &message, const IpEndpointName &remoteEndpoint);
   
   /** Start "run" loop in new thread. */
   static void * start_thread(void *);
@@ -35,22 +35,16 @@ private:
   /** Start listening for incoming messages. */
   void run ();
   
-  pthread_t mListenThreadId;
+  pthread_t listen_thread_id_;
   
-  UdpListeningReceiveSocket * mSocket;
+  UdpListeningReceiveSocket * socket_;
   
   ZeroConfRegister * mRegisterZeroConf; /** Zeroconf registration thread. */
   
-  /** Type tags as they are used in the application with automatic type casting from int/float to real, etc.
-    * @param[out] retTypes transposed types.
-    * @param  pTypes list of typetags characters.
-    * @return hash value of the casted type tags. */
-  static uint casted_type_tags(char * retTypes, const char * pTypes);
-  
   /** Write osc values inside the Value. 
     * @param pRes storage the value / multi value (allready allocated, type checked). 
-    * @param pMsg osc message. */
-  static void values_from_osc(Value * pRes, const osc::ReceivedMessage& pMsg);
+    * @param message osc message. */
+  static Value value_from_osc(const osc::ReceivedMessage &message);
   Root * root_;
 };
 } // namespace oscit

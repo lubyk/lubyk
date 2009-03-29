@@ -4,8 +4,7 @@
 class ValueTest : public TestHelper
 {  
 public:
-  void test_create( void )
-  {
+  void test_create( void ) {
     Value v;
     
     assert_true (v.is_nil());
@@ -31,8 +30,7 @@ public:
     assert_true(v2.is_nil());
   }
   
-  void testCopy( void )
-  {
+  void test_copy( void ) {
     Value v;
     Value v2(v);
     Value v3(1.2);
@@ -45,8 +43,7 @@ public:
     assert_true(v2.is_nil());
   }
   
-  void testSet( void )
-  {
+  void test_set( void ) {
     Value v(1.2);
     
     assert_true(v.is_real());
@@ -54,19 +51,24 @@ public:
     assert_true(v.is_nil());
   }
   
-  void testSetTag( void )
-  {
+  void test_set_tag( void ) {
     Value v(1.2);
     
     v.set_type_tag("N");
     assert_true(v.is_nil());
   }
   
-  void testSetType( void )
-  {
+  void test_set_type( void ) {
     Value v(1.2);
     
     v.set_type(NIL_VALUE);
     assert_true(v.is_nil());
+  }
+  
+  void test_stream( void ) {
+    Value v;
+    std::ostringstream os(std::ostringstream::out);
+    os << v;
+    assert_equal("Nil", os.str());
   }
 };

@@ -35,12 +35,9 @@ class Root : public Object
   }
   
   virtual ~Root();
-
-  virtual void clear() {
-    this->Object::clear();
-  }
   
-  void openPort(uint port) {
+  /** Start listening for incomming messages on a given port. */
+  void open_port(uint port) {
     if (osc_in_) delete osc_in_;
     osc_in_ = new OscReceive(this, port);
   }
@@ -147,7 +144,7 @@ class Root : public Object
    * FIXME: implement TTL (time to live)
    * FIXME: avoid duplicates (??)
    */
-  void register_observer(OscSend *observer) {
+  void adopt_observer(OscSend *observer) {
     observers_.push_back(observer);
   }
   
@@ -162,9 +159,10 @@ class Root : public Object
     //FIX send_reply(url, res);
   }
   
-  inline void send_reply(const std::string &url, const Value &val) {
-    OscSend::send_all(observers_, url, val);
-  }
+  /** Send reply to received message. 
+   *  @param remoteEndpoint can be NULL if this is triggered by an internal call.
+   */
+  void send_reply(const IpEndpointName *remoteEndpoint, const std::string &url, const Value &val);
   
   void * ground_;                 /**< Context pointer for objects in the tree. */
  protected:

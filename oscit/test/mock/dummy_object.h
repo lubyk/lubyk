@@ -36,6 +36,10 @@ public:
     return NULL;
   }
   
+  Real real() {
+    return value_.r;
+  }
+  
 private:
   RealValue value_;
 };

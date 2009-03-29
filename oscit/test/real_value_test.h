@@ -96,4 +96,11 @@ public:
     assert_true(v.is_real());
     assert_equal(0.0, v.r);
   }
+  
+  void test_stream( void ) {
+    Value v(1.35);
+    std::ostringstream os(std::ostringstream::out);
+    os << v;
+    assert_equal("1.35", os.str());
+  }
 };

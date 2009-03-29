@@ -102,14 +102,30 @@ size_t Value::from_string(const char * pStr)
   return p - pStr;
 }
 
-std::ostream& operator<< (std::ostream& pStream, const Value& val)
-{
-  if (val.ptr_ && val.ptr_->dataPtr_) {
-    val.ptr_->dataPtr_->to_stream(pStream);
-  } else {
-    pStream << "Nil";
+std::ostream &operator<<(std::ostream &out_stream, const Value &val) {
+  switch (val.type()) {
+    case REAL_VALUE:
+      out_stream << val.r;
+      break;
+    case ERROR_VALUE:
+      out_stream << val.error_code() << val.error_message();
+      break;
+    case STRING_VALUE:
+      out_stream << val.s;
+      break;
+    case NIL_VALUE:
+      // ???? out_stream << val.s;
+      break;
+    case LIST_VALUE:
+      size_t sz = val.size();
+      for (size_t i = 0; i < sz; ++i) {
+        out_stream << val[i];
+      }
+      break;
+    default:
+      // ????
   }
-  return pStream;
+  return out_stream;
 }
 
 

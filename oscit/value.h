@@ -206,11 +206,11 @@ public:
   
   inline Value &push_front(const Value& val);
   
-  const std::string& error_message() {
+  const std::string& error_message() const {
     return error_->message();
   }
   
-  ErrorCode error_code() {
+  ErrorCode error_code() const {
     return error_->code();
   }
   

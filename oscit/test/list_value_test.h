@@ -207,4 +207,15 @@ public:
     assert_equal("two", v[1].s);
     assert_equal(1.34,  v[2].r);
   }
+
+  void test_stream( void ) {
+    Value v(TypeTag("fsff"));
+    v[0].r = 1.234;
+    v[1].set("Hello World!");
+    v[2].r = 9.8;
+    v[3].r = 2000;
+    std::ostringstream os(std::ostringstream::out);
+    os << v;
+    assert_equal("[1.234, \"Hello World!\", 9.8, 2000]", os.str());
+  }
 };
