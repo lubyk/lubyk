@@ -84,7 +84,7 @@ public:
     assert_equal(9.87, res.r);
   }
   
-  void test_call_with_bad_arguments_should_return_an_error( void ) {
+  void test_call_with_bad_arguments_should_return_bad_request_error( void ) {
     Root root;
     root.adopt(new DummyObject("zorglub", 9.87));
     Value param(TypeTag("ff"));
@@ -94,22 +94,15 @@ public:
     assert_equal(BAD_REQUEST_ERROR, res.error_code());
   }
   
-//  void test_call_bad_object( void )
-//  {
-//    Root root;
-//    Value res, param;
-//    
-//    Number n1(4);
-//    assert_id(n1, 1);
-//    assert_id(res, 0);
-//    
-//    res = root.call("/foo",param);
-//    assert_id(res, 2);
-//    
-//    assert_true(res.is_error());
-//    assert_equal(Error(res).message(), std::string("Object '/foo' not found.") );
-//  }
-//  
+ void test_call_bad_url_should_return_missing_error( void ) {
+   Root root;
+   Value res = root.call("/foo");
+   
+   assert_true(res.is_error());
+   assert_equal("/foo", res.error_message());
+   assert_equal(NOT_FOUND_ERROR, res.error_code());
+ }
+ 
 //  void test_get_info( void )
 //  {
 //    Root root;

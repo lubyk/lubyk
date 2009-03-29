@@ -113,14 +113,13 @@ class Object
   /** This is the operation executed when the object is called.
    *  In order to benefit from return value optimization and avoid too many copy
    *  you have to use Value v = xxx.trigger(val). */
-  virtual const Value trigger (const Value& val) {
+  virtual const Value trigger(const Value &val) {
     return gNilValue;
   }
 
   /** This method is called whenever a sub-node or branch is not found and this is the last found object along the path. */
-  virtual const Value not_found (const std::string &url, const Value &val) {
-    raiseError(std::string("Object '").append(url).append("' not found."));
-    return gNilValue;
+  virtual const Value not_found(const std::string &url, const Value &val) {
+    return Value(NOT_FOUND_ERROR, url);
   }
   
   /** Define the object's container (parent). */
@@ -298,11 +297,6 @@ protected:
   }
   
  private:
-  
-  // FIXME: this is a temporary fix for error handling. DO NOT LEAVE THIS AS IS !
-  void raiseError(const std::string &message) {
-    fprintf(stderr, "Error in '%s': %s\n", url().c_str(), message.c_str());
-  }
   
   /** Free the child from the list of children. */
   void release(Object *pChild);

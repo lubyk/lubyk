@@ -84,4 +84,13 @@ public:
     assert_equal("/foo/bar", child2->url() );
     assert_equal("/foo-1"  , child3->url() );
   }
+  
+  void test_not_found( void ) {
+    Object base;
+    Object * carrot = base.adopt(new Object("carrot"));
+    Value res = carrot->not_found(std::string("/carrot/something"), gNilValue);
+    assert_true(res.is_error());
+    assert_equal(NOT_FOUND_ERROR, res.error_code());
+    assert_equal("/carrot/something", res.error_message());
+  }
 };
