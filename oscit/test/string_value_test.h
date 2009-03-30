@@ -12,6 +12,7 @@ public:
     assert_true (v.is_string());
     assert_false(v.is_list());
     assert_false(v.is_error());
+    assert_false(v.is_hash());
     
     assert_equal("foo", v.s);
     
@@ -38,6 +39,7 @@ public:
     assert_false(v.is_real());
     assert_true (v.is_string());
     assert_false(v.is_error());
+    assert_false(v.is_hash());
     
     assert_equal("foo", v.s);
     

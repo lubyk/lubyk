@@ -2,6 +2,7 @@
 #define _VALUE_H_
 #include <string>
 #include "oscit/values/error.h"
+#include "oscit/thash.h"
 
 namespace oscit {
   
@@ -14,6 +15,7 @@ enum ValueType
   STRING_VALUE,
   ERROR_VALUE,
   LIST_VALUE,
+  HASH_VALUE,
 };
 
 enum ValueTypeTag
@@ -22,6 +24,7 @@ enum ValueTypeTag
   REAL_TYPE_TAG   = 'f',
   STRING_TYPE_TAG = 's',
   ERROR_TYPE_TAG  = 's',
+  HASH_TYPE_TAG   = 'H',
 };
 
 /** Wrapper around a string identifying an osc type list. */
@@ -36,6 +39,11 @@ typedef uint TypeTagID;
 
 #define NO_TYPE_TAG_ID  H("")
 #define ANY_TYPE_TAG_ID H("*")
+
+class Value;
+
+typedef std::list<std::string>::const_iterator HashIterator;
+typedef THash<std::string,Value> Hash;
 
 /** Value is the base type of all data transmitted between objects or used as parameters
 and return values for osc messages. */
@@ -100,6 +108,9 @@ public:
       case ERROR_VALUE:
         set(other.error_);
         break;
+      case HASH_VALUE:
+        set(other.hash_);
+        break;
       default:
         set();
     }
@@ -119,6 +130,8 @@ public:
   bool is_list() const   { return type_ == LIST_VALUE; }
   
   bool is_error() const  { return type_ == ERROR_VALUE; }
+  
+  bool is_hash() const   { return type_ == HASH_VALUE; }
   
   inline const char * type_tag() const;
   
@@ -178,6 +191,33 @@ public:
   void set(const Error &error) {
     set_type_without_default(ERROR_VALUE);
     set_error(&error);
+  }
+  
+  /** Change the Value into a List by copying the content of the argument. */
+  void set(const Hash *hash) {
+    set_type_without_default(HASH_VALUE);
+    set_hash(hash);
+  }
+  
+  /** Change the Value into a List by copying the content of the argument. */
+  void set(const Hash &hash) {
+    set_type_without_default(HASH_VALUE);
+    set_hash(&hash);
+  }
+  
+  template<class T>
+  void set(const char *key, const T &val) {
+    set(std::string(key), Value(val));
+  }
+  
+  template<class T>
+  void set(const std::string &key, const T &val) {
+    set(key, Value(val));
+  }
+  
+  void set(const std::string &key, const T &val) {
+    if (!is_hash()) set_type(HASH_VALUE);
+    hash_->set(key, val);
   }
   
   /** Change the Value into the specific type. Since a default value must be set,
@@ -263,6 +303,11 @@ public:
     error_ = new Error(*error);
   }
   
+  /** Set hash content. */
+  void set_hash(const Hash *hash) {
+    hash_ = new Hash(*hash);
+  }
+  
   ValueType type_;
   
 public:
@@ -272,7 +317,8 @@ public:
     Real d; // alias for r
     char * s; // string
     List  * list_; // multi-value
-    Error * error_; // error definition
+    Error * error_; // error code and message
+    Hash  * hash_; // dictionary
   };
 };
 
@@ -375,6 +421,10 @@ void Value::clear() {
       if (error_ != NULL) delete error_;
       error_ = NULL;
       break;
+    case HASH_VALUE:
+      if (hash_ != NULL) delete hash_;
+      hash_ = NULL;
+      break;
     default:
       ; // nothing to clear
   }
@@ -393,6 +443,9 @@ void Value::set_default() {
       break;
     case ERROR_VALUE:
       error_ = new Error;
+      break;
+    case HASH_VALUE:
+      hash_ = new Hash;
       break;
     default:
       ; // nothing to set 

@@ -8,5 +8,6 @@
 #include "oscit/values/real_value.h"
 #include "oscit/values/string_value.h"
 #include "oscit/values/error_value.h"
+#include "oscit/values/hash_value.h"
 
 #endif // _VALUES_H_

@@ -45,7 +45,8 @@ typedef std::list<std::string>::iterator string_iterator;
 typedef std::list<std::string>::const_iterator const_string_iterator;
 
 template<class K, class T>
-struct THashElement {
+struct THashElement
+{
   THashElement() : obj(0), next(0) {}
   ~THashElement() { if (obj) delete obj; }
   K     id; 
@@ -59,16 +60,15 @@ static uint hashId(K key);
 
 // K is the key class, T is the object class
 template <class K, class T>
-class THash {
+class THash
+{
 public:
-  THash(unsigned int size) : mSize(size)
-  { 
+  THash(unsigned int size) : mSize(size) { 
     mTHashTable = new THashElement<K,T>[size];
   }
   
   // copy constructor
-  THash(const THash& pOther)
-  {  
+  THash(const THash& pOther) {  
     const_string_iterator it;
     const_string_iterator end = pOther.end();
     T value;
@@ -83,8 +83,7 @@ public:
     }
   }
   
-  THash& operator=(const THash& pOther)
-  {
+  THash& operator=(const THash& pOther) {
     const_string_iterator it;
     const_string_iterator end = pOther.end();
     T value;
@@ -112,26 +111,25 @@ public:
     delete[] mTHashTable;
   }
   
-  void set (const K& pId, const T& pElement);
+  void set(const K& pId, const T& pElement);
   
   /** Get an element of the dictionary and set the pResult to this element. Returns false if no element found. */
-  bool get (T* pResult, const K& pId) const;
+  bool get(const K& pId, T* pResult) const;
   
   /** Get an element's key. Returns false if the element could not be found. */
-  bool get_key (K* pResult, const T& pElement) const;
+  bool get_key(const T& pElement, K* pResult) const;
   
   /** Get the default value (last value). */
-  bool get (T* pResult) const;
+  bool get(T* pResult) const;
   
   /** Remove object with the given key. */
-  void remove (const K& pId);
+  void remove(const K& pId);
   
   /** Remove the given element. */
-  void remove_element (const T& pElement);
+  void remove_element(const T& pElement);
   
   /** Remove all objects. */
-  void clear() 
-  {
+  void clear() {
     // TODO: optimize...
     while(mKeys.begin() != mKeys.end()) {
       remove(*mKeys.begin());
@@ -139,16 +137,13 @@ public:
   }
   
   /** Return true if the dictionary is empty. */
-  bool empty() const
-  { return size() == 0; }
+  bool empty() const { return size() == 0; }
   
   /** Return number of elements (distinct keys). */
-  size_t size() const
-  { return mKeys.size(); }
+  size_t size() const { return mKeys.size(); }
   
   /** Return size of storage (main hash table). */
-  unsigned int storage_size() const
-  { return mSize; }
+  unsigned int storage_size() const { return mSize; }
   
   /** List of keys. */
   const std::list<K>& keys() { return mKeys; }
@@ -208,8 +203,7 @@ void THash<K,T>::set(const K& pId, const T& pElement) {
 }
 
 template <class K, class T>
-bool THash<K,T>::get(T* pResult, const K& pId) const 
-{
+bool THash<K,T>::get(const K& pId, T* pResult) const {
   THashElement<K,T> * found;
   uint key = hashId(pId) % mSize;
   
@@ -226,8 +220,7 @@ bool THash<K,T>::get(T* pResult, const K& pId) const
 }
 
 template <class K, class T>
-bool THash<K,T>::get_key(K* pResult, const T& pElement) const
-{
+bool THash<K,T>::get_key(const T& pElement, K* pResult) const {
   typename std::list<K>::const_iterator it;
   typename std::list<K>::const_iterator end = mKeys.end();
   
@@ -300,8 +293,7 @@ void THash<K,T>::remove_element(const T& pElement) {
 }
 
 template <class K, class T>
-std::ostream& operator<< (std::ostream& pStream, const THash<K,T>& hash)
-{
+std::ostream& operator<< (std::ostream& pStream, const THash<K,T>& hash) {
   typename std::list<K>::const_iterator it,begin,end;
   end   = hash.end();
   begin = hash.begin();
@@ -349,22 +341,19 @@ inline uint hashId(const uint key) {
 // We use the simpler hash to avoid too long compile times in the static string hash macro.
 
 template<>
-inline uint hashId (const char c)
-{
+inline uint hashId(const char c) {
   return HASH_FUNCTION(HASH_CONSTANT, c);
 }
 
 template<>
-inline uint hashId (const char * str)
-{
+inline uint hashId(const char * str) {
   return H(str);
 }
 
 // ===== std::string& =====
 // sdbm function: taken from http://www.cse.yorku.ca/~oz/hash.html
 template<>
-inline uint hashId(const std::string &key)
-{
+inline uint hashId(const std::string &key) {
   const char *str = key.c_str();
   return hashId(str);
 }
@@ -372,8 +361,7 @@ inline uint hashId(const std::string &key)
 // ===== std::string =====
 // sdbm function: taken from http://www.cse.yorku.ca/~oz/hash.html
 template<>
-inline uint hashId(const std::string key)
-{
+inline uint hashId(const std::string key) {
   return hashId<const std::string&>(key);
 }
 
