@@ -11,7 +11,7 @@ namespace oscit {
 OscReceive::OscReceive(Root * root, uint port) : root_(root)
 { 
   socket_ = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, port ), this );
-  mRegisterZeroConf = new ZeroConfRegister("oscit", "_oscit._udp", port);
+  zeroconf_register_ = new ZeroConfRegister("oscit", "_oscit._udp", port);
   
   // std::cout << "Listening for OSC messages on port " << port << ".\n";
   listen_thread_id_ = NULL;
@@ -23,7 +23,7 @@ OscReceive::~OscReceive()
   socket_->AsynchronousBreak();
   pthread_join(listen_thread_id_, NULL);  // wait
   delete socket_;
-  delete mRegisterZeroConf;
+  delete zeroconf_register_;
 }
   
 void * OscReceive::start_thread(void * pThis)
@@ -46,7 +46,7 @@ void OscReceive::ProcessMessage(const osc::ReceivedMessage &message, const IpEnd
     // TODO: implement register
     // Can we avoid this exception ?
     // std::cout << "registering satellite\n";
-    // root_->adopt_observer(new OscSend(remote_endpoint));
+    // root_->register_observer(new OscSend(remote_endpoint));
     // return value ??
   } else {
     Value val(value_from_osc(message));
@@ -60,7 +60,7 @@ void OscReceive::ProcessMessage(const osc::ReceivedMessage &message, const IpEnd
   }
   
   // send return
-  root_->send_reply(&remote_endpoint, url, res);
+  root_->send_reply(socket_, &remote_endpoint, url, res);
 }
 
 Value OscReceive::value_from_osc(const osc::ReceivedMessage &message) {

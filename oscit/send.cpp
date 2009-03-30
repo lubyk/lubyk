@@ -34,40 +34,65 @@ OscSend::~OscSend()
   delete remote_endpoint_;
 }
 
-void OscSend::send(const osc::OutboundPacketStream &message)
-{
-  socket_->Send(message.Data(), message.Size());
+void OscSend::send(const char *url, const Value &val) {
+  send(socket_, url, val);
 }
 
-void OscSend::send(const char *url, const Value& val)
-{
+void OscSend::send(const std::string &url, const Value &val) {
+  send(socket_, url.c_str(), val);
+}
+
+///////// class methods /////////
+
+
+/** Prepare message data and send it using the given socket. */
+void OscSend::send(UdpSocket *socket, const IpEndpointName &remote_endpoint, const char *url, const Value &val) {
   char buffer[OSC_OUT_BUFFER_SIZE]; // TODO: reuse buffer
-  osc::OutboundPacketStream oss( buffer, OSC_OUT_BUFFER_SIZE );
-  oss << osc::BeginBundleImmediate << osc::BeginMessage(url) << val << osc::EndMessage << osc::EndBundle;
-  
-  
-  // debugging
-  // char host_ip[ IpEndpointName::ADDRESS_STRING_LENGTH ];
-  // // get host ip as string
-  // remote_endpoint_->AddressAsString(host_ip);
-  // std::cout << "send: " << host_ip << ":" << remote_endpoint_->port << url << " " << val << std::endl;
-
-  send(oss);
+  osc::OutboundPacketStream message( buffer, OSC_OUT_BUFFER_SIZE );
+  build_message(url, val, &message);
+  socket->Connect(remote_endpoint);
+  socket->Send(message.Data(), message.Size());
 }
 
-void OscSend::send_all(std::list<OscSend*> &recipients, const char *url, const Value& val)
-{ 
-  std::list<OscSend*>::iterator it  = recipients.begin();
-  std::list<OscSend*>::iterator end = recipients.end();
+void OscSend::send(UdpSocket *socket, const IpEndpointName &remote_endpoint, osc::OutboundPacketStream &message) {
+  socket->Connect(remote_endpoint);
+  socket->Send(message.Data(), message.Size());
+}
   
-  //if (it == end) return;
-  // TODO: optimize: keep this thing between queries (make this not a static and let the first recipient send to all others).
+/** Prepare message data and send it using the given socket. */
+void OscSend::send(UdpSocket *socket, const char *url, const Value &val) {
   char buffer[OSC_OUT_BUFFER_SIZE]; // TODO: reuse buffer
-  osc::OutboundPacketStream oss( buffer, OSC_OUT_BUFFER_SIZE );
-  oss << osc::BeginBundleImmediate << osc::BeginMessage(url) << val << osc::EndMessage << osc::EndBundle;
+  osc::OutboundPacketStream message( buffer, OSC_OUT_BUFFER_SIZE );
+  build_message(url, val, &message);
   
-  while (it != end) (*it++)->send(oss);
+  socket->Send(message.Data(), message.Size());
 }
+
+/** Build osc message and send it to all recipients of the provided list. */
+void OscSend::send_all(UdpSocket *socket, const std::list<IpEndpointName> &recipients, const char *url, const Value &val) {
+  std::list<IpEndpointName>::const_iterator it  = recipients.begin();
+  std::list<IpEndpointName>::const_iterator end = recipients.end();
+  
+  char buffer[OSC_OUT_BUFFER_SIZE]; // TODO: reuse buffer
+  osc::OutboundPacketStream message( buffer, OSC_OUT_BUFFER_SIZE );
+  build_message(url, val, &message);
+  
+  while (it != end) {
+    socket->Connect(*it++);
+    socket->Send(message.Data(), message.Size());
+  }
+}
+
+
+void OscSend::build_message(const char *url, const Value &val, osc::OutboundPacketStream *message) {
+  *message << osc::BeginBundleImmediate << osc::BeginMessage(url) << val << osc::EndMessage << osc::EndBundle;
+}
+
+/** Prepare message data and send it using the given socket. */
+void OscSend::send(UdpSocket *socket, osc::OutboundPacketStream &message) {
+  socket->Send(message.Data(), message.Size());
+}
+
 
 osc::OutboundPacketStream &operator<<(osc::OutboundPacketStream &out_stream, const Value &val) {
   switch (val.type()) {

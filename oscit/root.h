@@ -5,6 +5,8 @@
 #include "oscit/receive.h"
 #include "oscit/send.h"
 
+#include "oscpack/ip/UdpSocket.h" // needed for IpEndpointName
+
 class Command;
 class Event;
 class Node;
@@ -63,10 +65,10 @@ class Root : public Object
     
     if (!target) return ErrorValue(NOT_FOUND_ERROR, url);
     
-    if (val.is_nil() || val.type_tag_id() == target->type_tag_id()) {
+    if (val.is_nil() || val.type_tag_id() == target->type_tag_id() || target->accept_any_type()) {
       return target->trigger(val);
     } else {
-      return ErrorValue(BAD_REQUEST_ERROR, target->info());
+      return ErrorValue(BAD_REQUEST_ERROR, std::string("'").append(url).append("' (").append(target->info()).append(")."));
     }
   }
 
@@ -144,9 +146,7 @@ class Root : public Object
    * FIXME: implement TTL (time to live)
    * FIXME: avoid duplicates (??)
    */
-  void adopt_observer(OscSend *observer) {
-    observers_.push_back(observer);
-  }
+  void register_observer(const IpEndpointName &observer);
   
   void receive(const std::string &url, const Value &val) {
     //FIX Value res;
@@ -162,23 +162,29 @@ class Root : public Object
   /** Send reply to received message. 
    *  @param remote_endpoint can be NULL if this is triggered by an internal call.
    */
-  void send_reply(const IpEndpointName *remote_endpoint, const std::string &url, const Value &val);
+  void send_reply(UdpSocket *socket, const IpEndpointName *remote_endpoint, const std::string &url, const Value &val);
+  
+  /** Send an osc message. 
+   *  @param remote_endpoint target host.
+   */
+  void send(const IpEndpointName &remote_endpoint, const std::string &url, const Value &val) {
+    send(remote_endpoint, url.c_str(), val);
+  }
+  
+  /** Send an osc message. 
+   *  @param remote_endpoint target host.
+   */
+  void send(const IpEndpointName &remote_endpoint, const char *url, const Value &val);
   
   void * ground_;                 /**< Context pointer for objects in the tree. */
  protected:
   THash<std::string, Object*> objects_;   /**< Hash to find any object in the tree from its url. */
 
  private:
-  void init() {
-    root_ = NULL;
-    register_object(this);
-    build_meta_methods();
-  }
-  
-  void build_meta_methods();
+  void init();
    
   OscReceive * osc_in_;           /**< Listening socket. */
-  std::list<OscSend*> observers_; /**< List of satellites that have registered to get return values back. */
+  std::list<IpEndpointName> observers_; /**< List of satellites that have registered to get return values back. */
 };
   
 } // namespace oscit

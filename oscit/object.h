@@ -15,12 +15,12 @@ class Alias;
 class Object
 {
  public:
-  Object() : root_(NULL), parent_(NULL), children_(20), type_tag_id_(EMPTY_TAG_ID), info_(DEFAULT_INFO) {
+  Object() : root_(NULL), parent_(NULL), children_(20), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {
    name_ = "";
    url_  = name_;
   }
   
-  Object(const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), type_tag_id_(EMPTY_TAG_ID), info_(DEFAULT_INFO) {}
+  Object(const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {}
   
   Object(TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
     name_ = "";
@@ -31,7 +31,7 @@ class Object
 
   Object(const std::string &name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {}
 
-  Object(Object *parent, const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(EMPTY_TAG_ID), info_(DEFAULT_INFO) {
+  Object(Object *parent, const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {
     parent->adopt(this);
   }
 
@@ -43,7 +43,7 @@ class Object
     parent->adopt(this);
   }
 
-  Object(Object &parent, const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(EMPTY_TAG_ID), info_(DEFAULT_INFO) {
+  Object(Object &parent, const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {
     parent.adopt(this);
   }
 
@@ -323,6 +323,10 @@ protected:
   /** Return the type tag signature id as an unsigned int. */
   TypeTagID type_tag_id() {
     return type_tag_id_;
+  }
+  
+  bool accept_any_type() {
+    return type_tag_id_ == ANY_TYPE_TAG_ID;
   }
   
  private:

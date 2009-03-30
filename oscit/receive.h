@@ -24,6 +24,7 @@ public:
   
   virtual ~OscReceive();
   
+  UdpListeningReceiveSocket *socket() { return socket_; }
   
 private:  
   /** Process incoming messages. */
@@ -37,9 +38,9 @@ private:
   
   pthread_t listen_thread_id_;
   
-  UdpListeningReceiveSocket * socket_;
+  UdpListeningReceiveSocket *socket_;
   
-  ZeroConfRegister * mRegisterZeroConf; /** Zeroconf registration thread. */
+  ZeroConfRegister *zeroconf_register_; /** Zeroconf registration thread. */
   
   /** Write osc values inside the Value. 
     * @param pRes storage the value / multi value (allready allocated, type checked). 

@@ -9,6 +9,7 @@ namespace osc {
 
 class UdpTransmitSocket;
 class IpEndpointName;
+class UdpSocket;
 
 namespace oscit {
 
@@ -24,28 +25,37 @@ public:
   
   ~OscSend();
   
-  /** Send prepared message out. */
-  void send(const osc::OutboundPacketStream &message);
-  
   /** Send a Value to the given url. */
   void send(const char *url, const Value &val);
   
   /** Send url with parameter. */
-  void send(const std::string &url, const Value &val) {
-    send(url.c_str(), val);
-  }
+  void send(const std::string &url, const Value &val);
   
   const IpEndpointName &remote_endpoint() {
     return *remote_endpoint_;
   }
   
-  /** Build osc message and send it to all recipients of the provided list. */
-  static void send_all(std::list<OscSend*> &recipients, const char *url, const Value &val);
+  /** Prepare message data and send it using the given socket. */
+  static void send(UdpSocket *socket, const IpEndpointName &remote_endpoint, const char *url, const Value &val);
+  
+  /** Prepare message data and send it using the given socket. */
+  static void send(UdpSocket *socket, const IpEndpointName &remote_endpoint, osc::OutboundPacketStream &message);
+  
+  /** Prepare message data and send it using the given socket. */
+  static void send(UdpSocket *socket, const char *url, const Value &val);
   
   /** Build osc message and send it to all recipients of the provided list. */
-  static void send_all(std::list<OscSend*> &recipients, std::string &url, const Value &val) {
-    send_all(recipients, url.c_str(), val);
+  static void send_all(UdpSocket *socket, const std::list<IpEndpointName> &recipients, const char *url, const Value &val);
+  
+  /** Build osc message and send it to all recipients of the provided list. */
+  static void send_all(UdpSocket *socket, const std::list<IpEndpointName> &recipients, std::string &url, const Value &val) {
+    send_all(socket, recipients, url.c_str(), val);
   }
+  
+  static void build_message(const char *url, const Value &val, osc::OutboundPacketStream *message);
+  
+  /** Prepare message data and send it using the given socket. */
+  static void send(UdpSocket *socket, osc::OutboundPacketStream &message);
   
  private:
   UdpTransmitSocket * socket_;

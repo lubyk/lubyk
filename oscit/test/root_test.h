@@ -90,7 +90,7 @@ public:
     Value param(TypeTag("ff"));
     Value res = root.call("/zorglub", param);
     assert_true(res.is_error());
-    assert_equal(DUMMY_OBJECT_INFO, res.error_message());
+    assert_equal(std::string("'/zorglub' (").append(DUMMY_OBJECT_INFO).append(")."), res.error_message());
     assert_equal(BAD_REQUEST_ERROR, res.error_code());
   }
 
