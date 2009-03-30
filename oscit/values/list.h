@@ -87,7 +87,6 @@ class List
     type_tag_id_ = hashId(type_tag_);
   }
  private:
-  
   void init(const char *type_tag) {
     type_tag_storage_ = type_tag;
     type_tag_    = type_tag_storage_.c_str();

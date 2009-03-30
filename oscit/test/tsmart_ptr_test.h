@@ -34,26 +34,26 @@ public:
   void test_create( void )
   { 
     TestSmart s(5);
-    assert_equal(5, s.getData()->value_);
+    assert_equal(5, s.data()->value_);
   }
   
   void testRefCount( void )
   {
     TestSmart s(5);
-    assert_equal(1, s.getRefCount());
-    assert_equal(5, s.getData()->value_);
+    assert_equal(1, s.ref_count());
+    assert_equal(5, s.data()->value_);
     
     TestSmart * s2 =  new TestSmart(s);
-    assert_equal(2, s.getRefCount());
-    assert_equal(2, s2->getRefCount());
-    assert_equal(5, s2->getData()->value_);
+    assert_equal(2, s.ref_count());
+    assert_equal(2, s2->ref_count());
+    assert_equal(5, s2->data()->value_);
     
-    s2->getData()->value_ = 3;
-    assert_equal(3, s2->getData()->value_);
-    assert_equal(3, s.getData()->value_);
+    s2->data()->value_ = 3;
+    assert_equal(3, s2->data()->value_);
+    assert_equal(3, s.data()->value_);
     
     delete s2;
-    assert_equal(1, s.getRefCount());
+    assert_equal(1, s.ref_count());
   }
   
   void testDelete( void )

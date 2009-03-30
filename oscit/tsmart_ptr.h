@@ -7,20 +7,17 @@ template <class T>
 class TSmartPtr
 {
 public:
-  TSmartPtr (T * p = 0) : ptr_(0)
-  {
+  TSmartPtr (T * p = 0) : ptr_(0) {
     if (p) ptr_ = new Ptr(p);
   }
   
   /** Initialize with another TSmartPtr: light copy of content. */
-  TSmartPtr(const TSmartPtr& other)
-  {
+  TSmartPtr(const TSmartPtr& other) {
     acquire(other.ptr_);
   }
   
   /** Light copy of the data contained in the other TSmartPtr. */
-  TSmartPtr& operator=(const TSmartPtr& v)
-  {
+  TSmartPtr& operator=(const TSmartPtr& v) {
     if (this != &v) {
       release();
       acquire(v.ptr_);
@@ -29,24 +26,20 @@ public:
   }
   
   /** When the TSmartPtr dies, it releases the content (decrement refcount). */
-  virtual ~TSmartPtr()
-  {
+  virtual ~TSmartPtr() {
     release();
   }
   
-  T * getData()
-  {
+  T * data() {
     return (ptr_ ? ptr_->dataPtr_ : NULL);
   }
   
   /** Return reference count for the content. Only used for testing/debugging. */
-  size_t getRefCount() const
-  {
+  size_t ref_count() const {
     return ptr_ ? ptr_->refCount_ : 0;
   }
   
-  void acquire(const TSmartPtr& s)
-  {
+  void acquire(const TSmartPtr& s) {
     acquire(s.ptr_);
   }
 protected:
@@ -64,8 +57,7 @@ protected:
 private:
   
   /** Get hold of a pointer (the TSmartPtr is in charge of calling 'delete'). */
-  void acquire(Ptr * p)
-  {  
+  void acquire(Ptr * p) {  
     ptr_ = p;
     if (ptr_) {
       ptr_->refCount_++;
@@ -73,8 +65,7 @@ private:
   }
   
   /** Decrement reference counter, destroying content if the reference count drops to zero. */
-  void release()
-  {
+  void release() {
     if (ptr_ && --ptr_->refCount_ == 0) {
       delete ptr_->dataPtr_;
       delete ptr_;
