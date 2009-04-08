@@ -8,7 +8,7 @@
 //FIX   void test_trigger( void )
 //FIX   {
 //FIX     oscit::Root root;
-//FIX     oscit::Object       * one = root.adopt(new oscit::Object("one")); //   [/one]
+//FIX     oscit::BaseObject       * one = root.adopt(new oscit::BaseObject("one")); //   [/one]
 //FIX     DummyNumber  * sub = one->adopt(new DummyNumber("sub", 3)); //   [/one/sub]
 //FIX     oscit::Alias        * ali = root.adopt(new oscit::Alias("ali", sub));
 //FIX     DummyNumber  * two = root.adopt(new DummyNumber("two", 2)); //  [/two]
@@ -50,13 +50,13 @@
 //FIX     
 //FIX     delete two; // delete original first
 //FIX     res = root.call("/ali", "23");
-//FIX     TS_ASSERT_EQUALS(res.to_string(), "[8] #Object '/ali' not found.");
+//FIX     TS_ASSERT_EQUALS(res.to_string(), "[8] #BaseObject '/ali' not found.");
 //FIX   }
 //FIX   
 //FIX   void test_delete_alias_first( void )
 //FIX   {
 //FIX     oscit::Root root;
-//FIX     oscit::Object       * one = root.adopt(new oscit::Object("one")); //   [/one]
+//FIX     oscit::BaseObject       * one = root.adopt(new oscit::BaseObject("one")); //   [/one]
 //FIX     DummyNumber  * sub = one->adopt(new DummyNumber("sub", 3)); //   [/one/sub]
 //FIX     oscit::Alias        * ali = root.adopt(new oscit::Alias("ali", sub));
 //FIX     Value res;
@@ -73,13 +73,13 @@
 //FIX     
 //FIX     delete ali;
 //FIX     res = root.call("/ali");
-//FIX     TS_ASSERT_EQUALS(res.to_string(), "[2] #Object '/ali' not found.");
+//FIX     TS_ASSERT_EQUALS(res.to_string(), "[2] #BaseObject '/ali' not found.");
 //FIX     res = root.call("/one/sub");
 //FIX     TS_ASSERT_EQUALS(Number(res).value(), 3.00);
 //FIX     
 //FIX     delete one;
 //FIX     res = root.call("/one/sub");
-//FIX     TS_ASSERT_EQUALS(res.to_string(), "[3] #Object '/one/sub' not found.");
+//FIX     TS_ASSERT_EQUALS(res.to_string(), "[3] #BaseObject '/one/sub' not found.");
 //FIX   }
 //FIX   
 //FIX };

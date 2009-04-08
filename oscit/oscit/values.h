@@ -1,5 +1,5 @@
-#ifndef _VALUES_H_
-#define _VALUES_H_
+#ifndef _OSCIT_VALUES_H_
+#define _OSCIT_VALUES_H_
 
 #include "oscit/conf.h"
 #include "oscit/thash.h"
@@ -11,4 +11,4 @@
 #include "oscit/hash_value.h"
 #include "oscit/matrix_value.h"
 
-#endif // _VALUES_H_
+#endif // _OSCIT_VALUES_H_

@@ -1,13 +1,13 @@
 #ifndef _DUMMY_OBJECT_H_
 #define _DUMMY_OBJECT_H_
-#include "oscit/object.h"
+#include "oscit/base_object.h"
 
 #define DUMMY_OBJECT_INFO "The dummy object simply stores a single real number. Call with a single 'f' argument."
 
-class DummyObject : public oscit::Object
+class DummyObject : public oscit::BaseObject
 {
 public:
-  DummyObject(const char * name, Real value) : oscit::Object(name, H("f")), value_(value) {
+  DummyObject(const char * name, Real value) : oscit::BaseObject(name, H("f")), value_(value) {
     set_info(DUMMY_OBJECT_INFO);
     // current, min, max, unit
     set_type(value_.r, 0, 127, "lux"); 
@@ -29,9 +29,9 @@ public:
     return value_;
   }
   
-  virtual Object * build_child(const std::string &name) {
+  virtual BaseObject * build_child(const std::string &name) {
     if (name == "special") {
-      return adopt(new Object("special"));
+      return adopt(new BaseObject("special"));
     }
     return NULL;
   }
@@ -44,16 +44,16 @@ private:
   RealValue value_;
 };
 
-class Dummy2Object : public oscit::Object
+class Dummy2BaseObject : public oscit::BaseObject
 {
 public:
-  Dummy2Object(const char * name, const char *value) : oscit::Object(name, H("s")), value_(value) {
+  Dummy2BaseObject(const char * name, const char *value) : oscit::BaseObject(name, H("s")), value_(value) {
     set_info(DUMMY_OBJECT_INFO);
     // current, min, max, unit
     set_type(value, "rgb,rgba,yuv", "color mode"); 
   }
   
-  virtual ~Dummy2Object() {}
+  virtual ~Dummy2BaseObject() {}
   
   virtual const std::string inspect()
   {

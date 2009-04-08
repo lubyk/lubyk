@@ -1,5 +1,5 @@
-#ifndef _REAL_VALUE_H_
-#define _REAL_VALUE_H_
+#ifndef _OSCIT_REAL_VALUE_H_
+#define _OSCIT_REAL_VALUE_H_
 #include "oscit/value.h"
 
 namespace oscit {
@@ -14,4 +14,4 @@ public:
 };
 
 } // oscit
-#endif // _REAL_VALUE_H_
+#endif // _OSCIT_REAL_VALUE_H_

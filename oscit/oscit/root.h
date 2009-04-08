@@ -1,6 +1,6 @@
-#ifndef _ROOT_H_
-#define _ROOT_H_
-#include "oscit/object.h"
+#ifndef _OSCIT_ROOT_H_
+#define _OSCIT_ROOT_H_
+#include "oscit/base_object.h"
 #include "oscit/call.h"
 #include "oscit/receive.h"
 #include "oscit/send.h"
@@ -17,7 +17,7 @@ namespace oscit {
 #define OBJECT_HASH_SIZE 10000
 
 /** Root object. You can only start new trees with root objects. */
-class Root : public Object
+class Root : public BaseObject
 {
  public:
   Root() : ground_(NULL), objects_(OBJECT_HASH_SIZE), osc_in_(NULL) {
@@ -61,7 +61,7 @@ class Root : public Object
 
   /** Trigger the object located at the given url with the given parameters. */
   const Value call(const std::string &url, const Value &val) {
-    Object * target = find_or_build_object_at(url);
+    BaseObject * target = find_or_build_object_at(url);
     
     if (!target) return ErrorValue(NOT_FOUND_ERROR, url);
     
@@ -74,7 +74,7 @@ class Root : public Object
 
   /** Notification of name/parent change from an object. This method
    *  keeps the objects dictionary in sync. */
-  void register_object(Object *obj) {
+  void register_object(BaseObject *obj) {
     // 1. remove object
     if (obj->root_) obj->root_->unregister_object(obj);
   
@@ -86,43 +86,43 @@ class Root : public Object
   }
 
   /** Unregister an object from tree (forget about it). */
-  void unregister_object(Object *obj) {
+  void unregister_object(BaseObject *obj) {
     objects_.remove_element(obj);
   }
 
-  /** Find a pointer to an Object from its url. Return false if the object is not found. */
-  bool get_object_at(const std::string &url, Object **retval) {
+  /** Find a pointer to an BaseObject from its url. Return false if the object is not found. */
+  bool get_object_at(const std::string &url, BaseObject **retval) {
     return objects_.get(url, retval);
   }
 
-  /** Find a pointer to an Object from its url. Return false if the object is not found. */
-  bool get_object_at(const char *url, Object **retval) {
+  /** Find a pointer to an BaseObject from its url. Return false if the object is not found. */
+  bool get_object_at(const char *url, BaseObject **retval) {
     return objects_.get(std::string(url), retval);
   }
   
   /** Return a pointer to the object located at a given url. NULL if not found. */
-  Object * object_at(const std::string &url) {
-    Object *res = NULL;
+  BaseObject * object_at(const std::string &url) {
+    BaseObject *res = NULL;
     get_object_at(url, &res);
     return res;
   }
 
   /** Return a pointer to the object located at a given url. NULL if not found. */
-  Object * object_at(const char *url) {
+  BaseObject * object_at(const char *url) {
     return object_at(std::string(url));
   }
   
   /** Find the object at the given url. Before raising a 404 error, we try to find a 'not_found'
    *  handler that could build the resource.
    */
-  Object * find_or_build_object_at(const std::string &url) {
-    Object * object = object_at(url);
+  BaseObject * find_or_build_object_at(const std::string &url) {
+    BaseObject * object = object_at(url);
     
     if (object == NULL) {
       size_t pos = url.rfind("/");
       if (pos != std::string::npos) {
         /** call 'not_found' handler in parent. */
-        Object * parent = find_or_build_object_at(url.substr(0, pos));
+        BaseObject * parent = find_or_build_object_at(url.substr(0, pos));
         if (parent != NULL) {
           return parent->build_child(url.substr(pos+1));
         }
@@ -134,7 +134,7 @@ class Root : public Object
   /** Find the object at the given url. Before raising a 404 error, we try to find a 'not_found'
    *  handler that could build the resource.
    */
-  Object * find_or_build_object_at(const char *url) {
+  BaseObject * find_or_build_object_at(const char *url) {
     return find_or_build_object_at(std::string(url));
   }
   
@@ -176,16 +176,16 @@ class Root : public Object
    */
   void send(const IpEndpointName &remote_endpoint, const char *url, const Value &val);
   
-  void * ground_;                 /**< Context pointer for objects in the tree. */
+  void * ground_;                         /**< Context pointer for objects in the tree. */
  protected:
-  THash<std::string, Object*> objects_;   /**< Hash to find any object in the tree from its url. */
+  THash<std::string, BaseObject*> objects_;   /**< Hash to find any object in the tree from its url. */
 
  private:
   void init();
    
-  OscReceive * osc_in_;           /**< Listening socket. */
-  std::list<IpEndpointName> observers_; /**< List of satellites that have registered to get return values back. */
+  OscReceive * osc_in_;                   /**< Listening socket. */
+  std::list<IpEndpointName> observers_;   /**< List of satellites that have registered to get return values back. */
 };
   
 } // namespace oscit
-#endif // _ROOT_H_
+#endif // _OSCIT_ROOT_H_

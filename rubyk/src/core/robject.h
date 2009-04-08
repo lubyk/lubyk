@@ -1,42 +1,23 @@
 #ifndef _OBJECT_H_
 #define _OBJECT_H_
-#include "oscit/object.h"
-#include "oscit/root.h"
+#include "oscit.h"
 
 class Planet;
 
-class RObject : public oscit::Object
+/** RObject is the base object in Rubyk context. The object is just a wrapper around oscit::Object
+ *  with an extra "Planet" pointer. */
+class RubykObject : public Object
 {
 public:
-  RObject(const char * pTypeTagStr) : oscit::Object(pTypeTagStr), mPlanet(NULL) {}
-  
-  RObject(const char * pTypeTagStr, Planet * pPlanet) : oscit::Object(pTypeTagStr), mPlanet(pPlanet) {}
-
-  RObject(const char * pTypeTagStr, const char * pName) : oscit::Object(pTypeTagStr, pName), mPlanet(NULL) {}
-
-  RObject(const char * pTypeTagStr, const std::string& pName) : oscit::Object(pTypeTagStr, pName), mPlanet(NULL) {}
-
-  RObject(const char * pTypeTagStr, Object * pParent) : oscit::Object(pTypeTagStr, pParent) {}
-
-  RObject(const char * pTypeTagStr, Object * pParent, const char * pName) : oscit::Object(pTypeTagStr, pParent, pName) {}
-
-  RObject(const char * pTypeTagStr, Object * pParent, const std::string& pName) : oscit::Object(pTypeTagStr, pParent, pName) {}
-
-  RObject(const char * pTypeTagStr, Object& pParent) : oscit::Object(pTypeTagStr, pParent) {}
-
-  RObject(const char * pTypeTagStr, Object& pParent, const char * pName) : oscit::Object(pTypeTagStr, pParent, pName) {}
-
-  RObject(const char * pTypeTagStr, Object& pParent, const std::string& pName) : oscit::Object(pTypeTagStr, pParent, pName) {}
-  
-  virtual void set_root(oscit::Root * pRoot)
+  virtual void set_root(Root * root)
   {  
-    oscit::Object::set_root(pRoot);
-    if (pRoot) mPlanet = (Planet*)(pRoot->mGround);
+    Object::set_root(root);
+    if (root) planet_ = (Planet*)(root->ground_);
   }
   
 protected:
   
-  Planet * mPlanet;  /**< Running planet. */
+  Planet * ground_;  /**< Planet on which the objects will live. */
 };
 
 #endif // _OBJECT_H_

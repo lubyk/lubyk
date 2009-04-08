@@ -1,5 +1,5 @@
-#ifndef _VALUE_H_
-#define _VALUE_H_
+#ifndef _OSCIT_VALUE_H_
+#define _OSCIT_VALUE_H_
 #include <string>
 #include "oscit/error.h"
 #include "oscit/thash.h"
@@ -569,4 +569,4 @@ void Value::set_list(const List *list) {
 std::ostream &operator<< (std::ostream &out_stream, const Value &val);
 
 } // oscit
-#endif // _VALUE_H_
+#endif // _OSCIT_VALUE_H_

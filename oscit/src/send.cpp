@@ -1,5 +1,5 @@
 #include "oscit/send.h"
-#include "oscit/object.h"
+#include "oscit/base_object.h"
 #include "osc/OscOutboundPacketStream.h"
 #include "ip/UdpSocket.h"
 

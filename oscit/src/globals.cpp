@@ -1,7 +1,7 @@
 #ifndef _OSCIT_GLOBALS_CPP_
 #define _OSCIT_GLOBALS_CPP_
 
-size_t oscit::Object::sIdCounter(0);
+size_t oscit::BaseObject::sIdCounter(0);
 oscit::Value oscit::gNilValue;
 oscit::Hash  oscit::gEmptyHash(1);
 

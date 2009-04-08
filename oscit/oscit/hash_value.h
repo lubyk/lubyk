@@ -1,5 +1,5 @@
-#ifndef _HASH_VALUE_H_
-#define _HASH_VALUE_H_
+#ifndef _OSCIT_HASH_VALUE_H_
+#define _OSCIT_HASH_VALUE_H_
 #include "oscit/value.h"
 
 namespace oscit {
@@ -12,4 +12,4 @@ class HashValue : public Value
 };
 
 } // oscit
-#endif // _HASH_VALUE_H_
+#endif // _OSCIT_HASH_VALUE_H_

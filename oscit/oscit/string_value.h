@@ -1,5 +1,5 @@
-#ifndef _STRING_VALUE_H_
-#define _STRING_VALUE_H_
+#ifndef _OSCIT_STRING_VALUE_H_
+#define _OSCIT_STRING_VALUE_H_
 #include "oscit/value.h"
 
 namespace oscit {
@@ -14,4 +14,4 @@ class StringValue : public Value
 };
 
 } // oscit
-#endif // _STRING_VALUE_H_
+#endif // _OSCIT_STRING_VALUE_H_

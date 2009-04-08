@@ -399,7 +399,7 @@ public:
                             : 0 );
             }
 
-			DWORD waitResult = WaitForMultipleObjects( (DWORD)socketListeners_.size() + 1, &events[0], FALSE, waitTime );
+			DWORD waitResult = WaitForMultipleBaseObjects( (DWORD)socketListeners_.size() + 1, &events[0], FALSE, waitTime );
 			if( break_ )
 				break;
 

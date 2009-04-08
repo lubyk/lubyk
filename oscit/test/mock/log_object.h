@@ -1,12 +1,12 @@
 #ifndef _LOG_OBJECT_H_
 #define _LOG_OBJECT_H_
-#include "oscit/object.h"
+#include "oscit/base_object.h"
 #include <sstream>
 
-class LogObject : public oscit::Object
+class LogBaseObject : public oscit::BaseObject
 {
 public:
-  LogObject(const char * name) : oscit::Object(name, ANY_TYPE_TAG_ID), logger_(std::ostringstream::out) {}
+  LogBaseObject(const char * name) : oscit::BaseObject(name, ANY_TYPE_TAG_ID), logger_(std::ostringstream::out) {}
   
   virtual const Value trigger (const Value &val)
   {

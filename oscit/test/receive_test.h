@@ -10,7 +10,7 @@ class ReceiveTest : public TestHelper
     root_.open_port(7000);
     
     sender_.open_port(7010);
-    reply_ = sender_.adopt(new LogObject(".reply"));
+    reply_ = sender_.adopt(new LogBaseObject(".reply"));
   }
   
   void setUp() {
@@ -44,5 +44,5 @@ class ReceiveTest : public TestHelper
   IpEndpointName root_end_point_;
   Root root_;
   Root sender_;
-  LogObject * reply_;
+  LogBaseObject * reply_;
 };

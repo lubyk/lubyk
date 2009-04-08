@@ -1,5 +1,5 @@
-#ifndef _MATRIX_H_
-#define _MATRIX_H_
+#ifndef _OSCIT_MATRIX_H_
+#define _OSCIT_MATRIX_H_
 #include "oscit/values.h"
 #include "opencv/cv.h"
 #include <vector>
@@ -19,4 +19,4 @@ class Matrix : public cv::Mat
 };
 
 } // oscit
-#endif // _MATRIX_H_
+#endif // _OSCIT_MATRIX_H_

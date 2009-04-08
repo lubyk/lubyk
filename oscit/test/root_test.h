@@ -13,9 +13,9 @@ public:
   
   void test_get_object_at( void ) {
     Root root;
-    Object * foo = root.adopt(new Object("foo"));
-    Object * bar = foo->adopt(new Object("bar"));
-    Object * res;
+    BaseObject * foo = root.adopt(new BaseObject("foo"));
+    BaseObject * bar = foo->adopt(new BaseObject("bar"));
+    BaseObject * res;
   
     assert_equal(""        , root.url() );
     assert_equal("/foo"    , foo->url() );
@@ -50,7 +50,7 @@ public:
     Root root;
     DummyObject * a  = new DummyObject("a", 1);
     DummyObject * a2 = new DummyObject("a", 2);
-    Object * res;
+    BaseObject * res;
     
     assert_true( root.get_object_at("", &res) );
     assert_equal(&root, res );
@@ -106,10 +106,10 @@ public:
   void test_find_or_build_object_at_should_call_build_child( void ) {
     Root root;
     root.adopt(new DummyObject("dummy", 0.0));
-    assert_equal((Object*)NULL, root.find_or_build_object_at("whatever"));
-    assert_equal((Object*)NULL, root.find_or_build_object_at("/whatever"));
-    assert_equal((Object*)NULL, root.find_or_build_object_at("/dummy/foo"));
-    Object * special = root.find_or_build_object_at("/dummy/special");
+    assert_equal((BaseObject*)NULL, root.find_or_build_object_at("whatever"));
+    assert_equal((BaseObject*)NULL, root.find_or_build_object_at("/whatever"));
+    assert_equal((BaseObject*)NULL, root.find_or_build_object_at("/dummy/foo"));
+    BaseObject * special = root.find_or_build_object_at("/dummy/special");
     assert_true( special != NULL );
     assert_equal("/dummy/special", special->url());
   }
@@ -118,7 +118,7 @@ public:
   
   void test_info( void ) {
     Root root;
-    root.adopt(new Object("foo"));
+    root.adopt(new BaseObject("foo"));
     Value res;
 
     root.set_info("This is the root node.");
@@ -159,7 +159,7 @@ public:
   
   void test_menu_type( void ) {
     Root root;
-    Dummy2Object * foo = root.adopt(new Dummy2Object("foo", "yuv"));
+    Dummy2BaseObject * foo = root.adopt(new Dummy2BaseObject("foo", "yuv"));
     Value res;
     
     // set wrong current to make sure current value is retrieved

@@ -1,5 +1,5 @@
-#ifndef _LIST_VALUE_H_
-#define _LIST_VALUE_H_
+#ifndef _OSCIT_LIST_VALUE_H_
+#define _OSCIT_LIST_VALUE_H_
 #include "oscit/value.h"
 #include "oscit/list.h"
 
@@ -18,4 +18,4 @@ class ListValue : public Value
 };
 
 } // oscit
-#endif // _LIST_VALUE_H_
+#endif // _OSCIT_LIST_VALUE_H_

@@ -1,5 +1,5 @@
-#ifndef _LIST_H_
-#define _LIST_H_
+#ifndef _OSCIT_LIST_H_
+#define _OSCIT_LIST_H_
 #include "oscit/values.h"
 #include <vector>
 
@@ -107,4 +107,4 @@ class List
 };
 
 } // oscit
-#endif // _LIST_H_
+#endif // _OSCIT_LIST_H_

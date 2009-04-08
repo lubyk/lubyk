@@ -10,7 +10,7 @@ namespace oscit {
 Root::~Root() {
   if (osc_in_) delete osc_in_;
   clear();
-  root_ = NULL; // avoid call to unregister_object in ~Object
+  root_ = NULL; // avoid call to unregister_object in ~BaseObject
 }
 
 void Root::init() {

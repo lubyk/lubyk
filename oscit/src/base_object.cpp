@@ -5,7 +5,7 @@
 
 namespace oscit {
   
-Object::~Object()
+BaseObject::~BaseObject()
 {  
   // notify parent and root
   if (parent_) parent_->release(this);
@@ -21,25 +21,25 @@ Object::~Object()
 
 
 /** Inform the object of an alias to be destroyed on destruction. */
-void Object::register_alias(Alias * pAlias)
+void BaseObject::register_alias(Alias * pAlias)
 {
   mAliases.push_back(pAlias);
 }
 
 /** Inform the object that an alias no longer exists. */
-void Object::unregister_alias(Alias * pAlias)
+void BaseObject::unregister_alias(Alias * pAlias)
 {
   mAliases.remove(pAlias);
 }
 
 /** Free the child from the list of children. */
-void Object::release(Object * pChild)
+void BaseObject::release(BaseObject * pChild)
 {
   children_.remove_element(pChild);
   if (root_) root_->unregister_object(pChild);
 }
 
-void Object::moved()
+void BaseObject::moved()
 { 
   // 1. get new name from parent, register as child
   if (parent_) parent_->registerChild(this);
@@ -47,7 +47,7 @@ void Object::moved()
   registerUrl();
 }
 
-void Object::registerChild(Object * pChild)
+void BaseObject::registerChild(BaseObject * pChild)
 {
   // 1. reset hash
   children_.remove_element(pChild);
@@ -60,9 +60,9 @@ void Object::registerChild(Object * pChild)
   children_.set(pChild->name_,pChild);
 }
 
-void Object::registerUrl()
+void BaseObject::registerUrl()
 {
-  Object * obj;
+  BaseObject * obj;
   string_iterator it;
   string_iterator end = children_.end();
   
@@ -83,14 +83,14 @@ void Object::registerUrl()
   }
 }
 
-void Object::clear()
+void BaseObject::clear()
 {
   string_iterator it;
   string_iterator end = children_.end();
 
   // destroy all children
   for(it = children_.begin(); it != end; it++) {
-    Object * child;
+    BaseObject * child;
     if (children_.get(*it, &child)) {
       // to avoid 'release' call (would alter children_)
       child->parent_ = NULL;

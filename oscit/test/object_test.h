@@ -2,7 +2,7 @@
 #include "oscit/root.h"
 #include "mock/dummy_object.h"
 
-class ObjectTest : public TestHelper
+class BaseObjectTest : public TestHelper
 {
 public:
   void test_create( void ) {
@@ -11,9 +11,9 @@ public:
   }
   
   void test_rename( void ) {
-    Object base;
-    Object * foo = base.adopt(new Object("foo"));
-    Object * bar = foo->adopt(new Object("bar"));
+    BaseObject base;
+    BaseObject * foo = base.adopt(new BaseObject("foo"));
+    BaseObject * bar = foo->adopt(new BaseObject("bar"));
     
     assert_equal("/foo"    , foo->url() );
     assert_equal("/foo/bar", bar->url() );
@@ -25,26 +25,26 @@ public:
   }
   
   void test_child( void ) {
-    Object base;
-    Object * one = base.adopt(new Object("one")); // This is the prefered way of creating sub-objects.
-    Object * sub = one->adopt(new Object("sub"));
+    BaseObject base;
+    BaseObject * one = base.adopt(new BaseObject("one")); // This is the prefered way of creating sub-objects.
+    BaseObject * sub = one->adopt(new BaseObject("sub"));
 
     assert_equal("",         base.url());
     assert_equal("/one",     one->url());
     assert_equal("/one/sub", sub->url());
 
     assert_equal(one, base.child("one"));
-    assert_equal((Object*)NULL, base.child("foo"));
+    assert_equal((BaseObject*)NULL, base.child("foo"));
 
     one->set_name("foo");
-    assert_equal((Object*)NULL, base.child("one"));
+    assert_equal((BaseObject*)NULL, base.child("one"));
     assert_equal(one, base.child("foo"));
   }
   
   void test_first_child( void ) {
-    Object base("base");
-    Object * one = base.adopt(new Object("one"));
-    Object * two = base.adopt(new Object("aaa"));
+    BaseObject base("base");
+    BaseObject * one = base.adopt(new BaseObject("one"));
+    BaseObject * two = base.adopt(new BaseObject("aaa"));
     
     assert_equal(one, base.first_child());
     
@@ -53,10 +53,10 @@ public:
   }
   
   void test_set_parent_same_name_as_sibling( void ) {
-    Object base;
-    Object * child1 = new Object("foo");
-    Object * child2 = new Object("bar");
-    Object * child3 = new Object("foo");
+    BaseObject base;
+    BaseObject * child1 = new BaseObject("foo");
+    BaseObject * child2 = new BaseObject("bar");
+    BaseObject * child3 = new BaseObject("foo");
     
     assert_equal(""   , base.url()    );
     assert_equal("foo", child1->url() );
@@ -86,10 +86,10 @@ public:
   }
   
   void test_build_child( void ) {
-    Object base;
-    Object * carrot = base.adopt(new DummyObject("dummy", 0.0));
-    Object * foo    = carrot->build_child(std::string("something"));
-    assert_equal((Object*)NULL, foo);
+    BaseObject base;
+    BaseObject * carrot = base.adopt(new DummyObject("dummy", 0.0));
+    BaseObject * foo    = carrot->build_child(std::string("something"));
+    assert_equal((BaseObject*)NULL, foo);
     foo = carrot->build_child(std::string("special"));
     assert_true( foo != NULL );
     assert_equal("/dummy/special", foo->url());

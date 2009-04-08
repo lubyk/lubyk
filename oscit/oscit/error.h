@@ -1,5 +1,5 @@
-#ifndef _ERROR_H_
-#define _ERROR_H_
+#ifndef _OSCIT_ERROR_H_
+#define _OSCIT_ERROR_H_
 #include "oscit/values.h"
 
 namespace oscit {
@@ -49,4 +49,4 @@ class Error
 };
 
 } // oscit
-#endif // _ERROR_H_
+#endif // _OSCIT_ERROR_H_

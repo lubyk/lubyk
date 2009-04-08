@@ -1,16 +1,16 @@
-#ifndef _TYPE_META_METHOD_H_
-#define _TYPE_META_METHOD_H_
+#ifndef _OSCIT_TYPE_META_METHOD_H_
+#define _OSCIT_TYPE_META_METHOD_H_
 #include "oscit/root.h"
 
 namespace oscit {
 
-class TypeMetaMethod : public Object
+class TypeMetaMethod : public BaseObject
 {
 public:
-  TypeMetaMethod(const char * name) : Object(name, H("s")) {}
+  TypeMetaMethod(const char * name) : BaseObject(name, H("s")) {}
 
   virtual const Value trigger (const Value &url) {
-    Object * target = root_->find_or_build_object_at(url.s);
+    BaseObject * target = root_->find_or_build_object_at(url.s);
     
     if (target != NULL) {
       Value type = target->type();
@@ -38,6 +38,6 @@ public:
   }
 };
 
-#endif // _TYPE_META_METHOD_H_
+#endif // _OSCIT_TYPE_META_METHOD_H_
 
 } // oscit

@@ -1,5 +1,5 @@
-#ifndef _CALL_H_
-#define _CALL_H_
+#ifndef _OSCIT_CALL_H_
+#define _OSCIT_CALL_H_
 #include <string>
 
 namespace oscit {
@@ -13,4 +13,4 @@ struct Call
 };
 } // namespace oscit
 
-#endif // _CALL_H_
+#endif // _OSCIT_CALL_H_

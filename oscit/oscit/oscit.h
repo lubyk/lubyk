@@ -2,7 +2,7 @@
 #define _OSCIT_H_
 
 #include "oscit/values.h"
-#include "oscit/object.h"
+#include "oscit/base_object.h"
 #include "oscit/root.h"
 
-#endif
+#endif // _OSCIT_H_
