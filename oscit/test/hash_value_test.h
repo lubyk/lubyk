@@ -1,7 +1,7 @@
 #include "test_helper.h"
 #include "oscit/values.h"
 
-class ListValueTest : public TestHelper
+class HashValueTest : public TestHelper
 {  
 public:
   void test_create( void ) {
@@ -13,13 +13,14 @@ public:
     assert_false(v.is_string());
     assert_false(v.is_list());
     assert_false(v.is_error());
-    assert_true(v.is_hash());
+    assert_true (v.is_hash());
+    assert_false(v.is_matrix());
     
     // 0
     assert_false(v.get("foo", &res));
     v.set("foo",3.5);
     assert_true(v.get("foo", &res));
-    assert_true(v.is_real());
+    assert_true(res.is_real());
     assert_equal(3.5, res.r);
   }
   
@@ -33,8 +34,8 @@ public:
   
   void test_copy( void ) {
     Value v(TypeTag("H"));
-    v.set(1,"one");
-    v.set(2,"two");
+    v.set("1","one");
+    v.set("2","two");
     
     Value v2(v);
     Value v3;
@@ -42,7 +43,8 @@ public:
     Value res;
     
     assert_true(v2.is_hash());
-    assert_true(v2.get(1, &res));
+    assert_true(v2.get("1", &res));
+    assert_true(res.is_string());
     assert_equal("one", res.s);
     
     v.set("1","un");
@@ -118,11 +120,11 @@ public:
       assert_true(v.get(key, &res));
       assert_true(res.is_real());
       if (key == "a") {
-        assert_equal(1, res.r);
+        assert_equal(1.0, res.r);
       } else if (key == "b") {
-        assert_equal(2, res.r);
+        assert_equal(2.0, res.r);
       } else if (key == "c") {
-        assert_equal(3, res.r);
+        assert_equal(3.0, res.r);
       } else {
         assert_equal("wrong key !", key);
       }
@@ -174,19 +176,19 @@ public:
     assert_equal("one", v["list"][0].s);
     
     assert_true(v["list"][1].is_real());
-    assert_equal(2, v["list"][1].r);
+    assert_equal(2.0, v["list"][1].r);
   }
   
   void test_stream( void ) {
     Value v;
     Value jobs;
     v.set("name", "Joe");
-    v.set("age", 34);
+    v.set("age", 34.0);
     jobs.push_back("dad").push_back("husband").push_back("lover").push_back(-666);
     v.set("job", jobs);
     
     std::ostringstream os(std::ostringstream::out);
     os << v;
-    assert_equal("...", os.str());
+    assert_equal("{\"name\":\"Joe\" \"age\":34 \"job\":[\"dad\", \"husband\", \"lover\", -666]}", os.str());
   }
 };

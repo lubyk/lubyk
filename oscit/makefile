@@ -3,7 +3,7 @@ TESTING=-D_TESTING_
 AR = ar rcu
 LIBTOOL=libtool -static
 TEST=test/*_test.h
-OBJECTS=object.o root.o receive.o send.o zeroconf.o value.o oscpack/liboscpack.a
+OBJECTS=object.o root.o receive.o send.o zeroconf.o value.o oscpack/liboscpack.a opencv_tiny.o
 CFLAGS=-g -Wall $(TESTING)
 
 
@@ -28,6 +28,9 @@ root.o: root.cpp root.h meta_methods/*
 
 value.o: values/value.cpp value.h
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
+
+opencv_tiny.o: opencv/cxalloc.cpp opencv/cxarithm.cpp opencv/cxsystem.cpp
+	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) -Iopencv $< -o $@
 
 %.o: %.cpp %.h
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@

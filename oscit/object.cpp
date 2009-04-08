@@ -76,7 +76,7 @@ void Object::registerUrl()
   
   // 3. update children
   for(it = children_.begin(); it != end; it++) {
-    if (children_.get(&obj, *it)) obj->registerUrl();
+    if (children_.get(*it, &obj)) obj->registerUrl();
   }
 }
 
@@ -88,7 +88,7 @@ void Object::clear()
   // destroy all children
   for(it = children_.begin(); it != end; it++) {
     Object * child;
-    if (children_.get(&child, *it)) {
+    if (children_.get(*it, &child)) {
       // to avoid 'release' call (would alter children_)
       child->parent_ = NULL;
       if (root_) root_->unregister_object(child);

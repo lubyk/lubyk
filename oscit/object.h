@@ -187,7 +187,7 @@ class Object
 
     while(it != end) {
       Object * obj;
-      if (children_.get(&obj, *it)) {
+      if (children_.get(*it, &obj)) {
         if (obj->class_type() != H("Alias")) {
             // do not list alias (Alias are used as internal helpers and do not need to be advertised)
           if (!start) res.append(",");
@@ -265,7 +265,7 @@ class Object
   /** Return the direct child named 'name'. */
   Object *child(const std::string &name) {
     Object * child;
-    if (children_.get(&child, name)) {
+    if (children_.get(name, &child)) {
       return child;
     } else {
       return NULL;

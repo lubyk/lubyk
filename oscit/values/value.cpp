@@ -14,6 +14,9 @@ std::ostream &operator<<(std::ostream &out_stream, const Value &val) {
     case STRING_VALUE:
       out_stream << "\"" << val.s << "\"";
       break;
+    case HASH_VALUE:
+      out_stream << "{" << *val.hash_ << "}";
+      break;
     case NIL_VALUE:
       out_stream << "Nil";
       break;

@@ -5,8 +5,9 @@
 #include "oscit/thash.h"
 
 namespace oscit {
-  
+
 class List;
+class Value;
   
 enum ValueType
 {
@@ -16,6 +17,7 @@ enum ValueType
   ERROR_VALUE,
   LIST_VALUE,
   HASH_VALUE,
+  MATRIX_VALUE,
 };
 
 enum ValueTypeTag
@@ -25,6 +27,12 @@ enum ValueTypeTag
   STRING_TYPE_TAG = 's',
   ERROR_TYPE_TAG  = 's',
   HASH_TYPE_TAG   = 'H',
+  MATRIX_TYPE_TAG = 'M',
+};
+
+enum HashDefaultSize
+{
+  DEFAULT_HASH_TABLE_SIZE = 20,
 };
 
 /** Wrapper around a string identifying an osc type list. */
@@ -45,6 +53,9 @@ class Value;
 typedef std::list<std::string>::const_iterator HashIterator;
 typedef THash<std::string,Value> Hash;
 
+extern Value gNilValue;
+extern Hash  gEmptyHash;
+
 /** Value is the base type of all data transmitted between objects or used as parameters
 and return values for osc messages. */
 class Value
@@ -53,6 +64,8 @@ public:
   Value() : type_(NIL_VALUE) {}
   
   explicit Value(Real real) : type_(REAL_VALUE), r(real) {}
+  
+  explicit Value(int number) : type_(REAL_VALUE), r(number) {}
   
   explicit Value(const char * string) : type_(STRING_VALUE) {
     set_string(string);
@@ -132,6 +145,8 @@ public:
   bool is_error() const  { return type_ == ERROR_VALUE; }
   
   bool is_hash() const   { return type_ == HASH_VALUE; }
+  
+  bool is_matrix() const   { return type_ == MATRIX_VALUE; }
   
   inline const char * type_tag() const;
   
@@ -215,11 +230,43 @@ public:
     set(key, Value(val));
   }
   
-  void set(const std::string &key, const T &val) {
+  void set(const std::string &key, const Value &val) {
     if (!is_hash()) set_type(HASH_VALUE);
     hash_->set(key, val);
   }
   
+  bool get(const std::string &key, Value *retval) {
+    if (!is_hash()) return false;
+    return hash_->get(key, retval);
+  }
+  
+  HashIterator begin() const {
+    return is_hash() ? hash_->begin() : gEmptyHash.begin();
+  }
+  
+  HashIterator end() const {
+    return is_hash() ? hash_->end() : gEmptyHash.end();
+  }
+  
+  Value operator[](const std::string &key) {
+    if (!is_hash()) return gNilValue;
+    Value res;
+    if (get(key, &res)) {
+      return res;
+    } else {
+      return gNilValue;
+    }
+  }
+  
+  Value operator[](const char * &key) {
+    if (!is_hash()) return gNilValue;
+    Value res;
+    if (get(key, &res)) {
+      return res;
+    } else {
+      return gNilValue;
+    }
+  }
   /** Change the Value into the specific type. Since a default value must be set,
     * it is better to use 'set'. */
   void set_type(ValueType type) {
@@ -264,7 +311,9 @@ public:
     switch (c) {
       case REAL_TYPE_TAG:   return REAL_VALUE;
       case STRING_TYPE_TAG: return STRING_VALUE;
-      case NIL_TYPE_TAG:    return NIL_VALUE;
+      // ERROR_TYPE_TAG == STRING_TYPE_TAG;
+      case HASH_TYPE_TAG:   return HASH_VALUE;
+      case MATRIX_TYPE_TAG: return MATRIX_VALUE;
       default:              return NIL_VALUE;
     }
   }
@@ -319,10 +368,9 @@ public:
     List  * list_; // multi-value
     Error * error_; // error code and message
     Hash  * hash_; // dictionary
+    Hash  * matrix_; // reference counted matrix
   };
 };
-
-extern Value gNilValue;
 
 } // oscit
 
@@ -334,6 +382,8 @@ const char * Value::type_tag() const {
     case REAL_VALUE:   return "f";
     case ERROR_VALUE: // continue
     case STRING_VALUE: return "s";
+    case HASH_VALUE:   return "H";
+    case MATRIX_VALUE: return "M";
     case NIL_VALUE:    return "N";
     case LIST_VALUE:   return list_->type_tag();
     default:           return "N";
@@ -445,7 +495,7 @@ void Value::set_default() {
       error_ = new Error;
       break;
     case HASH_VALUE:
-      hash_ = new Hash;
+      hash_ = new Hash(DEFAULT_HASH_TABLE_SIZE);
       break;
     default:
       ; // nothing to set 
@@ -457,6 +507,10 @@ void Value::set_list(const List *list) {
   list_ = new List(*list);
 }
 
+// void Value::set_matrix(const List *list) {
+//   list_ = new List(*list);
+// }
+// 
 std::ostream &operator<< (std::ostream &out_stream, const Value &val);
 
 } // oscit

@@ -49,7 +49,7 @@ struct THashElement
 {
   THashElement() : obj(0), next(0) {}
   ~THashElement() { if (obj) delete obj; }
-  K     id; 
+  K     key; 
   T*    obj;
   /// lookup collision chain
   THashElement<K,T> * next;
@@ -63,8 +63,8 @@ template <class K, class T>
 class THash
 {
 public:
-  THash(unsigned int size) : mSize(size) { 
-    mTHashTable = new THashElement<K,T>[size];
+  THash(unsigned int size) : size_(size) { 
+    thash_table_ = new THashElement<K,T>[size];
   }
   
   // copy constructor
@@ -73,11 +73,11 @@ public:
     const_string_iterator end = pOther.end();
     T value;
     
-    mSize = pOther.mSize;
-    mTHashTable = new THashElement<K,T>[mSize];
+    size_ = pOther.size_;
+    thash_table_ = new THashElement<K,T>[size_];
     
     for(it = pOther.begin(); it != end; it++) {
-      if (pOther.get(&value, *it)) {
+      if (pOther.get(*it, &value)) {
         set(*it, value);
       }
     }
@@ -89,7 +89,7 @@ public:
     T value;
 
     for(it = pOther.begin(); it != end; it++) {
-      if (pOther.get(&value, *it)) {
+      if (pOther.get(*it, &value)) {
         set(*it, value);
       }
     }
@@ -99,8 +99,8 @@ public:
   virtual ~THash() {
     THashElement<K,T> * current, * next;
     // remove collisions
-    for(size_t i=0;i<mSize;i++) {
-      current = mTHashTable[i].next;
+    for(size_t i=0;i<size_;i++) {
+      current = thash_table_[i].next;
       while (current) {
         next = current->next;
         delete current;
@@ -108,31 +108,32 @@ public:
       }
     }
     // remove table
-    delete[] mTHashTable;
+    delete[] thash_table_;
   }
   
-  void set(const K& pId, const T& pElement);
+  void set(const K &key, const T &pElement);
   
-  /** Get an element of the dictionary and set the pResult to this element. Returns false if no element found. */
-  bool get(const K& pId, T* pResult) const;
+  /** Get an element of the dictionary and set the retval to this element. Returns false if no element found. */
+  // FIXME: const T* ?
+  bool get(const K &key, T *retval) const;
   
   /** Get an element's key. Returns false if the element could not be found. */
-  bool get_key(const T& pElement, K* pResult) const;
+  bool get_key(const T &pElement, K *retval) const;
   
   /** Get the default value (last value). */
-  bool get(T* pResult) const;
+  bool get(T *retval) const;
   
   /** Remove object with the given key. */
-  void remove(const K& pId);
+  void remove(const K &key);
   
   /** Remove the given element. */
-  void remove_element(const T& pElement);
+  void remove_element(const T &pElement);
   
   /** Remove all objects. */
   void clear() {
     // TODO: optimize...
-    while(mKeys.begin() != mKeys.end()) {
-      remove(*mKeys.begin());
+    while(keys_.begin() != keys_.end()) {
+      remove(*keys_.begin());
     }
   }
   
@@ -140,42 +141,42 @@ public:
   bool empty() const { return size() == 0; }
   
   /** Return number of elements (distinct keys). */
-  size_t size() const { return mKeys.size(); }
+  size_t size() const { return keys_.size(); }
   
   /** Return size of storage (main hash table). */
-  unsigned int storage_size() const { return mSize; }
+  unsigned int storage_size() const { return size_; }
   
   /** List of keys. */
-  const std::list<K>& keys() { return mKeys; }
+  const std::list<K>& keys() { return keys_; }
   
   /** Begin iterator over the keys of the dictionary (read-only). */
-  typename std::list<K>::const_iterator begin() const { return mKeys.begin(); }
+  typename std::list<K>::const_iterator begin() const { return keys_.begin(); }
   
   /** Past end iterator over the keys of the dictionary (read-only). */
-  typename std::list<K>::const_iterator end()   const { return mKeys.end(); }
+  typename std::list<K>::const_iterator end()   const { return keys_.end(); }
   
   /** Begin iterator over the keys of the dictionary. */
-  typename std::list<K>::iterator begin() { return mKeys.begin(); }
+  typename std::list<K>::iterator begin() { return keys_.begin(); }
   
   /** Begin iterator over the keys of the dictionary. */
-  typename std::list<K>::iterator end()   { return mKeys.end(); }
+  typename std::list<K>::iterator end()   { return keys_.end(); }
 private:  
   /* data */
-  THashElement<K,T> * mTHashTable;
-  std::list<K>        mKeys;  // FIXME: this should be a list !
+  THashElement<K,T> * thash_table_;
+  std::list<K>        keys_;  // FIXME: this should be a list !
   
-  unsigned int mSize;
+  unsigned int size_;
 };
 
 template <class K, class T>
-void THash<K,T>::set(const K& pId, const T& pElement) {
+void THash<K,T>::set(const K& key, const T& pElement) {
   THashElement<K,T> *  found;
   THashElement<K,T> ** set_next;
-  uint key = hashId(pId) % mSize;
-  found    = &(mTHashTable[key]);  // pointer to found element
+  uint id = hashId(key) % size_;
+  found    = &(thash_table_[id]);  // pointer to found element
   set_next = &(found->next);      // where to write the new inserted value if there is one
   
-  while (found && found->obj && found->id != pId) { // found->obj is for the case where pId == 0
+  while (found && found->obj && found->key != key) { // found->obj is for the case where key == 0
     set_next = &(found->next);
     found    = found->next;
   }
@@ -196,23 +197,23 @@ void THash<K,T>::set(const K& pId, const T& pElement) {
     delete found->obj;
   } else {
     // new key
-    mKeys.push_back(pId);
+    keys_.push_back(key);
   }
   found->obj  = new T(pElement);
-  found->id   = pId;
+  found->key  = key;
 }
 
 template <class K, class T>
-bool THash<K,T>::get(const K& pId, T* pResult) const {
+bool THash<K,T>::get(const K& key, T* retval) const {
   THashElement<K,T> * found;
-  uint key = hashId(pId) % mSize;
+  uint id = hashId(key) % size_;
   
-  found = &(mTHashTable[key]);
-  while (found && found->obj && found->id != pId)
+  found = &(thash_table_[id]);
+  while (found && found->obj && found->key != key)
     found = found->next;
     
-  if (found && found->obj && found->id == pId) {
-    *pResult = *(found->obj);
+  if (found && found->obj && found->key == key) {
+    *retval = *(found->obj);
     return true;
   } else {
     return false;
@@ -220,15 +221,15 @@ bool THash<K,T>::get(const K& pId, T* pResult) const {
 }
 
 template <class K, class T>
-bool THash<K,T>::get_key(const T& pElement, K* pResult) const {
+bool THash<K,T>::get_key(const T& pElement, K* retval) const {
   typename std::list<K>::const_iterator it;
-  typename std::list<K>::const_iterator end = mKeys.end();
+  typename std::list<K>::const_iterator end = keys_.end();
   
   T element;
   
-  for(it = mKeys.begin(); it != end; it++) {
-    if (get(&element, *it) && element == pElement) {
-      *pResult = *it;
+  for(it = keys_.begin(); it != end; it++) {
+    if (get(*it, &element) && element == pElement) {
+      *retval = *it;
       return true;
     }
   }
@@ -237,23 +238,23 @@ bool THash<K,T>::get_key(const T& pElement, K* pResult) const {
 
 
 template <class K, class T>
-void THash<K,T>::remove(const K& pId) {
+void THash<K,T>::remove(const K& key) {
   THashElement<K,T> *  found, * next;
   THashElement<K,T> ** set_next;
-  uint key = hashId(pId) % mSize;
-  found    = &(mTHashTable[key]);  // pointer to found element
+  uint id = hashId(key) % size_;
+  found    = &(thash_table_[id]);  // pointer to found element
   set_next = NULL;                // where to write removed element's next if there is one
   
-  while (found && found->obj && found->id != pId) {
+  while (found && found->obj && found->key != key) {
     set_next = &(found->next);
     found    = found->next;
   }
   if (found && found->obj) {
-    typename std::list<K>::iterator it  = mKeys.begin();
-    typename std::list<K>::iterator end = mKeys.end();
+    typename std::list<K>::iterator it  = keys_.begin();
+    typename std::list<K>::iterator end = keys_.end();
     while(it != end) {
-      if (*it == pId)
-        it = mKeys.erase(it);
+      if (*it == key)
+        it = keys_.erase(it);
       else
         it++;
     }
@@ -271,7 +272,7 @@ void THash<K,T>::remove(const K& pId) {
         }
         found->obj  = next->obj;
         next->obj   = NULL;  // to avoid Real delete
-        found->id   = next->id;
+        found->key  = next->key;
         found->next = next->next;
         delete next;
       } else {
@@ -287,7 +288,7 @@ void THash<K,T>::remove(const K& pId) {
 template <class K, class T>
 void THash<K,T>::remove_element(const T& pElement) {
   K key;
-  while (get_key(&key, pElement)) {
+  while (get_key(pElement, &key)) {
     remove(key);
   }
 }
@@ -300,7 +301,7 @@ std::ostream& operator<< (std::ostream& pStream, const THash<K,T>& hash) {
   T value;
   for( it = begin; it != end; it++) {
     if (it != begin) pStream << " ";
-    if (hash.get(&value, *it))
+    if (hash.get(*it, &value))
       pStream << *it << ":" << value;
     else
       pStream << *it << ":" << "/error/";
@@ -308,6 +309,21 @@ std::ostream& operator<< (std::ostream& pStream, const THash<K,T>& hash) {
   return pStream;
 }
 
+template <class T>
+std::ostream& operator<< (std::ostream& pStream, const THash<std::string,T>& hash) {
+  typename std::list<std::string>::const_iterator it,begin,end;
+  end   = hash.end();
+  begin = hash.begin();
+  T value;
+  for( it = begin; it != end; it++) {
+    if (it != begin) pStream << " ";
+    if (hash.get(*it, &value))
+      pStream << "\"" << *it << "\"" << ":" << value;
+    else
+      pStream << "\"" << *it << "\"" << ":" << "/error/";
+  }
+  return pStream;
+}
 /////// HASH FUNCTIONS  ////////
 
 // ===== uint =====

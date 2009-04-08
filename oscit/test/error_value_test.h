@@ -11,7 +11,9 @@ public:
     assert_false(v.is_real());
     assert_false(v.is_string());
     assert_false(v.is_list());
-    assert_true(v.is_error());
+    assert_true (v.is_error());
+    assert_false(v.is_hash());
+    assert_false(v.is_matrix());
     
     assert_equal("foo", v.error_message());
     assert_equal(BAD_REQUEST_ERROR, v.error_code());

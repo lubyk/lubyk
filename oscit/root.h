@@ -92,12 +92,12 @@ class Root : public Object
 
   /** Find a pointer to an Object from its url. Return false if the object is not found. */
   bool get_object_at(const std::string &url, Object **retval) {
-    return objects_.get(retval, url);
+    return objects_.get(url, retval);
   }
 
   /** Find a pointer to an Object from its url. Return false if the object is not found. */
   bool get_object_at(const char *url, Object **retval) {
-    return objects_.get(retval, std::string(url));
+    return objects_.get(std::string(url), retval);
   }
   
   /** Return a pointer to the object located at a given url. NULL if not found. */
