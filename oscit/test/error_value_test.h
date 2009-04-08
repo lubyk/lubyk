@@ -96,5 +96,6 @@ public:
     std::ostringstream os(std::ostringstream::out);
     os << v;
     assert_equal("\"404 banana\"", os.str());
+    assert_equal("\"404 banana\"", v.as_string());
   }
 };

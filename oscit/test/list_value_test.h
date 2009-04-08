@@ -220,5 +220,6 @@ public:
     std::ostringstream os(std::ostringstream::out);
     os << v;
     assert_equal("[1.234, \"Hello World!\", 9.8, 2000]", os.str());
+    assert_equal("[1.234, \"Hello World!\", 9.8, 2000]", v.as_string());
   }
 };

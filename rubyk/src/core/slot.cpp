@@ -6,9 +6,9 @@ Slot::~Slot()
 {
   // remove connections with other slots
   Slot * s;
-  while( mConnections.get(&s)) {
+  while( connections_.get(&s)) {
     s->remove_connection(this);
-    mConnections.pop();
+    connections_.pop();
   }
 }
 
@@ -18,59 +18,59 @@ void Slot::set_id(int pId)
   mId = pId;
 }
 
-bool Slot::connect(Slot * pOther)
+bool Slot::connect(Slot * slot)
 {  
-  if (pOther == NULL) return false;
+  if (slot == NULL) return false;
   // outlet --> inlet
-  if (add_connection(pOther)) { 
-    pOther->add_connection(this);
+  if (add_connection(slot)) { 
+    slot->add_connection(this);
     return true;
   }
   return false;
 }
 
-void Slot::disconnect(Slot * pOther)
+void Slot::disconnect(Slot * slot)
 {
-  remove_connection(pOther);
-  pOther->remove_connection(this);
+  remove_connection(slot);
+  slot->remove_connection(this);
 }
     
 
 /** Sort slots by rightmost node and rightmost position in the same node. */
-bool Slot::operator>= (const Slot& pOther) const
+bool Slot::operator>= (const Slot& slot) const
 { 
-  if (mNode == pOther.mNode) {
+  if (node_ == slot.node_) {
     // same node, sort by position in container, largest first
-    return mId < pOther.mId;
+    return mId < slot.mId;
   } else {
     // different node, sort by node position, greatest first
-    return ((Node*)(mNode))->trigger_position() < ((Node*)(pOther.mNode))->trigger_position();
+    return ((Node*)(node_))->trigger_position() < ((Node*)(slot.node_))->trigger_position();
   }
 }
 
 
-bool Slot::add_connection(Slot * pOther)
+bool Slot::add_connection(Slot * slot)
 { 
-  if (mType & pOther->mType) {
+  if (mType & slot->mType) {
     // only create a link if the slot type signature are compatible
     // OrderedList makes sure the link is not created again if it already exists.
-    mConnections.push(pOther); 
+    connections_.push(slot); 
     return true;
   } else {
     return false;
   }
 }
 
-void Slot::remove_connection(Slot * pOther)
+void Slot::remove_connection(Slot * slot)
 {
-  mConnections.remove(pOther);
+  connections_.remove(slot);
 }
 
 const Value Slot::change_link(const Value val, bool pCreate)
 {
   if (val.is_nil()) {
     // return list of links
-    LinkedList<Slot*> * iterator = mConnections.begin();
+    LinkedList<Slot*> * iterator = connections_.begin();
     std::string res = "";
     while(iterator) {
       if (res != "") res.append(",");

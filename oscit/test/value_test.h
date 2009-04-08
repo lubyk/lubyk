@@ -72,5 +72,6 @@ public:
     std::ostringstream os(std::ostringstream::out);
     os << v;
     assert_equal("Nil", os.str());
+    assert_equal("Nil", v.as_string());
   }
 };

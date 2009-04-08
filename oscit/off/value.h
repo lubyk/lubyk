@@ -3,7 +3,6 @@
 #include "rubyk_types.h"
 #include "smart_ptr.h"
 #include "data.h"
-#include <ostream>
 
 class Error;
 /** Generic wrapper for all values passed between objects through outlets and to/from methods called through osc or the command line.

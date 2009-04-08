@@ -1,6 +1,6 @@
 #ifndef _EVENT_H_
 #define _EVENT_H_
-#include "robject.h"
+#include "object.h"
 #include <ostream>
 
 class Node;

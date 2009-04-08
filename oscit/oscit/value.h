@@ -253,6 +253,33 @@ public:
     set_matrix(&matrix);
   }
   
+  /** Return a string representation of the value. */
+  std::string as_string() const;
+  
+  /** Change the Value into the specific type. Since a default value must be set,
+    * it is better to use 'set'. */
+  void set_type(ValueType type) {
+    set_type_without_default(type);
+    set_default();
+  }
+  
+  /** Change the Value into something defined in a typeTag. */
+  inline void set_type_tag(const char *type_tag);
+  
+  static ValueType type_from_char(char c) {
+    switch (c) {
+      case REAL_TYPE_TAG:   return REAL_VALUE;
+      case STRING_TYPE_TAG: return STRING_VALUE;
+      // ERROR_TYPE_TAG == STRING_TYPE_TAG;
+      case HASH_TYPE_TAG:   return HASH_VALUE;
+      case MATRIX_TYPE_TAG: return MATRIX_VALUE;
+      default:              return NIL_VALUE;
+    }
+  }
+  
+  
+  /** ============ Hash ============ */
+  
   template<class T>
   void set(const char *key, const T &val) {
     set(std::string(key), Value(val));
@@ -301,6 +328,7 @@ public:
     }
   }
   
+  
   /** ============ Matrix ============ */
   size_t mat_size() const {
     return is_matrix() ? matrix_->rows * matrix_->cols : 0;
@@ -314,15 +342,8 @@ public:
     return is_matrix() ? (Real*)matrix_->data : NULL;
   }
   
-  /** Change the Value into the specific type. Since a default value must be set,
-    * it is better to use 'set'. */
-  void set_type(ValueType type) {
-    set_type_without_default(type);
-    set_default();
-  }
   
-  /** Change the Value into something defined in a typeTag. */
-  inline void set_type_tag(const char *type_tag);
+  /** ============ List ============ */
   
   inline const Value& operator[](size_t pos) const;
   
@@ -346,6 +367,9 @@ public:
   
   inline Value &push_front(const Value& val);
   
+  
+  /** ============ Error ============ */
+  
   const std::string& error_message() const {
     return error_->message();
   }
@@ -353,18 +377,6 @@ public:
   ErrorCode error_code() const {
     return error_->code();
   }
-  
-  static ValueType type_from_char(char c) {
-    switch (c) {
-      case REAL_TYPE_TAG:   return REAL_VALUE;
-      case STRING_TYPE_TAG: return STRING_VALUE;
-      // ERROR_TYPE_TAG == STRING_TYPE_TAG;
-      case HASH_TYPE_TAG:   return HASH_VALUE;
-      case MATRIX_TYPE_TAG: return MATRIX_VALUE;
-      default:              return NIL_VALUE;
-    }
-  }
-  
   
  private:
   /** Set the value to nil and release/free contained data. */

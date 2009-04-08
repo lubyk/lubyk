@@ -104,5 +104,6 @@ public:
     std::ostringstream os(std::ostringstream::out);
     os << v;
     assert_equal("1.35", os.str());
+    assert_equal("1.35", v.as_string());
   }
 };

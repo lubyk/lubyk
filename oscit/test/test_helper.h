@@ -3,6 +3,7 @@
 #include <cxxtest/TestSuite.h>
 #include "oscit/oscit.h"
 #include <sys/timeb.h> // ftime
+#include <ostream>
 
 void microsleep(size_t microseconds) {
   struct timespec sleeper;

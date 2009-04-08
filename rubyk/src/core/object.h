@@ -4,9 +4,9 @@
 
 class Planet;
 
-/** RObject is the base object in Rubyk context. The object is just a wrapper around oscit::Object
+/** Object is the base object in Rubyk context. The object is just a wrapper around oscit::BaseObject
  *  with an extra "Planet" pointer. */
-class RubykObject : public Object
+class Object : public BaseObject
 {
 public:
   virtual void set_root(Root * root)

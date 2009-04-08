@@ -118,5 +118,6 @@ public:
     std::ostringstream os(std::ostringstream::out);
     os << v;
     assert_equal("\"cake\"", os.str());
+    assert_equal("\"cake\"", v.as_string());
   }
 };

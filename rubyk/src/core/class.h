@@ -11,10 +11,10 @@
   * 2. create node methods
   * 3. create node inlets / outlets
   */
-class Class : public RObject
+class Class : public Object
 {
 public:
-  Class(const char* pName, const char* pInfo) : RObject(pName) 
+  Class(const char* pName, const char* pInfo) : Object(pName) 
   {
     set_info(pInfo);
   }

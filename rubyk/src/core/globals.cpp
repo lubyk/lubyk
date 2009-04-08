@@ -2,7 +2,7 @@
 #define _GLOBALS_CPP_
 
 //FIX #include "class.h"
-#include "robject.h"
+#include "object.h"
 #include "values.h"
 #include "class.h"
 

@@ -159,8 +159,7 @@ class BaseObject
 
 
   /** Set name from string. If the name is not unique in the parent's scope, the name is changed as "name-1", "name-2", etc. */
-  void set_name (const std::string &name) 
-  { 
+  void set_name (const std::string &name) { 
     if (name == "") return;
     name_ = name; // FIXME: gsub(/[^a-zA-Z\-0-9_],"")
   
@@ -340,13 +339,13 @@ protected:
   friend class Root;
   friend class Alias;
 
-  Root                        *root_;             /**< Root object. */
-  BaseObject                      *parent_;           /**< Pointer to parent object. */
-  THash<std::string,BaseObject *> children_;         /**< Hash with pointers to sub-objects / methods */
-  std::string                 name_;             /**< Unique name in parent's context. */
-  std::string                 url_;              /**< Absolute path to object (cached). TODO: this cache is not really needed. */
-  static size_t               sIdCounter;        /**< Use to set a default id and position. */
-  Value                       type_;
+  Root                            *root_;     /**< Root object. */
+  BaseObject                      *parent_;   /**< Pointer to parent object. */
+  THash<std::string,BaseObject *> children_;  /**< Hash with pointers to sub-objects / methods */
+  std::string                     name_;      /**< Unique name in parent's context. */
+  std::string                     url_;       /**< Absolute path to object (cached). TODO: this cache is not really needed. */
+  static size_t                   sIdCounter; /**< Use to set a default id and position. */
+  Value                           type_;
 
 private:
   friend class OscReceive;

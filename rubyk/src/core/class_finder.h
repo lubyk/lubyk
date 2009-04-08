@@ -1,29 +1,29 @@
 #ifndef _CLASS_FINDER_H_
 #define _CLASS_FINDER_H_
-#include "robject.h"
+#include "object.h"
 #include "new_method.h"
 #include "class.h"
 
 /** Special class to handle class listing from a directory. This usually responds at to the '/class' url. */
-class ClassFinder : public RObject
+class ClassFinder : public Object
 {
 public:
-  ClassFinder(const std::string &pName, const char * pObjPath) : RObject(pName), mObjectsPath(pObjPath) 
+  ClassFinder(const std::string &pName, const char * pObjPath) : Object(pName), mObjectsPath(pObjPath) 
   {
     init();
   }
   
-  ClassFinder(const std::string &pName, std::string& pObjPath) : RObject(pName), mObjectsPath(pObjPath) 
+  ClassFinder(const std::string &pName, std::string& pObjPath) : Object(pName), mObjectsPath(pObjPath) 
   {
     init();
   }
   
-  ClassFinder(const char * pName,       const char * pObjPath) : RObject(pName), mObjectsPath(pObjPath) 
+  ClassFinder(const char * pName,       const char * pObjPath) : Object(pName), mObjectsPath(pObjPath) 
   {
     init();
   }
   
-  ClassFinder(const char * pName,       std::string& pObjPath) : RObject(pName), mObjectsPath(pObjPath) 
+  ClassFinder(const char * pName,       std::string& pObjPath) : Object(pName), mObjectsPath(pObjPath) 
   {
     init();
   }

@@ -1,6 +1,6 @@
 #ifndef _NODE_H_
 #define _NODE_H_
-#include "robject.h"
+#include "object.h"
 #include "event.h"
 #include "inlet.h"
 #include "outlet.h"
@@ -15,7 +15,7 @@
 
 class Observer;
 
-class Node : public RObject
+class Node : public Object
 {
 public:
   
