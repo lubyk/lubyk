@@ -1,8 +1,8 @@
 #ifndef _OSC_OBJECT_H_
 #define _OSC_OBJECT_H_
 #include <list>
-#include "values.h"
-#include "thash.h"
+#include "oscit/values.h"
+#include "oscit/thash.h"
 
 
 namespace oscit {
@@ -78,7 +78,7 @@ class Object
   
   /** Shortcut to call first method on an object.
     * Using "obj.set('waga',3.4,1)" is equivalent to calling "obj.first_method(['waga',3.4,1])". */
-  bool set(const Value& val) {
+  bool set(const Value &val) {
     Object * obj;
     // use first method as default
     string_iterator it  = children_.begin();

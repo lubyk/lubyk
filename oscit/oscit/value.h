@@ -1,9 +1,9 @@
 #ifndef _VALUE_H_
 #define _VALUE_H_
 #include <string>
-#include "oscit/values/error.h"
+#include "oscit/error.h"
 #include "oscit/thash.h"
-#include "oscit/values/matrix.h"
+#include "oscit/matrix.h"
 
 namespace oscit {
 
@@ -426,7 +426,7 @@ public:
 
 } // oscit
 
-#include "oscit/values/list.h"
+#include "oscit/list.h"
 
 namespace oscit {
 const char * Value::type_tag() const {

@@ -1,6 +1,6 @@
 // ordered_list_test.h 
 #include <cxxtest/TestSuite.h>
-#include "thash.h"
+#include "oscit/thash.h"
 
 
 class StringTHashTest : public CxxTest::TestSuite

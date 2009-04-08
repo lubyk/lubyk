@@ -1,7 +1,7 @@
 #ifndef _MATRIX_H_
 #define _MATRIX_H_
 #include "oscit/values.h"
-#include "cv.h"
+#include "opencv/cv.h"
 #include <vector>
 
 namespace oscit {

@@ -1,8 +1,8 @@
 #include "oscit/root.h"
 // meta methods
-#include "oscit/meta_methods/info_meta_method.h"
-#include "oscit/meta_methods/type_meta_method.h"
-#include "oscit/meta_methods/error_meta_method.h"
+#include "oscit/info_meta_method.h"
+#include "oscit/type_meta_method.h"
+#include "oscit/error_meta_method.h"
 #include "ip/UdpSocket.h"
 
 namespace oscit {

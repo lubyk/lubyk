@@ -1,6 +1,6 @@
 #ifndef _OSCIT_SEND_H_
 #define _OSCIT_SEND_H_
-#include "values.h"
+#include "oscit/values.h"
 #include <list>
 
 namespace osc {

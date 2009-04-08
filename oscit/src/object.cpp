@@ -1,5 +1,8 @@
-#include "root.h"
-#include "alias.h"
+#include "oscit/root.h"
+#include "oscit/alias.h"
+
+#include "src/globals.cpp"
+
 namespace oscit {
   
 Object::~Object()

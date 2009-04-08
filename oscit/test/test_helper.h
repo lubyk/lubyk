@@ -1,10 +1,7 @@
 #ifndef _TEST_HELPER_H_
 #define _TEST_HELPER_H_
 #include <cxxtest/TestSuite.h>
-#include "oscit/values.h"
-#include "oscit/object.h"
-#include "oscit/globals.cpp"
-#include "oscit/root.h"
+#include "oscit/oscit.h"
 #include <sys/timeb.h> // ftime
 
 void microsleep(size_t microseconds) {

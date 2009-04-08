@@ -1,7 +1,7 @@
 #ifndef _MATRIX_VALUE_H_
 #define _MATRIX_VALUE_H_
 #include "oscit/value.h"
-#include "oscit/values/matrix.h"
+#include "oscit/matrix.h"
 
 namespace oscit {
 
