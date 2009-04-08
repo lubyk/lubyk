@@ -1,9 +1,9 @@
-INCLUDE_HEADERS=-I../rubyk/src/templates -Ivalues -Ioscpack -I..
+INCLUDE_HEADERS=-I../rubyk/src/templates -Ivalues -Ioscpack -I.. -Iopencv
 TESTING=-D_TESTING_
 AR = ar rcu
 LIBTOOL=libtool -static
 TEST=test/*_test.h
-OBJECTS=object.o root.o receive.o send.o zeroconf.o value.o oscpack/liboscpack.a opencv_tiny.o
+OBJECTS=object.o root.o receive.o send.o zeroconf.o value.o oscpack/liboscpack.a cxalloc.o cxsystem.o
 CFLAGS=-g -Wall $(TESTING)
 
 
@@ -29,8 +29,11 @@ root.o: root.cpp root.h meta_methods/*
 value.o: values/value.cpp value.h
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 
-opencv_tiny.o: opencv/cxalloc.cpp opencv/cxarithm.cpp opencv/cxsystem.cpp
-	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) -Iopencv $< -o $@
+cxalloc.o: opencv/cxalloc.cpp
+	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
+
+cxsystem.o: opencv/cxsystem.cpp
+	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 
 %.o: %.cpp %.h
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@

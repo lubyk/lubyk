@@ -179,6 +179,18 @@ public:
     assert_equal(2.0, v["list"][1].r);
   }
   
+  void test_set_hash( void ) {
+    Value v;
+    Hash h(20);
+    h.set("one", Value(1.0));
+    v.set(h);
+    assert_true(v.is_hash());
+    assert_equal(1.0, v["one"].r);
+    h.set("one", Value(2.0));
+    // copy, not sharing
+    assert_equal(1.0, v["one"].r);
+  }
+  
   void test_stream( void ) {
     Value v;
     Value jobs;

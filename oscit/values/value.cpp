@@ -17,6 +17,9 @@ std::ostream &operator<<(std::ostream &out_stream, const Value &val) {
     case HASH_VALUE:
       out_stream << "{" << *val.hash_ << "}";
       break;
+    case MATRIX_VALUE:
+      out_stream << "\"Matrix " << val.matrix_->rows << "x" << val.matrix_->cols << "\"";
+      break;
     case NIL_VALUE:
       out_stream << "Nil";
       break;

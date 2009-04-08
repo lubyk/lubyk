@@ -3,6 +3,7 @@
 #include <string>
 #include "oscit/values/error.h"
 #include "oscit/thash.h"
+#include "oscit/values/matrix.h"
 
 namespace oscit {
 
@@ -91,10 +92,27 @@ public:
     set_error(code, str.c_str());
   }
   
+  explicit Value(const Hash *hash) : type_(HASH_VALUE) {
+    set_hash(hash);
+  }
+  
+  explicit Value(const Hash &hash) : type_(HASH_VALUE) {
+    set_hash(&hash);
+  }
+  
+  explicit Value(const Matrix *matrix) : type_(MATRIX_VALUE) {
+    set_matrix(matrix);
+  }
+  
+  explicit Value(const Matrix &matrix) : type_(MATRIX_VALUE) {
+    set_matrix(&matrix);
+  }
+  
   /** Create a value from a TypeTag string. */
   explicit Value(TypeTag type_tag) : type_(NIL_VALUE) {
     set_type_tag(type_tag.str_);
   }
+  
   
   /** Create a default value from a type character like 'f'. */
   explicit Value(char type_char) : type_(NIL_VALUE) {
@@ -123,6 +141,9 @@ public:
         break;
       case HASH_VALUE:
         set(other.hash_);
+        break;
+      case MATRIX_VALUE:
+        set(other.matrix_);
         break;
       default:
         set();
@@ -196,28 +217,40 @@ public:
     set_error(code, string);
   }
   
-  /** Change the Value into a List by copying the content of the argument. */
+  /** Change the Value into a ListValue by copying the content of the argument. */
   void set(const Error *error) {
     set_type_without_default(ERROR_VALUE);
     set_error(error);
   }
   
-  /** Change the Value into a List by copying the content of the argument. */
+  /** Change the Value into a ListValue by copying the content of the argument. */
   void set(const Error &error) {
     set_type_without_default(ERROR_VALUE);
     set_error(&error);
   }
   
-  /** Change the Value into a List by copying the content of the argument. */
+  /** Change the Value into a HashValue by copying the content of the argument. */
   void set(const Hash *hash) {
     set_type_without_default(HASH_VALUE);
     set_hash(hash);
   }
   
-  /** Change the Value into a List by copying the content of the argument. */
+  /** Change the Value into a HashValue by copying the content of the argument. */
   void set(const Hash &hash) {
     set_type_without_default(HASH_VALUE);
     set_hash(&hash);
+  }
+  
+  /** Change the Value into a MatrixValue by making a reference to the argument. */
+  void set(const Matrix *matrix) {
+    set_type_without_default(MATRIX_VALUE);
+    set_matrix(matrix);
+  }
+  
+  /** Change the Value into a MatrixValue by making a reference to the argument. */
+  void set(const Matrix &matrix) {
+    set_type_without_default(MATRIX_VALUE);
+    set_matrix(&matrix);
   }
   
   template<class T>
@@ -267,6 +300,20 @@ public:
       return gNilValue;
     }
   }
+  
+  /** ============ Matrix ============ */
+  size_t mat_size() const {
+    return is_matrix() ? matrix_->rows * matrix_->cols : 0;
+  }
+  
+  int mat_type() const {
+    return is_matrix() ? matrix_->type() : 0;
+  }
+  
+  Real * mat_data() const {
+    return is_matrix() ? (Real*)matrix_->data : NULL;
+  }
+  
   /** Change the Value into the specific type. Since a default value must be set,
     * it is better to use 'set'. */
   void set_type(ValueType type) {
@@ -357,6 +404,11 @@ public:
     hash_ = new Hash(*hash);
   }
   
+  /** Set matrix content. */
+  void Value::set_matrix(const Matrix *matrix) {
+    matrix_ = new Matrix(*matrix);
+  }
+  
   ValueType type_;
   
 public:
@@ -364,11 +416,11 @@ public:
     Real r;
     Real f; // alias for r
     Real d; // alias for r
-    char * s; // string
-    List  * list_; // multi-value
-    Error * error_; // error code and message
-    Hash  * hash_; // dictionary
-    Hash  * matrix_; // reference counted matrix
+    char   *s; // string
+    List   *list_; // multi-value
+    Error  *error_; // error code and message
+    Hash   *hash_; // dictionary
+    Matrix *matrix_; // reference counted matrix
   };
 };
 
@@ -475,6 +527,10 @@ void Value::clear() {
       if (hash_ != NULL) delete hash_;
       hash_ = NULL;
       break;
+    case MATRIX_VALUE:
+      if (matrix_ != NULL) delete matrix_;
+      matrix_ = NULL;
+      break;
     default:
       ; // nothing to clear
   }
@@ -497,6 +553,9 @@ void Value::set_default() {
     case HASH_VALUE:
       hash_ = new Hash(DEFAULT_HASH_TABLE_SIZE);
       break;
+    case MATRIX_VALUE:
+      matrix_ = new Matrix;
+      break;
     default:
       ; // nothing to set 
   }
@@ -506,11 +565,7 @@ void Value::set_default() {
 void Value::set_list(const List *list) {
   list_ = new List(*list);
 }
-
-// void Value::set_matrix(const List *list) {
-//   list_ = new List(*list);
-// }
-// 
+ 
 std::ostream &operator<< (std::ostream &out_stream, const Value &val);
 
 } // oscit

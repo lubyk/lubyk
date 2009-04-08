@@ -15,10 +15,10 @@ public:
     assert_false(v.is_hash());
     assert_true (v.is_matrix());
     
-    Matrix * m = v.matrix();
-    assert_equal(0, m->rows());
-    assert_equal(0, m->cols());
-    assert_equal(0, m->type());
+    Matrix * m = v.matrix_;
+    assert_equal(0, m->rows);
+    assert_equal(0, m->cols);
+    assert_true(m->type() == 0);
     
     assert_equal("M", v.type_tag());
   }
@@ -72,7 +72,7 @@ public:
     assert_equal(6, v.mat_size());
     assert_equal(6, v2.mat_size());
     
-    mat[0] = 3.5;
+    mat[3] = 3.5;
     
     // shared data
     assert_equal(3.5,  v.mat_data()[3]);
@@ -84,7 +84,7 @@ public:
     assert_equal(6, v3.mat_size());
     assert_equal(3.5, v3.mat_data()[3]);
     
-    mat[0] = 3.8;
+    mat[3] = 3.8;
     
     assert_equal(3.8,  v.mat_data()[3]);
     assert_equal(3.8, v2.mat_data()[3]);
@@ -123,6 +123,6 @@ public:
     MatrixValue v(2,3);
     std::ostringstream os(std::ostringstream::out);
     os << v;
-    assert_equal("...", os.str());
+    assert_equal("\"Matrix 2x3\"", os.str());
   }
 };
