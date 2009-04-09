@@ -13,7 +13,7 @@ class Person : public BaseObject
   
   /** A simple member method. */
   const Value name(const Value &val) {
-    if (val.is_string()) set_name(val.s);
+    if (val.is_string()) set_name(val.str());
     return Value(std::string(name_).append(" On Earth"));
   }
   
@@ -37,7 +37,7 @@ public:
     res = root.call("/hello", Value());
     
     assert_true(res.is_string());
-    assert_equal("Nil", res.s);
+    assert_equal("Nil", res.str());
   }
   
   void test_trigger_method( void ) {
@@ -47,10 +47,10 @@ public:
     Value res;
     
     res = root.call("/Eva/name");
-    assert_equal("Eva On Earth", res.s);
+    assert_equal("Eva On Earth", res.str());
     
     res = root.call("/Eva/name", Value("Lilith"));
-    assert_equal("Lilith On Earth", res.s);
+    assert_equal("Lilith On Earth", res.str());
     
     res = root.call("/Eva/name");
     assert_true(res.is_error());
@@ -67,10 +67,10 @@ public:
     Value res;
     
     res = root.call("/Eva/name");
-    assert_equal("Eva On Earth", res.s);
+    assert_equal("Eva On Earth", res.str());
     
     res = root.call("/Eva/name", Value("Lilith"));
-    assert_equal("Lilith On Earth", res.s);
+    assert_equal("Lilith On Earth", res.str());
     
     res = root.call("/Eva/name");
     assert_true(res.is_error());

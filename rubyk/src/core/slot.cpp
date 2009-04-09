@@ -66,17 +66,20 @@ const Value Slot::change_link(unsigned char operation, const Value &val) {
     if (target->class_type() == H("Object")) {
       target = target->first_child();
       if (!target) {
-        return ErrorValue(NOT_FOUND_ERROR, std::string(val.s).append(": slot not found"));
+        return ErrorValue(NOT_FOUND_ERROR, val.s).append(": slot not found");
       }
     }
     
     if (class_type() == H("Outlet")) {
-      target = (Slot*)TYPE_CAST(Inlet,target);
+      // other should be an Inlet
+      target = (Slot*)TYPE_CAST(Inlet,  &target);
     } else {
-      target = (Slot*)TYPE_CAST(Outlet,target);
+      // other should be an Outlet
+      target = (Slot*)TYPE_CAST(Outlet, &target);
     }
     
-    if (!target) return Error("Could not update link (").append(val.to_string()).append(": incompatible).");
+    if (!target)
+      return ErrorValue(BAD_REQUEST_ERROR, "Could not update link with '").append(val.to_string()).append("': incompatible).");
     
     if (pCreate){
       // connect

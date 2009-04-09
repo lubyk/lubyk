@@ -61,14 +61,14 @@ public:
   virtual const std::string inspect()
   {
     std::ostringstream os(std::ostringstream::out);
-    os << name_ << ": " << value_.s;
+    os << name_ << ": " << value_.c_str();
     return os.str();
   }
   
   virtual const Value trigger (const Value &val)
   {
     if (val.is_string())
-      value_.set(val.s);
+      value_.set(val.c_str());
     return value_;
   }
   

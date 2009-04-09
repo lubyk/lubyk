@@ -10,9 +10,9 @@ public:
   InfoMetaMethod(const char * name) : BaseObject(name, H("s")) {}
 
   virtual const Value trigger (const Value &url) {
-    BaseObject * target = root_->find_or_build_object_at(url.s);
+    BaseObject * target = root_->find_or_build_object_at(url.c_str());
 
-    return target ? Value(target->info()) : ErrorValue(NOT_FOUND_ERROR, url.s);
+    return target ? Value(target->info()) : ErrorValue(NOT_FOUND_ERROR, url.c_str());
   }
 };
 

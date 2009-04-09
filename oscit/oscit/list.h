@@ -6,9 +6,11 @@
 
 namespace oscit {
 
+class List;
+  
 class ListData
 {
-private:
+ private:
   friend class List;
   
   ListData(const char *type_tag) : type_tag_storage_(type_tag) {
@@ -77,7 +79,7 @@ class List : public TSmartPtr<ListData>
   
   explicit List(const char *type_tag) : TSmartPtr<ListData>(new ListData(type_tag))  {}
   
-  explicit List(TypeTag type_tag) : TSmartPtr<ListData>(new ListData(type_tag.str_))  {}
+  explicit List(TypeTag type_tag) : TSmartPtr<ListData>(new ListData(type_tag.string_))  {}
   
   const char *type_tag() const { return ptr_->data_->type_tag_; }
   

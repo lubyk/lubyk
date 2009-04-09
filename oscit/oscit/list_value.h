@@ -1,7 +1,6 @@
 #ifndef _OSCIT_LIST_VALUE_H_
 #define _OSCIT_LIST_VALUE_H_
 #include "oscit/value.h"
-#include "oscit/list.h"
 
 namespace oscit {
 

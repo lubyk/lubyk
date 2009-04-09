@@ -40,6 +40,11 @@ class Error
   
   void set_message(const char *string) { message_ = string; }
   
+  Error& append(const char *str) {
+    message_.append(str);
+    return *this;
+  }
+  
   void set_message(const std::string &string) { message_ = string; }
   
  private:

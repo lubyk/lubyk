@@ -45,16 +45,16 @@ public:
     assert_true(v2.is_hash());
     assert_true(v2.get("1", &res));
     assert_true(res.is_string());
-    assert_equal("one", res.s);
+    assert_equal("one", res.str());
     
     v.set("1","un");
     v.set("2","deux");
     assert_true(v.get("1", &res));
-    assert_equal("un", res.s);
+    assert_equal("un", res.str());
     
-    // change in v did not change v2
+    // change in v changes v2
     assert_true(v2.get("1", &res));
-    assert_equal("one", res.s);
+    assert_equal("un", res.str());
     
     assert_true(v3.is_nil());
     
@@ -63,15 +63,15 @@ public:
     assert_true(v3.is_hash());
     
     assert_true(v3.get("1", &res));
-    assert_equal("un", res.s);
+    assert_equal("un", res.str());
     assert_true(v3.get("2", &res));
-    assert_equal("deux", res.s);
+    assert_equal("deux", res.str());
     
     v.set("1", "uno");
     
-    // change in v did not change v3
+    // change in v changes v3
     assert_true(v3.get("1", &res));
-    assert_equal("un", res.s);
+    assert_equal("uno", res.str());
     
   }
   
@@ -159,7 +159,7 @@ public:
     v.set("one", "first");
     assert_true(v.is_hash());
     assert_true(v["one"].is_string());
-    assert_equal("first", v["one"].s);
+    assert_equal("first", v["one"].str());
   }
   
   void test_set_list( void ) {
@@ -173,7 +173,7 @@ public:
     assert_equal(2, v["list"].size());
     
     assert_true(v["list"][0].is_string());
-    assert_equal("one", v["list"][0].s);
+    assert_equal("one", v["list"][0].str());
     
     assert_true(v["list"][1].is_real());
     assert_equal(2.0, v["list"][1].r);

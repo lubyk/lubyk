@@ -103,7 +103,7 @@ osc::OutboundPacketStream &operator<<(osc::OutboundPacketStream &out_stream, con
       out_stream << val.error_code() << val.error_message().c_str();
       break;
     case STRING_VALUE:
-      out_stream << val.s;
+      out_stream << val.c_str();
       break;
     case NIL_VALUE:
       out_stream << osc::Nil;

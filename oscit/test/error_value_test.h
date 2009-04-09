@@ -67,8 +67,8 @@ public:
     
     v.error_->set_message("bar");
     assert_equal("bar", v.error_message());
-    assert_equal("foo", v2.error_message());
-    assert_equal("foo", v3.error_message());
+    assert_equal("bar", v2.error_message());
+    assert_equal("bar", v3.error_message());
   }
   
   void test_set( void ) {
@@ -78,6 +78,13 @@ public:
     v.set(BAD_REQUEST_ERROR, "foobar");
     assert_true(v.is_error());
     assert_equal("foobar", v.error_message());
+  }
+  
+  void test_append( void ) {
+    ErrorValue v(BAD_REQUEST_ERROR, "bzz");
+    assert_equal("bzz", v.error_message());
+    v.append(" says the bee");
+    assert_equal("bzz says the bee", v.error_message());
   }
   
   // set_type_tag does not exist for errors.

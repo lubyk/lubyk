@@ -124,11 +124,11 @@ public:
     root.set_info("This is the root node.");
     res = root.call("/.info", Value(""));
     assert_true(res.is_string());
-    assert_equal("This is the root node.", res.s);
+    assert_equal("This is the root node.", res.str());
     
     res = root.call("/.info", Value("/foo"));
     assert_true(res.is_string());
-    assert_equal(DEFAULT_INFO, res.s);
+    assert_equal(DEFAULT_INFO, res.str());
 
     res = root.call("/.info", Value("/blah"));
     assert_true(res.is_error());
@@ -150,7 +150,7 @@ public:
     assert_equal(4.25,  res[0].r); // current
     assert_equal(0.0,   res[1].r); // min
     assert_equal(127.0, res[2].r); // max
-    assert_equal("lux", res[3].s); // unit
+    assert_equal("lux", res[3].str()); // unit
 
     res = root.call("/.type", Value("/blah"));
     assert_true(res.is_error());
@@ -168,9 +168,9 @@ public:
     res = root.call("/.type", Value("/foo"));
     assert_true(res.is_list());
     assert_equal("sss", res.type_tag());
-    assert_equal("yuv",  res[0].s); // current
-    assert_equal("rgb,rgba,yuv",  res[1].s); // current
-    assert_equal("color mode", res[2].s); // unit
+    assert_equal("yuv",  res[0].str()); // current
+    assert_equal("rgb,rgba,yuv",  res[1].str()); // current
+    assert_equal("color mode", res[2].str()); // unit
   }
   
   void test_any_real_type( void ) {
@@ -185,6 +185,6 @@ public:
     assert_true(res.is_list());
     assert_equal("fs", res.type_tag());
     assert_equal(1.23,  res[0].r); // current
-    assert_equal("Hz", res[1].s); // unit
+    assert_equal("Hz", res[1].str()); // unit
   }
 };

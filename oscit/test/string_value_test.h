@@ -15,7 +15,7 @@ public:
     assert_false(v.is_hash());
     assert_false(v.is_matrix());
     
-    assert_equal("foo", v.s);
+    assert_equal("foo", v.str());
     
     assert_equal("s", v.type_tag());
   }
@@ -28,8 +28,8 @@ public:
     assert_true(v2.is_string());
     
     
-    assert_equal("hello", v.s);
-    assert_equal("", v2.s);
+    assert_equal("hello", v.str());
+    assert_equal("", v2.str());
   }
   
   void test_create_std_string( void ) {
@@ -42,11 +42,11 @@ public:
     assert_false(v.is_error());
     assert_false(v.is_hash());
     
-    assert_equal("foo", v.s);
+    assert_equal("foo", v.str());
     
     str.append("bar");
     assert_equal("foobar", str);
-    assert_equal("foo", v.s);
+    assert_equal("foo", v.str());
     
     assert_equal("s", v.type_tag());
   }
@@ -55,14 +55,14 @@ public:
     Value v('s');
     
     assert_true(v.is_string());
-    assert_equal("", v.s);
+    assert_equal("", v.str());
   }
   
   void test_create_with_TypeTag( void ) {
     Value v(TypeTag("s"));
     
     assert_true(v.is_string());
-    assert_equal("", v.s);
+    assert_equal("", v.str());
   }
   
   void test_copy( void ) {
@@ -77,15 +77,14 @@ public:
     
     assert_true(v3.is_string());
     
-    assert_equal("foo", v.s);
-    assert_equal("foo", v2.s);
-    assert_equal("foo", v3.s);
+    assert_equal("foo", v.str());
+    assert_equal("foo", v2.str());
+    assert_equal("foo", v3.str());
     
-    // WARNING: never use v.s = "some string" (crash guaranteed !).
-    v.set("bar");
-    assert_equal("bar", v.s);
-    assert_equal("foo", v2.s);
-    assert_equal("foo", v3.s);
+    v.str() = "bar";
+    assert_equal("bar", v.str());
+    assert_equal("bar", v2.str());
+    assert_equal("bar", v3.str());
   }
   
   void test_set( void ) {
@@ -94,7 +93,7 @@ public:
     assert_true(v.is_nil());
     v.set("foobar");
     assert_true(v.is_string());
-    assert_equal("foobar", v.s);
+    assert_equal("foobar", v.str());
   }
   
   void test_set_type_tag( void ) {
@@ -102,7 +101,7 @@ public:
     
     v.set_type_tag("s");
     assert_true(v.is_string());
-    assert_equal("", v.s);
+    assert_equal("", v.str());
   }
   
   void test_set_type( void ) {
@@ -110,7 +109,7 @@ public:
     
     v.set_type(STRING_VALUE);
     assert_true(v.is_string());
-    assert_equal("", v.s);
+    assert_equal("", v.str());
   }
 
   void test_stream( void ) {

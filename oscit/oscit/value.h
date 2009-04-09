@@ -4,6 +4,7 @@
 #include "oscit/error.h"
 #include "oscit/thash.h"
 #include "oscit/matrix.h"
+#include "oscit/string.h"
 
 namespace oscit {
 
@@ -39,8 +40,8 @@ enum HashDefaultSize
 /** Wrapper around a string identifying an osc type list. */
 struct TypeTag
 {
-  explicit TypeTag(const char * str) : str_(str) {}
-  const char * str_;
+  explicit TypeTag(const char * str) : string_(str) {}
+  const char * string_;
 };
 
 /** Unique identifier for osc type tags strings. */
@@ -110,7 +111,7 @@ public:
   
   /** Create a value from a TypeTag string. */
   explicit Value(TypeTag type_tag) : type_(NIL_VALUE) {
-    set_type_tag(type_tag.str_);
+    set_type_tag(type_tag.string_);
   }
   
   
@@ -120,8 +121,17 @@ public:
   }
   
   /** Copy constructor (needed since many methods return a Value). */
-  Value(const Value& value) : type_(NIL_VALUE) {
+  Value(const Value &value) : type_(NIL_VALUE) {
     *this = value;
+  }
+  
+  ~Value() {
+    clear();
+  }
+  
+  /** Copy the content of another Value. */
+  void set(const Value &other) {
+    *this = other;
   }
   
   /** Copy the content of the other value. */
@@ -131,7 +141,7 @@ public:
         set(other.r);
         break;
       case STRING_VALUE:
-        set(other.s);
+        share(other.string_);
         break;
       case LIST_VALUE:
         set(other.list_);
@@ -150,107 +160,12 @@ public:
     }
   }
   
-  ~Value()
-  {
-    clear();
-  }
-  
-  bool is_nil() const    { return type_ == NIL_VALUE; }
-  
-  bool is_real() const   { return type_ == REAL_VALUE; }
-  
-  bool is_string() const { return type_ == STRING_VALUE; }
-  
-  bool is_list() const   { return type_ == LIST_VALUE; }
-  
-  bool is_error() const  { return type_ == ERROR_VALUE; }
-  
-  bool is_hash() const   { return type_ == HASH_VALUE; }
-  
-  bool is_matrix() const   { return type_ == MATRIX_VALUE; }
-  
   inline const char * type_tag() const;
   
   inline TypeTagID type_tag_id() const;
   
   ValueType type() const {
     return type_;
-  }
-  
-  /** Copy the content of another Value. */
-  void set(const Value &other) {
-    *this = other;
-  }
-  
-  /** Change the value to nil. */
-  void set() {
-    set_type_without_default(NIL_VALUE);
-  }
-  
-  /** Change the Value into a RealValue. */
-  void set(Real real) {
-    set_type_without_default(REAL_VALUE);
-    r = real;
-  }
-  
-  /** Change the Value into a StringValue. */
-  void set(const char *string) {
-    set_type_without_default(STRING_VALUE);
-    set_string(string);
-  }
-  
-  /** Change the Value into a List by copying the content of the argument. */
-  void set(const List *list) {
-    set_type_without_default(LIST_VALUE);
-    set_list(list);
-  }
-  
-  /** Change the Value into a List by copying the content of the argument. */
-  void set(const List &list) {
-    set_type_without_default(LIST_VALUE);
-    set_list(&list);
-  }
-  
-  /** Change the Value into an ErrorValue. */
-  void set(ErrorCode code, const char *string) {
-    set_type_without_default(ERROR_VALUE);
-    set_error(code, string);
-  }
-  
-  /** Change the Value into a ListValue by copying the content of the argument. */
-  void set(const Error *error) {
-    set_type_without_default(ERROR_VALUE);
-    set_error(error);
-  }
-  
-  /** Change the Value into a ListValue by copying the content of the argument. */
-  void set(const Error &error) {
-    set_type_without_default(ERROR_VALUE);
-    set_error(&error);
-  }
-  
-  /** Change the Value into a HashValue by copying the content of the argument. */
-  void set(const Hash *hash) {
-    set_type_without_default(HASH_VALUE);
-    set_hash(hash);
-  }
-  
-  /** Change the Value into a HashValue by copying the content of the argument. */
-  void set(const Hash &hash) {
-    set_type_without_default(HASH_VALUE);
-    set_hash(&hash);
-  }
-  
-  /** Change the Value into a MatrixValue by making a reference to the argument. */
-  void set(const Matrix *matrix) {
-    set_type_without_default(MATRIX_VALUE);
-    set_matrix(matrix);
-  }
-  
-  /** Change the Value into a MatrixValue by making a reference to the argument. */
-  void set(const Matrix &matrix) {
-    set_type_without_default(MATRIX_VALUE);
-    set_matrix(&matrix);
   }
   
   /** Return a string representation of the value. */
@@ -277,9 +192,143 @@ public:
     }
   }
   
+  /** =========================================================================================    Nil     */
+  bool is_nil() const    { return type_ == NIL_VALUE; }
   
-  /** ============ Hash ============ */
+  /** Change the value to nil. */
+  void set() {
+    set_type_without_default(NIL_VALUE);
+  }
   
+  /** =========================================================================================    Real    */
+  bool is_real() const   { return type_ == REAL_VALUE; }
+  
+  /** Change the Value into a RealValue. */
+  void set(Real real) {
+    set_type_without_default(REAL_VALUE);
+    r = real;
+  }
+  
+  /** =========================================================================================    String  */
+  bool is_string() const { return type_ == STRING_VALUE; }
+  
+  /** Change the Value into a StringValue. */
+  void set(const char *string) {
+    set_type_without_default(STRING_VALUE);
+    set_string(string);
+  }
+  
+  /** Change the Value into a StringValue. */
+  void set(const std::string &string) {
+    set_type_without_default(STRING_VALUE);
+    set_string(string);
+  }
+  
+  Value& append(std::string &str) {
+    return append(str.c_str());
+  }
+  
+  Value& append(const char *str) {
+    if (is_error()) {
+      error_->append(str);
+    } else if (is_string()) {
+      string_->str_.append(str);
+    }
+    return *this;
+  }
+  
+  inline const std::string &str() const {
+    return string_->str_;
+  }
+  
+  inline std::string &str() {
+    return string_->str_;
+  }
+  
+  inline const char *c_str() const {
+    return string_->str_.c_str();
+  }
+  
+  /** =========================================================================================    List    */
+  bool is_list() const   { return type_ == LIST_VALUE; }
+  
+  /** Change the Value into a List by copying the content of the argument. */
+  void set(const List *list) {
+    set_type_without_default(LIST_VALUE);
+    set_list(list);
+  }
+  
+  /** Change the Value into a List by copying the content of the argument. */
+  void set(const List &list) {
+    set_type_without_default(LIST_VALUE);
+    set_list(&list);
+  }
+  
+  inline const Value& operator[](size_t pos) const;
+  
+  inline Value& operator[](size_t pos);
+  
+  inline void set_value_at(size_t pos, const Value &val);
+  
+  inline size_t size() const;
+  
+  template<class T>
+  Value &push_back(const T& elem) {
+    return push_back(Value(elem));
+  }
+  
+  inline Value &push_back(const Value& val);
+  
+  template<class T>
+  Value &push_front(const T& elem) {
+    return push_front(Value(elem));
+  }
+  
+  inline Value &push_front(const Value& val);
+  
+  /** =========================================================================================    Error   */
+  bool is_error() const  { return type_ == ERROR_VALUE; }
+  
+  /** Change the Value into an ErrorValue. */
+  void set(ErrorCode code, const char *string) {
+    set_type_without_default(ERROR_VALUE);
+    set_error(code, string);
+  }
+  
+  /** Change the Value into a ListValue by copying the content of the argument. */
+  void set(const Error *error) {
+    set_type_without_default(ERROR_VALUE);
+    set_error(error);
+  }
+  
+  /** Change the Value into a ListValue by copying the content of the argument. */
+  void set(const Error &error) {
+    set_type_without_default(ERROR_VALUE);
+    set_error(&error);
+  }
+  
+  const std::string& error_message() const {
+    return error_->message();
+  }
+  
+  ErrorCode error_code() const {
+    return error_->code();
+  }
+  
+  /** =========================================================================================    Hash    */
+  bool is_hash() const   { return type_ == HASH_VALUE; }
+  
+  /** Change the Value into a HashValue by copying the content of the argument. */
+  void set(const Hash *hash) {
+    set_type_without_default(HASH_VALUE);
+    set_hash(hash);
+  }
+  
+  /** Change the Value into a HashValue by copying the content of the argument. */
+  void set(const Hash &hash) {
+    set_type_without_default(HASH_VALUE);
+    set_hash(&hash);
+  }
   template<class T>
   void set(const char *key, const T &val) {
     set(std::string(key), Value(val));
@@ -328,8 +377,21 @@ public:
     }
   }
   
+  /** =========================================================================================    Matrix  */
+  bool is_matrix() const   { return type_ == MATRIX_VALUE; }
   
-  /** ============ Matrix ============ */
+  /** Change the Value into a MatrixValue by making a reference to the argument. */
+  void set(const Matrix *matrix) {
+    set_type_without_default(MATRIX_VALUE);
+    set_matrix(matrix);
+  }
+  
+  /** Change the Value into a MatrixValue by making a reference to the argument. */
+  void set(const Matrix &matrix) {
+    set_type_without_default(MATRIX_VALUE);
+    set_matrix(&matrix);
+  }
+  
   size_t mat_size() const {
     return is_matrix() ? matrix_->rows * matrix_->cols : 0;
   }
@@ -342,41 +404,6 @@ public:
     return is_matrix() ? (Real*)matrix_->data : NULL;
   }
   
-  
-  /** ============ List ============ */
-  
-  inline const Value& operator[](size_t pos) const;
-  
-  inline Value& operator[](size_t pos);
-  
-  inline void set_value_at(size_t pos, const Value &val);
-  
-  inline size_t size() const;
-  
-  template<class T>
-  Value &push_back(const T& elem) {
-    return push_back(Value(elem));
-  }
-  
-  inline Value &push_back(const Value& val);
-  
-  template<class T>
-  Value &push_front(const T& elem) {
-    return push_front(Value(elem));
-  }
-  
-  inline Value &push_front(const Value& val);
-  
-  
-  /** ============ Error ============ */
-  
-  const std::string& error_message() const {
-    return error_->message();
-  }
-  
-  ErrorCode error_code() const {
-    return error_->code();
-  }
   
  private:
   /** Set the value to nil and release/free contained data. */
@@ -392,14 +419,26 @@ public:
   /** Properly initialize the type with a default value. */
   inline void set_default();
   
-  void set_string(const char * string) {
-    size_t len = strlen(string) + 1;
-    s = (char*)malloc(sizeof(char) * len);
-    memcpy(s,string,len);
+  
+  /** =========================================================================================    String  */
+  void share(const String *string) {
+    if (string_ == string) return;
+    set_type_without_default(STRING_VALUE);
+    // FIXME: there should be a way to deal with shared content
+    // that is protected from changes... Any solution welcome !!
+    string_ = const_cast<String*>(string);
+    ++string_->ref_count_;
   }
   
-  /** Set List content by making a copy. */
-  inline void set_list(const List * list);
+  void set_string(const char *string) {
+    string_ = new String(string);
+  }
+  
+  void set_string(const std::string &string) {
+    string_ = new String(string);
+  }
+  
+  /** =========================================================================================    Error   */
   
   /** Set error content. */
   void set_error(ErrorCode code, const char *string) {
@@ -411,10 +450,18 @@ public:
     error_ = new Error(*error);
   }
   
+  /** =========================================================================================    List    */
+  /** Set List content by making a copy. */
+  inline void set_list(const List *list);
+  
+  /** =========================================================================================    Hash    */
+  
   /** Set hash content. */
   void set_hash(const Hash *hash) {
     hash_ = new Hash(*hash);
   }
+  
+  /** =========================================================================================    Matrix  */
   
   /** Set matrix content. */
   void Value::set_matrix(const Matrix *matrix) {
@@ -423,16 +470,16 @@ public:
   
   ValueType type_;
   
-public:
+ public:
   union {
     Real r;
     Real f; // alias for r
     Real d; // alias for r
-    char   *s; // string
-    List   *list_; // multi-value
-    Error  *error_; // error code and message
-    Hash   *hash_; // dictionary
-    Matrix *matrix_; // reference counted matrix
+    String *string_; // string (shared, reference counted)
+    List   *list_;   // multi-value (shared, reference counted)
+    Error  *error_;  // error code and message (shared, reference counted)
+    Hash   *hash_;   // dictionary  (shared, reference counted)
+    Matrix *matrix_; // reference counted matrix (shared, reference counted)
   };
 };
 
@@ -474,11 +521,11 @@ void Value::set_type_tag(const char *type_tag) {
   }
 }
 
-const Value& Value::operator[](size_t pos) const {
+const Value &Value::operator[](size_t pos) const {
   return (*list_)[pos];
 }
 
-Value& Value::operator[](size_t pos) {
+Value &Value::operator[](size_t pos) {
   return (*list_)[pos];
 }
 
@@ -528,8 +575,8 @@ void Value::clear() {
       list_ = NULL;
       break;
     case STRING_VALUE:
-      if (s != NULL) free(s);
-      s = NULL;
+      if (string_ != NULL && (--string_->ref_count_ == 0)) delete string_;
+      string_ = NULL;
       break;
     case ERROR_VALUE:
       if (error_ != NULL) delete error_;

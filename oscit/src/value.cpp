@@ -13,7 +13,7 @@ std::ostream &operator<<(std::ostream &out_stream, const Value &val) {
       out_stream << "\"" << val.error_code() << " " << val.error_message() << "\"";
       break;
     case STRING_VALUE:
-      out_stream << "\"" << val.s << "\"";
+      out_stream << "\"" << val.str() << "\"";
       break;
     case HASH_VALUE:
       out_stream << "{" << *val.hash_ << "}";

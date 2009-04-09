@@ -20,7 +20,7 @@ public:
     
     // 1
     assert_true(v[1].is_string());
-    assert_equal("", v[1].s);
+    assert_equal("", v[1].str());
     
     // 2
     assert_true(v[2].is_real());
@@ -59,7 +59,7 @@ public:
     
     // change in v should change v2 (shared)
     assert_equal(1.2, v2[0].r);
-    assert_equal("super man",  v2[1].s);
+    assert_equal("super man",  v2[1].str());
     assert_equal(2, v.list_->ref_count());
     
     assert_true(v3.is_nil());
@@ -70,12 +70,12 @@ public:
     assert_equal(3, v.list_->ref_count());
     
     assert_equal(1.2,         v3[0].r);
-    assert_equal("super man", v3[1].s);
+    assert_equal("super man", v3[1].str());
     
     v[1].set("super woman");
     
     // change in v should change v3
-    assert_equal("super woman", v3[1].s);
+    assert_equal("super woman", v3[1].str());
   }
   
   void test_set( void ) {
@@ -102,7 +102,7 @@ public:
     
     v.set_type_tag("sff");
     assert_true(v.is_list());
-    assert_equal("",  v[0].s);
+    assert_equal("",  v[0].str());
     assert_equal(0.0, v[1].r);
     assert_equal(0.0, v[2].r);
   }
@@ -175,7 +175,7 @@ public:
     v.push_back(l);
     assert_true(v.is_list());
     assert_equal("ffss", v.type_tag());
-    assert_equal("two", v[3].s);
+    assert_equal("two", v[3].str());
   }
   
   void test_push_front_real( void ) {
@@ -214,8 +214,8 @@ public:
     v.push_front(l);
     assert_true(v.is_list());
     assert_equal("ssf", v.type_tag());
-    assert_equal("one", v[0].s);
-    assert_equal("two", v[1].s);
+    assert_equal("one", v[0].str());
+    assert_equal("two", v[1].str());
     assert_equal(1.34,  v[2].r);
   }
 
