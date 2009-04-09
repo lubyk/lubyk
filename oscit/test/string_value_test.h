@@ -67,24 +67,32 @@ public:
   
   void test_copy( void ) {
     Value v("foo");
-    Value v2(v);
+    assert_equal(1, v.string_->ref_count());
+    
+    Value * v2 = new Value(v);
+    assert_equal(v.string_, v2->string_);
+    assert_equal(2, v.string_->ref_count());
+    assert_true(v2->is_string());
+    
     Value v3;
     
-    assert_true(v2.is_string());
     assert_true(v3.is_nil());
     
     v3 = v;
-    
     assert_true(v3.is_string());
+    assert_equal(v.string_, v3.string_);
+    assert_equal(3, v.string_->ref_count());
     
     assert_equal("foo", v.str());
-    assert_equal("foo", v2.str());
+    assert_equal("foo", v2->str());
     assert_equal("foo", v3.str());
     
     v.str() = "bar";
     assert_equal("bar", v.str());
-    assert_equal("bar", v2.str());
+    assert_equal("bar", v2->str());
     assert_equal("bar", v3.str());
+    delete v2;
+    assert_equal(2, v.string_->ref_count());
   }
   
   void test_set( void ) {

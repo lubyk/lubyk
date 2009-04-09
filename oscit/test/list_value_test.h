@@ -46,28 +46,30 @@ public:
     v[0].r = 0.0;
     v[1].set("");
     
-    Value v2(v);
+    Value * v2 = new Value(v);
+    assert_true(v2->is_list());
+    assert_equal(2, v2->size());
     assert_equal(2, v.list_->ref_count());
-    
-    Value v3;
+    assert_equal(v.list_, v2->list_);
     
     v[0].r = 1.2;
     v[1].set("super man");
     
-    assert_true(v2.is_list());
-    assert_equal(2, v2.size());
-    
     // change in v should change v2 (shared)
-    assert_equal(1.2, v2[0].r);
-    assert_equal("super man",  v2[1].str());
-    assert_equal(2, v.list_->ref_count());
+    assert_equal(1.2, v2->value_at(0).r);
+    assert_equal("super man",  v2->value_at(1).str());
     
+    Value v3;
     assert_true(v3.is_nil());
     
     v3 = v;
     
     assert_true(v3.is_list());
     assert_equal(3, v.list_->ref_count());
+    assert_equal(v.list_, v3.list_);
+    
+    delete v2;
+    assert_equal(2, v.list_->ref_count());
     
     assert_equal(1.2,         v3[0].r);
     assert_equal("super man", v3[1].str());

@@ -1,6 +1,7 @@
 #ifndef _OSCIT_ERROR_H_
 #define _OSCIT_ERROR_H_
 #include "oscit/values.h"
+#include "oscit/reference_counted.h"
 
 namespace oscit {
 
@@ -17,7 +18,7 @@ enum ErrorCode {
 };
 
 /** A Error stores an error description with an error code. */
-class Error
+class Error : public ReferenceCounted
 {
  public:
   explicit Error() : code_(UNKNOWN_ERROR), message_("unknown error") {}

@@ -1,16 +1,20 @@
 #ifndef _OSCIT_VALUE_H_
 #define _OSCIT_VALUE_H_
 #include <string>
-#include "oscit/error.h"
 #include "oscit/thash.h"
-#include "oscit/matrix.h"
 #include "oscit/string.h"
+#include "oscit/error.h"
+#include "oscit/hash.h"
+#include "oscit/matrix.h"
 
 namespace oscit {
 
 class List;
 class Value;
-  
+
+extern Value gNilValue;
+extern Hash  gEmptyHash;
+
 enum ValueType
 {
   NIL_VALUE = 0,
@@ -40,8 +44,8 @@ enum HashDefaultSize
 /** Wrapper around a string identifying an osc type list. */
 struct TypeTag
 {
-  explicit TypeTag(const char * str) : string_(str) {}
-  const char * string_;
+  explicit TypeTag(const char * str) : str_(str) {}
+  const char * str_;
 };
 
 /** Unique identifier for osc type tags strings. */
@@ -49,14 +53,6 @@ typedef uint TypeTagID;
 
 #define NO_TYPE_TAG_ID  H("")
 #define ANY_TYPE_TAG_ID H("*")
-
-class Value;
-
-typedef std::list<std::string>::const_iterator HashIterator;
-typedef THash<std::string,Value> Hash;
-
-extern Value gNilValue;
-extern Hash  gEmptyHash;
 
 /** Value is the base type of all data transmitted between objects or used as parameters
 and return values for osc messages. */
@@ -111,7 +107,7 @@ public:
   
   /** Create a value from a TypeTag string. */
   explicit Value(TypeTag type_tag) : type_(NIL_VALUE) {
-    set_type_tag(type_tag.string_);
+    set_type_tag(type_tag.str_);
   }
   
   
@@ -144,15 +140,16 @@ public:
         share(other.string_);
         break;
       case LIST_VALUE:
-        set(other.list_);
+        share(other.list_);
         break;
       case ERROR_VALUE:
-        set(other.error_);
+        share(other.error_);
         break;
       case HASH_VALUE:
-        set(other.hash_);
+        share(other.hash_);
         break;
       case MATRIX_VALUE:
+        // FIXME: share matrix header
         set(other.matrix_);
         break;
       default:
@@ -232,21 +229,21 @@ public:
     if (is_error()) {
       error_->append(str);
     } else if (is_string()) {
-      string_->str_.append(str);
+      string_->append(str);
     }
     return *this;
   }
   
   inline const std::string &str() const {
-    return string_->str_;
+    return *string_;
   }
   
   inline std::string &str() {
-    return string_->str_;
+    return *string_;
   }
   
   inline const char *c_str() const {
-    return string_->str_.c_str();
+    return string_->c_str();
   }
   
   /** =========================================================================================    List    */
@@ -267,6 +264,14 @@ public:
   inline const Value& operator[](size_t pos) const;
   
   inline Value& operator[](size_t pos);
+  
+  inline const Value& value_at(size_t pos) const {
+    return (*this)[pos];
+  }
+  
+  inline Value& value_at(size_t pos) {
+    return (*this)[pos];
+  }
   
   inline void set_value_at(size_t pos, const Value &val);
   
@@ -427,7 +432,7 @@ public:
     // FIXME: there should be a way to deal with shared content
     // that is protected from changes... Any solution welcome !!
     string_ = const_cast<String*>(string);
-    ++string_->ref_count_;
+    ReferenceCounted::acquire(string_);
   }
   
   void set_string(const char *string) {
@@ -439,6 +444,14 @@ public:
   }
   
   /** =========================================================================================    Error   */
+  void share(const Error *error) {
+    if (error_ == error) return;
+    set_type_without_default(ERROR_VALUE);
+    // FIXME: there should be a way to deal with shared content
+    // that is protected from changes... Any solution welcome !!
+    error_ = const_cast<Error*>(error);
+    ReferenceCounted::acquire(error_);
+  }
   
   /** Set error content. */
   void set_error(ErrorCode code, const char *string) {
@@ -451,10 +464,20 @@ public:
   }
   
   /** =========================================================================================    List    */
+  inline void share(const List *list);
+  
   /** Set List content by making a copy. */
   inline void set_list(const List *list);
   
   /** =========================================================================================    Hash    */
+  void share(const Hash *hash) {
+    if (hash_ == hash) return;
+    set_type_without_default(HASH_VALUE);
+    // FIXME: there should be a way to deal with shared content
+    // that is protected from changes... Any solution welcome !!
+    hash_ = const_cast<Hash*>(hash);
+    ReferenceCounted::acquire(hash_);
+  }
   
   /** Set hash content. */
   void set_hash(const Hash *hash) {
@@ -571,22 +594,23 @@ Value &Value::push_front(const Value& val) {
 void Value::clear() {
   switch (type_) {
     case LIST_VALUE:
-      if (list_ != NULL) delete list_;
+      if (list_ != NULL) ReferenceCounted::release(list_);
       list_ = NULL;
       break;
     case STRING_VALUE:
-      if (string_ != NULL && (--string_->ref_count_ == 0)) delete string_;
+      if (string_ != NULL) ReferenceCounted::release(string_);
       string_ = NULL;
       break;
     case ERROR_VALUE:
-      if (error_ != NULL) delete error_;
+      if (error_ != NULL) ReferenceCounted::release(error_);
       error_ = NULL;
       break;
     case HASH_VALUE:
-      if (hash_ != NULL) delete hash_;
+      if (hash_ != NULL) ReferenceCounted::release(hash_);
       hash_ = NULL;
       break;
     case MATRIX_VALUE:
+      // TODO: Same reference counting as others by using cv::Mat header counter ?
       if (matrix_ != NULL) delete matrix_;
       matrix_ = NULL;
       break;
@@ -624,7 +648,16 @@ void Value::set_default() {
 void Value::set_list(const List *list) {
   list_ = new List(*list);
 }
- 
+
+void Value::share(const List *list) {
+  if (list_ == list) return;
+  set_type_without_default(LIST_VALUE);
+  // FIXME: there should be a way to deal with shared content
+  // that is protected from changes... Any solution welcome !!
+  list_ = const_cast<List*>(list);
+  ReferenceCounted::acquire(list_);
+}
+
 std::ostream &operator<< (std::ostream &out_stream, const Value &val);
 
 } // oscit

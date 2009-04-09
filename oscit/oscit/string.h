@@ -1,21 +1,16 @@
 #ifndef _OSCIT_STRING_H_
 #define _OSCIT_STRING_H_
 #include "oscit/values.h"
+#include "oscit/reference_counted.h"
 
 namespace oscit {
 
 /** A String is just a reference counted std::string. */
-struct String
+class String : public ReferenceCounted, public std::string
 {
  public:
-  explicit String() : ref_count_(1) {}
-  
-  explicit String(const char *str) : str_(str), ref_count_(1) {}
-  
-  explicit String(const std::string &str) : str_(str), ref_count_(1) {}
-  
-  std::string str_;
-  size_t ref_count_;
+  explicit String(const char *str) : std::string(str) {}
+  explicit String(const std::string &string) : std::string(string) {}
 };
 
 } // oscit
