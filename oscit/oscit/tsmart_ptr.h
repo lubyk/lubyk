@@ -12,15 +12,15 @@ public:
   }
   
   /** Initialize with another TSmartPtr: light copy of content. */
-  TSmartPtr(const TSmartPtr& other) {
+  TSmartPtr(const TSmartPtr &other) {
     acquire(other.ptr_);
   }
   
   /** Light copy of the data contained in the other TSmartPtr. */
-  TSmartPtr& operator=(const TSmartPtr& v) {
-    if (this != &v) {
+  TSmartPtr& operator=(const TSmartPtr &other) {
+    if (this != &other) {
       release();
-      acquire(v.ptr_);
+      acquire(other.ptr_);
     }
     return *this;
   }
@@ -31,12 +31,12 @@ public:
   }
   
   T * data() {
-    return (ptr_ ? ptr_->dataPtr_ : NULL);
+    return (ptr_ ? ptr_->data_ : NULL);
   }
   
   /** Return reference count for the content. Only used for testing/debugging. */
   size_t ref_count() const {
-    return ptr_ ? ptr_->refCount_ : 0;
+    return ptr_ ? ptr_->ref_count_ : 0;
   }
   
   void acquire(const TSmartPtr& s) {
@@ -47,9 +47,9 @@ protected:
   /** Structure shared by all smart pointers pointing to the same data. Holds the pointer to the "content" and the reference count. */
   struct Ptr 
   {
-    Ptr(T* p = 0, size_t c = 1) : dataPtr_(p), refCount_(c) {}
-    T * dataPtr_;
-    size_t refCount_;
+    Ptr(T* p = 0, size_t c = 1) : data_(p), ref_count_(c) {}
+    T * data_;
+    size_t ref_count_;
   };
   
   Ptr * ptr_;
@@ -60,14 +60,14 @@ private:
   void acquire(Ptr * p) {  
     ptr_ = p;
     if (ptr_) {
-      ptr_->refCount_++;
+      ptr_->ref_count_++;
     }
   }
   
   /** Decrement reference counter, destroying content if the reference count drops to zero. */
   void release() {
-    if (ptr_ && --ptr_->refCount_ == 0) {
-      delete ptr_->dataPtr_;
+    if (ptr_ && --ptr_->ref_count_ == 0) {
+      delete ptr_->data_;
       delete ptr_;
     }
     // stop pointing to counter+data

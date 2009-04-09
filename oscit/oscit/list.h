@@ -1,50 +1,30 @@
 #ifndef _OSCIT_LIST_H_
 #define _OSCIT_LIST_H_
 #include "oscit/values.h"
+#include "oscit/tsmart_ptr.h"
 #include <vector>
 
 namespace oscit {
 
-/** A List stores an array of Values. */
-class List
+class ListData
 {
- public:
-  explicit List() {
-    init("");
-  }
+private:
+  friend class List;
   
-  explicit List(const char *type_tag) {
-    init(type_tag);
-  }
-  
-  explicit List(TypeTag type_tag) {
-    init(type_tag.str_);
-  }
-  
-  /** Copy constructor (needed because Value relies on it in its own copy constructor. */
-  List(const List& list) : type_tag_storage_(list.type_tag_storage_), values_(list.values_) {
-    type_tag_ = type_tag_storage_.c_str();
+  ListData(const char *type_tag) : type_tag_storage_(type_tag) {
+    type_tag_    = type_tag_storage_.c_str();
     type_tag_id_ = hashId(type_tag_);
+
+    const char * c = type_tag_;
+
+    while ( *c ) {
+      values_.push_back(Value(*c));
+      ++c;
+    }
   }
-  
-  const char * type_tag() const {
-    return type_tag_;
-  }
-  
-  TypeTagID type_tag_id() const {
-    return type_tag_id_;
-  }
-  
-  const Value& operator[](size_t pos) const {
-    return values_[pos];
-  }
-  
-  Value& operator[](size_t pos) {
-    return values_[pos];
-  }
-  
-  /** Replace a value at a given position, checking for range and making sure
-   *  the type_tag of the list remains in sync. */
+
+  size_t size() const { return values_.size(); }
+
   void set_value_at(size_t pos, const Value &val) {
     if (pos >= size()) return;
     if (val.is_list()) return; // NOT SUPPORTED YET (probably never needed)
@@ -52,10 +32,6 @@ class List
     type_tag_storage_.replace(pos,1,val.type_tag());
     type_tag_ = type_tag_storage_.c_str();
     type_tag_id_ = hashId(type_tag_);
-  }
-  
-  size_t size() const {
-    return values_.size();
   }
   
   void push_back(const Value &val) {
@@ -86,24 +62,40 @@ class List
     type_tag_ = type_tag_storage_.c_str();
     type_tag_id_ = hashId(type_tag_);
   }
- private:
-  void init(const char *type_tag) {
-    type_tag_storage_ = type_tag;
-    type_tag_    = type_tag_storage_.c_str();
-    type_tag_id_ = hashId(type_tag_);
-
-    const char * c = type_tag_;
-
-    while ( *c ) {
-      values_.push_back(Value(*c));
-      c++;
-    }
-  }
   
   std::string type_tag_storage_;
   const char  *type_tag_;
   TypeTagID   type_tag_id_;
   std::vector<Value> values_;
+};
+
+/** A List stores an array of Values. */
+class List : public TSmartPtr<ListData>
+{
+ public:
+  explicit List() : TSmartPtr<ListData>(new ListData("")) {}
+  
+  explicit List(const char *type_tag) : TSmartPtr<ListData>(new ListData(type_tag))  {}
+  
+  explicit List(TypeTag type_tag) : TSmartPtr<ListData>(new ListData(type_tag.str_))  {}
+  
+  const char *type_tag() const { return ptr_->data_->type_tag_; }
+  
+  TypeTagID type_tag_id() const { return ptr_->data_->type_tag_id_; }
+  
+  const Value &operator[](size_t pos) const { return ptr_->data_->values_[pos];}
+  
+  Value &operator[](size_t pos) { return ptr_->data_->values_[pos]; }
+  
+  /** Replace a value at a given position, checking for range and making sure
+   *  the type_tag of the list remains in sync. */
+  void set_value_at(size_t pos, const Value &val) { ptr_->data_->set_value_at(pos, val); }
+  
+  size_t size() const { return ptr_->data_->size(); }
+  
+  void push_back(const Value &val) { ptr_->data_->push_back(val); }
+  
+  void push_front(const Value &val) { ptr_->data_->push_front(val); }
 };
 
 } // oscit

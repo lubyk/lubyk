@@ -42,7 +42,13 @@ public:
   
   void test_copy( void ) {
     Value v(TypeTag("fs"));
+    assert_equal(1, v.list_->ref_count());
+    v[0].r = 0.0;
+    v[1].set("");
+    
     Value v2(v);
+    assert_equal(2, v.list_->ref_count());
+    
     Value v3;
     
     v[0].r = 1.2;
@@ -51,23 +57,25 @@ public:
     assert_true(v2.is_list());
     assert_equal(2, v2.size());
     
-    // change in v did not change v2
-    assert_equal(0.0, v2[0].r);
-    assert_equal("",  v2[1].s);
+    // change in v should change v2 (shared)
+    assert_equal(1.2, v2[0].r);
+    assert_equal("super man",  v2[1].s);
+    assert_equal(2, v.list_->ref_count());
     
     assert_true(v3.is_nil());
     
     v3 = v;
     
     assert_true(v3.is_list());
+    assert_equal(3, v.list_->ref_count());
     
     assert_equal(1.2,         v3[0].r);
     assert_equal("super man", v3[1].s);
     
     v[1].set("super woman");
     
-    // change in v did not change v3
-    assert_equal("super man", v3[1].s);
+    // change in v should change v3
+    assert_equal("super woman", v3[1].s);
   }
   
   void test_set( void ) {
