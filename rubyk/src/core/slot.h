@@ -18,23 +18,23 @@ public:
     create_methods();
   }
   
-  Slot(Node *node, const char * pName, TypeTagID type_tag_id) : Object(name, type_tag_id), node_(pNode) {
+  Slot(Node *node, const char *name, TypeTagID type_tag_id) : Object(name, type_tag_id), node_(node) {
     create_methods();
   }
   
-  Slot(Node *node, const std::string &name, TypeTagID type_tag_id) : Object(name, type_tag_id), node_(pNode) {
+  Slot(Node *node, const std::string &name, TypeTagID type_tag_id) : Object(name, type_tag_id), node_(node) {
     create_methods();
   }
   
   virtual ~Slot();
   
   /** Set slot id (position in containing node) */
-  void set_id(int id);
+  void set_id(int id) { id_ = id; }
   
   /** Add a bi-directional connection to another slot. */
   bool connect(Slot *slot);
   
-  /** Remove a connection to another slot. */
+  /** Remove a bi-directional connection to another slot. */
   void disconnect(Slot *slot);
   
   /** Sort slots by rightmost node and rightmost position in the same node. */
@@ -45,38 +45,45 @@ public:
 protected:
   /** Make a one-way connection to another slot. 
     * Create a connection if the type of the other slot is compatible. */
-  bool add_connection (Slot * slot);
+  bool add_connection(Slot *slot);
   
   /** Remove a one-way connection to another slot. */
-  void remove_connection (Slot * slot);
+  void remove_connection(Slot *slot);
   
   /** Create 'link' and 'unlink' methods. */
   void create_methods() {
-    Method * m = adopt(new Method("link",   this, &Method::cast_method<Slot, &Slot::link>));
-    m->set_info("Create a link / list links.");
-    m = adopt(new Method("unlink", this, &Method::cast_method<Slot, &Slot::unlink>));
-    m->set_info("Remove a link / list links.");
+    adopt(new TMethod<Slot, &Slot::link>(this, "link", H("s"), "Create a link to the provided url."));
+    adopt(new TMethod<Slot, &Slot::unlink>(this, "unlink", H("s"), "Remove links to the provided url."));
+    adopt(new TMethod<Slot, &Slot::list>(this, "list", H("*"), "Return a list of linked urls."));
   }
   
-  // /m/out/counter/link  --> list links
-  // /m/out/counter/link /n/in/tempo  --> create a link
-  /** Create a link. */
-  const Value link(const Value val)
-  {
-    return change_link(val, 'c');
+  /** Create a link. 
+   *  example: /m/out/counter/link /n/in/tempo  --> create a link
+   */
+  const Value link(const Value &val) {
+    return change_link('c', val);
   }
   
   /** Delete a link. */
-  const Value unlink(const Value val)
-  {
-    return change_link(val, 'd');
+  const Value unlink(const Value &val) {
+    return change_link('d', val);
   }
   
+  /** List all links. */
+  const Value list(const Value &val) {
+    LinkedList<Slot*> * iterator = connections_.begin();
+    Value res;
+    while(iterator) {
+      res.push_back(iterator->obj->url());
+      iterator = iterator->next;
+    }
+    return res;
+  }
   
 protected:  
   
   /** If operation is 'c': create a new link, else unlink. */
-  const Value change_link(const Value val, unsigned char operation);
+  const Value change_link(unsigned char operation, const Value &val);
   
   Node * node_;   /**< Containing node.      */
   int    id_;     /**< Position in the node. */
