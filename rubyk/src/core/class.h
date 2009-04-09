@@ -22,10 +22,7 @@ public:
   virtual ~Class() {}
   
   /** Class signature. */
-  virtual uint type()
-  {
-    return H("Class");
-  }
+  virtual uint class_type() { return H("Class"); }
   
   /** Add a new class method to the class. */
   void add_class_method(const char * pTagTypeStr, const char * pName, class_method_t pMethod, const char * pInfo)

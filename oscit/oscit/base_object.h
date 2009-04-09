@@ -99,13 +99,11 @@ class BaseObject
   }
   
   /** Class type id. */
-  virtual uint class_type() {
-    return H("oscit::BaseObject");
-  }
+  virtual uint class_type() { return H("BaseObject"); }
 
   template<class T>
-  static inline T * type_cast(uint pType, BaseObject * obj) {
-    return (obj && obj->type() == pType) ? (T*)obj : NULL;
+  static inline T * type_cast(uint type, BaseObject * obj) {
+    return (obj && obj->class_type() == type) ? (T*)obj : NULL;
   }
 
   /** Clear all children (delete). */
@@ -354,6 +352,7 @@ private:
 };
 } // namespace osc
 
+/** Return a pointer to the object if the type match. */
 #define TYPE_CAST(klass, op) oscit::BaseObject::type_cast<klass>(H(#klass), op);
 
 #endif // _OSCIT_OBJECT_H_

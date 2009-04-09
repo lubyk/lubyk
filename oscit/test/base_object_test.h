@@ -1,5 +1,4 @@
 #include "test_helper.h"
-#include "oscit/root.h"
 #include "mock/dummy_object.h"
 
 class BaseObjectTest : public TestHelper
@@ -93,5 +92,21 @@ public:
     foo = carrot->build_child(std::string("special"));
     assert_true( foo != NULL );
     assert_equal("/dummy/special", foo->url());
+  }
+  
+  void test_type_cast( void ) {
+    BaseObject base;
+    DummyObject dummy("doudou", 1200.0);
+    BaseObject   * res1;
+    DummyObject  * res2;
+    res1 = TYPE_CAST(BaseObject, &base);
+    assert_equal(&base, res1);
+    res2 = TYPE_CAST(DummyObject, &base);
+    assert_equal((DummyObject*)NULL, res2);
+    
+    res1 = TYPE_CAST(BaseObject, &dummy);
+    assert_equal((BaseObject*)NULL, res1);
+    res2 = TYPE_CAST(DummyObject, &dummy);
+    assert_equal(&dummy, res2);
   }
 };

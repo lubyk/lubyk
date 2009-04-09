@@ -15,6 +15,9 @@ public:
   
   virtual ~DummyObject() {}
   
+  /** Class signature. */
+  virtual uint class_type() { return H("DummyObject"); }
+  
   virtual const std::string inspect()
   {
     std::ostringstream os(std::ostringstream::out);

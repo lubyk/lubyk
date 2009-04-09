@@ -60,17 +60,17 @@ const Value Slot::change_link(unsigned char operation, const Value &val) {
   if (val.is_string()) {
     // update a link (create/destroy)
     
-    // TODO: make sure it does not already exist.
+    BaseObject * target = root_->object_at(val.s);
+    if (!target) return ErrorValue(NOT_FOUND_ERROR, val.s);
     
-    oscit::Object * target = mRoot->find(String(val));
-    if (!target) return Error("Could not update link (").append(val.to_string()).append(": not found).");
-    
-    if (target->type() == H("oscit::Object")) {
+    if (target->class_type() == H("Object")) {
       target = target->first_child();
-      if (!target) return Error("Could not update link (").append(val.to_string()).append(": Slot not found).");
+      if (!target) {
+        return ErrorValue(NOT_FOUND_ERROR, std::string(val.s).append(": slot not found"));
+      }
     }
     
-    if (type() == H("Outlet")) {
+    if (class_type() == H("Outlet")) {
       target = (Slot*)TYPE_CAST(Inlet,target);
     } else {
       target = (Slot*)TYPE_CAST(Outlet,target);
