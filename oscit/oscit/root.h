@@ -4,6 +4,7 @@
 #include "oscit/call.h"
 #include "oscit/receive.h"
 #include "oscit/send.h"
+#include "oscit/mutex.h"
 
 #include "oscpack/ip/UdpSocket.h" // needed for IpEndpointName
 
@@ -16,23 +17,23 @@ namespace oscit {
 /** Size of the object hash table. */
 #define OBJECT_HASH_SIZE 10000
 
-/** Root object. You can only start new trees with root objects. */
+/** Root object. You can only start new trees with root objects. 
+
+In case you intend to call elements in the object tree from different
+threads, you should either manage your own mutex locks on each objects
+or use a context (Mutex class or subclass). Contexts ease inter-object
+communication be requiring locks/unlocks between groups of objects. Not
+for every object.
+
+*/
 class Root : public BaseObject
 {
  public:
-  Root() : ground_(NULL), objects_(OBJECT_HASH_SIZE), osc_in_(NULL) {
+  Root() : objects_(OBJECT_HASH_SIZE), osc_in_(NULL) {
     init();
   }
 
-  Root(size_t hashSize) : ground_(NULL), objects_(hashSize), osc_in_(NULL) {
-    init();
-  }
-  
-  Root(void *ground) : ground_(ground), objects_(OBJECT_HASH_SIZE), osc_in_(NULL) {
-    init();
-  }
-
-  Root(void *ground, size_t hashSize) : ground_(ground), objects_(hashSize), osc_in_(NULL) {
+  Root(size_t hashSize) : objects_(hashSize), osc_in_(NULL) {
     init();
   }
   
@@ -66,7 +67,7 @@ class Root : public BaseObject
     if (!target) return ErrorValue(NOT_FOUND_ERROR, url);
     
     if (val.is_nil() || val.type_tag_id() == target->type_tag_id() || target->accept_any_type()) {
-      return target->trigger(val);
+      return target->safe_trigger(val);
     } else {
       return ErrorValue(BAD_REQUEST_ERROR, std::string("'").append(url).append("' (").append(target->info()).append(")."));
     }
@@ -176,7 +177,6 @@ class Root : public BaseObject
    */
   void send(const IpEndpointName &remote_endpoint, const char *url, const Value &val);
   
-  void * ground_;                         /**< Context pointer for objects in the tree. */
  protected:
   THash<std::string, BaseObject*> objects_;   /**< Hash to find any object in the tree from its url. */
 

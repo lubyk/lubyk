@@ -3,7 +3,7 @@
 #include <list>
 #include "oscit/values.h"
 #include "oscit/thash.h"
-
+#include "oscit/mutex.h"
 
 namespace oscit {
 #define OSC_NEXT_NAME_BUFFER_SIZE 20
@@ -15,43 +15,43 @@ class Alias;
 class BaseObject
 {
  public:
-  BaseObject() : root_(NULL), parent_(NULL), children_(20), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {
+  BaseObject() : context_(NULL), root_(NULL), parent_(NULL), children_(20), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {
    name_ = "";
    url_  = name_;
   }
   
-  BaseObject(const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {}
+  BaseObject(const char *name) : context_(NULL), root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {}
   
-  BaseObject(TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
+  BaseObject(TypeTagID type_tag_id) : context_(NULL), root_(NULL), parent_(NULL), children_(20), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
     name_ = "";
     url_  = name_;
   }
 
-  BaseObject(const char *name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {}
+  BaseObject(const char *name, TypeTagID type_tag_id) : context_(NULL), root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {}
 
-  BaseObject(const std::string &name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {}
+  BaseObject(const std::string &name, TypeTagID type_tag_id) : context_(NULL), root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {}
 
-  BaseObject(BaseObject *parent, const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {
+  BaseObject(BaseObject *parent, const char *name) : context_(NULL), root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {
     parent->adopt(this);
   }
 
-  BaseObject(BaseObject *parent, const char *name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
+  BaseObject(BaseObject *parent, const char *name, TypeTagID type_tag_id) : context_(NULL), root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
     parent->adopt(this);
   }
 
-  BaseObject(BaseObject *parent, const std::string &name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
+  BaseObject(BaseObject *parent, const std::string &name, TypeTagID type_tag_id) : context_(NULL), root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
     parent->adopt(this);
   }
 
-  BaseObject(BaseObject &parent, const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {
+  BaseObject(BaseObject &parent, const char *name) : context_(NULL), root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {
     parent.adopt(this);
   }
 
-  BaseObject(BaseObject &parent, const char *name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
+  BaseObject(BaseObject &parent, const char *name, TypeTagID type_tag_id) : context_(NULL), root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
     parent.adopt(this);
   }
 
-  BaseObject(BaseObject& parent, const std::string &name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
+  BaseObject(BaseObject& parent, const std::string &name, TypeTagID type_tag_id) : context_(NULL), root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
     parent.adopt(this);
   }
 
@@ -94,8 +94,15 @@ class BaseObject
     * TODO: make sure a parent is not adopted by it's child. */
   template<class T>
   T * adopt(T * object) {
-    doAdopt(object);
-    return object;
+    BaseObject * old_parent = object->parent_;
+
+    if (old_parent) old_parent->release(object);
+
+    object->parent_ = this;
+    object->set_context(context_);
+
+    object->moved();
+    return (T*)object;
   }
   
   /** Class type id. */
@@ -108,7 +115,19 @@ class BaseObject
 
   /** Clear all children (delete). */
   void clear();
-
+  
+  /** Lock mutex if needed before calling 'trigger'. */
+  const Value safe_trigger(const Value &val) {
+    if (context_) {
+      context_->lock();
+        Value res = trigger(val);
+      context_->unlock();
+      return res;
+    } else {
+      return trigger(val);
+    }
+  }
+  
   /** This is the operation executed when the object is called.
    *  In order to benefit from return value optimization and avoid too many copy
    *  you have to use Value v = xxx.trigger(val). */
@@ -131,6 +150,7 @@ class BaseObject
     if (!parent) {
       if (parent_) parent_->release(this);
       parent_ = NULL;
+      set_context(NULL);
       moved();
     } else {
       parent->adopt(this);
@@ -144,7 +164,7 @@ class BaseObject
   void unregister_alias (Alias * pAlias);
 
   /** Return the object's unique url. */
-  inline const std::string &url () {
+  inline const std::string &url() {
     return url_;
   }
   
@@ -268,25 +288,17 @@ class BaseObject
       return NULL;
     }
   }
-
-  /** Actual adoption. Adopt objects in the new namespace (branch). */
-  virtual void doAdopt(BaseObject * object) {
-    BaseObject * oldParent = object->parent_;
-
-    if (oldParent) oldParent->release(object);
-
-    object->parent_ = this;
-
-    object->moved();
-  }
   
   BaseObject *parent() {
     return parent_;
   }
   
-  virtual void set_root(Root * root) {
+  virtual void set_root(Root *root) {
     root_ = root;
   }
+  
+  /** Parent changed, set new context. */
+  virtual void set_context(Mutex *context) { context_ = context; }
   
 protected:
 
@@ -331,8 +343,9 @@ protected:
   /** Free the child from the list of children. */
   void release(BaseObject *pChild);
 
-  std::list<Alias *>          mAliases;          /**< List of aliases to destroy when this node disappears. */
-
+  std::list<Alias *>          mAliases;       /**< List of aliases to destroy when this node disappears. */
+  
+  Mutex *context_;                            /**< Mutex to make sure only one thread is using a given context at a time. */
 protected:
   friend class Root;
   friend class Alias;
