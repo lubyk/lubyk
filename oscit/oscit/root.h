@@ -1,7 +1,6 @@
 #ifndef _OSCIT_ROOT_H_
 #define _OSCIT_ROOT_H_
 #include "oscit/base_object.h"
-#include "oscit/call.h"
 #include "oscit/receive.h"
 #include "oscit/send.h"
 #include "oscit/mutex.h"
