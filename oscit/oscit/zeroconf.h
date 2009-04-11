@@ -1,13 +1,11 @@
 #ifndef _OSCIT_ZEROCONF_H_
 #define _OSCIT_ZEROCONF_H_
+
 #include <string>
 
 struct _DNSServiceRef_t;
 typedef struct _DNSServiceRef_t* DNSServiceRef;
 
-#ifndef uint
-typedef unsigned int uint;
-#endif
 typedef int32_t DNSServiceErrorType;
 
 namespace oscit {
@@ -39,7 +37,7 @@ protected:
 class ZeroConfRegister : public ZeroConf
 {
  public:
-  ZeroConfRegister(const std::string &name, const std::string &service_type, uint port) : name_(name), service_type_(service_type), port_(port) {}
+  ZeroConfRegister(const std::string &name, const std::string &service_type, uint16_t port) : name_(name), service_type_(service_type), port_(port) {}
   
   /** Callback */
   void register_callback(DNSServiceErrorType error, const char * name, const char * service_type, const char * pDomain);

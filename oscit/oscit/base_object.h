@@ -15,43 +15,43 @@ class Alias;
 class BaseObject
 {
  public:
-  BaseObject() : context_(NULL), root_(NULL), parent_(NULL), children_(20), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {
+  BaseObject() : root_(NULL), parent_(NULL), children_(20), context_(NULL), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {
    name_ = "";
    url_  = name_;
   }
   
-  BaseObject(const char *name) : context_(NULL), root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {}
+  BaseObject(const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), context_(NULL), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {}
   
-  BaseObject(TypeTagID type_tag_id) : context_(NULL), root_(NULL), parent_(NULL), children_(20), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
+  BaseObject(TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), context_(NULL), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
     name_ = "";
     url_  = name_;
   }
 
-  BaseObject(const char *name, TypeTagID type_tag_id) : context_(NULL), root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {}
+  BaseObject(const char *name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), context_(NULL), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {}
 
-  BaseObject(const std::string &name, TypeTagID type_tag_id) : context_(NULL), root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {}
+  BaseObject(const std::string &name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), context_(NULL), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {}
 
-  BaseObject(BaseObject *parent, const char *name) : context_(NULL), root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {
+  BaseObject(BaseObject *parent, const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {
     parent->adopt(this);
   }
 
-  BaseObject(BaseObject *parent, const char *name, TypeTagID type_tag_id) : context_(NULL), root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
+  BaseObject(BaseObject *parent, const char *name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
     parent->adopt(this);
   }
 
-  BaseObject(BaseObject *parent, const std::string &name, TypeTagID type_tag_id) : context_(NULL), root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
+  BaseObject(BaseObject *parent, const std::string &name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
     parent->adopt(this);
   }
 
-  BaseObject(BaseObject &parent, const char *name) : context_(NULL), root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {
+  BaseObject(BaseObject &parent, const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {
     parent.adopt(this);
   }
 
-  BaseObject(BaseObject &parent, const char *name, TypeTagID type_tag_id) : context_(NULL), root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
+  BaseObject(BaseObject &parent, const char *name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
     parent.adopt(this);
   }
 
-  BaseObject(BaseObject& parent, const std::string &name, TypeTagID type_tag_id) : context_(NULL), root_(NULL), parent_(NULL), children_(20), name_(name), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
+  BaseObject(BaseObject &parent, const std::string &name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
     parent.adopt(this);
   }
 
@@ -243,7 +243,7 @@ class BaseObject
     return type_;
   }
   
-  /** Set meta type. */
+  /** Set meta type (signature, range, units). */
   void set_type(const Value &type) {
     type_ = type;
   }
@@ -345,7 +345,6 @@ protected:
 
   std::list<Alias *>          mAliases;       /**< List of aliases to destroy when this node disappears. */
   
-  Mutex *context_;                            /**< Mutex to make sure only one thread is using a given context at a time. */
 protected:
   friend class Root;
   friend class Alias;
@@ -356,12 +355,14 @@ protected:
   std::string                     name_;      /**< Unique name in parent's context. */
   std::string                     url_;       /**< Absolute path to object (cached). TODO: this cache is not really needed. */
   static size_t                   sIdCounter; /**< Use to set a default id and position. */
-  Value                           type_;
+  
+  Mutex *context_;                            /**< Mutex to make sure only one thread is using a given context at a time. */
 
 private:
   friend class OscReceive;
-  TypeTagID                   type_tag_id_;        /**< OSC type tag type_tag_id. */
-  std::string                 info_;             /**< Help/information string. */
+  TypeTagID                   type_tag_id_;   /**< OSC type tag type_tag_id. */
+  std::string                 info_;          /**< Help/information string. */
+  Value                       type_;          /**< Type information (type signature, range & units). */
 };
 } // namespace osc
 

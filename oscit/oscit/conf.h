@@ -9,8 +9,4 @@
   TypeName(const TypeName&);               \
   void operator=(const TypeName&);
 
-#ifndef uint
-#define uint unsigned int
-#endif
-
 #endif // _OSCIT_CONF_H_

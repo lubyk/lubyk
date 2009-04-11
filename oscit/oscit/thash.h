@@ -8,6 +8,8 @@
 #include <list>
 #include <iostream>
 
+typedef unsigned int uint;
+
 ///////////// MACRO FOR STATIC STRING HASH ////////////////
 // macro hashing function taken from http://chrissavoie.com/index.php?option=com_content&task=view&id=14&Itemid=1
 // the constant value to return at the end of the hashing
@@ -36,10 +38,6 @@
  
 // finally the macro used to generate the hash
 #define H(string) (uint)HASH_RECURSE_00(string, *string)
-
-#ifndef uint
-typedef unsigned int uint;
-#endif
 
 typedef std::list<std::string>::iterator string_iterator;
 typedef std::list<std::string>::const_iterator const_string_iterator;

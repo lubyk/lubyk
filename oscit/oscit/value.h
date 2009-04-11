@@ -166,7 +166,7 @@ public:
   }
   
   /** Return a string representation of the value. */
-  std::string as_string() const;
+  std::string to_string() const;
   
   /** Change the Value into the specific type. Since a default value must be set,
     * it is better to use 'set'. */
@@ -221,8 +221,8 @@ public:
     set_string(string);
   }
   
-  Value& append(std::string &str) {
-    return append(str.c_str());
+  Value& append(const std::string &string) {
+    return append(string.c_str());
   }
   
   Value& append(const char *str) {
