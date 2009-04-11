@@ -92,21 +92,21 @@ public:
     assert_call("/t2/counter", "", "[25] 6.00");
     
     oscit::Object * obj;
-    TS_ASSERT( mPlanet.root()->get(&obj, "/t/out/counter") );
+    TS_ASSERT( worker_.root()->get(&obj, "/t/out/counter") );
     // destroy first outlet ===> [3] becomes [2] ==> first output is now /out/nil
     // this is not a normal situation but it needs testing (dynamic outlets may be used with Lua and Group).
     delete obj;
-    TS_ASSERT( !mPlanet.root()->get(&obj, "/t/out/counter") );
-    TS_ASSERT( !mPlanet.root()->get(&obj, "/t/out/counter/link") );
-    TS_ASSERT(  mPlanet.root()->get(&obj, "/t/out/nil") );
+    TS_ASSERT( !worker_.root()->get(&obj, "/t/out/counter") );
+    TS_ASSERT( !worker_.root()->get(&obj, "/t/out/counter/link") );
+    TS_ASSERT(  worker_.root()->get(&obj, "/t/out/nil") );
     
     assert_call("/t/in/bang", "Bang!", "Nil"); // t++ --> nil outlet
     assert_call("/t/counter",  "", "[28] 7.00");
     assert_call("/t2/counter", "", "[29] 6.00");
     // destroy 'nil' outlet
     delete obj;
-    TS_ASSERT( !mPlanet.root()->get(&obj, "/t/out/nil") );
-    TS_ASSERT( !mPlanet.root()->get(&obj, "/t/out/nil/link") );
+    TS_ASSERT( !worker_.root()->get(&obj, "/t/out/nil") );
+    TS_ASSERT( !worker_.root()->get(&obj, "/t/out/nil/link") );
     assert_call("/t/in/bang", "Bang!", "Nil"); // t++ --> not send (no more outlets).
   }
   // TODO: test loop (t => t2 => t).

@@ -202,6 +202,6 @@ public:
     std::ostringstream os(std::ostringstream::out);
     os << v;
     assert_equal("{\"name\":\"Joe\" \"age\":34 \"job\":[\"dad\", \"husband\", \"lover\", -666]}", os.str());
-    assert_equal("{\"name\":\"Joe\" \"age\":34 \"job\":[\"dad\", \"husband\", \"lover\", -666]}", v.as_string());
+    assert_equal("{\"name\":\"Joe\" \"age\":34 \"job\":[\"dad\", \"husband\", \"lover\", -666]}", v.to_string());
   }
 };

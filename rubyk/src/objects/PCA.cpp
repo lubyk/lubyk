@@ -13,7 +13,7 @@ public:
     if (mTransposedFile) fclose(mTransposedFile);
   }
   
-  bool init(const Value& p)
+  bool init(const Value &p)
   {
     mTransposedFolder = "processed"; // where to store training data transposed in new basis
     mTransposedFile   = NULL;
@@ -26,7 +26,7 @@ public:
     return init_machine(p);
   }
 
-  bool set(const Value& p)
+  bool set(const Value &p)
   {
     size_t input_size  = mMeanValue.col_count();
     size_t output_size = mBuffer.col_count();
@@ -47,13 +47,13 @@ public:
   }
   
   // inlet 1
-  void bang (const Value val)
+  void bang (const Value &val)
   {
-    if (!mIsOK) return; // no recovery
+    if (!is_ok_) return; // no recovery
     
     if (val.type == MatrixValue) {
       if (val.matrix.value->size() != mMeanValue.size()) {
-        *mOutput << mName << ": wrong signal size " << val.matrix.value->size() << " should be " << mMeanValue.size() << "\n.";
+        *mOutput << name_ << ": wrong signal size " << val.matrix.value->size() << " should be " << mMeanValue.size() << "\n.";
         return;
       }
       val.get(&mLiveBuffer);
@@ -64,7 +64,7 @@ public:
       send(mS);
       
     } else {
-      *mOutput << mName << ": wrong signal type (" << val.type_name() << ") should be MatrixValue\n";
+      *mOutput << name_ << ": wrong signal type (" << val.type_name() << ") should be MatrixValue\n";
       return;
     }
     
@@ -73,10 +73,10 @@ public:
   /** Command to print the current basis. */
   void basis()
   {
-    *mOutput << mName << ": " << mBasis << std::endl;
+    *mOutput << name_ << ": " << mBasis << std::endl;
   }
   
-  virtual const Value inspect(const Value val) 
+  virtual const Value inspect(const Value &val) 
   {  
     bprint(mSpy, mSpySize,"%ix%i", mBasis.col_count(), mBasis.row_count());    
   }
@@ -91,7 +91,7 @@ private:
     //cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans, 1, mTargetSize, mVectorSize, 1, mWorkBuffer, mVectorSize, mBasis, mVectorSize, 0.0, mBuffer, mVectorSize);
   }
   
-  bool compute_mean_vector(const std::string& filename, Matrix * vector)
+  bool compute_mean_vector(const std::string &filename, Matrix * vector)
   {
     if (vector == NULL) {
       // class initialize // finished
@@ -101,7 +101,7 @@ private:
         TRY(mClasses, append(mMeanValue));
         
         if (filename != "")
-          *mOutput << mName << ": read '" << filename << "' (" << mVectorCount << " vectors)\n";
+          *mOutput << name_ << ": read '" << filename << "' (" << mVectorCount << " vectors)\n";
       }
       
       mVectorCount = 0;
@@ -115,7 +115,7 @@ private:
     return true;
   }
   
-  bool transpose_in_new_basis(const std::string& filename, Matrix * vector)
+  bool transpose_in_new_basis(const std::string &filename, Matrix * vector)
   {
     if (vector == NULL) {
       // initialize or finished a class
@@ -127,7 +127,7 @@ private:
     if (!mTransposedFile) {
       mTransposedFile = fopen(pca_transpose_path(filename).c_str(), "wb");
       if (!mTransposedFile) {
-        *mOutput << mName << ": could not open '" << pca_transpose_path(filename) << "' to write transposed data.\n";
+        *mOutput << name_ << ": could not open '" << pca_transpose_path(filename) << "' to write transposed data.\n";
         return false;
       }
     }
@@ -149,7 +149,7 @@ private:
     
     FILE * file = fopen(pca_model_path().c_str(), "rb");
       if (!file) {
-        *mOutput << mName << ": could not read from '" << pca_model_path() << "' (" << strerror(errno) << ")\n";
+        *mOutput << name_ << ": could not read from '" << pca_model_path() << "' (" << strerror(errno) << ")\n";
         return false;
       }
       // read mMeanValue vector
@@ -159,7 +159,7 @@ private:
         TRY(mBasis, append(vector));
         
         if (mBasis.row_count() > target_size ) {
-          *mOutput << mName << ": wrong dimension of pca basis. Found " << mBasis.row_count() << "x" << mBasis.col_count() << " when matrix should be " << target_size << "x" << mMeanValue.col_count() << "\n";
+          *mOutput << name_ << ": wrong dimension of pca basis. Found " << mBasis.row_count() << "x" << mBasis.col_count() << " when matrix should be " << target_size << "x" << mMeanValue.col_count() << "\n";
           fclose(file);
           return false;
         }
@@ -176,12 +176,12 @@ private:
     TRY(mClasses, set_sizes(0, mMeanValue.col_count()));
     
     if(!FOREACH_TRAIN_CLASS(PCA, compute_mean_vector)) {
-      *mOutput << mName << ": could not build model.\n";
+      *mOutput << name_ << ": could not build model.\n";
       return false;
     }
     
     if (mClasses.row_count() == 0) {
-      *mOutput << mName << ": no class file.\n";
+      *mOutput << name_ << ": no class file.\n";
       return false;
     }
     
@@ -200,20 +200,20 @@ private:
     TRY(mMeanValue, to_file(pca_model_path(), "wb"));
     
     // we have our matrix.
-    if (mDebug) *mOutput << mName << ": source:\n" << mClasses << "\n";
+    if (mDebug) *mOutput << name_ << ": source:\n" << mClasses << "\n";
     
     // 3. PCA
     
     // Compute T'T :
     TRY(symmetric_matrix, symmetric(mClasses));
     
-    if (mDebug) *mOutput << mName << ": symmetric:\n" << symmetric_matrix << "\n";
+    if (mDebug) *mOutput << name_ << ": symmetric:\n" << symmetric_matrix << "\n";
     
     // Find eigenvectors, eigenvalues of T'T :
     TRY(eigenvectors, eigenvectors(eigenvalues, symmetric_matrix));
     
     // build P out of those eigenvectors with greatest values :
-    *mOutput << mName << ": calculated " << eigenvalues.col_count() << " eigenvalues (showing greater then zero):\n  ";
+    *mOutput << name_ << ": calculated " << eigenvalues.col_count() << " eigenvalues (showing greater then zero):\n  ";
     
     for(size_t i= 0; i < eigenvalues.col_count(); i++)
       if (eigenvalues[0][i] < -0.0001 || eigenvalues[0][i] > 0.0001)
@@ -221,7 +221,7 @@ private:
         
     *mOutput << "\n";
     
-    if (mDebug) *mOutput << mName << ": eigenvectors:\n" << eigenvectors << "\n";
+    if (mDebug) *mOutput << name_ << ": eigenvectors:\n" << eigenvectors << "\n";
     
     // P = partial E'.
     
@@ -232,17 +232,17 @@ private:
     TRY(mBasis, to_file(pca_model_path(), "ab"));
     
     if (mDebug) {
-      *mOutput << mName << ": basis P:\n" << mBasis << "\n";
+      *mOutput << name_ << ": basis P:\n" << mBasis << "\n";
     } else {
-      *mOutput << mName << ": new basis with " << mBasis.row_count() << " dimensions from a vectors of size " << mBasis.col_count() << " computed.\n";
+      *mOutput << name_ << ": new basis with " << mBasis.row_count() << " dimensions from a vectors of size " << mBasis.col_count() << " computed.\n";
     }
     
     if(!FOREACH_TRAIN_CLASS(PCA, transpose_in_new_basis)) {
-      *mOutput << mName << ": could not write transposed training data\n";
+      *mOutput << name_ << ": could not write transposed training data\n";
       return false;
     }
     
-    *mOutput << mName << ": wrote transposed training data to '" << pca_transpose_path(std::string("")) << "'.\n"; 
+    *mOutput << name_ << ": wrote transposed training data to '" << pca_transpose_path(std::string("")) << "'.\n"; 
     
     return true;
   }
@@ -250,11 +250,11 @@ private:
   std::string pca_model_path()
   {
     std::string path(mFolder);
-    path.append("/").append(mName).append(".model");
+    path.append("/").append(name_).append(".model");
     return path;
   }
 
-  std::string pca_transpose_path(const std::string& pFilename)
+  std::string pca_transpose_path(const std::string &pFilename)
   {
     std::string path(mTransposedFolder);
     path.append("/").append(pFilename);

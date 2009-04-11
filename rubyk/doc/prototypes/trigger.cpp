@@ -9,13 +9,13 @@
 class Trigger
 {
   public:
-    Trigger () : mReceiver(NULL), mFunction(NULL) {}
+    Trigger () : receiver_(NULL), mFunction(NULL) {}
 
     template <class T, void(T::*Tmethod)(void)>
     static Trigger new_for (T* receiver)
     {
       Trigger t;
-      t.mReceiver = receiver;
+      t.receiver_ = receiver;
       t.mFunction = &cast_method<T, Tmethod>;
       return t;
     }
@@ -26,12 +26,12 @@ class Trigger
 
     void run ()
     {
-      return (*mFunction)(mReceiver);
+      return (*mFunction)(receiver_);
     }
 
   private:
     /* ATTRIBUTES */
-    void* mReceiver;
+    void* receiver_;
     void (*mFunction)(void* receiver);
 
   

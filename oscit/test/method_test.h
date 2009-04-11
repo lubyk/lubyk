@@ -8,7 +8,7 @@ class Person : public BaseObject
   
   /** A simple class method. */
   static const Value class_method(Root *root, const Value &val) {
-    return Value(val.as_string());
+    return Value(val.to_string());
   }
   
   /** A simple member method. */
@@ -32,7 +32,7 @@ public:
     
     res = root.call("/hello", MatrixValue(2,3));
     
-    assert_equal("\"400 \'/hello\' (Send me strings only.).\"", res.as_string());
+    assert_equal("\"400 \'/hello\' (Send me strings only.).\"", res.to_string());
     
     res = root.call("/hello", Value());
     

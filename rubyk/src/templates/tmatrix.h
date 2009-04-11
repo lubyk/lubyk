@@ -73,7 +73,7 @@ public:
   bool to_file(FILE * pFile, bool isMatrix = true) const;
   
   /** Write a matrix to a filepath. */
-  bool to_file(const std::string& pPath, const char * pMode = "wb", bool isMatrix = true) const;
+  bool to_file(const std::string &pPath, const char * pMode = "wb", bool isMatrix = true) const;
   
   /** Fill a matrix from a FILE pointer.
     * If the matrix has '0' rows, all the file is loaded into the matrix. If
@@ -84,7 +84,7 @@ public:
   bool from_file(FILE * pFile);
   
   /** Read a matrix from a filepath. */
-  bool from_file(const std::string& pPath, const char * pMode = "rb");
+  bool from_file(const std::string &pPath, const char * pMode = "rb");
   
   /** Make a partial copy of another matrix (copy all contents).
     * to copy the first vector:
@@ -126,16 +126,16 @@ public:
     * @return bool       returns false if allocation of new space failed. */
   bool copy_at(int pRowIndex, const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1, bool pResize = false);
 
-  //FIX bool copy(const Value val);
+  //FIX bool copy(const Value &val);
   
-  //FIX bool copy_at(int pRowIndex, const Value val);
+  //FIX bool copy_at(int pRowIndex, const Value &val);
   
   /** Append a vector to the end of the current data. Size increases automatically. */
   bool append (const T * pVector, size_t pVectorSize);
   
   /** Cast & append a vector. Size increases automatically. */
   template<typename V>
-  bool cast_append (const V * pVector, size_t pVectorSize, real_t pScale = 1.0);
+  bool cast_append (const V * pVector, size_t pVectorSize, Real pScale = 1.0);
   
   /** Append another matrix/vector to the end of the current data. Size increases automatically. 
     * @param pStartRow   where to start copying the data from (default is 0).
@@ -159,11 +159,11 @@ public:
     * @param pScale    amount to multiply each value before adding.
     *
     * @return true (never fails). */
-  bool add (const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1, real_t pScale = 1.0);
+  bool add (const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1, Real pScale = 1.0);
   
   /** Subtract elements of one matrix to another.
     * See 'add' for details. */
-  inline bool subtract(const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1, real_t pScale = 1.0)
+  inline bool subtract(const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1, Real pScale = 1.0)
   { return add(pOther, pStartRow, pEndRow, -pScale); }
   
   /** Add an array of reals to each elements in the matrix. 
@@ -173,7 +173,7 @@ public:
   bool add (const T * pVector, size_t pVectorSize);
   
   /** Add two matrices. */
-  bool add (const TMatrix& A, const TMatrix& B, real_t pScaleA = 1.0, real_t pScaleB = 1.0);
+  bool add (const TMatrix& A, const TMatrix& B, Real pScaleA = 1.0, Real pScaleB = 1.0);
   
   /** Divide all elements by the values in another matrix. a.divide(b) (a/b) is NOT the matrix division (a-1b)
     * If rows/columns match, elements are divided one by one.
@@ -185,7 +185,7 @@ public:
     * @param pStartRow if you want to use only part of the other matrix, start row. Default 0 (first row).
     * @param pEndRow   when using only part of the other matrix. Default -1 (last row).
     * @return true (never fails). */
-  bool divide (const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1, real_t pScale = 1.0);
+  bool divide (const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1, Real pScale = 1.0);
   
   /** Divide all elements by the values in another matrix.
     * See 'divide' for details. */
@@ -217,7 +217,7 @@ public:
     * @param pStartRow if you want to use only part of the other matrix, start row. Default 0 (first row).
     * @param pEndRow   when using only part of the other matrix. Default -1 (last row).
     * @return true (never fails). */
-  bool multiply (const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1, real_t pScale = 1.0);
+  bool multiply (const TMatrix& pOther, int pStartRow = 0, int pEndRow = -1, Real pScale = 1.0);
   
   /** Divide all elements by the values in another matrix.
     * See 'divide' for details. */
@@ -288,7 +288,7 @@ public:
     * @param pTransA transposition mode for matrix A (CblasNoTrans/CblasTrans).
     * @param pTransB transposition mode for matrix B.
     * @param pScale  scale factor. Default is 1.0 (no scaling). */
-  bool mat_multiply(const TMatrix& A, const TMatrix& B, const enum CBLAS_TRANSPOSE pTransA = CblasNoTrans, const enum CBLAS_TRANSPOSE pTransB = CblasNoTrans, real_t pScale = 1.0);
+  bool mat_multiply(const TMatrix& A, const TMatrix& B, const enum CBLAS_TRANSPOSE pTransA = CblasNoTrans, const enum CBLAS_TRANSPOSE pTransB = CblasNoTrans, Real pScale = 1.0);
   
   
   /** Compute A'A for the given (row major) matrix. Return false on failure. Write C.symmetric(A) for C = A'A. */
@@ -392,7 +392,7 @@ protected:
   bool raw_copy(size_t pRowOffset, const T * pVector, size_t pVectorSize, bool pResize = false);
   
   /** Do multiplication (wrapper around Cblas) */
-  inline void do_gemm(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA, const enum CBLAS_TRANSPOSE TransB, const int M, const int N, const int K, const real_t alpha, const T *A, const int lda, const T *B, const int ldb, const real_t beta, T *C, const int ldc);
+  inline void do_gemm(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA, const enum CBLAS_TRANSPOSE TransB, const int M, const int N, const int K, const Real alpha, const T *A, const int lda, const T *B, const int ldb, const Real beta, T *C, const int ldc);
   
   
   /** Read a char from a file. */
@@ -407,8 +407,8 @@ protected:
     return fscanf(pFile, " %i", pValue);
   }
   
-  /** Read a real_t from a file. */
-  inline int do_fscanf (FILE * pFile, real_t * pValue) const
+  /** Read a Real from a file. */
+  inline int do_fscanf (FILE * pFile, Real * pValue) const
   {
     return fscanf(pFile, " %lf", pValue);
   }
@@ -425,8 +425,8 @@ protected:
     fprintf(pFile, " %i", pValue);
   }
 
-  /** Write a real_t to a file. */
-  inline void do_fprintf (FILE * pFile, real_t pValue) const
+  /** Write a Real to a file. */
+  inline void do_fprintf (FILE * pFile, Real pValue) const
   {  
     fprintf(pFile, " % .5f", pValue);
   }
@@ -473,7 +473,7 @@ public:
     mColCount = pOther.mColCount;
   }
   
-  CutMatrix(real_t * pData, size_t pRowCount, size_t pColCount) {
+  CutMatrix(Real * pData, size_t pRowCount, size_t pColCount) {
     data = pData;
     mRowCount = pRowCount;
     mColCount = pColCount;
@@ -528,7 +528,7 @@ public:
     return true;
   }
   
-  void set_data(real_t * pData)
+  void set_data(Real * pData)
   {
     data = pData;
   }

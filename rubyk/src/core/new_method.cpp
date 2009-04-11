@@ -1,6 +1,6 @@
 #include "rubyk.h"
 
-const Value NewMethod::trigger (const Value val)
+const Value NewMethod::trigger (const Value &val)
 {
   String url;
   Value params;
@@ -14,12 +14,12 @@ const Value NewMethod::trigger (const Value val)
   
   if (url.is_nil()) return Error("Invalid parameters (missing 'url').");
   
-  res = (*mMethod)(*mPlanet, url);
+  res = (*method_)(*worker_, url);
   
   if (!res.is_string()) return res;
   url = res;
   
-  oscit::Object * obj = mRoot->find(url.string());
+  oscit::Object * obj = root_->find(url.string());
   
   if (!obj) {
     return Error("New Object at '").append(url.string()).append("' not found !");
@@ -56,7 +56,7 @@ const Value NewMethod::trigger (const Value val)
   node->set_is_ok( node->init() && node->set(params) ); // if init or set returns false, the node goes into 'broken' mode.
   
   // create pending links
-  mPlanet->create_pending_links();
+  worker_->create_pending_links();
   
   return url;
 }

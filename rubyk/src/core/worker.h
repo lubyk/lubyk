@@ -1,161 +1,91 @@
-#ifndef _PLANET_H_
-#define _PLANET_H_
+#ifndef _WORKER_H_
+#define _WORKER_H_
+/*
+Structure of a running planet:
+
+The Planet is an oscit::Root:
+Root   <- Planet
+
+It contains a single Worker that is passed to subnodes as context
+Planet <>--- Worker
+*/
 #include "group.h"
 #include "command.h"
-#include <csignal>
-#include <fstream>
-
-#include "mutex.h"
-#include <sys/timeb.h> // ftime
-#include <queue>
 #include "ordered_list.h"
 #include "event.h"
 
-// oscit
-#include "oscit/root.h"
+#include "oscit/mutex.h"
 
-class ClassFinder;
-
-#define CLASS_ROOT "/class"
-#define DEFAULT_OBJECTS_LIB_PATH "/usr/local/lib/rubyk"
+#include <csignal>
+#include <fstream>
+#include <sys/timeb.h> // ftime
+#include <queue>
 
 // is 2 [ms] too long ? Testing needed.
-#define RUBYK_SLEEP_MS 2.0
+#define WORKER_SLEEP_MS 2.0
 #define ONE_SECOND 1000.0
 #define ONE_MINUTE (60.0*ONE_SECOND)
 
-
-class Planet : public Group
+class Worker : public Mutex
 {
 public:
-  Planet() : mRoot(this)
-  {
-    init(gNilValue);
+  Worker(Root *root) : root_(root) {
+    init();
   }
-  
-  Planet(uint pPort) : mRoot(this)
-  {
-    init(gNilValue);
-    mRoot.open_port(pPort);
-  }
-  
-  Planet(int argc, char * argv[]) : mRoot(this)
-  {
-    // TODO: get port from command line
-    init(gNilValue);
-    
-    if (argc > 1) {
-      std::ifstream in(argv[1], std::ios::in);
-      std::ostringstream oss;
-      oss << in.rdbuf();
-      in.close();
-
-      Command  * fCmd;
-      fCmd = new Command(std::cin, std::cout); // we use new because cleanup code is not executed for this thread due to opengl glutMainLoop
-      fCmd->set_planet(this);
-      fCmd->set_silent(true);
-      unlock(); // so the commands are directly processed
-        oss << "\n";
-        fCmd->parse(oss.str());
-      lock();
-
-      fCmd->close();
-      delete fCmd;
-    }
-  }
-  
-  virtual ~Planet ();
-  
-  virtual bool init (const Value& p);
-  
-  virtual void clear()
-  {
-    mRoot.clear();
-    mPendingLinks.clear();
-  }
-  
-  void open_port(uint pPort)
-  {
-    mRoot.open_port(pPort);
-  }
-  
-  /** ======== META ========= */
-  
-  virtual const Value inspect(const Value val)
-  { 
-    return String("Planet");
-  }
-  
-  virtual void bang(const Value val) {}
   
   /** Run until quit (through a command or signal). */
-  void run()
-  {
-    set_thread_this(this);
+  void run() {
+    lock(); // we get hold of the lock
+      set_thread_this(this);
     
-    signal(SIGTERM, Planet::term); // register a SIGTERM handler
-    signal(SIGINT,  Planet::term);
+      signal(SIGTERM, Worker::term); // register a SIGTERM handler
+      signal(SIGINT,  Worker::term);
 
-    while (do_run());
+      while (do_run());
+    unlock();
   }
   
-  oscit::Root * root()
-  {
-    return &mRoot;
-  }
+  Root *root() { return root_; }
   
   /** Create pending links (called on new object creation). */
   const Value create_pending_links ();
   
-  /** Used by commands to get hold of the server to execute commands. */
-  void lock()
-  { mMutex.lock(); }
-
-  /** Commands are finished. */
-  void unlock()
-  { mMutex.unlock(); }
-
   /** Get current real time in [ms] since reference. */
-  time_t real_time()
-  {
+  time_t real_time() {
     struct timeb t;
     ftime(&t);
-    return ((t.time - mTimeRef.time) * 1000) + t.millitm - mTimeRef.millitm;
+    return ((t.time - time_ref_.time) * 1000) + t.millitm - time_ref_.millitm;
   }
 
   /** Set command thread to normal priority. */
   void normal_priority ();
 
-  /** Start listening to a command. */
-  void listen_to_command (Command& pCommand);
-
   /** Main loop, returns false when quit loop should stop (quit). */
-  bool do_run ();
+  bool do_run();
 
   /** Close the door and leave... */
-  void quit()
-  { 
-    mQuit = true; //gQuitGl = true; 
+  void quit() { 
+    quit_ = true; //gQuitGl = true; 
   }
 
   /** Add an event to the event queue. The server is responsible for deleting the event. */
   void register_event(Event * e)
   { 
-    if (!mQuit || e->mForced) mEventsQueue.push(e); // do not accept new events while we are trying to quit.
+    if (!quit_ || e->forced_) events_queue_.push(e); // do not accept new events while we are trying to quit.
   }
 
   /** Remove all events related to a given node before the node dies. */
-  void free_events_for(Node * pNode)
+  void free_events_for(Node * node)
   {  
     Event * e;
-    LinkedList<Event*> * it   = mEventsQueue.begin();
+    LinkedList<Event*> * it   = events_queue_.begin();
 
     // find element
     while(it) {
       e = it->obj;
-      if (e->uses_receiver(pNode)) {
-        if (e->mForced) e->trigger();
-        it = mEventsQueue.remove(e);
+      if (e->uses_receiver(node)) {
+        if (e->forced_) e->trigger();
+        it = events_queue_.remove(e);
       } else
         it = it->next;
     }
@@ -163,9 +93,8 @@ public:
 
   /** Create a new thread that will run the method given as template parameter. Use NEW_THREAD(klass, method) if you prefer. */
   template <class T, void(T::*Tmethod)(void)>
-  pthread_t new_thread (T * pReceiver)
-  {
-    Event * e = (Event*)new TCallEvent<T, Tmethod>(mCurrentTime, pReceiver);
+  pthread_t new_thread(T * pReceiver) {
+    Event * e = (Event*)new TEvent<T, Tmethod>(current_time_, pReceiver);
     return create_thread(e);
   }
 
@@ -205,82 +134,15 @@ public:
     return NULL;
   }
   
-  /** Return the class finder (create one if needed). */
-  ClassFinder * classes();
-  
-  /** Create a new object from a class name. Calls "/class/ClassName/new". */
-  const Value new_object(const char *       pUrl, const char *       pClass, const Value& pParams);
-
-  /** Create a new object from a class name. Calls "/class/ClassName/new". */
-  const Value new_object(const std::string& pUrl, const std::string& pClass, const Value& pParams);
-
-  /** Create a new link between two slots. */
-  const Value create_link(const std::string& pFrom, const std::string& pFromPort, const std::string& pToPort, const std::string& pTo);
-
-  /** Remove a link between two slots. */
-  const Value remove_link(const std::string& pFrom, const std::string& pFromPort, const std::string& pToPort, const std::string& pTo);
-  
-  
-  /** =========  PROXY METHODS ========= (used by commands) */
-  
-  /** Execute the default operation for an object. */
-  Value call (const char* pUrl)
-  {
-    return mRoot.call(std::string(pUrl), gNilValue);
-  }
-
-  /** Execute the default operation for an object. */
-  Value call (std::string& pUrl)
-  {
-    return mRoot.call(pUrl, gNilValue);
-  }
-
-  /** Execute the default operation for an object. */
-  Value call (const char* pUrl, const Value val)
-  {
-    return mRoot.call(std::string(pUrl), val);
-  }
-
-  /** Execute the default operation for an object. */
-  Value call (const std::string& pUrl, const Value val)
-  {
-    return mRoot.call(pUrl, val);
-  }
-  
-  /** Return a pointer to the object located at pUrl. NULL if not found. */
-  oscit::Object * find(const std::string& pUrl)
-  {
-    return mRoot.find(pUrl);
-  }
-
-  /** Return a pointer to the object located at pUrl. NULL if not found. */
-  oscit::Object * find(const char * pUrl)
-  {
-    return mRoot.find(std::string(pUrl));
-  }
-
-  /** Return a pointer to the object located at pUrl. NULL if not found. */
-  oscit::Object * find(const String& pUrl)
-  {
-    return mRoot.find(pUrl.string());
-  }
-  
-public:
-  std::list<oscit::Call> mPendingLinks;        /**< List of pending connections waiting for variable assignements. */
-  time_t mCurrentTime;                    /**< Current logical time in [ms] since reference. */
+ public:
+  time_t current_time_;                    /**< Current logical time in [ms] since reference. */
   static pthread_key_t sThisKey;   /**< Key to retrieve 'this' value from a running thread. */
   
-protected:
-  /** Actual adoption. Adopt objects in the new namespace (branch). */
-  virtual void do_adopt(Object * pObject)
-  {
-    mRoot.do_adopt(pObject);
-  }
+ private:
+  void init();
   
-private:
-  static void term(int sig)
-  {
-    ((Planet*)thread_this())->quit();
+  static void term(int sig) {
+    ((Worker*)thread_this())->quit();
   }
   
   /** Realtime related stuff. */
@@ -297,20 +159,19 @@ private:
   /** Trigger loop events. These are typically the IO 'read/write' of the IO nodes. */
   void trigger_loop_events ();
   
-  oscit::Root  mRoot;                     /**< Processing tree. */
+  Root *root_;                              /**< Root tree. */
   
-  Mutex mMutex;                           /**< "Do not mess with me" mutex lock. */
-  int mCommandSchedPoclicy;               /**< Thread's original scheduling priority (all commands get this). */ 
-  struct sched_param mCommandThreadParam; /**< Scheduling parameters for commands (lower then rubyk). */
-  struct timeb mTimeRef;                  /**< Time reference. All times are [ms] from this reference. It's the root's birthdate ! */
-  bool mQuit;                             /**< Internal flag to tell running threads to quit. */
+  int command_sched_policy_;                /**< Thread's original scheduling priority (all commands get this). */ 
+  struct sched_param command_thread_param_; /**< Scheduling parameters for commands (lower then rubyk). */
+  struct timeb time_ref_;                   /**< Time reference. All times are [ms] from this reference.
+                                                 It's the worker's birthdate ! */
+  bool quit_;                               /**< Internal flag to tell running threads to quit. */
 
-  std::queue<Command *>   mCommands;      /**< Command line / editors. FIXME: it seems these should live in oscit space ... (not sure). */
 
   /** Events ! */
-  OrderedList<Event*>     mEventsQueue;   /**< Ordered event list. */
-  std::deque<Node*>       mLoopedNodes;   /**< List of methods to call on every loop. */
+  OrderedList<Event*>     events_queue_;    /**< Ordered event list. */
+  std::deque<Node*>       looped_nodes_;    /**< List of methods to call on every loop. */
   
 };
 
-#endif // _PLANET_H_
+#endif // _WORKER_H_

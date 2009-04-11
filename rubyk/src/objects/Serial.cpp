@@ -12,19 +12,19 @@ public:
     return init_serial(p);
   }
   
-  bool set (const Value& p)
+  bool set (const Value &p)
   {
     // cannot change parameters during runtime, yet
-    *mOutput << mName << ": Serial object has no parameters to change during runtime.\n";
+    *mOutput << name_ << ": Serial object has no parameters to change during runtime.\n";
     return set_serial(p);
   }
   
-  bool set_serial(const Value& p)
+  bool set_serial(const Value &p)
   {
     return true;
   }
   
-  bool init_serial (const Value& p)
+  bool init_serial (const Value &p)
   {
     mPort.set_output(*mOutput);
     
@@ -49,14 +49,14 @@ public:
     return set_lua(p);
   }
   
-  static void list(std::ostream * pOutput, const Value& p)
+  static void list(std::ostream * pOutput, const Value &p)
   {
     // todo
     *pOutput << "todo\n";
   }
   
   // inlet 1
-  void bang(const Value val)
+  void bang(const Value &val)
   { 
     int c;
     if (mLua) {

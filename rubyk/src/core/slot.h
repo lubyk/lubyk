@@ -2,7 +2,6 @@
 #define _SLOT_H_
 #include "ordered_list.h"
 #include "object.h"
-#include "method.h"
 
 class Node;
 

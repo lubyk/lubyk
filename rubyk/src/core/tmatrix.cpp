@@ -127,7 +127,7 @@ bool TMatrix<T>::from_file(FILE * pFile)
 
 /** Read a matrix from a filepath. */
 template<typename T>
-bool TMatrix<T>::from_file(const std::string& pPath, const char * pMode)
+bool TMatrix<T>::from_file(const std::string &pPath, const char * pMode)
 {
   FILE * file = fopen(pPath.c_str(), pMode);
     if (!file) {
@@ -144,7 +144,7 @@ bool TMatrix<T>::from_file(const std::string& pPath, const char * pMode)
 
 /** Write a matrix to a filepath. */
 template<typename T>
-bool TMatrix<T>::to_file(const std::string& pPath, const char * pMode, bool isMatrix) const
+bool TMatrix<T>::to_file(const std::string &pPath, const char * pMode, bool isMatrix) const
 {
   FILE * file = fopen(pPath.c_str(), pMode);
     if (!file) {
@@ -352,7 +352,7 @@ bool TMatrix<T>::append(const TMatrix& pOther, int pStartRow, int pEndRow)
   *
   * @return true (never fails). */
 template<typename T>
-bool TMatrix<T>::add(const TMatrix& pOther, int pStartRow, int pEndRow, real_t pScale)
+bool TMatrix<T>::add(const TMatrix& pOther, int pStartRow, int pEndRow, Real pScale)
 {
   size_t start_row, end_row;
   if (!check_sizes("add", &start_row, &end_row, pOther, pStartRow, pEndRow, true)) return false;
@@ -459,7 +459,7 @@ bool TMatrix<T>::add(const T * pVector, size_t pVectorSize)
 }
 
 template<typename T>
-bool TMatrix<T>::add (const TMatrix& A, const TMatrix& B, real_t pScaleA, real_t pScaleB)
+bool TMatrix<T>::add (const TMatrix& A, const TMatrix& B, Real pScaleA, Real pScaleB)
 {
   if (A.mRowCount != B.mRowCount || A.mColCount != B.mColCount) {
     set_error("size error (add): matrix A %ix%i, matrix B %ix%i (incompatible)", A.mRowCount, A.mColCount, B.mRowCount, B.mColCount);
@@ -487,7 +487,7 @@ bool TMatrix<T>::add (const TMatrix& A, const TMatrix& B, real_t pScaleA, real_t
   * @param pEndRow   when using only part of the other matrix. Default -1 (last row).
   * @return true (never fails). */
 template<typename T>
-bool TMatrix<T>::divide(const TMatrix& pOther, int pStartRow, int pEndRow, real_t pScale)
+bool TMatrix<T>::divide(const TMatrix& pOther, int pStartRow, int pEndRow, Real pScale)
 {
   size_t start_row, end_row;
   if (!check_sizes("divide", &start_row, &end_row, pOther, pStartRow, pEndRow, true)) return false;
@@ -564,7 +564,7 @@ bool TMatrix<T>::divide(const TMatrix& pOther, int pStartRow, int pEndRow, real_
 
 /** Multiply all elements by the values in another matrix. a.divide(b) (a/b) is NOT the matrix multiplication (ab). See 'mat_multiply'. */
 template<typename T>
-bool TMatrix<T>::multiply(const TMatrix& pOther, int pStartRow, int pEndRow, real_t pScale)
+bool TMatrix<T>::multiply(const TMatrix& pOther, int pStartRow, int pEndRow, Real pScale)
 {
   size_t start_row, end_row;
   if (!check_sizes("multiply", &start_row, &end_row, pOther, pStartRow, pEndRow, true)) return false;
@@ -649,7 +649,7 @@ bool TMatrix<T>::multiply(const TMatrix& pOther, int pStartRow, int pEndRow, rea
   * @param pTransB transposition mode for matrix B.
   * @param pScale  scale factor. Default is 1.0 (no scaling). */
 template<typename T>
-bool TMatrix<T>::mat_multiply(const TMatrix& A, const TMatrix& B, const enum CBLAS_TRANSPOSE pTransA, const enum CBLAS_TRANSPOSE pTransB, real_t pScale)
+bool TMatrix<T>::mat_multiply(const TMatrix& A, const TMatrix& B, const enum CBLAS_TRANSPOSE pTransA, const enum CBLAS_TRANSPOSE pTransB, Real pScale)
 {
   /** MxK  *  KxN */
   size_t m, k, n;
@@ -678,13 +678,13 @@ bool TMatrix<T>::mat_multiply(const TMatrix& A, const TMatrix& B, const enum CBL
 }
 
 template<>
-void TMatrix<real_t>::do_gemm(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA, const enum CBLAS_TRANSPOSE TransB, const int M, const int N, const int K, const real_t alpha, const real_t *A, const int lda, const real_t *B, const int ldb, const real_t beta, real_t *C, const int ldc)
+void TMatrix<real_t>::do_gemm(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA, const enum CBLAS_TRANSPOSE TransB, const int M, const int N, const int K, const Real alpha, const Real *A, const int lda, const Real *B, const int ldb, const Real beta, Real *C, const int ldc)
 {
   cblas_dgemm(Order, TransA, TransB, M, N, K, alpha, A, lda, B, ldb, beta, C, ldc);
 }
 
 template<>
-void TMatrix<float>::do_gemm(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA, const enum CBLAS_TRANSPOSE TransB, const int M, const int N, const int K, const real_t alpha, const float *A, const int lda, const float *B, const int ldb, const real_t beta, float *C, const int ldc)
+void TMatrix<float>::do_gemm(const enum CBLAS_ORDER Order, const enum CBLAS_TRANSPOSE TransA, const enum CBLAS_TRANSPOSE TransB, const int M, const int N, const int K, const Real alpha, const float *A, const int lda, const float *B, const int ldb, const Real beta, float *C, const int ldc)
 {
   cblas_sgemm(Order, TransA, TransB, M, N, K, alpha, A, lda, B, ldb, beta, C, ldc);
 }
@@ -718,7 +718,7 @@ bool TMatrix<float>::symmetric(const TMatrix<float>& A)
   */
 template<>
 bool TMatrix<real_t>::eigenvectors(TMatrix<real_t>& pEigenValues, TMatrix<real_t>& pMatrix)
-//bool TMatrix<real_t>::compute_eigenvectors(real_t ** pEigenVectors, real_t ** pEigenValues, long * pEigenCount, real_t * pMatrix, int pSize)
+//bool TMatrix<real_t>::compute_eigenvectors(Real ** pEigenVectors, Real ** pEigenValues, long * pEigenCount, Real * pMatrix, int pSize)
 {
   if (pMatrix.col_count() != pMatrix.row_count()) {
     set_error("Cannot compute eigenvectors if source matrix is not symmetric. It is %ix%i.", pMatrix.row_count(), pMatrix.col_count());
@@ -742,18 +742,18 @@ bool TMatrix<real_t>::eigenvectors(TMatrix<real_t>& pEigenValues, TMatrix<real_t
   long n   = col_count;  //  4. Order of the matrix A (size of A is NxN).
   // (A) source           //  5.  source array
   long lda = col_count;  //  6. Leading dimension of A (=N).
-  real_t vl = 0.0;         //  7. See RANGE. (L stands for Low)
-	real_t vu = 0.0;         //  8. See RANGE. (U stands for Up)
+  Real vl = 0.0;         //  7. See RANGE. (L stands for Low)
+	Real vu = 0.0;         //  8. See RANGE. (U stands for Up)
 	long  il = 0.0;         //  9. See RANGE.
 	long  iu = 0.0;         // 10. See RANGE.
-	real_t abstol = 0.00001;    // 11. Absolute error tolerance for the eigenvalues. If set to zero, 
+	Real abstol = 0.00001;    // 11. Absolute error tolerance for the eigenvalues. If set to zero, 
 													//     machine precision will be used during convergence test. Higher values = faster but less precise.
 	// (M) eigencount       // 12. Output of the number of eigenvalues found.
   // (W) eigenvalues      // 13. Output eigenvalues in ascending order.
   // (Z) eigenvector      // 14. Output array. First M columns contain the orthonormal eigenvectors. i-th column contains the eigenvector associated with the i-th eigenvalue.
 	long ldz = col_count;  // 15. Leading dimension of Z (=N).
  	long isuppz[2 * col_count];// 16. Output array of integers telling which eigenvectors are nonzero. ??
- 	real_t work[col_count * 40];        // 17. Workspace (real array)
+ 	Real work[col_count * 40];        // 17. Workspace (real array)
   long lwork = col_count * 40;       // 18. Size of the workspace. Should be >= (NB+6)N where NB is the maximal blocksize for SSYTRD and SORMTR returned by ILAENV
  	long iwork[15 * col_count];         // 19. Workspace (integer array)
 	long liwork = 15 * col_count;       // 20. Size of IWORK array. Should be >= 10N
@@ -892,7 +892,7 @@ inline bool TMatrix<T>::check_sizes(const char * pMsg, size_t * start_row, size_
 
 template<typename T>
 template<typename V>
-bool TMatrix<T>::cast_append (const V * pVector, size_t pVectorSize, real_t pScale)
+bool TMatrix<T>::cast_append (const V * pVector, size_t pVectorSize, Real pScale)
 {
   if (pVectorSize % mColCount != 0) {
     set_error("could not append vector: column count not matching (%i is not a multiple of %i)", pVectorSize, mColCount);
@@ -931,7 +931,7 @@ bool TMatrix<real_t>::inverse()
     return false;
   } else {
     // make sure determinant is greater then MATRIX_MIN_DET
-    real_t det = 1.0;
+    Real det = 1.0;
     for (size_t i = 0; i < (size_t)M; i++) {
       det *= data[i * N + i]; // diagonal entries of LU factors
     }
@@ -967,31 +967,31 @@ bool TMatrix<real_t>::inverse()
 /// explicit instanciation for reals and integers //////
 
 #define TMATRIX_EXPLICIT(T) \
-  template bool TMatrix<T>::to_file(const std::string& pPath, const char * pMode, bool isMatrix) const; \
+  template bool TMatrix<T>::to_file(const std::string &pPath, const char * pMode, bool isMatrix) const; \
   template bool TMatrix<T>::to_file(FILE * pFile, bool isMatrix) const; \
-  template bool TMatrix<T>::from_file(const std::string& pPath, const char * pMode); \
+  template bool TMatrix<T>::from_file(const std::string &pPath, const char * pMode); \
   template bool TMatrix<T>::from_file(FILE * pFile); \
-  template bool TMatrix<T>::add(const TMatrix& pOther, int pStartRow, int pEndRow, real_t pScale); \
+  template bool TMatrix<T>::add(const TMatrix& pOther, int pStartRow, int pEndRow, Real pScale); \
   template bool TMatrix<T>::add(const T * pVector, size_t pVectorSize); \
-  template bool TMatrix<T>::add(const TMatrix& A, const TMatrix& B, real_t pScaleA, real_t pScaleB); \
+  template bool TMatrix<T>::add(const TMatrix& A, const TMatrix& B, Real pScaleA, Real pScaleB); \
   template bool TMatrix<T>::append(const T * pVector, size_t pVectorSize); \
   template bool TMatrix<T>::append(T pValue); \
   template bool TMatrix<T>::append(const TMatrix& pOther, int pStartRow, int pEndRow); \
-  template bool TMatrix<T>::multiply(const TMatrix& pOther, int pStartRow, int pEndRow, real_t pScale); \
-  template bool TMatrix<T>::divide(const TMatrix& pOther, int pStartRow, int pEndRow, real_t pScale);
+  template bool TMatrix<T>::multiply(const TMatrix& pOther, int pStartRow, int pEndRow, Real pScale); \
+  template bool TMatrix<T>::divide(const TMatrix& pOther, int pStartRow, int pEndRow, Real pScale);
 
 TMATRIX_EXPLICIT(char)
 TMATRIX_EXPLICIT(int)
 TMATRIX_EXPLICIT(real_t)
 
-template bool TMatrix<real_t>::mat_multiply(const TMatrix& A, const TMatrix& B, const enum CBLAS_TRANSPOSE pTransA, const enum CBLAS_TRANSPOSE pTransB, real_t pScale);
+template bool TMatrix<real_t>::mat_multiply(const TMatrix& A, const TMatrix& B, const enum CBLAS_TRANSPOSE pTransA, const enum CBLAS_TRANSPOSE pTransB, Real pScale);
 
 // cast append
-template bool TMatrix< int  >::cast_append<real_t> (const real_t * pVector, size_t pVectorSize, real_t pScale);
-template bool TMatrix<real_t>::cast_append< int  > (const int * pVector, size_t pVectorSize, real_t pScale);
+template bool TMatrix< int  >::cast_append<real_t> (const Real * pVector, size_t pVectorSize, Real pScale);
+template bool TMatrix<real_t>::cast_append< int  > (const int * pVector, size_t pVectorSize, Real pScale);
 
 // we instanciate those as they can be used to 'scale & copy':
-template bool TMatrix<real_t>::cast_append<real_t> (const real_t * pVector, size_t pVectorSize, real_t pScale);
-template bool TMatrix< int  >::cast_append< int  > (const int * pVector, size_t pVectorSize, real_t pScale);
+template bool TMatrix<real_t>::cast_append<real_t> (const Real * pVector, size_t pVectorSize, Real pScale);
+template bool TMatrix< int  >::cast_append< int  > (const int * pVector, size_t pVectorSize, Real pScale);
 
 // no mat_multiply for integers

@@ -2,7 +2,7 @@
 #include <cxxtest/TestSuite.h>
 #include "rubyk_signal.h"
 
-static real_t cast_tester(real_t v)
+static Real cast_tester(Real v)
 {
   return v;
 }
@@ -48,7 +48,7 @@ public:
   {  
     // FIXME: string meta values crash !
     // std::string name;
-    real_t age;
+    Real age;
     int    year;
     Signal sig;
     

@@ -14,11 +14,11 @@ public:
     if (mFileHandle) fclose(mFileHandle);
   }
   
-  bool init(const Value& p)
+  bool init(const Value &p)
   {
     mFileHandle = NULL;
     mState      = WaitingMode;
-    mFilePath   = mName;
+    mFilePath   = name_;
     mIsLoop     = true;
     mFilePath.append(".rec");
     
@@ -28,7 +28,7 @@ public:
     return true;
   }
   
-  bool set(const Value& p)
+  bool set(const Value &p)
   {
     size_t size;
     if (p.get(&size, "vector")) TRY(mData, set_sizes(0,size));
@@ -40,7 +40,7 @@ public:
     return true;
   }
   
-  void bang(const Value val)
+  void bang(const Value &val)
   {
     int cmd;
     if (val.get(&cmd)) {
@@ -72,16 +72,16 @@ public:
     }
   }
   
-  void play(const Value& p)
+  void play(const Value &p)
   { enter(PlaybackMode); }
   
-  void record(const Value& p)
+  void record(const Value &p)
   { enter(RecordingMode); }
   
-  void reload(const Value& p)
+  void reload(const Value &p)
   { reload_data(); }
   
-  virtual const Value inspect(const Value val) 
+  virtual const Value inspect(const Value &val) 
   {
     bprint(mSpy, mSpySize, "%u / %ux%u", mIndex, mData.row_count(), mData.col_count());
   }
@@ -94,14 +94,14 @@ private:
     
     switch(pMode) {
     case PlaybackMode:
-      *mOutput << mName << ": starting playback (buffer " << mData.row_count() << "x" << mData.col_count() << ").\n";
+      *mOutput << name_ << ": starting playback (buffer " << mData.row_count() << "x" << mData.col_count() << ").\n";
       mState = PlaybackMode;
       break;
     case RecordingMode:
       if (mState == RecordingMode) return;
       TRY_RET(mData, set_sizes(0, mData.col_count()));
       mData.clear();
-      *mOutput << mName << ": ready to record.\n";
+      *mOutput << name_ << ": ready to record.\n";
       mState = RecordingMode;
       break;
     default:
@@ -117,11 +117,11 @@ private:
         TRY(mData, set_sizes(0, mLiveBuffer->col_count()));
       }
       
-      *mOutput << mName << ": recording started (vector size " << mData.col_count() << ").\n";
+      *mOutput << name_ << ": recording started (vector size " << mData.col_count() << ").\n";
       // open file handle
       mFileHandle = fopen(mFilePath.c_str(), "wb");
       if (!mFileHandle) {
-        *mOutput << mName << ": could not open '" << mFilePath << "' for writing.\n";
+        *mOutput << name_ << ": could not open '" << mFilePath << "' for writing.\n";
         return false;
       }
     }

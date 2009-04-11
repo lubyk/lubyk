@@ -16,17 +16,17 @@
 /// extern void * gGLWindowNode;
 /// extern bool   gQuitGl;
 
-//OPENGL_HACK Planet * gPlanet;
-//OPENGL_HACK pthread_t gPlanetThread;
+//OPENGL_HACK Worker * gWorker;
+//OPENGL_HACK pthread_t gWorkerThread;
 //OPENGL_HACK 
 //OPENGL_HACK static void * start_thread(void * data)
 //OPENGL_HACK { 
 //OPENGL_HACK   InteractiveCommand cmd(std::cin, std::cout);
-//OPENGL_HACK   gPlanet->listen_to_command(cmd);
+//OPENGL_HACK   gWorker->listen_to_command(cmd);
 //OPENGL_HACK   
-//OPENGL_HACK   gPlanet->run();
+//OPENGL_HACK   gWorker->run();
 //OPENGL_HACK   
-//OPENGL_HACK   delete gPlanet;
+//OPENGL_HACK   delete gWorker;
 //OPENGL_HACK   gRunning = false;
 //OPENGL_HACK   return NULL;
 //OPENGL_HACK }
@@ -34,7 +34,7 @@
 
 int main(int argc, char * argv[])
 {  
-  Planet venus(argc, argv);
+  Worker venus(argc, argv);
   InteractiveCommand cmd(std::cin, std::cout);
   venus.listen_to_command(cmd);
   venus.open_port(7000);
@@ -54,7 +54,7 @@ int main(int argc, char * argv[])
   //OPENGL_HACK 
   //OPENGL_HACK ////// GLWINDOW HACK /////
   //OPENGL_HACK // this is a hack to put GLWindow inside thread 0
-  //OPENGL_HACK pthread_create( &gPlanetThread, NULL, start_thread, NULL);
+  //OPENGL_HACK pthread_create( &gWorkerThread, NULL, start_thread, NULL);
   //OPENGL_HACK while (gRunning) {
   //OPENGL_HACK   if (gGLWindowStartThread) {
   //OPENGL_HACK     (*gGLWindowStartThread)(gGLWindowNode);
@@ -63,10 +63,10 @@ int main(int argc, char * argv[])
   //OPENGL_HACK   }
   //OPENGL_HACK   nanosleep (&sleeper, NULL);
   //OPENGL_HACK }
-  //OPENGL_HACK pthread_join( gPlanetThread, NULL);
+  //OPENGL_HACK pthread_join( gWorkerThread, NULL);
   //OPENGL_HACK /////////////////////
-  //OPENGL_HACK // while (gPlanet->run());  
-  //OPENGL_HACK // delete gPlanet;
+  //OPENGL_HACK // while (gWorker->run());  
+  //OPENGL_HACK // delete gWorker;
   
   return 0;
 }

@@ -29,7 +29,7 @@ public:
     ////////////////
   }
   
-  bool init(const Value& p)
+  bool init(const Value &p)
   { 
     mHeight           = 600;
     mWidth            = 800;
@@ -43,7 +43,7 @@ public:
     mLuaKeyPress      = false;
     mMaxFPS           = 30.0;
     mLastDraw         = 0;
-    mFPS_start        = mServer->mCurrentTime;
+    mFPS_start        = mServer->current_time_;
     mFPS_i            = 0;
     mFPS              = 0;
     
@@ -64,7 +64,7 @@ public:
     return true;
   }
   
-  bool set (const Value& p)
+  bool set (const Value &p)
   {
     std::string s;
     mHeight     = p.val("height", mHeight);
@@ -85,13 +85,13 @@ public:
   }
   
   // inlet 1
-  virtual void bang(const Value val)
+  virtual void bang(const Value &val)
   {
     mNeedRedisplay = true;
     send(1, sig);
   }
   
-  virtual void draw(const Value val)
+  virtual void draw(const Value &val)
   {
     if (mNeedScriptReload) {
       mMutex.lock();
@@ -106,7 +106,7 @@ public:
     
     compute_fps();
     
-    mLastDraw = mServer->mCurrentTime;
+    mLastDraw = mServer->current_time_;
     
     if (mLuaDraw) {
       protected_call_lua("draw",sig);
@@ -150,7 +150,7 @@ public:
     mouse_move(x,y);
   }
   
-  virtual const Value inspect(const Value val) 
+  virtual const Value inspect(const Value &val) 
   { 
     bprint(mSpy, mSpySize,"%s %ix%i %.1ffps", mTitle.c_str(), mWidth, mHeight, mFPS);  
   }
@@ -220,7 +220,7 @@ protected:
   
   void idle()
   { 
-    if (mNeedRedisplay || mMaxFPS == 0 || (mServer->mCurrentTime >= mLastDraw + mMinFPSTime)) {
+    if (mNeedRedisplay || mMaxFPS == 0 || (mServer->current_time_ >= mLastDraw + mMinFPSTime)) {
       glutPostRedisplay();
       mNeedRedisplay = false;
     }
@@ -349,7 +349,7 @@ private:
     }
   }
   
-  bool eval_script(const std::string& pScript) 
+  bool eval_script(const std::string &pScript) 
   {
     // this is run inside a call to lua (protected).
     // except when run from "set_lua"
@@ -362,7 +362,7 @@ private:
     }
   }
   
-  bool eval_gl_script(const std::string& pScript)
+  bool eval_gl_script(const std::string &pScript)
   {
     // this is always run inside a call to lua (protected).
     mScriptOK = eval_lua_script(pScript);
@@ -390,7 +390,7 @@ private:
     return mScriptOK;
   }
   
-  inline void protected_call_lua(const char * key, const Value val)
+  inline void protected_call_lua(const char * key, const Value &val)
   {
     mMutex.lock();
       call_lua(key, sig);
@@ -421,10 +421,10 @@ private:
   void compute_fps()
   {
     mFPS_i++;
-    if (mServer->mCurrentTime >= mFPS_start + ONE_SECOND) {
-      mFPS = (real_t)mFPS_i * ONE_SECOND / (mServer->mCurrentTime - mFPS_start);
+    if (mServer->current_time_ >= mFPS_start + ONE_SECOND) {
+      mFPS = (real_t)mFPS_i * ONE_SECOND / (mServer->current_time_ - mFPS_start);
       mFPS_i = 0;
-      mFPS_start = mServer->mCurrentTime;
+      mFPS_start = mServer->current_time_;
     }
   }
   
@@ -444,10 +444,10 @@ private:
   Matrix      mMouseMatrix;  /**< Mouse position matrix. */
   Value      mMouseMatrixValue; /**< Wrapper around mMouseMatrix. */
   Mutex       mMutex;
-  real_t      mMaxFPS;       /**< Limit number of frames per second. (0 = no limit). */
+  Real      mMaxFPS;       /**< Limit number of frames per second. (0 = no limit). */
   time_t      mMinFPSTime;   /**< Minimal time interval between two draws (computed from mMaxFPS). */
   size_t      mFPS_i;        /**< Frame counter (used to compute fps). */
-  real_t      mFPS;          /**< Last computed number of frames per second. */
+  Real      mFPS;          /**< Last computed number of frames per second. */
   time_t      mFPS_start;    /**< Time when the last fps counter reset was called (used to compute fps). */
   time_t      mLastDraw;     /**< Last time the draw command was called. */
   

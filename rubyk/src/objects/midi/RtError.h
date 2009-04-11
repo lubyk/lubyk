@@ -39,7 +39,7 @@ protected:
 
 public:
   //! The constructor.
-  RtError(const std::string& message, Type type = RtError::UNSPECIFIED) : message_(message), type_(type) {}
+  RtError(const std::string &message, Type type = RtError::UNSPECIFIED) : message_(message), type_(type) {}
 
   //! The destructor.
   virtual ~RtError(void) {};
@@ -51,7 +51,7 @@ public:
   virtual const Type& getType(void) { return type_; }
 
   //! Returns the thrown error message string.
-  virtual const std::string& getMessage(void) { return message_; }
+  virtual const std::string &getMessage(void) { return message_; }
 
   //! Returns the thrown error message as a C string.
   virtual const char *getMessageString(void) { return message_.c_str(); }

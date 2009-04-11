@@ -3,15 +3,15 @@
 class Abs : public Node
 {
 public:
-  bool set(const Value& p)
+  bool set(const Value &p)
   {
     return true;
   }
   
   // inlet 1
-  void bang(const Value val)
+  void bang(const Value &val)
   {  
-    real_t d;
+    Real d;
     int i;
     if (val.type == MatrixValue) {
       mBuffer.copy(sig);
@@ -30,7 +30,7 @@ public:
     }
   }
   
-  virtual const Value inspect(const Value val) 
+  virtual const Value inspect(const Value &val) 
   { bprint(mSpy, mSpySize, "");  }
   
 private:

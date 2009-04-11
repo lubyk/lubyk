@@ -9,13 +9,13 @@ class GLLua : public LuaScript
 {
 public:
   
-  bool set (const Value& p)
+  bool set (const Value &p)
   {
     return set_lua(p);
   }
   
   // inlet 1
-  void bang(const Value val)
+  void bang(const Value &val)
   {
     mMutex.lock();
       // protected resource
@@ -24,10 +24,10 @@ public:
   }
   
   // inlet 2
-  void draw(const Value val)
+  void draw(const Value &val)
   { 
     if (!is_opengl_thread()) {
-      *mOutput << mName << ": " << "not an openGL thread." << std::endl;
+      *mOutput << name_ << ": " << "not an openGL thread." << std::endl;
       return;
     }
     
@@ -47,28 +47,28 @@ public:
     glMatrixMode(GL_MODELVIEW);
   }
   
-  void in3(const Value val)
+  void in3(const Value &val)
   { set_lua_global("in3", sig); }
   
-  void in4(const Value val)
+  void in4(const Value &val)
   { set_lua_global("in4", sig); }
   
-  void in5(const Value val)
+  void in5(const Value &val)
   { set_lua_global("in5", sig);}
   
-  void in6(const Value val)
+  void in6(const Value &val)
   { set_lua_global("in6", sig);}
   
-  void in7(const Value val)
+  void in7(const Value &val)
   { set_lua_global("in7", sig);}
   
-  void in8(const Value val)
+  void in8(const Value &val)
   { set_lua_global("in8", sig);}
   
-  void in9(const Value val)
+  void in9(const Value &val)
   { set_lua_global("in9", sig);}
   
-  void in10(const Value val)
+  void in10(const Value &val)
   { set_lua_global("in10", sig);}
   
 private:

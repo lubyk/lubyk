@@ -1,50 +1,48 @@
 #ifndef _INLET_H_
 #define _INLET_H_
 #include "slot.h"
-#include "values.h"
 
 class Node;
 
-typedef void(*inlet_method_t)(Node * node, const Value val);
+typedef void(*inlet_method_t)(Node * node, const Value &val);
 
 /** Prototype constructor for Inlets. */
 struct InletPrototype
 {
-  InletPrototype(const char * pTagTypeStr, const char * pName, inlet_method_t pMethod, const char * pInfo) : mName(pName), mTagTypeStr(pTagTypeStr), mMethod(pMethod), mInfo(pInfo) {}
-  const char *   mName;
-  const char *   mTagTypeStr;
-  inlet_method_t mMethod;
-  const char *   mInfo;
+  InletPrototype(const char *name, inlet_method_t method, TypeTagID type_tag_id, const char *info, const Value &type) :
+      name_(name), type_tag_id_(type_tag_id), method_(method), info_(info), type_(type) {}
+  std::string    name_;
+  TypeTagID      type_tag_id_;
+  inlet_method_t method_;
+  std::string    info_;
+  Value          type_;
 };
 
 class Inlet : public Slot {
 public:
   /** Constructor used for testing. */
-  Inlet (const char * pTagTypeStr, Node * node, inlet_method_t pMethod, uint pType) : Slot(pTagTypeStr, node, pType), mMethod(pMethod) 
-  {
+  Inlet(Node *node, inlet_method_t method, TypeTagID type_tag_id) : Slot(node, type_tag_id), method_(method) {
     register_in_node();
   }
   
-  Inlet (const char * pTagTypeStr, const std::string& pName, Node * node, inlet_method_t pMethod, uint pType) : Slot(pTagTypeStr, pName, node, pType), mMethod(pMethod) 
-  {
-    register_in_node();
-  }
-  
-  Inlet (const char * pTagTypeStr, Node * node, inlet_method_t pMethod) : Slot(pTagTypeStr, node), mMethod(pMethod) 
-  {
+  Inlet(Node *node, const char *name, inlet_method_t method, TypeTagID type_tag_id) : Slot(node, name, type_tag_id), method_(method) {
     register_in_node();
   }
   
   /** Prototype based constructor. */
-  Inlet (Node * pNode, const InletPrototype& pProto) : Slot(pProto.mTagTypeStr, pProto.mName, pNode, pProto.mType), mMethod(pProto.mMethod)
-  {
-    set_info(pProto.mInfo);
+  Inlet(Node *node, const InletPrototype& prototype) : Slot(node, prototype.name_, prototype.type_tag_id_), method_(prototype.method_) {
+    set_info(prototype.info_);
+    set_type(prototype.type_);
     register_in_node();
   }
   
-  virtual ~Inlet()
-  {
+  virtual ~Inlet() {
     unregister_in_node();
+  }
+  
+  /** Class signature. */
+  virtual uint class_type() {
+    return H("Inlet");
   }
   
   /** Inform the node about the existence of this outlet (direct callback). */
@@ -54,30 +52,23 @@ public:
   void unregister_in_node();
   
   /** The operation to be executed on call. If 'val' is not Nil, send to inlet. */
-  virtual const Value trigger (const Value val)
-  {
+  virtual const Value trigger(const Value &val) {
     receive(val);
     return gNilValue;
   }
   
-  /** Class signature. */
-  virtual uint type()
-  {
-    return H("Inlet");
-  }
-  
   /** Receive a value. */
-  void receive (const Value val);
+  void receive(const Value &val);
   
   /** Create a callback for an inlet. */
-  template <class T, void(T::*Tmethod)(const Value val)>
-  static void cast_method (Node * receiver, const Value val)
-  {
-    (((T*)receiver)->*Tmethod)(val);
-  }
+  // this is a copy of Method... template <class T, void(T::*Tmethod)(const Value &val)>
+  // this is a copy of Method... static void cast_method(Node *receiver, const Value &val)
+  // this is a copy of Method... {
+  // this is a copy of Method...   (((T*)receiver)->*Tmethod)(val);
+  // this is a copy of Method... }
   
 private:
-  inlet_method_t mMethod;        /**< Method to set a new value. */
+  inlet_method_t method_;        /**< Method to set a new value. */
 };
 
 #endif

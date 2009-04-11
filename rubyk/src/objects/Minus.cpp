@@ -3,16 +3,16 @@
 class Minus : public Node
 {
 public:
-  bool set(const Value& p)
+  bool set(const Value &p)
   {
     mValue = p.val("minus", 1.00, true);
     return true;
   }
   
   // inlet 1
-  void bang(const Value val)
+  void bang(const Value &val)
   {  
-    real_t d;
+    Real d;
     if (val.type == MatrixValue) {
       mBuffer.copy(sig);
       mBuffer -= mValue;
@@ -28,18 +28,18 @@ public:
   }
   
   // inlet 2
-  void set_minus(const Value val)
+  void set_minus(const Value &val)
   {
     val.get(&mValue);
   }
   
-  virtual const Value inspect(const Value val) 
+  virtual const Value inspect(const Value &val) 
   { bprint(mSpy, mSpySize,"-%.2f", mValue );  }
   
   
 private:
   Matrix mBuffer;
-  real_t mValue;
+  Real mValue;
 };
 
 extern "C" void init()

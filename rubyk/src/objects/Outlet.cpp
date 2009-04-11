@@ -16,16 +16,16 @@ public:
     
     if (!out || !node) return false;
     
-    mOutlet = out->adopt(new Outlet(mName, node, AnyValue));
+    mOutlet = out->adopt(new Outlet(name_, node, AnyValue));
     // No need to register as Alias for parent because this is destroyed with the parent anyway.
     return mOutlet != NULL;
   }
   
-  virtual const Value inspect(const Value val)  
+  virtual const Value inspect(const Value &val)  
   { return String("Outlet"); }
   
   // [1] pass value to the related parent outlet
-  void bang(const Value val)
+  void bang(const Value &val)
   { 
     mOutlet->send(val);
   }
@@ -33,7 +33,7 @@ private:
   Outlet * mOutlet;
 };
 
-extern "C" void init(Planet& planet)
+extern "C" void init(Worker& planet)
 {
   Class * c = planet.classes()->declare<OutletNode>("Outlet", "Create an inlet in the parent object. Sends values received in the parent's inlet.");
   INLET(OutletNode, bang, AnyValue, "Send value received out of parent's outlet.")

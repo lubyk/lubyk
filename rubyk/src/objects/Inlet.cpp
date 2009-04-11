@@ -13,21 +13,21 @@ public:
     oscit::Object * in = mParent->child("in");
     if (!in) return false;
     
-    Inlet * inlet = in->adopt(new Inlet(mName, this, &Inlet::cast_method<InletNode, &InletNode::bang>, AnyValue));
+    Inlet * inlet = in->adopt(new Inlet(name_, this, &Inlet::cast_method<InletNode, &InletNode::bang>, AnyValue));
     return inlet != NULL;
   }
   
-  virtual const Value inspect(const Value val)  
+  virtual const Value inspect(const Value &val)  
   { return String("Inlet"); }
   
   // [1]
-  void bang(const Value val)
+  void bang(const Value &val)
   { 
     send(val);
   }
 };
 
-extern "C" void init(Planet& planet)
+extern "C" void init(Worker& planet)
 {
   Class * c = planet.classes()->declare<InletNode>("Inlet", "Create an inlet in the parent object. Sends values received in the parent's inlet.");
   OUTLET(InletNode, port, AnyValue, "Value received in parent's inlet.")

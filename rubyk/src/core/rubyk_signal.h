@@ -33,7 +33,7 @@ typedef struct {
 typedef struct {
   rubyk_signal_t    type;
   THash<uint, Signal> * meta;
-  real_t value;
+  Real value;
 } DoubleSignal_t;
 
 typedef struct {
@@ -185,7 +185,7 @@ union Signal {
   }
   
   /** Set as real_t. */
-  inline void set(real_t pDouble)
+  inline void set(Real pDouble)
   {
     clear();
     type = DoubleSignal;
@@ -219,7 +219,7 @@ union Signal {
   }
   
   /** Set as String. */
-  inline void set(const std::string& str)
+  inline void set(const std::string &str)
   {
     clear();
     type = StringSignal;
@@ -341,7 +341,7 @@ union Signal {
   }
   
   /** Get as real_t. */
-  inline bool get(real_t * pDouble) const
+  inline bool get(Real * pDouble) const
   { 
     switch(type) {
       case IntegerSignal:

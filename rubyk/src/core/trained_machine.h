@@ -12,13 +12,13 @@ class TrainedMachine : public Node
 public:
   virtual ~TrainedMachine () {}
   
-  bool init_machine(const Value& p)
+  bool init_machine(const Value &p)
   {
     TRY(mVector, set_sizes(1,8));
     return true;
   }
   
-  bool set_machine(const Value& p)
+  bool set_machine(const Value &p)
   {
     std::string str;
     if (p.get(&str, "data"))
@@ -40,10 +40,10 @@ public:
   void learn()
   {
     if (!learn_from_data()) {
-      *mOutput << mName << ": learn failed.\n";
-      mIsOK = false;
+      *mOutput << name_ << ": learn failed.\n";
+      is_ok_ = false;
     } else {
-      mIsOK = load_model();
+      is_ok_ = load_model();
     }
   }
   
@@ -53,22 +53,22 @@ public:
   void load()
   {
     if (!load_model()) {
-      *mOutput << mName << ": could not load model.\n";
-      mIsOK = false;
+      *mOutput << name_ << ": could not load model.\n";
+      is_ok_ = false;
     } else {
-      mIsOK = true;
+      is_ok_ = true;
     }
   }
 protected:
   std::string mFolder; /**< Folder containing the class data. */
   Matrix   mVector;    /**< Temporary vector used to set/get from files. */
   
-  bool get_label_from_filename(int * pRes, const std::string& pFilename)
+  bool get_label_from_filename(int * pRes, const std::string &pFilename)
   {
     size_t start = pFilename.find("class_");
     size_t end   = pFilename.find(".txt");
     if (start == std::string::npos || end == std::string::npos) {
-      *mOutput << mName << ": bad filename '" << pFilename << "'. Should be 'class_[...].txt'.\n";
+      *mOutput << name_ << ": bad filename '" << pFilename << "'. Should be 'class_[...].txt'.\n";
       return false;
     }
     *pRes = pFilename.substr(start+6, end - start - 6).c_str()[0];
@@ -78,18 +78,18 @@ protected:
   virtual std::string model_file_path()
   {
     std::string path(mFolder);
-    path.append("/").append(mName).append(".model");
+    path.append("/").append(name_).append(".model");
     return path;
   }
   
-  template <class T, bool(T::*Tmethod)(const std::string& filename, Matrix * vector)>
+  template <class T, bool(T::*Tmethod)(const std::string &filename, Matrix * vector)>
   bool foreach_train_class()
   {
     DIR * directory = NULL;
     struct dirent *elem;
     directory = opendir(mFolder.c_str());
       if (directory == NULL) {
-        *mOutput << mName << ": could not open directory '" << mFolder << "' to read class data.\n";
+        *mOutput << name_ << ": could not open directory '" << mFolder << "' to read class data.\n";
         goto foreach_train_class_fail;
       }
       while ( (elem = readdir(directory)) ) {
@@ -108,7 +108,7 @@ protected:
         FILE * file;
         file = fopen(path.c_str(), "rb");
           if (!file) {
-            *mOutput << mName << "(error): could not read from '" << path << "' (" << strerror(errno) << ")\n";
+            *mOutput << name_ << "(error): could not read from '" << path << "' (" << strerror(errno) << ")\n";
             goto foreach_train_class_fail;
           }
           // read vectors one by one
@@ -120,7 +120,7 @@ protected:
     closedir(directory);
     return true;
 foreach_train_class_fail:
-    *mOutput << mName << ": foreach_train_class callback return false.\n";
+    *mOutput << name_ << ": foreach_train_class callback return false.\n";
     if (directory) closedir(directory);
     return false;
   }

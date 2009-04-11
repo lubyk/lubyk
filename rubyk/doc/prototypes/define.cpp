@@ -9,13 +9,13 @@ public:
   {
     Functor * f = new Functor();
     f->mFunc = &cast<T,Tmethod>;
-    f->mMethodName = pName;
+    f->method_Name = pName;
     return *f;
   }
   
   void operator() (void * pReceiver)
   {
-    printf("Calling '%s'\n", mMethodName);
+    printf("Calling '%s'\n", method_Name);
     (*mFunc)(pReceiver);
   }
 private:
@@ -25,20 +25,20 @@ private:
     (((T*)pReceiver)->*Tmethod)();
   }
   void (*mFunc)(void*);
-  const char * mMethodName;
+  const char * method_Name;
 };
 
 class A
 {
 public:
-  A(const char * name) : mName(name) {}
+  A(const char * name) : name_(name) {}
   
   void hello()
   {
-    printf("Hello from A(%s)\n", mName);
+    printf("Hello from A(%s)\n", name_);
   }
 private:
-  const char * mName;
+  const char * name_;
 };
 
 int main()

@@ -18,14 +18,14 @@ public:
   LuaScript() : mLua(NULL) {}
   ~LuaScript();
   
-  bool set_lua (const Value& p);
+  bool set_lua (const Value &p);
   
   /* call lua function without parameters */
   void call_lua (const char * pFunctionName)
   { call_lua(NULL, pFunctionName, NULL); }
   
   /* call lua function with one parameter */
-  void call_lua (const char * pFunctionName, const Value val)
+  void call_lua (const char * pFunctionName, const Value &val)
   { call_lua(NULL, pFunctionName, &sig); }
   
   /* call lua function without parameters, one value returned */
@@ -33,15 +33,15 @@ public:
   { call_lua(retSig, pFunctionName, NULL); }
   
   /* call lua function with one parameter, one value returned */
-  void call_lua (Value * retSig, const char * pFunctionName, const Value val)
+  void call_lua (Value * retSig, const char * pFunctionName, const Value &val)
   { call_lua(retSig, pFunctionName, &sig); }
   
   /* call lua function with one parameter, one value returned: prototype */
   void call_lua (Value * retSig, const char * pFunctionName, const Value * sig);
   
-  bool eval_script (const std::string& pScript);
+  bool eval_script (const std::string &pScript);
   
-  bool eval_lua_script(const std::string& pScript);
+  bool eval_lua_script(const std::string &pScript);
   
   static int send_for_lua(lua_State * L);
   
@@ -79,8 +79,8 @@ public:
   /** Define a signal from lua stack/parameters, with a custom buffer. */
   bool signal_from_lua (Value * sig, int index, Matrix& pMat, MidiMessage& pMsg);
   
-  /** Get a real_t from the current parameter list. */
-  bool real_from_lua (real_t *);
+  /** Get a Real from the current parameter list. */
+  bool real_from_lua (Real *);
   
   /** Get a string from the current parameter list. */
   bool string_from_lua (std::string *);
@@ -100,7 +100,7 @@ public:
   static Node * get_node_from_lua (lua_State * L);
   
   /** Push a matrix on top of the lua stack. */
-  bool lua_pushsignal (const Value val);
+  bool lua_pushsignal (const Value &val);
   
   /** Push a matrix on top of the lua stack. */
   void lua_pushmatrix (const Matrix& pMat);
@@ -111,7 +111,7 @@ public:
   /** Get a matrix from lua. */
   static bool matrix_from_lua (lua_State *L, Matrix ** pMat, int pIndex);
   
-  void set_lua_global (const char * key, const Value val);
+  void set_lua_global (const char * key, const Value &val);
   
   /** Return true if the function named 'key' is defined in Lua. */
   bool lua_has_function (const char * key);

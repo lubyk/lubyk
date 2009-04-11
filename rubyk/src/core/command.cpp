@@ -321,9 +321,8 @@ void Command::initialize()
 {
   int cs;
   
-  mAction = CmdNoAction;
-  mPlanet     = NULL;
-  mQuit       = false;
+  worker_     = NULL;
+  quit_       = false;
   mTokenIndex = 0;
   mSilent     = false;
   mThread     = NULL;
@@ -345,23 +344,23 @@ int Command::do_listen()
   char * line = buffer;
   
   // set thread priority to normal
-  mPlanet->normal_priority();
+  worker_->normal_priority();
   
   if (!mSilent)
     *mOutput << "Welcome to rubyk !\n\n";
   clear();
 
-  while(!mQuit && getline(&line,1023)) {
+  while(!quit_ && getline(&line,1023)) {
     parse(line);
     parse("\n");
-    if (!mQuit)
+    if (!quit_)
       saveline(line);
     freeline(line);
   }
   return 0; // thread return value
 }
 
-void Command::parse(const std::string& pStr)
+void Command::parse(const std::string &pStr)
 {
   const char *p  = pStr.data(); // data pointer
   const char *pe = p + pStr.size(); // past end
@@ -474,7 +473,7 @@ _match:
 	break;
 	case 3:
 #line 90 "src/core/command.rl"
-	{ set_from_token(mMethod);}
+	{ set_from_token(method_);}
 	break;
 	case 4:
 #line 92 "src/core/command.rl"
@@ -529,7 +528,7 @@ _match:
 	case 15:
 #line 126 "src/core/command.rl"
 	{
-      if (!mQuit) {
+      if (!quit_) {
         clear();
       }
     }
@@ -592,7 +591,7 @@ _again:
 
 void Command::close()
 {
-  mQuit = true;
+  quit_ = true;
   if (mThread) {
     pthread_kill(mThread, SIGINT);
   }
@@ -622,15 +621,15 @@ void Command::create_instance()
 {
   Value params = get_params();
   
-  mPlanet->lock();
+  worker_->lock();
     // FIXME: Group scope
     // FIXME: should be new_object(mVar, mClass, Value(mParams))
-    Value res = mPlanet->new_object(mVar, mClass, params);
-  mPlanet->unlock();
+    Value res = worker_->new_object(mVar, mClass, params);
+  worker_->unlock();
   
   if (res.is_string()) {
     std::string url = String(res).string();
-    res = mPlanet->call(url.append("/#inspect"));
+    res = worker_->call(url.append("/#inspect"));
   }
   
   
@@ -645,10 +644,10 @@ void Command::create_instance()
 
 void Command::create_link()
 { 
-  mPlanet->lock();
+  worker_->lock();
     // FIXME: Group scope
-    mPlanet->create_link(std::string("/").append(mFrom), mFromPort, mToPort, std::string("/").append(mTo));
-  mPlanet->unlock();
+    worker_->create_link(std::string("/").append(mFrom), mFromPort, mToPort, std::string("/").append(mTo));
+  worker_->unlock();
 
 #ifdef DEBUG_PARSER
   std::cout << "LINK " << mFrom << "." << mFromPort << "=>" << mToPort << "." << mTo << std::endl;
@@ -657,10 +656,10 @@ void Command::create_link()
 
 void Command::remove_link()
 { 
-  mPlanet->lock();
+  worker_->lock();
     // FIXME: Group scope
-    mPlanet->remove_link(std::string("/").append(mFrom), mFromPort, mToPort, std::string("/").append(mTo));
-  mPlanet->unlock();
+    worker_->remove_link(std::string("/").append(mFrom), mFromPort, mToPort, std::string("/").append(mTo));
+  worker_->unlock();
 
 #ifdef DEBUG_PARSER
   std::cout << "UNLINK " << mFrom << "." << mFromPort << "=>" << mToPort << "." << mTo << std::endl;
@@ -673,22 +672,22 @@ void Command::execute_method()
   Value res;
   Value params = get_params();
   
-  mPlanet->lock();
+  worker_->lock();
     // FIXME: Group scope
-    if (mMethod == "set") {
-      oscit::Object * obj = mPlanet->find(std::string("/").append(mVar));
+    if (method_ == "set") {
+      oscit::Object * obj = worker_->find(std::string("/").append(mVar));
       if (obj) obj->set(params);
     } else {
-      if (mMethod == "b") mMethod = "bang";
-      oscit::Object * meth = mPlanet->find(std::string("/").append(mVar).append("/").append(mMethod));
+      if (method_ == "b") method_ = "bang";
+      oscit::Object * meth = worker_->find(std::string("/").append(mVar).append("/").append(method_));
       if (meth) {
         res = meth->trigger(params);
       } else {
         if (params.is_nil()) params = gBangValue;
-        res = mPlanet->call(std::string("/").append(mVar).append("/in/").append(mMethod), params);
+        res = worker_->call(std::string("/").append(mVar).append("/in/").append(method_), params);
       }
     }
-  mPlanet->unlock();
+  worker_->unlock();
   if (!res.is_nil()) *mOutput << res << std::endl;
 }
 
@@ -697,9 +696,9 @@ void Command::execute_class_method()
   Value res;
   Value params = get_params();
   
-  mPlanet->lock();
-    res = mPlanet->call(std::string(CLASS_ROOT).append("/").append(mClass).append("/").append(mMethod), params);
-  mPlanet->unlock();
+  worker_->lock();
+    res = worker_->call(std::string(CLASS_ROOT).append("/").append(mClass).append("/").append(method_), params);
+  worker_->unlock();
   
   *mOutput << res << std::endl;
 }
@@ -709,41 +708,41 @@ void Command::execute_command()
   oscit::Object * obj;
   Value res;
   Value params = get_params();
-  if (mMethod == "set_lib_path") {
-    mPlanet->lock();
-      res = mPlanet->call(std::string(CLASS_ROOT).append("/lib_path"),params);
-    mPlanet->unlock();
-  } else if (mMethod == "quit" || mMethod == "q") {
-    mPlanet->lock();
-      mPlanet->quit();
-      mQuit = true;
-    mPlanet->unlock();    
+  if (method_ == "set_lib_path") {
+    worker_->lock();
+      res = worker_->call(std::string(CLASS_ROOT).append("/lib_path"),params);
+    worker_->unlock();
+  } else if (method_ == "quit" || method_ == "q") {
+    worker_->lock();
+      worker_->quit();
+      quit_ = true;
+    worker_->unlock();    
   } else {
-    mPlanet->lock();
+    worker_->lock();
       // FIXME: Group scope
-      obj = mPlanet->find(std::string("/").append(mMethod));
+      obj = worker_->find(std::string("/").append(method_));
       if (obj) {
         if (params.is_nil() && obj->type() == H("Node"))
-          res = mPlanet->call(std::string("/").append(mMethod).append("/#inspect"));
+          res = worker_->call(std::string("/").append(method_).append("/#inspect"));
         else
           res = obj->trigger(params);
       } else {
-        res = Error("Object/method not found '").append(mMethod).append("'.");
+        res = Error("Object/method not found '").append(method_).append("'.");
       }
-    mPlanet->unlock();
+    worker_->unlock();
   }
   if (!res.is_nil()) *mOutput << res << std::endl;
   /*
   TODO: these methods should exist in root...
   
-  if (mPlanet->get_instance(&node, mMethod)) {
+  if (worker_->get_instance(&node, method_)) {
     // inspect
     *mOutput << node->inspect() << std::endl;
     
-  } else if (mMethod == "quit" || mMethod == "q") {
-    mPlanet->quit();
-    mQuit = true;
-  } else if (mMethod == "set_lib_path") {
+  } else if (method_ == "quit" || method_ == "q") {
+    worker_->quit();
+    quit_ = true;
+  } else if (method_ == "set_lib_path") {
     std::string path;
     if (!mParameters.get(&path)) {
       *mOutput << "Could not set library path (no parameter).\n";
@@ -752,7 +751,7 @@ void Command::execute_command()
       *mOutput << "Library path set to '" << path << "'.\n";
     }
   } else {
-    *mOutput << "Unknown command '" << mMethod << "'" << std::endl;
+    *mOutput << "Unknown command '" << method_ << "'" << std::endl;
   }
   */
 }
@@ -760,7 +759,6 @@ void Command::execute_command()
 void Command::clear() 
 {
   mTokenIndex = 0;
-  mAction     = CmdNoAction;
   mVar        = "";
   mClass      = "";
   mParamString = "";

@@ -35,12 +35,12 @@ public:
   }
   
 protected:
-  void _assert_ref_count(const char * file, int lineno, const Value& v, size_t count)
+  void _assert_ref_count(const char * file, int lineno, const Value &v, size_t count)
   {
     _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("ref count")), v.ref_count(), count);
   }
   
-  void _assert_id(const char * file, int lineno, const Value& v, size_t id)
+  void _assert_id(const char * file, int lineno, const Value &v, size_t id)
   {
     _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("id")), v.data_id(), id);
   }
@@ -57,51 +57,51 @@ public:
   {
     Data::sIdCounter = 0;
     Data::sShowId    = true;
-    mPlanet.clear();
-    mPlanet.classes()->set_lib_path("lib");
+    worker_.clear();
+    worker_.classes()->set_lib_path("lib");
   }
   
 protected:
-  Planet mPlanet;
+  Worker worker_;
   
-  void _create(const char * file, int lineno, const char * pUrl, const char * pClass, const char* pParams, const char* pResult)
+  void _create(const char * file, int lineno, const char * url, const char * class_name, const char* params, const char* pResult)
   {
-    Value res = mPlanet.new_object(pUrl, pClass, pParams);
+    Value res = worker_.new_object(url, class_name, params);
     _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("create")),
                        res.to_string(), std::string(pResult));
   }
   
-  void _assert_call(const char * file, int lineno, const char * pUrl, const char * pVal, const char * pResult)
+  void _assert_call(const char * file, int lineno, const char * url, const char * pVal, const char * pResult)
   {
-    Value res = mPlanet.call(pUrl, Value(pVal));
+    Value res = worker_.call(url, Value(pVal));
     std::string str = res.is_string() ? String(res).string() : res.to_string();
-    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string(pUrl)), str, std::string(pResult));
+    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string(url)), str, std::string(pResult));
   }
   
-  void _assert_call(const char * file, int lineno, const char * pUrl, const char * pVal, real_t pResult)
+  void _assert_call(const char * file, int lineno, const char * url, const char * pVal, Real pResult)
   {
-    Value res = mPlanet.call(pUrl, Value(pVal));
+    Value res = worker_.call(url, Value(pVal));
     Number n(res);
     if (n.is_nil()) {
-      _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string(pUrl)), res.to_string(), TS_AS_STRING(pResult));
+      _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string(url)), res.to_string(), TS_AS_STRING(pResult));
     } else {
-      _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string(pUrl)), n.value(), pResult);
+      _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string(url)), n.value(), pResult);
     }
   }
   
   void _assert_inspect(const char * file, int lineno, const char * pName, const char * pInfo)
   {
     std::string url = std::string(pName).append("/#inspect");
-    Value res = mPlanet.call(url);
+    Value res = worker_.call(url);
     std::string str = res.is_string() ? String(res).string() : res.to_string();
     _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(url), str, std::string(pInfo));
   }
   
   
-  void _assert_inspect(const char * file, int lineno, const char * pName, real_t pInfo)
+  void _assert_inspect(const char * file, int lineno, const char * pName, Real pInfo)
   {
     std::string url = std::string(pName).append("/#inspect");
-    Value res = mPlanet.call(url);
+    Value res = worker_.call(url);
     Number n(res);
     if (n.is_nil()) {
       _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(url), res.to_string(), TS_AS_STRING(pInfo));
@@ -113,7 +113,7 @@ protected:
   void _assert_info(const char * file, int lineno, const char * pName, const char * pInfo)
   {
     std::string url = std::string(pName).append("/#info");
-    Value res = mPlanet.call(url);
+    Value res = worker_.call(url);
     std::string str = res.is_string() ? String(res).string() : res.to_string();
     _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(url), str, std::string(pInfo));
   }
@@ -126,7 +126,7 @@ public:
   
   virtual ~DummyNumber() {}
   
-  virtual const Value trigger (const Value val)
+  virtual const Value trigger (const Value &val)
   {
     mCounter = val;
     return mCounter;
@@ -144,7 +144,7 @@ public:
   ParseHelper() : mOutput(std::ostringstream::out), mInput(std::istringstream::in)
   { 
     mCmd  = new Command(mInput, mOutput);
-    mCmd->set_planet(&mPlanet);
+    mCmd->set_worker(&worker_);
   }
   
   ~ParseHelper()
@@ -156,13 +156,13 @@ public:
   {
     Data::sIdCounter = 0;
     Data::sShowId    = false;
-    mPlanet.clear();
-    mPlanet.classes()->set_lib_path("lib");
+    worker_.clear();
+    worker_.classes()->set_lib_path("lib");
     mOutput.str(std::string("")); // clear output
   }
   
 protected:
-  Planet mPlanet;
+  Worker worker_;
   Command * mCmd;
   std::ostringstream mOutput;
   std::istringstream mInput;
@@ -172,13 +172,13 @@ protected:
   void setup_with_print(const char* pInput)
   {
     Node * print;
-    mPlanet.unlock();
+    worker_.unlock();
       mCmd->parse("p=Print()\nn=>p\n");
-      print = TYPE_CAST(Node, mPlanet.find("/p"));
+      print = TYPE_CAST(Node, worker_.find("/p"));
       if (print) mCmd->observe(print);
       mCmd->parse(pInput);
       mOutput.str(std::string("")); // clear output
-    mPlanet.lock();
+    worker_.lock();
   }
   
 //FIX  void clean_assert_result(const char * pInput, const char * pOutput)
@@ -190,9 +190,9 @@ protected:
   void _assert_result(const char * file, int lineno, const char * pInput, const char * pOutput)
   {
     mOutput.str(std::string("")); // clear output
-    mPlanet.unlock();
+    worker_.unlock();
       mCmd->parse(pInput);
-    mPlanet.lock();
+    worker_.lock();
     _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string(pInput)), mOutput.str(), std::string(pOutput));
   }
   
@@ -204,13 +204,13 @@ protected:
 //FIX  
 //FIX  void assert_bang(const char * pInput, const char * pOutput)
 //FIX  { 
-//FIX    mPlanet.unlock();
+//FIX    worker_.unlock();
 //FIX      mOutput.str(std::string("")); // clear output
 //FIX      mCmd->set_silent(true);
 //FIX      mCmd->parse(pInput);
 //FIX      mCmd->parse("\nn.bang\n");
 //FIX      mCmd->set_silent(false);
-//FIX    mPlanet.lock();
+//FIX    worker_.lock();
 //FIX    TS_ASSERT_EQUALS( mOutput.str(), std::string(pOutput));
 //FIX  }
 //FIX  
@@ -223,12 +223,12 @@ protected:
   
   void _assert_print(const char * file, int lineno, const char * pInput, const char * pOutput)
   { 
-    mPlanet.unlock();
+    worker_.unlock();
       mOutput.str(std::string("")); // clear output
       mCmd->set_silent(true);
       mCmd->parse(pInput);
       mCmd->set_silent(false);
-    mPlanet.lock();
+    worker_.lock();
     
     _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string(pInput)), mOutput.str(), std::string(pOutput));
   }
@@ -241,10 +241,10 @@ protected:
 
   void _assert_run(const char * file, int lineno, time_t pLength, const char * pOutput)
   {
-    time_t start = mPlanet.mCurrentTime;
+    time_t start = worker_.current_time_;
     mOutput.str(std::string("")); // clear output
     mCmd->set_silent(true);
-    while(mPlanet.mCurrentTime <= start + pLength && mPlanet.do_run())
+    while(worker_.current_time_ <= start + pLength && worker_.do_run())
       ;
     mCmd->set_silent(false);
     _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING("running"), mOutput.str(), std::string(pOutput));

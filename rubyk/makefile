@@ -13,9 +13,9 @@ RAGEL=ragel
 RAGEL_CD=rlgen-cd
 PLAT= macosx
 TEST=test/*_test.h test/objects/*_test.h
-LINKER_OBJECTS=../oscit/liboscit.a slot.o inlet.o outlet.o buffer.o class.o node.o new_method.o class_finder.o group.o command.o event.o planet.o
+LINKER_OBJECTS=../oscit/liboscit.a event.o slot.o inlet.o outlet.o buffer.o class.o new_method.o class_finder.o group.o command.o planet.o
 OFF_OBJ=lua_script.o src/lib/lua/liblua.a 
-INCLUDE_HEADERS=-Isrc/templates -Isrc/core -Isrc/objects -Isrc/lib/lua -Isrc/lib -I.. -I../oscit/oscpack -Isrc/core/values -Isrc/lib/osc
+INCLUDE_HEADERS=-Isrc/templates -Isrc/core -Isrc/objects -Isrc/lib/lua -Isrc/lib -I../oscit -I../oscit/oscpack -Isrc/core/values -Isrc/lib/osc
 OBJECT_COMPILE=$(INCLUDE_HEADERS) -D__$(PLAT)__ -dynamic -bundle -undefined suppress -flat_namespace -L/usr/lib -lgcc -lstdc++
 OBJECT_DEPENDS=src/core/node.hpp src/core/class.h
 

@@ -38,7 +38,7 @@ std::ostream &operator<<(std::ostream &out_stream, const Value &val) {
   }
   return out_stream;
 }
-std::string Value::as_string() const {
+std::string Value::to_string() const {
   std::ostringstream os(std::ostringstream::out);
   os << *this;
   return os.str();

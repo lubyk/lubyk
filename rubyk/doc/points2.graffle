@@ -1395,7 +1395,7 @@
 	<integer>1</integer>
 	<key>IsPalette</key>
 	<string>NO</string>
-	<key>KeepToScale</key>
+	<key>Keeto_objectScale</key>
 	<false/>
 	<key>Layers</key>
 	<array>
@@ -1446,7 +1446,7 @@
 			<integer>1</integer>
 			<key>IsPalette</key>
 			<string>NO</string>
-			<key>KeepToScale</key>
+			<key>Keeto_objectScale</key>
 			<false/>
 			<key>Layers</key>
 			<array>

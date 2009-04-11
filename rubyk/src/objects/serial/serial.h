@@ -20,7 +20,7 @@ public:
   {
     mOutput = &std::cout;
     mIsOpen = false;
-    mIsOK   = true;
+    is_ok_   = true;
   }
   
   virtual ~SerialPort () 
@@ -50,7 +50,7 @@ public:
     * pSoftControl    : software flow control
     * pRaw            : raw data (set to false if you want buffered lines)
   */
-  bool init(const std::string& pPortName, int pBauds, int pCharSize, char pParityChecking, bool pBlock, bool pHardControl, bool pSoftControl, bool pRaw)
+  bool init(const std::string &portName, int pBauds, int pCharSize, char pParityChecking, bool pBlock, bool pHardControl, bool pSoftControl, bool pRaw)
   {
     int opt;
     struct termios options;
@@ -58,7 +58,7 @@ public:
     if (mIsOpen) close(mFd);
     mIsOpen = false;
     
-    mPortName = pPortName;
+    mPortName = portName;
     
     mFd = open(mPortName.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
     if (mFd == -1) {
@@ -114,7 +114,7 @@ public:
 #endif
     default: 
     *mOutput << "Unknown baud rate '" << pBauds << "'.\n";
-      mIsOK = false;
+      is_ok_ = false;
       return false;
     }
     cfsetispeed(&options, opt);
@@ -130,7 +130,7 @@ public:
     case 8: opt = CS8; break;
     default:
       *mOutput << "Unknown character size '" << pCharSize << "'.\n";
-      mIsOK = false;
+      is_ok_ = false;
       return false;
     }
     options.c_cflag &= ~CSIZE; /* Mask the character size bits */
@@ -169,7 +169,7 @@ public:
       *mOutput << "Unknown parity(must be 'N','E','O' or 'S') '" << pParityChecking << "'.\n";
       close(mFd);
       mIsOpen = false;
-      mIsOK   = false;
+      is_ok_   = false;
       return false;
     }
     
@@ -220,14 +220,14 @@ public:
   /** Read 1 char. */
   bool read_char(unsigned char * c)
   {
-    if (!mIsOK || !mIsOpen) return false;
+    if (!is_ok_ || !mIsOpen) return false;
     
     return read(mFd, c, 1) == 1;
   }
   
   bool read_char(int * pRes)
   {
-    if (!mIsOK || !mIsOpen) return false;
+    if (!is_ok_ || !mIsOpen) return false;
     unsigned char c;
     if (read(mFd, &c, 1) == 1) {
       *pRes = (int)c;
@@ -252,7 +252,7 @@ private:
   }
   
   bool mIsOpen;
-  bool mIsOK;
+  bool is_ok_;
   int mFd; /**< File descriptor. */
   std::ostream * mOutput;
   std::string mPortName;

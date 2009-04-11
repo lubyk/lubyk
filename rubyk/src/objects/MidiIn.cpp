@@ -12,7 +12,7 @@ public:
     try {
       mMidiIn = new RtMidiIn();
     } catch (RtError &error) {
-      *mOutput << mName << ": " << error.getMessageString() << std::endl;
+      *mOutput << name_ << ": " << error.getMessageString() << std::endl;
       return false;
     }
 
@@ -24,7 +24,7 @@ public:
         mMidiIn->openVirtualPort();
       }
       catch (RtError &error) {
-        *mOutput << mName << ": " << error.getMessageString() << std::endl;
+        *mOutput << name_ << ": " << error.getMessageString() << std::endl;
         // FIXME: close();
         return false;
       }
@@ -33,10 +33,10 @@ public:
      // Call function to select port.
      try {
        mMidiIn->openPort( mPortId );
-       *mOutput << mName << ": opened port " << mPortId << "\n";
+       *mOutput << name_ << ": opened port " << mPortId << "\n";
      }
      catch (RtError &error) {
-       *mOutput << mName << ": " << error.getMessageString() << std::endl;
+       *mOutput << name_ << ": " << error.getMessageString() << std::endl;
        // FIXME: close ?
        return false;
      }
@@ -52,14 +52,14 @@ public:
     return true;
   }
   
-  bool set (const Value& p)
+  bool set (const Value &p)
   {
-    *mOutput << mName << ": cannot change a Midi object during runtime, yet.\n";
+    *mOutput << name_ << ": cannot change a Midi object during runtime, yet.\n";
     return true;
   }
   
   // inlet 1
-  void bang(const Value val)
+  void bang(const Value &val)
   {
     if (val.type == NilValue && mMidiIn)
       get_messages();
@@ -76,7 +76,7 @@ public:
   { remove_my_events(); }
   
   // print a list of possible inputs
-  static void list(std::ostream * pOutput, const Value& p) {
+  static void list(std::ostream * pOutput, const Value &p) {
     std::vector<std::string> ports;
     if (!input_list(pOutput, ports)) return;
     size_t nPorts = ports.size();
@@ -88,7 +88,7 @@ public:
     }
   }
   
-  virtual const Value inspect(const Value val) 
+  virtual const Value inspect(const Value &val) 
   { 
     std::vector<std::string> portList;
     if (mPortId < 0)
@@ -100,7 +100,7 @@ public:
   }
 private:
   
-  static bool input_list(std::ostream * pOutput, std::vector<std::string>& pPorts)
+  static bool input_list(std::ostream * pOutput, std::vector<std::string>& ports)
   {
     RtMidiIn *midiin = 0;
     unsigned int i,nPorts;
@@ -114,14 +114,14 @@ private:
       return false;
     }
 
-    pPorts.clear();
+    ports.clear();
     
     nPorts = midiin->getPortCount();
     
     for ( i=0; i<nPorts; i++ ) {
       try {
         portName = midiin->getPortName(i);
-        pPorts.push_back(portName);
+        ports.push_back(portName);
       }
       catch (RtError &error) {
         *pOutput << error.getMessageString() << std::endl;
@@ -136,7 +136,7 @@ private:
   void get_messages()
   {
     std::vector<unsigned char> message;
-    real_t wait;
+    Real wait;
     while (true)
     {
       wait = mMidiIn->getMessage( &message );

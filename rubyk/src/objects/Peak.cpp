@@ -4,16 +4,16 @@ class Peak : public Node
 {
 public:
   
-  bool set (const Value& p)
+  bool set (const Value &p)
   {
     mDescent = p.val("descent", 0.125, true);
     mS.set(mBuffer);
     return true;
   }
 
-  void bang(const Value val)
+  void bang(const Value &val)
   { 
-    real_t d = -1;
+    Real d = -1;
     size_t row_count, col_count;
     const Matrix * live_buffer = NULL;
     if(val.get(&live_buffer)) {
@@ -30,7 +30,7 @@ public:
     
     if (mBuffer.row_count() != row_count || mBuffer.col_count() != col_count) {
       if(!mBuffer.set_sizes(row_count, col_count)) {
-        *mOutput << mName << ": " << mBuffer.error_msg() << std::endl;
+        *mOutput << name_ << ": " << mBuffer.error_msg() << std::endl;
         return;
       }
       mBuffer.clear();
@@ -55,12 +55,12 @@ public:
     }
   }
   
-  virtual const Value inspect(const Value val) 
+  virtual const Value inspect(const Value &val) 
   { bprint(mSpy, mSpySize,"%.2f", mDescent );  }
   
 private:
   Matrix mBuffer;      /** Current peak values. */
-  real_t mDescent;     /** Peak decreasing speed in value/sample. */
+  Real mDescent;     /** Peak decreasing speed in value/sample. */
 };
 
 extern "C" void init()

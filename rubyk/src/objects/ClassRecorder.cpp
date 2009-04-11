@@ -15,7 +15,7 @@ enum class_recorder_states_t {
 class ClassRecorder : public Node
 {
 public:
-  bool init(const Value& p)
+  bool init(const Value &p)
   {
     // defaults
     mTempo       = 120;
@@ -43,7 +43,7 @@ public:
     return true;
   }
 
-  bool set(const Value& p)
+  bool set(const Value &p)
   {
     // vector sizes is set from incomming stream
     p.get(&mTempo     ,"tempo");
@@ -57,11 +57,11 @@ public:
   }
 
   // inlet 1
-  void bang (const Value val)
+  void bang (const Value &val)
   {
     int cmd;
     
-    if (!mIsOK) return; // no recovery
+    if (!is_ok_) return; // no recovery
     
     if (val.type == MatrixValue) {
       if (!resize(val.matrix.value->row_count(), val.matrix.value->col_count())) return;
@@ -115,10 +115,10 @@ public:
           // swap snap style
           if (mRowOffset == mSnapOffset) {
             mRowOffset = mRowMargin;
-            *mOutput << mName << ": no-snap\n~> ";
+            *mOutput << name_ << ": no-snap\n~> ";
           } else {
             mRowOffset = mSnapOffset;
-            *mOutput << mName << ": snap\n~> ";
+            *mOutput << name_ << ": snap\n~> ";
           }
           
           mMeanValue.set_meta(H("sample_offset"), mRowOffset);
@@ -175,7 +175,7 @@ public:
     }
   }
   
-  virtual const Value inspect(const Value val) 
+  virtual const Value inspect(const Value &val) 
   {  
     bprint(mSpy, mSpySize,"%s", mFolder.c_str());    
   }
@@ -185,7 +185,7 @@ private:
   void receive_data()
   {
     if (!mHasLiveData) {
-      *mOutput << mName << ": no data to record (no stream coming from inlet 1).\n";
+      *mOutput << name_ << ": no data to record (no stream coming from inlet 1).\n";
       return;
     }
     
@@ -194,10 +194,10 @@ private:
     
     if (mRowMargin) {
       // try to find the best bet by calculating minimal distance
-      real_t distance, min_distance = -1.0;
-      real_t d;
-      real_t * vector;
-      real_t * mean = mMeanVector.data;
+      Real distance, min_distance = -1.0;
+      Real d;
+      Real * vector;
+      Real * mean = mMeanVector.data;
       int   delta_used = mBuffer.row_count() - (int)mMeanVector.row_count();
       for(int j = (int)mBuffer.row_count() - (int)mMeanVector.row_count(); j >= 0; j--) {
         distance = 0.0;
@@ -216,11 +216,11 @@ private:
         }
       }
       mSnapOffset = delta_used;
-      *mOutput << mName << ": distance to mean vector " << min_distance << " (delta " << delta_used << "/" << mBuffer.row_count() - mMeanVector.row_count() << ")\nKeep ? ~> ";
+      *mOutput << name_ << ": distance to mean vector " << min_distance << " (delta " << delta_used << "/" << mBuffer.row_count() - mMeanVector.row_count() << ")\nKeep ? ~> ";
       fflush(stdout); // FIXME: should be related to *mOutput
     } else {
       mSnapOffset = mBuffer.row_count() - mMeanVector.row_count();
-      *mOutput << mName << ":~> Keep ? ";
+      *mOutput << name_ << ":~> Keep ? ";
       fflush(stdout); // FIXME: should be related to *mOutput
     }
     
@@ -240,7 +240,7 @@ private:
     
     // 1. write to file
     if (!mView.to_file(mClassFile, "ab")) {
-      *mOutput << mName << ": could not write vector (" << mView.error_msg() << ")\n";
+      *mOutput << name_ << ": could not write vector (" << mView.error_msg() << ")\n";
     }
     
     // 2. update mean value
@@ -255,14 +255,14 @@ private:
       // new class
       load_class(cmd, &ClassRecorder::update_mean_value);
     }
-    *mOutput << mName << ": recording vector " << mVectorCount + 1 << " for " << (char)cmd << "\n~> ";
+    *mOutput << name_ << ": recording vector " << mVectorCount + 1 << " for " << (char)cmd << "\n~> ";
   }
   
   void enter(class_recorder_states_t pState)
   {
     switch(pState) {
     case ReadyToRecord:
-      *mOutput << mName << ": Ready to record\n~> ";
+      *mOutput << name_ << ": Ready to record\n~> ";
       break;
     case Recording:
       mHasLiveData = false;
@@ -277,7 +277,7 @@ private:
   void update_mean_value(const Matrix& pVector)
   {
     mVectorCount++;
-    real_t map = (real_t)(mVectorCount - 1) / (real_t)(mVectorCount);  // avg = (avg * (n-1)/n) + value/n
+    Real map = (real_t)(mVectorCount - 1) / (real_t)(mVectorCount);  // avg = (avg * (n-1)/n) + value/n
     mMeanVector *= map;
     mMeanVector.add(pVector, 0, -1, 1.0 / mVectorCount);
   }
@@ -303,7 +303,7 @@ private:
     // 2. open
     FILE * file = fopen(mClassFile.c_str(), "rb");
       if (!file) {
-        *mOutput << mName << ": new class\n";
+        *mOutput << name_ << ": new class\n";
         return;
       }
       // read a vector
@@ -323,7 +323,7 @@ private:
       TRY(mBuffer,     set_sizes(pRowCount,   pColCount));
       TRY(mMeanVector, set_sizes(vector_size, pColCount));
       
-      *mOutput << mName << ": resized to " << mMeanVector.row_count() << "x" << mMeanVector.col_count() << " (removed margin).\n";
+      *mOutput << name_ << ": resized to " << mMeanVector.row_count() << "x" << mMeanVector.col_count() << " (removed margin).\n";
       mMeanVector.clear();
       
       mMeanValue.set_meta(H("sample_offset"), mRowMargin); // shift display window right / left
@@ -355,7 +355,7 @@ private:
   Matrix mBuffer;             /**< Store a single vector +  margin.                                             */
   CutMatrix mView;            /**< Resulting view of the data used to record to file (points inside mBuffer).   */
   Value mBufferValue;       /**< Used to send view matrix.                                                    */
-  real_t mMargin;             /**< Size (in %) of the margin.                                                   */
+  Real mMargin;             /**< Size (in %) of the margin.                                                   */
   size_t mRowMargin;          /**< Number of rows on each side of the vector (mBuffer.row_count() * margin/2).  */
   size_t mVectorCount;        /**< Number of vectors used to build the current mean value.                      */
   int mTempo;                 /**< Tempo for countdown and recording.                                           */

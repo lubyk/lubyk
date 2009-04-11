@@ -36,23 +36,23 @@ public:
   virtual ~ClassFinder() {}
   
   /** Class signature. */
-  virtual uint type()
+  virtual uint class_type()
   {
     return H("ClassFinder");
   }
   
   /** This trigger implements "/class". It returns the list of objects in mObjectsPath. */
-  virtual const Value trigger (const Value val);
+  virtual const Value trigger (const Value &val);
   
-  virtual const Values not_found (const std::string& pUrl, uint pTypeTag, const osc::ReceivedMessage& pMsg);
+  virtual const Values not_found (const std::string &url, uint pTypeTag, const osc::ReceivedMessage& pMsg);
   
-  const Value lib_path(const Value val)
+  const Value lib_path(const Value &val)
   { 
     mObjectsPath = val;
     return mObjectsPath;
   }
  
-  void set_lib_path(const std::string& pPath)
+  void set_lib_path(const std::string &pPath)
   { mObjectsPath = pPath; }
   
   /** Declare a new class. This template is responsible for generating the "new" method. */
@@ -81,7 +81,7 @@ public:
   }
   
   /** Get a Class object from it's std::string name ("Metro"). */
-  Class * find_class (const std::string& pName)
+  Class * find_class (const std::string &pName)
   {
     return TYPE_CAST(Class, child(pName));
   }

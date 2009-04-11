@@ -3,15 +3,15 @@
 class Sum : public Node
 {
 public:
-  bool set(const Value& p)
+  bool set(const Value &p)
   {
     return true;
   }
   
   // inlet 1
-  void bang(const Value val)
+  void bang(const Value &val)
   {  
-    real_t d;
+    Real d;
     const Matrix * live;
     if (val.type == MatrixValue) {
       if (!val.get(&live) || live->size() == 0) return;
@@ -35,7 +35,7 @@ public:
     }
   }
   
-  virtual const Value inspect(const Value val) 
+  virtual const Value inspect(const Value &val) 
   {
     bprint(mSpy, mSpySize,"%ix%i", mBuffer.col_count(), mBuffer.row_count());
   }

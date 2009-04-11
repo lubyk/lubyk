@@ -8,14 +8,14 @@ struct A
   {   
     int i = 0;
     while(pName[i] && i < MAX_NAME_LENGTH) {
-      mName[i] = pName[i];
+      name_[i] = pName[i];
       i++;
     }
-    mName[i] = '\0';
-    printf("new [%s]\n", mName);
+    name_[i] = '\0';
+    printf("new [%s]\n", name_);
   }
-  ~A() { printf("[%s] is dying...\n", mName); }
-  char mName[MAX_NAME_LENGTH + 1];
+  ~A() { printf("[%s] is dying...\n", name_); }
+  char name_[MAX_NAME_LENGTH + 1];
 };
 
 int main()

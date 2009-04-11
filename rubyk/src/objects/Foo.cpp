@@ -3,7 +3,7 @@
 class Foo : public Node
 {
   // default inlet
-  void bang (const Value val)
+  void bang (const Value &val)
   {
     Matrix m;
     if (!val.set(&m)) return; // light copy (shares memory with "sig")
@@ -12,13 +12,13 @@ class Foo : public Node
   }
 
   // get mMult parameter
-  const Value& multiplier ()
+  const Value &multiplier ()
   {
     return Number(mMult);
   }
 
   // inlet 2: set mMult (also used as param)
-  void multiplier (const Value val)
+  void multiplier (const Value &val)
   {
     val.set(mMult);
   }
@@ -34,7 +34,7 @@ class Foo : public Node
   
   
 private:
-  real_t mMult;
+  Real mMult;
 }
 
 extern "C" void init()

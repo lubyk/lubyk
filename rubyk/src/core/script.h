@@ -9,7 +9,7 @@ class Script : public Node
 public:
   Script () : mScriptModTime(0), mReloadEvery(0), mNextReload(0), mScriptOK(false) {}
   
-  bool set_script(const Value& p)
+  bool set_script(const Value &p)
   {
     std::string str;
     
@@ -29,7 +29,7 @@ public:
   }
   
   // load script from file.
-  void load(const Value& p)
+  void load(const Value &p)
   {
     
     if (!p.get(&mScriptFile) && mScriptFile == "") {
@@ -46,11 +46,11 @@ public:
   
   void reload_script()
   {
-    if ( !mReloadEvery || (mNextReload > mServer->mCurrentTime) ) {
+    if ( !mReloadEvery || (mNextReload > mServer->current_time_) ) {
       return;
     }
     
-    mNextReload = mServer->mCurrentTime + (mReloadEvery * ONE_SECOND);
+    mNextReload = mServer->current_time_ + (mReloadEvery * ONE_SECOND);
      
     mScriptOK = load_script_from_file(false);
   }
@@ -77,19 +77,19 @@ public:
     in.close();
     oss << "\n";
     if (!eval_script(oss.str())) return false;
-    *mOutput << mName << ": script loaded.\n";
+    *mOutput << name_ << ": script loaded.\n";
     return true;
   }
   
-  virtual bool eval_script(const std::string& pScript) = 0;
+  virtual bool eval_script(const std::string &pScript) = 0;
   
-  void script(const Value& p)
+  void script(const Value &p)
   {  
     if (mScript == "" && mReloadEvery) reload_script();
     *mOutput << mScript << std::endl;
   }
   
-  virtual const Value inspect(const Value val)  
+  virtual const Value inspect(const Value &val)  
   { 
     bprint(mSpy, mSpySize,"%s", mScriptFile.c_str() );
   }
@@ -98,7 +98,7 @@ protected:
   std::string mScript;         /**< Script text. */
   std::string mScriptFile;     /**< Script file path. */
   time_t      mScriptModTime;  /**< Script file's modification time on last load. */
-  real_t      mReloadEvery;    /**< How often should we check for a modification in the source file (in seconds). */
+  Real      mReloadEvery;    /**< How often should we check for a modification in the source file (in seconds). */
   time_t      mNextReload;     /**< Compute time for the next check to reload the script. */
   bool        mScriptOK;       /**< Script compilation status. Might change on next reload. */
   

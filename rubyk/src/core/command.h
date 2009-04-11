@@ -1,24 +1,16 @@
 #ifndef _COMMAND_H_
 #define _COMMAND_H_
+#include "node.h"
 
 #include <pthread.h>
-#include "values.h"
-#include "thash.h"
-#include "node.h"
-#include "observer.h"
+#include <string>
+#include <sstream>
 
 #define MAX_TOKEN_SIZE 2048
 
-typedef enum command_actions_ {
-  CmdNoAction,
-	CmdCreateNode,
-	CmdCreateLink,
-	CmdOpenGroup,
-} command_action_t;
+class Worker;
 
-class Planet;
-
-class Command : public Observer
+class Command
 {
 public:
   Command(std::istream& pInput, std::ostream& pOutput) : mInput(&pInput), mOutput(&pOutput)
@@ -42,80 +34,71 @@ public:
   }
   
   /** Stop listening for incomming commands. */
-  void close ();
+  void close();
   
   /** Clear the current command. */
-  void clear ();
+  void clear();
   
   /** Ragel parser. */
-  void parse (const char * pStr) {
+  void parse(const char * pStr) {
     parse(std::string(pStr));
   }
   
   /** Ragel parser. */
-  void parse (const std::string& pStr);
+  void parse(const std::string &pStr);
   
   /** Used for testing. */
-  void set_output (std::ostream& pOutput)
+  void set_output(std::ostream& pOutput)
   { mOutput = &pOutput; }
   
   /** The tree to work on. */
-  void set_planet (Planet * pPlanet)
-  { mPlanet = pPlanet; }
+  void set_worker(Worker *pWorker)
+  { worker_ = pWorker; }
   
   /** Used for testing. */
-  void set_input (std::istream& pInput)
+  void set_input(std::istream& pInput)
   { mInput = &pInput; }
   
   /** Do not print command results back. */
   void set_silent (bool pSilent)
   { mSilent = pSilent;}
   
-  void set_thread_id(pthread_t& pId)
+  void set_thread_id(pthread_t &pId)
   { mThread = pId; }
-  
-  /** Notification trigger. */
-  virtual void changed(Node * node, uint key, const Value& pVal)
-  {
-    if (key == H("print"))
-      *mOutput << pVal << std::endl;
-    else
-      *mOutput << "unknown notification " << pVal << std::endl;
-  }
   
 protected:
   /** Constructor, set default values. */
   void initialize();
   
-  /** Code executed in a separate thread. Runs until 'mQuit' is true. */
+  /** Code executed in a separate thread. Runs until 'quit_' is true. */
   virtual int do_listen();
   
   /** RAGEL PARSER RELATED CALLBACKS **/
-  const Value get_params ();
+  const Value get_params();
   
   /** Set a variable from the current token content. */
-  void set_from_token (std::string& pElem);
+  void set_from_token(const std::string& pElem);
   
   /** Set the class name. */
-  void set_class_from_token  ();
+  void set_class_from_token();
   
   /** Create an instance. */
-  void create_instance ();
+  void create_instance();
   
-  /** Create a link. If the link cannot be created right now because all variables aren't set yet, the link will be kept in Planet's link buffer until all variables are found. */
-  void create_link ();
+  /** Create a link. If the link cannot be created right now because all variables aren't set yet, the link will be kept in Worker's link buffer until all variables are found. */
+  void create_link();
   
   /** Remove a link. */
-  void remove_link ();
+  void remove_link();
   
   /** Execute a method on an instance. */
-  void execute_method ();
+  void execute_method();
   
   /** Execute a class method. */
-  void execute_class_method ();
+  void execute_class_method();
 
   /** Execute a command or inspect instance. */
-  void execute_command ();
+  void execute_command();
   
   /** Read a line from input stream. */
   virtual bool getline(char ** pBuffer, size_t pSize)
@@ -136,24 +119,23 @@ protected:
   unsigned int mTokenIndex;
   unsigned int mCurrentState; /**< Current parser state between blocks. */
   
-	command_action_t mAction;
-  
   /** Command parts. */
-	std::string     mVar, mMethod, mClass, mKey, mValue, mFrom, mTo,;
-	std::string     mParamString;
+  std::string     mVar, method_, mClass, mKey, mValue, mFrom, mTo,;
+  std::string     mParamString;
   std::string     mFromPort, mToPort;
-  Planet *        mPlanet; /**< planet to work on. */
+  Worker *        worker_; /**< planet to work on. */
   
   /** IO management. */
   pthread_t mThread;
   std::istream * mInput;
   std::ostream * mOutput;
   
-  bool mQuit;
+  bool quit_;
   bool mSilent;
 };
 
 #ifdef USE_READLINE
+
 extern "C" {
 #include <stdio.h>
 #include <readline/readline.h>

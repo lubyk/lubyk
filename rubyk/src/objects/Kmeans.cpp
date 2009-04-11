@@ -16,7 +16,7 @@ public:
     clear_icov();
   }
   
-  bool init(const Value& p)
+  bool init(const Value &p)
   {
     mCodeBook.set_sizes(0,8); // arbitrary: 0 classes of 8 values
     mDistances.set_sizes(1,8);
@@ -25,7 +25,7 @@ public:
     return true;
   }
   
-  bool set(const Value& p)
+  bool set(const Value &p)
   {
     size_t vector_size = mVector.col_count();
     if (p.get(&vector_size, "vector")) {
@@ -47,13 +47,13 @@ public:
   }
   
   // inlet 1
-  void bang(const Value val)
+  void bang(const Value &val)
   {
     const Matrix * live;
     if (val.get(&live)) {
       // we automatically flatten (size()) matrix to vector.
       if (live->size() != mCodeBook.col_count()) {
-        *mOutput << mName << ": bad input matrix " << live->row_count() << "x" << live->col_count() << " should be 1x" << mCodeBook.col_count() << ".\n";
+        *mOutput << name_ << ": bad input matrix " << live->row_count() << "x" << live->col_count() << " should be 1x" << mCodeBook.col_count() << ".\n";
         return;
       }
       mView.set_data(live->data); // flatten matrix to vector (FIXME: do not know if this is useful, maybe we should just break if the input is not a vector)
@@ -86,8 +86,8 @@ private:
   
   bool get_label(const Matrix& live)
   {
-    real_t closest_distance = DBL_MAX;
-    real_t total_distance   = 0;
+    Real closest_distance = DBL_MAX;
+    Real total_distance   = 0;
     size_t row_count = mCodeBook.row_count();
     size_t col_count = mCodeBook.col_count();
     mDistances.clear();
@@ -97,7 +97,7 @@ private:
       row_count = mFullTrainingData.row_count();
       col_count = mFullTrainingData.col_count();
       for (size_t i = 0; i < row_count; i++) {
-        real_t d = 0.0;
+        Real d = 0.0;
         for (size_t j = 1; j < col_count; j++)
           d += (mFullTrainingData.data[i * col_count + j] - live.data[j-1]) * (mFullTrainingData.data[i * col_count + j] - live.data[j-1]);
         if (d < closest_distance) {
@@ -110,7 +110,7 @@ private:
     } else {
       // Distances to mean value (Mahalanobis or Euclidean)
       for (size_t i = 0; i < row_count; i++) {
-        real_t d = 0.0;
+        Real d = 0.0;
         if (mDistanceType == EuclideanDistance) {
           for (size_t j = 0; j < col_count; j++)
             d += (mCodeBook.data[i * col_count + j] - live.data[j]) * (mCodeBook.data[i * col_count + j] - live.data[j]);
@@ -126,7 +126,7 @@ private:
         mDistances.data[i] = d;
         total_distance    += d;
         if (d < 0) {
-          *mOutput << mName << ": error, corrupt covariance matrix for label '" << (char)mLabels.data[i] << "' (negative distance).\n";
+          *mOutput << name_ << ": error, corrupt covariance matrix for label '" << (char)mLabels.data[i] << "' (negative distance).\n";
         } else if (d < closest_distance) {
           closest_label = mLabels.data[i];
           closest_distance = d;
@@ -157,7 +157,7 @@ private:
     
     FILE * file = fopen(model_file_path().c_str(), "rb");
       if (!file) {
-        *mOutput << mName << ": could not read model from '" << model_file_path() << "'.\n";
+        *mOutput << name_ << ": could not read model from '" << model_file_path() << "'.\n";
         return false;
       }
       TRY_OR(mLabels,   from_file(file), goto load_model_failed);
@@ -182,7 +182,7 @@ private:
     TRY(mFullTrainingData, set_sizes(0, mCodeBook.col_count() + 1));
     
     if(!FOREACH_TRAIN_CLASS(Kmeans, load_training_samples)) {
-      *mOutput << mName << ": could not load training data (to plot points).\n";
+      *mOutput << name_ << ": could not load training data (to plot points).\n";
     }
     
     return true;
@@ -201,12 +201,12 @@ private:
     
     mVectorCount = 0;
     if(!FOREACH_TRAIN_CLASS(Kmeans, train_from_samples)) {
-      *mOutput << mName << ": could not build model.\n";
+      *mOutput << name_ << ": could not build model.\n";
       return false;
     }
     
-    *mOutput << mName << ": built codebook of size " << mCodeBook.row_count() << "x" << mCodeBook.col_count() << ".\n";
-    *mOutput << mName << ": labels = " << mLabels << ".\n";
+    *mOutput << name_ << ": built codebook of size " << mCodeBook.row_count() << "x" << mCodeBook.col_count() << ".\n";
+    *mOutput << name_ << ": labels = " << mLabels << ".\n";
     TRY(mLabels,   to_file(model_file_path()));
     TRY(mCodeBook, to_file(model_file_path(), "ab"));
     
@@ -216,7 +216,7 @@ private:
     return true;
   }
   
-  bool train_from_samples(const std::string& pFilename, Matrix * vector)
+  bool train_from_samples(const std::string &pFilename, Matrix * vector)
   {
     if (vector == NULL) {
       // class initialize // finished
@@ -245,18 +245,18 @@ private:
           *tmp /= (mTrainingSet.row_count() - 1);
           // 3. find inverse of covariance matrix tmp   C = inv(C)
           if (!tmp->inverse()) {
-            *mOutput << mName << ": warning. Not enough training data (" << mVectorCount << ") to build covariance matrix for class '" << pFilename << "'. Using identity matix.\n";
+            *mOutput << name_ << ": warning. Not enough training data (" << mVectorCount << ") to build covariance matrix for class '" << pFilename << "'. Using identity matix.\n";
             TRY((*tmp), identity(tmp->col_count()));
           }
         } else {
-          *mOutput << mName << ": warning. Not enough training data (" << mVectorCount << ") to build covariance matrix for class '" << pFilename << "'. Using identity matix.\n";
+          *mOutput << name_ << ": warning. Not enough training data (" << mVectorCount << ") to build covariance matrix for class '" << pFilename << "'. Using identity matix.\n";
           TRY((*tmp), identity(tmp->col_count()));
         }
         //
         mICov.push_back(tmp);
         
         if (pFilename != "")
-          *mOutput << mName << ": read '" << pFilename << "' (" << mVectorCount << " vectors)\n";
+          *mOutput << name_ << ": read '" << pFilename << "' (" << mVectorCount << " vectors)\n";
       }
       TRY(mTrainingSet, set_sizes(0,0));
       mVectorCount = 0;
@@ -271,7 +271,7 @@ private:
     return true;
   }
   
-  bool load_training_samples(const std::string& pFilename, Matrix * vector)
+  bool load_training_samples(const std::string &pFilename, Matrix * vector)
   {
     if (vector == NULL) {
       // class initialize // finished
@@ -290,7 +290,7 @@ private:
     mICov.clear();
   }
   
-  virtual const Value inspect(const Value val) 
+  virtual const Value inspect(const Value &val) 
   { 
     const char * cstr;
     if (mDistanceType == EuclideanDistance)
@@ -317,10 +317,10 @@ private:
   kmeans_distance_types_t mDistanceType; /**< Kind of distance calculation. Default is Euclidean. */
   
   int    mLabel;       /**< Current label. */
-  real_t mDistance; /**< Probability for current label. */
+  Real mDistance; /**< Probability for current label. */
   IntMatrix mLabels; /**< List of labels. */
   Matrix mDistances;   /**< Distance to each prototype. */
-  real_t mDistanceThreshold;   /**< Minimal distance to send values out. */
+  Real mDistanceThreshold;   /**< Minimal distance to send values out. */
   size_t mVectorCount; /**< Number of vectors to compute the current mean value. */
   Matrix mMeanValue; /**< Mean value for the current class. */
   Matrix mCodeBook;  /**< List of prototypes (one row per class). */

@@ -1,14 +1,14 @@
 #include "inlet.h"
 #include "node.h"
 
-void Inlet::receive (const Value val)
+void Inlet::receive (const Value &val)
 {
   // std::cout << mId << "receive " << val << std::endl;
   // TODO: test speed and replace by functor if there is no real gain...
   if (mId == 0) 
     ((Node*)mNode)->bang(val);   // use virtual (faster)
   else
-    (*mMethod)(mNode, val);    // use functor
+    (*method_)(mNode, val);    // use functor
 }
 
 

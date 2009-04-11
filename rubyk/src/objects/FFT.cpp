@@ -11,7 +11,7 @@ public:
     if (mProcessor)   delete(mProcessor);
   }
   
-  bool set (const Value& p)
+  bool set (const Value &p)
   {
     size_t row_count = p.val("row", 64);
     size_t col_count = p.val("col", 1);
@@ -19,15 +19,15 @@ public:
   }
   
   // inlet 1
-  void bang(const Value val)
+  void bang(const Value &val)
   { 
     const Matrix * mat;
     if (!val.get(&mat)) {
-      *mOutput << mName << ": wrong signal type '" << val.type_name() << "' (should be ArrayValue)\n";
+      *mOutput << name_ << ": wrong signal type '" << val.type_name() << "' (should be ArrayValue)\n";
       return;
     } else if (mat->row_count() != mFrequencies.row_count() || mat->col_count() != mFrequencies.col_count()) {
       if(!set_sizes(mat->row_count(), mat->col_count())) {
-        *mOutput << mName << ": could not change matrix dimension to " << mat->row_count() << "x" << mat->col_count() << ".\n";
+        *mOutput << name_ << ": could not change matrix dimension to " << mat->row_count() << "x" << mat->col_count() << ".\n";
         return;
       }
     }
@@ -45,7 +45,7 @@ public:
         // mBuffer.data (real) --- FFT ---> mFreqResult.data (complex)
         mProcessor->do_fft(mFreqResult.data, mBuffer.data + s*col_count);
         
-        real_t real, img;
+        Real real, img;
         for(size_t i=0; i < row_count/2; i++) {
           // interlace result back and compute power spectrum (real^2 + img^2)
           real =  mFreqResult.data[i];
@@ -73,7 +73,7 @@ public:
     send(mS);
   }
   
-  virtual const Value inspect(const Value val) 
+  virtual const Value inspect(const Value &val) 
   {  
     bprint(mSpy, mSpySize,"");    
   }
@@ -88,7 +88,7 @@ private:
     size_t size = 2;
     while (size < pRowCount) size *= 2;
     if (size != pRowCount) {
-      *mOutput << mName << ": wrong signal dimension " << pRowCount << ". Should be a power of 2.\n";
+      *mOutput << name_ << ": wrong signal dimension " << pRowCount << ". Should be a power of 2.\n";
       return false;
     }
     

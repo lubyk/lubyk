@@ -43,7 +43,7 @@ public:
     return true;
   }
   
-  bool set (const Value& p)
+  bool set (const Value &p)
   {
     std::string mode;
     p.get(&mLineCount,"line");
@@ -68,7 +68,7 @@ public:
   }
   
   // inlet 1
-  void bang(const Value val)
+  void bang(const Value &val)
   {
     mValue = &sig;
     val.get(&(mLiveBuffer));
@@ -76,7 +76,7 @@ public:
   }
   
   // inlet 2 (draw)
-  void draw(const Value val)
+  void draw(const Value &val)
   {
     const Matrix * mat;
     if (!is_opengl_thread()) return;
@@ -103,7 +103,7 @@ public:
     mServer->unlock();
   }
   
-  virtual const Value inspect(const Value val) 
+  virtual const Value inspect(const Value &val) 
   { 
     std::string str;
     
@@ -132,12 +132,12 @@ private:
     size_t value_count  = mat.size() / (mLineCount * mGroupSize); 
     size_t sample_count = value_count;
 
-    real_t width_ratio;
-    real_t height_ratio = (real_t)mHeight / (2.0 * mLineCount * mMaxAmplitude); // values : [-1,1]
-    real_t y_offset;
+    Real width_ratio;
+    Real height_ratio = (real_t)mHeight / (2.0 * mLineCount * mMaxAmplitude); // values : [-1,1]
+    Real y_offset;
 
     size_t sample_offset = 0; // move all points to the left (shift view to the right)
-    real_t x_offset      = 0;
+    Real x_offset      = 0;
     bool   draw_box      = false;
 
     ///// set x_offset, width_zoom with val.get_meta(...) /////
@@ -145,7 +145,7 @@ private:
     mValue->get_meta(&sample_count,  H("sample_count"));  // total number of samples per window when computing width_ratio
     mValue->get_meta(&draw_box,      H("draw_box"));      // draw a surrounding box
 
-    real_t col_ratio = 0.8; //1.0 / mGroupSize;
+    Real col_ratio = 0.8; //1.0 / mGroupSize;
 
     if (sample_count > 1)
       width_ratio = (real_t)mWidth  / (sample_count - 1);
@@ -200,10 +200,10 @@ private:
   {    
     size_t line_count   = mLineCount;
     size_t value_count  = mat.size() / (2 * line_count); 
-    real_t width_ratio  = (real_t)mWidth  / (2.0 * mMaxAmplitude);
-    real_t height_ratio = (real_t)mHeight / (2.0 * mMaxAmplitude); // values : [-1,1]
-    real_t width_offset = (real_t)mWidth  / 2.0;
-    real_t height_offset= (real_t)mHeight / 2.0;
+    Real width_ratio  = (real_t)mWidth  / (2.0 * mMaxAmplitude);
+    Real height_ratio = (real_t)mHeight / (2.0 * mMaxAmplitude); // values : [-1,1]
+    Real width_offset = (real_t)mWidth  / 2.0;
+    Real height_offset= (real_t)mHeight / 2.0;
 
     glPointSize(mPointSize);
     glLineWidth(mLineWidth);
@@ -247,16 +247,16 @@ private:
   {      
     size_t group_count  = mat.row_count();
     size_t value_count;
-    real_t width_ratio  = (real_t)mWidth  / (2.0 * mMaxAmplitude);
-    real_t height_ratio = (real_t)mHeight / (2.0 * mMaxAmplitude); // values : [-1,1]
-    real_t width_offset = (real_t)mWidth  / 2.0;
-    real_t height_offset= (real_t)mHeight / 2.0;
+    Real width_ratio  = (real_t)mWidth  / (2.0 * mMaxAmplitude);
+    Real height_ratio = (real_t)mHeight / (2.0 * mMaxAmplitude); // values : [-1,1]
+    Real width_offset = (real_t)mWidth  / 2.0;
+    Real height_offset= (real_t)mHeight / 2.0;
 
     glPointSize(mPointSize);
     glLineWidth(mLineWidth);
 
     for(size_t g=0; g < group_count; g++) {
-      const real_t * row = mat[g];
+      const Real * row = mat[g];
       size_t start_index;
 
       if (mMode == DotsPlot) {
@@ -289,7 +289,7 @@ private:
     }
   }
   
-  void set_mode_from_string(plot_type_t * pMode, const std::string& pStr)
+  void set_mode_from_string(plot_type_t * pMode, const std::string &pStr)
   {
     if (pStr == "xy")
       *pMode = XYPlot;
@@ -301,7 +301,7 @@ private:
       *pMode = TimePlot;
   }
   
-  void set_color_mode_from_string(plot_color_t * pMode, const std::string& pStr)
+  void set_color_mode_from_string(plot_color_t * pMode, const std::string &pStr)
   {
     if (pStr == "fixed")
       *pMode = FixedColorMode;
@@ -312,7 +312,7 @@ private:
   }
   
   /*** Set RGB colors from an integer. */
-  inline void set_color_from_int(int pId, real_t pAlpha)
+  inline void set_color_from_int(int pId, Real pAlpha)
   {
     uint col_id = hashId((uint)pId); // hashId defined in Hash template
     glColor4f(0.2 + 0.8 * (col_id % 100) / 100.0, // red color
@@ -326,16 +326,16 @@ private:
   const Value * mValue;     /**< Live signal received on each inlet. */
   size_t         mLineCount;
   size_t         mGroupSize;
-  real_t         mPointSize;
-  real_t         mLineWidth;
-  real_t         mMaxAmplitude;
+  Real         mPointSize;
+  Real         mLineWidth;
+  Real         mMaxAmplitude;
   plot_color_t   mColorMode;
-  real_t         mAlpha;
-  real_t         mFixedColorRed;
-  real_t         mFixedColorGreen;
-  real_t         mFixedColorBlue;
-  real_t         mHeight;
-  real_t         mWidth;
+  Real         mAlpha;
+  Real         mFixedColorRed;
+  Real         mFixedColorGreen;
+  Real         mFixedColorBlue;
+  Real         mHeight;
+  Real         mWidth;
   bool           mDrawBase;
 };
 

@@ -4,14 +4,14 @@
 
 
 /** This trigger implements "/class". It returns the list of objects in mObjectsPath. */
-const Value ClassFinder::trigger (const Value val)
+const Value ClassFinder::trigger (const Value &val)
 {
   return String(""); // TODO: 'lib' directory listing !
 }
 
-const Value ClassFinder::not_found (const std::string& pUrl, const Value val)
+const Value ClassFinder::not_found (const std::string &url, const Value &val)
 {
-  std::string className = pUrl.substr(url().length() + 1);
+  std::string className = url.substr(url().length() + 1);
   className = className.substr(0, className.find("/"));
   oscit::Object * obj;
   
@@ -21,11 +21,11 @@ const Value ClassFinder::not_found (const std::string& pUrl, const Value val)
   
   if (load(path.c_str(), "init")) {
     // FIXME: we should handle '#info' and '#inspect' here
-    if (mRoot->get(&obj, pUrl)) {
+    if (root_->get(&obj, url)) {
       // Found object, we can trigger it.
       return obj->trigger(val);
     } else
-      return Error("'").append(path).append("' should declare '").append(pUrl).append("'.");
+      return Error("'").append(path).append("' should declare '").append(url).append("'.");
   } else
     return Error("Could not load '").append(path).append("'.");
 }
@@ -34,7 +34,7 @@ const Value ClassFinder::not_found (const std::string& pUrl, const Value val)
 bool ClassFinder::load(const char * file, const char * init_name)
 {
   void *image;
-  void (*function)(Planet&);
+  void (*function)(Worker&);
   const char *error = 0;
   
   // load shared extension image into memory
@@ -49,7 +49,7 @@ bool ClassFinder::load(const char * file, const char * init_name)
   }
   
   // get 'init' function into the image
-  function = (void(*)(Planet&))dlsym(image, init_name);
+  function = (void(*)(Worker&))dlsym(image, init_name);
   if (function == 0) {
     dlclose(image);
     printf("Symbol '%s' not found in '%s'.",init_name,file);
@@ -61,7 +61,7 @@ bool ClassFinder::load(const char * file, const char * init_name)
   }
   
   // call 'init', passing the registration object
-  (*function)(*mPlanet);
+  (*function)(*worker_);
 
   return true;
 }

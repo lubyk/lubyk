@@ -42,7 +42,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define Malloc(type,n) (type *)malloc((n)*sizeof(type))
 
 // declarations not in svm.h
-real_t sigmoid_predict(real_t decision_value, real_t A, real_t B);
+Real sigmoid_predict(Real decision_value, Real A, Real B);
 #ifndef min
 template <class T> inline T min(T x,T y) { return (x<y)?x:y; }
 #endif
@@ -73,7 +73,7 @@ public:
     if (mTrainFile)  fclose(mTrainFile);
   }
 
-  bool init(const Value& p)
+  bool init(const Value &p)
   {
     mProblem.y = NULL;
     mProblem.x = NULL;
@@ -85,7 +85,7 @@ public:
     return init_machine(p);
   }
   
-  bool set (const Value& p)
+  bool set (const Value &p)
   {
     size_t vector_size = mVector.col_count();
     if(!set_machine(p)) return false;
@@ -101,7 +101,7 @@ public:
     else if (vector_size != mVector.col_count()) {
       void * tmp = realloc(mNode, (vector_size + 1) * sizeof(struct svm_node));
       if (!tmp) {
-        *mOutput << mName << ": could not reallocate " << vector_size + 1 << " nodes.\n";
+        *mOutput << name_ << ": could not reallocate " << vector_size + 1 << " nodes.\n";
         return false;
       }
       mNode = (struct svm_node *) tmp;
@@ -111,15 +111,15 @@ public:
   }
 
   // inlet 1
-  void bang (const Value val)
+  void bang (const Value &val)
   {
-    if (!mIsOK) return; // do not use 'predict' if no model loaded
+    if (!is_ok_) return; // do not use 'predict' if no model loaded
     if (val.type != MatrixValue) return; // ignore
     
     if (val.matrix.value->col_count() >= mVector.col_count()) {
       mLiveBuffer = val.matrix.value;
     } else {
-      *mOutput << mName << ": wrong signal size " << val.matrix.value->col_count() << " should be " << mVector.col_count() << "\n.";
+      *mOutput << name_ << ": wrong signal size " << val.matrix.value->col_count() << " should be " << mVector.col_count() << "\n.";
       return;
     }
     
@@ -135,12 +135,12 @@ public:
   void build()
   {
     if (!do_build()) {
-      *mOutput << mName << ": could not build sparse data file.\n";
+      *mOutput << name_ << ": could not build sparse data file.\n";
     }
   }
   
   
-  virtual const Value inspect(const Value val) 
+  virtual const Value inspect(const Value &val) 
   {  
     bprint(mSpy, mSpySize,"C:%.1f g:%.6f", mSvmCparam, mSvmGammaParam);    
   }
@@ -149,13 +149,13 @@ private:
   
   
   // Method 2 from the multiclass_prob paper by Wu, Lin, and Weng
-  void multiclass_probability(int k, real_t *r, real_t *p)
+  void multiclass_probability(int k, Real *r, Real *p)
   {
   	int t,j;
   	int iter = 0, max_iter=max(100,k);
-  	real_t **Q=Malloc(real_t *,k);
-  	real_t *Qp=Malloc(real_t,k);
-  	real_t pQp, eps=0.005/k;
+  	Real **Q=Malloc(Real *,k);
+  	Real *Qp=Malloc(real_t,k);
+  	Real pQp, eps=0.005/k;
 
   	for (t=0;t<k;t++)
   	{
@@ -184,10 +184,10 @@ private:
   				Qp[t]+=Q[t][j]*p[j];
   			pQp+=p[t]*Qp[t];
   		}
-  		real_t max_error=0;
+  		Real max_error=0;
   		for (t=0;t<k;t++)
   		{
-  			real_t error=fabs(Qp[t]-pQp);
+  			Real error=fabs(Qp[t]-pQp);
   			if (error>max_error)
   				max_error=error;
   		}
@@ -195,7 +195,7 @@ private:
 
   		for (t=0;t<k;t++)
   		{
-  			real_t diff=(-Qp[t]+pQp)/Q[t][t];
+  			Real diff=(-Qp[t]+pQp)/Q[t][t];
   			p[t]+=diff;
   			pQp=(pQp+diff*(diff*Q[t][t]+2*Qp[t]))/(1+diff)/(1+diff);
   			for (j=0;j<k;j++)
@@ -220,13 +220,13 @@ private:
     if (mTrainFile) fclose(mTrainFile);
     mTrainFile = fopen(train_file_path().c_str(), "wb");
       if (!mTrainFile) {
-        *mOutput << mName << ": could not open '" << train_file_path() << "' to store training data.\n";
+        *mOutput << name_ << ": could not open '" << train_file_path() << "' to store training data.\n";
         return false;
       }
     
       mVectorCount = 0;
       if(!FOREACH_TRAIN_CLASS(Svm, write_as_sparse)) {
-        *mOutput << mName << ": could not write as sparse data.\n";
+        *mOutput << name_ << ": could not write as sparse data.\n";
         return false;
       }
     
@@ -262,7 +262,7 @@ private:
     trainFilePath.append("/svm.train");
     
   	if (!read_problem(trainFilePath.c_str())) {
-      *mOutput << mName << ": could not use training data '" << trainFilePath << "'.\n";
+      *mOutput << name_ << ": could not use training data '" << trainFilePath << "'.\n";
       return false;
   	}
   	
@@ -271,7 +271,7 @@ private:
   	errorMsg = svm_check_parameter(&mProblem,&mSvmParam);
 
   	if(errorMsg) {
-      *mOutput << mName << ": " << errorMsg << "\n.";
+      *mOutput << name_ << ": " << errorMsg << "\n.";
       return false;
   	}
     // 2. train with these params
@@ -286,11 +286,11 @@ private:
   {
     int label;
     size_t vector_size = mVector.col_count();
-    real_t labelProbability = 1.0;
+    Real labelProbability = 1.0;
     
     // map current vector into svm_node
     size_t j = 0; // svm_node index
-    real_t * vector = mLiveBuffer->data + mLiveBuffer->size() - vector_size;
+    Real * vector = mLiveBuffer->data + mLiveBuffer->size() - vector_size;
     
     for(size_t i=0;i < vector_size; i++) {
       if (vector[i] >= mThreshold || vector[i] <= -mThreshold) {
@@ -321,7 +321,7 @@ private:
   }
     
   /** Write as a sparse vector. */
-  bool write_as_sparse(const std::string& pFilename, Matrix * pVector)
+  bool write_as_sparse(const std::string &pFilename, Matrix * pVector)
   {
     if (!pVector) {
       // class initialize // finish
@@ -329,7 +329,7 @@ private:
       return true;
     }
     if (!mTrainFile) {
-      *mOutput << mName << ": train file not opened !.\n";
+      *mOutput << name_ << ": train file not opened !.\n";
       return false;
     }
     fprintf(mTrainFile, "%+i", mClassLabel);
@@ -348,7 +348,7 @@ private:
     if (mModel) svm_destroy_model(mModel);
     mModel = svm_load_model(model_file_path().c_str());
     if (!mModel) {
-      *mOutput << mName << ": could not load model file '" << model_file_path() << "'.\n";
+      *mOutput << name_ << ": could not load model file '" << model_file_path() << "'.\n";
       return false;
     }
     
@@ -359,7 +359,7 @@ private:
     if (!alloc_ints(&mLabels, mLabelCount, "labels")) return false;
     
     svm_get_labels(mModel, mLabels);
-    *mOutput << mName << ": " << mLabelCount << " labels:\n";
+    *mOutput << name_ << ": " << mLabelCount << " labels:\n";
     for(size_t i=0; i < mLabelCount; i++) {
       *mOutput << " " << mLabels[i];
     }
@@ -389,7 +389,7 @@ private:
   	FILE *fp = fopen(filename,"r");
 
   	if(!fp) {
-      *mOutput << mName << ": could not open training data '" << filename << "'\n.";
+      *mOutput << name_ << ": could not open training data '" << filename << "'\n.";
       return false;
   	}
 
@@ -428,7 +428,7 @@ private:
   	j=0;
   	for(i=0;i<mProblem.l;i++)
   	{
-  		real_t label;
+  		Real label;
   		mProblem.x[i] = &mXSpace[j];
   		fscanf(fp,"%lf",&label);
   		mProblem.y[i] = label;
@@ -443,7 +443,7 @@ private:
   			ungetc(c,fp);
   			if (fscanf(fp,"%d:%lf",&(mXSpace[j].index),&(mXSpace[j].value)) < 2)
   			{
-          *mOutput << mName << ": wrong input format at line " << i+1 << "\n";
+          *mOutput << name_ << ": wrong input format at line " << i+1 << "\n";
           goto readpb_fail;
   			}
   			++j;
@@ -462,12 +462,12 @@ readpb_out2:
   		{
   			if (mProblem.x[i][0].index != 0)
   			{
-  				*mOutput << mName << ": (error): wrong input format: first column must be 0:sample_serial_number\n";
+  				*mOutput << name_ << ": (error): wrong input format: first column must be 0:sample_serial_number\n";
           goto readpb_fail;
   			}
   			if ((int)mProblem.x[i][0].value <= 0 || (int)mProblem.x[i][0].value > max_index)
   			{
-  				*mOutput << mName << ": (error): wrong input format: sample_serial_number out of range\n";
+  				*mOutput << name_ << ": (error): wrong input format: sample_serial_number out of range\n";
           goto readpb_fail;
   			}
   		}
@@ -483,17 +483,17 @@ readpb_fail:
 
   /** Finds the best label in a multiclass problem. Returns some kind of confidence value with
     * the worst pairwize probability for this label against the other classes. */
-  void get_label(int * pLabel, real_t * pProbability)
+  void get_label(int * pLabel, Real * pProbability)
   {
   	if (svm_get_svm_type(mModel) == C_SVC || svm_get_svm_type(mModel) == NU_SVC)
   	{
-      real_t uniform_probability = 1.0 / mLabelCount;
+      Real uniform_probability = 1.0 / mLabelCount;
   		svm_predict_values(mModel, mNode, mDistances);
   		
   		int k=0;
 
-  		real_t min_prob=1e-7;
-      real_t prob;
+  		Real min_prob=1e-7;
+      Real prob;
   		
       k=0;
   		memset(mVotes, 0, mLabelCount * sizeof(size_t));
@@ -524,8 +524,8 @@ readpb_fail:
       
       // our label id is 'vote_id'
       // Let's find it's worst pairwise probability:
-      real_t bad_prob = 1.0; // we start by beeing optimistic
-      real_t * probs = mPairwiseProb + vote_id * mLabelCount;
+      Real bad_prob = 1.0; // we start by beeing optimistic
+      Real * probs = mPairwiseProb + vote_id * mLabelCount;
       for(size_t i = 0; i < mLabelCount; i++) {
         if (i == vote_id) continue;
         if (probs[i] < bad_prob) bad_prob = probs[i];
@@ -555,9 +555,9 @@ readpb_fail:
   }
   
   /// libsvm ///
-  real_t   mSvmCparam;
-  real_t   mSvmGammaParam;
-  real_t   mProbabilityThreshold; /**< Minimal probability value for an output to be sent. */
+  Real   mSvmCparam;
+  Real   mSvmGammaParam;
+  Real   mProbabilityThreshold; /**< Minimal probability value for an output to be sent. */
   size_t   mLabelCount;       /**< Number of different classes to recognize. */
   
   struct svm_model * mModel;  /**< Contains the model (training result). */
@@ -566,8 +566,8 @@ readpb_fail:
   struct svm_parameter mSvmParam;	/**< Contains settings for the learning phase of svm. */
   struct svm_problem mProblem; /**< Packaging of the problem definition, training data and parameters. */
   
-  real_t * mPairwiseProb;     /**< Pairwise probabilities between classes. */
-  real_t * mDistances;        /**< Pairwise distances to the hyper-plane. */
+  Real * mPairwiseProb;     /**< Pairwise probabilities between classes. */
+  Real * mDistances;        /**< Pairwise distances to the hyper-plane. */
   size_t * mVotes;            /**< Used to compute the label out of the distances. */
   int    * mLabels;           /**< Translation from 'ids' to 'labels'. */
   
@@ -577,9 +577,9 @@ readpb_fail:
   int    mClassLabel;         /**< Current label. Used during recording and recognition. */
   size_t mVectorCount;        /**< Number of vectors used to build the current mean value. */
   
-  real_t mLabelProbability;   /**< Current probability for the given label. */
+  Real mLabelProbability;   /**< Current probability for the given label. */
   
-  real_t mThreshold;          /**< Values below this limit are recorded as zero in the training set. Use '0' for none. */
+  Real mThreshold;          /**< Values below this limit are recorded as zero in the training set. Use '0' for none. */
 };
 
 

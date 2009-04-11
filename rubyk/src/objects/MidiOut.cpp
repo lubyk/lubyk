@@ -12,7 +12,7 @@ public:
     try {
       mMidiOut = new RtMidiOut();
     } catch (RtError &error) {
-      *mOutput << mName << ": " << error.getMessageString() << std::endl;
+      *mOutput << name_ << ": " << error.getMessageString() << std::endl;
       return false;
     }
     
@@ -24,7 +24,7 @@ public:
         mMidiOut->openVirtualPort();
       }
       catch (RtError &error) {
-        *mOutput << mName << ": " << error.getMessageString() << std::endl;
+        *mOutput << name_ << ": " << error.getMessageString() << std::endl;
         // FIXME: close();
         return false;
       }
@@ -35,7 +35,7 @@ public:
        mMidiOut->openPort( mPortId );
      }
      catch (RtError &error) {
-       *mOutput << mName << ": " << error.getMessageString() << std::endl;
+       *mOutput << name_ << ": " << error.getMessageString() << std::endl;
        // FIXME: close ?
        return false;
      }
@@ -44,17 +44,17 @@ public:
     return true;
   }
   
-  bool set (const Value& p)
+  bool set (const Value &p)
   {
-    *mOutput << mName << ": cannot change a Midi object during runtime, yet.\n";
+    *mOutput << name_ << ": cannot change a Midi object during runtime, yet.\n";
     return true;
   }
   
   // inlet 1
-  void bang(const Value val)
+  void bang(const Value &val)
   {
     MidiMessage * msg;
-    if (mDebug) *mOutput << mName << ": " << sig << std::endl;
+    if (mDebug) *mOutput << name_ << ": " << sig << std::endl;
     
     if (!mMidiOut || val.type != MidiValue) return;
     
@@ -93,7 +93,7 @@ public:
   { remove_my_events(); }
   
   // print a list of possible outputs
-  static void list(std::ostream * pOutput, const Value& p)
+  static void list(std::ostream * pOutput, const Value &p)
   {
     std::vector<std::string> ports;
     if (!output_list(pOutput, ports)) return;
@@ -106,7 +106,7 @@ public:
     }
   }
   
-  virtual const Value inspect(const Value val) 
+  virtual const Value inspect(const Value &val) 
   { 
     std::vector<std::string> portList;
     if (mPortId < 0)
@@ -118,7 +118,7 @@ public:
   }
 private:
   
-  static bool output_list(std::ostream * pOutput, std::vector<std::string>& pPorts)
+  static bool output_list(std::ostream * pOutput, std::vector<std::string>& ports)
   {
     RtMidiOut *midiout = 0;
     unsigned int i,nPorts;
@@ -132,14 +132,14 @@ private:
       return false;
     }
 
-    pPorts.clear();
+    ports.clear();
     
     nPorts = midiout->getPortCount();
     
     for ( i=0; i<nPorts; i++ ) {
       try {
         portName = midiout->getPortName(i);
-        pPorts.push_back(portName);
+        ports.push_back(portName);
       }
       catch (RtError &error) {
         *pOutput << error.getMessageString() << std::endl;

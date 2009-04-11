@@ -10,10 +10,10 @@ public:
   
   virtual ~DummyObject() {}
   
-  virtual const Value inspect(const Value val)
+  virtual const Value inspect(const Value &val)
   {
     std::ostringstream os(std::ostringstream::out);
-    os << mName << ": " << mCounter;
+    os << name_ << ": " << mCounter;
     return String(os.str());
   }
 private:

@@ -1,6 +1,6 @@
 ////// This file IS NOT the original avcodec.h from FFmpeg. It is a /////////
 ////// simplified and modified version containing just what is      /////////
-////// needed to make elbg work within Planet.              Gaspard  /////////
+////// needed to make elbg work within Worker.              Gaspard  /////////
 
 /*
  * Copyright (C) 2007 Vitor Sessak <vitor1001@gmail.com>

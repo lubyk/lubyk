@@ -186,7 +186,7 @@ def calculate_jobs():
             jobs.append(line)
     return jobs
 
-class WorkerStopToken:  # used to notify the worker to stop
+class WorkerStoto_objectken:  # used to notify the worker to stop
         pass
 
 class Worker(Thread):
@@ -198,7 +198,7 @@ class Worker(Thread):
     def run(self):
         while 1:
             (cexp,gexp) = self.job_queue.get()
-            if cexp is WorkerStopToken:
+            if cexp is WorkerStoto_objectken:
                 self.job_queue.put((cexp,gexp))
                 # print 'worker %s stop.' % self.name
                 break
@@ -346,6 +346,6 @@ def main():
         redraw(db)
         redraw(db,1)
 
-    job_queue.put((WorkerStopToken,None))
+    job_queue.put((WorkerStoto_objectken,None))
     print "%s %s %s" % (best_c, best_g, best_rate)
 main()

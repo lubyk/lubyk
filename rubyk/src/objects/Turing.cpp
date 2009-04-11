@@ -10,10 +10,10 @@ struct TuringSend
 {
   TuringSend() {}
   TuringSend(int pValue) : mValue(pValue), mLuaMethod(0) {}
-  TuringSend(std::string pMethod) : mMethod(pMethod), mLuaMethod(0) {}
+  TuringSend(std::string pMethod) : method_(pMethod), mLuaMethod(0) {}
   
   int mValue;          /**< Send a direct integer value. */
-  std::string mMethod; /**< Lua method definition. */
+  std::string method_; /**< Lua method definition. */
   int mLuaMethod;      /**< Compiled lua method. */
 };
 
@@ -191,15 +191,15 @@ public:
     if (mPrintBuffer) free(mPrintBuffer);
   }
   
-  bool set (const Value& p)
+  bool set (const Value &p)
   {
     return set_script(p);
   }
 
   // inlet 1
-  void bang(const Value val)
+  void bang(const Value &val)
   { 
-    if (!mIsOK) return;
+    if (!is_ok_) return;
     
     int i;
     int state;
@@ -220,7 +220,7 @@ public:
         mToken = mTokenTable[ mRealToken % TUR_MAX_TOKEN_COUNT ]; // translate token in the current machine values.
     }
     
-    if (mDebug) *mOutput << mName << ": {" << mStateNames[mState] << "} -" << mRealToken << "-> ";
+    if (mDebug) *mOutput << name_ << ": {" << mStateNames[mState] << "} -" << mRealToken << "-> ";
     
     if ( !(mSend = mSendTable[mState][mToken]) ) {
       if ( (mSend = mSendTable[0][mToken]) )
@@ -249,41 +249,41 @@ public:
       /* Run the function. */
       status = lua_pcall(mLua, 0, 0, 0); // 0 arg, 1 result, no error function
       if (status) {
-        *mOutput << mName << ": trigger [" << mSend->mMethod << "] failed !\n";
+        *mOutput << name_ << ": trigger [" << mSend->method_ << "] failed !\n";
         *mOutput << lua_tostring(mLua, -1) << std::endl;
       }
     } else
       send(mSend->mValue);
   }
   
-  void in2(const Value val)
+  void in2(const Value &val)
   { set_lua_global("in2", sig); }
   
-  void in3(const Value val)
+  void in3(const Value &val)
   { set_lua_global("in3", sig); }
   
-  void in4(const Value val)
+  void in4(const Value &val)
   { set_lua_global("in4", sig); }
   
-  void in5(const Value val)
+  void in5(const Value &val)
   { set_lua_global("in5", sig);}
   
-  void in6(const Value val)
+  void in6(const Value &val)
   { set_lua_global("in6", sig);}
   
-  void in7(const Value val)
+  void in7(const Value &val)
   { set_lua_global("in7", sig);}
   
-  void in8(const Value val)
+  void in8(const Value &val)
   { set_lua_global("in8", sig);}
   
-  void in9(const Value val)
+  void in9(const Value &val)
   { set_lua_global("in9", sig);}
   
-  void in10(const Value val)
+  void in10(const Value &val)
   { set_lua_global("in10", sig);}
 
-  bool eval_script(const std::string& pScript) 
+  bool eval_script(const std::string &pScript) 
   {
     mToken = 0;
     mScript = pScript;
@@ -556,8 +556,8 @@ _match:
 	{
       // write the entry
       #ifdef DEBUG_PARSER
-      if (send->mMethod != "")
-        printf("define %i - %i:%s -> %i\n", source_state, token_id, send->mMethod.c_str(), target_state);
+      if (send->method_ != "")
+        printf("define %i - %i:%s -> %i\n", source_state, token_id, send->method_.c_str(), target_state);
       else
         printf("define %i - %i:%i -> %i\n", source_state, token_id, send->mValue, target_state);
       #endif
@@ -643,21 +643,21 @@ _again:
     if (begin_lua_script) {
       mLuaScript.append( begin_lua_script, p - begin_lua_script );
     }
-    // 1. for each mSendList with mMethod
+    // 1. for each mSendList with method_
     int met_count = 0;
     for(std::vector< TuringSend* >::iterator it = mSendList.begin(); it != mSendList.end(); it++) {
-      if ((*it)->mMethod != "") {
+      if ((*it)->method_ != "") {
         // 1.1 create function
         met_count++;
         mLuaScript.append(bprint(mPrintBuffer, mPrintBufferSize, "\nfunction trigger_%i()\n",met_count));
-        mLuaScript.append((*it)->mMethod);
+        mLuaScript.append((*it)->method_);
         mLuaScript.append("\nend\n");
       }
     }
     
     // 2. compile lua script
     if (!eval_lua_script(mLuaScript)) {
-      *mOutput << mName << ": script [\n" << mLuaScript << "]\n";
+      *mOutput << name_ << ": script [\n" << mLuaScript << "]\n";
       return false;
     }
     
@@ -665,7 +665,7 @@ _again:
     const char * met_function;
     met_count = 0;
     for(std::vector< TuringSend* >::iterator it = mSendList.begin(); it != mSendList.end(); it++) {
-      if ((*it)->mMethod != "") {
+      if ((*it)->method_ != "") {
         met_count++;
         met_function = bprint(mPrintBuffer, mPrintBufferSize, "trigger_%i",met_count);
         
@@ -674,7 +674,7 @@ _again:
         /* take func from top of stack and store it in the Registry */
         (*it)->mLuaMethod = luaL_ref(mLua, LUA_REGISTRYINDEX);
         if ((*it)->mLuaMethod == LUA_REFNIL)
-          *mOutput << mName << ": could not get lua reference for function '" << met_function << "'.\n";
+          *mOutput << name_ << ": could not get lua reference for function '" << met_function << "'.\n";
         
       }
     }
@@ -710,30 +710,30 @@ _again:
     for(std::vector< TuringSend* >::iterator it = mSendList.begin(); it != mSendList.end(); it++) {
       if ((*it)->mLuaMethod) {
         met_count++;
-        *mOutput << bprint(mPrintBuffer, mPrintBufferSize, "% 4i: %s\n", met_count, (*it)->mMethod.c_str());
+        *mOutput << bprint(mPrintBuffer, mPrintBufferSize, "% 4i: %s\n", met_count, (*it)->method_.c_str());
       }
     }
   }
   
   /** Output tables in digraph format to produce graphs with graphviz. */
-  void dot(const Value& p)
+  void dot(const Value &p)
   {
     std::string path;
     if (p.get(&path, "file", true)) {
       std::ofstream out(path.c_str(), std::ios::out | std::ios::binary);
       if (!out) {
-        *mOutput << mName << ": could not write graph to file '" << path << "'.\n";
+        *mOutput << name_ << ": could not write graph to file '" << path << "'.\n";
         return;
       }
       make_dot_graph(out);
       out.close();
-      *mOutput << mName << ": graph content written to '" << path << "'.\n";
+      *mOutput << name_ << ": graph content written to '" << path << "'.\n";
     } else {
       make_dot_graph(*mOutput);
     }
   }
 
-  virtual const Value inspect(const Value val) 
+  virtual const Value inspect(const Value &val) 
   { 
     const std::string state = (mState > 0 && (uint)mState < mStateNames.size()) ? mStateNames[(uint)mState] : "?";
     bprint(mSpy, mSpySize,"[%s] %ix%i", state.c_str(), mStateCount - 1, mTokenCount - 1);  
@@ -751,13 +751,13 @@ _again:
   }
   
   /** Set state from command line. */
-  void jump(const Value& p)
+  void jump(const Value &p)
   {
     std::string str;
     if (p.get(&str)) {
       set_state(str);
     } else {
-      *mOutput << mName << ": could not get state name from parameters.\n";
+      *mOutput << name_ << ": could not get state name from parameters.\n";
     }
   }
 private:
@@ -774,11 +774,11 @@ private:
     int state_id;
     if (mStateByName.get(&state_id, pStateName)) {
       set_state(state_id);
-      if (mDebug) *mOutput << mName << ": jump {" << pStateName << "}\n";
+      if (mDebug) *mOutput << name_ << ": jump {" << pStateName << "}\n";
       return true;
     } else {
       return false;      
-      *mOutput << mName << ": unknown state name '" << pStateName << "'.\n";
+      *mOutput << name_ << ": unknown state name '" << pStateName << "'.\n";
     }
   }
   
@@ -819,7 +819,7 @@ private:
     mTokenCount = 1; // first token (token '0') = default action/send
   }
   
-  int get_state_id(const std::string& pName)
+  int get_state_id(const std::string &pName)
   {
     int state_id;
     // do we know this name ?
@@ -884,12 +884,12 @@ private:
   }
   
   
-  void print_table_value(std::ostream& pOutput, TuringSend * pVal, TuringSend * pTokenDefault, int pIndex)
+  void print_table_value(std::ostream& pOutput, TuringSend * pVal, TuringSend * to_objectkenDefault, int pIndex)
   {
     if (pVal == NULL) {
       if (pIndex == 0)
         pOutput << "      ";
-      else if (pTokenDefault != NULL)
+      else if (to_objectkenDefault != NULL)
         pOutput << "     |";  // default
       else
         pOutput << "     -";  // default
@@ -905,7 +905,7 @@ private:
       }
       
       if (it == mSendList.end()) {
-        std::cout << "turing send not in mSendList ! (" << pVal->mMethod << ", " << pVal->mValue << ").\n";
+        std::cout << "turing send not in mSendList ! (" << pVal->method_ << ", " << pVal->mValue << ").\n";
         return;
       }
       pOutput << bprint(mPrintBuffer, mPrintBufferSize, " (% 3i)", met_count);
@@ -913,12 +913,12 @@ private:
       pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 5i", pVal->mValue);
   }
   
-  void print_table_value(std::ostream& pOutput, int pVal, int pTokenDefault, int pIndex)
+  void print_table_value(std::ostream& pOutput, int pVal, int to_objectkenDefault, int pIndex)
   {
     if (pVal == -1) {
       if (pIndex == 0)
         pOutput << "      ";
-      else if (pTokenDefault != -1)
+      else if (to_objectkenDefault != -1)
         pOutput << "     |";  // default
       else
         pOutput << "     -";  // default
@@ -932,7 +932,7 @@ private:
   {
     std::string source,target,token,send;
     TuringSend * tsend;
-    out << "digraph " << mName << "{\n";
+    out << "digraph " << name_ << "{\n";
     out << "  rankdir=LR;\n";
     out << "  node [ style = bold, fontsize = 12];\n";
   	// first node
@@ -975,7 +975,7 @@ private:
           else {
             send = ":";
             if (tsend->mLuaMethod)
-              send.append(tsend->mMethod);
+              send.append(tsend->method_);
             else
               send.append(bprint(mPrintBuffer, mPrintBufferSize, "%i", mSendTable[i][0]));
           }

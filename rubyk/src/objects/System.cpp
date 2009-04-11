@@ -11,7 +11,7 @@ public:
   }
   
   
-  bool eval_script(const std::string& pScript) 
+  bool eval_script(const std::string &pScript) 
   {
     if (pScript.find("function bang()") != std::string::npos) {
       mScript = pScript;

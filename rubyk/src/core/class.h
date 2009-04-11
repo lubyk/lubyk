@@ -32,14 +32,14 @@ public:
   }
   
   /** Declare a method. */
-  template <class T, const Value(T::*Tmethod)(const Value val)>
+  template <class T, const Value(T::*Tmethod)(const Value &val)>
   void add_method (const char * pTagTypeStr, const char * pName, const char * pInfo)
   { 
-    mMethodPrototypes.push_back( MethodPrototype(pTagTypeStr, pName, &Method::cast_method<T, Tmethod>, pInfo) );
+    method_Prototypes.push_back( MethodPrototype(pTagTypeStr, pName, &Method::cast_method<T, Tmethod>, pInfo) );
   }
   
   /** Declare an inlet. */
-  template <class T, void(T::*Tmethod)(const Value val)>
+  template <class T, void(T::*Tmethod)(const Value &val)>
   void add_inlet (const char * pTagTypeStr, const char * pName, const char * pInfo)
   { 
     mInletPrototypes.push_back( InletPrototype(pTagTypeStr, pName, &Inlet::cast_method<T, Tmethod>, pInfo) );
@@ -61,9 +61,9 @@ public:
   void make_methods(oscit::Object * pObj)
   {
     std::list<MethodPrototype>::iterator it;
-    std::list<MethodPrototype>::iterator end = mMethodPrototypes.end();
+    std::list<MethodPrototype>::iterator end = method_Prototypes.end();
     
-    for (it = mMethodPrototypes.begin(); it != end; it++) {
+    for (it = method_Prototypes.begin(); it != end; it++) {
       pObj->adopt(new Method(pObj, *it));
     }
   }
@@ -72,11 +72,11 @@ private:
   
   std::list<InletPrototype>  mInletPrototypes;   /**< Prototypes to create inlets. */
   std::list<OutletPrototype> mOutletPrototypes;  /**< Prototypes to create outlets. */
-  std::list<MethodPrototype> mMethodPrototypes;  /**< Prototypes to create methods. */
+  std::list<MethodPrototype> method_Prototypes;  /**< Prototypes to create methods. */
 };
 
 // HELPER FOR FAST AND EASY ACCESSOR CREATION
-#define ATTR_ACCESSOR(var, name) const Value name ## _ (const Value val)    \
+#define ATTR_ACCESSOR(var, name) const Value name ## _ (const Value &val)    \
 { var = val;                                                        \
   return var; }                                                     \
 

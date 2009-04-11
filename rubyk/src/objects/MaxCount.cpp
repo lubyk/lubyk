@@ -5,15 +5,15 @@
 class MaxCount : public Node
 {
 public:
-  bool set (const Value& p)
+  bool set (const Value &p)
   {
     return true;
   }
   
-  void bang(const Value val)
+  void bang(const Value &val)
   {
     if (val.type != MatrixValue) {
-      *mOutput << mName << ": filter only works with array signals. Use a buffer.\n";
+      *mOutput << name_ << ": filter only works with array signals. Use a buffer.\n";
       return;
     }
     const Matrix * vector = val.matrix.value;
@@ -38,7 +38,7 @@ public:
     send(max_label);
   }
   
-  virtual const Value inspect(const Value val) 
+  virtual const Value inspect(const Value &val) 
   {  
     bprint(mSpy, mSpySize,"");    
   }

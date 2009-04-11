@@ -3,6 +3,42 @@
 #include <list>
 #include "node.h"
 
+
+///// This should be changed for a link based observer:
+///// To observe metro/out/bang, you create a "send" Node and a link to listen to an outlet:
+///// metro/out/bang -----> sender ---> observer's url
+///// Something like the following:
+
+class Send : public Node
+{
+ public:
+  /** [1] sends received data to the local (same planet) or remote (through OSC) node. */
+  virtual void bang (const Value &val) {
+    root_->call(spy_url_, val);
+  }
+  
+ private:
+  std::string spy_url_; /**< Url of the (local or remoate) observing node. */
+};
+
+////// Debugging: 
+class Print : public Node
+{
+ public:
+  /** [1] prints received data to stdout. */
+  virtual void bang (const Value &val) {
+    std::cout << prefix_ << val << std::endl;
+  }
+  
+  /** Set the prefix shown before printed data. Should be "name:port" for debugging. */
+  void set_prefix(const std::string &string) {
+    prefix_ = std::string("[").append(string).append("] ");
+  }
+ private:
+   std::string prefix_;
+};
+  
+
 /** An object that is notified of node changes. */
 class Observer
 {
@@ -16,7 +52,7 @@ public:
   }
   
   /** Notification trigger. */
-  virtual void changed(Node * node, uint key, const Value& pVal)
+  virtual void changed(Node * node, uint key, const Value &pVal)
   {}
   
   void observe(Node * node)
@@ -44,7 +80,7 @@ private:
 
 //struct ObservingLink
 //{
-//  ObservingLink(Observer * pObserver, Node * pNode, time_t pTime) : mObserver(pObserver), mNode(pNode), mSince(pTime) {}
+//  ObservingLink(Observer * pObserver, Node * node, time_t pTime) : mObserver(pObserver), mNode(node), mSince(pTime) {}
 //  ~ObservingLink()
 //  {
 //    if (mNode) mNode->remove_observer

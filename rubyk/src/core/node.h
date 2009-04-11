@@ -4,8 +4,7 @@
 #include "event.h"
 #include "inlet.h"
 #include "outlet.h"
-#include "thash.h"
-#include "values.h"
+
 #include <sstream>
 #include <cstdio>
 #include <vector>
@@ -17,138 +16,97 @@ class Observer;
 
 class Node : public Object
 {
-public:
+ public:
   
   virtual ~Node();
   
   /** Class signature. */
-  virtual uint type()
-  {
+  virtual uint class_type() {
     return H("Node");
   }
   
   /** Add an inlet with the given callback (used by Class during instantiation). */
-  void register_inlet(Inlet * pInlet)
-  {
-    pInlet->set_id(mInlets.size()); /* first inlet has id 0 */
-    mInlets.push_back(pInlet);
+  void register_inlet(Inlet *inlet) {
+    inlet->set_id(inlets_.size()); /* first inlet has id 0 */
+    inlets_.push_back(inlet);
   }
   
-  /** Add an outlet. (used by Class during instantiation).
-    * Name not used for the moment. */
-  void register_outlet(Outlet * pOutlet)
-  {
-    pOutlet->set_id(mOutlets.size()); /* first inlet has id 0 */
-    mOutlets.push_back(pOutlet);
+  /** Add an outlet. (used by Class during instantiation). */
+  void register_outlet(Outlet *outlet) {
+    outlet->set_id(outlets_.size()); /* first outlet has id 0 */
+    outlets_.push_back(outlet);
   }
   
-  /** Remove inlet from mInlets list of callbacks. */
-  void unregister_inlet(Inlet * pInlet)
-  {
+  /** Remove inlet from inlets list of callbacks. */
+  void unregister_inlet(Inlet * inlet) {
     std::vector<Inlet*>::iterator it;
-    std::vector<Inlet*>::iterator end = mInlets.end();
+    std::vector<Inlet*>::iterator end = inlets_.end();
 
-    for(it = mInlets.begin(); it != end; it++) {
-      if (*it == pInlet) {
-        mInlets.erase(it);
+    for(it = inlets_.begin(); it != end; it++) {
+      if (*it == inlet) {
+        inlets_.erase(it);
         break;
       }
     }
   }
   
-  /** Remove outlet from mOutlets list of callbacks. */
-  void unregister_outlet(Outlet * pOutlet)
-  {
+  /** Remove outlet from outlets list of callbacks. */
+  void unregister_outlet(Outlet * outlet) {
     std::vector<Outlet*>::iterator it;
-    std::vector<Outlet*>::iterator end = mOutlets.end();
+    std::vector<Outlet*>::iterator end = outlets_.end();
     
-    for(it = mOutlets.begin(); it != end; it++) {
-      if (*it == pOutlet) {
-        mOutlets.erase(it);
+    for(it = outlets_.begin(); it != end; it++) {
+      if (*it == outlet) {
+        outlets_.erase(it);
         break;
       }
-    }
-  }
-  
-  /** Add an observer that will be notified of node changes. */
-  void register_observer(Observer * pObs)
-  {
-    mObservers.push_back(pObs);
-  }
-  
-  /** Stop notifying an observer of node changes. */
-  void unregister_observer(Observer * pObs)
-  {
-    std::list<Observer*>::iterator end = mObservers.end();
-    for(std::list<Observer*>::iterator it = mObservers.begin(); it != end; it++) {
-      if (*it == pObs) it = mObservers.erase(it);
     }
   }
   
   /** This method must be implemented in subclasses. It is used to do a basic setup with default parameters before these
     * are changed during runtime. */
-  virtual bool init()
-  { return true; }
+  virtual bool init() { return true; }
   
-  /** Set mIsOK flag. If this flag is not true, the node is considered "broken" and usually does not do any processing. */
-  void set_is_ok (bool pStatus) 
-  { mIsOK = pStatus; }
+  /** Set is_ok_ flag. If this flag is not true, the node is considered "broken" and usually does not do any processing. */
+  void set_is_ok (bool status) { is_ok_ = status; }
   
   /** This method must be implemented in subclasses. It's the place where most
     * of the work should be done. This method is responsible for sending the signals out. */
-  virtual void bang (const Value val) = 0;
+  virtual void bang (const Value &val) = 0;
   
   /** Set url for class. TODO: Maybe we should pass a pointer to the class in case it moves ? But then if it is removed ? */
-  void set_class_url(const std::string& pClass)
-  { mClassUrl = pClass; }
+  void set_class_url(const std::string &class_url) { class_url_ = class_url; }
   
   /** Used to sort outlet connections. A node with a high trigger position receives the value before
     * another node with a small trigger position, if they are both connected to the same outlet. */ 
-  inline real_t trigger_position() { return mTriggerPosition; }
+  inline Real trigger_position() { return trigger_position_; }
   
   /** Send a Value out of the first outlet. */
-  inline void send(const Value val)
-  { send(1, val); }
+  inline void send(const Value &val) { send(1, val); }
   
   /** Send a Value out of an outlet. */
-  inline void send (size_t pPort, const Value val)
-  { 
-//FIX    if (mDebug) *mOutput << "[" << mName << ":" << pPort << "] " << val << std::endl;
-    if (pPort < 1 || pPort > mOutlets.size() || val.is_nil()) return;
-    mOutlets[pPort - 1]->send(val);
+  inline void send (size_t port, const Value &val) {
+    if (port > outlets_.size() || port < 1) return;
+    outlets_[port - 1]->send(val);
   }
-  
-  /** Notify observers of a change. */
-  void notify(uint key, const Value& pValue);
   
   /** Remove all events concerning this node for the events queue. */
   void remove_my_events();
   
-  // time in [ms]
-  void bang_me_in (time_t pTime);
+  /** Ask to receive a bang in the given interval in [ms]. */
+  void bang_me_in(time_t interval);
+ 
+ private:
   
-protected:
-  
-  /** Actual adoption. Adopt objects in the new namespace (branch). */
-  virtual void do_adopt(oscit::Object * pObject)
-  {
-    oscit::Object::do_adopt(pObject);
-    Node * node = TYPE_CAST(Node,pObject);
-    if (node) node->mPlanet = mPlanet;
-  }
-  
-private:
-  
-  bool  mIsOK;     /**< If something bad arrived to the node during initialization or edit, the node goes into
-                     *  broken state and mIsOK becomes false. In 'broken' mode, the node does nothing. */
+  bool  is_ok_;                  /**< If something bad arrived to the node during initialization or edit, the node goes into
+                                  *   broken state and is_ok_ becomes false. In 'broken' mode, the node does nothing. */
                      
-  real_t mTriggerPosition; /**< When sending signals from a particular slot, a node with a small mTriggerPosition 
-                            *  will receive the signal after a node that has a greater mTriggerPosition. */
-  String mClassUrl;        /**< Url for the node's class. */
+  Real trigger_position_;       /**< When sending signals from a particular slot, a node with a small trigger_position_ 
+                                  *   will receive the signal after a node that has a greater trigger_position_. */
+  std::string class_url_;        /**< Url for the node's class. */
   
-  std::vector<Inlet*>  mInlets;    /**< List of inlets. FIXME: is this used ? */
-  std::vector<Outlet*> mOutlets;   /**< List of outlets. */
-  std::list<Observer*> mObservers; /**< Observers to notify of node changes (observing satellites/commands). */
+  std::vector<Inlet*>  inlets_;  /**< List of inlets. FIXME: is this used ? */
+  std::vector<Outlet*> outlets_; /**< List of outlets. */
 
 };
 

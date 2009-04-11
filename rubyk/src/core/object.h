@@ -2,22 +2,40 @@
 #define _OBJECT_H_
 #include "oscit.h"
 
-class Planet;
+class Worker;
 
 /** Object is the base object in Rubyk context. The object is just a wrapper around oscit::BaseObject
- *  with an extra "Planet" pointer. */
+ *  with an extra "Worker" pointer. */
 class Object : public BaseObject
 {
-public:
-  virtual void set_root(Root * root)
-  {  
-    Object::set_root(root);
-    if (root) planet_ = (Planet*)(root->ground_);
+ public:
+   Object() {}
+   Object(const char *name) : BaseObject(name) {}
+   Object(TypeTagID type_tag_id) : BaseObject(type_tag_id) {}
+   Object(const char *name, TypeTagID type_tag_id) : BaseObject(name, type_tag_id) {}
+   Object(const std::string &name, TypeTagID type_tag_id) : BaseObject(name, type_tag_id) {}
+   Object(Object *parent, const char *name) : BaseObject(parent, name) {}
+   Object(Object *parent, const char *name, TypeTagID type_tag_id) : BaseObject(parent, name, type_tag_id) {}
+   Object(Object *parent, const std::string &name, TypeTagID type_tag_id) : BaseObject(parent, name, type_tag_id) {}
+   Object(Object &parent, const char *name) : BaseObject(parent, name) {}
+   Object(Object &parent, const char *name, TypeTagID type_tag_id) : BaseObject(parent, name, type_tag_id) {}
+   Object(Object &parent, const std::string &name, TypeTagID type_tag_id) : BaseObject(parent, name, type_tag_id) {}
+  
+  /** Class signature. */
+  virtual uint class_type() {
+    return H("Object");
   }
   
-protected:
+  /** Inherit the worker from the parent. */
+  virtual void set_context(Mutex *context) {
+    // FIXME: what do we do if context is NULL ?? (no more parent)
+    // TODO: can we use a static_cast here ?
+    context_ = context;
+    worker_  = (Worker*)context_;
+  }
   
-  Planet * ground_;  /**< Planet on which the objects will live. */
+ protected:
+  Worker * worker_;  /**< Worker that will give life to object. */
 };
 
 #endif // _OBJECT_H_

@@ -7,29 +7,29 @@
 class DummyNode : public Node
 {
 public:
-  DummyNode(real_t pVal) : mValue(pVal) {}
+  DummyNode(Real pVal) : mValue(pVal) {}
   
-  virtual void bang(const Value val)
+  virtual void bang(const Value &val)
   {}
   
-  real_t mValue;
+  Real mValue;
 };
 
 // these receivers are complicated to make sure they work in the correct order and they are all called.
 // x = 2*x + y + 1
-static void receive_value1(Node * receiver, const Value val)
+static void receive_value1(Node * receiver, const Value &val)
 {
   ((DummyNode*)receiver)->mValue = (2*(((DummyNode*)receiver)->mValue)) + Number(val).value() + 1;
 }
 
 // x = 2*x + y + 2
-static void receive_value2(Node * receiver, const Value val)
+static void receive_value2(Node * receiver, const Value &val)
 {
   ((DummyNode*)receiver)->mValue = (2*(((DummyNode*)receiver)->mValue)) + Number(val).value() + 2;
 }
 
 // x = 2*x + y + 4
-static void receive_value4(Node * receiver, const Value val)
+static void receive_value4(Node * receiver, const Value &val)
 {
   ((DummyNode*)receiver)->mValue = (2*(((DummyNode*)receiver)->mValue)) + Number(val).value() + 4;
 }

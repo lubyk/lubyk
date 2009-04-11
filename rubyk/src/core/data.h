@@ -94,7 +94,7 @@ public:
   }
   
   /** Explicit conversion to a 'real_t'. Returns the default value if not implemented in the specialized Data. */
-  virtual real_t convert(const real_t& pDefault) const
+  virtual Real convert(const real_t& pDefault) const
   {
     printf("Data (real_t) version in [%s]\n", type_name());
     return pDefault;
@@ -108,7 +108,7 @@ public:
   }
   
   /** Explicit conversion to a 'std::string'. Returns the default value if not implemented in the specialized Data. */
-  virtual std::string convert(const std::string& pDefault) const
+  virtual std::string convert(const std::string &pDefault) const
   {
     return pDefault;
   }

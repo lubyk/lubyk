@@ -7,18 +7,18 @@ class Keyboard : public Node
 {
 public:
   
-  bool set (const Value& p)
+  bool set (const Value &p)
   {
     return true;
   }
   
   // capture method, called from a command
-  void bang(const Value val)
+  void bang(const Value &val)
   { 
     // do nothing
   }
   
-  void get(const Value& p)
+  void get(const Value &p)
   {
     int c;
     int mode = 2;
@@ -71,7 +71,7 @@ public:
     mServer->lock();
   }
   
-  virtual const Value inspect(const Value val) 
+  virtual const Value inspect(const Value &val) 
   {  
     bprint(mSpy, mSpySize,"");    
   }

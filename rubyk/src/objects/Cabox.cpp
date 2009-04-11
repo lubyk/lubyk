@@ -19,7 +19,7 @@ public:
     mFindHighestDirection = 0;
     mVectorRateCounter    = 0;
     mRate                 = 0.0;
-    mRateStart            = mServer->mCurrentTime;
+    mRateStart            = mServer->current_time_;
     
 
     mIndex  = 0;
@@ -33,7 +33,7 @@ public:
     return true;
   }
   
-  bool set (const Value& p)
+  bool set (const Value &p)
   {
     size_t buffer_size;
     if (p.get(&buffer_size, "buffer")) {
@@ -51,15 +51,15 @@ public:
   }
   
   
-  void bang(const Value val)
+  void bang(const Value &val)
   {
-    if (!mIsOK) return;
+    if (!is_ok_) return;
     
     int c;
     int sig_i, sig_max = 0;
-    real_t val;
-    real_t * sig_buf = NULL;
-    real_t sig_val;
+    Real val;
+    Real * sig_buf = NULL;
+    Real sig_val;
     bool new_data = false;
     
     if (val.type == MatrixValue) {
@@ -132,9 +132,9 @@ public:
         mFindHighestDirection = 0;
         mVector = mBuffer.advance(); // move loop buffer forward
         if (mVectorRateCounter > 800) {
-          mRate  = mVectorRateCounter * 1000.0 / (mServer->mCurrentTime - mRateStart);
+          mRate  = mVectorRateCounter * 1000.0 / (mServer->current_time_ - mRateStart);
           mVectorRateCounter = 0;
-          mRateStart = mServer->mCurrentTime;
+          mRateStart = mServer->current_time_;
         }
         
       } else {
@@ -173,15 +173,15 @@ public:
 private:
   
   Buffer   mBuffer; /**< Loop buffer to store the incoming values. */
-  real_t * mVector; /**< Current vector to write data (points in mBuffer). */
+  Real * mVector; /**< Current vector to write data (points in mBuffer). */
   Matrix   mOffset;       /**< Vector with the offset for each signal. */
-  real_t   mHighestValue;         /**< Last highest value of the signal. */
+  Real   mHighestValue;         /**< Last highest value of the signal. */
   size_t   mHighestDirection;     /**< Last highest direction of the signal. */
-  real_t   mFindHighestValue;     /**< Current try at finding the highest value of the signal. */
+  Real   mFindHighestValue;     /**< Current try at finding the highest value of the signal. */
   size_t   mFindHighestDirection; /**< Current try at finding the highest direction of the signal. */
   
   long int mVectorRateCounter; /**< Count number of vectors to measure data rate. */
-  real_t   mRate;         /**< Data rate in vectors per second. */
+  Real   mRate;         /**< Data rate in vectors per second. */
   time_t   mRateStart;    /**< Used to record time intervals between values to compute data rate. */
   size_t   mIndex;        /**< Current vector's value index (next write position). */
   int      mState;        /**< Synchronization flag. */

@@ -101,7 +101,7 @@ public:
     Matrix m2;
     m2.set_sizes(2,3);
     m2.clear();
-    real_t test_data[3] = {10,20,30};
+    Real test_data[3] = {10,20,30};
     
     TS_ASSERT_EQUALS(m2.row_count(), 2);
     TS_ASSERT(m2.append(test_data, 3));
@@ -154,7 +154,7 @@ public:
     Matrix m2;
     m2.set_sizes(2,3);
     m2.clear();
-    real_t test_data[6] = {10,20,30,40,50,60};
+    Real test_data[6] = {10,20,30,40,50,60};
     
     TS_ASSERT_EQUALS(m2.row_count(), 2);
     TS_ASSERT(m2.append(test_data, 6));
@@ -203,8 +203,8 @@ public:
     Matrix m, A, B;
     A.set_sizes(2,3);
     B.set_sizes(2,3);
-    real_t * A_raw = A.raw_data();
-    real_t * B_raw = B.raw_data();
+    Real * A_raw = A.raw_data();
+    Real * B_raw = B.raw_data();
     
     A_raw[0] = 0; A_raw[1] = 1; A_raw[2] = 2;
     A_raw[3] = 2; A_raw[4] = 3; A_raw[5] = 5;
@@ -288,7 +288,7 @@ public:
   void test_add_reals( void )
   {
     Matrix m2;
-    real_t d[6] = {1, 2, 3, 4, 5, 6};
+    Real d[6] = {1, 2, 3, 4, 5, 6};
     m2.set_sizes(2,3);
     m2.fill(0.5);
     
@@ -308,7 +308,7 @@ public:
   void test_add_reals_vector( void )
   {
     Matrix m2;
-    real_t d[3] = {0.5, 1, 0.5};
+    Real d[3] = {0.5, 1, 0.5};
     m2.set_sizes(2,3);
     m2.fill(1.0);
     m2[1][0] = 2.5;
@@ -330,7 +330,7 @@ public:
   void test_add_reals_column( void )
   {
     Matrix m2;
-    real_t d[2] = {10, 20};
+    Real d[2] = {10, 20};
     m2.set_sizes(2,3);
     m2.fill(0.5);
     m2.raw_data()[2] = 3.5;
@@ -866,7 +866,7 @@ private:
   void set_fixture(Matrix& m)
   {
     m.set_sizes(2,3);
-    real_t * data = m.raw_data();
+    Real * data = m.raw_data();
     /*
     1 2.4 3
     7 8   9.5 */

@@ -124,6 +124,6 @@ public:
     std::ostringstream os(std::ostringstream::out);
     os << v;
     assert_equal("\"Matrix 2x3\"", os.str());
-    assert_equal("\"Matrix 2x3\"", v.as_string());
+    assert_equal("\"Matrix 2x3\"", v.to_string());
   }
 };

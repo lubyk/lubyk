@@ -4,104 +4,80 @@
 #include <ostream>
 
 class Node;
-
-/** Pointer to a method. */
-typedef void (*obj_method_t)(void * pReceiver, const Value val);
+class Worker;
 
 /** This is the base class for Events and CallEvents. The class has a field for the time at which the event should
   * be triggered. */
 class Event
 {
-public:
-  Event (time_t pTime, void * pNode, bool pIsBang = true) : mTime(pTime), mReceiver(pNode), mForced(false) {}
+ public:
+  Event (void *node, time_t when) : when_(when), receiver_(node), forced_(false) {}
   
-  Event () : mForced(false) {}
+  Event () : forced_(false) {}
 
   virtual ~Event() {}
   
-  void trigger()
-  { mHasParameter ? (*mFunction)(mReceiver,mParameter) : (*mVoidFunction)(mReceiver); }
+  void trigger() {
+    (*function_)(receiver_,parameter_);
+  }
 
-  inline bool operator>= (const Event& pOther) const
-  { return mTime >= pOther.mTime; }
+  inline bool operator>= (const Event &event) const {
+    return when_ >= event.when_;
+  }
   
-  inline bool uses_receiver(const void * pNode) const
-  { return pNode == mReceiver; }
+  inline bool uses_receiver(const void * node) const {
+    return receiver_ == node;
+  }
   
-  void * receiver()
-  { return mReceiver; }
+  void * receiver() {
+    return receiver_;
+  }
   
 protected:
-  friend class Planet;
+  friend class Worker;
   friend class Node;
   
   // access needed by root
-  time_t mTime;
-  void * mReceiver;
-  bool mForced; /**< Run even if trying to quit. */
-  bool mHasParameter;
+  time_t when_;
+  void * receiver_;
+  bool   forced_;     /**< Run even if trying to quit. */
+  Value  parameter_;
   
-  void * mParameter;
-  void (*mVoidFunction)(void * pReceiver);
-  void (*mFunction)(void * pReceiver, void * pParam);
+  void (*function_)(void *receiver, const Value &parameter);
 };
 
 /** This is an event that sends a bang to a node. */
 class BangEvent : public Event
 {
 public:
-  BangEvent (time_t pTime, Node * pReceiver)
+  BangEvent (time_t when, Node * receiver)
   {
-    mTime      = pTime;
-    mReceiver  = (void*)pReceiver;
-    mHasParameter = false;
-    mVoidFunction = &cast_bang_method;
+    when_      = when;
+    receiver_  = (void*)receiver;
+    function_  = &cast_bang_method;
   }
   
 private:
   /** Make pointer to the bang method. */
-  static void cast_bang_method (void * pReceiver);
-};
-
-/** This is an event for void method. */
-template<class T, void(T::*Tmethod)(void)>
-class TCallEvent : public Event
-{
-public:
-  TCallEvent (time_t pTime, T * pReceiver)
-  {
-    mTime      = pTime;
-    mReceiver  = (void*)pReceiver;
-    mHasParameter = false;
-    mVoidFunction = &cast_void_method;
-  }
-  
-private:
-  /** Make pointer to method for events. */
-  static void cast_void_method (void * pReceiver)
-  {
-    (((T*)pReceiver)->*Tmethod)();
-  }
-  
+  static void cast_bang_method (void *receiver, const Value &parameter);
 };
 
 template<class T, void(T::*Tmethod)(void*)>
 class TEvent : public Event
 {
 public:
-  TEvent (time_t pTime, T * pReceiver, void * pParam)
+  TEvent (time_t when, T *receiver, const Value &parameter)
   {
-    mTime      = pTime;
-    mReceiver  = (void*)pReceiver;
-    mParameter = pParam;
-    mHasParameter = true;
-    mFunction  = &cast_method;
+    when_      = when;
+    receiver_  = (void*)receiver;
+    parameter_ = parameter;
+    function_  = &cast_method;
   }
 private:
   /** Make pointer to method for events. */
-  static void cast_method (void * pReceiver, void * pParam)
+  static void cast_method (void *receiver, const Value &parameter)
   {
-    (((T*)pReceiver)->*Tmethod)(pParam);
+    (((T*)receiver)->*Tmethod)(parameter);
   }
 };
 

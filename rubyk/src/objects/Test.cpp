@@ -15,7 +15,7 @@ public:
   /** Example to set an attribute stored as a Value (a String here). This is also an accessor (used by sending a nil value). */
   ATTR_ACCESSOR(mMessage, message)
   
-  const Value counter_ (const Value val)
+  const Value counter_ (const Value &val)
   {
     Number n;
     if (val.set(n)) mCounter = n;
@@ -23,7 +23,7 @@ public:
   }
   
   /** Test output. */
-  const Value out_message (const Value val)
+  const Value out_message (const Value &val)
   {
     //if (String(val) == "is output ok?")
     //  *mOutput << "Output set" << std::endl;
@@ -31,7 +31,7 @@ public:
     return gNilValue;
   }
   
-  virtual const Value inspect(const Value val) 
+  virtual const Value inspect(const Value &val) 
   { 
     // TODO: optimize (maybe).
     std::ostringstream os(std::ostringstream::out);
@@ -40,7 +40,7 @@ public:
   }
   
   // [1]. Increments mCounter on bang.
-  virtual void bang(const Value val)
+  virtual void bang(const Value &val)
   {
     if (val.is_number())
       mCounter = val || mCounter;
@@ -54,19 +54,19 @@ public:
   }
   
   /** [2]. Example to set an attribute stored as a native type (an int here). This is also an accessor (used by sending a nil value). */
-  void counter (const Value val)
+  void counter (const Value &val)
   {
     mCounter = val || mCounter;
   }
   
   /** [3]. Displays the values sent. */
-  void info(const Value val)
+  void info(const Value &val)
   {
     //*mOutput << val << std::endl;
   }
   
   /** Another method to test the "TRY" macro. */
-  const Value test_fail(const Value& p)
+  const Value test_fail(const Value &p)
   {
     if (!test_try()) {
       return Error("try failed");
@@ -75,7 +75,7 @@ public:
   }
   
   /** Class method that displays 'Hello: <parameter>'. */
-  static const Value hello(Planet& planet, const Value val)
+  static const Value hello(Worker& planet, const Value &val)
   {
     return String("Hello: ").append(val.to_string());
   }
@@ -96,7 +96,7 @@ private:
 };
 
 
-extern "C" void init(Planet& planet)
+extern "C" void init(Worker& planet)
 { 
   
   // Define class.

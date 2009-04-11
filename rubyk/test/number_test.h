@@ -123,7 +123,7 @@ public:
   
   void test_set( void )
   {
-    real_t d = 0;
+    Real d = 0;
     Number n(3.45);
     TS_ASSERT(n.set(d));
     TS_ASSERT_EQUALS(d, 3.45);
@@ -134,7 +134,7 @@ public:
     Number n(3.45);
     Number nothing;
     Value  niet;
-    real_t d = nothing || 1.2;
+    Real d = nothing || 1.2;
     TS_ASSERT_EQUALS(d, 1.2);
     d = n || 8.9;
     TS_ASSERT_EQUALS(d, 3.45);

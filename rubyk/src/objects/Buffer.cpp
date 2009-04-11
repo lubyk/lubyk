@@ -16,7 +16,7 @@ public:
   }
   
   // TODO: add 'flat' option.
-  bool set (const Value& p)
+  bool set (const Value &p)
   {
     size_t window_size = mBuffer.row_count();
     size_t vector_size = mBuffer.col_count();
@@ -35,12 +35,12 @@ public:
   }
   
   // inlet 1
-  void bang(const Value val)
+  void bang(const Value &val)
   {   
-    real_t d;
-    if (!mIsOK) return;
+    Real d;
+    if (!is_ok_) return;
     if(val.type == MatrixValue) {
-      real_t * data = val.matrix.value->data;
+      Real * data = val.matrix.value->data;
       if (!mVector) {
         // get buffer size from incoming signal
         TRY_RET(mBuffer, set_sizes(mBuffer.row_count(), val.matrix.value->col_count()));
@@ -75,14 +75,14 @@ public:
     send(mS);
   }
   
-  virtual const Value inspect(const Value val)  
+  virtual const Value inspect(const Value &val)  
   { 
     bprint(mSpy, mSpySize,"%ix%i", mBuffer.row_count(), mBuffer.col_count() );
   }
 private:
   
   Buffer mBuffer;
-  real_t * mVector; /**< Vector pointing into mBuffer to write the data. */
+  Real * mVector; /**< Vector pointing into mBuffer to write the data. */
   size_t   mIndex;  /**< Current write position into the 'write' vector. */
 };
 

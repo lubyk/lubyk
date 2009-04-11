@@ -12,11 +12,11 @@ public:
   
   /** This trigger method actually implements "new". The parameter can be either a String containing the url of the new object or
     * a Hash containing the "url" and "params": {url: "foo" params:{ bar:1 pico:2 }}. */
-  virtual const Value trigger (const Value val);
+  virtual const Value trigger (const Value &val);
   
   /** Template used as a method to create new nodes. */
   template<class T>
-  static const Value cast_create(Planet& pPlanet, const Value val)
+  static const Value cast_create(Worker& pWorker, const Value &val)
   {
     oscit::Object * parent;
     String url(val);
@@ -27,7 +27,7 @@ public:
     std::string str = url.string();
     if (str.at(0) == '/') {
       size_t pos = url.rfind("/");
-      parent = pPlanet.find( url.substr(0, pos) );
+      parent = pWorker.find( url.substr(0, pos) );
       if (!parent) return Error("Invalid parent '").append(url.substr(0,pos)).append("'.");
       name = url.substr(pos + 1, url.length());
     } else {
@@ -40,7 +40,7 @@ public:
     if (parent)
       obj = parent->adopt(new T());
     else
-      obj = pPlanet.root()->adopt(new T());
+      obj = pWorker.root()->adopt(new T());
     
     obj->set_name(name);
     

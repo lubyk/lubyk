@@ -11,7 +11,7 @@ public:
   {
     Buffer b;
     b.set_sizes(2, 2);
-    real_t * vector;
+    Real * vector;
     
     for(size_t i = 0; i < 100; i += 2){
       vector = b.advance();

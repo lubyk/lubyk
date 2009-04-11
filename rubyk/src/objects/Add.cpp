@@ -17,7 +17,7 @@ public:
   ATTR_ACCESSOR(mValue1, value1)
   ATTR_ACCESSOR(mValue2, value2)
   
-  virtual const Value inspect(const Value val)  
+  virtual const Value inspect(const Value &val)  
   { 
     std::ostringstream oss;
     mResult = mValue1 + mValue2;
@@ -26,9 +26,9 @@ public:
   }
   
   // [1]
-  void bang(const Value val)
+  void bang(const Value &val)
   { 
-    // std::cout << mName << ".bang: mValue1 = " << val << std::endl;
+    // std::cout << name_ << ".bang: mValue1 = " << val << std::endl;
     mValue1 = val;
     mResult = mValue1 + mValue2;
     
@@ -37,9 +37,9 @@ public:
   }
   
   // [2]
-  void adder(const Value val)
+  void adder(const Value &val)
   { 
-    // std::cout << mName << ".adder: mValue2 = " << val << std::endl;
+    // std::cout << name_ << ".adder: mValue2 = " << val << std::endl;
     mValue2 = val;
   }
 
@@ -50,7 +50,7 @@ private:
   Number mResult;
 };
 
-extern "C" void init(Planet& planet)
+extern "C" void init(Worker& planet)
 {
   CLASS (Add, "Add two numbers together (used for testing: only send new value on [1] change).")
   INLET (Add, bang,  NumberValue | BangValue, "Set first number to add and send.")

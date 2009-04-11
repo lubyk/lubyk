@@ -42,7 +42,7 @@ bool Slot::operator>= (const Slot &slot) const {
 
 
 bool Slot::add_connection(Slot *slot) { 
-  if (type_ == slot->type_) {
+  if (type_tag_id() == slot->type_tag_id()) {
     // only create a link if the slot type signature are the same
     // OrderedList makes sure the link is not created again if it already exists.
     connections_.push(slot); 
@@ -60,38 +60,42 @@ const Value Slot::change_link(unsigned char operation, const Value &val) {
   if (val.is_string()) {
     // update a link (create/destroy)
     
-    BaseObject * target = root_->object_at(val.s);
-    if (!target) return ErrorValue(NOT_FOUND_ERROR, val.s);
+    BaseObject * target = root_->object_at(val.str());
+    if (!target) return ErrorValue(NOT_FOUND_ERROR, val.str());
     
     if (target->class_type() == H("Object")) {
       target = target->first_child();
       if (!target) {
-        return ErrorValue(NOT_FOUND_ERROR, val.s).append(": slot not found");
+        return ErrorValue(NOT_FOUND_ERROR, val.str()).append(": slot not found");
       }
     }
     
     if (class_type() == H("Outlet")) {
       // other should be an Inlet
-      target = (Slot*)TYPE_CAST(Inlet,  &target);
+      target = (Slot*)TYPE_CAST(Inlet, target);
     } else {
       // other should be an Outlet
-      target = (Slot*)TYPE_CAST(Outlet, &target);
+      target = (Slot*)TYPE_CAST(Outlet,target);
     }
     
-    if (!target)
-      return ErrorValue(BAD_REQUEST_ERROR, "Could not update link with '").append(val.to_string()).append("': incompatible).");
+    if (!target) {
+      return ErrorValue(BAD_REQUEST_ERROR, "Could not update link with ").append(val.to_string()).append(": incompatible).");
+    }
     
-    if (pCreate){
-      // connect
+    if (operation == 'c') {
+      // create link
       if (connect((Slot*)target)) {
         //std::cout << "LINKED: " << url() << " with " << val << std::endl;
-        return String(val);
-      } else
-        return Error("Could not make the connection with (").append(val.to_string()).append(").");
+        return val;
+      } else {
+        return ErrorValue(BAD_REQUEST_ERROR, "Could not make the connection with (").append(val.to_string()).append(").");
+      }
     } else {
       // disconnect
       disconnect((Slot*)target);
-      return String(val);
+      return val;
     }
+  } else {
+    return Value(info());
   }
 }

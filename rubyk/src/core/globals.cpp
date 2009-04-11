@@ -15,8 +15,8 @@ plot_thread gGLWindowStartThread;
 void * gGLWindowNode;
 bool   gQuitGl;
 
-// Planet
-pthread_key_t Planet::sThisKey     = NULL;
+// Worker
+pthread_key_t Worker::sThisKey     = NULL;
 //FIX pthread_key_t Node::sGLThreadKey = NULL;
 
 // Object
