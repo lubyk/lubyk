@@ -4,6 +4,7 @@
 #include "event.h"
 #include "inlet.h"
 #include "outlet.h"
+#include "worker.h"
 
 #include <sstream>
 #include <cstdio>
@@ -91,23 +92,43 @@ class Node : public Object
   }
   
   /** Remove all events concerning this node for the events queue. */
-  void remove_my_events();
+  inline void remove_my_events() {
+    if (worker_) worker_->free_events_for(this);
+  }
   
   /** Ask to receive a bang in the given interval in [ms]. */
-  void bang_me_in(time_t interval);
+  inline void bang_me_in(time_t interval) {
+    worker_->register_event(new BangEvent(this, worker_->current_time_ + interval));
+  }
+  
+  /** Bang me on every loop. */
+  inline void loop_me() {
+    if (!looped_) {
+      worker_->register_looped_node(this);
+      looped_ = true;
+    }
+  }
+  
+  /** Stop banging me on every loop. */
+  inline void unloop_me() {
+    if (looped_) {
+      worker_->free_looped_node(this);
+      looped_ = false;
+    }
+  }
  
  private:
   
-  bool  is_ok_;                  /**< If something bad arrived to the node during initialization or edit, the node goes into
+  bool is_ok_;                   /**< If something bad arrived to the node during initialization or edit, the node goes into
                                   *   broken state and is_ok_ becomes false. In 'broken' mode, the node does nothing. */
+  bool looped_;                  /**< Set to true if the node is currently called on every worker loop. */
                      
-  Real trigger_position_;       /**< When sending signals from a particular slot, a node with a small trigger_position_ 
+  Real trigger_position_;        /**< When sending signals from a particular slot, a node with a small trigger_position_ 
                                   *   will receive the signal after a node that has a greater trigger_position_. */
   std::string class_url_;        /**< Url for the node's class. */
   
   std::vector<Inlet*>  inlets_;  /**< List of inlets. FIXME: is this used ? */
   std::vector<Outlet*> outlets_; /**< List of outlets. */
-
 };
 
 #endif // _NODE_H_

@@ -12,8 +12,8 @@ DOT_CMD=/Applications/Graphviz.app/Contents/MacOS/dot
 RAGEL=ragel
 RAGEL_CD=rlgen-cd
 PLAT= macosx
-TEST=test/*_test.h test/objects/*_test.h
-LINKER_OBJECTS=../oscit/liboscit.a event.o slot.o inlet.o outlet.o buffer.o class.o new_method.o class_finder.o group.o command.o planet.o
+TEST=test/*_test.h #test/objects/*_test.h
+LINKER_OBJECTS=../oscit/liboscit.a slot.o inlet.o outlet.o node.o worker.o #event.o outlet.o buffer.o class.o new_method.o class_finder.o group.o command.o planet.o
 OFF_OBJ=lua_script.o src/lib/lua/liblua.a 
 INCLUDE_HEADERS=-Isrc/templates -Isrc/core -Isrc/objects -Isrc/lib/lua -Isrc/lib -I../oscit -I../oscit/oscpack -Isrc/core/values -Isrc/lib/osc
 OBJECT_COMPILE=$(INCLUDE_HEADERS) -D__$(PLAT)__ -dynamic -bundle -undefined suppress -flat_namespace -L/usr/lib -lgcc -lstdc++
@@ -41,7 +41,7 @@ off: lib/MidiOut.rko lib/NoteOut.rko lib/Lua.rko lib/Serial.rko lib/Turing.rko l
 test/runner.cpp: $(TEST)
 	./test/cxxtest/cxxtestgen.pl --error-printer -o test/runner.cpp $(TEST)
 	
-test/runner: test/runner.cpp $(LINKER_OBJECTS) objects
+test/runner: test/runner.cpp $(LINKER_OBJECTS) #objects
 	$(CC) $(CFLAGS) $(LFLAGS) -Itest $(INCLUDE_HEADERS) -I. test/runner.cpp $(LINKER_OBJECTS) -o test/runner
 
 src/core/command.cpp: src/core/command.rl

@@ -6,7 +6,7 @@
 // FIXME: inline ?
 void Outlet::send(const Value &val)
 {  
-  LinkedList<Inlet*> * iterator = (LinkedList<Inlet*> *)(mConnections.begin());
+  LinkedList<Inlet*> * iterator = (LinkedList<Inlet*> *)(connections_.begin());
   
   while(iterator) {
     iterator->obj->receive(val);
@@ -16,10 +16,10 @@ void Outlet::send(const Value &val)
 
 void Outlet::register_in_node()
 {
-  mNode->register_outlet(this);
+  node_->register_outlet(this);
 }
 
 void Outlet::unregister_in_node()
 {
-  mNode->unregister_outlet(this);
+  node_->unregister_outlet(this);
 }

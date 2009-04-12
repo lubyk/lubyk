@@ -1,7 +1,11 @@
 #ifndef _PLANET_H_
 #define _PLANET_H_
 #include "oscit.h"
+
+#include "group.h"
+#include "command.h"
 #include "worker.h"
+
 #include <queue>
 
 class ClassFinder;
@@ -54,6 +58,9 @@ class Planet : public Root
   
   /** Start listening to a command. */
   void listen_to_command (Command &commend);
+  
+  /** Create pending links (called on new object creation). */
+  const Value create_pending_links();
   
   /** ======== Helpers for commands (builds OSC calls). ======== */
   

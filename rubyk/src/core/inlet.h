@@ -58,7 +58,9 @@ public:
   }
   
   /** Receive a value. */
-  void receive(const Value &val);
+  void receive(const Value &val) {
+    (*method_)(node_, val);     // use functor
+  }
   
   /** Create a callback for an inlet. */
   // this is a copy of Method... template <class T, void(T::*Tmethod)(const Value &val)>

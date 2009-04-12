@@ -50,7 +50,7 @@ protected:
 class BangEvent : public Event
 {
 public:
-  BangEvent (time_t when, Node * receiver)
+  BangEvent(Node *receiver, time_t when)
   {
     when_      = when;
     receiver_  = (void*)receiver;
@@ -62,7 +62,7 @@ private:
   static void cast_bang_method (void *receiver, const Value &parameter);
 };
 
-template<class T, void(T::*Tmethod)(void*)>
+template<class T, void(T::*Tmethod)(const Value&)>
 class TEvent : public Event
 {
 public:
