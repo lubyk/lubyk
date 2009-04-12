@@ -21,6 +21,13 @@ class Thread : public Mutex
    *  should stop using thread->run(). */
   template<class T, void(T::*Tmethod)(Thread*)>
   void start(T *owner, void *parameter) {
+    if (thread_id_) {
+     fprintf(stderr, "Trying to start thread when it is already running ! (in Thread::start_using_signals)");
+     return;
+    }
+    
+    use_signals_ = false;
+    quit_      = false;
     owner_     = owner;
     parameter_ = parameter;
     pthread_create( &thread_id_, NULL, &start_thread<T,Tmethod>, (void*)this);
@@ -30,7 +37,13 @@ class Thread : public Mutex
    *  a SIGTERM, it's quit() method is called. */
   template<class T, void(T::*Tmethod)(Thread*)>
   void start_using_signals(T *owner, void *parameter) {
+    if (thread_id_) {
+      fprintf(stderr, "Trying to start thread when it is already running ! (in Thread::start_using_signals)");
+      return;
+    }
+    
     use_signals_ = true;
+    quit_      = false;
     owner_     = owner;
     parameter_ = parameter;
     pthread_create( &thread_id_, NULL, &start_thread_using_signals<T,Tmethod>, (void*)this);
@@ -40,12 +53,6 @@ class Thread : public Mutex
     return !quit_;
   }
   
- public:
-  static pthread_key_t sThisKey;   /**< Key to retrieve 'this' value from a running thread. */
-  void                 *parameter_; /**< Any parameter that the started method could use. */
-  
- private:
-
   void quit() {
    if (thread_id_) {
      if (use_signals_) {
@@ -56,7 +63,12 @@ class Thread : public Mutex
      thread_id_ = NULL;
    }
   }
-
+  
+ public:
+  static pthread_key_t sThisKey;   /**< Key to retrieve 'this' value from a running thread. */
+  void                 *parameter_; /**< Any parameter that the started method could use. */
+  
+ private:
   /** Static function to start a new thread. */
   template<class T, void(T::*Tmethod)(Thread*)>
    static void * start_thread(void *thread) {

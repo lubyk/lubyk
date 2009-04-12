@@ -59,4 +59,74 @@ public:
     // should join here
     assert_equal(1, counter.value_);
   }
+  
+  void test_create_quit( void ) {
+    DummyWorker counter;
+    Thread * runner = new Thread;
+    runner->start<DummyWorker, &DummyWorker::count>(&counter, NULL);
+    // let it run 2 times: +1 ... 10ms ... +1 ... 5ms .. quit .. 5ms [end]
+    microsleep(15);
+    runner->quit();
+    runner->quit(); // should not lock
+    
+    // should join here
+    assert_equal(2, counter.value_);
+    
+    delete runner;
+  }
+  
+  // This version sends a SIGINT to stop the thread
+  void test_create_quit_signals( void ) {
+    DummyWorker counter;
+    Thread * runner = new Thread;
+    runner->start_using_signals<DummyWorker, &DummyWorker::count2>(&counter, NULL);
+    // let it run 1 times: +1 ... looooong sleep .. SIGTERM [end]
+    microsleep(15);
+    runner->quit();
+    runner->quit(); // should not lock
+    // should join here
+    assert_equal(1, counter.value_);
+    
+    delete runner;
+  }
+  
+  void test_create_restart( void ) {
+    DummyWorker counter;
+    Thread * runner = new Thread;
+    runner->start<DummyWorker, &DummyWorker::count>(&counter, NULL);
+    // let it run 2 times: +1 ... 10ms ... +1 ... 5ms .. quit .. 5ms [end]
+    microsleep(15);
+    runner->quit();
+    
+    runner->start<DummyWorker, &DummyWorker::count>(&counter, NULL);
+    // let it run 2 times: +1 ... 10ms ... +1 ... 5ms .. quit .. 5ms [end]
+    microsleep(15);
+    runner->quit();
+    
+    // should join here
+    assert_equal(4, counter.value_);
+    
+    delete runner;
+  }
+  
+  // This version sends a SIGINT to stop the thread
+  void test_create_restart_signals( void ) {
+    DummyWorker counter;
+    Thread * runner = new Thread;
+    runner->start_using_signals<DummyWorker, &DummyWorker::count2>(&counter, NULL);
+    // let it run 1 times: +1 ... looooong sleep .. SIGTERM [end]
+    microsleep(15);
+    runner->quit();
+    
+    counter.quit_ = false;
+    runner->start_using_signals<DummyWorker, &DummyWorker::count2>(&counter, NULL);
+    // let it run 1 times: +1 ... looooong sleep .. SIGTERM [end]
+    microsleep(15);
+    runner->quit();
+    
+    // should join here
+    assert_equal(2, counter.value_);
+    
+    delete runner;
+  }
 };
