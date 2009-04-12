@@ -28,7 +28,7 @@ public:
   virtual void start() = 0;
   
   /** Should not be called directly (used by Thread). */
-  void terminate() {
+  void terminate(Thread *thread) {
     quit_ = true;
   }
   

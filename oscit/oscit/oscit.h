@@ -6,5 +6,6 @@
 #include "oscit/root.h"
 #include "oscit/method.h"
 #include "oscit/call.h"
+#include "oscit/thread.h"
 
 #endif // _OSCIT_H_

@@ -37,7 +37,7 @@ struct DummyWorker
     }
   }
   
-  void terminate() {
+  void terminate(Thread *runner) {
     quit_ = true;
   }
   

@@ -135,7 +135,8 @@ class Thread
   /** Thread should stop. */
   template<class T>
   static void terminate_owner(int sig) {
-    ((T*)(thread_this()->owner_))->terminate();
+    Thread * thread = thread_this();
+    ((T*)(thread->owner_))->terminate(thread);
   }
   
   void      *owner_;
