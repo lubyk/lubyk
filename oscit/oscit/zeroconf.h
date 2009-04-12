@@ -1,6 +1,8 @@
 #ifndef _OSCIT_ZEROCONF_H_
 #define _OSCIT_ZEROCONF_H_
 
+#include "oscit/thread.h"
+
 #include <string>
 
 struct _DNSServiceRef_t;
@@ -16,22 +18,23 @@ class ZeroConf
 public:
   ZeroConf();
   
-  virtual ~ZeroConf();
+  virtual ~ZeroConf() {}
   
-protected:
+  void quit() {
+    quit_ = true;
+  }
+  
   /** Setup serviceRef and start listening. */
   virtual void start() = 0;
   
+protected:
+  
   /** Process events here. */
-  void listen(DNSServiceRef service_ref);
+  void listen(Thread *thread, DNSServiceRef service_ref);
   
-  /** Start "run" loop in new thread. */
-  static void * start_thread(void *);
-  
-  volatile bool   quit_;
-  volatile int    timeout_;
-  
-  pthread_t listen_thread_id_;
+  volatile bool quit_;
+  volatile int  timeout_;
+  Thread listen_thread_;
 };
 
 class ZeroConfRegister : public ZeroConf
@@ -40,12 +43,13 @@ class ZeroConfRegister : public ZeroConf
   ZeroConfRegister(const std::string &name, const std::string &service_type, uint16_t port) : name_(name), service_type_(service_type), port_(port) {}
   
   /** Callback */
-  void register_callback(DNSServiceErrorType error, const char * name, const char * service_type, const char * pDomain);
+  void register_callback(DNSServiceErrorType error, const char *name, const char *service_type, const char *domain);
   
- private:
   /** Registration setup. */
   virtual void start();
   
+ private:
+  void do_start(Thread *thread);
   std::string name_;
   std::string service_type_;
   uint16_t    port_;

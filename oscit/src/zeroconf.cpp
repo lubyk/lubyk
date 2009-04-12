@@ -14,8 +14,8 @@ typedef	int	pid_t;
 #define snprintf _snprintf
 #else
 #include <sys/time.h>		// For struct timeval
-#include <unistd.h>         // For getopt() and optind
-#include <arpa/inet.h>		// For inet_addr()
+#include <unistd.h>     // For getopt() and optind
+#include <arpa/inet.h>	// For inet_addr()
 #endif
 
 #include <iostream>
@@ -23,46 +23,26 @@ typedef	int	pid_t;
 namespace oscit {
 
 // Note: the select() implementation on Windows (Winsock2)
-//fails with any timeout much larger than this
+//       fails with any timeout much larger than this
 #define LONG_TIME 100000000
 
-ZeroConf::ZeroConf() : quit_(false), timeout_(LONG_TIME)
-{ 
-  listen_thread_id_ = NULL;
-  pthread_create( &listen_thread_id_, NULL, &start_thread, (void*)this);
-}
-  
-ZeroConf::~ZeroConf()
-{
-  quit_ = true;
-  pthread_kill(listen_thread_id_, SIGTERM);
-  pthread_join(listen_thread_id_, NULL);  // wait
-}
-  
-void * ZeroConf::start_thread(void * pThis)
-{
-  ((ZeroConf*)pThis)->start();
-  return NULL;
-}
+ZeroConf::ZeroConf() : quit_(false), timeout_(LONG_TIME) {}
 
-void ZeroConf::listen(DNSServiceRef service_ref)
-{
+void ZeroConf::listen(Thread *thread, DNSServiceRef service_ref) {
   // Run until break.
   int dns_sd_fd = DNSServiceRefSockFD(service_ref);
   fd_set readfds;
   struct timeval tv;
   int result;
 
-  while (!quit_)
-  {
+  while (thread->run()) {
     FD_ZERO(&readfds);
     FD_SET(dns_sd_fd, &readfds);
     tv.tv_sec = timeout_;
     tv.tv_usec = 0;
                     // highest fd in set + 1
     result = select(dns_sd_fd+1, &readfds, (fd_set*)NULL, (fd_set*)NULL, &tv);
-    if (result > 0)
-    {
+    if (result > 0) {
       DNSServiceErrorType err = kDNSServiceErr_NoError;
       // Execute callback
       if (FD_ISSET(dns_sd_fd, &readfds)) err = DNSServiceProcessResult(service_ref);
@@ -81,24 +61,27 @@ void ZeroConf::listen(DNSServiceRef service_ref)
 }
 
 /** Callback called after registration. */
-static void registerCallBack(DNSServiceRef pRef, DNSServiceFlags pFlags, DNSServiceErrorType error, const char * name, const char * service_type, const char * pDomain, void * pContext)
-{
-  ((ZeroConfRegister*)pContext)->register_callback(error, name, service_type, pDomain);
+static void s_register_callback(DNSServiceRef ref, DNSServiceFlags flags, DNSServiceErrorType error, const char *name,
+                             const char *service_type, const char *domain, void * context) {
+                               
+  ((ZeroConfRegister*)context)->register_callback(error, name, service_type, domain);
 }
 
-void ZeroConfRegister::register_callback(DNSServiceErrorType error, const char * name, const char * service_type, const char * pDomain)
-{
-  if (error != kDNSServiceErr_NoError)
-    fprintf(stderr, "registerCallBack returned error %d.\n", error);
-  else {
+void ZeroConfRegister::register_callback(DNSServiceErrorType error, const char *name, const char *service_type, const char *domain) {
+  if (error != kDNSServiceErr_NoError) {
+    fprintf(stderr, "register_callback returned error %d.\n", error);
+  } else {
     // Registration succeeded.
     name_ = name; // in case name clash
     fprintf(stdout,"Registration ok for %s.%s\n", name_.c_str(), service_type_.c_str());
   }
 }
 
-void ZeroConfRegister::start()
-{
+void ZeroConfRegister::start() {
+  listen_thread_.start_using_signals<ZeroConfRegister, &ZeroConfRegister::do_start>(this, NULL);
+}
+
+void ZeroConfRegister::do_start(Thread *thread) {
   DNSServiceErrorType error;
   DNSServiceRef       serviceRef;
 
@@ -112,14 +95,14 @@ void ZeroConfRegister::start()
     htons(port_),         // port number
     0,                    // length of TXT record
     NULL,                 // no TXT record
-    registerCallBack,     // call back function
+    s_register_callback,  // callback function
     (void*)this);         // context
 
-  if (error == kDNSServiceErr_NoError)
-    listen(serviceRef);
-  else
+  if (error == kDNSServiceErr_NoError) {
+    listen(thread, serviceRef);
+  } else {
     fprintf(stderr,"Could not register service %s.%s on port %u (error %d)\n", name_.c_str(), service_type_.c_str(), port_, errno);//, strerror(errno));
-  
+  }
   
   DNSServiceRefDeallocate(serviceRef);
 }
