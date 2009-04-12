@@ -9,17 +9,17 @@ class Worker;
 class Object : public BaseObject
 {
  public:
-   Object() {}
-   Object(const char *name) : BaseObject(name) {}
-   Object(TypeTagID type_tag_id) : BaseObject(type_tag_id) {}
-   Object(const char *name, TypeTagID type_tag_id) : BaseObject(name, type_tag_id) {}
-   Object(const std::string &name, TypeTagID type_tag_id) : BaseObject(name, type_tag_id) {}
-   Object(Object *parent, const char *name) : BaseObject(parent, name) {}
-   Object(Object *parent, const char *name, TypeTagID type_tag_id) : BaseObject(parent, name, type_tag_id) {}
-   Object(Object *parent, const std::string &name, TypeTagID type_tag_id) : BaseObject(parent, name, type_tag_id) {}
-   Object(Object &parent, const char *name) : BaseObject(parent, name) {}
-   Object(Object &parent, const char *name, TypeTagID type_tag_id) : BaseObject(parent, name, type_tag_id) {}
-   Object(Object &parent, const std::string &name, TypeTagID type_tag_id) : BaseObject(parent, name, type_tag_id) {}
+   Object() : worker_(NULL) {}
+   Object(const char *name) : BaseObject(name), worker_(NULL) {}
+   Object(TypeTagID type_tag_id) : BaseObject(type_tag_id), worker_(NULL) {}
+   Object(const char *name, TypeTagID type_tag_id) : BaseObject(name, type_tag_id), worker_(NULL) {}
+   Object(const std::string &name, TypeTagID type_tag_id) : BaseObject(name, type_tag_id), worker_(NULL) {}
+   Object(Object *parent, const char *name) : BaseObject(parent, name), worker_(NULL) {}
+   Object(Object *parent, const char *name, TypeTagID type_tag_id) : BaseObject(parent, name, type_tag_id), worker_(NULL) {}
+   Object(Object *parent, const std::string &name, TypeTagID type_tag_id) : BaseObject(parent, name, type_tag_id), worker_(NULL) {}
+   Object(Object &parent, const char *name) : BaseObject(parent, name), worker_(NULL) {}
+   Object(Object &parent, const char *name, TypeTagID type_tag_id) : BaseObject(parent, name, type_tag_id), worker_(NULL) {}
+   Object(Object &parent, const std::string &name, TypeTagID type_tag_id) : BaseObject(parent, name, type_tag_id), worker_(NULL) {}
   
   /** Class signature. */
   virtual uint class_type() {

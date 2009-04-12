@@ -18,6 +18,7 @@ class Observer;
 class Node : public Object
 {
  public:
+  Node() : looped_(false) {}
   
   virtual ~Node();
   
