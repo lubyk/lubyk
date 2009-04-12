@@ -6,7 +6,7 @@
 #include <fstream>
 namespace oscit {
 
-class Thread
+class Thread : public Mutex
 {
  public:
   Thread() : owner_(NULL), thread_id_(NULL), use_signals_(false), quit_(false) {
@@ -51,14 +51,6 @@ class Thread
   
   inline bool run() {
     return !quit_;
-  }
-  
-  inline void lock() {
-    mutex_.lock();
-  }
-  
-  inline void unlock() {
-    mutex_.unlock();
   }
   
   void quit() {
@@ -146,8 +138,8 @@ class Thread
   struct sched_param normal_thread_param_; /**< Scheduling parameters for commands (lower). */
   
   bool      use_signals_;
+ protected:
   bool      quit_;
-  Mutex     mutex_;
 };
 
 } // oscit
