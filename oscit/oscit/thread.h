@@ -6,7 +6,7 @@
 #include <fstream>
 namespace oscit {
 
-class Thread : public Mutex
+class Thread
 {
  public:
   Thread() : owner_(NULL), thread_id_(NULL), use_signals_(false), quit_(false) {
@@ -53,6 +53,14 @@ class Thread : public Mutex
     return !quit_;
   }
   
+  inline void lock() {
+    mutex_.lock();
+  }
+  
+  inline void unlock() {
+    mutex_.unlock();
+  }
+  
   void quit() {
    if (thread_id_) {
      if (use_signals_) {
@@ -63,6 +71,12 @@ class Thread : public Mutex
      thread_id_ = NULL;
    }
   }
+  
+  /** Set thread priority to high. */
+  void high_priority();
+  
+  /** Set thread priority to normal. */
+  void normal_priority();
   
  public:
   static pthread_key_t sThisKey;   /**< Key to retrieve 'this' value from a running thread. */
@@ -86,7 +100,7 @@ class Thread : public Mutex
    }
    
    
-  /** Static function to start a new thread which will use signals to interupt work. Class 'T' should respond to "quit()". */
+  /** Static function to start a new thread which will use signals to interupt work. Class 'T' should respond to "terminate()". */
   template<class T, void(T::*Tmethod)(Thread*)>
   static void * start_thread_using_signals(void *thread) {
   // begin of new thread
@@ -121,13 +135,18 @@ class Thread : public Mutex
   /** Thread should stop. */
   template<class T>
   static void terminate_owner(int sig) {
-    ((T*)(thread_this()->owner_))->quit();
+    ((T*)(thread_this()->owner_))->terminate();
   }
   
   void      *owner_;
+  
   pthread_t thread_id_;
+  int normal_sched_policy_;                /**< Thread's original scheduling priority (normal_priority). */ 
+  struct sched_param normal_thread_param_; /**< Scheduling parameters for commands (lower). */
+  
   bool      use_signals_;
   bool      quit_;
+  Mutex     mutex_;
 };
 
 } // oscit

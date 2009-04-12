@@ -21,14 +21,18 @@ public:
   virtual ~ZeroConf() {}
   
   void quit() {
-    quit_ = true;
+    listen_thread_.quit();
   }
   
   /** Setup serviceRef and start listening. */
   virtual void start() = 0;
   
-protected:
+  /** Should not be called directly (used by Thread). */
+  void terminate() {
+    quit_ = true;
+  }
   
+protected:
   /** Process events here. */
   void listen(Thread *thread, DNSServiceRef service_ref);
   

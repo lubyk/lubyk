@@ -26,7 +26,18 @@ struct DummyWorker
     }
   }
   
-  void quit() {
+  void count_high(Thread *runner) {
+    runner->high_priority();
+    while (!quit_) {
+      runner->lock();
+      ++value_;
+      runner->unlock();
+      
+      microsleep(10); // should be interrupted
+    }
+  }
+  
+  void terminate() {
     quit_ = true;
   }
   
@@ -128,5 +139,16 @@ public:
     assert_equal(2, counter.value_);
     
     delete runner;
+  }
+  
+  void test_create_high_priority( void ) {
+    DummyWorker counter;
+    Thread * runner = new Thread;
+    runner->start_using_signals<DummyWorker, &DummyWorker::count_high>(&counter, NULL);
+    // let it run 2 times: +1 ... 10ms ... +1 ... 5ms .. quit .. 5ms [end]
+    microsleep(15);
+    delete runner;
+    // should join here
+    assert_equal(2, counter.value_);
   }
 };
