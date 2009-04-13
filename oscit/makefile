@@ -1,6 +1,7 @@
 INCLUDE_HEADERS=-I../rubyk/src/templates -Ivalues -Ioscpack -I.
 TESTING=-D_TESTING_
 AR = ar rcu
+RAGEL=ragel
 LIBTOOL=libtool -static
 TEST=test/*_test.h
 OBJECTS=base_object.o root.o receive.o send.o zeroconf.o value.o thread.o oscpack/liboscpack.a cxalloc.o cxsystem.o
@@ -37,6 +38,9 @@ cxsystem.o: opencv/cxsystem.cpp
 
 %.o: src/%.cpp oscit/%.h
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
+
+src/%.cpp: src/%.rl
+	$(RAGEL) $< -o $@
 
 clean:
 	rm -rf *.o *.dSYM liboscit.a test/runner.cpp test/*.dSYM

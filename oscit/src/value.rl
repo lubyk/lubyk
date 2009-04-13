@@ -1,8 +1,54 @@
-#include "oscit/values.h"
-
 /** Ragel parser definition to create Values from JSON. */
+
 #define MAX_NUM_BUFFER_SIZE 50
-// #define DEBUG_PARSER
+//#define DEBUG_PARSER
+
+#include "oscit/values.h"
+#include <iostream>
+#include <ostream>
+
+namespace oscit {
+
+std::ostream &operator<<(std::ostream &out_stream, const Value &val) {
+  switch (val.type()) {
+    case REAL_VALUE:
+      out_stream << val.r;
+      break;
+    case ERROR_VALUE:
+      out_stream << "\"" << val.error_code() << " " << val.error_message() << "\"";
+      break;
+    case STRING_VALUE:
+      out_stream << "\"" << val.str() << "\"";
+      break;
+    case HASH_VALUE:
+      out_stream << "{" << *val.hash_ << "}";
+      break;
+    case MATRIX_VALUE:
+      out_stream << "\"Matrix " << val.matrix_->rows << "x" << val.matrix_->cols << "\"";
+      break;
+    case NIL_VALUE:
+      out_stream << "null";
+      break;
+    case LIST_VALUE:
+      size_t sz = val.size();
+      out_stream << "[";
+      for (size_t i = 0; i < sz; ++i) {
+        if (i > 0) out_stream << ", ";
+        out_stream << val[i];
+      }
+      out_stream << "]";
+      break;
+    default:
+      ;// ????
+  }
+  return out_stream;
+}
+
+Json Value::to_json() const {
+  std::ostringstream os(std::ostringstream::out);
+  os << *this;
+  return (Json)os.str();
+}
 
 %%{
   machine json;
@@ -12,7 +58,7 @@
     if (num_buf_i >= MAX_NUM_BUFFER_SIZE) {
       std::cerr << "Buffer overflow !" << std::endl;
       // stop parsing
-      return strlen(pStr);
+      return strlen(json);
     }
 #ifdef DEBUG_PARSER
 printf("%c_",fc);
@@ -31,39 +77,69 @@ printf("%c_",fc);
   }
 
   action number {
+    // become a RealValue
     num_buf[num_buf_i+1] = '\0';
-    Number(atof(num_buf)).set(*this);
+    set(atof(num_buf));
   }
 
   action string {
-    String(str_buf).set(*this);
+    // become a StringValue
+    set(str_buf);
     str_buf = "";
   }
 
   action hash_value {
+    // Parse a single element of a hash (key:value)
     // Build tmp_val from string and move p forward
     p++;
-    p += tmp_val.from_string(p);
-    tmp_h.set_key(str_buf, tmp_val);
-    if (p == pe)
-      tmp_h.set(*this);
+    p += tmp_val.build_from_json(p);
+    set(str_buf, tmp_val);
     
     str_buf = "";
     fhold;
   }
+  
+  action list_value {
+    // Parse a single element of a hash (key:value)
+    // Build tmp_val from string and move p forward
+    p++;
+    p += tmp_val.build_from_json(p);
+    push_back(tmp_val);
+    if (*(p-1) == ',') fhold; // hold the ',' separator
+    
+    fhold; // eaten by >list_value sub-action
+  }
 
   action hash {
-    tmp_h.set(*this);
+    // become an empty HashValue
+    if (!is_hash()) {
+      set_type(HASH_VALUE);
+    }
   }
-
-  action bang {
-    gBangValue.set(*this);
+  
+  action list {
+    // become an empty list
+    if (!is_list()) {
+      set_type(LIST_VALUE);
+    }
   }
-
+  
+  action nil {
+    // become a NilValue
+    set_type(NIL_VALUE);
+  }
+  
+  action debug {
+    printf("%c?",fc);
+  }
+  
+  action debug2 {
+    printf("%c!",fc);
+  }
   
   ws        = ' ' | '\t' | '\n';
-  end       = ws  | '\0' | '}';  # we need '}' to finish value when embedded in hash: {one:1.34}
-  char      = ([^"\\] | '\n' | ( '\\' (any | '\n') )) $str_a;
+  end       = ws  | '\0' | '}' | ',' | ']';  # we need '}' and ']' to finish value when embedded in hash: {one:1.34}
+  char      = ([^"\\] | '\n') $str_a | ('\\' (any | '\n') $str_a);
   word      = (alpha [^ \t\n:]*) $str_a;
   real      = ([\-+]? $num_a ('0'..'9' digit* '.' digit+) $num_a );
   integer   = ([\-+]? $num_a ('0'..'9' digit*) $num_a );
@@ -71,10 +147,12 @@ printf("%c_",fc);
   number    = real | integer;
   string    = ('"' char* '"') | word | '/' $str_a char*; # special case for urls
   hash      = '{'? (ws* string ':' >hash_value)+ ws* '}'? | '{' ws* '}';
-  bang      = 'Bang!';
-#  array   = '[]' | '[' ($value)* $array_element ']';
+  nil       = 'null';
+  true      = 'true';
+  false     = 'false';
+  list      = ('[' >list_value ws* (',' >list_value ws*)* ']') $debug;
   
-  main     := ws* (string %string | number %number | hash %hash | bang %bang) end; # | array | true | false | null;
+  main     := ws* (string %string | number %number | hash %hash | list %list | nil %nil) end; # | true | false;
   
 }%%
 
@@ -82,54 +160,32 @@ printf("%c_",fc);
 %% write data;
 
 /** This is a crude JSON parser. */
-size_t Value::from_string(const char * pStr)
-{
+size_t Value::build_from_json(const char *json, bool lazy_allowed) {
+  std::cout << "\nbuild_from_json:\"" << json << "\"\n";
   char num_buf[MAX_NUM_BUFFER_SIZE + 1];
   unsigned int num_buf_i = 0;
   std::string str_buf;
-  Value tmp_val;   // used when building Hash
-  Hash  tmp_h;     // used to build tmp Hash
+  Value tmp_val;   // used when building Hash or List
   
   // =============== Ragel job ==============
   
   int cs;
-  const char * p  = pStr;
-  const char * pe = pStr + strlen(p) + 1;
+  const char * p  = json;
+  const char * pe = json + strlen(p) + 1;
   
   %% write init;
   %% write exec;
   
-  return p - pStr;
+  return p - json;
 }
 
-std::ostream &operator<<(std::ostream &out_stream, const Value &val) {
-  switch (val.type()) {
-    case REAL_VALUE:
-      out_stream << val.r;
-      break;
-    case ERROR_VALUE:
-      out_stream << val.error_code() << val.error_message();
-      break;
-    case STRING_VALUE:
-      out_stream << val.s;
-      break;
-    case NIL_VALUE:
-      // ???? out_stream << val.s;
-      break;
-    case LIST_VALUE:
-      size_t sz = val.size();
-      for (size_t i = 0; i < sz; ++i) {
-        out_stream << val[i];
-      }
-      break;
-    default:
-      // ????
-  }
-  return out_stream;
-}
+} // oscit
 
 
-/** Display number inside stream. */
+/* 
+
+// old stuff, remove if we decide we do not need to stream matrix data as json...
+
 template<>
 void MatrixData::to_stream(std::ostream& pStream) const
 {
@@ -163,7 +219,7 @@ void MatrixData::to_stream(std::ostream& pStream) const
   }
 }
 
-/** Display number inside stream. */
+
 template<>
 void CharMatrixData::to_stream(std::ostream& pStream) const
 {
@@ -194,7 +250,7 @@ void CharMatrixData::to_stream(std::ostream& pStream) const
   }
 }
 
-/** Display MatrixData as json. */
+
 template<>
 void MatrixData::to_json(std::ostream& pStream) const
 {
@@ -212,7 +268,7 @@ void MatrixData::to_json(std::ostream& pStream) const
   pStream << "]";
 }
 
-/** Display CharMatrixData as json. */
+
 template<>
 void CharMatrixData::to_json(std::ostream& pStream) const
 {
@@ -226,3 +282,4 @@ void CharMatrixData::to_json(std::ostream& pStream) const
 
   pStream << "]";
 }
+*/

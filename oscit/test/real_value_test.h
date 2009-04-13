@@ -99,11 +99,17 @@ public:
     assert_equal(0.0, v.r);
   }
   
-  void test_stream( void ) {
+  void test_to_json( void ) {
     Value v(1.35);
     std::ostringstream os(std::ostringstream::out);
     os << v;
     assert_equal("1.35", os.str());
-    assert_equal("1.35", v.to_string());
+    assert_equal("1.35", v.to_json());
+  }
+  
+  void test_from_json( void ) {
+    Value v(Json("2.45"));
+    assert_true(v.is_real());
+    assert_equal(2.45, v.r);
   }
 };

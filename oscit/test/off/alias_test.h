@@ -50,7 +50,7 @@
 //FIX     
 //FIX     delete two; // delete original first
 //FIX     res = root.call("/ali", "23");
-//FIX     TS_ASSERT_EQUALS(res.to_string(), "[8] #BaseObject '/ali' not found.");
+//FIX     TS_ASSERT_EQUALS(res.to_json(), "[8] #BaseObject '/ali' not found.");
 //FIX   }
 //FIX   
 //FIX   void test_delete_alias_first( void )
@@ -73,13 +73,13 @@
 //FIX     
 //FIX     delete ali;
 //FIX     res = root.call("/ali");
-//FIX     TS_ASSERT_EQUALS(res.to_string(), "[2] #BaseObject '/ali' not found.");
+//FIX     TS_ASSERT_EQUALS(res.to_json(), "[2] #BaseObject '/ali' not found.");
 //FIX     res = root.call("/one/sub");
 //FIX     TS_ASSERT_EQUALS(Number(res).value(), 3.00);
 //FIX     
 //FIX     delete one;
 //FIX     res = root.call("/one/sub");
-//FIX     TS_ASSERT_EQUALS(res.to_string(), "[3] #BaseObject '/one/sub' not found.");
+//FIX     TS_ASSERT_EQUALS(res.to_json(), "[3] #BaseObject '/one/sub' not found.");
 //FIX   }
 //FIX   
 //FIX };

@@ -9,6 +9,14 @@
 
 namespace oscit {
 
+/** This is just a different typedef for std::string. */
+class Json : public std::string
+{
+ public:
+  Json(const char *str) : std::string(str) {}
+  Json(const std::string &str) : std::string(str) {}
+};
+
 class List;
 class Value;
 
@@ -60,6 +68,10 @@ class Value
 { 
 public:
   Value() : type_(NIL_VALUE) {}
+  
+  explicit Value(const Json &json) : type_(NIL_VALUE) {
+    build_from_json(json.c_str());
+  }
   
   explicit Value(Real real) : type_(REAL_VALUE), r(real) {}
   
@@ -165,8 +177,13 @@ public:
     return type_;
   }
   
+  /** Build the content of the value from the value to nil.
+   *  @return number of characters eaten in the buffer to build Value.
+   */
+  size_t build_from_json(const char *json, bool lazy_allowed = true);
+  
   /** Return a string representation of the value. */
-  std::string to_string() const;
+  Json to_json() const;
   
   /** Change the Value into the specific type. Since a default value must be set,
     * it is better to use 'set'. */

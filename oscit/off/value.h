@@ -217,9 +217,9 @@ public:
     return is_nil() ? pDefault : ptr_->dataPtr_->convert(pDefault);
   }
   
-  std::string to_string() const
+  std::string to_json() const
   {
-    return ptr_ ? ptr_->dataPtr_->to_string() : std::string("Nil");
+    return ptr_ ? ptr_->dataPtr_->to_json() : std::string("Nil");
   }
   
 #ifdef _TESTING_

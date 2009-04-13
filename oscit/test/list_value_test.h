@@ -221,7 +221,7 @@ public:
     assert_equal(1.34,  v[2].r);
   }
 
-  void test_stream( void ) {
+  void test_to_json( void ) {
     Value v(TypeTag("fsff"));
     v[0].r = 1.234;
     v[1].set("Hello World!");
@@ -230,6 +230,40 @@ public:
     std::ostringstream os(std::ostringstream::out);
     os << v;
     assert_equal("[1.234, \"Hello World!\", 9.8, 2000]", os.str());
-    assert_equal("[1.234, \"Hello World!\", 9.8, 2000]", v.to_string());
+    assert_equal("[1.234, \"Hello World!\", 9.8, 2000]", v.to_json());
   }
+  
+  void test_from_json_strict( void ) {
+    Value v(Json("[1.0, \"two\"]"));
+    assert_true(v.is_list());
+    assert_equal(1.0, v[0].r);
+    assert_equal("two", v[1].str());
+  }
+  
+  // void test_from_json_lazy( void ) {
+  //   Value v(Json("1.0, \"two\""));
+  //   assert_true(v.is_list());
+  //   assert_equal(1.0, v[0].r);
+  //   assert_equal("two", v[1].str());
+  // }
+  // 
+  // void test_from_json_list_in_list_lazy( void ) {
+  //   Value v(Json("1.0, [2.0, 3.0], [\"four\",\"five\"]"));
+  //   assert_true(v.is_list());
+  //   assert_equal(1.0, v[0].r);
+  //   assert_equal(2.0, v[1][0].r);
+  //   assert_equal(3.0, v[1][1].r);
+  //   assert_equal("four", v[2][0].str());
+  //   assert_equal("five", v[2][1].str());
+  // }
+  // 
+  // void test_from_json_list_in_list_bracket( void ) {
+  //   Value v(Json("[[1.0, 2.0], 3.0, [\"four\",\"five\"]]"));
+  //   assert_true(v.is_list());
+  //   assert_equal(1.0, v[0][0].r);
+  //   assert_equal(2.0, v[0][1].r);
+  //   assert_equal(3.0, v[1].r);
+  //   assert_equal("four", v[2][0].str());
+  //   assert_equal("five", v[2][1].str());
+  // }
 };

@@ -8,7 +8,7 @@ class Person : public BaseObject
   
   /** A simple class method. */
   static const Value class_method(Root *root, const Value &val) {
-    return Value(val.to_string());
+    return Value(std::string(val.to_json()));
   }
   
   /** A simple member method. */
@@ -32,12 +32,12 @@ public:
     
     res = root.call("/hello", MatrixValue(2,3));
     
-    assert_equal("\"400 \'/hello\' (Send me strings only.).\"", res.to_string());
+    assert_equal("\"400 \'/hello\' (Send me strings only.).\"", res.to_json());
     
-    res = root.call("/hello", Value());
+    res = root.call("/hello");
     
     assert_true(res.is_string());
-    assert_equal("Nil", res.str());
+    assert_equal("null", res.str());
   }
   
   void test_trigger_method( void ) {

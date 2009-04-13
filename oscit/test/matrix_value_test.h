@@ -119,11 +119,11 @@ public:
     assert_equal(0, v.mat_size());
   }
   
-  void test_stream( void ) {
+  void test_to_json( void ) {
     MatrixValue v(2,3);
     std::ostringstream os(std::ostringstream::out);
     os << v;
     assert_equal("\"Matrix 2x3\"", os.str());
-    assert_equal("\"Matrix 2x3\"", v.to_string());
+    assert_equal("\"Matrix 2x3\"", v.to_json());
   }
 };

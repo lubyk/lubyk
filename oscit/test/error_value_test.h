@@ -98,11 +98,11 @@ public:
     assert_equal(UNKNOWN_ERROR, v.error_code());
   }
   
-  void test_stream( void ) {
+  void test_to_json( void ) {
     Value v(NOT_FOUND_ERROR, "banana");
     std::ostringstream os(std::ostringstream::out);
     os << v;
     assert_equal("\"404 banana\"", os.str());
-    assert_equal("\"404 banana\"", v.to_string());
+    assert_equal("\"404 banana\"", v.to_json());
   }
 };

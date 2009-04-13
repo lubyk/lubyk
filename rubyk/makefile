@@ -10,7 +10,6 @@ RUBYK_LIBDIR=$(LIBDIR)/rubyk
 
 DOT_CMD=/Applications/Graphviz.app/Contents/MacOS/dot
 RAGEL=ragel
-RAGEL_CD=rlgen-cd
 PLAT= macosx
 TEST=test/*_test.h #test/objects/*_test.h
 LINKER_OBJECTS=../oscit/liboscit.a slot.o inlet.o outlet.o node.o worker.o #event.o outlet.o buffer.o class.o new_method.o class_finder.o group.o command.o planet.o

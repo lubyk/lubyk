@@ -67,11 +67,16 @@ public:
     assert_true(v.is_nil());
   }
   
-  void test_stream( void ) {
+  void test_to_json( void ) {
     Value v;
     std::ostringstream os(std::ostringstream::out);
     os << v;
-    assert_equal("Nil", os.str());
-    assert_equal("Nil", v.to_string());
+    assert_equal("null", os.str());
+    assert_equal("null", v.to_json());
+  }
+  
+  void test_from_json( void ) {
+    Value v(Json("null"));
+    assert_true(v.is_nil());
   }
 };

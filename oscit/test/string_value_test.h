@@ -120,11 +120,17 @@ public:
     assert_equal("", v.str());
   }
 
-  void test_stream( void ) {
+  void test_to_json( void ) {
     Value v("cake");
     std::ostringstream os(std::ostringstream::out);
     os << v;
     assert_equal("\"cake\"", os.str());
-    assert_equal("\"cake\"", v.to_string());
+    assert_equal("\"cake\"", v.to_json());
+  }
+  
+  void test_from_json( void ) {
+    Value v(Json("\"This is some \\\"super\\\" string !\""));
+    assert_true(v.is_string());
+    assert_equal("This is some \"super\" string !", v.str());
   }
 };

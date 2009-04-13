@@ -191,7 +191,7 @@ public:
     assert_equal(1.0, v["one"].r);
   }
   
-  void test_stream( void ) {
+  void test_to_json( void ) {
     Value v;
     Value jobs;
     v.set("name", "Joe");
@@ -202,6 +202,35 @@ public:
     std::ostringstream os(std::ostringstream::out);
     os << v;
     assert_equal("{\"name\":\"Joe\" \"age\":34 \"job\":[\"dad\", \"husband\", \"lover\", -666]}", os.str());
-    assert_equal("{\"name\":\"Joe\" \"age\":34 \"job\":[\"dad\", \"husband\", \"lover\", -666]}", v.to_string());
+    assert_equal("{\"name\":\"Joe\" \"age\":34 \"job\":[\"dad\", \"husband\", \"lover\", -666]}", v.to_json());
+  }
+  
+  void test_from_json_strict( void ) {
+    Value v(Json("{\"week_start_on\":1.0 monday:\"Lundi\"}"));
+    assert_true(v.is_hash());
+    assert_equal(1.0, v["week_start_on"].r);
+    assert_equal("Lundi", v["monday"].str());
+  }
+  
+  void test_from_json_lazy( void ) {
+    Value v(Json("week_start_on:1.0 monday:\"Lundi\""));
+    assert_true(v.is_hash());
+    assert_equal(1.0, v["week_start_on"].r);
+    assert_equal("Lundi", v["monday"].str());
+  }
+  
+  void test_from_json_hash_in_hash( void ) {
+    Value v(Json("week_start_on:1.0 weeks:{monday:\"Lundi\" friday:\"free\"}"));
+    assert_true(v.is_hash());
+    assert_equal(1.0, v["week_start_on"].r);
+    assert_equal("Lundi", v["weeks"]["monday"].str());
+  }
+  
+  void test_from_json_hash_in_hash_curly( void ) {
+    Value v(Json("{week_start_on:1.0 weeks:{monday:\"Lundi\" friday:\"free\"}}"));
+    assert_true(v.is_hash());
+    assert_equal(1.0, v["week_start_on"].r);
+    assert_true(v["weeks"].is_hash());
+    assert_equal("free", v["weeks"]["friday"].str());
   }
 };
