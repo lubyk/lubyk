@@ -331,7 +331,40 @@ public:
     assert_equal(19.0, value);
   }
   
-  void test_update_trigger_position( void ) {
+  void test_update_id( void ) {
+    Real value = 0;
+    DummyNode sender(&value);
+    DummyNode receiver1(&value);
+    DummyNode receiver2(&value);
+    Outlet outlet(&sender, H("f"));
+    Inlet  inlet1(&receiver1, SlotTest_receive_value1, H("f"));
+    Inlet  inlet2(&receiver2, SlotTest_receive_value2, H("f"));
+    Inlet  inlet3(&receiver2, SlotTest_receive_value4, H("f"));
+    
+    receiver1.set_trigger_position(2.0); // should trigger first
+    inlet1.set_id(1); // should not sort with this id               value + 1 = 2
+    
+    receiver2.set_trigger_position(1.0); // should trigger last
+    inlet3.set_id(7); //                                    2 * 2 + value + 4 = 9
+    inlet2.set_id(6); // sub-sorting by id                  2 * 9 + value + 2 = 21
+    
+    assert_true(outlet.connect(&inlet2));
+    assert_true(outlet.connect(&inlet1));
+    assert_true(outlet.connect(&inlet3));
+    
+    assert_equal(0.0, value);
+    
+    outlet.send(Value(1.0));
+    assert_equal(21.0, value); // order was inlet1, inlet3, inlet2
+    
+    inlet2.set_id(8);
+    value = 0.0;
+    
+    outlet.send(Value(1.0));
+    assert_equal(19.0, value); // order is now inlet1, inlet2, inlet3
+  }
+  
+  void test_update_node_trigger_position( void ) {
     Real value = 0;
     DummyNode sender(&value);
     DummyNode receiver1(&value);

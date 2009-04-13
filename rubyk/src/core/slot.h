@@ -28,7 +28,10 @@ public:
   virtual ~Slot();
   
   /** Set slot id (position in containing node) */
-  void set_id(int id) { id_ = id; }
+  void set_id(int id) {
+    id_ = id;
+    sort_incoming_connections();
+  }
   
   /** Add a bi-directional connection to another slot. */
   bool connect(Slot *slot);
@@ -44,6 +47,15 @@ public:
   /** Connections pointing out of this slot should reorder (an inlet id changed or its node changed position). */
   void sort_connections(Slot *changed) {
     connections_.sort_object(changed);
+  }
+  
+  void sort_incoming_connections() {
+    LinkedList<Slot*> * iterator = connections_.begin();
+
+    while(iterator) {
+      iterator->obj->sort_connections(this);
+      iterator = iterator->next;
+    }
   }
 protected:
   /** Make a one-way connection to another slot. 
