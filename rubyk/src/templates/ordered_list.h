@@ -160,7 +160,7 @@ class OrderedList<T*>
     bool empty()
     { return !mTop->next; }
 
-    T front()
+    T *front()
     { return  mTop->next->obj; }
     
     bool get(T** pObj)
@@ -247,6 +247,12 @@ class OrderedList<T*>
         i++;
       }
       return i;
+    }
+    
+    /** Reorder a single element. */
+    void sort_object(T *object) {
+      remove(object);
+      push(object);
     }
     
   private:

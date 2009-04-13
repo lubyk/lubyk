@@ -62,6 +62,9 @@ public:
     (*method_)(node_, val);     // use functor
   }
   
+  /** Connections pointing to this inlet should reorder (inlet id changed or node position changed). */
+  void sort_incoming_connections();
+  
   /** Create a callback for an inlet. */
   // this is a copy of Method... template <class T, void(T::*Tmethod)(const Value &val)>
   // this is a copy of Method... static void cast_method(Node *receiver, const Value &val)

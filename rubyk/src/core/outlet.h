@@ -11,7 +11,6 @@ struct OutletPrototype
   std::string info_;
 };
 
-
 class Outlet : public Slot {
 public:  
   Outlet(Node *node, TypeTagID type) : Slot(node, type) {

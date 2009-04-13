@@ -2,21 +2,18 @@
 
 // these receivers are complicated to make sure they work in the correct order and they are all called.
 // x = 2*x + y + 1
-static void SlotTest_receive_value1(Node * receiver, const Value &val)
-{
-  ((DummyNode*)receiver)->value_ = (2*(((DummyNode*)receiver)->value_)) + val.r + 1;
+static void SlotTest_receive_value1(Node * receiver, const Value &val) {
+  *(((DummyNode*)receiver)->SlotTest_value_) = (2*(*((DummyNode*)receiver)->SlotTest_value_)) + val.r + 1;
 }
 
 // x = 2*x + y + 2
-static void SlotTest_receive_value2(Node * receiver, const Value &val)
-{
-  ((DummyNode*)receiver)->value_ = (2*(((DummyNode*)receiver)->value_)) + val.r + 2;
+static void SlotTest_receive_value2(Node * receiver, const Value &val) {
+  *(((DummyNode*)receiver)->SlotTest_value_) = (2*(*((DummyNode*)receiver)->SlotTest_value_)) + val.r + 2;
 }
 
 // x = 2*x + y + 4
-static void SlotTest_receive_value4(Node * receiver, const Value &val)
-{
-  ((DummyNode*)receiver)->value_ = (2*(((DummyNode*)receiver)->value_)) + val.r + 4;
+static void SlotTest_receive_value4(Node * receiver, const Value &val) {
+  *(((DummyNode*)receiver)->SlotTest_value_) = (2*(*((DummyNode*)receiver)->SlotTest_value_)) + val.r + 4;
 }
 
 class SlotTest : public TestHelper
@@ -24,7 +21,8 @@ class SlotTest : public TestHelper
 public:
   
   void test_out_bang( void ) {
-    DummyNode counter(0);
+    Real value;
+    DummyNode counter(&value);
     Outlet o_bang(&counter, H(""));
     Inlet  i_bang(&counter, SlotTest_receive_value1, H(""));
     Inlet  i_real(&counter, SlotTest_receive_value1, H("f"));
@@ -64,7 +62,8 @@ public:
   }
   
   void test_out_real( void ) {
-    DummyNode counter(0);
+    Real value = 0;
+    DummyNode counter(&value);
     Outlet o_real(&counter, H("f"));
     Inlet  i_bang(&counter, SlotTest_receive_value1, H(""));
     Inlet  i_real(&counter, SlotTest_receive_value1, H("f"));
@@ -104,7 +103,8 @@ public:
   }
   
   void test_out_str( void ) {
-    DummyNode counter(0);
+    Real value = 0;
+    DummyNode counter(&value);
     Outlet o_str(&counter, H("s"));
     Inlet  i_bang(&counter, SlotTest_receive_value1, H(""));
     Inlet  i_real(&counter, SlotTest_receive_value1, H("f"));
@@ -144,7 +144,8 @@ public:
   }
   
   void test_out_hash( void ) {
-    DummyNode counter(0);
+    Real value = 0;
+    DummyNode counter(&value);
     Outlet o_hash(&counter, H("H"));
     Inlet  i_bang(&counter, SlotTest_receive_value1, H(""));
     Inlet  i_real(&counter, SlotTest_receive_value1, H("f"));
@@ -184,7 +185,8 @@ public:
   }
   
   void test_out_mat( void ) {
-    DummyNode counter(0);
+    Real value = 0;
+    DummyNode counter(&value);
     Outlet o_mat(&counter, H("M"));
     Inlet  i_bang(&counter, SlotTest_receive_value1, H(""));
     Inlet  i_real(&counter, SlotTest_receive_value1, H("f"));
@@ -224,7 +226,8 @@ public:
   }
   
   void test_out_list( void ) {
-    DummyNode counter(0);
+    Real value = 0;
+    DummyNode counter(&value);
     Outlet o_list(&counter, H("sfs"));
     Inlet  i_bang(&counter, SlotTest_receive_value1, H(""));
     Inlet  i_real(&counter, SlotTest_receive_value1, H("f"));
@@ -266,36 +269,96 @@ public:
     assert_false(i_list2.connect(&o_list));
   }
   
-  // void test_single_connection( void ) {
-  //   DummyNode counter(0);
-  //   Outlet o(&counter); // counter behaves as the receiver ()
-  //   Inlet  i(&counter, SlotTest_receive_value1 );
-  //   i.set_id(3); // make sure it does not send a 'bang()' to our fake receiver.
-  //   o.connect(&i);
-  //   assert_true_EQUALS( 0.0, counter.value_);
-  //   o.send(Number(1.0));
-  //   assert_true_EQUALS( 2.0, counter.value_);
-  // }
-  // 
-  // void test_many_connections( void )
-  // {
-  //   DummyNode counter(0);
-  //   Outlet o(&counter);
-  //   Inlet  i1(&counter, SlotTest_receive_value1 );
-  //   Inlet  i2(&counter, SlotTest_receive_value2 );
-  //   Inlet  i3(&counter, SlotTest_receive_value4 );
-  //   // from their ids, these should be called starting by i1, then i2 and i3 as they share the same receiver (counter)
-  //   i1.set_id(4); //         value + 1 = 2
-  //   i2.set_id(2); // 2 * 2 + value + 2 = 7
-  //   i3.set_id(1); // 2 * 7 + value + 4 = 19
-  //   
-  //   o.connect(&i2);
-  //   o.connect(&i1);
-  //   o.connect(&i3);
-  //   
-  //   assert_true_EQUALS( 0.0, counter.value_);
-  //   
-  //   o.send(Number(1.0));
-  //   assert_true_EQUALS( 19.0, counter.value_);
-  // }
+  void test_single_connection( void ) {
+    Real value = 0;
+    DummyNode sender(&value);
+    DummyNode receiver(&value);
+    Outlet outlet(&sender, H("f"));
+    Inlet  inlet(&receiver, SlotTest_receive_value1, H("f"));
+    assert_true(outlet.connect(&inlet));
+    assert_equal(0.0, value);
+    outlet.send(Value(1.0));
+    assert_equal(2.0, value);
+  }
+  
+  void test_many_connections_same_node( void ) {
+    Real value = 0;
+    DummyNode sender(&value);
+    DummyNode receiver(&value);
+    Outlet outlet(&sender, H("f"));
+    Inlet  inlet1(&receiver, SlotTest_receive_value1, H("f"));
+    Inlet  inlet2(&receiver, SlotTest_receive_value2, H("f"));
+    Inlet  inlet3(&receiver, SlotTest_receive_value4, H("f"));
+    // from their ids, these should be called starting by inlet1, then inlet2 and inlet3 as they share the same receiver (counter)
+    inlet1.set_id(4); //         value + 1 = 2
+    inlet2.set_id(2); // 2 * 2 + value + 2 = 7
+    inlet3.set_id(1); // 2 * 7 + value + 4 = 19
+    
+    assert_true(outlet.connect(&inlet2));
+    assert_true(outlet.connect(&inlet1));
+    assert_true(outlet.connect(&inlet3));
+    
+    assert_equal(0.0, value);
+    
+    outlet.send(Value(1.0));
+    assert_equal(19.0, value);
+  }
+  
+  void test_many_connections_different_nodes( void ) {
+    Real value = 0;
+    DummyNode sender(&value);
+    DummyNode receiver1(&value);
+    DummyNode receiver2(&value);
+    Outlet outlet(&sender, H("f"));
+    Inlet  inlet1(&receiver1, SlotTest_receive_value1, H("f"));
+    Inlet  inlet2(&receiver2, SlotTest_receive_value2, H("f"));
+    Inlet  inlet3(&receiver2, SlotTest_receive_value4, H("f"));
+    
+    receiver1.set_trigger_position(2.0); // should trigger first
+    inlet1.set_id(1); // should not sort with this id               value + 1 = 2
+    
+    receiver2.set_trigger_position(1.0); // should trigger last
+    inlet2.set_id(8); // sub-sorting by id                  2 * 2 + value + 2 = 7
+    inlet3.set_id(7); //                                    2 * 7 + value + 4 = 19
+    
+    assert_true(outlet.connect(&inlet2));
+    assert_true(outlet.connect(&inlet1));
+    assert_true(outlet.connect(&inlet3));
+    
+    assert_equal(0.0, value);
+    
+    outlet.send(Value(1.0));
+    assert_equal(19.0, value);
+  }
+  
+  void test_update_trigger_position( void ) {
+    Real value = 0;
+    DummyNode sender(&value);
+    DummyNode receiver1(&value);
+    DummyNode receiver2(&value);
+    Outlet outlet(&sender, H("f"));
+    Inlet  inlet1(&receiver1, SlotTest_receive_value1, H("f"));
+    Inlet  inlet2(&receiver2, SlotTest_receive_value2, H("f"));
+    Inlet  inlet3(&receiver2, SlotTest_receive_value4, H("f"));
+    
+    inlet1.set_id(1); // should not sort with this id       2 * 0 + x + 1 = 2
+    inlet2.set_id(8); // sub-sorting by id                  2 * 2 + x + 2 = 7
+    inlet3.set_id(7); //                                    2 * 7 + x + 4 = 19
+    
+    assert_true(outlet.connect(&inlet2));
+    assert_true(outlet.connect(&inlet1));
+    assert_true(outlet.connect(&inlet3));
+    
+    assert_equal(0.0, value);
+    
+    outlet.send(Value(1.0));
+    assert_equal(24.0, value); // order was inlet2, inlet3, inlet1
+    
+    receiver1.set_trigger_position(2.0); // should trigger first
+    receiver2.set_trigger_position(1.0); // should trigger last
+    value = 0.0;
+    
+    outlet.send(Value(1.0));
+    assert_equal(19.0, value); // order is now inlet1, inlet2, inlet3
+  }
 };

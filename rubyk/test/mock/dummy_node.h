@@ -4,6 +4,8 @@
 class DummyNode : public Node
 {
 public:
+  DummyNode(Real *value) : SlotTest_value_(value) {}
+  
   DummyNode(Real value) : value_(value) {}
   
   virtual void bang(const Value &val) {
@@ -14,6 +16,7 @@ public:
     }
   }
   
+  Real * SlotTest_value_;
   Real value_;
 };
 

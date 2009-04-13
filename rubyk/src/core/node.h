@@ -65,6 +65,9 @@ class Node : public Object
     }
   }
   
+  /**< Sending order from incoming connections should be updated. */
+  void sort_connections();
+  
   /** This method must be implemented in subclasses. It is used to do a basic setup with default parameters before these
     * are changed during runtime. */
   virtual bool init() { return true; }
@@ -82,6 +85,11 @@ class Node : public Object
   /** Used to sort outlet connections. A node with a high trigger position receives the value before
     * another node with a small trigger position, if they are both connected to the same outlet. */ 
   inline Real trigger_position() { return trigger_position_; }
+  
+  void set_trigger_position(Real value) {
+    trigger_position_ = value;
+    sort_connections();
+  }
   
   /** Send a Value out of the first outlet. */
   inline void send(const Value &val) { send(1, val); }

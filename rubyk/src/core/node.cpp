@@ -15,3 +15,9 @@ Node::~Node() {
     delete *it;
   }
 }
+
+void Node::sort_connections() {
+  for(std::vector<Inlet*>::iterator it = inlets_.begin(); it < inlets_.end(); it++) {
+    (*it)->sort_incoming_connections();
+  }
+}

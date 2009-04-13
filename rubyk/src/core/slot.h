@@ -41,6 +41,10 @@ public:
   
   void *node() { return node_; }
   
+  /** Connections pointing out of this slot should reorder (an inlet id changed or its node changed position). */
+  void sort_connections(Slot *changed) {
+    connections_.sort_object(changed);
+  }
 protected:
   /** Make a one-way connection to another slot. 
     * Create a connection if the type of the other slot is compatible. */
@@ -78,8 +82,6 @@ protected:
     }
     return res;
   }
-  
-protected:  
   
   /** If operation is 'c': create a new link, else unlink. */
   const Value change_link(unsigned char operation, const Value &val);
