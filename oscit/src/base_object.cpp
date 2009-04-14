@@ -24,7 +24,6 @@ const Value BaseObject::set(const Value &val) {
   HashIterator end = val.end();
   Value param;
   Value res;
-  std::string key;
   BaseObject * obj;
   
   for (it = val.begin(); it != end; ++it) {
@@ -35,6 +34,23 @@ const Value BaseObject::set(const Value &val) {
     }
   }
   return res;
+}
+
+bool BaseObject::set_all_ok(const Value &val) {
+  HashIterator it;
+  HashIterator end = val.end();
+  Value param;
+  bool all_ok = true;
+  BaseObject * obj;
+  
+  for (it = val.begin(); it != end; ++it) {
+    if ((obj = child(*it)) && val.get(*it, &param)) {
+      all_ok = !root_->call(obj, param).is_error() && all_ok;
+    } else {
+      all_ok = false;
+    }
+  }
+  return all_ok;
 }
 
 /** Inform the object of an alias to be destroyed on destruction. */

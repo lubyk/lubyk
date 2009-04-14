@@ -60,8 +60,16 @@ class BaseObject
   virtual ~BaseObject();
 
   /** Shortcut to call multiple methods on an object.
-    * Using "obj.set(tempo:45 rubato:1.5)" is equivalent to calling "obj.tempo(45)" and "obj.rubato(1.5)". */
+    * @param val Using "obj.set(tempo:45 rubato:1.5)" is equivalent to calling "obj.tempo(45)" and "obj.rubato(1.5)".
+    * @return a hash with the result for each call.
+    */
   const Value set(const Value &val);
+  
+  /** Shortcut to call multiple methods on an object.
+    * @param val Using "obj.set(tempo:45 rubato:1.5)" is equivalent to calling "obj.tempo(45)" and "obj.rubato(1.5)".
+    * @return true on success, false if any call failed.
+    */
+  bool set_all_ok(const Value &val);
 
   /** This is the prefered way to insert new objects in the tree since it clearly highlights ownership in the parent. 
     * TODO: make sure a parent is not adopted by it's child. */

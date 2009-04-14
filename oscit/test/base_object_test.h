@@ -122,4 +122,14 @@ public:
     assert_equal(10.0, one->real());
     assert_equal(22.22, two->real());
   }
+  
+  void test_call_set_method_return_bool( void ) {
+    BaseObject base;
+    DummyObject * one = base.adopt(new DummyObject("one", 123.0));
+    DummyObject * two = base.adopt(new DummyObject("two", 123.0));
+    assert_true(base.set_all_ok(Value(Json("one:10.0 two:22.22"))));
+    assert_false(base.set_all_ok(Value(Json("one:1.0 four:4.0"))));
+    assert_equal(1.0,   one->real());
+    assert_equal(22.22, two->real());
+  }
 };
