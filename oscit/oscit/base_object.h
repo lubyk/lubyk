@@ -22,6 +22,8 @@ class BaseObject
   
   BaseObject(const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), context_(NULL), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {}
   
+  BaseObject(const std::string &name) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), context_(NULL), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {}
+  
   BaseObject(TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), context_(NULL), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
     name_ = "";
     url_  = name_;

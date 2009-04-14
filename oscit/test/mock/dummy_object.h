@@ -35,6 +35,10 @@ public:
   virtual BaseObject * build_child(const std::string &name) {
     if (name == "special") {
       return adopt(new BaseObject("special"));
+    } else if (name == "AgeOf") {
+      BaseObject * comp = adopt(new BaseObject(name, 0.0));
+      comp->adopt(new DummyObject("Capitain", 78.0));
+      return comp;
     }
     return NULL;
   }

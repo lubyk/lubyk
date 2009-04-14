@@ -114,6 +114,14 @@ public:
     assert_equal("/dummy/special", special->url());
   }
   
+  void test_call_should_build_child( void ) {
+    Root root;
+    root.adopt(new DummyObject("builder", 0.0));
+    Value res = root.call("/builder/AgeOf/Capitain"); // dummy builds 'AgeOf' and 'Capitain'
+    assert_true(res.is_real());
+    assert_equal(78.0, res.r);
+  }
+  
   ////////////////////// OSCIT META METHODS TESTS ///////////////////////////////////////
   
   void test_info( void ) {

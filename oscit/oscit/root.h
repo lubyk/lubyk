@@ -125,9 +125,9 @@ class Root : public BaseObject
     if (object == NULL) {
       size_t pos = url.rfind("/");
       if (pos != std::string::npos) {
-        /** call 'not_found' handler in parent. */
+        /** call 'build_child' handler in parent. */
         BaseObject * parent = find_or_build_object_at(url.substr(0, pos));
-        if (parent != NULL) {
+        if (parent != NULL && (object = object_at(url)) == NULL) {
           return parent->build_child(url.substr(pos+1));
         }
       }
