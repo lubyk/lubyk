@@ -1,13 +1,14 @@
 #ifndef _NEW_METHOD_H_
 #define _NEW_METHOD_H_
-#include "method.h"
 #include "planet.h"
+
+#define NEW_METHOD_INFO "Create new objects from a given url and a hash of parameters."
 
 class NewMethod : public ClassMethod
 {
 public:
-  NewMethod(const std::string &pName, class_method_t pMethod) : ClassMethod(pName, pMethod) {}
-  NewMethod(const char * pName, class_method_t pMethod) : ClassMethod(pName, pMethod) {}
+  NewMethod(const std::string &name, class_method_t method, const char *info) : ClassMethod(name, method, H("sH"), info) {}
+  NewMethod(const char *name, class_method_t method, const char *info) : ClassMethod(name, method, H("sH"), info) {}
   virtual ~NewMethod() {}
   
   /** This trigger method actually implements "new". The parameter can be either a String containing the url of the new object or
@@ -16,19 +17,19 @@ public:
   
   /** Template used as a method to create new nodes. */
   template<class T>
-  static const Value cast_create(Worker& pWorker, const Value &val)
+  static const Value cast_create(Planet &planet, const Value &val)
   {
-    oscit::Object * parent;
-    String url(val);
+    if (val.is_nil()) return gNilValue; // ??? any idea for something better here ?
+    Object *parent;
+    Value params(val[1]);
+    std::string url(val[0].str());
     std::string name;
-    if (url.is_nil()) return Error("Invalid 'url' parameter.");
     
     // get parent ["/met", "met"] => "", "/grp/met" => "/grp"
-    std::string str = url.string();
-    if (str.at(0) == '/') {
+    if (url.at(0) == '/') {
       size_t pos = url.rfind("/");
-      parent = pWorker.find( url.substr(0, pos) );
-      if (!parent) return Error("Invalid parent '").append(url.substr(0,pos)).append("'.");
+      parent = planet.object_at( url.substr(0, pos) );
+      if (!parent) return ErrorValue(BAD_REQUEST_ERROR, "Invalid parent '").append(url.substr(0, pos)).append("'.");
       name = url.substr(pos + 1, url.length());
     } else {
       parent = NULL;
@@ -40,9 +41,10 @@ public:
     if (parent)
       obj = parent->adopt(new T());
     else
-      obj = pWorker.root()->adopt(new T());
+      obj = planet.adopt(new T());
     
     obj->set_name(name);
+    obj->set(val[1]);
     
     return String(obj->url());
   }

@@ -366,8 +366,9 @@ public:
     hash_->set(key, val);
   }
   
-  bool get(const std::string &key, Value *retval) {
+  bool get(const std::string &key, Value *retval) const {
     if (!is_hash()) return false;
+    // TODO: how to make sure the retval is not changed ?
     return hash_->get(key, retval);
   }
   

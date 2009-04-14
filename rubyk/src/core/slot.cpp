@@ -81,7 +81,7 @@ const Value Slot::change_link(unsigned char operation, const Value &val) {
     }
     
     if (!target) {
-      return ErrorValue(BAD_REQUEST_ERROR, "Could not update link with ").append(val.to_string()).append(": incompatible).");
+      return ErrorValue(BAD_REQUEST_ERROR, "Could not update link with ").append(val.to_json()).append(": incompatible).");
     }
     
     if (operation == 'c') {
@@ -90,7 +90,7 @@ const Value Slot::change_link(unsigned char operation, const Value &val) {
         //std::cout << "LINKED: " << url() << " with " << val << std::endl;
         return val;
       } else {
-        return ErrorValue(BAD_REQUEST_ERROR, "Could not make the connection with (").append(val.to_string()).append(").");
+        return ErrorValue(BAD_REQUEST_ERROR, "Could not make the connection with (").append(val.to_json()).append(").");
       }
     } else {
       // disconnect

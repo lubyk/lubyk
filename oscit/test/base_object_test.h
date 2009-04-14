@@ -109,4 +109,16 @@ public:
     res2 = TYPE_CAST(DummyObject, &dummy);
     assert_equal(&dummy, res2);
   }
+  
+  void test_call_set_method( void ) {
+    BaseObject base;
+    DummyObject * one = base.adopt(new DummyObject("one", 123.0));
+    DummyObject * two = base.adopt(new DummyObject("two", 123.0));
+    Value res = base.set(Value(Json("one:10.0 two:22.22")));
+    assert_true(res.is_hash());
+    assert_equal(10.0, res["one"].r);
+    assert_equal(22.22, res["two"].r);
+    assert_equal(10.0, one->real());
+    assert_equal(22.22, two->real());
+  }
 };

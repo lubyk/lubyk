@@ -75,8 +75,7 @@ public:
   }
 private:
   /** Make pointer to method for events. */
-  static void cast_method (void *receiver, const Value &parameter)
-  {
+  static void cast_method(void *receiver, const Value &parameter) {
     (((T*)receiver)->*Tmethod)(parameter);
   }
 };

@@ -68,13 +68,13 @@ protected:
   {
     Value res = worker_.new_object(url, class_name, params);
     _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string("create")),
-                       res.to_string(), std::string(pResult));
+                       res.to_json(), std::string(pResult));
   }
   
   void _assert_call(const char * file, int lineno, const char * url, const char * pVal, const char * pResult)
   {
     Value res = worker_.call(url, Value(pVal));
-    std::string str = res.is_string() ? String(res).string() : res.to_string();
+    std::string str = res.is_string() ? String(res).string() : res.to_json();
     _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string(url)), str, std::string(pResult));
   }
   
@@ -83,7 +83,7 @@ protected:
     Value res = worker_.call(url, Value(pVal));
     Number n(res);
     if (n.is_nil()) {
-      _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string(url)), res.to_string(), TS_AS_STRING(pResult));
+      _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string(url)), res.to_json(), TS_AS_STRING(pResult));
     } else {
       _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string(url)), n.value(), pResult);
     }
@@ -93,7 +93,7 @@ protected:
   {
     std::string url = std::string(pName).append("/#inspect");
     Value res = worker_.call(url);
-    std::string str = res.is_string() ? String(res).string() : res.to_string();
+    std::string str = res.is_string() ? String(res).string() : res.to_json();
     _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(url), str, std::string(pInfo));
   }
   
@@ -104,7 +104,7 @@ protected:
     Value res = worker_.call(url);
     Number n(res);
     if (n.is_nil()) {
-      _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(url), res.to_string(), TS_AS_STRING(pInfo));
+      _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(url), res.to_json(), TS_AS_STRING(pInfo));
     } else {
       _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(url), n.value(), pInfo);
     }
@@ -114,7 +114,7 @@ protected:
   {
     std::string url = std::string(pName).append("/#info");
     Value res = worker_.call(url);
-    std::string str = res.is_string() ? String(res).string() : res.to_string();
+    std::string str = res.is_string() ? String(res).string() : res.to_json();
     _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(url), str, std::string(pInfo));
   }
 };

@@ -77,7 +77,7 @@ public:
   /** Class method that displays 'Hello: <parameter>'. */
   static const Value hello(Worker& planet, const Value &val)
   {
-    return String("Hello: ").append(val.to_string());
+    return String("Hello: ").append(val.to_json());
   }
   
   

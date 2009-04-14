@@ -3,23 +3,20 @@
 class Print : public Node
 {
 public:
+  Print() : output_(std::count) {}
   
   // [1]
-  void bang(const Value &val)
-  { 
-    // std::cout << "received " << val << std::endl;
-    notify(H("print"), val);
+  void bang(const Value &val) { 
+    *output_ << val << std::endl;
   }
   
-  virtual const Value inspect(const Value &val) 
-  { 
-    return String("<Print:").append(url()).append(" >");
-  }
+  void set_output(std::ostream &output) { output_ = &output; }
   
+  std::ostream * output_;
 };
 
 extern "C" void init(Worker& planet)
 {
-  CLASS(Print, "Print any value received in bang inlet.")
-  INLET(Print, bang, AnyValue, "Received values are printed out to listening notifiers.")
+  CLASS(Print, "Print any value received in bang inlet.", "no options")
+  INLET(Print, bang, H("*"), "Received values are printed out to listening notifiers.")
 }

@@ -6,9 +6,9 @@
 #include "planet.h"
 #include "event.h"
 
-// #include "class.h"
-// #include "class_finder.h"
-// #include "new_method.h"
-// #include "command.h"
-// 
+#include "class.h"
+#include "class_finder.h"
+#include "new_method.h"
+#include "command.h"
+ 
 #include "node.hpp"

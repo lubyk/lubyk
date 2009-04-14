@@ -65,10 +65,14 @@ class Root : public BaseObject
     
     if (!target) return ErrorValue(NOT_FOUND_ERROR, url);
     
+    return call(target, val);
+  }
+  
+  inline const Value call(BaseObject *target, const Value &val) {
     if (val.is_nil() || val.type_tag_id() == target->type_tag_id() || target->accept_any_type()) {
       return target->safe_trigger(val);
     } else {
-      return ErrorValue(BAD_REQUEST_ERROR, std::string("'").append(url).append("' (").append(target->info()).append(")."));
+      return ErrorValue(BAD_REQUEST_ERROR, std::string("'").append(target->url()).append("' (").append(target->info()).append(")."));
     }
   }
 

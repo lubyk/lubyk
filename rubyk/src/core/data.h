@@ -56,7 +56,7 @@ public:
   }
   
   /** String representation of data. */
-  std::string to_string() const
+  std::string to_json() const
   {
     std::ostringstream os(std::ostringstream::out);
     to_stream(os);

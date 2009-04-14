@@ -63,11 +63,10 @@ public:
   }
   
   /** Create a callback for an inlet. */
-  // this is a copy of Method... template <class T, void(T::*Tmethod)(const Value &val)>
-  // this is a copy of Method... static void cast_method(Node *receiver, const Value &val)
-  // this is a copy of Method... {
-  // this is a copy of Method...   (((T*)receiver)->*Tmethod)(val);
-  // this is a copy of Method... }
+  template <class T, void(T::*Tmethod)(const Value &val)>
+  static void cast_method(Node *receiver, const Value &val) {
+    (((T*)receiver)->*Tmethod)(val);
+  }
   
 private:
   inlet_method_t method_;        /**< Method to set a new value. */

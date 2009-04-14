@@ -51,7 +51,7 @@ public:
     
     delete two; // delete original first
     res = root.call("/ali", "23");
-    TS_ASSERT_EQUALS(res.to_string(), "[8] #Object '/ali' not found.");
+    TS_ASSERT_EQUALS(res.to_json(), "[8] #Object '/ali' not found.");
   }
   
   void test_delete_alias_first( void )
@@ -74,13 +74,13 @@ public:
     
     delete ali;
     res = root.call("/ali");
-    TS_ASSERT_EQUALS(res.to_string(), "[2] #Object '/ali' not found.");
+    TS_ASSERT_EQUALS(res.to_json(), "[2] #Object '/ali' not found.");
     res = root.call("/one/sub");
     TS_ASSERT_EQUALS(Number(res).value(), 3.00);
     
     delete one;
     res = root.call("/one/sub");
-    TS_ASSERT_EQUALS(res.to_string(), "[3] #Object '/one/sub' not found.");
+    TS_ASSERT_EQUALS(res.to_json(), "[3] #Object '/one/sub' not found.");
   }
   
 };

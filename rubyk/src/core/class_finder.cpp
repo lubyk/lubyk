@@ -3,7 +3,7 @@
 #include <dlfcn.h> // dylib load
 
 
-/** This trigger implements "/class". It returns the list of objects in mObjectsPath. */
+/** This trigger implements "/class". It returns the list of objects in objects_path_. */
 const Value ClassFinder::trigger (const Value &val)
 {
   return String(""); // TODO: 'lib' directory listing !
@@ -16,7 +16,7 @@ const Value ClassFinder::not_found (const std::string &url, const Value &val)
   oscit::Object * obj;
   
   // try to load dynamic lib
-  std::string path = mObjectsPath.string();
+  std::string path = objects_path_.string();
   path.append("/").append(className).append(".rko");
   
   if (load(path.c_str(), "init")) {

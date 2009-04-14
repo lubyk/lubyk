@@ -19,6 +19,23 @@ BaseObject::~BaseObject()
   clear();
 }
 
+const Value BaseObject::set(const Value &val) {
+  HashIterator it;
+  HashIterator end = val.end();
+  Value param;
+  Value res;
+  std::string key;
+  BaseObject * obj;
+  
+  for (it = val.begin(); it != end; ++it) {
+    if ((obj = child(*it)) && val.get(*it, &param)) {
+      res.set(*it, root_->call(obj, param));
+    } else {
+      res.set(*it, ErrorValue(NOT_FOUND_ERROR, *it));
+    }
+  }
+  return res;
+}
 
 /** Inform the object of an alias to be destroyed on destruction. */
 void BaseObject::register_alias(Alias * pAlias)

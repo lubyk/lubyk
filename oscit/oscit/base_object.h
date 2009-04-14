@@ -58,37 +58,8 @@ class BaseObject
   virtual ~BaseObject();
 
   /** Shortcut to call multiple methods on an object.
-    * Using "obj.set(foo:4 bar:5)" is equivalent to calling "obj.foo(4)" and "obj.bar(5)". */
-  //FIX bool set(const Hash& pParams)
-  //FIX {
-  //FIX   BaseObject * obj;
-  //FIX   
-  //FIX   Hash_iterator it;
-  //FIX   Hash_iterator end = pParams.end();
-  //FIX 
-  //FIX   for(it = pParams.begin(); it != end; it++) {
-  //FIX     TypedValue tval;
-  //FIX     if ( (obj = child(*it)) && pParams.get(&tval, *it) ) {
-  //FIX       if (obj->typeTagID_ == hashId(tval.type)) obj->trigger(&tval.value);
-  //FIX       // TODO: else ?
-  //FIX     }
-  //FIX   }
-  //FIX   return true;
-  //FIX }
-  
-  /** Shortcut to call first method on an object.
-    * Using "obj.set('waga',3.4,1)" is equivalent to calling "obj.first_method(['waga',3.4,1])". */
-  bool set(const Value &val) {
-    BaseObject * obj;
-    // use first method as default
-    string_iterator it  = children_.begin();
-    string_iterator end = children_.end();
-    if (it != end && (obj = child(*it)) && obj->type_tag_id_ == val.type_tag_id()) {
-      // TODO: if the object type is "M" (matrix) ===> build a matrix from first "ffff" into a values.
-      obj->trigger(val);
-    }
-    return true;
-  }
+    * Using "obj.set(tempo:45 rubato:1.5)" is equivalent to calling "obj.tempo(45)" and "obj.rubato(1.5)". */
+  const Value set(const Value &val);
 
   /** This is the prefered way to insert new objects in the tree since it clearly highlights ownership in the parent. 
     * TODO: make sure a parent is not adopted by it's child. */
