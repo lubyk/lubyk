@@ -302,4 +302,12 @@ public:
     assert_equal("one", v[0]["one"].str());
     assert_equal(3.0, v[1].r);
   }
+  
+  void test_from_json_newline_in_list( void ) {
+    Value v(Json("one:\"one\"\ntwo:2.0"));
+    assert_true(v.is_hash());
+    assert_equal("H", v.type_tag());
+    assert_equal("one", v["one"].str());
+    assert_equal(2.0, v["two"].r);
+  }
 };
