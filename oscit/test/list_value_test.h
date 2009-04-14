@@ -293,4 +293,13 @@ public:
     assert_equal("four", v[2][0].str());
     assert_equal("five", v[2][1].str());
   }
+  
+  void test_from_json_hash_in_list( void ) {
+    Value v(Json("[{one:\"one\" two:2.0}, 3.0]"));
+    assert_true(v.is_list());
+    assert_equal("Hf", v.type_tag());
+    assert_equal(2.0, v[0]["two"].r);
+    assert_equal("one", v[0]["one"].str());
+    assert_equal(3.0, v[1].r);
+  }
 };
