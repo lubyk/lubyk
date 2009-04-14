@@ -20,7 +20,7 @@ void Class::make_outlets(Node *object)
   std::list<OutletPrototype>::iterator begin = outlet_prototypes_.begin();
   std::list<OutletPrototype>::iterator end   = outlet_prototypes_.end();
   Object * outlets = object->adopt(new Object("out"));
-  Object * method;
+  //FIX: Object * method;
   Outlet * outlet;
   
   for (it = begin; it != end; it++) {

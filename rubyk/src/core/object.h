@@ -11,6 +11,7 @@ class Object : public BaseObject
  public:
    Object() : worker_(NULL) {}
    Object(const char *name) : BaseObject(name), worker_(NULL) {}
+   Object(const std::string &name) : BaseObject(name), worker_(NULL) {}
    Object(TypeTagID type_tag_id) : BaseObject(type_tag_id), worker_(NULL) {}
    Object(const char *name, TypeTagID type_tag_id) : BaseObject(name, type_tag_id), worker_(NULL) {}
    Object(const std::string &name, TypeTagID type_tag_id) : BaseObject(name, type_tag_id), worker_(NULL) {}

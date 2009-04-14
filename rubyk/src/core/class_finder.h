@@ -12,7 +12,7 @@ public:
     init();
   }
   
-  ClassFinder(const std::string &name,std::string& objects_path) : Object(name), objects_path_(objects_path) {
+  ClassFinder(const std::string &name, std::string &objects_path) : Object(name), objects_path_(objects_path) {
     init();
   }
   
@@ -38,7 +38,7 @@ public:
   /** This trigger implements "/class". It returns the list of objects in objects_path_. */
   virtual const Value trigger (const Value &val);
   
-  virtual const Values not_found (const std::string &url, uint pTypeTag, const osc::ReceivedMessage& pMsg);
+  virtual BaseObject *build_child(const std::string &class_name, Value *error);
   
   const Value lib_path(const Value &val) { 
     if (val.is_string()) objects_path_ = val.str();

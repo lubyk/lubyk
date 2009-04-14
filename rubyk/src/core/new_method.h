@@ -1,24 +1,34 @@
 #ifndef _NEW_METHOD_H_
 #define _NEW_METHOD_H_
 #include "planet.h"
+#include "class.h"
 
 #define NEW_METHOD_INFO "Create new objects from a given url and a hash of parameters."
 
-class NewMethod : public ClassMethod
+class NewMethod;
+typedef const Value (*create_method_t)(Planet *root, NewMethod *new_method, const Value &val);
+
+class NewMethod : public BaseObject
 {
 public:
-  NewMethod(const std::string &name, class_method_t method, const char *info) : ClassMethod(name, method, H("sH"), info) {}
-  NewMethod(const char *name, class_method_t method, const char *info) : ClassMethod(name, method, H("sH"), info) {}
+  NewMethod(const std::string &name, create_method_t method, const char *info) : BaseObject(name, H("sH")), class_method_(method) {
+    set_info(info);
+  }
+  NewMethod(const char *name, create_method_t method, const char *info) : BaseObject(name, H("sH")), class_method_(method) {
+    set_info(info);
+  }
   virtual ~NewMethod() {}
   
-  /** This trigger method actually implements "new". The parameter can be either a String containing the url of the new object or
-    * a Hash containing the "url" and "params": {url: "foo" params:{ bar:1 pico:2 }}. */
-  virtual const Value trigger (const Value &val);
+  /** This trigger method actually implements "new".
+   *  @param val should be a string (url) followed by a hash (parameters): ["foo", {metro:115 rubato:0.7}].
+   */
+  virtual const Value trigger (const Value &val) {
+    return (*class_method_)((Planet*)root_, this, val);
+  }
   
   /** Template used as a method to create new nodes. */
   template<class T>
-  static const Value cast_create(Planet &planet, const Value &val)
-  {
+  static const Value cast_create(Planet *planet, NewMethod *new_method, const Value &val) {
     if (val.is_nil()) return gNilValue; // ??? any idea for something better here ?
     Object *parent;
     Value params(val[1]);
@@ -28,26 +38,51 @@ public:
     // get parent ["/met", "met"] => "", "/grp/met" => "/grp"
     if (url.at(0) == '/') {
       size_t pos = url.rfind("/");
-      parent = planet.object_at( url.substr(0, pos) );
+      parent = planet->object_at( url.substr(0, pos) );
       if (!parent) return ErrorValue(BAD_REQUEST_ERROR, "Invalid parent '").append(url.substr(0, pos)).append("'.");
       name = url.substr(pos + 1, url.length());
     } else {
       parent = NULL;
-      name = str;
+      name = url;
     }
     
-    T * obj;
+    T * node;
     
     if (parent)
-      obj = parent->adopt(new T());
+      node = parent->adopt(new T());
     else
-      obj = planet.adopt(new T());
+      node = planet->adopt(new T());
     
-    obj->set_name(name);
-    obj->set(val[1]);
+    node->set_name(name);
     
-    return String(obj->url());
+    Class * klass = TYPE_CAST(Class, new_method->parent_); // the parent of 'new' should be a Class.
+
+    if (!klass) {
+      return ErrorValue(INTERNAL_SERVER_ERROR, "Object at '").append(new_method->parent_->url()).append("' is not a Class !");
+    }
+    
+    // build methods from prototype
+    klass->make_methods(node);
+    
+
+    node->set_class_url(new_method->parent_->url());  // used by osc (using url instead of name because we might have class folders/subfolders some day).
+
+    // make inlets
+    klass->make_inlets(node);
+
+    // make outlets
+    klass->make_outlets(node);
+
+    // initialize and set defaults by calling methods (val[1] is a hash)
+    node->set_is_ok( node->init() && node->set_all_ok(val[1]) ); // if init or set returns false, the node goes into 'broken' mode.
+
+    // create pending links
+    planet->create_pending_links();
+    
+    return Value(node->url());
   }
+ private:
+  create_method_t class_method_;
   
 };
 
