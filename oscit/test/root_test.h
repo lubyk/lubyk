@@ -106,10 +106,19 @@ public:
   void test_find_or_build_object_at_should_call_build_child( void ) {
     Root root;
     root.adopt(new DummyObject("dummy", 0.0));
-    assert_equal((BaseObject*)NULL, root.find_or_build_object_at("whatever"));
-    assert_equal((BaseObject*)NULL, root.find_or_build_object_at("/whatever"));
-    assert_equal((BaseObject*)NULL, root.find_or_build_object_at("/dummy/foo"));
-    BaseObject * special = root.find_or_build_object_at("/dummy/special");
+    Value error;
+    
+    assert_equal((BaseObject*)NULL, root.find_or_build_object_at("whatever", &error));
+    assert_equal((BaseObject*)NULL, root.find_or_build_object_at("/whatever", &error));
+    assert_equal((BaseObject*)NULL, root.find_or_build_object_at("/dummy/foo", &error));
+    assert_true(error.is_error());
+    assert_equal(NOT_FOUND_ERROR, error.error_code());
+    assert_equal((BaseObject*)NULL, root.find_or_build_object_at("/dummy/error", &error));
+    assert_true(error.is_error());
+    assert_equal("You should not try to build errors !", error.error_message());
+    assert_equal(INTERNAL_SERVER_ERROR, error.error_code());
+    
+    BaseObject * special = root.find_or_build_object_at("/dummy/special", &error);
     assert_true( special != NULL );
     assert_equal("/dummy/special", special->url());
   }

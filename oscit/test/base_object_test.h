@@ -85,11 +85,12 @@ public:
   }
   
   void test_build_child( void ) {
+    Value error;
     BaseObject base;
     BaseObject * carrot = base.adopt(new DummyObject("dummy", 0.0));
-    BaseObject * foo    = carrot->build_child(std::string("something"));
+    BaseObject * foo    = carrot->build_child(std::string("something"), &error);
     assert_equal((BaseObject*)NULL, foo);
-    foo = carrot->build_child(std::string("special"));
+    foo = carrot->build_child(std::string("special"), &error);
     assert_true( foo != NULL );
     assert_equal("/dummy/special", foo->url());
   }

@@ -110,7 +110,7 @@ class BaseObject
   
   /** Dynamically build a child from the given name. This method is called whenever
    *  a sub-node or branch is not found and this is the last found object along the path. */
-  virtual BaseObject * build_child(const std::string &name) {
+  virtual BaseObject * build_child(const std::string &name, Value *error) {
     return NULL;
   }
   

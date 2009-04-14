@@ -61,9 +61,12 @@ class Root : public BaseObject
 
   /** Trigger the object located at the given url with the given parameters. */
   const Value call(const std::string &url, const Value &val) {
-    BaseObject * target = find_or_build_object_at(url);
+    Value error;
+    BaseObject * target = find_or_build_object_at(url, &error);
     
-    if (!target) return ErrorValue(NOT_FOUND_ERROR, url);
+    if (!target) {
+      return error;
+    }
     
     return call(target, val);
   }
@@ -119,27 +122,21 @@ class Root : public BaseObject
   /** Find the object at the given url. Before raising a 404 error, we try to find a 'not_found'
    *  handler that could build the resource.
    */
-  BaseObject * find_or_build_object_at(const std::string &url) {
-    BaseObject * object = object_at(url);
+  BaseObject * find_or_build_object_at(const std::string &url, Value *error) {
+    BaseObject * object = do_find_or_build_object_at(url, error);
     
-    if (object == NULL) {
-      size_t pos = url.rfind("/");
-      if (pos != std::string::npos) {
-        /** call 'build_child' handler in parent. */
-        BaseObject * parent = find_or_build_object_at(url.substr(0, pos));
-        if (parent != NULL && (object = object_at(url)) == NULL) {
-          return parent->build_child(url.substr(pos+1));
-        }
-      }
+    if (object == NULL && error->is_nil()) {
+      error->set(NOT_FOUND_ERROR, url);
     }
+    
     return object;
   }
   
   /** Find the object at the given url. Before raising a 404 error, we try to find a 'not_found'
    *  handler that could build the resource.
    */
-  BaseObject * find_or_build_object_at(const char *url) {
-    return find_or_build_object_at(std::string(url));
+  inline BaseObject * find_or_build_object_at(const char *url, Value *error) {
+    return find_or_build_object_at(std::string(url), error);
   }
   
   /* ======================= META METHODS HELPERS ===================== */
@@ -184,6 +181,22 @@ class Root : public BaseObject
   THash<std::string, BaseObject*> objects_;   /**< Hash to find any object in the tree from its url. */
 
  private:
+  BaseObject * do_find_or_build_object_at(const std::string &url, Value *error) {
+    BaseObject * object = object_at(url);
+  
+    if (object == NULL) {
+      size_t pos = url.rfind("/");
+      if (pos != std::string::npos) {
+        /** call 'build_child' handler in parent. */
+        BaseObject * parent = find_or_build_object_at(url.substr(0, pos), error);
+        if (parent != NULL && (object = object_at(url)) == NULL) {
+          return parent->build_child(url.substr(pos+1), error);
+        }
+      }
+    }
+    return object;
+  }
+   
   void init();
    
   OscReceive * osc_in_;                   /**< Listening socket. */

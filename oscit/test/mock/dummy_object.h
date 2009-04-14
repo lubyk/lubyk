@@ -32,13 +32,15 @@ public:
     return value_;
   }
   
-  virtual BaseObject * build_child(const std::string &name) {
+  virtual BaseObject * build_child(const std::string &name, Value *error) {
     if (name == "special") {
       return adopt(new BaseObject("special"));
     } else if (name == "AgeOf") {
       BaseObject * comp = adopt(new BaseObject(name, 0.0));
       comp->adopt(new DummyObject("Capitain", 78.0));
       return comp;
+    } else if (name == "error") {
+      error->set(INTERNAL_SERVER_ERROR, "You should not try to build errors !");
     }
     return NULL;
   }

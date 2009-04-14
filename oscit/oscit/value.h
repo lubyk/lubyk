@@ -317,6 +317,12 @@ public:
     set_error(code, string);
   }
   
+  /** Change the Value into an ErrorValue. */
+  void set(ErrorCode code, const std::string &string) {
+    set_type_without_default(ERROR_VALUE);
+    set_error(code, string.c_str());
+  }
+  
   /** Change the Value into a ListValue by copying the content of the argument. */
   void set(const Error *error) {
     set_type_without_default(ERROR_VALUE);
