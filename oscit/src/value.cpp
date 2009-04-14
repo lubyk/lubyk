@@ -5,10 +5,17 @@
 //#define DEBUG_PARSER
 
 #include "oscit/values.h"
+#include "oscit/list.h"
 #include <iostream>
 #include <ostream>
 
 namespace oscit {
+
+#ifdef DEBUG_PARSER
+#define DEBUG(x) x
+#else
+#define DEBUG(x)
+#endif
 
 std::ostream &operator<<(std::ostream &out_stream, const Value &val) {
   switch (val.type()) {
@@ -51,176 +58,224 @@ Json Value::to_json() const {
   return (Json)os.str();
 }
 
-#line 157 "src/value.rl"
+Value &Value::push_back(const Value& val) {
+  if (is_list()) {
+    list_->push_back(val);
+  } else if (is_nil() && !val.is_list()) {
+    set(val);
+  } else {
+    if (!is_nil()) {
+      // copy self as first element
+      Value original(*this);
+      set_type(LIST_VALUE);
+      push_back(original);
+    } else {
+      set_type(LIST_VALUE);
+    }
+
+    list_->push_back(val);
+  }
+  return *this;
+}
+
+Value &Value::push_front(const Value& val) {
+  if (is_nil()) {
+    set(val);
+  } else {
+    if (!is_list()) {
+      Value tmp(*this);
+      set_type(LIST_VALUE);
+      if (!tmp.is_nil()) push_back(tmp);
+    }
+
+    list_->push_front(val);
+  }
+  return *this;
+}
+
+///////////////// ====== JSON PARSER ========= /////////////
+#line 219 "src/value.rl"
 
 
 // transition table
 
-#line 60 "src/value.cpp"
+#line 103 "src/value.cpp"
 static const char _json_actions[] = {
-	0, 1, 0, 1, 1, 1, 2, 1, 
-	3, 1, 4, 1, 6, 1, 7, 1, 
-	9, 2, 1, 3, 2, 1, 4, 2, 
-	1, 6, 2, 3, 8, 2, 5, 9, 
-	3, 1, 3, 6, 3, 1, 3, 8
-	
+	0, 1, 0, 1, 1, 1, 4, 1, 
+	5, 1, 8, 1, 10, 2, 2, 10, 
+	2, 3, 10, 2, 7, 10, 2, 8, 
+	10, 2, 9, 10, 3, 1, 9, 10, 
+	3, 5, 8, 10, 3, 6, 5, 10, 
+	3, 8, 1, 10, 4, 2, 6, 5, 
+	10, 4, 3, 6, 5, 10, 4, 5, 
+	8, 1, 10, 4, 7, 6, 5, 10, 
+	5, 9, 6, 5, 1, 10
 };
 
 static const short _json_key_offsets[] = {
-	0, 0, 16, 18, 26, 39, 41, 42, 
-	42, 45, 59, 59, 65, 69, 73, 73, 
-	75, 85, 87, 96, 106, 120, 130, 134, 
-	134, 142, 147, 154, 163, 172, 181, 189, 
-	199, 206, 206, 219, 222, 236, 246, 253, 
-	263, 277, 287, 297
+	0, 0, 15, 29, 31, 39, 51, 59, 
+	61, 62, 62, 66, 66, 68, 78, 80, 
+	89, 91, 98, 106, 108, 109, 118, 122, 
+	129, 129, 134, 139, 144, 152, 163, 173, 
+	175, 182, 182, 184, 194, 196, 205, 207, 
+	214, 222, 224, 225, 234, 238, 245, 245, 
+	246, 247, 248, 255, 255, 262, 270, 274, 
+	282
 };
 
 static const char _json_trans_keys[] = {
-	32, 34, 43, 45, 47, 91, 110, 123, 
-	9, 10, 48, 57, 65, 90, 97, 122, 
-	34, 92, 0, 32, 44, 58, 93, 125, 
-	9, 10, 0, 32, 34, 44, 47, 93, 
-	125, 9, 10, 65, 90, 97, 122, 34, 
-	92, 58, 34, 58, 92, 0, 32, 34, 
-	44, 58, 92, 93, 125, 9, 10, 65, 
-	90, 97, 122, 32, 34, 58, 92, 9, 
-	10, 32, 58, 9, 10, 32, 58, 9, 
-	10, 48, 57, 0, 32, 44, 46, 93, 
-	125, 9, 10, 48, 57, 48, 57, 0, 
+	32, 34, 43, 45, 91, 110, 123, 9, 
+	10, 48, 57, 65, 90, 97, 122, 32, 
+	34, 43, 45, 91, 123, 9, 10, 48, 
+	57, 65, 90, 97, 122, 34, 92, 0, 
+	32, 44, 58, 93, 125, 9, 10, 0, 
+	32, 34, 44, 93, 125, 9, 10, 65, 
+	90, 97, 122, 32, 34, 9, 10, 65, 
+	90, 97, 122, 34, 92, 58, 32, 58, 
+	9, 10, 48, 57, 0, 32, 44, 46, 
+	93, 125, 9, 10, 48, 57, 48, 57, 
+	0, 32, 44, 93, 125, 9, 10, 48, 
+	57, 44, 93, 0, 32, 44, 93, 125, 
+	9, 10, 32, 34, 9, 10, 65, 90, 
+	97, 122, 34, 92, 58, 32, 34, 125, 
+	9, 10, 65, 90, 97, 122, 32, 58, 
+	9, 10, 0, 32, 44, 93, 125, 9, 
+	10, 32, 58, 117, 9, 10, 32, 58, 
+	108, 9, 10, 32, 58, 108, 9, 10, 
+	0, 32, 44, 58, 93, 125, 9, 10, 
+	32, 34, 43, 45, 91, 110, 123, 9, 
+	10, 48, 57, 32, 34, 43, 45, 91, 
+	123, 9, 10, 48, 57, 34, 92, 0, 
 	32, 44, 93, 125, 9, 10, 48, 57, 
-	0, 32, 34, 44, 58, 92, 93, 125, 
-	9, 10, 0, 32, 34, 44, 58, 92, 
-	93, 125, 9, 10, 65, 90, 97, 122, 
-	0, 32, 34, 44, 58, 92, 93, 125, 
-	9, 10, 32, 58, 9, 10, 0, 32, 
-	44, 58, 93, 125, 9, 10, 32, 44, 
-	93, 9, 10, 0, 32, 44, 93, 125, 
-	9, 10, 0, 32, 44, 58, 93, 117, 
-	125, 9, 10, 0, 32, 44, 58, 93, 
-	108, 125, 9, 10, 0, 32, 44, 58, 
-	93, 108, 125, 9, 10, 0, 32, 44, 
-	58, 93, 125, 9, 10, 32, 34, 47, 
-	125, 9, 10, 65, 90, 97, 122, 0, 
-	32, 44, 93, 125, 9, 10, 0, 32, 
-	34, 44, 47, 93, 125, 9, 10, 65, 
-	90, 97, 122, 34, 58, 92, 0, 32, 
-	34, 44, 58, 92, 93, 125, 9, 10, 
-	65, 90, 97, 122, 0, 32, 34, 44, 
-	58, 92, 93, 125, 9, 10, 0, 32, 
-	44, 93, 125, 9, 10, 0, 32, 34, 
-	44, 58, 92, 93, 125, 9, 10, 0, 
-	32, 34, 44, 58, 92, 93, 125, 9, 
-	10, 65, 90, 97, 122, 0, 32, 34, 
-	44, 58, 92, 93, 125, 9, 10, 0, 
-	32, 34, 44, 58, 92, 93, 125, 9, 
-	10, 0, 32, 44, 58, 93, 125, 9, 
-	10, 0
+	0, 32, 44, 46, 93, 125, 9, 10, 
+	48, 57, 48, 57, 0, 32, 44, 93, 
+	125, 9, 10, 48, 57, 44, 93, 0, 
+	32, 44, 93, 125, 9, 10, 32, 34, 
+	9, 10, 65, 90, 97, 122, 34, 92, 
+	58, 32, 34, 125, 9, 10, 65, 90, 
+	97, 122, 32, 58, 9, 10, 0, 32, 
+	44, 93, 125, 9, 10, 117, 108, 108, 
+	0, 32, 44, 93, 125, 9, 10, 0, 
+	32, 44, 93, 125, 9, 10, 32, 34, 
+	9, 10, 65, 90, 97, 122, 32, 58, 
+	9, 10, 0, 32, 44, 58, 93, 125, 
+	9, 10, 0
 };
 
 static const char _json_single_lengths[] = {
-	0, 8, 2, 6, 7, 2, 1, 0, 
-	3, 8, 0, 4, 2, 2, 0, 0, 
-	6, 0, 5, 8, 8, 8, 2, 0, 
-	6, 3, 5, 7, 7, 7, 6, 4, 
-	5, 0, 7, 3, 8, 8, 5, 8, 
-	8, 8, 8, 6
-};
-
-static const char _json_range_lengths[] = {
-	0, 4, 0, 1, 3, 0, 0, 0, 
-	0, 3, 0, 1, 1, 1, 0, 1, 
-	2, 1, 2, 1, 3, 1, 1, 0, 
-	1, 1, 1, 1, 1, 1, 1, 3, 
-	1, 0, 3, 0, 3, 1, 1, 1, 
-	3, 1, 1, 1
-};
-
-static const short _json_index_offsets[] = {
-	0, 0, 13, 16, 24, 35, 38, 40, 
-	41, 45, 57, 58, 64, 68, 72, 73, 
-	75, 84, 86, 94, 104, 116, 126, 130, 
-	131, 139, 144, 151, 160, 169, 178, 186, 
-	194, 201, 202, 213, 217, 229, 239, 246, 
-	256, 268, 278, 288
-};
-
-static const char _json_indicies[] = {
-	0, 2, 3, 3, 4, 7, 8, 9, 
-	0, 5, 6, 6, 1, 11, 12, 10, 
-	13, 13, 13, 14, 13, 13, 13, 1, 
-	15, 16, 17, 15, 18, 15, 20, 16, 
-	19, 19, 1, 22, 23, 21, 14, 1, 
-	21, 1, 24, 25, 18, 26, 27, 17, 
-	26, 24, 25, 26, 29, 27, 28, 28, 
-	18, 18, 18, 19, 24, 30, 18, 28, 
-	1, 14, 1, 19, 18, 24, 18, 28, 
-	10, 5, 1, 31, 31, 31, 32, 31, 
-	31, 31, 5, 1, 33, 1, 31, 31, 
-	31, 31, 31, 31, 33, 1, 34, 34, 
-	1, 34, 35, 36, 34, 34, 34, 4, 
-	37, 38, 17, 37, 35, 36, 37, 40, 
-	38, 39, 39, 4, 41, 34, 19, 41, 
-	35, 42, 41, 41, 34, 39, 4, 35, 
-	4, 39, 4, 43, 13, 43, 14, 43, 
-	43, 13, 6, 44, 7, 45, 44, 1, 
-	46, 46, 46, 46, 46, 46, 1, 43, 
-	13, 43, 14, 43, 47, 43, 13, 6, 
-	43, 13, 43, 14, 43, 48, 43, 13, 
-	6, 43, 13, 43, 14, 43, 49, 43, 
-	13, 6, 50, 51, 50, 14, 50, 50, 
-	51, 6, 9, 17, 18, 52, 9, 19, 
-	19, 1, 15, 15, 15, 15, 15, 15, 
-	1, 1, 15, 16, 17, 15, 18, 15, 
-	20, 16, 19, 19, 1, 1, 24, 25, 
-	18, 26, 27, 17, 26, 24, 25, 26, 
-	29, 27, 28, 28, 18, 26, 26, 1, 
-	26, 24, 25, 26, 26, 26, 18, 15, 
-	15, 15, 15, 15, 15, 1, 34, 34, 
-	1, 34, 35, 36, 34, 34, 34, 4, 
-	37, 38, 17, 37, 35, 36, 37, 40, 
-	38, 39, 39, 4, 41, 34, 19, 41, 
-	35, 42, 41, 41, 34, 39, 37, 37, 
-	1, 37, 35, 36, 37, 37, 37, 4, 
-	43, 13, 43, 14, 43, 43, 13, 6, 
+	0, 7, 6, 2, 6, 6, 2, 2, 
+	1, 0, 2, 0, 0, 6, 0, 5, 
+	2, 5, 2, 2, 1, 3, 2, 5, 
+	0, 3, 3, 3, 6, 7, 6, 2, 
+	5, 0, 0, 6, 0, 5, 2, 5, 
+	2, 2, 1, 3, 2, 5, 0, 1, 
+	1, 1, 5, 0, 5, 2, 2, 6, 
 	0
 };
 
+static const char _json_range_lengths[] = {
+	0, 4, 4, 0, 1, 3, 3, 0, 
+	0, 0, 1, 0, 1, 2, 1, 2, 
+	0, 1, 3, 0, 0, 3, 1, 1, 
+	0, 1, 1, 1, 1, 2, 2, 0, 
+	1, 0, 1, 2, 1, 2, 0, 1, 
+	3, 0, 0, 3, 1, 1, 0, 0, 
+	0, 0, 1, 0, 1, 3, 1, 1, 
+	0
+};
+
+static const short _json_index_offsets[] = {
+	0, 0, 12, 23, 26, 34, 44, 50, 
+	53, 55, 56, 60, 61, 63, 72, 74, 
+	82, 85, 92, 98, 101, 103, 110, 114, 
+	121, 122, 127, 132, 137, 145, 155, 164, 
+	167, 174, 175, 177, 186, 188, 196, 199, 
+	206, 212, 215, 217, 224, 228, 235, 236, 
+	238, 240, 242, 249, 250, 257, 263, 267, 
+	275
+};
+
+static const char _json_indicies[] = {
+	0, 2, 3, 3, 6, 7, 8, 0, 
+	4, 5, 5, 1, 0, 2, 3, 3, 
+	6, 8, 0, 4, 5, 5, 1, 10, 
+	11, 9, 12, 12, 13, 14, 12, 12, 
+	12, 1, 15, 16, 17, 15, 15, 15, 
+	16, 5, 5, 1, 18, 17, 18, 5, 
+	5, 1, 20, 21, 19, 14, 1, 19, 
+	1, 14, 1, 5, 9, 4, 1, 22, 
+	22, 23, 24, 22, 22, 22, 4, 1, 
+	25, 1, 22, 22, 23, 22, 22, 22, 
+	25, 1, 6, 26, 1, 27, 27, 28, 
+	27, 27, 27, 1, 8, 29, 8, 30, 
+	30, 1, 32, 33, 31, 34, 1, 8, 
+	29, 35, 8, 30, 30, 1, 1, 34, 
+	1, 30, 15, 15, 36, 15, 15, 15, 
+	1, 31, 1, 14, 37, 1, 5, 1, 
+	14, 38, 1, 5, 1, 14, 39, 1, 
+	5, 40, 41, 42, 14, 40, 40, 41, 
+	5, 43, 44, 45, 45, 47, 48, 49, 
+	43, 46, 1, 43, 44, 45, 45, 47, 
+	49, 43, 46, 1, 51, 52, 50, 53, 
+	53, 53, 53, 53, 53, 1, 50, 46, 
+	1, 54, 54, 54, 55, 54, 54, 54, 
+	46, 1, 56, 1, 54, 54, 54, 54, 
+	54, 54, 56, 1, 47, 57, 1, 58, 
+	58, 58, 58, 58, 58, 1, 49, 59, 
+	49, 60, 60, 1, 62, 63, 61, 64, 
+	1, 49, 59, 65, 49, 60, 60, 1, 
+	1, 64, 1, 60, 66, 66, 66, 66, 
+	66, 66, 1, 61, 67, 1, 68, 1, 
+	69, 1, 70, 70, 70, 70, 70, 70, 
+	1, 1, 71, 71, 72, 71, 71, 71, 
+	1, 18, 17, 18, 5, 5, 1, 1, 
+	14, 1, 5, 73, 71, 74, 14, 73, 
+	73, 71, 5, 1, 0
+};
+
 static const char _json_trans_targs[] = {
-	1, 0, 2, 15, 19, 16, 24, 25, 
-	27, 31, 2, 3, 14, 33, 4, 33, 
-	34, 5, 8, 12, 38, 5, 6, 7, 
-	9, 10, 35, 36, 11, 37, 13, 33, 
-	17, 18, 39, 20, 23, 39, 40, 21, 
-	42, 41, 22, 43, 25, 26, 33, 28, 
-	29, 30, 43, 33, 32
+	2, 0, 3, 12, 13, 10, 16, 25, 
+	18, 3, 4, 11, 51, 52, 5, 51, 
+	53, 7, 6, 7, 8, 9, 51, 52, 
+	14, 15, 17, 51, 52, 19, 22, 19, 
+	20, 24, 21, 23, 52, 26, 27, 28, 
+	54, 51, 55, 30, 31, 34, 35, 38, 
+	47, 40, 31, 32, 33, 56, 56, 36, 
+	37, 39, 56, 41, 44, 41, 42, 46, 
+	43, 45, 56, 48, 49, 50, 56, 51, 
+	52, 54, 55
 };
 
 static const char _json_trans_actions[] = {
-	0, 0, 0, 1, 3, 1, 3, 29, 
-	3, 0, 3, 0, 0, 7, 9, 11, 
-	11, 0, 3, 3, 11, 3, 0, 0, 
-	20, 0, 23, 23, 3, 23, 3, 5, 
-	1, 1, 17, 20, 0, 32, 32, 3, 
-	32, 17, 3, 17, 15, 15, 13, 3, 
-	3, 3, 36, 26, 0
+	0, 0, 0, 1, 1, 3, 7, 3, 
+	0, 3, 0, 0, 16, 49, 5, 19, 
+	19, 0, 0, 3, 0, 0, 13, 44, 
+	1, 1, 9, 11, 36, 0, 3, 3, 
+	0, 0, 5, 0, 59, 3, 3, 3, 
+	28, 25, 64, 0, 0, 1, 1, 7, 
+	0, 0, 3, 0, 0, 16, 13, 1, 
+	1, 9, 11, 0, 3, 3, 0, 0, 
+	5, 0, 19, 0, 0, 0, 25, 22, 
+	32, 40, 54
 };
 
 static const int json_start = 1;
-static const int json_first_final = 33;
+static const int json_first_final = 51;
 static const int json_error = 0;
 
-static const int json_en_main = 1;
+static const int json_en_main_strict = 29;
+static const int json_en_main_lazy = 1;
 
-#line 161 "src/value.rl"
+#line 223 "src/value.rl"
 
 /** This is a crude JSON parser. */
-size_t Value::build_from_json(const char *json) {
-  std::cout << "\nbuild_from_json:\"" << json << "\"\n";
+size_t Value::build_from_json(const char *json, bool strict_mode) {
+  DEBUG(printf("\nbuild_from_json:\"%s\"\n",json));
   char num_buf[MAX_NUM_BUFFER_SIZE + 1];
   unsigned int num_buf_i = 0;
   std::string str_buf;
-  Value tmp_val;   // used when building Hash or List
-  
+  Value tmp_val;
+  set_type(NIL_VALUE); // clear
   // =============== Ragel job ==============
   
   int cs;
@@ -228,13 +283,20 @@ size_t Value::build_from_json(const char *json) {
   const char * pe = json + strlen(p) + 1;
   
   
-#line 232 "src/value.cpp"
+#line 287 "src/value.cpp"
 	{
 	cs = json_start;
 	}
-#line 177 "src/value.rl"
+#line 239 "src/value.rl"
   
-#line 238 "src/value.cpp"
+  if (strict_mode) {
+    cs = json_en_main_strict;
+  } else {
+    cs = json_en_main_lazy;
+  }
+  
+  
+#line 300 "src/value.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -309,7 +371,7 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 56 "src/value.rl"
+#line 99 "src/value.rl"
 	{
      // append a char to number buffer
     if (num_buf_i >= MAX_NUM_BUFFER_SIZE) {
@@ -317,68 +379,77 @@ _match:
       // stop parsing
       return strlen(json);
     }
-#ifdef DEBUG_PARSER
-printf("%c_",(*p));
-#endif
+    DEBUG(printf("%c_",(*p)));
     num_buf[num_buf_i] = (*p); /* append */
     num_buf_i++;
   }
 	break;
 	case 1:
-#line 70 "src/value.rl"
+#line 111 "src/value.rl"
 	{
      // append a char to build a std::string
-#ifdef DEBUG_PARSER
-    printf("%c-",(*p));
-#endif
+    DEBUG(printf("%c-",(*p)));
     if ((*p))
       str_buf.append(&(*p), 1); /* append */
   }
 	break;
 	case 2:
-#line 79 "src/value.rl"
+#line 118 "src/value.rl"
 	{
     // become a RealValue
-    num_buf[num_buf_i+1] = '\0';
-    set(atof(num_buf));
+    num_buf[num_buf_i] = '\0';
+    tmp_val.set(atof(num_buf));
+    DEBUG(printf("[number %f/%s/%s\n]", tmp_val.r, num_buf, tmp_val.to_json().c_str()));
   }
 	break;
 	case 3:
-#line 85 "src/value.rl"
+#line 125 "src/value.rl"
 	{
     // become a StringValue
-    set(str_buf);
+    tmp_val.set(str_buf);
+    DEBUG(printf("[string %s]\n", tmp_val.to_json().c_str()));
     str_buf = "";
   }
 	break;
 	case 4:
-#line 91 "src/value.rl"
+#line 132 "src/value.rl"
 	{
     // Parse a single element of a hash (key:value)
     // Build tmp_val from string and move p forward
     p++;
     p += tmp_val.build_from_json(p);
     set(str_buf, tmp_val);
+    p--;
+    DEBUG(printf("[hash_value \"%s\":%s]\n", str_buf.c_str(), tmp_val.to_json().c_str()));
+    DEBUG(printf("[continue \"%s\"]\n",p));
     
     str_buf = "";
-    p--;
   }
 	break;
 	case 5:
-#line 102 "src/value.rl"
+#line 145 "src/value.rl"
 	{
     // Parse a single element of a hash (key:value)
     // Build tmp_val from string and move p forward
     p++;
-    p += tmp_val.build_from_json(p);
+    p += tmp_val.build_from_json(p, true);
     push_back(tmp_val);
     if (*(p-1) == ',') p--; // hold the ',' separator
     
+    DEBUG(printf("[%p:list_value %s ==> %s/%s]\n", this, tmp_val.to_json().c_str(), to_json().c_str(), p));
     p--; // eaten by >list_value sub-action
   }
 	break;
 	case 6:
-#line 113 "src/value.rl"
+#line 157 "src/value.rl"
+	{
+    // we have a value in tmp that should be changed into a list [tmp]
+    DEBUG(printf("[%p:lazy_list %s]\n", this, tmp_val.to_json().c_str()));
+    push_back(tmp_val);
+  }
+	break;
+	case 7:
+#line 163 "src/value.rl"
 	{
     // become an empty HashValue
     if (!is_hash()) {
@@ -386,29 +457,33 @@ printf("%c_",(*p));
     }
   }
 	break;
-	case 7:
-#line 120 "src/value.rl"
+	case 8:
+#line 170 "src/value.rl"
 	{
     // become an empty list
     if (!is_list()) {
       set_type(LIST_VALUE);
     }
+    DEBUG(printf("[%p:list %s]\n", this, p));
+    // FIXME: how to avoid 'return' by telling parsing to stop ?
+    return p - json + 1;
   }
 	break;
-	case 8:
-#line 127 "src/value.rl"
+	case 9:
+#line 180 "src/value.rl"
 	{
     // become a NilValue
     set_type(NIL_VALUE);
   }
 	break;
-	case 9:
-#line 132 "src/value.rl"
+	case 10:
+#line 185 "src/value.rl"
 	{
-    printf("%c?",(*p));
+    DEBUG(printf("[set_from_tmp %s]\n", tmp_val.to_json().c_str()));
+    if (!is_list() && !is_hash()) *this = tmp_val;
   }
 	break;
-#line 412 "src/value.cpp"
+#line 487 "src/value.cpp"
 		}
 	}
 
@@ -420,7 +495,8 @@ _again:
 	_test_eof: {}
 	_out: {}
 	}
-#line 178 "src/value.rl"
+#line 247 "src/value.rl"
+  if (p != pe) --p;
   
   return p - json;
 }

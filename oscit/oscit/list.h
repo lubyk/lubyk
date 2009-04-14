@@ -11,15 +11,15 @@ class List : public ReferenceCounted
 {
  public:
   explicit List() {
-    init("");
+    init_with_type_tag("");
   }
   
   explicit List(const char *type_tag) {
-    init(type_tag);
+    init_with_type_tag(type_tag);
   }
   
   explicit List(TypeTag type_tag) {
-    init(type_tag.str_);
+    init_with_type_tag(type_tag.str_);
   }
   
   const char * type_tag() const {
@@ -54,45 +54,57 @@ class List : public ReferenceCounted
   }
   
   void push_back(const Value &val) {
+    values_.push_back(val);
     if (val.is_list()) {
-      size_t sz = val.size();
-      for(size_t i = 0; i < sz; ++i) {
-        push_back(val[i]);
-      }
+      type_tag_storage_.append("[").append(val.type_tag()).append("]");
     } else {
-      values_.push_back(val);
       type_tag_storage_.append(val.type_tag());
-      type_tag_ = type_tag_storage_.c_str();
-      type_tag_id_ = hashId(type_tag_);
     }
-  }
-  
-  void push_front(const Value &val) {
-    if (val.is_list()) {
-      size_t sz = val.size();
-      values_.insert(values_.begin(), sz, gNilValue);
-      for(size_t i = 0; i < sz; ++i) {
-        values_[i] = val[i];
-      }
-    } else {
-      values_.insert(values_.begin(), 1, val);
-    }
-    type_tag_storage_.insert(0, val.type_tag());
     type_tag_ = type_tag_storage_.c_str();
     type_tag_id_ = hashId(type_tag_);
   }
- private:
-  void init(const char *type_tag) {
-    type_tag_storage_ = type_tag;
-    type_tag_    = type_tag_storage_.c_str();
-    type_tag_id_ = hashId(type_tag_);
-
-    const char * c = type_tag_;
-
-    while ( *c ) {
-      values_.push_back(Value(*c));
-      c++;
+  
+  void push_front(const Value &val) {
+    values_.insert(values_.begin(), 1, val);
+    if (val.is_list()) {
+      type_tag_storage_ = std::string("[").append(val.type_tag()).append("]").append(type_tag_storage_);
+    } else {
+      type_tag_storage_.insert(0, val.type_tag());
     }
+    type_tag_ = type_tag_storage_.c_str();
+    type_tag_id_ = hashId(type_tag_);
+  }
+  
+  const char *set_type_tag(const char *type_tag) {
+    values_.clear();
+    return init_with_type_tag(type_tag);
+  }
+  
+ private:
+  const char *init_with_type_tag(const char *type_tag) { 
+   type_tag_storage_ = type_tag;
+   type_tag_    = type_tag_storage_.c_str();
+   type_tag_id_ = hashId(type_tag_);
+   Value tmp;
+
+   const char * c = type_tag;
+
+   while ( *c ) {
+     if (*c == '[') {
+       c = tmp.set_type_tag(c+1);
+       values_.push_back(tmp);
+     } else if (*c == ']') {
+       // finished building here, exit
+       type_tag_storage_ = type_tag_storage_.substr(0, c - type_tag);
+       type_tag_    = type_tag_storage_.c_str();
+       type_tag_id_ = hashId(type_tag_);
+       return c+1;
+     } else {
+       values_.push_back(Value(*c));
+     }
+     c++;
+   }
+   return c;
   }
   
   std::string type_tag_storage_;

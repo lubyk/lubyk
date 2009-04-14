@@ -99,6 +99,18 @@ public:
     assert_equal(3.5, l[1].r);
   }
   
+  void test_set_tag_sub_list( void ) {
+    Value v;
+    
+    v.set_type_tag("sff[fsf]");
+    assert_true(v.is_list());
+    assert_equal("",  v[0].str());
+    assert_equal(0.0, v[1].r);
+    assert_equal(0.0, v[2].r);
+    assert_true(v[3].is_list());
+    assert_equal("fsf", v[3].type_tag());
+  }
+  
   void test_set_tag( void ) {
     Value v;
     
@@ -176,8 +188,8 @@ public:
     assert_equal("f", v.type_tag());
     v.push_back(l);
     assert_true(v.is_list());
-    assert_equal("ffss", v.type_tag());
-    assert_equal("two", v[3].str());
+    assert_equal("f[fss]", v.type_tag());
+    assert_equal("two", v[1][2].str());
   }
   
   void test_push_front_real( void ) {
@@ -215,10 +227,10 @@ public:
     assert_equal("f", v.type_tag());
     v.push_front(l);
     assert_true(v.is_list());
-    assert_equal("ssf", v.type_tag());
-    assert_equal("one", v[0].str());
-    assert_equal("two", v[1].str());
-    assert_equal(1.34,  v[2].r);
+    assert_equal("[ss]f", v.type_tag());
+    assert_equal("one", v[0][0].str());
+    assert_equal("two", v[0][1].str());
+    assert_equal(1.34,  v[1].r);
   }
 
   void test_to_json( void ) {
@@ -233,37 +245,52 @@ public:
     assert_equal("[1.234, \"Hello World!\", 9.8, 2000]", v.to_json());
   }
   
+  void test_from_json_strict_trailing( void ) {
+    Value v;
+    const char * json = "[2.0, 3.0], 4.0";
+    const char * trailing = json + v.build_from_json(json);
+    assert_true(v.is_list());
+    assert_equal(", 4.0", trailing);
+  }
+  
   void test_from_json_strict( void ) {
+    Value v(Json("[2.0, 3.0]"));
+    assert_true(v.is_list());
+    assert_equal(2.0, v[0].r);
+    assert_equal(3.0, v[1].r);
+  }
+  
+  void test_from_json_mixed_strict( void ) {
     Value v(Json("[1.0, \"two\"]"));
     assert_true(v.is_list());
     assert_equal(1.0, v[0].r);
     assert_equal("two", v[1].str());
   }
   
-  // void test_from_json_lazy( void ) {
-  //   Value v(Json("1.0, \"two\""));
-  //   assert_true(v.is_list());
-  //   assert_equal(1.0, v[0].r);
-  //   assert_equal("two", v[1].str());
-  // }
-  // 
-  // void test_from_json_list_in_list_lazy( void ) {
-  //   Value v(Json("1.0, [2.0, 3.0], [\"four\",\"five\"]"));
-  //   assert_true(v.is_list());
-  //   assert_equal(1.0, v[0].r);
-  //   assert_equal(2.0, v[1][0].r);
-  //   assert_equal(3.0, v[1][1].r);
-  //   assert_equal("four", v[2][0].str());
-  //   assert_equal("five", v[2][1].str());
-  // }
-  // 
-  // void test_from_json_list_in_list_bracket( void ) {
-  //   Value v(Json("[[1.0, 2.0], 3.0, [\"four\",\"five\"]]"));
-  //   assert_true(v.is_list());
-  //   assert_equal(1.0, v[0][0].r);
-  //   assert_equal(2.0, v[0][1].r);
-  //   assert_equal(3.0, v[1].r);
-  //   assert_equal("four", v[2][0].str());
-  //   assert_equal("five", v[2][1].str());
-  // }
+  void test_from_json_lazy( void ) {
+    Value v(Json("1.0, \"two\""));
+    assert_true(v.is_list());
+    assert_equal(1.0, v[0].r);
+    assert_equal("two", v[1].str());
+  }
+  
+  void test_from_json_list_in_list_lazy( void ) {
+    Value v(Json("1.0, [2.0, 3.0], [\"four\",\"five\"]"));
+    assert_true(v.is_list());
+    assert_equal(1.0, v[0].r);
+    assert_equal(2.0, v[1][0].r);
+    assert_equal(3.0, v[1][1].r);
+    assert_equal("four", v[2][0].str());
+    assert_equal("five", v[2][1].str());
+  }
+  
+  void test_from_json_list_in_list_bracket( void ) {
+    Value v(Json("[[1.0, 2.0], 3.0, [\"four\",\"five\"]]"));
+    assert_true(v.is_list());
+    assert_equal(1.0, v[0][0].r);
+    assert_equal(2.0, v[0][1].r);
+    assert_equal(3.0, v[1].r);
+    assert_equal("four", v[2][0].str());
+    assert_equal("five", v[2][1].str());
+  }
 };

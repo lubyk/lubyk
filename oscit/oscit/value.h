@@ -180,7 +180,7 @@ public:
   /** Build the content of the value from the value to nil.
    *  @return number of characters eaten in the buffer to build Value.
    */
-  size_t build_from_json(const char *json, bool lazy_allowed = true);
+  size_t build_from_json(const char *json, bool strict_mode = false);
   
   /** Return a string representation of the value. */
   Json to_json() const;
@@ -193,7 +193,7 @@ public:
   }
   
   /** Change the Value into something defined in a typeTag. */
-  inline void set_type_tag(const char *type_tag);
+  inline const char *set_type_tag(const char *type_tag);
   
   static ValueType type_from_char(char c) {
     switch (c) {
@@ -299,14 +299,14 @@ public:
     return push_back(Value(elem));
   }
   
-  inline Value &push_back(const Value& val);
+  Value &push_back(const Value& val);
   
   template<class T>
   Value &push_front(const T& elem) {
     return push_front(Value(elem));
   }
   
-  inline Value &push_front(const Value& val);
+  Value &push_front(const Value& val);
   
   /** =========================================================================================    Error   */
   bool is_error() const  { return type_ == ERROR_VALUE; }
@@ -552,12 +552,14 @@ TypeTagID Value::type_tag_id() const {
   }
 }
 
-void Value::set_type_tag(const char *type_tag) {
+const char *Value::set_type_tag(const char *type_tag) {
   if (strlen(type_tag) > 1) {
     set_type_without_default(LIST_VALUE);
-    list_ = new List(type_tag);
+    list_ = new List;
+    return list_->set_type_tag(type_tag);
   } else {
     set_type(type_from_char(type_tag[0]));
+    return type_tag+1; // eof
   }
 }
 
@@ -576,36 +578,6 @@ void Value::set_value_at(size_t pos, const Value &val) {
 
 size_t Value::size() const { 
   return type_ == LIST_VALUE ? list_->size() : 0;
-}
-
-Value &Value::push_back(const Value& val) {
-  if (is_nil()) {
-    set(val);
-  } else {
-    if (!is_list()) {
-      Value tmp(*this);
-      set_type(LIST_VALUE);
-      if (!tmp.is_nil()) push_back(tmp);
-    }
-
-    list_->push_back(Value(val));
-  }
-  return *this;
-}
-
-Value &Value::push_front(const Value& val) {
-  if (is_nil()) {
-    set(val);
-  } else {
-    if (!is_list()) {
-      Value tmp(*this);
-      set_type(LIST_VALUE);
-      if (!tmp.is_nil()) push_back(tmp);
-    }
-
-    list_->push_front(Value(val));
-  }
-  return *this;
 }
 
 void Value::clear() {
