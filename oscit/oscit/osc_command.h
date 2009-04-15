@@ -29,6 +29,8 @@ public:
   
   virtual ~OscCommand();
   
+  virtual void kill();
+  
   /** Add a new satellite to the list of observers. This method is the implementation
    *  of "/.register".
    * TODO: how to get the IP without checking for "/.register" in the 'receive' method ?
@@ -54,8 +56,6 @@ public:
    *  @param remote_endpoint target host.
    */
   void send(const IpEndpointName &remote_endpoint, const char *url, const Value &val);
-  
-  virtual void terminate(Thread *runner);
   
 private:
   /** Start listening for incoming messages (runs in its own thread). */

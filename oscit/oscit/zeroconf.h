@@ -12,7 +12,9 @@ typedef int32_t DNSServiceErrorType;
 
 namespace oscit {
 
-/** This class is a helper to initiate zeroconf operations. */
+/** This class is a helper to initiate zeroconf operations.
+ *  TODO: could be a sub-class of Thread.
+ */
 class ZeroConf
 {
 public:
@@ -21,7 +23,7 @@ public:
   virtual ~ZeroConf() {}
   
   void quit() {
-    listen_thread_.quit();
+    listen_thread_.kill();
   }
   
   /** Setup serviceRef and start listening. */

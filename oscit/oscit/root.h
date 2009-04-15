@@ -36,7 +36,7 @@ class Root : public BaseObject
   void clear() {
     while (!commands_.empty()) {
       Command *command = commands_.front();
-      command->quit();
+      command->kill();
       command->set_root(NULL); // avoid call to unregister_command in ~Command
       delete command;
       commands_.pop_front();

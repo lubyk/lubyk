@@ -8,7 +8,7 @@ struct DummyCommand : public Command
   DummyCommand(std::string *string) : string_(string) {}
   
   void do_listen() {
-    while (!quit_) {
+    while (thread_.run()) {
       string_->append(".");
       microsleep(10);
     }

@@ -78,7 +78,7 @@ void ZeroConfRegister::register_callback(DNSServiceErrorType error, const char *
 }
 
 void ZeroConfRegister::start() {
-  listen_thread_.start_using_signals<ZeroConfRegister, &ZeroConfRegister::do_start>(this, NULL);
+  listen_thread_.start<ZeroConfRegister, &ZeroConfRegister::do_start>(this, NULL);
 }
 
 void ZeroConfRegister::do_start(Thread *thread) {

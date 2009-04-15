@@ -16,17 +16,16 @@ OscCommand::OscCommand(uint port) {
 }
   
 OscCommand::~OscCommand() {
-  printf("OscCommand::die!\n");
-  quit();
-  // double join ?
+  if (thread_.run()) {
+    kill();
+  }
   delete socket_;
   delete zeroconf_register_;
 }
 
-void OscCommand::terminate(Thread *runner) {
-  printf("OscCommand::terminate()!\n");
+void OscCommand::kill() {
   socket_->AsynchronousBreak();
-  quit_ = true;
+  thread_.kill();
 }
 
 void OscCommand::do_listen() {
