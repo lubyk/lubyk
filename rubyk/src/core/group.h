@@ -7,11 +7,11 @@ class Group : public Node
 public:
   virtual ~Group() {}
   
-  bool init (const Value &p);
+  bool init(const Value &val) {
+    return true;
+  }
   
-  virtual const Value inspect(const Value &val) ;
-  
-  virtual void bang(const Value &val);
+  virtual void bang(const Value &val) {}
   
 };
 

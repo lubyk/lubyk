@@ -30,7 +30,7 @@ public:
     
     if (mBuffer.row_count() != row_count || mBuffer.col_count() != col_count) {
       if(!mBuffer.set_sizes(row_count, col_count)) {
-        *mOutput << name_ << ": " << mBuffer.error_msg() << std::endl;
+        *output_ << name_ << ": " << mBuffer.error_msg() << std::endl;
         return;
       }
       mBuffer.clear();

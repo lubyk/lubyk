@@ -12,7 +12,7 @@ public:
     try {
       mMidiIn = new RtMidiIn();
     } catch (RtError &error) {
-      *mOutput << name_ << ": " << error.getMessageString() << std::endl;
+      *output_ << name_ << ": " << error.getMessageString() << std::endl;
       return false;
     }
 
@@ -24,7 +24,7 @@ public:
         mMidiIn->openVirtualPort();
       }
       catch (RtError &error) {
-        *mOutput << name_ << ": " << error.getMessageString() << std::endl;
+        *output_ << name_ << ": " << error.getMessageString() << std::endl;
         // FIXME: close();
         return false;
       }
@@ -33,10 +33,10 @@ public:
      // Call function to select port.
      try {
        mMidiIn->openPort( mPortId );
-       *mOutput << name_ << ": opened port " << mPortId << "\n";
+       *output_ << name_ << ": opened port " << mPortId << "\n";
      }
      catch (RtError &error) {
-       *mOutput << name_ << ": " << error.getMessageString() << std::endl;
+       *output_ << name_ << ": " << error.getMessageString() << std::endl;
        // FIXME: close ?
        return false;
      }
@@ -54,7 +54,7 @@ public:
   
   bool set (const Value &p)
   {
-    *mOutput << name_ << ": cannot change a Midi object during runtime, yet.\n";
+    *output_ << name_ << ": cannot change a Midi object during runtime, yet.\n";
     return true;
   }
   
@@ -93,7 +93,7 @@ public:
     std::vector<std::string> portList;
     if (mPortId < 0)
       bprint(mSpy, mSpySize, "-virtual-");
-    else if (input_list(mOutput, portList) && (size_t)mPortId < portList.size())
+    else if (input_list(output_, portList) && (size_t)mPortId < portList.size())
       bprint(mSpy, mSpySize,"%i: %s", mPortId, portList[mPortId].c_str());
     else
       bprint(mSpy, mSpySize,"could not read port name for %i", mPortId);

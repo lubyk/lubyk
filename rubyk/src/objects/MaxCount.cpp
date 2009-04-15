@@ -13,7 +13,7 @@ public:
   void bang(const Value &val)
   {
     if (val.type != MatrixValue) {
-      *mOutput << name_ << ": filter only works with array signals. Use a buffer.\n";
+      *output_ << name_ << ": filter only works with array signals. Use a buffer.\n";
       return;
     }
     const Matrix * vector = val.matrix.value;

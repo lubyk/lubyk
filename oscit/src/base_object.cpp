@@ -26,13 +26,16 @@ const Value BaseObject::set(const Value &val) {
   Value res;
   BaseObject * obj;
   
-  for (it = val.begin(); it != end; ++it) {
-    if ((obj = child(*it)) && val.get(*it, &param)) {
-      res.set(*it, root_->call(obj, param));
-    } else {
-      res.set(*it, ErrorValue(NOT_FOUND_ERROR, *it));
+  if (context_) context_->lock();
+    for (it = val.begin(); it != end; ++it) {
+      if ((obj = child(*it)) && val.get(*it, &param)) {
+        res.set(*it, root_->call(obj, param));
+      } else {
+        res.set(*it, ErrorValue(NOT_FOUND_ERROR, *it));
+      }
     }
-  }
+  if (context_) context_->unlock();
+  
   return res;
 }
 
@@ -49,7 +52,7 @@ bool BaseObject::set_all_ok(const Value &val) {
     } else {
       all_ok = false;
     }
-  }
+  }  
   return all_ok;
 }
 

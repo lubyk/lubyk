@@ -54,7 +54,7 @@ template <class T> inline T max(T x,T y) { return (x>y)?x:y; }
 class Svm : public TrainedMachine
 {
 public:
-  Svm() : mModel(NULL), mNode(NULL), mXSpace(NULL), mPairwiseProb(NULL), mVotes(NULL), mLabels(NULL), mTrainFile(NULL), mLiveBuffer(NULL), mClassLabel(0), mVectorCount(0)
+  Svm() : mModel(NULL), mNode(NULL), mXSpace(NULL), mPairwiseProb(NULL), mVotes(NULL), mLabels(NULL), mTrainFile(NULL), mLiveBuffer(NULL), class_Label(0), mVectorCount(0)
   {
     mProblem.x = NULL; 
     mProblem.y = NULL;
@@ -101,7 +101,7 @@ public:
     else if (vector_size != mVector.col_count()) {
       void * tmp = realloc(mNode, (vector_size + 1) * sizeof(struct svm_node));
       if (!tmp) {
-        *mOutput << name_ << ": could not reallocate " << vector_size + 1 << " nodes.\n";
+        *output_ << name_ << ": could not reallocate " << vector_size + 1 << " nodes.\n";
         return false;
       }
       mNode = (struct svm_node *) tmp;
@@ -119,7 +119,7 @@ public:
     if (val.matrix.value->col_count() >= mVector.col_count()) {
       mLiveBuffer = val.matrix.value;
     } else {
-      *mOutput << name_ << ": wrong signal size " << val.matrix.value->col_count() << " should be " << mVector.col_count() << "\n.";
+      *output_ << name_ << ": wrong signal size " << val.matrix.value->col_count() << " should be " << mVector.col_count() << "\n.";
       return;
     }
     
@@ -128,14 +128,14 @@ public:
     
     //if (change) {
     send(2, mLabelProbability);
-    send(mClassLabel);
+    send(class_Label);
     //}
   }
   
   void build()
   {
     if (!do_build()) {
-      *mOutput << name_ << ": could not build sparse data file.\n";
+      *output_ << name_ << ": could not build sparse data file.\n";
     }
   }
   
@@ -220,13 +220,13 @@ private:
     if (mTrainFile) fclose(mTrainFile);
     mTrainFile = fopen(train_file_path().c_str(), "wb");
       if (!mTrainFile) {
-        *mOutput << name_ << ": could not open '" << train_file_path() << "' to store training data.\n";
+        *output_ << name_ << ": could not open '" << train_file_path() << "' to store training data.\n";
         return false;
       }
     
       mVectorCount = 0;
       if(!FOREACH_TRAIN_CLASS(Svm, write_as_sparse)) {
-        *mOutput << name_ << ": could not write as sparse data.\n";
+        *output_ << name_ << ": could not write as sparse data.\n";
         return false;
       }
     
@@ -262,7 +262,7 @@ private:
     trainFilePath.append("/svm.train");
     
   	if (!read_problem(trainFilePath.c_str())) {
-      *mOutput << name_ << ": could not use training data '" << trainFilePath << "'.\n";
+      *output_ << name_ << ": could not use training data '" << trainFilePath << "'.\n";
       return false;
   	}
   	
@@ -271,7 +271,7 @@ private:
   	errorMsg = svm_check_parameter(&mProblem,&mSvmParam);
 
   	if(errorMsg) {
-      *mOutput << name_ << ": " << errorMsg << "\n.";
+      *output_ << name_ << ": " << errorMsg << "\n.";
       return false;
   	}
     // 2. train with these params
@@ -307,13 +307,13 @@ private:
       // use probability threshold
       get_label(&label, &labelProbability);
 		} else {
-      mClassLabel = svm_predict(mModel,mNode);
+      class_Label = svm_predict(mModel,mNode);
       return true;
     }
     
     if (true || labelProbability > mProbabilityThreshold) {
       // confident enough, use this label
-      mClassLabel = label;
+      class_Label = label;
       mLabelProbability = labelProbability;
       return true;
     }
@@ -325,14 +325,14 @@ private:
   {
     if (!pVector) {
       // class initialize // finish
-      if (!get_label_from_filename(&mClassLabel, pFilename)) return false;
+      if (!get_label_from_filename(&class_Label, pFilename)) return false;
       return true;
     }
     if (!mTrainFile) {
-      *mOutput << name_ << ": train file not opened !.\n";
+      *output_ << name_ << ": train file not opened !.\n";
       return false;
     }
-    fprintf(mTrainFile, "%+i", mClassLabel);
+    fprintf(mTrainFile, "%+i", class_Label);
     for(size_t i=0; i < pVector->col_count(); i++) {
       if (pVector->data[i] >= mThreshold || pVector->data[i] <= -mThreshold) {
         fprintf(mTrainFile, " %i:%.5f", (int)i+1, (float)pVector->data[i]);
@@ -348,7 +348,7 @@ private:
     if (mModel) svm_destroy_model(mModel);
     mModel = svm_load_model(model_file_path().c_str());
     if (!mModel) {
-      *mOutput << name_ << ": could not load model file '" << model_file_path() << "'.\n";
+      *output_ << name_ << ": could not load model file '" << model_file_path() << "'.\n";
       return false;
     }
     
@@ -359,11 +359,11 @@ private:
     if (!alloc_ints(&mLabels, mLabelCount, "labels")) return false;
     
     svm_get_labels(mModel, mLabels);
-    *mOutput << name_ << ": " << mLabelCount << " labels:\n";
+    *output_ << name_ << ": " << mLabelCount << " labels:\n";
     for(size_t i=0; i < mLabelCount; i++) {
-      *mOutput << " " << mLabels[i];
+      *output_ << " " << mLabels[i];
     }
-    *mOutput << "\n";
+    *output_ << "\n";
     
     if (!alloc_reals(&mDistances,    mLabelCount * (mLabelCount-1)/2, "pairwise distances")) return false;
     if (!alloc_reals(&mPairwiseProb, mLabelCount * mLabelCount,   "pairwise probabilities")) return false;
@@ -389,7 +389,7 @@ private:
   	FILE *fp = fopen(filename,"r");
 
   	if(!fp) {
-      *mOutput << name_ << ": could not open training data '" << filename << "'\n.";
+      *output_ << name_ << ": could not open training data '" << filename << "'\n.";
       return false;
   	}
 
@@ -443,7 +443,7 @@ private:
   			ungetc(c,fp);
   			if (fscanf(fp,"%d:%lf",&(mXSpace[j].index),&(mXSpace[j].value)) < 2)
   			{
-          *mOutput << name_ << ": wrong input format at line " << i+1 << "\n";
+          *output_ << name_ << ": wrong input format at line " << i+1 << "\n";
           goto readpb_fail;
   			}
   			++j;
@@ -462,12 +462,12 @@ readpb_out2:
   		{
   			if (mProblem.x[i][0].index != 0)
   			{
-  				*mOutput << name_ << ": (error): wrong input format: first column must be 0:sample_serial_number\n";
+  				*output_ << name_ << ": (error): wrong input format: first column must be 0:sample_serial_number\n";
           goto readpb_fail;
   			}
   			if ((int)mProblem.x[i][0].value <= 0 || (int)mProblem.x[i][0].value > max_index)
   			{
-  				*mOutput << name_ << ": (error): wrong input format: sample_serial_number out of range\n";
+  				*output_ << name_ << ": (error): wrong input format: sample_serial_number out of range\n";
           goto readpb_fail;
   			}
   		}
@@ -574,7 +574,7 @@ readpb_fail:
   FILE * mTrainFile;          /**< Used during foreach class loop to write sparse data. */
 
   const Matrix * mLiveBuffer; /**< Pointer to the current buffer window. Content can change between calls. */
-  int    mClassLabel;         /**< Current label. Used during recording and recognition. */
+  int    class_Label;         /**< Current label. Used during recording and recognition. */
   size_t mVectorCount;        /**< Number of vectors used to build the current mean value. */
   
   Real mLabelProbability;   /**< Current probability for the given label. */

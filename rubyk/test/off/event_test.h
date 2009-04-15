@@ -6,12 +6,12 @@
 
 struct EventUser
 {
-  EventUser(int pValue) : mValue(pValue) {}
+  EventUser(int pValue) : value_(pValue) {}
   void increment(void)
-  { mValue++; }
+  { value_++; }
   void add(void * pValue)
-  { mValue = mValue + *((int*)pValue); }
-  int mValue;
+  { value_ = value_ + *((int*)pValue); }
+  int value_;
 };
 
 // FIXME: complete tests !
@@ -26,10 +26,10 @@ public:
     TEvent<EventUser, &EventUser::add> e2(333, &u, (void *)&val);
     
     
-    TS_ASSERT_EQUALS( u.mValue, 1);
+    TS_ASSERT_EQUALS( u.value_, 1);
     e1.trigger();
-    TS_ASSERT_EQUALS( u.mValue, 2);
+    TS_ASSERT_EQUALS( u.value_, 2);
     e2.trigger();
-    TS_ASSERT_EQUALS( u.mValue, 7);
+    TS_ASSERT_EQUALS( u.value_, 7);
   }
 };

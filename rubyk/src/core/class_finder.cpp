@@ -22,11 +22,11 @@ BaseObject *ClassFinder::build_child(const std::string &class_name, Value *error
       // Found object (everything went fine) !
       return obj;
     } else {
-      error->set(INTERNAL_SERVER_ERROR, "'").append(path).append("' should declare '").append(name).append("'.");
+      error->set(INTERNAL_SERVER_ERROR, std::string("'").append(path).append("' should declare '").append(class_name).append("'."));
       return NULL;
     }
   } else {
-    error->set(INTERNAL_SERVER_ERROR, "Could not load '").append(path).append("'.");
+    error->set(INTERNAL_SERVER_ERROR, std::string("Could not load '").append(path).append("'."));
     return NULL;
   }
 }

@@ -5,34 +5,34 @@ class NumberObj : public Node
 public:
   
   /** value accessor. */
-  ATTR_ACCESSOR(mValue, value)
+  ATTR_ACCESSOR(value_, value)
   
   // [1] set/output current value (Bang! just outputs value).
   void bang(const Value &val)
   { 
-    // std::cout << name_ << ".bang: mValue [" << mValue.data_id() << "/" << mValue.ref_count() << "] = " << val << std::endl;
-    if (val) mValue.r = val->r;
-    // std::cout << name_ << " send " << mValue << std::endl;
-    send(mValue);
+    // std::cout << name_ << ".bang: value_ [" << value_.data_id() << "/" << value_.ref_count() << "] = " << val << std::endl;
+    if (val) value_.r = val->r;
+    // std::cout << name_ << " send " << value_ << std::endl;
+    send(value_);
   }
   
   // [2] set value
   void value(const Value &val)
   {
-    // std::cout << name_ << ".value: mValue = " << val << std::endl;
-    if (val) mValue.r = val->r;
+    // std::cout << name_ << ".value: value_ = " << val << std::endl;
+    if (val) value_.r = val->r;
   }
   
   // #inspect
   virtual const Value inspect(const Value &val) 
   { 
     std::ostringstream oss;
-    oss << "<Number:" << url() << " " << mValue.r << ">";
+    oss << "<Number:" << url() << " " << value_.r << ">";
     return String(oss.str());
   }
   
 private:
-  Value mValue;
+  Value value_;
 };
 
 extern "C" void init(Worker& planet)

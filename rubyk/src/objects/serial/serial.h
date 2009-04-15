@@ -18,7 +18,7 @@ public:
   
   SerialPort ()
   {
-    mOutput = &std::cout;
+    output_ = &std::cout;
     mIsOpen = false;
     is_ok_   = true;
   }
@@ -30,7 +30,7 @@ public:
   }
   
   void set_output(std::ostream& pOutput)
-  { mOutput = &pOutput; }
+  { output_ = &pOutput; }
 
   ///** Write 'size' chars from the buffer. */
   //int write(const char * buffer, int size)
@@ -113,7 +113,7 @@ public:
     case 230400: opt = B230400; break;
 #endif
     default: 
-    *mOutput << "Unknown baud rate '" << pBauds << "'.\n";
+    *output_ << "Unknown baud rate '" << pBauds << "'.\n";
       is_ok_ = false;
       return false;
     }
@@ -129,7 +129,7 @@ public:
     case 7: opt = CS7; break;
     case 8: opt = CS8; break;
     default:
-      *mOutput << "Unknown character size '" << pCharSize << "'.\n";
+      *output_ << "Unknown character size '" << pCharSize << "'.\n";
       is_ok_ = false;
       return false;
     }
@@ -166,7 +166,7 @@ public:
       options.c_cflag |= CS8;
       break;
     default:
-      *mOutput << "Unknown parity(must be 'N','E','O' or 'S') '" << pParityChecking << "'.\n";
+      *output_ << "Unknown parity(must be 'N','E','O' or 'S') '" << pParityChecking << "'.\n";
       close(mFd);
       mIsOpen = false;
       is_ok_   = false;
@@ -248,12 +248,12 @@ private:
   /** Report last error. */
   void error(const char * msg)
   {
-    *mOutput << msg << ": " << strerror(errno) << std::endl;
+    *output_ << msg << ": " << strerror(errno) << std::endl;
   }
   
   bool mIsOpen;
   bool is_ok_;
   int mFd; /**< File descriptor. */
-  std::ostream * mOutput;
+  std::ostream * output_;
   std::string mPortName;
 };

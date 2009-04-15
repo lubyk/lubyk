@@ -70,7 +70,7 @@ public:
   // inlet 1
   void bang(const Value &val)
   {
-    mValue = &sig;
+    value_ = &sig;
     val.get(&(mLiveBuffer));
     send(1, sig);
   }
@@ -141,9 +141,9 @@ private:
     bool   draw_box      = false;
 
     ///// set x_offset, width_zoom with val.get_meta(...) /////
-    mValue->get_meta(&sample_offset, H("sample_offset")); // shift display window right / left
-    mValue->get_meta(&sample_count,  H("sample_count"));  // total number of samples per window when computing width_ratio
-    mValue->get_meta(&draw_box,      H("draw_box"));      // draw a surrounding box
+    value_->get_meta(&sample_offset, H("sample_offset")); // shift display window right / left
+    value_->get_meta(&sample_count,  H("sample_count"));  // total number of samples per window when computing width_ratio
+    value_->get_meta(&draw_box,      H("draw_box"));      // draw a surrounding box
 
     Real col_ratio = 0.8; //1.0 / mGroupSize;
 
@@ -323,7 +323,7 @@ private:
   
   plot_type_t    mMode;       /**< Plot mode (XYPlot, TimePlot) each pair as an XY point instead of x(t). */
   const Matrix * mLiveBuffer; /**< Pointer to the live stream (one matrix for each inlet). */
-  const Value * mValue;     /**< Live signal received on each inlet. */
+  const Value * value_;     /**< Live signal received on each inlet. */
   size_t         mLineCount;
   size_t         mGroupSize;
   Real         mPointSize;

@@ -33,7 +33,7 @@ public:
   {
     
     if (!p.get(&mScriptFile) && mScriptFile == "") {
-      *mOutput << "Please give a filename.\n" << std::endl;
+      *output_ << "Please give a filename.\n" << std::endl;
       return;
     }
     
@@ -60,7 +60,7 @@ public:
     struct stat info;
     
     if (stat(mScriptFile.c_str(), &info)) {
-      *mOutput << "Could not stat '" << mScriptFile << "'." << std::endl;
+      *output_ << "Could not stat '" << mScriptFile << "'." << std::endl;
       return false;
     }
     
@@ -77,7 +77,7 @@ public:
     in.close();
     oss << "\n";
     if (!eval_script(oss.str())) return false;
-    *mOutput << name_ << ": script loaded.\n";
+    *output_ << name_ << ": script loaded.\n";
     return true;
   }
   
@@ -86,7 +86,7 @@ public:
   void script(const Value &p)
   {  
     if (mScript == "" && mReloadEvery) reload_script();
-    *mOutput << mScript << std::endl;
+    *output_ << mScript << std::endl;
   }
   
   virtual const Value inspect(const Value &val)  

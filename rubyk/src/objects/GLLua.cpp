@@ -27,7 +27,7 @@ public:
   void draw(const Value &val)
   { 
     if (!is_opengl_thread()) {
-      *mOutput << name_ << ": " << "not an openGL thread." << std::endl;
+      *output_ << name_ << ": " << "not an openGL thread." << std::endl;
       return;
     }
     

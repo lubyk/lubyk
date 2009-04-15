@@ -94,14 +94,14 @@ private:
     
     switch(pMode) {
     case PlaybackMode:
-      *mOutput << name_ << ": starting playback (buffer " << mData.row_count() << "x" << mData.col_count() << ").\n";
+      *output_ << name_ << ": starting playback (buffer " << mData.row_count() << "x" << mData.col_count() << ").\n";
       mState = PlaybackMode;
       break;
     case RecordingMode:
       if (mState == RecordingMode) return;
       TRY_RET(mData, set_sizes(0, mData.col_count()));
       mData.clear();
-      *mOutput << name_ << ": ready to record.\n";
+      *output_ << name_ << ": ready to record.\n";
       mState = RecordingMode;
       break;
     default:
@@ -117,11 +117,11 @@ private:
         TRY(mData, set_sizes(0, mLiveBuffer->col_count()));
       }
       
-      *mOutput << name_ << ": recording started (vector size " << mData.col_count() << ").\n";
+      *output_ << name_ << ": recording started (vector size " << mData.col_count() << ").\n";
       // open file handle
       mFileHandle = fopen(mFilePath.c_str(), "wb");
       if (!mFileHandle) {
-        *mOutput << name_ << ": could not open '" << mFilePath << "' for writing.\n";
+        *output_ << name_ << ": could not open '" << mFilePath << "' for writing.\n";
         return false;
       }
     }

@@ -3,6 +3,12 @@
 
 //#define DEBUG_PARSER
 
+#ifdef DEBUG_PARSER
+#define DEBUG(x) x
+#else
+#define DEBUG(x)
+#endif
+
 %%{
   machine command;
   write data noerror;
@@ -17,98 +23,88 @@
   } command_action_t;
 */
 
-void Command::initialize()
-{
+void Command::initialize() {
   int cs;
   
-  worker_     = NULL;
-  quit_       = false;
-  mTokenIndex = 0;
-  mSilent     = false;
-  mThread     = NULL;
+  planet_     = NULL;
+  token_i_    = 0;
+  silent_     = false;
   
   clear();
   
   %% write init;
-  mCurrentState = cs;
+  current_state_ = cs;
 }
 
-int Command::do_listen()
-{
+void Command::do_run(Thread *runner) {
   char buffer[1024];
   char * line = buffer;
   
   // set thread priority to normal
-  worker_->normal_priority();
+  normal_priority();
   
-  if (!mSilent)
-    *mOutput << "Welcome to rubyk !\n\n";
+  if (!silent_) *output_ << "Welcome to rubyk !\n\n";
+    
   clear();
 
   while(!quit_ && getline(&line,1023)) {
     parse(line);
     parse("\n");
-    if (!quit_)
-      saveline(line);
+    if (!quit_) saveline(line);
     freeline(line);
   }
-  return 0; // thread return value
 }
 
-void Command::parse(const std::string &pStr)
-{
-  const char *p  = pStr.data(); // data pointer
-  const char *pe = p + pStr.size(); // past end
-  const char *eof = NULL;  // FIXME: this should be set to 'pe' on the last pStr block...
-  int cs = mCurrentState;        // restore machine state
+void Command::parse(const std::string &string) {
+  const char *p  = string.data();     // data pointer
+  const char *pe = p + string.size(); // past end
+  const char *eof = NULL;             // FIXME: this should be set to 'pe' on the last string block...
+  int cs = current_state_;            // restore machine state
   
-#ifdef DEBUG_PARSER
-  printf("parse:\"%s\"\n",pStr.c_str());
-#endif
+  DEBUG(printf("parse:\"%s\"\n",string.c_str()));
+  
   %%{
     action a {
-      if (mTokenIndex >= MAX_TOKEN_SIZE) {
+      if (token_i_ >= MAX_TOKEN_SIZE) {
         std::cerr << "Buffer overflow !" << std::endl;
         // stop parsing
         return;
       }
-#ifdef DEBUG_PARSER
-      printf("_%c_",fc);
-#endif
-      mToken[mTokenIndex] = fc; /* append */
-      mTokenIndex++;     
+      DEBUG(printf("_%c_",fc));
+      token_[token_i_] = fc; /* append */
+      token_i_++;     
     }
     
     action params {
       // FIXME: this is a temporary hack until we sub parse with Value...
-      mParamString += fc;
+      parameter_string_ += fc;
     }
     
-    action set_var    { set_from_token(mVar);}
+    action set_var    { set_from_token(var_);}
     
     action set_method { set_from_token(method_);}
   
-    action set_class  { set_from_token(mClass);}
+    action set_class  { set_from_token(class_);}
   
-    action set_value  { set_from_token(mValue);}
+    action set_value  { set_from_token(value_);}
     
-    action set_from      { mFrom     = mVar; }
+    action set_from      { from_node_     = var_; }
     
-    action set_from_port { mFromPort = mVar; }
+    action set_from_port { from_port_ = var_; }
     
-    action set_to_port   { mToPort   = mVar; }
+    action set_to_port   { to_port_   = var_; }
     
     action add_param_value { 
       add_value_from_token(); 
     }
     
     action create_link {
-      mTo   = mVar;
+      to_node_   = var_;
       create_link();
     }
     
     action remove_link {
-      mTo   = mVar;
+      to_node_   = var_;
       remove_link();
     }
 
@@ -127,11 +123,12 @@ void Command::parse(const std::string &pStr)
         clear();
       }
     }
+    
     action error {
       fhold; // move back one char
       char error_buffer[10];
       snprintf(error_buffer, 9, "%s", p);
-      *mOutput << "Syntax error near '" << error_buffer << "'." << std::endl;
+      *output_ << "Syntax error near '" << error_buffer << "'." << std::endl;
       clear();
       fgoto eat_line; // eat the rest of the line and continue parsing
     }
@@ -190,183 +187,109 @@ void Command::parse(const std::string &pStr)
     # write eof; (add eof actions to all above before removing comment)
   }%%
 //  printf("{%s}\n",p);
-  mCurrentState = cs;
+  current_state_ = cs;
 }
 
-
-void Command::close()
-{
-  quit_ = true;
-  if (mThread) {
-    pthread_kill(mThread, SIGINT);
-  }
-}
-
-const Value Command::get_params ()
-{
-  Value params(mParamString);
-  mParamString = "";
-  return params;
-}
-
-void Command::set_from_token (std::string& pElem)
-{
-  mToken[mTokenIndex] = '\0';
-#ifdef DEBUG_PARSER
-  if (&pElem == &mValue) std::cout << "[val " << mToken << "]" << std::endl;
-  if (&pElem == &mVar)   std::cout << "[var " << mToken << "]" << std::endl;
-  if (&pElem == &mClass) std::cout << "[cla " << mToken << "]" << std::endl;
-#endif
-  pElem = mToken;
-  mTokenIndex = 0;
-}
-
-// FIXME: create_instance should run in server space with concurrency locks.
-void Command::create_instance()
-{
-  Value params = get_params();
+void Command::set_from_token(std::string& string) {
+  token_[token_i_] = '\0';
   
-  worker_->lock();
-    // FIXME: Group scope
-    // FIXME: should be new_object(mVar, mClass, Value(mParams))
-    Value res = worker_->new_object(mVar, mClass, params);
-  worker_->unlock();
+  DEBUG(if (&string == &value_) std::cout << "[val " << token_ << "]" << std::endl);
+  DEBUG(if (&string == &var_)   std::cout << "[var " << token_ << "]" << std::endl);
+  DEBUG(if (&string == &class_) std::cout << "[cla " << token_ << "]" << std::endl);
   
-  if (res.is_string()) {
-    std::string url = String(res).string();
-    res = worker_->call(url.append("/#inspect"));
-  }
-  
-  
-#ifdef DEBUG_PARSER
-  std::cout << "NEW "<< mVar << " = " << mClass << "(" << params << ")";
-#endif
+  string = token_;
+  token_i_ = 0;
+}
 
-  if (!mSilent)
-    *mOutput << res << std::endl;
+void Command::create_instance() {
+  Value params(Json(parameter_string_.c_str()));
+  names_to_urls();
+  
+  DEBUG(std::cout << "NEW "<< var_ << " = " << class_ << "(" << params << ")");
+  Value res = planet_->new_object(var_, class_, params);
+  
+  if (res.is_string() && !silent_) {
+    res = planet_->call("/.inspect", res);
+    *output_ << res << std::endl;
+  } else if (!res.is_string()) {
+    *output_ << res << std::endl;
+  } 
 }
 
 
-void Command::create_link()
-{ 
-  worker_->lock();
-    // FIXME: Group scope
-    worker_->create_link(std::string("/").append(mFrom), mFromPort, mToPort, std::string("/").append(mTo));
-  worker_->unlock();
-
-#ifdef DEBUG_PARSER
-  std::cout << "LINK " << mFrom << "." << mFromPort << "=>" << mToPort << "." << mTo << std::endl;
-#endif
+void Command::create_link() {
+  names_to_urls();
+  
+  DEBUG(std::cout << "LINK " << from_node_ << "." << from_port_ << "=>" << to_port_ << "." << to_node_ << std::endl);
+  planet_->create_link(from_node_, from_port_, to_port_, to_node_);
 }
 
-void Command::remove_link()
-{ 
-  worker_->lock();
-    // FIXME: Group scope
-    worker_->remove_link(std::string("/").append(mFrom), mFromPort, mToPort, std::string("/").append(mTo));
-  worker_->unlock();
-
-#ifdef DEBUG_PARSER
-  std::cout << "UNLINK " << mFrom << "." << mFromPort << "=>" << mToPort << "." << mTo << std::endl;
-#endif
+void Command::remove_link() {
+  names_to_urls();
+  
+  DEBUG(std::cout << "UNLINK " << from_node_ << "." << from_port_ << "=>" << to_port_ << "." << to_node_ << std::endl);
+  planet_->remove_link(from_node_, from_port_, to_port_, to_node_);
 }
 
-// FIXME: execute_method should run in server space with concurrency locks.
-void Command::execute_method()
-{
+void Command::execute_method() {
   Value res;
-  Value params = get_params();
+  // why doesn't this work ? Value params(Json(parameter_string_));
+  Value params = Value(Json(parameter_string_));
+  names_to_urls();
   
-  worker_->lock();
-    // FIXME: Group scope
-    if (method_ == "set") {
-      oscit::Object * obj = worker_->find(std::string("/").append(mVar));
-      if (obj) obj->set(params);
+  DEBUG(std::cout << "METHOD " << var_ << "." << method_ << "(" << params << ")" << std::endl);
+  
+  if (method_ == "set") {
+    // TODO: should 'set' live in normal tree space ?
+    BaseObject *target = planet_->object_at(var_);
+    if (target) {
+      target->lock();
+        res = target->set(params);
+      target->unlock();
     } else {
-      if (method_ == "b") method_ = "bang";
-      oscit::Object * meth = worker_->find(std::string("/").append(mVar).append("/").append(method_));
-      if (meth) {
-        res = meth->trigger(params);
-      } else {
-        if (params.is_nil()) params = gBangValue;
-        res = worker_->call(std::string("/").append(mVar).append("/in/").append(method_), params);
-      }
+      res = ErrorValue(NOT_FOUND_ERROR, var_);
     }
-  worker_->unlock();
-  if (!res.is_nil()) *mOutput << res << std::endl;
+  } else {
+    if (method_ == "b") method_ = "bang";
+    var_.append("/").append(method_);
+    res = planet_->call(var_, params);
+  }
+  
+  if (!silent_) *output_ << res << std::endl;
 }
 
-void Command::execute_class_method()
-{
+void Command::execute_class_method() {
   Value res;
-  Value params = get_params();
+  Value params = Value(Json(parameter_string_));
   
-  worker_->lock();
-    res = worker_->call(std::string(CLASS_ROOT).append("/").append(mClass).append("/").append(method_), params);
-  worker_->unlock();
+  DEBUG(std::cout << "CLASS_METHOD " << std::string(CLASS_ROOT).append("/").append(class_).append("/").append(method_) << "(" << params << ")" << std::endl);
+  res = planet_->call(std::string(CLASS_ROOT).append("/").append(class_).append("/").append(method_), params);
   
-  *mOutput << res << std::endl;
+  if (!silent_) *output_ << res << std::endl;
 }
 
-void Command::execute_command()
-{
-  oscit::Object * obj;
+void Command::execute_command() {
   Value res;
-  Value params = get_params();
+  Value params = Value(Json(parameter_string_));
+
+  DEBUG(std::cout << "CMD " << method_ << "(" << params << ")" << std::endl);
   if (method_ == "set_lib_path") {
-    worker_->lock();
-      res = worker_->call(std::string(CLASS_ROOT).append("/lib_path"),params);
-    worker_->unlock();
+    res = planet_->call(std::string(CLASS_ROOT).append("/lib_path"), params);
   } else if (method_ == "quit" || method_ == "q") {
-    worker_->lock();
-      worker_->quit();
-      quit_ = true;
-    worker_->unlock();    
-  } else {
-    worker_->lock();
-      // FIXME: Group scope
-      obj = worker_->find(std::string("/").append(method_));
-      if (obj) {
-        if (params.is_nil() && obj->type() == H("Node"))
-          res = worker_->call(std::string("/").append(method_).append("/#inspect"));
-        else
-          res = obj->trigger(params);
-      } else {
-        res = Error("Object/method not found '").append(method_).append("'.");
-      }
-    worker_->unlock();
+    // TODO: move 'quit' into osc space "/quit"
+    planet_->quit();
+  } else {  
+    method_.insert(0, current_directory_);
+    res = planet_->call(method_, params);
   }
-  if (!res.is_nil()) *mOutput << res << std::endl;
-  /*
-  TODO: these methods should exist in root...
-  
-  if (worker_->get_instance(&node, method_)) {
-    // inspect
-    *mOutput << node->inspect() << std::endl;
-    
-  } else if (method_ == "quit" || method_ == "q") {
-    worker_->quit();
-    quit_ = true;
-  } else if (method_ == "set_lib_path") {
-    std::string path;
-    if (!mParameters.get(&path)) {
-      *mOutput << "Could not set library path (no parameter).\n";
-    } else {
-      Class::set_lib_path(path);
-      *mOutput << "Library path set to '" << path << "'.\n";
-    }
-  } else {
-    *mOutput << "Unknown command '" << method_ << "'" << std::endl;
-  }
-  */
+  if (!silent_) *output_ << res << std::endl;
 }
 
-void Command::clear() 
-{
-  mTokenIndex = 0;
-  mVar        = "";
-  mClass      = "";
-  mParamString = "";
-  mFromPort = "";
-  mToPort   = "";
+void Command::clear() {
+  token_i_    = 0;
+  var_        = "";
+  class_      = "";
+  parameter_string_ = "";
+  from_port_  = "";
+  to_port_    = "";
 }

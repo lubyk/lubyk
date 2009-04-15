@@ -137,6 +137,16 @@ class BaseObject
       parent->adopt(this);
     }
   }
+  
+  /** Lock resource (used by commands). */
+  inline void lock() {
+    if (context_) context_->lock();
+  }
+  
+  /** Unlock resource (used by commands). */
+  inline void unlock() {
+    if (context_) context_->unlock();
+  }
 
   /** Inform the object of an alias linked to this object (has to be deleted on destruction). */
   void register_alias (Alias * pAlias);

@@ -8,10 +8,10 @@
 struct TuringSend
 {
   TuringSend() {}
-  TuringSend(int pValue) : mValue(pValue), mLuaMethod(0) {}
+  TuringSend(int pValue) : value_(pValue), mLuaMethod(0) {}
   TuringSend(std::string pMethod) : method_(pMethod), mLuaMethod(0) {}
   
-  int mValue;          /**< Send a direct integer value. */
+  int value_;          /**< Send a direct integer value. */
   std::string method_; /**< Lua method definition. */
   int mLuaMethod;      /**< Compiled lua method. */
 };
@@ -26,7 +26,7 @@ TuringSend gSendNothing;
 class Turing : public LuaScript
 {
 public:
-  Turing() : mTokenByName(30), mTokenNameByValue(30), mStateByName(30), mPrintBuffer(NULL), mPrintBufferSize(0) 
+  Turing() : token_ByName(30), token_NameByValue(30), mStateByName(30), mPrintBuffer(NULL), mPrintBufferSize(0) 
   {
     clear_tables();
     mState = 1;
@@ -53,7 +53,7 @@ public:
     
     if (val.get(&i)) {
       mRealToken = i;
-      mToken = mTokenTable[ mRealToken % TUR_MAX_TOKEN_COUNT ]; // translate token in the current machine values.
+      token_ = token_Table[ mRealToken % TUR_MAX_TOKEN_COUNT ]; // translate token in the current machine values.
     }
     
     reload_script();
@@ -63,28 +63,28 @@ public:
     if (!mS.type) return; // bang returned nil, abort
     else if (mS.type != BangValue) {
       if (mS.get(&mRealToken)) // use token from returned value
-        mToken = mTokenTable[ mRealToken % TUR_MAX_TOKEN_COUNT ]; // translate token in the current machine values.
+        token_ = token_Table[ mRealToken % TUR_MAX_TOKEN_COUNT ]; // translate token in the current machine values.
     }
     
-    if (mDebug) *mOutput << name_ << ": {" << mStateNames[mState] << "} -" << mRealToken << "-> ";
+    if (mDebug) *output_ << name_ << ": {" << mStateNames[mState] << "} -" << mRealToken << "-> ";
     
-    if ( !(mSend = mSendTable[mState][mToken]) ) {
-      if ( (mSend = mSendTable[0][mToken]) )
+    if ( !(mSend = mSendTable[mState][token_]) ) {
+      if ( (mSend = mSendTable[0][token_]) )
         ; // ok use token default send
       else
         mSend = mSendTable[mState][0]; // use state default
     } else
       ; // ok custom value
 
-    if ((state = mGotoTable[mState][mToken]) == -1) {
-      if (mGotoTable[0][mToken] == -1)
+    if ((state = mGotoTable[mState][token_]) == -1) {
+      if (mGotoTable[0][token_] == -1)
         mState = mGotoTable[mState][0]; // use default state action
       else
-        mState = mGotoTable[0][mToken]; // use default token action
+        mState = mGotoTable[0][token_]; // use default token action
     } else
       mState = state;
     
-    if (mDebug) *mOutput << "{" << mStateNames[mState] << "}" << std::endl;
+    if (mDebug) *output_ << "{" << mStateNames[mState] << "}" << std::endl;
     
     /* Send the value out. */
     if (mSend == &gSendNothing)
@@ -95,11 +95,11 @@ public:
       /* Run the function. */
       status = lua_pcall(mLua, 0, 0, 0); // 0 arg, 1 result, no error function
       if (status) {
-        *mOutput << name_ << ": trigger [" << mSend->method_ << "] failed !\n";
-        *mOutput << lua_tostring(mLua, -1) << std::endl;
+        *output_ << name_ << ": trigger [" << mSend->method_ << "] failed !\n";
+        *output_ << lua_tostring(mLua, -1) << std::endl;
       }
     } else
-      send(mSend->mValue);
+      send(mSend->value_);
   }
   
   void in2(const Value &val)
@@ -131,7 +131,7 @@ public:
 
   bool eval_script(const std::string &pScript) 
   {
-    mToken = 0;
+    token_ = 0;
     mScript = pScript;
     mScript.append("\n");
     int cs;
@@ -180,7 +180,7 @@ public:
   %%{
     action a {
       if (name_index >= MAX_NAME_SIZE) {
-        *mOutput << "Name buffer overflow !\n";
+        *output_ << "Name buffer overflow !\n";
         return false;
       }
       #ifdef DEBUG_PARSER
@@ -239,8 +239,8 @@ public:
     }
 
     action set_token_from_identifier { 
-      if (!mTokenByName.get(&tok, std::string(name))) {
-        *mOutput << "Syntax error. Unknown token '" << name << "' (missing declaration)\n";
+      if (!token_ByName.get(&tok, std::string(name))) {
+        *output_ << "Syntax error. Unknown token '" << name << "' (missing declaration)\n";
         return false;
       }
     }
@@ -256,8 +256,8 @@ public:
     
     
     action define_token {
-      mTokenByName.set(identifier, tok);
-      mTokenNameByValue.set(tok, identifier);
+      token_ByName.set(identifier, tok);
+      token_NameByValue.set(tok, identifier);
       #ifdef DEBUG_PARSER
         std::cout << identifier << " = " << tok << std::endl;
       #endif
@@ -265,20 +265,20 @@ public:
     
     action set_token {
       // do we know this token ?
-      if (!mTokenTable[tok % TUR_MAX_TOKEN_COUNT]) {
+      if (!token_Table[tok % TUR_MAX_TOKEN_COUNT]) {
         // new token
         #ifdef DEBUG_PARSER
-        printf("new token %i: %i\n", (int)mTokenCount, tok);
+        printf("new token %i: %i\n", (int)token_Count, tok);
         #endif
         
-        mTokenTable[tok % TUR_MAX_TOKEN_COUNT] = mTokenCount;
-        mTokenList.push_back(tok);
+        token_Table[tok % TUR_MAX_TOKEN_COUNT] = token_Count;
+        token_List.push_back(tok);
         
         // enlarge lookup tables (add new column)
         int counter = 0;
         for (size_t i = 0; i < mStateCount; i++) {
           // enlarge all arrays in the table
-          if (mTokenCount == 1 && i != 0)
+          if (token_Count == 1 && i != 0)
             mGotoTable[i].push_back(counter); // first value is counter (stay)
           else
             mGotoTable[i].push_back(-1); // -1 means use default
@@ -288,15 +288,15 @@ public:
         
         for (size_t i = 0; i < mStateCount; i++) {
           // enlarge all arrays in the table
-          if (mTokenCount == 1 && i != 0) {
+          if (token_Count == 1 && i != 0) {
             mSendTable[i].push_back(&gSendNothing);
           } else
             mSendTable[i].push_back(NULL); // use default 
         }
         
-        mTokenCount++;
+        token_Count++;
       }
-      token_id = mTokenTable[tok % TUR_MAX_TOKEN_COUNT];
+      token_id = token_Table[tok % TUR_MAX_TOKEN_COUNT];
     }
     
     action add_entry {
@@ -305,7 +305,7 @@ public:
       if (send->method_ != "")
         printf("define %i - %i:%s -> %i\n", source_state, token_id, send->method_.c_str(), target_state);
       else
-        printf("define %i - %i:%i -> %i\n", source_state, token_id, send->mValue, target_state);
+        printf("define %i - %i:%i -> %i\n", source_state, token_id, send->value_, target_state);
       #endif
     
       mGotoTable[source_state][token_id] = target_state;
@@ -321,7 +321,7 @@ public:
       fhold; // move back one char
       char error_buffer[10];
       snprintf(error_buffer, 9, "%s", p);
-      *mOutput << "Syntax error near '" << error_buffer << "'." << std::endl;
+      *output_ << "Syntax error near '" << error_buffer << "'." << std::endl;
       return false;
     }
     
@@ -392,7 +392,7 @@ public:
     
     // 2. compile lua script
     if (!eval_lua_script(mLuaScript)) {
-      *mOutput << name_ << ": script [\n" << mLuaScript << "]\n";
+      *output_ << name_ << ": script [\n" << mLuaScript << "]\n";
       return false;
     }
     
@@ -409,7 +409,7 @@ public:
         /* take func from top of stack and store it in the Registry */
         (*it)->mLuaMethod = luaL_ref(mLua, LUA_REGISTRYINDEX);
         if ((*it)->mLuaMethod == LUA_REFNIL)
-          *mOutput << name_ << ": could not get lua reference for function '" << met_function << "'.\n";
+          *output_ << name_ << ": could not get lua reference for function '" << met_function << "'.\n";
         
       }
     }
@@ -423,29 +423,29 @@ public:
   /** Output transition and action tables. */
   void tables()
   {  
-    *mOutput << "tokens\n";
-    for(size_t i=1; i < mTokenCount; i++) {
-      int tok_value = mTokenList[i];
+    *output_ << "tokens\n";
+    for(size_t i=1; i < token_Count; i++) {
+      int tok_value = token_List[i];
       std::string identifier;
-      if (mTokenNameByValue.get(&identifier, tok_value)) {
+      if (token_NameByValue.get(&identifier, tok_value)) {
         bprint(mPrintBuffer, mPrintBufferSize, "% 4i: %s = %i\n", i, identifier.c_str(), tok_value);
-        *mOutput << mPrintBuffer;
-        //*mOutput << " " << i << " : " << identifier << " = " << tok_value << "\n";
+        *output_ << mPrintBuffer;
+        //*output_ << " " << i << " : " << identifier << " = " << tok_value << "\n";
       } else {
-        *mOutput << bprint(mPrintBuffer, mPrintBufferSize, "% 4i: %i\n", i, tok_value);
-        //*mOutput << " " << i << " : " << tok_value << "\n";
+        *output_ << bprint(mPrintBuffer, mPrintBufferSize, "% 4i: %i\n", i, tok_value);
+        //*output_ << " " << i << " : " << tok_value << "\n";
       }
     }
-    print_table(*mOutput, "goto", mGotoTable);
-    print_table(*mOutput, "send", mSendTable);
+    print_table(*output_, "goto", mGotoTable);
+    print_table(*output_, "send", mSendTable);
     
     
-    *mOutput << bprint(mPrintBuffer, mPrintBufferSize, "\n%- 7s", "methods\n");
+    *output_ << bprint(mPrintBuffer, mPrintBufferSize, "\n%- 7s", "methods\n");
     int met_count = 0;
     for(std::vector< TuringSend* >::iterator it = mSendList.begin(); it != mSendList.end(); it++) {
       if ((*it)->mLuaMethod) {
         met_count++;
-        *mOutput << bprint(mPrintBuffer, mPrintBufferSize, "% 4i: %s\n", met_count, (*it)->method_.c_str());
+        *output_ << bprint(mPrintBuffer, mPrintBufferSize, "% 4i: %s\n", met_count, (*it)->method_.c_str());
       }
     }
   }
@@ -457,21 +457,21 @@ public:
     if (p.get(&path, "file", true)) {
       std::ofstream out(path.c_str(), std::ios::out | std::ios::binary);
       if (!out) {
-        *mOutput << name_ << ": could not write graph to file '" << path << "'.\n";
+        *output_ << name_ << ": could not write graph to file '" << path << "'.\n";
         return;
       }
       make_dot_graph(out);
       out.close();
-      *mOutput << name_ << ": graph content written to '" << path << "'.\n";
+      *output_ << name_ << ": graph content written to '" << path << "'.\n";
     } else {
-      make_dot_graph(*mOutput);
+      make_dot_graph(*output_);
     }
   }
 
   virtual const Value inspect(const Value &val) 
   { 
     const std::string state = (mState > 0 && (uint)mState < mStateNames.size()) ? mStateNames[(uint)mState] : "?";
-    bprint(mSpy, mSpySize,"[%s] %ix%i", state.c_str(), mStateCount - 1, mTokenCount - 1);  
+    bprint(mSpy, mSpySize,"[%s] %ix%i", state.c_str(), mStateCount - 1, token_Count - 1);  
   }
 
   
@@ -492,7 +492,7 @@ public:
     if (p.get(&str)) {
       set_state(str);
     } else {
-      *mOutput << name_ << ": could not get state name from parameters.\n";
+      *output_ << name_ << ": could not get state name from parameters.\n";
     }
   }
 private:
@@ -509,17 +509,17 @@ private:
     int state_id;
     if (mStateByName.get(&state_id, pStateName)) {
       set_state(state_id);
-      if (mDebug) *mOutput << name_ << ": jump {" << pStateName << "}\n";
+      if (mDebug) *output_ << name_ << ": jump {" << pStateName << "}\n";
       return true;
     } else {
       return false;      
-      *mOutput << name_ << ": unknown state name '" << pStateName << "'.\n";
+      *output_ << name_ << ": unknown state name '" << pStateName << "'.\n";
     }
   }
   
   void clear_tables()
   { 
-    memset(mTokenTable, 0, TUR_MAX_TOKEN_COUNT * sizeof(int));
+    memset(token_Table, 0, TUR_MAX_TOKEN_COUNT * sizeof(int));
       
     mGotoTable.clear();
     mGotoTable.push_back( std::vector<int>(1, -1) ); // -1 means use default
@@ -542,16 +542,16 @@ private:
     mStateNames.clear();
     mStateNames.push_back("-");
     
-    mTokenList.clear();
-    mTokenList.push_back(0);
+    token_List.clear();
+    token_List.push_back(0);
     
-    mTokenByName.clear();
+    token_ByName.clear();
     
-    mTokenNameByValue.clear();
-    mTokenNameByValue.set(0, "-");
+    token_NameByValue.clear();
+    token_NameByValue.set(0, "-");
     
     mStateCount = 1; // first state = token default
-    mTokenCount = 1; // first token (token '0') = default action/send
+    token_Count = 1; // first token (token '0') = default action/send
   }
   
   int get_state_id(const std::string &pName)
@@ -564,10 +564,10 @@ private:
       mStateByName.set(pName, state_id);
       mStateNames.push_back(pName);
       // add a new line to the lookup tables
-      mGotoTable.push_back( std::vector<int>(mTokenCount+1, -1) ); // -1 means use default
+      mGotoTable.push_back( std::vector<int>(token_Count+1, -1) ); // -1 means use default
       mGotoTable[mStateCount][0] = mStateCount; // default: stay
       
-      mSendTable.push_back( std::vector<TuringSend*>(mTokenCount+1, (TuringSend*)NULL) ); // NULL means use default
+      mSendTable.push_back( std::vector<TuringSend*>(token_Count+1, (TuringSend*)NULL) ); // NULL means use default
       mSendTable[mStateCount][0] = &gSendNothing;
       
       mStateCount++;
@@ -577,10 +577,10 @@ private:
 
   void print_tokens(std::ostream& pOutput)
   {
-    for(size_t i=0;i<mTokenCount;i++) {
-      int tok_value = mTokenList[i];
+    for(size_t i=0;i<token_Count;i++) {
+      int tok_value = token_List[i];
       std::string identifier;
-      if (mTokenNameByValue.get(&identifier, tok_value))
+      if (token_NameByValue.get(&identifier, tok_value))
         pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 5s", identifier.c_str());
       else
         pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 5i", tok_value);
@@ -597,7 +597,7 @@ private:
     
     for (size_t i=0; i < pTable.size(); i++) {
       pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 5s:", mStateNames[i].c_str());
-      for (size_t j=0; j < mTokenCount; j++)
+      for (size_t j=0; j < token_Count; j++)
         print_table_value(pOutput, pTable[i][j], pTable[0][j], i);
       pOutput << "\n";
     } 
@@ -612,19 +612,19 @@ private:
 
     for (size_t i=0; i < pTable.size(); i++) {
       pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 5s:", mStateNames[i].c_str());
-      for (size_t j=0; j < mTokenCount; j++)
+      for (size_t j=0; j < token_Count; j++)
         print_table_value(pOutput, pTable[i][j], pTable[0][j], i);
       pOutput << "\n";
     }
   }
   
   
-  void print_table_value(std::ostream& pOutput, TuringSend * pVal, TuringSend * to_objectkenDefault, int pIndex)
+  void print_table_value(std::ostream& pOutput, TuringSend * pVal, TuringSend * to_nodekenDefault, int pIndex)
   {
     if (pVal == NULL) {
       if (pIndex == 0)
         pOutput << "      ";
-      else if (to_objectkenDefault != NULL)
+      else if (to_nodekenDefault != NULL)
         pOutput << "     |";  // default
       else
         pOutput << "     -";  // default
@@ -640,20 +640,20 @@ private:
       }
       
       if (it == mSendList.end()) {
-        std::cout << "turing send not in mSendList ! (" << pVal->method_ << ", " << pVal->mValue << ").\n";
+        std::cout << "turing send not in mSendList ! (" << pVal->method_ << ", " << pVal->value_ << ").\n";
         return;
       }
       pOutput << bprint(mPrintBuffer, mPrintBufferSize, " (% 3i)", met_count);
     } else
-      pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 5i", pVal->mValue);
+      pOutput << bprint(mPrintBuffer, mPrintBufferSize, " % 5i", pVal->value_);
   }
   
-  void print_table_value(std::ostream& pOutput, int pVal, int to_objectkenDefault, int pIndex)
+  void print_table_value(std::ostream& pOutput, int pVal, int to_nodekenDefault, int pIndex)
   {
     if (pVal == -1) {
       if (pIndex == 0)
         pOutput << "      ";
-      else if (to_objectkenDefault != -1)
+      else if (to_nodekenDefault != -1)
         pOutput << "     |";  // default
       else
         pOutput << "     -";  // default
@@ -683,11 +683,11 @@ private:
     for (size_t i=0; i < mStateCount; i++) { // loop into each state (row)
       source = mStateNames[i];
       
-      for (size_t j=0; j < mTokenCount; j++) { // loop into each token (column).
+      for (size_t j=0; j < token_Count; j++) { // loop into each token (column).
         if (i == 0 && j == 0) continue; // no default_default
         
-        if (!mTokenNameByValue.get(&token, mTokenList[j])) {
-          bprint(mPrintBuffer, mPrintBufferSize, "%i", mTokenList[j]); // no token name
+        if (!token_NameByValue.get(&token, token_List[j])) {
+          bprint(mPrintBuffer, mPrintBufferSize, "%i", token_List[j]); // no token name
           token = mPrintBuffer;
         }
         if (mGotoTable[i][j] == -1)
@@ -721,20 +721,20 @@ private:
     out << "}\n";
   }
   
-  int  mToken;           /**< Current token value (translated). */
+  int  token_;           /**< Current token value (translated). */
   int  mRealToken;       /**< Current token value (not translated). */
   TuringSend * mSend;    /**< Send result. */
   int  mState;           /**< Current state. */
   
-  int     mTokenTable[TUR_MAX_TOKEN_COUNT]; /**< Translate token values into their internal representation. */
+  int     token_Table[TUR_MAX_TOKEN_COUNT]; /**< Translate token values into their internal representation. */
   size_t  mStateCount;      /**< Number of states in the machine. */
-  size_t  mTokenCount;      /**< Number of tokens recognized by the machine. */
+  size_t  token_Count;      /**< Number of tokens recognized by the machine. */
   
   std::string mLuaScript; /**< Lua script for method calls. */
   
-  THash<std::string, int>   mTokenByName;   /**< Dictionary returning token id from its identifier (used to  plot/debug). */
-  THash<uint, std::string>  mTokenNameByValue; /**< Dictionary returning token name from its value (used to plot/debug). */
-  std::vector<int>         mTokenList;     /**< List of token values (used to plot/debug). */
+  THash<std::string, int>   token_ByName;   /**< Dictionary returning token id from its identifier (used to  plot/debug). */
+  THash<uint, std::string>  token_NameByValue; /**< Dictionary returning token name from its value (used to plot/debug). */
+  std::vector<int>         token_List;     /**< List of token values (used to plot/debug). */
   
   THash<std::string, int>   mStateByName;   /**< Dictionary returning state id from its identifier. */
   std::vector<std::string> mStateNames;    /**< List of state names (used to plot/debug). */

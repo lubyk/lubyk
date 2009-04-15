@@ -8,19 +8,19 @@ class Add : public Node
 public:
   bool init ()
   {
-    mValue1 = 0;
-    mValue2 = 0;
+    value_1 = 0;
+    value_2 = 0;
     mResult = 0;
     return true;
   }
   
-  ATTR_ACCESSOR(mValue1, value1)
-  ATTR_ACCESSOR(mValue2, value2)
+  ATTR_ACCESSOR(value_1, value1)
+  ATTR_ACCESSOR(value_2, value2)
   
   virtual const Value inspect(const Value &val)  
   { 
     std::ostringstream oss;
-    mResult = mValue1 + mValue2;
+    mResult = value_1 + value_2;
     oss << "<Add:" << url() << " " << mResult << ">";
     return String(oss.str());
   }
@@ -28,9 +28,9 @@ public:
   // [1]
   void bang(const Value &val)
   { 
-    // std::cout << name_ << ".bang: mValue1 = " << val << std::endl;
-    mValue1 = val;
-    mResult = mValue1 + mValue2;
+    // std::cout << name_ << ".bang: value_1 = " << val << std::endl;
+    value_1 = val;
+    mResult = value_1 + value_2;
     
     // std::cout << "=> mResult: [" << mResult.data_id() << "/" << mResult.ref_count() << "] = " << mResult.value() << std::endl;
     send(mResult);
@@ -39,14 +39,14 @@ public:
   // [2]
   void adder(const Value &val)
   { 
-    // std::cout << name_ << ".adder: mValue2 = " << val << std::endl;
-    mValue2 = val;
+    // std::cout << name_ << ".adder: value_2 = " << val << std::endl;
+    value_2 = val;
   }
 
   
 private:
-  Number mValue1;
-  Number mValue2;
+  Number value_1;
+  Number value_2;
   Number mResult;
 };
 

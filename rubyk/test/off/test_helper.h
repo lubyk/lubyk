@@ -141,9 +141,9 @@ public:
 class ParseHelper : public CxxTest::TestSuite
 {
 public:
-  ParseHelper() : mOutput(std::ostringstream::out), mInput(std::istringstream::in)
+  ParseHelper() : output_(std::ostringstream::out), input_(std::istringstream::in)
   { 
-    mCmd  = new Command(mInput, mOutput);
+    mCmd  = new Command(input_, output_);
     mCmd->set_worker(&worker_);
   }
   
@@ -158,14 +158,14 @@ public:
     Data::sShowId    = false;
     worker_.clear();
     worker_.classes()->set_lib_path("lib");
-    mOutput.str(std::string("")); // clear output
+    output_.str(std::string("")); // clear output
   }
   
 protected:
   Worker worker_;
   Command * mCmd;
-  std::ostringstream mOutput;
-  std::istringstream mInput;
+  std::ostringstream output_;
+  std::istringstream input_;
   
 protected:
   
@@ -177,7 +177,7 @@ protected:
       print = TYPE_CAST(Node, worker_.find("/p"));
       if (print) mCmd->observe(print);
       mCmd->parse(pInput);
-      mOutput.str(std::string("")); // clear output
+      output_.str(std::string("")); // clear output
     worker_.lock();
   }
   
@@ -189,11 +189,11 @@ protected:
 
   void _assert_result(const char * file, int lineno, const char * pInput, const char * pOutput)
   {
-    mOutput.str(std::string("")); // clear output
+    output_.str(std::string("")); // clear output
     worker_.unlock();
       mCmd->parse(pInput);
     worker_.lock();
-    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string(pInput)), mOutput.str(), std::string(pOutput));
+    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string(pInput)), output_.str(), std::string(pOutput));
   }
   
 //FIX  void clean_assert_bang(const char * pInput, const char * pOutput)
@@ -205,13 +205,13 @@ protected:
 //FIX  void assert_bang(const char * pInput, const char * pOutput)
 //FIX  { 
 //FIX    worker_.unlock();
-//FIX      mOutput.str(std::string("")); // clear output
+//FIX      output_.str(std::string("")); // clear output
 //FIX      mCmd->set_silent(true);
 //FIX      mCmd->parse(pInput);
 //FIX      mCmd->parse("\nn.bang\n");
 //FIX      mCmd->set_silent(false);
 //FIX    worker_.lock();
-//FIX    TS_ASSERT_EQUALS( mOutput.str(), std::string(pOutput));
+//FIX    TS_ASSERT_EQUALS( output_.str(), std::string(pOutput));
 //FIX  }
 //FIX  
 //FIX  void clean_assert_print(const char * pInput, const char * pOutput)
@@ -224,13 +224,13 @@ protected:
   void _assert_print(const char * file, int lineno, const char * pInput, const char * pOutput)
   { 
     worker_.unlock();
-      mOutput.str(std::string("")); // clear output
+      output_.str(std::string("")); // clear output
       mCmd->set_silent(true);
       mCmd->parse(pInput);
       mCmd->set_silent(false);
     worker_.lock();
     
-    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string(pInput)), mOutput.str(), std::string(pOutput));
+    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string(pInput)), output_.str(), std::string(pOutput));
   }
   
 //FIX  void clean_assert_run(time_t pLength, const char * pInput, const char * pOutput)
@@ -242,12 +242,12 @@ protected:
   void _assert_run(const char * file, int lineno, time_t pLength, const char * pOutput)
   {
     time_t start = worker_.current_time_;
-    mOutput.str(std::string("")); // clear output
+    output_.str(std::string("")); // clear output
     mCmd->set_silent(true);
     while(worker_.current_time_ <= start + pLength && worker_.do_run())
       ;
     mCmd->set_silent(false);
-    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING("running"), mOutput.str(), std::string(pOutput));
+    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING("running"), output_.str(), std::string(pOutput));
   }
 };
 

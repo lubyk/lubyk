@@ -26,7 +26,7 @@ public:
   const Value out_message (const Value &val)
   {
     //if (String(val) == "is output ok?")
-    //  *mOutput << "Output set" << std::endl;
+    //  *output_ << "Output set" << std::endl;
     
     return gNilValue;
   }
@@ -48,9 +48,9 @@ public:
       send(Number(++mCounter));
    // 
    // // special nil sending test
-   // *mOutput << "sending nil=>";
+   // *output_ << "sending nil=>";
    // send(2, gNilValue);
-   // *mOutput << "<=done.\n";
+   // *output_ << "<=done.\n";
   }
   
   /** [2]. Example to set an attribute stored as a native type (an int here). This is also an accessor (used by sending a nil value). */
@@ -62,7 +62,7 @@ public:
   /** [3]. Displays the values sent. */
   void info(const Value &val)
   {
-    //*mOutput << val << std::endl;
+    //*output_ << val << std::endl;
   }
   
   /** Another method to test the "TRY" macro. */

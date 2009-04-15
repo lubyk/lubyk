@@ -64,6 +64,9 @@ class Root : public BaseObject
     Value error;
     BaseObject * target = find_or_build_object_at(url, &error);
     
+    // FIXME: possible problem here: target deleted by other thread before call..
+    // a solution is to use a purgatory for suppressed objects where they are kept for a few seconds.
+    
     if (!target) {
       return error;
     }

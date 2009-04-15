@@ -6,10 +6,9 @@
 Planet::~Planet() {
   Command * child;
 
-  while(!commands_.empty()) {
+  while (!commands_.empty()) {
     child = commands_.front();
-    // join
-    child->close(); // joins pthread
+    child->quit(); // joins pthread
     commands_.pop();
   }
   
@@ -29,17 +28,12 @@ ClassFinder * Planet::classes() {
 }
 
 /** Start listening to a command. */
-void Planet::listen_to_command (Command &command)
-{
+void Planet::listen_to(Command &command) {
   int ret;
   pthread_t id;
-  command.set_worker(this);
-
-  ret = pthread_create( &id, NULL, &Command::call_do_listen, &command);
-  command.set_thread_id(id);
-  // FIXME: check for error from 'ret'
-
-  commands_.push(&pCommand);
+  command.set_planet(this);
+  command.listen();
+  commands_.push(&command);
 }
 
 /** Create a new object from a class name. Calls "/class/ClassName/new URL PARAMS". */
@@ -50,8 +44,8 @@ const Value Planet::new_object(const char * url, const char * class_name, const 
   return call(std::string(classes()->url()).append("/").append(class_name).append("/new"), list);
 }
 
-const Value Planet::create_link(const std::string &from, const std::string &from_port, const std::string &to_port, const std::string &to_object) {
-  //std::cout << "pending " << from << "("<< from_port << ":" << from_port.length() << ")" << " --> " << to_object << "("<< to_port << ")" << std::endl;
+const Value Planet::create_link(const std::string &from, const std::string &from_port, const std::string &to_port, const std::string &to_node) {
+  //std::cout << "pending " << from << "("<< from_port << ":" << from_port.length() << ")" << " --> " << to_node << "("<< to_port << ")" << std::endl;
   
   std::string url(from);
   if (from_port != "")
@@ -59,7 +53,7 @@ const Value Planet::create_link(const std::string &from, const std::string &from
   else
     url.append("/out/link"); // link from first outlet
     
-  Value param(to_object);
+  Value param(to_node);
   
   if (to_port != "")
     param.append("/in/").append(to_port);
@@ -72,7 +66,7 @@ const Value Planet::create_link(const std::string &from, const std::string &from
   return res;
 }
 
-const Value Planet::remove_link(const std::string &from, const std::string &from_port, const std::string &to_port, const std::string &to_object) { 
+const Value Planet::remove_link(const std::string &from, const std::string &from_port, const std::string &to_port, const std::string &to_node) { 
   
   std::string url(from);
   if (from_port != "")
@@ -80,7 +74,7 @@ const Value Planet::remove_link(const std::string &from, const std::string &from
   else
     url.append("/out/unlink"); // unlink first outlet
     
-  String param(to_object);
+  String param(to_node);
   
   if (to_port != "")
     param.append("/in/").append(to_port);

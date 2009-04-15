@@ -5,7 +5,7 @@ class Minus : public Node
 public:
   bool set(const Value &p)
   {
-    mValue = p.val("minus", 1.00, true);
+    value_ = p.val("minus", 1.00, true);
     return true;
   }
   
@@ -15,11 +15,11 @@ public:
     Real d;
     if (val.type == MatrixValue) {
       mBuffer.copy(sig);
-      mBuffer -= mValue;
+      mBuffer -= value_;
       send(mBuffer);
     } else if (val.get(&d)) {
       // single value
-      d -= mValue;
+      d -= value_;
       send(d);
     } else {
       // pass through
@@ -30,16 +30,16 @@ public:
   // inlet 2
   void set_minus(const Value &val)
   {
-    val.get(&mValue);
+    val.get(&value_);
   }
   
   virtual const Value inspect(const Value &val) 
-  { bprint(mSpy, mSpySize,"-%.2f", mValue );  }
+  { bprint(mSpy, mSpySize,"-%.2f", value_ );  }
   
   
 private:
   Matrix mBuffer;
-  Real mValue;
+  Real value_;
 };
 
 extern "C" void init()

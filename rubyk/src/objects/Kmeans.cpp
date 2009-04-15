@@ -53,7 +53,7 @@ public:
     if (val.get(&live)) {
       // we automatically flatten (size()) matrix to vector.
       if (live->size() != mCodeBook.col_count()) {
-        *mOutput << name_ << ": bad input matrix " << live->row_count() << "x" << live->col_count() << " should be 1x" << mCodeBook.col_count() << ".\n";
+        *output_ << name_ << ": bad input matrix " << live->row_count() << "x" << live->col_count() << " should be 1x" << mCodeBook.col_count() << ".\n";
         return;
       }
       mView.set_data(live->data); // flatten matrix to vector (FIXME: do not know if this is useful, maybe we should just break if the input is not a vector)
@@ -74,7 +74,7 @@ public:
   
   void probabilities()
   {
-    *mOutput << mDistances << std::endl;
+    *output_ << mDistances << std::endl;
   }
   
   /**< Send out training data points. */
@@ -126,7 +126,7 @@ private:
         mDistances.data[i] = d;
         total_distance    += d;
         if (d < 0) {
-          *mOutput << name_ << ": error, corrupt covariance matrix for label '" << (char)mLabels.data[i] << "' (negative distance).\n";
+          *output_ << name_ << ": error, corrupt covariance matrix for label '" << (char)mLabels.data[i] << "' (negative distance).\n";
         } else if (d < closest_distance) {
           closest_label = mLabels.data[i];
           closest_distance = d;
@@ -157,7 +157,7 @@ private:
     
     FILE * file = fopen(model_file_path().c_str(), "rb");
       if (!file) {
-        *mOutput << name_ << ": could not read model from '" << model_file_path() << "'.\n";
+        *output_ << name_ << ": could not read model from '" << model_file_path() << "'.\n";
         return false;
       }
       TRY_OR(mLabels,   from_file(file), goto load_model_failed);
@@ -182,7 +182,7 @@ private:
     TRY(mFullTrainingData, set_sizes(0, mCodeBook.col_count() + 1));
     
     if(!FOREACH_TRAIN_CLASS(Kmeans, load_training_samples)) {
-      *mOutput << name_ << ": could not load training data (to plot points).\n";
+      *output_ << name_ << ": could not load training data (to plot points).\n";
     }
     
     return true;
@@ -201,12 +201,12 @@ private:
     
     mVectorCount = 0;
     if(!FOREACH_TRAIN_CLASS(Kmeans, train_from_samples)) {
-      *mOutput << name_ << ": could not build model.\n";
+      *output_ << name_ << ": could not build model.\n";
       return false;
     }
     
-    *mOutput << name_ << ": built codebook of size " << mCodeBook.row_count() << "x" << mCodeBook.col_count() << ".\n";
-    *mOutput << name_ << ": labels = " << mLabels << ".\n";
+    *output_ << name_ << ": built codebook of size " << mCodeBook.row_count() << "x" << mCodeBook.col_count() << ".\n";
+    *output_ << name_ << ": labels = " << mLabels << ".\n";
     TRY(mLabels,   to_file(model_file_path()));
     TRY(mCodeBook, to_file(model_file_path(), "ab"));
     
@@ -245,18 +245,18 @@ private:
           *tmp /= (mTrainingSet.row_count() - 1);
           // 3. find inverse of covariance matrix tmp   C = inv(C)
           if (!tmp->inverse()) {
-            *mOutput << name_ << ": warning. Not enough training data (" << mVectorCount << ") to build covariance matrix for class '" << pFilename << "'. Using identity matix.\n";
+            *output_ << name_ << ": warning. Not enough training data (" << mVectorCount << ") to build covariance matrix for class '" << pFilename << "'. Using identity matix.\n";
             TRY((*tmp), identity(tmp->col_count()));
           }
         } else {
-          *mOutput << name_ << ": warning. Not enough training data (" << mVectorCount << ") to build covariance matrix for class '" << pFilename << "'. Using identity matix.\n";
+          *output_ << name_ << ": warning. Not enough training data (" << mVectorCount << ") to build covariance matrix for class '" << pFilename << "'. Using identity matix.\n";
           TRY((*tmp), identity(tmp->col_count()));
         }
         //
         mICov.push_back(tmp);
         
         if (pFilename != "")
-          *mOutput << name_ << ": read '" << pFilename << "' (" << mVectorCount << " vectors)\n";
+          *output_ << name_ << ": read '" << pFilename << "' (" << mVectorCount << " vectors)\n";
       }
       TRY(mTrainingSet, set_sizes(0,0));
       mVectorCount = 0;

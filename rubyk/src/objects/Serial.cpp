@@ -15,7 +15,7 @@ public:
   bool set (const Value &p)
   {
     // cannot change parameters during runtime, yet
-    *mOutput << name_ << ": Serial object has no parameters to change during runtime.\n";
+    *output_ << name_ << ": Serial object has no parameters to change during runtime.\n";
     return set_serial(p);
   }
   
@@ -26,10 +26,10 @@ public:
   
   bool init_serial (const Value &p)
   {
-    mPort.set_output(*mOutput);
+    mPort.set_output(*output_);
     
     if (!p.get(&mPortName, "port")) {
-      *mOutput << "Port not set!\n";
+      *output_ << "Port not set!\n";
       return false;
     }
     
@@ -41,7 +41,7 @@ public:
                     p.val("hard",    0),
                     p.val("soft",    0), 
                     p.val("raw",     1))) {
-      *mOutput << "Could not open port.\n";
+      *output_ << "Could not open port.\n";
       return false;
     }
     

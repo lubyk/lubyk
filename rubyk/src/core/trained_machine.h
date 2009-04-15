@@ -40,7 +40,7 @@ public:
   void learn()
   {
     if (!learn_from_data()) {
-      *mOutput << name_ << ": learn failed.\n";
+      *output_ << name_ << ": learn failed.\n";
       is_ok_ = false;
     } else {
       is_ok_ = load_model();
@@ -53,7 +53,7 @@ public:
   void load()
   {
     if (!load_model()) {
-      *mOutput << name_ << ": could not load model.\n";
+      *output_ << name_ << ": could not load model.\n";
       is_ok_ = false;
     } else {
       is_ok_ = true;
@@ -68,7 +68,7 @@ protected:
     size_t start = pFilename.find("class_");
     size_t end   = pFilename.find(".txt");
     if (start == std::string::npos || end == std::string::npos) {
-      *mOutput << name_ << ": bad filename '" << pFilename << "'. Should be 'class_[...].txt'.\n";
+      *output_ << name_ << ": bad filename '" << pFilename << "'. Should be 'class_[...].txt'.\n";
       return false;
     }
     *pRes = pFilename.substr(start+6, end - start - 6).c_str()[0];
@@ -89,7 +89,7 @@ protected:
     struct dirent *elem;
     directory = opendir(mFolder.c_str());
       if (directory == NULL) {
-        *mOutput << name_ << ": could not open directory '" << mFolder << "' to read class data.\n";
+        *output_ << name_ << ": could not open directory '" << mFolder << "' to read class data.\n";
         goto foreach_train_class_fail;
       }
       while ( (elem = readdir(directory)) ) {
@@ -108,7 +108,7 @@ protected:
         FILE * file;
         file = fopen(path.c_str(), "rb");
           if (!file) {
-            *mOutput << name_ << "(error): could not read from '" << path << "' (" << strerror(errno) << ")\n";
+            *output_ << name_ << "(error): could not read from '" << path << "' (" << strerror(errno) << ")\n";
             goto foreach_train_class_fail;
           }
           // read vectors one by one
@@ -120,7 +120,7 @@ protected:
     closedir(directory);
     return true;
 foreach_train_class_fail:
-    *mOutput << name_ << ": foreach_train_class callback return false.\n";
+    *output_ << name_ << ": foreach_train_class callback return false.\n";
     if (directory) closedir(directory);
     return false;
   }

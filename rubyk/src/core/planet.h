@@ -38,11 +38,10 @@ class Planet : public Root
       in.close();
 
       Command  * command = new Command(std::cin, std::cout);
-      command->set_worker(&worker_);
-      command->set_silent(true);
+      command->set_planet(this);
+      command->set_silent();
       oss << "\n";
       command->parse(oss.str());
-      command->close();
       delete command;
     }
   }
@@ -53,11 +52,15 @@ class Planet : public Root
     worker_.run();
   }
   
+  void quit() {
+    worker_.quit();
+  }
+  
   /** Return the class finder (create one if needed). */
   ClassFinder * classes();
   
   /** Start listening to a command. */
-  void listen_to_command (Command &commend);
+  void listen_to(Command &command);
   
   /** Create pending links (called on new object creation). */
   const Value create_pending_links();
@@ -73,10 +76,10 @@ class Planet : public Root
   }
 
   /** Create a new link between two slots. */
-  const Value create_link(const std::string &from, const std::string &from_port, const std::string &to_port, const std::string &to_object);
+  const Value create_link(const std::string &from, const std::string &from_port, const std::string &to_port, const std::string &to_node);
 
   /** Remove a link between two slots. */
-  const Value remove_link(const std::string &from, const std::string &from_port, const std::string &to_port, const std::string &to_object);
+  const Value remove_link(const std::string &from, const std::string &from_port, const std::string &to_port, const std::string &to_node);
  
  public:
   std::list<oscit::Call>  pending_links_;        /**< List of pending connections waiting for variable assignements. */

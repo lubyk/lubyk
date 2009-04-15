@@ -23,11 +23,11 @@ public:
   { 
     const Matrix * mat;
     if (!val.get(&mat)) {
-      *mOutput << name_ << ": wrong signal type '" << val.type_name() << "' (should be ArrayValue)\n";
+      *output_ << name_ << ": wrong signal type '" << val.type_name() << "' (should be ArrayValue)\n";
       return;
     } else if (mat->row_count() != mFrequencies.row_count() || mat->col_count() != mFrequencies.col_count()) {
       if(!set_sizes(mat->row_count(), mat->col_count())) {
-        *mOutput << name_ << ": could not change matrix dimension to " << mat->row_count() << "x" << mat->col_count() << ".\n";
+        *output_ << name_ << ": could not change matrix dimension to " << mat->row_count() << "x" << mat->col_count() << ".\n";
         return;
       }
     }
@@ -88,7 +88,7 @@ private:
     size_t size = 2;
     while (size < pRowCount) size *= 2;
     if (size != pRowCount) {
-      *mOutput << name_ << ": wrong signal dimension " << pRowCount << ". Should be a power of 2.\n";
+      *output_ << name_ << ": wrong signal dimension " << pRowCount << ". Should be a power of 2.\n";
       return false;
     }
     

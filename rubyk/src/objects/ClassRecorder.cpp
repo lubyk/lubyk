@@ -23,7 +23,7 @@ public:
     mMargin      = 1.5;
     mFolder      = "data";
     mUseSnap     = true;
-    mClassLabel  = 0;
+    class_Label  = 0;
     mChannel     = 1;
     mVectorCount = 0;
     mTrainFile   = NULL;
@@ -87,17 +87,17 @@ public:
         if (mTempo == 0) {
           // record directly
           bang_me_in(record_with_margin);
-          send_note(3, 72 + (mClassLabel % 12),80,record_time,mChannel);
+          send_note(3, 72 + (class_Label % 12),80,record_time,mChannel);
           enter(Recording);
         } else {
           bang_me_in(countdown_time);
-          send_note(3, 60 + (mClassLabel % 12),80,100,mChannel);
+          send_note(3, 60 + (class_Label % 12),80,100,mChannel);
           enter(CountDownSet);
         }
         break;
       case CountDownSet:
         bang_me_in(record_with_margin); // 1/2 margin at the end
-        send_note(3, 72 + (mClassLabel % 12),80,record_time,mChannel);
+        send_note(3, 72 + (class_Label % 12),80,record_time,mChannel);
         enter(Recording);
         break;
       case Recording:
@@ -115,10 +115,10 @@ public:
           // swap snap style
           if (mRowOffset == mSnapOffset) {
             mRowOffset = mRowMargin;
-            *mOutput << name_ << ": no-snap\n~> ";
+            *output_ << name_ << ": no-snap\n~> ";
           } else {
             mRowOffset = mSnapOffset;
-            *mOutput << name_ << ": snap\n~> ";
+            *output_ << name_ << ": snap\n~> ";
           }
           
           mMeanValue.set_meta(H("sample_offset"), mRowOffset);
@@ -153,7 +153,7 @@ public:
           enter(ReadyToRecord);
         } else if (cmd == 127) {
           // clear mean vector
-          mClassLabel  = 0;
+          class_Label  = 0;
           mVectorCount = 0;
           mMeanVector.clear();
           enter(ReadyToRecord);
@@ -161,7 +161,7 @@ public:
           prepare_class_for_recording(cmd);
           enter(CountDownReady);
           bang_me_in(countdown_time);
-          send_note(3, 60 + (mClassLabel % 12),80,100,mChannel);
+          send_note(3, 60 + (class_Label % 12),80,100,mChannel);
         }  
         break;
       }
@@ -185,7 +185,7 @@ private:
   void receive_data()
   {
     if (!mHasLiveData) {
-      *mOutput << name_ << ": no data to record (no stream coming from inlet 1).\n";
+      *output_ << name_ << ": no data to record (no stream coming from inlet 1).\n";
       return;
     }
     
@@ -216,12 +216,12 @@ private:
         }
       }
       mSnapOffset = delta_used;
-      *mOutput << name_ << ": distance to mean vector " << min_distance << " (delta " << delta_used << "/" << mBuffer.row_count() - mMeanVector.row_count() << ")\nKeep ? ~> ";
-      fflush(stdout); // FIXME: should be related to *mOutput
+      *output_ << name_ << ": distance to mean vector " << min_distance << " (delta " << delta_used << "/" << mBuffer.row_count() - mMeanVector.row_count() << ")\nKeep ? ~> ";
+      fflush(stdout); // FIXME: should be related to *output_
     } else {
       mSnapOffset = mBuffer.row_count() - mMeanVector.row_count();
-      *mOutput << name_ << ":~> Keep ? ";
-      fflush(stdout); // FIXME: should be related to *mOutput
+      *output_ << name_ << ":~> Keep ? ";
+      fflush(stdout); // FIXME: should be related to *output_
     }
     
     if (mUseSnap && mVectorCount > 0) {
@@ -239,8 +239,8 @@ private:
     TRY_RET(mView,     set_view(mBuffer, mRowOffset, mRowOffset + mMeanVector.row_count() - 1));
     
     // 1. write to file
-    if (!mView.to_file(mClassFile, "ab")) {
-      *mOutput << name_ << ": could not write vector (" << mView.error_msg() << ")\n";
+    if (!mView.to_file(class_File, "ab")) {
+      *output_ << name_ << ": could not write vector (" << mView.error_msg() << ")\n";
     }
     
     // 2. update mean value
@@ -250,19 +250,19 @@ private:
   void prepare_class_for_recording(int cmd)
   {
     // record character as class id
-    if (mClassLabel != cmd)
+    if (class_Label != cmd)
     {
       // new class
       load_class(cmd, &ClassRecorder::update_mean_value);
     }
-    *mOutput << name_ << ": recording vector " << mVectorCount + 1 << " for " << (char)cmd << "\n~> ";
+    *output_ << name_ << ": recording vector " << mVectorCount + 1 << " for " << (char)cmd << "\n~> ";
   }
   
   void enter(class_recorder_states_t pState)
   {
     switch(pState) {
     case ReadyToRecord:
-      *mOutput << name_ << ": Ready to record\n~> ";
+      *output_ << name_ << ": Ready to record\n~> ";
       break;
     case Recording:
       mHasLiveData = false;
@@ -289,21 +289,21 @@ private:
     
     TRY_RET(vector, set_sizes(mMeanVector.row_count(), mMeanVector.col_count()));
     
-    mClassLabel = cmd;
+    class_Label = cmd;
     /** reset mean value. */
     mVectorCount = 0;
     mMeanVector.clear();
     
     // 1. find file
-    mClassFile = mFolder;
+    class_File = mFolder;
     std::string str;
     bprint(str,"/class_%c.txt", cmd);
-    mClassFile.append(str);
+    class_File.append(str);
     
     // 2. open
-    FILE * file = fopen(mClassFile.c_str(), "rb");
+    FILE * file = fopen(class_File.c_str(), "rb");
       if (!file) {
-        *mOutput << name_ << ": new class\n";
+        *output_ << name_ << ": new class\n";
         return;
       }
       // read a vector
@@ -323,7 +323,7 @@ private:
       TRY(mBuffer,     set_sizes(pRowCount,   pColCount));
       TRY(mMeanVector, set_sizes(vector_size, pColCount));
       
-      *mOutput << name_ << ": resized to " << mMeanVector.row_count() << "x" << mMeanVector.col_count() << " (removed margin).\n";
+      *output_ << name_ << ": resized to " << mMeanVector.row_count() << "x" << mMeanVector.col_count() << " (removed margin).\n";
       mMeanVector.clear();
       
       mMeanValue.set_meta(H("sample_offset"), mRowMargin); // shift display window right / left
@@ -336,7 +336,7 @@ private:
   class_recorder_states_t mState;
   
   std::string mFolder;        /**< Folder containing the class data.   */
-  std::string mClassFile;     /**< Current class data file.            */
+  std::string class_File;     /**< Current class data file.            */
   FILE * mTrainFile;
 
   bool mUseSnap;              /**< True if the recording should snap to the best match. Usually better without. */
@@ -360,7 +360,7 @@ private:
   size_t mVectorCount;        /**< Number of vectors used to build the current mean value.                      */
   int mTempo;                 /**< Tempo for countdown and recording.                                           */
 
-  int mClassLabel;            /**< Current label. Used during recording and recognition.                        */
+  int class_Label;            /**< Current label. Used during recording and recognition.                        */
   int mSampleRate;            /**< Number of samples per second (used to compute recording time).               */
   int mChannel;               /**< Midi channel used to send notes. */
 };

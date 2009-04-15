@@ -25,8 +25,8 @@ void LuaScript::call_lua (Value * retSig, const char * pFunctionName, const Valu
   lua_getglobal(mLua, pFunctionName); /* function to be called */
   if (sig) {
     if (!lua_pushsignal(*sig)) {
-      *mOutput << name_ << "(error): ";
-      *mOutput << "cannot call '" << pFunctionName << "' with argument " << *sig << " (type not yet suported in Lua).\n";
+      *output_ << name_ << "(error): ";
+      *output_ << "cannot call '" << pFunctionName << "' with argument " << *sig << " (type not yet suported in Lua).\n";
       return;
     } 
   }
@@ -34,8 +34,8 @@ void LuaScript::call_lua (Value * retSig, const char * pFunctionName, const Valu
   /* Run the function. */
   status = lua_pcall(mLua, (sig ? 1 : 0), (retSig ? 1 : 0), 0); // 1 arg, 1 result, no error function
   if (status) {
-    *mOutput << name_ << "(error): ";
-    *mOutput << lua_tostring(mLua, -1) << std::endl;
+    *output_ << name_ << "(error): ";
+    *output_ << lua_tostring(mLua, -1) << std::endl;
   	
     mScriptOK = false;
     return;
@@ -79,16 +79,16 @@ bool LuaScript::eval_lua_script(const std::string &pScript)
   /* compile script (as long as we maintain 1 context per object, we could release the mutex for long compilations since they are done inside the 'command' space) */
   status = luaL_loadbuffer(mLua, pScript.c_str(), pScript.size(), "script" ); // the last parameter is just used for debugging and error reporting
   if (status) {
-    *mOutput << name_ << ": Compilation error !\n";
-    *mOutput << lua_tostring(mLua, -1) << std::endl;
+    *output_ << name_ << ": Compilation error !\n";
+    *output_ << lua_tostring(mLua, -1) << std::endl;
     return false;
   }
   
   /* Run the script to create the functions. */
   status = lua_pcall(mLua, 0, 0, 0); // 0 arg, 1 result, no error function
   if (status) {
-    *mOutput << name_ << ": Function creation failed !\n";
-    *mOutput << lua_tostring(mLua, -1) << std::endl;
+    *output_ << name_ << ": Function creation failed !\n";
+    *output_ << lua_tostring(mLua, -1) << std::endl;
   	return false;
   }
   return true; // ok, we can receive and process signals (again).
@@ -113,7 +113,7 @@ bool LuaScript::real_from_lua(Real * d)
 {
   int index = lua_gettop(mLua);
   if (!lua_isnumber(mLua, index)) {
-    *mOutput << name_ << ": wrong value type to get number (" << lua_typename(mLua, index) << " at " << index << ").\n";
+    *output_ << name_ << ": wrong value type to get number (" << lua_typename(mLua, index) << " at " << index << ").\n";
     return false;
   }
   *d = lua_tonumber(mLua,index);
@@ -125,7 +125,7 @@ bool LuaScript::string_from_lua(std::string * pStr)
 {
   int index = lua_gettop(mLua);
   if (!lua_isstring(mLua, index)) {
-    *mOutput << name_ << ": wrong value type to get string (" << lua_typename(mLua, index) << " at " << index << ").\n";
+    *output_ << name_ << ": wrong value type to get string (" << lua_typename(mLua, index) << " at " << index << ").\n";
     return false;
   }
   *pStr = lua_tostring(mLua,index);
@@ -143,7 +143,7 @@ bool LuaScript::matrix_from_lua_table(Matrix * pMat, int pIndex)
   int i  = 1;
   if (!pMat->set_sizes(1,0)) return false;
   if (!lua_istable(mLua, pIndex)) {
-    *mOutput << name_ << ": wrong value type to get matrix (" << lua_typename(mLua, pIndex) << " at " << pIndex << ").\n";
+    *output_ << name_ << ": wrong value type to get matrix (" << lua_typename(mLua, pIndex) << " at " << pIndex << ").\n";
     return false;
   }
   while(true) {
@@ -171,13 +171,13 @@ bool LuaScript::midi_message_from_lua_table(MidiMessage * pMsg, int pIndex)
 { 
   std::string type;
   if (!lua_istable(mLua, pIndex)) {
-    *mOutput << name_ << ": wrong value type to get midi message (" << lua_typename(mLua, pIndex) << " at " << pIndex << ").\n";
+    *output_ << name_ << ": wrong value type to get midi message (" << lua_typename(mLua, pIndex) << " at " << pIndex << ").\n";
     return false;
   }
   // type
   lua_getfield(mLua, pIndex, "type");
   if (!lua_isstring(mLua, -1)) {
-    *mOutput << name_ << ": could not get type of midi message (" << lua_typename(mLua, -1) << " at " << pIndex << ").\n";
+    *output_ << name_ << ": could not get type of midi message (" << lua_typename(mLua, -1) << " at " << pIndex << ").\n";
     lua_pop(mLua,1);
     return false;
   }
@@ -220,7 +220,7 @@ bool LuaScript::midi_message_from_lua_table(MidiMessage * pMsg, int pIndex)
     lua_pop(mLua,1);
     
   } else if (type == "CtrlChange") {
-    *mOutput << name_ << ": CtrlChange from lua not implemented yet...\n";
+    *output_ << name_ << ": CtrlChange from lua not implemented yet...\n";
     return false;
     //lua_pushstring(mLua, "ctrl");
     //lua_pushnumber(mLua, pMessage.ctrl());
@@ -275,7 +275,7 @@ bool LuaScript::signal_from_lua(Value * sig, int pIndex, Matrix& pMat, MidiMessa
     }
     break;
   default:
-    *mOutput << name_ << ": wrong value type to build signal (" << lua_typename(mLua, lua_type(mLua, index)) << " at " << index << ").\n";
+    *output_ << name_ << ": wrong value type to build signal (" << lua_typename(mLua, lua_type(mLua, index)) << " at " << index << ").\n";
     lua_pop(mLua, 1);
     return false;
   }
@@ -429,8 +429,8 @@ void LuaScript::set_lua_global (const char * key, const Value &val)
   if (lua_pushsignal(sig)) {
     lua_setglobal(mLua, key);
   } else if (val.type) {
-    *mOutput << name_ << "(error): ";
-    *mOutput << "cannot set '" << key << "' to " << sig << " (type not yet suported in Lua).\n";
+    *output_ << name_ << "(error): ";
+    *output_ << "cannot set '" << key << "' to " << sig << " (type not yet suported in Lua).\n";
   }
 }
 
@@ -548,7 +548,7 @@ void LuaScript::register_lua_methods()
 {
   /* register methods for lua */
   Hash_iterator it,end;
-  const THash<std::string, method_for_lua_t> * method_for_lua = mClass->methodsForLua();
+  const THash<std::string, method_for_lua_t> * method_for_lua = class_->methodsForLua();
   end   = method_for_lua->end();
   
   /* register send methods */

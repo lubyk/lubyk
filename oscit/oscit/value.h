@@ -13,9 +13,10 @@ namespace oscit {
 class Json : public std::string
 {
  public:
-  Json(const char *str) : std::string(str) {}
-  Json(const std::string &str) : std::string(str) {}
+  explicit Json(const char *str) : std::string(str) {}
+  explicit Json(const std::string &str) : std::string(str) {}
 };
+
 
 class List;
 class Value;

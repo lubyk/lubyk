@@ -33,6 +33,22 @@ class Thread : public Mutex
     pthread_create( &thread_id_, NULL, &start_thread<T,Tmethod>, (void*)this);
   }
   
+  /** Start a new thread with the given parameter. The thread should check if it
+   *  should stop using thread->run(). */
+  template<class T, void(T::*Tmethod)(Thread*)>
+  void start(void *parameter = NULL) {
+    if (thread_id_) {
+     fprintf(stderr, "Trying to start thread when it is already running ! (in Thread::start_using_signals)");
+     return;
+    }
+    
+    use_signals_ = false;
+    quit_      = false;
+    owner_     = this;
+    parameter_ = parameter;
+    pthread_create( &thread_id_, NULL, &start_thread<T,Tmethod>, (void*)this);
+  }
+  
   /** Start a new thread with the given parameter. If the thread is interrupted with
    *  a SIGTERM, it's quit() method is called. */
   template<class T, void(T::*Tmethod)(Thread*)>
