@@ -1,5 +1,5 @@
 #include "lua_script.h"
-#include "command.h"
+#include "text_command.h"
 
 /*** Lua script with macro capability (can execute rubyk commands). */
 class Macro : public LuaScript

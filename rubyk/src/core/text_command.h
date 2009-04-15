@@ -10,30 +10,19 @@
 
 class Planet;
 
-class Command : public Thread
+class TextCommand : public BaseCommand
 {
 public:
-  Command(std::istream &input, std::ostream &output) : current_directory_("/"), input_(&input), output_(&output)
+  TextCommand(std::istream &input, std::ostream &output) : current_directory_("/"), input_(&input), output_(&output)
   { initialize(); }
   
-  Command() : current_directory_("/") {
+  TextCommand() : current_directory_("/") {
     input_  = &std::cin;
     output_ = &std::cout;
     initialize();
   }
   
-  virtual ~Command() {}
-  
-  /** This method creates a new thread to listen for incomming commands. */
-  void listen(std::istream &input, std::ostream &output) {
-    input_  = &input;
-    output_ = &output;
-    listen();
-  }
-  
-  void listen() {
-    start<Command, &Command::do_run>();
-  }
+  virtual ~TextCommand() {}
   
   /** Clear the current command. */
   void clear();
@@ -67,7 +56,7 @@ protected:
   void initialize();
   
   /** Code executed in a separate thread. Runs until deleted or quit. */
-  virtual void do_run(Thread *thread);
+  virtual void do_listen();
   
   /** RAGEL PARSER RELATED CALLBACKS **/
   
@@ -120,7 +109,7 @@ protected:
   unsigned int token_i_;
   unsigned int current_state_; /**< Current parser state between blocks. */
   
-  /** Command parts. */
+  /** Command building parts. */
   std::string     var_, method_, class_, key_, value_, from_node_, to_node_,;
   std::string     parameter_string_;
   std::string     from_port_, to_port_;
@@ -144,21 +133,21 @@ extern "C" {
 #include <readline/history.h>
 }
 
-class InteractiveCommand : public Command
+class CommandLine : public TextCommand
 {
 public:
-  InteractiveCommand(std::istream& pInput, std::ostream& pOutput) : Command(pInput,pOutput)
+  CommandLine(std::istream& pInput, std::ostream& pOutput) : TextCommand(pInput,pOutput)
   {
     read_history(history_path().c_str());
   }
   
-  InteractiveCommand() 
+  CommandLine() 
   {
     // read readline history
     read_history(history_path().c_str());
   }
   
-  virtual ~InteractiveCommand()
+  virtual ~CommandLine()
   {
     // save readline history
     *output_ << "\nBye..." << std::endl;
@@ -194,11 +183,11 @@ private:
 
 #else
 
-class InteractiveCommand : public Command
+class CommandLine : public TextCommand
 {
 public:
-  InteractiveCommand(std::istream& pInput, std::ostream& pOutput) : Command(pInput,pOutput) {}
-  InteractiveCommand() {}
+  CommandLine(std::istream& pInput, std::ostream& pOutput) : TextCommand(pInput,pOutput) {}
+  CommandLine() {}
   
   virtual bool getline(char ** pBuffer, size_t pSize)
   {

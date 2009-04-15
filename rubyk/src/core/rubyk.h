@@ -9,6 +9,6 @@
 #include "class.h"
 #include "class_finder.h"
 #include "new_method.h"
-#include "command.h"
+#include "text_command.h"
  
 #include "node.hpp"

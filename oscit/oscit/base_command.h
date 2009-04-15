@@ -1,5 +1,5 @@
-#ifndef _COMMAND_H_
-#define _COMMAND_H_
+#ifndef _OSCIT_BASE_COMMAND_H_
+#define _OSCIT_BASE_COMMAND_H_
 #include "oscit/thread.h"
 #include "oscit/values.h"
 
@@ -49,4 +49,4 @@ class BaseCommand
 
 } // oscit
 
-#endif // _COMMAND_H_
+#endif // _OSCIT_BASE_COMMAND_H_

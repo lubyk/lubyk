@@ -1,5 +1,5 @@
 #include "planet.h"
-#include "command.h"
+#include "text_command.h"
 #include <iostream>
 #include "globals.cpp"
 

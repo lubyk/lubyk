@@ -3,7 +3,7 @@
 class Print : public Node
 {
 public:
-  Print() : output_(std::count) {}
+  Print() : output_(&std::count) {}
   
   // [1]
   void bang(const Value &val) { 

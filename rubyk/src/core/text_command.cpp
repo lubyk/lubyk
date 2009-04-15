@@ -1,5 +1,5 @@
-#line 1 "src/core/command.rl"
-#include "command.h"
+#line 1 "src/core/text_command.rl"
+#include "text_command.h"
 #include "rubyk.h"
 
 //#define DEBUG_PARSER
@@ -11,8 +11,8 @@
 #endif
 
 
-#line 15 "src/core/command.cpp"
-static const char _command_actions[] = {
+#line 15 "src/core/text_command.cpp"
+static const char _text_command_actions[] = {
 	0, 1, 0, 1, 1, 1, 3, 1, 
 	4, 1, 5, 1, 11, 1, 12, 1, 
 	13, 1, 15, 1, 16, 1, 17, 2, 
@@ -27,7 +27,7 @@ static const char _command_actions[] = {
 	12, 2, 7
 };
 
-static const short _command_key_offsets[] = {
+static const short _text_command_key_offsets[] = {
 	0, 0, 8, 11, 12, 20, 22, 34, 
 	37, 45, 47, 51, 54, 61, 63, 70, 
 	74, 76, 82, 82, 90, 97, 99, 104, 
@@ -45,7 +45,7 @@ static const short _command_key_offsets[] = {
 	523
 };
 
-static const char _command_trans_keys[] = {
+static const char _text_command_trans_keys[] = {
 	9, 10, 32, 35, 65, 90, 97, 122, 
 	9, 10, 32, 10, 46, 95, 48, 57, 
 	65, 90, 97, 122, 97, 122, 9, 10, 
@@ -114,7 +114,7 @@ static const char _command_trans_keys[] = {
 	90, 97, 122, 0
 };
 
-static const char _command_single_lengths[] = {
+static const char _text_command_single_lengths[] = {
 	0, 4, 3, 1, 2, 0, 6, 3, 
 	4, 2, 4, 3, 5, 0, 5, 4, 
 	0, 4, 0, 2, 5, 2, 3, 3, 
@@ -132,7 +132,7 @@ static const char _command_single_lengths[] = {
 	0
 };
 
-static const char _command_range_lengths[] = {
+static const char _text_command_range_lengths[] = {
 	0, 2, 0, 0, 3, 1, 3, 0, 
 	2, 0, 0, 0, 1, 1, 1, 0, 
 	1, 1, 0, 3, 1, 0, 1, 1, 
@@ -150,7 +150,7 @@ static const char _command_range_lengths[] = {
 	0
 };
 
-static const short _command_index_offsets[] = {
+static const short _text_command_index_offsets[] = {
 	0, 0, 7, 11, 13, 19, 21, 31, 
 	35, 42, 45, 50, 54, 61, 63, 70, 
 	75, 77, 83, 84, 90, 97, 100, 105, 
@@ -168,7 +168,7 @@ static const short _command_index_offsets[] = {
 	519
 };
 
-static const unsigned char _command_indicies[] = {
+static const unsigned char _text_command_indicies[] = {
 	1, 2, 1, 3, 4, 5, 0, 1, 
 	2, 1, 0, 2, 3, 6, 4, 4, 
 	4, 4, 0, 7, 0, 8, 9, 8, 
@@ -237,7 +237,7 @@ static const unsigned char _command_indicies[] = {
 	0
 };
 
-static const char _command_trans_targs[] = {
+static const char _text_command_trans_targs[] = {
 	0, 2, 111, 3, 4, 29, 5, 6, 
 	7, 111, 3, 8, 7, 9, 15, 13, 
 	14, 19, 9, 10, 18, 11, 15, 12, 
@@ -262,7 +262,7 @@ static const char _command_trans_targs[] = {
 	0
 };
 
-static const char _command_trans_actions[] = {
+static const char _text_command_trans_actions[] = {
 	19, 0, 17, 0, 1, 1, 7, 1, 
 	44, 74, 44, 5, 0, 3, 0, 23, 
 	23, 23, 23, 3, 23, 47, 9, 47, 
@@ -287,7 +287,7 @@ static const char _command_trans_actions[] = {
 	0
 };
 
-static const char _command_eof_actions[] = {
+static const char _text_command_eof_actions[] = {
 	0, 19, 19, 19, 19, 19, 19, 19, 
 	19, 19, 19, 19, 19, 19, 19, 19, 
 	19, 19, 19, 19, 19, 19, 19, 19, 
@@ -305,25 +305,16 @@ static const char _command_eof_actions[] = {
 	0
 };
 
-static const int command_start = 1;
-static const int command_first_final = 111;
+static const int text_command_start = 1;
+static const int text_command_first_final = 111;
 
-static const int command_en_eat_line = 110;
-static const int command_en_main = 1;
+static const int text_command_en_eat_line = 110;
+static const int text_command_en_main = 1;
 
-#line 15 "src/core/command.rl"
+#line 15 "src/core/text_command.rl"
 
 
-/*
-  typedef enum command_actions_ {
-    CmdNoAction,
-  	CmdCreateNode,
-  	CmdCreateLink,
-  	CmdOpenGroup,
-  } command_action_t;
-*/
-
-void Command::initialize() {
+void TextCommand::initialize() {
   int cs;
   
   planet_     = NULL;
@@ -333,34 +324,31 @@ void Command::initialize() {
   clear();
   
   
-#line 337 "src/core/command.cpp"
+#line 328 "src/core/text_command.cpp"
 	{
-	cs = command_start;
+	cs = text_command_start;
 	}
-#line 36 "src/core/command.rl"
+#line 27 "src/core/text_command.rl"
   current_state_ = cs;
 }
 
-void Command::do_run(Thread *runner) {
+void TextCommand::do_listen() {
   char buffer[1024];
   char * line = buffer;
-  
-  // set thread priority to normal
-  normal_priority();
   
   if (!silent_) *output_ << "Welcome to rubyk !\n\n";
     
   clear();
 
-  while(!quit_ && getline(&line,1023)) {
+  while(thread_.run() && getline(&line,1023)) {
     parse(line);
     parse("\n");
-    if (!quit_) saveline(line);
+    if (thread_.run()) saveline(line); // command was not a 'quit'
     freeline(line);
   }
 }
 
-void Command::parse(const std::string &string) {
+void TextCommand::parse(const std::string &string) {
   const char *p  = string.data();     // data pointer
   const char *pe = p + string.size(); // past end
   const char *eof = NULL;             // FIXME: this should be set to 'pe' on the last string block...
@@ -369,7 +357,7 @@ void Command::parse(const std::string &string) {
   DEBUG(printf("parse:\"%s\"\n",string.c_str()));
   
   
-#line 373 "src/core/command.cpp"
+#line 361 "src/core/text_command.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -382,10 +370,10 @@ void Command::parse(const std::string &string) {
 	if ( cs == 0 )
 		goto _out;
 _resume:
-	_keys = _command_trans_keys + _command_key_offsets[cs];
-	_trans = _command_index_offsets[cs];
+	_keys = _text_command_trans_keys + _text_command_key_offsets[cs];
+	_trans = _text_command_index_offsets[cs];
 
-	_klen = _command_single_lengths[cs];
+	_klen = _text_command_single_lengths[cs];
 	if ( _klen > 0 ) {
 		const char *_lower = _keys;
 		const char *_mid;
@@ -408,7 +396,7 @@ _resume:
 		_trans += _klen;
 	}
 
-	_klen = _command_range_lengths[cs];
+	_klen = _text_command_range_lengths[cs];
 	if ( _klen > 0 ) {
 		const char *_lower = _keys;
 		const char *_mid;
@@ -431,20 +419,20 @@ _resume:
 	}
 
 _match:
-	_trans = _command_indicies[_trans];
-	cs = _command_trans_targs[_trans];
+	_trans = _text_command_indicies[_trans];
+	cs = _text_command_trans_targs[_trans];
 
-	if ( _command_trans_actions[_trans] == 0 )
+	if ( _text_command_trans_actions[_trans] == 0 )
 		goto _again;
 
-	_acts = _command_actions + _command_trans_actions[_trans];
+	_acts = _text_command_actions + _text_command_trans_actions[_trans];
 	_nacts = (unsigned int) *_acts++;
 	while ( _nacts-- > 0 )
 	{
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 67 "src/core/command.rl"
+#line 55 "src/core/text_command.rl"
 	{
       if (token_i_ >= MAX_TOKEN_SIZE) {
         std::cerr << "Buffer overflow !" << std::endl;
@@ -457,80 +445,78 @@ _match:
     }
 	break;
 	case 1:
-#line 78 "src/core/command.rl"
+#line 66 "src/core/text_command.rl"
 	{
       // FIXME: this is a temporary hack until we sub parse with Value...
       parameter_string_ += (*p);
     }
 	break;
 	case 2:
-#line 83 "src/core/command.rl"
+#line 71 "src/core/text_command.rl"
 	{ set_from_token(var_);}
 	break;
 	case 3:
-#line 85 "src/core/command.rl"
+#line 73 "src/core/text_command.rl"
 	{ set_from_token(method_);}
 	break;
 	case 4:
-#line 87 "src/core/command.rl"
+#line 75 "src/core/text_command.rl"
 	{ set_from_token(class_);}
 	break;
 	case 5:
-#line 89 "src/core/command.rl"
+#line 77 "src/core/text_command.rl"
 	{ set_from_token(value_);}
 	break;
 	case 6:
-#line 91 "src/core/command.rl"
+#line 79 "src/core/text_command.rl"
 	{ from_node_     = var_; }
 	break;
 	case 7:
-#line 93 "src/core/command.rl"
+#line 81 "src/core/text_command.rl"
 	{ from_port_ = var_; }
 	break;
 	case 8:
-#line 95 "src/core/command.rl"
+#line 83 "src/core/text_command.rl"
 	{ to_port_   = var_; }
 	break;
 	case 9:
-#line 101 "src/core/command.rl"
+#line 89 "src/core/text_command.rl"
 	{
       to_node_   = var_;
       create_link();
     }
 	break;
 	case 10:
-#line 106 "src/core/command.rl"
+#line 94 "src/core/text_command.rl"
 	{
       to_node_   = var_;
       remove_link();
     }
 	break;
 	case 11:
-#line 111 "src/core/command.rl"
+#line 99 "src/core/text_command.rl"
 	{ create_instance(); }
 	break;
 	case 12:
-#line 113 "src/core/command.rl"
+#line 101 "src/core/text_command.rl"
 	{ execute_method(); }
 	break;
 	case 13:
-#line 115 "src/core/command.rl"
+#line 103 "src/core/text_command.rl"
 	{ execute_class_method(); }
 	break;
 	case 14:
-#line 117 "src/core/command.rl"
+#line 105 "src/core/text_command.rl"
 	{ execute_command(); }
 	break;
 	case 15:
-#line 121 "src/core/command.rl"
+#line 109 "src/core/text_command.rl"
 	{
-      if (!quit_) {
-        clear();
-      }
+      clear();
     }
 	break;
 	case 16:
-#line 127 "src/core/command.rl"
+#line 113 "src/core/text_command.rl"
 	{
       p--; // move back one char
       char error_buffer[10];
@@ -541,10 +527,10 @@ _match:
     }
 	break;
 	case 17:
-#line 136 "src/core/command.rl"
+#line 122 "src/core/text_command.rl"
 	{ {cs = 1; goto _again;} }
 	break;
-#line 548 "src/core/command.cpp"
+#line 534 "src/core/text_command.cpp"
 		}
 	}
 
@@ -556,12 +542,12 @@ _again:
 	_test_eof: {}
 	if ( p == eof )
 	{
-	const char *__acts = _command_actions + _command_eof_actions[cs];
+	const char *__acts = _text_command_actions + _text_command_eof_actions[cs];
 	unsigned int __nacts = (unsigned int) *__acts++;
 	while ( __nacts-- > 0 ) {
 		switch ( *__acts++ ) {
 	case 16:
-#line 127 "src/core/command.rl"
+#line 113 "src/core/text_command.rl"
 	{
       p--; // move back one char
       char error_buffer[10];
@@ -571,20 +557,20 @@ _again:
       {cs = 110; goto _again;} // eat the rest of the line and continue parsing
     }
 	break;
-#line 575 "src/core/command.cpp"
+#line 561 "src/core/text_command.cpp"
 		}
 	}
 	}
 
 	_out: {}
 	}
-#line 188 "src/core/command.rl"
+#line 174 "src/core/text_command.rl"
 
 //  printf("{%s}\n",p);
   current_state_ = cs;
 }
 
-void Command::set_from_token(std::string& string) {
+void TextCommand::set_from_token(std::string& string) {
   token_[token_i_] = '\0';
   
   DEBUG(if (&string == &value_) std::cout << "[val " << token_ << "]" << std::endl);
@@ -595,7 +581,7 @@ void Command::set_from_token(std::string& string) {
   token_i_ = 0;
 }
 
-void Command::create_instance() {
+void TextCommand::create_instance() {
   Value params(Json(parameter_string_.c_str()));
   names_to_urls();
   
@@ -611,21 +597,21 @@ void Command::create_instance() {
 }
 
 
-void Command::create_link() {
+void TextCommand::create_link() {
   names_to_urls();
   
   DEBUG(std::cout << "LINK " << from_node_ << "." << from_port_ << "=>" << to_port_ << "." << to_node_ << std::endl);
   planet_->create_link(from_node_, from_port_, to_port_, to_node_);
 }
 
-void Command::remove_link() {
+void TextCommand::remove_link() {
   names_to_urls();
   
   DEBUG(std::cout << "UNLINK " << from_node_ << "." << from_port_ << "=>" << to_port_ << "." << to_node_ << std::endl);
   planet_->remove_link(from_node_, from_port_, to_port_, to_node_);
 }
 
-void Command::execute_method() {
+void TextCommand::execute_method() {
   Value res;
   // why doesn't this work ? Value params(Json(parameter_string_));
   Value params = Value(Json(parameter_string_));
@@ -652,7 +638,7 @@ void Command::execute_method() {
   if (!silent_) *output_ << res << std::endl;
 }
 
-void Command::execute_class_method() {
+void TextCommand::execute_class_method() {
   Value res;
   Value params = Value(Json(parameter_string_));
   
@@ -662,7 +648,7 @@ void Command::execute_class_method() {
   if (!silent_) *output_ << res << std::endl;
 }
 
-void Command::execute_command() {
+void TextCommand::execute_command() {
   Value res;
   Value params = Value(Json(parameter_string_));
 
@@ -679,7 +665,7 @@ void Command::execute_command() {
   if (!silent_) *output_ << res << std::endl;
 }
 
-void Command::clear() {
+void TextCommand::clear() {
   token_i_    = 0;
   var_        = "";
   class_      = "";

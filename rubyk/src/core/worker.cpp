@@ -2,14 +2,12 @@
 #include "node.h"
 
 
-void Worker::register_looped_node(Node *node)
-{
+void Worker::register_looped_node(Node *node) {
   free_looped_node(node);
   looped_nodes_.push_back(node);
 }
 
-void Worker::free_looped_node(Node *node)
-{  
+void Worker::free_looped_node(Node *node) {  
   std::deque<Node*>::iterator it;
   std::deque<Node*>::iterator end = looped_nodes_.end();
   for(it = looped_nodes_.begin(); it < end; it++) {
@@ -21,16 +19,16 @@ void Worker::free_looped_node(Node *node)
 }
 
 void Worker::do_run(Thread *thread) {
-  high_priority();
-  lock();
-    while(!quit_) {
+  thread_.high_priority();
+  thread_.lock();
+    while(thread_.run()) {
       struct timespec sleeper;
       sleeper.tv_sec  = 0; 
       sleeper.tv_nsec = WORKER_SLEEP_MS * 1000000;
   
-      unlock(); // ok, others can do things while we sleep
+      thread_.unlock(); // ok, others can do things while we sleep
         nanosleep(&sleeper, NULL); // FIXME: only if no loop events ?
-      lock();
+      thread_.lock();
   
       current_time_ = real_time();
   
@@ -40,7 +38,7 @@ void Worker::do_run(Thread *thread) {
       // trigger events in the queue
       pop_events();
     }
-  unlock();
+  thread_.unlock();
 }
 
 void Worker::pop_events() {
@@ -55,8 +53,7 @@ void Worker::pop_events() {
   current_time_ = realTime;
 }
 
-void Worker::pop_all_events()
-{
+void Worker::pop_all_events() {
   Event * e;
   while( events_queue_.get(&e)) {
     current_time_ = e->when_;
@@ -66,8 +63,7 @@ void Worker::pop_all_events()
   }
 }
 
-void Worker::trigger_loop_events()
-{
+void Worker::trigger_loop_events() {
   std::deque<Node *>::iterator it;
   std::deque<Node *>::iterator end = looped_nodes_.end();
   for(it = looped_nodes_.begin(); it < end; it++) {

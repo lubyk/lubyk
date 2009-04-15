@@ -3,7 +3,7 @@
 #include "oscit.h"
 
 #include "group.h"
-#include "command.h"
+#include "text_command.h"
 #include "worker.h"
 
 #include <queue>
@@ -37,7 +37,7 @@ class Planet : public Root
       oss << in.rdbuf();
       in.close();
 
-      Command  * command = new Command(std::cin, std::cout);
+      TextCommand  * command = new TextCommand(std::cin, std::cout);
       command->set_planet(this);
       command->set_silent();
       oss << "\n";
@@ -46,21 +46,23 @@ class Planet : public Root
     }
   }
   
-  virtual ~Planet();
+  void open_port(uint port) {
+    adopt_command(new OscCommand(port));
+  }
   
   void run() {
     worker_.run();
   }
   
   void quit() {
-    worker_.quit();
+    worker_.kill();
+    clear(); // kill commands and destroy objects
   }
+  
+  inline Worker *worker() { return &worker_; }
   
   /** Return the class finder (create one if needed). */
   ClassFinder * classes();
-  
-  /** Start listening to a command. */
-  void listen_to(Command &command);
   
   /** Create pending links (called on new object creation). */
   const Value create_pending_links();
@@ -81,16 +83,13 @@ class Planet : public Root
   /** Remove a link between two slots. */
   const Value remove_link(const std::string &from, const std::string &from_port, const std::string &to_port, const std::string &to_node);
  
- public:
-  std::list<oscit::Call>  pending_links_;        /**< List of pending connections waiting for variable assignements. */
-  
  private:
   void init() {
     // force build of "/class"
     classes();
   }
   
-  std::queue<Command *>   commands_;      /**< Command line / editors. FIXME: it seems these should live in oscit space ... (not sure). */
+  std::list<oscit::Call>  pending_links_;        /**< List of pending connections waiting for variable assignements. */
   Worker worker_;
 };
 

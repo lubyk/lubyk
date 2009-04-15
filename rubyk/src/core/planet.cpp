@@ -1,20 +1,7 @@
 #include "planet.h"
 #include "class_finder.h"
 #include "node.h"
-#include "command.h"
-
-Planet::~Planet() {
-  Command * child;
-
-  while (!commands_.empty()) {
-    child = commands_.front();
-    child->quit(); // joins pthread
-    commands_.pop();
-  }
-  
-  pending_links_.clear();
-  clear();
-}
+#include "text_command.h"
 
 /** Return the class listing Object (create one if needed). */
 ClassFinder * Planet::classes() {
@@ -25,15 +12,6 @@ ClassFinder * Planet::classes() {
     return cf;
   }
   return TYPE_CAST(ClassFinder, obj);
-}
-
-/** Start listening to a command. */
-void Planet::listen_to(Command &command) {
-  int ret;
-  pthread_t id;
-  command.set_planet(this);
-  command.listen();
-  commands_.push(&command);
 }
 
 /** Create a new object from a class name. Calls "/class/ClassName/new URL PARAMS". */
@@ -74,7 +52,7 @@ const Value Planet::remove_link(const std::string &from, const std::string &from
   else
     url.append("/out/unlink"); // unlink first outlet
     
-  String param(to_node);
+  Value param(to_node);
   
   if (to_port != "")
     param.append("/in/").append(to_port);
@@ -88,18 +66,19 @@ const Value Planet::remove_link(const std::string &from, const std::string &from
 
 // FIXME: on node deletion/replacement, remove/move all pending links related to this node ?.
 const Value Planet::create_pending_links() {
-  std::list<oscit::Call>::iterator it,end;
-  end = pending_links_.end();
-  it  = pending_links_.begin();
+  std::list<Call>::iterator it  = pending_links_.begin();
+  std::list<Call>::iterator end = pending_links_.end();
+  
   Value res;
   
-  while(it != end) {
+  while (it != end) {
     //std::cout << "PENDING " << it->mUrl << " => " << it->mParam << std::endl;
-    res = call(it->mUrl, it->mParam);
+    res = it->trigger(this);
     if (res.is_string()) {
       it = pending_links_.erase(it);  // call succeeded
-    } else
+    } else {
       it++;
+    }
   }
   // return list of created links ?
   return gNilValue;

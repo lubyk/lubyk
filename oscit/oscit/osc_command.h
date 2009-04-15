@@ -1,5 +1,5 @@
-#ifndef _OSCIT_RECEIVE_H_
-#define _OSCIT_RECEIVE_H_
+#ifndef _OSCIT_OSC_COMMAND_H_
+#define _OSCIT_OSC_COMMAND_H_
 #include "oscit/base_command.h"
 
 #include <list>
@@ -90,4 +90,4 @@ private:
 
 } // oscit
 
-#endif // _OSCIT_RECEIVE_H_
+#endif // _OSCIT_OSC_COMMAND_H_

@@ -12,7 +12,7 @@ DOT_CMD=/Applications/Graphviz.app/Contents/MacOS/dot
 RAGEL=ragel
 PLAT= macosx
 TEST=test/*_test.h #test/objects/*_test.h
-LINKER_OBJECTS=../oscit/liboscit.a slot.o inlet.o outlet.o node.o worker.o event.o class.o class_finder.o group.o command.o planet.o #buffer.o
+LINKER_OBJECTS=../oscit/liboscit.a slot.o inlet.o outlet.o node.o worker.o event.o class.o class_finder.o group.o text_command.o planet.o #buffer.o
 OFF_OBJ=lua_script.o src/lib/lua/liblua.a 
 INCLUDE_HEADERS=-Isrc/templates -Isrc/core -Isrc/objects -Isrc/lib/lua -Isrc/lib -I../oscit -I../oscit/oscpack -Isrc/core/values -Isrc/lib/osc
 OBJECT_COMPILE=$(INCLUDE_HEADERS) -D__$(PLAT)__ -dynamic -bundle -undefined suppress -flat_namespace -L/usr/lib -lgcc -lstdc++
@@ -43,8 +43,8 @@ test/runner.cpp: $(TEST)
 test/runner: test/runner.cpp $(LINKER_OBJECTS) #objects
 	$(CC) $(CFLAGS) $(LFLAGS) -Itest $(INCLUDE_HEADERS) -I. test/runner.cpp $(LINKER_OBJECTS) -o test/runner
 
-src/core/command.cpp: src/core/command.rl
-	${RAGEL} src/core/command.rl -o src/core/command.cpp
+src/core/text_command.cpp: src/core/text_command.rl
+	${RAGEL} src/core/text_command.rl -o src/core/text_command.cpp
 
 tmatrix.o: src/core/tmatrix.cpp src/templates/tmatrix.h
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
@@ -100,14 +100,14 @@ src/lib/lua/liblua.a:
 ../oscit/liboscit.a:
 	cd ../oscit && make liboscit.a
 	
-dot: src/core/command.png	
-	open src/core/command.png
+dot: src/core/text_command.png	
+	open src/core/text_command.png
 
 src/core/command.dot: src/core/command.rl
 	ragel src/core/command.rl | rlgen-dot -p -o src/core/command.dot
 	
-src/core/command.png: src/core/command.dot
-	${DOT_CMD} -Tpng src/core/command.dot -o src/core/command.png
+src/core/text_command.png: src/core/text_command.dot
+	${DOT_CMD} -Tpng src/core/text_command.dot -o src/core/text_command.png
 
 install: install_rubyk install_libs
 
@@ -120,4 +120,4 @@ install_libs:
 	cd lib && for e in *.rko ; do echo $(RUBYK_LIBDIR)/$$e && $(INSTALL) $$e $(RUBYK_LIBDIR) ; done
 
 clean:
-	rm -rf *.o *.dSYM lib/*.rko lib/*.dSYM rubyk src/core/command.png src/core/command.dot test/runner test/runner.cpp test/*.dSYM
+	rm -rf *.o *.dSYM lib/*.rko lib/*.dSYM rubyk src/core/text_command.png src/core/text_command.dot test/runner test/runner.cpp test/*.dSYM

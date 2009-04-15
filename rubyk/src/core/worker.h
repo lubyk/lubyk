@@ -24,7 +24,7 @@ Planet <>--- Worker
 #define ONE_SECOND 1000.0
 #define ONE_MINUTE (60.0*ONE_SECOND)
 
-class Worker : public Thread
+class Worker
 {
 public:
   Worker(Root *root) : root_(root), quit_(false) {
@@ -32,9 +32,25 @@ public:
     current_time_ = real_time();
   }
   
+  virtual ~Worker() {
+    kill();
+  }
+  
   /** Run until quit (through a command or signal). */
   void run() {
-    start_using_signals<Worker, &Worker::do_run>(this, NULL);
+    thread_.start<Worker, &Worker::do_run>(this, NULL);
+  }
+  
+  void kill() {
+    thread_.kill();
+  }
+  
+  inline void lock() {
+    thread_.lock();
+  }
+  
+  inline void unlock() {
+    thread_.unlock();
   }
   
   Root *root() { return root_; }
@@ -73,9 +89,6 @@ public:
     }
   }
   
-  /** Received a SIGTERM. */
-  void terminate(Thread *thread) {}
-  
  public:
   time_t current_time_;                    /**< Current logical time in [ms] since reference. */
   
@@ -96,15 +109,13 @@ public:
   /** Trigger loop events. These are typically the IO 'read/write' of the IO nodes. */
   void trigger_loop_events ();
   
-  Thread thread_;                           /**< Manage running thread. */
-  
   Root *root_;                              /**< Root tree. */
   
   struct timeb time_ref_;                   /**< Time reference. All times are [ms] from this reference.
                                                  It's the worker's birthdate ! */
   bool quit_;                               /**< Internal flag to tell running threads to quit. */
 
-
+  Thread                  thread_;          /**< Running thread. */
   /** Events ! */
   OrderedList<Event*>     events_queue_;    /**< Ordered event list. */
   std::deque<Node*>       looped_nodes_;    /**< List of methods to call on every loop. */

@@ -1,4 +1,4 @@
-#include "command.h"
+#include "text_command.h"
 #include "rubyk.h"
 
 //#define DEBUG_PARSER
@@ -10,20 +10,11 @@
 #endif
 
 %%{
-  machine command;
+  machine text_command;
   write data noerror;
 }%%
 
-/*
-  typedef enum command_actions_ {
-    CmdNoAction,
-  	CmdCreateNode,
-  	CmdCreateLink,
-  	CmdOpenGroup,
-  } command_action_t;
-*/
-
-void Command::initialize() {
+void TextCommand::initialize() {
   int cs;
   
   planet_     = NULL;
@@ -36,26 +27,23 @@ void Command::initialize() {
   current_state_ = cs;
 }
 
-void Command::do_run(Thread *runner) {
+void TextCommand::do_listen() {
   char buffer[1024];
   char * line = buffer;
-  
-  // set thread priority to normal
-  normal_priority();
   
   if (!silent_) *output_ << "Welcome to rubyk !\n\n";
     
   clear();
 
-  while(!quit_ && getline(&line,1023)) {
+  while(thread_.run() && getline(&line,1023)) {
     parse(line);
     parse("\n");
-    if (!quit_) saveline(line);
+    if (thread_.run()) saveline(line); // command was not a 'quit'
     freeline(line);
   }
 }
 
-void Command::parse(const std::string &string) {
+void TextCommand::parse(const std::string &string) {
   const char *p  = string.data();     // data pointer
   const char *pe = p + string.size(); // past end
   const char *eof = NULL;             // FIXME: this should be set to 'pe' on the last string block...
@@ -119,9 +107,7 @@ void Command::parse(const std::string &string) {
     action debug { printf("[%c]", p[0]); }
     
     action prompt {
-      if (!quit_) {
-        clear();
-      }
+      clear();
     }
     
     action error {
@@ -190,7 +176,7 @@ void Command::parse(const std::string &string) {
   current_state_ = cs;
 }
 
-void Command::set_from_token(std::string& string) {
+void TextCommand::set_from_token(std::string& string) {
   token_[token_i_] = '\0';
   
   DEBUG(if (&string == &value_) std::cout << "[val " << token_ << "]" << std::endl);
@@ -201,7 +187,7 @@ void Command::set_from_token(std::string& string) {
   token_i_ = 0;
 }
 
-void Command::create_instance() {
+void TextCommand::create_instance() {
   Value params(Json(parameter_string_.c_str()));
   names_to_urls();
   
@@ -217,21 +203,21 @@ void Command::create_instance() {
 }
 
 
-void Command::create_link() {
+void TextCommand::create_link() {
   names_to_urls();
   
   DEBUG(std::cout << "LINK " << from_node_ << "." << from_port_ << "=>" << to_port_ << "." << to_node_ << std::endl);
   planet_->create_link(from_node_, from_port_, to_port_, to_node_);
 }
 
-void Command::remove_link() {
+void TextCommand::remove_link() {
   names_to_urls();
   
   DEBUG(std::cout << "UNLINK " << from_node_ << "." << from_port_ << "=>" << to_port_ << "." << to_node_ << std::endl);
   planet_->remove_link(from_node_, from_port_, to_port_, to_node_);
 }
 
-void Command::execute_method() {
+void TextCommand::execute_method() {
   Value res;
   // why doesn't this work ? Value params(Json(parameter_string_));
   Value params = Value(Json(parameter_string_));
@@ -258,7 +244,7 @@ void Command::execute_method() {
   if (!silent_) *output_ << res << std::endl;
 }
 
-void Command::execute_class_method() {
+void TextCommand::execute_class_method() {
   Value res;
   Value params = Value(Json(parameter_string_));
   
@@ -268,7 +254,7 @@ void Command::execute_class_method() {
   if (!silent_) *output_ << res << std::endl;
 }
 
-void Command::execute_command() {
+void TextCommand::execute_command() {
   Value res;
   Value params = Value(Json(parameter_string_));
 
@@ -285,7 +271,7 @@ void Command::execute_command() {
   if (!silent_) *output_ << res << std::endl;
 }
 
-void Command::clear() {
+void TextCommand::clear() {
   token_i_    = 0;
   var_        = "";
   class_      = "";
