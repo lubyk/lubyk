@@ -1,15 +1,7 @@
 #ifndef _OSCIT_ROOT_H_
 #define _OSCIT_ROOT_H_
 #include "oscit/base_object.h"
-#include "oscit/receive.h"
-#include "oscit/send.h"
-#include "oscit/mutex.h"
-
-#include "oscpack/ip/UdpSocket.h" // needed for IpEndpointName
-
-class Command;
-class Event;
-class Node;
+#include "oscit/command.h"
 
 namespace oscit {
   
@@ -28,20 +20,41 @@ for every object.
 class Root : public BaseObject
 {
  public:
-  Root() : objects_(OBJECT_HASH_SIZE), osc_in_(NULL) {
+  Root() : objects_(OBJECT_HASH_SIZE) {
     init();
   }
 
-  Root(size_t hashSize) : objects_(hashSize), osc_in_(NULL) {
+  Root(size_t hashSize) : objects_(hashSize) {
     init();
   }
   
-  virtual ~Root();
+  virtual ~Root() {
+    clear();
+    root_ = NULL; // avoid call to unregister_object in ~BaseObject
+  }
   
-  /** Start listening for incomming messages on a given port. */
-  void open_port(uint port) {
-    if (osc_in_) delete osc_in_;
-    osc_in_ = new OscReceive(this, port);
+  void clear() {
+    while (!commands_.empty()) {
+      Command *command = commands_.front();
+      command->quit();
+      command->set_root(NULL); // avoid call to unregister_command in ~Command
+      delete command;
+      commands_.pop_front();
+    }
+    this->BaseObject::clear();
+  }
+  
+  /** Start listening for incomming messages from the given command. */
+  template<class T>
+  T * adopt_command(T *command) {
+    command->set_root(this);
+    commands_.push_back(command);
+    command->listen();
+    return command;
+  }
+  
+  void unregister_command(Command *command) {
+    commands_.remove(command);
   }
   
   /** Trigger the object located at the given url, passing nil as parameter. */
@@ -144,41 +157,16 @@ class Root : public BaseObject
   
   /* ======================= META METHODS HELPERS ===================== */
   
-  /** Add a new satellite to the list of observers. This method is the implementation
-   *  of "/.register".
-   * TODO: how to get the IP without checking for "/.register" in the 'receive' method ?
-   * FIXME: implement TTL (time to live)
-   * FIXME: avoid duplicates (??)
-   */
-  void register_observer(const IpEndpointName &observer);
-  
-  void receive(const std::string &url, const Value &val) {
-    //FIX Value res;
-    
-    //FIX if (pParams.is_error()) {
-    //FIX   res = pParams;
-    //FIX } else {
-    //FIX   res = call(url,pParams);
-    //FIX }
-    //FIX send_reply(url, res);
+  /** Send a reply to all commands so they pass it further to their observers. */
+  void notify_observers(const char *url, const Value &val, const Command *skip_command = NULL) {
+    std::list<Command*>::iterator it;
+    std::list<Command*>::iterator end = commands_.end();
+    for (it = commands_.begin(); it != end; ++it) {
+      if (*it != skip_command) {
+        (*it)->notify_observers(url, val);
+      }
+    }
   }
-  
-  /** Send reply to received message. 
-   *  @param remote_endpoint can be NULL if this is triggered by an internal call.
-   */
-  void send_reply(UdpSocket *socket, const IpEndpointName *remote_endpoint, const std::string &url, const Value &val);
-  
-  /** Send an osc message. 
-   *  @param remote_endpoint target host.
-   */
-  void send(const IpEndpointName &remote_endpoint, const std::string &url, const Value &val) {
-    send(remote_endpoint, url.c_str(), val);
-  }
-  
-  /** Send an osc message. 
-   *  @param remote_endpoint target host.
-   */
-  void send(const IpEndpointName &remote_endpoint, const char *url, const Value &val);
   
  protected:
   THash<std::string, BaseObject*> objects_;   /**< Hash to find any object in the tree from its url. */
@@ -201,9 +189,8 @@ class Root : public BaseObject
   }
    
   void init();
-   
-  OscReceive * osc_in_;                   /**< Listening socket. */
-  std::list<IpEndpointName> observers_;   /**< List of satellites that have registered to get return values back. */
+  
+  std::list<Command *> commands_;    /**< Listening commands. */
 };
   
 } // namespace oscit

@@ -2,20 +2,21 @@
 #include "oscit/root.h"
 #include "mock/dummy_object.h"
 #include "mock/log_object.h"
+#include "ip/UdpSocket.h"
 
 class ReceiveTest : public TestHelper
 {
  public:
-  ReceiveTest() : root_end_point_(IpEndpointName::ANY_ADDRESS, 7000) { 
-    root_.open_port(7000);
+  ReceiveTest() : root_end_point_(IpEndpointName::ANY_ADDRESS, 7000) {
+    root_.adopt_command(new OscCommand(7000));
     
-    sender_.open_port(7010);
-    reply_ = sender_.adopt(new LogBaseObject(".reply"));
+    sender_ = root2_.adopt_command(new OscCommand(7010));
+    reply_  = root2_.adopt(new LogBaseObject(".reply"));
   }
   
   void setUp() {
     reply_->clear();
-    root_.clear();
+    root_.BaseObject::clear(); // empty root but keep commands
   }
   
   void test_send_receive( void ) {
@@ -32,7 +33,7 @@ class ReceiveTest : public TestHelper
   }
   
   void send(const char *url, const Value &val) {
-    sender_.send(root_end_point_, url, val);
+    sender_->send(root_end_point_, url, val);
     microsleep(1);
   }
   
@@ -43,6 +44,7 @@ class ReceiveTest : public TestHelper
   
   IpEndpointName root_end_point_;
   Root root_;
-  Root sender_;
+  Root root2_;
+  OscCommand * sender_;
   LogBaseObject * reply_;
 };

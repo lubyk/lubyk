@@ -4,12 +4,12 @@ AR = ar rcu
 RAGEL=ragel
 LIBTOOL=libtool -static
 TEST=test/*_test.h
-OBJECTS=base_object.o root.o receive.o send.o zeroconf.o value.o thread.o oscpack/liboscpack.a cxalloc.o cxsystem.o
+OBJECTS=base_object.o root.o command.o osc_command.o zeroconf.o value.o thread.o oscpack/liboscpack.a cxalloc.o cxsystem.o
 CFLAGS=-g -Wall $(TESTING)
 
 
 test: test/runner test/runner.cpp
-	./test/runner; rm test/runner
+	./test/runner && rm test/runner
 	
 # TODO: archive (ar ..)
 liboscit.a: $(OBJECTS)

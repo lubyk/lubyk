@@ -350,7 +350,7 @@ protected:
   Mutex *context_;                            /**< Mutex to make sure only one thread is using a given context at a time. */
 
 private:
-  friend class OscReceive;
+  friend class OscCommand;
   TypeTagID                   type_tag_id_;   /**< OSC type tag type_tag_id. */
   std::string                 info_;          /**< Help/information string. */
   Value                       type_;          /**< Type information (type signature, range & units). */
