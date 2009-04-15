@@ -35,8 +35,9 @@
 int main(int argc, char * argv[])
 {  
   Worker venus(argc, argv);
-  InteractiveCommand cmd(std::cin, std::cout);
-  venus.listen_to_command(cmd);
+  InteractiveCommand command(std::cin, std::cout);
+  venus.listen_to(command);
+  ZeroConfRegister zeroconf("rubyk")
   venus.open_port(7000);
   venus.run();
   //OPENGL_HACK gGLWindowStartThread = NULL;

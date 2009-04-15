@@ -2,7 +2,7 @@
 #include "oscit/thread.h"
 #include <sstream>
 
-struct DummyCommand : public Command
+struct DummyCommand : public BaseCommand
 {
  public:
   DummyCommand(std::string *string) : string_(string) {}
@@ -17,7 +17,7 @@ struct DummyCommand : public Command
   std::string * string_;
 };
 
-class CommandTest : public TestHelper
+class BaseCommandTest : public TestHelper
 {  
 public:
   void test_create_delete( void ) {

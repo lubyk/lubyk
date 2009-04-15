@@ -1,7 +1,7 @@
 #ifndef _OSCIT_ROOT_H_
 #define _OSCIT_ROOT_H_
 #include "oscit/base_object.h"
-#include "oscit/command.h"
+#include "oscit/base_command.h"
 
 namespace oscit {
   
@@ -35,9 +35,9 @@ class Root : public BaseObject
   
   void clear() {
     while (!commands_.empty()) {
-      Command *command = commands_.front();
+      BaseCommand *command = commands_.front();
       command->kill();
-      command->set_root(NULL); // avoid call to unregister_command in ~Command
+      command->set_root(NULL); // avoid call to unregister_command in ~BaseCommand
       delete command;
       commands_.pop_front();
     }
@@ -53,7 +53,7 @@ class Root : public BaseObject
     return command;
   }
   
-  void unregister_command(Command *command) {
+  void unregister_command(BaseCommand *command) {
     commands_.remove(command);
   }
   
@@ -158,9 +158,9 @@ class Root : public BaseObject
   /* ======================= META METHODS HELPERS ===================== */
   
   /** Send a reply to all commands so they pass it further to their observers. */
-  void notify_observers(const char *url, const Value &val, const Command *skip_command = NULL) {
-    std::list<Command*>::iterator it;
-    std::list<Command*>::iterator end = commands_.end();
+  void notify_observers(const char *url, const Value &val, const BaseCommand *skip_command = NULL) {
+    std::list<BaseCommand*>::iterator it;
+    std::list<BaseCommand*>::iterator end = commands_.end();
     for (it = commands_.begin(); it != end; ++it) {
       if (*it != skip_command) {
         (*it)->notify_observers(url, val);
@@ -190,7 +190,7 @@ class Root : public BaseObject
    
   void init();
   
-  std::list<Command *> commands_;    /**< Listening commands. */
+  std::list<BaseCommand *> commands_;    /**< Listening commands. */
 };
   
 } // namespace oscit

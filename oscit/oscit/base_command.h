@@ -10,14 +10,14 @@ class Value;
 
 /** This class is responsible for listening to any kind of incoming command (implemented by subclasses in do_listen)
  *  and passing these commands to the root object. */
-class Command
+class BaseCommand
 {
  public:
-  Command() : root_(NULL) {}
+  BaseCommand() : root_(NULL) {}
   
-  Command(Root *root) : root_(root) {}
+  BaseCommand(Root *root) : root_(root) {}
   
-  virtual ~Command();
+  virtual ~BaseCommand();
   
   virtual void kill() {
     thread_.kill();
@@ -28,7 +28,7 @@ class Command
       fprintf(stderr, "Impossible to start command (no access to root).");
       return;
     }
-    thread_.start<Command, &Command::do_listen>(this);
+    thread_.start<BaseCommand, &BaseCommand::do_listen>(this);
   }
   
   /** Send a notification to all observers of this command. */

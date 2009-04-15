@@ -1,6 +1,6 @@
 #ifndef _OSCIT_RECEIVE_H_
 #define _OSCIT_RECEIVE_H_
-#include "oscit/command.h"
+#include "oscit/base_command.h"
 
 #include <list>
 
@@ -22,7 +22,7 @@ namespace oscit {
 class Root;
 class ZeroConfRegister;
 
-class OscCommand : public Command, public osc::OscPacketListener
+class OscCommand : public BaseCommand, public osc::OscPacketListener
 {
 public:
   OscCommand(uint port);
