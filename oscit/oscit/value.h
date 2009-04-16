@@ -1,9 +1,11 @@
 #ifndef _OSCIT_VALUE_H_
 #define _OSCIT_VALUE_H_
 #include <string>
+#include "oscit/value_types.h"
 #include "oscit/thash.h"
 #include "oscit/string.h"
 #include "oscit/error.h"
+#include "oscit/list.h"
 #include "oscit/hash.h"
 #include "oscit/matrix.h"
 
@@ -17,51 +19,6 @@ class Json : public std::string
   explicit Json(const std::string &str) : std::string(str) {}
 };
 
-
-class List;
-class Value;
-
-extern Value gNilValue;
-extern Hash  gEmptyHash;
-
-enum ValueType
-{
-  NIL_VALUE = 0,
-  REAL_VALUE,
-  STRING_VALUE,
-  ERROR_VALUE,
-  LIST_VALUE,
-  HASH_VALUE,
-  MATRIX_VALUE,
-};
-
-enum ValueTypeTag
-{
-  NIL_TYPE_TAG    = 'N',
-  REAL_TYPE_TAG   = 'f',
-  STRING_TYPE_TAG = 's',
-  ERROR_TYPE_TAG  = 's',
-  HASH_TYPE_TAG   = 'H',
-  MATRIX_TYPE_TAG = 'M',
-};
-
-enum HashDefaultSize
-{
-  DEFAULT_HASH_TABLE_SIZE = 20,
-};
-
-/** Wrapper around a string identifying an osc type list. */
-struct TypeTag
-{
-  explicit TypeTag(const char * str) : str_(str) {}
-  const char * str_;
-};
-
-/** Unique identifier for osc type tags strings. */
-typedef uint TypeTagID;
-
-#define NO_TYPE_TAG_ID  H("")
-#define ANY_TYPE_TAG_ID H("*")
 
 /** Value is the base type of all data transmitted between objects or used as parameters
 and return values for osc messages. */
@@ -170,9 +127,29 @@ public:
     }
   }
   
-  inline const char * type_tag() const;
+  const char * type_tag() const {
+    switch (type_) {
+      case REAL_VALUE:   return "f";
+      case ERROR_VALUE: // continue
+      case STRING_VALUE: return "s";
+      case HASH_VALUE:   return "H";
+      case MATRIX_VALUE: return "M";
+      case NIL_VALUE:    return "N";
+      case LIST_VALUE:   return list_->type_tag();
+      default:           return "N";
+    }
+  }
   
-  inline TypeTagID type_tag_id() const;
+  TypeTagID type_tag_id() const {
+    switch (type_) {
+      case REAL_VALUE:   return H("f");
+      case ERROR_VALUE:  // continue
+      case STRING_VALUE: return H("s");
+      case NIL_VALUE:    return H("N");
+      case LIST_VALUE:   return list_->type_tag_id();
+      default:           return H("N");
+    }
+  }
   
   ValueType type() const {
     return type_;
@@ -194,7 +171,17 @@ public:
   }
   
   /** Change the Value into something defined in a typeTag. */
-  inline const char *set_type_tag(const char *type_tag);
+  const char *set_type_tag(const char *type_tag) {
+    if (strlen(type_tag) > 1) {
+      set_type_without_default(LIST_VALUE);
+      list_ = new List;
+      return list_->set_type_tag(type_tag);
+    } else {
+      set_type(type_from_char(type_tag[0]));
+      return type_tag+1; // eof
+    }
+  }
+  
   
   static ValueType type_from_char(char c) {
     switch (c) {
@@ -279,21 +266,30 @@ public:
     set_list(&list);
   }
   
-  inline const Value& operator[](size_t pos) const;
-  
-  inline Value& operator[](size_t pos);
-  
-  inline const Value& value_at(size_t pos) const {
-    return (*this)[pos];
+  const Value &operator[](size_t pos) const {
+    return *((*list_)[pos]);
   }
   
-  inline Value& value_at(size_t pos) {
-    return (*this)[pos];
+  Value &operator[](size_t pos) {
+    return *((*list_)[pos]);
   }
   
-  inline void set_value_at(size_t pos, const Value &val);
+  const Value &value_at(size_t pos) const {
+    return *((*list_)[pos]);
+  }
   
-  inline size_t size() const;
+  Value &value_at(size_t pos) {
+    return *((*list_)[pos]);
+  }
+  
+  void set_value_at(size_t pos, const Value &val) {
+    if (!is_list()) return;
+    list_->set_value_at(pos, val);
+  }
+  
+  size_t size() const { 
+    return type_ == LIST_VALUE ? list_->size() : 0;
+  }
   
   template<class T>
   Value &push_back(const T& elem) {
@@ -437,7 +433,33 @@ public:
   
  private:
   /** Set the value to nil and release/free contained data. */
-  inline void clear();
+  void clear()  {
+   switch (type_) {
+     case LIST_VALUE:
+     if (list_ != NULL) ReferenceCounted::release(list_);
+     list_ = NULL;
+     break;
+     case STRING_VALUE:
+     if (string_ != NULL) ReferenceCounted::release(string_);
+     string_ = NULL;
+     break;
+     case ERROR_VALUE:
+     if (error_ != NULL) ReferenceCounted::release(error_);
+     error_ = NULL;
+     break;
+     case HASH_VALUE:
+     if (hash_ != NULL) ReferenceCounted::release(hash_);
+     hash_ = NULL;
+     break;
+     case MATRIX_VALUE:
+       // TODO: Same reference counting as others by using cv::Mat header counter ?
+     if (matrix_ != NULL) delete matrix_;
+     matrix_ = NULL;
+     break;
+     default:
+     ; // nothing to clear
+   }
+  }
   
   /** Change the Value into the specific type. Does not set any default value
     * so the object must be considered uninitialized. */
@@ -447,7 +469,30 @@ public:
   }
   
   /** Properly initialize the type with a default value. */
-  inline void set_default();
+  inline void set_default() {
+    switch (type_) {
+      case REAL_VALUE:
+        r = 0.0;
+        break;
+      case STRING_VALUE:
+        set_string("");
+        break;
+      case LIST_VALUE:
+        list_ = new List;
+        break;
+      case ERROR_VALUE:
+        error_ = new Error;
+        break;
+      case HASH_VALUE:
+        hash_ = new Hash(DEFAULT_HASH_TABLE_SIZE);
+        break;
+      case MATRIX_VALUE:
+        matrix_ = new Matrix;
+        break;
+      default:
+        ; // nothing to set 
+    }
+  }
   
   
   /** =========================================================================================    String  */
@@ -489,11 +534,20 @@ public:
   }
   
   /** =========================================================================================    List    */
-  inline void share(const List *list);
+  void share(const List *list) {
+    if (list_ == list) return;
+    set_type_without_default(LIST_VALUE);
+    // FIXME: there should be a way to deal with shared content
+    // that is protected from changes... Any solution welcome !!
+    list_ = const_cast<List*>(list);
+    ReferenceCounted::acquire(list_);
+  }
   
   /** Set List content by making a copy. */
-  inline void set_list(const List *list);
-  
+  void set_list(const List *list) {
+    list_ = new List(*list);
+  }
+
   /** =========================================================================================    Hash    */
   void share(const Hash *hash) {
     if (hash_ == hash) return;
@@ -531,131 +585,7 @@ public:
   };
 };
 
-} // oscit
-
-#include "oscit/list.h"
-
-namespace oscit {
-const char * Value::type_tag() const {
-  switch (type_) {
-    case REAL_VALUE:   return "f";
-    case ERROR_VALUE: // continue
-    case STRING_VALUE: return "s";
-    case HASH_VALUE:   return "H";
-    case MATRIX_VALUE: return "M";
-    case NIL_VALUE:    return "N";
-    case LIST_VALUE:   return list_->type_tag();
-    default:           return "N";
-  }
-}
-
-TypeTagID Value::type_tag_id() const {
-  switch (type_) {
-    case REAL_VALUE:   return H("f");
-    case ERROR_VALUE:  // continue
-    case STRING_VALUE: return H("s");
-    case NIL_VALUE:    return H("N");
-    case LIST_VALUE:   return list_->type_tag_id();
-    default:           return H("N");
-  }
-}
-
-const char *Value::set_type_tag(const char *type_tag) {
-  if (strlen(type_tag) > 1) {
-    set_type_without_default(LIST_VALUE);
-    list_ = new List;
-    return list_->set_type_tag(type_tag);
-  } else {
-    set_type(type_from_char(type_tag[0]));
-    return type_tag+1; // eof
-  }
-}
-
-const Value &Value::operator[](size_t pos) const {
-  return (*list_)[pos];
-}
-
-Value &Value::operator[](size_t pos) {
-  return (*list_)[pos];
-}
-
-void Value::set_value_at(size_t pos, const Value &val) {
-  if (!is_list()) return;
-  list_->set_value_at(pos, val);
-}
-
-size_t Value::size() const { 
-  return type_ == LIST_VALUE ? list_->size() : 0;
-}
-
-void Value::clear() {
-  switch (type_) {
-    case LIST_VALUE:
-      if (list_ != NULL) ReferenceCounted::release(list_);
-      list_ = NULL;
-      break;
-    case STRING_VALUE:
-      if (string_ != NULL) ReferenceCounted::release(string_);
-      string_ = NULL;
-      break;
-    case ERROR_VALUE:
-      if (error_ != NULL) ReferenceCounted::release(error_);
-      error_ = NULL;
-      break;
-    case HASH_VALUE:
-      if (hash_ != NULL) ReferenceCounted::release(hash_);
-      hash_ = NULL;
-      break;
-    case MATRIX_VALUE:
-      // TODO: Same reference counting as others by using cv::Mat header counter ?
-      if (matrix_ != NULL) delete matrix_;
-      matrix_ = NULL;
-      break;
-    default:
-      ; // nothing to clear
-  }
-}
-
-void Value::set_default() {
-  switch (type_) {
-    case REAL_VALUE:
-      r = 0.0;
-      break;
-    case STRING_VALUE:
-      set_string("");
-      break;
-    case LIST_VALUE:
-      list_ = new List;
-      break;
-    case ERROR_VALUE:
-      error_ = new Error;
-      break;
-    case HASH_VALUE:
-      hash_ = new Hash(DEFAULT_HASH_TABLE_SIZE);
-      break;
-    case MATRIX_VALUE:
-      matrix_ = new Matrix;
-      break;
-    default:
-      ; // nothing to set 
-  }
-  
-}
-
-void Value::set_list(const List *list) {
-  list_ = new List(*list);
-}
-
-void Value::share(const List *list) {
-  if (list_ == list) return;
-  set_type_without_default(LIST_VALUE);
-  // FIXME: there should be a way to deal with shared content
-  // that is protected from changes... Any solution welcome !!
-  list_ = const_cast<List*>(list);
-  ReferenceCounted::acquire(list_);
-}
-
 std::ostream &operator<< (std::ostream &out_stream, const Value &val);
-
 } // oscit
+
 #endif // _OSCIT_VALUE_H_

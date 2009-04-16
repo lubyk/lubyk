@@ -46,7 +46,7 @@ public:
   }
   
   /** Create a reference to a remote object. */
-  virtual BaseObject *build_remote_object(const Url &url);
+  virtual BaseObject *build_remote_object(const Url &url, Value *error);
   
   /** Send an osc message. 
    *  @param remote_endpoint target host.

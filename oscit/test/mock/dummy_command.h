@@ -9,22 +9,25 @@ struct DummyCommand : public BaseCommand
   DummyCommand(std::string *string, const char *protocol) : BaseCommand(protocol), string_(string) {}
   
   void do_listen() {
-    while (should_run()) {
-      string_->append(".");
-      microsleep(10);
-    }
+    //while (should_run()) {
+    //  string_->append(".");
+    //  microsleep(10);
+    //}
   }
   
-  virtual BaseObject *build_remote_object(const Url &url) {
+  virtual BaseObject *build_remote_object(const Url &url, Value *error) {
     if (url.host() == "dummy.host") {
-      return remote_objects_->adopt(new DummyObject(url.path().c_str(), url.port()));
+      return adopt_remote_object(url.str(), new DummyObject(url.str().c_str(), url.port()));
     } else {
+      error->set(BAD_REQUEST_ERROR, std::string("Unknown host '").append(url.host()).append("'."));
       return NULL;
     }
   }
   
   BaseObject *remote_object_no_build(const std::string &url) {
-    return remote_objects_->object_at(url);
+    BaseObject *res = NULL;
+    remote_objects_.get(url, &res);
+    return res;
   }
   
   std::string * string_;

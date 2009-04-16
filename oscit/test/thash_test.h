@@ -1,5 +1,4 @@
-// ordered_list_test.h 
-#include <cxxtest/TestSuite.h>
+#include "test/test_helper.h"
 #include "oscit/thash.h"
 
 
@@ -123,6 +122,8 @@ public:
     assert_false(H("longname_a") == H("longname_c"));
     // this is the upper limit for H() macro
     assert_true(H("longnamelong_a") == H("longnamelong_c"));
+    // no upper limit for hashId() function
+    assert_false(hashId("longnamelong_a") == hashId("longnamelong_c"));
   }
   
   void test_copy( void ) {

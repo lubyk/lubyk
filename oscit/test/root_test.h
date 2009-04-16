@@ -131,7 +131,37 @@ public:
     assert_equal(78.0, res.r);
   }
   
-  // remote url testing is done in base_command_test.h
+  void test_remote_object_at( void ) {
+    Root root;
+    std::string string;
+    root.adopt_command(new DummyCommand(&string));
+    DummyObject  *foo = root.adopt(new DummyObject("foo", 3));
+    BaseObject   *res;
+    Value error;
+    res = root.object_at(Url("/foo"), &error);
+    assert_equal((BaseObject*)foo, res);
+    assert_true(error.is_nil());
+  }
+  
+  void test_object_at_bad_protocol( void ) {
+    Root root;
+    Value error;
+    BaseObject * res = root.object_at(Url("some://example.com/foo"), &error);
+    assert_equal((BaseObject*)NULL, res);
+    assert_equal(BAD_REQUEST_ERROR, error.error_code());
+    assert_equal("No command to handle \'some\' protocol.", error.error_message());
+  }
+  
+  void test_object_at_bad_url( void ) {
+    Root root;
+    Value error;
+    BaseObject * res = root.object_at(Url("some://example.com /foo"), &error);
+    assert_equal((BaseObject*)NULL, res);
+    assert_equal(BAD_REQUEST_ERROR, error.error_code());
+    assert_equal("Could not parse url \'some://example.com /foo\'.", error.error_message());
+  }
+  
+  // remote objects and 'send' testing is done in base_command_test.h
   
   ////////////////////// OSCIT META METHODS TESTS ///////////////////////////////////////
   

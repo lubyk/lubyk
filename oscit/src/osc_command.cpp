@@ -38,10 +38,11 @@ void OscCommand::register_observer(const IpEndpointName &observer) {
   observers_.push_back(observer);
 }
 
-BaseObject *OscCommand::build_remote_object(const Url &url) {
+BaseObject *OscCommand::build_remote_object(const Url &url, Value *error) {
   // find host with zeroconf... ? DNS ?
   //   url.host() : url.port()
   //   host not found
+  error->set(NOT_FOUND_ERROR, url.str());
   return NULL;
   //   host found ==> IpEndpointName
   // build remoteobject and let it test remote url

@@ -77,10 +77,10 @@ class Root : public BaseObject
     return call(std::string(url), val);
   }
 
-  /** Trigger the object located at the given url with the given parameters. */
-  const Value call(const std::string &url, const Value &val) {
+  /** Trigger the object in the local tree located at the given url. */
+  const Value call(const std::string &path, const Value &val) {
     Value error;
-    BaseObject * target = find_or_build_object_at(url, &error);
+    BaseObject * target = find_or_build_object_at(path, &error);
     
     // FIXME: possible problem here: target deleted by other thread before call..
     // a solution is to use a purgatory for suppressed objects where they are kept for a few seconds.
@@ -90,6 +90,43 @@ class Root : public BaseObject
     }
     
     return call(target, val);
+  }
+  
+  /** Send value to given url (can be local or remote). You should use 'call' for local urls (faster). */
+  const Value send(const Url &url, const Value &val) {
+    Value error;
+    BaseObject * target = object_at(url, &error);
+    
+    // FIXME: possible problem here: target deleted by other thread before call..
+    // a solution is to use a purgatory for suppressed objects where they are kept for a few seconds.
+    
+    if (!target) {
+      return error;
+    }
+    
+    return call(target, val);
+  }
+  
+  /** Find any object (local or remoate). */
+  BaseObject *object_at(const Url &url, Value *error) {
+    if (url.path() == "") {
+      // bad url
+      error->set(BAD_REQUEST_ERROR, std::string("Could not parse url '").append(url.str()).append("'."));
+      return NULL;
+    } else if (url.protocol() == "") {
+      // local object
+      return find_or_build_object_at(url.str(), error);
+    } else {
+      // remote
+      // find command for given protocol
+      BaseCommand * cmd = command_for_protocol(url.protocol());
+      if (cmd) {
+        return cmd->remote_object(url, error);
+      } else {
+        error->set(BAD_REQUEST_ERROR, std::string("No command to handle '").append(url.protocol()).append("' protocol."));
+        return NULL;
+      }
+    }
   }
   
   inline const Value call(BaseObject *target, const Value &val) {
@@ -192,31 +229,13 @@ class Root : public BaseObject
     BaseObject * object = object_at(path);
     
     if (object == NULL) {
-      // is it a local object ?
-      Url url(path);
-      if (url.path() == "") {
-        // bad url
-        error->set(BAD_REQUEST_ERROR, std::string("Could not parse url '").append(path).append("'."));
-      } else if (url.protocol() == "") {
-        // find locally
-        size_t pos = path.rfind("/");
-        if (pos != std::string::npos) {
-          /** call 'build_child' handler in parent. */
-          BaseObject * parent = find_or_build_object_at(path.substr(0, pos), error);
-          if (parent != NULL && (object = object_at(path)) == NULL) {
-            return parent->build_child(path.substr(pos+1), error);
-          }
-        }
-      } else {
-        std::cout << "Remote: " << url << std::endl;
-        // remote object
-        // find command for given protocol
-        BaseCommand * cmd = command_for_protocol(url.protocol());
-        if (cmd) {
-          return cmd->remote_object(url);
-        } else {
-          error->set(BAD_REQUEST_ERROR, std::string("No command to handle '").append(url.protocol()).append("' protocol."));
-          return NULL;
+      // ask parents to build
+      size_t pos = path.rfind("/");
+      if (pos != std::string::npos) {
+        /** call 'build_child' handler in parent. */
+        BaseObject * parent = find_or_build_object_at(path.substr(0, pos), error);
+        if (parent != NULL && (object = object_at(path)) == NULL) {
+          return parent->build_child(path.substr(pos+1), error);
         }
       }
     }

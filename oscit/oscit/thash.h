@@ -340,18 +340,18 @@ inline uint hashId(const uint key) {
 
 // ===== char *      =====
 // sdbm function: taken from http://www.cse.yorku.ca/~oz/hash.html
-// template<>
-// inline uint hashId (const char * str)
-// {
-//   unsigned long hash = 0;
-//   int c;
-// 
-//   while ( (c = *str++) )
-//     hash = c + (hash << 6) + (hash << 16) - hash;
-// 
-//   return hash;
-// }
-//
+template<>
+inline uint hashId(const char *str) {
+  unsigned long h = 0;
+  int c;
+
+  while ( (c = *str++) ) {
+    h = c + (h << 6) + (h << 16) - h;
+  }
+  
+  return h;
+}
+
 // We use the simpler hash to avoid too long compile times in the static string hash macro.
 
 template<>
@@ -359,10 +359,10 @@ inline uint hashId(const char c) {
   return HASH_FUNCTION(HASH_CONSTANT, c);
 }
 
-template<>
-inline uint hashId(const char * str) {
-  return H(str);
-}
+//template<>
+//inline uint hashId(const char * str) {
+//  return H(str);
+//}
 
 // ===== std::string& =====
 // sdbm function: taken from http://www.cse.yorku.ca/~oz/hash.html

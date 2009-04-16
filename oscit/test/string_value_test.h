@@ -106,7 +106,7 @@ public:
   
   void test_set_type_tag( void ) {
     Value v;
-    
+    std::cout << "set_type_tag(\"s\")\n";
     v.set_type_tag("s");
     assert_true(v.is_string());
     assert_equal("", v.str());

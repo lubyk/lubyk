@@ -19,6 +19,13 @@ public:
     assert_equal(0.0, v[0].r);
     
     // 1
+    std::cout << "??? " << v << std::endl;
+    std::cout << "H(\"\") = " << H("") << std::endl;
+    std::cout << "H(\"s\") = " << H("s") << std::endl;
+    std::cout << "H(\"f\") = " << H("f") << std::endl;
+    std::cout << "hashId(\"\") = " << hashId("") << std::endl;
+    std::cout << "hashId(\"s\") = " << hashId("s") << std::endl;
+    std::cout << "hashId(\"f\") = " << hashId("f") << std::endl;
     assert_true(v[1].is_string());
     assert_equal("", v[1].str());
     
@@ -144,11 +151,11 @@ public:
     Value v(TypeTag("ff"));
     List &l = *v.list_;
     
-    assert_equal(0.0, l[0].f);
-    assert_equal(0.0, l[1].f);
-    l[0].f = 3.5;
-    assert_equal(3.5, l[0].f);
-    assert_equal(0.0, l[1].f);
+    assert_equal(0.0, l[0]->f);
+    assert_equal(0.0, l[1]->f);
+    l[0]->f = 3.5;
+    assert_equal(3.5, l[0]->f);
+    assert_equal(0.0, l[1]->f);
   }
   
   void test_push_back_real( void ) {
