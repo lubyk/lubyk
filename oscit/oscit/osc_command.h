@@ -45,6 +45,9 @@ public:
     send_all(url, val);
   }
   
+  /** Create a reference to a remote object. */
+  virtual BaseObject *build_remote_object(const Url &url);
+  
   /** Send an osc message. 
    *  @param remote_endpoint target host.
    */

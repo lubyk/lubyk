@@ -36,6 +36,10 @@ public:
     original_ = NULL;
   }
   
+  inline bool connected() {
+    return original_ != NULL;
+  }
+  
   /** Set new original object from url. */
   void set_original(const std::string &url) {
     BaseObject *original = root_->object_at(url);

@@ -1,12 +1,11 @@
 /** Ragel parser definition to create Values from JSON. */
 
-#define MAX_NUM_BUFFER_SIZE 50
 //#define DEBUG_PARSER
 
 #include "oscit/values.h"
 #include "oscit/list.h"
 #include <iostream>
-#include <ostream>
+#include <sstream>
 
 namespace oscit {
 
@@ -95,19 +94,7 @@ Value &Value::push_front(const Value& val) {
 ///////////////// ====== JSON PARSER ========= /////////////
 %%{
   machine json;
-
-  action num_a {
-     // append a char to number buffer
-    if (num_buf_i >= MAX_NUM_BUFFER_SIZE) {
-      std::cerr << "Buffer overflow !" << std::endl;
-      // stop parsing
-      return strlen(json);
-    }
-    DEBUG(printf("%c_",fc));
-    num_buf[num_buf_i] = fc; /* append */
-    num_buf_i++;
-  }
-
+  
   action str_a {
      // append a char to build a std::string
     DEBUG(printf("%c-",fc));
@@ -117,9 +104,9 @@ Value &Value::push_front(const Value& val) {
 
   action number {
     // become a RealValue
-    num_buf[num_buf_i] = '\0';
-    tmp_val.set(atof(num_buf));
+    tmp_val.set(atof(str_buf.c_str()));
     DEBUG(printf("[number %f/%s/%s\n]", tmp_val.r, num_buf, tmp_val.to_json().c_str()));
+    str_buf = "";
   }
 
   action string {
@@ -191,8 +178,8 @@ Value &Value::push_front(const Value& val) {
   end       = ws  | '\0' | '}' | ',' | ']';  # we need '}' and ']' to finish value when embedded in hash: {one:1.34}
   char      = ([^"\\] | '\n') $str_a | ('\\' (any | '\n') $str_a);
   word      = ws* (alpha [^ \t\n:]*) $str_a;
-  real      = ws* ([\-+]? $num_a ('0'..'9' digit* '.' digit+) $num_a );
-  integer   = ws* ([\-+]? $num_a ('0'..'9' digit*) $num_a );
+  real      = ws* ([\-+]? $str_a ('0'..'9' digit* '.' digit+) $str_a );
+  integer   = ws* ([\-+]? $str_a ('0'..'9' digit*) $str_a );
   nil       = 'null';
   true      = 'true';
   false     = 'false';
@@ -224,8 +211,6 @@ Value &Value::push_front(const Value& val) {
 /** This is a crude JSON parser. */
 size_t Value::build_from_json(const char *json, bool strict_mode) {
   DEBUG(printf("\nbuild_from_json:\"%s\"\n",json));
-  char num_buf[MAX_NUM_BUFFER_SIZE + 1];
-  unsigned int num_buf_i = 0;
   std::string str_buf;
   Value tmp_val;
   set_type(NIL_VALUE); // clear

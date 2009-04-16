@@ -1,9 +1,10 @@
-#ifndef _OSCIT_OBJECT_H_
-#define _OSCIT_OBJECT_H_
-#include <list>
+#ifndef _OSCIT_BASE_OBJECT_H_
+#define _OSCIT_BASE_OBJECT_H_
 #include "oscit/values.h"
 #include "oscit/thash.h"
 #include "oscit/mutex.h"
+
+#include <list>
 
 namespace oscit {
 #define OSC_NEXT_NAME_BUFFER_SIZE 20
@@ -359,4 +360,4 @@ private:
 /** Return a pointer to the object if the type match. */
 #define TYPE_CAST(klass, op) oscit::BaseObject::type_cast<klass>(H(#klass), op);
 
-#endif // _OSCIT_OBJECT_H_
+#endif // _OSCIT_BASE_OBJECT_H_

@@ -131,6 +131,8 @@ public:
     assert_equal(78.0, res.r);
   }
   
+  // remote url testing is done in base_command_test.h
+  
   ////////////////////// OSCIT META METHODS TESTS ///////////////////////////////////////
   
   void test_info( void ) {

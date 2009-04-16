@@ -47,6 +47,11 @@ class Root : public BaseObject
   /** Start listening for incomming messages from the given command. */
   template<class T>
   T * adopt_command(T *command) {
+    if (command_for_protocol(command->protocol()) != NULL) {
+      // we already have a command for this protocol. Do not adopt.
+      delete command;
+      return NULL;
+    }
     command->set_root(this);
     commands_.push_back(command);
     command->listen();
@@ -138,8 +143,8 @@ class Root : public BaseObject
   /** Find the object at the given url. Before raising a 404 error, we try to find a 'not_found'
    *  handler that could build the resource.
    */
-  BaseObject * find_or_build_object_at(const std::string &url, Value *error) {
-    BaseObject * object = do_find_or_build_object_at(url, error);
+  BaseObject *find_or_build_object_at(const std::string &url, Value *error) {
+    BaseObject *object = do_find_or_build_object_at(url, error);
     
     if (object == NULL && (error->is_nil() || (error->is_error() && error->error_code() == NOT_FOUND_ERROR))) {
       error->set(NOT_FOUND_ERROR, url);
@@ -168,20 +173,50 @@ class Root : public BaseObject
     }
   }
   
+  BaseCommand *command_for_protocol(const std::string& protocol) {
+    std::list<BaseCommand*>::iterator it;
+    std::list<BaseCommand*>::iterator end = commands_.end();
+    for (it = commands_.begin(); it != end; ++it) {
+      if ((*it)->protocol() == protocol) {
+        return *it;
+      }
+    }
+    return NULL;
+  }
+  
  protected:
   THash<std::string, BaseObject*> objects_;   /**< Hash to find any object in the tree from its url. */
 
  private:
-  BaseObject * do_find_or_build_object_at(const std::string &url, Value *error) {
-    BaseObject * object = object_at(url);
-  
+  BaseObject * do_find_or_build_object_at(const std::string &path, Value *error) {
+    BaseObject * object = object_at(path);
+    
     if (object == NULL) {
-      size_t pos = url.rfind("/");
-      if (pos != std::string::npos) {
-        /** call 'build_child' handler in parent. */
-        BaseObject * parent = find_or_build_object_at(url.substr(0, pos), error);
-        if (parent != NULL && (object = object_at(url)) == NULL) {
-          return parent->build_child(url.substr(pos+1), error);
+      // is it a local object ?
+      Url url(path);
+      if (url.path() == "") {
+        // bad url
+        error->set(BAD_REQUEST_ERROR, std::string("Could not parse url '").append(path).append("'."));
+      } else if (url.protocol() == "") {
+        // find locally
+        size_t pos = path.rfind("/");
+        if (pos != std::string::npos) {
+          /** call 'build_child' handler in parent. */
+          BaseObject * parent = find_or_build_object_at(path.substr(0, pos), error);
+          if (parent != NULL && (object = object_at(path)) == NULL) {
+            return parent->build_child(path.substr(pos+1), error);
+          }
+        }
+      } else {
+        std::cout << "Remote: " << url << std::endl;
+        // remote object
+        // find command for given protocol
+        BaseCommand * cmd = command_for_protocol(url.protocol());
+        if (cmd) {
+          return cmd->remote_object(url);
+        } else {
+          error->set(BAD_REQUEST_ERROR, std::string("No command to handle '").append(url.protocol()).append("' protocol."));
+          return NULL;
         }
       }
     }
@@ -190,7 +225,7 @@ class Root : public BaseObject
    
   void init();
   
-  std::list<BaseCommand *> commands_;    /**< Listening commands. */
+  std::list<BaseCommand *> commands_;    /**< Listening commands (only one allowed per protocol). */
 };
   
 } // namespace oscit

@@ -3,78 +3,73 @@
 #include "oscit/thash.h"
 
 
-class StringTHashTest : public CxxTest::TestSuite
+class StringTHashTest : public TestHelper
 {
 public:
-  void test_set_get( void )
-  {
+  void test_set_get( void ) {
     THash<std::string, std::string> hash(10);
     std::string res;
     
     hash.set(std::string("hello"), std::string("world"));
     hash.set(std::string("my"),    std::string("mum"));
     
-    TS_ASSERT(hash.get("hello", &res));
-    TS_ASSERT_EQUALS( res,  std::string("world") );
-    TS_ASSERT(hash.get("my", &res));
-    TS_ASSERT_EQUALS( res,  std::string("mum"  ) );
-    TS_ASSERT_EQUALS(  hash.get("money", &res),  false );
+    assert_true(hash.get("hello", &res));
+    assert_equal("world", res);
+    assert_true(hash.get("my", &res));
+    assert_equal("mum", res);
+    assert_false(hash.get("money", &res));
   }
   
-  void test_set_get_empty( void )
-  {
+  void test_set_get_empty( void ) {
     THash<std::string, std::string> hash(10);
     std::string res;
 
     hash.set(std::string(""), std::string("empty"));
     hash.set(std::string("other"),    std::string("string"));
 
-    TS_ASSERT(hash.get("", &res));
-    TS_ASSERT_EQUALS( res,  std::string("empty") );
-    TS_ASSERT(hash.get("other", &res));
-    TS_ASSERT_EQUALS( res,  std::string("string"  ) );
+    assert_true(hash.get("", &res));
+    assert_equal("empty", res);
+    assert_true(hash.get("other", &res));
+    assert_equal("string", res);
   }
   
-  void test_get_key( void )
-  {
+  void test_get_key( void ) {
     THash<std::string, std::string> hash(10);
     std::string res;
     
     hash.set(std::string("hello"), std::string("world"));
     hash.set(std::string("my"),    std::string("mum"));
     
-    TS_ASSERT(hash.get_key("world", &res));
-    TS_ASSERT_EQUALS( res,  std::string("hello") );
-    TS_ASSERT(hash.get_key("mum", &res));
-    TS_ASSERT_EQUALS( res,  std::string("my"  ) );
-    TS_ASSERT_EQUALS(  hash.get_key("money", &res),  false );
+    assert_true(hash.get_key("world", &res));
+    assert_equal("hello", res);
+    assert_true(hash.get_key("mum", &res));
+    assert_equal("my", res);
+    assert_false(hash.get_key("money", &res));
   }
   
-  void test_keys( void )
-  {
+  void test_keys( void ) {
     THash<std::string, std::string> hash(10);
     const std::list<std::string> * keys = &hash.keys();
     
     hash.set(std::string("hello"), std::string("world"));
-    TS_ASSERT_EQUALS( 1, keys->size());
-    TS_ASSERT_EQUALS( keys->front(), std::string("hello"));
+    assert_equal(1, keys->size());
+    assert_equal("hello", keys->front());
     
     hash.set(std::string("my"),    std::string("mum"));
-    TS_ASSERT_EQUALS( 2, keys->size());
-    TS_ASSERT_EQUALS( keys->front(), std::string("hello"));
-    TS_ASSERT_EQUALS( keys->back(), std::string("my"));
+    assert_equal(2, keys->size());
+    assert_equal("hello", keys->front());
+    assert_equal("my", keys->back());
     
     hash.remove(std::string("bob")); // does nothing
-    TS_ASSERT_EQUALS( keys->front(), std::string("hello"));
-    TS_ASSERT_EQUALS( keys->back(), std::string("my"));
+    assert_equal("hello", keys->front());
+    assert_equal("my", keys->back());
     
     hash.remove(std::string("hello"));
-    TS_ASSERT_EQUALS( 1, keys->size());
-    TS_ASSERT_EQUALS( keys->front(), std::string("my"));
+    assert_equal(1, keys->size());
+    assert_equal("my", keys->front());
   }
   
-  void test_clear( void )
-  {
+  void test_clear( void ) {
     THash<std::string, std::string> hash(10);
     std::string res;
     
@@ -83,21 +78,20 @@ public:
   
     
     
-    TS_ASSERT_EQUALS( 2,  hash.keys().size());
+    assert_equal(2, hash.keys().size());
     
-    TS_ASSERT(hash.get("a", &res));
-    TS_ASSERT_EQUALS( res,  std::string("world") );
-    TS_ASSERT(hash.get("b", &res));
-    TS_ASSERT_EQUALS( res,  std::string("mum"  ) );
+    assert_true(hash.get("a", &res));
+    assert_equal( res,  std::string("world") );
+    assert_true(hash.get("b", &res));
+    assert_equal( res,  std::string("mum"  ) );
     
     hash.clear();
-    TS_ASSERT_EQUALS( 0,  hash.keys().size());
-    TS_ASSERT( !hash.get("a", &res));
-    TS_ASSERT( !hash.get("b", &res));
+    assert_equal(0, hash.keys().size());
+    assert_false(hash.get("a", &res));
+    assert_false(hash.get("b", &res));
   }
   
-  void test_clear_int( void )
-  {
+  void test_clear_int( void ) {
     THash<std::string, int> hash(10);
     int res;
     
@@ -106,32 +100,32 @@ public:
     hash.set(std::string("c"), 3);
   
     
-    TS_ASSERT_EQUALS( 3,  hash.size());
+    assert_equal(3, hash.size());
     
-    TS_ASSERT(hash.get("a", &res));
-    TS_ASSERT_EQUALS( res,  1);
-    TS_ASSERT(hash.get("b", &res));
-    TS_ASSERT_EQUALS( res,  2);
-    TS_ASSERT(hash.get("c", &res));
-    TS_ASSERT_EQUALS( res,  3);
+    assert_true(hash.get("a", &res));
+    assert_equal(1, res);
+    assert_true(hash.get("b", &res));
+    assert_equal(2, res);
+    assert_true(hash.get("c", &res));
+    assert_equal(3, res);
     
     hash.clear();
-    TS_ASSERT_EQUALS( 0,  hash.size());
-    TS_ASSERT( !hash.get("a", &res));
-    TS_ASSERT( !hash.get("b", &res));
-    TS_ASSERT( !hash.get("c", &res));
+    assert_equal(0,  hash.size());
+    assert_false(hash.get("a", &res));
+    assert_false(hash.get("b", &res));
+    assert_false(hash.get("c", &res));
   }
   
-  void test_H( void )
-  {
-    TS_ASSERT_DIFFERS(H("a"), H("b"));
-    TS_ASSERT_DIFFERS(H("one"), H("two"));
-    TS_ASSERT_DIFFERS(H("longname_a"), H("longname_b"));
-    TS_ASSERT_DIFFERS(H("longname_a"), H("longname_c"));
+  void test_H( void ) {
+    assert_false(H("a") == H("b"));
+    assert_false(H("one") == H("two"));
+    assert_false(H("longname_a") == H("longname_b"));
+    assert_false(H("longname_a") == H("longname_c"));
+    // this is the upper limit for H() macro
+    assert_true(H("longnamelong_a") == H("longnamelong_c"));
   }
   
-  void test_copy( void )
-  {
+  void test_copy( void ) {
     THash<std::string, std::string> hash(10);
     THash<std::string, std::string> hash2(10);
     std::string res;
@@ -145,14 +139,14 @@ public:
     // change hash
     hash.set(std::string("hello"), std::string("planet"));
 
-    TS_ASSERT(hash.get("hello", &res));
-    TS_ASSERT_EQUALS( res,  std::string("planet") );
-    TS_ASSERT(hash.get("my", &res));
-    TS_ASSERT_EQUALS( res,  std::string("mum"  ) );
+    assert_true(hash.get("hello", &res));
+    assert_equal("planet", res);
+    assert_true(hash.get("my", &res));
+    assert_equal("mum", res);
     
-    TS_ASSERT(hash2.get("hello", &res));
-    TS_ASSERT_EQUALS( res,  std::string("world") );
-    TS_ASSERT(hash2.get("my", &res));
-    TS_ASSERT_EQUALS( res,  std::string("mum"  ) );
+    assert_true(hash2.get("hello", &res));
+    assert_equal("world", res);
+    assert_true(hash2.get("my", &res));
+    assert_equal("mum", res);
   }
 };

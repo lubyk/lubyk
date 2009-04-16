@@ -1,6 +1,7 @@
 #include "oscit/osc_command.h"
 #include "oscit/root.h"
 #include "oscit/zeroconf.h"
+#include "oscit/osc_remote_object.h"
 
 #include "osc/OscReceivedElements.h"
 #include "osc/OscOutboundPacketStream.h"
@@ -10,7 +11,7 @@ namespace oscit {
 
 static osc::OutboundPacketStream &operator<<(osc::OutboundPacketStream &out_stream, const Value &val);
 
-OscCommand::OscCommand(uint port) { 
+OscCommand::OscCommand(uint port) : BaseCommand("osc") { 
   socket_ = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, port ), this );
   zeroconf_register_ = new ZeroConfRegister("oscit", "_oscit._udp", port);
 }
@@ -35,6 +36,16 @@ void OscCommand::do_listen() {
 void OscCommand::register_observer(const IpEndpointName &observer) {
   // TODO: check that the observer is not already in the list of observers_.
   observers_.push_back(observer);
+}
+
+BaseObject *OscCommand::build_remote_object(const Url &url) {
+  // find host with zeroconf... ? DNS ?
+  //   url.host() : url.port()
+  //   host not found
+  return NULL;
+  //   host found ==> IpEndpointName
+  // build remoteobject and let it test remote url
+  // return remote_objects_->adopt(new OscRemoteObject(this, end_point, url.path()));
 }
 
 void OscCommand::send_reply(const IpEndpointName *remote_endpoint, const std::string &url, const Value &val) {

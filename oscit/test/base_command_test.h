@@ -1,21 +1,8 @@
 #include "test_helper.h"
 #include "oscit/thread.h"
-#include <sstream>
+#include "mock/dummy_command.h"
 
-struct DummyCommand : public BaseCommand
-{
- public:
-  DummyCommand(std::string *string) : string_(string) {}
-  
-  void do_listen() {
-    while (should_run()) {
-      string_->append(".");
-      microsleep(10);
-    }
-  }
-  
-  std::string * string_;
-};
+#include <sstream>
 
 class BaseCommandTest : public TestHelper
 {  
@@ -37,9 +24,16 @@ public:
     std::string string1;
     std::string string2;
     std::string string3;
-    root1->adopt_command(new DummyCommand(&string1));
-    root1->adopt_command(new DummyCommand(&string2));
-    root2->adopt_command(new DummyCommand(&string3));
+    DummyCommand *d1 = root1->adopt_command(new DummyCommand(&string1)); // first registered
+    DummyCommand *d2 = root1->adopt_command(new DummyCommand(&string2)); // not registered (same protocol)
+    DummyCommand *d3 = root1->adopt_command(new DummyCommand(&string2, "doom"));
+    DummyCommand *d4 = root2->adopt_command(new DummyCommand(&string3));
+    
+    assert_true(d1 != NULL);
+    assert_true(d2 == NULL);
+    assert_true(d3 != NULL);
+    assert_true(d4 != NULL);
+    
     // let it run 2 times: +1 ... 10ms ... +1 ... 5ms .. quit [end]
     microsleep(15);
     delete root1;
@@ -50,4 +44,22 @@ public:
     assert_equal("..", string2);
     assert_equal("..", string3);
   }
+  
+  //void test_remote_url( void ) {
+  //  Root root;
+  //  std::string string;
+  //  DummyCommand *cmd = root.adopt_command(new DummyCommand(&string));
+  //  Value res = root.call("dummy://dummy.host:324/one/two/testing");
+  //  std::cout << res << std::endl;
+  //  DummyObject *object = (DummyObject*) cmd->remote_object_no_build("dummy://dummy.host:324/one/two/testing");
+  //  // object created (the 324 port thing is a hack for testing)
+  //  assert_equal(324.0, object->real());
+  //  root.call("dummy://dummy.host:324/one/two/testing", Value(120));
+  //  // normally, the remote object should send data out. In this case we just trigger a DummyObject.
+  //  assert_equal(120.0, object->real());
+  //  
+  //  res = root.call("dummy://bad.add");
+  //  assert_true(res.is_error());
+  //  assert_equal(NOT_FOUND_ERROR, res.error_code());
+  //}
 };

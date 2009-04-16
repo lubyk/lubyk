@@ -1,13 +1,12 @@
 #line 1 "src/value.rl"
 /** Ragel parser definition to create Values from JSON. */
 
-#define MAX_NUM_BUFFER_SIZE 50
 //#define DEBUG_PARSER
 
 #include "oscit/values.h"
 #include "oscit/list.h"
 #include <iostream>
-#include <ostream>
+#include <sstream>
 
 namespace oscit {
 
@@ -94,22 +93,22 @@ Value &Value::push_front(const Value& val) {
 }
 
 ///////////////// ====== JSON PARSER ========= /////////////
-#line 219 "src/value.rl"
+#line 206 "src/value.rl"
 
 
 // transition table
 
-#line 103 "src/value.cpp"
+#line 102 "src/value.cpp"
 static const char _json_actions[] = {
-	0, 1, 0, 1, 1, 1, 4, 1, 
-	5, 1, 8, 1, 10, 2, 2, 10, 
-	2, 3, 10, 2, 7, 10, 2, 8, 
-	10, 2, 9, 10, 3, 1, 9, 10, 
-	3, 5, 8, 10, 3, 6, 5, 10, 
-	3, 8, 1, 10, 4, 2, 6, 5, 
-	10, 4, 3, 6, 5, 10, 4, 5, 
-	8, 1, 10, 4, 7, 6, 5, 10, 
-	5, 9, 6, 5, 1, 10
+	0, 1, 0, 1, 3, 1, 4, 1, 
+	7, 1, 9, 2, 1, 9, 2, 2, 
+	9, 2, 6, 9, 2, 7, 9, 2, 
+	8, 9, 3, 0, 8, 9, 3, 4, 
+	7, 9, 3, 5, 4, 9, 3, 7, 
+	0, 9, 4, 1, 5, 4, 9, 4, 
+	2, 5, 4, 9, 4, 4, 7, 0, 
+	9, 4, 6, 5, 4, 9, 5, 8, 
+	5, 4, 0, 9
 };
 
 static const short _json_key_offsets[] = {
@@ -247,16 +246,16 @@ static const char _json_trans_targs[] = {
 };
 
 static const char _json_trans_actions[] = {
-	0, 0, 0, 1, 1, 3, 7, 3, 
-	0, 3, 0, 0, 16, 49, 5, 19, 
-	19, 0, 0, 3, 0, 0, 13, 44, 
-	1, 1, 9, 11, 36, 0, 3, 3, 
-	0, 0, 5, 0, 59, 3, 3, 3, 
-	28, 25, 64, 0, 0, 1, 1, 7, 
-	0, 0, 3, 0, 0, 16, 13, 1, 
-	1, 9, 11, 0, 3, 3, 0, 0, 
-	5, 0, 19, 0, 0, 0, 25, 22, 
-	32, 40, 54
+	0, 0, 0, 1, 1, 1, 5, 1, 
+	0, 1, 0, 0, 14, 47, 3, 17, 
+	17, 0, 0, 1, 0, 0, 11, 42, 
+	1, 1, 7, 9, 34, 0, 1, 1, 
+	0, 0, 3, 0, 57, 1, 1, 1, 
+	26, 23, 62, 0, 0, 1, 1, 5, 
+	0, 0, 1, 0, 0, 14, 11, 1, 
+	1, 7, 9, 0, 1, 1, 0, 0, 
+	3, 0, 17, 0, 0, 0, 23, 20, 
+	30, 38, 52
 };
 
 static const int json_start = 1;
@@ -266,13 +265,11 @@ static const int json_error = 0;
 static const int json_en_main_strict = 29;
 static const int json_en_main_lazy = 1;
 
-#line 223 "src/value.rl"
+#line 210 "src/value.rl"
 
 /** This is a crude JSON parser. */
 size_t Value::build_from_json(const char *json, bool strict_mode) {
   DEBUG(printf("\nbuild_from_json:\"%s\"\n",json));
-  char num_buf[MAX_NUM_BUFFER_SIZE + 1];
-  unsigned int num_buf_i = 0;
   std::string str_buf;
   Value tmp_val;
   set_type(NIL_VALUE); // clear
@@ -283,11 +280,11 @@ size_t Value::build_from_json(const char *json, bool strict_mode) {
   const char * pe = json + strlen(p) + 1;
   
   
-#line 287 "src/value.cpp"
+#line 284 "src/value.cpp"
 	{
 	cs = json_start;
 	}
-#line 239 "src/value.rl"
+#line 224 "src/value.rl"
   
   if (strict_mode) {
     cs = json_en_main_strict;
@@ -296,7 +293,7 @@ size_t Value::build_from_json(const char *json, bool strict_mode) {
   }
   
   
-#line 300 "src/value.cpp"
+#line 297 "src/value.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -371,21 +368,7 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 99 "src/value.rl"
-	{
-     // append a char to number buffer
-    if (num_buf_i >= MAX_NUM_BUFFER_SIZE) {
-      std::cerr << "Buffer overflow !" << std::endl;
-      // stop parsing
-      return strlen(json);
-    }
-    DEBUG(printf("%c_",(*p)));
-    num_buf[num_buf_i] = (*p); /* append */
-    num_buf_i++;
-  }
-	break;
-	case 1:
-#line 111 "src/value.rl"
+#line 98 "src/value.rl"
 	{
      // append a char to build a std::string
     DEBUG(printf("%c-",(*p)));
@@ -393,17 +376,17 @@ _match:
       str_buf.append(&(*p), 1); /* append */
   }
 	break;
-	case 2:
-#line 118 "src/value.rl"
+	case 1:
+#line 105 "src/value.rl"
 	{
     // become a RealValue
-    num_buf[num_buf_i] = '\0';
-    tmp_val.set(atof(num_buf));
+    tmp_val.set(atof(str_buf.c_str()));
     DEBUG(printf("[number %f/%s/%s\n]", tmp_val.r, num_buf, tmp_val.to_json().c_str()));
+    str_buf = "";
   }
 	break;
-	case 3:
-#line 125 "src/value.rl"
+	case 2:
+#line 112 "src/value.rl"
 	{
     // become a StringValue
     tmp_val.set(str_buf);
@@ -411,8 +394,8 @@ _match:
     str_buf = "";
   }
 	break;
-	case 4:
-#line 132 "src/value.rl"
+	case 3:
+#line 119 "src/value.rl"
 	{
     // Parse a single element of a hash (key:value)
     // Build tmp_val from string and move p forward
@@ -426,8 +409,8 @@ _match:
     str_buf = "";
   }
 	break;
-	case 5:
-#line 145 "src/value.rl"
+	case 4:
+#line 132 "src/value.rl"
 	{
     // Parse a single element of a hash (key:value)
     // Build tmp_val from string and move p forward
@@ -440,16 +423,16 @@ _match:
     p--; // eaten by >list_value sub-action
   }
 	break;
-	case 6:
-#line 157 "src/value.rl"
+	case 5:
+#line 144 "src/value.rl"
 	{
     // we have a value in tmp that should be changed into a list [tmp]
     DEBUG(printf("[%p:lazy_list %s]\n", this, tmp_val.to_json().c_str()));
     push_back(tmp_val);
   }
 	break;
-	case 7:
-#line 163 "src/value.rl"
+	case 6:
+#line 150 "src/value.rl"
 	{
     // become an empty HashValue
     if (!is_hash()) {
@@ -457,8 +440,8 @@ _match:
     }
   }
 	break;
-	case 8:
-#line 170 "src/value.rl"
+	case 7:
+#line 157 "src/value.rl"
 	{
     // become an empty list
     if (!is_list()) {
@@ -469,21 +452,21 @@ _match:
     return p - json + 1;
   }
 	break;
-	case 9:
-#line 180 "src/value.rl"
+	case 8:
+#line 167 "src/value.rl"
 	{
     // become a NilValue
     set_type(NIL_VALUE);
   }
 	break;
-	case 10:
-#line 185 "src/value.rl"
+	case 9:
+#line 172 "src/value.rl"
 	{
     DEBUG(printf("[set_from_tmp %s]\n", tmp_val.to_json().c_str()));
     if (!is_list() && !is_hash()) *this = tmp_val;
   }
 	break;
-#line 487 "src/value.cpp"
+#line 470 "src/value.cpp"
 		}
 	}
 
@@ -495,7 +478,7 @@ _again:
 	_test_eof: {}
 	_out: {}
 	}
-#line 247 "src/value.rl"
+#line 232 "src/value.rl"
   if (p != pe) --p;
   
   return p - json;
