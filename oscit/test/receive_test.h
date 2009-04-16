@@ -11,7 +11,7 @@ class ReceiveTest : public TestHelper
     root_.adopt_command(new OscCommand(7000));
     
     sender_ = root2_.adopt_command(new OscCommand(7010));
-    reply_  = root2_.adopt(new LogBaseObject(".reply"));
+    reply_  = root2_.adopt(new LogObject(".reply"));
   }
   
   void setUp() {
@@ -46,5 +46,5 @@ class ReceiveTest : public TestHelper
   Root root_;
   Root root2_;
   OscCommand * sender_;
-  LogBaseObject * reply_;
+  LogObject * reply_;
 };

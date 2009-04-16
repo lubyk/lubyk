@@ -141,7 +141,7 @@ class Root : public BaseObject
   BaseObject * find_or_build_object_at(const std::string &url, Value *error) {
     BaseObject * object = do_find_or_build_object_at(url, error);
     
-    if (object == NULL && error->is_nil()) {
+    if (object == NULL && (error->is_nil() || (error->is_error() && error->error_code() == NOT_FOUND_ERROR))) {
       error->set(NOT_FOUND_ERROR, url);
     }
     

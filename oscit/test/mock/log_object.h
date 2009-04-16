@@ -3,10 +3,12 @@
 #include "oscit/base_object.h"
 #include <sstream>
 
-class LogBaseObject : public oscit::BaseObject
+namespace oscit {
+
+class LogObject : public BaseObject
 {
 public:
-  LogBaseObject(const char * name) : oscit::BaseObject(name, ANY_TYPE_TAG_ID), logger_(std::ostringstream::out) {}
+  LogObject(const char * name) : BaseObject(name, ANY_TYPE_TAG_ID), logger_(std::ostringstream::out) {}
   
   virtual const Value trigger (const Value &val)
   {
@@ -26,4 +28,5 @@ private:
   std::ostringstream logger_;
 };
 
+} // oscit
 #endif // _LOG_OBJECT_H_

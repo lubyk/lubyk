@@ -5,12 +5,12 @@
 
 namespace oscit {
   
-BaseObject::~BaseObject()
-{  
+BaseObject::~BaseObject() {
+  std::list<Alias*>::iterator it, end = aliases_.end();
   // notify parent and root
   if (parent_) parent_->release(this);
   
-  for(std::list<Alias*>::iterator it = mAliases.begin(); it != mAliases.end(); it++) {
+  for (it = aliases_.begin(); it != end; ++it) {
     // to avoid notification to this dying object
     (*it)->unlink_original();
     delete *it;
@@ -56,48 +56,44 @@ bool BaseObject::set_all_ok(const Value &val) {
   return all_ok;
 }
 
-/** Inform the object of an alias to be destroyed on destruction. */
-void BaseObject::register_alias(Alias * pAlias)
-{
-  mAliases.push_back(pAlias);
+/** Inform the object of an alias that depends on it. */
+void BaseObject::register_alias(Alias *alias) {
+  aliases_.push_back(alias);
 }
 
 /** Inform the object that an alias no longer exists. */
-void BaseObject::unregister_alias(Alias * pAlias)
-{
-  mAliases.remove(pAlias);
+void BaseObject::unregister_alias(Alias *alias) {
+  aliases_.remove(alias);
 }
 
 /** Free the child from the list of children. */
-void BaseObject::release(BaseObject * pChild)
-{
-  children_.remove_element(pChild);
-  if (root_) root_->unregister_object(pChild);
+void BaseObject::release(BaseObject *object) {
+  children_.remove_element(object);
+  if (root_) root_->unregister_object(object);
 }
 
 void BaseObject::moved()
 { 
   // 1. get new name from parent, register as child
-  if (parent_) parent_->registerChild(this);
+  if (parent_) parent_->register_child(this);
   
-  registerUrl();
+  register_url();
 }
 
-void BaseObject::registerChild(BaseObject * pChild)
-{
+void BaseObject::register_child(BaseObject *object) {
   // 1. reset hash
-  children_.remove_element(pChild);
+  children_.remove_element(object);
   
   // 2. get valid name
-  while (child(pChild->name_))
-    pChild->findNextName();
+  while (child(object->name_)) {
+    object->find_next_name();
+  }
   
   // 3. set hash back
-  children_.set(pChild->name_,pChild);
+  children_.set(object->name_, object);
 }
 
-void BaseObject::registerUrl()
-{
+void BaseObject::register_url() {
   BaseObject * obj;
   string_iterator it;
   string_iterator end = children_.end();
@@ -115,12 +111,11 @@ void BaseObject::registerUrl()
   
   // 3. update children
   for(it = children_.begin(); it != end; it++) {
-    if (children_.get(*it, &obj)) obj->registerUrl();
+    if (children_.get(*it, &obj)) obj->register_url();
   }
 }
 
-void BaseObject::clear()
-{
+void BaseObject::clear() {
   string_iterator it;
   string_iterator end = children_.end();
 
@@ -136,4 +131,5 @@ void BaseObject::clear()
   }
   children_.clear();
 }
+
 } // namespace oscit

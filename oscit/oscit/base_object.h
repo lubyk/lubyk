@@ -149,10 +149,10 @@ class BaseObject
   }
 
   /** Inform the object of an alias linked to this object (has to be deleted on destruction). */
-  void register_alias (Alias * pAlias);
+  void register_alias(Alias *alias);
 
   /** Inform the object that an alias no longer exists. */
-  void unregister_alias (Alias * pAlias);
+  void unregister_alias(Alias *alias);
 
   /** Return the object's unique url. */
   inline const std::string &url() {
@@ -160,11 +160,10 @@ class BaseObject
   }
   
   /** Register unique url in the Root object so that methods addressed to this url actually end in this object. */
-  void registerUrl ();
+  void register_url ();
   
   /** Set name from string. If the name is not unique in the parent's scope, the name is changed as "name-1", "name-2", etc. */
-  void set_name (const char* name) 
-  { set_name(std::string(name)); }
+  void set_name (const char* name) { set_name(std::string(name)); }
 
 
   /** Set name from string. If the name is not unique in the parent's scope, the name is changed as "name-1", "name-2", etc. */
@@ -294,13 +293,13 @@ class BaseObject
 protected:
 
   /** Child sends a notification to the parent when it's name changes so that the parent/root keep their url hash in sync. */
-  void registerChild(BaseObject * pChild);
+  void register_child(BaseObject * pChild);
 
   /** Update cached url, notify root_ of the position change. */
   void moved();
 
   /** Add '-1', '-2', ... at the end of the current name. bob --> bob-1 */
-  void findNextName() {
+  void find_next_name() {
     size_t pos = name_.find('-');
     char buffer[OSC_NEXT_NAME_BUFFER_SIZE];
     if (pos == std::string::npos) {
@@ -334,7 +333,7 @@ protected:
   /** Free the child from the list of children. */
   void release(BaseObject *pChild);
 
-  std::list<Alias *>          mAliases;       /**< List of aliases to destroy when this node disappears. */
+  std::list<Alias *>              aliases_;   /**< List of aliases to destroy when this node disappears. */
   
 protected:
   friend class Root;
