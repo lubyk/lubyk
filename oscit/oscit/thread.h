@@ -4,6 +4,8 @@
 
 #include <csignal>
 #include <fstream>
+#include <sys/timeb.h> // ftime
+
 namespace oscit {
 
 class Thread : public Mutex
@@ -27,9 +29,11 @@ class Thread : public Mutex
       return;
     }
     
-    owner_     = owner;
-    parameter_ = parameter;
+    owner_      = owner;
+    parameter_  = parameter;
+    should_run_ = true;
     pthread_create( &thread_id_, NULL, &start_thread<T,Tmethod>, (void*)this);
+    microsleep(0.01); // make sure thread is properly started (signals registered) in case we die right after
   }
   
   /** Start a new thread with the given parameter. The class should check if it
@@ -42,9 +46,11 @@ class Thread : public Mutex
       return;
     }
     
-    owner_     = owner;
-    parameter_ = parameter;
+    owner_      = owner;
+    parameter_  = parameter;
+    should_run_ = true;
     pthread_create( &thread_id_, NULL, &start_thread<T,Tmethod>, (void*)this);
+    microsleep(0.01); // make sure thread is properly started (signals registered) in case we die right after
   }
   
   inline bool should_run() {
@@ -71,6 +77,13 @@ class Thread : public Mutex
   /** Set thread priority to normal. */
   void normal_priority();
   
+  static void microsleep(float microseconds) {
+    struct timespec sleeper;
+    sleeper.tv_sec  = 0; 
+    sleeper.tv_nsec = (unsigned int)(microseconds * 1000000.0);
+    nanosleep (&sleeper, NULL);
+  }
+  
  public:
   static pthread_key_t sThisKey;   /**< Key to retrieve 'this' value from a running thread. */
   void                 *parameter_; /**< Any parameter that the started method could use. */
@@ -96,10 +109,9 @@ class Thread : public Mutex
 
     signal(SIGTERM, terminate); // register a SIGTERM handler
     signal(SIGINT,  terminate);
-
+    
     T *owner = (T*)thread->owner_;
     
-    thread->should_run_ = true;
     (owner->*Tmethod)(thread);
     
     return NULL;
@@ -114,7 +126,7 @@ class Thread : public Mutex
 
     signal(SIGTERM, terminate); // register a SIGTERM handler
     signal(SIGINT,  terminate);
-
+    
     T *owner = (T*)thread->owner_;
     
     thread->should_run_ = true;

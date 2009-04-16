@@ -2,17 +2,14 @@
 #define _TEST_HELPER_H_
 #include <cxxtest/TestSuite.h>
 #include "oscit/oscit.h"
-#include <sys/timeb.h> // ftime
+#include "oscit/thread.h"
 #include <ostream>
 
-void microsleep(size_t microseconds) {
-  struct timespec sleeper;
-  sleeper.tv_sec  = 0; 
-  sleeper.tv_nsec = microseconds * 1000000;
-  nanosleep (&sleeper, NULL);
-}
-
 using namespace oscit;
+
+void microsleep(float microseconds) {
+  Thread::microsleep(microseconds);
+}
 
 #define assert_equal(x,y) _assert_equal(__FILE__,__LINE__,#y,x,y)
 #define assert_true(e) _TS_ASSERT(__FILE__,__LINE__,e)
