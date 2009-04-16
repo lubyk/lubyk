@@ -25,6 +25,9 @@ class List : public ReferenceCounted
     init_with_type_tag(type_tag.str_);
   }
   
+  // deep copy
+  List(const List &list);
+  
   ~List() {
     clear();
   }
@@ -67,7 +70,7 @@ class List : public ReferenceCounted
    
   void update_type_tag() {
     type_tag_ = type_tag_storage_.c_str();
-    type_tag_id_ = H(type_tag_);
+    type_tag_id_ = H(type_tag_); // FIXME: length limit is ~12 ...
   }
   
   const char *init_with_type_tag(const char *type_tag);

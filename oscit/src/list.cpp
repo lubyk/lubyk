@@ -3,6 +3,16 @@
 #include "oscit/reference_counted.h"
 
 namespace oscit {
+  
+List::List(const List& list) {
+  std::vector<Value*>::const_iterator it,end;
+  end = list.values_.end();
+  for (it = list.values_.begin(); it != end; ++it) {
+    values_.push_back(new Value(**it));
+  }
+  type_tag_storage_ = list.type_tag_storage_;
+  update_type_tag();
+}
 
 /** Replace a value at a given position, checking for range and making sure
  *  the type_tag of the list remains in sync. */
@@ -41,6 +51,7 @@ void List::push_front(const Value &val) {
    for (it = values_.begin(); it != end; ++it) {
      delete *it;
    }
+   values_.clear();
  }
 
 const char *List::init_with_type_tag(const char *type_tag) { 

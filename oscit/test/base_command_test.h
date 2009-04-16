@@ -62,7 +62,6 @@ public:
     std::string string;
     DummyCommand *cmd = root.adopt_command(new DummyCommand(&string));
     Value res = root.send(Url("dummy://dummy.host:324/one/two/testing"), gNilValue);
-    std::cout << res << std::endl;
     DummyObject *object = (DummyObject*) cmd->remote_object_no_build("dummy://dummy.host:324/one/two/testing");
     // object created (the 324 port thing is a hack for testing)
     assert_equal(324.0, object->real());

@@ -9,10 +9,10 @@ struct DummyCommand : public BaseCommand
   DummyCommand(std::string *string, const char *protocol) : BaseCommand(protocol), string_(string) {}
   
   void do_listen() {
-    //while (should_run()) {
-    //  string_->append(".");
-    //  microsleep(10);
-    //}
+    while (should_run()) {
+      string_->append(".");
+      microsleep(10);
+    }
   }
   
   virtual BaseObject *build_remote_object(const Url &url, Value *error) {
