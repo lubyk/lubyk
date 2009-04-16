@@ -340,10 +340,10 @@ void TextCommand::do_listen() {
     
   clear();
 
-  while(thread_.run() && getline(&line,1023)) {
+  while(should_run() && getline(&line,1023)) {
     parse(line);
     parse("\n");
-    if (thread_.run()) saveline(line); // command was not a 'quit'
+    if (should_run()) saveline(line); // command was not a 'quit'
     freeline(line);
   }
 }

@@ -24,10 +24,10 @@ Planet <>--- Worker
 #define ONE_SECOND 1000.0
 #define ONE_MINUTE (60.0*ONE_SECOND)
 
-class Worker
+class Worker : public Thread
 {
 public:
-  Worker(Root *root) : root_(root), quit_(false) {
+  Worker(Root *root) : root_(root) {
     ftime(&time_ref_); // set time reference to now (my birthdate).
     current_time_ = real_time();
   }
@@ -38,19 +38,7 @@ public:
   
   /** Run until quit (through a command or signal). */
   void run() {
-    thread_.start<Worker, &Worker::do_run>(this, NULL);
-  }
-  
-  void kill() {
-    thread_.kill();
-  }
-  
-  inline void lock() {
-    thread_.lock();
-  }
-  
-  inline void unlock() {
-    thread_.unlock();
+    start<Worker, &Worker::do_run>(this, NULL);
   }
   
   Root *root() { return root_; }
@@ -64,7 +52,7 @@ public:
   
   /** Add an event to the event queue. The server is responsible for deleting the event. */
   void register_event(Event *e) { 
-    if (!quit_ || e->forced_) events_queue_.push(e); // do not accept new events while we are trying to quit.
+    if (should_run_ || e->forced_) events_queue_.push(e); // do not accept new events while we are trying to quit.
   }
   
   /** Register a node as needing constant bangs. */
@@ -113,9 +101,7 @@ public:
   
   struct timeb time_ref_;                   /**< Time reference. All times are [ms] from this reference.
                                                  It's the worker's birthdate ! */
-  bool quit_;                               /**< Internal flag to tell running threads to quit. */
-
-  Thread                  thread_;          /**< Running thread. */
+  
   /** Events ! */
   OrderedList<Event*>     events_queue_;    /**< Ordered event list. */
   std::deque<Node*>       looped_nodes_;    /**< List of methods to call on every loop. */

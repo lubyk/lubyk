@@ -16,16 +16,14 @@ OscCommand::OscCommand(uint port) {
 }
   
 OscCommand::~OscCommand() {
-  if (thread_.run()) {
-    kill();
-  }
+  kill();
   delete socket_;
   delete zeroconf_register_;
 }
 
 void OscCommand::kill() {
   socket_->AsynchronousBreak();
-  thread_.kill();
+  this->Thread::kill();
 }
 
 void OscCommand::do_listen() {

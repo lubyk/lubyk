@@ -26,7 +26,7 @@ namespace oscit {
 //       fails with any timeout much larger than this
 #define LONG_TIME 100000000
 
-ZeroConf::ZeroConf() : quit_(false), timeout_(LONG_TIME) {}
+ZeroConf::ZeroConf() : timeout_(LONG_TIME) {}
 
 void ZeroConf::listen(Thread *thread, DNSServiceRef service_ref) {
   // Run until break.
@@ -35,7 +35,7 @@ void ZeroConf::listen(Thread *thread, DNSServiceRef service_ref) {
   struct timeval tv;
   int result;
 
-  while (thread->run()) {
+  while (thread->should_run()) {
     FD_ZERO(&readfds);
     FD_SET(dns_sd_fd, &readfds);
     tv.tv_sec = timeout_;
@@ -50,12 +50,12 @@ void ZeroConf::listen(Thread *thread, DNSServiceRef service_ref) {
       if (err) {
         // An error occured. Halt.
         fprintf(stderr, "DNSServiceProcessResult returned %d\n", err);
-        quit_ = true;
+        thread->stop();
       }
     }	else if (errno != EINTR) {
       // Error.
       fprintf(stderr, "ZeroConf error (%d %s)\n", errno, strerror(errno));
-      if (errno != EINTR) quit_ = true;
+      if (errno != EINTR) thread->stop();
     }
   }
 }

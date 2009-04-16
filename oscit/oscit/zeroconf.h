@@ -29,16 +29,10 @@ public:
   /** Setup serviceRef and start listening. */
   virtual void start() = 0;
   
-  /** Should not be called directly (used by Thread). */
-  void terminate(Thread *thread) {
-    quit_ = true;
-  }
-  
 protected:
   /** Process events here. */
   void listen(Thread *thread, DNSServiceRef service_ref);
   
-  volatile bool quit_;
   volatile int  timeout_;
   Thread listen_thread_;
 };

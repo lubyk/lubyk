@@ -47,11 +47,11 @@ class Thread : public Mutex
     pthread_create( &thread_id_, NULL, &start_thread<T,Tmethod>, (void*)this);
   }
   
-  inline bool run() {
+  inline bool should_run() {
     return should_run_;
   }
   
-  /** Kill thread. */
+  /** Kill thread (do not make this a virtual). */
   void kill() {
     if (thread_id_) {
       pthread_kill(thread_id_, SIGTERM);
