@@ -1,7 +1,11 @@
 #include "oscit/root.h"
 #include "oscit/alias.h"
 
-#include "src/globals.cpp"
+size_t oscit::Object::sIdCounter(0);
+oscit::Value oscit::gNilValue;
+oscit::Hash  oscit::gEmptyHash(1);
+pthread_key_t oscit::Thread::sThisKey;
+
 
 namespace oscit {
   

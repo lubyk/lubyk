@@ -1,4 +1,4 @@
-INCLUDE_HEADERS=-I../rubyk/src/templates -Ivalues -Ioscpack -I.
+INCLUDE_HEADERS=-Ioscpack -Iinclude
 TESTING=-D_TESTING_
 AR = ar rcu
 RAGEL=ragel
@@ -24,19 +24,19 @@ test/runner.cpp: $(TEST)
 test/runner: test/runner.cpp liboscit.a
 	$(CC) $(CFLAGS) $(LFLAGS) -Itest $(INCLUDE_HEADERS) -I. test/runner.cpp liboscit.a -lgcc -lstdc++ -o test/runner
 
-root.o: src/root.cpp oscit/root.h oscit/*_meta_method.h
+root.o: src/root.cpp include/oscit/root.h include/oscit/*_meta_method.h
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 
-value.o: src/value.cpp oscit/value.h
+value.o: src/value.cpp include/oscit/value.h
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 
-cxalloc.o: opencv/cxalloc.cpp
+cxalloc.o: include/opencv/cxalloc.cpp
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 
-cxsystem.o: opencv/cxsystem.cpp
+cxsystem.o: include/opencv/cxsystem.cpp
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 
-%.o: src/%.cpp oscit/%.h
+%.o: src/%.cpp include/oscit/%.h
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 
 src/%.cpp: src/%.rl
