@@ -122,6 +122,8 @@ public:
         // FIXME: share matrix header
         set(other.matrix_);
         break;
+      case ANY_VALUE:
+        set_any();
       default:
         set();
     }
@@ -136,6 +138,7 @@ public:
       case MATRIX_VALUE: return "M";
       case NIL_VALUE:    return "N";
       case LIST_VALUE:   return list_->type_tag();
+      case ANY_VALUE:    return "*";
       default:           return "N";
     }
   }
@@ -147,7 +150,8 @@ public:
       case STRING_VALUE: return H("s");
       case NIL_VALUE:    return H("N");
       case LIST_VALUE:   return list_->type_tag_id();
-      default:           return H("N");
+      case ANY_VALUE:    return H("*");
+      default:           return H("N");  // NIL_VALUE
     }
   }
   
@@ -190,6 +194,7 @@ public:
       // ERROR_TYPE_TAG == STRING_TYPE_TAG;
       case HASH_TYPE_TAG:   return HASH_VALUE;
       case MATRIX_TYPE_TAG: return MATRIX_VALUE;
+      case ANY_TYPE_TAG:    return ANY_VALUE;
       default:              return NIL_VALUE;
     }
   }
@@ -430,6 +435,13 @@ public:
     return is_matrix() ? (Real*)matrix_->data : NULL;
   }
   
+  /** =========================================================================================    Any     */
+  bool is_any() const    { return type_ == ANY_VALUE; }
+  
+  /** Change the value to nil. */
+  void set_any() {
+    set_type_without_default(ANY_VALUE);
+  }
   
  private:
   /** Set the value to nil and release/free contained data. */

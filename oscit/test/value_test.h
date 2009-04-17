@@ -79,4 +79,11 @@ public:
     Value v(Json("null"));
     assert_true(v.is_nil());
   }
+  
+  /** ANY_VALUE '*' is used to move type tags around without reading values. */
+  void test_any_value( void ) {
+    Value v('*');
+    assert_true(v.is_any());
+    assert_equal("*", v.type_tag());
+  }
 };

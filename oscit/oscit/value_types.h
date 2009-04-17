@@ -17,6 +17,7 @@ enum ValueType
   LIST_VALUE,
   HASH_VALUE,
   MATRIX_VALUE,
+  ANY_VALUE, // nil but with '*' type tag
 };
 
 enum ValueTypeTag
@@ -27,6 +28,7 @@ enum ValueTypeTag
   ERROR_TYPE_TAG  = 's',
   HASH_TYPE_TAG   = 'H',
   MATRIX_TYPE_TAG = 'M',
+  ANY_TYPE_TAG    = '*',
 };
 
 enum HashDefaultSize
