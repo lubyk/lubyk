@@ -37,4 +37,13 @@ public:
     Url url("http://www.example.com /foo/bar");
     assert_equal("", url.path());
   }
+  
+  void test_name( void ) {
+    Url url("http://www.example.com/ bad/url");
+    assert_equal("", url.name());
+    assert_equal("boy",   url.set("http://www.example.com/good/boy").name());
+    assert_equal("foo",   url.set("foo").name());
+    assert_equal("buzz",  url.set("/buzz").name());
+    assert_equal("split", url.set("/banana/split").name());
+  }
 };

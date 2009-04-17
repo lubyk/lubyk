@@ -11,7 +11,7 @@ namespace oscit {
 
 static osc::OutboundPacketStream &operator<<(osc::OutboundPacketStream &out_stream, const Value &val);
 
-OscCommand::OscCommand(uint port) : BaseCommand("osc") { 
+OscCommand::OscCommand(uint port) : Command("osc") { 
   socket_ = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, port ), this );
   zeroconf_register_ = new ZeroConfRegister("oscit", "_oscit._udp", port);
 }
@@ -38,7 +38,7 @@ void OscCommand::register_observer(const IpEndpointName &observer) {
   observers_.push_back(observer);
 }
 
-BaseObject *OscCommand::build_remote_object(const Url &url, Value *error) {
+Object *OscCommand::build_remote_object(const Url &url, Value *error) {
   // find host with zeroconf... ? DNS ?
   //   url.host() : url.port()
   //   host not found

@@ -1,12 +1,12 @@
 #ifndef _OSCIT_OSC_REMOTE_OBJECT_H_
 #define _OSCIT_OSC_REMOTE_OBJECT_H_
-#include "oscit/base_object.h"
+#include "oscit/object.h"
 
 #include "ip/UdpSocket.h"
 
 namespace oscit {
 
-class OscRemoteObject : public BaseObject
+class OscRemoteObject : public Object
 {
   OscRemoteObject(OscCommand *osc_command, const IpEndpointName &endpoint, const std::string &remote_path) : 
       osc_command_(osc_command), remote_endpoint_(endpoint), remote_path_(remote_path), connected_(false) {

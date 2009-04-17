@@ -29,6 +29,26 @@ class Url
   
   const std::string &path() const { return path_; }
   
+  const std::string name() {
+    size_t pos = path_.rfind("/");
+    if (pos != std::string::npos) {
+      return path_.substr(pos + 1);
+    } else {
+      return path_;
+    }
+  }
+  
+  Url &set(const char *str) {
+    clear();
+    parse(str);
+    return *this;
+  }
+  
+  void set(const std::string &str) {
+    clear();
+    parse(str.c_str());
+  }
+  
  private:
   friend std::ostream &operator<<(std::ostream &out_stream, const Url &url);
   void parse(const char *string);

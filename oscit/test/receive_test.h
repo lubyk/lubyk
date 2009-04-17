@@ -16,7 +16,7 @@ class ReceiveTest : public TestHelper
   
   void setUp() {
     reply_->clear();
-    root_.BaseObject::clear(); // empty root but keep commands
+    root_.Object::clear(); // empty root but keep commands
   }
   
   void test_send_receive( void ) {

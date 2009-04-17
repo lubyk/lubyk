@@ -1,7 +1,7 @@
 #include "test_helper.h"
 #include "mock/dummy_object.h"
 
-class BaseObjectTest : public TestHelper
+class ObjectTest : public TestHelper
 {
 public:
   void test_create( void ) {
@@ -10,9 +10,9 @@ public:
   }
   
   void test_rename( void ) {
-    BaseObject base;
-    BaseObject * foo = base.adopt(new BaseObject("foo"));
-    BaseObject * bar = foo->adopt(new BaseObject("bar"));
+    Object base;
+    Object * foo = base.adopt(new Object("foo"));
+    Object * bar = foo->adopt(new Object("bar"));
     
     assert_equal("/foo"    , foo->url() );
     assert_equal("/foo/bar", bar->url() );
@@ -24,26 +24,26 @@ public:
   }
   
   void test_child( void ) {
-    BaseObject base;
-    BaseObject * one = base.adopt(new BaseObject("one")); // This is the prefered way of creating sub-objects.
-    BaseObject * sub = one->adopt(new BaseObject("sub"));
+    Object base;
+    Object * one = base.adopt(new Object("one")); // This is the prefered way of creating sub-objects.
+    Object * sub = one->adopt(new Object("sub"));
 
     assert_equal("",         base.url());
     assert_equal("/one",     one->url());
     assert_equal("/one/sub", sub->url());
 
     assert_equal(one, base.child("one"));
-    assert_equal((BaseObject*)NULL, base.child("foo"));
+    assert_equal((Object*)NULL, base.child("foo"));
 
     one->set_name("foo");
-    assert_equal((BaseObject*)NULL, base.child("one"));
+    assert_equal((Object*)NULL, base.child("one"));
     assert_equal(one, base.child("foo"));
   }
   
   void test_first_child( void ) {
-    BaseObject base("base");
-    BaseObject * one = base.adopt(new BaseObject("one"));
-    BaseObject * two = base.adopt(new BaseObject("aaa"));
+    Object base("base");
+    Object * one = base.adopt(new Object("one"));
+    Object * two = base.adopt(new Object("aaa"));
     
     assert_equal(one, base.first_child());
     
@@ -52,10 +52,10 @@ public:
   }
   
   void test_set_parent_same_name_as_sibling( void ) {
-    BaseObject base;
-    BaseObject * child1 = new BaseObject("foo");
-    BaseObject * child2 = new BaseObject("bar");
-    BaseObject * child3 = new BaseObject("foo");
+    Object base;
+    Object * child1 = new Object("foo");
+    Object * child2 = new Object("bar");
+    Object * child3 = new Object("foo");
     
     assert_equal(""   , base.url()    );
     assert_equal("foo", child1->url() );
@@ -86,33 +86,33 @@ public:
   
   void test_build_child( void ) {
     Value error;
-    BaseObject base;
-    BaseObject * carrot = base.adopt(new DummyObject("dummy", 0.0));
-    BaseObject * foo    = carrot->build_child(std::string("something"), &error);
-    assert_equal((BaseObject*)NULL, foo);
+    Object base;
+    Object * carrot = base.adopt(new DummyObject("dummy", 0.0));
+    Object * foo    = carrot->build_child(std::string("something"), &error);
+    assert_equal((Object*)NULL, foo);
     foo = carrot->build_child(std::string("special"), &error);
     assert_true( foo != NULL );
     assert_equal("/dummy/special", foo->url());
   }
   
   void test_type_cast( void ) {
-    BaseObject base;
+    Object base;
     DummyObject dummy("doudou", 1200.0);
-    BaseObject   * res1;
+    Object   * res1;
     DummyObject  * res2;
-    res1 = TYPE_CAST(BaseObject, &base);
+    res1 = TYPE_CAST(Object, &base);
     assert_equal(&base, res1);
     res2 = TYPE_CAST(DummyObject, &base);
     assert_equal((DummyObject*)NULL, res2);
     
-    res1 = TYPE_CAST(BaseObject, &dummy);
-    assert_equal((BaseObject*)NULL, res1);
+    res1 = TYPE_CAST(Object, &dummy);
+    assert_equal((Object*)NULL, res1);
     res2 = TYPE_CAST(DummyObject, &dummy);
     assert_equal(&dummy, res2);
   }
   
   void test_call_set_method( void ) {
-    BaseObject base;
+    Object base;
     DummyObject * one = base.adopt(new DummyObject("one", 123.0));
     DummyObject * two = base.adopt(new DummyObject("two", 123.0));
     Value res = base.set(Value(Json("one:10.0 two:22.22")));
@@ -124,7 +124,7 @@ public:
   }
   
   void test_call_set_method_return_bool( void ) {
-    BaseObject base;
+    Object base;
     DummyObject * one = base.adopt(new DummyObject("one", 123.0));
     DummyObject * two = base.adopt(new DummyObject("two", 123.0));
     assert_true(base.set_all_ok(Value(Json("one:10.0 two:22.22"))));

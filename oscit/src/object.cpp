@@ -5,7 +5,7 @@
 
 namespace oscit {
   
-BaseObject::~BaseObject() {
+Object::~Object() {
   std::list<Alias*>::iterator it, end = aliases_.end();
   // notify parent and root
   if (parent_) parent_->release(this);
@@ -19,12 +19,12 @@ BaseObject::~BaseObject() {
   clear();
 }
 
-const Value BaseObject::set(const Value &val) {
+const Value Object::set(const Value &val) {
   HashIterator it;
   HashIterator end = val.end();
   Value param;
   Value res;
-  BaseObject * obj;
+  Object * obj;
   
   if (context_) context_->lock();
     for (it = val.begin(); it != end; ++it) {
@@ -39,12 +39,12 @@ const Value BaseObject::set(const Value &val) {
   return res;
 }
 
-bool BaseObject::set_all_ok(const Value &val) {
+bool Object::set_all_ok(const Value &val) {
   HashIterator it;
   HashIterator end = val.end();
   Value param;
   bool all_ok = true;
-  BaseObject * obj;
+  Object * obj;
   
   for (it = val.begin(); it != end; ++it) {
     if ((obj = child(*it)) && val.get(*it, &param)) {
@@ -57,22 +57,22 @@ bool BaseObject::set_all_ok(const Value &val) {
 }
 
 /** Inform the object of an alias that depends on it. */
-void BaseObject::register_alias(Alias *alias) {
+void Object::register_alias(Alias *alias) {
   aliases_.push_back(alias);
 }
 
 /** Inform the object that an alias no longer exists. */
-void BaseObject::unregister_alias(Alias *alias) {
+void Object::unregister_alias(Alias *alias) {
   aliases_.remove(alias);
 }
 
 /** Free the child from the list of children. */
-void BaseObject::release(BaseObject *object) {
+void Object::release(Object *object) {
   children_.remove_element(object);
   if (root_) root_->unregister_object(object);
 }
 
-void BaseObject::moved()
+void Object::moved()
 { 
   // 1. get new name from parent, register as child
   if (parent_) parent_->register_child(this);
@@ -80,7 +80,7 @@ void BaseObject::moved()
   register_url();
 }
 
-void BaseObject::register_child(BaseObject *object) {
+void Object::register_child(Object *object) {
   // 1. reset hash
   children_.remove_element(object);
   
@@ -93,8 +93,8 @@ void BaseObject::register_child(BaseObject *object) {
   children_.set(object->name_, object);
 }
 
-void BaseObject::register_url() {
-  BaseObject * obj;
+void Object::register_url() {
+  Object * obj;
   string_iterator it;
   string_iterator end = children_.end();
   
@@ -115,13 +115,13 @@ void BaseObject::register_url() {
   }
 }
 
-void BaseObject::clear() {
+void Object::clear() {
   string_iterator it;
   string_iterator end = children_.end();
 
   // destroy all children
   for(it = children_.begin(); it != end; it++) {
-    BaseObject * child;
+    Object * child;
     if (children_.get(*it, &child)) {
       // to avoid 'release' call (would alter children_)
       child->parent_ = NULL;

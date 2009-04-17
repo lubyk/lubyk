@@ -1,6 +1,6 @@
 #ifndef _OSCIT_OSC_COMMAND_H_
 #define _OSCIT_OSC_COMMAND_H_
-#include "oscit/base_command.h"
+#include "oscit/command.h"
 
 #include <list>
 
@@ -22,7 +22,7 @@ namespace oscit {
 class Root;
 class ZeroConfRegister;
 
-class OscCommand : public BaseCommand, public osc::OscPacketListener
+class OscCommand : public Command, public osc::OscPacketListener
 {
 public:
   OscCommand(uint port);
@@ -46,7 +46,7 @@ public:
   }
   
   /** Create a reference to a remote object. */
-  virtual BaseObject *build_remote_object(const Url &url, Value *error);
+  virtual Object *build_remote_object(const Url &url, Value *error);
   
   /** Send an osc message. 
    *  @param remote_endpoint target host.

@@ -5,16 +5,16 @@
 
 namespace oscit {
 /** This object triggers another object's trigger when called. It's used in Group to expose functionalities. */
-class Alias : public BaseObject
+class Alias : public Object
 {
 public:
   Alias() : original_(NULL) {}
   
-  Alias(const char *name, BaseObject *object) : BaseObject(name), original_(NULL) {
+  Alias(const char *name, Object *object) : Object(name), original_(NULL) {
     set_original(object);
   }
   
-  Alias(const std::string &name, BaseObject *object) : BaseObject(name), original_(NULL) {
+  Alias(const std::string &name, Object *object) : Object(name), original_(NULL) {
     set_original(object);
   }
   
@@ -42,12 +42,12 @@ public:
   
   /** Set new original object from url. */
   void set_original(const std::string &url) {
-    BaseObject *original = root_->object_at(url);
+    Object *original = root_->object_at(url);
     if (original) set_original(original);
   }
   
   /** Set new original object from an object pointer. */
-  void set_original(BaseObject *object) {
+  void set_original(Object *object) {
     if (original_) original_->unregister_alias(this);
     original_ = object;
     set_type_tag_id(original_->type_tag_id());
@@ -56,7 +56,7 @@ public:
   }
   
 protected:
-  BaseObject *original_; /**< Original object pointed to by the alias. */
+  Object *original_; /**< Original object pointed to by the alias. */
 };
 
 } // namespace oscit

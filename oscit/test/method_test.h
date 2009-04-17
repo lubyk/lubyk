@@ -1,10 +1,10 @@
 #include "test_helper.h"
 
-/** Methods and ClassMethods can also point on objects that are not descendants of the BaseObject. */
-class Person : public BaseObject
+/** Methods and ClassMethods can also point on objects that are not descendants of the Object. */
+class Person : public Object
 {
  public:
-  Person(const char * name) : BaseObject(name) {}
+  Person(const char * name) : Object(name) {}
   
   /** A simple class method. */
   static const Value class_method(Root *root, const Value &val) {

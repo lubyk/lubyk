@@ -13,9 +13,9 @@ public:
   
   void test_get_object_at( void ) {
     Root root;
-    BaseObject * foo = root.adopt(new BaseObject("foo"));
-    BaseObject * bar = foo->adopt(new BaseObject("bar"));
-    BaseObject * res;
+    Object * foo = root.adopt(new Object("foo"));
+    Object * bar = foo->adopt(new Object("bar"));
+    Object * res;
   
     assert_equal(""        , root.url() );
     assert_equal("/foo"    , foo->url() );
@@ -50,7 +50,7 @@ public:
     Root root;
     DummyObject * a  = new DummyObject("a", 1);
     DummyObject * a2 = new DummyObject("a", 2);
-    BaseObject * res;
+    Object * res;
     
     assert_true( root.get_object_at("", &res) );
     assert_equal(&root, res );
@@ -108,17 +108,17 @@ public:
     root.adopt(new DummyObject("dummy", 0.0));
     Value error;
     
-    assert_equal((BaseObject*)NULL, root.find_or_build_object_at("whatever", &error));
-    assert_equal((BaseObject*)NULL, root.find_or_build_object_at("/whatever", &error));
-    assert_equal((BaseObject*)NULL, root.find_or_build_object_at("/dummy/foo", &error));
+    assert_equal((Object*)NULL, root.find_or_build_object_at("whatever", &error));
+    assert_equal((Object*)NULL, root.find_or_build_object_at("/whatever", &error));
+    assert_equal((Object*)NULL, root.find_or_build_object_at("/dummy/foo", &error));
     assert_true(error.is_error());
     assert_equal(NOT_FOUND_ERROR, error.error_code());
-    assert_equal((BaseObject*)NULL, root.find_or_build_object_at("/dummy/error", &error));
+    assert_equal((Object*)NULL, root.find_or_build_object_at("/dummy/error", &error));
     assert_true(error.is_error());
     assert_equal("You should not try to build errors !", error.error_message());
     assert_equal(INTERNAL_SERVER_ERROR, error.error_code());
     
-    BaseObject * special = root.find_or_build_object_at("/dummy/special", &error);
+    Object * special = root.find_or_build_object_at("/dummy/special", &error);
     assert_true( special != NULL );
     assert_equal("/dummy/special", special->url());
   }
@@ -131,43 +131,57 @@ public:
     assert_equal(78.0, res.r);
   }
   
+  void test_adopt_command( void ) {
+    Root root;
+    std::string string;
+    DummyCommand * cmd = root.adopt_command(new DummyCommand(&string));
+    microsleep(15);
+    assert_equal("..", string);
+    delete cmd;
+    string = "";
+    cmd = root.adopt_command(new DummyCommand(&string), false); // do not start
+    microsleep(15);
+    assert_equal("", string);
+    delete cmd; // should not lock
+  }
+  
   void test_remote_object_at( void ) {
     Root root;
     std::string string;
     root.adopt_command(new DummyCommand(&string));
     DummyObject  *foo = root.adopt(new DummyObject("foo", 3));
-    BaseObject   *res;
+    Object   *res;
     Value error;
     res = root.object_at(Url("/foo"), &error);
-    assert_equal((BaseObject*)foo, res);
+    assert_equal((Object*)foo, res);
     assert_true(error.is_nil());
   }
   
-  //void test_object_at_bad_protocol( void ) {
-  //  Root root;
-  //  Value error;
-  //  BaseObject * res = root.object_at(Url("some://example.com/foo"), &error);
-  //  assert_equal((BaseObject*)NULL, res);
-  //  assert_equal(BAD_REQUEST_ERROR, error.error_code());
-  //  assert_equal("No command to handle \'some\' protocol.", error.error_message());
-  //}
-  //
-  //void test_object_at_bad_url( void ) {
-  //  Root root;
-  //  Value error;
-  //  BaseObject * res = root.object_at(Url("some://example.com /foo"), &error);
-  //  assert_equal((BaseObject*)NULL, res);
-  //  assert_equal(BAD_REQUEST_ERROR, error.error_code());
-  //  assert_equal("Could not parse url \'some://example.com /foo\'.", error.error_message());
-  //}
+  void test_object_at_bad_protocol( void ) {
+    Root root;
+    Value error;
+    Object * res = root.object_at(Url("some://example.com/foo"), &error);
+    assert_equal((Object*)NULL, res);
+    assert_equal(BAD_REQUEST_ERROR, error.error_code());
+    assert_equal("No command to handle \'some\' protocol.", error.error_message());
+  }
   
-  // remote objects and 'send' testing is done in base_command_test.h
+  void test_object_at_bad_url( void ) {
+    Root root;
+    Value error;
+    Object * res = root.object_at(Url("some://example.com /foo"), &error);
+    assert_equal((Object*)NULL, res);
+    assert_equal(BAD_REQUEST_ERROR, error.error_code());
+    assert_equal("Could not parse url \'some://example.com /foo\'.", error.error_message());
+  }
+  
+  // remote objects and 'send' testing is done in command_test.h
   
   ////////////////////// OSCIT META METHODS TESTS ///////////////////////////////////////
   
   void test_info( void ) {
     Root root;
-    root.adopt(new BaseObject("foo"));
+    root.adopt(new Object("foo"));
     Value res;
 
     root.set_info("This is the root node.");
@@ -208,7 +222,7 @@ public:
   
   void test_menu_type( void ) {
     Root root;
-    Dummy2BaseObject * foo = root.adopt(new Dummy2BaseObject("foo", "yuv"));
+    Dummy2Object * foo = root.adopt(new Dummy2Object("foo", "yuv"));
     Value res;
     
     // set wrong current to make sure current value is retrieved

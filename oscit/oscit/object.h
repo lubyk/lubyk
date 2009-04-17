@@ -13,52 +13,52 @@ namespace oscit {
 class Root;
 class Alias;
 
-class BaseObject
+class Object
 {
  public:
-  BaseObject() : root_(NULL), parent_(NULL), children_(20), context_(NULL), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {
+  Object() : root_(NULL), parent_(NULL), children_(20), context_(NULL), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {
    name_ = "";
    url_  = name_;
   }
   
-  BaseObject(const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), context_(NULL), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {}
+  Object(const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), context_(NULL), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {}
   
-  BaseObject(const std::string &name) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), context_(NULL), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {}
+  Object(const std::string &name) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), context_(NULL), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {}
   
-  BaseObject(TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), context_(NULL), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
+  Object(TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), context_(NULL), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
     name_ = "";
     url_  = name_;
   }
 
-  BaseObject(const char *name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), context_(NULL), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {}
+  Object(const char *name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), context_(NULL), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {}
 
-  BaseObject(const std::string &name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), context_(NULL), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {}
+  Object(const std::string &name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), context_(NULL), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {}
 
-  BaseObject(BaseObject *parent, const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {
+  Object(Object *parent, const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {
     parent->adopt(this);
   }
 
-  BaseObject(BaseObject *parent, const char *name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
+  Object(Object *parent, const char *name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
     parent->adopt(this);
   }
 
-  BaseObject(BaseObject *parent, const std::string &name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
+  Object(Object *parent, const std::string &name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
     parent->adopt(this);
   }
 
-  BaseObject(BaseObject &parent, const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {
+  Object(Object &parent, const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {
     parent.adopt(this);
   }
 
-  BaseObject(BaseObject &parent, const char *name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
+  Object(Object &parent, const char *name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
     parent.adopt(this);
   }
 
-  BaseObject(BaseObject &parent, const std::string &name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
+  Object(Object &parent, const std::string &name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
     parent.adopt(this);
   }
 
-  virtual ~BaseObject();
+  virtual ~Object();
 
   /** Shortcut to call multiple methods on an object.
     * @param val Using "obj.set(tempo:45 rubato:1.5)" is equivalent to calling "obj.tempo(45)" and "obj.rubato(1.5)".
@@ -76,7 +76,7 @@ class BaseObject
     * TODO: make sure a parent is not adopted by it's child. */
   template<class T>
   T * adopt(T * object) {
-    BaseObject * old_parent = object->parent_;
+    Object * old_parent = object->parent_;
 
     if (old_parent) old_parent->release(object);
 
@@ -88,10 +88,10 @@ class BaseObject
   }
   
   /** Class type id. */
-  virtual uint class_type() { return H("BaseObject"); }
+  virtual uint class_type() { return H("Object"); }
 
   template<class T>
-  static inline T * type_cast(uint type, BaseObject * obj) {
+  static inline T * type_cast(uint type, Object * obj) {
     return (obj && obj->class_type() == type) ? (T*)obj : NULL;
   }
 
@@ -119,16 +119,16 @@ class BaseObject
   
   /** Dynamically build a child from the given name. This method is called whenever
    *  a sub-node or branch is not found and this is the last found object along the path. */
-  virtual BaseObject * build_child(const std::string &name, Value *error) {
+  virtual Object * build_child(const std::string &name, Value *error) {
     return NULL;
   }
   
   /** Define the object's container (parent). */
-  void set_parent(BaseObject& parent)
+  void set_parent(Object& parent)
   { set_parent(&parent); }
 
   /** Define the object's container (parent). */
-  void set_parent(BaseObject * parent) {
+  void set_parent(Object * parent) {
     if (!parent) {
       if (parent_) parent_->release(this);
       parent_ = NULL;
@@ -182,7 +182,7 @@ class BaseObject
   
   /* ========================== REPLIES TO META METHODS =========================== */
   /* The replies to meta methods are implemented as virtuals so that objects that   */
-  /* inherit from osc::BaseObject just need to overwrite these in order to return more  */
+  /* inherit from osc::Object just need to overwrite these in order to return more  */
   /* meaningful information / content.                                              */
   
   /** List sub-nodes. */
@@ -194,7 +194,7 @@ class BaseObject
     if (it == end) return NULL;
 
     while(it != end) {
-      BaseObject * obj;
+      Object * obj;
       if (children_.get(*it, &obj)) {
         if (obj->class_type() != H("Alias")) {
             // do not list alias (Alias are used as internal helpers and do not need to be advertised)
@@ -261,18 +261,18 @@ class BaseObject
   }
   
   /** Return the list of children as a hash. */
-  const THash<std::string,BaseObject *> children() const {
+  const THash<std::string,Object *> children() const {
     return children_;
   }
 
   /** Return first child. */
-  BaseObject *first_child() {
+  Object *first_child() {
     return children_.size() > 0 ? child(children_.keys().front()) : NULL;
   }
 
   /** Return the direct child named 'name'. */
-  BaseObject *child(const std::string &name) {
-    BaseObject * child;
+  Object *child(const std::string &name) {
+    Object * child;
     if (children_.get(name, &child)) {
       return child;
     } else {
@@ -280,7 +280,7 @@ class BaseObject
     }
   }
   
-  BaseObject *parent() {
+  Object *parent() {
     return parent_;
   }
   
@@ -294,7 +294,7 @@ class BaseObject
 protected:
 
   /** Child sends a notification to the parent when it's name changes so that the parent/root keep their url hash in sync. */
-  void register_child(BaseObject * pChild);
+  void register_child(Object * pChild);
 
   /** Update cached url, notify root_ of the position change. */
   void moved();
@@ -332,7 +332,7 @@ protected:
  private:
   
   /** Free the child from the list of children. */
-  void release(BaseObject *pChild);
+  void release(Object *pChild);
 
   std::list<Alias *>              aliases_;   /**< List of aliases to destroy when this node disappears. */
   
@@ -341,8 +341,8 @@ protected:
   friend class Alias;
 
   Root                            *root_;     /**< Root object. */
-  BaseObject                      *parent_;   /**< Pointer to parent object. */
-  THash<std::string,BaseObject *> children_;  /**< Hash with pointers to sub-objects / methods */
+  Object                      *parent_;   /**< Pointer to parent object. */
+  THash<std::string,Object *> children_;  /**< Hash with pointers to sub-objects / methods */
   std::string                     name_;      /**< Unique name in parent's context. */
   std::string                     url_;       /**< Absolute path to object (cached). TODO: this cache is not really needed. */
   static size_t                   sIdCounter; /**< Use to set a default id and position. */
@@ -358,6 +358,6 @@ private:
 } // namespace osc
 
 /** Return a pointer to the object if the type match. */
-#define TYPE_CAST(klass, op) oscit::BaseObject::type_cast<klass>(H(#klass), op);
+#define TYPE_CAST(klass, op) oscit::Object::type_cast<klass>(H(#klass), op);
 
 #endif // _OSCIT_BASE_OBJECT_H_

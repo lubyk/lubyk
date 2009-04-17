@@ -4,7 +4,7 @@
 
 #include <sstream>
 
-class BaseCommandTest : public TestHelper
+class CommandTest : public TestHelper
 {  
 public:
   void test_create_delete( void ) {
@@ -50,11 +50,11 @@ public:
     std::string string;
     DummyCommand *cmd = root.adopt_command(new DummyCommand(&string));
     Value error;
-    BaseObject * obj  = root.object_at(Url("dummy://dummy.host:324/one/two/testing"), &error); // builds reference
+    Object * obj  = root.object_at(Url("dummy://dummy.host:324/one/two/testing"), &error); // builds reference
     
     DummyObject *object = (DummyObject*) cmd->remote_object_no_build("dummy://dummy.host:324/one/two/testing");
     assert_equal(324.0, object->real());
-    assert_equal((BaseObject*)object, obj);
+    assert_equal((Object*)object, obj);
   }
   
   void test_root_send( void ) {

@@ -7,7 +7,7 @@ class AliasTest : public TestHelper {
  public:
   void test_trigger( void ) {
     Root root;
-    BaseObject   * one = root.adopt(new BaseObject("one"));
+    Object   * one = root.adopt(new Object("one"));
     DummyObject  * sub = one->adopt(new DummyObject("sub", 3));
     Alias        * ali = root.adopt(new Alias("ali", sub));
     DummyObject  * two = root.adopt(new DummyObject("two", 2));
@@ -58,7 +58,7 @@ class AliasTest : public TestHelper {
   void test_delete_alias_first( void )
   {
     Root root;
-    BaseObject       * one = root.adopt(new BaseObject("one")); //   [/one]
+    Object       * one = root.adopt(new Object("one")); //   [/one]
     DummyObject  * sub = one->adopt(new DummyObject("sub", 3)); //   [/one/sub]
     Alias        * ali = root.adopt(new Alias("ali", sub));
     Value res;

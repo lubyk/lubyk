@@ -1,6 +1,6 @@
 #ifndef _METHOD_H_
 #define _METHOD_H_
-#include "oscit/base_object.h"
+#include "oscit/object.h"
 
 namespace oscit {
 
@@ -11,18 +11,18 @@ typedef const Value (*member_method_t)(void *receiver, const Value &val);
 typedef const Value (*class_method_t )(Root *root, const Value &val);
 
 /** Object instance to trigger a class method. */
-class ClassMethod : public BaseObject
+class ClassMethod : public Object
 {
  public:
   /** Create a new object that will call a class method when "triggered". */
   ClassMethod(const std::string &name, class_method_t method, TypeTagID type_tag_id, const char *info = DEFAULT_INFO) :
-      BaseObject(name, type_tag_id), class_method_(method) {
+      Object(name, type_tag_id), class_method_(method) {
     set_info(info);
   }
   
   /** Create a new object that will call a class method when "triggered". */
   ClassMethod(const char *name, class_method_t method, TypeTagID type_tag_id, const char *info = DEFAULT_INFO) :
-      BaseObject(name, type_tag_id), class_method_(method) {
+      Object(name, type_tag_id), class_method_(method) {
     set_info(info);
   }
   
@@ -48,23 +48,23 @@ struct MethodPrototype
 };
 
 /** Object instance to trigger a member method (stores a reference to the receiver). */
-class Method : public BaseObject
+class Method : public Object
 {
  public:  
   /** Create a new object that call a member method when "triggered". */
   Method(void *receiver, const char *name, member_method_t method, TypeTagID type_tag_id, const char *info = DEFAULT_INFO) :
-      BaseObject(name, type_tag_id), receiver_(receiver), member_method_(method) {
+      Object(name, type_tag_id), receiver_(receiver), member_method_(method) {
     set_info(info);
   }
   
   /** Create a new object that call a member method when "triggered". */
   Method(void *receiver, const std::string &name, member_method_t method, TypeTagID type_tag_id, const char *info = DEFAULT_INFO) :
-      BaseObject(name, type_tag_id), receiver_(receiver), member_method_(method) {
+      Object(name, type_tag_id), receiver_(receiver), member_method_(method) {
     set_info(info);
   }
   
   /** Prototype based constructor. */
-  Method (void * receiver, const MethodPrototype &prototype) : BaseObject(prototype.name_, prototype.type_tag_id_),
+  Method (void * receiver, const MethodPrototype &prototype) : Object(prototype.name_, prototype.type_tag_id_),
       receiver_(receiver), member_method_(prototype.member_method_) {
     set_info(prototype.info_);
   }
@@ -83,7 +83,7 @@ protected:
     return (((T*)receiver)->*Tmethod)(val);
   }
 
-  void *          receiver_;       /**< BaseObject containing the method. */
+  void *          receiver_;       /**< Object containing the method. */
   member_method_t member_method_;  /**< Pointer on a cast of the member method. */ 
 };
 

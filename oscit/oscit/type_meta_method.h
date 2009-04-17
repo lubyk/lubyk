@@ -4,14 +4,14 @@
 
 namespace oscit {
 
-class TypeMetaMethod : public BaseObject
+class TypeMetaMethod : public Object
 {
 public:
-  TypeMetaMethod(const char * name) : BaseObject(name, H("s")) {}
+  TypeMetaMethod(const char * name) : Object(name, H("s")) {}
 
   virtual const Value trigger (const Value &url) {
     Value error;
-    BaseObject * target = root_->find_or_build_object_at(url.c_str(), &error);
+    Object * target = root_->find_or_build_object_at(url.c_str(), &error);
     
     if (target == NULL) {
       return error;

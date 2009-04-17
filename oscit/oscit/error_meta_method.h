@@ -4,10 +4,10 @@
 
 namespace oscit {
 
-class ErrorMetaMethod : public BaseObject
+class ErrorMetaMethod : public Object
 {
 public:
-  ErrorMetaMethod(const char * name) : BaseObject(name, ANY_TYPE_TAG_ID) {}
+  ErrorMetaMethod(const char * name) : Object(name, ANY_TYPE_TAG_ID) {}
 
   virtual const Value trigger (const Value &val) {
     std::cerr << val << std::endl;

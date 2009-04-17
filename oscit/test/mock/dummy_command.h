@@ -1,12 +1,12 @@
 #ifndef _DUMMY_COMMAND_H_
 #define _DUMMY_COMMAND_H_
-#include "oscit/base_command.h"
+#include "oscit/command.h"
 
-struct DummyCommand : public BaseCommand
+struct DummyCommand : public Command
 {
  public:
-  DummyCommand(std::string *string) : BaseCommand("dummy"), string_(string) {}
-  DummyCommand(std::string *string, const char *protocol) : BaseCommand(protocol), string_(string) {}
+  DummyCommand(std::string *string) : Command("dummy"), string_(string) {}
+  DummyCommand(std::string *string, const char *protocol) : Command(protocol), string_(string) {}
   
   void do_listen() {
     while (should_run()) {
@@ -15,7 +15,7 @@ struct DummyCommand : public BaseCommand
     }
   }
   
-  virtual BaseObject *build_remote_object(const Url &url, Value *error) {
+  virtual Object *build_remote_object(const Url &url, Value *error) {
     if (url.host() == "dummy.host") {
       return adopt_remote_object(url.str(), new DummyObject(url.str().c_str(), url.port()));
     } else {
@@ -24,8 +24,8 @@ struct DummyCommand : public BaseCommand
     }
   }
   
-  BaseObject *remote_object_no_build(const std::string &url) {
-    BaseObject *res = NULL;
+  Object *remote_object_no_build(const std::string &url) {
+    Object *res = NULL;
     remote_objects_.get(url, &res);
     return res;
   }
