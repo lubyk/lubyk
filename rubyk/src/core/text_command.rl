@@ -30,13 +30,17 @@ void TextCommand::do_listen() {
   if (!silent_) *output_ << "Welcome to rubyk !\n\n";
     
   clear();
-
+  
+    std::cout << "parse: (" << should_run() << ")\n";
   while(should_run() && getline(&line,1023)) {
+    std::cout << "parse:" << line << " (" << should_run() << ")\n";
     parse(line);
     parse("\n");
     if (should_run()) saveline(line); // command was not a 'quit'
     freeline(line);
+    std::cout << "_should:run = " << should_run() << "\n";
   }
+  std::cout << "should:run = " << should_run() << "\n";
 }
 
 void TextCommand::parse(const std::string &string) {

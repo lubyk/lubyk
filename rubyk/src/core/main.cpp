@@ -1,7 +1,6 @@
-#include "planet.h"
+#include "rubyk.h"
 #include "text_command.h"
 #include <iostream>
-#include "globals.cpp"
 
 
 
@@ -35,7 +34,7 @@
 int main(int argc, char * argv[])
 {  
   Planet venus(argc, argv);
-  InteractiveCommand *command = venus.adopt_command(new InteractiveCommand(std::cin, std::cout));
+  venus.adopt_command(new CommandLine(std::cin, std::cout));
   venus.open_port(7000);
   venus.run();
   //OPENGL_HACK gGLWindowStartThread = NULL;

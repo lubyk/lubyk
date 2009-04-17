@@ -57,6 +57,8 @@ class Planet : public Root
   
   void run() {
     worker_.run();
+    // wait for worker to finish
+    worker_.join();
   }
   
   void quit() {
@@ -77,7 +79,6 @@ class Planet : public Root
   
   const Value quit(const Value &val) {
     lock();
-      // FIXME: create quit event
       worker_.register_event<Planet, &Planet::do_quit>(200, this, gNilValue);
     unlock();
     return gNilValue;
@@ -85,7 +86,7 @@ class Planet : public Root
   
   /** Triggered by quit event. */
   void do_quit(const Value &val) {
-    quit();
+    should_run_
   }
   
   /** Create pending links. Return a list of created links [[sffs][sffs]...]. */

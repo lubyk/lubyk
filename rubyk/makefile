@@ -27,7 +27,7 @@ all: test
 test: test/runner test/runner.cpp
 	./test/runner && rm test/runner
 
-rubyk: src/core/main.cpp $(LINKER_OBJECTS) objects
+rubyk: src/core/main.cpp $(LINKER_OBJECTS) test_objects
 	$(CC) $(CFLAGS) $(LFLAGS) $(INCLUDE_HEADERS) src/core/main.cpp $(LINKER_OBJECTS) -o rubyk
 
 lib:

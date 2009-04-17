@@ -335,13 +335,17 @@ void TextCommand::do_listen() {
   if (!silent_) *output_ << "Welcome to rubyk !\n\n";
     
   clear();
-
+  
+    std::cout << "parse: (" << should_run() << ")\n";
   while(should_run() && getline(&line,1023)) {
+    std::cout << "parse:" << line << " (" << should_run() << ")\n";
     parse(line);
     parse("\n");
     if (should_run()) saveline(line); // command was not a 'quit'
     freeline(line);
+    std::cout << "_should:run = " << should_run() << "\n";
   }
+  std::cout << "should:run = " << should_run() << "\n";
 }
 
 void TextCommand::parse(const std::string &string) {
@@ -353,7 +357,7 @@ void TextCommand::parse(const std::string &string) {
   DEBUG(printf("parse:\"%s\"\n",string.c_str()));
   
   
-#line 357 "src/core/text_command.cpp"
+#line 361 "src/core/text_command.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -428,85 +432,85 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 51 "src/core/text_command.rl"
+#line 55 "src/core/text_command.rl"
 	{
       DEBUG(printf("_%c_",(*p)));
       token_ += (*p); /* append */
     }
 	break;
 	case 1:
-#line 56 "src/core/text_command.rl"
+#line 60 "src/core/text_command.rl"
 	{
       // FIXME: this is a temporary hack until we sub parse with Value...
       parameter_string_ += (*p);
     }
 	break;
 	case 2:
-#line 61 "src/core/text_command.rl"
+#line 65 "src/core/text_command.rl"
 	{ set_from_token(var_);}
 	break;
 	case 3:
-#line 63 "src/core/text_command.rl"
+#line 67 "src/core/text_command.rl"
 	{ set_from_token(method_);}
 	break;
 	case 4:
-#line 65 "src/core/text_command.rl"
+#line 69 "src/core/text_command.rl"
 	{ set_from_token(class_);}
 	break;
 	case 5:
-#line 67 "src/core/text_command.rl"
+#line 71 "src/core/text_command.rl"
 	{ set_from_token(value_);}
 	break;
 	case 6:
-#line 69 "src/core/text_command.rl"
+#line 73 "src/core/text_command.rl"
 	{ from_node_     = var_; }
 	break;
 	case 7:
-#line 71 "src/core/text_command.rl"
+#line 75 "src/core/text_command.rl"
 	{ from_port_ = var_; }
 	break;
 	case 8:
-#line 73 "src/core/text_command.rl"
+#line 77 "src/core/text_command.rl"
 	{ to_port_   = var_; }
 	break;
 	case 9:
-#line 79 "src/core/text_command.rl"
+#line 83 "src/core/text_command.rl"
 	{
       to_node_   = var_;
       create_link();
     }
 	break;
 	case 10:
-#line 84 "src/core/text_command.rl"
+#line 88 "src/core/text_command.rl"
 	{
       to_node_   = var_;
       remove_link();
     }
 	break;
 	case 11:
-#line 89 "src/core/text_command.rl"
+#line 93 "src/core/text_command.rl"
 	{ create_instance(); }
 	break;
 	case 12:
-#line 91 "src/core/text_command.rl"
+#line 95 "src/core/text_command.rl"
 	{ execute_method(); }
 	break;
 	case 13:
-#line 93 "src/core/text_command.rl"
+#line 97 "src/core/text_command.rl"
 	{ execute_class_method(); }
 	break;
 	case 14:
-#line 95 "src/core/text_command.rl"
+#line 99 "src/core/text_command.rl"
 	{ execute_command(); }
 	break;
 	case 15:
-#line 99 "src/core/text_command.rl"
+#line 103 "src/core/text_command.rl"
 	{
       clear();
     }
 	break;
 	case 16:
-#line 103 "src/core/text_command.rl"
+#line 107 "src/core/text_command.rl"
 	{
       p--; // move back one char
       char error_buffer[10];
@@ -517,10 +521,10 @@ _match:
     }
 	break;
 	case 17:
-#line 112 "src/core/text_command.rl"
+#line 116 "src/core/text_command.rl"
 	{ {cs = 1; goto _again;} }
 	break;
-#line 524 "src/core/text_command.cpp"
+#line 528 "src/core/text_command.cpp"
 		}
 	}
 
@@ -537,7 +541,7 @@ _again:
 	while ( __nacts-- > 0 ) {
 		switch ( *__acts++ ) {
 	case 16:
-#line 103 "src/core/text_command.rl"
+#line 107 "src/core/text_command.rl"
 	{
       p--; // move back one char
       char error_buffer[10];
@@ -547,14 +551,14 @@ _again:
       {cs = 110; goto _again;} // eat the rest of the line and continue parsing
     }
 	break;
-#line 551 "src/core/text_command.cpp"
+#line 555 "src/core/text_command.cpp"
 		}
 	}
 	}
 
 	_out: {}
 	}
-#line 164 "src/core/text_command.rl"
+#line 168 "src/core/text_command.rl"
 
 //  printf("{%s}\n",p);
   current_state_ = cs;
