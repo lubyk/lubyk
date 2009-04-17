@@ -10,8 +10,6 @@ public:
     std::ostringstream output(std::ostringstream::out);  // allow output  operations
     planet.adopt_command(new TextCommand(input, output));
     
-    time_t start = planet.worker().current_time_;
-    
     microsleep(10);
     
     assert_equal("Welcome to rubyk !\n\n", output.str());
@@ -23,7 +21,7 @@ class ParseCommandTest : public ParseHelper
 public:
   
   void test_parse_command( void ) 
-  { assert_result("v1=Number(value:1)\n","<Number:/v1 1.00>\n"); }
+  { assert_result("/v1\n/v1/in\n/v1/in/bang\n/v1/in/bang/list\n/v1/out\n", "v1=Number(value:1)\n"); }
   
 //  void test_parse_zero( void ) 
 //  { assert_result("v1=Number(0)\n","<Number:/v1 0.00>\n"); }

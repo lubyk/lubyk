@@ -27,7 +27,7 @@ public:
   }
   
   void init() {
-    adopt(new Method(this, "lib_path", &Method::cast_method<ClassFinder, &ClassFinder::lib_path>, H("s"), "Get/set path to load objects files (*.rko)."));
+    adopt(new TMethod<ClassFinder, &ClassFinder::lib_path>(this, "lib_path", H("s"), "Get/set path to load objects files (*.rko)."));
   }
   
   virtual ~ClassFinder() {}
@@ -74,7 +74,6 @@ public:
   }
   
 private:
-  
   /** Load an object stored in a dynamic library. */
   bool load(const char * file, const char * init_name);
   

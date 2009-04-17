@@ -5,9 +5,8 @@
 
 void Planet::init() {
   // build application methods
-  
   //          /class
-  adopt(new ClassFinder(Url(CLASS_URL).name(), DEFAULT_OBJECTS_LIB_PATH));
+  classes_ = adopt(new ClassFinder(Url(CLASS_URL).name(), DEFAULT_OBJECTS_LIB_PATH));
   //          /rubyk
   Object * rubyk = adopt(new Object(Url(RUBYK_URL).name()));
   //          /rubyk/link

@@ -130,8 +130,10 @@ class Node : public Object
     context_ = context;
     if (context_ != NULL && context_->kind_of(Worker)) {
       worker_  = (Worker*)context_;
+    } else if (context_ != NULL) {
+      fprintf(stderr, "Could not cast '%s' to Worker in %s ! Program might crash.\n", context_->class_path(), class_path());
     } else {
-      fprintf(stderr, "Could not cast '%s' to Worker in %s ! Program might crash.", context_->class_path(), class_path());
+      // fprintf(stderr, "No context ! Program might crash.\n");
     }
   }
 

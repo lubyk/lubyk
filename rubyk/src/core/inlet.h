@@ -9,10 +9,15 @@ typedef void(*inlet_method_t)(Node * node, const Value &val);
 /** Prototype constructor for Inlets. */
 struct InletPrototype
 {
-  InletPrototype(const char *name, inlet_method_t method, TypeTagID type_tag_id, const char *info, const Value &type) :
-      name_(name), type_tag_id_(type_tag_id), method_(method), info_(info), type_(type) {}
+  InletPrototype(const char *name, inlet_method_t method, const Value &type, const char *info) :
+      name_(name), method_(method), info_(info), type_(type) {}
+  
+  /** Use Range/Slider/... definition to set inlet type_tag_id. */
+  TypeTagID type_tag_id() const {
+    return type_.is_list() ? type_[0].type_tag_id() : type_.type_tag_id();
+  }
+  
   std::string    name_;
-  TypeTagID      type_tag_id_;
   inlet_method_t method_;
   std::string    info_;
   Value          type_;
@@ -32,7 +37,7 @@ public:
   }
   
   /** Prototype based constructor. */
-  Inlet(Node *node, const InletPrototype& prototype) : Slot(node, prototype.name_, prototype.type_tag_id_), method_(prototype.method_) {
+  Inlet(Node *node, const InletPrototype& prototype) : Slot(node, prototype.name_, prototype.type_tag_id()), method_(prototype.method_) {
     set_info(prototype.info_);
     set_type(prototype.type_);
     register_in_node();
@@ -69,4 +74,7 @@ private:
   inlet_method_t method_;        /**< Method to set a new value. */
 };
 
+#define FieldInput(units) Value(0.0).push_back(units)
+#define RangeInput(min,max,units) Value(0.0).push_back(min).push_back(max).push_back(units)
+#define AnyInput Value('*')
 #endif

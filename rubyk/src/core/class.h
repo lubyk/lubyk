@@ -36,8 +36,8 @@ public:
   
   /** Declare an inlet. */
   template <class T, void(T::*Tmethod)(const Value &val)>
-  void add_inlet(const char *name, TypeTagID type_tag_id, const char *info) { 
-    inlet_prototypes_.push_back( InletPrototype(name, &Inlet::cast_method<T, Tmethod>, type_tag_id, info) );
+  void add_inlet(const char *name, const Value& type, const char *info) { 
+    inlet_prototypes_.push_back( InletPrototype(name, &Inlet::cast_method<T, Tmethod>, type, info) );
   }
   
   /** Declare an outlet. */
@@ -74,7 +74,7 @@ private:
   return var; }                                                     \
 
 // HELPERS TO AVOID TEMPLATE SYNTAX
-#define CLASS(klass, info)                Class * c = planet.classes()->declare<klass>(#klass, info);
+#define CLASS(klass, info, options)  Class * c = planet.classes()->declare<klass>(#klass, info, options);
 #define CLASS_METHOD(klass, method, info) c->add_class_method(#method, &klass::method, info);
 #define ACCESSOR(klass, method, info)       ACCESSOR_NAMED(klass, #method, method ## _, info);
 #define ACCESSOR_NAMED(klass, name, method, info)       c->add_method<klass, &klass::method>(name, info);

@@ -24,16 +24,16 @@ class Planet : public Root
  public:
   TYPED("Object.Root.Planet")
   
-  Planet() : worker_(this) {
+  Planet() : worker_(this), classes_(NULL) {
     init();
   }
   
-  Planet(uint port) : worker_(this) {
+  Planet(uint port) : worker_(this), classes_(NULL) {
     init();
     open_port(port);
   }
   
-  Planet(int argc, char * argv[]) : worker_(this) {
+  Planet(int argc, char * argv[]) : worker_(this), classes_(NULL) {
     // TODO: get port from command line
     init();
     
@@ -65,7 +65,10 @@ class Planet : public Root
   }
   
   inline Worker *worker() { return &worker_; }
-    
+  
+  /** Used to access '/class' when rko objects are loaded. */  
+  ClassFinder *classes() { return classes_; }
+  
   /** Create a new link between two slots. */
   const Value link(const Value &val);
 
@@ -85,14 +88,16 @@ class Planet : public Root
     quit();
   }
   
- private:
   /** Create pending links. Return a list of created links [[sffs][sffs]...]. */
   const Value create_pending_links();
-
+  
+ private:
+  /** Create base objects (public for testing, should not be used). */
   void init();
   
   std::list<oscit::Call>  pending_links_;        /**< List of pending connections waiting for variable assignements. */
   Worker worker_;
+  ClassFinder *classes_;
 };
 
 #endif // _PLANET_H_

@@ -581,8 +581,12 @@ void TextCommand::create_instance() {
   Value res = root_->call(std::string(CLASS_URL).append("/").append(class_).append("/new"), list);
   
   if (res.is_string() && !silent_) {
-    res = root_->call("/.inspect", res);
-    *output_ << res << std::endl;
+    *output_ << res.str() << std::endl;
+    Value tree = root_->call("/.tree", res);
+    size_t i, sz = tree.size();
+    for (i = 0; i < sz; ++i) {
+      *output_ << res.str() << "/" << tree[i].str() << std::endl;
+    }
   } else if (!res.is_string()) {
     *output_ << res << std::endl;
   } 
