@@ -236,7 +236,7 @@ class Root : public Object
       size_t pos = path.rfind("/");
       if (pos != std::string::npos) {
         /** call 'build_child' handler in parent. */
-        Object * parent = find_or_build_object_at(path.substr(0, pos), error);
+        Object * parent = do_find_or_build_object_at(path.substr(0, pos), error);
         if (parent != NULL && (object = object_at(path)) == NULL) {
           return parent->build_child(path.substr(pos+1), error);
         }

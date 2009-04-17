@@ -12,7 +12,7 @@ public:
   
   TypeMetaMethod(const char * name) : Object(name, H("s")) {}
 
-  virtual const Value trigger (const Value &url) {
+  virtual const Value trigger(const Value &url) {
     Value error;
     Object * target = root_->find_or_build_object_at(url.c_str(), &error);
     

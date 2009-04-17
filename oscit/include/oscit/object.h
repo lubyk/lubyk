@@ -152,7 +152,7 @@ class Object : public Typed
   void unregister_alias(Alias *alias);
 
   /** Return the object's unique url. */
-  inline const std::string &url() {
+  inline const std::string &url() const {
     return url_;
   }
   
@@ -182,28 +182,41 @@ class Object : public Typed
   /* meaningful information / content.                                              */
   
   /** List sub-nodes. */
-  const std::string list () const {
-    std::string res;
-    const_string_iterator it  = children_.begin();
-    const_string_iterator end = children_.end();
-    bool start = true;
-    if (it == end) return NULL;
-
-    while(it != end) {
+  const Value list() const {
+    Value res;
+    const_string_iterator it, end = children_.end();
+    for (it = children_.begin(); it != end; ++it) {
       Object * obj;
       if (children_.get(*it, &obj)) {
         if (!obj->is_a("Object.Alias")) {
-            // do not list alias (Alias are used as internal helpers and do not need to be advertised)
-          if (!start) res.append(",");
-          res.append(obj->name_);
-          if (!(obj->children_.empty())) res.append("/");
-          start = false;
+          // do not list alias (Alias are used as internal helpers and do not need to be advertised) ?
+          if (obj->children_.empty()) {
+            res.push_back(obj->name_);
+          } else {
+            res.push_back(std::string(obj->name_).append("/"));
+          }
         }
       }
-      it++;
     }
-  
     return res;
+  }
+  
+  /** List full tree under this node.
+   *  @param base_length is the length of the url for the initial call (removed from results).
+   *  @param tree returned value.
+   */
+  void tree(size_t base_length, Value *tree) const {
+    const_string_iterator it, end = children_.end();
+    for (it = children_.begin(); it != end; ++it) {
+      Object * obj;
+      if (children_.get(*it, &obj)) {
+        if (!obj->is_a("Object.Alias")) {
+          // do not list alias (Alias are used as internal helpers and do not need to be advertised) ?
+          tree->push_back(obj->url().substr(base_length));
+          obj->tree(base_length, tree);
+        }
+      }
+    }
   }
   
   /** Human readable information method.
