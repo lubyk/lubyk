@@ -15,7 +15,7 @@ class ClassMethod : public Object
 {
  public: 
   /** Class signature. */
-  CLASS_PATH("Object.ClassMethod")
+  TYPED("Object.ClassMethod")
   
   /** Create a new object that will call a class method when "triggered". */
   ClassMethod(const std::string &name, class_method_t method, TypeTagID type_tag_id, const char *info = DEFAULT_INFO) :
@@ -54,7 +54,7 @@ struct MethodPrototype
 class Method : public Object
 {
  public:
-  CLASS_PATH("Object.Method")
+  TYPED("Object.Method")
   
   /** Create a new object that call a member method when "triggered". */
   Method(void *receiver, const char *name, member_method_t method, TypeTagID type_tag_id, const char *info = DEFAULT_INFO) :
@@ -96,7 +96,7 @@ template<class T, const Value(T::*Tmethod)(const Value&)>
 class TMethod : public Method
 {
  public:
-  CLASS_PATH("Object.TMethod.Method")
+  TYPED("Object.TMethod.Method")
   
   /** Create a new object that call a member method when "triggered". */
   TMethod(void *receiver, const char *name, TypeTagID type_tag_id, const char *info = DEFAULT_INFO) :

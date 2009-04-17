@@ -8,7 +8,7 @@ class TypeMetaMethod : public Object
 {
 public:  
   /** Class signature. */
-  CLASS_PATH("Object.TypeMetaMethod")
+  TYPED("Object.TypeMetaMethod")
   
   TypeMetaMethod(const char * name) : Object(name, H("s")) {}
 

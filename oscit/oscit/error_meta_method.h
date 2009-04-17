@@ -8,7 +8,7 @@ class ErrorMetaMethod : public Object
 {
 public:  
   /** Class signature. */
-  CLASS_PATH("Object.ErrorMetaMethod")
+  TYPED("Object.ErrorMetaMethod")
   
   ErrorMetaMethod(const char * name) : Object(name, ANY_TYPE_TAG_ID) {}
 

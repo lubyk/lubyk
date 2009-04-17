@@ -9,7 +9,7 @@ class Alias : public Object
 {
 public:  
   /** Class signature. */
-  CLASS_PATH("Object.Alias")
+  TYPED("Object.Alias")
   
   Alias() : original_(NULL) {}
   

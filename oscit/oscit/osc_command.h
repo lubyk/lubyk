@@ -25,6 +25,8 @@ class ZeroConfRegister;
 class OscCommand : public Command, public osc::OscPacketListener
 {
 public:
+  TYPED("Mutex.Thread.Command.OscCommand")
+  
   OscCommand(uint port);
   
   virtual ~OscCommand();

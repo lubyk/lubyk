@@ -21,7 +21,7 @@ class Root : public Object
 {
  public: 
   /** Class signature. */
-  CLASS_PATH("Object.Root")
+  TYPED("Object.Root")
   
   Root() : objects_(OBJECT_HASH_SIZE) {
     init();

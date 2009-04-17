@@ -373,7 +373,7 @@ _match:
      // append a char to build a std::string
     DEBUG(printf("%c-",(*p)));
     if ((*p))
-      str_buf.append(&(*p), 1); /* append */
+      str_buf += (*p); /* append */
   }
 	break;
 	case 1:

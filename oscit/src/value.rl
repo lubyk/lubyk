@@ -99,7 +99,7 @@ Value &Value::push_front(const Value& val) {
      // append a char to build a std::string
     DEBUG(printf("%c-",fc));
     if (fc)
-      str_buf.append(&fc, 1); /* append */
+      str_buf += fc; /* append */
   }
 
   action number {

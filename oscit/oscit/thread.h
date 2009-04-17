@@ -11,6 +11,8 @@ namespace oscit {
 class Thread : public Mutex
 {
  public:
+  TYPED("Mutex.Thread")
+  
   Thread() : owner_(NULL), thread_id_(NULL), should_run_(false) {
     if (!sThisKey) pthread_key_create(&sThisKey, NULL); // create a key to find 'this' object in new thread
   }

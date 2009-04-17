@@ -16,6 +16,8 @@ class Object;
 class Command : public Thread
 {
  public:
+   TYPED("Mutex.Thread.Command")
+   
    Command(const char *protocol) : remote_objects_(REMOTE_OBJECTS_HASH_SIZE), root_(NULL), protocol_(protocol) {}
 
    Command(const std::string &protocol) : remote_objects_(REMOTE_OBJECTS_HASH_SIZE), root_(NULL), protocol_(protocol) {}

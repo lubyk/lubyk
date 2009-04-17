@@ -1,5 +1,6 @@
 #ifndef _OSCIT_BASE_OBJECT_H_
 #define _OSCIT_BASE_OBJECT_H_
+#include "oscit/typed.h"
 #include "oscit/values.h"
 #include "oscit/thash.h"
 #include "oscit/mutex.h"
@@ -9,19 +10,15 @@
 namespace oscit {
 #define OSC_NEXT_NAME_BUFFER_SIZE 20
 #define DEFAULT_INFO "no information defined for this object"
-#define kind_of(klass) is_a(klass::_path())
-#define CLASS_PATH(str) \
-  virtual const char *class_path() { return str; } \
-  static  const char *_path() { return str; } \
   
 class Root;
 class Alias;
 
-class Object
+class Object : public Typed
 {
- public: 
+ public:
   /** Class signature. */
-  CLASS_PATH("Object")
+  TYPED("Object")
   
   Object() : root_(NULL), parent_(NULL), children_(20), context_(NULL), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {
    name_ = "";
@@ -94,27 +91,6 @@ class Object
     return (T*)object;
   }
 
-  template<class T>
-  static inline T * type_cast(Object * obj) {
-    if (!obj) return NULL;
-    if (obj->is_a(T::_path())) {
-      return (T*)obj;
-    } else {
-      return NULL;
-    }
-  }
-  
-  inline bool is_a(const char *path) {
-    const char * c  = path;
-    const char * cl = class_path();
-    while (*c) {
-      if (*c != *cl) return false;
-      ++c;
-      ++cl;
-    }
-    return (*cl == '\0') || (*cl == '.');
-  }
-  
   /** Clear all children (delete). */
   void clear();
   
@@ -376,8 +352,5 @@ private:
   Value                       type_;          /**< Type information (type signature, range & units). */
 };
 } // namespace osc
-
-/** Return a pointer to the object if the type match. */
-#define TYPE_CAST(klass, op) oscit::Object::type_cast<klass>(op);
 
 #endif // _OSCIT_BASE_OBJECT_H_

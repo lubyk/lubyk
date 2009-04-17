@@ -8,7 +8,7 @@ class DummyObject : public Object
 {
 public:  
   /** Class signature. */
-  CLASS_PATH("Object.DummyObject")
+  TYPED("Object.DummyObject")
   
   DummyObject(const char * name, Real value) : Object(name, H("f")), value_(value) {
     set_info(DUMMY_OBJECT_INFO);
@@ -56,7 +56,7 @@ private:
 class DummyObject2 : public Object
 {
 public:  
-  CLASS_PATH("Object.DummyObject2")
+  TYPED("Object.DummyObject2")
   
   DummyObject2(const char * name, const char *value) : Object(name, H("s")), value_(value) {
     set_info(DUMMY_OBJECT_INFO);
@@ -87,7 +87,7 @@ private:
 class SubDummyObject : public DummyObject
 {
 public:
-  CLASS_PATH("Object.DummyObject.SubDummyObject")
+  TYPED("Object.DummyObject.SubDummyObject")
   
   SubDummyObject(const char *name, Real value) : DummyObject(name, value) {}
 };

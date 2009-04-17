@@ -5,7 +5,7 @@ class Person : public Object
 {
  public: 
   /** Class signature. */
-  CLASS_PATH("Object.Person")
+  TYPED("Object.Person")
   
   Person(const char * name) : Object(name) {}
   
