@@ -146,4 +146,8 @@ public:
     // should join here
     assert_equal(2, counter.value_);
   }
+  
+  void test_join( void ) {
+    assert_true( false ); // TODO
+  }
 };

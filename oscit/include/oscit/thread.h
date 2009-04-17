@@ -68,6 +68,12 @@ class Thread : public Mutex
     }
   }
   
+  /** Wait for thread to finish. */
+  void join() {
+    if (thread_id_) {
+      pthread_join(thread_id_, NULL);
+    }
+  }
   /** Tell thread to stop after current loop. */
   void stop() {
     should_run_ = false;
