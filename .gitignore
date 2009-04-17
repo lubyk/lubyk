@@ -12,3 +12,4 @@ rubyk/test/runner.cpp
 rubyk/test/runner
 rubyk/rubyk
 mimas/build/*/build
+doc/prototypes/test

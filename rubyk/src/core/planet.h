@@ -10,13 +10,19 @@
 
 class ClassFinder;
 
-#define CLASS_ROOT "/class"
+#define CLASS_URL  "/class"
+#define RUBYK_URL  "/rubyk"
+#define LINK_URL   "/rubyk/link"
+#define UNLINK_URL "/rubyk/unlink"
+#define QUIT_URL   "/rubyk/quit"
+
 #define DEFAULT_OBJECTS_LIB_PATH "/usr/local/lib/rubyk"
 
 /** A planet is just a root with a worker. */
 class Planet : public Root
 {
  public:
+  TYPED("Object.Root.Planet")
   
   Planet() : worker_(this) {
     init();
@@ -37,8 +43,7 @@ class Planet : public Root
       oss << in.rdbuf();
       in.close();
 
-      TextCommand  * command = new TextCommand(std::cin, std::cout);
-      command->set_planet(this);
+      TextCommand * command = adopt_command(new TextCommand(std::cin, std::cout), false);
       command->set_silent();
       oss << "\n";
       command->parse(oss.str());
@@ -60,34 +65,31 @@ class Planet : public Root
   }
   
   inline Worker *worker() { return &worker_; }
-  
-  /** Return the class finder (create one if needed). */
-  ClassFinder * classes();
-  
-  /** Create pending links (called on new object creation). */
-  const Value create_pending_links();
-  
-  /** ======== Helpers for commands (builds OSC calls). ======== */
-  
-  /** Create a new object from a class name. Calls "/class/ClassName/new". */
-  const Value new_object(const char *url, const char *class_name, const Value &params);
-
-  /** Create a new object from a class name. Calls "/class/ClassName/new". */
-  inline const Value new_object(const std::string &url, const std::string &class_name, const Value &params) {
-    return new_object(url.c_str(), class_name.c_str(), params);
-  }
-
+    
   /** Create a new link between two slots. */
-  const Value create_link(const std::string &from, const std::string &from_port, const std::string &to_port, const std::string &to_node);
+  const Value link(const Value &val);
 
   /** Remove a link between two slots. */
-  const Value remove_link(const std::string &from, const std::string &from_port, const std::string &to_port, const std::string &to_node);
- 
- private:
-  void init() {
-    // force build of "/class"
-    classes();
+  const Value unlink(const Value &val);
+  
+  const Value quit(const Value &val) {
+    lock();
+      // FIXME: create quit event
+      worker_.register_event<Planet, &Planet::do_quit>(200, this, gNilValue);
+    unlock();
+    return gNilValue;
   }
+  
+  /** Triggered by quit event. */
+  void do_quit(const Value &val) {
+    quit();
+  }
+  
+ private:
+  /** Create pending links. Return a list of created links [[sffs][sffs]...]. */
+  const Value create_pending_links();
+
+  void init();
   
   std::list<oscit::Call>  pending_links_;        /**< List of pending connections waiting for variable assignements. */
   Worker worker_;

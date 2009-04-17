@@ -17,12 +17,8 @@
 void TextCommand::initialize() {
   int cs;
   
-  planet_     = NULL;
-  token_i_    = 0;
-  silent_     = false;
-  
+  silent_     = false;    
   clear();
-  
   %% write init;
   current_state_ = cs;
 }
@@ -53,14 +49,8 @@ void TextCommand::parse(const std::string &string) {
   
   %%{
     action a {
-      if (token_i_ >= MAX_TOKEN_SIZE) {
-        std::cerr << "Buffer overflow !" << std::endl;
-        // stop parsing
-        return;
-      }
       DEBUG(printf("_%c_",fc));
-      token_[token_i_] = fc; /* append */
-      token_i_++;     
+      token_ += fc; /* append */
     }
     
     action params {
@@ -176,45 +166,58 @@ void TextCommand::parse(const std::string &string) {
   current_state_ = cs;
 }
 
-void TextCommand::set_from_token(std::string& string) {
-  token_[token_i_] = '\0';
-  
+void TextCommand::set_from_token(std::string &string) {
   DEBUG(if (&string == &value_) std::cout << "[val " << token_ << "]" << std::endl);
   DEBUG(if (&string == &var_)   std::cout << "[var " << token_ << "]" << std::endl);
   DEBUG(if (&string == &class_) std::cout << "[cla " << token_ << "]" << std::endl);
   
   string = token_;
-  token_i_ = 0;
+  token_ = "";
 }
 
 void TextCommand::create_instance() {
   Value params(Json(parameter_string_.c_str()));
+  ListValue list;
   names_to_urls();
   
   DEBUG(std::cout << "NEW "<< var_ << " = " << class_ << "(" << params << ")");
-  Value res = planet_->new_object(var_, class_, params);
+  list.push_back(var_);
+  list.push_back(params);
+  
+  Value res = root_->call(std::string(CLASS_URL).append("/").append(class_).append("/new"), list);
   
   if (res.is_string() && !silent_) {
-    res = planet_->call("/.inspect", res);
+    res = root_->call("/.inspect", res);
     *output_ << res << std::endl;
   } else if (!res.is_string()) {
     *output_ << res << std::endl;
   } 
 }
 
-
-void TextCommand::create_link() {
+void TextCommand::change_link(char op) {
   names_to_urls();
   
-  DEBUG(std::cout << "LINK " << from_node_ << "." << from_port_ << "=>" << to_port_ << "." << to_node_ << std::endl);
-  planet_->create_link(from_node_, from_port_, to_port_, to_node_);
-}
-
-void TextCommand::remove_link() {
-  names_to_urls();
+  DEBUG(std::cout << op << " LINK " << from_node_ << "." << from_port_ << "=>" << to_port_ << "." << to_node_ << std::endl);
+  ListValue list;
+  Value res;
   
-  DEBUG(std::cout << "UNLINK " << from_node_ << "." << from_port_ << "=>" << to_port_ << "." << to_node_ << std::endl);
-  planet_->remove_link(from_node_, from_port_, to_port_, to_node_);
+  if (from_port_ == "") {
+    list.push_back(std::string(from_node_).append("/out"));
+  } else {
+    list.push_back(std::string(from_node_).append("/out/").append(from_port_));
+  }
+  if (to_port_ == "") {
+    list.push_back(std::string(to_node_).append("/in"));
+  } else {
+    list.push_back(std::string(to_node_).append("/in/").append(to_port_));
+  }
+  if (op == 'c') {
+    res = root_->call(LINK_URL, list);
+  } else {
+    res = root_->call(UNLINK_URL, list);
+  }
+  
+  if (!silent_) *output_ << res << std::endl;
 }
 
 void TextCommand::execute_method() {
@@ -227,7 +230,7 @@ void TextCommand::execute_method() {
   
   if (method_ == "set") {
     // TODO: should 'set' live in normal tree space ?
-    BaseObject *target = planet_->object_at(var_);
+    Object *target = root_->object_at(var_);
     if (target) {
       target->lock();
         res = target->set(params);
@@ -238,7 +241,7 @@ void TextCommand::execute_method() {
   } else {
     if (method_ == "b") method_ = "bang";
     var_.append("/").append(method_);
-    res = planet_->call(var_, params);
+    res = root_->call(var_, params);
   }
   
   if (!silent_) *output_ << res << std::endl;
@@ -248,8 +251,8 @@ void TextCommand::execute_class_method() {
   Value res;
   Value params = Value(Json(parameter_string_));
   
-  DEBUG(std::cout << "CLASS_METHOD " << std::string(CLASS_ROOT).append("/").append(class_).append("/").append(method_) << "(" << params << ")" << std::endl);
-  res = planet_->call(std::string(CLASS_ROOT).append("/").append(class_).append("/").append(method_), params);
+  DEBUG(std::cout << "CLASS_METHOD " << std::string(CLASS_URL).append("/").append(class_).append("/").append(method_) << "(" << params << ")" << std::endl);
+  res = root_->call(std::string(CLASS_URL).append("/").append(class_).append("/").append(method_), params);
   
   if (!silent_) *output_ << res << std::endl;
 }
@@ -260,19 +263,19 @@ void TextCommand::execute_command() {
 
   DEBUG(std::cout << "CMD " << method_ << "(" << params << ")" << std::endl);
   if (method_ == "set_lib_path") {
-    res = planet_->call(std::string(CLASS_ROOT).append("/lib_path"), params);
+    res = root_->call(std::string(CLASS_URL).append("/lib_path"), params);
   } else if (method_ == "quit" || method_ == "q") {
-    // TODO: move 'quit' into osc space "/quit"
-    planet_->quit();
+    res = root_->call(QUIT_URL);
   } else {  
     method_.insert(0, current_directory_);
-    res = planet_->call(method_, params);
+    res = root_->call(method_, params);
   }
+  
   if (!silent_) *output_ << res << std::endl;
 }
 
 void TextCommand::clear() {
-  token_i_    = 0;
+  token_      = "";
   var_        = "";
   class_      = "";
   parameter_string_ = "";

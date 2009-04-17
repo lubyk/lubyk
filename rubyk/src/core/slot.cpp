@@ -43,8 +43,8 @@ bool Slot::operator>= (const Slot &slot) const {
 
 bool Slot::add_connection(Slot *slot) { 
   if (type_tag_id() == slot->type_tag_id() || 
-     (type_tag_id() == H("*") && class_type() == H("Inlet")) ||
-     (slot->type_tag_id() == H("*") && slot->class_type() == H("Inlet"))) {
+     (type_tag_id() == H("*") && kind_of(Inlet)) ||
+     (slot->type_tag_id() == H("*") && slot->kind_of(Inlet))) {
     // same type signature or inlet receiving any type
     // OrderedList makes sure the link is not created again if it already exists.
     connections_.push(slot); 
@@ -62,17 +62,17 @@ const Value Slot::change_link(unsigned char operation, const Value &val) {
   if (val.is_string()) {
     // update a link (create/destroy)
     
-    BaseObject * target = root_->object_at(val.str());
+    Object * target = root_->object_at(val.str());
     if (!target) return ErrorValue(NOT_FOUND_ERROR, val.str());
     
-    if (target->class_type() == H("Object")) {
+    if (!target->kind_of(Slot)) {
       target = target->first_child();
       if (!target) {
         return ErrorValue(NOT_FOUND_ERROR, val.str()).append(": slot not found");
       }
     }
     
-    if (class_type() == H("Outlet")) {
+    if (kind_of(Outlet)) {
       // other should be an Inlet
       target = (Slot*)TYPE_CAST(Inlet, target);
     } else {

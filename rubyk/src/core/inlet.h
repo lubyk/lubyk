@@ -20,6 +20,8 @@ struct InletPrototype
 
 class Inlet : public Slot {
 public:
+  TYPED("Object.Slot.Inlet")
+  
   /** Constructor used for testing. */
   Inlet(Node *node, inlet_method_t method, TypeTagID type_tag_id) : Slot(node, type_tag_id), method_(method) {
     register_in_node();
@@ -38,11 +40,6 @@ public:
   
   virtual ~Inlet() {
     unregister_in_node();
-  }
-  
-  /** Class signature. */
-  virtual uint class_type() {
-    return H("Inlet");
   }
   
   /** Inform the node about the existence of this outlet (direct callback). */

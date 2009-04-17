@@ -1,6 +1,6 @@
 #ifndef _NODE_H_
 #define _NODE_H_
-#include "object.h"
+#include "oscit.h"
 #include "event.h"
 #include "inlet.h"
 #include "outlet.h"
@@ -18,14 +18,11 @@ class Observer;
 class Node : public Object
 {
  public:
-  Node() : looped_(false) {}
+  TYPED("Object.Node")
+  
+  Node() : worker_(NULL), looped_(false) {}
   
   virtual ~Node();
-  
-  /** Class signature. */
-  virtual uint class_type() {
-    return H("Node");
-  }
   
   /** Add an inlet with the given callback (used by Class during instantiation). */
   void register_inlet(Inlet *inlet) {
@@ -125,7 +122,22 @@ class Node : public Object
       looped_ = false;
     }
   }
- 
+  
+  /** Cast general Mutex context to Worker. */
+  virtual void set_context(Mutex *context) {
+    // FIXME: what do we do if context is NULL ?? (no more parent)
+     // TODO: can we use a static_cast here ?
+    context_ = context;
+    if (context_ != NULL && context_->kind_of(Worker)) {
+      worker_  = (Worker*)context_;
+    } else {
+      fprintf(stderr, "Could not cast '%s' to Worker in %s ! Program might crash.", context_->class_path(), class_path());
+    }
+  }
+
+ protected:
+  Worker * worker_;  /**< Worker that will give life to object. */
+  
  private:
   
   bool is_ok_;                   /**< If something bad arrived to the node during initialization or edit, the node goes into

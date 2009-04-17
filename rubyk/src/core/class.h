@@ -14,14 +14,13 @@
 class Class : public Object
 {
 public:
+  TYPED("Object.Class")
+  
   Class(const char* pName, const char* info) : Object(pName) {
     set_info(info);
   }
   
   virtual ~Class() {}
-  
-  /** Class signature. */
-  virtual uint class_type() { return H("Class"); }
   
   /** Add a new class method to the class. */
   void add_class_method(const char *name, class_method_t method, TypeTagID type_tag_id, const char *info) {

@@ -15,7 +15,7 @@ public:
   std::ostream * output_;
 };
 
-extern "C" void init(Worker& planet)
+extern "C" void init(Planet *planet)
 {
   CLASS(Print, "Print any value received in bang inlet.", "no options")
   INLET(Print, bang, H("*"), "Received values are printed out to listening notifiers.")

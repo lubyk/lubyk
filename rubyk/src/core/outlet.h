@@ -12,7 +12,9 @@ struct OutletPrototype
 };
 
 class Outlet : public Slot {
-public:  
+public:
+  TYPED("Object.Slot.Outlet")
+  
   Outlet(Node *node, TypeTagID type) : Slot(node, type) {
     register_in_node();
   }
@@ -33,11 +35,6 @@ public:
   
   virtual ~Outlet() {
     unregister_in_node();
-  }
-  
-  /** Class signature. */
-  virtual uint class_type() {
-    return H("Outlet");
   }
   
   /** Inform the node about the existence of this outlet (direct callback). */

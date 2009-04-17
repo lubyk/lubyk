@@ -8,13 +8,15 @@
 class NewMethod;
 typedef const Value (*create_method_t)(Planet *root, NewMethod *new_method, const Value &val);
 
-class NewMethod : public BaseObject
+class NewMethod : public Object
 {
 public:
-  NewMethod(const std::string &name, create_method_t method, const char *info) : BaseObject(name, H("sH")), class_method_(method) {
+  TYPED("Object.NewMethod")
+  
+  NewMethod(const std::string &name, create_method_t method, const char *info) : Object(name, H("sH")), class_method_(method) {
     set_info(info);
   }
-  NewMethod(const char *name, create_method_t method, const char *info) : BaseObject(name, H("sH")), class_method_(method) {
+  NewMethod(const char *name, create_method_t method, const char *info) : Object(name, H("sH")), class_method_(method) {
     set_info(info);
   }
   virtual ~NewMethod() {}

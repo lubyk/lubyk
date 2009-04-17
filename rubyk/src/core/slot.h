@@ -1,7 +1,7 @@
 #ifndef _SLOT_H_
 #define _SLOT_H_
 #include "ordered_list.h"
-#include "object.h"
+#include "oscit.h"
 
 class Node;
 
@@ -13,6 +13,8 @@ class Node;
 class Slot : public Object
 {
 public:
+  TYPED("Object.Slot")
+  
   Slot(Node *node, TypeTagID type_tag_id) : Object(type_tag_id), node_(node) {
     create_methods();
   }
@@ -38,6 +40,29 @@ public:
   
   /** Remove a bi-directional connection to another slot. */
   void disconnect(Slot *slot);
+  
+  /** Create a link. 
+   *  example: /m/out/counter/link /n/in/tempo  --> create a link
+   */
+  const Value link(const Value &val) {
+    return change_link('c', val);
+  }
+  
+  /** Delete a link. */
+  const Value unlink(const Value &val) {
+    return change_link('d', val);
+  }
+  
+  /** List all links. */
+  const Value list(const Value &val) {
+    LinkedList<Slot*> * iterator = connections_.begin();
+    Value res;
+    while(iterator) {
+      res.push_back(iterator->obj->url());
+      iterator = iterator->next;
+    }
+    return res;
+  }
   
   /** Sort slots by rightmost node and rightmost position in the same node. */
   bool operator>=(const Slot &slot) const;
@@ -65,34 +90,9 @@ protected:
   /** Remove a one-way connection to another slot. */
   void remove_connection(Slot *slot);
   
-  /** Create 'link' and 'unlink' methods. */
+  /** Create 'list' method. */
   void create_methods() {
-    adopt(new TMethod<Slot, &Slot::link>(this, "link", H("s"), "Create a link to the provided url."));
-    adopt(new TMethod<Slot, &Slot::unlink>(this, "unlink", H("s"), "Remove links to the provided url."));
     adopt(new TMethod<Slot, &Slot::list>(this, "list", H("*"), "Return a list of linked urls."));
-  }
-  
-  /** Create a link. 
-   *  example: /m/out/counter/link /n/in/tempo  --> create a link
-   */
-  const Value link(const Value &val) {
-    return change_link('c', val);
-  }
-  
-  /** Delete a link. */
-  const Value unlink(const Value &val) {
-    return change_link('d', val);
-  }
-  
-  /** List all links. */
-  const Value list(const Value &val) {
-    LinkedList<Slot*> * iterator = connections_.begin();
-    Value res;
-    while(iterator) {
-      res.push_back(iterator->obj->url());
-      iterator = iterator->next;
-    }
-    return res;
   }
   
   /** If operation is 'c': create a new link, else unlink. */

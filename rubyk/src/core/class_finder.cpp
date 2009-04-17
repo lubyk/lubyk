@@ -9,8 +9,8 @@ const Value ClassFinder::trigger (const Value &val)
   return gNilValue; // TODO: 'lib' directory listing ?
 }
 
-BaseObject *ClassFinder::build_child(const std::string &class_name, Value *error) {
-  BaseObject * obj;
+Object *ClassFinder::build_child(const std::string &class_name, Value *error) {
+  Object * obj;
   
   // try to load dynamic lib
   std::string path = objects_path_;
@@ -35,7 +35,7 @@ BaseObject *ClassFinder::build_child(const std::string &class_name, Value *error
 bool ClassFinder::load(const char * file, const char * init_name)
 {
   void *image;
-  void (*function)(Worker&);
+  void (*function)(Planet*);
   const char *error = 0;
   
   // load shared extension image into memory
@@ -50,7 +50,7 @@ bool ClassFinder::load(const char * file, const char * init_name)
   }
   
   // get 'init' function into the image
-  function = (void(*)(Worker&))dlsym(image, init_name);
+  function = (void(*)(Planet*))dlsym(image, init_name);
   if (function == 0) {
     dlclose(image);
     printf("Symbol '%s' not found in '%s'.",init_name,file);
@@ -61,8 +61,15 @@ bool ClassFinder::load(const char * file, const char * init_name)
     return false;
   }
   
-  // call 'init', passing the registration object
-  (*function)(*worker_);
-
+  Planet *planet = TYPE_CAST(Planet, root_);
+  
+  // call 'init', passing planet
+  if (planet) {
+    (*function)(planet);
+  } else {
+    fprintf(stderr, "Could not cast root_ to Planet* !\n");
+    return false;
+  }
+  
   return true;
 }

@@ -10,13 +10,14 @@
 
 class Planet;
 
-class TextCommand : public BaseCommand
+class TextCommand : public Command
 {
 public:
-  TextCommand(std::istream &input, std::ostream &output) : current_directory_("/"), input_(&input), output_(&output)
+  TYPED("Mutex.Thread.Command.TextCommand")
+  TextCommand(std::istream &input, std::ostream &output) : Command("text"), current_directory_("/"), input_(&input), output_(&output)
   { initialize(); }
   
-  TextCommand() : current_directory_("/") {
+  TextCommand() : Command("text"), current_directory_("/") {
     input_  = &std::cin;
     output_ = &std::cout;
     initialize();
@@ -35,10 +36,6 @@ public:
   /** Ragel parser. */
   void parse(const std::string &string);
   
-  
-  /** The tree to work on. */
-  void set_planet(Planet *planet) { planet_ = planet; }
-  
   /** Used for testing. */
   void set_input(std::istream &input) { input_ = &input; }
   
@@ -50,6 +47,12 @@ public:
   
   /** Print command results back. */
   void set_verbose() { silent_ = false; }
+  
+  virtual Object* build_remote_object(const Url &url, Value* error) {
+    error->set(BAD_REQUEST_ERROR, "TextCommand cannot create references to remote objects.");
+    return NULL;
+  }
+  
   
 protected:
   /** Constructor, set default values. */
@@ -77,10 +80,16 @@ protected:
   void create_instance();
   
   /** Create a link. If the link cannot be created right now because all variables aren't set yet, the link will be kept in Planet's link buffer until all variables are found. */
-  void create_link();
+  void create_link() {
+    change_link('c');
+  }
   
   /** Remove a link. */
-  void remove_link();
+  void remove_link() {
+    change_link('d');
+  }
+  
+  void change_link(char op);
   
   /** Execute a method on an instance. */
   void execute_method();
@@ -99,14 +108,13 @@ protected:
   }
   
   /** Save a line in edit history. */
-  virtual void saveline(const char * pLine) {}
+  virtual void saveline(const char *line) {}
   
   /** Free a line. */
-  virtual void freeline(char * pLine) {}
+  virtual void freeline(char *line) {}
     
   /** Token for the parser. */
-  char token_[MAX_TOKEN_SIZE + 1];
-  unsigned int token_i_;
+  std::string  token_;
   unsigned int current_state_; /**< Current parser state between blocks. */
   
   /** Command building parts. */
@@ -115,8 +123,6 @@ protected:
   std::string     from_port_, to_port_;
   
   std::string     current_directory_;  /**< Current directory url (used to prefix relative urls). */
-  
-  Planet *        planet_; /**< planet to work on. */
   
   /** IO management. */
   std::istream *input_;
@@ -136,45 +142,40 @@ extern "C" {
 class CommandLine : public TextCommand
 {
 public:
-  CommandLine(std::istream& pInput, std::ostream& pOutput) : TextCommand(pInput,pOutput)
-  {
+  TYPED("Mutex.Thread.Command.TextCommand.CommandLine")
+  CommandLine(std::istream &input, std::ostream &output) : TextCommand(input, output) {
     read_history(history_path().c_str());
   }
   
-  CommandLine() 
-  {
+  CommandLine() {
     // read readline history
     read_history(history_path().c_str());
   }
   
-  virtual ~CommandLine()
-  {
+  virtual ~CommandLine() {
     // save readline history
     *output_ << "\nBye..." << std::endl;
     write_history(history_path().c_str());
   }
   
-  virtual bool getline(char ** pBuffer, size_t pSize)
-  {
-    *pBuffer = readline("> "); // FIXME: this would not work if input is not stdin...
-    return *pBuffer != NULL;
+  virtual bool getline(char **buffer, size_t size) {
+    *buffer = readline("> "); // FIXME: this would not work if input is not stdin...
+    return *buffer != NULL;
   }
   
-  virtual void saveline(const char * pLine)
+  virtual void saveline(const char *line)
   {
-    if (strlen(pLine) > 0) {
-      add_history(pLine);
+    if (strlen(line) > 0) {
+      add_history(line);
     }
   }
   
-  virtual void freeline(char * pLine)
-  {
-    free(pLine);
+  virtual void freeline(char *line) {
+    free(line);
   }
   
 private:
-  std::string history_path()
-  {
+  std::string history_path() {
     std::string home(getenv("HOME"));
     home.append("/.rubyk_history");
     return home;
@@ -186,14 +187,14 @@ private:
 class CommandLine : public TextCommand
 {
 public:
-  CommandLine(std::istream& pInput, std::ostream& pOutput) : TextCommand(pInput,pOutput) {}
+  TYPED("Mutex.Thread.Command.TextCommand.CommandLine")
+  CommandLine(std::istream &input, std::ostream &output) : TextCommand(input, output) {}
   CommandLine() {}
   
-  virtual bool getline(char ** pBuffer, size_t pSize)
-  {
+  virtual bool getline(char ** buffer, size_t size) {
     *output_ << "> ";
     if (input_->eof()) return false;
-    input_->getline(*pBuffer,pSize);
+    input_->getline(*buffer, size);
     return true;
   }
 };

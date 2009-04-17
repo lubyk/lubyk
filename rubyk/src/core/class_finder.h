@@ -1,6 +1,6 @@
 #ifndef _CLASS_FINDER_H_
 #define _CLASS_FINDER_H_
-#include "object.h"
+#include "oscit.h"
 #include "new_method.h"
 #include "class.h"
 
@@ -8,6 +8,8 @@
 class ClassFinder : public Object
 {
 public:
+  TYPED("Object.ClassFinder")
+  
   ClassFinder(const std::string &name, const char *objects_path) : Object(name), objects_path_(objects_path) {
     init();
   }
@@ -30,15 +32,10 @@ public:
   
   virtual ~ClassFinder() {}
   
-  /** Class signature. */
-  virtual uint class_type() {
-    return H("ClassFinder");
-  }
-  
   /** This trigger implements "/class". It returns the list of objects in objects_path_. */
   virtual const Value trigger (const Value &val);
   
-  virtual BaseObject *build_child(const std::string &class_name, Value *error);
+  virtual Object *build_child(const std::string &class_name, Value *error);
   
   const Value lib_path(const Value &val) { 
     if (val.is_string()) objects_path_ = val.str();

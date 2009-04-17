@@ -1,6 +1,6 @@
 #ifndef _EVENT_H_
 #define _EVENT_H_
-#include "object.h"
+#include "oscit.h"
 #include <ostream>
 
 class Node;

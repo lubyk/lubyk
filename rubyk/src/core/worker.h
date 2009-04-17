@@ -55,6 +55,11 @@ public:
     if (should_run_ || e->forced_) events_queue_.push(e); // do not accept new events while we are trying to quit.
   }
   
+  template<class T, void(T::*Tmethod)(const Value&)>
+  void register_event(time_t when, T *receiver, const Value &parameter) {
+    register_event(new TEvent<T, Tmethod>(when, receiver, parameter));
+  }
+  
   /** Register a node as needing constant bangs. */
   void register_looped_node(Node *node);
   

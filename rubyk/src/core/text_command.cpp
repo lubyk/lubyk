@@ -317,18 +317,14 @@ static const int text_command_en_main = 1;
 void TextCommand::initialize() {
   int cs;
   
-  planet_     = NULL;
-  token_i_    = 0;
-  silent_     = false;
-  
+  silent_     = false;    
   clear();
   
-  
-#line 328 "src/core/text_command.cpp"
+#line 324 "src/core/text_command.cpp"
 	{
 	cs = text_command_start;
 	}
-#line 27 "src/core/text_command.rl"
+#line 23 "src/core/text_command.rl"
   current_state_ = cs;
 }
 
@@ -357,7 +353,7 @@ void TextCommand::parse(const std::string &string) {
   DEBUG(printf("parse:\"%s\"\n",string.c_str()));
   
   
-#line 361 "src/core/text_command.cpp"
+#line 357 "src/core/text_command.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -432,91 +428,85 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 55 "src/core/text_command.rl"
+#line 51 "src/core/text_command.rl"
 	{
-      if (token_i_ >= MAX_TOKEN_SIZE) {
-        std::cerr << "Buffer overflow !" << std::endl;
-        // stop parsing
-        return;
-      }
       DEBUG(printf("_%c_",(*p)));
-      token_[token_i_] = (*p); /* append */
-      token_i_++;     
+      token_ += (*p); /* append */
     }
 	break;
 	case 1:
-#line 66 "src/core/text_command.rl"
+#line 56 "src/core/text_command.rl"
 	{
       // FIXME: this is a temporary hack until we sub parse with Value...
       parameter_string_ += (*p);
     }
 	break;
 	case 2:
-#line 71 "src/core/text_command.rl"
+#line 61 "src/core/text_command.rl"
 	{ set_from_token(var_);}
 	break;
 	case 3:
-#line 73 "src/core/text_command.rl"
+#line 63 "src/core/text_command.rl"
 	{ set_from_token(method_);}
 	break;
 	case 4:
-#line 75 "src/core/text_command.rl"
+#line 65 "src/core/text_command.rl"
 	{ set_from_token(class_);}
 	break;
 	case 5:
-#line 77 "src/core/text_command.rl"
+#line 67 "src/core/text_command.rl"
 	{ set_from_token(value_);}
 	break;
 	case 6:
-#line 79 "src/core/text_command.rl"
+#line 69 "src/core/text_command.rl"
 	{ from_node_     = var_; }
 	break;
 	case 7:
-#line 81 "src/core/text_command.rl"
+#line 71 "src/core/text_command.rl"
 	{ from_port_ = var_; }
 	break;
 	case 8:
-#line 83 "src/core/text_command.rl"
+#line 73 "src/core/text_command.rl"
 	{ to_port_   = var_; }
 	break;
 	case 9:
-#line 89 "src/core/text_command.rl"
+#line 79 "src/core/text_command.rl"
 	{
       to_node_   = var_;
       create_link();
     }
 	break;
 	case 10:
-#line 94 "src/core/text_command.rl"
+#line 84 "src/core/text_command.rl"
 	{
       to_node_   = var_;
       remove_link();
     }
 	break;
 	case 11:
-#line 99 "src/core/text_command.rl"
+#line 89 "src/core/text_command.rl"
 	{ create_instance(); }
 	break;
 	case 12:
-#line 101 "src/core/text_command.rl"
+#line 91 "src/core/text_command.rl"
 	{ execute_method(); }
 	break;
 	case 13:
-#line 103 "src/core/text_command.rl"
+#line 93 "src/core/text_command.rl"
 	{ execute_class_method(); }
 	break;
 	case 14:
-#line 105 "src/core/text_command.rl"
+#line 95 "src/core/text_command.rl"
 	{ execute_command(); }
 	break;
 	case 15:
-#line 109 "src/core/text_command.rl"
+#line 99 "src/core/text_command.rl"
 	{
       clear();
     }
 	break;
 	case 16:
-#line 113 "src/core/text_command.rl"
+#line 103 "src/core/text_command.rl"
 	{
       p--; // move back one char
       char error_buffer[10];
@@ -527,10 +517,10 @@ _match:
     }
 	break;
 	case 17:
-#line 122 "src/core/text_command.rl"
+#line 112 "src/core/text_command.rl"
 	{ {cs = 1; goto _again;} }
 	break;
-#line 534 "src/core/text_command.cpp"
+#line 524 "src/core/text_command.cpp"
 		}
 	}
 
@@ -547,7 +537,7 @@ _again:
 	while ( __nacts-- > 0 ) {
 		switch ( *__acts++ ) {
 	case 16:
-#line 113 "src/core/text_command.rl"
+#line 103 "src/core/text_command.rl"
 	{
       p--; // move back one char
       char error_buffer[10];
@@ -557,58 +547,71 @@ _again:
       {cs = 110; goto _again;} // eat the rest of the line and continue parsing
     }
 	break;
-#line 561 "src/core/text_command.cpp"
+#line 551 "src/core/text_command.cpp"
 		}
 	}
 	}
 
 	_out: {}
 	}
-#line 174 "src/core/text_command.rl"
+#line 164 "src/core/text_command.rl"
 
 //  printf("{%s}\n",p);
   current_state_ = cs;
 }
 
-void TextCommand::set_from_token(std::string& string) {
-  token_[token_i_] = '\0';
-  
+void TextCommand::set_from_token(std::string &string) {
   DEBUG(if (&string == &value_) std::cout << "[val " << token_ << "]" << std::endl);
   DEBUG(if (&string == &var_)   std::cout << "[var " << token_ << "]" << std::endl);
   DEBUG(if (&string == &class_) std::cout << "[cla " << token_ << "]" << std::endl);
   
   string = token_;
-  token_i_ = 0;
+  token_ = "";
 }
 
 void TextCommand::create_instance() {
   Value params(Json(parameter_string_.c_str()));
+  ListValue list;
   names_to_urls();
   
   DEBUG(std::cout << "NEW "<< var_ << " = " << class_ << "(" << params << ")");
-  Value res = planet_->new_object(var_, class_, params);
+  list.push_back(var_);
+  list.push_back(params);
+  
+  Value res = root_->call(std::string(CLASS_URL).append("/").append(class_).append("/new"), list);
   
   if (res.is_string() && !silent_) {
-    res = planet_->call("/.inspect", res);
+    res = root_->call("/.inspect", res);
     *output_ << res << std::endl;
   } else if (!res.is_string()) {
     *output_ << res << std::endl;
   } 
 }
 
-
-void TextCommand::create_link() {
+void TextCommand::change_link(char op) {
   names_to_urls();
   
-  DEBUG(std::cout << "LINK " << from_node_ << "." << from_port_ << "=>" << to_port_ << "." << to_node_ << std::endl);
-  planet_->create_link(from_node_, from_port_, to_port_, to_node_);
-}
-
-void TextCommand::remove_link() {
-  names_to_urls();
+  DEBUG(std::cout << op << " LINK " << from_node_ << "." << from_port_ << "=>" << to_port_ << "." << to_node_ << std::endl);
+  ListValue list;
+  Value res;
   
-  DEBUG(std::cout << "UNLINK " << from_node_ << "." << from_port_ << "=>" << to_port_ << "." << to_node_ << std::endl);
-  planet_->remove_link(from_node_, from_port_, to_port_, to_node_);
+  if (from_port_ == "") {
+    list.push_back(std::string(from_node_).append("/out"));
+  } else {
+    list.push_back(std::string(from_node_).append("/out/").append(from_port_));
+  }
+  if (to_port_ == "") {
+    list.push_back(std::string(to_node_).append("/in"));
+  } else {
+    list.push_back(std::string(to_node_).append("/in/").append(to_port_));
+  }
+  if (op == 'c') {
+    res = root_->call(LINK_URL, list);
+  } else {
+    res = root_->call(UNLINK_URL, list);
+  }
+  
+  if (!silent_) *output_ << res << std::endl;
 }
 
 void TextCommand::execute_method() {
@@ -621,7 +624,7 @@ void TextCommand::execute_method() {
   
   if (method_ == "set") {
     // TODO: should 'set' live in normal tree space ?
-    BaseObject *target = planet_->object_at(var_);
+    Object *target = root_->object_at(var_);
     if (target) {
       target->lock();
         res = target->set(params);
@@ -632,7 +635,7 @@ void TextCommand::execute_method() {
   } else {
     if (method_ == "b") method_ = "bang";
     var_.append("/").append(method_);
-    res = planet_->call(var_, params);
+    res = root_->call(var_, params);
   }
   
   if (!silent_) *output_ << res << std::endl;
@@ -642,8 +645,8 @@ void TextCommand::execute_class_method() {
   Value res;
   Value params = Value(Json(parameter_string_));
   
-  DEBUG(std::cout << "CLASS_METHOD " << std::string(CLASS_ROOT).append("/").append(class_).append("/").append(method_) << "(" << params << ")" << std::endl);
-  res = planet_->call(std::string(CLASS_ROOT).append("/").append(class_).append("/").append(method_), params);
+  DEBUG(std::cout << "CLASS_METHOD " << std::string(CLASS_URL).append("/").append(class_).append("/").append(method_) << "(" << params << ")" << std::endl);
+  res = root_->call(std::string(CLASS_URL).append("/").append(class_).append("/").append(method_), params);
   
   if (!silent_) *output_ << res << std::endl;
 }
@@ -654,19 +657,19 @@ void TextCommand::execute_command() {
 
   DEBUG(std::cout << "CMD " << method_ << "(" << params << ")" << std::endl);
   if (method_ == "set_lib_path") {
-    res = planet_->call(std::string(CLASS_ROOT).append("/lib_path"), params);
+    res = root_->call(std::string(CLASS_URL).append("/lib_path"), params);
   } else if (method_ == "quit" || method_ == "q") {
-    // TODO: move 'quit' into osc space "/quit"
-    planet_->quit();
+    res = root_->call(QUIT_URL);
   } else {  
     method_.insert(0, current_directory_);
-    res = planet_->call(method_, params);
+    res = root_->call(method_, params);
   }
+  
   if (!silent_) *output_ << res << std::endl;
 }
 
 void TextCommand::clear() {
-  token_i_    = 0;
+  token_      = "";
   var_        = "";
   class_      = "";
   parameter_string_ = "";

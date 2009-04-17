@@ -73,7 +73,7 @@ protected:
 //   }
 //   
 //   void setUp() {
-//     planet_.BaseObject::clear();
+//     planet_.Object::clear();
 //     planet_.classes()->set_lib_path("lib");
 //     output_.str(std::string("")); // clear output
 //   }
@@ -89,7 +89,7 @@ protected:
 //   void setup_with_print(const char *input) {
 //     Node * print;
 //     cmd_->parse("p=Print()\nn=>p\n");
-//     // use LogBaseObject ...
+//     // use LogObject ...
 //     // print = TYPE_CAST(Node, planet_.object_at("/p"));
 //     // if (print) cmd_->observe(print);
 //     cmd_->parse(input);
