@@ -8,6 +8,10 @@ namespace oscit {
 
 class OscRemoteObject : public Object
 {
+ public: 
+  /** Class signature. */
+  CLASS_PATH("Object.OscRemoteObject")
+  
   OscRemoteObject(OscCommand *osc_command, const IpEndpointName &endpoint, const std::string &remote_path) : 
       osc_command_(osc_command), remote_endpoint_(endpoint), remote_path_(remote_path), connected_(false) {
     connect();

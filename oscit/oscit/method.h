@@ -13,7 +13,10 @@ typedef const Value (*class_method_t )(Root *root, const Value &val);
 /** Object instance to trigger a class method. */
 class ClassMethod : public Object
 {
- public:
+ public: 
+  /** Class signature. */
+  CLASS_PATH("Object.ClassMethod")
+  
   /** Create a new object that will call a class method when "triggered". */
   ClassMethod(const std::string &name, class_method_t method, TypeTagID type_tag_id, const char *info = DEFAULT_INFO) :
       Object(name, type_tag_id), class_method_(method) {
@@ -50,7 +53,9 @@ struct MethodPrototype
 /** Object instance to trigger a member method (stores a reference to the receiver). */
 class Method : public Object
 {
- public:  
+ public:
+  CLASS_PATH("Object.Method")
+  
   /** Create a new object that call a member method when "triggered". */
   Method(void *receiver, const char *name, member_method_t method, TypeTagID type_tag_id, const char *info = DEFAULT_INFO) :
       Object(name, type_tag_id), receiver_(receiver), member_method_(method) {
@@ -91,6 +96,8 @@ template<class T, const Value(T::*Tmethod)(const Value&)>
 class TMethod : public Method
 {
  public:
+  CLASS_PATH("Object.TMethod.Method")
+  
   /** Create a new object that call a member method when "triggered". */
   TMethod(void *receiver, const char *name, TypeTagID type_tag_id, const char *info = DEFAULT_INFO) :
       Method(receiver, name, &cast_method<T, Tmethod>, type_tag_id, info) {}

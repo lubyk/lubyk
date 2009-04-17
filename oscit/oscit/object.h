@@ -9,13 +9,20 @@
 namespace oscit {
 #define OSC_NEXT_NAME_BUFFER_SIZE 20
 #define DEFAULT_INFO "no information defined for this object"
-
+#define kind_of(klass) is_a(klass::_path())
+#define CLASS_PATH(str) \
+  virtual const char *class_path() { return str; } \
+  static  const char *_path() { return str; } \
+  
 class Root;
 class Alias;
 
 class Object
 {
- public:
+ public: 
+  /** Class signature. */
+  CLASS_PATH("Object")
+  
   Object() : root_(NULL), parent_(NULL), children_(20), context_(NULL), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {
    name_ = "";
    url_  = name_;
@@ -86,15 +93,28 @@ class Object
     object->moved();
     return (T*)object;
   }
-  
-  /** Class type id. */
-  virtual uint class_type() { return H("Object"); }
 
   template<class T>
-  static inline T * type_cast(uint type, Object * obj) {
-    return (obj && obj->class_type() == type) ? (T*)obj : NULL;
+  static inline T * type_cast(Object * obj) {
+    if (!obj) return NULL;
+    if (obj->is_a(T::_path())) {
+      return (T*)obj;
+    } else {
+      return NULL;
+    }
   }
-
+  
+  inline bool is_a(const char *path) {
+    const char * c  = path;
+    const char * cl = class_path();
+    while (*c) {
+      if (*c != *cl) return false;
+      ++c;
+      ++cl;
+    }
+    return (*cl == '\0') || (*cl == '.');
+  }
+  
   /** Clear all children (delete). */
   void clear();
   
@@ -196,7 +216,7 @@ class Object
     while(it != end) {
       Object * obj;
       if (children_.get(*it, &obj)) {
-        if (obj->class_type() != H("Alias")) {
+        if (!obj->is_a("Object.Alias")) {
             // do not list alias (Alias are used as internal helpers and do not need to be advertised)
           if (!start) res.append(",");
           res.append(obj->name_);
@@ -358,6 +378,6 @@ private:
 } // namespace osc
 
 /** Return a pointer to the object if the type match. */
-#define TYPE_CAST(klass, op) oscit::Object::type_cast<klass>(H(#klass), op);
+#define TYPE_CAST(klass, op) oscit::Object::type_cast<klass>(op);
 
 #endif // _OSCIT_BASE_OBJECT_H_

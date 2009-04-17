@@ -19,7 +19,10 @@ for every object.
 */
 class Root : public Object
 {
- public:
+ public: 
+  /** Class signature. */
+  CLASS_PATH("Object.Root")
+  
   Root() : objects_(OBJECT_HASH_SIZE) {
     init();
   }

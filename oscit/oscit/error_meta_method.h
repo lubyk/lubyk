@@ -6,7 +6,10 @@ namespace oscit {
 
 class ErrorMetaMethod : public Object
 {
-public:
+public:  
+  /** Class signature. */
+  CLASS_PATH("Object.ErrorMetaMethod")
+  
   ErrorMetaMethod(const char * name) : Object(name, ANY_TYPE_TAG_ID) {}
 
   virtual const Value trigger (const Value &val) {

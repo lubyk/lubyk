@@ -6,7 +6,10 @@ namespace oscit {
 
 class TypeMetaMethod : public Object
 {
-public:
+public:  
+  /** Class signature. */
+  CLASS_PATH("Object.TypeMetaMethod")
+  
   TypeMetaMethod(const char * name) : Object(name, H("s")) {}
 
   virtual const Value trigger (const Value &url) {

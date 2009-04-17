@@ -3,7 +3,10 @@
 /** Methods and ClassMethods can also point on objects that are not descendants of the Object. */
 class Person : public Object
 {
- public:
+ public: 
+  /** Class signature. */
+  CLASS_PATH("Object.Person")
+  
   Person(const char * name) : Object(name) {}
   
   /** A simple class method. */

@@ -7,7 +7,10 @@ namespace oscit {
 /** This object triggers another object's trigger when called. It's used in Group to expose functionalities. */
 class Alias : public Object
 {
-public:
+public:  
+  /** Class signature. */
+  CLASS_PATH("Object.Alias")
+  
   Alias() : original_(NULL) {}
   
   Alias(const char *name, Object *object) : Object(name), original_(NULL) {
@@ -21,11 +24,6 @@ public:
   virtual ~Alias() {
     // We unregister to tell the object that it should not delete this alias on destruction.
     if (original_) original_->unregister_alias(this);
-  }
-  
-  /** Class signature. */
-  virtual uint class_type() {
-    return H("Alias");
   }
   
   virtual const Value trigger(const Value &val) {

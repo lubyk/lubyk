@@ -222,7 +222,7 @@ public:
   
   void test_menu_type( void ) {
     Root root;
-    Dummy2Object * foo = root.adopt(new Dummy2Object("foo", "yuv"));
+    DummyObject2 * foo = root.adopt(new DummyObject2("foo", "yuv"));
     Value res;
     
     // set wrong current to make sure current value is retrieved

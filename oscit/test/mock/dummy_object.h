@@ -4,19 +4,19 @@
 
 #define DUMMY_OBJECT_INFO "The dummy object simply stores a single real number. Call with a single 'f' argument."
 
-class DummyObject : public oscit::Object
+class DummyObject : public Object
 {
-public:
-  DummyObject(const char * name, Real value) : oscit::Object(name, H("f")), value_(value) {
+public:  
+  /** Class signature. */
+  CLASS_PATH("Object.DummyObject")
+  
+  DummyObject(const char * name, Real value) : Object(name, H("f")), value_(value) {
     set_info(DUMMY_OBJECT_INFO);
     // current, min, max, unit
     set_type(value_.r, 0, 127, "lux"); 
   }
   
   virtual ~DummyObject() {}
-  
-  /** Class signature. */
-  virtual uint class_type() { return H("DummyObject"); }
   
   virtual const std::string inspect()
   {
@@ -53,16 +53,18 @@ private:
   RealValue value_;
 };
 
-class Dummy2Object : public oscit::Object
+class DummyObject2 : public Object
 {
-public:
-  Dummy2Object(const char * name, const char *value) : oscit::Object(name, H("s")), value_(value) {
+public:  
+  CLASS_PATH("Object.DummyObject2")
+  
+  DummyObject2(const char * name, const char *value) : Object(name, H("s")), value_(value) {
     set_info(DUMMY_OBJECT_INFO);
     // current, min, max, unit
     set_type(value, "rgb,rgba,yuv", "color mode"); 
   }
   
-  virtual ~Dummy2Object() {}
+  virtual ~DummyObject2() {}
   
   virtual const std::string inspect()
   {
@@ -80,5 +82,13 @@ public:
   
 private:
   StringValue value_;
+};
+
+class SubDummyObject : public DummyObject
+{
+public:
+  CLASS_PATH("Object.DummyObject.SubDummyObject")
+  
+  SubDummyObject(const char *name, Real value) : DummyObject(name, value) {}
 };
 #endif // _DUMMY_OBJECT_H_
