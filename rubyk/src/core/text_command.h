@@ -53,7 +53,9 @@ public:
     return NULL;
   }
   
-  
+  void print_result(const Value &res) {
+    if (!silent_ && !res.is_nil()) *output_ << res << std::endl;
+  }
 protected:
   /** Constructor, set default values. */
   void initialize();

@@ -3,7 +3,6 @@
 class Number : public Node
 {
 public:
-  
 //  /** value accessor. */
 //  ATTR_ACCESSOR(value_, value)
 
@@ -22,13 +21,13 @@ public:
 //    if (val) value_.r = val->r;
 //  }
 //  
-//  // #inspect
-//  virtual const Value inspect(const Value &val) 
-//  { 
-//    std::ostringstream oss;
-//    oss << "<Number:" << url() << " " << value_.r << ">";
-//    return String(oss.str());
-//  }
+  // #inspect
+  virtual const Value trigger(const Value &val) 
+  { 
+    std::ostringstream oss;
+    oss << "<Number:" << url() << " " << value_.r << ">";
+    return Value(oss.str());
+  }
   
 private:
   Value value_;
@@ -36,7 +35,7 @@ private:
 
 extern "C" void init(Planet &planet) {
   CLASS(Number, "Store a number which can be sent again through Bang!.", "value: [initial value]");
-  INLET(Number, bang, FieldInput("-"), "Set and send current value.");
+  INLET(Number, bang, FieldInput("any real"), "Set and send current value.");
   // OUTLET(Number, value, FieldInput("-"), "Current value.")
   // ACCESSOR(NumberObj, value, "Set/get current value.")
 }

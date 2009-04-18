@@ -27,6 +27,16 @@ struct DummyWorker
     }
   }
   
+  void read(Thread *runner) {
+    int i = 0;
+    while (runner->should_run()) {
+      runner->lock();
+      std::cin >> i;
+      value_ += i;
+      runner->unlock();
+    }
+  }
+  
   int  value_;
 };
 
@@ -56,7 +66,7 @@ class ThreadTest : public TestHelper
 public:
   void test_create_delete( void ) {
     DummyWorker counter;
-    Thread * runner = new Thread;
+    Thread *runner = new Thread;
     runner->start<DummyWorker, &DummyWorker::count>(&counter, NULL);
     // let it run 2 times: +1 ... 10ms ... +1 ... 5ms .. kill [end]
     microsleep(15);
@@ -89,7 +99,7 @@ public:
   
   void test_create_stop( void ) {
     DummyWorker counter;
-    Thread * runner = new Thread;
+    Thread *runner = new Thread;
     runner->start<DummyWorker, &DummyWorker::count>(&counter, NULL);
     // let it run 2 times: +1 ... 10ms ... +1 ... 5ms .. kill .. 5ms [end]
     microsleep(15);
@@ -105,7 +115,7 @@ public:
   // This version sends a SIGINT to stop the thread
   void test_create_kill( void ) {
     DummyWorker counter;
-    Thread * runner = new Thread;
+    Thread *runner = new Thread;
     runner->start<DummyWorker, &DummyWorker::count>(&counter, NULL);
     // let it run 1 times: +1 ... 5ms kill [end]
     microsleep(5);
@@ -119,7 +129,7 @@ public:
   
   void test_create_restart( void ) {
     DummyWorker counter;
-    Thread * runner = new Thread;
+    Thread *runner = new Thread;
     runner->start<DummyWorker, &DummyWorker::count>(&counter, NULL);
     // let it run 2 times: +1 ... 10ms ... +1 ... 5ms .. kill .. 5ms [end]
     microsleep(15);
@@ -138,13 +148,25 @@ public:
   
   void test_create_high_priority( void ) {
     DummyWorker counter;
-    Thread * runner = new Thread;
+    Thread *runner = new Thread;
     runner->start<DummyWorker, &DummyWorker::count_high>(&counter, NULL);
     // let it run 2 times: +1 ... 10ms ... +1 ... 5ms .. kill .. 5ms [end]
     microsleep(15);
     delete runner;
     // should join here
     assert_equal(2, counter.value_);
+  }
+  
+  void test_kill_readline( void ) {
+    DummyWorker counter;
+    Thread *runner = new Thread;
+    runner->start<DummyWorker, &DummyWorker::read>(&counter, NULL);
+    // reads input...
+    microsleep(10);
+    runner->kill();
+    // should interrupt
+    assert_equal(0, counter.value_);
+    delete runner;
   }
   
   void test_join( void ) {

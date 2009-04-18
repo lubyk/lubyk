@@ -37,7 +37,7 @@ public:
   }
   
   /** Prototype based constructor. */
-  Inlet(Node *node, const InletPrototype& prototype) : Slot(node, prototype.name_, prototype.type_tag_id()), method_(prototype.method_) {
+  Inlet(Node *node, const InletPrototype &prototype) : Slot(node, prototype.name_, prototype.type_tag_id()), method_(prototype.method_) {
     set_info(prototype.info_);
     set_type(prototype.type_);
     register_in_node();

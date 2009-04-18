@@ -1,12 +1,16 @@
 // g++ -lreadline term_readline.cpp -o test
-
 #include <stdio.h>
+#include <setjmp.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 
 #include <pthread.h>
 #include <fstream>
 #include <sys/timeb.h> // ftime
+
+
+
+static jmp_buf buf;
 
 static void microsleep(float microseconds) {
   struct timespec sleeper;
@@ -19,10 +23,17 @@ static void microsleep(float microseconds) {
 
 pthread_t gReadingThread;
 bool      gRunning;
+
+extern int rl_catch_signals;
+
 void terminate(int sig) {
   printf("[Terminate]");
   fflush(stdout);
   gRunning = false;
+  
+  rl_free_line_state();      // if it was working, longjmp would not be needed ! It seems to do nothing...
+  rl_cleanup_after_signal(); // not doing anyting...
+  longjmp(buf,1);
 }
 
 void *start_thread1(void *data) {
@@ -30,11 +41,18 @@ void *start_thread1(void *data) {
   fflush(stdout);
   char * line;
   signal(TEST_SIGNAL, terminate);
-  
-  while (gRunning && (line=readline(">")) ) {
-    printf("Read \"%s\"", line);
-    free(line);
+  rl_catch_signals = 0;
+  if ( !setjmp(buf) ) {
+    // normal loop
+    
+    while (gRunning && (line=readline(">")) ) {
+      printf("Read \"%s\"", line);
+      free(line);
+    }
+  } else {
+    // jump back after interrupt
   }
+  
   return NULL;
 }
 
@@ -54,20 +72,14 @@ void *start_thread2(void *data) {
 
 int main() {
   gRunning = true;
-  
-  char *text = readline("Please select test ('1' for readline, '2' for loop) > ");
-  if (text) {
-    int test = atoi(text);
-    if (test == 1) {
-      printf("Testing readline.\n");
-      // start_thread won't quit...
-      pthread_create( &gReadingThread, NULL, &start_thread1, NULL);
-    } else {
-      printf("Testing loop.\n");
-      // start_thread2 works fine
-      pthread_create( &gReadingThread, NULL, &start_thread2, NULL);
-    }
-    free(text);
+  rl_catch_signals = 0;
+  if (true) {
+    printf("Testing readline.\n");
+    // start_thread won't quit...
+    pthread_create( &gReadingThread, NULL, &start_thread1, NULL);
+  } else {
+    printf("Testing loop.\n");
+    pthread_create( &gReadingThread, NULL, &start_thread2, NULL);
   }
   
   printf("[New created]");

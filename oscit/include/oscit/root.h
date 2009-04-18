@@ -41,6 +41,7 @@ class Root : public Object
       Command *command = commands_.front();
       command->kill();
       command->set_root(NULL); // avoid call to unregister_command in ~Command
+      
       delete command;
       commands_.pop_front();
     }
@@ -136,7 +137,8 @@ class Root : public Object
     if (val.is_nil() || val.type_tag_id() == target->type_tag_id() || target->accept_any_type()) {
       return target->safe_trigger(val);
     } else {
-      return ErrorValue(BAD_REQUEST_ERROR, std::string("'").append(target->url()).append("' (").append(target->info()).append(")."));
+      Value type = call("/.type", Value(target->url()));
+      return ErrorValue(BAD_REQUEST_ERROR, std::string("'").append(target->url()).append("' (").append(target->info()).append(": ").append(type.to_json()).append(")."));
     }
   }
 

@@ -61,7 +61,9 @@ class Thread : public Mutex
   
   /** Kill thread (do not make this a virtual). */
   void kill() {
-    if (thread_id_) {
+    if (thread_id_ == pthread_self()) {
+      should_run_ = false;
+    } else {
       pthread_kill(thread_id_, SIGTERM);
       pthread_join(thread_id_, NULL);
       thread_id_ = NULL;
@@ -71,7 +73,9 @@ class Thread : public Mutex
   /** Wait for thread to finish. */
   void join() {
     if (thread_id_) {
+      // TODO: check we do not join on self ?
       pthread_join(thread_id_, NULL);
+      thread_id_ = NULL;
     }
   }
   /** Tell thread to stop after current loop. */
