@@ -9,6 +9,8 @@
 
 namespace oscit {
 
+#define DEBUG_OSC_COMMAND
+
 static osc::OutboundPacketStream &operator<<(osc::OutboundPacketStream &out_stream, const Value &val);
 
 OscCommand::OscCommand(uint port) : Command("osc") { 
@@ -82,11 +84,12 @@ void OscCommand::ProcessMessage(const osc::ReceivedMessage &message, const IpEnd
   } else {
     Value val(value_from_osc(message));
     
-    // debugging
-    // char host_ip[ IpEndpointName::ADDRESS_STRING_LENGTH ];
-    // // get host ip as string
-    // remote_endpoint.AddressAsString(host_ip);
-    // std::cout << url << " " << val << " (" << host_ip << ":" << remote_endpoint.port << ")" << std::endl;
+#ifdef DEBUG_OSC_COMMAND
+    char host_ip[ IpEndpointName::ADDRESS_STRING_LENGTH ];
+    // get host ip as string
+    remote_endpoint.AddressAsString(host_ip);
+    std::cout << url << " " << val << " (" << host_ip << ":" << remote_endpoint.port << ")" << std::endl;
+#endif
     res = root_->call(url, val);
   }
   
@@ -109,10 +112,14 @@ Value OscCommand::value_from_osc(const osc::ReceivedMessage &message) {
       case osc::FALSE_TYPE_TAG:
         res.push_back(0.0);
         break;
-      // case osc::NIL_TYPE_TAG:
-      //   ??
+      case osc::NIL_TYPE_TAG:
+        res.push_back(gNilValue);
+        break;
       // case osc::INFINITUM_TYPE_TAG:
       //   ??
+      case osc::ANY_TYPE_TAG:
+        res.push_back(Value('*'));
+        break;
       // zero length
 
       case osc::INT32_TYPE_TAG:
@@ -199,6 +206,8 @@ osc::OutboundPacketStream &operator<<(osc::OutboundPacketStream &out_stream, con
         out_stream << val[i];
       }
       break;
+    case ANY_VALUE:
+      out_stream << osc::Any;
     default:
       ;// ????
   }

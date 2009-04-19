@@ -9,7 +9,15 @@
 
 namespace oscit {
 #define OSC_NEXT_NAME_BUFFER_SIZE 20
-#define DEFAULT_INFO "no information defined for this object"
+
+#define NoInput(info) ListValue("N").push_back(info)
+#define FieldInput(units,info) Value(0.0).push_back(units).push_back(info)
+#define TextInput(units,info) Value("").push_back(units).push_back(info)
+#define RangeInput(min,max,units,info) Value(0.0).push_back(min).push_back(max).push_back(units).push_back(info)
+#define SelectInput(values,units,info) Value("").push_back(values).push_back(units).push_back(info)
+#define AnyInput(info) ListValue("*").push_back(info)
+
+#define DEFAULT_TYPE NoInput("no information defined for this object")
   
 class Root;
 class Alias;
@@ -20,45 +28,54 @@ class Object : public Typed
   /** Class signature. */
   TYPED("Object")
   
-  Object() : root_(NULL), parent_(NULL), children_(20), context_(NULL), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {
+  Object() : root_(NULL), parent_(NULL), children_(20), context_(NULL), type_(DEFAULT_TYPE), type_id_(NO_TYPE_TAG_ID) {
    name_ = "";
    url_  = name_;
   }
   
-  Object(const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), context_(NULL), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {}
+  Object(const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), context_(NULL), type_(DEFAULT_TYPE), type_id_(NO_TYPE_TAG_ID) {}
   
-  Object(const std::string &name) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), context_(NULL), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {}
+  Object(const std::string &name) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), context_(NULL), type_(DEFAULT_TYPE), type_id_(NO_TYPE_TAG_ID) {}
   
-  Object(TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), context_(NULL), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
+  Object(const Value &type) : root_(NULL), parent_(NULL), children_(20), context_(NULL), type_(type) {
+    type_changed();
     name_ = "";
     url_  = name_;
   }
 
-  Object(const char *name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), context_(NULL), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {}
-
-  Object(const std::string &name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), context_(NULL), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {}
-
-  Object(Object *parent, const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {
+  Object(const char *name, const Value &type) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), context_(NULL), type_(type) {
+    type_changed();
+  }
+  
+  Object(const std::string &name, const Value &type) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), context_(NULL), type_(type) {
+    type_changed();
+  }
+  
+  Object(Object *parent, const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_(DEFAULT_TYPE), type_id_(NO_TYPE_TAG_ID) {
     parent->adopt(this);
   }
 
-  Object(Object *parent, const char *name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
+  Object(Object *parent, const char *name, const Value &type) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_(type) {
+    type_changed();
     parent->adopt(this);
   }
 
-  Object(Object *parent, const std::string &name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
+  Object(Object *parent, const std::string &name, const Value &type) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_(type) {
+    type_changed();
     parent->adopt(this);
   }
 
-  Object(Object &parent, const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_tag_id_(NO_TYPE_TAG_ID), info_(DEFAULT_INFO) {
+  Object(Object &parent, const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_(DEFAULT_TYPE), type_id_(NO_TYPE_TAG_ID) {
     parent.adopt(this);
   }
 
-  Object(Object &parent, const char *name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
+  Object(Object &parent, const char *name, const Value &type) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_(type) {
+    type_changed();
     parent.adopt(this);
   }
 
-  Object(Object &parent, const std::string &name, TypeTagID type_tag_id) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_tag_id_(type_tag_id), info_(DEFAULT_INFO) {
+  Object(Object &parent, const std::string &name, const Value &type) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_(type) {
+    type_changed();
     parent.adopt(this);
   }
 
@@ -222,18 +239,8 @@ class Object : public Typed
   /** Human readable information method.
    *  Called as a response to "/.info '/this/url'". 
    */
-  const std::string &info() const {
-    return info_;
-  }
-  
-  /** Set info string. */
-  void set_info (const char* pInfo) {
-    info_ = pInfo;
-  }
-
-  /** Set info string. */
-  void set_info (const std::string &pInfo) {
-    info_ = pInfo;
+  const Value &info() const {
+    return type_.last();
   }
   
   /** Type information on node (used to automatically generate the correct control). 
@@ -243,31 +250,18 @@ class Object : public Typed
     return type_;
   }
   
-  /** Set meta type (signature, range, units). */
-  void set_type(const Value &type) {
-    type_ = type;
-  }
-  
-  /** Set meta type as range (slider). */
-  void set_type(Real current, Real min, Real max, const char *unit) {
-    Value type;
-    type.push_back(current).push_back(min).push_back(max).push_back(unit);
-    set_type(type);
-  }
-  
-  /** Set meta type as list (menu). */
-  void set_type(const char *current, const char *values, const char *unit) {
-    Value type;
-    type.push_back(current).push_back(values).push_back(unit);
-    set_type(type);
-  }
-  
-  /** Set meta type as any real (entry field). */
-  void set_type(Real current, const char *unit) {
-    Value type;
-    type.push_back(current).push_back(unit);
-    set_type(type);
-  }
+  /** Set meta type (signature, range, units). The type should be immutable.
+   *  this method is not a good idea.
+   */
+  // bool set_type(const Value &type) {
+  //   if (type.type_id() != type_.type_id()) {
+  //     return false;
+  //   } else {
+  //     type_ = type;
+  //     type_changed();
+  //     return true;
+  //   }
+  // }
   
   /** Return the list of children as a hash. */
   const THash<std::string,Object *> children() const {
@@ -322,47 +316,44 @@ protected:
     }
   }
   
-  /** Define object type_tag_id. This cannot be changed during runtime.
-    * @param typeTag a string with the osc type type_tag_id.
-    */
-  void set_type_tag_id(TypeTagID type_tag_id) {
-    type_tag_id_ = type_tag_id;
-  }
-  
-  /** Return the type tag signature id as an unsigned int. */
-  TypeTagID type_tag_id() {
-    return type_tag_id_;
+  /** Return the type tag signature id (uint) of the trigger method of this object (what it wants to receive as arguments). */
+  TypeTagID type_id() {
+    return type_id_;
   }
   
   bool accept_any_type() {
-    return type_tag_id_ == ANY_TYPE_TAG_ID;
+    return type_id_ == ANY_TYPE_TAG_ID;
   }
   
  private:
+  /** Keep type_id_ in sync with type_. */
+  void type_changed() {
+    type_id_ = type_.size() > 0 ? type_[0].type_id() : NO_TYPE_TAG_ID;
+  }
   
   /** Free the child from the list of children. */
   void release(Object *pChild);
 
-  std::list<Alias *>              aliases_;   /**< List of aliases to destroy when this node disappears. */
+  std::list<Alias *>          aliases_;   /**< List of aliases to destroy when this node disappears. */
   
 protected:
   friend class Root;
   friend class Alias;
 
-  Root                            *root_;     /**< Root object. */
+  Root                        *root_;     /**< Root object. */
   Object                      *parent_;   /**< Pointer to parent object. */
   THash<std::string,Object *> children_;  /**< Hash with pointers to sub-objects / methods */
-  std::string                     name_;      /**< Unique name in parent's context. */
-  std::string                     url_;       /**< Absolute path to object (cached). TODO: this cache is not really needed. */
-  static size_t                   sIdCounter; /**< Use to set a default id and position. */
+  std::string                 name_;      /**< Unique name in parent's context. */
+  std::string                 url_;       /**< Absolute path to object (cached). TODO: this cache is not really needed. */
+  static size_t               sIdCounter; /**< Use to set a default id and position. */
   
-  Mutex *context_;                            /**< Mutex to make sure only one thread is using a given context at a time. */
+  Mutex *context_;                        /**< Mutex to make sure only one thread is using a given context at a time. */
 
 private:
   friend class OscCommand;
-  TypeTagID                   type_tag_id_;   /**< OSC type tag type_tag_id. */
-  std::string                 info_;          /**< Help/information string. */
-  Value                       type_;          /**< Type information (type signature, range & units). */
+  Value                       type_;      /**< Type information (type signature, range & units). */
+  TypeTagID                   type_id_;   /**< OSC type tag id (cached from type_). */
+  std::string                 info_;      /**< Help/information string (cached from type_). */
 };
 } // namespace osc
 

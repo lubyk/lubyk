@@ -10,13 +10,13 @@ public:
   /** Class signature. */
   TYPED("Object.InfoMetaMethod")
   
-  InfoMetaMethod(const char * name) : Object(name, H("s")) {}
+  InfoMetaMethod(const char *name) : Object(name, TextInput("url", "Return information on the given url.")) {}
 
   virtual const Value trigger (const Value &url) {
     Value error;
     Object * target = root_->find_or_build_object_at(url.c_str(), &error);
     
-    return target ? Value(target->info()) : error;
+    return target ? target->info() : error;
   }
 };
 

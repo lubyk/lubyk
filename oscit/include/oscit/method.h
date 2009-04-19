@@ -18,16 +18,12 @@ class ClassMethod : public Object
   TYPED("Object.ClassMethod")
   
   /** Create a new object that will call a class method when "triggered". */
-  ClassMethod(const std::string &name, class_method_t method, TypeTagID type_tag_id, const char *info = DEFAULT_INFO) :
-      Object(name, type_tag_id), class_method_(method) {
-    set_info(info);
-  }
+  ClassMethod(const std::string &name, class_method_t method, const Value &type) :
+      Object(name, type), class_method_(method) {}
   
   /** Create a new object that will call a class method when "triggered". */
-  ClassMethod(const char *name, class_method_t method, TypeTagID type_tag_id, const char *info = DEFAULT_INFO) :
-      Object(name, type_tag_id), class_method_(method) {
-    set_info(info);
-  }
+  ClassMethod(const char *name, class_method_t method, const Value &type) :
+      Object(name, type), class_method_(method) {}
   
   /** Trigger: call the class method. */
   virtual const Value trigger(const Value &val) {
@@ -42,12 +38,11 @@ class ClassMethod : public Object
 /** Prototype constructor for Method. */
 struct MethodPrototype
 {
-  MethodPrototype(const char *name, member_method_t method, TypeTagID type_tag_id, const char *info) : 
-      name_(name), member_method_(method), type_tag_id_(type_tag_id), info_(info) {}
+  MethodPrototype(const char *name, member_method_t method, const Value &type, const char *info) : 
+      name_(name), member_method_(method), type_(type) {}
   const char *    name_;
   member_method_t member_method_;
-  TypeTagID       type_tag_id_;
-  const char *    info_;
+  Value           type_;
 };
 
 /** Object instance to trigger a member method (stores a reference to the receiver). */
@@ -57,22 +52,16 @@ class Method : public Object
   TYPED("Object.Method")
   
   /** Create a new object that call a member method when "triggered". */
-  Method(void *receiver, const char *name, member_method_t method, TypeTagID type_tag_id, const char *info = DEFAULT_INFO) :
-      Object(name, type_tag_id), receiver_(receiver), member_method_(method) {
-    set_info(info);
-  }
+  Method(void *receiver, const char *name, member_method_t method, const Value &type) :
+      Object(name, type), receiver_(receiver), member_method_(method) {}
   
   /** Create a new object that call a member method when "triggered". */
-  Method(void *receiver, const std::string &name, member_method_t method, TypeTagID type_tag_id, const char *info = DEFAULT_INFO) :
-      Object(name, type_tag_id), receiver_(receiver), member_method_(method) {
-    set_info(info);
-  }
+  Method(void *receiver, const std::string &name, member_method_t method, const Value &type) :
+      Object(name, type), receiver_(receiver), member_method_(method) {}
   
   /** Prototype based constructor. */
-  Method (void * receiver, const MethodPrototype &prototype) : Object(prototype.name_, prototype.type_tag_id_),
-      receiver_(receiver), member_method_(prototype.member_method_) {
-    set_info(prototype.info_);
-  }
+  Method (void * receiver, const MethodPrototype &prototype) : Object(prototype.name_, prototype.type_),
+      receiver_(receiver), member_method_(prototype.member_method_) {}
   
   /** Trigger: call the member method on the receiver. */
   virtual const Value trigger(const Value &val)
@@ -99,12 +88,12 @@ class TMethod : public Method
   TYPED("Object.TMethod.Method")
   
   /** Create a new object that call a member method when "triggered". */
-  TMethod(void *receiver, const char *name, TypeTagID type_tag_id, const char *info = DEFAULT_INFO) :
-      Method(receiver, name, &cast_method<T, Tmethod>, type_tag_id, info) {}
+  TMethod(void *receiver, const char *name, const Value &type) :
+      Method(receiver, name, &cast_method<T, Tmethod>, type) {}
   
   /** Create a new object that call a member method when "triggered". */
-  TMethod(void *receiver, const std::string &name, TypeTagID type_tag_id, const char *info = DEFAULT_INFO) :
-      Method(receiver, name, &cast_method<T, Tmethod>, type_tag_id, info) {}
+  TMethod(void *receiver, const std::string &name, const Value &type) :
+      Method(receiver, name, &cast_method<T, Tmethod>, type) {}
 };
 
 } // oscit

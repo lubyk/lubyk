@@ -6,18 +6,17 @@ class InfoMetaMethodTest : public TestHelper
 {
 public:
   void test_info( void ) {
-    Root root;
+    Root root(NoInput("This is the root node."));
     root.adopt(new Object("foo"));
     Value res;
-
-    root.set_info("This is the root node.");
+    
     res = root.call("/.info", Value(""));
     assert_true(res.is_string());
     assert_equal("This is the root node.", res.str());
 
     res = root.call("/.info", Value("/foo"));
     assert_true(res.is_string());
-    assert_equal(DEFAULT_INFO, res.str());
+    assert_equal(DEFAULT_TYPE[1].str(), res.str());
 
     res = root.call("/.info", Value("/blah"));
     assert_true(res.is_error());

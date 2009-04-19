@@ -7,6 +7,7 @@ public:
   void test_create( void ) {
     Value v(BAD_REQUEST_ERROR, "foo");
     
+    assert_false(v.is_empty());
     assert_false(v.is_nil());
     assert_false(v.is_real());
     assert_false(v.is_string());
@@ -14,6 +15,7 @@ public:
     assert_true (v.is_error());
     assert_false(v.is_hash());
     assert_false(v.is_matrix());
+    assert_false(v.is_any());
     
     assert_equal("foo", v.error_message());
     assert_equal(BAD_REQUEST_ERROR, v.error_code());
@@ -54,7 +56,6 @@ public:
     Value v3;
     
     assert_true(v2.is_error());
-    assert_true(v3.is_nil());
     
     v3 = v;
     
@@ -73,8 +74,7 @@ public:
   
   void test_set( void ) {
     Value v;
-    
-    assert_true(v.is_nil());
+
     v.set(BAD_REQUEST_ERROR, "foobar");
     assert_true(v.is_error());
     assert_equal("foobar", v.error_message());

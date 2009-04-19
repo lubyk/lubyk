@@ -8,6 +8,7 @@ public:
     Value v(TypeTag("H"));
     Value res;
     
+    assert_false(v.is_empty());
     assert_false(v.is_nil());
     assert_false(v.is_real());
     assert_false(v.is_string());
@@ -56,7 +57,7 @@ public:
     assert_true(v2.get("1", &res));
     assert_equal("un", res.str());
     
-    assert_true(v3.is_nil());
+    assert_true(v3.is_empty());
     
     v3 = v;
     
@@ -77,8 +78,6 @@ public:
   
   void test_set( void ) {
     Value v;
-    
-    assert_true(v.is_nil());
     
     v.set("nice", "friends");
     
@@ -165,7 +164,7 @@ public:
   void test_set_list( void ) {
     Value v;
     Value l;
-    l.push_back("one").push_back(2.0);
+    l.set("one").push_back(2.0);
     v.set("list", l);
     assert_true(v.is_hash());
     
@@ -196,7 +195,7 @@ public:
     Value jobs;
     v.set("name", "Joe");
     v.set("age", 34.0);
-    jobs.push_back("dad").push_back("husband").push_back("lover").push_back(-666);
+    jobs.set("dad").push_back("husband").push_back("lover").push_back(-666);
     v.set("job", jobs);
     
     std::ostringstream os(std::ostringstream::out);

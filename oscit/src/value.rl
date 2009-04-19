@@ -32,20 +32,21 @@ std::ostream &operator<<(std::ostream &out_stream, const Value &val) {
     case MATRIX_VALUE:
       out_stream << "\"Matrix " << val.matrix_->rows << "x" << val.matrix_->cols << "\"";
       break;
-    case NIL_VALUE:
-      out_stream << "null";
-      break;
     case LIST_VALUE:
       size_t sz = val.size();
       out_stream << "[";
       for (size_t i = 0; i < sz; ++i) {
-        if (i > 0) out_stream << ", ";
+        if (i > 0 && !val[i].is_empty()) out_stream << ", ";
         out_stream << val[i];
       }
       out_stream << "]";
       break;
+    case EMPTY_VALUE:
+      break; // nothing
+    case ANY_VALUE: /* continue */
+    case NIL_VALUE: /* continue */
     default:
-      ;// ????
+      out_stream << "null";
   }
   return out_stream;
 }
@@ -57,36 +58,37 @@ Json Value::to_json() const {
 }
 
 Value &Value::push_back(const Value& val) {
-  if (is_list()) {
-    list_->push_back(val);
-  } else if (is_nil() && !val.is_list()) {
-    set(val);
-  } else {
-    if (!is_nil()) {
+  if (!val.is_empty()) {
+    if (is_list()) {
+      list_->push_back(val);
+    } else if (is_empty()) {
+      set_type(LIST_VALUE);
+      list_->push_back(val);
+    } else {
       // copy self as first element
       Value original(*this);
       set_type(LIST_VALUE);
-      push_back(original);
-    } else {
-      set_type(LIST_VALUE);
+      list_->push_back(original);
+      list_->push_back(val);
     }
-
-    list_->push_back(val);
   }
   return *this;
 }
 
 Value &Value::push_front(const Value& val) {
-  if (is_nil()) {
-    set(val);
-  } else {
-    if (!is_list()) {
-      Value tmp(*this);
+  if (!val.is_empty()) {
+    if (is_list()) {
+      list_->push_front(val);
+    } else if (is_empty()) {
       set_type(LIST_VALUE);
-      if (!tmp.is_nil()) push_back(tmp);
+      list_->push_back(val); // push_back is faster
+    } else {
+      // copy self as first element
+      Value original(*this);
+      set_type(LIST_VALUE);
+      list_->push_back(val); // push_back is faster
+      list_->push_back(original);
     }
-
-    list_->push_front(val);
   }
   return *this;
 }
@@ -105,7 +107,7 @@ Value &Value::push_front(const Value& val) {
   action number {
     // become a RealValue
     tmp_val.set(atof(str_buf.c_str()));
-    DEBUG(printf("[number %f/%s/%s\n]", tmp_val.r, num_buf, tmp_val.to_json().c_str()));
+    DEBUG(printf("[number %f/%s/%s\n]", tmp_val.r, str_buf.c_str(), tmp_val.to_json().c_str()));
     str_buf = "";
   }
 
@@ -155,10 +157,8 @@ Value &Value::push_front(const Value& val) {
   }
   
   action list {
-    // become an empty list
-    if (!is_list()) {
-      set_type(LIST_VALUE);
-    }
+    if (!is_list()) set_type(LIST_VALUE);
+    
     DEBUG(printf("[%p:list %s]\n", this, p));
     // FIXME: how to avoid 'return' by telling parsing to stop ?
     return p - json + 1;
@@ -213,7 +213,7 @@ size_t Value::build_from_json(const char *json, bool strict_mode) {
   DEBUG(printf("\nbuild_from_json:\"%s\"\n",json));
   std::string str_buf;
   Value tmp_val;
-  set_type(NIL_VALUE); // clear
+  set_empty(); // clear
   // =============== Ragel job ==============
   
   int cs;

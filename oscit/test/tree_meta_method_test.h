@@ -45,11 +45,11 @@ public:
   
   void test_tree_on_empty( void ) {
     Root root;
-    root.adopt(new Object("Nikolaus"));
+    root.adopt(new Object("Zorglub"));
     Value res;
 
-    res = root.call("/.tree", Value("/Nikolaus"));
-    assert_true(res.is_nil());
+    res = root.call("/.tree", Value("/Zorglub"));
+    assert_true(res.is_list());
     assert_equal(0, res.size());
   }
 };

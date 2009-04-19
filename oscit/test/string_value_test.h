@@ -7,6 +7,7 @@ public:
   void test_create( void ) {
     Value v("foo");
     
+    assert_false(v.is_empty());
     assert_false(v.is_nil());
     assert_false(v.is_real());
     assert_true (v.is_string());
@@ -36,11 +37,14 @@ public:
     std::string str("foo");
     Value v(str);
     
+    assert_false(v.is_empty());
+    assert_false(v.is_nil());
     assert_false(v.is_nil());
     assert_false(v.is_real());
     assert_true (v.is_string());
     assert_false(v.is_error());
     assert_false(v.is_hash());
+    assert_false(v.is_any());
     
     assert_equal("foo", v.str());
     

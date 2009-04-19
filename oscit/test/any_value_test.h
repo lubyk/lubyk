@@ -1,0 +1,81 @@
+#include "test_helper.h"
+#include "oscit/values.h"
+
+class AnyValueTest : public TestHelper
+{  
+public:
+  void test_create( void ) {
+    Value v('*');
+    
+    assert_false(v.is_empty());
+    assert_false(v.is_nil());
+    assert_false(v.is_real());
+    assert_false(v.is_string());
+    assert_false(v.is_list());
+    assert_false(v.is_error());
+    assert_false(v.is_hash());
+    assert_false(v.is_matrix());
+    assert_true (v.is_any());
+    
+    assert_equal("*", v.type_tag());
+  }
+  
+  void test_create_with_TypeTag( void ) {
+    Value v(TypeTag("*"));
+    
+    assert_true(v.is_any());
+  }
+  
+  void test_copy( void )
+  {
+    Value v('*');
+    Value v2(v);
+    Value v3;
+    
+    assert_true(v2.is_any());
+    
+    v3 = v;
+    
+    assert_true(v3.is_any());
+  }
+  
+  void test_set( void )
+  {
+    Value v;
+    
+    v.set_any();
+    assert_true(v.is_any());
+  }
+  
+  void test_set_tag( void )
+  {
+    Value v;
+    
+    v.set_type_tag("*");
+    assert_true(v.is_any());
+    assert_equal("*", v.type_tag());
+  }
+  
+  void test_set_type( void )
+  {
+    Value v;
+    
+    v.set_type(ANY_VALUE);
+    assert_true(v.is_any());
+  }
+  
+  void test_to_json( void ) {
+    Value v('*');
+    std::ostringstream os(std::ostringstream::out);
+    os << v;
+    assert_equal("null", os.str());
+    assert_equal("null", v.to_json());
+  }
+  
+  void test_any_input( void ) {
+    Value any(AnyInput("La la."));
+    assert_equal("*s", any.type_tag());
+  }
+  
+  // from_json is not possible for AnyValue
+};

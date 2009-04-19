@@ -7,6 +7,7 @@ public:
   void test_create( void ) {
     Value v(3.5);
     
+    assert_false(v.is_empty());
     assert_false(v.is_nil());
     assert_true (v.is_real());
     assert_false(v.is_string());
@@ -14,6 +15,7 @@ public:
     assert_false(v.is_error());
     assert_false(v.is_hash());
     assert_false(v.is_matrix());
+    assert_false(v.is_any());
     
     
     assert_equal(3.5, v.r); // real
@@ -71,7 +73,7 @@ public:
     assert_equal(3.2, v3.r);
   }
   
-  void testSet( void )
+  void test_set( void )
   {
     Value v;
     
@@ -81,7 +83,7 @@ public:
     assert_equal(3.5, v.r);
   }
   
-  void testSetTag( void )
+  void test_set_tag( void )
   {
     Value v;
     
@@ -90,7 +92,7 @@ public:
     assert_equal(0.0, v.r);
   }
   
-  void testSetType( void )
+  void test_set_type( void )
   {
     Value v;
     

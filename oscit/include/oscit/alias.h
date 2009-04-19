@@ -48,7 +48,8 @@ public:
   void set_original(Object *object) {
     if (original_) original_->unregister_alias(this);
     original_ = object;
-    set_type_tag_id(original_->type_tag_id());
+    type_ = original_->type();
+    type_changed();
     // We register so that the alias dies with the original object.
     if (original_) original_->register_alias(this);
   }

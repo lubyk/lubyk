@@ -36,8 +36,8 @@ class List : public ReferenceCounted
     return type_tag_;
   }
   
-  TypeTagID type_tag_id() const {
-    return type_tag_id_;
+  TypeTagID type_id() const {
+    return type_id_;
   }
   
   const Value *operator[](size_t pos) const {
@@ -48,6 +48,9 @@ class List : public ReferenceCounted
     return values_[pos];
   }
   
+  Value *last() {
+    return values_.size() > 0 ? values_[values_.size() - 1] : NULL;
+  }
   /** Replace a value at a given position, checking for range and making sure
    *  the type_tag of the list remains in sync. */
   void set_value_at(size_t pos, const Value &val);
@@ -70,14 +73,14 @@ class List : public ReferenceCounted
    
   void update_type_tag() {
     type_tag_ = type_tag_storage_.c_str();
-    type_tag_id_ = H(type_tag_); // FIXME: length limit is ~12 ...
+    type_id_ = H(type_tag_); // FIXME: length limit is ~12 ...
   }
   
   const char *init_with_type_tag(const char *type_tag);
   
   std::string type_tag_storage_;
   const char  *type_tag_;
-  TypeTagID   type_tag_id_;
+  TypeTagID   type_id_;
   std::vector<Value*> values_;
 };
 

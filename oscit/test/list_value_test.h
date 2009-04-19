@@ -6,13 +6,17 @@ class ListValueTest : public TestHelper
 public:
   void test_create( void ) {
     Value v(TypeTag("fsf"));
+
+    v.type(); // removing this makes "is_list" fail ???? What ? ?! #@)(#)@@!!
     
+    assert_false(v.is_empty());
     assert_false(v.is_nil());
     assert_false(v.is_real());
     assert_false(v.is_string());
     assert_true (v.is_list());
     assert_false(v.is_error());
     assert_false(v.is_hash());
+    assert_false(v.is_any());
     
     // 0
     assert_true(v[0].is_real());
@@ -27,6 +31,14 @@ public:
     assert_equal(0.0, v[2].r);
     
     assert_equal("fsf", v.type_tag());
+  }
+  
+  void test_empty_list_is_nil( void ) {
+    ListValue v;
+    assert_true(v.is_list());
+    assert_equal("", v.type_tag());
+    v.push_back(1.0);
+    assert_equal("f", v.type_tag());
   }
   
   void test_create_list_value( void ) {
@@ -60,7 +72,6 @@ public:
     assert_equal("super man",  v2->value_at(1).str());
     
     Value v3;
-    assert_true(v3.is_nil());
     
     v3 = v;
     
@@ -83,8 +94,6 @@ public:
   void test_set( void ) {
     Value v;
     List l("fs");
-    
-    assert_true(v.is_nil());
     
     v.set(&l);
     
@@ -151,13 +160,39 @@ public:
     assert_equal(0.0, l[1]->f);
   }
   
+  void test_push_back_on_empty( void ) {
+    Value v;
+    v.push_back(Value('N'));
+    assert_equal("N", v.type_tag());
+    assert_true(v.is_nil());
+    v.push_back(gNilValue);
+    assert_equal("NN", v.type_tag());
+    assert_true(v.is_list());
+    assert_equal(2, v.size());
+    assert_true(v[0].is_nil());
+    assert_true(v[1].is_nil());
+  }
+  
+  void test_push_back_empty( void ) {
+    Value v;
+    v.push_back(Value());
+    assert_true(v.is_empty());
+    assert_equal("", v.type_tag());
+  }
+  
+  void test_push_back_nil( void ) {
+    Value v;
+    v.set_nil().push_back(Value());
+    assert_equal("NN", v.type_tag());
+    assert_equal(2, v.size());
+    assert_true(v[0].is_nil());
+    assert_true(v[1].is_nil());
+  }
+  
   void test_push_back_real( void ) {
     Value v;
-    v.push_back(1.34);
-    assert_true(v.is_real());
-    assert_equal(1.34, v.r);
+    v.set(1.34).push_back(3.45);
     
-    v.push_back(3.45);
     assert_true(v.is_list());
     assert_true(v[0].is_real());
     assert_true(v[1].is_real());
@@ -166,24 +201,83 @@ public:
     assert_equal(3.45, v[1].r);
   }
   
-  void test_push_back_real_to_real( void ) {
-    Value v(1.0);
-    v.push_back(2.0);
-    assert_true(v.is_list());
-    assert_equal(2, v.size());
-    assert_true(v[0].is_real());
-    assert_true(v[1].is_real());
-    assert_equal(1.0, v[0].r);
-    assert_equal(2.0, v[1].r);
+  void test_push_back_real_on_empty_list( void ) {
+    // push_back on empty list is the same as set(...)
+    ListValue v;
+    v.push_back(1.34);
+    
+    assert_true(v.is_real());
+    assert_equal(1.34, v.r);
   }
   
-  void test_push_back_list( void ) {
+  void test_push_back_string( void ) {
+    Value v;
+    v.set("foo").push_back("bar");
+    
+    assert_true(v.is_list());
+    assert_true(v[0].is_string());
+    assert_true(v[1].is_string());
+    assert_equal(2, v.size());
+    assert_equal("foo", v[0].str());
+    assert_equal("bar", v[1].str());
+  }
+  
+  void test_push_back_error( void ) {
+    Value v;
+    v.set(BAD_REQUEST_ERROR, "blah").push_back(ErrorValue(INTERNAL_SERVER_ERROR, "bad, bad, bad"));
+    
+    assert_true(v.is_list());
+    assert_true(v[0].is_error());
+    assert_true(v[1].is_error());
+    assert_equal(2, v.size());
+    assert_equal(BAD_REQUEST_ERROR,     v[0].error_code());
+    assert_equal(INTERNAL_SERVER_ERROR, v[1].error_code());
+  }
+  
+  void test_push_back_hash( void ) {
+    Value v;
+    v.set(Json("one:1 two:2")).push_back(Json("un:1 deux:2"));
+    
+    assert_true(v.is_list());
+    assert_true(v[0].is_hash());
+    assert_true(v[1].is_hash());
+    assert_equal(2, v.size());
+    assert_equal("{\"one\":1 \"two\":2}", v[0].to_json());
+    assert_equal("{\"un\":1 \"deux\":2}", v[1].to_json());
+  }
+  
+  void test_push_back_matrix( void ) {
+    Value v;
+    v.set(MatrixValue(2,2)).push_back(MatrixValue(1,2));
+    
+    assert_true(v.is_list());
+    assert_true(v[0].is_matrix());
+    assert_true(v[1].is_matrix());
+    assert_equal(2, v.size());
+    assert_equal(2, v[0].matrix_->rows);
+    assert_equal(2, v[0].matrix_->cols);
+    assert_equal(1, v[1].matrix_->rows);
+    assert_equal(2, v[1].matrix_->cols);
+  }
+  
+  void test_push_back_any( void ) {
+    Value v;
+    v.set_any().push_back("bar");
+    
+    assert_true(v.is_list());
+    assert_true(v[0].is_any());
+    assert_true(v[1].is_string());
+    assert_equal(2, v.size());
+    assert_equal("bar", v[1].str());
+  }
+  
+  void test_push_back_list_on_real( void ) {
     Value v;
     Value l(TypeTag("fss"));
     l[0].r = 10.0;
     l[1].set("one");
     l[2].set("two");
-    v.push_back(1.34);
+    v.set(1.34);
     assert_true(v.is_real());
     assert_equal("f", v.type_tag());
     v.push_back(l);
@@ -192,13 +286,28 @@ public:
     assert_equal("two", v[1][2].str());
   }
   
+  void test_push_back_list_on_nil( void ) {
+    Value v;
+    Value l(TypeTag("fss"));
+    l[0].r = 10.0;
+    l[1].set("one");
+    l[2].set("two");
+    assert_true(v.is_nil());
+    assert_equal("N", v.type_tag());
+    v.push_back(l);
+    assert_true(v.is_list());
+    assert_equal("N[fss]", v.type_tag());
+    assert_equal("two", v[1][2].str());
+  }
+  
   void test_push_front_real( void ) {
     Value v;
     v.push_front(1.34);
-    assert_true(v.is_real());
-    assert_equal(1.34, v.r);
+    assert_true(v.is_list());
+    assert_true(v[0].is_real());
+    assert_true(v[1].is_nil());
     
-    v.push_front(3.45);
+    v.set(1.34).push_front(3.45);
     assert_true(v.is_list());
     assert_equal(2, v.size());
     assert_true(v[0].is_real());
@@ -222,7 +331,7 @@ public:
     Value l(TypeTag("ss"));
     l[0].set("one");
     l[1].set("two");
-    v.push_front(1.34);
+    v.set(1.34);
     assert_true(v.is_real());
     assert_equal("f", v.type_tag());
     v.push_front(l);
@@ -232,7 +341,16 @@ public:
     assert_equal("two", v[0][1].str());
     assert_equal(1.34,  v[1].r);
   }
-
+  
+  void test_last( void ) {
+    Value v;
+    assert_true(v.last().is_nil());
+    v.set(1.5);
+    assert_equal(1.5, v.last().r);
+    v.push_back("how");
+    assert_equal("how", v.last().str());
+  }
+  
   void test_to_json( void ) {
     Value v(TypeTag("fsff"));
     v[0].r = 1.234;

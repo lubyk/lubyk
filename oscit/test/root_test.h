@@ -1,6 +1,7 @@
 #include "test_helper.h"
 #include "oscit/root.h"
 #include "mock/dummy_object.h"
+#include "mock/dummy_command.h"
 
 class RootTest : public TestHelper
 {

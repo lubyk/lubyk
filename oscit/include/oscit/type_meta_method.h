@@ -10,7 +10,7 @@ public:
   /** Class signature. */
   TYPED("Object.TypeMetaMethod")
   
-  TypeMetaMethod(const char * name) : Object(name, H("s")) {}
+  TypeMetaMethod(const char *name) : Object(name, TextInput("url", "Return type and information on the given url.")) {}
 
   virtual const Value trigger(const Value &url) {
     Value error;
@@ -31,17 +31,19 @@ public:
         return ErrorValue(INTERNAL_SERVER_ERROR, "Invalid meta type. Should be a list (found '").append(type.type_tag()).append("').");
       }
       
-      // get current value
-      Value current = target->trigger(gNilValue);
+      if (!type[0].is_any() && !type[0].is_nil()) {
+        // get current value
+        Value current = target->trigger(gNilValue);
       
-      // make sure current value type is compatible with type
-      if (current.type_tag_id() != type[0].type_tag_id()) {
-        return ErrorValue(INTERNAL_SERVER_ERROR, "Current value type not matching meta type (expected '").append(
-            type[0].type_tag()).append(
-            "' found '").append(current.type_tag()).append("').");
+        // make sure current value type is compatible with type
+        if (current.type_id() != type[0].type_id()) {
+          return ErrorValue(INTERNAL_SERVER_ERROR, "Current value type not matching meta type (expected '").append(
+              type[0].type_tag()).append(
+              "' found '").append(current.type_tag()).append("').");
+        }
+      
+        type.set_value_at(0, current);
       }
-      
-      type.set_value_at(0, current);
       return type;
     }
   }

@@ -116,4 +116,25 @@ public:
     assert_equal(1.0,   one->real());
     assert_equal(22.22, two->real());
   }
+  
+  // set_type is not a good idea. It should be immutable (or maybe I'm wrong, so I leave the test here)
+  //void test_set_type( void ) {
+  //  DummyObject one("one", 123.0);
+  //  assert_equal("fffss", one.type().type_tag()); // RangeInput
+  //  assert_equal(0.0, one.type()[0].r); // current
+  //  assert_equal(0.0, one.type()[1].r);   // min
+  //  assert_equal(127.0, one.type()[2].r); // max
+  //  assert_equal("lux", one.type()[3].str()); // unit
+  //  assert_equal(DUMMY_OBJECT_INFO, one.type()[4].str()); // info
+  //  
+  //  Value type(TypeTag("fss"));
+  //  assert_false(one.set_type(type));
+  //  assert_equal("fffss", one.type().type_tag());
+  //  assert_equal("lux", one.type()[3].str()); // unit
+  //  type.set(0.0);
+  //  type.push_back(0).push_back(5).push_back("eggs").push_back("I'm a hen !");
+  //  assert_true(one.set_type(type));
+  //  assert_equal("fffss", one.type().type_tag());
+  //  assert_equal("eggs", one.type()[1].str());
+  //}
 };

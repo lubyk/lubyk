@@ -56,7 +56,8 @@ public:
     Value res;
 
     res = root.call("/.list", Value("/Nikolaus"));
-    assert_true(res.is_nil());
-    assert_equal(0, res.size());
+    assert_true(res.is_list());
+    assert_equal(0,  res.size());
+    assert_equal("", res.type_tag());
   }
 };

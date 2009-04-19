@@ -7,6 +7,7 @@ public:
   void test_create( void ) {
     Value v(TypeTag("M"));
     
+    assert_false(v.is_empty());
     assert_false(v.is_nil());
     assert_false(v.is_real());
     assert_false(v.is_string());
@@ -14,6 +15,7 @@ public:
     assert_false(v.is_error());
     assert_false(v.is_hash());
     assert_true (v.is_matrix());
+    assert_false(v.is_any());
     
     Matrix * m = v.matrix_;
     assert_equal(0, m->rows);

@@ -33,20 +33,21 @@ std::ostream &operator<<(std::ostream &out_stream, const Value &val) {
     case MATRIX_VALUE:
       out_stream << "\"Matrix " << val.matrix_->rows << "x" << val.matrix_->cols << "\"";
       break;
-    case NIL_VALUE:
-      out_stream << "null";
-      break;
     case LIST_VALUE:
       size_t sz = val.size();
       out_stream << "[";
       for (size_t i = 0; i < sz; ++i) {
-        if (i > 0) out_stream << ", ";
+        if (i > 0 && !val[i].is_empty()) out_stream << ", ";
         out_stream << val[i];
       }
       out_stream << "]";
       break;
+    case EMPTY_VALUE:
+      break; // nothing
+    case ANY_VALUE: /* continue */
+    case NIL_VALUE: /* continue */
     default:
-      ;// ????
+      out_stream << "null";
   }
   return out_stream;
 }
@@ -58,36 +59,37 @@ Json Value::to_json() const {
 }
 
 Value &Value::push_back(const Value& val) {
-  if (is_list()) {
-    list_->push_back(val);
-  } else if (is_nil() && !val.is_list()) {
-    set(val);
-  } else {
-    if (!is_nil()) {
+  if (!val.is_empty()) {
+    if (is_list()) {
+      list_->push_back(val);
+    } else if (is_empty()) {
+      set_type(LIST_VALUE);
+      list_->push_back(val);
+    } else {
       // copy self as first element
       Value original(*this);
       set_type(LIST_VALUE);
-      push_back(original);
-    } else {
-      set_type(LIST_VALUE);
+      list_->push_back(original);
+      list_->push_back(val);
     }
-
-    list_->push_back(val);
   }
   return *this;
 }
 
 Value &Value::push_front(const Value& val) {
-  if (is_nil()) {
-    set(val);
-  } else {
-    if (!is_list()) {
-      Value tmp(*this);
+  if (!val.is_empty()) {
+    if (is_list()) {
+      list_->push_front(val);
+    } else if (is_empty()) {
       set_type(LIST_VALUE);
-      if (!tmp.is_nil()) push_back(tmp);
+      list_->push_back(val); // push_back is faster
+    } else {
+      // copy self as first element
+      Value original(*this);
+      set_type(LIST_VALUE);
+      list_->push_back(val); // push_back is faster
+      list_->push_back(original);
     }
-
-    list_->push_front(val);
   }
   return *this;
 }
@@ -98,7 +100,7 @@ Value &Value::push_front(const Value& val) {
 
 // transition table
 
-#line 102 "src/value.cpp"
+#line 104 "src/value.cpp"
 static const char _json_actions[] = {
 	0, 1, 0, 1, 3, 1, 4, 1, 
 	7, 1, 9, 2, 1, 9, 2, 2, 
@@ -272,7 +274,7 @@ size_t Value::build_from_json(const char *json, bool strict_mode) {
   DEBUG(printf("\nbuild_from_json:\"%s\"\n",json));
   std::string str_buf;
   Value tmp_val;
-  set_type(NIL_VALUE); // clear
+  set_empty(); // clear
   // =============== Ragel job ==============
   
   int cs;
@@ -280,7 +282,7 @@ size_t Value::build_from_json(const char *json, bool strict_mode) {
   const char * pe = json + strlen(p) + 1;
   
   
-#line 284 "src/value.cpp"
+#line 286 "src/value.cpp"
 	{
 	cs = json_start;
 	}
@@ -293,7 +295,7 @@ size_t Value::build_from_json(const char *json, bool strict_mode) {
   }
   
   
-#line 297 "src/value.cpp"
+#line 299 "src/value.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -368,7 +370,7 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 98 "src/value.rl"
+#line 100 "src/value.rl"
 	{
      // append a char to build a std::string
     DEBUG(printf("%c-",(*p)));
@@ -377,16 +379,16 @@ _match:
   }
 	break;
 	case 1:
-#line 105 "src/value.rl"
+#line 107 "src/value.rl"
 	{
     // become a RealValue
     tmp_val.set(atof(str_buf.c_str()));
-    DEBUG(printf("[number %f/%s/%s\n]", tmp_val.r, num_buf, tmp_val.to_json().c_str()));
+    DEBUG(printf("[number %f/%s/%s\n]", tmp_val.r, str_buf.c_str(), tmp_val.to_json().c_str()));
     str_buf = "";
   }
 	break;
 	case 2:
-#line 112 "src/value.rl"
+#line 114 "src/value.rl"
 	{
     // become a StringValue
     tmp_val.set(str_buf);
@@ -395,7 +397,7 @@ _match:
   }
 	break;
 	case 3:
-#line 119 "src/value.rl"
+#line 121 "src/value.rl"
 	{
     // Parse a single element of a hash (key:value)
     // Build tmp_val from string and move p forward
@@ -410,7 +412,7 @@ _match:
   }
 	break;
 	case 4:
-#line 132 "src/value.rl"
+#line 134 "src/value.rl"
 	{
     // Parse a single element of a hash (key:value)
     // Build tmp_val from string and move p forward
@@ -424,7 +426,7 @@ _match:
   }
 	break;
 	case 5:
-#line 144 "src/value.rl"
+#line 146 "src/value.rl"
 	{
     // we have a value in tmp that should be changed into a list [tmp]
     DEBUG(printf("[%p:lazy_list %s]\n", this, tmp_val.to_json().c_str()));
@@ -432,7 +434,7 @@ _match:
   }
 	break;
 	case 6:
-#line 150 "src/value.rl"
+#line 152 "src/value.rl"
 	{
     // become an empty HashValue
     if (!is_hash()) {
@@ -441,12 +443,10 @@ _match:
   }
 	break;
 	case 7:
-#line 157 "src/value.rl"
+#line 159 "src/value.rl"
 	{
-    // become an empty list
-    if (!is_list()) {
-      set_type(LIST_VALUE);
-    }
+    if (!is_list()) set_type(LIST_VALUE);
+    
     DEBUG(printf("[%p:list %s]\n", this, p));
     // FIXME: how to avoid 'return' by telling parsing to stop ?
     return p - json + 1;

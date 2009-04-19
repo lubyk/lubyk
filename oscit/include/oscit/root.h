@@ -26,8 +26,16 @@ class Root : public Object
   Root() : objects_(OBJECT_HASH_SIZE) {
     init();
   }
-
+  
+  Root(const Value &type) : Object(type), objects_(OBJECT_HASH_SIZE) {
+    init();
+  }
+  
   Root(size_t hashSize) : objects_(hashSize) {
+    init();
+  }
+  
+  Root(size_t hashSize, const Value &type) : Object(type), objects_(hashSize) {
     init();
   }
   
@@ -134,11 +142,11 @@ class Root : public Object
   }
   
   inline const Value call(Object *target, const Value &val) {
-    if (val.is_nil() || val.type_tag_id() == target->type_tag_id() || target->accept_any_type()) {
+    if (val.is_nil() || val.type_id() == target->type_id() || target->accept_any_type()) {
       return target->safe_trigger(val);
     } else {
       Value type = call("/.type", Value(target->url()));
-      return ErrorValue(BAD_REQUEST_ERROR, std::string("'").append(target->url()).append("' (").append(target->info()).append(": ").append(type.to_json()).append(")."));
+      return ErrorValue(BAD_REQUEST_ERROR, std::string("'").append(target->url()).append("' (").append(target->type().last().str()).append(")."));
     }
   }
 

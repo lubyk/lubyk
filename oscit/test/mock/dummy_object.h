@@ -2,7 +2,7 @@
 #define _DUMMY_OBJECT_H_
 #include "oscit/object.h"
 
-#define DUMMY_OBJECT_INFO "The dummy object simply stores a single real number. Call with a single 'f' argument."
+#define DUMMY_OBJECT_INFO "The dummy object simply stores a single real number."
 
 class DummyObject : public Object
 {
@@ -10,11 +10,8 @@ public:
   /** Class signature. */
   TYPED("Object.DummyObject")
   
-  DummyObject(const char * name, Real value) : Object(name, H("f")), value_(value) {
-    set_info(DUMMY_OBJECT_INFO);
-    // current, min, max, unit
-    set_type(value_.r, 0, 127, "lux"); 
-  }
+  DummyObject(const char * name, Real value) : Object(name, RangeInput(0, 127, "lux", DUMMY_OBJECT_INFO)), value_(value) {}
+  DummyObject(const char *name, Real value, const Value &type) : Object(name, type), value_(value) {}
   
   virtual ~DummyObject() {}
   
@@ -27,16 +24,23 @@ public:
   
   virtual const Value trigger (const Value &val)
   {
-    if (val.is_real())
-      value_.r = val.r;
-    return value_;
+    if (val.is_real()) value_.r = val.r;
+    
+    if (type()[0].is_real()) {
+      return value_;
+    } else if (type()[0].is_string()) {
+      // testing type
+      return Value("hello");
+    } else {
+      return gNilValue;
+    }
   }
   
   virtual Object * build_child(const std::string &name, Value *error) {
     if (name == "special") {
       return adopt(new Object("special"));
     } else if (name == "AgeOf") {
-      Object * comp = adopt(new Object(name, 0.0));
+      Object * comp = adopt(new Object(name));
       comp->adopt(new DummyObject("Capitain", 78.0));
       return comp;
     } else if (name == "error") {
@@ -58,11 +62,9 @@ class DummyObject2 : public Object
 public:  
   TYPED("Object.DummyObject2")
   
-  DummyObject2(const char * name, const char *value) : Object(name, H("s")), value_(value) {
-    set_info(DUMMY_OBJECT_INFO);
-    // current, min, max, unit
-    set_type(value, "rgb,rgba,yuv", "color mode"); 
-  }
+  DummyObject2(const char * name, const char *value) : Object(name, SelectInput("rgb,rgba,yuv", "color mode", "Set color mode.")), value_(value) {}
+  
+  DummyObject2(const char * name, const char *value, const Value &type) : Object(name, type), value_(value) {}
   
   virtual ~DummyObject2() {}
   
@@ -91,4 +93,5 @@ public:
   
   SubDummyObject(const char *name, Real value) : DummyObject(name, value) {}
 };
+
 #endif // _DUMMY_OBJECT_H_

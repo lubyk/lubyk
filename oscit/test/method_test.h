@@ -30,7 +30,7 @@ class MethodTest : public TestHelper
 public:
   void test_trigger_class_method( void ) {
     Root root;
-    root.adopt(new ClassMethod("hello", &Person::class_method, H("s"), "Send me strings only."));
+    root.adopt(new ClassMethod("hello", &Person::class_method, TextInput("", "Send me strings only.")));
     Value res;
     
     res = root.call("/hello", MatrixValue(2,3));
@@ -46,7 +46,7 @@ public:
   void test_trigger_method( void ) {
     Root root;
     Person * eva = root.adopt(new Person("Eva"));
-    eva->adopt(new Method(eva, "name", &Method::cast_method<Person, &Person::name>, H("s"), "Name of the person."));
+    eva->adopt(new Method(eva, "name", &Method::cast_method<Person, &Person::name>, TextInput("", "Name of the person.")));
     Value res;
     
     res = root.call("/Eva/name");
@@ -66,7 +66,7 @@ public:
     Root root;
     Person * eva = root.adopt(new Person("Eva"));
     // template syntax is nicer and more readable
-    eva->adopt(new TMethod<Person, &Person::name>(eva, "name", H("s"), "Name of the person."));
+    eva->adopt(new TMethod<Person, &Person::name>(eva, "name", TextInput("", "Name of the person.")));
     Value res;
     
     res = root.call("/Eva/name");

@@ -63,7 +63,8 @@ class Thread : public Mutex
   void kill() {
     if (thread_id_ == pthread_self()) {
       should_run_ = false;
-    } else {
+      thread_id_ = NULL;
+    } else if (thread_id_) {
       pthread_kill(thread_id_, SIGTERM);
       pthread_join(thread_id_, NULL);
       thread_id_ = NULL;

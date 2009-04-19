@@ -25,24 +25,26 @@ and return values for osc messages. */
 class Value
 { 
 public:
-  Value() : type_(NIL_VALUE) {}
   
-  explicit Value(const Json &json) : type_(NIL_VALUE) {
-    build_from_json(json.c_str());
-  }
+  /** =========================================================================================    Empty   */
+  Value() : type_(EMPTY_VALUE) {}
+  
+  /** =========================================================================================    Real    */
   
   explicit Value(Real real) : type_(REAL_VALUE), r(real) {}
   
   explicit Value(int number) : type_(REAL_VALUE), r(number) {}
   
-  explicit Value(const char * string) : type_(STRING_VALUE) {
+  /** =========================================================================================    String  */
+  explicit Value(const char *string) : type_(STRING_VALUE) {
     set_string(string);
   }
   
-  explicit Value(const std::string& string) : type_(STRING_VALUE) {
+  explicit Value(const std::string &string) : type_(STRING_VALUE) {
     set_string(string.c_str());
   }
   
+  /** =========================================================================================    List     */
   explicit Value(const List *list) : type_(LIST_VALUE) {
     set_list(list);
   }
@@ -51,6 +53,7 @@ public:
     set_list(&list);
   }
   
+  /** =========================================================================================    Error    */
   explicit Value(ErrorCode code, const char *str) : type_(ERROR_VALUE) {
     set_error(code, str);
   }
@@ -59,6 +62,7 @@ public:
     set_error(code, str.c_str());
   }
   
+  /** =========================================================================================    Hash    */
   explicit Value(const Hash *hash) : type_(HASH_VALUE) {
     set_hash(hash);
   }
@@ -67,6 +71,7 @@ public:
     set_hash(&hash);
   }
   
+  /** =========================================================================================    Matrix  */
   explicit Value(const Matrix *matrix) : type_(MATRIX_VALUE) {
     set_matrix(matrix);
   }
@@ -75,19 +80,24 @@ public:
     set_matrix(&matrix);
   }
   
+  /** =========================================================================================    Any     */
   /** Create a value from a TypeTag string. */
-  explicit Value(TypeTag type_tag) : type_(NIL_VALUE) {
+  explicit Value(TypeTag type_tag) : type_(EMPTY_VALUE) {
     set_type_tag(type_tag.str_);
   }
   
+  /** Create a value by parsing a JSON string. */
+  explicit Value(const Json &json) : type_(EMPTY_VALUE) {
+    build_from_json(json.c_str());
+  }
   
   /** Create a default value from a type character like 'f'. */
-  explicit Value(char type_char) : type_(NIL_VALUE) {
+  explicit Value(char type_char) : type_(EMPTY_VALUE) {
     set_type(type_from_char(type_char));
   }
   
   /** Copy constructor (needed since many methods return a Value). */
-  Value(const Value &value) : type_(NIL_VALUE) {
+  Value(const Value &value) : type_(EMPTY_VALUE) {
     *this = value;
   }
   
@@ -96,8 +106,9 @@ public:
   }
   
   /** Copy the content of another Value. */
-  void set(const Value &other) {
+  Value &set(const Value &other) {
     *this = other;
+    return *this;
   }
   
   /** Copy the content of the other value. */
@@ -122,14 +133,18 @@ public:
         // FIXME: share matrix header
         set(other.matrix_);
         break;
+      case NIL_VALUE:
+        set_nil();
+        break;
       case ANY_VALUE:
         set_any();
+        break;
       default:
-        set();
+        set_empty();
     }
   }
   
-  const char * type_tag() const {
+  const char *type_tag() const {
     switch (type_) {
       case REAL_VALUE:   return "f";
       case ERROR_VALUE: // continue
@@ -139,19 +154,21 @@ public:
       case NIL_VALUE:    return "N";
       case LIST_VALUE:   return list_->type_tag();
       case ANY_VALUE:    return "*";
-      default:           return "N";
+      case EMPTY_VALUE:  /* continue */
+      default:           return "";
     }
   }
   
-  TypeTagID type_tag_id() const {
+  TypeTagID type_id() const {
     switch (type_) {
       case REAL_VALUE:   return H("f");
       case ERROR_VALUE:  // continue
       case STRING_VALUE: return H("s");
       case NIL_VALUE:    return H("N");
-      case LIST_VALUE:   return list_->type_tag_id();
+      case LIST_VALUE:   return list_->type_id();
       case ANY_VALUE:    return H("*");
-      default:           return H("N");  // NIL_VALUE
+      case EMPTY_VALUE:  /* continue */
+      default:           return H("");  // EMPTY_VALUE
     }
   }
   
@@ -195,40 +212,55 @@ public:
       case HASH_TYPE_TAG:   return HASH_VALUE;
       case MATRIX_TYPE_TAG: return MATRIX_VALUE;
       case ANY_TYPE_TAG:    return ANY_VALUE;
-      default:              return NIL_VALUE;
+      case NIL_TYPE_TAG:    return NIL_VALUE;
+      default:              return EMPTY_VALUE;
     }
+  }
+  
+  
+  /** =========================================================================================    Empty   */
+  bool is_empty() const { return type_ == EMPTY_VALUE; }
+  
+  /** Change the value to nil. */
+  Value &set_empty() {
+    set_type_without_default(EMPTY_VALUE);
+    return *this;
   }
   
   /** =========================================================================================    Nil     */
   bool is_nil() const    { return type_ == NIL_VALUE; }
   
   /** Change the value to nil. */
-  void set() {
+  Value &set_nil() {
     set_type_without_default(NIL_VALUE);
+    return *this;
   }
   
   /** =========================================================================================    Real    */
   bool is_real() const   { return type_ == REAL_VALUE; }
   
   /** Change the Value into a RealValue. */
-  void set(Real real) {
+  Value &set(Real real) {
     set_type_without_default(REAL_VALUE);
     r = real;
+    return *this;
   }
   
   /** =========================================================================================    String  */
   bool is_string() const { return type_ == STRING_VALUE; }
   
   /** Change the Value into a StringValue. */
-  void set(const char *string) {
+  Value &set(const char *string) {
     set_type_without_default(STRING_VALUE);
     set_string(string);
+    return *this;
   }
   
   /** Change the Value into a StringValue. */
-  void set(const std::string &string) {
+  Value &set(const std::string &string) {
     set_type_without_default(STRING_VALUE);
     set_string(string);
+    return *this;
   }
   
   Value& append(const std::string &string) {
@@ -260,15 +292,17 @@ public:
   bool is_list() const   { return type_ == LIST_VALUE; }
   
   /** Change the Value into a List by copying the content of the argument. */
-  void set(const List *list) {
+  Value &set(const List *list) {
     set_type_without_default(LIST_VALUE);
     set_list(list);
+    return *this;
   }
   
   /** Change the Value into a List by copying the content of the argument. */
-  void set(const List &list) {
+  Value &set(const List &list) {
     set_type_without_default(LIST_VALUE);
     set_list(&list);
+    return *this;
   }
   
   const Value &operator[](size_t pos) const {
@@ -285,6 +319,15 @@ public:
   
   Value &value_at(size_t pos) {
     return *((*list_)[pos]);
+  }
+  
+  const Value &last() const {
+    if (is_list()) {
+      Value *last = list_->last();
+      return last ? *last : gNilValue;
+    } else {
+      return *this;
+    }
   }
   
   void set_value_at(size_t pos, const Value &val) {
@@ -314,27 +357,31 @@ public:
   bool is_error() const  { return type_ == ERROR_VALUE; }
   
   /** Change the Value into an ErrorValue. */
-  void set(ErrorCode code, const char *string) {
+  Value &set(ErrorCode code, const char *string) {
     set_type_without_default(ERROR_VALUE);
     set_error(code, string);
+    return *this;
   }
   
   /** Change the Value into an ErrorValue. */
-  void set(ErrorCode code, const std::string &string) {
+  Value &set(ErrorCode code, const std::string &string) {
     set_type_without_default(ERROR_VALUE);
     set_error(code, string.c_str());
+    return *this;
   }
   
   /** Change the Value into a ListValue by copying the content of the argument. */
-  void set(const Error *error) {
+  Value &set(const Error *error) {
     set_type_without_default(ERROR_VALUE);
     set_error(error);
+    return *this;
   }
   
   /** Change the Value into a ListValue by copying the content of the argument. */
-  void set(const Error &error) {
+  Value &set(const Error &error) {
     set_type_without_default(ERROR_VALUE);
     set_error(&error);
+    return *this;
   }
   
   const std::string& error_message() const {
@@ -349,16 +396,19 @@ public:
   bool is_hash() const   { return type_ == HASH_VALUE; }
   
   /** Change the Value into a HashValue by copying the content of the argument. */
-  void set(const Hash *hash) {
+  Value &set(const Hash *hash) {
     set_type_without_default(HASH_VALUE);
     set_hash(hash);
+    return *this;
   }
   
   /** Change the Value into a HashValue by copying the content of the argument. */
-  void set(const Hash &hash) {
+  Value &set(const Hash &hash) {
     set_type_without_default(HASH_VALUE);
     set_hash(&hash);
+    return *this;
   }
+  
   template<class T>
   void set(const char *key, const T &val) {
     set(std::string(key), Value(val));
@@ -412,15 +462,17 @@ public:
   bool is_matrix() const   { return type_ == MATRIX_VALUE; }
   
   /** Change the Value into a MatrixValue by making a reference to the argument. */
-  void set(const Matrix *matrix) {
+  Value &set(const Matrix *matrix) {
     set_type_without_default(MATRIX_VALUE);
     set_matrix(matrix);
+    return *this;
   }
   
   /** Change the Value into a MatrixValue by making a reference to the argument. */
-  void set(const Matrix &matrix) {
+  Value &set(const Matrix &matrix) {
     set_type_without_default(MATRIX_VALUE);
     set_matrix(&matrix);
+    return *this;
   }
   
   size_t mat_size() const {
@@ -439,8 +491,16 @@ public:
   bool is_any() const    { return type_ == ANY_VALUE; }
   
   /** Change the value to nil. */
-  void set_any() {
+  Value &set_any() {
     set_type_without_default(ANY_VALUE);
+    return *this;
+  }
+  
+  /** Create a value by parsing a JSON string. */
+  Value &set(const Json &json) {
+    set_type_without_default(NIL_VALUE);
+    build_from_json(json.c_str());
+    return *this;
   }
   
  private:

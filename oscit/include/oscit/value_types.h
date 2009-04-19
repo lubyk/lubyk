@@ -10,7 +10,8 @@ extern Hash  gEmptyHash;
 
 enum ValueType
 {
-  NIL_VALUE = 0,
+  EMPTY_VALUE = 0,
+  NIL_VALUE,
   REAL_VALUE,
   STRING_VALUE,
   ERROR_VALUE,
@@ -21,7 +22,7 @@ enum ValueType
 };
 
 enum ValueTypeTag
-{
+{ 
   NIL_TYPE_TAG    = 'N',
   REAL_TYPE_TAG   = 'f',
   STRING_TYPE_TAG = 's',

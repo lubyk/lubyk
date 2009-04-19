@@ -1,6 +1,7 @@
 #ifndef _DUMMY_COMMAND_H_
 #define _DUMMY_COMMAND_H_
 #include "oscit/command.h"
+#include "mock/dummy_object.h"
 
 struct DummyCommand : public Command
 {
