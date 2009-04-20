@@ -42,7 +42,7 @@ std::ostream &operator<<(std::ostream &out_stream, const Value &val) {
       size_t sz = val.size();
       out_stream << "[";
       for (size_t i = 0; i < sz; ++i) {
-        if (i > 0 && !val[i].is_empty()) out_stream << ", ";
+        if (i > 0) out_stream << ", ";
         out_stream << val[i];
       }
       out_stream << "]";

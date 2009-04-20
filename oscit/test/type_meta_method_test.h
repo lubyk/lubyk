@@ -52,4 +52,14 @@ public:
     assert_true(res[0].is_any());
     assert_equal("This is the info string.", res[1].str()); // info
   }
+
+  void test_list_type( void ) {
+    Root root;
+    root.adopt(new DummyObject("Haddock", 42.0, Value(Json("[[\"\", 0.0], \"name\", \"years old\", \"Set captain with name and age.\"]"))));
+    Value res;
+    res = root.call("/.type", Value("/Haddock"));
+    assert_true(res.is_list());
+    assert_equal("[sf]sss", res.type_tag());
+    assert_equal("[\"Haddock\", 42]", res[0].to_json()); // info
+  }
 };

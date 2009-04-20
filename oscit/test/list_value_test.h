@@ -106,6 +106,17 @@ public:
     assert_equal(3.5, l[1].r);
   }
   
+  void test_set_list_value_at( void ) {
+    Value l(TypeTag("[fs]s"));
+    Value v(3.4);
+    assert_equal("[fs]s", l.type_tag());
+    assert_equal("[[0, \"\"], \"\"]", l.to_json());
+    v.push_back("hho");
+    l.set_value_at(0,v);
+    assert_equal("[fs]s", l.type_tag());
+    assert_equal("[[3.4, \"hho\"], \"\"]", l.to_json());
+  }
+  
   void test_set_tag_sub_list( void ) {
     Value v;
     

@@ -18,11 +18,15 @@ List::List(const List& list) {
  *  the type_tag of the list remains in sync. */
 void List::set_value_at(size_t pos, const Value &val) {
   if (pos >= size()) return;
-  if (val.is_list()) return; // NOT SUPPORTED YET
-  values_[pos]->set(val);
-  // FIXME: what if we had a list: "ff[sfs]ss", replace elem at 2 --> "ffsss"
-  type_tag_storage_.replace(pos,1,val.type_tag());
-  update_type_tag();
+  if (val.is_list()) {
+    if (values_[pos]->type_id() != val.type_id()) return; // TODO: NOT SUPPORTED YET
+    values_[pos]->set(val);
+  } else {
+    values_[pos]->set(val);
+    // FIXME: what if we had a list: "ff[sfs]ss", replace elem at 2 --> "ffsss"
+    type_tag_storage_.replace(pos,1,val.type_tag());
+    update_type_tag();
+  }
 }
   
 void List::push_back(const Value &val) {
@@ -72,8 +76,8 @@ const char *List::init_with_type_tag(const char *type_tag) {
      return c+1;
    } else {
      values_.push_back(new Value(*c));
+     c++;
    }
-   c++;
  }
  return c;
 }

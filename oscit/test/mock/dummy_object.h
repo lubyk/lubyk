@@ -31,6 +31,9 @@ public:
     } else if (type()[0].is_string()) {
       // testing type
       return Value("hello");
+    } else if (type()[0].is_list()) {
+      // testing multiple type
+      return Value(name_).push_back(value_.r);
     } else {
       return gNilValue;
     }
