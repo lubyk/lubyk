@@ -35,8 +35,9 @@ public:
     
     v3 = v;
     
-    assert_true(v3.is_empty());
-    assert_true(v2.is_empty());
+    assert_true(v.is_empty());
+    assert_true(v3.is_nil());
+    assert_true(v2.is_nil());
   }
   
   void test_set( void ) {

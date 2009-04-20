@@ -15,6 +15,11 @@ namespace oscit {
 #define DEBUG(x)
 #endif
 
+
+Value gNilValue('N');
+Value gEmptyValue;
+Hash  gEmptyHash(1);
+
 std::ostream &operator<<(std::ostream &out_stream, const Value &val) {
   switch (val.type()) {
     case REAL_VALUE:
@@ -61,9 +66,11 @@ Value &Value::push_back(const Value& val) {
   if (!val.is_empty()) {
     if (is_list()) {
       list_->push_back(val);
-    } else if (is_empty()) {
+    } else if (is_empty() && val.is_list()) {
       set_type(LIST_VALUE);
       list_->push_back(val);
+    } else if (is_empty()) {
+      set(val);
     } else {
       // copy self as first element
       Value original(*this);
@@ -80,8 +87,7 @@ Value &Value::push_front(const Value& val) {
     if (is_list()) {
       list_->push_front(val);
     } else if (is_empty()) {
-      set_type(LIST_VALUE);
-      list_->push_back(val); // push_back is faster
+      set(val);
     } else {
       // copy self as first element
       Value original(*this);
@@ -166,7 +172,8 @@ Value &Value::push_front(const Value& val) {
   
   action nil {
     // become a NilValue
-    set_type(NIL_VALUE);
+    DEBUG(printf("[nil]\n"));
+    tmp_val.set_type(NIL_VALUE);
   }
   
   action set_from_tmp {

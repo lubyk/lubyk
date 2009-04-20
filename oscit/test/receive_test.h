@@ -27,6 +27,22 @@ class ReceiveTest : public TestHelper
     assert_equal("[\"/foo\", 3]\n", reply());
   }
   
+  void test_send_empty_should_receive_value( void ) {
+    DummyObject * foo = root_.adopt(new DummyObject("foo", 1.25));
+    
+    send("/foo", Value());
+    assert_equal(1.25, foo->real());
+    assert_equal("[\"/foo\", 1.25]\n", reply());
+  }
+  
+  void test_send_nil_should_receive_value( void ) {
+    DummyObject * foo = root_.adopt(new DummyObject("foo", 1.25));
+
+    send("/foo", gNilValue);
+    assert_equal(1.25, foo->real());
+    assert_equal("[\"/foo\", 1.25]\n", reply());
+  }
+  
  private:
   void send(const char *url, Real real) {
     send(url, Value(real));

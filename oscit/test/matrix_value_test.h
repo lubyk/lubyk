@@ -68,7 +68,7 @@ public:
     Value v3;
     
     assert_true(v2.is_matrix());
-    assert_true(v3.is_nil());
+    assert_true(v3.is_empty());
     
     assert_equal(3.0, v2.mat_data()[3]);
     assert_equal(6, v.mat_size());
@@ -97,7 +97,7 @@ public:
   {
     Value v;
     Matrix m(2,2);
-    assert_true(v.is_nil());
+    assert_true(v.is_empty());
     v.set(m);
     assert_true(v.is_matrix());
     assert_equal(4, v.mat_size());

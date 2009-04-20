@@ -9,7 +9,7 @@
 
 namespace oscit {
 
-#define DEBUG_OSC_COMMAND
+//#define DEBUG_OSC_COMMAND
 
 static osc::OutboundPacketStream &operator<<(osc::OutboundPacketStream &out_stream, const Value &val);
 
@@ -197,6 +197,7 @@ osc::OutboundPacketStream &operator<<(osc::OutboundPacketStream &out_stream, con
     case STRING_VALUE:
       out_stream << val.c_str();
       break;
+    case EMPTY_VALUE: /* continue */
     case NIL_VALUE:
       out_stream << osc::Nil;
       break;

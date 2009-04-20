@@ -6,19 +6,20 @@ class Value;
 class Hash;
 
 extern Value gNilValue;
+extern Value gEmptyValue;
 extern Hash  gEmptyHash;
 
 enum ValueType
 {
-  EMPTY_VALUE = 0,
-  NIL_VALUE,
-  REAL_VALUE,
-  STRING_VALUE,
-  ERROR_VALUE,
-  LIST_VALUE,
-  HASH_VALUE,
-  MATRIX_VALUE,
-  ANY_VALUE, // nil but with '*' type tag
+  EMPTY_VALUE  = 0,
+  NIL_VALUE    = 1,
+  REAL_VALUE   = 2,
+  STRING_VALUE = 3,
+  ERROR_VALUE  = 4,
+  LIST_VALUE   = 5,
+  HASH_VALUE   = 6,
+  MATRIX_VALUE = 7,
+  ANY_VALUE    = 8, // nil but with '*' type tag
 };
 
 enum ValueTypeTag

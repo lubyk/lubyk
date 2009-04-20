@@ -21,7 +21,11 @@ class Json : public std::string
 
 
 /** Value is the base type of all data transmitted between objects or used as parameters
-and return values for osc messages. */
+and return values for osc messages. 
+ *
+ *  Nil vs Empty: Empty means "not initialized", Nil means "initialized to 'no value'". If you pass
+ *  Empty as a parameter it will be considered the same as Nil (root does a cast).
+ */
 class Value
 { 
 public:
@@ -133,14 +137,17 @@ public:
         // FIXME: share matrix header
         set(other.matrix_);
         break;
-      case NIL_VALUE:
-        set_nil();
-        break;
       case ANY_VALUE:
         set_any();
         break;
+      case EMPTY_VALUE:
+        /* we consider that if you set a value with empty it means you want Nil. 
+         * This is very useful for return values. */
+        /* continue */
+      case NIL_VALUE:
+        /* continue */
       default:
-        set_empty();
+        set_nil();
     }
   }
   

@@ -5,18 +5,18 @@ class NilValueTest : public TestHelper
 {  
 public:
   void test_create( void ) {
-    Value v;
     
-    assert_true (v.is_nil());
-    assert_false(v.is_real());
-    assert_false(v.is_string());
-    assert_false(v.is_list());
-    assert_false(v.is_error());
-    assert_false(v.is_hash());
-    assert_false(v.is_matrix());
-    assert_false(v.is_any());
+    assert_false(gNilValue.is_empty());
+    assert_true (gNilValue.is_nil());
+    assert_false(gNilValue.is_real());
+    assert_false(gNilValue.is_string());
+    assert_false(gNilValue.is_list());
+    assert_false(gNilValue.is_error());
+    assert_false(gNilValue.is_hash());
+    assert_false(gNilValue.is_matrix());
+    assert_false(gNilValue.is_any());
     
-    assert_equal("N", v.type_tag());
+    assert_equal("N", gNilValue.type_tag());
   }
   
   void test_create_with_char( void ) {
@@ -32,7 +32,7 @@ public:
   }
   
   void test_copy( void ) {
-    Value v;
+    Value v('N');
     Value v2(v);
     Value v3(1.2);
     
@@ -67,7 +67,7 @@ public:
   }
   
   void test_to_json( void ) {
-    Value v;
+    Value v('N');
     std::ostringstream os(std::ostringstream::out);
     os << v;
     assert_equal("null", os.str());

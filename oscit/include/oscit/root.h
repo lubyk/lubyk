@@ -142,7 +142,9 @@ class Root : public Object
   }
   
   inline const Value call(Object *target, const Value &val) {
-    if (val.is_nil() || val.type_id() == target->type_id() || target->accept_any_type()) {
+    if (val.is_nil() || val.is_empty()) {
+      return target->safe_trigger(gNilValue);
+    } else if (val.type_id() == target->type_id() || target->accept_any_type()) {
       return target->safe_trigger(val);
     } else {
       Value type = call("/.type", Value(target->url()));
@@ -196,7 +198,7 @@ class Root : public Object
   Object *find_or_build_object_at(const std::string &url, Value *error) {
     Object *object = do_find_or_build_object_at(url, error);
     
-    if (object == NULL && (error->is_nil() || (error->is_error() && error->error_code() == NOT_FOUND_ERROR))) {
+    if (object == NULL && (error->is_empty() || (error->is_error() && error->error_code() == NOT_FOUND_ERROR))) {
       error->set(NOT_FOUND_ERROR, url);
     }
     

@@ -80,7 +80,7 @@ public:
     
     Value v3;
     
-    assert_true(v3.is_nil());
+    assert_true(v3.is_empty());
     
     v3 = v;
     assert_true(v3.is_string());
@@ -102,7 +102,7 @@ public:
   void test_set( void ) {
     Value v;
     
-    assert_true(v.is_nil());
+    assert_true(v.is_empty());
     v.set("foobar");
     assert_true(v.is_string());
     assert_equal("foobar", v.str());

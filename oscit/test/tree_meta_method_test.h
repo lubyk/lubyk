@@ -49,7 +49,7 @@ public:
     Value res;
 
     res = root.call("/.tree", Value("/Zorglub"));
-    assert_true(res.is_list());
+    assert_true(res.is_nil());
     assert_equal(0, res.size());
   }
 };

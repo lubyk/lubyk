@@ -7,8 +7,6 @@ public:
   void test_create( void ) {
     Value v(TypeTag("fsf"));
 
-    v.type(); // removing this makes "is_list" fail ???? What ? ?! #@)(#)@@!!
-    
     assert_false(v.is_empty());
     assert_false(v.is_nil());
     assert_false(v.is_real());
@@ -165,6 +163,8 @@ public:
     v.push_back(Value('N'));
     assert_equal("N", v.type_tag());
     assert_true(v.is_nil());
+    v.push_back(gEmptyValue);
+    assert_equal("N", v.type_tag());
     v.push_back(gNilValue);
     assert_equal("NN", v.type_tag());
     assert_true(v.is_list());
@@ -175,14 +175,14 @@ public:
   
   void test_push_back_empty( void ) {
     Value v;
-    v.push_back(Value());
+    v.push_back(gEmptyValue);
     assert_true(v.is_empty());
     assert_equal("", v.type_tag());
   }
   
   void test_push_back_nil( void ) {
     Value v;
-    v.set_nil().push_back(Value());
+    v.set_nil().push_back(gNilValue);
     assert_equal("NN", v.type_tag());
     assert_equal(2, v.size());
     assert_true(v[0].is_nil());
@@ -203,7 +203,7 @@ public:
   
   void test_push_back_real_on_empty_list( void ) {
     // push_back on empty list is the same as set(...)
-    ListValue v;
+    Value v;
     v.push_back(1.34);
     
     assert_true(v.is_real());
@@ -287,7 +287,7 @@ public:
   }
   
   void test_push_back_list_on_nil( void ) {
-    Value v;
+    Value v('N');
     Value l(TypeTag("fss"));
     l[0].r = 10.0;
     l[1].set("one");
@@ -303,9 +303,7 @@ public:
   void test_push_front_real( void ) {
     Value v;
     v.push_front(1.34);
-    assert_true(v.is_list());
-    assert_true(v[0].is_real());
-    assert_true(v[1].is_nil());
+    assert_true(v.is_real());
     
     v.set(1.34).push_front(3.45);
     assert_true(v.is_list());
@@ -344,7 +342,7 @@ public:
   
   void test_last( void ) {
     Value v;
-    assert_true(v.last().is_nil());
+    assert_true(v.last().is_empty());
     v.set(1.5);
     assert_equal(1.5, v.last().r);
     v.push_back("how");
@@ -405,6 +403,7 @@ public:
   void test_from_json_list_in_list_bracket( void ) {
     Value v(Json("[[1.0, 2.0], 3.0, [\"four\",\"five\"]]"));
     assert_true(v.is_list());
+    assert_equal("[[1, 2], 3, [\"four\", \"five\"]]", v.to_json());
     assert_equal(1.0, v[0][0].r);
     assert_equal(2.0, v[0][1].r);
     assert_equal(3.0, v[1].r);

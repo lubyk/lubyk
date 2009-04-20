@@ -58,7 +58,7 @@ public:
     Value v3;
     
     assert_true(v2.is_real());
-    assert_true(v3.is_nil());
+    assert_true(v3.is_empty());
     
     v3 = v;
     
@@ -77,7 +77,7 @@ public:
   {
     Value v;
     
-    assert_true(v.is_nil());
+    assert_true(v.is_empty());
     v.set(3.5);
     assert_true(v.is_real());
     assert_equal(3.5, v.r);

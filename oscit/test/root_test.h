@@ -85,6 +85,22 @@ public:
     assert_equal(9.87, res.r);
   }
   
+  void test_call_with_nil_should_return_current_value( void ) {
+    Root root;
+    root.adopt(new DummyObject("zorglub", 9.87));
+    Value res = root.call("/zorglub", gNilValue);
+    assert_true(res.is_real());
+    assert_equal(9.87, res.r);
+  }
+  
+  void test_call_with_empty_should_return_current_value( void ) {
+    Root root;
+    root.adopt(new DummyObject("zorglub", 9.87));
+    Value res = root.call("/zorglub", Value());
+    assert_true(res.is_real());
+    assert_equal(9.87, res.r);
+  }
+  
   void test_call_with_bad_arguments_should_return_bad_request_error( void ) {
     Root root;
     root.adopt(new DummyObject("zorglub", 9.87));
@@ -98,7 +114,7 @@ public:
   void test_call_bad_url_should_return_missing_error( void ) {
     Root root;
     Value res = root.call("/foo");
-
+    
     assert_true(res.is_error());
     assert_equal("/foo", res.error_message());
     assert_equal(NOT_FOUND_ERROR, res.error_code());
@@ -155,7 +171,7 @@ public:
     Value error;
     res = root.object_at(Url("/foo"), &error);
     assert_equal((Object*)foo, res);
-    assert_true(error.is_nil());
+    assert_true(error.is_empty());
   }
   
   void test_object_at_bad_protocol( void ) {
