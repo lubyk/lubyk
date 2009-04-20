@@ -10,7 +10,7 @@ public:
   /** Class signature. */
   TYPED("Object.InfoMetaMethod")
   
-  InfoMetaMethod(const char *name) : Object(name, TextIO("url", "Return information on the given url.")) {}
+  InfoMetaMethod(const char *name) : Object(name, StringIO("url", "Return information on the given url.")) {}
 
   virtual const Value trigger (const Value &url) {
     Value error;

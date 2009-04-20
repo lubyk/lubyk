@@ -153,12 +153,12 @@ public:
   
   const char *type_tag() const {
     switch (type_) {
+      case NIL_VALUE:    return "N";
       case REAL_VALUE:   return "f";
       case ERROR_VALUE: // continue
       case STRING_VALUE: return "s";
       case HASH_VALUE:   return "H";
       case MATRIX_VALUE: return "M";
-      case NIL_VALUE:    return "N";
       case LIST_VALUE:   return list_->type_tag();
       case ANY_VALUE:    return "*";
       case EMPTY_VALUE:  /* continue */
@@ -168,10 +168,12 @@ public:
   
   TypeTagID type_id() const {
     switch (type_) {
+      case NIL_VALUE:    return H("N");
       case REAL_VALUE:   return H("f");
       case ERROR_VALUE:  // continue
       case STRING_VALUE: return H("s");
-      case NIL_VALUE:    return H("N");
+      case HASH_VALUE:   return H("H");
+      case MATRIX_VALUE: return H("M");
       case LIST_VALUE:   return list_->type_id();
       case ANY_VALUE:    return H("*");
       case EMPTY_VALUE:  /* continue */

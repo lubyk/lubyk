@@ -10,7 +10,7 @@ public:
   /** Class signature. */
   TYPED("Object.ListMetaMethod")
   
-  ListMetaMethod(const char *name) : Object(name, TextIO("url", "List all children under the given url.")) {}
+  ListMetaMethod(const char *name) : Object(name, StringIO("url", "List all children under the given url.")) {}
 
   virtual const Value trigger(const Value &url) {
     Value error;

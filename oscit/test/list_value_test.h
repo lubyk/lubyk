@@ -29,6 +29,8 @@ public:
     assert_equal(0.0, v[2].r);
     
     assert_equal("fsf", v.type_tag());
+    int i = H("fsf");
+    assert_equal(i, v.type_id());
   }
   
   void test_empty_list_is_nil( void ) {

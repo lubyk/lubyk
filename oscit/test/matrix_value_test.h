@@ -23,6 +23,9 @@ public:
     assert_true(m->type() == 0);
     
     assert_equal("M", v.type_tag());
+    
+    int i = H("M");
+    assert_equal(i, v.type_id());
   }
   
   void test_create_matrix_value( void ) {

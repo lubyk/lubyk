@@ -23,6 +23,8 @@ public:
     assert_equal(3.5, v.d); // alias as double
     
     assert_equal("f", v.type_tag());
+    int i = H("f");
+    assert_equal(i, v.type_id());
   }
   
   void test_create_real_value( void ) {

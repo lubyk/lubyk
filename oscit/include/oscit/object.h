@@ -13,7 +13,7 @@ namespace oscit {
 #define NoIO(info)  Value(info)
 #define NilIO(info)  ListValue("N").push_back(info)
 #define FieldIO(units,info) Value(0.0).push_back(units).push_back(info)
-#define TextIO(units,info) Value("").push_back(units).push_back(info)
+#define StringIO(units,info) Value("").push_back(units).push_back(info)
 #define RangeIO(min,max,units,info) Value(0.0).push_back(min).push_back(max).push_back(units).push_back(info)
 #define SelectIO(values,units,info) Value("").push_back(values).push_back(units).push_back(info)
 #define HashIO(info) Value('H').push_back(info)
@@ -304,6 +304,15 @@ class Object : public Typed
   /** Parent changed, set new context. */
   virtual void set_context(Mutex *context) { context_ = context; }
   
+  /** Return the type tag signature id (uint) of the trigger method of this object (what it wants to receive as arguments). */
+  TypeTagID type_id() {
+    return type_id_;
+  }
+  
+  bool accept_any_type() {
+    return type_id_ == ANY_TYPE_TAG_ID;
+  }
+  
 protected:
 
   /** Child sends a notification to the parent when it's name changes so that the parent/root keep their url hash in sync. */
@@ -326,19 +335,13 @@ protected:
     }
   }
   
-  /** Return the type tag signature id (uint) of the trigger method of this object (what it wants to receive as arguments). */
-  TypeTagID type_id() {
-    return type_id_;
-  }
-  
-  bool accept_any_type() {
-    return type_id_ == ANY_TYPE_TAG_ID;
-  }
-  
  private:
   /** Keep type_id_ in sync with type_. */
   void type_changed() {
     type_id_ = type_.size() > 0 ? type_[0].type_id() : type_.type_id();
+    //if (type_.size() > 0) {
+    //  std::cout << "type_changed: " << type_[0] << " = " << type_[0].type_id() << " // " << type_id_ << "\n"; 
+    //}
   }
   
   /** Free the child from the list of children. */

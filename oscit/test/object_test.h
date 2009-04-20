@@ -117,6 +117,14 @@ public:
     assert_equal(22.22, two->real());
   }
   
+  void test_hash_type_id( void ) {
+    Object hash("foo", HashIO("bar"));
+    Object matr("foo", MatrixIO(1,4,"bar"));
+    assert_false(hash.type_id() == matr.type_id());
+    assert_equal("Hs", hash.type().type_tag());
+    assert_equal("Ms", matr.type().type_tag());
+  }
+  
   // set_type is not a good idea. It should be immutable (or maybe I'm wrong, so I leave the test here)
   //void test_set_type( void ) {
   //  DummyObject one("one", 123.0);

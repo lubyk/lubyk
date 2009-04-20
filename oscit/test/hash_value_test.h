@@ -23,6 +23,10 @@ public:
     assert_true(v.get("foo", &res));
     assert_true(res.is_real());
     assert_equal(3.5, res.r);
+    
+    assert_equal("H", v.type_tag());
+    int i = H("H");
+    assert_equal(i, v.type_id());
   }
   
   void test_create_set( void ) {

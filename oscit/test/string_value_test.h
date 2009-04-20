@@ -19,6 +19,9 @@ public:
     assert_equal("foo", v.str());
     
     assert_equal("s", v.type_tag());
+    
+    int i = H("s");
+    assert_equal(i, v.type_id());
   }
   
   void test_create_string_value( void ) {

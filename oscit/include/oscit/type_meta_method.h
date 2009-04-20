@@ -10,7 +10,7 @@ public:
   /** Class signature. */
   TYPED("Object.TypeMetaMethod")
   
-  TypeMetaMethod(const char *name) : Object(name, TextIO("url", "Return type and information on the given url.")) {}
+  TypeMetaMethod(const char *name) : Object(name, StringIO("url", "Return type and information on the given url.")) {}
 
   virtual const Value trigger(const Value &url) {
     Value error;

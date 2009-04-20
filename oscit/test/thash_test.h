@@ -126,6 +126,54 @@ public:
     assert_false(hashId("longnamelong_a") == hashId("longnamelong_c"));
   }
   
+  void test_N_type_id( void ) {
+    assert_false(H("N") == H("f"));
+    assert_false(H("N") == H("s"));
+    assert_false(H("N") == H("H"));
+    assert_false(H("N") == H("M"));
+    assert_false(H("N") == H("*"));
+  }
+  
+  void test_f_type_id( void ) {
+    assert_false(H("f") == H("N"));
+    assert_false(H("f") == H("s"));
+    assert_false(H("f") == H("H"));
+    assert_false(H("f") == H("M"));
+    assert_false(H("f") == H("*"));
+  }
+  
+  void test_s_type_id( void ) {
+    assert_false(H("s") == H("N"));
+    assert_false(H("s") == H("f"));
+    assert_false(H("s") == H("H"));
+    assert_false(H("s") == H("M"));
+    assert_false(H("s") == H("*"));
+  }
+  
+  void test_H_type_id( void ) {
+    assert_false(H("H") == H("N"));
+    assert_false(H("H") == H("f"));
+    assert_false(H("H") == H("s"));
+    assert_false(H("H") == H("M"));
+    assert_false(H("H") == H("*"));
+  }
+  
+  void test_M_type_id( void ) {
+    assert_false(H("M") == H("N"));
+    assert_false(H("M") == H("f"));
+    assert_false(H("M") == H("s"));
+    assert_false(H("M") == H("H"));
+    assert_false(H("M") == H("*"));
+  }
+  
+  void test_any_type_id( void ) {
+    assert_false(H("*") == H("N"));
+    assert_false(H("*") == H("f"));
+    assert_false(H("*") == H("s"));
+    assert_false(H("*") == H("H"));
+    assert_false(H("*") == H("M"));
+  }
+  
   void test_copy( void ) {
     THash<std::string, std::string> hash(10);
     THash<std::string, std::string> hash2(10);
