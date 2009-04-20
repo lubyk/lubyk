@@ -440,6 +440,17 @@ OutboundPacketStream& OutboundPacketStream::operator<<( const InfinitumType& rhs
     return *this;
 }
 
+// [ oscit
+OutboundPacketStream& OutboundPacketStream::operator<<( const AnyType& rhs )
+{
+    (void) rhs;
+    CheckForAvailableArgumentSpace(0);
+
+    *(--typeTagsCurrent_) = ANY_TYPE_TAG;
+
+    return *this;
+}
+// ]
 
 OutboundPacketStream& OutboundPacketStream::operator<<( int32 rhs )
 {

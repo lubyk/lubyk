@@ -174,6 +174,7 @@ public:
 
     bool IsNil() const { return *typeTag_ == NIL_TYPE_TAG; }
     bool IsInfinitum() const { return *typeTag_ == INFINITUM_TYPE_TAG; }
+    bool IsAny() const { return *typeTag_ == ANY_TYPE_TAG; }
 
     bool IsInt32() const { return *typeTag_ == INT32_TYPE_TAG; }
     int32 AsInt32() const;

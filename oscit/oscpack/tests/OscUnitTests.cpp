@@ -325,6 +325,7 @@ void test3()
 
     TEST_PACK_UNPACK0( "/nil", Nil, true, IsNil );
     TEST_PACK_UNPACK0( "/inf", Infinitum, true, IsInfinitum );
+    TEST_PACK_UNPACK0( "/any", Any, true, IsAny );
 
     TEST_PACK_UNPACK( "/an_int", (int32)1234, int32, AsInt32 );
 

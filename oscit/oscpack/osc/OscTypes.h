@@ -68,6 +68,7 @@ enum TypeTagValue {
     FALSE_TYPE_TAG = 'F',
     NIL_TYPE_TAG = 'N',
     INFINITUM_TYPE_TAG = 'I',
+    ANY_TYPE_TAG = '*', // oscit
     INT32_TYPE_TAG = 'i',
     FLOAT_TYPE_TAG = 'f',
     CHAR_TYPE_TAG = 'c',
@@ -127,6 +128,13 @@ struct InfinitumType{
 };
 
 extern InfinitumType Infinitum;
+
+// [ oscit
+struct AnyType{
+};
+
+extern AnyType Any;
+// ]
 
 struct RgbaColor{
     RgbaColor() {}

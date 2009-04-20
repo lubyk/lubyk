@@ -140,6 +140,10 @@ protected:
 
                 std::cout << "received '/inf' message\n";
 
+            }else if( strcmp( m.AddressPattern(), "/any" ) == 0 ){
+
+                std::cout << "received '/any' message\n";
+
             }else if( strcmp( m.AddressPattern(), "/an_int" ) == 0 ){
 
                 osc::int32 a;

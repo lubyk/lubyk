@@ -13,3 +13,5 @@ rubyk/test/runner
 rubyk/rubyk
 mimas/build/*/build
 doc/prototypes/test
+oscit/oscpack/bin/*
+oscit/oscpack/liboscpack.*

@@ -458,6 +458,7 @@ void ReceivedMessageArgumentIterator::Advance()
         case FALSE_TYPE_TAG:
         case NIL_TYPE_TAG:
         case INFINITUM_TYPE_TAG:
+        case ANY_TYPE_TAG:
 
             // zero length
             break;
@@ -587,6 +588,7 @@ void ReceivedMessage::Init( const char *message, unsigned long size )
                     case FALSE_TYPE_TAG:
                     case NIL_TYPE_TAG:
                     case INFINITUM_TYPE_TAG:
+                    case ANY_TYPE_TAG:
 
                         // zero length
                         break;

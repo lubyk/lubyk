@@ -94,6 +94,7 @@ public:
     OutboundPacketStream& operator<<( bool rhs );
     OutboundPacketStream& operator<<( const NilType& rhs );
     OutboundPacketStream& operator<<( const InfinitumType& rhs );
+    OutboundPacketStream& operator<<( const AnyType& rhs ); // oscit
     OutboundPacketStream& operator<<( int32 rhs );
 
 #ifndef x86_64

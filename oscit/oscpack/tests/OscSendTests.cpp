@@ -118,6 +118,9 @@ void RunSendTests( const IpEndpointName& host )
 
         p << osc::BeginMessage( "/inf" )
             << osc::Infinitum << osc::EndMessage;
+            
+        p << osc::BeginMessage( "/any" )
+            << osc::Any << osc::EndMessage;
 
         p << osc::BeginMessage( "/an_int" ) << 1234 << osc::EndMessage;
 

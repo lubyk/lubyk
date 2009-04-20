@@ -36,5 +36,6 @@ BundleTerminator EndBundle;
 MessageTerminator EndMessage;
 NilType Nil;
 InfinitumType Infinitum;
+AnyType Any; // oscit
 
 } // namespace osc
