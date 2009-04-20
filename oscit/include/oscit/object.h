@@ -10,22 +10,15 @@
 namespace oscit {
 #define OSC_NEXT_NAME_BUFFER_SIZE 20
 
-#define NoInput(info)  Value(info)
-#define NoOutput(info) Value(info)
-#define NilInput(info)  ListValue("N").push_back(info)
-#define NilOutput(info) ListValue("N").push_back(info)
-#define FieldInput(units,info) Value(0.0).push_back(units).push_back(info)
-#define FieldOutput(units,info) Value(0.0).push_back(units).push_back(info)
-#define TextInput(units,info) Value("").push_back(units).push_back(info)
-#define TextOutput(units,info) Value("").push_back(units).push_back(info)
-#define RangeInput(min,max,units,info) Value(0.0).push_back(min).push_back(max).push_back(units).push_back(info)
-#define RangeOutput(min,max,units,info) Value(0.0).push_back(min).push_back(max).push_back(units).push_back(info)
-#define SelectInput(values,units,info) Value("").push_back(values).push_back(units).push_back(info)
-#define SelectOutput(values,units,info) Value("").push_back(values).push_back(units).push_back(info)
-#define AnyInput(info) ListValue("*").push_back(info)
-#define AnyOutput(info) ListValue("*").push_back(info)
+#define NoIO(info)  Value(info)
+#define NilIO(info)  ListValue("N").push_back(info)
+#define FieldIO(units,info) Value(0.0).push_back(units).push_back(info)
+#define TextIO(units,info) Value("").push_back(units).push_back(info)
+#define RangeIO(min,max,units,info) Value(0.0).push_back(min).push_back(max).push_back(units).push_back(info)
+#define SelectIO(values,units,info) Value("").push_back(values).push_back(units).push_back(info)
+#define AnyIO(info) ListValue("*").push_back(info)
 
-#define DEFAULT_TYPE NoInput("No information on this node.")
+#define DEFAULT_TYPE NoIO("No information on this node.")
   
 class Root;
 class Alias;

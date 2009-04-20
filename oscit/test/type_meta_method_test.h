@@ -44,7 +44,7 @@ public:
 
   void test_any_type( void ) {
     Root root;
-    root.adopt(new DummyObject("foo", 1.23, AnyInput("This is the info string.")));
+    root.adopt(new DummyObject("foo", 1.23, AnyIO("This is the info string.")));
     Value res;
     res = root.call("/.type", Value("/foo"));
     assert_true(res.is_list());

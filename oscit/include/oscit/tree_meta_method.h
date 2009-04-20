@@ -10,7 +10,7 @@ public:
   /** Class signature. */
   TYPED("Object.TreeMetaMethod")
   
-  TreeMetaMethod(const char *name) : Object(name, TextInput("url", "Returns all children and sub-children under the given url")) {}
+  TreeMetaMethod(const char *name) : Object(name, TextIO("url", "Returns all children and sub-children under the given url")) {}
 
   virtual const Value trigger(const Value &url) {
     Value res;

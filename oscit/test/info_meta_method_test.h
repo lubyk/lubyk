@@ -6,7 +6,7 @@ class InfoMetaMethodTest : public TestHelper
 {
 public:
   void test_info( void ) {
-    Root root(NoInput("This is the root node."));
+    Root root(NoIO("This is the root node."));
     root.adopt(new Object("foo"));
     Value res;
     

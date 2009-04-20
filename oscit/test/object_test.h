@@ -120,7 +120,7 @@ public:
   // set_type is not a good idea. It should be immutable (or maybe I'm wrong, so I leave the test here)
   //void test_set_type( void ) {
   //  DummyObject one("one", 123.0);
-  //  assert_equal("fffss", one.type().type_tag()); // RangeInput
+  //  assert_equal("fffss", one.type().type_tag()); // RangeIO
   //  assert_equal(0.0, one.type()[0].r); // current
   //  assert_equal(0.0, one.type()[1].r);   // min
   //  assert_equal(127.0, one.type()[2].r); // max

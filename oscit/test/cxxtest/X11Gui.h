@@ -194,7 +194,7 @@ namespace CxxTest
         void initializeEvents()
         {
             _eventMask = ExposureMask;
-            XSelectInput( _display, _window, _eventMask );
+            XSelectIO( _display, _window, _eventMask );
         }
 
         void initializeBar( const WorldDescription &wd )

@@ -48,7 +48,6 @@ struct TypeTag
 /** Unique identifier for osc type tags strings. */
 typedef uint TypeTagID;
 
-#define NO_TYPE_TAG_ID  H("")
 #define ANY_TYPE_TAG_ID H("*")
 
 } // oscit

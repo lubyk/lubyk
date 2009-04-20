@@ -73,7 +73,7 @@ public:
   }
   
   void test_any_input( void ) {
-    Value any(AnyInput("La la."));
+    Value any(AnyIO("La la."));
     assert_equal("*s", any.type_tag());
   }
   
