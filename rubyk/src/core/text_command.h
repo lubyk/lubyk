@@ -57,6 +57,13 @@ public:
     if (!silent_) {
       if (res.is_string()) {
         *output_ << res.str() << std::endl;
+      } else if (res.is_error()) {
+        *output_ << res.error_code() << " " << res.error_message() << std::endl;
+      } else if (res.is_list()) {
+        for (size_t i=0; i < res.size(); ++i) {
+          res[i].to_stream(*output_, true);
+          *output_ << std::endl;
+        }
       } else if (!res.is_nil()) {
         *output_ << res << std::endl;
       }
@@ -82,6 +89,7 @@ protected:
     if (from_node_.size() > 0 && from_node_.at(0) != '/') from_node_.insert(0, current_directory_);
     if (to_node_.size() > 0 && to_node_.at(0) != '/') to_node_.insert(0,   current_directory_);
     if (var_.size() > 0 && var_.at(0) != '/') var_.insert(0,   current_directory_);
+    if (method_.size() > 0 && method_.at(0) != '/') method_.insert(0,   current_directory_);
   }
   
   /** Create an instance. */

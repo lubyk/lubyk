@@ -115,7 +115,7 @@ void TextCommand::parse(const std::string &string) {
     
     ws     = (' ' | '\t');
   
-    identifier = ((lower | '/') (alnum | '_' | '/')*) $a;
+    identifier = ((lower | '/' '.'? | '.') (alnum | '_' | '/')*) $a;
   
     var    = identifier %set_var;
     
@@ -139,21 +139,21 @@ void TextCommand::parse(const std::string &string) {
   
     create_instance = var ws* '=' ws* class '(' parameters? ')' ;
   
-    from_link = var %set_from ('.' var %set_from_port)?;
-    to_link   = (var %set_to_port '.')? var;
+    from_link = var %set_from ('~' var %set_from_port)?;
+    to_link   = (var %set_to_port '~')? var;
     create_link = from_link ws* '=>' ws* to_link;
     
     remove_link = from_link ws* '||' ws* to_link;
     
-    execute_method       = var   '.' method ( '(' parameters? ')' )? ;
+    execute_method       = var   '~' method ( '(' parameters? ')' )? ; # TODO: remove these lines and simply use execute_command ?
     
-    execute_class_method = class '.' method ( '(' parameters? ')' )? ;
+    execute_class_method = class '~' method ( '(' parameters? ')' )? ; # TODO: remove these lines and simply use execute_command ?
 
     execute_command = method ( '(' parameters? ')' )?;
   
     main := ((execute_command %execute_command # cannot put comments here :-(
-            | execute_method  %execute_method (ws* comment)?
-            | execute_class_method  %execute_class_method (ws* comment)?
+            #| execute_method  %execute_method (ws* comment)?
+            #| execute_class_method  %execute_class_method (ws* comment)?
             | create_instance %create_instance (ws* comment)?
             | create_link %create_link (ws* comment)?
             | remove_link %remove_link (ws* comment)?
@@ -268,7 +268,7 @@ void TextCommand::execute_command() {
     stop(); // Readline won't quit with a SIGTERM (see doc/prototypes/term_readline.cpp).
     res = root_->call(QUIT_URL);
   } else {  
-    method_.insert(0, current_directory_);
+    names_to_urls();
     res = root_->call(method_, params);
   }
   print_result(res);
