@@ -193,6 +193,9 @@ public:
   /** Return a string representation of the value. */
   Json to_json() const;
   
+  /** Return a lazy json string representation of the value. */
+  Json lazy_json() const;
+  
   /** Change the Value into the specific type. Since a default value must be set,
     * it is better to use 'set'. */
   void set_type(ValueType type) {
@@ -334,6 +337,15 @@ public:
     if (is_list()) {
       Value *last = list_->last();
       return last ? *last : gNilValue;
+    } else {
+      return *this;
+    }
+  }
+  
+  const Value &first() const {
+    if (is_list()) {
+      Value *first = list_->first();
+      return first ? *first : gNilValue;
     } else {
       return *this;
     }
@@ -512,6 +524,12 @@ public:
     return *this;
   }
   
+  /** Print value into the given stream.
+   *  @param out_stream std stream to print value in
+   *  @param lazy print mode (lazy = unparsable json but can be easier to read)
+   */
+  void to_stream(std::ostream &out_stream, bool lazy = false) const;
+  
  private:
   /** Set the value to nil and release/free contained data. */
   void clear()  {
@@ -650,7 +668,7 @@ public:
   void Value::set_matrix(const Matrix *matrix) {
     matrix_ = new Matrix(*matrix);
   }
-  
+    
   ValueType type_;
   
  public:

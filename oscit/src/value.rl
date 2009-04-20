@@ -19,7 +19,7 @@ Value gNilValue('N');
 Value gEmptyValue;
 Hash  gEmptyHash(1);
 
-std::string escape(const std::string &string) {
+static std::string escape(const std::string &string) {
   std::string res;
   size_t len = 0;
   const char *last_append = string.c_str();
@@ -54,30 +54,43 @@ std::string escape(const std::string &string) {
 }
 
 std::ostream &operator<<(std::ostream &out_stream, const Value &val) {
-  switch (val.type()) {
+  val.to_stream(out_stream);
+  return out_stream;
+}
+
+void Value::to_stream(std::ostream &out_stream, bool lazy) const {
+  switch (type()) {
     case REAL_VALUE:
-      out_stream << val.r;
+      out_stream << r;
       break;
     case ERROR_VALUE:
-      out_stream << "\"" << val.error_code() << " " << escape(val.error_message()) << "\"";
+      out_stream << "\"" << error_code() << " " << escape(error_message()) << "\"";
       break;
     case STRING_VALUE:
-      out_stream << "\"" << escape(val.str()) << "\"";
+      if (lazy) {
+        out_stream << str();
+      } else {
+        out_stream << "\"" << escape(str()) << "\"";
+      }
       break;
     case HASH_VALUE:
-      out_stream << "{" << *val.hash_ << "}";
+      if (lazy) {
+        hash_->to_stream(out_stream, true);
+      } else {
+        out_stream << "{" << *hash_ << "}";
+      }
       break;
     case MATRIX_VALUE:
-      out_stream << "\"Matrix " << val.matrix_->rows << "x" << val.matrix_->cols << "\"";
+      out_stream << "\"Matrix " << matrix_->rows << "x" << matrix_->cols << "\"";
       break;
     case LIST_VALUE:
-      size_t sz = val.size();
-      out_stream << "[";
+      size_t sz = size();
+      if (!lazy) out_stream << "[";
       for (size_t i = 0; i < sz; ++i) {
         if (i > 0) out_stream << ", ";
-        out_stream << val[i];
+        out_stream << this->operator[](i);
       }
-      out_stream << "]";
+      if (!lazy) out_stream << "]";
       break;
     case EMPTY_VALUE:
       break; // nothing
@@ -86,12 +99,17 @@ std::ostream &operator<<(std::ostream &out_stream, const Value &val) {
     default:
       out_stream << "null";
   }
-  return out_stream;
 }
 
 Json Value::to_json() const {
   std::ostringstream os(std::ostringstream::out);
   os << *this;
+  return (Json)os.str();
+}
+
+Json Value::lazy_json() const {
+  std::ostringstream os(std::ostringstream::out);
+  to_stream(os, true);
   return (Json)os.str();
 }
 

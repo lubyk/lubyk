@@ -38,7 +38,7 @@ class ClassMethod : public Object
 /** Prototype constructor for Method. */
 struct MethodPrototype
 {
-  MethodPrototype(const char *name, member_method_t method, const Value &type, const char *info) : 
+  MethodPrototype(const char *name, member_method_t method, const Value &type) : 
       name_(name), member_method_(method), type_(type) {}
   const char *    name_;
   member_method_t member_method_;

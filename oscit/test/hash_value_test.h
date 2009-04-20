@@ -208,6 +208,17 @@ public:
     assert_equal("{\"name\":\"Joe\" \"age\":34 \"job\":[\"dad\", \"husband\", \"lover\", -666]}", v.to_json());
   }
   
+  void test_lazy_json( void ) {
+    Value v;
+    Value jobs;
+    v.set("name", "Joe");
+    v.set("age", 34.0);
+    jobs.set("dad").push_back("husband").push_back("lover").push_back(-666);
+    v.set("job", jobs);
+    
+    assert_equal("name:\"Joe\" age:34 job:[\"dad\", \"husband\", \"lover\", -666]", v.lazy_json());
+  }
+  
   void test_from_json_strict( void ) {
     Value v(Json("{\"week_start_on\":1.0 monday:\"Lundi\"}"));
     assert_true(v.is_hash());

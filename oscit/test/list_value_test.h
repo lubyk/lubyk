@@ -362,6 +362,15 @@ public:
     assert_equal("how", v.last().str());
   }
   
+  void test_first( void ) {
+    Value v;
+    assert_true(v.first().is_empty());
+    v.set(1.5);
+    assert_equal(1.5, v.first().r);
+    v.push_back("how");
+    assert_equal(1.5, v.first().r);
+  }
+  
   void test_to_json( void ) {
     Value v(TypeTag("fsff"));
     v[0].r = 1.234;
@@ -372,6 +381,15 @@ public:
     os << v;
     assert_equal("[1.234, \"Hello World!\", 9.8, 2000]", os.str());
     assert_equal("[1.234, \"Hello World!\", 9.8, 2000]", v.to_json());
+  }
+  
+  void test_lazy_json( void ) {
+    Value v(TypeTag("fsff"));
+    v[0].r = 1.234;
+    v[1].set("Hello World!");
+    v[2].r = 9.8;
+    v[3].r = 2000;
+    assert_equal("1.234, \"Hello World!\", 9.8, 2000", v.lazy_json());
   }
   
   void test_from_json_strict_trailing( void ) {

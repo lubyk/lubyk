@@ -144,6 +144,8 @@ public:
   /** Return size of storage (main hash table). */
   unsigned int storage_size() const { return size_; }
   
+  void to_stream(std::ostream &out_stream, bool lazy = false) const;
+  
   /** List of keys. */
   const std::list<K>& keys() { return keys_; }
   
@@ -308,20 +310,37 @@ std::ostream& operator<< (std::ostream& pStream, const THash<K,T>& hash) {
 }
 
 template <class T>
-std::ostream& operator<< (std::ostream& pStream, const THash<std::string,T>& hash) {
-  typename std::list<std::string>::const_iterator it,begin,end;
-  end   = hash.end();
-  begin = hash.begin();
+std::ostream& operator<< (std::ostream& out_stream, const THash<std::string,T>& hash) {
+  hash.to_stream(out_stream, false);
+  return out_stream;
+}
+
+// FIXME: this should be restricted to K == string...
+template <class K, class T>
+void THash<K,T>::to_stream(std::ostream &out_stream, bool lazy) const {
+  typename std::list<K>::const_iterator it,begin,end;
+  end   = keys_.end();
+  begin = keys_.begin();
   T value;
   for( it = begin; it != end; it++) {
-    if (it != begin) pStream << " ";
-    if (hash.get(*it, &value))
-      pStream << "\"" << *it << "\"" << ":" << value;
-    else
-      pStream << "\"" << *it << "\"" << ":" << "/error/";
+    if (it != begin) out_stream << " ";
+    if (lazy) {
+      if (get(*it, &value)) {
+        out_stream << *it << ":" << value;
+      } else {
+        out_stream << *it << ":" << "/error/";
+      }
+    } else {
+      if (get(*it, &value)) {
+        // FIXME: escape(*it) !
+        out_stream << "\"" << *it << "\"" << ":" << value;
+      } else {
+        out_stream << "\"" << *it << "\"" << ":" << "/error/";
+      }
+    }
   }
-  return pStream;
 }
+
 /////// HASH FUNCTIONS  ////////
 
 // ===== uint =====

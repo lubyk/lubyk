@@ -144,7 +144,7 @@ class Root : public Object
   inline const Value call(Object *target, const Value &val) {
     if (val.is_nil() || val.is_empty()) {
       return target->safe_trigger(gNilValue);
-    } else if (val.type_id() == target->type_id() || target->accept_any_type()) {
+    } else if (target->can_receive(val)) {
       return target->safe_trigger(val);
     } else {
       Value type = call("/.type", Value(target->url()));

@@ -51,6 +51,10 @@ class List : public ReferenceCounted
   Value *last() {
     return values_.size() > 0 ? values_[values_.size() - 1] : NULL;
   }
+  
+  Value *first() {
+    return values_.size() > 0 ? values_[0] : NULL;
+  }
   /** Replace a value at a given position, checking for range and making sure
    *  the type_tag of the list remains in sync. */
   void set_value_at(size_t pos, const Value &val);
