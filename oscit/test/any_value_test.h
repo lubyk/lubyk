@@ -77,5 +77,12 @@ public:
     assert_equal("*s", any.type_tag());
   }
   
+  void test_json_value( void ) {
+    JsonValue v("[[1,2],\"hello\"]");
+    assert_true(v.is_list());
+    assert_equal("[ff]s", v.type_tag());
+    assert_equal("[[1, 2], \"hello\"]", v.to_json());
+  }
+  
   // from_json is not possible for AnyValue
 };
