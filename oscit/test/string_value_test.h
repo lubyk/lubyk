@@ -136,4 +136,10 @@ public:
     assert_true(v.is_string());
     assert_equal("This is some \"super\" string !", v.str());
   }
+  
+  void test_from_json_single_quote( void ) {
+    Value v(Json("'It took 25\" for \\'John\\' to \\\"get here !'"));
+    assert_true(v.is_string());
+    assert_equal("\"It took 25\\\" for 'John' to \\\"get here !\"", v.to_json());
+  }
 };

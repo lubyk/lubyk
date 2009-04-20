@@ -15,10 +15,43 @@ namespace oscit {
 #define DEBUG(x)
 #endif
 
-
 Value gNilValue('N');
 Value gEmptyValue;
 Hash  gEmptyHash(1);
+
+std::string escape(const std::string &string) {
+  std::string res;
+  size_t len = 0;
+  const char *last_append = string.c_str();
+  const char *ptr = string.c_str();
+  while (*ptr) {
+    if (*ptr == '"') {
+      // append \"
+      if (len) {
+        res.append(last_append, len);
+        last_append = ptr + 1;
+        len = 0;
+      }
+      res.append("\\\"");
+      ++ptr;
+    } else if (*ptr == '\\') {
+      ++len;
+      ++ptr;
+      if (*ptr) {
+        // in case string ends with "\"
+        ++ptr;
+        ++len;
+      }
+    } else {
+      // append
+      ++len;
+      ++ptr;
+    }
+  }
+  
+  if (len) res.append(last_append, len);
+  return res;
+}
 
 std::ostream &operator<<(std::ostream &out_stream, const Value &val) {
   switch (val.type()) {
@@ -26,10 +59,10 @@ std::ostream &operator<<(std::ostream &out_stream, const Value &val) {
       out_stream << val.r;
       break;
     case ERROR_VALUE:
-      out_stream << "\"" << val.error_code() << " " << val.error_message() << "\"";
+      out_stream << "\"" << val.error_code() << " " << escape(val.error_message()) << "\"";
       break;
     case STRING_VALUE:
-      out_stream << "\"" << val.str() << "\"";
+      out_stream << "\"" << escape(val.str()) << "\"";
       break;
     case HASH_VALUE:
       out_stream << "{" << *val.hash_ << "}";
@@ -183,7 +216,8 @@ Value &Value::push_front(const Value& val) {
   
   ws        = ' ' | '\t' | '\n';
   end       = ws  | '\0' | '}' | ',' | ']';  # we need '}' and ']' to finish value when embedded in hash: {one:1.34}
-  char      = ([^"\\] | '\n') $str_a | ('\\' (any | '\n') $str_a);
+  dquote_content = ([^"\\] | '\n') $str_a | ('\\' (any | '\n') $str_a);
+  squote_content = ([^'\\] | '\n') $str_a | ('\\' (any | '\n') $str_a);
   word      = ws* (alpha [^ \t\n:]*) $str_a;
   real      = ws* ([\-+]? $str_a ('0'..'9' digit* '.' digit+) $str_a );
   integer   = ws* ([\-+]? $str_a ('0'..'9' digit*) $str_a );
@@ -191,7 +225,7 @@ Value &Value::push_front(const Value& val) {
   true      = 'true';
   false     = 'false';
   number    = real | integer;
-  string    = ws* ('"' char* '"');
+  string    = ws* ('"' dquote_content* '"' | '\'' squote_content* '\'');
   
   hash_content = ((string | word) ':' >hash_value)+;
   
