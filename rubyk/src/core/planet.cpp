@@ -5,16 +5,18 @@
 
 void Planet::init() {
   // build application methods
+  //           /.inspect
+  adopt(new TMethod<Planet, &Planet::inspect>(this, Url(INSPECT_URL).name(), StringIO("url", "Returns some information on the state of a node.")));
   //          /class
   classes_ = adopt(new ClassFinder(Url(CLASS_URL).name(), DEFAULT_OBJECTS_LIB_PATH));
   //          /rubyk
   Object * rubyk = adopt(new Object(Url(RUBYK_URL).name()));
-  //          /rubyk/link
-  rubyk->adopt(new TMethod<Planet, &Planet::link>(this, Url(LINK_URL).name(), H("ss"), "Create a link between to the two provided urls."));
+  //          /rubyk/link [[["","source url"],["", "target url"]], "Create a link between two urls."]
+  rubyk->adopt(new TMethod<Planet, &Planet::link>(this, Url(LINK_URL).name(), JsonValue("[['',''],'url','url','Create a link between the two provided urls.']")));
   //          /rubyk/unlink
-  rubyk->adopt(new TMethod<Planet, &Planet::unlink>(this, Url(UNLINK_URL).name(), H("ss"), "Remove link between to the two provided urls."));
+  rubyk->adopt(new TMethod<Planet, &Planet::unlink>(this, Url(UNLINK_URL).name(), JsonValue("[['',''],'url','url','Remove link between the two provided urls.']")));
   //          /rubyk/quit
-  rubyk->adopt(new TMethod<Planet, &Planet::quit>(this, Url(QUIT_URL).name(), H(""), "Stop all operations and quit."));
+  rubyk->adopt(new TMethod<Planet, &Planet::quit>(this, Url(QUIT_URL).name(), NoIO("Stop all operations and quit.")));
 }
 
 // typetag: "ss" (inlet, outlet)

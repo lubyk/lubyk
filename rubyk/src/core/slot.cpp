@@ -42,9 +42,9 @@ bool Slot::operator>= (const Slot &slot) const {
 
 
 bool Slot::add_connection(Slot *slot) { 
-  if (type_tag_id() == slot->type_tag_id() || 
-     (type_tag_id() == H("*") && kind_of(Inlet)) ||
-     (slot->type_tag_id() == H("*") && slot->kind_of(Inlet))) {
+  if (type_id() == slot->type_id() || 
+     (kind_of(Inlet)       && accept_any_type()) ||
+     (slot->kind_of(Inlet) && slot->accept_any_type())) {
     // same type signature or inlet receiving any type
     // OrderedList makes sure the link is not created again if it already exists.
     connections_.push(slot); 

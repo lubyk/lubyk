@@ -10,12 +10,6 @@
 
 class ClassFinder;
 
-#define CLASS_URL  "/class"
-#define RUBYK_URL  "/rubyk"
-#define LINK_URL   "/rubyk/link"
-#define UNLINK_URL "/rubyk/unlink"
-#define QUIT_URL   "/rubyk/quit"
-
 #define DEFAULT_OBJECTS_LIB_PATH "/usr/local/lib/rubyk"
 
 /** A planet is just a root with a worker. */
@@ -84,6 +78,17 @@ class Planet : public Root
       worker_.stop();
     unlock();
     return gNilValue;
+  }
+  
+  /** Calls 'inspect' on a node. */
+  const Value inspect(const Value &val) {
+    if (!val.is_string()) return Value(BAD_REQUEST_ERROR, "Bad arguments:'inspect' should be called with an url.");
+    Value res;
+    Object *object = find_or_build_object_at(val.str(), &res);
+    if (!object) return res;
+    Node *node = TYPE_CAST(Node, object);
+    if (!object) return Value(BAD_REQUEST_ERROR, "Bad target:'inspect' only works on Nodes.");
+    return node->do_inspect();
   }
   
   /** Create pending links. Return a list of created links [[sffs][sffs]...]. */

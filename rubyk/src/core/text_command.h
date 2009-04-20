@@ -54,7 +54,13 @@ public:
   }
   
   void print_result(const Value &res) {
-    if (!silent_ && !res.is_nil()) *output_ << res << std::endl;
+    if (!silent_) {
+      if (res.is_string()) {
+        *output_ << res.str() << std::endl;
+      } else if (!res.is_nil()) {
+        *output_ << res << std::endl;
+      }
+    }
   }
 protected:
   /** Constructor, set default values. */
@@ -73,9 +79,9 @@ protected:
   
   /** Transform node names to absolute urls depending on the current directory. */
   void names_to_urls() {
-    from_node_.insert(0, current_directory_);
-    to_node_.insert(0,   current_directory_);
-    var_.insert(0,   current_directory_);
+    if (from_node_.size() > 0 && from_node_.at(0) != '/') from_node_.insert(0, current_directory_);
+    if (to_node_.size() > 0 && to_node_.at(0) != '/') to_node_.insert(0,   current_directory_);
+    if (var_.size() > 0 && var_.at(0) != '/') var_.insert(0,   current_directory_);
   }
   
   /** Create an instance. */

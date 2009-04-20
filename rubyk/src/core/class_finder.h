@@ -27,7 +27,7 @@ public:
   }
   
   void init() {
-    adopt(new TMethod<ClassFinder, &ClassFinder::lib_path>(this, "lib_path", H("s"), "Get/set path to load objects files (*.rko)."));
+    adopt(new TMethod<ClassFinder, &ClassFinder::lib_path>(this, "lib_path", StringIO("file path", "Get/set path to load objects files (*.rko).")));
   }
   
   virtual ~ClassFinder() {}
@@ -46,19 +46,20 @@ public:
   
   /** Declare a new class. This template is responsible for generating the "new" method. */
   template<class T>
-  Class * declare(const char *name, const char *info, const char *new_info)
+  Class * declare(const char *name, const char *info, const char *options)
   {
     Class * klass;
     
     if (find_class(name))
       delete klass; // remove existing class with same name.
     
-    klass = adopt(new Class(name, info));
+    klass = adopt(new Class(name, NoIO(info)));
     
     if (!klass) return NULL; // FIXME: this will crash !!!
     
     // build "new" method for this class
-    klass->adopt(new NewMethod("new", &NewMethod::cast_create<T>, new_info));
+    klass->adopt(new NewMethod( "new", &NewMethod::cast_create<T>,
+                                AnyIO(std::string("Create a new ").append(name).append(" from a given url and optional Hash of parameters (").append(options).append(")."))));
     
     return klass;
   }

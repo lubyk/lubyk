@@ -20,8 +20,14 @@ class ParseCommandTest : public ParseHelper
 {
 public:
   
-  void test_parse_command( void ) 
-  { assert_result("/v1\n/v1/in\n/v1/in/bang\n/v1/in/bang/list\n/v1/out\n", "v1=Number(value:1)\n"); }
+  void test_create_command_should_work( void ) 
+  { 
+    assert_result("/v1\n/v1/in\n/v1/in/bang\n/v1/in/bang/list\n/v1/out\n", "v1=Number(value:1.25)\n");
+    assert_result("/v1\n/v1/in\n/v1/in/bang\n/v1/in/bang/list\n/v1/out\n", "/v1/value\n");
+  }
+  
+  void test_argument_which_is_not_hash_should_go_to_first_inlet( void ) 
+  { assert_result("/v1\n/v1/in\n/v1/in/bang\n/v1/in/bang/list\n/v1/out\n", "v1=Number(2.52)\n"); }
   
 //  void test_parse_zero( void ) 
 //  { assert_result("v1=Number(0)\n","<Number:/v1 0.00>\n"); }

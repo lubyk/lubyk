@@ -106,7 +106,7 @@ protected:
   void _assert_result(const char *file, int lineno, const char *descr, const char *expected, const char *input) {
     output_.str(std::string("")); // clear output
     cmd_->parse(input);
-    _OSCIT_ASSERT_EQUALS( file, lineno, TS_AS_STRING(descr), expected, output_.str());
+    _OSCIT_ASSERT_EQUALS( file, lineno, TS_AS_STRING(descr), output_.str(), expected);
   }
 
 //  void clean_assert_result(const char * input, const char * pOutput)

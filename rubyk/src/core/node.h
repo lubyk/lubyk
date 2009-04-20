@@ -20,9 +20,32 @@ class Node : public Object
  public:
   TYPED("Object.Node")
   
-  Node() : worker_(NULL), looped_(false) {}
+  Node() : Object("n", AnyIO("Node.")), worker_(NULL), looped_(false) {}
   
   virtual ~Node();
+  
+  /** Trigger for nodes calls methods if hash given or tries to call first inlet. */
+  virtual const Value trigger(const Value &val) {
+    if (val.is_hash()) {
+      return set(val);
+    } else if (!val.is_nil()) {
+      // call first inlet
+      if (inlets_.size() > 0 && inlets_[0]->can_receive(val)) {
+        inlets_[0]->receive(val);
+      } else {
+        return Value(BAD_REQUEST_ERROR, "Invalid arguments for first inlet.");
+      }
+    }
+    return do_inspect();
+  }
+  
+  const Value do_inspect() {
+    return Value(std::string("<").append(class_url().substr(strlen(CLASS_URL)+1)).append(": ").append(inspect().lazy_json()).append(">"));
+  }
+  
+  virtual const Value inspect() {
+    return Value(std::string("inspect not implemented for '").append(url()).append("'."));
+  }
   
   /** Add an inlet with the given callback (used by Class during instantiation). */
   void register_inlet(Inlet *inlet) {
@@ -78,6 +101,8 @@ class Node : public Object
   
   /** Set url for class. TODO: Maybe we should pass a pointer to the class in case it moves ? But then if it is removed ? */
   void set_class_url(const std::string &class_url) { class_url_ = class_url; }
+  
+  const std::string &class_url() const { return class_url_; }
   
   /** Used to sort outlet connections. A node with a high trigger position receives the value before
     * another node with a small trigger position, if they are both connected to the same outlet. */ 

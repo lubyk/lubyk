@@ -115,7 +115,7 @@ void TextCommand::parse(const std::string &string) {
     
     ws     = (' ' | '\t');
   
-    identifier = (lower (alnum | '_' | '/')*) $a;
+    identifier = ((lower | '/') (alnum | '_' | '/')*) $a;
   
     var    = identifier %set_var;
     
@@ -191,15 +191,10 @@ void TextCommand::create_instance() {
   Value res = root_->call(std::string(CLASS_URL).append("/").append(class_).append("/new"), list);
   
   if (res.is_string() && !silent_) {
-    *output_ << res.str() << std::endl;
-    Value tree = root_->call("/.tree", res);
-    size_t i, sz = tree.size();
-    for (i = 0; i < sz; ++i) {
-      *output_ << res.str() << "/" << tree[i].str() << std::endl;
-    }
-  } else if (!res.is_string()) {
+    print_result(root_->call(INSPECT_URL, res));
+  } else if (!silent_) {
     print_result(res);
-  } 
+  }
 }
 
 void TextCommand::change_link(char op) {

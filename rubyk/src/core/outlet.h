@@ -5,31 +5,29 @@
 /** Prototype constructor for Inlets. */
 struct OutletPrototype
 {
-  OutletPrototype(const char *name, TypeTagID type, const char * info) : name_(name), type_(type), info_(info) {}
+  OutletPrototype(const char *name, const Value &type) : name_(name), type_(type) {}
   std::string name_;
-  TypeTagID   type_;
-  std::string info_;
+  Value       type_;
 };
 
 class Outlet : public Slot {
 public:
   TYPED("Object.Slot.Outlet")
   
-  Outlet(Node *node, TypeTagID type) : Slot(node, type) {
+  Outlet(Node *node, const Value &type) : Slot(node, type) {
     register_in_node();
   }
   
-  Outlet(Node *node, const std::string &name, TypeTagID type) : Slot(node, name, type) {
+  Outlet(Node *node, const std::string &name, const Value &type) : Slot(node, name, type) {
     register_in_node();
   }
   
-  Outlet(Node *node, const char *name, TypeTagID type) : Slot(node, name, type) {
+  Outlet(Node *node, const char *name, const Value &type) : Slot(node, name, type) {
     register_in_node();
   }
   
   /** Prototype based constructor. */
   Outlet(Node *node, const OutletPrototype &prototype) : Slot(node, prototype.name_, prototype.type_) {
-    set_info(prototype.info_);
     register_in_node();
   }
   

@@ -9,3 +9,8 @@ void Inlet::register_in_node() {
 void Inlet::unregister_in_node() {
   node_->unregister_inlet(this);
 }
+
+const Value Inlet::trigger(const Value &val) {
+  receive(val);
+  return node_->do_inspect();
+}

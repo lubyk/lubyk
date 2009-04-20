@@ -13,12 +13,10 @@ class NewMethod : public Object
 public:
   TYPED("Object.NewMethod")
   
-  NewMethod(const std::string &name, create_method_t method, const char *info) : Object(name, H("sH")), class_method_(method) {
-    set_info(info);
-  }
-  NewMethod(const char *name, create_method_t method, const char *info) : Object(name, H("sH")), class_method_(method) {
-    set_info(info);
-  }
+  NewMethod(const std::string &name, create_method_t method, const Value &type) : Object(name, type), class_method_(method) {}
+  
+  NewMethod(const char *name, create_method_t method, const Value &type) : Object(name, type), class_method_(method) {}
+  
   virtual ~NewMethod() {}
   
   /** This trigger method actually implements "new".
@@ -33,9 +31,21 @@ public:
   static const Value cast_create(Planet *planet, NewMethod *new_method, const Value &val) {
     if (val.is_nil()) return gNilValue; // ??? any idea for something better here ?
     Object *parent;
-    Value params(val[1]);
-    std::string url(val[0].str());
+    Value params;
+    std::string url;
     std::string name;
+    
+    if (val.first().is_string()) {
+      url = val.first().str();
+    } else {
+      return ErrorValue(BAD_REQUEST_ERROR, "Invalid arguments. First argument shoul be an url (type 's').");
+    }
+    
+    if (val.size() > 1) {
+      params = val[1];
+    } else {
+      params.set_nil();
+    }
     
     // get parent ["/met", "met"] => "", "/grp/met" => "/grp"
     if (url.at(0) == '/') {
@@ -74,10 +84,15 @@ public:
 
     // make outlets
     klass->make_outlets(node);
-
-    // initialize and set defaults by calling methods (val[1] is a hash)
-    node->set_is_ok( node->init() && node->set_all_ok(val[1]) ); // if init or set returns false, the node goes into 'broken' mode.
-
+    
+    if (params.is_hash()){
+      // initialize and set defaults by calling methods
+      node->set_is_ok(node->init() && node->set_all_ok(params)); // if init or set returns false, the node goes into 'broken' mode.
+    } else if (!params.is_nil() && node->can_receive(params)) {
+      node->trigger(params);
+    } else {
+      node->set_is_ok(node->init()); // if init or set returns false, the node goes into 'broken' mode.
+    }
     // create pending links
     planet->create_pending_links();
     

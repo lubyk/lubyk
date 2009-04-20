@@ -23,14 +23,14 @@ public:
   void test_out_bang( void ) {
     Real value;
     DummyNode counter(&value);
-    Outlet o_bang(&counter, H(""));
-    Inlet  i_bang(&counter, SlotTest_receive_value1, H(""));
-    Inlet  i_real(&counter, SlotTest_receive_value1, H("f"));
-    Inlet  i_str( &counter, SlotTest_receive_value1, H("s"));
-    Inlet  i_hash(&counter, SlotTest_receive_value1, H("H"));
-    Inlet  i_mat( &counter, SlotTest_receive_value1, H("M"));
-    Inlet  i_list(&counter, SlotTest_receive_value1, H("fsf"));
-    Inlet  i_any( &counter, SlotTest_receive_value1, H("*"));
+    Outlet o_bang(&counter, BangIO("Sends current counter value."));
+    Inlet  i_bang(&counter, SlotTest_receive_value1, NilIO("Receives bang values."));
+    Inlet  i_real(&counter, SlotTest_receive_value1, FieldIO("any", "Receive real values."));
+    Inlet  i_str( &counter, SlotTest_receive_value1, StringIO("any", "Receive real values."));
+    Inlet  i_hash(&counter, SlotTest_receive_value1, HashIO("Any description."));
+    Inlet  i_mat( &counter, SlotTest_receive_value1, MatrixIO(2,3,"A matrix."));
+    Inlet  i_list(&counter, SlotTest_receive_value1, JsonValue("[[null,null],\"first\", \"second\", \"Info.\"]"));
+    Inlet  i_any( &counter, SlotTest_receive_value1, AnyIO("Blah."));
     
     // connection initiated by outlet
     
@@ -64,14 +64,14 @@ public:
   void test_out_real( void ) {
     Real value = 0;
     DummyNode counter(&value);
-    Outlet o_real(&counter, H("f"));
-    Inlet  i_bang(&counter, SlotTest_receive_value1, H(""));
-    Inlet  i_real(&counter, SlotTest_receive_value1, H("f"));
-    Inlet  i_str( &counter, SlotTest_receive_value1, H("s"));
-    Inlet  i_hash(&counter, SlotTest_receive_value1, H("H"));
-    Inlet  i_mat( &counter, SlotTest_receive_value1, H("M"));
-    Inlet  i_list(&counter, SlotTest_receive_value1, H("ff"));
-    Inlet  i_any( &counter, SlotTest_receive_value1, H("*"));
+    Outlet o_real(&counter, FieldIO("any", "Receive real values."));
+    Inlet  i_bang(&counter, SlotTest_receive_value1, NilIO("Receives bang values."));
+    Inlet  i_real(&counter, SlotTest_receive_value1, FieldIO("any", "Receive real values."));
+    Inlet  i_str( &counter, SlotTest_receive_value1, StringIO("any", "Receive real values."));
+    Inlet  i_hash(&counter, SlotTest_receive_value1, HashIO("Any description."));
+    Inlet  i_mat( &counter, SlotTest_receive_value1, MatrixIO(2,3,"A matrix."));
+    Inlet  i_list(&counter, SlotTest_receive_value1, JsonValue("[[0,0],\"first\", \"second\", \"Info.\"]"));
+    Inlet  i_any( &counter, SlotTest_receive_value1, AnyIO("Blah."));
     
     // connection initiated by outlet
     
@@ -105,14 +105,14 @@ public:
   void test_out_str( void ) {
     Real value = 0;
     DummyNode counter(&value);
-    Outlet o_str(&counter, H("s"));
-    Inlet  i_bang(&counter, SlotTest_receive_value1, H(""));
-    Inlet  i_real(&counter, SlotTest_receive_value1, H("f"));
-    Inlet  i_str( &counter, SlotTest_receive_value1, H("s"));
-    Inlet  i_hash(&counter, SlotTest_receive_value1, H("H"));
-    Inlet  i_mat( &counter, SlotTest_receive_value1, H("M"));
-    Inlet  i_list(&counter, SlotTest_receive_value1, H("ss"));
-    Inlet  i_any( &counter, SlotTest_receive_value1, H("*"));
+    Outlet o_str(&counter, StringIO("any", "Receive real values."));
+    Inlet  i_bang(&counter, SlotTest_receive_value1, NilIO("Receives bang values."));
+    Inlet  i_real(&counter, SlotTest_receive_value1, FieldIO("any", "Receive real values."));
+    Inlet  i_str( &counter, SlotTest_receive_value1, StringIO("any", "Receive real values."));
+    Inlet  i_hash(&counter, SlotTest_receive_value1, HashIO("Any description."));
+    Inlet  i_mat( &counter, SlotTest_receive_value1, MatrixIO(2,3,"A matrix."));
+    Inlet  i_list(&counter, SlotTest_receive_value1, JsonValue("[['',''],\"first\", \"second\", \"Info.\"]"));
+    Inlet  i_any( &counter, SlotTest_receive_value1, AnyIO("Blah."));
     
     // connection initiated by outlet
     
@@ -146,14 +146,14 @@ public:
   void test_out_hash( void ) {
     Real value = 0;
     DummyNode counter(&value);
-    Outlet o_hash(&counter, H("H"));
-    Inlet  i_bang(&counter, SlotTest_receive_value1, H(""));
-    Inlet  i_real(&counter, SlotTest_receive_value1, H("f"));
-    Inlet  i_str( &counter, SlotTest_receive_value1, H("s"));
-    Inlet  i_hash(&counter, SlotTest_receive_value1, H("H"));
-    Inlet  i_mat( &counter, SlotTest_receive_value1, H("M"));
-    Inlet  i_list(&counter, SlotTest_receive_value1, H("HH"));
-    Inlet  i_any( &counter, SlotTest_receive_value1, H("*"));
+    Outlet o_hash(&counter, HashIO("Any description."));
+    Inlet  i_bang(&counter, SlotTest_receive_value1, NilIO("Receives bang values."));
+    Inlet  i_real(&counter, SlotTest_receive_value1, FieldIO("any", "Receive real values."));
+    Inlet  i_str( &counter, SlotTest_receive_value1, StringIO("any", "Receive real values."));
+    Inlet  i_hash(&counter, SlotTest_receive_value1, HashIO("Any description."));
+    Inlet  i_mat( &counter, SlotTest_receive_value1, MatrixIO(2,3,"A matrix."));
+    Inlet  i_list(&counter, SlotTest_receive_value1, JsonValue("[[{},{}],\"first\", \"second\", \"Info.\"]"));
+    Inlet  i_any( &counter, SlotTest_receive_value1, AnyIO("Blah."));
     
     // connection initiated by outlet
     
@@ -187,14 +187,14 @@ public:
   void test_out_mat( void ) {
     Real value = 0;
     DummyNode counter(&value);
-    Outlet o_mat(&counter, H("M"));
-    Inlet  i_bang(&counter, SlotTest_receive_value1, H(""));
-    Inlet  i_real(&counter, SlotTest_receive_value1, H("f"));
-    Inlet  i_str( &counter, SlotTest_receive_value1, H("s"));
-    Inlet  i_hash(&counter, SlotTest_receive_value1, H("H"));
-    Inlet  i_mat( &counter, SlotTest_receive_value1, H("M"));
-    Inlet  i_list(&counter, SlotTest_receive_value1, H("MM"));
-    Inlet  i_any( &counter, SlotTest_receive_value1, H("*"));
+    Outlet o_mat(&counter, MatrixIO(2,3,"A matrix."));
+    Inlet  i_bang(&counter, SlotTest_receive_value1, NilIO("Receives bang values."));
+    Inlet  i_real(&counter, SlotTest_receive_value1, FieldIO("any", "Receive real values."));
+    Inlet  i_str( &counter, SlotTest_receive_value1, StringIO("any", "Receive real values."));
+    Inlet  i_hash(&counter, SlotTest_receive_value1, HashIO("Any description."));
+    Inlet  i_mat( &counter, SlotTest_receive_value1, MatrixIO(2,3,"A matrix."));
+    Inlet  i_list(&counter, SlotTest_receive_value1, JsonValue("[[0,0],\"first\", \"second\", \"Info.\"]"));
+    Inlet  i_any( &counter, SlotTest_receive_value1, AnyIO("Blah."));
     
     // connection initiated by outlet
     
@@ -228,15 +228,15 @@ public:
   void test_out_list( void ) {
     Real value = 0;
     DummyNode counter(&value);
-    Outlet o_list(&counter, H("sfs"));
-    Inlet  i_bang(&counter, SlotTest_receive_value1, H(""));
-    Inlet  i_real(&counter, SlotTest_receive_value1, H("f"));
-    Inlet  i_str( &counter, SlotTest_receive_value1, H("s"));
-    Inlet  i_hash(&counter, SlotTest_receive_value1, H("H"));
-    Inlet  i_mat( &counter, SlotTest_receive_value1, H("M"));
-    Inlet  i_list(&counter, SlotTest_receive_value1, H("sfs"));
-    Inlet  i_list2(&counter, SlotTest_receive_value1, H("sf"));
-    Inlet  i_any( &counter, SlotTest_receive_value1, H("*"));
+    Outlet o_list(&counter, JsonValue("[['',0,''], 'ho', 'ha', 'three', 'Info.']"));
+    Inlet  i_bang(&counter, SlotTest_receive_value1, NilIO("Receives bang values."));
+    Inlet  i_real(&counter, SlotTest_receive_value1, FieldIO("any", "Receive real values."));
+    Inlet  i_str( &counter, SlotTest_receive_value1, StringIO("any", "Receive real values."));
+    Inlet  i_hash(&counter, SlotTest_receive_value1, HashIO("Any description."));
+    Inlet  i_mat( &counter, SlotTest_receive_value1, MatrixIO(2,3,"A matrix."));
+    Inlet  i_list(&counter, SlotTest_receive_value1, JsonValue("[['',0,''],'first', 'second', 'three', 'Info.']"));
+    Inlet  i_list2(&counter, SlotTest_receive_value1,JsonValue("[['',0], 'one', 'two', 'Info.']"));
+    Inlet  i_any( &counter, SlotTest_receive_value1, AnyIO("Blah."));
     
     // connection initiated by outlet
     
@@ -273,8 +273,8 @@ public:
     Real value = 0;
     DummyNode sender(&value);
     DummyNode receiver(&value);
-    Outlet outlet(&sender, H("f"));
-    Inlet  inlet(&receiver, SlotTest_receive_value1, H("f"));
+    Outlet outlet(&sender, FieldIO("any", "Receive real values."));
+    Inlet  inlet(&receiver, SlotTest_receive_value1, FieldIO("any", "Receive real values."));
     assert_true(outlet.connect(&inlet));
     assert_equal(0.0, value);
     outlet.send(Value(1.0));
@@ -285,10 +285,10 @@ public:
     Real value = 0;
     DummyNode sender(&value);
     DummyNode receiver(&value);
-    Outlet outlet(&sender, H("f"));
-    Inlet  inlet1(&receiver, SlotTest_receive_value1, H("f"));
-    Inlet  inlet2(&receiver, SlotTest_receive_value2, H("f"));
-    Inlet  inlet3(&receiver, SlotTest_receive_value4, H("f"));
+    Outlet outlet(&sender, FieldIO("any", "Receive real values."));
+    Inlet  inlet1(&receiver, SlotTest_receive_value1, FieldIO("any", "Receive real values."));
+    Inlet  inlet2(&receiver, SlotTest_receive_value2, FieldIO("any", "Receive real values."));
+    Inlet  inlet3(&receiver, SlotTest_receive_value4, FieldIO("any", "Receive real values."));
     // from their ids, these should be called starting by inlet1, then inlet2 and inlet3 as they share the same receiver (counter)
     inlet1.set_id(4); //         value + 1 = 2
     inlet2.set_id(2); // 2 * 2 + value + 2 = 7
@@ -309,10 +309,10 @@ public:
     DummyNode sender(&value);
     DummyNode receiver1(&value);
     DummyNode receiver2(&value);
-    Outlet outlet(&sender, H("f"));
-    Inlet  inlet1(&receiver1, SlotTest_receive_value1, H("f"));
-    Inlet  inlet2(&receiver2, SlotTest_receive_value2, H("f"));
-    Inlet  inlet3(&receiver2, SlotTest_receive_value4, H("f"));
+    Outlet outlet(&sender, FieldIO("any", "Receive real values."));
+    Inlet  inlet1(&receiver1, SlotTest_receive_value1, FieldIO("any", "Receive real values."));
+    Inlet  inlet2(&receiver2, SlotTest_receive_value2, FieldIO("any", "Receive real values."));
+    Inlet  inlet3(&receiver2, SlotTest_receive_value4, FieldIO("any", "Receive real values."));
     
     receiver1.set_trigger_position(2.0); // should trigger first
     inlet1.set_id(1); // should not sort with this id               value + 1 = 2
@@ -336,10 +336,10 @@ public:
     DummyNode sender(&value);
     DummyNode receiver1(&value);
     DummyNode receiver2(&value);
-    Outlet outlet(&sender, H("f"));
-    Inlet  inlet1(&receiver1, SlotTest_receive_value1, H("f"));
-    Inlet  inlet2(&receiver2, SlotTest_receive_value2, H("f"));
-    Inlet  inlet3(&receiver2, SlotTest_receive_value4, H("f"));
+    Outlet outlet(&sender, FieldIO("any", "Receive real values."));
+    Inlet  inlet1(&receiver1, SlotTest_receive_value1, FieldIO("any", "Receive real values."));
+    Inlet  inlet2(&receiver2, SlotTest_receive_value2, FieldIO("any", "Receive real values."));
+    Inlet  inlet3(&receiver2, SlotTest_receive_value4, FieldIO("any", "Receive real values."));
     
     receiver1.set_trigger_position(2.0); // should trigger first
     inlet1.set_id(1); // should not sort with this id               value + 1 = 2
@@ -369,10 +369,10 @@ public:
     DummyNode sender(&value);
     DummyNode receiver1(&value);
     DummyNode receiver2(&value);
-    Outlet outlet(&sender, H("f"));
-    Inlet  inlet1(&receiver1, SlotTest_receive_value1, H("f"));
-    Inlet  inlet2(&receiver2, SlotTest_receive_value2, H("f"));
-    Inlet  inlet3(&receiver2, SlotTest_receive_value4, H("f"));
+    Outlet outlet(&sender, FieldIO("any", "Receive real values."));
+    Inlet  inlet1(&receiver1, SlotTest_receive_value1, FieldIO("any", "Receive real values."));
+    Inlet  inlet2(&receiver2, SlotTest_receive_value2, FieldIO("any", "Receive real values."));
+    Inlet  inlet3(&receiver2, SlotTest_receive_value4, FieldIO("any", "Receive real values."));
     
     inlet1.set_id(1); // should not sort with this id       2 * 0 + x + 1 = 2
     inlet2.set_id(8); // sub-sorting by id                  2 * 2 + x + 2 = 7

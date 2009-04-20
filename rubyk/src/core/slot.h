@@ -15,15 +15,15 @@ class Slot : public Object
 public:
   TYPED("Object.Slot")
   
-  Slot(Node *node, TypeTagID type_tag_id) : Object(type_tag_id), node_(node) {
+  Slot(Node *node, const Value &type) : Object(type), node_(node) {
     create_methods();
   }
   
-  Slot(Node *node, const char *name, TypeTagID type_tag_id) : Object(name, type_tag_id), node_(node) {
+  Slot(Node *node, const char *name, const Value &type) : Object(name, type), node_(node) {
     create_methods();
   }
   
-  Slot(Node *node, const std::string &name, TypeTagID type_tag_id) : Object(name, type_tag_id), node_(node) {
+  Slot(Node *node, const std::string &name, const Value &type) : Object(name, type), node_(node) {
     create_methods();
   }
   
@@ -82,6 +82,7 @@ public:
       iterator = iterator->next;
     }
   }
+  int tmp() { return type_id(); }
 protected:
   /** Make a one-way connection to another slot. 
     * Create a connection if the type of the other slot is compatible. */
@@ -92,7 +93,7 @@ protected:
   
   /** Create 'list' method. */
   void create_methods() {
-    adopt(new TMethod<Slot, &Slot::list>(this, "list", H("*"), "Return a list of linked urls."));
+    adopt(new TMethod<Slot, &Slot::list>(this, "list", NoIO("Return a list of linked urls.")));
   }
   
   /** If operation is 'c': create a new link, else unlink. */

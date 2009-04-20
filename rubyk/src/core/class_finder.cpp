@@ -14,7 +14,6 @@ Object *ClassFinder::build_child(const std::string &class_name, Value *error) {
   // try to load dynamic lib
   std::string path = objects_path_;
   path.append("/").append(class_name).append(".rko");
-  
   if (load(path.c_str(), "init")) {
     obj = child(class_name);
     if ( obj != NULL ) {
