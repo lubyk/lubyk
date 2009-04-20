@@ -11,8 +11,8 @@ public:
     Value res;
 
     res = root.call("/.type", Value(""));
-    assert_true(res.is_list());
-    assert_equal("Ns", res.type_tag());
+    assert_true(res.is_string());
+    assert_equal("s", res.type_tag()); // no information ...
 
     res = root.call("/.type", Value("/foo"));
     assert_true(res.is_list());
@@ -62,4 +62,15 @@ public:
     assert_equal("[sf]sss", res.type_tag());
     assert_equal("[\"Haddock\", 42]", res[0].to_json()); // info
   }
+  
+  void test_no_input( void ) {
+    Root root;
+    root.adopt(new Object("foo"));
+    Value res;
+
+    res = root.call("/.type", Value("/foo"));
+    assert_true(res.is_string());
+    assert_equal("No information on this node.", res.str());
+  }
+
 };

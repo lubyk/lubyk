@@ -16,7 +16,7 @@ public:
 
     res = root.call("/.info", Value("/foo"));
     assert_true(res.is_string());
-    assert_equal(DEFAULT_TYPE[1].str(), res.str());
+    assert_equal(DEFAULT_TYPE.str(), res.str());
 
     res = root.call("/.info", Value("/blah"));
     assert_true(res.is_error());

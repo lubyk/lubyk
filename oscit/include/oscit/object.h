@@ -10,14 +10,22 @@
 namespace oscit {
 #define OSC_NEXT_NAME_BUFFER_SIZE 20
 
-#define NoInput(info) ListValue("N").push_back(info)
+#define NoInput(info)  Value(info)
+#define NoOutput(info) Value(info)
+#define NilInput(info)  ListValue("N").push_back(info)
+#define NilOutput(info) ListValue("N").push_back(info)
 #define FieldInput(units,info) Value(0.0).push_back(units).push_back(info)
+#define FieldOutput(units,info) Value(0.0).push_back(units).push_back(info)
 #define TextInput(units,info) Value("").push_back(units).push_back(info)
+#define TextOutput(units,info) Value("").push_back(units).push_back(info)
 #define RangeInput(min,max,units,info) Value(0.0).push_back(min).push_back(max).push_back(units).push_back(info)
+#define RangeOutput(min,max,units,info) Value(0.0).push_back(min).push_back(max).push_back(units).push_back(info)
 #define SelectInput(values,units,info) Value("").push_back(values).push_back(units).push_back(info)
+#define SelectOutput(values,units,info) Value("").push_back(values).push_back(units).push_back(info)
 #define AnyInput(info) ListValue("*").push_back(info)
+#define AnyOutput(info) ListValue("*").push_back(info)
 
-#define DEFAULT_TYPE NoInput("no information defined for this object")
+#define DEFAULT_TYPE NoInput("No information on this node.")
   
 class Root;
 class Alias;
@@ -28,14 +36,19 @@ class Object : public Typed
   /** Class signature. */
   TYPED("Object")
   
-  Object() : root_(NULL), parent_(NULL), children_(20), context_(NULL), type_(DEFAULT_TYPE), type_id_(NO_TYPE_TAG_ID) {
-   name_ = "";
-   url_  = name_;
+  Object() : root_(NULL), parent_(NULL), children_(20), context_(NULL), type_(DEFAULT_TYPE) {
+    type_changed();
+    name_ = "";
+    url_  = name_;
   }
   
-  Object(const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), context_(NULL), type_(DEFAULT_TYPE), type_id_(NO_TYPE_TAG_ID) {}
+  Object(const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), context_(NULL), type_(DEFAULT_TYPE) {
+    type_changed();
+  }
   
-  Object(const std::string &name) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), context_(NULL), type_(DEFAULT_TYPE), type_id_(NO_TYPE_TAG_ID) {}
+  Object(const std::string &name) : root_(NULL), parent_(NULL), children_(20), name_(name), url_(name), context_(NULL), type_(DEFAULT_TYPE) {
+    type_changed();
+  }
   
   Object(const Value &type) : root_(NULL), parent_(NULL), children_(20), context_(NULL), type_(type) {
     type_changed();
@@ -51,7 +64,8 @@ class Object : public Typed
     type_changed();
   }
   
-  Object(Object *parent, const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_(DEFAULT_TYPE), type_id_(NO_TYPE_TAG_ID) {
+  Object(Object *parent, const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_(DEFAULT_TYPE) {
+    type_changed();
     parent->adopt(this);
   }
 
@@ -65,7 +79,8 @@ class Object : public Typed
     parent->adopt(this);
   }
 
-  Object(Object &parent, const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_(DEFAULT_TYPE), type_id_(NO_TYPE_TAG_ID) {
+  Object(Object &parent, const char *name) : root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL), type_(DEFAULT_TYPE) {
+    type_changed();
     parent.adopt(this);
   }
 
@@ -328,7 +343,7 @@ protected:
  private:
   /** Keep type_id_ in sync with type_. */
   void type_changed() {
-    type_id_ = type_.size() > 0 ? type_[0].type_id() : NO_TYPE_TAG_ID;
+    type_id_ = type_.size() > 0 ? type_[0].type_id() : type_.type_id();
   }
   
   /** Free the child from the list of children. */

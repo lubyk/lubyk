@@ -21,9 +21,9 @@ public:
     } else {
       Value type = target->type();
       
-      if (type.is_nil()) {
-        // meta type is nil = no type (not callable)
-        return gNilValue;
+      if (type.is_string()) {
+        // meta type is string = just information (not callable)
+        return type;
       }
       
       if (!type.is_list()) {
