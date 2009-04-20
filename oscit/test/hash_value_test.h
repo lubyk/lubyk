@@ -131,7 +131,7 @@ public:
   }
   
   void test_read( void ) {
-    Value v(TypeTag("H"));
+    Value v('H');
     Hash &l = *v.hash_;
     Value res;
     

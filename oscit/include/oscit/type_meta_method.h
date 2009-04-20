@@ -34,7 +34,7 @@ public:
       if (!type[0].is_any() && !type[0].is_nil()) {
         // get current value
         Value current = target->trigger(gNilValue);
-      
+        
         // make sure current value type is compatible with type
         if (current.type_id() != type[0].type_id()) {
           return ErrorValue(INTERNAL_SERVER_ERROR, "Current value type not matching meta type (expected '").append(

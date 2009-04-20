@@ -63,6 +63,28 @@ public:
     assert_equal("[\"Haddock\", 42]", res[0].to_json()); // info
   }
   
+  void test_hash_type( void ) {
+    Root root;
+    root.adopt(new DummyObject("dog_food", 42.0, HashIO("Blah blah.")));
+    Value res;
+    res = root.call("/.type", Value("/dog_food"));
+    assert_true(res.is_list());
+    assert_equal("Hs", res.type_tag());
+    assert_equal("{\"lazy\":\"dog\" \"silly\":\"cats and mices\"}", res[0].to_json()); // hash
+    assert_equal("Blah blah.", res[1].str()); // info
+  }
+
+  void test_matrix_type( void ) {
+    Root root;
+    root.adopt(new DummyObject("master_of_time", 42.0, MatrixIO(1,5,"Stupid matrix.")));
+    Value res;
+    res = root.call("/.type", Value("/master_of_time"));
+    assert_true(res.is_list());
+    assert_equal("Ms", res.type_tag());
+    assert_equal("\"Matrix 1x5\"", res[0].to_json()); // matrix to json ...
+    assert_equal("Stupid matrix.", res[1].str()); // info
+  }
+
   void test_no_input( void ) {
     Root root;
     root.adopt(new Object("foo"));

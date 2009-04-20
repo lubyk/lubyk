@@ -16,7 +16,9 @@ namespace oscit {
 #define TextIO(units,info) Value("").push_back(units).push_back(info)
 #define RangeIO(min,max,units,info) Value(0.0).push_back(min).push_back(max).push_back(units).push_back(info)
 #define SelectIO(values,units,info) Value("").push_back(values).push_back(units).push_back(info)
-#define AnyIO(info) ListValue("*").push_back(info)
+#define HashIO(info) Value('H').push_back(info)
+#define MatrixIO(rows,cols,info) MatrixValue(rows,cols).push_back(info)
+#define AnyIO(info) Value('*').push_back(info)
 
 #define DEFAULT_TYPE NoIO("No information on this node.")
   

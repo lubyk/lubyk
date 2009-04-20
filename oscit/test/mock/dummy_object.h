@@ -15,25 +15,30 @@ public:
   
   virtual ~DummyObject() {}
   
-  virtual const std::string inspect()
-  {
-    std::ostringstream os(std::ostringstream::out);
-    os << name_ << ": " << value_.r;
-    return os.str();
-  }
-  
-  virtual const Value trigger (const Value &val)
-  {
+  virtual const Value trigger(const Value &val) {
     if (val.is_real()) value_.r = val.r;
     
-    if (type()[0].is_real()) {
+    Value my_type(type()[0]);
+    
+    if (my_type.is_real()) {
       return value_;
-    } else if (type()[0].is_string()) {
-      // testing type
+    } else if (my_type.is_string()) {
+      // testing my_type
       return Value("hello");
-    } else if (type()[0].is_list()) {
+    } else if (my_type.is_list()) {
       // testing multiple type
       return Value(name_).push_back(value_.r);
+    } else if (my_type.is_hash()) {
+      // testing hash type
+      return JsonValue("lazy:'dog' silly:'cats and mices'");
+    } else if (my_type.is_matrix()) {
+      // testing matrix type
+      Value mat(my_type);
+      Real * data = mat.mat_data();
+      for(size_t i=0; i < mat.mat_size(); i++) {
+        data[i] = i;
+      }
+      return mat;
     } else {
       return gNilValue;
     }
