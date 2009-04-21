@@ -314,7 +314,21 @@ class Object : public Typed
   }
   
   inline bool can_receive(const Value &val) {
-    return val.type_id() == type_id() || accept_any_type();
+    if (val.type_id() == type_id() || accept_any_type()) {
+      return true;
+    } else if (!val.is_list() || !type_[0].is_list()) {
+      return false;
+    } else {
+      // first elements should match
+      const char * c  = type_[0].type_tag();
+      const char * cl = val.type_tag();
+      while (*c) {
+        if (*c != *cl) return false;
+        ++c;
+        ++cl;
+      }
+      return true;
+    }
   }
   
 protected:
