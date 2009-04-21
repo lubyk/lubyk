@@ -8,16 +8,30 @@ class Print : public Node
 public:
   TYPED("Object.Node.Print")
   
-  Print() : output_(&std::cout) {}
+  Print() : output_(&std::cout), prefix_("print") {}
+  
+  const Value prefix(const Value &val) {
+    if (val.is_string()) {
+      prefix_ = val.str();
+    }
+    return Value(prefix_);
+  }
   
   // [1]
-  void bang(const Value &val) { 
-    *output_ << val << std::endl;
+  const Value print(const Value &val) {
+    *output_ << prefix_ << ": " << val << std::endl;
+    return gNilValue;
+  }
+  
+  virtual void inspect(Value *hash) {
+    hash->set("prefix", prefix_);
   }
   
   void set_output(std::ostream &output) { output_ = &output; }
   
   std::ostream * output_;
+private:
+  std::string   prefix_;
 };
 
 #endif // _PRINT_H_

@@ -21,6 +21,7 @@ void Planet::init() {
 
 // typetag: "ss" (inlet, outlet)
 const Value Planet::link(const Value &val) {
+  bool ignore_pending = val.size() > 2 && val[2].is_real() && val[2].r == 1;
   if (val.is_nil()) {
     return create_pending_links();
   }
@@ -29,7 +30,15 @@ const Value Planet::link(const Value &val) {
   
   Value error;
   Object *source = object_at(Url(val[0].str()), &error);
-  if (error.is_error()) return error;
+  if (error.is_error() || !object_at(Url(val[1].str()), &error)) {
+    // not found
+    if (!ignore_pending) {
+      Value params;
+      params.copy(val).push_back(1); // ignore_pending when trying to rebuild
+      pending_links_.push_back(Call(LINK_URL, params));
+    }
+    return Value(std::string("pending: ").append(val[0].str()).append(" => ").append(val[1].str())); // FIXME (not [sss] and not an error) !
+  }
   
   Slot   *slot = TYPE_CAST(Slot, source);
   Object *object;
@@ -49,15 +58,24 @@ const Value Planet::link(const Value &val) {
 
 const Value Planet::unlink(const Value &val) { 
   
-  // unlink: "/met/out/tempo" // "/counter/in/bang"
+  // unlink: "/met/out/tempo" || "/counter/in/bang"
   
   Value error;
   Object *source = object_at(Url(val[0].str()), &error);
   if (error.is_error()) return error;
   
-  Slot *slot = TYPE_CAST(Slot, source);
+  
+  Slot   *slot = TYPE_CAST(Slot, source);
+  Object *object;
   if (slot != NULL) {
     return slot->unlink(val[1]);
+  } else if ( (object = source->first_child()) ) {
+    // was a link default slots: /met/out --> /counter/in
+    if ( (slot = TYPE_CAST(Slot, object)) ) {
+      return slot->unlink(val[1]);
+    } else {
+      return Value(BAD_REQUEST_ERROR, std::string("Object at '").append(slot->url()).append("' does not support links (using first child of '").append(source->url()).append("')."));
+    }
   } else {
     return Value(BAD_REQUEST_ERROR, std::string("Object at '").append(source->url()).append("' does not support links (not an Outlet, Inlet or Node)."));
   }
@@ -72,13 +90,12 @@ const Value Planet::create_pending_links() {
   Value list;
   
   while (it != end) {
-    //std::cout << "PENDING " << it->mUrl << " => " << it->mParam << std::endl;
     res = it->trigger(this);
-    if (res.is_string()) {
+    if (res.type_id() == H("sss") || res.is_error()) {
       list.push_back(res);
-      it = pending_links_.erase(it);  // call succeeded
+      it = pending_links_.erase(it);  // call succeeded or definitely failed
     } else {
-      it++;
+      ++it;
     }
   }
   // return list of created links

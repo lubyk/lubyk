@@ -98,7 +98,7 @@ class Planet : public Root
   /** Create base objects (public for testing, should not be used). */
   void init();
   
-  std::list<oscit::Call>  pending_links_;        /**< List of pending connections waiting for variable assignements. */
+  std::list<Call>  pending_links_;        /**< List of pending connections waiting for variable assignements. */
   Worker worker_;
   ClassFinder *classes_;
 };

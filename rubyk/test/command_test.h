@@ -20,14 +20,23 @@ class ParseCommandTest : public ParseHelper
 {
 public:
   
-  void test_create_command_should_work( void ) 
-  { 
-    assert_result("/v1\n/v1/in\n/v1/in/bang\n/v1/in/bang/list\n/v1/out\n", "v1=Number(value:1.25)\n");
-    assert_result("/v1\n/v1/in\n/v1/in/bang\n/v1/in/bang/list\n/v1/out\n", "/v1/value\n");
+  void test_create_command_should_work( void ) { 
+    assert_result("<Value:/v1 value:1.25>\n", "v1=Value(value:1.25)\n");
+    assert_result("1.25\n", "/v1/value\n");
   }
   
-  void test_argument_which_is_not_hash_should_go_to_first_inlet( void ) 
-  { assert_result("/v1\n/v1/in\n/v1/in/bang\n/v1/in/bang/list\n/v1/out\n", "v1=Number(2.52)\n"); }
+  void test_argument_which_is_not_hash_should_go_to_first_inlet( void ) { 
+    assert_result("<Value:/v1 value:2.52>\n", "v1=Value(2.52)\n");
+  }
+  
+  void test_hash_argument_should_set( void ) { 
+    assert_result("<Print:/p prefix:\"print\">\n", "p = Print(prefix:'print' foo:34)\n");
+  }
+  
+  void test_print( void ) {
+    setup_with_print("n = Value(34)\n");
+    assert_print("34\n", "n/value");
+  }
   
 //  void test_parse_zero( void ) 
 //  { assert_result("v1=Number(0)\n","<Number:/v1 0.00>\n"); }

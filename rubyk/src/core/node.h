@@ -40,12 +40,12 @@ class Node : public Object
   }
   
   const Value do_inspect() {
-    return Value(std::string("<").append(class_url().substr(strlen(CLASS_URL)+1)).append(": ").append(inspect().lazy_json()).append(">"));
+    HashValue hash;
+    inspect(&hash);
+    return Value(std::string("<").append(class_url().substr(strlen(CLASS_URL)+1)).append(":").append(url()).append(" ").append(hash.lazy_json()).append(">"));
   }
   
-  virtual const Value inspect() {
-    return Value(std::string("inspect not implemented for '").append(url()).append("'."));
-  }
+  virtual void inspect(Value *hash) {}
   
   /** Add an inlet with the given callback (used by Class during instantiation). */
   void register_inlet(Inlet *inlet) {
@@ -95,9 +95,10 @@ class Node : public Object
   /** Set is_ok_ flag. If this flag is not true, the node is considered "broken" and usually does not do any processing. */
   void set_is_ok (bool status) { is_ok_ = status; }
   
-  /** This method must be implemented in subclasses. It's the place where most
-    * of the work should be done. This method is responsible for sending the signals out. */
-  virtual void bang (const Value &val) = 0;
+  /** This method must be implemented in subclasses that want to be looped. */
+  virtual void bang (const Value &val) {
+    fprintf(stderr, "Default Node::bang method called !\n");
+  }
   
   /** Set url for class. TODO: Maybe we should pass a pointer to the class in case it moves ? But then if it is removed ? */
   void set_class_url(const std::string &class_url) { class_url_ = class_url; }

@@ -89,12 +89,11 @@ public:
       // initialize and set defaults by calling methods
       node->set_is_ok(node->init() && node->set_all_ok(params)); // if init or set returns false, the node goes into 'broken' mode.
     } else if (!params.is_nil() && node->can_receive(params)) {
+      node->set_is_ok(node->init());
       node->trigger(params);
     } else {
       node->set_is_ok(node->init()); // if init or set returns false, the node goes into 'broken' mode.
     }
-    // create pending links
-    planet->create_pending_links();
     
     return Value(node->url());
   }

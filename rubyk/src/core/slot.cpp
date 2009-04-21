@@ -88,14 +88,14 @@ const Value Slot::change_link(unsigned char operation, const Value &val) {
       // create link
       if (connect((Slot*)target)) {
         //std::cout << "LINKED: " << url() << " with " << val << std::endl;
-        return val;
+        return Value(url()).push_back("=>").push_back(val);
       } else {
         return ErrorValue(BAD_REQUEST_ERROR, "Could not make the connection with (").append(val.to_json()).append(").");
       }
     } else {
       // disconnect
       disconnect((Slot*)target);
-      return val;
+      return Value(url()).push_back("||").push_back(val);
     }
   } else {
     return Value(info());

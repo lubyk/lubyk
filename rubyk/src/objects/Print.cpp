@@ -3,5 +3,6 @@
 
 extern "C" void init(Planet &planet) {
   CLASS(Print, "Print any value received in bang inlet.", "no options")
-  INLET(Print, bang, AnyIO("Received values are printed out."))
+  METHOD(Print, print,  AnyIO("Received values are printed out."))
+  METHOD(Print, prefix, StringIO("any", "Prefix to print before values."))
 }

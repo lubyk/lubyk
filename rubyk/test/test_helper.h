@@ -59,6 +59,7 @@ protected:
 
 
 #define assert_result(x,y) _assert_result(__FILE__,__LINE__,#y,x,y)
+#define assert_print(x,y) _assert_result(__FILE__,__LINE__,#y,x,y)
 
 // ========================== ParseHelper  ====================== //
 
@@ -83,6 +84,7 @@ protected:
   Planet * planet_;
   TextCommand * cmd_;
   std::ostringstream output_;
+  std::ostringstream print_;
   std::istringstream input_;
 
   void setup_with_print(const char *input) {
@@ -96,7 +98,7 @@ protected:
       if (print == NULL) {
         fprintf(stderr, "Wrong object type '%s'. Should be Print.\n", print->class_path());
       } else {
-        print->set_output(output_);
+        print->set_output(print_);
       }
     }
     cmd_->parse(input);
@@ -107,6 +109,12 @@ protected:
     output_.str(std::string("")); // clear output
     cmd_->parse(input);
     _OSCIT_ASSERT_EQUALS( file, lineno, TS_AS_STRING(descr), output_.str(), expected);
+  }
+
+  void _assert_print(const char * file, int lineno, const char *descr, const char *expected, const char *input) { 
+    print_.str(std::string("")); // clear output
+    cmd_->parse(input);
+    _OSCIT_ASSERT_EQUALS( file, lineno, TS_AS_STRING(descr), print_.str(), expected);
   }
 
 //  void clean_assert_result(const char * input, const char * pOutput)
@@ -138,14 +146,6 @@ protected:
 //    clean_start();
 //    assert_print(input, pOutput);
 //
-//  }
-//
-//  void _assert_print(const char * file, int lineno, const char * input, const char * pOutput) { 
-//    output_.str(std::string("")); // clear output
-//    cmd_->set_silent();
-//    cmd_->parse(input);
-//    cmd_->set_verbose();
-//    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING(std::string(input)), output_.str(), std::string(pOutput));
 //  }
 //
 //  void clean_assert_run(time_t pLength, const char * input, const char * pOutput)

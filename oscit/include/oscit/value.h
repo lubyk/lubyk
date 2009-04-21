@@ -110,7 +110,7 @@ public:
   }
   
   /** Share the content of another Value. */
-  Value &set(const Value &other) { // TODO: use 'const' to select between 'share' and 'copy'.
+  Value &set(const Value &other) { // TODO: use 'const' to select between 'share' and 'copy' ? Do the same with Root::call return values.
     switch (other.type_) {
       case REAL_VALUE:
         set(other.r);

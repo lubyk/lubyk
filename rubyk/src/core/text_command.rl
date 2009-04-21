@@ -123,7 +123,7 @@ void TextCommand::parse(const std::string &string) {
   
     class  = (upper (alnum | '_')*) $a %set_class;
   
-    string  = '"' ([^"\\] | '\n' | ( '\\' (any | '\n') ))* $a '"';
+    string  = '"' ([^"\\] | '\n' | ( '\\' (any | '\n') ))* $a '"' | '\'' ([^'\\] | '\n' | ( '\\' (any | '\n') ))* $a '\'';
     float   = ([\-+]? $a ('0'..'9' digit* '.' digit+) $a );
     integer = ([\-+]? $a ('0'..'9' digit*) $a );
   
@@ -190,8 +190,16 @@ void TextCommand::create_instance() {
   
   Value res = root_->call(std::string(CLASS_URL).append("/").append(class_).append("/new"), list);
   
+  Value links;
+  if (res.is_string()) {
+    links = root_->call(LINK_URL); // create pending links
+  }
+  
   if (res.is_string() && !silent_) {
     print_result(root_->call(INSPECT_URL, res));
+    for (size_t i = 0; i < links.size(); ++i) {
+      print_result(links[i]);
+    }
   } else if (!silent_) {
     print_result(res);
   }

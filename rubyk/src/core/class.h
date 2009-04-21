@@ -31,11 +31,19 @@ public:
     method_Prototypes.push_back( MethodPrototype(name, &Method::cast_method<T, Tmethod>, type) );
   }
   
+  /** Declare an inlet from a method (less efficient, should be avoided for fast inlets). */
+  template <class T, const Value(T::*Tmethod)(const Value &val)>
+  void add_inlet(const char *name, const Value &type) { 
+    inlet_prototypes_.push_back( InletPrototype(name, &Inlet::cast_method<T, Tmethod>, type) );
+  }
+  
+  
   /** Declare an inlet. */
   template <class T, void(T::*Tmethod)(const Value &val)>
   void add_inlet(const char *name, const Value &type) { 
     inlet_prototypes_.push_back( InletPrototype(name, &Inlet::cast_method<T, Tmethod>, type) );
   }
+  
   
   /** Declare an outlet. */
   void add_outlet(const char *name, const Value &type) {
@@ -73,8 +81,11 @@ private:
 // HELPERS TO AVOID TEMPLATE SYNTAX
 #define CLASS(klass, info, options)  Class * c = planet.classes()->declare<klass>(#klass, info, options);
 #define CLASS_METHOD(klass, method, info) c->add_class_method(#method, &klass::method, info);
+#define METHOD(klass, method, type)         ADD_METHOD(klass, #method, method, type); \
+                                            ADD_INLET(klass,  #method, method, type);
 #define ACCESSOR(klass, method, type)       ADD_METHOD(klass, #method, method ## _accessor, type);
-#define ADD_METHOD(klass, name, method, type)       c->add_method<klass, &klass::method>(name, type);
+#define ADD_METHOD(klass, name, method, type) c->add_method<klass, &klass::method>(name, type);
+#define ADD_INLET(klass,  name, method, type) c->add_inlet<klass, &klass::method>(name, type);
 #define INLET(klass,  method, type) c->add_inlet<klass, &klass::method>(#method, type);
 #define OUTLET(klass, name,   type) c->add_outlet(#name, type);
 #endif // _CLASS_H_

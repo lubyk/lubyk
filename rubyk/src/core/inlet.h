@@ -58,6 +58,13 @@ public:
     (((T*)receiver)->*Tmethod)(val);
   }
   
+  /** Create a callback for an inlet based on a normal accessor. */
+  template <class T, const Value(T::*Tmethod)(const Value &val)>
+  static void cast_method(Node *receiver, const Value &val) {
+    (((T*)receiver)->*Tmethod)(val);
+    // ignore return value
+  }
+  
 private:
   inlet_method_t method_;        /**< Method to set a new value. */
 };
