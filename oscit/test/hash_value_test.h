@@ -247,4 +247,16 @@ public:
     assert_true(v["weeks"].is_hash());
     assert_equal("free", v["weeks"]["friday"].str());
   }
+  
+  void test_can_receive( void ) {
+    Object object("foo", HashIO("bar"));
+    assert_false(object.can_receive(Value()));
+    assert_true (object.can_receive(gNilValue));
+    assert_false(object.can_receive(Value(1.23)));
+    assert_false(object.can_receive(Value("foo")));
+    assert_false(object.can_receive(Value(BAD_REQUEST_ERROR, "foo")));
+    assert_false(object.can_receive(JsonValue("['','']")));
+    assert_true (object.can_receive(HashValue()));
+    assert_false(object.can_receive(MatrixValue(1,1)));
+  }
 };

@@ -54,8 +54,7 @@ public:
     assert_equal(0, v.mat_size());
   }
   
-  void test_copy( void )
-  {
+  void test_copy( void ) {
     MatrixValue v(2,3);
 #if Real == double
     assert_true(v.mat_type() == CV_64FC1);
@@ -96,8 +95,7 @@ public:
     assert_equal(3.8, v3.mat_data()[3]);
   }
   
-  void test_set( void )
-  {
+  void test_set( void ) {
     Value v;
     Matrix m(2,2);
     assert_true(v.is_empty());
@@ -106,8 +104,7 @@ public:
     assert_equal(4, v.mat_size());
   }
   
-  void test_set_tag( void )
-  {
+  void test_set_tag( void ) {
     Value v;
     
     v.set_type_tag("M");
@@ -115,8 +112,7 @@ public:
     assert_equal(0, v.mat_size());
   }
   
-  void test_set_type( void )
-  {
+  void test_set_type( void ) {
     Value v;
     
     v.set_type(MATRIX_VALUE);
@@ -130,5 +126,17 @@ public:
     os << v;
     assert_equal("\"Matrix 2x3\"", os.str());
     assert_equal("\"Matrix 2x3\"", v.to_json());
+  }
+  
+  void test_can_receive( void ) {
+    Object object("foo", MatrixIO(1,5,"bar"));
+    assert_false(object.can_receive(Value()));
+    assert_true (object.can_receive(gNilValue));
+    assert_false(object.can_receive(Value(1.23)));
+    assert_false(object.can_receive(Value("foo")));
+    assert_false(object.can_receive(Value(BAD_REQUEST_ERROR, "foo")));
+    assert_false(object.can_receive(JsonValue("['','']")));
+    assert_false(object.can_receive(HashValue()));
+    assert_true (object.can_receive(MatrixValue(1,1)));
   }
 };

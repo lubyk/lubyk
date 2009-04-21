@@ -20,8 +20,8 @@ public:
     assert_equal("foo", v.error_message());
     assert_equal(BAD_REQUEST_ERROR, v.error_code());
     
-    assert_equal("s", v.type_tag());
-    int i = H("s");
+    assert_equal("E", v.type_tag());
+    int i = H("E");
     assert_equal(i, v.type_id());
   }
   
@@ -106,5 +106,17 @@ public:
     os << v;
     assert_equal("\"404 banana\"", os.str());
     assert_equal("\"404 banana\"", v.to_json());
+  }
+  
+  void test_can_receive( void ) {
+    Object object("foo", Value(BAD_REQUEST_ERROR, "bar").push_back("Receives errors..."));
+    assert_false(object.can_receive(Value()));
+    assert_true (object.can_receive(gNilValue));
+    assert_false(object.can_receive(Value(1.23)));
+    assert_false(object.can_receive(Value("foo")));
+    assert_true (object.can_receive(Value(BAD_REQUEST_ERROR, "foo")));
+    assert_false(object.can_receive(JsonValue("['','']")));
+    assert_false(object.can_receive(HashValue()));
+    assert_false(object.can_receive(MatrixValue(1,1)));
   }
 };

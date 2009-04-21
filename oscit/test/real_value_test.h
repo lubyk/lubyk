@@ -116,4 +116,16 @@ public:
     assert_true(v.is_real());
     assert_equal(2.45, v.r);
   }
+  
+  void test_can_receive( void ) {
+    Object object("foo", RealIO("bar", "info"));
+    assert_false(object.can_receive(Value()));
+    assert_true (object.can_receive(gNilValue));
+    assert_true (object.can_receive(Value(1.23)));
+    assert_false(object.can_receive(Value("foo")));
+    assert_false(object.can_receive(Value(BAD_REQUEST_ERROR, "foo")));
+    assert_false(object.can_receive(JsonValue("['','']")));
+    assert_false(object.can_receive(HashValue()));
+    assert_false(object.can_receive(MatrixValue(1,1)));
+  }
 };

@@ -192,7 +192,7 @@ public:
     switch (type_) {
       case NIL_VALUE:    return "N";
       case REAL_VALUE:   return "f";
-      case ERROR_VALUE: // continue
+      case ERROR_VALUE:  return "E";
       case STRING_VALUE: return "s";
       case HASH_VALUE:   return "H";
       case MATRIX_VALUE: return "M";
@@ -207,7 +207,7 @@ public:
     switch (type_) {
       case NIL_VALUE:    return H("N");
       case REAL_VALUE:   return H("f");
-      case ERROR_VALUE:  // continue
+      case ERROR_VALUE:  return H("E");
       case STRING_VALUE: return H("s");
       case HASH_VALUE:   return H("H");
       case MATRIX_VALUE: return H("M");
