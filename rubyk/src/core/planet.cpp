@@ -29,11 +29,10 @@ const Value Planet::link(const Value &val) {
   if (error.is_error() || !object_at(Url(val[2].str()), &error)) {
     // not found
     if (val[1].str() == "=>") {
-      Value params;
-      params.copy(val);
-      params[1].set("?");
-      pending_links_.push_back(Call(LINK_URL, params));
-      return params;
+      return add_pending_link(val);
+    } else if (val[1].str() == "||") {
+      // remove from pending links
+      return remove_pending_link(val);
     }
     return val;
   }
@@ -75,3 +74,25 @@ const Value Planet::create_pending_links() {
   return list;
 }
 
+
+// FIXME: on node deletion/replacement, remove/move all pending links related to this node ?.
+const Value Planet::remove_pending_link(const Value &val) {
+  std::list<Call>::iterator it  = pending_links_.begin();
+  std::list<Call>::iterator end = pending_links_.end();
+  
+  Value res;
+  res.set_nil();
+  
+  while (it != end) {
+    
+    if (it->param_[0].str() == val[0].str() && it->param_[2].str() == val[2].str()) {
+      res = it->param_;
+      res[1].set("||");
+      it = pending_links_.erase(it);  // removed
+      break;
+    } else {
+      ++it;
+    }
+  }
+  return res;
+}

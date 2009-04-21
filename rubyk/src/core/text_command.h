@@ -56,19 +56,20 @@ public:
   void print_result(const Value &res) {
     if (!silent_) {
       if (res.is_string()) {
-        *output_ << res.str() << std::endl;
+        *output_ << "# " << res.str() << std::endl;
       } else if (res.is_error()) {
-        *output_ << res.error_code() << " " << res.error_message() << std::endl;
+        *output_ << "# " << res.error_code() << " " << res.error_message() << std::endl;
       } else if (res.type_id() == H("sss") && (res[1].str() == "=>" || res[1].str() == "||" || res[1].str() == "?")) {
         // link
-        *output_ << res[0].str() << " " << res[1].str() << " " << res[2].str() << std::endl;
+        *output_ << "# " << res[0].str() << " " << res[1].str() << " " << res[2].str() << std::endl;
       } else if (res.is_list()) {
         for (size_t i=0; i < res.size(); ++i) {
+          *output_ << "# ";
           res[i].to_stream(*output_, true);
           *output_ << std::endl;
         }
       } else if (!res.is_nil()) {
-        *output_ << res << std::endl;
+        *output_ << "# " << res << std::endl;
       }
     }
   }
@@ -173,7 +174,7 @@ public:
   
   virtual ~CommandLine() {
     // save readline history
-    *output_ << "\nBye..." << std::endl;
+    *output_ << "# \n# Bye..." << std::endl;
     write_history(history_path().c_str());
   }
   

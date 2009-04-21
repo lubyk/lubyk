@@ -88,10 +88,23 @@ class Planet : public Root
     return node->do_inspect();
   }
   
+ private:
+  /** Add a pending link. */
+  const Value add_pending_link(const Value &val) {
+    Value params;
+    params.copy(val);
+    params[1].set("?");
+    pending_links_.push_back(Call(LINK_URL, params));
+    return params;
+  }
+  
+  /** Remove a link from the pending link list. */
+  const Value remove_pending_link(const Value &val);
+  
   /** Create pending links. Return a list of created links [[sffs][sffs]...]. */
   const Value create_pending_links();
   
- private:
+  
   /** Create base objects (public for testing, should not be used). */
   void init();
   

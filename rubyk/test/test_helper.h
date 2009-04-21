@@ -104,6 +104,11 @@ protected:
     cmd_->parse(input);
     output_.str(std::string("")); // clear output
   }
+  
+  void setup(const char *input) {
+    cmd_->parse(input);
+    output_.str(std::string(""));
+  }
 
   void _assert_result(const char *file, int lineno, const char *descr, const char *expected, const char *input) {
     output_.str(std::string("")); // clear output

@@ -27,7 +27,7 @@ void TextCommand::do_listen() {
   char buffer[1024];
   char * line = buffer;
   
-  if (!silent_) *output_ << "Welcome to rubyk !\n\n";
+  if (!silent_) *output_ << "# Welcome to rubyk !\n# \n";
     
   clear();
   
@@ -104,7 +104,7 @@ void TextCommand::parse(const std::string &string) {
       fhold; // move back one char
       char error_buffer[10];
       snprintf(error_buffer, 9, "%s", p);
-      *output_ << "Syntax error near '" << error_buffer << "'." << std::endl;
+      *output_ << "# Syntax error near '" << error_buffer << "'." << std::endl;
       clear();
       fgoto eat_line; // eat the rest of the line and continue parsing
     }

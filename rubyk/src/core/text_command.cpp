@@ -281,7 +281,7 @@ void TextCommand::do_listen() {
   char buffer[1024];
   char * line = buffer;
   
-  if (!silent_) *output_ << "Welcome to rubyk !\n\n";
+  if (!silent_) *output_ << "# Welcome to rubyk !\n# \n";
     
   clear();
   
@@ -452,7 +452,7 @@ _match:
       p--; // move back one char
       char error_buffer[10];
       snprintf(error_buffer, 9, "%s", p);
-      *output_ << "Syntax error near '" << error_buffer << "'." << std::endl;
+      *output_ << "# Syntax error near '" << error_buffer << "'." << std::endl;
       clear();
       {cs = 81; goto _again;} // eat the rest of the line and continue parsing
     }
@@ -483,7 +483,7 @@ _again:
       p--; // move back one char
       char error_buffer[10];
       snprintf(error_buffer, 9, "%s", p);
-      *output_ << "Syntax error near '" << error_buffer << "'." << std::endl;
+      *output_ << "# Syntax error near '" << error_buffer << "'." << std::endl;
       clear();
       {cs = 81; goto _again;} // eat the rest of the line and continue parsing
     }

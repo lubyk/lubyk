@@ -12,7 +12,7 @@ public:
     
     microsleep(10);
     
-    assert_equal("Welcome to rubyk !\n\n", output.str());
+    assert_equal("# Welcome to rubyk !\n# \n", output.str());
   }
 };
 
@@ -21,27 +21,23 @@ class ParseCommandTest : public ParseHelper
 public:
   
   void test_create_command_should_work( void ) { 
-    assert_result("<Value:/v1 value:1.25>\n", "v1=Value(value:1.25)\n");
-    assert_result("1.25\n", "/v1/value\n");
+    assert_result("# <Value:/v1 value:1.25>\n", "v1=Value(value:1.25)\n");
+    assert_result("# 1.25\n", "/v1/value\n");
   }
   
   void test_argument_which_is_not_hash_should_go_to_first_inlet( void ) { 
-    assert_result("<Value:/v1 value:2.52>\n", "v1=Value(2.52)\n");
+    assert_result("# <Value:/v1 value:2.52>\n", "v1=Value(2.52)\n");
   }
   
   void test_hash_argument_should_set( void ) { 
-    assert_result("<Print:/p prefix:\"print\">\n", "p = Print(prefix:'print' foo:34)\n");
+    assert_result("# <Print:/p prefix:\"print\">\n", "p = Print(prefix:'print' foo:34)\n");
   }
   
   void test_print( void ) {
     setup_with_print("n = Value(34)\n");
-    assert_print("34\n", "n/value");
+    assert_print("# 34\n", "n/value\n");
   }
   
-  void test_pending_link( void ) {
-    assert_result("/a ? /b\n", "a => b\n");
-    assert_result("/a/out/value ? /b/in/print\n", "a~value => print~b\n");
-  }
   
 //  void test_parse_zero( void ) 
 //  { assert_result("v1=Number(0)\n","<Number:/v1 0.00>\n"); }

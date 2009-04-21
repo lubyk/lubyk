@@ -412,3 +412,18 @@ public:
     assert_equal("/n-1/in/pong", res[2].str());
   }
 };
+
+class SlotCommandTest : public ParseHelper
+{
+public:
+  void test_pending_link( void ) {
+    assert_result("# /a ? /b\n", "a => b\n");
+    assert_result("# /a/out/value ? /b/in/print\n", "a~value => print~b\n");
+  }
+  
+  void test_pending_removed_on_unlink( void ) {
+    setup("a => b\na = Value()\n"); // pending a => b
+    assert_result("# /a || /b\n", "a || b\n");
+    assert_result("# <Print:/b prefix:\"print\">\n", "b = Print()\n");
+  }
+};

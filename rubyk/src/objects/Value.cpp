@@ -6,8 +6,10 @@ public:
   
   // [1] set/get value, send value
   const Value value(const Value &val) {
-    if (!val.is_nil()) value_ = val;
-    send(value_);
+    if (!val.is_nil()) {
+      value_ = val;
+      send(value_);
+    }
     return value_;
   }
   
