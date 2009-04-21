@@ -314,9 +314,10 @@ class Object : public Typed
   }
   
   inline bool can_receive(const Value &val) {
+    if (type_id() == H("")) return false;
     if (val.type_id() == type_id() || accept_any_type()) {
       return true;
-    } else if (val.is_nil() && type_id() != H("")) {
+    } else if (val.is_nil()) {
       return true;
     } else if (!val.is_list() || !type_[0].is_list()) {
       return false;
@@ -358,7 +359,7 @@ protected:
  private:
   /** Keep type_id_ in sync with type_. */
   void type_changed() {
-    type_id_ = type_.size() > 0 ? type_[0].type_id() : type_.type_id();
+    type_id_ = type_.size() > 0 ? type_[0].type_id() : H("");
   }
   
   /** Free the child from the list of children. */

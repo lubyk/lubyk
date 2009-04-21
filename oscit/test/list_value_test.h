@@ -503,15 +503,16 @@ public:
   }
   
   void test_can_receive( void ) {
-    Object object("foo", JsonValue("[['',''], 'url', 'url', 'info']")); // list
+    Object object("foo", JsonValue("[['',1,''], 'url', 'url', 'info']")); // list
     assert_false(object.can_receive(Value()));
     assert_true (object.can_receive(gNilValue));
     assert_false(object.can_receive(Value(1.23)));
     assert_false(object.can_receive(Value("foo")));
     assert_false(object.can_receive(Value(BAD_REQUEST_ERROR, "foo")));
-    assert_true (object.can_receive(JsonValue("['','']")));      // same arguments
-    assert_true (object.can_receive(JsonValue("['','', 1.0]"))); // extra arguments are allowed
-    assert_false(object.can_receive(JsonValue("['',1.0]")));    // wrong arguments
+    assert_true (object.can_receive(JsonValue("['asd',3,'']")));      // same arguments
+    assert_true (object.can_receive(JsonValue("['',5,'', 1.0]"))); // extra arguments are allowed
+    assert_false(object.can_receive(JsonValue("['','','']")));    // wrong arguments
+    assert_false(object.can_receive(JsonValue("['',2]")));    // too short
     assert_false(object.can_receive(HashValue()));
     assert_false(object.can_receive(MatrixValue(1,1)));
   }

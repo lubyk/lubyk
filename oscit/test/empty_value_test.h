@@ -18,6 +18,8 @@ public:
     assert_false(v.is_any());
     
     assert_equal("", v.type_tag());
+    int i = H("");
+    assert_equal(i, v.type_id());
   }
   
   void test_create_with_TypeTag( void ) {
