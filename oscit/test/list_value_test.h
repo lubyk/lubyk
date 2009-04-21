@@ -52,7 +52,7 @@ public:
     assert_equal("", v2.type_tag());
   }
   
-  void test_copy( void ) {
+  void test_share( void ) {
     Value v(TypeTag("fs"));
     assert_equal(1, v.list_->ref_count());
     v[0].r = 0.0;
@@ -89,6 +89,49 @@ public:
     
     // change in v should change v3
     assert_equal("super woman", v3[1].str());
+  }
+  
+  void test_copy( void ) {
+    Value v(TypeTag("fs"));
+    assert_equal(1, v.list_->ref_count());
+    v[0].r = 0.0;
+    v[1].set("");
+    
+    Value v2;
+    v2.copy(v);
+    assert_true(v2.is_list());
+    assert_equal(2, v2.size());
+    assert_equal(1, v.list_->ref_count());
+    assert_false(v.list_ == v2.list_);
+    
+    v[0].r = 1.2;
+    v[1].set("super man");
+    
+    // change in v should not change v2
+    assert_equal(0.0, v2.value_at(0).r);
+    assert_equal("",  v2.value_at(1).str());
+    
+    // TODO: test deep copy
+    // TODO: test copy for hash, error, matrix, ...
+    
+    // Value v3;
+    // 
+    // v3 = v;
+    // 
+    // assert_true(v3.is_list());
+    // assert_equal(3, v.list_->ref_count());
+    // assert_equal(v.list_, v3.list_);
+    // 
+    // delete v2;
+    // assert_equal(2, v.list_->ref_count());
+    // 
+    // assert_equal(1.2,         v3[0].r);
+    // assert_equal("super man", v3[1].str());
+    // 
+    // v[1].set("super woman");
+    // 
+    // // change in v should change v3
+    // assert_equal("super woman", v3[1].str());
   }
   
   void test_set( void ) {

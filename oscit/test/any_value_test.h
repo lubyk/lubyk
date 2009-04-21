@@ -26,8 +26,7 @@ public:
     assert_true(v.is_any());
   }
   
-  void test_copy( void )
-  {
+  void test_copy( void ) {
     Value v('*');
     Value v2(v);
     Value v3;
@@ -39,16 +38,14 @@ public:
     assert_true(v3.is_any());
   }
   
-  void test_set( void )
-  {
+  void test_set( void ) {
     Value v;
     
     v.set_any();
     assert_true(v.is_any());
   }
   
-  void test_set_tag( void )
-  {
+  void test_set_tag( void ) {
     Value v;
     
     v.set_type_tag("*");
@@ -56,8 +53,7 @@ public:
     assert_equal("*", v.type_tag());
   }
   
-  void test_set_type( void )
-  {
+  void test_set_type( void ) {
     Value v;
     
     v.set_type(ANY_VALUE);

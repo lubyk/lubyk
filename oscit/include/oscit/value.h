@@ -109,14 +109,8 @@ public:
     clear();
   }
   
-  /** Copy the content of another Value. */
-  Value &set(const Value &other) {
-    *this = other;
-    return *this;
-  }
-  
-  /** Copy the content of the other value. */
-  void operator=(const Value& other) {
+  /** Share the content of another Value. */
+  Value &set(const Value &other) { // TODO: use 'const' to select between 'share' and 'copy'.
     switch (other.type_) {
       case REAL_VALUE:
         set(other.r);
@@ -149,6 +143,49 @@ public:
       default:
         set_nil();
     }
+    return *this;
+  }
+  
+  /** Share the content of another Value. */
+  Value &copy(const Value &other) {
+    switch (other.type_) {
+      case REAL_VALUE:
+        set(other.r);
+        break;
+      case STRING_VALUE:
+        set(*other.string_);
+        break;
+      case LIST_VALUE:
+        set(other.list_);
+        break;
+      case ERROR_VALUE:
+        set(other.error_);
+        break;
+      case HASH_VALUE:
+        set(other.hash_);
+        break;
+      case MATRIX_VALUE:
+        // FIXME: share matrix header
+        set(other.matrix_);
+        break;
+      case ANY_VALUE:
+        set_any();
+        break;
+      case EMPTY_VALUE:
+        /* we consider that if you set a value with empty it means you want Nil. 
+         * This is very useful for return values. */
+        /* continue */
+      case NIL_VALUE:
+        /* continue */
+      default:
+        set_nil();
+    }
+    return *this;
+  }
+  
+  /** Copy the content of the other value. */
+  void operator=(const Value& other) {
+    set(other);
   }
   
   const char *type_tag() const {
