@@ -35,8 +35,7 @@ private:
   Alias *alias_; /**< Remote object is on the same planet. */
 };
 
-extern "C" void init(Worker& planet)
-{
+extern "C" void init(Planet &planet) {
   Class * c = planet.classes()->declare<AliasNode>("Alias", "Create an alias to a node's method.");
   ACCESSOR(AliasNode, original, "Set original method.")
 }

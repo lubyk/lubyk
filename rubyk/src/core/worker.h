@@ -41,6 +41,11 @@ public:
     start<Worker, &Worker::do_run>(this, NULL);
   }
   
+  /** Set if the planet should be running (only used with direct loop control). */
+  void should_run(bool should_run) {
+    should_run_ = should_run;
+  }
+  
   Root *root() { return root_; }
   
   /** Get current real time in [ms] since reference. */
@@ -82,13 +87,36 @@ public:
     }
   }
   
+  /** Run a single step, returns false when quit loop should stop (quit).
+   *  This method can be used if you want to handle the loop yourself.
+   */
+  inline bool loop() {
+    struct timespec sleeper;
+    sleeper.tv_sec  = 0; 
+    sleeper.tv_nsec = WORKER_SLEEP_MS * 1000000;
+
+    unlock(); // ok, others can do things while we sleep
+      nanosleep(&sleeper, NULL); // FIXME: only if no loop events ?
+    lock();
+
+    current_time_ = real_time();
+
+    // execute events that must occur on each loop (io operations)
+    trigger_loop_events();
+
+    // trigger events in the queue
+    pop_events();
+    
+    return should_run_;
+  }
+  
  public:
   time_t current_time_;                    /**< Current logical time in [ms] since reference. */
   
  private:
   void init();
   
-  /** Main loop, returns false when quit loop should stop (quit). */
+  /** Main loop. The call to do_run will hang until quit. */
   void do_run(Thread *thread);
   
   /** Realtime related stuff. */

@@ -50,8 +50,7 @@ private:
   Number mResult;
 };
 
-extern "C" void init(Worker& planet)
-{
+extern "C" void init(Planet &planet) {
   CLASS (Add, "Add two numbers together (used for testing: only send new value on [1] change).")
   INLET (Add, bang,  NumberValue | BangValue, "Set first number to add and send.")
   INLET (Add, adder, NumberValue, "Set second number to add.")

@@ -53,6 +53,11 @@ class Planet : public Root
     worker_.run();
   }
   
+  /** Only used with direct loop control. */
+  void should_run(bool should_run) {
+    worker_.should_run(should_run);
+  }
+  
   void join() {
     worker_.join();
   }
@@ -60,6 +65,14 @@ class Planet : public Root
   void quit() {
     worker_.kill();
     clear(); // kill commands and destroy objects
+  }
+  
+  bool loop() {
+    return worker_.loop();
+  }
+  
+  time_t current_time() {
+    return worker_.current_time_;
   }
   
   inline Worker *worker() { return &worker_; }

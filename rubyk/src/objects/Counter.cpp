@@ -46,8 +46,7 @@ private:
   Number mIncrement;
 };
 
-extern "C" void init(Worker& planet)
-{
+extern "C" void init(Planet &planet) {
   CLASS (Counter, "Increment counter on each bang.")
   INLET (Counter, bang, BangValue | NumberValue, "Increment counter | set counter.")
   INLET (Counter, increment, NumberValue, "Value to increment counter on each bang.")

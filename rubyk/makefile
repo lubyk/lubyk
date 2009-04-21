@@ -11,7 +11,7 @@ RUBYK_LIBDIR=$(LIBDIR)/rubyk
 DOT_CMD=/Applications/Graphviz.app/Contents/MacOS/dot
 RAGEL=ragel
 PLAT= macosx
-TEST=test/*_test.h #test/objects/*_test.h
+TEST=test/*_test.h test/objects/Metro_test.h
 LINKER_OBJECTS=../oscit/liboscit.a slot.o inlet.o outlet.o node.o worker.o event.o class.o class_finder.o group.o text_command.o planet.o #buffer.o
 OFF_OBJ=lua_script.o src/lib/lua/liblua.a 
 INCLUDE_HEADERS=-Isrc/templates -Isrc/core -Isrc/objects -Isrc/lib/lua -Isrc/lib -I../oscit/include -I../oscit/oscpack -Isrc/core/values -Isrc/lib/osc
@@ -33,7 +33,7 @@ rubyk: src/core/main.cpp $(LINKER_OBJECTS) test_objects
 lib:
 	mkdir lib
 
-test_objects: lib lib/Value.rko lib/Print.rko
+test_objects: lib lib/Value.rko lib/Print.rko lib/Metro.rko
 
 objects: lib lib/Test.rko lib/Number.rko lib/Add.rko lib/Inlet.rko lib/Group.rko lib/Alias.rko lib/Outlet.rko lib/Print.rko lib/Counter.rko lib/Metro.rko
 

@@ -29,11 +29,12 @@ class Node : public Object
     if (val.is_hash()) {
       return set(val);
     } else if (!val.is_nil()) {
-      // call first inlet
-      if (inlets_.size() > 0 && inlets_[0]->can_receive(val)) {
-        inlets_[0]->receive(val);
+      // call first method
+      Object *child = first_child();
+      if (child && child->can_receive(val)) {
+        return child->trigger(val);
       } else {
-        return Value(BAD_REQUEST_ERROR, "Invalid arguments for first inlet.");
+        return Value(BAD_REQUEST_ERROR, std::string("Invalid arguments for first method '").append(child->name()).append("'."));
       }
     }
     return do_inspect();

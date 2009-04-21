@@ -19,7 +19,11 @@ public:
   
   // [1]
   const Value print(const Value &val) {
-    *output_ << prefix_ << ": " << val << std::endl;
+    if (val.is_nil()) {
+      *output_ << prefix_ << ": Bang!\n";
+    } else {
+      *output_ << prefix_ << ": " << val << std::endl;
+    }
     return gNilValue;
   }
   

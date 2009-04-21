@@ -96,8 +96,7 @@ private:
 };
 
 
-extern "C" void init(Worker& planet)
-{ 
+extern "C" void init(Planet &planet) { 
   
   // Define class.
   CLASS (   Test, "Object used for testing. Does not do anything really useful.")

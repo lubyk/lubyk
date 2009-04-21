@@ -4,6 +4,8 @@
 #include "text_command.h"
 
 void Planet::init() {
+  set_context(&worker_);
+  
   // build application methods
   //           /.inspect
   adopt(new TMethod<Planet, &Planet::inspect>(this, Url(INSPECT_URL).name(), StringIO("url", "Returns some information on the state of a node.")));
@@ -14,7 +16,7 @@ void Planet::init() {
   //          /rubyk/link [[["","source url"],["", "target url"]], "Create a link between two urls."]
   rubyk->adopt(new TMethod<Planet, &Planet::link>(this, Url(LINK_URL).name(), JsonValue("[['','', ''],'url','op','url','Update a link between the two provided urls. Operations are '=>' (link) '||' (unlink) or '?' (pending).']")));
   //          /rubyk/quit
-  rubyk->adopt(new TMethod<Planet, &Planet::quit>(this, Url(QUIT_URL).name(), NoIO("Stop all operations and quit.")));
+  rubyk->adopt(new TMethod<Planet, &Planet::quit>(this, Url(QUIT_URL).name(), NilIO("Stop all operations and quit.")));
 }
 
 // typetag: "ss" (inlet, outlet)

@@ -21,23 +21,8 @@ void Worker::free_looped_node(Node *node) {
 void Worker::do_run(Thread *thread) {
   high_priority();
   lock();
-    while(should_run_) {
-      struct timespec sleeper;
-      sleeper.tv_sec  = 0; 
-      sleeper.tv_nsec = WORKER_SLEEP_MS * 1000000;
-  
-      unlock(); // ok, others can do things while we sleep
-        nanosleep(&sleeper, NULL); // FIXME: only if no loop events ?
-      lock();
-  
-      current_time_ = real_time();
-  
-      // execute events that must occur on each loop (io operations)
-      trigger_loop_events();
-  
-      // trigger events in the queue
-      pop_events();
-    }
+    while (loop())
+      ;
   unlock();
 }
 

@@ -27,8 +27,7 @@ public:
   }
 };
 
-extern "C" void init(Worker& planet)
-{
+extern "C" void init(Planet &planet) {
   Class * c = planet.classes()->declare<InletNode>("Inlet", "Create an inlet in the parent object. Sends values received in the parent's inlet.");
   OUTLET(InletNode, port, AnyValue, "Value received in parent's inlet.")
 }

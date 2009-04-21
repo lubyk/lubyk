@@ -60,6 +60,7 @@ protected:
 
 #define assert_result(x,y) _assert_result(__FILE__,__LINE__,#y,x,y)
 #define assert_print(x,y) _assert_result(__FILE__,__LINE__,#y,x,y)
+#define assert_run(x,y) _assert_run(__FILE__,__LINE__,#y,x,y)
 
 // ========================== ParseHelper  ====================== //
 
@@ -73,6 +74,7 @@ public:
     cmd_ = planet_->adopt_command(new TextCommand(input_, output_), false);
     planet_->call(LIB_URL, Value("lib"));
     output_.str(std::string("")); // clear output
+    planet_->should_run(true);
   }
   
   void tearDown() {
@@ -122,6 +124,14 @@ protected:
     _OSCIT_ASSERT_EQUALS( file, lineno, TS_AS_STRING(descr), print_.str(), expected);
   }
 
+  void _assert_run(const char * file, int lineno, const char *descr, const char *expected, time_t length)
+  {
+    time_t start = planet_->current_time();
+    print_.str(std::string("")); // clear output
+    while(planet_->current_time() <= start + length && planet_->loop())
+      ;
+    _OSCIT_ASSERT_EQUALS( file, lineno, TS_AS_STRING(descr), print_.str(), expected);
+  }
 //  void clean_assert_result(const char * input, const char * pOutput)
 //  {
 //    clean_start();
@@ -159,16 +169,6 @@ protected:
 //    assert_run(pLength, input, pOutput);
 //  }
 //
-//  void _assert_run(const char * file, int lineno, time_t pLength, const char * pOutput)
-//  {
-//    time_t start = worker_.current_time_;
-//    output_.str(std::string("")); // clear output
-//    cmd_->set_silent(true);
-//    while(worker_.current_time_ <= start + pLength && worker_.do_run())
-//      ;
-//    cmd_->set_silent(false);
-//    _RK_ASSERT_EQUALS( file, lineno, TS_AS_STRING("running"), output_.str(), std::string(pOutput));
-//  }
 };
 
 #endif // _TEST_HELPER_H_

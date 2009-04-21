@@ -15,21 +15,31 @@ public:
   
   // [1] restart metronome / set tempo
   const Value tempo(const Value &val) {
-    Real old_tempo = tempo_;
     if (val.is_real()) change_tempo(val.r);
     
     return Value(tempo_);
   }
   
   // [2] stop metronome
-  void stop(const Value &val) {
-    remove_my_events();
-    run_ = false;
+  const Value start_stop(const Value &val) {
+    if (val.is_real()) {
+      if (val.r == 0.0) {
+        // stop
+        remove_my_events();
+        run_ = false;
+      } else {
+        // start
+        if (!run_) bang_me_in(ONE_MINUTE / tempo_);
+        run_ = true;
+      }
+    }
+    
+    return Value(run_);
   }
   
   virtual void inspect(Value *hash)  {
-    hash.set("tempo", tempo_);
-    hash.set("run", run_);
+    hash->set("tempo", tempo_);
+    hash->set("run", run_);
   }
   
   // internal use only (looped call)
@@ -47,6 +57,7 @@ private:
       run_ = false;
     } else if (tempo != tempo_) {
       // tempo changed
+      tempo_ = tempo;
       remove_my_events();
       if (run_) bang_me_in(ONE_MINUTE / tempo_);
     }
@@ -56,10 +67,9 @@ private:
   bool run_;
 };
 
-extern "C" void init(Worker& planet)
-{
-  CLASS( Metro, RealIO("bpm", "Metronome that sends bangs at regular intervals."))
+extern "C" void init(Planet &planet) {
+  CLASS( Metro, "Metronome that sends bangs at regular intervals.", "tempo: [initial tempo]")
   METHOD(Metro, tempo,RealIO("bpm", "Restart metronome | set tempo value."))
-  INLET( Metro, stop, AnyIO("Stop metronome."))
+  METHOD(Metro, start_stop, RealIO("1,0", "Start/stop metronome."))
   OUTLET(Metro, bang, BangIO("Regular bangs."))
 }
