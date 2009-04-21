@@ -66,7 +66,8 @@ const Value Slot::change_link(unsigned char operation, const Value &val) {
     if (!target) return ErrorValue(NOT_FOUND_ERROR, val.str());
     
     if (!target->kind_of(Slot)) {
-      target = target->first_child();
+      target = target->child("in");
+      if (target) target = target->first_child(); // target/out/... 
       if (!target) {
         return ErrorValue(NOT_FOUND_ERROR, val.str()).append(": slot not found");
       }
@@ -88,14 +89,14 @@ const Value Slot::change_link(unsigned char operation, const Value &val) {
       // create link
       if (connect((Slot*)target)) {
         //std::cout << "LINKED: " << url() << " with " << val << std::endl;
-        return Value(url()).push_back("=>").push_back(val);
+        return Value(url()).push_back("=>").push_back(target->url());
       } else {
         return ErrorValue(BAD_REQUEST_ERROR, "Could not make the connection with (").append(val.to_json()).append(").");
       }
     } else {
       // disconnect
       disconnect((Slot*)target);
-      return Value(url()).push_back("||").push_back(val);
+      return Value(url()).push_back("||").push_back(target->url());
     }
   } else {
     return Value(info());

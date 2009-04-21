@@ -1,4 +1,4 @@
-set_lib_path("lib")
+lib("lib")
 m = Metro(20000)
 m => win
 m => lua

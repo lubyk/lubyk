@@ -545,24 +545,26 @@ void TextCommand::change_link(char op) {
   
   DEBUG(std::cout << op << " LINK " << from_node_ << "." << from_port_ << "=>" << to_port_ << "." << to_node_ << std::endl);
   ListValue list;
-  Value res;
   
   if (from_port_ == "") {
-    list.push_back(std::string(from_node_).append("/out"));
+    list.push_back(std::string(from_node_));
   } else {
     list.push_back(std::string(from_node_).append("/out/").append(from_port_));
   }
+  
+  if (op == 'c') {
+    list.push_back("=>");
+  } else {
+    list.push_back("||");
+  }
+  
   if (to_port_ == "") {
-    list.push_back(std::string(to_node_).append("/in"));
+    list.push_back(std::string(to_node_));
   } else {
     list.push_back(std::string(to_node_).append("/in/").append(to_port_));
   }
-  if (op == 'c') {
-    res = root_->call(LINK_URL, list);
-  } else {
-    res = root_->call(UNLINK_URL, list);
-  }
-  print_result(res);
+  
+  print_result(root_->call(LINK_URL, list));
 }
 
 void TextCommand::execute_method() {
@@ -605,8 +607,8 @@ void TextCommand::execute_command() {
   Value params = Value(Json(parameter_string_));
 
   DEBUG(std::cout << "CMD " << method_ << "(" << params << ")" << std::endl);
-  if (method_ == "set_lib_path") {
-    res = root_->call(std::string(CLASS_URL).append("/lib_path"), params);
+  if (method_ == "lib") {
+    res = root_->call(LIB_URL, params);
   } else if (method_ == "quit" || method_ == "q") {
     stop(); // Readline won't quit with a SIGTERM (see doc/prototypes/term_readline.cpp).
     res = root_->call(QUIT_URL);

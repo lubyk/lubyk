@@ -71,7 +71,7 @@ public:
   void setUp() {
     planet_ = new Planet;
     cmd_ = planet_->adopt_command(new TextCommand(input_, output_), false);
-    planet_->call(std::string(CLASS_URL).append("/lib_path"), Value("lib"));
+    planet_->call(LIB_URL, Value("lib"));
     output_.str(std::string("")); // clear output
   }
   

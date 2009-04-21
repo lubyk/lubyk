@@ -27,7 +27,8 @@ public:
   }
   
   void init() {
-    adopt(new TMethod<ClassFinder, &ClassFinder::lib_path>(this, "lib_path", StringIO("file path", "Get/set path to load objects files (*.rko).")));
+    //          /class/lib
+    adopt(new TMethod<ClassFinder, &ClassFinder::lib_path>(this, Url(LIB_URL).name(), StringIO("file path", "Get/set path to load objects files (*.rko).")));
   }
   
   virtual ~ClassFinder() {}
@@ -41,8 +42,6 @@ public:
     if (val.is_string()) objects_path_ = val.str();
     return Value(objects_path_);
   }
- 
-  void set_lib_path(const std::string &path) { objects_path_ = path; }
   
   /** Declare a new class. This template is responsible for generating the "new" method. */
   template<class T>

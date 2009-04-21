@@ -394,4 +394,21 @@ public:
     outlet.send(Value(1.0));
     assert_equal(19.0, value); // order is now inlet1, inlet2, inlet3
   }
+  
+  void test_find_inlet( void ) {
+    Root base;
+    Real value = 0;
+    DummyNode *sender    = base.adopt(new DummyNode(&value));
+    Object *out    = sender->adopt(new Object("out"));
+    DummyNode *receiver1 = base.adopt(new DummyNode(&value));
+    Object *in     = receiver1->adopt(new Object("in"));
+    Outlet *outlet = out->adopt(new Outlet(sender, "ping", FieldIO("any", "Receive real values.")));
+    in->adopt(new Inlet(receiver1, "pong", SlotTest_receive_value1, FieldIO("any", "Receive real values.")));
+    
+    Value res = outlet->link(Value(receiver1->url())); // should find /receiver1/in/pong
+    assert_true(res.type_id() == H("sss"));
+    assert_equal("/n/out/ping", res[0].str());
+    assert_equal("=>", res[1].str());
+    assert_equal("/n-1/in/pong", res[2].str());
+  }
 };

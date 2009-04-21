@@ -38,6 +38,11 @@ public:
     assert_print("34\n", "n/value");
   }
   
+  void test_pending_link( void ) {
+    assert_result("/a ? /b\n", "a => b\n");
+    assert_result("/a/out/value ? /b/in/print\n", "a~value => print~b\n");
+  }
+  
 //  void test_parse_zero( void ) 
 //  { assert_result("v1=Number(0)\n","<Number:/v1 0.00>\n"); }
 //  

@@ -10,10 +10,10 @@ using namespace oscit;
 
 // TODO move this in a types.h file ?
 #define CLASS_URL   "/class"
+#define LIB_URL     "/class/lib"
 #define INSPECT_URL "/.inspect"
 #define RUBYK_URL   "/rubyk"
 #define LINK_URL    "/rubyk/link"
-#define UNLINK_URL  "/rubyk/unlink"
 #define QUIT_URL    "/rubyk/quit"
 
 #endif

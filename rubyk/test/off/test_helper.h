@@ -58,7 +58,7 @@ public:
     Data::sIdCounter = 0;
     Data::sShowId    = true;
     worker_.clear();
-    worker_.classes()->set_lib_path("lib");
+    worker_.classes()->lib("lib");
   }
   
 protected:
@@ -157,7 +157,7 @@ public:
     Data::sIdCounter = 0;
     Data::sShowId    = false;
     worker_.clear();
-    worker_.classes()->set_lib_path("lib");
+    worker_.classes()->lib("lib");
     output_.str(std::string("")); // clear output
   }
   

@@ -12,67 +12,40 @@ void Planet::init() {
   //          /rubyk
   Object * rubyk = adopt(new Object(Url(RUBYK_URL).name()));
   //          /rubyk/link [[["","source url"],["", "target url"]], "Create a link between two urls."]
-  rubyk->adopt(new TMethod<Planet, &Planet::link>(this, Url(LINK_URL).name(), JsonValue("[['',''],'url','url','Create a link between the two provided urls.']")));
-  //          /rubyk/unlink
-  rubyk->adopt(new TMethod<Planet, &Planet::unlink>(this, Url(UNLINK_URL).name(), JsonValue("[['',''],'url','url','Remove link between the two provided urls.']")));
+  rubyk->adopt(new TMethod<Planet, &Planet::link>(this, Url(LINK_URL).name(), JsonValue("[['','', ''],'url','op','url','Update a link between the two provided urls. Operations are '=>' (link) '||' (unlink) or '?' (pending).']")));
   //          /rubyk/quit
   rubyk->adopt(new TMethod<Planet, &Planet::quit>(this, Url(QUIT_URL).name(), NoIO("Stop all operations and quit.")));
 }
 
 // typetag: "ss" (inlet, outlet)
 const Value Planet::link(const Value &val) {
-  bool ignore_pending = val.size() > 2 && val[2].is_real() && val[2].r == 1;
+  // std::cout << "link: " << val << std::endl;
   if (val.is_nil()) {
     return create_pending_links();
   }
   
-  // link: "/met/out/tempo" ---> "/counter/in/bang"
-  
   Value error;
   Object *source = object_at(Url(val[0].str()), &error);
-  if (error.is_error() || !object_at(Url(val[1].str()), &error)) {
+  if (error.is_error() || !object_at(Url(val[2].str()), &error)) {
     // not found
-    if (!ignore_pending) {
+    if (val[1].str() == "=>") {
       Value params;
-      params.copy(val).push_back(1); // ignore_pending when trying to rebuild
+      params.copy(val);
+      params[1].set("?");
       pending_links_.push_back(Call(LINK_URL, params));
+      return params;
     }
-    return Value(std::string("pending: ").append(val[0].str()).append(" => ").append(val[1].str())); // FIXME (not [sss] and not an error) !
+    return val;
   }
   
   Slot   *slot = TYPE_CAST(Slot, source);
   Object *object;
   if (slot != NULL) {
-    return slot->link(val[1]);
-  } else if ( (object = source->first_child()) ) {
+    return val[1].str() == "||" ? slot->unlink(val[2]) : slot->link(val[2]);
+  } else if ( (object = source->child("out")) && (object = object->first_child()) ) {
     // was a link default slots: /met/out --> /counter/in
     if ( (slot = TYPE_CAST(Slot, object)) ) {
-      return slot->link(val[1]);
-    } else {
-      return Value(BAD_REQUEST_ERROR, std::string("Object at '").append(slot->url()).append("' does not support links (using first child of '").append(source->url()).append("')."));
-    }
-  } else {
-    return Value(BAD_REQUEST_ERROR, std::string("Object at '").append(source->url()).append("' does not support links (not an Outlet, Inlet or Node)."));
-  }
-}
-
-const Value Planet::unlink(const Value &val) { 
-  
-  // unlink: "/met/out/tempo" || "/counter/in/bang"
-  
-  Value error;
-  Object *source = object_at(Url(val[0].str()), &error);
-  if (error.is_error()) return error;
-  
-  
-  Slot   *slot = TYPE_CAST(Slot, source);
-  Object *object;
-  if (slot != NULL) {
-    return slot->unlink(val[1]);
-  } else if ( (object = source->first_child()) ) {
-    // was a link default slots: /met/out --> /counter/in
-    if ( (slot = TYPE_CAST(Slot, object)) ) {
-      return slot->unlink(val[1]);
+      return val[1].str() == "||" ? slot->unlink(val[2]) : slot->link(val[2]);
     } else {
       return Value(BAD_REQUEST_ERROR, std::string("Object at '").append(slot->url()).append("' does not support links (using first child of '").append(source->url()).append("')."));
     }
@@ -91,7 +64,7 @@ const Value Planet::create_pending_links() {
   
   while (it != end) {
     res = it->trigger(this);
-    if (res.type_id() == H("sss") || res.is_error()) {
+    if ((res.type_id() == H("sss") && res[1].str() == "=>") || res.is_error()) {
       list.push_back(res);
       it = pending_links_.erase(it);  // call succeeded or definitely failed
     } else {

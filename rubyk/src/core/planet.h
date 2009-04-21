@@ -67,11 +67,8 @@ class Planet : public Root
   /** Used to access '/class' when rko objects are loaded. */  
   ClassFinder *classes() { return classes_; }
   
-  /** Create a new link between two slots. */
+  /** Create/remove a link between two slots. */
   const Value link(const Value &val);
-
-  /** Remove a link between two slots. */
-  const Value unlink(const Value &val);
   
   const Value quit(const Value &val) {
     lock();
