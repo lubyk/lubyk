@@ -131,18 +131,21 @@ public:
     Object matr("foo", MatrixIO(1,4,"bar"));
     Object list("foo", JsonValue("[['',''], 'url', 'url', 'info']")); // list
     assert_true(hash.can_receive(HashValue()));
+    assert_true(hash.can_receive(gNilValue));
     assert_false(hash.can_receive(MatrixValue(1,1)));
     assert_false(hash.can_receive(JsonValue("['','']")));
     
     assert_true(matr.can_receive(MatrixValue(1,1)));
+    assert_true(matr.can_receive(gNilValue));
     assert_false(matr.can_receive(HashValue()));
     assert_false(hash.can_receive(JsonValue("['','']")));
     
-    assert_true(matr.can_receive(MatrixValue(1,1)));
-    assert_false(matr.can_receive(HashValue()));
-    assert_false(list.can_receive(JsonValue("['',1.0]")));
     assert_true(list.can_receive(JsonValue("['','']")));
     assert_true(list.can_receive(JsonValue("['','', 1.0]"))); // extra arguments are allowed
+    assert_true(list.can_receive(gNilValue));
+    assert_false(list.can_receive(MatrixValue(1,1)));
+    assert_false(list.can_receive(HashValue()));
+    assert_false(list.can_receive(JsonValue("['',1.0]")));
   }
   
   // set_type is not a good idea. It should be immutable (or maybe I'm wrong, so I leave the test here)

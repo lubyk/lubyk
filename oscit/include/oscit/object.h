@@ -12,7 +12,7 @@ namespace oscit {
 
 #define NoIO(info)  Value(info)
 #define NilIO(info)  ListValue("N").push_back(info)
-#define FieldIO(units,info) Value(0.0).push_back(units).push_back(info)
+#define RealIO(units,info) Value(0.0).push_back(units).push_back(info)
 #define StringIO(units,info) Value("").push_back(units).push_back(info)
 #define RangeIO(min,max,units,info) Value(0.0).push_back(min).push_back(max).push_back(units).push_back(info)
 #define SelectIO(values,units,info) Value("").push_back(values).push_back(units).push_back(info)
@@ -315,6 +315,8 @@ class Object : public Typed
   
   inline bool can_receive(const Value &val) {
     if (val.type_id() == type_id() || accept_any_type()) {
+      return true;
+    } else if (val.is_nil() && type_id() != H("")) {
       return true;
     } else if (!val.is_list() || !type_[0].is_list()) {
       return false;
