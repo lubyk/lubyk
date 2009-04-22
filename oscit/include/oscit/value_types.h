@@ -6,6 +6,8 @@ class Value;
 class Hash;
 
 extern Value gNilValue;
+extern Value gTrueValue;
+extern Value gFalseValue;
 extern Value gEmptyValue;
 extern Hash  gEmptyHash;
 

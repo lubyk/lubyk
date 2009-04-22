@@ -3,7 +3,6 @@
 //#define DEBUG_PARSER
 
 #include "oscit/values.h"
-#include "oscit/list.h"
 #include <iostream>
 #include <sstream>
 
@@ -16,6 +15,8 @@ namespace oscit {
 #endif
 
 Value gNilValue('N');
+Value gTrueValue(1.0);
+Value gFalseValue(0.0);
 Value gEmptyValue;
 Hash  gEmptyHash(1);
 
@@ -82,6 +83,9 @@ void Value::to_stream(std::ostream &out_stream, bool lazy) const {
       break;
     case MATRIX_VALUE:
       out_stream << "\"Matrix " << matrix_->rows << "x" << matrix_->cols << "\"";
+      break;
+    case MIDI_VALUE:
+      out_stream << "\"MidiMessage " << *midi_message_ << "\"";
       break;
     case LIST_VALUE:
       size_t sz = size();

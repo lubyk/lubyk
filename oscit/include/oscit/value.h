@@ -304,7 +304,9 @@ public:
   }
   
   /** =========================================================    Real    */
-  bool is_real() const   { return type_ == REAL_VALUE; }
+  bool is_real() const  { return type_ == REAL_VALUE; }
+  bool is_true() const  { return type_ == REAL_VALUE && r == 1.0; }
+  bool is_false() const { return type_ == REAL_VALUE && r == 0.0; }
   
   /** Change the Value into a RealValue. */
   Value &set(Real real) {

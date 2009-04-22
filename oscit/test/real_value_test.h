@@ -26,6 +26,19 @@ public:
     assert_equal(i, v.type_id());
   }
   
+  void test_true_value( void ) {
+    assert_equal("f", gTrueValue.type_tag());
+    assert_equal(1.0, gTrueValue.r);
+    assert_true(gTrueValue.is_true());
+    assert_true(Value(1.0).is_true());
+  }
+  
+  void test_false_value( void ) {
+    assert_equal("f", gFalseValue.type_tag());
+    assert_equal(0.0, gFalseValue.r);
+    assert_false(gFalseValue.is_true());
+  }
+  
   void test_create_real_value( void ) {
     RealValue v(3.5);
     RealValue v2;
