@@ -458,8 +458,7 @@ protected:
 };
 
 
-extern "C" void init()
-{
+extern "C" void init(Planet &planet) {
   CLASS(GLWindow)
   OUTLET(GLWindow, out)
   OUTLET(GLWindow, draw)

@@ -91,8 +91,7 @@ protected:
   }
 };
 
-extern "C" void init()
-{
+extern "C" void init(Planet &planet) {
   CLASS (GLLua)
   INLET (GLLua, draw)
   INLET (GLLua, in3)

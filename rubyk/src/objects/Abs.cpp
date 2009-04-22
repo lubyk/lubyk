@@ -37,8 +37,7 @@ private:
   Matrix mBuffer;
 };
 
-extern "C" void init()
-{
+extern "C" void init(Planet &planet) {
   CLASS(Abs)
   OUTLET(Abs,absolute)
 }

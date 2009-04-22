@@ -63,8 +63,7 @@ private:
   Real mDescent;     /** Peak decreasing speed in value/sample. */
 };
 
-extern "C" void init()
-{
+extern "C" void init(Planet &planet) {
   CLASS (Peak)
   OUTLET(Peak, peak)
 }

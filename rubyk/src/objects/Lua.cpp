@@ -43,8 +43,7 @@ public:
   { set_lua_global("in10", sig);}
 };
 
-extern "C" void init()
-{
+extern "C" void init(Planet &planet) {
   CLASS (Lua)
   INLET (Lua, in2)
   INLET (Lua, in3)

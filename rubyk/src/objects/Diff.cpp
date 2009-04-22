@@ -56,8 +56,7 @@ private:
   size_t mDistance;
 };
 
-extern "C" void init()
-{
+extern "C" void init(Planet &planet) {
   CLASS(Diff)
   OUTLET(Diff,difference)
 }

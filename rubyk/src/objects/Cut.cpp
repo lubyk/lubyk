@@ -36,8 +36,7 @@ private:
   bool     mFlatten;     /**< Transform matrix into vector. */
 };
 
-extern "C" void init()
-{
+extern "C" void init(Planet &planet) {
   CLASS (Cut)
   OUTLET(Cut, cut)
 }

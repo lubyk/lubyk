@@ -277,8 +277,7 @@ private:
 };
 
 
-extern "C" void init()
-{
+extern "C" void init(Planet &planet) {
   CLASS (PCA)
   OUTLET(PCA,scaled)
   SUPER_METHOD(PCA, TrainedMachine, learn)

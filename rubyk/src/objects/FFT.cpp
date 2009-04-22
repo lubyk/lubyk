@@ -123,8 +123,7 @@ private:
                                   *  more then one signal at a time. */
 };
 
-extern "C" void init()
-{
+extern "C" void init(Planet &planet) {
   CLASS(FFT)
   OUTLET(FFT,frequencies)
 }

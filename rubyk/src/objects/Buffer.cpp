@@ -86,8 +86,7 @@ private:
   size_t   mIndex;  /**< Current write position into the 'write' vector. */
 };
 
-extern "C" void init()
-{
+extern "C" void init(Planet &planet) {
   CLASS_NAME (Buffer,BufferNode)
   OUTLET     (Buffer,data)
 }

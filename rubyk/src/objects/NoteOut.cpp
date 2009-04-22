@@ -1,104 +1,69 @@
 #include "rubyk.h"
-#include "midi_message.h"
-#include <sstream>
 
-class NoteOut : public Node
-{
-public:
-  bool init(const Value &p)
-  {
-    mMessage.mType = NoteOn;
-    mMessage.set_key(     MIDI_NOTE_C0);
-    mMessage.set_velocity(70);
-    mMessage.set_length(  500); // 0.5 sec.
-    mMessage.set_channel( 1);
-    
-    return true;
+class NoteOut : public Node {
+ public:
+  NoteOut() {
+    note_.set_as_note(MIDI_NOTE_C0, 70, 500, 1);
   }
   
-  bool set(const Value &p)
-  {  
-    mMessage.set_key(      p.val("note",     mMessage.note()    ));
-    mMessage.set_velocity( p.val("velocity", mMessage.velocity()));
-    mMessage.set_length(   p.val("length",   mMessage.length()  )); // 0.5 sec.
-    mMessage.set_channel(  p.val("channel",  mMessage.channel() ));
-    return true;
-  }
-  
-  // inlet 1 and 5 (silent set note)
-  void bang(const Value &val)
-  {
-    if (val.type == MidiValue && val.midi_ptr.value->mType == NoteOn) {
-      mMessage = *(val.midi_ptr.value);
-    } else {
-      set_note(sig);
+  // [1] set note, send current note
+  void note(const Value &val) {
+    if (val.is_real()) {
+      note_.midi_message_->set_note(val.r);
     }
-    send(mMessage);
-  }
-
-  // inlet 2
-  void set_velocity(const Value &val)
-  {
-    int v = 0;
-    val.get(&v);
-    if (v) mMessage.set_velocity(v); 
+    send(note_);
   }
   
-  // inlet 3
-  void set_length(const Value &val)
-  { 
-    time_t l;
-    if (val.get(&l)) mMessage.set_length(l); 
+  // [2] velocity
+  const Value velocity(const Value &val) {
+    if (val.is_real()) {
+      note_.midi_message_->set_velocity(val.r);
+    }
+    return Value((Real)note_.midi_message_->velocity());
   }
   
-  // inlet 4
-  void set_channel(const Value &val)
-  {
-    int i;
-    if (val.get(&i)) mMessage.set_channel(i);
+  // [3] length
+  const Value length(const Value &val) {
+    if (val.is_real()) {
+      note_.midi_message_->set_length(val.r);
+    }
+    return Value((Real)note_.midi_message_->length());
   }
   
-  // inlet 5 (set note but do not send)
-  void set_note(const Value &val)
-  {
-    int n;
-    if (val.get(&n)) mMessage.set_note(n);
+  // [4] channel
+  const Value channel(const Value &val) {
+    if (val.is_real()) {
+      note_.midi_message_->set_channel(val.r);
+    }
+    return Value((Real)note_.midi_message_->channel());
   }
   
-  // internal callback
-  void noteOff(void * data)
-  {
-    MidiMessage * msg = (MidiMessage*)data;
-    Outlet * out;
-    Value sig;
-    
-    val.set(msg);
-    if ( (out = outlet(1)) ) out->send(sig);
-    delete msg;
+  // [5] set note, no send
+  const Value set_note(const Value &val) {
+    if (val.is_real()) {
+      note_.midi_message_->set_note(val.r);
+    }
+    return Value((Real)note_.midi_message_->note());
   }
   
-  void clear()
-  { remove_my_events(); }
+  //void clear()
+  //{ remove_my_events(); }
   
-  virtual const Value inspect(const Value &val) 
-  { 
-    std::ostringstream oss(std::ostringstream::out);
-    oss << mMessage;
-    bprint(mSpy, mSpySize,"%s", oss.str().c_str());
+  void inspect(Value *hash) {
+    hash->set("note", note_);
   }
   
 private:
   /* data */
-  MidiMessage  mMessage;
+  Value  note_;
 };
 
-extern "C" void init()
-{
-  CLASS (NoteOut)
-  INLET (NoteOut, set_velocity)
-  INLET (NoteOut, set_length)
-  INLET (NoteOut, set_channel)
-  INLET (NoteOut, set_note)
-  OUTLET(NoteOut, send)
-  METHOD(NoteOut, clear)
+extern "C" void init(Planet &planet) {
+  CLASS (NoteOut, "Helper to create a note.", "note, velocity, length, channel");
+  METHOD(NoteOut, note, RangeIO(0, 127, "midi note", "Set value / send note out."));
+  OUTLET(NoteOut, note, MidiIO("Midi note."));
+  METHOD(NoteOut, velocity, RangeIO(0, 127, "note velocity", "Set/get note velocity."));
+  METHOD(NoteOut, length, RealIO("note length", "Set/get note length."));
+  METHOD(NoteOut, channel,  RangeIO(0, 16, "midi channel", "Set/get midi channel."));
+  METHOD(NoteOut, set_note, RangeIO(0, 127, "midi note", "Set/get note value (does not send note out)."));
 }

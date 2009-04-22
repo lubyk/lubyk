@@ -77,8 +77,7 @@ public:
   }
 };
 
-extern "C" void init()
-{
+extern "C" void init(Planet &planet) {
   CLASS (Keyboard)
   METHOD(Keyboard,get)
   OUTLET(Keyboard,send)

@@ -83,8 +83,7 @@ private:
   Command mCmd;        /**< Command parser. */
 };
 
-extern "C" void init()
-{
+extern "C" void init(Planet &planet) {
   CLASS (Macro)
   INLET (Macro, in2)
   INLET (Macro, in3)

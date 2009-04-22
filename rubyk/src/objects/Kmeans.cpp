@@ -333,8 +333,7 @@ private:
 };
 
 
-extern "C" void init()
-{
+extern "C" void init(Planet &planet) {
   CLASS (Kmeans)
   OUTLET(Kmeans,label)
   OUTLET(Kmeans,distance)

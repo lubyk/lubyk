@@ -113,8 +113,7 @@ private:
   unsigned int mTarget;
 };
 
-extern "C" void init()
-{
+extern "C" void init(Planet &planet) {
   CLASS (Ctrl)
   INLET (Ctrl, set_ctrl)
   INLET (Ctrl, set_slope)

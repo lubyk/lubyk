@@ -1013,8 +1013,7 @@ private:
   
 };
 
-extern "C" void init()
-{
+extern "C" void init(Planet &planet) {
   CLASS (Turing)
   INLET (Turing, in2)
   INLET (Turing, in3)

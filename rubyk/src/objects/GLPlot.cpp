@@ -339,8 +339,7 @@ private:
   bool           mDrawBase;
 };
 
-extern "C" void init()
-{
+extern "C" void init(Planet &planet) {
   CLASS(GLPlot)
   OUTLET(GLPlot,bang)
   INLET(GLPlot, draw)

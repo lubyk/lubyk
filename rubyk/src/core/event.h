@@ -57,21 +57,21 @@ public:
   BangEvent(Node *receiver, time_t when, bool forced = false) {
     when_      = when;
     receiver_  = (void*)receiver;
-    function_  = &cast_bang_me_inthod;
+    function_  = &cast_bang_method;
     forced_    = forced;
   }
   
   BangEvent(Node *receiver, time_t when, const Value &parameter, bool forced = false) {
     when_      = when;
     receiver_  = (void*)receiver;
-    function_  = &cast_bang_me_inthod;
+    function_  = &cast_bang_method;
     parameter_ = parameter;
     forced_    = forced;
   }
   
 private:
   /** Make pointer to the bang method. */
-  static void cast_bang_me_inthod (void *receiver, const Value &parameter);
+  static void cast_bang_method(void *receiver, const Value &parameter);
 };
 
 template<class T, void(T::*Tmethod)(const Value&)>

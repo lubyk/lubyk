@@ -189,8 +189,7 @@ private:
   bool     mOffsetOnFull; /**< If 'true', the next time we have a full vector, reset offset with these values. */
 };
 
-extern "C" void init()
-{
+extern "C" void init(Planet &planet) {
   CLASS (Cabox)
   OUTLET(Cabox,stream)
   OUTLET(Cabox,high)

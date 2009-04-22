@@ -155,8 +155,7 @@ private:
 };
 
 
-extern "C" void init()
-{
+extern "C" void init(Planet &planet) {
   CLASS (Replay)
   OUTLET(Replay,stream)
   METHOD(Replay,play)

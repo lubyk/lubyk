@@ -22,8 +22,7 @@ public:
   
 };
 
-extern "C" void init()
-{
+extern "C" void init(Planet &planet) {
   CLASS( Bang)
   OUTLET(Bang,bang)
   OUTLET(Bang,bang2)

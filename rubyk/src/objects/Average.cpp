@@ -46,8 +46,7 @@ private:
   Matrix mBuffer; /**< Average of incoming live stream. */
 };
 
-extern "C" void init()
-{
+extern "C" void init(Planet &planet) {
   CLASS(Average)
   OUTLET(Average, average)
 }

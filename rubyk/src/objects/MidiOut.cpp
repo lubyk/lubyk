@@ -73,12 +73,12 @@ class MidiOut : public Node {
   /** internal use to send NoteOff or delayed NoteOn.
    */
   virtual void bang(const Value &val) {
-    // FIXME: Review: we const cast for note_on_to_off. Should we copy ?
-    MidiMessage *msg = const_cast<MidiMessage*>(val.midi_message_);
+    const MidiMessage *msg = val.midi_message_;
     midi_out_->sendMessage( &(msg->data()) );
     if (msg->type() == NoteOn && msg->length() > 0) {
-      msg->note_on_to_off();
-      bang_me_in(msg->length(), val, true);
+      Value out(msg); // copy
+      out.midi_message_->note_on_to_off();
+      bang_me_in(msg->length(), out, true);
     }
   }
   

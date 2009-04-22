@@ -44,8 +44,7 @@ private:
   Matrix mBuffer;
 };
 
-extern "C" void init()
-{
+extern "C" void init(Planet &planet) {
   CLASS(Sum)
   OUTLET(Sum,absolute)
 }

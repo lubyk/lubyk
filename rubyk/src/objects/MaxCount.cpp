@@ -48,8 +48,7 @@ private:
 };
 
 
-extern "C" void init()
-{ 
+extern "C" void init(Planet &planet) { 
   CLASS (MaxCount)
   OUTLET(MaxCount, value)
   OUTLET(MaxCount, votes)

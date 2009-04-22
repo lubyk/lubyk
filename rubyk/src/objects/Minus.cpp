@@ -42,8 +42,7 @@ private:
   Real value_;
 };
 
-extern "C" void init()
-{
+extern "C" void init(Planet &planet) {
   CLASS( Minus)
   INLET( Minus, set_minus)
   OUTLET(Minus,bang)

@@ -356,8 +356,7 @@ private:
   FILE *    mTrainFile;    /**< Where the training vectors are stored. */
 };
 
-extern "C" void init()
-{
+extern "C" void init(Planet &planet) {
   CLASS(VQ)
   OUTLET(VQ, label)
   OUTLET(VQ, probabilities)

@@ -37,8 +37,7 @@ private:
   Real mMult;
 }
 
-extern "C" void init()
-{  
+extern "C" void init(Planet &planet) {  
   // define class
   CLASS (   Foo, "Matrix multiplication.")
   

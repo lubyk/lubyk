@@ -90,8 +90,7 @@ protected:
 
 #ifdef COMPILE_SERIAL_OBJECT
 // only when making 'Serial' and not a subclass
-extern "C" void init()
-{
+extern "C" void init(Planet &planet) {
   CLASS (Serial)
   OUTLET(Serial,data)
   CLASS_METHOD(Serial, list)

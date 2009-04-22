@@ -583,8 +583,7 @@ readpb_fail:
 };
 
 
-extern "C" void init()
-{
+extern "C" void init(Planet &planet) {
   CLASS (Svm)
   OUTLET(Svm,label)
   OUTLET(Svm,probability)

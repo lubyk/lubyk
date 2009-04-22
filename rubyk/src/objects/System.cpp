@@ -75,8 +75,7 @@ private:
   std::string mSystCall; // FIXME: this is not thread safe !
 };
 
-extern "C" void init()
-{
+extern "C" void init(Planet &planet) {
   CLASS (System)
   INLET (System, in2)
   INLET (System, in3)

@@ -366,8 +366,7 @@ private:
 };
 
 
-extern "C" void init()
-{
+extern "C" void init(Planet &planet) {
   CLASS (ClassRecorder)
   OUTLET(ClassRecorder,current)
   OUTLET(ClassRecorder,mean)

@@ -39,7 +39,7 @@ rubyk: src/core/main.cpp $(LINKER_OBJECTS) test_objects
 lib:
 	mkdir lib
 
-test_objects: lib lib/Value.rko lib/Print.rko lib/Metro.rko lib/MidiOut.rko
+test_objects: lib lib/Value.rko lib/Print.rko lib/Metro.rko lib/MidiOut.rko lib/NoteOut.rko
 
 objects: lib lib/Test.rko lib/Number.rko lib/Add.rko lib/Inlet.rko lib/Group.rko lib/Alias.rko lib/Outlet.rko lib/Print.rko lib/Counter.rko lib/Metro.rko
 
