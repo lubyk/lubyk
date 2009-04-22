@@ -13,12 +13,14 @@ public:
   
   Alias() : original_(NULL) {}
   
-  Alias(const char *name, Object *object) : Object(name), original_(NULL) {
-    set_original(object);
+  Alias(const char *name, Object *object) : Object(name, object->type()),
+    original_(object) {
+    original_->register_alias(this);
   }
   
-  Alias(const std::string &name, Object *object) : Object(name), original_(NULL) {
-    set_original(object);
+  Alias(const std::string &name, Object *object) : Object(name, object->type()),
+    original_(object) {
+    original_->register_alias(this);
   }
   
   virtual ~Alias() {
@@ -30,31 +32,14 @@ public:
     return original_ ? original_->safe_trigger(val) : gNilValue;
   }
   
+  /** Used by original object during destruction (avoid ~Alias calling
+   *  unregister_alias).
+   */
   void unlink_original() {
     original_ = NULL;
   }
   
-  inline bool connected() {
-    return original_ != NULL;
-  }
-  
-  /** Set new original object from url. */
-  void set_original(const std::string &url) {
-    Object *original = root_->object_at(url);
-    if (original) set_original(original);
-  }
-  
-  /** Set new original object from an object pointer. */
-  void set_original(Object *object) {
-    if (original_) original_->unregister_alias(this);
-    original_ = object;
-    type_ = original_->type();
-    type_changed();
-    // We register so that the alias dies with the original object.
-    if (original_) original_->register_alias(this);
-  }
-  
-protected:
+ protected:
   Object *original_; /**< Original object pointed to by the alias. */
 };
 

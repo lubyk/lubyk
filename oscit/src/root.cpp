@@ -9,9 +9,7 @@
 namespace oscit {
 
 void Root::init() {
-  root_ = NULL;
-  register_object(this);
-  // objects_.set("/", this); // the root object should not be accessed with "/" but with "".
+  set_root(this);
   
   // build meta methods
   adopt(new ErrorMetaMethod(".error"));

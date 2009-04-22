@@ -152,16 +152,11 @@ class Root : public Object
   }
 
   /** Notification of name/parent change from an object. This method
-   *  keeps the objects dictionary in sync. */
+   *  keeps the objects dictionary in sync.
+   */
   void register_object(Object *obj) {
-    // 1. remove object
-    if (obj->root_) obj->root_->unregister_object(obj);
-  
-    // 2. add with new key
+    // add object to objects dictionary
     objects_.set(obj->url(), obj);
-  
-    // 4. set 'this' as the object's new root
-    obj->set_root(this);
   }
 
   /** Unregister an object from tree (forget about it). */

@@ -1,7 +1,6 @@
 #include "oscit/root.h"
 #include "oscit/alias.h"
 
-size_t oscit::Object::sIdCounter(0);
 pthread_key_t oscit::Thread::sThisKey;
 
 
@@ -10,7 +9,8 @@ namespace oscit {
 Object::~Object() {
   std::list<Alias*>::iterator it, end = aliases_.end();
   // notify parent and root
-  if (parent_) parent_->release(this);
+  set_parent(NULL);
+  set_root(NULL);
   
   for (it = aliases_.begin(); it != end; ++it) {
     // to avoid notification to this dying object
@@ -69,52 +69,57 @@ void Object::unregister_alias(Alias *alias) {
 }
 
 /** Free the child from the list of children. */
-void Object::release(Object *object) {
+void Object::unregister_child(Object *object) {
   children_.remove_element(object);
-  if (root_) root_->unregister_object(object);
 }
 
-void Object::moved()
-{ 
+void Object::moved() { 
   // 1. get new name from parent, register as child
-  if (parent_) parent_->register_child(this);
+  if (parent_) {
+    // rebuild fullpath
+    url_ = std::string(parent_->url()).append("/").append(name_);
+    set_root(parent_->root_);
+    set_context(parent_->context_);
+  } else {
+    // no parent
+    url_ = name_;
+    set_root(NULL);
+  }
   
-  register_url();
+  string_iterator it;
+  string_iterator end = children_.end();
+  Object *child;
+  
+  // 3. update children
+  for(it = children_.begin(); it != end; it++) {
+    if (children_.get(*it, &child)) child->moved();
+  }
 }
 
 void Object::register_child(Object *object) {
-  // 1. reset hash
-  children_.remove_element(object);
+  // 1. make sure it is not in dictionary
+  unregister_child(object);
   
   // 2. get valid name
   while (child(object->name_)) {
     object->find_next_name();
   }
   
-  // 3. set hash back
+  // 3. add to dictionary with new name
   children_.set(object->name_, object);
 }
 
-void Object::register_url() {
-  Object * obj;
-  string_iterator it;
-  string_iterator end = children_.end();
-  
-  // 1. rebuild url
-  if (parent_) {
-    // build fullpath
-    url_ = std::string(parent_->url()).append("/").append(name_);
-    if (parent_->root_) parent_->root_->register_object(this);
-  } else {
-    // no parent
-    url_ = name_;
-    if (root_) root_->unregister_object(this);
-  }
-  
-  // 3. update children
-  for(it = children_.begin(); it != end; it++) {
-    if (children_.get(*it, &obj)) obj->register_url();
-  }
+void Object::set_root(Root *root) {
+  if (root_) root_->unregister_object(this);
+  root_ = root;
+  if (root_) root_->register_object(this);
+}
+
+void Object::set_parent(Object *parent) {
+  if (parent_) parent_->unregister_child(this);
+  parent_ = parent;
+  if (parent_) parent_->register_child(this);
+  moved();
 }
 
 void Object::clear() {
@@ -125,7 +130,7 @@ void Object::clear() {
   for(it = children_.begin(); it != end; it++) {
     Object * child;
     if (children_.get(*it, &child)) {
-      // to avoid 'release' call (would alter children_)
+      // to avoid 'unregister_child' call (would alter children_)
       child->parent_ = NULL;
       if (root_) root_->unregister_object(child);
       delete child;

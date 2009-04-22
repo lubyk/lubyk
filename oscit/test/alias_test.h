@@ -39,17 +39,7 @@ class AliasTest : public TestHelper {
     res = root.call("/one/sub");
     assert_equal(23.00, res.r);
     
-    
-    ali->set_original("/two");
-    
-    res = root.call("/ali", Value(7.0));
-    assert_equal(7.00, res.r);
-    res = root.call("/two");
-    assert_equal(7.00, res.r);
-    res = root.call("/one/sub");
-    assert_equal(23.00, res.r);
-    
-    delete two; // delete original first
+    delete one; // delete original first
     res = root.call("/ali", Value(23.0));
     assert_equal("/ali", res.error_message());
     assert_equal(NOT_FOUND_ERROR, res.error_code());

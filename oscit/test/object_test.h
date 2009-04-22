@@ -62,7 +62,7 @@ public:
     assert_equal("bar", child2->url() );
     assert_equal("foo", child3->url() );
     
-    child1->set_parent(base);
+    child1->set_parent(&base);
     
     assert_equal(""    , base.url()    );
     assert_equal("/foo", child1->url() );
@@ -76,7 +76,7 @@ public:
     assert_equal("/foo/bar", child2->url() );
     assert_equal("foo"     , child3->url() );
     
-    child3->set_parent(base);
+    child3->set_parent(&base);
     
     assert_equal(""        , base.url()    );
     assert_equal("/foo"    , child1->url() );
