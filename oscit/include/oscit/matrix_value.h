@@ -13,8 +13,8 @@ class MatrixValue : public Value
   explicit MatrixValue() {
     set_type(MATRIX_VALUE);
   }
-  explicit MatrixValue(size_t rows, size_t cols) : Value(Matrix(rows,cols)) {}
-  explicit MatrixValue(const Hash &hash) : Value(hash) {}
+  MatrixValue(size_t rows, size_t cols) : Value(Matrix(rows,cols)) {}
+  explicit MatrixValue(const Matrix &matrix) : Value(matrix) {}
 };
 
 } // oscit

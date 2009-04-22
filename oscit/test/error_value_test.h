@@ -15,6 +15,7 @@ public:
     assert_true (v.is_error());
     assert_false(v.is_hash());
     assert_false(v.is_matrix());
+    assert_false(v.is_midi());
     assert_false(v.is_any());
     
     assert_equal("foo", v.error_message());
@@ -118,5 +119,6 @@ public:
     assert_false(object.can_receive(JsonValue("['','']")));
     assert_false(object.can_receive(HashValue()));
     assert_false(object.can_receive(MatrixValue(1,1)));
+    assert_false(object.can_receive(MidiValue()));
   }
 };

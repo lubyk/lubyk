@@ -4,7 +4,7 @@
 class MatrixValueTest : public TestHelper
 {  
 public:
-  void test_create( void ) {
+  void test_is_matrix( void ) {
     Value v(TypeTag("M"));
     
     assert_false(v.is_empty());
@@ -138,5 +138,6 @@ public:
     assert_false(object.can_receive(JsonValue("['','']")));
     assert_false(object.can_receive(HashValue()));
     assert_true (object.can_receive(MatrixValue(1,1)));
+    assert_false(object.can_receive(MidiValue()));
   }
 };

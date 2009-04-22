@@ -12,14 +12,15 @@ extern Hash  gEmptyHash;
 enum ValueType
 {
   EMPTY_VALUE  = 0,
-  NIL_VALUE    = 1,
-  REAL_VALUE   = 2,
-  STRING_VALUE = 3,
-  ERROR_VALUE  = 4,
-  LIST_VALUE   = 5,
-  HASH_VALUE   = 6,
-  MATRIX_VALUE = 7,
-  ANY_VALUE    = 8, // nil but with '*' type tag
+  NIL_VALUE,
+  REAL_VALUE,
+  STRING_VALUE,
+  ERROR_VALUE,
+  LIST_VALUE,
+  HASH_VALUE,
+  MATRIX_VALUE,
+  MIDI_VALUE,
+  ANY_VALUE,
 };
 
 enum ValueTypeTag
@@ -30,6 +31,7 @@ enum ValueTypeTag
   ERROR_TYPE_TAG  = 'E',
   HASH_TYPE_TAG   = 'H',
   MATRIX_TYPE_TAG = 'M',
+  MIDI_MESSAGE_TYPE_TAG = 'm',
   ANY_TYPE_TAG    = '*',
 };
 

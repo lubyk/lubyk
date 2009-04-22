@@ -4,7 +4,7 @@
 class StringValueTest : public TestHelper
 {  
 public:
-  void test_create( void ) {
+  void test_is_string( void ) {
     Value v("foo");
     
     assert_false(v.is_empty());
@@ -15,6 +15,7 @@ public:
     assert_false(v.is_error());
     assert_false(v.is_hash());
     assert_false(v.is_matrix());
+    assert_false(v.is_midi());
     
     assert_equal("foo", v.str());
     
@@ -156,5 +157,6 @@ public:
     assert_false(object.can_receive(JsonValue("['','']")));
     assert_false(object.can_receive(HashValue()));
     assert_false(object.can_receive(MatrixValue(1,1)));
+    assert_false(object.can_receive(MidiValue()));
   }
 };

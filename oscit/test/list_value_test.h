@@ -207,11 +207,11 @@ public:
     Value v(TypeTag("ff"));
     List &l = *v.list_;
     
-    assert_equal(0.0, l[0]->f);
-    assert_equal(0.0, l[1]->f);
-    l[0]->f = 3.5;
-    assert_equal(3.5, l[0]->f);
-    assert_equal(0.0, l[1]->f);
+    assert_equal(0.0, l[0]->r);
+    assert_equal(0.0, l[1]->r);
+    l[0]->r = 3.5;
+    assert_equal(3.5, l[0]->r);
+    assert_equal(0.0, l[1]->r);
   }
   
   void test_push_back_on_empty( void ) {
@@ -515,5 +515,6 @@ public:
     assert_false(object.can_receive(JsonValue("['',2]")));    // too short
     assert_false(object.can_receive(HashValue()));
     assert_false(object.can_receive(MatrixValue(1,1)));
+    assert_false(object.can_receive(MidiValue()));
   }
 };

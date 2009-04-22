@@ -6,6 +6,9 @@
 
 namespace oscit {
 
+/** 
+ * cv::Mat is defined in cxcore.hpp:686
+ */
 class Matrix : public cv::Mat
 {
  public: 

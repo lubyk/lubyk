@@ -4,7 +4,7 @@ AR = ar rcu
 RAGEL=ragel
 LIBTOOL=libtool -static
 TEST=test/*_test.h
-OBJECTS=url.o list.o object.o root.o command.o osc_command.o zeroconf.o value.o thread.o oscpack/liboscpack.a cxalloc.o cxsystem.o
+OBJECTS=url.o list.o midi_message.o object.o root.o command.o osc_command.o zeroconf.o value.o thread.o oscpack/liboscpack.a cxalloc.o cxsystem.o
 CFLAGS=-g -Wall $(TESTING)
 
 

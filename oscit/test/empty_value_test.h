@@ -15,6 +15,7 @@ public:
     assert_false(v.is_error());
     assert_false(v.is_hash());
     assert_false(v.is_matrix());
+    assert_false(v.is_midi());
     assert_false(v.is_any());
     
     assert_equal("", v.type_tag());

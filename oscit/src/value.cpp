@@ -84,6 +84,9 @@ void Value::to_stream(std::ostream &out_stream, bool lazy) const {
     case MATRIX_VALUE:
       out_stream << "\"Matrix " << matrix_->rows << "x" << matrix_->cols << "\"";
       break;
+    case MIDI_VALUE:
+      out_stream << "\"MidiMessage " << *midi_message_ << "\"";
+      break;
     case LIST_VALUE:
       size_t sz = size();
       if (!lazy) out_stream << "[";

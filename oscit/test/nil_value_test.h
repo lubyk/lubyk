@@ -4,7 +4,7 @@
 class NilValueTest : public TestHelper
 {  
 public:
-  void test_create( void ) {
+  void test_is_nil( void ) {
     
     assert_false(gNilValue.is_empty());
     assert_true (gNilValue.is_nil());

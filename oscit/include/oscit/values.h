@@ -10,5 +10,6 @@
 #include "oscit/error_value.h"
 #include "oscit/hash_value.h"
 #include "oscit/matrix_value.h"
+#include "oscit/midi_value.h"
 
 #endif // _OSCIT_VALUES_H_

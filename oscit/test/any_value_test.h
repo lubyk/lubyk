@@ -4,7 +4,7 @@
 class AnyValueTest : public TestHelper
 {  
 public:
-  void test_create( void ) {
+  void test_is_any( void ) {
     Value v('*');
     
     assert_false(v.is_empty());
@@ -15,6 +15,7 @@ public:
     assert_false(v.is_error());
     assert_false(v.is_hash());
     assert_false(v.is_matrix());
+    assert_false(v.is_midi());
     assert_true (v.is_any());
     
     assert_equal("*", v.type_tag());

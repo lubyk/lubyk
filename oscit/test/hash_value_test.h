@@ -4,7 +4,7 @@
 class HashValueTest : public TestHelper
 {  
 public:
-  void test_create( void ) {
+  void test_is_hash( void ) {
     Value v(TypeTag("H"));
     Value res;
     
@@ -16,8 +16,8 @@ public:
     assert_false(v.is_error());
     assert_true (v.is_hash());
     assert_false(v.is_matrix());
+    assert_false(v.is_midi());
     
-    // 0
     assert_false(v.get("foo", &res));
     v.set("foo",3.5);
     assert_true(v.get("foo", &res));
@@ -37,7 +37,7 @@ public:
     assert_equal("H", v.type_tag());
   }
   
-  void test_copy( void ) {
+  void test_share( void ) {
     Value v(TypeTag("H"));
     v.set("1","one");
     v.set("2","two");
@@ -258,5 +258,6 @@ public:
     assert_false(object.can_receive(JsonValue("['','']")));
     assert_true (object.can_receive(HashValue()));
     assert_false(object.can_receive(MatrixValue(1,1)));
+    assert_false(object.can_receive(MidiValue()));
   }
 };

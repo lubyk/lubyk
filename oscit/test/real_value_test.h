@@ -4,7 +4,7 @@
 class RealValueTest : public TestHelper
 {  
 public:
-  void test_create( void ) {
+  void test_is_real( void ) {
     Value v(3.5);
     
     assert_false(v.is_empty());
@@ -15,12 +15,11 @@ public:
     assert_false(v.is_error());
     assert_false(v.is_hash());
     assert_false(v.is_matrix());
+    assert_false(v.is_midi());
     assert_false(v.is_any());
     
     
-    assert_equal(3.5, v.r); // real
-    assert_equal(3.5, v.f); // alias as float
-    assert_equal(3.5, v.d); // alias as double
+    assert_equal(3.5, v.r);
     
     assert_equal("f", v.type_tag());
     int i = H("f");
@@ -127,5 +126,6 @@ public:
     assert_false(object.can_receive(JsonValue("['','']")));
     assert_false(object.can_receive(HashValue()));
     assert_false(object.can_receive(MatrixValue(1,1)));
+    assert_false(object.can_receive(MidiValue()));
   }
 };

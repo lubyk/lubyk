@@ -8,6 +8,7 @@
 #include "oscit/list.h"
 #include "oscit/hash.h"
 #include "oscit/matrix.h"
+#include "oscit/midi_message.h"
 
 namespace oscit {
 
@@ -30,16 +31,16 @@ class Value
 { 
 public:
   
-  /** =========================================================================================    Empty   */
+  /** =========================================================    Empty   */
   Value() : type_(EMPTY_VALUE) {}
   
-  /** =========================================================================================    Real    */
+  /** =========================================================    Real    */
   
   explicit Value(Real real) : type_(REAL_VALUE), r(real) {}
   
   explicit Value(int number) : type_(REAL_VALUE), r(number) {}
   
-  /** =========================================================================================    String  */
+  /** =========================================================    String  */
   explicit Value(const char *string) : type_(STRING_VALUE) {
     set_string(string);
   }
@@ -48,7 +49,7 @@ public:
     set_string(string.c_str());
   }
   
-  /** =========================================================================================    List     */
+  /** =========================================================    List     */
   explicit Value(const List *list) : type_(LIST_VALUE) {
     set_list(list);
   }
@@ -57,7 +58,7 @@ public:
     set_list(&list);
   }
   
-  /** =========================================================================================    Error    */
+  /** =========================================================    Error    */
   explicit Value(ErrorCode code, const char *str) : type_(ERROR_VALUE) {
     set_error(code, str);
   }
@@ -66,7 +67,7 @@ public:
     set_error(code, str.c_str());
   }
   
-  /** =========================================================================================    Hash    */
+  /** =========================================================    Hash    */
   explicit Value(const Hash *hash) : type_(HASH_VALUE) {
     set_hash(hash);
   }
@@ -75,7 +76,7 @@ public:
     set_hash(&hash);
   }
   
-  /** =========================================================================================    Matrix  */
+  /** =========================================================    Matrix  */
   explicit Value(const Matrix *matrix) : type_(MATRIX_VALUE) {
     set_matrix(matrix);
   }
@@ -84,7 +85,16 @@ public:
     set_matrix(&matrix);
   }
   
-  /** =========================================================================================    Any     */
+  /** =========================================================    Midi    */
+  explicit Value(const MidiMessage *midi_message) : type_(MIDI_VALUE) {
+    set_midi(midi_message);
+  }
+  
+  explicit Value(const MidiMessage &midi_message) : type_(MIDI_VALUE) {
+    set_midi(&midi_message);
+  }
+  
+  /** =========================================================    Any     */
   /** Create a value from a TypeTag string. */
   explicit Value(TypeTag type_tag) : type_(EMPTY_VALUE) {
     set_type_tag(type_tag.str_);
@@ -131,6 +141,9 @@ public:
         // FIXME: share matrix header
         set(other.matrix_);
         break;
+      case MIDI_VALUE:
+        share(other.midi_message_);
+        break;
       case ANY_VALUE:
         set_any();
         break;
@@ -165,8 +178,10 @@ public:
         set(other.hash_);
         break;
       case MATRIX_VALUE:
-        // FIXME: share matrix header
         set(other.matrix_);
+        break;
+      case MIDI_VALUE:
+        set(other.midi_message_);
         break;
       case ANY_VALUE:
         set_any();
@@ -196,6 +211,7 @@ public:
       case STRING_VALUE: return "s";
       case HASH_VALUE:   return "H";
       case MATRIX_VALUE: return "M";
+      case MIDI_VALUE:   return "m";
       case LIST_VALUE:   return list_->type_tag();
       case ANY_VALUE:    return "*";
       case EMPTY_VALUE:  /* continue */
@@ -211,6 +227,7 @@ public:
       case STRING_VALUE: return H("s");
       case HASH_VALUE:   return H("H");
       case MATRIX_VALUE: return H("M");
+      case MIDI_VALUE:   return H("m");
       case LIST_VALUE:   return list_->type_id();
       case ANY_VALUE:    return H("*");
       case EMPTY_VALUE:  /* continue */
@@ -260,6 +277,7 @@ public:
       // ERROR_TYPE_TAG == STRING_TYPE_TAG;
       case HASH_TYPE_TAG:   return HASH_VALUE;
       case MATRIX_TYPE_TAG: return MATRIX_VALUE;
+      case MIDI_MESSAGE_TYPE_TAG: return MIDI_VALUE;
       case ANY_TYPE_TAG:    return ANY_VALUE;
       case NIL_TYPE_TAG:    return NIL_VALUE;
       default:              return EMPTY_VALUE;
@@ -267,7 +285,7 @@ public:
   }
   
   
-  /** =========================================================================================    Empty   */
+  /** =========================================================    Empty   */
   bool is_empty() const { return type_ == EMPTY_VALUE; }
   
   /** Change the value to nil. */
@@ -276,7 +294,7 @@ public:
     return *this;
   }
   
-  /** =========================================================================================    Nil     */
+  /** =========================================================    Nil     */
   bool is_nil() const    { return type_ == NIL_VALUE; }
   
   /** Change the value to nil. */
@@ -285,7 +303,7 @@ public:
     return *this;
   }
   
-  /** =========================================================================================    Real    */
+  /** =========================================================    Real    */
   bool is_real() const   { return type_ == REAL_VALUE; }
   
   /** Change the Value into a RealValue. */
@@ -295,7 +313,7 @@ public:
     return *this;
   }
   
-  /** =========================================================================================    String  */
+  /** =========================================================    String  */
   bool is_string() const { return type_ == STRING_VALUE; }
   
   /** Change the Value into a StringValue. */
@@ -337,7 +355,7 @@ public:
     return string_->c_str();
   }
   
-  /** =========================================================================================    List    */
+  /** =========================================================    List    */
   bool is_list() const   { return type_ == LIST_VALUE; }
   
   /** Change the Value into a List by copying the content of the argument. */
@@ -411,7 +429,7 @@ public:
   
   Value &push_front(const Value& val);
   
-  /** =========================================================================================    Error   */
+  /** =========================================================    Error   */
   bool is_error() const  { return type_ == ERROR_VALUE; }
   
   /** Change the Value into an ErrorValue. */
@@ -450,7 +468,7 @@ public:
     return error_->code();
   }
   
-  /** =========================================================================================    Hash    */
+  /** =========================================================    Hash    */
   bool is_hash() const   { return type_ == HASH_VALUE; }
   
   /** Change the Value into a HashValue by copying the content of the argument. */
@@ -516,7 +534,7 @@ public:
     }
   }
   
-  /** =========================================================================================    Matrix  */
+  /** =========================================================    Matrix  */
   bool is_matrix() const   { return type_ == MATRIX_VALUE; }
   
   /** Change the Value into a MatrixValue by making a reference to the argument. */
@@ -545,7 +563,42 @@ public:
     return is_matrix() ? (Real*)matrix_->data : NULL;
   }
   
-  /** =========================================================================================    Any     */
+  /** =========================================================    Midi  */
+  bool is_midi() const   { return type_ == MIDI_VALUE; }
+  
+  /** Change the Value into a MidiValue by making a reference
+   *  to the argument. */
+  Value &set(const MidiMessage *midi_message) {
+    set_type_without_default(MIDI_VALUE);
+    set_midi(midi_message);
+    return *this;
+  }
+  
+  /** Change the Value into a MidiMessage by making a reference
+   *  to the argument. */
+  Value &set(const MidiMessage &midi_message) {
+    set_type_without_default(MIDI_VALUE);
+    set_midi(&midi_message);
+    return *this;
+  }
+  
+  /** Change the Value into a Midi note.
+   */
+  void set_as_note(unsigned char note, unsigned char velocity = 80,
+    unsigned int length = 500, unsigned int channel = 1, time_t wait = 0) {
+    if (!is_midi()) set_type(MIDI_VALUE);
+    midi_message_->set_as_note(note, velocity, length, channel, wait);
+  }
+  
+  /** Change the Value into a Midi control change.
+   */
+  void set_as_ctrl(unsigned char ctrl, unsigned char ctrl_value,
+    unsigned int channel = 1, time_t wait = 0) {
+    if (!is_midi()) set_type(MIDI_VALUE);
+    midi_message_->set_as_ctrl(ctrl, ctrl_value, channel, wait);
+  }
+  
+  /** =========================================================    Any     */
   bool is_any() const    { return type_ == ANY_VALUE; }
   
   /** Change the value to nil. */
@@ -571,28 +624,32 @@ public:
   /** Set the value to nil and release/free contained data. */
   void clear()  {
    switch (type_) {
-     case LIST_VALUE:
+   case LIST_VALUE:
      if (list_ != NULL) ReferenceCounted::release(list_);
      list_ = NULL;
      break;
-     case STRING_VALUE:
+   case STRING_VALUE:
      if (string_ != NULL) ReferenceCounted::release(string_);
      string_ = NULL;
      break;
-     case ERROR_VALUE:
+   case ERROR_VALUE:
      if (error_ != NULL) ReferenceCounted::release(error_);
      error_ = NULL;
      break;
-     case HASH_VALUE:
+   case HASH_VALUE:
      if (hash_ != NULL) ReferenceCounted::release(hash_);
      hash_ = NULL;
      break;
-     case MATRIX_VALUE:
+   case MATRIX_VALUE:
        // TODO: Same reference counting as others by using cv::Mat header counter ?
      if (matrix_ != NULL) delete matrix_;
      matrix_ = NULL;
      break;
-     default:
+   case MIDI_VALUE:
+     if (midi_message_ != NULL) ReferenceCounted::release(midi_message_);
+     midi_message_ = NULL;
+     break;
+   default:
      ; // nothing to clear
    }
   }
@@ -625,13 +682,16 @@ public:
       case MATRIX_VALUE:
         matrix_ = new Matrix;
         break;
+      case MIDI_VALUE:
+        midi_message_ = new MidiMessage;
+        break;
       default:
         ; // nothing to set 
     }
   }
   
   
-  /** =========================================================================================    String  */
+  /** =========================================================    String  */
   void share(const String *string) {
     if (string_ == string) return;
     set_type_without_default(STRING_VALUE);
@@ -649,7 +709,7 @@ public:
     string_ = new String(string);
   }
   
-  /** =========================================================================================    Error   */
+  /** =========================================================    Error   */
   void share(const Error *error) {
     if (error_ == error) return;
     set_type_without_default(ERROR_VALUE);
@@ -669,7 +729,7 @@ public:
     error_ = new Error(*error);
   }
   
-  /** =========================================================================================    List    */
+  /** =========================================================    List    */
   void share(const List *list) {
     if (list_ == list) return;
     set_type_without_default(LIST_VALUE);
@@ -684,7 +744,7 @@ public:
     list_ = new List(*list);
   }
 
-  /** =========================================================================================    Hash    */
+  /** =========================================================    Hash    */
   void share(const Hash *hash) {
     if (hash_ == hash) return;
     set_type_without_default(HASH_VALUE);
@@ -699,25 +759,64 @@ public:
     hash_ = new Hash(*hash);
   }
   
-  /** =========================================================================================    Matrix  */
+  /** =========================================================    Matrix  */
   
   /** Set matrix content. */
   void Value::set_matrix(const Matrix *matrix) {
     matrix_ = new Matrix(*matrix);
   }
-    
+
+  /** =========================================================    Midi    */
+  void share(const MidiMessage *midi_message) {
+    if (midi_message_ == midi_message) return;
+    set_type_without_default(MIDI_VALUE);
+    // FIXME: there should be a way to deal with shared content
+    // that is protected from changes... Any solution welcome !!
+    midi_message_ = const_cast<MidiMessage*>(midi_message);
+    ReferenceCounted::acquire(midi_message_);
+  }
+
+  /** Set hash content. */
+  void set_midi(const MidiMessage *midi_message) {
+    midi_message_ = new MidiMessage(*midi_message);
+  }
+
   ValueType type_;
   
  public:
   union {
+    /** Store a single Real number.
+     *  The value of 'Real' can be a float or double depending on compilation.
+     */
     Real r;
-    Real f; // alias for r
-    Real d; // alias for r
-    String *string_; // string (shared, reference counted)
-    List   *list_;   // multi-value (shared, reference counted)
-    Error  *error_;  // error code and message (shared, reference counted)
-    Hash   *hash_;   // dictionary  (shared, reference counted)
-    Matrix *matrix_; // reference counted matrix (shared, reference counted)
+    
+    /** Pointer to a reference counted std::string.
+     */
+    String *string_;
+    
+    /** Pointer to a list of values (class List).
+     *  The list is reference counted.
+     */
+    List *list_;
+    
+    /** Pointer to an Error (contains an error code and message).
+     *  The error is reference counted.
+     */
+    Error *error_;
+    
+    /** Pointer to a reference counted dictionary.
+     *  Use std::string as keys for the dictionary.
+     */
+    Hash *hash_;
+    
+    /** Pointer to an opencv matrix (cv::Mat).
+     *  TODO: reference count matrix_ !
+     */
+    Matrix *matrix_;
+    
+    /** Pointer to a reference counted MidiMessage.
+     */
+    MidiMessage *midi_message_;
   };
 };
 

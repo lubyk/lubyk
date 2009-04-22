@@ -131,6 +131,7 @@ public:
     assert_false(H("N") == H("s"));
     assert_false(H("N") == H("H"));
     assert_false(H("N") == H("M"));
+    assert_false(H("N") == H("m"));
     assert_false(H("N") == H("*"));
   }
   
@@ -139,6 +140,7 @@ public:
     assert_false(H("f") == H("s"));
     assert_false(H("f") == H("H"));
     assert_false(H("f") == H("M"));
+    assert_false(H("f") == H("m"));
     assert_false(H("f") == H("*"));
   }
   
@@ -147,6 +149,7 @@ public:
     assert_false(H("s") == H("f"));
     assert_false(H("s") == H("H"));
     assert_false(H("s") == H("M"));
+    assert_false(H("s") == H("m"));
     assert_false(H("s") == H("*"));
   }
   
@@ -155,6 +158,7 @@ public:
     assert_false(H("H") == H("f"));
     assert_false(H("H") == H("s"));
     assert_false(H("H") == H("M"));
+    assert_false(H("H") == H("m"));
     assert_false(H("H") == H("*"));
   }
   
@@ -163,7 +167,17 @@ public:
     assert_false(H("M") == H("f"));
     assert_false(H("M") == H("s"));
     assert_false(H("M") == H("H"));
+    assert_false(H("M") == H("m"));
     assert_false(H("M") == H("*"));
+  }
+  
+  void test_m_type_id( void ) {
+    assert_false(H("m") == H("N"));
+    assert_false(H("m") == H("f"));
+    assert_false(H("m") == H("s"));
+    assert_false(H("m") == H("H"));
+    assert_false(H("m") == H("M"));
+    assert_false(H("m") == H("*"));
   }
   
   void test_any_type_id( void ) {
@@ -171,6 +185,7 @@ public:
     assert_false(H("*") == H("f"));
     assert_false(H("*") == H("s"));
     assert_false(H("*") == H("H"));
+    assert_false(H("*") == H("m"));
     assert_false(H("*") == H("M"));
   }
   
