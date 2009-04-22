@@ -139,4 +139,41 @@ void Object::clear() {
   children_.clear();
 }
 
+
+const Value Object::list() const {
+  Value res;
+  const_string_iterator it, end = children_.end();
+  for (it = children_.begin(); it != end; ++it) {
+    Object * obj;
+    if (children_.get(*it, &obj)) {
+      if (!obj->kind_of(Alias)) {
+        // do not list alias (Alias are used as internal helpers and do not
+        // need to be advertised) ?
+        if (obj->children_.empty()) {
+          res.push_back(obj->name_);
+        } else {
+          res.push_back(std::string(obj->name_).append("/"));
+        }
+      }
+    }
+  }
+  return res;
+}
+
+
+void Object::tree(size_t base_length, Value *tree) const {
+  const_string_iterator it, end = children_.end();
+  for (it = children_.begin(); it != end; ++it) {
+    Object * obj;
+    if (children_.get(*it, &obj)) {
+      if (!obj->kind_of(Alias)) {
+        // do not list alias (Alias are used as internal helpers and
+        // do not need to be advertised) ?
+        tree->push_back(obj->url().substr(base_length));
+        obj->tree(base_length, tree);
+      }
+    }
+  }
+}
+
 } // namespace oscit

@@ -199,45 +199,14 @@ class Object : public Typed {
    */
 
   /** List sub-nodes. */
-  const Value list() const {
-    Value res;
-    const_string_iterator it, end = children_.end();
-    for (it = children_.begin(); it != end; ++it) {
-      Object * obj;
-      if (children_.get(*it, &obj)) {
-        if (!obj->is_a("Object.Alias")) {
-          // do not list alias (Alias are used as internal helpers and do not
-          // need to be advertised) ?
-          if (obj->children_.empty()) {
-            res.push_back(obj->name_);
-          } else {
-            res.push_back(std::string(obj->name_).append("/"));
-          }
-        }
-      }
-    }
-    return res;
-  }
-
+  const Value list() const;
+   
   /** List full tree under this node.
    *  @param base_length is the length of the url for the initial call
    *                     (removed from results).
    *  @param tree returned value.
    */
-  void tree(size_t base_length, Value *tree) const {
-    const_string_iterator it, end = children_.end();
-    for (it = children_.begin(); it != end; ++it) {
-      Object * obj;
-      if (children_.get(*it, &obj)) {
-        if (!obj->is_a("Object.Alias")) {
-          // do not list alias (Alias are used as internal helpers and
-          // do not need to be advertised) ?
-          tree->push_back(obj->url().substr(base_length));
-          obj->tree(base_length, tree);
-        }
-      }
-    }
-  }
+  void tree(size_t base_length, Value *tree) const;
 
   /** Human readable information method.
    *  Called as a response to "/.info '/this/url'".
@@ -296,7 +265,7 @@ class Object : public Typed {
   /** Set object's new root.
    */
   void set_root(Root *root);
-  
+
   /** Set object's new parent.
    */
   void set_parent(Object *parent);
