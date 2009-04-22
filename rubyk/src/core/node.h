@@ -93,13 +93,17 @@ class Node : public Object
   
   /** This method must be implemented in subclasses. It is used to do a basic setup with default parameters before these
     * are changed during runtime. */
-  virtual bool init() { return true; }
+  virtual const Value init() { return gTrueValue; }
   
   /** Set is_ok_ flag. If this flag is not true, the node is considered "broken" and usually does not do any processing. */
-  void set_is_ok (bool status) { is_ok_ = status; }
+  void set_is_ok(bool status) { is_ok_ = status; }
+  
+  /** Return true if the node is not broken.
+   */
+  bool is_ok() { return is_ok_; }
   
   /** This method must be implemented in subclasses that want to be looped. */
-  virtual void bang (const Value &val) {
+  virtual void bang(const Value &val) {
     fprintf(stderr, "Default Node::bang method called !\n");
   }
   
@@ -134,6 +138,11 @@ class Node : public Object
   /** Ask to receive a bang in the given interval in [ms]. */
   inline void bang_me_in(time_t interval) {
     worker_->register_event(new BangEvent(this, worker_->current_time_ + interval));
+  }
+  
+  /** Ask to receive a bang with the given parameter in the given interval in [ms]. */
+  inline void bang_me_in(time_t interval, const Value &parameter, bool forced = false) {
+    worker_->register_event(new BangEvent(this, worker_->current_time_ + interval, parameter, forced));
   }
   
   /** Bang me on every loop. */

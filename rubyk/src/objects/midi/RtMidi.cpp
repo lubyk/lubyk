@@ -585,8 +585,8 @@ RtMidiOut :: ~RtMidiOut()
   if ( data->endpoint ) MIDIEndpointDispose( data->endpoint );
   delete data;
 }
-
-void RtMidiOut :: sendMessage( std::vector<unsigned char> *message )
+                               // rubyk changed to 'const'
+void RtMidiOut :: sendMessage( const std::vector<unsigned char> *message )
 {
   unsigned int nBytes = message->size();
   // Pad the buffer for extra (unknown) structure data.
@@ -1224,8 +1224,8 @@ RtMidiOut :: ~RtMidiOut()
   snd_seq_close( data->seq );
   delete data;
 }
-
-void RtMidiOut :: sendMessage( std::vector<unsigned char> *message )
+                               // rubyk changed to 'const'
+void RtMidiOut :: sendMessage( const std::vector<unsigned char> *message )
 {
   int result;
   AlsaMidiData *data = static_cast<AlsaMidiData *> (apiData_);

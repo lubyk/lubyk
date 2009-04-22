@@ -285,8 +285,8 @@ class RtMidiOut : public RtMidi
   /*!
       An exception is thrown if an error occurs during output or an
       output connection was not previously established.
-  */
-  void sendMessage( std::vector<unsigned char> *message );
+  */             // rubyk changed to 'const'
+  void sendMessage( const std::vector<unsigned char> *message );
 
  private:
 

@@ -88,10 +88,15 @@ public:
     if (!params.is_nil()) {
       // set defaults by calling methods
       node->trigger(params);
-      // if init returns false, the node goes into 'broken' mode.
-      node->set_is_ok(node->init());
-    } else {
-      node->set_is_ok(node->init());
+    }
+    
+    Value res = node->init();
+    
+    // if init does not return gTrueValue, the node goes into 'broken' mode.
+    node->set_is_ok(!res.is_error());
+    
+    if (res.is_error()) {
+      return res;
     }
     
     return Value(node->url());

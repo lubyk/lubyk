@@ -165,6 +165,10 @@ class MidiMessage : public ReferenceCounted {
   
   inline time_t length() const { return length_; }
   
+  inline time_t wait() const { return wait_; }
+  
+  inline const std::vector<unsigned char> &data() const { return data_; }
+  
   /** Write the note name (as C2#, D-1, E3) into the buffer. The buffer must be min 5 chars large (C-3#\0). */
   inline void get_note_name(char buffer[]) const {
     unsigned int i = 0;

@@ -76,6 +76,14 @@ protected:
   {
     return (((T*)receiver)->*Tmethod)(val);
   }
+  
+  /** Make a pointer to a member method without return values. */
+  template<class T, void(T::*Tmethod)(const Value&)>
+  static const Value cast_method (void *receiver, const Value &val)
+  {
+    (((T*)receiver)->*Tmethod)(val);
+    return gNilValue;
+  }
 
   void *          receiver_;       /**< Object containing the method. */
   member_method_t member_method_;  /**< Pointer on a cast of the member method. */ 

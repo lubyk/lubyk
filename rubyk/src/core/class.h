@@ -31,6 +31,12 @@ public:
     method_Prototypes.push_back( MethodPrototype(name, &Method::cast_method<T, Tmethod>, type) );
   }
   
+  /** Declare a method without return value. */
+  template <class T, void(T::*Tmethod)(const Value &val)>
+  void add_method(const char *name, const Value &type) { 
+    method_Prototypes.push_back( MethodPrototype(name, &Method::cast_method<T, Tmethod>, type) );
+  }
+  
   /** Declare an inlet from a method (less efficient, should be avoided for fast inlets). */
   template <class T, const Value(T::*Tmethod)(const Value &val)>
   void add_inlet(const char *name, const Value &type) { 

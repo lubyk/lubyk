@@ -11,7 +11,7 @@ class Worker;
 class Event
 {
  public:
-  Event (void *node, time_t when) : when_(when), receiver_(node), forced_(false) {}
+  Event (void *node, time_t when) : when_(when), receiver_(node), forced_(false), parameter_(NIL_VALUE) {}
   
   Event () : forced_(false) {}
 
@@ -33,6 +33,10 @@ class Event
     return receiver_;
   }
   
+  void set_forced(bool forced) {
+    forced_ = forced;
+  }
+  
 protected:
   friend class Worker;
   friend class Node;
@@ -50,16 +54,24 @@ protected:
 class BangEvent : public Event
 {
 public:
-  BangEvent(Node *receiver, time_t when)
-  {
+  BangEvent(Node *receiver, time_t when, bool forced = false) {
     when_      = when;
     receiver_  = (void*)receiver;
-    function_  = &cast_bang_method;
+    function_  = &cast_bang_me_inthod;
+    forced_    = forced;
+  }
+  
+  BangEvent(Node *receiver, time_t when, const Value &parameter, bool forced = false) {
+    when_      = when;
+    receiver_  = (void*)receiver;
+    function_  = &cast_bang_me_inthod;
+    parameter_ = parameter;
+    forced_    = forced;
   }
   
 private:
   /** Make pointer to the bang method. */
-  static void cast_bang_method (void *receiver, const Value &parameter);
+  static void cast_bang_me_inthod (void *receiver, const Value &parameter);
 };
 
 template<class T, void(T::*Tmethod)(const Value&)>
