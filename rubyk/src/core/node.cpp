@@ -2,6 +2,8 @@
 #include "inlet.h"
 #include "outlet.h"
 
+size_t Node::sIdCounter(0);
+
 Node::~Node() {
   // we have to do this here before ~Node, because some events have to be triggered before the node dies (note off).
   remove_my_events();

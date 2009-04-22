@@ -20,7 +20,9 @@ class Node : public Object
  public:
   TYPED("Object.Node")
   
-  Node() : Object("n", AnyIO("Node.")), worker_(NULL), looped_(false) {}
+  Node() : Object("n", AnyIO("Node.")), worker_(NULL), looped_(false) {
+    trigger_position_ = ++sIdCounter; // FIXME: atomic operation
+  }
   
   virtual ~Node();
   
@@ -155,19 +157,19 @@ class Node : public Object
     // FIXME: what do we do if context is NULL ?? (no more parent)
      // TODO: can we use a static_cast here ?
     context_ = context;
-    if (context_ != NULL && context_->kind_of(Worker)) {
-      worker_  = (Worker*)context_;
-    } else if (context_ != NULL) {
-      fprintf(stderr, "Could not cast '%s' to Worker in %s ! Program might crash.\n", context_->class_path(), class_path());
-    } else {
-      // fprintf(stderr, "No context ! Program might crash.\n");
+    if (context_ != NULL) {
+      worker_  = TYPE_CAST(Worker, context_);
+      if (context_ == NULL) {
+        fprintf(stderr, "Could not cast '%s' to Worker in %s ! Program might crash.\n", context_->class_path(), class_path());
+      }
     }
   }
 
  protected:
   Worker * worker_;  /**< Worker that will give life to object. */
   
- private:
+ private: 
+  static size_t    sIdCounter;   ///< Used to set a default trigger position.
   
   bool is_ok_;                   /**< If something bad arrived to the node during initialization or edit, the node goes into
                                   *   broken state and is_ok_ becomes false. In 'broken' mode, the node does nothing. */

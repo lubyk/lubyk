@@ -68,11 +68,33 @@ public:
     // not reordered yet
     assert_equal(&a, list.front());
     
-    list.sort_object(&a);
+    list.sort();
     assert_equal(&b, list.front());
     list.pop();
     assert_equal(&a, list.front());
     list.pop();
     assert_equal(&c, list.front());
+  }
+
+  void test_reorder_two( void ) {
+    OrderedList<OrderedListTest_Object*> list;
+    OrderedListTest_Object a(10), b(20), c(30);
+
+    // elements are sorted (10, 20, 30)
+    list.push(&b);
+    list.push(&a);
+    list.push(&c);
+    assert_equal(3, list.size());
+    assert_equal(&a, list.front());
+
+    a.value_ = 100;
+    b.value_ = 200;
+    // before reordering (100, 200, 30)
+    list.sort();
+    
+    // 30, 100, 200
+    assert_equal(&c, list.front());
+    list.pop();
+    assert_equal(&a, list.front());
   }
 };

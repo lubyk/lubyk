@@ -70,19 +70,19 @@ public:
   void *node() { return node_; }
   
   /** Connections pointing out of this slot should reorder (an inlet id changed or its node changed position). */
-  void sort_connections(Slot *changed) {
-    connections_.sort_object(changed);
+  void sort_connections() {
+    connections_.sort();
   }
-  
+
   void sort_incoming_connections() {
     LinkedList<Slot*> * iterator = connections_.begin();
 
     while(iterator) {
-      iterator->obj->sort_connections(this);
+      iterator->obj->sort_connections();
       iterator = iterator->next;
     }
   }
-  int tmp() { return type_id(); }
+
 protected:
   /** Make a one-way connection to another slot. 
     * Create a connection if the type of the other slot is compatible. */
@@ -95,7 +95,7 @@ protected:
   void create_methods() {
     adopt(new TMethod<Slot, &Slot::list>(this, "list", NoIO("Return a list of linked urls.")));
   }
-  
+
   /** If operation is 'c': create a new link, else unlink. */
   const Value change_link(unsigned char operation, const Value &val);
   

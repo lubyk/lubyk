@@ -504,6 +504,7 @@ public:
     
     receiver1.set_trigger_position(2.0); // should trigger first
     receiver2.set_trigger_position(1.0); // should trigger last
+    
     value = 0.0;
     
     outlet.send(Value(1.0));

@@ -7,7 +7,7 @@
 
 template <class T>
 struct LinkedList {
-  LinkedList(T pObj) : obj(pObj), next(NULL) {}
+  LinkedList(T object) : obj(object), next(NULL) {}
   T obj;
   LinkedList* next;
 };
@@ -21,7 +21,7 @@ class OrderedList
   public:
     OrderedList()
     {
-      to_node_p = new LinkedList<T>(NULL);
+      linked_list_ = new LinkedList<T>(NULL);
     }
     
     OrderedList(const OrderedList& other)
@@ -32,45 +32,113 @@ class OrderedList
     ~OrderedList()
     {
       LinkedList<T> * tmp;
-      while( (tmp = to_node_p->next) ) {
-        delete to_node_p;
-        to_node_p = tmp;
+      while( (tmp = linked_list_->next) ) {
+        delete linked_list_;
+        linked_list_ = tmp;
       }
     }
     
     bool empty()
-    { return !to_node_p->next; }
+    { return !linked_list_->next; }
 
     T front()
-    { return  to_node_p->next->obj; }
+    { return  linked_list_->next->obj; }
     
-    bool get(T* pObj)
+    bool get(T* object)
     {
       if ( empty() )
         return false;
       else {
-        *pObj = to_node_p->next->obj;
+        *object = linked_list_->next->obj;
         return true;
       } 
     }
     
-    void push(T pObj)
+    void push(T object) {
+      LinkedList<T> *container = new LinkedList<T>(object);
+      push_container(container);
+    }
+    
+    LinkedList<T> * remove(T object)
     {
-      LinkedList<T> * container = new LinkedList<T>(pObj);
-      LinkedList<T> * iterator  = to_node_p;
+      LinkedList<T> * iterator = linked_list_;
+      LinkedList<T> * tmp;
       
-      // make sure pObj is not in the list already
-      while(iterator->next && pObj != iterator->next->obj) {
+      // find element
+      while(iterator->next && object != iterator->next->obj)
+        iterator = iterator->next;
+      
+      if (iterator->next && object == iterator->next->obj) {
+        // remove element
+        tmp = iterator->next->next;
+        delete iterator->next;
+        iterator->next = tmp;
+        return tmp;
+      }
+    }
+    
+    void pop()
+    {
+      LinkedList<T> * tmp;
+      if (linked_list_->next) {
+        tmp = linked_list_->next->next;
+        delete linked_list_->next;
+        linked_list_->next = tmp;
+      }
+    }
+    
+    LinkedList<T> * begin() { return linked_list_->next; }
+    
+    size_t size()
+    {
+      int i=0;
+      LinkedList<T> * it = linked_list_;
+
+      // find element
+      while(it->next) {
+        it = it->next;
+        i++;
+      }
+      return i;
+    }
+    
+    /** Reorder list in case an element's sort value
+     *  changed.
+     *  This is a simple implementation of 'insertion' sort.
+     */
+    void sort() {
+      LinkedList<T> *old_head = linked_list_;
+      LinkedList<T> *current, *next;
+      
+      linked_list_ = new LinkedList<T>(NULL);
+      
+      current = old_head->next;
+      while(current) {
+        next = current->next;
+        current->next = NULL;
+        push_container(current);
+        current = next;
+      }
+      delete old_head;
+    }
+    
+  private:
+    
+    void push_container(LinkedList<T> *container) {
+      LinkedList<T> * iterator  = linked_list_;
+      
+      // make sure object is not in the list already
+      while(iterator->next && container->obj != iterator->next->obj) {
         iterator = iterator->next;
       }
       
-      if (iterator->next && pObj == iterator->next->obj)
+      if (iterator->next && container->obj == iterator->next->obj)
         return;
       
-      iterator = to_node_p;
+      iterator = linked_list_;
       
       // queue is kept sorted, smallest on top
-      while(iterator->next && pObj >= iterator->next->obj) {
+      while(iterator->next && container->obj >= iterator->next->obj) {
         iterator = iterator->next;
       }
       
@@ -84,51 +152,7 @@ class OrderedList
       }
     }
     
-    LinkedList<T> * remove(T pObj)
-    {
-      LinkedList<T> * iterator = to_node_p;
-      LinkedList<T> * tmp;
-      
-      // find element
-      while(iterator->next && pObj != iterator->next->obj)
-        iterator = iterator->next;
-      
-      if (iterator->next && pObj == iterator->next->obj) {
-        // remove element
-        tmp = iterator->next->next;
-        delete iterator->next;
-        iterator->next = tmp;
-        return tmp;
-      }
-    }
-    
-    void pop()
-    {
-      LinkedList<T> * tmp;
-      if (to_node_p->next) {
-        tmp = to_node_p->next->next;
-        delete to_node_p->next;
-        to_node_p->next = tmp;
-      }
-    }
-    
-    LinkedList<T> * begin() { return to_node_p->next; }
-    
-    size_t size()
-    {
-      int i=0;
-      LinkedList<T> * it = to_node_p;
-
-      // find element
-      while(it->next) {
-        it = it->next;
-        i++;
-      }
-      return i;
-    }
-    
-  private:
-    LinkedList<T> * to_node_p;
+    LinkedList<T> * linked_list_;
 };
 
 /** This class maintains a linked list of pointers to elements, ensuring that the elements are kept sorted, 
@@ -138,9 +162,8 @@ template <class T>
 class OrderedList<T*>
 {
   public:
-    OrderedList()
-    {
-      to_node_p = new LinkedList<T*>(NULL);
+    OrderedList() {
+      linked_list_ = new LinkedList<T*>(NULL);
     }
     
     OrderedList(const OrderedList& other)
@@ -151,46 +174,116 @@ class OrderedList<T*>
     ~OrderedList()
     {
       LinkedList<T*> * tmp;
-      while( (tmp = to_node_p->next) ) {
-        delete to_node_p;
-        to_node_p = tmp;
+      while( (tmp = linked_list_->next) ) {
+        delete linked_list_;
+        linked_list_ = tmp;
       }
     }
     
     bool empty()
-    { return !to_node_p->next; }
+    { return !linked_list_->next; }
 
     T *front()
-    { return  to_node_p->next->obj; }
+    { return  linked_list_->next->obj; }
     
-    bool get(T** pObj)
+    bool get(T** object)
     {
       if ( empty() )
         return false;
       else {
-        *pObj = to_node_p->next->obj;
+        *object = linked_list_->next->obj;
         return true;
       } 
     }
     
-    void push(T* pObj)
+    void push(T* object) {
+      LinkedList<T*> *container = new LinkedList<T*>(object);
+      push_container(container);
+    }
+    
+    LinkedList<T*> * remove(T* object)
     {
-      LinkedList<T*> * container = new LinkedList<T*>(pObj);
-      LinkedList<T*> * iterator  = to_node_p;
+      LinkedList<T*> * iterator = linked_list_;
+      LinkedList<T*> * tmp;
       
-      // make sure pObj is not in the list already
-      while(iterator->next && pObj != iterator->next->obj) {
+      // find element
+      while(iterator->next && object != iterator->next->obj)
+        iterator = iterator->next;
+      
+      if (iterator->next && object == iterator->next->obj) {
+        // remove element
+        tmp = iterator->next->next;
+        delete iterator->next;
+        iterator->next = tmp;
+        return tmp;
+      }
+	  return linked_list_;
+    }
+    
+    void pop()
+    {
+      LinkedList<T*> * tmp;
+      if (linked_list_->next) {
+        tmp = linked_list_->next->next;
+        delete linked_list_->next;
+        linked_list_->next = tmp;
+      }
+    }
+    
+    LinkedList<T*> * begin() { return linked_list_->next; }
+    
+    size_t size()
+    {
+      int i=0;
+      LinkedList<T*> * it = linked_list_;
+
+      // find element
+      while(it->next) {
+        it = it->next;
+        i++;
+      }
+      return i;
+    }
+    
+    /** Reorder list in case an element's sort value
+     *  changed.
+     *  This is a simple implementation of 'insertion' sort.
+     */
+    void sort() {
+      LinkedList<T*> *old_head = linked_list_;
+      LinkedList<T*> *current, *next;
+      
+      linked_list_ = new LinkedList<T*>(NULL);
+      
+      current = old_head->next;
+      while(current) {
+        next = current->next;
+        current->next = NULL;
+        push_container(current);
+        current = next;
+      }
+      delete old_head;
+    }
+    
+  private:
+    
+    void push_container(LinkedList<T*> *container) {
+      LinkedList<T*> * iterator  = linked_list_;
+      T *object = container->obj;
+      
+      // make sure object is not in the list already
+      while(iterator->next && object != iterator->next->obj) {
         iterator = iterator->next;
       }
       
-      if (iterator->next && pObj == iterator->next->obj)
+      if (iterator->next && object == iterator->next->obj)
         return;
       
-      iterator = to_node_p;
+      iterator = linked_list_;
       
       // queue is kept sorted, smallest on top
       if (iterator->next) {
-        while(iterator->next && *pObj >= *(iterator->next->obj)) {
+        while(iterator->next && *object >= *(iterator->next->obj)) {
           iterator = iterator->next;
         }
       }
@@ -205,58 +298,7 @@ class OrderedList<T*>
       }
     }
     
-    LinkedList<T*> * remove(T* pObj)
-    {
-      LinkedList<T*> * iterator = to_node_p;
-      LinkedList<T*> * tmp;
-      
-      // find element
-      while(iterator->next && pObj != iterator->next->obj)
-        iterator = iterator->next;
-      
-      if (iterator->next && pObj == iterator->next->obj) {
-        // remove element
-        tmp = iterator->next->next;
-        delete iterator->next;
-        iterator->next = tmp;
-        return tmp;
-      }
-	  return to_node_p;
-    }
-    
-    void pop()
-    {
-      LinkedList<T*> * tmp;
-      if (to_node_p->next) {
-        tmp = to_node_p->next->next;
-        delete to_node_p->next;
-        to_node_p->next = tmp;
-      }
-    }
-    
-    LinkedList<T*> * begin() { return to_node_p->next; }
-    
-    size_t size()
-    {
-      int i=0;
-      LinkedList<T*> * it = to_node_p;
-
-      // find element
-      while(it->next) {
-        it = it->next;
-        i++;
-      }
-      return i;
-    }
-    
-    /** Reorder a single element. */
-    void sort_object(T *object) {
-      remove(object);
-      push(object);
-    }
-    
-  private:
-    LinkedList<T*> * to_node_p;
+    LinkedList<T*> * linked_list_;
 };
 
 #endif

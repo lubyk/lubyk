@@ -30,13 +30,13 @@ void Slot::disconnect(Slot *slot) {
     
 
 /** Sort slots by rightmost node and rightmost position in the same node. */
-bool Slot::operator>= (const Slot &slot) const { 
+bool Slot::operator>= (const Slot &slot) const {
   if (node_ == slot.node_) {
     // same node, sort by position in container, largest first
     return id_ < slot.id_;
   } else {
     // different node, sort by node position, greatest first
-    return ((Node*)(node_))->trigger_position() < ((Node*)(slot.node_))->trigger_position();
+    return node_->trigger_position() < slot.node_->trigger_position();
   }
 }
 
