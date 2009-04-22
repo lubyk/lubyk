@@ -1,13 +1,10 @@
 #include "rubyk.h"
 #include "midi/RtMidi.h"
 
-class MidiOut : public Node
-{
-public:
-  
-  bool init ()
-  {
-    mPortId = -1;
+class MidiOut : public Node {
+ public: 
+  bool init () {
+    port_id_ = -1;
     
     try {
       mMidiOut = new RtMidiOut();
@@ -16,7 +13,7 @@ public:
       return false;
     }
     
-    if (!p.get(&mPortId, "port", true)) {
+    if (!p.get(&port_id_, "port", true)) {
       // create a virtual port
 
       // Call function to select port.
@@ -32,7 +29,7 @@ public:
     } else {
      // Call function to select port.
      try {
-       mMidiOut->openPort( mPortId );
+       mMidiOut->openPort( port_id_ );
      }
      catch (RtError &error) {
        *output_ << name_ << ": " << error.getMessageString() << std::endl;
@@ -109,12 +106,12 @@ public:
   virtual const Value inspect(const Value &val) 
   { 
     std::vector<std::string> portList;
-    if (mPortId < 0)
+    if (port_id_ < 0)
       bprint(mSpy, mSpySize, "-virtual-");
-    else if (output_list(output_, portList) && (size_t)mPortId < portList.size())
-      bprint(mSpy, mSpySize,"%i: %s", mPortId, portList[mPortId].c_str());
+    else if (output_list(output_, portList) && (size_t)port_id_ < portList.size())
+      bprint(mSpy, mSpySize,"%i: %s", port_id_, portList[port_id_].c_str());
     else
-      bprint(mSpy, mSpySize,"could not read port name for %i", mPortId);
+      bprint(mSpy, mSpySize,"could not read port name for %i", port_id_);
   }
 private:
   
@@ -149,7 +146,14 @@ private:
     return true;
   }
   
-  int mPortId;
+  /** Midi port id to which the element is connected.
+   *  If the value is -1 this means it has opened its own virtual port.
+   */
+  int port_id_;
+  
+  /** Pointer to our RtMidiOut instance (MidiOut is just a wrapper around
+   *  RtMidiOut).
+   */
   RtMidiOut * mMidiOut;
 };
 /*

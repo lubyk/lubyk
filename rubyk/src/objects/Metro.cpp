@@ -3,11 +3,9 @@
 class Metro : public Node
 {
 public:
+  Metro() : tempo_(120), run_(false) {}
   
   bool init() {
-    tempo_ = 120;
-    
-    remove_my_events();
     bang_me_in(0); // start loop
     run_ = true;
     return true;

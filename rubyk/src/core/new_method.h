@@ -85,14 +85,13 @@ public:
     // make outlets
     klass->make_outlets(node);
     
-    if (params.is_hash()){
-      // initialize and set defaults by calling methods
-      node->set_is_ok(node->init() && node->set_all_ok(params)); // if init or set returns false, the node goes into 'broken' mode.
-    } else if (!params.is_nil() && node->can_receive(params)) {
-      node->set_is_ok(node->init());
+    if (!params.is_nil()) {
+      // set defaults by calling methods
       node->trigger(params);
+      // if init returns false, the node goes into 'broken' mode.
+      node->set_is_ok(node->init());
     } else {
-      node->set_is_ok(node->init()); // if init or set returns false, the node goes into 'broken' mode.
+      node->set_is_ok(node->init());
     }
     
     return Value(node->url());

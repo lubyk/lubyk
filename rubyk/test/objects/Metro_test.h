@@ -7,7 +7,7 @@ public:
   
   void test_bang_bang( void ) { 
     setup_with_print("n=Metro(1000)\n");
-    assert_run("print: Bang!\nprint: Bang!\nprint: Bang!\n", (60 * 3) + 10);  // 0 ... 20 ... 60 [bang] ... 120 [bang] ... 180 [bang] ... 190.
+    assert_run("print: Bang!\nprint: Bang!\nprint: Bang!\n", (60 * 2) + 10);  // 0 [bang] ... 60 [bang] ... 120 [bang] ... 130.
   }
   
   void test_set_tempo( void ) { 
