@@ -20,7 +20,7 @@ Planet <>--- Worker
 #include <queue>
 
 // is 2 [ms] too long ? Testing needed.
-#define WORKER_SLEEP_MS 2.0
+#define WORKER_SLEEP_MS 0.75
 #define ONE_SECOND 1000.0
 #define ONE_MINUTE (60.0*ONE_SECOND)
 
@@ -57,7 +57,7 @@ public:
   
   /** Add an event to the event queue. The server is responsible for deleting the event. */
   void register_event(Event *e) { 
-    if (should_run_ || e->forced_) events_queue_.push(e); // do not accept new events while we are trying to quit.
+    if ((should_run_ || e->forced_) && (e->when_ > (current_time_ + WORKER_SLEEP_MS))) events_queue_.push(e); // do not accept new events while we are trying to quit.
   }
   
   template<class T, void(T::*Tmethod)(const Value&)>

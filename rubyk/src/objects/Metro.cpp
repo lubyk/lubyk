@@ -56,6 +56,9 @@ private:
     } else if (tempo != tempo_) {
       // tempo changed
       tempo_ = tempo;
+      if ((ONE_MINUTE / tempo_) < (WORKER_SLEEP_MS + 1)) {
+        tempo_ = ONE_MINUTE / (WORKER_SLEEP_MS * 1.5);
+      }
       remove_my_events();
       if (run_) bang_me_in(ONE_MINUTE / tempo_);
     }
