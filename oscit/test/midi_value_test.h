@@ -19,7 +19,7 @@ public:
     
     MidiMessage *msg = v.midi_message_;
     
-    assert_equal(RawMidi, msg->type());
+    assert_equal(NoteOn, msg->type());
     
     assert_equal("m", v.type_tag());
     int i = H("m");
@@ -38,14 +38,14 @@ public:
     Value v('m');
     
     assert_true(v.is_midi());
-    assert_equal(RawMidi, v.midi_message_->type());
+    assert_equal(NoteOn, v.midi_message_->type());
   }
   
   void test_create_with_TypeTag( void ) {
     Value v(TypeTag("m"));
     
     assert_true(v.is_midi());
-    assert_equal(RawMidi, v.midi_message_->type());
+    assert_equal(NoteOn, v.midi_message_->type());
   }
   
   
@@ -96,7 +96,7 @@ public:
     Value v;
     v.set_type_tag("m");
     assert_true(v.is_midi());
-    assert_equal(RawMidi, v.midi_message_->type());
+    assert_equal(NoteOn, v.midi_message_->type());
   }
   
   void test_set_type( void ) {
@@ -104,7 +104,7 @@ public:
     
     v.set_type(MIDI_VALUE);
     assert_true(v.is_midi());
-    assert_equal(RawMidi, v.midi_message_->type());
+    assert_equal(NoteOn, v.midi_message_->type());
   }
 
   void test_to_json( void ) {
