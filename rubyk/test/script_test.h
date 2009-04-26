@@ -115,4 +115,40 @@ public:
     assert_equal("test/fixtures/script_test_file.txt", res.str());
     assert_true(script->is_ok());
   }
+  
+  void test_reload( void ) {
+    Planet base;
+    DummyScript *script = base.adopt(new DummyScript);
+    script->file(Value("test/fixtures/script_test_reload.txt"));
+    
+    assert_equal(1.0, script->reload(gNilValue).r);
+    Value res = script->reload(Value(0.001)); // 1 [ms]
+    
+    std::ofstream out("test/fixtures/script_test_reload.txt", std::ios::out);
+      out << "This is a nice script.";
+    out.close();
+    
+    // too soon, should not reload
+    script->reload_script();
+    assert_false(script->is_ok());
+    assert_equal("", script->script(gNilValue).str());
+    
+    base.worker()->current_time_ = 1;
+    // reload
+    
+    script->reload_script();
+    assert_true(script->is_ok());
+    assert_equal("This is a nice script.", script->script(gNilValue).str());
+    
+    remove("test/fixtures/script_test_reload.txt");
+  }
+  
+  void test_inspect( void ) {
+    Planet base;
+    DummyScript *script = base.adopt(new DummyScript);
+    script->file(Value("test/fixtures/script_test_new_file.txt"));
+    Value res;
+    script->inspect(&res);
+    assert_equal("script:\"\" file:\"test/fixtures/script_test_new_file.txt\" reload:1", res.lazy_json());
+  }
 };
