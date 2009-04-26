@@ -19,7 +19,7 @@ public:
     worker.run(); // running in new thread
     microsleep(10);
     worker.kill();
-    assert_true(start + 9  <= worker.current_time_);
-    assert_true(start + 11 >= worker.current_time_);
+    assert_true(start + 8  <= worker.current_time_);
+    assert_true(start + 12 >= worker.current_time_);
   }
 };

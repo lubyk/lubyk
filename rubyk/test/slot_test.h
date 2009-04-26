@@ -540,6 +540,6 @@ public:
   void test_pending_removed_on_unlink( void ) {
     setup("a => b\na = Value()\n"); // pending a => b
     assert_result("# /a || /b\n", "a || b\n");
-    assert_result("# <Print:/b prefix:\"print\">\n", "b = Print()\n");
+    assert_result("# <Print:/b prefix:\"b\">\n", "b = Print()\n");
   }
 };

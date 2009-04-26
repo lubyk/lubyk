@@ -14,12 +14,12 @@ public:
   bool eval_script(const std::string &pScript) 
   {
     if (pScript.find("function bang()") != std::string::npos) {
-      mScript = pScript;
+      script_ = pScript;
     } else {
-      mScript = std::string("function bang()\nsystem([[").append(pScript).append("\n]])\nend\n");
+      script_ = std::string("function bang()\nsystem([[").append(pScript).append("\n]])\nend\n");
     }
     
-    return eval_lua_script(mScript);
+    return eval_lua_script(script_);
   }
   
   // inlet 1

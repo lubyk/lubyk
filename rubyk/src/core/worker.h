@@ -20,7 +20,8 @@ Planet <>--- Worker
 #include <queue>
 
 // is 2 [ms] too long ? Testing needed.
-#define WORKER_SLEEP_MS 0.75
+// 0.01 = 10 [us] = 0.00001 [s] = 100'000 [Hz] = 100 [kHz]
+#define WORKER_SLEEP_MS 0.01
 #define ONE_SECOND 1000.0
 #define ONE_MINUTE (60.0*ONE_SECOND)
 
@@ -56,8 +57,12 @@ public:
   }
   
   /** Add an event to the event queue. The server is responsible for deleting the event. */
-  void register_event(Event *e) { 
-    if ((should_run_ || e->forced_) && (e->when_ > (current_time_ + WORKER_SLEEP_MS))) events_queue_.push(e); // do not accept new events while we are trying to quit.
+  void register_event(Event *event) {
+    if (event->when_ < current_time_ + WORKER_SLEEP_MS) {
+      miss_event(event);
+    } else if (should_run_ || event->forced_) {
+      events_queue_.push(event); // do not accept new events while we are trying to quit.
+    }
   }
   
   template<class T, void(T::*Tmethod)(const Value&)>
@@ -93,7 +98,7 @@ public:
   inline bool loop() {
     struct timespec sleeper;
     sleeper.tv_sec  = 0; 
-    sleeper.tv_nsec = WORKER_SLEEP_MS * 1000000;
+    sleeper.tv_nsec = WORKER_SLEEP_MS * 1000000; // 1'000'000
 
     unlock(); // ok, others can do things while we sleep
       nanosleep(&sleeper, NULL); // FIXME: only if no loop events ?
@@ -111,7 +116,9 @@ public:
   }
   
  public:
-  time_t current_time_;                    /**< Current logical time in [ms] since reference. */
+  /** Current logical time in [ms] since reference.
+   */
+  time_t current_time_;
   
  private:
   void init();
@@ -120,6 +127,9 @@ public:
   void do_run(Thread *thread);
   
   /** Realtime related stuff. */
+  /** Method executed when an Event is registering too fast.
+   */
+  void miss_event(const Event *event);
   
   /** Trigger events with a time older or equal to the current time. */
   void pop_events ();

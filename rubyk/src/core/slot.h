@@ -93,7 +93,7 @@ protected:
   
   /** Create 'list' method. */
   void create_methods() {
-    adopt(new TMethod<Slot, &Slot::list>(this, "list", NoIO("Return a list of linked urls.")));
+    adopt(new TMethod<Slot, &Slot::list>(this, "list", NilIO("Return a list of linked urls.")));
   }
 
   /** If operation is 'c': create a new link, else unlink. */

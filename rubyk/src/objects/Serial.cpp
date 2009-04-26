@@ -59,7 +59,7 @@ public:
   void bang(const Value &val)
   { 
     int c;
-    if (mLua) {
+    if (lua_) {
       // return value from 'update'
       call_lua("bang");
     } else {
@@ -76,7 +76,7 @@ public:
   {
     int c;
     if (mPort.read_char(&c)) {
-      lua_pushinteger(mLua,c);
+      lua_pushinteger(lua_,c);
       return 1;
     } else {
       return 0;

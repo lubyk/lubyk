@@ -9,12 +9,12 @@
 struct TuringSend
 {
   TuringSend() {}
-  TuringSend(int pValue) : value_(pValue), mLuaMethod(0) {}
-  TuringSend(std::string pMethod) : method_(pMethod), mLuaMethod(0) {}
+  TuringSend(int pValue) : value_(pValue), lua_Method(0) {}
+  TuringSend(std::string pMethod) : method_(pMethod), lua_Method(0) {}
   
   int value_;          /**< Send a direct integer value. */
   std::string method_; /**< Lua method definition. */
-  int mLuaMethod;      /**< Compiled lua method. */
+  int lua_Method;      /**< Compiled lua method. */
 };
 
 
@@ -211,7 +211,7 @@ public:
     }
     
     reload_script();
-    if (!mScriptOK) return;
+    if (!script_ok_) return;
     
     call_lua(&mS, "bang", sig);
     if (!mS.type) return; // bang returned nil, abort
@@ -243,14 +243,14 @@ public:
     /* Send the value out. */
     if (mSend == &gSendNothing)
       ; // send nothing
-    else if (mSend->mLuaMethod) {
+    else if (mSend->lua_Method) {
       // trigger lua function
-      lua_rawgeti(mLua, LUA_REGISTRYINDEX, mSend->mLuaMethod);
+      lua_rawgeti(lua_, LUA_REGISTRYINDEX, mSend->lua_Method);
       /* Run the function. */
-      status = lua_pcall(mLua, 0, 0, 0); // 0 arg, 1 result, no error function
+      status = lua_pcall(lua_, 0, 0, 0); // 0 arg, 1 result, no error function
       if (status) {
         *output_ << name_ << ": trigger [" << mSend->method_ << "] failed !\n";
-        *output_ << lua_tostring(mLua, -1) << std::endl;
+        *output_ << lua_tostring(lua_, -1) << std::endl;
       }
     } else
       send(mSend->value_);
@@ -286,11 +286,11 @@ public:
   bool eval_script(const std::string &pScript) 
   {
     token_ = 0;
-    mScript = pScript;
-    mScript.append("\n");
+    script_ = pScript;
+    script_.append("\n");
     int cs;
-    const char * p  = mScript.data(); // data pointer
-    const char * pe = p + mScript.size(); // past end
+    const char * p  = script_.data(); // data pointer
+    const char * pe = p + script_.size(); // past end
     const char *eof = NULL;  // FIXME: this should be set to 'pe' on the last pStr block...
     char name[MAX_NAME_SIZE + 1];
     int  name_index = 0;
@@ -310,7 +310,7 @@ public:
     
     // integrated lua script
     const char * begin_lua_script = NULL;
-    mLuaScript = "function bang(sig) return sig end\n\n";
+    lua_Script = "function bang(sig) return sig end\n\n";
     
     
     // function call id, params
@@ -599,7 +599,7 @@ _match:
 	case 15:
 #line 340 "src/objects/Turing.rl"
 	{
-      mLuaScript.append( begin_lua_script, p - begin_lua_script - 4 );
+      lua_Script.append( begin_lua_script, p - begin_lua_script - 4 );
       begin_lua_script = NULL;
       {cs = 1; goto _again;} 
     }
@@ -641,7 +641,7 @@ _again:
 
   // token_default %add_token_default |
     if (begin_lua_script) {
-      mLuaScript.append( begin_lua_script, p - begin_lua_script );
+      lua_Script.append( begin_lua_script, p - begin_lua_script );
     }
     // 1. for each mSendList with method_
     int met_count = 0;
@@ -649,15 +649,15 @@ _again:
       if ((*it)->method_ != "") {
         // 1.1 create function
         met_count++;
-        mLuaScript.append(bprint(mPrintBuffer, mPrintBufferSize, "\nfunction trigger_%i()\n",met_count));
-        mLuaScript.append((*it)->method_);
-        mLuaScript.append("\nend\n");
+        lua_Script.append(bprint(mPrintBuffer, mPrintBufferSize, "\nfunction trigger_%i()\n",met_count));
+        lua_Script.append((*it)->method_);
+        lua_Script.append("\nend\n");
       }
     }
     
     // 2. compile lua script
-    if (!eval_lua_script(mLuaScript)) {
-      *output_ << name_ << ": script [\n" << mLuaScript << "]\n";
+    if (!eval_lua_script(lua_Script)) {
+      *output_ << name_ << ": script [\n" << lua_Script << "]\n";
       return false;
     }
     
@@ -669,11 +669,11 @@ _again:
         met_count++;
         met_function = bprint(mPrintBuffer, mPrintBufferSize, "trigger_%i",met_count);
         
-        lua_getglobal(mLua, met_function); /* function to be called */
+        lua_getglobal(lua_, met_function); /* function to be called */
 
         /* take func from top of stack and store it in the Registry */
-        (*it)->mLuaMethod = luaL_ref(mLua, LUA_REGISTRYINDEX);
-        if ((*it)->mLuaMethod == LUA_REFNIL)
+        (*it)->lua_Method = luaL_ref(lua_, LUA_REGISTRYINDEX);
+        if ((*it)->lua_Method == LUA_REFNIL)
           *output_ << name_ << ": could not get lua reference for function '" << met_function << "'.\n";
         
       }
@@ -708,7 +708,7 @@ _again:
     *output_ << bprint(mPrintBuffer, mPrintBufferSize, "\n%- 7s", "methods\n");
     int met_count = 0;
     for(std::vector< TuringSend* >::iterator it = mSendList.begin(); it != mSendList.end(); it++) {
-      if ((*it)->mLuaMethod) {
+      if ((*it)->lua_Method) {
         met_count++;
         *output_ << bprint(mPrintBuffer, mPrintBufferSize, "% 4i: %s\n", met_count, (*it)->method_.c_str());
       }
@@ -792,8 +792,8 @@ private:
     std::vector< TuringSend* >::iterator it,end;
     end   = mSendList.end();
     for (it = mSendList.begin(); it < end; it++) {
-      if ((*it)->mLuaMethod) {
-        luaL_unref(mLua, LUA_REGISTRYINDEX, (*it)->mLuaMethod);
+      if ((*it)->lua_Method) {
+        luaL_unref(lua_, LUA_REGISTRYINDEX, (*it)->lua_Method);
       }
       delete *it;
     }
@@ -895,12 +895,12 @@ private:
         pOutput << "     -";  // default
     } else if (pVal == &gSendNothing)
       pOutput << "     /";  // do not send
-    else if (pVal->mLuaMethod) {
+    else if (pVal->lua_Method) {
       // find method id
       std::vector<TuringSend*>::iterator it = mSendList.begin();
       int met_count = 0;
       for ( ; it != mSendList.end(); it++) {
-        if ((*it)->mLuaMethod) met_count++;
+        if ((*it)->lua_Method) met_count++;
         if (*it == pVal) break;
       }
       
@@ -974,7 +974,7 @@ private:
             send = ""; // send nothing
           else {
             send = ":";
-            if (tsend->mLuaMethod)
+            if (tsend->lua_Method)
               send.append(tsend->method_);
             else
               send.append(bprint(mPrintBuffer, mPrintBufferSize, "%i", mSendTable[i][0]));
@@ -995,7 +995,7 @@ private:
   size_t  mStateCount;      /**< Number of states in the machine. */
   size_t  token_Count;      /**< Number of tokens recognized by the machine. */
   
-  std::string mLuaScript; /**< Lua script for method calls. */
+  std::string lua_Script; /**< Lua script for method calls. */
   
   THash<std::string, int>   token_ByName;   /**< Dictionary returning token id from its identifier (used to  plot/debug). */
   THash<uint, std::string>  token_NameByValue; /**< Dictionary returning token name from its value (used to plot/debug). */

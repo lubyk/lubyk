@@ -2,6 +2,6 @@
 #include "node.h"
 
 
-void BangEvent::cast_bang_method (void *receiver, const Value &parameter) {
-  ((Node*)receiver)->bang(parameter);
+void BangEvent::cast_bang_method (Node *receiver, const Value &parameter) {
+  receiver->bang(parameter);
 }

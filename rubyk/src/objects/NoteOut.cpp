@@ -3,7 +3,7 @@
 class NoteOut : public Node {
  public:
   NoteOut() {
-    note_.set_as_note(MIDI_NOTE_C0, 70, 500, 1);
+    note_.set_as_note(MIDI_NOTE_C0 + 36); // C3
   }
   
   // [1] set note, send current note
@@ -49,7 +49,7 @@ class NoteOut : public Node {
   //void clear()
   //{ remove_my_events(); }
   
-  void inspect(Value *hash) {
+  virtual void inspect(Value *hash) const {
     hash->set("note", note_);
   }
   
@@ -64,6 +64,6 @@ extern "C" void init(Planet &planet) {
   OUTLET(NoteOut, note, MidiIO("Midi note."));
   METHOD(NoteOut, velocity, RangeIO(0, 127, "note velocity", "Set/get note velocity."));
   METHOD(NoteOut, length, RealIO("note length", "Set/get note length."));
-  METHOD(NoteOut, channel,  RangeIO(0, 16, "midi channel", "Set/get midi channel."));
+  METHOD(NoteOut, channel,  RangeIO(1, 16, "midi channel", "Set/get midi channel."));
   METHOD(NoteOut, set_note, RangeIO(0, 127, "midi note", "Set/get note value (does not send note out)."));
 }

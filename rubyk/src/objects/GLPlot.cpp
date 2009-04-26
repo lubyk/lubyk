@@ -88,7 +88,7 @@ public:
     }
     
     // protected resource
-    mServer->lock();
+    worker_->lock();
       switch(mMode) {
       case XYPlot:
         xy_plot(*mLiveBuffer);
@@ -100,7 +100,7 @@ public:
       default:
         time_plot(*mLiveBuffer);
       }
-    mServer->unlock();
+    worker_->unlock();
   }
   
   virtual const Value inspect(const Value &val) 

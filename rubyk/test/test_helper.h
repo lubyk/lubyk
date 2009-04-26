@@ -59,12 +59,12 @@ protected:
 
 
 #define assert_result(x,y) _assert_result(__FILE__,__LINE__,#y,x,y)
-#define assert_print(x,y) _assert_result(__FILE__,__LINE__,#y,x,y)
+#define assert_print(x,y) _assert_print(__FILE__,__LINE__,#y,x,y)
 #define assert_run(x,y) _assert_run(__FILE__,__LINE__,#y,x,y)
 
 // ========================== ParseHelper  ====================== //
 
-class ParseHelper : public CxxTest::TestSuite
+class ParseHelper : public TestHelper
 {
 public:
   ParseHelper() : planet_(NULL), output_(std::ostringstream::out), input_(std::istringstream::in) {}
@@ -100,7 +100,7 @@ protected:
       if (print == NULL) {
         fprintf(stderr, "Wrong object type '%s'. Should be Print.\n", print->class_path());
       } else {
-        print->set_output(print_);
+        print->set_output(&print_);
       }
     }
     cmd_->parse(input);

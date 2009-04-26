@@ -1,5 +1,5 @@
-#ifndef _DUMMY_NODE_H_
-#define _DUMMY_NODE_H_
+#ifndef RUBYK_TEST_MOCK_DUMMY_NODE_H_
+#define RUBYK_TEST_MOCK_DUMMY_NODE_H_
 
 class DummyNode : public Node
 {
@@ -23,4 +23,4 @@ public:
 };
 
 
-#endif // _DUMMY_NODE_H_
+#endif // RUBYK_TEST_MOCK_DUMMY_NODE_H_

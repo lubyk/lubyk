@@ -6,8 +6,8 @@ public:
   Metro() : tempo_(120), run_(false) {}
   
   const Value init() {
-    bang_me_in(0); // start loop
     run_ = true;
+    bang(gNilValue); // start loop
     return gTrueValue;
   }
   
@@ -35,7 +35,7 @@ public:
     return Value(run_);
   }
   
-  virtual void inspect(Value *hash)  {
+  virtual void inspect(Value *hash) const {
     hash->set("tempo", tempo_);
     hash->set("run", run_);
   }

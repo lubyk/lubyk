@@ -36,14 +36,14 @@ public:
     mNeedRedisplay    = false;
     mNeedScriptReload = false;
     mFullscreen       = false;
-    mLuaInit          = false;
-    mLuaReshape       = false;
-    mLuaDraw          = false;
-    mLuaMouseMove     = false;
-    mLuaKeyPress      = false;
+    lua_Init          = false;
+    lua_Reshape       = false;
+    lua_Draw          = false;
+    lua_MouseMove     = false;
+    lua_KeyPress      = false;
     mMaxFPS           = 30.0;
     mLastDraw         = 0;
-    mFPS_start        = mServer->current_time_;
+    mFPS_start        = worker_->current_time_;
     mFPS_i            = 0;
     mFPS              = 0;
     
@@ -95,7 +95,7 @@ public:
   {
     if (mNeedScriptReload) {
       mMutex.lock();
-        mScriptOK = eval_gl_script(mScript);
+        script_ok_ = eval_gl_script(script_);
       mMutex.unlock();
       
       mNeedScriptReload = false;
@@ -106,9 +106,9 @@ public:
     
     compute_fps();
     
-    mLastDraw = mServer->current_time_;
+    mLastDraw = worker_->current_time_;
     
-    if (mLuaDraw) {
+    if (lua_Draw) {
       protected_call_lua("draw",sig);
     } else {
       send(2, mDisplaySizeValue);
@@ -120,13 +120,13 @@ public:
     Value s;
     s.set(pKey);
     if (!handle_default_keys(pKey)) {
-      mServer->lock();
-        if (mLuaKeyPress) {
+      worker_->lock();
+        if (lua_KeyPress) {
           protected_call_lua("key_press",s);
         } else {
           send(3, (int)pKey);
         }
-      mServer->unlock();
+      worker_->unlock();
     }
   }
   
@@ -134,13 +134,13 @@ public:
   {
     mMouseMatrix.data[0] = (real_t)x;
     mMouseMatrix.data[1] = mDisplaySize.data[1] - (real_t)y;
-    mServer->lock();
-      if (mLuaMouseMove) {
+    worker_->lock();
+      if (lua_MouseMove) {
         protected_call_lua("mouse_move",mMouseMatrixValue);
       } else {
         send(4, mMouseMatrix);
       }
-    mServer->unlock();
+    worker_->unlock();
   }
   
   virtual void mouse_click(int button, int state, int x, int y)
@@ -176,9 +176,9 @@ protected:
       update_window_size();
       return true;
     case '\e':
-      mServer->lock();
-        mServer->quit();
-      mServer->unlock();
+      worker_->lock();
+        worker_->quit();
+      worker_->unlock();
       return true;
     default:
       return false;
@@ -206,7 +206,7 @@ protected:
       mHeight = h;
     }
     
-    if (mLuaReshape) {
+    if (lua_Reshape) {
       protected_call_lua("reshape",mDisplaySizeValue);  
     } else {
       glViewport(0, 0, w, h);
@@ -220,7 +220,7 @@ protected:
   
   void idle()
   { 
-    if (mNeedRedisplay || mMaxFPS == 0 || (mServer->current_time_ >= mLastDraw + mMinFPSTime)) {
+    if (mNeedRedisplay || mMaxFPS == 0 || (worker_->current_time_ >= mLastDraw + mMinFPSTime)) {
       glutPostRedisplay();
       mNeedRedisplay = false;
     }
@@ -324,13 +324,13 @@ private:
     update_window_size();
     
     /* This thread runs with a lower priority. */
-    mServer->normal_priority();
+    worker_->normal_priority();
     glutMainLoop();
   }
   
   void init_gl ()
   {
-    if (mLuaInit) {
+    if (lua_Init) {
       protected_call_lua("init");
     } else {
       glEnable(GL_POINT_SMOOTH);
@@ -354,7 +354,7 @@ private:
     // this is run inside a call to lua (protected).
     // except when run from "set_lua"
     if (!is_opengl_thread()) {
-      mScript = pScript;
+      script_ = pScript;
       mNeedScriptReload = true;
       return true;
     } else {
@@ -365,20 +365,20 @@ private:
   bool eval_gl_script(const std::string &pScript)
   {
     // this is always run inside a call to lua (protected).
-    mScriptOK = eval_lua_script(pScript);
+    script_ok_ = eval_lua_script(pScript);
   
-    if (mScriptOK) {
-      mLuaInit      = lua_has_function("init");
-      mLuaReshape   = lua_has_function("reshape");
-      mLuaDraw      = lua_has_function("draw");
-      mLuaMouseMove = lua_has_function("mouse_move");
-      mLuaKeyPress  = lua_has_function("key_press");
+    if (script_ok_) {
+      lua_Init      = lua_has_function("init");
+      lua_Reshape   = lua_has_function("reshape");
+      lua_Draw      = lua_has_function("draw");
+      lua_MouseMove = lua_has_function("mouse_move");
+      lua_KeyPress  = lua_has_function("key_press");
     } else {
-      mLuaInit      = false;
-      mLuaReshape   = false;
-      mLuaDraw      = false;
-      mLuaMouseMove = false;
-      mLuaKeyPress  = false;
+      lua_Init      = false;
+      lua_Reshape   = false;
+      lua_Draw      = false;
+      lua_MouseMove = false;
+      lua_KeyPress  = false;
     }
     // draw lock
     mMutex.unlock();
@@ -387,7 +387,7 @@ private:
     mMutex.lock();
     // back in draw lock
     update_window_size();
-    return mScriptOK;
+    return script_ok_;
   }
   
   inline void protected_call_lua(const char * key, const Value &val)
@@ -421,10 +421,10 @@ private:
   void compute_fps()
   {
     mFPS_i++;
-    if (mServer->current_time_ >= mFPS_start + ONE_SECOND) {
-      mFPS = (real_t)mFPS_i * ONE_SECOND / (mServer->current_time_ - mFPS_start);
+    if (worker_->current_time_ >= mFPS_start + ONE_SECOND) {
+      mFPS = (real_t)mFPS_i * ONE_SECOND / (worker_->current_time_ - mFPS_start);
       mFPS_i = 0;
-      mFPS_start = mServer->current_time_;
+      mFPS_start = worker_->current_time_;
     }
   }
   
@@ -435,11 +435,11 @@ private:
   int         mWidth;        /**< Window width (in pixels). */
   int         mId;           /**< Window id. */
   bool        mFullscreen;   /**< True if fullscreen is enabled. */
-  bool        mLuaInit;      /**< True if there is a Lua "init" function. */
-  bool        mLuaReshape;   /**< True if there is a Lua "reshape" function. */
-  bool        mLuaDraw;      /**< True if there is a Lua "draw" function. */
-  bool        mLuaMouseMove; /**< True if there is a Lua "mouse_move" function. */
-  bool        mLuaKeyPress;  /**< True if there is a Lua "key_press" function. */
+  bool        lua_Init;      /**< True if there is a Lua "init" function. */
+  bool        lua_Reshape;   /**< True if there is a Lua "reshape" function. */
+  bool        lua_Draw;      /**< True if there is a Lua "draw" function. */
+  bool        lua_MouseMove; /**< True if there is a Lua "mouse_move" function. */
+  bool        lua_KeyPress;  /**< True if there is a Lua "key_press" function. */
   pthread_t   mThread;       /**< Thread running all openGL stuff. */
   Matrix      mMouseMatrix;  /**< Mouse position matrix. */
   Value      mMouseMatrixValue; /**< Wrapper around mMouseMatrix. */

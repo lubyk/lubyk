@@ -19,7 +19,7 @@ public:
     mFindHighestDirection = 0;
     mVectorRateCounter    = 0;
     mRate                 = 0.0;
-    mRateStart            = mServer->current_time_;
+    mRateStart            = worker_->current_time_;
     
 
     mIndex  = 0;
@@ -132,9 +132,9 @@ public:
         mFindHighestDirection = 0;
         mVector = mBuffer.advance(); // move loop buffer forward
         if (mVectorRateCounter > 800) {
-          mRate  = mVectorRateCounter * 1000.0 / (mServer->current_time_ - mRateStart);
+          mRate  = mVectorRateCounter * 1000.0 / (worker_->current_time_ - mRateStart);
           mVectorRateCounter = 0;
-          mRateStart = mServer->current_time_;
+          mRateStart = worker_->current_time_;
         }
         
       } else {

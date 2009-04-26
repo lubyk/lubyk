@@ -8,12 +8,12 @@ public:
   const Value value(const Value &val) {
     if (!val.is_nil()) {
       value_ = val;
-      send(value_);
     }
+    send(value_);
     return value_;
   }
   
-  virtual void inspect(Value *hash) {
+  virtual void inspect(Value *hash) const {
     hash->set("value", value_);
   }
   

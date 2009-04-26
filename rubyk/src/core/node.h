@@ -42,13 +42,13 @@ class Node : public Object
     return do_inspect();
   }
   
-  const Value do_inspect() {
+  const Value do_inspect() const {
     HashValue hash;
     inspect(&hash);
     return Value(std::string("<").append(class_url().substr(strlen(CLASS_URL)+1)).append(":").append(url()).append(" ").append(hash.lazy_json()).append(">"));
   }
   
-  virtual void inspect(Value *hash) {}
+  virtual void inspect(Value *hash) const {}
   
   /** Add an inlet with the given callback (used by Class during instantiation). */
   void register_inlet(Inlet *inlet) {
@@ -100,7 +100,7 @@ class Node : public Object
   
   /** Return true if the node is not broken.
    */
-  bool is_ok() { return is_ok_; }
+  bool is_ok() const { return is_ok_; }
   
   /** This method must be implemented in subclasses that want to be looped. */
   virtual void bang(const Value &val) {
@@ -128,6 +128,15 @@ class Node : public Object
   inline void send (size_t port, const Value &val) {
     if (port > outlets_.size() || port < 1) return;
     outlets_[port - 1]->send(val);
+  }
+  
+  /** Return the outlet at the given port if there is one and
+   *  it can receive the provided value.
+   */
+  Outlet *outlet_for_value(size_t port, const Value &val) {
+    if (port > outlets_.size() || port < 1) return NULL;
+    Outlet *outlet = outlets_[port - 1];
+    return outlet->can_receive(val) ? outlet : NULL;
   }
   
   /** Remove all events concerning this node for the events queue. */

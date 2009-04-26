@@ -100,7 +100,7 @@ class MidiOut : public Node {
   //   }
   // }
   
-  void inspect(Value *hash) {
+  virtual void inspect(Value *hash) const {
     if (is_ok() && port_id_ >= 0) {
       std::string name;
       try {

@@ -7,6 +7,13 @@ void Worker::register_looped_node(Node *node) {
   looped_nodes_.push_back(node);
 }
 
+
+void Worker::miss_event(const Event *event) {
+  fprintf(stderr, "Not registering event from %s: (trigger too soon: %f [ms]).\n",
+                  event->node()->do_inspect().str().c_str(),
+                  (event->when_ - current_time_));
+}
+
 void Worker::free_looped_node(Node *node) {  
   std::deque<Node*>::iterator it;
   std::deque<Node*>::iterator end = looped_nodes_.end();

@@ -23,7 +23,7 @@ public:
     int c;
     int mode = 2;
     struct termios oldt, newt;
-    mServer->unlock(); // Let the server breath. We are in a lock--unlock from Command
+    worker_->unlock(); // Let the server breath. We are in a lock--unlock from Command
     
     tcgetattr ( STDIN_FILENO, &oldt );
     newt = oldt;
@@ -44,10 +44,10 @@ public:
         // send both \e and current
         mode = 2;
         
-        mServer->lock();
+        worker_->lock();
           // protected resource
           send('\e');
-        mServer->unlock();
+        worker_->unlock();
       } else if (mode == 3 && c == 68) {
         // left arrow
         c = RK_LEFT_ARROW;
@@ -59,16 +59,16 @@ public:
         mode = 2;
       }
       if (mode <= 0) break;  // esc+esc to leave
-      mServer->lock();
+      worker_->lock();
         // protected resource
         send(c);
-      mServer->unlock();
+      worker_->unlock();
     }
     
     // restore old settings
     tcsetattr ( STDIN_FILENO, TCSANOW, &oldt );
     
-    mServer->lock();
+    worker_->lock();
   }
   
   virtual const Value inspect(const Value &val) 

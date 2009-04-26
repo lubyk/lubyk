@@ -24,7 +24,10 @@ enum MidiMessageType {
 /** This class encapsulates midi messages. */
 class MidiMessage : public ReferenceCounted {
  public:
-  MidiMessage() : type_(RawMidi), wait_(0), data_(3) {}
+  MidiMessage() : type_(RawMidi), wait_(0), data_(3) {
+    set_as_note(60);
+  }
+  
   explicit MidiMessage(unsigned int data_size) : type_(RawMidi), data_(data_size) {}
   
   virtual ~MidiMessage () {}
@@ -70,8 +73,7 @@ class MidiMessage : public ReferenceCounted {
     return true;
   }
   
-  void set_as_note(unsigned char note, unsigned char velocity = 80,
-    unsigned int length = 500, unsigned int channel = 1, time_t wait = 0) {
+  void set_as_note(int note, int velocity = 80, int length = 500, int channel = 1, time_t wait = 0) {
     if (velocity != 0) {
       type_ = NoteOn;
     } else {
@@ -80,11 +82,11 @@ class MidiMessage : public ReferenceCounted {
     set_key(note);
     set_channel(channel);
     set_value(velocity);
-    length_ = length;
+    set_length(length);
     wait_   = wait;
   }
   
-  void set_as_ctrl (unsigned char ctrl, unsigned char ctrl_value,
+  void set_as_ctrl (int ctrl, int ctrl_value,
     unsigned int channel = 1, time_t wait = 0) {
     type_ = CtrlChange;
     set_key(ctrl);
@@ -104,40 +106,62 @@ class MidiMessage : public ReferenceCounted {
     type_ = type;
   }
   
-  inline void set_note(unsigned char note) {
+  inline void set_note(int note) {
     set_key(note);
   }
 
-  inline void set_ctrl(unsigned char ctrl) {
+  inline void set_ctrl(int ctrl) {
     set_key(ctrl);
   }
   
-  inline void set_key(unsigned char note)  {
-    data_[1] = note % 128;
+  inline void set_key(int note)  {
+    if (note > 127) {
+      data_[1] = 127;
+    } else if (note < 0) {
+      data_[1] = 0;
+    } else {
+      data_[1] = note;
+    }
   }
   
-  inline void set_channel(unsigned char channel) {
+  inline void set_channel(int channel) {
+    if (channel > 16) {
+      channel = 16;
+    } else if (channel < 1) {
+      channel = 1;
+    }
+    --channel;
     if (type_ == NoteOn) {
-      data_[0] = 0x90 + ((channel + 15) % 16);
+      data_[0] = 0x90 + channel;
     } else if (type_ == NoteOff) {
-      data_[0] = 0x80 + ((channel + 15) % 16);
+      data_[0] = 0x80 + channel;
     } else if (type_ == CtrlChange) {
-      data_[0] = 0xB0 + ((channel + 15) % 16);
+      data_[0] = 0xB0 + channel;
     } else {
       fprintf(stderr, "set channel for type %i not implemented yet.\n", type_);
     }
   }
   
-  inline void set_velocity(unsigned char velocity) {
+  inline void set_velocity(int velocity) {
     set_value(velocity);
   }
   
-  inline void set_length(time_t length) {
-    length_ = length;
+  inline void set_length(int length) {
+    if (length < 0) {
+      length_ = 0;
+    } else {
+      length_ = length;
+    }
   }
   
-  inline void set_value(unsigned char pValue) {
-    data_[2] = pValue % 128;
+  inline void set_value(int value) {
+    if (value > 127) {
+      data_[2] = 127;
+    } else if (value < 0) {
+      data_[2] = 0;
+    } else {
+      data_[2] = value;
+    }
   }
   
   inline MidiMessageType type() const { return type_; }

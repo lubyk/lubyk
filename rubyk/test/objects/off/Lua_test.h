@@ -82,7 +82,7 @@ public:
     parse("n=Lua(\"function bang(sig)\nsend(1,current_time)\nend\")\nn=>p\n");
     
     assert_print("n.b\n",              "0.00\n");
-    mServer->current_time_ = 1234;
+    worker_->current_time_ = 1234;
     assert_print("n.b\n",              "1234.00\n");
   }
 };

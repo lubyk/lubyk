@@ -10,7 +10,7 @@ public:
   {
     mCmd.set_output(std::cout);
     mCmd.set_input(std::cin);
-    mCmd.set_server(*mServer);
+    mCmd.set_server(*worker_);
     mCmd.set_silent(true);
     return true;
   }
@@ -24,12 +24,12 @@ public:
   bool eval_script(const std::string &pScript) 
   {
     if (pScript.find("function bang()") != std::string::npos) {
-      mScript = pScript;
+      script_ = pScript;
     } else {
-      mScript = std::string("function bang()\nparse_command([[").append(pScript).append("\n]])\nend\n");
+      script_ = std::string("function bang()\nparse_command([[").append(pScript).append("\n]])\nend\n");
     }
     
-    return eval_lua_script(mScript);
+    return eval_lua_script(script_);
   }
 
   // inlet 1
@@ -71,10 +71,10 @@ public:
     std::string str;
     if (string_from_lua(&str)) {
       // server is currently locked by the execution of the Lua script calling parse. We must unlock.
-      mServer->unlock();
+      worker_->unlock();
       mCmd.parse(str);
       // lock back before going back into lua.
-      mServer->lock();
+      worker_->lock();
     }
     return 0;
   }
