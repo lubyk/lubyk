@@ -18,7 +18,7 @@ endif
 
 
 TEST=test/*_test.h test/objects/*_test.h
-LINKER_OBJECTS=../oscit/liboscit.a slot.o inlet.o outlet.o node.o worker.o event.o class.o class_finder.o group.o text_command.o planet.o # lua_script.o src/lib/lua/liblua.a buffer.o
+LINKER_OBJECTS=../oscit/liboscit.a slot.o inlet.o outlet.o node.o worker.o event.o class.o class_finder.o group.o text_command.o planet.o lua_script.o src/lib/lua/liblua.a # buffer.o
 INCLUDE_HEADERS=-Isrc/templates -Isrc/core -Isrc/objects -Isrc/lib/lua -Isrc/lib -I../oscit/include -I../oscit/oscpack -Isrc/core/values -Isrc/lib/osc
 OBJECT_COMPILE=$(INCLUDE_HEADERS) $(DEFINES) -dynamic -bundle -undefined suppress -flat_namespace -L/usr/lib -lgcc -lstdc++
 OBJECT_DEPENDS=src/core/node.hpp src/core/class.h
