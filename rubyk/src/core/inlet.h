@@ -1,5 +1,5 @@
-#ifndef _INLET_H_
-#define _INLET_H_
+#ifndef RUBYK_SRC_CORE_INLET_H_
+#define RUBYK_SRC_CORE_INLET_H_
 #include "slot.h"
 
 class Node;
@@ -69,4 +69,4 @@ private:
   inlet_method_t method_;        /**< Method to set a new value. */
 };
 
-#endif
+#endif // RUBYK_SRC_CORE_INLET_H_
