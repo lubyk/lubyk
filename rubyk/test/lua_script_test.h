@@ -7,13 +7,21 @@
 class LuaScriptTest : public TestHelper {
 public:
   virtual void setUp() {
-    planet_.clear();
-    script_ = planet_.adopt(new LuaScript);
+    planet_ = new Planet();
+    planet_->call(LIB_URL, Value("lib"));
+    script_ = planet_->adopt(new LuaScript);
+    // all this is done by Class normally
     script_->set_name("lua");
+    script_->adopt(new Object("in"));
+    Value res = script_->init();
+    if (res.is_error()) {
+      std::cout << "Could not init LuaScript !\n" << res << "\n";
+    }
   }
   
   void tearDown() {
-    delete script_;
+    if (planet_) delete planet_;
+    planet_ = NULL;
   }
   
   void test_compile( void ) {
@@ -40,10 +48,10 @@ public:
   }
   
   void test_add_inlet( void ) {
-    script_->adopt(new Object("in")); // this is done by Class normally
     Value res = parse("inlet('tempo', {0.0, 'bpm', 'Main beat machine tempo.'})");
+    std::cout << res << "\n\n";
     assert_true(res.is_string());
-    Object *inlet = planet_.object_at("/lua/in/tempo");
+    Object *inlet = planet_->object_at("/lua/in/tempo");
     assert_true(inlet != NULL);
     assert_equal("fss", inlet->type().type_tag());
     assert_equal(0.0, inlet->type()[0].r);
@@ -54,17 +62,34 @@ public:
     assert_true(res.is_string()); // no error
   }
   
-  void test_rubyk_lua( void ) {
-    // RealIO('bpm', 'Main beat machine tempo.')
+  void test_add_inlet_RealIO( void ) {
+    // also tests loading of rubyk.lua
+    Value res = parse("inlet('tempo', RealIO('bpm', 'Main beat machine tempo.'))");
+    std::cout << res << "\n";
+    assert_true(res.is_string());
+    Object *inlet = planet_->object_at("/lua/in/tempo");
+    assert_true(inlet != NULL);
+    assert_equal("fss", inlet->type().type_tag());
+    assert_equal(0.0, inlet->type()[0].r);
+    assert_equal("bpm", inlet->type()[1].str());
+    assert_equal("Main beat machine tempo.", inlet->type()[2].str());
   }
   
-  
+  void test_add_inlet_NilIO( void ) {
+    // also tests loading of rubyk.lua
+    Value res = parse("inlet('boom', NilIO('Ping pong.'))");
+    assert_true(res.is_string());
+    Object *inlet = planet_->object_at("/lua/in/boom");
+    assert_true(inlet != NULL);
+    assert_equal("Ns", inlet->type().type_tag());
+    assert_equal("Ping pong.", inlet->type()[1].str());
+  }
   
 private:
   const Value parse(const char *string) {
     return script_->script(Value(string));
   }
   
-  Planet    planet_;
+  Planet    *planet_;
   LuaScript *script_;
 };

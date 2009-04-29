@@ -10,7 +10,7 @@ extern "C" {
 
 #define RUBYK_THIS_IN_LUA "__this"
 
-LuaScript::LuaScript() {
+const Value LuaScript::lua_init() {
   // Our own lua context.
   lua_ = lua_open();
   
@@ -24,7 +24,19 @@ LuaScript::LuaScript() {
   register_lua_method<LuaScript, &LuaScript::lua_inlet>("inlet");
   
   // load rubyk.lua
-  // ????
+  Value res = root_->call(LIB_URL);
+  if (!res.is_string()) {
+    return res;
+  } else {
+    std::string path(res.str());
+    path.append("/lua/rubyk.lua");
+    int status = luaL_dofile(lua_, path.c_str());
+    if (status) {
+      return Value(INTERNAL_SERVER_ERROR, 
+        std::string(lua_tostring(lua_, -1)).append("."));
+    }
+  }
+  return gNilValue;
 }
 
 LuaScript::~LuaScript() {
@@ -147,9 +159,10 @@ bool LuaScript::value_from_lua(int index, Value *res) {
   */
   switch ( lua_type(lua_, index) ) {
   case LUA_TNONE:
-  case LUA_TNIL:
-    // we cannot retrieve a nil value since this is what marks end of lists.
     return false;
+  case LUA_TNIL:
+    res->set_nil();
+    break;
   case LUA_TNUMBER:
     res->set(lua_tonumber(lua_, index));
     break;
@@ -186,21 +199,23 @@ bool LuaScript::value_from_lua(int index, Value *res) {
 
 
 bool LuaScript::list_from_lua(int index, Value *val) {
-  int i  = 1;
+  int size = lua_objlen(lua_, index);
   Value tmp;
   
-  while(true) {
-    lua_pushinteger(lua_, i);
-    lua_gettable(lua_, index);
+  for(int i = 1; i <= size; ++i) {
+    
+    lua_rawgeti(lua_, index, i); // no meta table passing
     
     if (!value_from_lua(-1, &tmp)) {
-      lua_pop(lua_,1);
-      break;
+      // TODO: unsupported format. BAD
+      val->push_back(gNilValue);
+    } else {
+      val->push_back(tmp);
     }
-    val->push_back(tmp);
     lua_pop(lua_,1);
-    i++;
   }
+  
+  std::cout << "list_from_lua: " << *val << "\n";
   return true;
 }
 

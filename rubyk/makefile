@@ -37,10 +37,13 @@ rubyk: src/core/main.cpp $(LINKER_OBJECTS) test_objects
 
 lib:
 	mkdir lib
+	
+lib/lua: lib src/objects/lua/*.lua
+	mkdir lib/lua; cp src/objects/lua/*.lua lib/lua/
 
-test_objects: lib lib/Value.rko lib/Print.rko lib/Metro.rko lib/MidiOut.rko lib/NoteOut.rko
+test_objects: lib lib/lua lib/Value.rko lib/Print.rko lib/Metro.rko lib/MidiOut.rko lib/NoteOut.rko
 
-objects: lib lib/Test.rko lib/Number.rko lib/Add.rko lib/Inlet.rko lib/Group.rko lib/Alias.rko lib/Outlet.rko lib/Print.rko lib/Counter.rko lib/Metro.rko
+objects: lib lib/Test.rko lib/Number.rko lib/Add.rko lib/Inlet.rko lib/Group.rko lib/Alias.rko lib/Outlet.rko lib/Print.rko lib/Counter.rko lib/Metro.rko lib/lua/rubyk.lua
 
 off: lib/MidiOut.rko lib/NoteOut.rko lib/Lua.rko lib/Serial.rko lib/Turing.rko lib/Keyboard.rko lib/Cabox.rko lib/Svm.rko lib/Buffer.rko lib/GLWindow.rko lib/Cut.rko lib/MaxCount.rko lib/FFT.rko lib/VQ.rko lib/ClassRecorder.rko lib/PCA.rko lib/Average.rko lib/Peak.rko lib/Minus.rko lib/Replay.rko lib/Kmeans.rko lib/Abs.rko lib/Sum.rko lib/Ctrl.rko lib/Diff.rko lib/Bang.rko lib/Macro.rko lib/MidiIn.rko lib/GLLua.rko lib/GLPlot.rko lib/Group.rko lib/System.rko
 	

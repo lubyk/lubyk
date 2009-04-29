@@ -9,7 +9,9 @@ typedef int (*lua_CFunction) (lua_State *L);
 class LuaScript : public Script
 {
 public:
-  LuaScript();
+  virtual const Value init() {
+    return lua_init();
+  }
   
   virtual ~LuaScript();
   
@@ -17,7 +19,10 @@ public:
    */
   const Value call_lua(const char *function_name, const Value &val);
 protected:
-
+  /** Initialization (build methods, load libraries, etc).
+   */
+  const Value lua_init();
+  
   /** Script compilation.
    */
   virtual const Value eval_script();
