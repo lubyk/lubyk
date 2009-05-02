@@ -9,7 +9,7 @@ void Worker::register_looped_node(Node *node) {
 
 
 void Worker::miss_event(const Event *event) {
-  fprintf(stderr, "Not registering event from %s: (trigger too soon: %f [ms]).\n",
+  fprintf(stderr, "Not registering event from %s: (trigger too soon: %li [ms]).\n",
                   event->node()->do_inspect().str().c_str(),
                   (event->when_ - current_time_));
 }

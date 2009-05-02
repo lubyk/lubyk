@@ -104,6 +104,12 @@ protected:
       }
     }
     cmd_->parse(input);
+    if (output_.str().find("# 400 ") != std::string::npos ||
+        output_.str().find("# 404 ") != std::string::npos ||
+        output_.str().find("# 500 ") != std::string::npos) {
+      // could find a better way to detect errors...
+      fprintf(stderr, "Error while parsing '%s'\n%s\n", input, output_.str().c_str());
+    }
     output_.str(std::string("")); // clear output
   }
   

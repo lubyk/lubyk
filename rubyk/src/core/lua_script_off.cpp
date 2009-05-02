@@ -433,12 +433,6 @@ int LuaScript::Matrix_tostring (lua_State *L)
 }
 
 
-const luaL_reg LuaScript::sMatrix_methods[] = {
-  {"get",        Matrix_get},
-  {"tostring",   Matrix_tostring},
-  {0,0}
-};
-
 const luaL_reg LuaScript::sMatrix_meta[] = {
   {"__gc",       Matrix_gc},
   {"__tostring", Matrix_tostring},

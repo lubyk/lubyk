@@ -15,6 +15,14 @@
 
 class Observer;
 
+/** Base class for all nodes in rubyk.
+ *
+ *  Initialization is done in the following order:
+ *  1. create : you should not write constructors.
+ *  2. init   : return error messages if this step fails.
+ *  2. set    : call methods with parameters, return error messages if this fails.
+ *  3. start  : this is called only if init and set did not fail.
+ */
 class Node : public Object
 {
  public:
@@ -91,9 +99,16 @@ class Node : public Object
   /**< Sending order from incoming connections should be updated. */
   void sort_connections();
   
-  /** This method must be implemented in subclasses. It is used to do a basic setup with default parameters before these
-    * are changed during runtime. */
-  virtual const Value init() { return gTrueValue; }
+  /** When this method is implemented in subclasses, it is used to
+   *  do a basic setup with default parameters before these
+   *  are changed by calling methods during runtime.
+   */
+  virtual const Value init() { return gNilValue; }
+  
+  /** When this method is implemented in subclasses, it is used as
+   *  the last call in the initialization chain.
+   */
+  virtual const Value start() { return gNilValue; }
   
   /** Set is_ok_ flag. If this flag is not true, the node is considered "broken" and usually does not do any processing. */
   void set_is_ok(bool status) { is_ok_ = status; }

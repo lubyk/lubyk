@@ -2,17 +2,20 @@
 
 // these receivers are complicated to make sure they work in the correct order and they are all called.
 // x = 2*x + y + 1
-static void SlotTest_receive_value1(Node * receiver, const Value &val) {
+static void SlotTest_receive_value1(Inlet *inlet, const Value &val) {
+  Node *receiver = inlet->node();
   *(((DummyNode*)receiver)->SlotTest_value_) = (2*(*((DummyNode*)receiver)->SlotTest_value_)) + val.r + 1;
 }
 
 // x = 2*x + y + 2
-static void SlotTest_receive_value2(Node * receiver, const Value &val) {
+static void SlotTest_receive_value2(Inlet *inlet, const Value &val) {
+  Node *receiver = inlet->node();
   *(((DummyNode*)receiver)->SlotTest_value_) = (2*(*((DummyNode*)receiver)->SlotTest_value_)) + val.r + 2;
 }
 
 // x = 2*x + y + 4
-static void SlotTest_receive_value4(Node * receiver, const Value &val) {
+static void SlotTest_receive_value4(Inlet *inlet, const Value &val) {
+  Node *receiver = inlet->node();
   *(((DummyNode*)receiver)->SlotTest_value_) = (2*(*((DummyNode*)receiver)->SlotTest_value_)) + val.r + 4;
 }
 

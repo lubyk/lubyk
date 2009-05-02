@@ -67,7 +67,7 @@ public:
   /** Sort slots by rightmost node and rightmost position in the same node. */
   bool operator>=(const Slot &slot) const;
   
-  void *node() { return node_; }
+  inline Node *node() { return node_; }
   
   /** Connections pointing out of this slot should reorder (an inlet id changed or its node changed position). */
   void sort_connections() {
@@ -99,8 +99,13 @@ protected:
   /** If operation is 'c': create a new link, else unlink. */
   const Value change_link(unsigned char operation, const Value &val);
   
-  Node * node_;   /**< Containing node.      */
-  int    id_;     /**< Position in the node. */
+  /** Containing node.
+   */
+  Node *node_;
+  
+  /** Position in the node.
+   */
+  int id_;
   
   OrderedList<Slot*> connections_; /**< connections are kept sorted, so that we always send values to inlets
     that are rightmost (less important, no bang) first. */

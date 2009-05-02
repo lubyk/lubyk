@@ -37,3 +37,22 @@ end
 -- function AnyIO(info)
 --   { ??? , info}
 -- end
+
+
+function Outlet(name, vtype)
+  local self = build_outlet_(name, vtype)
+  local send
+  
+  if (type(self) == 'string') then
+    -- error
+    print(self)
+    send = function (v)
+      print('outlet ' .. name .. ' could not be created (' .. self .. '). Cannot send:', v)
+    end
+  else
+    send = function (v)
+      send_(self, v)
+    end
+  end
+  return { send = send }
+end

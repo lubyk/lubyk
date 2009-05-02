@@ -2,9 +2,10 @@
 #define RUBYK_SRC_CORE_INLET_H_
 #include "slot.h"
 
+class Inlet;
 class Node;
 
-typedef void(*inlet_method_t)(Node * node, const Value &val);
+typedef void(*inlet_method_t)(Inlet *node, const Value &val);
 
 /** Prototype constructor for Inlets. */
 struct InletPrototype
@@ -48,20 +49,20 @@ public:
   virtual const Value trigger(const Value &val);
     
   /** Receive a value. */
-  void receive(const Value &val) {
-    (*method_)(node_, val);     // use functor
+  inline void receive(const Value &val) {
+    (*method_)(this, val);     // use functor
   }
   
   /** Create a callback for an inlet. */
   template <class T, void(T::*Tmethod)(const Value &val)>
-  static void cast_method(Node *receiver, const Value &val) {
-    (((T*)receiver)->*Tmethod)(val);
+  static void cast_method(Inlet *inlet, const Value &val) {
+    (((T*)inlet->node_)->*Tmethod)(val);
   }
   
   /** Create a callback for an inlet based on a normal accessor. */
   template <class T, const Value(T::*Tmethod)(const Value &val)>
-  static void cast_method(Node *receiver, const Value &val) {
-    (((T*)receiver)->*Tmethod)(val);
+  static void cast_method(Inlet *inlet, const Value &val) {
+    (((T*)inlet->node_)->*Tmethod)(val);
     // ignore return value
   }
   

@@ -189,7 +189,7 @@ class Object : public Typed {
   }
 
   /** Return name of object. */
-  const std::string name() const {
+  inline const std::string name() const {
     return name_;
   }
 

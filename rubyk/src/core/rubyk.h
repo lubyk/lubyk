@@ -11,5 +11,6 @@
 #include "class_finder.h"
 #include "new_method.h"
 #include "text_command.h"
+#include "lua_script.h"
  
 #include "node.hpp"

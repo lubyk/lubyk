@@ -13,6 +13,7 @@ public:
     // all this is done by Class normally
     script_->set_name("lua");
     script_->adopt(new Object("in"));
+    script_->adopt(new Object("out"));
     Value res = script_->init();
     if (res.is_error()) {
       std::cout << "Could not init LuaScript !\n" << res << "\n";
@@ -49,7 +50,6 @@ public:
   
   void test_add_inlet( void ) {
     Value res = parse("inlet('tempo', {0.0, 'bpm', 'Main beat machine tempo.'})");
-    std::cout << res << "\n\n";
     assert_true(res.is_string());
     Object *inlet = planet_->object_at("/lua/in/tempo");
     assert_true(inlet != NULL);
@@ -65,7 +65,6 @@ public:
   void test_add_inlet_RealIO( void ) {
     // also tests loading of rubyk.lua
     Value res = parse("inlet('tempo', RealIO('bpm', 'Main beat machine tempo.'))");
-    std::cout << res << "\n";
     assert_true(res.is_string());
     Object *inlet = planet_->object_at("/lua/in/tempo");
     assert_true(inlet != NULL);
@@ -84,6 +83,18 @@ public:
     assert_equal("Ns", inlet->type().type_tag());
     assert_equal("Ping pong.", inlet->type()[1].str());
   }
+  
+  void test_add_outlet( void ) {
+    Value res = parse("note = Outlet('note', RealIO('midi note', 'Sends note values.'))");
+    assert_true(res.is_string());
+    Object *outlet = planet_->object_at("/lua/out/note");
+    assert_true(outlet != NULL);
+    assert_equal("fss", outlet->type().type_tag());
+    assert_equal("midi note", outlet->type()[1].str()); // units
+    assert_equal("Sends note values.", outlet->type()[2].str()); // info
+  }
+  
+  // sending tested in LuaTest
   
 private:
   const Value parse(const char *string) {

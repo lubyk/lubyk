@@ -18,7 +18,7 @@ endif
 
 
 TEST=test/*_test.h test/objects/*_test.h
-LINKER_OBJECTS=../oscit/liboscit.a slot.o inlet.o outlet.o node.o worker.o event.o class.o class_finder.o group.o text_command.o planet.o lua_script.o src/lib/lua/liblua.a # buffer.o
+LINKER_OBJECTS=../oscit/liboscit.a slot.o inlet.o outlet.o node.o worker.o event.o class.o class_finder.o group.o text_command.o planet.o lua_script.o lua_inlet.o src/lib/lua/liblua.a # buffer.o
 INCLUDE_HEADERS=-Isrc/templates -Isrc/core -Isrc/objects -Isrc/lib/lua -Isrc/lib -I../oscit/include -I../oscit/oscpack -Isrc/core/values -Isrc/lib/osc
 OBJECT_COMPILE=$(INCLUDE_HEADERS) $(DEFINES) -dynamic -bundle -undefined suppress -flat_namespace -L/usr/lib -lgcc -lstdc++
 OBJECT_DEPENDS=src/core/node.hpp src/core/class.h
@@ -41,11 +41,11 @@ lib:
 lib/lua: lib src/objects/lua/*.lua
 	mkdir lib/lua; cp src/objects/lua/*.lua lib/lua/
 
-test_objects: lib lib/lua lib/Value.rko lib/Print.rko lib/Metro.rko lib/MidiOut.rko lib/NoteOut.rko
+test_objects: lib lib/lua lib/Value.rko lib/Print.rko lib/Metro.rko lib/MidiOut.rko lib/NoteOut.rko lib/Lua.rko
 
 objects: lib lib/Test.rko lib/Number.rko lib/Add.rko lib/Inlet.rko lib/Group.rko lib/Alias.rko lib/Outlet.rko lib/Print.rko lib/Counter.rko lib/Metro.rko lib/lua/rubyk.lua
 
-off: lib/MidiOut.rko lib/NoteOut.rko lib/Lua.rko lib/Serial.rko lib/Turing.rko lib/Keyboard.rko lib/Cabox.rko lib/Svm.rko lib/Buffer.rko lib/GLWindow.rko lib/Cut.rko lib/MaxCount.rko lib/FFT.rko lib/VQ.rko lib/ClassRecorder.rko lib/PCA.rko lib/Average.rko lib/Peak.rko lib/Minus.rko lib/Replay.rko lib/Kmeans.rko lib/Abs.rko lib/Sum.rko lib/Ctrl.rko lib/Diff.rko lib/Bang.rko lib/Macro.rko lib/MidiIn.rko lib/GLLua.rko lib/GLPlot.rko lib/Group.rko lib/System.rko
+off: lib/Serial.rko lib/Turing.rko lib/Keyboard.rko lib/Cabox.rko lib/Svm.rko lib/Buffer.rko lib/GLWindow.rko lib/Cut.rko lib/MaxCount.rko lib/FFT.rko lib/VQ.rko lib/ClassRecorder.rko lib/PCA.rko lib/Average.rko lib/Peak.rko lib/Minus.rko lib/Replay.rko lib/Kmeans.rko lib/Abs.rko lib/Sum.rko lib/Ctrl.rko lib/Diff.rko lib/Bang.rko lib/Macro.rko lib/MidiIn.rko lib/GLLua.rko lib/GLPlot.rko lib/Group.rko lib/System.rko
 	
 test/runner.cpp: $(TEST) test_objects
 	./test/cxxtest/cxxtestgen.pl --error-printer -o test/runner.cpp $(TEST)

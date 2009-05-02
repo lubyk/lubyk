@@ -5,10 +5,10 @@ class Metro : public Node
 public:
   Metro() : tempo_(120), run_(false) {}
   
-  const Value init() {
+  const Value start() {
     run_ = true;
     bang(gNilValue); // start loop
-    return gTrueValue;
+    return gNilValue;
   }
   
   // [1] restart metronome / set tempo

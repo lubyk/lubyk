@@ -85,19 +85,21 @@ public:
     // make outlets
     klass->make_outlets(node);
     
+    Value res = node->init();
+    
+    // if init does not return gNilValue, the node goes into 'broken' mode.
+    node->set_is_ok(!res.is_error());
+    if (res.is_error()) return res;
+    
     if (!params.is_nil()) {
       // set defaults by calling methods
+      // TODO: deal with errors and return values
       node->trigger(params);
     }
     
-    Value res = node->init();
-    
-    // if init does not return gTrueValue, the node goes into 'broken' mode.
+    res = node->start();
     node->set_is_ok(!res.is_error());
-    
-    if (res.is_error()) {
-      return res;
-    }
+    if (res.is_error()) return res;
     
     return Value(node->url());
   }
