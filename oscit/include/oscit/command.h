@@ -67,8 +67,11 @@ class Command : public Thread
     return object;
   }
   
-  THash<std::string, Object*> remote_objects_; /**< Contains remote_objects (TODO: purge if no alias and not used...). */
-  Root              *root_;
+  /**< Contains remote_objects (TODO: purge if no alias and not used...).
+   */
+  THash<std::string, Object*> remote_objects_;
+  
+  Root *root_;
   
  private:
   const std::string  protocol_;

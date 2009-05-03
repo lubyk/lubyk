@@ -7,9 +7,14 @@ TEST=test/*_test.h
 OBJECTS=url.o list.o midi_message.o object.o root.o command.o osc_command.o zeroconf.o zeroconf_registration.o zeroconf_browser.o value.o thread.o oscpack/liboscpack.a cxalloc.o cxsystem.o
 CFLAGS=-g -Wall $(TESTING)
 
-
-test: test/runner test/runner.cpp
+# without slow tests
+test: test/runner
 	./test/runner && rm test/runner
+
+# all tests (zeroconf & co)
+test_all: test/runner_all
+	./test/runner_all && rm test/runner_all
+
 	
 # TODO: archive (ar ..)
 liboscit.a: $(OBJECTS)
@@ -20,9 +25,15 @@ oscpack/liboscpack.a:
 
 test/runner.cpp: $(TEST)
 	./test/cxxtest/cxxtestgen.pl --error-printer -o test/runner.cpp $(TEST)
-	
+
 test/runner: test/runner.cpp liboscit.a
 	$(CC) $(CFLAGS) $(LFLAGS) -Itest $(INCLUDE_HEADERS) -I. test/runner.cpp liboscit.a -lgcc -lstdc++ -o test/runner
+
+test/runner_all.cpp: $(TEST) test/*_test_slow.h
+	./test/cxxtest/cxxtestgen.pl --error-printer -o test/runner_all.cpp $(TEST) test/*_test_slow.h
+
+test/runner_all: test/runner_all.cpp liboscit.a
+	$(CC) $(CFLAGS) $(LFLAGS) -Itest $(INCLUDE_HEADERS) -I. test/runner_all.cpp liboscit.a -lgcc -lstdc++ -o test/runner_all
 
 root.o: src/root.cpp include/oscit/root.h include/oscit/*_meta_method.h
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
@@ -49,4 +60,4 @@ src/%.cpp: src/%.rl
 	$(RAGEL) $< -o $@
 
 clean:
-	rm -rf *.o *.dSYM liboscit.a test/runner.cpp test/*.dSYM
+	rm -rf *.o *.dSYM liboscit.a test/runner.cpp test/*.dSYM test/runner_all.cpp

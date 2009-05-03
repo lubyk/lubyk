@@ -7,8 +7,8 @@
 
 using namespace oscit;
 
-void microsleep(float microseconds) {
-  Thread::microsleep(microseconds);
+void millisleep(float microseconds) {
+  Thread::millisleep(microseconds);
 }
 
 #define assert_equal(x,y) _assert_equal(__FILE__,__LINE__,#y,x,y)

@@ -8,9 +8,9 @@ std::ostringstream gMutexTest_log(std::ostringstream::out);
 void * start_mutex_test_thread(void * data) {  
   gMutexTest_log << "[1:new]";
   gMutexTest_mutex.lock();
-  microsleep(1);
+  millisleep(1);
   gMutexTest_log << "[1:lock]";
-  microsleep(50);
+  millisleep(50);
   gMutexTest_mutex.unlock();
   gMutexTest_log << "[1:unlock][1:end]";
   return NULL;
@@ -40,12 +40,12 @@ public:
     pthread_t id;
     // create new thread (will try to get hold of the lock)
     pthread_create( &id, NULL, &start_mutex_test_thread, NULL);
-    microsleep(10);
+    millisleep(10);
     // release lock() --> other gets hold of it
     gMutexTest_mutex.unlock();
     gMutexTest_log << "[0:unlock]";
     gMutexTest_mutex.lock();
-    microsleep(1);
+    millisleep(1);
     gMutexTest_log << "[0:lock]";
     gMutexTest_mutex.unlock();
     pthread_join( id, NULL);

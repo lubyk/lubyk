@@ -25,13 +25,9 @@ public:
   
 protected:
   
-  /** Setup serviceRef and start listening.
-   */
-  virtual void start() = 0;
-  
   /** Process events here.
    */
-  void listen(Thread *thread, DNSServiceRef service_ref);
+  void listen(Thread *thread, DNSServiceRef service);
   
   volatile int  timeout_;
   Thread listen_thread_;
@@ -46,21 +42,21 @@ protected:
 class ZeroConfRegistration : public ZeroConf
 {
  public:
-  ZeroConfRegistration(const std::string &name, const std::string &service_type, uint16_t port) : name_(name), service_type_(service_type), port_(port) {
-    start();
-  }
+  ZeroConfRegistration(const std::string &name, const std::string &service_type, uint16_t port);
   
-  virtual void registration_done(const std::string &name) {
+  virtual void registration_done() {}
+  
+  void finish_registration(const std::string &name, const std::string &host) {
     name_ = name;
+    host_ = host;
+    registration_done();
   }
- protected:
   
-  /** Registration setup.
-   */
-  virtual void start();
- private:
+ protected:
   void do_start(Thread *thread);
+
   std::string name_;
+  std::string host_;
   std::string service_type_;
   uint16_t    port_;
 };
@@ -73,9 +69,7 @@ class ZeroConfRegistration : public ZeroConf
 class ZeroConfBrowser : public ZeroConf
 {
  public:
-  ZeroConfBrowser(const std::string &service_type) : service_type_(service_type) {
-    start();
-  }
+  ZeroConfBrowser(const std::string &service_type);
   
   virtual void add_device(const std::string &name, const std::string &host, unsigned int port, bool more_coming) {
     printf("add_device %s @ %s:%i%s\n", name.c_str(), host.c_str(), port, more_coming ? " (more coming)" : "");
@@ -84,11 +78,6 @@ class ZeroConfBrowser : public ZeroConf
   virtual void remove_device(const std::string &name, const std::string &host, unsigned int port, bool more_coming) {
     printf("remove_device %s @ %s:%i%s\n", name.c_str(), host.c_str(), port, more_coming ? " (more coming)" : "");
   }
- protected:
-   
-  /** Start browsing.
-  */
-  virtual void start();
 
  private:
   void do_start(Thread *thread);

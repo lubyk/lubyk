@@ -13,15 +13,14 @@ namespace oscit {
 
 static osc::OutboundPacketStream &operator<<(osc::OutboundPacketStream &out_stream, const Value &val);
 
-OscCommand::OscCommand(uint port) : Command("osc") { 
-  socket_ = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, port ), this );
-  zeroconf_registration_ = new ZeroConfRegistration("oscit", "_oscit._udp", port);
+OscCommand::OscCommand(uint port) : Command("osc"), port_(port), zeroconf_registration_(NULL) { 
+  socket_ = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, port_ ), this );
 }
 
 OscCommand::~OscCommand() {
   kill();
   delete socket_;
-  delete zeroconf_registration_;
+  if (zeroconf_registration_ != NULL) delete zeroconf_registration_;
 }
 
 void OscCommand::kill() {
@@ -31,6 +30,13 @@ void OscCommand::kill() {
 
 void OscCommand::do_listen() {
   // Run until async break.
+  if (!zeroconf_registration_) {
+    std::string name(root_->name());
+    if (name == "") {
+      name = "Generic oscit device";
+    }
+    zeroconf_registration_ = new ZeroConfRegistration(name.c_str(), "_oscit._udp.", port_);
+  }
   socket_->Run();
 }
 

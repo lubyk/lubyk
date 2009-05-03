@@ -27,7 +27,15 @@ class Root : public Object
     init();
   }
   
+  Root(const char *name) : Object(name), objects_(OBJECT_HASH_SIZE) {
+    init();
+  }
+  
   Root(const Value &type) : Object(type), objects_(OBJECT_HASH_SIZE) {
+    init();
+  }
+  
+  Root(const char *name, const Value &type) : Object(name, type), objects_(OBJECT_HASH_SIZE) {
     init();
   }
   
@@ -35,7 +43,15 @@ class Root : public Object
     init();
   }
   
+  Root(size_t hashSize, const char *name) : Object(name), objects_(hashSize) {
+    init();
+  }
+  
   Root(size_t hashSize, const Value &type) : Object(type), objects_(hashSize) {
+    init();
+  }
+  
+  Root(size_t hashSize, const char *name, const Value &type) : Object(name, type), objects_(hashSize) {
     init();
   }
   

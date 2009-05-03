@@ -12,6 +12,14 @@ public:
     assert_equal("", r.url());
   }
   
+  void test_url( void ) {
+    Root r("funky");
+    assert_equal("funky", r.name());
+    assert_equal("", r.url());
+    Object *lala = r.adopt(new Object("lala"));
+    assert_equal("/lala", lala->url());
+  }
+  
   void test_get_object_at( void ) {
     Root root;
     Object * foo = root.adopt(new Object("foo"));
@@ -152,12 +160,12 @@ public:
     Root root;
     std::string string;
     DummyCommand * cmd = root.adopt_command(new DummyCommand(&string));
-    microsleep(15);
+    millisleep(15);
     assert_equal("..", string);
     delete cmd;
     string = "";
     cmd = root.adopt_command(new DummyCommand(&string), false); // do not start
-    microsleep(15);
+    millisleep(15);
     assert_equal("", string);
     delete cmd; // should not lock
   }

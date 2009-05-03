@@ -5,11 +5,10 @@ rubyk/lib/*
 *.pbxuser
 *.mode1v3
 .DS_Store
-oscit/test/runner.cpp
+oscit/test/runner*
 rubyk/src/lib/lua/lua
 rubyk/src/lib/lua/luac
-rubyk/test/runner.cpp
-rubyk/test/runner
+rubyk/test/runner*
 rubyk/rubyk
 mimas/build/*/build
 doc/prototypes/test

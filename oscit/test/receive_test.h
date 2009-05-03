@@ -50,11 +50,11 @@ class ReceiveTest : public TestHelper
   
   void send(const char *url, const Value &val) {
     sender_->send(root_end_point_, url, val);
-    microsleep(1);
+    millisleep(1);
   }
   
   std::string reply() {
-    microsleep(1);
+    millisleep(1);
     return reply_->str();
   }
   

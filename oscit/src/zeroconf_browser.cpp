@@ -32,17 +32,23 @@ struct BrowsedDevice {
   DNSServiceFlags flags_;
 };
 
+ZeroConfBrowser::ZeroConfBrowser(const std::string &service_type) : service_type_(service_type) {
+  listen_thread_.start<ZeroConfBrowser, &ZeroConfBrowser::do_start>(this, NULL);
+}
+
 static void s_resolve_callback(DNSServiceRef service, DNSServiceFlags flags, uint32_t interface_index,
                                DNSServiceErrorType error, const char *fullname, const char *host_target,
                                uint16_t port, uint16_t txt_len, const unsigned char *txt, void *context) {
   BrowsedDevice *device = (BrowsedDevice*)context;
-  DNSServiceRefDeallocate(service);
   
+  //printf("flags:%i\n interface_index:%i\n error:%i\n fullname:%s\n host_target:%s\n port:%u\n txt_len:%i\n", flags, interface_index, error, fullname, host_target, ntohs(port), txt_len);
   if (device->flags_ & kDNSServiceFlagsAdd) {
-    device->browser_->add_device(device->name_, device->host_, port, device->flags_ & kDNSServiceFlagsMoreComing);
+    device->browser_->add_device(device->name_, device->host_, ntohs(port), device->flags_ & kDNSServiceFlagsMoreComing);
   } else {
-    device->browser_->remove_device(device->name_, device->host_, port, device->flags_ & kDNSServiceFlagsMoreComing);
+    device->browser_->remove_device(device->name_, device->host_, ntohs(port), device->flags_ & kDNSServiceFlagsMoreComing);
   }
+  
+  DNSServiceRefDeallocate(service);
   delete device;
 }
 
@@ -77,10 +83,6 @@ static void s_browser_callback(DNSServiceRef service, DNSServiceFlags flags, uin
      fprintf(stderr,"Error while trying to resolve %s @ %s (%d)\n", name, domain, error);
     }
   }
-}
-
-void ZeroConfBrowser::start() {
-  listen_thread_.start<ZeroConfBrowser, &ZeroConfBrowser::do_start>(this, NULL);
 }
 
 void ZeroConfBrowser::do_start(Thread *thread) {

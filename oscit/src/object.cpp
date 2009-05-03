@@ -80,6 +80,9 @@ void Object::moved() {
     url_ = std::string(parent_->url()).append("/").append(name_);
     set_root(parent_->root_);
     set_context(parent_->context_);
+  } else if (root_ == this) {
+    // root: url does not contain name
+    url_ = "";
   } else {
     // no parent
     url_ = name_;

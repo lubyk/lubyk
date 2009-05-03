@@ -35,7 +35,7 @@ class Thread : public Mutex
     parameter_  = parameter;
     should_run_ = true;
     pthread_create( &thread_id_, NULL, &start_thread<T,Tmethod>, (void*)this);
-    microsleep(0.01); // make sure thread is properly started (signals registered) in case we die right after
+    millisleep(0.01); // make sure thread is properly started (signals registered) in case we die right after
   }
   
   /** Start a new thread with the given parameter. The class should check if it
@@ -52,7 +52,7 @@ class Thread : public Mutex
     parameter_  = parameter;
     should_run_ = true;
     pthread_create( &thread_id_, NULL, &start_thread<T,Tmethod>, (void*)this);
-    microsleep(0.01); // make sure thread is properly started (signals registered) in case we die right after
+    millisleep(0.01); // make sure thread is properly started (signals registered) in case we die right after
   }
   
   inline bool should_run() {
@@ -90,10 +90,10 @@ class Thread : public Mutex
   /** Set thread priority to normal. */
   void normal_priority();
   
-  static void microsleep(float microseconds) {
+  static void millisleep(float milliseconds) {
     struct timespec sleeper;
     sleeper.tv_sec  = 0; 
-    sleeper.tv_nsec = (unsigned int)(microseconds * 1000000.0);
+    sleeper.tv_nsec = (unsigned int)(milliseconds * 1000000.0);
     nanosleep (&sleeper, NULL);
   }
   

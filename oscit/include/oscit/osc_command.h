@@ -84,7 +84,13 @@ private:
   /** Build a message from a value. */
   static void build_message(const char *url, const Value &val, osc::OutboundPacketStream *message);
   
-  UdpListeningReceiveSocket *socket_;   /**< Socket listening to udp packets. */
+  /** Socket listening to udp packets.
+   */
+  UdpListeningReceiveSocket *socket_;
+  
+  /** Connected port.
+   */
+  uint port_;
   
   /** Zeroconf registration thread.
    */

@@ -1,6 +1,3 @@
-#include "oscit/zeroconf.h"
-
-#include <dns_sd.h>     // zeroconf
 #include <stdio.h>			// For stdout, stderr
 #include <string.h>			// For strlen(), strcpy(), bzero()
 #include <errno.h>      // For errno, EINTR
@@ -20,21 +17,25 @@ typedef	int	pid_t;
 
 #include <iostream>
 
+#include <dns_sd.h>     // zeroconf
+#include "oscit/zeroconf.h"
+
+
 namespace oscit {
+
+
+ZeroConfRegistration::ZeroConfRegistration(const std::string &name, const std::string &service_type, uint16_t port) : name_(name), service_type_(service_type), port_(port) {
+  listen_thread_.start<ZeroConfRegistration, &ZeroConfRegistration::do_start>(this, NULL);
+}
 
 /** Callback called after registration. */
 static void s_register_callback(DNSServiceRef ref, DNSServiceFlags flags, DNSServiceErrorType error, const char *name,
-                             const char *service_type, const char *domain, void * context) {
-  
+                             const char *service_type, const char *host, void * context) {
   if (error != kDNSServiceErr_NoError) {
    fprintf(stderr, "register_callback returned error %d.\n", error);
   } else {
-    ((ZeroConfRegistration*)context)->registration_done(name);
+    ((ZeroConfRegistration*)context)->finish_registration(name, host);
   }
-}
-
-void ZeroConfRegistration::start() {
-  listen_thread_.start<ZeroConfRegistration, &ZeroConfRegistration::do_start>(this, NULL);
 }
 
 void ZeroConfRegistration::do_start(Thread *thread) {
