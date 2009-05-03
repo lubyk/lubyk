@@ -1,14 +1,11 @@
-#ifndef _OSCIT_ZEROCONF_H_
-#define _OSCIT_ZEROCONF_H_
-
-#include "oscit/thread.h"
-
+#ifndef OSCIT_INCLUDE_OSCIT_ZEROCONF_H_
+#define OSCIT_INCLUDE_OSCIT_ZEROCONF_H_
 #include <string>
+#include <list>
+#include "oscit/thread.h"
 
 struct _DNSServiceRef_t;
 typedef struct _DNSServiceRef_t* DNSServiceRef;
-
-typedef int32_t DNSServiceErrorType;
 
 namespace oscit {
 
@@ -26,28 +23,41 @@ public:
     listen_thread_.kill();
   }
   
-  /** Setup serviceRef and start listening. */
+protected:
+  
+  /** Setup serviceRef and start listening.
+   */
   virtual void start() = 0;
   
-protected:
-  /** Process events here. */
+  /** Process events here.
+   */
   void listen(Thread *thread, DNSServiceRef service_ref);
   
   volatile int  timeout_;
   Thread listen_thread_;
 };
 
-class ZeroConfRegister : public ZeroConf
+
+/** This class let's you easily register an application as providing a certain type of
+ *  service.
+ *  After creating the object, you need to call 'start' for the
+ *  registration to take place.
+ */
+class ZeroConfRegistration : public ZeroConf
 {
  public:
-  ZeroConfRegister(const std::string &name, const std::string &service_type, uint16_t port) : name_(name), service_type_(service_type), port_(port) {}
+  ZeroConfRegistration(const std::string &name, const std::string &service_type, uint16_t port) : name_(name), service_type_(service_type), port_(port) {
+    start();
+  }
   
-  /** Callback */
-  void register_callback(DNSServiceErrorType error, const char *name, const char *service_type, const char *domain);
+  virtual void registration_done(const std::string &name) {
+    name_ = name;
+  }
+ protected:
   
-  /** Registration setup. */
+  /** Registration setup.
+   */
   virtual void start();
-  
  private:
   void do_start(Thread *thread);
   std::string name_;
@@ -55,6 +65,36 @@ class ZeroConfRegister : public ZeroConf
   uint16_t    port_;
 };
 
+/** This class let's you easily register an application as providing a certain type of
+ *  service.
+ *  After creating the object, you need to call 'start' for the
+ *  registration to take place.
+ */
+class ZeroConfBrowser : public ZeroConf
+{
+ public:
+  ZeroConfBrowser(const std::string &service_type) : service_type_(service_type) {
+    start();
+  }
+  
+  virtual void add_device(const std::string &name, const std::string &host, unsigned int port, bool more_coming) {
+    printf("add_device %s @ %s:%i%s\n", name.c_str(), host.c_str(), port, more_coming ? " (more coming)" : "");
+  }
+  
+  virtual void remove_device(const std::string &name, const std::string &host, unsigned int port, bool more_coming) {
+    printf("remove_device %s @ %s:%i%s\n", name.c_str(), host.c_str(), port, more_coming ? " (more coming)" : "");
+  }
+ protected:
+   
+  /** Start browsing.
+  */
+  virtual void start();
+
+ private:
+  void do_start(Thread *thread);
+  std::string service_type_;
+};
+
 } // namespace oscit
 
-#endif // _OSCIT_ZEROCONF_H_
+#endif // OSCIT_INCLUDE_OSCIT_ZEROCONF_H_

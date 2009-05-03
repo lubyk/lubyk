@@ -20,7 +20,7 @@ namespace oscit {
 #define OSC_OUT_BUFFER_SIZE 2048
 
 class Root;
-class ZeroConfRegister;
+class ZeroConfRegistration;
 
 class OscCommand : public Command, public osc::OscPacketListener
 {
@@ -86,7 +86,9 @@ private:
   
   UdpListeningReceiveSocket *socket_;   /**< Socket listening to udp packets. */
   
-  ZeroConfRegister *zeroconf_register_; /** Zeroconf registration thread. */
+  /** Zeroconf registration thread.
+   */
+  ZeroConfRegistration *zeroconf_registration_;
   
   std::list<IpEndpointName> observers_; /**< List of satellites that have registered to get return values back. */
   

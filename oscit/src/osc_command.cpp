@@ -15,13 +15,13 @@ static osc::OutboundPacketStream &operator<<(osc::OutboundPacketStream &out_stre
 
 OscCommand::OscCommand(uint port) : Command("osc") { 
   socket_ = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, port ), this );
-  zeroconf_register_ = new ZeroConfRegister("oscit", "_oscit._udp", port);
+  zeroconf_registration_ = new ZeroConfRegistration("oscit", "_oscit._udp", port);
 }
-  
+
 OscCommand::~OscCommand() {
   kill();
   delete socket_;
-  delete zeroconf_register_;
+  delete zeroconf_registration_;
 }
 
 void OscCommand::kill() {

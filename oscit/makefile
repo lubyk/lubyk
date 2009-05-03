@@ -4,7 +4,7 @@ AR = ar rcu
 RAGEL=ragel
 LIBTOOL=libtool -static
 TEST=test/*_test.h
-OBJECTS=url.o list.o midi_message.o object.o root.o command.o osc_command.o zeroconf.o value.o thread.o oscpack/liboscpack.a cxalloc.o cxsystem.o
+OBJECTS=url.o list.o midi_message.o object.o root.o command.o osc_command.o zeroconf.o zeroconf_registration.o zeroconf_browser.o value.o thread.o oscpack/liboscpack.a cxalloc.o cxsystem.o
 CFLAGS=-g -Wall $(TESTING)
 
 
@@ -34,6 +34,12 @@ cxalloc.o: include/opencv/cxalloc.cpp
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 
 cxsystem.o: include/opencv/cxsystem.cpp
+	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
+
+zeroconf_registration.o: src/zeroconf_registration.cpp include/oscit/zeroconf.h
+	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
+
+zeroconf_browser.o: src/zeroconf_browser.cpp include/oscit/zeroconf.h
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 
 %.o: src/%.cpp include/oscit/%.h
