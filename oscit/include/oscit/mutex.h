@@ -1,5 +1,5 @@
-#ifndef _OSCIT_MUTEX_H_
-#define _OSCIT_MUTEX_H_
+#ifndef OSCIT_INCLUDE_OSCIT_MUTEX_H_
+#define OSCIT_INCLUDE_OSCIT_MUTEX_H_
 #include "oscit/typed.h"
 #include <pthread.h>
 #include <cstdio>
@@ -48,4 +48,5 @@ public:
 };
 
 } // oscit
-#endif // _OSCIT_MUTEX_H_
+
+#endif // OSCIT_INCLUDE_OSCIT_MUTEX_H_

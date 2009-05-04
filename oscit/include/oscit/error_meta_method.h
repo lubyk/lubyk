@@ -1,5 +1,5 @@
-#ifndef _OSCIT_ERROR_META_METHOD_H_
-#define _OSCIT_ERROR_META_METHOD_H_
+#ifndef OSCIT_INCLUDE_OSCIT_ERROR_META_METHOD_H_
+#define OSCIT_INCLUDE_OSCIT_ERROR_META_METHOD_H_
 #include "oscit/root.h"
 
 namespace oscit {
@@ -18,6 +18,6 @@ public:
   }
 };
 
-#endif // _OSCIT_ERROR_META_METHOD_H_
-
 } // oscit
+
+#endif // OSCIT_INCLUDE_OSCIT_ERROR_META_METHOD_H_

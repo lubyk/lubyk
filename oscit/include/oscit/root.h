@@ -1,5 +1,5 @@
-#ifndef _OSCIT_ROOT_H_
-#define _OSCIT_ROOT_H_
+#ifndef OSCIT_INCLUDE_OSCIT_ROOT_H_
+#define OSCIT_INCLUDE_OSCIT_ROOT_H_
 #include "oscit/object.h"
 #include "oscit/command.h"
 
@@ -273,4 +273,5 @@ class Root : public Object
 };
   
 } // namespace oscit
-#endif // _OSCIT_ROOT_H_
+
+#endif // OSCIT_INCLUDE_OSCIT_ROOT_H_

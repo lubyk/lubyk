@@ -1,5 +1,5 @@
-#ifndef _REFERENCE_COUNTED_H_
-#define _REFERENCE_COUNTED_H_
+#ifndef OSCIT_INCLUDE_REFERENCE_COUNTED_H_
+#define OSCIT_INCLUDE_REFERENCE_COUNTED_H_
 
 namespace oscit {
 
@@ -24,4 +24,5 @@ class ReferenceCounted
 };
 
 } // oscit
-#endif // _REFERENCE_COUNTED_H_
+
+#endif // OSCIT_INCLUDE_REFERENCE_COUNTED_H_

@@ -64,4 +64,4 @@ void ZeroConfRegistration::do_start(Thread *thread) {
   DNSServiceRefDeallocate(serviceRef);
 }
 
-} // namespace oscit
+} // oscit

@@ -17,4 +17,5 @@ class ListValue : public Value
 };
 
 } // oscit
-#endif // _OSCIT_LIST_VALUE_H_
+
+#endif // OSCIT_INCLUDE_OSCIT_LIST_VALUE_H_

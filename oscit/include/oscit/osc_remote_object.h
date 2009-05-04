@@ -1,5 +1,5 @@
-#ifndef _OSCIT_OSC_REMOTE_OBJECT_H_
-#define _OSCIT_OSC_REMOTE_OBJECT_H_
+#ifndef OSCIT_INCLUDE_OSCIT_OSC_REMOTE_OBJECT_H_
+#define OSCIT_INCLUDE_OSCIT_OSC_REMOTE_OBJECT_H_
 #include "oscit/object.h"
 
 #include "ip/UdpSocket.h"
@@ -36,4 +36,4 @@ private:
 
 } // namespace osc
 
-#endif // _OSCIT_OSC_REMOTE_OBJECT_H_
+#endif // OSCIT_INCLUDE_OSCIT_OSC_REMOTE_OBJECT_H_

@@ -1,5 +1,5 @@
-#ifndef _OSCIT_VALUE_TYPES_H_
-#define _OSCIT_VALUE_TYPES_H_
+#ifndef OSCIT_INCLUDE_OSCIT_VALUE_TYPES_H_
+#define OSCIT_INCLUDE_OSCIT_VALUE_TYPES_H_
 
 namespace oscit {
 class Value;
@@ -55,4 +55,5 @@ typedef uint TypeTagID;
 #define ANY_TYPE_TAG_ID H("*")
 
 } // oscit
-#endif
+
+#endif // OSCIT_INCLUDE_OSCIT_VALUE_TYPES_H_

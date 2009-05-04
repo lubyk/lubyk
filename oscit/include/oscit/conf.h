@@ -1,5 +1,5 @@
-#ifndef _OSCIT_CONF_H_
-#define _OSCIT_CONF_H_
+#ifndef OSCIT_INCLUDE_OSCIT_CONF_H_
+#define OSCIT_INCLUDE_OSCIT_CONF_H_
 
 #define Real double
 
@@ -9,4 +9,4 @@
   TypeName(const TypeName&);               \
   void operator=(const TypeName&);
 
-#endif // _OSCIT_CONF_H_
+#endif // OSCIT_INCLUDE_OSCIT_CONF_H_

@@ -1,5 +1,5 @@
-#ifndef _METHOD_H_
-#define _METHOD_H_
+#ifndef OSCIT_INCLUDE_OSCIT_METHOD_H_
+#define OSCIT_INCLUDE_OSCIT_METHOD_H_
 #include "oscit/object.h"
 
 namespace oscit {
@@ -105,4 +105,5 @@ class TMethod : public Method
 };
 
 } // oscit
-#endif
+
+#endif // OSCIT_INCLUDE_OSCIT_METHOD_H_

@@ -1,5 +1,5 @@
-#ifndef _OSCIT_LIST_H_
-#define _OSCIT_LIST_H_
+#ifndef OSCIT_INCLUDE_OSCIT_LIST_H_
+#define OSCIT_INCLUDE_OSCIT_LIST_H_
 #include "oscit/value_types.h"
 #include "oscit/reference_counted.h"
 
@@ -89,4 +89,5 @@ class List : public ReferenceCounted
 };
 
 } // oscit
-#endif // _OSCIT_LIST_H_
+
+#endif // OSCIT_INCLUDE_OSCIT_LIST_H_

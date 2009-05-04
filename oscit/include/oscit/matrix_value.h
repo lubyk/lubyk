@@ -1,5 +1,5 @@
-#ifndef _OSCIT_MATRIX_VALUE_H_
-#define _OSCIT_MATRIX_VALUE_H_
+#ifndef OSCIT_INCLUDE_OSCIT_MATRIX_VALUE_H_
+#define OSCIT_INCLUDE_OSCIT_MATRIX_VALUE_H_
 #include "oscit/value.h"
 #include "oscit/matrix.h"
 
@@ -18,4 +18,5 @@ class MatrixValue : public Value
 };
 
 } // oscit
-#endif // _OSCIT_MATRIX_VALUE_H_
+
+#endif // OSCIT_INCLUDE_OSCIT_MATRIX_VALUE_H_

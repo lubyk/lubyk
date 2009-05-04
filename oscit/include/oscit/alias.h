@@ -1,5 +1,5 @@
-#ifndef _OSCIT_ALIAS_H_
-#define _OSCIT_ALIAS_H_
+#ifndef OSCIT_INCLUDE_OSCIT_ALIAS_H_
+#define OSCIT_INCLUDE_OSCIT_ALIAS_H_
 
 #include "oscit/root.h"
 
@@ -44,4 +44,4 @@ public:
 };
 
 } // namespace oscit
-#endif // _OSCIT_ALIAS_H_
+#endif // OSCIT_INCLUDE_OSCIT_ALIAS_H_

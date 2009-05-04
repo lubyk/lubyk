@@ -1,5 +1,5 @@
-#ifndef _OSCIT_ERROR_VALUE_H_
-#define _OSCIT_ERROR_VALUE_H_
+#ifndef OSCIT_INCLUDE_OSCIT_ERROR_VALUE_H_
+#define OSCIT_INCLUDE_OSCIT_ERROR_VALUE_H_
 #include "oscit/value.h"
 
 namespace oscit {
@@ -18,4 +18,5 @@ public:
 };
 
 } // oscit
-#endif // _OSCIT_ERROR_VALUE_H_
+
+#endif // OSCIT_INCLUDE_OSCIT_ERROR_VALUE_H_

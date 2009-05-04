@@ -1,5 +1,3 @@
-#ifndef _OSCIT_MATRIX_H_
-#define _OSCIT_MATRIX_H_
 #include "oscit/values.h"
 #include "opencv/cv.h"
 #include <vector>
@@ -64,5 +62,3 @@ const cv::Mat *Matrix::cv_mat() {
 // opencv
 #include "opencv/cxalloc.cpp"
 #include "opencv/cxsystem.cpp"
-
-#endif // _OSCIT_MATRIX_H_

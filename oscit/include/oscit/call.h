@@ -1,5 +1,5 @@
-#ifndef _OSCIT_CALL_H_
-#define _OSCIT_CALL_H_
+#ifndef OSCIT_INCLUDE_OSCIT_CALL_H_
+#define OSCIT_INCLUDE_OSCIT_CALL_H_
 #include <string>
 #include "oscit/root.h"
 
@@ -19,4 +19,4 @@ struct Call
 };
 } // namespace oscit
 
-#endif // _OSCIT_CALL_H_
+#endif // OSCIT_INCLUDE_OSCIT_CALL_H_

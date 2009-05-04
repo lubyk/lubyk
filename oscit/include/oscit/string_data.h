@@ -1,5 +1,5 @@
-#ifndef _OSCIT_STRING_H_
-#define _OSCIT_STRING_H_
+#ifndef OSCIT_INCLUDE_OSCIT_STRING_H_
+#define OSCIT_INCLUDE_OSCIT_STRING_H_
 #include "oscit/values.h"
 #include "oscit/reference_counted.h"
 
@@ -14,4 +14,5 @@ class StringData : public ReferenceCounted, public std::string
 };
 
 } // oscit
-#endif // _OSCIT_STRING_H_
+
+#endif // OSCIT_INCLUDE_OSCIT_STRING_H_

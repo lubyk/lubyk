@@ -308,4 +308,5 @@ std::ostream &operator<<(std::ostream &out_stream,
   const MidiMessage &midi_message);
 
 }  // oscit
+
 #endif  // OSCIT_INCLUDE_OSCIT_MIDI_MESSAGE_H_

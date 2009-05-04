@@ -1,5 +1,5 @@
-#ifndef _OSCIT_URL_H_
-#define _OSCIT_URL_H_
+#ifndef OSCIT_INCLUDE_OSCIT_URL_H_
+#define OSCIT_INCLUDE_OSCIT_URL_H_
 #include <string>
 #include <ostream>
 
@@ -73,4 +73,4 @@ std::ostream &operator<<(std::ostream &out_stream, const Url &url);
 
 } // oscit
 
-#endif // _OSCIT_URL_H_
+#endif // OSCIT_INCLUDE_OSCIT_URL_H_

@@ -38,4 +38,5 @@ class Matrix {
 };
 
 } // oscit
+
 #endif // OSCIT_INCLUDE_OSCIT_MATRIX_H_

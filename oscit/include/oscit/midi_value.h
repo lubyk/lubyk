@@ -18,4 +18,5 @@ class MidiValue : public Value
 };
 
 } // oscit
+
 #endif // OSCIT_INCLUDE_OSCIT_MIDI_VALUE_H_

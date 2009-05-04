@@ -1,5 +1,5 @@
-#ifndef _THREAD_H_
-#define _THREAD_H_
+#ifndef OSCIT_INCLUDE_OSCIT_THREAD_H_
+#define OSCIT_INCLUDE_OSCIT_THREAD_H_
 #include "oscit/mutex.h"
 
 #include <csignal>
@@ -164,4 +164,5 @@ class Thread : public Mutex
 };
 
 } // oscit
-#endif // _THREAD_H_
+
+#endif // OSCIT_INCLUDE_OSCIT_THREAD_H_

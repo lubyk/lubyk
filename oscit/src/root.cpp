@@ -20,4 +20,4 @@ void Root::init() {
   adopt(new TreeMetaMethod(".tree"));
 }
 
-} // namespace oscit
+} // oscit

@@ -1,5 +1,5 @@
-#ifndef _OSCIT_BASE_COMMAND_H_
-#define _OSCIT_BASE_COMMAND_H_
+#ifndef OSCIT_INCLUDE_OSCIT_BASE_COMMAND_H_
+#define OSCIT_INCLUDE_OSCIT_BASE_COMMAND_H_
 #include "oscit/thread.h"
 #include "oscit/url.h"
 #include "oscit/thash.h"
@@ -79,4 +79,4 @@ class Command : public Thread
 
 } // oscit
 
-#endif // _OSCIT_BASE_COMMAND_H_
+#endif // OSCIT_INCLUDE_OSCIT_BASE_COMMAND_H_

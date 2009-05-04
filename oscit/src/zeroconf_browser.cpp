@@ -105,4 +105,4 @@ void ZeroConfBrowser::do_start(Thread *thread) {
   DNSServiceRefDeallocate(service);
 }
 
-} // namespace oscit
+} // oscit

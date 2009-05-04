@@ -1,5 +1,5 @@
-#ifndef _OSCIT_VALUES_H_
-#define _OSCIT_VALUES_H_
+#ifndef OSCIT_INCLUDE_OSCIT_VALUES_H_
+#define OSCIT_INCLUDE_OSCIT_VALUES_H_
 
 #include "oscit/conf.h"
 #include "oscit/thash.h"
@@ -12,4 +12,4 @@
 #include "oscit/matrix_value.h"
 #include "oscit/midi_value.h"
 
-#endif // _OSCIT_VALUES_H_
+#endif // OSCIT_INCLUDE_OSCIT_VALUES_H_

@@ -1,5 +1,5 @@
-#ifndef _OSCIT_HASH_H_
-#define _OSCIT_HASH_H_
+#ifndef OSCIT_INCLUDE_OSCIT_HASH_H_
+#define OSCIT_INCLUDE_OSCIT_HASH_H_
 #include "oscit/values.h"
 
 namespace oscit {
@@ -14,4 +14,5 @@ class Hash : public ReferenceCounted, public THash<std::string,Value>
 };
 
 } // oscit
-#endif // _OSCIT_HASH_H_
+
+#endif // OSCIT_INCLUDE_OSCIT_HASH_H_

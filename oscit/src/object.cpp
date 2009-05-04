@@ -179,4 +179,4 @@ void Object::tree(size_t base_length, Value *tree) const {
   }
 }
 
-} // namespace oscit
+} // oscit

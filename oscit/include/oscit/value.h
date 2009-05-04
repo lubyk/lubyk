@@ -1,5 +1,5 @@
-#ifndef _OSCIT_VALUE_H_
-#define _OSCIT_VALUE_H_
+#ifndef OSCIT_INCLUDE_OSCIT_VALUE_H_
+#define OSCIT_INCLUDE_OSCIT_VALUE_H_
 #include <string>
 #include "oscit/value_types.h"
 #include "oscit/thash.h"
@@ -831,4 +831,4 @@ public:
 std::ostream &operator<< (std::ostream &out_stream, const Value &val);
 } // oscit
 
-#endif // _OSCIT_VALUE_H_
+#endif // OSCIT_INCLUDE_OSCIT_VALUE_H_

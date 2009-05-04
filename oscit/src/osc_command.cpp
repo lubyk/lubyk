@@ -298,4 +298,4 @@ Object *OscCommand::build_remote_object(const Url &url, Value *error) {
   // return remote_objects_->adopt(new OscRemoteObject(this, end_point, url.path()));
 }
 
-} // namespace oscit
+} // oscit

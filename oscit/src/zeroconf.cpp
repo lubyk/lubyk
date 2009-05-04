@@ -60,4 +60,4 @@ void ZeroConf::listen(Thread *thread, DNSServiceRef service) {
   }
 }
 
-} // namespace oscit
+} // oscit

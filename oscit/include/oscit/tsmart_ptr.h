@@ -1,5 +1,5 @@
-#ifndef _OSCIT_TSMART_PTR_H_
-#define _OSCIT_TSMART_PTR_H_
+#ifndef OSCIT_INCLUDE_OSCIT_TSMART_PTR_H_
+#define OSCIT_INCLUDE_OSCIT_TSMART_PTR_H_
 #include <stdlib.h> // size_t
 
 /** The TSmartPtr class implements a simple Smart Pointer with reference counting. */
@@ -76,4 +76,4 @@ private:
 
 };
 
-#endif // _OSCIT_TSMART_PTR_H_
+#endif // OSCIT_INCLUDE_OSCIT_TSMART_PTR_H_

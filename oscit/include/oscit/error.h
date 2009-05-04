@@ -1,5 +1,5 @@
-#ifndef _OSCIT_ERROR_H_
-#define _OSCIT_ERROR_H_
+#ifndef OSCIT_INCLUDE_OSCIT_ERROR_H_
+#define OSCIT_INCLUDE_OSCIT_ERROR_H_
 #include "oscit/values.h"
 #include "oscit/reference_counted.h"
 
@@ -55,4 +55,5 @@ class Error : public ReferenceCounted
 };
 
 } // oscit
-#endif // _OSCIT_ERROR_H_
+
+#endif // OSCIT_INCLUDE_OSCIT_ERROR_H_

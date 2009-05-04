@@ -1,5 +1,5 @@
-#ifndef _OSCIT_TYPED_H_
-#define _OSCIT_TYPED_H_
+#ifndef OSCIT_INCLUDE_OSCIT_TYPED_H_
+#define OSCIT_INCLUDE_OSCIT_TYPED_H_
 #include <stdio.h> // NULL
 
 #define USE_RTTI_TYPE
@@ -74,4 +74,5 @@ public:
 #endif  // USE_RTTI_TYPE
 
 } // oscit
-#endif // _OSCIT_TYPED_H_
+
+#endif // OSCIT_INCLUDE_OSCIT_TYPED_H_
