@@ -55,6 +55,10 @@ int Matrix::type() {
   return impl_->type();
 }
 
+const cv::Mat *Matrix::cv_mat() {
+  return impl_;
+}
+
 } // oscit
 
 // opencv

@@ -1,7 +1,7 @@
 /** Dictionary. The dictionary stores a copy of the data. Pointers to the copy are returned. 
   * We return pointers so that we can return NULL if the value is not found. */
-#ifndef _OSCIT_THASH_H_
-#define _OSCIT_THASH_H_
+#ifndef OSCIT_INCLUDE_OSCIT_THASH_H_
+#define OSCIT_INCLUDE_OSCIT_THASH_H_
 
 #include <cstdio>
 #include <string>
@@ -9,6 +9,8 @@
 #include <iostream>
 
 typedef unsigned int uint;
+
+namespace oscit {
 
 ///////////// MACRO FOR STATIC STRING HASH ////////////////
 // macro hashing function taken from http://chrissavoie.com/index.php?option=com_content&task=view&id=14&Itemid=1
@@ -168,10 +170,10 @@ private:
   unsigned int size_;
 };
 
-template <class K, class T>
-void THash<K,T>::set(const K& key, const T& pElement) {
-  THashElement<K,T> *  found;
-  THashElement<K,T> ** set_next;
+template <class K, class Te>
+void THash<K,Te>::set(const K& key, const Te& pElement) {
+  THashElement<K,Te> *  found;
+  THashElement<K,Te> ** set_next;
   uint id = hashId(key) % size_;
   found    = &(thash_table_[id]);  // pointer to found element
   set_next = &(found->next);      // where to write the new inserted value if there is one
@@ -184,7 +186,7 @@ void THash<K,T>::set(const K& key, const T& pElement) {
     // in table value
   } else if (!found) {
     // collision
-    found = new THashElement<K,T>;
+    found = new THashElement<K,Te>;
     if (!found) {
       // FIXME: alloc error. Raise ?
       fprintf(stderr, "Could not allocate new hash pointer.\n");
@@ -199,7 +201,7 @@ void THash<K,T>::set(const K& key, const T& pElement) {
     // new key
     keys_.push_back(key);
   }
-  found->obj  = new T(pElement);
+  found->obj  = new Te(pElement); // new T(pElement) does not compile in mimas with libjuce... ???
   found->key  = key;
 }
 
@@ -398,5 +400,6 @@ inline uint hashId(const std::string key) {
   return hashId<const std::string&>(key);
 }
 
+} // oscit
 
-#endif // _OSCIT_THASH_H_
+#endif // OSCIT_INCLUDE_OSCIT_THASH_H_

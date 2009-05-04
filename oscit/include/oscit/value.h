@@ -3,7 +3,7 @@
 #include <string>
 #include "oscit/value_types.h"
 #include "oscit/thash.h"
-#include "oscit/string.h"
+#include "oscit/string_data.h"
 #include "oscit/error.h"
 #include "oscit/list.h"
 #include "oscit/hash.h"
@@ -694,21 +694,21 @@ public:
   
   
   /** =========================================================    String  */
-  void share(const String *string) {
+  void share(const StringData *string) {
     if (string_ == string) return;
     set_type_without_default(STRING_VALUE);
     // FIXME: there should be a way to deal with shared content
     // that is protected from changes... Any solution welcome !!
-    string_ = const_cast<String*>(string);
+    string_ = const_cast<StringData*>(string);
     ReferenceCounted::acquire(string_);
   }
   
   void set_string(const char *string) {
-    string_ = new String(string);
+    string_ = new StringData(string);
   }
   
   void set_string(const std::string &string) {
-    string_ = new String(string);
+    string_ = new StringData(string);
   }
   
   /** =========================================================    Error   */
@@ -794,7 +794,7 @@ public:
     
     /** Pointer to a reference counted std::string.
      */
-    String *string_;
+    StringData *string_;
     
     /** Pointer to a list of values (class List).
      *  The list is reference counted.

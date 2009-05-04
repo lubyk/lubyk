@@ -4,6 +4,10 @@
 
 #include "oscit/values.h"
 
+namespace cv {
+  struct Mat;
+}
+
 namespace oscit {
 
 /** 
@@ -25,6 +29,8 @@ class Matrix {
   size_t cols();
   
   void *data();
+  
+  const cv::Mat *cv_mat();
   
  private:
   class Implementation;

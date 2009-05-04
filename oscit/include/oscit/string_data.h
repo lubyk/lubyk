@@ -6,11 +6,11 @@
 namespace oscit {
 
 /** A String is just a reference counted std::string. */
-class String : public ReferenceCounted, public std::string
+class StringData : public ReferenceCounted, public std::string
 {
  public:
-  explicit String(const char *str) : std::string(str) {}
-  explicit String(const std::string &string) : std::string(string) {}
+  explicit StringData(const char *str) : std::string(str) {}
+  explicit StringData(const std::string &string) : std::string(string) {}
 };
 
 } // oscit
