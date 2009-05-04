@@ -7,3 +7,6 @@
 #include "../../src/lib/juce/juce_amalgamated.h"
 
 // ======================= /JUCE STUFF =======================
+
+#include "oscit/oscit.h"
+using namespace oscit;

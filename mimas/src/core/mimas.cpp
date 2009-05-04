@@ -1,30 +1,23 @@
 #include "mimas.h"
 #include "MainComponent.h"
 
-class HelloWorldWindow  : public DocumentWindow
+class Mimas  : public DocumentWindow
 {
 public:
     //==============================================================================
-    HelloWorldWindow() 
-        : DocumentWindow (T("JUCE Hello World!"),
-                          Colours::lightgrey, 
-                          DocumentWindow::allButtons,
-                          true)
-    {
-        // Create an instance of our main content component, and add it 
-        // to our window.
+    Mimas() 
+        : DocumentWindow (T("Mimas"), Colours::lightgrey, DocumentWindow::allButtons, true) {
 
-        MainComponent* const contentComponent = new MainComponent();
-
-        setContentComponent (contentComponent, true, true);
-
-        centreWithSize (getWidth(), getHeight());
-
-        setVisible (true);
+        // MainComponent* const contentComponent = new MainComponent();
+        // 
+        // setContentComponent (contentComponent, true, true);
+        // 
+        // centreWithSize (getWidth(), getHeight());
+        // 
+        // setVisible (true);
     }
 
-    ~HelloWorldWindow()
-    {
+    ~HelloWorldWindow() {
         // (the content component will be deleted automatically, so no need to do it here)
     }
 

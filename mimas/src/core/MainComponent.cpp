@@ -24,7 +24,6 @@
 
 #include "MainComponent.h"
 
-
 //[MiscUserDefs] You can add your own user definitions and misc code here...
 //[/MiscUserDefs]
 
