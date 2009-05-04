@@ -764,7 +764,7 @@ public:
   /** =========================================================    Matrix  */
   
   /** Set matrix content. */
-  void Value::set_matrix(const Matrix *matrix) {
+  void set_matrix(const Matrix *matrix) {
     matrix_ = new Matrix(*matrix);
   }
 
