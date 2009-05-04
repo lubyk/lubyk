@@ -9,7 +9,7 @@ public:
   DummyBrowser(const char *service) : ZeroConfBrowser(service), stream_(std::ostringstream::out), was_more_coming_(false) {}
   
   
-  virtual void add_device(const std::string &name, const std::string &host, unsigned int port, bool more_coming) {
+  virtual void add_device(const char *name, const char *host, unsigned int port, bool more_coming) {
     if (!was_more_coming_) {
       // only record first entry in case there are more then one network interfaces
       stream_ << "[+ " << name << " @ " << host << ":" << port << "]";
@@ -17,7 +17,7 @@ public:
     was_more_coming_ = more_coming;
   }
   
-  virtual void remove_device(const std::string &name, const std::string &host, unsigned int port, bool more_coming) {
+  virtual void remove_device(const char *name, const char *host, unsigned int port, bool more_coming) {
     if (!was_more_coming_) {
       // only record first entry in case there are more then one network interfaces
       stream_ << "[- " << name << " @ " << host << ":" << port << "]";

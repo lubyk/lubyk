@@ -11,6 +11,7 @@
 namespace oscit {
 
 #define OSC_OUT_BUFFER_SIZE 2048
+#define OSCIT_SERVICE_TYPE "_oscit._udp."
 
 //#define DEBUG_OSC_COMMAND
 
@@ -91,7 +92,7 @@ public:
       if (name == "") {
         name = "Generic oscit device";
       }
-      zeroconf_registration_ = new ZeroConfRegistration(name.c_str(), "_oscit._udp.", port_);
+      zeroconf_registration_ = new ZeroConfRegistration(name.c_str(), OSCIT_SERVICE_TYPE, port_);
     }
     socket_->Run();
   }

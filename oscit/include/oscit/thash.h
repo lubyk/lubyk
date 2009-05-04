@@ -201,8 +201,8 @@ void THash<K,Te>::set(const K& key, const Te& pElement) {
     // new key
     keys_.push_back(key);
   }
-  found->obj  = new Te(pElement); // new T(pElement) does not compile in mimas with libjuce... ???
-  found->key  = key;
+  found->obj  = new Te(pElement); // new T(pElement) does not compile in mimas with libjuce... T is a macro to create
+  found->key  = key;              // juce String elements...
 }
 
 template <class K, class T>

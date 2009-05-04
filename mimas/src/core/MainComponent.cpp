@@ -29,11 +29,12 @@
 
 //==============================================================================
 MainComponent::MainComponent ()
-    : helloWorldLabel (0),
+    : ZeroConfBrowser("_oscit._udp."),
+	  helloWorldLabel (0),
       quitButton (0)
 {
     addAndMakeVisible (helloWorldLabel = new Label (String::empty,
-                                                    T("Hello World!")));
+                                                    T("oscit ?")));
     helloWorldLabel->setFont (Font (40.0000f, Font::bold));
     helloWorldLabel->setJustificationType (Justification::centred);
     helloWorldLabel->setEditable (false, false, false);
@@ -123,6 +124,27 @@ void MainComponent::buttonClicked (Button* buttonThatWasClicked)
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
+
+void MainComponent::add_device(const char *name, const char *host, unsigned int port, bool more_coming) {
+	if (!was_more_coming_) {
+		// only record first entry in case there are more then one network interfaces
+    String msg("[+ ");
+		msg << name << " @ " << host << ":" << port << "]";
+		helloWorldLabel->setText(msg, true);
+	}
+	was_more_coming_ = more_coming;
+}
+
+void MainComponent::remove_device(const char *name, const char *host, unsigned int port, bool more_coming) {
+	if (!was_more_coming_) {
+		// only record first entry in case there are more then one network interfaces
+    String msg("[- ");
+		msg << name << " @ " << host << ":" << port << "]";
+		helloWorldLabel->setText(msg, true);
+	}
+	was_more_coming_ = more_coming;
+}
+
 //[/MiscUserCode]
 
 

@@ -11,6 +11,7 @@
 class ClassFinder;
 
 #define DEFAULT_OBJECTS_LIB_PATH "/usr/local/lib/rubyk"
+#define RUBYK_DEFAULT_NAME "rubyk"
 
 /** A planet is just a root with a worker. */
 class Planet : public Root
@@ -18,20 +19,22 @@ class Planet : public Root
  public:
   TYPED("Object.Root.Planet")
   
-  Planet() : worker_(this), classes_(NULL) {
+  Planet() : Root(RUBYK_DEFAULT_NAME), worker_(this), classes_(NULL) {
     init();
   }
   
-  Planet(uint port) : worker_(this), classes_(NULL) {
+  Planet(uint port) : Root(RUBYK_DEFAULT_NAME), worker_(this), classes_(NULL) {
     init();
     open_port(port);
   }
   
-  Planet(int argc, char * argv[]) : worker_(this), classes_(NULL) {
+  Planet(int argc, char * argv[]) : Root(RUBYK_DEFAULT_NAME), worker_(this), classes_(NULL) {
     // TODO: get port from command line
     init();
     
     if (argc > 1) {
+      std::string file_name(argv[1]);
+      set_name(file_name.substr(0, file_name.rfind(".")));
       std::ifstream in(argv[1], std::ios::in);
       std::ostringstream oss;
       oss << in.rdbuf();

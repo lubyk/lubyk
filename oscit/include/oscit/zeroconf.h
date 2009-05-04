@@ -71,12 +71,12 @@ class ZeroConfBrowser : public ZeroConf
  public:
   ZeroConfBrowser(const std::string &service_type);
   
-  virtual void add_device(const std::string &name, const std::string &host, unsigned int port, bool more_coming) {
-    printf("add_device %s @ %s:%i%s\n", name.c_str(), host.c_str(), port, more_coming ? " (more coming)" : "");
+  virtual void add_device(const char *name, const char *host, unsigned int port, bool more_coming) {
+    printf("add_device %s @ %s:%i%s\n", name, host, port, more_coming ? " (more coming)" : "");
   }
   
-  virtual void remove_device(const std::string &name, const std::string &host, unsigned int port, bool more_coming) {
-    printf("remove_device %s @ %s:%i%s\n", name.c_str(), host.c_str(), port, more_coming ? " (more coming)" : "");
+  virtual void remove_device(const char *name, const char *host, unsigned int port, bool more_coming) {
+    printf("remove_device %s @ %s:%i%s\n", name, host, port, more_coming ? " (more coming)" : "");
   }
 
  private:

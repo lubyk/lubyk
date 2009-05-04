@@ -43,9 +43,9 @@ static void s_resolve_callback(DNSServiceRef service, DNSServiceFlags flags, uin
   
   //printf("flags:%i\n interface_index:%i\n error:%i\n fullname:%s\n host_target:%s\n port:%u\n txt_len:%i\n", flags, interface_index, error, fullname, host_target, ntohs(port), txt_len);
   if (device->flags_ & kDNSServiceFlagsAdd) {
-    device->browser_->add_device(device->name_, device->host_, ntohs(port), device->flags_ & kDNSServiceFlagsMoreComing);
+    device->browser_->add_device(device->name_.c_str(), device->host_.c_str(), ntohs(port), device->flags_ & kDNSServiceFlagsMoreComing);
   } else {
-    device->browser_->remove_device(device->name_, device->host_, ntohs(port), device->flags_ & kDNSServiceFlagsMoreComing);
+    device->browser_->remove_device(device->name_.c_str(), device->host_.c_str(), ntohs(port), device->flags_ & kDNSServiceFlagsMoreComing);
   }
   
   DNSServiceRefDeallocate(service);

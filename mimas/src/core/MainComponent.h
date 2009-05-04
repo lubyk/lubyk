@@ -37,7 +37,8 @@
                                                                     //[/Comments]
 */
 class MainComponent  : public Component,
-                       public ButtonListener
+                       public ButtonListener,
+                       public ZeroConfBrowser
 {
 public:
     //==============================================================================
@@ -46,6 +47,10 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
+	
+    virtual void add_device(const char *name, const char *host, unsigned int port, bool more_coming);
+    virtual void remove_device(const char *name, const char *host, unsigned int port, bool more_coming);
+    
     //[/UserMethods]
 
     void paint (Graphics& g);
@@ -58,6 +63,7 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
+	bool was_more_coming_;
     //[/UserVariables]
 
     //==============================================================================

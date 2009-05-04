@@ -9,4 +9,5 @@
 // ======================= /JUCE STUFF =======================
 
 #include "oscit/oscit.h"
+#include "oscit/zeroconf.h"
 using namespace oscit;

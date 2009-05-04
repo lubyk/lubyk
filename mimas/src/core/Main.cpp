@@ -6,7 +6,7 @@ class HelloWorldWindow  : public DocumentWindow
 public:
     //==============================================================================
     HelloWorldWindow() 
-        : DocumentWindow (T("JUCE Hello World!"),
+        : DocumentWindow (T("mimas"),
                           Colours::lightgrey, 
                           DocumentWindow::allButtons,
                           true)

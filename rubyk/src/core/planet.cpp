@@ -12,7 +12,7 @@ void Planet::init() {
   //          /class
   classes_ = adopt(new ClassFinder(Url(CLASS_URL).name(), DEFAULT_OBJECTS_LIB_PATH));
   //          /rubyk
-  Object * rubyk = adopt(new Object(Url(RUBYK_URL).name()));
+  Object *rubyk = adopt(new Object(Url(RUBYK_URL).name()));
   //          /rubyk/link [[["","source url"],["", "target url"]], "Create a link between two urls."]
   rubyk->adopt(new TMethod<Planet, &Planet::link>(this, Url(LINK_URL).name(), JsonValue("[['','', ''],'url','op','url','Update a link between the two provided urls. Operations are '=>' (link) '||' (unlink) or '?' (pending).']")));
   //          /rubyk/quit
