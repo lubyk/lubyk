@@ -1,5 +1,6 @@
 #include "test_helper.h"
 #include "oscit/values.h"
+#include "opencv/cxtypes.h"
 
 class MatrixValueTest : public TestHelper
 {  
@@ -18,8 +19,8 @@ public:
     assert_false(v.is_any());
     
     Matrix * m = v.matrix_;
-    assert_equal(0, m->rows);
-    assert_equal(0, m->cols);
+    assert_equal(0, m->rows());
+    assert_equal(0, m->cols());
     assert_true(m->type() == 0);
     
     assert_equal("M", v.type_tag());

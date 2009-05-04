@@ -310,10 +310,10 @@ public:
     assert_true(v[0].is_matrix());
     assert_true(v[1].is_matrix());
     assert_equal(2, v.size());
-    assert_equal(2, v[0].matrix_->rows);
-    assert_equal(2, v[0].matrix_->cols);
-    assert_equal(1, v[1].matrix_->rows);
-    assert_equal(2, v[1].matrix_->cols);
+    assert_equal(2, v[0].matrix_->rows());
+    assert_equal(2, v[0].matrix_->cols());
+    assert_equal(1, v[1].matrix_->rows());
+    assert_equal(2, v[1].matrix_->cols());
   }
   
   void test_push_back_any( void ) {

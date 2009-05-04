@@ -554,7 +554,7 @@ public:
   }
   
   size_t mat_size() const {
-    return is_matrix() ? matrix_->rows * matrix_->cols : 0;
+    return is_matrix() ? matrix_->rows() * matrix_->cols() : 0;
   }
   
   int mat_type() const {
@@ -562,7 +562,7 @@ public:
   }
   
   Real * mat_data() const {
-    return is_matrix() ? (Real*)matrix_->data : NULL;
+    return is_matrix() ? (Real*)matrix_->data() : NULL;
   }
   
   /** =========================================================    Midi  */
