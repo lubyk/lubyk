@@ -4,14 +4,20 @@ AR = ar rcu
 RAGEL=ragel
 LIBTOOL=libtool -static
 TEST=test/*_test.h
-OBJECTS=url.o list.o midi_message.o object.o root.o command.o osc_command.o zeroconf.o zeroconf_browser.o zeroconf_registration.o value.o thread.o oscpack/liboscpack.a matrix.o
+OBJECTS=url.o list.o midi_message.o object.o root.o command.o osc_command.o zeroconf_browser.o zeroconf_registration.o value.o thread.o oscpack/liboscpack.a matrix.o
 CFLAGS=-g -Wall $(TESTING) $(PLAT_FLAGS)
 
 PLATS=macosx linux
 
 
-ifeq ($(PLAT),)
-	PLAT=none
+ifeq ($(PLAT),"macosx")
+  PLAT_FLAGS="-D_macosx_"
+else
+  ifeq ($(PLAT),"linux")
+    PLAT_FLAGS="-D_linux_"
+  else
+    PLAT=none
+  endif
 endif
 
 default: $(PLAT)
@@ -58,9 +64,6 @@ cxalloc.o: include/opencv/cxalloc.cpp
 cxsystem.o: include/opencv/cxsystem.cpp
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 
-zeroconf.o: src/$(PLAT)/zeroconf.cpp include/oscit/zeroconf.h
-	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
-
 zeroconf_browser.o: src/$(PLAT)/zeroconf_browser.cpp include/oscit/zeroconf.h
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 
@@ -79,10 +82,10 @@ clean:
 # targets for different platforms
 
 macosx:
-	$(MAKE) all PLAT_FLAGS="-D_macosx_" PLAT=macosx
+	$(MAKE) all PLAT=macosx
 
 linux:
-	$(MAKE) all PLAT_FLAGS="-D_linux_" PLAT=linux
+	$(MAKE) all PLAT=linux
 
 none:
 	@echo "Please choose a platform from the list: $(PLATS)"

@@ -1,78 +1,70 @@
-#include "oscit/zeroconf.h"
-
-#include <dns_sd.h>     // zeroconf
-#include <stdio.h>			// For stdout, stderr
-#include <string.h>			// For strlen(), strcpy(), bzero()
-#include <errno.h>      // For errno, EINTR
+#include <stdio.h>
+#include <assert.h>
+#include <stdlib.h>
 #include <time.h>
 
-#ifdef _WIN32
-#include <process.h>
-typedef	int	pid_t;
-#define	getpid	_getpid
-#define	strcasecmp	_stricmp
-#define snprintf _snprintf
-#else
-#include <sys/time.h>		// For struct timeval
-#include <unistd.h>     // For getopt() and optind
-#include <arpa/inet.h>	// For inet_addr()
-#endif
-
-#ifdef __M_
-#endif
-#ifdef __M_
 #include <avahi-client/client.h>
-#include <avahi-client/publish.h>
 #include <avahi-client/lookup.h>
 
-#include <avahi-common/alternative.h>
 #include <avahi-common/simple-watch.h>
 #include <avahi-common/malloc.h>
 #include <avahi-common/error.h>
-#include <avahi-common/timeval.h>
 
-#endif
+#include "oscit/zeroconf.h"
 
-#include <iostream>
 
 namespace oscit {
+
+static void s_client_callback(AvahiClient *client, AvahiClientState state, void *context) {
+  ZeroConf *zero_conf = (ZeroConf*)context;
+
+  if (state == AVAHI_CLIENT_FAILURE) {
+    fprintf(stderr, "Server connection failure: %s\n", avahi_strerror(avahi_client_errno(client)));
+    zero_conf->quit();
+  } else {
+    zero_conf->client_callback(state);
+  }
+}
 
 // Note: the select() implementation on Windows (Winsock2)
 //       fails with any timeout much larger than this
 #define LONG_TIME 100000000
 
-ZeroConf::ZeroConf() : timeout_(LONG_TIME) {}
-
-void ZeroConf::listen(Thread *thread, DNSServiceRef service) {
-  // Run until break.
-  int dns_sd_fd = DNSServiceRefSockFD(service);
-  fd_set readfds;
-  struct timeval tv;
-  int result;
-
-  while (thread->should_run()) {
-    FD_ZERO(&readfds);
-    FD_SET(dns_sd_fd, &readfds);
-    tv.tv_sec = timeout_;
-    tv.tv_usec = 0;
-                    // highest fd in set + 1
-    result = select(dns_sd_fd+1, &readfds, (fd_set*)NULL, (fd_set*)NULL, &tv);
-    if (result > 0) {
-      DNSServiceErrorType err = kDNSServiceErr_NoError;
-      // Execute callback
-      if (FD_ISSET(dns_sd_fd, &readfds)) err = DNSServiceProcessResult(service);
-      
-      if (err) {
-        // An error occured. Halt.
-        fprintf(stderr, "DNSServiceProcessResult returned %d\n", err);
-        thread->stop();
-      }
-    }	else if (errno != EINTR) {
-      // Error.
-      fprintf(stderr, "ZeroConf error (%d %s)\n", errno, strerror(errno));
-      if (errno != EINTR) thread->stop();
-    }
+ZeroConf::ZeroConf() : timeout_(LONG_TIME), avahi_poll_(NULL), avahi_client_(NULL) {
+  int error;
+  // create poll object
+  avahi_poll_ = avahi_avahi_poll_new();
+  if (avahi_poll_ == NULL) {
+    fprintf(stderr, "Could not create avahi simple poll object.\n");
+    return;
   }
+  
+  // create client
+  avahi_client_ = avahi_client_new(avahi_avahi_poll_get(avahi_poll_),
+                            0,                 // flags
+                            s_client_callback, // callback
+                            this,              // context
+                            &error);
+
+  if (avahi_client_ == NULL) {
+    fprintf(stderr, "Failed to create avahi client (%s).\n", avahi_strerror(error));
+    return;
+  }
+}
+
+ZeroConf::quit() {
+  avahi_simple_poll_quit(avahi_poll_);
+  listen_thread_.kill();
+}
+
+ZeroConf::~ZeroConf() {
+  if (avahi_poll_) avahi_simple_poll_free(avahi_poll_);
+  if (avahi_client_) avahi_client_free(avahi_client_);
+}
+
+void ZeroConf::listen(Thread *thread) {
+  // Run until poll quit.
+  avahi_avahi_poll_loop(avahi_poll_);
 }
 
 } // oscit

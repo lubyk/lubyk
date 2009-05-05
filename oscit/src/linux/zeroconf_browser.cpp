@@ -24,85 +24,122 @@ typedef	int	pid_t;
 namespace oscit {
 
 struct BrowsedDevice {
-  BrowsedDevice(ZeroConfBrowser *browser, const char *name, const char *host, DNSServiceFlags flags) :
-                name_(name), host_(host), browser_(browser), flags_(flags) {}
+  BrowsedDevice(ZeroConfBrowser *browser, const char *name, const char *host, AvahiBrowserEvent event) :
+                name_(name), host_(host), browser_(browser), event_(event) {}
   std::string name_;              
   std::string host_;
   ZeroConfBrowser *browser_;
-  DNSServiceFlags flags_;
+  AvahiBrowserEvent event_;
 };
+
+
 
 ZeroConfBrowser::ZeroConfBrowser(const std::string &service_type) : service_type_(service_type) {
   listen_thread_.start<ZeroConfBrowser, &ZeroConfBrowser::do_start>(this, NULL);
 }
 
-static void s_resolve_callback(DNSServiceRef service, DNSServiceFlags flags, uint32_t interface_index,
-                               DNSServiceErrorType error, const char *fullname, const char *host_target,
-                               uint16_t port, uint16_t txt_len, const unsigned char *txt, void *context) {
+static void s_resolve_callback(AvahiServiceResolver *resolver,
+                               AVAHI_GCC_UNUSED AvahiIfIndex interface,
+                               AVAHI_GCC_UNUSED AvahiProtocol protocol,
+                               AvahiResolverEvent event,
+                               const char *name,
+                               const char *type,
+                               const char *domain,
+                               const char *host_name,
+                               const AvahiAddress *address,
+                               uint16_t port,
+                               AvahiStringList *txt,
+                               AvahiLookupResultFlags flags,
+                               void* context) {
+  
   BrowsedDevice *device = (BrowsedDevice*)context;
-  
-  //printf("flags:%i\n interface_index:%i\n error:%i\n fullname:%s\n host_target:%s\n port:%u\n txt_len:%i\n", flags, interface_index, error, fullname, host_target, ntohs(port), txt_len);
-  if (device->flags_ & kDNSServiceFlagsAdd) {
-    device->browser_->add_device(device->name_.c_str(), device->host_.c_str(), ntohs(port), device->flags_ & kDNSServiceFlagsMoreComing);
-  } else {
-    device->browser_->remove_device(device->name_.c_str(), device->host_.c_str(), ntohs(port), device->flags_ & kDNSServiceFlagsMoreComing);
-  }
-  
-  DNSServiceRefDeallocate(service);
-  delete device;
-}
-
-/** Callback called on device notification.
- */
-static void s_browser_callback(DNSServiceRef service, DNSServiceFlags flags, uint32_t interface_index,
-                               DNSServiceErrorType error, const char *name, const char *type,
-                               const char *domain, void *context) {
-  if (error != kDNSServiceErr_NoError) {
-    fprintf(stderr, "browser_callback returned error %d.\n", error);
-  } else {
-    DNSServiceRef service;
-    BrowsedDevice *device = new BrowsedDevice((ZeroConfBrowser*)context, name, domain, flags);
-    error = DNSServiceResolve(&service,
-               0,    // flags
-               interface_index,
-               name,
-               type,
-               domain,
-               s_resolve_callback,
-               (void*)device);  // context
-
-    if (error == kDNSServiceErr_NoError) {
-     error = DNSServiceProcessResult(service);
-     if (error != kDNSServiceErr_NoError) {
-       fprintf(stderr, "DNSServiceProcessResult failed: %i\n", error);
-       DNSServiceRefDeallocate(service);
-       delete device;
-     }
-    } else {  
-     DNSServiceRefDeallocate(service);
-     fprintf(stderr,"Error while trying to resolve %s @ %s (%d)\n", name, domain, error);
+  switch (event) {
+   case AVAHI_RESOLVER_FAILURE:
+      fprintf(stderr, "Error while trying to resolve %s @ %s (%d)\n", name, domain,
+                      avahi_strerror(avahi_client_errno(avahi_service_resolver_get_client(r))));
+      break;
+    case AVAHI_RESOLVER_FOUND:
+      if (device->event_ == AVAHI_BROWSER_NEW) {
+        device->browser_->add_device(name, domain, port, false); // more coming ?
+      } else {
+        device->browser_->remove_device(name, domain, port, false);
+      }
+      break;
     }
   }
 }
 
-void ZeroConfBrowser::do_start(Thread *thread) {
-  DNSServiceErrorType error;
-  DNSServiceRef       service;
-
-  error = DNSServiceBrowse(&service,
-    0,                     // no flags
-    0,                     // all network interfaces
-    service_type_.c_str(), // service type
-    NULL,                  // default domain(s)
-    s_browser_callback,    // callback function
-    (void*)this);          // context
-
-  if (error == kDNSServiceErr_NoError) {
-    listen(thread, service);
-  } else {
-    fprintf(stderr,"Could not browse for service %s (error %d)\n", service_type_.c_str(), error);//, strerror(errno));
+/** Callback called on device notification.
+ */
+static void s_browser_callback(AvahiServiceBrowser *browser,
+                               AvahiIfIndex interface,
+                               AvahiProtocol protocol,
+                               AvahiBrowserEvent event,
+                               const char *name,
+                               const char *type,
+                               const char *domain,
+                               AvahiLookupResultFlags flags,
+                               void *context) {
+  ZeroConfBrowser *zero_conf = context;
+  AvahiServiceResolver *resolver;
+  BrowsedDevice *device = new BrowsedDevice((ZeroConfBrowser*)context, name, domain, event);
+  
+  switch (event) {
+    case AVAHI_BROWSER_FAILURE:
+      fprintf(stderr, "Avahi browser failure (%s).\n",
+                      avahi_strerror(avahi_client_errno(avahi_service_browser_get_client(b))));
+      zero_conf->quit();
+      break;
+    case AVAHI_BROWSER_NEW: /* continue */  
+    case AVAHI_BROWSER_REMOVE:
+      resolver = avahi_service_resolver_new(zero_conf->avahi_client(), // client
+                                interface,           // interface
+                                protocol,            // 
+                                name,                // 
+                                type,                // 
+                                domain,              // 
+                                AVAHI_PROTO_UNSPEC,  // address protocol (IPv4, IPv6)
+                                0,                   // flags
+                                s_resolve_callback,  // callback
+                                device);             // context
+      if (resolver == NULL) {
+        fprintf(stderr,"Error while trying to resolve %s @ %s (%s)\n", name, domain, avahi_strerror(avahi_client_errno(c)));
+      } else {
+        avahi_service_resolver_free(resolver);
+      }
+      break;
+    case AVAHI_BROWSER_ALL_FOR_NOW:
+    case AVAHI_BROWSER_CACHE_EXHAUSTED:
+      fprintf(stderr, "(Browser) %s\n", event == AVAHI_BROWSER_CACHE_EXHAUSTED ? "CACHE_EXHAUSTED" : "ALL_FOR_NOW");
+      break;
   }
-  DNSServiceRefDeallocate(service);
+  
+  delete device;
+}
+
+void ZeroConfBrowser::do_start(Thread *thread) {
+  if (avahi_client_ == NULL) return;
+  
+  AvahiServiceBrowser *browser = NULL;
+  
+  
+  // create browser service
+  browser = avahi_service_browser_new(avahi_client_, // client
+                            AVAHI_IF_UNSPEC,         // interface
+                            AVAHI_PROTO_UNSPEC,      // protocol
+                            service_type_.c_str(),   // service type
+                            NULL,                    // domain
+                            0,                       // flags
+                            s_browser_callback,      // callback
+                            this);                   // context
+  if (browser == NULL) {
+    fprintf(stderr, "Could not create avahi service browser (%s).\n", avahi_strerror(avahi_client_errno(avahi_client_)));
+    return;
+  }
+  
+  listen(thread);
+  
+  avahi_service_browser_free(browser);
 }
 
 } // oscit
