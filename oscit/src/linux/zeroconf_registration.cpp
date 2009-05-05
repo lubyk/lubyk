@@ -1,8 +1,9 @@
-
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+
+#include <string>
 
 #include <avahi-client/client.h>
 #include <avahi-client/publish.h>
@@ -133,10 +134,11 @@ void ZeroConfRegistration::client_callback(AvahiClientState state) {
       // server not ready (collision, registering)
       if (avahi_group_) avahi_entry_group_reset(avahi_group_);
       break;
-    case AVAHI_CLIENT_CONNECTING: /* continue */
+    case AVAHI_CLIENT_CONNECTING:
+      break;
     case AVAHI_CLIENT_FAILURE:
-      // never comes here, ZeroConf class handles this event.
-      ;
+      fprintf(stderr, "Server connection failure: %s\n", avahi_strerror(avahi_client_errno(client)));
+      impl->quit();
   }
 }
 
