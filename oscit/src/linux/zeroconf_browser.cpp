@@ -6,7 +6,7 @@
 #include <string>
 
 #include <avahi-client/client.h>
-#include <avahi-client/publish.h>
+#include <avahi-client/lookup.h>
 
 #include <avahi-common/alternative.h>
 #include <avahi-common/simple-watch.h>
@@ -29,7 +29,7 @@ struct BrowsedDevice {
 
 class ZeroConfBrowser::Implementation {
 public:
-  Implementation(ZeroConfBrowser *master) : master_(master) : avahi_poll_(NULL), avahi_client_(NULL) {
+  Implementation(ZeroConfBrowser *master) : master_(master), avahi_poll_(NULL), avahi_client_(NULL) {
     do_start();
   }
   
@@ -42,15 +42,15 @@ public:
   void do_start() {
     int error;
     // create poll object
-    avahi_poll_ = avahi_avahi_poll_new();
+    avahi_poll_ = avahi_simple_poll_new();
     if (avahi_poll_ == NULL) {
       fprintf(stderr, "Could not create avahi simple poll object.\n");
       return;
     }
 
     // create client
-    avahi_client_ = avahi_client_new(avahi_avahi_poll_get(avahi_poll_),
-                              0,                 // flags
+    avahi_client_ = avahi_client_new(avahi_simple_poll_get(avahi_poll_),
+                              (AvahiClientFlags)0,             // flags
                               Implementation::client_callback, // callback
                               this,              // context
                               &error);
@@ -69,9 +69,9 @@ public:
     browser = avahi_service_browser_new(avahi_client_, // client
                               AVAHI_IF_UNSPEC,         // interface
                               AVAHI_PROTO_UNSPEC,      // protocol
-                              service_type_.c_str(),   // service type
+                              master_->service_type_.c_str(),   // service type
                               NULL,                    // domain
-                              0,                       // flags
+                              (AvahiLookupFlags)0,     // flags
                               Implementation::browser_callback,      // callback
                               this);                   // context
     if (browser == NULL) {
@@ -79,8 +79,8 @@ public:
       return;
     }
   
-    listen(thread);
-  
+    avahi_simple_poll_loop(avahi_poll_);
+    
     avahi_service_browser_free(browser);
   }
   
@@ -121,18 +121,18 @@ public:
         break;
       case AVAHI_BROWSER_NEW: /* continue */  
       case AVAHI_BROWSER_REMOVE:
-        resolver = avahi_service_resolver_new(zero_conf->avahi_client(), // client
+        resolver = avahi_service_resolver_new(impl->avahi_client_, // client
                                   interface,           // interface
                                   protocol,            // 
                                   name,                // 
                                   type,                // 
                                   domain,              // 
                                   AVAHI_PROTO_UNSPEC,  // address protocol (IPv4, IPv6)
-                                  0,                   // flags
+                                  (AvahiLookupFlags)0, // flags
                                   Implementation::resolve_callback,  // callback
                                   device);             // context
         if (resolver == NULL) {
-          fprintf(stderr,"Error while trying to resolve %s @ %s (%s)\n", name, domain, avahi_strerror(avahi_client_errno(c)));
+          fprintf(stderr,"Error while trying to resolve %s @ %s (%s)\n", name, domain, avahi_strerror(avahi_client_errno(impl->avahi_client_)));
         } else {
           avahi_service_resolver_free(resolver);
         }
@@ -165,7 +165,7 @@ public:
     switch (event) {
      case AVAHI_RESOLVER_FAILURE:
         fprintf(stderr, "Error while trying to resolve %s @ %s (%d)\n", name, domain,
-                        avahi_strerror(avahi_client_errno(avahi_service_resolver_get_client(r))));
+                        avahi_strerror(avahi_client_errno(avahi_service_resolver_get_client(resolver))));
         break;
       case AVAHI_RESOLVER_FOUND:
         if (device->event_ == AVAHI_BROWSER_NEW) {
@@ -174,7 +174,6 @@ public:
           device->browser_->remove_device(name, domain, port, false);
         }
         break;
-      }
     }
   }
   
