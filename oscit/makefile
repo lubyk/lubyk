@@ -1,6 +1,5 @@
 INCLUDE_HEADERS=-Ioscpack -Iinclude
 TESTING=-D_TESTING_
-PLAT=none
 AR = ar rcu
 RAGEL=ragel
 LIBTOOL=libtool -static
@@ -9,6 +8,11 @@ OBJECTS=url.o list.o midi_message.o object.o root.o command.o osc_command.o zero
 CFLAGS=-g -Wall $(TESTING) $(PLAT_FLAGS)
 
 PLATS=macosx linux
+
+
+ifeq ($(PLAT),)
+	PLAT=none
+endif
 
 default: $(PLAT)
 
@@ -54,13 +58,13 @@ cxalloc.o: include/opencv/cxalloc.cpp
 cxsystem.o: include/opencv/cxsystem.cpp
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 
-zeroconf.o: include/oscit/zeroconf.h src/$(PLAT)/zeroconf.cpp
+zeroconf.o: src/$(PLAT)/zeroconf.cpp include/oscit/zeroconf.h
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 
-zeroconf_browser.o: include/oscit/zeroconf.h src/$(PLAT)/zeroconf_browser.cpp
+zeroconf_browser.o: src/$(PLAT)/zeroconf_browser.cpp include/oscit/zeroconf.h
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 
-zeroconf_registration.o: include/oscit/zeroconf.h src/$(PLAT)/zeroconf_registration.cpp
+zeroconf_registration.o: src/$(PLAT)/zeroconf_registration.cpp include/oscit/zeroconf.h
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 
 %.o: src/%.cpp include/oscit/%.h
@@ -75,10 +79,10 @@ clean:
 # targets for different platforms
 
 macosx:
-	$(MAKE) all PLAT_FLAGS="-D_$(PLAT)_" PLAT=$(PLAT)
+	$(MAKE) all PLAT_FLAGS="-D_macosx_" PLAT=macosx
 
 linux:
-	$(MAKE) all PLAT_FLAGS="-D_$(PLAT)_" PLAT=$(PLAT)
+	$(MAKE) all PLAT_FLAGS="-D_linux_" PLAT=linux
 
 none:
 	@echo "Please choose a platform from the list: $(PLATS)"

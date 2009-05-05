@@ -1,0 +1,13 @@
+Compilation:
+
+mac os x
+--------
+
+> make macosx
+
+linux
+-----
+
+You first need to install avahi:
+
+> sudo aptitude install libavahi-client-dev
