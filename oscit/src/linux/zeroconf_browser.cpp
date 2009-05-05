@@ -39,6 +39,10 @@ public:
     if (avahi_client_) avahi_client_free(avahi_client_);
   }
   
+  void quit() {
+    avahi_simple_poll_quit(avahi_poll_);
+  }
+  
   void do_start() {
     int error;
     // create poll object
@@ -78,14 +82,10 @@ public:
       fprintf(stderr, "Could not create avahi service browser (%s).\n", avahi_strerror(avahi_client_errno(avahi_client_)));
       return;
     }
-  
+
     avahi_simple_poll_loop(avahi_poll_);
     
     avahi_service_browser_free(browser);
-  }
-  
-  void quit() {
-    avahi_simple_poll_quit(avahi_poll_);
   }
   
   static void client_callback(AvahiClient *client, AvahiClientState state, void *context) {
