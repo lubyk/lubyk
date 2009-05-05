@@ -16,6 +16,7 @@ namespace oscit {
 //#define DEBUG_OSC_COMMAND
 
 static osc::OutboundPacketStream &operator<<(osc::OutboundPacketStream &out_stream, const Value &val) {
+  size_t sz;
   switch (val.type()) {
     case REAL_VALUE:
       out_stream << val.r;
@@ -31,13 +32,17 @@ static osc::OutboundPacketStream &operator<<(osc::OutboundPacketStream &out_stre
       out_stream << osc::Nil;
       break;
     case LIST_VALUE:
-      size_t sz = val.size();
+      sz = val.size();
       for (size_t i = 0; i < sz; ++i) {
         out_stream << val[i];
       }
       break;
     case ANY_VALUE:
       out_stream << osc::Any;
+      break;
+    case HASH_VALUE:   /* continue */
+    case MATRIX_VALUE: /* continue */
+    case MIDI_VALUE:   /* continue */
     default:
       ;// ????
   }

@@ -18,6 +18,21 @@ typedef	int	pid_t;
 #include <arpa/inet.h>	// For inet_addr()
 #endif
 
+#ifdef __M_
+#endif
+#ifdef __M_
+#include <avahi-client/client.h>
+#include <avahi-client/publish.h>
+#include <avahi-client/lookup.h>
+
+#include <avahi-common/alternative.h>
+#include <avahi-common/simple-watch.h>
+#include <avahi-common/malloc.h>
+#include <avahi-common/error.h>
+#include <avahi-common/timeval.h>
+
+#endif
+
 #include <iostream>
 
 namespace oscit {

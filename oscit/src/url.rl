@@ -1,7 +1,8 @@
 /** Ragel parser definition to parse urls. */
 #include "oscit/url.h"
 #include <sstream>
-#include <stdio.h>
+#include <stdlib.h> // atoi
+#include <string.h> // strlen
 
 #define MAX_NUM_BUFFER_SIZE 20
 //#define DEBUG_PARSER

@@ -2,7 +2,8 @@
 /** Ragel parser definition to parse urls. */
 #include "oscit/url.h"
 #include <sstream>
-#include <stdio.h>
+#include <stdlib.h> // atoi
+#include <string.h> // strlen
 
 #define MAX_NUM_BUFFER_SIZE 20
 //#define DEBUG_PARSER
@@ -32,12 +33,12 @@ void Url::rebuild_full_url() {
 }
 
 ///////////////// ====== URL PARSER ========= /////////////
-#line 96 "src/url.rl"
+#line 97 "src/url.rl"
 
 
 // transition table
 
-#line 41 "src/url.cpp"
+#line 42 "src/url.cpp"
 static const char _url_actions[] = {
 	0, 1, 0, 1, 1, 1, 2, 1, 
 	4, 2, 2, 0, 2, 3, 0
@@ -98,7 +99,7 @@ static const int url_error = 0;
 
 static const int url_en_main = 1;
 
-#line 100 "src/url.rl"
+#line 101 "src/url.rl"
 
 /** This is a crude JSON parser. */
 void Url::parse(const char *url) {
@@ -110,13 +111,13 @@ void Url::parse(const char *url) {
   const char * pe = url + strlen(p) + 1;
   
   
-#line 114 "src/url.cpp"
+#line 115 "src/url.cpp"
 	{
 	cs = url_start;
 	}
-#line 111 "src/url.rl"
+#line 112 "src/url.rl"
   
-#line 120 "src/url.cpp"
+#line 121 "src/url.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -191,14 +192,14 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 49 "src/url.rl"
+#line 50 "src/url.rl"
 	{
     DEBUG(printf("%c-",(*p)));
     if ((*p)) str_buf.append(&(*p), 1); /* append */
   }
 	break;
 	case 1:
-#line 54 "src/url.rl"
+#line 55 "src/url.rl"
 	{
     protocol_ = str_buf;
     str_buf = "";
@@ -206,7 +207,7 @@ _match:
   }
 	break;
 	case 2:
-#line 60 "src/url.rl"
+#line 61 "src/url.rl"
 	{
     host_ = str_buf;
     str_buf = "";
@@ -214,7 +215,7 @@ _match:
   }
 	break;
 	case 3:
-#line 66 "src/url.rl"
+#line 67 "src/url.rl"
 	{
     port_ = atoi(str_buf.c_str());
     str_buf = "";
@@ -222,14 +223,14 @@ _match:
   }
 	break;
 	case 4:
-#line 72 "src/url.rl"
+#line 73 "src/url.rl"
 	{
     path_ = str_buf;
     str_buf = "";
     DEBUG(printf("[path %s\n]", path_.c_str()));
   }
 	break;
-#line 233 "src/url.cpp"
+#line 234 "src/url.cpp"
 		}
 	}
 
@@ -241,7 +242,7 @@ _again:
 	_test_eof: {}
 	_out: {}
 	}
-#line 112 "src/url.rl"
+#line 113 "src/url.rl"
 }
 
 } // oscit

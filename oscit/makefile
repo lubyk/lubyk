@@ -1,11 +1,18 @@
 INCLUDE_HEADERS=-Ioscpack -Iinclude
 TESTING=-D_TESTING_
+PLAT=none
 AR = ar rcu
 RAGEL=ragel
 LIBTOOL=libtool -static
 TEST=test/*_test.h
-OBJECTS=url.o list.o midi_message.o object.o root.o command.o osc_command.o zeroconf.o zeroconf_registration.o zeroconf_browser.o value.o thread.o oscpack/liboscpack.a matrix.o
-CFLAGS=-g -Wall $(TESTING)
+OBJECTS=url.o list.o midi_message.o object.o root.o command.o osc_command.o zeroconf.o zeroconf_browser.o zeroconf_registration.o value.o thread.o oscpack/liboscpack.a matrix.o
+CFLAGS=-g -Wall $(TESTING) $(PLAT_FLAGS)
+
+PLATS=macosx linux
+
+default: $(PLAT)
+
+all: test
 
 # without slow tests
 test: test/runner
@@ -47,10 +54,13 @@ cxalloc.o: include/opencv/cxalloc.cpp
 cxsystem.o: include/opencv/cxsystem.cpp
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 
-zeroconf_registration.o: src/zeroconf_registration.cpp include/oscit/zeroconf.h
+zeroconf.o: include/oscit/zeroconf.h src/$(PLAT)/zeroconf.cpp
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 
-zeroconf_browser.o: src/zeroconf_browser.cpp include/oscit/zeroconf.h
+zeroconf_browser.o: include/oscit/zeroconf.h src/$(PLAT)/zeroconf_browser.cpp
+	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
+
+zeroconf_registration.o: include/oscit/zeroconf.h src/$(PLAT)/zeroconf_registration.cpp
 	$(CC) $(CFLAGS) -c $(INCLUDE_HEADERS) $< -o $@
 
 %.o: src/%.cpp include/oscit/%.h
@@ -61,3 +71,16 @@ src/%.cpp: src/%.rl
 
 clean:
 	rm -rf *.o *.dSYM liboscit.a test/runner.cpp test/*.dSYM test/runner_all.cpp
+
+# targets for different platforms
+
+macosx:
+	$(MAKE) all PLAT_FLAGS="-D_$(PLAT)_" PLAT=$(PLAT)
+
+linux:
+	$(MAKE) all PLAT_FLAGS="-D_$(PLAT)_" PLAT=$(PLAT)
+
+none:
+	@echo "Please choose a platform from the list: $(PLATS)"
+
+

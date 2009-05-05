@@ -4,6 +4,8 @@
 
 #ifndef OSCIT_INCLUDE_OSCIT_OBJECT_H_
 #define OSCIT_INCLUDE_OSCIT_OBJECT_H_
+
+#include <stdlib.h> // atoi
 #include <list>
 #include <string>
 

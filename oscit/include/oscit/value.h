@@ -1,5 +1,7 @@
 #ifndef OSCIT_INCLUDE_OSCIT_VALUE_H_
 #define OSCIT_INCLUDE_OSCIT_VALUE_H_
+
+#include <string.h> // strlen
 #include <string>
 #include "oscit/value_types.h"
 #include "oscit/thash.h"

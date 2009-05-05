@@ -2,9 +2,10 @@
 
 //#define DEBUG_PARSER
 
-#include "oscit/values.h"
+#include <string.h> // strlen
 #include <iostream>
 #include <sstream>
+#include "oscit/values.h"
 
 namespace oscit {
 
@@ -60,6 +61,7 @@ std::ostream &operator<<(std::ostream &out_stream, const Value &val) {
 }
 
 void Value::to_stream(std::ostream &out_stream, bool lazy) const {
+  size_t sz;
   switch (type()) {
     case REAL_VALUE:
       out_stream << r;
@@ -88,7 +90,7 @@ void Value::to_stream(std::ostream &out_stream, bool lazy) const {
       out_stream << "\"MidiMessage " << *midi_message_ << "\"";
       break;
     case LIST_VALUE:
-      size_t sz = size();
+      sz = size();
       if (!lazy) out_stream << "[";
       for (size_t i = 0; i < sz; ++i) {
         if (i > 0) out_stream << ", ";
