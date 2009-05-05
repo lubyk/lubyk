@@ -2,7 +2,8 @@
 
 //#define DEBUG_PARSER
 
-#include <string.h> // strlen
+#include <string.h>  // strlen
+#include <stdlib.h>  // atof
 #include <iostream>
 #include <sstream>
 #include "oscit/values.h"

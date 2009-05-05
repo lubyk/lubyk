@@ -164,7 +164,7 @@ public:
     BrowsedDevice *device = (BrowsedDevice*)context;
     switch (event) {
      case AVAHI_RESOLVER_FAILURE:
-        fprintf(stderr, "Error while trying to resolve %s @ %s (%d)\n", name, domain,
+        fprintf(stderr, "Error while trying to resolve %s @ %s (%s)\n", name, domain,
                         avahi_strerror(avahi_client_errno(avahi_service_resolver_get_client(resolver))));
         break;
       case AVAHI_RESOLVER_FOUND:

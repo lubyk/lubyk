@@ -45,9 +45,9 @@ public:
       error = avahi_entry_group_add_service(group_,  // group
         AVAHI_IF_UNSPEC,                        // interface
         AVAHI_PROTO_UNSPEC,                     // protocol to announce service with
-        0,                                      // flags
+        (AvahiPublishFlags)0,                   // flags
         name_.c_str(),                          // name
-        master_->service_type_,                 // service type
+        master_->service_type_.c_str(),         // service type
         NULL,                                   // domain
         NULL,                                   // host
         master_->port_,                         // port
@@ -75,17 +75,17 @@ public:
   void do_start() {
     int error;
     // create poll object
-    avahi_poll_ = avahi_avahi_poll_new();
+    avahi_poll_ = avahi_simple_poll_new();
     if (avahi_poll_ == NULL) {
       fprintf(stderr, "Could not create avahi simple poll object.\n");
       return;
     }
 
     // create client
-    avahi_client_ = avahi_client_new(avahi_avahi_poll_get(avahi_poll_),
-                              0,                 // flags
+    avahi_client_ = avahi_client_new(avahi_simple_poll_get(avahi_poll_),
+                              (AvahiClientFlags)0,             // flags
                               Implementation::client_callback, // callback
-                              this,              // context
+                              this,                            // context
                               &error);
 
     if (avahi_client_ == NULL) {
@@ -147,7 +147,9 @@ public:
     switch (state) {
       case AVAHI_ENTRY_GROUP_ESTABLISHED:
         // done !
-        impl->registration_->finish_registration(impl->name_, impl->host_);
+        impl->master_->name_ = impl->name_;
+        impl->master_->host_ = impl->host_;
+        impl->master_->registration_done();
         break;
       case AVAHI_ENTRY_GROUP_COLLISION:
         // build new name
@@ -167,6 +169,8 @@ public:
   }
 
   ZeroConfRegistration *master_;
+  AvahiSimplePoll *avahi_poll_;
+  AvahiClient     *avahi_client_;
   std::string name_;
   std::string host_;
   AvahiEntryGroup *group_;
