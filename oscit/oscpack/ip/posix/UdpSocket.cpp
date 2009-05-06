@@ -428,7 +428,9 @@ public:
 			if ( FD_ISSET( breakPipe_[0], &tempfds ) ){
 				// clear pending data from the asynchronous break pipe
 				char c;
-				read( breakPipe_[0], &c, 1 );
+				if (read( breakPipe_[0], &c, 1 ) < 0) {
+				  fprintf(stderr, "Could not read from osc pipe.\n");
+		    }
 			}
 			
 			if( break_ )
@@ -478,7 +480,9 @@ public:
 		break_ = true;
 
 		// Send a termination message to the asynchronous break pipe, so select() will return
-		write( breakPipe_[1], "!", 1 );
+		if (write( breakPipe_[1], "!", 1 ) < 1) {
+		  fprintf(stderr, "Could not write termination message to osc pipe.\n");
+		}
 	}
 };
 
