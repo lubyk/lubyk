@@ -6,7 +6,7 @@ rubyk/lib/*
 *.mode1v3
 .DS_Store
 *~
-oscit/test/runner*
+oscit/build
 rubyk/src/lib/lua/lua
 rubyk/src/lib/lua/luac
 rubyk/test/runner*

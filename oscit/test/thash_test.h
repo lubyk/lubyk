@@ -1,4 +1,4 @@
-#include "test/test_helper.h"
+#include "test_helper.h"
 #include "oscit/thash.h"
 
 
