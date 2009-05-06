@@ -6,13 +6,13 @@
 
 namespace oscit {
 
-/** Simple wrapper class for POSIX mutex. */
+/** Simple wrapper class for a POSIX fast mutex. */
 class Mutex : public Typed
 {
 public:
   TYPED("Mutex")
   
-  Mutex() : mutex_owner_(NULL) { 
+  Mutex() { 
     pthread_mutex_init(&mutex_, NULL);
   }
   
@@ -22,28 +22,16 @@ public:
   
   /** If the mutex is locked by another thread, waits until it is unlocked, lock and continue.
     * If the mutex is not locked. Lock and continue.
-    * If this thread locked it, ignore. */
-  void lock() { 
-    fflush(stdout);
-    pthread_t current_thread_id = pthread_self();
-    if (!pthread_equal(mutex_owner_, current_thread_id)) {
-      // only try to lock if we do not own the current lock (avoid deadlock)
-      pthread_mutex_lock(&mutex_);
-      mutex_owner_ = current_thread_id;
-    }
+    * If this thread locked it: bang! */
+  void lock() {
+    pthread_mutex_lock(&mutex_);
   }
   
   /** Release the lock so others can work on the data. */
   void unlock() {
-    fflush(stdout);
-    if (mutex_owner_ == pthread_self()) {
-      // only unlock a lock we own
-      pthread_mutex_unlock(&mutex_);
-      mutex_owner_ = NULL;
-    }
+    pthread_mutex_unlock(&mutex_);
   }
  private:
-  pthread_t mutex_owner_;
   pthread_mutex_t mutex_;
 };
 

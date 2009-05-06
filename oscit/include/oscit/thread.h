@@ -61,7 +61,7 @@ class Thread : public Mutex
   
   /** Kill thread (do not make this a virtual). */
   void kill() {
-    if (thread_id_ == pthread_self()) {
+    if (pthread_equal(thread_id_, pthread_self())) {
       should_run_ = false;
       thread_id_ = NULL;
     } else if (thread_id_) {

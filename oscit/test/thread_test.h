@@ -12,7 +12,7 @@ struct DummyWorker
       ++value_;
       runner->unlock();
       
-      millisleep(10);
+      millisleep(20);
     }
   }
   
@@ -22,7 +22,7 @@ struct DummyWorker
       ++value_;
       runner->unlock();
       
-      millisleep(10);
+      millisleep(20);
     }
   }
   
@@ -33,7 +33,7 @@ struct DummyWorker
       ++value_;
       runner->unlock();
       
-      millisleep(10); // should be interrupted
+      millisleep(20); // should be interrupted
     }
   }
   
@@ -64,7 +64,7 @@ struct DummySubWorker : public Thread
       ++value_;
       unlock();
       
-      millisleep(10);
+      millisleep(20);
     }
   }
   
@@ -78,8 +78,8 @@ public:
     DummyWorker counter;
     Thread *runner = new Thread;
     runner->start<DummyWorker, &DummyWorker::count>(&counter, NULL);
-    // let it run 2 times: +1 ... 10ms ... +1 ... 5ms .. kill [end]
-    millisleep(15);
+    // let it run 2 times: +1 ... 20ms ... +1 ... 10ms .. kill [end]
+    millisleep(30);
     delete runner;
     // should join here
     assert_equal(2, counter.value_);
@@ -89,7 +89,7 @@ public:
     DummySubWorker * counter = new DummySubWorker;
     counter->start<DummySubWorker, &DummySubWorker::count>(counter, NULL);
     // let it run 2 times: +1 ... 10ms ... +1 ... 5ms .. kill [end]
-    millisleep(15);
+    millisleep(30);
     counter->kill();
     // should join here
     assert_equal(2, counter->value_);
@@ -101,7 +101,7 @@ public:
     DummySubWorker * counter = new DummySubWorker;
     counter->start<DummySubWorker, &DummySubWorker::count>(counter, NULL);
     // let it run 2 times: +1 ... 10ms ... +1 ... 5ms .. kill [end]
-    millisleep(15);
+    millisleep(30);
     delete counter;
     // should join here
     // should not block
@@ -112,7 +112,7 @@ public:
     Thread *runner = new Thread;
     runner->start<DummyWorker, &DummyWorker::count>(&counter, NULL);
     // let it run 2 times: +1 ... 10ms ... +1 ... 5ms .. kill .. 5ms [end]
-    millisleep(15);
+    millisleep(30);
     runner->stop();
     runner->stop(); // should not lock
     
@@ -128,7 +128,7 @@ public:
     Thread *runner = new Thread;
     runner->start<DummyWorker, &DummyWorker::count>(&counter, NULL);
     // let it run 1 times: +1 ... 5ms kill [end]
-    millisleep(5);
+    millisleep(10);
     runner->kill();
     runner->kill(); // should not lock
     // should join here
@@ -142,12 +142,12 @@ public:
     Thread *runner = new Thread;
     runner->start<DummyWorker, &DummyWorker::count>(&counter, NULL);
     // let it run 2 times: +1 ... 10ms ... +1 ... 5ms .. kill .. 5ms [end]
-    millisleep(15);
+    millisleep(30);
     runner->kill();
     
     runner->start<DummyWorker, &DummyWorker::count>(&counter, NULL);
     // let it run 2 times: +1 ... 10ms ... +1 ... 5ms .. kill .. 5ms [end]
-    millisleep(15);
+    millisleep(30);
     runner->kill();
     
     // should join here
@@ -161,7 +161,7 @@ public:
     Thread *runner = new Thread;
     runner->start<DummyWorker, &DummyWorker::count_high>(&counter, NULL);
     // let it run 2 times: +1 ... 10ms ... +1 ... 5ms .. kill .. 5ms [end]
-    millisleep(15);
+    millisleep(30);
     delete runner;
     // should join here
     assert_equal(2, counter.value_);

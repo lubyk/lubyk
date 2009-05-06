@@ -14,6 +14,7 @@
 #include <avahi-common/error.h>
 #include <avahi-common/timeval.h>
 
+#include "oscit/thread.h"
 #include "oscit/zeroconf.h"
 
 namespace oscit {
@@ -27,16 +28,16 @@ struct BrowsedDevice {
   AvahiBrowserEvent event_;
 };
 
-class ZeroConfBrowser::Implementation {
+class ZeroConfBrowser::Implementation : public Thread {
 public:
   Implementation(ZeroConfBrowser *master) : master_(master), avahi_poll_(NULL), avahi_client_(NULL) {
-    do_start();
+    start<Implementation, &Implementation::do_start>(this, NULL);
   }
   
   ~Implementation() {
     quit();
-    if (avahi_poll_) avahi_simple_poll_free(avahi_poll_);
     if (avahi_client_) avahi_client_free(avahi_client_);
+    if (avahi_poll_) avahi_simple_poll_free(avahi_poll_);
   }
   
   void quit() {
@@ -82,7 +83,7 @@ public:
       fprintf(stderr, "Could not create avahi service browser (%s).\n", avahi_strerror(avahi_client_errno(avahi_client_)));
       return;
     }
-
+    
     avahi_simple_poll_loop(avahi_poll_);
     
     avahi_service_browser_free(browser);
@@ -111,7 +112,7 @@ public:
                                  void *context) {
     Implementation *impl = (Implementation*)context;
     AvahiServiceResolver *resolver;
-    BrowsedDevice *device = new BrowsedDevice(impl->master_, name, domain, event);
+    BrowsedDevice *device;
 
     switch (event) {
       case AVAHI_BROWSER_FAILURE:
@@ -121,6 +122,7 @@ public:
         break;
       case AVAHI_BROWSER_NEW: /* continue */  
       case AVAHI_BROWSER_REMOVE:
+        device = new BrowsedDevice(impl->master_, name, domain, event);
         resolver = avahi_service_resolver_new(impl->avahi_client_, // client
                                   interface,           // interface
                                   protocol,            // 
@@ -136,14 +138,14 @@ public:
         } else {
           avahi_service_resolver_free(resolver);
         }
+        delete device;
         break;
       case AVAHI_BROWSER_ALL_FOR_NOW:
       case AVAHI_BROWSER_CACHE_EXHAUSTED:
-        fprintf(stderr, "(Browser) %s\n", event == AVAHI_BROWSER_CACHE_EXHAUSTED ? "CACHE_EXHAUSTED" : "ALL_FOR_NOW");
+        // fprintf(stderr, "(Browser) %s\n", event == AVAHI_BROWSER_CACHE_EXHAUSTED ? "CACHE_EXHAUSTED" : "ALL_FOR_NOW");
         break;
     }
 
-    delete device;
   }
   
   
@@ -187,6 +189,8 @@ ZeroConfBrowser::ZeroConfBrowser(const std::string &service_type) : service_type
 }
 
 ZeroConfBrowser::~ZeroConfBrowser() {
+  impl_->quit();
+  // not needed impl_->kill();
   delete impl_;
 }
 

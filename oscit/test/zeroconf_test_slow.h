@@ -12,7 +12,7 @@ public:
   virtual void add_device(const char *name, const char *host, unsigned int port, bool more_coming) {
     if (!was_more_coming_) {
       // only record first entry in case there are more then one network interfaces
-      stream_ << "[+ " << name << " @ " << host << ":" << port << "]";
+      stream_ << "[+ " << name << " @ " << port << "]";
     }
     was_more_coming_ = more_coming;
   }
@@ -20,7 +20,7 @@ public:
   virtual void remove_device(const char *name, const char *host, unsigned int port, bool more_coming) {
     if (!was_more_coming_) {
       // only record first entry in case there are more then one network interfaces
-      stream_ << "[- " << name << " @ " << host << ":" << port << "]";
+      stream_ << "[- " << name << " @ " << port << "]";
     }
     was_more_coming_ = more_coming;
   }
@@ -38,7 +38,7 @@ public:
   DummyRegistration(const char *name, const char *service, uint port) : ZeroConfRegistration(name, service, port), stream_(std::ostringstream::out) {}
   
   virtual void registration_done() {
-    stream_ << "[registered: " << name_ << " @ " << host_ << ":" << port_ << "]";
+    stream_ << "[registered: " << name_ << " @ " << port_ << "]";
   }
   
   const std::string str() { return stream_.str(); }
@@ -59,13 +59,13 @@ class ZeroConfTest : public TestHelper {
     
     wait(2000);
     
-    assert_equal("[registered: foobar @ local.:5007]", registration->str());
-    assert_equal("[+ foobar @ local.:5007]", browser.str());
+    assert_equal("[registered: foobar @ 5007]", registration->str());
+    assert_equal("[+ foobar @ 5007]", browser.str());
     browser.str(""); // clear
     
     delete registration;
     wait(2000);
-    assert_equal("[- foobar @ local.:5007]", browser.str());
+    assert_equal("[- foobar @ 5007]", browser.str());
   }
     
  private:

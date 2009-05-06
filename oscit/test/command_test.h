@@ -12,7 +12,7 @@ public:
     std::string string;
     root->adopt_command(new DummyCommand(&string));
     // let it run 2 times: +1 ... 10ms ... +1 ... 5ms .. quit [end]
-    millisleep(15);
+    millisleep(30);
     delete root;
     // should join here
     assert_equal("..", string);
@@ -35,7 +35,7 @@ public:
     assert_true(d4 != NULL);
     
     // let it run 2 times: +1 ... 10ms ... +1 ... 5ms .. quit [end]
-    millisleep(15);
+    millisleep(30);
     delete root1;
     delete root2;
     

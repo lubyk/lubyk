@@ -8,9 +8,9 @@ std::ostringstream gMutexTest_log(std::ostringstream::out);
 void * start_mutex_test_thread(void * data) {  
   gMutexTest_log << "[1:new]";
   gMutexTest_mutex.lock();
-  millisleep(1);
+  millisleep(2);
   gMutexTest_log << "[1:lock]";
-  millisleep(50);
+  millisleep(100);
   gMutexTest_mutex.unlock();
   gMutexTest_log << "[1:unlock][1:end]";
   return NULL;
@@ -19,13 +19,14 @@ void * start_mutex_test_thread(void * data) {
 class MutexTest : public TestHelper
 {  
 public:
-  void test_double_lock( void ) {
-    Mutex mutex;
-    mutex.lock();
-    mutex.lock();
-    // the test would hang and would never reach here if it fails
-    assert_true( true ); // passed !
-  }
+//  we have removed support for recursive locks (see if it works without first)
+//  void test_double_lock( void ) {
+//    Mutex mutex;
+//    mutex.lock();
+//    mutex.lock();
+//    // the test would hang and would never reach here if it fails
+//    assert_true( true ); // passed !
+//  }
   
   void test_bad_unlock( void ) {
     Mutex mutex;
@@ -40,12 +41,12 @@ public:
     pthread_t id;
     // create new thread (will try to get hold of the lock)
     pthread_create( &id, NULL, &start_mutex_test_thread, NULL);
-    millisleep(10);
+    millisleep(20);
     // release lock() --> other gets hold of it
     gMutexTest_mutex.unlock();
     gMutexTest_log << "[0:unlock]";
     gMutexTest_mutex.lock();
-    millisleep(1);
+    millisleep(2);
     gMutexTest_log << "[0:lock]";
     gMutexTest_mutex.unlock();
     pthread_join( id, NULL);

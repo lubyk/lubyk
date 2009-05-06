@@ -31,7 +31,7 @@ add_library (oscit STATIC ${OSCIT_SOURCES})
 
 # one test for all CxxTests
 enable_testing()
-file (GLOB OSCIT_TEST_SOURCES test/*_test.h test/*_test_slow.h)
+file (GLOB OSCIT_TEST_SOURCES test/*_xxtest.h test/*_test_slow.h)
 add_custom_command (
   OUTPUT  test_runner.cpp
   COMMAND ${OSCIT_SOURCE_DIR}/test/cxxtest/cxxtestgen.pl --error-printer -o test_runner.cpp ${OSCIT_TEST_SOURCES})
@@ -43,7 +43,7 @@ add_test (oscit_test test_runner)
 
 # this is to enable verbose output during testing
 add_custom_target (test_all ALL ${CMAKE_CTEST_COMMAND} -V)
-add_dependencies(test_all test_runner)
+add_dependencies (test_all test_runner)
 
 # one test for each file
 # # this is to enable verbose output during testing

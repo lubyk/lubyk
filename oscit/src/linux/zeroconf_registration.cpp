@@ -14,6 +14,7 @@
 #include <avahi-common/error.h>
 #include <avahi-common/timeval.h>
 
+#include "oscit/thread.h"
 #include "oscit/zeroconf.h"
 
 
@@ -22,18 +23,17 @@ namespace oscit {
 #define MAX_NAME_COUNTER_BUFFER_SIZE 10
 
 
-class ZeroConfRegistration::Implementation {
+class ZeroConfRegistration::Implementation : public Thread {
 public:
-  Implementation(ZeroConfRegistration *master) : master_(master), group_(NULL), counter_(0) {
-    printf("do_start !\n");
-    do_start();
-    printf("done.\n");
+  Implementation(ZeroConfRegistration *master) : master_(master), name_(master_->name_), host_(master_->host_), group_(NULL), counter_(0) {
+    start<Implementation, &Implementation::do_start>(this, NULL);
   }
   
   ~Implementation() {
     quit();
-    if (avahi_poll_) avahi_simple_poll_free(avahi_poll_);
+    if (group_) avahi_entry_group_reset(group_);
     if (avahi_client_) avahi_client_free(avahi_client_);
+    if (avahi_poll_) avahi_simple_poll_free(avahi_poll_);
   }
   
   void quit() {
@@ -61,44 +61,45 @@ public:
           next_name();
           create_services();
         } else {
-          fprintf(stderr, "Could not add service '%s' to avahi group (%s)\n",
+          fprintf(stderr, "Could not add service '%s' (%s) to avahi group (%s)\n",
+                                  name_.c_str(),
                                   master_->service_type_.c_str(),
                                   avahi_strerror(error));
           return;
         }
       }
-
-      // start registering the service
-      error = avahi_entry_group_commit(group_);
-      if (error < 0) {
-        fprintf(stderr, "Could not commit avahi group (%s)\n", avahi_strerror(error));
-      }
+    }
+    // start registering the service
+    error = avahi_entry_group_commit(group_);
+    if (error < 0) {
+      fprintf(stderr, "Could not commit avahi group (%s)\n", avahi_strerror(error));
     }
   }
   
   void do_start() {
     int error;
+    printf("Trying to register '%s' (%s).\n", master_->name_.c_str(), master_->service_type_.c_str());
     // create poll object
     avahi_poll_ = avahi_simple_poll_new();
     if (avahi_poll_ == NULL) {
       fprintf(stderr, "Could not create avahi simple poll object.\n");
       return;
     }
-    printf("Create client.\n");
+
     // create client
     avahi_client_ = avahi_client_new(avahi_simple_poll_get(avahi_poll_),
                               (AvahiClientFlags)0,             // flags
                               Implementation::client_callback, // callback
                               this,                            // context
                               &error);
-    printf("Create client done.\n");
+
     if (avahi_client_ == NULL) {
       fprintf(stderr, "Failed to create avahi client (%s).\n", avahi_strerror(error));
       return;
     }
     
     avahi_simple_poll_loop(avahi_poll_);
-
+    printf("finished avahi_simple_poll_loop\n");
     avahi_entry_group_reset(group_);
   }
   
@@ -124,7 +125,6 @@ public:
                         avahi_strerror(avahi_client_errno(impl->avahi_client_)));
         return;
       }
-      printf("Created group_ = %p\n", impl->group_);
     }
     
     // called on every server state change
@@ -156,7 +156,7 @@ public:
       case AVAHI_ENTRY_GROUP_ESTABLISHED:
         // done !
         impl->master_->name_ = impl->name_;
-        impl->master_->host_ = impl->host_;
+        impl->master_->host_ = avahi_client_get_host_name(impl->avahi_client_);
         impl->master_->registration_done();
         break;
       case AVAHI_ENTRY_GROUP_COLLISION:
@@ -192,6 +192,7 @@ ZeroConfRegistration::ZeroConfRegistration(const std::string &name, const std::s
 
 ZeroConfRegistration::~ZeroConfRegistration() {
   impl_->quit();
+  // not needed impl_->kill();
   delete impl_;
 }
 

@@ -160,12 +160,12 @@ public:
     Root root;
     std::string string;
     DummyCommand * cmd = root.adopt_command(new DummyCommand(&string));
-    millisleep(15);
+    millisleep(30);
     assert_equal("..", string);
     delete cmd;
     string = "";
     cmd = root.adopt_command(new DummyCommand(&string), false); // do not start
-    millisleep(15);
+    millisleep(30);
     assert_equal("", string);
     delete cmd; // should not lock
   }

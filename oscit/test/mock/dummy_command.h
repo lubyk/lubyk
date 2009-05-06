@@ -12,7 +12,7 @@ struct DummyCommand : public Command
   void do_listen() {
     while (should_run()) {
       string_->append(".");
-      millisleep(10);
+      millisleep(20);
     }
   }
   
