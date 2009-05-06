@@ -35,10 +35,10 @@ add_library (oscit STATIC ${OSCIT_SOURCES})
 enable_testing()
 file (GLOB OSCIT_TEST_SOURCES test/*_test.h test/*_test_slow.h)
 add_custom_command (
-  OUTPUT  ${OSCIT_SOURCE_DIR}/test/runner.cpp
-  COMMAND ${OSCIT_SOURCE_DIR}/test/cxxtest/cxxtestgen.pl --error-printer -o ${OSCIT_SOURCE_DIR}/test/runner.cpp ${OSCIT_TEST_SOURCES})
+  OUTPUT  test_runner.cpp
+  COMMAND ${OSCIT_SOURCE_DIR}/test/cxxtest/cxxtestgen.pl --error-printer -o test_runner.cpp ${OSCIT_TEST_SOURCES})
 
-add_executable (test_runner test/runner.cpp)
+add_executable (test_runner test_runner.cpp)
 
 target_link_libraries (test_runner oscit ${OSCIT_SOURCE_DIR}/oscpack/liboscpack.a)
 add_test (oscit_test test_runner)
