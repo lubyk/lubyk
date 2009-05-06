@@ -17,12 +17,7 @@ MESSAGE("Platform is ${PLAT}")
 
 project (OSCIT)
 set (CMAKE_CXX_FLAGS "-g -Wall")
-file (GLOB OSCIT_COMMON_SOURCES src/*.cpp)
-set (OSCIT_SOURCES
-${OSCIT_COMMON_SOURCES}
-src/${PLAT}/zeroconf_browser.cpp
-src/${PLAT}/zeroconf_registration.cpp
-)
+file (GLOB OSCIT_SOURCES src/*.cpp src/${PLAT}/*.cpp)
 
 include_directories (${OSCIT_SOURCE_DIR}/oscpack ${OSCIT_SOURCE_DIR}/include)
 include_directories (AFTER ${OSCIT_SOURCE_DIR}/test)
