@@ -11,7 +11,7 @@
 namespace oscit {
 
 #define OSC_OUT_BUFFER_SIZE 2048
-#define OSCIT_SERVICE_TYPE "_oscit._udp."
+#define OSCIT_SERVICE_TYPE "_oscit._udp"
 
 //#define DEBUG_OSC_COMMAND
 

@@ -52,10 +52,10 @@ class ZeroConfTest : public TestHelper {
  public:
   
   void test_register_browse( void ) {
-    DummyBrowser browser("_oscit._udp.");
+    DummyBrowser browser("_oscit._udp");
     wait(1000);
     browser.str(""); // clear
-    DummyRegistration *registration = new DummyRegistration("foobar", "_oscit._udp.", 5007);
+    DummyRegistration *registration = new DummyRegistration("foobar", "_oscit._udp", 5007);
     
     wait(2000);
     

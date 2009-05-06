@@ -26,7 +26,7 @@ public:
   void lock() { 
     fflush(stdout);
     pthread_t current_thread_id = pthread_self();
-    if (mutex_owner_ != current_thread_id) {
+    if (!pthread_equal(mutex_owner_, current_thread_id)) {
       // only try to lock if we do not own the current lock (avoid deadlock)
       pthread_mutex_lock(&mutex_);
       mutex_owner_ = current_thread_id;

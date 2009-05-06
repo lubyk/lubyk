@@ -1,4 +1,15 @@
+#include "errno.h"   // errno
+#include "string.h"  // strerror
+
 #include "oscit/thread.h"
+
+#ifdef __macosx__
+#define SCHED_HIGH_PRIORITY 47
+#endif
+
+#ifdef __linux__
+#define SCHED_HIGH_PRIORITY 42
+#endif
 
 namespace oscit {
   
@@ -23,13 +34,12 @@ void Thread::high_priority() {
   
   // set to high priority
   param = normal_thread_param_;
-                             // FIXME: other magick numbers for Linux, Windows
-  param.sched_priority = 47; // magick number for Mac OS X
-  policy = SCHED_RR;         // round robin
+  param.sched_priority = SCHED_HIGH_PRIORITY;  // magick number
+  policy = SCHED_RR;                           // realtime, round robin
   
   
   if (pthread_setschedparam(id, policy, &param)) {
-    fprintf(stderr, "Could not set thread priority to %i.\n", param.sched_priority);
+    fprintf(stderr, "Could not set thread priority to %i (%s). You might need to run the application as super user.\n", param.sched_priority, strerror(errno));
   }
 }
 

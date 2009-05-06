@@ -10,4 +10,4 @@ linux
 
 You first need to install avahi:
 
-> sudo aptitude install libavahi-client-dev
+> sudo aptitude install libavahi-client-dev build-essentials

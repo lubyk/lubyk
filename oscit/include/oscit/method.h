@@ -69,7 +69,6 @@ class Method : public Object
     return (*member_method_)(receiver_,val);
   }
   
-protected:
   /** Make a pointer to a member method. */
   template<class T, const Value(T::*Tmethod)(const Value&)>
   static const Value cast_method (void *receiver, const Value &val)
@@ -85,6 +84,7 @@ protected:
     return gNilValue;
   }
 
+ protected:
   void *          receiver_;       /**< Object containing the method. */
   member_method_t member_method_;  /**< Pointer on a cast of the member method. */ 
 };

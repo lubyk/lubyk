@@ -24,8 +24,10 @@ namespace oscit {
 
 class ZeroConfRegistration::Implementation {
 public:
-  Implementation(ZeroConfRegistration *master) : master_(master), counter_(0) {
+  Implementation(ZeroConfRegistration *master) : master_(master), group_(NULL), counter_(0) {
+    printf("do_start !\n");
     do_start();
+    printf("done.\n");
   }
   
   ~Implementation() {
@@ -59,7 +61,9 @@ public:
           next_name();
           create_services();
         } else {
-          fprintf(stderr, "Could not add service to avahi group (%s)\n", avahi_strerror(error));
+          fprintf(stderr, "Could not add service '%s' to avahi group (%s)\n",
+                                  master_->service_type_.c_str(),
+                                  avahi_strerror(error));
           return;
         }
       }
@@ -80,29 +84,19 @@ public:
       fprintf(stderr, "Could not create avahi simple poll object.\n");
       return;
     }
-
+    printf("Create client.\n");
     // create client
     avahi_client_ = avahi_client_new(avahi_simple_poll_get(avahi_poll_),
                               (AvahiClientFlags)0,             // flags
                               Implementation::client_callback, // callback
                               this,                            // context
                               &error);
-
+    printf("Create client done.\n");
     if (avahi_client_ == NULL) {
       fprintf(stderr, "Failed to create avahi client (%s).\n", avahi_strerror(error));
       return;
     }
     
-    group_ = avahi_entry_group_new(avahi_client_,  // client
-                 Implementation::entry_group_callback,   // calback
-                 this);                                  // context
-
-    if (group_ == NULL) {
-      fprintf(stderr, "Could not create avahi group (%s).\n",
-                      avahi_strerror(avahi_client_errno(avahi_client_)));
-      return;
-    }
-
     avahi_simple_poll_loop(avahi_poll_);
 
     avahi_entry_group_reset(group_);
@@ -118,6 +112,20 @@ public:
   
   static void client_callback(AvahiClient *client, AvahiClientState state, void *context) {
     Implementation *impl = (Implementation*)context;
+    
+    if (impl->group_ == NULL) {
+      impl->avahi_client_ = client; // do_start client creation has not returned yet...
+      impl->group_ = avahi_entry_group_new(impl->avahi_client_,  // client
+                   Implementation::entry_group_callback,         // callback
+                   impl);                                        // context
+
+      if (impl->group_ == NULL) {
+        fprintf(stderr, "Could not create avahi group (%s).\n",
+                        avahi_strerror(avahi_client_errno(impl->avahi_client_)));
+        return;
+      }
+      printf("Created group_ = %p\n", impl->group_);
+    }
     
     // called on every server state change
     switch (state) {
