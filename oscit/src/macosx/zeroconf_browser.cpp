@@ -31,7 +31,7 @@ namespace oscit {
 struct BrowsedDevice {
   BrowsedDevice(ZeroConfBrowser *browser, const char *name, const char *host, DNSServiceFlags flags) :
                 name_(name), host_(host), browser_(browser), flags_(flags) {}
-  std::string name_;              
+  std::string name_;
   std::string host_;
   ZeroConfBrowser *browser_;
   DNSServiceFlags flags_;
@@ -42,7 +42,7 @@ public:
   Implementation(ZeroConfBrowser *master) : master_(master) {
     start<Implementation, &Implementation::do_start>(this, NULL);
   }
-  
+
   void do_start(Thread *thread) {
     DNSServiceErrorType error;
     DNSServiceRef       service;
@@ -62,7 +62,7 @@ public:
     }
     DNSServiceRefDeallocate(service);
   }
-  
+
   void browse(DNSServiceRef service) {
     // Run until break.
     int dns_sd_fd = DNSServiceRefSockFD(service);
@@ -94,7 +94,7 @@ public:
       }
     }
   }
-  
+
   static void resolve_callback(DNSServiceRef service,
                                DNSServiceFlags flags,
                                uint32_t interface_index,
@@ -105,11 +105,11 @@ public:
                                uint16_t txt_len,
                                const unsigned char *txt,
                                void *context) {
-    
+
     BrowsedDevice *device = (BrowsedDevice*)context;
-    
+
     if (device->flags_ & kDNSServiceFlagsAdd) {
-      device->browser_->add_device(device->name_.c_str(), 
+      device->browser_->add_device(device->name_.c_str(),
                                device->host_.c_str(),
                                ntohs(port),
                                device->flags_ & kDNSServiceFlagsMoreComing);
@@ -118,7 +118,7 @@ public:
                                device->flags_ & kDNSServiceFlagsMoreComing);
     }
   }
-  
+
   static void browser_callback(DNSServiceRef service,
                                DNSServiceFlags flags,
                                uint32_t interface_index,
@@ -156,7 +156,7 @@ public:
     DNSServiceRefDeallocate(resolve_service);
     delete device;
   }
-  
+
   ZeroConfBrowser *master_;
 };
 
@@ -165,8 +165,11 @@ ZeroConfBrowser::ZeroConfBrowser(const std::string &service_type) : service_type
 }
 
 ZeroConfBrowser::~ZeroConfBrowser() {
-  impl_->kill();
   delete impl_;
+}
+
+void ZeroConfBrowser::stop() {
+  impl_->kill();
 }
 
 } // oscit

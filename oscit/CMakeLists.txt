@@ -43,7 +43,7 @@ add_custom_command (
   OUTPUT  test_runner.cpp
   COMMAND ${OSCIT_SOURCE_DIR}/test/cxxtest/cxxtestgen.pl --error-printer -o test_runner.cpp ${OSCIT_TEST_SOURCES})
 
-add_executable (test_runner test_runner.cpp)
+add_executable (test_runner test_runner.cpp ${OSCIT_SOURCE_DIR}/oscpack/liboscpack.a)
 
 target_link_libraries (test_runner oscit ${OSCIT_SOURCE_DIR}/oscpack/liboscpack.a ${PLAT_LINK})
 add_test (oscit_test test_runner)
@@ -63,9 +63,9 @@ add_dependencies (test_all test_runner)
 #   add_custom_command (
 #     OUTPUT  ${TEST_NAME}.cpp
 #     COMMAND ${OSCIT_SOURCE_DIR}/test/cxxtest/cxxtestgen.pl --error-printer -o ${TEST_NAME}.cpp ${TEST_SOURCE})
-# 
+#
 #   add_executable (${TEST_NAME}.runner ${TEST_NAME}.cpp)
-# 
+#
 #   target_link_libraries (${TEST_NAME}.runner oscit ${OSCIT_SOURCE_DIR}/oscpack/liboscpack.a)
 #   add_test (${TEST_NAME} ${TEST_NAME}.runner)
 #   add_dependencies(test ${TEST_NAME}.runner)

@@ -23,13 +23,18 @@ public:
   Implementation(ZeroConfBrowser *browser) : browser_(browser), avahi_poll_(NULL), avahi_client_(NULL) {
     do_start();
   }
-  
+
   ~Implementation() {
-    avahi_threaded_poll_stop(avahi_poll_); // does this join ?
     if (avahi_client_) avahi_client_free(avahi_client_);
     if (avahi_poll_) avahi_threaded_poll_free(avahi_poll_);
   }
-  
+
+	/** Called from outside of thread to stop operations.
+	 */
+	void stop() {
+    avahi_threaded_poll_stop(avahi_poll_);
+	}
+
   void do_start() {
     int error;
     // create poll object
@@ -50,12 +55,12 @@ public:
       fprintf(stderr, "Failed to create avahi client (%s).\n", avahi_strerror(error));
       return;
     }
-    
+
     if (avahi_client_ == NULL) return;
-  
+
     AvahiServiceBrowser *browser = NULL;
-  
-  
+
+
     // create browser service
     browser = avahi_service_browser_new(avahi_client_, // client
                               AVAHI_IF_UNSPEC,         // interface
@@ -69,10 +74,10 @@ public:
       fprintf(stderr, "Could not create avahi service browser (%s).\n", avahi_strerror(avahi_client_errno(avahi_client_)));
       return;
     }
-    
+
     avahi_threaded_poll_start(avahi_poll_);
   }
-  
+
   static void client_callback(AvahiClient *client, AvahiClientState state, void *context) {
     Implementation *impl = (Implementation*)context;
 
@@ -81,8 +86,8 @@ public:
       impl->quit();
     }
   }
-  
-  
+
+
   /** Callback called on device notification.
    */
   static void browser_callback(AvahiServiceBrowser *browser,
@@ -96,7 +101,7 @@ public:
                                  void *context) {
     Implementation *impl = (Implementation*)context;
     AvahiServiceResolver *resolver;
-    
+
     switch (event) {
       case AVAHI_BROWSER_FAILURE:
         fprintf(stderr, "Avahi browser failure (%s).\n",
@@ -106,10 +111,10 @@ public:
       case AVAHI_BROWSER_NEW: /* continue */
         resolver = avahi_service_resolver_new(impl->avahi_client_, // client
                                   interface,           // interface
-                                  protocol,            // 
-                                  name,                // 
-                                  type,                // 
-                                  domain,              // 
+                                  protocol,            //
+                                  name,                //
+                                  type,                //
+                                  domain,              //
                                   AVAHI_PROTO_UNSPEC,  // address protocol (IPv4, IPv6)
                                   (AvahiLookupFlags)0, // flags
                                   Implementation::resolve_callback,  // callback
@@ -128,8 +133,8 @@ public:
     }
 
   }
-  
-  
+
+
   static void resolve_callback(AvahiServiceResolver *resolver,
                                AVAHI_GCC_UNUSED AvahiIfIndex interface,
                                AVAHI_GCC_UNUSED AvahiProtocol protocol,
@@ -145,7 +150,7 @@ public:
                                void* context) {
 
     Implementation *impl = (Implementation*)context;
-    
+
     switch (event) {
      case AVAHI_RESOLVER_FAILURE:
         fprintf(stderr, "Error while trying to resolve %s @ %s (%s)\n", name, domain,
@@ -155,17 +160,17 @@ public:
         impl->browser_->add_device(name, domain, port, false); // more coming ?
         break;
     }
-    
+
     avahi_service_resolver_free(resolver);
   }
- 
+
  private:
   /** Called from own callbacks (inside thread).
    */
   void quit() {
     avahi_threaded_poll_quit(avahi_poll_);
   }
-  
+
   ZeroConfBrowser *browser_;
   AvahiThreadedPoll *avahi_poll_;
   AvahiClient     *avahi_client_;
@@ -177,6 +182,10 @@ ZeroConfBrowser::ZeroConfBrowser(const std::string &service_type) : service_type
 
 ZeroConfBrowser::~ZeroConfBrowser() {
   delete impl_;
+}
+
+void ZeroConfBrowser::stop() {
+  impl_->stop();
 }
 
 } // oscit

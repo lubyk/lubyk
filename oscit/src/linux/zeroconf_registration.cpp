@@ -27,13 +27,18 @@ public:
   Implementation(ZeroConfRegistration *master) : master_(master), name_(master_->name_), host_(master_->host_), group_(NULL), counter_(0) {
     do_start();
   }
-  
+
   ~Implementation() {
-    avahi_threaded_poll_stop(avahi_poll_);
     if (avahi_client_) avahi_client_free(avahi_client_);
     if (avahi_poll_) avahi_threaded_poll_free(avahi_poll_);
   }
-  
+
+	/** Called from outside of thread to stop operations.
+	 */
+	void stop() {
+    avahi_threaded_poll_stop(avahi_poll_);
+	}
+
   void create_services() {
     int error;
     if (avahi_entry_group_is_empty(group_)) {
@@ -69,7 +74,7 @@ public:
       }
     }
   }
-  
+
   void do_start() {
     int error;
     // create poll object
@@ -90,21 +95,21 @@ public:
       fprintf(stderr, "Failed to create avahi client (%s).\n", avahi_strerror(error));
       return;
     }
-    
+
     avahi_threaded_poll_start(avahi_poll_);
   }
-  
+
   void next_name() {
     char name_buffer[MAX_NAME_COUNTER_BUFFER_SIZE+1];
     snprintf(name_buffer, MAX_NAME_COUNTER_BUFFER_SIZE, " (%i)", ++counter_);
     name_ = std::string(master_->name_).append(name_buffer);
     avahi_entry_group_reset(group_);
   }
-  
-  
+
+
   static void client_callback(AvahiClient *client, AvahiClientState state, void *context) {
     Implementation *impl = (Implementation*)context;
-    
+
     if (impl->group_ == NULL) {
       impl->avahi_client_ = client; // do_start client creation has not returned yet...
       impl->group_ = avahi_entry_group_new(impl->avahi_client_,  // client
@@ -117,7 +122,7 @@ public:
         return;
       }
     }
-    
+
     // called on every server state change
     switch (state) {
       case AVAHI_CLIENT_S_RUNNING:
@@ -138,7 +143,7 @@ public:
         impl->quit();
     }
   }
-  
+
   static void entry_group_callback(AvahiEntryGroup *g, AvahiEntryGroupState state, void *context) {
     Implementation *impl = (Implementation*)context;
     // callback called whenever our entry group state changes
@@ -166,12 +171,13 @@ public:
     }
   }
 private:
-  
-  /** Called from callbacks. */
+
+  /** Called from inside our own thread (callbacks).
+	 */
   void quit() {
     avahi_threaded_poll_quit(avahi_poll_);
   }
-  
+
   ZeroConfRegistration *master_;
   AvahiThreadedPoll *avahi_poll_;
   AvahiClient     *avahi_client_;
@@ -188,6 +194,10 @@ ZeroConfRegistration::ZeroConfRegistration(const std::string &name, const std::s
 
 ZeroConfRegistration::~ZeroConfRegistration() {
   delete impl_;
+}
+
+void ZeroConfRegistration::stop() {
+  impl_->stop();
 }
 
 } // oscit

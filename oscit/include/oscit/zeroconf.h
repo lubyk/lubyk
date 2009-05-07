@@ -16,6 +16,12 @@ class ZeroConfRegistration {
   virtual void registration_done() {}
   
  protected:
+  /** This method *must* be called from sub-classes in their destructors to
+   * make sure the callback (registration_done) is not called in the middle of
+	 * a class destruction.
+	 */        
+  virtual void stop();
+	
   std::string name_;
   std::string host_;
   std::string service_type_;
@@ -44,6 +50,12 @@ class ZeroConfBrowser {
   }
 
  protected:
+  /** This method *must* be called from sub-classes in their destructors to
+   * make sure the callbacks (add_device, remove_device) are not called in the
+	 * middle of a class destruction.
+	 */        
+  virtual void stop();
+	
   std::string service_type_;
   
  private:

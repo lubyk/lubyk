@@ -34,7 +34,7 @@ public:
   Implementation(ZeroConfRegistration *master) : master_(master) {
     start<Implementation, &Implementation::do_start>(this, NULL);
   }
-  
+
   void register_service(DNSServiceRef service) {
     // Run until break.
     int dns_sd_fd = DNSServiceRefSockFD(service);
@@ -53,7 +53,7 @@ public:
         DNSServiceErrorType err = kDNSServiceErr_NoError;
         // Execute callback
         if (FD_ISSET(dns_sd_fd, &readfds)) err = DNSServiceProcessResult(service);
-      
+
         if (err) {
           // An error occured. Halt.
           fprintf(stderr, "DNSServiceProcessResult returned %d\n", err);
@@ -66,11 +66,11 @@ public:
       }
     }
   }
-  
+
   void do_start(Thread *thread) {
     DNSServiceErrorType error;
     DNSServiceRef service;
-    
+
     error = DNSServiceRegister(&service,
       0,                    // no flags
       0,                    // all network interfaces
@@ -92,7 +92,7 @@ public:
 
     DNSServiceRefDeallocate(service);
   }
-  
+
   /** Callback called after registration. */
   static void register_callback(DNSServiceRef ref,
                                 DNSServiceFlags flags,
@@ -120,8 +120,11 @@ ZeroConfRegistration::ZeroConfRegistration(const std::string &name, const std::s
 }
 
 ZeroConfRegistration::~ZeroConfRegistration() {
-  impl_->kill();
   delete impl_;
+}
+
+void ZeroConfRegistration::stop() {
+  impl_->kill();
 }
 
 } // oscit
