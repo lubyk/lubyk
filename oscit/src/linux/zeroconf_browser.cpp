@@ -5,6 +5,7 @@
 
 #include <string>
 
+extern "C" {
 #include <avahi-client/client.h>
 #include <avahi-client/lookup.h>
 
@@ -13,7 +14,7 @@
 #include <avahi-common/malloc.h>
 #include <avahi-common/error.h>
 #include <avahi-common/timeval.h>
-
+}
 #include "oscit/zeroconf.h"
 
 namespace oscit {
@@ -33,6 +34,7 @@ public:
 	 */
 	void stop() {
     avahi_threaded_poll_stop(avahi_poll_);
+    // join threads here
 	}
 
   void do_start() {
@@ -65,7 +67,7 @@ public:
     browser = avahi_service_browser_new(avahi_client_, // client
                               AVAHI_IF_UNSPEC,         // interface
                               AVAHI_PROTO_UNSPEC,      // protocol
-                              browser_->service_type_.c_str(),   // service type
+                              browser_->service_type_, // service type
                               NULL,                    // domain
                               (AvahiLookupFlags)0,     // flags
                               Implementation::browser_callback,      // callback
@@ -176,16 +178,16 @@ public:
   AvahiClient     *avahi_client_;
 };
 
-ZeroConfBrowser::ZeroConfBrowser(const std::string &service_type) : service_type_(service_type) {
+ZeroConfBrowser::ZeroConfBrowser(const char *service_type) : service_type_(service_type) {
   impl_ = new ZeroConfBrowser::Implementation(this);
 }
 
 ZeroConfBrowser::~ZeroConfBrowser() {
-  delete impl_;
 }
 
 void ZeroConfBrowser::stop() {
   impl_->stop();
+  delete impl_;
 }
 
 } // oscit

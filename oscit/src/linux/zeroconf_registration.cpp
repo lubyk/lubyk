@@ -48,7 +48,7 @@ public:
         AVAHI_PROTO_UNSPEC,                     // protocol to announce service with
         (AvahiPublishFlags)0,                   // flags
         name_.c_str(),                          // name
-        master_->service_type_.c_str(),         // service type
+        master_->service_type_,                 // service type
         NULL,                                   // domain
         NULL,                                   // host
         master_->port_,                         // port
@@ -62,7 +62,7 @@ public:
         } else {
           fprintf(stderr, "Could not add service '%s' (%s) to avahi group (%s)\n",
                                   name_.c_str(),
-                                  master_->service_type_.c_str(),
+                                  master_->service_type_,
                                   avahi_strerror(error));
           return;
         }
@@ -188,16 +188,16 @@ private:
 };
 
 
-ZeroConfRegistration::ZeroConfRegistration(const std::string &name, const std::string &service_type, uint16_t port) : name_(name), service_type_(service_type), port_(port) {
+ZeroConfRegistration::ZeroConfRegistration(const std::string &name, const char *service_type, uint16_t port) : name_(name), service_type_(service_type), port_(port) {
   impl_ = new ZeroConfRegistration::Implementation(this);
 }
 
 ZeroConfRegistration::~ZeroConfRegistration() {
-  delete impl_;
 }
 
 void ZeroConfRegistration::stop() {
   impl_->stop();
+  delete impl_;
 }
 
 } // oscit

@@ -9,22 +9,22 @@ namespace oscit {
  */
 class ZeroConfRegistration {
  public:
-  ZeroConfRegistration(const std::string &name, const std::string &service_type, uint16_t port);
-  
+  ZeroConfRegistration(const std::string &name, const char *service_type, uint16_t port);
+
   virtual ~ZeroConfRegistration();
-  
+
   virtual void registration_done() {}
-  
+
  protected:
   /** This method *must* be called from sub-classes in their destructors to
    * make sure the callback (registration_done) is not called in the middle of
 	 * a class destruction.
-	 */        
+	 */
   virtual void stop();
-	
+
   std::string name_;
   std::string host_;
-  std::string service_type_;
+  const char *service_type_;
   uint16_t    port_;
 
  private:
@@ -37,14 +37,14 @@ class ZeroConfRegistration {
  */
 class ZeroConfBrowser {
  public:
-  ZeroConfBrowser(const std::string &service_type);
-  
+  ZeroConfBrowser(const char *service_type);
+
   virtual ~ZeroConfBrowser();
-  
+
   virtual void add_device(const char *name, const char *host, unsigned int port, bool more_coming) {
     printf("add_device %s @ %s:%i%s\n", name, host, port, more_coming ? " (more coming)" : "");
   }
-  
+
   virtual void remove_device(const char *name, bool more_coming) {
     printf("remove_device %s%s\n", name, more_coming ? " (more coming)" : "");
   }
@@ -53,11 +53,11 @@ class ZeroConfBrowser {
   /** This method *must* be called from sub-classes in their destructors to
    * make sure the callbacks (add_device, remove_device) are not called in the
 	 * middle of a class destruction.
-	 */        
+	 */
   virtual void stop();
-	
-  std::string service_type_;
-  
+
+  const char *service_type_;
+
  private:
   class Implementation;
   Implementation *impl_;

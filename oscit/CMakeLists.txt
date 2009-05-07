@@ -39,9 +39,11 @@ message("oscpack: '${OSCIT_SOURCE_DIR}/oscpack/liboscpack.a'")
 # one test for all CxxTests
 enable_testing()
 file (GLOB OSCIT_TEST_SOURCES test/*_xxtest.h test/*_test_slow.h)
-add_custom_command (
+add_custom_command ( PRE_BUILD
   OUTPUT  test_runner.cpp
-  COMMAND ${OSCIT_SOURCE_DIR}/test/cxxtest/cxxtestgen.pl --error-printer -o test_runner.cpp ${OSCIT_TEST_SOURCES})
+  COMMAND ${OSCIT_SOURCE_DIR}/test/cxxtest/cxxtestgen.pl --error-printer -o test_runner.cpp ${OSCIT_TEST_SOURCES}
+  DEPENDS ${OSCIT_TEST_SOURCES}
+)
 
 add_executable (test_runner test_runner.cpp ${OSCIT_SOURCE_DIR}/oscpack/liboscpack.a)
 
@@ -70,3 +72,6 @@ add_dependencies (test_all test_runner)
 #   add_test (${TEST_NAME} ${TEST_NAME}.runner)
 #   add_dependencies(test ${TEST_NAME}.runner)
 # endforeach (TEST_SOURCE)
+
+add_executable(publish publish.c)
+target_link_libraries(publish avahi-client)
