@@ -22,36 +22,28 @@
 #ifndef __JUCER_HEADER_MAINCOMPONENT_MAINCOMPONENT_D0F6CD31__
 #define __JUCER_HEADER_MAINCOMPONENT_MAINCOMPONENT_D0F6CD31__
 
-//[Headers]     -- You can add your own extra header files here --
 #include "mimas.h"
-//[/Headers]
 
+class MainComponent;
 
+class DummyBrowser : public ZeroConfBrowser {
+public:
+  DummyBrowser(Label *label, const char *service_type) : ZeroConfBrowser(service_type), label_(label) {}
+	
+  virtual void add_device(const char *name, const char *host, unsigned int port, bool more_coming);
+  virtual void remove_device(const char *name, const char *host, unsigned int port, bool more_coming);
+private:
+  Label *label_;
+  bool was_more_coming_;
+};
+	
 
-//==============================================================================
-/**
-                                                                    //[Comments]
-    An auto-generated component, created by the Jucer.
-
-    Describe your class and how it works here!
-                                                                    //[/Comments]
-*/
 class MainComponent  : public Component,
-                       public ButtonListener,
-                       public ZeroConfBrowser
-{
+                       public ButtonListener {
 public:
     //==============================================================================
     MainComponent ();
     ~MainComponent();
-
-    //==============================================================================
-    //[UserMethods]     -- You can add your own custom methods in this section.
-	
-    virtual void add_device(const char *name, const char *host, unsigned int port, bool more_coming);
-    virtual void remove_device(const char *name, const char *host, unsigned int port, bool more_coming);
-    
-    //[/UserMethods]
 
     void paint (Graphics& g);
     void resized();
@@ -62,9 +54,7 @@ public:
     juce_UseDebuggingNewOperator
 
 private:
-    //[UserVariables]   -- You can add your own custom variables in this section.
-	bool was_more_coming_;
-    //[/UserVariables]
+    DummyBrowser *dummy_browser_;
 
     //==============================================================================
     Label* helloWorldLabel;

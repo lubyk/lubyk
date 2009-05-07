@@ -29,7 +29,7 @@
 
 //==============================================================================
 MainComponent::MainComponent ()
-    : ZeroConfBrowser("_oscit._udp."),
+    : dummy_browser_(NULL),
 	  helloWorldLabel (0),
       quitButton (0)
 {
@@ -46,6 +46,7 @@ MainComponent::MainComponent ()
     quitButton->setButtonText (T("Quit"));
     quitButton->addButtonListener (this);
 
+	dummy_browser_ = new DummyBrowser(helloWorldLabel, "_oscit._udp");
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -60,7 +61,7 @@ MainComponent::~MainComponent()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
     //[/Destructor_pre]
-
+	deleteAndZero (dummy_browser_);
     deleteAndZero (helloWorldLabel);
     deleteAndZero (quitButton);
 
@@ -111,7 +112,7 @@ void MainComponent::buttonClicked (Button* buttonThatWasClicked)
     if (buttonThatWasClicked == quitButton)
     {
         //[UserButtonCode_quitButton] -- add your button handler code here..
-
+		
         JUCEApplication::quit();
 
         //[/UserButtonCode_quitButton]
@@ -125,22 +126,22 @@ void MainComponent::buttonClicked (Button* buttonThatWasClicked)
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 
-void MainComponent::add_device(const char *name, const char *host, unsigned int port, bool more_coming) {
+void DummyBrowser::add_device(const char *name, const char *host, unsigned int port, bool more_coming) {
 	if (!was_more_coming_) {
 		// only record first entry in case there are more then one network interfaces
     String msg("[+ ");
 		msg << name << " @ " << host << ":" << port << "]";
-		helloWorldLabel->setText(msg, true);
+		label_->setText(msg, true);
 	}
 	was_more_coming_ = more_coming;
 }
 
-void MainComponent::remove_device(const char *name, const char *host, unsigned int port, bool more_coming) {
+void DummyBrowser::remove_device(const char *name, const char *host, unsigned int port, bool more_coming) {
 	if (!was_more_coming_) {
 		// only record first entry in case there are more then one network interfaces
     String msg("[- ");
 		msg << name << " @ " << host << ":" << port << "]";
-		helloWorldLabel->setText(msg, true);
+		label_->setText(msg, true);
 	}
 	was_more_coming_ = more_coming;
 }
