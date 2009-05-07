@@ -39,8 +39,8 @@ class ZeroConfBrowser {
     printf("add_device %s @ %s:%i%s\n", name, host, port, more_coming ? " (more coming)" : "");
   }
   
-  virtual void remove_device(const char *name, const char *host, unsigned int port, bool more_coming) {
-    printf("remove_device %s @ %s:%i%s\n", name, host, port, more_coming ? " (more coming)" : "");
+  virtual void remove_device(const char *name, bool more_coming) {
+    printf("remove_device %s%s\n", name, more_coming ? " (more coming)" : "");
   }
 
  protected:

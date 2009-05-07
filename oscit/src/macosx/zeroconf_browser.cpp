@@ -114,9 +114,7 @@ public:
                                ntohs(port),
                                device->flags_ & kDNSServiceFlagsMoreComing);
     } else {
-      device->browser_->remove_device(device->name_.c_str(), 
-                               device->host_.c_str(),
-                               ntohs(port),
+      device->browser_->remove_device(device->name_.c_str(),
                                device->flags_ & kDNSServiceFlagsMoreComing);
     }
   }

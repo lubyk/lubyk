@@ -27,6 +27,13 @@ include_directories (AFTER ${OSCIT_SOURCE_DIR}/test)
 
 add_library (oscit STATIC ${OSCIT_SOURCES})
 
+# oscpack
+add_custom_command (
+  OUTPUT  ${OSCIT_SOURCE_DIR}/oscpack/liboscpack.a
+  COMMAND cd ${OSCIT_SOURCE_DIR}/oscpack && make liboscpack.a
+)
+message("oscpack: '${OSCIT_SOURCE_DIR}/oscpack/liboscpack.a'")
+
 # testing
 
 # one test for all CxxTests

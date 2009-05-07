@@ -17,10 +17,10 @@ public:
     was_more_coming_ = more_coming;
   }
   
-  virtual void remove_device(const char *name, const char *host, unsigned int port, bool more_coming) {
+  virtual void remove_device(const char *name, bool more_coming) {
     if (!was_more_coming_) {
       // only record first entry in case there are more then one network interfaces
-      stream_ << "[- " << name << " @ " << port << "]";
+      stream_ << "[- " << name << "]";
     }
     was_more_coming_ = more_coming;
   }
@@ -65,7 +65,7 @@ class ZeroConfTest : public TestHelper {
     
     delete registration;
     wait(2000);
-    assert_equal("[- foobar @ 5007]", browser.str());
+    assert_equal("[- foobar]", browser.str());
   }
     
  private:

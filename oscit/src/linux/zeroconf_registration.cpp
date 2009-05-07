@@ -9,12 +9,11 @@
 #include <avahi-client/publish.h>
 
 #include <avahi-common/alternative.h>
-#include <avahi-common/simple-watch.h>
+#include <avahi-common/thread-watch.h>
 #include <avahi-common/malloc.h>
 #include <avahi-common/error.h>
 #include <avahi-common/timeval.h>
 
-#include "oscit/thread.h"
 #include "oscit/zeroconf.h"
 
 
@@ -23,21 +22,16 @@ namespace oscit {
 #define MAX_NAME_COUNTER_BUFFER_SIZE 10
 
 
-class ZeroConfRegistration::Implementation : public Thread {
+class ZeroConfRegistration::Implementation {
 public:
   Implementation(ZeroConfRegistration *master) : master_(master), name_(master_->name_), host_(master_->host_), group_(NULL), counter_(0) {
-    start<Implementation, &Implementation::do_start>(this, NULL);
+    do_start();
   }
   
   ~Implementation() {
-    quit();
-    if (group_) avahi_entry_group_reset(group_);
+    avahi_threaded_poll_stop(avahi_poll_);
     if (avahi_client_) avahi_client_free(avahi_client_);
-    if (avahi_poll_) avahi_simple_poll_free(avahi_poll_);
-  }
-  
-  void quit() {
-    avahi_simple_poll_quit(avahi_poll_);
+    if (avahi_poll_) avahi_threaded_poll_free(avahi_poll_);
   }
   
   void create_services() {
@@ -68,26 +62,25 @@ public:
           return;
         }
       }
-    }
-    // start registering the service
-    error = avahi_entry_group_commit(group_);
-    if (error < 0) {
-      fprintf(stderr, "Could not commit avahi group (%s)\n", avahi_strerror(error));
+      // start registering the service
+      error = avahi_entry_group_commit(group_);
+      if (error < 0) {
+        fprintf(stderr, "Could not commit avahi group (%s)\n", avahi_strerror(error));
+      }
     }
   }
   
   void do_start() {
     int error;
-    printf("Trying to register '%s' (%s).\n", master_->name_.c_str(), master_->service_type_.c_str());
     // create poll object
-    avahi_poll_ = avahi_simple_poll_new();
+    avahi_poll_ = avahi_threaded_poll_new();
     if (avahi_poll_ == NULL) {
-      fprintf(stderr, "Could not create avahi simple poll object.\n");
+      fprintf(stderr, "Could not create avahi threaded poll object.\n");
       return;
     }
 
     // create client
-    avahi_client_ = avahi_client_new(avahi_simple_poll_get(avahi_poll_),
+    avahi_client_ = avahi_client_new(avahi_threaded_poll_get(avahi_poll_),
                               (AvahiClientFlags)0,             // flags
                               Implementation::client_callback, // callback
                               this,                            // context
@@ -98,9 +91,7 @@ public:
       return;
     }
     
-    avahi_simple_poll_loop(avahi_poll_);
-    printf("finished avahi_simple_poll_loop\n");
-    avahi_entry_group_reset(group_);
+    avahi_threaded_poll_start(avahi_poll_);
   }
   
   void next_name() {
@@ -150,7 +141,6 @@ public:
   
   static void entry_group_callback(AvahiEntryGroup *g, AvahiEntryGroupState state, void *context) {
     Implementation *impl = (Implementation*)context;
-
     // callback called whenever our entry group state changes
     switch (state) {
       case AVAHI_ENTRY_GROUP_ESTABLISHED:
@@ -175,9 +165,15 @@ public:
         ;
     }
   }
-
+private:
+  
+  /** Called from callbacks. */
+  void quit() {
+    avahi_threaded_poll_quit(avahi_poll_);
+  }
+  
   ZeroConfRegistration *master_;
-  AvahiSimplePoll *avahi_poll_;
+  AvahiThreadedPoll *avahi_poll_;
   AvahiClient     *avahi_client_;
   std::string name_;
   std::string host_;
@@ -191,8 +187,6 @@ ZeroConfRegistration::ZeroConfRegistration(const std::string &name, const std::s
 }
 
 ZeroConfRegistration::~ZeroConfRegistration() {
-  impl_->quit();
-  // not needed impl_->kill();
   delete impl_;
 }
 

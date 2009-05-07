@@ -9,52 +9,38 @@
 #include <avahi-client/lookup.h>
 
 #include <avahi-common/alternative.h>
-#include <avahi-common/simple-watch.h>
+#include <avahi-common/thread-watch.h>
 #include <avahi-common/malloc.h>
 #include <avahi-common/error.h>
 #include <avahi-common/timeval.h>
 
-#include "oscit/thread.h"
 #include "oscit/zeroconf.h"
 
 namespace oscit {
 
-struct BrowsedDevice {
-  BrowsedDevice(ZeroConfBrowser *browser, const char *name, const char *host, AvahiBrowserEvent event) :
-                name_(name), host_(host), browser_(browser), event_(event) {}
-  std::string name_;              
-  std::string host_;
-  ZeroConfBrowser *browser_;
-  AvahiBrowserEvent event_;
-};
-
-class ZeroConfBrowser::Implementation : public Thread {
+class ZeroConfBrowser::Implementation {
 public:
-  Implementation(ZeroConfBrowser *master) : master_(master), avahi_poll_(NULL), avahi_client_(NULL) {
-    start<Implementation, &Implementation::do_start>(this, NULL);
+  Implementation(ZeroConfBrowser *browser) : browser_(browser), avahi_poll_(NULL), avahi_client_(NULL) {
+    do_start();
   }
   
   ~Implementation() {
-    quit();
+    avahi_threaded_poll_stop(avahi_poll_); // does this join ?
     if (avahi_client_) avahi_client_free(avahi_client_);
-    if (avahi_poll_) avahi_simple_poll_free(avahi_poll_);
-  }
-  
-  void quit() {
-    avahi_simple_poll_quit(avahi_poll_);
+    if (avahi_poll_) avahi_threaded_poll_free(avahi_poll_);
   }
   
   void do_start() {
     int error;
     // create poll object
-    avahi_poll_ = avahi_simple_poll_new();
+    avahi_poll_ = avahi_threaded_poll_new();
     if (avahi_poll_ == NULL) {
-      fprintf(stderr, "Could not create avahi simple poll object.\n");
+      fprintf(stderr, "Could not create avahi threaded poll object.\n");
       return;
     }
 
     // create client
-    avahi_client_ = avahi_client_new(avahi_simple_poll_get(avahi_poll_),
+    avahi_client_ = avahi_client_new(avahi_threaded_poll_get(avahi_poll_),
                               (AvahiClientFlags)0,             // flags
                               Implementation::client_callback, // callback
                               this,              // context
@@ -74,7 +60,7 @@ public:
     browser = avahi_service_browser_new(avahi_client_, // client
                               AVAHI_IF_UNSPEC,         // interface
                               AVAHI_PROTO_UNSPEC,      // protocol
-                              master_->service_type_.c_str(),   // service type
+                              browser_->service_type_.c_str(),   // service type
                               NULL,                    // domain
                               (AvahiLookupFlags)0,     // flags
                               Implementation::browser_callback,      // callback
@@ -84,9 +70,7 @@ public:
       return;
     }
     
-    avahi_simple_poll_loop(avahi_poll_);
-    
-    avahi_service_browser_free(browser);
+    avahi_threaded_poll_start(avahi_poll_);
   }
   
   static void client_callback(AvahiClient *client, AvahiClientState state, void *context) {
@@ -112,17 +96,14 @@ public:
                                  void *context) {
     Implementation *impl = (Implementation*)context;
     AvahiServiceResolver *resolver;
-    BrowsedDevice *device;
-
+    
     switch (event) {
       case AVAHI_BROWSER_FAILURE:
         fprintf(stderr, "Avahi browser failure (%s).\n",
                         avahi_strerror(avahi_client_errno(impl->avahi_client_)));
         impl->quit();
         break;
-      case AVAHI_BROWSER_NEW: /* continue */  
-      case AVAHI_BROWSER_REMOVE:
-        device = new BrowsedDevice(impl->master_, name, domain, event);
+      case AVAHI_BROWSER_NEW: /* continue */
         resolver = avahi_service_resolver_new(impl->avahi_client_, // client
                                   interface,           // interface
                                   protocol,            // 
@@ -132,13 +113,13 @@ public:
                                   AVAHI_PROTO_UNSPEC,  // address protocol (IPv4, IPv6)
                                   (AvahiLookupFlags)0, // flags
                                   Implementation::resolve_callback,  // callback
-                                  device);             // context
+                                  impl);               // context
         if (resolver == NULL) {
           fprintf(stderr,"Error while trying to resolve %s @ %s (%s)\n", name, domain, avahi_strerror(avahi_client_errno(impl->avahi_client_)));
-        } else {
-          avahi_service_resolver_free(resolver);
         }
-        delete device;
+        break;
+      case AVAHI_BROWSER_REMOVE:
+        impl->browser_->remove_device(name, false);
         break;
       case AVAHI_BROWSER_ALL_FOR_NOW:
       case AVAHI_BROWSER_CACHE_EXHAUSTED:
@@ -163,34 +144,38 @@ public:
                                AvahiLookupResultFlags flags,
                                void* context) {
 
-    BrowsedDevice *device = (BrowsedDevice*)context;
+    Implementation *impl = (Implementation*)context;
+    
     switch (event) {
      case AVAHI_RESOLVER_FAILURE:
         fprintf(stderr, "Error while trying to resolve %s @ %s (%s)\n", name, domain,
                         avahi_strerror(avahi_client_errno(avahi_service_resolver_get_client(resolver))));
         break;
       case AVAHI_RESOLVER_FOUND:
-        if (device->event_ == AVAHI_BROWSER_NEW) {
-          device->browser_->add_device(name, domain, port, false); // more coming ?
-        } else {
-          device->browser_->remove_device(name, domain, port, false);
-        }
+        impl->browser_->add_device(name, domain, port, false); // more coming ?
         break;
     }
+    
+    avahi_service_resolver_free(resolver);
+  }
+ 
+ private:
+  /** Called from own callbacks (inside thread).
+   */
+  void quit() {
+    avahi_threaded_poll_quit(avahi_poll_);
   }
   
-  ZeroConfBrowser *master_;
-  AvahiSimplePoll *avahi_poll_;
+  ZeroConfBrowser *browser_;
+  AvahiThreadedPoll *avahi_poll_;
   AvahiClient     *avahi_client_;
 };
 
 ZeroConfBrowser::ZeroConfBrowser(const std::string &service_type) : service_type_(service_type) {
-  new ZeroConfBrowser::Implementation(this);
+  impl_ = new ZeroConfBrowser::Implementation(this);
 }
 
 ZeroConfBrowser::~ZeroConfBrowser() {
-  impl_->quit();
-  // not needed impl_->kill();
   delete impl_;
 }
 

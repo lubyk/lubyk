@@ -1,10 +1,12 @@
 #ifndef OSCIT_INCLUDE_OSCIT_THREAD_H_
 #define OSCIT_INCLUDE_OSCIT_THREAD_H_
-#include "oscit/mutex.h"
 
 #include <csignal>
 #include <fstream>
 #include <sys/timeb.h> // ftime
+#include "assert.h"
+
+#include "oscit/mutex.h"
 
 namespace oscit {
 
@@ -62,7 +64,7 @@ class Thread : public Mutex
   /** Kill thread (do not make this a virtual). */
   void kill() {
     if (pthread_equal(thread_id_, pthread_self())) {
-      should_run_ = false;
+      quit();
       thread_id_ = NULL;
     } else if (thread_id_) {
       pthread_kill(thread_id_, SIGTERM);
@@ -79,8 +81,10 @@ class Thread : public Mutex
       thread_id_ = NULL;
     }
   }
-  /** Tell thread to stop after current loop. */
-  void stop() {
+  
+  /** Tell thread to quit (called from within own thread). */
+  void quit() {
+    assert( pthread_equal(thread_id_, pthread_self()) );
     should_run_ = false;
   }
   
@@ -150,7 +154,7 @@ class Thread : public Mutex
   
   /** Thread should stop. */
   static void terminate(int sig) {
-    thread_this()->stop();
+    thread_this()->quit();
   }
   
   void      *owner_;
