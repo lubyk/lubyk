@@ -2,12 +2,14 @@
 #define OSCIT_INCLUDE_OSCIT_ZEROCONF_H_
 #include <string>
 
+#include "oscit/mutex.h"
+
 namespace oscit {
 
 /** This class let's you easily register an application as providing a certain type of
  *  service.
  */
-class ZeroConfRegistration {
+class ZeroConfRegistration : public Mutex {
  public:
   ZeroConfRegistration(const std::string &name, const char *service_type, uint16_t port);
 
@@ -35,7 +37,7 @@ class ZeroConfRegistration {
 /** This class let's you easily register an application as providing a certain type of
  *  service.
  */
-class ZeroConfBrowser {
+class ZeroConfBrowser : public Mutex {
  public:
   ZeroConfBrowser(const char *service_type);
 

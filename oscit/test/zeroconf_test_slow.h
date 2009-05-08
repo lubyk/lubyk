@@ -30,9 +30,6 @@ public:
 
   const std::string str() { return stream_.str(); }
   void str(const char *string) { stream_.str(string); }
-  bool good() {
-  	return stream_.good();
-  }
 
 private:
   std::ostringstream stream_;
@@ -64,19 +61,24 @@ class ZeroConfTest : public TestHelper {
   void test_register_browse( void ) {
     DummyBrowser browser("_oscit._udp");
     wait(500);
-    browser.str(""); // clear
+    browser.lock();
+      browser.str(""); // clear
+    browser.unlock();
     DummyRegistration *registration = new DummyRegistration("foobar", "_oscit._udp", 5007);
 
     wait(1000);
-
-    assert_equal("[registered: foobar @ 5007]", registration->str());
-    assert_equal("[+ foobar @ 5007]", browser.str());
-    browser.str(""); // clear
-
+    registration->lock();
+    browser.lock();
+      assert_equal("[registered: foobar @ 5007]", registration->str());
+      assert_equal("[+ foobar @ 5007]", browser.str());
+      browser.str(""); // clear
+    browser.unlock();
+    registration->unlock(); // ?
     delete registration;
     wait(1000);
-    assert(browser.good());
-    assert_equal("[- foobar]", browser.str());
+    browser.lock();
+      assert_equal("[- foobar]", browser.str());
+    browser.unlock();
   }
 
  private:

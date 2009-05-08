@@ -24,7 +24,7 @@ namespace oscit {
 
 class ZeroConfRegistration::Implementation {
 public:
-  Implementation(ZeroConfRegistration *master) : master_(master), name_(master_->name_), host_(master_->host_), group_(NULL), counter_(0) {
+  Implementation(ZeroConfRegistration *master) : registration_(master), name_(registration_->name_), host_(registration_->host_), group_(NULL), counter_(0) {
     do_start();
   }
 
@@ -48,10 +48,10 @@ public:
         AVAHI_PROTO_UNSPEC,                     // protocol to announce service with
         (AvahiPublishFlags)0,                   // flags
         name_.c_str(),                          // name
-        master_->service_type_,                 // service type
+        registration_->service_type_,           // service type
         NULL,                                   // domain
         NULL,                                   // host
-        master_->port_,                         // port
+        registration_->port_,                   // port
         NULL);                                  // list of txt records
 
       if (error < 0) {
@@ -62,7 +62,7 @@ public:
         } else {
           fprintf(stderr, "Could not add service '%s' (%s) to avahi group (%s)\n",
                                   name_.c_str(),
-                                  master_->service_type_,
+                                  registration_->service_type_,
                                   avahi_strerror(error));
           return;
         }
@@ -102,7 +102,7 @@ public:
   void next_name() {
     char name_buffer[MAX_NAME_COUNTER_BUFFER_SIZE+1];
     snprintf(name_buffer, MAX_NAME_COUNTER_BUFFER_SIZE, " (%i)", ++counter_);
-    name_ = std::string(master_->name_).append(name_buffer);
+    name_ = std::string(registration_->name_).append(name_buffer);
     avahi_entry_group_reset(group_);
   }
 
@@ -150,9 +150,11 @@ public:
     switch (state) {
       case AVAHI_ENTRY_GROUP_ESTABLISHED:
         // done !
-        impl->master_->name_ = impl->name_;
-        impl->master_->host_ = avahi_client_get_host_name(impl->avahi_client_);
-        impl->master_->registration_done();
+        impl->registration_->lock();
+          impl->registration_->name_ = impl->name_;
+          impl->registration_->host_ = avahi_client_get_host_name(impl->avahi_client_);
+          impl->registration_->registration_done();
+        impl->registration_->unlock();
         break;
       case AVAHI_ENTRY_GROUP_COLLISION:
         // build new name
@@ -178,7 +180,7 @@ private:
     avahi_threaded_poll_quit(avahi_poll_);
   }
 
-  ZeroConfRegistration *master_;
+  ZeroConfRegistration *registration_;
   AvahiThreadedPoll *avahi_poll_;
   AvahiClient     *avahi_client_;
   std::string name_;

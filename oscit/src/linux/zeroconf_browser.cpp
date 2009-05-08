@@ -33,6 +33,8 @@ public:
 	/** Called from outside of thread to stop operations.
 	 */
 	void stop() {
+    printf("stop\n");
+    fflush(stdout);
     avahi_threaded_poll_stop(avahi_poll_);
     // join threads here
 	}
@@ -126,7 +128,9 @@ public:
         }
         break;
       case AVAHI_BROWSER_REMOVE:
-        impl->browser_->remove_device(name, false);
+        impl->browser_->lock();
+          impl->browser_->remove_device(name, false);
+        impl->browser_->unlock();
         break;
       case AVAHI_BROWSER_ALL_FOR_NOW:
       case AVAHI_BROWSER_CACHE_EXHAUSTED:
@@ -159,7 +163,9 @@ public:
                         avahi_strerror(avahi_client_errno(avahi_service_resolver_get_client(resolver))));
         break;
       case AVAHI_RESOLVER_FOUND:
-        impl->browser_->add_device(name, domain, port, false); // more coming ?
+        impl->browser_->lock();
+          impl->browser_->add_device(name, domain, port, false); // more coming ?
+        impl->browser_->unlock();
         break;
     }
 
