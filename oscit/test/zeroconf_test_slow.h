@@ -75,7 +75,7 @@ class ZeroConfTest : public TestHelper {
     browser.unlock();
     registration->unlock(); // ?
     delete registration;
-    wait(1000);
+    wait(1500);
     browser.lock();
       assert_equal("[- foobar]", browser.str());
     browser.unlock();

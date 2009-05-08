@@ -24,7 +24,7 @@ namespace oscit {
 
 class ZeroConfRegistration::Implementation {
 public:
-  Implementation(ZeroConfRegistration *master) : registration_(master), name_(registration_->name_), host_(registration_->host_), group_(NULL), counter_(0) {
+  Implementation(ZeroConfRegistration *master) : registration_(master), avahi_client_(NULL), group_(NULL), name_(registration_->name_), host_(registration_->host_),  counter_(0) {
     do_start();
   }
 
@@ -38,42 +38,6 @@ public:
 	void stop() {
     avahi_threaded_poll_stop(avahi_poll_);
 	}
-
-  void create_services() {
-    int error;
-    if (avahi_entry_group_is_empty(group_)) {
-      // new group or after reset
-      error = avahi_entry_group_add_service(group_,  // group
-        AVAHI_IF_UNSPEC,                        // interface
-        AVAHI_PROTO_UNSPEC,                     // protocol to announce service with
-        (AvahiPublishFlags)0,                   // flags
-        name_.c_str(),                          // name
-        registration_->service_type_,           // service type
-        NULL,                                   // domain
-        NULL,                                   // host
-        registration_->port_,                   // port
-        NULL);                                  // list of txt records
-
-      if (error < 0) {
-          // error
-        if (error == AVAHI_ERR_COLLISION) {
-          next_name();
-          create_services();
-        } else {
-          fprintf(stderr, "Could not add service '%s' (%s) to avahi group (%s)\n",
-                                  name_.c_str(),
-                                  registration_->service_type_,
-                                  avahi_strerror(error));
-          return;
-        }
-      }
-      // start registering the service
-      error = avahi_entry_group_commit(group_);
-      if (error < 0) {
-        fprintf(stderr, "Could not commit avahi group (%s)\n", avahi_strerror(error));
-      }
-    }
-  }
 
   void do_start() {
     int error;
@@ -106,21 +70,66 @@ public:
     avahi_entry_group_reset(group_);
   }
 
+  void create_services() {
+    int error;
+
+    if (group_ == NULL) {
+      group_ = avahi_entry_group_new(avahi_client_,  // client
+                   Implementation::entry_group_callback,         // callback
+                   this);                                        // context
+
+      if (group_ == NULL) {
+        fprintf(stderr, "Could not create avahi group (%s).\n",
+                        avahi_strerror(avahi_client_errno(avahi_client_)));
+        return;
+      }
+    }
+
+    if (avahi_entry_group_is_empty(group_)) {
+      // new group or after reset
+      error = avahi_entry_group_add_service(group_,  // group
+        AVAHI_IF_UNSPEC,                        // interface
+        AVAHI_PROTO_UNSPEC,                     // protocol to announce service with
+        (AvahiPublishFlags)0,                   // flags
+        name_.c_str(),                          // name
+        registration_->service_type_,           // service type
+        NULL,                                   // domain
+        NULL,                                   // host
+        registration_->port_,                   // port
+        NULL);                                  // list of txt records
+
+      if (error < 0) {
+          // error
+        if (error == AVAHI_ERR_COLLISION) {
+          // collision with local service name
+          next_name();
+          // retry
+          create_services();
+        } else {
+          fprintf(stderr, "Could not add service '%s' (%s) to avahi group (%s)\n",
+                                  name_.c_str(),
+                                  registration_->service_type_,
+                                  avahi_strerror(error));
+          return;
+        }
+      }
+      // start registering the service
+      fprintf(stderr, "Commit %p\n", this);
+      fflush(stderr);
+      error = avahi_entry_group_commit(group_);
+      if (error < 0) {
+        fprintf(stderr, "Could not commit avahi group '%s' (%s)\n", name_.c_str(), avahi_strerror(error));
+        assert(0);
+      }
+    }
+  }
 
   static void client_callback(AvahiClient *client, AvahiClientState state, void *context) {
     Implementation *impl = (Implementation*)context;
 
-    if (impl->group_ == NULL) {
-      impl->avahi_client_ = client; // do_start client creation has not returned yet...
-      impl->group_ = avahi_entry_group_new(impl->avahi_client_,  // client
-                   Implementation::entry_group_callback,         // callback
-                   impl);                                        // context
-
-      if (impl->group_ == NULL) {
-        fprintf(stderr, "Could not create avahi group (%s).\n",
-                        avahi_strerror(avahi_client_errno(impl->avahi_client_)));
-        return;
-      }
+    if (impl->avahi_client_ == NULL) {
+      // first run
+      impl->avahi_client_ = client;
     }
 
     // called on every server state change
@@ -183,9 +192,9 @@ private:
   ZeroConfRegistration *registration_;
   AvahiThreadedPoll *avahi_poll_;
   AvahiClient     *avahi_client_;
+  AvahiEntryGroup *group_;
   std::string name_;
   std::string host_;
-  AvahiEntryGroup *group_;
   int counter_;
 };
 

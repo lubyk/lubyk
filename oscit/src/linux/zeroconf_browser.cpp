@@ -33,8 +33,6 @@ public:
 	/** Called from outside of thread to stop operations.
 	 */
 	void stop() {
-    printf("stop\n");
-    fflush(stdout);
     avahi_threaded_poll_stop(avahi_poll_);
     // join threads here
 	}
