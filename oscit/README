@@ -3,11 +3,12 @@ Compilation:
 mac os x
 --------
 
-> make macosx
+> make
 
 linux
 -----
 
-You first need to install avahi:
+You first need to install avahi and cmake:
 
-> sudo aptitude install libavahi-client-dev build-essentials
+> sudo aptitude install libavahi-client-dev cmake
+> make
