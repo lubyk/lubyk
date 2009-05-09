@@ -26,7 +26,7 @@ class ZeroConfRegistration : public Mutex {
 
   std::string name_;
   std::string host_;
-  const char *service_type_;
+  std::string service_type_;
   uint16_t    port_;
 
  private:
@@ -58,7 +58,7 @@ class ZeroConfBrowser : public Mutex {
 	 */
   virtual void stop();
 
-  const char *service_type_;
+  std::string service_type_;
 
  private:
   class Implementation;

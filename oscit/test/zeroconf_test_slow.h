@@ -60,7 +60,7 @@ class ZeroConfTest : public TestHelper {
 
   void test_register_browse( void ) {
     DummyBrowser browser("_oscit._udp");
-    wait(500);
+    wait(1000);
     browser.lock();
       browser.str(""); // clear
     browser.unlock();

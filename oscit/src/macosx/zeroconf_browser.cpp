@@ -85,12 +85,12 @@ public:
         if (err) {
           // An error occured. Halt.
           fprintf(stderr, "DNSServiceProcessResult error (%d).\n", err);
-          stop();
+          quit();
         }
       }	else if (errno != EINTR) {
         // Error.
         fprintf(stderr, "ZeroConf error (%d %s)\n", errno, strerror(errno));
-        if (errno != EINTR) stop();
+        if (errno != EINTR) quit();
       }
     }
   }
@@ -160,7 +160,7 @@ public:
   ZeroConfBrowser *master_;
 };
 
-ZeroConfBrowser::ZeroConfBrowser(const std::string &service_type) : service_type_(service_type) {
+ZeroConfBrowser::ZeroConfBrowser(const char *service_type) : service_type_(service_type) {
   impl_ = new ZeroConfBrowser::Implementation(this);
 }
 

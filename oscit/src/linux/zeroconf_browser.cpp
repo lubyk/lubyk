@@ -71,7 +71,7 @@ public:
     browser = avahi_service_browser_new(avahi_client_, // client
                               AVAHI_IF_UNSPEC,         // interface
                               AVAHI_PROTO_UNSPEC,      // protocol
-                              browser_->service_type_, // service type
+                              browser_->service_type_.c_str(), // service type
                               NULL,                    // domain
                               (AvahiLookupFlags)0,     // flags
                               Implementation::browser_callback,      // callback

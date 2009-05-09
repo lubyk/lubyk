@@ -57,12 +57,12 @@ public:
         if (err) {
           // An error occured. Halt.
           fprintf(stderr, "DNSServiceProcessResult returned %d\n", err);
-          stop();
+          quit();
         }
       }	else if (errno != EINTR) {
         // Error.
         fprintf(stderr, "ZeroConf error (%d %s)\n", errno, strerror(errno));
-        if (errno != EINTR) stop();
+        if (errno != EINTR) quit();
       }
     }
   }
@@ -74,7 +74,7 @@ public:
     error = DNSServiceRegister(&service,
       0,                    // no flags
       0,                    // all network interfaces
-      master_->name_.c_str(),        // name
+      master_->name_.c_str(),         // name
       master_->service_type_.c_str(), // service type
       "",                   // register in default domain(s)
       NULL,                 // use default host name
@@ -115,7 +115,7 @@ public:
 };
 
 
-ZeroConfRegistration::ZeroConfRegistration(const std::string &name, const std::string &service_type, uint16_t port) : name_(name), service_type_(service_type), port_(port) {
+ZeroConfRegistration::ZeroConfRegistration(const std::string &name, const char *service_type, uint16_t port) : name_(name), service_type_(service_type), port_(port) {
   impl_ = new ZeroConfRegistration::Implementation(this);
 }
 

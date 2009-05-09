@@ -98,7 +98,7 @@ public:
         AVAHI_PROTO_UNSPEC,                     // protocol to announce service with
         (AvahiPublishFlags)0,                   // flags
         name_.c_str(),                          // name
-        registration_->service_type_,           // service type
+        registration_->service_type_.c_str(),   // service type
         NULL,                                   // domain
         NULL,                                   // host
         registration_->port_,                   // port
@@ -114,7 +114,7 @@ public:
         } else {
           fprintf(stderr, "Could not add service '%s' (%s) to avahi group (%s)\n",
                                   name_.c_str(),
-                                  registration_->service_type_,
+                                  registration_->service_type_.c_str(),
                                   avahi_strerror(error));
           return;
         }
