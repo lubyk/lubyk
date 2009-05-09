@@ -1,4 +1,4 @@
-/** Dictionary. The dictionary stores a copy of the data. Pointers to the copy are returned. 
+/** Dictionary. The dictionary stores a copy of the data. Pointers to the copy are returned.
   * We return pointers so that we can return NULL if the value is not found. */
 #ifndef OSCIT_INCLUDE_OSCIT_THASH_H_
 #define OSCIT_INCLUDE_OSCIT_THASH_H_
@@ -16,7 +16,7 @@ namespace oscit {
 // macro hashing function taken from http://chrissavoie.com/index.php?option=com_content&task=view&id=14&Itemid=1
 // the constant value to return at the end of the hashing
 #define HASH_CONSTANT 5381
- 
+
 // The following is the guts of the compile-time hasher
 #define HASH_RECURSE_00(string, value) HASH_FUNCTION((*(string+1) == 0 ? HASH_CONSTANT : HASH_RECURSE_01(string+1, *(string+1))), value)
 #define HASH_RECURSE_01(string, value) HASH_FUNCTION((*(string+1) == 0 ? HASH_CONSTANT : HASH_RECURSE_02(string+1, *(string+1))), value)
@@ -31,13 +31,13 @@ namespace oscit {
 #define HASH_RECURSE_10(string, value) HASH_FUNCTION((*(string+1) == 0 ? HASH_CONSTANT : HASH_RECURSE_11(string+1, *(string+1))), value)
 #define HASH_RECURSE_11(string, value) HASH_FUNCTION((*(string+1) == 0 ? HASH_CONSTANT : HASH_RECURSE_12(string+1, *(string+1))), value)
 #define HASH_RECURSE_12(string, value) HASH_CONSTANT
- 
+
 // The following is the function used for hashing
 // Do NOT use NEXTHASH more than once, it will cause
 // N-Squared expansion and make compilation very slow
 // If not impossible
 #define HASH_FUNCTION(NEXTHASH, VALUE) VALUE + (NEXTHASH << 2)
- 
+
 // finally the macro used to generate the hash
 #define H(string) (uint)HASH_RECURSE_00(string, *string)
 
@@ -49,7 +49,7 @@ struct THashElement
 {
   THashElement() : obj(0), next(0) {}
   ~THashElement() { if (obj) delete obj; }
-  K     key; 
+  K     key;
   T*    obj;
   /// lookup collision chain
   THashElement<K,T> * next;
@@ -63,26 +63,26 @@ template <class K, class T>
 class THash
 {
 public:
-  THash(unsigned int size) : size_(size) { 
+  THash(unsigned int size) : size_(size) {
     thash_table_ = new THashElement<K,T>[size];
   }
-  
+
   // copy constructor
-  THash(const THash& pOther) {  
+  THash(const THash& pOther) {
     const_string_iterator it;
     const_string_iterator end = pOther.end();
     T value;
-    
+
     size_ = pOther.size_;
     thash_table_ = new THashElement<K,T>[size_];
-    
+
     for(it = pOther.begin(); it != end; it++) {
       if (pOther.get(*it, &value)) {
         set(*it, value);
       }
     }
   }
-  
+
   THash& operator=(const THash& pOther) {
     const_string_iterator it;
     const_string_iterator end = pOther.end();
@@ -95,7 +95,7 @@ public:
     }
     return *this;
   }
-  
+
   virtual ~THash() {
     THashElement<K,T> * current, * next;
     // remove collisions
@@ -110,63 +110,79 @@ public:
     // remove table
     delete[] thash_table_;
   }
-  
+
   void set(const K &key, const T &pElement);
-  
+
   /** Get an element of the dictionary and set the retval to this element. Returns false if no element found. */
   // FIXME: const T* ?
   bool get(const K &key, T *retval) const;
-  
+
   /** Get an element's key. Returns false if the element could not be found. */
   bool get_key(const T &pElement, K *retval) const;
-  
+
   /** Get the default value (last value). */
   bool get(T *retval) const;
-  
+
   /** Remove object with the given key. */
-  void remove(const K &key);
-  
-  /** Remove the given element. */
-  void remove_element(const T &pElement);
-  
-  /** Remove all objects. */
-  void clear() {
-    // TODO: optimize...
-    while(keys_.begin() != keys_.end()) {
-      remove(*keys_.begin());
+  void remove(const K &key) {
+    if (remove_keeping_key(key)) {
+      // object has been removed, remove key
+      typename std::list<K>::iterator it  = keys_.begin();
+      typename std::list<K>::iterator end = keys_.end();
+      while (it != end) {
+        if (*it == key)
+          it = keys_.erase(it);
+        else
+          it++;
+      }
     }
   }
-  
+
+  /** Remove the given element. */
+  void remove_element(const T &pElement);
+
+  /** Remove all objects. */
+  void clear() {
+    typename std::list<K>::iterator it;
+    typename std::list<K>::iterator end = keys_.end();
+    for (it = keys_.begin(); it != end; ++it) {
+      remove_keeping_key(*it);
+    }
+    keys_.clear();
+  }
+
   /** Return true if the dictionary is empty. */
   bool empty() const { return size() == 0; }
-  
+
   /** Return number of elements (distinct keys). */
   size_t size() const { return keys_.size(); }
-  
+
   /** Return size of storage (main hash table). */
   unsigned int storage_size() const { return size_; }
-  
+
   void to_stream(std::ostream &out_stream, bool lazy = false) const;
-  
+
   /** List of keys. */
   const std::list<K>& keys() { return keys_; }
-  
+
   /** Begin iterator over the keys of the dictionary (read-only). */
   typename std::list<K>::const_iterator begin() const { return keys_.begin(); }
-  
+
   /** Past end iterator over the keys of the dictionary (read-only). */
   typename std::list<K>::const_iterator end()   const { return keys_.end(); }
-  
+
   /** Begin iterator over the keys of the dictionary. */
   typename std::list<K>::iterator begin() { return keys_.begin(); }
-  
+
   /** Begin iterator over the keys of the dictionary. */
   typename std::list<K>::iterator end()   { return keys_.end(); }
-private:  
+private:
+  bool remove_keeping_key(const K &key);
+
   /* data */
   THashElement<K,T> * thash_table_;
   std::list<K>        keys_;  // FIXME: this should be a list !
-  
+
   unsigned int size_;
 };
 
@@ -177,7 +193,7 @@ void THash<K,Te>::set(const K& key, const Te& pElement) {
   uint id = hashId(key) % size_;
   found    = &(thash_table_[id]);  // pointer to found element
   set_next = &(found->next);      // where to write the new inserted value if there is one
-  
+
   while (found && found->obj && found->key != key) { // found->obj is for the case where key == 0
     set_next = &(found->next);
     found    = found->next;
@@ -209,11 +225,11 @@ template <class K, class T>
 bool THash<K,T>::get(const K& key, T* retval) const {
   THashElement<K,T> * found;
   uint id = hashId(key) % size_;
-  
+
   found = &(thash_table_[id]);
   while (found && found->obj && found->key != key)
     found = found->next;
-    
+
   if (found && found->obj && found->key == key) {
     *retval = *(found->obj);
     return true;
@@ -226,9 +242,9 @@ template <class K, class T>
 bool THash<K,T>::get_key(const T& pElement, K* retval) const {
   typename std::list<K>::const_iterator it;
   typename std::list<K>::const_iterator end = keys_.end();
-  
+
   T element;
-  
+
   for(it = keys_.begin(); it != end; it++) {
     if (get(*it, &element) && element == pElement) {
       *retval = *it;
@@ -240,27 +256,20 @@ bool THash<K,T>::get_key(const T& pElement, K* retval) const {
 
 
 template <class K, class T>
-void THash<K,T>::remove(const K& key) {
+bool THash<K,T>::remove_keeping_key(const K& key) {
+  bool element_removed = false;
   THashElement<K,T> *  found, * next;
   THashElement<K,T> ** set_next;
   uint id = hashId(key) % size_;
   found    = &(thash_table_[id]);  // pointer to found element
   set_next = NULL;                // where to write removed element's next if there is one
-  
+
   while (found && found->obj && found->key != key) {
     set_next = &(found->next);
     found    = found->next;
   }
   if (found && found->obj) {
-    typename std::list<K>::iterator it  = keys_.begin();
-    typename std::list<K>::iterator end = keys_.end();
-    while(it != end) {
-      if (*it == key)
-        it = keys_.erase(it);
-      else
-        it++;
-    }
-    
+    element_removed = true;
     if (set_next) {
       // link previous to next
       *set_next = found->next;
@@ -284,6 +293,7 @@ void THash<K,T>::remove(const K& key) {
       }
     }
   }
+  return element_removed;
 }
 
 
@@ -369,7 +379,7 @@ inline uint hashId(const char *str) {
   while ( (c = *str++) ) {
     h = c + (h << 6) + (h << 16) - h;
   }
-  
+
   return h;
 }
 

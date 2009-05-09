@@ -116,10 +116,13 @@ public:
       // start registering the service
       fprintf(stderr, "Commit %p\n", this);
       fflush(stderr);
+        fprintf(stderr, "Could not create avahi group (%s).\n",
+                        avahi_strerror(avahi_client_errno(avahi_client_)));
       error = avahi_entry_group_commit(group_);
       if (error < 0) {
         fprintf(stderr, "Could not commit avahi group '%s' (%s)\n", name_.c_str(), avahi_strerror(error));
-        assert(0);
+      } else {
+        fprintf(stderr, "Commit ok\n");
       }
     }
   }

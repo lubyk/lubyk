@@ -8,14 +8,19 @@ struct DummyCommand : public Command
  public:
   DummyCommand(std::string *string) : Command("dummy"), string_(string) {}
   DummyCommand(std::string *string, const char *protocol) : Command(protocol), string_(string) {}
-  
+
+  ~DummyCommand() {
+    // make sure command is halted before being destroyed
+    kill();
+  }
+
   void do_listen() {
     while (should_run()) {
       string_->append(".");
       millisleep(20);
     }
   }
-  
+
   virtual Object *build_remote_object(const Url &url, Value *error) {
     if (url.host() == "dummy.host") {
       return adopt_remote_object(url.str(), new DummyObject(url.str().c_str(), url.port()));
@@ -24,13 +29,13 @@ struct DummyCommand : public Command
       return NULL;
     }
   }
-  
+
   Object *remote_object_no_build(const std::string &url) {
     Object *res = NULL;
     remote_objects_.get(url, &res);
     return res;
   }
-  
+
   std::string * string_;
 };
 

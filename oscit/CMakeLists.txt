@@ -39,10 +39,11 @@ message("oscpack: '${OSCIT_SOURCE_DIR}/oscpack/liboscpack.a'")
 # one test for all CxxTests
 enable_testing()
 file (GLOB OSCIT_TEST_SOURCES test/*_test.h test/*_test_slow.h)
+file (GLOB OSCIT_TEST_MOCKS test/mock/*.h)
 add_custom_command ( PRE_BUILD
   OUTPUT  test_runner.cpp
   COMMAND ${OSCIT_SOURCE_DIR}/test/cxxtest/cxxtestgen.pl --error-printer -o test_runner.cpp ${OSCIT_TEST_SOURCES}
-  DEPENDS ${OSCIT_TEST_SOURCES}
+  DEPENDS ${OSCIT_TEST_SOURCES} ${OSCIT_TEST_MOCKS}
 )
 
 add_executable (test_runner test_runner.cpp ${OSCIT_SOURCE_DIR}/oscpack/liboscpack.a)
@@ -53,3 +54,7 @@ add_test (oscit_test test_runner)
 # this is to enable verbose output during testing
 add_custom_target (test_all ALL ${CMAKE_CTEST_COMMAND} -V)
 add_dependencies (test_all test_runner)
+
+# avahi testing...
+# add_executable(publish ${OSCIT_SOURCE_DIR}/publish.c)
+# target_link_libraries(publish ${PLAT_LINK})

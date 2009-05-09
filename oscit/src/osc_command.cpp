@@ -52,23 +52,25 @@ static osc::OutboundPacketStream &operator<<(osc::OutboundPacketStream &out_stre
 
 class OscCommand::Implementation : public osc::OscPacketListener {
 public:
-  
-  Implementation(Root *root, uint port) : root_(root), port_(port), zeroconf_registration_(NULL) {
-    socket_ = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, port_ ), this );
-  }
-  
+
+  Implementation(OscCommand *command, uint port) : command_(command), root_(NULL), socket_(NULL), port_(port), zeroconf_registration_(NULL) {}
+
   virtual ~Implementation() {
     if (zeroconf_registration_ != NULL) delete zeroconf_registration_;
+    if (socket_ != NULL) delete socket_;
   }
-  
+
   void kill() {
     socket_->AsynchronousBreak();
   }
-  
+
   void set_root(Root *root) {
     root_ = root;
+    if (root_ != NULL && socket_ == NULL) {
+      socket_ = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, port_ ), this );
+    }
   }
-  
+
   /** Add a new satellite to the list of observers. This method is the implementation
    *  of "/.register".
    * TODO: how to get the IP without checking for "/.register" in the 'receive' method ?
@@ -79,8 +81,8 @@ public:
     // TODO: check that the observer is not already in the list of observers_.
     observers_.push_back(observer);
   }
-  
-  /** Send an osc message. 
+
+  /** Send an osc message.
    *  @param remote_endpoint target host.
    */
   void send(const IpEndpointName &remote_endpoint, const char *url, const Value &val) {
@@ -89,10 +91,10 @@ public:
     socket_->Connect(remote_endpoint);
     socket_->Send(message.Data(), message.Size());
   }
-  
+
   /** Start listening for incoming messages (runs in its own thread). */
   virtual void do_listen() {
-    if (!zeroconf_registration_) {
+    if (zeroconf_registration_ == NULL) {
       std::string name(root_->name());
       if (name == "") {
         name = "Generic oscit device";
@@ -101,7 +103,7 @@ public:
     }
     socket_->Run();
   }
-  
+
   /** Callback to process incoming messages. */
   virtual void ProcessMessage(const osc::ReceivedMessage &message, const IpEndpointName &remote_endpoint) {
     Value res;
@@ -126,7 +128,7 @@ public:
     // send return
     send_reply(&remote_endpoint, url, res);
   }
-  
+
   /** Send reply to caller and notify observers. */
   void send_reply(const IpEndpointName *remote_endpoint, const std::string &url, const Value &val) {
     if (val.is_nil()) return;
@@ -166,7 +168,7 @@ public:
       }
     }
   }
-  
+
   /** Build a value from osc packet.
    *  @param message osc message.
    *  @return new value corresponding to the osc data.
@@ -234,31 +236,31 @@ public:
   /** Access to OscCommand.
    */
   OscCommand *command_;
-  
+
   /** Direct link to root without passing by OscCommand.
    */
   Root *root_;
-  
+
   /** Socket listening to udp packets.
    */
   UdpListeningReceiveSocket *socket_;
-  
+
   /** Connected port.
    */
   uint port_;
-  
+
   /** Zeroconf registration thread.
    */
   ZeroConfRegistration *zeroconf_registration_;
-  
+
   std::list<IpEndpointName> observers_; /**< List of satellites that have registered to get return values back. */
-  
+
   char osc_buffer_[OSC_OUT_BUFFER_SIZE];     /** Buffer used to build osc packets. */
 };
 
 
 OscCommand::OscCommand(uint port) : Command("osc") {
-  impl_   = new OscCommand::Implementation(root_, port);
+  impl_ = new OscCommand::Implementation(this, port);
 }
 
 OscCommand::~OscCommand() {
