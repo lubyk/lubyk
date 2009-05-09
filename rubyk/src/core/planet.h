@@ -86,6 +86,8 @@ class Planet : public Root
   /** Create/remove a link between two slots. */
   const Value link(const Value &val);
   
+  /** Tell worker to stop.
+   */
   const Value quit(const Value &val) {
     lock();
       worker_.stop();
