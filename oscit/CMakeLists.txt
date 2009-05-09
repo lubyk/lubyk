@@ -58,3 +58,9 @@ add_dependencies (test_all test_runner)
 # avahi testing...
 # add_executable(publish ${OSCIT_SOURCE_DIR}/publish.c)
 # target_link_libraries(publish ${PLAT_LINK})
+
+# add_executable(registration ${OSCIT_SOURCE_DIR}/test/mock/registration.cpp)
+# target_link_libraries(registration oscit ${OSCIT_SOURCE_DIR}/oscpack/liboscpack.a ${PLAT_LINK})
+
+# valgrind command ?
+# valgrind --leak-check=full --track-origins=yes ./test_runner

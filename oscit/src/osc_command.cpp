@@ -53,22 +53,21 @@ static osc::OutboundPacketStream &operator<<(osc::OutboundPacketStream &out_stre
 class OscCommand::Implementation : public osc::OscPacketListener {
 public:
 
-  Implementation(OscCommand *command, uint port) : command_(command), root_(NULL), socket_(NULL), port_(port), zeroconf_registration_(NULL) {}
+  Implementation(OscCommand *command, uint port) : command_(command), root_(NULL), socket_(NULL), port_(port), zeroconf_registration_(NULL), running_(false) {}
 
   virtual ~Implementation() {
+    kill();
     if (zeroconf_registration_ != NULL) delete zeroconf_registration_;
     if (socket_ != NULL) delete socket_;
   }
 
   void kill() {
-    socket_->AsynchronousBreak();
+    if (running_) socket_->AsynchronousBreak();
+    running_ = false;
   }
 
   void set_root(Root *root) {
     root_ = root;
-    if (root_ != NULL && socket_ == NULL) {
-      socket_ = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, port_ ), this );
-    }
   }
 
   /** Add a new satellite to the list of observers. This method is the implementation
@@ -93,7 +92,9 @@ public:
   }
 
   /** Start listening for incoming messages (runs in its own thread). */
-  virtual void do_listen() {
+  void do_listen() {
+    assert(root_);
+
     if (zeroconf_registration_ == NULL) {
       std::string name(root_->name());
       if (name == "") {
@@ -101,6 +102,11 @@ public:
       }
       zeroconf_registration_ = new ZeroConfRegistration(name.c_str(), OSCIT_SERVICE_TYPE, port_);
     }
+
+    if (socket_ == NULL) {
+      socket_ = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, port_ ), this );
+    }
+    running_ = true;
     socket_->Run();
   }
 
@@ -256,6 +262,7 @@ public:
   std::list<IpEndpointName> observers_; /**< List of satellites that have registered to get return values back. */
 
   char osc_buffer_[OSC_OUT_BUFFER_SIZE];     /** Buffer used to build osc packets. */
+  bool running_;
 };
 
 
@@ -270,7 +277,7 @@ OscCommand::~OscCommand() {
 
 void OscCommand::kill() {
   impl_->kill();
-  this->Thread::kill();
+  join(); // do not kill, impl_->kill() will stop thread.
 }
 
 void OscCommand::notify_observers(const char *url, const Value &val) {

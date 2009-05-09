@@ -21,11 +21,12 @@ namespace oscit {
 
 class ZeroConfBrowser::Implementation {
 public:
-  Implementation(ZeroConfBrowser *browser) : browser_(browser), avahi_poll_(NULL), avahi_client_(NULL) {
+  Implementation(ZeroConfBrowser *browser) : browser_(browser), avahi_poll_(NULL), avahi_client_(NULL), running_(false) {
     do_start();
   }
 
   ~Implementation() {
+    stop();
     if (avahi_client_) avahi_client_free(avahi_client_);
     if (avahi_poll_) avahi_threaded_poll_free(avahi_poll_);
   }
@@ -33,7 +34,10 @@ public:
 	/** Called from outside of thread to stop operations.
 	 */
 	void stop() {
-    avahi_threaded_poll_stop(avahi_poll_);
+    if (running_) {
+      avahi_threaded_poll_stop(avahi_poll_);
+      running_ = false;
+    }
     // join threads here
 	}
 
@@ -78,6 +82,7 @@ public:
     }
 
     avahi_threaded_poll_start(avahi_poll_);
+    running_ = true;
   }
 
   static void client_callback(AvahiClient *client, AvahiClientState state, void *context) {
@@ -180,6 +185,7 @@ public:
   ZeroConfBrowser *browser_;
   AvahiThreadedPoll *avahi_poll_;
   AvahiClient     *avahi_client_;
+  bool running_;
 };
 
 ZeroConfBrowser::ZeroConfBrowser(const char *service_type) : service_type_(service_type) {
@@ -187,11 +193,11 @@ ZeroConfBrowser::ZeroConfBrowser(const char *service_type) : service_type_(servi
 }
 
 ZeroConfBrowser::~ZeroConfBrowser() {
+  delete impl_;
 }
 
 void ZeroConfBrowser::stop() {
   impl_->stop();
-  delete impl_;
 }
 
 } // oscit

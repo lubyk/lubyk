@@ -24,11 +24,13 @@ namespace oscit {
 
 class ZeroConfRegistration::Implementation {
 public:
-  Implementation(ZeroConfRegistration *master) : registration_(master), avahi_client_(NULL), group_(NULL), name_(registration_->name_), host_(registration_->host_),  counter_(0) {
+  Implementation(ZeroConfRegistration *master) : registration_(master), avahi_client_(NULL), avahi_group_(NULL), name_(registration_->name_), host_(registration_->host_),  counter_(0), running_(false) {
     do_start();
   }
 
   ~Implementation() {
+    stop();
+    if (avahi_group_) avahi_entry_group_free(avahi_group_);
     if (avahi_client_) avahi_client_free(avahi_client_);
     if (avahi_poll_) avahi_threaded_poll_free(avahi_poll_);
   }
@@ -36,7 +38,10 @@ public:
 	/** Called from outside of thread to stop operations.
 	 */
 	void stop() {
-    avahi_threaded_poll_stop(avahi_poll_);
+    if (running_) {
+      avahi_threaded_poll_stop(avahi_poll_);
+      running_ = false;
+    }
 	}
 
   void do_start() {
@@ -61,33 +66,34 @@ public:
     }
 
     avahi_threaded_poll_start(avahi_poll_);
+    running_ = true;
   }
 
   void next_name() {
     char name_buffer[MAX_NAME_COUNTER_BUFFER_SIZE+1];
     snprintf(name_buffer, MAX_NAME_COUNTER_BUFFER_SIZE, " (%i)", ++counter_);
     name_ = std::string(registration_->name_).append(name_buffer);
-    avahi_entry_group_reset(group_);
+    avahi_entry_group_reset(avahi_group_);
   }
 
   void create_services() {
     int error;
 
-    if (group_ == NULL) {
-      group_ = avahi_entry_group_new(avahi_client_,  // client
-                   Implementation::entry_group_callback,         // callback
+    if (avahi_group_ == NULL) {
+      avahi_group_ = avahi_entry_group_new(avahi_client_,  // client
+                   Implementation::entry_avahi_group_callback,         // callback
                    this);                                        // context
 
-      if (group_ == NULL) {
+      if (avahi_group_ == NULL) {
         fprintf(stderr, "Could not create avahi group (%s).\n",
                         avahi_strerror(avahi_client_errno(avahi_client_)));
         return;
       }
     }
 
-    if (avahi_entry_group_is_empty(group_)) {
+    if (avahi_entry_group_is_empty(avahi_group_)) {
       // new group or after reset
-      error = avahi_entry_group_add_service(group_,  // group
+      error = avahi_entry_group_add_service(avahi_group_,  // group
         AVAHI_IF_UNSPEC,                        // interface
         AVAHI_PROTO_UNSPEC,                     // protocol to announce service with
         (AvahiPublishFlags)0,                   // flags
@@ -114,15 +120,9 @@ public:
         }
       }
       // start registering the service
-      fprintf(stderr, "Commit %p\n", this);
-      fflush(stderr);
-        fprintf(stderr, "Could not create avahi group (%s).\n",
-                        avahi_strerror(avahi_client_errno(avahi_client_)));
-      error = avahi_entry_group_commit(group_);
+      error = avahi_entry_group_commit(avahi_group_);
       if (error < 0) {
         fprintf(stderr, "Could not commit avahi group '%s' (%s)\n", name_.c_str(), avahi_strerror(error));
-      } else {
-        fprintf(stderr, "Commit ok\n");
       }
     }
   }
@@ -145,7 +145,7 @@ public:
       case AVAHI_CLIENT_S_REGISTERING:
         // server not ready (collision, registering)
         // make sure we restart registration
-        avahi_entry_group_reset(impl->group_);
+        avahi_entry_group_reset(impl->avahi_group_);
         break;
       case AVAHI_CLIENT_CONNECTING:
         // wait
@@ -156,7 +156,7 @@ public:
     }
   }
 
-  static void entry_group_callback(AvahiEntryGroup *g, AvahiEntryGroupState state, void *context) {
+  static void entry_avahi_group_callback(AvahiEntryGroup *g, AvahiEntryGroupState state, void *context) {
     Implementation *impl = (Implementation*)context;
     // callback called whenever our entry group state changes
     switch (state) {
@@ -195,10 +195,11 @@ private:
   ZeroConfRegistration *registration_;
   AvahiThreadedPoll *avahi_poll_;
   AvahiClient     *avahi_client_;
-  AvahiEntryGroup *group_;
+  AvahiEntryGroup *avahi_group_;
   std::string name_;
   std::string host_;
   int counter_;
+  bool running_;
 };
 
 
@@ -207,11 +208,11 @@ ZeroConfRegistration::ZeroConfRegistration(const std::string &name, const char *
 }
 
 ZeroConfRegistration::~ZeroConfRegistration() {
+  delete impl_;
 }
 
 void ZeroConfRegistration::stop() {
   impl_->stop();
-  delete impl_;
 }
 
 } // oscit
