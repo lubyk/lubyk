@@ -1,0 +1,6 @@
+
+
+linux
+------
+
+> sudo aptitude install readline5-devel
