@@ -8,7 +8,7 @@ class LuaScriptTest : public TestHelper {
 public:
   virtual void setUp() {
     planet_ = new Planet();
-    planet_->call(LIB_URL, Value("lib"));
+    planet_->call(LIB_URL, Value(TEST_LIB_PATH));
     script_ = planet_->adopt(new LuaScript);
     // all this is done by Class normally
     script_->set_name("lua");

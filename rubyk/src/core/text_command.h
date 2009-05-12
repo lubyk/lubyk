@@ -10,14 +10,14 @@
 
 class Planet;
 
-class TextCommand : public Command
+class TextCommand : public oscit::Command
 {
 public:
   TYPED("Mutex.Thread.Command.TextCommand")
-  TextCommand(std::istream &input, std::ostream &output) : Command("text"), current_directory_("/"), input_(&input), output_(&output)
+  TextCommand(std::istream &input, std::ostream &output) : oscit::Command("text"), current_directory_("/"), input_(&input), output_(&output)
   { initialize(); }
   
-  TextCommand() : Command("text"), current_directory_("/") {
+  TextCommand() : oscit::Command("text"), current_directory_("/") {
     input_  = &std::cin;
     output_ = &std::cout;
     initialize();
@@ -48,11 +48,6 @@ public:
   /** Print command results back. */
   void set_verbose() { silent_ = false; }
   
-  virtual Object* build_remote_object(const Url &url, Value* error) {
-    error->set(BAD_REQUEST_ERROR, "TextCommand cannot create references to remote objects.");
-    return NULL;
-  }
-  
   void print_result(const Value &res) {
     if (!silent_) {
       if (res.is_string()) {
@@ -76,6 +71,11 @@ public:
 protected:
   /** Constructor, set default values. */
   void initialize();
+  
+  virtual Object* build_remote_object(const Url &url, Value* error) {
+    error->set(BAD_REQUEST_ERROR, "TextCommand cannot create references to remote objects.");
+    return NULL;
+  }
   
   /** Code executed in a separate thread. Runs until deleted or quit. */
   virtual void do_listen();

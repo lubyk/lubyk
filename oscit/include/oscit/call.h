@@ -10,8 +10,8 @@ struct Call
 {
   Call(const std::string &url, const Value &param) : url_(url), param_(param) {}
   
-  const Value trigger(Root *root) {
-    return root->call(url_, param_);
+  const Value safe_trigger(Root *root, Mutex *context) {
+    return root->call(url_, param_, context);
   }
   
   std::string url_;

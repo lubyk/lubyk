@@ -52,8 +52,8 @@ class Planet : public Root
     adopt_command(new OscCommand(port));
   }
   
-  void run() {
-    worker_.run();
+  void start() {
+    worker_.start();
   }
   
   /** Only used with direct loop control. */
@@ -89,22 +89,12 @@ class Planet : public Root
   /** Tell worker to stop.
    */
   const Value quit(const Value &val) {
-    lock();
-      worker_.stop();
-    unlock();
+    worker_.quit();
     return gNilValue;
   }
   
   /** Calls 'inspect' on a node. */
-  const Value inspect(const Value &val) {
-    if (!val.is_string()) return Value(BAD_REQUEST_ERROR, "Bad arguments:'inspect' should be called with an url.");
-    Value res;
-    Object *object = find_or_build_object_at(val.str(), &res);
-    if (!object) return res;
-    Node *node = TYPE_CAST(Node, object);
-    if (!object) return Value(BAD_REQUEST_ERROR, "Bad target:'inspect' only works on Nodes.");
-    return node->do_inspect();
-  }
+  const Value inspect(const Value &val);
   
  private:
   /** Add a pending link. */

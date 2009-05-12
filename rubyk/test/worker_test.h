@@ -6,7 +6,7 @@ public:
   void test_run_kill( void ) {
     Root root;
     Worker worker(&root);
-    worker.run();
+    worker.start();
     microsleep(5);
     worker.kill();
   }
@@ -16,7 +16,7 @@ public:
     Worker worker(&root);
     time_t start = worker.current_time_;
     
-    worker.run(); // running in new thread
+    worker.start(); // running in new thread
     microsleep(10);
     worker.kill();
     assert_true(start + 8  <= worker.current_time_);

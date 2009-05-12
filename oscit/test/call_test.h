@@ -13,7 +13,7 @@ public:
     Call call("/Evil", Value(6.66));
 
     assert_equal(1.23, evil->real());
-    Value res = call.trigger(&root);
+    Value res = call.safe_trigger(&root, NULL);
     assert_equal(6.66, res.r);
     assert_equal(6.66, evil->real());
   }

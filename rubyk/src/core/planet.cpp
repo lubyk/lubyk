@@ -1,7 +1,7 @@
-#include "planet.h"
-#include "class_finder.h"
 #include "node.h"
+#include "class_finder.h"
 #include "text_command.h"
+#include "planet.h"
 
 void Planet::init() {
   set_context(&worker_);
@@ -64,7 +64,7 @@ const Value Planet::create_pending_links() {
   Value list;
   
   while (it != end) {
-    res = it->trigger(this);
+    res = it->safe_trigger(this, context_);
     if ((res.type_id() == H("sss") && res[1].str() == "=>") || res.is_error()) {
       list.push_back(res);
       it = pending_links_.erase(it);  // call succeeded or definitely failed
@@ -97,4 +97,14 @@ const Value Planet::remove_pending_link(const Value &val) {
     }
   }
   return res;
+}
+
+const Value Planet::inspect(const Value &val) {
+  if (!val.is_string()) return Value(BAD_REQUEST_ERROR, "Bad arguments:'inspect' should be called with an url.");
+  Value res;
+  Object *object = find_or_build_object_at(val.str(), &res);
+  if (!object) return res;
+  Node *node = TYPE_CAST(Node, object);
+  if (!node) return Value(BAD_REQUEST_ERROR, std::string("Bad target '").append(object->url()).append("':inspect only works on Nodes (class is '").append(object->class_path()).append("')."));
+  return node->do_inspect();
 }

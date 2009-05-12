@@ -128,7 +128,7 @@ public:
       remote_endpoint.AddressAsString(host_ip);
       std::cout << url << " " << val << " (" << host_ip << ":" << remote_endpoint.port << ")" << std::endl;
 #endif
-      res = root_->call(url, val);
+      res = root_->call(url, val, NULL);  // NULL = external context
     }
 
     // send return

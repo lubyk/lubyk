@@ -1,7 +1,6 @@
 CC=g++
 TESTING=-D_TESTING_
 CFLAGS=-g -Wall -DUSE_READLINE $(TESTING)
-LFLAGS=-framework Accelerate -lreadline
 PREFIX=/usr/local
 LIBDIR=$(PREFIX)/lib
 BINDIR=$(PREFIX)/bin
@@ -12,9 +11,6 @@ DOT_CMD=/Applications/Graphviz.app/Contents/MacOS/dot
 RAGEL=ragel
 PLAT= macosx
 
-ifeq ($(PLAT),macosx)
-DEFINES=-D__macosx__ -D__MACOSX_CORE__
-endif
 
 
 TEST=test/*_test.h test/objects/*_test.h
@@ -47,8 +43,6 @@ objects: lib lib/Test.rko lib/Number.rko lib/Add.rko lib/Inlet.rko lib/Group.rko
 
 off: lib/Serial.rko lib/Turing.rko lib/Keyboard.rko lib/Cabox.rko lib/Svm.rko lib/Buffer.rko lib/GLWindow.rko lib/Cut.rko lib/MaxCount.rko lib/FFT.rko lib/VQ.rko lib/ClassRecorder.rko lib/PCA.rko lib/Average.rko lib/Peak.rko lib/Minus.rko lib/Replay.rko lib/Kmeans.rko lib/Abs.rko lib/Sum.rko lib/Ctrl.rko lib/Diff.rko lib/Bang.rko lib/Macro.rko lib/MidiIn.rko lib/GLLua.rko lib/GLPlot.rko lib/Group.rko lib/System.rko
 	
-test/runner.cpp: $(TEST) test_objects
-	./test/cxxtest/cxxtestgen.pl --error-printer -o test/runner.cpp $(TEST)
 	
 test/runner: test/runner.cpp $(LINKER_OBJECTS) #objects
 	$(CC) $(CFLAGS) $(LFLAGS) -Itest $(INCLUDE_HEADERS) -I. test/runner.cpp $(LINKER_OBJECTS) -o test/runner

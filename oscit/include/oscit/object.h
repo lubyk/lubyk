@@ -124,9 +124,12 @@ class Object : public Typed {
   /** Clear all children (delete). */
   void clear();
 
-  /** Lock mutex if needed before calling 'trigger'. */
-  const Value safe_trigger(const Value &val) {
-    if (context_) {
+  /** Lock mutex if needed before calling 'trigger'.
+   * This is the method that should be used by objects when they are doing a
+   * direct call.
+   */
+  const Value safe_trigger(const Value &val, Mutex *caller_context) {
+    if (context_ && context_ != caller_context) {
       context_->lock();
         Value res = trigger(val);
       context_->unlock();
@@ -288,7 +291,7 @@ class Object : public Typed {
   }
 
   inline bool can_receive(const Value &val) {
-    if (type_id() == H("")) return false;
+    if (type_id() == NO_TYPE_TAG_ID) return false;
     if (val.type_id() == type_id() || accept_any_type()) {
       return true;
     } else if (val.is_nil()) {
@@ -338,7 +341,7 @@ class Object : public Typed {
   /** Keep type_id_ in sync with type_.
    */
   void type_changed() {
-    type_id_ = type_.size() > 0 ? type_[0].type_id() : H("");
+    type_id_ = type_.size() > 0 ? type_[0].type_id() : NO_TYPE_TAG_ID;
   }
 
   /** Free the child from the list of children.
@@ -381,7 +384,7 @@ class Object : public Typed {
   Mutex *context_;
 
  private:
-
+   
   /** Value that holds type information on the 'trigger' method of this
    *  object.
    *  If the type_ is not a list, this means the object is not callable and

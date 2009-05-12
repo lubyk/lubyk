@@ -39,7 +39,7 @@ namespace oscit {
 #define HASH_FUNCTION(NEXTHASH, VALUE) VALUE + (NEXTHASH << 2)
 
 // finally the macro used to generate the hash
-#define H(string) (uint)HASH_RECURSE_00(string, *string)
+#define H(string) (uint)(*string == 0 ? 0 : HASH_RECURSE_00(string, *string))
 
 typedef std::list<std::string>::iterator string_iterator;
 typedef std::list<std::string>::const_iterator const_string_iterator;

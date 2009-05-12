@@ -36,8 +36,6 @@ public:
     Inlet  i_list(&counter, SlotTest_receive_value1, JsonValue("[[null,null],\"first\", \"second\", \"Info.\"]"));
     Inlet  i_any( &counter, SlotTest_receive_value1, AnyIO("Blah."));
     
-    // connection initiated by outlet
-    
     // all should fail
     assert_false(o_no.connect(&i_no));
     assert_false(o_no.connect(&i_bang));

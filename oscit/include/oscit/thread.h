@@ -65,6 +65,7 @@ class Thread : public Mutex
    */
   void kill() {
     if (pthread_equal(thread_id_, pthread_self())) {
+      printf("same.quit\n");
       quit();
       thread_id_ = NULL;
     } else if (thread_id_) {

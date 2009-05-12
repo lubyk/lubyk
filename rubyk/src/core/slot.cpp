@@ -41,8 +41,10 @@ bool Slot::operator>= (const Slot &slot) const {
 }
 
 
-bool Slot::add_connection(Slot *slot) { 
-  if (type_id() == H("") ||  slot->type_id() == H("")) return false; // one of them is a NoIO
+bool Slot::add_connection(Slot *slot) {
+  if (type_id() == NO_TYPE_TAG_ID ||  slot->type_id() == NO_TYPE_TAG_ID) return false; // one of them is a NoIO
+  assert(type().size() > 0);
+  assert(slot->type().size()  > 0);
   if ((kind_of(Inlet)        && can_receive(slot->type()[0])) ||
       (slot->kind_of(Inlet)  && slot->can_receive(type()[0]))) {
     // same type signature or inlet receiving any type

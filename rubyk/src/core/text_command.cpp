@@ -1,4 +1,4 @@
-#line 1 "src/core/text_command.rl"
+#line 1 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.rl"
 #include "text_command.h"
 #include "rubyk.h"
 
@@ -11,7 +11,7 @@
 #endif
 
 
-#line 15 "src/core/text_command.cpp"
+#line 15 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.cpp"
 static const char _text_command_actions[] = {
 	0, 1, 0, 1, 1, 1, 3, 1, 
 	4, 1, 5, 1, 11, 1, 13, 1, 
@@ -260,7 +260,7 @@ static const int text_command_first_final = 82;
 static const int text_command_en_eat_line = 81;
 static const int text_command_en_main = 1;
 
-#line 15 "src/core/text_command.rl"
+#line 15 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.rl"
 
 
 void TextCommand::initialize() {
@@ -269,11 +269,11 @@ void TextCommand::initialize() {
   silent_     = false;    
   clear();
   
-#line 273 "src/core/text_command.cpp"
+#line 273 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.cpp"
 	{
 	cs = text_command_start;
 	}
-#line 23 "src/core/text_command.rl"
+#line 23 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.rl"
   current_state_ = cs;
 }
 
@@ -302,7 +302,7 @@ void TextCommand::parse(const std::string &string) {
   DEBUG(printf("parse:\"%s\"\n",string.c_str()));
   
   
-#line 306 "src/core/text_command.cpp"
+#line 306 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -377,77 +377,77 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 51 "src/core/text_command.rl"
+#line 51 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.rl"
 	{
       DEBUG(printf("_%c_",(*p)));
       token_ += (*p); /* append */
     }
 	break;
 	case 1:
-#line 56 "src/core/text_command.rl"
+#line 56 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.rl"
 	{
       // FIXME: this is a temporary hack until we sub parse with Value...
       parameter_string_ += (*p);
     }
 	break;
 	case 2:
-#line 61 "src/core/text_command.rl"
+#line 61 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.rl"
 	{ set_from_token(var_);}
 	break;
 	case 3:
-#line 63 "src/core/text_command.rl"
+#line 63 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.rl"
 	{ set_from_token(method_);}
 	break;
 	case 4:
-#line 65 "src/core/text_command.rl"
+#line 65 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.rl"
 	{ set_from_token(class_);}
 	break;
 	case 5:
-#line 67 "src/core/text_command.rl"
+#line 67 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.rl"
 	{ set_from_token(value_);}
 	break;
 	case 6:
-#line 69 "src/core/text_command.rl"
+#line 69 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.rl"
 	{ from_node_     = var_; }
 	break;
 	case 7:
-#line 71 "src/core/text_command.rl"
+#line 71 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.rl"
 	{ from_port_ = var_; }
 	break;
 	case 8:
-#line 73 "src/core/text_command.rl"
+#line 73 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.rl"
 	{ to_port_   = var_; }
 	break;
 	case 9:
-#line 79 "src/core/text_command.rl"
+#line 79 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.rl"
 	{
       to_node_   = var_;
       create_link();
     }
 	break;
 	case 10:
-#line 84 "src/core/text_command.rl"
+#line 84 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.rl"
 	{
       to_node_   = var_;
       remove_link();
     }
 	break;
 	case 11:
-#line 89 "src/core/text_command.rl"
+#line 89 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.rl"
 	{ create_instance(); }
 	break;
 	case 12:
-#line 95 "src/core/text_command.rl"
+#line 95 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.rl"
 	{ execute_command(); }
 	break;
 	case 13:
-#line 99 "src/core/text_command.rl"
+#line 99 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.rl"
 	{
       clear();
     }
 	break;
 	case 14:
-#line 103 "src/core/text_command.rl"
+#line 103 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.rl"
 	{
       p--; // move back one char
       char error_buffer[10];
@@ -458,10 +458,10 @@ _match:
     }
 	break;
 	case 15:
-#line 112 "src/core/text_command.rl"
+#line 112 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.rl"
 	{ {cs = 1; goto _again;} }
 	break;
-#line 465 "src/core/text_command.cpp"
+#line 465 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.cpp"
 		}
 	}
 
@@ -478,7 +478,7 @@ _again:
 	while ( __nacts-- > 0 ) {
 		switch ( *__acts++ ) {
 	case 14:
-#line 103 "src/core/text_command.rl"
+#line 103 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.rl"
 	{
       p--; // move back one char
       char error_buffer[10];
@@ -488,14 +488,14 @@ _again:
       {cs = 81; goto _again;} // eat the rest of the line and continue parsing
     }
 	break;
-#line 492 "src/core/text_command.cpp"
+#line 492 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.cpp"
 		}
 	}
 	}
 
 	_out: {}
 	}
-#line 164 "src/core/text_command.rl"
+#line 164 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.rl"
 
 //  printf("{%s}\n",p);
   current_state_ = cs;
@@ -610,7 +610,9 @@ void TextCommand::execute_command() {
   if (method_ == "lib") {
     res = root_->call(LIB_URL, params);
   } else if (method_ == "quit" || method_ == "q") {
-    stop(); // Readline won't quit with a SIGTERM (see doc/prototypes/term_readline.cpp).
+    quit();  // Readline won't quit with a SIGTERM (see doc/prototypes/term_readline.cpp) so
+             // we have to use quit() instead of kill().
+
     res = root_->call(QUIT_URL);
   } else {  
     names_to_urls();

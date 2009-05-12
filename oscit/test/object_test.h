@@ -125,7 +125,7 @@ public:
     assert_equal("Hs", hash.type().type_tag());
     assert_equal("Ms", matr.type().type_tag());
   }
-
+  
   // set_type is not a good idea. It should be immutable (or maybe I'm wrong, so I leave the test here)
   //void test_set_type( void ) {
   //  DummyObject one("one", 123.0);

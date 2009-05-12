@@ -53,6 +53,7 @@ struct TypeTag
 typedef uint TypeTagID;
 
 #define ANY_TYPE_TAG_ID H("*")
+#define NO_TYPE_TAG_ID H("")
 
 } // oscit
 

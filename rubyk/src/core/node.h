@@ -117,18 +117,22 @@ class Node : public Object
    */
   bool is_ok() const { return is_ok_; }
   
-  /** This method must be implemented in subclasses that want to be looped. */
+  /** This method must be implemented in subclasses that want to be looped.
+   */
   virtual void bang(const Value &val) {
     fprintf(stderr, "Default Node::bang method called !\n");
   }
   
-  /** Set url for class. TODO: Maybe we should pass a pointer to the class in case it moves ? But then if it is removed ? */
+  /** Set url for class. TODO: Maybe we should pass a pointer to the class in case it moves ?
+   * But then if it is removed ?
+   */
   void set_class_url(const std::string &class_url) { class_url_ = class_url; }
   
   const std::string &class_url() const { return class_url_; }
   
   /** Used to sort outlet connections. A node with a high trigger position receives the value before
-    * another node with a small trigger position, if they are both connected to the same outlet. */ 
+   * another node with a small trigger position, if they are both connected to the same outlet.
+   */
   inline Real trigger_position() { return trigger_position_; }
   
   void set_trigger_position(Real value) {

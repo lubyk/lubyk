@@ -7,6 +7,7 @@ rubyk/lib/*
 .DS_Store
 *~
 oscit/build
+rubyk/build
 rubyk/src/lib/lua/lua
 rubyk/src/lib/lua/luac
 rubyk/test/runner*

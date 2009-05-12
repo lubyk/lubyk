@@ -28,15 +28,13 @@ const Value Object::set(const Value &val) {
   Value res;
   Object * obj;
   
-  if (context_) context_->lock();
-    for (it = val.begin(); it != end; ++it) {
-      if ((obj = child(*it)) && val.get(*it, &param)) {
-        res.set(*it, root_->call(obj, param));
-      } else {
-        res.set(*it, ErrorValue(NOT_FOUND_ERROR, *it));
-      }
+  for (it = val.begin(); it != end; ++it) {
+    if ((obj = child(*it)) && val.get(*it, &param)) {
+      res.set(*it, root_->call(obj, param, context_));
+    } else {
+      res.set(*it, ErrorValue(NOT_FOUND_ERROR, *it));
     }
-  if (context_) context_->unlock();
+  }
   
   return res;
 }
@@ -50,7 +48,7 @@ bool Object::set_all_ok(const Value &val) {
   
   for (it = val.begin(); it != end; ++it) {
     if ((obj = child(*it)) && val.get(*it, &param)) {
-      all_ok = !root_->call(obj, param).is_error() && all_ok;
+      all_ok = !root_->call(obj, param, context_).is_error() && all_ok;
     } else {
       all_ok = false;
     }

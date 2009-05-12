@@ -3,7 +3,7 @@
 class LuaTest : public ParseHelper {
 public:
   void test_send( void ) {
-    setup_with_print("n=Lua('test/fixtures/lua_test_send.lua')\n");
+    setup_with_print("n=Lua('../test/fixtures/lua_test_send.lua')\n");
     Object *obj = planet_->object_at("/n/in/value");
     assert_true(obj != NULL);
     assert_true(obj->kind_of(Inlet));

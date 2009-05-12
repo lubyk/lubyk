@@ -91,22 +91,22 @@ class Root : public Object
   }
   
   /** Trigger the object located at the given url, passing nil as parameter. */
-  const Value call(const char *url) {
-    return call(std::string(url), gNilValue);
+  const Value call(const char *url, Mutex *context = NULL) {
+    return call(std::string(url), gNilValue, context);
   }
 
   /** Trigger the object located at the given url, passing nil as parameter. */
-  const Value call(std::string &url) {
-    return call(url, gNilValue);
+  const Value call(std::string &url, Mutex *context = NULL) {
+    return call(url, gNilValue, context);
   }
 
   /** Trigger the object located at the given url with the given parameters. */
-  const Value call(const char *url, const Value &val) {
-    return call(std::string(url), val);
+  const Value call(const char *url, const Value &val, Mutex *context = NULL) {
+    return call(std::string(url), val, context);
   }
 
   /** Trigger the object in the local tree located at the given url. */
-  const Value call(const std::string &path, const Value &val) {
+  const Value call(const std::string &path, const Value &val, Mutex *context = NULL) {
     Value error;
     Object * target = find_or_build_object_at(path, &error);
     
@@ -117,11 +117,12 @@ class Root : public Object
       return error;
     }
     
-    return call(target, val);
+    return call(target, val, context);
   }
-  
-  /** Send value to given url (can be local or remote). You should use 'call' for local urls (faster). */
-  const Value send(const Url &url, const Value &val) {
+
+  /** Send value to given url (can be local or remote). You should use 'call' for local urls (faster).
+   */
+  const Value send(const Url &url, const Value &val, Mutex *context = NULL) {
     Value error;
     Object * target = object_at(url, &error);
     
@@ -132,7 +133,7 @@ class Root : public Object
       return error;
     }
     
-    return call(target, val);
+    return call(target, val, context);
   }
   
   /** Find any object (local or remoate). */
@@ -157,16 +158,20 @@ class Root : public Object
     }
   }
   
-  inline const Value call(Object *target, const Value &val) {
-    if (val.is_empty()) return call(target, gNilValue);
+  /** All calls between objects in the same tree should pass
+   * their context in order for the locks to work.
+   * If you do not follow this rule, you will get deadlocks.
+   */
+  inline const Value call(Object *target, const Value &val, Mutex *context = NULL) {
+    if (val.is_empty()) return call(target, gNilValue, context);
     if (target->can_receive(val)) {
-      return target->safe_trigger(val);
+      return target->safe_trigger(val, context);
     } else {
-      Value type = call("/.type", Value(target->url()));
+      Value type = call("/.type", Value(target->url()), context);
       return ErrorValue(BAD_REQUEST_ERROR, std::string("'").append(target->url()).append("' (").append(target->type().last().str()).append(")."));
     }
   }
-
+  
   /** Notification of name/parent change from an object. This method
    *  keeps the objects dictionary in sync.
    */

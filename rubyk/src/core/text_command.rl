@@ -275,7 +275,9 @@ void TextCommand::execute_command() {
   if (method_ == "lib") {
     res = root_->call(LIB_URL, params);
   } else if (method_ == "quit" || method_ == "q") {
-    stop(); // Readline won't quit with a SIGTERM (see doc/prototypes/term_readline.cpp).
+    quit();  // Readline won't quit with a SIGTERM (see doc/prototypes/term_readline.cpp) so
+             // we have to use quit() instead of kill().
+
     res = root_->call(QUIT_URL);
   } else {  
     names_to_urls();

@@ -38,8 +38,8 @@ public:
   }
   
   /** Run until quit (through a command or signal). */
-  void run() {
-    start<Worker, &Worker::do_run>(this, NULL);
+  void start() {
+    this->Thread::start<Worker, &Worker::do_start>(this, NULL);
   }
   
   /** Set if the planet should be running (only used with direct loop control). */
@@ -124,7 +124,7 @@ public:
   void init();
   
   /** Main loop. The call to do_run will hang until quit. */
-  void do_run(Thread *thread);
+  void do_start(Thread *thread);
   
   /** Realtime related stuff. */
   /** Method executed when an Event is registering too fast.

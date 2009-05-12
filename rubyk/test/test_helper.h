@@ -9,6 +9,9 @@
 #include <sys/timeb.h> // ftime
 #include <ostream>
 
+#define TEST_LIB_PATH "../lib"
+#define TEST_FIXTURES_PATH "../test/fixtures"
+
 void microsleep(size_t microseconds) {
   struct timespec sleeper;
   sleeper.tv_sec  = 0; 
@@ -57,6 +60,9 @@ protected:
   }
 };
 
+std::string fixture_path(const char *path) {
+  return std::string(TEST_FIXTURES_PATH).append("/").append(path);
+}
 
 #define assert_result(x,y) _assert_result(__FILE__,__LINE__,#y,x,y)
 #define assert_print(x,y) _assert_print(__FILE__,__LINE__,#y,x,y)
@@ -72,7 +78,7 @@ public:
   void setUp() {
     planet_ = new Planet;
     cmd_ = planet_->adopt_command(new TextCommand(input_, output_), false);
-    planet_->call(LIB_URL, Value("lib"));
+    planet_->call(LIB_URL, Value(TEST_LIB_PATH));
     output_.str(std::string("")); // clear output
     planet_->should_run(true);
   }

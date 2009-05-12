@@ -14,7 +14,7 @@ class Send : public Node
  public:
   /** [1] sends received data to the local (same planet) or remote (through OSC) node. */
   virtual void bang (const Value &val) {
-    root_->call(spy_url_, val);
+    call(spy_url_, val);
   }
   
  private:

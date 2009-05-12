@@ -28,7 +28,7 @@ const Value LuaScript::lua_init() {
   register_lua_method("send_", &LuaScript::lua_send);
   
   // load rubyk.lua
-  Value res = root_->call(LIB_URL);
+  Value res = root_->call(LIB_URL, context_);
   if (!res.is_string()) {
     return res;
   } else {

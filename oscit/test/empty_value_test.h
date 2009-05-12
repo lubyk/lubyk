@@ -19,7 +19,7 @@ public:
     assert_false(v.is_any());
     
     assert_equal("", v.type_tag());
-    int i = H("");
+    int i = NO_TYPE_TAG_ID;
     assert_equal(i, v.type_id());
   }
   

@@ -233,7 +233,7 @@ public:
       case LIST_VALUE:   return list_->type_id();
       case ANY_VALUE:    return H("*");
       case EMPTY_VALUE:  /* continue */
-      default:           return H("");  // EMPTY_VALUE
+      default:           return NO_TYPE_TAG_ID;  // EMPTY_VALUE
     }
   }
 
