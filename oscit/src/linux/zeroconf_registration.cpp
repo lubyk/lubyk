@@ -30,7 +30,6 @@ public:
 
   ~Implementation() {
     stop();
-    if (avahi_group_) avahi_entry_group_free(avahi_group_);
     if (avahi_client_) avahi_client_free(avahi_client_);
     if (avahi_poll_) avahi_threaded_poll_free(avahi_poll_);
   }

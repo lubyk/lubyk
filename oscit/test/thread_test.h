@@ -8,32 +8,29 @@ struct DummyWorker
 
   void count(Thread *runner) {
     while (runner->should_run()) {
-      runner->lock();
       ++value_;
       runner->unlock();
-
-      millisleep(20);
+        millisleep(20);
+      runner->lock();
     }
   }
 
   void count_twice(Thread *runner) {
     while (runner->should_run() && value_ < 2) {
-      runner->lock();
       ++value_;
       runner->unlock();
-
-      millisleep(20);
+        millisleep(20);
+      runner->lock();
     }
   }
 
   void count_high(Thread *runner) {
     runner->high_priority();
     while (runner->should_run()) {
-      runner->lock();
       ++value_;
       runner->unlock();
-
-      millisleep(20); // should be interrupted
+        millisleep(20); // should be interrupted
+      runner->lock();
     }
   }
 
@@ -60,11 +57,10 @@ struct DummySubWorker : public Thread
 
   void count(Thread *runner) {
     while (should_run()) {
-      lock();
       ++value_;
       unlock();
-
-      millisleep(20);
+        millisleep(20);
+      lock();
     }
   }
 

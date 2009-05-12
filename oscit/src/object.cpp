@@ -1,23 +1,23 @@
 #include "oscit/root.h"
 #include "oscit/alias.h"
 
-pthread_key_t oscit::Thread::sThisKey;
+pthread_key_t oscit::Thread::sThisKey = NULL;
 
 
 namespace oscit {
-  
+
 Object::~Object() {
   std::list<Alias*>::iterator it, end = aliases_.end();
   // notify parent and root
   set_parent(NULL);
   set_root(NULL);
-  
+
   for (it = aliases_.begin(); it != end; ++it) {
     // to avoid notification to this dying object
     (*it)->unlink_original();
     delete *it;
   }
-  
+
   clear();
 }
 
@@ -27,7 +27,7 @@ const Value Object::set(const Value &val) {
   Value param;
   Value res;
   Object * obj;
-  
+
   for (it = val.begin(); it != end; ++it) {
     if ((obj = child(*it)) && val.get(*it, &param)) {
       res.set(*it, root_->call(obj, param, context_));
@@ -35,7 +35,7 @@ const Value Object::set(const Value &val) {
       res.set(*it, ErrorValue(NOT_FOUND_ERROR, *it));
     }
   }
-  
+
   return res;
 }
 
@@ -45,14 +45,14 @@ bool Object::set_all_ok(const Value &val) {
   Value param;
   bool all_ok = true;
   Object * obj;
-  
+
   for (it = val.begin(); it != end; ++it) {
     if ((obj = child(*it)) && val.get(*it, &param)) {
       all_ok = !root_->call(obj, param, context_).is_error() && all_ok;
     } else {
       all_ok = false;
     }
-  }  
+  }
   return all_ok;
 }
 
@@ -71,7 +71,7 @@ void Object::unregister_child(Object *object) {
   children_.remove_element(object);
 }
 
-void Object::moved() { 
+void Object::moved() {
   // 1. get new name from parent, register as child
   if (parent_) {
     // rebuild fullpath
@@ -86,11 +86,11 @@ void Object::moved() {
     url_ = name_;
     set_root(NULL);
   }
-  
+
   string_iterator it;
   string_iterator end = children_.end();
   Object *child;
-  
+
   // 3. update children
   for(it = children_.begin(); it != end; it++) {
     if (children_.get(*it, &child)) child->moved();
@@ -100,12 +100,12 @@ void Object::moved() {
 void Object::register_child(Object *object) {
   // 1. make sure it is not in dictionary
   unregister_child(object);
-  
+
   // 2. get valid name
   while (child(object->name_)) {
     object->find_next_name();
   }
-  
+
   // 3. add to dictionary with new name
   children_.set(object->name_, object);
 }

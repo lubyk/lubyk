@@ -36,8 +36,13 @@ class Thread : public Mutex
     owner_      = owner;
     parameter_  = parameter;
     should_run_ = true;
+
+    lock();  // unlock in new thread
     pthread_create( &thread_id_, NULL, &start_thread<T,Tmethod>, (void*)this);
-    millisleep(0.01); // make sure thread is properly started (signals registered) in case we die right after
+
+    // make sure thread is properly started (signals registered) in case we die right after
+    lock();    // wait for created thread to unlock
+    unlock();  // created thread can run
   }
 
   /** Start a new thread with the given parameter. The class should check if it
@@ -53,8 +58,13 @@ class Thread : public Mutex
     owner_      = owner;
     parameter_  = parameter;
     should_run_ = true;
+
+    lock();  // unlock in new thread
     pthread_create( &thread_id_, NULL, &start_thread<T,Tmethod>, (void*)this);
-    millisleep(0.01); // make sure thread is properly started (signals registered) in case we die right after
+
+    // make sure thread is properly started (signals registered) in case we die right after
+    lock();    // wait for created thread to unlock
+    unlock();  // created thread can run
   }
 
   inline bool should_run() {
@@ -64,15 +74,12 @@ class Thread : public Mutex
   /** Kill thread (do not make this a virtual).
    */
   void kill() {
-    if (pthread_equal(thread_id_, pthread_self())) {
-      printf("same.quit\n");
-      quit();
-      thread_id_ = NULL;
-    } else if (thread_id_) {
-      pthread_kill(thread_id_, SIGTERM);
-      pthread_join(thread_id_, NULL);
-      thread_id_ = NULL;
-    }
+    if (!thread_id_) return;  // not running
+    assert(!pthread_equal(thread_id_, pthread_self()));
+
+    pthread_kill(thread_id_, SIGTERM);
+    pthread_join(thread_id_, NULL);
+    thread_id_ = NULL;
   }
 
   /** Wait for thread to finish. */
@@ -114,7 +121,9 @@ class Thread : public Mutex
    return (Thread*) pthread_getspecific(sThisKey);
   }
 
-  /** Set 'this' value for the current thread (used by Rubyk when starting a new thread). */
+  /** Set 'this' value for the current thread so we can
+   * find our object back.
+   */
   static void set_thread_this(Thread *thread) {
    pthread_setspecific(sThisKey, (void*)thread);
   }
@@ -130,9 +139,14 @@ class Thread : public Mutex
     signal(SIGINT,  terminate);
 
     T *owner = (T*)thread->owner_;
+    thread->should_run_ = true;
 
-    (owner->*Tmethod)(thread);
+    // signals installed, we can free parent thread
+    thread->unlock();  // --> parent can continue
 
+    thread->lock();
+      (owner->*Tmethod)(thread);
+    thread->unlock();
     return NULL;
   }
 
@@ -147,10 +161,14 @@ class Thread : public Mutex
     signal(SIGINT,  terminate);
 
     T *owner = (T*)thread->owner_;
-
     thread->should_run_ = true;
-    (owner->*Tmethod)();
 
+    // signals installed, we can free parent thread
+    thread->unlock();  // --> parent can continue
+
+    thread->lock();
+      (owner->*Tmethod)();
+    thread->unlock();
     return NULL;
   }
 
@@ -166,7 +184,7 @@ class Thread : public Mutex
   struct sched_param normal_thread_param_; /**< Scheduling parameters for commands (lower). */
 
  protected:
-  bool      should_run_;
+  bool should_run_;
 };
 
 } // oscit

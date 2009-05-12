@@ -85,6 +85,7 @@ public:
    *  @param remote_endpoint target host.
    */
   void send(const IpEndpointName &remote_endpoint, const char *url, const Value &val) {
+    assert(socket_);
     osc::OutboundPacketStream message( osc_buffer_, OSC_OUT_BUFFER_SIZE );
     build_message(url, val, &message);
     socket_->Connect(remote_endpoint);
@@ -107,7 +108,11 @@ public:
       socket_ = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, port_ ), this );
     }
     running_ = true;
-    socket_->Run();
+    command_->unlock();
+      // done with lock, free
+      socket_->Run();
+      // lock again because it will be unlocked when thread ends
+    command_->lock();
   }
 
   /** Callback to process incoming messages. */
@@ -290,11 +295,15 @@ void OscCommand::do_listen() {
 }
 
 void OscCommand::send(const IpEndpointName &remote_endpoint, const std::string &url, const Value &val) {
-  impl_->send(remote_endpoint, url.c_str(), val);
+  lock();
+    impl_->send(remote_endpoint, url.c_str(), val);
+  unlock();
 }
 
 void OscCommand::send(const IpEndpointName &remote_endpoint, const char *url, const Value &val) {
-  impl_->send(remote_endpoint, url, val);
+  lock();
+    impl_->send(remote_endpoint, url, val);
+  unlock();
 }
 
 Object *OscCommand::build_remote_object(const Url &url, Value *error) {

@@ -37,6 +37,7 @@ class Command : public Thread
       fprintf(stderr, "Impossible to start command (no access to root).");
       return;
     }
+
     start<Command, &Command::do_listen>(this);
   }
 
