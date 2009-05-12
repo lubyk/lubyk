@@ -83,10 +83,9 @@ class Thread : public Mutex
     }
   }
 
-  /** Tell thread to quit (called from within own thread).
+  /** Tell thread to quit (called from within own thread or when we can wait for next loop).
    */
   void quit() {
-    assert( pthread_equal(thread_id_, pthread_self()) );
     should_run_ = false;
   }
 

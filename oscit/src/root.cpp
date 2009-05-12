@@ -9,8 +9,8 @@
 namespace oscit {
 
 void Root::init() {
+  url_ = "";
   set_root(this);
-  moved();
   
   // build meta methods
   adopt(new ErrorMetaMethod(".error"));

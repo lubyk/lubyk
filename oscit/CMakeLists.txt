@@ -25,6 +25,7 @@ file (GLOB OSCIT_SOURCES src/*.cpp src/${PLAT}/*.cpp)
 include_directories (${OSCIT_SOURCE_DIR}/oscpack ${OSCIT_SOURCE_DIR}/include)
 include_directories (AFTER ${OSCIT_SOURCE_DIR}/test)
 
+# TODO: can we do a static link with liboscpack.a ?
 add_library (oscit STATIC ${OSCIT_SOURCES})
 
 # oscpack
@@ -32,7 +33,6 @@ add_custom_command (
   OUTPUT  ${OSCIT_SOURCE_DIR}/oscpack/liboscpack.a
   COMMAND cd ${OSCIT_SOURCE_DIR}/oscpack && make liboscpack.a
 )
-message("oscpack: '${OSCIT_SOURCE_DIR}/oscpack/liboscpack.a'")
 
 # testing
 

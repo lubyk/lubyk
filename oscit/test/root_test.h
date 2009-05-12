@@ -194,10 +194,16 @@ public:
   void test_object_at_bad_url( void ) {
     Root root;
     Value error;
-    Object * res = root.object_at(Url("some://example.com /foo"), &error);
-    assert_equal((Object*)NULL, res);
+    Object *obj = root.object_at(Url("some://example.com /foo"), &error);
+    assert_equal((Object*)NULL, obj);
     assert_equal(BAD_REQUEST_ERROR, error.error_code());
     assert_equal("Could not parse url \'some://example.com /foo\'.", error.error_message());
+  }
+  
+  void test_named_root( void ) {
+    Root root("gaia");
+    Object *obj = root.object_at("");
+    assert_equal((Object*)&root, obj);
   }
   
   // remote objects and 'send' testing is done in command_test.h

@@ -8,3 +8,6 @@ build:
 
 build/MakeFile: build
 	cd build && cmake ..
+
+clean: build
+	cd build && make clean

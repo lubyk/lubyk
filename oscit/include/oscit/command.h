@@ -52,13 +52,15 @@ class Command : public Thread
 
  protected:
   friend class Root;
-  /** Should only be used by Root. */
-  virtual void set_root(Root *root) { root_ = root; }
+  /** Should only be used by Root.
+   */
+  void set_root(Root *root) { root_ = root; }
 
   /** Build an object to communicate with a remote endpoint. */
   virtual Object *build_remote_object(const Url &remote_url, Value *error) = 0;
 
-  /** Run in new thread. */
+  /** Run in new thread.
+   */
   virtual void do_listen() = 0;
 
   template<class T>

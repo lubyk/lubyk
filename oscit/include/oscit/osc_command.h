@@ -23,9 +23,6 @@ public:
   /** Send a notification to all observers. */
   virtual void notify_observers(const char *url, const Value &val);
   
-  /** Create a reference to a remote object. */
-  virtual Object *build_remote_object(const Url &url, Value *error);
-  
   /** Send an osc message. 
    *  @param remote_endpoint target host.
    *  TODO: Not sure if we really need this method...
@@ -38,18 +35,18 @@ public:
    */
   void send(const IpEndpointName &remote_endpoint, const char *url, const Value &val);
   
-private:
-  friend class Root;
-  class Implementation;
-  Implementation *impl_;
+protected:
+  /** Create a reference to a remote object. */
+  virtual Object *build_remote_object(const Url &url, Value *error);
   
-  /** Start listening for incoming messages (runs in its own thread). */
+  /** Start listening for incoming messages (runs in its own thread).
+   */
   virtual void do_listen();
   
-  /** Set root for this command and the command's implementation.
-   *  (Should only be used by Root class).
-   */
-  virtual void set_root(Root *root);
+private:
+  class Implementation;
+  Implementation *impl_;
+
 };
 
 } // oscit

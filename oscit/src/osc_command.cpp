@@ -284,12 +284,8 @@ void OscCommand::notify_observers(const char *url, const Value &val) {
   impl_->send_all(url, val);
 }
 
-void OscCommand::set_root(Root *root) {
-  root_ = root;
-  impl_->set_root(root);
-}
-
 void OscCommand::do_listen() {
+  impl_->set_root(root_);
   impl_->do_listen();
 }
 
