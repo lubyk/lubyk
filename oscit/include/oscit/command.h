@@ -9,6 +9,8 @@ namespace oscit {
 class Root;
 class Value;
 class Object;
+class ZeroConfRegistration;
+
 #define REMOTE_OBJECTS_HASH_SIZE 10000
 
 /** This class is responsible for listening to any kind of incoming command (implemented by subclasses in do_listen)
@@ -18,13 +20,13 @@ class Command : public Thread
  public:
   TYPED("Mutex.Thread.Command")
 
-  Command(const char *protocol) : remote_objects_(REMOTE_OBJECTS_HASH_SIZE), root_(NULL), protocol_(protocol) {}
+  Command(const char *protocol);
 
-  Command(const std::string &protocol) : remote_objects_(REMOTE_OBJECTS_HASH_SIZE), root_(NULL), protocol_(protocol) {}
+  Command(const char *protocol, const char *service_type, uint16_t port);
 
-  Command(Root *root, const char *protocol) : remote_objects_(REMOTE_OBJECTS_HASH_SIZE), root_(root), protocol_(protocol) {}
+  Command(Root *root, const char *protocol);
 
-  Command(Root *root, const std::string &protocol) : remote_objects_(REMOTE_OBJECTS_HASH_SIZE), root_(root), protocol_(protocol) {}
+  Command(Root *root, const char *protocol, const char *service_type, uint16_t port);
 
   virtual ~Command();
 
@@ -47,12 +49,20 @@ class Command : public Thread
   virtual void notify_observers(const char *url, const Value &val) {}
 
   /** Returns a pointer to an object that can be used to send values to a remote object.
-   *  The receiver should create an alias for the remote_object (do not keep the pointer).
-   *  @param remote_url should contain the full url with protocol and domain: osc://video.local/vid/contrast. */
+   * The receiver should create an alias for the remote_object (do not keep the pointer).
+   * @param remote_url should contain the full url with protocol and domain: osc://video.local/vid/contrast. */
   Object *remote_object(const Url &remote_url, Value *error);
+  
+  uint16_t port() { return port_; }
 
  protected:
   friend class Root;
+  
+  /** Should be called by sub-classes when they have finished
+   * initializing and are ready to go public.
+   */
+  void publish_service();
+  
   /** Should only be used by Root.
    */
   void set_root(Root *root) { root_ = root; }
@@ -77,7 +87,25 @@ class Command : public Thread
   Root *root_;
 
  private:
-  const std::string  protocol_;
+  
+  /** Type of protocol this command is responsible for. For example if
+   * a command has 'http' protocol, then all urls starting with 'http://' will
+   * be forwarded to this command.
+   */
+  const std::string protocol_;
+  
+  /** Service type published by this command.
+   * If this value is empty, no service will be published.
+   */
+  const std::string service_type_;
+  
+  /** Connected port.
+   */
+  uint16_t port_;
+  
+  /** Zeroconf registration thread started when 'publish_service()' is called.
+   */
+  ZeroConfRegistration *zeroconf_registration_;
 };
 
 } // oscit

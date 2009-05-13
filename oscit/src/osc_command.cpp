@@ -13,7 +13,7 @@ namespace oscit {
 #define OSC_OUT_BUFFER_SIZE 2048
 #define OSCIT_SERVICE_TYPE "_oscit._udp"
 
-//#define DEBUG_OSC_COMMAND
+#define DEBUG_OSC_COMMAND
 
 static osc::OutboundPacketStream &operator<<(osc::OutboundPacketStream &out_stream, const Value &val) {
   size_t sz;
@@ -53,21 +53,16 @@ static osc::OutboundPacketStream &operator<<(osc::OutboundPacketStream &out_stre
 class OscCommand::Implementation : public osc::OscPacketListener {
 public:
 
-  Implementation(OscCommand *command, uint port) : command_(command), root_(NULL), socket_(NULL), port_(port), zeroconf_registration_(NULL), running_(false) {}
+  Implementation(OscCommand *command) : command_(command), socket_(NULL), running_(false) {}
 
   virtual ~Implementation() {
     kill();
-    if (zeroconf_registration_ != NULL) delete zeroconf_registration_;
     if (socket_ != NULL) delete socket_;
   }
 
   void kill() {
     if (running_) socket_->AsynchronousBreak();
     running_ = false;
-  }
-
-  void set_root(Root *root) {
-    root_ = root;
   }
 
   /** Add a new satellite to the list of observers. This method is the implementation
@@ -94,20 +89,13 @@ public:
 
   /** Start listening for incoming messages (runs in its own thread). */
   void do_listen() {
-    assert(root_);
-
-    if (zeroconf_registration_ == NULL) {
-      std::string name(root_->name());
-      if (name == "") {
-        name = "Generic oscit device";
-      }
-      zeroconf_registration_ = new ZeroConfRegistration(name.c_str(), OSCIT_SERVICE_TYPE, port_);
-    }
 
     if (socket_ == NULL) {
-      socket_ = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, port_ ), this );
+      socket_ = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, command_->port() ), this );
     }
     running_ = true;
+    // let's trigger zeroconf registration
+    command_->publish_service();
     command_->unlock();
       // done with lock, free
       socket_->Run();
@@ -133,19 +121,16 @@ public:
       remote_endpoint.AddressAsString(host_ip);
       std::cout << url << " " << val << " (" << host_ip << ":" << remote_endpoint.port << ")" << std::endl;
 #endif
-      res = root_->call(url, val, NULL);  // NULL = external context
+      command_->process_message(remote_endpoint, url, val);
     }
-
-    // send return
-    send_reply(&remote_endpoint, url, res);
   }
 
   /** Send reply to caller and notify observers. */
-  void send_reply(const IpEndpointName *remote_endpoint, const std::string &url, const Value &val) {
+  void send_reply(const IpEndpointName &remote_endpoint, const std::string &url, const Value &val) {
     if (val.is_nil()) return;
 
     if (val.is_error()) {
-      if (remote_endpoint) send(*remote_endpoint, "/.error", val);
+      send(remote_endpoint, "/.error", val);
     } else {
       // reply to all
 
@@ -153,12 +138,9 @@ public:
       Value res(url);
       res.push_back(val);
 
-      if (remote_endpoint) {
-        send(*remote_endpoint, "/.reply", res);
-      }
+      send(remote_endpoint, "/.reply", res);
 
-      send_all("/.reply", res, remote_endpoint); // skip remote_endpoint
-      root_->notify_observers("/.reply", res, command_);   // skip this command
+      send_all("/.reply", res, &remote_endpoint); // skip remote_endpoint
     }
   }
 
@@ -248,21 +230,9 @@ public:
    */
   OscCommand *command_;
 
-  /** Direct link to root without passing by OscCommand.
-   */
-  Root *root_;
-
   /** Socket listening to udp packets.
    */
   UdpListeningReceiveSocket *socket_;
-
-  /** Connected port.
-   */
-  uint port_;
-
-  /** Zeroconf registration thread.
-   */
-  ZeroConfRegistration *zeroconf_registration_;
 
   std::list<IpEndpointName> observers_; /**< List of satellites that have registered to get return values back. */
 
@@ -271,8 +241,14 @@ public:
 };
 
 
-OscCommand::OscCommand(uint port) : Command("osc") {
-  impl_ = new OscCommand::Implementation(this, port);
+OscCommand::OscCommand(uint16_t port) :
+                    Command("osc", OSCIT_SERVICE_TYPE, port) {
+  impl_ = new OscCommand::Implementation(this);
+}
+
+OscCommand::OscCommand(const char *protocol, const char *service_type, uint16_t port) : 
+                    Command(protocol, service_type, port) {
+  impl_ = new OscCommand::Implementation(this);
 }
 
 OscCommand::~OscCommand() {
@@ -290,7 +266,6 @@ void OscCommand::notify_observers(const char *url, const Value &val) {
 }
 
 void OscCommand::do_listen() {
-  impl_->set_root(root_);
   impl_->do_listen();
 }
 
@@ -316,5 +291,14 @@ Object *OscCommand::build_remote_object(const Url &url, Value *error) {
   // build remoteobject and let it test remote url
   // return remote_objects_->adopt(new OscRemoteObject(this, end_point, url.path()));
 }
+
+void OscCommand::process_message(const IpEndpointName &remote_endpoint, const std::string &url, const Value &val) {
+  Value res = root_->call(url, val, NULL);  // NULL = external context
+  
+  // send return
+  impl_->send_reply(remote_endpoint, url, res);
+  root_->notify_observers("/.reply", res, this);   // skip this command
+}
+
 
 } // oscit

@@ -1,5 +1,5 @@
-#ifndef _COMMAND_H_
-#define _COMMAND_H_
+#ifndef RUBYK_SRC_CORE_TEXT_COMMAND_H_
+#define RUBYK_SRC_CORE_TEXT_COMMAND_H_
 #include "node.h"
 
 #include <pthread.h>
@@ -221,4 +221,4 @@ public:
 
 #endif // USE_READLINE
 
-#endif // _COMMAND_H_
+#endif // RUBYK_SRC_CORE_TEXT_COMMAND_H_

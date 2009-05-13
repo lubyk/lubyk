@@ -14,7 +14,9 @@ class OscCommand : public Command {
 public:
   TYPED("Mutex.Thread.Command.OscCommand")
   
-  OscCommand(uint port);
+  OscCommand(uint16_t port);
+  
+  OscCommand(const char *protocol, const char *service_type, uint16_t port);
   
   virtual ~OscCommand();
   
@@ -43,10 +45,11 @@ protected:
    */
   virtual void do_listen();
   
+  virtual void process_message(const IpEndpointName &remote_endpoint, const std::string &url, const Value &val);
+  
 private:
   class Implementation;
   Implementation *impl_;
-
 };
 
 } // oscit
