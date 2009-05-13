@@ -27,10 +27,8 @@ void Worker::free_looped_node(Node *node) {
 
 void Worker::do_start(Thread *thread) {
   high_priority();
-  lock();
-    while (loop())
-      ;
-  unlock();
+  while (loop())
+    ;
 }
 
 void Worker::pop_events() {

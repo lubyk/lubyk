@@ -33,6 +33,8 @@ add_custom_command (
   OUTPUT  ${OSCIT_SOURCE_DIR}/oscpack/liboscpack.a
   COMMAND cd ${OSCIT_SOURCE_DIR}/oscpack && make liboscpack.a
 )
+add_custom_target (generate_liboscpack DEPENDS ${OSCIT_SOURCE_DIR}/oscpack/liboscpack.a)
+add_dependencies (oscit generate_liboscpack)
 
 # testing
 
@@ -56,8 +58,10 @@ add_custom_target (test_all ALL ${CMAKE_CTEST_COMMAND} -V)
 add_dependencies (test_all test_runner)
 
 # avahi testing...
-add_executable(publish ${OSCIT_SOURCE_DIR}/test/mock/publish.c)
-target_link_libraries(publish ${PLAT_LINK})
+if (PLAT STREQUAL "linux")
+	add_executable(publish ${OSCIT_SOURCE_DIR}/test/mock/publish.c)
+	target_link_libraries(publish ${PLAT_LINK})
+endif(PLAT)
 
 add_executable(registration ${OSCIT_SOURCE_DIR}/test/mock/registration.cpp)
 target_link_libraries(registration oscit ${OSCIT_SOURCE_DIR}/oscpack/liboscpack.a ${PLAT_LINK})
