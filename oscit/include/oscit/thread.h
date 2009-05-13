@@ -4,6 +4,7 @@
 #include <csignal>
 #include <fstream>
 #include <sys/timeb.h> // ftime
+#include <semaphore.h>
 #include "assert.h"
 
 #include "oscit/mutex.h"
@@ -17,10 +18,12 @@ class Thread : public Mutex
 
   Thread() : owner_(NULL), thread_id_(NULL), should_run_(false) {
     if (!sThisKey) pthread_key_create(&sThisKey, NULL); // create a key to find 'this' object in new thread
+    sem_init(&semaphore_, 0, 0);
   }
 
   virtual ~Thread() {
     kill();
+    sem_destroy(&semaphore_);
   }
 
   /** Start a new thread with the given parameter. The class should check if it
@@ -37,12 +40,10 @@ class Thread : public Mutex
     parameter_  = parameter;
     should_run_ = true;
 
-    lock();  // unlock in new thread
     pthread_create( &thread_id_, NULL, &start_thread<T,Tmethod>, (void*)this);
 
     // make sure thread is properly started (signals registered) in case we die right after
-    lock();    // wait for created thread to unlock
-    unlock();  // created thread can run
+    sem_wait(&semaphore_);
   }
 
   /** Start a new thread with the given parameter. The class should check if it
@@ -59,12 +60,10 @@ class Thread : public Mutex
     parameter_  = parameter;
     should_run_ = true;
 
-    lock();  // unlock in new thread
     pthread_create( &thread_id_, NULL, &start_thread<T,Tmethod>, (void*)this);
 
     // make sure thread is properly started (signals registered) in case we die right after
-    lock();    // wait for created thread to unlock
-    unlock();  // created thread can run
+    sem_wait(&semaphore_);
   }
 
   inline bool should_run() {
@@ -141,10 +140,9 @@ class Thread : public Mutex
     T *owner = (T*)thread->owner_;
     thread->should_run_ = true;
 
-    // signals installed, we can free parent thread
-    thread->unlock();  // --> parent can continue
-
     thread->lock();
+      // signals installed, we can free parent thread
+      sem_post(&thread->semaphore_);
       (owner->*Tmethod)(thread);
     thread->unlock();
     return NULL;
@@ -163,10 +161,9 @@ class Thread : public Mutex
     T *owner = (T*)thread->owner_;
     thread->should_run_ = true;
 
-    // signals installed, we can free parent thread
-    thread->unlock();  // --> parent can continue
-
     thread->lock();
+      // signals installed, we can free parent thread
+      sem_post(&thread->semaphore_);
       (owner->*Tmethod)();
     thread->unlock();
     return NULL;
@@ -180,11 +177,15 @@ class Thread : public Mutex
   void      *owner_;
 
   pthread_t thread_id_;
-  int normal_sched_policy_;                /**< Thread's original scheduling priority (normal_priority). */
+  int normal_sched_policy_;                /**< Thread's original scheduling policy (normal_priority). */
   struct sched_param normal_thread_param_; /**< Scheduling parameters for commands (lower). */
 
  protected:
   bool should_run_;
+
+ private:
+   sem_t semaphore_;
+
 };
 
 } // oscit

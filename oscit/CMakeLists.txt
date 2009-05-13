@@ -56,7 +56,7 @@ add_custom_target (test_all ALL ${CMAKE_CTEST_COMMAND} -V)
 add_dependencies (test_all test_runner)
 
 # avahi testing...
-add_executable(publish ${OSCIT_SOURCE_DIR}/publish.c)
+add_executable(publish ${OSCIT_SOURCE_DIR}/test/mock/publish.c)
 target_link_libraries(publish ${PLAT_LINK})
 
 add_executable(registration ${OSCIT_SOURCE_DIR}/test/mock/registration.cpp)
