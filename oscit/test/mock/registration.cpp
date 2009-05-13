@@ -1,3 +1,5 @@
+// compile with g++ -g -Wall -lavahi-client -o test registration.cpp
+
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
