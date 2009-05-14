@@ -22,10 +22,12 @@ endif(UNIX)
 MESSAGE("Platform is ${PLAT}")
 add_definitions(-D__${PLAT}__ -DUSE_READLINE)
 
-set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-Wall -O2 -g")
-set(CMAKE_CXX_FLAGS_RELEASE        "-Wall -O2 -DNDEBUG")
-set(CMAKE_CXX_FLAGS_DEBUG          "-Wall -O2 -g -0b0 -noalign")
-set(CMAKE_CXX_FLAGS_DEBUGFULL      "-Wall -g -Ob0 -noalign")
+set (CMAKE_CXX_FLAGS "-g -Wall")
+# TODO: learn how to use these flags...
+# set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-Wall -O2 -g")
+# set(CMAKE_CXX_FLAGS_RELEASE        "-Wall -O2 -DNDEBUG")
+# set(CMAKE_CXX_FLAGS_DEBUG          "-Wall -O2 -g -0b0 -noalign")
+# set(CMAKE_CXX_FLAGS_DEBUGFULL      "-Wall -g -Ob0 -noalign")
 
 project (RUBYK)
 

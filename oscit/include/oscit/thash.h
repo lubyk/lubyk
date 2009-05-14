@@ -229,7 +229,7 @@ void THash<K,Te>::set(const K& key, const Te& pElement) {
 
 template <class K, class T>
 bool THash<K,T>::get(const K &key, T *retval) const {
-  THashElement<K,T> * found;
+  THashElement<K,T> *found;
   uint id = hashId(key) % size_;
 
   found = &(thash_table_[id]);
@@ -246,7 +246,7 @@ bool THash<K,T>::get(const K &key, T *retval) const {
 
 template <class K, class T>
 bool THash<K,T>::get(const K &key, const T **retval) const {
-  THashElement<K,T> * found;
+  THashElement<K,T> *found;
   uint id = hashId(key) % size_;
 
   found = &(thash_table_[id]);
