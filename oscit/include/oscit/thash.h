@@ -117,6 +117,12 @@ public:
   // FIXME: const T* ?
   bool get(const K &key, T *retval) const;
 
+  /** Get a pointer to an element in the dictionary.
+   * The value of this pointer should not be kept (it may change as the hash is updated).
+   * Returns false if no element found.
+   */
+  bool get(const K &key, const T **retval) const;
+  
   /** Get an element's key. Returns false if the element could not be found. */
   bool get_key(const T &pElement, K *retval) const;
 
@@ -222,7 +228,7 @@ void THash<K,Te>::set(const K& key, const Te& pElement) {
 }
 
 template <class K, class T>
-bool THash<K,T>::get(const K& key, T* retval) const {
+bool THash<K,T>::get(const K &key, T *retval) const {
   THashElement<K,T> * found;
   uint id = hashId(key) % size_;
 
@@ -239,7 +245,24 @@ bool THash<K,T>::get(const K& key, T* retval) const {
 }
 
 template <class K, class T>
-bool THash<K,T>::get_key(const T& pElement, K* retval) const {
+bool THash<K,T>::get(const K &key, const T **retval) const {
+  THashElement<K,T> * found;
+  uint id = hashId(key) % size_;
+
+  found = &(thash_table_[id]);
+  while (found && found->obj && found->key != key)
+    found = found->next;
+
+  if (found && found->obj && found->key == key) {
+    *retval = found->obj;
+    return true;
+  } else {
+    return false;
+  }
+}
+
+template <class K, class T>
+bool THash<K,T>::get_key(const T &pElement, K *retval) const {
   typename std::list<K>::const_iterator it;
   typename std::list<K>::const_iterator end = keys_.end();
 

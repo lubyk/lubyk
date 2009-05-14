@@ -213,4 +213,18 @@ public:
     assert_true(hash2.get("my", &res));
     assert_equal("mum", res);
   }
+  
+  void test_set_get_pointer( void ) {
+    THash<std::string, std::string> hash(10);
+    const std::string *res;
+    
+    hash.set(std::string("hello"), std::string("world"));
+    hash.set(std::string("my"),    std::string("mum"));
+    
+    assert_true(hash.get("hello", &res));
+    assert_equal("world", *res);
+    assert_true(hash.get("my", &res));
+    assert_equal("mum", *res);
+    assert_false(hash.get("money", &res));
+  }
 };
