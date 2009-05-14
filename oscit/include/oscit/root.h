@@ -91,22 +91,22 @@ class Root : public Object
   }
   
   /** Trigger the object located at the given url, passing nil as parameter. */
-  const Value call(const char *url, Mutex *context = NULL) {
+  const Value call(const char *url, const Mutex *context = NULL) {
     return call(std::string(url), gNilValue, context);
   }
 
   /** Trigger the object located at the given url, passing nil as parameter. */
-  const Value call(std::string &url, Mutex *context = NULL) {
+  const Value call(std::string &url, const Mutex *context = NULL) {
     return call(url, gNilValue, context);
   }
 
   /** Trigger the object located at the given url with the given parameters. */
-  const Value call(const char *url, const Value &val, Mutex *context = NULL) {
+  const Value call(const char *url, const Value &val, const Mutex *context = NULL) {
     return call(std::string(url), val, context);
   }
 
   /** Trigger the object in the local tree located at the given url. */
-  const Value call(const std::string &path, const Value &val, Mutex *context = NULL) {
+  const Value call(const std::string &path, const Value &val, const Mutex *context = NULL) {
     Value error;
     Object * target = find_or_build_object_at(path, &error);
     
@@ -117,12 +117,16 @@ class Root : public Object
       return error;
     }
     
-    return call(target, val, context);
+    Value res = call(target, val, context);
+    if (!res.is_error()) {
+      notify_observers(path.c_str(), res, context);
+    }
+    return res;
   }
 
   /** Send value to given url (can be local or remote). You should use 'call' for local urls (faster).
    */
-  const Value send(const Url &url, const Value &val, Mutex *context = NULL) {
+  const Value send(const Url &url, const Value &val, const Mutex *context = NULL) {
     Value error;
     Object * target = object_at(url, &error);
     
@@ -162,7 +166,7 @@ class Root : public Object
    * their context in order for the locks to work.
    * If you do not follow this rule, you will get deadlocks.
    */
-  inline const Value call(Object *target, const Value &val, Mutex *context = NULL) {
+  inline const Value call(Object *target, const Value &val, const Mutex *context = NULL) {
     if (val.is_empty()) return call(target, gNilValue, context);
     if (target->can_receive(val)) {
       return target->safe_trigger(val, context);
@@ -230,11 +234,11 @@ class Root : public Object
   /* ======================= META METHODS HELPERS ===================== */
   
   /** Send a reply to all commands so they pass it further to their observers. */
-  void notify_observers(const char *url, const Value &val, const Command *skip_command = NULL) {
+  void notify_observers(const char *url, const Value &val, const Mutex *skip_context) {
     std::list<Command*>::iterator it;
     std::list<Command*>::iterator end = commands_.end();
     for (it = commands_.begin(); it != end; ++it) {
-      if (*it != skip_command) {
+      if (*it != skip_context) {
         (*it)->notify_observers(url, val);
       }
     }

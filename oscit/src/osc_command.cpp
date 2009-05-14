@@ -293,11 +293,10 @@ Object *OscCommand::build_remote_object(const Url &url, Value *error) {
 }
 
 void OscCommand::process_message(const IpEndpointName &remote_endpoint, const std::string &url, const Value &val) {
-  Value res = root_->call(url, val, NULL);  // NULL = external context
+  Value res = root_->call(url, val, this);
   
   // send return
   impl_->send_reply(remote_endpoint, url, res);
-  root_->notify_observers("/.reply", res, this);   // skip this command
 }
 
 

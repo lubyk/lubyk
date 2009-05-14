@@ -1,5 +1,5 @@
-#ifndef _DUMMY_COMMAND_H_
-#define _DUMMY_COMMAND_H_
+#ifndef OSCIT_TEST_MOCK_DUMMY_COMMAND_H_
+#define OSCIT_TEST_MOCK_DUMMY_COMMAND_H_
 #include "oscit/command.h"
 #include "mock/dummy_object.h"
 
@@ -31,6 +31,10 @@ struct DummyCommand : public Command
       return NULL;
     }
   }
+  
+  virtual void notify_observers(const char *url, const Value &val) {
+    notifications_ << url << "(" << val << ")";
+  }
 
   Object *remote_object_no_build(const std::string &url) {
     Object *res = NULL;
@@ -38,7 +42,8 @@ struct DummyCommand : public Command
     return res;
   }
 
-  std::string * string_;
+  std::ostringstream notifications_;
+  std::string *string_;
 };
 
-#endif // _DUMMY_COMMAND_H_
+#endif // OSCIT_TEST_MOCK_DUMMY_COMMAND_H_
