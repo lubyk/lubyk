@@ -31,12 +31,16 @@ void TextCommand::do_listen() {
     
   clear();
   
+  unlock();
   while(should_run() && getline(&line,1023)) {
-    parse(line);
-    parse("\n");
-    if (should_run()) saveline(line); // command was not a 'quit'
-    freeline(line);
+    lock();
+      parse(line);
+      parse("\n");
+      if (should_run()) saveline(line); // command was not a 'quit'
+      freeline(line);
+    unlock();
   }
+  lock();
 }
 
 void TextCommand::parse(const std::string &string) {
@@ -188,15 +192,15 @@ void TextCommand::create_instance() {
   list.push_back(var_);
   list.push_back(params);
   
-  Value res = root_->call(std::string(CLASS_URL).append("/").append(class_).append("/new"), list);
+  Value res = root_->call(std::string(CLASS_URL).append("/").append(class_).append("/new"), list, this);
   
   Value links;
   if (res.is_string()) {
-    links = root_->call(LINK_URL); // create pending links
+    links = root_->call(LINK_URL, gNilValue, this); // create pending links
   }
   
   if (res.is_string() && !silent_) {
-    print_result(root_->call(INSPECT_URL, res));
+    print_result(root_->call(INSPECT_URL, res, this));
     for (size_t i = 0; i < links.size(); ++i) {
       print_result(links[i]);
     }
@@ -229,7 +233,7 @@ void TextCommand::change_link(char op) {
     list.push_back(std::string(to_node_).append("/in/").append(to_port_));
   }
   
-  print_result(root_->call(LINK_URL, list));
+  print_result(root_->call(LINK_URL, list, this));
 }
 
 void TextCommand::execute_method() {
@@ -253,7 +257,7 @@ void TextCommand::execute_method() {
   } else {
     if (method_ == "b") method_ = "bang";
     var_.append("/").append(method_);
-    res = root_->call(var_, params);
+    res = root_->call(var_, params, this);
   }
   print_result(res);
 }
@@ -263,7 +267,7 @@ void TextCommand::execute_class_method() {
   Value params = Value(Json(parameter_string_));
   
   DEBUG(std::cout << "CLASS_METHOD " << std::string(CLASS_URL).append("/").append(class_).append("/").append(method_) << "(" << params << ")" << std::endl);
-  res = root_->call(std::string(CLASS_URL).append("/").append(class_).append("/").append(method_), params);
+  res = root_->call(std::string(CLASS_URL).append("/").append(class_).append("/").append(method_), params, this);
   print_result(res);
 }
 
@@ -273,15 +277,15 @@ void TextCommand::execute_command() {
 
   DEBUG(std::cout << "CMD " << method_ << "(" << params << ")" << std::endl);
   if (method_ == "lib") {
-    res = root_->call(LIB_URL, params);
+    res = root_->call(LIB_URL, params, this);
   } else if (method_ == "quit" || method_ == "q") {
     quit();  // Readline won't quit with a SIGTERM (see doc/prototypes/term_readline.cpp) so
              // we have to use quit() instead of kill().
 
-    res = root_->call(QUIT_URL);
+    res = root_->call(QUIT_URL, gNilValue, this);
   } else {  
     names_to_urls();
-    res = root_->call(method_, params);
+    res = root_->call(method_, params, this);
   }
   print_result(res);
 }

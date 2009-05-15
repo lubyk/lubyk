@@ -239,7 +239,9 @@ class Root : public Object
     std::list<Command*>::iterator end = commands_.end();
     for (it = commands_.begin(); it != end; ++it) {
       if (*it != skip_context) {
-        (*it)->notify_observers(url, val);
+        (*it)->lock();
+          (*it)->notify_observers(url, val);
+        (*it)->unlock();
       }
     }
   }

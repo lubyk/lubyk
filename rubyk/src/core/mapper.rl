@@ -5,6 +5,8 @@
 //#define DEBUG_PARSER
 
 Mapper::Mapper() : map_(200), reverse_map_(200) {}
+
+Mapper::Mapper(size_t hash_table_size) : map_(hash_table_size), reverse_map_(hash_table_size) {}
   
 Mapper::~Mapper() {
   clear();
@@ -164,7 +166,7 @@ bool Mapper::reverse_map(const std::string &source, Real value, std::string *tar
   map_entry = string %source_url ws wsc '[' number %source_min ws* ',' number %source_max ws* ']' wsc '-'+ '>'
               wsc string %target_url ws wsc '[' number %target_min ws* ',' number %target_max ws* ']' %set_map;
 
-  main := (map_entry '\n' | wsc)+ '\0' $err(error);
+  main := (map_entry '\n' | ws+ | ws* ('#' $comment) ws*)+ '\0' $err(error);
 
 }%%
 

@@ -11,6 +11,8 @@ class Mapper {
 public:
   Mapper();
   
+  Mapper(size_t hash_table_size);
+  
   virtual ~Mapper();
   
   bool parse(const std::string &definitions);

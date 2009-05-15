@@ -121,7 +121,9 @@ public:
       remote_endpoint.AddressAsString(host_ip);
       std::cout << url << " " << val << " (" << host_ip << ":" << remote_endpoint.port << ")" << std::endl;
 #endif
-      command_->process_message(remote_endpoint, url, val);
+      command_->lock();
+        command_->process_message(remote_endpoint, url, val);
+      command_->unlock();
     }
   }
 
@@ -270,15 +272,11 @@ void OscCommand::do_listen() {
 }
 
 void OscCommand::send(const IpEndpointName &remote_endpoint, const std::string &url, const Value &val) {
-  lock();
-    impl_->send(remote_endpoint, url.c_str(), val);
-  unlock();
+  impl_->send(remote_endpoint, url.c_str(), val);
 }
 
 void OscCommand::send(const IpEndpointName &remote_endpoint, const char *url, const Value &val) {
-  lock();
-    impl_->send(remote_endpoint, url, val);
-  unlock();
+  impl_->send(remote_endpoint, url, val);
 }
 
 Object *OscCommand::build_remote_object(const Url &url, Value *error) {

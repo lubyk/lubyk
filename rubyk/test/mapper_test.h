@@ -45,7 +45,7 @@ public:
   }
   
   void test_parse_comment_in_definition( void ) {
-    Mapper mapper;
+    Mapper mapper(10);
     assert_true(mapper.parse(std::string("\n\n/slider1/1 [0,1] #foo bar\n -->#baz\n /m/tempo #blah\n[60,240]\n# comment\n/foo/bar [1,2] -> /baz [10, 20]")));
     std::string target;
     Real value;

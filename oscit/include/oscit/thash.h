@@ -392,6 +392,18 @@ inline uint hashId(const uint key) {
   return res;
 }
 
+template<>
+inline uint hashId(const unsigned long key) {
+  uint res = key;
+  res += ~(res << 15);
+  res ^= (res >> 10);
+  res += (res << 3);
+  res ^= (res >> 6);
+  res += ~(res << 11);
+  res ^= (res >> 16);
+  return res;
+}
+
 // ===== char *      =====
 // sdbm function: taken from http://www.cse.yorku.ca/~oz/hash.html
 template<>

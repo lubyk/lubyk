@@ -22,7 +22,9 @@ public:
   
   virtual void kill();
   
-  /** Send a notification to all observers. */
+  /** Send a notification to all observers.
+   * Executed within mutex lock from root.
+   */
   virtual void notify_observers(const char *url, const Value &val);
   
   /** Send an osc message. 
@@ -45,6 +47,9 @@ protected:
    */
   virtual void do_listen();
   
+  /** Do something useful with the received osc message.
+   * Executed within mutex lock from our own thread.
+   */
   virtual void process_message(const IpEndpointName &remote_endpoint, const std::string &url, const Value &val);
   
 private:

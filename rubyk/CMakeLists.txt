@@ -58,7 +58,7 @@ add_dependencies (test_all test_runner)
 file (GLOB RUBYK_SOURCES src/core/*.cpp src/core/${PLAT}/*.cpp)
 file (GLOB RUBYK_INCLUDES ${RUBYK_SOURCE_DIR}/src/core ${RUBYK_SOURCE_DIR}/src/lib_objects)
 
-include_directories (${RUBYK_INCLUDES} ${RUBYK_SOURCE_DIR}/src/lib/lua ${RUBYK_SOURCE_DIR}/../oscit/include)
+include_directories (${RUBYK_INCLUDES} ${RUBYK_SOURCE_DIR}/src/lib/lua ${RUBYK_SOURCE_DIR}/../oscit/include ${RUBYK_SOURCE_DIR}/../oscit/oscpack)
 
 file (GLOB RAGEL_SOURCES src/core/*.rl)
 foreach (RAGEL_SRC ${RAGEL_SOURCES})
