@@ -629,20 +629,16 @@ public:
   void clear()  {
    switch (type_) {
    case LIST_VALUE:
-     if (list_ != NULL) ReferenceCounted::release(list_);
-     list_ = NULL;
+     list_ = ReferenceCounted::release(list_);
      break;
    case STRING_VALUE:
-     if (string_ != NULL) ReferenceCounted::release(string_);
-     string_ = NULL;
+     string_ = ReferenceCounted::release(string_);
      break;
    case ERROR_VALUE:
-     if (error_ != NULL) ReferenceCounted::release(error_);
-     error_ = NULL;
+     error_ = ReferenceCounted::release(error_);
      break;
    case HASH_VALUE:
-     if (hash_ != NULL) ReferenceCounted::release(hash_);
-     hash_ = NULL;
+     hash_ = ReferenceCounted::release(hash_);
      break;
    case MATRIX_VALUE:
        // TODO: Same reference counting as others by using cv::Mat header counter ?
@@ -650,8 +646,7 @@ public:
      matrix_ = NULL;
      break;
    case MIDI_VALUE:
-     if (midi_message_ != NULL) ReferenceCounted::release(midi_message_);
-     midi_message_ = NULL;
+     midi_message_ = ReferenceCounted::release(midi_message_);
      break;
    default:
      ; // nothing to clear
@@ -701,8 +696,7 @@ public:
     set_type_without_default(STRING_VALUE);
     // FIXME: there should be a way to deal with shared content
     // that is protected from changes... Any solution welcome !!
-    string_ = const_cast<StringData*>(string);
-    ReferenceCounted::acquire(string_);
+    string_ = ReferenceCounted::acquire(const_cast<StringData*>(string));
   }
 
   void set_string(const char *string) {
@@ -719,8 +713,7 @@ public:
     set_type_without_default(ERROR_VALUE);
     // FIXME: there should be a way to deal with shared content
     // that is protected from changes... Any solution welcome !!
-    error_ = const_cast<Error*>(error);
-    ReferenceCounted::acquire(error_);
+    error_ = ReferenceCounted::acquire(const_cast<Error*>(error));
   }
 
   /** Set error content. */
@@ -739,8 +732,7 @@ public:
     set_type_without_default(LIST_VALUE);
     // FIXME: there should be a way to deal with shared content
     // that is protected from changes... Any solution welcome !!
-    list_ = const_cast<List*>(list);
-    ReferenceCounted::acquire(list_);
+    list_ = ReferenceCounted::acquire(const_cast<List*>(list));
   }
 
   /** Set List content by making a copy. */
@@ -754,8 +746,7 @@ public:
     set_type_without_default(HASH_VALUE);
     // FIXME: there should be a way to deal with shared content
     // that is protected from changes... Any solution welcome !!
-    hash_ = const_cast<Hash*>(hash);
-    ReferenceCounted::acquire(hash_);
+    hash_ = ReferenceCounted::acquire(const_cast<Hash*>(hash));
   }
 
   /** Set hash content. */
@@ -776,8 +767,7 @@ public:
     set_type_without_default(MIDI_VALUE);
     // FIXME: there should be a way to deal with shared content
     // that is protected from changes... Any solution welcome !!
-    midi_message_ = const_cast<MidiMessage*>(midi_message);
-    ReferenceCounted::acquire(midi_message_);
+    midi_message_ = ReferenceCounted::acquire(const_cast<MidiMessage*>(midi_message));
   }
 
   /** Set hash content. */
