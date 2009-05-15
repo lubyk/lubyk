@@ -19,7 +19,7 @@ static osc::OutboundPacketStream &operator<<(osc::OutboundPacketStream &out_stre
   size_t sz;
   switch (val.type()) {
     case REAL_VALUE:
-      out_stream << val.r;
+      out_stream << (float)val.r; // most osc applications don't understand double type tag.
       break;
     case ERROR_VALUE:
       out_stream << val.error_code() << val.error_message().c_str();
@@ -83,8 +83,8 @@ public:
     assert(socket_);
     osc::OutboundPacketStream message( osc_buffer_, OSC_OUT_BUFFER_SIZE );
     build_message(url, val, &message);
-    socket_->Connect(remote_endpoint);
-    socket_->Send(message.Data(), message.Size());
+    send_socket_.Connect(remote_endpoint);
+    send_socket_.Send(message.Data(), message.Size());
   }
 
   /** Start listening for incoming messages (runs in its own thread). */
@@ -142,12 +142,12 @@ public:
 
       send(remote_endpoint, "/.reply", res);
 
-      send_all("/.reply", res, &remote_endpoint); // skip remote_endpoint
+      send_to_observers("/.reply", res, &remote_endpoint); // skip remote_endpoint
     }
   }
 
   /** Build osc message and send it to all observers. */
-  void send_all(const char *url, const Value &val, const IpEndpointName *skip_end_point = NULL) {
+  void send_to_observers(const char *url, const Value &val, const IpEndpointName *skip_end_point = NULL) {
     std::list<IpEndpointName>::const_iterator it  = observers_.begin();
     std::list<IpEndpointName>::const_iterator end = observers_.end();
 
@@ -226,7 +226,8 @@ public:
 
   /** Build a message from a value. */
   static void build_message(const char *url, const Value &val, osc::OutboundPacketStream *message) {
-    *message << osc::BeginBundleImmediate << osc::BeginMessage(url) << val << osc::EndMessage << osc::EndBundle;
+    // *message << osc::BeginBundleImmediate << osc::BeginMessage(url) << val << osc::EndMessage << osc::EndBundle;
+    *message << osc::BeginMessage(url) << val << osc::EndMessage;
   }
   /** Access to OscCommand.
    */
@@ -235,6 +236,10 @@ public:
   /** Socket listening to udp packets.
    */
   UdpListeningReceiveSocket *socket_;
+  
+  /** Socket listening to udp packets.
+   */
+  UdpSocket send_socket_;
 
   std::list<IpEndpointName> observers_; /**< List of satellites that have registered to get return values back. */
 
@@ -264,7 +269,11 @@ void OscCommand::kill() {
 }
 
 void OscCommand::notify_observers(const char *url, const Value &val) {
-  impl_->send_all(url, val);
+  send_to_observers(url, val);
+}
+
+void OscCommand::send_to_observers(const char *url, const Value &val, const IpEndpointName *skip_end_point) {
+  impl_->send_to_observers(url, val, skip_end_point);
 }
 
 void OscCommand::do_listen() {

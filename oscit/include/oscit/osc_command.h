@@ -52,6 +52,10 @@ protected:
    */
   virtual void process_message(const IpEndpointName &remote_endpoint, const std::string &url, const Value &val);
   
+  /** Send a message to all observers.
+   */
+  virtual void send_to_observers(const char *url, const Value &val, const IpEndpointName *skip_end_point = NULL);
+  
 private:
   class Implementation;
   Implementation *impl_;

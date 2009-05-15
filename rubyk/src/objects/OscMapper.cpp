@@ -89,7 +89,11 @@ public:
     virtual void process_message(const IpEndpointName &remote_endpoint, const std::string &ext_url, const Value &ext_val);
   
     /** Executed within mutex lock from root. */
-    virtual void notify_observers(const char *url, const Value &val);
+    virtual void notify_observers(const char *url, const Value &val) {
+      send_to_observers(url, val);
+    }
+    
+    virtual void send_to_observers(const char *url, const Value &val, const IpEndpointName *skip_end_point = NULL);
   
     OscMapper *osc_mapper_;
     /** Port where the applications connecting to here expect replies.
@@ -157,11 +161,11 @@ void OscMapper::MapCommand::process_message(const IpEndpointName &remote_endpoin
   
   // 3. send reply to reply_port with reverse mapping
   if (!res.is_error()) {
-    notify_observers(url.c_str(), res);
+    send_to_observers(url.c_str(), res, &remote_endpoint);
   }
 }
-  
-void OscMapper::MapCommand::notify_observers(const char *url, const Value &val) {
+
+void OscMapper::MapCommand::send_to_observers(const char *url, const Value &val, const IpEndpointName *skip_end_point) {
   std::string ext_url;
   Real ext_val;
   std::list<unsigned long> to_remove;
@@ -171,12 +175,16 @@ void OscMapper::MapCommand::notify_observers(const char *url, const Value &val) 
       std::list<unsigned long>::const_iterator end = observers_.end();
       const IpEndpointName *remote;
       while (it != end) {
-        if (observers_.get(*it, &remote)) {
-          try {
-            send(*remote, url, Value(ext_val));
-          } catch (std::runtime_error e) {
+        if ((skip_end_point == NULL || *it != skip_end_point->address) && observers_.get(*it, &remote)) {
+          
             char address[ IpEndpointName::ADDRESS_AND_PORT_STRING_LENGTH ];
             remote->AddressAndPortAsString(address);
+          try {
+            std::cout << "sending: " << ext_url << "(" << ext_val << ") to " << address << "\n";
+            send(*remote, ext_url, Value(ext_val));
+          } catch (std::runtime_error e) {
+            //char address[ IpEndpointName::ADDRESS_AND_PORT_STRING_LENGTH ];
+            //remote->AddressAndPortAsString(address);
             fprintf(stderr, "Could not connect to observer '%s'.\n", address);
             to_remove.push_back(*it);
           }
