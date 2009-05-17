@@ -84,10 +84,7 @@ class Root : public Object
     commands_.push_back(command);
     
     if (start) {
-      command->listen();
-      // wait for command to release lock (fully started)
-      command->lock();
-      command->unlock();
+      command->start_command();
     }
     
     return command;

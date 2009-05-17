@@ -103,7 +103,7 @@ public:
   }
 
   /** Start listening for incoming messages (runs in its own thread). */
-  void do_listen() {
+  void listen() {
     if (socket_ == NULL) {
       try {
         socket_ = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, command_->port() ), this );
@@ -118,11 +118,10 @@ public:
     running_ = true;
     // let's trigger zeroconf registration
     command_->publish_service();
-    command_->unlock();
-      // done with lock, free
-      socket_->Run();
-      // lock again because it will be unlocked when thread ends
-    command_->lock();
+    
+    // done with initializations
+    command_->thread_ready();
+    socket_->Run();
   }
   
   void change_port(uint16_t port) {
@@ -309,8 +308,8 @@ void OscCommand::send_to_observers(const char *url, const Value &val, const IpEn
   impl_->send_to_observers(url, val, skip_end_point);
 }
 
-void OscCommand::do_listen() {
-  impl_->do_listen();
+void OscCommand::listen() {
+  impl_->listen();
 }
 
 void OscCommand::send(const IpEndpointName &remote_endpoint, const std::string &url, const Value &val) {

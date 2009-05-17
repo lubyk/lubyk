@@ -14,12 +14,12 @@ struct DummyCommand : public Command
     kill();
   }
 
-  void do_listen() {
+  void listen() {
     while (should_run()) {
-      string_->append(".");
-      unlock();
-        millisleep(20);
       lock();
+        string_->append(".");
+      unlock();
+      millisleep(20);
     }
   }
 

@@ -7,40 +7,33 @@ struct DummyWorker
   DummyWorker() : value_(0) {}
 
   void count(Thread *runner) {
+    runner->thread_ready();
     while (runner->should_run()) {
-      ++value_;
-      runner->unlock();
-        millisleep(20);
       runner->lock();
+        ++value_;
+      runner->unlock();
+      millisleep(20);
     }
   }
 
   void count_twice(Thread *runner) {
+    runner->thread_ready();
     while (runner->should_run() && value_ < 2) {
-      ++value_;
-      runner->unlock();
-        millisleep(20);
       runner->lock();
+        ++value_;
+      runner->unlock();
+      millisleep(20);
     }
   }
 
   void count_high(Thread *runner) {
     runner->high_priority();
-    while (runner->should_run()) {
-      ++value_;
-      runner->unlock();
-        millisleep(20); // should be interrupted
-      runner->lock();
-    }
-  }
-
-  void read(Thread *runner) {
-    int i = 0;
+    runner->thread_ready();
     while (runner->should_run()) {
       runner->lock();
-      std::cin >> i;
-      value_ += i;
+        ++value_;
       runner->unlock();
+      millisleep(20); // should be interrupted
     }
   }
 
@@ -73,7 +66,7 @@ public:
   void test_create_delete( void ) {
     DummyWorker counter;
     Thread *runner = new Thread;
-    runner->start<DummyWorker, &DummyWorker::count>(&counter, NULL);
+    runner->start_thread<DummyWorker, &DummyWorker::count>(&counter, NULL);
     // let it run 2 times: +1 ... 20ms ... +1 ... 10ms .. kill [end]
     millisleep(30);
     delete runner;
@@ -83,7 +76,7 @@ public:
 
   void test_create_kill_sub_class( void ) {
     DummySubWorker * counter = new DummySubWorker;
-    counter->start<DummySubWorker, &DummySubWorker::count>(counter, NULL);
+    counter->start_thread<DummySubWorker, &DummySubWorker::count>(counter, NULL);
     // let it run 2 times: +1 ... 20ms ... +1 ... 10ms .. kill [end]
     millisleep(30);
     counter->kill();
@@ -95,7 +88,7 @@ public:
 
   void test_create_delete_sub_class( void ) {
     DummySubWorker * counter = new DummySubWorker;
-    counter->start<DummySubWorker, &DummySubWorker::count>(counter, NULL);
+    counter->start_thread<DummySubWorker, &DummySubWorker::count>(counter, NULL);
     // let it run 2 times: +1 ... 10ms ... +1 ... 5ms .. kill [end]
     millisleep(30);
     delete counter;
@@ -106,7 +99,7 @@ public:
   void test_create_stop( void ) {
     DummyWorker counter;
     Thread *runner = new Thread;
-    runner->start<DummyWorker, &DummyWorker::count>(&counter, NULL);
+    runner->start_thread<DummyWorker, &DummyWorker::count>(&counter, NULL);
     millisleep(30);
     runner->kill();
     runner->kill(); // should not lock
@@ -121,7 +114,7 @@ public:
   void test_create_kill( void ) {
     DummyWorker counter;
     Thread *runner = new Thread;
-    runner->start<DummyWorker, &DummyWorker::count>(&counter, NULL);
+    runner->start_thread<DummyWorker, &DummyWorker::count>(&counter, NULL);
     // let it run 1 times: +1 ... 10ms kill [end]
     millisleep(10);
     runner->kill();
@@ -131,16 +124,16 @@ public:
 
     delete runner;
   }
-
+  
   void test_create_restart( void ) {
     DummyWorker counter;
     Thread *runner = new Thread;
-    runner->start<DummyWorker, &DummyWorker::count>(&counter, NULL);
+    runner->start_thread<DummyWorker, &DummyWorker::count>(&counter, NULL);
     // let it run 2 times: +1 ... 10ms ... +1 ... 5ms .. kill .. 5ms [end]
     millisleep(30);
     runner->kill();
 
-    runner->start<DummyWorker, &DummyWorker::count>(&counter, NULL);
+    runner->start_thread<DummyWorker, &DummyWorker::count>(&counter, NULL);
     // let it run 2 times: +1 ... 10ms ... +1 ... 5ms .. kill .. 5ms [end]
     millisleep(30);
     runner->kill();
@@ -154,7 +147,7 @@ public:
   void test_create_high_priority( void ) {
     DummyWorker counter;
     Thread *runner = new Thread;
-    runner->start<DummyWorker, &DummyWorker::count_high>(&counter, NULL);
+    runner->start_thread<DummyWorker, &DummyWorker::count_high>(&counter, NULL);
     // let it run 2 times: +1 ... 10ms ... +1 ... 5ms .. kill .. 5ms [end]
     millisleep(30);
     delete runner;
@@ -166,7 +159,7 @@ public:
   // void test_kill_readline( void ) {
   //   DummyWorker counter;
   //   Thread *runner = new Thread;
-  //   runner->start<DummyWorker, &DummyWorker::read>(&counter, NULL);
+  //   runner->start_thread<DummyWorker, &DummyWorker::read>(&counter, NULL);
   //   // reads input...
   //   millisleep(10);
   //   runner->kill();
@@ -178,7 +171,7 @@ public:
   void test_join_without_kill( void ) {
     DummyWorker counter;
     Thread *runner = new Thread;
-    runner->start<DummyWorker, &DummyWorker::count_twice>(&counter, NULL);
+    runner->start_thread<DummyWorker, &DummyWorker::count_twice>(&counter, NULL);
     // let it run 2 times: +1 ... 10ms ... +1 ... 10ms [done]
     runner->join();
     // should join here

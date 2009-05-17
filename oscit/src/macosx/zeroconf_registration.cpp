@@ -32,7 +32,7 @@ namespace oscit {
 class ZeroConfRegistration::Implementation : public Thread {
 public:
   Implementation(ZeroConfRegistration *master) : master_(master) {
-    start<Implementation, &Implementation::do_start>(this, NULL);
+    start_thread<Implementation, &Implementation::registration>(this, NULL);
   }
 
   void register_service(DNSServiceRef service) {
@@ -67,7 +67,10 @@ public:
     }
   }
 
-  void do_start(Thread *thread) {
+  void registration(Thread *thread) {
+    //  release calling thread semaphore
+    thread->thread_ready();
+    
     DNSServiceErrorType error;
     DNSServiceRef service;
 

@@ -7,6 +7,14 @@ namespace oscit {
 
 // #define DEBUG_MAP_COMMAND
 
+OscMapCommand::OscMapCommand() : 
+                  OscCommand("oscmap", "", IpEndpointName::ANY_PORT),
+                  reply_port_(IpEndpointName::ANY_PORT),
+                  observers_(50),
+                  mapper_(200) {
+  time_ref_ = Thread::new_time_ref();
+}
+
 OscMapCommand::OscMapCommand(uint16_t port, uint16_t reply_port) : 
                   OscCommand("oscmap", "", port),
                   reply_port_(reply_port),
@@ -21,7 +29,7 @@ OscMapCommand::~OscMapCommand() {
   
 void OscMapCommand::process_message(const IpEndpointName &remote_endpoint, const std::string &ext_url, const Value &ext_val) {
   unlock();
-    // release lock because we lock during eval_script
+    // release lock because we lock again during eval_script
     reload_script(Thread::real_time(time_ref_));
   lock();
   

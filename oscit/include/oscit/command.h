@@ -34,13 +34,13 @@ class Command : public Thread
     this->Thread::kill();
   }
 
-  void listen() {
+  void start_command() {
     if (root_ == NULL) {
       fprintf(stderr, "Impossible to start command (no access to root).");
       return;
     }
 
-    start<Command, &Command::do_listen>(this);
+    start_thread<Command, &Command::listen>(this);
   }
 
   const std::string &protocol() { return protocol_; }
@@ -70,9 +70,9 @@ class Command : public Thread
   /** Build an object to communicate with a remote endpoint. */
   virtual Object *build_remote_object(const Url &remote_url, Value *error) = 0;
 
-  /** Run in new thread.
+  /** Listen for commands (in new thread).
    */
-  virtual void do_listen() = 0;
+  virtual void listen() = 0;
 
   template<class T>
   T * adopt_remote_object(const std::string &url, T* object) {

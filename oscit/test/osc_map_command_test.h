@@ -9,7 +9,7 @@
 #define APP2_PORT 7017
 
 /** In these tests, we have the following setup:
- *  app1_  : contains /foo  + /map     (OscMap)
+ *  app1_  : contains /foo  + /map     (OscMapCommand)
  *  app2_  : contains /slider/1 + app2_sender_  (OscCommand)
  *  /map receives messages on port APP1_PORT sent by app2_
  *  app1_ notifies changes to app2_ on port APP2_PORT through /map command.

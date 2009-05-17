@@ -45,7 +45,7 @@ protected:
   
   /** Start listening for incoming messages (runs in its own thread).
    */
-  virtual void do_listen();
+  virtual void listen();
   
   /** Do something useful with the received osc message.
    * Executed within mutex lock from our own thread.

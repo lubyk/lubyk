@@ -17,6 +17,8 @@ struct TimeRef;
   
 class OscMapCommand : public Script, public OscCommand {
 public:
+  OscMapCommand();
+  
   OscMapCommand(uint16_t port, uint16_t reply_port);
   
   virtual ~OscMapCommand();
