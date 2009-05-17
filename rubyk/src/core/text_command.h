@@ -78,7 +78,7 @@ protected:
   }
   
   /** Code executed in a separate thread. Runs until deleted or quit. */
-  virtual void do_listen();
+  virtual void listen();
   
   /** RAGEL PARSER RELATED CALLBACKS **/
   

@@ -20,9 +20,17 @@ const Value Script::script(const Value &val) {
   if (!val.is_nil()) {
     script_       = val.str();
     Value res = save_script();
-    if (res.is_error()) return res;
+    if (res.is_error()) {
+      set_script_ok(false);
+      return res;
+    }
+    
     res = eval_script();
-    if (res.is_error()) return res;
+    if (res.is_error()) {
+      set_script_ok(false);
+      return res;
+    }
+    
     set_script_ok(true);
   }
   return Value(script_);

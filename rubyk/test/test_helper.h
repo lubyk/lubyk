@@ -29,6 +29,10 @@ class TestHelper : public CxxTest::TestSuite
 {
 protected:
   
+  void millisleep(float microseconds) {
+    Thread::millisleep(microseconds);
+  }
+
   void _assert_equal(const char * file, int lineno, const char * descr, Real expected, Real found)
   {
     _OSCIT_ASSERT_EQUALS( file, lineno, TS_AS_STRING(descr), found, expected);
@@ -121,6 +125,12 @@ protected:
   
   void setup(const char *input) {
     cmd_->parse(input);
+    if (output_.str().find("# 400 ") != std::string::npos ||
+        output_.str().find("# 404 ") != std::string::npos ||
+        output_.str().find("# 500 ") != std::string::npos) {
+      // could find a better way to detect errors...
+      fprintf(stderr, "Error while parsing '%s'\n%s\n", input, output_.str().c_str());
+    }
     output_.str(std::string(""));
   }
 

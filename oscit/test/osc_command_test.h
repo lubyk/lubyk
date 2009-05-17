@@ -1,7 +1,7 @@
 #include "test_helper.h"
 #include "oscit/root.h"
 #include "mock/dummy_object.h"
-#include "mock/log_object.h"
+#include "oscit/log_object.h"
 #include "ip/UdpSocket.h"
 
 #define ROOT1_PORT 7014

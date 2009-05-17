@@ -16,7 +16,6 @@ Planet <>--- Worker
 
 #include <csignal>
 #include <fstream>
-#include <sys/timeb.h> // ftime
 #include <queue>
 
 // is 2 [ms] too long ? Testing needed.
@@ -29,17 +28,18 @@ class Worker : public Thread
 {
 public:
   Worker(Root *root) : root_(root) {
-    ftime(&time_ref_); // set time reference to now (my birthdate).
-    current_time_ = real_time();
+    time_ref_ = new_time_ref();
+    current_time_ = real_time(time_ref_);
   }
   
   virtual ~Worker() {
     kill();
+    time_ref_ = Thread::delete_time_ref(time_ref_);
   }
   
   /** Run until quit (through a command or signal). */
   void start() {
-    this->Thread::start<Worker, &Worker::do_start>(this, NULL);
+    start_thread<Worker, &Worker::start_worker>(this, NULL);
   }
   
   /** Set if the planet should be running (only used with direct loop control). */
@@ -48,13 +48,6 @@ public:
   }
   
   Root *root() { return root_; }
-  
-  /** Get current real time in [ms] since reference. */
-  time_t real_time() {
-    struct timeb t;
-    ftime(&t);
-    return ((t.time - time_ref_.time) * 1000) + t.millitm - time_ref_.millitm;
-  }
   
   /** Add an event to the event queue. The server is responsible for deleting the event. */
   void register_event(Event *event) {
@@ -100,17 +93,18 @@ public:
     sleeper.tv_sec  = 0; 
     sleeper.tv_nsec = WORKER_SLEEP_MS * 1000000; // 1'000'000
 
-    unlock(); // ok, others can do things while we sleep
-      nanosleep(&sleeper, NULL); // FIXME: only if no loop events ?
+    // FIXME: only if no loop events ?
+    // FIXME: set sleeper time depending on next events ? what about commands that insert new events ?
+    nanosleep(&sleeper, NULL);
     lock();
+      current_time_ = real_time(time_ref_);
 
-    current_time_ = real_time();
+      // execute events that must occur on each loop (io operations)
+      trigger_loop_events();
 
-    // execute events that must occur on each loop (io operations)
-    trigger_loop_events();
-
-    // trigger events in the queue
-    pop_events();
+      // trigger events in the queue
+      pop_events();
+    unlock(); // ok, others can do things while we sleep
     
     return should_run_;
   }
@@ -124,7 +118,7 @@ public:
   void init();
   
   /** Main loop. The call to do_run will hang until quit. */
-  void do_start(Thread *thread);
+  void start_worker(Thread *thread);
   
   /** Realtime related stuff. */
   /** Method executed when an Event is registering too fast.
@@ -142,8 +136,10 @@ public:
   
   Root *root_;                              /**< Root tree. */
   
-  struct timeb time_ref_;                   /**< Time reference. All times are [ms] from this reference.
-                                                 It's the worker's birthdate ! */
+  /** Time reference. All times are [ms] from this reference.
+   * It's the worker's birthdate !
+   */
+  TimeRef *time_ref_;
   
   /** Events ! */
   OrderedList<Event*>     events_queue_;    /**< Ordered event list. */

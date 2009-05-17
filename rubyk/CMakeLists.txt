@@ -111,3 +111,6 @@ file (GLOB RUBYK_LIB_OBJECTS src/lib_objects/*)
 foreach (RUBYK_LIB_OBJECT ${RUBYK_LIB_OBJECTS})
 	add_subdirectory (${RUBYK_LIB_OBJECT})
 endforeach (RUBYK_LIB_OBJECT)
+
+add_executable(send ${RUBYK_SOURCE_DIR}/test/mock/send.cpp)
+target_link_libraries(send ${RUBYK_SOURCE_DIR}/../oscit/oscpack/liboscpack.a)

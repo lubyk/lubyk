@@ -23,16 +23,16 @@ void TextCommand::initialize() {
   current_state_ = cs;
 }
 
-void TextCommand::do_listen() {
+void TextCommand::listen() {
   char buffer[1024];
-  char * line = buffer;
+  char *line = buffer; //  when not using readline, use 'buffer' for storage
   
   if (!silent_) *output_ << "# Welcome to rubyk !\n# \n";
     
   clear();
   
-  unlock();
-  while(should_run() && getline(&line,1023)) {
+  thread_ready();
+  while(should_run() && getline(&line, 1023)) {
     lock();
       parse(line);
       parse("\n");
@@ -40,7 +40,6 @@ void TextCommand::do_listen() {
       freeline(line);
     unlock();
   }
-  lock();
 }
 
 void TextCommand::parse(const std::string &string) {

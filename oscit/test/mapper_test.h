@@ -1,5 +1,5 @@
 #include "test_helper.h"
-#include "mapper.h"
+#include "oscit/mapper.h"
 
 class MapperTest : public TestHelper
 {

@@ -44,7 +44,7 @@ class Thread : public Mutex
     pthread_create( &thread_id_, NULL, &s_start_thread<T,Tmethod>, (void*)this);
 
     // make sure thread is properly started (signals registered) in case we die right after
-    sem_wait(&semaphore_);
+    wait();
   }
 
   /** Start a new thread with the given parameter. The class should check if it
@@ -64,7 +64,7 @@ class Thread : public Mutex
     pthread_create( &thread_id_, NULL, &s_start_thread<T,Tmethod>, (void*)this);
 
     // make sure thread is properly started (signals registered) in case we die right after
-    sem_wait(&semaphore_);
+    wait();
   }
 
   inline bool should_run() {
@@ -120,7 +120,15 @@ class Thread : public Mutex
    */
   void thread_ready() {
     // signals installed, we can free parent thread
+    post();
+  }
+  
+  void post() {
     sem_post(&semaphore_);
+  }
+  
+  void wait() {
+    sem_wait(&semaphore_);
   }
 
  public:

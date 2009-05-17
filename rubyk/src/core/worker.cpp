@@ -25,7 +25,8 @@ void Worker::free_looped_node(Node *node) {
   }
 }
 
-void Worker::do_start(Thread *thread) {
+void Worker::start_worker(Thread *thread) {
+  thread->thread_ready();
   high_priority();
   while (loop())
     ;
