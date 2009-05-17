@@ -1,5 +1,6 @@
 #include "errno.h"   // errno
 #include "string.h"  // strerror
+#include <sys/timeb.h> // ftime
 
 #include "oscit/thread.h"
 
@@ -12,7 +13,9 @@
 #endif
 
 namespace oscit {
-  
+
+struct TimeRef : public timeb {};
+
 /** Called by commands and other low priority threads. */
 void Thread::normal_priority()
 {
@@ -43,4 +46,28 @@ void Thread::high_priority() {
   }
 }
 
+
+void Thread::millisleep(float milliseconds) {
+  struct timespec sleeper;
+  sleeper.tv_sec  = 0;
+  sleeper.tv_nsec = (unsigned int)(milliseconds * 1000000.0);
+  nanosleep (&sleeper, NULL);
+}
+
+time_t Thread::real_time(const TimeRef *time_ref) {
+  TimeRef t;
+  ftime(&t);
+  return ((t.time - time_ref->time) * 1000) + t.millitm - time_ref->millitm;
+}
+
+TimeRef *Thread::new_time_ref() {
+  TimeRef *time_ref = new TimeRef;
+  ftime(time_ref);
+  return time_ref;
+}
+
+TimeRef *Thread::delete_time_ref(TimeRef *time_ref) {
+  delete time_ref;
+  return NULL;
+}
 } // oscit

@@ -85,9 +85,13 @@ class Command : public Thread
   THash<std::string, Object*> remote_objects_;
 
   Root *root_;
+  
+  /** Connected port.
+  */
+  uint16_t port_;
 
  private:
-  
+   
   /** Type of protocol this command is responsible for. For example if
    * a command has 'http' protocol, then all urls starting with 'http://' will
    * be forwarded to this command.
@@ -98,10 +102,6 @@ class Command : public Thread
    * If this value is empty, no service will be published.
    */
   const std::string service_type_;
-  
-  /** Connected port.
-   */
-  uint16_t port_;
   
   /** Zeroconf registration thread started when 'publish_service()' is called.
    */

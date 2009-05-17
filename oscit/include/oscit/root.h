@@ -82,7 +82,14 @@ class Root : public Object
     }
     command->set_root(this);
     commands_.push_back(command);
-    if (start) command->listen();
+    
+    if (start) {
+      command->listen();
+      // wait for command to release lock (fully started)
+      command->lock();
+      command->unlock();
+    }
+    
     return command;
   }
   

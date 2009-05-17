@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
-
+set(RAGEL "ragel")
 if(UNIX)
   if(APPLE)
     set(PLAT "macosx")
@@ -24,6 +24,19 @@ file (GLOB OSCIT_SOURCES src/*.cpp src/${PLAT}/*.cpp)
 
 include_directories (${OSCIT_SOURCE_DIR}/oscpack ${OSCIT_SOURCE_DIR}/include)
 include_directories (AFTER ${OSCIT_SOURCE_DIR}/test)
+
+file (GLOB RAGEL_SOURCES src/*.rl)
+foreach (RAGEL_SRC ${RAGEL_SOURCES})
+  get_filename_component (RAGEL_SRC_NAME ${RAGEL_SRC} NAME_WE)
+	add_custom_command ( PRE_BUILD
+	  OUTPUT  ${OSCIT_SOURCE_DIR}/src/${RAGEL_SRC_NAME}.cpp
+	  COMMAND ${RAGEL} ${RAGEL_SRC} -o ${OSCIT_SOURCE_DIR}/src/${RAGEL_SRC_NAME}.cpp
+	  DEPENDS ${RAGEL_SRC}
+	)
+	# make sure output is included in OSCIT_SOURCES in case 'make clean' removes cached cpp file
+	# TODO: how to make sure 'clean' does not remove these generated files ?
+	set (OSCIT_SOURCES ${OSCIT_SOURCES} ${OSCIT_SOURCE_DIR}/src/${RAGEL_SRC_NAME}.cpp)
+endforeach (RAGEL_SRC)
 
 # TODO: can we do a static link with liboscpack.a ?
 add_library (oscit STATIC ${OSCIT_SOURCES})
@@ -58,13 +71,13 @@ add_custom_target (test_all ALL ${CMAKE_CTEST_COMMAND} -V)
 add_dependencies (test_all test_runner)
 
 # avahi testing...
-if (PLAT STREQUAL "linux")
+if(PLAT STREQUAL "linux")
 	add_executable(publish ${OSCIT_SOURCE_DIR}/test/mock/publish.c)
 	target_link_libraries(publish ${PLAT_LINK})
 	
 	add_executable(registration ${OSCIT_SOURCE_DIR}/test/mock/registration.cpp)
 	target_link_libraries(registration ${PLAT_LINK})
-endif(PLAT)
+endif(PLAT STREQUAL "linux")
 
 
 # valgrind command ?

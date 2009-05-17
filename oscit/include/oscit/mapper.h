@@ -1,7 +1,10 @@
 #ifndef RUBYK_SRC_CORE_MAPPER_H_
 #define RUBYK_SRC_CORE_MAPPER_H_
 
-#include "map_real.h"
+#include "oscit/scale_real.h"
+#include "oscit/thash.h"
+
+namespace oscit {
 
 /** The Mapper class helps transform some input data
  * into something else based on strings for mapping and
@@ -34,10 +37,10 @@ public:
   bool reverse_map(const std::string &source, Real value, std::string *target, Real *target_value);
   
 private:
-  struct MapElement : public MapReal {
+  struct MapElement : public ScaleReal {
 
     MapElement(const std::string &target_url, Real source_min, Real source_max, Real target_min, Real target_max) :
-                MapReal(source_min, source_max, target_min, target_max), target_url_(target_url) {}
+                ScaleReal(source_min, source_max, target_min, target_max), target_url_(target_url) {}
 
     const std::string &target_url() const {
       return target_url_;
@@ -56,5 +59,7 @@ private:
   THash<std::string, MapElement> reverse_map_;
   std::string error_;
 };
+
+}  // oscit
 
 #endif // RUBYK_SRC_CORE_MAPPER_H_

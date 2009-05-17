@@ -1,6 +1,8 @@
 #include <string>
 
-#include "mapper.h"
+#include "oscit/mapper.h"
+
+namespace oscit {
 
 //#define DEBUG_PARSER
 
@@ -195,3 +197,5 @@ bool Mapper::parse(const std::string &definitions) {
 
  return true;
 }
+
+}  // oscit

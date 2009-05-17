@@ -8,33 +8,33 @@ namespace oscit {
 Command::Command(const char *protocol) :
                                 remote_objects_(REMOTE_OBJECTS_HASH_SIZE), 
                                 root_(NULL),
+                                port_(0),
                                 protocol_(protocol),
                                 service_type_(""),
-                                port_(0),
                                 zeroconf_registration_(NULL) {}
 
 Command::Command(const char *protocol, const char *service_type, uint16_t port) :
                                 remote_objects_(REMOTE_OBJECTS_HASH_SIZE),
                                 root_(NULL),
+                                port_(port),
                                 protocol_(protocol),
                                 service_type_(service_type),
-                                port_(port),
                                 zeroconf_registration_(NULL) {}
 
 Command::Command(Root *root, const char *protocol) :
                                 remote_objects_(REMOTE_OBJECTS_HASH_SIZE),
                                 root_(NULL),
+                                port_(0),
                                 protocol_(protocol),
                                 service_type_(""),
-                                port_(0),
                                 zeroconf_registration_(NULL) {}
 
 Command::Command(Root *root, const char *protocol, const char *service_type, uint16_t port) :
                                 remote_objects_(REMOTE_OBJECTS_HASH_SIZE),
                                 root_(NULL),
+                                port_(port),
                                 protocol_(protocol),
                                 service_type_(service_type),
-                                port_(port),
                                 zeroconf_registration_(NULL) {}
 
 Command::~Command() {

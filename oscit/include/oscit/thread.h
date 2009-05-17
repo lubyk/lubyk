@@ -3,13 +3,14 @@
 
 #include <csignal>
 #include <fstream>
-#include <sys/timeb.h> // ftime
 #include <semaphore.h>
 #include "assert.h"
 
 #include "oscit/mutex.h"
 
 namespace oscit {
+
+struct TimeRef;
 
 class Thread : public Mutex
 {
@@ -102,12 +103,16 @@ class Thread : public Mutex
   /** Set thread priority to normal. */
   void normal_priority();
 
-  static void millisleep(float milliseconds) {
-    struct timespec sleeper;
-    sleeper.tv_sec  = 0;
-    sleeper.tv_nsec = (unsigned int)(milliseconds * 1000000.0);
-    nanosleep (&sleeper, NULL);
-  }
+  static void millisleep(float milliseconds);
+  
+  /** Get current real time in [ms] since reference.
+   */
+  static time_t real_time(const TimeRef *time_ref);
+  
+
+  static TimeRef *new_time_ref();
+
+  static TimeRef *delete_time_ref(TimeRef *time_ref);
 
  public:
   static pthread_key_t sThisKey;   /**< Key to retrieve 'this' value from a running thread. */

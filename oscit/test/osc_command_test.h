@@ -4,13 +4,16 @@
 #include "mock/log_object.h"
 #include "ip/UdpSocket.h"
 
-class ReceiveTest : public TestHelper
+#define ROOT1_PORT 7014
+#define ROOT2_PORT 7015
+
+class OscCommandTest : public TestHelper
 {
  public:
-  ReceiveTest() : root_end_point_(IpEndpointName::ANY_ADDRESS, 7000) {
-    root_.adopt_command(new OscCommand(7000));
+  OscCommandTest() : root_end_point_("localhost", ROOT1_PORT) {
+    root_.adopt_command(new OscCommand(ROOT1_PORT));
     
-    sender_ = root2_.adopt_command(new OscCommand(7010));
+    sender_ = root2_.adopt_command(new OscCommand(ROOT2_PORT));
     reply_  = root2_.adopt(new LogObject(".reply"));
   }
   

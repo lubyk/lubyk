@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "oscit/osc_command.h"
 #include "oscit/root.h"
 #include "oscit/zeroconf.h"
@@ -13,7 +15,7 @@ namespace oscit {
 #define OSC_OUT_BUFFER_SIZE 2048
 #define OSCIT_SERVICE_TYPE "_oscit._udp"
 
-#define DEBUG_OSC_COMMAND
+// #define DEBUG_OSC_COMMAND
 
 static osc::OutboundPacketStream &operator<<(osc::OutboundPacketStream &out_stream, const Value &val) {
   size_t sz;
@@ -83,16 +85,36 @@ public:
     assert(socket_);
     osc::OutboundPacketStream message( osc_buffer_, OSC_OUT_BUFFER_SIZE );
     build_message(url, val, &message);
-    send_socket_.Connect(remote_endpoint);
-    send_socket_.Send(message.Data(), message.Size());
+    try {
+      socket_->SendTo(remote_endpoint, message.Data(), message.Size());
+#ifdef DEBUG_OSC_COMMAND
+      char address[ IpEndpointName::ADDRESS_AND_PORT_STRING_LENGTH ];
+      // get host ip as string
+      remote_endpoint.AddressAndPortAsString(address);
+      std::cout << "[" << command_->port() << "] --- " << url << "(" << val << ") --> [" << address << "]" << std::endl;
+#endif
+
+    } catch (std::runtime_error &e) {
+      char address[ IpEndpointName::ADDRESS_AND_PORT_STRING_LENGTH ];
+      remote_endpoint.AddressAndPortAsString(address);
+      printf("Could not connect to %s\n", address);
+      // TODO: make sure we do not leak here
+    }
   }
 
   /** Start listening for incoming messages (runs in its own thread). */
   void do_listen() {
-
     if (socket_ == NULL) {
-      socket_ = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, command_->port() ), this );
-    }
+      try {
+        socket_ = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, command_->port() ), this );
+      } catch (std::runtime_error &e) {
+        printf("Could not create UdpListeningReceiveSocket on port %i\n", command_->port());
+        throw;
+      }
+    }  
+#ifdef DEBUG_OSC_COMMAND
+    printf("OscCommand listening on port %i\n", command_->port());
+#endif
     running_ = true;
     // let's trigger zeroconf registration
     command_->publish_service();
@@ -102,7 +124,15 @@ public:
       // lock again because it will be unlocked when thread ends
     command_->lock();
   }
-
+  
+  void change_port(uint16_t port) {
+    try {
+      socket_->Bind(IpEndpointName( IpEndpointName::ANY_ADDRESS, port ));
+    } catch (std::runtime_error &e) {
+      printf("Could not create UdpListeningReceiveSocket on port %i\n", port);
+    }
+  }
+  
   /** Callback to process incoming messages. */
   virtual void ProcessMessage(const osc::ReceivedMessage &message, const IpEndpointName &remote_endpoint) {
     Value res;
@@ -116,10 +146,10 @@ public:
       Value val(value_from_osc(message));
 
 #ifdef DEBUG_OSC_COMMAND
-      char host_ip[ IpEndpointName::ADDRESS_STRING_LENGTH ];
+      char address[ IpEndpointName::ADDRESS_AND_PORT_STRING_LENGTH ];
       // get host ip as string
-      remote_endpoint.AddressAsString(host_ip);
-      std::cout << url << " " << val << " (" << host_ip << ":" << remote_endpoint.port << ")" << std::endl;
+      remote_endpoint.AddressAndPortAsString(address);
+      std::cout << "[" << command_->port() << "] <-- " << url << "(" << val << ") --- [" << address << "]" << std::endl;
 #endif
       command_->lock();
         command_->process_message(remote_endpoint, url, val);
@@ -148,8 +178,8 @@ public:
 
   /** Build osc message and send it to all observers. */
   void send_to_observers(const char *url, const Value &val, const IpEndpointName *skip_end_point = NULL) {
-    std::list<IpEndpointName>::const_iterator it  = observers_.begin();
-    std::list<IpEndpointName>::const_iterator end = observers_.end();
+    std::list<IpEndpointName>::iterator it  = observers_.begin();
+    std::list<IpEndpointName>::iterator end = observers_.end();
 
     osc::OutboundPacketStream message( osc_buffer_, OSC_OUT_BUFFER_SIZE );
     build_message(url, val, &message);
@@ -158,8 +188,15 @@ public:
       if (skip_end_point != NULL && *it == *skip_end_point) {
         // skip
       } else {
-        socket_->Connect(*it++);
-        socket_->Send(message.Data(), message.Size());
+        try {
+          socket_->SendTo(*it, message.Data(), message.Size());
+          ++it;
+        } catch (std::runtime_error &e) {
+          char address[ IpEndpointName::ADDRESS_AND_PORT_STRING_LENGTH ];
+          it->AddressAndPortAsString(address);
+          printf("Could not send to observer %s\n", address);
+          it = observers_.erase(it);
+        }
       }
     }
   }
@@ -236,10 +273,6 @@ public:
   /** Socket listening to udp packets.
    */
   UdpListeningReceiveSocket *socket_;
-  
-  /** Socket listening to udp packets.
-   */
-  UdpSocket send_socket_;
 
   std::list<IpEndpointName> observers_; /**< List of satellites that have registered to get return values back. */
 
@@ -306,5 +339,9 @@ void OscCommand::process_message(const IpEndpointName &remote_endpoint, const st
   impl_->send_reply(remote_endpoint, url, res);
 }
 
+void OscCommand::change_port(uint16_t port) {
+  impl_->change_port(port);
+  port_ = port;
+}
 
 } // oscit

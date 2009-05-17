@@ -56,6 +56,10 @@ protected:
    */
   virtual void send_to_observers(const char *url, const Value &val, const IpEndpointName *skip_end_point = NULL);
   
+  /** Listen to messages on a different port number.
+   */
+  void change_port(uint16_t port);
+  
 private:
   class Implementation;
   Implementation *impl_;

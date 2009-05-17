@@ -7,6 +7,12 @@
 
 using namespace oscit;
 
+#define TEST_FIXTURES_PATH "../test/fixtures"
+
+std::string fixture_path(const char *path) {
+  return std::string(TEST_FIXTURES_PATH).append("/").append(path);
+}
+
 void millisleep(float microseconds) {
   Thread::millisleep(microseconds);
 }

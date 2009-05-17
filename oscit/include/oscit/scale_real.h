@@ -1,13 +1,14 @@
-#ifndef RUBYK_SRC_CORE_MAP_REAL_H_
-#define RUBYK_SRC_CORE_MAP_REAL_H_
-#include <assert.h>
+#ifndef OSCIT_INCLUDE_OSCIT_SCALE_REAL_H_
+#define OSCIT_INCLUDE_OSCIT_SCALE_REAL_H_
 #include <string>
 
-#include "oscit.h"
+#include "oscit/conf.h"
 
-class MapReal {
+namespace oscit {
+
+class ScaleReal {
  public:
-  MapReal(Real source_min, Real source_max, Real target_min, Real target_max) :
+  ScaleReal(Real source_min, Real source_max, Real target_min, Real target_max) :
                        source_min_(source_min), target_min_(target_min),
                        target_max_(target_max) {
     assert(source_min != source_max);
@@ -26,4 +27,6 @@ class MapReal {
   Real scale_;
 };
 
-#endif // RUBYK_SRC_CORE_MAP_REAL_H_
+}  // oscit
+
+#endif // OSCIT_INCLUDE_OSCIT_SCALE_REAL_H_
