@@ -9,6 +9,8 @@ namespace oscit {
 class Root;
 class Value;
 class Object;
+class ZeroConfRegistration;
+
 #define REMOTE_OBJECTS_HASH_SIZE 10000
 
 /** This class is responsible for listening to any kind of incoming command (implemented by subclasses in do_listen)
@@ -18,13 +20,13 @@ class Command : public Thread
  public:
   TYPED("Mutex.Thread.Command")
 
-  Command(const char *protocol) : remote_objects_(REMOTE_OBJECTS_HASH_SIZE), root_(NULL), protocol_(protocol) {}
+  Command(const char *protocol);
 
-  Command(const std::string &protocol) : remote_objects_(REMOTE_OBJECTS_HASH_SIZE), root_(NULL), protocol_(protocol) {}
+  Command(const char *protocol, const char *service_type, uint16_t port);
 
-  Command(Root *root, const char *protocol) : remote_objects_(REMOTE_OBJECTS_HASH_SIZE), root_(root), protocol_(protocol) {}
+  Command(Root *root, const char *protocol);
 
-  Command(Root *root, const std::string &protocol) : remote_objects_(REMOTE_OBJECTS_HASH_SIZE), root_(root), protocol_(protocol) {}
+  Command(Root *root, const char *protocol, const char *service_type, uint16_t port);
 
   virtual ~Command();
 
@@ -32,13 +34,13 @@ class Command : public Thread
     this->Thread::kill();
   }
 
-  void listen() {
+  void start_command() {
     if (root_ == NULL) {
       fprintf(stderr, "Impossible to start command (no access to root).");
       return;
     }
 
-    start<Command, &Command::do_listen>(this);
+    start_thread<Command, &Command::listen>(this);
   }
 
   const std::string &protocol() { return protocol_; }
@@ -47,12 +49,20 @@ class Command : public Thread
   virtual void notify_observers(const char *url, const Value &val) {}
 
   /** Returns a pointer to an object that can be used to send values to a remote object.
-   *  The receiver should create an alias for the remote_object (do not keep the pointer).
-   *  @param remote_url should contain the full url with protocol and domain: osc://video.local/vid/contrast. */
+   * The receiver should create an alias for the remote_object (do not keep the pointer).
+   * @param remote_url should contain the full url with protocol and domain: osc://video.local/vid/contrast. */
   Object *remote_object(const Url &remote_url, Value *error);
+  
+  uint16_t port() { return port_; }
 
  protected:
   friend class Root;
+  
+  /** Should be called by sub-classes when they have finished
+   * initializing and are ready to go public.
+   */
+  void publish_service();
+  
   /** Should only be used by Root.
    */
   void set_root(Root *root) { root_ = root; }
@@ -60,9 +70,9 @@ class Command : public Thread
   /** Build an object to communicate with a remote endpoint. */
   virtual Object *build_remote_object(const Url &remote_url, Value *error) = 0;
 
-  /** Run in new thread.
+  /** Listen for commands (in new thread).
    */
-  virtual void do_listen() = 0;
+  virtual void listen() = 0;
 
   template<class T>
   T * adopt_remote_object(const std::string &url, T* object) {
@@ -75,9 +85,27 @@ class Command : public Thread
   THash<std::string, Object*> remote_objects_;
 
   Root *root_;
+  
+  /** Connected port.
+  */
+  uint16_t port_;
 
  private:
-  const std::string  protocol_;
+   
+  /** Type of protocol this command is responsible for. For example if
+   * a command has 'http' protocol, then all urls starting with 'http://' will
+   * be forwarded to this command.
+   */
+  const std::string protocol_;
+  
+  /** Service type published by this command.
+   * If this value is empty, no service will be published.
+   */
+  const std::string service_type_;
+  
+  /** Zeroconf registration thread started when 'publish_service()' is called.
+   */
+  ZeroConfRegistration *zeroconf_registration_;
 };
 
 } // oscit

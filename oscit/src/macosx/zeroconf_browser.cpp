@@ -40,13 +40,17 @@ struct BrowsedDevice {
 class ZeroConfBrowser::Implementation : public Thread {
 public:
   Implementation(ZeroConfBrowser *master) : master_(master) {
-    start<Implementation, &Implementation::do_start>(this, NULL);
+    start_thread<Implementation, &Implementation::browse>(this, NULL);
   }
 
-  void do_start(Thread *thread) {
+  void browse(Thread *thread) {
+    //  release calling thread semaphore
+    thread_ready();
+    
     DNSServiceErrorType error;
     DNSServiceRef       service;
-
+    
+    
     error = DNSServiceBrowse(&service,
       0,                     // no flags
       0,                     // all network interfaces
@@ -54,12 +58,13 @@ public:
       NULL,                  // default domain(s)
       Implementation::browser_callback,    // callback function
       (void*)master_);       // context
-
+      
     if (error == kDNSServiceErr_NoError) {
       browse(service);
     } else {
       fprintf(stderr,"Could not browse for service %s (error %d)\n", master_->service_type_.c_str(), error);//, strerror(errno));
     }
+    
     DNSServiceRefDeallocate(service);
   }
 

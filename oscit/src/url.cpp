@@ -1,4 +1,4 @@
-#line 1 "src/url.rl"
+#line 1 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
 /** Ragel parser definition to parse urls. */
 #include "oscit/url.h"
 #include <sstream>
@@ -33,12 +33,12 @@ void Url::rebuild_full_url() {
 }
 
 ///////////////// ====== URL PARSER ========= /////////////
-#line 97 "src/url.rl"
+#line 97 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
 
 
 // transition table
 
-#line 42 "src/url.cpp"
+#line 42 "/Users/gaspard/git/rubyk/oscit/src/url.cpp"
 static const char _url_actions[] = {
 	0, 1, 0, 1, 1, 1, 2, 1, 
 	4, 2, 2, 0, 2, 3, 0
@@ -99,7 +99,7 @@ static const int url_error = 0;
 
 static const int url_en_main = 1;
 
-#line 101 "src/url.rl"
+#line 101 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
 
 /** This is a crude JSON parser. */
 void Url::parse(const char *url) {
@@ -111,13 +111,13 @@ void Url::parse(const char *url) {
   const char * pe = url + strlen(p) + 1;
   
   
-#line 115 "src/url.cpp"
+#line 115 "/Users/gaspard/git/rubyk/oscit/src/url.cpp"
 	{
 	cs = url_start;
 	}
-#line 112 "src/url.rl"
+#line 112 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
   
-#line 121 "src/url.cpp"
+#line 121 "/Users/gaspard/git/rubyk/oscit/src/url.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -192,14 +192,14 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 50 "src/url.rl"
+#line 50 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
 	{
     DEBUG(printf("%c-",(*p)));
     if ((*p)) str_buf.append(&(*p), 1); /* append */
   }
 	break;
 	case 1:
-#line 55 "src/url.rl"
+#line 55 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
 	{
     protocol_ = str_buf;
     str_buf = "";
@@ -207,7 +207,7 @@ _match:
   }
 	break;
 	case 2:
-#line 61 "src/url.rl"
+#line 61 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
 	{
     host_ = str_buf;
     str_buf = "";
@@ -215,7 +215,7 @@ _match:
   }
 	break;
 	case 3:
-#line 67 "src/url.rl"
+#line 67 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
 	{
     port_ = atoi(str_buf.c_str());
     str_buf = "";
@@ -223,14 +223,14 @@ _match:
   }
 	break;
 	case 4:
-#line 73 "src/url.rl"
+#line 73 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
 	{
     path_ = str_buf;
     str_buf = "";
     DEBUG(printf("[path %s\n]", path_.c_str()));
   }
 	break;
-#line 234 "src/url.cpp"
+#line 234 "/Users/gaspard/git/rubyk/oscit/src/url.cpp"
 		}
 	}
 
@@ -242,7 +242,7 @@ _again:
 	_test_eof: {}
 	_out: {}
 	}
-#line 113 "src/url.rl"
+#line 113 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
 }
 
 } // oscit

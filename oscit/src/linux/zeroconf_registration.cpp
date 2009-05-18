@@ -35,7 +35,7 @@ class ZeroConfRegistration::Implementation {
 public:
   Implementation(ZeroConfRegistration *master) : registration_(master), avahi_poll_(NULL), avahi_client_(NULL), avahi_group_(NULL), host_(registration_->host_),  counter_(0), running_(false) {
     name_ = avahi_strdup(registration_->name_.c_str());
-    do_start();
+    start();
   }
 
   ~Implementation() {
@@ -57,7 +57,7 @@ public:
     }
 	}
 
-  void do_start() {
+  void start() {
     int error;
     // create poll object
     avahi_poll_ = avahi_threaded_poll_new();

@@ -50,7 +50,7 @@ LuaScript::~LuaScript() {
 const Value LuaScript::call_lua(const char *function_name, const Value &val) {
   int status;
 
-  reload_script();
+  reload_script(worker_->current_time_);
 
   if (!is_ok()) return Value(BAD_REQUEST_ERROR, "Script is broken.");
 

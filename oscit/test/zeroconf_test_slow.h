@@ -60,13 +60,13 @@ class ZeroConfTest : public TestHelper {
 
   void test_register_browse( void ) {
     DummyBrowser browser("_oscit._udp");
-    wait(1000);
+    wait(2000);
     browser.lock();
       browser.str(""); // clear
     browser.unlock();
     DummyRegistration *registration = new DummyRegistration("foobar", "_oscit._udp", 5007);
 
-    wait(1000);
+    wait(2000);
     registration->lock();
     browser.lock();
       assert_equal("[registered: foobar @ 5007]", registration->str());

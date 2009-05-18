@@ -1,8 +1,8 @@
-#ifndef RUBYK_TEST_MOCK_DUMMY_SCRIPT_H_
-#define RUBYK_TEST_MOCK_DUMMY_SCRIPT_H_
+#ifndef OSCIT_TEST_MOCK_DUMMY_SCRIPT_H_
+#define OSCIT_TEST_MOCK_DUMMY_SCRIPT_H_
 #include <string>
 
-#include "script.h"
+#include "oscit/script.h"
 
 class DummyScript : public Script {
 public:
@@ -16,9 +16,9 @@ public:
     return Value(script_);
   }
   
-  void reload_script() {
-    this->Script::reload_script();
+  void reload_script(time_t current_time) {
+    this->Script::reload_script(current_time);
   }
 };
 
-#endif // RUBYK_TEST_MOCK_DUMMY_SCRIPT_H_
+#endif // OSCIT_TEST_MOCK_DUMMY_SCRIPT_H_

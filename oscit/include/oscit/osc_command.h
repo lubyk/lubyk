@@ -14,13 +14,17 @@ class OscCommand : public Command {
 public:
   TYPED("Mutex.Thread.Command.OscCommand")
   
-  OscCommand(uint port);
+  OscCommand(uint16_t port);
+  
+  OscCommand(const char *protocol, const char *service_type, uint16_t port);
   
   virtual ~OscCommand();
   
   virtual void kill();
   
-  /** Send a notification to all observers. */
+  /** Send a notification to all observers.
+   * Executed within mutex lock from root.
+   */
   virtual void notify_observers(const char *url, const Value &val);
   
   /** Send an osc message. 
@@ -41,12 +45,24 @@ protected:
   
   /** Start listening for incoming messages (runs in its own thread).
    */
-  virtual void do_listen();
+  virtual void listen();
+  
+  /** Do something useful with the received osc message.
+   * Executed within mutex lock from our own thread.
+   */
+  virtual void process_message(const IpEndpointName &remote_endpoint, const std::string &url, const Value &val);
+  
+  /** Send a message to all observers.
+   */
+  virtual void send_to_observers(const char *url, const Value &val, const IpEndpointName *skip_end_point = NULL);
+  
+  /** Listen to messages on a different port number.
+   */
+  void change_port(uint16_t port);
   
 private:
   class Implementation;
   Implementation *impl_;
-
 };
 
 } // oscit

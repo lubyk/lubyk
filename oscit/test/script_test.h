@@ -7,66 +7,62 @@
 class ScriptTest : public TestHelper {
 public:
   void test_script( void ) {
-    Planet base;
-    DummyScript *script = base.adopt(new DummyScript);
-    Value res = script->script(Value("This script will compile fine."));
+    DummyScript script;
+    Value res = script.script(Value("This script will compile fine."));
     assert_true(res.is_string());
     assert_equal("This script will compile fine.", res.str());
-    assert_true(script->is_ok());
+    assert_true(script.script_ok());
     res.set_nil();
-    res = script->script(gNilValue);
+    res = script.script(gNilValue);
     assert_true(res.is_string());
     assert_equal("This script will compile fine.", res.str());
   }
   
   void test_bad_script( void ) {
-    Planet base;
-    DummyScript *script = base.adopt(new DummyScript);
-    Value res = script->script(Value("This script will raise a [compilation error]."));
+    DummyScript script;
+    Value res = script.script(Value("This script will raise a [compilation error]."));
     assert_true(res.is_error());
     assert_equal(BAD_REQUEST_ERROR, res.error_code());
     assert_equal("Compilation error near ' a [compilation error].'.", res.error_message());
-    assert_false(script->is_ok());
+    assert_false(script.script_ok());
     res.set_nil();
-    res = script->script(gNilValue);
+    res = script.script(gNilValue);
     assert_true(res.is_string());
     assert_equal("This script will raise a [compilation error].", res.str());
     // compile a correct script
-    res = script->script(Value("This script will compile fine."));
+    res = script.script(Value("This script will compile fine."));
     assert_true(res.is_string());
     assert_equal("This script will compile fine.", res.str());
-    assert_true(script->is_ok());
+    assert_true(script.script_ok());
   }
   
   void test_file( void ) {
-    Planet base;
-    DummyScript *script = base.adopt(new DummyScript);
-    Value res = script->file(Value(fixture_path("script_test_file.txt")));
+    DummyScript script;
+    Value res = script.file(Value(fixture_path("script_test_file.txt")));
     assert_true(res.is_string());
     assert_equal(fixture_path("script_test_file.txt"), res.str());
-    assert_true(script->is_ok());
+    assert_true(script.script_ok());
     res.set_nil();
-    res = script->file(gNilValue);
+    res = script.file(gNilValue);
     assert_true(res.is_string());
     assert_equal(fixture_path("script_test_file.txt"), res.str());
-    res = script->script(gNilValue);
+    res = script.script(gNilValue);
     assert_equal("On a dark, rainy day,\nWe will go out to fish.\nWith the elements we play\nAnd fishes end served on a dish.\n", res.str());
   }
   
   void test_change_content_should_be_saved_in_file( void ) {
-    Planet base;
-    DummyScript *script = base.adopt(new DummyScript);
+    DummyScript script;
     std::string new_file(fixture_path("script_test_new_file.txt"));
-    Value res = script->file(Value(new_file));
+    Value res = script.file(Value(new_file));
     assert_true(res.is_error());
     assert_equal(BAD_REQUEST_ERROR, res.error_code());
     assert_equal(std::string("Could not stat '").append(new_file).append("'."), res.error_message());
-    assert_false(script->is_ok());
-    res = script->script(gNilValue);
+    assert_false(script.script_ok());
+    res = script.script(gNilValue);
     assert_true(res.is_string());
     assert_equal("", res.str());
     
-    res = script->script(Value("Foo bar baz !"));
+    res = script.script(Value("Foo bar baz !"));
     assert_true(res.is_string());
     assert_equal("Foo bar baz !", res.str());
     
@@ -80,80 +76,74 @@ public:
   }
   
   void test_file_not_found( void ) {
-    Planet base;
-    DummyScript *script = base.adopt(new DummyScript);
+    DummyScript script;
     std::string not_found(fixture_path("script_test_file_not_found.txt"));
-    Value res = script->file(Value(not_found));
+    Value res = script.file(Value(not_found));
     assert_true(res.is_error());
     assert_equal(BAD_REQUEST_ERROR, res.error_code());
     assert_equal(std::string("Could not stat '").append(not_found).append("'."), res.error_message());
-    assert_false(script->is_ok());
-    res = script->file(gNilValue);
+    assert_false(script.script_ok());
+    res = script.file(gNilValue);
     assert_true(res.is_string());
     assert_equal(not_found, res.str());
     // load another existing file
-    res = script->file(Value(fixture_path("script_test_file.txt")));
+    res = script.file(Value(fixture_path("script_test_file.txt")));
     assert_true(res.is_string());
     assert_equal(fixture_path("script_test_file.txt"), res.str());
-    assert_true(script->is_ok());
+    assert_true(script.script_ok());
   }
   
   void test_bad_file( void ) {
-    Planet base;
-    DummyScript *script = base.adopt(new DummyScript);
+    DummyScript script;
     std::string bad_file(fixture_path("script_test_bad_file.txt"));
-    Value res = script->file(Value(bad_file));
+    Value res = script.file(Value(bad_file));
     assert_true(res.is_error());
     assert_equal(BAD_REQUEST_ERROR, res.error_code());
     assert_equal("Compilation error near \'he [compilation error] \'.", res.error_message());
-    assert_false(script->is_ok());
+    assert_false(script.script_ok());
     res.set_nil();
-    res = script->file(gNilValue);
+    res = script.file(gNilValue);
     assert_true(res.is_string());
     assert_equal(bad_file, res.str());
-    assert_equal("On a dark, rainy day,\nWe will go out to fish.\nWith the [compilation error] #)IOYLNK$\n#:L)(_)*@#)(()}#\n#\n#&#()&U)$", script->script(gNilValue).str());
+    assert_equal("On a dark, rainy day,\nWe will go out to fish.\nWith the [compilation error] #)IOYLNK$\n#:L)(_)*@#)(()}#\n#\n#&#()&U)$", script.script(gNilValue).str());
     // load a correct file
-    res = script->file(Value(fixture_path("script_test_file.txt")));
+    res = script.file(Value(fixture_path("script_test_file.txt")));
     assert_true(res.is_string());
     assert_equal(fixture_path("script_test_file.txt"), res.str());
-    assert_true(script->is_ok());
+    assert_true(script.script_ok());
   }
   
   void test_reload( void ) {
-    Planet base;
-    DummyScript *script = base.adopt(new DummyScript);
+    DummyScript script;
     std::string reload_file(fixture_path("script_test_reload.txt"));
-    script->file(Value(reload_file));
+    script.file(Value(reload_file));
     
-    assert_equal(1.0, script->reload(gNilValue).r);
-    Value res = script->reload(Value(0.001)); // 1 [ms]
+    assert_equal(1.0, script.reload(gNilValue).r);
+    Value res = script.reload(Value(0.002)); // 1 [ms]
     
     std::ofstream out(reload_file.c_str(), std::ios::out);
       out << "This is a nice script.";
     out.close();
     
     // too soon, should not reload
-    script->reload_script();
-    assert_false(script->is_ok());
-    assert_equal("", script->script(gNilValue).str());
+    script.reload_script(1);
+    assert_false(script.script_ok());
+    assert_equal("", script.script(gNilValue).str());
     
-    base.worker()->current_time_ = 1;
     // reload
-    
-    script->reload_script();
-    assert_true(script->is_ok());
-    assert_equal("This is a nice script.", script->script(gNilValue).str());
+    script.reload_script(2);
+    assert_true(script.script_ok());
+    assert_equal("This is a nice script.", script.script(gNilValue).str());
     
     remove(reload_file.c_str());
   }
   
   void test_inspect( void ) {
-    Planet base;
-    DummyScript *script = base.adopt(new DummyScript);
+    DummyScript script;
     std::string new_file(fixture_path("script_test_new_file.txt"));
-    script->file(Value(new_file));
+    script.file(Value(new_file));
     Value res;
-    script->inspect(&res);
+    script.inspect(&res);
     assert_equal(std::string("script:\"\" file:\"").append(new_file).append("\" reload:1"), res.lazy_json());
   }
 };

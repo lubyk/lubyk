@@ -22,7 +22,7 @@ namespace oscit {
 class ZeroConfBrowser::Implementation {
 public:
   Implementation(ZeroConfBrowser *browser) : browser_(browser), avahi_poll_(NULL), avahi_client_(NULL), running_(false) {
-    do_start();
+    start();
   }
 
   ~Implementation() {
@@ -41,7 +41,7 @@ public:
     // join threads here
 	}
 
-  void do_start() {
+  void start() {
     int error;
     // create poll object
     avahi_poll_ = avahi_threaded_poll_new();

@@ -66,6 +66,18 @@ public:
     // ignore return value
   }
   
+  /** Create a callback for an inlet (method in superclass). */
+  template <class R, class T, void(T::*Tmethod)(const Value &val)>
+  static void cast_method(Inlet *inlet, const Value &val) {
+    (((R*)inlet->node_)->*Tmethod)(val);
+  }
+  
+  /** Create a callback for an inlet based on a normal accessor (method in superclass). */
+  template <class R, class T, const Value(T::*Tmethod)(const Value &val)>
+  static void cast_method(Inlet *inlet, const Value &val) {
+    (((R*)inlet->node_)->*Tmethod)(val);
+    // ignore return value
+  }
 private:
   inlet_method_t method_;        /**< Method to set a new value. */
 };

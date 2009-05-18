@@ -3,8 +3,7 @@
 
 namespace oscit {
 
-class ReferenceCounted
-{
+class ReferenceCounted {
  public:
   ReferenceCounted() : ref_count_(1) {}
   
@@ -12,12 +11,18 @@ class ReferenceCounted
   
   size_t ref_count() { return ref_count_; }
   
-  static void acquire(ReferenceCounted *elem) {
+  template<class T>
+  static T* acquire(T *elem) {
     ++elem->ref_count_;
+    return elem;
   }
   
-  static void release(ReferenceCounted *elem) {
-    if (--elem->ref_count_ == 0) delete elem;
+  template<class T>
+  static T* release(T *elem) {
+    if (elem) {
+      if (--elem->ref_count_ == 0) delete elem;
+    }
+    return NULL;
   }
  protected:
   size_t ref_count_;

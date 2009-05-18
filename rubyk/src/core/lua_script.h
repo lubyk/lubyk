@@ -1,13 +1,14 @@
 #ifndef RUBYK_SRC_CORE_LUA_SCRIPT_H_
 #define RUBYK_SRC_CORE_LUA_SCRIPT_H_
 
-#include "script.h"
+#include "oscit/script.h"
+#include "node.h"
 
+class Outlet;
 struct lua_State;
 typedef int (*lua_CFunction) (lua_State *L);
 
-class LuaScript : public Script
-{
+class LuaScript : public Node, public Script {
 public:
   virtual const Value init() {
     return lua_init();
@@ -53,6 +54,11 @@ protected:
     } else {
       return 0;
     }
+  }
+  
+  virtual void set_script_ok(bool state) {
+    this->Script::set_script_ok(state);
+    set_is_ok(state);
   }
   
 private:

@@ -22,10 +22,12 @@ endif(UNIX)
 MESSAGE("Platform is ${PLAT}")
 add_definitions(-D__${PLAT}__ -DUSE_READLINE)
 
-set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-Wall -O2 -g")
-set(CMAKE_CXX_FLAGS_RELEASE        "-Wall -O2 -DNDEBUG")
-set(CMAKE_CXX_FLAGS_DEBUG          "-Wall -O2 -g -0b0 -noalign")
-set(CMAKE_CXX_FLAGS_DEBUGFULL      "-Wall -g -Ob0 -noalign")
+set (CMAKE_CXX_FLAGS "-g -Wall")
+# TODO: learn how to use these flags...
+# set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-Wall -O2 -g")
+# set(CMAKE_CXX_FLAGS_RELEASE        "-Wall -O2 -DNDEBUG")
+# set(CMAKE_CXX_FLAGS_DEBUG          "-Wall -O2 -g -0b0 -noalign")
+# set(CMAKE_CXX_FLAGS_DEBUGFULL      "-Wall -g -Ob0 -noalign")
 
 project (RUBYK)
 
@@ -35,7 +37,7 @@ include_directories (AFTER ${RUBYK_SOURCE_DIR}/test)
 
 # one test for all CxxTests
 enable_testing()
-file (GLOB RUBYK_TEST_SOURCES test/*_test.h src/objects/*_test.h src/lib_objects/*/*_test.h)
+file (GLOB RUBYK_TEST_SOURCES test/*_test.h src/objects/Lua_test.h src/lib_objects/*/*_test.h)
 file (GLOB RUBYK_TEST_MOCKS test/mock/*.h)
 add_custom_command (PRE_BUILD
   OUTPUT  test_runner.cpp
@@ -56,7 +58,7 @@ add_dependencies (test_all test_runner)
 file (GLOB RUBYK_SOURCES src/core/*.cpp src/core/${PLAT}/*.cpp)
 file (GLOB RUBYK_INCLUDES ${RUBYK_SOURCE_DIR}/src/core ${RUBYK_SOURCE_DIR}/src/lib_objects)
 
-include_directories (${RUBYK_INCLUDES} ${RUBYK_SOURCE_DIR}/src/lib/lua ${RUBYK_SOURCE_DIR}/../oscit/include)
+include_directories (${RUBYK_INCLUDES} ${RUBYK_SOURCE_DIR}/src/lib/lua ${RUBYK_SOURCE_DIR}/../oscit/include ${RUBYK_SOURCE_DIR}/../oscit/oscpack)
 
 file (GLOB RAGEL_SOURCES src/core/*.rl)
 foreach (RAGEL_SRC ${RAGEL_SOURCES})
@@ -83,7 +85,7 @@ target_link_libraries (rubyk rubyk_core)
 macro (add_rko_object RKO_NAME)
 	add_library (${RKO_NAME} MODULE ${ARGN}) # ARGN = list of arguments passed last expected argument
 	target_link_libraries (${RKO_NAME} rubyk_core)
-	set_target_properties (${RKO_NAME} PROPERTIES 
+	set_target_properties (${RKO_NAME} PROPERTIES
 		LIBRARY_OUTPUT_DIRECTORY ${RUBYK_SOURCE_DIR}/lib
 		LINK_FLAGS ${PLAT_OBJ_FLAGS}
 		PREFIX ""

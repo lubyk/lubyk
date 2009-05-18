@@ -25,6 +25,11 @@ class Person : public Object
   }
 };
 
+class Employee : public Person {
+public:
+  Employee(const char *name) : Person(name) {}
+};
+
 class MethodTest : public TestHelper
 {
 public:
@@ -80,5 +85,24 @@ public:
     assert_equal(NOT_FOUND_ERROR, res.error_code());
     
     assert_equal("Lilith", eva->name());
+  }
+  
+  void test_cast_super_method( void ) {
+    Root root;
+    Employee *joe = root.adopt(new Employee("Joe"));
+    joe->adopt(new Method(joe, "name", &Method::cast_method<Employee, Person, &Person::name>, StringIO("", "Name of the person.")));
+    Value res;
+    
+    res = root.call("/Joe/name");
+    assert_equal("Joe On Earth", res.str());
+    
+    res = root.call("/Joe/name", Value("Tarzan"));
+    assert_equal("Tarzan On Earth", res.str());
+    
+    res = root.call("/Joe/name");
+    assert_true(res.is_error());
+    assert_equal(NOT_FOUND_ERROR, res.error_code());
+    
+    assert_equal("Tarzan", joe->name());
   }
 };

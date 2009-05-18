@@ -31,7 +31,7 @@ public:
   Registration(const char *name, const char *service_type, uint16_t port) : avahi_poll_(NULL), avahi_client_(NULL), avahi_group_(NULL), port_(port), running_(false) {
     name_ = avahi_strdup(name);
     service_type_ = avahi_strdup(service_type);
-    do_start();
+    start();
   }
 
   ~Registration() {
@@ -54,7 +54,7 @@ public:
     }
 	}
 
-  void do_start() {
+  void start() {
     int error;
     // create poll object
     avahi_poll_ = avahi_threaded_poll_new();

@@ -128,7 +128,7 @@ class Object : public Typed {
    * This is the method that should be used by objects when they are doing a
    * direct call.
    */
-  const Value safe_trigger(const Value &val, Mutex *caller_context) {
+  const Value safe_trigger(const Value &val, const Mutex *caller_context) {
     if (context_ && context_ != caller_context) {
       context_->lock();
         Value res = trigger(val);

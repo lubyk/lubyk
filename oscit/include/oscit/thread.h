@@ -3,13 +3,14 @@
 
 #include <csignal>
 #include <fstream>
-#include <sys/timeb.h> // ftime
 #include <semaphore.h>
 #include "assert.h"
 
 #include "oscit/mutex.h"
 
 namespace oscit {
+
+struct TimeRef;
 
 class Thread : public Mutex
 {
@@ -30,7 +31,7 @@ class Thread : public Mutex
    *  should stop using a typical @while (thread->run())@. If the thread is interrupted with
    *  a SIGTERM, the class's terminate() method is called. */
   template<class T, void(T::*Tmethod)(Thread*)>
-  void start(T *owner, void *parameter = NULL) {
+  void start_thread(T *owner, void *parameter = NULL) {
     if (thread_id_) {
       fprintf(stderr, "Trying to start thread when it is already running ! (in Thread::start)");
       return;
@@ -40,17 +41,17 @@ class Thread : public Mutex
     parameter_  = parameter;
     should_run_ = true;
 
-    pthread_create( &thread_id_, NULL, &start_thread<T,Tmethod>, (void*)this);
+    pthread_create( &thread_id_, NULL, &s_start_thread<T,Tmethod>, (void*)this);
 
     // make sure thread is properly started (signals registered) in case we die right after
-    sem_wait(&semaphore_);
+    wait();
   }
 
   /** Start a new thread with the given parameter. The class should check if it
    *  should stop using a typical @while (thread->run())@. If the thread is interrupted with
    *  a SIGTERM, the class's terminate() method is called. */
   template<class T, void(T::*Tmethod)()>
-  void start(T *owner, void *parameter = NULL) {
+  void start_thread(T *owner, void *parameter = NULL) {
     if (thread_id_) {
       fprintf(stderr, "Trying to start thread when it is already running ! (in Thread::start)");
       return;
@@ -60,10 +61,10 @@ class Thread : public Mutex
     parameter_  = parameter;
     should_run_ = true;
 
-    pthread_create( &thread_id_, NULL, &start_thread<T,Tmethod>, (void*)this);
+    pthread_create( &thread_id_, NULL, &s_start_thread<T,Tmethod>, (void*)this);
 
     // make sure thread is properly started (signals registered) in case we die right after
-    sem_wait(&semaphore_);
+    wait();
   }
 
   inline bool should_run() {
@@ -102,11 +103,32 @@ class Thread : public Mutex
   /** Set thread priority to normal. */
   void normal_priority();
 
-  static void millisleep(float milliseconds) {
-    struct timespec sleeper;
-    sleeper.tv_sec  = 0;
-    sleeper.tv_nsec = (unsigned int)(milliseconds * 1000000.0);
-    nanosleep (&sleeper, NULL);
+  static void millisleep(float milliseconds);
+  
+  /** Get current real time in [ms] since reference.
+   */
+  static time_t real_time(const TimeRef *time_ref);
+  
+
+  static TimeRef *new_time_ref();
+
+  static TimeRef *delete_time_ref(TimeRef *time_ref);
+  
+  /** This method should be called by started thread when it has
+   * properly started an it is ready. The creating thread locks until
+   * this method is called.
+   */
+  void thread_ready() {
+    // signals installed, we can free parent thread
+    post();
+  }
+  
+  void post() {
+    sem_post(&semaphore_);
+  }
+  
+  void wait() {
+    sem_wait(&semaphore_);
   }
 
  public:
@@ -129,7 +151,7 @@ class Thread : public Mutex
 
   /** Static function to start a new thread. */
   template<class T, void(T::*Tmethod)(Thread*)>
-  static void * start_thread(void *thread_ptr) {
+  static void * s_start_thread(void *thread_ptr) {
     Thread * thread = (Thread*)thread_ptr;
      // begin of new thread
     set_thread_this(thread);
@@ -140,17 +162,14 @@ class Thread : public Mutex
     T *owner = (T*)thread->owner_;
     thread->should_run_ = true;
 
-    thread->lock();
-      // signals installed, we can free parent thread
-      sem_post(&thread->semaphore_);
-      (owner->*Tmethod)(thread);
-    thread->unlock();
+    (owner->*Tmethod)(thread);
+
     return NULL;
   }
 
   /** Static function to start a new thread. */
   template<class T, void(T::*Tmethod)()>
-  static void * start_thread(void *thread_ptr) {
+  static void * s_start_thread(void *thread_ptr) {
     Thread * thread = (Thread*)thread_ptr;
      // begin of new thread
     set_thread_this(thread);
@@ -161,11 +180,8 @@ class Thread : public Mutex
     T *owner = (T*)thread->owner_;
     thread->should_run_ = true;
 
-    thread->lock();
-      // signals installed, we can free parent thread
-      sem_post(&thread->semaphore_);
-      (owner->*Tmethod)();
-    thread->unlock();
+    (owner->*Tmethod)();
+    
     return NULL;
   }
 
@@ -184,7 +200,7 @@ class Thread : public Mutex
   bool should_run_;
 
  private:
-   sem_t semaphore_;
+  sem_t semaphore_;
 
 };
 

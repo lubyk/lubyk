@@ -206,5 +206,15 @@ public:
     assert_equal((Object*)&root, obj);
   }
   
+  void test_notify_observers( void ) {
+    Root root;
+    std::string string;
+    DummyCommand *cmd = root.adopt_command(new DummyCommand(&string));
+    root.adopt(new DummyObject("foo", 4.5));
+    assert_equal("", cmd->notifications_.str());
+    Value res = root.call("/foo", Value(5.2));
+    assert_equal(5.2, res.r);
+    assert_equal("/foo(5.2)", cmd->notifications_.str());
+  }
   // remote objects and 'send' testing is done in command_test.h
 };
