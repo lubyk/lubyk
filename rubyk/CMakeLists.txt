@@ -37,7 +37,7 @@ include_directories (AFTER ${RUBYK_SOURCE_DIR}/test)
 
 # one test for all CxxTests
 enable_testing()
-file (GLOB RUBYK_TEST_SOURCES test/*_test.h src/objects/*_test.h src/lib_objects/*/*_test.h)
+file (GLOB RUBYK_TEST_SOURCES test/*_test.h src/objects/Lua_test.h src/lib_objects/*/*_test.h)
 file (GLOB RUBYK_TEST_MOCKS test/mock/*.h)
 add_custom_command (PRE_BUILD
   OUTPUT  test_runner.cpp
@@ -85,7 +85,7 @@ target_link_libraries (rubyk rubyk_core)
 macro (add_rko_object RKO_NAME)
 	add_library (${RKO_NAME} MODULE ${ARGN}) # ARGN = list of arguments passed last expected argument
 	target_link_libraries (${RKO_NAME} rubyk_core)
-	set_target_properties (${RKO_NAME} PROPERTIES 
+	set_target_properties (${RKO_NAME} PROPERTIES
 		LIBRARY_OUTPUT_DIRECTORY ${RUBYK_SOURCE_DIR}/lib
 		LINK_FLAGS ${PLAT_OBJ_FLAGS}
 		PREFIX ""
@@ -111,6 +111,3 @@ file (GLOB RUBYK_LIB_OBJECTS src/lib_objects/*)
 foreach (RUBYK_LIB_OBJECT ${RUBYK_LIB_OBJECTS})
 	add_subdirectory (${RUBYK_LIB_OBJECT})
 endforeach (RUBYK_LIB_OBJECT)
-
-add_executable(send ${RUBYK_SOURCE_DIR}/test/mock/send.cpp)
-target_link_libraries(send ${RUBYK_SOURCE_DIR}/../oscit/oscpack/liboscpack.a)

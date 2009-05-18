@@ -71,19 +71,33 @@ class Method : public Object
   
   /** Make a pointer to a member method. */
   template<class T, const Value(T::*Tmethod)(const Value&)>
-  static const Value cast_method (void *receiver, const Value &val)
+  static const Value cast_method(void *receiver, const Value &val)
   {
     return (((T*)receiver)->*Tmethod)(val);
   }
   
+  /** Make a pointer to a member method. */
+  template<class R, class T, const Value(T::*Tmethod)(const Value&)>
+  static const Value cast_method(void *receiver, const Value &val)
+  {
+    return (((R*)receiver)->*Tmethod)(val);
+  }
+  
   /** Make a pointer to a member method without return values. */
   template<class T, void(T::*Tmethod)(const Value&)>
-  static const Value cast_method (void *receiver, const Value &val)
+  static const Value cast_method(void *receiver, const Value &val)
   {
     (((T*)receiver)->*Tmethod)(val);
     return gNilValue;
   }
-
+  
+  /** Make a pointer to a member method without return values. */
+  template<class R, class T, void(T::*Tmethod)(const Value&)>
+  static const Value cast_method(void *receiver, const Value &val)
+  {
+    (((R*)receiver)->*Tmethod)(val);
+    return gNilValue;
+  }
  protected:
   void *          receiver_;       /**< Object containing the method. */
   member_method_t member_method_;  /**< Pointer on a cast of the member method. */ 

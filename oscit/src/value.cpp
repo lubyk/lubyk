@@ -1,4 +1,4 @@
-#line 1 "src/value.rl"
+#line 1 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 /** Ragel parser definition to create Values from JSON. */
 
 //#define DEBUG_PARSER
@@ -159,12 +159,12 @@ Value &Value::push_front(const Value& val) {
 }
 
 ///////////////// ====== JSON PARSER ========= /////////////
-#line 272 "src/value.rl"
+#line 272 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 
 
 // transition table
 
-#line 168 "src/value.cpp"
+#line 168 "/Users/gaspard/git/rubyk/oscit/src/value.cpp"
 static const char _json_actions[] = {
 	0, 1, 0, 1, 3, 1, 4, 1, 
 	7, 1, 9, 2, 1, 9, 2, 2, 
@@ -345,7 +345,7 @@ static const int json_error = 0;
 static const int json_en_main_strict = 35;
 static const int json_en_main_lazy = 1;
 
-#line 276 "src/value.rl"
+#line 276 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 
 /** This is a crude JSON parser. */
 size_t Value::build_from_json(const char *json, bool strict_mode) {
@@ -360,11 +360,11 @@ size_t Value::build_from_json(const char *json, bool strict_mode) {
   const char * pe = json + strlen(p) + 1;
   
   
-#line 364 "src/value.cpp"
+#line 364 "/Users/gaspard/git/rubyk/oscit/src/value.cpp"
 	{
 	cs = json_start;
 	}
-#line 290 "src/value.rl"
+#line 290 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
   
   if (strict_mode) {
     cs = json_en_main_strict;
@@ -373,7 +373,7 @@ size_t Value::build_from_json(const char *json, bool strict_mode) {
   }
   
   
-#line 377 "src/value.cpp"
+#line 377 "/Users/gaspard/git/rubyk/oscit/src/value.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -448,7 +448,7 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 164 "src/value.rl"
+#line 164 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
      // append a char to build a std::string
     DEBUG(printf("%c-",(*p)));
@@ -457,7 +457,7 @@ _match:
   }
 	break;
 	case 1:
-#line 171 "src/value.rl"
+#line 171 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
     // become a RealValue
     tmp_val.set(atof(str_buf.c_str()));
@@ -466,7 +466,7 @@ _match:
   }
 	break;
 	case 2:
-#line 178 "src/value.rl"
+#line 178 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
     // become a StringValue
     tmp_val.set(str_buf);
@@ -475,7 +475,7 @@ _match:
   }
 	break;
 	case 3:
-#line 185 "src/value.rl"
+#line 185 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
     // Parse a single element of a hash (key:value)
     // Build tmp_val from string and move p forward
@@ -490,7 +490,7 @@ _match:
   }
 	break;
 	case 4:
-#line 198 "src/value.rl"
+#line 198 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
     // Parse a single element of a hash (key:value)
     // Build tmp_val from string and move p forward
@@ -504,7 +504,7 @@ _match:
   }
 	break;
 	case 5:
-#line 210 "src/value.rl"
+#line 210 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
     // we have a value in tmp that should be changed into a list [tmp]
     DEBUG(printf("[%p:lazy_list %s]\n", this, tmp_val.to_json().c_str()));
@@ -512,7 +512,7 @@ _match:
   }
 	break;
 	case 6:
-#line 216 "src/value.rl"
+#line 216 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
     // become an empty HashValue
     if (!is_hash()) {
@@ -521,7 +521,7 @@ _match:
   }
 	break;
 	case 7:
-#line 223 "src/value.rl"
+#line 223 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
     if (!is_list()) set_type(LIST_VALUE);
     
@@ -531,7 +531,7 @@ _match:
   }
 	break;
 	case 8:
-#line 231 "src/value.rl"
+#line 231 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
     // become a NilValue
     DEBUG(printf("[nil]\n"));
@@ -539,13 +539,13 @@ _match:
   }
 	break;
 	case 9:
-#line 237 "src/value.rl"
+#line 237 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
     DEBUG(printf("[set_from_tmp %s]\n", tmp_val.to_json().c_str()));
     if (!is_list() && !is_hash()) *this = tmp_val;
   }
 	break;
-#line 549 "src/value.cpp"
+#line 549 "/Users/gaspard/git/rubyk/oscit/src/value.cpp"
 		}
 	}
 
@@ -557,7 +557,7 @@ _again:
 	_test_eof: {}
 	_out: {}
 	}
-#line 298 "src/value.rl"
+#line 298 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
   if (p != pe) --p;
   
   return p - json;
