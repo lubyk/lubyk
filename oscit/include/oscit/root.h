@@ -122,7 +122,8 @@ class Root : public Object
     }
     
     Value res = call(target, val, context);
-    if (!res.is_error()) {
+    if (context != NULL && !res.is_error()) {
+      // only notify when context is defined (command call)
       notify_observers(path.c_str(), res, context);
     }
     return res;
@@ -237,7 +238,8 @@ class Root : public Object
   
   /* ======================= META METHODS HELPERS ===================== */
   
-  /** Send a reply to all commands so they pass it further to their observers. */
+  /** Send a reply to all commands so they pass it further to their observers.
+   */
   void notify_observers(const char *url, const Value &val, const Mutex *skip_context) {
     std::list<Command*>::iterator it;
     std::list<Command*>::iterator end = commands_.end();

@@ -16,6 +16,36 @@ namespace oscit {
 
 struct TimeRef : public timeb {};
 
+Thread::Thread() : owner_(NULL), thread_id_(NULL), should_run_(false), semaphore_(NULL) {
+  if (!sThisKey) pthread_key_create(&sThisKey, NULL); // create a key to find 'this' object in new thread
+//#ifdef __macosx__
+  semaphore_ = sem_open("oscit::Thread", O_CREAT, 0, 0);
+  if (semaphore_ == NULL) {
+    fprintf(stderr, "Could not open semaphore 'oscit::Thread' (%s)\n", strerror(errno));
+  } else {
+    // transform this process wide semaphore into an unamed semaphore.
+    if (sem_unlink("oscit::Thread") < 0) {
+      fprintf(stderr, "Could not unlink semaphore 'oscit::Thread' (%s)\n", strerror(errno));
+    }
+  }
+//#else
+//  if (sem_init(&semaphore_, 0, 0) < 0) {
+//    fprintf(stderr, "Could not init semaphore (%s)\n", strerror(errno));
+//  }
+//#endif
+}
+
+Thread::~Thread() {
+  kill();
+  if (semaphore_) {
+//#ifdef __macosx__
+    sem_close(semaphore_);
+//#else
+//    sem_destroy(*semaphore_);
+//#endif
+  }
+}
+
 /** Called by commands and other low priority threads. */
 void Thread::normal_priority()
 {

@@ -44,7 +44,7 @@ class OscMapCommandTest : public TestHelper
     app1_.adopt(new DummyObject("foo", 1.0));
     Value res = map_cmd_->script(Value("/slider/1 [0,1] --> /foo [10,20]"));
     assert_false(res.is_error());
-    app1_.call("/foo", Value(17.5));
+    app1_.call("/foo", Value(17.5), &context_);
     // notification should be sent to /slider/1 0.75
     assert_equal("0.75\n", reply());
   }
@@ -64,6 +64,7 @@ class OscMapCommandTest : public TestHelper
     return app2_log_->str();
   }
   
+  Mutex context_;
   IpEndpointName app1_end_point_;
   Root app1_;
   Root app2_;

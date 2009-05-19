@@ -208,11 +208,17 @@ public:
   
   void test_notify_observers( void ) {
     Root root;
+    Mutex context;
     std::string string;
     DummyCommand *cmd = root.adopt_command(new DummyCommand(&string));
     root.adopt(new DummyObject("foo", 4.5));
     assert_equal("", cmd->notifications_.str());
+    // call without context should not notify
     Value res = root.call("/foo", Value(5.2));
+    assert_equal(5.2, res.r);
+    assert_equal("", cmd->notifications_.str());
+    // call with context should send notification
+    res = root.call("/foo", Value(5.2), &context);
     assert_equal(5.2, res.r);
     assert_equal("/foo(5.2)", cmd->notifications_.str());
   }

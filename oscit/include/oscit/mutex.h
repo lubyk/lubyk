@@ -23,16 +23,33 @@ public:
   /** If the mutex is locked by another thread, waits until it is unlocked, lock and continue.
     * If the mutex is not locked. Lock and continue.
     * If this thread locked it: bang! */
-  void lock() {
+  inline void lock() {
     pthread_mutex_lock(&mutex_);
   }
   
   /** Release the lock so others can work on the data. */
-  void unlock() {
+  inline void unlock() {
     pthread_mutex_unlock(&mutex_);
   }
  private:
   pthread_mutex_t mutex_;
+};
+
+class ScopedLock {
+public:
+  ScopedLock(Mutex *mutex) : mutex_ptr_(mutex) {
+    mutex_ptr_->lock();
+  }
+  
+  ScopedLock(Mutex &mutex) : mutex_ptr_(&mutex) {
+    mutex_ptr_->lock();
+  }
+  
+  ~ScopedLock() {
+    mutex_ptr_->unlock();
+  }
+ private:
+  Mutex *mutex_ptr_;
 };
 
 } // oscit

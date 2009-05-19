@@ -2,6 +2,8 @@
 #include "oscit/thread.h"
 #include <sstream>
 
+std::ostringstream gThreadTest_log(std::ostringstream::out);
+
 struct DummyWorker
 {
   DummyWorker() : value_(0) {}
@@ -49,11 +51,12 @@ struct DummySubWorker : public Thread
   }
 
   void count(Thread *runner) {
+    runner->thread_ready();
     while (should_run()) {
-      ++value_;
-      unlock();
-        millisleep(20);
       lock();
+        ++value_;
+      unlock();
+      millisleep(20);
     }
   }
 
@@ -178,5 +181,28 @@ public:
     assert_equal(2, counter.value_);
 
     delete runner;
+  }
+  
+  void test_multiple_semaphores( void ) {
+    gThreadTest_log.str("");
+    Thread m1, m2, m3;
+    m2.post();  // increment semaphore ==> 1
+    m3.post();  // increment semaphore ==> 1
+    
+    // m1 should not be 3. It would if all semaphores were global (same name 'oscit::Thread').
+    m1.start_thread<ThreadTest::s_multiple_semaphore_thread>(NULL);  // waits for 'post'
+    gThreadTest_log << "[0:start done]";
+    m1.post();
+    m1.join();
+    gThreadTest_log << "[0:join]";
+    assert_equal("[1:started][0:start done][1:continue][0:join]", gThreadTest_log.str());
+  }
+  
+  static void s_multiple_semaphore_thread(Thread *runner) {
+    millisleep(100);
+    gThreadTest_log << "[1:started]";
+    runner->post();
+    runner->wait();
+    gThreadTest_log << "[1:continue]";
   }
 };

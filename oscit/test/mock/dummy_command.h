@@ -15,6 +15,7 @@ struct DummyCommand : public Command
   }
 
   void listen() {
+    thread_ready();
     while (should_run()) {
       lock();
         string_->append(".");
