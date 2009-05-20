@@ -1,14 +1,15 @@
 #ifndef OSCIT_INCLUDE_OSCIT_MUTEX_H_
 #define OSCIT_INCLUDE_OSCIT_MUTEX_H_
-#include "oscit/typed.h"
 #include <pthread.h>
 #include <cstdio>
+
+#include "oscit/non_copyable.h"
+#include "oscit/typed.h"
 
 namespace oscit {
 
 /** Simple wrapper class for a POSIX fast mutex. */
-class Mutex : public Typed
-{
+class Mutex : public Typed, private NonCopyable {
 public:
   TYPED("Mutex")
   
