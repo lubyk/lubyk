@@ -17,3 +17,5 @@ doc/prototypes/test
 oscit/oscpack/bin/*
 oscit/oscpack/liboscpack.*
 rubyk/doc/prototypes/test
+oscit/examples/send
+oscit/examples/receive

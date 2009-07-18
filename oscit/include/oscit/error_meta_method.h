@@ -13,7 +13,7 @@ public:
   ErrorMetaMethod(const char * name) : Object(name, AnyIO("Errors returned should end here.")) {}
 
   virtual const Value trigger (const Value &val) {
-    std::cerr << val << std::endl;
+    std::cerr << "[" << url() << "] received " << val << std::endl;
     return gNilValue;
   }
 };
