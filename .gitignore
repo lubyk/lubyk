@@ -6,6 +6,7 @@ rubyk/lib/*
 *.mode1v3
 .DS_Store
 *~
+*.pch
 oscit/build
 rubyk/build
 rubyk/src/lib/lua/lua
@@ -19,3 +20,4 @@ oscit/oscpack/liboscpack.*
 rubyk/doc/prototypes/test
 oscit/examples/send
 oscit/examples/receive
+oscit/misc/iPhone/oscit/build
