@@ -204,9 +204,20 @@ class Object : public Typed {
    * return more meaningful information / content. 
    */
 
-  /** List sub-nodes. */
+  /** List sub-nodes.
+   * This method is used as a reply to the /.list meta method.
+   * The format of the reply is a list of names with the type:
+   * [name, name, ...].
+   */
   const Value list() const;
-   
+  
+  /** List sub-nodes with their current value and type.
+   * This method is used as a reply to the /.list_types meta method.
+   * The format of the reply is a list of names with the type:
+   * [name, current, unit, ...], [name, current, unit, ...], etc.
+   */
+  const Value list_types() const;
+
   /** List full tree under this node.
    *  @param base_length is the length of the url for the initial call
    *                     (removed from results).
@@ -221,12 +232,16 @@ class Object : public Typed {
     return type_.last();
   }
 
-  /** Type information on node (used to automatically generate the correct control).
-   *  Called during response to "/.type '/this/url'".
+  /** Type information on node.
    */
   const Value &type() const {
     return type_;
   }
+  
+  /** Type information with current value (used to automatically generate the correct control).
+   * Called during response to "/.type '/this/url'".
+   */
+  const Value type_with_current_value();
 
   /** Set meta type (signature, range, units). The type should be immutable.
    *  this method is not a good idea.

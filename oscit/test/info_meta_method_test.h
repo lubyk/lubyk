@@ -22,4 +22,12 @@ public:
     assert_true(res.is_error());
     assert_equal(NOT_FOUND_ERROR, res.error_code());
   }
+  
+  void test_info_with_nil( void ) {
+    Root root(NoIO("This is the root node."));
+    Value res;
+    
+    res = root.call("/.info", gNilValue);
+    assert_true(res.is_nil());
+  }
 };

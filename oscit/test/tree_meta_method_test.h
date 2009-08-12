@@ -52,4 +52,12 @@ public:
     assert_true(res.is_nil());
     assert_equal(0, res.size());
   }
+  
+  void test_tree_with_nil( void ) {
+    Root root(NoIO("This is the root node."));
+    Value res;
+    
+    res = root.call("/.tree", gNilValue);
+    assert_true(res.is_nil());
+  }
 };

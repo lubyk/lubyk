@@ -60,4 +60,12 @@ public:
     assert_equal(0,  res.size());
     assert_equal("N", res.type_tag());
   }
+  
+  void test_list_with_nil( void ) {
+    Root root(NoIO("This is the root node."));
+    Value res;
+    
+    res = root.call("/.list", gNilValue);
+    assert_true(res.is_nil());
+  }
 };

@@ -10,11 +10,12 @@ public:
   /** Class signature. */
   TYPED("Object.TreeMetaMethod")
   
-  TreeMetaMethod(const char *name) : Object(name, StringIO("url", "Returns all children and sub-children under the given url")) {}
+  TreeMetaMethod(const char *name) : Object(name, StringIO("path", "Returns all children and sub-children under the given path")) {}
 
-  virtual const Value trigger(const Value &url) {
+  virtual const Value trigger(const Value &path) {
+    if (!path.is_string()) return gNilValue;
     Value res;
-    Object * target = root_->find_or_build_object_at(url.c_str(), &res);
+    Object * target = root_->find_or_build_object_at(path.c_str(), &res);
     if (!target) return res;
     target->tree(target->url().length() + 1, &res);
     return res;

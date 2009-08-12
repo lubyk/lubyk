@@ -14,7 +14,10 @@ class ZeroConfRegistration;
 #define REMOTE_OBJECTS_HASH_SIZE 10000
 
 /** This class is responsible for listening to any kind of incoming command (implemented by subclasses in do_listen)
- *  and passing these commands to the root object. */
+ *  and passing these commands to the root object.
+ *
+ * If you do not want the command to publish a service, set service_type to "" (blank).
+ */
 class Command : public Thread
 {
  public:
@@ -33,7 +36,9 @@ class Command : public Thread
   virtual void kill() {
     this->Thread::kill();
   }
-
+  
+  /** Start the command in a new thread.
+   */
   void start_command() {
     if (root_ == NULL) {
       fprintf(stderr, "Impossible to start command (no access to root).");

@@ -94,5 +94,12 @@ public:
     assert_true(res.is_string());
     assert_equal("No information on this node.", res.str());
   }
-
+  
+  void test_type_with_nil( void ) {
+    Root root(NoIO("This is the root node."));
+    Value res;
+    
+    res = root.call("/.type", gNilValue);
+    assert_true(res.is_nil());
+  }
 };

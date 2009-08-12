@@ -10,11 +10,13 @@ public:
   /** Class signature. */
   TYPED("Object.ListMetaMethod")
   
-  ListMetaMethod(const char *name) : Object(name, StringIO("url", "List all children under the given url.")) {}
+  ListMetaMethod(const char *name) : Object(name, StringIO("path", "List all children under the given path.")) {}
 
-  virtual const Value trigger(const Value &url) {
+  virtual const Value trigger(const Value &path) {
+    if (!path.is_string()) return gNilValue;
+    
     Value error;
-    Object * target = root_->find_or_build_object_at(url.c_str(), &error);
+    Object * target = root_->find_or_build_object_at(path.c_str(), &error);
     
     return target ? target->list() : error;
   }
