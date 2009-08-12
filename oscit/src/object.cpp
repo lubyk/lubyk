@@ -161,8 +161,8 @@ const Value Object::list() const {
   return res;
 }
 
-const Value Object::list_types() const {
-  ListValue list;
+const Value Object::list_with_type() const {
+  Value list;
   const_string_iterator it, end = children_.end();
   for (it = children_.begin(); it != end; ++it) {
     ListValue name_with_type;

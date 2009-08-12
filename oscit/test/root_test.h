@@ -227,12 +227,11 @@ public:
     Root root;
     root.adopt(new DummyObject("mode", 0.0, SelectIO("rgb, yuv", "color mode", "This is a menu.")));
     root.adopt(new DummyObject("tint", 45.0, RangeIO(1, 127, "tint", "This is a slider from 1 to 127.")));
-    Value res = root.list_types();
+    Value res = root.list_with_type();
     // .error, .info, etc are ignored (current value -- type mismatch)
-    assert_equal("[s[*s]][s[sss]][s[sss]][s[sss]][s[sss]][s[ssss]][s[fffss]]", res.type_tag());
+    assert_equal("[s[*s]][s[sss]][s[sss]][s[sss]][s[sss]][s[sss]][s[ssss]][s[fffss]]", res.type_tag());
     assert_equal(".error", res[0][0].str());
     assert_equal(".info", res[1][0].str());
-    std::cout << res << "\n";
   }
   
   // remote objects and 'send' testing is done in command_test.h

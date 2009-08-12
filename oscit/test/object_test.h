@@ -130,7 +130,7 @@ public:
     Object base;
     base.adopt(new DummyObject("mode", 0.0, SelectIO("rgb, yuv", "color mode", "This is a menu.")));
     base.adopt(new DummyObject("tint", 45.0, RangeIO(1, 127, "tint", "This is a slider from 1 to 127.")));
-    Value res = base.list_types();
+    Value res = base.list_with_type();
     assert_equal(res.type_tag(), "[s[ssss]][s[fffss]]"); // [name, [current, values, unit, info]], [name, [current, min, max, unit, info]]
     assert_equal("mode", res[0][0].str());
     assert_equal("tint", res[1][0].str());

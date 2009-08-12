@@ -27,13 +27,14 @@ public:
 
     res = root.call("/.list", Value(""));
     assert_true(res.is_list());
-    assert_equal(6, res.size());
+    assert_equal(7, res.size());
     assert_equal(".error", res[0].str());
     assert_equal(".info", res[1].str());
     assert_equal(".list", res[2].str());
-    assert_equal(".type", res[3].str());
-    assert_equal(".tree", res[4].str());
-    assert_equal("Nikolaus/", res[5].str());
+    assert_equal(".list_with_type", res[3].str());
+    assert_equal(".type", res[4].str());
+    assert_equal(".tree", res[5].str());
+    assert_equal("Nikolaus/", res[6].str());
     
     res = root.call("/.list", Value("/Nikolaus"));
     assert_true(res.is_list());

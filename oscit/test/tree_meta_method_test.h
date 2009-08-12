@@ -27,8 +27,8 @@ public:
 
     res = root.call("/.tree", Value(""));
     assert_true(res.is_list());
-    assert_equal(12, res.size());
-    assert_equal("[\".error\", \".info\", \".list\", \".type\", \".tree\", \"Nikolaus\", \"Nikolaus/Jacob\", \"Nikolaus/Nikolaus\", \"Nikolaus/Johann\", \"Nikolaus/Johann/Nicolaus\", \"Nikolaus/Johann/Daniel\", \"Nikolaus/Johann/Johann\"]", res.to_json());
+    assert_equal(13, res.size());
+    assert_equal("[\".error\", \".info\", \".list\", \".list_with_type\", \".type\", \".tree\", \"Nikolaus\", \"Nikolaus/Jacob\", \"Nikolaus/Nikolaus\", \"Nikolaus/Johann\", \"Nikolaus/Johann/Nicolaus\", \"Nikolaus/Johann/Daniel\", \"Nikolaus/Johann/Johann\"]", res.to_json());
     
     res = root.call("/.tree", Value("/Nikolaus"));
     assert_true(res.is_list());

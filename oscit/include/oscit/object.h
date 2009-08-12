@@ -212,11 +212,11 @@ class Object : public Typed {
   const Value list() const;
   
   /** List sub-nodes with their current value and type.
-   * This method is used as a reply to the /.list_types meta method.
+   * This method is used as a reply to the /.list_with_type meta method.
    * The format of the reply is a list of names with the type:
    * [name, current, unit, ...], [name, current, unit, ...], etc.
    */
-  const Value list_types() const;
+  const Value list_with_type() const;
 
   /** List full tree under this node.
    *  @param base_length is the length of the url for the initial call
