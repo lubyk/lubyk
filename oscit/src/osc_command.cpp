@@ -17,7 +17,7 @@ namespace oscit {
 
 // #define DEBUG_OSC_COMMAND
 
-static osc::OutboundPacketStream &operator<<(osc::OutboundPacketStream &out_stream, const Value &val) {
+static void to_stream(osc::OutboundPacketStream &out_stream, const Value &val, bool in_array = false) {
   size_t sz;
   switch (val.type()) {
     case REAL_VALUE:
@@ -35,9 +35,12 @@ static osc::OutboundPacketStream &operator<<(osc::OutboundPacketStream &out_stre
       break;
     case LIST_VALUE:
       sz = val.size();
+      // do not insert array markers for level 0 type tags: "ff[fs]" not "[ff[fs]]"
+      if (in_array) out_stream << osc::ArrayStart;
       for (size_t i = 0; i < sz; ++i) {
-        out_stream << val[i];
+        to_stream(out_stream, val[i], true);
       }
+      if (in_array) out_stream << osc::ArrayEnd;
       break;
     case ANY_VALUE:
       out_stream << osc::Any;
@@ -48,6 +51,10 @@ static osc::OutboundPacketStream &operator<<(osc::OutboundPacketStream &out_stre
     default:
       ;// ????
   }
+}
+
+static osc::OutboundPacketStream &operator<<(osc::OutboundPacketStream &out_stream, const Value &val) {
+  to_stream(out_stream, val);
   return out_stream;
 }
 
@@ -200,19 +207,11 @@ public:
     }
   }
 
-  /** Build a value from osc packet.
-   *  @param message osc message.
-   *  @return new value corresponding to the osc data.
-   */
-  static Value value_from_osc(const osc::ReceivedMessage &message) {
-    Value res;
-    const char * type_tags = message.TypeTags();
-    uint i = 0;
-    osc::ReceivedMessage::const_iterator arg = message.ArgumentsBegin();
-    osc::ReceivedMessage::const_iterator end = message.ArgumentsEnd();
-
-    while (arg != end) {
-      switch (type_tags[i]) {
+  static const char *parse_osc_message(Value &res, const char *start_type_tags, osc::ReceivedMessage::const_iterator &arg) {
+    ListValue tmp;
+    const char *type_tags = start_type_tags;
+    while (*type_tags) {
+      switch (*type_tags) {
         case osc::TRUE_TYPE_TAG:
           res.push_back(1.0);
           break;
@@ -227,6 +226,17 @@ public:
         case osc::ANY_TYPE_TAG:
           res.push_back(Value('*'));
           break;
+        case osc::ARRAY_START_TYPE_TAG:
+          tmp.set_type(LIST_VALUE); // clear
+          ++type_tags;
+          ++arg;
+          type_tags = parse_osc_message(tmp, type_tags, arg);
+          res.push_back(tmp);
+          break;
+        case osc::ARRAY_END_TYPE_TAG:
+          // return before type_tags increment
+          return type_tags;
+          
         // zero length
 
         case osc::INT32_TYPE_TAG:
@@ -254,9 +264,20 @@ public:
           // TODO
           break;
       }
-      i++;
-      arg++;
+      ++type_tags;
+      ++arg;
     }
+    return type_tags;
+  }
+  
+  /** Build a value from osc packet.
+   *  @param message osc message.
+   *  @return new value corresponding to the osc data.
+   */
+  static Value value_from_osc(const osc::ReceivedMessage &message) {
+    Value res;
+    osc::ReceivedMessage::const_iterator arg = message.ArgumentsBegin();
+    parse_osc_message(res, message.TypeTags(), arg);
     return res;
   }
 

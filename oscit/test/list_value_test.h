@@ -185,8 +185,9 @@ public:
   }
   
   void test_set_type( void ) {
-    Value v;
-    
+    ListValue v;
+    v.push_back(Value(1.2));
+    assert_equal(1, v.size());
     v.set_type(LIST_VALUE);
     assert_true(v.is_list());
     assert_equal(0, v.size());
