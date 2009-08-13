@@ -14,12 +14,12 @@ void Root::init() {
   set_root(this);
   
   // build meta methods
-  adopt(new ErrorMetaMethod(".error"));
-  adopt(new InfoMetaMethod(".info"));
-  adopt(new ListMetaMethod(".list"));
-  adopt(new ListWithTypeMetaMethod(".list_with_type"));
-  adopt(new TypeMetaMethod(".type"));
-  adopt(new TreeMetaMethod(".tree"));
+  adopt(new ErrorMetaMethod(Url(ERROR_PATH).name()));
+  adopt(new InfoMetaMethod(Url(INFO_PATH).name()));
+  adopt(new ListMetaMethod(Url(LIST_PATH).name()));
+  adopt(new ListWithTypeMetaMethod(Url(LIST_WITH_TYPE_PATH).name()));
+  adopt(new TypeMetaMethod(Url(TYPE_PATH).name()));
+  adopt(new TreeMetaMethod(Url(TREE_PATH).name()));
 }
 
 } // oscit

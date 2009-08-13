@@ -10,7 +10,8 @@ public:
   /** Class signature. */
   TYPED("Object.ListTypesMetaMethod")
   
-  ListWithTypeMetaMethod(const char *name) : Object(name, StringIO("path", "List all children under the given path with their current value and type.")) {}
+  ListWithTypeMetaMethod(const char *name)        : Object(name, StringIO("path", "List all children under the given path with their current value and type.")) {}
+  ListWithTypeMetaMethod(const std::string &name) : Object(name, StringIO("path", "List all children under the given path with their current value and type.")) {}
 
   virtual const Value trigger (const Value &path) {
     if (!path.is_string()) return gNilValue;

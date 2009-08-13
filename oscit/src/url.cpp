@@ -45,23 +45,24 @@ static const char _url_actions[] = {
 };
 
 static const char _url_key_offsets[] = {
-	0, 0, 6, 16, 27, 28, 29, 36, 
-	44, 50, 52, 55
+	0, 0, 7, 18, 30, 31, 32, 39, 
+	47, 54, 56, 59
 };
 
 static const char _url_trans_keys[] = {
-	46, 57, 65, 90, 97, 122, 0, 32, 
-	9, 10, 46, 57, 65, 90, 97, 122, 
-	0, 32, 58, 9, 10, 46, 57, 65, 
-	90, 97, 122, 47, 47, 46, 48, 57, 
-	65, 90, 97, 122, 47, 58, 46, 57, 
-	65, 90, 97, 122, 46, 57, 65, 90, 
-	97, 122, 48, 57, 47, 48, 57, 0
+	95, 46, 57, 65, 90, 97, 122, 0, 
+	32, 95, 9, 10, 46, 57, 65, 90, 
+	97, 122, 0, 32, 58, 95, 9, 10, 
+	46, 57, 65, 90, 97, 122, 47, 47, 
+	46, 48, 57, 65, 90, 97, 122, 47, 
+	58, 46, 57, 65, 90, 97, 122, 95, 
+	46, 57, 65, 90, 97, 122, 48, 57, 
+	47, 48, 57, 0
 };
 
 static const char _url_single_lengths[] = {
-	0, 0, 2, 3, 1, 1, 1, 2, 
-	0, 0, 1, 0
+	0, 1, 3, 4, 1, 1, 1, 2, 
+	1, 0, 1, 0
 };
 
 static const char _url_range_lengths[] = {
@@ -70,17 +71,18 @@ static const char _url_range_lengths[] = {
 };
 
 static const char _url_index_offsets[] = {
-	0, 0, 4, 11, 19, 21, 23, 28, 
-	34, 38, 40, 43
+	0, 0, 5, 13, 22, 24, 26, 31, 
+	37, 42, 44, 47
 };
 
 static const char _url_indicies[] = {
-	0, 2, 2, 1, 3, 3, 3, 0, 
-	0, 0, 1, 3, 3, 4, 3, 0, 
-	2, 2, 1, 5, 1, 6, 1, 7, 
-	7, 7, 7, 1, 8, 9, 7, 7, 
-	7, 1, 0, 0, 0, 1, 10, 1, 
-	11, 10, 1, 1, 0
+	0, 0, 2, 2, 1, 3, 3, 0, 
+	3, 0, 0, 0, 1, 3, 3, 4, 
+	0, 3, 0, 2, 2, 1, 5, 1, 
+	6, 1, 7, 7, 7, 7, 1, 8, 
+	9, 7, 7, 7, 1, 0, 0, 0, 
+	0, 1, 10, 1, 11, 10, 1, 1, 
+	0
 };
 
 static const char _url_trans_targs[] = {
@@ -111,13 +113,13 @@ void Url::parse(const char *url) {
   const char * pe = url + strlen(p) + 1;
   
   
-#line 115 "/Users/gaspard/git/rubyk/oscit/src/url.cpp"
+#line 117 "/Users/gaspard/git/rubyk/oscit/src/url.cpp"
 	{
 	cs = url_start;
 	}
 #line 112 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
   
-#line 121 "/Users/gaspard/git/rubyk/oscit/src/url.cpp"
+#line 123 "/Users/gaspard/git/rubyk/oscit/src/url.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -230,7 +232,7 @@ _match:
     DEBUG(printf("[path %s\n]", path_.c_str()));
   }
 	break;
-#line 234 "/Users/gaspard/git/rubyk/oscit/src/url.cpp"
+#line 236 "/Users/gaspard/git/rubyk/oscit/src/url.cpp"
 		}
 	}
 

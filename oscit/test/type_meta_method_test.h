@@ -10,12 +10,12 @@ public:
     root.adopt(new DummyObject("foo", 4.25));
     Value res;
 
-    res = root.call("/.type", Value(""));
+    res = root.call(TYPE_PATH, Value(""));
     assert_equal("", res[0].str());
     res = res[1];
     assert_equal("s", res.type_tag()); // no information ...
 
-    res = root.call("/.type", Value("/foo"));
+    res = root.call(TYPE_PATH, Value("/foo"));
     assert_equal("/foo", res[0].str());
     res = res[1];
     assert_equal("fffss", res.type_tag());
@@ -25,7 +25,7 @@ public:
     assert_equal("lux", res[3].str()); // unit
     assert_equal(DUMMY_OBJECT_INFO, res[4].str()); // info
 
-    res = root.call("/.type", Value("/blah"));
+    res = root.call(TYPE_PATH, Value("/blah"));
     assert_equal("/blah", res[0].str());
     res = res[1];
     assert_true(res.is_error());
@@ -37,7 +37,7 @@ public:
     root.adopt(new DummyObject2("foo", "yuv"));
     Value res;
     
-    res = root.call("/.type", Value("/foo"));
+    res = root.call(TYPE_PATH, Value("/foo"));
     assert_equal("/foo", res[0].str());
     res = res[1];
     assert_equal("ssss", res.type_tag());
@@ -51,7 +51,7 @@ public:
     Root root;
     root.adopt(new DummyObject("foo", 1.23, AnyIO("This is the info string.")));
     Value res;
-    res = root.call("/.type", Value("/foo"));
+    res = root.call(TYPE_PATH, Value("/foo"));
     assert_equal("/foo", res[0].str());
     res = res[1];
     assert_equal("*s", res.type_tag());
@@ -63,7 +63,7 @@ public:
     Root root;
     root.adopt(new DummyObject("Haddock", 42.0, Value(Json("[[\"\", 0.0], \"name\", \"years old\", \"Set captain with name and age.\"]"))));
     Value res;
-    res = root.call("/.type", Value("/Haddock"));
+    res = root.call(TYPE_PATH, Value("/Haddock"));
     assert_equal("/Haddock", res[0].str());
     res = res[1];
     assert_equal("[sf]sss", res.type_tag());
@@ -74,7 +74,7 @@ public:
     Root root;
     root.adopt(new DummyObject("dog_food", 42.0, HashIO("Blah blah.")));
     Value res;
-    res = root.call("/.type", Value("/dog_food"));
+    res = root.call(TYPE_PATH, Value("/dog_food"));
     assert_equal("/dog_food", res[0].str());
     res = res[1];
     assert_equal("Hs", res.type_tag());
@@ -86,7 +86,7 @@ public:
     Root root;
     root.adopt(new DummyObject("master_of_time", 42.0, MatrixIO(1,5,"Stupid matrix.")));
     Value res;
-    res = root.call("/.type", Value("/master_of_time"));
+    res = root.call(TYPE_PATH, Value("/master_of_time"));
     assert_equal("/master_of_time", res[0].str());
     res = res[1];
     assert_true(res.is_list());
@@ -100,7 +100,7 @@ public:
     root.adopt(new Object("foo"));
     Value res;
 
-    res = root.call("/.type", Value("/foo"));
+    res = root.call(TYPE_PATH, Value("/foo"));
     assert_equal("/foo", res[0].str());
     res = res[1];
     assert_equal("No information on this node.", res.str());
@@ -110,7 +110,7 @@ public:
     Root root(NoIO("This is the root node."));
     Value res;
     
-    res = root.call("/.type", gNilValue);
+    res = root.call(TYPE_PATH, gNilValue);
     assert_true(res.is_nil());
   }
 };

@@ -85,7 +85,7 @@ void Url::rebuild_full_url() {
   protocol  = alpha+;
   host      = (alpha | digit | '.')+;
   port      = digit+;
-  path      = (alpha | digit | '/' | '.')+;
+  path      = (alpha | digit | '/' | '.' | '_' )+;
   
   main     := ((protocol $str_a  %set_protocol '://'
               host $str_a %set_host

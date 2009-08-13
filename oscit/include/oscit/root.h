@@ -8,6 +8,13 @@ namespace oscit {
 /** Size of the object hash table. */
 #define OBJECT_HASH_SIZE 10000
 
+#define ERROR_PATH "/.error"
+#define INFO_PATH "/.info"
+#define LIST_PATH "/.list"
+#define LIST_WITH_TYPE_PATH "/.list_with_type"
+#define TYPE_PATH "/.type"
+#define TREE_PATH "/.tree"
+
 /** Root object. You can only start new trees with root objects. 
 
 In case you intend to call elements in the object tree from different
@@ -176,7 +183,7 @@ class Root : public Object
     if (target->can_receive(val)) {
       return target->safe_trigger(val, context);
     } else {
-      Value type = call("/.type", Value(target->url()), context);
+      Value type = call(TYPE_PATH, Value(target->url()), context);
       return ErrorValue(BAD_REQUEST_ERROR, std::string("'").append(target->url()).append("' (").append(target->type().last().str()).append(")."));
     }
   }

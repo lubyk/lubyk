@@ -10,7 +10,8 @@ public:
   /** Class signature. */
   TYPED("Object.TreeMetaMethod")
   
-  TreeMetaMethod(const char *name) : Object(name, StringIO("path", "Returns all children and sub-children under the given path")) {}
+  TreeMetaMethod(const char *name)        : Object(name, StringIO("path", "Returns all children and sub-children under the given path")) {}
+  TreeMetaMethod(const std::string &name) : Object(name, StringIO("path", "Returns all children and sub-children under the given path")) {}
 
   virtual const Value trigger(const Value &path) {
     if (!path.is_string()) return gNilValue;

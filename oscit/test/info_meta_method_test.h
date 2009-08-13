@@ -10,17 +10,17 @@ public:
     root.adopt(new Object("foo"));
     Value res;
     
-    res = root.call("/.info", Value(""));
+    res = root.call(INFO_PATH, Value(""));
     assert_true(res.is_list());
     assert_equal("", res[0].str());
     assert_equal("This is the root node.", res[1].str());
 
-    res = root.call("/.info", Value("/foo"));
+    res = root.call(INFO_PATH, Value("/foo"));
     assert_true(res.is_list());
     assert_equal("/foo", res[0].str());
     assert_equal(DEFAULT_TYPE.str(), res[1].str());
 
-    res = root.call("/.info", Value("/blah"));
+    res = root.call(INFO_PATH, Value("/blah"));
     assert_equal("/blah", res[0].str());
     assert_true(res[1].is_error());
     assert_equal(NOT_FOUND_ERROR, res[1].error_code());
@@ -30,7 +30,7 @@ public:
     Root root(NoIO("This is the root node."));
     Value res;
     
-    res = root.call("/.info", gNilValue);
+    res = root.call(INFO_PATH, gNilValue);
     assert_true(res.is_nil());
   }
 };

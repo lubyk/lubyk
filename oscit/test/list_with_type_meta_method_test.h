@@ -33,20 +33,21 @@ public:
     tmp->adopt(new DummyObject("tint", 45.0, RangeIO(1, 127, "tint", "This is a slider from 1 to 127.")));
     Value reply, res;
 
-    reply = root.call("/.list_with_type", Value(""));
+    reply = root.call(LIST_WITH_TYPE_PATH, Value(""));
     assert_equal("", reply[0].str());
     res = reply[1];
     assert_true(res.is_list());
     assert_equal(7, res.size());
-    assert_equal(".error", res[0][0].str());
-    assert_equal(".info", res[1][0].str());
-    assert_equal(".list", res[2][0].str());
-    assert_equal(".list_with_type", res[3][0].str());
-    assert_equal(".type", res[4][0].str());
-    assert_equal(".tree", res[5][0].str());
+    
+    assert_equal(Url(ERROR_PATH).name(), res[0][0].str());
+    assert_equal(Url(INFO_PATH).name(), res[1][0].str());
+    assert_equal(Url(LIST_PATH).name(), res[2][0].str());
+    assert_equal(Url(LIST_WITH_TYPE_PATH).name(), res[3][0].str());
+    assert_equal(Url(TYPE_PATH).name(), res[4][0].str());
+    assert_equal(Url(TREE_PATH).name(), res[5][0].str());
     assert_equal("monitor/", res[6][0].str());
     
-    reply = root.call("/.list_with_type", Value("/monitor"));
+    reply = root.call(LIST_WITH_TYPE_PATH, Value("/monitor"));
     assert_equal("/monitor", reply[0].str());
     res = reply[1];
     assert_true(res.is_list());
@@ -60,7 +61,7 @@ public:
     root.adopt(new Object("Nikolaus"));
     Value res;
 
-    res = root.call("/.list_with_type", Value("/Nikolaus"));
+    res = root.call(LIST_WITH_TYPE_PATH, Value("/Nikolaus"));
     assert_equal("/Nikolaus", res[0].str());
     res = res[1];
     assert_true(res.is_list());
@@ -71,7 +72,7 @@ public:
     Root root(NoIO("This is the root node."));
     Value res;
     
-    res = root.call("/.list_with_type", gNilValue);
+    res = root.call(LIST_WITH_TYPE_PATH, gNilValue);
     assert_true(res.is_nil());
   }
 };

@@ -50,32 +50,32 @@ class OscCommandTest : public TestHelper
   
   void test_send_receive_list( void ) {
     // root_ objects are cleared before each run
-    root_.adopt(new ListMetaMethod(".list"));
+    root_.adopt(new ListMetaMethod(Url(LIST_PATH).name()));
     Object * tmp = root_.adopt(new Object("monitor"));
     tmp->adopt(new DummyObject("mode", 0.0, SelectIO("rgb, yuv", "color mode", "This is a menu.")));
     tmp->adopt(new DummyObject("tint", 45.0, RangeIO(1, 127, "tint", "This is a slider from 1 to 127.")));
     
-    send("/.list", "/monitor");
+    send(LIST_PATH, "/monitor");
     assert_equal("[\"/.list\", [\"/monitor\", [\"mode\", \"tint\"]]]\n", reply());
   }
   
   void test_send_receive_list_on_empty( void ) {
     // root_ objects are cleared before each run
-    root_.adopt(new ListMetaMethod(".list"));
+    root_.adopt(new ListMetaMethod(Url(LIST_PATH).name()));
     root_.adopt(new Object("monitor"));
     
-    send("/.list", "/monitor");
+    send(LIST_PATH, "/monitor");
     assert_equal("[\"/.list\", [\"/monitor\", []]]\n", reply());
   }
   
   void test_send_receive_list_with_type( void ) {
     // root_ objects are cleared before each run
-    root_.adopt(new ListWithTypeMetaMethod(".list_with_type"));
+    root_.adopt(new ListWithTypeMetaMethod(Url(LIST_WITH_TYPE_PATH).name()));
     Object * tmp = root_.adopt(new Object("monitor"));
     tmp->adopt(new DummyObject("mode", 0.0, SelectIO("rgb, yuv", "color mode", "This is a menu.")));
     tmp->adopt(new DummyObject("tint", 45.0, RangeIO(1, 127, "tint", "This is a slider from 1 to 127.")));
     
-    send("/.list_with_type", "/monitor");
+    send(LIST_WITH_TYPE_PATH, "/monitor");
     assert_equal("[\"/.list_with_type\", [\"/monitor\", [[\"mode\", [\"hello\", \"rgb, yuv\", \"color mode\", \"This is a menu.\"]], [\"tint\", [45, 1, 127, \"tint\", \"This is a slider from 1 to 127.\"]]]]]\n", reply());
   }
   
