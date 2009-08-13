@@ -17,11 +17,10 @@ public:
     Value error;
     Object * target = root_->find_or_build_object_at(path.c_str(), &error);
     
-    if (target == NULL) {
-      return error;
-    } else {
-      return target->type_with_current_value();
-    }
+    Value reply = path;
+    
+    reply.push_back(target ? target->type_with_current_value() : error);
+    return reply;
   }
 };
 

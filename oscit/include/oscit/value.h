@@ -123,6 +123,15 @@ public:
 
   /** Share the content of another Value. */
   Value &set(const Value &other) { // TODO: use 'const' to select between 'share' and 'copy' ? Do the same with Root::call return values.
+    // In case current value is a Hash or List, we must retain ReferenceCounted element before clear
+    // or foo = foo[3] will fail.
+    ReferenceCounted *old_ref = NULL;
+    if (type_ == LIST_VALUE) {
+      old_ref = ReferenceCounted::acquire(list_);
+    } else if (type_ == HASH_VALUE) {
+      old_ref = ReferenceCounted::acquire(hash_);
+    }
+    
     switch (other.type_) {
       case REAL_VALUE:
         set(other.r);
@@ -158,6 +167,11 @@ public:
       default:
         set_nil();
     }
+    
+    if (old_ref) {
+      ReferenceCounted::release(old_ref);
+    }
+    
     return *this;
   }
 

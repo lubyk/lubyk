@@ -2,6 +2,7 @@
 #include "oscit/root.h"
 #include "mock/dummy_object.h"
 #include "oscit/log_object.h"
+#include "oscit/list_meta_method.h"
 #include "oscit/list_with_type_meta_method.h"
 #include "ip/UdpSocket.h"
 
@@ -47,7 +48,27 @@ class OscCommandTest : public TestHelper
     assert_equal("[\"/foo\", 1.25]\n", reply());
   }
   
-  void test_send_list_with_type_receive( void ) {
+  void test_send_receive_list( void ) {
+    // root_ objects are cleared before each run
+    root_.adopt(new ListMetaMethod(".list"));
+    Object * tmp = root_.adopt(new Object("monitor"));
+    tmp->adopt(new DummyObject("mode", 0.0, SelectIO("rgb, yuv", "color mode", "This is a menu.")));
+    tmp->adopt(new DummyObject("tint", 45.0, RangeIO(1, 127, "tint", "This is a slider from 1 to 127.")));
+    
+    send("/.list", "/monitor");
+    assert_equal("[\"/.list\", [\"/monitor\", [\"mode\", \"tint\"]]]\n", reply());
+  }
+  
+  void test_send_receive_list_on_empty( void ) {
+    // root_ objects are cleared before each run
+    root_.adopt(new ListMetaMethod(".list"));
+    root_.adopt(new Object("monitor"));
+    
+    send("/.list", "/monitor");
+    assert_equal("[\"/.list\", [\"/monitor\", []]]\n", reply());
+  }
+  
+  void test_send_receive_list_with_type( void ) {
     // root_ objects are cleared before each run
     root_.adopt(new ListWithTypeMetaMethod(".list_with_type"));
     Object * tmp = root_.adopt(new Object("monitor"));
@@ -55,7 +76,7 @@ class OscCommandTest : public TestHelper
     tmp->adopt(new DummyObject("tint", 45.0, RangeIO(1, 127, "tint", "This is a slider from 1 to 127.")));
     
     send("/.list_with_type", "/monitor");
-    assert_equal("[\"/.list_with_type\", [[\"mode\", [\"hello\", \"rgb, yuv\", \"color mode\", \"This is a menu.\"]], [\"tint\", [45, 1, 127, \"tint\", \"This is a slider from 1 to 127.\"]]]]\n", reply());
+    assert_equal("[\"/.list_with_type\", [\"/monitor\", [[\"mode\", [\"hello\", \"rgb, yuv\", \"color mode\", \"This is a menu.\"]], [\"tint\", [45, 1, 127, \"tint\", \"This is a slider from 1 to 127.\"]]]]]\n", reply());
   }
   
  private:

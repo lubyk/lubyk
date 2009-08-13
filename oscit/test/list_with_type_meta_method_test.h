@@ -31,9 +31,11 @@ public:
     Object * tmp = root.adopt(new Object("monitor"));
     tmp->adopt(new DummyObject("mode", 0.0, SelectIO("rgb, yuv", "color mode", "This is a menu.")));
     tmp->adopt(new DummyObject("tint", 45.0, RangeIO(1, 127, "tint", "This is a slider from 1 to 127.")));
-    Value res;
+    Value reply, res;
 
-    res = root.call("/.list_with_type", Value(""));
+    reply = root.call("/.list_with_type", Value(""));
+    assert_equal("", reply[0].str());
+    res = reply[1];
     assert_true(res.is_list());
     assert_equal(7, res.size());
     assert_equal(".error", res[0][0].str());
@@ -44,7 +46,9 @@ public:
     assert_equal(".tree", res[5][0].str());
     assert_equal("monitor/", res[6][0].str());
     
-    res = root.call("/.list_with_type", Value("/monitor"));
+    reply = root.call("/.list_with_type", Value("/monitor"));
+    assert_equal("/monitor", reply[0].str());
+    res = reply[1];
     assert_true(res.is_list());
     assert_equal(2, res.size());
     assert_equal("mode",    res[0][0].str());
@@ -57,9 +61,10 @@ public:
     Value res;
 
     res = root.call("/.list_with_type", Value("/Nikolaus"));
-    assert_true(res.is_nil());
+    assert_equal("/Nikolaus", res[0].str());
+    res = res[1];
+    assert_true(res.is_list());
     assert_equal(0,  res.size());
-    assert_equal("N", res.type_tag());
   }
   
   void test_list_with_type_with_nil( void ) {

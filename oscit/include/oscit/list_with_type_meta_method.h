@@ -18,7 +18,9 @@ public:
     Value error;
     Object * target = root_->find_or_build_object_at(path.c_str(), &error);
     
-    return target ? target->list_with_type() : error;
+    Value reply = path;
+    reply.push_back(target ? target->list_with_type() : error);
+    return reply;
   }
 };
 

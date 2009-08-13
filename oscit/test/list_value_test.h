@@ -518,4 +518,10 @@ public:
     assert_false(object.can_receive(MatrixValue(1,1)));
     assert_false(object.can_receive(MidiValue()));
   }
+  
+  void test_auto_set( void ) {
+    Value list(Json("1,[2,3]"));
+    list = list[1];
+    assert_equal("[2, 3]", list.to_json());
+  }
 };

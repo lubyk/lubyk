@@ -142,7 +142,7 @@ void Object::clear() {
 
 
 const Value Object::list() const {
-  Value res;
+  ListValue res;
   const_string_iterator it, end = children_.end();
   for (it = children_.begin(); it != end; ++it) {
     Object * obj;
@@ -162,7 +162,7 @@ const Value Object::list() const {
 }
 
 const Value Object::list_with_type() const {
-  Value list;
+  ListValue list;
   const_string_iterator it, end = children_.end();
   for (it = children_.begin(); it != end; ++it) {
     ListValue name_with_type;

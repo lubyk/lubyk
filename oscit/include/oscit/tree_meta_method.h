@@ -14,11 +14,15 @@ public:
 
   virtual const Value trigger(const Value &path) {
     if (!path.is_string()) return gNilValue;
-    Value res;
-    Object * target = root_->find_or_build_object_at(path.c_str(), &res);
-    if (!target) return res;
-    target->tree(target->url().length() + 1, &res);
-    return res;
+    ListValue tmp;
+    Object * target = root_->find_or_build_object_at(path.c_str(), &tmp);
+    
+    Value reply = path;
+    if (target) {
+      target->tree(target->url().length() + 1, &tmp);
+    }
+    reply.push_back(tmp);
+    return reply;
   }
 };
 

@@ -11,11 +11,13 @@ public:
     Value res;
 
     res = root.call("/.type", Value(""));
-    assert_true(res.is_string());
+    assert_equal("", res[0].str());
+    res = res[1];
     assert_equal("s", res.type_tag()); // no information ...
 
     res = root.call("/.type", Value("/foo"));
-    assert_true(res.is_list());
+    assert_equal("/foo", res[0].str());
+    res = res[1];
     assert_equal("fffss", res.type_tag());
     assert_equal(4.25,  res[0].r); // current
     assert_equal(0.0,   res[1].r); // min
@@ -24,6 +26,8 @@ public:
     assert_equal(DUMMY_OBJECT_INFO, res[4].str()); // info
 
     res = root.call("/.type", Value("/blah"));
+    assert_equal("/blah", res[0].str());
+    res = res[1];
     assert_true(res.is_error());
     assert_equal(NOT_FOUND_ERROR, res.error_code());
   }
@@ -34,7 +38,8 @@ public:
     Value res;
     
     res = root.call("/.type", Value("/foo"));
-    assert_true(res.is_list());
+    assert_equal("/foo", res[0].str());
+    res = res[1];
     assert_equal("ssss", res.type_tag());
     assert_equal("yuv",  res[0].str()); // current
     assert_equal("rgb,rgba,yuv",  res[1].str()); // current
@@ -47,7 +52,8 @@ public:
     root.adopt(new DummyObject("foo", 1.23, AnyIO("This is the info string.")));
     Value res;
     res = root.call("/.type", Value("/foo"));
-    assert_true(res.is_list());
+    assert_equal("/foo", res[0].str());
+    res = res[1];
     assert_equal("*s", res.type_tag());
     assert_true(res[0].is_any());
     assert_equal("This is the info string.", res[1].str()); // info
@@ -58,7 +64,8 @@ public:
     root.adopt(new DummyObject("Haddock", 42.0, Value(Json("[[\"\", 0.0], \"name\", \"years old\", \"Set captain with name and age.\"]"))));
     Value res;
     res = root.call("/.type", Value("/Haddock"));
-    assert_true(res.is_list());
+    assert_equal("/Haddock", res[0].str());
+    res = res[1];
     assert_equal("[sf]sss", res.type_tag());
     assert_equal("[\"Haddock\", 42]", res[0].to_json()); // info
   }
@@ -68,7 +75,8 @@ public:
     root.adopt(new DummyObject("dog_food", 42.0, HashIO("Blah blah.")));
     Value res;
     res = root.call("/.type", Value("/dog_food"));
-    assert_true(res.is_list());
+    assert_equal("/dog_food", res[0].str());
+    res = res[1];
     assert_equal("Hs", res.type_tag());
     assert_equal("{\"lazy\":\"dog\" \"silly\":\"cats and mices\"}", res[0].to_json()); // hash
     assert_equal("Blah blah.", res[1].str()); // info
@@ -79,6 +87,8 @@ public:
     root.adopt(new DummyObject("master_of_time", 42.0, MatrixIO(1,5,"Stupid matrix.")));
     Value res;
     res = root.call("/.type", Value("/master_of_time"));
+    assert_equal("/master_of_time", res[0].str());
+    res = res[1];
     assert_true(res.is_list());
     assert_equal("Ms", res.type_tag());
     assert_equal("\"Matrix 1x5\"", res[0].to_json()); // matrix to json ...
@@ -91,7 +101,8 @@ public:
     Value res;
 
     res = root.call("/.type", Value("/foo"));
-    assert_true(res.is_string());
+    assert_equal("/foo", res[0].str());
+    res = res[1];
     assert_equal("No information on this node.", res.str());
   }
   

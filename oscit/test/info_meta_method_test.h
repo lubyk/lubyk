@@ -11,16 +11,19 @@ public:
     Value res;
     
     res = root.call("/.info", Value(""));
-    assert_true(res.is_string());
-    assert_equal("This is the root node.", res.str());
+    assert_true(res.is_list());
+    assert_equal("", res[0].str());
+    assert_equal("This is the root node.", res[1].str());
 
     res = root.call("/.info", Value("/foo"));
-    assert_true(res.is_string());
-    assert_equal(DEFAULT_TYPE.str(), res.str());
+    assert_true(res.is_list());
+    assert_equal("/foo", res[0].str());
+    assert_equal(DEFAULT_TYPE.str(), res[1].str());
 
     res = root.call("/.info", Value("/blah"));
-    assert_true(res.is_error());
-    assert_equal(NOT_FOUND_ERROR, res.error_code());
+    assert_equal("/blah", res[0].str());
+    assert_true(res[1].is_error());
+    assert_equal(NOT_FOUND_ERROR, res[1].error_code());
   }
   
   void test_info_with_nil( void ) {

@@ -26,20 +26,24 @@ public:
     Value res;
 
     res = root.call("/.tree", Value(""));
-    assert_true(res.is_list());
+    assert_equal("", res[0].str());
+    res = res[1];
     assert_equal(13, res.size());
     assert_equal("[\".error\", \".info\", \".list\", \".list_with_type\", \".type\", \".tree\", \"Nikolaus\", \"Nikolaus/Jacob\", \"Nikolaus/Nikolaus\", \"Nikolaus/Johann\", \"Nikolaus/Johann/Nicolaus\", \"Nikolaus/Johann/Daniel\", \"Nikolaus/Johann/Johann\"]", res.to_json());
     
     res = root.call("/.tree", Value("/Nikolaus"));
-    assert_true(res.is_list());
+    assert_equal("/Nikolaus", res[0].str());
+    res = res[1];
     assert_equal(6, res.size());
     assert_equal("[\"Jacob\", \"Nikolaus\", \"Johann\", \"Johann/Nicolaus\", \"Johann/Daniel\", \"Johann/Johann\"]", res.to_json());
     
     res = root.call("/.tree", Value("/Nikolaus/Johann"));
-    assert_true(res.is_list());
+    assert_equal("/Nikolaus/Johann", res[0].str());
+    res = res[1];
     assert_equal(3, res.size());
     assert_equal("[\"Nicolaus\", \"Daniel\", \"Johann\"]", res.to_json());
     Value res2 = root.call("/.tree", Value("/Nikolaus/Johann"));
+    res2 = res2[1];
     assert_equal(res2.to_json(), res.to_json()); // should be the same as list if there are no children
   }
   
@@ -49,7 +53,8 @@ public:
     Value res;
 
     res = root.call("/.tree", Value("/Zorglub"));
-    assert_true(res.is_nil());
+    assert_equal("/Zorglub", res[0].str());
+    res = res[1];
     assert_equal(0, res.size());
   }
   
