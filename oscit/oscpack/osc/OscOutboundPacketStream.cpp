@@ -450,6 +450,26 @@ OutboundPacketStream& OutboundPacketStream::operator<<( const AnyType& rhs )
 
     return *this;
 }
+
+OutboundPacketStream& OutboundPacketStream::operator<<( const ArrayStartType& rhs )
+{
+    (void) rhs;
+    CheckForAvailableArgumentSpace(0);
+
+    *(--typeTagsCurrent_) = ARRAY_START_TYPE_TAG;
+
+    return *this;
+}
+
+OutboundPacketStream& OutboundPacketStream::operator<<( const ArrayEndType& rhs )
+{
+    (void) rhs;
+    CheckForAvailableArgumentSpace(0);
+
+    *(--typeTagsCurrent_) = ARRAY_END_TYPE_TAG;
+
+    return *this;
+}
 // ]
 
 OutboundPacketStream& OutboundPacketStream::operator<<( int32 rhs )
