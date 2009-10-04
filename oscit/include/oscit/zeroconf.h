@@ -34,7 +34,7 @@ class ZeroConfRegistration : public Mutex {
   Implementation *impl_;
 };
 
-/** This class let's you easily register an application as providing a certain type of
+/** This class let's you easily found applications providing a certain
  *  service.
  */
 class ZeroConfBrowser : public Mutex {

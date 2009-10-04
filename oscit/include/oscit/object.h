@@ -1,4 +1,4 @@
-/** Copyright 2009 Gaspard Bucher - Buma
+/** Copyright 2009 Gaspard Bucher
  *
  */
 
@@ -117,6 +117,7 @@ class Object : public Typed {
   template<class T>
   T * adopt(T * object) {
     object->set_parent(this);
+    // FIXME: remove 'moved()' when tests pass: already called in 'set_parent'
     object->moved();
     return object;
   }
@@ -165,7 +166,7 @@ class Object : public Typed {
   }
 
   /** Inform the object of an alias linked to this object (has to be deleted
-   *  on destruction). 
+   *  on destruction).
    */
   void register_alias(Alias *alias);
 
@@ -200,8 +201,8 @@ class Object : public Typed {
 
   /** ========================== REPLIES TO META METHODS ======================
    * The replies to meta methods are implemented as virtuals so that objects
-   * that inherit from osc::Object just need to overwrite these in order to 
-   * return more meaningful information / content. 
+   * that inherit from osc::Object just need to overwrite these in order to
+   * return more meaningful information / content.
    */
 
   /** List sub-nodes.
@@ -210,7 +211,7 @@ class Object : public Typed {
    * [name, name, ...].
    */
   const Value list() const;
-  
+
   /** List sub-nodes with their current value and type.
    * This method is used as a reply to the /.list_with_type meta method.
    * The format of the reply is a list of names with the type:
@@ -237,7 +238,7 @@ class Object : public Typed {
   const Value &type() const {
     return type_;
   }
-  
+
   /** Type information with current value (used to automatically generate the correct control).
    * Called during response to "/.type '/this/url'".
    */
@@ -331,7 +332,11 @@ class Object : public Typed {
   /** Child sends a notification to the parent when it's name changes so that
    *  the parent/root keep their url hash in sync.
    */
-  void register_child(Object * pChild);
+  void register_child(Object *child);
+
+  /** Free the child from the list of children.
+   */
+  void unregister_child(Object *child);
 
   /** Update cached url, notify root_ of the position change.
    */
@@ -358,10 +363,6 @@ class Object : public Typed {
   void type_changed() {
     type_id_ = type_.size() > 0 ? type_[0].type_id() : NO_TYPE_TAG_ID;
   }
-
-  /** Free the child from the list of children.
-   */
-  void unregister_child(Object *pChild);
 
   /** List of aliases to destroy when
    * this node disappears.
@@ -399,7 +400,7 @@ class Object : public Typed {
   Mutex *context_;
 
  private:
-   
+
   /** Value that holds type information on the 'trigger' method of this
    *  object.
    *  If the type_ is not a list, this means the object is not callable and
