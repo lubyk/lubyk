@@ -9,17 +9,19 @@
 
 namespace oscit {
 
-void Root::init() {
+void Root::init(bool should_build_meta) {
   url_ = "";
   set_root(this);
   
-  // build meta methods
-  adopt(new ErrorMetaMethod(Url(ERROR_PATH).name()));
-  adopt(new InfoMetaMethod(Url(INFO_PATH).name()));
-  adopt(new ListMetaMethod(Url(LIST_PATH).name()));
-  adopt(new ListWithTypeMetaMethod(Url(LIST_WITH_TYPE_PATH).name()));
-  adopt(new TypeMetaMethod(Url(TYPE_PATH).name()));
-  adopt(new TreeMetaMethod(Url(TREE_PATH).name()));
+  if (should_build_meta) {
+    // build meta methods
+    adopt(new ErrorMetaMethod(Url(ERROR_PATH).name()));
+    adopt(new InfoMetaMethod(Url(INFO_PATH).name()));
+    adopt(new ListMetaMethod(Url(LIST_PATH).name()));
+    adopt(new ListWithTypeMetaMethod(Url(LIST_WITH_TYPE_PATH).name()));
+    adopt(new TypeMetaMethod(Url(TYPE_PATH).name()));
+    adopt(new TreeMetaMethod(Url(TREE_PATH).name()));
+  }
 }
 
 } // oscit

@@ -14,6 +14,7 @@ namespace oscit {
 #define LIST_WITH_TYPE_PATH "/.list_with_type"
 #define TYPE_PATH "/.type"
 #define TREE_PATH "/.tree"
+#define REPLY_PATH "/.reply"
 
 /** Root object. You can only start new trees with root objects. 
 
@@ -29,6 +30,10 @@ class Root : public Object
  public: 
   /** Class signature. */
   TYPED("Object.Root")
+  
+  Root(bool should_build_meta) : objects_(OBJECT_HASH_SIZE) {
+    init(should_build_meta);
+  }
   
   Root() : objects_(OBJECT_HASH_SIZE) {
     init();
@@ -291,7 +296,7 @@ class Root : public Object
     return object;
   }
    
-  void init();
+  void init(bool should_build_meta = true);
   
   std::list<Command *> commands_;    /**< Listening commands (only one allowed per protocol). */
 };
