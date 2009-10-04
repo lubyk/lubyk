@@ -36,7 +36,7 @@ class Command : public Thread
   virtual void kill() {
     this->Thread::kill();
   }
-  
+
   /** Start the command in a new thread.
    */
   void start_command() {
@@ -54,63 +54,92 @@ class Command : public Thread
   virtual void notify_observers(const char *url, const Value &val) {}
 
   /** Returns a pointer to an object that can be used to send values to a remote object.
-   * The receiver should create an alias for the remote_object (do not keep the pointer).
-   * @param remote_url should contain the full url with protocol and domain: osc://video.local/vid/contrast. */
+   *  The receiver should create an alias for the remote_object (do not keep the pointer).
+   *  @param remote_url should contain the full url with protocol and domain: osc://video.local/vid/contrast. */
   Object *remote_object(const Url &remote_url, Value *error);
-  
+
   uint16_t port() { return port_; }
 
  protected:
   friend class Root;
-  
+
+
+  /** We have just adopted this proxy: start routing 'reply' messages to it.
+   */
+  void register_proxy(RootProxy *proxy);
+
+  /** Forget about this proxy: stop sending content of 'reply' messages to it.
+   */
+  void unregister_proxy(RootProxy *proxy);
+
   /** Should be called by sub-classes when they have finished
-   * initializing and are ready to go public.
+   *  initializing and are ready to go public.
    */
   void publish_service();
-  
+
   /** Should only be used by Root.
    */
   void set_root(Root *root) { root_ = root; }
 
-  /** Build an object to communicate with a remote endpoint. */
+  /** Build an object to communicate with a remote endpoint.
+   *  FIXME: maybe we do not need this since we have RootPoxy...
+   */
   virtual Object *build_remote_object(const Url &remote_url, Value *error) = 0;
 
   /** Listen for commands (in new thread).
    */
   virtual void listen() = 0;
 
+  /** FIXME: maybe we do not need this since we have RootPoxy...
+   */
   template<class T>
   T * adopt_remote_object(const std::string &url, T* object) {
     remote_objects_.set(url, object);
     return object;
   }
 
-  /**< Contains remote_objects (TODO: purge if no alias and not used...).
+  /** Adopt a new RootProxy and start using it to route messages for its
+   *  endpoint identifier.
+   */
+  template<class T>
+  T * adopt_proxy(T * proxy) {
+    proxy->set_command(this);
+    return proxy;
+  }
+
+
+  /** Contains remote_objects (TODO: purge if no alias and not used...).
+   *  FIXME: maybe we do not need this since we have RootPoxy...
    */
   THash<std::string, Object*> remote_objects_;
 
   Root *root_;
-  
+
   /** Connected port.
-  */
+   */
   uint16_t port_;
 
  private:
-   
+
   /** Type of protocol this command is responsible for. For example if
-   * a command has 'http' protocol, then all urls starting with 'http://' will
-   * be forwarded to this command.
+   *  a command has 'http' protocol, then all urls starting with 'http://' will
+   *  be forwarded to this command.
    */
   const std::string protocol_;
-  
+
   /** Service type published by this command.
-   * If this value is empty, no service will be published.
+   *  If this value is empty, no service will be published.
    */
   const std::string service_type_;
-  
+
   /** Zeroconf registration thread started when 'publish_service()' is called.
    */
   ZeroConfRegistration *zeroconf_registration_;
+
+  /** Route for 'reply' messages which are sent to the proxy identified
+   *  by the IP endpoint (origin of the message).
+   */
+  THash<IpEndPoint, RootProxy*> root_proxies_;
 };
 
 } // oscit
