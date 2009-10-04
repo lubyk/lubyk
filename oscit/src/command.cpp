@@ -6,7 +6,7 @@
 namespace oscit {
 
 Command::Command(const char *protocol) :
-                                remote_objects_(REMOTE_OBJECTS_HASH_SIZE), 
+                                remote_objects_(REMOTE_OBJECTS_HASH_SIZE),
                                 root_(NULL),
                                 port_(0),
                                 protocol_(protocol),
@@ -40,7 +40,7 @@ Command::Command(Root *root, const char *protocol, const char *service_type, uin
 Command::~Command() {
   kill();
   if (zeroconf_registration_ != NULL) delete zeroconf_registration_;
-  
+
   if (root_) {
     root_->unregister_command(this);
     root_ = NULL;
@@ -74,6 +74,18 @@ void Command::publish_service() {
     }
     zeroconf_registration_ = new ZeroConfRegistration(name.c_str(), service_type_.c_str(), port_);
   }
+}
+
+void Command::register_proxy(RootProxy *proxy) {
+  // 1. make sure it is not in dictionary
+  unregister_proxy(proxy);
+
+  // 3. add to dictionary
+  root_proxies_.set(proxy->end_point_, proxy);
+}
+
+void Commmand::unregister_proxy(RootProxy *proxy) {
+  root_proxies_.remove_element(proxy);
 }
 
 } // oscit
