@@ -81,7 +81,7 @@ void Command::register_proxy(RootProxy *proxy) {
   unregister_proxy(proxy);
 
   // 3. add to dictionary
-  root_proxies_.set(proxy->end_point_, proxy);
+  root_proxies_.set(proxy->endpoint_id(), proxy);
 }
 
 void Commmand::unregister_proxy(RootProxy *proxy) {

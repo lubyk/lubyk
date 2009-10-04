@@ -38,6 +38,13 @@ public:
    */
   void set_command(Command *command);
 
+  /** Return a unique identifier for an endpoint.
+   *  this method should be part of an abstract Location class
+   *  that could cleanly encapsulate an IpEndPoint, a Pipe or any
+   *  other way to connect two places.
+   */
+  const std::string &endpoint_id();
+
 private:
 
   /** Get an object proxy at a defined url.
