@@ -8,6 +8,8 @@
 using namespace oscit;
 
 #define TEST_FIXTURES_PATH "../test/fixtures"
+#define ROOT1_PORT 7014
+#define ROOT2_PORT 7015
 
 std::string fixture_path(const char *path) {
   return std::string(TEST_FIXTURES_PATH).append("/").append(path);

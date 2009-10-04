@@ -6,9 +6,6 @@
 #include "oscit/list_with_type_meta_method.h"
 #include "ip/UdpSocket.h"
 
-#define ROOT1_PORT 7014
-#define ROOT2_PORT 7015
-
 class OscCommandTest : public TestHelper
 {
  public:

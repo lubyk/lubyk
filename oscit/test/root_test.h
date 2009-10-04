@@ -234,5 +234,10 @@ public:
     assert_equal(".info", res[1][0].str());
   }
   
+  void test_create_root_without_meta( void ) {
+    Root root(false);
+    Value res = root.list();
+    assert_equal(0, res[1].size());
+  }
   // remote objects and 'send' testing is done in command_test.h
 };

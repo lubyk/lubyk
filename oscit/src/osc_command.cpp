@@ -168,7 +168,7 @@ public:
     if (val.is_nil()) return;
 
     if (val.is_error()) {
-      send(remote_endpoint, "/.error", val);
+      send(remote_endpoint, ERROR_PATH, val);
     } else {
       // reply to all
 
@@ -176,9 +176,9 @@ public:
       Value res(url);
       res.push_back(val);
 
-      send(remote_endpoint, "/.reply", res);
+      send(remote_endpoint, REPLY_PATH, res);
 
-      send_to_observers("/.reply", res, &remote_endpoint); // skip remote_endpoint
+      send_to_observers(REPLY_PATH, res, &remote_endpoint); // skip remote_endpoint
     }
   }
 
@@ -353,6 +353,12 @@ Object *OscCommand::build_remote_object(const Url &url, Value *error) {
 }
 
 void OscCommand::process_message(const IpEndpointName &remote_endpoint, const std::string &url, const Value &val) {
+  // TODO: we need to know the call's origin, at least for "/.reply" ...
+  // TODO: should we use
+  // TODO: this: Value res = root_->call(url, val, &Context(this, remote_endpoint)); // ?
+  // OR: OscCommand::process_message(const Context &context, ..., ...)
+  // Value res = root_->call(url, val, &context); context ==> {this, remote_endpoint} ?
+  // OR: if (url == REPLY_PATH) { root_->handle_reply(val, ..., ...) } ?
   Value res = root_->call(url, val, this);
   
   // send return
