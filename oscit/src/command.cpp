@@ -11,7 +11,8 @@ Command::Command(const char *protocol) :
                                 port_(0),
                                 protocol_(protocol),
                                 service_type_(""),
-                                zeroconf_registration_(NULL) {}
+                                zeroconf_registration_(NULL),
+                                root_proxies_(ROOT_PROXY_HASH_SIZE) {}
 
 Command::Command(const char *protocol, const char *service_type, uint16_t port) :
                                 remote_objects_(REMOTE_OBJECTS_HASH_SIZE),
@@ -19,7 +20,8 @@ Command::Command(const char *protocol, const char *service_type, uint16_t port) 
                                 port_(port),
                                 protocol_(protocol),
                                 service_type_(service_type),
-                                zeroconf_registration_(NULL) {}
+                                zeroconf_registration_(NULL),
+                                root_proxies_(ROOT_PROXY_HASH_SIZE) {}
 
 Command::Command(Root *root, const char *protocol) :
                                 remote_objects_(REMOTE_OBJECTS_HASH_SIZE),
@@ -27,7 +29,8 @@ Command::Command(Root *root, const char *protocol) :
                                 port_(0),
                                 protocol_(protocol),
                                 service_type_(""),
-                                zeroconf_registration_(NULL) {}
+                                zeroconf_registration_(NULL),
+                                root_proxies_(ROOT_PROXY_HASH_SIZE) {}
 
 Command::Command(Root *root, const char *protocol, const char *service_type, uint16_t port) :
                                 remote_objects_(REMOTE_OBJECTS_HASH_SIZE),
@@ -35,7 +38,8 @@ Command::Command(Root *root, const char *protocol, const char *service_type, uin
                                 port_(port),
                                 protocol_(protocol),
                                 service_type_(service_type),
-                                zeroconf_registration_(NULL) {}
+                                zeroconf_registration_(NULL),
+                                root_proxies_(ROOT_PROXY_HASH_SIZE) {}
 
 Command::~Command() {
   kill();
@@ -81,10 +85,10 @@ void Command::register_proxy(RootProxy *proxy) {
   unregister_proxy(proxy);
 
   // 3. add to dictionary
-  root_proxies_.set(proxy->endpoint_id(), proxy);
+  // root_proxies_.set(proxy->location(), proxy);
 }
 
-void Commmand::unregister_proxy(RootProxy *proxy) {
+void Command::unregister_proxy(RootProxy *proxy) {
   root_proxies_.remove_element(proxy);
 }
 

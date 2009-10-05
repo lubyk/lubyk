@@ -7,29 +7,38 @@
 
 namespace oscit {
 
-/** Url is a parsed string with easy access to protocol, host, port, path, etc.
+/** The Url is used to access remote locations by wrapping protocol, ip, port and other data.
  *
- * TODO: could we avoid rebuilding 'callee' and 'caller' all the time and just store
- * a reference ?
+ * TODO: keep only a reference to the location in case we need this information very often...
  */
 class Url
 {
  public:
-  explicit Url(const std::string &string) : full_url_(string), port_(0) {
+  explicit Url(const std::string &string) : full_url_(string) {
     parse(string.c_str());
   }
 
-  explicit Url(const char *string) : full_url_(string), port_(0) {
+  explicit Url(const char *string) : full_url_(string) {
     parse(string);
   }
 
   const std::string &str() const { return full_url_; }
 
-  const std::string &protocol() const { return protocol_; }
+  const Location &location() const { return location_; }
 
-  const std::string &host() const { return host_; }
+  const std::string &protocol() const { return location_.protocol_; }
 
-  uint port() const { return port_; }
+  bool has_hostname() const { return location_.reference_by_hostname_; }
+
+  bool has_service_name() const { return !location_.reference_by_hostname_; }
+
+  const std::string &hostname() const { return location_.name_; }
+
+  const std::string &service_name() const { return location_.name_; }
+
+  unsigned long ip() const { return location_.ip_; }
+
+  uint port() const { return location_.port_; }
 
   const std::string &path() const { return path_; }
 
@@ -60,29 +69,23 @@ class Url
   void rebuild_full_url();
 
   void clear() {
-    protocol_ = "";
-    host_     = "";
-    port_     = 0;
-    path_     = "";
+    location_.clear();
+    path_ = "";
   }
 
-  /** FIXME: document why we need all these strings...
+  /** FIXME: document why we this string...
    */
   std::string full_url_;
+
+  /** Host, ip and other information to reach a remote location.
+   *  This can refer to the *target location* if the url is going out
+   *  or to the *source location* when the url is received.
+   */
+  Location location_;
 
   /** Path to method on the called location (callee).
    */
   std::string path_;
-
-  /** Location of the receiver of this url. If this value is NULL, the
-   *  receiver is on the current tree (local call).
-   */
-  Location    *callee_;
-
-  /** Information on the source of a call. If this value is NULL, the
-   *  caller is on the current tree (local call).
-   */
-  Location    *caller_;
 };
 
 std::ostream &operator<<(std::ostream &out_stream, const Url &url);

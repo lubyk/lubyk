@@ -3,53 +3,96 @@
 #include <string>
 #include <ostream>
 
-typedef unsigned int uint;
+#include "oscit/thash.h"
 
 namespace oscit {
 
-/** A location is an abstract reference to a place that is not in the current tree. It can be a remote host
- *  refered to by ip address and port, a pipe or any other place.
- */
 class Location
 {
 public:
-  Location(const std::string &protocol, unsigned long ip, uint port) : protocol_(protocol), ip_(ip), port_(port) {}
-  Location(const char        *protocol, unsigned long ip, uint port) : protocol_(protocol), ip_(ip), port_(port) {}
+  static const unsigned long NO_IP = 0xFFFFFFFF;
+  static const uint NO_PORT = 0;
 
-  const std::string &protocol() {
-    return protocol_;
+  Location() : reference_by_hostname_(false), ip_(NO_IP), port_(NO_PORT) {}
+  Location(const char *protocol, const char *service_name) :
+                      protocol_(protocol), name_(service_name),
+                      reference_by_hostname_(false), ip_(NO_IP), port_(NO_PORT) {}
+  Location(const char *protocol, const char *hostname, uint port) :
+                      protocol_(protocol), name_(hostname),
+                      reference_by_hostname_(true), ip_(NO_IP), port_(port) {}
+  Location(const char *protocol, unsigned long ip, uint port) :
+                      protocol_(protocol),
+                      reference_by_hostname_(true), ip_(ip), port_(port) {
+    set_name_from_ip();
   }
 
-  const std::string &host() {
-    return host_;
+  void clear() {
+    protocol_ = "";
+    name_ = "";
+    reference_by_hostname_ = false;
+    ip_   = NO_IP;
+    port_ = NO_PORT;
   }
 
-  const unsigned long &ip() {
-    return ip_;
+  bool operator!=(const Location &other) {
+    return ip_       != other.ip_       ||
+           port_     != other.port_     ||
+           protocol_ != other.protocol_ ||
+           reference_by_hostname_ != other.reference_by_hostname_ ||
+           name_     != other.name_;
   }
 
-  const uint &port() {
-    return port_;
+  bool operator==(const Location &other) {
+    return protocol_ == other.protocol_ &&
+           (
+             (ip_ != Location::NO_IP && ip_ == other.ip_ && port_ == other.port_) ||
+             (reference_by_hostname_ == other.reference_by_hostname_ && name_ == other.name_)
+           );
   }
 
 private:
-  /** Protocol used to reach the remote location: this indicates to the dispatcher (Root) which
-   *  command it should use (OscCommand for 'osc', PipeCommand for 'pipe', etc).
+  friend std::ostream &operator<<(std::ostream &out_stream, const Location &location);
+  friend class Url;
+  friend uint hashId<const Location&>(const Location &location);
+
+  void set_name_from_ip();
+
+  /** Protocol used (oscit, http, ...)
    */
   std::string protocol_;
 
-  /** Remote host's name (not used when we have an IP)
+  /** This can contain either a hostname (example.com) or a service
+   *  name ("stage camera").
    */
-  std::string host_;
+  std::string name_;
 
-  /** IP address when the location is a remote host reached through the network.
+  /** This tells us if the name_ contains a hostname or a
+   *  service name (true if it is a hostname).
+   */
+  bool reference_by_hostname_;
+
+  /** Once the location has been resolved, we have an IP.
    */
   unsigned long ip_;
 
-  /** Host port used when the location is a remote host reached through the network.
+  /** Port of the remote object (set when location is resolved)
    */
-  uint        port_;
+  uint port_;
 };
+
+// ===== std::string =====
+// FIXME: why do we need this ?
+// sdbm function: taken from http://www.cse.yorku.ca/~oz/hash.html
+template<>
+inline uint hashId(const Location &location) {
+  if (location.ip_ != Location::NO_IP) {
+    return hashId<unsigned long>(location.ip_) + hashId<uint>(location.port_);
+  } else {
+    // FIXME: hashid name_, protocol_, etc.....
+    return hashId<const std::string&>(location.name_);
+  }
+}
+
 
 } // oscit
 

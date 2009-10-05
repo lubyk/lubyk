@@ -10,8 +10,10 @@ class Root;
 class Value;
 class Object;
 class ZeroConfRegistration;
+class RootProxy;
 
 #define REMOTE_OBJECTS_HASH_SIZE 10000
+#define ROOT_PROXY_HASH_SIZE     100
 
 /** This class is responsible for listening to any kind of incoming command (implemented by subclasses in do_listen)
  *  and passing these commands to the root object.
@@ -61,8 +63,8 @@ class Command : public Thread
   uint16_t port() { return port_; }
 
  protected:
-  friend class Root;
-
+  friend class Root;       // set_root
+  friend class RootProxy;  // register_proxy, unregister_proxy
 
   /** We have just adopted this proxy: start routing 'reply' messages to it.
    */
@@ -139,7 +141,7 @@ class Command : public Thread
   /** Route for 'reply' messages which are sent to the proxy identified
    *  by the IP endpoint (origin of the message).
    */
-  THash<IpEndPoint, RootProxy*> root_proxies_;
+  THash<Location, RootProxy*> root_proxies_;
 };
 
 } // oscit

@@ -122,7 +122,7 @@ public:
    * Returns false if no element found.
    */
   bool get(const K &key, const T **retval) const;
-  
+
   /** Get an element's key. Returns false if the element could not be found. */
   bool get_key(const T &pElement, K *retval) const;
 
@@ -439,6 +439,7 @@ inline uint hashId(const std::string &key) {
 }
 
 // ===== std::string =====
+// FIXME: why do we need this ?
 // sdbm function: taken from http://www.cse.yorku.ca/~oz/hash.html
 template<>
 inline uint hashId(const std::string key) {
