@@ -10,7 +10,7 @@ class LogObject : public Object
 public:
   LogObject(const char * name) : Object(name, AnyIO("Log any information.")), logger_(std::ostringstream::out) {}
   
-  virtual const Value trigger (const Value &val) {
+  virtual const Value trigger(const Value &val, const Location *origin) {
     logger_ << val << std::endl;
     return gNilValue;
   }

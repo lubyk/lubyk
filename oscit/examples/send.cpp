@@ -33,7 +33,7 @@ class ShowReplies : public Object
 public:
   ShowReplies(const char * name) : Object(name, AnyIO("Log any information.")) {}
 
-  virtual const Value trigger (const Value &val) {
+  virtual const Value trigger(const Value &val, const Location *origin) {
     std::cout << "[" << url() << "] received " << val << std::endl;
     return gNilValue;
   }

@@ -15,7 +15,7 @@ public:
   
   virtual ~DummyObject() {}
   
-  virtual const Value trigger(const Value &val) {
+  virtual const Value trigger(const Value &val, const Location *origin) {
     if (val.is_real()) value_.r = val.r;
     
     Value my_type(type()[0]);
@@ -83,7 +83,7 @@ public:
     return os.str();
   }
   
-  virtual const Value trigger (const Value &val)
+  virtual const Value trigger(const Value &val, const Location *origin)
   {
     if (val.is_string())
       value_.set(val.c_str());

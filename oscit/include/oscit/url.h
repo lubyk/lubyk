@@ -32,6 +32,10 @@ class Url
 
   Url(const Location &location, const std::string &path) : location_(location), path_(path) {}
 
+  Url(const Location *location, const std::string &path) : path_(path) {
+    if (location) location_ = *location;
+  }
+
   explicit Url(const std::string &string) : full_url_(string) {
     parse(string.c_str());
   }

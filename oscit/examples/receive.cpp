@@ -17,7 +17,7 @@ public:
   /** This is the method triggered in response to the object's url.
    *  In this example this url is "/message".
    */
-  virtual const Value trigger(const Value &val) {
+  virtual const Value trigger(const Value &val, const Location *origin) {
     std::cout << "[" << url() << "] received " << val << std::endl;
     if (val.is_string()) {
       message_ = val.str();

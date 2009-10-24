@@ -13,6 +13,7 @@
 #include "oscit/values.h"
 #include "oscit/thash.h"
 #include "oscit/mutex.h"
+#include "oscit/location.h"
 
 namespace oscit {
 #define OSC_NEXT_NAME_BUFFER_SIZE 20
@@ -129,21 +130,21 @@ class Object : public Typed {
    * This is the method that should be used by objects when they are doing a
    * direct call.
    */
-  const Value safe_trigger(const Value &val, const Mutex *caller_context) {
+  const Value safe_trigger(const Value &val, const Location *origin, const Mutex *caller_context) {
     if (context_ && context_ != caller_context) {
       context_->lock();
-        Value res = trigger(val);
+        Value res = trigger(val, origin);
       context_->unlock();
       return res;
     } else {
-      return trigger(val);
+      return trigger(val, origin);
     }
   }
 
   /** This is the operation executed when the object is called.
    *  In order to benefit from return value optimization and avoid too many copy
    *  you have to use Value v = xxx.trigger(val). */
-  virtual const Value trigger(const Value &val) {
+  virtual const Value trigger(const Value &val, const Location *origin) {
     return gNilValue;
   }
 

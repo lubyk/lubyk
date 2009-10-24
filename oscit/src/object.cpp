@@ -30,7 +30,7 @@ const Value Object::set(const Value &val) {
 
   for (it = val.begin(); it != end; ++it) {
     if ((obj = child(*it)) && val.get(*it, &param)) {
-      res.set(*it, root_->call(obj, param, context_));
+      res.set(*it, root_->call(obj, param, NULL, context_));
     } else {
       res.set(*it, ErrorValue(NOT_FOUND_ERROR, *it));
     }
@@ -48,7 +48,7 @@ bool Object::set_all_ok(const Value &val) {
 
   for (it = val.begin(); it != end; ++it) {
     if ((obj = child(*it)) && val.get(*it, &param)) {
-      all_ok = !root_->call(obj, param, context_).is_error() && all_ok;
+      all_ok = !root_->call(obj, param, NULL, context_).is_error() && all_ok;
     } else {
       all_ok = false;
     }
@@ -186,21 +186,21 @@ const Value Object::list_with_type() const {
 
 const Value Object::type_with_current_value() {
   Value type = type_;
-  
+
   if (type.is_string()) {
     // meta type is string = just information (not callable)
     return type;
   }
-  
+
   if (!type.is_list()) {
     // make sure type is a ListValue
     return ErrorValue(INTERNAL_SERVER_ERROR, "Invalid meta type. Should be a list (found '").append(type.type_tag()).append("').");
   }
-  
+
   if (!type[0].is_any() && !type[0].is_nil()) {
     // get current value
-    Value current = trigger(gNilValue);
-    
+    Value current = trigger(gNilValue, NULL);
+
     if (current.is_nil()) {
       // current type cannot be queried. Leave dummy value.
     } else if (current.type_id() != type[0].type_id()) {
@@ -211,7 +211,7 @@ const Value Object::type_with_current_value() {
     } else {
       type.set_value_at(0, current);
     }
-  
+
   }
   return type;
 }

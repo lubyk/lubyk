@@ -6,19 +6,19 @@ namespace oscit {
 
 class ListWithTypeMetaMethod : public Object
 {
-public:  
+public:
   /** Class signature. */
   TYPED("Object.ListTypesMetaMethod")
-  
+
   ListWithTypeMetaMethod(const char *name)        : Object(name, StringIO("path", "List all children under the given path with their current value and type.")) {}
   ListWithTypeMetaMethod(const std::string &name) : Object(name, StringIO("path", "List all children under the given path with their current value and type.")) {}
 
-  virtual const Value trigger (const Value &path) {
+  virtual const Value trigger(const Value &path, const Location *origin) {
     if (!path.is_string()) return gNilValue;
-    
+
     Value error;
     Object * target = root_->find_or_build_object_at(path.c_str(), &error);
-    
+
     Value reply = path;
     reply.push_back(target ? target->list_with_type() : error);
     return reply;

@@ -26,7 +26,7 @@ class ClassMethod : public Object
       Object(name, type), class_method_(method) {}
   
   /** Trigger: call the class method. */
-  virtual const Value trigger(const Value &val) {
+  virtual const Value trigger(const Value &val, const Location *origin) {
     return (*class_method_)(root_, val);
   }
   
@@ -64,7 +64,7 @@ class Method : public Object
       receiver_(receiver), member_method_(prototype.member_method_) {}
   
   /** Trigger: call the member method on the receiver. */
-  virtual const Value trigger(const Value &val)
+  virtual const Value trigger(const Value &val, const Location *origin)
   {
     return (*member_method_)(receiver_,val);
   }

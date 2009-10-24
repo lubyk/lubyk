@@ -125,7 +125,7 @@ class Root : public Object
    *  url's location contains the origin of the call.
    *  TODO: remove context ?
    */
-  const Value call(const Url& url, const Value &val, const Mutex *context = NULL) {
+  const Value call(const Url &url, const Value &val, const Mutex *context = NULL) {
     Value error;
     Object * target = find_or_build_object_at(url.path(), &error);
 
@@ -136,7 +136,8 @@ class Root : public Object
       return error;
     }
 
-    Value res = call(target, val, context);
+    Value res = call(target, val, &url.location(), context);
+
     if (context != NULL && !res.is_error()) {
       // only notify when context is defined (command call)
       notify_observers(url.path().c_str(), res, context);
@@ -157,7 +158,7 @@ class Root : public Object
       return error;
     }
 
-    return call(target, val, context);
+    return call(target, val, &url.location(), context);
   }
 
   /** Find any object (local or remoate). */
@@ -186,12 +187,12 @@ class Root : public Object
    * their context in order for the locks to work.
    * If you do not follow this rule, you will get deadlocks.
    */
-  inline const Value call(Object *target, const Value &val, const Mutex *context = NULL) {
-    if (val.is_empty()) return call(target, gNilValue, context);
+  inline const Value call(Object *target, const Value &val, const Location *origin, const Mutex *context = NULL) {
+    if (val.is_empty()) return call(target, gNilValue, origin, context);
     if (target->can_receive(val)) {
-      return target->safe_trigger(val, context);
+      return target->safe_trigger(val, origin, context);
     } else {
-      Value type = call(TYPE_PATH, Value(target->url()), context);
+      Value type = call(Url(origin, TYPE_PATH), Value(target->url()), context);
       return ErrorValue(BAD_REQUEST_ERROR, std::string("'").append(target->url()).append("' (").append(target->type().last().str()).append(")."));
     }
   }
