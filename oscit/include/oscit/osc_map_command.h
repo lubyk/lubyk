@@ -9,20 +9,18 @@
 #include "oscit/mapper.h"
 #include "oscit/values.h"
 
-#include "ip/UdpSocket.h"
-
 namespace oscit {
 
 struct TimeRef;
-  
+
 class OscMapCommand : public Script, public OscCommand {
 public:
   OscMapCommand();
-  
+
   OscMapCommand(uint16_t port, uint16_t reply_port);
-  
+
   virtual ~OscMapCommand();
-  
+
   // {4} set/change input port
   const Value port(const Value &val) {
     if (val.is_real() && val.r > 0 && val.r != port_) {
@@ -30,10 +28,10 @@ public:
         change_port(val.r);
       unlock();
     }
-    
+
     return Value(port_);
   }
-  
+
   // {5} set/change input port
   const Value reply_port(const Value &val) {
     if (val.is_real() && val.r > 0) {
@@ -41,14 +39,14 @@ public:
         reply_port_ = val.r;
       unlock();
     }
-    
+
     return Value(reply_port_);
   }
 
  protected:
   /** Executed within mutex lock from own thread.
    */
-  virtual void process_message(const IpEndpointName &remote_endpoint, const std::string &ext_url, const Value &ext_val);
+  virtual void process_message(const Location &remote_endpoint, const std::string &ext_url, const Value &ext_val);
 
   /** Executed within mutex lock from root.
    */
@@ -56,8 +54,8 @@ public:
    send_to_observers(url, val);
   }
 
-  virtual void send_to_observers(const char *url, const Value &val, const IpEndpointName *skip_end_point = NULL);
-  
+  virtual void send_to_observers(const char *url, const Value &val, const Location *skip_end_point = NULL);
+
   /** Mappings compilation.
    */
   virtual const Value eval_script() {
@@ -71,15 +69,15 @@ public:
     unlock();
     return res;
   }
-    
+
  private:
-  
+
   uint16_t reply_port_;
-  
-  /** List of remote endpoints to send replies to.
+
+  /** List of remote endpoints to send replies to indexed by IP
    */
-  THash<unsigned long, IpEndpointName> observers_;
-  
+  THash<unsigned long, Location> observers_;
+
   Mapper mapper_;
   TimeRef *time_ref_;
 };

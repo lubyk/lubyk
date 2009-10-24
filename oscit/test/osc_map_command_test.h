@@ -65,7 +65,7 @@ class OscMapCommandTest : public TestHelper
   }
 
   Mutex context_;
-  IpEndpointName app1_end_point_;
+  Location app1_end_point_;
   Root app1_;
   Root app2_;
   OscCommand *app2_sender_;

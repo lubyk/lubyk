@@ -10,7 +10,12 @@ namespace oscit {
 class Location
 {
 public:
-  static const unsigned long NO_IP = 0xFFFFFFFF;
+  /** IP not configured yet.
+   */
+  static const unsigned long NO_IP = 0;
+  /** Any local IP.
+   */
+  static const unsigned long ANY_IP = 0xFFFFFFFF;
   static const uint NO_PORT = 0;
 
   Location() : reference_by_hostname_(false), ip_(NO_IP), port_(NO_PORT) {}
@@ -22,6 +27,17 @@ public:
                       reference_by_hostname_(true), ip_(NO_IP), port_(port) {}
   Location(const char *protocol, unsigned long ip, uint port) :
                       protocol_(protocol),
+                      reference_by_hostname_(true), ip_(ip), port_(port) {
+    set_name_from_ip();
+  }
+  Location(const char *service_name) :
+                      protocol_("oscit"), name_(service_name),
+                      reference_by_hostname_(false), ip_(NO_IP), port_(NO_PORT) {}
+  Location(const char *hostname, uint port) :
+                      protocol_("oscit"), name_(hostname),
+                      reference_by_hostname_(true), ip_(NO_IP), port_(port) {}
+  Location(unsigned long ip, uint port) :
+                      protocol_("oscit"),
                       reference_by_hostname_(true), ip_(ip), port_(port) {
     set_name_from_ip();
   }
@@ -52,6 +68,14 @@ public:
 
   const std::string name() const {
     return name_;
+  }
+
+  const unsigned long &ip() const {
+    return ip_;
+  }
+
+  const uint &port() const {
+    return port_;
   }
 
 private:

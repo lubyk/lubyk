@@ -15,7 +15,7 @@ namespace oscit {
 #define OSC_OUT_BUFFER_SIZE 2048
 #define OSCIT_SERVICE_TYPE "_oscit._udp"
 
-// #define DEBUG_OSC_COMMAND
+//#define DEBUG_OSC_COMMAND
 
 static void to_stream(osc::OutboundPacketStream &out_stream, const Value &val, bool in_array = false) {
   size_t sz;
@@ -80,7 +80,7 @@ public:
    * FIXME: implement TTL (time to live)
    * FIXME: avoid duplicates (??)
    */
-  void register_observer(const IpEndpointName &observer) {
+  void register_observer(const Location &observer) {
     // TODO: check that the observer is not already in the list of observers_.
     observers_.push_back(observer);
   }
@@ -88,23 +88,19 @@ public:
   /** Send an osc message.
    *  @param remote_endpoint target host.
    */
-  void send(const IpEndpointName &remote_endpoint, const char *url, const Value &val) {
+  void send(const Location &remote_endpoint, const char *url, const Value &val) {
     assert(socket_);
     osc::OutboundPacketStream message( osc_buffer_, OSC_OUT_BUFFER_SIZE );
     build_message(url, val, &message);
     try {
-      socket_->SendTo(remote_endpoint, message.Data(), message.Size());
+      // FIXME: hack oscpack to accept 'Location' or rewrite this layer using ragel...
+      socket_->SendTo(IpEndpointName(remote_endpoint.ip(), remote_endpoint.port()), message.Data(), message.Size());
 #ifdef DEBUG_OSC_COMMAND
-      char address[ IpEndpointName::ADDRESS_AND_PORT_STRING_LENGTH ];
-      // get host ip as string
-      remote_endpoint.AddressAndPortAsString(address);
-      std::cout << "[" << command_->port() << "] --- " << url << "(" << val << ") --> [" << address << "]" << std::endl;
+      std::cout << "[" << command_->port() << "] --- " << url << "(" << val << ") --> [" << remote_endpoint << "]" << std::endl;
 #endif
 
     } catch (std::runtime_error &e) {
-      char address[ IpEndpointName::ADDRESS_AND_PORT_STRING_LENGTH ];
-      remote_endpoint.AddressAndPortAsString(address);
-      printf("Could not connect to %s\n", address);
+      std::cout << "Could not connect to " << remote_endpoint << "\n";
       // TODO: make sure we do not leak here
     }
   }
@@ -118,19 +114,19 @@ public:
         printf("Could not create UdpListeningReceiveSocket on port %i\n", command_->port());
         throw;
       }
-    }  
+    }
 #ifdef DEBUG_OSC_COMMAND
     printf("OscCommand listening on port %i\n", command_->port());
 #endif
     running_ = true;
     // let's trigger zeroconf registration
     command_->publish_service();
-    
+
     // done with initializations
     command_->thread_ready();
     socket_->Run();
   }
-  
+
   void change_port(uint16_t port) {
     try {
       socket_->Bind(IpEndpointName( IpEndpointName::ANY_ADDRESS, port ));
@@ -138,24 +134,26 @@ public:
       printf("Could not create UdpListeningReceiveSocket on port %i\n", port);
     }
   }
-  
+
   /** Callback to process incoming messages. */
-  virtual void ProcessMessage(const osc::ReceivedMessage &message, const IpEndpointName &remote_endpoint) {
+  virtual void ProcessMessage(const osc::ReceivedMessage &message, const IpEndpointName &ip_end_point) {
     Value res;
     std::string url(message.AddressPattern());
+    // TODO: reuse location ?
+    Location remote_endpoint(ip_end_point.address, ip_end_point.port);
 
     if (url == "/.register") {
       register_observer(remote_endpoint);
       // TODO: implement TTL
       // return value ??
+#ifdef DEBUG_OSC_COMMAND
+      std::cout << "[" << command_->port() << "] <-- " << url << "(" << val << ") --- [" << remote_endpoint << "]" << std::endl;
+#endif
     } else {
       Value val(value_from_osc(message));
 
 #ifdef DEBUG_OSC_COMMAND
-      char address[ IpEndpointName::ADDRESS_AND_PORT_STRING_LENGTH ];
-      // get host ip as string
-      remote_endpoint.AddressAndPortAsString(address);
-      std::cout << "[" << command_->port() << "] <-- " << url << "(" << val << ") --- [" << address << "]" << std::endl;
+      std::cout << "[" << command_->port() << "] <-- " << url << "(" << val << ") --- [" << remote_endpoint << "]" << std::endl;
 #endif
       command_->lock();
         command_->process_message(remote_endpoint, url, val);
@@ -164,7 +162,7 @@ public:
   }
 
   /** Send reply to caller and notify observers. */
-  void send_reply(const IpEndpointName &remote_endpoint, const std::string &url, const Value &val) {
+  void send_reply(const Location &remote_endpoint, const std::string &url, const Value &val) {
     if (val.is_nil()) return;
 
     if (val.is_error()) {
@@ -183,9 +181,9 @@ public:
   }
 
   /** Build osc message and send it to all observers. */
-  void send_to_observers(const char *url, const Value &val, const IpEndpointName *skip_end_point = NULL) {
-    std::list<IpEndpointName>::iterator it  = observers_.begin();
-    std::list<IpEndpointName>::iterator end = observers_.end();
+  void send_to_observers(const char *url, const Value &val, const Location *skip_end_point = NULL) {
+    std::list<Location>::iterator it  = observers_.begin();
+    std::list<Location>::iterator end = observers_.end();
 
     osc::OutboundPacketStream message( osc_buffer_, OSC_OUT_BUFFER_SIZE );
     build_message(url, val, &message);
@@ -195,12 +193,11 @@ public:
         // skip
       } else {
         try {
-          socket_->SendTo(*it, message.Data(), message.Size());
+          // FIXME: hack oscpack to use Location or rewrite...
+          socket_->SendTo(IpEndpointName(it->ip(), it->port()), message.Data(), message.Size());
           ++it;
         } catch (std::runtime_error &e) {
-          char address[ IpEndpointName::ADDRESS_AND_PORT_STRING_LENGTH ];
-          it->AddressAndPortAsString(address);
-          printf("Could not send to observer %s\n", address);
+          std::cout << "Could not send to observer " << *it << "\n";
           it = observers_.erase(it);
         }
       }
@@ -236,7 +233,7 @@ public:
         case osc::ARRAY_END_TYPE_TAG:
           // return before type_tags increment
           return type_tags;
-          
+
         // zero length
 
         case osc::INT32_TYPE_TAG:
@@ -269,7 +266,7 @@ public:
     }
     return type_tags;
   }
-  
+
   /** Build a value from osc packet.
    *  @param message osc message.
    *  @return new value corresponding to the osc data.
@@ -294,7 +291,7 @@ public:
    */
   UdpListeningReceiveSocket *socket_;
 
-  std::list<IpEndpointName> observers_; /**< List of satellites that have registered to get return values back. */
+  std::list<Location> observers_; /**< List of satellites that have registered to get return values back. */
 
   char osc_buffer_[OSC_OUT_BUFFER_SIZE];     /** Buffer used to build osc packets. */
   bool running_;
@@ -306,7 +303,7 @@ OscCommand::OscCommand(uint16_t port) :
   impl_ = new OscCommand::Implementation(this);
 }
 
-OscCommand::OscCommand(const char *protocol, const char *service_type, uint16_t port) : 
+OscCommand::OscCommand(const char *protocol, const char *service_type, uint16_t port) :
                     Command(protocol, service_type, port) {
   impl_ = new OscCommand::Implementation(this);
 }
@@ -325,7 +322,7 @@ void OscCommand::notify_observers(const char *url, const Value &val) {
   send_to_observers(url, val);
 }
 
-void OscCommand::send_to_observers(const char *url, const Value &val, const IpEndpointName *skip_end_point) {
+void OscCommand::send_to_observers(const char *url, const Value &val, const Location *skip_end_point) {
   impl_->send_to_observers(url, val, skip_end_point);
 }
 
@@ -333,11 +330,11 @@ void OscCommand::listen() {
   impl_->listen();
 }
 
-void OscCommand::send(const IpEndpointName &remote_endpoint, const std::string &url, const Value &val) {
+void OscCommand::send(const Location &remote_endpoint, const std::string &url, const Value &val) {
   impl_->send(remote_endpoint, url.c_str(), val);
 }
 
-void OscCommand::send(const IpEndpointName &remote_endpoint, const char *url, const Value &val) {
+void OscCommand::send(const Location &remote_endpoint, const char *url, const Value &val) {
   impl_->send(remote_endpoint, url, val);
 }
 
@@ -352,7 +349,7 @@ Object *OscCommand::build_remote_object(const Url &url, Value *error) {
   // return remote_objects_->adopt(new OscRemoteObject(this, end_point, url.path()));
 }
 
-void OscCommand::process_message(const IpEndpointName &remote_endpoint, const std::string &url, const Value &val) {
+void OscCommand::process_message(const Location &remote_endpoint, const std::string &url, const Value &val) {
   // TODO: we need to know the call's origin, at least for "/.reply" ...
   // TODO: should we use
   // TODO: this: Value res = root_->call(url, val, &Context(this, remote_endpoint)); // ?
@@ -360,7 +357,7 @@ void OscCommand::process_message(const IpEndpointName &remote_endpoint, const st
   // Value res = root_->call(url, val, &context); context ==> {this, remote_endpoint} ?
   // OR: if (url == REPLY_PATH) { root_->handle_reply(val, ..., ...) } ?
   Value res = root_->call(url, val, this);
-  
+
   // send return
   impl_->send_reply(remote_endpoint, url, res);
 }

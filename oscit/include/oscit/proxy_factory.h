@@ -26,7 +26,7 @@ public:
    */
   virtual ObjectProxy *build_object_proxy(const std::string &name, const Value &type) = 0;
 
-  virtual RootProxy *build_root_proxy(IpEndpointName* end_point);
+  virtual RootProxy *build_root_proxy(Location* end_point);
 
 private:
 

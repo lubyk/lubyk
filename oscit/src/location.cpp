@@ -24,7 +24,9 @@ std::ostream &operator<<(std::ostream &out_stream, const Location &location) {
 void Location::set_name_from_ip() {
   if (ip_ == NO_IP) {
     name_ = "";
-	} else {
+	} else if (ip_ == ANY_IP) {
+    name_ = "localhost";
+  } else {
 	  std::ostringstream out;
     out <<        ((ip_ >> 24) & 0xFF);
     out << "." << ((ip_ >> 16) & 0xFF);
