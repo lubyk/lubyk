@@ -4,7 +4,7 @@
 #include "oscit/command.h"
 
 namespace oscit {
-  
+
 /** Size of the object hash table. */
 #define OBJECT_HASH_SIZE 10000
 
@@ -16,7 +16,7 @@ namespace oscit {
 #define TREE_PATH "/.tree"
 #define REPLY_PATH "/.reply"
 
-/** Root object. You can only start new trees with root objects. 
+/** Root object. You can only start new trees with root objects.
 
 In case you intend to call elements in the object tree from different
 threads, you should either manage your own mutex locks on each objects
@@ -27,63 +27,63 @@ for every object.
 */
 class Root : public Object
 {
- public: 
+ public:
   /** Class signature. */
   TYPED("Object.Root")
-  
+
   Root(bool should_build_meta) : objects_(OBJECT_HASH_SIZE) {
     init(should_build_meta);
   }
-  
+
   Root() : objects_(OBJECT_HASH_SIZE) {
     init();
   }
-  
+
   Root(const char *name) : Object(name), objects_(OBJECT_HASH_SIZE) {
     init();
   }
-  
+
   Root(const Value &type) : Object(type), objects_(OBJECT_HASH_SIZE) {
     init();
   }
-  
+
   Root(const char *name, const Value &type) : Object(name, type), objects_(OBJECT_HASH_SIZE) {
     init();
   }
-  
+
   Root(size_t hashSize) : objects_(hashSize) {
     init();
   }
-  
+
   Root(size_t hashSize, const char *name) : Object(name), objects_(hashSize) {
     init();
   }
-  
+
   Root(size_t hashSize, const Value &type) : Object(type), objects_(hashSize) {
     init();
   }
-  
+
   Root(size_t hashSize, const char *name, const Value &type) : Object(name, type), objects_(hashSize) {
     init();
   }
-  
+
   virtual ~Root() {
     clear();
     root_ = NULL; // avoid call to unregister_object in ~Object
   }
-  
+
   void clear() {
     while (!commands_.empty()) {
       Command *command = commands_.front();
       command->kill();
       command->set_root(NULL); // avoid call to unregister_command in ~Command
-      
+
       delete command;
       commands_.pop_front();
     }
     this->Object::clear();
   }
-  
+
   /** Start listening for incomming messages from the given command. */
   template<class T>
   T * adopt_command(T *command, bool start = true) {
@@ -94,18 +94,18 @@ class Root : public Object
     }
     command->set_root(this);
     commands_.push_back(command);
-    
+
     if (start) {
       command->start_command();
     }
-    
+
     return command;
   }
-  
+
   void unregister_command(Command *command) {
     commands_.remove(command);
   }
-  
+
   /** Trigger the object located at the given url, passing nil as parameter. */
   const Value call(const char *url, const Mutex *context = NULL) {
     return call(std::string(url), gNilValue, context);
@@ -125,14 +125,14 @@ class Root : public Object
   const Value call(const std::string &path, const Value &val, const Mutex *context = NULL) {
     Value error;
     Object * target = find_or_build_object_at(path, &error);
-    
+
     // FIXME: possible problem here: target deleted by other thread before call..
     // a solution is to use a purgatory for suppressed objects where they are kept for a few seconds.
-    
+
     if (!target) {
       return error;
     }
-    
+
     Value res = call(target, val, context);
     if (context != NULL && !res.is_error()) {
       // only notify when context is defined (command call)
@@ -146,17 +146,17 @@ class Root : public Object
   const Value send(const Url &url, const Value &val, const Mutex *context = NULL) {
     Value error;
     Object * target = object_at(url, &error);
-    
+
     // FIXME: possible problem here: target deleted by other thread before call..
     // a solution is to use a purgatory for suppressed objects where they are kept for a few seconds.
-    
+
     if (!target) {
       return error;
     }
-    
+
     return call(target, val, context);
   }
-  
+
   /** Find any object (local or remoate). */
   Object *object_at(const Url &url, Value *error) {
     if (url.path() == "") {
@@ -178,7 +178,7 @@ class Root : public Object
       }
     }
   }
-  
+
   /** All calls between objects in the same tree should pass
    * their context in order for the locks to work.
    * If you do not follow this rule, you will get deadlocks.
@@ -192,7 +192,7 @@ class Root : public Object
       return ErrorValue(BAD_REQUEST_ERROR, std::string("'").append(target->url()).append("' (").append(target->type().last().str()).append(")."));
     }
   }
-  
+
   /** Notification of name/parent change from an object. This method
    *  keeps the objects dictionary in sync.
    */
@@ -206,20 +206,20 @@ class Root : public Object
     objects_.remove_element(obj);
   }
 
-  /** Find a pointer to an Object from its url. Return false if the object is not found. */
-  bool get_object_at(const std::string &url, Object **retval) {
-    return objects_.get(url, retval);
+  /** Find a pointer to an Object from its path. Return false if the object is not found. */
+  bool get_object_at(const std::string &path, Object **retval) {
+    return objects_.get(path, retval);
   }
 
-  /** Find a pointer to an Object from its url. Return false if the object is not found. */
-  bool get_object_at(const char *url, Object **retval) {
-    return objects_.get(std::string(url), retval);
+  /** Find a pointer to an Object from its path. Return false if the object is not found. */
+  bool get_object_at(const char *path, Object **retval) {
+    return objects_.get(std::string(path), retval);
   }
-  
-  /** Return a pointer to the object located at a given url. NULL if not found. */
-  Object * object_at(const std::string &url) {
+
+  /** Return a pointer to the object located at a given path. NULL if not found. */
+  Object * object_at(const std::string &path) {
     Object *res = NULL;
-    get_object_at(url, &res);
+    get_object_at(path, &res);
     return res;
   }
 
@@ -227,43 +227,43 @@ class Root : public Object
   Object * object_at(const char *url) {
     return object_at(std::string(url));
   }
-  
-  /** Find the object at the given url. Before raising a 404 error, we try to find a 'not_found'
+
+  /** Find the object at the given path. Before raising a 404 error, we try to find a 'not_found'
    *  handler that could build the resource.
    */
-  Object *find_or_build_object_at(const std::string &url, Value *error) {
-    Object *object = do_find_or_build_object_at(url, error);
-    
+  Object *find_or_build_object_at(const std::string &path, Value *error) {
+    Object *object = do_find_or_build_object_at(path, error);
+
     if (object == NULL && (error->is_empty() || (error->is_error() && error->error_code() == NOT_FOUND_ERROR))) {
-      error->set(NOT_FOUND_ERROR, url);
+      error->set(NOT_FOUND_ERROR, path);
     }
-    
+
     return object;
   }
-  
-  /** Find the object at the given url. Before raising a 404 error, we try to find a 'not_found'
+
+  /** Find the object at the given path. Before raising a 404 error, we try to find a 'not_found'
    *  handler that could build the resource.
    */
-  inline Object * find_or_build_object_at(const char *url, Value *error) {
-    return find_or_build_object_at(std::string(url), error);
+  inline Object * find_or_build_object_at(const char *path, Value *error) {
+    return find_or_build_object_at(std::string(path), error);
   }
-  
+
   /* ======================= META METHODS HELPERS ===================== */
-  
+
   /** Send a reply to all commands so they pass it further to their observers.
    */
-  void notify_observers(const char *url, const Value &val, const Mutex *skip_context) {
+  void notify_observers(const char *path, const Value &val, const Mutex *skip_context) {
     std::list<Command*>::iterator it;
     std::list<Command*>::iterator end = commands_.end();
     for (it = commands_.begin(); it != end; ++it) {
       if (*it != skip_context) {
         (*it)->lock();
-          (*it)->notify_observers(url, val);
+          (*it)->notify_observers(path, val);
         (*it)->unlock();
       }
     }
   }
-  
+
   Command *command_for_protocol(const std::string& protocol) {
     std::list<Command*>::iterator it;
     std::list<Command*>::iterator end = commands_.end();
@@ -274,14 +274,14 @@ class Root : public Object
     }
     return NULL;
   }
-  
+
  protected:
   THash<std::string, Object*> objects_;   /**< Hash to find any object in the tree from its url. */
 
  private:
   Object * do_find_or_build_object_at(const std::string &path, Value *error) {
     Object * object = object_at(path);
-    
+
     if (object == NULL) {
       // ask parents to build
       size_t pos = path.rfind("/");
@@ -295,12 +295,12 @@ class Root : public Object
     }
     return object;
   }
-   
+
   void init(bool should_build_meta = true);
-  
+
   std::list<Command *> commands_;    /**< Listening commands (only one allowed per protocol). */
 };
-  
+
 } // namespace oscit
 
 #endif // OSCIT_INCLUDE_OSCIT_ROOT_H_

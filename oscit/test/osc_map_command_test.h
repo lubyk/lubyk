@@ -17,20 +17,20 @@
 class OscMapCommandTest : public TestHelper
 {
  public:
-  OscMapCommandTest() : app1_end_point_("localhot", APP1_PORT) {
+  OscMapCommandTest() : app1_end_point_("localhost", APP1_PORT) {
                                                   // IN      // OUT
     map_cmd_ = app1_.adopt_command(new OscMapCommand(APP1_PORT, APP2_PORT));
-    
+
     app2_sender_  = app2_.adopt_command(new OscCommand(APP2_PORT));
     Object *o = app2_.adopt(new Object("slider"));
     app2_log_ = o->adopt(new LogObject("1"));  //   /slider/1
   }
-  
+
   void setUp() {
     app2_log_->clear();
     app1_.Object::clear(); // empty root but keep commands
   }
-  
+
   void test_received_should_map( void ) {
     DummyObject * foo = app1_.adopt(new DummyObject("foo", 1.0));
     Value res = map_cmd_->script(Value("/slider/1 [0,1] --> /foo [10,20]"));
@@ -39,7 +39,7 @@ class OscMapCommandTest : public TestHelper
     assert_equal(15.0, foo->real());
     assert_equal("", reply());
   }
-  
+
   void test_notifications_should_reverse_map( void ) {
     app1_.adopt(new DummyObject("foo", 1.0));
     Value res = map_cmd_->script(Value("/slider/1 [0,1] --> /foo [10,20]"));
@@ -48,22 +48,22 @@ class OscMapCommandTest : public TestHelper
     // notification should be sent to /slider/1 0.75
     assert_equal("0.75\n", reply());
   }
-  
+
  private:
   void send(const char *url, Real real) {
     send(url, Value(real));
   }
-  
+
   void send(const char *url, const Value &val) {
     app2_sender_->send(app1_end_point_, url, val);
     millisleep(50);
   }
-  
+
   std::string reply() {
     millisleep(50);
     return app2_log_->str();
   }
-  
+
   Mutex context_;
   IpEndpointName app1_end_point_;
   Root app1_;

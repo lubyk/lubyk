@@ -6,7 +6,7 @@
 #include <stdlib.h> // atoi
 #include <string.h> // strlen
 
-#define DEBUG_PARSER
+// #define DEBUG_PARSER
 
 namespace oscit {
 

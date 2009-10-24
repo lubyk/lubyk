@@ -131,7 +131,7 @@ public:
     } else if (type_ == HASH_VALUE) {
       old_ref = ReferenceCounted::acquire(hash_);
     }
-    
+
     switch (other.type_) {
       case REAL_VALUE:
         set(other.r);
@@ -167,11 +167,11 @@ public:
       default:
         set_nil();
     }
-    
+
     if (old_ref) {
       ReferenceCounted::release(old_ref);
     }
-    
+
     return *this;
   }
 
@@ -302,6 +302,7 @@ public:
 
 
   /** =========================================================    Empty   */
+  /** TODO: rename to 'void' ? because empty also means 'empty array'... */
   bool is_empty() const { return type_ == EMPTY_VALUE; }
 
   /** Change the value to nil. */

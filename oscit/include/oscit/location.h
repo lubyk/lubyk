@@ -34,7 +34,7 @@ public:
     port_ = NO_PORT;
   }
 
-  bool operator!=(const Location &other) {
+  bool operator!=(const Location &other) const {
     return ip_       != other.ip_       ||
            port_     != other.port_     ||
            protocol_ != other.protocol_ ||
@@ -42,7 +42,7 @@ public:
            name_     != other.name_;
   }
 
-  bool operator==(const Location &other) {
+  bool operator==(const Location &other) const {
     return protocol_ == other.protocol_ &&
            (
              (ip_ != Location::NO_IP && ip_ == other.ip_ && port_ == other.port_) ||
@@ -50,10 +50,14 @@ public:
            );
   }
 
+  const std::string name() const {
+    return name_;
+  }
+
 private:
   friend std::ostream &operator<<(std::ostream &out_stream, const Location &location);
   friend class Url;
-  friend uint hashId<const Location&>(const Location &location);
+  friend uint hashId(const Location &location);
 
   void set_name_from_ip();
 
@@ -80,16 +84,12 @@ private:
   uint port_;
 };
 
-// ===== std::string =====
-// FIXME: why do we need this ?
-// sdbm function: taken from http://www.cse.yorku.ca/~oz/hash.html
-template<>
 inline uint hashId(const Location &location) {
   if (location.ip_ != Location::NO_IP) {
-    return hashId<unsigned long>(location.ip_) + hashId<uint>(location.port_);
+    return hashId(location.ip_) + hashId(location.port_);
   } else {
     // FIXME: hashid name_, protocol_, etc.....
-    return hashId<const std::string&>(location.name_);
+    return hashId(location.name_);
   }
 }
 

@@ -1,3 +1,4 @@
+
 #line 1 "/Users/gaspard/git/rubyk/oscit/src/mapper.rl"
 #include <string>
 
@@ -58,11 +59,12 @@ bool Mapper::reverse_map(const std::string &source, Real value, std::string *tar
 
 //// Mapping parser ///////
 
+
 #line 173 "/Users/gaspard/git/rubyk/oscit/src/mapper.rl"
 
 
 
-#line 66 "/Users/gaspard/git/rubyk/oscit/src/mapper.cpp"
+#line 68 "/Users/gaspard/git/rubyk/oscit/src/mapper.cpp"
 static const char _mapper_actions[] = {
 	0, 1, 0, 1, 1, 1, 2, 1, 
 	3, 1, 4, 1, 5, 1, 6, 1, 
@@ -209,6 +211,7 @@ static const int mapper_error = 0;
 static const int mapper_en_eat_line = 49;
 static const int mapper_en_main = 1;
 
+
 #line 176 "/Users/gaspard/git/rubyk/oscit/src/mapper.rl"
 
 bool Mapper::parse(const std::string &definitions) {
@@ -229,14 +232,15 @@ bool Mapper::parse(const std::string &definitions) {
  Real source_min, source_max, target_min, target_max;
 
  
-#line 233 "/Users/gaspard/git/rubyk/oscit/src/mapper.cpp"
+#line 236 "/Users/gaspard/git/rubyk/oscit/src/mapper.cpp"
 	{
 	cs = mapper_start;
 	}
+
 #line 195 "/Users/gaspard/git/rubyk/oscit/src/mapper.rl"
 
  
-#line 240 "/Users/gaspard/git/rubyk/oscit/src/mapper.cpp"
+#line 244 "/Users/gaspard/git/rubyk/oscit/src/mapper.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -426,7 +430,7 @@ _match:
 #line 155 "/Users/gaspard/git/rubyk/oscit/src/mapper.rl"
 	{ {cs = (state); goto _again;} printf("comment: [%s:%i]\n", p, cs);}
 	break;
-#line 430 "/Users/gaspard/git/rubyk/oscit/src/mapper.cpp"
+#line 434 "/Users/gaspard/git/rubyk/oscit/src/mapper.cpp"
 		}
 	}
 
@@ -461,13 +465,14 @@ _again:
     {cs = 49; goto _again;} // eat the rest of the line and continue parsing
   }
 	break;
-#line 465 "/Users/gaspard/git/rubyk/oscit/src/mapper.cpp"
+#line 469 "/Users/gaspard/git/rubyk/oscit/src/mapper.cpp"
 		}
 	}
 	}
 
 	_out: {}
 	}
+
 #line 197 "/Users/gaspard/git/rubyk/oscit/src/mapper.rl"
 
  return true;

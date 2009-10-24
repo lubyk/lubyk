@@ -55,9 +55,6 @@ struct THashElement
   THashElement<K,T> * next;
 };
 
-template<class K>
-static uint hashId(K key);
-
 // K is the key class, T is the object class
 template <class K, class T>
 class THash
@@ -380,7 +377,6 @@ void THash<K,T>::to_stream(std::ostream &out_stream, bool lazy) const {
 
 // ===== uint =====
 // Thomas Wang's 32 Bit Mix Function: http://www.cris.com/~Ttwang/tech/inthash.htm
-template<>
 inline uint hashId(const uint key) {
   uint res = key;
   res += ~(res << 15);
@@ -392,7 +388,6 @@ inline uint hashId(const uint key) {
   return res;
 }
 
-template<>
 inline uint hashId(const unsigned long key) {
   uint res = key;
   res += ~(res << 15);
@@ -406,7 +401,6 @@ inline uint hashId(const unsigned long key) {
 
 // ===== char *      =====
 // sdbm function: taken from http://www.cse.yorku.ca/~oz/hash.html
-template<>
 inline uint hashId(const char *str) {
   unsigned long h = 0;
   int c;
@@ -420,7 +414,6 @@ inline uint hashId(const char *str) {
 
 // We use the simpler hash to avoid too long compile times in the static string hash macro.
 
-template<>
 inline uint hashId(const char c) {
   return HASH_FUNCTION(HASH_CONSTANT, c);
 }
@@ -432,19 +425,11 @@ inline uint hashId(const char c) {
 
 // ===== std::string& =====
 // sdbm function: taken from http://www.cse.yorku.ca/~oz/hash.html
-template<>
 inline uint hashId(const std::string &key) {
   const char *str = key.c_str();
   return hashId(str);
 }
 
-// ===== std::string =====
-// FIXME: why do we need this ?
-// sdbm function: taken from http://www.cse.yorku.ca/~oz/hash.html
-template<>
-inline uint hashId(const std::string key) {
-  return hashId<const std::string&>(key);
-}
 
 } // oscit
 
