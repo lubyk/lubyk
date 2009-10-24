@@ -24,6 +24,9 @@ public:
   Location(const char *protocol, const char *service_name) :
                       protocol_(protocol), name_(service_name),
                       reference_by_hostname_(false), ip_(NO_IP), port_(NO_PORT) {}
+  Location(const char *protocol, const char *service_name, unsigned long ip, uint port) :
+                      protocol_(protocol), name_(service_name),
+                      reference_by_hostname_(false), ip_(ip), port_(port) {}
   Location(const char *protocol, const char *hostname, uint port) :
                       protocol_(protocol), name_(hostname),
                       reference_by_hostname_(true), ip_(NO_IP), port_(port) {}

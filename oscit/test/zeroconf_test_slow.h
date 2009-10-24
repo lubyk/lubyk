@@ -6,26 +6,20 @@
 
 class DummyBrowser : public ZeroConfBrowser {
 public:
-  DummyBrowser(const char *service) : ZeroConfBrowser(service), stream_(std::ostringstream::out), was_more_coming_(false) {}
+  DummyBrowser(const char *service) : ZeroConfBrowser(service), stream_(std::ostringstream::out) {}
 
   ~DummyBrowser() {
     stop();
   }
 
-  virtual void add_device(const char *name, const char *host, unsigned int port, bool more_coming) {
-    if (!was_more_coming_) {
-      // only record first entry in case there are more then one network interfaces
-      stream_ << "[+ " << name << " @ " << port << "]";
-    }
-    was_more_coming_ = more_coming;
+  virtual void add_device(const Location &location) {
+    // only record first entry in case there are more then one network interfaces
+    stream_ << "[+ " << location.name() << " @ " << location.port() << "]";
   }
 
   virtual void remove_device(const char *name, bool more_coming) {
-    if (!was_more_coming_) {
-      // only record first entry in case there are more then one network interfaces
-      stream_ << "[- " << name << "]";
-    }
-    was_more_coming_ = more_coming;
+    // only record first entry in case there are more then one network interfaces
+    stream_ << "[- " << name << "]";
   }
 
   const std::string str() { return stream_.str(); }
@@ -33,7 +27,6 @@ public:
 
 private:
   std::ostringstream stream_;
-  bool was_more_coming_;
 };
 
 class DummyRegistration : public ZeroConfRegistration {

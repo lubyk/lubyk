@@ -59,10 +59,14 @@
 
 - (void)netServiceDidResolveAddress:(NSNetService *)service {
   NSLog(@"\n\nResolved: %@ in %@:%i addresses: %i\n", [service name], [service hostName], [service port], [[service addresses] count]);
-  master_->add_device( [[service name] UTF8String],
-                       [[service hostName] UTF8String],
-                       [service port],
-                       false);
+  //[[service hostName] UTF8String]
+
+  master_->add_device(Location(
+                        master_->protocol_.c_str(),
+                        [[service name] UTF8String],
+                        Location::ANY_IP, // FIXME: get IP !
+                        [service port]
+                        ));
 }
 
 - (void)netService:(NSNetService *)service didNotResolve:(NSDictionary *)errorDict {
@@ -100,11 +104,11 @@ public:
   Implementation(ZeroConfBrowser *master) {
     delegate_ = [[NetServiceDelegate alloc] initWithDelegate:master serviceType:master->service_type_.c_str()];
   }
-  
+
   ~Implementation() {
     [delegate_ release];
   }
-  
+
   void stop() {
     [delegate_ stop];
   }
@@ -113,6 +117,7 @@ public:
 };
 
 ZeroConfBrowser::ZeroConfBrowser(const char *service_type) : service_type_(service_type) {
+  get_protocol_from_service_type();
   impl_ = new ZeroConfBrowser::Implementation(this);
 }
 

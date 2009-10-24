@@ -167,7 +167,14 @@ public:
         break;
       case AVAHI_RESOLVER_FOUND:
         impl->browser_->lock();
-          impl->browser_->add_device(name, domain, port, false); // more coming ?
+          // domain ?
+          // AvahiAddress ?
+          impl->browser_->add_device(Location(
+                                      impl->browser_->protocol_.c_str(),
+                                      name,
+                                      Location::ANY_IP, // FIXME: get IP !
+                                      port
+                                      ));
         impl->browser_->unlock();
         break;
     }
@@ -189,6 +196,7 @@ public:
 };
 
 ZeroConfBrowser::ZeroConfBrowser(const char *service_type) : service_type_(service_type) {
+  get_protocol_from_service_type();
   impl_ = new ZeroConfBrowser::Implementation(this);
 }
 

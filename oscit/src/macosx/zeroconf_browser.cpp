@@ -46,11 +46,11 @@ public:
   void browse(Thread *thread) {
     //  release calling thread semaphore
     thread_ready();
-    
+
     DNSServiceErrorType error;
     DNSServiceRef       service;
-    
-    
+
+
     error = DNSServiceBrowse(&service,
       0,                     // no flags
       0,                     // all network interfaces
@@ -58,13 +58,13 @@ public:
       NULL,                  // default domain(s)
       Implementation::browser_callback,    // callback function
       (void*)master_);       // context
-      
+
     if (error == kDNSServiceErr_NoError) {
       browse(service);
     } else {
       fprintf(stderr,"Could not browse for service %s (error %d)\n", master_->service_type_.c_str(), error);//, strerror(errno));
     }
-    
+
     DNSServiceRefDeallocate(service);
   }
 
@@ -114,13 +114,14 @@ public:
     BrowsedDevice *device = (BrowsedDevice*)context;
 
     if (device->flags_ & kDNSServiceFlagsAdd) {
-      device->browser_->add_device(device->name_.c_str(),
-                               device->host_.c_str(),
-                               ntohs(port),
-                               device->flags_ & kDNSServiceFlagsMoreComing);
+      device->browser_->add_device(Location(
+                               device->browser_->protocol_.c_str(),
+                               device->name_.c_str(),
+                               Location::ANY_IP, // FIXME: get IP !
+                               ntohs(port)
+                               ));
     } else {
-      device->browser_->remove_device(device->name_.c_str(),
-                               device->flags_ & kDNSServiceFlagsMoreComing);
+      device->browser_->remove_device(device->name_.c_str());
     }
   }
 
@@ -166,6 +167,7 @@ public:
 };
 
 ZeroConfBrowser::ZeroConfBrowser(const char *service_type) : service_type_(service_type) {
+  get_protocol_from_service_type();
   impl_ = new ZeroConfBrowser::Implementation(this);
 }
 

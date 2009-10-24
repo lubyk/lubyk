@@ -14,8 +14,8 @@ namespace oscit {
  */
 class ProxyFactory : ZeroConfBrowser {
 public:
-  virtual void add_device(const char *name, const char *host, unsigned int port, bool more_coming) {
-    RootProxy *root_proxy = build_root_proxy(end_point);
+  virtual void add_device(const Location &location) {
+    RootProxy *root_proxy = build_root_proxy(location);
     if (root_proxy) {
       register_proxy(root_proxy);
     }
@@ -26,7 +26,7 @@ public:
    */
   virtual ObjectProxy *build_object_proxy(const std::string &name, const Value &type) = 0;
 
-  virtual RootProxy *build_root_proxy(Location* end_point);
+  virtual RootProxy *build_root_proxy(const Location &end_point);
 
 private:
 
