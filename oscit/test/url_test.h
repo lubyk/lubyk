@@ -37,7 +37,7 @@ public:
 
   void test_create_using_service_name_without_protocol( void ) {
     Url url("'my new stage camera'/filter/contrast");
-    assert_equal("", url.protocol());
+    assert_equal("oscit", url.protocol());
     assert_false( url.has_hostname() );
     assert_true(  url.has_service_name() );
     assert_equal("my new stage camera", url.service_name());
@@ -86,5 +86,16 @@ public:
     std::ostringstream out(std::ostringstream::out);
     out << url;
     assert_equal("oscit://\"my place\"/foo/bar/baz", out.str());
+  }
+
+  void test_create_using_ip_port_path( void ) {
+    Url url((10<<24)+4, 1432, "/this/is/a/path");
+    assert_equal("oscit", url.protocol());
+    assert_true( url.has_hostname() );
+    assert_false(url.has_service_name() );
+    assert_equal("10.0.0.4", url.hostname());
+    assert_equal((10<<24)+4, url.ip());
+    assert_equal(1432, url.port());
+    assert_equal("/this/is/a/path", url.path());
   }
 };

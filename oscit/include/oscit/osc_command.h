@@ -24,19 +24,19 @@ public:
   /** Send a notification to all observers.
    * Executed within mutex lock from root.
    */
-  virtual void notify_observers(const char *url, const Value &val);
+  virtual void notify_observers(const char *path, const Value &val);
 
   /** Send an osc message.
    *  @param remote_endpoint target host.
    *  TODO: Not sure if we really need this method...
    */
-  void send(const Location &remote_endpoint, const std::string &url, const Value &val);
+  void send(const Location &remote_endpoint, const std::string &path, const Value &val);
 
   /** Send an osc message.
    *  @param remote_endpoint target host.
    *  TODO: Not sure if we really need this method...
    */
-  void send(const Location &remote_endpoint, const char *url, const Value &val);
+  void send(const Location &remote_endpoint, const char *path, const Value &val);
 
 protected:
   /** Create a reference to a remote object. */
@@ -49,11 +49,11 @@ protected:
   /** Do something useful with the received osc message.
    * Executed within mutex lock from our own thread.
    */
-  virtual void process_message(const Location &remote_endpoint, const std::string &url, const Value &val);
+  virtual void process_message(const Url &url, const Value &val);
 
   /** Send a message to all observers.
    */
-  virtual void send_to_observers(const char *url, const Value &val, const Location *skip_end_point = NULL);
+  virtual void send_to_observers(const char *path, const Value &val, const Location *skip_end_point = NULL);
 
   /** Listen to messages on a different port number.
    */

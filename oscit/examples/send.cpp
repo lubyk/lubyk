@@ -81,7 +81,6 @@ int main(int argc, char * argv[]) {
 
     Thread::millisleep(10); // wait for answer
 
-    std::cout << std::endl;
     input("Continue ? ", continue_input);
     if (continue_input != "yes") {
       gRun = false;

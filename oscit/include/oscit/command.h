@@ -53,7 +53,7 @@ class Command : public Thread
   const std::string &protocol() { return protocol_; }
 
   /** Send a notification to all observers of this command. */
-  virtual void notify_observers(const char *url, const Value &val) {}
+  virtual void notify_observers(const char *path, const Value &val) {}
 
   /** Returns a pointer to an object that can be used to send values to a remote object.
    *  The receiver should create an alias for the remote_object (do not keep the pointer).
@@ -95,8 +95,8 @@ class Command : public Thread
   /** FIXME: maybe we do not need this since we have RootPoxy...
    */
   template<class T>
-  T * adopt_remote_object(const std::string &url, T* object) {
-    remote_objects_.set(url, object);
+  T * adopt_remote_object(const std::string &path, T* object) {
+    remote_objects_.set(path, object);
     return object;
   }
 

@@ -41,6 +41,9 @@ void Url::rebuild_full_url() {
   }
 
   action set_hostname {
+    if (location_.protocol_ == "") {
+      location_.protocol_ = DEFAULT_PROTOCOL;
+    }
     location_.name_ = str_buf;
     location_.reference_by_hostname_ = true;
     str_buf = "";
@@ -48,10 +51,13 @@ void Url::rebuild_full_url() {
   }
 
   action set_service_name {
+    if (location_.protocol_ == "") {
+      location_.protocol_ = DEFAULT_PROTOCOL;
+    }
     location_.name_ = str_buf;
     location_.reference_by_hostname_ = false;
     str_buf = "";
-    DEBUG(printf("[servie \"%s\"\n]", location_.name_.c_str()));
+    DEBUG(printf("[service \"%s\"\n]", location_.name_.c_str()));
   }
 
   action set_port {

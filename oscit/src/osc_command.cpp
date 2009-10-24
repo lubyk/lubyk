@@ -88,15 +88,15 @@ public:
   /** Send an osc message.
    *  @param remote_endpoint target host.
    */
-  void send(const Location &remote_endpoint, const char *url, const Value &val) {
+  void send(const Location &remote_endpoint, const char *path, const Value &val) {
     assert(socket_);
     osc::OutboundPacketStream message( osc_buffer_, OSC_OUT_BUFFER_SIZE );
-    build_message(url, val, &message);
+    build_message(path, val, &message);
     try {
       // FIXME: hack oscpack to accept 'Location' or rewrite this layer using ragel...
       socket_->SendTo(IpEndpointName(remote_endpoint.ip(), remote_endpoint.port()), message.Data(), message.Size());
 #ifdef DEBUG_OSC_COMMAND
-      std::cout << "[" << command_->port() << "] --- " << url << "(" << val << ") --> [" << remote_endpoint << "]" << std::endl;
+      std::cout << "[" << command_->port() << "] --- " << path << "(" << val << ") --> [" << remote_endpoint << "]" << std::endl;
 #endif
 
     } catch (std::runtime_error &e) {
@@ -138,55 +138,54 @@ public:
   /** Callback to process incoming messages. */
   virtual void ProcessMessage(const osc::ReceivedMessage &message, const IpEndpointName &ip_end_point) {
     Value res;
-    std::string url(message.AddressPattern());
     // TODO: reuse location ?
-    Location remote_endpoint(ip_end_point.address, ip_end_point.port);
+    Url   url(ip_end_point.address, ip_end_point.port, message.AddressPattern());
 
-    if (url == "/.register") {
-      register_observer(remote_endpoint);
-      // TODO: implement TTL
+    if (url.path() == "/.register") {
+      register_observer(url.location());
+      // TODO: implement TTL, remove from here: should live in Root.
       // return value ??
 #ifdef DEBUG_OSC_COMMAND
-      std::cout << "[" << command_->port() << "] <-- " << url << "(" << val << ") --- [" << remote_endpoint << "]" << std::endl;
+      std::cout << "[" << command_->port() << "] <-- " << url << "()" << std::endl;
 #endif
     } else {
       Value val(value_from_osc(message));
 
 #ifdef DEBUG_OSC_COMMAND
-      std::cout << "[" << command_->port() << "] <-- " << url << "(" << val << ") --- [" << remote_endpoint << "]" << std::endl;
+      std::cout << "[" << command_->port() << "] <-- " << url << "(" << val << ")" << std::endl;
 #endif
       command_->lock();
-        command_->process_message(remote_endpoint, url, val);
+        command_->process_message(url, val);
       command_->unlock();
     }
   }
 
   /** Send reply to caller and notify observers. */
-  void send_reply(const Location &remote_endpoint, const std::string &url, const Value &val) {
+  void send_reply(const Url &url, const Value &val) {
     if (val.is_nil()) return;
 
     if (val.is_error()) {
-      send(remote_endpoint, ERROR_PATH, val);
+      send(url.location(), ERROR_PATH, val);
     } else {
       // reply to all
 
       // prepare reply
-      Value res(url);
+      Value res(url.path());
       res.push_back(val);
 
-      send(remote_endpoint, REPLY_PATH, res);
+      send(url.location(), REPLY_PATH, res);
 
-      send_to_observers(REPLY_PATH, res, &remote_endpoint); // skip remote_endpoint
+      send_to_observers(REPLY_PATH, res, &url.location()); // skip remote_endpoint
     }
   }
 
   /** Build osc message and send it to all observers. */
-  void send_to_observers(const char *url, const Value &val, const Location *skip_end_point = NULL) {
+  void send_to_observers(const char *path, const Value &val, const Location *skip_end_point = NULL) {
     std::list<Location>::iterator it  = observers_.begin();
     std::list<Location>::iterator end = observers_.end();
 
     osc::OutboundPacketStream message( osc_buffer_, OSC_OUT_BUFFER_SIZE );
-    build_message(url, val, &message);
+    build_message(path, val, &message);
 
     while (it != end) {
       if (skip_end_point != NULL && *it == *skip_end_point) {
@@ -279,9 +278,9 @@ public:
   }
 
   /** Build a message from a value. */
-  static void build_message(const char *url, const Value &val, osc::OutboundPacketStream *message) {
-    // *message << osc::BeginBundleImmediate << osc::BeginMessage(url) << val << osc::EndMessage << osc::EndBundle;
-    *message << osc::BeginMessage(url) << val << osc::EndMessage;
+  static void build_message(const char *path, const Value &val, osc::OutboundPacketStream *message) {
+    // *message << osc::BeginBundleImmediate << osc::BeginMessage(path) << val << osc::EndMessage << osc::EndBundle;
+    *message << osc::BeginMessage(path) << val << osc::EndMessage;
   }
   /** Access to OscCommand.
    */
@@ -318,24 +317,24 @@ void OscCommand::kill() {
   join(); // do not kill, impl_->kill() will stop thread.
 }
 
-void OscCommand::notify_observers(const char *url, const Value &val) {
-  send_to_observers(url, val);
+void OscCommand::notify_observers(const char *path, const Value &val) {
+  send_to_observers(path, val);
 }
 
-void OscCommand::send_to_observers(const char *url, const Value &val, const Location *skip_end_point) {
-  impl_->send_to_observers(url, val, skip_end_point);
+void OscCommand::send_to_observers(const char *path, const Value &val, const Location *skip_end_point) {
+  impl_->send_to_observers(path, val, skip_end_point);
 }
 
 void OscCommand::listen() {
   impl_->listen();
 }
 
-void OscCommand::send(const Location &remote_endpoint, const std::string &url, const Value &val) {
-  impl_->send(remote_endpoint, url.c_str(), val);
+void OscCommand::send(const Location &remote_endpoint, const std::string &path, const Value &val) {
+  impl_->send(remote_endpoint, path.c_str(), val);
 }
 
-void OscCommand::send(const Location &remote_endpoint, const char *url, const Value &val) {
-  impl_->send(remote_endpoint, url, val);
+void OscCommand::send(const Location &remote_endpoint, const char *path, const Value &val) {
+  impl_->send(remote_endpoint, path, val);
 }
 
 Object *OscCommand::build_remote_object(const Url &url, Value *error) {
@@ -349,17 +348,11 @@ Object *OscCommand::build_remote_object(const Url &url, Value *error) {
   // return remote_objects_->adopt(new OscRemoteObject(this, end_point, url.path()));
 }
 
-void OscCommand::process_message(const Location &remote_endpoint, const std::string &url, const Value &val) {
-  // TODO: we need to know the call's origin, at least for "/.reply" ...
-  // TODO: should we use
-  // TODO: this: Value res = root_->call(url, val, &Context(this, remote_endpoint)); // ?
-  // OR: OscCommand::process_message(const Context &context, ..., ...)
-  // Value res = root_->call(url, val, &context); context ==> {this, remote_endpoint} ?
-  // OR: if (url == REPLY_PATH) { root_->handle_reply(val, ..., ...) } ?
+void OscCommand::process_message(const Url &url, const Value &val) {
   Value res = root_->call(url, val, this);
 
   // send return
-  impl_->send_reply(remote_endpoint, url, res);
+  impl_->send_reply(url, res);
 }
 
 void OscCommand::change_port(uint16_t port) {

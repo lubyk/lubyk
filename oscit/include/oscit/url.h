@@ -14,6 +14,24 @@ namespace oscit {
 class Url
 {
  public:
+  Url(const unsigned long ip, const uint port, const char *path) : path_(path) {
+    location_.protocol_ = DEFAULT_PROTOCOL;
+    location_.reference_by_hostname_ = true;
+    location_.ip_   = ip;
+    location_.port_ = port;
+    location_.set_name_from_ip();
+  }
+
+  Url(const unsigned long ip, const uint port, const std::string &path) : path_(path) {
+    location_.protocol_ = DEFAULT_PROTOCOL;
+    location_.reference_by_hostname_ = true;
+    location_.ip_   = ip;
+    location_.port_ = port;
+    location_.set_name_from_ip();
+  }
+
+  Url(const Location &location, const std::string &path) : location_(location), path_(path) {}
+
   explicit Url(const std::string &string) : full_url_(string) {
     parse(string.c_str());
   }

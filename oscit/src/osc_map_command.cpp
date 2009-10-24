@@ -27,7 +27,7 @@ OscMapCommand::~OscMapCommand() {
   time_ref_ = Thread::delete_time_ref(time_ref_);
 }
 
-void OscMapCommand::process_message(const Location &remote_endpoint, const std::string &ext_url, const Value &ext_val) {
+void OscMapCommand::process_message(const Url &ext_url, const Value &ext_val) {
   unlock();
     // release lock because we lock again during eval_script
     reload_script(Thread::real_time(time_ref_));
@@ -36,11 +36,11 @@ void OscMapCommand::process_message(const Location &remote_endpoint, const std::
   const Location *remote_reply;
 
   // register observer
-  if (!observers_.get(remote_endpoint.ip(), &remote_reply)) {
-    observers_.set(remote_endpoint.ip(), Location(remote_endpoint.ip(), reply_port_));
+  if (!observers_.get(ext_url.ip(), &remote_reply)) {
+    observers_.set(ext_url.ip(), Location(ext_url.ip(), reply_port_));
   }
 
-  std::string url;
+  std::string path;
   Real  r;
   Value res;
 
@@ -49,14 +49,14 @@ void OscMapCommand::process_message(const Location &remote_endpoint, const std::
 #endif
   // resolve mapping
   if (ext_val.is_real()) {
-    if (mapper_.map(ext_url, ext_val.r, &url, &r)) {
-      res = root_->call(url, Value(r), this);
+    if (mapper_.map(ext_url.path(), ext_val.r, &path, &r)) {
+      res = root_->call(Url(ext_url.location(), path), Value(r), this);
 #ifdef DEBUG_MAP_COMMAND
-      std::cout << "to            : " << url << "(" << r << ")\n";
+      std::cout << "to            : " << path << "(" << r << ")\n";
 #endif
     } else {
       // no mapping found...
-      // fprintf(stderr, "No mapping found for '%s'\n", ext_url.c_str());
+      // fprintf(stderr, "No mapping found for '%s'\n", ext_path.c_str());
     }
   } else {
     //fprintf(stderr, "Input value not supported (%s)\n", ext_val.to_json().c_str());
@@ -65,7 +65,7 @@ void OscMapCommand::process_message(const Location &remote_endpoint, const std::
 
   // send reply to reply_port with reverse mapping
   if (!res.is_error()) {
-    send_to_observers(url.c_str(), res, &remote_endpoint);
+    send_to_observers(path.c_str(), res, &ext_url.location());
   }
 }
 

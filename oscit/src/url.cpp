@@ -29,7 +29,7 @@ void Url::rebuild_full_url() {
 
 ///////////////// ====== URL PARSER ========= /////////////
 
-#line 91 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
+#line 97 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
 
 
 // transition table
@@ -122,7 +122,7 @@ static const int url_error = 0;
 static const int url_en_main = 1;
 
 
-#line 95 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
+#line 101 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
 
 /** This is a crude JSON parser. */
 void Url::parse(const char *url) {
@@ -139,7 +139,7 @@ void Url::parse(const char *url) {
 	cs = url_start;
 	}
 
-#line 106 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
+#line 112 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
   
 #line 145 "/Users/gaspard/git/rubyk/oscit/src/url.cpp"
 	{
@@ -233,6 +233,9 @@ _match:
 	case 2:
 #line 43 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
 	{
+    if (location_.protocol_ == "") {
+      location_.protocol_ = DEFAULT_PROTOCOL;
+    }
     location_.name_ = str_buf;
     location_.reference_by_hostname_ = true;
     str_buf = "";
@@ -240,16 +243,19 @@ _match:
   }
 	break;
 	case 3:
-#line 50 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
+#line 53 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
 	{
+    if (location_.protocol_ == "") {
+      location_.protocol_ = DEFAULT_PROTOCOL;
+    }
     location_.name_ = str_buf;
     location_.reference_by_hostname_ = false;
     str_buf = "";
-    DEBUG(printf("[servie \"%s\"\n]", location_.name_.c_str()));
+    DEBUG(printf("[service \"%s\"\n]", location_.name_.c_str()));
   }
 	break;
 	case 4:
-#line 57 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
+#line 63 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
 	{
     location_.port_ = atoi(str_buf.c_str());
     str_buf = "";
@@ -257,14 +263,14 @@ _match:
   }
 	break;
 	case 5:
-#line 63 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
+#line 69 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
 	{
     path_ = str_buf;
     str_buf = "";
     DEBUG(printf("[path %s\n]", path_.c_str()));
   }
 	break;
-#line 268 "/Users/gaspard/git/rubyk/oscit/src/url.cpp"
+#line 274 "/Users/gaspard/git/rubyk/oscit/src/url.cpp"
 		}
 	}
 
@@ -277,7 +283,7 @@ _again:
 	_out: {}
 	}
 
-#line 107 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
+#line 113 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
 }
 
 } // oscit

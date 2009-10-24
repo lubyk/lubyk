@@ -46,7 +46,7 @@ public:
  protected:
   /** Executed within mutex lock from own thread.
    */
-  virtual void process_message(const Location &remote_endpoint, const std::string &ext_url, const Value &ext_val);
+  virtual void process_message(const Url &url, const Value &ext_val);
 
   /** Executed within mutex lock from root.
    */

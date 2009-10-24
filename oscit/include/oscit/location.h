@@ -7,6 +7,8 @@
 
 namespace oscit {
 
+#define DEFAULT_PROTOCOL "oscit"
+
 class Location
 {
 public:
@@ -31,13 +33,13 @@ public:
     set_name_from_ip();
   }
   Location(const char *service_name) :
-                      protocol_("oscit"), name_(service_name),
+                      protocol_(DEFAULT_PROTOCOL), name_(service_name),
                       reference_by_hostname_(false), ip_(NO_IP), port_(NO_PORT) {}
   Location(const char *hostname, uint port) :
-                      protocol_("oscit"), name_(hostname),
+                      protocol_(DEFAULT_PROTOCOL), name_(hostname),
                       reference_by_hostname_(true), ip_(NO_IP), port_(port) {}
   Location(unsigned long ip, uint port) :
-                      protocol_("oscit"),
+                      protocol_(DEFAULT_PROTOCOL),
                       reference_by_hostname_(true), ip_(ip), port_(port) {
     set_name_from_ip();
   }

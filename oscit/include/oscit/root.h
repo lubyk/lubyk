@@ -106,25 +106,28 @@ class Root : public Object
     commands_.remove(command);
   }
 
-  /** Trigger the object located at the given url, passing nil as parameter. */
-  const Value call(const char *url, const Mutex *context = NULL) {
-    return call(std::string(url), gNilValue, context);
+  /** Trigger the object located at the given path, passing nil as parameter. */
+  const Value call(const char *path, const Mutex *context = NULL) {
+    return call(Url(Location::NO_IP, Location::NO_PORT, path), gNilValue, context);
   }
 
-  /** Trigger the object located at the given url, passing nil as parameter. */
-  const Value call(std::string &url, const Mutex *context = NULL) {
-    return call(url, gNilValue, context);
+  /** Trigger the object located at the given path, passing nil as parameter. */
+  const Value call(std::string &path, const Mutex *context = NULL) {
+    return call(Url(Location::NO_IP, Location::NO_PORT, path), gNilValue, context);
   }
 
-  /** Trigger the object located at the given url with the given parameters. */
-  const Value call(const char *url, const Value &val, const Mutex *context = NULL) {
-    return call(std::string(url), val, context);
+  /** Trigger the object located at the given path with the given parameters. */
+  const Value call(const char *path, const Value &val, const Mutex *context = NULL) {
+    return call(Url(Location::NO_IP, Location::NO_PORT, path), val, context);
   }
 
-  /** Trigger the object in the local tree located at the given url. */
-  const Value call(const std::string &path, const Value &val, const Mutex *context = NULL) {
+  /** Trigger the object in the local tree located at the given url. At this point, the
+   *  url's location contains the origin of the call.
+   *  TODO: remove context ?
+   */
+  const Value call(const Url& url, const Value &val, const Mutex *context = NULL) {
     Value error;
-    Object * target = find_or_build_object_at(path, &error);
+    Object * target = find_or_build_object_at(url.path(), &error);
 
     // FIXME: possible problem here: target deleted by other thread before call..
     // a solution is to use a purgatory for suppressed objects where they are kept for a few seconds.
@@ -136,7 +139,7 @@ class Root : public Object
     Value res = call(target, val, context);
     if (context != NULL && !res.is_error()) {
       // only notify when context is defined (command call)
-      notify_observers(path.c_str(), res, context);
+      notify_observers(url.path().c_str(), res, context);
     }
     return res;
   }
@@ -223,9 +226,9 @@ class Root : public Object
     return res;
   }
 
-  /** Return a pointer to the object located at a given url. NULL if not found. */
-  Object * object_at(const char *url) {
-    return object_at(std::string(url));
+  /** Return a pointer to the object located at a given path. NULL if not found. */
+  Object * object_at(const char *path) {
+    return object_at(std::string(path));
   }
 
   /** Find the object at the given path. Before raising a 404 error, we try to find a 'not_found'
@@ -276,7 +279,7 @@ class Root : public Object
   }
 
  protected:
-  THash<std::string, Object*> objects_;   /**< Hash to find any object in the tree from its url. */
+  THash<std::string, Object*> objects_;   /**< Hash to find any object in the tree from its path. */
 
  private:
   Object * do_find_or_build_object_at(const std::string &path, Value *error) {
