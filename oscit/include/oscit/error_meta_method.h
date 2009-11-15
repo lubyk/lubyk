@@ -6,10 +6,10 @@ namespace oscit {
 
 class ErrorMetaMethod : public Object
 {
-public:  
+public:
   /** Class signature. */
   TYPED("Object.ErrorMetaMethod")
-  
+
   ErrorMetaMethod(const char * name)       : Object(name, AnyIO("Errors returned should end here.")) {}
   ErrorMetaMethod(const std::string &name) : Object(name, AnyIO("Errors returned should end here.")) {}
 

@@ -10,6 +10,9 @@
 
 namespace oscit {
 
+class ObjectProxy;
+class ProxyFactory;
+
 /** This class helps maintain a 'ghost' tree that mirrors a remote 'real' tree. It is usually used
  * as an element from an interface to interact with some remote device.
  */
@@ -17,7 +20,7 @@ class RootProxy : Root {
 public:
   /** Create a proxy from a remote end_point. Do not build meta methods.
    */
-  RootProxy(const Location &remote_location) : Root(false), remote_location_(remote_location), command_(NULL) {}
+  RootProxy(const Location &remote_location, ProxyFactory *factory) : Root(false), remote_location_(remote_location), command_(NULL) {}
 
   virtual ~RootProxy() {
     // unregister from command_
@@ -30,14 +33,21 @@ public:
 
   /** Keep proxy in sync by parsing replies and sending new queries.
    */
-  virtual void handle_list_reply(const std::string &path, const Value &val) {
+  virtual void handle_reply(const std::string &path, const Value &val) {
     // ObjectProxy *find_or_build_object_proxy_at(path);
   }
 
-  /** Set proxy's new command (communication channel).
-   *  this method registers the RootProxy as into the given command.
+  ObjectProxy *build_object_proxy(const std::string &name, const Value &type);
+
+  /** Set proxy's command (communication channel).
+   *  this method registers the RootProxy into the given command.
    */
   void set_command(Command *command);
+
+  /** Set proxy's factory (used to create new object proxies).
+   *  this method registers the RootProxy into the given factory.
+   */
+  void set_proxy_factory(ProxyFactory *factory);
 
   /** Return a unique identifier for an endpoint.
    *  this method should be part of an abstract Location class
@@ -78,6 +88,10 @@ private:
    *  remote tree.
    */
   Command *command_;
+
+  /** The link to the proxy factory is used by the RootProxy when it needs to create
+   *  new ObjectProxies. */
+  ProxyFactory *proxy_factory_;
 };
 
 

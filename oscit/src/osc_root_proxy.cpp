@@ -1,7 +1,7 @@
 // #include "oscit/osc_root_proxy.h"
 // #include "oscit/osc_command.h"
 // 
-// namespace oscit {
+// oscit {
 // 
 // OscRootProxy::OscRootProxy(OscCommand *command, const IpEndpointName *remote_endpoint) : command_(command) {
 //   remote_endpoint_ = new IpEndpointName(*remote_endpoint);

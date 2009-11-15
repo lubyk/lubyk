@@ -1,6 +1,10 @@
-#include "oscit/zeroconf.h"
 #import <Foundation/NSNetServices.h>
 #import <Foundation/Foundation.h>
+
+#include "oscit/zeroconf.h"
+#include "oscit/proxy_factory.h"
+#include "oscit/root_proxy.h"
+#include "oscit/object_proxy.h"
 
 @interface NetServiceDelegate : NSObject {
   oscit::ZeroConfBrowser *master_;
@@ -116,13 +120,14 @@ public:
   NetServiceDelegate *delegate_;
 };
 
-ZeroConfBrowser::ZeroConfBrowser(const char *service_type) : service_type_(service_type) {
+ZeroConfBrowser::ZeroConfBrowser(const char *service_type) : service_type_(service_type), command_(NULL), proxy_factory_(NULL) {
   get_protocol_from_service_type();
   impl_ = new ZeroConfBrowser::Implementation(this);
 }
 
 ZeroConfBrowser::~ZeroConfBrowser() {
   delete impl_;
+  if (proxy_factory_) delete proxy_factory_;
 }
 
 void ZeroConfBrowser::stop() {

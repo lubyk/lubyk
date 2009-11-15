@@ -62,6 +62,15 @@ class Command : public Thread
 
   uint16_t port() { return port_; }
 
+  /** Adopt a new RootProxy and start using it to route messages for its
+   *  endpoint identifier.
+   */
+  template<class T>
+  T * adopt_proxy(T * proxy) {
+    proxy->set_command(this); // This will trigger 'register_proxy'.
+    return proxy;
+  }
+
  protected:
   friend class Root;       // set_root
   friend class RootProxy;  // register_proxy, unregister_proxy
@@ -99,16 +108,6 @@ class Command : public Thread
     remote_objects_.set(path, object);
     return object;
   }
-
-  /** Adopt a new RootProxy and start using it to route messages for its
-   *  endpoint identifier.
-   */
-  template<class T>
-  T * adopt_proxy(T * proxy) {
-    proxy->set_command(this);
-    return proxy;
-  }
-
 
   /** Contains remote_objects (TODO: purge if no alias and not used...).
    *  FIXME: maybe we do not need this since we have RootPoxy...

@@ -116,7 +116,7 @@ class Object : public Typed {
     * highlights ownership in the parent.
     * TODO: make sure a parent is not adopted by it's child. */
   template<class T>
-  T * adopt(T * object) {
+  T *adopt(T *object) {
     object->set_parent(this);
     // FIXME: remove 'moved()' when tests pass: already called in 'set_parent'
     object->moved();

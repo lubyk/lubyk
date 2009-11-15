@@ -1,3 +1,8 @@
+#include "oscit/zeroconf.h"
+#include "oscit/proxy_factory.h"
+#include "oscit/root_proxy.h"
+#include "oscit/object_proxy.h"
+
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,7 +20,7 @@ extern "C" {
 #include <avahi-common/error.h>
 #include <avahi-common/timeval.h>
 }
-#include "oscit/zeroconf.h"
+
 
 namespace oscit {
 
@@ -195,13 +200,14 @@ public:
   bool running_;
 };
 
-ZeroConfBrowser::ZeroConfBrowser(const char *service_type) : service_type_(service_type) {
+ZeroConfBrowser::ZeroConfBrowser(const char *service_type) : service_type_(service_type), proxy_factory_(NULL) {
   get_protocol_from_service_type();
   impl_ = new ZeroConfBrowser::Implementation(this);
 }
 
 ZeroConfBrowser::~ZeroConfBrowser() {
   delete impl_;
+  if (proxy_factory_) delete proxy_factory_;
 }
 
 void ZeroConfBrowser::stop() {

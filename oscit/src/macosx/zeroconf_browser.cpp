@@ -1,3 +1,9 @@
+#include "oscit/zeroconf.h"
+#include "oscit/thread.h"
+#include "oscit/proxy_factory.h"
+#include "oscit/root_proxy.h"
+#include "oscit/object_proxy.h"
+
 #include <iostream>
 
 #include <stdio.h>			// For stdout, stderr
@@ -18,9 +24,6 @@ typedef	int	pid_t;
 #endif
 
 #include <dns_sd.h>     // zeroconf
-
-#include "oscit/thread.h"
-#include "oscit/zeroconf.h"
 
 namespace oscit {
 
@@ -166,13 +169,14 @@ public:
   ZeroConfBrowser *master_;
 };
 
-ZeroConfBrowser::ZeroConfBrowser(const char *service_type) : service_type_(service_type) {
+ZeroConfBrowser::ZeroConfBrowser(const char *service_type) : service_type_(service_type), command_(NULL), proxy_factory_(NULL) {
   get_protocol_from_service_type();
   impl_ = new ZeroConfBrowser::Implementation(this);
 }
 
 ZeroConfBrowser::~ZeroConfBrowser() {
   delete impl_;
+  if (proxy_factory_) delete proxy_factory_;
 }
 
 void ZeroConfBrowser::stop() {

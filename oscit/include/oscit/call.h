@@ -17,6 +17,6 @@ struct Call
   Url url_;
   Value param_;
 };
-} // namespace oscit
+} // oscit
 
 #endif // OSCIT_INCLUDE_OSCIT_CALL_H_

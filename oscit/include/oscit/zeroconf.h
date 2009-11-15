@@ -7,6 +7,9 @@
 
 namespace oscit {
 
+class ProxyFactory;
+class Command;
+
 /** This class let's you easily register an application as providing a certain type of
  *  service.
  */
@@ -45,12 +48,21 @@ class ZeroConfBrowser : public Mutex {
   virtual ~ZeroConfBrowser();
 
   virtual void add_device(const Location &location) {
+    build_proxy(location);
     std::cout << "add_device " << location.name() << " @ " << location << std::endl;
   }
 
   virtual void remove_device(const char *name) {
     std::cout << "remove_device " << name << std::endl;
   }
+
+  template<class T>
+  T *adopt_proxy_factory(T *factory) {
+    do_adopt_proxy_factory(factory);
+    return factory;
+  }
+
+  void set_command(Command *command);
 
  protected:
   /** This method *must* be called from sub-classes in their destructors to
@@ -59,24 +71,22 @@ class ZeroConfBrowser : public Mutex {
 	 */
   virtual void stop();
 
-  void get_protocol_from_service_type() {
-    size_t dot_index = service_type_.find(".");
-    if (dot_index != std::string::npos) {
-      protocol_ = service_type_.substr(1, dot_index);
-    } else {
-      // Bad service type
-      std::cerr << "Could not get protocol from service type: " << service_type_ << "\n";
-    }
-  }
+  void get_protocol_from_service_type();
 
-  std::string protocol_;
-  std::string service_type_;
+  void build_proxy(const Location &location);
+
+  std::string   protocol_;
+  std::string   service_type_;
+  Command      *command_;
+  ProxyFactory *proxy_factory_;
 
  private:
+  void do_adopt_proxy_factory(ProxyFactory *factory);
+
   class Implementation;
   Implementation *impl_;
 };
 
-} // namespace oscit
+} // oscit
 
 #endif // OSCIT_INCLUDE_OSCIT_ZEROCONF_H_

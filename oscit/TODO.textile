@@ -1,0 +1,39 @@
+h1. Rubyk: TODO
+
+√  Compile with Location code
+√  Replace occurences of IpEndPointName by Location
+√  Sign incoming messages: from location + target Url
+Root::call() ---> Object::safe_trigger() ---> Object::trigger()
+4. Write the tests for ProxyFactory
+5. Use signature to route in '/.reply' handler
+6. Start Proxy code...
+
+h2. Proxy stuff
+
+ProxyFactory
+
+h2. TODO: later
+
+0. Fix IP resolution (ZeroConf code):
+   Understand how we can connect to the remote when we have resolved from ZeroConfBrowser
+   and adapt Location to store the relative information.
+1. RefCount locations (shared objects ?).
+2. Merge 'Location *origin' with 'Mutex *caller_context' ?
+  Location can be
+  a. Remote Location ===> need lock
+  b. Local context   ===> need lock if context is different
+
+
+
+h2. DOCUMENTATION
+
++--------------+-------------+
+| inside oscit | command     |
+|  <- url      |  <-  path   |
+|              |    + loc    |
++-------------+--------------+
+
+Comming in  = path
+Inside ruby = url or path
+
+

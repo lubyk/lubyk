@@ -9,33 +9,47 @@
 
 namespace oscit {
 
+class ObjectProxy;
+class RootProxy;
+
 /** This class is used to bridge between oscit and a GUI when building a
  * 'ghost' tree that mirrors a remote 'real' tree.
  */
-class ProxyFactory : ZeroConfBrowser {
+class ProxyFactory
+{
 public:
-  virtual void add_device(const Location &location) {
-    RootProxy *root_proxy = build_root_proxy(location);
-    if (root_proxy) {
-      register_proxy(root_proxy);
-    }
-  }
+  ProxyFactory() {}
+
+  /** Called by ZeroConfBrowser to create a new RootProxy and pass
+   *  it this object as factory.
+   */
+  RootProxy *build_and_init_root_proxy(const Location &end_point);
+
+  /** Root proxy factory. This method should be overwritten in subclasses in order to
+   *  create custom RootProxy objects. This is called by build_and_init_root_proxy.
+   */
+  virtual RootProxy *build_root_proxy(const Location &end_point) = 0;
 
   /** Object proxy factory. This method should be overwritten in subclasses in order to
    * create custom ObjectProxy objects.
    */
   virtual ObjectProxy *build_object_proxy(const std::string &name, const Value &type) = 0;
 
-  virtual RootProxy *build_root_proxy(const Location &end_point);
+  /** A RootProxy is using this object as factory, keep a link in case it is removed.
+   */
+  void register_proxy(RootProxy *proxy);
 
-private:
+  /** Forget about this root proxy.
+   */
+  void unregister_proxy(RootProxy *proxy);
 
-  void register_proxy(RootProxy* root_proxy) {
-    // This enables routing 'reply' messages coming from the remote ip endpoint to
-    // this root_proxy.
-    command_->adopt_proxy(root_proxy);
-  }
+ private:
 
+  /** List of RootProxies that use this factory. The list simply serves to remove the dependency
+   *  when the ProxyFactory is deleted.
+   */
+  std::list<RootProxy *> root_proxies_;
 };
 
+} // oscit
 #endif // OSCIT_INCLUDE_OSCIT_PROXY_FACTORY_H_

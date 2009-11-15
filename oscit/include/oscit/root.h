@@ -305,6 +305,6 @@ class Root : public Object
   std::list<Command *> commands_;    /**< Listening commands (only one allowed per protocol). */
 };
 
-} // namespace oscit
+} // oscit
 
 #endif // OSCIT_INCLUDE_OSCIT_ROOT_H_

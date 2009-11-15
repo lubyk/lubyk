@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58140DA1D0A300B32029 /* MainMenu.xib */; };
-		2B6C72030FAF1AD200F2DAC9 /* liboscit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B6C72020FAF1AD200F2DAC9 /* liboscit.a */; };
+		2B85FDDF10A0D43C00F02A64 /* liboscit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B85FDDE10A0D43C00F02A64 /* liboscit.a */; };
 		2BD249120F0B454200AAA8C7 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BD249050F0B454200AAA8C7 /* Carbon.framework */; };
 		2BD249130F0B454200AAA8C7 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BD249060F0B454200AAA8C7 /* AudioUnit.framework */; };
 		2BD249140F0B454200AAA8C7 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BD249070F0B454200AAA8C7 /* Cocoa.framework */; };
@@ -36,7 +36,6 @@
 		1DDD58150DA1D0A300B32029 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		2B6C72020FAF1AD200F2DAC9 /* liboscit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liboscit.a; path = ../../../oscit/liboscit.a; sourceTree = SOURCE_ROOT; };
 		2B6C722C0FAF1BE800F2DAC9 /* mimas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mimas.h; path = ../../src/core/mimas.h; sourceTree = SOURCE_ROOT; };
 		2B6C72850FAF37E200F2DAC9 /* juce_amalgamated.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = juce_amalgamated.cpp; path = ../../src/lib/juce/juce_amalgamated.cpp; sourceTree = SOURCE_ROOT; };
 		2B6C73180FAF3DAD00F2DAC9 /* alias.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = alias.h; sourceTree = "<group>"; };
@@ -79,6 +78,7 @@
 		2B6C733D0FAF3DAD00F2DAC9 /* values.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = values.h; sourceTree = "<group>"; };
 		2B6C733E0FAF3DAD00F2DAC9 /* zeroconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zeroconf.h; sourceTree = "<group>"; };
 		2B6C73650FAF440D00F2DAC9 /* juce_amalgamated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = juce_amalgamated.h; path = ../../src/lib/juce/juce_amalgamated.h; sourceTree = SOURCE_ROOT; };
+		2B85FDDE10A0D43C00F02A64 /* liboscit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liboscit.a; path = ../../../oscit/build/liboscit.a; sourceTree = SOURCE_ROOT; };
 		2BD249050F0B454200AAA8C7 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		2BD249060F0B454200AAA8C7 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
 		2BD249070F0B454200AAA8C7 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
@@ -122,7 +122,7 @@
 				2BD2491C0F0B454200AAA8C7 /* IOKit.framework in Frameworks */,
 				2BD2491D0F0B454200AAA8C7 /* OpenGL.framework in Frameworks */,
 				2BD2491E0F0B454200AAA8C7 /* WebKit.framework in Frameworks */,
-				2B6C72030FAF1AD200F2DAC9 /* liboscit.a in Frameworks */,
+				2B85FDDF10A0D43C00F02A64 /* liboscit.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -267,7 +267,7 @@
 		2BA19D260F1249DA003B0C27 /* lib */ = {
 			isa = PBXGroup;
 			children = (
-				2B6C72020FAF1AD200F2DAC9 /* liboscit.a */,
+				2B85FDDE10A0D43C00F02A64 /* liboscit.a */,
 			);
 			name = lib;
 			sourceTree = "<group>";
@@ -387,6 +387,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../oscit\"",
+					"\"$(SRCROOT)/../../../oscit/build\"",
 				);
 				PRODUCT_NAME = Mimas;
 			};
@@ -405,6 +406,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../oscit\"",
+					"\"$(SRCROOT)/../../../oscit/build\"",
 				);
 				PRODUCT_NAME = Mimas;
 			};

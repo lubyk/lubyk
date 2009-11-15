@@ -43,5 +43,5 @@ public:
   Object *original_; /**< Original object pointed to by the alias. */
 };
 
-} // namespace oscit
+} // oscit
 #endif // OSCIT_INCLUDE_OSCIT_ALIAS_H_

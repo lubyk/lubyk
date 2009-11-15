@@ -128,6 +128,15 @@ public:
     assert_equal(NOT_FOUND_ERROR, res.error_code());
   }
 
+  void test_call_should_route_message_to_object( void ) {
+    Root root;
+    DummyObject *dummy = root.adopt(new DummyObject("dummy", 0.0));
+    Value res = root.call("/dummy", Value(4.5));
+
+    assert_false(res.is_error());
+    assert_equal(4.5, dummy->real());
+  }
+
   void test_find_or_build_object_at_should_call_build_child( void ) {
     Root root;
     root.adopt(new DummyObject("dummy", 0.0));
