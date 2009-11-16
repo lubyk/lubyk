@@ -3,6 +3,8 @@
 #include "oscit/command.h"
 #include "mock/dummy_object.h"
 
+// FIXME: can we remove this and replace it by CommandLogger ?
+
 struct DummyCommand : public Command
 {
  public:
@@ -14,7 +16,7 @@ struct DummyCommand : public Command
     kill();
   }
 
-  void listen() {
+  virtual void listen() {
     thread_ready();
     while (should_run()) {
       lock();
@@ -23,6 +25,10 @@ struct DummyCommand : public Command
       millisleep(20);
     }
   }
+
+  virtual void notify_observers(const char*, const oscit::Value&) {}
+
+  virtual void send(const Location &remote_endpoint, const char *path, const Value &val) {}
 
   virtual Object *build_remote_object(const Url &url, Value *error) {
     if (url.location() == dummy_host_) {

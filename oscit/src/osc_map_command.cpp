@@ -81,7 +81,7 @@ void OscMapCommand::send_to_observers(const char *url, const Value &val, const L
       while (it != end) {
         if ((skip_end_point == NULL || *it != skip_end_point->ip()) && observers_.get(*it, &remote)) {
           try {
-            send(*remote, ext_url, Value(ext_val));
+            send(*remote, ext_url.c_str(), Value(ext_val));
           } catch (std::runtime_error e) {
             //char address[ IpEndpointName::ADDRESS_AND_PORT_STRING_LENGTH ];
             //remote->AddressAndPortAsString(address);

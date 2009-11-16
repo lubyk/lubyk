@@ -53,7 +53,11 @@ class Command : public Thread
   const std::string &protocol() { return protocol_; }
 
   /** Send a notification to all observers of this command. */
-  virtual void notify_observers(const char *path, const Value &val) {}
+  virtual void notify_observers(const char *path, const Value &val) = 0;
+
+  /** Send a message to a specific path on a remote end point.
+   */
+  virtual void send(const Location &remote_endpoint, const char *path, const Value &val) = 0;
 
   /** Returns a pointer to an object that can be used to send values to a remote object.
    *  The receiver should create an alias for the remote_object (do not keep the pointer).

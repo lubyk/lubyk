@@ -2,8 +2,8 @@
 #include "oscit/root.h"
 #include "mock/dummy_object.h"
 #include "mock/dummy_command.h"
-#include "mock/object_action_logger.h"
-#include "mock/command_action_logger.h"
+#include "mock/object_logger.h"
+#include "mock/command_logger.h"
 
 class RootTest : public TestHelper
 {
@@ -170,14 +170,14 @@ public:
   void test_adopt_command_should_start_listeners( void ) {
     Root root;
     std::ostringstream logger(std::ostringstream::out);
-    root.adopt_command(new CommandActionLogger("osc", &logger));
+    root.adopt_command(new CommandLogger("osc", &logger));
     assert_equal("[osc: listen]", logger.str());
   }
 
   void test_adopt_command_with_false_should_not_start_listeners( void ) {
     Root root;
     std::ostringstream logger(std::ostringstream::out);
-    root.adopt_command(new CommandActionLogger("osc", &logger), false);
+    root.adopt_command(new CommandLogger("osc", &logger), false);
     assert_equal("", logger.str());
   }
 
@@ -214,8 +214,8 @@ public:
   void test_send_should_route_messages_depending_on_protocol( void ) {
     Root root;
     std::ostringstream logger(std::ostringstream::out);
-    root.adopt_command(new CommandActionLogger("http", &logger),false);
-    root.adopt_command(new CommandActionLogger("osc", &logger),false);
+    root.adopt_command(new CommandLogger("http", &logger),false);
+    root.adopt_command(new CommandLogger("osc", &logger),false);
     logger.str("");
     root.send(Url("http://example.com/foo/bar"), gNilValue);
     assert_equal("[http: http://example.com/foo/bar]", logger.str());
@@ -226,8 +226,8 @@ public:
   void test_should_only_register_one_command_per_protocol( void ) {
     Root root;
     std::ostringstream logger(std::ostringstream::out);
-    root.adopt_command(new CommandActionLogger("one", "osc", &logger),false);
-    CommandActionLogger *two = root.adopt_command(new CommandActionLogger("two", "osc", &logger),false);
+    root.adopt_command(new CommandLogger("one", "osc", &logger),false);
+    CommandLogger *two = root.adopt_command(new CommandLogger("two", "osc", &logger),false);
     assert_equal(NULL, (void*)two);
     assert_equal("", logger.str());
     logger.str("");
@@ -245,7 +245,7 @@ public:
   void test_call_without_context_should_not_notify( void ) {
     Root root;
     std::ostringstream logger(std::ostringstream::out);
-    root.adopt_command(new CommandActionLogger("osc", &logger));
+    root.adopt_command(new CommandLogger("osc", &logger));
     root.adopt(new DummyObject("foo", 4.5));
     logger.str("");
     // call without context should not notify
@@ -258,8 +258,8 @@ public:
     Mutex context;
     root.adopt(new DummyObject("foo", 4.5));
     std::ostringstream logger(std::ostringstream::out);
-    root.adopt_command(new CommandActionLogger("http", &logger));
-    root.adopt_command(new CommandActionLogger("osc", &logger));
+    root.adopt_command(new CommandLogger("http", &logger));
+    root.adopt_command(new CommandLogger("osc", &logger));
     logger.str("");
     root.call("/foo", Value(5.2), &context);
     assert_equal("[http: /foo 5.2][osc: /foo 5.2]", logger.str());
@@ -270,7 +270,7 @@ public:
     Mutex context;
     root.adopt(new DummyObject("foo", 4.5));
     std::ostringstream logger(std::ostringstream::out);
-    CommandActionLogger *cmd = root.adopt_command(new CommandActionLogger("osc", &logger));
+    CommandLogger *cmd = root.adopt_command(new CommandLogger("osc", &logger));
     delete cmd;
     logger.str("");
     root.call("/foo", Value(5.2), &context);
@@ -296,7 +296,7 @@ public:
   void test_should_destroy_all_tree_on_delete( void ) {
     Root *root = new Root;
     std::ostringstream logger(std::ostringstream::out);
-    root->adopt(new ObjectActionLogger("one", &logger));
+    root->adopt(new ObjectLogger("one", &logger));
     assert_equal("", logger.str());
     delete root;
     assert_equal("[one: destroyed]", logger.str());

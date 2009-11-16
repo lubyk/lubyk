@@ -1,15 +1,15 @@
-#ifndef OSCIT_TEST_MOCK_COMMAND_NOTIFICATION_LOGGER_H_
-#define OSCIT_TEST_MOCK_COMMAND_NOTIFICATION_LOGGER_H_
+#ifndef OSCIT_TEST_MOCK_COMMAND_LOGGER_H_
+#define OSCIT_TEST_MOCK_COMMAND_LOGGER_H_
 
 #include "oscit/command.h"
 #include "mock/logger.h"
 
-class CommandActionLogger : public Command, protected MockLogger {
+class CommandLogger : public Command, protected MockLogger {
 public:
-  CommandActionLogger(const char *protocol,std::ostringstream *stream) :
+  CommandLogger(const char *protocol,std::ostringstream *stream) :
                      Command(protocol),
                      MockLogger(protocol, stream) {}
-  CommandActionLogger(const char *name, const char *protocol, std::ostringstream *stream) :
+  CommandLogger(const char *name, const char *protocol, std::ostringstream *stream) :
                      Command(protocol),
                      MockLogger(name, stream) {}
 
@@ -24,6 +24,10 @@ public:
     log(path, val);
   }
 
+  virtual void send(const Location &remote_endpoint, const char *path, const Value &val) {
+    log("send", remote_endpoint, path, val);
+  }
+
   virtual Object *build_remote_object(const Url &remote_url, Value *error) {
     log(remote_url);
     return NULL;
@@ -31,4 +35,4 @@ public:
 };
 
 
-#endif // OSCIT_TEST_MOCK_COMMAND_NOTIFICATION_LOGGER_H_
+#endif // OSCIT_TEST_MOCK_COMMAND_LOGGER_H_

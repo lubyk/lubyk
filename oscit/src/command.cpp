@@ -2,6 +2,7 @@
 #include "oscit/root.h"
 #include "oscit/object.h"
 #include "oscit/zeroconf.h"
+#include "oscit/root_proxy.h"
 
 namespace oscit {
 
@@ -84,8 +85,8 @@ void Command::register_proxy(RootProxy *proxy) {
   // 1. make sure it is not in dictionary
   unregister_proxy(proxy);
 
-  // 3. add to dictionary
-  // root_proxies_.set(proxy->location(), proxy);
+  // 2. add to dictionary
+  root_proxies_.set(proxy->remote_location(), proxy);
 }
 
 void Command::unregister_proxy(RootProxy *proxy) {

@@ -13,9 +13,26 @@ protected:
     *stream_ << "[" << identifier_ << ": " << info << "]";
   }
 
-  template<class T, class S>
-  void log(const T& info1, const S& info2) {
+  template<class S, class T>
+  void log(const S& info1, const T& info2) {
     *stream_ << "[" << identifier_ << ": " << info1 << " " << info2 << "]";
+  }
+
+  template<class S, class T, class U>
+  void log(const S& info1, const T& info2, const U& info3) {
+    *stream_ << "[" << identifier_ << ": " \
+             << info1 << " " \
+             << info2 << " " \
+             << info3 << "]";
+  }
+
+  template<class S, class T, class U, class V>
+  void log(const S& info1, const T& info2, const U& info3, const V& info4) {
+    *stream_ << "[" << identifier_ << ": " \
+             << info1 << " " \
+             << info2 << " " \
+             << info3 << " " \
+             << info4 << "]";
   }
 
 private:

@@ -329,10 +329,6 @@ void OscCommand::listen() {
   impl_->listen();
 }
 
-void OscCommand::send(const Location &remote_endpoint, const std::string &path, const Value &val) {
-  impl_->send(remote_endpoint, path.c_str(), val);
-}
-
 void OscCommand::send(const Location &remote_endpoint, const char *path, const Value &val) {
   impl_->send(remote_endpoint, path, val);
 }

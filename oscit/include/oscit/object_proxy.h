@@ -15,14 +15,18 @@ namespace oscit {
  */
 class ObjectProxy : public Object {
 public:
-  ObjectProxy(const char *name, const Value &type) : Object(name, type), root_proxy_(NULL), synced_children_(false) {}
+  ObjectProxy(const char *name, const Value &type) :
+              Object(name, type), synced_children_(false), root_proxy_(NULL) {}
+
+  ObjectProxy(const std::string &name, const Value &type) :
+              Object(name, type), synced_children_(false), root_proxy_(NULL) {}
 
   /** This method should be called to set a new value for the 'real' remote object. It
    * is usually called by some GUI widget callback when the user changes a control. */
   void set_value(const Value &val) {
     if (can_receive(val)) {
       // only send if value type is correct
-      root_proxy_->send_to_remote(url(), val);
+      root_proxy_->send_to_remote(url().c_str(), val);
     }
   }
 
@@ -39,24 +43,6 @@ public:
   virtual void value_changed() {
   }
 
-  void handle_list_with_type_reply(const Value &children) {
-    if (!children.is_list()) return;
-    int max = children.size();
-    Object *child;
-    Value child_def;
-    for(int i = 0; i < max; ++i) {
-      child_def = children[i];
-      // TODO: make sure child_def is of a proper format !
-      child = this->child(child_def[0].str());
-      if (!child) {
-        adopt(root_proxy_->build_object_proxy(child_def[0].str(), child_def[1]));
-      } else {
-        // ignore
-        // set type ?
-      }
-    }
-  }
-
   void handle_value_change(const Value &val) {
     // TODO: should root check type ?
     cached_value_ = val;
@@ -65,7 +51,7 @@ public:
 
   void sync(bool forced = false) {
     if (!synced_children_ || forced) {
-      root_proxy_->send_to_remote(std::string(LIST_WITH_TYPE_PATH), Value(url()));
+      root_proxy_->send_to_remote(LIST_WITH_TYPE_PATH, Value(url()));
     }
     synced_children_ = true;
   }
@@ -77,12 +63,11 @@ protected:
     root_proxy_ = root_proxy;
   }
 
+  bool synced_children_;
 private:
   /** Reference to a RootProxy object that links back to the original tree.
   */
   RootProxy *root_proxy_;
-
-  bool synced_children_;
 
   Value cached_value_;
 };

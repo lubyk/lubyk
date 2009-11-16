@@ -8,7 +8,10 @@ namespace oscit {
 void RootProxy::set_command(Command *command) {
   if (command_) command_->unregister_proxy(this);
   command_ = command;
-  if (command_) command_->register_proxy(this);
+  if (command_) {
+    command_->register_proxy(this);
+    sync();
+  }
 }
 
 void RootProxy::set_proxy_factory(ProxyFactory *factory) {
@@ -26,6 +29,25 @@ ObjectProxy *RootProxy::build_object_proxy(const std::string &name, const Value 
     return object;
   }
   return NULL;
+}
+
+
+void RootProxy::handle_list_with_type_reply(ObjectProxy *target, const Value &children) {
+  if (!children.is_list()) return;
+  int max = children.size();
+  Object *child;
+  Value child_def;
+  for(int i = 0; i < max; ++i) {
+    child_def = children[i];
+    // TODO: make sure child_def is of a proper format !
+    child = target->child(child_def[0].str());
+    if (!child) {
+      target->adopt(build_object_proxy(child_def[0].str(), child_def[1]));
+    } else {
+      // ignore
+      // set type ?
+    }
+  }
 }
 
 } // oscit

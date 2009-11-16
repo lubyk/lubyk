@@ -4,6 +4,8 @@
 
 namespace oscit {
 
+// FIXME: I think we should find a way to replace this by ObjectProxy..
+
 class OscRemoteObject : public Object
 {
  public:
@@ -16,7 +18,7 @@ class OscRemoteObject : public Object
   }
 
   virtual const Value trigger(const Value &val, const Location *origin) {
-    osc_command_->send(remote_endpoint_, remote_path_, val);
+    osc_command_->send(remote_endpoint_, remote_path_.c_str(), val);
     return gNilValue;
   }
 

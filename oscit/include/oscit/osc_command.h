@@ -26,15 +26,7 @@ public:
    */
   virtual void notify_observers(const char *path, const Value &val);
 
-  /** Send an osc message.
-   *  @param remote_endpoint target host.
-   *  TODO: Not sure if we really need this method...
-   */
-  void send(const Location &remote_endpoint, const std::string &path, const Value &val);
-
-  /** Send an osc message.
-   *  @param remote_endpoint target host.
-   *  TODO: Not sure if we really need this method...
+  /** Send a Value to a remote endpoint at a given path using osc.
    */
   void send(const Location &remote_endpoint, const char *path, const Value &val);
 
