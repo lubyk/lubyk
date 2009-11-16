@@ -97,7 +97,8 @@ class Command : public Thread
    */
   virtual Object *build_remote_object(const Url &remote_url, Value *error) = 0;
 
-  /** Listen for commands (in new thread).
+  /** Listen for commands (in new thread). Should call "thread_ready()" when it
+   *  has finished initializing.
    */
   virtual void listen() = 0;
 

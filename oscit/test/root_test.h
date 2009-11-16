@@ -2,6 +2,8 @@
 #include "oscit/root.h"
 #include "mock/dummy_object.h"
 #include "mock/dummy_command.h"
+#include "mock/object_destroy_logger.h"
+#include "mock/command_build_logger.h"
 
 class RootTest : public TestHelper
 {
@@ -209,6 +211,17 @@ public:
     assert_equal("Could not parse url \'some://example.com /foo\'.", error.error_message());
   }
 
+  void test_send_should_route_messages_depending_on_protocol( void ) {
+    Root root;
+    std::ostringstream logger(std::ostringstream::out);
+    root.adopt_command(new CommandBuildLogger("http", &logger),false);
+    root.adopt_command(new CommandBuildLogger("osc", &logger),false);
+    root.send(Url("http://example.com/foo/bar"), gNilValue);
+    assert_equal("[http: http://example.com/foo/bar]", logger.str());
+    root.send(Url("osc://\"funky thing\"/one/two"), gNilValue);
+    assert_equal("[http: http://example.com/foo/bar][osc: osc://\"funky thing\"/one/two]", logger.str());
+  }
+
   void test_named_root( void ) {
     Root root("gaia");
     Object *obj = root.object_at("");
@@ -247,6 +260,15 @@ public:
     Root root(false);
     Value res = root.list();
     assert_true(res.size() == 0);
+  }
+
+  void test_should_destroy_all_tree_on_delete( void ) {
+    Root *root = new Root;
+    std::ostringstream logger(std::ostringstream::out);
+    root->adopt(new DestroyLogger("one", &logger));
+    assert_equal("", logger.str());
+    delete root;
+    assert_equal("[one: destroyed]", logger.str());
   }
   // remote objects and 'send' testing is done in command_test.h
 };
