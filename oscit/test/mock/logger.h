@@ -13,6 +13,11 @@ protected:
     *stream_ << "[" << identifier_ << ": " << info << "]";
   }
 
+  template<class T, class S>
+  void log(const T& info1, const S& info2) {
+    *stream_ << "[" << identifier_ << ": " << info1 << " " << info2 << "]";
+  }
+
 private:
   std::string identifier_;
   std::ostream *stream_;

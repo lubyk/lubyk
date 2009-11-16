@@ -4,13 +4,13 @@
 #include "oscit/object.h"
 #include "mock/logger.h"
 
-class DestroyLogger : public Object, protected MockLogger {
+class ObjectActionLogger : public Object, protected MockLogger {
 public:
-  DestroyLogger(const char *name, std::ostringstream *stream) :
+  ObjectActionLogger(const char *name, std::ostringstream *stream) :
                 Object(name),
                 MockLogger(name, stream) {}
 
-  virtual ~DestroyLogger() {
+  virtual ~ObjectActionLogger() {
     log("destroyed");
   }
 };

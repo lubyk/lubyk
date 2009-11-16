@@ -200,7 +200,7 @@ public:
   bool running_;
 };
 
-ZeroConfBrowser::ZeroConfBrowser(const char *service_type) : service_type_(service_type), proxy_factory_(NULL) {
+ZeroConfBrowser::ZeroConfBrowser(const char *service_type) : service_type_(service_type), command_(NULL), proxy_factory_(NULL) {
   get_protocol_from_service_type();
   impl_ = new ZeroConfBrowser::Implementation(this);
 }

@@ -33,17 +33,12 @@ struct DummyCommand : public Command
     }
   }
 
-  virtual void notify_observers(const char *url, const Value &val) {
-    notifications_ << url << "(" << val << ")";
-  }
-
   Object *remote_object_no_build(const std::string &url) {
     Object *res = NULL;
     remote_objects_.get(url, &res);
     return res;
   }
 
-  std::ostringstream notifications_;
   std::string *string_;
   Location dummy_host_;
 };
