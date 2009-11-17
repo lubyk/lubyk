@@ -16,13 +16,19 @@ class ProxyFactory;
 /** This class helps maintain a 'ghost' tree that mirrors a remote 'real' tree. It is usually used
  * as an element from an interface to interact with some remote device.
  */
-class RootProxy : Root {
+class RootProxy : public Root {
 public:
   /** Create a proxy from a remote end_point. Do not build meta methods.
    */
-  RootProxy(const Location &remote_location, ProxyFactory *factory) :
+  RootProxy(const Location &remote_location) :
             Root(false), remote_location_(remote_location),
             command_(NULL), proxy_factory_(NULL) {}
+
+  RootProxy(const Location &remote_location, ProxyFactory *proxy_factory) :
+            Root(false), remote_location_(remote_location),
+            command_(NULL), proxy_factory_(NULL) {
+    set_proxy_factory(proxy_factory);
+  }
 
   virtual ~RootProxy() {
     // unregister from command_
@@ -39,9 +45,7 @@ public:
 
   /** Keep proxy in sync by parsing replies and sending new queries.
    */
-  virtual void handle_reply(const std::string &path, const Value &val) {
-    // ObjectProxy *find_or_build_object_proxy_at(path);
-  }
+  void handle_reply(const std::string &path, const Value &val);
 
   ObjectProxy *build_object_proxy(const std::string &name, const Value &type);
 

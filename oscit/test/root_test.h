@@ -169,14 +169,14 @@ public:
 
   void test_adopt_command_should_start_listeners( void ) {
     Root root;
-    std::ostringstream logger(std::ostringstream::out);
+    Logger logger;
     root.adopt_command(new CommandLogger("osc", &logger));
     assert_equal("[osc: listen]", logger.str());
   }
 
   void test_adopt_command_with_false_should_not_start_listeners( void ) {
     Root root;
-    std::ostringstream logger(std::ostringstream::out);
+    Logger logger;
     root.adopt_command(new CommandLogger("osc", &logger), false);
     assert_equal("", logger.str());
   }
@@ -213,7 +213,7 @@ public:
 
   void test_send_should_route_messages_depending_on_protocol( void ) {
     Root root;
-    std::ostringstream logger(std::ostringstream::out);
+    Logger logger;
     root.adopt_command(new CommandLogger("http", &logger),false);
     root.adopt_command(new CommandLogger("osc", &logger),false);
     logger.str("");
@@ -225,7 +225,7 @@ public:
 
   void test_should_only_register_one_command_per_protocol( void ) {
     Root root;
-    std::ostringstream logger(std::ostringstream::out);
+    Logger logger;
     root.adopt_command(new CommandLogger("one", "osc", &logger),false);
     CommandLogger *two = root.adopt_command(new CommandLogger("two", "osc", &logger),false);
     assert_equal(NULL, (void*)two);
@@ -244,7 +244,7 @@ public:
   // Is this really what we want ? Shouldn't we notify always ?
   void test_call_without_context_should_not_notify( void ) {
     Root root;
-    std::ostringstream logger(std::ostringstream::out);
+    Logger logger;
     root.adopt_command(new CommandLogger("osc", &logger));
     root.adopt(new DummyObject("foo", 4.5));
     logger.str("");
@@ -257,7 +257,7 @@ public:
     Root root;
     Mutex context;
     root.adopt(new DummyObject("foo", 4.5));
-    std::ostringstream logger(std::ostringstream::out);
+    Logger logger;
     root.adopt_command(new CommandLogger("http", &logger));
     root.adopt_command(new CommandLogger("osc", &logger));
     logger.str("");
@@ -269,7 +269,7 @@ public:
     Root root;
     Mutex context;
     root.adopt(new DummyObject("foo", 4.5));
-    std::ostringstream logger(std::ostringstream::out);
+    Logger logger;
     CommandLogger *cmd = root.adopt_command(new CommandLogger("osc", &logger));
     delete cmd;
     logger.str("");
@@ -295,7 +295,7 @@ public:
 
   void test_should_destroy_all_tree_on_delete( void ) {
     Root *root = new Root;
-    std::ostringstream logger(std::ostringstream::out);
+    Logger logger;
     root->adopt(new ObjectLogger("one", &logger));
     assert_equal("", logger.str());
     delete root;

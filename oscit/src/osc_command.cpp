@@ -173,6 +173,8 @@ public:
       Value res(url.path());
       res.push_back(val);
 
+      // FIXME: why don't we just send to all observers in one go ?
+      // send_to_observers(REPLY_PATH, res) ?
       send(url.location(), REPLY_PATH, res);
 
       send_to_observers(REPLY_PATH, res, &url.location()); // skip remote_endpoint

@@ -50,4 +50,21 @@ void RootProxy::handle_list_with_type_reply(ObjectProxy *target, const Value &ch
   }
 }
 
+void RootProxy::handle_reply(const std::string &path, const Value &val) {
+  if (path == LIST_WITH_TYPE_PATH) {
+    // FIXME: ...
+  } else {
+    // Find target
+    Object *target = object_at(path);
+
+    if (target && target->can_receive(val)) {
+      ObjectProxy *object_proxy = TYPE_CAST(ObjectProxy, target);
+      // TODO: Should we use 'safe' here ? (mutex)
+      if (object_proxy) object_proxy->handle_value_change(val);
+    } else {
+      std::cerr << "could not route '" << path << "' reply to '" << val << "'\n";
+    }
+  }
+}
+
 } // oscit

@@ -34,7 +34,7 @@ public:
     if (!val.is_nil()) {
       set_value(val);
     }
-    return cached_value_;
+    return value_;
   }
 
   /** This method should be implemented in order to give a visual feedback to
@@ -44,8 +44,8 @@ public:
   }
 
   void handle_value_change(const Value &val) {
-    // TODO: should root check type ?
-    cached_value_ = val;
+    // TODO: root should check type
+    value_ = val;
     value_changed();
   }
 
@@ -64,12 +64,14 @@ protected:
   }
 
   bool synced_children_;
-private:
+
   /** Reference to a RootProxy object that links back to the original tree.
   */
   RootProxy *root_proxy_;
 
-  Value cached_value_;
+  /** Cached information on the remote value.
+   */
+  Value value_;
 };
 
 

@@ -23,7 +23,7 @@ h2. TODO: later
   a. Remote Location ===> need lock
   b. Local context   ===> need lock if context is different
 
-
+3. Choose once and for all between "const char*" or std::string !!
 
 h2. DOCUMENTATION
 
