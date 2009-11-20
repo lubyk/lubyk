@@ -12,9 +12,14 @@ namespace oscit {
 
 /** This class helps maintain a 'ghost' object that mirrors a remote 'real' object. It is usually used
  * as an element from an interface to interact with the remote object.
+ *
+ * This object is not fully functional before the root_proxy has been set (when adopted by a RootProxy).
  */
 class ObjectProxy : public Object {
 public:
+  /** Class signature. */
+  TYPED("Object.ObjectProxy")
+
   ObjectProxy(const char *name, const Value &type) :
               Object(name, type), synced_children_(false), root_proxy_(NULL) {}
 
@@ -56,12 +61,11 @@ public:
     synced_children_ = true;
   }
 
-protected:
-  friend class RootProxy;
+  /** Set root and if the root is a RootProxy, set root_proxy_ as well.
+   */
+  virtual void set_root(Root *root);
 
-  void set_root_proxy(RootProxy *root_proxy) {
-    root_proxy_ = root_proxy;
-  }
+protected:
 
   bool synced_children_;
 

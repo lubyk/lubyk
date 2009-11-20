@@ -18,6 +18,10 @@ class ProxyFactory;
  */
 class RootProxy : public Root {
 public:
+
+  /** Class signature. */
+  TYPED("Object.Root.RootProxy")
+
   /** Create a proxy from a remote end_point. Do not build meta methods.
    */
   RootProxy(const Location &remote_location) :
@@ -47,12 +51,16 @@ public:
    */
   void handle_reply(const std::string &path, const Value &val);
 
-  ObjectProxy *build_object_proxy(const std::string &name, const Value &type);
-
   /** Set proxy's command (communication channel).
    *  this method registers the RootProxy into the given command.
    */
   void set_command(Command *command);
+
+  /** Called by ~Command to avoid further 'unregister' calls.
+   */
+  void unlink_command() {
+    command_ = NULL;
+  }
 
   /** Set proxy's factory (used to create new object proxies).
    *  this method registers the RootProxy into the given factory.

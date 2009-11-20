@@ -60,6 +60,16 @@ Command::~Command() {
       delete object;
     }
   }
+
+  // destroy all references to remote objects
+  std::list<Location>::const_iterator p_it;
+  std::list<Location>::const_iterator p_end = root_proxies_.end();
+  for(p_it = root_proxies_.begin(); p_it != p_end; p_it++) {
+    RootProxy *root_proxy;
+    if (root_proxies_.get(*p_it, &root_proxy)) {
+      root_proxy->unlink_command();
+    }
+  }
 }
 
 Object *Command::remote_object(const Url &remote_url, Value *error) {

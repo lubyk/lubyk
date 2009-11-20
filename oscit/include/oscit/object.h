@@ -118,8 +118,6 @@ class Object : public Typed {
   template<class T>
   T *adopt(T *object) {
     object->set_parent(this);
-    // FIXME: remove 'moved()' when tests pass: already called in 'set_parent'
-    object->moved();
     return object;
   }
 
@@ -287,7 +285,7 @@ class Object : public Typed {
 
   /** Set object's new root.
    */
-  void set_root(Root *root);
+  virtual void set_root(Root *root);
 
   /** Set object's new parent.
    */

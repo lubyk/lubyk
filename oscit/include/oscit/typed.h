@@ -6,26 +6,33 @@
 
 namespace oscit {
 
+#define TYPED(str) \
+  virtual const char *class_path() const { return str; } \
+  static  const char *_path() { return str; } \
+
 #ifdef USE_RTTI_TYPE
 
 #define kind_of(klass) is_a<klass *>()
-#define TYPED(str)   \
-    virtual const char *class_path() { return str; } \
-    static  const char *_path() { return str; } \
 
 class Typed {
 public:
   TYPED("")
   virtual ~Typed() {}
-  
+
   template<class T>
   inline bool is_a() {
     return dynamic_cast<T>(this) != NULL;
   }
-  
+
   template<class T>
   inline T type_cast() {
     return dynamic_cast<T>(this);
+  }
+
+  const std::string class_name() const {
+    std::string path(class_path());
+    size_t pos = path.rfind(".");
+    return path.substr(pos+1);
   }
 };
 
@@ -35,16 +42,13 @@ public:
 #else
 
 #define kind_of(klass) is_a(klass::_path())
-#define TYPED(str) \
-  virtual const char *class_path() { return str; } \
-  static  const char *_path() { return str; } \
-  
+
 class Typed
 {
 public:
   TYPED("")
   virtual ~Typed() {}
-  
+
   template<class T>
   static inline T * type_cast(Typed * obj) {
     if (!obj) return NULL;
@@ -64,6 +68,12 @@ public:
       ++cl;
     }
     return (*cl == '\0') || (*cl == '.');
+  }
+
+  const std::string class_name() const {
+    std::string path(class_path());
+    size_t pos = path.rfind(".");
+    return path.substr(pos);
   }
 
 };
