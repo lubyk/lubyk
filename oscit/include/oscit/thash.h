@@ -114,6 +114,10 @@ public:
   // FIXME: const T* ?
   bool get(const K &key, T *retval) const;
 
+  /** Return true if the dictionary contains an element at the given key.
+   */
+  bool has_key(const K &key) const;
+
   /** Get a pointer to an element in the dictionary.
    * The value of this pointer should not be kept (it may change as the hash is updated).
    * Returns false if no element found.
@@ -235,6 +239,22 @@ bool THash<K,T>::get(const K &key, T *retval) const {
 
   if (found && found->obj && found->key == key) {
     *retval = *(found->obj);
+    return true;
+  } else {
+    return false;
+  }
+}
+
+template <class K, class T>
+bool THash<K,T>::has_key(const K &key) const {
+  THashElement<K,T> *found;
+  uint id = hashId(key) % size_;
+
+  found = &(thash_table_[id]);
+  while (found && found->obj && found->key != key)
+    found = found->next;
+
+  if (found && found->obj && found->key == key) {
     return true;
   } else {
     return false;
