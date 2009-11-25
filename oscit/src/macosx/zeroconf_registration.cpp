@@ -20,7 +20,7 @@ typedef	int	pid_t;
 #include <dns_sd.h>     // zeroconf
 
 #include "oscit/thread.h"
-#include "oscit/zeroconf.h"
+#include "oscit/zeroconf_registration.h"
 
 
 namespace oscit {

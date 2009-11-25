@@ -1,6 +1,7 @@
 #include "test_helper.h"
 #include "oscit/thread.h"
 #include "mock/dummy_command.h"
+#include "oscit/root_proxy.h"
 
 #include <sstream>
 
@@ -72,5 +73,29 @@ public:
     res = root.send(Url("dummy://unknown.host/foo/bar"), Value(45));
     assert_true(res.is_error());
     assert_equal(BAD_REQUEST_ERROR, res.error_code());
+  }
+
+  void test_should_find_proxy_from_location( void ) {
+    std::string logger;
+    DummyCommand cmd(&logger);
+    Location remote("oscit", "my place");
+    Location remote2("oscit", "my place2");
+    RootProxy *proxy = cmd.adopt_proxy(new RootProxy(remote));
+    RootProxy *found = cmd.find_proxy(remote2);
+    assert_equal((RootProxy *)NULL, found);
+    found = cmd.find_proxy(remote);
+    assert_equal(proxy, found);
+  }
+
+  void test_should_not_find_proxy_from_location_after_proxy_deletion( void ) {
+    std::string logger;
+    DummyCommand cmd(&logger);
+    Location remote("oscit", "my place");
+    RootProxy *proxy = cmd.adopt_proxy(new RootProxy(remote));
+    RootProxy *found;
+
+    delete proxy;
+    found = cmd.find_proxy(remote);
+    assert_equal((RootProxy *)NULL, found);
   }
 };

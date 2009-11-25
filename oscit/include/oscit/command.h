@@ -74,6 +74,8 @@ class Command : public Thread
     proxy->set_command(this); // This will trigger 'register_proxy'.
     return proxy;
   }
+  
+  RootProxy *find_proxy(const Location &location);
 
  protected:
   friend class Root;       // set_root

@@ -1,7 +1,7 @@
 #import <Foundation/NSNetServices.h>
 #import <Foundation/Foundation.h>
 
-#include "oscit/zeroconf.h"
+#include "oscit/zeroconf_browser.h"
 #include "oscit/proxy_factory.h"
 #include "oscit/root_proxy.h"
 #include "oscit/object_proxy.h"

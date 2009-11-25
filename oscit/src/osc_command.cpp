@@ -2,7 +2,7 @@
 
 #include "oscit/osc_command.h"
 #include "oscit/root.h"
-#include "oscit/zeroconf.h"
+#include "oscit/zeroconf_registration.h"
 #include "oscit/osc_remote_object.h"
 
 #include "osc/OscReceivedElements.h"

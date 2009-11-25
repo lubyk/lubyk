@@ -11,7 +11,7 @@ class Observer;
  * destruction (to invalidate the references pointing to instances of this class).
  */
 class Observable {
-protected:
+private:
   friend class Observer;
 
   class Callback {
@@ -103,7 +103,7 @@ protected:
   void disable_on_destroy(void *key) {
     destruction_notifier_.remove_callback(key);
   }
-private:
+
   // Observable ivars
   OnDestroyNotifier destruction_notifier_;
 

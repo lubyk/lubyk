@@ -10,6 +10,7 @@
 #include <string>
 
 #include "oscit/typed.h"
+#include "oscit/observer.h"
 #include "oscit/values.h"
 #include "oscit/thash.h"
 #include "oscit/mutex.h"
@@ -36,7 +37,7 @@ namespace oscit {
 class Root;
 class Alias;
 
-class Object : public Typed {
+class Object : public Typed, public Observer, private Observable {
  public:
   /** Class signature. */
   TYPED("Object")

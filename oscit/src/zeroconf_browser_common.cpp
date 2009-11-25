@@ -1,4 +1,4 @@
-#include "oscit/zeroconf.h"
+#include "oscit/zeroconf_browser.h"
 #include "oscit/proxy_factory.h"
 #include "oscit/root_proxy.h"
 #include "oscit/object_proxy.h"
@@ -18,13 +18,22 @@ void ZeroConfBrowser::do_adopt_proxy_factory(ProxyFactory *factory) {
 }
 
 
-void ZeroConfBrowser::build_proxy(const Location &location) {
+void ZeroConfBrowser::add_proxy(const Location &location) {
   if (proxy_factory_ && command_) {
     // TODO: check that there is no proxy for this location already and
     // return true/false ?
-    command_->adopt_proxy(proxy_factory_->build_and_init_root_proxy(location));
+    if (!command_->find_proxy(location)) {
+      command_->adopt_proxy(proxy_factory_->build_and_init_root_proxy(location));
+    }
   } else {
     fprintf(stderr, "Cannot build proxy: proxy_factory_ or command_ is NULL (%s:%i)", __FILE__, __LINE__);
+  }
+}
+
+void ZeroConfBrowser::remove_proxy(const Location &location) {
+  if (command_) {
+    RootProxy *proxy = command_->find_proxy(location);
+    if (proxy) delete proxy;
   }
 }
 

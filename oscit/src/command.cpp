@@ -1,7 +1,7 @@
 #include "oscit/command.h"
 #include "oscit/root.h"
 #include "oscit/object.h"
-#include "oscit/zeroconf.h"
+#include "oscit/zeroconf_registration.h"
 #include "oscit/root_proxy.h"
 
 namespace oscit {
@@ -103,4 +103,9 @@ void Command::unregister_proxy(RootProxy *proxy) {
   root_proxies_.remove_element(proxy);
 }
 
+RootProxy *Command::find_proxy(const Location &location) {
+  RootProxy *found = NULL;
+  root_proxies_.get(location, &found);
+  return found;
+}
 } // oscit

@@ -1,7 +1,8 @@
 #include <sstream>
 
 #include "test_helper.h"
-#include "oscit/zeroconf.h"
+#include "oscit/zeroconf_registration.h"
+#include "oscit/zeroconf_browser.h"
 #include "ip/UdpSocket.h"
 
 class DummyBrowser : public ZeroConfBrowser {
@@ -59,13 +60,13 @@ class ZeroConfTest : public TestHelper {
 
   void test_register_browse( void ) {
     DummyBrowser browser("_oscit._udp");
-    wait(3000);
+    wait(2000);
     browser.lock();
       browser.str(""); // clear
     browser.unlock();
     DummyRegistration *registration = new DummyRegistration("foobar", "_oscit._udp", 5007);
 
-    wait(3000);
+    wait(2000);
     registration->lock();
     browser.lock();
       assert_equal("[registered: foobar @ 5007]", registration->str());
@@ -74,7 +75,7 @@ class ZeroConfTest : public TestHelper {
     browser.unlock();
     registration->unlock(); // ?
     delete registration;
-    wait(2500);
+    wait(1500);
     browser.lock();
       assert_equal("[- foobar]", browser.str());
     browser.unlock();
