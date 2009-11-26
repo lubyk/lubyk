@@ -278,7 +278,7 @@ public:
 
   void test_list_with_type_on_root( void ) {
     Root root;
-    root.adopt(new DummyObject("mode", 0.0, SelectIO("rgb, yuv", "color mode", "This is a menu.")));
+    root.adopt(new DummyObject("mode", "rgb", SelectIO("rgb, yuv", "color mode", "This is a menu.")));
     root.adopt(new DummyObject("tint", 45.0, RangeIO(1, 127, "tint", "This is a slider from 1 to 127.")));
     Value res = root.list_with_type();
     // .error, .info, etc are ignored (current value -- type mismatch)

@@ -1,10 +1,13 @@
 #include "test_helper.h"
 #include "oscit/thread.h"
-#include "mock/dummy_command.h"
 #include "oscit/root_proxy.h"
+
+#include "mock/dummy_command.h"
+#include "mock/object_proxy_logger.h"
 
 #include <sstream>
 
+namespace oscit {
 class CommandTest : public TestHelper
 {
 public:
@@ -98,4 +101,30 @@ public:
     found = cmd.find_proxy(remote);
     assert_equal((RootProxy *)NULL, found);
   }
+
+  void test_should_handle_register_messages( void ) {
+    std::string logger;
+    DummyCommand cmd(&logger);
+    assert_equal(0, cmd.observers().size());
+    // receive is protected, we need to be friend...
+    cmd.receive(Url("dummy://unknown.host/.register"), gNilValue);
+    assert_equal(1, cmd.observers().size());
+    assert_equal("unknown.host", cmd.observers().front().name());
+  }
+
+  void test_should_handle_reply_messages( void ) {
+    std::string logger1;
+    Logger logger;
+    // FIXME: use Logger instead of string !!
+    DummyCommand cmd(&logger1, "dummy");
+    assert_equal(0, cmd.observers().size());
+    RootProxy *root_proxy = cmd.adopt_proxy(new RootProxy(Location("dummy", "unknown.host")));
+    root_proxy->adopt(new ObjectProxyLogger("foo", RangeIO(1, 127, "tint", "This is a slider from 1 to 127."), &logger));
+    // receive is protected, we need to be friend...
+    logger.str("");
+    cmd.receive(Url("dummy://unknown.host/.reply"), Value("/foo").push_back(5));
+    assert_equal("..", logger.str());
+  }
 };
+
+} // oscit

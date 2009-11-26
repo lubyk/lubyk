@@ -46,15 +46,11 @@ public:
  protected:
   /** Executed within mutex lock from own thread.
    */
-  virtual void process_message(const Url &url, const Value &ext_val);
+  virtual void receive(const Url &url, const Value &ext_val);
 
   /** Executed within mutex lock from root.
    */
-  virtual void notify_observers(const char *url, const Value &val) {
-   send_to_observers(url, val);
-  }
-
-  virtual void send_to_observers(const char *url, const Value &val, const Location *skip_end_point = NULL);
+  virtual void notify_observers(const char *path, const Value &val);
 
   /** Mappings compilation.
    */
@@ -73,10 +69,6 @@ public:
  private:
 
   uint16_t reply_port_;
-
-  /** List of remote endpoints to send replies to indexed by IP
-   */
-  THash<unsigned long, Location> observers_;
 
   Mapper mapper_;
   TimeRef *time_ref_;

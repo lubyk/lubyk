@@ -170,7 +170,7 @@ public:
   void to_stream(std::ostream &out_stream, bool lazy = false) const;
 
   /** List of keys. */
-  const std::list<K>& keys() { return keys_; }
+  const std::list<K> &keys() const { return keys_; }
 
   /** Begin iterator over the keys of the dictionary (read-only). */
   typename std::list<K>::const_iterator begin() const { return keys_.begin(); }

@@ -74,17 +74,6 @@ public:
     running_ = false;
   }
 
-  /** Add a new satellite to the list of observers. This method is the implementation
-   *  of "/.register".
-   * TODO: how to get the IP without checking for "/.register" in the 'receive' method ?
-   * FIXME: implement TTL (time to live)
-   * FIXME: avoid duplicates (??)
-   */
-  void register_observer(const Location &observer) {
-    // TODO: check that the observer is not already in the list of observers_.
-    observers_.push_back(observer);
-  }
-
   /** Send an osc message.
    *  @param remote_endpoint target host.
    */
@@ -141,66 +130,31 @@ public:
     // TODO: reuse location ?
     Url   url(ip_end_point.address, ip_end_point.port, message.AddressPattern());
 
-    if (url.path() == "/.register") {
-      register_observer(url.location());
-      // TODO: implement TTL, remove from here: should live in Root.
-      // return value ??
-#ifdef DEBUG_OSC_COMMAND
-      std::cout << "[" << command_->port() << "] <-- " << url << "()" << std::endl;
-#endif
-    } else {
-      Value val(value_from_osc(message));
+    Value val(value_from_osc(message));
 
 #ifdef DEBUG_OSC_COMMAND
-      std::cout << "[" << command_->port() << "] <-- " << url << "(" << val << ")" << std::endl;
+    std::cout << "[" << command_->port() << "] <-- " << url << "(" << val << ")" << std::endl;
 #endif
-      command_->lock();
-        command_->process_message(url, val);
-      command_->unlock();
-    }
+
+    ScopedLock lock(command_);
+    command_->receive(url, val);
   }
 
-  /** Send reply to caller and notify observers. */
-  void send_reply(const Url &url, const Value &val) {
-    if (val.is_nil()) return;
-
-    if (val.is_error()) {
-      send(url.location(), ERROR_PATH, val);
-    } else {
-      // reply to all
-
-      // prepare reply
-      Value res(url.path());
-      res.push_back(val);
-
-      // FIXME: why don't we just send to all observers in one go ?
-      // send_to_observers(REPLY_PATH, res) ?
-      send(url.location(), REPLY_PATH, res);
-
-      send_to_observers(REPLY_PATH, res, &url.location()); // skip remote_endpoint
-    }
-  }
-
-  /** Build osc message and send it to all observers. */
-  void send_to_observers(const char *path, const Value &val, const Location *skip_end_point = NULL) {
-    std::list<Location>::iterator it  = observers_.begin();
-    std::list<Location>::iterator end = observers_.end();
+  /** Build an osc message and send it to all observers. */
+  void send_to_all(const std::list<Location> locations, const char *path, const Value &val) {
+    std::list<Location>::const_iterator it  = locations.begin();
+    std::list<Location>::const_iterator end = locations.end();
 
     osc::OutboundPacketStream message( osc_buffer_, OSC_OUT_BUFFER_SIZE );
     build_message(path, val, &message);
 
     while (it != end) {
-      if (skip_end_point != NULL && *it == *skip_end_point) {
-        // skip
-      } else {
-        try {
-          // FIXME: hack oscpack to use Location or rewrite...
-          socket_->SendTo(IpEndpointName(it->ip(), it->port()), message.Data(), message.Size());
-          ++it;
-        } catch (std::runtime_error &e) {
-          std::cout << "Could not send to observer " << *it << "\n";
-          it = observers_.erase(it);
-        }
+      try {
+        // FIXME: hack oscpack to use Location or rewrite...
+        socket_->SendTo(IpEndpointName(it->ip(), it->port()), message.Data(), message.Size());
+        ++it;
+      } catch (std::runtime_error &e) {
+        std::cout << "Could not send to observer " << *it << "\n";
       }
     }
   }
@@ -292,15 +246,13 @@ public:
    */
   UdpListeningReceiveSocket *socket_;
 
-  std::list<Location> observers_; /**< List of satellites that have registered to get return values back. */
-
   char osc_buffer_[OSC_OUT_BUFFER_SIZE];     /** Buffer used to build osc packets. */
   bool running_;
 };
 
 
 OscCommand::OscCommand(uint16_t port) :
-                    Command("osc", OSCIT_SERVICE_TYPE, port) {
+                    Command("osc", "", port) { // no service_type, we do not want automatic registration
   impl_ = new OscCommand::Implementation(this);
 }
 
@@ -320,11 +272,7 @@ void OscCommand::kill() {
 }
 
 void OscCommand::notify_observers(const char *path, const Value &val) {
-  send_to_observers(path, val);
-}
-
-void OscCommand::send_to_observers(const char *path, const Value &val, const Location *skip_end_point) {
-  impl_->send_to_observers(path, val, skip_end_point);
+  impl_->send_to_all(observers(), path, val);
 }
 
 void OscCommand::listen() {
@@ -344,13 +292,6 @@ Object *OscCommand::build_remote_object(const Url &url, Value *error) {
   //   host found ==> IpEndpointName
   // build remoteobject and let it test remote url
   // return remote_objects_->adopt(new OscRemoteObject(this, end_point, url.path()));
-}
-
-void OscCommand::process_message(const Url &url, const Value &val) {
-  Value res = root_->call(url, val, this);
-
-  // send return
-  impl_->send_reply(url, res);
 }
 
 void OscCommand::change_port(uint16_t port) {

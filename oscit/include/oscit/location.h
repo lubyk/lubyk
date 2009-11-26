@@ -18,6 +18,7 @@ public:
   /** Any local IP.
    */
   static const unsigned long ANY_IP = 0xFFFFFFFF;
+  static const unsigned long LOOPBACK = (127<<24) + 1; // 127.0.0.1
   static const uint NO_PORT = 0;
 
   Location() : reference_by_hostname_(false), ip_(NO_IP), port_(NO_PORT) {}
@@ -71,8 +72,12 @@ public:
            );
   }
 
-  const std::string name() const {
+  const std::string &name() const {
     return name_;
+  }
+
+  const std::string &protocol() const {
+    return protocol_;
   }
 
   const unsigned long &ip() const {

@@ -21,10 +21,18 @@ public:
   TYPED("Object.ObjectProxy")
 
   ObjectProxy(const char *name, const Value &type) :
-              Object(name, type), synced_children_(false), root_proxy_(NULL) {}
+              Object(name, type), need_sync_(true), root_proxy_(NULL) {
+    if (type.is_list()) {
+      value_ = type[0];
+    }
+  }
 
   ObjectProxy(const std::string &name, const Value &type) :
-              Object(name, type), synced_children_(false), root_proxy_(NULL) {}
+              Object(name, type), need_sync_(true), root_proxy_(NULL) {
+    if (type.is_list()) {
+      value_ = type[0];
+    }
+  }
 
   /** This method should be called to set a new value for the 'real' remote object. It
    * is usually called by some GUI widget callback when the user changes a control. */
@@ -35,7 +43,7 @@ public:
     }
   }
 
-  virtual const Value trigger(const Value &val) {
+  virtual const Value trigger(const Value &val, const Location *origin) {
     if (!val.is_nil()) {
       set_value(val);
     }
@@ -55,10 +63,14 @@ public:
   }
 
   void sync(bool forced = false) {
-    if (!synced_children_ || forced) {
+    if (need_sync_ || forced) {
       root_proxy_->send_to_remote(LIST_WITH_TYPE_PATH, Value(url()));
     }
-    synced_children_ = true;
+    need_sync_ = false;
+  }
+
+  void set_need_sync(bool need_sync) {
+    need_sync_ = need_sync;
   }
 
   /** Set root and if the root is a RootProxy, set root_proxy_ as well.
@@ -67,7 +79,7 @@ public:
 
 protected:
 
-  bool synced_children_;
+  bool need_sync_;
 
   /** Reference to a RootProxy object that links back to the original tree.
   */

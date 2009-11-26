@@ -75,34 +75,13 @@ public:
 
 private:
 
-  void handle_list_with_type_reply(ObjectProxy *target, const Value &children);
+  void build_children_from_types(Object *base, const Value &types);
 
   /** Get information on the direct children of the remote root.
    */
   void sync() {
     send_to_remote(LIST_WITH_TYPE_PATH, Value(url()));
   }
-
-  /** Get an object proxy at a defined url.
-   */
-  // ObjectProxy *find_or_build_object_proxy_at(const std::string &path) {
-  //   Object * object = object_at(path);
-  //
-  //   if (object == NULL) {
-  //     // build object
-  //     ObjectProxy *object ..
-  //     size_t pos = path.rfind("/");
-  //     if (pos != std::string::npos) {
-  //       // "/foo/bar" ==> "/foo/bar", "/foo", ""
-  //       // find or build parent
-  //       Object * parent = find_or_build_object_proxy_at(path.substr(0, pos));
-  //       parent->adopt(build_object_proxy(path.substr(pos)))
-  //     } else {
-  //       // root object "foo"... error ?
-  //     }
-  //   }
-  //   return object;
-  // }
 
   /** Reference to the original tree this root proxies. When the RootProxy is adopted
    *  by a command, this is used as key to route 'reply' messages.

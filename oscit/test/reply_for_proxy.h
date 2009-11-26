@@ -1,17 +1,21 @@
-/** Copyright 2009 Gaspard Bucher
- *
- */
+#ifndef OSCIT_INCLUDE_OSCIT_REPLY_FORWARDER_H_
+#define OSCIT_INCLUDE_OSCIT_REPLY_FORWARDER_H_
 
-#ifndef OSCIT_INCLUDE_OSCIT_REPLY_FOR_PROXY_H_
-#define OSCIT_INCLUDE_OSCIT_REPLY_FOR_PROXY_H_
+#include "oscit/object.h"
+#include "oscit/root_proxy.h"
 
-class ReplyForProxy : public Object
+class ReplyForwarder : public Object
 {
 public:
-  ShowReplies(const char * name) : Object(name, AnyIO("Log any information.")) {}
+  ReplyForwarder(const char * name) : Object(name, AnyIO("Forward replies to root proxies.")) {}
 
   virtual const Value trigger(const Value &val, const Location *origin) {
-    std::cout << "[" << url() << "] received " << val << std::endl;
+    if (!origin) return gNilValue;
+    RootProxy *proxy;
+    // 1. find command from protocol
+    // 2. find proxy from command + location
+    // 3. send 'handle_reply' to proxy
+
     return gNilValue;
   }
 };

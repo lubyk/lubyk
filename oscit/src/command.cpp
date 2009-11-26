@@ -6,6 +6,11 @@
 
 namespace oscit {
 
+#define REMOTE_OBJECTS_HASH_SIZE 10000
+#define ROOT_PROXY_HASH_SIZE     100
+#define OBSERVERS_HASH_SIZE      100
+#define DEFAULT_TTL              240 // 4 minutes
+
 Command::Command(const char *protocol) :
                                 remote_objects_(REMOTE_OBJECTS_HASH_SIZE),
                                 root_(NULL),
@@ -13,7 +18,8 @@ Command::Command(const char *protocol) :
                                 protocol_(protocol),
                                 service_type_(""),
                                 zeroconf_registration_(NULL),
-                                root_proxies_(ROOT_PROXY_HASH_SIZE) {}
+                                root_proxies_(ROOT_PROXY_HASH_SIZE),
+                                observers_(OBSERVERS_HASH_SIZE) {}
 
 Command::Command(const char *protocol, const char *service_type, uint16_t port) :
                                 remote_objects_(REMOTE_OBJECTS_HASH_SIZE),
@@ -22,7 +28,8 @@ Command::Command(const char *protocol, const char *service_type, uint16_t port) 
                                 protocol_(protocol),
                                 service_type_(service_type),
                                 zeroconf_registration_(NULL),
-                                root_proxies_(ROOT_PROXY_HASH_SIZE) {}
+                                root_proxies_(ROOT_PROXY_HASH_SIZE),
+                                observers_(OBSERVERS_HASH_SIZE) {}
 
 Command::Command(Root *root, const char *protocol) :
                                 remote_objects_(REMOTE_OBJECTS_HASH_SIZE),
@@ -31,7 +38,8 @@ Command::Command(Root *root, const char *protocol) :
                                 protocol_(protocol),
                                 service_type_(""),
                                 zeroconf_registration_(NULL),
-                                root_proxies_(ROOT_PROXY_HASH_SIZE) {}
+                                root_proxies_(ROOT_PROXY_HASH_SIZE),
+                                observers_(OBSERVERS_HASH_SIZE) {}
 
 Command::Command(Root *root, const char *protocol, const char *service_type, uint16_t port) :
                                 remote_objects_(REMOTE_OBJECTS_HASH_SIZE),
@@ -40,7 +48,8 @@ Command::Command(Root *root, const char *protocol, const char *service_type, uin
                                 protocol_(protocol),
                                 service_type_(service_type),
                                 zeroconf_registration_(NULL),
-                                root_proxies_(ROOT_PROXY_HASH_SIZE) {}
+                                root_proxies_(ROOT_PROXY_HASH_SIZE),
+                                observers_(OBSERVERS_HASH_SIZE) {}
 
 Command::~Command() {
   kill();
@@ -88,6 +97,40 @@ void Command::publish_service() {
       name = "Generic oscit device";
     }
     zeroconf_registration_ = new ZeroConfRegistration(name.c_str(), service_type_.c_str(), port_);
+  }
+}
+
+void Command::receive(const Url &url, const Value &val) {
+  if (!handle_reply_message(url, val) && !handle_register_message(url, val)) {
+    root_->call(url, val, this);
+  }
+}
+
+/** Add a new satellite to the list of observers. This method is whenever we receive messages from
+ * a given location.
+ */
+bool Command::handle_register_message(const Url &url, const Value &val) {
+  if (url.path() == REGISTER_PATH) {
+    observers_.set(url.location(), DEFAULT_TTL);
+    return true;
+  } else {
+    return false;
+  }
+}
+
+bool Command::handle_reply_message(const Url &url, const Value &val) {
+  if (url.path() == REPLY_PATH) {
+    RootProxy *proxy = find_proxy(url.location());
+    if (proxy) {
+      if (val.size() < 2 || !val[0].is_string()) {
+        std::cerr << "Bad argument to " << REPLY_PATH << " :" << val << "\n";
+        return true;
+      }
+      proxy->handle_reply(val[0].str(), val[1]);
+    }
+    return true;
+  } else {
+    return false;
   }
 }
 

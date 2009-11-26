@@ -11,9 +11,7 @@ class Value;
 class Object;
 class ZeroConfRegistration;
 class RootProxy;
-
-#define REMOTE_OBJECTS_HASH_SIZE 10000
-#define ROOT_PROXY_HASH_SIZE     100
+class CommandTest;
 
 /** This class is responsible for listening to any kind of incoming command (implemented by subclasses in do_listen)
  *  and passing these commands to the root object.
@@ -74,12 +72,13 @@ class Command : public Thread
     proxy->set_command(this); // This will trigger 'register_proxy'.
     return proxy;
   }
-  
+
   RootProxy *find_proxy(const Location &location);
 
  protected:
   friend class Root;       // set_root
   friend class RootProxy;  // register_proxy, unregister_proxy
+  friend class CommandTest;
 
   /** We have just adopted this proxy: start routing 'reply' messages to it.
    */
@@ -93,6 +92,12 @@ class Command : public Thread
    *  initializing and are ready to go public.
    */
   void publish_service();
+
+  /** This method is called whenever the command receives a new message.
+   * Executed within mutex lock from the command's own thread.
+   *
+   */
+  virtual void receive(const Url &url, const Value &val);
 
   /** Should only be used by Root.
    */
@@ -127,6 +132,22 @@ class Command : public Thread
    */
   uint16_t port_;
 
+  /** Return the list of locations observing through this command.
+   */
+  const std::list<Location> &observers() const {
+    return observers_.keys();
+  }
+
+  /** Handle '/.register' messages. This method should be called from within 'receive'.
+   * The method adds a new satellite to the list of observers.
+   */
+  bool handle_register_message(const Url &url, const Value &val);
+
+  /** Handle '/.reply' messages. This method should be called from within 'receive'.
+  * @return true if the message was a '/.reply' and it does not need any further processing
+  */
+  bool handle_reply_message(const Url &url, const Value &val);
+
  private:
 
   /** Type of protocol this command is responsible for. For example if
@@ -144,10 +165,14 @@ class Command : public Thread
    */
   ZeroConfRegistration *zeroconf_registration_;
 
-  /** Route for 'reply' messages which are sent to the proxy identified
+  /** Route for received '/.reply' messages which are sent to the proxy identified
    *  by the IP endpoint (origin of the message).
    */
   THash<Location, RootProxy*> root_proxies_;
+
+  /** List of satellites that have registered to get return values.
+   */
+  THash<Location, unsigned int> observers_;
 };
 
 } // oscit

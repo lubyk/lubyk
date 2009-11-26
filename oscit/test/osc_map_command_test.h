@@ -17,13 +17,15 @@
 class OscMapCommandTest : public TestHelper
 {
  public:
-  OscMapCommandTest() : app1_end_point_("localhost", APP1_PORT) {
+  OscMapCommandTest() : app1_end_point_("oscmap", Location::LOOPBACK, APP1_PORT) {
                                                   // IN      // OUT
     map_cmd_ = app1_.adopt_command(new OscMapCommand(APP1_PORT, APP2_PORT));
 
     app2_sender_  = app2_.adopt_command(new OscCommand(APP2_PORT));
     Object *o = app2_.adopt(new Object("slider"));
     app2_log_ = o->adopt(new LogObject("1"));  //   /slider/1
+    // we need to register in order to get return values
+    send("/.register", gNilValue);
   }
 
   void setUp() {
@@ -37,7 +39,7 @@ class OscMapCommandTest : public TestHelper
     assert_false(res.is_error());
     send("/slider/1", 0.5);
     assert_equal(15.0, foo->real());
-    assert_equal("", reply());
+    assert_equal("0.5\n", reply());
   }
 
   void test_notifications_should_reverse_map( void ) {

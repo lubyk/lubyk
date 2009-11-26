@@ -15,6 +15,7 @@ namespace oscit {
 #define TYPE_PATH "/.type"
 #define TREE_PATH "/.tree"
 #define REPLY_PATH "/.reply"
+#define REGISTER_PATH "/.register"
 
 /** Root object. You can only start new trees with root objects.
 
@@ -138,14 +139,37 @@ class Root : public Object
 
     Value res = call(target, val, &url.location(), context);
 
-    if (context != NULL && !res.is_error()) {
+    if (context != NULL) {
       // only notify when context is defined (command call)
-      notify_observers(url.path().c_str(), res, context);
+      if (res.is_error()) {
+        // only send reply to caller
+        send(url.location(), ERROR_PATH, res);
+      } else {
+        // prepare reply
+        Value reply(url.path());
+        reply.push_back(res);
+        notify_observers(REPLY_PATH, reply, context);
+      }
     }
     return res;
   }
 
+  void send(const Location &remote, const char *path, const Value &val, const Mutex *context = NULL) {
+    Command *cmd = command_for_protocol(remote.protocol());
+    if (cmd) {
+      if (cmd != context) {
+        ScopedLock lock(cmd);
+        cmd->send(remote, path, val);
+      } else
+        cmd->send(remote, path, val);
+    } else {
+      std::cerr << "Cannot send '" << path << "(" << val << ")" << "' to " << remote << " no command for protocol '" << remote.protocol() << "'.\n";
+    }
+  }
+
   /** Send value to given url (can be local or remote). You should use 'call' for local urls (faster).
+   * FIXME: this needs refactoring... we should not have a 'send' finishing in a 'call' !
+   * FIXME: maybe rename this to 'call_remote' ?
    */
   const Value send(const Url &url, const Value &val, const Mutex *context = NULL) {
     Value error;
@@ -256,15 +280,15 @@ class Root : public Object
 
   /** Send a reply to all commands so they pass it further to their observers.
    */
-  void notify_observers(const char *path, const Value &val, const Mutex *skip_context) {
+  void notify_observers(const char *path, const Value &val, const Mutex *context = NULL) {
     std::list<Command*>::iterator it;
     std::list<Command*>::iterator end = commands_.end();
     for (it = commands_.begin(); it != end; ++it) {
-      if (*it != skip_context) {
-        (*it)->lock();
-          (*it)->notify_observers(path, val);
-        (*it)->unlock();
-      }
+      if (*it != context) {
+        ScopedLock lock(*it);
+        (*it)->notify_observers(path, val);
+      } else
+        (*it)->notify_observers(path, val);
     }
   }
 

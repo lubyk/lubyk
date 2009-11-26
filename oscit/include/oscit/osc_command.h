@@ -21,14 +21,11 @@ public:
 
   virtual void kill();
 
-  /** Send a notification to all observers.
-   * Executed within mutex lock from root.
-   */
-  virtual void notify_observers(const char *path, const Value &val);
-
   /** Send a Value to a remote endpoint at a given path using osc.
    */
   void send(const Location &remote_endpoint, const char *path, const Value &val);
+
+  virtual void notify_observers(const char *path, const Value &val);
 
 protected:
   /** Create a reference to a remote object. */
@@ -37,15 +34,6 @@ protected:
   /** Start listening for incoming messages (runs in its own thread).
    */
   virtual void listen();
-
-  /** Do something useful with the received osc message.
-   * Executed within mutex lock from our own thread.
-   */
-  virtual void process_message(const Url &url, const Value &val);
-
-  /** Send a message to all observers.
-   */
-  virtual void send_to_observers(const char *path, const Value &val, const Location *skip_end_point = NULL);
 
   /** Listen to messages on a different port number.
    */

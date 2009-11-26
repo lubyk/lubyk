@@ -3,7 +3,6 @@
 
 #include "oscit/object.h"
 #include "mock/logger.h"
-#include "oscit/object_proxy.h"
 
 class ObjectProxyLogger : public ObjectProxy, protected MockLogger {
 public:

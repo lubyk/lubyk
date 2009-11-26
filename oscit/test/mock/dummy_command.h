@@ -26,9 +26,13 @@ struct DummyCommand : public Command
     }
   }
 
-  virtual void notify_observers(const char*, const oscit::Value&) {}
+  virtual void notify_observers(const char *path, const oscit::Value &val) {
+    //log("notify", path, val);
+  }
 
-  virtual void send(const Location &remote_endpoint, const char *path, const Value &val) {}
+  virtual void send(const Location &remote_endpoint, const char *path, const Value &val) {
+    //log("send", remote_endpoint, path, val);
+  }
 
   virtual Object *build_remote_object(const Url &url, Value *error) {
     if (url.location() == dummy_host_) {
@@ -43,6 +47,10 @@ struct DummyCommand : public Command
     Object *res = NULL;
     remote_objects_.get(url, &res);
     return res;
+  }
+
+  const std::list<Location> &observers() const {
+    return Command::observers();
   }
 
   std::string *string_;
