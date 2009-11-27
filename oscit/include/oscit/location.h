@@ -127,6 +127,8 @@ inline uint hashId(const Location &location) {
   }
 }
 
+std::ostream &operator<< (std::ostream &out_stream, const std::list<Location> &locations);
+
 
 } // oscit
 

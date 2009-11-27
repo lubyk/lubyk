@@ -118,12 +118,12 @@ public:
     // FIXME: use Logger instead of string !!
     DummyCommand cmd(&logger1, "dummy");
     assert_equal(0, cmd.observers().size());
-    RootProxy *root_proxy = cmd.adopt_proxy(new RootProxy(Location("dummy", "unknown.host")));
+    RootProxy *root_proxy = cmd.adopt_proxy(new RootProxy(Location("dummy", "some place")));
     root_proxy->adopt(new ObjectProxyLogger("foo", RangeIO(1, 127, "tint", "This is a slider from 1 to 127."), &logger));
     // receive is protected, we need to be friend...
     logger.str("");
-    cmd.receive(Url("dummy://unknown.host/.reply"), Value("/foo").push_back(5));
-    assert_equal("..", logger.str());
+    cmd.receive(Url("dummy://\"some place\"/.reply"), Value(Json("[\"/foo\", 5]")));
+    assert_equal("[foo: value_changed 5]", logger.str());
   }
 };
 

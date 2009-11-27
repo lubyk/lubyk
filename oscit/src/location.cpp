@@ -36,4 +36,15 @@ void Location::set_name_from_ip() {
   }
 }
 
+std::ostream &operator<< (std::ostream &out_stream, const std::list<Location> &locations) {
+  std::list<Location>::const_iterator it;
+  std::list<Location>::const_iterator begin = locations.begin();
+  std::list<Location>::const_iterator end   = locations.end();
+  for(it = begin; it != end; ++it) {
+    if (it != begin) out_stream << ", ";
+    out_stream << *it;
+  }
+  return out_stream;
+}
+
 } // oscit

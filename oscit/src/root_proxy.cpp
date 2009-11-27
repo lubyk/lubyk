@@ -10,7 +10,7 @@ void RootProxy::set_command(Command *command) {
   command_ = command;
   if (command_) {
     command_->register_proxy(this);
-    send(remote_location_, REGISTER_PATH, gNilValue);
+    command_->send(remote_location_, REGISTER_PATH, gNilValue);
     sync();
   }
 }

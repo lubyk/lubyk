@@ -262,7 +262,7 @@ public:
     root.adopt_command(new CommandLogger("osc", &logger));
     logger.str("");
     root.call("/foo", Value(5.2), &context);
-    assert_equal("[http: /foo 5.2][osc: /foo 5.2]", logger.str());
+    assert_equal("[http: /.reply [\"/foo\", 5.2]][osc: /.reply [\"/foo\", 5.2]]", logger.str());
   }
 
   void test_delete_command_should_unregister_it_from_observers( void ) {

@@ -63,7 +63,7 @@ Command::~Command() {
   string_iterator end = remote_objects_.end();
 
   // destroy all references to remote objects
-  for(it = remote_objects_.begin(); it != end; it++) {
+  for(it = remote_objects_.begin(); it != end; ++it) {
     Object * object;
     if (remote_objects_.get(*it, &object)) {
       delete object;
@@ -73,7 +73,7 @@ Command::~Command() {
   // destroy all references to remote objects
   std::list<Location>::const_iterator p_it;
   std::list<Location>::const_iterator p_end = root_proxies_.end();
-  for(p_it = root_proxies_.begin(); p_it != p_end; p_it++) {
+  for(p_it = root_proxies_.begin(); p_it != p_end; ++p_it) {
     RootProxy *root_proxy;
     if (root_proxies_.get(*p_it, &root_proxy)) {
       root_proxy->unlink_command();

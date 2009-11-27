@@ -10,6 +10,8 @@
 
 namespace oscit {
 
+//#define DEBUG_PARSER
+
 #ifdef DEBUG_PARSER
 #define DEBUG(x) x
 #else
@@ -51,7 +53,7 @@ static std::string escape(const std::string &string) {
       ++ptr;
     }
   }
-  
+
   if (len) res.append(last_append, len);
   return res;
 }
@@ -160,7 +162,7 @@ Value &Value::push_front(const Value& val) {
 ///////////////// ====== JSON PARSER ========= /////////////
 %%{
   machine json;
-  
+
   action str_a {
      // append a char to build a std::string
     DEBUG(printf("%c-",fc));
@@ -186,15 +188,15 @@ Value &Value::push_front(const Value& val) {
     // Parse a single element of a hash (key:value)
     // Build tmp_val from string and move p forward
     p++;
-    p += tmp_val.build_from_json(p);
+    p += tmp_val.build_from_json(p, true);
     set(str_buf, tmp_val);
     fhold;
     DEBUG(printf("[hash_value \"%s\":%s]\n", str_buf.c_str(), tmp_val.to_json().c_str()));
     DEBUG(printf("[continue \"%s\"]\n",p));
-    
+
     str_buf = "";
   }
-  
+
   action list_value {
     // Parse a single element of a hash (key:value)
     // Build tmp_val from string and move p forward
@@ -202,11 +204,11 @@ Value &Value::push_front(const Value& val) {
     p += tmp_val.build_from_json(p, true);
     push_back(tmp_val);
     if (*(p-1) == ',') fhold; // hold the ',' separator
-    
+
     DEBUG(printf("[%p:list_value %s ==> %s/%s]\n", this, tmp_val.to_json().c_str(), to_json().c_str(), p));
     fhold; // eaten by >list_value sub-action
   }
-  
+
   action lazy_list {
     // we have a value in tmp that should be changed into a list [tmp]
     DEBUG(printf("[%p:lazy_list %s]\n", this, tmp_val.to_json().c_str()));
@@ -219,26 +221,26 @@ Value &Value::push_front(const Value& val) {
       set_type(HASH_VALUE);
     }
   }
-  
+
   action list {
     if (!is_list()) set_type(LIST_VALUE);
-    
+
     DEBUG(printf("[%p:list %s]\n", this, p));
     // FIXME: how to avoid 'return' by telling parsing to stop ?
     return p - json + 1;
   }
-  
+
   action nil {
     // become a NilValue
     DEBUG(printf("[nil]\n"));
     tmp_val.set_type(NIL_VALUE);
   }
-  
+
   action set_from_tmp {
     DEBUG(printf("[set_from_tmp %s]\n", tmp_val.to_json().c_str()));
     if (!is_list() && !is_hash()) *this = tmp_val;
   }
-  
+
   ws        = ' ' | '\t' | '\n';
   end       = ws  | '\0' | '}' | ',' | ']';  # we need '}' and ']' to finish value when embedded in hash: {one:1.34}
   dquote_content = ([^"\\] | '\n') $str_a | ('\\' (any | '\n') $str_a);
@@ -251,24 +253,24 @@ Value &Value::push_front(const Value& val) {
   false     = 'false';
   number    = real | integer;
   string    = ws* ('"' dquote_content* '"' | '\'' squote_content* '\'');
-  
-  hash_content = ((string | word) ':' >hash_value)+;
-  
+
+  hash_content = (string | word) ':' >hash_value;
+
   strict    = ws* '[' >list_value (',' >list_value)* ']' $list |
-              ws* '{' hash_content   '}' %hash   |
+              ws* '{' hash_content (','? hash_content)* '}' %hash   |
                       string             %string |
                       number             %number |
                       nil                %nil;
-                      
+
   lazy_list_content = strict %lazy_list ',' >list_value (',' >list_value)*;
 
-  lazy      = lazy_list_content          %list   |          
-              hash_content               %hash   |
-              strict;  
-  
+  lazy      = lazy_list_content          %list   |
+              hash_content (','? hash_content)* %hash   |
+              strict;
+
   main_strict := strict %set_from_tmp end;
   main_lazy   := lazy   %set_from_tmp end;
-  
+
 }%%
 
 // transition table
@@ -281,29 +283,29 @@ size_t Value::build_from_json(const char *json, bool strict_mode) {
   Value tmp_val;
   set_empty(); // clear
   // =============== Ragel job ==============
-  
+
   int cs;
   const char * p  = json;
   const char * pe = json + strlen(p) + 1;
-  
+
   %% write init;
-  
+
   if (strict_mode) {
     cs = json_en_main_strict;
   } else {
     cs = json_en_main_lazy;
   }
-  
+
   %% write exec;
   if (p != pe) --p;
-  
+
   return p - json;
 }
 
 } // oscit
 
 
-/* 
+/*
 
 // old stuff, remove if we decide we do not need to stream matrix data as json...
 
@@ -376,7 +378,7 @@ template<>
 void MatrixData::to_json(std::ostream& pStream) const
 {
   char buffer[20];
-  
+
   size_t sz = size();
   pStream << "[";
 

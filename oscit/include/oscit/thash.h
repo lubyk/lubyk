@@ -375,7 +375,7 @@ void THash<K,T>::to_stream(std::ostream &out_stream, bool lazy) const {
   begin = keys_.begin();
   T value;
   for( it = begin; it != end; it++) {
-    if (it != begin) out_stream << " ";
+    if (it != begin) out_stream << (lazy ? " " : ", ");
     if (lazy) {
       if (get(*it, &value)) {
         out_stream << *it << ":" << value;

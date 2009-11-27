@@ -36,7 +36,7 @@ public:
     Root root;
     root.adopt(new DummyObject2("foo", "yuv"));
     Value res;
-    
+
     res = root.call(TYPE_PATH, Value("/foo"));
     assert_equal("/foo", res[0].str());
     res = res[1];
@@ -61,7 +61,7 @@ public:
 
   void test_list_type( void ) {
     Root root;
-    root.adopt(new DummyObject("Haddock", 42.0, Value(Json("[[\"\", 0.0], \"name\", \"years old\", \"Set captain with name and age.\"]"))));
+    root.adopt(new DummyObject("Haddock", Value("Haddock").push_back(42), Value(Json("[[\"\", 0.0], \"name\", \"years old\", \"Set captain with name and age.\"]"))));
     Value res;
     res = root.call(TYPE_PATH, Value("/Haddock"));
     assert_equal("/Haddock", res[0].str());
@@ -69,22 +69,22 @@ public:
     assert_equal("[sf]sss", res.type_tag());
     assert_equal("[\"Haddock\", 42]", res[0].to_json()); // info
   }
-  
+
   void test_hash_type( void ) {
     Root root;
-    root.adopt(new DummyObject("dog_food", 42.0, HashIO("Blah blah.")));
+    root.adopt(new DummyObject("dog_food", Value(Json("{lazy:\"dog\", silly:\"cats and mices\"}")), HashIO("Blah blah.")));
     Value res;
     res = root.call(TYPE_PATH, Value("/dog_food"));
     assert_equal("/dog_food", res[0].str());
     res = res[1];
     assert_equal("Hs", res.type_tag());
-    assert_equal("{\"lazy\":\"dog\" \"silly\":\"cats and mices\"}", res[0].to_json()); // hash
+    assert_equal("{\"lazy\":\"dog\", \"silly\":\"cats and mices\"}", res[0].to_json()); // hash
     assert_equal("Blah blah.", res[1].str()); // info
   }
 
   void test_matrix_type( void ) {
     Root root;
-    root.adopt(new DummyObject("master_of_time", 42.0, MatrixIO(1,5,"Stupid matrix.")));
+    root.adopt(new DummyObject("master_of_time", MatrixValue(1,5), MatrixIO(1,5,"Stupid matrix.")));
     Value res;
     res = root.call(TYPE_PATH, Value("/master_of_time"));
     assert_equal("/master_of_time", res[0].str());
@@ -105,11 +105,11 @@ public:
     res = res[1];
     assert_equal("No information on this node.", res.str());
   }
-  
+
   void test_type_with_nil( void ) {
     Root root(NoIO("This is the root node."));
     Value res;
-    
+
     res = root.call(TYPE_PATH, gNilValue);
     assert_true(res.is_nil());
   }
