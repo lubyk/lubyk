@@ -1,10 +1,12 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8)
 set(RAGEL "ragel")
 if(UNIX)
+  set(OSCPACK_PLAT "posix")
   if(APPLE)
     set(PLAT "macosx")
     set(PLAT_LINK "")
     set(CMAKE_CXX_FLAGS "-mmacosx-version-min=10.4 -g -Wall")
+    set(CMAKE_OSX_ARCHITECTURES "ppc;i386;x86_64" CACHE STRING "Build architectures for OSX" FORCE)
   else(APPLE)
     set(PLAT "linux")
     set(PLAT_LINK avahi-client rt)
@@ -13,6 +15,7 @@ if(UNIX)
 else(UNIX)
   if(WIN32)
     set(PLAT "win32")
+    set(OSCPACK_PLAT "win32")
     set (CMAKE_CXX_FLAGS "-g -Wall")
   else(WIN32)
     set(PLAT "unsupported")
@@ -40,16 +43,16 @@ foreach (RAGEL_SRC ${RAGEL_SOURCES})
 	set (OSCIT_SOURCES ${OSCIT_SOURCES} ${OSCIT_SOURCE_DIR}/src/${RAGEL_SRC_NAME}.cpp)
 endforeach (RAGEL_SRC)
 
-# TODO: can we do a static link with liboscpack.a ?
-add_library (oscit STATIC ${OSCIT_SOURCES})
+file (GLOB OSCPACK_SOURCES oscpack/ip/*.cpp oscpack/ip/${OSCPACK_PLAT}/*.cpp oscpack/osc/*.cpp)
+add_library (oscit STATIC ${OSCIT_SOURCES} ${OSCPACK_SOURCES})
 
-# oscpack
-add_custom_command (
-  OUTPUT  ${OSCIT_SOURCE_DIR}/oscpack/liboscpack.a
-  COMMAND cd ${OSCIT_SOURCE_DIR}/oscpack && make liboscpack.a
-)
-add_custom_target (generate_liboscpack DEPENDS ${OSCIT_SOURCE_DIR}/oscpack/liboscpack.a)
-add_dependencies (oscit generate_liboscpack)
+# not cmake based oscpack
+# add_custom_command (
+#   OUTPUT  ${OSCIT_SOURCE_DIR}/oscpack/liboscpack.a
+#   COMMAND cd ${OSCIT_SOURCE_DIR}/oscpack && make liboscpack.a
+# )
+# add_custom_target (generate_liboscpack DEPENDS ${OSCIT_SOURCE_DIR}/oscpack/liboscpack.a)
+# add_dependencies (oscit generate_liboscpack)
 
 # testing
 
@@ -63,9 +66,8 @@ add_custom_command ( PRE_BUILD
   DEPENDS ${OSCIT_TEST_SOURCES} ${OSCIT_TEST_MOCKS}
 )
 
-add_executable (test_runner test_runner.cpp ${OSCIT_SOURCE_DIR}/oscpack/liboscpack.a)
-
-target_link_libraries (test_runner oscit ${OSCIT_SOURCE_DIR}/oscpack/liboscpack.a ${PLAT_LINK})
+add_executable (test_runner test_runner.cpp)
+target_link_libraries (test_runner oscit ${PLAT_LINK})
 add_test (oscit_test test_runner)
 
 # this is to enable verbose output during testing
