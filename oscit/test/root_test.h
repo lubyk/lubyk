@@ -1,7 +1,7 @@
 #include "test_helper.h"
 #include "oscit/root.h"
 #include "mock/dummy_object.h"
-#include "mock/dummy_command.h"
+#include "mock/command_logger.h"
 #include "mock/object_logger.h"
 #include "mock/command_logger.h"
 
@@ -171,7 +171,7 @@ public:
     Root root;
     Logger logger;
     root.adopt_command(new CommandLogger("osc", &logger));
-    assert_equal("[osc: listen]", logger.str());
+    assert_equal("[osc: listen][osc: .]", logger.str());
   }
 
   void test_adopt_command_with_false_should_not_start_listeners( void ) {
@@ -183,8 +183,8 @@ public:
 
   void test_remote_object_at( void ) {
     Root root;
-    std::string string;
-    root.adopt_command(new DummyCommand(&string));
+    Logger logger;
+    root.adopt_command(new CommandLogger(&logger));
     DummyObject  *foo = root.adopt(new DummyObject("foo", 3));
     Object   *res;
     Value error;
@@ -217,10 +217,11 @@ public:
     root.adopt_command(new CommandLogger("http", &logger),false);
     root.adopt_command(new CommandLogger("osc", &logger),false);
     logger.str("");
-    root.send(Url("http://example.com/foo/bar"), gNilValue);
-    assert_equal("[http: http://example.com/foo/bar]", logger.str());
-    root.send(Url("osc://\"funky thing\"/one/two"), gNilValue);
-    assert_equal("[http: http://example.com/foo/bar][osc: osc://\"funky thing\"/one/two]", logger.str());
+    root.send(Location("http", "this place"), "/foo/bar", gNilValue);
+    assert_equal("[http: send http://\"this place\" /foo/bar null]", logger.str());
+    logger.str("");
+    root.send(Location("osc", "funky thing"), "/one/two", gNilValue);
+    assert_equal("[osc: send osc://\"funky thing\" /one/two null]", logger.str());
   }
 
   void test_should_only_register_one_command_per_protocol( void ) {
@@ -231,8 +232,8 @@ public:
     assert_equal(NULL, (void*)two);
     assert_equal("", logger.str());
     logger.str("");
-    root.send(Url("osc://example.com/foo/bar"), gNilValue);
-    assert_equal("[one: osc://example.com/foo/bar]", logger.str());
+    root.send(Location("osc", "some place"), "/foo/bar", gNilValue);
+    assert_equal("[one: send osc://\"some place\" /foo/bar null]", logger.str());
   }
 
   void test_named_root( void ) {
@@ -262,7 +263,7 @@ public:
     root.adopt_command(new CommandLogger("osc", &logger));
     logger.str("");
     root.call("/foo", Value(5.2), &context);
-    assert_equal("[http: /.reply [\"/foo\", 5.2]][osc: /.reply [\"/foo\", 5.2]]", logger.str());
+    assert_equal("[http: notify /.reply [\"/foo\", 5.2]][osc: notify /.reply [\"/foo\", 5.2]]", logger.str());
   }
 
   void test_delete_command_should_unregister_it_from_observers( void ) {

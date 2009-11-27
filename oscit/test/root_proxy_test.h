@@ -14,7 +14,7 @@ public:
     ProxyFactoryLogger factory("factory", &logger);
     Location location("oscit", "my place");
     CommandLogger *cmd = root.adopt_command(new CommandLogger("oscit", &logger));
-    assert_equal("[oscit: listen]", logger.str());
+    assert_equal("[oscit: listen][oscit: .]", logger.str());
     logger.str("");
     cmd->adopt_proxy(factory.build_and_init_root_proxy(location));
     assert_equal("[factory: build_root_proxy oscit://\"my place\"][oscit: send oscit://\"my place\" /.register null][oscit: send oscit://\"my place\" /.list_with_type \"\"]", logger.str());

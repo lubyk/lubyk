@@ -8,9 +8,9 @@ namespace oscit {
 void RootProxy::set_command(Command *command) {
   if (command_) command_->unregister_proxy(this);
   command_ = command;
-  if (command_) {
-    command_->register_proxy(this);
-    command_->send(remote_location_, REGISTER_PATH, gNilValue);
+  if (command) {
+    command->register_proxy(this);
+    command->send(remote_location_, REGISTER_PATH, gNilValue);
     sync();
   }
 }

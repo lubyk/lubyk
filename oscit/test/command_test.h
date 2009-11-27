@@ -2,7 +2,7 @@
 #include "oscit/thread.h"
 #include "oscit/root_proxy.h"
 
-#include "mock/dummy_command.h"
+#include "mock/command_logger.h"
 #include "mock/object_proxy_logger.h"
 
 #include <sstream>
@@ -13,25 +13,27 @@ class CommandTest : public TestHelper
 public:
   void test_create_delete( void ) {
     Root * root = new Root;
-    std::string string;
-    root->adopt_command(new DummyCommand(&string));
+    Logger logger;
+    root->adopt_command(new CommandLogger(&logger));
     // let it run 2 times: +1 ... 10ms ... +1 ... 5ms .. quit [end]
     millisleep(30);
     delete root;
     // should join here
-    assert_equal("..", string);
+    assert_equal("[dummy: listen][dummy: .][dummy: .]", logger.str());
   }
 
   void test_many_root_many_commands( void ) {
     Root * root1 = new Root;
     Root * root2 = new Root;
-    std::string string1;
-    std::string string2;
-    std::string string3;
-    DummyCommand *d1 = root1->adopt_command(new DummyCommand(&string1)); // first registered
-    DummyCommand *d2 = root1->adopt_command(new DummyCommand(&string2)); // not registered (same protocol)
-    DummyCommand *d3 = root1->adopt_command(new DummyCommand(&string2, "doom"));
-    DummyCommand *d4 = root2->adopt_command(new DummyCommand(&string3));
+    Logger logger1;
+    Logger logger2;
+    Logger logger3;
+    Logger logger4;
+
+    CommandLogger *d1 = root1->adopt_command(new CommandLogger(&logger1)); // first registered
+    CommandLogger *d2 = root1->adopt_command(new CommandLogger(&logger2)); // not registered (same protocol)
+    CommandLogger *d3 = root1->adopt_command(new CommandLogger("doom", &logger3));
+    CommandLogger *d4 = root2->adopt_command(new CommandLogger(&logger4)); // registered (same protocol, other root)
 
     assert_true(d1 != NULL);
     assert_true(d2 == NULL);
@@ -44,15 +46,16 @@ public:
     delete root2;
 
     // should join here
-    assert_equal("..", string1);
-    assert_equal("..", string2);
-    assert_equal("..", string3);
+    assert_equal("[dummy: listen][dummy: .][dummy: .]", logger1.str());
+    assert_equal("", logger2.str()); // never started (same protocol)
+    assert_equal("[doom: listen][doom: .][doom: .]", logger3.str());
+    assert_equal("[dummy: listen][dummy: .][dummy: .]", logger4.str());
   }
 
   void test_root_remote_object_at( void ) {
     Root root;
-    std::string string;
-    DummyCommand *cmd = root.adopt_command(new DummyCommand(&string));
+    Logger logger;
+    CommandLogger *cmd = root.adopt_command(new CommandLogger(&logger));
     Value error;
     Object *obj  = root.object_at(Url("dummy://dummy.host:2009/one/two/testing"), &error); // builds reference
 
@@ -63,8 +66,8 @@ public:
 
   void test_root_send( void ) {
     Root root;
-    std::string string;
-    DummyCommand *cmd = root.adopt_command(new DummyCommand(&string));
+    Logger logger;
+    CommandLogger *cmd = root.adopt_command(new CommandLogger(&logger));
     Value res = root.send(Url("dummy://dummy.host:2009/one/two/testing"), gNilValue);
     DummyObject *object = (DummyObject*) cmd->remote_object_no_build("dummy://dummy.host:2009/one/two/testing");
     // object created (the 2009 port thing is a hack for testing)
@@ -79,8 +82,8 @@ public:
   }
 
   void test_should_find_proxy_from_location( void ) {
-    std::string logger;
-    DummyCommand cmd(&logger);
+    Logger logger;
+    CommandLogger cmd(&logger);
     Location remote("oscit", "my place");
     Location remote2("oscit", "my place2");
     RootProxy *proxy = cmd.adopt_proxy(new RootProxy(remote));
@@ -91,8 +94,8 @@ public:
   }
 
   void test_should_not_find_proxy_from_location_after_proxy_deletion( void ) {
-    std::string logger;
-    DummyCommand cmd(&logger);
+    Logger logger;
+    CommandLogger cmd(&logger);
     Location remote("oscit", "my place");
     RootProxy *proxy = cmd.adopt_proxy(new RootProxy(remote));
     RootProxy *found;
@@ -103,8 +106,8 @@ public:
   }
 
   void test_should_handle_register_messages( void ) {
-    std::string logger;
-    DummyCommand cmd(&logger);
+    Logger logger;
+    CommandLogger cmd(&logger);
     assert_equal(0, cmd.observers().size());
     // receive is protected, we need to be friend...
     cmd.receive(Url("dummy://unknown.host/.register"), gNilValue);
@@ -113,10 +116,8 @@ public:
   }
 
   void test_should_handle_reply_messages( void ) {
-    std::string logger1;
     Logger logger;
-    // FIXME: use Logger instead of string !!
-    DummyCommand cmd(&logger1, "dummy");
+    CommandLogger cmd("dummy", &logger);
     assert_equal(0, cmd.observers().size());
     RootProxy *root_proxy = cmd.adopt_proxy(new RootProxy(Location("dummy", "some place")));
     root_proxy->adopt(new ObjectProxyLogger("foo", RangeIO(1, 127, "tint", "This is a slider from 1 to 127."), &logger));
@@ -124,6 +125,15 @@ public:
     logger.str("");
     cmd.receive(Url("dummy://\"some place\"/.reply"), Value(Json("[\"/foo\", 5]")));
     assert_equal("[foo: value_changed 5]", logger.str());
+  }
+
+  void test_should_notify_observers( void ) {
+    Logger logger;
+    Root root;
+    root.adopt_command(new CommandLogger(&logger));
+    logger.str("");
+    root.notify_observers("/flop", Value(5));
+    assert_equal("[dummy: notify /flop 5]", logger.str());
   }
 };
 

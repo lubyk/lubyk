@@ -1,10 +1,10 @@
-#ifndef OSCIT_TEST_MOCK_OBJECT_PROXY_LOGGER_H_
-#define OSCIT_TEST_MOCK_OBJECT_PROXY_LOGGER_H_
+#ifndef OSCIT_TEST_MOCK_ROOT_PROXY_LOGGER_H_
+#define OSCIT_TEST_MOCK_ROOT_PROXY_LOGGER_H_
 
 #include "oscit/object.h"
 #include "mock/logger.h"
 
-class ObjectProxyLogger : public ObjectProxy, protected MockLogger {
+class RootProxyLogger : public ObjectProxy, protected MockLogger {
 public:
   ObjectProxyLogger(const char *name, const Value &type, std::ostringstream *stream) :
                 ObjectProxy(name, type),
@@ -46,4 +46,4 @@ public:
 };
 
 
-#endif // OSCIT_TEST_MOCK_OBJECT_PROXY_LOGGER_H_
+#endif // OSCIT_TEST_MOCK_ROOT_PROXY_LOGGER_H_

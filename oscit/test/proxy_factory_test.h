@@ -52,7 +52,7 @@ remote + OscCommand = remote
 proxy = proxy of remote remote in local context
 */
 
-class OscProxyTest : public TestHelper
+class ProxyFactoryTest : public TestHelper
 {
  public:
   enum {
@@ -83,8 +83,15 @@ class OscProxyTest : public TestHelper
     millisleep(100);
     Value res = proxy->list();
     assert_equal("[\"monitor\"]", res.to_json());
+
+    // ProxyFactory "should set itself as factory when creating a RootProxy"
+    // same factory used to build root and objects ==> OK
     ObjectProxy *object_proxy = factory.find_by_name("monitor");
     assert_true(object_proxy);
+
+    // ProxyFactory "should build subclasses of ObjectProxy"
+    assert_true(object_proxy->kind_of(ObjectProxy));
+
     res = object_proxy->list();
     assert_equal("[]", res.to_json());
 
@@ -104,6 +111,10 @@ class OscProxyTest : public TestHelper
     Object *bar = proxy_->object_at("/bar");
     Value res = bar->trigger(gNilValue, NULL);
     assert_equal("45", res.to_json());
+
+    // should have same type as remote
+    assert_equal("[45, 1, 127, \"tint\", \"This is a slider from 1 to 127.\"]", bar->type().to_json());
+    assert_equal("[45, 1, 127, \"tint\", \"This is a slider from 1 to 127.\"]", bar_->type().to_json());
   }
 
   void test_call_local_proxy_should_find_cached_value( void ) {
