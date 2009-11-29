@@ -37,7 +37,7 @@ namespace oscit {
 class Root;
 class Alias;
 
-class Object : public Typed, public Observer, private Observable {
+class Object : public Typed, public Observer, public Observable {
  public:
   /** Class signature. */
   TYPED("Object")
