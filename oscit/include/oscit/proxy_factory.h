@@ -20,6 +20,8 @@ class ProxyFactory
 public:
   ProxyFactory() {}
 
+  virtual ~ProxyFactory() {}
+
   /** Called by ZeroConfBrowser to create a new RootProxy and pass
    *  it this object as factory.
    */

@@ -9,23 +9,12 @@ class DummyBrowser : public ZeroConfBrowser {
 public:
   DummyBrowser(const char *service) : ZeroConfBrowser(service), stream_(std::ostringstream::out), found_devices_(10) {}
 
-  ~DummyBrowser() {
-    stop();
+  virtual void added_proxy(RootProxy *proxy) {
+    stream_ << "[+ " << proxy->remote_location() << "]";
   }
 
-  virtual void add_device(const Location &location) {
-    // only record first entry in case there are more then one network interfaces
-    if (!found_devices_.has_key(location.name())) {
-      stream_ << "[+ " << location.name() << " @ " << location.port() << "]";
-      found_devices_.set(location.name(), true);
-    }
-  }
-
-  virtual void remove_device(const char *name) {
-    if (found_devices_.has_key(name)) {
-      stream_ << "[- " << name << "]";
-      found_devices_.remove(name);
-    }
+  virtual void removing_proxy(RootProxy *proxy) {
+    stream_ << "[- " << proxy->remote_location() << "]";
   }
 
   const std::string str() { return stream_.str(); }
@@ -60,6 +49,9 @@ class ZeroConfTest : public TestHelper {
 
   void test_register_browse( void ) {
     DummyBrowser browser("_oscit._udp");
+    Logger logger;
+    CommandLogger cmd("oscit", &logger);
+    browser.set_command(&cmd);
     wait(500);
     browser.lock();
       browser.str(""); // clear
@@ -70,14 +62,14 @@ class ZeroConfTest : public TestHelper {
     registration->lock();
     browser.lock();
       assert_equal("[registered: foobar @ 5007]", registration->str());
-      assert_equal("[+ foobar @ 5007]", browser.str());
+      assert_equal("[+ oscit://\"foobar\"]", browser.str());
       browser.str(""); // clear
     browser.unlock();
     registration->unlock(); // ?
     delete registration;
     wait(1500);
     browser.lock();
-      assert_equal("[- foobar]", browser.str());
+      assert_equal("[- oscit://\"foobar\"]", browser.str());
     browser.unlock();
   }
 

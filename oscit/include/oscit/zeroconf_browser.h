@@ -4,8 +4,11 @@
 
 #include "oscit/mutex.h"
 #include "oscit/location.h"
+#include "oscit/root_proxy.h"
 
 namespace oscit {
+
+#define FOUND_DEVICE_HASH_SIZE 100
 
 class ProxyFactory;
 class Command;
@@ -19,13 +22,13 @@ class ZeroConfBrowser : public Mutex {
 
   virtual ~ZeroConfBrowser();
 
-  virtual void add_device(const Location &location) {
-    add_proxy(location);
-  }
+  /** This method is called just after a new proxy has been added to the list.
+   */
+  virtual void added_proxy(RootProxy *proxy) {}
 
-  virtual void remove_device(const char *name) {
-    remove_proxy(Location(protocol_.c_str(), name));
-  }
+  /** This method is called just before the proxy is actually deleted.
+   */
+  virtual void removing_proxy(RootProxy *proxy) {}
 
   template<class T>
   T *adopt_proxy_factory(T *factory) {
@@ -44,6 +47,10 @@ class ZeroConfBrowser : public Mutex {
 
   void get_protocol_from_service_type();
 
+  void add_device(const Location &location);
+
+  void remove_device(const char *name);
+
   void add_proxy(const Location &location);
 
   void remove_proxy(const Location &location);
@@ -58,6 +65,8 @@ class ZeroConfBrowser : public Mutex {
 
   class Implementation;
   Implementation *impl_;
+
+  THash<std::string, Location> found_devices_;
 };
 
 } // oscit

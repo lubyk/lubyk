@@ -34,6 +34,8 @@ public:
     }
   }
 
+  virtual ~ObjectProxy() {}
+
   /** This method should be called to set a new value for the 'real' remote object. It
    * is usually called by some GUI widget callback when the user changes a control. */
   void set_value(const Value &val) {

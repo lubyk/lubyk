@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58140DA1D0A300B32029 /* MainMenu.xib */; };
-		2B85FDDF10A0D43C00F02A64 /* liboscit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B85FDDE10A0D43C00F02A64 /* liboscit.a */; };
 		2BD249120F0B454200AAA8C7 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BD249050F0B454200AAA8C7 /* Carbon.framework */; };
 		2BD249130F0B454200AAA8C7 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BD249060F0B454200AAA8C7 /* AudioUnit.framework */; };
 		2BD249140F0B454200AAA8C7 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BD249070F0B454200AAA8C7 /* Cocoa.framework */; };
@@ -25,6 +24,7 @@
 		2BD249260F0B456400AAA8C7 /* MainComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BD249200F0B456400AAA8C7 /* MainComponent.cpp */; };
 		2BD249270F0B456400AAA8C7 /* Main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BD249220F0B456400AAA8C7 /* Main.cpp */; };
 		2BD249280F0B456400AAA8C7 /* juce_LibrarySource.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2BD249250F0B456400AAA8C7 /* juce_LibrarySource.mm */; };
+		2BE5BA8A10C0241000535DB4 /* liboscit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BE5BA8910C0241000535DB4 /* liboscit.a */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -78,7 +78,6 @@
 		2B6C733D0FAF3DAD00F2DAC9 /* values.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = values.h; sourceTree = "<group>"; };
 		2B6C733E0FAF3DAD00F2DAC9 /* zeroconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zeroconf.h; sourceTree = "<group>"; };
 		2B6C73650FAF440D00F2DAC9 /* juce_amalgamated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = juce_amalgamated.h; path = ../../src/lib/juce/juce_amalgamated.h; sourceTree = SOURCE_ROOT; };
-		2B85FDDE10A0D43C00F02A64 /* liboscit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liboscit.a; path = ../../../oscit/build/liboscit.a; sourceTree = SOURCE_ROOT; };
 		2BD249050F0B454200AAA8C7 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		2BD249060F0B454200AAA8C7 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
 		2BD249070F0B454200AAA8C7 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
@@ -98,6 +97,10 @@
 		2BD249230F0B456400AAA8C7 /* includes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = includes.h; path = ../../src/core/includes.h; sourceTree = SOURCE_ROOT; };
 		2BD249240F0B456400AAA8C7 /* juce_AppConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = juce_AppConfig.h; path = ../../src/core/juce_AppConfig.h; sourceTree = SOURCE_ROOT; };
 		2BD249250F0B456400AAA8C7 /* juce_LibrarySource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = juce_LibrarySource.mm; path = ../../src/core/juce_LibrarySource.mm; sourceTree = SOURCE_ROOT; };
+		2BE5BA8910C0241000535DB4 /* liboscit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liboscit.a; path = ../../../oscit/build/liboscit.a; sourceTree = SOURCE_ROOT; };
+		2BE5BAC710C0839700535DB4 /* browser_proxy_factory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = browser_proxy_factory.h; path = ../../src/core/browser_proxy_factory.h; sourceTree = SOURCE_ROOT; };
+		2BE5BAC810C0839700535DB4 /* device_browser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = device_browser.h; path = ../../src/core/device_browser.h; sourceTree = SOURCE_ROOT; };
+		2BE5BAC910C0839700535DB4 /* device_proxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = device_proxy.h; path = ../../src/core/device_proxy.h; sourceTree = SOURCE_ROOT; };
 		32CA4F630368D1EE00C91783 /* Mimas_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mimas_Prefix.pch; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Mimas.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mimas.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -122,7 +125,7 @@
 				2BD2491C0F0B454200AAA8C7 /* IOKit.framework in Frameworks */,
 				2BD2491D0F0B454200AAA8C7 /* OpenGL.framework in Frameworks */,
 				2BD2491E0F0B454200AAA8C7 /* WebKit.framework in Frameworks */,
-				2B85FDDF10A0D43C00F02A64 /* liboscit.a in Frameworks */,
+				2BE5BA8A10C0241000535DB4 /* liboscit.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -267,7 +270,7 @@
 		2BA19D260F1249DA003B0C27 /* lib */ = {
 			isa = PBXGroup;
 			children = (
-				2B85FDDE10A0D43C00F02A64 /* liboscit.a */,
+				2BE5BA8910C0241000535DB4 /* liboscit.a */,
 			);
 			name = lib;
 			sourceTree = "<group>";
@@ -275,6 +278,9 @@
 		2BD2491F0F0B455500AAA8C7 /* core */ = {
 			isa = PBXGroup;
 			children = (
+				2BE5BAC710C0839700535DB4 /* browser_proxy_factory.h */,
+				2BE5BAC810C0839700535DB4 /* device_browser.h */,
+				2BE5BAC910C0839700535DB4 /* device_proxy.h */,
 				2B6C73650FAF440D00F2DAC9 /* juce_amalgamated.h */,
 				2B6C72850FAF37E200F2DAC9 /* juce_amalgamated.cpp */,
 				2B6C722C0FAF1BE800F2DAC9 /* mimas.h */,
@@ -415,13 +421,13 @@
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = ../../../oscit/include/;
-				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH)";
+				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 			};
@@ -430,11 +436,12 @@
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = ../../../oscit/include;
 				PREBINDING = NO;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 			};

@@ -70,7 +70,7 @@ public:
   void registration(Thread *thread) {
     //  release calling thread semaphore
     thread->thread_ready();
-    
+
     DNSServiceErrorType error;
     DNSServiceRef service;
 
@@ -123,6 +123,7 @@ ZeroConfRegistration::ZeroConfRegistration(const std::string &name, const char *
 }
 
 ZeroConfRegistration::~ZeroConfRegistration() {
+  stop();
   delete impl_;
 }
 
