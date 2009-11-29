@@ -25,6 +25,8 @@
 #include "mimas.h"
 #include "oscit/osc_command.h"
 #include "device_browser.h"
+#include "device_view.h"
+#include "device_proxy.h"
 #include "browser_proxy_factory.h"
 
 class MainComponent  : public Component,

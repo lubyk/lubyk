@@ -21,6 +21,7 @@
 
 #include "MainComponent.h"
 
+
 //==============================================================================
 MainComponent::MainComponent()
     : device_browser_(NULL),
