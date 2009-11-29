@@ -31,7 +31,8 @@ MainComponent::MainComponent()
   quitButton->setButtonText (T("Quit"));
   quitButton->addButtonListener (this);
 
-  OscCommand *cmd = work_tree_.adopt_command(new OscCommand("oscit", "_oscit._udp", 7019));
+  // no service-type: we do not want to publish a service
+  OscCommand *cmd = work_tree_.adopt_command(new OscCommand("oscit", "", 7019));
   device_browser_ = new DeviceBrowser("_oscit._udp");
   device_browser_->set_command(cmd);
   device_browser_->adopt_proxy_factory(new BrowserProxyFactory);
