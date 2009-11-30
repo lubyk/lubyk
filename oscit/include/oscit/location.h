@@ -61,11 +61,7 @@ public:
   }
 
   bool operator!=(const Location &other) const {
-    return ip_       != other.ip_       ||
-           port_     != other.port_     ||
-           protocol_ != other.protocol_ ||
-           reference_by_hostname_ != other.reference_by_hostname_ ||
-           name_     != other.name_;
+    return !(this->operator==(other));
   }
 
   bool operator==(const Location &other) const {

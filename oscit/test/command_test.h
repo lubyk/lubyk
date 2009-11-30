@@ -165,6 +165,18 @@ public:
     assert_equal("[dummy: notify /.reply [\"/foo\", 5.2]][http: notify /.reply [\"/foo\", 5.2]][osc: notify /.reply [\"/foo\", 5.2]]", logger.str());
   }
 
+  void test_register_proxy( void ) {
+    Logger logger;
+    CommandLogger cmd(&logger);
+    Location location("oscit", 167772167, 45);
+    RootProxy proxy(location);
+    assert_true(NULL  == cmd.find_proxy(location));
+    cmd.register_proxy(&proxy);
+    assert_true(&proxy == cmd.find_proxy(location));
+    cmd.unregister_proxy(&proxy);
+    assert_true(NULL  == cmd.find_proxy(location));
+  }
+
 };
 
 } // oscit

@@ -20,8 +20,6 @@ void ZeroConfBrowser::do_adopt_proxy_factory(ProxyFactory *factory) {
 
 void ZeroConfBrowser::add_proxy(const Location &location) {
   if (command_) {
-    // TODO: check that there is no proxy for this location already and
-    // return true/false ?
     if (!command_->find_proxy(location)) {
       RootProxy *proxy = NULL;
       if (proxy_factory_) {

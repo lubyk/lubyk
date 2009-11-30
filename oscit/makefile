@@ -11,3 +11,6 @@ build/MakeFile: build
 
 clean: build
 	cd build && make clean
+
+oscit: build build/MakeFile
+	cd build && make oscit

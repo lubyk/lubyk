@@ -151,6 +151,8 @@ bool Command::handle_reply_message(const Url &url, const Value &val) {
         return true;
       }
       proxy->handle_reply(val[0].str(), val[1]);
+    } else {
+      // std::cerr << "Could not handle reply from '" << url.location() << "' (no proxy for this location).\n";
     }
     return true;
   } else {
