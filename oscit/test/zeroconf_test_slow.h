@@ -49,6 +49,7 @@ class ZeroConfTest : public TestHelper {
 
   void test_register_browse( void ) {
     DummyBrowser browser("_oscit._udp");
+    browser.adopt_proxy_factory(new ProxyFactory);
     Logger logger;
     CommandLogger cmd("oscit", &logger);
     browser.set_command(&cmd);

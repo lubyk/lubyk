@@ -92,6 +92,10 @@ public:
     return port_;
   }
 
+  void set_port(uint port) {
+    port_ = port;
+  }
+
   /** Used for debugging: show location with ip and port.
    */
   const std::string inspect() const;

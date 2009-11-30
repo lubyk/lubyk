@@ -128,7 +128,14 @@ void Command::receive(const Url &url, const Value &val) {
  */
 bool Command::handle_register_message(const Url &url, const Value &val) {
   if (url.path() == REGISTER_PATH) {
-    observers_.set(url.location(), DEFAULT_TTL);
+    if (val.is_real()) {
+      // other port
+      Location remote(url.location());
+      remote.set_port((uint)val.r);
+      observers_.set(remote, DEFAULT_TTL);
+    } else {
+      observers_.set(url.location(), DEFAULT_TTL);
+    }
     return true;
   } else {
     return false;

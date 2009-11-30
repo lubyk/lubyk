@@ -28,14 +28,13 @@ void input(const char *name, std::string &rval) {
 }
 
 
-class ShowReplies : public Object
-{
+class OscCommandShowReplies : public OscCommand {
 public:
-  ShowReplies(const char * name) : Object(name, AnyIO("Log any information.")) {}
+  OscCommandShowReplies(uint port) : OscCommand(port) {}
 
-  virtual const Value trigger(const Value &val, const Location *origin) {
-    std::cout << "[" << url() << "] received " << val << std::endl;
-    return gNilValue;
+  virtual void receive(const Url &url, const Value &val) {
+    std::cout << "[" << url << "] received " << val << std::endl;
+    Command::receive(url, val);
   }
 };
 
@@ -43,7 +42,6 @@ public:
 int main(int argc, char * argv[]) {
   Root root;
   std::string port_str("7020");
-  int port;
   int in_port;
 
   if (argc > 1) {
@@ -58,15 +56,12 @@ int main(int argc, char * argv[]) {
   Value value;
 
   // open osc command on port OSC_PORT
-  OscCommand *sender = root.adopt_command(new OscCommand(in_port));
+  OscCommand *sender = root.adopt_command(new OscCommandShowReplies(in_port));
 
   ZeroConfBrowser browser("_oscit._udp");
   browser.set_command(sender);
   // FIXME: the lines above should be:
   // ZeroConfBrowser *browser = sender->adopt_zeroconf_browser(new ZeroConfBrowser("_oscit._udp"));
-
-  // just to log replies
-  root.adopt(new ShowReplies(".reply"));
 
   // register signals
   signal(SIGINT,  terminate);
@@ -80,10 +75,8 @@ int main(int argc, char * argv[]) {
     // If the location is a service name, resolve
     url.resolve_with(&browser);
 
-    std::cout << url.location().inspect() << "\n";
-
     // This is the interesting part: send an osc value out
-    sender->send(url, value);
+    sender->send(url.location(), url.path().c_str(), value);
 
     Thread::millisleep(10); // wait for answer
 

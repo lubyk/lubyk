@@ -50,7 +50,7 @@ void Location::resolve_with(const ZeroConfBrowser *browser) {
   if (ip_ == NO_IP) {
     if (reference_by_hostname_) {
       ip_ = ip_from_hostname(name_.c_str());
-    } else {
+    } else if (browser) {
       if (!browser->get_location_from_name(name_.c_str(), this)) {
         std::cerr << "Could not resolve service '" << name_ << "'.\n";
       }

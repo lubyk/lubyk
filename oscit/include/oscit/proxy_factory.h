@@ -6,6 +6,8 @@
 #define OSCIT_INCLUDE_OSCIT_PROXY_FACTORY_H_
 
 #include "oscit/root.h"
+#include "oscit/root_proxy.h"
+#include "oscit/object_proxy.h"
 
 namespace oscit {
 
@@ -25,17 +27,21 @@ public:
   /** Called by ZeroConfBrowser to create a new RootProxy and pass
    *  it this object as factory.
    */
-  RootProxy *build_and_init_root_proxy(const Location &end_point);
+  RootProxy *build_and_init_root_proxy(const Location &location);
 
   /** Root proxy factory. This method should be overwritten in subclasses in order to
    *  create custom RootProxy objects. This is called by build_and_init_root_proxy.
    */
-  virtual RootProxy *build_root_proxy(const Location &end_point) = 0;
+  virtual RootProxy *build_root_proxy(const Location &location) {
+    return new RootProxy(location);
+  }
 
   /** Object proxy factory. This method should be overwritten in subclasses in order to
    * create custom ObjectProxy objects.
    */
-  virtual ObjectProxy *build_object_proxy(const std::string &name, const Value &type) = 0;
+  virtual ObjectProxy *build_object_proxy(const std::string &name, const Value &type) {
+    return new ObjectProxy(name, type);
+  }
 
   /** A RootProxy is using this object as factory, keep a link in case it is removed.
    */

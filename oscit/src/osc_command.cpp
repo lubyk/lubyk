@@ -85,7 +85,7 @@ public:
       // FIXME: hack oscpack to accept 'Location' or rewrite this layer using ragel...
       socket_->SendTo(IpEndpointName(remote_endpoint.ip(), remote_endpoint.port()), message.Data(), message.Size());
 #ifdef DEBUG_OSC_COMMAND
-      std::cout << "[" << command_->port() << "] --- " << path << "(" << val << ") --> [" << remote_endpoint.inspect() << "]" << std::endl;
+      std::cout << "[" << command_->port() << "] --- " << path << "(" << val << ") --> [" << remote_endpoint.ip() << "]" << std::endl;
 #endif
 
     } catch (std::runtime_error &e) {
