@@ -20,6 +20,30 @@ void ObjectProxyView::paintItem(Graphics& g, int width, int height) {
     Justification::centredLeft, true);
 }
 
+bool ObjectProxyView::mightContainSubItems() {
+  return object_proxy_->children().size() > 0;
+}
+
+Component *ObjectProxyView::createItemComponent() {
+  Value type = object_proxy_->type();
+  std::cout << "type: " << type.type_tag() << "\n";
+  if (type.type_id() == H("fffss")) {
+    std::cout << "Building slider!\n";
+    ObservableSlider *slider = new ObservableSlider(String(object_proxy_->name().c_str()));
+    slider->setRange(type[1].r, type[2].r);
+    slider->setValue(type[0].r);
+    slider->setSliderStyle(Slider::LinearHorizontal);
+    slider->setTextBoxStyle(Slider::TextBoxLeft, false, 80, 20);
+    slider->setBounds (100, 2, 150, 20);
+    object_proxy_->set_slider(slider);
+    slider->addListener(object_proxy_);
+
+    return slider;
+  } else {
+    return 0; // use paintItem instead
+  }
+}
+
 void ObjectProxyView::itemOpennessChanged(bool isNowOpen) {
 //   if (isNowOpen && !subnodes_added_) {
 //     // FIXME: make sure we do not accept changes to this tree now !

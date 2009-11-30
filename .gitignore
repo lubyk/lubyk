@@ -20,4 +20,5 @@ oscit/oscpack/liboscpack.*
 rubyk/doc/prototypes/test
 oscit/examples/send
 oscit/examples/receive
+oscit/examples/beatbox
 oscit/misc/iPhone/oscit/build

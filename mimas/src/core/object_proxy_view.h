@@ -15,9 +15,9 @@ public:
 
   virtual void paintItem(Graphics& g, int width, int height);
 
-  virtual bool mightContainSubItems() {
-    return true;
-  }
+  virtual Component *createItemComponent();
+
+  virtual bool mightContainSubItems();
 
   virtual void itemOpennessChanged(bool isNowOpen);
 
