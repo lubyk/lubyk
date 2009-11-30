@@ -73,4 +73,9 @@ void ZeroConfBrowser::remove_device(const char *name) {
   }
 }
 
+bool ZeroConfBrowser::get_location_from_name(const char *service_name, Location *location) const {
+  return found_devices_.get(service_name, location);
+}
+
+
 } // oscit

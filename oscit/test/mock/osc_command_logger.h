@@ -21,9 +21,9 @@ public:
     OscCommand::notify_observers(path, val);
   }
 
-  virtual void send(const Location &remote_endpoint, const char *path, const Value &val) {
+  virtual void send_message(const Location &remote_endpoint, const char *path, const Value &val) {
     log("send", remote_endpoint, path, val);
-    OscCommand::send(remote_endpoint, path, val);
+    OscCommand::send_message(remote_endpoint, path, val);
   }
 
   virtual void receive(const Url &url, const Value &val) {
@@ -32,11 +32,11 @@ public:
     Command::receive(url, val);
   }
 
-  void clear_reply() {
+  void clear_replies() {
     replies_.str("");
   }
 
-  const std::string reply() {
+  const std::string replies() {
     return replies_.str();
   }
 

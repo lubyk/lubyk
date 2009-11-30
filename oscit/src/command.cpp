@@ -94,7 +94,8 @@ void Command::publish_service() {
   if (zeroconf_registration_ == NULL && service_type_ != "") {
     std::string name(root_->name());
     if (name == "") {
-      name = "Generic oscit device";
+      std::cerr << "## Cannot publish service '" << service_type_ << "': root name missing !\n";
+      return;
     }
     zeroconf_registration_ = new ZeroConfRegistration(name.c_str(), service_type_.c_str(), port_);
   }
@@ -102,7 +103,23 @@ void Command::publish_service() {
 
 void Command::receive(const Url &url, const Value &val) {
   if (!handle_reply_message(url, val) && !handle_register_message(url, val)) {
-    root_->call(url, val, this);
+    Value res = root_->call(url, val, this);
+
+    if (res.is_error()) {
+      // only send reply to caller
+      send(url.location(), ERROR_PATH, res);
+    } else {
+      // prepare reply
+      Value reply(url.path());
+      reply.push_back(res);
+      if (url.is_meta()) {
+        // only send to caller
+        send(url.location(), REPLY_PATH, reply);
+      } else {
+        // notify all
+        root_->notify_observers(REPLY_PATH, reply, this);
+      }
+    }
   }
 }
 

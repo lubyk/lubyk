@@ -24,7 +24,8 @@
 
 //==============================================================================
 MainComponent::MainComponent()
-    : device_browser_(NULL),
+    : work_tree_("Mimas"),
+      device_browser_(NULL),
       quitButton (0)
 {
   addAndMakeVisible (quitButton = new TextButton (String::empty));

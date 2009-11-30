@@ -38,6 +38,8 @@ class ZeroConfBrowser : public Mutex {
 
   void set_command(Command *command);
 
+  bool get_location_from_name(const char *service_name, Location *location) const;
+
  protected:
   /** This method *must* be called from sub-classes in their destructors to
    * make sure the callbacks (add_device, remove_device) are not called in the

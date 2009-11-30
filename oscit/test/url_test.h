@@ -45,6 +45,16 @@ public:
     assert_equal("/filter/contrast", url.path());
   }
 
+  void test_create_using_host_without_dot_and_port( void ) {
+    Url url("oscit://localhost:80/filter/contrast");
+    assert_equal("oscit", url.protocol());
+    assert_true( url.has_hostname() );
+    assert_false(url.has_service_name() );
+    assert_equal("localhost", url.hostname());
+    assert_equal(80, url.port());
+    assert_equal("/filter/contrast", url.path());
+  }
+
   void test_create_local( void ) {
     Url url("/one/two");
     assert_equal("", url.protocol());
@@ -67,14 +77,14 @@ public:
   }
 
   void test_create_bad_path( void ) {
-    Url url("http://www.example.com /foo/bar");
+    Url url("http://www.example.com:80 /foo/bar");
     assert_equal("", url.path());
   }
 
   void test_name( void ) {
     Url url("http://www.example.com/ bad/url");
     assert_equal("", url.name());
-    assert_equal("boy",   url.set("http://www.example.com/good/boy").name());
+    assert_equal("boy",   url.set("http://www.example.com:80/good/boy").name());
     assert_equal("foo",   url.set("foo").name());
     assert_equal("buzz",  url.set("/buzz").name());
     assert_equal("buzz_waga",  url.set("/buzz_waga").name());
@@ -97,5 +107,12 @@ public:
     assert_equal((10<<24)+4, url.ip());
     assert_equal(1432, url.port());
     assert_equal("/this/is/a/path", url.path());
+  }
+
+  void test_is_meta( void ) {
+    Url meta_url("oscit://\"foobar\"/.list");
+    Url url("oscit://\"foobar\"/list");
+    assert_true(meta_url.is_meta());
+    assert_false(url.is_meta());
   }
 };

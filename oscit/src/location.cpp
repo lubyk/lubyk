@@ -1,5 +1,9 @@
 #include <sstream>
 #include "oscit/location.h"
+#include "oscit/zeroconf_browser.h"
+
+#include <netdb.h>     // gethostbyname
+#include <arpa/inet.h> // inet_addr
 
 namespace oscit {
 
@@ -8,6 +12,7 @@ std::ostream &operator<<(std::ostream &out_stream, const Location &location) {
   if (location.protocol_ != "") {
     out_stream << location.protocol_ << "://";
   }
+
   if (location.reference_by_hostname_) {
     out_stream << location.name_;
     if (location.port_ != Location::NO_PORT) {
@@ -20,19 +25,36 @@ std::ostream &operator<<(std::ostream &out_stream, const Location &location) {
   return out_stream;
 }
 
+const std::string Location::inspect() const {
+  std::ostringstream out;
+  out << protocol_ << "://" << name_from_ip(ip_) << ":" << port_;
+  return out.str();
+}
 
-void Location::set_name_from_ip() {
-  if (ip_ == NO_IP) {
-    name_ = "";
-	} else if (ip_ == ANY_IP) {
-    name_ = "localhost";
+const std::string Location::name_from_ip(unsigned long ip) {
+  if (ip == NO_IP) {
+    return std::string("");
+	} else if (ip == ANY_IP) {
+    return std::string("localhost");
   } else {
 	  std::ostringstream out;
-    out <<        ((ip_ >> 24) & 0xFF);
-    out << "." << ((ip_ >> 16) & 0xFF);
-    out << "." << ((ip_ >> 8)  & 0xFF);
-    out << "." << ( ip_        & 0xFF);
-    name_ = out.str();
+    out <<        ((ip >> 24) & 0xFF);
+    out << "." << ((ip >> 16) & 0xFF);
+    out << "." << ((ip >> 8)  & 0xFF);
+    out << "." << ( ip        & 0xFF);
+    return out.str();
+  }
+}
+
+void Location::resolve_with(const ZeroConfBrowser *browser) {
+  if (ip_ == NO_IP) {
+    if (reference_by_hostname_) {
+      ip_ = ip_from_hostname(name_.c_str());
+    } else {
+      if (!browser->get_location_from_name(name_.c_str(), this)) {
+        std::cerr << "Could not resolve service '" << name_ << "'.\n";
+      }
+    }
   }
 }
 

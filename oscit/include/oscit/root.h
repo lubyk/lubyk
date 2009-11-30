@@ -137,21 +137,7 @@ class Root : public Object
       return error;
     }
 
-    Value res = call(target, val, &url.location(), context);
-
-    if (context != NULL) {
-      // only notify when context is defined (command call)
-      if (res.is_error()) {
-        // only send reply to caller
-        send(url.location(), ERROR_PATH, res);
-      } else {
-        // prepare reply
-        Value reply(url.path());
-        reply.push_back(res);
-        notify_observers(REPLY_PATH, reply, context);
-      }
-    }
-    return res;
+    return call(target, val, &url.location(), context);
   }
 
   void send(const Location &remote, const char *path, const Value &val, const Mutex *context = NULL) {

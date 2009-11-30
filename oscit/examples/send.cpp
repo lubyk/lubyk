@@ -1,5 +1,5 @@
 // compile with
-// g++ -I../include -I../oscpack ../build/liboscit.a ../oscpack/liboscpack.a send.cpp -o send
+// g++ -I../include ../build/liboscit.a send.cpp -o send
 
 /** This simple application sends arbitrary values through osc. */
 
@@ -52,14 +52,18 @@ int main(int argc, char * argv[]) {
     in_port = OSC_PORT;
   }
 
-  std::string host("localhost");
-  std::string url("/message");
+  std::string url_str("oscit://\"receive\"/message");
   std::string value_str("null");
   std::string continue_input("yes");
   Value value;
 
   // open osc command on port OSC_PORT
   OscCommand *sender = root.adopt_command(new OscCommand(in_port));
+
+  ZeroConfBrowser browser("_oscit._udp");
+  browser.set_command(sender);
+  // FIXME: the lines above should be:
+  // ZeroConfBrowser *browser = sender->adopt_zeroconf_browser(new ZeroConfBrowser("_oscit._udp"));
 
   // just to log replies
   root.adopt(new ShowReplies(".reply"));
@@ -69,15 +73,17 @@ int main(int argc, char * argv[]) {
 
   printf("Send started and listening on port %i.\nValues are parsed as Json\n", in_port);
   while (gRun) {
-    input("Enter  host", host);
-    input("Enter  port", port_str);
-    port = atoi(port_str.c_str());
-    input("Enter   url",  url);
+    input("Enter   url", url_str);
     input("Enter value", value_str);
     value.set(Json(value_str));
+    Url url(url_str);
+    // If the location is a service name, resolve
+    url.resolve_with(&browser);
+
+    std::cout << url.location().inspect() << "\n";
 
     // This is the interesting part: send an osc value out
-    sender->send(Location(host.c_str(), port), url, value);
+    sender->send(url, value);
 
     Thread::millisleep(10); // wait for answer
 

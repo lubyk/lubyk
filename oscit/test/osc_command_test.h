@@ -24,7 +24,7 @@ class OscCommandTest : public TestHelper
   }
 
   void setUp() {
-    sender_->clear_reply();
+    sender_->clear_replies();
     reply_.str("");
     remote_.Object::clear(); // empty root but keep commands
   }
@@ -100,7 +100,7 @@ class OscCommandTest : public TestHelper
 
   const std::string reply() {
     millisleep(10);
-    return sender_->reply();
+    return sender_->replies();
   }
 
   Location remote_end_point_;

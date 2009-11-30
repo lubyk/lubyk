@@ -55,7 +55,15 @@ class Command : public Thread
 
   /** Send a message to a specific path on a remote end point.
    */
-  virtual void send(const Location &remote_endpoint, const char *path, const Value &val) = 0;
+  inline void send(const Location &remote_endpoint, const char *path, const Value &val) {
+    send_message(remote_endpoint, path, val);
+  }
+
+  /** Send a message to an url.
+   */
+  inline void send(const Url &url, const Value &val) {
+    send_message(url.location(), url.path().c_str(), val);
+  }
 
   /** Returns a pointer to an object that can be used to send values to a remote object.
    *  The receiver should create an alias for the remote_object (do not keep the pointer).
@@ -98,6 +106,11 @@ class Command : public Thread
    *
    */
   virtual void receive(const Url &url, const Value &val);
+
+  /** This method must be implemented in subclasses to actually send
+   * values to the remote endpoint.
+   */
+  virtual void send_message(const Location &remote_endpoint, const char *path, const Value &val) = 0;
 
   /** Should only be used by Root.
    */

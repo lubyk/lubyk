@@ -38,7 +38,7 @@ void terminate(int sig) {
 }
 
 int main(int argc, char * argv[]) {
-  Root root;
+  Root root("receive");
 
   // open osc command on port OSC_PORT
   root.adopt_command(new OscCommand("oscit", "_oscit._udp", OSC_PORT));

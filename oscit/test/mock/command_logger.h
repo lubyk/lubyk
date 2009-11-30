@@ -3,6 +3,7 @@
 
 #include "oscit/command.h"
 #include "mock/logger.h"
+#include "mock/dummy_object.h"
 
 class CommandLogger : public Command, protected MockLogger {
 public:
@@ -40,7 +41,7 @@ public:
     log("notify", path, val);
   }
 
-  virtual void send(const Location &remote_endpoint, const char *path, const Value &val) {
+  virtual void send_message(const Location &remote_endpoint, const char *path, const Value &val) {
     log("send", remote_endpoint, path, val);
   }
 

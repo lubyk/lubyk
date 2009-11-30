@@ -18,9 +18,9 @@ typedef	int	pid_t;
 #define	strcasecmp	_stricmp
 #define snprintf _snprintf
 #else
-#include <sys/time.h>		// For struct timeval
-#include <unistd.h>     // For getopt() and optind
-#include <arpa/inet.h>	// For inet_addr()
+#include <sys/time.h>		// struct timeval
+#include <unistd.h>     // getopt() and optind ?
+#include <arpa/inet.h>	// inet_addr() ?
 #endif
 
 #include <dns_sd.h>     // zeroconf
@@ -108,19 +108,19 @@ public:
                                uint32_t interface_index,
                                DNSServiceErrorType error,
                                const char *fullname,
-                               const char *host_target,
+                               const char *hostname,
                                uint16_t port,
                                uint16_t txt_len,
                                const unsigned char *txt,
                                void *context) {
-
+    
     BrowsedDevice *device = (BrowsedDevice*)context;
-
+    
     if (device->flags_ & kDNSServiceFlagsAdd) {
       device->browser_->add_device(Location(
                                device->browser_->protocol_.c_str(),
                                device->name_.c_str(),
-                               Location::ANY_IP, // FIXME: get IP !
+                               hostname,
                                ntohs(port)
                                ));
     } else {

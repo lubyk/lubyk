@@ -21,15 +21,15 @@ public:
 
   virtual void kill();
 
-  /** Send a Value to a remote endpoint at a given path using osc.
-   */
-  void send(const Location &remote_endpoint, const char *path, const Value &val);
-
   virtual void notify_observers(const char *path, const Value &val);
 
 protected:
   /** Create a reference to a remote object. */
   virtual Object *build_remote_object(const Url &url, Value *error);
+
+  /** Send a Value to a remote endpoint at a given path using osc.
+   */
+  virtual void send_message(const Location &remote_endpoint, const char *path, const Value &val);
 
   /** Start listening for incoming messages (runs in its own thread).
    */

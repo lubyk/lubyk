@@ -9,6 +9,8 @@ namespace oscit {
 
 #define DEFAULT_PROTOCOL "oscit"
 
+class ZeroConfBrowser;
+
 class Location
 {
 public:
@@ -25,16 +27,18 @@ public:
   Location(const char *protocol, const char *service_name) :
                       protocol_(protocol), name_(service_name),
                       reference_by_hostname_(false), ip_(NO_IP), port_(NO_PORT) {}
-  Location(const char *protocol, const char *service_name, unsigned long ip, uint port) :
+  Location(const char *protocol, const char *service_name, const char *hostname, uint port) :
                       protocol_(protocol), name_(service_name),
-                      reference_by_hostname_(false), ip_(ip), port_(port) {}
+                      reference_by_hostname_(false), ip_(NO_IP), port_(port){
+    ip_ = ip_from_hostname(hostname);
+  }
   Location(const char *protocol, const char *hostname, uint port) :
                       protocol_(protocol), name_(hostname),
                       reference_by_hostname_(true), ip_(NO_IP), port_(port) {}
   Location(const char *protocol, unsigned long ip, uint port) :
                       protocol_(protocol),
                       reference_by_hostname_(true), ip_(ip), port_(port) {
-    set_name_from_ip();
+    name_ = name_from_ip(ip_);
   }
   Location(const char *service_name) :
                       protocol_(DEFAULT_PROTOCOL), name_(service_name),
@@ -45,7 +49,7 @@ public:
   Location(unsigned long ip, uint port) :
                       protocol_(DEFAULT_PROTOCOL),
                       reference_by_hostname_(true), ip_(ip), port_(port) {
-    set_name_from_ip();
+    name_ = name_from_ip(ip_);
   }
 
   void clear() {
@@ -88,12 +92,20 @@ public:
     return port_;
   }
 
+  /** Used for debugging: show location with ip and port.
+   */
+  const std::string inspect() const;
+
+  void resolve_with(const ZeroConfBrowser *browser);
+
+  static unsigned long ip_from_hostname(const char *hostname);
+  static const std::string name_from_ip(unsigned long ip);
+
 private:
   friend std::ostream &operator<<(std::ostream &out_stream, const Location &location);
   friend class Url;
   friend uint hashId(const Location &location);
 
-  void set_name_from_ip();
 
   /** Protocol used (oscit, http, ...)
    */

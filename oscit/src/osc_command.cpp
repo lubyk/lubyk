@@ -77,7 +77,7 @@ public:
   /** Send an osc message.
    *  @param remote_endpoint target host.
    */
-  void send(const Location &remote_endpoint, const char *path, const Value &val) {
+  void send_message(const Location &remote_endpoint, const char *path, const Value &val) {
     assert(socket_);
     osc::OutboundPacketStream message( osc_buffer_, OSC_OUT_BUFFER_SIZE );
     build_message(path, val, &message);
@@ -85,11 +85,11 @@ public:
       // FIXME: hack oscpack to accept 'Location' or rewrite this layer using ragel...
       socket_->SendTo(IpEndpointName(remote_endpoint.ip(), remote_endpoint.port()), message.Data(), message.Size());
 #ifdef DEBUG_OSC_COMMAND
-      std::cout << "[" << command_->port() << "] --- " << path << "(" << val << ") --> [" << remote_endpoint << "]" << std::endl;
+      std::cout << "[" << command_->port() << "] --- " << path << "(" << val << ") --> [" << remote_endpoint.inspect() << "]" << std::endl;
 #endif
 
     } catch (std::runtime_error &e) {
-      std::cout << "Could not connect to " << remote_endpoint << "\n";
+      std::cerr << "Could not connect to " << remote_endpoint << "\n";
       // TODO: make sure we do not leak here
     }
   }
@@ -149,12 +149,16 @@ public:
     build_message(path, val, &message);
 
     while (it != end) {
+
+#ifdef DEBUG_OSC_COMMAND
+      std::cout << "  " << *it << std::endl;
+#endif
       try {
         // FIXME: hack oscpack to use Location or rewrite...
         socket_->SendTo(IpEndpointName(it->ip(), it->port()), message.Data(), message.Size());
         ++it;
       } catch (std::runtime_error &e) {
-        std::cout << "Could not send to observer " << *it << "\n";
+        std::cerr << "Could not send to observer " << *it << "\n";
       }
     }
   }
@@ -272,6 +276,9 @@ void OscCommand::kill() {
 }
 
 void OscCommand::notify_observers(const char *path, const Value &val) {
+#ifdef DEBUG_OSC_COMMAND
+      std::cout << "[" << port() << "] - notify -> " << path << "(" << val << ")\n";
+#endif
   impl_->send_to_all(observers(), path, val);
 }
 
@@ -279,8 +286,8 @@ void OscCommand::listen() {
   impl_->listen();
 }
 
-void OscCommand::send(const Location &remote_endpoint, const char *path, const Value &val) {
-  impl_->send(remote_endpoint, path, val);
+void OscCommand::send_message(const Location &remote_endpoint, const char *path, const Value &val) {
+  impl_->send_message(remote_endpoint, path, val);
 }
 
 Object *OscCommand::build_remote_object(const Url &url, Value *error) {

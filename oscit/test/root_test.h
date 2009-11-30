@@ -196,7 +196,7 @@ public:
   void test_object_at_bad_protocol( void ) {
     Root root;
     Value error;
-    Object * res = root.object_at(Url("some://example.com/foo"), &error);
+    Object * res = root.object_at(Url("some://example.com:80/foo"), &error);
     assert_equal((Object*)NULL, res);
     assert_equal(BAD_REQUEST_ERROR, error.error_code());
     assert_equal("No command to handle \'some\' protocol.", error.error_message());
@@ -240,30 +240,6 @@ public:
     Root root("gaia");
     Object *obj = root.object_at("");
     assert_equal((Object*)&root, obj);
-  }
-
-  // Is this really what we want ? Shouldn't we notify always ?
-  void test_call_without_context_should_not_notify( void ) {
-    Root root;
-    Logger logger;
-    root.adopt_command(new CommandLogger("osc", &logger));
-    root.adopt(new DummyObject("foo", 4.5));
-    logger.str("");
-    // call without context should not notify
-    Value res = root.call("/foo", Value(5.2));
-    assert_equal("", logger.str());
-  }
-
-  void test_call_with_context_should_notify_observers( void ) {
-    Root root;
-    Mutex context;
-    root.adopt(new DummyObject("foo", 4.5));
-    Logger logger;
-    root.adopt_command(new CommandLogger("http", &logger));
-    root.adopt_command(new CommandLogger("osc", &logger));
-    logger.str("");
-    root.call("/foo", Value(5.2), &context);
-    assert_equal("[http: notify /.reply [\"/foo\", 5.2]][osc: notify /.reply [\"/foo\", 5.2]]", logger.str());
   }
 
   void test_delete_command_should_unregister_it_from_observers( void ) {

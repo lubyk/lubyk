@@ -80,12 +80,12 @@ void Url::rebuild_full_url() {
   end             = ws  | '\0';
   protocol        = alpha+;
   hostpart        = (alpha | digit)+ $str_a;
-  hostname        = hostpart ('.' $str_a hostpart) ('.' $str_a hostpart)*;
+  hostname        = hostpart ('.' $str_a hostpart)*;
   dquote_content  = ([^"\\] | '\n') $str_a | ('\\' (any | '\n') $str_a);
   squote_content  = ([^'\\] | '\n') $str_a | ('\\' (any | '\n') $str_a);
   string          = ('"' dquote_content* '"' | '\'' squote_content* '\'');
   port            = digit+;
-  host_or_service = (hostname %set_hostname (':' port $str_a %set_port)? |
+  host_or_service = (hostname %set_hostname (':' port $str_a %set_port) |
                     string %set_service_name);
   path            = (alpha | digit | '/' | '.' | '_' )+;
 

@@ -7,6 +7,8 @@
 
 namespace oscit {
 
+class ZeroConfBrowser;
+
 /** The Url is used to access remote locations by wrapping protocol, ip, port and other data.
  *
  * TODO: keep only a reference to the location in case we need this information very often...
@@ -19,7 +21,7 @@ class Url
     location_.reference_by_hostname_ = true;
     location_.ip_   = ip;
     location_.port_ = port;
-    location_.set_name_from_ip();
+    location_.name_ = Location::name_from_ip(ip);
   }
 
   Url(const unsigned long ip, const uint port, const std::string &path) : path_(path) {
@@ -27,7 +29,7 @@ class Url
     location_.reference_by_hostname_ = true;
     location_.ip_   = ip;
     location_.port_ = port;
-    location_.set_name_from_ip();
+    location_.name_ = Location::name_from_ip(ip);
   }
 
   Url(const Location &location, const std::string &path) : location_(location), path_(path) {}
@@ -54,9 +56,17 @@ class Url
 
   bool has_service_name() const { return !location_.reference_by_hostname_; }
 
+  bool is_meta() const {
+    return path_.compare(0, 2, "/.") == 0;
+  }
+
   const std::string &hostname() const { return location_.name_; }
 
   const std::string &service_name() const { return location_.name_; }
+
+  void resolve_with(const ZeroConfBrowser *browser) {
+    location_.resolve_with(browser);
+  }
 
   unsigned long ip() const { return location_.ip_; }
 

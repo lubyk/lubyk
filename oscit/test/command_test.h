@@ -4,6 +4,7 @@
 
 #include "mock/command_logger.h"
 #include "mock/object_proxy_logger.h"
+#include "mock/dummy_object.h"
 
 #include <sstream>
 
@@ -110,7 +111,7 @@ public:
     CommandLogger cmd(&logger);
     assert_equal(0, cmd.observers().size());
     // receive is protected, we need to be friend...
-    cmd.receive(Url("dummy://unknown.host/.register"), gNilValue);
+    cmd.receive(Url("dummy://unknown.host:4560/.register"), gNilValue);
     assert_equal(1, cmd.observers().size());
     assert_equal("unknown.host", cmd.observers().front().name());
   }
@@ -135,6 +136,35 @@ public:
     root.notify_observers("/flop", Value(5));
     assert_equal("[dummy: notify /flop 5]", logger.str());
   }
+
+  void test_receive_meta_should_not_notify_observers( void ) {
+    Logger logger;
+    Root root;
+    CommandLogger *cmd = root.adopt_command(new CommandLogger(&logger));
+    root.adopt_command(new CommandLogger("http", &logger));
+    root.adopt_command(new CommandLogger("osc", &logger));
+    root.adopt(new DummyObject("foo", 4.5));
+    logger.str("");
+
+    // receive is protected, we need to be friend...
+    cmd->receive(Url("dummy://unknown.host:4560/.type"), Value(""));
+    assert_equal("[dummy: send dummy://unknown.host:4560 /.reply [\"/.type\", [\"\", \"No information on this node.\"]]]", logger.str());
+  }
+
+  void test_receive_should_notify_observers( void ) {
+    Logger logger;
+    Root root;
+    CommandLogger *cmd = root.adopt_command(new CommandLogger(&logger));
+    root.adopt_command(new CommandLogger("http", &logger));
+    root.adopt_command(new CommandLogger("osc", &logger));
+    root.adopt(new DummyObject("foo", 4.5));
+    logger.str("");
+
+    // receive is protected, we need to be friend...
+    cmd->receive(Url("dummy://unknown.host:4560/foo"), Value(5.2));
+    assert_equal("[dummy: notify /.reply [\"/foo\", 5.2]][http: notify /.reply [\"/foo\", 5.2]][osc: notify /.reply [\"/foo\", 5.2]]", logger.str());
+  }
+
 };
 
 } // oscit

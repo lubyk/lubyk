@@ -9,5 +9,6 @@
 #include "oscit/thread.h"
 #include "oscit/command.h"
 #include "oscit/osc_command.h"
+#include "oscit/zeroconf_browser.h"
 
 #endif // OSCIT_INCLUDE_OSCIT_H_

@@ -36,15 +36,15 @@ void Url::rebuild_full_url() {
 
 #line 38 "/Users/gaspard/git/rubyk/oscit/src/url.cpp"
 static const char _url_actions[] = {
-	0, 1, 0, 1, 1, 1, 2, 1, 
-	5, 2, 2, 0, 2, 3, 0, 2, 
-	4, 0
+	0, 1, 0, 1, 2, 1, 5, 2, 
+	1, 2, 2, 3, 0, 2, 4, 0
+	
 };
 
 static const char _url_key_offsets[] = {
 	0, 0, 11, 13, 14, 21, 32, 32, 
-	34, 34, 47, 60, 74, 76, 79, 93, 
-	94, 95, 103, 110, 116, 125
+	34, 34, 48, 61, 63, 66, 80, 83, 
+	84, 92, 100, 106
 };
 
 static const char _url_trans_keys[] = {
@@ -52,36 +52,34 @@ static const char _url_trans_keys[] = {
 	90, 97, 122, 34, 92, 47, 95, 46, 
 	57, 65, 90, 97, 122, 0, 32, 95, 
 	9, 10, 46, 57, 65, 90, 97, 122, 
-	39, 92, 0, 32, 46, 47, 95, 9, 
-	10, 48, 57, 65, 90, 97, 122, 0, 
-	32, 95, 9, 10, 46, 47, 48, 57, 
-	65, 90, 97, 122, 0, 32, 46, 47, 
-	58, 95, 9, 10, 48, 57, 65, 90, 
-	97, 122, 48, 57, 47, 48, 57, 0, 
-	32, 46, 47, 58, 95, 9, 10, 48, 
-	57, 65, 90, 97, 122, 47, 47, 34, 
-	39, 48, 57, 65, 90, 97, 122, 46, 
-	48, 57, 65, 90, 97, 122, 48, 57, 
-	65, 90, 97, 122, 46, 47, 58, 48, 
-	57, 65, 90, 97, 122, 0
+	39, 92, 0, 32, 46, 47, 58, 95, 
+	9, 10, 48, 57, 65, 90, 97, 122, 
+	0, 32, 95, 9, 10, 46, 47, 48, 
+	57, 65, 90, 97, 122, 48, 57, 47, 
+	48, 57, 0, 32, 46, 47, 58, 95, 
+	9, 10, 48, 57, 65, 90, 97, 122, 
+	47, 48, 57, 47, 34, 39, 48, 57, 
+	65, 90, 97, 122, 46, 58, 48, 57, 
+	65, 90, 97, 122, 48, 57, 65, 90, 
+	97, 122, 0
 };
 
 static const char _url_single_lengths[] = {
 	0, 3, 2, 1, 1, 3, 0, 2, 
-	0, 5, 3, 6, 0, 1, 6, 1, 
-	1, 2, 1, 0, 3, 0
+	0, 6, 3, 0, 1, 6, 1, 1, 
+	2, 2, 0, 0
 };
 
 static const char _url_range_lengths[] = {
 	0, 4, 0, 0, 3, 4, 0, 0, 
-	0, 4, 5, 4, 1, 1, 4, 0, 
-	0, 3, 3, 3, 3, 0
+	0, 4, 5, 1, 1, 4, 1, 0, 
+	3, 3, 3, 0
 };
 
 static const char _url_index_offsets[] = {
 	0, 0, 8, 11, 13, 18, 26, 27, 
-	30, 31, 41, 50, 61, 63, 66, 77, 
-	79, 81, 87, 92, 96, 103
+	30, 31, 42, 51, 53, 56, 67, 70, 
+	72, 78, 84, 88
 };
 
 static const char _url_indicies[] = {
@@ -89,34 +87,30 @@ static const char _url_indicies[] = {
 	7, 8, 6, 9, 1, 3, 3, 3, 
 	3, 1, 10, 10, 3, 10, 3, 3, 
 	3, 1, 6, 7, 12, 11, 11, 10, 
-	10, 13, 3, 3, 10, 4, 4, 4, 
-	1, 10, 10, 3, 10, 3, 14, 14, 
-	14, 1, 10, 10, 13, 15, 16, 3, 
-	10, 14, 14, 14, 1, 17, 1, 18, 
-	17, 1, 10, 10, 13, 3, 19, 3, 
-	10, 4, 5, 5, 1, 20, 1, 21, 
-	1, 0, 2, 22, 22, 22, 1, 23, 
-	22, 22, 22, 1, 24, 24, 24, 1, 
-	23, 25, 16, 24, 24, 24, 1, 1, 
-	0
+	10, 13, 3, 14, 3, 10, 4, 4, 
+	4, 1, 10, 10, 3, 10, 3, 4, 
+	4, 4, 1, 15, 1, 16, 15, 1, 
+	10, 10, 13, 3, 17, 3, 10, 4, 
+	5, 5, 1, 18, 15, 1, 19, 1, 
+	0, 2, 20, 20, 20, 1, 21, 14, 
+	20, 20, 20, 1, 20, 20, 20, 1, 
+	1, 0
 };
 
 static const char _url_trans_targs[] = {
-	2, 0, 7, 5, 9, 14, 2, 3, 
-	6, 4, 21, 7, 8, 10, 11, 5, 
-	12, 13, 4, 15, 16, 17, 18, 19, 
-	20, 4
+	2, 0, 7, 5, 9, 13, 2, 3, 
+	6, 4, 19, 7, 8, 10, 11, 12, 
+	4, 14, 15, 16, 17, 18
 };
 
 static const char _url_trans_actions[] = {
 	0, 0, 0, 1, 1, 1, 1, 0, 
-	0, 12, 7, 1, 0, 1, 1, 9, 
-	5, 1, 15, 3, 0, 0, 1, 1, 
-	1, 9
+	0, 10, 5, 1, 0, 1, 3, 1, 
+	13, 7, 0, 0, 1, 1
 };
 
 static const int url_start = 1;
-static const int url_first_final = 21;
+static const int url_first_final = 19;
 static const int url_error = 0;
 
 static const int url_en_main = 1;
@@ -134,14 +128,14 @@ void Url::parse(const char *url) {
   const char * pe = url + strlen(p) + 1;
 
   
-#line 138 "/Users/gaspard/git/rubyk/oscit/src/url.cpp"
+#line 132 "/Users/gaspard/git/rubyk/oscit/src/url.cpp"
 	{
 	cs = url_start;
 	}
 
 #line 112 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
   
-#line 145 "/Users/gaspard/git/rubyk/oscit/src/url.cpp"
+#line 139 "/Users/gaspard/git/rubyk/oscit/src/url.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -270,7 +264,7 @@ _match:
     DEBUG(printf("[path %s\n]", path_.c_str()));
   }
 	break;
-#line 274 "/Users/gaspard/git/rubyk/oscit/src/url.cpp"
+#line 268 "/Users/gaspard/git/rubyk/oscit/src/url.cpp"
 		}
 	}
 
