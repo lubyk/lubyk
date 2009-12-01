@@ -18,25 +18,26 @@ private:
   public:
     virtual ~Callback() {}
     virtual void trigger() = 0;
-    virtual bool key_match(void *key) = 0;
+    virtual bool key_match(void *var, void *data) = 0;
   };
 
-  template<class T, void(T::*Tmethod)(void *data)>
+  template<class T, void(T::*Tmethod)(void *var, void *data)>
   class TCallback : public Callback {
   public:
-    TCallback(T *owner, void *data) : owner_(owner), data_(data) {}
+    TCallback(T *owner, void *var, void *data) : owner_(owner), var_(var), data_(data) {}
 
     ~TCallback() {}
     virtual void trigger() {
-      (owner_->*Tmethod)(data_);
+      (owner_->*Tmethod)(var_, data_);
     }
 
-    bool key_match(void *key) {
-      return data_ == key;
+    bool key_match(void *var, void *data) {
+      return var_ == var && data_ == data;
     }
 
   private:
     T *owner_;
+    void *var_;
     void *data_;
   };
 
@@ -66,11 +67,11 @@ private:
 
     /** Remove callback identified by the given key.
      */
-    void remove_callback(void *key) {
+    void remove_callback(void *var, void *data) {
       std::list<Callback*>::iterator it, end;
       end = callbacks_.end();
       for (it = callbacks_.begin(); it != end; ++it) {
-        if ((*it)->key_match(key)) {
+        if ((*it)->key_match(var, data)) {
           delete *it;
           it = callbacks_.erase(it);
         }
@@ -80,11 +81,11 @@ private:
     /** Find the callback identified by the given key,
      *  trigger it and remove from list.
      */
-    void trigger_and_remove(void *key) {
+    void trigger_and_remove(void *var, void *data) {
       std::list<Callback*>::iterator it, end;
       end = callbacks_.end();
       for (it = callbacks_.begin(); it != end; ++it) {
-        if ((*it)->key_match(key)) {
+        if ((*it)->key_match(var, data)) {
           (*it)->trigger();
           delete *it;
           it = callbacks_.erase(it);
@@ -100,8 +101,8 @@ private:
     destruction_notifier_.adopt_callback(callback);
   }
 
-  void disable_on_destroy(void *key) {
-    destruction_notifier_.remove_callback(key);
+  void disable_on_destroy(void *var, void *data) {
+    destruction_notifier_.remove_callback(var, data);
   }
 
   // Observable ivars
