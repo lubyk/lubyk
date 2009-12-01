@@ -6,7 +6,7 @@
 
 class SimpleObjectProxy : public ObjectProxy, public SliderListener {
 public:
-  SimpleObjectProxy(const std::string &name, const Value &type) : ObjectProxy(name, type), slider_(NULL) {
+  SimpleObjectProxy(const std::string &name, const Value &type) : ObjectProxy(name, type) {
     set_and_hold(&tree_view_item_, new ObjectProxyView(this));
   }
 
@@ -14,8 +14,9 @@ public:
     return tree_view_item_;
   }
 
-  void set_slider(ObservableSlider *slider) {
-    set_and_hold(&slider_, slider);
+  void observe(ObservableSlider *slider) {
+    append_and_hold(&sliders_, slider);
+    slider->addListener(this);
   }
 
   virtual void sliderValueChanged (Slider *slider) {
@@ -25,22 +26,21 @@ public:
 
   virtual void 	sliderDragEnded (Slider *slider) {
     // sync user slider with real value
-    if (value_.is_real()) {
-      slider->setValue(value_.r, false); // do not notify
-    }
+    value_changed();
   }
 
   virtual void value_changed() {
     // update real value slider
     MessageManagerLock mml;
-    if (slider_ && value_.is_real()) {
-      // request a redraw... ?
-      slider_->setValue(value_.r, false);
+    if (value_.is_real()) {
+      std::list<ObservableSlider*>::iterator it, end = sliders_.end();
+      for (it = sliders_.begin(); it != end; ++it)
+        (*it)->setValue(value_.r, false); // do not notify
     }
   }
 
 private:
-  ObservableSlider *slider_;
+  std::list<ObservableSlider*> sliders_;
   ObjectProxyView *tree_view_item_;
 };
 

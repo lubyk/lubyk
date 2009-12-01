@@ -28,17 +28,22 @@ Component *ObjectProxyView::createItemComponent() {
   Value type = object_proxy_->type();
   std::cout << "type: " << type.type_tag() << "\n";
   if (type.type_id() == H("fffss")) {
+    Value current = object_proxy_->trigger(gNilValue, NULL);
     std::cout << "Building slider!\n";
-    ObservableSlider *slider = new ObservableSlider(String(object_proxy_->name().c_str()));
-    slider->setRange(type[1].r, type[2].r);
-    slider->setValue(type[0].r);
-    slider->setSliderStyle(Slider::LinearHorizontal);
-    slider->setTextBoxStyle(Slider::TextBoxLeft, false, 80, 20);
-    slider->setBounds (100, 2, 150, 20);
-    object_proxy_->set_slider(slider);
-    slider->addListener(object_proxy_);
+    ObservableSlider *slider;
+    Component *component = new Component;
+    for(int i = 0; i < 2; ++i) {
+      slider = new ObservableSlider(String(object_proxy_->name().c_str()));
+      slider->setRange(type[1].r, type[2].r);
+      slider->setValue(current.r);
+      slider->setSliderStyle(i == 0 ? Slider::LinearHorizontal : Slider::Rotary);
+      slider->setTextBoxStyle(Slider::TextBoxLeft, false, 80, 20);
+      component->addAndMakeVisible(slider);
+      slider->setBounds (100 + i * 150, 2, 150, 20);
+      object_proxy_->observe(slider);
+    }
 
-    return slider;
+    return component;
   } else {
     return 0; // use paintItem instead
   }
