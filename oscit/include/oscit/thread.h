@@ -11,8 +11,6 @@
 
 namespace oscit {
 
-struct TimeRef;
-
 class Thread : public Mutex
 {
  public:
@@ -40,7 +38,7 @@ class Thread : public Mutex
     // make sure thread is properly started (signals registered) in case we die right after
     wait();
   }
-  
+
   /** Start a new thread with a static function. */
   void start_thread(void (*static_method)(Thread*), void *parameter = NULL) {
      if (thread_id_) {
@@ -58,7 +56,7 @@ class Thread : public Mutex
      // make sure thread is properly started (signals registered) in case we die right after
      wait();
   }
-  
+
   /** Start a new thread with the given parameter. The class should check if it
    *  should stop using a typical @while (thread->run())@. If the thread is interrupted with
    *  a SIGTERM, the class's terminate() method is called. */
@@ -135,17 +133,10 @@ class Thread : public Mutex
   /** Set thread priority to normal. */
   void normal_priority();
 
-  static void millisleep(float milliseconds);
-  
-  /** Get current real time in [ms] since reference.
+  /** Sleep for a given number of milliseconds.
    */
-  static time_t real_time(const TimeRef *time_ref);
-  
+  static void millisleep(float milliseconds);
 
-  static TimeRef *new_time_ref();
-
-  static TimeRef *delete_time_ref(TimeRef *time_ref);
-  
   /** This method should be called by started thread when it has
    * properly started an it is ready. The creating thread locks until
    * this method is called.
@@ -154,13 +145,13 @@ class Thread : public Mutex
     // signals installed, we can free parent thread
     post();
   }
-  
+
   void post() {
     if (sem_post(semaphore_) < 0) {
       fprintf(stderr, "Could not post (%s)\n", strerror(errno));
     }
   }
-  
+
   void wait() {
     if (sem_wait(semaphore_) < 0) {
       fprintf(stderr, "Could not wait (%s)\n", strerror(errno));
@@ -202,7 +193,7 @@ class Thread : public Mutex
 
     return NULL;
   }
-  
+
   /** Static function to start a new thread. */
   template<class T, void(T::*Tmethod)(Thread*)>
   static void * s_start_thread(void *thread_ptr) {
@@ -235,7 +226,7 @@ class Thread : public Mutex
     thread->should_run_ = true;
 
     (owner->*Tmethod)();
-    
+
     return NULL;
   }
 

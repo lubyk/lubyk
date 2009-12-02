@@ -8,10 +8,9 @@
 #include "oscit/script.h"
 #include "oscit/mapper.h"
 #include "oscit/values.h"
+#include "oscit/time_ref.h"
 
 namespace oscit {
-
-struct TimeRef;
 
 class OscMapCommand : public Script, public OscCommand {
 public:
@@ -71,7 +70,7 @@ public:
   uint16_t reply_port_;
 
   Mapper mapper_;
-  TimeRef *time_ref_;
+  TimeRef time_ref_;
 };
 
 }  // oscit

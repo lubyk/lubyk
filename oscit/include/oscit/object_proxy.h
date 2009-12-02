@@ -7,6 +7,7 @@
 
 #include "oscit/object.h"
 #include "oscit/root_proxy.h"
+#include "oscit/time_ref.h"
 
 namespace oscit {
 
@@ -21,14 +22,14 @@ public:
   TYPED("Object.ObjectProxy")
 
   ObjectProxy(const char *name, const Value &type) :
-              Object(name, type), need_sync_(true), root_proxy_(NULL) {
+              Object(name, type), need_sync_(true), root_proxy_(NULL), waiting_for_reply_(0), last_delay_(0) {
     if (type.is_list()) {
       value_ = type[0];
     }
   }
 
   ObjectProxy(const std::string &name, const Value &type) :
-              Object(name, type), need_sync_(true), root_proxy_(NULL) {
+              Object(name, type), need_sync_(true), root_proxy_(NULL), waiting_for_reply_(0), last_delay_(0) {
     if (type.is_list()) {
       value_ = type[0];
     }
@@ -38,12 +39,7 @@ public:
 
   /** This method should be called to set a new value for the 'real' remote object. It
    * is usually called by some GUI widget callback when the user changes a control. */
-  void set_value(const Value &val) {
-    if (can_receive(val)) {
-      // only send if value type is correct
-      root_proxy_->send_to_remote(url().c_str(), val);
-    }
-  }
+  void set_value(const Value &val);
 
   virtual const Value trigger(const Value &val, const Location *origin) {
     if (!val.is_nil()) {
@@ -58,11 +54,7 @@ public:
   virtual void value_changed() {
   }
 
-  void handle_value_change(const Value &val) {
-    // TODO: root should check type
-    value_ = val;
-    value_changed();
-  }
+  void handle_value_change(const Value &val);
 
   void sync(bool forced = false) {
     if (need_sync_ || forced) {
@@ -81,6 +73,7 @@ public:
 
 protected:
 
+
   bool need_sync_;
 
   /** Reference to a RootProxy object that links back to the original tree.
@@ -90,6 +83,20 @@ protected:
   /** Cached information on the remote value.
    */
   Value value_;
+
+  /** We have sent a notification out and the reply has not come back yet, we need to slow
+   * down in order to avoid flooding.
+   */
+  time_t waiting_for_reply_;
+
+  /** We have sent a notification out and the reply has not come back yet, we need to slow
+   * down in order to avoid flooding.
+   */
+  time_t last_delay_;
+
+  Value to_send_;
+
+  TimeRef time_ref_;
 };
 
 

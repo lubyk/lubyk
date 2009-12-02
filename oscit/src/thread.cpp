@@ -1,6 +1,5 @@
 #include "errno.h"   // errno
 #include "string.h"  // strerror
-#include <sys/timeb.h> // ftime
 
 #include "oscit/thread.h"
 
@@ -13,8 +12,6 @@
 #endif
 
 namespace oscit {
-
-struct TimeRef : public timeb {};
 
 Thread::Thread() : owner_(NULL), thread_id_(NULL), should_run_(false), semaphore_(NULL) {
   if (!sThisKey) pthread_key_create(&sThisKey, NULL); // create a key to find 'this' object in new thread
@@ -64,13 +61,13 @@ void Thread::high_priority() {
 
   // save original scheduling parameters
   pthread_getschedparam(id, &normal_sched_policy_, &normal_thread_param_);
-  
+
   // set to high priority
   param = normal_thread_param_;
   param.sched_priority = SCHED_HIGH_PRIORITY;  // magick number
   policy = SCHED_RR;                           // realtime, round robin
-  
-  
+
+
   if (pthread_setschedparam(id, policy, &param)) {
     fprintf(stderr, "Could not set thread priority to %i (%s). You might need to run the application as super user.\n", param.sched_priority, strerror(errno));
   }
@@ -79,25 +76,10 @@ void Thread::high_priority() {
 
 void Thread::millisleep(float milliseconds) {
   struct timespec sleeper;
-  sleeper.tv_sec  = 0;
-  sleeper.tv_nsec = (unsigned int)(milliseconds * 1000000.0);
+  time_t seconds = milliseconds / 1000;
+  sleeper.tv_sec  = seconds;
+  sleeper.tv_nsec = (unsigned int)((milliseconds - seconds * 1000) * 1000000.0);
   nanosleep (&sleeper, NULL);
 }
 
-time_t Thread::real_time(const TimeRef *time_ref) {
-  TimeRef t;
-  ftime(&t);
-  return ((t.time - time_ref->time) * 1000) + t.millitm - time_ref->millitm;
-}
-
-TimeRef *Thread::new_time_ref() {
-  TimeRef *time_ref = new TimeRef;
-  ftime(time_ref);
-  return time_ref;
-}
-
-TimeRef *Thread::delete_time_ref(TimeRef *time_ref) {
-  delete time_ref;
-  return NULL;
-}
 } // oscit

@@ -10,25 +10,19 @@ namespace oscit {
 OscMapCommand::OscMapCommand() :
                   OscCommand("oscmap", "", Location::NO_PORT),
                   reply_port_(Location::NO_PORT),
-                  mapper_(200) {
-  time_ref_ = Thread::new_time_ref();
-}
+                  mapper_(200) {}
 
 OscMapCommand::OscMapCommand(uint16_t port, uint16_t reply_port) :
                   OscCommand("oscmap", "", port),
                   reply_port_(reply_port),
-                  mapper_(200) {
-  time_ref_ = Thread::new_time_ref();
-}
+                  mapper_(200) {}
 
-OscMapCommand::~OscMapCommand() {
-  time_ref_ = Thread::delete_time_ref(time_ref_);
-}
+OscMapCommand::~OscMapCommand() {}
 
 void OscMapCommand::receive(const Url &ext_url, const Value &ext_val) {
   unlock();
     // release lock because we lock again during eval_script
-    reload_script(Thread::real_time(time_ref_));
+    reload_script(time_ref_.elapsed());
   lock();
 
   std::string path;
