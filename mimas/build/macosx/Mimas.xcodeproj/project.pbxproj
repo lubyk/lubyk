@@ -26,6 +26,7 @@
 		2BD249260F0B456400AAA8C7 /* MainComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BD249200F0B456400AAA8C7 /* MainComponent.cpp */; };
 		2BD249270F0B456400AAA8C7 /* Main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BD249220F0B456400AAA8C7 /* Main.cpp */; };
 		2BD249280F0B456400AAA8C7 /* juce_LibrarySource.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2BD249250F0B456400AAA8C7 /* juce_LibrarySource.mm */; };
+		2BD9566110C65E46004CA68A /* mimas_look_and_feel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BD9565E10C65E46004CA68A /* mimas_look_and_feel.cpp */; };
 		2BE5BA8A10C0241000535DB4 /* liboscit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BE5BA8910C0241000535DB4 /* liboscit.a */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -104,6 +105,9 @@
 		2BD249230F0B456400AAA8C7 /* includes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = includes.h; path = ../../src/core/includes.h; sourceTree = SOURCE_ROOT; };
 		2BD249240F0B456400AAA8C7 /* juce_AppConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = juce_AppConfig.h; path = ../../src/core/juce_AppConfig.h; sourceTree = SOURCE_ROOT; };
 		2BD249250F0B456400AAA8C7 /* juce_LibrarySource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = juce_LibrarySource.mm; path = ../../src/core/juce_LibrarySource.mm; sourceTree = SOURCE_ROOT; };
+		2BD9565E10C65E46004CA68A /* mimas_look_and_feel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mimas_look_and_feel.cpp; path = ../../src/core/mimas_look_and_feel.cpp; sourceTree = SOURCE_ROOT; };
+		2BD9565F10C65E46004CA68A /* mimas_look_and_feel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mimas_look_and_feel.h; path = ../../src/core/mimas_look_and_feel.h; sourceTree = SOURCE_ROOT; };
+		2BD9566010C65E46004CA68A /* observable_slider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = observable_slider.h; path = ../../src/core/observable_slider.h; sourceTree = SOURCE_ROOT; };
 		2BE5BA8910C0241000535DB4 /* liboscit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liboscit.a; path = ../../../oscit/build/liboscit.a; sourceTree = SOURCE_ROOT; };
 		2BE5BAC710C0839700535DB4 /* browser_proxy_factory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = browser_proxy_factory.h; path = ../../src/core/browser_proxy_factory.h; sourceTree = SOURCE_ROOT; };
 		2BE5BAC810C0839700535DB4 /* device_browser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = device_browser.h; path = ../../src/core/device_browser.h; sourceTree = SOURCE_ROOT; };
@@ -288,6 +292,9 @@
 				2B86C06210C30CEF00E6E468 /* device_browser_root.h */,
 				2B86C06310C30CEF00E6E468 /* device_view.cpp */,
 				2B86C09E10C319EB00E6E468 /* object_proxy_view.cpp */,
+				2BD9565E10C65E46004CA68A /* mimas_look_and_feel.cpp */,
+				2BD9565F10C65E46004CA68A /* mimas_look_and_feel.h */,
+				2BD9566010C65E46004CA68A /* observable_slider.h */,
 				2B86C09F10C319EB00E6E468 /* object_proxy_view.h */,
 				2B86C0A010C319EB00E6E468 /* simple_object_proxy.h */,
 				2BE5BAC710C0839700535DB4 /* browser_proxy_factory.h */,
@@ -366,6 +373,7 @@
 				2BD249280F0B456400AAA8C7 /* juce_LibrarySource.mm in Sources */,
 				2B86C06410C30CEF00E6E468 /* device_view.cpp in Sources */,
 				2B86C0A110C319EB00E6E468 /* object_proxy_view.cpp in Sources */,
+				2BD9566110C65E46004CA68A /* mimas_look_and_feel.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

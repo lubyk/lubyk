@@ -39,7 +39,7 @@ Component *ObjectProxyView::createItemComponent() {
       slider->setSliderStyle(i == 0 ? Slider::LinearHorizontal : Slider::Rotary);
       slider->setTextBoxStyle(Slider::TextBoxLeft, false, 80, 20);
       component->addAndMakeVisible(slider);
-      slider->setBounds (100 + i * 150, 2, 150, 20);
+      slider->setBounds (100 + i * 250, 2, 250, 20);
       object_proxy_->observe(slider);
     }
 

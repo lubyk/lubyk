@@ -16,6 +16,8 @@ public:
 
   void observe(ObservableSlider *slider) {
     append_and_hold(&sliders_, slider);
+    if (value_.is_real())
+      slider->setComponentProperty(T("RemoteValue"), value_.r);
     slider->addListener(this);
   }
 
@@ -25,17 +27,27 @@ public:
   }
 
   virtual void 	sliderDragEnded (Slider *slider) {
-    // sync user slider with real value
-    value_changed();
+    slider->setComponentProperty(T("LastDrag"), (int)time_ref_.elapsed());
   }
 
   virtual void value_changed() {
     // update real value slider
     MessageManagerLock mml;
+    String remote_value("RemoteValue");
     if (value_.is_real()) {
       std::list<ObservableSlider*>::iterator it, end = sliders_.end();
-      for (it = sliders_.begin(); it != end; ++it)
-        (*it)->setValue(value_.r, false); // do not notify
+      for (it = sliders_.begin(); it != end; ++it) {
+        (*it)->setComponentProperty(remote_value, value_.r);
+        if ((*it)->getThumbBeingDragged() == -1) {
+          int last = (*it)->getComponentPropertyDouble(T("LastDrag"), false);
+          // no dragging
+          if (last < time_ref_.elapsed() - 2 * last_delay_) {
+            (*it)->setValue(value_.r, false);
+          } else {
+            (*it)->repaint();
+          }
+        }
+      }
     }
   }
 

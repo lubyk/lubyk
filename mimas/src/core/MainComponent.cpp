@@ -28,12 +28,13 @@ MainComponent::MainComponent()
       device_browser_(NULL),
       quitButton (0)
 {
+  LookAndFeel::setDefaultLookAndFeel(&mimas_look_and_feel_);
   addAndMakeVisible (quitButton = new TextButton (String::empty));
   quitButton->setButtonText (T("Quit"));
   quitButton->addButtonListener (this);
 
   // no service-type: we do not want to publish a service
-  OscCommand *cmd = work_tree_.adopt_command(new OscCommand("oscit", "", 7018)); // FIXME: no port => take any...
+  OscCommand *cmd = work_tree_.adopt_command(new OscCommand("oscit", "", 7019)); // FIXME: no port => take any...
   device_browser_ = new DeviceBrowser("_oscit._udp");
   device_browser_->set_command(cmd);
   device_browser_->adopt_proxy_factory(new BrowserProxyFactory);

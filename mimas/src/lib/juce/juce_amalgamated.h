@@ -47217,6 +47217,8 @@ public:
 
     juce_UseDebuggingNewOperator
 
+    float getLinearSliderPos (const double value);
+
 protected:
     /** @internal */
     void labelTextChanged (Label*);
@@ -47282,7 +47284,6 @@ private:
     Component* popupDisplay;
     Component* parentForPopupDisplay;
 
-    float getLinearSliderPos (const double value);
     void restoreMouseIfHidden();
     void sendDragStart();
     void sendDragEnd();
