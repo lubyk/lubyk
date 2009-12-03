@@ -19,17 +19,17 @@ bool File::write(const std::string &content) {
   return true;
 }
 
-std::string File::read() {
+Value File::read() {
   std::ostringstream oss;
   // FIXME: atomic !!
   std::ifstream in(path_.c_str(), std::ios::in);
     if (in.fail()) {
       last_error_ = ErrorValue(UNKNOWN_ERROR, std::string("Could not read file '").append(path_).append("'."));
-      return std::string("");
+      return last_error_;
     }
     oss << in.rdbuf();
   in.close();
-  return oss.str();
+  return Value(oss.str());
 }
 
 bool File::append(const std::string& data) {

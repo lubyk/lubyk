@@ -17,9 +17,10 @@ public:
   File(const std::string &path) : path_(path) {}
   virtual ~File() {}
 
-  /** Read all content of file into a string.
+  /** Read all content of file into a Value.
+   * @return a StringValue on success and an ErrorValue in case of failure.
    */
-  std::string read();
+  Value read();
 
   /** Replace the current file's content by the new content.
    * Returns false on failure (use File#last_error() for an ErrorValue).
