@@ -1,9 +1,13 @@
-#include <sstream>
 #include "oscit/location.h"
-#include "oscit/zeroconf_browser.h"
 
 #include <netdb.h>     // gethostbyname
 #include <arpa/inet.h> // inet_addr
+
+#include <sstream>
+
+#include "oscit/zeroconf_browser.h"
+
+
 
 namespace oscit {
 

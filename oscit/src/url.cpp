@@ -1,11 +1,14 @@
 
 #line 1 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
-/** Ragel parser definition to parse urls. */
 #include "oscit/url.h"
-#include <sstream>
+
 #include <stdlib.h> // atoi
 #include <string.h> // strlen
 
+#include <sstream>
+
+
+/** Ragel parser definition to parse urls. */
 // #define DEBUG_PARSER
 
 namespace oscit {
@@ -29,12 +32,12 @@ void Url::rebuild_full_url() {
 
 ///////////////// ====== URL PARSER ========= /////////////
 
-#line 97 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
+#line 100 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
 
 
 // transition table
 
-#line 38 "/Users/gaspard/git/rubyk/oscit/src/url.cpp"
+#line 41 "/Users/gaspard/git/rubyk/oscit/src/url.cpp"
 static const char _url_actions[] = {
 	0, 1, 0, 1, 2, 1, 5, 2, 
 	1, 2, 2, 3, 0, 2, 4, 0
@@ -116,7 +119,7 @@ static const int url_error = 0;
 static const int url_en_main = 1;
 
 
-#line 101 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
+#line 104 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
 
 /** This is a crude JSON parser. */
 void Url::parse(const char *url) {
@@ -128,14 +131,14 @@ void Url::parse(const char *url) {
   const char * pe = url + strlen(p) + 1;
 
   
-#line 132 "/Users/gaspard/git/rubyk/oscit/src/url.cpp"
+#line 135 "/Users/gaspard/git/rubyk/oscit/src/url.cpp"
 	{
 	cs = url_start;
 	}
 
-#line 112 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
+#line 115 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
   
-#line 139 "/Users/gaspard/git/rubyk/oscit/src/url.cpp"
+#line 142 "/Users/gaspard/git/rubyk/oscit/src/url.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -210,14 +213,14 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 32 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
+#line 35 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
 	{
     DEBUG(printf("%c-",(*p)));
     if ((*p)) str_buf.append(&(*p), 1); /* append */
   }
 	break;
 	case 1:
-#line 37 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
+#line 40 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
 	{
     location_.protocol_ = str_buf;
     str_buf = "";
@@ -225,7 +228,7 @@ _match:
   }
 	break;
 	case 2:
-#line 43 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
+#line 46 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
 	{
     if (location_.protocol_ == "") {
       location_.protocol_ = DEFAULT_PROTOCOL;
@@ -237,7 +240,7 @@ _match:
   }
 	break;
 	case 3:
-#line 53 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
+#line 56 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
 	{
     if (location_.protocol_ == "") {
       location_.protocol_ = DEFAULT_PROTOCOL;
@@ -249,7 +252,7 @@ _match:
   }
 	break;
 	case 4:
-#line 63 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
+#line 66 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
 	{
     location_.port_ = atoi(str_buf.c_str());
     str_buf = "";
@@ -257,14 +260,14 @@ _match:
   }
 	break;
 	case 5:
-#line 69 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
+#line 72 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
 	{
     path_ = str_buf;
     str_buf = "";
     DEBUG(printf("[path %s\n]", path_.c_str()));
   }
 	break;
-#line 268 "/Users/gaspard/git/rubyk/oscit/src/url.cpp"
+#line 271 "/Users/gaspard/git/rubyk/oscit/src/url.cpp"
 		}
 	}
 
@@ -277,7 +280,7 @@ _again:
 	_out: {}
 	}
 
-#line 113 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
+#line 116 "/Users/gaspard/git/rubyk/oscit/src/url.rl"
 }
 
 } // oscit

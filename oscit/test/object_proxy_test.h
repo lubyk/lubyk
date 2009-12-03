@@ -40,4 +40,17 @@ public:
     assert_equal("[osc: send osc://\"funky synth\" /seven 45]", logger.str());
   }
 
+  void test_latency( void ) {
+    RootProxy proxy(Location("osc", "funky synth"));
+    Logger logger;
+    CommandLogger cmd("osc", &logger);
+    ObjectProxyLogger *obj = proxy.adopt(new ObjectProxyLogger("seven", RangeIO(0.0, 2000.0, "bpm", "the sky is blue"), &logger));
+    proxy.set_command(&cmd);
+    logger.str("");
+    obj->set_value(Value(45.0));
+    millisleep(12);
+    obj->handle_value_change(Value(45.0));
+    assert_equal(12, obj->latency());
+  }
+
 };

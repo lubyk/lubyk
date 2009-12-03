@@ -1,3 +1,8 @@
+#include "oscit/object.h"
+
+#include <string>
+#include <list>
+
 #include "oscit/root.h"
 #include "oscit/alias.h"
 

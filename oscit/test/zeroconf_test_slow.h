@@ -1,9 +1,14 @@
+#include "test_helper.h"
+
 #include <sstream>
 
-#include "test_helper.h"
+#include "ip/UdpSocket.h"
+
 #include "oscit/zeroconf_registration.h"
 #include "oscit/zeroconf_browser.h"
-#include "ip/UdpSocket.h"
+#include "oscit/proxy_factory.h"
+#include "mock/logger.h"
+#include "mock/command_logger.h"
 
 class DummyBrowser : public ZeroConfBrowser {
 public:
@@ -53,13 +58,13 @@ class ZeroConfTest : public TestHelper {
     Logger logger;
     CommandLogger cmd("oscit", &logger);
     browser.set_command(&cmd);
-    wait(500);
+    wait(1000);
     browser.lock();
       browser.str(""); // clear
     browser.unlock();
     DummyRegistration *registration = new DummyRegistration("foobar", "_oscit._udp", 5007);
 
-    wait(1000);
+    wait(1500);
     registration->lock();
     browser.lock();
       assert_equal("[registered: foobar @ 5007]", registration->str());
@@ -68,7 +73,7 @@ class ZeroConfTest : public TestHelper {
     browser.unlock();
     registration->unlock(); // ?
     delete registration;
-    wait(1500);
+    wait(2000);
     browser.lock();
       assert_equal("[- oscit://\"foobar\"]", browser.str());
     browser.unlock();

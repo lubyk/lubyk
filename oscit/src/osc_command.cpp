@@ -1,14 +1,16 @@
-#include <stdexcept>
-
 #include "oscit/osc_command.h"
-#include "oscit/root.h"
-#include "oscit/zeroconf_registration.h"
-#include "oscit/osc_remote_object.h"
+
+#include <stdexcept>
 
 #include "osc/OscReceivedElements.h"
 #include "osc/OscPacketListener.h"
 #include "osc/OscOutboundPacketStream.h"
 #include "ip/UdpSocket.h"
+
+#include "oscit/root.h"
+#include "oscit/zeroconf_registration.h"
+#include "oscit/osc_remote_object.h"
+
 
 namespace oscit {
 

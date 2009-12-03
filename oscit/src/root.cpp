@@ -1,4 +1,5 @@
 #include "oscit/root.h"
+
 // meta methods
 #include "oscit/info_meta_method.h"
 #include "oscit/type_meta_method.h"
@@ -12,7 +13,7 @@ namespace oscit {
 void Root::init(bool should_build_meta) {
   url_ = "";
   set_root(this);
-  
+
   if (should_build_meta) {
     // build meta methods
     adopt(new ErrorMetaMethod(Url(ERROR_PATH).name()));

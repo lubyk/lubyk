@@ -36,6 +36,14 @@ public:
     }
   }
 
+  time_t latency() const {
+    return latency_;
+  }
+
+  TimeRef &time_ref() {
+    return time_ref_;
+  }
+
   RootProxy *root_proxy() {
     return root_proxy_;
   }

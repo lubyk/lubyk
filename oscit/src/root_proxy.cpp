@@ -1,4 +1,8 @@
 #include "oscit/root_proxy.h"
+
+#include <string>
+#include <iostream>
+
 #include "oscit/command.h"
 #include "oscit/object_proxy.h"
 #include "oscit/proxy_factory.h"

@@ -1,7 +1,11 @@
+#include "oscit/osc_map_command.h"
+
+#include <string>
+#include <list>
+#include <iostream>
 
 #include "oscit/thread.h"
 #include "oscit/root.h"
-#include "oscit/osc_map_command.h"
 
 namespace oscit {
 

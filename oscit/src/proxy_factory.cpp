@@ -1,4 +1,5 @@
 #include "oscit/proxy_factory.h"
+
 #include "oscit/root_proxy.h"
 
 namespace oscit {

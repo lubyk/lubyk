@@ -1,4 +1,9 @@
 #include "oscit/zeroconf_browser.h"
+
+#include <stdio.h>
+
+#include <string>
+
 #include "oscit/proxy_factory.h"
 #include "oscit/root_proxy.h"
 #include "oscit/object_proxy.h"

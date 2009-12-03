@@ -1,9 +1,12 @@
-/** Ragel parser definition to parse urls. */
 #include "oscit/url.h"
-#include <sstream>
+
 #include <stdlib.h> // atoi
 #include <string.h> // strlen
 
+#include <sstream>
+
+
+/** Ragel parser definition to parse urls. */
 // #define DEBUG_PARSER
 
 namespace oscit {

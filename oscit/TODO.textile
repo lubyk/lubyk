@@ -4,9 +4,13 @@ h1. Rubyk: TODO
 √  Replace occurences of IpEndPointName by Location
 √  Sign incoming messages: from location + target Url
 Root::call() ---> Object::safe_trigger() ---> Object::trigger()
-4. Write the tests for ProxyFactory
-5. Use signature to route in '/.reply' handler
-6. Start Proxy code...
+√ Write the tests for ProxyFactory
+√ Use signature to route in '/.reply' handler
+√ Start Proxy code...
+8. File class
+9. /.view method & spec
+10. refactor: const correctness (do not return const values: const reference or value)
+11. refactor: script.h should use File
 
 h2. Proxy stuff
 

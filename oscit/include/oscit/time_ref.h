@@ -5,6 +5,8 @@
 
 #include "oscit/non_copyable.h"
 
+namespace oscit {
+
 class TimeRef : private NonCopyable {
 public:
   TimeRef();
@@ -18,4 +20,5 @@ private:
   TimeRefData *reference_;
 };
 
+} // oscit
 #endif // OSCIT_INCLUDE_OSCIT_TIME_REF_H_

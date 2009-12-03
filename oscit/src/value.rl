@@ -1,13 +1,15 @@
-/** Ragel parser definition to create Values from JSON. */
+#include "oscit/values.h"
 
 //#define DEBUG_PARSER
 
 #include <string.h>  // strlen
 #include <stdlib.h>  // atof
+
 #include <iostream>
 #include <sstream>
-#include "oscit/values.h"
 
+
+/** Ragel parser definition to create Values from JSON. */
 namespace oscit {
 
 //#define DEBUG_PARSER

@@ -22,14 +22,14 @@ public:
   TYPED("Object.ObjectProxy")
 
   ObjectProxy(const char *name, const Value &type) :
-              Object(name, type), need_sync_(true), root_proxy_(NULL), waiting_for_reply_(0), last_delay_(0) {
+              Object(name, type), need_sync_(true), root_proxy_(NULL), wait_until_(-1), latency_(-1) {
     if (type.is_list()) {
       value_ = type[0];
     }
   }
 
   ObjectProxy(const std::string &name, const Value &type) :
-              Object(name, type), need_sync_(true), root_proxy_(NULL), waiting_for_reply_(0), last_delay_(0) {
+              Object(name, type), need_sync_(true), root_proxy_(NULL), wait_until_(-1), latency_(-1) {
     if (type.is_list()) {
       value_ = type[0];
     }
@@ -87,12 +87,12 @@ protected:
   /** We have sent a notification out and the reply has not come back yet, we need to slow
    * down in order to avoid flooding.
    */
-  time_t waiting_for_reply_;
+  time_t wait_until_;
 
   /** We have sent a notification out and the reply has not come back yet, we need to slow
    * down in order to avoid flooding.
    */
-  time_t last_delay_;
+  time_t latency_;
 
   Value to_send_;
 

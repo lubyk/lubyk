@@ -1,10 +1,13 @@
 #ifndef OSCIT_INCLUDE_OSCIT_THREAD_H_
 #define OSCIT_INCLUDE_OSCIT_THREAD_H_
+
+// TODO: refactor all this to move all thread specific code into 'cpp' file !
 #include <errno.h>   // errno
 #include <string.h>  // strerror
 #include <csignal>
 #include <fstream>
 #include <semaphore.h>
+
 #include "assert.h"
 
 #include "oscit/mutex.h"

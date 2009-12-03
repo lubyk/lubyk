@@ -1,6 +1,7 @@
-#include <string>
-
 #include "oscit/mapper.h"
+
+#include <string>
+#include <iostream>
 
 namespace oscit {
 
@@ -9,7 +10,7 @@ namespace oscit {
 Mapper::Mapper() : map_(200), reverse_map_(200) {}
 
 Mapper::Mapper(size_t hash_table_size) : map_(hash_table_size), reverse_map_(hash_table_size) {}
-  
+
 Mapper::~Mapper() {
   clear();
 }
@@ -26,13 +27,13 @@ bool Mapper::set_map(const std::string &source_url, Real source_min, Real source
     error_ = std::string("Source min and max cannot be the same value !");
     return false;
   }
-  
+
   if (target_min == target_max) {
     // TODO: record line, better error reporting
     error_ = "Target min and max cannot be the same value (used for reverse mapping) !";
     return false;
   }
-  
+
   map_.set(source_url, MapElement(target_url, source_min, source_max, target_min, target_max));
   reverse_map_.set(target_url, MapElement(source_url, target_min, target_max, source_min, source_max));
   return true;
@@ -129,31 +130,31 @@ bool Mapper::reverse_map(const std::string &source, Real value, std::string *tar
    target_min = 0.0;
    target_max = 0.0;
   }
-    
+
   action error {
     fhold; // move back one char
     char error_buffer[10];
     snprintf(error_buffer, 9, "%s", p);
-    std::cout << "# Syntax error near '" << error_buffer << "'." << std::endl;
-    
+    std::cerr << "# Syntax error near '" << error_buffer << "'." << std::endl;
+
     source_url = "";
     source_min = 0.0;
     source_max = 0.0;
     target_url = "";
     target_min = 0.0;
     target_max = 0.0;
-    
+
     state = fentry(main);
     fgoto eat_line; // eat the rest of the line and continue parsing
   }
-  
+
   action comment {
     state = cs;
     fgoto eat_line;
   }
-  
+
   eat_line := [^\n]* '\n' @{ fgoto *state; printf("comment: [%s:%i]\n", p, cs);};
-  
+
   ws        = ' ' | '\t' | '\n' ;
   wsc       = ws* ('#' $comment)? ws*;
   dquote_content = ([^"\\] | '\n') $str_a | ('\\' (any | '\n') $str_a);

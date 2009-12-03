@@ -1,7 +1,8 @@
 #include "oscit/time_ref.h"
+
 #include <sys/timeb.h> // ftime
 
-
+namespace oscit {
 struct TimeRef::TimeRefData : public timeb {};
 
 TimeRef::TimeRef() {
@@ -20,3 +21,5 @@ time_t TimeRef::elapsed() {
   ftime(&t);
   return ((t.time - reference_->time) * 1000) + t.millitm - reference_->millitm;
 }
+
+} // oscit

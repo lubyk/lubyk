@@ -1,4 +1,9 @@
 #include "oscit/command.h"
+
+#include <string>
+#include <iostream>
+#include <list>
+
 #include "oscit/root.h"
 #include "oscit/object.h"
 #include "oscit/zeroconf_registration.h"
