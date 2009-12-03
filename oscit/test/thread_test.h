@@ -14,7 +14,7 @@ struct DummyWorker
       runner->lock();
         ++value_;
       runner->unlock();
-      millisleep(20);
+      Thread::millisleep(20);
     }
   }
 
@@ -24,7 +24,7 @@ struct DummyWorker
       runner->lock();
         ++value_;
       runner->unlock();
-      millisleep(20);
+      Thread::millisleep(20);
     }
   }
 
@@ -35,7 +35,7 @@ struct DummyWorker
       runner->lock();
         ++value_;
       runner->unlock();
-      millisleep(20); // should be interrupted
+      Thread::millisleep(20); // should be interrupted
     }
   }
 
@@ -127,7 +127,7 @@ public:
 
     delete runner;
   }
-  
+
   void test_create_restart( void ) {
     DummyWorker counter;
     Thread *runner = new Thread;
@@ -182,13 +182,13 @@ public:
 
     delete runner;
   }
-  
+
   void test_multiple_semaphores( void ) {
     gThreadTest_log.str("");
     Thread m1, m2, m3;
     m2.post();  // increment semaphore ==> 1
     m3.post();  // increment semaphore ==> 1
-    
+
     // m1 should not be 3. It would if all semaphores were global (same name 'oscit::Thread').
     m1.start_thread<ThreadTest::s_multiple_semaphore_thread>(NULL);  // waits for 'post'
     gThreadTest_log << "[0:start done]";
@@ -197,7 +197,7 @@ public:
     gThreadTest_log << "[0:join]";
     assert_equal("[1:started][0:start done][1:continue][0:join]", gThreadTest_log.str());
   }
-  
+
   static void s_multiple_semaphore_thread(Thread *runner) {
     millisleep(100);
     gThreadTest_log << "[1:started]";

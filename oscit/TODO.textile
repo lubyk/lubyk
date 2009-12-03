@@ -7,8 +7,11 @@ Root::call() ---> Object::safe_trigger() ---> Object::trigger()
 √ Write the tests for ProxyFactory
 √ Use signature to route in '/.reply' handler
 √ Start Proxy code...
-8. File class
-9. /.view method & spec
+√ File class
+√ /.view method & spec
+10. refactor: Couldn't we can remove "const Location *origin" from trigger ?
+              If we really need a remote location, it will probably be different from the UDP/OSC caller
+              and it's the caller's job to give us an Url (as string): "IP:port/video1" for example.
 10. refactor: const correctness (do not return const values: const reference or value)
 11. refactor: script.h should use File
 
