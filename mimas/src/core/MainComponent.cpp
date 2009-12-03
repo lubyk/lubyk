@@ -26,7 +26,8 @@
 MainComponent::MainComponent()
     : work_tree_("Mimas"),
       device_browser_(NULL),
-      quitButton (0)
+      quitButton (0),
+      main_view_(NULL)
 {
   LookAndFeel::setDefaultLookAndFeel(&mimas_look_and_feel_);
   addAndMakeVisible (quitButton = new TextButton (String::empty));
@@ -37,7 +38,9 @@ MainComponent::MainComponent()
   OscCommand *cmd = work_tree_.adopt_command(new OscCommand("oscit", "", 7019)); // FIXME: no port => take any...
   device_browser_ = new DeviceBrowser("_oscit._udp");
   device_browser_->set_command(cmd);
-  device_browser_->adopt_proxy_factory(new BrowserProxyFactory);
+  main_view_ = new Component;
+  addAndMakeVisible(main_view_);
+  device_browser_->adopt_proxy_factory(new BrowserProxyFactory(main_view_));
   addAndMakeVisible(device_browser_);
 
   setSize(600, 600);
@@ -47,6 +50,7 @@ MainComponent::MainComponent()
 MainComponent::~MainComponent() {
   deleteAndZero (device_browser_);
   deleteAndZero (quitButton);
+  deleteAndZero (main_view_);
 }
 
 //==============================================================================
@@ -60,8 +64,9 @@ void MainComponent::paint(Graphics& g) {
 }
 
 void MainComponent::resized() {
-    device_browser_->setBounds (10, 10, getWidth() - 10, getHeight() - 100);
+    device_browser_->setBounds (10, 10, getWidth() - 10, getHeight() - 250);
     quitButton->setBounds (getWidth() - 176, getHeight() - 60, 120, 32);
+    main_view_->setBounds (10, getHeight() - 250, getWidth() - 20, 240);
 }
 
 void MainComponent::buttonClicked(Button* buttonThatWasClicked) {

@@ -48,7 +48,8 @@ private:
     Root work_tree_;
     DeviceBrowser *device_browser_;
 
-    TextButton* quitButton;
+    TextButton *quitButton;
+    Component *main_view_;
     Path internalPath1;
 
     // (prevent copy constructor and operator= being generated..)

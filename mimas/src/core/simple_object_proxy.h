@@ -6,11 +6,14 @@
 
 class SimpleObjectProxy : public ObjectProxy, public SliderListener {
 public:
+  /** Class signature. */
+  TYPED("Object.ObjectProxy.SimpleObjectProxy")
+
   SimpleObjectProxy(const std::string &name, const Value &type) : ObjectProxy(name, type) {
     set_and_hold(&tree_view_item_, new ObjectProxyView(this));
   }
 
-  ObjectProxyView *object_proxy_view() const { // FIXME: how to keep constness ok here ?
+  ObjectProxyView *object_proxy_view() { // FIXME: how to keep constness ok here ?
     return tree_view_item_;
   }
 
@@ -41,7 +44,7 @@ public:
         if ((*it)->getThumbBeingDragged() == -1) {
           int last = (*it)->getComponentPropertyDouble(T("LastDrag"), false);
           // no dragging
-          if (last < time_ref_.elapsed() - 2 * last_delay_) {
+          if (last < time_ref_.elapsed() - 2 * latency_) {
             (*it)->setValue(value_.r, false);
           } else {
             (*it)->repaint();
@@ -50,6 +53,8 @@ public:
       }
     }
   }
+
+  ObservableSlider *build_slider();
 
 private:
   std::list<ObservableSlider*> sliders_;

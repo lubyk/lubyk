@@ -23,13 +23,12 @@ void DeviceView::paintItem(Graphics& g, int width, int height) {
 
 void DeviceView::itemOpennessChanged(bool isNowOpen) {
   if (isNowOpen && !subnodes_added_) {
-    std::cout << "itemOpennessChanged\n";
     // FIXME: make sure we do not accept changes to this tree now !
     const THash<std::string, Object *> children = device_proxy_->children();
     std::list<std::string>::const_iterator it = children.begin();
     std::list<std::string>::const_iterator end = children.end();
     for (; it != end; ++it) {
-      std::cout << *it << "<<<\n";
+      std::cout << *it << " <<< added to device\n";
       Object *object;
       assert(children.get(*it, &object));
       SimpleObjectProxy *object_proxy = TYPE_CAST(SimpleObjectProxy, object);
