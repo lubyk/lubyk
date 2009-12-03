@@ -39,7 +39,7 @@ public:
   /** Object proxy factory. This method should be overwritten in subclasses in order to
    * create custom ObjectProxy objects.
    */
-  virtual ObjectProxy *build_object_proxy(const std::string &name, const Value &type) {
+  virtual ObjectProxy *build_object_proxy(Object *parent, const std::string &name, const Value &type) {
     return new ObjectProxy(name, type);
   }
 
@@ -50,6 +50,10 @@ public:
   /** Forget about this root proxy.
    */
   void unregister_proxy(RootProxy *proxy);
+
+  static bool is_meta_method(const std::string &name) {
+    return (name.size() < 1 || name.at(0) == '.');
+  }
 
  private:
 

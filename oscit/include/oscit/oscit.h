@@ -10,5 +10,6 @@
 #include "oscit/command.h"
 #include "oscit/osc_command.h"
 #include "oscit/zeroconf_browser.h"
+#include "oscit/file_method.h"
 
 #endif // OSCIT_INCLUDE_OSCIT_H_

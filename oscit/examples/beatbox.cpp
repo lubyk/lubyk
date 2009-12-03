@@ -1,21 +1,24 @@
 // compile with
 // g++ -I../include ../build/liboscit.a beatbox.cpp -o beatbox
+// in order to find 'beatbox.xml' file (view), beatbox should be launched from within oscit/examples folder
 
 #include <stdio.h>
 #include <stdlib.h> // atoi
 #include <iostream>
+
 #include "oscit/oscit.h"
 using namespace oscit;
 
 
 #define OSC_PORT 7021
+#define VIEW_PATH "beatbox.xml"
 
-class Tempo : public Object
+class ValueDisplay : public Object
 {
 public:
-  Tempo(const char *name, Real current_value, uint sleepy)
-      : Object(name, RangeIO(0, 512, "bpm", "Current tempo.")),
-        tempo_(current_value),
+  ValueDisplay(const char *name, Real current_value, uint sleepy)
+      : Object(name, RangeIO(0, 512, "bpm", "Current value.")),
+        value_(current_value),
         sleepy_(sleepy) {}
 
   /** This is the method triggered in response to the object's url.
@@ -23,7 +26,7 @@ public:
    */
   virtual const Value trigger(const Value &val, const Location *origin) {
     if (val.is_real()) {
-      tempo_.r = val.r;
+      value_.r = val.r;
       if (val.r == 0) {
         sleepy_ = sleepy_ / 2;
       } else if (val.r == 512) {
@@ -31,7 +34,7 @@ public:
       }
     }
 
-    std::cout << "tempo: " << tempo_ << std::endl;
+    std::cout << name_ << ": " << value_ << std::endl;
 
     // simulate a slow network
     if (sleepy_) {
@@ -39,11 +42,11 @@ public:
       Thread::millisleep(sleepy_);
     }
     // oscit convention is to return current value
-    return tempo_;
+    return value_;
   }
 
 private:
-  RealValue tempo_;
+  RealValue value_;
   uint sleepy_;
 };
 
@@ -65,7 +68,17 @@ int main(int argc, char * argv[]) {
   root.adopt_command(new OscCommand("oscit", "_oscit._udp", OSC_PORT));
 
   // create '/tempo' url
-  root.adopt(new Tempo("tempo", 120, sleepy));
+  root.adopt(new ValueDisplay("tempo", 120, sleepy));
+
+  // create '/other/slider' url
+  Object *other = root.adopt(new Object("other"));
+  other->adopt(new ValueDisplay("slider", 115, 0));
+
+  // create '/.views' url
+  Object *views = root.make_views_path();
+
+  // create '/.views/basic' url
+  views->adopt(new FileMethod("basic", VIEW_PATH, "basic view for the beatbox example"));
 
   printf("Beatbox started and listening on port %i (sleeping %ims betwween calls).\nType Ctrl+C to stop.\n", OSC_PORT, sleepy);
 

@@ -278,5 +278,19 @@ public:
     delete root;
     assert_equal("[one: destroyed]", logger.str());
   }
+
+  void test_make_views_path( void ) {
+    Root root(false);
+    Value res = root.list();
+    assert_equal("[]", res.to_json());
+    Object *views = root.make_views_path();
+    res = root.list();
+    assert_equal("[\".views\"]", res.to_json());
+    // make again should return same object
+    assert_equal(views, root.make_views_path());
+    res = root.list();
+    assert_equal("[\".views\"]", res.to_json());
+  }
+
   // remote objects and 'send' testing is done in command_test.h
 };

@@ -26,7 +26,8 @@ class MyProxyFactory : public ProxyFactory {
 public:
   MyProxyFactory() : built_(10) {}
 
-  virtual ObjectProxy *build_object_proxy(const std::string &name, const Value &type) {
+  virtual ObjectProxy *build_object_proxy(Object *parent, const std::string &name, const Value &type) {
+    if (is_meta_method(name)) return NULL;
     ObjectProxyLogger *object_proxy = new MyObjectProxy(name, type);
     built_.set(name, object_proxy);
     return object_proxy;

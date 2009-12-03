@@ -23,7 +23,6 @@ void ObjectProxy::set_value(const Value &val) {
         wait_until_ = now;
       }
     } else if (now < wait_until_) {
-      std::cout << "not sending: " << val << "\n";
       // do not send
       to_send_ = val;
     } else {
@@ -52,7 +51,6 @@ void ObjectProxy::handle_value_change(const Value &val) {
 
     if (!to_send_.is_empty()) {
       // send now
-      std::cout << "sending: " << val << "\n";
       root_proxy_->send_to_remote(url().c_str(), to_send_);
       to_send_.set_empty();
       wait_until_ = time_ref_.elapsed() + latency_;

@@ -48,18 +48,18 @@ void RootProxy::build_children_from_types(Object *base, const Value &types) {
       std::cerr << "Invalid type in " << LIST_WITH_TYPE_PATH << " reply argument: " << path_with_type << "\n";
     } else {
       std::string path = path_with_type[0].str();
-      if (path.size() < 1 || path.at(0) == '.') {
-        // meta method, ignore ?
+      if (path.at(path.length()-1) == '/') {
+        has_children = true;
+        path = path.substr(0, path.length() - 1);
       } else {
-        if (path.at(path.length()-1) == '/') {
-          has_children = true;
-          path = path.substr(0, path.length() - 1);
-        } else {
-          has_children = false;
-        }
-        if (!base->child(path)) {
-          object_proxy = base->adopt(proxy_factory_->build_object_proxy(path, path_with_type[1]));
-          if (object_proxy) object_proxy->set_need_sync(has_children);
+        has_children = false;
+      }
+
+      if (!base->child(path)) {
+        object_proxy = proxy_factory_->build_object_proxy(base, path, path_with_type[1]);
+        if (object_proxy) {
+          base->adopt(object_proxy);
+          object_proxy->set_need_sync(has_children);
         }
       }
     }

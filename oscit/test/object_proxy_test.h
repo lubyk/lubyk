@@ -53,4 +53,14 @@ public:
     assert_equal(12, obj->latency());
   }
 
+  void test_sync_should_call_list_with_type( void ) {
+    RootProxy proxy(Location("osc", "funky synth"));
+    Logger logger;
+    CommandLogger cmd("osc", &logger);
+    ObjectProxyLogger *obj = proxy.adopt(new ObjectProxyLogger("seven", RangeIO(0.0, 2000.0, "bpm", "the sky is blue"), &logger));
+    proxy.set_command(&cmd);
+    logger.str("");
+    obj->sync();
+    assert_equal("[osc: send osc://\"funky synth\" /.list_with_type \"/seven\"]", logger.str());
+  }
 };

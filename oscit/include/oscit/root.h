@@ -12,10 +12,11 @@ namespace oscit {
 #define INFO_PATH "/.info"
 #define LIST_PATH "/.list"
 #define LIST_WITH_TYPE_PATH "/.list_with_type"
-#define TYPE_PATH "/.type"
-#define TREE_PATH "/.tree"
 #define REPLY_PATH "/.reply"
 #define REGISTER_PATH "/.register"
+#define TYPE_PATH "/.type"
+#define TREE_PATH "/.tree"
+#define VIEWS_PATH "/.views"
 
 /** Root object. You can only start new trees with root objects.
 
@@ -105,6 +106,17 @@ class Root : public Object
 
   void unregister_command(Command *command) {
     commands_.remove(command);
+  }
+
+  /** Return (create if necessary) the "/.views" container.
+   */
+  Object *make_views_path() {
+    Object *views = object_at(VIEWS_PATH);
+    if (views) {
+      return views;
+    } else {
+      return adopt(new Object(Url(VIEWS_PATH).name(), NoIO("All objects under this path are views.")));
+    }
   }
 
   /** Trigger the object located at the given path, passing nil as parameter. */
