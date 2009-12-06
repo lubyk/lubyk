@@ -9,10 +9,19 @@ public:
   ObjectLogger(const char *name, std::ostringstream *stream) :
                 Object(name),
                 MockLogger(name, stream) {}
+  ObjectLogger(const char *name, const Value &type, std::ostringstream *stream) :
+                Object(name, type),
+                MockLogger(name, stream) {}
 
   virtual ~ObjectLogger() {
     log("destroyed");
   }
+
+  virtual const Value trigger(const Value &val, const Location *origin) {
+    log("trigger", val;
+    return val;
+  }
+
 };
 
 

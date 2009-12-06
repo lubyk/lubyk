@@ -48,8 +48,9 @@ protected:
     stream_ = stream;
   }
 
-private:
   std::string identifier_;
+
+private:
   std::ostream *stream_;
 };
 

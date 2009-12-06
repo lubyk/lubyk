@@ -9,6 +9,8 @@ namespace oscit {
 struct Call
 {
   Call(const std::string &url, const Value &param) : url_(url), param_(param) {}
+  Call(const char        *url, const Value &param) : url_(url), param_(param) {}
+  Call(const Url         &url, const Value &param) : url_(url), param_(param) {}
 
   const Value safe_trigger(Root *root, Mutex *context) {
     return root->call(url_, param_, context);

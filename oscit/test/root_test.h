@@ -292,5 +292,17 @@ public:
     assert_equal("[\".views\"]", res.to_json());
   }
 
+  void test_should_accept_registration_notifications( void ) {
+    Root root(false);
+    Logger logger;
+    root.adopt(new ObjectLogger("notified", StringIO("any", "message"), &logger));
+    root.adopt_callback_on_register(std::string("/foo/bar"), new Call("/notified", Value("/foo/bar created")));
+    assert_equal("", logger.str());
+    Object *foo = root.adopt(new Object("foo"));
+    assert_equal("", logger.str());
+    foo->adopt(new Object("foo"));
+    assert_equal("xxx", logger.str());
+  }
+
   // remote objects and 'send' testing is done in command_test.h
 };

@@ -6,7 +6,7 @@
 
 #include "oscit/callback_list.h"
 #include "oscit/on_destroy_notifier.h"
-#include "oscit/callback_observer.h"
+#include "oscit/observer.h"
 
 namespace oscit {
 

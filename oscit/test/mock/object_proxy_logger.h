@@ -15,7 +15,7 @@ public:
                 ObjectProxy(name, type),
                 MockLogger(name.c_str(), NULL) {}
 
-  virtual const Value trigger(const Value &val) {
+  virtual const Value trigger(const Value &val, const Location *origin) {
     log("trigger", val, value_);
     return value_;
   }

@@ -10,7 +10,7 @@
 #include <string>
 
 #include "oscit/typed.h"
-#include "oscit/observer.h"
+#include "oscit/observable.h"
 #include "oscit/values.h"
 #include "oscit/thash.h"
 #include "oscit/mutex.h"
@@ -37,7 +37,7 @@ namespace oscit {
 class Root;
 class Alias;
 
-class Object : public Typed, public Observer, public Observable {
+class Object : public Typed, public Observable {
  public:
   /** Class signature. */
   TYPED("Object")
@@ -355,6 +355,14 @@ class Object : public Typed, public Observer, public Observable {
       snprintf(buffer, OSC_NEXT_NAME_BUFFER_SIZE, "%i", i+1);
       name_ = baseName.append(buffer);
     }
+  }
+
+  void observer_lock() {
+    // FIXME: we need a recursive lock here...
+  }
+
+  void observer_unlock() {
+    // FIXME: we need a recursive lock here...
   }
 
  private:

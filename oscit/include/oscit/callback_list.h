@@ -3,15 +3,20 @@
 #include <list>
 
 #include "oscit/callback.h"
+#include "oscit/non_copyable.h"
 
 namespace oscit {
+
+class Observer;
 
 /** Holds a list of callbacks. The list is responsible for staying
  * sane (no callbacks to dangling pointers) by registering its own
  * callback in the original callback target to be notified on destroy.
  */
-class CallbackList {
+class CallbackList : private NonCopyable {
 public:
+  CallbackList(Observer *list_owner) : list_owner_(list_owner) {}
+
   typedef std::list<Callback*>::iterator Iterator;
 
   virtual ~CallbackList() {
@@ -31,21 +36,11 @@ public:
 
   /** Remove a specific callback from the list.
    */
-  void remove_callback(Callback *callback) {
-    Iterator it = callbacks_.begin(), end = callbacks_.end();
-    while (it != end) {
-      if (*it == callback) {
-        delete *it;
-        it = callbacks_.erase(it);
-      } else {
-        ++it;
-      }
-    }
-  }
+  void delete_callback(Callback *callback);
 
   // /** Remove a specific callback from the list.
   //  */
-  // void remove_callbacks_to(CallbackObserver *observer) {
+  // void remove_callbacks_to(Observer *observer) {
   //   Iterator it = callbacks_.begin(), end = callbacks_.end();
   //   while (it != end) {
   //     if ((*it)->observer() == observer) {
@@ -81,6 +76,7 @@ public:
   // }
 
 protected:
+  Observer *list_owner_;
   std::list<Callback*> callbacks_;
 };
 

@@ -1,5 +1,6 @@
 #ifndef OSCIT_INCLUDE_OSCIT_ROOT_H_
 #define OSCIT_INCLUDE_OSCIT_ROOT_H_
+
 #include "oscit/object.h"
 #include "oscit/command.h"
 
@@ -7,6 +8,9 @@ namespace oscit {
 
 /** Size of the object hash table. */
 #define OBJECT_HASH_SIZE 10000
+
+/** Size of the on register callbacks hash. */
+#define CALLBACKS_ON_REGISTER_HASH_SIZE 100
 
 #define ERROR_PATH "/.error"
 #define INFO_PATH "/.info"
@@ -17,6 +21,9 @@ namespace oscit {
 #define TYPE_PATH "/.type"
 #define TREE_PATH "/.tree"
 #define VIEWS_PATH "/.views"
+
+class Callback;
+class CallbackList;
 
 /** Root object. You can only start new trees with root objects.
 
@@ -33,39 +40,63 @@ class Root : public Object
   /** Class signature. */
   TYPED("Object.Root")
 
-  Root(bool should_build_meta) : objects_(OBJECT_HASH_SIZE) {
+  Root(bool should_build_meta)
+      : objects_(OBJECT_HASH_SIZE),
+        callbacks_on_register_(CALLBACKS_ON_REGISTER_HASH_SIZE) {
     init(should_build_meta);
   }
 
-  Root() : objects_(OBJECT_HASH_SIZE) {
+  Root()
+      : objects_(OBJECT_HASH_SIZE),
+        callbacks_on_register_(CALLBACKS_ON_REGISTER_HASH_SIZE) {
     init();
   }
 
-  Root(const char *name) : Object(name), objects_(OBJECT_HASH_SIZE) {
+  Root(const char *name)
+      : Object(name),
+        objects_(OBJECT_HASH_SIZE),
+        callbacks_on_register_(CALLBACKS_ON_REGISTER_HASH_SIZE) {
     init();
   }
 
-  Root(const Value &type) : Object(type), objects_(OBJECT_HASH_SIZE) {
+  Root(const Value &type)
+      : Object(type),
+        objects_(OBJECT_HASH_SIZE),
+        callbacks_on_register_(CALLBACKS_ON_REGISTER_HASH_SIZE) {
     init();
   }
 
-  Root(const char *name, const Value &type) : Object(name, type), objects_(OBJECT_HASH_SIZE) {
+  Root(const char *name, const Value &type)
+      : Object(name, type),
+        objects_(OBJECT_HASH_SIZE),
+        callbacks_on_register_(CALLBACKS_ON_REGISTER_HASH_SIZE) {
     init();
   }
 
-  Root(size_t hashSize) : objects_(hashSize) {
+  Root(size_t hashSize)
+      : objects_(hashSize),
+        callbacks_on_register_(CALLBACKS_ON_REGISTER_HASH_SIZE) {
     init();
   }
 
-  Root(size_t hashSize, const char *name) : Object(name), objects_(hashSize) {
+  Root(size_t hashSize, const char *name)
+      : Object(name),
+        objects_(hashSize),
+        callbacks_on_register_(CALLBACKS_ON_REGISTER_HASH_SIZE) {
     init();
   }
 
-  Root(size_t hashSize, const Value &type) : Object(type), objects_(hashSize) {
+  Root(size_t hashSize, const Value &type)
+      : Object(type),
+        objects_(hashSize),
+        callbacks_on_register_(CALLBACKS_ON_REGISTER_HASH_SIZE) {
     init();
   }
 
-  Root(size_t hashSize, const char *name, const Value &type) : Object(name, type), objects_(hashSize) {
+  Root(size_t hashSize, const char *name, const Value &type)
+      : Object(name, type),
+        objects_(hashSize),
+        callbacks_on_register_(CALLBACKS_ON_REGISTER_HASH_SIZE) {
     init();
   }
 
@@ -74,17 +105,7 @@ class Root : public Object
     root_ = NULL; // avoid call to unregister_object in ~Object
   }
 
-  void clear() {
-    while (!commands_.empty()) {
-      Command *command = commands_.front();
-      command->kill();
-      command->set_root(NULL); // avoid call to unregister_command in ~Command
-
-      delete command;
-      commands_.pop_front();
-    }
-    this->Object::clear();
-  }
+  void clear();
 
   /** Start listening for incomming messages from the given command. */
   template<class T>
@@ -219,6 +240,18 @@ class Root : public Object
     }
   }
 
+  /** Add a callback on object registration.
+   */
+  void adopt_callback_on_register(const std::string &url, Callback *callback);
+
+  /** Remove all callbacks to the given target url.
+   */
+  void clear_on_register_callbacks(const std::string &url);
+
+  /** Remove all on register callbacks.
+   */
+  void clear_on_register_callbacks();
+
   /** Notification of name/parent change from an object. This method
    *  keeps the objects dictionary in sync.
    */
@@ -325,6 +358,9 @@ class Root : public Object
   void init(bool should_build_meta = true);
 
   std::list<Command *> commands_;    /**< Listening commands (only one allowed per protocol). */
+  /** List of callbacks to trigger on object registration.
+   */
+  THash<std::string, CallbackList*> callbacks_on_register_;
 };
 
 } // oscit

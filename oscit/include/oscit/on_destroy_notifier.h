@@ -11,13 +11,16 @@ namespace oscit {
  */
 class OnDestroyNotifier : public CallbackList {
 public:
+  OnDestroyNotifier(Observer *owner) : CallbackList(owner) {}
+
   /** On destruction, the notifier triggers all its callbacks.
    */
   ~OnDestroyNotifier() {
-    Iterator it, end = callbacks_.end();
-    for (it = callbacks_.begin(); it != end; ++it) {
+    Iterator it = callbacks_.begin(), end = callbacks_.end();
+    while (it != end) {
       (*it)->trigger();
       delete *it;
+      it = callbacks_.erase(it);
     }
   }
 };

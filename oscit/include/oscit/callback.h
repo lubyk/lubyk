@@ -8,7 +8,7 @@ namespace oscit {
 #endif
 
 class CallbackList;
-class CallbackObserver;
+class Observer;
 
 /** The Callback class holds a pointer to the target of the callback
  * and a method (eventually with parameters) to call the target back.
@@ -19,7 +19,10 @@ class CallbackObserver;
  */
 class Callback {
 public:
-  Callback(CallbackObserver *observer) : observer_(observer), callback_list_(NULL) {}
+  Callback(Observer *observer, void *data)
+      : observer_(observer),
+        data_(data),
+        callback_list_(NULL) {}
 
   virtual ~Callback();
 
@@ -28,25 +31,32 @@ public:
    */
   void set_list(CallbackList *list);
 
-  CallbackObserver *observer() {
+  Observer *observer() {
     return observer_;
   }
 
   virtual void trigger() = 0;
+
+  bool match_data(void *data) {
+    return data_ == data;
+  }
 protected:
-  friend class CallbackObserver;
+  friend class Observer;
 
   /** Pointer to the observer so we can reach it's on_destroy notification
    * list. The observer's on_destroy list is used to invalidate registered
    * callback for the observer. If this callback is destroyed before the
    * observer, we must remove it from the list.
    */
-  CallbackObserver *observer_;
+  Observer *observer_;
+
+  /** Any data that will be passed back to the caller.
+   */
+   void *data_;
 
 private:
   /** The CallbackList containing this Callback. We need a pointer to the
-   * list in order to remove the on_destroy callback in the observer: this
-   * callback's target is callback_list_->remove_callback(this).
+   * list in order to remove the on_destroy callback reference in the observer.
    */
   CallbackList *callback_list_;
 };
@@ -54,15 +64,13 @@ private:
 template<class T, void(T::*Tmethod)(void *data)>
 class TCallback : public Callback {
 public:
-  TCallback(T *observer, void *data) : Callback(observer), data_(data) {}
+  TCallback(T *observer, void *data) : Callback(observer, data) {}
 
   ~TCallback() {}
+
   virtual void trigger() {
     (((T*)observer_)->*Tmethod)(data_);
   }
-
-private:
-  void *data_;
 };
 
 } // oscit

@@ -3,55 +3,41 @@
 
 #include "oscit/observer.h"
 #include "mock/logger.h"
+#include "oscit/tobservable_list.h"
 
-struct MockObservable : public Observable {
-  MockObservable(const char *name) : name_(name) {}
-  const char *name_;
-};
-
-class ObserverLogger : public Observer, protected MockLogger {
+class ObserverLogger : public Observable, public MockLogger {
 public:
-  enum {
+  enum TestType {
+    ClbkTest,
     VarTest,
     ListXTest,
     ListYTest
   };
-  ObserverLogger(const char *name, std::ostringstream *stream)
-      : MockLogger(name, stream),
-        mode_(VarTest),
+  ObserverLogger(const char *name, Logger *logger)
+      : MockLogger(name, logger),
+        mode_(ClbkTest),
         x_(NULL),
-        y_(NULL) {}
+        y_(NULL),
+        list_x_(this),
+        list_y_(this),
+        callbacks_for_event_xyz_(this) {}
 
-  void set_x(MockObservable *x) {
-    set_and_hold(&x_, x);
-  }
+  ObserverLogger(const char *name, Logger *logger, TestType mode)
+      : MockLogger(name, logger),
+        mode_(mode),
+        x_(NULL),
+        y_(NULL),
+        list_x_(this),
+        list_y_(this),
+        callbacks_for_event_xyz_(this) {}
 
-  void set_y(MockObservable *y) {
-    set_and_hold(&y_, y);
-  }
-
-  void append_x(MockObservable *x) {
-    append_and_hold(&list_x_, x);
-  }
-
-  void append_y(MockObservable *y) {
-    append_and_hold(&list_y_, y);
-  }
-
-  void remove_x(MockObservable *x) {
-    remove_from_list(&list_x_, x);
-  }
-
-  void remove_y(MockObservable *y) {
-    remove_from_list(&list_y_, y);
-  }
-
-  /** This method invalidates an instance variable.
-   */
   virtual void observer_lock() {
     switch(mode_) {
+    case ClbkTest:
+      log("lock");
+      break;
     case VarTest:
-      log("lock", (x_ ? x_->name_ : "NULL"), (y_ ? y_->name_ : "NULL"));
+      log("lock", (x_ ? x_->identifier_.c_str() : "NULL"), (y_ ? y_->identifier_.c_str() : "NULL"));
       break;
     case ListXTest:
       log("lock", list_x_.size());
@@ -62,14 +48,13 @@ public:
     }
   }
 
-  /** Stop observing an object contained in ivar. If you are in a multi-threaded
-   *  environment, you should overwrite this method.
-   * @params void *ivar_ptr address of the instance variable containing the value (already set to NULL).
-   */
   virtual void observer_unlock() {
      switch(mode_) {
+     case ClbkTest:
+       log("unlock");
+       break;
      case VarTest:
-        log("unlock", (x_ ? x_->name_ : "NULL"), (y_ ? y_->name_ : "NULL"));
+        log("unlock", (x_ ? x_->identifier_.c_str() : "NULL"), (y_ ? y_->identifier_.c_str() : "NULL"));
        break;
      case ListXTest:
        log("unlock", list_x_.size());
@@ -80,12 +65,67 @@ public:
      }
   }
 
+  void set_x(ObserverLogger *x) {
+    set_and_hold(&x_, x);
+  }
+
+  void set_y(ObserverLogger *y) {
+    set_and_hold(&y_, y);
+  }
+
+  void push_back_x(ObserverLogger *x) {
+    list_x_.push_back(x);
+  }
+
+  void push_back_y(ObserverLogger *y) {
+    list_y_.push_back(y);
+  }
+
+  void remove_x(ObserverLogger *x) {
+    list_x_.remove(x);
+  }
+
+  void remove_y(ObserverLogger *y) {
+    list_x_.remove(y);
+  }
+
+
+  void my_callback(void *data) {
+    const char *message = (const char *)data;
+    log("my_callback", message);
+  }
+
+  void adopt_callback_for_event_xyz(Callback *callback) {
+    callbacks_for_event_xyz_.adopt_callback(callback);
+  }
+
+  void event_xyz() {
+    callbacks_for_event_xyz_.trigger_all();
+  }
+
   int mode_;
-  MockObservable *x_;
-  MockObservable *y_;
-  std::list<MockObservable *> list_x_;
-  std::list<MockObservable *> list_y_;
+  ObserverLogger *x_;
+  ObserverLogger *y_;
+  TObservableList<ObserverLogger *> list_x_;
+  TObservableList<ObserverLogger *> list_y_;
+
+private:
+  CallbackList callbacks_for_event_xyz_;
 };
 
+template<class T, void(T::*Tmethod)(void *data)>
+class TCallbackLogger : public Callback, public MockLogger {
+public:
+  TCallbackLogger(T *observer, void *data, const char *name, Logger *logger) : Callback(observer, data), MockLogger(name, logger) {}
+
+  ~TCallbackLogger() {
+    log("destroy");
+  }
+
+  virtual void trigger() {
+    log("trigger");
+    (((T*)observer_)->*Tmethod)(data_);
+  }
+};
 
 #endif // OSCIT_TEST_MOCK_OBSERVER_LOGGER_H_
