@@ -1,5 +1,43 @@
+project (OSCIT)
 cmake_minimum_required(VERSION 2.8)
+
+# ==============================================================================
+#
+#  Options
+#
+# ==============================================================================
+option (OSCIT_MEMORY_CHECKING    "Enable checking against memory leaks?"     NO  )
+option (OSCIT_ENABLE_TESTING     "Build and run tests ?"                     YES )
+
+
+# handle memory checking option
+if (OSCIT_MEMORY_CHECKING)
+
+  if (APPLE)
+    find_library (HAVE_MALLOC_DEBUG MallocDebug ${lib_locations})
+
+    if (HAVE_MALLOC_DEBUG)
+      message (STATUS "libMallocDebug = ${HAVE_MALLOC_DEBUG}")
+    else (HAVE_MALLOC_DEBUG)
+      set (HAVE_MALLOC_DEBUG NO)
+    endif (HAVE_MALLOC_DEBUG)
+  endif (APPLE)
+
+endif (OSCIT_MEMORY_CHECKING)
+
+# handle testing option
+if (OSCIT_ENABLE_TESTING)
+  enable_testing()
+endif (OSCIT_ENABLE_TESTING)
+
+# ragel executable
 set(RAGEL "ragel")
+
+# ==============================================================================
+#
+#  Platform guessing
+#
+# ==============================================================================
 if(UNIX)
   set(OSCPACK_PLAT "posix")
   if(APPLE)
@@ -23,10 +61,14 @@ else(UNIX)
     set(PLAT "unsupported")
   endif(WIN32)
 endif(UNIX)
-MESSAGE("Platform is ${PLAT}")
+
 add_definitions(-D__${PLAT}__)
 
-project (OSCIT)
+# ==============================================================================
+#
+#  oscit library build
+#
+# ==============================================================================
 file (GLOB OSCIT_SOURCES src/*.cpp src/${PLAT}/*.cpp)
 
 include_directories (${OSCIT_SOURCE_DIR}/oscpack ${OSCIT_SOURCE_DIR}/include)
@@ -56,11 +98,19 @@ add_library (oscit STATIC ${OSCIT_SOURCES} ${OSCPACK_SOURCES})
 # add_custom_target (generate_liboscpack DEPENDS ${OSCIT_SOURCE_DIR}/oscpack/liboscpack.a)
 # add_dependencies (oscit generate_liboscpack)
 
-# testing
+# ==============================================================================
+#
+#  test_runner build
+#
+# ==============================================================================
+# (one test for all CxxTests)
 
-# one test for all CxxTests
-enable_testing()
-file (GLOB OSCIT_TEST_SOURCES test/*_test.h test/*_test_slow.h)
+if(OSCIT_MEMORY_CHECKING)
+  file (GLOB OSCIT_TEST_SOURCES test/*_test.h test/*_test_slow.h test/zpause_for_memory_analysis.h)
+else(OSCIT_MEMORY_CHECKING)
+  file (GLOB OSCIT_TEST_SOURCES test/*_test.h test/*_test_slow.h)
+endif(OSCIT_MEMORY_CHECKING)
+
 file (GLOB OSCIT_TEST_MOCKS test/mock/*.h)
 add_custom_command ( PRE_BUILD
   OUTPUT  test_runner.cpp
@@ -88,3 +138,22 @@ endif(PLAT STREQUAL "linux")
 
 # valgrind command ?
 # valgrind --leak-check=full --track-origins=yes ./test_runner
+
+
+# ==============================================================================
+#
+#  configuration feedback
+#
+# ==============================================================================
+
+message (STATUS "===========================================================================")
+message (STATUS "   OSCIT build configuration settings                                      ")
+message (STATUS "===========================================================================")
+message (STATUS "   Platform                                                     = ${PLAT}")
+message (STATUS "   OSCIT_ENABLE_TESTING  (Build and run tests)                  = ${OSCIT_ENABLE_TESTING}")
+message (STATUS "   OSCIT_MEMORY_CHECKING (Enable checking against memory leaks) = ${OSCIT_MEMORY_CHECKING}")
+if(OSCIT_MEMORY_CHECKING)
+message (STATUS "       you should run test_runner with")
+message (STATUS "       > export MallocStackLogging=1;./test_runner")
+endif(OSCIT_MEMORY_CHECKING)
+message (STATUS "===========================================================================")
