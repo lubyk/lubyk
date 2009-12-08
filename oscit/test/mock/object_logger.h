@@ -18,7 +18,7 @@ public:
   }
 
   virtual const Value trigger(const Value &val, const Location *origin) {
-    log("trigger", val;
+    log("trigger", val);
     return val;
   }
 

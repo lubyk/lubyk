@@ -53,11 +53,12 @@ public:
     assert_equal("", logger.str());
   }
 
-  void test_append_and_hold_should_append_value( void ) {
+  void test_push_back_should_append_value( void ) {
     Logger logger;
     ObserverLogger o("observer", &logger);
     ObserverLogger a("a", &logger);
     ObserverLogger b("b", &logger);
+
     assert_equal((ObserverLogger*)NULL, o.x_);
     assert_equal((ObserverLogger*)NULL, o.y_);
 
@@ -77,7 +78,10 @@ public:
     logger.str("");
 
     delete a;
-    assert_equal("[observer: lock 1][observer: unlock 0]", logger.str());
+    // lock/unlock called twice:
+    // - during the trigger of a's 'on destroy' callbacks in 'observer'
+    // - during the removal of the observer's "produced" callbacks
+    assert_equal("[observer: lock 1][observer: unlock 0][observer: lock 0][observer: unlock 0]", logger.str());
     assert_equal((ObserverLogger*)NULL, o.x_);
   }
 
@@ -87,10 +91,14 @@ public:
     ObserverLogger *a = new ObserverLogger("a", &logger);
 
     o->push_back_x(a);
+    // we lock object 'a' when registering 'on_destroy' callbacks
+    logger.str("[a: lock][a: unlock]");
     logger.str("");
 
     delete o;
-    assert_equal("", logger.str());
+    // we lock while removing 'on_destroy' callbacks in a
+    assert_equal("[a: lock][a: unlock]", logger.str());
+    logger.str("");
     delete a; // should not call o
     assert_equal("", logger.str());
   }

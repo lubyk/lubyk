@@ -50,7 +50,7 @@ public:
     obj->set_value(Value(45.0));
     millisleep(12);
     obj->handle_value_change(Value(45.0));
-    assert_equal(12, obj->latency());
+    assert_true( 11 <= obj->latency() && obj->latency() <= 13 );
   }
 
   void test_sync_should_call_list_with_type( void ) {

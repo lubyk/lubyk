@@ -15,11 +15,6 @@ public:
                 ObjectProxy(name, type),
                 MockLogger(name.c_str(), NULL) {}
 
-  virtual const Value trigger(const Value &val, const Location *origin) {
-    log("trigger", val, value_);
-    return value_;
-  }
-
   /** This method should be implemented in order to give a visual feedback to
    * users that the value has changed (GUI object notification).
    */

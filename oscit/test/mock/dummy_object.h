@@ -25,30 +25,6 @@ public:
       value_ = val;
     }
     return value_;
-
-    // WTF is this mess ?
-    //if (my_type.is_real()) {
-    //  return value_;
-    //} else if (my_type.is_string()) {
-    //  // testing my_type
-    //  return Value("hello");
-    //} else if (my_type.is_list()) {
-    //  // testing multiple type
-    //  return Value(name_).push_back(value_.r);
-    //} else if (my_type.is_hash()) {
-    //  // testing hash type
-    //  return JsonValue("lazy:'dog' silly:'cats and mices'");
-    //} else if (my_type.is_matrix()) {
-    //  // testing matrix type
-    //  Value mat(my_type);
-    //  Real * data = mat.mat_data();
-    //  for(size_t i=0; i < mat.mat_size(); i++) {
-    //    data[i] = i;
-    //  }
-    //  return mat;
-    //} else {
-    //  return gNilValue;
-    //}
   }
 
   virtual Object * build_child(const std::string &name, Value *error) {

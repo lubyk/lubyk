@@ -36,10 +36,11 @@ void Root::clear_on_register_callbacks() {
   }
 }
 
-void Root::clear_on_register_callbacks(const std::string &url) {
+void Root::trigger_and_clear_on_register_callbacks(const std::string &url) {
   CallbackList *callbacks;
 
   if (callbacks_on_register_.get(url, &callbacks)) {
+    callbacks->trigger_all();
     delete callbacks;
     callbacks_on_register_.remove(url);
   }

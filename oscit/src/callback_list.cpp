@@ -1,5 +1,7 @@
 #include "oscit/callback_list.h"
 
+#include <iostream>
+
 #include "oscit/observer.h"
 
 namespace oscit {

@@ -1,6 +1,7 @@
 #include "test_helper.h"
 #include "oscit/root.h"
 #include "mock/dummy_object.h"
+#include "mock/observer_logger.h"
 #include "mock/command_logger.h"
 #include "mock/object_logger.h"
 #include "mock/command_logger.h"
@@ -295,13 +296,16 @@ public:
   void test_should_accept_registration_notifications( void ) {
     Root root(false);
     Logger logger;
-    root.adopt(new ObjectLogger("notified", StringIO("any", "message"), &logger));
-    root.adopt_callback_on_register(std::string("/foo/bar"), new Call("/notified", Value("/foo/bar created")));
+    ObserverLogger observer("observer", &logger);
+    root.adopt_callback_on_register(std::string("/foo/bar"),
+      new ObserverLogger::OnRegistrationCallback(&observer, "/foo/bar")
+    );
     assert_equal("", logger.str());
     Object *foo = root.adopt(new Object("foo"));
     assert_equal("", logger.str());
-    foo->adopt(new Object("foo"));
-    assert_equal("xxx", logger.str());
+    foo->adopt(new Object("bar"));
+    // trigger, and lock/unlock during removal 'produced callbacks'.
+    assert_equal("[observer: on_registration_callback /foo/bar][observer: lock][observer: unlock]", logger.str());
   }
 
   // remote objects and 'send' testing is done in command_test.h

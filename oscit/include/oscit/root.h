@@ -244,9 +244,9 @@ class Root : public Object
    */
   void adopt_callback_on_register(const std::string &url, Callback *callback);
 
-  /** Remove all callbacks to the given target url.
+  /** Trigger and remove all callbacks for a specific url registration.
    */
-  void clear_on_register_callbacks(const std::string &url);
+  void trigger_and_clear_on_register_callbacks(const std::string &url);
 
   /** Remove all on register callbacks.
    */
@@ -258,6 +258,7 @@ class Root : public Object
   void register_object(Object *obj) {
     // add object to objects dictionary
     objects_.set(obj->url(), obj);
+    trigger_and_clear_on_register_callbacks(obj->url());
   }
 
   /** Unregister an object from tree (forget about it). */

@@ -2,6 +2,7 @@
 #define OSCIT_INCLUDE_OSCIT_OBSERVER_H_
 
 #include <list>
+#include <iostream>
 
 #include "oscit/callback_list.h"
 
@@ -63,7 +64,6 @@ protected:
       CallbackWithList *cl = *it;
       if (cl->callback_->match_data(data)) {
         // found matching callback: remove
-        cl->callback_->observer_ = NULL;
         cl->list_->delete_callback(cl->callback_);
         delete cl;
         it = produced_callbacks_.erase(it);

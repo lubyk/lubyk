@@ -29,6 +29,7 @@ public:
   }
 
   void remove(T target) {
+    // remove remote "on_destroy" callback
     delete_produced_callbacks_with_data(target);
     list_.remove(target);
   }
@@ -41,13 +42,14 @@ public:
     return list_.size();
   }
 protected:
-  /** The target is becoming invalid, remove from list.
+  /** The target is becoming invalid, remove from list (called from the target's
+   * "on_destroy" list).
    */
   void remove_from_list(void *data) {
     T target = (T)data;
     // stop observing this target
     list_owner_->observer_lock();
-      remove(target);
+      list_.remove(target);
     list_owner_->observer_unlock();
   }
 

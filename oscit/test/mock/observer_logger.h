@@ -103,6 +103,25 @@ public:
     callbacks_for_event_xyz_.trigger_all();
   }
 
+  void on_registration_callback(void *data) {
+    std::string *url = (std::string *)data;
+    log("on_registration_callback", *url);
+  }
+
+  class OnRegistrationCallback : public TCallback<ObserverLogger, &ObserverLogger::on_registration_callback> {
+  public:
+    OnRegistrationCallback(ObserverLogger *observer, const std::string &url)
+        : TCallback<ObserverLogger, &ObserverLogger::on_registration_callback>(observer, new std::string(url)) {}
+
+    OnRegistrationCallback(ObserverLogger *observer, const char *url)
+        : TCallback<ObserverLogger, &ObserverLogger::on_registration_callback>(observer, new std::string(url)) {}
+
+    virtual ~OnRegistrationCallback() {
+      std::string *str = (std::string*)data_;
+      delete str;
+    }
+  };
+
   int mode_;
   ObserverLogger *x_;
   ObserverLogger *y_;
