@@ -80,19 +80,6 @@ public:
     }
   }
 
-  THash& operator=(const THash& pOther) {
-    const_string_iterator it;
-    const_string_iterator end = pOther.end();
-    T value;
-
-    for(it = pOther.begin(); it != end; it++) {
-      if (pOther.get(*it, &value)) {
-        set(*it, value);
-      }
-    }
-    return *this;
-  }
-
   virtual ~THash() {
     THashElement<K,T> * current, * next;
     // remove collisions
@@ -106,6 +93,19 @@ public:
     }
     // remove table
     delete[] thash_table_;
+  }
+
+  THash& operator=(const THash& pOther) {
+    const_string_iterator it;
+    const_string_iterator end = pOther.end();
+    T value;
+
+    for(it = pOther.begin(); it != end; it++) {
+      if (pOther.get(*it, &value)) {
+        set(*it, value);
+      }
+    }
+    return *this;
   }
 
   void set(const K &key, const T &pElement);

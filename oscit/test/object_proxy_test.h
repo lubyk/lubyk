@@ -30,22 +30,20 @@ public:
   }
 
   void test_update_remote_on_set_value( void ) {
-    RootProxy proxy(Location("osc", "funky synth"));
     Logger logger;
     CommandLogger cmd("osc", &logger);
-    ObjectProxyLogger *obj = proxy.adopt(new ObjectProxyLogger("seven", RangeIO(0.0, 2000.0, "bpm", "the sky is blue"), &logger));
-    proxy.set_command(&cmd);
+    RootProxy *proxy = cmd.adopt_proxy(new RootProxy(Location("osc", "funky synth")));
+    ObjectProxyLogger *obj = proxy->adopt(new ObjectProxyLogger("seven", RangeIO(0.0, 2000.0, "bpm", "the sky is blue"), &logger));
     logger.str("");
     obj->set_value(Value(45.0));
     assert_equal("[osc: send osc://\"funky synth\" /seven 45]", logger.str());
   }
 
   void test_latency( void ) {
-    RootProxy proxy(Location("osc", "funky synth"));
     Logger logger;
     CommandLogger cmd("osc", &logger);
-    ObjectProxyLogger *obj = proxy.adopt(new ObjectProxyLogger("seven", RangeIO(0.0, 2000.0, "bpm", "the sky is blue"), &logger));
-    proxy.set_command(&cmd);
+    RootProxy *proxy = cmd.adopt_proxy(new RootProxy(Location("osc", "funky synth")));
+    ObjectProxyLogger *obj = proxy->adopt(new ObjectProxyLogger("seven", RangeIO(0.0, 2000.0, "bpm", "the sky is blue"), &logger));
     logger.str("");
     obj->set_value(Value(45.0));
     millisleep(12);
@@ -54,11 +52,10 @@ public:
   }
 
   void test_sync_should_call_list_with_type( void ) {
-    RootProxy proxy(Location("osc", "funky synth"));
     Logger logger;
     CommandLogger cmd("osc", &logger);
-    ObjectProxyLogger *obj = proxy.adopt(new ObjectProxyLogger("seven", RangeIO(0.0, 2000.0, "bpm", "the sky is blue"), &logger));
-    proxy.set_command(&cmd);
+    RootProxy *proxy = cmd.adopt_proxy(new RootProxy(Location("osc", "funky synth")));
+    ObjectProxyLogger *obj = proxy->adopt(new ObjectProxyLogger("seven", RangeIO(0.0, 2000.0, "bpm", "the sky is blue"), &logger));
     logger.str("");
     obj->sync();
     assert_equal("[osc: send osc://\"funky synth\" /.list_with_type \"/seven\"]", logger.str());

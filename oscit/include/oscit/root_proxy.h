@@ -51,17 +51,6 @@ public:
    */
   void handle_reply(const std::string &path, const Value &val);
 
-  /** Set proxy's command (communication channel).
-   *  this method registers the RootProxy into the given command.
-   */
-  void set_command(Command *command);
-
-  /** Called by ~Command to avoid further 'unregister' calls.
-   */
-  void unlink_command() {
-    command_ = NULL;
-  }
-
   /** Set proxy's factory (used to create new object proxies).
    *  this method registers the RootProxy into the given factory.
    */
@@ -74,6 +63,18 @@ public:
   }
 
 private:
+  friend class Command; // set_command
+
+  /** Set proxy's command (communication channel).
+   *  this method registers the RootProxy into the given command.
+   */
+  void set_command(Command *command);
+
+  /** Called by ~Command to avoid further 'unregister' calls.
+   */
+  void unlink_command() {
+    command_ = NULL;
+  }
 
   void build_children_from_types(Object *base, const Value &types);
 

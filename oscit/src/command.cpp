@@ -82,6 +82,7 @@ Command::~Command() {
     RootProxy *root_proxy;
     if (root_proxies_.get(*p_it, &root_proxy)) {
       root_proxy->unlink_command();
+      delete root_proxy;
     }
   }
 }

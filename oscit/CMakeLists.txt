@@ -106,7 +106,7 @@ add_library (oscit STATIC ${OSCIT_SOURCES} ${OSCPACK_SOURCES})
 # (one test for all CxxTests)
 
 if(OSCIT_MEMORY_CHECKING)
-  file (GLOB OSCIT_TEST_SOURCES test/*_test.h test/*_test_slow.h test/zpause_for_memory_analysis.h)
+  file (GLOB OSCIT_TEST_SOURCES test/*_proxy_test.h test/*_test_slow.h test/zpause_for_memory_analysis.h)
 else(OSCIT_MEMORY_CHECKING)
   file (GLOB OSCIT_TEST_SOURCES test/*_test.h test/*_test_slow.h)
 endif(OSCIT_MEMORY_CHECKING)
