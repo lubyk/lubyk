@@ -96,13 +96,19 @@ endforeach (RAGEL_SRC)
 file (GLOB OSCPACK_SOURCES oscpack/ip/*.cpp oscpack/ip/${OSCPACK_PLAT}/*.cpp oscpack/osc/*.cpp)
 add_library (oscit STATIC ${OSCIT_SOURCES} ${OSCPACK_SOURCES})
 
-# not cmake based oscpack
-# add_custom_command (
-#   OUTPUT  ${OSCIT_SOURCE_DIR}/oscpack/liboscpack.a
-#   COMMAND cd ${OSCIT_SOURCE_DIR}/oscpack && make liboscpack.a
-# )
-# add_custom_target (generate_liboscpack DEPENDS ${OSCIT_SOURCE_DIR}/oscpack/liboscpack.a)
-# add_dependencies (oscit generate_liboscpack)
+# ==============================================================================
+#
+#  examples build
+#
+# ==============================================================================
+file (GLOB OSCIT_EXAMPLES examples/*.cpp)
+
+foreach (OSCIT_EXAMPLE ${OSCIT_EXAMPLES})
+  get_filename_component (OSCIT_EXAMPLE_NAME ${OSCIT_EXAMPLE} NAME_WE)
+  
+	add_executable(${OSCIT_EXAMPLE_NAME} ${OSCIT_EXAMPLE})
+	target_link_libraries(${OSCIT_EXAMPLE_NAME} oscit ${PLAT_LINK})
+endforeach (OSCIT_EXAMPLE)
 
 # ==============================================================================
 #
