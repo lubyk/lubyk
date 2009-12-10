@@ -3,32 +3,77 @@
 #include <string>
 #include <ostream>
 
-typedef unsigned int uint;
+#include "oscit/location.h"
 
 namespace oscit {
 
-/** Url is a parsed string with easy access to protocol, host, port, path, etc. */
+class ZeroConfBrowser;
+
+/** The Url is used to access remote locations by wrapping protocol, ip, port and other data.
+ *
+ * TODO: keep only a reference to the location in case we need this information very often...
+ */
 class Url
 {
  public:
-  explicit Url(const std::string &string) : full_url_(string), port_(0) {
+  Url(const unsigned long ip, const uint port, const char *path) : path_(path) {
+    location_.protocol_ = DEFAULT_PROTOCOL;
+    location_.reference_by_hostname_ = true;
+    location_.ip_   = ip;
+    location_.port_ = port;
+    location_.name_ = Location::name_from_ip(ip);
+  }
+
+  Url(const unsigned long ip, const uint port, const std::string &path) : path_(path) {
+    location_.protocol_ = DEFAULT_PROTOCOL;
+    location_.reference_by_hostname_ = true;
+    location_.ip_   = ip;
+    location_.port_ = port;
+    location_.name_ = Location::name_from_ip(ip);
+  }
+
+  Url(const Location &location, const std::string &path) : location_(location), path_(path) {}
+
+  Url(const Location *location, const std::string &path) : path_(path) {
+    if (location) location_ = *location;
+  }
+
+  explicit Url(const std::string &string) : full_url_(string) {
     parse(string.c_str());
   }
-  
-  explicit Url(const char *string) : full_url_(string), port_(0) {
+
+  explicit Url(const char *string) : full_url_(string) {
     parse(string);
   }
-  
+
   const std::string &str() const { return full_url_; }
-  
-  const std::string &protocol() const { return protocol_; }
-  
-  const std::string &host() const { return host_; }
-  
-  uint port() const { return port_; }
-  
+
+  const Location &location() const { return location_; }
+
+  const std::string &protocol() const { return location_.protocol_; }
+
+  bool has_hostname() const { return location_.reference_by_hostname_; }
+
+  bool has_service_name() const { return !location_.reference_by_hostname_; }
+
+  bool is_meta() const {
+    return path_.compare(0, 2, "/.") == 0;
+  }
+
+  const std::string &hostname() const { return location_.name_; }
+
+  const std::string &service_name() const { return location_.name_; }
+
+  void resolve_with(const ZeroConfBrowser *browser) {
+    location_.resolve_with(browser);
+  }
+
+  unsigned long ip() const { return location_.ip_; }
+
+  uint port() const { return location_.port_; }
+
   const std::string &path() const { return path_; }
-  
+
   const std::string name() {
     size_t pos = path_.rfind("/");
     if (pos != std::string::npos) {
@@ -37,35 +82,41 @@ class Url
       return path_;
     }
   }
-  
+
   Url &set(const char *str) {
     clear();
     parse(str);
     return *this;
   }
-  
+
   void set(const std::string &str) {
     clear();
     parse(str.c_str());
   }
-  
+
  private:
   friend std::ostream &operator<<(std::ostream &out_stream, const Url &url);
   void parse(const char *string);
-  
+
   void rebuild_full_url();
-  
+
   void clear() {
-    protocol_ = "";
-    host_     = "";
-    port_     = 0;
-    path_     = "";
+    location_.clear();
+    path_ = "";
   }
-  
+
+  /** FIXME: document why we this string...
+   */
   std::string full_url_;
-  std::string protocol_;
-  std::string host_;
-  uint        port_;
+
+  /** Host, ip and other information to reach a remote location.
+   *  This can refer to the *target location* if the url is going out
+   *  or to the *source location* when the url is received.
+   */
+  Location location_;
+
+  /** Path to method on the called location (callee).
+   */
   std::string path_;
 };
 

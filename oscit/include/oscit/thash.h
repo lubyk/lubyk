@@ -55,9 +55,6 @@ struct THashElement
   THashElement<K,T> * next;
 };
 
-template<class K>
-static uint hashId(K key);
-
 // K is the key class, T is the object class
 template <class K, class T>
 class THash
@@ -83,19 +80,6 @@ public:
     }
   }
 
-  THash& operator=(const THash& pOther) {
-    const_string_iterator it;
-    const_string_iterator end = pOther.end();
-    T value;
-
-    for(it = pOther.begin(); it != end; it++) {
-      if (pOther.get(*it, &value)) {
-        set(*it, value);
-      }
-    }
-    return *this;
-  }
-
   virtual ~THash() {
     THashElement<K,T> * current, * next;
     // remove collisions
@@ -111,18 +95,35 @@ public:
     delete[] thash_table_;
   }
 
+  THash& operator=(const THash& pOther) {
+    const_string_iterator it;
+    const_string_iterator end = pOther.end();
+    T value;
+
+    for(it = pOther.begin(); it != end; it++) {
+      if (pOther.get(*it, &value)) {
+        set(*it, value);
+      }
+    }
+    return *this;
+  }
+
   void set(const K &key, const T &pElement);
 
   /** Get an element of the dictionary and set the retval to this element. Returns false if no element found. */
   // FIXME: const T* ?
   bool get(const K &key, T *retval) const;
 
+  /** Return true if the dictionary contains an element at the given key.
+   */
+  bool has_key(const K &key) const;
+
   /** Get a pointer to an element in the dictionary.
    * The value of this pointer should not be kept (it may change as the hash is updated).
    * Returns false if no element found.
    */
   bool get(const K &key, const T **retval) const;
-  
+
   /** Get an element's key. Returns false if the element could not be found. */
   bool get_key(const T &pElement, K *retval) const;
 
@@ -169,7 +170,7 @@ public:
   void to_stream(std::ostream &out_stream, bool lazy = false) const;
 
   /** List of keys. */
-  const std::list<K>& keys() { return keys_; }
+  const std::list<K> &keys() const { return keys_; }
 
   /** Begin iterator over the keys of the dictionary (read-only). */
   typename std::list<K>::const_iterator begin() const { return keys_.begin(); }
@@ -238,6 +239,22 @@ bool THash<K,T>::get(const K &key, T *retval) const {
 
   if (found && found->obj && found->key == key) {
     *retval = *(found->obj);
+    return true;
+  } else {
+    return false;
+  }
+}
+
+template <class K, class T>
+bool THash<K,T>::has_key(const K &key) const {
+  THashElement<K,T> *found;
+  uint id = hashId(key) % size_;
+
+  found = &(thash_table_[id]);
+  while (found && found->obj && found->key != key)
+    found = found->next;
+
+  if (found && found->obj && found->key == key) {
     return true;
   } else {
     return false;
@@ -358,7 +375,7 @@ void THash<K,T>::to_stream(std::ostream &out_stream, bool lazy) const {
   begin = keys_.begin();
   T value;
   for( it = begin; it != end; it++) {
-    if (it != begin) out_stream << " ";
+    if (it != begin) out_stream << (lazy ? " " : ", ");
     if (lazy) {
       if (get(*it, &value)) {
         out_stream << *it << ":" << value;
@@ -380,7 +397,6 @@ void THash<K,T>::to_stream(std::ostream &out_stream, bool lazy) const {
 
 // ===== uint =====
 // Thomas Wang's 32 Bit Mix Function: http://www.cris.com/~Ttwang/tech/inthash.htm
-template<>
 inline uint hashId(const uint key) {
   uint res = key;
   res += ~(res << 15);
@@ -392,7 +408,6 @@ inline uint hashId(const uint key) {
   return res;
 }
 
-template<>
 inline uint hashId(const unsigned long key) {
   uint res = key;
   res += ~(res << 15);
@@ -406,7 +421,6 @@ inline uint hashId(const unsigned long key) {
 
 // ===== char *      =====
 // sdbm function: taken from http://www.cse.yorku.ca/~oz/hash.html
-template<>
 inline uint hashId(const char *str) {
   unsigned long h = 0;
   int c;
@@ -420,7 +434,6 @@ inline uint hashId(const char *str) {
 
 // We use the simpler hash to avoid too long compile times in the static string hash macro.
 
-template<>
 inline uint hashId(const char c) {
   return HASH_FUNCTION(HASH_CONSTANT, c);
 }
@@ -432,18 +445,11 @@ inline uint hashId(const char c) {
 
 // ===== std::string& =====
 // sdbm function: taken from http://www.cse.yorku.ca/~oz/hash.html
-template<>
 inline uint hashId(const std::string &key) {
   const char *str = key.c_str();
   return hashId(str);
 }
 
-// ===== std::string =====
-// sdbm function: taken from http://www.cse.yorku.ca/~oz/hash.html
-template<>
-inline uint hashId(const std::string key) {
-  return hashId<const std::string&>(key);
-}
 
 } // oscit
 

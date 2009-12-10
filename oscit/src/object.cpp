@@ -1,3 +1,8 @@
+#include "oscit/object.h"
+
+#include <string>
+#include <list>
+
 #include "oscit/root.h"
 #include "oscit/alias.h"
 
@@ -30,7 +35,7 @@ const Value Object::set(const Value &val) {
 
   for (it = val.begin(); it != end; ++it) {
     if ((obj = child(*it)) && val.get(*it, &param)) {
-      res.set(*it, root_->call(obj, param, context_));
+      res.set(*it, root_->call(obj, param, NULL, context_));
     } else {
       res.set(*it, ErrorValue(NOT_FOUND_ERROR, *it));
     }
@@ -48,7 +53,7 @@ bool Object::set_all_ok(const Value &val) {
 
   for (it = val.begin(); it != end; ++it) {
     if ((obj = child(*it)) && val.get(*it, &param)) {
-      all_ok = !root_->call(obj, param, context_).is_error() && all_ok;
+      all_ok = !root_->call(obj, param, NULL, context_).is_error() && all_ok;
     } else {
       all_ok = false;
     }
@@ -142,7 +147,7 @@ void Object::clear() {
 
 
 const Value Object::list() const {
-  Value res;
+  ListValue res;
   const_string_iterator it, end = children_.end();
   for (it = children_.begin(); it != end; ++it) {
     Object * obj;
@@ -159,6 +164,61 @@ const Value Object::list() const {
     }
   }
   return res;
+}
+
+const Value Object::list_with_type() const {
+  ListValue list;
+  const_string_iterator it, end = children_.end();
+  for (it = children_.begin(); it != end; ++it) {
+    ListValue name_with_type;
+    Object * obj;
+    if (children_.get(*it, &obj)) {
+      if (!obj->kind_of(Alias)) {
+        // do not list alias (Alias are used as internal helpers and do not
+        // need to be advertised) ?
+        if (obj->children_.empty()) {
+          name_with_type.push_back(obj->name_);
+        } else {
+          name_with_type.push_back(std::string(obj->name_).append("/"));
+        }
+        name_with_type.push_back(obj->type_with_current_value());
+        list.push_back(name_with_type);
+      }
+    }
+  }
+  return list;
+}
+
+const Value Object::type_with_current_value() {
+  Value type = type_;
+
+  if (type.is_string()) {
+    // meta type is string = just information (not callable)
+    return type;
+  }
+
+  if (!type.is_list()) {
+    // make sure type is a ListValue
+    return ErrorValue(INTERNAL_SERVER_ERROR, "Invalid meta type. Should be a list (found '").append(type.type_tag()).append("').");
+  }
+
+  if (!type[0].is_any() && !type[0].is_nil()) {
+    // get current value
+    Value current = trigger(gNilValue, NULL);
+
+    if (current.is_nil()) {
+      // current type cannot be queried. Leave dummy value.
+    } else if (current.type_id() != type[0].type_id()) {
+      // make sure current value type is compatible with type
+      return ErrorValue(INTERNAL_SERVER_ERROR, "Current value type not matching meta type (expected '").append(
+          type[0].type_tag()).append(
+          "' found '").append(current.type_tag()).append("').");
+    } else {
+      type.set_value_at(0, current);
+    }
+
+  }
+  return type;
 }
 
 

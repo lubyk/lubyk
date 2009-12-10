@@ -5,16 +5,29 @@
 Mutex gMutexTest_mutex;
 std::ostringstream gMutexTest_log(std::ostringstream::out);
 
-void * start_mutex_test_thread(void * data) {
+void start_mutex_test_thread(Thread* runner) {
   gMutexTest_log << "[1:new]";
+  runner->thread_ready();
   gMutexTest_mutex.lock();
-  millisleep(2);
   gMutexTest_log << "[1:lock]";
-  millisleep(100);
+  runner->post();
   gMutexTest_mutex.unlock();
   gMutexTest_log << "[1:unlock][1:end]";
-  return NULL;
 }
+
+static void lock_method(Thread* runner) {
+  ScopedLock lock(gMutexTest_mutex);
+  gMutexTest_log << "[1:lock]";
+  runner->post();
+}
+
+static void start_mutex_test_thread_scoped_lock(Thread* runner) {
+  gMutexTest_log << "[1:new]";
+  runner->thread_ready();
+  lock_method(runner);
+  gMutexTest_log << "[1:unlock][1:end]";
+}
+
 
 class MutexTest : public TestHelper
 {
@@ -36,22 +49,64 @@ public:
   }
 
   void test_two_threads( void ) {
+    Thread runner;
     gMutexTest_mutex.lock();
     gMutexTest_log << "[0:lock]";
-    pthread_t id;
     // create new thread (will try to get hold of the lock)
-    pthread_create( &id, NULL, &start_mutex_test_thread, NULL);
-    millisleep(20);
+    runner.start_thread<start_mutex_test_thread>(NULL);
     // release lock() --> other gets hold of it
     gMutexTest_log << "[0:unlock]";
     gMutexTest_mutex.unlock();
-    millisleep(2);
+    runner.wait();
     gMutexTest_mutex.lock();
     gMutexTest_log << "[0:lock]";
     gMutexTest_mutex.unlock();
-    pthread_join( id, NULL);
+    runner.join();
     gMutexTest_log << "[joined]";
 
     assert_equal("[0:lock][1:new][0:unlock][1:lock][1:unlock][1:end][0:lock][joined]", gMutexTest_log.str());
   }
+
+  void test_two_threads_scoped_lock( void ) {
+    gMutexTest_log.str("");
+    Thread runner;
+    {
+      ScopedLock lock(gMutexTest_mutex);
+      gMutexTest_log << "[0:lock]";
+      // create new thread (will try to get hold of the lock)
+      runner.start_thread(start_mutex_test_thread_scoped_lock, NULL);
+      // release lock() --> other gets hold of it
+      gMutexTest_log << "[0:unlock]";
+    }
+    runner.wait();
+    {
+      ScopedLock lock(gMutexTest_mutex);
+      gMutexTest_log << "[0:lock]";
+    }
+    runner.join();
+    gMutexTest_log << "[joined]";
+
+    assert_equal("[0:lock][1:new][0:unlock][1:lock][1:unlock][1:end][0:lock][joined]", gMutexTest_log.str());
+  }
+  //void test_two_threads_scoped_lock( void ) {
+  //  Thread runner;
+  //  {
+  //    ScopedLock lock(gMutexTest_mutex);
+  //    gMutexTest_log << "[0:lock]";
+  //    // create new thread (will try to get hold of the lock)
+  //    runner.start_thread(start_mutex_test_thread_scoped_lock, NULL);
+  //    // release lock() --> other gets hold of it
+  //    gMutexTest_log << "[0:unlock]"; 
+  //  }
+  //  runner.wait();
+  //  { 
+  //    ScopedLock lock(gMutexTest_mutex);
+  //    gMutexTest_mutex.lock();
+  //    gMutexTest_log << "[0:lock]";
+  //  }
+  //  runner.join();
+  //  gMutexTest_log << "[joined]";
+  //
+  //  assert_equal("[0:lock][1:new][0:unlock][1:lock][1:unlock][1:end][0:lock][joined]", gMutexTest_log.str());
+  //}
 };

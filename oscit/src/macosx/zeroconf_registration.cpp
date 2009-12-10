@@ -20,7 +20,7 @@ typedef	int	pid_t;
 #include <dns_sd.h>     // zeroconf
 
 #include "oscit/thread.h"
-#include "oscit/zeroconf.h"
+#include "oscit/zeroconf_registration.h"
 
 
 namespace oscit {
@@ -70,7 +70,7 @@ public:
   void registration(Thread *thread) {
     //  release calling thread semaphore
     thread->thread_ready();
-    
+
     DNSServiceErrorType error;
     DNSServiceRef service;
 
@@ -123,6 +123,7 @@ ZeroConfRegistration::ZeroConfRegistration(const std::string &name, const char *
 }
 
 ZeroConfRegistration::~ZeroConfRegistration() {
+  stop();
   delete impl_;
 }
 

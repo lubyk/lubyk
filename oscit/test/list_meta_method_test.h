@@ -23,26 +23,34 @@ public:
     tmp->adopt(new Object("Nicolaus"));
     tmp->adopt(new Object("Daniel"));
     tmp->adopt(new Object("Johann"));
-    Value res;
+    Value reply;
 
-    res = root.call("/.list", Value(""));
-    assert_true(res.is_list());
-    assert_equal(6, res.size());
-    assert_equal(".error", res[0].str());
-    assert_equal(".info", res[1].str());
-    assert_equal(".list", res[2].str());
-    assert_equal(".type", res[3].str());
-    assert_equal(".tree", res[4].str());
-    assert_equal("Nikolaus/", res[5].str());
+    reply = root.call(LIST_PATH, Value(""));
+    assert_equal("", reply[0].str());
+    Value res = reply[1];
     
-    res = root.call("/.list", Value("/Nikolaus"));
+    assert_true(res.is_list());
+    assert_equal(7, res.size());
+    assert_equal(Url(ERROR_PATH).name(), res[0].str());
+    assert_equal(Url(INFO_PATH).name(), res[1].str());
+    assert_equal(Url(LIST_PATH).name(), res[2].str());
+    assert_equal(Url(LIST_WITH_TYPE_PATH).name(), res[3].str());
+    assert_equal(Url(TYPE_PATH).name(), res[4].str());
+    assert_equal(Url(TREE_PATH).name(), res[5].str());
+    assert_equal("Nikolaus/", res[6].str());
+    
+    reply = root.call(LIST_PATH, Value("/Nikolaus"));
+    assert_equal("/Nikolaus", reply[0].str());
+    res = reply[1];
     assert_true(res.is_list());
     assert_equal(3, res.size());
     assert_equal("Jacob",    res[0].str());
     assert_equal("Nikolaus", res[1].str());
     assert_equal("Johann/",  res[2].str());
     
-    res = root.call("/.list", Value("/Nikolaus/Johann"));
+    reply = root.call(LIST_PATH, Value("/Nikolaus/Johann"));
+    assert_equal("/Nikolaus/Johann", reply[0].str());
+    res = reply[1];
     assert_true(res.is_list());
     assert_equal(3, res.size());
     assert_equal("Nicolaus", res[0].str());
@@ -55,9 +63,18 @@ public:
     root.adopt(new Object("Nikolaus"));
     Value res;
 
-    res = root.call("/.list", Value("/Nikolaus"));
-    assert_true(res.is_nil());
+    res = root.call(LIST_PATH, Value("/Nikolaus"));
+    assert_equal("/Nikolaus", res[0].str());
+    res = res[1];
+    assert_true(res.is_list());
     assert_equal(0,  res.size());
-    assert_equal("N", res.type_tag());
+  }
+  
+  void test_list_with_nil( void ) {
+    Root root(NoIO("This is the root node."));
+    Value res;
+    
+    res = root.call(LIST_PATH, gNilValue);
+    assert_true(res.is_nil());
   }
 };

@@ -1,3 +1,9 @@
+#include "oscit/zeroconf_browser.h"
+#include "oscit/thread.h"
+#include "oscit/proxy_factory.h"
+#include "oscit/root_proxy.h"
+#include "oscit/object_proxy.h"
+
 #include <iostream>
 
 #include <stdio.h>			// For stdout, stderr
@@ -12,15 +18,12 @@ typedef	int	pid_t;
 #define	strcasecmp	_stricmp
 #define snprintf _snprintf
 #else
-#include <sys/time.h>		// For struct timeval
-#include <unistd.h>     // For getopt() and optind
-#include <arpa/inet.h>	// For inet_addr()
+#include <sys/time.h>		// struct timeval
+#include <unistd.h>     // getopt() and optind ?
+#include <arpa/inet.h>	// inet_addr() ?
 #endif
 
 #include <dns_sd.h>     // zeroconf
-
-#include "oscit/thread.h"
-#include "oscit/zeroconf.h"
 
 namespace oscit {
 
@@ -46,11 +49,11 @@ public:
   void browse(Thread *thread) {
     //  release calling thread semaphore
     thread_ready();
-    
+
     DNSServiceErrorType error;
     DNSServiceRef       service;
-    
-    
+
+
     error = DNSServiceBrowse(&service,
       0,                     // no flags
       0,                     // all network interfaces
@@ -58,13 +61,13 @@ public:
       NULL,                  // default domain(s)
       Implementation::browser_callback,    // callback function
       (void*)master_);       // context
-      
+
     if (error == kDNSServiceErr_NoError) {
       browse(service);
     } else {
       fprintf(stderr,"Could not browse for service %s (error %d)\n", master_->service_type_.c_str(), error);//, strerror(errno));
     }
-    
+
     DNSServiceRefDeallocate(service);
   }
 
@@ -105,22 +108,23 @@ public:
                                uint32_t interface_index,
                                DNSServiceErrorType error,
                                const char *fullname,
-                               const char *host_target,
+                               const char *hostname,
                                uint16_t port,
                                uint16_t txt_len,
                                const unsigned char *txt,
                                void *context) {
-
+    
     BrowsedDevice *device = (BrowsedDevice*)context;
-
+    
     if (device->flags_ & kDNSServiceFlagsAdd) {
-      device->browser_->add_device(device->name_.c_str(),
-                               device->host_.c_str(),
-                               ntohs(port),
-                               device->flags_ & kDNSServiceFlagsMoreComing);
+      device->browser_->add_device(Location(
+                               device->browser_->protocol_.c_str(),
+                               device->name_.c_str(),
+                               hostname,
+                               ntohs(port)
+                               ));
     } else {
-      device->browser_->remove_device(device->name_.c_str(),
-                               device->flags_ & kDNSServiceFlagsMoreComing);
+      device->browser_->remove_device(device->name_.c_str());
     }
   }
 
@@ -165,12 +169,18 @@ public:
   ZeroConfBrowser *master_;
 };
 
-ZeroConfBrowser::ZeroConfBrowser(const char *service_type) : service_type_(service_type) {
+ZeroConfBrowser::ZeroConfBrowser(const char *service_type) :
+                  service_type_(service_type),
+                  command_(NULL),
+                  proxy_factory_(NULL),
+                  found_devices_(FOUND_DEVICE_HASH_SIZE) {
+  get_protocol_from_service_type();
   impl_ = new ZeroConfBrowser::Implementation(this);
 }
 
 ZeroConfBrowser::~ZeroConfBrowser() {
   delete impl_;
+  if (proxy_factory_) delete proxy_factory_;
 }
 
 void ZeroConfBrowser::stop() {

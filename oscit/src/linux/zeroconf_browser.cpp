@@ -1,3 +1,8 @@
+#include "oscit/zeroconf_browser.h"
+#include "oscit/proxy_factory.h"
+#include "oscit/root_proxy.h"
+#include "oscit/object_proxy.h"
+
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,7 +20,7 @@ extern "C" {
 #include <avahi-common/error.h>
 #include <avahi-common/timeval.h>
 }
-#include "oscit/zeroconf.h"
+
 
 namespace oscit {
 
@@ -167,7 +172,14 @@ public:
         break;
       case AVAHI_RESOLVER_FOUND:
         impl->browser_->lock();
-          impl->browser_->add_device(name, domain, port, false); // more coming ?
+          // domain ?
+          // AvahiAddress ?
+          impl->browser_->add_device(Location(
+                                      impl->browser_->protocol_.c_str(),
+                                      name,
+                                      Location::ANY_IP, // FIXME: get IP !
+                                      port
+                                      ));
         impl->browser_->unlock();
         break;
     }
@@ -188,12 +200,18 @@ public:
   bool running_;
 };
 
-ZeroConfBrowser::ZeroConfBrowser(const char *service_type) : service_type_(service_type) {
+ZeroConfBrowser::ZeroConfBrowser(const char *service_type) :
+                  service_type_(service_type),
+                  command_(NULL),
+                  proxy_factory_(NULL),
+                  found_devices_(FOUND_DEVICE_HASH_SIZE) {
+  get_protocol_from_service_type();
   impl_ = new ZeroConfBrowser::Implementation(this);
 }
 
 ZeroConfBrowser::~ZeroConfBrowser() {
   delete impl_;
+  if (proxy_factory_) delete proxy_factory_;
 }
 
 void ZeroConfBrowser::stop() {

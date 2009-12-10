@@ -460,7 +460,9 @@ void ReceivedMessageArgumentIterator::Advance()
         case FALSE_TYPE_TAG:
         case NIL_TYPE_TAG:
         case INFINITUM_TYPE_TAG:
-        case ANY_TYPE_TAG:
+        case ANY_TYPE_TAG:         // oscit
+        case ARRAY_START_TYPE_TAG: // oscit
+        case ARRAY_END_TYPE_TAG:   // oscit
 
             // zero length
             break;
@@ -590,7 +592,9 @@ void ReceivedMessage::Init( const char *message, unsigned long size )
                     case FALSE_TYPE_TAG:
                     case NIL_TYPE_TAG:
                     case INFINITUM_TYPE_TAG:
-                    case ANY_TYPE_TAG:
+                    case ANY_TYPE_TAG:          // oscit
+                    case ARRAY_START_TYPE_TAG:  // oscit
+                    case ARRAY_END_TYPE_TAG:    // oscit
 
                         // zero length
                         break;

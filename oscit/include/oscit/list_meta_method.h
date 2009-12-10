@@ -6,17 +6,22 @@ namespace oscit {
 
 class ListMetaMethod : public Object
 {
-public:  
+public:
   /** Class signature. */
   TYPED("Object.ListMetaMethod")
-  
-  ListMetaMethod(const char *name) : Object(name, StringIO("url", "List all children under the given url.")) {}
 
-  virtual const Value trigger(const Value &url) {
+  ListMetaMethod(const char *name)        : Object(name, StringIO("path", "List all children under the given path.")) {}
+  ListMetaMethod(const std::string &name) : Object(name, StringIO("path", "List all children under the given path.")) {}
+
+  virtual const Value trigger(const Value &path, const Location *origin) {
+    if (!path.is_string()) return gNilValue;
+
     Value error;
-    Object * target = root_->find_or_build_object_at(url.c_str(), &error);
-    
-    return target ? target->list() : error;
+    Object * target = root_->find_or_build_object_at(path.c_str(), &error);
+
+    Value reply = path;
+    reply.push_back(target ? target->list() : error);
+    return reply;
   }
 };
 

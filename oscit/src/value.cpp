@@ -1,15 +1,20 @@
+
 #line 1 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
-/** Ragel parser definition to create Values from JSON. */
+#include "oscit/values.h"
 
 //#define DEBUG_PARSER
 
 #include <string.h>  // strlen
 #include <stdlib.h>  // atof
+
 #include <iostream>
 #include <sstream>
-#include "oscit/values.h"
 
+
+/** Ragel parser definition to create Values from JSON. */
 namespace oscit {
+
+//#define DEBUG_PARSER
 
 #ifdef DEBUG_PARSER
 #define DEBUG(x) x
@@ -52,7 +57,7 @@ static std::string escape(const std::string &string) {
       ++ptr;
     }
   }
-  
+
   if (len) res.append(last_append, len);
   return res;
 }
@@ -159,12 +164,13 @@ Value &Value::push_front(const Value& val) {
 }
 
 ///////////////// ====== JSON PARSER ========= /////////////
-#line 272 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
+
+#line 276 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 
 
 // transition table
 
-#line 168 "/Users/gaspard/git/rubyk/oscit/src/value.cpp"
+#line 174 "/Users/gaspard/git/rubyk/oscit/src/value.cpp"
 static const char _json_actions[] = {
 	0, 1, 0, 1, 3, 1, 4, 1, 
 	7, 1, 9, 2, 1, 9, 2, 2, 
@@ -181,12 +187,12 @@ static const short _json_key_offsets[] = {
 	0, 0, 16, 31, 33, 41, 54, 63, 
 	65, 66, 66, 68, 68, 72, 72, 74, 
 	74, 76, 86, 88, 97, 99, 106, 115, 
-	117, 118, 128, 130, 130, 134, 141, 141, 
-	146, 151, 156, 164, 176, 187, 189, 196, 
-	196, 198, 198, 200, 210, 212, 221, 223, 
-	230, 239, 241, 242, 252, 254, 254, 258, 
-	265, 265, 266, 267, 268, 275, 275, 282, 
-	291, 295, 303
+	117, 118, 129, 131, 131, 135, 142, 142, 
+	147, 152, 157, 165, 177, 188, 190, 197, 
+	197, 199, 199, 201, 211, 213, 222, 224, 
+	231, 240, 242, 243, 254, 256, 256, 260, 
+	267, 267, 268, 269, 270, 277, 277, 284, 
+	293, 297, 305
 };
 
 static const char _json_trans_keys[] = {
@@ -205,39 +211,40 @@ static const char _json_trans_keys[] = {
 	57, 44, 93, 0, 32, 44, 93, 125, 
 	9, 10, 32, 34, 39, 9, 10, 65, 
 	90, 97, 122, 34, 92, 58, 32, 34, 
-	39, 125, 9, 10, 65, 90, 97, 122, 
-	39, 92, 32, 58, 9, 10, 0, 32, 
-	44, 93, 125, 9, 10, 32, 58, 117, 
-	9, 10, 32, 58, 108, 9, 10, 32, 
-	58, 108, 9, 10, 0, 32, 44, 58, 
-	93, 125, 9, 10, 32, 34, 39, 43, 
-	45, 91, 110, 123, 9, 10, 48, 57, 
-	32, 34, 39, 43, 45, 91, 123, 9, 
-	10, 48, 57, 34, 92, 0, 32, 44, 
-	93, 125, 9, 10, 39, 92, 48, 57, 
-	0, 32, 44, 46, 93, 125, 9, 10, 
-	48, 57, 48, 57, 0, 32, 44, 93, 
-	125, 9, 10, 48, 57, 44, 93, 0, 
-	32, 44, 93, 125, 9, 10, 32, 34, 
-	39, 9, 10, 65, 90, 97, 122, 34, 
-	92, 58, 32, 34, 39, 125, 9, 10, 
-	65, 90, 97, 122, 39, 92, 32, 58, 
-	9, 10, 0, 32, 44, 93, 125, 9, 
-	10, 117, 108, 108, 0, 32, 44, 93, 
-	125, 9, 10, 0, 32, 44, 93, 125, 
-	9, 10, 32, 34, 39, 9, 10, 65, 
-	90, 97, 122, 32, 58, 9, 10, 0, 
-	32, 44, 58, 93, 125, 9, 10, 0
+	39, 44, 125, 9, 10, 65, 90, 97, 
+	122, 39, 92, 32, 58, 9, 10, 0, 
+	32, 44, 93, 125, 9, 10, 32, 58, 
+	117, 9, 10, 32, 58, 108, 9, 10, 
+	32, 58, 108, 9, 10, 0, 32, 44, 
+	58, 93, 125, 9, 10, 32, 34, 39, 
+	43, 45, 91, 110, 123, 9, 10, 48, 
+	57, 32, 34, 39, 43, 45, 91, 123, 
+	9, 10, 48, 57, 34, 92, 0, 32, 
+	44, 93, 125, 9, 10, 39, 92, 48, 
+	57, 0, 32, 44, 46, 93, 125, 9, 
+	10, 48, 57, 48, 57, 0, 32, 44, 
+	93, 125, 9, 10, 48, 57, 44, 93, 
+	0, 32, 44, 93, 125, 9, 10, 32, 
+	34, 39, 9, 10, 65, 90, 97, 122, 
+	34, 92, 58, 32, 34, 39, 44, 125, 
+	9, 10, 65, 90, 97, 122, 39, 92, 
+	32, 58, 9, 10, 0, 32, 44, 93, 
+	125, 9, 10, 117, 108, 108, 0, 32, 
+	44, 93, 125, 9, 10, 0, 32, 44, 
+	93, 125, 9, 10, 32, 34, 39, 9, 
+	10, 65, 90, 97, 122, 32, 58, 9, 
+	10, 0, 32, 44, 58, 93, 125, 9, 
+	10, 0
 };
 
 static const char _json_single_lengths[] = {
 	0, 8, 7, 2, 6, 7, 3, 2, 
 	1, 0, 2, 0, 2, 0, 2, 0, 
 	0, 6, 0, 5, 2, 5, 3, 2, 
-	1, 4, 2, 0, 2, 5, 0, 3, 
+	1, 5, 2, 0, 2, 5, 0, 3, 
 	3, 3, 6, 8, 7, 2, 5, 0, 
 	2, 0, 0, 6, 0, 5, 2, 5, 
-	3, 2, 1, 4, 2, 0, 2, 5, 
+	3, 2, 1, 5, 2, 0, 2, 5, 
 	0, 1, 1, 1, 5, 0, 5, 3, 
 	2, 6, 0
 };
@@ -258,12 +265,12 @@ static const short _json_index_offsets[] = {
 	0, 0, 13, 25, 28, 36, 47, 54, 
 	57, 59, 60, 63, 64, 68, 69, 72, 
 	73, 75, 84, 86, 94, 97, 104, 111, 
-	114, 116, 124, 127, 128, 132, 139, 140, 
-	145, 150, 155, 163, 174, 184, 187, 194, 
-	195, 198, 199, 201, 210, 212, 220, 223, 
-	230, 237, 240, 242, 250, 253, 254, 258, 
-	265, 266, 268, 270, 272, 279, 280, 287, 
-	294, 298, 306
+	114, 116, 125, 128, 129, 133, 140, 141, 
+	146, 151, 156, 164, 175, 185, 188, 195, 
+	196, 199, 200, 202, 211, 213, 221, 224, 
+	231, 238, 241, 243, 252, 255, 256, 260, 
+	267, 268, 270, 272, 274, 281, 282, 289, 
+	296, 300, 308
 };
 
 static const char _json_indicies[] = {
@@ -272,7 +279,7 @@ static const char _json_indicies[] = {
 	4, 4, 7, 9, 0, 5, 6, 6, 
 	1, 11, 12, 10, 13, 13, 14, 15, 
 	13, 13, 13, 1, 16, 17, 18, 19, 
-	16, 16, 16, 17, 6, 6, 1, 20, 
+	17, 16, 16, 17, 6, 6, 1, 20, 
 	18, 19, 20, 6, 6, 1, 22, 23, 
 	21, 15, 1, 21, 22, 25, 24, 24, 
 	1, 15, 1, 6, 10, 11, 27, 26, 
@@ -281,31 +288,31 @@ static const char _json_indicies[] = {
 	29, 28, 28, 28, 31, 1, 7, 32, 
 	1, 33, 33, 34, 33, 33, 33, 1, 
 	9, 35, 36, 9, 37, 37, 1, 39, 
-	40, 38, 41, 1, 9, 35, 36, 42, 
-	9, 37, 37, 1, 39, 44, 43, 43, 
-	1, 41, 1, 37, 16, 16, 45, 16, 
-	16, 16, 1, 38, 1, 15, 46, 1, 
-	6, 1, 15, 47, 1, 6, 1, 15, 
-	48, 1, 6, 49, 50, 51, 15, 49, 
-	49, 50, 6, 52, 53, 54, 55, 55, 
-	57, 58, 59, 52, 56, 1, 52, 53, 
-	54, 55, 55, 57, 59, 52, 56, 1, 
-	61, 62, 60, 63, 63, 63, 63, 63, 
-	63, 1, 60, 61, 65, 64, 64, 56, 
-	1, 66, 66, 66, 67, 66, 66, 66, 
-	56, 1, 68, 1, 66, 66, 66, 66, 
-	66, 66, 68, 1, 57, 69, 1, 70, 
-	70, 70, 70, 70, 70, 1, 59, 71, 
-	72, 59, 73, 73, 1, 75, 76, 74, 
-	77, 1, 59, 71, 72, 78, 59, 73, 
-	73, 1, 75, 80, 79, 79, 1, 77, 
-	1, 73, 81, 81, 81, 81, 81, 81, 
-	1, 74, 82, 1, 83, 1, 84, 1, 
-	85, 85, 85, 85, 85, 85, 1, 1, 
-	86, 86, 87, 86, 86, 86, 1, 20, 
-	18, 19, 20, 6, 6, 1, 1, 15, 
-	1, 6, 88, 86, 89, 15, 88, 88, 
-	86, 6, 1, 0
+	40, 38, 41, 1, 9, 35, 36, 9, 
+	42, 9, 37, 37, 1, 39, 44, 43, 
+	43, 1, 41, 1, 37, 16, 16, 45, 
+	16, 16, 16, 1, 38, 1, 15, 46, 
+	1, 6, 1, 15, 47, 1, 6, 1, 
+	15, 48, 1, 6, 49, 50, 51, 15, 
+	49, 49, 50, 6, 52, 53, 54, 55, 
+	55, 57, 58, 59, 52, 56, 1, 52, 
+	53, 54, 55, 55, 57, 59, 52, 56, 
+	1, 61, 62, 60, 63, 63, 63, 63, 
+	63, 63, 1, 60, 61, 65, 64, 64, 
+	56, 1, 66, 66, 66, 67, 66, 66, 
+	66, 56, 1, 68, 1, 66, 66, 66, 
+	66, 66, 66, 68, 1, 57, 69, 1, 
+	70, 70, 70, 70, 70, 70, 1, 59, 
+	71, 72, 59, 73, 73, 1, 75, 76, 
+	74, 77, 1, 59, 71, 72, 59, 78, 
+	59, 73, 73, 1, 75, 80, 79, 79, 
+	1, 77, 1, 73, 81, 81, 81, 81, 
+	81, 81, 1, 74, 82, 1, 83, 1, 
+	84, 1, 85, 85, 85, 85, 85, 85, 
+	1, 1, 86, 86, 87, 86, 86, 86, 
+	1, 20, 18, 19, 20, 6, 6, 1, 
+	1, 15, 1, 6, 88, 86, 89, 15, 
+	88, 88, 86, 6, 1, 0
 };
 
 static const char _json_trans_targs[] = {
@@ -345,7 +352,8 @@ static const int json_error = 0;
 static const int json_en_main_strict = 35;
 static const int json_en_main_lazy = 1;
 
-#line 276 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
+
+#line 280 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 
 /** This is a crude JSON parser. */
 size_t Value::build_from_json(const char *json, bool strict_mode) {
@@ -354,26 +362,27 @@ size_t Value::build_from_json(const char *json, bool strict_mode) {
   Value tmp_val;
   set_empty(); // clear
   // =============== Ragel job ==============
-  
+
   int cs;
   const char * p  = json;
   const char * pe = json + strlen(p) + 1;
+
   
-  
-#line 364 "/Users/gaspard/git/rubyk/oscit/src/value.cpp"
+#line 372 "/Users/gaspard/git/rubyk/oscit/src/value.cpp"
 	{
 	cs = json_start;
 	}
-#line 290 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
-  
+
+#line 294 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
+
   if (strict_mode) {
     cs = json_en_main_strict;
   } else {
     cs = json_en_main_lazy;
   }
+
   
-  
-#line 377 "/Users/gaspard/git/rubyk/oscit/src/value.cpp"
+#line 386 "/Users/gaspard/git/rubyk/oscit/src/value.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -448,7 +457,7 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 164 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
+#line 168 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
      // append a char to build a std::string
     DEBUG(printf("%c-",(*p)));
@@ -457,7 +466,7 @@ _match:
   }
 	break;
 	case 1:
-#line 171 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
+#line 175 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
     // become a RealValue
     tmp_val.set(atof(str_buf.c_str()));
@@ -466,7 +475,7 @@ _match:
   }
 	break;
 	case 2:
-#line 178 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
+#line 182 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
     // become a StringValue
     tmp_val.set(str_buf);
@@ -475,22 +484,22 @@ _match:
   }
 	break;
 	case 3:
-#line 185 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
+#line 189 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
     // Parse a single element of a hash (key:value)
     // Build tmp_val from string and move p forward
     p++;
-    p += tmp_val.build_from_json(p);
+    p += tmp_val.build_from_json(p, true);
     set(str_buf, tmp_val);
     p--;
     DEBUG(printf("[hash_value \"%s\":%s]\n", str_buf.c_str(), tmp_val.to_json().c_str()));
     DEBUG(printf("[continue \"%s\"]\n",p));
-    
+
     str_buf = "";
   }
 	break;
 	case 4:
-#line 198 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
+#line 202 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
     // Parse a single element of a hash (key:value)
     // Build tmp_val from string and move p forward
@@ -498,13 +507,13 @@ _match:
     p += tmp_val.build_from_json(p, true);
     push_back(tmp_val);
     if (*(p-1) == ',') p--; // hold the ',' separator
-    
+
     DEBUG(printf("[%p:list_value %s ==> %s/%s]\n", this, tmp_val.to_json().c_str(), to_json().c_str(), p));
     p--; // eaten by >list_value sub-action
   }
 	break;
 	case 5:
-#line 210 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
+#line 214 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
     // we have a value in tmp that should be changed into a list [tmp]
     DEBUG(printf("[%p:lazy_list %s]\n", this, tmp_val.to_json().c_str()));
@@ -512,7 +521,7 @@ _match:
   }
 	break;
 	case 6:
-#line 216 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
+#line 220 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
     // become an empty HashValue
     if (!is_hash()) {
@@ -521,17 +530,17 @@ _match:
   }
 	break;
 	case 7:
-#line 223 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
+#line 227 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
     if (!is_list()) set_type(LIST_VALUE);
-    
+
     DEBUG(printf("[%p:list %s]\n", this, p));
     // FIXME: how to avoid 'return' by telling parsing to stop ?
     return p - json + 1;
   }
 	break;
 	case 8:
-#line 231 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
+#line 235 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
     // become a NilValue
     DEBUG(printf("[nil]\n"));
@@ -539,13 +548,13 @@ _match:
   }
 	break;
 	case 9:
-#line 237 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
+#line 241 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
     DEBUG(printf("[set_from_tmp %s]\n", tmp_val.to_json().c_str()));
     if (!is_list() && !is_hash()) *this = tmp_val;
   }
 	break;
-#line 549 "/Users/gaspard/git/rubyk/oscit/src/value.cpp"
+#line 558 "/Users/gaspard/git/rubyk/oscit/src/value.cpp"
 		}
 	}
 
@@ -557,16 +566,17 @@ _again:
 	_test_eof: {}
 	_out: {}
 	}
-#line 298 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
+
+#line 302 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
   if (p != pe) --p;
-  
+
   return p - json;
 }
 
 } // oscit
 
 
-/* 
+/*
 
 // old stuff, remove if we decide we do not need to stream matrix data as json...
 
@@ -639,7 +649,7 @@ template<>
 void MatrixData::to_json(std::ostream& pStream) const
 {
   char buffer[20];
-  
+
   size_t sz = size();
   pStream << "[";
 

@@ -1,9 +1,11 @@
 #include "oscit/values.h"
+
 #include <vector>
+
 #include "oscit/reference_counted.h"
 
 namespace oscit {
-  
+
 List::List(const List& list) {
   std::vector<Value*>::const_iterator it,end;
   end = list.values_.end();
@@ -28,7 +30,7 @@ void List::set_value_at(size_t pos, const Value &val) {
     update_type_tag();
   }
 }
-  
+
 void List::push_back(const Value &val) {
   values_.push_back(new Value(val));
   if (val.is_list()) {
@@ -58,10 +60,10 @@ void List::push_front(const Value &val) {
    values_.clear();
  }
 
-const char *List::init_with_type_tag(const char *type_tag) { 
+const char *List::init_with_type_tag(const char *type_tag) {
  type_tag_storage_ = type_tag;
  update_type_tag();
- 
+
  const char * c = type_tag;
 
  while ( *c ) {

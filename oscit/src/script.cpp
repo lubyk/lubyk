@@ -1,12 +1,13 @@
+#include "oscit/script.h"
+
 #include <sys/types.h>
 #include <sys/stat.h> // stat for file modification time
-#include <fstream>    // file io
 
+#include <fstream>    // file io
 #include <string>
 #include <sstream>
 
 #include "oscit/values.h"
-#include "oscit/script.h"
 
 namespace oscit {
 
@@ -24,13 +25,13 @@ const Value Script::script(const Value &val) {
       set_script_ok(false);
       return res;
     }
-    
+
     res = eval_script();
     if (res.is_error()) {
       set_script_ok(false);
       return res;
     }
-    
+
     set_script_ok(true);
   }
   return Value(script_);
@@ -73,32 +74,33 @@ void Script::set_script_ok(bool state) {
 
 const Value Script::load_script_from_file(bool is_new) {
   struct stat info;
-  
+
   if (stat(script_file_.c_str(), &info)) {
     set_script_ok(false);
     script_mod_time_ = 0;
     set_next_reload();
     return Value(BAD_REQUEST_ERROR, std::string("Could not stat '").append(script_file_).append("'."));
   }
-  
+
   if (!is_new && info.st_mtime == script_mod_time_) {
     // file did not change, skip
     return Value(script_file_);
   }
-  
+
   script_mod_time_ = info.st_mtime;
-  
+
+  // TODO: refactor using File *script_file_.... ///
   std::ifstream in(script_file_.c_str(), std::ios::in);
-    // TODO: remove ostringstream and read directly into string ?
     std::ostringstream oss;
     oss << in.rdbuf();
   in.close();
+
   script_ = oss.str();
-  
+
   Value res = eval_script();
   set_script_ok(!res.is_error());
   if (res.is_error()) return res;
-  
+
   return Value(script_file_);
 }
 
@@ -107,19 +109,19 @@ const Value Script::save_script() {
 
   // TODO: check file is writeable, limit path, etc
   //   return Value(INTERNAL_SERVER_ERROR, std::string("Could not save to '").append(script_file_).append("' (.....)."));
-  
+
   // try .. ?
   std::ofstream out(script_file_.c_str(), std::ios::out);
     out << script_;
   out.close();
-  
+
   struct stat info;
-  
+
   if (stat(script_file_.c_str(), &info)) {
     set_script_ok(false);
     return Value(BAD_REQUEST_ERROR, std::string("Could not stat '").append(script_file_).append("'."));
   }
-  
+
   script_mod_time_ = info.st_mtime;
   return gNilValue;
 }

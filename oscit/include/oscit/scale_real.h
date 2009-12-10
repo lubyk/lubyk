@@ -1,5 +1,6 @@
 #ifndef OSCIT_INCLUDE_OSCIT_SCALE_REAL_H_
 #define OSCIT_INCLUDE_OSCIT_SCALE_REAL_H_
+#include <assert.h>
 #include <string>
 
 #include "oscit/conf.h"

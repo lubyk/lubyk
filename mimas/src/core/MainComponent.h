@@ -23,20 +23,12 @@
 #define __JUCER_HEADER_MAINCOMPONENT_MAINCOMPONENT_D0F6CD31__
 
 #include "mimas.h"
-
-class MainComponent;
-
-class DummyBrowser : public ZeroConfBrowser {
-public:
-  DummyBrowser(Label *label, const char *service_type) : ZeroConfBrowser(service_type), label_(label) {}
-	
-  virtual void add_device(const char *name, const char *host, unsigned int port, bool more_coming);
-  virtual void remove_device(const char *name, const char *host, unsigned int port, bool more_coming);
-private:
-  Label *label_;
-  bool was_more_coming_;
-};
-	
+#include "mimas_look_and_feel.h"
+#include "oscit/osc_command.h"
+#include "device_browser.h"
+#include "device_view.h"
+#include "device_proxy.h"
+#include "browser_proxy_factory.h"
 
 class MainComponent  : public Component,
                        public ButtonListener {
@@ -49,19 +41,17 @@ public:
     void resized();
     void buttonClicked (Button* buttonThatWasClicked);
 
-
-    //==============================================================================
     juce_UseDebuggingNewOperator
 
 private:
-    DummyBrowser *dummy_browser_;
+    MimasLookAndFeel mimas_look_and_feel_;
+    Root work_tree_;
+    DeviceBrowser *device_browser_;
 
-    //==============================================================================
-    Label* helloWorldLabel;
-    TextButton* quitButton;
+    TextButton *quitButton;
+    Component *main_view_;
     Path internalPath1;
 
-    //==============================================================================
     // (prevent copy constructor and operator= being generated..)
     MainComponent (const MainComponent&);
     const MainComponent& operator= (const MainComponent&);

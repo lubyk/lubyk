@@ -1,4 +1,4 @@
-/** Copyright 2009 Gaspard Bucher - Buma
+/** Copyright 2009 Gaspard Bucher
  *
  */
 
@@ -10,9 +10,11 @@
 #include <string>
 
 #include "oscit/typed.h"
+#include "oscit/observable.h"
 #include "oscit/values.h"
 #include "oscit/thash.h"
 #include "oscit/mutex.h"
+#include "oscit/location.h"
 
 namespace oscit {
 #define OSC_NEXT_NAME_BUFFER_SIZE 20
@@ -35,7 +37,7 @@ namespace oscit {
 class Root;
 class Alias;
 
-class Object : public Typed {
+class Object : public Typed, public Observable {
  public:
   /** Class signature. */
   TYPED("Object")
@@ -115,9 +117,8 @@ class Object : public Typed {
     * highlights ownership in the parent.
     * TODO: make sure a parent is not adopted by it's child. */
   template<class T>
-  T * adopt(T * object) {
+  T *adopt(T *object) {
     object->set_parent(this);
-    object->moved();
     return object;
   }
 
@@ -128,21 +129,21 @@ class Object : public Typed {
    * This is the method that should be used by objects when they are doing a
    * direct call.
    */
-  const Value safe_trigger(const Value &val, const Mutex *caller_context) {
+  const Value safe_trigger(const Value &val, const Location *origin, const Mutex *caller_context) {
     if (context_ && context_ != caller_context) {
       context_->lock();
-        Value res = trigger(val);
+        Value res = trigger(val, origin);
       context_->unlock();
       return res;
     } else {
-      return trigger(val);
+      return trigger(val, origin);
     }
   }
 
   /** This is the operation executed when the object is called.
    *  In order to benefit from return value optimization and avoid too many copy
    *  you have to use Value v = xxx.trigger(val). */
-  virtual const Value trigger(const Value &val) {
+  virtual const Value trigger(const Value &val, const Location *origin) {
     return gNilValue;
   }
 
@@ -165,7 +166,7 @@ class Object : public Typed {
   }
 
   /** Inform the object of an alias linked to this object (has to be deleted
-   *  on destruction). 
+   *  on destruction).
    */
   void register_alias(Alias *alias);
 
@@ -200,13 +201,24 @@ class Object : public Typed {
 
   /** ========================== REPLIES TO META METHODS ======================
    * The replies to meta methods are implemented as virtuals so that objects
-   * that inherit from osc::Object just need to overwrite these in order to 
-   * return more meaningful information / content. 
+   * that inherit from osc::Object just need to overwrite these in order to
+   * return more meaningful information / content.
    */
 
-  /** List sub-nodes. */
+  /** List sub-nodes.
+   * This method is used as a reply to the /.list meta method.
+   * The format of the reply is a list of names with the type:
+   * [name, name, ...].
+   */
   const Value list() const;
-   
+
+  /** List sub-nodes with their current value and type.
+   * This method is used as a reply to the /.list_with_type meta method.
+   * The format of the reply is a list of names with the type:
+   * [name, current, unit, ...], [name, current, unit, ...], etc.
+   */
+  const Value list_with_type() const;
+
   /** List full tree under this node.
    *  @param base_length is the length of the url for the initial call
    *                     (removed from results).
@@ -221,12 +233,16 @@ class Object : public Typed {
     return type_.last();
   }
 
-  /** Type information on node (used to automatically generate the correct control).
-   *  Called during response to "/.type '/this/url'".
+  /** Type information on node.
    */
   const Value &type() const {
     return type_;
   }
+
+  /** Type information with current value (used to automatically generate the correct control).
+   * Called during response to "/.type '/this/url'".
+   */
+  const Value type_with_current_value();
 
   /** Set meta type (signature, range, units). The type should be immutable.
    *  this method is not a good idea.
@@ -270,7 +286,7 @@ class Object : public Typed {
 
   /** Set object's new root.
    */
-  void set_root(Root *root);
+  virtual void set_root(Root *root);
 
   /** Set object's new parent.
    */
@@ -316,7 +332,11 @@ class Object : public Typed {
   /** Child sends a notification to the parent when it's name changes so that
    *  the parent/root keep their url hash in sync.
    */
-  void register_child(Object * pChild);
+  void register_child(Object *child);
+
+  /** Free the child from the list of children.
+   */
+  void unregister_child(Object *child);
 
   /** Update cached url, notify root_ of the position change.
    */
@@ -337,16 +357,20 @@ class Object : public Typed {
     }
   }
 
+  void observer_lock() {
+    // FIXME: we need a recursive lock here...
+  }
+
+  void observer_unlock() {
+    // FIXME: we need a recursive lock here...
+  }
+
  private:
   /** Keep type_id_ in sync with type_.
    */
   void type_changed() {
     type_id_ = type_.size() > 0 ? type_[0].type_id() : NO_TYPE_TAG_ID;
   }
-
-  /** Free the child from the list of children.
-   */
-  void unregister_child(Object *pChild);
 
   /** List of aliases to destroy when
    * this node disappears.
@@ -384,7 +408,7 @@ class Object : public Typed {
   Mutex *context_;
 
  private:
-   
+
   /** Value that holds type information on the 'trigger' method of this
    *  object.
    *  If the type_ is not a list, this means the object is not callable and

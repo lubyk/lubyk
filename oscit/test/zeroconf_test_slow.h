@@ -1,31 +1,25 @@
+#include "test_helper.h"
+
 #include <sstream>
 
-#include "test_helper.h"
-#include "oscit/zeroconf.h"
 #include "ip/UdpSocket.h"
+
+#include "oscit/zeroconf_registration.h"
+#include "oscit/zeroconf_browser.h"
+#include "oscit/proxy_factory.h"
+#include "mock/logger.h"
+#include "mock/command_logger.h"
 
 class DummyBrowser : public ZeroConfBrowser {
 public:
-  DummyBrowser(const char *service) : ZeroConfBrowser(service), stream_(std::ostringstream::out), was_more_coming_(false) {}
+  DummyBrowser(const char *service) : ZeroConfBrowser(service), stream_(std::ostringstream::out), found_devices_(10) {}
 
-  ~DummyBrowser() {
-    stop();
+  virtual void added_proxy(RootProxy *proxy) {
+    stream_ << "[+ " << proxy->remote_location() << "]";
   }
 
-  virtual void add_device(const char *name, const char *host, unsigned int port, bool more_coming) {
-    if (!was_more_coming_) {
-      // only record first entry in case there are more then one network interfaces
-      stream_ << "[+ " << name << " @ " << port << "]";
-    }
-    was_more_coming_ = more_coming;
-  }
-
-  virtual void remove_device(const char *name, bool more_coming) {
-    if (!was_more_coming_) {
-      // only record first entry in case there are more then one network interfaces
-      stream_ << "[- " << name << "]";
-    }
-    was_more_coming_ = more_coming;
+  virtual void removing_proxy(RootProxy *proxy) {
+    stream_ << "[- " << proxy->remote_location() << "]";
   }
 
   const std::string str() { return stream_.str(); }
@@ -33,7 +27,7 @@ public:
 
 private:
   std::ostringstream stream_;
-  bool was_more_coming_;
+  THash<std::string, bool> found_devices_;
 };
 
 class DummyRegistration : public ZeroConfRegistration {
@@ -60,24 +54,28 @@ class ZeroConfTest : public TestHelper {
 
   void test_register_browse( void ) {
     DummyBrowser browser("_oscit._udp");
-    wait(2000);
+    browser.adopt_proxy_factory(new ProxyFactory);
+    Logger logger;
+    CommandLogger cmd("oscit", &logger);
+    browser.set_command(&cmd);
+    wait(1000);
     browser.lock();
       browser.str(""); // clear
     browser.unlock();
     DummyRegistration *registration = new DummyRegistration("foobar", "_oscit._udp", 5007);
 
-    wait(2000);
+    wait(1500);
     registration->lock();
     browser.lock();
       assert_equal("[registered: foobar @ 5007]", registration->str());
-      assert_equal("[+ foobar @ 5007]", browser.str());
+      assert_equal("[+ oscit://\"foobar\"]", browser.str());
       browser.str(""); // clear
     browser.unlock();
     registration->unlock(); // ?
     delete registration;
-    wait(1500);
+    wait(2000);
     browser.lock();
-      assert_equal("[- foobar]", browser.str());
+      assert_equal("[- oscit://\"foobar\"]", browser.str());
     browser.unlock();
   }
 

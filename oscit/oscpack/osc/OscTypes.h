@@ -68,7 +68,9 @@ enum TypeTagValue {
     FALSE_TYPE_TAG = 'F',
     NIL_TYPE_TAG = 'N',
     INFINITUM_TYPE_TAG = 'I',
-    ANY_TYPE_TAG = '*', // oscit
+    ANY_TYPE_TAG = '*',    // oscit,
+    ARRAY_START_TYPE_TAG = '[', // oscit
+    ARRAY_END_TYPE_TAG = ']',   // oscit
     INT32_TYPE_TAG = 'i',
     FLOAT_TYPE_TAG = 'f',
     CHAR_TYPE_TAG = 'c',
@@ -134,6 +136,16 @@ struct AnyType{
 };
 
 extern AnyType Any;
+
+struct ArrayStartType{
+};
+
+extern ArrayStartType ArrayStart;
+
+struct ArrayEndType{
+};
+
+extern ArrayEndType ArrayEnd;
 // ]
 
 struct RgbaColor{

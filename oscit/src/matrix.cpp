@@ -1,11 +1,13 @@
 #include "oscit/values.h"
-#include "opencv/cv.h"
+
 #include <vector>
+
+#include "opencv/cv.h"
 
 
 namespace oscit {
 
-/** 
+/**
  * cv::Mat is defined in cxcore.hpp:686
  */
 struct Matrix::Implementation : public cv::Mat {
