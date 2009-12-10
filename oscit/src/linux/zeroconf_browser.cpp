@@ -137,7 +137,7 @@ public:
         break;
       case AVAHI_BROWSER_REMOVE:
         impl->browser_->lock();
-          impl->browser_->remove_device(name, false);
+          impl->browser_->remove_device(name);
         impl->browser_->unlock();
         break;
       case AVAHI_BROWSER_ALL_FOR_NOW:
@@ -177,7 +177,7 @@ public:
           impl->browser_->add_device(Location(
                                       impl->browser_->protocol_.c_str(),
                                       name,
-                                      Location::ANY_IP, // FIXME: get IP !
+                                      host_name,
                                       port
                                       ));
         impl->browser_->unlock();

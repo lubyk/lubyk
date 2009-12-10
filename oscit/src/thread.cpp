@@ -5,6 +5,7 @@
 #include <csignal>
 #include <fstream>
 #include <semaphore.h>
+#include <fcntl.h>   // O_CREAT
 
 #include "assert.h"
 #include "string.h"  // strerror

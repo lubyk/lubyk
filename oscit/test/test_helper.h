@@ -38,19 +38,10 @@ protected:
     _OSCIT_ASSERT_EQUALS( file, lineno, TS_AS_STRING(descr), expected, found);
   }
 
-  void _assert_equal(const char * file, int lineno, const char * descr, int expected, uint found)
+  template<class T>
+  void _assert_equal(const char * file, int lineno, const char * descr, int expected, T found)
   {
-    _OSCIT_ASSERT_EQUALS( file, lineno, TS_AS_STRING(descr), (uint)expected, found);
-  }
-
-  void _assert_equal(const char * file, int lineno, const char * descr, int expected, size_t found)
-  {
-    _OSCIT_ASSERT_EQUALS( file, lineno, TS_AS_STRING(descr), (size_t)expected, found);
-  }
-
-  void _assert_equal(const char * file, int lineno, const char * descr, int expected, time_t found)
-  {
-    _OSCIT_ASSERT_EQUALS( file, lineno, TS_AS_STRING(descr), (time_t)expected, found);
+    _OSCIT_ASSERT_EQUALS( file, lineno, TS_AS_STRING(descr), (T)expected, found);
   }
 
   void _assert_equal(const char * file, int lineno, const char * descr, unsigned long expected, unsigned long found)

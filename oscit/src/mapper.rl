@@ -1,5 +1,7 @@
 #include "oscit/mapper.h"
 
+#include <stdlib.h> // atof
+
 #include <string>
 #include <iostream>
 
