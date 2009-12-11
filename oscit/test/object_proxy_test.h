@@ -60,4 +60,13 @@ public:
     obj->sync();
     assert_equal("[osc: send osc://\"funky synth\" /.list_with_type \"/seven\"]", logger.str());
   }
+
+  void test_new_object_without_type_should_try_to_find_type( void ) {
+    Logger logger;
+    CommandLogger cmd("osc", &logger);
+    RootProxy *proxy = cmd.adopt_proxy(new RootProxy(Location("osc", "funky synth")));
+    logger.str("");
+    proxy->adopt(new ObjectProxy("seven", gNilValue));
+    assert_equal("[osc: send osc://\"funky synth\" /.type \"/seven\"]", logger.str());
+  }
 };

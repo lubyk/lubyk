@@ -9,6 +9,10 @@ namespace oscit {
 void ObjectProxy::set_root(Root *root) {
   Object::set_root(root);
   root_proxy_ = TYPE_CAST(RootProxy, root);
+  if (root_proxy_ && type().is_nil()) {
+    // try to find type
+    root_proxy_->send_to_remote(TYPE_PATH, Value(url()));
+  }
 }
 
 void ObjectProxy::set_value(const Value &val) {
