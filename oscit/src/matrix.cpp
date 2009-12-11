@@ -13,6 +13,13 @@ namespace oscit {
 struct Matrix::Implementation : public cv::Mat {
   Implementation() {}
   Implementation(int rows, int cols, int type) : cv::Mat(rows, cols, type) {}
+
+  bool operator==(const Matrix::Implementation &other) {
+    // FIXME: this is all wrong but who really needs to compare matrices anyway ?
+    // This implementation is just here so that we can compare Values.
+    std::cerr << __FILE__ << ":" << __LINE__ << " WARNING: comparing matrices is not implemented, it might return wrong results\n";
+    return rows == other.rows && cols == other.cols;
+  }
 };
 
 Matrix::Matrix() {
@@ -57,6 +64,10 @@ int Matrix::type() {
 
 const cv::Mat *Matrix::cv_mat() {
   return impl_;
+}
+
+bool Matrix::operator==(const Matrix &other) const {
+  return *impl_ == *other.impl_;
 }
 
 } // oscit

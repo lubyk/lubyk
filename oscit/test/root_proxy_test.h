@@ -28,4 +28,31 @@ public:
     proxy.handle_reply(std::string("/seven"), Value(300.0));
     assert_equal("[seven: value_changed 300]", logger.str());
   }
+
+  void test_should_build_object_proxies_without_type( void ) {
+    RootProxy proxy(Location("osc", "funky synth"));
+    Logger logger;
+    ProxyFactoryLogger factory("factory", &logger);
+    proxy.set_proxy_factory(&factory);
+
+    Object *object = proxy.object_at("/one/two");
+    assert_true(object == NULL);
+    object = proxy.object_at("/one");
+    assert_true(object == NULL);
+
+    Value error;
+    Object *object2 = proxy.find_or_build_object_at(std::string("/one/two"), &error);
+    assert_equal("[factory: build_object_proxy one null][factory: build_object_proxy two null]", logger.str());
+    logger.str("");
+    assert_false(object2 == NULL);
+
+    object = proxy.object_at("/one/two");
+    assert_equal(object2, object);
+    assert_equal(object->type(), gNilValue);
+
+    object = proxy.object_at("/one");
+    assert_false(object == NULL);
+    assert_equal(object->type(), gNilValue);
+    assert_equal("", logger.str());
+  }
 };

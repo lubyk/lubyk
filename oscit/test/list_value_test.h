@@ -524,4 +524,14 @@ public:
     list = list[1];
     assert_equal("[2, 3]", list.to_json());
   }
+
+  void test_equal( void ) {
+    Value a(Json("[1, 2, 'hello']"));
+    Value b(Json("[1, 2, 'hello']"));
+    assert_equal(a, b);
+    a[1].r = 3;
+    assert_false(a == b);
+    a.set_nil();
+    assert_false(a == b);
+  }
 };

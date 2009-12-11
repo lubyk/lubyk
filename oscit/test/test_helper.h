@@ -44,6 +44,12 @@ protected:
     _OSCIT_ASSERT_EQUALS( file, lineno, TS_AS_STRING(descr), (T)expected, found);
   }
 
+  template<class T>
+  void _assert_equal(const char * file, int lineno, const char * descr, T expected, T found)
+  {
+    _OSCIT_ASSERT_EQUALS( file, lineno, TS_AS_STRING(descr), expected, found);
+  }
+
   void _assert_equal(const char * file, int lineno, const char * descr, unsigned long expected, unsigned long found)
   {
     _OSCIT_ASSERT_EQUALS( file, lineno, TS_AS_STRING(descr), expected, found);

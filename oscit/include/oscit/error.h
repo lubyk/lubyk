@@ -48,6 +48,10 @@ class Error : public ReferenceCounted
 
   void set_message(const std::string &string) { message_ = string; }
 
+  bool operator==(const Error& other) const {
+    return code_ == other.code_ && message_ == other.message_;
+  }
+
  private:
 
   ErrorCode   code_;

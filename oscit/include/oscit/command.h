@@ -67,7 +67,10 @@ class Command : public Thread
 
   /** Returns a pointer to an object that can be used to send values to a remote object.
    *  The receiver should create an alias for the remote_object (do not keep the pointer).
-   *  @param remote_url should contain the full url with protocol and domain: osc://video.local/vid/contrast. */
+   *  @param remote_url should contain the full url with protocol and domain: osc://video.local/vid/contrast.
+   *
+   *  FIXME: rewrite all this with new "proxy" objects and trees.. ?
+   */
   Object *remote_object(const Url &remote_url, Value *error);
 
   uint16_t port() { return port_; }

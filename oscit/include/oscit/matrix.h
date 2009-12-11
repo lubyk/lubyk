@@ -32,6 +32,7 @@ class Matrix {
   
   const cv::Mat *cv_mat();
   
+  bool operator==(const Matrix &other) const;
  private:
   class Implementation;
   Implementation *impl_;

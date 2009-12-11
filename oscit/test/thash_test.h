@@ -240,4 +240,21 @@ public:
     assert_equal("mum", *res);
     assert_false(hash.get("money", &res));
   }
+
+
+  void test_equal( void ) {
+    THash<std::string, int> a(10);
+    THash<std::string, int> b(10);
+    assert_equal(a, b);
+    a.set(std::string("one"), 1);
+    assert_false(a == b);
+    b.set(std::string("one"), 1);
+    assert_equal(a, b);
+    a.set(std::string("two"), 2);
+    assert_false(a == b);
+    b.set(std::string("two"), 2);
+    assert_equal(a, b);
+    a.set(std::string("two"), 4);
+    assert_false(a == b);
+  }
 };

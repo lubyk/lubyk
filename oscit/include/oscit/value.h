@@ -215,8 +215,32 @@ public:
   }
 
   /** Copy the content of the other value. */
-  void operator=(const Value& other) {
+  void operator=(const Value &other) {
     set(other);
+  }
+
+  /** Return true if the two objects have the same type
+   * and contain identical values.
+   */
+  bool operator==(const Value &other) const {
+    if (type_ != other.type_) return false;
+    switch (type_) {
+      case REAL_VALUE:   return r == other.r;
+      case ERROR_VALUE:  return *error_ == *(other.error_);
+      case STRING_VALUE: return *string_ == *(other.string_);
+      case HASH_VALUE:   return *hash_ == *(other.hash_);
+      case MATRIX_VALUE: return *matrix_ == *(other.matrix_);
+      case MIDI_VALUE:   return *midi_message_ == *(other.midi_message_);
+      case LIST_VALUE:   return *list_ == *(other.list_);
+      case NIL_VALUE:    /* continue */
+      case ANY_VALUE:    /* continue */
+      case EMPTY_VALUE:  /* continue */
+      default:           return true;
+    }
+  }
+
+  bool operator!=(const Value &other) const {
+    return !(*this == other);
   }
 
   const char *type_tag() const {
@@ -603,8 +627,12 @@ public:
 
   /** Change the Value into a Midi note.
    */
-  void set_as_note(unsigned char note, unsigned char velocity = 80,
-    unsigned int length = 500, unsigned int channel = 1, time_t wait = 0) {
+  void set_as_note(
+      unsigned char note,
+      unsigned char velocity = 80,
+      unsigned int length = 500,
+      unsigned int channel = 1,
+      time_t wait = 0) {
     if (!is_midi()) set_type(MIDI_VALUE);
     midi_message_->set_as_note(note, velocity, length, channel, wait);
   }

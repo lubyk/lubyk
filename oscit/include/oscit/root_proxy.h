@@ -62,6 +62,15 @@ public:
     return remote_location_;
   }
 
+  /** Dynamically build a child from the given name. We build dummy object proxies
+   * that will try to get a "type" from the remote end.
+   */
+  virtual Object *build_child(const std::string &name, Value *error);
+
+  ProxyFactory *proxy_factory() {
+    return proxy_factory_;
+  }
+
 private:
   friend class Command; // set_command
 

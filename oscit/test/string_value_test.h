@@ -159,4 +159,16 @@ public:
     assert_false(object.can_receive(MatrixValue(1,1)));
     assert_false(object.can_receive(MidiValue()));
   }
+  
+  void test_equal( void ) {
+    Value a("one");
+    Value b("one");
+    assert_equal(a, b);
+    a.set("two");
+    assert_false(a == b);
+    a.set(4);
+    assert_false(a == b);
+    a.set_nil();
+    assert_false(a == b);
+  }
 };

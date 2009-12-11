@@ -72,6 +72,8 @@ class List : public ReferenceCounted
     return init_with_type_tag(type_tag);
   }
 
+  bool operator==(const List &other) const;
+
  private:
   void clear();
 

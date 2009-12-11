@@ -339,8 +339,8 @@ class Root : public Object
   THash<std::string, Object*> objects_;   /**< Hash to find any object in the tree from its path. */
 
  private:
-  Object * do_find_or_build_object_at(const std::string &path, Value *error) {
-    Object * object = object_at(path);
+  Object *do_find_or_build_object_at(const std::string &path, Value *error) {
+    Object *object = object_at(path);
 
     if (object == NULL) {
       // ask parents to build
@@ -348,8 +348,13 @@ class Root : public Object
       if (pos != std::string::npos) {
         /** call 'build_child' handler in parent. */
         Object * parent = do_find_or_build_object_at(path.substr(0, pos), error);
-        if (parent != NULL && (object = object_at(path)) == NULL) {
-          return parent->build_child(path.substr(pos+1), error);
+        if (parent != NULL) {
+          // parent might have automatically created the children objects:
+          object = object_at(path);
+          if (object == NULL) {
+            // ask parent to create child
+            return parent->build_child(path.substr(pos+1), error);
+          }
         }
       }
     }

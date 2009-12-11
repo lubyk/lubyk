@@ -261,4 +261,14 @@ public:
     assert_false(object.can_receive(MatrixValue(1,1)));
     assert_false(object.can_receive(MidiValue()));
   }
+
+  void test_equal( void ) {
+    Value a(Json("one: 1 two: 2"));
+    Value b(Json("two: 2 one: 1"));
+    assert_equal(a, b);
+    a.set(Json("one: 1 two: 3"));
+    assert_false(a == b);
+    a.set_nil();
+    assert_false(a == b);
+  }
 };

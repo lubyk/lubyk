@@ -2,6 +2,7 @@
 
 #include "oscit/root.h"
 #include "oscit/root_proxy.h"
+#include "oscit/proxy_factory.h"
 
 namespace oscit {
 
@@ -60,4 +61,21 @@ void ObjectProxy::handle_value_change(const Value &val) {
   }
   value_changed();
 }
+
+void ObjectProxy::set_type(const Value &type) {
+  if (type != type_) {
+    type_ = type;
+    sync_type_id();
+    type_changed();
+  }
+}
+
+Object *ObjectProxy::build_child(const std::string &name, Value *error) {
+  if (!root_proxy_ || !root_proxy_->proxy_factory()) {
+    std::cerr << "Cannot build child /" << name << " : no RootProxy or no ProxyFactory !\n";
+    return NULL;
+  }
+  return adopt(root_proxy_->proxy_factory()->build_object_proxy(this, name, gNilValue));
+}
+
 } // oscit

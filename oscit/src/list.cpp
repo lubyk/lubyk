@@ -84,4 +84,16 @@ const char *List::init_with_type_tag(const char *type_tag) {
  return c;
 }
 
+bool List::operator==(const List &other) const {
+  if (type_id_          != other.type_id_ ||
+      values_.size()    != other.values_.size() ||
+      type_tag_storage_ != other.type_tag_storage_) return false;
+
+  int sz = values_.size();
+  for (int i = 0; i < sz; ++i) {
+    if (*values_[i] != *other.values_[i]) return false;
+  }
+
+  return true;
+}
 } // oscit

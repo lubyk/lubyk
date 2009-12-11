@@ -199,6 +199,7 @@ const Value Object::type_with_current_value() {
 
   if (!type.is_list()) {
     // make sure type is a ListValue
+    // type can be gNilValue for object proxies when they are not yet initialized (haven't received type information).
     return ErrorValue(INTERNAL_SERVER_ERROR, "Invalid meta type. Should be a list (found '").append(type.type_tag()).append("').");
   }
 

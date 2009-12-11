@@ -164,6 +164,21 @@ public:
   /** Return number of elements (distinct keys). */
   size_t size() const { return keys_.size(); }
 
+  bool operator==(const THash& other) const {
+    if (size() != other.size()) return false;
+    typename std::list<K>::const_iterator it, end = keys_.end();
+    const T *val1;
+    const T *val2;
+    for (it = keys_.begin(); it != end; ++it) {
+      if (get(*it, &val1) && other.get(*it, &val2)) {
+        if (*val1 != *val2) return false;
+      } else {
+        return false;
+      }
+    }
+    return true;
+  }
+
   /** Return size of storage (main hash table). */
   unsigned int storage_size() const { return size_; }
 

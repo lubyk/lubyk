@@ -36,6 +36,7 @@ namespace oscit {
 
 class Root;
 class Alias;
+class ObjectProxy;
 
 class Object : public Typed, public Observable {
  public:
@@ -44,56 +45,56 @@ class Object : public Typed, public Observable {
 
   explicit Object() : root_(NULL), parent_(NULL), children_(20), context_(NULL),
     type_(DEFAULT_TYPE) {
-    type_changed();
+    sync_type_id();
     name_ = "";
     url_  = name_;
   }
 
   explicit Object(const char *name) : root_(NULL), parent_(NULL), children_(20),
     name_(name), url_(name), context_(NULL), type_(DEFAULT_TYPE) {
-    type_changed();
+    sync_type_id();
   }
 
   explicit Object(const std::string &name) : root_(NULL), parent_(NULL),
     children_(20), name_(name), url_(name), context_(NULL),
     type_(DEFAULT_TYPE) {
-    type_changed();
+    sync_type_id();
   }
 
   explicit Object(const Value &type) : root_(NULL), parent_(NULL),
     children_(20), context_(NULL), type_(type) {
-    type_changed();
+    sync_type_id();
     name_ = "";
     url_  = name_;
   }
 
   Object(const char *name, const Value &type) : root_(NULL), parent_(NULL),
     children_(20), name_(name), url_(name), context_(NULL), type_(type) {
-    type_changed();
+    sync_type_id();
   }
 
   Object(const std::string &name, const Value &type) : root_(NULL),
     parent_(NULL), children_(20), name_(name), url_(name), context_(NULL),
     type_(type) {
-    type_changed();
+    sync_type_id();
   }
 
   Object(Object *parent, const char *name) : root_(NULL), parent_(NULL),
     children_(20), name_(name), context_(NULL), type_(DEFAULT_TYPE) {
-    type_changed();
+    sync_type_id();
     parent->adopt(this);
   }
 
   Object(Object *parent, const char *name, const Value &type) : root_(NULL),
     parent_(NULL), children_(20), name_(name), context_(NULL), type_(type) {
-    type_changed();
+    sync_type_id();
     parent->adopt(this);
   }
 
   Object(Object *parent, const std::string &name, const Value &type) :
     root_(NULL), parent_(NULL), children_(20), name_(name), context_(NULL),
     type_(type) {
-    type_changed();
+    sync_type_id();
     parent->adopt(this);
   }
 
@@ -252,7 +253,7 @@ class Object : public Typed, public Observable {
   //     return false;
   //   } else {
   //     type_ = type;
-  //     type_changed();
+  //     sync_type_id();
   //     return true;
   //   }
   // }
@@ -366,9 +367,11 @@ class Object : public Typed, public Observable {
   }
 
  private:
+  friend class ObjectProxy;
+
   /** Keep type_id_ in sync with type_.
    */
-  void type_changed() {
+  void sync_type_id() {
     type_id_ = type_.size() > 0 ? type_[0].type_id() : NO_TYPE_TAG_ID;
   }
 

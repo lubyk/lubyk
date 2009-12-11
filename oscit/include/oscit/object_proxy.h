@@ -54,6 +54,13 @@ public:
   virtual void value_changed() {
   }
 
+  /** This method is called when the object proxy receives it's type information or the type
+   * of the remote changed.
+   */
+  virtual void type_changed() {
+
+  }
+
   void handle_value_change(const Value &val);
 
   void sync(bool forced = false) {
@@ -70,6 +77,14 @@ public:
   /** Set root and if the root is a RootProxy, set root_proxy_ as well.
    */
   virtual void set_root(Root *root);
+
+  /** @internal. */
+  void set_type(const Value &type);
+
+  /** Dynamically build a child from the given name. We build dummy object proxies
+   * that will try to get a "type" from the remote end.
+   */
+  virtual Object *build_child(const std::string &name, Value *error);
 
 protected:
 
