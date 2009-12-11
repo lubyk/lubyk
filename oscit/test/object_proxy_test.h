@@ -57,7 +57,7 @@ public:
     RootProxy *proxy = cmd.adopt_proxy(new RootProxy(Location("osc", "funky synth")));
     ObjectProxyLogger *obj = proxy->adopt(new ObjectProxyLogger("seven", RangeIO(0.0, 2000.0, "bpm", "the sky is blue"), &logger));
     logger.str("");
-    obj->sync();
+    obj->sync_children();
     assert_equal("[osc: send osc://\"funky synth\" /.list_with_type \"/seven\"]", logger.str());
   }
 
@@ -68,5 +68,16 @@ public:
     logger.str("");
     proxy->adopt(new ObjectProxy("seven", gNilValue));
     assert_equal("[osc: send osc://\"funky synth\" /.type \"/seven\"]", logger.str());
+  }
+
+  void test_until_type_is_set_object_proxy_should_respond_false_to_is_connected( void ) {
+    ObjectProxy o("name", gNilValue);
+    assert_false( o.is_connected() );
+    Value res = o.trigger(gNilValue, NULL);
+    assert_true( res.is_nil() );
+    o.set_type(RangeIO(0.0, 200.0, "bpm", "hop hop"));
+    assert_true( o.is_connected() );
+    res = o.trigger(gNilValue, NULL);
+    assert_equal(Value(0.0), res);
   }
 };

@@ -89,7 +89,7 @@ private:
 
   /** Get information on the direct children of the remote root.
    */
-  void sync() {
+  void sync_children() {
     send_to_remote(LIST_WITH_TYPE_PATH, Value(url()));
   }
 

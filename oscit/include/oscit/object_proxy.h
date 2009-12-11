@@ -41,6 +41,7 @@ public:
    * is usually called by some GUI widget callback when the user changes a control. */
   void set_value(const Value &val);
 
+
   virtual const Value trigger(const Value &val, const Location *origin) {
     if (!val.is_nil()) {
       set_value(val);
@@ -61,27 +62,49 @@ public:
 
   }
 
-  void handle_value_change(const Value &val);
-
-  void sync(bool forced = false) {
+  /** Find the list of children by querying the remote.
+   */
+  void sync_children(bool forced = false) {
     if (need_sync_ || forced) {
       root_proxy_->send_to_remote(LIST_WITH_TYPE_PATH, Value(url()));
     }
     need_sync_ = false;
   }
 
+  /** Set root and if the root is a RootProxy, set root_proxy_ as well. You can
+   * overwrite this (but make sure to call ObjectProxy::set_root(root) in your
+   * method) but you should not call it directly. It is called when the object
+   * is adopted.
+   */
+  virtual void set_root(Root *root);
+
+  /** Returns true if the object has been properly initialized (type and value
+   * have been synced with remote).
+   */
+  bool is_connected() const {
+    return !type_.is_nil();
+  }
+
+  /** @internal.
+   * Used by root_proxy_ when initializing the object.
+   */
   void set_need_sync(bool need_sync) {
     need_sync_ = need_sync;
   }
 
-  /** Set root and if the root is a RootProxy, set root_proxy_ as well.
+  /** @internal.
+   * Called when the object proxy finally receives type information.
    */
-  virtual void set_root(Root *root);
-
-  /** @internal. */
   void set_type(const Value &type);
 
-  /** Dynamically build a child from the given name. We build dummy object proxies
+  /** @internal.
+   * Method triggered on a value change notification. This method calls
+   * sets the new value in cache and calls "value_changed".
+   */
+  void handle_value_change(const Value &val);
+
+  /** @internal.
+   * Dynamically build a child from the given name. We build dummy object proxies
    * that will try to get a "type" from the remote end.
    */
   virtual Object *build_child(const std::string &name, Value *error);

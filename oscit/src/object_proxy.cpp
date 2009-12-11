@@ -69,6 +69,11 @@ void ObjectProxy::handle_value_change(const Value &val) {
 void ObjectProxy::set_type(const Value &type) {
   if (type != type_) {
     type_ = type;
+
+    if (type_.is_list()) {
+      value_ = type[0];
+    }
+
     sync_type_id();
     type_changed();
   }

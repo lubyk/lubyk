@@ -96,7 +96,7 @@ class ProxyFactoryTest : public TestHelper
     res = object_proxy->list();
     assert_equal("[]", res.to_json());
 
-    object_proxy->sync();
+    object_proxy->sync_children();
     millisleep(100);
     res = object_proxy->list();
     assert_equal("[\"mode\", \"tint\"]", res.to_json());

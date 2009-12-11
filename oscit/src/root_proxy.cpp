@@ -15,7 +15,7 @@ void RootProxy::set_command(Command *command) {
   if (command) {
     command->register_proxy(this);
     command->send(remote_location_, REGISTER_PATH, gNilValue);
-    sync();
+    sync_children();
   }
 }
 
