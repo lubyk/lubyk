@@ -70,9 +70,11 @@ int main(int argc, char * argv[]) {
   // create '/tempo' url
   root.adopt(new ValueDisplay("tempo", 120, sleepy));
 
-  // create '/other/slider' url
-  Object *other = root.adopt(new Object("other"));
-  other->adopt(new ValueDisplay("slider", 115, 0));
+  // create '/other/deeply/nested/slider' url
+  Object *tmp = root.adopt(new Object("other"));
+  tmp = tmp->adopt(new Object("deeply"));
+  tmp = tmp->adopt(new Object("nested"));
+  tmp->adopt(new ValueDisplay("slider", 115, 0));
 
   // create '/.views' url
   Object *views = root.make_views_path();

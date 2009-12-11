@@ -76,6 +76,7 @@ void ObjectProxy::set_type(const Value &type) {
 
     sync_type_id();
     type_changed();
+    value_changed();
   }
 }
 

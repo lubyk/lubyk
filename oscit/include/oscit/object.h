@@ -297,7 +297,9 @@ class Object : public Typed, public Observable {
   virtual void set_context(Mutex *context) { context_ = context; }
 
   /** Return the type tag signature id (uint) of the trigger method of this
-   *  object (what it wants to receive as arguments).
+   * object (what it wants to receive as arguments).
+   *
+   * TODO: rename, it's confusing with type().type_id(). Use accept_type_id() instead ?
    */
   inline TypeTagID type_id() {
     return type_id_;

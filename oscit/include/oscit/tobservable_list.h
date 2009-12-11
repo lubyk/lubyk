@@ -41,6 +41,22 @@ public:
   size_t size() {
     return list_.size();
   }
+
+  typename std::list<T>::iterator begin() {
+    return list_.begin();
+  }
+
+  typename std::list<T>::iterator end() {
+    return list_.end();
+  }
+
+  typename std::list<T>::const_iterator begin() const {
+    return list_.begin();
+  }
+
+  typename std::list<T>::const_iterator end() const {
+    return list_.end();
+  }
 protected:
   /** The target is becoming invalid, remove from list (called from the target's
    * "on_destroy" list).
