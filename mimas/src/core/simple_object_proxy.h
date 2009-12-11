@@ -1,15 +1,19 @@
 #ifndef MIMAS_SRC_CORE_SIMPLE_OBJECT_PROXY_H_
 #define MIMAS_SRC_CORE_SIMPLE_OBJECT_PROXY_H_
+
 #include "oscit/object_proxy.h"
+#include "oscit/tobservable_list.h"
+
 #include "object_proxy_view.h"
 #include "observable_slider.h"
+
 
 class SimpleObjectProxy : public ObjectProxy, public SliderListener {
 public:
   /** Class signature. */
   TYPED("Object.ObjectProxy.SimpleObjectProxy")
 
-  SimpleObjectProxy(const std::string &name, const Value &type) : ObjectProxy(name, type) {
+  SimpleObjectProxy(const std::string &name, const Value &type) : ObjectProxy(name, type), sliders_(this) {
     set_and_hold(&tree_view_item_, new ObjectProxyView(this));
   }
 
@@ -18,9 +22,7 @@ public:
   }
 
   void observe(ObservableSlider *slider) {
-    append_and_hold(&sliders_, slider);
-    if (value_.is_real())
-      slider->setComponentProperty(T("RemoteValue"), value_.r);
+    sliders_.push_back(slider);
     slider->addListener(this);
   }
 
@@ -31,6 +33,14 @@ public:
 
   virtual void 	sliderDragEnded (Slider *slider) {
     slider->setComponentProperty(T("LastDrag"), (int)time_ref_.elapsed());
+  }
+
+  virtual void observer_lock() {
+    mml_ = new MessageManagerLock();
+  }
+
+  virtual void observer_unlock() {
+    delete mml_;
   }
 
   virtual void value_changed() {
@@ -54,10 +64,15 @@ public:
     }
   }
 
+  /** When we finally know our type, enable the views.
+   */
+  virtual void type_changed();
+
   ObservableSlider *build_slider();
 
 private:
-  std::list<ObservableSlider*> sliders_;
+  MessageManagerLock *mml_;
+  TObservableList<ObservableSlider *> sliders_;
   ObjectProxyView *tree_view_item_;
 };
 

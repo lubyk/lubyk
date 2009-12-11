@@ -1,10 +1,10 @@
 #ifndef MIMAS_SRC_CORE_OBJECT_PROXY_VIEW_H_
 #define MIMAS_SRC_CORE_OBJECT_PROXY_VIEW_H_
 #include "oscit/object_proxy.h"
-
+#include "observable_in_juce.h"
 class SimpleObjectProxy;
 
-class ObjectProxyView : public TreeViewItem, public Observer, public Observable {
+class ObjectProxyView : public TreeViewItem, public ObservableInJuce {
 public:
 
   ObjectProxyView(SimpleObjectProxy *proxy);

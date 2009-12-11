@@ -33,7 +33,7 @@ void DeviceView::itemOpennessChanged(bool isNowOpen) {
       assert(children.get(*it, &object));
       SimpleObjectProxy *object_proxy = TYPE_CAST(SimpleObjectProxy, object);
       assert(object_proxy);
-      object_proxy->sync();
+      object_proxy->sync_children();
       addSubItem(object_proxy->object_proxy_view());
     }
     subnodes_added_ = true;

@@ -3,7 +3,7 @@
 
 class DeviceProxy;
 
-class DeviceView : public TreeViewItem, public Observer, public Observable {
+class DeviceView : public TreeViewItem, public Observable {
 public:
 
   DeviceView(DeviceProxy *proxy);
@@ -20,7 +20,16 @@ public:
 
   void itemOpennessChanged( bool isNowOpen);
 
+  virtual void observer_lock() {
+    mml_ = new MessageManagerLock();
+  }
+
+  virtual void observer_unlock() {
+    delete mml_;
+  }
+
 private:
+  MessageManagerLock *mml_;
   DeviceProxy *device_proxy_;
   bool subnodes_added_;
 };
