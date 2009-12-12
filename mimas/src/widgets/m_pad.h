@@ -28,6 +28,7 @@ public:
 
   virtual void set_remote_value(Real value) {
     remote_value_ = value;
+    redraw();
   }
 
   virtual void handle_value_change(const Value &value) {
@@ -78,7 +79,14 @@ public:
 
   /** ======== Component callbacks ======== */
 
-  virtual void mouseDrag (const MouseEvent &e) {
+  virtual void mouseDown(const MouseEvent &e) {
+    dragged_ = true;
+    range_x_.set_scaled_value(e.x, getWidth());
+    range_y_.set_scaled_value(getHeight() - e.y, getHeight());
+    repaint();
+  }
+
+  virtual void mouseDrag(const MouseEvent &e) {
     range_x_.set_scaled_value(e.x, getWidth());
     range_y_.set_scaled_value(getHeight() - e.y, getHeight());
     repaint();
@@ -88,13 +96,6 @@ public:
     dragged_ = false;
     range_x_.stop_drag();
     range_y_.stop_drag();
-  }
-
-  virtual void mouseDown(const MouseEvent &e) {
-    dragged_ = true;
-    range_x_.set_scaled_value(e.x, getWidth());
-    range_y_.set_scaled_value(getHeight() - e.y, getHeight());
-    repaint();
   }
 
   MRangeWidget *range_x() {

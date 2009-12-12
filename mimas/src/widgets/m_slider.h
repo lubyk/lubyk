@@ -18,6 +18,7 @@ public:
 
   virtual void set_remote_value(Real value) {
     setComponentProperty(T("RemoteValue"), value);
+    redraw();
   }
 
   virtual void handle_value_change(const Value &value) {

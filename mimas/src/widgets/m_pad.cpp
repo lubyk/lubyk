@@ -18,7 +18,10 @@ void MPadRange::redraw() {
 
 void MPadRange::set_scaled_value(Real position, Real range) {
   if (!range) return;
-  value_.r = position * (max_ - min_) / range;
+  Real r = position * (max_ - min_) / range;
+  if (r < min_) r = min_;
+  if (r > max_) r = max_;
+  value_.r = r;
   proxy_->set_value(value_);
 }
 

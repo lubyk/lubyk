@@ -31,6 +31,7 @@ public:
   }
 
   virtual void value_changed() {
+    std::cout << url() << " value_changed: " << value_ << "\n";
     // update real value slider
     MessageManagerLock mml;
     String remote_value("RemoteValue");
@@ -38,14 +39,10 @@ public:
       std::list<MRangeWidget*>::iterator it, end = range_widgets_.end();
       for (it = range_widgets_.begin(); it != end; ++it) {
         (*it)->set_remote_value(value_.r);
-        std::cout << url() << ": " << (*it)->is_dragged() << ": " << value_ << "\n";
         if (!(*it)->is_dragged()) {
-          int last = (*it)->last_drag();
           // no dragging
-          if (last + (3 * latency_) > time_ref_.elapsed()) {
-            // we just dropped the widget, keep 'ghost'.
-            (*it)->redraw();
-          } else {
+          if ((*it)->last_drag() + (3 * latency_) < time_ref_.elapsed()) {
+            // we stopped draggin long ago, move real.
             (*it)->handle_value_change(value_);
           }
         }
