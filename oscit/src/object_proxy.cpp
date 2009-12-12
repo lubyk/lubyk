@@ -32,7 +32,7 @@ void ObjectProxy::set_value(const Value &val) {
       to_send_ = val;
     } else {
       root_proxy_->send_to_remote(url().c_str(), val);
-      wait_until_ = now + latency_;
+      wait_until_ = now + (latency_ * 1.5);
     }
   }
 }
@@ -58,7 +58,7 @@ void ObjectProxy::handle_value_change(const Value &val) {
       // send now
       root_proxy_->send_to_remote(url().c_str(), to_send_);
       to_send_.set_empty();
-      wait_until_ = time_ref_.elapsed() + latency_;
+      wait_until_ = time_ref_.elapsed() + (latency_ * 1.5);
     } else {
       wait_until_ = 0;
     }

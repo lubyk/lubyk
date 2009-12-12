@@ -46,6 +46,11 @@ public:
     return value_.r * range / (max_ - min_);
   }
 
+  Real scaled_remote_value(Real range) {
+    if (max_ - min_ == 0) return 0;
+    return remote_value_ * range / (max_ - min_);
+  }
+
 private:
   friend class MPad;
   MPad *pad_;
@@ -74,6 +79,7 @@ public:
   virtual void mouseDrag (const MouseEvent &e) {
     range_x_.set_scaled_value(e.x, getWidth());
     range_y_.set_scaled_value(getHeight() - e.y, getHeight());
+    repaint();
   }
 
   virtual void mouseUp(const MouseEvent &e) {
@@ -90,11 +96,23 @@ public:
 
   virtual void paint(Graphics& g) {
     float radius = 8;
-    float pos_x = range_x_.scaled_value(getWidth())  - radius;
-    float pos_y = getHeight() - range_y_.scaled_value(getHeight()) - radius;
+    float pos_x;
+    float pos_y;
 
     g.fillAll(Colours::grey);
 
+    // remote_value_
+    pos_x = range_x_.scaled_remote_value(getWidth()) - radius;
+    pos_y = getHeight() - range_y_.scaled_remote_value(getHeight()) - radius;
+    g.setColour(Colours::lightgrey);
+    g.fillEllipse(pos_x, pos_y, 2*radius, 2*radius);
+
+    g.setColour(Colours::darkgrey);
+    g.drawEllipse(pos_x, pos_y, 2*radius, 2*radius, 2.0f);
+
+    // value_
+    pos_x = range_x_.scaled_value(getWidth())  - radius;
+    pos_y = getHeight() - range_y_.scaled_value(getHeight()) - radius;
     g.setColour(Colours::white);
     g.fillEllipse(pos_x, pos_y, 2*radius, 2*radius);
 
