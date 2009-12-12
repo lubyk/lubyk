@@ -1,10 +1,10 @@
-#ifndef MIMAS_SRC_CORE_PROXY_VIEW_H_
-#define MIMAS_SRC_CORE_PROXY_VIEW_H_
-#include "simple_object_proxy.h"
+#ifndef MIMAS_SRC_PROXY_VIEW_PROXY_VIEW_H_
+#define MIMAS_SRC_PROXY_VIEW_PROXY_VIEW_H_
+#include "m_object_proxy.h"
 
-class ProxyView : public SimpleObjectProxy {
+class ProxyView : public MObjectProxy {
 public:
-  ProxyView(const std::string &name, const Value &type, Component *main_view) : SimpleObjectProxy(name, type), main_view_(main_view) {}
+  ProxyView(const std::string &name, const Value &type, Component *main_view) : MObjectProxy(name, type), main_view_(main_view) {}
 
   /** Set root and sync (do not wait for the browser to be opened).
    */
@@ -20,4 +20,4 @@ private:
   Component *main_view_;
 };
 
-#endif // MIMAS_SRC_CORE_PROXY_VIEW_H_
+#endif // MIMAS_SRC_PROXY_VIEW_PROXY_VIEW_H_

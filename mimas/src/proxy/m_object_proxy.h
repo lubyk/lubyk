@@ -1,23 +1,23 @@
-#ifndef MIMAS_SRC_CORE_SIMPLE_OBJECT_PROXY_H_
-#define MIMAS_SRC_CORE_SIMPLE_OBJECT_PROXY_H_
+#ifndef MIMAS_SRC_PROXY_M_OBJECT_PROXY_H_
+#define MIMAS_SRC_PROXY_M_OBJECT_PROXY_H_
 
 #include "oscit/object_proxy.h"
 #include "oscit/tobservable_list.h"
 
-#include "object_proxy_view.h"
-#include "observable_slider.h"
+#include "object_proxy_tree_item.h"
+#include "m_slider.h"
 
 
-class SimpleObjectProxy : public ObjectProxy, public SliderListener {
+class MObjectProxy : public ObjectProxy, public SliderListener {
 public:
   /** Class signature. */
-  TYPED("Object.ObjectProxy.SimpleObjectProxy")
+  TYPED("Object.ObjectProxy.MObjectProxy")
 
-  SimpleObjectProxy(const std::string &name, const Value &type) : ObjectProxy(name, type), sliders_(this) {
-    set_and_hold(&tree_view_item_, new ObjectProxyView(this));
+  MObjectProxy(const std::string &name, const Value &type) : ObjectProxy(name, type), sliders_(this) {
+    set_and_hold(&tree_view_item_, new ObjectProxyTreeItem(this));
   }
 
-  ObjectProxyView *object_proxy_view() { // FIXME: how to keep constness ok here ?
+  ObjectProxyTreeItem *object_proxy_view() { // FIXME: how to keep constness ok here ?
     return tree_view_item_;
   }
 
@@ -73,7 +73,7 @@ public:
 private:
   MessageManagerLock *mml_;
   TObservableList<ObservableSlider *> sliders_;
-  ObjectProxyView *tree_view_item_;
+  ObjectProxyTreeItem *tree_view_item_;
 };
 
-#endif // MIMAS_SRC_CORE_SIMPLE_OBJECT_PROXY_H_
+#endif // MIMAS_SRC_PROXY_M_OBJECT_PROXY_H_

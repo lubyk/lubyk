@@ -1,4 +1,4 @@
-#include "mimas_look_and_feel.h"
+#include "m_look_and_feel.h"
 //==============================================================================
 static const Colour createBaseColour (const Colour& buttonColour,
                                       const bool hasKeyboardFocus,
@@ -17,7 +17,7 @@ static const Colour createBaseColour (const Colour& buttonColour,
 }
 
 //==============================================================================
-void MimasLookAndFeel::drawLinearSlider (Graphics& g,
+void MLookAndFeel::drawLinearSlider (Graphics& g,
                                     int x, int y,
                                     int width, int height,
                                     float sliderPos,
@@ -41,7 +41,7 @@ void MimasLookAndFeel::drawLinearSlider (Graphics& g,
   }
 }
 
-void MimasLookAndFeel::drawGhostSliderThumb (Graphics& g,
+void MLookAndFeel::drawGhostSliderThumb (Graphics& g,
                                          int x, int y,
                                          int width, int height,
                                          float sliderPos,

@@ -1,8 +1,8 @@
-#ifndef MIMAS_SRC_CORE_MIMAS_LOOK_AND_FEEL_H_
-#define MIMAS_SRC_CORE_MIMAS_LOOK_AND_FEEL_H_
+#ifndef MIMAS_SRC_WIDGETS_M_LOOK_AND_FEEL_H_
+#define MIMAS_SRC_WIDGETS_M_LOOK_AND_FEEL_H_
 #include "mimas.h"
 
-class MimasLookAndFeel : public LookAndFeel {
+class MLookAndFeel : public LookAndFeel {
 public:
   virtual void drawLinearSlider (Graphics& g,
                                       int x, int y,
@@ -23,4 +23,4 @@ protected:
                                        Slider& slider);
 
 };
-#endif // MIMAS_SRC_CORE_MIMAS_LOOK_AND_FEEL_H_
+#endif // MIMAS_SRC_WIDGETS_M_LOOK_AND_FEEL_H_

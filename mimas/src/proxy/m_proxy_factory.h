@@ -1,17 +1,17 @@
-#ifndef MIMAS_SRC_CORE_BROWSER_PROXY_FACTORY_
-#define MIMAS_SRC_CORE_BROWSER_PROXY_FACTORY_
+#ifndef MIMAS_SRC_PROXY_M_PROXY_FACTORY_
+#define MIMAS_SRC_PROXY_M_PROXY_FACTORY_
 #include "oscit/proxy_factory.h"
-#include "device_proxy.h"
-#include "simple_object_proxy.h"
-#include "views_builder.h"
+#include "m_root_proxy.h"
+#include "m_object_proxy.h"
+#include "proxy_view_builder.h"
 #include "proxy_view.h"
 
-class BrowserProxyFactory : public ProxyFactory {
+class MProxyFactory : public ProxyFactory {
 public:
-  BrowserProxyFactory(Component *main_view) : main_view_(main_view) {}
+  MProxyFactory(Component *main_view) : main_view_(main_view) {}
 
   virtual RootProxy *build_root_proxy(const Location &end_point) {
-    return new DeviceProxy(end_point);
+    return new MRootProxy(end_point);
   }
 
   virtual ObjectProxy *build_object_proxy(Object *parent, const std::string &name, const Value &type) {
@@ -21,7 +21,7 @@ public:
       // build view
       return new ProxyView(name, type, main_view_);
     } else if (!is_meta_method(name) || parent->url() != "") {
-      return new SimpleObjectProxy(name, type);
+      return new MObjectProxy(name, type);
     } else {
       return NULL;
     }
@@ -30,4 +30,4 @@ private:
   Component *main_view_;
 };
 
-#endif // MIMAS_SRC_CORE_BROWSER_PROXY_FACTORY_
+#endif // MIMAS_SRC_PROXY_M_PROXY_FACTORY_

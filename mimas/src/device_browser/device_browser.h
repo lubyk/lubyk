@@ -1,7 +1,7 @@
-#ifndef MIMAS_SRC_CORE_DEVICE_BROWSER_H_
-#define MIMAS_SRC_CORE_DEVICE_BROWSER_H_
+#ifndef MIMAS_SRC_DEVICE_BROWSER_DEVICE_BROWSER_H_
+#define MIMAS_SRC_DEVICE_BROWSER_DEVICE_BROWSER_H_
 #include "oscit/zeroconf_browser.h"
-#include "device_proxy.h"
+#include "m_root_proxy.h"
 #include "device_browser_root.h"
 
 class DeviceBrowser : public TreeView, public ZeroConfBrowser {
@@ -14,7 +14,7 @@ public:
 
   virtual void added_proxy(RootProxy *proxy) {
     std::cout << "added_proxy " << proxy << " " << proxy->remote_location() << "\n";
-    DeviceProxy *device = TYPE_CAST(DeviceProxy, proxy);
+    MRootProxy *device = TYPE_CAST(MRootProxy, proxy);
     assert(device);
     MessageManagerLock mml;
     ScopedAutoReleasePool pool;
@@ -23,10 +23,10 @@ public:
 
   virtual void removing_proxy(RootProxy *proxy) {
     // find position in tree
-    DeviceProxy *device = TYPE_CAST(DeviceProxy, proxy);
+    MRootProxy *device = TYPE_CAST(MRootProxy, proxy);
     int index = device_browser_root_.get_item_position(device->tree_view_item());
     MessageManagerLock mml;
-    if (index >= 0) device_browser_root_.removeSubItem(index); // do not delete, this will be done by ~DeviceProxy
+    if (index >= 0) device_browser_root_.removeSubItem(index); // do not delete, this will be done by ~MRootProxy
     std::cout << "removing_proxy " << index << " " << proxy << " " << proxy->remote_location() << "\n";
   }
 
@@ -35,4 +35,4 @@ private:
 
 };
 
-#endif // MIMAS_SRC_CORE_OSC_BROWSER_H_
+#endif // MIMAS_SRC_DEVICE_BROWSER_DEVICE_BROWSER_H_

@@ -1,8 +1,8 @@
-#ifndef MIMAS_SRC_CORE_OBSERVABLE_IN_JUCE_H_
-#define MIMAS_SRC_CORE_OBSERVABLE_IN_JUCE_H_
+#ifndef MIMAS_SRC_PROXY_M_OBSERVABLE_H_
+#define MIMAS_SRC_PROXY_M_OBSERVABLE_H_
 #include "oscit/observable.h"
 
-class ObservableInJuce : public Observable {
+class MObservable : public Observable {
 public:
   virtual void observer_lock() {
     mml_ = new MessageManagerLock();
@@ -14,4 +14,4 @@ public:
 private:
   MessageManagerLock *mml_;
 };
-#endif // MIMAS_SRC_CORE_OBSERVABLE_IN_JUCE_H_
+#endif // MIMAS_SRC_PROXY_M_OBSERVABLE_H_

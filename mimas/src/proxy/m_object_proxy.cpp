@@ -1,9 +1,9 @@
 #include "mimas.h"
-#include "simple_object_proxy.h"
+#include "m_object_proxy.h"
 
 #include <iostream>
 
-ObservableSlider *SimpleObjectProxy::build_slider() {
+ObservableSlider *MObjectProxy::build_slider() {
   ObservableSlider *slider = new ObservableSlider(String(name_.c_str()));
   if (is_connected()) {
     slider->setRange(type()[1].r, type()[2].r);
@@ -14,7 +14,7 @@ ObservableSlider *SimpleObjectProxy::build_slider() {
   return slider;
 }
 
-void SimpleObjectProxy::type_changed() {
+void MObjectProxy::type_changed() {
   if (type().type_id() == H("fffss")) {
     MessageManagerLock mml;
     // RangeIO

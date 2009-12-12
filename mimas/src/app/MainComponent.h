@@ -23,12 +23,12 @@
 #define __JUCER_HEADER_MAINCOMPONENT_MAINCOMPONENT_D0F6CD31__
 
 #include "mimas.h"
-#include "mimas_look_and_feel.h"
+#include "m_look_and_feel.h"
 #include "oscit/osc_command.h"
 #include "device_browser.h"
-#include "device_view.h"
-#include "device_proxy.h"
-#include "browser_proxy_factory.h"
+#include "root_proxy_tree_item.h"
+#include "m_root_proxy.h"
+#include "m_proxy_factory.h"
 
 class MainComponent  : public Component,
                        public ButtonListener {
@@ -44,7 +44,7 @@ public:
     juce_UseDebuggingNewOperator
 
 private:
-    MimasLookAndFeel mimas_look_and_feel_;
+    MLookAndFeel mimas_look_and_feel_;
     Root work_tree_;
     DeviceBrowser *device_browser_;
 

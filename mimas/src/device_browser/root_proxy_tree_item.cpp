@@ -1,13 +1,14 @@
 #include "mimas.h"
-#include "device_view.h"
-#include "device_proxy.h"
-#include "simple_object_proxy.h"
+#include "root_proxy_tree_item.h"
 
-DeviceView::DeviceView(DeviceProxy *proxy) : subnodes_added_(false) {
+#include "m_root_proxy.h"
+#include "m_object_proxy.h"
+
+RootProxyTreeItem::RootProxyTreeItem(MRootProxy *proxy) : subnodes_added_(false) {
   set_and_hold(&device_proxy_, proxy);
 }
 
-void DeviceView::paintItem(Graphics& g, int width, int height) {
+void RootProxyTreeItem::paintItem(Graphics& g, int width, int height) {
     // if this item is selected, fill it with a background colour..
   if (isSelected()) g.fillAll(Colours::blue.withAlpha (0.3f));
   // use a "colour" attribute in the xml tag for this node to set the text colour..
@@ -21,7 +22,7 @@ void DeviceView::paintItem(Graphics& g, int width, int height) {
     Justification::centredLeft, true);
 }
 
-void DeviceView::itemOpennessChanged(bool isNowOpen) {
+void RootProxyTreeItem::itemOpennessChanged(bool isNowOpen) {
   if (isNowOpen && !subnodes_added_) {
     // FIXME: make sure we do not accept changes to this tree now !
     const THash<std::string, Object *> children = device_proxy_->children();
@@ -31,7 +32,7 @@ void DeviceView::itemOpennessChanged(bool isNowOpen) {
       std::cout << *it << " <<< added to device\n";
       Object *object;
       assert(children.get(*it, &object));
-      SimpleObjectProxy *object_proxy = TYPE_CAST(SimpleObjectProxy, object);
+      MObjectProxy *object_proxy = TYPE_CAST(MObjectProxy, object);
       assert(object_proxy);
       object_proxy->sync_children();
       addSubItem(object_proxy->object_proxy_view());

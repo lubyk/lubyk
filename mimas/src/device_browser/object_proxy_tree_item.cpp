@@ -1,12 +1,12 @@
 #include "mimas.h"
-#include "object_proxy_view.h"
-#include "simple_object_proxy.h"
+#include "object_proxy_tree_item.h"
+#include "m_object_proxy.h"
 
-ObjectProxyView::ObjectProxyView(SimpleObjectProxy *object) : subnodes_added_(false) {
+ObjectProxyTreeItem::ObjectProxyTreeItem(MObjectProxy *object) : subnodes_added_(false) {
   set_and_hold(&object_proxy_, object);
 }
 
-void ObjectProxyView::paintItem(Graphics& g, int width, int height) {
+void ObjectProxyTreeItem::paintItem(Graphics& g, int width, int height) {
     // if this item is selected, fill it with a background colour..
   if (isSelected()) g.fillAll(Colours::blue.withAlpha (0.3f));
   // use a "colour" attribute in the xml tag for this node to set the text colour..
@@ -20,11 +20,11 @@ void ObjectProxyView::paintItem(Graphics& g, int width, int height) {
     Justification::centredLeft, true);
 }
 
-bool ObjectProxyView::mightContainSubItems() {
+bool ObjectProxyTreeItem::mightContainSubItems() {
   return object_proxy_->children().size() > 0;
 }
 
-Component *ObjectProxyView::createItemComponent() {
+Component *ObjectProxyTreeItem::createItemComponent() {
   Value type = object_proxy_->type();
   if (type.type_id() == H("fffss")) {
     ObservableSlider *slider;
@@ -43,7 +43,7 @@ Component *ObjectProxyView::createItemComponent() {
   }
 }
 
-void ObjectProxyView::itemOpennessChanged(bool isNowOpen) {
+void ObjectProxyTreeItem::itemOpennessChanged(bool isNowOpen) {
   if (isNowOpen && !subnodes_added_) {
     // FIXME: make sure we do not accept changes to this tree now !
     const THash<std::string, Object *> children = object_proxy_->children();
@@ -53,7 +53,7 @@ void ObjectProxyView::itemOpennessChanged(bool isNowOpen) {
       std::cout << *it << " <<< added to object proxy\n";
       Object *object;
       assert(children.get(*it, &object));
-      SimpleObjectProxy *object_proxy = TYPE_CAST(SimpleObjectProxy, object);
+      MObjectProxy *object_proxy = TYPE_CAST(MObjectProxy, object);
       assert(object_proxy);
       object_proxy->sync_children();
       addSubItem(object_proxy->object_proxy_view());

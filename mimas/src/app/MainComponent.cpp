@@ -40,7 +40,7 @@ MainComponent::MainComponent()
   device_browser_->set_command(cmd);
   main_view_ = new Component;
   addAndMakeVisible(main_view_);
-  device_browser_->adopt_proxy_factory(new BrowserProxyFactory(main_view_));
+  device_browser_->adopt_proxy_factory(new MProxyFactory(main_view_));
   addAndMakeVisible(device_browser_);
 
   setSize(600, 600);

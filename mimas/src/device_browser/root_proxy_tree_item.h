@@ -1,14 +1,14 @@
-#ifndef MIMAS_SRC_CORE_DEVICE_VIEW_H_
-#define MIMAS_SRC_CORE_DEVICE_VIEW_H_
+#ifndef MIMAS_SRC_DEVICE_BROWSER_ROOT_PROXY_TREE_ITEM_H_
+#define MIMAS_SRC_DEVICE_BROWSER_ROOT_PROXY_TREE_ITEM_H_
 
-class DeviceProxy;
+class MRootProxy;
 
-class DeviceView : public TreeViewItem, public Observable {
+class RootProxyTreeItem : public TreeViewItem, public Observable {
 public:
 
-  DeviceView(DeviceProxy *proxy);
+  RootProxyTreeItem(MRootProxy *proxy);
 
-  DeviceProxy *device_proxy() {
+  MRootProxy *device_proxy() {
     return device_proxy_;
   }
 
@@ -30,8 +30,8 @@ public:
 
 private:
   MessageManagerLock *mml_;
-  DeviceProxy *device_proxy_;
+  MRootProxy *device_proxy_;
   bool subnodes_added_;
 };
 
-#endif // MIMAS_SRC_CORE_DEVICE_VIEW_H_
+#endif // MIMAS_SRC_DEVICE_BROWSER_ROOT_PROXY_TREE_ITEM_H_

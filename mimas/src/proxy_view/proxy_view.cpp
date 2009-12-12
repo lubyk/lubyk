@@ -34,7 +34,7 @@ void ProxyView::build_slider(XmlElement &def) {
 
   String connect_path = def.getStringAttribute(T("connect"));
   Value error;
-  SimpleObjectProxy *proxy = TYPE_CAST(SimpleObjectProxy, root_->find_or_build_object_at(connect_path.toUTF8(), &error));
+  MObjectProxy *proxy = TYPE_CAST(MObjectProxy, root_->find_or_build_object_at(connect_path.toUTF8(), &error));
   if (!proxy) {
     std::cerr << "Error in '" << url() << "': could not connect to proxy " << connect_path.toUTF8() << "'\n.";
     return;
