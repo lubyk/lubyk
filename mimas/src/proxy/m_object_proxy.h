@@ -44,7 +44,7 @@ public:
             std::cout << url() << ": " << last << " < " << time_ref_.elapsed() - 2 * latency_ << "\n";
           // no dragging
           if (last < time_ref_.elapsed() - 2 * latency_) {
-            (*it)->set_value(value_.r);
+            (*it)->handle_value_change(value_);
           } else {
             (*it)->redraw();
           }

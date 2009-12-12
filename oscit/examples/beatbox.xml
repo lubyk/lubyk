@@ -1,6 +1,6 @@
-<view x='0' y='0' width='200' height='200'>
+<view x='0' y='0' width='500' height='200'>
   <slider id='1' x='10'  y='10' width='30'  height='150' connect='/tempo'/>
   <slider id='2' x='50'  y='10' width='30'  height='150' connect='/other/deeply/nested/slider'/>
   <button id='3' x='90'  y='10' width='30'  height='30'  connect='/tempo' value='100'/>
-  <pad    id='4' x='130' y='10' width='150' height='150' connect_x='/tempo' connect_y='/other/slider'/>
+  <pad    id='4' x='130' y='10' width='150' height='150' connect_x='/tempo' connect_y='/other/deeply/nested/slider'/>
 </view>

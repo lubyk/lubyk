@@ -4,6 +4,8 @@
 
 #include <iostream>
 
+class MObjectProxy;
+
 class MRangeWidget : public MObservable {
 public:
   MRangeWidget() : last_drag_(0), proxy_(NULL) {}
@@ -16,15 +18,13 @@ public:
 
   virtual void set_remote_value(Real value) = 0;
 
-  virtual void set_value(Real value) = 0;
+  virtual void handle_value_change(const Value &value) = 0;
 
   virtual bool is_dragged() = 0;
 
   virtual void redraw() = 0;
 
-  void set_proxy(MObjectProxy *proxy) {
-    set_and_hold(&proxy_, proxy);
-  }
+  void set_proxy(MObjectProxy *proxy);
 
   int last_drag() {
     return last_drag_;

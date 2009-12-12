@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "m_slider.h"
+#include "m_pad.h"
 
 void ProxyView::build_view(const std::string &view_defition) {
   std::cout << "BUILDING FROM\n" << view_defition << "\n";
@@ -35,6 +36,8 @@ void ProxyView::build_view(const std::string &view_defition) {
     String type = child->getTagName();
     if (type == T("slider")) {
       build_slider(*child);
+    } else if (type == T("pad")) {
+      build_pad(*child);
     }
     child = child->getNextElement();
   }
@@ -63,38 +66,32 @@ void ProxyView::build_slider(XmlElement &def) {
 }
 
 void ProxyView::build_pad(XmlElement &def) {
-//   std::cout << "build_pad\n";
-//   if (!check_attribute(def, "pad", T("connect_x"))) return;
-//   if (!check_attribute(def, "pad", T("connect_y"))) return;
-//
-//   String connect_path_x = def.getStringAttribute(T("connect_x"));
-//   String connect_path_y = def.getStringAttribute(T("connect_y"));
-//
-//   Value error;
-//   MObjectProxy *proxy_x = TYPE_CAST(MObjectProxy, root_->find_or_build_object_at(connect_path_x.toUTF8(), &error));
-//   if (!proxy_x) {
-//     std::cerr << "Error in '" << url() << "': could not connect to proxy " << connect_path_x.toUTF8() << "'\n.";
-//     return;
-//   }
-//
-//   MObjectProxy *proxy_y = TYPE_CAST(MObjectProxy, root_->find_or_build_object_at(connect_path_y.toUTF8(), &error));
-//   if (!proxy_y) {
-//     std::cerr << "Error in '" << url() << "': could not connect to proxy " << connect_path_y.toUTF8() << "'\n.";
-//     return;
-//   }
-//
-//
-//   MessageManagerLock mml;
-//   MPad *pad = proxy->build_pad();
-// //  slider->setTextBoxStyle(Slider::TextBoxLeft, false, 80, 20);
-//   double width  = def.getDoubleAttribute(T("width"));
-//   double height = def.getDoubleAttribute(T("height"));
-//   slider->setBounds (def.getDoubleAttribute(T("x")),
-//                      def.getDoubleAttribute(T("y")),
-//                      width,
-//                      height);
-//   slider->setSliderStyle(width > height ? Slider::LinearHorizontal : Slider::LinearVertical);
-//   main_view_->addAndMakeVisible(slider);
+  std::cout << "build_pad\n";
+  if (!check_attribute(def, "pad", T("connect_x"))) return;
+  if (!check_attribute(def, "pad", T("connect_y"))) return;
+
+  String connect_path_x = def.getStringAttribute(T("connect_x"));
+  String connect_path_y = def.getStringAttribute(T("connect_y"));
+
+  Value error;
+  MObjectProxy *proxy_x = TYPE_CAST(MObjectProxy, root_->find_or_build_object_at(connect_path_x.toUTF8(), &error));
+  if (!proxy_x) {
+    std::cerr << "Error in '" << url() << "': could not connect to proxy " << connect_path_x.toUTF8() << "'\n.";
+    return;
+  }
+
+  MObjectProxy *proxy_y = TYPE_CAST(MObjectProxy, root_->find_or_build_object_at(connect_path_y.toUTF8(), &error));
+  if (!proxy_y) {
+    std::cerr << "Error in '" << url() << "': could not connect to proxy " << connect_path_y.toUTF8() << "'\n.";
+    return;
+  }
+
+  MPad *pad = new MPad(connect_path_x);
+  proxy_x->connect(pad->range_x());
+  proxy_y->connect(pad->range_y());
+
+  set_bounds_from_xml(pad, def);
+  view_->addAndMakeVisible(pad);
 }
 
 bool ProxyView::check_attribute(XmlElement &definition, const char *type, const tchar *const name) {

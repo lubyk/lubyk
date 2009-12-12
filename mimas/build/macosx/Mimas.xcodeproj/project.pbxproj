@@ -16,6 +16,8 @@
 		2B322AC810D399120089DD2B /* m_object_proxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B322AB610D399120089DD2B /* m_object_proxy.cpp */; };
 		2B322AC910D399120089DD2B /* proxy_view.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B322ABC10D399120089DD2B /* proxy_view.cpp */; };
 		2B322ACA10D399120089DD2B /* m_look_and_feel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B322AC010D399120089DD2B /* m_look_and_feel.cpp */; };
+		2B322B5810D3D7310089DD2B /* m_pad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B322B5710D3D7310089DD2B /* m_pad.cpp */; };
+		2B322B6F10D3D8980089DD2B /* m_range_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B322B6E10D3D8980089DD2B /* m_range_widget.cpp */; };
 		2BD249120F0B454200AAA8C7 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BD249050F0B454200AAA8C7 /* Carbon.framework */; };
 		2BD249130F0B454200AAA8C7 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BD249060F0B454200AAA8C7 /* AudioUnit.framework */; };
 		2BD249140F0B454200AAA8C7 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BD249070F0B454200AAA8C7 /* Cocoa.framework */; };
@@ -67,6 +69,8 @@
 		2B322AE510D3BA950089DD2B /* m_pad_thumb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = m_pad_thumb.h; sourceTree = "<group>"; };
 		2B322AE610D3BA950089DD2B /* m_pad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = m_pad.h; sourceTree = "<group>"; };
 		2B322AE710D3BA950089DD2B /* m_range_widget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = m_range_widget.h; sourceTree = "<group>"; };
+		2B322B5710D3D7310089DD2B /* m_pad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = m_pad.cpp; sourceTree = "<group>"; };
+		2B322B6E10D3D8980089DD2B /* m_range_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = m_range_widget.cpp; sourceTree = "<group>"; };
 		2BD249050F0B454200AAA8C7 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		2BD249060F0B454200AAA8C7 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
 		2BD249070F0B454200AAA8C7 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
@@ -250,6 +254,8 @@
 		2B322ABF10D399120089DD2B /* widgets */ = {
 			isa = PBXGroup;
 			children = (
+				2B322B6E10D3D8980089DD2B /* m_range_widget.cpp */,
+				2B322B5710D3D7310089DD2B /* m_pad.cpp */,
 				2B322AE510D3BA950089DD2B /* m_pad_thumb.h */,
 				2B322AE610D3BA950089DD2B /* m_pad.h */,
 				2B322AE710D3BA950089DD2B /* m_range_widget.h */,
@@ -332,6 +338,8 @@
 				2B322AC810D399120089DD2B /* m_object_proxy.cpp in Sources */,
 				2B322AC910D399120089DD2B /* proxy_view.cpp in Sources */,
 				2B322ACA10D399120089DD2B /* m_look_and_feel.cpp in Sources */,
+				2B322B5810D3D7310089DD2B /* m_pad.cpp in Sources */,
+				2B322B6F10D3D8980089DD2B /* m_range_widget.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

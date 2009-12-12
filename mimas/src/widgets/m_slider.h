@@ -20,8 +20,8 @@ public:
     setComponentProperty(T("RemoteValue"), value);
   }
 
-  virtual void set_value(Real value) {
-    setValue(value, false);
+  virtual void handle_value_change(const Value &value) {
+    setValue(value.r, false);
   }
 
   virtual void redraw() {
