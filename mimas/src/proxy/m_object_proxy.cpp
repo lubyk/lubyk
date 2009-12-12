@@ -1,28 +1,26 @@
 #include "mimas.h"
 #include "m_object_proxy.h"
 
-#include <iostream>
+#include <list>
 
-ObservableSlider *MObjectProxy::build_slider() {
-  ObservableSlider *slider = new ObservableSlider(String(name_.c_str()));
+void MObjectProxy::connect(MRangeWidget *widget) {
   if (is_connected()) {
-    slider->setRange(type()[1].r, type()[2].r);
+    widget->set_range(type()[1].r, type()[2].r);
   } else {
-    slider->setEnabled(false);
+    widget->set_enabled(false);
   }
-  observe(slider);
-  return slider;
+  range_widgets_.push_back(widget);
+  widget->set_proxy(this);
 }
 
 void MObjectProxy::type_changed() {
   if (type().type_id() == H("fffss")) {
     MessageManagerLock mml;
     // RangeIO
-    std::list<ObservableSlider*>::iterator it, end = sliders_.end();
-    for (it = sliders_.begin(); it != end; ++it) {
-      std::cout << *it << "\n";
-      (*it)->setEnabled(true);
-      (*it)->setRange(type()[1].r, type()[2].r);
+    std::list<MRangeWidget*>::iterator it, end = range_widgets_.end();
+    for (it = range_widgets_.begin(); it != end; ++it) {
+      (*it)->set_enabled(true);
+      (*it)->set_range(type()[1].r, type()[2].r);
     }
   }
 }

@@ -1,6 +1,7 @@
 #include "mimas.h"
 #include "object_proxy_tree_item.h"
 #include "m_object_proxy.h"
+#include "m_slider.h"
 
 ObjectProxyTreeItem::ObjectProxyTreeItem(MObjectProxy *object) : subnodes_added_(false) {
   set_and_hold(&object_proxy_, object);
@@ -27,10 +28,11 @@ bool ObjectProxyTreeItem::mightContainSubItems() {
 Component *ObjectProxyTreeItem::createItemComponent() {
   Value type = object_proxy_->type();
   if (type.type_id() == H("fffss")) {
-    ObservableSlider *slider;
+    MSlider *slider;
     Component *component = new Component;
     for(int i = 0; i < 2; ++i) {
-      slider = object_proxy_->build_slider();
+      slider = new MSlider(String(object_proxy_->url().c_str()));
+      object_proxy_->connect(slider);
       slider->setBounds (100 + i * 250, 2, 250, 20);
       slider->setSliderStyle(i == 0 ? Slider::LinearHorizontal : Slider::Rotary);
       slider->setTextBoxStyle(Slider::TextBoxLeft, false, 80, 20);

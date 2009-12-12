@@ -5,34 +5,21 @@
 #include "oscit/tobservable_list.h"
 
 #include "object_proxy_tree_item.h"
-#include "m_slider.h"
+#include "m_range_widget.h"
 
-
-class MObjectProxy : public ObjectProxy, public SliderListener {
+class MObjectProxy : public ObjectProxy {
 public:
   /** Class signature. */
   TYPED("Object.ObjectProxy.MObjectProxy")
 
-  MObjectProxy(const std::string &name, const Value &type) : ObjectProxy(name, type), sliders_(this) {
+  MObjectProxy(const std::string &name, const Value &type)
+      : ObjectProxy(name, type),
+        range_widgets_(this) {
     set_and_hold(&tree_view_item_, new ObjectProxyTreeItem(this));
   }
 
   ObjectProxyTreeItem *object_proxy_view() { // FIXME: how to keep constness ok here ?
     return tree_view_item_;
-  }
-
-  void observe(ObservableSlider *slider) {
-    sliders_.push_back(slider);
-    slider->addListener(this);
-  }
-
-  virtual void sliderValueChanged (Slider *slider) {
-    // user slider being dragged
-    set_value(Value(slider->getValue()));
-  }
-
-  virtual void 	sliderDragEnded (Slider *slider) {
-    slider->setComponentProperty(T("LastDrag"), (int)time_ref_.elapsed());
   }
 
   virtual void observer_lock() {
@@ -48,16 +35,18 @@ public:
     MessageManagerLock mml;
     String remote_value("RemoteValue");
     if (value_.is_real()) {
-      std::list<ObservableSlider*>::iterator it, end = sliders_.end();
-      for (it = sliders_.begin(); it != end; ++it) {
-        (*it)->setComponentProperty(remote_value, value_.r);
-        if ((*it)->getThumbBeingDragged() == -1) {
-          int last = (*it)->getComponentPropertyDouble(T("LastDrag"), false);
+      std::list<MRangeWidget*>::iterator it, end = range_widgets_.end();
+      for (it = range_widgets_.begin(); it != end; ++it) {
+        (*it)->set_remote_value(value_.r);
+        std::cout << url() << ": " << (*it)->is_dragged() << ": " << value_ << "\n";
+        if (!(*it)->is_dragged()) {
+          int last = (*it)->last_drag();
+            std::cout << url() << ": " << last << " < " << time_ref_.elapsed() - 2 * latency_ << "\n";
           // no dragging
           if (last < time_ref_.elapsed() - 2 * latency_) {
-            (*it)->setValue(value_.r, false);
+            (*it)->set_value(value_.r);
           } else {
-            (*it)->repaint();
+            (*it)->redraw();
           }
         }
       }
@@ -68,11 +57,11 @@ public:
    */
   virtual void type_changed();
 
-  ObservableSlider *build_slider();
+  void connect(MRangeWidget *widget);
 
 private:
   MessageManagerLock *mml_;
-  TObservableList<ObservableSlider *> sliders_;
+  TObservableList<MRangeWidget *> range_widgets_;
   ObjectProxyTreeItem *tree_view_item_;
 };
 

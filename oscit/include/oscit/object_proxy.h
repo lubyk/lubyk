@@ -109,6 +109,9 @@ public:
    */
   virtual Object *build_child(const std::string &name, Value *error);
 
+  TimeRef &time_ref() {
+    return time_ref_;
+  }
 protected:
 
 
