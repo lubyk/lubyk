@@ -22,4 +22,8 @@ void MPadRange::set_scaled_value(Real position, Real range) {
   proxy_->set_value(value_);
 }
 
+void MPadRange::stop_drag() {
+  last_drag_ = proxy_->time_ref().elapsed();
+}
+
 /** ================ Pad ============ */

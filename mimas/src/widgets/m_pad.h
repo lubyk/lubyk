@@ -51,6 +51,8 @@ public:
     return remote_value_ * range / (max_ - min_);
   }
 
+  void stop_drag();
+
 private:
   friend class MPad;
   MPad *pad_;
@@ -84,6 +86,15 @@ public:
 
   virtual void mouseUp(const MouseEvent &e) {
     dragged_ = false;
+    range_x_.stop_drag();
+    range_y_.stop_drag();
+  }
+
+  virtual void mouseDown(const MouseEvent &e) {
+    dragged_ = true;
+    range_x_.set_scaled_value(e.x, getWidth());
+    range_y_.set_scaled_value(getHeight() - e.y, getHeight());
+    repaint();
   }
 
   MRangeWidget *range_x() {
@@ -101,14 +112,16 @@ public:
 
     g.fillAll(Colours::grey);
 
-    // remote_value_
-    pos_x = range_x_.scaled_remote_value(getWidth()) - radius;
-    pos_y = getHeight() - range_y_.scaled_remote_value(getHeight()) - radius;
-    g.setColour(Colours::lightgrey);
-    g.fillEllipse(pos_x, pos_y, 2*radius, 2*radius);
+    if (abs(range_x_.value_.r - range_x_.remote_value_) + abs(range_y_.value_.r - range_y_.remote_value_) > 4 * radius) {
+      // remote_value_
+      pos_x = range_x_.scaled_remote_value(getWidth()) - radius;
+      pos_y = getHeight() - range_y_.scaled_remote_value(getHeight()) - radius;
+      g.setColour(Colours::lightgrey);
+      g.fillEllipse(pos_x, pos_y, 2*radius, 2*radius);
 
-    g.setColour(Colours::darkgrey);
-    g.drawEllipse(pos_x, pos_y, 2*radius, 2*radius, 2.0f);
+      g.setColour(Colours::darkgrey);
+      g.drawEllipse(pos_x, pos_y, 2*radius, 2*radius, 2.0f);
+    }
 
     // value_
     pos_x = range_x_.scaled_value(getWidth())  - radius;

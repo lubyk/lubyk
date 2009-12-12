@@ -41,12 +41,12 @@ public:
         std::cout << url() << ": " << (*it)->is_dragged() << ": " << value_ << "\n";
         if (!(*it)->is_dragged()) {
           int last = (*it)->last_drag();
-            std::cout << url() << ": " << last << " < " << time_ref_.elapsed() - 2 * latency_ << "\n";
           // no dragging
-          if (last < time_ref_.elapsed() - 2 * latency_) {
-            (*it)->handle_value_change(value_);
-          } else {
+          if (last + (3 * latency_) > time_ref_.elapsed()) {
+            // we just dropped the widget, keep 'ghost'.
             (*it)->redraw();
+          } else {
+            (*it)->handle_value_change(value_);
           }
         }
       }
