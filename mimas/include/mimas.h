@@ -4,7 +4,7 @@
 #include "juce_AppConfig.h"
 
 // And this includes all the juce headers..
-#include "../../src/lib/juce/juce_amalgamated.h"
+#include "../lib/juce/juce_amalgamated.h"
 
 // ======================= /JUCE STUFF =======================
 

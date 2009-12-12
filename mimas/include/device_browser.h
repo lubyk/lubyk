@@ -17,6 +17,7 @@ public:
     DeviceProxy *device = TYPE_CAST(DeviceProxy, proxy);
     assert(device);
     MessageManagerLock mml;
+    ScopedAutoReleasePool pool;
     device_browser_root_.addSubItem(device->tree_view_item());
   }
 
