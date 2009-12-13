@@ -1,5 +1,8 @@
 #ifndef OSCIT_INCLUDE_OSCIT_BASE_COMMAND_H_
 #define OSCIT_INCLUDE_OSCIT_BASE_COMMAND_H_
+
+#include <stdint.h>
+
 #include "oscit/thread.h"
 #include "oscit/url.h"
 #include "oscit/thash.h"

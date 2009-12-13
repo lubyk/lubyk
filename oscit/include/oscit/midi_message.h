@@ -1,5 +1,6 @@
 #ifndef OSCIT_INCLUDE_OSCIT_MIDI_MESSAGE_H_
 #define OSCIT_INCLUDE_OSCIT_MIDI_MESSAGE_H_
+
 #include <vector>
 #include <iostream>
 
@@ -65,7 +66,7 @@ class MidiMessage : public ReferenceCounted {
           type_ = CtrlChange;
           data_ = message;
         } else {
-          fprintf(stderr, "unknown message type %i.\n", (int)channel);
+          std::cerr << "unknown message type " << channel << ".\n";
           return false;
         }
     }
@@ -138,7 +139,7 @@ class MidiMessage : public ReferenceCounted {
     } else if (type_ == CtrlChange) {
       data_[0] = 0xB0 + channel;
     } else {
-      fprintf(stderr, "set channel for type %i not implemented yet.\n", type_);
+      std::cerr << "Set channel for type " << type_ << " is not implemented yet.\n";
     }
   }
 
@@ -180,7 +181,7 @@ class MidiMessage : public ReferenceCounted {
     } else if (type_ == CtrlChange) {
       return data_[0] - 0xB0 + 1;
     } else {
-      fprintf(stderr, "get channel for type %i not implemented yet.\n", type_);
+      std::cerr << "Get channel for type " << type_ << " not implemented yet.\n";
       return 0;
     }
   }
