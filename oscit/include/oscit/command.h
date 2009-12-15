@@ -96,13 +96,11 @@ class Command : public Thread
     return root_proxies_vector_.size();
   }
 
+  /** Return the root proxy located at a specific index.
+   */
   RootProxy *root_proxy_at_index(size_t index) {
     if (index >= root_proxies_vector_.size()) return NULL;
     return root_proxies_vector_[index];
-  }
-
-  THash<Location, RootProxy*> &root_proxies() {
-    return root_proxies_;
   }
 
  protected:

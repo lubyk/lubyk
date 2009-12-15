@@ -74,6 +74,12 @@ void Object::unregister_alias(Alias *alias) {
 /** Free the child from the list of children. */
 void Object::unregister_child(Object *object) {
   children_.remove_element(object);
+  std::vector<Object*>::iterator it, end = children_vector_.end();
+  for(it = children_vector_.begin(); it != end; ++it) {
+    if (*it == object) {
+      it = children_vector_.erase(it);
+    }
+  }
 }
 
 void Object::moved() {
@@ -113,6 +119,7 @@ void Object::register_child(Object *object) {
 
   // 3. add to dictionary with new name
   children_.set(object->name_, object);
+  children_vector_.push_back(object);
 }
 
 void Object::set_root(Root *root) {

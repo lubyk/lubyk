@@ -267,7 +267,7 @@ class Object : public Typed, public Observable {
   /** Return first child.
    */
   Object *first_child() {
-    return children_.size() > 0 ? child(children_.keys().front()) : NULL;
+    return child_at_index(0);
   }
 
   /** Return the direct child named 'name'.
@@ -279,6 +279,19 @@ class Object : public Typed, public Observable {
     } else {
       return NULL;
     }
+  }
+  
+  /** Return the number of children objects.
+   */
+  size_t children_count() {
+    return children_vector_.size();
+  }
+
+  /** Return the object located at a specific index.
+   */
+  Object *child_at_index(size_t index) {
+    if (index >= children_vector_.size()) return NULL;
+    return children_vector_[index];
   }
 
   Object *parent() {
@@ -399,6 +412,10 @@ class Object : public Typed, public Observable {
    *  their parent by calling 'unregister_child'.
    */
   THash<std::string, Object *> children_;
+
+  /** List of children as a vector for faster enumeration type of access.
+   */
+  std::vector<Object*> children_vector_;
 
   /** Unique name in parent's context.
    */

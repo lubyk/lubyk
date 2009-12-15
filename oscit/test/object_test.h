@@ -8,21 +8,21 @@ public:
     DummyObject a("a", 1);
     assert_equal("a", a.name());
   }
-  
+
   void test_rename( void ) {
     Object base;
     Object * foo = base.adopt(new Object("foo"));
     Object * bar = foo->adopt(new Object("bar"));
-    
+
     assert_equal("/foo"    , foo->url() );
     assert_equal("/foo/bar", bar->url() );
-    
+
     foo->set_name("super");
-    
+
     assert_equal("/super"    , foo->url() );
     assert_equal("/super/bar", bar->url() );
   }
-  
+
   void test_child( void ) {
     Object base;
     Object * one = base.adopt(new Object("one")); // This is the prefered way of creating sub-objects.
@@ -39,51 +39,51 @@ public:
     assert_equal((Object*)NULL, base.child("one"));
     assert_equal(one, base.child("foo"));
   }
-  
+
   void test_first_child( void ) {
     Object base("base");
     Object * one = base.adopt(new Object("one"));
     Object * two = base.adopt(new Object("aaa"));
-    
+
     assert_equal(one, base.first_child());
-    
+
     delete one;
     assert_equal(two, base.first_child());
   }
-  
+
   void test_set_parent_same_name_as_sibling( void ) {
     Object base;
     Object * child1 = new Object("foo");
     Object * child2 = new Object("bar");
     Object * child3 = new Object("foo");
-    
+
     assert_equal(""   , base.url()    );
     assert_equal("foo", child1->url() );
     assert_equal("bar", child2->url() );
     assert_equal("foo", child3->url() );
-    
+
     child1->set_parent(&base);
-    
+
     assert_equal(""    , base.url()    );
     assert_equal("/foo", child1->url() );
     assert_equal("bar" , child2->url() );
     assert_equal("foo" , child3->url() );
-    
+
     child2->set_parent(child1);
-    
+
     assert_equal(""        , base.url()    );
     assert_equal("/foo"    , child1->url() );
     assert_equal("/foo/bar", child2->url() );
     assert_equal("foo"     , child3->url() );
-    
+
     child3->set_parent(&base);
-    
+
     assert_equal(""        , base.url()    );
     assert_equal("/foo"    , child1->url() );
     assert_equal("/foo/bar", child2->url() );
     assert_equal("/foo-1"  , child3->url() );
   }
-  
+
   void test_build_child( void ) {
     Value error;
     Object base;
@@ -94,7 +94,7 @@ public:
     assert_true( foo != NULL );
     assert_equal("/dummy/special", foo->url());
   }
-  
+
   void test_call_set_method( void ) {
     Object base;
     DummyObject * one = base.adopt(new DummyObject("one", 123.0));
@@ -106,7 +106,7 @@ public:
     assert_equal(10.0, one->real());
     assert_equal(22.22, two->real());
   }
-  
+
   void test_call_set_method_return_bool( void ) {
     Object base;
     DummyObject * one = base.adopt(new DummyObject("one", 123.0));
@@ -125,7 +125,7 @@ public:
     assert_equal("Hs", hash.type().type_tag());
     assert_equal("Ms", matr.type().type_tag());
   }
-  
+
   void test_list_with_type( void ) {
     Object base;
     base.adopt(new DummyObject("mode", "rgb", SelectIO("rgb, yuv", "color mode", "This is a menu.")));
@@ -135,7 +135,28 @@ public:
     assert_equal("mode", res[0][0].str());
     assert_equal("tint", res[1][0].str());
   }
-  
+
+  void test_should_find_child_from_position( void ) {
+    Object base("base");
+    Object * one = base.adopt(new Object("one"));
+    assert_equal(1, base.children_count());
+    Object * two = base.adopt(new Object("aaa"));
+    assert_equal(2, base.children_count());
+
+    assert_equal(one, base.child_at_index(0));
+    assert_equal(two, base.child_at_index(1));
+
+    delete one;
+    assert_equal(1, base.children_count());
+    assert_equal(two, base.child_at_index(0));
+    assert_equal((RootProxy *)NULL, base.child_at_index(1));
+
+    delete two;
+    assert_equal(0, base.children_count());
+    assert_equal((RootProxy *)NULL, base.child_at_index(0));
+  }
+
+
   // set_type is not a good idea. It should be immutable (or maybe I'm wrong, so I leave the test here)
   //void test_set_type( void ) {
   //  DummyObject one("one", 123.0);
@@ -145,7 +166,7 @@ public:
   //  assert_equal(127.0, one.type()[2].r); // max
   //  assert_equal("lux", one.type()[3].str()); // unit
   //  assert_equal(DUMMY_OBJECT_INFO, one.type()[4].str()); // info
-  //  
+  //
   //  Value type(TypeTag("fss"));
   //  assert_false(one.set_type(type));
   //  assert_equal("fffss", one.type().type_tag());
