@@ -5,14 +5,18 @@
 #include "oscit/proxy_factory.h"
 #include "oscit/root_proxy.h"
 #include "oscit/object_proxy.h"
+#include "oscit/location.h"
+
+using namespace oscit;
 
 @interface NetServiceDelegate : NSObject {
   oscit::ZeroConfBrowser *master_;
   NSNetServiceBrowser *browser_;
   bool running_;
+  NSString *protocol_;
 }
 
-- (id)initWithDelegate:(oscit::ZeroConfBrowser *)master serviceType:(const char *)service_type;
+- (id)initWithDelegate:(oscit::ZeroConfBrowser *)master serviceType:(const char *)service_type protocol:(const char *)protocol;
 - (void)stop;
 // NSNetServiceBrowser delegate methods
 - (void)netServiceBrowserWillSearch:(NSNetServiceBrowser *)browser;
@@ -27,10 +31,13 @@
 @end
 
 @implementation NetServiceDelegate
-- (id)initWithDelegate:(oscit::ZeroConfBrowser *)master serviceType:(const char *)service_type {
-    if (self = [super init]) {
-    master_  = master;
-    browser_ = [[NSNetServiceBrowser alloc] init];
+- (id)initWithDelegate:(oscit::ZeroConfBrowser *)master
+        serviceType:(const char *)service_type
+        protocol:(const char *)protocol {
+  if (self = [super init]) {
+    protocol_ = [NSString stringWithCString:protocol encoding:NSUTF8StringEncoding];
+    master_   = master;
+    browser_  = [[NSNetServiceBrowser alloc] init];
     [browser_ setDelegate:self];
     [browser_ searchForServicesOfType:[NSString stringWithCString:service_type encoding:NSUTF8StringEncoding] inDomain:@""];
     running_ = YES;
@@ -58,19 +65,18 @@
 }
 
 - (void)netServiceWillResolve:(NSNetService *)service {
-  NSLog(@"Going to resolve %@\n", [service name]);
+  // NSLog(@"Going to resolve %@\n", [service name]);
 }
 
 - (void)netServiceDidResolveAddress:(NSNetService *)service {
-  NSLog(@"\n\nResolved: %@ in %@:%i addresses: %i\n", [service name], [service hostName], [service port], [[service addresses] count]);
-  //[[service hostName] UTF8String]
+  //NSLog(@"\n\nResolved: %@ in %@:%i addresses: %i\n", [service name], [service hostName], [service port], [[service addresses] count]);
 
   master_->add_device(Location(
-                        master_->protocol_.c_str(),
-                        [[service name] UTF8String],
-                        Location::ANY_IP, // FIXME: get IP !
-                        [service port]
-                        ));
+                          [protocol_ UTF8String],
+                          [[service name] UTF8String],
+                          [[service hostName] UTF8String],
+                          [service port]
+                          ));
 }
 
 - (void)netService:(NSNetService *)service didNotResolve:(NSDictionary *)errorDict {
@@ -85,7 +91,7 @@
 }
 
 - (void)netServiceBrowser:(NSNetServiceBrowser *)browser didRemoveService:(NSNetService *)aNetService moreComing:(BOOL)moreComing {
-  master_->remove_device( [[aNetService name] UTF8String], moreComing);
+  master_->remove_device( [[aNetService name] UTF8String]);
 }
 
 -(BOOL) respondsToSelector:(SEL)selector {
@@ -106,7 +112,7 @@ namespace oscit {
 class ZeroConfBrowser::Implementation {
 public:
   Implementation(ZeroConfBrowser *master) {
-    delegate_ = [[NetServiceDelegate alloc] initWithDelegate:master serviceType:master->service_type_.c_str()];
+    delegate_ = [[NetServiceDelegate alloc] initWithDelegate:master serviceType:master->service_type_.c_str() protocol:master->protocol_.c_str()];
   }
 
   ~Implementation() {
@@ -120,7 +126,7 @@ public:
   NetServiceDelegate *delegate_;
 };
 
-ZeroConfBrowser::ZeroConfBrowser(const char *service_type) : 
+ZeroConfBrowser::ZeroConfBrowser(const char *service_type) :
                   service_type_(service_type),
                   command_(NULL),
                   proxy_factory_(NULL),

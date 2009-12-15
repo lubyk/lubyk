@@ -40,6 +40,12 @@ class ZeroConfBrowser : public Mutex {
 
   bool get_location_from_name(const char *service_name, Location *location) const;
 
+  /** @internal. */
+  void add_device(const Location &location);
+
+  /** @internal. */
+  void remove_device(const char *name);
+
  protected:
   /** This method *must* be called from sub-classes in their destructors to
    * make sure the callbacks (add_device, remove_device) are not called in the
@@ -48,10 +54,6 @@ class ZeroConfBrowser : public Mutex {
   virtual void stop();
 
   void get_protocol_from_service_type();
-
-  void add_device(const Location &location);
-
-  void remove_device(const char *name);
 
   void add_proxy(const Location &location);
 
