@@ -172,10 +172,17 @@ void Command::register_proxy(RootProxy *proxy) {
 
   // 2. add to dictionary
   root_proxies_.set(proxy->remote_location(), proxy);
+  root_proxies_vector_.push_back(proxy);
 }
 
 void Command::unregister_proxy(RootProxy *proxy) {
   root_proxies_.remove_element(proxy);
+  std::vector<RootProxy*>::iterator it, end = root_proxies_vector_.end();
+  for(it = root_proxies_vector_.begin(); it != end; ++it) {
+    if (*it == proxy) {
+      it = root_proxies_vector_.erase(it);
+    }
+  }
 }
 
 RootProxy *Command::find_proxy(const Location &location) {

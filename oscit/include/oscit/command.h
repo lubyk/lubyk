@@ -2,6 +2,7 @@
 #define OSCIT_INCLUDE_OSCIT_BASE_COMMAND_H_
 
 #include <stdint.h>
+#include <vector>
 
 #include "oscit/thread.h"
 #include "oscit/url.h"
@@ -88,6 +89,21 @@ class Command : public Thread
   }
 
   RootProxy *find_proxy(const Location &location);
+
+  /** Return the number of root proxies registered for this command.
+   */
+  size_t root_proxies_count() {
+    return root_proxies_vector_.size();
+  }
+
+  RootProxy *root_proxy_at_index(size_t index) {
+    if (index >= root_proxies_vector_.size()) return NULL;
+    return root_proxies_vector_[index];
+  }
+
+  THash<Location, RootProxy*> &root_proxies() {
+    return root_proxies_;
+  }
 
  protected:
   friend class Root;       // set_root
@@ -188,6 +204,11 @@ class Command : public Thread
    *  by the IP endpoint (origin of the message).
    */
   THash<Location, RootProxy*> root_proxies_;
+
+  /** Maintain a list of registered root proxies in a vector to keep them ordered and provide
+   * faster access to elements by index (used by GUI).
+   */
+  std::vector<RootProxy*> root_proxies_vector_;
 
   /** List of satellites that have registered to get return values.
    */

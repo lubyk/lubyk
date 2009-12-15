@@ -94,6 +94,20 @@ public:
     assert_equal(proxy, found);
   }
 
+  void test_should_find_proxy_from_position( void ) {
+    Logger logger;
+    CommandLogger cmd(&logger);
+    Location remote("oscit", "my place");
+    Location remote2("oscit", "my place2");
+    RootProxy *proxy = cmd.adopt_proxy(new RootProxy(remote));
+    assert_equal(1, cmd.root_proxies_count());
+    assert_equal(proxy, cmd.root_proxy_at_index(0));
+    assert_equal((RootProxy *)NULL, cmd.root_proxy_at_index(1));
+    delete proxy;
+    assert_equal(0, cmd.root_proxies_count());
+    assert_equal((RootProxy *)NULL, cmd.root_proxy_at_index(0));
+  }
+
   void test_should_not_find_proxy_from_location_after_proxy_deletion( void ) {
     Logger logger;
     CommandLogger cmd(&logger);
