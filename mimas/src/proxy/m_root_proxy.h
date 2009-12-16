@@ -5,6 +5,9 @@
 
 class MRootProxy : public RootProxy {
 public:
+  /** Class signature. */
+  TYPED("Object.Root.RootProxy.MRootProxy")
+
   MRootProxy(const Location &endpoint) : RootProxy(endpoint) {
     set_and_hold(&tree_view_item_, new RootProxyTreeItem(this));
   }

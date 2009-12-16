@@ -66,7 +66,7 @@ void MainComponent::paint(Graphics& g) {
 void MainComponent::resized() {
     device_browser_->setBounds (10, 10, getWidth() - 10, getHeight() - 250);
     quitButton->setBounds (getWidth() - 176, getHeight() - 60, 120, 32);
-    main_view_->setBounds (10, getHeight() - 250, getWidth() - 20, 240);
+    main_view_->setBounds (10, getHeight() - 250, getWidth() - 20, 200);
 }
 
 void MainComponent::buttonClicked(Button* buttonThatWasClicked) {
