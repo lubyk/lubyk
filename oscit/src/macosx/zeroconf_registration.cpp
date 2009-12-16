@@ -25,6 +25,11 @@ typedef	int	pid_t;
 
 namespace oscit {
 
+static void registration_cleanup(void *data) {
+  DNSServiceRef *service = (DNSServiceRef*)data;
+  DNSServiceRefDeallocate(*service);
+}
+
 // Note: the select() implementation on Windows (Winsock2)
 //       fails with any timeout much larger than this
 #define LONG_TIME 100000000
@@ -88,7 +93,9 @@ public:
       (void*)master_);         // context
 
     if (error == kDNSServiceErr_NoError) {
-      register_service(service);
+      pthread_cleanup_push(registration_cleanup, &service);
+        register_service(service);
+      pthread_cleanup_pop(0); // 0 = do not execute on pop
     } else {
       fprintf(stderr,"Could not register service %s.%s on port %u (error %d)\n", master_->name_.c_str(), master_->service_type_.c_str(), master_->port_, error);//, strerror(errno));
     }

@@ -110,7 +110,8 @@ class Thread : public Mutex
     if (!thread_id_) return;  // not running
     assert(!pthread_equal(thread_id_, pthread_self()));
 
-    pthread_kill(thread_id_, SIGTERM);
+    // pthread_kill(thread_id_, SIGTERM);
+    pthread_cancel(thread_id_);
     pthread_join(thread_id_, NULL);
     thread_id_ = NULL;
   }
@@ -189,6 +190,9 @@ class Thread : public Mutex
 
     signal(SIGTERM, terminate); // register a SIGTERM handler
     signal(SIGINT,  terminate);
+    pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
+    // removing comment below = force cancelation to occur NOW, whatever the program is doing.
+    // pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 
     thread->should_run_ = true;
 
@@ -206,6 +210,8 @@ class Thread : public Mutex
 
     signal(SIGTERM, terminate); // register a SIGTERM handler
     signal(SIGINT,  terminate);
+    pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
+    //pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 
     T *owner = (T*)thread->owner_;
     thread->should_run_ = true;
