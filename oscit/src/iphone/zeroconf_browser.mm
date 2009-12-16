@@ -13,7 +13,7 @@ using namespace oscit;
   oscit::ZeroConfBrowser *master_;
   NSNetServiceBrowser *browser_;
   bool running_;
-  NSString *protocol_;
+  std::string protocol_;
 }
 
 - (id)initWithDelegate:(oscit::ZeroConfBrowser *)master serviceType:(const char *)service_type protocol:(const char *)protocol;
@@ -35,7 +35,7 @@ using namespace oscit;
         serviceType:(const char *)service_type
         protocol:(const char *)protocol {
   if (self = [super init]) {
-    protocol_ = [NSString stringWithCString:protocol encoding:NSUTF8StringEncoding];
+    protocol_ = protocol;
     master_   = master;
     browser_  = [[NSNetServiceBrowser alloc] init];
     [browser_ setDelegate:self];
@@ -65,18 +65,22 @@ using namespace oscit;
 }
 
 - (void)netServiceWillResolve:(NSNetService *)service {
-  // NSLog(@"Going to resolve %@\n", [service name]);
+  NSLog(@"Going to resolve %@\n", [service name]);
 }
 
 - (void)netServiceDidResolveAddress:(NSNetService *)service {
-  //NSLog(@"\n\nResolved: %@ in %@:%i addresses: %i\n", [service name], [service hostName], [service port], [[service addresses] count]);
+  NSLog(@"\n\nResolved: %@ in %@:%i addresses: %i\n", [service name], [service hostName], [service port], [[service addresses] count]);
 
+  NSLog(@"master: %p\n", master_);
   master_->add_device(Location(
-                          [protocol_ UTF8String],
+                          protocol_.c_str(),
                           [[service name] UTF8String],
                           [[service hostName] UTF8String],
                           [service port]
                           ));
+
+  NSLog(@"device added.\n");
+  [service release];
 }
 
 - (void)netService:(NSNetService *)service didNotResolve:(NSDictionary *)errorDict {
@@ -86,6 +90,7 @@ using namespace oscit;
 
 - (void)netServiceBrowser:(NSNetServiceBrowser *)browser didFindService:(NSNetService *)service moreComing:(BOOL)moreComing {
   NSLog(@"\n\nFound: %@ in %@:%i addresses: %i\n", [service name], [service hostName], [service port], [[service addresses] count]);
+  [service retain];
   [service setDelegate:self];
   [service resolveWithTimeout:0.0];
 }
@@ -132,6 +137,7 @@ ZeroConfBrowser::ZeroConfBrowser(const char *service_type) :
                   proxy_factory_(NULL),
                   found_devices_(FOUND_DEVICE_HASH_SIZE) {
   get_protocol_from_service_type();
+  NSLog(@"master: %p\n", this);
   impl_ = new ZeroConfBrowser::Implementation(this);
 }
 

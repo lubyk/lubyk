@@ -21,13 +21,13 @@ public:
     device_browser_root_.addSubItem(device->tree_view_item());
   }
 
-  virtual void removing_proxy(RootProxy *proxy) {
+  virtual void removed_proxy(RootProxy *proxy) {
     // find position in tree
     MRootProxy *device = TYPE_CAST(MRootProxy, proxy);
     int index = device_browser_root_.get_item_position(device->tree_view_item());
     MessageManagerLock mml;
     if (index >= 0) device_browser_root_.removeSubItem(index); // do not delete, this will be done by ~MRootProxy
-    std::cout << "removing_proxy " << index << " " << proxy << " " << proxy->remote_location() << "\n";
+    std::cout << "removed_proxy " << index << " " << proxy << " " << proxy->remote_location() << "\n";
   }
 
 private:

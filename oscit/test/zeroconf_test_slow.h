@@ -18,7 +18,7 @@ public:
     stream_ << "[+ " << proxy->remote_location() << "]";
   }
 
-  virtual void removing_proxy(RootProxy *proxy) {
+  virtual void removed_proxy(RootProxy *proxy) {
     stream_ << "[- " << proxy->remote_location() << "]";
   }
 

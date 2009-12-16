@@ -29,11 +29,13 @@ void ZeroConfBrowser::add_proxy(const Location &location) {
       RootProxy *proxy = NULL;
       if (proxy_factory_) {
         proxy = command_->adopt_proxy(proxy_factory_->build_and_init_root_proxy(location));
+      } else {
+        std::cerr << "Cannot build proxy: proxy_factory_ is NULL\n";
       }
       if (proxy) added_proxy(proxy);
     }
   } else {
-    fprintf(stderr, "Cannot build proxy: command_ is NULL (%s:%i)", __FILE__, __LINE__);
+    std::cerr << "Cannot build proxy: command_ is NULL\n";
   }
 }
 
@@ -41,7 +43,8 @@ void ZeroConfBrowser::remove_proxy(const Location &location) {
   if (command_) {
     RootProxy *proxy = command_->find_proxy(location);
     if (proxy) {
-      removing_proxy(proxy);
+      proxy->detach();
+      removed_proxy(proxy);
       delete proxy;
     }
   }

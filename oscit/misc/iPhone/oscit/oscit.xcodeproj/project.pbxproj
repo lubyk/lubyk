@@ -183,6 +183,8 @@
 		2B5BCC5F10D7A40300AB2FBA /* PacketListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B5BCC5510D7A40300AB2FBA /* PacketListener.h */; };
 		2B5BCC6010D7A40300AB2FBA /* TimerListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B5BCC5610D7A40300AB2FBA /* TimerListener.h */; };
 		2B5BCC6110D7A40300AB2FBA /* UdpSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B5BCC5710D7A40300AB2FBA /* UdpSocket.h */; };
+		2B5D846510D8AB5800B4CC3F /* location.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B5D846410D8AB5800B4CC3F /* location.cpp */; };
+		2B5D846610D8AB5800B4CC3F /* location.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B5D846410D8AB5800B4CC3F /* location.cpp */; };
 		2BE4B2DA102ECC9C008D730E /* cxalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B268607102D7642001D8112 /* cxalloc.cpp */; };
 		2BE4B2DB102ECC9C008D730E /* cxsystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B26860D102D7642001D8112 /* cxsystem.cpp */; };
 		2BE4B2DC102ECC9C008D730E /* command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B268685102D768A001D8112 /* command.cpp */; };
@@ -400,6 +402,7 @@
 		2B5BCC5510D7A40300AB2FBA /* PacketListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PacketListener.h; path = ../../../oscpack/ip/PacketListener.h; sourceTree = SOURCE_ROOT; };
 		2B5BCC5610D7A40300AB2FBA /* TimerListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TimerListener.h; path = ../../../oscpack/ip/TimerListener.h; sourceTree = SOURCE_ROOT; };
 		2B5BCC5710D7A40300AB2FBA /* UdpSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UdpSocket.h; path = ../../../oscpack/ip/UdpSocket.h; sourceTree = SOURCE_ROOT; };
+		2B5D846410D8AB5800B4CC3F /* location.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = location.cpp; path = ../../../src/macosx/location.cpp; sourceTree = SOURCE_ROOT; };
 		2BE4B2D2102ECC23008D730E /* liboscit_sim.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = liboscit_sim.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BE4B35C102ED635008D730E /* zeroconf_browser.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = zeroconf_browser.mm; path = ../../../src/iphone/zeroconf_browser.mm; sourceTree = SOURCE_ROOT; };
 		AA747D9E0F9514B9006C5449 /* oscit_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = oscit_Prefix.pch; sourceTree = SOURCE_ROOT; };
@@ -579,6 +582,7 @@
 		2B26869F102D7699001D8112 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				2B5D846410D8AB5800B4CC3F /* location.cpp */,
 				2B5BCBC010D7A31B00AB2FBA /* callback_list.cpp */,
 				2B5BCBC110D7A31B00AB2FBA /* callback.cpp */,
 				2B5BCBC210D7A31B00AB2FBA /* file.cpp */,
@@ -979,6 +983,7 @@
 				2B5BCC2C10D7A39800AB2FBA /* IpEndpointName.cpp in Sources */,
 				2B5BCC3310D7A3B000AB2FBA /* NetworkingUtils.cpp in Sources */,
 				2B5BCC3410D7A3B000AB2FBA /* UdpSocket.cpp in Sources */,
+				2B5D846610D8AB5800B4CC3F /* location.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1019,6 +1024,7 @@
 				2B5BCC2B10D7A39800AB2FBA /* IpEndpointName.cpp in Sources */,
 				2B5BCC3110D7A3B000AB2FBA /* NetworkingUtils.cpp in Sources */,
 				2B5BCC3210D7A3B000AB2FBA /* UdpSocket.cpp in Sources */,
+				2B5D846510D8AB5800B4CC3F /* location.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1064,6 +1070,7 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = __macosx__;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
@@ -1082,6 +1089,7 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PREPROCESSOR_DEFINITIONS = __macosx__;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (

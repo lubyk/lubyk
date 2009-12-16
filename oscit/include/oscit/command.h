@@ -88,6 +88,8 @@ class Command : public Thread
     return proxy;
   }
 
+  /** Find a proxy from a given location.
+   */
   RootProxy *find_proxy(const Location &location);
 
   /** Return the number of root proxies registered for this command.

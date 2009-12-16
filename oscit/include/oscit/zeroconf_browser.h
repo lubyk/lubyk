@@ -28,7 +28,7 @@ class ZeroConfBrowser : public Mutex {
 
   /** This method is called just before the proxy is actually deleted.
    */
-  virtual void removing_proxy(RootProxy *proxy) {}
+  virtual void removed_proxy(RootProxy *proxy) {}
 
   template<class T>
   T *adopt_proxy_factory(T *factory) {
@@ -36,6 +36,8 @@ class ZeroConfBrowser : public Mutex {
     return factory;
   }
 
+  /** FIXME: make this internal and use command->adopt_browser
+   */
   void set_command(Command *command);
 
   bool get_location_from_name(const char *service_name, Location *location) const;

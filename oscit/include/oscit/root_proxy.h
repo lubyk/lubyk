@@ -36,7 +36,7 @@ public:
 
   virtual ~RootProxy() {
     // unregister from command_
-    set_command(NULL);
+    detach();
   }
 
   /** This method is used to send a message to the remote tree.
@@ -58,7 +58,7 @@ public:
 
   /** Returns the location of the original tree this proxy mirrors.
    */
-  const Location &remote_location() {
+  const Location &remote_location() const {
     return remote_location_;
   }
 
@@ -69,6 +69,15 @@ public:
 
   ProxyFactory *proxy_factory() {
     return proxy_factory_;
+  }
+
+  /** IF the RootProxy was adopted by a Command, this removes the link
+   * making it an orphan.
+   *
+   * Used by ZeroConfBrowser before deletion.
+   */
+  void detach() {
+    set_command(NULL);
   }
 
 private:
