@@ -110,7 +110,7 @@ class ProxyFactoryTest : public TestHelper
     build_foobar_local_and_remote(local, remote, factory, logger);
 
     Object *bar = proxy_->object_at("/bar");
-    Value res = bar->trigger(gNilValue, NULL);
+    Value res = bar->trigger(gNilValue);
     assert_equal("45", res.to_json());
 
     // should have same type as remote

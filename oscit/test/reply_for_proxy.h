@@ -9,7 +9,7 @@ class ReplyForwarder : public Object
 public:
   ReplyForwarder(const char * name) : Object(name, AnyIO("Forward replies to root proxies.")) {}
 
-  virtual const Value trigger(const Value &val, const Location *origin) {
+  virtual const Value trigger(const Value &val) {
     if (!origin) return gNilValue;
     RootProxy *proxy;
     // 1. find command from protocol

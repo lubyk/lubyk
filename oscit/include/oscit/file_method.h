@@ -29,7 +29,7 @@ public:
 
   /** Read/write to file. The file path was provided on the object's creation.
     */
-  virtual const Value trigger(const Value &val, const Location *origin) {
+  virtual const Value trigger(const Value &val) {
     if (!val.is_string()) return file_.read();
 
     if (!file_.write(val.str())) {

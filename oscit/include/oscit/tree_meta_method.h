@@ -13,12 +13,12 @@ public:
   TreeMetaMethod(const char *name)        : Object(name, StringIO("path", "Returns all children and sub-children under the given path")) {}
   TreeMetaMethod(const std::string &name) : Object(name, StringIO("path", "Returns all children and sub-children under the given path")) {}
 
-  virtual const Value trigger(const Value &path, const Location *origin) {
-    if (!path.is_string()) return gNilValue;
+  virtual const Value trigger(const Value &val) {
+    if (!val.is_string()) return gNilValue;
     ListValue tmp;
-    Object * target = root_->find_or_build_object_at(path.c_str(), &tmp);
+    Object * target = root_->find_or_build_object_at(val.c_str(), &tmp);
 
-    Value reply = path;
+    Value reply = val;
     if (target) {
       target->tree(target->url().length() + 1, &tmp);
     }

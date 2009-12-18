@@ -233,7 +233,7 @@ class Root : public Object
   inline const Value call(Object *target, const Value &val, const Location *origin, const Mutex *context = NULL) {
     if (val.is_empty()) return call(target, gNilValue, origin, context);
     if (target->can_receive(val)) {
-      return target->safe_trigger(val, origin, context);
+      return target->safe_trigger(val, context);
     } else {
       Value type = call(Url(origin, TYPE_PATH), Value(target->url()), context);
       return ErrorValue(BAD_REQUEST_ERROR, std::string("'").append(target->url()).append("' (").append(target->type().last().str()).append(")."));

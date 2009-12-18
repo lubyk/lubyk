@@ -130,21 +130,21 @@ class Object : public Typed, public Observable {
    * This is the method that should be used by objects when they are doing a
    * direct call.
    */
-  const Value safe_trigger(const Value &val, const Location *origin, const Mutex *caller_context) {
+  const Value safe_trigger(const Value &val, const Mutex *caller_context) {
     if (context_ && context_ != caller_context) {
       context_->lock();
-        Value res = trigger(val, origin);
+        Value res = trigger(val);
       context_->unlock();
       return res;
     } else {
-      return trigger(val, origin);
+      return trigger(val);
     }
   }
 
   /** This is the operation executed when the object is called.
    *  In order to benefit from return value optimization and avoid too many copy
    *  you have to use Value v = xxx.trigger(val). */
-  virtual const Value trigger(const Value &val, const Location *origin) {
+  virtual const Value trigger(const Value &val) {
     return gNilValue;
   }
 
@@ -280,7 +280,7 @@ class Object : public Typed, public Observable {
       return NULL;
     }
   }
-  
+
   /** Return the number of children objects.
    */
   size_t children_count() {

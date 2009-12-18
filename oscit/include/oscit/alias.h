@@ -28,8 +28,8 @@ public:
     if (original_) original_->unregister_alias(this);
   }
 
-  virtual const Value trigger(const Value &val, const Location *origin) {
-    return original_ ? original_->safe_trigger(val, origin, context_) : gNilValue;
+  virtual const Value trigger(const Value &val) {
+    return original_ ? original_->safe_trigger(val, context_) : gNilValue;
   }
 
   /** Used by original object during destruction (avoid ~Alias calling

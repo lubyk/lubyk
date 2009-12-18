@@ -17,7 +17,7 @@ class OscRemoteObject : public Object
     connect();
   }
 
-  virtual const Value trigger(const Value &val, const Location *origin) {
+  virtual const Value trigger(const Value &val) {
     osc_command_->send(remote_endpoint_, remote_path_.c_str(), val);
     return gNilValue;
   }

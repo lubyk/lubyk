@@ -17,7 +17,7 @@ public:
     log("destroyed");
   }
 
-  virtual const Value trigger(const Value &val, const Location *origin) {
+  virtual const Value trigger(const Value &val) {
     log("trigger", val);
     return val;
   }

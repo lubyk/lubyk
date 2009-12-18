@@ -73,11 +73,11 @@ public:
   void test_until_type_is_set_object_proxy_should_respond_false_to_is_connected( void ) {
     ObjectProxy o("name", gNilValue);
     assert_false( o.is_connected() );
-    Value res = o.trigger(gNilValue, NULL);
+    Value res = o.trigger(gNilValue);
     assert_true( res.is_nil() );
     o.set_type(RangeIO(0.0, 200.0, "bpm", "hop hop"));
     assert_true( o.is_connected() );
-    res = o.trigger(gNilValue, NULL);
+    res = o.trigger(gNilValue);
     assert_equal(Value(0.0), res);
   }
 };

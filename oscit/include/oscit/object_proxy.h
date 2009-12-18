@@ -42,7 +42,7 @@ public:
   void set_value(const Value &val);
 
 
-  virtual const Value trigger(const Value &val, const Location *origin) {
+  virtual const Value trigger(const Value &val) {
     if (!val.is_nil()) {
       set_value(val);
     }

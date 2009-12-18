@@ -212,7 +212,7 @@ const Value Object::type_with_current_value() {
 
   if (!type[0].is_any() && !type[0].is_nil()) {
     // get current value
-    Value current = trigger(gNilValue, NULL);
+    Value current = trigger(gNilValue);
 
     if (current.is_nil()) {
       // current type cannot be queried. Leave dummy value.

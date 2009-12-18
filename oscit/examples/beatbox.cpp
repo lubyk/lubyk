@@ -24,7 +24,7 @@ public:
   /** This is the method triggered in response to the object's url.
    *  In this example this url is "/tempo".
    */
-  virtual const Value trigger(const Value &val, const Location *origin) {
+  virtual const Value trigger(const Value &val) {
     if (val.is_real()) {
       value_.r = val.r;
       if (val.r == 0) {

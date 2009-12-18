@@ -18,7 +18,7 @@ public:
 
   virtual ~DummyObject() {}
 
-  virtual const Value trigger(const Value &val, const Location *origin) {
+  virtual const Value trigger(const Value &val) {
     Value my_type(type()[0]);
 
     if (my_type.type() == val.type()) {
@@ -48,8 +48,7 @@ private:
   Value value_;
 };
 
-class DummyObject2 : public Object
-{
+class DummyObject2 : public Object {
 public:
   TYPED("Object.DummyObject2")
 
@@ -59,15 +58,13 @@ public:
 
   virtual ~DummyObject2() {}
 
-  virtual const std::string inspect()
-  {
+  virtual const std::string inspect() {
     std::ostringstream os(std::ostringstream::out);
     os << name_ << ": " << value_.c_str();
     return os.str();
   }
 
-  virtual const Value trigger(const Value &val, const Location *origin)
-  {
+  virtual const Value trigger(const Value &val) {
     if (val.is_string())
       value_.set(val.c_str());
     return value_;
@@ -77,8 +74,7 @@ private:
   StringValue value_;
 };
 
-class SubDummyObject : public DummyObject
-{
+class SubDummyObject : public DummyObject {
 public:
   TYPED("Object.DummyObject.SubDummyObject")
 
