@@ -18,20 +18,20 @@ class Planet : public Root
 {
  public:
   TYPED("Object.Root.Planet")
-  
+
   Planet() : Root(RUBYK_DEFAULT_NAME), worker_(this), classes_(NULL) {
     init();
   }
-  
+
   Planet(uint port) : Root(RUBYK_DEFAULT_NAME), worker_(this), classes_(NULL) {
     init();
     open_port(port);
   }
-  
+
   Planet(int argc, char * argv[]) : Root(RUBYK_DEFAULT_NAME), worker_(this), classes_(NULL) {
     // TODO: get port from command line
     init();
-    
+
     if (argc > 1) {
       std::string file_name(argv[1]);
       set_name(file_name.substr(0, file_name.rfind(".")));
@@ -47,55 +47,57 @@ class Planet : public Root
       delete command;
     }
   }
-  
+
+  /** FIXME: remove this method: we should use "adopt_command". */
   void open_port(uint port) {
-    adopt_command(new OscCommand(port));
+    std::cout << "Command on port " << port << "\n";
+    adopt_command(new OscCommand("oscit", "_oscit._udp", port));
   }
-  
+
   void start() {
     worker_.start();
   }
-  
+
   /** Only used with direct loop control. */
   void should_run(bool should_run) {
     worker_.should_run(should_run);
   }
-  
+
   void join() {
     worker_.join();
   }
-  
+
   void quit() {
     worker_.kill();
     clear(); // kill commands and destroy objects
   }
-  
+
   bool loop() {
     return worker_.loop();
   }
-  
+
   time_t current_time() {
     return worker_.current_time_;
   }
-  
+
   inline Worker *worker() { return &worker_; }
-  
-  /** Used to access '/class' when rko objects are loaded. */  
+
+  /** Used to access '/class' when rko objects are loaded. */
   ClassFinder *classes() { return classes_; }
-  
+
   /** Create/remove a link between two slots. */
   const Value link(const Value &val);
-  
+
   /** Tell worker to stop.
    */
   const Value quit(const Value &val) {
     worker_.quit();
     return gNilValue;
   }
-  
+
   /** Calls 'inspect' on a node. */
   const Value inspect(const Value &val);
-  
+
  private:
   /** Add a pending link. */
   const Value add_pending_link(const Value &val) {
@@ -105,17 +107,17 @@ class Planet : public Root
     pending_links_.push_back(Call(LINK_URL, params));
     return params;
   }
-  
+
   /** Remove a link from the pending link list. */
   const Value remove_pending_link(const Value &val);
-  
+
   /** Create pending links. Return a list of created links [[sffs][sffs]...]. */
   const Value create_pending_links();
-  
-  
+
+
   /** Create base objects (public for testing, should not be used). */
   void init();
-  
+
   std::list<Call>  pending_links_;        /**< List of pending connections waiting for variable assignements. */
   Worker worker_;
   ClassFinder *classes_;

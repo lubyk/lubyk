@@ -102,16 +102,18 @@ add_library (oscit STATIC ${OSCIT_SOURCES} ${OSCPACK_SOURCES})
 #  examples build
 #
 # ==============================================================================
-if(OSCIT_ENABLE_EXAMPLES)
-  file (GLOB OSCIT_EXAMPLES examples/*.cpp)
+add_custom_target(examples)
+file (GLOB OSCIT_EXAMPLES examples/*.cpp)
 
-  foreach (OSCIT_EXAMPLE ${OSCIT_EXAMPLES})
-    get_filename_component (OSCIT_EXAMPLE_NAME ${OSCIT_EXAMPLE} NAME_WE)
+foreach (OSCIT_EXAMPLE ${OSCIT_EXAMPLES})
+  get_filename_component (OSCIT_EXAMPLE_NAME ${OSCIT_EXAMPLE} NAME_WE)
 
-  	add_executable(${OSCIT_EXAMPLE_NAME} ${OSCIT_EXAMPLE})
-  	target_link_libraries(${OSCIT_EXAMPLE_NAME} oscit ${PLAT_LINK})
-  endforeach (OSCIT_EXAMPLE)
-endif(OSCIT_ENABLE_EXAMPLES)
+	add_executable(${OSCIT_EXAMPLE_NAME} ${OSCIT_EXAMPLE})
+	target_link_libraries(${OSCIT_EXAMPLE_NAME} oscit ${PLAT_LINK})
+	add_dependencies(examples ${OSCIT_EXAMPLE_NAME})
+	# FIXME: should compile examples in /examples/ folder
+endforeach (OSCIT_EXAMPLE)
+
 # ==============================================================================
 #
 #  test_runner build
@@ -165,10 +167,11 @@ message (STATUS "   OSCIT build configuration settings                          
 message (STATUS "===========================================================================")
 message (STATUS "   Platform                                                     = ${PLAT}")
 message (STATUS "   OSCIT_ENABLE_TESTING  (Build and run tests)                  = ${OSCIT_ENABLE_TESTING}")
-message (STATUS "   OSCIT_ENABLE_EXAMPLES (Build examples)                       = ${OSCIT_ENABLE_EXAMPLES}")
 message (STATUS "   OSCIT_MEMORY_CHECKING (Enable checking against memory leaks) = ${OSCIT_MEMORY_CHECKING}")
 if(OSCIT_MEMORY_CHECKING)
 message (STATUS "       you should run test_runner with")
 message (STATUS "       > export MallocStackLogging=1;./test_runner")
 endif(OSCIT_MEMORY_CHECKING)
+message (STATUS "")
+message (STATUS "   Type: 'make examples' to build examples")
 message (STATUS "===========================================================================")

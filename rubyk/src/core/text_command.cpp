@@ -1,3 +1,4 @@
+
 #line 1 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.rl"
 #include "text_command.h"
 #include "rubyk.h"
@@ -11,7 +12,7 @@
 #endif
 
 
-#line 15 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.cpp"
+#line 16 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.cpp"
 static const char _text_command_actions[] = {
 	0, 1, 0, 1, 1, 1, 3, 1, 
 	4, 1, 5, 1, 11, 1, 13, 1, 
@@ -260,19 +261,21 @@ static const int text_command_first_final = 82;
 static const int text_command_en_eat_line = 81;
 static const int text_command_en_main = 1;
 
+
 #line 15 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.rl"
 
 
 void TextCommand::initialize() {
   int cs;
-  
-  silent_     = false;    
+
+  silent_     = false;
   clear();
   
-#line 273 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.cpp"
+#line 275 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.cpp"
 	{
 	cs = text_command_start;
 	}
+
 #line 23 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.rl"
   current_state_ = cs;
 }
@@ -280,11 +283,11 @@ void TextCommand::initialize() {
 void TextCommand::listen() {
   char buffer[1024];
   char *line = buffer; //  when not using readline, use 'buffer' for storage
-  
+
   if (!silent_) *output_ << "# Welcome to rubyk !\n# \n";
-    
+
   clear();
-  
+
   thread_ready();
   while(should_run() && getline(&line, 1023)) {
     lock();
@@ -301,11 +304,11 @@ void TextCommand::parse(const std::string &string) {
   const char *pe = p + string.size(); // past end
   const char *eof = NULL;             // FIXME: this should be set to 'pe' on the last string block...
   int cs = current_state_;            // restore machine state
-  
+
   DEBUG(printf("parse:\"%s\"\n",string.c_str()));
+
   
-  
-#line 309 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.cpp"
+#line 312 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -464,7 +467,7 @@ _match:
 #line 115 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.rl"
 	{ {cs = 1; goto _again;} }
 	break;
-#line 468 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.cpp"
+#line 471 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.cpp"
 		}
 	}
 
@@ -491,13 +494,14 @@ _again:
       {cs = 81; goto _again;} // eat the rest of the line and continue parsing
     }
 	break;
-#line 495 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.cpp"
+#line 498 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.cpp"
 		}
 	}
 	}
 
 	_out: {}
 	}
+
 #line 167 "/Users/gaspard/git/rubyk/rubyk/src/core/text_command.rl"
 
 //  printf("{%s}\n",p);
@@ -508,7 +512,7 @@ void TextCommand::set_from_token(std::string &string) {
   DEBUG(if (&string == &value_) std::cout << "[val " << token_ << "]" << std::endl);
   DEBUG(if (&string == &var_)   std::cout << "[var " << token_ << "]" << std::endl);
   DEBUG(if (&string == &class_) std::cout << "[cla " << token_ << "]" << std::endl);
-  
+
   string = token_;
   token_ = "";
 }
@@ -518,21 +522,21 @@ void TextCommand::create_instance() {
   if (params.is_nil()) {
     params.set_type(HASH_VALUE); // empty hash value
   }
-  
-  ListValue list;
+
+  Value list;
   names_to_urls();
-  
+
   DEBUG(std::cout << "NEW "<< var_ << " = " << class_ << "(" << params << ")");
   list.push_back(var_);
   list.push_back(params);
-  
+
   Value res = root_->call(std::string(CLASS_URL).append("/").append(class_).append("/new"), list, this);
-  
+
   Value links;
   if (res.is_string()) {
-    links = root_->call(LINK_URL, gNilValue, this); // create pending links
+    links = root_->call(LINK_URL, gNilValue); // create pending links
   }
-  
+
   if (res.is_string() && !silent_) {
     print_result(root_->call(INSPECT_URL, res, this));
     for (size_t i = 0; i < links.size(); ++i) {
@@ -545,28 +549,28 @@ void TextCommand::create_instance() {
 
 void TextCommand::change_link(char op) {
   names_to_urls();
-  
+
   DEBUG(std::cout << op << " LINK " << from_node_ << "." << from_port_ << "=>" << to_port_ << "." << to_node_ << std::endl);
   ListValue list;
-  
+
   if (from_port_ == "") {
     list.push_back(std::string(from_node_));
   } else {
     list.push_back(std::string(from_node_).append("/out/").append(from_port_));
   }
-  
+
   if (op == 'c') {
     list.push_back("=>");
   } else {
     list.push_back("||");
   }
-  
+
   if (to_port_ == "") {
     list.push_back(std::string(to_node_));
   } else {
     list.push_back(std::string(to_node_).append("/in/").append(to_port_));
   }
-  
+
   print_result(root_->call(LINK_URL, list, this));
 }
 
@@ -575,9 +579,9 @@ void TextCommand::execute_method() {
   // why doesn't this work ? Value params(Json(parameter_string_));
   Value params = Value(Json(parameter_string_));
   names_to_urls();
-  
+
   DEBUG(std::cout << "METHOD " << var_ << "." << method_ << "(" << params << ")" << std::endl);
-  
+
   if (method_ == "set") {
     // TODO: should 'set' live in normal tree space ?
     Object *target = root_->object_at(var_);
@@ -599,7 +603,7 @@ void TextCommand::execute_method() {
 void TextCommand::execute_class_method() {
   Value res;
   Value params = Value(Json(parameter_string_));
-  
+
   DEBUG(std::cout << "CLASS_METHOD " << std::string(CLASS_URL).append("/").append(class_).append("/").append(method_) << "(" << params << ")" << std::endl);
   res = root_->call(std::string(CLASS_URL).append("/").append(class_).append("/").append(method_), params, this);
   print_result(res);
@@ -617,7 +621,7 @@ void TextCommand::execute_command() {
              // we have to use quit() instead of kill().
 
     res = root_->call(QUIT_URL, gNilValue, this);
-  } else {  
+  } else {
     names_to_urls();
     res = root_->call(method_, params, this);
   }

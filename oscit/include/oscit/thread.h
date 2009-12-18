@@ -14,8 +14,7 @@
 
 namespace oscit {
 
-class Thread : public Mutex
-{
+class Thread : public Mutex {
  public:
   TYPED("Mutex.Thread")
 

@@ -22,8 +22,7 @@ class CommandTest;
  *
  * If you do not want the command to publish a service, set service_type to "" (blank).
  */
-class Command : public Thread
-{
+class Command : public Thread {
  public:
   TYPED("Mutex.Thread.Command")
 

@@ -14,3 +14,6 @@ clean: build
 
 oscit: build build/MakeFile
 	cd build && make oscit
+
+examples: build build/MakeFile
+	cd build && make examples

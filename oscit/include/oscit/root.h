@@ -146,12 +146,17 @@ class Root : public Object
   }
 
   /** Trigger the object located at the given path, passing nil as parameter. */
-  const Value call(std::string &path, const Mutex *context = NULL) {
+  const Value call(const std::string &path, const Mutex *context = NULL) {
     return call(Url(Location::NO_IP, Location::NO_PORT, path), gNilValue, context);
   }
 
   /** Trigger the object located at the given path with the given parameters. */
   const Value call(const char *path, const Value &val, const Mutex *context = NULL) {
+    return call(Url(Location::NO_IP, Location::NO_PORT, path), val, context);
+  }
+
+  /** Trigger the object located at the given path with the given parameters. */
+  const Value call(const std::string &path, const Value &val, const Mutex *context = NULL) {
     return call(Url(Location::NO_IP, Location::NO_PORT, path), val, context);
   }
 
