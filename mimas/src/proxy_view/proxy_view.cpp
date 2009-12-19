@@ -7,17 +7,12 @@
 #include "m_slider.h"
 #include "m_pad.h"
 
-void ProxyView::build_view(const std::string &view_defition) {
-  std::cout << "BUILDING FROM\n" << view_defition << "\n";
-  XmlDocument xml_document(String(view_defition.c_str()));
-  XmlElement *xml_root = xml_document.getDocumentElement();
-  if (!xml_root) {
-    std::cerr << "Could not load xml document '" << url() << "': " << xml_document.getLastParseError().toUTF8() << "\n";
-    return;
-  }
-
-  if (xml_root->getTagName() != T("view")) {
-    std::cerr << "Invalid view definition '" << url() << "': root should be 'view' (found '" << xml_root->getTagName().toUTF8() << "')\n.";
+void ProxyView::build_view(const std::string &view_def) {
+  std::cout << "BUILDING FROM\n" << view_def << "\n";
+  Value def; // TODO: why doesn't "Value def(Json(view_def));" work ?
+  def.build_from_json(view_def.c_str());
+  if (!def.is_hash()) {
+    std::cerr << "Json document is not a has '" << url() << "': " << def << "\n";
     return;
   }
 
@@ -26,88 +21,106 @@ void ProxyView::build_view(const std::string &view_defition) {
   if (view_) delete view_;
 
   view_ = new Component;
-  set_bounds_from_xml(view_, *xml_root);
+  set_bounds_from_hash(view_, def);
   ResizableBorderComponent *resize = new ResizableBorderComponent(view_, NULL);
   resize->setBorderThickness(BorderSize(4));
   main_view_->addAndMakeVisible(view_);
 
-  XmlElement *child = xml_root->getFirstChildElement();
-  while (child != NULL) {
-    String type = child->getTagName();
-    if (type == T("slider")) {
-      build_slider(*child);
-    } else if (type == T("pad")) {
-      build_pad(*child);
+  Value parts_value = def["parts"];
+  if (!parts_value.is_hash()) {
+    error("'parts' attribute is not a hash. Found", parts_value);
+    return;
+  }
+  Hash *parts = parts_value.hash_;
+  Hash::const_iterator it, end = parts->end();
+  Value part;
+  for (it = parts->begin(); it != end; ++it) {
+    if (parts->get(*it, &part) && part.is_hash()) {
+      Value klass = part["class"];
+      if (!klass.is_string()) {
+        error("'class' attribute missing in", part);
+        continue;
+      }
+      if (klass.str() == "Slider") {
+        build_slider(part);
+      } else if (klass.str() == "Pad") {
+        build_pad(part);
+      } else {
+        error("Unknown class", klass);
+      }
     }
-    child = child->getNextElement();
   }
 }
 
-void ProxyView::build_slider(XmlElement &def) {
+void ProxyView::build_slider(const Value &def) {
   std::cout << "build_slider\n";
-  if (!check_attribute(def, "slider", T("connect"))) return;
-
-  String connect_path = def.getStringAttribute(T("connect"));
-  Value error;
-  MObjectProxy *proxy = TYPE_CAST(MObjectProxy, root_->find_or_build_object_at(connect_path.toUTF8(), &error));
-  if (!proxy) {
-    std::cerr << "Error in '" << url() << "': could not connect to proxy " << connect_path.toUTF8() << "'\n.";
+  const Value connect_path = def["connect"];
+  if (!connect_path.is_string()) {
+    error("invalid 'connect' attribute in", def);
     return;
   }
 
-  MSlider *slider = new MSlider(connect_path);
+  Value err;
+  MObjectProxy *proxy = TYPE_CAST(MObjectProxy, root_->find_or_build_object_at(connect_path.str(), &err));
+  if (!proxy) {
+    error("could not connect", err);
+    return;
+  }
+
+  MSlider *slider = new MSlider(connect_path.str());
   proxy->connect(slider);
 
 //  slider->setTextBoxStyle(Slider::TextBoxLeft, false, 80, 20);
-  set_bounds_from_xml(slider, def);
+  set_bounds_from_hash(slider, def);
 
   slider->setSliderStyle(slider->getWidth() > slider->getHeight() ? Slider::LinearHorizontal : Slider::LinearVertical);
   view_->addAndMakeVisible(slider);
 }
 
-void ProxyView::build_pad(XmlElement &def) {
+void ProxyView::build_pad(const Value &def) {
   std::cout << "build_pad\n";
-  if (!check_attribute(def, "pad", T("connect_x"))) return;
-  if (!check_attribute(def, "pad", T("connect_y"))) return;
+  Value connect_path_x = def["connect_x"];
+  Value connect_path_y = def["connect_y"];
+  if (!connect_path_x.is_string()) {
+    error("invalid 'connect_x' attribute in", def);
+    return;
+  }
+  if (!connect_path_y.is_string()) {
+    error("invalid 'connect_y' attribute in", def);
+    return;
+  }
 
-  String connect_path_x = def.getStringAttribute(T("connect_x"));
-  String connect_path_y = def.getStringAttribute(T("connect_y"));
 
-  Value error;
-  MObjectProxy *proxy_x = TYPE_CAST(MObjectProxy, root_->find_or_build_object_at(connect_path_x.toUTF8(), &error));
+  Value err;
+  MObjectProxy *proxy_x = TYPE_CAST(MObjectProxy, root_->find_or_build_object_at(connect_path_x.str(), &err));
   if (!proxy_x) {
-    std::cerr << "Error in '" << url() << "': could not connect to proxy " << connect_path_x.toUTF8() << "'\n.";
+    error("could not connect x", err);
     return;
   }
 
-  MObjectProxy *proxy_y = TYPE_CAST(MObjectProxy, root_->find_or_build_object_at(connect_path_y.toUTF8(), &error));
+  MObjectProxy *proxy_y = TYPE_CAST(MObjectProxy, root_->find_or_build_object_at(connect_path_y.str(), &err));
   if (!proxy_y) {
-    std::cerr << "Error in '" << url() << "': could not connect to proxy " << connect_path_y.toUTF8() << "'\n.";
+    error("could not connect y", err);
     return;
   }
 
-  MPad *pad = new MPad(connect_path_x);
+  MPad *pad = new MPad(connect_path_x.str());
   proxy_x->connect(pad->range_x());
   proxy_y->connect(pad->range_y());
 
-  set_bounds_from_xml(pad, def);
+  set_bounds_from_hash(pad, def);
   view_->addAndMakeVisible(pad);
 }
 
-bool ProxyView::check_attribute(XmlElement &definition, const char *type, const tchar *const name) {
-  if (!definition.hasAttribute(name)) {
-    std::cerr << "Error in '" << url() << "': '" << type << "' needs '" << name << "' attribute.\n.";
-    return false;
-  }
-  return true;
+void ProxyView::error(const char *message, const Value &context) {
+  std::cerr << "Error in '" << url() << "': '" << message << " " << context << ".\n";
 }
 
-
-void ProxyView::set_bounds_from_xml(Component *component, XmlElement &def) {
-  double width  = def.getDoubleAttribute(T("width"));
-  double height = def.getDoubleAttribute(T("height"));
-  component->setBounds (def.getDoubleAttribute(T("x")),
-    def.getDoubleAttribute(T("y")),
-    width,
-    height);
+void ProxyView::set_bounds_from_hash(Component *component, const Value &def) {
+  component->setBounds(
+    def["x"].get_real(),
+    def["y"].get_real(),
+    def["width"].get_real(),
+    def["height"].get_real()
+  );
 }

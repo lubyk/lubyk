@@ -279,7 +279,7 @@ public:
     return type_;
   }
 
-  /** Build the content of the value from the value to nil.
+  /** Build the content of the value from the characters in the buffer until NULL.
    *  @return number of characters eaten in the buffer to build Value.
    */
   size_t build_from_json(const char *json, bool strict_mode = false);
@@ -354,6 +354,13 @@ public:
     set_type_without_default(REAL_VALUE);
     r = real;
     return *this;
+  }
+
+  /** Safe accessor for Real value.
+   * returns the default value if the current Value is not a real number.
+   */
+  Real get_real(Real default_result = 0) const {
+    return is_real() ? r : default_result;
   }
 
   /** =========================================================    String  */
@@ -557,7 +564,27 @@ public:
     return is_hash() ? hash_->end() : gEmptyHash.end();
   }
 
+  const Value operator[](const std::string &key) const {
+    if (!is_hash()) return gNilValue;
+    Value res;
+    if (get(key, &res)) {
+      return res;
+    } else {
+      return gNilValue;
+    }
+  }
+
   Value operator[](const std::string &key) {
+    if (!is_hash()) return gNilValue;
+    Value res;
+    if (get(key, &res)) {
+      return res;
+    } else {
+      return gNilValue;
+    }
+  }
+
+  const Value operator[](const char * &key) const {
     if (!is_hash()) return gNilValue;
     Value res;
     if (get(key, &res)) {

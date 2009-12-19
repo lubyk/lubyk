@@ -10,6 +10,7 @@ typedef std::list<std::string>::const_iterator HashIterator;
 class Hash : public ReferenceCounted, public THash<std::string,Value>
 {
  public:
+  typedef std::list<std::string>::const_iterator const_iterator;
   explicit Hash(size_t size) : THash<std::string,Value>(size) {}
 };
 

@@ -67,8 +67,8 @@ private:
 
 class MPad : public Component, public MObservable {
 public:
-  MPad(const String &name)
-      : Component(name),
+  MPad(const std::string &name)
+      : Component(String(name.c_str())),
         range_x_(this),
         range_y_(this),
         dragged_(false) {}

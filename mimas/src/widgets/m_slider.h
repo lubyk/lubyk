@@ -4,7 +4,7 @@
 
 class MSlider : public Slider, public MRangeWidget {
 public:
-  MSlider(const String &name) : Slider(name) {}
+  MSlider(const std::string &name) : Slider(String(name.c_str())) {}
 
   /** =========== MRangeWidget callbacks ========== */
 

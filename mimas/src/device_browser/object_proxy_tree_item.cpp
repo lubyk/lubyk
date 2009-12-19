@@ -31,7 +31,7 @@ Component *ObjectProxyTreeItem::createItemComponent() {
     MSlider *slider;
     Component *component = new Component;
     for(int i = 0; i < 2; ++i) {
-      slider = new MSlider(String(object_proxy_->url().c_str()));
+      slider = new MSlider(object_proxy_->url().c_str());
       object_proxy_->connect(slider);
       slider->setBounds (100 + i * 250, 2, 250, 20);
       slider->setSliderStyle(i == 0 ? Slider::LinearHorizontal : Slider::Rotary);

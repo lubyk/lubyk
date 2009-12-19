@@ -154,4 +154,16 @@ public:
     a.set_nil();
     assert_false(a == b);
   }
+
+  void test_get_real( void ) {
+    Value a("hello");
+    Value b;
+    Value c(4.5);
+    assert_equal(0, a.get_real());
+    assert_equal(3, a.get_real(3));
+    assert_equal(0, b.get_real());
+    assert_equal(1.1, b.get_real(1.1));
+    assert_equal(4.5, c.get_real());
+    assert_equal(4.5, c.get_real(1.1));
+  }
 };

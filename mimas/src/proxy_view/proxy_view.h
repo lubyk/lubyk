@@ -25,13 +25,13 @@ public:
 
   void build_view(const std::string &view_defition);
 private:
-  bool check_attribute(XmlElement &definition, const char *type, const tchar *const name);
+  void error(const char *message, const Value &context);
 
-  void set_bounds_from_xml(Component *component, XmlElement &definition);
+  void set_bounds_from_hash(Component *component, const Value &val);
 
-  void build_slider(XmlElement &def);
+  void build_slider(const Value &val);
 
-  void build_pad(XmlElement &def);
+  void build_pad(const Value &val);
   Component *main_view_;
   Component *view_;
 };

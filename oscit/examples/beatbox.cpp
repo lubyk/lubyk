@@ -1,6 +1,6 @@
 // compile with
 // g++ -I../include ../build/liboscit.a beatbox.cpp -o beatbox
-// in order to find 'beatbox.xml' file (view), beatbox should be launched from within oscit/examples folder
+// in order to find 'beatbox.json' file (view), beatbox should be launched from within oscit/examples folder
 
 #include <stdio.h>
 #include <stdlib.h> // atoi
@@ -11,7 +11,7 @@ using namespace oscit;
 
 
 #define OSC_PORT 7021
-#define VIEW_PATH "beatbox.xml"
+#define VIEW_PATH "beatbox.json"
 
 class ValueDisplay : public Object
 {
