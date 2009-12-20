@@ -161,6 +161,38 @@ Value &Value::push_front(const Value& val) {
   return *this;
 }
 
+static Value s_deep_merge(const Value a, const Value b) {
+  HashIterator it, end = b.end();
+  std::string key;
+  HashValue res;
+  Hash *res_hash = res.hash_;
+  Value val_a, val_b;
+
+  for (it = b.begin(); it != end; ++it) {
+    key = *it;
+    if (!b.hash_->get(key, &val_b)) continue; // this should never happen, just in case ;-)
+
+    if (a.hash_->get(key, &val_a)) {
+      if (val_a.is_hash() && val_b.is_hash()) {
+        // deep merge
+        val_b = s_deep_merge(val_a, val_b);
+      }
+    }
+
+    if (val_b.is_nil()) {
+      // remove
+    } else {
+      res_hash->set(key, val_b);
+    }
+  }
+  return res;
+}
+
+Value Value::deep_merge(const Value &other) {
+  if (!is_hash() || !other.is_hash()) return gNilValue;
+  return s_deep_merge(*this, other);
+}
+
 ///////////////// ====== JSON PARSER ========= /////////////
 %%{
   machine json;

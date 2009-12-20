@@ -1,8 +1,8 @@
 #ifndef OSCIT_INCLUDE_OSCIT_FILE_H_
 #define OSCIT_INCLUDE_OSCIT_FILE_H_
-#include "oscit/values.h"
-
 #include <string>
+
+#include "oscit/values.h"
 
 namespace oscit {
 

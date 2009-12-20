@@ -163,14 +163,46 @@ Value &Value::push_front(const Value& val) {
   return *this;
 }
 
+static Value s_deep_merge(const Value a, const Value b) {
+  HashIterator it, end = b.end();
+  std::string key;
+  HashValue res;
+  Hash *res_hash = res.hash_;
+  Value val_a, val_b;
+
+  for (it = b.begin(); it != end; ++it) {
+    key = *it;
+    if (!b.hash_->get(key, &val_b)) continue; // this should never happen, just in case ;-)
+
+    if (a.hash_->get(key, &val_a)) {
+      if (val_a.is_hash() && val_b.is_hash()) {
+        // deep merge
+        val_b = s_deep_merge(val_a, val_b);
+      }
+    }
+
+    if (val_b.is_nil()) {
+      // remove
+    } else {
+      res_hash->set(key, val_b);
+    }
+  }
+  return res;
+}
+
+Value Value::deep_merge(const Value &other) {
+  if (!is_hash() || !other.is_hash()) return gNilValue;
+  return s_deep_merge(*this, other);
+}
+
 ///////////////// ====== JSON PARSER ========= /////////////
 
-#line 276 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
+#line 308 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 
 
 // transition table
 
-#line 174 "/Users/gaspard/git/rubyk/oscit/src/value.cpp"
+#line 206 "/Users/gaspard/git/rubyk/oscit/src/value.cpp"
 static const char _json_actions[] = {
 	0, 1, 0, 1, 3, 1, 4, 1, 
 	7, 1, 9, 2, 1, 9, 2, 2, 
@@ -353,7 +385,7 @@ static const int json_en_main_strict = 35;
 static const int json_en_main_lazy = 1;
 
 
-#line 280 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
+#line 312 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 
 /** This is a crude JSON parser. */
 size_t Value::build_from_json(const char *json, bool strict_mode) {
@@ -368,12 +400,12 @@ size_t Value::build_from_json(const char *json, bool strict_mode) {
   const char * pe = json + strlen(p) + 1;
 
   
-#line 372 "/Users/gaspard/git/rubyk/oscit/src/value.cpp"
+#line 404 "/Users/gaspard/git/rubyk/oscit/src/value.cpp"
 	{
 	cs = json_start;
 	}
 
-#line 294 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
+#line 326 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 
   if (strict_mode) {
     cs = json_en_main_strict;
@@ -382,7 +414,7 @@ size_t Value::build_from_json(const char *json, bool strict_mode) {
   }
 
   
-#line 386 "/Users/gaspard/git/rubyk/oscit/src/value.cpp"
+#line 418 "/Users/gaspard/git/rubyk/oscit/src/value.cpp"
 	{
 	int _klen;
 	unsigned int _trans;
@@ -457,7 +489,7 @@ _match:
 		switch ( *_acts++ )
 		{
 	case 0:
-#line 168 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
+#line 200 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
      // append a char to build a std::string
     DEBUG(printf("%c-",(*p)));
@@ -466,7 +498,7 @@ _match:
   }
 	break;
 	case 1:
-#line 175 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
+#line 207 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
     // become a RealValue
     tmp_val.set(atof(str_buf.c_str()));
@@ -475,7 +507,7 @@ _match:
   }
 	break;
 	case 2:
-#line 182 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
+#line 214 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
     // become a StringValue
     tmp_val.set(str_buf);
@@ -484,7 +516,7 @@ _match:
   }
 	break;
 	case 3:
-#line 189 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
+#line 221 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
     // Parse a single element of a hash (key:value)
     // Build tmp_val from string and move p forward
@@ -499,7 +531,7 @@ _match:
   }
 	break;
 	case 4:
-#line 202 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
+#line 234 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
     // Parse a single element of a hash (key:value)
     // Build tmp_val from string and move p forward
@@ -513,7 +545,7 @@ _match:
   }
 	break;
 	case 5:
-#line 214 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
+#line 246 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
     // we have a value in tmp that should be changed into a list [tmp]
     DEBUG(printf("[%p:lazy_list %s]\n", this, tmp_val.to_json().c_str()));
@@ -521,7 +553,7 @@ _match:
   }
 	break;
 	case 6:
-#line 220 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
+#line 252 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
     // become an empty HashValue
     if (!is_hash()) {
@@ -530,7 +562,7 @@ _match:
   }
 	break;
 	case 7:
-#line 227 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
+#line 259 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
     if (!is_list()) set_type(LIST_VALUE);
 
@@ -540,7 +572,7 @@ _match:
   }
 	break;
 	case 8:
-#line 235 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
+#line 267 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
     // become a NilValue
     DEBUG(printf("[nil]\n"));
@@ -548,13 +580,13 @@ _match:
   }
 	break;
 	case 9:
-#line 241 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
+#line 273 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
 	{
     DEBUG(printf("[set_from_tmp %s]\n", tmp_val.to_json().c_str()));
     if (!is_list() && !is_hash()) *this = tmp_val;
   }
 	break;
-#line 558 "/Users/gaspard/git/rubyk/oscit/src/value.cpp"
+#line 590 "/Users/gaspard/git/rubyk/oscit/src/value.cpp"
 		}
 	}
 
@@ -567,7 +599,7 @@ _again:
 	_out: {}
 	}
 
-#line 302 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
+#line 334 "/Users/gaspard/git/rubyk/oscit/src/value.rl"
   if (p != pe) --p;
 
   return p - json;

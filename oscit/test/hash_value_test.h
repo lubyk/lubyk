@@ -271,4 +271,18 @@ public:
     a.set_nil();
     assert_false(a == b);
   }
+
+  void test_deep_merge( void ) {
+    Value a(Json("{one:{x:4 y:10} two:{x:5 y:8}}"));
+    Value b(Json("{one:{x:7}} two:null"));
+    Value c = a.deep_merge(b);
+    assert_equal("{\"one\":{\"x\":7}}", c.to_json());
+  }
+
+  void test_deep_merge_self( void ) {
+    Value a(Json("{one:{x:4 y:10} two:{x:5 y:8}}"));
+    Value b(Json("{one:{x:7} two:null three:[1,2]}"));
+    a = a.deep_merge(b);
+    assert_equal("{\"one\":{\"x\":7}, \"three\":[1, 2]}", a.to_json());
+  }
 };

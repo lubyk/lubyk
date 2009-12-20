@@ -9,7 +9,7 @@ class FileMethod : public Object
 {
 public:
   /** Class signature. */
-  TYPED("Object.ListMetaMethod")
+  TYPED("Object.FileMethod")
 
   FileMethod(const char *name, const char *path)
       : Object(name, StringIO("data", "Read/write file content.")),
@@ -39,7 +39,7 @@ public:
 
     return val;
   }
-private:
+protected:
   File file_;
 };
 
