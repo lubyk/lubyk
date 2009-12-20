@@ -1,6 +1,0 @@
-<view x='100' y='100' width='200' height='200'>
-  <slider id='1' x='10'  y='10' width='30'  height='150' connect='/tempo'/>
-  <slider id='2' x='50'  y='10' width='30'  height='150' connect='/velocity'/>
-  <button id='3' x='90'  y='10' width='30'  height='30'  connect='/tempo' value='100'/>
-  <pad    id='4' x='130' y='10' width='150' height='150' connect[x]='/velocity' connect[y]='/tempo'/>
-</view>
