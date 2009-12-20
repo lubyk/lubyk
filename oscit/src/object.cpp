@@ -159,7 +159,7 @@ const Value Object::list() const {
   for (it = children_.begin(); it != end; ++it) {
     Object * obj;
     if (children_.get(*it, &obj)) {
-      if (!obj->kind_of(Alias)) {
+      // if (!obj->kind_of(Alias)) {
         // do not list alias (Alias are used as internal helpers and do not
         // need to be advertised) ?
         if (obj->children_.empty()) {
@@ -167,7 +167,7 @@ const Value Object::list() const {
         } else {
           res.push_back(std::string(obj->name_).append("/"));
         }
-      }
+      // }
     }
   }
   return res;
@@ -180,7 +180,7 @@ const Value Object::list_with_type() const {
     ListValue name_with_type;
     Object * obj;
     if (children_.get(*it, &obj)) {
-      if (!obj->kind_of(Alias)) {
+      // if (!obj->kind_of(Alias)) {
         // do not list alias (Alias are used as internal helpers and do not
         // need to be advertised) ?
         if (obj->children_.empty()) {
@@ -190,7 +190,7 @@ const Value Object::list_with_type() const {
         }
         name_with_type.push_back(obj->type_with_current_value());
         list.push_back(name_with_type);
-      }
+      // }
     }
   }
   return list;
@@ -235,12 +235,12 @@ void Object::tree(size_t base_length, Value *tree) const {
   for (it = children_.begin(); it != end; ++it) {
     Object * obj;
     if (children_.get(*it, &obj)) {
-      if (!obj->kind_of(Alias)) {
+      // if (!obj->kind_of(Alias)) {
         // do not list alias (Alias are used as internal helpers and
         // do not need to be advertised) ?
         tree->push_back(obj->url().substr(base_length));
         obj->tree(base_length, tree);
-      }
+      //}
     }
   }
 }

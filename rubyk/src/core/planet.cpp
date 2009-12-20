@@ -5,7 +5,7 @@
 
 void Planet::init() {
   set_context(&worker_);
-  
+
   // build application methods
   //           /.inspect
   adopt(new TMethod<Planet, &Planet::inspect>(this, Url(INSPECT_URL).name(), StringIO("url", "Returns some information on the state of a node.")));
@@ -25,7 +25,7 @@ const Value Planet::link(const Value &val) {
   if (val.is_nil()) {
     return create_pending_links();
   }
-  
+
   Value error;
   Object *source = object_at(Url(val[0].str()), &error);
   if (error.is_error() || !object_at(Url(val[2].str()), &error)) {
@@ -38,7 +38,7 @@ const Value Planet::link(const Value &val) {
     }
     return val;
   }
-  
+
   Slot   *slot = TYPE_CAST(Slot, source);
   Object *object;
   if (slot != NULL) {
@@ -59,10 +59,10 @@ const Value Planet::link(const Value &val) {
 const Value Planet::create_pending_links() {
   std::list<Call>::iterator it  = pending_links_.begin();
   std::list<Call>::iterator end = pending_links_.end();
-  
+
   Value res;
   Value list;
-  
+
   while (it != end) {
     res = it->safe_trigger(this, context_);
     if ((res.type_id() == H("sss") && res[1].str() == "=>") || res.is_error()) {
@@ -81,12 +81,12 @@ const Value Planet::create_pending_links() {
 const Value Planet::remove_pending_link(const Value &val) {
   std::list<Call>::iterator it  = pending_links_.begin();
   std::list<Call>::iterator end = pending_links_.end();
-  
+
   Value res;
   res.set_nil();
-  
+
   while (it != end) {
-    
+
     if (it->param_[0].str() == val[0].str() && it->param_[2].str() == val[2].str()) {
       res = it->param_;
       res[1].set("||");
@@ -100,6 +100,7 @@ const Value Planet::remove_pending_link(const Value &val) {
 }
 
 const Value Planet::inspect(const Value &val) {
+  std::cout << "## inspect " << val << "\n";
   if (!val.is_string()) return Value(BAD_REQUEST_ERROR, "Bad arguments:'inspect' should be called with an url.");
   Value res;
   Object *object = find_or_build_object_at(val.str(), &res);

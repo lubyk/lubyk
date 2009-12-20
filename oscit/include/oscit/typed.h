@@ -2,7 +2,10 @@
 #define OSCIT_INCLUDE_OSCIT_TYPED_H_
 #include <stdio.h> // NULL
 
-#define USE_RTTI_TYPE
+// Using RTTI does not seem to work with libs and such (rubyk does not recognize oscit objects...)
+// #define USE_RTTI_TYPE
+
+#include <iostream>
 
 namespace oscit {
 
@@ -31,8 +34,8 @@ public:
 
   const std::string class_name() const {
     std::string path(class_path());
-    size_t pos = path.rfind(".");
-    return path.substr(pos+1);
+    size_t pos = path.find_last_of('.');
+    return pos == std::string::npos ? path : path.substr(pos+1);
   }
 };
 
@@ -72,8 +75,8 @@ public:
 
   const std::string class_name() const {
     std::string path(class_path());
-    size_t pos = path.rfind(".");
-    return path.substr(pos);
+    size_t pos = path.find_last_of('.');
+    return pos == std::string::npos ? path : path.substr(pos+1);
   }
 
 };
