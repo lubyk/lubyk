@@ -39,7 +39,8 @@ public:
 
     return val;
   }
-protected:
+  
+private:
   File file_;
 };
 

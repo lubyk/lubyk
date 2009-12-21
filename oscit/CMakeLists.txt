@@ -102,18 +102,20 @@ add_library (oscit STATIC ${OSCIT_SOURCES} ${OSCPACK_SOURCES})
 #  examples build
 #
 # ==============================================================================
-add_custom_target(examples)
-file (GLOB OSCIT_EXAMPLES examples/*.cpp)
+if(OSCIT_ENABLE_EXAMPLES)
+  # TODO: how to add a custom target, but not run it ?
+  add_custom_target(examples)
+  file (GLOB OSCIT_EXAMPLES examples/*.cpp)
 
-foreach (OSCIT_EXAMPLE ${OSCIT_EXAMPLES})
-  get_filename_component (OSCIT_EXAMPLE_NAME ${OSCIT_EXAMPLE} NAME_WE)
+  foreach (OSCIT_EXAMPLE ${OSCIT_EXAMPLES})
+    get_filename_component (OSCIT_EXAMPLE_NAME ${OSCIT_EXAMPLE} NAME_WE)
 
-	add_executable(${OSCIT_EXAMPLE_NAME} ${OSCIT_EXAMPLE})
-	target_link_libraries(${OSCIT_EXAMPLE_NAME} oscit ${PLAT_LINK})
-	add_dependencies(examples ${OSCIT_EXAMPLE_NAME})
-	# FIXME: should compile examples in /examples/ folder
-endforeach (OSCIT_EXAMPLE)
-
+  	add_executable(${OSCIT_EXAMPLE_NAME} ${OSCIT_EXAMPLE})
+  	target_link_libraries(${OSCIT_EXAMPLE_NAME} oscit ${PLAT_LINK})
+  	add_dependencies(examples ${OSCIT_EXAMPLE_NAME})
+  	# FIXME: should compile examples in /examples/ folder
+  endforeach (OSCIT_EXAMPLE)
+endif(OSCIT_ENABLE_EXAMPLES)
 # ==============================================================================
 #
 #  test_runner build

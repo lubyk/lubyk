@@ -161,11 +161,10 @@ Value &Value::push_front(const Value& val) {
   return *this;
 }
 
-static Value s_deep_merge(const Value a, const Value b) {
+static void s_deep_merge(const Value a, const Value b) {
   HashIterator it, end = b.end();
   std::string key;
-  HashValue res;
-  Hash *res_hash = res.hash_;
+  Hash *res_hash = a.hash_;
   Value val_a, val_b;
 
   for (it = b.begin(); it != end; ++it) {
@@ -173,24 +172,27 @@ static Value s_deep_merge(const Value a, const Value b) {
     if (!b.hash_->get(key, &val_b)) continue; // this should never happen, just in case ;-)
 
     if (a.hash_->get(key, &val_a)) {
+      // existing key
       if (val_a.is_hash() && val_b.is_hash()) {
         // deep merge
-        val_b = s_deep_merge(val_a, val_b);
+        s_deep_merge(val_a, val_b);
+      } else if (val_b.is_nil()) {
+        // remove
+        res_hash->remove(key);
+      } else {
+        // update
+        res_hash->set(key, val_b);
       }
-    }
-
-    if (val_b.is_nil()) {
-      // remove
     } else {
+      // new key
       res_hash->set(key, val_b);
     }
   }
-  return res;
 }
 
-Value Value::deep_merge(const Value &other) {
-  if (!is_hash() || !other.is_hash()) return gNilValue;
-  return s_deep_merge(*this, other);
+void Value::deep_merge(const Value &other) {
+  if (!is_hash() || !other.is_hash()) return;
+  s_deep_merge(*this, other);
 }
 
 ///////////////// ====== JSON PARSER ========= /////////////
@@ -288,7 +290,7 @@ Value Value::deep_merge(const Value &other) {
   number    = real | integer;
   string    = ws* ('"' dquote_content* '"' | '\'' squote_content* '\'');
 
-  hash_content = (string | word) ':' >hash_value;
+  hash_content = (string | word | integer) ':' >hash_value;
 
   strict    = ws* '[' >list_value (',' >list_value)* ']' $list |
               ws* '{' hash_content (','? hash_content)* '}' %hash   |

@@ -11,27 +11,31 @@ namespace oscit {
  * that you should prepare all the content in a string instead of calling File#append
  * again and again.
  */
-class HashFileMethod : public FileMethod {
+class HashFileMethod : public Object {
 public:
-  TYPED("Object.FileMethod.HashFileMethod")
+  TYPED("Object.HashFileMethod")
 
   HashFileMethod(const char *name, const char *path)
-      : FileMethod(name, path) {
+      : Object(name, HashIO("Read/write hash file content.")),
+        file_(path) {
     create_methods();
   }
 
   HashFileMethod(const std::string &name, const std::string &path)
-      : FileMethod(name, path) {
+      : Object(name, HashIO("Read/write hash file content.")),
+        file_(path) {
     create_methods();
   }
 
   HashFileMethod(const char *name, const char *path, const char *info)
-      : FileMethod(name, path, info) {
+      : Object(name, HashIO(info)),
+        file_(path) {
     create_methods();
   }
 
   HashFileMethod(const std::string &name, const std::string &path, const std::string &info)
-      : FileMethod(name, path, info) {
+      : Object(name, HashIO(info)),
+        file_(path) {
     create_methods();
   }
 
@@ -40,7 +44,7 @@ public:
   /** Read/write the hash content as string.
    * The file path was provided on the object's creation.
    */
-  virtual const Value trigger(const Value &val);
+  virtual const Value trigger(const Value &hash);
 
   /** Update the content of the file's hash by doing a deep merge.
    * For example if the current content is {"one":{"x":45, "y":100}, "two":{...}} and we
@@ -49,7 +53,13 @@ public:
    */
   const Value update(const Value &hash);
 
+  ///** Set root and create a 'xxx/update' method that is connected to "update"
+  // */
+  //virtual void set_root(Root *root);
+
 private:
+  File file_;
+
   /** Creates a 'xxx/update' method that is connected to "update"
    */
   void create_methods();

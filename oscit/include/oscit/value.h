@@ -604,12 +604,12 @@ public:
     }
   }
 
-  /** Return the result of two hashes deep merging.
+  /** Merge 'other' hash into the current hash.
    * For example if the current content is {"one":{"x":45, "y":100}, "two":{...}} and we
    * receive {"one":{"x":40}, "two":null}, the final result will be
    * {"one":{"x":40, "y":100}}.
    */
-  Value deep_merge(const Value &other);
+  void deep_merge(const Value &other);
 
   /** =========================================================    Matrix  */
   bool is_matrix() const   { return type_ == MATRIX_VALUE; }

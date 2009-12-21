@@ -102,7 +102,7 @@ template<class T, const Value(T::*Tmethod)(const Value&)>
 class TMethod : public Method
 {
  public:
-  TYPED("Object.TMethod.Method")
+  TYPED("Object.Method.TMethod")
 
   /** Create a new object that call a member method when "triggered". */
   TMethod(void *receiver, const char *name, const Value &type) :
