@@ -7,3 +7,4 @@ The code written here conforms to http://google-styleguide.googlecode.com/svn/tr
 - Write tests !
 - Only accessors/finders that return true or false on success should start with "get_".
 - "*" and "&" (pointers and references) should be glued to the variable: const char *str.
+- Use "is_" or "has_" for methods without parameters returning true or false ("is_ready()", "has_error()").
