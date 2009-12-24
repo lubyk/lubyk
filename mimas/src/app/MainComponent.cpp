@@ -55,7 +55,7 @@ MainComponent::~MainComponent() {
 
 //==============================================================================
 void MainComponent::paint(Graphics& g) {
-    g.fillAll (Colour (0xffc1d0ff));
+    g.fillAll(MAIN_BG_COLOR);
 
     g.setColour (Colours::white);
     g.fillPath (internalPath1);

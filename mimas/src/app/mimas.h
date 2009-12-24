@@ -10,3 +10,13 @@
 
 #include "oscit/oscit.h"
 using namespace oscit;
+
+// ======================= GUI constants
+
+// dark background
+// #define MAIN_BG_COLOR Colour(0xff222222)
+// #define MAIN_LABEL_COLOR Colour(0xffaaaaaa)
+
+// white background
+#define MAIN_BG_COLOR Colours::white
+#define MAIN_LABEL_COLOR Colours::darkgrey

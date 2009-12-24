@@ -1,18 +1,19 @@
 #include "mimas.h"
-#include "proxy_view.h"
+#include "m_view_proxy.h"
 
 #include <string>
 #include <iostream>
 
+#include "m_device_view.h"
 #include "m_slider.h"
 #include "m_pad.h"
 
-void ProxyView::build_view(const std::string &view_def) {
+void MViewProxy::build_view(const std::string &view_def) {
   std::cout << "BUILDING FROM\n" << view_def << "\n";
   Value def; // TODO: why doesn't "Value def(Json(view_def));" work ?
   def.build_from_json(view_def.c_str());
   if (!def.is_hash()) {
-    std::cerr << "Json document is not a has '" << url() << "': " << def << "\n";
+    std::cerr << "Json document is not a hash '" << url() << "': " << def << "\n";
     return;
   }
 
@@ -20,7 +21,7 @@ void ProxyView::build_view(const std::string &view_def) {
 
   if (view_) delete view_;
 
-  view_ = new Component;
+  view_ = new MDeviceView(root_proxy_->remote_location().name());
   set_bounds_from_hash(view_, def);
   ResizableBorderComponent *resize = new ResizableBorderComponent(view_, NULL);
   resize->setBorderThickness(BorderSize(4));
@@ -31,9 +32,11 @@ void ProxyView::build_view(const std::string &view_def) {
     error("'parts' attribute is not a hash. Found", parts_value);
     return;
   }
+
   Hash *parts = parts_value.hash_;
   Hash::const_iterator it, end = parts->end();
   Value part;
+
   for (it = parts->begin(); it != end; ++it) {
     if (parts->get(*it, &part) && part.is_hash()) {
       Value klass = part["class"];
@@ -52,7 +55,7 @@ void ProxyView::build_view(const std::string &view_def) {
   }
 }
 
-void ProxyView::build_slider(const Value &def) {
+void MViewProxy::build_slider(const Value &def) {
   std::cout << "build_slider\n";
   const Value connect_path = def["connect"];
   if (!connect_path.is_string()) {
@@ -77,7 +80,7 @@ void ProxyView::build_slider(const Value &def) {
   view_->addAndMakeVisible(slider);
 }
 
-void ProxyView::build_pad(const Value &def) {
+void MViewProxy::build_pad(const Value &def) {
   std::cout << "build_pad\n";
   Value connect_path_x = def["connect_x"];
   Value connect_path_y = def["connect_y"];
@@ -112,11 +115,11 @@ void ProxyView::build_pad(const Value &def) {
   view_->addAndMakeVisible(pad);
 }
 
-void ProxyView::error(const char *message, const Value &context) {
+void MViewProxy::error(const char *message, const Value &context) {
   std::cerr << "Error in '" << url() << "': '" << message << " " << context << ".\n";
 }
 
-void ProxyView::set_bounds_from_hash(Component *component, const Value &def) {
+void MViewProxy::set_bounds_from_hash(Component *component, const Value &def) {
   component->setBounds(
     def["x"].get_real(),
     def["y"].get_real(),

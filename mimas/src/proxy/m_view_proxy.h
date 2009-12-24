@@ -1,15 +1,15 @@
-#ifndef MIMAS_SRC_PROXY_VIEW_PROXY_VIEW_H_
-#define MIMAS_SRC_PROXY_VIEW_PROXY_VIEW_H_
+#ifndef MIMAS_SRC_PROXY_M_VIEW_PROXY_H_
+#define MIMAS_SRC_PROXY_M_VIEW_PROXY_H_
 #include "m_object_proxy.h"
 
-class ProxyView : public MObjectProxy {
+class MViewProxy : public MObjectProxy {
 public:
-  ProxyView(const std::string &name, const Value &type, Component *main_view)
+  MViewProxy(const std::string &name, const Value &type, Component *main_view)
       : MObjectProxy(name, type),
         main_view_(main_view),
         view_(NULL) {}
 
-  virtual ~ProxyView() {
+  virtual ~MViewProxy() {
     MessageManagerLock mml;
     if (view_) delete view_;
   }
@@ -36,4 +36,4 @@ private:
   Component *view_;
 };
 
-#endif // MIMAS_SRC_PROXY_VIEW_PROXY_VIEW_H_
+#endif // MIMAS_SRC_PROXY_M_VIEW_PROXY_H_

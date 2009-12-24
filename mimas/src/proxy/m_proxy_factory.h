@@ -3,8 +3,8 @@
 #include "oscit/proxy_factory.h"
 #include "m_root_proxy.h"
 #include "m_object_proxy.h"
-#include "proxy_view_builder.h"
-#include "proxy_view.h"
+#include "m_views_builder.h"
+#include "m_view_proxy.h"
 
 class MProxyFactory : public ProxyFactory {
 public:
@@ -16,10 +16,10 @@ public:
 
   virtual ObjectProxy *build_object_proxy(Object *parent, const std::string &name, const Value &type) {
     if (parent->url() == "" && name == ".views") {
-      return new ViewsBuilder(name, type);
+      return new MViewsBuilder(name, type);
     } else if (parent->url() == "/.views" && type.type_id() == H("sss")) {
       // build view
-      return new ProxyView(name, type, main_view_);
+      return new MViewProxy(name, type, main_view_);
     } else if (!is_meta_method(name) || parent->url() != "") {
       return new MObjectProxy(name, type);
     } else {
