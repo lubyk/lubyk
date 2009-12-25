@@ -20,6 +20,7 @@
 		2B96413A10E36E2700F829BC /* m_device_view.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B96413810E36E2700F829BC /* m_device_view.cpp */; };
 		2B96414010E36E4600F829BC /* m_view_proxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B96413D10E36E4600F829BC /* m_view_proxy.cpp */; };
 		2B96415610E3710500F829BC /* m_device_label.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B96415410E3710500F829BC /* m_device_label.cpp */; };
+		2BB43E7C10E52D96006AF2B0 /* device_browser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BB43E7B10E52D96006AF2B0 /* device_browser.cpp */; };
 		2BD249120F0B454200AAA8C7 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BD249050F0B454200AAA8C7 /* Carbon.framework */; };
 		2BD249130F0B454200AAA8C7 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BD249060F0B454200AAA8C7 /* AudioUnit.framework */; };
 		2BD249140F0B454200AAA8C7 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BD249070F0B454200AAA8C7 /* Cocoa.framework */; };
@@ -77,6 +78,7 @@
 		2B96413F10E36E4600F829BC /* m_views_builder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = m_views_builder.h; sourceTree = "<group>"; };
 		2B96415410E3710500F829BC /* m_device_label.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = m_device_label.cpp; sourceTree = "<group>"; };
 		2B96415510E3710500F829BC /* m_device_label.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = m_device_label.h; sourceTree = "<group>"; };
+		2BB43E7B10E52D96006AF2B0 /* device_browser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = device_browser.cpp; sourceTree = "<group>"; };
 		2BD249050F0B454200AAA8C7 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		2BD249060F0B454200AAA8C7 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
 		2BD249070F0B454200AAA8C7 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
@@ -222,6 +224,7 @@
 		2B322AAE10D399120089DD2B /* device_browser */ = {
 			isa = PBXGroup;
 			children = (
+				2BB43E7B10E52D96006AF2B0 /* device_browser.cpp */,
 				2B322AAF10D399120089DD2B /* device_browser.h */,
 				2B322AB010D399120089DD2B /* device_browser_root.h */,
 				2B322AB110D399120089DD2B /* object_proxy_tree_item.cpp */,
@@ -352,6 +355,7 @@
 				2B96413A10E36E2700F829BC /* m_device_view.cpp in Sources */,
 				2B96414010E36E4600F829BC /* m_view_proxy.cpp in Sources */,
 				2B96415610E3710500F829BC /* m_device_label.cpp in Sources */,
+				2BB43E7C10E52D96006AF2B0 /* device_browser.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

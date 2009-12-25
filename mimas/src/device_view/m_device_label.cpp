@@ -3,7 +3,6 @@
 
 #include "m_device_view.h"
 
-#define LABEL_MARGIN_L 8
 #define LABEL_MARGIN_T 0
 
 MDeviceLabel::MDeviceLabel(MDeviceView *device_view, const String &name, const String &device_name)
@@ -16,8 +15,8 @@ MDeviceLabel::MDeviceLabel(MDeviceView *device_view, const String &name, const S
   min_width_  = label_->getFont().getStringWidth(label_->getText());
   min_height_ = label_->getFont().getHeight();
 
-  label_->setBounds(LABEL_MARGIN_L, LABEL_MARGIN_T, min_width_, min_height_);
-  setBounds(0, 0, min_width_ + 2 * LABEL_MARGIN_L, min_height_ + 2 * LABEL_MARGIN_T);
+  label_->setBounds(DEVICE_ROUNDED_RADIUS * 2.0, LABEL_MARGIN_T, min_width_, min_height_);
+  setBounds(0, 0, min_width_ + 2 * DEVICE_ROUNDED_RADIUS * 2.0, min_height_ + 2 * LABEL_MARGIN_T);
 
   addAndMakeVisible(label_);
 

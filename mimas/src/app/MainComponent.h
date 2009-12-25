@@ -30,16 +30,14 @@
 #include "m_root_proxy.h"
 #include "m_proxy_factory.h"
 
-class MainComponent  : public Component,
-                       public ButtonListener {
+class MainComponent  : public Component {
 public:
     //==============================================================================
     MainComponent ();
     ~MainComponent();
 
-    void paint (Graphics& g);
+    void paint(Graphics& g);
     void resized();
-    void buttonClicked (Button* buttonThatWasClicked);
 
     juce_UseDebuggingNewOperator
 
@@ -47,10 +45,10 @@ private:
     MLookAndFeel mimas_look_and_feel_;
     Root work_tree_;
     DeviceBrowser *device_browser_;
+    ResizableBorderComponent *border_;
 
-    TextButton *quitButton;
     Component *main_view_;
-    Path internalPath1;
+    Viewport *main_port_;
 
     // (prevent copy constructor and operator= being generated..)
     MainComponent (const MainComponent&);

@@ -23,8 +23,9 @@ void MViewProxy::build_view(const std::string &view_def) {
 
   view_ = new MDeviceView(root_proxy_->remote_location().name());
   set_bounds_from_hash(view_, def);
-  ResizableBorderComponent *resize = new ResizableBorderComponent(view_, NULL);
-  resize->setBorderThickness(BorderSize(4));
+
+  // TODO: resize view
+
   main_view_->addAndMakeVisible(view_);
 
   Value parts_value = def["parts"];

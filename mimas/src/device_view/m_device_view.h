@@ -28,6 +28,7 @@ private:
   /** Display the name of the device.
    */
   MDeviceLabel *label_;
+  ResizableBorderComponent *border_;
   bool hover_;
 };
 
