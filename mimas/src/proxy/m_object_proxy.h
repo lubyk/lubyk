@@ -39,11 +39,12 @@ public:
       std::list<MRangeWidget*>::iterator it, end = range_widgets_.end();
       for (it = range_widgets_.begin(); it != end; ++it) {
         (*it)->set_remote_value(value_.r);
+        // FIXME: shouldn't this logic live in the range widget thing ?
         if (!(*it)->is_dragged()) {
           // no dragging
           if ((*it)->last_drag() + (3 * latency_) < time_ref_.elapsed()) {
-            // we stopped draggin long ago, move real.
-            (*it)->handle_value_change(value_);
+            // we stopped dragging long ago, move real.
+            (*it)->set_value(value_.r);
           }
         }
       }

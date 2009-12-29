@@ -76,8 +76,12 @@ void MViewProxy::build_slider(const Value &def) {
 
 //  slider->setTextBoxStyle(Slider::TextBoxLeft, false, 80, 20);
   set_bounds_from_hash(slider, def);
+  if (slider->getWidth() > slider->getHeight()) {
+    slider->set_slider_type(MSlider::HorizontalSliderType);
+  } else {
+    slider->set_slider_type(MSlider::VerticalSliderType);
+  }
 
-  slider->setSliderStyle(slider->getWidth() > slider->getHeight() ? Slider::LinearHorizontal : Slider::LinearVertical);
   view_->addAndMakeVisible(slider);
 }
 

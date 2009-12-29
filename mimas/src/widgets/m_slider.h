@@ -1,10 +1,22 @@
 #ifndef MIMAS_SRC_WIDGETS_M_SLIDER_H_
 #define MIMAS_SRC_WIDGETS_M_SLIDER_H_
 #include "m_observable.h"
+#include "m_range_widget.h"
 
-class MSlider : public Slider, public MRangeWidget {
+class MSlider : public Component, public MRangeWidget {
 public:
-  MSlider(const std::string &name) : Slider(String(name.c_str())) {}
+  MSlider(const std::string &name)
+      : Component(String(name.c_str())),
+        is_dragged_(false) {}
+
+  enum SliderType {
+    VerticalSliderType,
+    HorizontalSliderType
+  };
+
+  void set_slider_type(SliderType type) {
+    slider_type_ = type;
+  }
 
   /** =========== MRangeWidget callbacks ========== */
 
@@ -12,37 +24,36 @@ public:
     setEnabled(enabled);
   }
 
-  virtual void set_range(Real min, Real max) {
-    setRange(min, max);
-  }
-
-  virtual void set_remote_value(Real value) {
-    setComponentProperty(T("RemoteValue"), value);
-    redraw();
-  }
-
-  virtual void handle_value_change(const Value &value) {
-    setValue(value.r, false);
-  }
-
   virtual void redraw() {
     repaint();
   }
 
   virtual bool is_dragged() {
-    return getThumbBeingDragged() != -1;
+    return is_dragged_;
   }
 
-  /** =========== Slider callbacks       ========== */
+  /** =========== Component callbacks  ========== */
 
-  virtual void valueChanged() {
-    // user slider being dragged
-    proxy_->set_value(Value(getValue()));
-  }
+  virtual void mouseDown(const MouseEvent &e);
 
-  virtual void stoppedDragging() {
-    last_drag_ = proxy_->time_ref().elapsed();
-  }
+  virtual void mouseDrag(const MouseEvent &e);
+
+  virtual void mouseUp(const MouseEvent &e);
+
+  virtual void paint(Graphics &g);
+
+  // virtual void valueChanged() {
+  //   // user slider being dragged
+  //   proxy_->set_value(Value(getValue()));
+  // }
+  //
+  // virtual void stoppedDragging() {
+  //   last_drag_ = proxy_->time_ref().elapsed();
+  // }
+private:
+  SliderType slider_type_;
+  bool is_dragged_;
+  Real slider_pos_;
 };
 
 #endif // MIMAS_SRC_WIDGETS_M_SLIDER_H_

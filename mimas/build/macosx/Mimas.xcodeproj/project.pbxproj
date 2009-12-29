@@ -17,6 +17,8 @@
 		2B322ACA10D399120089DD2B /* m_look_and_feel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B322AC010D399120089DD2B /* m_look_and_feel.cpp */; };
 		2B322B5810D3D7310089DD2B /* m_pad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B322B5710D3D7310089DD2B /* m_pad.cpp */; };
 		2B322B6F10D3D8980089DD2B /* m_range_widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B322B6E10D3D8980089DD2B /* m_range_widget.cpp */; };
+		2B46592C10EA654700CBFA47 /* paint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B46592B10EA654700CBFA47 /* paint.cpp */; };
+		2B46593C10EA676700CBFA47 /* m_slider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B46593B10EA676700CBFA47 /* m_slider.cpp */; };
 		2B96413A10E36E2700F829BC /* m_device_view.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B96413810E36E2700F829BC /* m_device_view.cpp */; };
 		2B96414010E36E4600F829BC /* m_view_proxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B96413D10E36E4600F829BC /* m_view_proxy.cpp */; };
 		2B96415610E3710500F829BC /* m_device_label.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B96415410E3710500F829BC /* m_device_label.cpp */; };
@@ -71,6 +73,8 @@
 		2B322AE710D3BA950089DD2B /* m_range_widget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = m_range_widget.h; sourceTree = "<group>"; };
 		2B322B5710D3D7310089DD2B /* m_pad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = m_pad.cpp; sourceTree = "<group>"; };
 		2B322B6E10D3D8980089DD2B /* m_range_widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = m_range_widget.cpp; sourceTree = "<group>"; };
+		2B46592B10EA654700CBFA47 /* paint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = paint.cpp; sourceTree = "<group>"; };
+		2B46593B10EA676700CBFA47 /* m_slider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = m_slider.cpp; sourceTree = "<group>"; };
 		2B96413810E36E2700F829BC /* m_device_view.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = m_device_view.cpp; sourceTree = "<group>"; };
 		2B96413910E36E2700F829BC /* m_device_view.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = m_device_view.h; sourceTree = "<group>"; };
 		2B96413D10E36E4600F829BC /* m_view_proxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = m_view_proxy.cpp; sourceTree = "<group>"; };
@@ -255,6 +259,8 @@
 		2B322ABF10D399120089DD2B /* widgets */ = {
 			isa = PBXGroup;
 			children = (
+				2B46593B10EA676700CBFA47 /* m_slider.cpp */,
+				2B46592B10EA654700CBFA47 /* paint.cpp */,
 				2B322B6E10D3D8980089DD2B /* m_range_widget.cpp */,
 				2B322B5710D3D7310089DD2B /* m_pad.cpp */,
 				2B322AE510D3BA950089DD2B /* m_pad_thumb.h */,
@@ -356,6 +362,8 @@
 				2B96414010E36E4600F829BC /* m_view_proxy.cpp in Sources */,
 				2B96415610E3710500F829BC /* m_device_label.cpp in Sources */,
 				2BB43E7C10E52D96006AF2B0 /* device_browser.cpp in Sources */,
+				2B46592C10EA654700CBFA47 /* paint.cpp in Sources */,
+				2B46593C10EA676700CBFA47 /* m_slider.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

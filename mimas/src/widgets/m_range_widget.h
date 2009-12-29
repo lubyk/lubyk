@@ -8,21 +8,40 @@ class MObjectProxy;
 
 class MRangeWidget : public MObservable {
 public:
-  MRangeWidget() : last_drag_(0), proxy_(NULL) {}
+  MRangeWidget();
 
   virtual ~MRangeWidget() {}
 
   virtual void set_enabled(bool enabled) = 0;
 
-  virtual void set_range(Real min, Real max) = 0;
+  virtual void set_range(Real min, Real max) {
+    min_ = min;
+    max_ = max;
+  }
 
-  virtual void set_remote_value(Real value) = 0;
+  void set_remote_value(Real value) {
+    remote_value_ = value;
+    redraw();
+  }
 
-  virtual void handle_value_change(const Value &value) = 0;
+  void set_value(Real value) {
+    value_ = value;
+    redraw();
+  }
 
-  virtual bool is_dragged() = 0;
+  Real scaled_value(Real range) {
+    if (max_ - min_ == 0) return 0;
+    return value_ * range / (max_ - min_);
+  }
 
-  virtual void redraw() = 0;
+  Real scaled_remote_value(Real range) {
+    if (max_ - min_ == 0) return 0;
+    return remote_value_ * range / (max_ - min_);
+  }
+
+  void set_scaled_value(Real position, Real range);
+
+  void stop_drag();
 
   void set_proxy(MObjectProxy *proxy);
 
@@ -30,12 +49,40 @@ public:
     return last_drag_;
   }
 
-  void set_last_drag(int last_drag) {
-    last_drag_ = last_drag;
-  }
+  /* =======  Callbacks that need to be implemented in sub-classes. ========== */
+
+  /** Should return true if the component is being dragged.
+   */
+  virtual bool is_dragged() = 0;
+
+  /** Should provoque a redraw of the widget.
+   */
+  virtual void redraw() = 0;
 
 protected:
+
+  /** Time when the last dragging operation occured.
+   */
   int last_drag_;
+
+  /** Smallest possible value.
+   */
+  Real min_;
+
+  /** Largest possible value.
+   */
+  Real max_;
+
+  /** Current value set by user.
+   */
+  Real value_;
+
+  /** Remote value.
+   */
+  Real remote_value_;
+
+  /** Object proxy that is connected to this widget.
+   */
   MObjectProxy *proxy_;
 };
 

@@ -16,17 +16,23 @@ void MPadRange::redraw() {
   pad_->repaint();
 }
 
-void MPadRange::set_scaled_value(Real position, Real range) {
-  if (!range) return;
-  Real r = position * (max_ - min_) / range;
-  if (r < min_) r = min_;
-  if (r > max_) r = max_;
-  value_.r = r;
-  proxy_->set_value(value_);
-}
-
-void MPadRange::stop_drag() {
-  last_drag_ = proxy_->time_ref().elapsed();
-}
-
 /** ================ Pad ============ */
+
+void MPad::mouseDown(const MouseEvent &e) {
+  dragged_ = true;
+  range_x_.set_scaled_value(e.x, getWidth());
+  range_y_.set_scaled_value(getHeight() - e.y, getHeight());
+  repaint();
+}
+
+void MPad::mouseDrag(const MouseEvent &e) {
+  range_x_.set_scaled_value(e.x, getWidth());
+  range_y_.set_scaled_value(getHeight() - e.y, getHeight());
+  repaint();
+}
+
+void MPad::mouseUp(const MouseEvent &e) {
+  dragged_ = false;
+  range_x_.stop_drag();
+  range_y_.stop_drag();
+}

@@ -28,18 +28,11 @@ bool ObjectProxyTreeItem::mightContainSubItems() {
 Component *ObjectProxyTreeItem::createItemComponent() {
   Value type = object_proxy_->type();
   if (type.type_id() == H("fffss")) {
-    MSlider *slider;
-    Component *component = new Component;
-    for(int i = 0; i < 2; ++i) {
-      slider = new MSlider(object_proxy_->url().c_str());
-      object_proxy_->connect(slider);
-      slider->setBounds (100 + i * 250, 2, 250, 20);
-      slider->setSliderStyle(i == 0 ? Slider::LinearHorizontal : Slider::Rotary);
-      slider->setTextBoxStyle(Slider::TextBoxLeft, false, 80, 20);
-      component->addAndMakeVisible(slider);
-    }
-
-    return component;
+    MSlider *slider = new MSlider(object_proxy_->url().c_str());
+    object_proxy_->connect(slider);
+    slider->setBounds(100, 2, 250, 20);
+    slider->set_slider_type(MSlider::HorizontalSliderType);
+    return slider;
   } else {
     return 0; // use paintItem instead
   }
