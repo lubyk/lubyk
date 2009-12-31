@@ -8,7 +8,7 @@
 
 class MProxyFactory : public ProxyFactory {
 public:
-  MProxyFactory(Component *main_view) : main_view_(main_view) {}
+  MProxyFactory(Component *main_view) : workspace_(main_view) {}
 
   virtual RootProxy *build_root_proxy(const Location &end_point) {
     return new MRootProxy(end_point);
@@ -19,7 +19,7 @@ public:
       return new MViewsBuilder(name, type);
     } else if (parent->url() == "/.views" && type.type_id() == H("sss")) {
       // build view
-      return new MViewProxy(name, type, main_view_);
+      return new MViewProxy(name, type, workspace_);
     } else if (!is_meta_method(name) || parent->url() != "") {
       return new MObjectProxy(name, type);
     } else {
@@ -27,7 +27,7 @@ public:
     }
   }
 private:
-  Component *main_view_;
+  Component *workspace_;
 };
 
 #endif // MIMAS_SRC_PROXY_M_PROXY_FACTORY_

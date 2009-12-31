@@ -6,7 +6,7 @@ class MViewProxy : public MObjectProxy {
 public:
   MViewProxy(const std::string &name, const Value &type, Component *main_view)
       : MObjectProxy(name, type),
-        main_view_(main_view),
+        workspace_(main_view),
         view_(NULL) {}
 
   virtual ~MViewProxy() {
@@ -32,7 +32,7 @@ private:
   void build_slider(const Value &val);
 
   void build_pad(const Value &val);
-  Component *main_view_;
+  Component *workspace_;
   Component *view_;
 };
 

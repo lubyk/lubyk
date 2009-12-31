@@ -26,7 +26,7 @@ void MViewProxy::build_view(const std::string &view_def) {
 
   // TODO: resize view
 
-  main_view_->addAndMakeVisible(view_);
+  workspace_->addAndMakeVisible(view_);
 
   Value parts_value = def["parts"];
   if (!parts_value.is_hash()) {

@@ -19,13 +19,14 @@
   ==============================================================================
 */
 
-#include "MainComponent.h"
+#include "MimasWindowContent.h"
 
+#define TOOLBAR_HEIGHT 30
 //==============================================================================
-MainComponent::MainComponent()
-    : work_tree_("Mimas"),
+MimasWindowContent::MimasWindowContent()
+    : work_tree_("MimasWindowContent"),
       device_browser_(NULL),
-      main_view_(NULL)
+      workspace_(NULL)
 {
   LookAndFeel::setDefaultLookAndFeel(&mimas_look_and_feel_);
 
@@ -35,36 +36,55 @@ MainComponent::MainComponent()
   border_ = new ResizableBorderComponent(this, 0);
   addAndMakeVisible(border_);
 
-  main_view_ = new Component;
-  main_port_ = new Viewport;
-  main_view_->setSize(2000,2000);
-  main_port_->setViewedComponent(main_view_);
-  addAndMakeVisible(main_port_);
+  workspace_ = new Component;
+  workspace_port_ = new Viewport;
+  workspace_->setSize(2000,2000);
+  workspace_port_->setViewedComponent(workspace_);
+  addAndMakeVisible(workspace_port_);
 
   device_browser_ = new DeviceBrowser("_oscit._udp");
   device_browser_->set_command(cmd);
-  device_browser_->adopt_proxy_factory(new MProxyFactory(main_view_));
+  device_browser_->adopt_proxy_factory(new MProxyFactory(workspace_));
   device_browser_->setBounds(0, 0, LAYOUT_BROWSER_WIDTH + LAYOUT_BROWSER_BORDER_WIDTH, getHeight());
   addAndMakeVisible(device_browser_);
+
+  toolbar_ = new Component;
+  addAndMakeVisible(toolbar_);
+
+  edit_mode_button_ = new TextButton(T("lock button"), T("lock"));
+  edit_mode_button_->addButtonListener(this);
+  edit_mode_button_->setBounds(2, 2, 100, 20);
+  toolbar_->addAndMakeVisible(edit_mode_button_);
 
   setSize(600, 600);
   resized();
 }
 
-MainComponent::~MainComponent() {
+MimasWindowContent::~MimasWindowContent() {
   deleteAndZero(device_browser_);
-  deleteAndZero(main_port_);
+  deleteAndZero(workspace_port_);
 }
 
 //==============================================================================
-void MainComponent::paint(Graphics& g) {
+void MimasWindowContent::paint(Graphics& g) {
   g.fillAll(MAIN_BG_COLOR);
+  g.setColour(Colours::lightgrey);
+  g.fillRect(0, 0, getWidth(), TOOLBAR_HEIGHT);
   //g.strokePath (internalPath1, PathStrokeType (5.2000f));
 }
 
-void MainComponent::resized() {
+void MimasWindowContent::resized() {
   float browser_width = device_browser_->getWidth();
-  device_browser_->setBounds(0, 0, browser_width, getHeight());
-  border_->setBounds(0, 0, getWidth(), getHeight());
-  main_port_->setBounds(browser_width, 0, getWidth() - browser_width, getHeight());
+  toolbar_->setBounds(0, 0, getWidth(), TOOLBAR_HEIGHT);
+
+  device_browser_->setBounds(0, TOOLBAR_HEIGHT, browser_width, getHeight() - TOOLBAR_HEIGHT);
+  border_->setBounds(0, TOOLBAR_HEIGHT, getWidth(), getHeight() - TOOLBAR_HEIGHT);
+  workspace_port_->setBounds(browser_width, TOOLBAR_HEIGHT, getWidth() - browser_width, getHeight() - TOOLBAR_HEIGHT);
+}
+
+
+void MimasWindowContent::buttonClicked(Button *button) {
+  if (button == edit_mode_button_) {
+    // xyz
+  }
 }
