@@ -19,16 +19,20 @@
   ==============================================================================
 */
 
-#include "MimasWindowContent.h"
+#include "mimas_window_content.h"
+#include "m_theme.h"
 
-#define TOOLBAR_HEIGHT 30
 //==============================================================================
 MimasWindowContent::MimasWindowContent()
-    : work_tree_("MimasWindowContent"),
+    : editor_mode_(ActionMode),
+      is_day_mode_(false),
+      work_tree_("MimasWindowContent"),
       device_browser_(NULL),
-      workspace_(NULL)
-{
-  LookAndFeel::setDefaultLookAndFeel(&mimas_look_and_feel_);
+      workspace_(NULL) {
+
+  themes_ = new MTheme[2];
+  themes_[0].set_night_theme();
+  themes_[1].set_day_theme();
 
   // no service-type: we do not want to publish a service
   OscCommand *cmd = work_tree_.adopt_command(new OscCommand("oscit", "", 7019)); // FIXME: no port => take any...
@@ -44,7 +48,7 @@ MimasWindowContent::MimasWindowContent()
 
   device_browser_ = new DeviceBrowser("_oscit._udp");
   device_browser_->set_command(cmd);
-  device_browser_->adopt_proxy_factory(new MProxyFactory(workspace_));
+  device_browser_->adopt_proxy_factory(new MProxyFactory(this, workspace_));
   device_browser_->setBounds(0, 0, LAYOUT_BROWSER_WIDTH + LAYOUT_BROWSER_BORDER_WIDTH, getHeight());
   addAndMakeVisible(device_browser_);
 
@@ -63,14 +67,7 @@ MimasWindowContent::MimasWindowContent()
 MimasWindowContent::~MimasWindowContent() {
   deleteAndZero(device_browser_);
   deleteAndZero(workspace_port_);
-}
-
-//==============================================================================
-void MimasWindowContent::paint(Graphics& g) {
-  g.fillAll(MAIN_BG_COLOR);
-  g.setColour(Colours::lightgrey);
-  g.fillRect(0, 0, getWidth(), TOOLBAR_HEIGHT);
-  //g.strokePath (internalPath1, PathStrokeType (5.2000f));
+  delete[] themes_;
 }
 
 void MimasWindowContent::resized() {
@@ -85,6 +82,7 @@ void MimasWindowContent::resized() {
 
 void MimasWindowContent::buttonClicked(Button *button) {
   if (button == edit_mode_button_) {
-    // xyz
+    editor_mode_ = (EditorMode)((editor_mode_ + 1) % LastMode);
+    repaint();
   }
 }

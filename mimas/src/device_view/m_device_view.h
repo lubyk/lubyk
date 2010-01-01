@@ -3,10 +3,11 @@
 #include "m_object_proxy.h"
 
 class MDeviceLabel;
+class MimasWindowContent;
 
 class MDeviceView : public Component {
 public:
-  MDeviceView(const std::string &name);
+  MDeviceView(MimasWindowContent *mimas, const std::string &name);
 
   //virtual ~MDeviceView();
   virtual void mouseEnter(const MouseEvent &e) {
@@ -25,6 +26,8 @@ public:
   void resized();
 
 private:
+  MimasWindowContent *mimas_;
+
   /** Display the name of the device.
    */
   MDeviceLabel *label_;

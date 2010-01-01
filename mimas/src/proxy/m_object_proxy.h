@@ -7,15 +7,18 @@
 #include "object_proxy_tree_item.h"
 #include "m_range_widget.h"
 
+class MimasWindowContent;
+
 class MObjectProxy : public ObjectProxy {
 public:
   /** Class signature. */
   TYPED("Object.ObjectProxy.MObjectProxy")
 
-  MObjectProxy(const std::string &name, const Value &type)
+  MObjectProxy(MimasWindowContent *mimas, const std::string &name, const Value &type)
       : ObjectProxy(name, type),
+        mimas_(mimas),
         range_widgets_(this) {
-    set_and_hold(&tree_view_item_, new ObjectProxyTreeItem(this));
+    set_and_hold(&tree_view_item_, new ObjectProxyTreeItem(mimas_, this));
   }
 
   ObjectProxyTreeItem *object_proxy_view() { // FIXME: how to keep constness ok here ?
@@ -57,6 +60,8 @@ public:
 
   void connect(MRangeWidget *widget);
 
+protected:
+  MimasWindowContent *mimas_;
 private:
   MessageManagerLock *mml_;
   TObservableList<MRangeWidget *> range_widgets_;

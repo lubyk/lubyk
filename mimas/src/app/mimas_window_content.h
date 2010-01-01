@@ -8,13 +8,17 @@
 #include "root_proxy_tree_item.h"
 #include "m_root_proxy.h"
 #include "m_proxy_factory.h"
+#include "m_theme.h"
+
+#define TOOLBAR_HEIGHT 30
 
 class MimasWindowContent : public Component, public ButtonListener {
 public:
   enum EditorMode {
+    ActionMode = 0,
     EditMode,
-    ActionMode,
-    FreezeMode
+    FrozenMode,
+    LastMode
   };
 
   MimasWindowContent();
@@ -26,9 +30,37 @@ public:
 
   juce_UseDebuggingNewOperator
 
+  const Colour &color(const MTheme::ColorId color_id) const {
+    return themes_[is_day_mode_].color_for_id(color_id);
+  }
+
+  const Colour &bg_color() const {
+    return themes_[is_day_mode_].color_for_id((MTheme::ColorId)editor_mode_);
+  }
+
+  Component *workspace() {
+    return workspace_;
+  }
+
+  inline bool action_mode() {
+    return editor_mode_ == ActionMode;
+  }
+
+  inline bool edit_mode() {
+    return editor_mode_ == EditMode;
+  }
+
 private:
   /* ================== APP STATE    ================= */
   EditorMode editor_mode_;
+
+  /** This holds two array of colors used by the various paint methods.
+   */
+  MTheme *themes_;
+
+  /** Holds true if we should use the "day" theme (light).
+   */
+  bool is_day_mode_;
 
   /* ================== MAIN WIDGETS ================= */
 
@@ -37,10 +69,6 @@ private:
   Root work_tree_;
 
   /* ================== MAIN WIDGETS ================= */
-
-  /** TODO: remove: we use a custom "paint.cpp" and might make it a dylib.
-   */
-  MLookAndFeel mimas_look_and_feel_;
 
   /** Device browser (currently a TreeView, but should be replaced by a custom view
    * holding a device list, a breadcrumbs path and a method list).

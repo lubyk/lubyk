@@ -1,6 +1,9 @@
 #ifndef MIMAS_SRC_APP_MIMAS_WINDOW_H_
 #define MIMAS_SRC_APP_MIMAS_WINDOW_H_
+#include "mimas_window_content.h"
 
+/** Main window holding workspace.
+ */
 class MimasWindow : public DocumentWindow {
 public:
   MimasWindow()

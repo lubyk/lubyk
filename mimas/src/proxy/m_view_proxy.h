@@ -2,12 +2,11 @@
 #define MIMAS_SRC_PROXY_M_VIEW_PROXY_H_
 #include "m_object_proxy.h"
 
+class MimasWindowContent;
+
 class MViewProxy : public MObjectProxy {
 public:
-  MViewProxy(const std::string &name, const Value &type, Component *main_view)
-      : MObjectProxy(name, type),
-        workspace_(main_view),
-        view_(NULL) {}
+  MViewProxy(MimasWindowContent *mimas, const std::string &name, const Value &type);
 
   virtual ~MViewProxy() {
     MessageManagerLock mml;
@@ -29,9 +28,13 @@ private:
 
   void set_bounds_from_hash(Component *component, const Value &val);
 
+  /** TODO: replace with a generic "MWidget::update_from_hash()"
+   * or "MWidget::build_from_hash()"
+   */
   void build_slider(const Value &val);
 
   void build_pad(const Value &val);
+
   Component *workspace_;
   Component *view_;
 };

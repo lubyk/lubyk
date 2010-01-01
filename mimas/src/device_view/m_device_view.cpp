@@ -3,9 +3,10 @@
 
 #include "m_device_label.h"
 
-MDeviceView::MDeviceView(const std::string &name)
-    : Component(String(name.c_str())) {
-  label_ = new MDeviceLabel(this, T("device name"), String(name.c_str()));
+MDeviceView::MDeviceView(MimasWindowContent *mimas, const std::string &name)
+    : Component(String(name.c_str())),
+      mimas_(mimas) {
+  label_ = new MDeviceLabel(mimas_, this, T("device name"), String(name.c_str()));
 
   border_ = new ResizableBorderComponent(this, 0);
   addAndMakeVisible(border_);
@@ -16,18 +17,6 @@ MDeviceView::MDeviceView(const std::string &name)
 //MDeviceView::~MDeviceView() {
 //
 //}
-
-void MDeviceView::paint(Graphics &g) {
-  g.setColour(DEVICE_BORDER_COLOR.withMultipliedAlpha(hover_ ? 1.0f : 0.5f));
-
-  g.drawRoundedRectangle(
-    (DEVICE_BORDER_WIDTH / 2),
-    (DEVICE_BORDER_WIDTH / 2) + label_->min_height() / 2,
-    getWidth() - DEVICE_BORDER_WIDTH,
-    getHeight() - (label_->min_height() / 2) - DEVICE_BORDER_WIDTH,
-    DEVICE_ROUNDED_RADIUS,
-    DEVICE_BORDER_WIDTH);
-}
 
 void MDeviceView::resized() {
   // FIXME: get label width...

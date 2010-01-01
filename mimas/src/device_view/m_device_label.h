@@ -3,10 +3,11 @@
 #include "m_object_proxy.h"
 
 class MDeviceView;
+class MimasWindowContent;
 
 class MDeviceLabel : public Component {
 public:
-  MDeviceLabel(MDeviceView *device_view, const String &name, const String &device_name);
+  MDeviceLabel(MimasWindowContent *mimas, MDeviceView *device_view, const String &name, const String &device_name);
 
   virtual void mouseDrag(const MouseEvent &e);
 
@@ -19,7 +20,11 @@ public:
   int min_height() {
     return min_height_;
   }
+
+  virtual void paint(Graphics &g);
+
 private:
+  MimasWindowContent *mimas_;
   Label *label_;
   int min_width_;
   int min_height_;

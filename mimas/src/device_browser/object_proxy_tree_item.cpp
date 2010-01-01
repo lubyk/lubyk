@@ -1,9 +1,12 @@
 #include "mimas.h"
+#include "mimas_window_content.h"
 #include "object_proxy_tree_item.h"
 #include "m_object_proxy.h"
 #include "m_slider.h"
 
-ObjectProxyTreeItem::ObjectProxyTreeItem(MObjectProxy *object) : subnodes_added_(false) {
+ObjectProxyTreeItem::ObjectProxyTreeItem(MimasWindowContent *mimas, MObjectProxy *object)
+    : mimas_(mimas),
+      subnodes_added_(false) {
   set_and_hold(&object_proxy_, object);
 }
 
@@ -28,7 +31,7 @@ bool ObjectProxyTreeItem::mightContainSubItems() {
 Component *ObjectProxyTreeItem::createItemComponent() {
   Value type = object_proxy_->type();
   if (type.type_id() == H("fffss")) {
-    MSlider *slider = new MSlider(object_proxy_->url().c_str());
+    MSlider *slider = new MSlider(mimas_, object_proxy_->url().c_str());
     object_proxy_->connect(slider);
     slider->setBounds(100, 2, 250, 20);
     slider->set_slider_type(MSlider::HorizontalSliderType);

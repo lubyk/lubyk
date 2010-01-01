@@ -1,7 +1,6 @@
 #ifndef MIMAS_SRC_APP_MIMAS_APPLICATION_H_
 #define MIMAS_SRC_APP_MIMAS_APPLICATION_H_
 #include "mimas.h"
-#include "MimasWindowContent.h"
 #include "mimas_window.h"
 
 

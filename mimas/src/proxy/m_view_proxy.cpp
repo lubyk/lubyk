@@ -4,9 +4,16 @@
 #include <string>
 #include <iostream>
 
+#include "mimas_window_content.h"
 #include "m_device_view.h"
 #include "m_slider.h"
 #include "m_pad.h"
+
+
+MViewProxy::MViewProxy(MimasWindowContent *mimas, const std::string &name, const Value &type)
+    : MObjectProxy(mimas, name, type),
+      workspace_(mimas->workspace()),
+      view_(NULL) {}
 
 void MViewProxy::build_view(const std::string &view_def) {
   std::cout << "BUILDING FROM\n" << view_def << "\n";
@@ -21,7 +28,7 @@ void MViewProxy::build_view(const std::string &view_def) {
 
   if (view_) delete view_;
 
-  view_ = new MDeviceView(root_proxy_->remote_location().name());
+  view_ = new MDeviceView(mimas_, root_proxy_->remote_location().name());
   set_bounds_from_hash(view_, def);
 
   // TODO: resize view
@@ -71,7 +78,7 @@ void MViewProxy::build_slider(const Value &def) {
     return;
   }
 
-  MSlider *slider = new MSlider(connect_path.str());
+  MSlider *slider = new MSlider(mimas_, connect_path.str());
   proxy->connect(slider);
 
 //  slider->setTextBoxStyle(Slider::TextBoxLeft, false, 80, 20);
