@@ -78,11 +78,18 @@ class ZeroConfBrowser : public Mutex {
   void remove_device(const char *name);
 
  protected:
+
+  /** This method is called when the command_ is set. Sub-classes can call this
+  * method if they want to use the browser without creating proxies (without a command).
+   */
+  virtual void start();
+
   /** This method *must* be called from sub-classes in their destructors to
    * make sure the callbacks (add_device, remove_device) are not called in the
 	 * middle of a class destruction.
 	 */
   virtual void stop();
+
 
   void get_protocol_from_service_type();
 

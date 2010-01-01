@@ -42,6 +42,7 @@ namespace oscit {
 
 void ZeroConfBrowser::set_command(Command *command) {
   command_ = command;
+  start();
 }
 
 void ZeroConfBrowser::do_adopt_proxy_factory(ProxyFactory *factory) {

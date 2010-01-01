@@ -43,10 +43,12 @@ using namespace oscit;
   NSNetServiceBrowser *browser_;
   bool running_;
   std::string protocol_;
+  std::string service_type_;
 }
 
 - (id)initWithDelegate:(oscit::ZeroConfBrowser *)master serviceType:(const char *)service_type protocol:(const char *)protocol;
 - (void)stop;
+- (void)start;
 // NSNetServiceBrowser delegate methods
 - (void)netServiceBrowserWillSearch:(NSNetServiceBrowser *)browser;
 - (void)netServiceBrowserDidStopSearch:(NSNetServiceBrowser *)browser;
@@ -67,11 +69,18 @@ using namespace oscit;
     protocol_ = protocol;
     master_   = master;
     browser_  = [[NSNetServiceBrowser alloc] init];
+    service_type_ = service_type;
     [browser_ setDelegate:self];
-    [browser_ searchForServicesOfType:[NSString stringWithCString:service_type encoding:NSUTF8StringEncoding] inDomain:@""];
-    running_ = YES;
   }
   return self;
+}
+
+- (void)start {
+  if (!running_) {
+    [browser_ stop];
+    [browser_ searchForServicesOfType:[NSString stringWithCString:service_type_.c_str() encoding:NSUTF8StringEncoding] inDomain:@""];
+    running_ = YES;
+  }
 }
 
 - (void)stop {
@@ -80,6 +89,7 @@ using namespace oscit;
     running_ = NO;
   }
 }
+
 // NSNetServiceBrowser delegate methods
 - (void)netServiceBrowserWillSearch:(NSNetServiceBrowser *)browser {
   // ignore
@@ -153,6 +163,10 @@ public:
     [delegate_ release];
   }
 
+  void start() {
+    [delegate_ start];
+  }
+
   void stop() {
     [delegate_ stop];
   }
@@ -173,6 +187,10 @@ ZeroConfBrowser::ZeroConfBrowser(const char *service_type) :
 ZeroConfBrowser::~ZeroConfBrowser() {
   delete impl_;
   if (proxy_factory_) delete proxy_factory_;
+}
+
+void ZeroConfBrowser::start() {
+  impl_->start();
 }
 
 void ZeroConfBrowser::stop() {

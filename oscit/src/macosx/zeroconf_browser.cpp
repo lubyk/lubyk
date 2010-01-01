@@ -71,8 +71,15 @@ struct BrowsedDevice {
 
 class ZeroConfBrowser::Implementation : public Thread {
 public:
-  Implementation(ZeroConfBrowser *master) : master_(master) {
-    start_thread<Implementation, &Implementation::browse>(this, NULL);
+  Implementation(ZeroConfBrowser *master)
+      : master_(master),
+        started_(false) {}
+
+  void start() {
+    if (!started_) {
+      started_ = true;
+      start_thread<Implementation, &Implementation::browse>(this, NULL);
+    }
   }
 
   void browse(Thread *thread) {
@@ -142,9 +149,9 @@ public:
                                uint16_t txt_len,
                                const unsigned char *txt,
                                void *context) {
-    
+
     BrowsedDevice *device = (BrowsedDevice*)context;
-    
+
     if (device->flags_ & kDNSServiceFlagsAdd) {
       device->browser_->add_device(Location(
                                device->browser_->protocol_.c_str(),
@@ -196,6 +203,7 @@ public:
   }
 
   ZeroConfBrowser *master_;
+  bool started_;
 };
 
 ZeroConfBrowser::ZeroConfBrowser(const char *service_type) :
@@ -210,6 +218,10 @@ ZeroConfBrowser::ZeroConfBrowser(const char *service_type) :
 ZeroConfBrowser::~ZeroConfBrowser() {
   delete impl_;
   if (proxy_factory_) delete proxy_factory_;
+}
+
+void ZeroConfBrowser::start() {
+  impl_->start();
 }
 
 void ZeroConfBrowser::stop() {

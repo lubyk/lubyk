@@ -55,9 +55,7 @@ namespace oscit {
 
 class ZeroConfBrowser::Implementation {
 public:
-  Implementation(ZeroConfBrowser *browser) : browser_(browser), avahi_poll_(NULL), avahi_client_(NULL), running_(false) {
-    start();
-  }
+  Implementation(ZeroConfBrowser *browser) : browser_(browser), avahi_poll_(NULL), avahi_client_(NULL), running_(false) {}
 
   ~Implementation() {
     stop();
@@ -76,6 +74,8 @@ public:
 	}
 
   void start() {
+    if (running_) return;
+
     int error;
     // create poll object
     avahi_poll_ = avahi_threaded_poll_new();
@@ -241,6 +241,10 @@ ZeroConfBrowser::ZeroConfBrowser(const char *service_type) :
 ZeroConfBrowser::~ZeroConfBrowser() {
   delete impl_;
   if (proxy_factory_) delete proxy_factory_;
+}
+
+void ZeroConfBrowser::start() {
+  impl_->start();
 }
 
 void ZeroConfBrowser::stop() {
