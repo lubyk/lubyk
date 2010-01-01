@@ -1,5 +1,7 @@
 #include "mimas.h"
 #include "mimas_window_content.h"
+#include "m_browser.h"
+#include "m_device_list.h"
 #include "m_device_view.h"
 #include "m_device_label.h"
 #include "m_slider.h"
@@ -22,7 +24,11 @@ void MTheme::set_day_theme() {
   colors_[WorkspaceFrozenBG] = Colour(0xff3f0000);
   colors_[WorkspaceBorder]   = Colour(0xff000000);
 
+  colors_[BrowserSelectedItem] = Colour(0xffadd8e6);
+  colors_[BrowserLabel]      = Colour(0xffa0a0a0);
+
   colors_[ToolbarBG]         = Colour(0xff808080);
+
   colors_[DeviceBorder]      = Colour(0xffa0a0a0);
   colors_[DeviceLabel]       = Colour(0xffa0a0a0);
 }
@@ -32,6 +38,9 @@ void MTheme::set_night_theme() {
   colors_[WorkspaceEditBG]   = Colour(0xff808080);
   colors_[WorkspaceFrozenBG] = Colour(0xff3f0000);
   colors_[WorkspaceBorder]   = Colour(0xff000000);
+
+  colors_[BrowserSelectedItem] = Colour(0xffadd8e6);
+  colors_[BrowserLabel]      = Colour(0xffa0a0a0);
 
   colors_[ToolbarBG]         = Colour(0xff808080);
   colors_[DeviceBorder]      = Colour(0xffa0a0a0);
@@ -48,6 +57,48 @@ void MimasWindowContent::paint(Graphics& g) {
   g.setColour(color(MTheme::ToolbarBG));
   g.fillRect(0, 0, getWidth(), TOOLBAR_HEIGHT);
   //g.strokePath (internalPath1, PathStrokeType (5.2000f));
+}
+
+
+// =============================================
+// ==             MBrowser                    ==
+// =============================================
+
+void MBrowser::paint(Graphics &g) {
+  g.fillAll(mimas_->bg_color());
+  g.setColour(mimas_->color(MTheme::DeviceBorder));
+  g.drawLine(
+    getWidth() - LAYOUT_BROWSER_BORDER_WIDTH / 2.0f,
+    0,
+    getWidth() - LAYOUT_BROWSER_BORDER_WIDTH / 2.0f,
+    getHeight(),
+    LAYOUT_BROWSER_BORDER_WIDTH
+  );
+}
+
+
+// =============================================
+// ==             MDeviceList                 ==
+// =============================================
+
+void MDeviceList::paintListBoxItem(int rowNumber, Graphics& g, int width, int height, bool rowIsSelected) {
+  if (rowIsSelected) g.fillAll(mimas_->color(MTheme::BrowserSelectedItem));
+
+  g.setColour(mimas_->color(MTheme::BrowserLabel));
+  g.setFont(height * 0.7f);
+
+  g.drawText(
+    String(devices_[rowNumber]->remote_location().name().c_str()),
+    5, 0, width, height,
+    Justification::centredLeft,
+    true
+  );
+}
+
+void MDeviceList::paint(Graphics& g) {
+  setColour(ListBox::backgroundColourId, mimas_->bg_color());
+  setColour(ListBox::outlineColourId, mimas_->color(MTheme::DeviceBorder));
+  setColour(ListBox::textColourId, mimas_->color(MTheme::DeviceLabel));
 }
 
 // =============================================

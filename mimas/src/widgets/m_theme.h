@@ -17,6 +17,9 @@ public:
     WorkspaceFrozenBG,
     WorkspaceBorder,
 
+    BrowserSelectedItem,
+    BrowserLabel,
+
     ToolbarBG,
 
     DeviceBorder,

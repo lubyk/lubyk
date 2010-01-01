@@ -4,9 +4,7 @@
 #include "mimas.h"
 #include "m_look_and_feel.h"
 #include "oscit/osc_command.h"
-#include "device_browser.h"
-#include "root_proxy_tree_item.h"
-#include "m_root_proxy.h"
+#include "m_browser.h"
 #include "m_proxy_factory.h"
 #include "m_theme.h"
 
@@ -42,6 +40,10 @@ public:
     return workspace_;
   }
 
+  Component *workspace_port() {
+    return workspace_port_;
+  }
+
   inline bool action_mode() {
     return editor_mode_ == ActionMode;
   }
@@ -49,6 +51,8 @@ public:
   inline bool edit_mode() {
     return editor_mode_ == EditMode;
   }
+
+  void resize_except(Component *skip_component);
 
 private:
   /* ================== APP STATE    ================= */
@@ -73,11 +77,19 @@ private:
   /** Device browser (currently a TreeView, but should be replaced by a custom view
    * holding a device list, a breadcrumbs path and a method list).
    */
-  DeviceBrowser *device_browser_;
+  MBrowser *device_browser_;
 
   /** Border used to resize the window.
   */
   ResizableBorderComponent *border_;
+
+  /** Top toolbar.
+  */
+  Component *toolbar_;
+
+  /** Button to enter/exit edit mode.
+  */
+  TextButton *edit_mode_button_;
 
   /** Main workspace and view port: this is where all the work
   * is done.
@@ -87,14 +99,6 @@ private:
   /** Scrollable container that contains the main workspace.
   */
   Viewport *workspace_port_;
-
-  /** Top toolbar.
-  */
-  Component *toolbar_;
-
-  /** Button to enter/exit edit mode.
-  */
-  TextButton *edit_mode_button_;
 
   // (prevent copy constructor and operator= being generated..)
   MimasWindowContent (const MimasWindowContent&);

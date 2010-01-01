@@ -1,11 +1,10 @@
 #ifndef MIMAS_SRC_DEVICE_BROWSER_DEVICE_BROWSER_ROOT_H_
 #define MIMAS_SRC_DEVICE_BROWSER_DEVICE_BROWSER_ROOT_H_
 #include "oscit/zeroconf_browser.h"
-#include "m_root_proxy.h"
 
-class DeviceBrowserRoot : public TreeViewItem {
+class MBrowserRoot : public TreeViewItem {
 public:
-  DeviceBrowserRoot() {
+  MBrowserRoot() {
     setOpen(true);
   }
 

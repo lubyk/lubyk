@@ -1,14 +1,13 @@
 #include "mimas.h"
 #include "root_proxy_tree_item.h"
 
-#include "m_root_proxy.h"
 #include "m_object_proxy.h"
 
-RootProxyTreeItem::RootProxyTreeItem(MRootProxy *proxy) : subnodes_added_(false) {
+RootProxyListItem::RootProxyListItem(RootProxy *proxy) : subnodes_added_(false) {
   set_and_hold(&device_proxy_, proxy);
 }
 
-void RootProxyTreeItem::paintItem(Graphics& g, int width, int height) {
+void RootProxyListItem::paintItem(Graphics& g, int width, int height) {
     // if this item is selected, fill it with a background colour..
   if (isSelected()) g.fillAll(Colours::blue.withAlpha (0.3f));
   // use a "colour" attribute in the xml tag for this node to set the text colour..
@@ -22,7 +21,7 @@ void RootProxyTreeItem::paintItem(Graphics& g, int width, int height) {
     Justification::centredLeft, true);
 }
 
-void RootProxyTreeItem::itemOpennessChanged(bool isNowOpen) {
+void RootProxyListItem::itemOpennessChanged(bool isNowOpen) {
   if (isNowOpen && !subnodes_added_) {
     // FIXME: make sure we do not accept changes to this tree now !
     const THash<std::string, Object *> children = device_proxy_->children();

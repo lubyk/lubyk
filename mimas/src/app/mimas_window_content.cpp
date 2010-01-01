@@ -22,13 +22,17 @@
 #include "mimas_window_content.h"
 #include "m_theme.h"
 
+#define LAYOUT_SCROLLBAR_THICKNESS 8
+
 //==============================================================================
 MimasWindowContent::MimasWindowContent()
     : editor_mode_(ActionMode),
       is_day_mode_(false),
       work_tree_("MimasWindowContent"),
+      toolbar_(NULL),
       device_browser_(NULL),
-      workspace_(NULL) {
+      workspace_(NULL),
+      workspace_port_(NULL) {
 
   themes_ = new MTheme[2];
   themes_[0].set_night_theme();
@@ -44,9 +48,10 @@ MimasWindowContent::MimasWindowContent()
   workspace_port_ = new Viewport;
   workspace_->setSize(2000,2000);
   workspace_port_->setViewedComponent(workspace_);
+  workspace_port_->setScrollBarThickness(LAYOUT_SCROLLBAR_THICKNESS);
   addAndMakeVisible(workspace_port_);
 
-  device_browser_ = new DeviceBrowser("_oscit._udp");
+  device_browser_ = new MBrowser(this, "_oscit._udp");
   device_browser_->set_command(cmd);
   device_browser_->adopt_proxy_factory(new MProxyFactory(this, workspace_));
   device_browser_->setBounds(0, 0, LAYOUT_BROWSER_WIDTH + LAYOUT_BROWSER_BORDER_WIDTH, getHeight());
@@ -71,14 +76,24 @@ MimasWindowContent::~MimasWindowContent() {
 }
 
 void MimasWindowContent::resized() {
-  float browser_width = device_browser_->getWidth();
-  toolbar_->setBounds(0, 0, getWidth(), TOOLBAR_HEIGHT);
-
-  device_browser_->setBounds(0, TOOLBAR_HEIGHT, browser_width, getHeight() - TOOLBAR_HEIGHT);
-  border_->setBounds(0, TOOLBAR_HEIGHT, getWidth(), getHeight() - TOOLBAR_HEIGHT);
-  workspace_port_->setBounds(browser_width, TOOLBAR_HEIGHT, getWidth() - browser_width, getHeight() - TOOLBAR_HEIGHT);
+  resize_except(NULL);
 }
 
+void MimasWindowContent::resize_except(Component *skip_component) {
+  float browser_width = device_browser_->getWidth();
+  if (skip_component != toolbar_ && toolbar_)
+    toolbar_->setBounds(0, 0, getWidth(), TOOLBAR_HEIGHT);
+
+  if (skip_component != device_browser_ && device_browser_)
+    device_browser_->setBounds(0, TOOLBAR_HEIGHT, browser_width, getHeight() - TOOLBAR_HEIGHT);
+
+  if (skip_component != border_ && border_)
+    border_->setBounds(0, TOOLBAR_HEIGHT, getWidth(), getHeight() - TOOLBAR_HEIGHT);
+
+  if (skip_component != workspace_port_ && workspace_port_)
+    workspace_port_->setBounds(browser_width, TOOLBAR_HEIGHT, getWidth() - browser_width, getHeight() - TOOLBAR_HEIGHT);
+
+}
 
 void MimasWindowContent::buttonClicked(Button *button) {
   if (button == edit_mode_button_) {

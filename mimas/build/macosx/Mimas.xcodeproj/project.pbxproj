@@ -10,7 +10,6 @@
 		1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58140DA1D0A300B32029 /* MainMenu.xib */; };
 		2B322AC310D399120089DD2B /* juce_LibrarySource.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B322AA910D399120089DD2B /* juce_LibrarySource.mm */; };
 		2B322AC610D399120089DD2B /* object_proxy_tree_item.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B322AB110D399120089DD2B /* object_proxy_tree_item.cpp */; };
-		2B322AC710D399120089DD2B /* root_proxy_tree_item.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B322AB310D399120089DD2B /* root_proxy_tree_item.cpp */; };
 		2B322AC810D399120089DD2B /* m_object_proxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B322AB610D399120089DD2B /* m_object_proxy.cpp */; };
 		2B322ACA10D399120089DD2B /* m_look_and_feel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B322AC010D399120089DD2B /* m_look_and_feel.cpp */; };
 		2B322B5810D3D7310089DD2B /* m_pad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B322B5710D3D7310089DD2B /* m_pad.cpp */; };
@@ -20,7 +19,6 @@
 		2B96413A10E36E2700F829BC /* m_device_view.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B96413810E36E2700F829BC /* m_device_view.cpp */; };
 		2B96414010E36E4600F829BC /* m_view_proxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B96413D10E36E4600F829BC /* m_view_proxy.cpp */; };
 		2B96415610E3710500F829BC /* m_device_label.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B96415410E3710500F829BC /* m_device_label.cpp */; };
-		2BB43E7C10E52D96006AF2B0 /* device_browser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BB43E7B10E52D96006AF2B0 /* device_browser.cpp */; };
 		2BD249120F0B454200AAA8C7 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BD249050F0B454200AAA8C7 /* Carbon.framework */; };
 		2BD249130F0B454200AAA8C7 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BD249060F0B454200AAA8C7 /* AudioUnit.framework */; };
 		2BD249140F0B454200AAA8C7 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BD249070F0B454200AAA8C7 /* Cocoa.framework */; };
@@ -37,6 +35,8 @@
 		2BE5BA8A10C0241000535DB4 /* liboscit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BE5BA8910C0241000535DB4 /* liboscit.a */; };
 		2BF6115010EE03E600B1F78D /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BF6114B10EE03E600B1F78D /* main.cpp */; };
 		2BF6115110EE03E600B1F78D /* mimas_window_content.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BF6114D10EE03E600B1F78D /* mimas_window_content.cpp */; };
+		2BF611FF10EE3F8500B1F78D /* m_browser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BF611FB10EE3F8500B1F78D /* m_browser.cpp */; };
+		2BF6120010EE3F8500B1F78D /* m_device_list.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BF611FD10EE3F8500B1F78D /* m_device_list.cpp */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -51,17 +51,13 @@
 		2B322AA810D399120089DD2B /* juce_AppConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = juce_AppConfig.h; sourceTree = "<group>"; };
 		2B322AA910D399120089DD2B /* juce_LibrarySource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = juce_LibrarySource.mm; sourceTree = "<group>"; };
 		2B322AAD10D399120089DD2B /* mimas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mimas.h; sourceTree = "<group>"; };
-		2B322AAF10D399120089DD2B /* device_browser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = device_browser.h; sourceTree = "<group>"; };
 		2B322AB010D399120089DD2B /* device_browser_root.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = device_browser_root.h; sourceTree = "<group>"; };
 		2B322AB110D399120089DD2B /* object_proxy_tree_item.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = object_proxy_tree_item.cpp; sourceTree = "<group>"; };
 		2B322AB210D399120089DD2B /* object_proxy_tree_item.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = object_proxy_tree_item.h; sourceTree = "<group>"; };
-		2B322AB310D399120089DD2B /* root_proxy_tree_item.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = root_proxy_tree_item.cpp; sourceTree = "<group>"; };
-		2B322AB410D399120089DD2B /* root_proxy_tree_item.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = root_proxy_tree_item.h; sourceTree = "<group>"; };
 		2B322AB610D399120089DD2B /* m_object_proxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = m_object_proxy.cpp; sourceTree = "<group>"; };
 		2B322AB710D399120089DD2B /* m_object_proxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = m_object_proxy.h; sourceTree = "<group>"; };
 		2B322AB810D399120089DD2B /* m_observable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = m_observable.h; sourceTree = "<group>"; };
 		2B322AB910D399120089DD2B /* m_proxy_factory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = m_proxy_factory.h; sourceTree = "<group>"; };
-		2B322ABA10D399120089DD2B /* m_root_proxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = m_root_proxy.h; sourceTree = "<group>"; };
 		2B322AC010D399120089DD2B /* m_look_and_feel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = m_look_and_feel.cpp; sourceTree = "<group>"; };
 		2B322AC110D399120089DD2B /* m_look_and_feel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = m_look_and_feel.h; sourceTree = "<group>"; };
 		2B322AC210D399120089DD2B /* m_slider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = m_slider.h; sourceTree = "<group>"; };
@@ -79,7 +75,6 @@
 		2B96413F10E36E4600F829BC /* m_views_builder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = m_views_builder.h; sourceTree = "<group>"; };
 		2B96415410E3710500F829BC /* m_device_label.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = m_device_label.cpp; sourceTree = "<group>"; };
 		2B96415510E3710500F829BC /* m_device_label.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = m_device_label.h; sourceTree = "<group>"; };
-		2BB43E7B10E52D96006AF2B0 /* device_browser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = device_browser.cpp; sourceTree = "<group>"; };
 		2BD249050F0B454200AAA8C7 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		2BD249060F0B454200AAA8C7 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
 		2BD249070F0B454200AAA8C7 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
@@ -100,6 +95,11 @@
 		2BF6114E10EE03E600B1F78D /* mimas_window_content.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mimas_window_content.h; sourceTree = "<group>"; };
 		2BF6114F10EE03E600B1F78D /* mimas_window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mimas_window.h; sourceTree = "<group>"; };
 		2BF6116610EE060F00B1F78D /* m_theme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = m_theme.h; sourceTree = "<group>"; };
+		2BF611FA10EE3F8500B1F78D /* m_breadcrumbs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = m_breadcrumbs.h; path = ../../src/browser/m_breadcrumbs.h; sourceTree = SOURCE_ROOT; };
+		2BF611FB10EE3F8500B1F78D /* m_browser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = m_browser.cpp; path = ../../src/browser/m_browser.cpp; sourceTree = SOURCE_ROOT; };
+		2BF611FC10EE3F8500B1F78D /* m_browser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = m_browser.h; path = ../../src/browser/m_browser.h; sourceTree = SOURCE_ROOT; };
+		2BF611FD10EE3F8500B1F78D /* m_device_list.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = m_device_list.cpp; path = ../../src/browser/m_device_list.cpp; sourceTree = SOURCE_ROOT; };
+		2BF611FE10EE3F8500B1F78D /* m_device_list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = m_device_list.h; path = ../../src/browser/m_device_list.h; sourceTree = SOURCE_ROOT; };
 		32CA4F630368D1EE00C91783 /* Mimas_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Mimas_Prefix.pch; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Mimas.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mimas.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -173,6 +173,7 @@
 		29B97314FDCFA39411CA2CEA /* Mimas */ = {
 			isa = PBXGroup;
 			children = (
+				2BF611F710EE3F6900B1F78D /* browser */,
 				2B322AA710D399120089DD2B /* app */,
 				2B322AAE10D399120089DD2B /* device_browser */,
 				2B322AB510D399120089DD2B /* proxy */,
@@ -233,13 +234,9 @@
 		2B322AAE10D399120089DD2B /* device_browser */ = {
 			isa = PBXGroup;
 			children = (
-				2BB43E7B10E52D96006AF2B0 /* device_browser.cpp */,
-				2B322AAF10D399120089DD2B /* device_browser.h */,
 				2B322AB010D399120089DD2B /* device_browser_root.h */,
 				2B322AB110D399120089DD2B /* object_proxy_tree_item.cpp */,
 				2B322AB210D399120089DD2B /* object_proxy_tree_item.h */,
-				2B322AB310D399120089DD2B /* root_proxy_tree_item.cpp */,
-				2B322AB410D399120089DD2B /* root_proxy_tree_item.h */,
 			);
 			name = device_browser;
 			path = ../../src/device_browser;
@@ -255,7 +252,6 @@
 				2B322AB710D399120089DD2B /* m_object_proxy.h */,
 				2B322AB810D399120089DD2B /* m_observable.h */,
 				2B322AB910D399120089DD2B /* m_proxy_factory.h */,
-				2B322ABA10D399120089DD2B /* m_root_proxy.h */,
 			);
 			name = proxy;
 			path = ../../src/proxy;
@@ -298,6 +294,18 @@
 				2BE5BA8910C0241000535DB4 /* liboscit.a */,
 			);
 			name = lib;
+			sourceTree = "<group>";
+		};
+		2BF611F710EE3F6900B1F78D /* browser */ = {
+			isa = PBXGroup;
+			children = (
+				2BF611FA10EE3F8500B1F78D /* m_breadcrumbs.h */,
+				2BF611FB10EE3F8500B1F78D /* m_browser.cpp */,
+				2BF611FC10EE3F8500B1F78D /* m_browser.h */,
+				2BF611FD10EE3F8500B1F78D /* m_device_list.cpp */,
+				2BF611FE10EE3F8500B1F78D /* m_device_list.h */,
+			);
+			name = browser;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -357,7 +365,6 @@
 			files = (
 				2B322AC310D399120089DD2B /* juce_LibrarySource.mm in Sources */,
 				2B322AC610D399120089DD2B /* object_proxy_tree_item.cpp in Sources */,
-				2B322AC710D399120089DD2B /* root_proxy_tree_item.cpp in Sources */,
 				2B322AC810D399120089DD2B /* m_object_proxy.cpp in Sources */,
 				2B322ACA10D399120089DD2B /* m_look_and_feel.cpp in Sources */,
 				2B322B5810D3D7310089DD2B /* m_pad.cpp in Sources */,
@@ -365,11 +372,12 @@
 				2B96413A10E36E2700F829BC /* m_device_view.cpp in Sources */,
 				2B96414010E36E4600F829BC /* m_view_proxy.cpp in Sources */,
 				2B96415610E3710500F829BC /* m_device_label.cpp in Sources */,
-				2BB43E7C10E52D96006AF2B0 /* device_browser.cpp in Sources */,
 				2B46592C10EA654700CBFA47 /* paint.cpp in Sources */,
 				2B46593C10EA676700CBFA47 /* m_slider.cpp in Sources */,
 				2BF6115010EE03E600B1F78D /* main.cpp in Sources */,
 				2BF6115110EE03E600B1F78D /* mimas_window_content.cpp in Sources */,
+				2BF611FF10EE3F8500B1F78D /* m_browser.cpp in Sources */,
+				2BF6120010EE3F8500B1F78D /* m_device_list.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
