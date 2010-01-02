@@ -613,7 +613,8 @@ public:
     }
   }
 
-  const Value operator[](const char * &key) const {
+  const Value operator[](const char *&key) const {
+    // we need *&key to disable ambiguous overloading with operator[](size_t)
     if (!is_hash()) return gNilValue;
     Value res;
     if (get(key, &res)) {
@@ -623,7 +624,8 @@ public:
     }
   }
 
-  Value operator[](const char * &key) {
+  Value operator[](const char *&key) {
+    // we need *&key to disable ambiguous overloading with operator[](size_t)
     if (!is_hash()) return gNilValue;
     Value res;
     if (get(key, &res)) {
@@ -639,6 +641,22 @@ public:
    * {"one":{"x":40, "y":100}}.
    */
   void deep_merge(const Value &other);
+
+  /** Return true if the current value is a hash and it contains an entry
+   * for the given key.
+   */
+  bool has_key(const char *key) const {
+    if (!is_hash()) return false;
+    return hash_->has_key(std::string(key));
+  }
+
+  /** Return true if the current value is a hash and it contains an entry
+   * for the given key.
+   */
+  bool has_key(const std::string &key) const {
+    if (!is_hash()) return false;
+    return hash_->has_key(key);
+  }
 
   /** =========================================================    Matrix  */
   bool is_matrix() const   { return type_ == MATRIX_VALUE; }

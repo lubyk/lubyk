@@ -308,8 +308,31 @@ public:
     assert_equal("{\"one\":{\"x\":7, \"y\":10}}", a.to_json());
   }
 
+  void test_deep_merge_on_copy( void ) {
+    Value a(Json("{one:{x:4 y:10} two:{x:5 y:8}}"));
+    Value b(Json("{one:{x:7} two:null}"));
+    Value c(a.to_json()); // this is how we make a copy
+    c.deep_merge(b);
+    assert_equal("{\"one\":{\"x\":4, \"y\":10}, \"two\":{\"x\":5, \"y\":8}}", a.to_json());
+    assert_equal("{\"one\":{\"x\":7, \"y\":10}}", c.to_json());
+  }
+
   void test_integer_key( void ) {
     Value a(Json("1:\"one\" two: 2"));
     assert_equal("{\"1\":\"one\", \"two\":2}", a.to_json());
+  }
+
+  void test_has_key( void ) {
+    Value a(Json("one: 1 two: 2"));
+    Value b;
+    assert_false(b.has_key("one"));
+
+    assert_true(a.has_key("one"));
+    assert_false(a.has_key("four"));
+
+    assert_false(b.has_key(std::string("one")));
+
+    assert_true(a.has_key(std::string("one")));
+    assert_false(a.has_key(std::string("four")));
   }
 };
