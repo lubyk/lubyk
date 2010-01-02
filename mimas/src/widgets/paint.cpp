@@ -20,7 +20,7 @@
 
 void MTheme::set_day_theme() {
   colors_[WorkspaceActionBG] = Colour(0xff262626);
-  colors_[WorkspaceEditBG]   = Colour(0xff808080);
+  colors_[WorkspaceEditBG]   = Colour(0xff262626);
   colors_[WorkspaceFrozenBG] = Colour(0xff3f0000);
   colors_[WorkspaceBorder]   = Colour(0xff000000);
 
@@ -35,7 +35,7 @@ void MTheme::set_day_theme() {
 
 void MTheme::set_night_theme() {
   colors_[WorkspaceActionBG] = Colour(0xff262626);
-  colors_[WorkspaceEditBG]   = Colour(0xff808080);
+  colors_[WorkspaceEditBG]   = Colour(0xff262626);
   colors_[WorkspaceFrozenBG] = Colour(0xff3f0000);
   colors_[WorkspaceBorder]   = Colour(0xff000000);
 
@@ -52,8 +52,19 @@ void MTheme::set_night_theme() {
 // ==             MimasWindowContent          ==
 // =============================================
 
+#define FID_SIZE 8
+#define FID_SPACE 100
 void MimasWindowContent::paint(Graphics& g) {
+  // TODO: move this in the draw code for the workspace_, not the view port ...
   g.fillAll(bg_color());
+  int width = getWidth();
+  int height = getHeight();
+
+  if (editor_mode_ == EditMode) {
+    Image* bg_image = ImageCache::getFromFile(juce::File(T("/Users/gaspard/git/rubyk/mimas/doc/edit_bg.png")));
+    g.setTiledImageFill(*bg_image, 0, 0, 1.0f);
+    g.fillAll();
+  }
   g.setColour(color(MTheme::ToolbarBG));
   g.fillRect(0, 0, getWidth(), TOOLBAR_HEIGHT);
   //g.strokePath (internalPath1, PathStrokeType (5.2000f));
@@ -73,6 +84,15 @@ void MBrowser::paint(Graphics &g) {
     getWidth() - LAYOUT_BROWSER_BORDER_WIDTH / 2.0f,
     getHeight(),
     LAYOUT_BROWSER_BORDER_WIDTH
+  );
+
+  g.setColour(mimas_->bg_color());
+  g.drawLine(
+    getWidth() - LAYOUT_BROWSER_BORDER_WIDTH / 2.0f,
+    (getHeight() / 2) - 2 * LAYOUT_BROWSER_BORDER_WIDTH,
+    getWidth() - LAYOUT_BROWSER_BORDER_WIDTH / 2.0f,
+    (getHeight() / 2) + 2 * LAYOUT_BROWSER_BORDER_WIDTH,
+    1.0f
   );
 }
 

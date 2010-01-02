@@ -4,6 +4,35 @@
 #include "m_object_proxy.h"
 #include "mimas_window_content.h"
 
+void MSlider::update(const Value &def) {
+  Value err;
+
+  // ========================================== x, y, width, height
+  MComponent::update(def);
+  if (getWidth() > getHeight()) {
+    set_slider_type(MSlider::HorizontalSliderType);
+  } else {
+    set_slider_type(MSlider::VerticalSliderType);
+  }
+
+  // ========================================== connect
+
+  if (!proxy_ && def.has_key("connect")) {
+  // TODO: implement disconnect so that we can change connection...
+    const Value connect_path = def["connect"];
+    if (!connect_path.is_string()) {
+      error("invalid 'connect' attribute in", def);
+    } else {
+      MObjectProxy *proxy = TYPE_CAST(MObjectProxy, root_proxy_->find_or_build_object_at(connect_path.str(), &err));
+      if (!proxy) {
+        error("could not connect", err);
+      } else {
+        proxy->connect(this);
+      }
+    }
+  }
+}
+
 void MSlider::mouseDown(const MouseEvent &e) {
   if (mimas_->action_mode()) {
     is_dragged_ = true;

@@ -1,9 +1,7 @@
 #ifndef MIMAS_SRC_WIDGETS_M_PAD_H_
 #define MIMAS_SRC_WIDGETS_M_PAD_H_
 #include "m_observable.h"
-
-#include <iostream>
-
+#include "m_component.h"
 #include "m_range_widget.h"
 
 class MPad;
@@ -26,11 +24,12 @@ private:
   MPad *pad_;
 };
 
+class MViewProxy;
 
-class MPad : public Component, public MObservable {
+class MPad : public MComponent, public MObservable {
 public:
-  MPad(const std::string &name)
-      : Component(String(name.c_str())),
+  MPad(MViewProxy *view_proxy, const Value &def)
+      : MComponent(view_proxy, def),
         range_x_(this),
         range_y_(this),
         dragged_(false) {}
@@ -39,6 +38,8 @@ public:
     return dragged_;
   }
 
+  virtual void update(const Value &def);
+
   /** ======== Component callbacks ======== */
 
   virtual void mouseDown(const MouseEvent &e);
@@ -46,16 +47,6 @@ public:
   virtual void mouseDrag(const MouseEvent &e);
 
   virtual void mouseUp(const MouseEvent &e);
-
-  /** TODO: Where is this used ? */
-  MRangeWidget *range_x() {
-    return &range_x_;
-  }
-
-  /** TODO: Where is this used ? */
-  MRangeWidget *range_y() {
-    return &range_y_;
-  }
 
   virtual void paint(Graphics& g);
 private:

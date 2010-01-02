@@ -4,7 +4,6 @@
 #include "oscit/object_proxy.h"
 #include "oscit/tobservable_list.h"
 
-#include "object_proxy_tree_item.h"
 #include "m_range_widget.h"
 
 class MimasWindowContent;
@@ -17,13 +16,7 @@ public:
   MObjectProxy(MimasWindowContent *mimas, const std::string &name, const Value &type)
       : ObjectProxy(name, type),
         mimas_(mimas),
-        range_widgets_(this) {
-    set_and_hold(&tree_view_item_, new ObjectProxyTreeItem(mimas_, this));
-  }
-
-  ObjectProxyTreeItem *object_proxy_view() { // FIXME: how to keep constness ok here ?
-    return tree_view_item_;
-  }
+        range_widgets_(this) {}
 
   virtual void observer_lock() {
     mml_ = new MessageManagerLock();
@@ -65,7 +58,6 @@ protected:
 private:
   MessageManagerLock *mml_;
   TObservableList<MRangeWidget *> range_widgets_;
-  ObjectProxyTreeItem *tree_view_item_;
 };
 
 #endif // MIMAS_SRC_PROXY_M_OBJECT_PROXY_H_

@@ -49,6 +49,10 @@ public:
     return last_drag_;
   }
 
+  bool connected() {
+    return proxy_ != NULL;
+  }
+
   /* =======  Callbacks that need to be implemented in sub-classes. ========== */
 
   /** Should return true if the component is being dragged.

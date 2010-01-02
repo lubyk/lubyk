@@ -11,8 +11,8 @@ public:
 
   /** Set root and sync (do not wait for the browser to be opened).
    */
-  virtual void set_root(Root *root) {
-    ObjectProxy::set_root(root);
+  virtual void adopted() {
+    ObjectProxy::adopted();
     sync_children();
   }
 };

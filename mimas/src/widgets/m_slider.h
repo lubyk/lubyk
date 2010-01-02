@@ -1,15 +1,15 @@
 #ifndef MIMAS_SRC_WIDGETS_M_SLIDER_H_
 #define MIMAS_SRC_WIDGETS_M_SLIDER_H_
 #include "m_observable.h"
+#include "m_component.h"
 #include "m_range_widget.h"
 
-class MimasWindowContent;
+class MViewProxy;
 
-class MSlider : public Component, public MRangeWidget {
+class MSlider : public MComponent, public MRangeWidget {
 public:
-  MSlider(MimasWindowContent *mimas, const std::string &name)
-      : Component(String(name.c_str())),
-        mimas_(mimas),
+  MSlider(MViewProxy *view_proxy, const Value &def)
+      : MComponent(view_proxy, def),
         is_dragged_(false) {
     set_hue(182);
   }
@@ -23,14 +23,9 @@ public:
     slider_type_ = type;
   }
 
-  /** Set color hue (must be a value from 0 to 360 degrees).
-   */
-  void set_hue(float hue) {
-    if (hue < 0 || hue >= 360) hue = 0;
-    //                     hue           sat  bri  alpha
-    border_color_ = Colour(hue / 360.0f, 1.0f, 1.0f, 1.0f);
-    fill_color_   = Colour(hue / 360.0f, 0.5f, 0.5f, 1.0f);
-  }
+  /** =========== MComponent callbacks ========== */
+
+  virtual void update(const Value &def);
 
   /** =========== MRangeWidget callbacks ========== */
 
@@ -65,10 +60,7 @@ public:
   //   last_drag_ = proxy_->time_ref().elapsed();
   // }
 private:
-  MimasWindowContent *mimas_;
   SliderType slider_type_;
-  Colour     border_color_;
-  Colour     fill_color_;
   ComponentDragger dragger_;
 
   bool  is_dragged_;

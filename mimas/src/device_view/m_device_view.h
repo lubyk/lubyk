@@ -1,15 +1,19 @@
 #ifndef MIMAS_SRC_DEVICE_VIEW_M_DEVICE_VIEW_H_
 #define MIMAS_SRC_DEVICE_VIEW_M_DEVICE_VIEW_H_
 #include "m_object_proxy.h"
+#include "m_component.h"
 
 class MDeviceLabel;
-class MimasWindowContent;
+class MViewProxy;
 
-class MDeviceView : public Component {
+class MDeviceView : public MComponent {
 public:
-  MDeviceView(MimasWindowContent *mimas, const std::string &name);
+  MDeviceView(MViewProxy *view_proxy, const std::string &name);
 
   //virtual ~MDeviceView();
+
+  virtual void update(const Value &def);
+
   virtual void mouseEnter(const MouseEvent &e) {
     hover_ = true;
     repaint();
@@ -26,11 +30,15 @@ public:
   void resized();
 
 private:
-  MimasWindowContent *mimas_;
-
   /** Display the name of the device.
    */
   MDeviceLabel *label_;
+
+  /** Contains a hash with the list of sub-components indexed by
+   * part id.
+   */
+  THash<std::string, MComponent*> parts_;
+
   ResizableBorderComponent *border_;
   bool hover_;
 };
