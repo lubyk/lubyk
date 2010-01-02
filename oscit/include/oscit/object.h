@@ -181,7 +181,7 @@ class Object : public Typed, public Observable {
    *  a sub-node or branch is not found and this is the last found object along
    *  the path.
    */
-  virtual Object * build_child(const std::string &name, Value *error) {
+  virtual Object *build_child(const std::string &name, const Value &type, Value *error) {
     return NULL;
   }
 

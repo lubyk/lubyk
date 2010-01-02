@@ -387,7 +387,7 @@ class Root : public Object
           object = object_at(path);
           if (object == NULL) {
             // ask parent to create child
-            return parent->build_child(path.substr(pos+1), error);
+            return parent->build_child(path.substr(pos+1), gNilValue, error);
           }
         }
       }

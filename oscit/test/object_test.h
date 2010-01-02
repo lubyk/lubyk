@@ -117,9 +117,9 @@ public:
     Value error;
     Object base;
     Object * carrot = base.adopt(new DummyObject("dummy", 0.0));
-    Object * foo    = carrot->build_child(std::string("something"), &error);
+    Object * foo    = carrot->build_child(std::string("something"), gNilValue, &error);
     assert_equal((Object*)NULL, foo);
-    foo = carrot->build_child(std::string("special"), &error);
+    foo = carrot->build_child(std::string("special"), gNilValue, &error);
     assert_true( foo != NULL );
     assert_equal("/dummy/special", foo->url());
   }

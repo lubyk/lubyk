@@ -55,7 +55,7 @@ void RootProxy::set_proxy_factory(ProxyFactory *factory) {
 }
 
 
-void RootProxy::build_children_from_types(Object *base, const Value &types) {
+void RootProxy::build_children_from_types(Object *parent, const Value &types) {
   if (!types.is_list()) {
     std::cerr << "Cannot handle " << LIST_WITH_TYPE_PATH << " reply: invalid argument: " << types << "\n";
     return;
@@ -84,23 +84,42 @@ void RootProxy::build_children_from_types(Object *base, const Value &types) {
         has_children = false;
       }
 
-      if (!base->child(name)) {
-        object_proxy = proxy_factory_->build_object_proxy(base, name, name_with_type[1]);
-        if (object_proxy) {
-          base->adopt(object_proxy);
-          object_proxy->set_need_sync(has_children);
+      if (!parent->child(name)) {
+        // child does not exist yet, first ask parent if it can build it
+        Value error;
+        Object *object = parent->build_child(name, name_with_type[1], &error);
+        if (object) {
+          object_proxy = TYPE_CAST(ObjectProxy, object);
+          if (!object_proxy) {
+            std::cerr << parent->url() << " has built an invalid object through 'build_child'. Should be an ObjectProxy, found a " << object->class_name() << "\n";
+          } else {
+            object_proxy->set_need_sync(has_children);
+          }
+        } else if (error.is_error()) {
+          std::cerr << parent->url() << "Returned an error while trying to build " << name << ": " << error << "\n";
+        } else {
+          object_proxy = proxy_factory_->build_object_proxy(parent, name, name_with_type[1]);
+          if (object_proxy) {
+            parent->adopt(object_proxy);
+            object_proxy->set_need_sync(has_children);
+          }
         }
       }
     }
   }
 }
 
-Object *RootProxy::build_child(const std::string &name, Value *error) {
+Object *RootProxy::build_child(const std::string &name, const Value &type, Value *error) {
   if (!proxy_factory_) {
     std::cerr << "Cannot build child /" << name << " : no ProxyFactory !\n";
     return NULL;
   }
-  return adopt(proxy_factory_->build_object_proxy(this, name, gNilValue));
+
+  Object *object = proxy_factory_->build_object_proxy(this, name, type);
+
+  if (object) adopt(object);
+
+  return object;
 }
 
 void RootProxy::handle_reply(const std::string &path, const Value &val) {
@@ -110,13 +129,13 @@ void RootProxy::handle_reply(const std::string &path, const Value &val) {
       return;
     }
 
-    Object *base = object_at(val[0].str());
-    if (!base) {
-      std::cerr << "Invalid base path " << val[0].str() << " in " << LIST_WITH_TYPE_PATH << " reply: unknown path.\n";
+    Object *parent = object_at(val[0].str());
+    if (!parent) {
+      std::cerr << "Invalid parent path " << val[0].str() << " in " << LIST_WITH_TYPE_PATH << " reply: unknown path.\n";
       return;
     }
 
-    build_children_from_types(base, val[1]);
+    build_children_from_types(parent, val[1]);
   } else if (path == TYPE_PATH) {
     if (val.size() < 2 || !val[0].is_string()) {
       std::cerr << "Invalid argument in " << TYPE_PATH << " reply: " << val << "\n";

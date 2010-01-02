@@ -56,7 +56,7 @@ public:
     return value_;
   }
 
-  virtual Object * build_child(const std::string &name, Value *error) {
+  virtual Object * build_child(const std::string &name, const Value &type, Value *error) {
     if (name == "special") {
       return adopt(new Object("special"));
     } else if (name == "AgeOf") {

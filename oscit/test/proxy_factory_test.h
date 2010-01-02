@@ -40,9 +40,43 @@
 
 
 /* Widgets */
+
+class UpdateDummyView : public ObjectProxy {
+public:
+  /** Class signature. */
+  TYPED("Object.ObjectProxy.UpdateDummyView")
+
+  UpdateDummyView(const std::string &name, const Value &type)
+      : ObjectProxy(name, type) {}
+};
+
+class DummyView : public ObjectProxyLogger {
+public:
+  /** Class signature. */
+  TYPED("Object.ObjectProxy.ObjectProxyLogger.DummyView")
+
+  DummyView(const std::string &name, const Value &type)
+      : ObjectProxyLogger(name, type) {}
+
+  virtual void set_root(Root *root) {
+    ObjectProxyLogger::set_root(root);
+    // force immediate sync
+    sync_children();
+  }
+
+  virtual Object *build_child(const std::string &name, const Value &type, Value *error) {
+    if (name == "update") {
+      return adopt(new UpdateDummyView(name, type));
+    } else {
+      return NULL;
+    }
+  }
+};
+
 class MyRootProxy : public RootProxy {
 public:
   MyRootProxy(const Location &location) : RootProxy(location) {}
+
 };
 
 class MyObjectProxy : public ObjectProxyLogger {
@@ -57,7 +91,16 @@ public:
 
   virtual ObjectProxy *build_object_proxy(Object *parent, const std::string &name, const Value &type) {
     if (is_meta_method(name)) return NULL;
-    ObjectProxyLogger *object_proxy = new MyObjectProxy(name, type);
+
+    ObjectProxyLogger *object_proxy;
+
+    if (name == "dummy_view") {
+      // build a dummy 'view' proxy to test if it builds the 'update' method
+      object_proxy = new DummyView(name, type);
+    } else {
+      object_proxy = new MyObjectProxy(name, type);
+    }
+
     built_.set(name, object_proxy);
     return object_proxy;
   }
@@ -175,9 +218,29 @@ class ProxyFactoryTest : public TestHelper
     assert_equal("33", proxy_->call("/bar").to_json()); // new value is in cache now
   }
 
+  void test_root_proxy_should_try_to_use_build_child_to_build_proxy( void ) {
+    Root local;
+    Root remote;
+    Logger logger;
+    MyProxyFactory factory;
+    build_foobar_local_and_remote(local, remote, factory, logger);
+
+    Object *dummy_view = proxy_->object_at("/dummy_view");
+    assert_equal("DummyView", dummy_view->class_name());
+
+    Object *update = proxy_->object_at("/dummy_view/update");
+    assert_equal("UpdateDummyView", update->class_name());
+  }
+
 private:
 
-  /** Builds a setup where the remote tree contains real objects ('foo' and 'bar') and
+  /** Builds a setup where the remote tree contains real objects:
+   *
+   * +- foo
+   * +- bar
+   * +- dummy_view
+   *    +- update
+   *
    * the local tree has an OscCommand and builds the proxies.
    */
   void build_foobar_local_and_remote(Root &local, Root &remote, MyProxyFactory &factory,  Logger &logger) {
@@ -185,6 +248,8 @@ private:
     remote.adopt_command(new OscCommand(REMOTE_PORT));
     foo_ = remote.adopt(new DummyObject("foo", "rgb", SelectIO("rgb, yuv", "color mode", "This is a menu.")));
     bar_ = remote.adopt(new DummyObject("bar", 45.0, RangeIO(1, 127, "tint", "This is a slider from 1 to 127.")));
+    dummy_view_ = remote.adopt(new DummyObject("dummy_view", "view content", StringIO("view content", "Some dummy view.")));
+    dummy_view_->adopt(new DummyObject("update", HashValue(), HashIO("hash to update content")));
 
     OscCommand *cmd = local.adopt_command(new OscCommand(LOCAL_PORT));
 
@@ -194,16 +259,20 @@ private:
 
     // sync first level (root children)
     cmd->adopt_proxy(proxy_); // sync ----> cmd ----> remote -----> cmd -----> "/.reply" ----> proxy
-    millisleep(10);
+    millisleep(20);
 
     ObjectProxyLogger *object_proxy = factory.find_by_name("foo");
     object_proxy->set_stream(&logger);
 
     object_proxy = factory.find_by_name("bar");
     object_proxy->set_stream(&logger);
+
+    object_proxy = factory.find_by_name("dummy_view");
+    object_proxy->set_stream(&logger);
   }
 
   DummyObject *foo_;
   DummyObject *bar_;
+  DummyObject *dummy_view_;
   MyRootProxy *proxy_;
 };
