@@ -9,12 +9,10 @@ MComponent::MComponent(MViewProxy *view_proxy, const std::string &name)
       view_proxy_(view_proxy),
       root_proxy_(view_proxy->root_proxy()) {}
 
-MComponent::MComponent(MViewProxy *view_proxy, const Value &def)
+MComponent::MComponent(MViewProxy *view_proxy)
     : mimas_(view_proxy->mimas()),
       view_proxy_(view_proxy),
-      root_proxy_(view_proxy->root_proxy()) {
-  update(def);
-}
+      root_proxy_(view_proxy->root_proxy()) {}
 
 void MComponent::update(const Value &def) {
 
@@ -42,3 +40,28 @@ void MComponent::set_hue(float hue) {
   border_color_ = Colour(hue / 360.0f, 1.0f, 1.0f, 1.0f);
   fill_color_   = Colour(hue / 360.0f, 0.5f, 0.5f, 1.0f);
 }
+
+class MComponent::OnRegistrationCallback : public TCallback<MComponent, &MComponent::on_registration_callback> {
+public:
+  OnRegistrationCallback(MComponent *observer, const Value &def)
+      : TCallback<MComponent, &MComponent::on_registration_callback>(observer, new Value(def.to_json())) {}
+
+  virtual ~OnRegistrationCallback() {
+    Value *def = (Value*)data_;
+    delete def;
+  }
+};
+
+void MComponent::add_callback(const std::string &path, const Value &def) {
+  root_proxy_->adopt_callback_on_register(path,
+    new MComponent::OnRegistrationCallback(this, def)
+  );
+}
+
+void MComponent::on_registration_callback(void *data) {
+  Value *def = (Value*)data;
+  MessageManagerLock mml;
+  std::cout << "Callback triggered with " << *def << "\n";
+  update(*def);
+}
+

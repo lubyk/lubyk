@@ -26,6 +26,7 @@ void MSlider::update(const Value &def) {
       MObjectProxy *proxy = TYPE_CAST(MObjectProxy, root_proxy_->find_or_build_object_at(connect_path.str(), &err));
       if (!proxy) {
         error("could not connect", err);
+        add_callback(connect_path.str(), def);
       } else {
         proxy->connect(this);
       }
@@ -34,7 +35,7 @@ void MSlider::update(const Value &def) {
 }
 
 void MSlider::mouseDown(const MouseEvent &e) {
-  if (mimas_->action_mode()) {
+  if (mimas_->action_mode() && connected()) {
     is_dragged_ = true;
     mouseDrag(e);
   } else if (mimas_->edit_mode()) {
@@ -43,7 +44,7 @@ void MSlider::mouseDown(const MouseEvent &e) {
 }
 
 void MSlider::mouseDrag(const MouseEvent &e) {
-  if (mimas_->action_mode()) {
+  if (mimas_->action_mode() && connected()) {
     if (slider_type_ == HorizontalSliderType) {
       set_scaled_value(e.x, getWidth());
     } else {

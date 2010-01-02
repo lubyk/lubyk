@@ -78,8 +78,6 @@ void MViewProxy::update_view(const Value &def) {
     return;
   }
 
-  std::cout << "UPDATING FROM\n" << def << "\n";
-
   if (!view_) {
     view_ = new MDeviceView(this, root_proxy_->remote_location().name());
   }

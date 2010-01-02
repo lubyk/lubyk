@@ -34,6 +34,5 @@ void MDeviceList::remove_device(RootProxy *device) {
 // ======== ListBoxModel callbacks =========== //
 
 int MDeviceList::getNumRows() {
-  std::cout << "getNumRows = " << devices_.size() << "\n";
   return devices_.size();
 }

@@ -22,7 +22,7 @@ public:
 
   virtual void value_changed() {
     if (!value_.is_string()) {
-      std::cout << "'" << url() << "' error: value should be a string. Found " << value_ << "\n";
+      std::cerr << "'" << url() << "' error: value should be a string. Found " << value_ << "\n";
       return;
     }
 

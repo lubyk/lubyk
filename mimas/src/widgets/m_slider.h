@@ -8,8 +8,8 @@ class MViewProxy;
 
 class MSlider : public MComponent, public MRangeWidget {
 public:
-  MSlider(MViewProxy *view_proxy, const Value &def)
-      : MComponent(view_proxy, def),
+  MSlider(MViewProxy *view_proxy)
+      : MComponent(view_proxy),
         is_dragged_(false) {
     set_hue(182);
   }

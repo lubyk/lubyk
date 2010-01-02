@@ -27,7 +27,6 @@ public:
   }
 
   virtual void value_changed() {
-    std::cout << url() << " value_changed: " << value_ << "\n";
     // update real value slider
     MessageManagerLock mml;
     String remote_value("RemoteValue");

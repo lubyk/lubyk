@@ -57,8 +57,6 @@ void MTheme::set_night_theme() {
 void MimasWindowContent::paint(Graphics& g) {
   // TODO: move this in the draw code for the workspace_, not the view port ...
   g.fillAll(bg_color());
-  int width = getWidth();
-  int height = getHeight();
 
   if (editor_mode_ == EditMode) {
     Image* bg_image = ImageCache::getFromFile(juce::File(T("/Users/gaspard/git/rubyk/mimas/doc/edit_bg.png")));

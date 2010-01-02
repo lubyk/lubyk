@@ -17,7 +17,6 @@ public:
     TreeViewItem *sub_item;
     for(int i=0; i < sub_items_count; ++i) {
       sub_item = getSubItem(i);
-      std::cout << i << ": " << sub_item << "\n";
       if (sub_item == item) return i;
     }
     return -1;

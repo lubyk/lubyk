@@ -398,6 +398,7 @@ class Root : public Object
   void init(bool should_build_meta = true);
 
   std::list<Command *> commands_;    /**< Listening commands (only one allowed per protocol). */
+  
   /** List of callbacks to trigger on object registration.
    */
   THash<std::string, CallbackList*> callbacks_on_register_;

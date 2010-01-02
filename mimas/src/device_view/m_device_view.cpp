@@ -25,8 +25,6 @@ MDeviceView::MDeviceView(MViewProxy *view_proxy, const std::string &name)
 void MDeviceView::update(const Value &def) {
   MComponent::update(def);
 
-  std::cout << "MDeviceView::update: " << def << "\n";
-
   Value parts_value = def["parts"];
   if (!parts_value.is_hash()) {
     error("'parts' attribute is not a hash. Found", parts_value);
@@ -53,11 +51,15 @@ void MDeviceView::update(const Value &def) {
 
         if (klass.str() == "Slider") {
           // ================================================== Slider
-          addAndMakeVisible(new MSlider(view_proxy_, part_def));
+          part = new MSlider(view_proxy_);
+          part->update(part_def);
+          addAndMakeVisible(part);
 
         } else if (klass.str() == "Pad") {
           // ================================================== Pad
-          addAndMakeVisible(new MPad(view_proxy_, part_def));
+          part = new MPad(view_proxy_);
+          part->update(part_def);
+          addAndMakeVisible(part);
 
         } else {
           error("Unknown class", klass);

@@ -1,9 +1,10 @@
 {
-  "x":0, "y":0, "width":500, "height":200,
+  "x":10, "y":10, "width":500, "height":250,
   "parts":{
     "1":{"class":"Slider", "x":10,  "y":50, "width":30,  "height":150, "connect":"/tempo"},
     "2":{"class":"Slider", "x":50,  "y":50, "width":30,  "height":150, "connect":"/other/deeply/nested/slider"},
     "3":{"class":"Button", "x":90,  "y":50, "width":30,  "height":30,  "connect":"/tempo", "value":100},
-    "4":{"class":"Pad",    "x":130, "y":50, "width":150, "height":150, "connect_x":"/tempo", "connect_y":"/other/deeply/nested/slider"}
+    "4":{"class":"Pad",    "x":130, "y":50, "width":150, "height":150, "connect_x":"/tempo", "connect_y":"/other/deeply/nested/slider"},
+    "5":{"class":"Slider", "x":290, "y":50, "width":30,  "height":150, "connect":"/not_ready"}
   }
 }

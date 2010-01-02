@@ -5,7 +5,6 @@
 #include "m_device_view.h"
 
 ObjectProxy *MProxyFactory::build_object_proxy(Object *parent, const std::string &name, const Value &type) {
-  ScopedAutoReleasePool pool;
   if (parent->url() == "" && name == ".views") {
     // build views container
     return new MViewsBuilder(mimas_, name, type);

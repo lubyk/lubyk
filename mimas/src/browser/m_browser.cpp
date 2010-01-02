@@ -15,16 +15,14 @@ MBrowser::MBrowser(MimasWindowContent *mimas, const char *service_type)
 }
 
 void MBrowser::added_proxy(RootProxy *proxy) {
-  std::cout << "added_proxy " << proxy << " " << proxy->remote_location() << "\n";
   MessageManagerLock mml;
-  //ScopedAutoReleasePool pool;
+  ScopedAutoReleasePool pool;
   device_list_->add_device(proxy);
 }
 
 void MBrowser::removed_proxy(RootProxy *proxy) {
-  std::cout << "added_proxy " << proxy << " " << proxy->remote_location() << "\n";
   MessageManagerLock mml;
-  //ScopedAutoReleasePool pool;
+  ScopedAutoReleasePool pool;
   device_list_->remove_device(proxy);
 }
 

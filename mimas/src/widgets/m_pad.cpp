@@ -68,6 +68,7 @@ void MPad::update(const Value &def) {
 }
 
 void MPad::mouseDown(const MouseEvent &e) {
+  if (!range_x_.connected() || !range_y_.connected()) return;
   dragged_ = true;
   range_x_.set_scaled_value(e.x, getWidth());
   range_y_.set_scaled_value(getHeight() - e.y, getHeight());
@@ -75,6 +76,7 @@ void MPad::mouseDown(const MouseEvent &e) {
 }
 
 void MPad::mouseDrag(const MouseEvent &e) {
+  if (!range_x_.connected() || !range_y_.connected()) return;
   range_x_.set_scaled_value(e.x, getWidth());
   range_y_.set_scaled_value(getHeight() - e.y, getHeight());
   repaint();

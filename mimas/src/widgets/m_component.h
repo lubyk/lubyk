@@ -7,11 +7,11 @@ class MimasWindowContent;
 class MViewProxy;
 class MRootProxy;
 
-class MComponent : public Component {
+class MComponent : public Component, public MObservable {
 public:
   MComponent(MViewProxy *view_proxy, const std::string &name);
 
-  MComponent(MViewProxy *view_proxy, const Value &def);
+  MComponent(MViewProxy *view_proxy);
 
   /** =========== MComponent callbacks  ========== */
 
@@ -37,6 +37,15 @@ protected:
     std::cerr << "Error: '" << message << " " << context << ".\n";
   }
 
+  /** Add a callback to process some pending definitions when an url
+   * becomes live.
+   */
+  void add_callback(const std::string &path, const Value &def);
+
+private:
+  class OnRegistrationCallback;
+
+  void on_registration_callback(void *data);
 };
 
 #endif // MIMAS_SRC_WIDGETS_M_COMPONENT_H_

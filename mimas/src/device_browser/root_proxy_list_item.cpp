@@ -28,7 +28,6 @@ void RootProxyListItem::itemOpennessChanged(bool isNowOpen) {
     std::list<std::string>::const_iterator it = children.begin();
     std::list<std::string>::const_iterator end = children.end();
     for (; it != end; ++it) {
-      std::cout << *it << " <<< added to device\n";
       Object *object;
       assert(children.get(*it, &object));
       MObjectProxy *object_proxy = TYPE_CAST(MObjectProxy, object);

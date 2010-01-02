@@ -20,7 +20,6 @@ public:
   }
 
   virtual void mouseExit(const MouseEvent &e) {
-    std::cout << e.x << "x" << e.y << " out\n";
     if (e.x <= 0 || e.x >= getWidth() || e.y <= 0 || e.y >= getHeight()) hover_ = false;
     repaint();
   }
