@@ -58,8 +58,8 @@ public:
   DummyView(const std::string &name, const Value &type)
       : ObjectProxyLogger(name, type) {}
 
-  virtual void set_root(Root *root) {
-    ObjectProxyLogger::set_root(root);
+  virtual void adopted() {
+    ObjectProxyLogger::adopted();
     // force immediate sync
     sync_children();
   }

@@ -82,10 +82,6 @@ public:
    */
   const Value update(const Value &hash);
 
-  ///** Set root and create a 'xxx/update' method that is connected to "update"
-  // */
-  //virtual void set_root(Root *root);
-
 private:
   File file_;
 

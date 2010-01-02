@@ -54,6 +54,8 @@ public:
               Object(name, type), need_sync_(true), root_proxy_(NULL), wait_until_(-1), latency_(-1) {
     if (type.is_list()) {
       value_ = type[0];
+      // we do not call value_changed here because this method expects the
+      // object to be fully functional (adopted).
     }
   }
 
@@ -100,12 +102,11 @@ public:
     need_sync_ = false;
   }
 
-  /** Set root and if the root is a RootProxy, set root_proxy_ as well. You can
-   * overwrite this (but make sure to call ObjectProxy::set_root(root) in your
-   * method) but you should not call it directly. It is called when the object
-   * is adopted.
+  /** If root is a RootProxy, set root_proxy_ as well. You can
+   * overwrite this (but make sure to call ObjectProxy::adopted() in your
+   * method). This method is called when the object is adopted.
    */
-  virtual void set_root(Root *root);
+  virtual void adopted();
 
   /** Returns true if the object has been properly initialized (type and value
    * have been synced with remote).

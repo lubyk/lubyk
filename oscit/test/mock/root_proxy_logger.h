@@ -55,12 +55,12 @@ public:
     log("value_changed", value_);
   }
 
-  virtual void set_root(Root *root) {
-    ObjectProxy::set_root(root);
+  virtual void adopted() {
+    ObjectProxy::adopted();
     if (root_proxy_) {
-      log("set_root", root_proxy_->class_name());
+      log("adopted", root_proxy_->class_name());
     } else {
-      log("set_root");
+      log("adopted");
     }
   }
 

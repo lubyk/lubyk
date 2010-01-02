@@ -327,9 +327,10 @@ class Object : public Typed, public Observable {
     return parent_;
   }
 
-  /** Set object's new root.
+  /** This method is called whenever the parent changes. It can be
+   * used to finish initializing the object.
    */
-  virtual void set_root(Root *root);
+  virtual void adopted() {}
 
   /** Set object's new parent.
    */
@@ -373,6 +374,10 @@ class Object : public Typed, public Observable {
   }
 
  protected:
+
+  /** Set object's new root.
+  */
+  void set_root(Root *root);
 
   /** Child sends a notification to the parent when it's name changes so that
    *  the parent/root keep their url hash in sync.

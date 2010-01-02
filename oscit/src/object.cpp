@@ -162,6 +162,7 @@ void Object::set_parent(Object *parent) {
   parent_ = parent;
   if (parent_) parent_->register_child(this);
   moved();
+  adopted();
 }
 
 void Object::clear() {

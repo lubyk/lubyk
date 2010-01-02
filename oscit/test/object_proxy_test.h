@@ -45,7 +45,7 @@ public:
     ObjectProxyLogger *object = new ObjectProxyLogger("foobar", Value("info"), &logger);
     object->set_stream(&logger);
     proxy.adopt(object);
-    assert_equal("[foobar: set_root RootProxy]", logger.str());
+    assert_equal("[foobar: adopted RootProxy]", logger.str());
     assert_equal(&proxy, object->root_proxy());
   }
 
