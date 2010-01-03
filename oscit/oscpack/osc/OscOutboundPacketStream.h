@@ -63,7 +63,6 @@ public:
         : Exception( w ) {}
 };
 
-
 class OutboundPacketStream{
 public:
 	OutboundPacketStream( char *buffer, unsigned long capacity );
@@ -87,7 +86,7 @@ public:
 
     OutboundPacketStream& operator<<( const BundleInitiator& rhs );
     OutboundPacketStream& operator<<( const BundleTerminator& rhs );
-    
+
     OutboundPacketStream& operator<<( const BeginMessage& rhs );
     OutboundPacketStream& operator<<( const MessageTerminator& rhs );
 
@@ -97,6 +96,7 @@ public:
     OutboundPacketStream& operator<<( const AnyType& rhs );        // oscit
     OutboundPacketStream& operator<<( const ArrayStartType& rhs ); // oscit
     OutboundPacketStream& operator<<( const ArrayEndType& rhs );   // oscit
+    OutboundPacketStream& operator<<( const JsonHash rhs );       // oscit
     OutboundPacketStream& operator<<( int32 rhs );
 
 #ifndef x86_64

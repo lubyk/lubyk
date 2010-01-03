@@ -470,6 +470,26 @@ OutboundPacketStream& OutboundPacketStream::operator<<( const ArrayEndType& rhs 
 
     return *this;
 }
+
+
+OutboundPacketStream& OutboundPacketStream::operator<<( const JsonHash rhs )
+{
+  CheckForAvailableArgumentSpace( RoundUp4(strlen(rhs) + 1) );
+
+  *(--typeTagsCurrent_) = HASH_TYPE_TAG;
+  strcpy( argumentCurrent_, rhs );
+  unsigned long rhsLength = strlen(rhs);
+  argumentCurrent_ += rhsLength + 1;
+
+  // zero pad to 4-byte boundary
+  unsigned long i = rhsLength + 1;
+  while( i & 0x3 ){
+      *argumentCurrent_++ = '\0';
+      ++i;
+  }
+
+  return *this;
+}
 // ]
 
 OutboundPacketStream& OutboundPacketStream::operator<<( int32 rhs )
@@ -651,7 +671,7 @@ OutboundPacketStream& OutboundPacketStream::operator<<( const Blob& rhs )
     *(--typeTagsCurrent_) = BLOB_TYPE_TAG;
     FromUInt32( argumentCurrent_, rhs.size );
     argumentCurrent_ += 4;
-    
+
     memcpy( argumentCurrent_, rhs.data, rhs.size );
     argumentCurrent_ += rhs.size;
 

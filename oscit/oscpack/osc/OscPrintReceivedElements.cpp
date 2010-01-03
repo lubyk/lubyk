@@ -45,7 +45,7 @@ std::ostream& operator<<( std::ostream & os,
         case TRUE_TYPE_TAG:
             os << "bool:true";
             break;
-                
+
         case FALSE_TYPE_TAG:
             os << "bool:false";
             break;
@@ -70,6 +70,10 @@ std::ostream& operator<<( std::ostream & os,
             os << "]";        // oscit
             break;            // oscit
 
+        case HASH_TYPE_TAG: // oscit
+            os << "OSC-hash:`" << arg.AsStringUnchecked() << "'"; // oscit
+            break;                                                // oscit
+
         case INT32_TYPE_TAG:
             os << "int32:" << arg.AsInt32Unchecked();
             break;
@@ -89,7 +93,7 @@ std::ostream& operator<<( std::ostream & os,
         case RGBA_COLOR_TYPE_TAG:
             {
                 uint32 color = arg.AsRgbaColorUnchecked();
-                
+
                 os << "RGBA:0x"
                         << std::hex << std::setfill('0')
                         << std::setw(2) << (int)((color>>24) & 0xFF)
@@ -114,7 +118,7 @@ std::ostream& operator<<( std::ostream & os,
                 os.unsetf(std::ios::basefield);
             }
             break;
-				
+
         case INT64_TYPE_TAG:
             os << "int64:" << arg.AsInt64Unchecked();
             break;
@@ -133,11 +137,11 @@ std::ostream& operator<<( std::ostream & os,
                 strcpy( s, timeString );
                 if( len )
                     s[ len - 1 ] = '\0';
-                    
+
                 os << " " << s;
             }
             break;
-                
+
         case DOUBLE_TYPE_TAG:
             os << "double:" << arg.AsDoubleUnchecked();
             break;
@@ -145,8 +149,8 @@ std::ostream& operator<<( std::ostream & os,
         case STRING_TYPE_TAG:
             os << "OSC-string:`" << arg.AsStringUnchecked() << "'";
             break;
-                
-        case SYMBOL_TYPE_TAG: 
+
+        case SYMBOL_TYPE_TAG:
             os << "OSC-string (symbol):`" << arg.AsSymbolUnchecked() << "'";
             break;
 
@@ -213,7 +217,7 @@ std::ostream& operator<<( std::ostream & os, const ReceivedBundle& b )
     os << " )\n";
 
     ++indent;
-    
+
     for( ReceivedBundle::const_iterator i = b.ElementsBegin();
             i != b.ElementsEnd(); ++i ){
         if( i->IsBundle() ){
