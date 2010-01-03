@@ -24,6 +24,8 @@ void MTheme::set_day_theme() {
   colors_[WorkspaceFrozenBG] = Colour(0xff3f0000);
   colors_[WorkspaceBorder]   = Colour(0xff000000);
 
+  colors_[Disconnected]      = Colour(0x10ff0000);
+
   colors_[BrowserSelectedItem] = Colour(0xffadd8e6);
   colors_[BrowserLabel]      = Colour(0xffa0a0a0);
 
@@ -38,6 +40,8 @@ void MTheme::set_night_theme() {
   colors_[WorkspaceEditBG]   = Colour(0xff262626);
   colors_[WorkspaceFrozenBG] = Colour(0xff3f0000);
   colors_[WorkspaceBorder]   = Colour(0xff000000);
+
+  colors_[Disconnected]      = Colour(0x10ff0000);
 
   colors_[BrowserSelectedItem] = Colour(0xffadd8e6);
   colors_[BrowserLabel]      = Colour(0xffa0a0a0);
@@ -154,12 +158,16 @@ void MDeviceLabel::paint(Graphics &g) {
  */
 
 void MSlider::paint(Graphics &g) {
-  g.fillAll(mimas_->bg_color()); // TODO: do we need this ?
+  if (isEnabled()) {
+    g.fillAll(mimas_->bg_color());
+  } else {
+    g.fillAll(mimas_->color(MTheme::Disconnected));
+  }
 
   g.setColour(fill_color_);
   if (slider_type_ == VerticalSliderType) {
     // vertical slider
-    int remote_pos = scaled_remote_value(getHeight()-2);
+    int remote_pos = scaled_remote_value(getHeight()-2);  // TODO: -2 ?
     int h = getHeight() - remote_pos - SLIDER_BORDER_WIDTH / 2;
     // filled slider value
     g.fillRect(
@@ -197,33 +205,31 @@ void MSlider::paint(Graphics &g) {
 // =============================================
 
 void MPad::paint(Graphics& g) {
-  float radius = 8;
-  float pos_x;
-  float pos_y;
-
-  g.fillAll(Colours::grey);
-
-  if (abs(range_x_.value_ - range_x_.remote_value_) + abs(range_y_.value_ - range_y_.remote_value_) > 4 * radius) {
-    // remote_value_
-    pos_x = range_x_.scaled_remote_value(getWidth()) - radius;
-    pos_y = getHeight() - range_y_.scaled_remote_value(getHeight()) - radius;
-    g.setColour(Colours::lightgrey);
-    g.fillEllipse(pos_x, pos_y, 2*radius, 2*radius);
-
-    g.setColour(Colours::darkgrey);
-    g.drawEllipse(pos_x, pos_y, 2*radius, 2*radius, 2.0f);
+  if (isEnabled()) {
+    g.fillAll(mimas_->bg_color());
+  } else {
+    g.fillAll(mimas_->color(MTheme::Disconnected));
   }
 
-  // value_
-  pos_x = range_x_.scaled_value(getWidth())  - radius;
-  pos_y = getHeight() - range_y_.scaled_value(getHeight()) - radius;
-  g.setColour(Colours::white);
-  g.fillEllipse(pos_x, pos_y, 2*radius, 2*radius);
+  // if (abs(range_x_.value_ - range_x_.remote_value_) + abs(range_y_.value_ - range_y_.remote_value_) > 4 * radius) {
+  //   // draw ghost
+  // }
 
-  g.setColour(Colours::black);
-  g.drawEllipse(pos_x, pos_y, 2*radius, 2*radius, 2.0f);
+  // vertical slider
+  int remote_x = range_x_.scaled_remote_value(getWidth()-2); // TODO: -2 ?
+  int remote_y = getHeight() - range_y_.scaled_remote_value(getHeight()-2) - SLIDER_BORDER_WIDTH / 2;
 
-  g.setColour(Colours::black);
+  // filled pad value
+  g.setColour(fill_color_);
+  g.fillRect(
+    0,
+    remote_y,
+    remote_x,
+    getHeight()
+  );
+
+  // pad border
+  g.setColour(border_color_);
   g.drawRect(
     0,
     0,

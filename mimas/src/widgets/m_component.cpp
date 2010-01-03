@@ -7,12 +7,14 @@ MComponent::MComponent(MViewProxy *view_proxy, const std::string &name)
     : Component(String(name.c_str())),
       mimas_(view_proxy->mimas()),
       view_proxy_(view_proxy),
-      root_proxy_(view_proxy->root_proxy()) {}
+      root_proxy_(view_proxy->root_proxy()),
+      hue_(80) {}
 
 MComponent::MComponent(MViewProxy *view_proxy)
     : mimas_(view_proxy->mimas()),
       view_proxy_(view_proxy),
-      root_proxy_(view_proxy->root_proxy()) {}
+      root_proxy_(view_proxy->root_proxy()),
+      hue_(80) {}
 
 void MComponent::update(const Value &def) {
 
@@ -28,17 +30,16 @@ void MComponent::update(const Value &def) {
   }
 
   // ========================================== hue
-
   if (def.has_key("hue")) {
     set_hue(def["hue"].get_real());
   }
 }
 
 void MComponent::set_hue(float hue) {
-  if (hue < 0 || hue >= 360) hue = 0;
-  //                     hue           sat  bri  alpha
-  border_color_ = Colour(hue / 360.0f, 1.0f, 1.0f, 1.0f);
-  fill_color_   = Colour(hue / 360.0f, 0.5f, 0.5f, 1.0f);
+  hue_ = (hue < 0 || hue >= 360) ? 0 : hue;
+  //                     hue            sat   bri   alpha
+  border_color_ = Colour(hue_ / 360.0f, 1.0f, 1.0f, isEnabled() ? 1.0f : 0.3f);
+  fill_color_   = Colour(hue_ / 360.0f, 0.5f, 0.5f, isEnabled() ? 1.0f : 0.3f);
 }
 
 class MComponent::OnRegistrationCallback : public TCallback<MComponent, &MComponent::on_registration_callback> {
@@ -53,6 +54,7 @@ public:
 };
 
 void MComponent::add_callback(const std::string &path, const Value &def) {
+  std::cout << "Add callback '" << path << "' with " << def << "\n";
   root_proxy_->adopt_callback_on_register(path,
     new MComponent::OnRegistrationCallback(this, def)
   );

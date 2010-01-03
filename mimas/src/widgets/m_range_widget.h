@@ -12,8 +12,6 @@ public:
 
   virtual ~MRangeWidget() {}
 
-  virtual void set_enabled(bool enabled) = 0;
-
   virtual void set_range(Real min, Real max) {
     min_ = min;
     max_ = max;
@@ -49,11 +47,11 @@ public:
     return last_drag_;
   }
 
-  bool connected() {
-    return proxy_ != NULL;
-  }
-
   /* =======  Callbacks that need to be implemented in sub-classes. ========== */
+
+  /** enable/disable widget.
+   */
+  virtual void set_enabled(bool enabled) = 0;
 
   /** Should return true if the component is being dragged.
    */

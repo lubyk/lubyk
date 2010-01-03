@@ -40,6 +40,10 @@ public:
 
   virtual void update(const Value &def);
 
+  /** Returns true if the slider is connected to a proxy.
+   */
+  virtual bool is_connected();
+
   /** ======== Component callbacks ======== */
 
   virtual void mouseDown(const MouseEvent &e);
@@ -49,6 +53,10 @@ public:
   virtual void mouseUp(const MouseEvent &e);
 
   virtual void paint(Graphics& g);
+
+  /** ======== MPadRange callbacks ======== */
+
+  void set_enabled(bool enabled);
 private:
   bool dragged_;
   MPadRange range_x_;

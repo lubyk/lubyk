@@ -5,7 +5,7 @@
 /** ================ X Range ============ */
 
 void MPadRange::set_enabled(bool enabled) {
-  pad_->setEnabled(enabled);
+  pad_->set_enabled(enabled);
 }
 
 bool MPadRange::is_dragged() {
@@ -18,6 +18,12 @@ void MPadRange::redraw() {
 
 /** ================ Pad ============ */
 
+void MPad::set_enabled(bool enabled) {
+  setEnabled(enabled);
+  set_hue(hue_);
+  // repaint(); ?
+}
+
 void MPad::update(const Value &def) {
   Value err;
 
@@ -26,7 +32,7 @@ void MPad::update(const Value &def) {
 
   // ========================================== connect_x
 
-  if (def.has_key("connect_x") && !range_x_.connected()) {
+  if (def.has_key("connect_x") && !range_x_.proxy_) {
     // TODO: implement disconnect so that we can change connection...
 
     Value connect_path = def["connect_x"];
@@ -36,15 +42,19 @@ void MPad::update(const Value &def) {
       MObjectProxy *proxy = TYPE_CAST(MObjectProxy, root_proxy_->find_or_build_object_at(connect_path.str(), &err));
       if (!proxy) {
         error("could not connect x", err);
+        // this should never happen since find_or_build_object_at should build dummy
+        // objects that will receive a "type_changed" when they are ready...
+        add_callback(connect_path.str(), def);
       } else {
         proxy->connect(&range_x_);
+        set_hue(hue_); // update color
       }
     }
   }
 
   // ========================================== connect_y
 
-  if (def.has_key("connect_y") && !range_y_.connected()) {
+  if (def.has_key("connect_y") && !range_y_.proxy_) {
     // TODO: implement disconnect so that we can change connection...
 
     Value connect_path = def["connect_y"];
@@ -54,6 +64,9 @@ void MPad::update(const Value &def) {
       MObjectProxy *proxy = TYPE_CAST(MObjectProxy, root_proxy_->find_or_build_object_at(connect_path.str(), &err));
       if (!proxy) {
         error("could not connect y", err);
+        // this should never happen since find_or_build_object_at should build dummy
+        // objects that will receive a "type_changed" when they are ready...
+        add_callback(connect_path.str(), def);
       } else {
         proxy->connect(&range_y_);
       }
@@ -67,16 +80,22 @@ void MPad::update(const Value &def) {
   }
 }
 
+
+bool MPad::is_connected() {
+  return range_x_.proxy_ != NULL && range_x_.proxy_->is_connected() &&
+         range_y_.proxy_ != NULL && range_y_.proxy_->is_connected();
+}
+
 void MPad::mouseDown(const MouseEvent &e) {
-  if (!range_x_.connected() || !range_y_.connected()) return;
   dragged_ = true;
+  if (!is_connected()) return;
   range_x_.set_scaled_value(e.x, getWidth());
   range_y_.set_scaled_value(getHeight() - e.y, getHeight());
   repaint();
 }
 
 void MPad::mouseDrag(const MouseEvent &e) {
-  if (!range_x_.connected() || !range_y_.connected()) return;
+  if (!is_connected()) return;
   range_x_.set_scaled_value(e.x, getWidth());
   range_y_.set_scaled_value(getHeight() - e.y, getHeight());
   repaint();
@@ -84,6 +103,7 @@ void MPad::mouseDrag(const MouseEvent &e) {
 
 void MPad::mouseUp(const MouseEvent &e) {
   dragged_ = false;
+  if (!is_connected()) return;
   range_x_.stop_drag();
   range_y_.stop_drag();
 }

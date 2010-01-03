@@ -26,6 +26,8 @@ void MSlider::update(const Value &def) {
       MObjectProxy *proxy = TYPE_CAST(MObjectProxy, root_proxy_->find_or_build_object_at(connect_path.str(), &err));
       if (!proxy) {
         error("could not connect", err);
+        // this should never happen since find_or_build_object_at should build dummy
+        // objects that will receive a "type_changed" when they are ready...
         add_callback(connect_path.str(), def);
       } else {
         proxy->connect(this);
@@ -34,8 +36,13 @@ void MSlider::update(const Value &def) {
   }
 }
 
+
+bool MSlider::is_connected() {
+  return proxy_ != NULL && proxy_->is_connected();
+}
+
 void MSlider::mouseDown(const MouseEvent &e) {
-  if (mimas_->action_mode() && connected()) {
+  if (mimas_->action_mode() && is_connected()) {
     is_dragged_ = true;
     mouseDrag(e);
   } else if (mimas_->edit_mode()) {
@@ -44,7 +51,7 @@ void MSlider::mouseDown(const MouseEvent &e) {
 }
 
 void MSlider::mouseDrag(const MouseEvent &e) {
-  if (mimas_->action_mode() && connected()) {
+  if (mimas_->action_mode() && is_connected()) {
     if (slider_type_ == HorizontalSliderType) {
       set_scaled_value(e.x, getWidth());
     } else {
@@ -58,6 +65,7 @@ void MSlider::mouseDrag(const MouseEvent &e) {
 }
 
 void MSlider::mouseUp(const MouseEvent &e) {
+  if (!is_connected()) return;
   is_dragged_ = false;
   last_drag_ = proxy_->time_ref().elapsed();
 }

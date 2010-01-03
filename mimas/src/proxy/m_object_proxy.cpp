@@ -6,6 +6,7 @@
 void MObjectProxy::connect(MRangeWidget *widget) {
   if (is_connected()) {
     widget->set_range(type()[1].r, type()[2].r);
+    if (value_.is_real()) widget->set_remote_value(value_.r);
   } else {
     widget->set_enabled(false);
   }

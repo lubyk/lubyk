@@ -21,6 +21,12 @@ public:
    */
   virtual void update(const Value &def);
 
+  /** Returns true if the component is connected to a proxy.
+   */
+  virtual bool is_connected() {
+    return false;
+  }
+
   /** Set color hue (must be a value from 0 to 360 degrees).
    */
   void set_hue(float hue);
@@ -30,6 +36,7 @@ protected:
   MViewProxy *view_proxy_;
   RootProxy *root_proxy_;
 
+  float  hue_;
   Colour border_color_;
   Colour fill_color_;
 

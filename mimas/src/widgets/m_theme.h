@@ -16,6 +16,8 @@ public:
     WorkspaceEditBG,
     WorkspaceFrozenBG,
     WorkspaceBorder,
+    
+    Disconnected,
 
     BrowserSelectedItem,
     BrowserLabel,

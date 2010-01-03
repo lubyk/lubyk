@@ -10,9 +10,7 @@ class MSlider : public MComponent, public MRangeWidget {
 public:
   MSlider(MViewProxy *view_proxy)
       : MComponent(view_proxy),
-        is_dragged_(false) {
-    set_hue(182);
-  }
+        is_dragged_(false) {}
 
   enum SliderType {
     VerticalSliderType,
@@ -27,10 +25,15 @@ public:
 
   virtual void update(const Value &def);
 
+  /** Returns true if the slider is connected to a proxy.
+   */
+  virtual bool is_connected();
+
   /** =========== MRangeWidget callbacks ========== */
 
   virtual void set_enabled(bool enabled) {
     setEnabled(enabled);
+    set_hue(hue_);
   }
 
   virtual void redraw() {
