@@ -46,6 +46,9 @@ void ZeroConfBrowser::set_command(Command *command) {
 }
 
 void ZeroConfBrowser::do_adopt_proxy_factory(ProxyFactory *factory) {
+  if (running_ && !proxy_factory_) {
+    std::cerr << "WARNING: " << "browser allready running when adopting proxy factory, you should adopt the factory before starting the browser.\n";
+  }
   if (proxy_factory_) {
     delete proxy_factory_;
   }

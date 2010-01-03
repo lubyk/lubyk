@@ -76,11 +76,11 @@ int main(int argc, char * argv[]) {
   tmp = tmp->adopt(new Object("nested"));
   tmp->adopt(new ValueDisplay("slider", 115, 0));
 
-  // create '/.views' url
+  // create '/views' url
   Object *views = root.make_views_path();
 
-  // create '/.views/basic' url
-  views->adopt(new FileMethod("basic", VIEW_PATH, "basic view for the beatbox example"));
+  // create '/views/basic' url
+  views->adopt(new HashFileMethod("basic", VIEW_PATH, "basic view for the beatbox example"));
 
   printf("Beatbox started and listening on port %i (sleeping %ims betwween calls).\nType Ctrl+C to stop.\n", OSC_PORT, sleepy);
 

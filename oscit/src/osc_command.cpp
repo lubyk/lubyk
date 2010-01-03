@@ -77,6 +77,7 @@ static void to_stream(osc::OutboundPacketStream &out_stream, const Value &val, b
       out_stream << osc::Any;
       break;
     case HASH_VALUE:   /* continue */
+      out_stream << (osc::JsonHash)val.to_json().c_str();
     case MATRIX_VALUE: /* continue */
     case MIDI_VALUE:   /* continue */
     default:
@@ -237,6 +238,9 @@ public:
           break;
         case osc::DOUBLE_TYPE_TAG:
           res.push_back(Value((Real)(arg->AsDoubleUnchecked())));
+          break;
+        case osc::HASH_TYPE_TAG:
+          res.push_back(Value((Json)arg->AsStringUnchecked()));
           break;
         case osc::STRING_TYPE_TAG:
           res.push_back(Value(arg->AsStringUnchecked()));

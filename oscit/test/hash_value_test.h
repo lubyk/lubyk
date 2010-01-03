@@ -278,6 +278,13 @@ public:
     assert_equal("free", v["weeks"]["friday"].str());
   }
 
+  void test_from_json_empty_hash( void ) {
+    std::cout << "test_from_json_empty_hash\n\n";
+    Value v(Json("{}"));
+    std::cout << "\n\n";
+    assert_true(v.is_hash());
+  }
+
   void test_can_receive( void ) {
     Object object("foo", HashIO("bar"));
     assert_false(object.can_receive(Value()));

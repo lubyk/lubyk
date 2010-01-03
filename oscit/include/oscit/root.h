@@ -49,7 +49,7 @@ namespace oscit {
 #define REGISTER_PATH "/.register"
 #define TYPE_PATH "/.type"
 #define TREE_PATH "/.tree"
-#define VIEWS_PATH "/.views"
+#define VIEWS_PATH "/views"
 
 class Callback;
 class CallbackList;
@@ -158,7 +158,7 @@ class Root : public Object
     commands_.remove(command);
   }
 
-  /** Return (create if necessary) the "/.views" container.
+  /** Return (create if necessary) the "/views" container.
    */
   Object *make_views_path() {
     Object *views = object_at(VIEWS_PATH);

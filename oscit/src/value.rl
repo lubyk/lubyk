@@ -41,8 +41,6 @@
 /** Ragel parser definition to create Values from JSON. */
 namespace oscit {
 
-//#define DEBUG_PARSER
-
 #ifdef DEBUG_PARSER
 #define DEBUG(x) x
 #else
@@ -280,7 +278,8 @@ void Value::deep_merge(const Value &other) {
     push_back(tmp_val);
   }
 
-  action hash {
+  action empty_hash {
+    DEBUG(printf("[%p:empty_hash %s]\n", this, tmp_val.to_json().c_str()));
     // become an empty HashValue
     if (!is_hash()) {
       set_type(HASH_VALUE);
@@ -321,8 +320,9 @@ void Value::deep_merge(const Value &other) {
 
   hash_content = (string | word | integer) ':' >hash_value;
 
-  strict    = ws* '[' >list_value (',' >list_value)* ']' $list |
-              ws* '{' hash_content (','? hash_content)* '}' %hash   |
+  strict    = ws* '[' >list_value (',' >list_value)* ']' $list    |
+              ws* '{' hash_content (','? hash_content)* '}' |
+              ws* '{' ws* '}'        %empty_hash |
                       string             %string |
                       number             %number |
                       nil                %nil;
@@ -330,7 +330,7 @@ void Value::deep_merge(const Value &other) {
   lazy_list_content = strict %lazy_list ',' >list_value (',' >list_value)*;
 
   lazy      = lazy_list_content          %list   |
-              hash_content (','? hash_content)* %hash   |
+              hash_content (','? hash_content)*  |
               strict;
 
   main_strict := strict %set_from_tmp end;

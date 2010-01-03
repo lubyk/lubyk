@@ -68,7 +68,7 @@ public:
 
     return val;
   }
-  
+
 private:
   File file_;
 };

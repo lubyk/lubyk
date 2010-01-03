@@ -315,11 +315,11 @@ public:
     assert_equal("[]", res.to_json());
     Object *views = root.make_views_path();
     res = root.list();
-    assert_equal("[\".views\"]", res.to_json());
+    assert_equal("[\"views\"]", res.to_json());
     // make again should return same object
     assert_equal(views, root.make_views_path());
     res = root.list();
-    assert_equal("[\".views\"]", res.to_json());
+    assert_equal("[\"views\"]", res.to_json());
   }
 
   void test_should_accept_registration_notifications( void ) {

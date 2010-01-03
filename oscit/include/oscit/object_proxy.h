@@ -112,7 +112,7 @@ public:
    * have been synced with remote).
    */
   bool is_connected() const {
-    return !type_.is_nil();
+    return type_.is_list();
   }
 
   /** @internal.

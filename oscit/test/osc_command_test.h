@@ -113,6 +113,21 @@ class OscCommandTest : public TestHelper
     assert_equal("[\"/.list_with_type\", [\"/monitor\", [[\"mode\", [\"rgb\", \"rgb, yuv\", \"color mode\", \"This is a menu.\"]], [\"tint\", [45, 1, 127, \"tint\", \"This is a slider from 1 to 127.\"]]]]]\n", reply());
   }
 
+  void test_send_receive_hash( void ) {
+    DummyObject * foo = remote_.adopt(new DummyObject("foo", 1.0));
+
+    send("/foo", 3.0);
+    assert_equal(3.0, foo->real());
+    assert_equal("[\"/foo\", 3]\n", reply());
+  }
+
+  void test_send_receive_any( void ) {
+    remote_.adopt(new DummyObject("foo", Value(Json("{one:1}")), HashIO("some data")));
+
+    send("/foo", Value(Json("{five:5}")));
+    assert_equal("[\"/foo\", {\"five\":5}]\n", reply());
+  }
+
  private:
   void send(const char *url, Real real) {
     send(url, Value(real));
