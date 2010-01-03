@@ -43,7 +43,10 @@ class ProxyFactory;
 class Command;
 
 /** This class let's you easily found applications providing a certain
- *  service.
+ * service. To make sure that everything works as expected, you should
+ * do all the setup work (set ProxyFactory for example), BEFORE the
+ * browser is adopted by a command (since this operation starts the
+ * service browsing).
  */
 class ZeroConfBrowser : public Mutex {
  public:
@@ -80,7 +83,7 @@ class ZeroConfBrowser : public Mutex {
  protected:
 
   /** This method is called when the command_ is set. Sub-classes can call this
-  * method if they want to use the browser without creating proxies (without a command).
+   * method if they want to use the browser without creating proxies (without a command).
    */
   virtual void start();
 
@@ -97,6 +100,7 @@ class ZeroConfBrowser : public Mutex {
 
   void remove_proxy(const Location &location);
 
+  bool          running_;
   std::string   protocol_;
   std::string   service_type_;
   Command      *command_;

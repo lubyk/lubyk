@@ -39,9 +39,8 @@
 using namespace oscit;
 
 @interface NetServiceDelegate : NSObject {
-  oscit::ZeroConfBrowser *master_;
-  NSNetServiceBrowser *browser_;
-  bool running_;
+  oscit::ZeroConfBrowser *browser_;
+  NSNetServiceBrowser *service_browser_;
   std::string protocol_;
   std::string service_type_;
 }
@@ -67,26 +66,26 @@ using namespace oscit;
         protocol:(const char *)protocol {
   if (self = [super init]) {
     protocol_ = protocol;
-    master_   = master;
-    browser_  = [[NSNetServiceBrowser alloc] init];
+    browser_   = master;
+    service_browser_  = [[NSNetServiceBrowser alloc] init];
     service_type_ = service_type;
-    [browser_ setDelegate:self];
+    [service_browser_ setDelegate:self];
   }
   return self;
 }
 
 - (void)start {
-  if (!running_) {
-    [browser_ stop];
-    [browser_ searchForServicesOfType:[NSString stringWithCString:service_type_.c_str() encoding:NSUTF8StringEncoding] inDomain:@""];
-    running_ = YES;
+  if (!browser_->running_) {
+    [service_browser_ stop];
+    [service_browser_ searchForServicesOfType:[NSString stringWithCString:service_type_.c_str() encoding:NSUTF8StringEncoding] inDomain:@""];
+    browser_->running_ = true;
   }
 }
 
 - (void)stop {
-  if (running_) {
-    [browser_ stop];
-    running_ = NO;
+  if (browser_->running_) {
+    [service_browser_ stop];
+    browser_->running_ = false;
   }
 }
 
@@ -110,8 +109,8 @@ using namespace oscit;
 - (void)netServiceDidResolveAddress:(NSNetService *)service {
   NSLog(@"\n\nResolved: %@ in %@:%i addresses: %i\n", [service name], [service hostName], [service port], [[service addresses] count]);
 
-  NSLog(@"master: %p\n", master_);
-  master_->add_device(Location(
+  NSLog(@"master: %p\n", browser_);
+  browser_->add_device(Location(
                           protocol_.c_str(),
                           [[service name] UTF8String],
                           [[service hostName] UTF8String],
@@ -135,7 +134,7 @@ using namespace oscit;
 }
 
 - (void)netServiceBrowser:(NSNetServiceBrowser *)browser didRemoveService:(NSNetService *)aNetService moreComing:(BOOL)moreComing {
-  master_->remove_device( [[aNetService name] UTF8String]);
+  browser_->remove_device( [[aNetService name] UTF8String]);
 }
 
 -(BOOL) respondsToSelector:(SEL)selector {
@@ -145,7 +144,7 @@ using namespace oscit;
 
 -(void)dealloc {
   [self stop];
-  [browser_ release];
+  [service_browser_ release];
   [super dealloc];
 }
 

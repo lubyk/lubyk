@@ -72,12 +72,11 @@ struct BrowsedDevice {
 class ZeroConfBrowser::Implementation : public Thread {
 public:
   Implementation(ZeroConfBrowser *master)
-      : master_(master),
-        started_(false) {}
+      : browser_(master) {}
 
   void start() {
-    if (!started_) {
-      started_ = true;
+    if (!browser_->running_) {
+      browser_->running_ = true;
       start_thread<Implementation, &Implementation::browse>(this, NULL);
     }
   }
@@ -93,15 +92,15 @@ public:
     error = DNSServiceBrowse(&service,
       0,                     // no flags
       0,                     // all network interfaces
-      master_->service_type_.c_str(), // service type
+      browser_->service_type_.c_str(), // service type
       NULL,                  // default domain(s)
       Implementation::browser_callback,    // callback function
-      (void*)master_);       // context
+      (void*)browser_);       // context
 
     if (error == kDNSServiceErr_NoError) {
       browse(service);
     } else {
-      fprintf(stderr,"Could not browse for service %s (error %d)\n", master_->service_type_.c_str(), error);//, strerror(errno));
+      fprintf(stderr,"Could not browse for service %s (error %d)\n", browser_->service_type_.c_str(), error);//, strerror(errno));
     }
 
     DNSServiceRefDeallocate(service);
@@ -137,6 +136,7 @@ public:
         if (errno != EINTR) quit();
       }
     }
+    browser_->running_ = false;
   }
 
   static void resolve_callback(DNSServiceRef service,
@@ -202,15 +202,15 @@ public:
     delete device;
   }
 
-  ZeroConfBrowser *master_;
-  bool started_;
+  ZeroConfBrowser *browser_;
 };
 
-ZeroConfBrowser::ZeroConfBrowser(const char *service_type) :
-                  service_type_(service_type),
-                  command_(NULL),
-                  proxy_factory_(NULL),
-                  found_devices_(FOUND_DEVICE_HASH_SIZE) {
+ZeroConfBrowser::ZeroConfBrowser(const char *service_type)
+    : running_(false),
+      service_type_(service_type),
+      command_(NULL),
+      proxy_factory_(NULL),
+      found_devices_(FOUND_DEVICE_HASH_SIZE) {
   get_protocol_from_service_type();
   impl_ = new ZeroConfBrowser::Implementation(this);
 }

@@ -55,7 +55,7 @@ namespace oscit {
 
 class ZeroConfBrowser::Implementation {
 public:
-  Implementation(ZeroConfBrowser *browser) : browser_(browser), avahi_poll_(NULL), avahi_client_(NULL), running_(false) {}
+  Implementation(ZeroConfBrowser *browser) : browser_(browser), avahi_poll_(NULL), avahi_client_(NULL) {}
 
   ~Implementation() {
     stop();
@@ -66,15 +66,15 @@ public:
 	/** Called from outside of thread to stop operations.
 	 */
 	void stop() {
-    if (running_) {
+    if (browser_->running_) {
       avahi_threaded_poll_stop(avahi_poll_);
-      running_ = false;
+      browser_->running_ = false;
     }
     // join threads here
 	}
 
   void start() {
-    if (running_) return;
+    if (browser_->running_) return;
 
     int error;
     // create poll object
@@ -116,7 +116,7 @@ public:
     }
 
     avahi_threaded_poll_start(avahi_poll_);
-    running_ = true;
+    browser_->running_ = true;
   }
 
   static void client_callback(AvahiClient *client, AvahiClientState state, void *context) {
@@ -226,14 +226,14 @@ public:
   ZeroConfBrowser *browser_;
   AvahiThreadedPoll *avahi_poll_;
   AvahiClient     *avahi_client_;
-  bool running_;
 };
 
-ZeroConfBrowser::ZeroConfBrowser(const char *service_type) :
-                  service_type_(service_type),
-                  command_(NULL),
-                  proxy_factory_(NULL),
-                  found_devices_(FOUND_DEVICE_HASH_SIZE) {
+ZeroConfBrowser::ZeroConfBrowser(const char *service_type)
+    : running_(false),
+      service_type_(service_type),
+      command_(NULL),
+      proxy_factory_(NULL),
+      found_devices_(FOUND_DEVICE_HASH_SIZE) {
   get_protocol_from_service_type();
   impl_ = new ZeroConfBrowser::Implementation(this);
 }
