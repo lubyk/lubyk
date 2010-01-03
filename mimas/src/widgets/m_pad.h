@@ -32,10 +32,10 @@ public:
       : MComponent(part_id, view_proxy),
         range_x_(this),
         range_y_(this),
-        dragged_(false) {}
+        is_dragged_(false) {}
 
   virtual bool is_dragged() {
-    return dragged_;
+    return is_dragged_;
   }
 
   virtual void update(const Value &def);
@@ -58,7 +58,7 @@ public:
 
   void set_enabled(bool enabled);
 private:
-  bool dragged_;
+  bool is_dragged_;
   MPadRange range_x_;
   MPadRange range_y_;
 };

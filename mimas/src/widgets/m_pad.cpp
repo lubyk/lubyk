@@ -87,23 +87,32 @@ bool MPad::is_connected() {
 }
 
 void MPad::mouseDown(const MouseEvent &e) {
-  dragged_ = true;
-  if (!is_connected()) return;
-  range_x_.set_scaled_value(e.x, getWidth());
-  range_y_.set_scaled_value(getHeight() - e.y, getHeight());
-  repaint();
+  if (should_handle_mouse()) {
+    is_dragged_ = true;
+    range_x_.set_scaled_value(e.x, getWidth());
+    range_y_.set_scaled_value(getHeight() - e.y, getHeight());
+    //repaint();
+  } else {
+    MComponent::mouseDown(e);
+  }
 }
 
 void MPad::mouseDrag(const MouseEvent &e) {
-  if (!is_connected()) return;
-  range_x_.set_scaled_value(e.x, getWidth());
-  range_y_.set_scaled_value(getHeight() - e.y, getHeight());
-  repaint();
+  if (should_handle_mouse()) {
+    range_x_.set_scaled_value(e.x, getWidth());
+    range_y_.set_scaled_value(getHeight() - e.y, getHeight());
+  } else {
+    MComponent::mouseDrag(e);
+  }
+    //repaint(); // ?
 }
 
 void MPad::mouseUp(const MouseEvent &e) {
-  dragged_ = false;
-  if (!is_connected()) return;
-  range_x_.stop_drag();
-  range_y_.stop_drag();
+  if (is_dragged_) {
+    is_dragged_ = false;
+    range_x_.stop_drag();
+    range_y_.stop_drag();
+  } else {
+    MComponent::mouseUp(e);
+  }
 }

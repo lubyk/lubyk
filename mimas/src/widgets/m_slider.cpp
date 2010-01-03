@@ -42,50 +42,32 @@ bool MSlider::is_connected() {
 }
 
 void MSlider::mouseDown(const MouseEvent &e) {
-  if (mimas_->action_mode() && is_connected()) {
+  if (should_handle_mouse()) {
     is_dragged_ = true;
     mouseDrag(e);
-  } else if (mimas_->edit_mode()) {
-    ghost_component_.setBounds(
-      getX(),
-      getY(),
-      getWidth(),
-      getHeight()
-    );
-    getParentComponent()->addAndMakeVisible(&ghost_component_);
-    dragger_.startDraggingComponent(&ghost_component_, 0);
+  } else {
+    MComponent::mouseDown(e);
   }
 }
 
 void MSlider::mouseDrag(const MouseEvent &e) {
-  if (mimas_->action_mode() && is_connected()) {
+  if (should_handle_mouse()) {
     if (slider_type_ == HorizontalSliderType) {
       set_scaled_value(e.x, getWidth());
     } else {
       set_scaled_value(getHeight() - e.y, getHeight());
     }
     proxy_->set_value(Value(value_));
-  } else if (mimas_->edit_mode()) {
-    dragger_.dragComponent(&ghost_component_, e);
+  } else {
+    MComponent::mouseDrag(e);
   }
 }
 
 void MSlider::mouseUp(const MouseEvent &e) {
-  if (!is_connected()) return;
   if (is_dragged_) {
     is_dragged_ = false;
     last_drag_ = proxy_->time_ref().elapsed();
   } else {
-    // ghost dragging ended
-    Value view;
-    Value parts;
-    Value def;
-    def.set("x",ghost_component_.getX());
-    def.set("y",ghost_component_.getY());
-    def.set("width",ghost_component_.getWidth());
-    def.set("height",ghost_component_.getHeight());
-    parts.set(part_id_, def);
-    view.set("parts", parts);
-    view_proxy_->update_remote(view);
+    MComponent::mouseUp(e);
   }
 }

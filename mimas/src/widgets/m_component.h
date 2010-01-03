@@ -12,6 +12,14 @@ class MComponent : public Component, public MObservable {
 public:
   MComponent(const std::string &part_id, MViewProxy *view_proxy);
 
+  /** =========== Component callbacks   ========== */
+
+  virtual void mouseDown(const MouseEvent &e);
+
+  virtual void mouseDrag(const MouseEvent &e);
+
+  virtual void mouseUp(const MouseEvent &e);
+
   /** =========== MComponent callbacks  ========== */
 
   // TODO: move some of the MRangeWidget callbacks here (dragging...)
@@ -29,6 +37,10 @@ public:
   /** Set color hue (must be a value from 0 to 360 degrees).
    */
   void set_hue(float hue);
+
+  /** Return true if the component should react to mouse event.
+   */
+  bool should_handle_mouse();
 
   MimasWindowContent *mimas() {
     return mimas_;

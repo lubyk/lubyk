@@ -1,6 +1,7 @@
 #include "mimas.h"
 #include "m_component.h"
 
+#include "mimas_window_content.h"
 #include "m_view_proxy.h"
 
 MComponent::MComponent(const std::string &part_id, MViewProxy *view_proxy)
@@ -39,6 +40,47 @@ void MComponent::set_hue(float hue) {
   border_color_ = Colour(hue_ / 360.0f, 1.0f, 1.0f, isEnabled() ? 1.0f : 0.3f);
   fill_color_   = Colour(hue_ / 360.0f, 0.5f, 0.5f, isEnabled() ? 1.0f : 0.3f);
 }
+
+
+bool MComponent::should_handle_mouse() {
+  return mimas_->action_mode() && is_connected();
+}
+
+void MComponent::mouseDown(const MouseEvent &e) {
+  if (!mimas_->edit_mode()) return;
+
+  ghost_component_.setBounds(
+    getX(),
+    getY(),
+    getWidth(),
+    getHeight()
+  );
+  getParentComponent()->addAndMakeVisible(&ghost_component_);
+  dragger_.startDraggingComponent(&ghost_component_, 0);
+}
+
+void MComponent::mouseDrag(const MouseEvent &e) {
+  if (!mimas_->edit_mode()) return;
+
+  dragger_.dragComponent(&ghost_component_, e);
+}
+
+void MComponent::mouseUp(const MouseEvent &e) {
+  // ghost dragging ended
+  Value view;
+  Value parts;
+  Value def;
+  def.set("x",ghost_component_.getX());
+  def.set("y",ghost_component_.getY());
+  def.set("width",ghost_component_.getWidth());
+  def.set("height",ghost_component_.getHeight());
+  parts.set(part_id_, def);
+  view.set("parts", parts);
+  view_proxy_->update_remote(view);
+}
+
+
+// ================== on_registration_callback
 
 class MComponent::OnRegistrationCallback : public TCallback<MComponent, &MComponent::on_registration_callback> {
 public:
