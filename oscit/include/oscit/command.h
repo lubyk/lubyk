@@ -138,6 +138,12 @@ class Command : public Thread {
   friend class RootProxy;  // register_proxy, unregister_proxy
   friend class CommandTest;
 
+  /** Used by sub-classes when they finally know the port.
+   */
+  void set_port(uint16_t port) {
+    port_ = port;
+  }
+
   /** We have just adopted this proxy: start routing 'reply' messages to it.
    */
   void register_proxy(RootProxy *proxy);

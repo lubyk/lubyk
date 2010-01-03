@@ -44,7 +44,7 @@ public:
 
   OscCommand(uint16_t port);
 
-  OscCommand(const char *protocol, const char *service_type, uint16_t port);
+  OscCommand(const char *protocol, const char *service_type = "", uint16_t port = 0);
 
   virtual ~OscCommand();
 

@@ -46,7 +46,7 @@ namespace oscit {
 #define OSC_OUT_BUFFER_SIZE 2048
 #define OSCIT_SERVICE_TYPE "_oscit._udp"
 
-//#define DEBUG_OSC_COMMAND
+#define DEBUG_OSC_COMMAND
 
 static void to_stream(osc::OutboundPacketStream &out_stream, const Value &val, bool in_array = false) {
   size_t sz;
@@ -117,7 +117,7 @@ public:
       // FIXME: hack oscpack to accept 'Location' or rewrite this layer using ragel...
       socket_->SendTo(IpEndpointName(remote_endpoint.ip(), remote_endpoint.port()), message.Data(), message.Size());
 #ifdef DEBUG_OSC_COMMAND
-      std::cout << "[" << command_->port() << "] --- " << path << "(" << val << ") --> [" << remote_endpoint.ip() << "]" << std::endl;
+      std::cout << "[" << command_->port() << "] --- " << path << "(" << val << ") --> [" << remote_endpoint << "]" << std::endl;
 #endif
 
     } catch (std::runtime_error &e) {
@@ -130,9 +130,15 @@ public:
   void listen() {
     if (socket_ == NULL) {
       try {
-        socket_ = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, command_->port() ), this );
+        if (command_->port() != 0) {
+          socket_ = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, command_->port() ), this );
+        } else {
+          std::cout << "Connecting to port 0\n";
+          socket_ = new UdpListeningReceiveSocket( IpEndpointName(), this );
+          command_->set_port(socket_->BoundPort());
+        }
       } catch (std::runtime_error &e) {
-        printf("Could not create UdpListeningReceiveSocket on port %i\n", command_->port());
+        printf("Could not create listening socket on port %i\n", command_->port());
         throw;
       }
     }
