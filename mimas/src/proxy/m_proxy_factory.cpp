@@ -5,11 +5,13 @@
 #include "m_device_view.h"
 
 ObjectProxy *MProxyFactory::build_object_proxy(Object *parent, const std::string &name, const Value &type) {
-  if (parent->url() == "" && name == ".views") {
+  std::cout << "BUILD: " << name << " : " << type.type_tag() << "\n";
+  if (parent->url() == "" && name == Url(VIEWS_PATH).name()) {
     // build views container
     return new MViewsBuilder(mimas_, name, type);
-  } else if (parent->url() == "/.views" && type.type_id() == H("sss")) {
+  } else if (parent->url() == VIEWS_PATH && type.type_id() == H("Hs")) {
     // build view proxy
+    // TODO: move this as build_child in MViewsBuilder.
     return new MViewProxy(mimas_, name, type);
   } else if (!is_meta_method(name) || parent->url() != "") {
     return new MObjectProxy(mimas_, name, type);

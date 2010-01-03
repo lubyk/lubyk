@@ -28,8 +28,8 @@ class MViewProxy;
 
 class MPad : public MComponent {
 public:
-  MPad(MViewProxy *view_proxy)
-      : MComponent(view_proxy),
+  MPad(const std::string &part_id, MViewProxy *view_proxy)
+      : MComponent(part_id, view_proxy),
         range_x_(this),
         range_y_(this),
         dragged_(false) {}

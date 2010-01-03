@@ -8,7 +8,7 @@ class MViewProxy;
 
 class MDeviceView : public MComponent {
 public:
-  MDeviceView(MViewProxy *view_proxy, const std::string &name);
+  MDeviceView(const std::string &part_id, MViewProxy *view_proxy, const std::string &name);
 
   //virtual ~MDeviceView();
 

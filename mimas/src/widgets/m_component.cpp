@@ -3,17 +3,12 @@
 
 #include "m_view_proxy.h"
 
-MComponent::MComponent(MViewProxy *view_proxy, const std::string &name)
-    : Component(String(name.c_str())),
+MComponent::MComponent(const std::string &part_id, MViewProxy *view_proxy)
+    : part_id_(part_id), // FIXME: replace part_id by def_path...
       mimas_(view_proxy->mimas()),
       view_proxy_(view_proxy),
       root_proxy_(view_proxy->root_proxy()),
-      hue_(80) {}
-
-MComponent::MComponent(MViewProxy *view_proxy)
-    : mimas_(view_proxy->mimas()),
-      view_proxy_(view_proxy),
-      root_proxy_(view_proxy->root_proxy()),
+      ghost_component_(this),
       hue_(80) {}
 
 void MComponent::update(const Value &def) {
@@ -27,6 +22,9 @@ void MComponent::update(const Value &def) {
       def["width"].get_real(getWidth()),
       def["height"].get_real(getHeight())
     );
+    if (ghost_component_.isVisible()) { // TODO:  && !is_dragged_
+      ghost_component_.setVisible(false);
+    }
   }
 
   // ========================================== hue

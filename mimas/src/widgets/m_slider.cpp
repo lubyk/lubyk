@@ -46,7 +46,14 @@ void MSlider::mouseDown(const MouseEvent &e) {
     is_dragged_ = true;
     mouseDrag(e);
   } else if (mimas_->edit_mode()) {
-    dragger_.startDraggingComponent(this, 0);
+    ghost_component_.setBounds(
+      getX(),
+      getY(),
+      getWidth(),
+      getHeight()
+    );
+    getParentComponent()->addAndMakeVisible(&ghost_component_);
+    dragger_.startDraggingComponent(&ghost_component_, 0);
   }
 }
 
@@ -58,14 +65,27 @@ void MSlider::mouseDrag(const MouseEvent &e) {
       set_scaled_value(getHeight() - e.y, getHeight());
     }
     proxy_->set_value(Value(value_));
-
   } else if (mimas_->edit_mode()) {
-    dragger_.dragComponent(this, e);
+    dragger_.dragComponent(&ghost_component_, e);
   }
 }
 
 void MSlider::mouseUp(const MouseEvent &e) {
   if (!is_connected()) return;
-  is_dragged_ = false;
-  last_drag_ = proxy_->time_ref().elapsed();
+  if (is_dragged_) {
+    is_dragged_ = false;
+    last_drag_ = proxy_->time_ref().elapsed();
+  } else {
+    // ghost dragging ended
+    Value view;
+    Value parts;
+    Value def;
+    def.set("x",ghost_component_.getX());
+    def.set("y",ghost_component_.getY());
+    def.set("width",ghost_component_.getWidth());
+    def.set("height",ghost_component_.getHeight());
+    parts.set(part_id_, def);
+    view.set("parts", parts);
+    view_proxy_->update_remote(view);
+  }
 }

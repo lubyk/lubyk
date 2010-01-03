@@ -21,20 +21,13 @@ public:
   virtual void adopted();
 
   virtual void value_changed() {
-    if (!value_.is_string()) {
-      std::cerr << "'" << url() << "' error: value should be a string. Found " << value_ << "\n";
-      return;
-    }
-
-    Value def; // TODO: why doesn't "Value def(Json(view_def));" work ?
-    def.build_from_json(value_.c_str());
-    if (!def.is_hash()) {
-      std::cerr << "Json document is not a hash '" << url() << "': " << def << "\n";
+    if (!value_.is_hash()) {
+      std::cerr << "'" << url() << "' error: value should be a Hash. Found " << value_ << "\n";
       return;
     }
 
     MessageManagerLock mml;
-    update_view(def);
+    update_view(value_);
   }
 
   /** This method is called by widgets when something changed on our side. If the
@@ -47,10 +40,7 @@ public:
 
   MDeviceView *view() {
     if (!view_) {
-      if (view_definition_.is_empty() && value_.is_string()) {
-        view_definition_.build_from_json(value_.c_str());
-      }
-      update_view(view_definition_);
+      update_view(value_);
     }
 
     // TODO: resize view
@@ -79,7 +69,6 @@ public:
 private:
 
   MDeviceView *view_;
-  Value view_definition_;
 
   /** Simple object to handle messages to the method "this_view/update".
    */

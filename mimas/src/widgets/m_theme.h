@@ -18,6 +18,10 @@ public:
     WorkspaceBorder,
     
     Disconnected,
+    
+    // MGhostComponent
+    GhostBG,
+    GhostBorder,
 
     BrowserSelectedItem,
     BrowserLabel,

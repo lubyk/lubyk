@@ -39,7 +39,8 @@ MimasWindowContent::MimasWindowContent()
   themes_[1].set_day_theme();
 
   // no service-type: we do not want to publish a service
-  OscCommand *cmd = work_tree_.adopt_command(new OscCommand("oscit", "", 7019)); // FIXME: no port => take any...
+  OscCommand *cmd = work_tree_.adopt_command(new OscCommand("oscit"));
+
 
   border_ = new ResizableBorderComponent(this, 0);
   addAndMakeVisible(border_);
@@ -52,8 +53,9 @@ MimasWindowContent::MimasWindowContent()
   addAndMakeVisible(workspace_port_);
 
   device_browser_ = new MBrowser(this, "_oscit._udp");
-  device_browser_->set_command(cmd);
   device_browser_->adopt_proxy_factory(new MProxyFactory(this, workspace_));
+  // FIXME: it should be cmd->adopt_browser(device_browser_);
+  device_browser_->set_command(cmd);
   device_browser_->setBounds(0, 0, LAYOUT_BROWSER_WIDTH + LAYOUT_BROWSER_BORDER_WIDTH, getHeight());
   addAndMakeVisible(device_browser_);
 

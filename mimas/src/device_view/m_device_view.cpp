@@ -7,8 +7,8 @@
 
 #define PARTS_HASH_SIZE 100
 
-MDeviceView::MDeviceView(MViewProxy *view_proxy, const std::string &name)
-    : MComponent(view_proxy, name),
+MDeviceView::MDeviceView(const std::string &part_id, MViewProxy *view_proxy, const std::string &name)
+    : MComponent(part_id, view_proxy),
       parts_(PARTS_HASH_SIZE) {
   label_ = new MDeviceLabel(mimas_, this, T("device name"), String(name.c_str()));
 
@@ -40,7 +40,6 @@ void MDeviceView::update(const Value &def) {
     if (parts->get(*it, &part_def) && part_def.is_hash()) {
       if (parts_.get(*it, &part)) {
         // part already exists, update
-        part->update(part_def);
       } else {
         // create new part from definition
         Value klass = part_def["class"];
@@ -51,19 +50,22 @@ void MDeviceView::update(const Value &def) {
 
         if (klass.str() == "Slider") {
           // ================================================== Slider
-          part = new MSlider(view_proxy_);
-          part->update(part_def);
-          addAndMakeVisible(part);
+          part = new MSlider(*it, view_proxy_);
 
         } else if (klass.str() == "Pad") {
           // ================================================== Pad
-          part = new MPad(view_proxy_);
-          part->update(part_def);
-          addAndMakeVisible(part);
+          part = new MPad(*it, view_proxy_);
 
         } else {
+          part = NULL;
           error("Unknown class", klass);
         }
+      }
+
+      if (part) {
+        part->update(part_def);
+        if (!part->isVisible()) addAndMakeVisible(part);
+        parts_.set(*it, part);
       }
     }
   }

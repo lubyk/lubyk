@@ -2,6 +2,7 @@
 #include "mimas_window_content.h"
 #include "m_browser.h"
 #include "m_device_list.h"
+#include "m_ghost_component.h"
 #include "m_device_view.h"
 #include "m_device_label.h"
 #include "m_slider.h"
@@ -26,6 +27,9 @@ void MTheme::set_day_theme() {
 
   colors_[Disconnected]      = Colour(0x10ff0000);
 
+  colors_[GhostBG]           = Colour(0x40ffffff);
+  colors_[GhostBorder]       = Colour(0x10ffffff);
+
   colors_[BrowserSelectedItem] = Colour(0xffadd8e6);
   colors_[BrowserLabel]      = Colour(0xffa0a0a0);
 
@@ -42,6 +46,9 @@ void MTheme::set_night_theme() {
   colors_[WorkspaceBorder]   = Colour(0xff000000);
 
   colors_[Disconnected]      = Colour(0x10ff0000);
+
+  colors_[GhostBG]           = Colour(0x40ffffff);
+  colors_[GhostBorder]       = Colour(0x10ffffff);
 
   colors_[BrowserSelectedItem] = Colour(0xffadd8e6);
   colors_[BrowserLabel]      = Colour(0xffa0a0a0);
@@ -72,6 +79,22 @@ void MimasWindowContent::paint(Graphics& g) {
   //g.strokePath (internalPath1, PathStrokeType (5.2000f));
 }
 
+
+// =============================================
+// ==             MGhostComponent             ==
+// =============================================
+
+void MGhostComponent::paint(Graphics &g) {
+  g.fillAll(mimas_->color(MTheme::GhostBG));
+  g.setColour(mimas_->color(MTheme::GhostBorder));
+  g.drawRect(
+    0,
+    0,
+    getWidth(),
+    getHeight(),
+    SLIDER_BORDER_WIDTH
+  );
+}
 
 // =============================================
 // ==             MBrowser                    ==

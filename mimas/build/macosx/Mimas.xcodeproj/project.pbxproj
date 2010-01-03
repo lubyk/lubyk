@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58140DA1D0A300B32029 /* MainMenu.xib */; };
+		2B07729710F0E2D2001873ED /* m_ghost_component.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B07729510F0E2D2001873ED /* m_ghost_component.cpp */; };
 		2B322AC310D399120089DD2B /* juce_LibrarySource.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B322AA910D399120089DD2B /* juce_LibrarySource.mm */; };
 		2B322AC810D399120089DD2B /* m_object_proxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B322AB610D399120089DD2B /* m_object_proxy.cpp */; };
 		2B322ACA10D399120089DD2B /* m_look_and_feel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B322AC010D399120089DD2B /* m_look_and_feel.cpp */; };
@@ -49,6 +50,8 @@
 		1DDD58150DA1D0A300B32029 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		2B07729510F0E2D2001873ED /* m_ghost_component.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = m_ghost_component.cpp; sourceTree = "<group>"; };
+		2B07729610F0E2D2001873ED /* m_ghost_component.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = m_ghost_component.h; sourceTree = "<group>"; };
 		2B322AA810D399120089DD2B /* juce_AppConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = juce_AppConfig.h; sourceTree = "<group>"; };
 		2B322AA910D399120089DD2B /* juce_LibrarySource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = juce_LibrarySource.mm; sourceTree = "<group>"; };
 		2B322AAD10D399120089DD2B /* mimas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mimas.h; sourceTree = "<group>"; };
@@ -261,6 +264,8 @@
 		2B322ABF10D399120089DD2B /* widgets */ = {
 			isa = PBXGroup;
 			children = (
+				2B07729510F0E2D2001873ED /* m_ghost_component.cpp */,
+				2B07729610F0E2D2001873ED /* m_ghost_component.h */,
 				2BFC9CBB10EFEA3500311C2F /* m_component.cpp */,
 				2BFC9C4E10EFDDB300311C2F /* m_component.h */,
 				2BF6116610EE060F00B1F78D /* m_theme.h */,
@@ -382,6 +387,7 @@
 				2BF6120010EE3F8500B1F78D /* m_device_list.cpp in Sources */,
 				2BFC9CB110EFE99900311C2F /* m_proxy_factory.cpp in Sources */,
 				2BFC9CBC10EFEA3500311C2F /* m_component.cpp in Sources */,
+				2B07729710F0E2D2001873ED /* m_ghost_component.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

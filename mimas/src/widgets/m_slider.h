@@ -8,8 +8,8 @@ class MViewProxy;
 
 class MSlider : public MComponent, public MRangeWidget {
 public:
-  MSlider(MViewProxy *view_proxy)
-      : MComponent(view_proxy),
+  MSlider(const std::string &part_id, MViewProxy *view_proxy)
+      : MComponent(part_id, view_proxy),
         is_dragged_(false) {}
 
   enum SliderType {
@@ -64,7 +64,6 @@ public:
   // }
 private:
   SliderType slider_type_;
-  ComponentDragger dragger_;
 
   bool  is_dragged_;
   float slider_pos_;
