@@ -29,20 +29,22 @@
 
 #include "mimas.h"
 #include "m_device_list.h"
-#include "mimas_window_content.h"
 
-MDeviceList::MDeviceList(MimasWindowContent *mimas)
+#include "mimas_window_content.h"
+#include "m_browser.h"
+
+MDeviceList::MDeviceList(MBrowser *browser)
   : ListBox(T("device list"), NULL),
     ListBoxModel(),
-    mimas_(mimas) {
+    mimas_(browser->mimas()),
+    browser_(browser) {
 
   setModel(this);
   setMultipleSelectionEnabled(false);
 
   // TODO: should replace this with a callback on theme change...
   setColour(ListBox::backgroundColourId, mimas_->bg_color());
-  setColour(ListBox::outlineColourId, mimas_->color(MTheme::BrowserSelectedItem));
-  setColour(ListBox::textColourId, mimas_->color(MTheme::DeviceLabel));
+  setColour(ListBox::textColourId, mimas_->color(MTheme::BrowserLabel));
 }
 
 // ======== data management        =========== //
@@ -65,3 +67,12 @@ void MDeviceList::remove_device(RootProxy *device) {
 int MDeviceList::getNumRows() {
   return devices_.size();
 }
+
+// ======== ListBox callbacks =========== //
+void MDeviceList::listBoxItemClicked(int row, const MouseEvent &e) {
+  browser_->select_device(devices_[row]);
+}
+
+
+
+

@@ -30,14 +30,25 @@
 #include "mimas.h"
 #include "m_browser.h"
 #include "m_device_list.h"
+#include "m_breadcrumbs.h"
+#include "m_path_list.h"
 #include "mimas_window_content.h"
 
 MBrowser::MBrowser(MimasWindowContent *mimas, const char *service_type)
     : ZeroConfBrowser(service_type),
       mimas_(mimas) {
 
-  device_list_ = new MDeviceList(mimas_);
+  border_ = new ResizableBorderComponent(this, 0);
+  addAndMakeVisible(border_);
+
+  device_list_ = new MDeviceList(this);
   addAndMakeVisible(device_list_);
+
+  breadcrumbs_ = new MBreadcrumbs(this);
+  addAndMakeVisible(breadcrumbs_);
+
+  path_list_ = new MPathList(this);
+  addAndMakeVisible(path_list_);
 
   border_ = new ResizableBorderComponent(this, 0);
   addAndMakeVisible(border_);
@@ -56,7 +67,33 @@ void MBrowser::removed_proxy(RootProxy *proxy) {
 }
 
 void MBrowser::resized() {
-  device_list_->setBounds(0, 0, getWidth() - LAYOUT_BROWSER_BORDER_WIDTH, getHeight() / 3.0f);
+  int inner_width = getWidth() - LAYOUT_BROWSER_BORDER_WIDTH;
+  int device_height = getHeight() / 3.0f;
+  int breadcrumbs_height = 25;
+
+  device_list_->setBounds(0, 0,             inner_width, device_height);
+  breadcrumbs_->setBounds(0, device_height, inner_width, breadcrumbs_height);
+  path_list_->setBounds(0, device_height + breadcrumbs_height, inner_width, getHeight() - device_height - breadcrumbs_height);
+
   border_->setBounds(0, 0, getWidth(), getHeight());
   mimas_->resize_except(this);
 }
+
+void MBrowser::select_device(RootProxy* device) {
+  selected_device_ = device;
+  select_container_url(Url(selected_device_->remote_location(), ""));
+}
+
+void MBrowser::select_container_url(const Url &url) {
+  selected_container_url_ = url;
+  std::cout << "SELECTED URL = " << url << "\n";
+  breadcrumbs_->set_url(url);
+  Object *object = selected_device_->object_at(url.path());
+  std::cout << "FOUND OBJECT " << object << "\n";
+  path_list_->set_container(object);
+}
+
+
+
+
+

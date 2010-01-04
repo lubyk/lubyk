@@ -27,60 +27,41 @@
   ==============================================================================
 */
 
-#ifndef MIMAS_SRC_DEVICE_BROWSER_M_BREADCRUMBS_H_
-#define MIMAS_SRC_DEVICE_BROWSER_M_BREADCRUMBS_H_
-#include "m_browser.h"
+#ifndef MIMAS_SRC_DEVICE_BROWSER_M_PATH_LIST_H_
+#define MIMAS_SRC_DEVICE_BROWSER_M_PATH_LIST_H_
+#include "mimas.h"
 
-#include <list>
+#include <vector>
 
 class MimasWindowContent;
-class MBreadcrumbsItem;
+class MBrowser;
 
-class MBreadcrumbs : public Component {
+class MPathList : public ListBox, public ListBoxModel {
 public:
+  MPathList(MBrowser *browser);
 
-  MBreadcrumbs(MBrowser *browser)
-    : mimas_(browser->mimas()),
-      browser_(browser) {}
+  void set_container(Object *object);
 
-  MBreadcrumbs(MBrowser *browser, const Url &url)
-    : browser_(browser) {
-    set_url(url);
-    setInterceptsMouseClicks(false, true); // pass through and test child components
-  }
+  // ======== ListBoxModel callbacks =========== //
 
-  /** Url for which we want to display the path hierarchy.
-   */
-  void set_url(const Url &url);
+  virtual int getNumRows();
 
-  // ========== Component callbacks
-  virtual void resized();
+  virtual void paintListBoxItem(int rowNumber, Graphics& g, int width, int height, bool rowIsSelected);
+
+  // ======== ListBox callbacks     ============ //
+  virtual void listBoxItemClicked(int row, const MouseEvent &e);
 
   virtual void paint(Graphics &g);
-
-  virtual void mouseDown(const MouseEvent &e) {
-    std::cout << "hit breadcrumbs!\n";
-  }
 
 private:
   MimasWindowContent *mimas_;
   MBrowser *browser_;
 
-
-  /** Currently displayed url.
+  /** Object whose children are currently displayed in the
+   * list.
+   * FIXME: callback on object delete !
    */
-  Url url_;
-
-  /** Delete all MBreadcrumbsItem in the path list.
-   */
-  void clear();
-
-  /** List of paths leading to the currently loaded path. For example
-   * if the path is "/one/two/three", this will display:
-   * "/" > "one" > "two" > "three"
-   */
-  std::list<MBreadcrumbsItem *> paths_;
+  Object *container_;
 };
 
-
-#endif MIMAS_SRC_DEVICE_BROWSER_M_BREADCRUMBS_H_
+#endif // MIMAS_SRC_DEVICE_BROWSER_M_PATH_LIST_H_

@@ -34,10 +34,11 @@
 #include <vector>
 
 class MimasWindowContent;
+class MBrowser;
 
 class MDeviceList : public ListBox, public ListBoxModel {
 public:
-  MDeviceList(MimasWindowContent *mimas);
+  MDeviceList(MBrowser *browser);
 
   void add_device(RootProxy *device);
 
@@ -50,10 +51,13 @@ public:
   virtual void paintListBoxItem(int rowNumber, Graphics& g, int width, int height, bool rowIsSelected);
 
   // ======== ListBox callbacks     ============ //
+  virtual void listBoxItemClicked(int row, const MouseEvent &e);
+
   virtual void paint(Graphics &g);
 
 private:
   MimasWindowContent *mimas_;
+  MBrowser *browser_;
 
   std::vector<RootProxy*> devices_;
 };

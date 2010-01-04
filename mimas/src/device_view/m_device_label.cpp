@@ -39,7 +39,10 @@ MDeviceLabel::MDeviceLabel(MimasWindowContent *mimas, MDeviceView *device_view, 
     : mimas_(mimas),
       device_view_(device_view) {
   label_ = new Label(name, device_name);
-  label_->setFont(Font(15.0f, Font::bold));
+
+  // FIXME: callback on theme change
+  label_->setFont(Font(mimas_->font_size(), Font::bold));
+
   label_->setInterceptsMouseClicks(false, false);
   min_width_  = label_->getFont().getStringWidth(label_->getText());
   min_height_ = label_->getFont().getHeight();

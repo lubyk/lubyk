@@ -27,60 +27,49 @@
   ==============================================================================
 */
 
-#ifndef MIMAS_SRC_DEVICE_BROWSER_M_BREADCRUMBS_H_
-#define MIMAS_SRC_DEVICE_BROWSER_M_BREADCRUMBS_H_
+#include "mimas.h"
+#include "m_path_list.h"
+
+#include "mimas_window_content.h"
 #include "m_browser.h"
 
-#include <list>
+MPathList::MPathList(MBrowser *browser)
+  : ListBox(T("device list"), NULL),
+    ListBoxModel(),
+    mimas_(browser->mimas()),
+    browser_(browser),
+    container_(NULL) {
 
-class MimasWindowContent;
-class MBreadcrumbsItem;
+  setModel(this);
+  setMultipleSelectionEnabled(false);
 
-class MBreadcrumbs : public Component {
-public:
+  // TODO: should replace this with a callback on theme change...
+  setColour(ListBox::backgroundColourId, mimas_->bg_color());
+  setColour(ListBox::textColourId, mimas_->color(MTheme::BrowserLabel));
+}
 
-  MBreadcrumbs(MBrowser *browser)
-    : mimas_(browser->mimas()),
-      browser_(browser) {}
+// ======== data management        =========== //
 
-  MBreadcrumbs(MBrowser *browser, const Url &url)
-    : browser_(browser) {
-    set_url(url);
-    setInterceptsMouseClicks(false, true); // pass through and test child components
-  }
+void MPathList::set_container(Object *object) {
+  container_ = object;
+  deselectAllRows();
+  updateContent();
+  repaint();
+}
 
-  /** Url for which we want to display the path hierarchy.
-   */
-  void set_url(const Url &url);
+// ======== ListBoxModel callbacks =========== //
 
-  // ========== Component callbacks
-  virtual void resized();
+int MPathList::getNumRows() {
+  if (!container_) return 0;
+  return container_->children_count();
+}
 
-  virtual void paint(Graphics &g);
-
-  virtual void mouseDown(const MouseEvent &e) {
-    std::cout << "hit breadcrumbs!\n";
-  }
-
-private:
-  MimasWindowContent *mimas_;
-  MBrowser *browser_;
-
-
-  /** Currently displayed url.
-   */
-  Url url_;
-
-  /** Delete all MBreadcrumbsItem in the path list.
-   */
-  void clear();
-
-  /** List of paths leading to the currently loaded path. For example
-   * if the path is "/one/two/three", this will display:
-   * "/" > "one" > "two" > "three"
-   */
-  std::list<MBreadcrumbsItem *> paths_;
-};
+// ======== ListBox callbacks =========== //
+void MPathList::listBoxItemClicked(int row, const MouseEvent &e) {
+  Object *object = container_->child_at_index(row);
+  browser_->select_container_url(Url("", object->url())); // FIXME: object::url should be an url, not a string..
+}
 
 
-#endif MIMAS_SRC_DEVICE_BROWSER_M_BREADCRUMBS_H_
+
+

@@ -32,7 +32,7 @@
 
 class MTheme {
 public:
-  MTheme() {
+  MTheme() : font_size_(18.0) {
     colors_ = new Colour[LastColorId];
   }
 
@@ -45,15 +45,18 @@ public:
     WorkspaceEditBG,
     WorkspaceFrozenBG,
     WorkspaceBorder,
-    
+
     Disconnected,
-    
+
     // MGhostComponent
     GhostBG,
     GhostBorder,
 
     BrowserSelectedItem,
     BrowserLabel,
+
+    BreadcrumbsBG,
+    BreadcrumbsLabel,
 
     ToolbarBG,
 
@@ -67,6 +70,10 @@ public:
     return colors_[id];
   }
 
+  float font_size() const {
+    return font_size_;
+  }
+
   /** Load the "day" colors into the theme.
    * TODO: load from file...
    */
@@ -78,6 +85,7 @@ public:
   void set_night_theme();
 private:
   Colour *colors_;
+  float font_size_;
 };
 
 #endif // MIMAS_SRC_WIDGETS_M_THEME_H_

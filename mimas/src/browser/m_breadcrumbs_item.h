@@ -27,60 +27,30 @@
   ==============================================================================
 */
 
-#ifndef MIMAS_SRC_DEVICE_BROWSER_M_BREADCRUMBS_H_
-#define MIMAS_SRC_DEVICE_BROWSER_M_BREADCRUMBS_H_
-#include "m_browser.h"
-
-#include <list>
+#ifndef MIMAS_SRC_DEVICE_BROWSER_M_BREADCRUMBS_ITEM_H_
+#define MIMAS_SRC_DEVICE_BROWSER_M_BREADCRUMBS_ITEM_H_
 
 class MimasWindowContent;
-class MBreadcrumbsItem;
+class MBrowser;
 
-class MBreadcrumbs : public Component {
+class MBreadcrumbsItem : public Component {
 public:
+  MBreadcrumbsItem(MBrowser *browser, const Url &url);
 
-  MBreadcrumbs(MBrowser *browser)
-    : mimas_(browser->mimas()),
-      browser_(browser) {}
+  int min_width();
 
-  MBreadcrumbs(MBrowser *browser, const Url &url)
-    : browser_(browser) {
-    set_url(url);
-    setInterceptsMouseClicks(false, true); // pass through and test child components
-  }
-
-  /** Url for which we want to display the path hierarchy.
-   */
-  void set_url(const Url &url);
-
-  // ========== Component callbacks
-  virtual void resized();
+  // =========== Component callback
 
   virtual void paint(Graphics &g);
 
-  virtual void mouseDown(const MouseEvent &e) {
-    std::cout << "hit breadcrumbs!\n";
-  }
+  virtual void mouseDown(const MouseEvent &e);
+
+  virtual void mouseUp(const MouseEvent &e);
 
 private:
   MimasWindowContent *mimas_;
   MBrowser *browser_;
-
-
-  /** Currently displayed url.
-   */
   Url url_;
-
-  /** Delete all MBreadcrumbsItem in the path list.
-   */
-  void clear();
-
-  /** List of paths leading to the currently loaded path. For example
-   * if the path is "/one/two/three", this will display:
-   * "/" > "one" > "two" > "three"
-   */
-  std::list<MBreadcrumbsItem *> paths_;
 };
 
-
-#endif MIMAS_SRC_DEVICE_BROWSER_M_BREADCRUMBS_H_
+#endif // MIMAS_SRC_DEVICE_BROWSER_M_BREADCRUMBS_ITEM_H_

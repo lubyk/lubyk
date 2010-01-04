@@ -65,6 +65,10 @@ public:
     return themes_[is_day_mode_].color_for_id((MTheme::ColorId)editor_mode_);
   }
 
+  float font_size() const {
+    return themes_[is_day_mode_].font_size();
+  }
+
   Component *workspace() {
     return workspace_;
   }

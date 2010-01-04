@@ -30,11 +30,11 @@
 #ifndef MIMAS_SRC_DEVICE_BROWSER_DEVICE_BROWSER_H_
 #define MIMAS_SRC_DEVICE_BROWSER_DEVICE_BROWSER_H_
 #include "oscit/zeroconf_browser.h"
-#include "device_browser_root.h"
 
 class MimasWindowContent;
 class MDeviceList;
 class MBreadcrumbs;
+class MPathList;
 
 class MBrowser : public Component, public ZeroConfBrowser {
 public:
@@ -48,6 +48,20 @@ public:
 
   virtual void resized();
 
+  // ============= device or path selection callbacks ============
+
+  /** Select a given device (called by device list).
+   */
+  void select_device(RootProxy* device);
+
+  /** Select a parent whose children will be listed in the path list.
+   */
+  void select_container_url(const Url &url);
+
+  MimasWindowContent *mimas() {
+    return mimas_;
+  }
+
 private:
   MimasWindowContent *mimas_;
 
@@ -56,21 +70,22 @@ private:
   MDeviceList *device_list_;
 
   /** Currently selected device.
+   * FIXME: callback on device delete !
    */
-  //RootProxy *selected_device_;
+  RootProxy *selected_device_;
 
   /** Currently selected parent path (this is the
-   * parent of the items listed in the children list).
+   * parent of the items listed in the path list).
    */
-  //MObjectProxy *selected_parent_;
+  Url selected_container_url_;
 
   /** Path hierarchy of the currently selected parent path.
    */
-  //MBreadcrumbs *breadcrumbs_;
+  MBreadcrumbs *breadcrumbs_;
 
   /** List of sub-paths in the currently selected path (selected_parent_).
    */
-  //MPathList *children_list_;
+  MPathList *path_list_;
 
   /** Right border to resize the width of the device browser.
    */
