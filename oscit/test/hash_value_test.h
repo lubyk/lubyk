@@ -279,9 +279,7 @@ public:
   }
 
   void test_from_json_empty_hash( void ) {
-    std::cout << "test_from_json_empty_hash\n\n";
     Value v(Json("{}"));
-    std::cout << "\n\n";
     assert_true(v.is_hash());
   }
 

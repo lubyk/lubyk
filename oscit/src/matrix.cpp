@@ -46,7 +46,6 @@ struct Matrix::Implementation : public cv::Mat {
   bool operator==(const Matrix::Implementation &other) {
     // FIXME: this is all wrong but who really needs to compare matrices anyway ?
     // This implementation is just here so that we can compare Values.
-    std::cerr << __FILE__ << ":" << __LINE__ << " WARNING: comparing matrices is not implemented, it might return wrong results\n";
     return rows == other.rows && cols == other.cols;
   }
 };

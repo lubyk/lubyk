@@ -181,7 +181,9 @@ public:
   void test_same( void ) {
     Url url1("oscit://\"foobar\"/a/b");
     Url url2("http://\"foobar\"/a/b");
+    Url url3(Location("oscit", "foobar"), "/a/b");
     assert_false(url1 == url2);
+    assert_true(url1 == url3);
 
     url2.set("oscit://\"foobar\"/a/b/c");
     assert_false(url1 == url2);

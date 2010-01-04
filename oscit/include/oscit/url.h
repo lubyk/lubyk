@@ -51,6 +51,7 @@ class Url
     location_.ip_   = ip;
     location_.port_ = port;
     location_.name_ = Location::name_from_ip(ip);
+    rebuild_full_url();
   }
 
   Url(const unsigned long ip, const uint port, const std::string &path) : path_(path) {
@@ -59,12 +60,16 @@ class Url
     location_.ip_   = ip;
     location_.port_ = port;
     location_.name_ = Location::name_from_ip(ip);
+    rebuild_full_url();
   }
 
-  Url(const Location &location, const std::string &path) : location_(location), path_(path) {}
+  Url(const Location &location, const std::string &path) : location_(location), path_(path) {
+    rebuild_full_url();
+  }
 
   Url(const Location *location, const std::string &path) : path_(path) {
     if (location) location_ = *location;
+    rebuild_full_url();
   }
 
   explicit Url(const std::string &string) {
@@ -75,9 +80,7 @@ class Url
     parse(string);
   }
 
-  Url() {
-    rebuild_full_url();
-  }
+  Url() {}
 
   const std::string &str() const { return full_url_; }
 
