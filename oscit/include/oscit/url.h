@@ -67,12 +67,16 @@ class Url
     if (location) location_ = *location;
   }
 
-  explicit Url(const std::string &string) : full_url_(string) {
+  explicit Url(const std::string &string) {
     parse(string.c_str());
   }
 
-  explicit Url(const char *string) : full_url_(string) {
+  explicit Url(const char *string) {
     parse(string);
+  }
+
+  Url() {
+    rebuild_full_url();
   }
 
   const std::string &str() const { return full_url_; }
@@ -103,12 +107,29 @@ class Url
 
   const std::string &path() const { return path_; }
 
+  /** Return the name of the last element in the url's path.
+   */
   const std::string name() {
     size_t pos = path_.rfind("/");
     if (pos != std::string::npos) {
       return path_.substr(pos + 1);
     } else {
       return path_;
+    }
+  }
+
+  /** Get the url above the current url. Returns true on success
+   * or false if the current url is already a top-level url.
+   */
+  bool get_parent_url(Url *parent_url) const {
+    size_t pos = path_.rfind("/");
+    if (pos != std::string::npos) {
+      parent_url->location_ = location_;
+      parent_url->path_ = path_.substr(0, pos);
+      parent_url->rebuild_full_url();
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -121,6 +142,10 @@ class Url
   void set(const std::string &str) {
     clear();
     parse(str.c_str());
+  }
+
+  bool operator==(const Url &other) {
+    return full_url_ == other.full_url_;
   }
 
  private:

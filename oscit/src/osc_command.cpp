@@ -46,7 +46,7 @@ namespace oscit {
 #define OSC_OUT_BUFFER_SIZE 2048
 #define OSCIT_SERVICE_TYPE "_oscit._udp"
 
-#define DEBUG_OSC_COMMAND
+//#define DEBUG_OSC_COMMAND
 
 static void to_stream(osc::OutboundPacketStream &out_stream, const Value &val, bool in_array = false) {
   size_t sz;

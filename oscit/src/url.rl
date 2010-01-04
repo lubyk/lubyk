@@ -133,6 +133,7 @@ void Url::rebuild_full_url() {
 
 /** This is a crude JSON parser. */
 void Url::parse(const char *url) {
+  full_url_ = url;
   std::string str_buf;
   // =============== Ragel job ==============
 

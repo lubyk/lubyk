@@ -43,6 +43,23 @@ public:
     assert_equal("/one/two", url.path());
   }
 
+  void test_empty( void ) {
+    Url url;
+    assert_equal("", url.str());
+  }
+
+  void test_create_copy( void ) {
+    Url url("http://example.com:7010/one/two");
+    Url copy(url);
+    url.set("oscit://'funky thing'/a/b/c");
+    assert_equal("http", copy.protocol());
+    assert_true(  copy.has_hostname() );
+    assert_false( copy.has_service_name() );
+    assert_equal("example.com", copy.hostname());
+    assert_equal(7010, copy.port());
+    assert_equal("/one/two", copy.path());
+  }
+
   void test_create_using_service_name_squote( void ) {
     Url url("oscit://'stage camera'/filter/contrast");
     assert_equal("oscit", url.protocol());
@@ -120,6 +137,22 @@ public:
     assert_equal("split", url.set("/banana/split").name());
   }
 
+  void test_get_parent_url( void ) {
+    Url url("http://'some place'/one/two/three");
+
+    assert_true(url.get_parent_url(&url));
+    assert_equal("http://\"some place\"/one/two", url.str());
+
+    assert_true(url.get_parent_url(&url));
+    assert_equal("http://\"some place\"/one", url.str());
+
+    assert_true(url.get_parent_url(&url));
+    assert_equal("http://\"some place\"", url.str());
+
+    assert_false(url.get_parent_url(&url));
+    assert_equal("http://\"some place\"", url.str());
+  }
+
   void test_to_stream( void ) {
     Url url("oscit://'my place'/foo/bar/baz");
     std::ostringstream out(std::ostringstream::out);
@@ -143,5 +176,23 @@ public:
     Url url("oscit://\"foobar\"/list");
     assert_true(meta_url.is_meta());
     assert_false(url.is_meta());
+  }
+
+  void test_same( void ) {
+    Url url1("oscit://\"foobar\"/a/b");
+    Url url2("http://\"foobar\"/a/b");
+    assert_false(url1 == url2);
+
+    url2.set("oscit://\"foobar\"/a/b/c");
+    assert_false(url1 == url2);
+
+    url2.set("oscit://\"foobar\"/a/c");
+    assert_false(url1 == url2);
+
+    url2.set("oscit://\"bozon\"/a/b");
+    assert_false(url1 == url2);
+
+    url2.set("oscit://\"foobar\"/a/b");
+    assert_true(url1 == url2);
   }
 };
