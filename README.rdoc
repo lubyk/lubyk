@@ -1,10 +1,17 @@
-Rubyk
------
+== Rubyk
 
-Rubyk is a patcher written in C++ for realtime signal processing.
+Rubyk is an open source tool written in C++ for real time signal processing. This tool uses
+the oscit protocol (based on OpenSoundControl) to talk with graphical interfaces.
 
-History
--------
+website: http://rubyk.org
+
+bug tracker: http://rubyk.lighthouseapp.com/projects/17616-rubyk
+
+license: MIT
+
+author: Gaspard Buma (http://gaspardbuma.org)
+
+== History
 
 I started this tool for the show 'home'  (first showed in Arsenic, Lausanne, Switzerland in January 2008)
 because I wanted to be able to write Ruby scripts inside a multimedia application. I never felt at home
@@ -15,16 +22,17 @@ felt like reinventing object orientation I thought it would be more natural to u
 Lua for scripting for its speed and ease of integration but the name rubyk (Ruby Kontroller) was kept. In my
 country (Switzerland) rubies are used in clockworks so Rubyk is also a reference to this tradition.
 
-Design goals
-------------
+== Design goals
 
 I made a lot of efforts so that writing new objects is very easy (look at the code for Print or Metro). This
 makes the development/wrapping of new features very lightweight. All these efforts weren't made to the detriment
-of speed which was my main concern with this tool (it was meant to run on mac minis in realtime !).
+of speed which was my main concern with this tool (it is meant to run on tiny, embedded hardware !).
 
-Contact
--------
+Rubyk is the 'dynamic' layer on top of oscit (http://rubyk.org/oscit). You usually interact with a rubyk
+server through oscit capable interfaces like mimas (http://rubyk.org/mimas).
 
-The website for this project is: http://rubyk.org
+== Classes
 
-If you have any questions, propositions, improvements, contact me (art thisisanat gaspardbuma thisisadot org).
+The real power of rubyk comes from the objects you can create with this tool. These objects are compiled as
+dynamic libraries and are only loaded on demand. Currently, there are objects for midi signal processing,
+matrix calculations (PCA, VQ, FFT, etc) and lua based scripting tools.
