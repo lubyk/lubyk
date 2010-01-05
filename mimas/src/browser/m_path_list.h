@@ -48,8 +48,14 @@ public:
 
   virtual void paintListBoxItem(int rowNumber, Graphics& g, int width, int height, bool rowIsSelected);
 
+  /** Return the dragged row's url.
+   */
+  virtual const String getDragSourceDescription(const SparseSet<int> &selectedRows);
+
   // ======== ListBox callbacks     ============ //
-  virtual void listBoxItemClicked(int row, const MouseEvent &e);
+  virtual void listBoxItemDoubleClicked(int row, const MouseEvent &e);
+  
+  virtual void selectedRowsChanged(int row);
 
   virtual void paint(Graphics &g);
 

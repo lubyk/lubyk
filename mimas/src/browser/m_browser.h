@@ -36,7 +36,9 @@ class MDeviceList;
 class MBreadcrumbs;
 class MPathList;
 
-class MBrowser : public Component, public ZeroConfBrowser {
+class MBrowser : public Component,
+                 public DragAndDropContainer,
+                 public ZeroConfBrowser {
 public:
   MBrowser(MimasWindowContent *mimas, const char *service_type);
 

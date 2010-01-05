@@ -7,12 +7,6 @@ MBreadcrumbsItem::MBreadcrumbsItem(MBrowser *browser, const Url &url)
       browser_(browser),
       url_(url) {}
 
-
-void MBreadcrumbsItem::mouseUp(const MouseEvent &e) {
-  //browser_->select_container_url(url_);
-  // not triggered ?
-}
-
 void MBreadcrumbsItem::mouseDown(const MouseEvent &e) {
   browser_->select_container_url(url_);
 }

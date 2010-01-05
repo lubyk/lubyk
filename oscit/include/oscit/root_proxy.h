@@ -123,13 +123,16 @@ private:
     command_ = NULL;
   }
 
-  void build_children_from_types(Object *base, const Value &types);
-
-  /** Get information on the direct children of the remote root.
+  /** Get information on the direct children of the remote root: this method should not
+   * be used (automatically called during startup).
+   * The argument is just here to give the same signature as ObjectProxy::sync_children.
+   *
    */
-  void sync_children() {
+  void sync_children(bool forced = true) {
     send_to_remote(LIST_WITH_TYPE_PATH, Value(url()));
   }
+
+  void build_children_from_types(Object *base, const Value &types);
 
   /** Reference to the original tree this root proxies. When the RootProxy is adopted
    *  by a command, this is used as key to route 'reply' messages.

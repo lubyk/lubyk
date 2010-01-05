@@ -64,8 +64,18 @@ int MPathList::getNumRows() {
   return container_->children_count();
 }
 
+const String MPathList::getDragSourceDescription(const SparseSet<int> &selectedRows) {
+  if (!container_) return T("");
+  return String(container_->child_at_index(selectedRows[0])->url().c_str());
+}
+
+
+void MPathList::selectedRowsChanged(int row) {
+  if (!container_) return;
+  mimas_->select_object(container_->child_at_index(row));
+}
 // ======== ListBox callbacks =========== //
-void MPathList::listBoxItemClicked(int row, const MouseEvent &e) {
+void MPathList::listBoxItemDoubleClicked(int row, const MouseEvent &e) {
   Object *object = container_->child_at_index(row);
   browser_->select_container_url(Url("", object->url())); // FIXME: object::url should be an url, not a string..
 }

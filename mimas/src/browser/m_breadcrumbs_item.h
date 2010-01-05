@@ -45,8 +45,6 @@ public:
 
   virtual void mouseDown(const MouseEvent &e);
 
-  virtual void mouseUp(const MouseEvent &e);
-
 private:
   MimasWindowContent *mimas_;
   MBrowser *browser_;

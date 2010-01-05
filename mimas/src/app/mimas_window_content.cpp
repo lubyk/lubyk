@@ -35,6 +35,7 @@
 MimasWindowContent::MimasWindowContent()
     : editor_mode_(ActionMode),
       is_day_mode_(false),
+      selected_object_(NULL),
       work_tree_("MimasWindowContent"),
       toolbar_(NULL),
       device_browser_(NULL),
@@ -109,4 +110,9 @@ void MimasWindowContent::buttonClicked(Button *button) {
     editor_mode_ = (EditorMode)((editor_mode_ + 1) % LastMode);
     repaint();
   }
+}
+
+void MimasWindowContent::select_object(Object *object) {
+  // FIXME: do not store select_object but load it in some kind of editor/viewer...
+  selected_object_ = object;
 }

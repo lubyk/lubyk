@@ -87,6 +87,10 @@ public:
 
   void resize_except(Component *skip_component);
 
+  /** Select an object proxy (used to display info).
+   */
+  void select_object(Object *object);
+
 private:
   /* ================== APP STATE    ================= */
   EditorMode editor_mode_;
@@ -99,7 +103,12 @@ private:
    */
   bool is_day_mode_;
 
-  /* ================== MAIN WIDGETS ================= */
+
+  /** Currently selected object (selected from the path list).
+   */
+  Object *selected_object_;
+
+  /* ================== MAIN TREE     ================= */
 
   /** Our main working tree (holds commands and proxies).
    */
