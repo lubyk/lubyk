@@ -2,7 +2,7 @@
 # links are evaluated after each new variable name until it can be made
 
 # contains the first value
-v1 = Value(5) 
+v1 = Value(5)
 
 v1.1 => 1.sum
 
@@ -42,27 +42,3 @@ sp {
   # la la la
 }
 
-
-commands:   command+ ;
-
-command	:
-	object | comment ;
-
-object 	:	
-	ID '=' CLASS '(' ')';
-
-comment :
-	  '#' (~'\n')* '\n';
-	  
-fragment ID
-	: LOWER (LOWER | UPPER | '_')*;
-
-fragment CLASS
-	: UPPER (LOWER | UPPER | '_')*;
-		
-fragment LOWER
-	:	'a'..'z';
-
-fragment UPPER
-	:	'A'..'Z';
-WS	:	(' '|'\n'|'\t')+ {channel=99};

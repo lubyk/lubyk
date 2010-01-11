@@ -44,21 +44,21 @@ bool LuaScript::eval_script(const std::string &script) {
     /* push 'this' into the global field 'rubyk_this' */
     lua_pushlightuserdata(lua_, (void*)this);
     lua_setglobal(lua_, "rubyk_this");
-    
+
     /* register methods */
     register_lua_methods();
-    
+
     /* register matrix */
     register_lua_Matrix();
-    
+
     /* open std libs */
     open_lua_libs();
   }
-  
+
   /* set 'current_time' */
   lua_pushnumber(lua_, worker_->current_time_);
   lua_setglobal(lua_, "current_time");
-  
+
   /* compile script (as long as we maintain 1 context per object, we could release the mutex for long compilations since they are done inside the 'command' space) */
   status = luaL_loadbuffer(lua_, pScript.c_str(), pScript.size(), "script" ); // the last parameter is just used for debugging and error reporting
   if (status) {
@@ -67,14 +67,14 @@ bool LuaScript::eval_script(const std::string &script) {
     std::cout << lua_tostring(lua_, -1) << std::endl;
     return false;
   }
-  
+
   /* Run the script to create the functions. */
   status = lua_pcall(lua_, 0, 0, 0); // 0 arg, 1 result, no error function
   if (status) {
     // TODO: proper error reporting
     std::cout << name_ << ": Function creation failed !\n";
     std::cout << lua_tostring(lua_, -1) << std::endl;
-  	return false;
+    return false;
   }
   return true; // ok, we can receive and process values (again).
 }
@@ -108,7 +108,7 @@ bool LuaScript::string_from_lua(std::string * pStr)
 
 
 bool LuaScript::midi_message_from_lua_table(MidiMessage * pMsg, int index)
-{ 
+{
   std::string type;
   if (!lua_istable(lua_, index)) {
     // TODO: proper error reporting
@@ -125,10 +125,10 @@ bool LuaScript::midi_message_from_lua_table(MidiMessage * pMsg, int index)
   }
   type = lua_tostring(lua_, -1);
   lua_pop(lua_,1);
-  
+
   if (type == "NoteOff" || type == "NoteOn") {
     pMsg->set_type(type == "NoteOff" ? NoteOff : NoteOn);
-    
+
     // get note
     lua_getfield(lua_, index, "note");
     if (lua_type(lua_, -1) == LUA_TNUMBER)
@@ -136,7 +136,7 @@ bool LuaScript::midi_message_from_lua_table(MidiMessage * pMsg, int index)
     else
       pMsg->set_note(MIDI_NOTE_C0);
     lua_pop(lua_,1);
-    
+
     // get channel
     lua_getfield(lua_, index, "channel");
     if (lua_type(lua_, -1) == LUA_TNUMBER)
@@ -144,7 +144,7 @@ bool LuaScript::midi_message_from_lua_table(MidiMessage * pMsg, int index)
     else
       pMsg->set_channel(1);
     lua_pop(lua_,1);
-    
+
     // get velocity
     lua_getfield(lua_, index, "velocity");
     if (lua_type(lua_, -1) == LUA_TNUMBER)
@@ -152,7 +152,7 @@ bool LuaScript::midi_message_from_lua_table(MidiMessage * pMsg, int index)
     else
       pMsg->set_velocity(70);
     lua_pop(lua_,1);
-    
+
     // get length
     lua_getfield(lua_, index, "length");
     if (lua_type(lua_, -1) == LUA_TNUMBER)
@@ -160,7 +160,7 @@ bool LuaScript::midi_message_from_lua_table(MidiMessage * pMsg, int index)
     else
       pMsg->set_length(500);
     lua_pop(lua_,1);
-    
+
   } else if (type == "CtrlChange") {
     // TODO: proper error reporting
     std::cout << name_ << ": CtrlChange from lua not implemented yet...\n";
@@ -241,7 +241,7 @@ int LuaScript::send_note_for_lua(lua_State * L)
     }
     velocity = d;
     if (lua_istable(node->lua_, lua_gettop(node->lua_))) {
-      if (!node->matrix_from_lua_table(&(node->lua_Matrix))) {  
+      if (!node->matrix_from_lua_table(&(node->lua_Matrix))) {
         node->error("could not get note from lua table in 'send_note'");
         return 0;
       } else {
@@ -380,7 +380,7 @@ bool LuaScript::lua_pushvalue(const Value &val) {
       // TODO ??
       break;
     case EMPTY_VALUE:
-      /* we consider that if you set a value with empty it means you want Nil. 
+      /* we consider that if you set a value with empty it means you want Nil.
        * This is very useful for return values. */
       /* continue */
     case NIL_VALUE:
@@ -388,7 +388,7 @@ bool LuaScript::lua_pushvalue(const Value &val) {
     default:
       lua_pushnil(lua_);
   }
-  
+
   return true;
 }
 
@@ -398,27 +398,27 @@ void LuaScript::lua_pushmidi (const MidiMessage& pMessage)
   // lua_newtable(lua_);
   // lua_pushstring(lua_, pMessage.type_name());
   // lua_setfield(lua_, -2, "type");
-  // 
+  //
   // if (pMessage.mType == NoteOff || pMessage.mType == NoteOn) {
   //   lua_pushnumber(lua_, pMessage.note());
   //   lua_setfield(lua_, -2, "note");
-  //   
+  //
   //   lua_pushnumber(lua_, pMessage.channel());
   //   lua_setfield(lua_, -2, "channel");
-  //   
+  //
   //   lua_pushnumber(lua_, pMessage.velocity());
   //   lua_setfield(lua_, -2, "velocity");
-  //   
+  //
   //   lua_pushnumber(lua_, pMessage.length());
   //   lua_setfield(lua_, -2, "length");
-  //   
+  //
   // } else if (pMessage.mType == CtrlChange) {
   //   lua_pushnumber(lua_, pMessage.ctrl());
   //   lua_setfield(lua_, -2, "ctrl");
-  //   
+  //
   //   lua_pushnumber(lua_, pMessage.channel());
   //   lua_setfield(lua_, -2, "channel");
-  //   
+  //
   //   lua_pushnumber(lua_, pMessage.value());
   //   lua_setfield(lua_, -2, "value");
   // } else {
@@ -428,7 +428,7 @@ void LuaScript::lua_pushmidi (const MidiMessage& pMessage)
 
 void LuaScript::lua_pushlist(const Value &val) {
   lua_newtable(lua_);
-  
+
   for (size_t i = 0; i < val.size(); ++i) {
     // TODO...
   }
@@ -451,10 +451,10 @@ int LuaScript::Matrix_gc (lua_State *L)
 }
 
 int LuaScript::Matrix_tostring (lua_State *L)
-{ 
+{
   Matrix * mat;
   if (!matrix_from_lua(L, &mat, 1)) return 0;
-  
+
   std::ostringstream oss(std::ostringstream::out);
   oss << *mat;
   lua_pushfstring(L, "%s", oss.str().c_str());
@@ -474,20 +474,20 @@ void LuaScript::register_lua_methods()
   Hash_iterator it,end;
   const THash<std::string, method_for_lua_t> * method_for_lua = class_->methodsForLua();
   end   = method_for_lua->end();
-  
+
   /* register send methods */
   lua_pushcfunction(lua_, &LuaScript::send);
   lua_setglobal(lua_, "send");
-  
+
   lua_pushcfunction(lua_, &LuaScript::send_note);
   lua_setglobal(lua_, "send_note");
-  
+
   lua_pushcfunction(lua_, &LuaScript::send_ctrl);
   lua_setglobal(lua_, "send_ctrl");
-  
+
   lua_pushcfunction(lua_, &LuaScript::send_ctrl);
   lua_setglobal(lua_, "send_ctrl");
-  
+
   for(it = method_for_lua->begin(); it < end; it++) {
     method_for_lua_t method;
     if (method_for_lua->get(&method, *it)) {
@@ -501,25 +501,25 @@ void LuaScript::register_lua_Matrix()
 {
   luaL_newmetatable(lua_, LUA_MATRIX_NAME);        /* create metatable for Matrix, add it to the Lua registry */
   luaL_openlib(lua_, LUA_MATRIX_NAME, sMatrix_methods, 0);  /* create methods table, add it to the globals */
-  
+
   lua_pushstring(lua_, "__index");
   lua_pushstring(lua_, "get");
   lua_gettable(lua_, 2);  /* get Matrix.get */
   lua_settable(lua_, 1);  /* metatable.__index = Matrix.get */
-  
-  
+
+
   lua_pushstring(lua_, "__tostring");
   lua_pushstring(lua_, "tostring");
   lua_gettable(lua_, 2); /* get Matrix.tostring */
   lua_settable(lua_, 1); /* metatable.__tostring = Matrix.tostring */
-  
-  
+
+
   // uncomment when we have const / not const checking code.
   // lua_pushstring(L, "__newindex");
   // lua_pushstring(L, "set");
   // lua_gettable(L, 2); /* get array.set */
   // lua_settable(L, 1); /* metatable.__newindex = array.set */
-  
+
   //  luaL_openlib(lua_, 0, sMatrix_meta, 0);  /* fill metatable */
   //  lua_pushliteral(lua_, "__index");
   //  lua_pushvalue(lua_, -3);               /* dup methods table*/
@@ -531,11 +531,11 @@ void LuaScript::register_lua_Matrix()
   //  lua_pop(lua_, 1);                      /* drop metatable */
 }
 
-void LuaScript::open_lua_lib(const char* pName, lua_CFunction pFunc)  
-{  
-  lua_pushcfunction(lua_, pFunc) ;  
-  lua_pushstring(lua_, pName) ;  
-  lua_call(lua_, 1, 0) ;  
+void LuaScript::open_lua_lib(const char* pName, lua_CFunction pFunc)
+{
+  lua_pushcfunction(lua_, pFunc) ;
+  lua_pushstring(lua_, pName) ;
+  lua_call(lua_, 1, 0) ;
 }
 
 void LuaScript::open_lua_libs()

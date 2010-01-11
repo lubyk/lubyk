@@ -42,7 +42,7 @@
   * grows to receive the copied data.
   * to copy the second row into the last row, you would write:
   * copy_at(-1, matrix, 1, 1)
-  * 
+  *
   * to copy the third line into the first row:
   * copy_at(0, matrix, 2, 2)
   *
@@ -61,7 +61,7 @@ bool TMatrix<T>::copy_at(const int pRowIndex, const TMatrix& pOther, int pStartR
   size_t row_index = pRowIndex < 0 ? mRowCount + pRowIndex : pRowIndex;
   size_t start_row, end_row;
   if (!check_sizes("copy", &start_row, &end_row, pOther, pStartRow, pEndRow, pRowIndex == 0)) return false;
-  
+
   if (row_index > mRowCount || row_index < 0) {
     // copy can start at most at the end of the current matrix
     set_error("cannot start copying at %i in matrix %ix%i", pRowIndex, mRowCount, mColCount);
@@ -77,13 +77,13 @@ bool TMatrix<T>::from_file(FILE * pFile)
   bool read_all = mRowCount == 0;
   size_t start_i = 0;
   char c;
-  
+
   // if mColCount == 0, get row_size from first row
-  if (!mColCount) { 
+  if (!mColCount) {
     TMatrix tmp;
     T val;
     tmp.set_sizes(0,0);
-    
+
     while(do_fscanf(pFile, &val) > 0) {
       tmp.append(val);
       if ( (c=getc(pFile)) == '\n') {
@@ -97,7 +97,7 @@ bool TMatrix<T>::from_file(FILE * pFile)
     mRowCount = 1;
     start_i = 1;
   }
-  
+
   if (read_all) {
     TMatrix tmp;
     if(!tmp.set_sizes(1, mColCount)) {
@@ -106,7 +106,7 @@ bool TMatrix<T>::from_file(FILE * pFile)
     }
     while (true) {
       for(size_t j=0; j < mColCount; j++) {
-        
+
         if ( (c=getc(pFile)) == '\n') {
           // end of line
           if ( (c=getc(pFile)) == '\n') {
@@ -122,7 +122,7 @@ bool TMatrix<T>::from_file(FILE * pFile)
             ungetc(c, pFile);
         } else
           ungetc(c, pFile);
-          
+
         if(do_fscanf(pFile, tmp.data + j) == EOF) {
           if (j == 0) {
             // ok. end of file
@@ -149,7 +149,7 @@ bool TMatrix<T>::from_file(FILE * pFile)
       }
     }
   }
-  
+
   return true;
 }
 
@@ -196,7 +196,7 @@ bool TMatrix<T>::to_file(FILE * pFile, bool isMatrix) const
   for(size_t i=0; i < mRowCount; i++) {
     for(size_t j=0; j < mColCount; j++) {
       do_fprintf(pFile, data[i * mColCount + j]);
-    }  
+    }
     fprintf(pFile, "\n");
   }
   if (isMatrix)
@@ -207,15 +207,15 @@ bool TMatrix<T>::to_file(FILE * pFile, bool isMatrix) const
 template<>
 void TMatrix<real_t>::print(FILE * pFile) const
 {
-	size_t i,j;
+  size_t i,j;
 
   for(i=0;i<mRowCount;i++) {
-		if (i==0)
-		  fprintf(pFile, "[");
+    if (i==0)
+      fprintf(pFile, "[");
     else
       fprintf(pFile, " ");
-		for(j=0;j<mColCount;j++)
-				fprintf(pFile, " % .2f",data[(i * mColCount) + j]);
+    for(j=0;j<mColCount;j++)
+        fprintf(pFile, " % .2f",data[(i * mColCount) + j]);
     if (i == mRowCount -1)
       fprintf(pFile, " ]\n");
     else
@@ -226,15 +226,15 @@ void TMatrix<real_t>::print(FILE * pFile) const
 template<>
 void TMatrix<int>::print(FILE * pFile) const
 {
-	size_t i,j;
+  size_t i,j;
 
   for(i=0;i<mRowCount;i++) {
-		if (i==0)
-		  fprintf(pFile, "[");
+    if (i==0)
+      fprintf(pFile, "[");
     else
       fprintf(pFile, " ");
-		for(j=0;j<mColCount;j++)
-				fprintf(pFile, " %i",data[(i * mColCount) + j]);
+    for(j=0;j<mColCount;j++)
+        fprintf(pFile, " %i",data[(i * mColCount) + j]);
     if (i == mRowCount -1)
       fprintf(pFile, " ]\n");
     else
@@ -245,15 +245,15 @@ void TMatrix<int>::print(FILE * pFile) const
 template<>
 void TMatrix<char>::print(FILE * pFile) const
 {
-	size_t i,j;
+  size_t i,j;
 
   for(i=0;i<mRowCount;i++) {
-		if (i==0)
-		  fprintf(pFile, "[");
+    if (i==0)
+      fprintf(pFile, "[");
     else
       fprintf(pFile, " ");
-		for(j=0;j<mColCount;j++)
-				fprintf(pFile, " %i",(int)data[(i * mColCount) + j]);
+    for(j=0;j<mColCount;j++)
+        fprintf(pFile, " %i",(int)data[(i * mColCount) + j]);
     if (i == mRowCount -1)
       fprintf(pFile, " ]\n");
     else
@@ -267,17 +267,17 @@ std::ostream& operator<< (std::ostream& pStream, const TMatrix<real_t>& mat)
   char buf[200];
   size_t row_count = mat.row_count();
   size_t col_count = mat.col_count();
-	size_t i,j;
+  size_t i,j;
 
   for(i=0;i<row_count;i++) {
-		if (i==0)
-		  pStream << "[";
+    if (i==0)
+      pStream << "[";
     else
       pStream << " ";
-		for(j=0;j<col_count;j++) {
-			snprintf(buf, 200, " % .2f", mat.data[(i * col_count) + j]);
+    for(j=0;j<col_count;j++) {
+      snprintf(buf, 200, " % .2f", mat.data[(i * col_count) + j]);
       pStream << buf;
-		}
+    }
     if (i == row_count -1)
       pStream << " ]\n";
     else
@@ -292,17 +292,17 @@ std::ostream& operator<< (std::ostream& pStream, const TMatrix<int>& mat)
   char buf[200];
   size_t row_count = mat.row_count();
   size_t col_count = mat.col_count();
-	size_t i,j;
+  size_t i,j;
 
   for(i=0;i<row_count;i++) {
-		if (i==0)
-		  pStream << "[";
+    if (i==0)
+      pStream << "[";
     else
       pStream << " ";
-		for(j=0;j<col_count;j++) {
-			snprintf(buf, 200, " %i", mat.data[(i * col_count) + j]);
+    for(j=0;j<col_count;j++) {
+      snprintf(buf, 200, " %i", mat.data[(i * col_count) + j]);
       pStream << buf;
-		}
+    }
     if (i == row_count -1)
       pStream << " ]\n";
     else
@@ -317,17 +317,17 @@ std::ostream& operator<< (std::ostream& pStream, const TMatrix<char>& mat)
   char buf[200];
   size_t row_count = mat.row_count();
   size_t col_count = mat.col_count();
-	size_t i,j;
+  size_t i,j;
 
   for(i=0;i<row_count;i++) {
-		if (i==0)
-		  pStream << "[";
+    if (i==0)
+      pStream << "[";
     else
       pStream << " ";
-		for(j=0;j<col_count;j++) {
-			snprintf(buf, 200, " %i", (int)mat.data[(i * col_count) + j]);
+    for(j=0;j<col_count;j++) {
+      snprintf(buf, 200, " %i", (int)mat.data[(i * col_count) + j]);
       pStream << buf;
-		}
+    }
     if (i == row_count -1)
       pStream << " ]\n";
     else
@@ -362,7 +362,7 @@ bool TMatrix<T>::append(T pValue)
   return true;
 }
 
-/** Append another matrix/vector to the end of the current data. Size increases automatically. 
+/** Append another matrix/vector to the end of the current data. Size increases automatically.
   * @return false if the column count of both matrices do not match. */
 template<typename T>
 bool TMatrix<T>::append(const TMatrix& pOther, int pStartRow, int pEndRow)
@@ -387,7 +387,7 @@ bool TMatrix<T>::add(const TMatrix& pOther, int pStartRow, int pEndRow, Real pSc
   if (!check_sizes("add", &start_row, &end_row, pOther, pStartRow, pEndRow, true)) return false;
   size_t row_count = end_row - start_row + 1;
   T * other_data = pOther.data + start_row * pOther.mColCount;
-  
+
   if (pOther.mColCount == mColCount) {
     if (row_count == mRowCount) {
       // one to one
@@ -395,34 +395,34 @@ bool TMatrix<T>::add(const TMatrix& pOther, int pStartRow, int pEndRow, Real pSc
         for(size_t i=0; i < mRowCount; i++)
           for(size_t j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
             data[i * mColCount + j] += other_data[i * mColCount + j];
-            
+
       else if (pScale == -1.0)
         for(size_t i=0; i < mRowCount; i++)
           for(size_t j=0; j < mColCount; j++)
             data[i * mColCount + j] -= other_data[i * mColCount + j];
-            
+
       else
         for(size_t i=0; i < mRowCount; i++)
           for(size_t j=0; j < mColCount; j++)
             data[i * mColCount + j] += pScale * other_data[i * mColCount + j];
-        
+
     } else if (row_count == 1) {
       // vector
       if (pScale == 1.0)
         for(size_t i=0; i < mRowCount; i++)
           for(size_t j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
             data[i * mColCount + j] += other_data[j];
-            
+
       else if (pScale == -1.0)
         for(size_t i=0; i < mRowCount; i++)
           for(size_t j=0; j < mColCount; j++)
             data[i * mColCount + j] -= other_data[j];
-            
+
       else
         for(size_t i=0; i < mRowCount; i++)
           for(size_t j=0; j < mColCount; j++)
             data[i * mColCount + j] += pScale * other_data[j];
-      
+
     } else {
       // bad size
       set_error("size error (add): source matrix %ix%i, target matrix %ix%i (bad vector count)", row_count, pOther.mColCount, mRowCount, mColCount);
@@ -434,17 +434,17 @@ bool TMatrix<T>::add(const TMatrix& pOther, int pStartRow, int pEndRow, Real pSc
       for(size_t i=0; i < mRowCount; i++)
         for(size_t j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
           data[i * mColCount + j] += other_data[i];
-          
+
     else if (pScale == -1.0)
       for(size_t i=0; i < mRowCount; i++)
         for(size_t j=0; j < mColCount; j++)
           data[i * mColCount + j] -= other_data[i];
-          
+
     else
       for(size_t i=0; i < mRowCount; i++)
         for(size_t j=0; j < mColCount; j++)
           data[i * mColCount + j] += pScale * other_data[i];
-    
+
   } else if (pOther.mColCount == 1 && row_count == 1) {
     // scalar
     return *this += pScale * other_data[0];
@@ -457,7 +457,7 @@ bool TMatrix<T>::add(const TMatrix& pOther, int pStartRow, int pEndRow, Real pSc
 }
 
 
-/** Add an array of reals to each elements in the matrix. 
+/** Add an array of reals to each elements in the matrix.
   * If the size is the same as the matrix : one to one.
   * If the size is col_size : add to each row.
   * If the size is row_size : add corresponding value to element in the row. */
@@ -495,7 +495,7 @@ bool TMatrix<T>::add (const TMatrix& A, const TMatrix& B, Real pScaleA, Real pSc
     return false;
   }
   if (!set_sizes(A.mRowCount, A.mColCount)) return false;
-  
+
   for(size_t i=0; i < mRowCount; i++) {
     size_t offset = i * mColCount;
     for(size_t j=0; j < mColCount; j++)
@@ -530,34 +530,34 @@ bool TMatrix<T>::divide(const TMatrix& pOther, int pStartRow, int pEndRow, Real 
         for(size_t i=0; i < mRowCount; i++)
           for(size_t j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
             data[i * mColCount + j] /= other_data[i * mColCount + j];
-          
+
       else if (pScale == -1.0)
         for(size_t i=0; i < mRowCount; i++)
           for(size_t j=0; j < mColCount; j++)
             data[i * mColCount + j] /= -other_data[i * mColCount + j];
-          
+
       else
         for(size_t i=0; i < mRowCount; i++)
           for(size_t j=0; j < mColCount; j++)
             data[i * mColCount + j] /= pScale * other_data[i * mColCount + j];
-      
+
     } else if (row_count == 1) {
       // vector
       if (pScale == 1.0)
         for(size_t i=0; i < mRowCount; i++)
           for(size_t j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
             data[i * mColCount + j] /= other_data[j];
-          
+
       else if (pScale == -1.0)
         for(size_t i=0; i < mRowCount; i++)
           for(size_t j=0; j < mColCount; j++)
             data[i * mColCount + j] /= other_data[j];
-          
+
       else
         for(size_t i=0; i < mRowCount; i++)
           for(size_t j=0; j < mColCount; j++)
             data[i * mColCount + j] /= pScale * other_data[j];
-    
+
     } else {
       // bad size
       set_error("size error (divide): source matrix %ix%i, target matrix %ix%i (bad vector count)", row_count, pOther.mColCount, mRowCount, mColCount);
@@ -569,17 +569,17 @@ bool TMatrix<T>::divide(const TMatrix& pOther, int pStartRow, int pEndRow, Real 
       for(size_t i=0; i < mRowCount; i++)
         for(size_t j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
           data[i * mColCount + j] /= other_data[i];
-        
+
     else if (pScale == -1.0)
       for(size_t i=0; i < mRowCount; i++)
         for(size_t j=0; j < mColCount; j++)
           data[i * mColCount + j] /= other_data[i];
-        
+
     else
       for(size_t i=0; i < mRowCount; i++)
         for(size_t j=0; j < mColCount; j++)
           data[i * mColCount + j] /= pScale * other_data[i];
-  
+
   } else if (pOther.mColCount == 1 && row_count == 1) {
     // scalar
     return *this /= pScale * other_data[0];
@@ -607,34 +607,34 @@ bool TMatrix<T>::multiply(const TMatrix& pOther, int pStartRow, int pEndRow, Rea
         for(size_t i=0; i < mRowCount; i++)
           for(size_t j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
             data[i * mColCount + j] *= other_data[i * mColCount + j];
-          
+
       else if (pScale == -1.0)
         for(size_t i=0; i < mRowCount; i++)
           for(size_t j=0; j < mColCount; j++)
             data[i * mColCount + j] *= -other_data[i * mColCount + j];
-          
+
       else
         for(size_t i=0; i < mRowCount; i++)
           for(size_t j=0; j < mColCount; j++)
             data[i * mColCount + j] *= pScale * other_data[i * mColCount + j];
-      
+
     } else if (row_count == 1) {
       // vector
       if (pScale == 1.0)
         for(size_t i=0; i < mRowCount; i++)
           for(size_t j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
             data[i * mColCount + j] *= other_data[j];
-          
+
       else if (pScale == -1.0)
         for(size_t i=0; i < mRowCount; i++)
           for(size_t j=0; j < mColCount; j++)
             data[i * mColCount + j] *= other_data[j];
-          
+
       else
         for(size_t i=0; i < mRowCount; i++)
           for(size_t j=0; j < mColCount; j++)
             data[i * mColCount + j] *= pScale * other_data[j];
-    
+
     } else {
       // bad size
       set_error("size error (multiply): source matrix %ix%i, target matrix %ix%i (bad vector count)", row_count, pOther.mColCount, mRowCount, mColCount);
@@ -646,17 +646,17 @@ bool TMatrix<T>::multiply(const TMatrix& pOther, int pStartRow, int pEndRow, Rea
       for(size_t i=0; i < mRowCount; i++)
         for(size_t j=0; j < mColCount; j++) // FIXME: if we change realloc/malloc to align, we could write j+=4/8, with SSE optimization
           data[i * mColCount + j] *= other_data[i];
-        
+
     else if (pScale == -1.0)
       for(size_t i=0; i < mRowCount; i++)
         for(size_t j=0; j < mColCount; j++)
           data[i * mColCount + j] *= other_data[i];
-        
+
     else
       for(size_t i=0; i < mRowCount; i++)
         for(size_t j=0; j < mColCount; j++)
           data[i * mColCount + j] *= pScale * other_data[i];
-  
+
   } else if (pOther.mColCount == 1 && row_count == 1) {
     // scalar
     return *this *= pScale * other_data[0];
@@ -682,7 +682,7 @@ bool TMatrix<T>::mat_multiply(const TMatrix& A, const TMatrix& B, const enum CBL
 {
   /** MxK  *  KxN */
   size_t m, k, n;
-  if (pTransA == CblasNoTrans) { 
+  if (pTransA == CblasNoTrans) {
     m = A.mRowCount;
     k = A.mColCount;
   } else {
@@ -695,12 +695,12 @@ bool TMatrix<T>::mat_multiply(const TMatrix& A, const TMatrix& B, const enum CBL
       return false;
     } else
       n = B.mColCount;
-  } else if (B.mColCount != k) {  
+  } else if (B.mColCount != k) {
     set_error("size error (%s): cannot multiply matrix %ix%i with matrix %ix%i", m, k, B.mColCount, B.mRowCount);
     return false;
   } else
     n = B.mRowCount;
-  
+
   if (!set_sizes(m,n)) return false;
   do_gemm(CblasRowMajor, pTransA, pTransB, m, n, k, pScale, A.data, A.mColCount, B.data, B.mColCount, 0.0, data, mColCount);
   return true;
@@ -753,18 +753,18 @@ bool TMatrix<real_t>::eigenvectors(TMatrix<real_t>& pEigenValues, TMatrix<real_t
     set_error("Cannot compute eigenvectors if source matrix is not symmetric. It is %ix%i.", pMatrix.row_count(), pMatrix.col_count());
     return false;
   }
-  
+
   size_t col_count = pMatrix.col_count();
-  
+
   if (!set_sizes(col_count, col_count)) return false;
   if (!pEigenValues.set_sizes(col_count, 1)) {
     set_error("eigenvalues matrix: %s", pEigenValues.error_msg());
     return false;
   }
-  
+
   // we have to instanciate all parameters as they are passed by reference.
   char jobz  = 'V';       //  1. 'N': compute eigenvalues only, 'V': eigenvalues and eigenvectors.
-  char range = 'A';       //  2. 'A': find all eigenvalues, 
+  char range = 'A';       //  2. 'A': find all eigenvalues,
                           //     'V': find all eigenvalues in the interval ]VL,VU]
                           //     'I': find the eigenvalues with index in [IL,IU]
   char uplo  = 'U';       //  3. symmetric matrix is only stored in the upper triangle. 'L': for lower.
@@ -772,36 +772,36 @@ bool TMatrix<real_t>::eigenvectors(TMatrix<real_t>& pEigenValues, TMatrix<real_t
   // (A) source           //  5.  source array
   long lda = col_count;  //  6. Leading dimension of A (=N).
   Real vl = 0.0;         //  7. See RANGE. (L stands for Low)
-	Real vu = 0.0;         //  8. See RANGE. (U stands for Up)
-	long  il = 0.0;         //  9. See RANGE.
-	long  iu = 0.0;         // 10. See RANGE.
-	Real abstol = 0.00001;    // 11. Absolute error tolerance for the eigenvalues. If set to zero, 
-													//     machine precision will be used during convergence test. Higher values = faster but less precise.
-	// (M) eigencount       // 12. Output of the number of eigenvalues found.
+  Real vu = 0.0;         //  8. See RANGE. (U stands for Up)
+  long  il = 0.0;         //  9. See RANGE.
+  long  iu = 0.0;         // 10. See RANGE.
+  Real abstol = 0.00001;    // 11. Absolute error tolerance for the eigenvalues. If set to zero,
+                          //     machine precision will be used during convergence test. Higher values = faster but less precise.
+  // (M) eigencount       // 12. Output of the number of eigenvalues found.
   // (W) eigenvalues      // 13. Output eigenvalues in ascending order.
   // (Z) eigenvector      // 14. Output array. First M columns contain the orthonormal eigenvectors. i-th column contains the eigenvector associated with the i-th eigenvalue.
-	long ldz = col_count;  // 15. Leading dimension of Z (=N).
- 	long isuppz[2 * col_count];// 16. Output array of integers telling which eigenvectors are nonzero. ??
- 	Real work[col_count * 40];        // 17. Workspace (real array)
+  long ldz = col_count;  // 15. Leading dimension of Z (=N).
+   long isuppz[2 * col_count];// 16. Output array of integers telling which eigenvectors are nonzero. ??
+   Real work[col_count * 40];        // 17. Workspace (real array)
   long lwork = col_count * 40;       // 18. Size of the workspace. Should be >= (NB+6)N where NB is the maximal blocksize for SSYTRD and SORMTR returned by ILAENV
- 	long iwork[15 * col_count];         // 19. Workspace (integer array)
-	long liwork = 15 * col_count;       // 20. Size of IWORK array. Should be >= 10N
-	long info = 0;          // 21. Result information. 0 = success, -i: i-th argument had an illegal value, > 0 internal error
-  
+   long iwork[15 * col_count];         // 19. Workspace (integer array)
+  long liwork = 15 * col_count;       // 20. Size of IWORK array. Should be >= 10N
+  long info = 0;          // 21. Result information. 0 = success, -i: i-th argument had an illegal value, > 0 internal error
+
   long eigen_count;
 
   // compute the eigenvectors of pMatrix:
   // you want to understand this line ?
   // visit: http://dev.gaspardbuma.org/en/post191.html
-	dsyevr_( &jobz, &range, &uplo, &n, pMatrix.data, &lda, &vl, &vu, &il, &iu, &abstol, &eigen_count, pEigenValues.data, data, &ldz, isuppz, work, &lwork, iwork, &liwork, &info );
-	
-	if ((size_t)eigen_count != mRowCount) {
-	  /// ignore
-	}
+  dsyevr_( &jobz, &range, &uplo, &n, pMatrix.data, &lda, &vl, &vu, &il, &iu, &abstol, &eigen_count, pEigenValues.data, data, &ldz, isuppz, work, &lwork, iwork, &liwork, &info );
+
+  if ((size_t)eigen_count != mRowCount) {
+    /// ignore
+  }
   return true;
 }
 
-/** Manage memory allocation (make sure there is enough space for matrix of size pSize). 
+/** Manage memory allocation (make sure there is enough space for matrix of size pSize).
   * @return false on memory allocation failure. */
 template<typename T>
 bool TMatrix<T>::check_alloc(size_t pSize)
@@ -812,7 +812,7 @@ bool TMatrix<T>::check_alloc(size_t pSize)
       storage = BUF_INITIAL_SIZE;
     else
       storage = pSize;
-    
+
     data = (T*)malloc(storage * sizeof(T));
     if (!data) {
       if (!set_error("could not allocate %ix%i", storage, sizeof(T)))
@@ -822,7 +822,7 @@ bool TMatrix<T>::check_alloc(size_t pSize)
     mStorageSize = storage;
   } else if (pSize > mStorageSize) {
     return reallocate(pSize);
-  }  
+  }
   return true;
 }
 
@@ -881,7 +881,7 @@ bool TMatrix<T>::set_error(const char * fmt, ...)
      if (n > -1 && n < (int)mErrorBufferSize) {
        // OK
        mErrorMsg = mErrorBuffer;
-       return true; 
+       return true;
      }
      // try with more space
      if (n > -1)    // glibc 2.1
@@ -932,7 +932,7 @@ bool TMatrix<T>::cast_append (const V * pVector, size_t pVectorSize, Real pScale
   // copy
   for(size_t i=0; i< pVectorSize; i++)
     data[current_size + i] = (T)(pVector[i] * pScale);
-  
+
   mRowCount += pVectorSize / mColCount;
   return true;
 }
@@ -942,7 +942,7 @@ bool TMatrix<real_t>::inverse()
 {
   TMatrix<long> pivot;
   long info;
-  
+
   if (!pivot.set_sizes(1, mColCount)) {
     set_error("could not allocate pivot array (%s)", pivot.error_msg());
     return false;

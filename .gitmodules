@@ -1,0 +1,3 @@
+[submodule "src/lib/oscit"]
+	path = src/lib/oscit
+	url = git://github.com/rubyk/oscit.git

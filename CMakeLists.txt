@@ -41,7 +41,8 @@ if(UNIX)
     set(PLAT "macosx")
     add_definitions(-DLUA_USE_MACOSX)
     add_definitions(-D__MACOSX_CORE__)
-    set(PLAT_LINK "-framework Accelerate -lreadline")
+    # CoreFoundation needed by Midi and cannot be added in dylib
+    set(PLAT_LINK "-framework Accelerate -framework CoreFoundation -lreadline")
     set(PLAT_OBJ_FLAGS "${PLAT_LINK} -dynamic -bundle")
     set(CMAKE_CXX_FLAGS "-mmacosx-version-min=10.4 -g -Wall")
     if (RELEASE)
@@ -82,8 +83,8 @@ add_definitions(-D__${PLAT}__ -DUSE_READLINE)
 # ==============================================================================
 
 add_custom_command ( PRE_BUILD
-  OUTPUT  ${RUBYK_SOURCE_DIR}/../oscit/build/liboscit.a
-  COMMAND cd ${RUBYK_SOURCE_DIR}/../oscit && make oscit
+  OUTPUT  ${RUBYK_SOURCE_DIR}/src/lib/oscit/build/liboscit.a
+  COMMAND cd ${RUBYK_SOURCE_DIR}/src/lib/oscit && make oscit
 )
 
 
@@ -105,26 +106,26 @@ add_library(mealua STATIC ${LUA_SOURCES})
 file (GLOB RUBYK_SOURCES src/core/*.cpp src/core/${PLAT}/*.cpp)
 file (GLOB RUBYK_INCLUDES ${RUBYK_SOURCE_DIR}/src/core ${RUBYK_SOURCE_DIR}/src/lib_objects)
 
-include_directories (${RUBYK_INCLUDES} ${RUBYK_SOURCE_DIR}/src/lib/lua ${RUBYK_SOURCE_DIR}/../oscit/include ${RUBYK_SOURCE_DIR}/../oscit/oscpack)
+include_directories (${RUBYK_INCLUDES} ${RUBYK_SOURCE_DIR}/src/lib/lua ${RUBYK_SOURCE_DIR}/src/lib/oscit/include ${RUBYK_SOURCE_DIR}/src/lib/oscit/oscpack)
 
 file (GLOB RAGEL_SOURCES src/core/*.rl)
 foreach (RAGEL_SRC ${RAGEL_SOURCES})
   get_filename_component (RAGEL_SRC_NAME ${RAGEL_SRC} NAME_WE)
-	add_custom_command ( PRE_BUILD
-	  OUTPUT  ${RUBYK_SOURCE_DIR}/src/core/${RAGEL_SRC_NAME}.cpp
-	  COMMAND ${RAGEL} ${RAGEL_SRC} -o ${RUBYK_SOURCE_DIR}/src/core/${RAGEL_SRC_NAME}.cpp
-	  DEPENDS ${RAGEL_SRC}
-	)
-	# make sure output is included in RUBYK_SOURCES in case 'make clean' removes cached cpp file
-	# TODO: how to make sure 'clean' does not remove these generated files ?
-	set (RUBYK_SOURCES ${RUBYK_SOURCES} ${RUBYK_SOURCE_DIR}/src/core/${RAGEL_SRC_NAME}.cpp)
+  add_custom_command ( PRE_BUILD
+    OUTPUT  ${RUBYK_SOURCE_DIR}/src/core/${RAGEL_SRC_NAME}.cpp
+    COMMAND ${RAGEL} ${RAGEL_SRC} -o ${RUBYK_SOURCE_DIR}/src/core/${RAGEL_SRC_NAME}.cpp
+    DEPENDS ${RAGEL_SRC}
+  )
+  # make sure output is included in RUBYK_SOURCES in case 'make clean' removes cached cpp file
+  # TODO: how to make sure 'clean' does not remove these generated files ?
+  set (RUBYK_SOURCES ${RUBYK_SOURCES} ${RUBYK_SOURCE_DIR}/src/core/${RAGEL_SRC_NAME}.cpp)
 endforeach (RAGEL_SRC)
 
 # FIXME: Should be static
-add_library (rubyk_core STATIC ${RUBYK_SOURCES} ${RUBYK_SOURCE_DIR}/../oscit/build/liboscit.a)
-add_dependencies (rubyk_core ${RUBYK_SOURCE_DIR}/../oscit/build/liboscit.a)
-target_link_libraries (rubyk_core mealua ${RUBYK_SOURCE_DIR}/../oscit/build/liboscit.a ${PLAT_LINK})
-#target_link_libraries (rubyk_core ${RUBYK_SOURCE_DIR}/src/lib/lua/liblua.a ${RUBYK_SOURCE_DIR}/../oscit/build/liboscit.a ${PLAT_LINK})
+add_library (rubyk_core STATIC ${RUBYK_SOURCES} ${RUBYK_SOURCE_DIR}/src/lib/oscit/build/liboscit.a)
+add_dependencies (rubyk_core ${RUBYK_SOURCE_DIR}/src/lib/oscit/build/liboscit.a)
+target_link_libraries (rubyk_core mealua ${RUBYK_SOURCE_DIR}/src/lib/oscit/build/liboscit.a ${PLAT_LINK})
+#target_link_libraries (rubyk_core ${RUBYK_SOURCE_DIR}/src/lib/lua/liblua.a ${RUBYK_SOURCE_DIR}/src/lib/oscit/build/liboscit.a ${PLAT_LINK})
 
 add_executable(rubyk ${RUBYK_SOURCE_DIR}/src/main.cpp)
 target_link_libraries (rubyk rubyk_core)
@@ -138,16 +139,16 @@ target_link_libraries (rubyk rubyk_core)
 add_custom_target(objects)
 
 macro (add_rko_object RKO_NAME)
-	add_library (${RKO_NAME} MODULE ${ARGN}) # ARGN = list of arguments passed last expected argument
-	# FIXME: remove rubyk_core
-	target_link_libraries (${RKO_NAME} rubyk_core)
-	set_target_properties (${RKO_NAME} PROPERTIES
-		LIBRARY_OUTPUT_DIRECTORY ${RUBYK_SOURCE_DIR}/lib
-		LINK_FLAGS ${PLAT_OBJ_FLAGS}
-		PREFIX ""
-		SUFFIX ".rko"
-	)
-	add_dependencies (objects ${RKO_NAME})
+  add_library (${RKO_NAME} MODULE ${ARGN}) # ARGN = list of arguments passed after RKO_NAME
+  # FIXME: remove rubyk_core
+  target_link_libraries (${RKO_NAME} rubyk_core)
+  set_target_properties (${RKO_NAME} PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${RUBYK_SOURCE_DIR}/lib
+    LINK_FLAGS ${PLAT_OBJ_FLAGS}
+    PREFIX ""
+    SUFFIX ".rko"
+  )
+  add_dependencies (objects ${RKO_NAME})
 endmacro(add_rko_object)
 
 # ----------- objects (simple build)
@@ -155,9 +156,9 @@ endmacro(add_rko_object)
 file (GLOB RUBYK_OBJECT_SOURCES src/objects/*.cpp)
 
 foreach (RUBYK_OBJECT_SOURCE ${RUBYK_OBJECT_SOURCES})
-	get_filename_component (RUBYK_OBJECT_NAME ${RUBYK_OBJECT_SOURCE} NAME_WE)
+  get_filename_component (RUBYK_OBJECT_NAME ${RUBYK_OBJECT_SOURCE} NAME_WE)
 
-	add_rko_object (${RUBYK_OBJECT_NAME} ${RUBYK_OBJECT_SOURCE})
+  add_rko_object (${RUBYK_OBJECT_NAME} ${RUBYK_OBJECT_SOURCE})
 endforeach (RUBYK_OBJECT_SOURCE)
 
 # ----------- lib_objects (special, complicated builds)
@@ -165,7 +166,7 @@ endforeach (RUBYK_OBJECT_SOURCE)
 file (GLOB RUBYK_LIB_OBJECTS src/lib_objects/*)
 
 foreach (RUBYK_LIB_OBJECT ${RUBYK_LIB_OBJECTS})
-	add_subdirectory (${RUBYK_LIB_OBJECT})
+  add_subdirectory (${RUBYK_LIB_OBJECT})
 endforeach (RUBYK_LIB_OBJECT)
 
 # ==============================================================================

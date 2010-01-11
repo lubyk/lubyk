@@ -1,10 +1,10 @@
 juce
 ----
-	brief    : JUCE is an all-encompassing C++ class library for developing cross-platform applications.
-	authors  : Julian Storer
-	website  : http://www.rawmaterialsoftware.com/juce/
-	copyright: see mimas/lib/juce/docs/JUCE readme.html
-	license  : GPL license
+  brief    : JUCE is an all-encompassing C++ class library for developing cross-platform applications.
+  authors  : Julian Storer
+  website  : http://www.rawmaterialsoftware.com/juce/
+  copyright: see mimas/lib/juce/docs/JUCE readme.html
+  license  : GPL license
 
 oscpack
 -------
@@ -16,24 +16,24 @@ oscpack
 
 libsvm
 ------
-	brief    : Machine learning library used for pattern recognition in the 'Svm' object.
-	authors  : Chih-Chung Chang and Chih-Jen Lin
-	website  : http://www.csie.ntu.edu.tw/~cjlin/libsvm
-	copyright: see objects/svm/COPYRIGHT
-	license  : MIT License
+  brief    : Machine learning library used for pattern recognition in the 'Svm' object.
+  authors  : Chih-Chung Chang and Chih-Jen Lin
+  website  : http://www.csie.ntu.edu.tw/~cjlin/libsvm
+  copyright: see objects/svm/COPYRIGHT
+  license  : MIT License
 
 FFT
 ---
-	brief    : Fast Fourier Transform used in the 'FFT' object.
-	authors  : Laurent de Soras
-	website  : http://ldesoras.free.fr/prod.html
-	copyright: see objects/fft/readme.txt
-	license  : LGPL
+  brief    : Fast Fourier Transform used in the 'FFT' object.
+  authors  : Laurent de Soras
+  website  : http://ldesoras.free.fr/prod.html
+  copyright: see objects/fft/readme.txt
+  license  : LGPL
 
 ELBG
 ----
-	brief    : Enhanced LBG. Vector Quantization used in the 'VQ' object.
-	author   : Vitor Sessak <vitor1001@gmail.com>
-	website  : http://ffmpeg.mplayerhq.hu/
-	copyright: see objects/quantize/elbg.h
-	license  : LGPL
+  brief    : Enhanced LBG. Vector Quantization used in the 'VQ' object.
+  author   : Vitor Sessak <vitor1001@gmail.com>
+  website  : http://ffmpeg.mplayerhq.hu/
+  copyright: see objects/quantize/elbg.h
+  license  : LGPL

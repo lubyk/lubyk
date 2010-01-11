@@ -38,8 +38,9 @@ const Value ClassFinder::trigger (const Value &val)
   return gNilValue; // TODO: 'lib' directory listing ?
 }
 
-Object *ClassFinder::build_child(const std::string &class_name, Value *error) {
+Object *ClassFinder::build_child(const std::string &class_name, const Value &type, Value *error) {
   Object * obj;
+  std::cout << "Trying to load " << objects_path_ << "/" << class_name << "\n";
   // try to load dynamic lib
   std::string path = objects_path_;
   path.append("/").append(class_name).append(".rko");
@@ -64,32 +65,32 @@ bool ClassFinder::load(const char * file, const char * init_name)
   void *image;
   void (*function)(Planet*);
   const char *error = 0;
-  
+
   // load shared extension image into memory
-  // ---> 
+  // --->
   if ((image = (void*)dlopen(file, RTLD_LAZY|RTLD_GLOBAL)) == 0) {
     printf("Could not open file '%s'.", file);
-    if ( (error = dlerror()) ) 
+    if ( (error = dlerror()) )
       printf(" %s\n", error);
     else
       printf("\n");
     return false;
   }
-  
+
   // get 'init' function into the image
   function = (void(*)(Planet*))dlsym(image, init_name);
   if (function == 0) {
     dlclose(image);
     printf("Symbol '%s' not found in '%s'.",init_name,file);
-    if ( (error = dlerror()) ) 
+    if ( (error = dlerror()) )
       printf(" %s\n", error);
     else
       printf("\n");
     return false;
   }
-  
+
   Planet *planet = TYPE_CAST(Planet, root_);
-  
+
   // call 'init', passing planet
   if (planet) {
     (*function)(planet);
@@ -97,6 +98,6 @@ bool ClassFinder::load(const char * file, const char * init_name)
     fprintf(stderr, "Could not cast root_ to Planet* !\n");
     return false;
   }
-  
+
   return true;
 }

@@ -1,3 +1,3 @@
 function bang(sig)
-	return sig+12
+  return sig+12
 end
