@@ -36,3 +36,18 @@ server through oscit capable interfaces like mimas (http://rubyk.org/mimas).
 The real power of rubyk comes from the objects you can create with this tool. These objects are compiled as
 dynamic libraries and are only loaded on demand. Currently, there are objects for midi signal processing,
 matrix calculations (PCA, VQ, FFT, etc) and lua based scripting tools.
+
+== Compilation
+
+=== Linux
+
+You might need to install readline and ALSA development headers as well as CMake:
+
+ sudo aptitude install readline5-devel libasound2-dev cmake
+ make
+
+=== Mac OS X
+
+You should be ok with:
+
+ make

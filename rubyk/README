@@ -1,6 +1,0 @@
-
-
-linux
-------
-
-> sudo aptitude install readline5-devel libasound2-dev
