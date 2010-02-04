@@ -48,7 +48,7 @@ class Planet : public Root
  public:
   TYPED("Object.Root.Planet")
 
-  Planet() : Root(RUBYK_DEFAULT_NAME), worker_(this), classes_(NULL) {
+  Planet() : Root(RUBYK_DEFAULT_NAME), worker_(this), classes_(NULL), gui_started_(false) {
     init();
   }
 
@@ -57,7 +57,7 @@ class Planet : public Root
     open_port(port);
   }
 
-  Planet(int argc, char * argv[]) : Root(RUBYK_DEFAULT_NAME), worker_(this), classes_(NULL) {
+  Planet(int argc, char * argv[]) : Root(RUBYK_DEFAULT_NAME), worker_(this), classes_(NULL), gui_started_(false) {
     // TODO: get port from command line
     init();
 
@@ -83,7 +83,7 @@ class Planet : public Root
     adopt_command(new OscCommand("oscit", "_oscit._udp", port));
   }
 
-  void start() {
+  void start_worker() {
     worker_.start();
   }
 
@@ -96,7 +96,15 @@ class Planet : public Root
     worker_.join();
   }
 
+  /** Blocking call to use instead of 'join' when we want to reserve the main
+   * thread for objects that may need a GUI event loop to handle window
+   * events.
+   */
+  void wait_for_gui();
+
   void quit() {
+    // TODO: should we 'stop_gui' first or last ?
+    stop_gui();
     worker_.kill();
     clear(); // kill commands and destroy objects
   }
@@ -121,13 +129,23 @@ class Planet : public Root
    */
   const Value quit(const Value &val) {
     worker_.quit();
+    s_need_gui_semaphore_.release();
     return gNilValue;
   }
 
   /** Calls 'inspect' on a node. */
   const Value inspect(const Value &val);
 
+  /** Should be called by objects before the create windows.
+   */
+  bool gui_ready();
  private:
+
+  /** Properly quit application in case we started a GUI event loop to
+   * deal with windows.
+   */
+  void stop_gui();
+
   /** Add a pending link. */
   const Value add_pending_link(const Value &val) {
     Value params;
@@ -147,9 +165,30 @@ class Planet : public Root
   /** Create base objects (public for testing, should not be used). */
   void init();
 
-  std::list<Call>  pending_links_;        /**< List of pending connections waiting for variable assignements. */
+  /** List of pending connections waiting for variable assignements.
+   */
+  std::list<Call>  pending_links_;
+
   Worker worker_;
   ClassFinder *classes_;
+
+  /** Semaphore to lock main thread until a sub-thread 'quits' or needs
+   * to initialize GUI event loop.
+   */
+  Semaphore s_need_gui_semaphore_;
+
+  /** Semaphore to lock sub-thread until a main thread has started the event loop.
+   */
+  Semaphore s_start_gui_semaphore_;
+
+  /** Flag to initialize GUI event loop.
+   */
+  bool s_need_gui_;
+
+  /** Flag set to true if this instance was used to start the
+   * gui event loop.
+   */
+  bool gui_started_;
 };
 
 #endif // _PLANET_H_

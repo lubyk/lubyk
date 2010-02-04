@@ -35,9 +35,9 @@ int main(int argc, char * argv[])
 {
   Planet venus(argc, argv);
   venus.adopt_command(new CommandLine(std::cin, std::cout));
-  venus.adopt_command(new OscCommand("oscit", "_oscit._udp", 7000));
-  venus.start();
-  venus.join(); // wait for venus to finish
+  venus.adopt_command(new OscCommand("oscit", "_oscit._udp"));
+  venus.start_worker();
+  venus.wait_for_gui();
 
   //OPENGL_HACK gGLWindowStartThread = NULL;
   //OPENGL_HACK gGLWindowNode = NULL; /////// GLWINDOW HACK

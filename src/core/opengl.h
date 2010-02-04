@@ -27,8 +27,8 @@
   ==============================================================================
 */
 
-#ifndef _OPENGL_H_
-#define _OPENGL_H_
+#ifndef RUBYK_SRC_OPENGL_H_
+#define RUBYK_SRC_OPENGL_H_
 
 #ifdef __macosx__
 #include <GLUT/glut.h>

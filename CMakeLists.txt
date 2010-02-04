@@ -42,7 +42,7 @@ if(UNIX)
     add_definitions(-DLUA_USE_MACOSX)
     add_definitions(-D__MACOSX_CORE__)
     # CoreFoundation needed by Midi and cannot be added in dylib
-    set(PLAT_LINK "-framework Accelerate -framework CoreFoundation -lreadline")
+    set(PLAT_LINK "-framework Accelerate -framework CoreFoundation -lreadline -framework Cocoa -lobjc") # -lobjc ===> planet_gui.mm
     set(PLAT_OBJ_FLAGS "${PLAT_LINK} -dynamic -bundle")
     set(CMAKE_CXX_FLAGS "-mmacosx-version-min=10.4 -g -Wall")
     if (RELEASE)
@@ -103,7 +103,7 @@ add_library(mealua STATIC ${LUA_SOURCES})
 # ==============================================================================
 
 
-file (GLOB RUBYK_SOURCES src/core/*.cpp src/core/${PLAT}/*.cpp)
+file (GLOB RUBYK_SOURCES src/core/*.cpp src/core/${PLAT}/*)
 file (GLOB RUBYK_INCLUDES ${RUBYK_SOURCE_DIR}/src/core ${RUBYK_SOURCE_DIR}/src/lib_objects)
 
 include_directories (${RUBYK_INCLUDES} ${RUBYK_SOURCE_DIR}/lib/lua ${RUBYK_SOURCE_DIR}/lib/oscit/include ${RUBYK_SOURCE_DIR}/lib/oscit/oscpack)
