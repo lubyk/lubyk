@@ -9,11 +9,11 @@
 
 /* ======================== OpenGL view ======================= */
 
-NSRunLoop *gMainLoop;
 
 @interface SimpleGLView : NSOpenGLView {
   NSTimer *render_timer_;
   bool draw_triangle_;
+  bool need_resize_;
 }
 - (void)start_loop;
 - (void)timerFired:(id)sender;
@@ -32,7 +32,6 @@ NSRunLoop *gMainLoop;
   draw_triangle_ = should_draw;
 }
 
-// FIXME: this should run from within the main thread: create an event queue and call this method from there...
 -(void)start_loop {
   printf("start_loop\n");
   // very small interval (1ms). Maximal frame rate = vertical refresh rate.
@@ -42,10 +41,12 @@ NSRunLoop *gMainLoop;
     userInfo:nil
     repeats:true] retain];
 
-  [gMainLoop addTimer:render_timer_
+  [[NSRunLoop currentRunLoop] addTimer:render_timer_
     forMode:NSDefaultRunLoopMode];
-  [gMainLoop addTimer:render_timer_
+  [[NSRunLoop currentRunLoop] addTimer:render_timer_
     forMode:NSEventTrackingRunLoopMode]; //Ensure timer fires during resize
+
+  [[NSRunLoop currentRunLoop] run];
 }
 
 // Timer callback method
@@ -76,25 +77,31 @@ NSRunLoop *gMainLoop;
  * Resize ourself
 */
 - (void) reshape {
-  printf("reshape (%i)\n", draw_triangle_);
-  NSRect sceneBounds;
-
-  [ [ self openGLContext ] update ];
-  sceneBounds = [ self bounds ];
-  // Reset current viewport
-  glViewport( 0, 0, sceneBounds.size.width, sceneBounds.size.height );
-  glMatrixMode( GL_PROJECTION );   // Select the projection matrix
-  glLoadIdentity();                // and reset it
-  // Calculate the aspect ratio of the view
-  gluPerspective( 45.0f, sceneBounds.size.width / sceneBounds.size.height,
-    0.1f, 100.0f );
-  glMatrixMode( GL_MODELVIEW );    // Select the modelview matrix
-  glLoadIdentity();                // and reset it
+  need_resize_ = true;
 }
 /*
  * Called between system frame swapping.
  */
 - (void)drawRect:(NSRect*)rect {
+  if (need_resize_) {
+
+    printf("reshape (%i)\n", draw_triangle_);
+    NSRect sceneBounds;
+
+    [ [ self openGLContext ] update ];
+    sceneBounds = [ self bounds ];
+    // Reset current viewport
+    glViewport( 0, 0, sceneBounds.size.width, sceneBounds.size.height );
+    glMatrixMode( GL_PROJECTION );   // Select the projection matrix
+    glLoadIdentity();                // and reset it
+    // Calculate the aspect ratio of the view
+    gluPerspective( 45.0f, sceneBounds.size.width / sceneBounds.size.height,
+      0.1f, 100.0f );
+    glMatrixMode( GL_MODELVIEW );    // Select the modelview matrix
+    glLoadIdentity();                // and reset it
+    need_resize_ = false;
+  }
+
   printf("draw\n");
    // Clear the screen and depth buffer
    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -177,9 +184,6 @@ void *open_window(void *data) {
   [[win contentView] addSubview:gl_view];
   [win makeKeyAndOrderFront:win];
   [gl_view start_loop];
-  sleep(10);
-
-  [NSApp terminate:NULL];
   [pool release];
   [gl_view release];
 }
@@ -202,9 +206,10 @@ void *app_loop(void *data) {
 int main(int argc, char *argv[]) {
   pthread_t app_thread;
   [NSApplication sharedApplication]; // ?
-  gMainLoop = [NSRunLoop currentRunLoop];
   pthread_create( &app_thread, NULL, app_loop, NULL);
   [NSApp run];
+  sleep(4);
+  [NSApp terminate:NULL];
 
   pthread_join( app_thread, NULL);
   return 0;
