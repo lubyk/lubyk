@@ -56,8 +56,8 @@ const Value Planet::link(const Value &val) {
   }
 
   Value error;
-  Object *source = object_at(Url(val[0].str()), &error);
-  if (error.is_error() || !object_at(Url(val[2].str()), &error)) {
+  ObjectHandle source, target;
+  if (!get_object_at(Url(val[0].str()), &error, &source) || !get_object_at(Url(val[2].str()), &error, &target)) {
     // not found
     if (val[1].str() == "=>") {
       return add_pending_link(val);
@@ -68,13 +68,13 @@ const Value Planet::link(const Value &val) {
     return val;
   }
 
-  Slot   *slot = TYPE_CAST(Slot, source);
-  Object *object;
+  Slot   *slot = source.type_cast<Slot>();
+  ObjectHandle out, outlet;
   if (slot != NULL) {
     return val[1].str() == "||" ? slot->unlink(val[2]) : slot->link(val[2]);
-  } else if ( (object = source->child("out")) && (object = object->first_child()) ) {
-    // was a link default slots: /met/out --> /counter/in
-    if ( (slot = TYPE_CAST(Slot, object)) ) {
+  } else if (source->get_child("out", &out) && out->first_child(&outlet)) {
+    // was a link to/from default slots: /met/out --> /counter/in
+    if ( (slot = outlet.type_cast<Slot>()) ) {
       return val[1].str() == "||" ? slot->unlink(val[2]) : slot->link(val[2]);
     } else {
       return Value(BAD_REQUEST_ERROR, std::string("Object at '").append(slot->url()).append("' does not support links (using first child of '").append(source->url()).append("')."));
@@ -85,6 +85,7 @@ const Value Planet::link(const Value &val) {
 }
 
 // FIXME: on node deletion/replacement, remove/move all pending links related to this node ?.
+// FIXME: thread safety !
 const Value Planet::create_pending_links() {
   std::list<Call>::iterator it  = pending_links_.begin();
   std::list<Call>::iterator end = pending_links_.end();
@@ -93,7 +94,7 @@ const Value Planet::create_pending_links() {
   Value list;
 
   while (it != end) {
-    res = it->safe_trigger(this, context_);
+    res = it->trigger_call(this);
     if ((res.type_id() == H("sss") && res[1].str() == "=>") || res.is_error()) {
       list.push_back(res);
       it = pending_links_.erase(it);  // call succeeded or definitely failed
@@ -132,9 +133,9 @@ const Value Planet::inspect(const Value &val) {
   std::cout << "## inspect " << val << "\n";
   if (!val.is_string()) return Value(BAD_REQUEST_ERROR, "Bad arguments:'inspect' should be called with an url.");
   Value res;
-  Object *object = find_or_build_object_at(val.str(), &res);
-  if (!object) return res;
-  Node *node = TYPE_CAST(Node, object);
+  ObjectHandle object;
+  if (!find_or_build_object_at(val.str(), &res, &object)) return res;
+  Node *node = object.type_cast<Node>();
   if (!node) return Value(BAD_REQUEST_ERROR, std::string("Bad target '").append(object->url()).append("':inspect only works on Nodes (class is '").append(object->class_path()).append("')."));
   return node->do_inspect();
 }

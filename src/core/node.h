@@ -68,8 +68,8 @@ class Node : public Object {
       return set(val);
     } else if (!val.is_nil()) {
       // call first method
-      Object *child = first_child();
-      if (child && child->can_receive(val)) {
+      ObjectHandle child;
+      if (first_child(&child) && child->can_receive(val)) {
         return child->trigger(val);
       } else {
         return Value(BAD_REQUEST_ERROR, std::string("Invalid arguments for first method '").append(child->name()).append("'."));

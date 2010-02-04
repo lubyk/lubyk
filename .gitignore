@@ -1,5 +1,4 @@
 *.perspectivev3
-lib/*
 *.o
 *.a
 *.dSYM
@@ -9,8 +8,8 @@ lib/*
 *~
 *.pch
 build
-src/lib/lua/lua
-src/lib/lua/luac
+lib/lua/lua
+lib/lua/luac
 test/runner*
 rubyk
 doc/prototypes/test

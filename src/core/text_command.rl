@@ -220,7 +220,7 @@ void TextCommand::create_instance() {
   list.push_back(var_);
   list.push_back(params);
 
-  Value res = root_->call(std::string(CLASS_URL).append("/").append(class_).append("/new"), list, this);
+  Value res = root_->call(std::string(CLASS_URL).append("/").append(class_).append("/new"), list);
 
   Value links;
   if (res.is_string()) {
@@ -228,7 +228,7 @@ void TextCommand::create_instance() {
   }
 
   if (res.is_string() && !silent_) {
-    print_result(root_->call(INSPECT_URL, res, this));
+    print_result(root_->call(INSPECT_URL, res));
     for (size_t i = 0; i < links.size(); ++i) {
       print_result(links[i]);
     }
@@ -261,7 +261,7 @@ void TextCommand::change_link(char op) {
     list.push_back(std::string(to_node_).append("/in/").append(to_port_));
   }
 
-  print_result(root_->call(LINK_URL, list, this));
+  print_result(root_->call(LINK_URL, list));
 }
 
 void TextCommand::execute_method() {
@@ -274,8 +274,9 @@ void TextCommand::execute_method() {
 
   if (method_ == "set") {
     // TODO: should 'set' live in normal tree space ?
-    Object *target = root_->object_at(var_);
-    if (target) {
+    ObjectHandle target;
+    if (root_->get_object_at(var_, &target)) {
+      // FIXME: this is not correct: we should make ALL objects thread-safe.
       target->lock();
         res = target->set(params);
       target->unlock();
@@ -285,7 +286,7 @@ void TextCommand::execute_method() {
   } else {
     if (method_ == "b") method_ = "bang";
     var_.append("/").append(method_);
-    res = root_->call(var_, params, this);
+    res = root_->call(var_, params);
   }
   print_result(res);
 }
@@ -295,7 +296,7 @@ void TextCommand::execute_class_method() {
   Value params = Value(Json(parameter_string_));
 
   DEBUG(std::cout << "CLASS_METHOD " << std::string(CLASS_URL).append("/").append(class_).append("/").append(method_) << "(" << params << ")" << std::endl);
-  res = root_->call(std::string(CLASS_URL).append("/").append(class_).append("/").append(method_), params, this);
+  res = root_->call(std::string(CLASS_URL).append("/").append(class_).append("/").append(method_), params);
   print_result(res);
 }
 
@@ -305,15 +306,15 @@ void TextCommand::execute_command() {
 
   DEBUG(std::cout << "CMD " << method_ << "(" << params << ")" << std::endl);
   if (method_ == "lib") {
-    res = root_->call(LIB_URL, params, this);
+    res = root_->call(LIB_URL, params);
   } else if (method_ == "quit" || method_ == "q") {
     quit();  // Readline won't quit with a SIGTERM (see doc/prototypes/term_readline.cpp) so
              // we have to use quit() instead of kill().
 
-    res = root_->call(QUIT_URL, gNilValue, this);
+    res = root_->call(QUIT_URL, gNilValue);
   } else {
     names_to_urls();
-    res = root_->call(method_, params, this);
+    res = root_->call(method_, params);
   }
   print_result(res);
 }

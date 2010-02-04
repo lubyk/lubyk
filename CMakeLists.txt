@@ -83,8 +83,8 @@ add_definitions(-D__${PLAT}__ -DUSE_READLINE)
 # ==============================================================================
 
 add_custom_command ( PRE_BUILD
-  OUTPUT  ${RUBYK_SOURCE_DIR}/src/lib/oscit/build/liboscit.a
-  COMMAND cd ${RUBYK_SOURCE_DIR}/src/lib/oscit && make oscit
+  OUTPUT  ${RUBYK_SOURCE_DIR}/lib/oscit/build/liboscit.a
+  COMMAND cd ${RUBYK_SOURCE_DIR}/lib/oscit && make oscit
 )
 
 
@@ -94,7 +94,7 @@ add_custom_command ( PRE_BUILD
 #
 # ==============================================================================
 
-file (GLOB LUA_SOURCES src/lib/lua/*.c)
+file (GLOB LUA_SOURCES lib/lua/*.c)
 add_library(mealua STATIC ${LUA_SOURCES})
 # ==============================================================================
 #
@@ -106,7 +106,7 @@ add_library(mealua STATIC ${LUA_SOURCES})
 file (GLOB RUBYK_SOURCES src/core/*.cpp src/core/${PLAT}/*.cpp)
 file (GLOB RUBYK_INCLUDES ${RUBYK_SOURCE_DIR}/src/core ${RUBYK_SOURCE_DIR}/src/lib_objects)
 
-include_directories (${RUBYK_INCLUDES} ${RUBYK_SOURCE_DIR}/src/lib/lua ${RUBYK_SOURCE_DIR}/src/lib/oscit/include ${RUBYK_SOURCE_DIR}/src/lib/oscit/oscpack)
+include_directories (${RUBYK_INCLUDES} ${RUBYK_SOURCE_DIR}/lib/lua ${RUBYK_SOURCE_DIR}/lib/oscit/include ${RUBYK_SOURCE_DIR}/lib/oscit/oscpack)
 
 file (GLOB RAGEL_SOURCES src/core/*.rl)
 foreach (RAGEL_SRC ${RAGEL_SOURCES})
@@ -122,10 +122,10 @@ foreach (RAGEL_SRC ${RAGEL_SOURCES})
 endforeach (RAGEL_SRC)
 
 # FIXME: Should be static
-add_library (rubyk_core STATIC ${RUBYK_SOURCES} ${RUBYK_SOURCE_DIR}/src/lib/oscit/build/liboscit.a)
-add_dependencies (rubyk_core ${RUBYK_SOURCE_DIR}/src/lib/oscit/build/liboscit.a)
-target_link_libraries (rubyk_core mealua ${RUBYK_SOURCE_DIR}/src/lib/oscit/build/liboscit.a ${PLAT_LINK})
-#target_link_libraries (rubyk_core ${RUBYK_SOURCE_DIR}/src/lib/lua/liblua.a ${RUBYK_SOURCE_DIR}/src/lib/oscit/build/liboscit.a ${PLAT_LINK})
+add_library (rubyk_core STATIC ${RUBYK_SOURCES} ${RUBYK_SOURCE_DIR}/lib/oscit/build/liboscit.a)
+add_dependencies (rubyk_core ${RUBYK_SOURCE_DIR}/lib/oscit/build/liboscit.a)
+target_link_libraries (rubyk_core mealua ${RUBYK_SOURCE_DIR}/lib/oscit/build/liboscit.a ${PLAT_LINK})
+#target_link_libraries (rubyk_core ${RUBYK_SOURCE_DIR}/lib/lua/liblua.a ${RUBYK_SOURCE_DIR}/lib/oscit/build/liboscit.a ${PLAT_LINK})
 
 add_executable(rubyk ${RUBYK_SOURCE_DIR}/src/main.cpp)
 target_link_libraries (rubyk rubyk_core)
@@ -143,7 +143,7 @@ macro (add_rko_object RKO_NAME)
   # FIXME: remove rubyk_core
   target_link_libraries (${RKO_NAME} rubyk_core)
   set_target_properties (${RKO_NAME} PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY ${RUBYK_SOURCE_DIR}/lib
+    LIBRARY_OUTPUT_DIRECTORY ${RUBYK_SOURCE_DIR}/build/lib
     LINK_FLAGS ${PLAT_OBJ_FLAGS}
     PREFIX ""
     SUFFIX ".rko"

@@ -43,7 +43,7 @@
 
 void microsleep(size_t microseconds) {
   struct timespec sleeper;
-  sleeper.tv_sec  = 0; 
+  sleeper.tv_sec  = 0;
   sleeper.tv_nsec = microseconds * 1000000;
   nanosleep (&sleeper, NULL);
 }
@@ -57,7 +57,7 @@ void microsleep(size_t microseconds) {
 class TestHelper : public CxxTest::TestSuite
 {
 protected:
-  
+
   void millisleep(float microseconds) {
     Thread::millisleep(microseconds);
   }
@@ -66,27 +66,27 @@ protected:
   {
     _OSCIT_ASSERT_EQUALS( file, lineno, TS_AS_STRING(descr), found, expected);
   }
-  
+
   void _assert_equal(const char * file, int lineno, const char * descr, int expected, int found)
   {
     _OSCIT_ASSERT_EQUALS( file, lineno, TS_AS_STRING(descr), found, expected);
   }
-  
+
   void _assert_equal(const char * file, int lineno, const char * descr, const char * expected, const char * found)
   {
     _OSCIT_ASSERT_EQUALS( file, lineno, TS_AS_STRING(descr), std::string(found), std::string(expected));
   }
-  
+
   void _assert_equal(const char * file, int lineno, const char * descr, const char * expected, const std::string &found)
   {
     _OSCIT_ASSERT_EQUALS( file, lineno, TS_AS_STRING(descr), found, std::string(expected));
   }
-  
+
   void _assert_equal(const char * file, int lineno, const char * descr, const std::string &expected, const std::string &found)
   {
     _OSCIT_ASSERT_EQUALS( file, lineno, TS_AS_STRING(descr), found, expected);
   }
-  
+
   void _assert_equal(const char * file, int lineno, const char * descr, void * expected, void * found)
   {
     _OSCIT_ASSERT_EQUALS( file, lineno, TS_AS_STRING(descr), found, expected);
@@ -107,7 +107,7 @@ class ParseHelper : public TestHelper
 {
 public:
   ParseHelper() : planet_(NULL), output_(std::ostringstream::out), input_(std::istringstream::in) {}
-    
+
   void setUp() {
     planet_ = new Planet;
     cmd_ = planet_->adopt_command(new TextCommand(input_, output_), false);
@@ -115,7 +115,7 @@ public:
     output_.str(std::string("")); // clear output
     planet_->should_run(true);
   }
-  
+
   void tearDown() {
     if (planet_) delete planet_;
     planet_ = NULL;
@@ -129,13 +129,12 @@ protected:
   std::istringstream input_;
 
   void setup_with_print(const char *input) {
-    Object *object;
+    ObjectHandle object;
     cmd_->parse("p=Print()\nn=>p\n");
-    object = planet_->object_at("/p");
-    if (!object) {
+    if (!planet_->get_object_at("/p", &object)) {
       fprintf(stderr, "Print object '/p' not found !");
     } else {
-      Print *print = TYPE_CAST(Print, object);
+      Print *print = object.type_cast<Print>();
       if (print == NULL) {
         fprintf(stderr, "Wrong object type '%s'. Should be Print.\n", print->class_path());
       } else {
@@ -151,7 +150,7 @@ protected:
     }
     output_.str(std::string("")); // clear output
   }
-  
+
   void setup(const char *input) {
     cmd_->parse(input);
     if (output_.str().find("# 400 ") != std::string::npos ||
@@ -169,7 +168,7 @@ protected:
     _OSCIT_ASSERT_EQUALS( file, lineno, TS_AS_STRING(descr), output_.str(), expected);
   }
 
-  void _assert_print(const char * file, int lineno, const char *descr, const char *expected, const char *input) { 
+  void _assert_print(const char * file, int lineno, const char *descr, const char *expected, const char *input) {
     print_.str(std::string("")); // clear output
     cmd_->parse(input);
     _OSCIT_ASSERT_EQUALS( file, lineno, TS_AS_STRING(descr), print_.str(), expected);
@@ -196,7 +195,7 @@ protected:
 //  }
 //
 //  void assert_bang(const char * input, const char * pOutput)
-//  { 
+//  {
 //    worker_.unlock();
 //    output_.str(std::string("")); // clear output
 //    cmd_->set_silent(true);

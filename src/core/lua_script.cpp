@@ -43,21 +43,21 @@ extern "C" {
 const Value LuaScript::lua_init() {
   // Our own lua context.
   lua_ = lua_open();
-  
+
   // Load Lua main libraries
   luaL_openlibs(lua_);
-  
+
   // push 'this' into the global field '__this'
   lua_pushlightuserdata(lua_, (void*)this);
   lua_setglobal(lua_, "__this");
-  
+
   register_lua_method<LuaScript, &LuaScript::lua_inlet>("inlet");
   // TODO: make sure build_outlet_ and send_ are never accessible from lua (only through Outlet).
   register_lua_method<LuaScript, &LuaScript::lua_build_outlet>("build_outlet_");
   register_lua_method("send_", &LuaScript::lua_send);
-  
+
   // load rubyk.lua
-  Value res = root_->call(LIB_URL, context_);
+  Value res = root_->call(LIB_URL);
   if (!res.is_string()) {
     return res;
   } else {
@@ -65,7 +65,7 @@ const Value LuaScript::lua_init() {
     path.append("/lua/rubyk.lua");
     int status = luaL_dofile(lua_, path.c_str());
     if (status) {
-      return Value(INTERNAL_SERVER_ERROR, 
+      return Value(INTERNAL_SERVER_ERROR,
         std::string(lua_tostring(lua_, -1)).append("."));
     }
   }
@@ -90,30 +90,30 @@ const Value LuaScript::call_lua(const char *function_name, const Value &val) {
   if (!lua_pushvalue(lua_, val)) {
     return Value(BAD_REQUEST_ERROR, std::string("cannot call '").append(function_name).append("' with argument ").append(val.lazy_json()).append(" (type not yet suported in Lua).\n"));
   }
-  
+
   /* Run the function. */
   status = lua_pcall(lua_, 1, 1, 0); // 1 arg, 1 result, no error function
   if (status) {
     return Value(BAD_REQUEST_ERROR, lua_tostring(lua_, -1));
   }
-  
+
   return stack_to_value(lua_);
 }
 
 
 const Value LuaScript::eval_script() {
   int status;
-  
+
   /* set 'current_time' */
   lua_pushnumber(lua_, worker_->current_time_);
   lua_setglobal(lua_, "current_time");
-  
+
   // compile script
   status = luaL_loadbuffer(lua_, script_.c_str(), script_.size(), name_.c_str());
   if (status) {
     return Value(BAD_REQUEST_ERROR, std::string(lua_tostring(lua_, -1)).append("."));
   }
-  
+
   // Run the script to create the functions.
   status = lua_pcall(lua_, 0, 0, 0); // 0 arg, 1 result, no error function
   if (status) {
@@ -143,17 +143,19 @@ int LuaScript::lua_inlet(const Value &val) {
     // TODO: proper error reporting
     return 0;
   }
-  Object *in = child("in");
-  if (in) {
-    Object *inlet = in->child(val[0].str().c_str());
-    if (inlet != NULL && (inlet->name() != val[0].str() || inlet->type_id() != val[1][0].type_id())) {
-      // TODO: inlet rename = keep connections
-      // TODO: inlet type change = reset connections
-    } else if (inlet == NULL) {
+  ObjectHandle in;
+  if (get_child("in", &in)) {
+    ObjectHandle inlet;
+    if (in->get_child(val[0].str().c_str(), &inlet)) {
+      if (inlet->name() != val[0].str() || inlet->type_id() != val[1][0].type_id()) {
+        // TODO: inlet rename = keep connections
+        // TODO: inlet type change = reset connections
+      } else {
+        // TODO: update units/range/...
+      }
+    } else {
       in->adopt(new LuaInlet(this, val[0].str().c_str(), val[1]));
       // TODO: create method...
-    } else {
-      // TODO: update units/range/...
     }
   } else {
     fprintf(stderr, "%s: Could not find inlet folder 'in'\n", name_.c_str());
@@ -168,19 +170,22 @@ int LuaScript::lua_build_outlet(const Value &val) {
     lua_pushstring(lua_, std::string("Cannot build outlet from (").append(val.lazy_json()).append(").").c_str());
     return 1;
   }
-  Object *out = child("out");
-  if (out) {
-    Object *outlet = out->child(val[0].str().c_str());
-    if (outlet == NULL) {
+  ObjectHandle out;
+  if (get_child("out", &out)) {
+    ObjectHandle outlet;
+    if (out->get_child(val[0].str().c_str(), &outlet)) {
+      if (outlet->name() != val[0].str() || outlet->type_id() != val[1][0].type_id()) {
+        // TODO: outlet rename = keep connections
+        // TODO: outlet type change = reset connections
+      } else {
+        // TODO: update units/range/...
+      }
+    } else {
       // new outlet
       outlet = out->adopt(new Outlet(this, val[0].str().c_str(), val[1]));
-    } else if (outlet->name() != val[0].str() || outlet->type_id() != val[1][0].type_id()) {  
-      // TODO: outlet rename = keep connections
-      // TODO: outlet type change = reset connections
-    } else {
-      // TODO: update units/range/...
     }
-    lua_pushlightuserdata(lua_, (void*)outlet);
+    // TODO: retain ?
+    lua_pushlightuserdata(lua_, (void*)outlet.ptr());
     return 1;
   } else {
     fprintf(stderr, "%s: Could not find outlet folder 'out'\n", name_.c_str());
@@ -193,7 +198,7 @@ int LuaScript::lua_build_outlet(const Value &val) {
 const Value LuaScript::stack_to_value(lua_State *L, int start_index) {
   int top = lua_gettop(L);
   Value res, tmp;
-  
+
   for (int i = start_index; i <= top; ++i) {
     if (value_from_lua(L, i, &tmp)) {
       res.push_back(tmp);
@@ -207,17 +212,17 @@ const Value LuaScript::stack_to_value(lua_State *L, int start_index) {
 
 bool LuaScript::value_from_lua(lua_State *L, int index, Value *res) {
   int top = lua_gettop(L);
-  
+
   if (index < 0) {
     index = top + index + 1; // -1 == top
   }
-  
+
   if (index > top) {
     // nothing
     return false;
   }
-  
-  
+
+
   /* LUA_TNIL, LUA_TNUMBER, LUA_TBOOLEAN, LUA_TSTRING, LUA_TTABLE, LUA_TFUNCTION, LUA_TUSERDATA, LUA_TTHREAD, and LUA_TLIGHTUSERDATA.
   */
   switch ( lua_type(L, index) ) {
@@ -245,7 +250,7 @@ bool LuaScript::value_from_lua(lua_State *L, int index, Value *res) {
       // midi_message_from_lua_table(&pMsg, index);
       // res->set(&pMsg);
       res->set_nil();
-    } else {  
+    } else {
       lua_pop(L,1); // type
       // table
       res->set_empty();
@@ -264,11 +269,11 @@ bool LuaScript::value_from_lua(lua_State *L, int index, Value *res) {
 bool LuaScript::list_from_lua(lua_State *L, int index, Value *val) {
   int size = lua_objlen(L, index);
   Value tmp;
-  
+
   for(int i = 1; i <= size; ++i) {
-    
+
     lua_rawgeti(L, index, i); // no meta table passing
-    
+
     if (!value_from_lua(L, -1, &tmp)) {
       // TODO: unsupported format. BAD
       val->push_back(gNilValue);
@@ -277,7 +282,7 @@ bool LuaScript::list_from_lua(lua_State *L, int index, Value *val) {
     }
     lua_pop(L, 1);
   }
-  
+
   return true;
 }
 
@@ -309,7 +314,7 @@ bool LuaScript::lua_pushvalue(lua_State *L, const Value &val) {
       // TODO ??
       /* continue */
     case EMPTY_VALUE:
-      /* we consider that if you set a value with empty it means you want Nil. 
+      /* we consider that if you set a value with empty it means you want Nil.
        * This is very useful for return values. */
       /* continue */
     case NIL_VALUE:
@@ -317,14 +322,14 @@ bool LuaScript::lua_pushvalue(lua_State *L, const Value &val) {
     default:
       lua_pushnil(L);
   }
-  
+
   return true;
 }
 
 
 bool LuaScript::lua_pushlist(lua_State *L, const Value &val) {
   lua_createtable(L, val.size(), 0); // top
-  
+
   for (size_t i = 0; i < val.size(); ++i) {
     lua_pushnumber(L, i + 1);
     if (!lua_pushvalue(L, val[i])) {

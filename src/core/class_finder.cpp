@@ -38,24 +38,22 @@ const Value ClassFinder::trigger (const Value &val)
   return gNilValue; // TODO: 'lib' directory listing ?
 }
 
-Object *ClassFinder::build_child(const std::string &class_name, const Value &type, Value *error) {
-  Object * obj;
+bool ClassFinder::build_child(const std::string &class_name, const Value &type, Value *error, ObjectHandle *object) {
   std::cout << "Trying to load " << objects_path_ << "/" << class_name << "\n";
   // try to load dynamic lib
   std::string path = objects_path_;
   path.append("/").append(class_name).append(".rko");
   if (load(path.c_str(), "init")) {
-    obj = child(class_name);
-    if ( obj != NULL ) {
+    if (get_child(class_name, object)) {
       // Found object (everything went fine) !
-      return obj;
+      return true;
     } else {
       error->set(INTERNAL_SERVER_ERROR, std::string("'").append(path).append("' should declare '").append(class_name).append("'."));
-      return NULL;
+      return false;
     }
   } else {
     error->set(INTERNAL_SERVER_ERROR, std::string("Could not load '").append(path).append("'."));
-    return NULL;
+    return false;
   }
 }
 

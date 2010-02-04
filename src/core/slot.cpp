@@ -41,7 +41,7 @@ Slot::~Slot() {
 }
 
 
-bool Slot::connect(Slot *slot) {  
+bool Slot::connect(Slot *slot) {
   if (slot == NULL) return false;
   // outlet --> inlet
   if (add_connection(slot)) {
@@ -56,7 +56,7 @@ void Slot::disconnect(Slot *slot) {
   remove_connection(slot);
   slot->remove_connection(this);
 }
-    
+
 
 /** Sort slots by rightmost node and rightmost position in the same node. */
 bool Slot::operator>= (const Slot &slot) const {
@@ -78,7 +78,7 @@ bool Slot::add_connection(Slot *slot) {
       (slot->kind_of(Inlet)  && slot->can_receive(type()[0]))) {
     // same type signature or inlet receiving any type
     // OrderedList makes sure the link is not created again if it already exists.
-    connections_.push(slot); 
+    connections_.push(slot);
     return true;
   } else {
     return false;
@@ -92,33 +92,39 @@ void Slot::remove_connection(Slot * slot) {
 const Value Slot::change_link(unsigned char operation, const Value &val) {
   if (val.is_string()) {
     // update a link (create/destroy)
-    
-    Object * target = root_->object_at(val.str());
-    if (!target) return ErrorValue(NOT_FOUND_ERROR, val.str());
-    
+
+    ObjectHandle target;
+    Slot *target_slot;
+    if (!root_->get_object_at(val.str(), &target)) return ErrorValue(NOT_FOUND_ERROR, val.str());
+
     if (!target->kind_of(Slot)) {
-      target = target->child("in");
-      if (target) target = target->first_child(); // target/out/... 
-      if (!target) {
+      ObjectHandle in;
+      if (target->get_child("in", &in)) {
+        target = NULL;
+        // target/in/...
+        if (!in->first_child(&target)) {
+          return ErrorValue(NOT_FOUND_ERROR, val.str()).append(": slot not found");
+        }
+      } else {
         return ErrorValue(NOT_FOUND_ERROR, val.str()).append(": slot not found");
       }
     }
-    
+
     if (kind_of(Outlet)) {
       // other should be an Inlet
-      target = (Slot*)TYPE_CAST(Inlet, target);
+      target_slot = (Slot*)target.type_cast<Inlet>();
     } else {
       // other should be an Outlet
-      target = (Slot*)TYPE_CAST(Outlet,target);
+      target_slot = (Slot*)target.type_cast<Outlet>();
     }
-    
-    if (!target) {
+
+    if (!target_slot) {
       return ErrorValue(BAD_REQUEST_ERROR, "Could not update link with ").append(val.to_json()).append(": incompatible).");
     }
-    
+
     if (operation == 'c') {
       // create link
-      if (connect((Slot*)target)) {
+      if (connect(target_slot)) {
         //std::cout << "LINKED: " << url() << " with " << val << std::endl;
         return Value(url()).push_back("=>").push_back(target->url());
       } else {
@@ -126,7 +132,7 @@ const Value Slot::change_link(unsigned char operation, const Value &val) {
       }
     } else {
       // disconnect
-      disconnect((Slot*)target);
+      disconnect(target_slot);
       return Value(url()).push_back("||").push_back(target->url());
     }
   } else {

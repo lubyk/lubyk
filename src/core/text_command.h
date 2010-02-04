@@ -113,9 +113,9 @@ protected:
   /** Constructor, set default values. */
   void initialize();
 
-  virtual Object* build_remote_object(const Url &url, Value* error) {
+  virtual bool build_remote_object(const Url &url, Value *error, ObjectHandle *object) {
     error->set(BAD_REQUEST_ERROR, "TextCommand cannot create references to remote objects.");
-    return NULL;
+    return false;
   }
 
   /** Code executed in a separate thread. Runs until deleted or quit. */

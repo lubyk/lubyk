@@ -65,21 +65,27 @@ public:
   /** This trigger implements "/class". It returns the list of objects in objects_path_. */
   virtual const Value trigger (const Value &val);
 
-  virtual Object *build_child(const std::string &class_name, const Value &type, Value *error);
+  virtual bool build_child(const std::string &class_name, const Value &type, Value *error, ObjectHandle *object);
 
   const Value lib_path(const Value &val) {
     if (val.is_string()) objects_path_ = val.str();
     return Value(objects_path_);
   }
 
-  /** Declare a new class. This template is responsible for generating the "new" method. */
+  /** Declare a new class. This template is responsible for generating the "new" method.
+   * FIXME: use ObjectHandle instead of class pointer.
+   */
   template<class T>
   Class * declare(const char *name, const char *info, const char *options)
   {
-    Class * klass;
+    Class *klass;
+    ObjectHandle class_object;
 
-    if (find_class(name))
-      delete klass; // remove existing class with same name.
+    if (find_class(name, &class_object) && (klass = class_object.type_cast<Class>()) ) {
+      // remove existing class with same name.
+      klass->release();
+      class_object = NULL;
+    }
 
     klass = adopt(new Class(name, NoIO(info)));
 
@@ -93,13 +99,13 @@ public:
   }
 
   /** Get a Class object from it's name ("Metro"). */
-  Class * find_class (const char *name) {
-    return TYPE_CAST(Class, child(name));
+  bool find_class(const char *name, ObjectHandle *object) {
+    return get_child(name, object);
   }
 
   /** Get a Class object from it's std::string name ("Metro"). */
-  Class * find_class (const std::string &name) {
-    return TYPE_CAST(Class, child(name));
+  bool find_class(const std::string &name, ObjectHandle *object) {
+    return get_child(name, object);
   }
 
 private:
