@@ -90,8 +90,8 @@
   if (need_resize_) {
     NSRect sceneBounds;
 
-    // FIXME: what does this do ?
-    [ [ self openGLContext ] update ];
+    // We need to call this method whenever the size or location changes
+    [[self openGLContext] update];
     sceneBounds = [self bounds];
     gl_window_->resized(sceneBounds.size.width, sceneBounds.size.height);
     need_resize_ = false;
