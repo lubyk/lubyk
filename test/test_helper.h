@@ -38,7 +38,7 @@
 #include <sys/timeb.h> // ftime
 #include <ostream>
 
-#define TEST_LIB_PATH "../lib"
+#define TEST_LIB_PATH "lib"
 #define TEST_FIXTURES_PATH "../test/fixtures"
 
 void microsleep(size_t microseconds) {

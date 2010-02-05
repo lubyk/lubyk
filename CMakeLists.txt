@@ -42,8 +42,8 @@ if(UNIX)
     add_definitions(-DLUA_USE_MACOSX)
     add_definitions(-D__MACOSX_CORE__)
     # CoreFoundation needed by Midi and cannot be added in dylib
-    set(PLAT_LINK "-framework Accelerate -framework CoreFoundation -lreadline -framework Cocoa -lobjc") # -lobjc ===> planet_gui.mm
-    set(PLAT_OBJ_FLAGS "${PLAT_LINK} -dynamic -bundle")
+    set(PLAT_LINK "-flat_namespace -lreadline -framework Accelerate -framework CoreFoundation -framework Cocoa -lobjc") # -framework Cocoa -lobjc ===> planet_gui.mm
+    set(PLAT_OBJ_FLAGS "-flat_namespace -undefined suppress -dynamic -bundle")
     set(CMAKE_CXX_FLAGS "-mmacosx-version-min=10.4 -g -Wall")
     if (RELEASE)
       set(CMAKE_OSX_ARCHITECTURES "ppc;i386;x86_64" CACHE STRING "Build architectures for OSX" FORCE)
@@ -121,14 +121,15 @@ foreach (RAGEL_SRC ${RAGEL_SOURCES})
   set (RUBYK_SOURCES ${RUBYK_SOURCES} ${RUBYK_SOURCE_DIR}/src/core/${RAGEL_SRC_NAME}.cpp)
 endforeach (RAGEL_SRC)
 
-# FIXME: Should be static
-add_library (rubyk_core STATIC ${RUBYK_SOURCES} ${RUBYK_SOURCE_DIR}/lib/oscit/build/liboscit.a)
-add_dependencies (rubyk_core ${RUBYK_SOURCE_DIR}/lib/oscit/build/liboscit.a)
-target_link_libraries (rubyk_core mealua ${RUBYK_SOURCE_DIR}/lib/oscit/build/liboscit.a ${PLAT_LINK})
-#target_link_libraries (rubyk_core ${RUBYK_SOURCE_DIR}/lib/lua/liblua.a ${RUBYK_SOURCE_DIR}/lib/oscit/build/liboscit.a ${PLAT_LINK})
+#add_library (rubyk_core ${RUBYK_SOURCES} ${RUBYK_SOURCE_DIR}/lib/oscit/build/liboscit.a)
+#add_dependencies (rubyk_core ${RUBYK_SOURCE_DIR}/lib/oscit/build/liboscit.a)
+#add_dependencies (rubyk_core mealua)
+#target_link_libraries (rubyk_core mealua ${RUBYK_SOURCE_DIR}/lib/oscit/build/liboscit.a)
 
-add_executable(rubyk ${RUBYK_SOURCE_DIR}/src/main.cpp)
-target_link_libraries (rubyk rubyk_core)
+add_executable(rubyk ${RUBYK_SOURCES} ${RUBYK_SOURCE_DIR}/src/main.cpp)
+target_link_libraries (rubyk mealua ${RUBYK_SOURCE_DIR}/lib/oscit/build/liboscit.a ${PLAT_LINK})
+add_dependencies (rubyk ${RUBYK_SOURCE_DIR}/lib/oscit/build/liboscit.a)
+add_dependencies (rubyk mealua)
 
 # ==============================================================================
 #
@@ -141,7 +142,7 @@ add_custom_target(objects)
 macro (add_rko_object RKO_NAME)
   add_library (${RKO_NAME} MODULE ${ARGN}) # ARGN = list of arguments passed after RKO_NAME
   # FIXME: remove rubyk_core
-  target_link_libraries (${RKO_NAME} rubyk_core)
+  #target_link_libraries (${RKO_NAME} rubyk_core) # remove rubyk_core ?
   set_target_properties (${RKO_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${RUBYK_SOURCE_DIR}/build/lib
     LINK_FLAGS ${PLAT_OBJ_FLAGS}
@@ -186,8 +187,11 @@ add_custom_command (PRE_BUILD
   DEPENDS ${RUBYK_TEST_SOURCES} ${OSCIT_TEST_MOCKS}
 )
 
-add_executable (test_runner test_runner.cpp)
-target_link_libraries (test_runner rubyk_core)
+add_executable (test_runner ${RUBYK_SOURCES} test_runner.cpp)
+target_link_libraries (test_runner mealua ${RUBYK_SOURCE_DIR}/lib/oscit/build/liboscit.a ${PLAT_LINK})
+add_dependencies (test_runner ${RUBYK_SOURCE_DIR}/lib/oscit/build/liboscit.a)
+add_dependencies (test_runner mealua)
+
 add_test (oscit_test test_runner)
 
 # this is to enable verbose output during testing
