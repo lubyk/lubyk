@@ -44,11 +44,11 @@ plot_thread gGLWindowStartThread;
 void * gGLWindowNode;
 bool   gQuitGl;
 
-// Worker
+// ======================================== Worker
 pthread_key_t Worker::sThisKey     = NULL;
 //FIX pthread_key_t Node::sGLThreadKey = NULL;
 
-// Object
+// ======================================== Object
 #include "oscit/globals.cpp"
 
 #ifdef _TESTING_
@@ -56,11 +56,11 @@ size_t Data::sIdCounter = 0;
 bool   Data::sShowId = true;
 #endif
 
-// Values
+// ======================================== Values
 Value gNilValue;        // globals declared in values.h
 Bang  gBangValue(true); // globals declared in values.h
 
-// StringValue
+// ======================================== StringValue
 const  std::string String::sNoString("");
 
 #endif // _GLOBALS_CPP_

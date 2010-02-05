@@ -2,32 +2,71 @@
 
 #import <Cocoa/Cocoa.h>
 
-// bool Planet::s_need_gui_ = false;
-// Semaphore Planet::s_need_gui_semaphore_;
-// Semaphore Planet::s_start_gui_semaphore_;
+// ======================================== Planet
+bool Planet::s_need_gui_ = false;
+Semaphore Planet::s_need_gui_semaphore_;
+Semaphore Planet::s_start_gui_semaphore_;
+
+
+@interface DummyThread : NSThread {
+  bool done_;
+}
+- (id)init;
+- (void)main;
+- (bool)done;
+@end
+
+@implementation DummyThread
+- (id)init {
+  if ( (self = [super init]) ) {
+    done_ = false;
+  }
+  return self;
+}
+
+- (bool)done {
+  return done_;
+}
+
+- (void)main {
+  done_ = true;
+}
+@end
+
 
 void Planet::wait_for_gui() {
   s_need_gui_ = false;
-  printf("wait_for_gui\n");
   s_need_gui_semaphore_.acquire();
-  printf("wait_for_gui done.\n");
+  // wait until we need a GUI or we quit
+
   if (s_need_gui_) {
-    printf("needs gui\n");
+    // Make sure Cocoa runs in multi-threaded mode
+    if (![NSThread isMultiThreaded]) {
+      DummyThread *dummy = [[DummyThread alloc] init];
+      [dummy start];
+      while (![dummy done]) // spin wait
+        ;
+      [dummy release];
+      assert([NSThread isMultiThreaded]);
+    }
+
     // what does sharedApplication do ?
     [NSApplication sharedApplication];
-    // let gui_ready return
+
     gui_started_ = true;
+    // let gui_ready return
     s_start_gui_semaphore_.release();
-    printf("starting\n");
     [NSApp run];
   }
-    printf("gui done\n");
   join();
 }
 
 void Planet::stop_gui() {
   if (gui_started_) {
+    // can we stop without such a kill all ?
     [NSApp terminate:NULL];
+  } else {
+    s_need_gui_semaphore_.release();
   }
 }
 

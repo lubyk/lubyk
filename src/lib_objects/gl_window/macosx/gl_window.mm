@@ -17,7 +17,7 @@
   GLWindow *gl_window_;
 }
 - (id)initWithFrame:(NSRect)frame glWindow:(GLWindow*)gl_window;
-- (void)run;
+- (void)set_timer;
 - (void)timerFired:(id)sender;
 - (void)draw_triangle:(bool)should_draw;
 @end
@@ -39,8 +39,7 @@
   draw_triangle_ = should_draw;
 }
 
--(void)run {
-  printf("run\n");
+-(void)set_timer {
   // very small interval (1ms). Maximal frame rate = vertical refresh rate.
   render_timer_ = [[NSTimer timerWithTimeInterval:0.001
     target:self
@@ -52,8 +51,6 @@
     forMode:NSDefaultRunLoopMode];
   [[NSRunLoop currentRunLoop] addTimer:render_timer_
     forMode:NSEventTrackingRunLoopMode]; //Ensure timer fires during resize
-
-  [[NSRunLoop currentRunLoop] run];
 }
 
 // Timer callback method
@@ -110,39 +107,58 @@
 
 class GLWindow::Implementation {
 public:
-  Implementation(GLWindow *master, int x, int y, int width, int height) {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    view_ = [[OpenGLView alloc] initWithFrame:NSMakeRect(0, 0, width, height) glWindow:master];
+  Implementation(GLWindow *master, int x, int y, int width, int height) : should_run_(true) {
+    if (Planet::gui_ready()) {
+      NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+      view_ = [[OpenGLView alloc] initWithFrame:NSMakeRect(0, 0, width, height) glWindow:master];
 
-    int style = NSClosableWindowMask | NSResizableWindowMask | NSTitledWindowMask | NSMiniaturizableWindowMask;
+      int style = NSClosableWindowMask | NSResizableWindowMask | NSTitledWindowMask | NSMiniaturizableWindowMask;
 
-    window_ = [[NSWindow alloc] initWithContentRect:NSMakeRect(x, y, width, height)
-      styleMask:style
-      backing:NSBackingStoreBuffered
-      defer:NO];
+      window_ = [[NSWindow alloc] initWithContentRect:NSMakeRect(x, y, width, height)
+        styleMask:style
+        backing:NSBackingStoreBuffered
+        defer:NO];
 
-    [view_ setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-    [[window_ contentView] addSubview:view_];
-    [window_ makeKeyAndOrderFront:window_];
-    gl_thread_.start_thread<Implementation, &Implementation::run>(this, NULL);
-    ok_ = true;
-    [pool release];
+      [view_ setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+      [[window_ contentView] addSubview:view_];
+      [window_ makeKeyAndOrderFront:window_];
+      gl_thread_.start_thread<Implementation, &Implementation::run>(this, NULL);
+      ok_ = true;
+      [pool drain];
+    } else {
+      ok_ = false;
+    }
   }
 
   ~Implementation() {
+    should_run_ = false;
+    gl_thread_.kill();
+    printf("killed\n");
+    gl_thread_.join();
+    printf("joined\n");
     [view_ release];
     [window_ release];
   }
 
   void run(Thread *runner) {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     runner->thread_ready();
-    [view_ run];
+    [view_ set_timer];
+
+    NSRunLoop *run_loop = [NSRunLoop currentRunLoop];
+    NSDate *date = [[NSDate alloc] initWithTimeIntervalSinceNow:1];
+
+    while (should_run_ && [run_loop runMode:NSDefaultRunLoopMode beforeDate:date]) { // distantFuture
+      [date release];
+      date = [[NSDate alloc] initWithTimeIntervalSinceNow:1];
+    }
+    [pool drain];
   }
 
   void set_title(const char *title) {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     [window_ setTitle:[NSString stringWithUTF8String:title]];
-    [pool release];
+    [pool drain];
   }
 
   bool ok() {
@@ -151,6 +167,7 @@ public:
 
 private:
   Thread gl_thread_;
+  bool should_run_;
   bool ok_;
   NSWindow *window_;
   OpenGLView *view_;
@@ -158,9 +175,8 @@ private:
 
 GLWindow::GLWindow() : impl_(NULL) {}
 
-bool GLWindow::open_window(Planet *planet, int x, int y, int width, int height) {
+bool GLWindow::open_window(int x, int y, int width, int height) {
   if (!impl_) {
-    if (!planet->gui_ready()) return false;
     impl_ = new Implementation(this, x, y, width, height);
   }
   return impl_->ok();

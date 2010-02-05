@@ -130,7 +130,6 @@ const Value Planet::remove_pending_link(const Value &val) {
 }
 
 const Value Planet::inspect(const Value &val) {
-  std::cout << "## inspect " << val << "\n";
   if (!val.is_string()) return Value(BAD_REQUEST_ERROR, "Bad arguments:'inspect' should be called with an url.");
   Value res;
   ObjectHandle object;

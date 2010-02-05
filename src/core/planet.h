@@ -128,8 +128,10 @@ class Planet : public Root
   /** Tell worker to stop.
    */
   const Value quit(const Value &val) {
-    worker_.quit();
-    s_need_gui_semaphore_.release();
+    stop_gui();
+    worker_.kill();
+    // We do not 'clear' here to avoid shooting in our own foot. Killing worker
+    // ensures planet joins out in main loop and is normally deleted.
     return gNilValue;
   }
 
@@ -138,7 +140,7 @@ class Planet : public Root
 
   /** Should be called by objects before the create windows.
    */
-  bool gui_ready();
+  static bool gui_ready();
  private:
 
   /** Properly quit application in case we started a GUI event loop to
@@ -175,15 +177,15 @@ class Planet : public Root
   /** Semaphore to lock main thread until a sub-thread 'quits' or needs
    * to initialize GUI event loop.
    */
-  Semaphore s_need_gui_semaphore_;
+  static Semaphore s_need_gui_semaphore_;
 
   /** Semaphore to lock sub-thread until a main thread has started the event loop.
    */
-  Semaphore s_start_gui_semaphore_;
+  static Semaphore s_start_gui_semaphore_;
 
   /** Flag to initialize GUI event loop.
    */
-  bool s_need_gui_;
+  static bool s_need_gui_;
 
   /** Flag set to true if this instance was used to start the
    * gui event loop.

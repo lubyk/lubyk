@@ -29,12 +29,20 @@
 
 #include "rubyk.h"
 
-class ValueNode : public Node
+class NumberNode : public Node
 {
 public:
+  NumberNode() {
+    printf("[%p] NumberNode\n", this);
+  }
+
+  virtual ~NumberNode() {
+    printf("[%p] ~NumberNode\n", this);
+  }
 
   // [1] set/get value, send value
   const Value value(const Value &val) {
+    printf("[%p] NumberNode::value\n", this);
     if (!val.is_nil()) {
       value_ = val;
     }
@@ -43,7 +51,7 @@ public:
   }
 
   virtual void inspect(Value *hash) const {
-    hash->set("value", value_);
+    hash->set("number", value_);
   }
 
 private:
@@ -51,7 +59,7 @@ private:
 };
 
 extern "C" void init(Planet &planet) {
-  Class * c = planet.classes()->declare<ValueNode>("Value", "Stores a value which can be sent again through Bang!.", "value: [initial value]");
-  METHOD(ValueNode, value, AnyIO("Set/get current value."))
-  OUTLET(ValueNode, value, AnyIO("Send the current value out."))
+  CLASS_NAMED(NumberNode, "Number", "Stores a number which can be sent again through Bang!.", "value: [initial value]");
+  METHOD(NumberNode, value, RealIO("none", "Set/get current number."))
+  OUTLET(NumberNode, value, RealIO("none", "Send the current number out."))
 }

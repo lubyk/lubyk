@@ -29,22 +29,29 @@
 #include "rubyk.h"
 #include "gl_window.h"
 
-class GLWindowNode : public GLWindow, public Node {
+class GLWindowNode : public GLWindow {
 public:
   const Value start() {
-    Planet *planet = TYPE_CAST(Planet, root_);
-    if (planet) open_window(planet, 50, 50, 400, 200);
+    return open(gNilValue);
+  }
+
+  const Value close(const Value &val) {
+    close_window();
+    return gNilValue;
+  }
+
+  const Value open(const Value &val) {
+    open_window(50, 50, 400, 200);
     return gNilValue;
   }
 
   virtual void resized(int width, int height) {
-    printf("resize\n");
     // Reset current viewport
     glViewport( 0, 0, width, height );
     glMatrixMode( GL_PROJECTION );   // Select the projection matrix
     glLoadIdentity();                // and reset it
     // Calculate the aspect ratio of the view
-    gluPerspective( 45.0f, width / height,
+    gluPerspective( 45.0f, (float)width / height,
       0.1f, 100.0f );
     glMatrixMode( GL_MODELVIEW );    // Select the modelview matrix
     glLoadIdentity();                // and reset it
@@ -78,5 +85,7 @@ public:
 };
 
 extern "C" void init(Planet &planet) {
-  Class *c = planet.classes()->declare<GLWindowNode>("GLWindow", "OpenGL window", "no options yet");
+  CLASS_NAMED(GLWindowNode, "GLWindow", "OpenGL window", "no options yet")
+  METHOD(GLWindowNode, open,  BangIO("Open a window."))
+  METHOD(GLWindowNode, close, BangIO("Close opened window."))
 }

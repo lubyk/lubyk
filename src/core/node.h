@@ -44,7 +44,8 @@
 
 class Observer;
 
-/** Base class for all nodes in rubyk.
+/** Base class for all nodes in rubyk. You should *NEVER* create sub-classes of Node with
+ * multiple inheritance (cannot cast).
  *
  *  Initialization is done in the following order:
  *  1. create : you should not write constructors.

@@ -30,13 +30,14 @@
 #ifndef RUBYK_SRC_CORE_GL_WINDOW_H_
 #define RUBYK_SRC_CORE_GL_WINDOW_H_
 #include "oscit.h"
+#include "node.h"
 #include "opengl.h"
 
 class Planet;
 
 /** This is a wrapper facade around an OpenGL window.
  */
-class GLWindow {
+class GLWindow : public Node {
 public:
   GLWindow();
 
@@ -51,7 +52,7 @@ public:
   /** Open an OpenGL window. If the window is already open, this
    * method does a resize.
    */
-  bool open_window(Planet *planet, int x, int y, int width, int height);
+  bool open_window(int x, int y, int width, int height);
 
   /** This method should be implemented in sub-classes to do the actual
    * drawing.

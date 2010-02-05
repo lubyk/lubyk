@@ -99,7 +99,7 @@ public:
 
   /** Send a notification to all observers of this command. */
   virtual void notify_observers(const char *path, const Value &val) {
-    print_result(val);
+    if (!strcmp(path, "/.type")) print_result(val);
   }
 
   /** This method must be implemented in subclasses to actually send
