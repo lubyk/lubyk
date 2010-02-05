@@ -39,7 +39,6 @@ const Value ClassFinder::trigger (const Value &val)
 }
 
 bool ClassFinder::build_child(const std::string &class_name, const Value &type, Value *error, ObjectHandle *object) {
-  std::cout << "Trying to load " << objects_path_ << "/" << class_name << "\n";
   // try to load dynamic lib
   std::string path = objects_path_;
   path.append("/").append(class_name).append(".rko");

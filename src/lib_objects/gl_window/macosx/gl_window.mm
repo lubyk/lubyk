@@ -132,10 +132,7 @@ public:
 
   ~Implementation() {
     should_run_ = false;
-    gl_thread_.kill();
-    printf("killed\n");
     gl_thread_.join();
-    printf("joined\n");
     [view_ release];
     [window_ release];
   }
@@ -146,11 +143,11 @@ public:
     [view_ set_timer];
 
     NSRunLoop *run_loop = [NSRunLoop currentRunLoop];
-    NSDate *date = [[NSDate alloc] initWithTimeIntervalSinceNow:1];
+    NSDate *date = [[NSDate alloc] initWithTimeIntervalSinceNow:0.1];
 
-    while (should_run_ && [run_loop runMode:NSDefaultRunLoopMode beforeDate:date]) { // distantFuture
+    while (should_run_ && [run_loop runMode:NSDefaultRunLoopMode beforeDate:date]) {
       [date release];
-      date = [[NSDate alloc] initWithTimeIntervalSinceNow:1];
+      date = [[NSDate alloc] initWithTimeIntervalSinceNow:0.1];
     }
     [pool drain];
   }

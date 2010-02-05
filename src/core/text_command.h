@@ -51,8 +51,6 @@ public:
     initialize();
   }
 
-  virtual ~TextCommand() {}
-
   /** Clear the current command. */
   void clear();
 

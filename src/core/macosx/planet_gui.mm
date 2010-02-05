@@ -7,19 +7,27 @@ bool Planet::s_need_gui_ = false;
 Semaphore Planet::s_need_gui_semaphore_;
 Semaphore Planet::s_start_gui_semaphore_;
 
-
-@interface DummyThread : NSThread {
+@interface PlanetHelper : NSThread { // < NSApplicationDelegate >
   bool done_;
+  Planet *planet_;
 }
-- (id)init;
+- (id)initWithPlanet:(Planet*)planet;
+/* ================ NSThread ===== */
+/** This part is just used to put Cocoa into multi-threaded mode. */
 - (void)main;
 - (bool)done;
+/* ================ NSApplicationDelegate ===== */
+/** This part is used to properly quit when we had to install
+ * an event loop.
+ */
+- (void)applicationWillTerminate:(NSNotification *)aNotification;
 @end
 
-@implementation DummyThread
-- (id)init {
+@implementation PlanetHelper
+- (id)initWithPlanet:(Planet*)planet {
   if ( (self = [super init]) ) {
-    done_ = false;
+    done_   = false;
+    planet_ = planet;
   }
   return self;
 }
@@ -31,54 +39,78 @@ Semaphore Planet::s_start_gui_semaphore_;
 - (void)main {
   done_ = true;
 }
+
+- (void)applicationWillTerminate:(NSNotification *)aNotification {
+  printf("applicationWillTerminate [%p]\n", planet_);
+  planet_->quit();
+}
+
 @end
 
+static PlanetHelper *gAppHelper = NULL;
+
+const Value Planet::quit(const Value &val) {
+  if (gui_started_) {
+    [NSApp terminate:NULL];
+    // never reached
+  } else {
+    s_need_gui_semaphore_.release();
+    worker_.kill();
+    // clean exit
+  }
+  // We do not 'clear' here to avoid shooting in our own foot. Killing worker
+  // ensures planet joins out in main loop and is normally deleted.
+  return gNilValue;
+}
+
+// Called by NSApp on termination
+void Planet::quit() {
+  printf("raw quit\n");
+  worker_.kill();
+  // kill commands and destroy objects
+  clear();
+}
 
 void Planet::wait_for_gui() {
   s_need_gui_ = false;
   s_need_gui_semaphore_.acquire();
   // wait until we need a GUI or we quit
 
-  if (s_need_gui_) {
+  if (s_need_gui_ && !gAppHelper) {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    gAppHelper = [[PlanetHelper alloc] initWithPlanet:this];
+
     // Make sure Cocoa runs in multi-threaded mode
     if (![NSThread isMultiThreaded]) {
-      DummyThread *dummy = [[DummyThread alloc] init];
-      [dummy start];
-      while (![dummy done]) // spin wait
+      [gAppHelper start];
+      while (![gAppHelper done]) // spin wait
         ;
-      [dummy release];
       assert([NSThread isMultiThreaded]);
     }
 
-    // what does sharedApplication do ?
+    // Create the shared application
     [NSApplication sharedApplication];
+
+    // Register PlanetHelper as delegate
+    [NSApp setDelegate:gAppHelper];
 
     gui_started_ = true;
     // let gui_ready return
     s_start_gui_semaphore_.release();
+    [pool drain];
     [NSApp run];
+    // never reached
   }
   join();
 }
 
-void Planet::stop_gui() {
-  if (gui_started_) {
-    // can we stop without such a kill all ?
-    [NSApp terminate:NULL];
-  } else {
-    s_need_gui_semaphore_.release();
-  }
-}
 
 bool Planet::gui_ready() {
-  printf("gui ready\n");
   if (s_need_gui_) return true;
   s_need_gui_ = true;
   // let main thread initialize NSApplication
   s_need_gui_semaphore_.release();
-  printf("gui released\n");
   // wait until initialization is finished
   s_start_gui_semaphore_.acquire();
-  printf("gui out\n");
   return true;
 }

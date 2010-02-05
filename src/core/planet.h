@@ -102,13 +102,6 @@ class Planet : public Root
    */
   void wait_for_gui();
 
-  void quit() {
-    // TODO: should we 'stop_gui' first or last ?
-    stop_gui();
-    worker_.kill();
-    clear(); // kill commands and destroy objects
-  }
-
   bool loop() {
     return worker_.loop();
   }
@@ -127,13 +120,7 @@ class Planet : public Root
 
   /** Tell worker to stop.
    */
-  const Value quit(const Value &val) {
-    stop_gui();
-    worker_.kill();
-    // We do not 'clear' here to avoid shooting in our own foot. Killing worker
-    // ensures planet joins out in main loop and is normally deleted.
-    return gNilValue;
-  }
+  const Value quit(const Value &val);
 
   /** Calls 'inspect' on a node. */
   const Value inspect(const Value &val);
@@ -141,13 +128,12 @@ class Planet : public Root
   /** Should be called by objects before the create windows.
    */
   static bool gui_ready();
- private:
 
-  /** Properly quit application in case we started a GUI event loop to
-   * deal with windows.
+  /** @internal.
+   * Called by NSApp or other event loop on quit.
    */
-  void stop_gui();
-
+  virtual void quit();
+ private:
   /** Add a pending link. */
   const Value add_pending_link(const Value &val) {
     Value params;
