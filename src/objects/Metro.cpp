@@ -29,15 +29,12 @@
 
 #include "rubyk.h"
 
-class Metro : public Node
-{
+class Metro : public Node {
 public:
-  Metro() : tempo_(120), run_(false) {}
+  Metro() : timer_(this, 500), tempo_(120) {}
 
   const Value start() {
-    run_ = true;
-    bang(gNilValue); // start loop
-    return gNilValue;
+    return start_stop(Value(1));
   }
 
   // [1] restart metronome / set tempo
@@ -52,53 +49,47 @@ public:
     if (val.is_real()) {
       if (val.r == 0.0) {
         // stop
-        remove_my_events();
-        run_ = false;
+        timer_.stop();
       } else {
         // start
-        if (!run_) bang_me_in(ONE_MINUTE / tempo_);
-        run_ = true;
+        if (tempo_ > 0){
+          timer_.start(ONE_MINUTE / tempo_);
+        } else {
+          return ErrorValue(BAD_REQUEST_ERROR, "Cannot start metronome (invalid tempo)");
+        }
       }
     }
 
-    return Value(run_);
+    return val;
   }
 
   virtual void inspect(Value *hash) const {
     hash->set("tempo", tempo_);
-    hash->set("run", run_);
+    hash->set("run", timer_.running());
   }
 
   // internal use only (looped call)
-  void bang(const Value &val) {
-    if (run_) {
-      // TODO: optimize: reuse previous event (send it in Value& val as EventValue ?)
-      bang_me_in(ONE_MINUTE / tempo_);
-      send(gNilValue);
-    }
+  void bang() {
+    send(gNilValue);
   }
 
 private:
   void change_tempo(Real tempo) {
     if (tempo <= 0) {
-      run_ = false;
+      timer_.stop();
+      tempo_ = 0;
     } else if (tempo != tempo_) {
       // tempo changed
       tempo_ = tempo;
-      if ((ONE_MINUTE / tempo_) < (WORKER_SLEEP_MS + 1)) {
-        tempo_ = ONE_MINUTE / (WORKER_SLEEP_MS * 1.5);
-      }
-      remove_my_events();
-      if (run_) bang_me_in(ONE_MINUTE / tempo_);
+      timer_.set_interval(ONE_MINUTE / tempo_);
     }
   }
 
+  Timer<Metro, &Metro::bang> timer_;
   Real tempo_;
-  bool run_;
 };
 
 extern "C" void init(Planet &planet) {
-  std::cout << "Metro::init\n";
   CLASS( Metro, "Metronome that sends bangs at regular intervals.", "tempo: [initial tempo]")
   METHOD(Metro, tempo,RealIO("bpm", "Restart metronome | set tempo value."))
   METHOD(Metro, start_stop, RealIO("1,0", "Start/stop metronome."))
