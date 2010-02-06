@@ -39,6 +39,8 @@ using namespace oscit;
 
 // TODO move this in a types.h file ?
 #define CLASS_URL   "/class"
+#define CLASS_URL_LENGTH 6
+
 #define LIB_URL     "/class/lib"
 #define INSPECT_URL "/.inspect"
 #define RUBYK_URL   "/rubyk"

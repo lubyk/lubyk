@@ -41,6 +41,8 @@ class ClassFinder;
 
 #define DEFAULT_OBJECTS_LIB_PATH "/usr/local/lib/rubyk"
 #define RUBYK_DEFAULT_NAME "rubyk"
+#define PLANET_VERSION "0.5.0"
+#define PLANET_WELCOME "# Welcome to rubyk !\n# version: 0.5.0\n# \n"
 
 /** A planet is just a root with a worker. */
 class Planet : public Root
@@ -102,6 +104,8 @@ class Planet : public Root
    */
   void wait_for_gui();
 
+  /** Used for testing.
+   */
   bool loop() {
     return worker_.loop();
   }

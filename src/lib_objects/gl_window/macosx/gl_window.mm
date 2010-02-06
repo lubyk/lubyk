@@ -162,6 +162,10 @@ public:
     return ok_;
   }
 
+  void redraw() {
+    [view_ setNeedsDisplay:YES];
+  }
+
 private:
   Thread gl_thread_;
   bool should_run_;
@@ -184,7 +188,11 @@ void GLWindow::close_window() {
   impl_ = NULL;
 }
 
-
+void GLWindow::redraw() {
+  if (impl_) {
+    impl_->redraw();
+  }
+}
 
 
 

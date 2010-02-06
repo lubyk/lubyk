@@ -41,7 +41,6 @@ Semaphore Planet::s_start_gui_semaphore_;
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
-  printf("applicationWillTerminate [%p]\n", planet_);
   planet_->quit();
 }
 
@@ -65,7 +64,6 @@ const Value Planet::quit(const Value &val) {
 
 // Called by NSApp on termination
 void Planet::quit() {
-  printf("raw quit\n");
   worker_.kill();
   // kill commands and destroy objects
   clear();

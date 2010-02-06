@@ -56,7 +56,7 @@ void TextCommand::listen() {
   char buffer[1024];
   char *line = buffer; //  when not using readline, use 'buffer' for storage
 
-  if (!silent_) *output_ << "# Welcome to rubyk !\n# \n";
+  if (!silent_) *output_ << PLANET_WELCOME;
 
   clear();
 

@@ -104,8 +104,9 @@ public:
     // build methods from prototype
     klass->make_methods(node);
 
-
-    node->set_class_url(new_method->parent_->url());  // used by osc (using url instead of name because we might have class folders/subfolders some day).
+    // used by osc (using url instead of name because we might have class folders/subfolders some day).
+    // not very clear why we need this...
+    node->set_class_url(new_method->parent_->url());
 
     // make inlets
     klass->make_inlets(node);

@@ -79,11 +79,7 @@ class Node : public Object {
     return do_inspect();
   }
 
-  const Value do_inspect() const {
-    HashValue hash;
-    inspect(&hash);
-    return Value(std::string("<").append(class_url().substr(strlen(CLASS_URL)+1)).append(":").append(url()).append(" ").append(hash.lazy_json()).append(">"));
-  }
+  const Value do_inspect() const;
 
   virtual void inspect(Value *hash) const {}
 

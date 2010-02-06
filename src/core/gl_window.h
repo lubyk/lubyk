@@ -54,6 +54,10 @@ public:
    */
   bool open_window(int x, int y, int width, int height);
 
+  /** Forces a redraw of the scene.
+   */
+  void redraw();
+
   /** This method should be implemented in sub-classes to do the actual
    * drawing.
    */

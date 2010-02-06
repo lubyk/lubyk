@@ -93,7 +93,6 @@ void Worker::run() {
     nanosleep(&sleeper, NULL);
     printf("wake\n");
     // ======== do your job, worker
-    // FIXME: ScopedLock
     { ScopedLock lock(this);
       current_time_ = time_ref_.elapsed();
 
@@ -106,6 +105,22 @@ void Worker::run() {
     // ok, others can do things while we sleep
     }
   }
+}
+
+// Used for testing only
+bool Worker::loop() {
+  { ScopedLock lock(this);
+    current_time_ = time_ref_.elapsed();
+
+    // execute events that must occur on each loop (io operations)
+    trigger_loop_events();
+
+    // trigger events in the queue
+    pop_events();
+
+  // ok, others can do things while we sleep
+  }
+  return should_run_;
 }
 
 void Worker::restart(int sig) {

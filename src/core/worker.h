@@ -115,6 +115,11 @@ public:
    */
   void restart_queue();
 
+  /** @internal.
+   * Testing only: run a single loop.
+   */
+  bool loop();
+
  public:
   /** Current logical time in [ms] since reference.
    */

@@ -37,11 +37,11 @@ Node::~Node() {
   // we have to do this here before ~Node, because some events have to be triggered before the node dies (note off).
   remove_my_events();
   unloop_me();
-  
+
   for(std::vector<Outlet*>::iterator it = outlets_.begin(); it < outlets_.end(); it++) {
     delete *it;
   }
-  
+
   for(std::vector<Inlet*>::iterator it = inlets_.begin(); it < inlets_.end(); it++) {
     delete *it;
   }
@@ -51,4 +51,16 @@ void Node::sort_connections() {
   for(std::vector<Inlet*>::iterator it = inlets_.begin(); it < inlets_.end(); it++) {
     (*it)->sort_incoming_connections();
   }
+}
+
+const Value Node::do_inspect() const {
+  HashValue hash;
+  inspect(&hash);
+  std::string class_name;
+  if (class_url().length() > CLASS_URL_LENGTH + 1) {
+    class_name = class_url().substr(CLASS_URL_LENGTH + 1);
+  } else {
+    class_name = this->class_name();
+  }
+  return Value(std::string("<").append(class_name).append(":").append(url()).append(" ").append(hash.lazy_json()).append(">"));
 }

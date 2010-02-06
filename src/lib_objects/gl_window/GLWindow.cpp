@@ -30,6 +30,7 @@
 #include "gl_window.h"
 
 class GLWindowNode : public GLWindow {
+  Real red_;
 public:
   const Value start() {
     return open(gNilValue);
@@ -43,6 +44,14 @@ public:
   const Value open(const Value &val) {
     open_window(50, 50, 400, 200);
     return gNilValue;
+  }
+
+  const Value red(const Value &val) {
+    if (val.is_real()) {
+      red_ = val.r;
+      redraw();
+    }
+    return Value(red_);
   }
 
   virtual void resized(int width, int height) {
@@ -74,7 +83,7 @@ public:
 
     glTranslatef( 3.0f, 0.0f, 0.0f );    // Move right 3 units
 
-    glColor3f(0.2f,0.5f,0.0f);
+    glColor3f(red_,0.5f,0.0f);
     glBegin( GL_QUADS );                // Draw a quad
       glVertex3f( -1.0f,  1.0f, 0.0f );   // Top left
       glVertex3f(  1.0f,  1.0f, 0.0f );   // Top right
@@ -88,4 +97,5 @@ extern "C" void init(Planet &planet) {
   CLASS_NAMED(GLWindowNode, "GLWindow", "OpenGL window", "no options yet")
   METHOD(GLWindowNode, open,  BangIO("Open a window."))
   METHOD(GLWindowNode, close, BangIO("Close opened window."))
+  METHOD(GLWindowNode, red, RangeIO(0,1,"red", "Change triangle color."))
 }
