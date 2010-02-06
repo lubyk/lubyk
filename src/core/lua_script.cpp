@@ -81,7 +81,7 @@ LuaScript::~LuaScript() {
 const Value LuaScript::call_lua(const char *function_name, const Value &val) {
   int status;
   ScopedLock lock(mutex_);
-  // FIXME: will not work
+
   reload_script(worker_->current_time());
 
   if (!is_ok()) return Value(BAD_REQUEST_ERROR, "Script is broken.");

@@ -55,18 +55,14 @@ void Worker::free_looped_node(Node *node) {
 }
 
 void Worker::start_worker(Thread *thread) {
-
   signal(SIGUSR1, Worker::restart); // register a SIGTERM handler
-  printf("SIGUSR1 set\n");
   thread->thread_ready();
   high_priority();
   run();
 }
 
 void Worker::restart_queue() {
-  printf("restart_queue\n");
   ScopedLock lock(this);
-  printf("..restart_queue locked\n");
   send_signal(SIGUSR1); // SIGUSR1
 }
 
@@ -81,7 +77,6 @@ void Worker::run() {
     // ======== setup sleep duration
     if (events_queue_.get(&next_event)) {
       wait_duration = next_event->when_ - time_ref_.elapsed();
-      printf("event %li\n", wait_duration);
       sleeper.tv_sec  = wait_duration / 1000;
       sleeper.tv_nsec = (wait_duration % 1000) * 1000000; // 1'000'000
     } else {
@@ -89,9 +84,9 @@ void Worker::run() {
       sleeper.tv_sec  = 1000;
       sleeper.tv_nsec = 0;
     }
-    printf("sleep\n");
+
     nanosleep(&sleeper, NULL);
-    printf("wake\n");
+
     // ======== do your job, worker
     { ScopedLock lock(this);
       current_time_ = time_ref_.elapsed();

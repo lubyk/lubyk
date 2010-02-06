@@ -52,16 +52,14 @@ public:
     glMatrixMode( GL_PROJECTION );   // Select the projection matrix
     glLoadIdentity();                // and reset it
     // Calculate the aspect ratio of the view
-    gluPerspective( 45.0f, (float)width / height,
-      0.1f, 100.0f );
+    gluPerspective( 45.0f, (float)width / height, 0.1f, 100.0f );
+    //gluOrtho2D(0, width, 0, height);
     glMatrixMode( GL_MODELVIEW );    // Select the modelview matrix
-    glLoadIdentity();                // and reset it
   }
 
   void draw() {
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     glLoadIdentity();   // Reset the current modelview matrix
-
     send(gNilValue);
   }
 };
