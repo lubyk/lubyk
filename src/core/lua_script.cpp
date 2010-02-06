@@ -41,11 +41,12 @@ extern "C" {
 #define LUA_OUTLET_NAME   "Outlet"
 
 const Value LuaScript::lua_init() {
+  ScopedLock lock(mutex_);
   // Our own lua context.
   lua_ = lua_open();
 
-  // Load Lua main libraries
-  luaL_openlibs(lua_);
+  // Load lua libraries
+  open_lua_libs();
 
   // push 'this' into the global field '__this'
   lua_pushlightuserdata(lua_, (void*)this);
@@ -73,12 +74,13 @@ const Value LuaScript::lua_init() {
 }
 
 LuaScript::~LuaScript() {
+  ScopedLock lock(mutex_);
   lua_close(lua_);
 }
 
 const Value LuaScript::call_lua(const char *function_name, const Value &val) {
   int status;
-
+  ScopedLock lock(mutex_);
   // FIXME: will not work
   reload_script(worker_->current_time());
 
@@ -100,7 +102,6 @@ const Value LuaScript::call_lua(const char *function_name, const Value &val) {
 
   return stack_to_value(lua_);
 }
-
 
 const Value LuaScript::eval_script() {
   int status;
@@ -401,4 +402,20 @@ int LuaScript::lua_send(lua_State *L) {
     fprintf(stderr, "Incompatible parameter to send through '%s' (%s).\n", outlet->url().c_str(), param.to_json().c_str());
   }
   return 0;
+}
+
+void LuaScript::open_lua_lib(const char *name, lua_CFunction func)
+{
+  lua_pushcfunction(lua_, func);
+  lua_pushstring(lua_, name);
+  lua_call(lua_, 1, 0);
+}
+
+void LuaScript::open_lua_libs() {
+  luaL_openlibs(lua_);
+  open_lua_lib("", luaopen_base);
+  open_lua_lib(LUA_TABLIBNAME, luaopen_table);
+  open_lua_lib(LUA_IOLIBNAME, luaopen_io);
+  open_lua_lib(LUA_STRLIBNAME, luaopen_string);
+  open_lua_lib(LUA_MATHLIBNAME, luaopen_math);
 }

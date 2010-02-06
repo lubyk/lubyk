@@ -58,6 +58,9 @@ class Node : public Object {
   TYPED("Object.Node")
 
   Node() : Object("n", AnyIO("Node.")), worker_(NULL), looped_(false) {
+    // create a key to detect if we are running in an OpenGL thread
+    if (!Node::sOpenGLThreadKey) pthread_key_create(&Node::sOpenGLThreadKey, NULL);
+
     trigger_position_ = ++sIdCounter; // FIXME: atomic operation
   }
 
@@ -214,6 +217,18 @@ class Node : public Object {
     }
   }
 
+  /** Return true if the current thread runs in an OpenGL context.
+   */
+  inline bool is_opengl_thread() {
+    return pthread_getspecific(sOpenGLThreadKey) != NULL;
+  }
+
+  /** This method should be called whenever we open an OpenGL context.
+   */
+  static void set_is_opengl_thread() {
+    pthread_setspecific(sOpenGLThreadKey, (void*)true);
+  }
+
   /** Cast general Mutex context to Worker. */
   virtual void set_context(Mutex *context) {
     // FIXME: what do we do if context is NULL ?? (no more parent)
@@ -226,6 +241,10 @@ class Node : public Object {
       }
     }
   }
+  
+  /** Key to retrieve 'this' value from a running thread. 
+   */
+  static pthread_key_t sOpenGLThreadKey;
 
  protected:
   Worker * worker_;  /**< Worker that will give life to object. */

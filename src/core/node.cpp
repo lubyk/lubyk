@@ -32,6 +32,7 @@
 #include "outlet.h"
 
 size_t Node::sIdCounter(0);
+pthread_key_t Node::sOpenGLThreadKey = NULL;
 
 Node::~Node() {
   // we have to do this here before ~Node, because some events have to be triggered before the node dies (note off).

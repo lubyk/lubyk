@@ -46,14 +46,6 @@ public:
     return gNilValue;
   }
 
-  const Value red(const Value &val) {
-    if (val.is_real()) {
-      red_ = val.r;
-      redraw();
-    }
-    return Value(red_);
-  }
-
   virtual void resized(int width, int height) {
     // Reset current viewport
     glViewport( 0, 0, width, height );
@@ -66,36 +58,17 @@ public:
     glLoadIdentity();                // and reset it
   }
 
-  virtual void draw() {
-    // Clear the screen and depth buffer
+  void draw() {
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     glLoadIdentity();   // Reset the current modelview matrix
 
-    glTranslatef( -1.5f, 0.0f, -6.0f );   // Left 1.5 units, into screen 6.0
-
-    glColor3f(1.0f,1.0f,1.0f);
-    glBegin( GL_TRIANGLES );             // Draw a triangle
-      glVertex3f(  0.0f,  1.0f, 0.0f );    // Top
-      glVertex3f( -1.0f, -1.0f, 0.0f );    // Bottom left
-      glColor3f(0.5f,0.2f,0.0f);
-      glVertex3f(  1.0f, -1.0f, 0.0f );    // Bottom right
-    glEnd();                             // Done with the triangle
-
-    glTranslatef( 3.0f, 0.0f, 0.0f );    // Move right 3 units
-
-    glColor3f(red_,0.5f,0.0f);
-    glBegin( GL_QUADS );                // Draw a quad
-      glVertex3f( -1.0f,  1.0f, 0.0f );   // Top left
-      glVertex3f(  1.0f,  1.0f, 0.0f );   // Top right
-      glVertex3f(  1.0f, -1.0f, 0.0f );   // Bottom right
-      glVertex3f( -1.0f, -1.0f, 0.0f );   // Bottom left
-    glEnd();                            // Quad is complete
+    send(gNilValue);
   }
 };
 
 extern "C" void init(Planet &planet) {
   CLASS_NAMED(GLWindowNode, "GLWindow", "OpenGL window", "no options yet")
+  OUTLET(NoteOut, draw, NilIO("Bang to execute OpenGL."))
   METHOD(GLWindowNode, open,  BangIO("Open a window."))
   METHOD(GLWindowNode, close, BangIO("Close opened window."))
-  METHOD(GLWindowNode, red, RangeIO(0,1,"red", "Change triangle color."))
 }

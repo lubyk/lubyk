@@ -14,6 +14,7 @@
   NSTimer *render_timer_;
   bool draw_triangle_;
   bool need_resize_;
+  bool gl_thread_setup_;
   GLWindow *gl_window_;
 }
 - (id)initWithFrame:(NSRect)frame glWindow:(GLWindow*)gl_window;
@@ -26,6 +27,7 @@
 
 - (id)initWithFrame:(NSRect)frame glWindow:(GLWindow*)gl_window {
   gl_window_ = gl_window;
+  gl_thread_setup_ = false;
   return [self initWithFrame:frame];
 }
 
@@ -61,20 +63,19 @@
   [self setNeedsDisplay:YES];
 }
 
-/*
- * Initial OpenGL setup
+/** Initial OpenGL setup
  */
-- (BOOL) initGL
-{
-   glShadeModel( GL_SMOOTH );                // Enable smooth shading
-   glClearColor( 0.0f, 0.0f, 0.0f, 0.5f );   // Black background
-   glClearDepth( 1.0f );                     // Depth buffer setup
-   glEnable( GL_DEPTH_TEST );                // Enable depth testing
-   glDepthFunc( GL_LEQUAL );                 // Type of depth test to do
-   // Really nice perspective calculations
-   glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
 
-   return true;
+- (BOOL) initGL {
+  glShadeModel( GL_SMOOTH );                // Enable smooth shading
+  glClearColor( 0.0f, 0.0f, 0.0f, 0.5f );   // Black background
+  glClearDepth( 1.0f );                     // Depth buffer setup
+  glEnable( GL_DEPTH_TEST );                // Enable depth testing
+  glDepthFunc( GL_LEQUAL );                 // Type of depth test to do
+   // Really nice perspective calculations
+  glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
+
+  return true;
 }
 
 /*
@@ -88,6 +89,9 @@
  */
 - (void)drawRect:(NSRect)rect {
   if (need_resize_) {
+    // Declare this thread as being an OpenGL thread to allow OpenGL calls.
+    if (!gl_thread_setup_) Node::set_is_opengl_thread();
+
     NSRect sceneBounds;
 
     // We need to call this method whenever the size or location changes
@@ -140,6 +144,7 @@ public:
   void run(Thread *runner) {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     runner->thread_ready();
+
     [view_ set_timer];
 
     NSRunLoop *run_loop = [NSRunLoop currentRunLoop];
