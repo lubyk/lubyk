@@ -49,7 +49,7 @@ Planet <>--- Worker
 
 // is 2 [ms] too long ? Testing needed.
 // 0.01 = 10 [us] = 0.00001 [s] = 100'000 [Hz] = 100 [kHz]
-#define WORKER_SLEEP_MS 0.01
+#define WORKER_SLEEP_MS 200 //0.01
 #define ONE_SECOND 1000.0
 #define ONE_MINUTE (60.0*ONE_SECOND)
 
@@ -95,7 +95,8 @@ public:
 
   /** Remove all events related to a given node before the node dies. */
   void free_events_for(Node *node) {
-    Event * e;
+    Event *e;
+    ScopedLock lock(this);
     LinkedList<Event*> * it   = events_queue_.begin();
 
     // find element
@@ -109,29 +110,10 @@ public:
     }
   }
 
-  /** Run a single step, returns false when quit loop should stop (quit).
-   *  This method can be used if you want to handle the loop yourself.
+  /** Interrupt current sleep and force loop to run again.
+   * This must be called from within a scoped lock.
    */
-  inline bool loop() {
-    struct timespec sleeper;
-    sleeper.tv_sec  = 0;
-    sleeper.tv_nsec = WORKER_SLEEP_MS * 1000000; // 1'000'000
-
-    // FIXME: only if no loop events ?
-    // FIXME: set sleeper time depending on next events ? what about commands that insert new events ?
-    nanosleep(&sleeper, NULL);
-    lock();
-      current_time_ = time_ref_.elapsed();
-
-      // execute events that must occur on each loop (io operations)
-      trigger_loop_events();
-
-      // trigger events in the queue
-      pop_events();
-    unlock(); // ok, others can do things while we sleep
-
-    return should_run_;
-  }
+  void restart_queue();
 
  public:
   /** Current logical time in [ms] since reference.
@@ -141,8 +123,17 @@ public:
  private:
   void init();
 
-  /** Main loop. The call to do_run will hang until quit. */
+  /** Setup thread priority and start main loop.
+   */
   void start_worker(Thread *thread);
+
+  /** Main loop.
+   */
+  void run();
+
+  /** Signal handler to restart loop on event registration.
+   */
+  static void restart(int sig);
 
   /** Realtime related stuff. */
   /** Method executed when an Event is registering too fast.

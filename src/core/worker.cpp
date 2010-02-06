@@ -43,7 +43,7 @@ void Worker::miss_event(const Event *event) {
                   (event->when_ - current_time_));
 }
 
-void Worker::free_looped_node(Node *node) {  
+void Worker::free_looped_node(Node *node) {
   std::deque<Node*>::iterator it;
   std::deque<Node*>::iterator end = looped_nodes_.end();
   for(it = looped_nodes_.begin(); it < end; it++) {
@@ -55,10 +55,64 @@ void Worker::free_looped_node(Node *node) {
 }
 
 void Worker::start_worker(Thread *thread) {
+
+  signal(SIGUSR1, Worker::restart); // register a SIGTERM handler
+  printf("SIGUSR1 set\n");
   thread->thread_ready();
   high_priority();
-  while (loop())
-    ;
+  run();
+}
+
+void Worker::restart_queue() {
+  printf("restart_queue\n");
+  ScopedLock lock(this);
+  printf("..restart_queue locked\n");
+  send_signal(SIGUSR1); // SIGUSR1
+}
+
+void Worker::run() {
+  Event *next_event;
+  time_t wait_duration;
+  struct timespec sleeper;
+  while (should_run_) {
+    // FIXME: only if no loop events ?
+    // FIXME: set sleeper time depending on next events ? what about commands that insert new events ?
+
+    // ======== setup sleep duration
+    if (events_queue_.get(&next_event)) {
+      wait_duration = next_event->when_ - time_ref_.elapsed();
+      printf("event %li\n", wait_duration);
+      sleeper.tv_sec  = wait_duration / 1000;
+      sleeper.tv_nsec = (wait_duration % 1000) * 1000000; // 1'000'000
+    } else {
+      // sleep forever
+      sleeper.tv_sec  = 1000;
+      sleeper.tv_nsec = 0;
+    }
+    printf("sleep\n");
+    nanosleep(&sleeper, NULL);
+    printf("wake\n");
+    // ======== do your job, worker
+    // FIXME: ScopedLock
+    { ScopedLock lock(this);
+      current_time_ = time_ref_.elapsed();
+
+      // execute events that must occur on each loop (io operations)
+      trigger_loop_events();
+
+      // trigger events in the queue
+      pop_events();
+
+    // ok, others can do things while we sleep
+    }
+  }
+}
+
+void Worker::restart(int sig) {
+  printf("restart\n");
+  signal(SIGUSR1, Worker::restart); // register a SIGTERM handler
+  //((Worker*)thread_this())->run();
+  return;
 }
 
 void Worker::pop_events() {
