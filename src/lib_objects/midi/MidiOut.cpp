@@ -1,6 +1,12 @@
 #include "rubyk.h"
 #include "midi/RtMidi.h"
 
+/** This class lets you create virtual ports (where possible) or connect
+ * to midi receivers and send them midi data.
+ * FIXME: rewrite this properly for thread safety with our own queue ?
+ * We could avoid the 'restart_queue' if our event is after the next event. Maybe
+ * we could do: restart_queue(time_t event_at) // or integrate this in register...
+ */
 class MidiOut : public Node {
  public:
   MidiOut() : port_id_(-1), midi_out_(NULL) {
@@ -12,13 +18,13 @@ class MidiOut : public Node {
       error_.set(UNKNOWN_ERROR, error.getMessageString());
     }
   }
-  
+
   virtual ~MidiOut() {
     if (midi_out_) {
       delete midi_out_;
     }
   }
-  
+
   const Value init () {
     if (error_.is_error()) {
       return error_;
@@ -28,23 +34,24 @@ class MidiOut : public Node {
       return gNilValue;
     }
   }
-  
+
   // [1] Send midi data out
   void midi(const Value &val) {
-    MidiMessage * msg;
-    
+    MidiMessage *msg;
+
     if (!is_ok() || !val.is_midi()) return;
-    
+
     msg = val.midi_message_;
-    
+
     if (msg->wait() > 0) {
-      bang_me_in(worker_->current_time_ + msg->wait(), val);
+      bang_me_in(msg->wait(), val);
+      worker_->restart_queue();
     } else {
       // send now
       bang(val);
     }
   }
-  
+
   // [2] Get/set midi out port
   const Value port(const Value &val) {
     if (val.is_real()) {
@@ -54,7 +61,7 @@ class MidiOut : public Node {
       // 1. find port
       size_t port_count = midi_out_->getPortCount();
       std::string name;
-      
+
       for (size_t i = 0; i < port_count; ++i) {
         try {
           name = midi_out_->getPortName(i);
@@ -69,37 +76,40 @@ class MidiOut : public Node {
     }
     return port_id_ == -1 ? Value(name_) : Value(port_id_);
   }
-  
+
   /** internal use to send NoteOff or delayed NoteOn.
    */
   virtual void bang(const Value &val) {
     const MidiMessage *msg = val.midi_message_;
-    midi_out_->sendMessage( &(msg->data()) );
+    { ScopedLock lock(mutex_);
+      midi_out_->sendMessage( &(msg->data()) );
+    }
     if (msg->type() == NoteOn && msg->length() > 0) {
       Value out(msg); // copy
       out.midi_message_->note_on_to_off();
       bang_me_in(msg->length(), out, true);
+      worker_->restart_queue();
     }
   }
-  
+
   // void clear() {
   //   remove_my_events();
   // }
-  // 
+  //
   // // print a list of possible outputs
   // static void list(std::ostream * pOutput, const Value &p)
   // {
   //   std::vector<std::string> ports;
   //   if (!output_list(pOutput, ports)) return;
   //   size_t nPorts = ports.size();
-  //   
+  //
   //   *pOutput << "Midi out ports (" << nPorts << "):" << std::endl;
-  // 
+  //
   //   for (size_t i=0; i<nPorts; i++ ) {
   //     *pOutput << "  " << i << ": " << ports[i] << std::endl;
   //   }
   // }
-  
+
   virtual void inspect(Value *hash) const {
     if (is_ok() && port_id_ >= 0) {
       std::string name;
@@ -120,7 +130,7 @@ private:
     if (midi_out_ == NULL) return error_;
     midi_out_->closePort();
     set_is_ok(false);
-    
+
     if (port == -1) {
       // create a virtual port
       try {
@@ -140,13 +150,13 @@ private:
     set_is_ok(true);
     return Value(port_id_);
   }
-  
+
   // static bool output_list(std::ostream * pOutput, std::vector<std::string>& ports)
   // {
   //   RtMidiOut *midiout = 0;
   //   unsigned int i,nPorts;
   //   std::string portName;
-  // 
+  //
   //   try {
   //     midiout = new RtMidiOut();
   //   }
@@ -154,11 +164,11 @@ private:
   //     *pOutput << error.getMessageString() << std::endl;
   //     return false;
   //   }
-  // 
+  //
   //   ports.clear();
-  //   
+  //
   //   nPorts = midiout->getPortCount();
-  //   
+  //
   //   for ( i=0; i<nPorts; i++ ) {
   //     try {
   //       portName = midiout->getPortName(i);
@@ -170,25 +180,27 @@ private:
   //   }
   //   return true;
   // }
-  
+
   /** Midi port id to which the element is connected.
    *  If the value is -1 this means it has opened its own virtual port.
    */
   int port_id_;
-  
+
   /** Pointer to our RtMidiOut instance (MidiOut is just a wrapper around
    *  RtMidiOut).
    */
   RtMidiOut * midi_out_;
-  
+
   /** ErrorValue to store the error message that can occur during
    *  object construction.
    */
   Value error_;
+
+  Mutex mutex_;
 };
 
 extern "C" void init(Planet &planet) {
-  CLASS (MidiOut, "Port to send midi values out. If no port is provided, tries to open a virtual port.", 
+  CLASS (MidiOut, "Port to send midi values out. If no port is provided, tries to open a virtual port.",
                   "port: [port number/name]");
   // using ADD_METHOD so that only the method is added without inlet (first method = port, first inlet = midi)
   ADD_METHOD(MidiOut, "port", port, AnyIO("Port number or string.")); // TODO: this should be a SelectIO...

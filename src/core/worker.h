@@ -75,7 +75,8 @@ public:
 
   /** Add an event to the event queue. The server is responsible for deleting the event. */
   void register_event(Event *event) {
-    if (event->when_ < current_time_ + WORKER_SLEEP_MS) {
+    if (event->when_ < current_time_) {
+      // FIXME: we should find other ways to detect an flood...
       miss_event(event);
     } else if (should_run_ || event->forced_) {
       events_queue_.push(event); // do not accept new events while we are trying to quit.

@@ -186,19 +186,23 @@ class Node : public Object {
     return outlet->can_receive(val) ? outlet : NULL;
   }
 
-  /** Remove all events concerning this node for the events queue. */
+  /** Remove all events concerning this node for the events queue.
+   * FIXME: temporary fix by using current_time(). But we should use some logical time.
+   */
   inline void remove_my_events() {
     if (worker_) worker_->free_events_for(this);
   }
 
   /** Ask to receive a bang in the given interval in [ms]. */
   inline void bang_me_in(time_t interval) {
-    worker_->register_event(new BangEvent(this, worker_->current_time_ + interval));
+    worker_->register_event(new BangEvent(this, worker_->current_time() + interval));
   }
 
-  /** Ask to receive a bang with the given parameter in the given interval in [ms]. */
+  /** Ask to receive a bang with the given parameter in the given interval in [ms].
+   * FIXME: temporary fix by using current_time(). But we should use some logical time.
+   */
   inline void bang_me_in(time_t interval, const Value &parameter, bool forced = false) {
-    worker_->register_event(new BangEvent(this, worker_->current_time_ + interval, parameter, forced));
+    worker_->register_event(new BangEvent(this, worker_->current_time() + interval, parameter, forced));
   }
 
   /** Bang me on every loop. */
@@ -241,8 +245,8 @@ class Node : public Object {
       }
     }
   }
-  
-  /** Key to retrieve 'this' value from a running thread. 
+
+  /** Key to retrieve 'this' value from a running thread.
    */
   static pthread_key_t sOpenGLThreadKey;
 
