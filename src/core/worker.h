@@ -121,8 +121,14 @@ public:
   bool loop();
 
  public:
-  /** Current logical time in [ms] since reference.
+  /** Current time in [ms] since reference.
    */
+  time_t current_time() {
+    return time_ref_.elapsed();
+  }
+
+ //private:
+  // FIXME: remove ?
   time_t current_time_;
 
  private:

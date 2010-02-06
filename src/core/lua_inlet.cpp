@@ -30,10 +30,17 @@
 #include "lua_inlet.h"
 #include "lua_script.h"
 
+// TODO: This looks quite slow...
 
-LuaInlet::LuaInlet(LuaScript *node, const char *name, const Value &type) :
-    Inlet(static_cast<Node*>(node), name, &LuaInlet::receive_method, type) {}
+LuaInlet::LuaInlet(LuaScript *node, const char *name, const Value &type)
+    : Inlet(node, name, &LuaInlet::receive_method, type),
+      lua_script_(node) {}
 
+// static
 void LuaInlet::receive_method(Inlet *inlet, const Value &val) {
   ((LuaScript*)inlet->node())->call_lua(inlet->name().c_str(), val);
+}
+
+const Value LuaInlet::trigger(const Value &val) {
+  return lua_script_->call_lua(name().c_str(), val);
 }

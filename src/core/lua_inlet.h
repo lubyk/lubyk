@@ -37,7 +37,11 @@ class LuaInlet : public Inlet {
 public:
   LuaInlet(LuaScript *node, const char *name, const Value &type);
 
+  virtual const Value trigger(const Value &val);
+
   static void receive_method(Inlet *inlet, const Value &val);
+private:
+  LuaScript *lua_script_;
 };
 
 #endif // RUBYK_SRC_CORE_LUA_INLET_H_

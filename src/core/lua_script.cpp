@@ -79,22 +79,23 @@ LuaScript::~LuaScript() {
 const Value LuaScript::call_lua(const char *function_name, const Value &val) {
   int status;
 
-  reload_script(worker_->current_time_);
+  // FIXME: will not work
+  reload_script(worker_->current_time());
 
   if (!is_ok()) return Value(BAD_REQUEST_ERROR, "Script is broken.");
 
-  lua_pushnumber(lua_, worker_->current_time_);
+  lua_pushnumber(lua_, worker_->current_time());
   lua_setglobal(lua_, "current_time");
 
   lua_getglobal(lua_, function_name); /* function to be called */
   if (!lua_pushvalue(lua_, val)) {
-    return Value(BAD_REQUEST_ERROR, std::string("cannot call '").append(function_name).append("' with argument ").append(val.lazy_json()).append(" (type not yet suported in Lua).\n"));
+    return Value(BAD_REQUEST_ERROR, "Could not call ").append(function_name).append("(").append(val.lazy_json()).append("): type not yet suported in Lua");
   }
 
   /* Run the function. */
   status = lua_pcall(lua_, 1, 1, 0); // 1 arg, 1 result, no error function
   if (status) {
-    return Value(BAD_REQUEST_ERROR, lua_tostring(lua_, -1));
+    return Value(BAD_REQUEST_ERROR, "Could not call ").append(function_name).append("(").append(val.lazy_json()).append("): ").append(lua_tostring(lua_, -1));
   }
 
   return stack_to_value(lua_);
@@ -105,7 +106,7 @@ const Value LuaScript::eval_script() {
   int status;
 
   /* set 'current_time' */
-  lua_pushnumber(lua_, worker_->current_time_);
+  lua_pushnumber(lua_, worker_->current_time());
   lua_setglobal(lua_, "current_time");
 
   // compile script
@@ -141,6 +142,7 @@ int LuaScript::lua_inlet(const Value &val) {
   if (!val.is_list() || !val[0].is_string() || val[1].size() < 2 ) {
     // invalid call to 'inlet'
     // TODO: proper error reporting
+    fprintf(stderr, "%s: Invalid inlet definition: %s\n", name_.c_str(), val.to_json().c_str());
     return 0;
   }
   ObjectHandle in;
