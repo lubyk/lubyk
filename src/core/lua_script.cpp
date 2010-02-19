@@ -82,7 +82,10 @@ const Value LuaScript::call_lua(const char *function_name, const Value &val) {
   int status;
   ScopedLock lock(mutex_);
 
-  reload_script(worker_->current_time());
+  Value res = reload_script(worker_->current_time());
+  if (res.is_error()) {
+    return res;
+  }
 
   if (!is_ok()) return Value(BAD_REQUEST_ERROR, "Script is broken.");
 
@@ -97,7 +100,9 @@ const Value LuaScript::call_lua(const char *function_name, const Value &val) {
   /* Run the function. */
   status = lua_pcall(lua_, 1, 1, 0); // 1 arg, 1 result, no error function
   if (status) {
-    return Value(BAD_REQUEST_ERROR, "Could not call ").append(function_name).append("(").append(val.lazy_json()).append("): ").append(lua_tostring(lua_, -1));
+    Value err = Value(BAD_REQUEST_ERROR, "Could not call ").append(function_name).append("(").append(val.lazy_json()).append("): ").append(lua_tostring(lua_, -1));
+    std::cerr << err << "\n";
+    return err;
   }
 
   return stack_to_value(lua_);
@@ -120,8 +125,9 @@ const Value LuaScript::eval_script() {
   status = lua_pcall(lua_, 0, 0, 0); // 0 arg, 1 result, no error function
   if (status) {
     // TODO: proper error reporting
-      return Value(BAD_REQUEST_ERROR, std::string(lua_tostring(lua_, -1)).append("."));
+    return Value(BAD_REQUEST_ERROR, std::string(lua_tostring(lua_, -1)).append("."));
   }
+
   // ok, we can receive and process values (again).
   return Value(script_);
 }

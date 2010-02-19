@@ -280,7 +280,7 @@ static int str2mask(const char *str)
       }
       else if(str[i] == '0')
          j++;
-         
+
    }
    return mask;
 }
@@ -2600,7 +2600,7 @@ static int gl_logic_op(lua_State *L)
    return 0;
 }
 
-/*Map (target, u1, u2, ustride, pointsArray) -> none
+/*Map (target, u1, u2, pointsArray) -> none
   Map (target, u1, u2, ustride, v1, v2, vstride, pointsArray) -> none*/
 static int gl_map(lua_State *L)
 {
@@ -2653,7 +2653,7 @@ static int gl_map(lua_State *L)
    if(lua_gettop(L) < 6)
    {
       if(!lua_istable(L, 4))
-         luaL_error(L, "incorrect argument to function 'gl.Map'");
+         luaL_error(L, "incorrect argument to function 'gl.Map' (argument 4 should be a list of points)");
 
       /* get argument */
       uorder = get_arrayd(L, 4, &points) / size;
@@ -2903,7 +2903,7 @@ static int gl_ortho(lua_State *L)
 static int gl_ortho2D(lua_State *L)
 {
    /* test arguments type */
-   if(!( lua_isnumber(L, 1) && lua_isnumber(L, 2) && 
+   if(!( lua_isnumber(L, 1) && lua_isnumber(L, 2) &&
          lua_isnumber(L, 3) && lua_isnumber(L, 4)))
       luaL_error(L, "incorrect string argument to function 'gl.Ortho2D'");
 
@@ -2961,7 +2961,7 @@ static int gl_pixel_store(lua_State *L)
 {
    /* get string parameters */
    GLenum e;
-   
+
    /* test argument */
    if(!lua_isstring(L, 1))
       luaL_error(L, "incorrect argument to function 'gl.PixelStore'");
@@ -2991,7 +2991,7 @@ static int gl_pixel_transfer(lua_State *L)
 {
    /* get string parameters */
    GLenum e;
-   
+
    /* test argument */
    if(!lua_isstring(L, 1))
       luaL_error(L, "incorrect argument to function 'gl.PixelTransfer'");
@@ -3966,7 +3966,7 @@ static int gl_perspective(lua_State *L)
    GLdouble aspect = (GLdouble)lua_tonumber(L, 2);
    GLdouble zNear  = (GLdouble)lua_tonumber(L, 3);
    GLdouble zFar   = (GLdouble)lua_tonumber(L, 4);
-   
+
    gluPerspective(fovy,aspect,zNear,zFar);
    /*
    GLdouble xmin, xmax, ymin, ymax;

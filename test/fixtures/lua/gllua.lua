@@ -4,9 +4,7 @@
 -- l = GLLua("../test/fixtures/lua/gllua.lua")
 -- w => l
 -- m = Metro(3000)
--- m => l/in/bang
--- I want
--- m => bang.l
+-- m => bang~l
 
 x = 200
 y = 200
@@ -33,26 +31,31 @@ function draw(sig)
     gl.Vertex(-1.0, 1.0,-1.0)
     gl.Vertex(-1.0, 1.0, 1.0)
     gl.Vertex( 1.0, 1.0, 1.0)
+
     gl.Color(0.8,0.5,0.0,0.9)
     gl.Vertex( 1.0,-1.0, 1.0)
     gl.Vertex(-1.0,-1.0, 1.0)
     gl.Vertex(-1.0,-1.0,-1.0)
     gl.Vertex( 1.0,-1.0,-1.0)
+
     gl.Color(0.8,0.0,0.0,0.9)
     gl.Vertex( 1.0, 1.0, 1.0)
     gl.Vertex(-1.0, 1.0, 1.0)
     gl.Vertex(-1.0,-1.0, 1.0)
     gl.Vertex( 1.0,-1.0, 1.0)
+
     gl.Color(0.8,0.8,0.0,0.9)
     gl.Vertex( 1.0,-1.0,-1.0)
     gl.Vertex(-1.0,-1.0,-1.0)
     gl.Vertex(-1.0, 1.0,-1.0)
     gl.Vertex( 1.0, 1.0,-1.0)
+
     gl.Color(0.0,0.0,0.8,0.9)
     gl.Vertex(-1.0, 1.0, 1.0)
     gl.Vertex(-1.0, 1.0,-1.0)
     gl.Vertex(-1.0,-1.0,-1.0)
     gl.Vertex(-1.0,-1.0, 1.0)
+
     gl.Color(0.8,0.0,0.8,0.9)
     gl.Vertex( 1.0, 1.0,-1.0)
     gl.Vertex( 1.0, 1.0, 1.0)

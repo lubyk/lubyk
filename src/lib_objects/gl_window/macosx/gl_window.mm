@@ -1,3 +1,32 @@
+/*
+  ==============================================================================
+
+   This file is part of the RUBYK project (http://rubyk.org)
+   Copyright (c) 2007-2009 by Gaspard Bucher - Buma (http://teti.ch).
+
+  ------------------------------------------------------------------------------
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+   THE SOFTWARE.
+
+  ==============================================================================
+*/
+
 #include "gl_window.h"
 
 #include <stdio.h>
@@ -17,7 +46,7 @@
   bool gl_thread_setup_;
   GLWindow *gl_window_;
 }
-- (id)initWithFrame:(NSRect)frame glWindow:(GLWindow*)gl_window;
+- (id)initWithFrame:(NSRect)frame pixelFormat:(NSOpenGLPixelFormat*)format  glWindow:(GLWindow*)gl_window;
 - (void)set_timer;
 - (void)timerFired:(id)sender;
 - (void)draw_triangle:(bool)should_draw;
@@ -25,10 +54,15 @@
 
 @implementation OpenGLView
 
-- (id)initWithFrame:(NSRect)frame glWindow:(GLWindow*)gl_window {
+- (id)initWithFrame:(NSRect)frame pixelFormat:(NSOpenGLPixelFormat*)format  glWindow:(GLWindow*)gl_window {
   gl_window_ = gl_window;
   gl_thread_setup_ = false;
-  return [self initWithFrame:frame];
+  if (format == NULL) {
+    // use default
+    return [self initWithFrame:frame];
+  } else {
+    return [self initWithFrame:frame pixelFormat:format];
+  }
 }
 
 // Synchronize buffer swaps with vertical refresh rate
@@ -72,7 +106,8 @@
   glClearDepth( 1.0f );                     // Depth buffer setup
   glEnable( GL_DEPTH_TEST );                // Enable depth testing
   glDepthFunc( GL_LEQUAL );                 // Type of depth test to do
-   // Really nice perspective calculations
+
+  // Really nice perspective calculations
   glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
 
   return true;
@@ -109,12 +144,53 @@
 
 /* ======================== open window thread ======================= */
 
+/*
+NSOpenGLPFAAllRenderers
+NSOpenGLPFADoubleBuffer
+NSOpenGLPFAStereo
+NSOpenGLPFAMinimumPolicy
+NSOpenGLPFAMaximumPolicy
+NSOpenGLPFAOffScreen
+NSOpenGLPFAFullScreen
+NSOpenGLPFASingleRenderer
+NSOpenGLPFANoRecovery
+NSOpenGLPFAAccelerated
+NSOpenGLPFAClosestPolicy
+NSOpenGLPFARobust
+NSOpenGLPFABackingStore
+NSOpenGLPFAWindow
+NSOpenGLPFAMultiScreen
+NSOpenGLPFACompliant
+NSOpenGLPFAPixelBuffer
+The integer constants must be followed by a value. These constants are:
+
+NSOpenGLPFAAuxBuffers
+NSOpenGLPFAColorSize
+NSOpenGLPFAAlphaSize
+NSOpenGLPFADepthSize
+NSOpenGLPFAStencilSize
+NSOpenGLPFAAccumSize
+NSOpenGLPFARendererID
+NSOpenGLPFAScreenMask
+*/
+
 class GLWindow::Implementation {
 public:
   Implementation(GLWindow *master, int x, int y, int width, int height) : should_run_(true) {
     if (Planet::gui_ready()) {
       NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-      view_ = [[OpenGLView alloc] initWithFrame:NSMakeRect(0, 0, width, height) glWindow:master];
+      NSOpenGLPixelFormatAttribute attrs[] =
+      {
+          // NSOpenGLPFADoubleBuffer,
+          NSOpenGLPFADepthSize, 32,
+          0
+      };
+      NSOpenGLPixelFormat *format = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs];
+      if (format == NULL) {
+        std::cerr << "Could not create pixel format (32bit depth)\n";
+      }
+
+      view_ = [[OpenGLView alloc] initWithFrame:NSMakeRect(0, 0, width, height) pixelFormat:format glWindow:master];
 
       int style = NSClosableWindowMask | NSResizableWindowMask | NSTitledWindowMask | NSMiniaturizableWindowMask;
 

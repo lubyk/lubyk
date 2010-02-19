@@ -38,7 +38,12 @@ LuaInlet::LuaInlet(LuaScript *node, const char *name, const Value &type)
 
 // static
 void LuaInlet::receive_method(Inlet *inlet, const Value &val) {
-  ((LuaScript*)inlet->node())->call_lua(inlet->name().c_str(), val);
+  Value res = ((LuaScript*)inlet->node())->call_lua(inlet->name().c_str(), val);
+  if (res.is_error()) {
+    // FIXME: we should create a .log (for observers) and an error
+    // notification thing
+    std::cerr << res << std::endl;
+  }
 }
 
 const Value LuaInlet::trigger(const Value &val) {

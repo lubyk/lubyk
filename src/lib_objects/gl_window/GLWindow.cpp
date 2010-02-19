@@ -52,7 +52,13 @@ public:
     glMatrixMode( GL_PROJECTION );   // Select the projection matrix
     glLoadIdentity();                // and reset it
     // Calculate the aspect ratio of the view
-    gluPerspective( 45.0f, (float)width / height, 0.1f, 100.0f );
+
+    gluPerspective(
+      45.0f,                  // Field of view angle
+      (float)width / height,  // Aspect ration
+      1.0f,                   // zNear
+      100.0f                  // zFar
+    );
     //gluOrtho2D(0, width, 0, height);
     glMatrixMode( GL_MODELVIEW );    // Select the modelview matrix
   }

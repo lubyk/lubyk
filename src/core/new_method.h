@@ -116,17 +116,14 @@ public:
 
     Value res = node->init();
 
-    // if init does not return gNilValue, the node goes into 'broken' mode.
-    node->set_is_ok(!res.is_error());
-    if (res.is_error()) return res;
-
-    if (!params.is_nil()) {
+    if (!res.is_error() && !params.is_nil()) {
       // set defaults by calling methods
       // TODO: deal with errors and return values
-      node->trigger(params);
+      res = node->trigger(params);
     }
 
-    res = node->start();
+    if (!res.is_error()) res = node->start();
+
     node->set_is_ok(!res.is_error());
     if (res.is_error()) return res;
 
