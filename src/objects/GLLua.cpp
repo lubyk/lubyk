@@ -28,10 +28,8 @@
 */
 
 #include "rubyk.h"
-#include "lua_script.h"
 
-#include "gllua/LuaGL.h"
-#include "gllua/lua_glut.h"
+#include "lua_opengl.h"
 
 class GLLua : public LuaScript {
 public:

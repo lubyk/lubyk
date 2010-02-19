@@ -32,8 +32,8 @@
 
 */
 
-#ifndef RUBYK_SRC_LIB_OBJECTS_GLLUA_LUA_GLUT_H_
-#define RUBYK_SRC_LIB_OBJECTS_GLLUA_LUA_GLUT_H_
+#ifndef RUBYK_LIB_LUA_OPENGL_LUA_GLUT_H_
+#define RUBYK_LIB_LUA_OPENGL_LUA_GLUT_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,18 +54,8 @@ extern "C" {
  #endif
 #endif
 
-#include <string.h>
-
-#ifdef __macosx__
-#include <GLUT/glut.h>
-#include <stdlib.h>
-#else
-#include <GL/gl.h>
-#include <malloc.h>
-#endif
-
-#include <lualib.h>
-#include <lauxlib.h>
+#include "lua/lualib.h"
+#include "lua/lauxlib.h"
 
 
 LUAGLUT_API int luaopen_glut(lua_State *L);
@@ -74,15 +64,4 @@ LUAGLUT_API int luaopen_glut(lua_State *L);
 }
 #endif
 
-typedef struct glut_str_value {
-  const char *str;
-  void  *value;
-} glut_str_value;
-
-static const glut_str_value glut_str[] = {
-   { "STROKE_ROMAN"        , GLUT_STROKE_ROMAN },
-   { "STROKE_MONO_ROMAN"   , GLUT_STROKE_MONO_ROMAN },
-   { 0, 0}
-};
-
-#endif // RUBYK_SRC_LIB_OBJECTS_GLLUA_LUA_GLUT_H_
+#endif // RUBYK_LIB_LUA_OPENGL_LUA_GLUT_H_

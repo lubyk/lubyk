@@ -32,6 +32,27 @@
 
 #include "lua_glut.h"
 
+#include <string.h>
+
+#ifdef __macosx__
+#include <GLUT/glut.h>
+#include <stdlib.h>
+#else
+#include <GL/gl.h>
+#include <malloc.h>
+#endif
+
+typedef struct glut_str_value {
+  const char *str;
+  void  *value;
+} glut_str_value;
+
+static const glut_str_value glut_str[] = {
+   { "STROKE_ROMAN"        , GLUT_STROKE_ROMAN },
+   { "STROKE_MONO_ROMAN"   , GLUT_STROKE_MONO_ROMAN },
+   { 0, 0}
+};
+
 #define ENUM_ERROR (void *)-2
 
 /** SolidCone (base, height, slices, stacks) -> none
@@ -305,7 +326,7 @@ static int glut_stroke_length(lua_State *L) {
   const char *p = lua_tostring(L, 2);
 
   /* call opengl function and push the return value on the stack */
-  lua_pushnumber(L, glutStrokeLengthf(e, p));
+  lua_pushnumber(L, glutStrokeLength(e, p));
 
   return 1;
 }

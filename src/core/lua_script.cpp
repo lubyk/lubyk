@@ -27,15 +27,10 @@
   ==============================================================================
 */
 
-extern "C" {
-// we compiled Lua as C code
-#include <lua.h>
-#include <lauxlib.h>
-#include <lualib.h>
-}
-
 #include "lua_script.h"
 #include "lua_inlet.h"
+
+#include "lua.h"
 
 #define RUBYK_THIS_IN_LUA "__this"
 #define LUA_OUTLET_NAME   "Outlet"

@@ -288,19 +288,6 @@ function draw_curve()
         gl.Vertex(dot.pos)
       end
     gl.End()
-
-
-      -- Cannot make 'Map' work, hand coding
-      -- gl.Map("MAP1_VERTEX_3", 0.0, 1.0, dots[i].ctrls)
-      -- gl.Enable("MAP1_VERTEX_3")
-      -- --gl.ShadeModel("FLAT")
-      --
-      -- gl.Color(1.0, 1.0, 1.0)
-      -- gl.Begin("LINE_STRIP")
-      --   for i = 0,30 do
-      --   gl.EvalCoord(i/30.0)
-      --   end
-      -- gl.End()
   else
     gl.Begin("LINE_STRIP")
       for i = 1,old_count do
@@ -370,8 +357,6 @@ function draw_ctrl_lines()
 end
 
 function resize(width, height)
-  print('resize')
-
   gl.Enable("POINT_SMOOTH")
   gl.Enable("LINE_SMOOTH")
   -- Select the projection matrix

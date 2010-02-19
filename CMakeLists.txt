@@ -42,7 +42,7 @@ if(UNIX)
     add_definitions(-DLUA_USE_MACOSX)
     add_definitions(-D__MACOSX_CORE__)
     # CoreFoundation needed by Midi and cannot be added in dylib
-    set(PLAT_LINK "-flat_namespace -lreadline -framework Accelerate -framework CoreFoundation -framework Cocoa -lobjc") # -framework Cocoa -lobjc ===> planet_gui.mm
+    set(PLAT_LINK "-flat_namespace -lreadline -framework Accelerate -framework CoreFoundation -framework OpenGL -framework GLUT -framework Cocoa -lobjc") # -framework Cocoa -lobjc ===> planet_gui.mm
     set(PLAT_OBJ_FLAGS "-flat_namespace -undefined suppress -dynamic -bundle")
     set(CMAKE_CXX_FLAGS "-mmacosx-version-min=10.4 -g -Wall")
     if (RELEASE)
@@ -94,7 +94,7 @@ add_custom_command ( PRE_BUILD
 #
 # ==============================================================================
 
-file (GLOB LUA_SOURCES lib/lua/*.c)
+file (GLOB LUA_SOURCES lib/lua/*.c lib/lua_*/*.c)
 add_library(mealua STATIC ${LUA_SOURCES})
 # ==============================================================================
 #
@@ -106,7 +106,7 @@ add_library(mealua STATIC ${LUA_SOURCES})
 file (GLOB RUBYK_SOURCES src/core/*.cpp src/core/${PLAT}/*)
 file (GLOB RUBYK_INCLUDES ${RUBYK_SOURCE_DIR}/src/core ${RUBYK_SOURCE_DIR}/src/lib_objects)
 
-include_directories (${RUBYK_INCLUDES} ${RUBYK_SOURCE_DIR}/lib/lua ${RUBYK_SOURCE_DIR}/lib/oscit/include ${RUBYK_SOURCE_DIR}/lib/oscit/oscpack)
+include_directories (${RUBYK_INCLUDES} ${RUBYK_SOURCE_DIR}/lib ${RUBYK_SOURCE_DIR}/lib/oscit/include ${RUBYK_SOURCE_DIR}/lib/oscit/oscpack)
 
 file (GLOB RAGEL_SOURCES src/core/*.rl)
 foreach (RAGEL_SRC ${RAGEL_SOURCES})
@@ -121,13 +121,8 @@ foreach (RAGEL_SRC ${RAGEL_SOURCES})
   set (RUBYK_SOURCES ${RUBYK_SOURCES} ${RUBYK_SOURCE_DIR}/src/core/${RAGEL_SRC_NAME}.cpp)
 endforeach (RAGEL_SRC)
 
-#add_library (rubyk_core ${RUBYK_SOURCES} ${RUBYK_SOURCE_DIR}/lib/oscit/build/liboscit.a)
-#add_dependencies (rubyk_core ${RUBYK_SOURCE_DIR}/lib/oscit/build/liboscit.a)
-#add_dependencies (rubyk_core mealua)
-#target_link_libraries (rubyk_core mealua ${RUBYK_SOURCE_DIR}/lib/oscit/build/liboscit.a)
-
 add_executable(rubyk ${RUBYK_SOURCES} ${RUBYK_SOURCE_DIR}/src/main.cpp)
-target_link_libraries (rubyk mealua ${RUBYK_SOURCE_DIR}/lib/oscit/build/liboscit.a ${PLAT_LINK})
+target_link_libraries (rubyk -all_load mealua ${RUBYK_SOURCE_DIR}/lib/oscit/build/liboscit.a ${PLAT_LINK})
 add_dependencies (rubyk ${RUBYK_SOURCE_DIR}/lib/oscit/build/liboscit.a)
 add_dependencies (rubyk mealua)
 

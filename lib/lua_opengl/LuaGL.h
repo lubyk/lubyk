@@ -54,8 +54,8 @@ extern "C" {
 #include <malloc.h>
 #endif
 
-#include <lualib.h>
-#include <lauxlib.h>
+#include "lua/lualib.h"
+#include "lua/lauxlib.h"
 
 
 LUAGL_API int luaopen_opengl (lua_State *L);
