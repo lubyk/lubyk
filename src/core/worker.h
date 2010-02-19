@@ -38,7 +38,7 @@ Root   <- Planet
 It contains a single Worker that is passed to subnodes as context
 Planet <>--- Worker
 */
-#include "ordered_list.h"
+#include "c_ordered_list.h"
 #include "event.h"
 
 #include "oscit/mutex.h"
@@ -75,11 +75,17 @@ public:
 
   /** Add an event to the event queue. The server is responsible for deleting the event. */
   void register_event(Event *event) {
-    if (event->when_ < current_time_) {
+    Event *top_event;
+    if (event->when_ < time_ref_.elapsed()) {
       // FIXME: we should find other ways to detect an flood...
       miss_event(event);
     } else if (should_run_ || event->forced_) {
-      events_queue_.push(event); // do not accept new events while we are trying to quit.
+      // do not accept new events while we are trying to quit.
+      events_queue_.push(event);
+      if (events_queue_.get(&top_event) && top_event == event) {
+        // our event is now on top of the list, we must interrupt sleep
+        reload_queue();
+      }
     }
   }
 
@@ -97,8 +103,8 @@ public:
   /** Remove all events related to a given node before the node dies. */
   void free_events_for(Node *node) {
     Event *e;
-    ScopedLock lock(this);
-    LinkedList<Event*> * it   = events_queue_.begin();
+    ScopedLock lock(events_queue_);
+    LinkedList<Event*> *it = events_queue_.begin();
 
     // find element
     while(it) {
@@ -110,11 +116,6 @@ public:
         it = it->next;
     }
   }
-
-  /** Interrupt current sleep and force loop to run again.
-   * This must be called from within a scoped lock.
-   */
-  void restart_queue();
 
   /** @internal.
    * Testing only: run a single loop.
@@ -143,9 +144,14 @@ public:
    */
   void run();
 
+  /** Interrupt current sleep and force loop to run again.
+   * This must be called from within a scoped lock.
+   */
+  void reload_queue();
+
   /** Signal handler to restart loop on event registration.
    */
-  static void restart(int sig);
+  static void reload(int sig);
 
   /** Realtime related stuff. */
   /** Method executed when an Event is registering too fast.
@@ -168,10 +174,21 @@ public:
    */
   TimeRef time_ref_;
 
-  /** Events ! */
-  OrderedList<Event*>     events_queue_;    /**< Ordered event list. */
-  std::deque<Node*>       looped_nodes_;    /**< List of methods to call on every loop. */
+  /** Ordered event list.
+   */
+  COrderedList<Event*>  events_queue_;
 
+  /** Flag to mark if we need to reload the queue.
+   */
+  bool sleeping_;
+
+  /** Only allow interrupts durring sleep.
+   */
+  Mutex sleep_lock_;
+
+  /** List of methods to call on every loop.
+   */
+  std::deque<Node*>       looped_nodes_;
 };
 
 #endif // _WORKER_H_

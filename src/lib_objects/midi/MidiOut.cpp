@@ -3,9 +3,6 @@
 
 /** This class lets you create virtual ports (where possible) or connect
  * to midi receivers and send them midi data.
- * FIXME: rewrite this properly for thread safety with our own queue ?
- * We could avoid the 'restart_queue' if our event is after the next event. Maybe
- * we could do: restart_queue(time_t event_at) // or integrate this in register...
  */
 class MidiOut : public Node {
  public:
@@ -45,7 +42,6 @@ class MidiOut : public Node {
 
     if (msg->wait() > 0) {
       bang_me_in(msg->wait(), val);
-      worker_->restart_queue();
     } else {
       // send now
       bang(val);
@@ -88,7 +84,6 @@ class MidiOut : public Node {
       Value out(msg); // copy
       out.midi_message_->note_on_to_off();
       bang_me_in(msg->length(), out, true);
-      worker_->restart_queue();
     }
   }
 

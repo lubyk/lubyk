@@ -55,56 +55,45 @@ void Worker::free_looped_node(Node *node) {
 }
 
 void Worker::start_worker(Thread *thread) {
-  signal(SIGUSR1, Worker::restart); // register a SIGTERM handler
+  signal(SIGUSR1, Worker::reload); // register a SIGTERM handler
+  thread->high_priority();
   thread->thread_ready();
-  high_priority();
   run();
 }
 
-void Worker::restart_queue() {
-  ScopedLock lock(this);
-  send_signal(SIGUSR1); // SIGUSR1
-}
-
-void Worker::run() {
-  Event *next_event;
-  time_t wait_duration;
-  struct timespec sleeper;
-  while (should_run_) {
-    // FIXME: only if no loop events ?
-    // FIXME: set sleeper time depending on next events ? what about commands that insert new events ?
-
-    // ======== setup sleep duration
-    if (events_queue_.get(&next_event)) {
-      wait_duration = next_event->when_ - time_ref_.elapsed();
-      sleeper.tv_sec  = wait_duration / 1000;
-      sleeper.tv_nsec = (wait_duration % 1000) * 1000000; // 1'000'000
-    } else {
-      // sleep forever
-      sleeper.tv_sec  = 1000;
-      sleeper.tv_nsec = 0;
-    }
-
-    nanosleep(&sleeper, NULL);
-
-    // ======== do your job, worker
-    { ScopedLock lock(this);
-      current_time_ = time_ref_.elapsed();
-
-      // execute events that must occur on each loop (io operations)
-      trigger_loop_events();
-
-      // trigger events in the queue
-      pop_events();
-
-    // ok, others can do things while we sleep
-    }
+void Worker::reload_queue() {
+  if (sleeping_) {
+    ScopedLock lock(sleep_lock_);
+    send_signal(SIGUSR1); // SIGUSR1
   }
 }
 
-// Used for testing only
-bool Worker::loop() {
-  { ScopedLock lock(this);
+void Worker::run() {
+  ScopedLock lock(sleep_lock_);
+  Event *next_event;
+  time_t wait_duration;
+  struct timespec sleeper;
+  sleeping_ = false;
+
+  while (should_run_) {
+    // ======== setup sleep duration
+    sleeping_ = true;
+      if (events_queue_.get(&next_event)) {
+        wait_duration = next_event->when_ - time_ref_.elapsed();
+        sleeper.tv_sec  = wait_duration / 1000;
+        sleeper.tv_nsec = (wait_duration % 1000) * 1000000; // 1'000'000
+      } else {
+        // sleep forever
+        sleeper.tv_sec  = 1000;
+        sleeper.tv_nsec = 0;
+      }
+    { ScopedUnlock unlock(sleep_lock_);
+      // this is the only place where we can be interrupted
+      nanosleep(&sleeper, NULL);
+    }
+    sleeping_ = false;
+
+    // ======== worker's job loop ====
     current_time_ = time_ref_.elapsed();
 
     // execute events that must occur on each loop (io operations)
@@ -112,38 +101,47 @@ bool Worker::loop() {
 
     // trigger events in the queue
     pop_events();
-
-  // ok, others can do things while we sleep
   }
+}
+
+// Used for testing only
+bool Worker::loop() {
+  current_time_ = time_ref_.elapsed();
+
+  // execute events that must occur on each loop (io operations)
+  trigger_loop_events();
+
+  // trigger events in the queue
+  pop_events();
   return should_run_;
 }
 
-void Worker::restart(int sig) {
-  printf("restart\n");
-  signal(SIGUSR1, Worker::restart); // register a SIGTERM handler
+void Worker::reload(int sig) {
+  signal(SIGUSR1, Worker::reload); // register a SIGTERM handler
   //((Worker*)thread_this())->run();
   return;
 }
 
 void Worker::pop_events() {
-  Event * e;
-  time_t realTime = current_time_;
-  while( events_queue_.get(&e) && realTime >= e->when_) {
+  Event *e;
+  time_t real_time = current_time_;
+  while( events_queue_.get(&e) && real_time >= e->when_) {
+    // FIXME: we have a possible race condition here
+    // could we extend COrderedList<Event*> with get_and_pop(real_time, &e) ?
     current_time_ = e->when_;
     e->trigger();
     delete e;
     events_queue_.pop();
   }
-  current_time_ = realTime;
+  current_time_ = real_time;
 }
 
 void Worker::pop_all_events() {
-  Event * e;
-  while( events_queue_.get(&e)) {
+  Event *e;
+  while( events_queue_.get_and_pop(&e)) {
     current_time_ = e->when_;
     if (e->forced_) e->trigger();
     delete e;
-    events_queue_.pop();
   }
 }
 

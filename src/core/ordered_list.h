@@ -27,9 +27,10 @@
   ==============================================================================
 */
 
-#ifndef _ORDERED_LIST_H_
-#define _ORDERED_LIST_H_
+#ifndef RUBYK_SRC_CORE_ORDERED_LIST_H_
+#define RUBYK_SRC_CORE_ORDERED_LIST_H_
 
+#include "oscit/non_copyable.h"
 #include <cstdlib>
 #include <cstdio>
 #include <vector>
@@ -45,21 +46,13 @@ struct LinkedList {
   * the smallest being on top of the list. It also ensures that only one version of an element is stored.
   */
 template <class T>
-class OrderedList
-{
+class OrderedList : private oscit::NonCopyable {
   public:
-    OrderedList()
-    {
+    OrderedList() {
       linked_list_ = new LinkedList<T>(NULL);
     }
 
-    OrderedList(const OrderedList& other)
-    {
-      printf("YOU SHOULD NOT USE REFERENCES WITH ORDEREDLIST\n");
-    }
-
-    ~OrderedList()
-    {
+    ~OrderedList() {
       LinkedList<T> * tmp;
       while( (tmp = linked_list_->next) ) {
         delete linked_list_;
@@ -67,14 +60,15 @@ class OrderedList
       }
     }
 
-    bool empty()
-    { return !linked_list_->next; }
+    bool empty() {
+      return !linked_list_->next;
+    }
 
-    T front()
-    { return  linked_list_->next->obj; }
+    T front() {
+      return  linked_list_->next->obj;
+    }
 
-    bool get(T* object)
-    {
+    bool get(T* object) {
       if ( empty() )
         return false;
       else {
@@ -151,7 +145,7 @@ class OrderedList
       delete old_head;
     }
 
-  private:
+  protected:
 
     void push_container(LinkedList<T> *container) {
       LinkedList<T> * iterator  = linked_list_;
@@ -249,8 +243,7 @@ class OrderedList<T*>
     return linked_list_;
     }
 
-    void pop()
-    {
+    void pop() {
       LinkedList<T*> * tmp;
       if (linked_list_->next) {
         tmp = linked_list_->next->next;
@@ -294,7 +287,7 @@ class OrderedList<T*>
       delete old_head;
     }
 
-  private:
+  protected:
 
     void push_container(LinkedList<T*> *container) {
       LinkedList<T*> * iterator  = linked_list_;
@@ -330,4 +323,4 @@ class OrderedList<T*>
     LinkedList<T*> * linked_list_;
 };
 
-#endif
+#endif // RUBYK_SRC_CORE_ORDERED_LIST_H_
