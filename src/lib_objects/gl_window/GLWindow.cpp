@@ -49,30 +49,19 @@ public:
   virtual void resized(int width, int height) {
     // Reset current viewport
     glViewport( 0, 0, width, height );
-    glMatrixMode( GL_PROJECTION );   // Select the projection matrix
-    glLoadIdentity();                // and reset it
-    // Calculate the aspect ratio of the view
-
-    gluPerspective(
-      45.0f,                  // Field of view angle
-      (float)width / height,  // Aspect ration
-      1.0f,                   // zNear
-      100.0f                  // zFar
-    );
-    //gluOrtho2D(0, width, 0, height);
-    glMatrixMode( GL_MODELVIEW );    // Select the modelview matrix
+    size_ = Value((Real)width).push_back((Real)height);
   }
 
   void draw() {
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-    glLoadIdentity();   // Reset the current modelview matrix
-    send(gNilValue);
+    send(size_);
   }
+private:
+  Value size_;
 };
 
 extern "C" void init(Planet &planet) {
   CLASS_NAMED(GLWindowNode, "GLWindow", "OpenGL window", "no options yet")
-  OUTLET(NoteOut, draw, NilIO("Bang to execute OpenGL."))
+  OUTLET(GLWindowNode, draw, Value(Json("[0,0]")).push_back("Sends width/height of view to execute OpenGL."))
   METHOD(GLWindowNode, open,  BangIO("Open a window."))
   METHOD(GLWindowNode, close, BangIO("Close opened window."))
 }

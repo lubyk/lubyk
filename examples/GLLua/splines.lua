@@ -21,18 +21,13 @@ resolution = 50
 rebuild = true
 old_count = old_count or 0
 
--- list of dots
-dots = dots or {}
--- ordered list of control points, ready for Map
-ctrl_points = ctrl_points or {}
-
-function make_dots(old_count)
+function make_dots(nb)
   math.randomseed( os.time() )
   local next = nil
   local j   = 1
   local dot = nil
   local dots = {}
-  for i = old_count,1,-1 do
+  for i = nb,1,-1 do
     dot = {
       next = next,
       pos  = {
@@ -66,8 +61,6 @@ function make_dots(old_count)
     dots[i] = dot
     next = dot
   end
-
-  make_ctrl_points(true)
   return dots
 end
 
@@ -118,11 +111,12 @@ function make_ctrl_points(rebuild_all)
   end
 end
 
-dots = dots or make_dots(old_count)
+dots = dots or {}
 
 if count ~= old_count then
   dots = make_dots(count)
   old_count = count
+  make_ctrl_points(true)
 end
 
 dim = {
@@ -139,7 +133,12 @@ x = x or 0
 y = y or 0
 z = z or 0
 
-function bang(sig)
+view = view or {
+  w = 0,
+  h = 0
+}
+
+function bang(val)
   for k,dot in pairs(dots) do
     move(dot.pos, dot.move)
     move(dot.ctrl, dot.cmove)
@@ -154,9 +153,10 @@ function bang(sig)
 end
 inlet('bang', NilIO('just bang me'))
 
-function draw(sig)
-  gl.Enable("POINT_SMOOTH")
-  gl.Enable("LINE_SMOOTH")
+function draw(val)
+  if view.width ~= val[1] or view.height ~= val[2] then
+    resize(val[1], val[2])
+  end
 
   if blend then
     gl.Enable("BLEND")
@@ -168,6 +168,19 @@ function draw(sig)
   gl.BlendFunc("SRC_ALPHA", "ONE_MINUS_SRC_ALPHA")
   gl.Disable("CULL_FACE")
 
+  --gl.Clear( "COLOR_BUFFER_BIT, DEPTH_BUFFER_BIT")
+
+  gl.MatrixMode("MODELVIEW")
+  gl.LoadIdentity()
+
+  gl.Color(0.0,0,0,0.03)
+  gl.Begin("QUADS")
+    gl.Vertex(-view.width/2, -view.height/2, -6.0)
+    gl.Vertex( view.width/2, -view.height/2, -6.0)
+    gl.Vertex( view.width/2,  view.height/2, -6.0)
+    gl.Vertex(-view.width/2,  view.height/2, -6.0)
+  gl.End()
+
   gl.Translate(0.0, 0.0, -6.0)
 
   gl.Rotate(x, 1.0, 0.0, 0.0)
@@ -175,7 +188,7 @@ function draw(sig)
   gl.Rotate(z, 0.0, 0.0, 1.0)
   gl.Color(0.5,0.5,0.0,0.3)
   gl.LineWidth(1.0)
-  glut.WireCube(2.6)
+  --glut.WireCube(2.6)
 
   --gl.Translate(-1.0, -1.2, 0.0)
   draw_curve()
@@ -190,7 +203,6 @@ function draw(sig)
   --gl.End()
 
   gl.Color(0.5,1.0,0.5)
-  --draw_rect(dimx.min, dimy.min, dimx.max, dimy.max)
 end
 
 function move(pos, mv)
@@ -198,7 +210,7 @@ function move(pos, mv)
     pos[i] = pos[i] + mv[i] * step
     if (pos[i] > dim[i].max) then
       mv[i] = -mv[i]
-    elseif (pos[i] < dimx.min) then
+    elseif (pos[i] < dim[i].min) then
       mv[i] = -mv[i]
     end
   end
@@ -355,4 +367,28 @@ function draw_ctrl_lines()
     end
   gl.End()
   gl.PopMatrix()
+end
+
+function resize(width, height)
+  print('resize')
+
+  gl.Enable("POINT_SMOOTH")
+  gl.Enable("LINE_SMOOTH")
+  -- Select the projection matrix
+  gl.MatrixMode("PROJECTION")
+  -- reset
+  gl.LoadIdentity()
+  -- Calculate the aspect ratio of the view
+  gl.Perspective(
+    45.0,             -- Field of view angle
+    width / height,   -- Aspect ration
+    1.0,              -- zNear
+    100.0             -- zFar
+  )
+  --gl.Ortho2D(0, width, 0, height)
+  -- Select the modelview matrix
+  gl.Clear( "COLOR_BUFFER_BIT, DEPTH_BUFFER_BIT")
+  view.width  = width
+  view.height = height
+
 end

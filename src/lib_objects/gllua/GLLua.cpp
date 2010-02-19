@@ -42,17 +42,7 @@ public:
       return;
     }
 
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-
     call_lua("draw", val);
-
-    glPopMatrix();
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
   }
 protected:
   /* open all standard libraries and openGL libraries (called by LuaScript on init) */
@@ -68,7 +58,7 @@ protected:
 extern "C" void init(Planet &planet) {
   CLASS (GLLua, "GLLua script.", "script: [script content] or file: [path to file]")
   // {1}
-  INLET (GLLua, draw, NilIO("receives bangs from an OpenGL thread"))
+  INLET (GLLua, draw, Value(Json("[0,0]")).push_back("Receives width/height from an OpenGL thread."))
 
   ADD_SUPER_METHOD(GLLua, Script, file, StringIO("path", "Set path to script content."))
   ADD_SUPER_METHOD(GLLua, Script, script, StringIO("lua code", "Script content."))
