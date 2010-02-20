@@ -1,5 +1,5 @@
 #include "rubyk.h"
-#include "midi/RtMidi.h"
+#include "MidiOut/RtMidi.h"
 
 /** This class lets you create virtual ports (where possible) or connect
  * to midi receivers and send them midi data.

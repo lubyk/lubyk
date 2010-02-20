@@ -168,7 +168,7 @@ function draw(val)
   gl.BlendFunc("SRC_ALPHA", "ONE_MINUS_SRC_ALPHA")
   gl.Disable("CULL_FACE")
 
-  --gl.Clear( "COLOR_BUFFER_BIT, DEPTH_BUFFER_BIT")
+  gl.Clear( "COLOR_BUFFER_BIT, DEPTH_BUFFER_BIT")
 
   gl.MatrixMode("MODELVIEW")
   gl.LoadIdentity()
@@ -181,14 +181,16 @@ function draw(val)
     gl.Vertex(-view.width/2,  view.height/2, -6.0)
   gl.End()
 
-  gl.Translate(0.0, 0.0, -6.0)
+  gl.Translate(0.0, 0.0, -4.0)
 
   gl.Rotate(x, 1.0, 0.0, 0.0)
   gl.Rotate(y, 0.0, 1.0, 0.0)
   gl.Rotate(z, 0.0, 0.0, 1.0)
   gl.Color(0.5,0.5,0.0,0.3)
   gl.LineWidth(1.0)
-  --glut.WireCube(2.6)
+  glut.WireCube(2.6)
+  gl.Color(0.5,0.5,0.0,0.1)
+  glut.SolidCube(2.6)
 
   --gl.Translate(-1.0, -1.2, 0.0)
   draw_curve()

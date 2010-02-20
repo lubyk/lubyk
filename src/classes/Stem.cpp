@@ -74,7 +74,7 @@ private:
  * basically an array of doubles with 0 meaning "no danger" and 1.0 "kill".
  * When the stems grow, they are also drawn on this grid so that we can avoid collisions.
  */
-static struct StemGrid {
+struct StemGrid {
 
   /** Grid width.
    */
@@ -87,7 +87,7 @@ static struct StemGrid {
   /** The actual grid.
    */
   double *grid_;
-}
+};
 
 class Stem : public LuaScript {
 public:

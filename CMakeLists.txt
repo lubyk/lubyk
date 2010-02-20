@@ -83,8 +83,8 @@ add_definitions(-D__${PLAT}__ -DUSE_READLINE)
 # ==============================================================================
 
 add_custom_command ( PRE_BUILD
-  OUTPUT  ${RUBYK_SOURCE_DIR}/lib/oscit/build/liboscit.a
-  COMMAND cd ${RUBYK_SOURCE_DIR}/lib/oscit && make oscit
+  OUTPUT  ${RUBYK_SOURCE_DIR}/vendor/oscit/build/liboscit.a
+  COMMAND cd ${RUBYK_SOURCE_DIR}/vendor/oscit && make oscit
 )
 
 
@@ -94,7 +94,7 @@ add_custom_command ( PRE_BUILD
 #
 # ==============================================================================
 
-file (GLOB LUA_SOURCES lib/lua/*.c lib/lua_*/*.c)
+file (GLOB LUA_SOURCES vendor/lua/*.c vendor/lua_*/*.c)
 add_library(mealua STATIC ${LUA_SOURCES})
 # ==============================================================================
 #
@@ -104,9 +104,9 @@ add_library(mealua STATIC ${LUA_SOURCES})
 
 
 file (GLOB RUBYK_SOURCES src/core/*.cpp src/core/${PLAT}/*)
-file (GLOB RUBYK_INCLUDES ${RUBYK_SOURCE_DIR}/src/core ${RUBYK_SOURCE_DIR}/src/lib_objects)
+file (GLOB RUBYK_INCLUDES ${RUBYK_SOURCE_DIR}/src/core ${RUBYK_SOURCE_DIR}/src/classes)
 
-include_directories (${RUBYK_INCLUDES} ${RUBYK_SOURCE_DIR}/lib ${RUBYK_SOURCE_DIR}/lib/oscit/include ${RUBYK_SOURCE_DIR}/lib/oscit/oscpack)
+include_directories (${RUBYK_INCLUDES} ${RUBYK_SOURCE_DIR}/vendor ${RUBYK_SOURCE_DIR}/ ${RUBYK_SOURCE_DIR}/vendor/oscit/include ${RUBYK_SOURCE_DIR}/vendor/oscit/oscpack)
 
 file (GLOB RAGEL_SOURCES src/core/*.rl)
 foreach (RAGEL_SRC ${RAGEL_SOURCES})
@@ -121,14 +121,15 @@ foreach (RAGEL_SRC ${RAGEL_SOURCES})
   set (RUBYK_SOURCES ${RUBYK_SOURCES} ${RUBYK_SOURCE_DIR}/src/core/${RAGEL_SRC_NAME}.cpp)
 endforeach (RAGEL_SRC)
 
-add_executable(rubyk ${RUBYK_SOURCES} ${RUBYK_SOURCE_DIR}/src/main.cpp)
-target_link_libraries (rubyk -all_load mealua ${RUBYK_SOURCE_DIR}/lib/oscit/build/liboscit.a ${PLAT_LINK})
-add_dependencies (rubyk ${RUBYK_SOURCE_DIR}/lib/oscit/build/liboscit.a)
+add_library(lrubyk STATIC ${RUBYK_SOURCES})
+add_executable(rubyk ${RUBYK_SOURCE_DIR}/src/main.cpp)
+target_link_libraries (rubyk -all_load mealua lrubyk ${RUBYK_SOURCE_DIR}/vendor/oscit/build/liboscit.a ${PLAT_LINK})
+add_dependencies (rubyk ${RUBYK_SOURCE_DIR}/vendor/oscit/build/liboscit.a)
 add_dependencies (rubyk mealua)
 
 # ==============================================================================
 #
-#  rko objects build
+#  rko classes build
 #
 # ==============================================================================
 
@@ -147,9 +148,9 @@ macro (add_rko_object RKO_NAME)
   add_dependencies (objects ${RKO_NAME})
 endmacro(add_rko_object)
 
-# ----------- objects (simple build)
+# ----------- classes (simple build)
 
-file (GLOB RUBYK_OBJECT_SOURCES src/objects/*.cpp)
+file (GLOB RUBYK_OBJECT_SOURCES src/classes/*.cpp)
 
 foreach (RUBYK_OBJECT_SOURCE ${RUBYK_OBJECT_SOURCES})
   get_filename_component (RUBYK_OBJECT_NAME ${RUBYK_OBJECT_SOURCE} NAME_WE)
@@ -157,9 +158,13 @@ foreach (RUBYK_OBJECT_SOURCE ${RUBYK_OBJECT_SOURCES})
   add_rko_object (${RUBYK_OBJECT_NAME} ${RUBYK_OBJECT_SOURCE})
 endforeach (RUBYK_OBJECT_SOURCE)
 
-# ----------- lib_objects (special, complicated builds)
+# ----------- classes/xxx (special, complicated builds)
 
-file (GLOB RUBYK_LIB_OBJECTS src/lib_objects/*)
+file (GLOB RUBYK_LIB_OBJECTS src/classes/*)
+file (GLOB RUBYK_OBJECTS_TESTS src/classes/*.h)
+
+# -- Filter out all *.cpp and *.h from the 'classes' folder
+list (REMOVE_ITEM RUBYK_LIB_OBJECTS ${RUBYK_OBJECT_SOURCES} ${RUBYK_OBJECTS_TESTS})
 
 foreach (RUBYK_LIB_OBJECT ${RUBYK_LIB_OBJECTS})
   add_subdirectory (${RUBYK_LIB_OBJECT})
@@ -174,7 +179,7 @@ endforeach (RUBYK_LIB_OBJECT)
 include_directories (AFTER ${RUBYK_SOURCE_DIR}/test)
 
 # one test for all CxxTests
-file (GLOB RUBYK_TEST_SOURCES test/*_test.h src/objects/Lua_test.h src/lib_objects/*/*_test.h)
+file (GLOB RUBYK_TEST_SOURCES test/*_test.h src/objects/*_test.h src/objects/*/*_test.h)
 file (GLOB RUBYK_TEST_MOCKS test/mock/*.h)
 add_custom_command (PRE_BUILD
   OUTPUT  test_runner.cpp
@@ -182,9 +187,9 @@ add_custom_command (PRE_BUILD
   DEPENDS ${RUBYK_TEST_SOURCES} ${OSCIT_TEST_MOCKS}
 )
 
-add_executable (test_runner ${RUBYK_SOURCES} test_runner.cpp)
-target_link_libraries (test_runner mealua ${RUBYK_SOURCE_DIR}/lib/oscit/build/liboscit.a ${PLAT_LINK})
-add_dependencies (test_runner ${RUBYK_SOURCE_DIR}/lib/oscit/build/liboscit.a)
+add_executable (test_runner test_runner.cpp)
+target_link_libraries (test_runner -all_load lrubyk mealua ${RUBYK_SOURCE_DIR}/vendor/oscit/build/liboscit.a ${PLAT_LINK})
+add_dependencies (test_runner ${RUBYK_SOURCE_DIR}/vendor/oscit/build/liboscit.a)
 add_dependencies (test_runner mealua)
 
 add_test (oscit_test test_runner)

@@ -51,3 +51,36 @@ You might need to install readline and ALSA development headers as well as CMake
 You should be ok with:
 
  make
+
+== Directory structure
+
+This is a list of
+
+=== src/core
+
+This folder holds the core classes of Rubyk without which nothing runs.
+
+=== src/support
+
+This holds support classes shared by many objects such as Color, Point, Spline
+and so on. The support classes are organized by theme and the header files should
+be included with "theme/file_name.h".
+
+=== src/classes
+
+This folder contains the class definitions and implementations for simple classes
+that do not require extra libraries or files. The tests for each class should be
+called ClassName_test.h and should live in this folder.
+
+Some classes that need many files and eventually external libraries can have their
+own folder inside "classes". In this case these folders should contain their own
+CMakeLists.txt compilation rules.
+
+=== vendor
+
+This folder holds external dependencies that are used by many parts of Rubyk like
+"oscit" and "lua".
+
+=== test
+
+Contains the test files for librairies and core parts.

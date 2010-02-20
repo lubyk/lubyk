@@ -1,6 +1,6 @@
 math.randomseed(os.time())
 
-function grow(stem)
+function grow()
   if stem.next then
     -- once we have grown, we do not move
     return
