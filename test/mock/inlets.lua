@@ -1,7 +1,7 @@
 -- ==============================================================================
 --
 --  This file is part of the RUBYK project (http://rubyk.org)
---  Copyright (c) 2007-2009 by Gaspard Bucher - Buma (http://teti.ch).
+--  Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 --
 -- ------------------------------------------------------------------------------
 --
