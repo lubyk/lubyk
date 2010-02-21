@@ -1,5 +1,5 @@
 --[[  Run with (in build directory)
-lib("lib") # needed if you are running from the build directory
+lib("lib")
 win = GLWindow()
 cube = GLLua("../examples/GLLua/cube.lua")
 win => cube
