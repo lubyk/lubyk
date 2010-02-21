@@ -46,7 +46,9 @@ public:
 
   virtual ~LuaScript();
 
-  /** Call a function in lua.
+  /** Call a function in lua. If the Value argument is an array, each element
+   * will be pushed on the stack before the method call thus passing [1,2,3] as
+   * argument to method 'foo' produces the call <tt>foo(1,2,3)</tt>.
    * Thread-safe.
    */
   const Value call_lua(const char *function_name, const Value &val);
@@ -73,7 +75,7 @@ public:
   /** Initialization (build methods, load libraries, etc).
    * Thread-safe.
    */
-  const Value lua_init();
+  const Value lua_init(const char *init_script = NULL);
 
 protected:
   /** Open lua libraries. You can overwrite this method
@@ -111,6 +113,8 @@ protected:
   }
 
 private:
+  /** Return 'this' object from lua.
+   */
   static LuaScript *lua_this(lua_State *L);
 
   /** Pop all the stack as a list value.
@@ -152,6 +156,10 @@ private:
   void register_lua_method(const char *name, lua_CFunction function);
 
   void register_custom_types();
+
+  /** Evaluate some lua content.
+   */
+  const Value eval(const char *script, size_t script_size);
 
   /** Printout the stack content. This is useful during debugging.
    */

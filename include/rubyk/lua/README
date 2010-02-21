@@ -1,0 +1,5 @@
+The headers here are copies of required headers in /vendor/lua and vendor/lua/addons. These
+headers need to be accessible to compile new classes.
+
+TODO: use a compile step to copy the lua, lauxlib and lualib headers to make sure they are in
+sync with the current version in /vendor/lua.

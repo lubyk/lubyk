@@ -35,7 +35,7 @@
 #define RUBYK_THIS_IN_LUA "__this"
 #define LUA_OUTLET_NAME   "Outlet"
 
-const Value LuaScript::lua_init() {
+const Value LuaScript::lua_init(const char *init_script) {
   ScopedLock lock(mutex_);
   // Our own lua context.
   lua_ = lua_open();
@@ -65,6 +65,12 @@ const Value LuaScript::lua_init() {
         std::string(lua_tostring(lua_, -1)).append("."));
     }
   }
+
+  if (init_script) {
+    Value res = eval(init_script, strlen(init_script));
+    if (res.is_error()) return res;
+  }
+
   return gNilValue;
 }
 
@@ -88,12 +94,36 @@ const Value LuaScript::call_lua(const char *function_name, const Value &val) {
   lua_setglobal(lua_, "current_time");
 
   lua_getglobal(lua_, function_name); /* function to be called */
-  if (!lua_pushvalue(lua_, val)) {
+
+  bool ok = true;
+  int arg_count = 0;
+  if (val.is_list()) {
+    // push each value on the stack
+    arg_count = val.size();
+    int i = 0;
+    for (i=0; i < arg_count; ++i) {
+      ok = lua_pushvalue(lua_, val[i]);
+      if (!ok) break;
+    }
+
+    if (!ok && i > 0) {
+      // we must pop the values already on the stack
+      while (i > 0) {
+        lua_pop(lua_, -1);
+        --i;
+      }
+    }
+  } else if (!val.is_nil()) {
+    arg_count = 1;
+    ok = lua_pushvalue(lua_, val);
+  }
+
+  if (!ok) {
     return Value(BAD_REQUEST_ERROR, "Could not call ").append(function_name).append("(").append(val.lazy_json()).append("): type not yet suported in Lua");
   }
 
   /* Run the function. */
-  status = lua_pcall(lua_, 1, 1, 0); // 1 arg, 1 result, no error function
+  status = lua_pcall(lua_, arg_count, 1, 0); // 1 arg, 1 result, no error function
   if (status) {
     Value err = Value(BAD_REQUEST_ERROR, "Could not call ").append(function_name).append("(").append(val.lazy_json()).append("): ").append(lua_tostring(lua_, -1));
     std::cerr << err << "\n";
@@ -104,27 +134,7 @@ const Value LuaScript::call_lua(const char *function_name, const Value &val) {
 }
 
 const Value LuaScript::eval_script() {
-  int status;
-
-  /* set 'current_time' */
-  lua_pushnumber(lua_, worker_->current_time());
-  lua_setglobal(lua_, "current_time");
-
-  // compile script
-  status = luaL_loadbuffer(lua_, script_.c_str(), script_.size(), name_.c_str());
-  if (status) {
-    return Value(BAD_REQUEST_ERROR, std::string(lua_tostring(lua_, -1)).append("."));
-  }
-
-  // Run the script to create the functions.
-  status = lua_pcall(lua_, 0, 0, 0); // 0 arg, 1 result, no error function
-  if (status) {
-    // TODO: proper error reporting
-    return Value(BAD_REQUEST_ERROR, std::string(lua_tostring(lua_, -1)).append("."));
-  }
-
-  // ok, we can receive and process values (again).
-  return Value(script_);
+  return eval(script_.c_str(), script_.size());
 }
 
 void LuaScript::register_lua_method(const char *name, lua_CFunction function) {
@@ -419,4 +429,28 @@ void LuaScript::open_lua_libs() {
   open_lua_lib(LUA_IOLIBNAME, luaopen_io);
   open_lua_lib(LUA_STRLIBNAME, luaopen_string);
   open_lua_lib(LUA_MATHLIBNAME, luaopen_math);
+}
+
+const Value LuaScript::eval(const char *script, size_t script_size) {
+
+  int status;
+
+  /* set 'current_time' */
+  lua_pushnumber(lua_, worker_->current_time());
+  lua_setglobal(lua_, "current_time");
+
+  // Load script and compile.
+  status = luaL_loadbuffer(lua_, script, script_size, name_.c_str());
+  if (status) {
+    return Value(BAD_REQUEST_ERROR, std::string(lua_tostring(lua_, -1)).append("."));
+  }
+
+  // Run the script to create the functions.
+  status = lua_pcall(lua_, 0, 0, 0); // 0 arg, 1 result, no error function
+  if (status) {
+    // TODO: proper error reporting
+    return Value(BAD_REQUEST_ERROR, std::string(lua_tostring(lua_, -1)).append("."));
+  }
+
+  return Value(script);
 }

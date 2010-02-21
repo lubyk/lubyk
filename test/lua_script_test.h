@@ -122,6 +122,20 @@ public:
     assert_equal("Sends note values.", outlet->type()[2].str()); // info
   }
 
+  void test_call_lua( void ) {
+    Value res = parse("function foo(x,y)\n return x+y\nend");
+    assert_true(res.is_string());
+    res = script_->call_lua("foo", Value(5).push_back(9));
+    assert_equal(14.0, res.r);
+  }
+
+  void test_call_lua_with_nil( void ) {
+    Value res = parse("function foo()\n return 45\nend");
+    assert_true(res.is_string());
+    res = script_->call_lua("foo", gNilValue);
+    assert_equal(45.0, res.r);
+  }
+
   // sending tested in LuaTest
 
 private:

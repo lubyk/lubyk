@@ -5,7 +5,7 @@ w = GLWindow()
 l = GLLua("../examples/GLLua/splines.lua")
 w => l
 m = Metro(3000)
-m => bang~l
+m => advance~l
 --]]
 
 count = 9
@@ -138,7 +138,7 @@ view = view or {
   h = 0
 }
 
-function bang(val)
+function advance()
   for k,dot in pairs(dots) do
     move(dot.pos, dot.move)
     move(dot.ctrl, dot.cmove)
@@ -151,13 +151,9 @@ function bang(val)
   y = math.sin(n / 0.7) * 360 / math.pi
   z = math.sin(n) * 360 / math.pi
 end
-inlet('bang', NilIO('just bang me'))
+inlet('advance', NilIO('just bang me'))
 
-function draw(val)
-  if view.width ~= val[1] or view.height ~= val[2] then
-    resize(val[1], val[2])
-  end
-
+function draw()
   if blend then
     gl.Enable("BLEND")
     gl.Disable("DEPTH_TEST")
@@ -168,7 +164,7 @@ function draw(val)
   gl.BlendFunc("SRC_ALPHA", "ONE_MINUS_SRC_ALPHA")
   gl.Disable("CULL_FACE")
 
-  gl.Clear( "COLOR_BUFFER_BIT, DEPTH_BUFFER_BIT")
+  --gl.Clear( "COLOR_BUFFER_BIT, DEPTH_BUFFER_BIT")
 
   gl.MatrixMode("MODELVIEW")
   gl.LoadIdentity()
@@ -188,9 +184,9 @@ function draw(val)
   gl.Rotate(z, 0.0, 0.0, 1.0)
   gl.Color(0.5,0.5,0.0,0.3)
   gl.LineWidth(1.0)
-  glut.WireCube(2.6)
+  --glut.WireCube(2.6)
   gl.Color(0.5,0.5,0.0,0.1)
-  glut.SolidCube(2.6)
+  --glut.SolidCube(2.6)
 
   --gl.Translate(-1.0, -1.2, 0.0)
   draw_curve()

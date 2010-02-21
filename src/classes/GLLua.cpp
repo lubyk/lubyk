@@ -28,9 +28,22 @@
 */
 
 #include "rubyk.h"
+#define INIT_SCRIPT "view = {width=0, height=0}\n\
+function draw()\n\
+end\n\
+function resize(width, height)\n\
+  view = {width=width, height=height}\n\
+end"
 
 class GLLua : public LuaScript {
 public:
+  const Value init() {
+    // insert dummy 'draw' and 'resize' methods
+    view_width_  = 0;
+    view_height_ = 0;
+    return lua_init(INIT_SCRIPT);
+  }
+
   // inlet 1
   void draw(const Value &val) {
     if (!is_opengl_thread()) {
@@ -38,7 +51,13 @@ public:
       return;
     }
 
-    call_lua("draw", val);
+    if (val[0].r != view_width_ || val[1].r != view_height_) {
+      view_width_  = val[0].r;
+      view_height_ = val[1].r;
+      call_lua("resize", val);
+    }
+
+    call_lua("draw", gNilValue);
   }
 protected:
   /* open all standard libraries and openGL libraries (called by LuaScript on init) */
@@ -49,6 +68,14 @@ protected:
     // TODO: adapt GLWindow with keyboard & mouse outlets to replce
     // what glut offered.
   }
+
+  /** View's width in pixels.
+   */
+  double view_width_;
+
+  /** View's height in pixels.
+   */
+  double view_height_;
 };
 
 extern "C" void init(Planet &planet) {

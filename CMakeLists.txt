@@ -8,6 +8,7 @@ cmake_minimum_required(VERSION 2.6.2)
 # ==============================================================================
 option (RUBYK_MEMORY_CHECKING    "Enable checking against memory leaks ?"    NO  )
 option (RUBYK_ENABLE_TESTING     "Build and run tests ?"                     YES )
+option (RUBYK_USE_LUA_JIT        "Use Lua Just In Time compiler ?"           NO  )
 
 
 # handle memory checking option
@@ -76,6 +77,7 @@ add_definitions(-D__${PLAT}__ -DUSE_READLINE)
 # set(CMAKE_CXX_FLAGS_DEBUG          "-Wall -O2 -g -0b0 -noalign")
 # set(CMAKE_CXX_FLAGS_DEBUGFULL      "-Wall -g -Ob0 -noalign")
 
+
 # ==============================================================================
 #
 #  liboscit.a build
@@ -95,10 +97,23 @@ add_custom_command ( PRE_BUILD
 #
 # ==============================================================================
 
+#  lua-jit2
+if (RUBYK_USE_LUA_JIT)
+  message("THIS DOES NOT WORK FOR THE MOMENT")
+  add_definitions(-arch i386)
+  set(CMAKE_OSX_ARCHITECTURES "i386" CACHE STRING "Build architectures for OSX" FORCE)
+  message("Forcing i386 architecture to build with Lua JIT")
+  message("   (you need to build oscit with cd vendor/oscit && mkdir build && cmake -D RELEASE=ON .. && make")
+  set(LUA_DIR   "${RUBYK_SOURCE_DIR}/vendor/lua_jit2/src")
+  set(LUA_LIB   "${LUA_DIR}/libluajit.a")
+  set(LUA_BUILD cd ${RUBYK_SOURCE_DIR}/vendor/lua-jit2 && make)
+endif(RUBYK_USE_LUA_JIT)
+
 # Lua build defaults
 if (LUA_LIB)
 else(LUA_LIB)
-  set(LUA_LIB   "${RUBYK_SOURCE_DIR}/vendor/lua/liblua.a")
+  set(LUA_DIR   "${RUBYK_SOURCE_DIR}/vendor/lua")
+  set(LUA_LIB   "${LUA_DIR}/liblua.a")
   set(LUA_BUILD cd ${RUBYK_SOURCE_DIR}/vendor/lua && make ${PLAT})
 endif(LUA_LIB)
 
@@ -235,15 +250,22 @@ message (STATUS "===============================================================
 message (STATUS "   OSCIT build configuration settings                                      ")
 message (STATUS "===========================================================================")
 message (STATUS "   Platform                                                     = ${PLAT}")
+
+# ================= RUBYK_ENABLE_TESTING
 message (STATUS "   RUBYK_ENABLE_TESTING  (Build and run tests)                  = ${RUBYK_ENABLE_TESTING}")
 if(RUBYK_ENABLE_TESTING)
 else(RUBYK_ENABLE_TESTING)
   message (STATUS "")
   message (STATUS "   Type: 'make objects' to build rko objects")
 endif(RUBYK_ENABLE_TESTING)
+
+# ================= RUBYK_MEMORY_CHECKING
 message (STATUS "   RUBYK_MEMORY_CHECKING (Enable checking against memory leaks) = ${RUBYK_MEMORY_CHECKING}")
-if(OSCIT_MEMORY_CHECKING)
+if(RUBYK_MEMORY_CHECKING)
 message (STATUS "       you should run test_runner with")
 message (STATUS "       > export MallocStackLogging=1;./test_runner")
-endif(OSCIT_MEMORY_CHECKING)
+endif(RUBYK_MEMORY_CHECKING)
+
+# ================= RUBYK_USE_LUA_JIT
+message (STATUS "   RUBYK_USE_LUA_JIT (Experimental Lua JIT compiler)            = ${RUBYK_USE_LUA_JIT}")
 message (STATUS "===========================================================================")
