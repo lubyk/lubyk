@@ -27,8 +27,8 @@
   ==============================================================================
 */
 
-#include "lua_inlet.h"
-#include "lua_script.h"
+#include "rubyk/lua_inlet.h"
+#include "rubyk/lua_script.h"
 
 // TODO: This looks quite slow...
 

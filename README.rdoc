@@ -74,7 +74,7 @@ called ClassName_test.h and should live in this folder.
 
 Some classes that need many files and eventually external libraries can have their
 own folder inside "classes". In this case these folders should contain their own
-CMakeLists.txt compilation rules.
+  CMakeLists.txt compilation rules.
 
 === vendor
 

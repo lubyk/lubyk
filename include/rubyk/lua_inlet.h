@@ -27,9 +27,22 @@
   ==============================================================================
 */
 
-#include "rubyk/event.h"
-#include "rubyk/node.h"
+#ifndef RUBYK_INCLUDE_RUBYK_LUA_INLET_H_
+#define RUBYK_INCLUDE_RUBYK_LUA_INLET_H_
 
-void BangEvent::cast_bang_method (Node *receiver, const Value &parameter) {
-  receiver->bang(parameter);
-}
+#include "rubyk/inlet.h"
+
+class LuaScript;
+
+class LuaInlet : public Inlet {
+public:
+  LuaInlet(LuaScript *node, const char *name, const Value &type);
+
+  virtual const Value trigger(const Value &val);
+
+  static void receive_method(Inlet *inlet, const Value &val);
+private:
+  LuaScript *lua_script_;
+};
+
+#endif // RUBYK_INCLUDE_RUBYK_LUA_INLET_H_

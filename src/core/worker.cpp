@@ -27,8 +27,8 @@
   ==============================================================================
 */
 
-#include "worker.h"
-#include "node.h"
+#include "rubyk/worker.h"
+#include "rubyk/node.h"
 
 
 void Worker::register_looped_node(Node *node) {

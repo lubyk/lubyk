@@ -27,9 +27,49 @@
   ==============================================================================
 */
 
-#include "rubyk/event.h"
-#include "rubyk/node.h"
+#ifndef RUBYK_INCLUDE_RUBYK_GL_WINDOW_H_
+#define RUBYK_INCLUDE_RUBYK_GL_WINDOW_H_
 
-void BangEvent::cast_bang_method (Node *receiver, const Value &parameter) {
-  receiver->bang(parameter);
-}
+#include "rubyk/oscit.h"
+#include "rubyk/node.h"
+#include "rubyk/opengl.h"
+
+class Planet;
+
+/** This is a wrapper facade around an OpenGL window.
+ */
+class GLWindow : public Node {
+public:
+  GLWindow();
+
+  virtual ~GLWindow() {
+    close_window();
+  }
+
+  /** Closes the OpenGL window if it's already open.
+   */
+  void close_window();
+
+  /** Open an OpenGL window. If the window is already open, this
+   * method does a resize.
+   */
+  bool open_window(int x, int y, int width, int height);
+
+  /** Forces a redraw of the scene.
+   */
+  void redraw();
+
+  /** This method should be implemented in sub-classes to do the actual
+   * drawing.
+   */
+  virtual void draw() = 0;
+
+  /** This method is called when the window dimension changes.
+   */
+  virtual void resized(int width, int height) = 0;
+
+private:
+  class Implementation;
+  Implementation *impl_;
+};
+#endif // RUBYK_INCLUDE_RUBYK_GL_WINDOW_H_

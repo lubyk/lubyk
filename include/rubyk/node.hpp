@@ -27,9 +27,25 @@
   ==============================================================================
 */
 
-#include "rubyk/event.h"
-#include "rubyk/node.h"
+#ifndef RUBYK_INCLUDE_RUBYK_NODE_HPP_
+#define RUBYK_INCLUDE_RUBYK_NODE_HPP_
 
-void BangEvent::cast_bang_method (Node *receiver, const Value &parameter) {
-  receiver->bang(parameter);
-}
+/* Inline methods that could not live in the class to avoid circular definition */
+
+// template <class T, void(T::*Tmethod)(void *)>
+// inline void Node::register_event (time_t pTime, void * data)
+// {
+//   BaseEvent * e = (BaseEvent *) new Event<T, Tmethod>(worker_->current_time_ + pTime, (T*)this, data);
+//   e->forced_ = false;
+//   worker_->register_event( e );
+// }
+// 
+// template <class T, void(T::*Tmethod)(void *)>
+// inline void Node::register_forced_event (time_t pTime, void * data)
+// {
+//   BaseEvent * e = (BaseEvent *) new Event<T, Tmethod>(worker_->current_time_ + pTime, (T*)this, data);
+//   e->forced_ = true;
+//   worker_->register_event( e );
+// }
+// 
+#endif // RUBYK_INCLUDE_RUBYK_NODE_HPP_

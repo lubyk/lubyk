@@ -27,9 +27,9 @@
   ==============================================================================
 */
 
-#include "inlet.h"
-#include "outlet.h"
-#include "node.h"
+#include "rubyk/inlet.h"
+#include "rubyk/outlet.h"
+#include "rubyk/node.h"
 
 void Inlet::register_in_node() {
   node_->register_inlet(this);

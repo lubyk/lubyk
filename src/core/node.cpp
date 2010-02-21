@@ -27,9 +27,9 @@
   ==============================================================================
 */
 
-#include "node.h"
-#include "inlet.h"
-#include "outlet.h"
+#include "rubyk/node.h"
+#include "rubyk/inlet.h"
+#include "rubyk/outlet.h"
 
 size_t Node::sIdCounter(0);
 pthread_key_t Node::sOpenGLThreadKey = NULL;

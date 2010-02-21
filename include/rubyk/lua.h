@@ -27,9 +27,17 @@
   ==============================================================================
 */
 
-#include "rubyk/event.h"
-#include "rubyk/node.h"
+#ifndef RUBYK_INCLUDE_RUBYK_LUA_H_
+#define RUBYK_INCLUDE_RUBYK_LUA_H_
 
-void BangEvent::cast_bang_method (Node *receiver, const Value &parameter) {
-  receiver->bang(parameter);
+extern "C" {
+// we compiled Lua as C code
+// not sure of that...
+#include "rubyk/lua/lua.h"
+#include "rubyk/lua/lauxlib.h"
+#include "rubyk/lua/lualib.h"
+#include "rubyk/lua/gl.h"
+#include "rubyk/lua/glut.h"
 }
+
+#endif // RUBYK_INCLUDE_RUBYK_LUA_H_

@@ -27,9 +27,27 @@
   ==============================================================================
 */
 
-#include "rubyk/event.h"
-#include "rubyk/node.h"
 
-void BangEvent::cast_bang_method (Node *receiver, const Value &parameter) {
-  receiver->bang(parameter);
-}
+#include "rubyk/oscit.h"
+#include "rubyk/lua.h"
+
+// slot management
+#include "rubyk/slot.h"
+#include "rubyk/inlet.h"
+#include "rubyk/outlet.h"
+#include "rubyk/node.h"
+#include "rubyk/planet.h"
+#include "rubyk/event.h"
+
+// object creation
+#include "rubyk/class.h"
+#include "rubyk/class_finder.h"
+#include "rubyk/new_method.h"
+#include "rubyk/text_command.h"
+#include "rubyk/lua_script.h"
+
+#include "rubyk/node.hpp"
+
+// classes helpers
+#include "rubyk/print.h"
+#include "rubyk/opengl.h"

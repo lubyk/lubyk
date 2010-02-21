@@ -27,7 +27,7 @@
   ==============================================================================
 */
 #include "rubyk.h"
-#include "gl_window.h"
+#include "rubyk/gl_window.h"
 
 class GLWindowNode : public GLWindow {
   Real red_;

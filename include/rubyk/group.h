@@ -27,9 +27,22 @@
   ==============================================================================
 */
 
-#include "rubyk/event.h"
+#ifndef RUBYK_INCLUDE_RUBYK_GROUP_H_
+#define RUBYK_INCLUDE_RUBYK_GROUP_H_
+
 #include "rubyk/node.h"
 
-void BangEvent::cast_bang_method (Node *receiver, const Value &parameter) {
-  receiver->bang(parameter);
-}
+class Group : public Node
+{
+public:
+  virtual ~Group() {}
+
+  bool init(const Value &val) {
+    return true;
+  }
+
+  virtual void bang(const Value &val) {}
+
+};
+
+#endif // RUBYK_INCLUDE_RUBYK_GROUP_H_

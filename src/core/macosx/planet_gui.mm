@@ -1,4 +1,4 @@
-#include "planet.h"
+#include "rubyk/planet.h"
 
 #import <Cocoa/Cocoa.h>
 

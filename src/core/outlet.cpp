@@ -27,16 +27,16 @@
   ==============================================================================
 */
 
-#include "outlet.h"
-#include "inlet.h"
-#include "node.h"
+#include "rubyk/outlet.h"
+#include "rubyk/inlet.h"
+#include "rubyk/node.h"
 
 
 // FIXME: inline ?
 void Outlet::send(const Value &val)
-{  
+{
   LinkedList<Inlet*> * iterator = (LinkedList<Inlet*> *)(connections_.begin());
-  
+
   while(iterator) {
     iterator->obj->receive(val);
     iterator = iterator->next;

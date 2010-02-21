@@ -1,5 +1,4 @@
 #include "rubyk.h"
-#include "text_command.h"
 #include <iostream>
 
 #define VIEW_PATH "."

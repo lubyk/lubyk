@@ -29,8 +29,6 @@
 
 #include "rubyk.h"
 
-#include "lua_opengl.h"
-
 /** The Stem script contains lua methods to implement the actual behavior of the
  * plant. We call these methods, passing every StemElement in turn with its
  * current context (surrounding array):

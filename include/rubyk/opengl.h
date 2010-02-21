@@ -27,9 +27,13 @@
   ==============================================================================
 */
 
-#include "rubyk/event.h"
-#include "rubyk/node.h"
+#ifndef RUBYK_INCLUDE_RUBYK_OPENGL_H_
+#define RUBYK_INCLUDE_RUBYK_OPENGL_H_
 
-void BangEvent::cast_bang_method (Node *receiver, const Value &parameter) {
-  receiver->bang(parameter);
-}
+#ifdef __macosx__
+#include <GLUT/glut.h>
+#else
+#include <GL/gl.h>
+#endif
+
+#endif // RUBYK_INCLUDE_RUBYK_OPENGL_H_

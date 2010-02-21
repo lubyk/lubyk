@@ -27,9 +27,9 @@
   ==============================================================================
 */
 
-#include "slot.h"
-#include "node.h"
-#include "planet.h"
+#include "rubyk/slot.h"
+#include "rubyk/node.h"
+#include "rubyk/planet.h"
 
 Slot::~Slot() {
   // remove connections with other slots

@@ -82,31 +82,60 @@ add_definitions(-D__${PLAT}__ -DUSE_READLINE)
 #
 # ==============================================================================
 
+set(OSCIT_LIB ${RUBYK_SOURCE_DIR}/vendor/oscit/build/liboscit.a)
 add_custom_command ( PRE_BUILD
-  OUTPUT  ${RUBYK_SOURCE_DIR}/vendor/oscit/build/liboscit.a
+  OUTPUT  ${OSCIT_LIB}
   COMMAND cd ${RUBYK_SOURCE_DIR}/vendor/oscit && make oscit
 )
 
 
 # ==============================================================================
 #
-#  libmealua.a build  (called mealua to avoid a clash with Lua rko object)
+#  liblua.a build
 #
 # ==============================================================================
 
-file (GLOB LUA_SOURCES vendor/lua/*.c vendor/lua_*/*.c)
-add_library(mealua STATIC ${LUA_SOURCES})
+# Lua build defaults
+if (LUA_LIB)
+else(LUA_LIB)
+  set(LUA_LIB   "${RUBYK_SOURCE_DIR}/vendor/lua/liblua.a")
+  set(LUA_BUILD cd ${RUBYK_SOURCE_DIR}/vendor/lua && make ${PLAT})
+endif(LUA_LIB)
+
+add_custom_command ( # PRE_BUILD
+  OUTPUT ${LUA_LIB}
+  COMMAND ${LUA_BUILD}
+)
+
+# ==============================================================================
+#
+#  custom build dependencies
+#
+# ==============================================================================
+
+set (CUSTOM_BUILD_DEPENDS ${LUA_LIB} ${OSCIT_LIB})
+
+# ==============================================================================
+#
+#  liblua_addons.a build
+#
+# ==============================================================================
+
+file (GLOB LUA_ADDONS vendor/lua_addons/*)
+include_directories (vendor/lua ${LUA_ADDONS})
+file (GLOB LUA_ADDONS_SOURCES vendor/lua_addons/*/*.c)
+add_library(lua_addons STATIC ${LUA_ADDONS_SOURCES})
+
 # ==============================================================================
 #
 #  rubyk build
 #
 # ==============================================================================
 
-
 file (GLOB RUBYK_SOURCES src/core/*.cpp src/core/${PLAT}/*)
-file (GLOB RUBYK_INCLUDES ${RUBYK_SOURCE_DIR}/src/core ${RUBYK_SOURCE_DIR}/src/classes)
+file (GLOB RUBYK_CLASSES_INCLUDES ${RUBYK_SOURCE_DIR}/src/classes)
 
-include_directories (${RUBYK_INCLUDES} ${RUBYK_SOURCE_DIR}/vendor ${RUBYK_SOURCE_DIR}/ ${RUBYK_SOURCE_DIR}/vendor/oscit/include ${RUBYK_SOURCE_DIR}/vendor/oscit/oscpack)
+include_directories (${RUBYK_SOURCE_DIR}/include ${RUBYK_SOURCE_DIR}/vendor/oscit/include ${RUBYK_SOURCE_DIR}/vendor/oscit/oscpack ${RUBYK_CLASSES_INCLUDES})
 
 file (GLOB RAGEL_SOURCES src/core/*.rl)
 foreach (RAGEL_SRC ${RAGEL_SOURCES})
@@ -122,10 +151,8 @@ foreach (RAGEL_SRC ${RAGEL_SOURCES})
 endforeach (RAGEL_SRC)
 
 add_library(lrubyk STATIC ${RUBYK_SOURCES})
-add_executable(rubyk ${RUBYK_SOURCE_DIR}/src/main.cpp)
-target_link_libraries (rubyk -all_load mealua lrubyk ${RUBYK_SOURCE_DIR}/vendor/oscit/build/liboscit.a ${PLAT_LINK})
-add_dependencies (rubyk ${RUBYK_SOURCE_DIR}/vendor/oscit/build/liboscit.a)
-add_dependencies (rubyk mealua)
+add_executable(rubyk ${RUBYK_SOURCE_DIR}/src/main.cpp ${CUSTOM_BUILD_DEPENDS})
+target_link_libraries (rubyk -all_load lua_addons lrubyk ${CUSTOM_BUILD_DEPENDS} ${PLAT_LINK})
 
 # ==============================================================================
 #
@@ -187,10 +214,8 @@ add_custom_command (PRE_BUILD
   DEPENDS ${RUBYK_TEST_SOURCES} ${OSCIT_TEST_MOCKS}
 )
 
-add_executable (test_runner test_runner.cpp)
-target_link_libraries (test_runner -all_load lrubyk mealua ${RUBYK_SOURCE_DIR}/vendor/oscit/build/liboscit.a ${PLAT_LINK})
-add_dependencies (test_runner ${RUBYK_SOURCE_DIR}/vendor/oscit/build/liboscit.a)
-add_dependencies (test_runner mealua)
+add_executable (test_runner test_runner.cpp ${CUSTOM_BUILD_DEPENDS})
+target_link_libraries (test_runner -all_load lua_addons lrubyk ${CUSTOM_BUILD_DEPENDS} ${PLAT_LINK})
 
 add_test (oscit_test test_runner)
 

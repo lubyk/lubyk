@@ -27,10 +27,10 @@
   ==============================================================================
 */
 
-#include "lua_script.h"
-#include "lua_inlet.h"
+#include "rubyk/lua_script.h"
+#include "rubyk/lua_inlet.h"
 
-#include "lua.h"
+#include "rubyk/lua.h"
 
 #define RUBYK_THIS_IN_LUA "__this"
 #define LUA_OUTLET_NAME   "Outlet"

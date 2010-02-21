@@ -27,9 +27,24 @@
   ==============================================================================
 */
 
-#include "rubyk/event.h"
-#include "rubyk/node.h"
+#ifndef RUBYK_INCLUDE_RUBYK_OSCIT_H_
+#define RUBYK_INCLUDE_RUBYK_OSCIT_H_
 
-void BangEvent::cast_bang_method (Node *receiver, const Value &parameter) {
-  receiver->bang(parameter);
-}
+#include "oscit/oscit.h"
+using namespace oscit;
+
+#define BangIO NilIO
+#define gBang gNilValue
+#define is_bang is_nil
+
+// TODO move this in a types.h file ?
+#define CLASS_URL   "/class"
+#define CLASS_URL_LENGTH 6
+
+#define LIB_URL     "/class/lib"
+#define INSPECT_URL "/.inspect"
+#define RUBYK_URL   "/rubyk"
+#define LINK_URL    "/rubyk/link"
+#define QUIT_URL    "/rubyk/quit"
+
+#endif // RUBYK_INCLUDE_RUBYK_OSCIT_H_

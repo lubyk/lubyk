@@ -29,8 +29,6 @@
 
 #include "rubyk.h"
 
-#include "lua_opengl.h"
-
 class GLLua : public LuaScript {
 public:
   // inlet 1

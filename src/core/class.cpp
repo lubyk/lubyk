@@ -27,7 +27,7 @@
   ==============================================================================
 */
 
-#include "class.h"
+#include "rubyk/class.h"
 #include "oscit/alias.h"
 
 
@@ -37,7 +37,7 @@ void Class::make_inlets(Node *object)
   std::list<InletPrototype>::iterator it;
   std::list<InletPrototype>::iterator end = inlet_prototypes_.end();
   Object * inlets = object->adopt(new Object("in"));
-  
+
   for (it = inlet_prototypes_.begin(); it != end; it++)
     inlets->adopt(new Inlet(object, *it));
 }
@@ -51,7 +51,7 @@ void Class::make_outlets(Node *object)
   Object * outlets = object->adopt(new Object("out"));
   //FIX: Object * method;
   Outlet * outlet;
-  
+
   for (it = begin; it != end; it++) {
     outlet = outlets->adopt(new Outlet(object, *it));
     if (it == begin) {

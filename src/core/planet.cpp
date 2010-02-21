@@ -27,10 +27,10 @@
   ==============================================================================
 */
 
-#include "node.h"
-#include "class_finder.h"
-#include "text_command.h"
-#include "planet.h"
+#include "rubyk/node.h"
+#include "rubyk/class_finder.h"
+#include "rubyk/text_command.h"
+#include "rubyk/planet.h"
 
 void Planet::init() {
   set_context(&worker_);

@@ -31,7 +31,6 @@
 #include <string>
 
 #include "test_helper.h"
-#include "lua_script.h"
 
 class LuaScriptTest : public TestHelper {
 public:

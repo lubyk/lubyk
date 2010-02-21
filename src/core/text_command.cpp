@@ -29,7 +29,7 @@
   ==============================================================================
 */
 
-#include "text_command.h"
+// include all
 #include "rubyk.h"
 
 //#define DEBUG_PARSER

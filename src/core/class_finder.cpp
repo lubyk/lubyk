@@ -27,8 +27,8 @@
   ==============================================================================
 */
 
-#include "class_finder.h"
-#include "planet.h"
+#include "rubyk/class_finder.h"
+#include "rubyk/planet.h"
 #include <dlfcn.h> // dylib load
 
 

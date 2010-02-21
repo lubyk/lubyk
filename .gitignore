@@ -8,13 +8,11 @@
 *~
 *.pch
 build
-lib/lua/lua
-lib/lua/luac
+vendor/lua/lua
+vendor/lua/luac
 test/runner*
 rubyk
 doc/prototypes/test
-oscpack/bin/*
-oscpack/liboscpack.*
 doc/prototypes/test
 examples/send
 examples/receive

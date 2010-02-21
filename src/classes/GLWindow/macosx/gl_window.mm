@@ -27,7 +27,7 @@
   ==============================================================================
 */
 
-#include "gl_window.h"
+#include "rubyk/gl_window.h"
 
 #include <stdio.h>
 #include <pthread.h>
@@ -35,7 +35,7 @@
 
 #import <Cocoa/Cocoa.h> // NSOpenGLView
 
-#include "planet.h"
+#include "rubyk/planet.h"
 
 /* ======================== OpenGL view ======================= */
 
