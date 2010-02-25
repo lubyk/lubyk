@@ -45,7 +45,9 @@ if(UNIX)
     # CoreFoundation needed by Midi and cannot be added in dylib
     set(PLAT_LINK "-flat_namespace -lreadline -framework Accelerate -framework CoreFoundation -framework OpenGL -framework GLUT -framework Cocoa -lobjc") # -framework Cocoa -lobjc ===> planet_gui.mm
     set(PLAT_OBJ_FLAGS "-flat_namespace -undefined suppress -dynamic -bundle")
-    set(CMAKE_CXX_FLAGS "-mmacosx-version-min=10.4 -g -Wall")
+
+    # set(CMAKE_CXX_FLAGS "-mmacosx-version-min=10.6 -g -Wall")
+    set(CMAKE_CXX_FLAGS "-g -Wall")
     if (RELEASE)
       set(CMAKE_OSX_ARCHITECTURES "ppc;i386;x86_64" CACHE STRING "Build architectures for OSX" FORCE)
     endif(RELEASE)
@@ -90,6 +92,7 @@ add_custom_command ( PRE_BUILD
   COMMAND cd ${RUBYK_SOURCE_DIR}/vendor/oscit && make oscit
 )
 
+set (CUSTOM_BUILD_DEPENDS ${OSCIT_LIB})
 
 # ==============================================================================
 #
@@ -107,28 +110,19 @@ if (RUBYK_USE_LUA_JIT)
   set(LUA_DIR   "${RUBYK_SOURCE_DIR}/vendor/lua_jit2/src")
   set(LUA_LIB   "${LUA_DIR}/libluajit.a")
   set(LUA_BUILD cd ${RUBYK_SOURCE_DIR}/vendor/lua-jit2 && make)
+
+  add_custom_command ( # PRE_BUILD
+    OUTPUT ${LUA_LIB}
+    COMMAND ${LUA_BUILD}
+  )
+  set (CUSTOM_BUILD_DEPENDS ${LUA_LIB})
+
+else(RUBYK_USE_LUA_JIT)
+  file (GLOB LUA_SOURCES vendor/lua/*.c)
+  list (REMOVE_ITEM LUA_SOURCES ${RUBYK_SOURCE_DIR}/vendor/lua/lua.c ${RUBYK_SOURCE_DIR}/vendor/lua/luac.c)
+  include_directories (vendor/lua)
+  add_library(mealua STATIC ${LUA_SOURCES})
 endif(RUBYK_USE_LUA_JIT)
-
-# Lua build defaults
-if (LUA_LIB)
-else(LUA_LIB)
-  set(LUA_DIR   "${RUBYK_SOURCE_DIR}/vendor/lua")
-  set(LUA_LIB   "${LUA_DIR}/liblua.a")
-  set(LUA_BUILD cd ${RUBYK_SOURCE_DIR}/vendor/lua && make ${PLAT})
-endif(LUA_LIB)
-
-add_custom_command ( # PRE_BUILD
-  OUTPUT ${LUA_LIB}
-  COMMAND ${LUA_BUILD}
-)
-
-# ==============================================================================
-#
-#  custom build dependencies
-#
-# ==============================================================================
-
-set (CUSTOM_BUILD_DEPENDS ${LUA_LIB} ${OSCIT_LIB})
 
 # ==============================================================================
 #
@@ -148,9 +142,8 @@ add_library(lua_addons STATIC ${LUA_ADDONS_SOURCES})
 # ==============================================================================
 
 file (GLOB RUBYK_SOURCES src/core/*.cpp src/core/${PLAT}/*)
-file (GLOB RUBYK_CLASSES_INCLUDES ${RUBYK_SOURCE_DIR}/src/classes)
 
-include_directories (${RUBYK_SOURCE_DIR}/include ${RUBYK_SOURCE_DIR}/vendor/oscit/include ${RUBYK_SOURCE_DIR}/vendor/oscit/oscpack ${RUBYK_CLASSES_INCLUDES})
+include_directories (${RUBYK_SOURCE_DIR}/include ${RUBYK_SOURCE_DIR}/vendor/oscit/include ${RUBYK_SOURCE_DIR}/vendor/oscit/oscpack ${RUBYK_SOURCE_DIR}/src/classes)
 
 file (GLOB RAGEL_SOURCES src/core/*.rl)
 foreach (RAGEL_SRC ${RAGEL_SOURCES})
@@ -167,7 +160,7 @@ endforeach (RAGEL_SRC)
 
 add_library(lrubyk STATIC ${RUBYK_SOURCES})
 add_executable(rubyk ${RUBYK_SOURCE_DIR}/src/main.cpp ${CUSTOM_BUILD_DEPENDS})
-target_link_libraries (rubyk -all_load lua_addons lrubyk ${CUSTOM_BUILD_DEPENDS} ${PLAT_LINK})
+target_link_libraries (rubyk -all_load lua_addons lrubyk mealua ${CUSTOM_BUILD_DEPENDS} ${PLAT_LINK})
 
 # ==============================================================================
 #
@@ -230,7 +223,7 @@ add_custom_command (PRE_BUILD
 )
 
 add_executable (test_runner test_runner.cpp ${CUSTOM_BUILD_DEPENDS})
-target_link_libraries (test_runner -all_load lua_addons lrubyk ${CUSTOM_BUILD_DEPENDS} ${PLAT_LINK})
+target_link_libraries (test_runner -all_load lua_addons lrubyk mealua ${CUSTOM_BUILD_DEPENDS} ${PLAT_LINK})
 
 add_test (oscit_test test_runner)
 
@@ -267,5 +260,5 @@ message (STATUS "       > export MallocStackLogging=1;./test_runner")
 endif(RUBYK_MEMORY_CHECKING)
 
 # ================= RUBYK_USE_LUA_JIT
-message (STATUS "   RUBYK_USE_LUA_JIT (Experimental Lua JIT compiler)            = ${RUBYK_USE_LUA_JIT}")
+message (STATUS "   RUBYK_USE_LUA_JIT     (Experimental Lua JIT compiler)        = ${RUBYK_USE_LUA_JIT}")
 message (STATUS "===========================================================================")
