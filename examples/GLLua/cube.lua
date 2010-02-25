@@ -39,7 +39,7 @@ function draw()
   glut.SolidCube(2.6)
 end
 
-function resize(width, height)
+function resize(height, width)
   gl.Enable("BLEND")
   gl.Disable("DEPTH_TEST")
   gl.BlendFunc("SRC_ALPHA", "ONE_MINUS_SRC_ALPHA")

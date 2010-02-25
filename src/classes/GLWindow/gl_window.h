@@ -66,7 +66,7 @@ public:
 
   /** This method is called when the window dimension changes.
    */
-  virtual void resized(int width, int height) = 0;
+  virtual void resized(int height, int width) = 0;
 
 private:
   class Implementation;

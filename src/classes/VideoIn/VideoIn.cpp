@@ -101,5 +101,5 @@ extern "C" void init(Planet &planet) {
   CLASS_NAMED( VideoInNode, "VideoIn", "Video input.", "device: [input device] preview: [0/1]")
   METHOD(VideoInNode, device,  StringIO("name", "Set input device id."))
   METHOD(VideoInNode, preview, RealIO("bool", "Open/close a preview window."))
-  OUTLET(VideoInNode, frames,  MatrixIO(10,20,"Video frames as matrix."))
+  OUTLET(VideoInNode, frames,  MatrixIO(0,0,"Video frames as matrix."))
 }

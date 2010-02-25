@@ -46,10 +46,10 @@ public:
     return gNilValue;
   }
 
-  virtual void resized(int width, int height) {
+  virtual void resized(int height, int width) {
     // Reset current viewport
     glViewport( 0, 0, width, height );
-    size_ = Value((Real)width).push_back((Real)height);
+    size_ = Value((Real)height).push_back((Real)width);
   }
 
   void draw() {
@@ -61,7 +61,7 @@ private:
 
 extern "C" void init(Planet &planet) {
   CLASS_NAMED(GLWindowNode, "GLWindow", "OpenGL window", "no options yet")
-  OUTLET(GLWindowNode, draw, Value(Json("[0,0]")).push_back("Sends width/height of view to execute OpenGL."))
+  OUTLET(GLWindowNode, draw, Value(Json("[0,0]")).push_back("Sends [height,width] of view to execute OpenGL."))
   METHOD(GLWindowNode, open,  BangIO("Open a window."))
   METHOD(GLWindowNode, close, BangIO("Close opened window."))
 }

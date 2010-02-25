@@ -354,7 +354,7 @@ function draw_ctrl_lines()
   gl.PopMatrix()
 end
 
-function resize(width, height)
+function resize(height, width)
   gl.Enable("POINT_SMOOTH")
   gl.Enable("LINE_SMOOTH")
   -- Select the projection matrix

@@ -132,7 +132,7 @@
     // We need to call this method whenever the size or location changes
     [[self openGLContext] update];
     sceneBounds = [self bounds];
-    gl_window_->resized(sceneBounds.size.width, sceneBounds.size.height);
+    gl_window_->resized(sceneBounds.size.height, sceneBounds.size.width);
     need_resize_ = false;
   }
 
