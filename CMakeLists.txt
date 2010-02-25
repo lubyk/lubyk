@@ -73,12 +73,13 @@ if (RELEASE)
 endif(RELEASE)
 add_definitions(-D__${PLAT}__ -DUSE_READLINE)
 
+set(STATIC_LIBS)
+
 # TODO: learn how to use these flags...
 # set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-Wall -O2 -g")
 # set(CMAKE_CXX_FLAGS_RELEASE        "-Wall -O2 -DNDEBUG")
 # set(CMAKE_CXX_FLAGS_DEBUG          "-Wall -O2 -g -0b0 -noalign")
 # set(CMAKE_CXX_FLAGS_DEBUGFULL      "-Wall -g -Ob0 -noalign")
-
 
 # ==============================================================================
 #
@@ -92,7 +93,7 @@ add_custom_command ( PRE_BUILD
   COMMAND cd ${RUBYK_SOURCE_DIR}/vendor/oscit && make oscit
 )
 
-set (CUSTOM_BUILD_DEPENDS ${OSCIT_LIB})
+set (CUSTOM_BUILD_DEPENDS ${CUSTOM_BUILD_DEPENDS} ${OSCIT_LIB})
 
 # ==============================================================================
 #
@@ -122,6 +123,7 @@ else(RUBYK_USE_LUA_JIT)
   list (REMOVE_ITEM LUA_SOURCES ${RUBYK_SOURCE_DIR}/vendor/lua/lua.c ${RUBYK_SOURCE_DIR}/vendor/lua/luac.c)
   include_directories (vendor/lua)
   add_library(mealua STATIC ${LUA_SOURCES})
+  set(STATIC_LIBS ${STATIC_LIBS} mealua)
 endif(RUBYK_USE_LUA_JIT)
 
 # ==============================================================================
@@ -134,6 +136,7 @@ file (GLOB LUA_ADDONS vendor/lua_addons/*)
 include_directories (vendor/lua ${LUA_ADDONS})
 file (GLOB LUA_ADDONS_SOURCES vendor/lua_addons/*/*.c)
 add_library(lua_addons STATIC ${LUA_ADDONS_SOURCES})
+set(STATIC_LIBS ${STATIC_LIBS} lua_addons)
 
 # ==============================================================================
 #
@@ -159,8 +162,21 @@ foreach (RAGEL_SRC ${RAGEL_SOURCES})
 endforeach (RAGEL_SRC)
 
 add_library(lrubyk STATIC ${RUBYK_SOURCES})
+set(STATIC_LIBS ${STATIC_LIBS} lrubyk)
+
 add_executable(rubyk ${RUBYK_SOURCE_DIR}/src/main.cpp ${CUSTOM_BUILD_DEPENDS})
-target_link_libraries (rubyk -all_load lua_addons lrubyk mealua ${CUSTOM_BUILD_DEPENDS} ${PLAT_LINK})
+
+# ==============================================================================
+#
+#  vendor library build helper
+#
+# ==============================================================================
+
+add_subdirectory(vendor/opencv)
+set(STATIC_LIBS ${STATIC_LIBS} cv)
+
+
+target_link_libraries (rubyk -all_load ${STATIC_LIBS} ${CUSTOM_BUILD_DEPENDS} ${PLAT_LINK})
 
 # ==============================================================================
 #
@@ -172,8 +188,6 @@ add_custom_target(objects)
 
 macro (add_rko_object RKO_NAME)
   add_library (${RKO_NAME} MODULE ${ARGN}) # ARGN = list of arguments passed after RKO_NAME
-  # FIXME: remove rubyk_core
-  #target_link_libraries (${RKO_NAME} rubyk_core) # remove rubyk_core ?
   set_target_properties (${RKO_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${RUBYK_SOURCE_DIR}/build/lib
     LINK_FLAGS ${PLAT_OBJ_FLAGS}
@@ -223,7 +237,8 @@ add_custom_command (PRE_BUILD
 )
 
 add_executable (test_runner test_runner.cpp ${CUSTOM_BUILD_DEPENDS})
-target_link_libraries (test_runner -all_load lua_addons lrubyk mealua ${CUSTOM_BUILD_DEPENDS} ${PLAT_LINK})
+
+target_link_libraries (test_runner -all_load ${STATIC_LIBS} ${CUSTOM_BUILD_DEPENDS} ${PLAT_LINK})
 
 add_test (oscit_test test_runner)
 
