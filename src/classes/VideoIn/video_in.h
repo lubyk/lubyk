@@ -26,42 +26,48 @@
 
   ==============================================================================
 */
-#include "rubyk.h"
-#include "GLWindow/gl_window.h"
 
-class GLWindowNode : public GLWindow {
-  Real red_;
+#ifndef RUBYK_INCLUDE_RUBYK_VIDEO_IN_H_
+#define RUBYK_INCLUDE_RUBYK_VIDEO_IN_H_
+
+#include "rubyk/oscit.h"
+
+/** This is a wrapper facade around a QTCaptureView window or equivalent.
+ */
+class VideoIn {
 public:
-  const Value start() {
-    return open(gNilValue);
-  }
+  VideoIn();
 
-  const Value close(const Value &val) {
-    close_window();
-    return gNilValue;
-  }
+  virtual ~VideoIn();
 
-  const Value open(const Value &val) {
-    open_window(50, 50, 400, 200);
-    return gNilValue;
-  }
+  /** Select a device from its unique device ID.
+   */
+  const Value set_device(const std::string &device_name);
 
-  virtual void resized(int width, int height) {
-    // Reset current viewport
-    glViewport( 0, 0, width, height );
-    size_ = Value((Real)width).push_back((Real)height);
-  }
+  /** Stop capturing video frames.
+   */
+  void stop_capture();
 
-  void draw() {
-    send(size_);
-  }
+  /** Start capturing video frames.
+   */
+  const Value start_capture();
+
+  /** Open a preview window for the video signal. If the window is already open, this
+   * method moves it around.
+   */
+  const Value open_preview(int x, int y);
+
+  /** Close preview window.
+   */
+  const Value close_preview();
+
+  /** This method can be implemented in sub-classes to do something on each frame
+   * received.
+   */
+  virtual void frame_changed(const Value &matrix) {}
+
 private:
-  Value size_;
+  class Implementation;
+  Implementation *impl_;
 };
-
-extern "C" void init(Planet &planet) {
-  CLASS_NAMED(GLWindowNode, "GLWindow", "OpenGL window", "no options yet")
-  OUTLET(GLWindowNode, draw, Value(Json("[0,0]")).push_back("Sends width/height of view to execute OpenGL."))
-  METHOD(GLWindowNode, open,  BangIO("Open a window."))
-  METHOD(GLWindowNode, close, BangIO("Close opened window."))
-}
+#endif // RUBYK_INCLUDE_RUBYK_VIDEO_IN_H_

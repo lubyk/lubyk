@@ -73,7 +73,7 @@ void Planet::wait_for_gui() {
   s_need_gui_ = false;
   s_need_gui_semaphore_.acquire();
   // wait until we need a GUI or we quit
-
+  std::cout << "s_need_gui_: " << s_need_gui_ << "\n";
   if (s_need_gui_ && !gAppHelper) {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     gAppHelper = [[PlanetHelper alloc] initWithPlanet:this];
@@ -96,6 +96,8 @@ void Planet::wait_for_gui() {
     // let gui_ready return
     s_start_gui_semaphore_.release();
     [pool drain];
+
+    std::cout << "NSApp run\n";
     [NSApp run];
     // never reached
   }
@@ -104,11 +106,16 @@ void Planet::wait_for_gui() {
 
 
 bool Planet::gui_ready() {
+  std::cout << "gui_ready: s_need_gui_: " << s_need_gui_ << "\n";
   if (s_need_gui_) return true;
   s_need_gui_ = true;
   // let main thread initialize NSApplication
   s_need_gui_semaphore_.release();
+
+  std::cout << "gui_ready: released\n";
   // wait until initialization is finished
   s_start_gui_semaphore_.acquire();
+
+  std::cout << "gui_ready: acquired\n";
   return true;
 }

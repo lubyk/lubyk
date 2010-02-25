@@ -27,7 +27,7 @@
   ==============================================================================
 */
 
-#include "rubyk/gl_window.h"
+#include "GLWindow/gl_window.h"
 
 #include <stdio.h>
 #include <pthread.h>
