@@ -1,5 +1,3 @@
-if (DEFINED OPENCV_VERSION)
-
 # ----------------------------------------------------------------------------
 #  CMake file for libflann. See root CMakeLists.txt
 #
@@ -15,7 +13,7 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/algorithms
    ${CMAKE_CURRENT_SOURCE_DIR}/util
    ${CMAKE_CURRENT_SOURCE_DIR}/nn
-   "${CMAKE_CURRENT_SOURCE_DIR}/../include/flann"
+   "${RUBYK_SOURCES_DIR}/include/flann"
    )
 
 # The .cpp files:
@@ -50,58 +48,3 @@ if(UNIX)
   endif()
 endif()
 
-set_target_properties(${the_target}
-   PROPERTIES
-   OUTPUT_NAME "${the_target}"
-   DEBUG_POSTFIX "${OPENCV_DEBUG_POSTFIX}"
-   ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/3rdparty/lib"
-   )
-
-ELSE()
-
-INCLUDE_DIRECTORIES(algorithms util nn .)
-
-ADD_SUBDIRECTORY( tests )
-
-file(GLOB_RECURSE SOURCES *.cpp)
-#SET(SOURCES flann.cpp util/Random.cpp nn/Testing.cpp algorithms/NNIndex.cpp algorithms/dist.cpp util/Logger.cpp util/Saving.cpp)
-
-ADD_LIBRARY(flann ${SOURCES})
-#ADD_LIBRARY(flann SHARED ${SOURCES})   #JL: Why the two versions??
-#ADD_LIBRARY(flann_s STATIC ${SOURCES})
-
-IF(WIN32)
-INSTALL (
-    TARGETS flann
-    RUNTIME DESTINATION matlab 
-)
-INSTALL (
-    TARGETS flann
-    RUNTIME DESTINATION python/pyflann/bindings
-)
-ELSE(WIN32)
-INSTALL (
-    TARGETS flann
-    LIBRARY DESTINATION python/pyflann/bindings
-)
-ENDIF(WIN32)
-
-INSTALL (
-    TARGETS flann  # flann_s
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-)
-
-# INSTALL (
-#     TARGETS flann flann_s
-#     ARCHIVE DESTINATION ${PROJECT_SOURCE_DIR}/python
-#     LIBRARY DESTINATION ${PROJECT_SOURCE_DIR}/python
-# )
-
-INSTALL (
-    FILES flann.h constants.h
-    DESTINATION include
-)
-
-ENDIF()
