@@ -28,26 +28,63 @@
 */
 
 #include "test_helper.h"
+#include "oscit/matrix.h"
 
-class WorkerTest : public TestHelper
-{
+static float cv_mat_test_data[28]  = { 9, 9, 9, 9, 9, 9, 9,  // 9 = padding
+                                       9, 1, 0, 0, 0, 9, 9,  // 3x4
+                                       9, 0, 2, 3, 0, 9, 9,  //
+                                       9, 0, 0, 0, 4, 9, 9}; //
+class CvMatTest : public TestHelper {
 public:
-  void test_run_kill( void ) {
-    Root root;
-    Worker worker(&root);
-    worker.start();
-    microsleep(5);
-    worker.kill();
+  void test_copy_userdata( void ) {
+    float *raw_data = (float*)malloc(28 * sizeof(float));
+    for (size_t i=0; i<28; ++i) raw_data[i] = cv_mat_test_data[i];
+
+    Value val(4, 7, CV_32FC1, raw_data);
+
+    // remove padding by setting Region of interest (ROI):
+    val.matrix_->adjustROI(-1, 0, -1, -2); // top, bottom, left, right
+
+    assert_equal(3, val.matrix_->rows);
+    assert_equal(4, val.matrix_->cols);
+
+    Matrix mat_B;
+    val.matrix_->copyTo(mat_B);
+
+    assert_equal(3, mat_B.rows);
+    assert_equal(4, mat_B.cols);
+
+    free(raw_data);
+
+    float *data = (float*)mat_B.data;
+    assert_equal(1.0, data[0]);
+
+    data[0] = 2.4; // should not try to access raw_data
   }
 
-  void test_running( void ) {
-    Root   root;
-    Worker worker(&root);
-    time_t start = worker.current_time_;
+  void test_resize_userdata( void ) {
+    Matrix mat_A(4, 7, CV_32FC1, cv_mat_test_data);
+    mat_A.adjustROI(-1, 0, -1, -2);
 
-    worker.start(); // running in new thread
-    microsleep(10);
-    worker.kill();
-    assert_equal((int)start, (int)worker.current_time_); // nothing to do so never run
+    Matrix mat_B(3, 2, CV_32FC1);
+
+    cv::resize(mat_A, mat_B, cv::Size(2, 3));
+
+    assert_equal(3, mat_B.rows);
+    assert_equal(2, mat_B.cols);
+
+    float *B_data = (float *)mat_B.data;
+
+    assert_equal(0.5, B_data[0]);
+    assert_equal(1.5, B_data[3]);
   }
 };
+
+
+
+
+
+
+
+
+

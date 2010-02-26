@@ -28,6 +28,7 @@
 */
 #include "rubyk/planet.h"
 #include "VideoIn/video_in.h"
+#include "oscit/matrix.h"
 
 #import <Cocoa/Cocoa.h>
 #import <QTKit/QTKit.h>

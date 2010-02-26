@@ -71,6 +71,9 @@ public:
       }
       std::cout << "[ Need copy\n";
       val.matrix_->copyTo(copied_frame_);
+
+      cv::resize(*val.matrix_, copied_frame_, cv::Size(width_/10, height_/10), 0, 0, CV_INTER_NN);
+
       std::cout << "  Copied ]\n";
     }
   }
