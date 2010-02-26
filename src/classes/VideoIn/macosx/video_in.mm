@@ -298,16 +298,13 @@ public:
                 << "\n";
                 current_frame_ = MatrixValue();
                 current_frame_.adopt(new Matrix(
-                  cols_,
                   rows_,
+                  cols_,
                   CV_8UC3, // 3 unsigned ints for each pixel
                   (unsigned char*)CVPixelBufferGetBaseAddress(videoFrame) + padding_,
                   step_    // step in bytes to get to next row
                 ));
-    } else {
-
     }
-
 
     // ======== change matrix data
     current_frame_.matrix_->data = ((unsigned char*)CVPixelBufferGetBaseAddress(videoFrame)) + padding_;

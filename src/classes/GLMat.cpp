@@ -33,7 +33,11 @@
 
 class GLMat : public Node {
 public:
-  GLMat() : drawing_(false) {}
+
+  const Value init() {
+    downsample_ = 4.0;
+    return gNilValue;
+  }
 
   // [1] draw inlent
   void draw(const Value &val) {
@@ -46,6 +50,9 @@ public:
       width_  = val[0].r;
       height_ = val[1].r;
       resize(width_, height_);
+      { ScopedWrite lock(size_lock_);
+        size_ = cv::Size(width_ / downsample_, height_ / downsample_);
+      }
     }
 
     draw();
@@ -53,11 +60,7 @@ public:
 
   // [2] set matrix inlet
   void matrix(const Value &val) {
-    ScopedLock lock(drawing_flag_); // forbid change in drawing_ value
-    if (drawing_) {
-      std::cout << "drop frame\n";
-      return;
-    }
+    ScopedRead lock(size_lock_); // forbid change in drawing_ value
 
     if (val.is_matrix()) {
       if (val.matrix_->type() != CV_8UC3) {
@@ -69,23 +72,47 @@ public:
         std::cerr << "Cannot display 0x0 matrix\n";
         return;
       }
-      std::cout << "[ Need copy\n";
-      val.matrix_->copyTo(copied_frame_);
+      if (copied_frame_.size() != size_) {
 
-      cv::resize(*val.matrix_, copied_frame_, cv::Size(width_/10, height_/10), 0, 0, CV_INTER_NN);
+        copied_frame_.create(size_, val.matrix_->type());
 
-      std::cout << "  Copied ]\n";
+        /** This is a loop test (fill the matrix with a gradient).
+        unsigned char *data = (unsigned char *)copied_frame_.data;
+        size_t row_step = copied_frame_.step1();
+        size_t channels = copied_frame_.channels();
+
+        for (size_t j=0; j<size_.height; ++j) {
+          unsigned char row_p = (j * 127) / size_.height;
+          unsigned char *start_row = data + j * row_step;
+          for (size_t i=0; i<size_.width; ++i) {
+            start_row[(i * channels) + 0] = row_p + (i * 127) / size_.width;
+            start_row[(i * channels) + 1] = row_p + (i * 127) / size_.width;
+            start_row[(i * channels) + 2] = row_p + (i * 127) / size_.width;
+          }
+        }
+        */
+      }
+      cv::resize(*val.matrix_, copied_frame_, size_, 0, 0, CV_INTER_NN);
     }
+  }
+
+  // {downsample} Downsample factor
+  const Value downsample(const Value &val) {
+    if (val.is_real() && val.r >= 1) {
+      { ScopedWrite lock(size_lock_);
+        downsample_ = val.r;
+        size_ = cv::Size(width_ / downsample_, height_ / downsample_);
+      }
+    }
+
+    return Value(downsample_);
   }
 
 protected:
   void draw() {
-    { ScopedLock lock(drawing_flag_);
-      drawing_ = true;
-    }
-    if (copied_frame_.cols && copied_frame_.rows) {
+    ScopedRead lock(size_lock_);
 
-      std::cout << "[ Draw \n";
+    if (copied_frame_.cols && copied_frame_.rows) {
       size_t rows = copied_frame_.rows;
       size_t cols = copied_frame_.cols;
       size_t row_step = copied_frame_.step1();
@@ -94,38 +121,33 @@ protected:
       float pix_width  = width_  / cols;
       float pix_height = height_ / rows;
 
-      GLuint *color;
-      GLuint *row_start;
-      GLuint *data = (GLuint*)copied_frame_.data;
+      unsigned char *color;
+      unsigned char *row_start;
+      unsigned char *data = (unsigned char *)copied_frame_.data;
 
 
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity();
 
-      //glTranslatef(0.0, 0.0, -4.0);
-
-      //glColor3f(1.0, 0.0, 0.0);
-      //glRectf(0, 0, width_, height_);
       for (size_t j = 0; j < rows; ++j) {
         row_start = data + j * row_step;
-        y1 = j * pix_height;
+        y1 = height_ - j * pix_height;
         for (size_t i = 0; i < cols; ++i) {
           color = row_start + 3 * i;
           x1    = pix_width * i;
-          glColor3uiv(color);
+          glColor3f(
+            color[0] / 255.0,
+            color[1] / 255.0,
+            color[2] / 255.0
+          );
           glRectf(
             x1,
             y1,
             x1 + pix_width,
-            y1 + pix_height
+            y1 - pix_height
           );
         }
       }
-      std::cout << "  draw done ]\n";
-    }
-
-    { ScopedLock lock(drawing_flag_);
-      drawing_ = false;
     }
   }
 
@@ -150,19 +172,26 @@ protected:
   }
 
   Matrix copied_frame_;
-  Mutex drawing_flag_;
-  /** Tell the incomming matrix to drop frame because we
-   * haven't finished drawing.
+
+  /** Protect size altering.
    */
-  bool drawing_;
+  RWMutex size_lock_;
 
   /** View's width in pixels.
    */
-  double width_;
+  Real width_;
 
   /** View's height in pixels.
    */
-  double height_;
+  Real height_;
+
+  /** Resized matrix dimension.
+   */
+  cv::Size size_;
+
+  /** Downsample factor.
+   */
+  Real downsample_;
 };
 
 extern "C" void init(Planet &planet) {
@@ -171,4 +200,6 @@ extern "C" void init(Planet &planet) {
   INLET (GLMat, draw, Value(Json("[0,0]")).push_back("Receives [width, height] from an OpenGL thread."))
   // [2]
   INLET (GLMat, matrix, MatrixIO(0, 0, "Receives a matrix to be drawn on screen."))
+  // {downsample}
+  METHOD(GLMat, downsample, RangeIO(1, 64, "xx", "Downsampling factor."))
 }
