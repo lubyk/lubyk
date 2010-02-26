@@ -83,60 +83,34 @@ set(STATIC_LIBS)
 
 # ==============================================================================
 #
-#  liboscit.a build
+#  VENDOR
 #
 # ==============================================================================
 
-set(OSCIT_LIB ${RUBYK_SOURCE_DIR}/vendor/oscit/build/liboscit.a)
-add_custom_command ( PRE_BUILD
-  OUTPUT  ${OSCIT_LIB}
-  COMMAND cd ${RUBYK_SOURCE_DIR}/vendor/oscit && make oscit
-)
+# ------------------------------------------------ cv, cxcore, ml, opencv_lapack, flann, zlib
+set(OSCIT_WILL_LINK_OPENCV YES)
+set(OSCIT_ENABLE_TESTING OFF)
+add_subdirectory(vendor/oscit)
+list(APPEND STATIC_LIBS oscit)
 
-set (CUSTOM_BUILD_DEPENDS ${CUSTOM_BUILD_DEPENDS} ${OSCIT_LIB})
-
-# ==============================================================================
-#
-#  liblua.a build
-#
-# ==============================================================================
-
-#  lua-jit2
 if (RUBYK_USE_LUA_JIT)
-  message("THIS DOES NOT WORK FOR THE MOMENT")
-  add_definitions(-arch i386)
-  set(CMAKE_OSX_ARCHITECTURES "i386" CACHE STRING "Build architectures for OSX" FORCE)
-  message("Forcing i386 architecture to build with Lua JIT")
-  message("   (you need to build oscit with cd vendor/oscit && mkdir build && cmake -D RELEASE=ON .. && make")
-  set(LUA_DIR   "${RUBYK_SOURCE_DIR}/vendor/lua_jit2/src")
-  set(LUA_LIB   "${LUA_DIR}/libluajit.a")
-  set(LUA_BUILD cd ${RUBYK_SOURCE_DIR}/vendor/lua-jit2 && make)
-
-  add_custom_command ( # PRE_BUILD
-    OUTPUT ${LUA_LIB}
-    COMMAND ${LUA_BUILD}
-  )
-  set (CUSTOM_BUILD_DEPENDS ${LUA_LIB})
-
+# ------------------------------------------------ luajit
+  add_subdirectory(vendor/lua-jit2)
+  list(APPEND STATIC_LIBS luajit)
 else(RUBYK_USE_LUA_JIT)
-  file (GLOB LUA_SOURCES vendor/lua/*.c)
-  list (REMOVE_ITEM LUA_SOURCES ${RUBYK_SOURCE_DIR}/vendor/lua/lua.c ${RUBYK_SOURCE_DIR}/vendor/lua/luac.c)
-  include_directories (vendor/lua)
-  add_library(mealua STATIC ${LUA_SOURCES})
-  set(STATIC_LIBS ${STATIC_LIBS} mealua)
+
+# ------------------------------------------------ lua
+  add_subdirectory(vendor/lua)
+  list(APPEND STATIC_LIBS lua)
 endif(RUBYK_USE_LUA_JIT)
 
-# ==============================================================================
-#
-#  liblua_addons.a build
-#
-# ==============================================================================
+# ------------------------------------------------ lua_addons
+add_subdirectory(vendor/lua_addons)
+list(APPEND STATIC_LIBS lua_addons)
 
-file (GLOB LUA_ADDONS vendor/lua_addons/*)
-include_directories (vendor/lua ${LUA_ADDONS})
-file (GLOB LUA_ADDONS_SOURCES vendor/lua_addons/*/*.c)
-add_library(lua_addons STATIC ${LUA_ADDONS_SOURCES})
-set(STATIC_LIBS ${STATIC_LIBS} lua_addons)
+# ------------------------------------------------ cv, cxcore, ml, opencv_lapack, flann, zlib
+add_subdirectory(vendor/opencv)
+list(APPEND STATIC_LIBS cv cxcore ml opencv_lapack flann zlib)
 
 # ==============================================================================
 #
@@ -162,18 +136,9 @@ foreach (RAGEL_SRC ${RAGEL_SOURCES})
 endforeach (RAGEL_SRC)
 
 add_library(lrubyk STATIC ${RUBYK_SOURCES})
-set(STATIC_LIBS ${STATIC_LIBS} lrubyk)
+list(APPEND STATIC_LIBS lrubyk)
 
 add_executable(rubyk ${RUBYK_SOURCE_DIR}/src/main.cpp ${CUSTOM_BUILD_DEPENDS})
-
-# ==============================================================================
-#
-#  vendor library build helper
-#
-# ==============================================================================
-
-add_subdirectory(vendor/opencv)
-set(STATIC_LIBS ${STATIC_LIBS} cv)
 
 
 target_link_libraries (rubyk -all_load ${STATIC_LIBS} ${CUSTOM_BUILD_DEPENDS} ${PLAT_LINK})
@@ -255,7 +220,7 @@ add_dependencies (test_runner objects)
 # ==============================================================================
 
 message (STATUS "===========================================================================")
-message (STATUS "   OSCIT build configuration settings                                      ")
+message (STATUS "   RUBYK build configuration settings                                      ")
 message (STATUS "===========================================================================")
 message (STATUS "   Platform                                                     = ${PLAT}")
 

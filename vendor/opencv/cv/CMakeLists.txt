@@ -24,6 +24,12 @@ set(the_target "cv")
 
 add_library(${the_target} STATIC ${lib_srcs} ${lib_hdrs} ${lib_int_hdrs})
 
+set_target_properties(${the_target}
+	PROPERTIES OUTPUT_NAME "${the_target}"
+	ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/vendor_lib
+	)
+
+
 # if(PCHSupport_FOUND)
 #     set(pch_header ${CMAKE_CURRENT_SOURCE_DIR}/_cv.h)
 #     if(${CMAKE_GENERATOR} MATCHES "Visual*" OR ${CMAKE_GENERATOR} MATCHES "Xcode*")

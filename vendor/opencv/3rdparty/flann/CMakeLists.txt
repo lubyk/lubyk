@@ -13,7 +13,7 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/algorithms
    ${CMAKE_CURRENT_SOURCE_DIR}/util
    ${CMAKE_CURRENT_SOURCE_DIR}/nn
-   "${RUBYK_SOURCES_DIR}/include/flann"
+   "${CMAKE_CURRENT_SOURCE_DIR}/../include"
    )
 
 # The .cpp files:
@@ -35,6 +35,11 @@ set(the_target "flann")
 
 add_library(${the_target} STATIC ${flann_sources})
 add_definitions(-Dflann_EXPORTS)
+
+set_target_properties(${the_target}
+	PROPERTIES OUTPUT_NAME "${the_target}"
+	ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/vendor_lib
+	)
 
 if(MSVC)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /W3")

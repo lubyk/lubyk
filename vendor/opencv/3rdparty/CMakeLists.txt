@@ -1,6 +1,6 @@
 add_subdirectory(flann)
-#add_subdirectory(lapack)
-#add_subdirectory(zlib)
+add_subdirectory(lapack)
+add_subdirectory(zlib)
 
 #if(WITH_JASPER AND NOT JASPER_FOUND)
 #	add_subdirectory(libjasper)

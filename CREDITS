@@ -1,10 +1,10 @@
-juce
-----
-  brief    : JUCE is an all-encompassing C++ class library for developing cross-platform applications.
-  authors  : Julian Storer
-  website  : http://www.rawmaterialsoftware.com/juce/
-  copyright: see mimas/lib/juce/docs/JUCE readme.html
-  license  : GPL license
+oscit
+-----
+  brief     : A protocol to ease interaction between OpenSoundControl enabled applications / hardware.
+  authors   : Gaspard Bucher <gaspard@teti.ch>
+  website   : http://rubyk.org/en/oscit
+  copyright : see vendor/oscit/LICENSE
+  license   : MIT license
 
 oscpack
 -------
@@ -13,27 +13,70 @@ oscpack
   website  : http://www.audiomulch.com/~rossb/code/oscpack/
   copyright: see rubyk/src/lib/osc/LICENSE
   license  : MIT license
+  comment  : used by OSCIT
+
+Lua
+---
+  brief     : Lua is a powerful, fast, lightweight, embeddable scripting language.
+  authors   : Roberto Ierusalimschy, Waldemar Celes, Luiz Henrique de Figueiredo
+  website   : http://www.lua.org
+  copyright : see vendor/lua/COPYRIGHT
+  license   : MIT license
+
+OpenCV
+------
+  brief     : The Open Computer Vision Library has > 500 algorithms, documentation and sample code for real time computer vision.
+  author    : Intel Corporation, Willow Garage Inc.
+  website   : http://sourceforge.net/projects/opencvlibrary/
+  copyright : See vendor/opencv/COPYING
+  license   : New BSD license
+
+flann
+------
+  brief     : (used by OpenCV, please complete)
+  authors   : Marius Muja <mariusm@cs.ubc.ca>, David G. Lowe <lowe@cs.ubc.ca>
+  website   : http://sourceforge.net/projects/opencvlibrary/
+  copyright : See vendor/opencv/3rdparty/flann/flann.h
+  license   : New BSD license
+
+LAPACK
+------
+  brief     : Linear Algebra PACKage
+  author    : Copyright (c) 1992-2008 The University of Tennessee
+  website   : http://www.netlib.org/lapack/
+  copyright : See vendor/opencv/3rdparty/lapack/COPYING
+  license   : New BSD license
+
+Zlib
+------
+  brief     : Zlib is a general purpose data compression library.
+  authors   : Jean-loup Gailly <jloup@gzip.org>, Mark Adler <madler@alumni.caltech.edu>
+  website   : http://zlib.net
+  copyright : See vendor/opencv/3rdparty/include/zlib.h
+  license   : zlib license
+
+# ------------ LEGACY, NOT USED FOR THE MOMENT ------
 
 libsvm
 ------
-  brief    : Machine learning library used for pattern recognition in the 'Svm' object.
-  authors  : Chih-Chung Chang and Chih-Jen Lin
-  website  : http://www.csie.ntu.edu.tw/~cjlin/libsvm
-  copyright: see objects/svm/COPYRIGHT
-  license  : MIT License
+  brief     : Machine learning library used for pattern recognition in the 'Svm' object.
+  authors   : Chih-Chung Chang and Chih-Jen Lin
+  website   : http://www.csie.ntu.edu.tw/~cjlin/libsvm
+  copyright : see objects/svm/COPYRIGHT
+  license   : MIT License
 
 FFT
 ---
-  brief    : Fast Fourier Transform used in the 'FFT' object.
-  authors  : Laurent de Soras
-  website  : http://ldesoras.free.fr/prod.html
-  copyright: see objects/fft/readme.txt
-  license  : LGPL
+  brief     : Fast Fourier Transform used in the 'FFT' object.
+  authors   : Laurent de Soras
+  website   : http://ldesoras.free.fr/prod.html
+  copyright : see objects/fft/readme.txt
+  license   : LGPL
 
 ELBG
 ----
-  brief    : Enhanced LBG. Vector Quantization used in the 'VQ' object.
-  author   : Vitor Sessak <vitor1001@gmail.com>
-  website  : http://ffmpeg.mplayerhq.hu/
-  copyright: see objects/quantize/elbg.h
-  license  : LGPL
+  brief     : Enhanced LBG. Vector Quantization used in the 'VQ' object.
+  author    : Vitor Sessak <vitor1001@gmail.com>
+  website   : http://ffmpeg.mplayerhq.hu/
+  copyright : see objects/quantize/elbg.h
+  license   : LGPL

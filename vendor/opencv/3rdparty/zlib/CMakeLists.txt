@@ -12,6 +12,7 @@ include_directories(
     )
 
 file(GLOB lib_srcs *.c)
+list(REMOVE_ITEM lib_srcs ${CMAKE_CURRENT_SOURCE_DIR}/example.c)
 file(GLOB lib_hdrs *.h)
 set(lib_ext_hdrs "../include/zlib.h" "../include/zconf.h")
 
@@ -32,6 +33,5 @@ endif()
 set_target_properties(${the_target}
     PROPERTIES
         OUTPUT_NAME "${the_target}"
-        DEBUG_POSTFIX "${OPENCV_DEBUG_POSTFIX}"
-        ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/3rdparty/lib"
+      	ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/vendor_lib
     )

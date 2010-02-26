@@ -15,6 +15,7 @@ include_directories(
 # The .cpp files:
 file(GLOB lib_srcs *.c)
 file(GLOB lib_hdrs *.h)
+list(REMOVE_ITEM lib_srcs precomp.c)
 set(lib_ext_hdrs "../include/f2c.h" "../include/cblas.h" "../include/clapack.h")
 
 # ----------------------------------------------------------------------------------
@@ -30,7 +31,7 @@ if(PCHSupport_FOUND)
     if(${CMAKE_GENERATOR} MATCHES "Visual*" OR ${CMAKE_GENERATOR} MATCHES "Xcode*")
         if(${CMAKE_GENERATOR} MATCHES "Visual*")
             set(${the_target}_pch "precomp.c")
-        endif()            
+        endif()
         add_native_precompiled_header(${the_target} ${pch_header})
     #elseif(CMAKE_COMPILER_IS_GNUCXX AND ${CMAKE_GENERATOR} MATCHES ".*Makefiles")
     #    add_precompiled_header(${the_target} ${pch_header})
@@ -54,6 +55,5 @@ endif()
 
 set_target_properties(${the_target}
 	PROPERTIES OUTPUT_NAME "${the_target}"
-	DEBUG_POSTFIX "${OPENCV_DEBUG_POSTFIX}"
-	ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/3rdparty/lib
+	ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/vendor_lib
 	)
