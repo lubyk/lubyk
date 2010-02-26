@@ -31,7 +31,7 @@
 #define INIT_SCRIPT "view = {width=0, height=0}\n\
 function draw()\n\
 end\n\
-function resize(height, width)\n\
+function resize(width, height)\n\
   view = {width=width, height=height}\n\
 end"
 
@@ -81,7 +81,7 @@ protected:
 extern "C" void init(Planet &planet) {
   CLASS (GLLua, "GLLua script.", "script: [script content] or file: [path to file]")
   // {1}
-  INLET (GLLua, draw, Value(Json("[0,0]")).push_back("Receives [height,width] from an OpenGL thread."))
+  INLET (GLLua, draw, Value(Json("[0,0]")).push_back("Receives [width, height] from an OpenGL thread."))
 
   ADD_SUPER_METHOD(GLLua, Script, file, StringIO("path", "Set path to script content."))
   ADD_SUPER_METHOD(GLLua, Script, script, StringIO("lua code", "Script content."))

@@ -29,9 +29,11 @@
 
 #include "rubyk.h"
 #include "rubyk/opengl.h"
+#include "oscit/matrix.h"
 
 class GLMat : public Node {
 public:
+  GLMat() : drawing_(false) {}
 
   // [1] draw inlent
   void draw(const Value &val) {
@@ -40,10 +42,10 @@ public:
       return;
     }
 
-    if (val[1].r != height_ || val[0].r != width_) {
-      height_ = val[0].r;
-      width_  = val[1].r;
-      resize(height_, width_);
+    if (val[0].r != width_ || val[1].r != height_) {
+      width_  = val[0].r;
+      height_ = val[1].r;
+      resize(width_, height_);
     }
 
     draw();
@@ -51,6 +53,12 @@ public:
 
   // [2] set matrix inlet
   void matrix(const Value &val) {
+    ScopedLock lock(drawing_flag_); // forbid change in drawing_ value
+    if (drawing_) {
+      std::cout << "drop frame\n";
+      return;
+    }
+
     if (val.is_matrix()) {
       if (val.matrix_->type() != CV_8UC3) {
         std::cerr << "Cannot display matrix (type should be CV_8UC3)\n";
@@ -61,50 +69,65 @@ public:
         std::cerr << "Cannot display 0x0 matrix\n";
         return;
       }
-      ScopedLock lock(mutex_);
-      copied_frame_ = val.matrix_->clone();
+      std::cout << "[ Need copy\n";
+      val.matrix_->copyTo(copied_frame_);
+      std::cout << "  Copied ]\n";
     }
   }
+
 protected:
   void draw() {
-    if (!copied_frame_.cols || !copied_frame_.rows) return;
-    ScopedLock lock(mutex_);
-    size_t rows = copied_frame_.rows;
-    size_t cols = copied_frame_.cols;
-    size_t row_step = copied_frame_.step1();
+    { ScopedLock lock(drawing_flag_);
+      drawing_ = true;
+    }
+    if (copied_frame_.cols && copied_frame_.rows) {
 
-    float x1, y1;
-    float pix_width  = width_  / cols;
-    float pix_height = height_ / rows;
+      std::cout << "[ Draw \n";
+      size_t rows = copied_frame_.rows;
+      size_t cols = copied_frame_.cols;
+      size_t row_step = copied_frame_.step1();
 
-    GLuint *color;
-    GLuint *row_start;
-    GLuint *data = (GLuint*)copied_frame_.data;
+      float x1, y1;
+      float pix_width  = width_  / cols;
+      float pix_height = height_ / rows;
+
+      GLuint *color;
+      GLuint *row_start;
+      GLuint *data = (GLuint*)copied_frame_.data;
 
 
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+      glMatrixMode(GL_MODELVIEW);
+      glLoadIdentity();
 
-    glTranslatef(0.0, 0.0, -4.0);
+      //glTranslatef(0.0, 0.0, -4.0);
 
-    for (size_t j = 0; j < rows; ++j) {
-      row_start = data + j * row_step;
-      y1 = j * pix_height;
-      for (size_t i = 0; i < cols; ++i) {
-        color = row_start + 3 * i;
-        x1    = pix_width * i;
-        glColor3uiv(color);
-        glRectf(
-          x1,
-          y1,
-          x1 + pix_width,
-          y1 + pix_height
-        );
+      //glColor3f(1.0, 0.0, 0.0);
+      //glRectf(0, 0, width_, height_);
+      for (size_t j = 0; j < rows; ++j) {
+        row_start = data + j * row_step;
+        y1 = j * pix_height;
+        for (size_t i = 0; i < cols; ++i) {
+          color = row_start + 3 * i;
+          x1    = pix_width * i;
+          glColor3uiv(color);
+          glRectf(
+            x1,
+            y1,
+            x1 + pix_width,
+            y1 + pix_height
+          );
+        }
       }
+      std::cout << "  draw done ]\n";
+    }
+
+    { ScopedLock lock(drawing_flag_);
+      drawing_ = false;
     }
   }
 
-  void resize(Real height, Real width) {
+  void resize(Real width, Real height) {
+    std::cout << " Resize\n";
     glEnable(GL_POINT_SMOOTH);
     glEnable(GL_LINE_SMOOTH);
     glDisable(GL_DEPTH_TEST);
@@ -124,7 +147,12 @@ protected:
   }
 
   Matrix copied_frame_;
-  Mutex mutex_;
+  Mutex drawing_flag_;
+  /** Tell the incomming matrix to drop frame because we
+   * haven't finished drawing.
+   */
+  bool drawing_;
+
   /** View's width in pixels.
    */
   double width_;
@@ -137,7 +165,7 @@ protected:
 extern "C" void init(Planet &planet) {
   CLASS (GLMat, "GLMat displays a Matrix on an OpenGL window.", "")
   // [1]
-  INLET (GLMat, draw, Value(Json("[0,0]")).push_back("Receives [height,width] from an OpenGL thread."))
+  INLET (GLMat, draw, Value(Json("[0,0]")).push_back("Receives [width, height] from an OpenGL thread."))
   // [2]
   INLET (GLMat, matrix, MatrixIO(0, 0, "Receives a matrix to be drawn on screen."))
 }
