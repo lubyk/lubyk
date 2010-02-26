@@ -111,30 +111,36 @@ public:
 protected:
   void draw() {
     ScopedRead lock(size_lock_);
+    draw_matrix(copied_frame_, 0, height_, width_, 0);
+  }
 
-    if (copied_frame_.cols && copied_frame_.rows) {
-      size_t rows = copied_frame_.rows;
-      size_t cols = copied_frame_.cols;
-      size_t row_step = copied_frame_.step1();
+  /** Draw a matrix in the rectangle defined by the start and end coordinates.
+   */
+  void draw_matrix(const Matrix &mat, float start_x, float start_y, float end_x, float end_y) {
+    if (mat.cols && mat.rows) {
+      size_t rows = mat.rows;
+      size_t cols = mat.cols;
+      size_t row_step = mat.step1();
 
       float x1, y1;
-      float pix_width  = width_  / cols;
-      float pix_height = height_ / rows;
-
+      float pix_width  = (end_x - start_x) / cols;
+      float pix_height = (end_y - start_y) / rows;
       unsigned char *color;
       unsigned char *row_start;
-      unsigned char *data = (unsigned char *)copied_frame_.data;
+      unsigned char *data = (unsigned char *)mat.data;
 
 
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity();
 
+      // glTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, 256, 256, GL_RGB, GL_UNSIGNED_BYTE, data);
+
       for (size_t j = 0; j < rows; ++j) {
         row_start = data + j * row_step;
-        y1 = height_ - j * pix_height;
+        y1 = start_y + j * pix_height;
         for (size_t i = 0; i < cols; ++i) {
           color = row_start + 3 * i;
-          x1    = pix_width * i;
+          x1    = start_x + pix_width * i;
           glColor3f(
             color[0] / 255.0,
             color[1] / 255.0,
@@ -144,7 +150,7 @@ protected:
             x1,
             y1,
             x1 + pix_width,
-            y1 - pix_height
+            y1 + pix_height
           );
         }
       }
@@ -152,7 +158,6 @@ protected:
   }
 
   void resize(Real width, Real height) {
-    std::cout << " Resize\n";
     glEnable(GL_POINT_SMOOTH);
     glEnable(GL_LINE_SMOOTH);
     glDisable(GL_DEPTH_TEST);

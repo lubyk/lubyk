@@ -50,6 +50,14 @@
   /** Initial padding in bytes to get to first element.
    */
   size_t padding_;
+
+  /** Number of bytes per pixel.
+   */
+  size_t elem_size_;
+
+  /** OpenCV MagicType like CV_8UC3.
+   */
+  int type_;
 }
 
 - (id)initWithVideoIn:(VideoIn*)video_in;
@@ -149,7 +157,7 @@ public:
 
     [capture_session_ startRunning];
 
-    return Value("Started ok");
+    return gNilValue;
   }
 
   // ---------------------------------------------------------------
@@ -273,37 +281,42 @@ public:
         std::cerr << "Cannot capture frame with multiple planes (planar data not supported).\n";
         return;
       }
-
       cols_ = CVPixelBufferGetWidth(videoFrame);
       rows_ = CVPixelBufferGetHeight(videoFrame);
+      // size_t bytes_per_row = CVPixelBufferGetBytesPerRow(videoFrame);
+
+      elem_size_ = 3; // bytes_per_row / cols_;
+
+
+      type_ = CV_8UC3;// we could let user change type, but none is interesting (no greyscale). k24RGBPixelFormat
 
       size_t pad_l, pad_r, pad_t, pad_b;
 
       CVPixelBufferGetExtendedPixels(videoFrame, &pad_l, &pad_r, &pad_t, &pad_b);
 
-      size_t bytes_per_row = CVPixelBufferGetBytesPerRow(videoFrame);
 
-      step_ = (cols_ + pad_l + pad_r) * 3; // 3 bytes per pixel, we add left and right padding to the width
-      padding_ = (pad_t * step_) + (pad_l * 3);
+      step_ = (cols_ + pad_l + pad_r) * elem_size_; // 3 bytes per pixel, we add left and right padding to the width
+      padding_ = (pad_t * step_) + (pad_l * elem_size_);
 
-      std::cout << "received CVImageBufferRef " << cols_ << "x" << rows_
-                << " type: " << CVPixelBufferGetPixelFormatType(videoFrame)
-                << " pad_L " << pad_l
-                << " pad_R " << pad_r
-                << " pad_T " << pad_t
-                << " pad_B " << pad_b
-                << " bytes_per_row: " << bytes_per_row
-                << " padding : " << padding_
-                << " step : " << step_
-                << "\n";
-                current_frame_ = MatrixValue();
-                current_frame_.adopt(new Matrix(
-                  rows_,
-                  cols_,
-                  CV_8UC3, // 3 unsigned ints for each pixel
-                  (unsigned char*)CVPixelBufferGetBaseAddress(videoFrame) + padding_,
-                  step_    // step in bytes to get to next row
-                ));
+      // std::cout << "received CVImageBufferRef " << cols_ << "x" << rows_
+      //           << " type: " << CVPixelBufferGetPixelFormatType(videoFrame)
+      //           << " pad_L " << pad_l
+      //           << " pad_R " << pad_r
+      //           << " pad_T " << pad_t
+      //           << " pad_B " << pad_b
+      //           << " bytes_per_row: " << bytes_per_row
+      //           << " padding : " << padding_
+      //           << " step : " << step_
+      //           << "\n";
+      current_frame_ = MatrixValue();
+      current_frame_.adopt(new Matrix(
+        rows_,
+        cols_,
+        type_,
+        (unsigned char*)CVPixelBufferGetBaseAddress(videoFrame) + padding_,
+        step_    // step in bytes to get to next row
+        ));
+
     }
 
     // ======== change matrix data
