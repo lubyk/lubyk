@@ -112,6 +112,16 @@ public:
     assert_equal("Ping pong.", inlet->type()[1].str());
   }
 
+  void test_add_inlet_MatrixIO( void ) {
+    // also tests loading of rubyk.lua
+    Value res = parse("inlet('boom', MatrixIO('Ping pong.'))");
+    assert_true(res.is_string());
+    ObjectHandle inlet;
+    assert_true(planet_->get_object_at("/lua/in/boom", &inlet));
+    assert_equal("Ms", inlet->type().type_tag());
+    assert_equal("Ping pong.", inlet->type()[1].str());
+  }
+
   void test_add_outlet( void ) {
     Value res = parse("note = Outlet('note', RealIO('midi note', 'Sends note values.'))");
     assert_true(res.is_string());
@@ -134,6 +144,15 @@ public:
     assert_true(res.is_string());
     res = script_->call_lua("foo", gNilValue);
     assert_equal(45.0, res.r);
+  }
+
+  void test_call_lua_with_matrix( void ) {
+    Value matrix_value(Matrix(2,3,CV_32FC1));
+    Value res = parse("function foo(m)\n return m\nend");
+    assert_true(res.is_string());
+    res = script_->call_lua("foo", matrix_value);
+    assert_true(res.is_matrix());
+    assert_equal(matrix_value.matrix_->data, res.matrix_->data);
   }
 
   // sending tested in LuaTest

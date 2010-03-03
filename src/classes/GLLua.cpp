@@ -65,6 +65,7 @@ protected:
     LuaScript::open_lua_libs();
     open_lua_lib("opengl", luaopen_opengl);
     open_lua_lib("glut", luaopen_glut);
+    open_lua_lib("rubyk", luaopen_rubyk);
     // TODO: adapt GLWindow with keyboard & mouse outlets to replce
     // what glut offered.
   }

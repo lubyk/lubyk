@@ -6,7 +6,8 @@ project(lua_addons)
 
 file (GLOB lib_includes ${CMAKE_CURRENT_SOURCE_DIR}/*)
 list(REMOVE_ITEM lib_includes ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
-include_directories(${lib_includes} ${RUBYK_SOURCE_DIR}/include/rubyk/lua)
+include_directories(${lib_includes} ${RUBYK_SOURCE_DIR}/include/rubyk/lua
+  ${RUBYK_SOURCE_DIR}/vendor/oscit/include)
 
 # ----------------------------------------------------------------------------------
 # 				Define the library target:

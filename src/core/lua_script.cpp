@@ -31,6 +31,8 @@
 #include "rubyk/lua_inlet.h"
 
 #include "rubyk/lua.h"
+#include "lua_cpp_helper.h"
+#include "oscit/matrix.h"
 
 #define RUBYK_THIS_IN_LUA "__this"
 #define LUA_OUTLET_NAME   "Outlet"
@@ -136,6 +138,23 @@ const Value LuaScript::call_lua(const char *function_name, const Value &val) {
   return stack_to_value(lua_);
 }
 
+
+bool LuaScript::lua_is_userdata(lua_State *L, int index, const char *tname) {
+  void *p = lua_touserdata(L, index);
+  if (p != NULL) {  /* value is a userdata? */
+    if (lua_getmetatable(L, index)) {  /* does it have a metatable? */
+      lua_getfield(L, LUA_REGISTRYINDEX, tname);  /* get correct metatable */
+      if (lua_rawequal(L, -1, -2)) {  /* does it have the correct mt? */
+        lua_pop(L, 2);  /* remove both metatables */
+        // type match
+        return true;
+      }
+    }
+  }
+  // type does not match
+  return false;
+}
+
 const Value LuaScript::eval_script() {
   return eval(script_.c_str(), script_.size());
 }
@@ -146,7 +165,7 @@ void LuaScript::register_lua_method(const char *name, lua_CFunction function) {
 }
 
 LuaScript *LuaScript::lua_this(lua_State *L) {
-  lua_getglobal(L, RUBYK_THIS_IN_LUA);
+  lua_getglobal(L, RUBYK_THIS_IN_LUA); // FIXME: Use REGISTRY instead (better protection)
   LuaScript *script = (LuaScript*)lua_touserdata(L,lua_gettop(L));
   if (!script) fprintf(stderr, "Lua error: '__this' not set.\n");
   lua_pop(L,1);
@@ -274,6 +293,13 @@ bool LuaScript::value_from_lua(lua_State *L, int index, Value *res) {
       return list_from_lua(L, index, res);
     }
     break;
+  case LUA_TUSERDATA:
+    if (lua_is_userdata(L, index, "cv.Mat")) {
+      Matrix *mat = *((Matrix**)luaL_checkudata(L, index, "cv.Mat"));
+      // Matrix
+      res->set(mat);
+    }
+    break;
   default:
     // TODO: proper error reporting
     std::cerr << "Wrong value type to build value (" << lua_typename(L, lua_type(L, index)) << " at " << index << ").\n";
@@ -314,13 +340,14 @@ bool LuaScript::lua_pushvalue(lua_State *L, const Value &val) {
     case LIST_VALUE:
       lua_pushlist(L, val);
       break;
+    case MATRIX_VALUE:
+      // pass reference to create a new object
+      lua_pushclass<Matrix>(L, *val.matrix_, "cv.Mat");
+      break;
     case ERROR_VALUE:
       // TODO
       /* continue */
     case HASH_VALUE:
-      // TODO
-      /* continue */
-    case MATRIX_VALUE:
       // TODO
       /* continue */
     case MIDI_VALUE:
@@ -461,7 +488,7 @@ void LuaScript::open_lua_lib(const char *name, lua_CFunction func)
 
 extern void luaopen_cv_Mat(lua_State *L);
 extern void luaopen_cv(lua_State *L);
-extern void luaopen_cv_Size2i(lua_State *L);
+extern void luaopen_cv_Size(lua_State *L);
 
 void LuaScript::open_lua_libs() {
   luaL_openlibs(lua_);
@@ -471,9 +498,11 @@ void LuaScript::open_lua_libs() {
   open_lua_lib(LUA_STRLIBNAME, luaopen_string);
   open_lua_lib(LUA_MATHLIBNAME, luaopen_math);
 
+  // FIXME: we should make it possible to install these libs with the other
+  // shared objects (rko) and use: require 'cv.Mat' from lua...
   luaopen_cv_Mat(lua_);
   luaopen_cv(lua_);
-  luaopen_cv_Size2i(lua_);
+  luaopen_cv_Size(lua_);
 }
 
 const Value LuaScript::eval(const char *script, size_t script_size) {

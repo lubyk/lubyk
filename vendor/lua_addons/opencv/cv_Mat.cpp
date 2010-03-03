@@ -1,6 +1,6 @@
 #include "opencv/cv.h"
 
-#include "lua_dub_helper.h"
+#include "lua_cpp_helper.h"
 
 
 using namespace cv;
@@ -13,7 +13,7 @@ using namespace cv;
  * include/opencv/cxcore.hpp:746
  */
 static int Mat_Mat1(lua_State *L) {
-  Mat * retval__       = new Mat();
+  Mat * retval__ = new Mat();
   lua_pushclass<Mat>(L, retval__, "cv.Mat");
   return 1;
 }
@@ -23,10 +23,10 @@ static int Mat_Mat1(lua_State *L) {
  * include/opencv/cxcore.hpp:754
  */
 static int Mat_Mat2(lua_State *L) {
-  int _rows            = luaL_checkint   (L, 1);
-  int _cols            = luaL_checkint   (L, 2);
-  int _type            = luaL_checkint   (L, 3);
-  Mat * retval__       = new Mat(_rows, _cols, _type);
+  int _rows = luaL_checkint(L, 1);
+  int _cols = luaL_checkint(L, 2);
+  int _type = luaL_checkint(L, 3);
+  Mat * retval__ = new Mat(_rows, _cols, _type);
   lua_pushclass<Mat>(L, retval__, "cv.Mat");
   return 1;
 }
@@ -36,9 +36,9 @@ static int Mat_Mat2(lua_State *L) {
  * include/opencv/cxcore.hpp:755
  */
 static int Mat_Mat3(lua_State *L) {
-  Size *_size          = *((Size **)luaL_checkudata(L, 1, "cv.Size"));
-  int _type            = luaL_checkint   (L, 2);
-  Mat * retval__       = new Mat(*_size, _type);
+  Size *_size = *((Size **)luaL_checkudata(L, 1, "cv.Size"));
+  int _type = luaL_checkint(L, 2);
+  Mat * retval__ = new Mat(*_size, _type);
   lua_pushclass<Mat>(L, retval__, "cv.Mat");
   return 1;
 }
@@ -48,11 +48,11 @@ static int Mat_Mat3(lua_State *L) {
  * include/opencv/cxcore.hpp:757
  */
 static int Mat_Mat4(lua_State *L) {
-  int _rows            = luaL_checkint   (L, 1);
-  int _cols            = luaL_checkint   (L, 2);
-  int _type            = luaL_checkint   (L, 3);
-  const Scalar *_s     = *((const Scalar **)luaL_checkudata(L, 4, "cv.Scalar"));
-  Mat * retval__       = new Mat(_rows, _cols, _type, *_s);
+  int _rows = luaL_checkint(L, 1);
+  int _cols = luaL_checkint(L, 2);
+  int _type = luaL_checkint(L, 3);
+  const Scalar *_s = *((const Scalar **)luaL_checkudata(L, 4, "cv.Scalar"));
+  Mat * retval__ = new Mat(_rows, _cols, _type, *_s);
   lua_pushclass<Mat>(L, retval__, "cv.Mat");
   return 1;
 }
@@ -62,10 +62,10 @@ static int Mat_Mat4(lua_State *L) {
  * include/opencv/cxcore.hpp:758
  */
 static int Mat_Mat5(lua_State *L) {
-  Size *_size          = *((Size **)luaL_checkudata(L, 1, "cv.Size"));
-  int _type            = luaL_checkint   (L, 2);
-  const Scalar *_s     = *((const Scalar **)luaL_checkudata(L, 3, "cv.Scalar"));
-  Mat * retval__       = new Mat(*_size, _type, *_s);
+  Size *_size = *((Size **)luaL_checkudata(L, 1, "cv.Size"));
+  int _type = luaL_checkint(L, 2);
+  const Scalar *_s = *((const Scalar **)luaL_checkudata(L, 3, "cv.Scalar"));
+  Mat * retval__ = new Mat(*_size, _type, *_s);
   lua_pushclass<Mat>(L, retval__, "cv.Mat");
   return 1;
 }
@@ -75,39 +75,8 @@ static int Mat_Mat5(lua_State *L) {
  * include/opencv/cxcore.hpp:760
  */
 static int Mat_Mat6(lua_State *L) {
-  const Mat *m         = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat * retval__       = new Mat(*m);
-  lua_pushclass<Mat>(L, retval__, "cv.Mat");
-  return 1;
-}
-
-
-/** cv::Mat::Mat(int _rows, int _cols, int _type, void *_data, size_t _step=AUTO_STEP)
- * include/opencv/cxcore.hpp:774
- */
-static int Mat_Mat7(lua_State *L) {
-  int top__            = lua_gettop(L);
-  int _rows            = luaL_checkint   (L, 1);
-  int _cols            = luaL_checkint   (L, 2);
-  int _type            = luaL_checkint   (L, 3);
-  void *_data          = *((void **)luaL_checkudata(L, 4, "cv.void"));
-  size_t _step         = top__ < 5 ? cv::Mat::AUTO_STEP : luaL_checknumber(L, 5);
-  Mat * retval__       = new Mat(_rows, _cols, _type, _data, _step);
-  lua_pushclass<Mat>(L, retval__, "cv.Mat");
-  return 1;
-}
-
-
-/** cv::Mat::Mat(Size _size, int _type, void *_data, size_t _step=AUTO_STEP)
- * include/opencv/cxcore.hpp:775
- */
-static int Mat_Mat8(lua_State *L) {
-  int top__            = lua_gettop(L);
-  Size *_size          = *((Size **)luaL_checkudata(L, 1, "cv.Size"));
-  int _type            = luaL_checkint   (L, 2);
-  void *_data          = *((void **)luaL_checkudata(L, 3, "cv.void"));
-  size_t _step         = top__ < 4 ? cv::Mat::AUTO_STEP : luaL_checknumber(L, 4);
-  Mat * retval__       = new Mat(*_size, _type, _data, _step);
+  const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat * retval__ = new Mat(*m);
   lua_pushclass<Mat>(L, retval__, "cv.Mat");
   return 1;
 }
@@ -117,10 +86,10 @@ static int Mat_Mat8(lua_State *L) {
  * include/opencv/cxcore.hpp:777
  */
 static int Mat_Mat9(lua_State *L) {
-  const Mat *m         = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+  const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
   const Range *rowRange = *((const Range **)luaL_checkudata(L, 2, "cv.Range"));
   const Range *colRange = *((const Range **)luaL_checkudata(L, 3, "cv.Range"));
-  Mat * retval__       = new Mat(*m, *rowRange, *colRange);
+  Mat * retval__ = new Mat(*m, *rowRange, *colRange);
   lua_pushclass<Mat>(L, retval__, "cv.Mat");
   return 1;
 }
@@ -130,9 +99,9 @@ static int Mat_Mat9(lua_State *L) {
  * include/opencv/cxcore.hpp:784
  */
 static int Mat_Mat10(lua_State *L) {
-  const Mat *m         = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Rect *roi      = *((const Rect **)luaL_checkudata(L, 2, "cv.Rect"));
-  Mat * retval__       = new Mat(*m, *roi);
+  const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+  const Rect *roi = *((const Rect **)luaL_checkudata(L, 2, "cv.Rect"));
+  Mat * retval__ = new Mat(*m, *roi);
   lua_pushclass<Mat>(L, retval__, "cv.Mat");
   return 1;
 }
@@ -142,10 +111,15 @@ static int Mat_Mat10(lua_State *L) {
  * include/opencv/cxcore.hpp:786
  */
 static int Mat_Mat11(lua_State *L) {
-  int top__            = lua_gettop(L);
-  const CvMat *m       = *((const CvMat **)luaL_checkudata(L, 1, "cv.CvMat"));
-  bool copyData        = top__ < 2 ? false : luaL_checkint(L, 2);
-  Mat * retval__       = new Mat(m, copyData);
+  int top__ = lua_gettop(L);
+  Mat * retval__;
+  const CvMat *m = *((const CvMat **)luaL_checkudata(L, 1, "cv.CvMat"));
+  if (top__ < 2) {
+    retval__ = new Mat(m);
+  } else {
+    bool copyData = luaL_checkint(L, 2);
+    retval__ = new Mat(m, copyData);
+  }
   lua_pushclass<Mat>(L, retval__, "cv.Mat");
   return 1;
 }
@@ -155,10 +129,15 @@ static int Mat_Mat11(lua_State *L) {
  * include/opencv/cxcore.hpp:788
  */
 static int Mat_Mat12(lua_State *L) {
-  int top__            = lua_gettop(L);
-  const IplImage *img  = *((const IplImage **)luaL_checkudata(L, 1, "cv.IplImage"));
-  bool copyData        = top__ < 2 ? false : luaL_checkint(L, 2);
-  Mat * retval__       = new Mat(img, copyData);
+  int top__ = lua_gettop(L);
+  Mat * retval__;
+  const IplImage *img = *((const IplImage **)luaL_checkudata(L, 1, "cv.IplImage"));
+  if (top__ < 2) {
+    retval__ = new Mat(img);
+  } else {
+    bool copyData = luaL_checkint(L, 2);
+    retval__ = new Mat(img, copyData);
+  }
   lua_pushclass<Mat>(L, retval__, "cv.Mat");
   return 1;
 }
@@ -169,7 +148,7 @@ static int Mat_Mat12(lua_State *L) {
  */
 static int Mat_Mat13(lua_State *L) {
   const MatExpr_Base *expr = *((const MatExpr_Base **)luaL_checkudata(L, 1, "cv.MatExpr_Base"));
-  Mat * retval__       = new Mat(*expr);
+  Mat * retval__ = new Mat(*expr);
   lua_pushclass<Mat>(L, retval__, "cv.Mat");
   return 1;
 }
@@ -197,6 +176,24 @@ static int Mat_Mat(lua_State *L) {
       // use any to raise errors
       return Mat_Mat6(L);
     }
+  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.IplImage")) {
+    return Mat_Mat12(L);
+  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Size")) {
+    type__ = lua_type(L, 2);
+    if (type__ == LUA_TNUMBER) {
+      type__ = lua_type(L, 3);
+      if (type__ == LUA_TNONE) {
+        return Mat_Mat3(L);
+      } else if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "cv.Scalar")) {
+        return Mat_Mat5(L);
+      } else {
+        // use any to raise errors
+        return Mat_Mat5(L);
+      }
+    } else {
+      // use any to raise errors
+      return Mat_Mat5(L);
+    }
   } else if (type__ == LUA_TNUMBER) {
     type__ = lua_type(L, 2);
     if (type__ == LUA_TNUMBER) {
@@ -205,8 +202,6 @@ static int Mat_Mat(lua_State *L) {
         type__ = lua_type(L, 4);
         if (type__ == LUA_TNONE) {
           return Mat_Mat2(L);
-        } else if (type__ == LUA_TUSERDATA && is_userdata(L, 4, "cv.void")) {
-          return Mat_Mat7(L);
         } else if (type__ == LUA_TUSERDATA && is_userdata(L, 4, "cv.Scalar")) {
           return Mat_Mat4(L);
         } else {
@@ -221,29 +216,9 @@ static int Mat_Mat(lua_State *L) {
       // use any to raise errors
       return Mat_Mat4(L);
     }
-  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.IplImage")) {
-    return Mat_Mat12(L);
-  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Size")) {
-    type__ = lua_type(L, 2);
-    if (type__ == LUA_TNUMBER) {
-      type__ = lua_type(L, 3);
-      if (type__ == LUA_TNONE) {
-        return Mat_Mat3(L);
-      } else if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "cv.void")) {
-        return Mat_Mat8(L);
-      } else if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "cv.Scalar")) {
-        return Mat_Mat5(L);
-      } else {
-        // use any to raise errors
-        return Mat_Mat5(L);
-      }
-    } else {
-      // use any to raise errors
-      return Mat_Mat5(L);
-    }
   } else {
     // use any to raise errors
-    return Mat_Mat5(L);
+    return Mat_Mat4(L);
   }
 }
 
@@ -260,7 +235,8 @@ static int Mat_destructor(lua_State *L) {
 
 static int Mat__tostring(lua_State *L) {
   Mat **userdata = (Mat**)luaL_checkudata(L, 1, "cv.Mat");
-  lua_pushfstring(L, "cv.Mat: %p", *userdata);
+  Mat *mat = *userdata;
+  lua_pushfstring(L, "<cv.Mat:%p %dx%d>", mat, mat->cols, mat->rows);
   return 1;
 }
 
@@ -271,7 +247,7 @@ static int Mat__tostring(lua_State *L) {
  * include/opencv/cxcore.hpp:891
  */
 static int Mat_addref(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
   self__->addref();
   return 0;
@@ -282,93 +258,97 @@ static int Mat_addref(lua_State *L) {
  * include/opencv/cxcore.hpp:909
  */
 static int Mat_adjustROI(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  int dtop             = luaL_checkint   (L, 1);
-  int dbottom          = luaL_checkint   (L, 2);
-  int dleft            = luaL_checkint   (L, 3);
-  int dright           = luaL_checkint   (L, 4);
-  Mat  retval__        = self__->adjustROI(dtop, dbottom, dleft, dright);
-  lua_pushclass<Mat>(L, retval__, "Mat.Mat");
+  int dtop = luaL_checkint(L, 1);
+  int dbottom = luaL_checkint(L, 2);
+  int dleft = luaL_checkint(L, 3);
+  int dright = luaL_checkint(L, 4);
+  Mat  retval__ = self__->adjustROI(dtop, dbottom, dleft, dright);
+  lua_pushclass<Mat>(L, retval__, "cv.Mat");
   return 1;
 }
 
 
-/** void cv::Mat::assignTo(Mat &m, int type=-1) const 
+/** void cv::Mat::assignTo(Mat &m, int type=-1) const
  * include/opencv/cxcore.hpp:845
  */
 static int Mat_assignTo(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  int top__            = lua_gettop(L);
-  Mat *m               = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  int type             = top__ < 2 ? -1 : luaL_checkint(L, 2);
-  self__->assignTo(*m, type);
+  int top__ = lua_gettop(L);
+  Mat *m = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+  if (top__ < 2) {
+    self__->assignTo(*m);
+  } else {
+    int type = luaL_checkint(L, 2);
+    self__->assignTo(*m, type);
+  }
   return 0;
 }
 
 
-/** int cv::Mat::channels() const 
+/** int cv::Mat::channels() const
  * include/opencv/cxcore.hpp:967
  */
 static int Mat_channels(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  int  retval__        = self__->channels();
+  int  retval__ = self__->channels();
   lua_pushnumber(L, retval__);
   return 1;
 }
 
 
-/** Mat cv::Mat::clone() const 
+/** Mat cv::Mat::clone() const
  * include/opencv/cxcore.hpp:824
  */
 static int Mat_clone(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  Mat  retval__        = self__->clone();
-  lua_pushclass<Mat>(L, retval__, "Mat.Mat");
+  Mat  retval__ = self__->clone();
+  lua_pushclass<Mat>(L, retval__, "cv.Mat");
   return 1;
 }
 
 
-/** Mat cv::Mat::col(int x) const 
+/** Mat cv::Mat::col(int x) const
  * include/opencv/cxcore.hpp:804
  */
 static int Mat_col(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  int x                = luaL_checkint   (L, 1);
-  Mat  retval__        = self__->col(x);
-  lua_pushclass<Mat>(L, retval__, "Mat.Mat");
+  int x = luaL_checkint(L, 1);
+  Mat  retval__ = self__->col(x);
+  lua_pushclass<Mat>(L, retval__, "cv.Mat");
   return 1;
 }
 
 
 
-/** Mat cv::Mat::colRange(int startcol, int endcol) const 
+/** Mat cv::Mat::colRange(int startcol, int endcol) const
  * include/opencv/cxcore.hpp:809
  */
 static int Mat_colRange1(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  int startcol         = luaL_checkint   (L, 1);
-  int endcol           = luaL_checkint   (L, 2);
-  Mat  retval__        = self__->colRange(startcol, endcol);
-  lua_pushclass<Mat>(L, retval__, "Mat.Mat");
+  int startcol = luaL_checkint(L, 1);
+  int endcol = luaL_checkint(L, 2);
+  Mat  retval__ = self__->colRange(startcol, endcol);
+  lua_pushclass<Mat>(L, retval__, "cv.Mat");
   return 1;
 }
 
 
-/** Mat cv::Mat::colRange(const Range &r) const 
+/** Mat cv::Mat::colRange(const Range &r) const
  * include/opencv/cxcore.hpp:810
  */
 static int Mat_colRange2(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  const Range *r       = *((const Range **)luaL_checkudata(L, 1, "cv.Range"));
-  Mat  retval__        = self__->colRange(*r);
-  lua_pushclass<Mat>(L, retval__, "Mat.Mat");
+  const Range *r = *((const Range **)luaL_checkudata(L, 1, "cv.Range"));
+  Mat  retval__ = self__->colRange(*r);
+  lua_pushclass<Mat>(L, retval__, "cv.Mat");
   return 1;
 }
 
@@ -388,43 +368,51 @@ static int Mat_colRange(lua_State *L) {
 }
 
 
-/** void cv::Mat::convertTo(Mat &m, int rtype, double alpha=1, double beta=0) const 
+/** void cv::Mat::convertTo(Mat &m, int rtype, double alpha=1, double beta=0) const
  * include/opencv/cxcore.hpp:843
  */
 static int Mat_convertTo(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  int top__            = lua_gettop(L);
-  Mat *m               = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  int rtype            = luaL_checkint   (L, 2);
-  double alpha         = top__ < 3 ? 1 : luaL_checknumber(L, 3);
-  double beta          = top__ < 4 ? 0 : luaL_checknumber(L, 4);
-  self__->convertTo(*m, rtype, alpha, beta);
+  int top__ = lua_gettop(L);
+  Mat *m = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+  int rtype = luaL_checkint(L, 2);
+  if (top__ < 3) {
+    self__->convertTo(*m, rtype);
+  } else {
+    double alpha = luaL_checknumber(L, 3);
+    if (top__ < 4) {
+      self__->convertTo(*m, rtype, alpha);
+    } else {
+      double beta = luaL_checknumber(L, 4);
+      self__->convertTo(*m, rtype, alpha, beta);
+    }
+  }
   return 0;
 }
 
 
 
-/** void cv::Mat::copyTo(Mat &m) const 
+/** void cv::Mat::copyTo(Mat &m) const
  * include/opencv/cxcore.hpp:829
  */
 static int Mat_copyTo1(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  Mat *m               = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *m = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
   self__->copyTo(*m);
   return 0;
 }
 
 
-/** void cv::Mat::copyTo(Mat &m, const Mat &mask) const 
+/** void cv::Mat::copyTo(Mat &m, const Mat &mask) const
  * include/opencv/cxcore.hpp:831
  */
 static int Mat_copyTo2(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  Mat *m               = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *mask      = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+  Mat *m = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+  const Mat *mask = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
   self__->copyTo(*m, *mask);
   return 0;
 }
@@ -456,11 +444,11 @@ static int Mat_copyTo(lua_State *L) {
  * include/opencv/cxcore.hpp:888
  */
 static int Mat_create1(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  int _rows            = luaL_checkint   (L, 1);
-  int _cols            = luaL_checkint   (L, 2);
-  int _type            = luaL_checkint   (L, 3);
+  int _rows = luaL_checkint(L, 1);
+  int _cols = luaL_checkint(L, 2);
+  int _type = luaL_checkint(L, 3);
   self__->create(_rows, _cols, _type);
   return 0;
 }
@@ -470,10 +458,10 @@ static int Mat_create1(lua_State *L) {
  * include/opencv/cxcore.hpp:889
  */
 static int Mat_create2(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  Size *_size          = *((Size **)luaL_checkudata(L, 1, "cv.Size"));
-  int _type            = luaL_checkint   (L, 2);
+  Size *_size = *((Size **)luaL_checkudata(L, 1, "cv.Size"));
+  int _type = luaL_checkint(L, 2);
   self__->create(*_size, _type);
   return 0;
 }
@@ -483,53 +471,58 @@ static int Mat_create2(lua_State *L) {
 /** Overloaded function chooser for create(...) */
 static int Mat_create(lua_State *L) {
   int type__ = lua_type(L, 1);
-  if (type__ == LUA_TNUMBER) {
-    return Mat_create1(L);
-  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Size")) {
+  if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Size")) {
     return Mat_create2(L);
+  } else if (type__ == LUA_TNUMBER) {
+    return Mat_create1(L);
   } else {
     // use any to raise errors
-    return Mat_create2(L);
+    return Mat_create1(L);
   }
 }
 
 
-/** Mat cv::Mat::cross(const Mat &m) const 
+/** Mat cv::Mat::cross(const Mat &m) const
  * include/opencv/cxcore.hpp:870
  */
 static int Mat_cross(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  const Mat *m         = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat  retval__        = self__->cross(*m);
-  lua_pushclass<Mat>(L, retval__, "Mat.Mat");
+  const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat  retval__ = self__->cross(*m);
+  lua_pushclass<Mat>(L, retval__, "cv.Mat");
   return 1;
 }
 
 
-/** int cv::Mat::depth() const 
+/** int cv::Mat::depth() const
  * include/opencv/cxcore.hpp:961
  */
 static int Mat_depth(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  int  retval__        = self__->depth();
+  int  retval__ = self__->depth();
   lua_pushnumber(L, retval__);
   return 1;
 }
 
 
 
-/** Mat cv::Mat::diag(int d=0) const 
+/** Mat cv::Mat::diag(int d=0) const
  * include/opencv/cxcore.hpp:815
  */
 static int Mat_diag1(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  int top__            = lua_gettop(L);
-  int d                = top__ < 1 ? 0 : luaL_checkint(L, 1);
-  Mat  retval__        = self__->diag(d);
-  lua_pushclass<Mat>(L, retval__, "Mat.Mat");
+  int top__ = lua_gettop(L);
+  Mat  retval__;
+  if (top__ < 1) {
+    retval__ = self__->diag();
+  } else {
+    int d = luaL_checkint(L, 1);
+    retval__ = self__->diag(d);
+  }
+  lua_pushclass<Mat>(L, retval__, "cv.Mat");
   return 1;
 }
 
@@ -538,11 +531,11 @@ static int Mat_diag1(lua_State *L) {
  * include/opencv/cxcore.hpp:817
  */
 static int Mat_diag2(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  const Mat *d         = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat  retval__        = self__->diag(*d);
-  lua_pushclass<Mat>(L, retval__, "Mat.Mat");
+  const Mat *d = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat  retval__ = self__->diag(*d);
+  lua_pushclass<Mat>(L, retval__, "cv.Mat");
   return 1;
 }
 
@@ -562,50 +555,50 @@ static int Mat_diag(lua_State *L) {
 }
 
 
-/** double cv::Mat::dot(const Mat &m) const 
+/** double cv::Mat::dot(const Mat &m) const
  * include/opencv/cxcore.hpp:872
  */
 static int Mat_dot(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  const Mat *m         = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  double  retval__     = self__->dot(*m);
+  const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+  double  retval__ = self__->dot(*m);
   lua_pushnumber(L, retval__);
   return 1;
 }
 
 
-/** size_t cv::Mat::elemSize() const 
+/** size_t cv::Mat::elemSize() const
  * include/opencv/cxcore.hpp:942
  */
 static int Mat_elemSize(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  size_t  retval__     = self__->elemSize();
+  size_t  retval__ = self__->elemSize();
   lua_pushnumber(L, retval__);
   return 1;
 }
 
 
-/** size_t cv::Mat::elemSize1() const 
+/** size_t cv::Mat::elemSize1() const
  * include/opencv/cxcore.hpp:948
  */
 static int Mat_elemSize1(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  size_t  retval__     = self__->elemSize1();
+  size_t  retval__ = self__->elemSize1();
   lua_pushnumber(L, retval__);
   return 1;
 }
 
 
-/** bool cv::Mat::empty() const 
+/** bool cv::Mat::empty() const
  * include/opencv/cxcore.hpp:983
  */
 static int Mat_empty(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  bool  retval__       = self__->empty();
+  bool  retval__ = self__->empty();
   lua_pushnumber(L, retval__);
   return 1;
 }
@@ -616,13 +609,13 @@ static int Mat_empty(lua_State *L) {
  * include/opencv/cxcore.hpp:879
  */
 static int Mat_eye1(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  int rows             = luaL_checkint   (L, 1);
-  int cols             = luaL_checkint   (L, 2);
-  int type             = luaL_checkint   (L, 3);
+  int rows = luaL_checkint(L, 1);
+  int cols = luaL_checkint(L, 2);
+  int type = luaL_checkint(L, 3);
   MatExpr_Initializer  retval__ = self__->eye(rows, cols, type);
-  lua_pushclass<MatExpr_Initializer>(L, retval__, "Mat.MatExpr_Initializer");
+  lua_pushclass<MatExpr_Initializer>(L, retval__, "cv.MatExpr_Initializer");
   return 1;
 }
 
@@ -631,12 +624,12 @@ static int Mat_eye1(lua_State *L) {
  * include/opencv/cxcore.hpp:880
  */
 static int Mat_eye2(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  Size *size           = *((Size **)luaL_checkudata(L, 1, "cv.Size"));
-  int type             = luaL_checkint   (L, 2);
+  Size *size = *((Size **)luaL_checkudata(L, 1, "cv.Size"));
+  int type = luaL_checkint(L, 2);
   MatExpr_Initializer  retval__ = self__->eye(*size, type);
-  lua_pushclass<MatExpr_Initializer>(L, retval__, "Mat.MatExpr_Initializer");
+  lua_pushclass<MatExpr_Initializer>(L, retval__, "cv.MatExpr_Initializer");
   return 1;
 }
 
@@ -645,37 +638,37 @@ static int Mat_eye2(lua_State *L) {
 /** Overloaded function chooser for eye(...) */
 static int Mat_eye(lua_State *L) {
   int type__ = lua_type(L, 1);
-  if (type__ == LUA_TNUMBER) {
-    return Mat_eye1(L);
-  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Size")) {
+  if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Size")) {
     return Mat_eye2(L);
+  } else if (type__ == LUA_TNUMBER) {
+    return Mat_eye1(L);
   } else {
     // use any to raise errors
-    return Mat_eye2(L);
+    return Mat_eye1(L);
   }
 }
 
 
-/** bool cv::Mat::isContinuous() const 
+/** bool cv::Mat::isContinuous() const
  * include/opencv/cxcore.hpp:936
  */
 static int Mat_isContinuous(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  bool  retval__       = self__->isContinuous();
+  bool  retval__ = self__->isContinuous();
   lua_pushnumber(L, retval__);
   return 1;
 }
 
 
-/** void cv::Mat::locateROI(Size &wholeSize, Point &ofs) const 
+/** void cv::Mat::locateROI(Size &wholeSize, Point &ofs) const
  * include/opencv/cxcore.hpp:897
  */
 static int Mat_locateROI(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  Size *wholeSize      = *((Size **)luaL_checkudata(L, 1, "cv.Size"));
-  Point *ofs           = *((Point **)luaL_checkudata(L, 2, "cv.Point"));
+  Size *wholeSize = *((Size **)luaL_checkudata(L, 1, "cv.Size"));
+  Point *ofs = *((Point **)luaL_checkudata(L, 2, "cv.Point"));
   self__->locateROI(*wholeSize, *ofs);
   return 0;
 }
@@ -686,13 +679,13 @@ static int Mat_locateROI(lua_State *L) {
  * include/opencv/cxcore.hpp:877
  */
 static int Mat_ones1(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  int rows             = luaL_checkint   (L, 1);
-  int cols             = luaL_checkint   (L, 2);
-  int type             = luaL_checkint   (L, 3);
+  int rows = luaL_checkint(L, 1);
+  int cols = luaL_checkint(L, 2);
+  int type = luaL_checkint(L, 3);
   MatExpr_Initializer  retval__ = self__->ones(rows, cols, type);
-  lua_pushclass<MatExpr_Initializer>(L, retval__, "Mat.MatExpr_Initializer");
+  lua_pushclass<MatExpr_Initializer>(L, retval__, "cv.MatExpr_Initializer");
   return 1;
 }
 
@@ -701,12 +694,12 @@ static int Mat_ones1(lua_State *L) {
  * include/opencv/cxcore.hpp:878
  */
 static int Mat_ones2(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  Size *size           = *((Size **)luaL_checkudata(L, 1, "cv.Size"));
-  int type             = luaL_checkint   (L, 2);
+  Size *size = *((Size **)luaL_checkudata(L, 1, "cv.Size"));
+  int type = luaL_checkint(L, 2);
   MatExpr_Initializer  retval__ = self__->ones(*size, type);
-  lua_pushclass<MatExpr_Initializer>(L, retval__, "Mat.MatExpr_Initializer");
+  lua_pushclass<MatExpr_Initializer>(L, retval__, "cv.MatExpr_Initializer");
   return 1;
 }
 
@@ -715,13 +708,13 @@ static int Mat_ones2(lua_State *L) {
 /** Overloaded function chooser for ones(...) */
 static int Mat_ones(lua_State *L) {
   int type__ = lua_type(L, 1);
-  if (type__ == LUA_TNUMBER) {
-    return Mat_ones1(L);
-  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Size")) {
+  if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Size")) {
     return Mat_ones2(L);
+  } else if (type__ == LUA_TNUMBER) {
+    return Mat_ones1(L);
   } else {
     // use any to raise errors
-    return Mat_ones2(L);
+    return Mat_ones1(L);
   }
 }
 
@@ -730,65 +723,70 @@ static int Mat_ones(lua_State *L) {
  * include/opencv/cxcore.hpp:894
  */
 static int Mat_release(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
   self__->release();
   return 0;
 }
 
 
-/** Mat cv::Mat::reshape(int _cn, int _rows=0) const 
+/** Mat cv::Mat::reshape(int _cn, int _rows=0) const
  * include/opencv/cxcore.hpp:853
  */
 static int Mat_reshape(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  int top__            = lua_gettop(L);
-  int _cn              = luaL_checkint   (L, 1);
-  int _rows            = top__ < 2 ? 0 : luaL_checkint(L, 2);
-  Mat  retval__        = self__->reshape(_cn, _rows);
-  lua_pushclass<Mat>(L, retval__, "Mat.Mat");
+  int top__ = lua_gettop(L);
+  Mat  retval__;
+  int _cn = luaL_checkint(L, 1);
+  if (top__ < 2) {
+    retval__ = self__->reshape(_cn);
+  } else {
+    int _rows = luaL_checkint(L, 2);
+    retval__ = self__->reshape(_cn, _rows);
+  }
+  lua_pushclass<Mat>(L, retval__, "cv.Mat");
   return 1;
 }
 
 
-/** Mat cv::Mat::row(int y) const 
+/** Mat cv::Mat::row(int y) const
  * include/opencv/cxcore.hpp:802
  */
 static int Mat_row(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  int y                = luaL_checkint   (L, 1);
-  Mat  retval__        = self__->row(y);
-  lua_pushclass<Mat>(L, retval__, "Mat.Mat");
+  int y = luaL_checkint(L, 1);
+  Mat  retval__ = self__->row(y);
+  lua_pushclass<Mat>(L, retval__, "cv.Mat");
   return 1;
 }
 
 
 
-/** Mat cv::Mat::rowRange(int startrow, int endrow) const 
+/** Mat cv::Mat::rowRange(int startrow, int endrow) const
  * include/opencv/cxcore.hpp:806
  */
 static int Mat_rowRange1(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  int startrow         = luaL_checkint   (L, 1);
-  int endrow           = luaL_checkint   (L, 2);
-  Mat  retval__        = self__->rowRange(startrow, endrow);
-  lua_pushclass<Mat>(L, retval__, "Mat.Mat");
+  int startrow = luaL_checkint(L, 1);
+  int endrow = luaL_checkint(L, 2);
+  Mat  retval__ = self__->rowRange(startrow, endrow);
+  lua_pushclass<Mat>(L, retval__, "cv.Mat");
   return 1;
 }
 
 
-/** Mat cv::Mat::rowRange(const Range &r) const 
+/** Mat cv::Mat::rowRange(const Range &r) const
  * include/opencv/cxcore.hpp:807
  */
 static int Mat_rowRange2(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  const Range *r       = *((const Range **)luaL_checkudata(L, 1, "cv.Range"));
-  Mat  retval__        = self__->rowRange(*r);
-  lua_pushclass<Mat>(L, retval__, "Mat.Mat");
+  const Range *r = *((const Range **)luaL_checkudata(L, 1, "cv.Range"));
+  Mat  retval__ = self__->rowRange(*r);
+  lua_pushclass<Mat>(L, retval__, "cv.Mat");
   return 1;
 }
 
@@ -812,48 +810,53 @@ static int Mat_rowRange(lua_State *L) {
  * include/opencv/cxcore.hpp:850
  */
 static int Mat_setTo(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  int top__            = lua_gettop(L);
-  const Scalar *s      = *((const Scalar **)luaL_checkudata(L, 1, "cv.Scalar"));
-  const Mat *mask      = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat  retval__        = self__->setTo(*s, *mask);
-  lua_pushclass<Mat>(L, retval__, "Mat.Mat");
+  int top__ = lua_gettop(L);
+  Mat  retval__;
+  const Scalar *s = *((const Scalar **)luaL_checkudata(L, 1, "cv.Scalar"));
+  if (top__ < 2) {
+    retval__ = self__->setTo(*s);
+  } else {
+    const Mat *mask = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    retval__ = self__->setTo(*s, *mask);
+  }
+  lua_pushclass<Mat>(L, retval__, "cv.Mat");
   return 1;
 }
 
 
-/** Size cv::Mat::size() const 
+/** Size cv::Mat::size() const
  * include/opencv/cxcore.hpp:981
  */
 static int Mat_size(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  Size  retval__       = self__->size();
-  lua_pushclass<Size>(L, retval__, "Mat.Size");
+  Size  retval__ = self__->size();
+  lua_pushclass<Size>(L, retval__, "cv.Size");
   return 1;
 }
 
 
-/** size_t cv::Mat::step1() const 
+/** size_t cv::Mat::step1() const
  * include/opencv/cxcore.hpp:974
  */
 static int Mat_step1(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  size_t  retval__     = self__->step1();
+  size_t  retval__ = self__->step1();
   lua_pushnumber(L, retval__);
   return 1;
 }
 
 
-/** int cv::Mat::type() const 
+/** int cv::Mat::type() const
  * include/opencv/cxcore.hpp:955
  */
 static int Mat_type(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  int  retval__        = self__->type();
+  int  retval__ = self__->type();
   lua_pushnumber(L, retval__);
   return 1;
 }
@@ -864,13 +867,13 @@ static int Mat_type(lua_State *L) {
  * include/opencv/cxcore.hpp:875
  */
 static int Mat_zeros1(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  int rows             = luaL_checkint   (L, 1);
-  int cols             = luaL_checkint   (L, 2);
-  int type             = luaL_checkint   (L, 3);
+  int rows = luaL_checkint(L, 1);
+  int cols = luaL_checkint(L, 2);
+  int type = luaL_checkint(L, 3);
   MatExpr_Initializer  retval__ = self__->zeros(rows, cols, type);
-  lua_pushclass<MatExpr_Initializer>(L, retval__, "Mat.MatExpr_Initializer");
+  lua_pushclass<MatExpr_Initializer>(L, retval__, "cv.MatExpr_Initializer");
   return 1;
 }
 
@@ -879,12 +882,12 @@ static int Mat_zeros1(lua_State *L) {
  * include/opencv/cxcore.hpp:876
  */
 static int Mat_zeros2(lua_State *L) {
-  Mat *self__          = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
   lua_remove(L, 1);
-  Size *size           = *((Size **)luaL_checkudata(L, 1, "cv.Size"));
-  int type             = luaL_checkint   (L, 2);
+  Size *size = *((Size **)luaL_checkudata(L, 1, "cv.Size"));
+  int type = luaL_checkint(L, 2);
   MatExpr_Initializer  retval__ = self__->zeros(*size, type);
-  lua_pushclass<MatExpr_Initializer>(L, retval__, "Mat.MatExpr_Initializer");
+  lua_pushclass<MatExpr_Initializer>(L, retval__, "cv.MatExpr_Initializer");
   return 1;
 }
 
@@ -893,13 +896,13 @@ static int Mat_zeros2(lua_State *L) {
 /** Overloaded function chooser for zeros(...) */
 static int Mat_zeros(lua_State *L) {
   int type__ = lua_type(L, 1);
-  if (type__ == LUA_TNUMBER) {
-    return Mat_zeros1(L);
-  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Size")) {
+  if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Size")) {
     return Mat_zeros2(L);
+  } else if (type__ == LUA_TNUMBER) {
+    return Mat_zeros1(L);
   } else {
     // use any to raise errors
-    return Mat_zeros2(L);
+    return Mat_zeros1(L);
   }
 }
 

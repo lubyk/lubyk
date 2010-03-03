@@ -120,7 +120,7 @@ list(APPEND STATIC_LIBS cv cxcore ml opencv_lapack flann zlib)
 
 file (GLOB RUBYK_SOURCES src/core/*.cpp src/core/${PLAT}/*)
 
-include_directories (${RUBYK_SOURCE_DIR}/include ${RUBYK_SOURCE_DIR}/vendor/oscit/include ${RUBYK_SOURCE_DIR}/vendor/oscit/oscpack ${RUBYK_SOURCE_DIR}/src/classes)
+include_directories (${RUBYK_SOURCE_DIR}/include ${RUBYK_SOURCE_DIR}/include/rubyk/lua ${RUBYK_SOURCE_DIR}/vendor/oscit/include ${RUBYK_SOURCE_DIR}/vendor/oscit/oscpack ${RUBYK_SOURCE_DIR}/src/classes)
 
 file (GLOB RAGEL_SOURCES src/core/*.rl)
 foreach (RAGEL_SRC ${RAGEL_SOURCES})

@@ -112,6 +112,8 @@ protected:
     set_is_ok(state);
   }
 
+  static bool lua_is_userdata(lua_State *L, int index, const char *tname);
+
 private:
   /** Return 'this' object from lua.
    */

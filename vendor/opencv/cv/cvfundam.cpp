@@ -465,12 +465,12 @@ int CvFMEstimator::run8Point( const CvMat* _m1, const CvMat* _m2, CvMat* _fmatri
 
     scale0 = sqrt(2.)/scale0;
     scale1 = sqrt(2.)/scale1;
-    
+
     cvZero( &A );
 
     // form a linear system Ax=0: for each selected pair of points m1 & m2,
     // the row of A(=a) represents the coefficients of equation: (m2, 1)'*F*(m1, 1) = 0
-    // to save computation time, we compute (At*A) instead of A and then solve (At*A)x=0. 
+    // to save computation time, we compute (At*A) instead of A and then solve (At*A)x=0.
     for( i = 0; i < count; i++ )
     {
         double x0 = (m1[i].x - m0c.x)*scale0;
@@ -545,7 +545,7 @@ void CvFMEstimator::computeReprojError( const CvMat* _m1, const CvMat* _m2,
     const CvPoint2D64f* m2 = (const CvPoint2D64f*)_m2->data.ptr;
     const double* F = model->data.db;
     float* err = _err->data.fl;
-    
+
     for( i = 0; i < count; i++ )
     {
         double a, b, c, d1, d2, s1, s2;
@@ -618,7 +618,7 @@ CV_IMPL int cvFindFundamentalMat( const CvMat* points1, const CvMat* points2,
             param1 = 3;
         if( param2 < DBL_EPSILON || param2 > 1 - DBL_EPSILON )
             param2 = 0.99;
-        
+
         if( (method & ~3) == CV_RANSAC )
             result = estimator.runRANSAC(m1, m2, &_F3x3, tempMask, param1, param2 );
         else
@@ -1044,7 +1044,7 @@ static Mat _findHomography( const Mat& points1, const Mat& points2,
                points1.cols*points1.channels() == 2) &&
               ((points2.rows == 1 && points2.channels() == 2) ||
                points2.cols*points2.channels() == 2));
-    
+
     Mat H(3, 3, CV_64F);
     CvMat _pt1 = Mat(points1), _pt2 = Mat(points2);
     CvMat _H = H, _mask, *pmask = 0;
@@ -1058,7 +1058,7 @@ static Mat _findHomography( const Mat& points1, const Mat& points2,
         H = Scalar(0);
     return H;
 }
-    
+
 static Mat _findFundamentalMat( const Mat& points1, const Mat& points2,
                                int method, double param1, double param2,
                                vector<uchar>* mask )
@@ -1069,7 +1069,7 @@ static Mat _findFundamentalMat( const Mat& points1, const Mat& points2,
                points1.cols*points1.channels() == 2) &&
               ((points2.rows == 1 && points2.channels() == 2) ||
                points2.cols*points2.channels() == 2));
-    
+
     Mat F(3, 3, CV_64F);
     CvMat _pt1 = Mat(points1), _pt2 = Mat(points2);
     CvMat _F = F, _mask, *pmask = 0;
@@ -1083,8 +1083,8 @@ static Mat _findFundamentalMat( const Mat& points1, const Mat& points2,
         F = Scalar(0);
     return F;
 }
-    
-}    
+
+}
 
 
 cv::Mat cv::findHomography( const Mat& srcPoints, const Mat& dstPoints,
@@ -1100,7 +1100,7 @@ cv::Mat cv::findHomography( const Mat& srcPoints, const Mat& dstPoints,
     return _findHomography(srcPoints, dstPoints, method, ransacReprojThreshold, 0);
 }
 
-    
+
 cv::Mat cv::findFundamentalMat( const Mat& points1, const Mat& points2,
                                 vector<uchar>& mask, int method, double param1, double param2 )
 {
@@ -1120,7 +1120,7 @@ void cv::computeCorrespondEpilines( const Mat& points, int whichImage,
               (points.depth() == CV_32S || points.depth() == CV_32F) &&
               ((points.rows == 1 && points.channels() == 2) ||
                points.cols*points.channels() == 2));
-    
+
     lines.resize(points.cols*points.rows*points.channels()/2);
     CvMat _points = points, _lines = Mat(lines), _F = F;
     cvComputeCorrespondEpilines(&_points, whichImage, &_F, &_lines);
@@ -1132,7 +1132,7 @@ void cv::convertPointsHomogeneous( const Mat& src, vector<Point3f>& dst )
               (src.depth() == CV_32S || src.depth() == CV_32F) &&
               ((src.rows == 1 && src.channels() == 2) ||
                src.cols*src.channels() == 2));
-    
+
     dst.resize(src.cols*src.rows*src.channels()/2);
     CvMat _src = src, _dst = Mat(dst);
     cvConvertPointsHomogeneous(&_src, &_dst);
@@ -1144,7 +1144,7 @@ void cv::convertPointsHomogeneous( const Mat& src, vector<Point2f>& dst )
               (src.depth() == CV_32S || src.depth() == CV_32F) &&
               ((src.rows == 1 && src.channels() == 3) ||
                src.cols*src.channels() == 3));
-    
+
     dst.resize(src.cols*src.rows*src.channels()/3);
     CvMat _src = Mat(src), _dst = Mat(dst);
     cvConvertPointsHomogeneous(&_src, &_dst);
