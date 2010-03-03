@@ -40,6 +40,9 @@ const Value LuaScript::lua_init(const char *init_script) {
   // Our own lua context.
   lua_ = lua_open();
 
+  // register Matrix userdata
+  //register_lua_Matrix();
+
   // Load lua libraries
   open_lua_libs();
 
@@ -415,12 +418,50 @@ int LuaScript::lua_send(lua_State *L) {
   return 0;
 }
 
+// void LuaScript::register_lua_Matrix()
+// {
+//   luaL_newmetatable(lua_, LUA_MATRIX_NAME);        /* create metatable for Matrix, add it to the Lua registry */
+//   luaL_openlib(lua_, LUA_MATRIX_NAME, sMatrix_methods, 0);  /* create methods table, add it to the globals */
+//
+//   lua_pushstring(lua_, "__index");
+//   lua_pushstring(lua_, "get");
+//   lua_gettable(lua_, 2);  /* get Matrix.get */
+//   lua_settable(lua_, 1);  /* metatable.__index = Matrix.get */
+//
+//
+//   lua_pushstring(lua_, "__tostring");
+//   lua_pushstring(lua_, "tostring");
+//   lua_gettable(lua_, 2); /* get Matrix.tostring */
+//   lua_settable(lua_, 1); /* metatable.__tostring = Matrix.tostring */
+//
+//
+//   // uncomment when we have const / not const checking code.
+//   // lua_pushstring(L, "__newindex");
+//   // lua_pushstring(L, "set");
+//   // lua_gettable(L, 2); /* get array.set */
+//   // lua_settable(L, 1); /* metatable.__newindex = array.set */
+//
+//   //  luaL_openlib(lua_, 0, sMatrix_meta, 0);  /* fill metatable */
+//   //  lua_pushliteral(lua_, "__index");
+//   //  lua_pushvalue(lua_, -3);               /* dup methods table*/
+//   //  lua_rawset(lua_, -3);                  /* metatable.__index = methods */
+//   //  lua_pushliteral(lua_, "__metatable");
+//   //  lua_pushvalue(lua_, -3);               /* dup methods table*/
+//   //  lua_rawset(lua_, -3);                  /* hide metatable:
+//   //                                         metatable.__metatable = methods */
+//   //  lua_pop(lua_, 1);                      /* drop metatable */
+// }
+
 void LuaScript::open_lua_lib(const char *name, lua_CFunction func)
 {
   lua_pushcfunction(lua_, func);
   lua_pushstring(lua_, name);
   lua_call(lua_, 1, 0);
 }
+
+extern void luaopen_cv_Mat(lua_State *L);
+extern void luaopen_cv(lua_State *L);
+extern void luaopen_cv_Size2i(lua_State *L);
 
 void LuaScript::open_lua_libs() {
   luaL_openlibs(lua_);
@@ -429,6 +470,10 @@ void LuaScript::open_lua_libs() {
   open_lua_lib(LUA_IOLIBNAME, luaopen_io);
   open_lua_lib(LUA_STRLIBNAME, luaopen_string);
   open_lua_lib(LUA_MATHLIBNAME, luaopen_math);
+
+  luaopen_cv_Mat(lua_);
+  luaopen_cv(lua_);
+  luaopen_cv_Size2i(lua_);
 }
 
 const Value LuaScript::eval(const char *script, size_t script_size) {

@@ -76,15 +76,18 @@
 }
 
 -(void)set_timer {
-  // very small interval (1ms). Maximal frame rate = vertical refresh rate.
-  render_timer_ = [[NSTimer timerWithTimeInterval:0.001
+  // this is a minimal timer in case no bangs are received (1.5s).
+  render_timer_ = [[NSTimer timerWithTimeInterval:1.5
     target:self
     selector:@selector(timerFired:)
     userInfo:nil
     repeats:true] retain];
 
-  [[NSRunLoop currentRunLoop] addTimer:render_timer_
-    forMode:NSDefaultRunLoopMode];
+  // This code was used to trigger refresh as fast as possible without any knowledge on
+  // drawing needs.
+
+  // [[NSRunLoop currentRunLoop] addTimer:render_timer_
+  //   forMode:NSDefaultRunLoopMode];
   [[NSRunLoop currentRunLoop] addTimer:render_timer_
     forMode:NSEventTrackingRunLoopMode]; //Ensure timer fires during resize
 }
@@ -274,6 +277,7 @@ void GLWindow::redraw() {
     impl_->redraw();
   }
 }
+
 
 
 

@@ -80,7 +80,7 @@ protected:
 
 extern "C" void init(Planet &planet) {
   CLASS (GLLua, "GLLua script.", "script: [script content] or file: [path to file]")
-  // {1}
+  // [1]
   INLET (GLLua, draw, Value(Json("[0,0]")).push_back("Receives [width, height] from an OpenGL thread."))
 
   ADD_SUPER_METHOD(GLLua, Script, file, StringIO("path", "Set path to script content."))

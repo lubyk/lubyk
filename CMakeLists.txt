@@ -43,7 +43,7 @@ if(UNIX)
     add_definitions(-DLUA_USE_MACOSX)
     add_definitions(-D__MACOSX_CORE__)
     # CoreFoundation needed by Midi and cannot be added in dylib
-    set(PLAT_LINK "-flat_namespace -lreadline -framework Accelerate -framework CoreFoundation -framework OpenGL -framework GLUT -framework Cocoa -lobjc") # -framework Cocoa -lobjc ===> planet_gui.mm
+    set(PLAT_LINK "-all_load -flat_namespace -lreadline -framework Accelerate -framework CoreFoundation -framework OpenGL -framework GLUT -framework Cocoa -lobjc") # -framework Cocoa -lobjc ===> planet_gui.mm
     set(PLAT_OBJ_FLAGS "-flat_namespace -undefined suppress -dynamic -bundle")
 
     # set(CMAKE_CXX_FLAGS "-mmacosx-version-min=10.6 -g -Wall")
@@ -141,7 +141,7 @@ list(APPEND STATIC_LIBS lrubyk)
 add_executable(rubyk ${RUBYK_SOURCE_DIR}/src/main.cpp ${CUSTOM_BUILD_DEPENDS})
 
 
-target_link_libraries (rubyk -all_load ${STATIC_LIBS} ${CUSTOM_BUILD_DEPENDS} ${PLAT_LINK})
+target_link_libraries (rubyk ${STATIC_LIBS} ${CUSTOM_BUILD_DEPENDS} ${PLAT_LINK})
 
 # ==============================================================================
 #

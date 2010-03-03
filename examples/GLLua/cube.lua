@@ -4,6 +4,7 @@ win = GLWindow()
 cube = GLLua("../examples/GLLua/cube.lua")
 win => cube
 m = Metro(3000)
+m => win
 m => advance~cube
 --]]
 
