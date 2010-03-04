@@ -18,3 +18,4 @@ examples/send
 examples/receive
 examples/beatbox
 misc/iPhone/oscit/build
+vendor/lua_bindings/doc

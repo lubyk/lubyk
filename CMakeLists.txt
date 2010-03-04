@@ -104,9 +104,9 @@ else(RUBYK_USE_LUA_JIT)
   list(APPEND STATIC_LIBS lua)
 endif(RUBYK_USE_LUA_JIT)
 
-# ------------------------------------------------ lua_addons
-add_subdirectory(vendor/lua_addons)
-list(APPEND STATIC_LIBS lua_addons)
+# ------------------------------------------------ lua_bindings
+add_subdirectory(vendor/lua_bindings)
+list(APPEND STATIC_LIBS lua_bindings)
 
 # ------------------------------------------------ cv, cxcore, ml, opencv_lapack, flann, zlib
 add_subdirectory(vendor/opencv)
@@ -118,9 +118,9 @@ list(APPEND STATIC_LIBS cv cxcore ml opencv_lapack flann zlib)
 #
 # ==============================================================================
 
-file (GLOB RUBYK_SOURCES src/core/*.cpp src/core/${PLAT}/*)
+file (GLOB RUBYK_SOURCES src/core/*.cpp src/core/${PLAT}/* src/support/*)
 
-include_directories (${RUBYK_SOURCE_DIR}/include ${RUBYK_SOURCE_DIR}/include/rubyk/lua ${RUBYK_SOURCE_DIR}/vendor/oscit/include ${RUBYK_SOURCE_DIR}/vendor/oscit/oscpack ${RUBYK_SOURCE_DIR}/src/classes)
+include_directories (${RUBYK_SOURCE_DIR}/include ${RUBYK_SOURCE_DIR}/include/rubyk/lua  ${RUBYK_SOURCE_DIR}/vendor/oscit/include ${RUBYK_SOURCE_DIR}/vendor/oscit/oscpack ${RUBYK_SOURCE_DIR}/src/classes)
 
 file (GLOB RAGEL_SOURCES src/core/*.rl)
 foreach (RAGEL_SRC ${RAGEL_SOURCES})

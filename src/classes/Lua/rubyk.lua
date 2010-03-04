@@ -25,10 +25,10 @@ end
 -- function HashIO(info)
 --   return {{}, info}
 -- end
--- 
--- function MatrixIO(rows, cols, info)
---   return {Matrix(rows,cols), info}
--- end
+--
+function MatrixIO(info)
+  return {cv.Mat(), info}
+end
 
 -- function MidiIO(info)
 --   {MidiMessage(), info}
@@ -42,7 +42,7 @@ end
 function Outlet(name, vtype)
   local self = build_outlet_(name, vtype)
   local send
-  
+
   if (type(self) == 'string') then
     -- error
     print(self)
