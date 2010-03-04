@@ -61,6 +61,14 @@ void TextCommand::listen() {
   clear();
 
   thread_ready();
+
+  if (init_script_ != "") {
+    lock();
+      parse(init_script_.c_str());
+      parse("\n");
+    unlock();
+  }
+
   while(should_run() && getline(&line, 1023)) {
     lock();
       parse(line);

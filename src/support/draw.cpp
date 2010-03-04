@@ -131,3 +131,99 @@ void rk::draw_matrix(const cv::Mat &mat, float start_x, float start_y, float end
     }
   }
 }
+
+void glu::Build2DMipmaps(const cv::Mat &mat) {
+  if (mat.cols && mat.rows) {
+    if (mat.type() != CV_8UC3) {
+      std::cerr << "Cannot display matrix (type should be CV_8UC3)\n";
+      return;
+    }
+
+    if (!mat.isContinuous()) {
+      std::cerr << "Cannot build mipmap for matrix (data not continuous)\n";
+      return;
+    }
+
+    gluBuild2DMipmaps(
+      GL_TEXTURE_2D,
+      3,                  // internalFormat
+      mat.rows,           // width
+      mat.cols,           // height
+      GL_RGB,             // data ordering format
+      GL_UNSIGNED_BYTE,   // data value format
+      mat.data
+    );
+  }
+}
+
+void gl::DrawPixels(const cv::Mat &mat) {
+  if (mat.cols && mat.rows) {
+    if (mat.type() != CV_8UC3) {
+      std::cerr << "Cannot display matrix (type should be CV_8UC3)\n";
+      return;
+    }
+
+    if (!mat.isContinuous()) {
+      std::cerr << "Cannot build mipmap for matrix (data not continuous)\n";
+      return;
+    }
+
+    glDrawPixels(
+      mat.rows,          // width
+      mat.cols,          // height
+      GL_RGB,            // data ordering format
+      GL_UNSIGNED_BYTE, // data value format
+      mat.data
+    );
+  }
+}
+
+void gl::TexImage(const cv::Mat &mat) {
+  if (mat.rows && mat.cols) {
+    if (mat.type() != CV_8UC3) {
+      std::cerr << "Cannot display matrix (type should be CV_8UC3)\n";
+      return;
+    }
+
+    if (!mat.isContinuous()) {
+      std::cerr << "Cannot build mipmap for matrix (data not continuous)\n";
+      return;
+    }
+
+    // ??
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, mat.cols, mat.rows, 0, GL_RGB, GL_UNSIGNED_BYTE, mat.data);
+  }
+}
+
+
+
+
+
+// static int gl_draw_pixels(lua_State *L)
+// {
+//    GLenum e;
+//    GLfloat *pixels;
+//
+//    /* test arguments type */
+//    if(!(lua_isnumber(L, 1) && lua_isnumber(L, 2) &&
+//         lua_isstring(L, 3) && lua_istable (L, 4)) )
+//       luaL_error(L, "incorrect argument to function 'gl.DrawPixels'");
+//
+//    /* get parameters */
+//    e = get_gl_enum(L, 3);
+//    get_arrayf(L, 4, &pixels);
+//
+//    /* test argument */
+//    if(e == ENUM_ERROR)
+//       luaL_error(L, "incorrect string argument to function 'gl.DrawPixels'");
+//
+//    /* call opengl function */
+//    glDrawPixels((GLsizei)lua_tonumber(L, 1), (GLsizei)lua_tonumber(L, 2), e, GL_FLOAT, pixels);
+//
+//    free(pixels);
+//
+//    return 0;
+// }
+

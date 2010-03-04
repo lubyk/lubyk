@@ -44,8 +44,17 @@ class Planet;
 class TextCommand : public Command {
 public:
   TYPED("Mutex.Thread.Command.TextCommand")
-  TextCommand(std::istream &input, std::ostream &output) : Command("text"), current_directory_("/"), input_(&input), output_(&output)
-  { initialize(); }
+  TextCommand(std::istream &input, std::ostream &output)
+      : Command("text"), current_directory_("/"), input_(&input), output_(&output)
+  {
+    initialize();
+  }
+
+  TextCommand(std::istream &input, std::ostream &output, const std::string &init_script)
+      : Command("text"), current_directory_("/"), input_(&input), output_(&output), init_script_(init_script)
+  {
+    initialize();
+  }
 
   TextCommand() : Command("text"), current_directory_("/") {
     input_  = &std::cin;
@@ -189,6 +198,8 @@ protected:
   std::istream *input_;
   std::ostream *output_;
 
+  std::string init_script_;
+
   bool silent_;
 };
 
@@ -204,7 +215,13 @@ class CommandLine : public TextCommand
 {
 public:
   TYPED("Mutex.Thread.Command.TextCommand.CommandLine")
-  CommandLine(std::istream &input, std::ostream &output) : TextCommand(input, output) {
+  CommandLine(std::istream &input, std::ostream &output)
+      : TextCommand(input, output) {
+    read_history(history_path().c_str());
+  }
+
+  CommandLine(std::istream &input, std::ostream &output, const std::string &init_script)
+      : TextCommand(input, output, init_script) {
     read_history(history_path().c_str());
   }
 
@@ -250,6 +267,7 @@ class CommandLine : public TextCommand
 public:
   TYPED("Mutex.Thread.Command.TextCommand.CommandLine")
   CommandLine(std::istream &input, std::ostream &output) : TextCommand(input, output) {}
+  CommandLine(std::istream &input, std::ostream &output, const std::string &init_script) : TextCommand(input, output, init_script) {}
   CommandLine() {}
 
   virtual bool getline(char ** buffer, size_t size) {

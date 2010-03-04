@@ -1,3 +1,5 @@
+
+
 #include "draw.h"
 
 #include "lua_cpp_helper.h"
@@ -50,5 +52,89 @@ static const struct luaL_Reg rk_functions[] = {
 void luaopen_rk(lua_State *L) {
   // register functions
   luaL_register(L, "rk", rk_functions);
+
+}
+
+
+#include "draw.h"
+
+#include "lua_cpp_helper.h"
+
+using namespace glu;
+
+
+
+/** void glu::Build2DMipmaps(const cv::Mat &mat)
+ * rubyk/support/draw.h:57
+ */
+static int glu_Build2DMipmaps(lua_State *L) {
+  const cv::Mat *mat = *((const cv::Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+  Build2DMipmaps(*mat);
+  return 0;
+}
+
+
+
+// Register namespace
+
+
+static const struct luaL_Reg glu_functions[] = {
+  {"Build2DMipmaps"                , glu_Build2DMipmaps},
+  {NULL, NULL},
+};
+
+
+
+void luaopen_glu(lua_State *L) {
+  // register functions
+  luaL_register(L, "glu", glu_functions);
+
+}
+
+
+#include "draw.h"
+
+#include "lua_cpp_helper.h"
+
+using namespace gl;
+
+
+
+/** void gl::DrawPixels(const cv::Mat &mat)
+ * rubyk/support/draw.h:68
+ */
+static int gl_DrawPixels(lua_State *L) {
+  const cv::Mat *mat = *((const cv::Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+  DrawPixels(*mat);
+  return 0;
+}
+
+
+
+/** void gl::TexImage(const cv::Mat &mat)
+ * rubyk/support/draw.h:73
+ */
+static int gl_TexImage(lua_State *L) {
+  const cv::Mat *mat = *((const cv::Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+  TexImage(*mat);
+  return 0;
+}
+
+
+
+// Register namespace
+
+
+static const struct luaL_Reg gl_functions[] = {
+  {"DrawPixels"                    , gl_DrawPixels},
+  {"TexImage"                      , gl_TexImage},
+  {NULL, NULL},
+};
+
+
+
+void luaopen_gl(lua_State *L) {
+  // register functions
+  luaL_register(L, "gl", gl_functions);
 
 }

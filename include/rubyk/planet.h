@@ -54,29 +54,9 @@ class Planet : public Root
     init();
   }
 
-  Planet(uint port) : Root(RUBYK_DEFAULT_NAME), worker_(this), classes_(NULL) {
+  Planet(uint port) : Root(RUBYK_DEFAULT_NAME), worker_(this), classes_(NULL), gui_started_(false) {
     init();
     open_port(port);
-  }
-
-  Planet(int argc, char * argv[]) : Root(RUBYK_DEFAULT_NAME), worker_(this), classes_(NULL), gui_started_(false) {
-    // TODO: get port from command line
-    init();
-
-    if (argc > 1) {
-      std::string file_name(argv[1]);
-      set_name(file_name.substr(0, file_name.rfind(".")));
-      std::ifstream in(argv[1], std::ios::in);
-      std::ostringstream oss;
-      oss << in.rdbuf();
-      in.close();
-
-      TextCommand * command = adopt_command(new TextCommand(std::cin, std::cout), false);
-      command->set_silent();
-      oss << "\n";
-      command->parse(oss.str());
-      delete command;
-    }
   }
 
   /** FIXME: remove this method: we should use "adopt_command". */

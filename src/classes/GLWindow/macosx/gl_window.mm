@@ -184,6 +184,7 @@ public:
       NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
       NSOpenGLPixelFormatAttribute attrs[] =
       {
+          // NSOpenGLPFAFullScreen,
           // NSOpenGLPFADoubleBuffer,
           NSOpenGLPFADepthSize, 32,
           0

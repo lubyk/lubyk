@@ -5,7 +5,7 @@
 
 int main(int argc, char * argv[])
 {
-  Planet venus(argc, argv);
+  Planet venus;
 
   // create '/views' url
   Value error;
@@ -14,7 +14,22 @@ int main(int argc, char * argv[])
     return -1;
   }
 
-  venus.adopt_command(new CommandLine(std::cin, std::cout));
+  if (argc > 1) {
+    std::string file_name(argv[1]);
+    venus.set_name(file_name.substr(0, file_name.rfind(".")));
+
+    std::ifstream in(argv[1], std::ios::in);
+    std::ostringstream oss;
+    oss << in.rdbuf();
+    in.close();
+
+    std::cout << oss.str() << "\n";
+
+    venus.adopt_command(new CommandLine(std::cin, std::cout, oss.str()));
+  } else {
+    venus.adopt_command(new CommandLine(std::cin, std::cout));
+  }
+
   venus.adopt_command(new OscCommand("oscit", "_oscit._udp"));
   venus.start_worker();
   venus.wait_for_gui();

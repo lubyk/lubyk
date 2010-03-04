@@ -487,6 +487,9 @@ void LuaScript::open_lua_lib(const char *name, lua_CFunction func)
 }
 
 extern void luaopen_rk(lua_State *L);
+extern void luaopen_gl(lua_State *L);
+extern void luaopen_glu(lua_State *L);
+
 extern void luaopen_cv_Mat(lua_State *L);
 extern void luaopen_cv(lua_State *L);
 extern void luaopen_cv_Size(lua_State *L);
@@ -502,6 +505,9 @@ void LuaScript::open_lua_libs() {
   // FIXME: we should make it possible to install these libs with the other
   // shared objects (rko) and use: require 'cv.Mat' from lua...
   luaopen_rk(lua_);
+  luaopen_gl(lua_);
+  luaopen_glu(lua_);
+
   luaopen_cv_Mat(lua_);
   luaopen_cv(lua_);
   luaopen_cv_Size(lua_);

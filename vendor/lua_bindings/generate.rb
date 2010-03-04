@@ -6,8 +6,11 @@ require 'pathname'
 XML_DOC_PATH  = (Pathname(__FILE__).dirname + 'doc/xml/').expand_path
 BINDINGS_PATH = (Pathname(__FILE__).dirname)
 
-rk = Dub.parse(XML_DOC_PATH + 'namespacerk.xml')[:rk]
-Dub::Lua.bind(rk)
+namespaces = [:rk, :glu, :gl]
+
+namespaces.map! do |ns|
+  Dub::Lua.bind Dub.parse(XML_DOC_PATH + "namespace#{ns}.xml")[ns]
+end
 
 # %w{Mat Size Point}.each do |class_name|
 #   File.open(BINDINGS_PATH + "lua/cv_#{class_name}.cpp", 'wb') do |f|
@@ -20,5 +23,8 @@ Dub::Lua.bind(rk)
 #
 
 File.open(BINDINGS_PATH + "rk/lua_bindings.cpp", 'wb') do |f|
-  f.puts rk
+  namespaces.each do |ns|
+    f.puts "\n\n"
+    f.puts ns
+  end
 end
