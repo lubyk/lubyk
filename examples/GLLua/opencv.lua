@@ -21,6 +21,11 @@ z = z or 0
 function video(frame)
   cv.resize(frame, small, size, 0, 0, cv.INTER_LINEAR)
 
+  --N = 7
+  --lowThresh = 0
+  --highThresh = 100
+  --aperature_size = N
+	--cv.Canny(frame, small, lowThresh*N*N, highThresh*N*N, aperature_size );
   n = n + math.pi / 300
   x = math.cos(n / 0.9) * 360 / math.pi
   y = math.sin(n / 0.7) * 360 / math.pi
@@ -39,8 +44,9 @@ function draw()
   gl.Rotate(y, 0.0, 1.0, 0.0)
   gl.Rotate(z, 0.0, 0.0, 1.0)
 
+
   gl.PushMatrix()
-    gl.Translate(0.0, 0.0, 1.3)
+    gl.Translate(0.0, 0.0, 1.9)
     rk.draw_matrix(small, 1.3, 1.3, -1.3, -1.3)
   gl.PopMatrix()
 
@@ -48,7 +54,7 @@ function draw()
   gl.LineWidth(1.0)
   glut.WireCube(2.6)
 
-  gl.Color(0.5,0.5,0.0,0.1)
+  gl.Color(0.5,0.5,0.0,0.2)
   glut.SolidCube(2.6)
 end
 

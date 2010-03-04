@@ -4,6 +4,7 @@ lib("lib")
 w = GLWindow()
 l = GLLua("../examples/GLLua/splines.lua")
 w => l
+m => w
 m = Metro(3000)
 m => advance~l
 --]]
