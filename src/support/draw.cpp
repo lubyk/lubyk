@@ -135,12 +135,11 @@ void rk::drawMatrix(const cv::Mat &mat, float start_x, float start_y, float end_
 void rk::drawTexture(int tex, float start_x, float start_y, float end_x, float end_y) {
   glBindTexture(GL_TEXTURE_2D, tex);
   glEnable(GL_TEXTURE_2D);
-  glBegin(GL_TRIANGLE_STRIP);
-    glBindTexture(GL_TEXTURE_2D, tex);
+  glBegin(GL_QUADS);
     glTexCoord2f(0.0, 0.0); glVertex2f(start_x, start_y );
-    glTexCoord2f(1.0, 0.0); glVertex2f(start_x, end_y   );
-    glTexCoord2f(1.0, 1.0); glVertex2f(end_x  , start_y );
-    glTexCoord2f(0.0, 1.0); glVertex2f(end_x  , end_y   );
+    glTexCoord2f(1.0, 0.0); glVertex2f(end_x  , start_y );
+    glTexCoord2f(1.0, 1.0); glVertex2f(end_x  , end_y   );
+    glTexCoord2f(0.0, 1.0); glVertex2f(start_y, end_y   );
   glEnd();
   glDisable(GL_TEXTURE_2D);
 }

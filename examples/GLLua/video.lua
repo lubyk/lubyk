@@ -31,18 +31,8 @@ function draw()
     frame_changed = false
   end
 
-  gl.PushMatrix()
-    gl.Enable("TEXTURE_2D")
-    gl.Color(1.0,1.0,1.0, 1.0)
-    gl.Begin("QUADS")
-      gl.BindTexture( "TEXTURE_2D", tex)
-      gl.TexCoord(0.0, 0.0);  gl.Vertex(0,0)
-      gl.TexCoord(1.0, 0.0);  gl.Vertex(view.width,0)
-      gl.TexCoord(1.0, 1.0);  gl.Vertex(view.width, view.height)
-      gl.TexCoord(0.0, 1.0);  gl.Vertex(0, view.height)
-    gl.End()
-    gl.Disable("TEXTURE_2D")
-  gl.PopMatrix()
+  -- draw texture in rectangle
+  rk.drawTexture(tex, 0, 0, view.width, view.height)
 end
 
 function resize(width, height)
