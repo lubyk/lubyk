@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-void rk::draw_matrix(const cv::Mat &mat, float start_x, float start_y, float end_x, float end_y,
+void rk::drawMatrix(const cv::Mat &mat, float start_x, float start_y, float end_x, float end_y,
                      float alpha, float z_mul, bool strips) {
   if (mat.cols && mat.rows) {
     if (mat.type() != CV_8UC3) {
@@ -132,11 +132,49 @@ void rk::draw_matrix(const cv::Mat &mat, float start_x, float start_y, float end
   }
 }
 
+void rk::drawTexture(int tex, float start_x, float start_y, float end_x, float end_y) {
+  glBindTexture(GL_TEXTURE_2D, tex);
+  glEnable(GL_TEXTURE_2D);
+  glBegin(GL_TRIANGLE_STRIP);
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexCoord2f(0.0, 0.0); glVertex2f(start_x, start_y );
+    glTexCoord2f(1.0, 0.0); glVertex2f(start_x, end_y   );
+    glTexCoord2f(1.0, 1.0); glVertex2f(end_x  , start_y );
+    glTexCoord2f(0.0, 1.0); glVertex2f(end_x  , end_y   );
+  glEnd();
+  glDisable(GL_TEXTURE_2D);
+}
+
 void glu::Build2DMipmaps(const cv::Mat &mat) {
+  GLenum format;
+  GLenum type;
+
   if (mat.cols && mat.rows) {
-    if (mat.type() != CV_8UC3) {
-      std::cerr << "Cannot display matrix (type should be CV_8UC3)\n";
-      return;
+    switch(mat.channels()) {
+      case 1:
+        format = GL_LUMINANCE;
+        break;
+      case 3:
+        format = GL_RGB;
+        break;
+      case 4:
+        format = GL_RGBA;
+        break;
+      default:
+        std::cerr << "Cannot build texture for matrix (" << mat.channels() << " channels)\n";
+        return;
+    }
+
+    switch(mat.depth()) {
+      case CV_8U:
+        type = GL_UNSIGNED_BYTE;
+        break;
+      case CV_32F:
+        type = GL_FLOAT;
+        break;
+      default:
+        std::cerr << "Matrix type not supported for textures (only uint and float are supported for the moment)\n";
+        return;
     }
 
     if (!mat.isContinuous()) {
@@ -149,8 +187,8 @@ void glu::Build2DMipmaps(const cv::Mat &mat) {
       3,                  // internalFormat
       mat.rows,           // width
       mat.cols,           // height
-      GL_RGB,             // data ordering format
-      GL_UNSIGNED_BYTE,   // data value format
+      format,             // data ordering format
+      type,               // data value format
       mat.data
     );
   }
@@ -198,7 +236,20 @@ void gl::TexImage(const cv::Mat &mat) {
 }
 
 
+void rk::makeTexture(const cv::Mat &m, int tex) {
+  glBindTexture(GL_TEXTURE_2D, tex);
+  glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
+  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                   GL_LINEAR_MIPMAP_NEAREST );
+
+  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+
+  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+
+  glu::Build2DMipmaps(m);
+}
 
 
 // static int gl_draw_pixels(lua_State *L)

@@ -114,7 +114,8 @@ res_converted = res_converted or cv.Mat()
 
 function load_texture(tex, mat)
   cv.cvtColor(mat, res_converted, cv.CV_RGB2BGR)
-
+  rk.makeTexture(mat, tex)
+  --[[
   gl.BindTexture( "TEXTURE_2D", tex)
   gl.TexEnv( "TEXTURE_ENV", "TEXTURE_ENV_MODE", "MODULATE" )
 
@@ -130,6 +131,7 @@ function load_texture(tex, mat)
 
   --gl.TexImage(mat) -- not working ?
   glu.Build2DMipmaps(mat)
+  --]]
 end
 
 function tex_cube(sz)

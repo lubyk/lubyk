@@ -38,6 +38,7 @@ end"
 /** A Lua script that can be called from an OpenGL windown.
  * @todo: make sure script reloads only happen on the OpenGL thread
  *        to avoid OpenGL calls in the wrong places...
+ * @todo: only load script after first resize to avoid view.width to zero
  */
 class GLLua : public LuaScript {
 public:
