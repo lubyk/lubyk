@@ -32,6 +32,7 @@ function draw()
   end
 
   -- draw texture in rectangle
+  gl.Color(1,1,1) -- do not forget !
   rk.drawTexture(tex, 0, 0, view.width, view.height)
 end
 

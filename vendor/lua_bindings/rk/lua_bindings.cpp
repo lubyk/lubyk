@@ -94,7 +94,7 @@ using namespace glu;
 
 
 /** void glu::Build2DMipmaps(const cv::Mat &mat)
- * rubyk/support/draw.h:74
+ * rubyk/support/draw.h:96
  */
 static int glu_Build2DMipmaps(lua_State *L) {
   const cv::Mat *mat = *((const cv::Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -130,7 +130,7 @@ using namespace gl;
 
 
 /** void gl::DrawPixels(const cv::Mat &mat)
- * rubyk/support/draw.h:85
+ * rubyk/support/draw.h:107
  */
 static int gl_DrawPixels(lua_State *L) {
   const cv::Mat *mat = *((const cv::Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -141,7 +141,7 @@ static int gl_DrawPixels(lua_State *L) {
 
 
 /** void gl::TexImage(const cv::Mat &mat)
- * rubyk/support/draw.h:90
+ * rubyk/support/draw.h:112
  */
 static int gl_TexImage(lua_State *L) {
   const cv::Mat *mat = *((const cv::Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -167,3 +167,4 @@ void luaopen_gl(lua_State *L) {
   luaL_register(L, "gl", gl_functions);
 
 }
+

@@ -28,3 +28,10 @@ File.open(BINDINGS_PATH + "rk/lua_bindings.cpp", 'wb') do |f|
     f.puts ns
   end
 end
+
+# file is hand edited, do not blindly overwrite...
+# cv_additions = Dub::Lua.bind Dub.parse(XML_DOC_PATH + "namespacecv.xml")[:cv]
+#
+# File.open(BINDINGS_PATH + "rk/cv_additions.cpp", 'wb') do |f|
+#   f.puts cv
+# end

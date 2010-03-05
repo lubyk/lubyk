@@ -494,6 +494,8 @@ extern void luaopen_cv_Mat(lua_State *L);
 extern void luaopen_cv(lua_State *L);
 extern void luaopen_cv_Size(lua_State *L);
 
+extern void luaopen_cv_additions(lua_State *L);
+
 void LuaScript::open_lua_libs() {
   luaL_openlibs(lua_);
   open_lua_lib("", luaopen_base);
@@ -511,6 +513,7 @@ void LuaScript::open_lua_libs() {
   luaopen_cv_Mat(lua_);
   luaopen_cv(lua_);
   luaopen_cv_Size(lua_);
+  luaopen_cv_additions(lua_);
 }
 
 const Value LuaScript::eval(const char *script, size_t script_size) {
