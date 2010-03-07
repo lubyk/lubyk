@@ -30,7 +30,7 @@
 #include "VideoIn/video_in.h"
 #include "oscit/matrix.h"
 
-#import <Cocoa/Cocoa.h>
+#include "rubyk/cocoa.h"
 #import <QTKit/QTKit.h>
 
 /* ======================== Capture delegate ============== */
@@ -81,6 +81,7 @@ public:
         capture_view_(nil),
         x_(0), y_(0), preview_width_(320), preview_height_(240),
         capture_on_(false),
+        capture_should_be_on_(false),
         preview_open_(false) {}
 
   ~Implementation() {
@@ -90,17 +91,54 @@ public:
   }
 
   // ---------------------------------------------------------------
-  const Value set_device(const std::string &device_name) {
-    if (capture_on_) {
-      // change device...
+  const Value set_device(const std::string &device_id_or_name) {
+    std::cout << "(1) " << device_id_or_name << "\n";
+    ScopedPool pool;
+    Value devices = VideoIn::sources();
+    Value description;
+    devices.get(device_id_or_name, &description);
+    if (description.is_string()) {
+      std::cout << "(2) " << description << "\n";
+      device_id_ = device_id_or_name;
+      if (capture_on_) {
+        stop_capture();
+        start_capture();
+      } else if (capture_should_be_on_) {
+        start_capture();
+      }
+      return description;
     } else {
-      device_name_ = device_name;
+      std::cout << "(3) " << devices << "\n";
+      HashIterator it,end = devices.end();
+      for(it = devices.begin(); it != end; ++it) {
+        devices.get(*it, &description);
+        if (description.is_string() && description.str() == device_id_or_name) {
+          std::cout << "(4) " << description << "\n";
+          device_id_ = *it;
+          if (capture_on_) {
+            stop_capture();
+            start_capture();
+          } else if (capture_should_be_on_) {
+            start_capture();
+          }
+          return description;
+        }
+      }
+      // we set so that it fails starting later
+      device_id_ = device_id_or_name;
+      if (capture_on_) {
+        std::cout << "(5)\n";
+        stop_capture();
+        capture_should_be_on_ = true;
+      }
+      return FValue("Could not set video source to '") << device_id_or_name << "'.";
     }
     return gNilValue;
   }
 
   // ---------------------------------------------------------------
   const Value start_capture() {
+    capture_should_be_on_ = true;
     if (!Planet::gui_ready()) {
       return Value(INTERNAL_SERVER_ERROR, "Could not start NSApp (needed for Video in).");
     }
@@ -112,25 +150,24 @@ public:
 
     // Find video device
     QTCaptureDevice *device;
-    if (device_name_ != "") {
-      device = [QTCaptureDevice deviceWithUniqueID:[NSString stringWithUTF8String:device_name_.c_str()]];
+    if (device_id_ != "") {
+      device = [QTCaptureDevice deviceWithUniqueID:[NSString stringWithUTF8String:device_id_.c_str()]];
     } else {
       device = [QTCaptureDevice defaultInputDeviceWithMediaType:QTMediaTypeVideo];
     }
 
     if (!device) {
-      return FValue(BAD_REQUEST_ERROR, "Could not find device '", device_name_.c_str(), "'.");
+      return FValue(BAD_REQUEST_ERROR, "Could not find device '%s'.", device_id_.c_str());
     }
 
     if (![device open:&error]) {
-      return FValue(BAD_REQUEST_ERROR, "Could not open device '", device_name_.c_str(), "'.");
+      return FValue(BAD_REQUEST_ERROR, "Could not open device '%s'.", device_id_.c_str());
     }
-
 
     // Add the video device to the session as a device input.
     capture_input_ = [[QTCaptureDeviceInput alloc] initWithDevice:device];
     if (![capture_session_ addInput:capture_input_ error:&error]) {
-      return FValue(INTERNAL_SERVER_ERROR, "Could not add input '%s' to capture session.", device_name_.c_str());
+      return FValue(INTERNAL_SERVER_ERROR, "Could not add input '%s' to capture session.", device_id_.c_str());
     }
 
     capture_output_ = [[QTCaptureDecompressedVideoOutput alloc] init];
@@ -155,6 +192,7 @@ public:
       [capture_view_ setCaptureSession:capture_session_];
     }
 
+    capture_on_ = true;
     [capture_session_ startRunning];
 
     return gNilValue;
@@ -162,7 +200,7 @@ public:
 
   // ---------------------------------------------------------------
   void stop_capture() {
-
+    capture_should_be_on_ = false;
     if (capture_session_) {
       if ([capture_session_ isRunning]) [capture_session_ stopRunning];
 
@@ -199,7 +237,7 @@ public:
       return Value(INTERNAL_SERVER_ERROR, "Could not start NSApp.");
     }
 
-    { NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    { ScopedPool pool;
       capture_view_ = [[QTCaptureView alloc] initWithFrame:NSMakeRect(0, 0, preview_width_, preview_height_)];
 
       int style = NSClosableWindowMask | NSResizableWindowMask | NSTitledWindowMask | NSMiniaturizableWindowMask;
@@ -217,8 +255,6 @@ public:
       }
 
       [window_ makeKeyAndOrderFront:window_];
-
-      [pool drain];
     }
 
     preview_open_ = true;
@@ -229,7 +265,7 @@ public:
   // ---------------------------------------------------------------
   const Value close_preview() {
     if (!preview_open_) return gNilValue;
-    { NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    { ScopedPool pool;
 
       if (capture_view_) {
         [capture_view_ release];
@@ -240,8 +276,6 @@ public:
         [window_ release];
         window_ = nil;
       }
-
-      [pool drain];
     }
 
     preview_open_ = false;
@@ -257,9 +291,10 @@ public:
 
   NSWindow *window_;
   QTCaptureView *capture_view_;
-  std::string device_name_;
+  std::string device_id_;
   int x_, y_, preview_width_, preview_height_;
   bool capture_on_;
+  bool capture_should_be_on_;
   bool preview_open_;
 };
 /* ======================== Capture delegate ============== */
@@ -337,9 +372,9 @@ public:
 /* ======================== VideoIn ======================= */
 
 VideoIn::VideoIn() {
-  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    impl_ = new VideoIn::Implementation(this);
-  [pool drain];
+  ScopedPool pool;
+
+  impl_ = new VideoIn::Implementation(this);
 }
 
 VideoIn::~VideoIn() {
@@ -352,9 +387,9 @@ const Value VideoIn::set_device(const std::string &device_name) {
 
 // ---------------------------------------------------------------
 const Value VideoIn::start_capture() {
-  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    Value res = impl_->start_capture();
-  [pool drain];
+  ScopedPool pool;
+
+  Value res = impl_->start_capture();
 
   return res;
 }
@@ -372,4 +407,16 @@ const Value VideoIn::open_preview(int x, int y) {
 // ---------------------------------------------------------------
 const Value VideoIn::close_preview() {
   return impl_->close_preview();
+}
+
+const Value VideoIn::sources() {
+  ScopedPool pool;
+  NSEnumerator *list = [[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo] objectEnumerator];
+  QTCaptureDevice *device;
+
+  HashValue res; // TODO: use size as hint for hash init
+  while ( (device = [list nextObject]) ) {
+    res.set([[device uniqueID] UTF8String], [[device localizedDisplayName] UTF8String]);
+  }
+  return res;
 }

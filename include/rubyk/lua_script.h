@@ -77,6 +77,15 @@ public:
    */
   const Value lua_init(const char *init_script = NULL);
 
+  /** Convert all the stack as a list value (does not pop).
+   */
+  static const Value stack_to_value(lua_State *L, int start_index = 1);
+
+  /** Get the value at the given index from the lua context.
+   *  If index is 0, get all the stack as a list value.
+   */
+  static bool value_from_lua(lua_State *L, int index, Value *res);
+
 protected:
   /** Open lua libraries. You can overwrite this method
    * to load your super special libraries.
@@ -114,19 +123,11 @@ protected:
 
   static bool lua_is_userdata(lua_State *L, int index, const char *tname);
 
+
 private:
   /** Return 'this' object from lua.
    */
   static LuaScript *lua_this(lua_State *L);
-
-  /** Pop all the stack as a list value.
-   */
-  static const Value stack_to_value(lua_State *L, int start_index = 1);
-
-  /** Get the value at the given index from the lua context.
-   *  If index is 0, get all the stack as a list value.
-   */
-  static bool value_from_lua(lua_State *L, int index, Value *res);
 
   /** Get a list of values from the table at the given index.
    *  This method assumes the object at the given index is

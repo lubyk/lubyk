@@ -40,7 +40,8 @@ public:
 
   virtual ~VideoIn();
 
-  /** Select a device from its unique device ID.
+  /** Select a device from its unique device ID or name.
+   * @return device description on success, an error on failure.
    */
   const Value set_device(const std::string &device_name);
 
@@ -65,6 +66,12 @@ public:
    * received.
    */
   virtual void frame_changed(const Value &matrix) {}
+
+  /** List video sources.
+   * You can then use the source key or value to open Video streams.
+   * @return a hash describing the video in devices (key = source_id, value = description).
+   */
+  static const Value sources();
 
 private:
   class Implementation;

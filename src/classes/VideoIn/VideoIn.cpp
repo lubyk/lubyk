@@ -39,7 +39,6 @@ public:
 
   const Value start() {
     Value res = video_in_.start_capture();
-    std::cout << res << "\n";
     return res;
   }
 
@@ -80,6 +79,10 @@ public:
     return Value(preview_open_);
   }
 
+  static const Value sources(Root *planet, const Value &val) {
+    return VideoIn::sources();
+  }
+
 private:
   struct VideoInProxy : public VideoIn {
     VideoInProxy(VideoInNode *master) : master_(master) {}
@@ -102,4 +105,5 @@ extern "C" void init(Planet &planet) {
   METHOD(VideoInNode, device,  StringIO("name", "Set input device id."))
   METHOD(VideoInNode, preview, RealIO("bool", "Open/close a preview window."))
   OUTLET(VideoInNode, frames,  MatrixIO(0,0,"Video frames as matrix."))
+  CLASS_METHOD(VideoInNode, sources, NilIO("Return a dictionary of video in devices"))
 }

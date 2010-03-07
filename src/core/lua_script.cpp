@@ -93,7 +93,7 @@ const Value LuaScript::call_lua(const char *function_name, const Value &val) {
     return res;
   }
 
-  if (!is_ok()) return Value(BAD_REQUEST_ERROR, "Script is broken.");
+  if (!is_ok()) return last_error_;
 
   lua_pushnumber(lua_, worker_->current_time());
   lua_setglobal(lua_, "current_time");
@@ -135,7 +135,9 @@ const Value LuaScript::call_lua(const char *function_name, const Value &val) {
     return err;
   }
 
-  return stack_to_value(lua_);
+  res = stack_to_value(lua_);
+  lua_settop(lua_, 0); // clear stack
+  return res;
 }
 
 
@@ -242,7 +244,6 @@ const Value LuaScript::stack_to_value(lua_State *L, int start_index) {
       break;
     }
   }
-  lua_pop(L, top);
   return res;
 }
 
@@ -493,6 +494,7 @@ extern void luaopen_glu(lua_State *L);
 extern void luaopen_cv_Mat(lua_State *L);
 extern void luaopen_cv(lua_State *L);
 extern void luaopen_cv_Size(lua_State *L);
+extern void luaopen_cv_Scalar(lua_State *L);
 
 extern void luaopen_cv_additions(lua_State *L);
 

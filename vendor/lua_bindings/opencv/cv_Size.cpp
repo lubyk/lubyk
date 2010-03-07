@@ -68,14 +68,15 @@ static int Size_Size5(lua_State *L) {
 /** Overloaded function chooser for Size(...) */
 static int Size_Size(lua_State *L) {
   int type__ = lua_type(L, 1);
-  if (type__ == LUA_TNONE) {
+  int top__  = lua_gettop(L);
+  if (type__ == LUA_TNUMBER) {
+    return Size_Size2(L);
+  } else if (top__ < 1) {
     return Size_Size1(L);
   } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.CvSize")) {
     return Size_Size4(L);
   } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.CvSize2D32f")) {
     return Size_Size5(L);
-  } else if (type__ == LUA_TNUMBER) {
-    return Size_Size2(L);
   } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Size2i")) {
     return Size_Size3(L);
   } else {
@@ -97,15 +98,16 @@ static int Size_destructor(lua_State *L) {
 
 static int Size__tostring(lua_State *L) {
   Size **userdata = (Size**)luaL_checkudata(L, 1, "cv.Size");
-  Size *sz = *userdata;
-  lua_pushfstring(L, "<cv.Size:%p %dx%d>", sz, sz->width, sz->height);
+  
+  lua_pushfstring(L, "<cv.Size: %p %dx%d>", *userdata, (*userdata)->width, (*userdata)->height);
+  
   return 1;
 }
 
 /* ============================ Member Methods   ====================== */
 
 
-/** _Tp cv::Size2i::area() const
+/** _Tp cv::Size2i::area() const 
  * include/opencv/cxcore.hpp:355
  */
 static int Size_area(lua_State *L) {
@@ -138,7 +140,7 @@ static const struct luaL_Reg Size_namespace_methods[] = {
 
 void luaopen_cv_Size(lua_State *L) {
   // Create the metatable which will contain all the member methods
-  luaL_newmetatable(L, "cv.Size"); // "dub.Matrix"
+  luaL_newmetatable(L, "cv.Size");
 
   // metatable.__index = metatable (find methods in the table itself)
   lua_pushvalue(L, -1);

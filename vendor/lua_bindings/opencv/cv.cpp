@@ -178,13 +178,14 @@ static int cv_RQDecomp3x32(lua_State *L) {
 /** Overloaded function chooser for RQDecomp3x3(...) */
 static int cv_RQDecomp3x3(lua_State *L) {
   int type__ = lua_type(L, 1);
+  int top__  = lua_gettop(L);
   if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Mat")) {
     type__ = lua_type(L, 2);
     if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.Mat")) {
       type__ = lua_type(L, 3);
       if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "cv.Mat")) {
         type__ = lua_type(L, 4);
-        if (type__ == LUA_TNONE) {
+        if (top__ < 4) {
           return cv_RQDecomp3x31(L);
         } else if (type__ == LUA_TUSERDATA && is_userdata(L, 4, "cv.Mat")) {
           return cv_RQDecomp3x32(L);
@@ -236,11 +237,12 @@ static int cv_Rodrigues2(lua_State *L) {
 /** Overloaded function chooser for Rodrigues(...) */
 static int cv_Rodrigues(lua_State *L) {
   int type__ = lua_type(L, 1);
+  int top__  = lua_gettop(L);
   if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Mat")) {
     type__ = lua_type(L, 2);
     if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.Mat")) {
       type__ = lua_type(L, 3);
-      if (type__ == LUA_TNONE) {
+      if (top__ < 3) {
         return cv_Rodrigues1(L);
       } else if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "cv.Mat")) {
         return cv_Rodrigues2(L);
@@ -590,13 +592,14 @@ static int cv_add6(lua_State *L) {
 /** Overloaded function chooser for add(...) */
 static int cv_add(lua_State *L) {
   int type__ = lua_type(L, 1);
+  int top__  = lua_gettop(L);
   if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.MatND")) {
     type__ = lua_type(L, 2);
     if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.MatND")) {
       type__ = lua_type(L, 3);
       if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "cv.MatND")) {
         type__ = lua_type(L, 4);
-        if (type__ == LUA_TNONE) {
+        if (top__ < 4) {
           return cv_add5(L);
         } else if (type__ == LUA_TUSERDATA && is_userdata(L, 4, "cv.MatND")) {
           return cv_add4(L);
@@ -620,7 +623,7 @@ static int cv_add(lua_State *L) {
       type__ = lua_type(L, 3);
       if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "cv.Mat")) {
         type__ = lua_type(L, 4);
-        if (type__ == LUA_TNONE) {
+        if (top__ < 4) {
           return cv_add2(L);
         } else if (type__ == LUA_TUSERDATA && is_userdata(L, 4, "cv.Mat")) {
           return cv_add1(L);
@@ -1311,17 +1314,17 @@ static int cv_calcCovarMatrix(lua_State *L) {
   int type__ = lua_type(L, 1);
   if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Mat")) {
     type__ = lua_type(L, 2);
-    if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.Mat")) {
-      return cv_calcCovarMatrix2(L);
-    } else if (type__ == LUA_TNUMBER) {
+    if (type__ == LUA_TNUMBER) {
       return cv_calcCovarMatrix1(L);
+    } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.Mat")) {
+      return cv_calcCovarMatrix2(L);
     } else {
       // use any to raise errors
-      return cv_calcCovarMatrix1(L);
+      return cv_calcCovarMatrix2(L);
     }
   } else {
     // use any to raise errors
-    return cv_calcCovarMatrix1(L);
+    return cv_calcCovarMatrix2(L);
   }
 }
 
@@ -1745,27 +1748,27 @@ static int cv_compare(lua_State *L) {
   int type__ = lua_type(L, 1);
   if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.MatND")) {
     type__ = lua_type(L, 2);
-    if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.MatND")) {
-      return cv_compare3(L);
-    } else if (type__ == LUA_TNUMBER) {
+    if (type__ == LUA_TNUMBER) {
       return cv_compare4(L);
+    } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.MatND")) {
+      return cv_compare3(L);
     } else {
       // use any to raise errors
-      return cv_compare4(L);
+      return cv_compare3(L);
     }
   } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Mat")) {
     type__ = lua_type(L, 2);
-    if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.Mat")) {
-      return cv_compare1(L);
-    } else if (type__ == LUA_TNUMBER) {
+    if (type__ == LUA_TNUMBER) {
       return cv_compare2(L);
+    } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.Mat")) {
+      return cv_compare1(L);
     } else {
       // use any to raise errors
-      return cv_compare2(L);
+      return cv_compare1(L);
     }
   } else {
     // use any to raise errors
-    return cv_compare2(L);
+    return cv_compare1(L);
   }
 }
 
@@ -1874,6 +1877,7 @@ static int cv_composeRT2(lua_State *L) {
 /** Overloaded function chooser for composeRT(...) */
 static int cv_composeRT(lua_State *L) {
   int type__ = lua_type(L, 1);
+  int top__  = lua_gettop(L);
   if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Mat")) {
     type__ = lua_type(L, 2);
     if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.Mat")) {
@@ -1886,7 +1890,7 @@ static int cv_composeRT(lua_State *L) {
             type__ = lua_type(L, 6);
             if (type__ == LUA_TUSERDATA && is_userdata(L, 6, "cv.Mat")) {
               type__ = lua_type(L, 7);
-              if (type__ == LUA_TNONE) {
+              if (top__ < 7) {
                 return cv_composeRT1(L);
               } else if (type__ == LUA_TUSERDATA && is_userdata(L, 7, "cv.Mat")) {
                 return cv_composeRT2(L);
@@ -2189,6 +2193,7 @@ static int cv_decomposeProjectionMatrix2(lua_State *L) {
 /** Overloaded function chooser for decomposeProjectionMatrix(...) */
 static int cv_decomposeProjectionMatrix(lua_State *L) {
   int type__ = lua_type(L, 1);
+  int top__  = lua_gettop(L);
   if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Mat")) {
     type__ = lua_type(L, 2);
     if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.Mat")) {
@@ -2197,7 +2202,7 @@ static int cv_decomposeProjectionMatrix(lua_State *L) {
         type__ = lua_type(L, 4);
         if (type__ == LUA_TUSERDATA && is_userdata(L, 4, "cv.Mat")) {
           type__ = lua_type(L, 5);
-          if (type__ == LUA_TNONE) {
+          if (top__ < 5) {
             return cv_decomposeProjectionMatrix1(L);
           } else if (type__ == LUA_TUSERDATA && is_userdata(L, 5, "cv.Mat")) {
             return cv_decomposeProjectionMatrix2(L);
@@ -2330,21 +2335,21 @@ static int cv_distanceTransform(lua_State *L) {
     type__ = lua_type(L, 2);
     if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.Mat")) {
       type__ = lua_type(L, 3);
-      if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "cv.Mat")) {
-        return cv_distanceTransform1(L);
-      } else if (type__ == LUA_TNUMBER) {
+      if (type__ == LUA_TNUMBER) {
         return cv_distanceTransform2(L);
+      } else if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "cv.Mat")) {
+        return cv_distanceTransform1(L);
       } else {
         // use any to raise errors
-        return cv_distanceTransform2(L);
+        return cv_distanceTransform1(L);
       }
     } else {
       // use any to raise errors
-      return cv_distanceTransform2(L);
+      return cv_distanceTransform1(L);
     }
   } else {
     // use any to raise errors
-    return cv_distanceTransform2(L);
+    return cv_distanceTransform1(L);
   }
 }
 
@@ -2415,11 +2420,7 @@ static int cv_divide4(lua_State *L) {
 /** Overloaded function chooser for divide(...) */
 static int cv_divide(lua_State *L) {
   int type__ = lua_type(L, 1);
-  if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.MatND")) {
-    return cv_divide3(L);
-  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Mat")) {
-    return cv_divide1(L);
-  } else if (type__ == LUA_TNUMBER) {
+  if (type__ == LUA_TNUMBER) {
     type__ = lua_type(L, 2);
     if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.MatND")) {
       return cv_divide4(L);
@@ -2429,9 +2430,13 @@ static int cv_divide(lua_State *L) {
       // use any to raise errors
       return cv_divide2(L);
     }
+  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.MatND")) {
+    return cv_divide3(L);
+  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Mat")) {
+    return cv_divide1(L);
   } else {
     // use any to raise errors
-    return cv_divide2(L);
+    return cv_divide1(L);
   }
 }
 
@@ -2509,21 +2514,21 @@ static int cv_eigen(lua_State *L) {
     type__ = lua_type(L, 2);
     if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.Mat")) {
       type__ = lua_type(L, 3);
-      if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "cv.Mat")) {
-        return cv_eigen2(L);
-      } else if (type__ == LUA_TNUMBER) {
+      if (type__ == LUA_TNUMBER) {
         return cv_eigen1(L);
+      } else if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "cv.Mat")) {
+        return cv_eigen2(L);
       } else {
         // use any to raise errors
-        return cv_eigen1(L);
+        return cv_eigen2(L);
       }
     } else {
       // use any to raise errors
-      return cv_eigen1(L);
+      return cv_eigen2(L);
     }
   } else {
     // use any to raise errors
-    return cv_eigen1(L);
+    return cv_eigen2(L);
   }
 }
 
@@ -3587,29 +3592,29 @@ static int cv_integral(lua_State *L) {
     type__ = lua_type(L, 2);
     if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.Mat")) {
       type__ = lua_type(L, 3);
-      if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "cv.Mat")) {
+      if (type__ == LUA_TNUMBER) {
+        return cv_integral1(L);
+      } else if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "cv.Mat")) {
         type__ = lua_type(L, 4);
-        if (type__ == LUA_TUSERDATA && is_userdata(L, 4, "cv.Mat")) {
-          return cv_integral3(L);
-        } else if (type__ == LUA_TNUMBER) {
+        if (type__ == LUA_TNUMBER) {
           return cv_integral2(L);
+        } else if (type__ == LUA_TUSERDATA && is_userdata(L, 4, "cv.Mat")) {
+          return cv_integral3(L);
         } else {
           // use any to raise errors
-          return cv_integral2(L);
+          return cv_integral3(L);
         }
-      } else if (type__ == LUA_TNUMBER) {
-        return cv_integral1(L);
       } else {
         // use any to raise errors
-        return cv_integral1(L);
+        return cv_integral3(L);
       }
     } else {
       // use any to raise errors
-      return cv_integral1(L);
+      return cv_integral3(L);
     }
   } else {
     // use any to raise errors
-    return cv_integral1(L);
+    return cv_integral3(L);
   }
 }
 
@@ -3857,27 +3862,27 @@ static int cv_max(lua_State *L) {
   int type__ = lua_type(L, 1);
   if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.MatND")) {
     type__ = lua_type(L, 2);
-    if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.MatND")) {
-      return cv_max3(L);
-    } else if (type__ == LUA_TNUMBER) {
+    if (type__ == LUA_TNUMBER) {
       return cv_max4(L);
+    } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.MatND")) {
+      return cv_max3(L);
     } else {
       // use any to raise errors
-      return cv_max4(L);
+      return cv_max3(L);
     }
   } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Mat")) {
     type__ = lua_type(L, 2);
-    if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.Mat")) {
-      return cv_max1(L);
-    } else if (type__ == LUA_TNUMBER) {
+    if (type__ == LUA_TNUMBER) {
       return cv_max2(L);
+    } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.Mat")) {
+      return cv_max1(L);
     } else {
       // use any to raise errors
-      return cv_max2(L);
+      return cv_max1(L);
     }
   } else {
     // use any to raise errors
-    return cv_max2(L);
+    return cv_max1(L);
   }
 }
 
@@ -3934,9 +3939,10 @@ static int cv_mean4(lua_State *L) {
 /** Overloaded function chooser for mean(...) */
 static int cv_mean(lua_State *L) {
   int type__ = lua_type(L, 1);
+  int top__  = lua_gettop(L);
   if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.MatND")) {
     type__ = lua_type(L, 2);
-    if (type__ == LUA_TNONE) {
+    if (top__ < 2) {
       return cv_mean3(L);
     } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.MatND")) {
       return cv_mean4(L);
@@ -3946,7 +3952,7 @@ static int cv_mean(lua_State *L) {
     }
   } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Mat")) {
     type__ = lua_type(L, 2);
-    if (type__ == LUA_TNONE) {
+    if (top__ < 2) {
       return cv_mean1(L);
     } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.Mat")) {
       return cv_mean2(L);
@@ -4138,27 +4144,27 @@ static int cv_min(lua_State *L) {
   int type__ = lua_type(L, 1);
   if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.MatND")) {
     type__ = lua_type(L, 2);
-    if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.MatND")) {
-      return cv_min3(L);
-    } else if (type__ == LUA_TNUMBER) {
+    if (type__ == LUA_TNUMBER) {
       return cv_min4(L);
+    } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.MatND")) {
+      return cv_min3(L);
     } else {
       // use any to raise errors
-      return cv_min4(L);
+      return cv_min3(L);
     }
   } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Mat")) {
     type__ = lua_type(L, 2);
-    if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.Mat")) {
-      return cv_min1(L);
-    } else if (type__ == LUA_TNUMBER) {
+    if (type__ == LUA_TNUMBER) {
       return cv_min2(L);
+    } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.Mat")) {
+      return cv_min1(L);
     } else {
       // use any to raise errors
-      return cv_min2(L);
+      return cv_min1(L);
     }
   } else {
     // use any to raise errors
-    return cv_min2(L);
+    return cv_min1(L);
   }
 }
 
@@ -4657,25 +4663,36 @@ static int cv_norm7(lua_State *L) {
 /** Overloaded function chooser for norm(...) */
 static int cv_norm(lua_State *L) {
   int type__ = lua_type(L, 1);
+  int top__  = lua_gettop(L);
   if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.SparseMat")) {
     return cv_norm7(L);
   } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.MatND")) {
     type__ = lua_type(L, 2);
-    if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.MatND")) {
-      return cv_norm6(L);
-    } else if (type__ == LUA_TNUMBER) {
+    if (type__ == LUA_TNUMBER) {
       return cv_norm5(L);
+    } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.MatND")) {
+      return cv_norm6(L);
     } else {
       // use any to raise errors
-      return cv_norm5(L);
+      return cv_norm6(L);
     }
   } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Mat")) {
     type__ = lua_type(L, 2);
-    if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.Mat")) {
+    if (type__ == LUA_TNUMBER) {
+      type__ = lua_type(L, 3);
+      if (top__ < 3) {
+        return cv_norm1(L);
+      } else if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "cv.Mat")) {
+        return cv_norm3(L);
+      } else {
+        // use any to raise errors
+        return cv_norm3(L);
+      }
+    } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.Mat")) {
       type__ = lua_type(L, 3);
       if (type__ == LUA_TNUMBER) {
         type__ = lua_type(L, 4);
-        if (type__ == LUA_TNONE) {
+        if (top__ < 4) {
           return cv_norm2(L);
         } else if (type__ == LUA_TUSERDATA && is_userdata(L, 4, "cv.Mat")) {
           return cv_norm4(L);
@@ -4687,23 +4704,13 @@ static int cv_norm(lua_State *L) {
         // use any to raise errors
         return cv_norm4(L);
       }
-    } else if (type__ == LUA_TNUMBER) {
-      type__ = lua_type(L, 3);
-      if (type__ == LUA_TNONE) {
-        return cv_norm1(L);
-      } else if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "cv.Mat")) {
-        return cv_norm3(L);
-      } else {
-        // use any to raise errors
-        return cv_norm3(L);
-      }
     } else {
       // use any to raise errors
-      return cv_norm3(L);
+      return cv_norm4(L);
     }
   } else {
     // use any to raise errors
-    return cv_norm3(L);
+    return cv_norm4(L);
   }
 }
 
@@ -5248,13 +5255,14 @@ static int cv_repeat2(lua_State *L) {
 /** Overloaded function chooser for repeat(...) */
 static int cv_repeat(lua_State *L) {
   int type__ = lua_type(L, 1);
+  int top__  = lua_gettop(L);
   if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Mat")) {
     type__ = lua_type(L, 2);
     if (type__ == LUA_TNUMBER) {
       type__ = lua_type(L, 3);
       if (type__ == LUA_TNUMBER) {
         type__ = lua_type(L, 4);
-        if (type__ == LUA_TNONE) {
+        if (top__ < 4) {
           return cv_repeat2(L);
         } else if (type__ == LUA_TUSERDATA && is_userdata(L, 4, "cv.Mat")) {
           return cv_repeat1(L);
@@ -5706,6 +5714,7 @@ static int cv_stereoRectify2(lua_State *L) {
 /** Overloaded function chooser for stereoRectify(...) */
 static int cv_stereoRectify(lua_State *L) {
   int type__ = lua_type(L, 1);
+  int top__  = lua_gettop(L);
   if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Mat")) {
     type__ = lua_type(L, 2);
     if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.Mat")) {
@@ -5732,7 +5741,7 @@ static int cv_stereoRectify(lua_State *L) {
                           type__ = lua_type(L, 13);
                           if (type__ == LUA_TNUMBER) {
                             type__ = lua_type(L, 14);
-                            if (type__ == LUA_TNONE) {
+                            if (top__ < 14) {
                               return cv_stereoRectify1(L);
                             } else if (type__ == LUA_TUSERDATA && is_userdata(L, 14, "cv.Size")) {
                               return cv_stereoRectify2(L);
@@ -5929,13 +5938,14 @@ static int cv_subtract7(lua_State *L) {
 /** Overloaded function chooser for subtract(...) */
 static int cv_subtract(lua_State *L) {
   int type__ = lua_type(L, 1);
+  int top__  = lua_gettop(L);
   if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.MatND")) {
     type__ = lua_type(L, 2);
     if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.MatND")) {
       type__ = lua_type(L, 3);
       if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "cv.MatND")) {
         type__ = lua_type(L, 4);
-        if (type__ == LUA_TNONE) {
+        if (top__ < 4) {
           return cv_subtract6(L);
         } else if (type__ == LUA_TUSERDATA && is_userdata(L, 4, "cv.MatND")) {
           return cv_subtract5(L);
@@ -5957,7 +5967,7 @@ static int cv_subtract(lua_State *L) {
       type__ = lua_type(L, 3);
       if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "cv.Mat")) {
         type__ = lua_type(L, 4);
-        if (type__ == LUA_TNONE) {
+        if (top__ < 4) {
           return cv_subtract2(L);
         } else if (type__ == LUA_TUSERDATA && is_userdata(L, 4, "cv.Mat")) {
           return cv_subtract1(L);

@@ -68,19 +68,20 @@ static int Point_Point5(lua_State *L) {
 /** Overloaded function chooser for Point(...) */
 static int Point_Point(lua_State *L) {
   int type__ = lua_type(L, 1);
+  int top__  = lua_gettop(L);
   if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.CvPoint")) {
     return Point_Point4(L);
-  } else if (type__ == LUA_TNONE) {
+  } else if (type__ == LUA_TNUMBER) {
+    return Point_Point2(L);
+  } else if (top__ < 1) {
     return Point_Point1(L);
   } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Point2i")) {
     return Point_Point3(L);
   } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.CvPoint2D32f")) {
     return Point_Point5(L);
-  } else if (type__ == LUA_TNUMBER) {
-    return Point_Point2(L);
   } else {
     // use any to raise errors
-    return Point_Point2(L);
+    return Point_Point5(L);
   }
 }
 
@@ -97,15 +98,16 @@ static int Point_destructor(lua_State *L) {
 
 static int Point__tostring(lua_State *L) {
   Point **userdata = (Point**)luaL_checkudata(L, 1, "cv.Point");
-  Point *pt = *userdata;
-  lua_pushfstring(L, "<cv.Point:%p %dx%d>", pt, pt->x, pt->y);
+  
+  lua_pushfstring(L, "<cv.Point: %p>", *userdata);
+  
   return 1;
 }
 
 /* ============================ Member Methods   ====================== */
 
 
-/** double cv::Point2i::ddot(const Point2i &pt) const
+/** double cv::Point2i::ddot(const Point2i &pt) const 
  * include/opencv/cxcore.hpp:309
  */
 static int Point_ddot(lua_State *L) {
@@ -118,7 +120,7 @@ static int Point_ddot(lua_State *L) {
 }
 
 
-/** _Tp cv::Point2i::dot(const Point2i &pt) const
+/** _Tp cv::Point2i::dot(const Point2i &pt) const 
  * include/opencv/cxcore.hpp:308
  */
 static int Point_dot(lua_State *L) {
@@ -153,7 +155,7 @@ static const struct luaL_Reg Point_namespace_methods[] = {
 
 void luaopen_cv_Point(lua_State *L) {
   // Create the metatable which will contain all the member methods
-  luaL_newmetatable(L, "cv.Point"); // "dub.Matrix"
+  luaL_newmetatable(L, "cv.Point");
 
   // metatable.__index = metatable (find methods in the table itself)
   lua_pushvalue(L, -1);

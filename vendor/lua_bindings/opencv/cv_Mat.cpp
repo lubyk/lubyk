@@ -158,49 +158,16 @@ static int Mat_Mat13(lua_State *L) {
 /** Overloaded function chooser for Mat(...) */
 static int Mat_Mat(lua_State *L) {
   int type__ = lua_type(L, 1);
+  int top__  = lua_gettop(L);
   if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.MatExpr_Base")) {
     return Mat_Mat13(L);
-  } else if (type__ == LUA_TNONE) {
-    return Mat_Mat1(L);
-  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.CvMat")) {
-    return Mat_Mat11(L);
-  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Mat")) {
-    type__ = lua_type(L, 2);
-    if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.Rect")) {
-      return Mat_Mat10(L);
-    } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.Range")) {
-      return Mat_Mat9(L);
-    } else if (type__ == LUA_TNONE) {
-      return Mat_Mat6(L);
-    } else {
-      // use any to raise errors
-      return Mat_Mat6(L);
-    }
-  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.IplImage")) {
-    return Mat_Mat12(L);
-  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Size")) {
-    type__ = lua_type(L, 2);
-    if (type__ == LUA_TNUMBER) {
-      type__ = lua_type(L, 3);
-      if (type__ == LUA_TNONE) {
-        return Mat_Mat3(L);
-      } else if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "cv.Scalar")) {
-        return Mat_Mat5(L);
-      } else {
-        // use any to raise errors
-        return Mat_Mat5(L);
-      }
-    } else {
-      // use any to raise errors
-      return Mat_Mat5(L);
-    }
   } else if (type__ == LUA_TNUMBER) {
     type__ = lua_type(L, 2);
     if (type__ == LUA_TNUMBER) {
       type__ = lua_type(L, 3);
       if (type__ == LUA_TNUMBER) {
         type__ = lua_type(L, 4);
-        if (type__ == LUA_TNONE) {
+        if (top__ < 4) {
           return Mat_Mat2(L);
         } else if (type__ == LUA_TUSERDATA && is_userdata(L, 4, "cv.Scalar")) {
           return Mat_Mat4(L);
@@ -216,9 +183,43 @@ static int Mat_Mat(lua_State *L) {
       // use any to raise errors
       return Mat_Mat4(L);
     }
+  } else if (top__ < 1) {
+    return Mat_Mat1(L);
+  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.CvMat")) {
+    return Mat_Mat11(L);
+  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Mat")) {
+    type__ = lua_type(L, 2);
+    if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.Rect")) {
+      return Mat_Mat10(L);
+    } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.Range")) {
+      return Mat_Mat9(L);
+    } else if (top__ < 2) {
+      return Mat_Mat6(L);
+    } else {
+      // use any to raise errors
+      return Mat_Mat6(L);
+    }
+  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.IplImage")) {
+    return Mat_Mat12(L);
+  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Size")) {
+    type__ = lua_type(L, 2);
+    if (type__ == LUA_TNUMBER) {
+      type__ = lua_type(L, 3);
+      if (top__ < 3) {
+        return Mat_Mat3(L);
+      } else if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "cv.Scalar")) {
+        return Mat_Mat5(L);
+      } else {
+        // use any to raise errors
+        return Mat_Mat5(L);
+      }
+    } else {
+      // use any to raise errors
+      return Mat_Mat5(L);
+    }
   } else {
     // use any to raise errors
-    return Mat_Mat4(L);
+    return Mat_Mat5(L);
   }
 }
 
@@ -235,8 +236,9 @@ static int Mat_destructor(lua_State *L) {
 
 static int Mat__tostring(lua_State *L) {
   Mat **userdata = (Mat**)luaL_checkudata(L, 1, "cv.Mat");
-  Mat *mat = *userdata;
-  lua_pushfstring(L, "<cv.Mat:%p %dx%d>", mat, mat->cols, mat->rows);
+  
+  lua_pushfstring(L, "<cv.Mat: %p %dx%d>", *userdata, (*userdata)->rows, (*userdata)->cols);
+  
   return 1;
 }
 
@@ -270,7 +272,7 @@ static int Mat_adjustROI(lua_State *L) {
 }
 
 
-/** void cv::Mat::assignTo(Mat &m, int type=-1) const
+/** void cv::Mat::assignTo(Mat &m, int type=-1) const 
  * include/opencv/cxcore.hpp:846
  */
 static int Mat_assignTo(lua_State *L) {
@@ -288,7 +290,7 @@ static int Mat_assignTo(lua_State *L) {
 }
 
 
-/** int cv::Mat::channels() const
+/** int cv::Mat::channels() const 
  * include/opencv/cxcore.hpp:968
  */
 static int Mat_channels(lua_State *L) {
@@ -300,7 +302,7 @@ static int Mat_channels(lua_State *L) {
 }
 
 
-/** Mat cv::Mat::clone() const
+/** Mat cv::Mat::clone() const 
  * include/opencv/cxcore.hpp:824
  */
 static int Mat_clone(lua_State *L) {
@@ -312,7 +314,7 @@ static int Mat_clone(lua_State *L) {
 }
 
 
-/** Mat cv::Mat::col(int x) const
+/** Mat cv::Mat::col(int x) const 
  * include/opencv/cxcore.hpp:804
  */
 static int Mat_col(lua_State *L) {
@@ -326,7 +328,7 @@ static int Mat_col(lua_State *L) {
 
 
 
-/** Mat cv::Mat::colRange(int startcol, int endcol) const
+/** Mat cv::Mat::colRange(int startcol, int endcol) const 
  * include/opencv/cxcore.hpp:809
  */
 static int Mat_colRange1(lua_State *L) {
@@ -340,7 +342,7 @@ static int Mat_colRange1(lua_State *L) {
 }
 
 
-/** Mat cv::Mat::colRange(const Range &r) const
+/** Mat cv::Mat::colRange(const Range &r) const 
  * include/opencv/cxcore.hpp:810
  */
 static int Mat_colRange2(lua_State *L) {
@@ -357,18 +359,18 @@ static int Mat_colRange2(lua_State *L) {
 /** Overloaded function chooser for colRange(...) */
 static int Mat_colRange(lua_State *L) {
   int type__ = lua_type(L, 1);
-  if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Range")) {
-    return Mat_colRange2(L);
-  } else if (type__ == LUA_TNUMBER) {
+  if (type__ == LUA_TNUMBER) {
     return Mat_colRange1(L);
+  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Range")) {
+    return Mat_colRange2(L);
   } else {
     // use any to raise errors
-    return Mat_colRange1(L);
+    return Mat_colRange2(L);
   }
 }
 
 
-/** void cv::Mat::convertTo(Mat &m, int rtype, double alpha=1, double beta=0) const
+/** void cv::Mat::convertTo(Mat &m, int rtype, double alpha=1, double beta=0) const 
  * include/opencv/cxcore.hpp:844
  */
 static int Mat_convertTo(lua_State *L) {
@@ -393,7 +395,7 @@ static int Mat_convertTo(lua_State *L) {
 
 
 
-/** void cv::Mat::copyTo(Mat &m) const
+/** void cv::Mat::copyTo(Mat &m) const 
  * include/opencv/cxcore.hpp:829
  */
 static int Mat_copyTo1(lua_State *L) {
@@ -405,7 +407,7 @@ static int Mat_copyTo1(lua_State *L) {
 }
 
 
-/** void cv::Mat::copyTo(Mat &m, const Mat &mask) const
+/** void cv::Mat::copyTo(Mat &m, const Mat &mask) const 
  * include/opencv/cxcore.hpp:831
  */
 static int Mat_copyTo2(lua_State *L) {
@@ -422,9 +424,10 @@ static int Mat_copyTo2(lua_State *L) {
 /** Overloaded function chooser for copyTo(...) */
 static int Mat_copyTo(lua_State *L) {
   int type__ = lua_type(L, 1);
+  int top__  = lua_gettop(L);
   if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Mat")) {
     type__ = lua_type(L, 2);
-    if (type__ == LUA_TNONE) {
+    if (top__ < 2) {
       return Mat_copyTo1(L);
     } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.Mat")) {
       return Mat_copyTo2(L);
@@ -471,18 +474,18 @@ static int Mat_create2(lua_State *L) {
 /** Overloaded function chooser for create(...) */
 static int Mat_create(lua_State *L) {
   int type__ = lua_type(L, 1);
-  if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Size")) {
-    return Mat_create2(L);
-  } else if (type__ == LUA_TNUMBER) {
+  if (type__ == LUA_TNUMBER) {
     return Mat_create1(L);
+  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Size")) {
+    return Mat_create2(L);
   } else {
     // use any to raise errors
-    return Mat_create1(L);
+    return Mat_create2(L);
   }
 }
 
 
-/** Mat cv::Mat::cross(const Mat &m) const
+/** Mat cv::Mat::cross(const Mat &m) const 
  * include/opencv/cxcore.hpp:871
  */
 static int Mat_cross(lua_State *L) {
@@ -495,7 +498,7 @@ static int Mat_cross(lua_State *L) {
 }
 
 
-/** int cv::Mat::depth() const
+/** int cv::Mat::depth() const 
  * include/opencv/cxcore.hpp:962
  */
 static int Mat_depth(lua_State *L) {
@@ -508,7 +511,7 @@ static int Mat_depth(lua_State *L) {
 
 
 
-/** Mat cv::Mat::diag(int d=0) const
+/** Mat cv::Mat::diag(int d=0) const 
  * include/opencv/cxcore.hpp:815
  */
 static int Mat_diag1(lua_State *L) {
@@ -544,18 +547,18 @@ static int Mat_diag2(lua_State *L) {
 /** Overloaded function chooser for diag(...) */
 static int Mat_diag(lua_State *L) {
   int type__ = lua_type(L, 1);
-  if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Mat")) {
-    return Mat_diag2(L);
-  } else if (type__ == LUA_TNUMBER) {
+  if (type__ == LUA_TNUMBER) {
     return Mat_diag1(L);
+  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Mat")) {
+    return Mat_diag2(L);
   } else {
     // use any to raise errors
-    return Mat_diag1(L);
+    return Mat_diag2(L);
   }
 }
 
 
-/** double cv::Mat::dot(const Mat &m) const
+/** double cv::Mat::dot(const Mat &m) const 
  * include/opencv/cxcore.hpp:873
  */
 static int Mat_dot(lua_State *L) {
@@ -568,7 +571,7 @@ static int Mat_dot(lua_State *L) {
 }
 
 
-/** size_t cv::Mat::elemSize() const
+/** size_t cv::Mat::elemSize() const 
  * include/opencv/cxcore.hpp:943
  */
 static int Mat_elemSize(lua_State *L) {
@@ -580,7 +583,7 @@ static int Mat_elemSize(lua_State *L) {
 }
 
 
-/** size_t cv::Mat::elemSize1() const
+/** size_t cv::Mat::elemSize1() const 
  * include/opencv/cxcore.hpp:949
  */
 static int Mat_elemSize1(lua_State *L) {
@@ -592,7 +595,7 @@ static int Mat_elemSize1(lua_State *L) {
 }
 
 
-/** bool cv::Mat::empty() const
+/** bool cv::Mat::empty() const 
  * include/opencv/cxcore.hpp:984
  */
 static int Mat_empty(lua_State *L) {
@@ -638,18 +641,18 @@ static int Mat_eye2(lua_State *L) {
 /** Overloaded function chooser for eye(...) */
 static int Mat_eye(lua_State *L) {
   int type__ = lua_type(L, 1);
-  if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Size")) {
-    return Mat_eye2(L);
-  } else if (type__ == LUA_TNUMBER) {
+  if (type__ == LUA_TNUMBER) {
     return Mat_eye1(L);
+  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Size")) {
+    return Mat_eye2(L);
   } else {
     // use any to raise errors
-    return Mat_eye1(L);
+    return Mat_eye2(L);
   }
 }
 
 
-/** bool cv::Mat::isContinuous() const
+/** bool cv::Mat::isContinuous() const 
  * include/opencv/cxcore.hpp:937
  */
 static int Mat_isContinuous(lua_State *L) {
@@ -661,7 +664,7 @@ static int Mat_isContinuous(lua_State *L) {
 }
 
 
-/** void cv::Mat::locateROI(Size &wholeSize, Point &ofs) const
+/** void cv::Mat::locateROI(Size &wholeSize, Point &ofs) const 
  * include/opencv/cxcore.hpp:898
  */
 static int Mat_locateROI(lua_State *L) {
@@ -708,13 +711,13 @@ static int Mat_ones2(lua_State *L) {
 /** Overloaded function chooser for ones(...) */
 static int Mat_ones(lua_State *L) {
   int type__ = lua_type(L, 1);
-  if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Size")) {
-    return Mat_ones2(L);
-  } else if (type__ == LUA_TNUMBER) {
+  if (type__ == LUA_TNUMBER) {
     return Mat_ones1(L);
+  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Size")) {
+    return Mat_ones2(L);
   } else {
     // use any to raise errors
-    return Mat_ones1(L);
+    return Mat_ones2(L);
   }
 }
 
@@ -730,7 +733,7 @@ static int Mat_release(lua_State *L) {
 }
 
 
-/** Mat cv::Mat::reshape(int _cn, int _rows=0) const
+/** Mat cv::Mat::reshape(int _cn, int _rows=0) const 
  * include/opencv/cxcore.hpp:854
  */
 static int Mat_reshape(lua_State *L) {
@@ -750,7 +753,7 @@ static int Mat_reshape(lua_State *L) {
 }
 
 
-/** Mat cv::Mat::row(int y) const
+/** Mat cv::Mat::row(int y) const 
  * include/opencv/cxcore.hpp:802
  */
 static int Mat_row(lua_State *L) {
@@ -764,7 +767,7 @@ static int Mat_row(lua_State *L) {
 
 
 
-/** Mat cv::Mat::rowRange(int startrow, int endrow) const
+/** Mat cv::Mat::rowRange(int startrow, int endrow) const 
  * include/opencv/cxcore.hpp:806
  */
 static int Mat_rowRange1(lua_State *L) {
@@ -778,7 +781,7 @@ static int Mat_rowRange1(lua_State *L) {
 }
 
 
-/** Mat cv::Mat::rowRange(const Range &r) const
+/** Mat cv::Mat::rowRange(const Range &r) const 
  * include/opencv/cxcore.hpp:807
  */
 static int Mat_rowRange2(lua_State *L) {
@@ -795,13 +798,13 @@ static int Mat_rowRange2(lua_State *L) {
 /** Overloaded function chooser for rowRange(...) */
 static int Mat_rowRange(lua_State *L) {
   int type__ = lua_type(L, 1);
-  if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Range")) {
-    return Mat_rowRange2(L);
-  } else if (type__ == LUA_TNUMBER) {
+  if (type__ == LUA_TNUMBER) {
     return Mat_rowRange1(L);
+  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Range")) {
+    return Mat_rowRange2(L);
   } else {
     // use any to raise errors
-    return Mat_rowRange1(L);
+    return Mat_rowRange2(L);
   }
 }
 
@@ -826,7 +829,7 @@ static int Mat_setTo(lua_State *L) {
 }
 
 
-/** Size cv::Mat::size() const
+/** Size cv::Mat::size() const 
  * include/opencv/cxcore.hpp:982
  */
 static int Mat_size(lua_State *L) {
@@ -838,7 +841,7 @@ static int Mat_size(lua_State *L) {
 }
 
 
-/** size_t cv::Mat::step1() const
+/** size_t cv::Mat::step1() const 
  * include/opencv/cxcore.hpp:975
  */
 static int Mat_step1(lua_State *L) {
@@ -850,7 +853,7 @@ static int Mat_step1(lua_State *L) {
 }
 
 
-/** int cv::Mat::type() const
+/** int cv::Mat::type() const 
  * include/opencv/cxcore.hpp:956
  */
 static int Mat_type(lua_State *L) {
@@ -896,13 +899,13 @@ static int Mat_zeros2(lua_State *L) {
 /** Overloaded function chooser for zeros(...) */
 static int Mat_zeros(lua_State *L) {
   int type__ = lua_type(L, 1);
-  if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Size")) {
-    return Mat_zeros2(L);
-  } else if (type__ == LUA_TNUMBER) {
+  if (type__ == LUA_TNUMBER) {
     return Mat_zeros1(L);
+  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Size")) {
+    return Mat_zeros2(L);
   } else {
     // use any to raise errors
-    return Mat_zeros1(L);
+    return Mat_zeros2(L);
   }
 }
 
@@ -963,7 +966,7 @@ static const struct lua_constants_Reg Mat_namespace_constants[] = {
 
 void luaopen_cv_Mat(lua_State *L) {
   // Create the metatable which will contain all the member methods
-  luaL_newmetatable(L, "cv.Mat"); // "dub.Matrix"
+  luaL_newmetatable(L, "cv.Mat");
 
   // metatable.__index = metatable (find methods in the table itself)
   lua_pushvalue(L, -1);
