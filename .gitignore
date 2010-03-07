@@ -11,7 +11,7 @@ build
 vendor/lua/lua
 vendor/lua/luac
 test/runner*
-rubyk
+/build/rubyk
 doc/prototypes/test
 doc/prototypes/test
 examples/send
