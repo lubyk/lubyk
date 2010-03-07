@@ -92,13 +92,11 @@ public:
 
   // ---------------------------------------------------------------
   const Value set_device(const std::string &device_id_or_name) {
-    std::cout << "(1) " << device_id_or_name << "\n";
     ScopedPool pool;
     Value devices = VideoIn::sources();
     Value description;
     devices.get(device_id_or_name, &description);
     if (description.is_string()) {
-      std::cout << "(2) " << description << "\n";
       device_id_ = device_id_or_name;
       if (capture_on_) {
         stop_capture();
@@ -108,12 +106,10 @@ public:
       }
       return description;
     } else {
-      std::cout << "(3) " << devices << "\n";
       HashIterator it,end = devices.end();
       for(it = devices.begin(); it != end; ++it) {
         devices.get(*it, &description);
         if (description.is_string() && description.str() == device_id_or_name) {
-          std::cout << "(4) " << description << "\n";
           device_id_ = *it;
           if (capture_on_) {
             stop_capture();
@@ -127,7 +123,6 @@ public:
       // we set so that it fails starting later
       device_id_ = device_id_or_name;
       if (capture_on_) {
-        std::cout << "(5)\n";
         stop_capture();
         capture_should_be_on_ = true;
       }

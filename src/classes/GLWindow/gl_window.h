@@ -36,6 +36,10 @@
 
 class Planet;
 
+/** @internal.
+ */
+class GLWindow_Implementation;
+
 /** This is a wrapper facade around an OpenGL window.
  */
 class GLWindow : public Node {
@@ -59,6 +63,12 @@ public:
    */
   void redraw();
 
+  /** Set fullscreen on/off.
+   * @param on_off turns fullscreen on if the value is '1', off otherwise
+   * @return current fullscreen status
+   */
+  const Value fullscreen(const Value &on_off);
+
   /** This method should be implemented in sub-classes to do the actual
    * drawing.
    */
@@ -66,10 +76,13 @@ public:
 
   /** This method is called when the window dimension changes.
    */
-  virtual void resized(int height, int width) = 0;
+  virtual void resized(int width, int height) = 0;
+  
+  /** @internal.
+   * TODO: why can't I declare 'Implementation' inside the GLWindow class ?
+   */
+  GLWindow_Implementation *impl_;
 
-private:
-  class Implementation;
-  Implementation *impl_;
+  bool should_be_fullscreen_;
 };
 #endif // RUBYK_INCLUDE_RUBYK_GL_WINDOW_H_

@@ -46,7 +46,7 @@ public:
     return gNilValue;
   }
 
-  virtual void resized(int height, int width) {
+  virtual void resized(int width, int height) {
     // Reset current viewport
     glViewport( 0, 0, width, height );
     size_ = Value((Real)width).push_back((Real)height);
@@ -69,6 +69,8 @@ extern "C" void init(Planet &planet) {
   // [1]
   INLET (GLWindowNode, redraw, NilIO("Redraws on bang."))
   OUTLET(GLWindowNode, draw, Value(Json("[0,0]")).push_back("Sends [width, height] of view to execute OpenGL."))
+  // TODO replace 'open' and 'close' by 'xxxx' (open if true, close if false)
   METHOD(GLWindowNode, open,  BangIO("Open a window."))
   METHOD(GLWindowNode, close, BangIO("Close opened window."))
+  SUPER_METHOD(GLWindowNode, GLWindow, fullscreen, RangeIO(0,1,"xx", "1 to go fullscreen, 0 for window mode."))
 }
