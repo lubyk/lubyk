@@ -36,10 +36,6 @@
 
 class Planet;
 
-/** @internal.
- */
-class GLWindow_Implementation;
-
 /** This is a wrapper facade around an OpenGL window.
  */
 class GLWindow : public Node {
@@ -77,12 +73,17 @@ public:
   /** This method is called when the window dimension changes.
    */
   virtual void resized(int width, int height) = 0;
-  
-  /** @internal.
-   * TODO: why can't I declare 'Implementation' inside the GLWindow class ?
-   */
-  GLWindow_Implementation *impl_;
+
+private:
+  bool create_window();
+
+  class Implementation;
+  Implementation *impl_;
 
   bool should_be_fullscreen_;
+
+  /** Initial dimension and position of the window.
+   */
+  int x_,y_,width_,height_;
 };
 #endif // RUBYK_INCLUDE_RUBYK_GL_WINDOW_H_

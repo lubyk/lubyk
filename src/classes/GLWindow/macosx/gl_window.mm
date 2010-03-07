@@ -33,11 +33,50 @@
 #include <pthread.h>
 #include <string.h>
 
-#import <Cocoa/Cocoa.h> // NSOpenGLView
-
 #include "rubyk/planet.h"
+#include "rubyk/cocoa.h"
 
-/* ======================== OpenGL view ======================= */
+/* ======================== OpenGLWindow =================================== */
+
+@interface OpenGLWindow : NSWindow {
+  GLWindow *gl_window_;
+}
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)windowStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation glWindow:(GLWindow*)gl_window;
+- (void)keyDown:(NSEvent *)event;
+- (bool)canBecomeKeyWindow;
+- (bool)canBecomeMainWindow;
+@end
+
+/* ======================== OpenGLWindow @implementation =================== */
+@implementation OpenGLWindow
+- (id)initWithContentRect:(NSRect)contentRect styleMask:(NSUInteger)windowStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)deferCreation glWindow:(GLWindow*)gl_window {
+  gl_window_ = gl_window;
+  return [self initWithContentRect:contentRect styleMask:windowStyle backing:bufferingType defer:deferCreation];
+}
+
+- (void)keyDown:(NSEvent *)event {
+  std::cout << "keyDown.\n";
+  if ([event keyCode] == 53) {
+    // should leave fullscreen
+    gl_window_->fullscreen(Value(false));
+  }
+}
+
+- (void)mouseDown:(NSEvent *)event {
+  // should leave fullscreen
+  gl_window_->fullscreen(Value(false));
+}
+
+- (bool)canBecomeKeyWindow {
+  return true;
+}
+
+- (bool)canBecomeMainWindow {
+  return true;
+}
+@end
+
+/* ======================== OpenGLView ===================================== */
 
 @interface OpenGLView : NSOpenGLView {
   NSTimer *render_timer_;
@@ -50,7 +89,11 @@
 - (void)set_timer;
 - (void)timerFired:(id)sender;
 - (void)draw_triangle:(bool)should_draw;
+- (bool)canBecomeKeyView;
+- (void)keyDown:(NSEvent *)event;
 @end
+
+/* ======================== OpenGLView @implementation ===================== */
 
 @implementation OpenGLView
 
@@ -73,6 +116,14 @@
 
 -(void)draw_triangle:(bool)should_draw {
   draw_triangle_ = should_draw;
+}
+
+- (bool)canBecomeKeyView {
+  return true;
+}
+
+- (void)keyDown:(NSEvent *)event {
+  std::cout << "key down\n";
 }
 
 -(void)set_timer {
@@ -135,7 +186,7 @@
     // We need to call this method whenever the size or location changes
     [[self openGLContext] update];
     sceneBounds = [self bounds];
-    gl_window_->resized(sceneBounds.size.height, sceneBounds.size.width);
+    gl_window_->resized(sceneBounds.size.width, sceneBounds.size.height);
     need_resize_ = false;
   }
 
@@ -145,70 +196,70 @@
 
 @end // OpenGLView
 
-/* ======================== open window thread ======================= */
 
-/*
-NSOpenGLPFAAllRenderers
-NSOpenGLPFADoubleBuffer
-NSOpenGLPFAStereo
-NSOpenGLPFAMinimumPolicy
-NSOpenGLPFAMaximumPolicy
-NSOpenGLPFAOffScreen
-NSOpenGLPFAFullScreen
-NSOpenGLPFASingleRenderer
-NSOpenGLPFANoRecovery
-NSOpenGLPFAAccelerated
-NSOpenGLPFAClosestPolicy
-NSOpenGLPFARobust
-NSOpenGLPFABackingStore
-NSOpenGLPFAWindow
-NSOpenGLPFAMultiScreen
-NSOpenGLPFACompliant
-NSOpenGLPFAPixelBuffer
-The integer constants must be followed by a value. These constants are:
-
-NSOpenGLPFAAuxBuffers
-NSOpenGLPFAColorSize
-NSOpenGLPFAAlphaSize
-NSOpenGLPFADepthSize
-NSOpenGLPFAStencilSize
-NSOpenGLPFAAccumSize
-NSOpenGLPFARendererID
-NSOpenGLPFAScreenMask
-*/
+/* ======================== GLWindow::Implementation ======================= */
 
 class GLWindow::Implementation {
 public:
-  Implementation(GLWindow *master, int x, int y, int width, int height) : should_run_(true) {
+  Implementation(GLWindow *master, int x, int y, int width, int height, bool fullscreen) : fullscreen_(fullscreen), should_run_(true) {
     if (Planet::gui_ready()) {
-      NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-      NSOpenGLPixelFormatAttribute attrs[] =
-      {
+      ScopedPool pool;
+      NSOpenGLPixelFormatAttribute attrs[] = {
           // NSOpenGLPFAFullScreen,
           // NSOpenGLPFADoubleBuffer,
           NSOpenGLPFADepthSize, 32,
           0
       };
+      // create pixel format
       NSOpenGLPixelFormat *format = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs];
+
       if (format == NULL) {
         std::cerr << "Could not create pixel format (32bit depth)\n";
       }
 
-      view_ = [[OpenGLView alloc] initWithFrame:NSMakeRect(0, 0, width, height) pixelFormat:format glWindow:master];
+      if (fullscreen_) {
+        std::cout << "FULL\n";
+        // start fullscreen mode
+        NSRect screen_rect = [[NSScreen mainScreen] frame];
 
-      int style = NSClosableWindowMask | NSResizableWindowMask | NSTitledWindowMask | NSMiniaturizableWindowMask;
+        // create window the same size as the screen
+        window_ = [[OpenGLWindow alloc] initWithContentRect:screen_rect
+          styleMask:NSBorderlessWindowMask
+          backing:NSBackingStoreBuffered
+          defer:YES
+          glWindow:master];
 
-      window_ = [[NSWindow alloc] initWithContentRect:NSMakeRect(x, y, width, height)
-        styleMask:style
-        backing:NSBackingStoreBuffered
-        defer:NO];
+        [window_ setLevel:NSMainMenuWindowLevel + 1]; // live above menu bar
+        [window_ setOpaque:YES];
+        [window_ setHidesOnDeactivate:NO]; // not sure this is good
 
-      [view_ setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-      [[window_ contentView] addSubview:view_];
-      [window_ makeKeyAndOrderFront:window_];
+        // view fits inside window
+        NSRect view_rect = NSMakeRect(0.0, 0.0, screen_rect.size.width, screen_rect.size.height);
+        view_ = [[OpenGLView alloc] initWithFrame:view_rect pixelFormat:format glWindow:master];
+      } else {
+        // windowed mode
+        int style = NSClosableWindowMask | NSResizableWindowMask | NSTitledWindowMask | NSMiniaturizableWindowMask;
+
+        window_ = [[OpenGLWindow alloc] initWithContentRect:NSMakeRect(x, y, width, height)
+          styleMask:style
+          backing:NSBackingStoreBuffered
+          defer:NO
+          glWindow:master];
+
+        view_ = [[OpenGLView alloc] initWithFrame:NSMakeRect(0, 0, width, height) pixelFormat:format glWindow:master];
+
+        [view_ setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+      }
+
+      // the window_ now owns view_
+      [window_ setContentView:view_];
+
       gl_thread_.start_thread<Implementation, &Implementation::run>(this, NULL);
+
+      // display
+      [window_ makeKeyAndOrderFront:nil]; // no sender
+
       ok_ = true;
-      [pool drain];
     } else {
       ok_ = false;
     }
@@ -217,12 +268,12 @@ public:
   ~Implementation() {
     should_run_ = false;
     gl_thread_.join();
-    [view_ release];
+    // view_ is owned by window, do not release
     [window_ release];
   }
 
   void run(Thread *runner) {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    ScopedPool pool;
     runner->thread_ready();
 
     [view_ set_timer];
@@ -234,13 +285,11 @@ public:
       [date release];
       date = [[NSDate alloc] initWithTimeIntervalSinceNow:0.1];
     }
-    [pool drain];
   }
 
   void set_title(const char *title) {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    ScopedPool pool;
     [window_ setTitle:[NSString stringWithUTF8String:title]];
-    [pool drain];
   }
 
   bool ok() {
@@ -251,21 +300,32 @@ public:
     [view_ setNeedsDisplay:YES];
   }
 
-private:
   Thread gl_thread_;
-  bool should_run_;
-  bool ok_;
   NSWindow *window_;
   OpenGLView *view_;
+  bool fullscreen_;
+  bool should_run_;
+  bool ok_;
 };
 
-GLWindow::GLWindow() : impl_(NULL) {}
+/* ======================== GLWindow implementation ======================== */
 
-bool GLWindow::open_window(int x, int y, int width, int height) {
+GLWindow::GLWindow() : impl_(NULL), should_be_fullscreen_(false) {}
+
+bool GLWindow::create_window() {
+
   if (!impl_) {
-    impl_ = new Implementation(this, x, y, width, height);
+    impl_ = new GLWindow::Implementation(this, x_, y_, width_, height_, should_be_fullscreen_);
   }
   return impl_->ok();
+}
+
+bool GLWindow::open_window(int x, int y, int width, int height) {
+  x_ = x;
+  y_ = y;
+  width_  = width;
+  height_ = height;
+  return create_window();
 }
 
 void GLWindow::close_window() {
@@ -279,6 +339,26 @@ void GLWindow::redraw() {
   }
 }
 
+const Value GLWindow::fullscreen(const Value &val) {
+  ScopedPool pool;
+  if (val.is_real()) {
+    if (val.r == 1.0) {
+      should_be_fullscreen_ = true;
+    } else {
+      should_be_fullscreen_ = false;
+    }
 
+    if (impl_ && impl_->fullscreen_ != should_be_fullscreen_) {
+      // must change mode
+      // TODO: it might be better to change the window behavior instead of delete and recreate
+      delete impl_;
+      impl_ = NULL;
+      create_window();
+    }
 
-
+    // consider success
+    return val;
+  } else {
+    return Value(should_be_fullscreen_);
+  }
+}

@@ -1,6 +1,6 @@
 #include "rubyk/planet.h"
 
-#import <Cocoa/Cocoa.h>
+#include "rubyk/cocoa.h"
 
 // ======================================== Planet
 bool Planet::s_need_gui_ = false;
@@ -74,7 +74,7 @@ void Planet::wait_for_gui() {
   s_need_gui_semaphore_.acquire();
   // wait until we need a GUI or we quit
   if (s_need_gui_ && !gAppHelper) {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    ScopedPool pool;
     gAppHelper = [[PlanetHelper alloc] initWithPlanet:this];
 
     // Make sure Cocoa runs in multi-threaded mode
@@ -94,7 +94,6 @@ void Planet::wait_for_gui() {
     gui_started_ = true;
     // let gui_ready return
     s_start_gui_semaphore_.release();
-    [pool drain];
 
     [NSApp run];
     // never reached
