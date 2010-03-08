@@ -69,8 +69,7 @@ void Planet::quit() {
   clear();
 }
 
-void Planet::wait_for_gui() {
-  s_need_gui_ = false;
+void Planet::ready() {
   s_need_gui_semaphore_.acquire();
   // wait until we need a GUI or we quit
   if (s_need_gui_ && !gAppHelper) {

@@ -201,6 +201,7 @@ protected:
   std::string init_script_;
 
   bool silent_;
+  Mutex parse_lock_;
 };
 
 #ifdef USE_READLINE

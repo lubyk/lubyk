@@ -63,23 +63,21 @@ void TextCommand::listen() {
   thread_ready();
 
   if (init_script_ != "") {
-    lock();
-      parse(init_script_.c_str());
-      parse("\n");
-    unlock();
+    parse(init_script_.c_str());
+    parse("\n");
   }
 
   while(should_run() && getline(&line, 1023)) {
-    lock();
-      parse(line);
-      parse("\n");
-      if (should_run()) saveline(line); // command was not a 'quit'
-      freeline(line);
-    unlock();
+    parse(line);
+    parse("\n");
+    if (should_run()) saveline(line); // command was not a 'quit'
+    freeline(line);
   }
 }
 
 void TextCommand::parse(const std::string &string) {
+  ScopedLock lock(parse_lock_); // TODO: what happens to a lock on thread cancel ?
+
   const char *p  = string.data();     // data pointer
   const char *pe = p + string.size(); // past end
   const char *eof = NULL;             // FIXME: this should be set to 'pe' on the last string block...

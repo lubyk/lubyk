@@ -32,7 +32,9 @@ int main(int argc, char * argv[])
 
   venus.adopt_command(new OscCommand("oscit", "_oscit._udp"));
   venus.start_worker();
-  venus.wait_for_gui();
+
+  // YOU *MUST* FINISH WITH THIS LINE
+  venus.ready();
 
   return 0;
 }

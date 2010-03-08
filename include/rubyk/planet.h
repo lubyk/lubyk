@@ -82,7 +82,7 @@ class Planet : public Root
    * thread for objects that may need a GUI event loop to handle window
    * events.
    */
-  void wait_for_gui();
+  void ready();
 
   /** Used for testing.
    */
