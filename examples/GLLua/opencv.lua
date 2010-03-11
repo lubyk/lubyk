@@ -112,6 +112,9 @@ end
 
 res_converted = res_converted or cv.Mat()
 
+-- create a matrix filled with green color
+-- red = cv.Mat(64, 64, cv.CV_32FC3, cv.Scalar(0.3,0.8,0))
+
 function load_texture(tex, mat)
   cv.cvtColor(mat, res_converted, cv.CV_RGB2BGR)
   rk.makeTexture(mat, tex)

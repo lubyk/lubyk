@@ -49,14 +49,14 @@ public:
 extern "C" void init(Planet &planet) {
   CLASS (OscMap, "Open udp ports and map calls from these ports.", "script: [mapping definitions] or file: [path to mapping file]")
   // {1}
-  c->add_method<Script, &Script::file>("file", StringIO("path", "Set path to mappings definitions."));
+  c->add_method<Script, &Script::file>("file", StringIO("File path to mappings definitions."));
   // {2}
-  c->add_method<Script, &Script::script>("script", StringIO("mappings", "Mappings definitions."));
+  c->add_method<Script, &Script::script>("script", StringIO("Mappings definitions."));
   // {3}
-  c->add_method<Script, &Script::reload>("reload", RealIO("seconds", "How often shoudl we check file for relaod."));
+  c->add_method<Script, &Script::reload>("reload", RealIO("How often to stat file for reload [s]."));
 
-  c->add_method<OscMapCommand, &OscMapCommand::port>("number", RealIO("number", "Set incomming port number."));
-  c->add_inlet<OscMapCommand,  &OscMapCommand::port>("number", RealIO("number", "Set incomming port number."));
-  c->add_method<OscMapCommand, &OscMapCommand::reply_port>("number", RealIO("number", "Set outgoing reply port number."));
-  c->add_inlet<OscMapCommand,  &OscMapCommand::reply_port>("number", RealIO("number", "Set outgoing reply port number."));
+  c->add_method<OscMapCommand, &OscMapCommand::port>("number", RealIO("Incomming port number."));
+  c->add_inlet<OscMapCommand,  &OscMapCommand::port>("number", RealIO("Incomming port number."));
+  c->add_method<OscMapCommand, &OscMapCommand::reply_port>("number", RealIO("Outgoing reply port number."));
+  c->add_inlet<OscMapCommand,  &OscMapCommand::reply_port>("number", RealIO("Outgoing reply port number."));
 }

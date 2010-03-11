@@ -25,15 +25,15 @@
 --
 -- ==============================================================================
 
-inlet(1, 'frequency', RealIO('Hz', 'Frequency of the damn thing.'))
+inlet(1, 'frequency', RealIO('Frequency of the damn thing [Hz].'))
 
 function inlet(port, name, type){
   inlets_[port] = inlets_[port] or new_inlet(port, 'bang', type)
   return inlets_[port]
 }
 
-function RealIO(units, info) {
-  return {0.0, units, info}
+function RealIO(info) {
+  return {0.0, info}
 }
 
 function bang(val)

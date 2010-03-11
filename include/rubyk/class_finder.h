@@ -58,7 +58,7 @@ public:
 
   void init() {
     //          /class/lib
-    adopt(new TMethod<ClassFinder, &ClassFinder::lib_path>(this, Url(LIB_URL).name(), StringIO("file path", "Get/set path to load objects files (*.rko).")));
+    adopt(new TMethod<ClassFinder, &ClassFinder::lib_path>(this, Url(LIB_URL).name(), StringIO("File path to load objects files (*.rko).")));
   }
 
   virtual ~ClassFinder() {}

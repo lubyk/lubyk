@@ -92,14 +92,13 @@ public:
 
   void test_add_inlet_RealIO( void ) {
     // also tests loading of rubyk.lua
-    Value res = parse("inlet('tempo', RealIO('bpm', 'Main beat machine tempo.'))");
+    Value res = parse("inlet('tempo', RealIO('Main beat machine tempo [bpm].'))");
     assert_true(res.is_string());
     ObjectHandle inlet;
     assert_true(planet_->get_object_at("/lua/in/tempo", &inlet));
-    assert_equal("fss", inlet->type().type_tag());
+    assert_equal("fs", inlet->type().type_tag());
     assert_equal(0.0, inlet->type()[0].r);
-    assert_equal("bpm", inlet->type()[1].str());
-    assert_equal("Main beat machine tempo.", inlet->type()[2].str());
+    assert_equal("Main beat machine tempo [bpm].", inlet->type()[1].str());
   }
 
   void test_add_inlet_NilIO( void ) {
@@ -112,6 +111,26 @@ public:
     assert_equal("Ping pong.", inlet->type()[1].str());
   }
 
+  // ------------------------------------------------------------------------  Matrix
+
+  void test_create_matrix( void ) {
+    Value matrix_value(Matrix(2,3,CV_32FC1));
+    Value res = parse("function foo()\n return cv.Mat(2,3,cv.CV_32FC1)\nend");
+    assert_true(res.is_string());
+    res = script_->call_lua("foo");
+    assert_true(res.is_matrix());
+    assert_equal(matrix_value.matrix_->type(), res.matrix_->type());
+  }
+
+  void test_call_lua_with_matrix( void ) {
+    Value matrix_value(Matrix(2,3,CV_32FC1));
+    Value res = parse("function foo(m)\n return m\nend");
+    assert_true(res.is_string());
+    res = script_->call_lua("foo", matrix_value);
+    assert_true(res.is_matrix());
+    assert_equal(matrix_value.matrix_->data, res.matrix_->data);
+  }
+
   void test_add_inlet_MatrixIO( void ) {
     // also tests loading of rubyk.lua
     Value res = parse("inlet('boom', MatrixIO('Ping pong.'))");
@@ -122,14 +141,54 @@ public:
     assert_equal("Ping pong.", inlet->type()[1].str());
   }
 
+  // ------------------------------------------------------------------------  Midi
+
+  void test_create_midi( void ) {
+    Value res = parse("function foo()\n return oscit.MidiMessage_Note(65,68)\nend");
+    assert_true(res.is_string());
+    res = script_->call_lua("foo");
+    assert_true(res.is_midi());
+    std::ostringstream oss;
+    oss << res;
+    assert_equal("\"MidiMessage +1:F3(68), 0/500\"", oss.str());
+  }
+
+  void test_call_lua_with_MidiValue( void ) {
+    MidiValue midi_value;
+    midi_value.set_as_note(45, 78, 1000);
+    Value res = parse("function foo(m)\n return m\nend");
+    assert_true(res.is_string());
+    res = script_->call_lua("foo", midi_value);
+    // moving the message into Lua makes a copy because we loose constness
+    // if this is an important performance hit, we could discard const checking but
+    // this could lead to other problems such as kept values in lua that keep changing
+    // without proper mutex protections.
+    assert_false(midi_value.midi_message_ == res.midi_message_);
+  }
+
+  void test_add_inlet_MidiIO( void ) {
+    // also tests loading of rubyk.lua
+    Value res = parse("inlet('boom', MidiIO('Ping pong.'))");
+    assert_true(res.is_string());
+    ObjectHandle inlet;
+    assert_true(planet_->get_object_at("/lua/in/boom", &inlet));
+    assert_equal("ms", inlet->type().type_tag());
+    assert_equal("Ping pong.", inlet->type()[1].str());
+  }
+
+  void test_add_outlet_MidiIO( void ) {
+    // also tests loading of rubyk.lua
+    Value res = parse("out = Outlet('boom', MidiIO('Ping pong.'))");
+    // TODO...
+  }
+
   void test_add_outlet( void ) {
-    Value res = parse("note = Outlet('note', RealIO('midi note', 'Sends note values.'))");
+    Value res = parse("note = Outlet('note', RealIO('Midi note.'))");
     assert_true(res.is_string());
     ObjectHandle outlet;
     assert_true(planet_->get_object_at("/lua/out/note", &outlet));
-    assert_equal("fss", outlet->type().type_tag());
-    assert_equal("midi note", outlet->type()[1].str()); // units
-    assert_equal("Sends note values.", outlet->type()[2].str()); // info
+    assert_equal("fs", outlet->type().type_tag());
+    assert_equal("Midi note.", outlet->type()[1].str()); // info
   }
 
   void test_call_lua( void ) {
@@ -144,15 +203,6 @@ public:
     assert_true(res.is_string());
     res = script_->call_lua("foo", gNilValue);
     assert_equal(45.0, res.r);
-  }
-
-  void test_call_lua_with_matrix( void ) {
-    Value matrix_value(Matrix(2,3,CV_32FC1));
-    Value res = parse("function foo(m)\n return m\nend");
-    assert_true(res.is_string());
-    res = script_->call_lua("foo", matrix_value);
-    assert_true(res.is_matrix());
-    assert_equal(matrix_value.matrix_->data, res.matrix_->data);
   }
 
   // sending tested in LuaTest

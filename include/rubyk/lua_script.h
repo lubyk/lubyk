@@ -53,6 +53,10 @@ public:
    */
   const Value call_lua(const char *function_name, const Value &val);
 
+  const Value call_lua(const char *function_name) {
+    return call_lua(function_name, gNilValue);
+  }
+
   /** Template to give lua access to member methods.
    * Take care, these methods run within the mutex_ lock.
    */

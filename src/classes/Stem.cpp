@@ -116,7 +116,7 @@ extern "C" void init(Planet &planet) {
   // {1}
   INLET (Stem, draw, Value(Json("[0,0]")).push_back("Receives width/height from an OpenGL thread."))
 
-  ADD_SUPER_METHOD(Stem, Script, file, StringIO("path", "Set path to script content."))
-  ADD_SUPER_METHOD(Stem, Script, script, StringIO("lua code", "Script content."))
-  ADD_SUPER_METHOD(Stem, Script, reload, RealIO("seconds", "How often shoudl we check file for relaod."))
+  ADD_SUPER_METHOD(Stem, Script, file, StringIO("File path to script content."))
+  ADD_SUPER_METHOD(Stem, Script, script, StringIO("Script content [lua]."))
+  ADD_SUPER_METHOD(Stem, Script, reload, RealIO("How often to stat file for reload [s]."))
 }

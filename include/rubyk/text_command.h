@@ -91,7 +91,7 @@ public:
         *output_ << "# " << res.str() << std::endl;
       } else if (res.is_error()) {
         *output_ << "# " << res.error_code() << " " << res.error_message() << std::endl;
-      } else if (res.type_id() == H("sss") && (res[1].str() == "=>" || res[1].str() == "||" || res[1].str() == "?")) {
+      } else if (res.type_id() == SelectIOTypeId && (res[1].str() == "=>" || res[1].str() == "||" || res[1].str() == "?")) {
         // link
         *output_ << "# " << res[0].str() << " " << res[1].str() << " " << res[2].str() << std::endl;
       } else if (res.is_list()) {

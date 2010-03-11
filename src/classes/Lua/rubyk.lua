@@ -6,20 +6,20 @@ function BangIO(info)
   return {nil, info; n=2}
 end
 
-function RealIO(units, info)
-  return {0.0, units, info}
+function RealIO(info)
+  return {0.0, info}
 end
 
-function StringIO(units, info)
-  return {"", units, info}
+function StringIO(info)
+  return {"", info}
 end
 
-function RangeIO(min, max, units, info)
-  return {0.0, min, max, units, info}
+function RangeIO(min, max, info)
+  return {0.0, min, max, info}
 end
 
-function SelectIO(values, units, info)
-  return {"", values, units, info}
+function SelectIO(values, info)
+  return {"", values, info}
 end
 
 -- function HashIO(info)
@@ -30,9 +30,9 @@ function MatrixIO(info)
   return {cv.Mat(), info}
 end
 
--- function MidiIO(info)
---   {MidiMessage(), info}
--- end
+function MidiIO(info)
+  return {oscit.MidiMessage(), info}
+end
 
 -- function AnyIO(info)
 --   { ??? , info}

@@ -18,7 +18,7 @@ include_directories(${lib_includes}
 
 set(the_target "lua_bindings")
 
-file(GLOB lib_srcs ${CMAKE_CURRENT_SOURCE_DIR}/*/*.c ${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp)
+file(GLOB lib_srcs ${CMAKE_CURRENT_SOURCE_DIR}/*/*.c ${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/../oscit/misc/lua/*.cpp)
 file(GLOB lib_hdrs ${CMAKE_CURRENT_SOURCE_DIR}/*/*.h)
 set(lib_ext_hdrs)
 

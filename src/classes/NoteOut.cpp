@@ -89,10 +89,10 @@ private:
 
 extern "C" void init(Planet &planet) {
   CLASS (NoteOut, "Helper to create a note.", "note, velocity, length, channel");
-  METHOD(NoteOut, note, RangeIO(0, 127, "midi note", "Set value / send note out."));
+  METHOD(NoteOut, note, RangeIO(0, 127, "Midi note value (sends note out)."));
   OUTLET(NoteOut, note, MidiIO("Midi note."));
-  METHOD(NoteOut, velocity, RangeIO(0, 127, "note velocity", "Set/get note velocity."));
-  METHOD(NoteOut, length, RangeIO(0, 5000, "note length", "Set/get note length."));
-  METHOD(NoteOut, channel,  RangeIO(1, 16, "midi channel", "Set/get midi channel."));
-  METHOD(NoteOut, set_note, RangeIO(0, 127, "midi note", "Set/get note value (does not send note out)."));
+  METHOD(NoteOut, velocity, RangeIO(0, 127, "Note velocity."));
+  METHOD(NoteOut, length, RangeIO(0, 5000, "Note length."));
+  METHOD(NoteOut, channel,  RangeIO(1, 16, "Midi channel."));
+  METHOD(NoteOut, set_note, RangeIO(0, 127, "Note value (does not send note out)."));
 }

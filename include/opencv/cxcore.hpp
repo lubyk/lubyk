@@ -336,6 +336,10 @@ public:
 
 //////////////////////////////// Size_ ////////////////////////////////
 
+/** Represent a two dimensional size using the template typename.
+ * The class contains two fields: <tt>height</tt> (rows) and <tt>width</tt> (acols).
+ * @see \ref Size
+ */
 template<typename _Tp> class CV_EXPORTS Size_
 {
 public:
@@ -388,6 +392,10 @@ public:
 typedef Point_<int> Point2i;
 typedef Point2i Point;
 typedef Size_<int> Size2i;
+
+/** Represents a two dimensional size as a pair of integer values.
+ * @see Size_
+ */
 typedef Size2i Size;
 typedef Rect_<int> Rect;
 typedef Point_<float> Point2f;
@@ -808,15 +816,16 @@ public:
     // constructs a square diagonal matrix which main diagonal is vector "d"
     static Mat diag(const Mat& d);
 
-    // returns deep copy of the matrix, i.e. the data is copied
     /** Create a deep copy of the matrix.
-     * This method makes a full copy of the data.
+     * This method uses Mat.copyTo internal so the latter is a better option
+     * if you already have a matrix to clone the content into.
      * @return new matrix with a copy of the data
      */
     Mat clone() const;
     
-    // copies the matrix content to "m".
-    // It calls m.create(this->size(), this->type()).
+    /** Copy the data into another matrix.
+     * @param m matrix receiving a copy of the data
+     */
     void copyTo( Mat& m ) const;
     // copies those matrix elements to "m" that are marked with non-zero mask elements.
     void copyTo( Mat& m, const Mat& mask ) const;
@@ -824,15 +833,16 @@ public:
     /** Convert to another datatype with optional value scaling.
      * This method first multiplies the values by <tt>alpha</tt> (scale),
      * adds <tt>beta</tt> (shift) and then converts to the new \ref MagicType
-     * <tt>rtype</tt>.
+     * <tt>rtype</tt>. Note that you cannot use this to change the number of
+     * channels. To do so, you should use @ref cvtColor
      * @see cvConvertScale
-     * @param m matrix to which the resulting content will be written
-     * @param rtype MagicType of the converted matrix
+     * @param m target matrix (will contain the transformed data, size does not matter)
+     * @param rtype \ref DepthType of the converted matrix
      * @param alpha value scaling factor (applied first)
      * @param beta shift factor (applied after scaling but before conversion)
      */
     void convertTo( Mat& m, int rtype, double alpha=1, double beta=0 ) const;
-
+    
     void assignTo( Mat& m, int type=-1 ) const;
 
     // sets every matrix element to s
@@ -870,8 +880,12 @@ public:
     static MatExpr_Initializer eye(int rows, int cols, int type);
     static MatExpr_Initializer eye(Size size, int type);
 
-    // allocates new matrix data unless the matrix already has specified size and type.
-    // previous data is unreferenced if needed.
+    /** Allocate new matrix data unless the matrix already has the specified size and type.
+     * The previous data will be unreferenced if needed.
+     * @param _rows number of rows in the new matrix data
+     * @param _cols number of columns in the new matrix data
+     * @param _type \ref MagicType of the new data
+     */
     void create(int _rows, int _cols, int _type);
     void create(Size _size, int _type);
     // increases the reference counter; use with care to avoid memleaks
@@ -910,7 +924,9 @@ public:
      */
     Mat operator()( const Rect& roi ) const;
 
-    // converts header to CvMat; no data is copied
+    /** Convert header to legacy CvMat format without copying the data.
+     * @return a new CvMat header using the same format and data.
+     */
     operator CvMat() const;
     // converts header to IplImage; no data is copied
     operator IplImage() const;
@@ -938,7 +954,11 @@ public:
      * @return \ref MagicType of the data
      */
     int type() const;
-    // returns element type, similar to CV_MAT_DEPTH(cvmat->type)
+    
+    /** Returns the @ref DepthType of the current matrix.
+     * The DepthType is a single number representing the kind of value
+     * stored. This method is similar to CV_MAT_DEPTH(cvmat->type).
+     */
     int depth() const;
     
     /** Get the number of channels (number of values in each element).
@@ -947,15 +967,18 @@ public:
      */
     int channels() const;
 
-    
-    /** Number of elements to move to next row.
-     * This number is the number of bytes to next row \ref step divided
-     * by the number of bytes forming a single element \ref elemSize.
+    /** Get the number of elements to move to next row.
+     * This number is the number of bytes to next row (@ref step) divided
+     * by the number of bytes forming a single element (@ref elemSize).
      * @return number of elements to move to next row
      */
     size_t step1() const;
-    // returns matrix size:
-    // width == number of columns, height == number of rows
+    
+    /** Get the @ref Size of the matrix.
+     * The <tt>width</tt> parameter represents the number of columns 
+     * and the <tt>height</tt> parameter the number of rows.
+     * @return size of the matrix
+     */
     Size size() const;
     // returns true if matrix data is NULL
     bool empty() const;
@@ -1054,8 +1077,20 @@ CV_EXPORTS void extractImageCOI(const CvArr* arr, Mat& coiimg, int coi=-1);
 CV_EXPORTS void insertImageCOI(const Mat& coiimg, CvArr* arr, int coi=-1);
 
 CV_EXPORTS void add(const Mat& a, const Mat& b, Mat& c, const Mat& mask);
+/** Subtract two matrices (C = A - B)
+* @param a matrix containing data to be subtracted (A)
+* @param b matrix containing data to remove (B)
+* @param c matrix containing the result of A - B
+ * @param mask to only subtract where the mask is not 0
+ */
 CV_EXPORTS void subtract(const Mat& a, const Mat& b, Mat& c, const Mat& mask);
 CV_EXPORTS void add(const Mat& a, const Mat& b, Mat& c);
+
+/** Subtract two matrices (C = A - B)
+ * @param a matrix containing data to be subtracted (A)
+ * @param b matrix containing data to remove (B)
+ * @param c matrix containing the result of A - B
+ */
 CV_EXPORTS void subtract(const Mat& a, const Mat& b, Mat& c);
 CV_EXPORTS void add(const Mat& a, const Scalar& s, Mat& c, const Mat& mask=Mat());
 CV_EXPORTS void subtract(const Mat& a, const Scalar& s, Mat& c, const Mat& mask=Mat());
@@ -1094,6 +1129,15 @@ CV_EXPORTS void split(const Mat& m, Mat* mvbegin);
 
 CV_EXPORTS void mixChannels(const Mat* src, int nsrcs, Mat* dst, int ndsts,
                             const int* fromTo, size_t npairs);
+
+/** Flip an image horizontally and/or vertically.
+ * Use 0 to flip horizontally (right goes left)
+ * Use 1 to flip vertically (up goes down)
+ * Use -1 to flip both directions
+ * @param a source image
+ * @param b result image (flipped)
+ * @param flipCode (use 0, 1 or -1)
+ */
 CV_EXPORTS void flip(const Mat& a, Mat& b, int flipCode);
 
 CV_EXPORTS void repeat(const Mat& a, int ny, int nx, Mat& b);

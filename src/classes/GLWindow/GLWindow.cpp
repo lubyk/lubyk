@@ -72,5 +72,5 @@ extern "C" void init(Planet &planet) {
   // TODO replace 'open' and 'close' by 'xxxx' (open if true, close if false)
   METHOD(GLWindowNode, open,  BangIO("Open a window."))
   METHOD(GLWindowNode, close, BangIO("Close opened window."))
-  SUPER_METHOD(GLWindowNode, GLWindow, fullscreen, RangeIO(0,1,"xx", "1 to go fullscreen, 0 for window mode."))
+  SUPER_METHOD(GLWindowNode, GLWindow, fullscreen, RangeIO(0,1, "1 to go fullscreen, 0 for window mode."))
 }

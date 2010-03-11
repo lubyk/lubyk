@@ -40,6 +40,8 @@
 //
 //M*/
 
+/** @file */
+
 #ifndef _CV_HPP_
 #define _CV_HPP_
 
@@ -321,6 +323,21 @@ CV_EXPORTS void morphologyEx( const Mat& src, Mat& dst, int op, const Mat& kerne
 enum { INTER_NEAREST=0, INTER_LINEAR=1, INTER_CUBIC=2, INTER_AREA=3,
        INTER_LANCZOS4=4, INTER_MAX=7, WARP_INVERSE_MAP=16 };
 
+/** Resize the source matrix and write results in the destination matrix.
+ * Unlike cvResize, this method uses an explicit \ref Size parameter instead
+ * of using the destination ROI for the resizing information.<br>
+ * Also note that not all source depths are supported. Currently, the source
+ * depth must be @ref CV_8U, @ref CV_16U or @ref CV_32F.
+ *
+ * @param src original matrix to be resized
+ * @param dst target matrix to write resulting image into
+ * @param dsize target size (if empty, fx and fy should be provided)
+ * @param fx width scaling factor (not used if <tt>dsize</tt> is not empty)
+ * @param fy height scaling factor (not used if <tt>dsize</tt> is not empty)
+ * @param interpolation \ref InterpolationOption to use during resize (default is Bilinear). <br>
+ *        Note that true "area" interpolation is only implemented for the case (fx <= 1 && fy <= 1).
+ *        In other cases it is emulated using some variant of bilinear interpolation.
+ */
 CV_EXPORTS void resize( const Mat& src, Mat& dst,
                         Size dsize, double fx=0, double fy=0,
                         int interpolation=INTER_LINEAR );
@@ -478,6 +495,13 @@ CV_EXPORTS int floodFill( Mat& image, Mat& mask,
                           Scalar loDiff=Scalar(), Scalar upDiff=Scalar(),
                           int flags=4 );
 
+
+/** Convert from one color space to another (alters number of channels).
+ * @see Mat::convertTo
+ * @param src source matrix
+ * @param dst target matrix (will contain the new color space)
+ * @param code @ref ColorConversionOption option such as CV_BGRA2RGBA
+ */
 CV_EXPORTS void cvtColor( const Mat& src, Mat& dst, int code, int dstCn=0 );
 
 class CV_EXPORTS Moments

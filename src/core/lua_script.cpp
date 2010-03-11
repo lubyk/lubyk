@@ -167,6 +167,7 @@ void LuaScript::register_lua_method(const char *name, lua_CFunction function) {
 }
 
 LuaScript *LuaScript::lua_this(lua_State *L) {
+  //lua_getfield(L, LUA_REGISTRYINDEX, RUBYK_THIS_IN_LUA);
   lua_getglobal(L, RUBYK_THIS_IN_LUA); // FIXME: Use REGISTRY instead (better protection)
   LuaScript *script = (LuaScript*)lua_touserdata(L,lua_gettop(L));
   if (!script) fprintf(stderr, "Lua error: '__this' not set.\n");
@@ -259,7 +260,6 @@ bool LuaScript::value_from_lua(lua_State *L, int index, Value *res) {
     return false;
   }
 
-
   /* LUA_TNIL, LUA_TNUMBER, LUA_TBOOLEAN, LUA_TSTRING, LUA_TTABLE, LUA_TFUNCTION, LUA_TUSERDATA, LUA_TTHREAD, and LUA_TLIGHTUSERDATA.
   */
   switch ( lua_type(L, index) ) {
@@ -278,33 +278,26 @@ bool LuaScript::value_from_lua(lua_State *L, int index, Value *res) {
     res->set((Real)lua_toboolean(L, index));
     break;
   case LUA_TTABLE:
-    // list or midi message ?
-    lua_pushstring(L, "type");
-    lua_gettable(L, index);
-    if (lua_isstring(L, -1)) {
-      lua_pop(L,1); // type
-      // midi
-      // midi_message_from_lua_table(&pMsg, index);
-      // res->set(&pMsg);
-      res->set_nil();
-    } else {
-      lua_pop(L,1); // type
-      // table
-      res->set_empty();
-      return list_from_lua(L, index, res);
-    }
+    res->set_empty();
+    return list_from_lua(L, index, res);
     break;
   case LUA_TUSERDATA:
     if (lua_is_userdata(L, index, "cv.Mat")) {
-      Matrix *mat = *((Matrix**)luaL_checkudata(L, index, "cv.Mat"));
+      Matrix *mat = *((Matrix**)lua_touserdata(L, index));
       // Matrix
       res->set(mat);
+    } else if (lua_is_userdata(L, index, "oscit.MidiMessage")) {
+      MidiMessage *midi = *((MidiMessage**)lua_touserdata(L, index));
+        // Matrix
+      res->set(midi);
+    } else {
+      *res = FValue(BAD_REQUEST_ERROR, "Cannot retrieve userdata from lua.");
+      return true;
     }
     break;
   default:
-    // TODO: proper error reporting
-    std::cerr << "Wrong value type to build value (" << lua_typename(L, lua_type(L, index)) << " at " << index << ").\n";
-    return false;
+    *res = FValue(BAD_REQUEST_ERROR, "Cannot retrieve %s at %i from lua.", lua_typename(L, lua_type(L, index)), index);
+    return true;
   }
   return true;
 }
@@ -345,14 +338,14 @@ bool LuaScript::lua_pushvalue(lua_State *L, const Value &val) {
       // pass reference to create a new object
       lua_pushclass<Matrix>(L, *val.matrix_, "cv.Mat");
       break;
+    case MIDI_VALUE:
+      // pass reference to create a new object
+      lua_pushclass<MidiMessage>(L, *val.midi_message_, "oscit.MidiMessage");
+      break;
     case ERROR_VALUE:
       // TODO
       /* continue */
     case HASH_VALUE:
-      // TODO
-      /* continue */
-    case MIDI_VALUE:
-      // lua_pushmidi(val.midi_message_);
       // TODO
       /* continue */
     case ANY_VALUE:
@@ -432,11 +425,13 @@ bool LuaScript::outlet_from_lua(lua_State *L, int index, Outlet **outlet) {
 // stack should be:
 // 1: outlet (light user data)
 // 2->...: value
+// TODO: replace with Dub bindings to Outlet
 int LuaScript::lua_send(lua_State *L) {
   Outlet *outlet;
   if (!outlet_from_lua(L, 1, &outlet)) return 0;
   // value_from_lua
   Value param = stack_to_value(L, 2);
+
   if (outlet->can_receive(param)) {
     outlet->send(param);
   } else {
@@ -491,12 +486,14 @@ extern void luaopen_rk(lua_State *L);
 extern void luaopen_gl(lua_State *L);
 extern void luaopen_glu(lua_State *L);
 
-extern void luaopen_cv_Mat(lua_State *L);
 extern void luaopen_cv(lua_State *L);
+extern void luaopen_cv_Mat(lua_State *L);
 extern void luaopen_cv_Size(lua_State *L);
+extern void luaopen_cv_Point(lua_State *L);
 extern void luaopen_cv_Scalar(lua_State *L);
 
 extern void luaopen_cv_additions(lua_State *L);
+extern void luaopen_oscit_MidiMessage(lua_State *L);
 
 void LuaScript::open_lua_libs() {
   luaL_openlibs(lua_);
@@ -512,10 +509,14 @@ void LuaScript::open_lua_libs() {
   luaopen_gl(lua_);
   luaopen_glu(lua_);
 
-  luaopen_cv_Mat(lua_);
   luaopen_cv(lua_);
+  luaopen_cv_Mat(lua_);
   luaopen_cv_Size(lua_);
+  luaopen_cv_Point(lua_);
+  luaopen_cv_Scalar(lua_);
   luaopen_cv_additions(lua_);
+
+  luaopen_oscit_MidiMessage(lua_);
 }
 
 const Value LuaScript::eval(const char *script, size_t script_size) {

@@ -175,7 +175,7 @@ class RtMidiIn : public RtMidi
   */
   void ignoreTypes( bool midiSysex = true, bool midiTime = true, bool midiSense = true );
 
-  //! Fill the user-provided vector with the data bytes for the next available MIDI message in the input queue and return the event delta-time in seconds.
+  //! Fill the user-provided vector with the data bytes for the next available MIDI message in the input queue and return the event delta-time How often to stat file for reload [s].
   /*!
       This function returns immediately whether a new message is
       available or not.  A valid message is indicated by a non-zero

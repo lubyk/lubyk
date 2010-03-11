@@ -35,9 +35,9 @@ class Lua : public LuaScript {
 extern "C" void init(Planet &planet) {
   CLASS(Lua, "Lua script.", "script: [script content] or file: [path to file]")
   // {1}
-  ADD_SUPER_METHOD(Lua, Script, file, StringIO("path", "Set path to script content."))
+  ADD_SUPER_METHOD(Lua, Script, file, StringIO("Path to script content [filepath]."))
   // {2}
-  ADD_SUPER_METHOD(Lua, Script, script, StringIO("lua code", "Script content."))
+  ADD_SUPER_METHOD(Lua, Script, script, StringIO("Script content [lua]."))
   // {3}
-  ADD_SUPER_METHOD(Lua, Script, reload, RealIO("seconds", "How often shoudl we check file for relaod."))
+  ADD_SUPER_METHOD(Lua, Script, reload, RealIO("How often to stat file for reload [s]."))
 }

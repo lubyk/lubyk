@@ -60,6 +60,6 @@ private:
 
 extern "C" void init(Planet &planet) {
   CLASS_NAMED(NumberNode, "Number", "Stores a number which can be sent again through Bang!.", "value: [initial value]");
-  METHOD(NumberNode, value, RealIO("none", "Set/get current number."))
-  OUTLET(NumberNode, value, RealIO("none", "Send the current number out."))
+  METHOD(NumberNode, value, RealIO("Current number."))
+  OUTLET(NumberNode, value, RealIO("Send the current number out."))
 }

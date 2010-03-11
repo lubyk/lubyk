@@ -40,6 +40,8 @@
 //
 //M*/
 
+/** @file */
+
 #ifndef _CV_H_
 #define _CV_H_
 
@@ -160,6 +162,10 @@ CVAPI(void) cvLaplace( const CvArr* src, CvArr* dst,
                       int aperture_size CV_DEFAULT(3) );
 
 /* Constants for color conversion */
+/** @defgroup ColorConversionOption
+ * @brief List of color conversion options to use in methods such as @ref cvtColor
+ * 
+ *@{*/
 #define  CV_BGR2BGRA    0
 #define  CV_RGB2RGBA    CV_BGR2BGRA
 
@@ -251,16 +257,31 @@ CVAPI(void) cvLaplace( const CvArr* src, CvArr* dst,
 #define  CV_Luv2RGB     59
 #define  CV_HLS2BGR     60
 #define  CV_HLS2RGB     61
+/* @} ColorConversionOption */
 
 #define  CV_COLORCVT_MAX  100
 
 /* Converts input array pixels from one color space to another */
 CVAPI(void)  cvCvtColor( const CvArr* src, CvArr* dst, int code );
 
+/** @defgroup InterpolationOption
+ * @brief List of interpolation options to use in methods such as @ref cvResize, @ref cvRemap, etc
+ * 
+ *@{*/
+
+/** Nearest neighbor interpolation type.
+ */
 #define  CV_INTER_NN        0
+/** Bilinear interpolation type.
+ */
 #define  CV_INTER_LINEAR    1
+/** Bicubic interpolation type.
+ */
 #define  CV_INTER_CUBIC     2
+/** Pixel area re-sampling interpolation type.
+ */
 #define  CV_INTER_AREA      3
+/* @} InterpolationOption */
 
 #define  CV_WARP_FILL_OUTLIERS 8
 #define  CV_WARP_INVERSE_MAP  16

@@ -9,7 +9,7 @@ using namespace cv;
 /* ============================ Constructors     ====================== */
 
 
-/** cv::Point2i::Point2i()
+/** cv::Point2i< _Tp >::Point2i()
  * include/opencv/cxcore.hpp:295
  */
 static int Point_Point1(lua_State *L) {
@@ -19,7 +19,7 @@ static int Point_Point1(lua_State *L) {
 }
 
 
-/** cv::Point2i::Point2i(_Tp _x, _Tp _y)
+/** cv::Point2i< _Tp >::Point2i(_Tp _x, _Tp _y)
  * include/opencv/cxcore.hpp:296
  */
 static int Point_Point2(lua_State *L) {
@@ -31,7 +31,7 @@ static int Point_Point2(lua_State *L) {
 }
 
 
-/** cv::Point2i::Point2i(const Point2i &pt)
+/** cv::Point2i< _Tp >::Point2i(const Point2i &pt)
  * include/opencv/cxcore.hpp:297
  */
 static int Point_Point3(lua_State *L) {
@@ -42,7 +42,7 @@ static int Point_Point3(lua_State *L) {
 }
 
 
-/** cv::Point2i::Point2i(const CvPoint &pt)
+/** cv::Point2i< _Tp >::Point2i(const CvPoint &pt)
  * include/opencv/cxcore.hpp:298
  */
 static int Point_Point4(lua_State *L) {
@@ -53,7 +53,7 @@ static int Point_Point4(lua_State *L) {
 }
 
 
-/** cv::Point2i::Point2i(const CvPoint2D32f &pt)
+/** cv::Point2i< _Tp >::Point2i(const CvPoint2D32f &pt)
  * include/opencv/cxcore.hpp:299
  */
 static int Point_Point5(lua_State *L) {
@@ -64,19 +64,45 @@ static int Point_Point5(lua_State *L) {
 }
 
 
+/** cv::Point2i< _Tp >::Point2i(const Size_< _Tp > &sz)
+ * include/opencv/cxcore.hpp:300
+ */
+static int Point_Point6(lua_State *L) {
+  const Size *sz = *((const Size **)luaL_checkudata(L, 1, "cv.Size"));
+  Point * retval__ = new Point(*sz);
+  lua_pushclass<Point>(L, retval__, "cv.Point");
+  return 1;
+}
+
+
+/** cv::Point2i< _Tp >::Point2i(const Vec< _Tp, 2 > &v)
+ * include/opencv/cxcore.hpp:301
+ */
+static int Point_Point7(lua_State *L) {
+  const Vec2i *v = *((const Vec2i **)luaL_checkudata(L, 1, "cv.Vec2i"));
+  Point * retval__ = new Point(*v);
+  lua_pushclass<Point>(L, retval__, "cv.Point");
+  return 1;
+}
+
+
 
 /** Overloaded function chooser for Point(...) */
 static int Point_Point(lua_State *L) {
   int type__ = lua_type(L, 1);
   int top__  = lua_gettop(L);
-  if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.CvPoint")) {
-    return Point_Point4(L);
-  } else if (type__ == LUA_TNUMBER) {
+  if (type__ == LUA_TNUMBER) {
     return Point_Point2(L);
+  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.CvPoint")) {
+    return Point_Point4(L);
   } else if (top__ < 1) {
     return Point_Point1(L);
+  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Vec2i")) {
+    return Point_Point7(L);
   } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Point2i")) {
     return Point_Point3(L);
+  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Size")) {
+    return Point_Point6(L);
   } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.CvPoint2D32f")) {
     return Point_Point5(L);
   } else {
@@ -107,7 +133,7 @@ static int Point__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
-/** double cv::Point2i::ddot(const Point2i &pt) const 
+/** double cv::Point2i< _Tp >::ddot(const Point2i &pt) const 
  * include/opencv/cxcore.hpp:309
  */
 static int Point_ddot(lua_State *L) {
@@ -120,7 +146,7 @@ static int Point_ddot(lua_State *L) {
 }
 
 
-/** _Tp cv::Point2i::dot(const Point2i &pt) const 
+/** _Tp cv::Point2i< _Tp >::dot(const Point2i &pt) const 
  * include/opencv/cxcore.hpp:308
  */
 static int Point_dot(lua_State *L) {
@@ -133,6 +159,19 @@ static int Point_dot(lua_State *L) {
 }
 
 
+/** bool cv::Point2i< _Tp >::inside(const Rect_< _Tp > &r) const 
+ * include/opencv/cxcore.hpp:310
+ */
+static int Point_inside(lua_State *L) {
+  Point *self__ = *((Point**)luaL_checkudata(L, 1, "cv.Point"));
+  lua_remove(L, 1);
+  const Rect *r = *((const Rect **)luaL_checkudata(L, 1, "cv.Rect"));
+  bool  retval__ = self__->inside(*r);
+  lua_pushnumber(L, retval__);
+  return 1;
+}
+
+
 
 
 /* ============================ Lua Registration ====================== */
@@ -140,6 +179,7 @@ static int Point_dot(lua_State *L) {
 static const struct luaL_Reg Point_member_methods[] = {
   {"ddot"              , Point_ddot},
   {"dot"               , Point_dot},
+  {"inside"            , Point_inside},
   {"__tostring"        , Point__tostring},
   {"__gc"              , Point_destructor},
   {NULL, NULL},
@@ -164,7 +204,7 @@ void luaopen_cv_Point(lua_State *L) {
   // register member methods
   luaL_register(L, NULL, Point_member_methods);
 
-  // register class methods in a global table like "dub"
+  // register class methods in a global namespace table
   luaL_register(L, "cv", Point_namespace_methods);
 
 

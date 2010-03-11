@@ -37,7 +37,7 @@ void Planet::init() {
 
   // build application methods
   //           /.inspect
-  adopt(new TMethod<Planet, &Planet::inspect>(this, Url(INSPECT_URL).name(), StringIO("url", "Returns some information on the state of a node.")));
+  adopt(new TMethod<Planet, &Planet::inspect>(this, Url(INSPECT_URL).name(), StringIO("Returns inspect information on a given url.")));
   //          /class
   classes_ = adopt(new ClassFinder(Url(CLASS_URL).name(), DEFAULT_OBJECTS_LIB_PATH));
   //          /rubyk
@@ -95,7 +95,7 @@ const Value Planet::create_pending_links() {
 
   while (it != end) {
     res = it->trigger_call(this);
-    if ((res.type_id() == H("sss") && res[1].str() == "=>") || res.is_error()) {
+    if ((res.type_id() == SelectIOTypeId && res[1].str() == "=>") || res.is_error()) {
       list.push_back(res);
       it = pending_links_.erase(it);  // call succeeded or definitely failed
     } else {

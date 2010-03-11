@@ -9,7 +9,7 @@ using namespace cv;
 /* ============================ Constructors     ====================== */
 
 
-/** cv::Size2i::Size2i()
+/** cv::Size2i< _Tp >::Size2i()
  * include/opencv/cxcore.hpp:348
  */
 static int Size_Size1(lua_State *L) {
@@ -19,7 +19,7 @@ static int Size_Size1(lua_State *L) {
 }
 
 
-/** cv::Size2i::Size2i(_Tp _width, _Tp _height)
+/** cv::Size2i< _Tp >::Size2i(_Tp _width, _Tp _height)
  * include/opencv/cxcore.hpp:349
  */
 static int Size_Size2(lua_State *L) {
@@ -31,7 +31,7 @@ static int Size_Size2(lua_State *L) {
 }
 
 
-/** cv::Size2i::Size2i(const Size2i &sz)
+/** cv::Size2i< _Tp >::Size2i(const Size2i &sz)
  * include/opencv/cxcore.hpp:350
  */
 static int Size_Size3(lua_State *L) {
@@ -42,7 +42,7 @@ static int Size_Size3(lua_State *L) {
 }
 
 
-/** cv::Size2i::Size2i(const CvSize &sz)
+/** cv::Size2i< _Tp >::Size2i(const CvSize &sz)
  * include/opencv/cxcore.hpp:351
  */
 static int Size_Size4(lua_State *L) {
@@ -53,12 +53,23 @@ static int Size_Size4(lua_State *L) {
 }
 
 
-/** cv::Size2i::Size2i(const CvSize2D32f &sz)
+/** cv::Size2i< _Tp >::Size2i(const CvSize2D32f &sz)
  * include/opencv/cxcore.hpp:352
  */
 static int Size_Size5(lua_State *L) {
   const CvSize2D32f *sz = *((const CvSize2D32f **)luaL_checkudata(L, 1, "cv.CvSize2D32f"));
   Size * retval__ = new Size(*sz);
+  lua_pushclass<Size>(L, retval__, "cv.Size");
+  return 1;
+}
+
+
+/** cv::Size2i< _Tp >::Size2i(const Point_< _Tp > &pt)
+ * include/opencv/cxcore.hpp:353
+ */
+static int Size_Size6(lua_State *L) {
+  const Point *pt = *((const Point **)luaL_checkudata(L, 1, "cv.Point"));
+  Size * retval__ = new Size(*pt);
   lua_pushclass<Size>(L, retval__, "cv.Size");
   return 1;
 }
@@ -71,6 +82,8 @@ static int Size_Size(lua_State *L) {
   int top__  = lua_gettop(L);
   if (type__ == LUA_TNUMBER) {
     return Size_Size2(L);
+  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Point")) {
+    return Size_Size6(L);
   } else if (top__ < 1) {
     return Size_Size1(L);
   } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.CvSize")) {
@@ -107,7 +120,7 @@ static int Size__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
-/** _Tp cv::Size2i::area() const 
+/** _Tp cv::Size2i< _Tp >::area() const 
  * include/opencv/cxcore.hpp:355
  */
 static int Size_area(lua_State *L) {
@@ -149,7 +162,7 @@ void luaopen_cv_Size(lua_State *L) {
   // register member methods
   luaL_register(L, NULL, Size_member_methods);
 
-  // register class methods in a global table like "dub"
+  // register class methods in a global namespace table
   luaL_register(L, "cv", Size_namespace_methods);
 
 

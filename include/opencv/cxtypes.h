@@ -481,16 +481,13 @@ IplConvKernelFP;
 *                                  Matrix type (CvMat)                                   *
 \****************************************************************************************/
 
-/** \defgroup MagicType
- * \brief The type is a constant name of the form <tt>CV_<bit depth>(S|U|F)C<number of channels></tt>
- *
- * The S/U/F abbreviations stand for S = short, U = unsingned int, F = float. For example <tt>CV_32FC1</tt>
- * is the type of a matrix with one channel of 32bit float values.
- *@{*/
 #define CV_CN_MAX     64
 #define CV_CN_SHIFT   3
 #define CV_DEPTH_MAX  (1 << CV_CN_SHIFT)
 
+/** @defgroup DepthType
+ * @brief The depth is part of the @ref MagicType and represents the value size
+ *@{*/
 #define CV_8U   0
 #define CV_8S   1
 #define CV_16U  2
@@ -499,6 +496,7 @@ IplConvKernelFP;
 #define CV_32F  5
 #define CV_64F  6
 #define CV_USRTYPE1 7
+/**@} DepthType */
 
 #define CV_MAT_DEPTH_MASK       (CV_DEPTH_MAX - 1)
 #define CV_MAT_DEPTH(flags)     ((flags) & CV_MAT_DEPTH_MASK)
@@ -506,6 +504,14 @@ IplConvKernelFP;
 #define CV_MAKETYPE(depth,cn) (CV_MAT_DEPTH(depth) + (((cn)-1) << CV_CN_SHIFT))
 #define CV_MAKE_TYPE CV_MAKETYPE
 
+/** @defgroup MagicType
+ * @brief The type is a constant name of the form <tt>CV_<bit depth>(S|U|F)C<number of channels></tt>
+ *
+ * The S/U/F abbreviations stand for S = short, U = unsigned int, F = float. For example <tt>CV_32FC1</tt>
+ * is the type of a matrix with one channel of 32bit float values.
+ *
+ * @see DepthType
+ *@{*/
 #define CV_8UC1 CV_MAKETYPE(CV_8U,1)
 #define CV_8UC2 CV_MAKETYPE(CV_8U,2)
 #define CV_8UC3 CV_MAKETYPE(CV_8U,3)

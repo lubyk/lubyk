@@ -534,10 +534,8 @@ static int Mat_diag1(lua_State *L) {
  * include/opencv/cxcore.hpp:817
  */
 static int Mat_diag2(lua_State *L) {
-  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
-  lua_remove(L, 1);
   const Mat *d = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat  retval__ = self__->diag(*d);
+  Mat  retval__ = Mat::diag(*d);
   lua_pushclass<Mat>(L, retval__, "cv.Mat");
   return 1;
 }
@@ -612,12 +610,10 @@ static int Mat_empty(lua_State *L) {
  * include/opencv/cxcore.hpp:880
  */
 static int Mat_eye1(lua_State *L) {
-  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
-  lua_remove(L, 1);
   int rows = luaL_checkint(L, 1);
   int cols = luaL_checkint(L, 2);
   int type = luaL_checkint(L, 3);
-  MatExpr_Initializer  retval__ = self__->eye(rows, cols, type);
+  MatExpr_Initializer  retval__ = Mat::eye(rows, cols, type);
   lua_pushclass<MatExpr_Initializer>(L, retval__, "cv.MatExpr_Initializer");
   return 1;
 }
@@ -627,11 +623,9 @@ static int Mat_eye1(lua_State *L) {
  * include/opencv/cxcore.hpp:881
  */
 static int Mat_eye2(lua_State *L) {
-  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
-  lua_remove(L, 1);
   Size *size = *((Size **)luaL_checkudata(L, 1, "cv.Size"));
   int type = luaL_checkint(L, 2);
-  MatExpr_Initializer  retval__ = self__->eye(*size, type);
+  MatExpr_Initializer  retval__ = Mat::eye(*size, type);
   lua_pushclass<MatExpr_Initializer>(L, retval__, "cv.MatExpr_Initializer");
   return 1;
 }
@@ -682,12 +676,10 @@ static int Mat_locateROI(lua_State *L) {
  * include/opencv/cxcore.hpp:878
  */
 static int Mat_ones1(lua_State *L) {
-  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
-  lua_remove(L, 1);
   int rows = luaL_checkint(L, 1);
   int cols = luaL_checkint(L, 2);
   int type = luaL_checkint(L, 3);
-  MatExpr_Initializer  retval__ = self__->ones(rows, cols, type);
+  MatExpr_Initializer  retval__ = Mat::ones(rows, cols, type);
   lua_pushclass<MatExpr_Initializer>(L, retval__, "cv.MatExpr_Initializer");
   return 1;
 }
@@ -697,11 +689,9 @@ static int Mat_ones1(lua_State *L) {
  * include/opencv/cxcore.hpp:879
  */
 static int Mat_ones2(lua_State *L) {
-  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
-  lua_remove(L, 1);
   Size *size = *((Size **)luaL_checkudata(L, 1, "cv.Size"));
   int type = luaL_checkint(L, 2);
-  MatExpr_Initializer  retval__ = self__->ones(*size, type);
+  MatExpr_Initializer  retval__ = Mat::ones(*size, type);
   lua_pushclass<MatExpr_Initializer>(L, retval__, "cv.MatExpr_Initializer");
   return 1;
 }
@@ -870,12 +860,10 @@ static int Mat_type(lua_State *L) {
  * include/opencv/cxcore.hpp:876
  */
 static int Mat_zeros1(lua_State *L) {
-  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
-  lua_remove(L, 1);
   int rows = luaL_checkint(L, 1);
   int cols = luaL_checkint(L, 2);
   int type = luaL_checkint(L, 3);
-  MatExpr_Initializer  retval__ = self__->zeros(rows, cols, type);
+  MatExpr_Initializer  retval__ = Mat::zeros(rows, cols, type);
   lua_pushclass<MatExpr_Initializer>(L, retval__, "cv.MatExpr_Initializer");
   return 1;
 }
@@ -885,11 +873,9 @@ static int Mat_zeros1(lua_State *L) {
  * include/opencv/cxcore.hpp:877
  */
 static int Mat_zeros2(lua_State *L) {
-  Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
-  lua_remove(L, 1);
   Size *size = *((Size **)luaL_checkudata(L, 1, "cv.Size"));
   int type = luaL_checkint(L, 2);
-  MatExpr_Initializer  retval__ = self__->zeros(*size, type);
+  MatExpr_Initializer  retval__ = Mat::zeros(*size, type);
   lua_pushclass<MatExpr_Initializer>(L, retval__, "cv.MatExpr_Initializer");
   return 1;
 }
@@ -932,10 +918,8 @@ static const struct luaL_Reg Mat_member_methods[] = {
   {"elemSize"          , Mat_elemSize},
   {"elemSize1"         , Mat_elemSize1},
   {"empty"             , Mat_empty},
-  {"eye"               , Mat_eye},
   {"isContinuous"      , Mat_isContinuous},
   {"locateROI"         , Mat_locateROI},
-  {"ones"              , Mat_ones},
   {"release"           , Mat_release},
   {"reshape"           , Mat_reshape},
   {"row"               , Mat_row},
@@ -944,7 +928,6 @@ static const struct luaL_Reg Mat_member_methods[] = {
   {"size"              , Mat_size},
   {"step1"             , Mat_step1},
   {"type"              , Mat_type},
-  {"zeros"             , Mat_zeros},
   {"__tostring"        , Mat__tostring},
   {"__gc"              , Mat_destructor},
   {NULL, NULL},
@@ -952,6 +935,9 @@ static const struct luaL_Reg Mat_member_methods[] = {
 
 static const struct luaL_Reg Mat_namespace_methods[] = {
   {"Mat"               , Mat_Mat},
+  {"Mat_eye"           , Mat_eye},
+  {"Mat_ones"          , Mat_ones},
+  {"Mat_zeros"         , Mat_zeros},
   {NULL, NULL},
 };
 
@@ -975,7 +961,7 @@ void luaopen_cv_Mat(lua_State *L) {
   // register member methods
   luaL_register(L, NULL, Mat_member_methods);
 
-  // register class methods in a global table like "dub"
+  // register class methods in a global namespace table
   luaL_register(L, "cv", Mat_namespace_methods);
 
 

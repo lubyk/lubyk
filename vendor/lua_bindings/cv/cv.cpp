@@ -71,7 +71,7 @@ static int cv_GaussianBlur(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::LUT(const Mat &a, const Mat &lut, Mat &b)
- * include/opencv/cxcore.hpp:1095
+ * include/opencv/cxcore.hpp:1107
  */
 static int cv_LUT(lua_State *L) {
   const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -118,7 +118,7 @@ static int cv_Laplacian(lua_State *L) {
 
 
 /** CV_EXPORTS double cv::Mahalanobis(const Mat &v1, const Mat &v2, const Mat &icovar)
- * include/opencv/cxcore.hpp:1235
+ * include/opencv/cxcore.hpp:1247
  */
 static int cv_Mahalanobis(lua_State *L) {
   const Mat *v1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -132,7 +132,7 @@ static int cv_Mahalanobis(lua_State *L) {
 
 
 /** static double cv::Mahalonobis(const Mat &v1, const Mat &v2, const Mat &icovar)
- * include/opencv/cxcore.hpp:1237
+ * include/opencv/cxcore.hpp:1249
  */
 static int cv_Mahalonobis(lua_State *L) {
   const Mat *v1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -331,7 +331,7 @@ static int cv_Sobel(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::absdiff(const Mat &a, const Mat &b, Mat &c)
- * include/opencv/cxcore.hpp:1145
+ * include/opencv/cxcore.hpp:1157
  */
 static int cv_absdiff1(lua_State *L) {
   const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -343,7 +343,7 @@ static int cv_absdiff1(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::absdiff(const Mat &a, const Scalar &s, Mat &c)
- * include/opencv/cxcore.hpp:1146
+ * include/opencv/cxcore.hpp:1158
  */
 static int cv_absdiff2(lua_State *L) {
   const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -355,7 +355,7 @@ static int cv_absdiff2(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::absdiff(const MatND &a, const MatND &b, MatND &c)
- * include/opencv/cxcore.hpp:1779
+ * include/opencv/cxcore.hpp:1791
  */
 static int cv_absdiff3(lua_State *L) {
   const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
@@ -367,7 +367,7 @@ static int cv_absdiff3(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::absdiff(const MatND &a, const Scalar &s, MatND &c)
- * include/opencv/cxcore.hpp:1780
+ * include/opencv/cxcore.hpp:1792
  */
 static int cv_absdiff4(lua_State *L) {
   const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
@@ -516,7 +516,7 @@ static int cv_add1(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::add(const Mat &a, const Mat &b, Mat &c)
- * include/opencv/cxcore.hpp:1081
+ * include/opencv/cxcore.hpp:1087
  */
 static int cv_add2(lua_State *L) {
   const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -528,7 +528,7 @@ static int cv_add2(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::add(const Mat &a, const Scalar &s, Mat &c, const Mat &mask=Mat())
- * include/opencv/cxcore.hpp:1083
+ * include/opencv/cxcore.hpp:1095
  */
 static int cv_add3(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -546,7 +546,7 @@ static int cv_add3(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::add(const MatND &a, const MatND &b, MatND &c, const MatND &mask)
- * include/opencv/cxcore.hpp:1736
+ * include/opencv/cxcore.hpp:1748
  */
 static int cv_add4(lua_State *L) {
   const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
@@ -559,7 +559,7 @@ static int cv_add4(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::add(const MatND &a, const MatND &b, MatND &c)
- * include/opencv/cxcore.hpp:1738
+ * include/opencv/cxcore.hpp:1750
  */
 static int cv_add5(lua_State *L) {
   const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
@@ -571,7 +571,7 @@ static int cv_add5(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::add(const MatND &a, const Scalar &s, MatND &c, const MatND &mask=MatND())
- * include/opencv/cxcore.hpp:1740
+ * include/opencv/cxcore.hpp:1752
  */
 static int cv_add6(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -651,7 +651,7 @@ static int cv_add(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::addWeighted(const Mat &a, double alpha, const Mat &b, double beta, double gamma, Mat &c)
- * include/opencv/cxcore.hpp:1093
+ * include/opencv/cxcore.hpp:1105
  */
 static int cv_addWeighted1(lua_State *L) {
   const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -666,7 +666,7 @@ static int cv_addWeighted1(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::addWeighted(const MatND &a, double alpha, const MatND &b, double beta, double gamma, MatND &c)
- * include/opencv/cxcore.hpp:1749
+ * include/opencv/cxcore.hpp:1761
  */
 static int cv_addWeighted2(lua_State *L) {
   const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
@@ -745,7 +745,7 @@ static int cv_bilateralFilter(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::bitwise_and(const Mat &a, const Mat &b, Mat &c, const Mat &mask=Mat())
- * include/opencv/cxcore.hpp:1138
+ * include/opencv/cxcore.hpp:1150
  */
 static int cv_bitwise_and1(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -763,7 +763,7 @@ static int cv_bitwise_and1(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::bitwise_and(const Mat &a, const Scalar &s, Mat &c, const Mat &mask=Mat())
- * include/opencv/cxcore.hpp:1141
+ * include/opencv/cxcore.hpp:1153
  */
 static int cv_bitwise_and2(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -781,7 +781,7 @@ static int cv_bitwise_and2(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::bitwise_and(const MatND &a, const MatND &b, MatND &c, const MatND &mask=MatND())
- * include/opencv/cxcore.hpp:1772
+ * include/opencv/cxcore.hpp:1784
  */
 static int cv_bitwise_and3(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -799,7 +799,7 @@ static int cv_bitwise_and3(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::bitwise_and(const MatND &a, const Scalar &s, MatND &c, const MatND &mask=MatND())
- * include/opencv/cxcore.hpp:1775
+ * include/opencv/cxcore.hpp:1787
  */
 static int cv_bitwise_and4(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -850,7 +850,7 @@ static int cv_bitwise_and(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::bitwise_not(const Mat &a, Mat &c)
- * include/opencv/cxcore.hpp:1144
+ * include/opencv/cxcore.hpp:1156
  */
 static int cv_bitwise_not1(lua_State *L) {
   const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -861,7 +861,7 @@ static int cv_bitwise_not1(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::bitwise_not(const MatND &a, MatND &c)
- * include/opencv/cxcore.hpp:1778
+ * include/opencv/cxcore.hpp:1790
  */
 static int cv_bitwise_not2(lua_State *L) {
   const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
@@ -889,7 +889,7 @@ static int cv_bitwise_not(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::bitwise_or(const Mat &a, const Mat &b, Mat &c, const Mat &mask=Mat())
- * include/opencv/cxcore.hpp:1139
+ * include/opencv/cxcore.hpp:1151
  */
 static int cv_bitwise_or1(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -907,7 +907,7 @@ static int cv_bitwise_or1(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::bitwise_or(const Mat &a, const Scalar &s, Mat &c, const Mat &mask=Mat())
- * include/opencv/cxcore.hpp:1142
+ * include/opencv/cxcore.hpp:1154
  */
 static int cv_bitwise_or2(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -925,7 +925,7 @@ static int cv_bitwise_or2(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::bitwise_or(const MatND &a, const MatND &b, MatND &c, const MatND &mask=MatND())
- * include/opencv/cxcore.hpp:1773
+ * include/opencv/cxcore.hpp:1785
  */
 static int cv_bitwise_or3(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -943,7 +943,7 @@ static int cv_bitwise_or3(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::bitwise_or(const MatND &a, const Scalar &s, MatND &c, const MatND &mask=MatND())
- * include/opencv/cxcore.hpp:1776
+ * include/opencv/cxcore.hpp:1788
  */
 static int cv_bitwise_or4(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -994,7 +994,7 @@ static int cv_bitwise_or(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::bitwise_xor(const Mat &a, const Mat &b, Mat &c, const Mat &mask=Mat())
- * include/opencv/cxcore.hpp:1140
+ * include/opencv/cxcore.hpp:1152
  */
 static int cv_bitwise_xor1(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -1012,7 +1012,7 @@ static int cv_bitwise_xor1(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::bitwise_xor(const Mat &a, const Scalar &s, Mat &c, const Mat &mask=Mat())
- * include/opencv/cxcore.hpp:1143
+ * include/opencv/cxcore.hpp:1155
  */
 static int cv_bitwise_xor2(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -1030,7 +1030,7 @@ static int cv_bitwise_xor2(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::bitwise_xor(const MatND &a, const MatND &b, MatND &c, const MatND &mask=MatND())
- * include/opencv/cxcore.hpp:1774
+ * include/opencv/cxcore.hpp:1786
  */
 static int cv_bitwise_xor3(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -1048,7 +1048,7 @@ static int cv_bitwise_xor3(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::bitwise_xor(const MatND &a, const Scalar &s, MatND &c, const MatND &mask=MatND())
- * include/opencv/cxcore.hpp:1777
+ * include/opencv/cxcore.hpp:1789
  */
 static int cv_bitwise_xor4(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -1178,119 +1178,8 @@ static int cv_boxFilter(lua_State *L) {
 
 
 
-/** CV_EXPORTS void cv::calcBackProject(const Mat *images, int nimages, const int *channels, const MatND &hist, Mat &backProject, const float **ranges, double scale=1, bool uniform=true)
- * include/opencv/cv.hpp:444
- */
-static int cv_calcBackProject1(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *images = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  int nimages = luaL_checkint(L, 2);
-  
-  DubArgPointer<int> ptr_channels;
-  const int *channels = ptr_channels(L, 3);
-  const MatND *hist = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
-  Mat *backProject = *((Mat **)luaL_checkudata(L, 5, "cv.Mat"));
-  const float * *ranges = *((const float * **)luaL_checkudata(L, 6, "cv.float *"));
-  if (top__ < 7) {
-    calcBackProject(images, nimages, channels, *hist, *backProject, ranges);
-  } else {
-    double scale = luaL_checknumber(L, 7);
-    if (top__ < 8) {
-      calcBackProject(images, nimages, channels, *hist, *backProject, ranges, scale);
-    } else {
-      bool uniform = lua_toboolean(L, 8);
-      calcBackProject(images, nimages, channels, *hist, *backProject, ranges, scale, uniform);
-    }
-  }
-  return 0;
-}
-
-
-/** CV_EXPORTS void cv::calcBackProject(const Mat *images, int nimages, const int *channels, const SparseMat &hist, Mat &backProject, const float **ranges, double scale=1, bool uniform=true)
- * include/opencv/cv.hpp:449
- */
-static int cv_calcBackProject2(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *images = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  int nimages = luaL_checkint(L, 2);
-  
-  DubArgPointer<int> ptr_channels;
-  const int *channels = ptr_channels(L, 3);
-  const SparseMat *hist = *((const SparseMat **)luaL_checkudata(L, 4, "cv.SparseMat"));
-  Mat *backProject = *((Mat **)luaL_checkudata(L, 5, "cv.Mat"));
-  const float * *ranges = *((const float * **)luaL_checkudata(L, 6, "cv.float *"));
-  if (top__ < 7) {
-    calcBackProject(images, nimages, channels, *hist, *backProject, ranges);
-  } else {
-    double scale = luaL_checknumber(L, 7);
-    if (top__ < 8) {
-      calcBackProject(images, nimages, channels, *hist, *backProject, ranges, scale);
-    } else {
-      bool uniform = lua_toboolean(L, 8);
-      calcBackProject(images, nimages, channels, *hist, *backProject, ranges, scale, uniform);
-    }
-  }
-  return 0;
-}
-
-
-
-/** Overloaded function chooser for calcBackProject(...) */
-static int cv_calcBackProject(lua_State *L) {
-  int type__ = lua_type(L, 1);
-  if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Mat")) {
-    type__ = lua_type(L, 2);
-    if (type__ == LUA_TNUMBER) {
-      type__ = lua_type(L, 3);
-      if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "number_ptr")) {
-        type__ = lua_type(L, 4);
-        if (type__ == LUA_TUSERDATA && is_userdata(L, 4, "cv.SparseMat")) {
-          return cv_calcBackProject2(L);
-        } else if (type__ == LUA_TUSERDATA && is_userdata(L, 4, "cv.MatND")) {
-          return cv_calcBackProject1(L);
-        } else {
-          // use any to raise errors
-          return cv_calcBackProject1(L);
-        }
-      } else {
-        // use any to raise errors
-        return cv_calcBackProject1(L);
-      }
-    } else {
-      // use any to raise errors
-      return cv_calcBackProject1(L);
-    }
-  } else {
-    // use any to raise errors
-    return cv_calcBackProject1(L);
-  }
-}
-
-
-
-
-/** CV_EXPORTS void cv::calcCovarMatrix(const Mat *samples, int nsamples, Mat &covar, Mat &mean, int flags, int ctype=CV_64F)
- * include/opencv/cxcore.hpp:1201
- */
-static int cv_calcCovarMatrix1(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *samples = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  int nsamples = luaL_checkint(L, 2);
-  Mat *covar = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  Mat *mean = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  int flags = luaL_checkint(L, 5);
-  if (top__ < 6) {
-    calcCovarMatrix(samples, nsamples, *covar, *mean, flags);
-  } else {
-    int ctype = luaL_checkint(L, 6);
-    calcCovarMatrix(samples, nsamples, *covar, *mean, flags, ctype);
-  }
-  return 0;
-}
-
-
 /** CV_EXPORTS void cv::calcCovarMatrix(const Mat &samples, Mat &covar, Mat &mean, int flags, int ctype=CV_64F)
- * include/opencv/cxcore.hpp:1203
+ * include/opencv/cxcore.hpp:1215
  */
 static int cv_calcCovarMatrix2(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -1313,15 +1202,7 @@ static int cv_calcCovarMatrix2(lua_State *L) {
 static int cv_calcCovarMatrix(lua_State *L) {
   int type__ = lua_type(L, 1);
   if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Mat")) {
-    type__ = lua_type(L, 2);
-    if (type__ == LUA_TNUMBER) {
-      return cv_calcCovarMatrix1(L);
-    } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.Mat")) {
-      return cv_calcCovarMatrix2(L);
-    } else {
-      // use any to raise errors
-      return cv_calcCovarMatrix2(L);
-    }
+    return cv_calcCovarMatrix2(L);
   } else {
     // use any to raise errors
     return cv_calcCovarMatrix2(L);
@@ -1342,111 +1223,6 @@ static int cv_calcGlobalOrientation(lua_State *L) {
   double  retval__ = calcGlobalOrientation(*orientation, *mask, *mhi, timestamp, duration);
   lua_pushnumber(L, retval__);
   return 1;
-}
-
-
-
-
-/** CV_EXPORTS void cv::calcHist(const Mat *images, int nimages, const int *channels, const Mat &mask, MatND &hist, int dims, const int *histSize, const float **ranges, bool uniform=true, bool accumulate=false)
- * include/opencv/cv.hpp:433
- */
-static int cv_calcHist1(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *images = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  int nimages = luaL_checkint(L, 2);
-  
-  DubArgPointer<int> ptr_channels;
-  const int *channels = ptr_channels(L, 3);
-  const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  MatND *hist = *((MatND **)luaL_checkudata(L, 5, "cv.MatND"));
-  int dims = luaL_checkint(L, 6);
-  
-  DubArgPointer<int> ptr_histSize;
-  const int *histSize = ptr_histSize(L, 7);
-  const float * *ranges = *((const float * **)luaL_checkudata(L, 8, "cv.float *"));
-  if (top__ < 9) {
-    calcHist(images, nimages, channels, *mask, *hist, dims, histSize, ranges);
-  } else {
-    bool uniform = lua_toboolean(L, 9);
-    if (top__ < 10) {
-      calcHist(images, nimages, channels, *mask, *hist, dims, histSize, ranges, uniform);
-    } else {
-      bool accumulate = lua_toboolean(L, 10);
-      calcHist(images, nimages, channels, *mask, *hist, dims, histSize, ranges, uniform, accumulate);
-    }
-  }
-  return 0;
-}
-
-
-/** CV_EXPORTS void cv::calcHist(const Mat *images, int nimages, const int *channels, const Mat &mask, SparseMat &hist, int dims, const int *histSize, const float **ranges, bool uniform=true, bool accumulate=false)
- * include/opencv/cv.hpp:439
- */
-static int cv_calcHist2(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *images = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  int nimages = luaL_checkint(L, 2);
-  
-  DubArgPointer<int> ptr_channels;
-  const int *channels = ptr_channels(L, 3);
-  const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  SparseMat *hist = *((SparseMat **)luaL_checkudata(L, 5, "cv.SparseMat"));
-  int dims = luaL_checkint(L, 6);
-  
-  DubArgPointer<int> ptr_histSize;
-  const int *histSize = ptr_histSize(L, 7);
-  const float * *ranges = *((const float * **)luaL_checkudata(L, 8, "cv.float *"));
-  if (top__ < 9) {
-    calcHist(images, nimages, channels, *mask, *hist, dims, histSize, ranges);
-  } else {
-    bool uniform = lua_toboolean(L, 9);
-    if (top__ < 10) {
-      calcHist(images, nimages, channels, *mask, *hist, dims, histSize, ranges, uniform);
-    } else {
-      bool accumulate = lua_toboolean(L, 10);
-      calcHist(images, nimages, channels, *mask, *hist, dims, histSize, ranges, uniform, accumulate);
-    }
-  }
-  return 0;
-}
-
-
-
-/** Overloaded function chooser for calcHist(...) */
-static int cv_calcHist(lua_State *L) {
-  int type__ = lua_type(L, 1);
-  if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Mat")) {
-    type__ = lua_type(L, 2);
-    if (type__ == LUA_TNUMBER) {
-      type__ = lua_type(L, 3);
-      if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "number_ptr")) {
-        type__ = lua_type(L, 4);
-        if (type__ == LUA_TUSERDATA && is_userdata(L, 4, "cv.Mat")) {
-          type__ = lua_type(L, 5);
-          if (type__ == LUA_TUSERDATA && is_userdata(L, 5, "cv.SparseMat")) {
-            return cv_calcHist2(L);
-          } else if (type__ == LUA_TUSERDATA && is_userdata(L, 5, "cv.MatND")) {
-            return cv_calcHist1(L);
-          } else {
-            // use any to raise errors
-            return cv_calcHist1(L);
-          }
-        } else {
-          // use any to raise errors
-          return cv_calcHist1(L);
-        }
-      } else {
-        // use any to raise errors
-        return cv_calcHist1(L);
-      }
-    } else {
-      // use any to raise errors
-      return cv_calcHist1(L);
-    }
-  } else {
-    // use any to raise errors
-    return cv_calcHist1(L);
-  }
 }
 
 
@@ -1512,7 +1288,7 @@ static int cv_calibrationMatrixValues(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::cartToPolar(const Mat &x, const Mat &y, Mat &magnitude, Mat &angle, bool angleInDegrees=false)
- * include/opencv/cxcore.hpp:1168
+ * include/opencv/cxcore.hpp:1180
  */
 static int cv_cartToPolar(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -1532,41 +1308,8 @@ static int cv_cartToPolar(lua_State *L) {
 
 
 
-/** CV_EXPORTS bool cv::checkRange(const Mat &a, bool quiet=true, Point *pt=0, double minVal=-DBL_MAX, double maxVal=DBL_MAX)
- * include/opencv/cxcore.hpp:1173
- */
-static int cv_checkRange1(lua_State *L) {
-  int top__ = lua_gettop(L);
-  bool  retval__;
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  if (top__ < 2) {
-    retval__ = checkRange(*a);
-  } else {
-    bool quiet = lua_toboolean(L, 2);
-    if (top__ < 3) {
-      retval__ = checkRange(*a, quiet);
-    } else {
-      Point *pt = *((Point **)luaL_checkudata(L, 3, "cv.Point"));
-      if (top__ < 4) {
-        retval__ = checkRange(*a, quiet, pt);
-      } else {
-        double minVal = luaL_checknumber(L, 4);
-        if (top__ < 5) {
-          retval__ = checkRange(*a, quiet, pt, minVal);
-        } else {
-          double maxVal = luaL_checknumber(L, 5);
-          retval__ = checkRange(*a, quiet, pt, minVal, maxVal);
-        }
-      }
-    }
-  }
-  lua_pushnumber(L, retval__);
-  return 1;
-}
-
-
 /** CV_EXPORTS bool cv::checkRange(const MatND &a, bool quiet=true, int *idx=0, double minVal=-DBL_MAX, double maxVal=DBL_MAX)
- * include/opencv/cxcore.hpp:1797
+ * include/opencv/cxcore.hpp:1809
  */
 static int cv_checkRange2(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -1606,18 +1349,16 @@ static int cv_checkRange(lua_State *L) {
   int type__ = lua_type(L, 1);
   if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.MatND")) {
     return cv_checkRange2(L);
-  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Mat")) {
-    return cv_checkRange1(L);
   } else {
     // use any to raise errors
-    return cv_checkRange1(L);
+    return cv_checkRange2(L);
   }
 }
 
 
 
 /** CV_EXPORTS void cv::circle(Mat &img, Point center, int radius, const Scalar &color, int thickness=1, int lineType=8, int shift=0)
- * include/opencv/cxcore.hpp:1275
+ * include/opencv/cxcore.hpp:1287
  */
 static int cv_circle(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -1648,7 +1389,7 @@ static int cv_circle(lua_State *L) {
 
 
 /** CV_EXPORTS bool cv::clipLine(Size imgSize, Point &pt1, Point &pt2)
- * include/opencv/cxcore.hpp:1296
+ * include/opencv/cxcore.hpp:1308
  */
 static int cv_clipLine1(lua_State *L) {
   Size *imgSize = *((Size **)luaL_checkudata(L, 1, "cv.Size"));
@@ -1661,7 +1402,7 @@ static int cv_clipLine1(lua_State *L) {
 
 
 /** CV_EXPORTS bool cv::clipLine(Rect img_rect, Point &pt1, Point &pt2)
- * include/opencv/cxcore.hpp:1297
+ * include/opencv/cxcore.hpp:1309
  */
 static int cv_clipLine2(lua_State *L) {
   Rect *img_rect = *((Rect **)luaL_checkudata(L, 1, "cv.Rect"));
@@ -1691,7 +1432,7 @@ static int cv_clipLine(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::compare(const Mat &a, const Mat &b, Mat &c, int cmpop)
- * include/opencv/cxcore.hpp:1151
+ * include/opencv/cxcore.hpp:1163
  */
 static int cv_compare1(lua_State *L) {
   const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -1704,7 +1445,7 @@ static int cv_compare1(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::compare(const Mat &a, double s, Mat &c, int cmpop)
- * include/opencv/cxcore.hpp:1152
+ * include/opencv/cxcore.hpp:1164
  */
 static int cv_compare2(lua_State *L) {
   const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -1717,7 +1458,7 @@ static int cv_compare2(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::compare(const MatND &a, const MatND &b, MatND &c, int cmpop)
- * include/opencv/cxcore.hpp:1785
+ * include/opencv/cxcore.hpp:1797
  */
 static int cv_compare3(lua_State *L) {
   const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
@@ -1730,7 +1471,7 @@ static int cv_compare3(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::compare(const MatND &a, double s, MatND &c, int cmpop)
- * include/opencv/cxcore.hpp:1786
+ * include/opencv/cxcore.hpp:1798
  */
 static int cv_compare4(lua_State *L) {
   const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
@@ -1818,7 +1559,7 @@ static int cv_compareHist(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::completeSymm(Mat &a, bool lowerToUpper=false)
- * include/opencv/cxcore.hpp:1184
+ * include/opencv/cxcore.hpp:1196
  */
 static int cv_completeSymm(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -1960,7 +1701,7 @@ static int cv_convertMaps(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::convertScaleAbs(const Mat &a, Mat &c, double alpha=1, double beta=0)
- * include/opencv/cxcore.hpp:1094
+ * include/opencv/cxcore.hpp:1106
  */
 static int cv_convertScaleAbs(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -2072,7 +1813,7 @@ static int cv_cornerMinEigenVal(lua_State *L) {
 
 
 /** CV_EXPORTS int cv::countNonZero(const Mat &m)
- * include/opencv/cxcore.hpp:1098
+ * include/opencv/cxcore.hpp:1110
  */
 static int cv_countNonZero1(lua_State *L) {
   const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -2083,7 +1824,7 @@ static int cv_countNonZero1(lua_State *L) {
 
 
 /** CV_EXPORTS int cv::countNonZero(const MatND &m)
- * include/opencv/cxcore.hpp:1752
+ * include/opencv/cxcore.hpp:1764
  */
 static int cv_countNonZero2(lua_State *L) {
   const MatND *m = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
@@ -2110,7 +1851,7 @@ static int cv_countNonZero(lua_State *L) {
 
 
 /** CV_EXPORTS float cv::cubeRoot(float val)
- * include/opencv/cxcore.hpp:1162
+ * include/opencv/cxcore.hpp:1174
  */
 static int cv_cubeRoot(lua_State *L) {
   float val = luaL_checknumber(L, 1);
@@ -2141,7 +1882,7 @@ static int cv_cvtColor(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::dct(const Mat &src, Mat &dst, int flags=0)
- * include/opencv/cxcore.hpp:1241
+ * include/opencv/cxcore.hpp:1253
  */
 static int cv_dct(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -2231,7 +1972,7 @@ static int cv_decomposeProjectionMatrix(lua_State *L) {
 
 
 /** CV_EXPORTS double cv::determinant(const Mat &m)
- * include/opencv/cxcore.hpp:1186
+ * include/opencv/cxcore.hpp:1198
  */
 static int cv_determinant(lua_State *L) {
   const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -2243,7 +1984,7 @@ static int cv_determinant(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::dft(const Mat &src, Mat &dst, int flags=0, int nonzeroRows=0)
- * include/opencv/cxcore.hpp:1239
+ * include/opencv/cxcore.hpp:1251
  */
 static int cv_dft(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -2357,7 +2098,7 @@ static int cv_distanceTransform(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::divide(const Mat &a, const Mat &b, Mat &c, double scale=1)
- * include/opencv/cxcore.hpp:1087
+ * include/opencv/cxcore.hpp:1099
  */
 static int cv_divide1(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -2375,7 +2116,7 @@ static int cv_divide1(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::divide(double scale, const Mat &b, Mat &c)
- * include/opencv/cxcore.hpp:1088
+ * include/opencv/cxcore.hpp:1100
  */
 static int cv_divide2(lua_State *L) {
   double scale = luaL_checknumber(L, 1);
@@ -2387,7 +2128,7 @@ static int cv_divide2(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::divide(const MatND &a, const MatND &b, MatND &c, double scale=1)
- * include/opencv/cxcore.hpp:1743
+ * include/opencv/cxcore.hpp:1755
  */
 static int cv_divide3(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -2405,7 +2146,7 @@ static int cv_divide3(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::divide(double scale, const MatND &b, MatND &c)
- * include/opencv/cxcore.hpp:1744
+ * include/opencv/cxcore.hpp:1756
  */
 static int cv_divide4(lua_State *L) {
   double scale = luaL_checknumber(L, 1);
@@ -2458,7 +2199,7 @@ static int cv_drawChessboardCorners(lua_State *L) {
 
 
 /** CV_EXPORTS bool cv::eigen(const Mat &a, Mat &eigenvalues, int lowindex=-1, int highindex=-1)
- * include/opencv/cxcore.hpp:1195
+ * include/opencv/cxcore.hpp:1207
  */
 static int cv_eigen1(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -2482,7 +2223,7 @@ static int cv_eigen1(lua_State *L) {
 
 
 /** CV_EXPORTS bool cv::eigen(const Mat &a, Mat &eigenvalues, Mat &eigenvectors, int lowindex=-1, int highindex=-1)
- * include/opencv/cxcore.hpp:1197
+ * include/opencv/cxcore.hpp:1209
  */
 static int cv_eigen2(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -2536,7 +2277,7 @@ static int cv_eigen(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::ellipse(Mat &img, Point center, Size axes, double angle, double startAngle, double endAngle, const Scalar &color, int thickness=1, int lineType=8, int shift=0)
- * include/opencv/cxcore.hpp:1280
+ * include/opencv/cxcore.hpp:1292
  */
 static int cv_ellipse1(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -2568,7 +2309,7 @@ static int cv_ellipse1(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::ellipse(Mat &img, const RotatedRect &box, const Scalar &color, int thickness=1, int lineType=8)
- * include/opencv/cxcore.hpp:1283
+ * include/opencv/cxcore.hpp:1295
  */
 static int cv_ellipse2(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -2685,7 +2426,7 @@ static int cv_estimateRigidTransform(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::exp(const Mat &a, Mat &b)
- * include/opencv/cxcore.hpp:1160
+ * include/opencv/cxcore.hpp:1172
  */
 static int cv_exp1(lua_State *L) {
   const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -2696,7 +2437,7 @@ static int cv_exp1(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::exp(const MatND &a, MatND &b)
- * include/opencv/cxcore.hpp:1794
+ * include/opencv/cxcore.hpp:1806
  */
 static int cv_exp2(lua_State *L) {
   const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
@@ -2722,26 +2463,8 @@ static int cv_exp(lua_State *L) {
 
 
 
-/** CV_EXPORTS void cv::extractImageCOI(const CvArr *arr, Mat &coiimg, int coi=-1)
- * include/opencv/cxcore.hpp:1076
- */
-static int cv_extractImageCOI(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const CvArr *arr = *((const CvArr **)luaL_checkudata(L, 1, "cv.CvArr"));
-  Mat *coiimg = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  if (top__ < 3) {
-    extractImageCOI(arr, *coiimg);
-  } else {
-    int coi = luaL_checkint(L, 3);
-    extractImageCOI(arr, *coiimg, coi);
-  }
-  return 0;
-}
-
-
-
 /** CV_EXPORTS float cv::fastAtan2(float y, float x)
- * include/opencv/cxcore.hpp:1163
+ * include/opencv/cxcore.hpp:1175
  */
 static int cv_fastAtan2(lua_State *L) {
   float y = luaL_checknumber(L, 1);
@@ -2749,64 +2472,6 @@ static int cv_fastAtan2(lua_State *L) {
   float  retval__ = fastAtan2(y, x);
   lua_pushnumber(L, retval__);
   return 1;
-}
-
-
-
-/** CV_EXPORTS void cv::fillConvexPoly(Mat &img, const Point *pts, int npts, const Scalar &color, int lineType=8, int shift=0)
- * include/opencv/cxcore.hpp:1287
- */
-static int cv_fillConvexPoly(lua_State *L) {
-  int top__ = lua_gettop(L);
-  Mat *img = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Point *pts = *((const Point **)luaL_checkudata(L, 2, "cv.Point"));
-  int npts = luaL_checkint(L, 3);
-  const Scalar *color = *((const Scalar **)luaL_checkudata(L, 4, "cv.Scalar"));
-  if (top__ < 5) {
-    fillConvexPoly(*img, pts, npts, *color);
-  } else {
-    int lineType = luaL_checkint(L, 5);
-    if (top__ < 6) {
-      fillConvexPoly(*img, pts, npts, *color, lineType);
-    } else {
-      int shift = luaL_checkint(L, 6);
-      fillConvexPoly(*img, pts, npts, *color, lineType, shift);
-    }
-  }
-  return 0;
-}
-
-
-
-/** CV_EXPORTS void cv::fillPoly(Mat &img, const Point **pts, const int *npts, int ncontours, const Scalar &color, int lineType=8, int shift=0, Point offset=Point())
- * include/opencv/cxcore.hpp:1291
- */
-static int cv_fillPoly(lua_State *L) {
-  int top__ = lua_gettop(L);
-  Mat *img = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Point * *pts = *((const Point * **)luaL_checkudata(L, 2, "cv.Point *"));
-  
-  DubArgPointer<int> ptr_npts;
-  const int *npts = ptr_npts(L, 3);
-  int ncontours = luaL_checkint(L, 4);
-  const Scalar *color = *((const Scalar **)luaL_checkudata(L, 5, "cv.Scalar"));
-  if (top__ < 6) {
-    fillPoly(*img, pts, npts, ncontours, *color);
-  } else {
-    int lineType = luaL_checkint(L, 6);
-    if (top__ < 7) {
-      fillPoly(*img, pts, npts, ncontours, *color, lineType);
-    } else {
-      int shift = luaL_checkint(L, 7);
-      if (top__ < 8) {
-        fillPoly(*img, pts, npts, ncontours, *color, lineType, shift);
-      } else {
-        Point *offset = *((Point **)luaL_checkudata(L, 8, "cv.Point"));
-        fillPoly(*img, pts, npts, ncontours, *color, lineType, shift, *offset);
-      }
-    }
-  }
-  return 0;
 }
 
 
@@ -2929,7 +2594,7 @@ static int cv_fitLine(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::flip(const Mat &a, Mat &b, int flipCode)
- * include/opencv/cxcore.hpp:1129
+ * include/opencv/cxcore.hpp:1141
  */
 static int cv_flip(lua_State *L) {
   const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -2937,100 +2602,6 @@ static int cv_flip(lua_State *L) {
   int flipCode = luaL_checkint(L, 3);
   flip(*a, *b, flipCode);
   return 0;
-}
-
-
-
-
-/** CV_EXPORTS int cv::floodFill(Mat &image, Point seedPoint, Scalar newVal, Rect *rect=0, Scalar loDiff=Scalar(), Scalar upDiff=Scalar(), int flags=4)
- * include/opencv/cv.hpp:491
- */
-static int cv_floodFill1(lua_State *L) {
-  int top__ = lua_gettop(L);
-  int  retval__;
-  Mat *image = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Point *seedPoint = *((Point **)luaL_checkudata(L, 2, "cv.Point"));
-  Scalar *newVal = *((Scalar **)luaL_checkudata(L, 3, "cv.Scalar"));
-  if (top__ < 4) {
-    retval__ = floodFill(*image, *seedPoint, *newVal);
-  } else {
-    Rect *rect = *((Rect **)luaL_checkudata(L, 4, "cv.Rect"));
-    if (top__ < 5) {
-      retval__ = floodFill(*image, *seedPoint, *newVal, rect);
-    } else {
-      Scalar *loDiff = *((Scalar **)luaL_checkudata(L, 5, "cv.Scalar"));
-      if (top__ < 6) {
-        retval__ = floodFill(*image, *seedPoint, *newVal, rect, *loDiff);
-      } else {
-        Scalar *upDiff = *((Scalar **)luaL_checkudata(L, 6, "cv.Scalar"));
-        if (top__ < 7) {
-          retval__ = floodFill(*image, *seedPoint, *newVal, rect, *loDiff, *upDiff);
-        } else {
-          int flags = luaL_checkint(L, 7);
-          retval__ = floodFill(*image, *seedPoint, *newVal, rect, *loDiff, *upDiff, flags);
-        }
-      }
-    }
-  }
-  lua_pushnumber(L, retval__);
-  return 1;
-}
-
-
-/** CV_EXPORTS int cv::floodFill(Mat &image, Mat &mask, Point seedPoint, Scalar newVal, Rect *rect=0, Scalar loDiff=Scalar(), Scalar upDiff=Scalar(), int flags=4)
- * include/opencv/cv.hpp:496
- */
-static int cv_floodFill2(lua_State *L) {
-  int top__ = lua_gettop(L);
-  int  retval__;
-  Mat *image = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *mask = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Point *seedPoint = *((Point **)luaL_checkudata(L, 3, "cv.Point"));
-  Scalar *newVal = *((Scalar **)luaL_checkudata(L, 4, "cv.Scalar"));
-  if (top__ < 5) {
-    retval__ = floodFill(*image, *mask, *seedPoint, *newVal);
-  } else {
-    Rect *rect = *((Rect **)luaL_checkudata(L, 5, "cv.Rect"));
-    if (top__ < 6) {
-      retval__ = floodFill(*image, *mask, *seedPoint, *newVal, rect);
-    } else {
-      Scalar *loDiff = *((Scalar **)luaL_checkudata(L, 6, "cv.Scalar"));
-      if (top__ < 7) {
-        retval__ = floodFill(*image, *mask, *seedPoint, *newVal, rect, *loDiff);
-      } else {
-        Scalar *upDiff = *((Scalar **)luaL_checkudata(L, 7, "cv.Scalar"));
-        if (top__ < 8) {
-          retval__ = floodFill(*image, *mask, *seedPoint, *newVal, rect, *loDiff, *upDiff);
-        } else {
-          int flags = luaL_checkint(L, 8);
-          retval__ = floodFill(*image, *mask, *seedPoint, *newVal, rect, *loDiff, *upDiff, flags);
-        }
-      }
-    }
-  }
-  lua_pushnumber(L, retval__);
-  return 1;
-}
-
-
-
-/** Overloaded function chooser for floodFill(...) */
-static int cv_floodFill(lua_State *L) {
-  int type__ = lua_type(L, 1);
-  if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Mat")) {
-    type__ = lua_type(L, 2);
-    if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.Point")) {
-      return cv_floodFill1(L);
-    } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.Mat")) {
-      return cv_floodFill2(L);
-    } else {
-      // use any to raise errors
-      return cv_floodFill2(L);
-    }
-  } else {
-    // use any to raise errors
-    return cv_floodFill2(L);
-  }
 }
 
 
@@ -3048,7 +2619,7 @@ static int cv_fromUtf16(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::gemm(const Mat &a, const Mat &b, double alpha, const Mat &c, double gamma, Mat &d, int flags=0)
- * include/opencv/cxcore.hpp:1176
+ * include/opencv/cxcore.hpp:1188
  */
 static int cv_gemm(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -3187,39 +2758,12 @@ static int cv_getNumThreads(lua_State *L) {
 
 
 /** CV_EXPORTS int cv::getOptimalDFTSize(int vecsize)
- * include/opencv/cxcore.hpp:1245
+ * include/opencv/cxcore.hpp:1257
  */
 static int cv_getOptimalDFTSize(lua_State *L) {
   int vecsize = luaL_checkint(L, 1);
   int  retval__ = getOptimalDFTSize(vecsize);
   lua_pushnumber(L, retval__);
-  return 1;
-}
-
-
-
-/** CV_EXPORTS Mat cv::getOptimalNewCameraMatrix(const Mat &cameraMatrix, const Mat &distCoeffs, Size imageSize, double alpha, Size newImgSize=Size(), Rect *validPixROI=0)
- * include/opencv/cv.hpp:405
- */
-static int cv_getOptimalNewCameraMatrix(lua_State *L) {
-  int top__ = lua_gettop(L);
-  Mat  retval__;
-  const Mat *cameraMatrix = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *distCoeffs = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Size *imageSize = *((Size **)luaL_checkudata(L, 3, "cv.Size"));
-  double alpha = luaL_checknumber(L, 4);
-  if (top__ < 5) {
-    retval__ = getOptimalNewCameraMatrix(*cameraMatrix, *distCoeffs, *imageSize, alpha);
-  } else {
-    Size *newImgSize = *((Size **)luaL_checkudata(L, 5, "cv.Size"));
-    if (top__ < 6) {
-      retval__ = getOptimalNewCameraMatrix(*cameraMatrix, *distCoeffs, *imageSize, alpha, *newImgSize);
-    } else {
-      Rect *validPixROI = *((Rect **)luaL_checkudata(L, 6, "cv.Rect"));
-      retval__ = getOptimalNewCameraMatrix(*cameraMatrix, *distCoeffs, *imageSize, alpha, *newImgSize, validPixROI);
-    }
-  }
-  lua_pushclass<Mat>(L, retval__, "cv.Mat");
   return 1;
 }
 
@@ -3280,7 +2824,7 @@ static int cv_getStructuringElement(lua_State *L) {
 
 
 /** CV_EXPORTS Size cv::getTextSize(const string &text, int fontFace, double fontScale, int thickness, int *baseLine)
- * include/opencv/cxcore.hpp:1337
+ * include/opencv/cxcore.hpp:1349
  */
 static int cv_getTextSize(lua_State *L) {
   const string *text = *((const string **)luaL_checkudata(L, 1, "cv.string"));
@@ -3353,7 +2897,7 @@ static int cv_grabCut(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::idct(const Mat &src, Mat &dst, int flags=0)
- * include/opencv/cxcore.hpp:1242
+ * include/opencv/cxcore.hpp:1254
  */
 static int cv_idct(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -3371,7 +2915,7 @@ static int cv_idct(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::idft(const Mat &src, Mat &dst, int flags=0, int nonzeroRows=0)
- * include/opencv/cxcore.hpp:1240
+ * include/opencv/cxcore.hpp:1252
  */
 static int cv_idft(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -3395,7 +2939,7 @@ static int cv_idft(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::inRange(const Mat &src, const Mat &lowerb, const Mat &upperb, Mat &dst)
- * include/opencv/cxcore.hpp:1148
+ * include/opencv/cxcore.hpp:1160
  */
 static int cv_inRange1(lua_State *L) {
   const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -3408,7 +2952,7 @@ static int cv_inRange1(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::inRange(const Mat &src, const Scalar &lowerb, const Scalar &upperb, Mat &dst)
- * include/opencv/cxcore.hpp:1150
+ * include/opencv/cxcore.hpp:1162
  */
 static int cv_inRange2(lua_State *L) {
   const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -3421,7 +2965,7 @@ static int cv_inRange2(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::inRange(const MatND &src, const MatND &lowerb, const MatND &upperb, MatND &dst)
- * include/opencv/cxcore.hpp:1782
+ * include/opencv/cxcore.hpp:1794
  */
 static int cv_inRange3(lua_State *L) {
   const MatND *src = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
@@ -3434,7 +2978,7 @@ static int cv_inRange3(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::inRange(const MatND &src, const Scalar &lowerb, const Scalar &upperb, MatND &dst)
- * include/opencv/cxcore.hpp:1784
+ * include/opencv/cxcore.hpp:1796
  */
 static int cv_inRange4(lua_State *L) {
   const MatND *src = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
@@ -3506,24 +3050,6 @@ static int cv_inpaint(lua_State *L) {
   double inpaintRange = luaL_checknumber(L, 4);
   int flags = luaL_checkint(L, 5);
   inpaint(*src, *inpaintMask, *dst, inpaintRange, flags);
-  return 0;
-}
-
-
-
-/** CV_EXPORTS void cv::insertImageCOI(const Mat &coiimg, CvArr *arr, int coi=-1)
- * include/opencv/cxcore.hpp:1077
- */
-static int cv_insertImageCOI(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *coiimg = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  CvArr *arr = *((CvArr **)luaL_checkudata(L, 2, "cv.CvArr"));
-  if (top__ < 3) {
-    insertImageCOI(*coiimg, arr);
-  } else {
-    int coi = luaL_checkint(L, 3);
-    insertImageCOI(*coiimg, arr, coi);
-  }
   return 0;
 }
 
@@ -3621,7 +3147,7 @@ static int cv_integral(lua_State *L) {
 
 
 /** CV_EXPORTS double cv::invert(const Mat &a, Mat &c, int flags=DECOMP_LU)
- * include/opencv/cxcore.hpp:1188
+ * include/opencv/cxcore.hpp:1200
  */
 static int cv_invert(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -3664,26 +3190,8 @@ static int cv_isContourConvex(lua_State *L) {
 
 
 
-/** CV_EXPORTS double cv::kmeans(const Mat &data, int K, Mat &best_labels, TermCriteria criteria, int attempts, int flags, Mat *centers)
- * include/opencv/cxcore.hpp:1250
- */
-static int cv_kmeans(lua_State *L) {
-  const Mat *data = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  int K = luaL_checkint(L, 2);
-  Mat *best_labels = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  TermCriteria *criteria = *((TermCriteria **)luaL_checkudata(L, 4, "cv.TermCriteria"));
-  int attempts = luaL_checkint(L, 5);
-  int flags = luaL_checkint(L, 6);
-  Mat *centers = *((Mat **)luaL_checkudata(L, 7, "cv.Mat"));
-  double  retval__ = kmeans(*data, K, *best_labels, *criteria, attempts, flags, centers);
-  lua_pushnumber(L, retval__);
-  return 1;
-}
-
-
-
 /** CV_EXPORTS void cv::line(Mat &img, Point pt1, Point pt2, const Scalar &color, int thickness=1, int lineType=8, int shift=0)
- * include/opencv/cxcore.hpp:1263
+ * include/opencv/cxcore.hpp:1275
  */
 static int cv_line(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -3714,7 +3222,7 @@ static int cv_line(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::log(const Mat &a, Mat &b)
- * include/opencv/cxcore.hpp:1161
+ * include/opencv/cxcore.hpp:1173
  */
 static int cv_log1(lua_State *L) {
   const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -3725,7 +3233,7 @@ static int cv_log1(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::log(const MatND &a, MatND &b)
- * include/opencv/cxcore.hpp:1795
+ * include/opencv/cxcore.hpp:1807
  */
 static int cv_log2(lua_State *L) {
   const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
@@ -3752,7 +3260,7 @@ static int cv_log(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::magnitude(const Mat &x, const Mat &y, Mat &magnitude)
- * include/opencv/cxcore.hpp:1171
+ * include/opencv/cxcore.hpp:1183
  */
 static int cv_magnitude(lua_State *L) {
   const Mat *x = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -3809,7 +3317,7 @@ static int cv_matchTemplate(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::max(const Mat &a, const Mat &b, Mat &c)
- * include/opencv/cxcore.hpp:1155
+ * include/opencv/cxcore.hpp:1167
  */
 static int cv_max1(lua_State *L) {
   const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -3821,7 +3329,7 @@ static int cv_max1(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::max(const Mat &a, double alpha, Mat &c)
- * include/opencv/cxcore.hpp:1156
+ * include/opencv/cxcore.hpp:1168
  */
 static int cv_max2(lua_State *L) {
   const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -3833,7 +3341,7 @@ static int cv_max2(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::max(const MatND &a, const MatND &b, MatND &c)
- * include/opencv/cxcore.hpp:1789
+ * include/opencv/cxcore.hpp:1801
  */
 static int cv_max3(lua_State *L) {
   const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
@@ -3845,7 +3353,7 @@ static int cv_max3(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::max(const MatND &a, double alpha, MatND &c)
- * include/opencv/cxcore.hpp:1790
+ * include/opencv/cxcore.hpp:1802
  */
 static int cv_max4(lua_State *L) {
   const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
@@ -3890,7 +3398,7 @@ static int cv_max(lua_State *L) {
 
 
 /** CV_EXPORTS Scalar cv::mean(const Mat &m)
- * include/opencv/cxcore.hpp:1100
+ * include/opencv/cxcore.hpp:1112
  */
 static int cv_mean1(lua_State *L) {
   const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -3901,7 +3409,7 @@ static int cv_mean1(lua_State *L) {
 
 
 /** CV_EXPORTS Scalar cv::mean(const Mat &m, const Mat &mask)
- * include/opencv/cxcore.hpp:1101
+ * include/opencv/cxcore.hpp:1113
  */
 static int cv_mean2(lua_State *L) {
   const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -3913,7 +3421,7 @@ static int cv_mean2(lua_State *L) {
 
 
 /** CV_EXPORTS Scalar cv::mean(const MatND &m)
- * include/opencv/cxcore.hpp:1754
+ * include/opencv/cxcore.hpp:1766
  */
 static int cv_mean3(lua_State *L) {
   const MatND *m = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
@@ -3924,7 +3432,7 @@ static int cv_mean3(lua_State *L) {
 
 
 /** CV_EXPORTS Scalar cv::mean(const MatND &m, const MatND &mask)
- * include/opencv/cxcore.hpp:1755
+ * include/opencv/cxcore.hpp:1767
  */
 static int cv_mean4(lua_State *L) {
   const MatND *m = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
@@ -3984,7 +3492,7 @@ static int cv_meanShift(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::meanStdDev(const Mat &m, Scalar &mean, Scalar &stddev, const Mat &mask=Mat())
- * include/opencv/cxcore.hpp:1102
+ * include/opencv/cxcore.hpp:1114
  */
 static int cv_meanStdDev1(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -4002,7 +3510,7 @@ static int cv_meanStdDev1(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::meanStdDev(const MatND &m, Scalar &mean, Scalar &stddev, const MatND &mask=MatND())
- * include/opencv/cxcore.hpp:1756
+ * include/opencv/cxcore.hpp:1768
  */
 static int cv_meanStdDev2(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -4049,49 +3557,8 @@ static int cv_medianBlur(lua_State *L) {
 
 
 
-/** CV_EXPORTS void cv::merge(const Mat *mv, size_t count, Mat &dst)
- * include/opencv/cxcore.hpp:1115
- */
-static int cv_merge1(lua_State *L) {
-  const Mat *mv = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  size_t count = luaL_checkint(L, 2);
-  Mat *dst = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  merge(mv, count, *dst);
-  return 0;
-}
-
-
-/** CV_EXPORTS void cv::merge(const MatND *mvbegin, size_t count, MatND &dst)
- * include/opencv/cxcore.hpp:1767
- */
-static int cv_merge2(lua_State *L) {
-  const MatND *mvbegin = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  size_t count = luaL_checkint(L, 2);
-  MatND *dst = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-  merge(mvbegin, count, *dst);
-  return 0;
-}
-
-
-
-/** Overloaded function chooser for merge(...) */
-static int cv_merge(lua_State *L) {
-  int type__ = lua_type(L, 1);
-  if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.MatND")) {
-    return cv_merge2(L);
-  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Mat")) {
-    return cv_merge1(L);
-  } else {
-    // use any to raise errors
-    return cv_merge1(L);
-  }
-}
-
-
-
-
 /** CV_EXPORTS void cv::min(const Mat &a, const Mat &b, Mat &c)
- * include/opencv/cxcore.hpp:1153
+ * include/opencv/cxcore.hpp:1165
  */
 static int cv_min1(lua_State *L) {
   const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -4103,7 +3570,7 @@ static int cv_min1(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::min(const Mat &a, double alpha, Mat &c)
- * include/opencv/cxcore.hpp:1154
+ * include/opencv/cxcore.hpp:1166
  */
 static int cv_min2(lua_State *L) {
   const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -4115,7 +3582,7 @@ static int cv_min2(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::min(const MatND &a, const MatND &b, MatND &c)
- * include/opencv/cxcore.hpp:1787
+ * include/opencv/cxcore.hpp:1799
  */
 static int cv_min3(lua_State *L) {
   const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
@@ -4127,7 +3594,7 @@ static int cv_min3(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::min(const MatND &a, double alpha, MatND &c)
- * include/opencv/cxcore.hpp:1788
+ * include/opencv/cxcore.hpp:1800
  */
 static int cv_min4(lua_State *L) {
   const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
@@ -4196,44 +3663,8 @@ static int cv_minEnclosingCircle(lua_State *L) {
 
 
 
-/** CV_EXPORTS void cv::minMaxLoc(const Mat &a, double *minVal, double *maxVal=0, Point *minLoc=0, Point *maxLoc=0, const Mat &mask=Mat())
- * include/opencv/cxcore.hpp:1113
- */
-static int cv_minMaxLoc1(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  
-  DubArgPointer<double> ptr_minVal;
-  double *minVal = ptr_minVal(L, 2);
-  if (top__ < 3) {
-    minMaxLoc(*a, minVal);
-  } else {
-    
-    DubArgPointer<double> ptr_maxVal;
-    double *maxVal = ptr_maxVal(L, 3);
-    if (top__ < 4) {
-      minMaxLoc(*a, minVal, maxVal);
-    } else {
-      Point *minLoc = *((Point **)luaL_checkudata(L, 4, "cv.Point"));
-      if (top__ < 5) {
-        minMaxLoc(*a, minVal, maxVal, minLoc);
-      } else {
-        Point *maxLoc = *((Point **)luaL_checkudata(L, 5, "cv.Point"));
-        if (top__ < 6) {
-          minMaxLoc(*a, minVal, maxVal, minLoc, maxLoc);
-        } else {
-          const Mat *mask = *((const Mat **)luaL_checkudata(L, 6, "cv.Mat"));
-          minMaxLoc(*a, minVal, maxVal, minLoc, maxLoc, *mask);
-        }
-      }
-    }
-  }
-  return 0;
-}
-
-
 /** CV_EXPORTS void cv::minMaxLoc(const MatND &a, double *minVal, double *maxVal, int *minIdx=0, int *maxIdx=0, const MatND &mask=MatND())
- * include/opencv/cxcore.hpp:1765
+ * include/opencv/cxcore.hpp:1777
  */
 static int cv_minMaxLoc2(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -4269,7 +3700,7 @@ static int cv_minMaxLoc2(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::minMaxLoc(const SparseMat &a, double *minVal, double *maxVal, int *minIdx=0, int *maxIdx=0)
- * include/opencv/cxcore.hpp:2070
+ * include/opencv/cxcore.hpp:2082
  */
 static int cv_minMaxLoc3(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -4307,62 +3738,9 @@ static int cv_minMaxLoc(lua_State *L) {
     return cv_minMaxLoc3(L);
   } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.MatND")) {
     return cv_minMaxLoc2(L);
-  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Mat")) {
-    return cv_minMaxLoc1(L);
   } else {
     // use any to raise errors
-    return cv_minMaxLoc1(L);
-  }
-}
-
-
-
-
-/** CV_EXPORTS void cv::mixChannels(const Mat *src, int nsrcs, Mat *dst, int ndsts, const int *fromTo, size_t npairs)
- * include/opencv/cxcore.hpp:1119
- */
-static int cv_mixChannels1(lua_State *L) {
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  int nsrcs = luaL_checkint(L, 2);
-  Mat *dst = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  int ndsts = luaL_checkint(L, 4);
-  
-  DubArgPointer<int> ptr_fromTo;
-  const int *fromTo = ptr_fromTo(L, 5);
-  size_t npairs = luaL_checkint(L, 6);
-  mixChannels(src, nsrcs, dst, ndsts, fromTo, npairs);
-  return 0;
-}
-
-
-/** CV_EXPORTS void cv::mixChannels(const MatND *src, int nsrcs, MatND *dst, int ndsts, const int *fromTo, size_t npairs)
- * include/opencv/cxcore.hpp:1770
- */
-static int cv_mixChannels2(lua_State *L) {
-  const MatND *src = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  int nsrcs = luaL_checkint(L, 2);
-  MatND *dst = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-  int ndsts = luaL_checkint(L, 4);
-  
-  DubArgPointer<int> ptr_fromTo;
-  const int *fromTo = ptr_fromTo(L, 5);
-  size_t npairs = luaL_checkint(L, 6);
-  mixChannels(src, nsrcs, dst, ndsts, fromTo, npairs);
-  return 0;
-}
-
-
-
-/** Overloaded function chooser for mixChannels(...) */
-static int cv_mixChannels(lua_State *L) {
-  int type__ = lua_type(L, 1);
-  if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.MatND")) {
-    return cv_mixChannels2(L);
-  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Mat")) {
-    return cv_mixChannels1(L);
-  } else {
-    // use any to raise errors
-    return cv_mixChannels1(L);
+    return cv_minMaxLoc2(L);
   }
 }
 
@@ -4434,7 +3812,7 @@ static int cv_morphologyEx(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::mulSpectrums(const Mat &a, const Mat &b, Mat &c, int flags, bool conjB=false)
- * include/opencv/cxcore.hpp:1244
+ * include/opencv/cxcore.hpp:1256
  */
 static int cv_mulSpectrums(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -4454,7 +3832,7 @@ static int cv_mulSpectrums(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::mulTransposed(const Mat &a, Mat &c, bool aTa, const Mat &delta=Mat(), double scale=1, int rtype=-1)
- * include/opencv/cxcore.hpp:1179
+ * include/opencv/cxcore.hpp:1191
  */
 static int cv_mulTransposed(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -4484,7 +3862,7 @@ static int cv_mulTransposed(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::multiply(const Mat &a, const Mat &b, Mat &c, double scale=1)
- * include/opencv/cxcore.hpp:1086
+ * include/opencv/cxcore.hpp:1098
  */
 static int cv_multiply1(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -4502,7 +3880,7 @@ static int cv_multiply1(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::multiply(const MatND &a, const MatND &b, MatND &c, double scale=1)
- * include/opencv/cxcore.hpp:1742
+ * include/opencv/cxcore.hpp:1754
  */
 static int cv_multiply2(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -4537,7 +3915,7 @@ static int cv_multiply(lua_State *L) {
 
 
 /** CV_EXPORTS double cv::norm(const Mat &a, int normType=NORM_L2)
- * include/opencv/cxcore.hpp:1103
+ * include/opencv/cxcore.hpp:1115
  */
 static int cv_norm1(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -4555,7 +3933,7 @@ static int cv_norm1(lua_State *L) {
 
 
 /** CV_EXPORTS double cv::norm(const Mat &a, const Mat &b, int normType=NORM_L2)
- * include/opencv/cxcore.hpp:1104
+ * include/opencv/cxcore.hpp:1116
  */
 static int cv_norm2(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -4574,7 +3952,7 @@ static int cv_norm2(lua_State *L) {
 
 
 /** CV_EXPORTS double cv::norm(const Mat &a, int normType, const Mat &mask)
- * include/opencv/cxcore.hpp:1105
+ * include/opencv/cxcore.hpp:1117
  */
 static int cv_norm3(lua_State *L) {
   const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -4587,7 +3965,7 @@ static int cv_norm3(lua_State *L) {
 
 
 /** CV_EXPORTS double cv::norm(const Mat &a, const Mat &b, int normType, const Mat &mask)
- * include/opencv/cxcore.hpp:1107
+ * include/opencv/cxcore.hpp:1119
  */
 static int cv_norm4(lua_State *L) {
   const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -4601,7 +3979,7 @@ static int cv_norm4(lua_State *L) {
 
 
 /** CV_EXPORTS double cv::norm(const MatND &a, int normType=NORM_L2, const MatND &mask=MatND())
- * include/opencv/cxcore.hpp:1757
+ * include/opencv/cxcore.hpp:1769
  */
 static int cv_norm5(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -4624,7 +4002,7 @@ static int cv_norm5(lua_State *L) {
 
 
 /** CV_EXPORTS double cv::norm(const MatND &a, const MatND &b, int normType=NORM_L2, const MatND &mask=MatND())
- * include/opencv/cxcore.hpp:1759
+ * include/opencv/cxcore.hpp:1771
  */
 static int cv_norm6(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -4648,7 +4026,7 @@ static int cv_norm6(lua_State *L) {
 
 
 /** CV_EXPORTS double cv::norm(const SparseMat &src, int normType)
- * include/opencv/cxcore.hpp:2071
+ * include/opencv/cxcore.hpp:2083
  */
 static int cv_norm7(lua_State *L) {
   const SparseMat *src = *((const SparseMat **)luaL_checkudata(L, 1, "cv.SparseMat"));
@@ -4718,7 +4096,7 @@ static int cv_norm(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::normalize(const Mat &a, Mat &b, double alpha=1, double beta=0, int norm_type=NORM_L2, int rtype=-1, const Mat &mask=Mat())
- * include/opencv/cxcore.hpp:1109
+ * include/opencv/cxcore.hpp:1121
  */
 static int cv_normalize1(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -4755,7 +4133,7 @@ static int cv_normalize1(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::normalize(const MatND &a, MatND &b, double alpha=1, double beta=0, int norm_type=NORM_L2, int rtype=-1, const MatND &mask=MatND())
- * include/opencv/cxcore.hpp:1761
+ * include/opencv/cxcore.hpp:1773
  */
 static int cv_normalize2(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -4792,7 +4170,7 @@ static int cv_normalize2(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::normalize(const SparseMat &src, SparseMat &dst, double alpha, int normType)
- * include/opencv/cxcore.hpp:2072
+ * include/opencv/cxcore.hpp:2084
  */
 static int cv_normalize3(lua_State *L) {
   const SparseMat *src = *((const SparseMat **)luaL_checkudata(L, 1, "cv.SparseMat"));
@@ -4823,7 +4201,7 @@ static int cv_normalize(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::perspectiveTransform(const Mat &src, Mat &dst, const Mat &m)
- * include/opencv/cxcore.hpp:1182
+ * include/opencv/cxcore.hpp:1194
  */
 static int cv_perspectiveTransform(lua_State *L) {
   const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -4836,7 +4214,7 @@ static int cv_perspectiveTransform(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::phase(const Mat &x, const Mat &y, Mat &angle, bool angleInDegrees=false)
- * include/opencv/cxcore.hpp:1170
+ * include/opencv/cxcore.hpp:1182
  */
 static int cv_phase(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -4869,7 +4247,7 @@ static int cv_pointPolygonTest(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::polarToCart(const Mat &magnitude, const Mat &angle, Mat &x, Mat &y, bool angleInDegrees=false)
- * include/opencv/cxcore.hpp:1165
+ * include/opencv/cxcore.hpp:1177
  */
 static int cv_polarToCart(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -4888,43 +4266,9 @@ static int cv_polarToCart(lua_State *L) {
 
 
 
-/** CV_EXPORTS void cv::polylines(Mat &img, const Point **pts, const int *npts, int ncontours, bool isClosed, const Scalar &color, int thickness=1, int lineType=8, int shift=0)
- * include/opencv/cxcore.hpp:1294
- */
-static int cv_polylines(lua_State *L) {
-  int top__ = lua_gettop(L);
-  Mat *img = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Point * *pts = *((const Point * **)luaL_checkudata(L, 2, "cv.Point *"));
-  
-  DubArgPointer<int> ptr_npts;
-  const int *npts = ptr_npts(L, 3);
-  int ncontours = luaL_checkint(L, 4);
-  bool isClosed = lua_toboolean(L, 5);
-  const Scalar *color = *((const Scalar **)luaL_checkudata(L, 6, "cv.Scalar"));
-  if (top__ < 7) {
-    polylines(*img, pts, npts, ncontours, isClosed, *color);
-  } else {
-    int thickness = luaL_checkint(L, 7);
-    if (top__ < 8) {
-      polylines(*img, pts, npts, ncontours, isClosed, *color, thickness);
-    } else {
-      int lineType = luaL_checkint(L, 8);
-      if (top__ < 9) {
-        polylines(*img, pts, npts, ncontours, isClosed, *color, thickness, lineType);
-      } else {
-        int shift = luaL_checkint(L, 9);
-        polylines(*img, pts, npts, ncontours, isClosed, *color, thickness, lineType, shift);
-      }
-    }
-  }
-  return 0;
-}
-
-
-
 
 /** CV_EXPORTS void cv::pow(const Mat &a, double power, Mat &b)
- * include/opencv/cxcore.hpp:1159
+ * include/opencv/cxcore.hpp:1171
  */
 static int cv_pow1(lua_State *L) {
   const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -4936,7 +4280,7 @@ static int cv_pow1(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::pow(const MatND &a, double power, MatND &b)
- * include/opencv/cxcore.hpp:1793
+ * include/opencv/cxcore.hpp:1805
  */
 static int cv_pow2(lua_State *L) {
   const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
@@ -4983,7 +4327,7 @@ static int cv_preCornerDetect(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::putText(Mat &img, const string &text, Point org, int fontFace, double fontScale, Scalar color, int thickness=1, int linetype=8, bool bottomLeftOrigin=false)
- * include/opencv/cxcore.hpp:1333
+ * include/opencv/cxcore.hpp:1345
  */
 static int cv_putText(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -5050,30 +4394,8 @@ static int cv_pyrUp(lua_State *L) {
 
 
 
-/** CV_EXPORTS void cv::randShuffle(Mat &dst, double iterFactor=1., RNG *rng=0)
- * include/opencv/cxcore.hpp:1259
- */
-static int cv_randShuffle(lua_State *L) {
-  int top__ = lua_gettop(L);
-  Mat *dst = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  if (top__ < 2) {
-    randShuffle(*dst);
-  } else {
-    double iterFactor = luaL_checknumber(L, 2);
-    if (top__ < 3) {
-      randShuffle(*dst, iterFactor);
-    } else {
-      RNG *rng = *((RNG **)luaL_checkudata(L, 3, "cv.RNG"));
-      randShuffle(*dst, iterFactor, rng);
-    }
-  }
-  return 0;
-}
-
-
-
 /** static void cv::randn(Mat &dst, const Scalar &mean, const Scalar &stddev)
- * include/opencv/cxcore.hpp:1258
+ * include/opencv/cxcore.hpp:1270
  */
 static int cv_randn(lua_State *L) {
   Mat *dst = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -5086,7 +4408,7 @@ static int cv_randn(lua_State *L) {
 
 
 /** static void cv::randu(Mat &dst, const Scalar &low, const Scalar &high)
- * include/opencv/cxcore.hpp:1256
+ * include/opencv/cxcore.hpp:1268
  */
 static int cv_randu(lua_State *L) {
   Mat *dst = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -5100,7 +4422,7 @@ static int cv_randu(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::rectangle(Mat &img, Point pt1, Point pt2, const Scalar &color, int thickness=1, int lineType=8, int shift=0)
- * include/opencv/cxcore.hpp:1267
+ * include/opencv/cxcore.hpp:1279
  */
 static int cv_rectangle1(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -5129,7 +4451,7 @@ static int cv_rectangle1(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::rectangle(Mat &img, Rect rec, const Scalar &color, int thickness=1, int lineType=8, int shift=0)
- * include/opencv/cxcore.hpp:1271
+ * include/opencv/cxcore.hpp:1283
  */
 static int cv_rectangle2(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -5179,7 +4501,7 @@ static int cv_rectangle(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::reduce(const Mat &m, Mat &dst, int dim, int rtype, int dtype=-1)
- * include/opencv/cxcore.hpp:1114
+ * include/opencv/cxcore.hpp:1126
  */
 static int cv_reduce(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -5226,7 +4548,7 @@ static int cv_remap(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::repeat(const Mat &a, int ny, int nx, Mat &b)
- * include/opencv/cxcore.hpp:1131
+ * include/opencv/cxcore.hpp:1143
  */
 static int cv_repeat1(lua_State *L) {
   const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -5239,7 +4561,7 @@ static int cv_repeat1(lua_State *L) {
 
 
 /** static Mat cv::repeat(const Mat &src, int ny, int nx)
- * include/opencv/cxcore.hpp:1133
+ * include/opencv/cxcore.hpp:1145
  */
 static int cv_repeat2(lua_State *L) {
   const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -5336,7 +4658,7 @@ static int cv_resize(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::scaleAdd(const Mat &a, double alpha, const Mat &b, Mat &c)
- * include/opencv/cxcore.hpp:1091
+ * include/opencv/cxcore.hpp:1103
  */
 static int cv_scaleAdd1(lua_State *L) {
   const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -5349,7 +4671,7 @@ static int cv_scaleAdd1(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::scaleAdd(const MatND &a, double alpha, const MatND &b, MatND &c)
- * include/opencv/cxcore.hpp:1747
+ * include/opencv/cxcore.hpp:1759
  */
 static int cv_scaleAdd2(lua_State *L) {
   const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
@@ -5421,7 +4743,7 @@ static int cv_setBreakOnError(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::setIdentity(Mat &c, const Scalar &s=Scalar(1))
- * include/opencv/cxcore.hpp:1185
+ * include/opencv/cxcore.hpp:1197
  */
 static int cv_setIdentity(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -5460,7 +4782,7 @@ static int cv_setUseOptimized(lua_State *L) {
 
 
 /** CV_EXPORTS bool cv::solve(const Mat &a, const Mat &b, Mat &x, int flags=DECOMP_LU)
- * include/opencv/cxcore.hpp:1189
+ * include/opencv/cxcore.hpp:1201
  */
 static int cv_solve(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -5481,7 +4803,7 @@ static int cv_solve(lua_State *L) {
 
 
 /** CV_EXPORTS int cv::solveCubic(const Mat &coeffs, Mat &roots)
- * include/opencv/cxcore.hpp:1192
+ * include/opencv/cxcore.hpp:1204
  */
 static int cv_solveCubic(lua_State *L) {
   const Mat *coeffs = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -5516,7 +4838,7 @@ static int cv_solvePnP(lua_State *L) {
 
 
 /** CV_EXPORTS double cv::solvePoly(const Mat &coeffs, Mat &roots, int maxIters=300)
- * include/opencv/cxcore.hpp:1193
+ * include/opencv/cxcore.hpp:1205
  */
 static int cv_solvePoly(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -5536,7 +4858,7 @@ static int cv_solvePoly(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::sort(const Mat &a, Mat &b, int flags)
- * include/opencv/cxcore.hpp:1190
+ * include/opencv/cxcore.hpp:1202
  */
 static int cv_sort(lua_State *L) {
   const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -5549,7 +4871,7 @@ static int cv_sort(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::sortIdx(const Mat &a, Mat &b, int flags)
- * include/opencv/cxcore.hpp:1191
+ * include/opencv/cxcore.hpp:1203
  */
 static int cv_sortIdx(lua_State *L) {
   const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -5562,47 +4884,8 @@ static int cv_sortIdx(lua_State *L) {
 
 
 
-/** CV_EXPORTS void cv::split(const Mat &m, Mat *mvbegin)
- * include/opencv/cxcore.hpp:1116
- */
-static int cv_split1(lua_State *L) {
-  const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *mvbegin = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  split(*m, mvbegin);
-  return 0;
-}
-
-
-/** CV_EXPORTS void cv::split(const MatND &m, MatND *mv)
- * include/opencv/cxcore.hpp:1768
- */
-static int cv_split2(lua_State *L) {
-  const MatND *m = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  MatND *mv = *((MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-  split(*m, mv);
-  return 0;
-}
-
-
-
-/** Overloaded function chooser for split(...) */
-static int cv_split(lua_State *L) {
-  int type__ = lua_type(L, 1);
-  if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.MatND")) {
-    return cv_split2(L);
-  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Mat")) {
-    return cv_split1(L);
-  } else {
-    // use any to raise errors
-    return cv_split1(L);
-  }
-}
-
-
-
-
 /** CV_EXPORTS void cv::sqrt(const Mat &a, Mat &b)
- * include/opencv/cxcore.hpp:1158
+ * include/opencv/cxcore.hpp:1170
  */
 static int cv_sqrt1(lua_State *L) {
   const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -5613,7 +4896,7 @@ static int cv_sqrt1(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::sqrt(const MatND &a, MatND &b)
- * include/opencv/cxcore.hpp:1792
+ * include/opencv/cxcore.hpp:1804
  */
 static int cv_sqrt2(lua_State *L) {
   const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
@@ -5667,139 +4950,15 @@ static int cv_stereoRectify1(lua_State *L) {
 }
 
 
-/** CV_EXPORTS void cv::stereoRectify(const Mat &cameraMatrix1, const Mat &distCoeffs1, const Mat &cameraMatrix2, const Mat &distCoeffs2, Size imageSize, const Mat &R, const Mat &T, Mat &R1, Mat &R2, Mat &P1, Mat &P2, Mat &Q, double alpha, Size newImageSize=Size(), Rect *validPixROI1=0, Rect *validPixROI2=0, int flags=CALIB_ZERO_DISPARITY)
- * include/opencv/cv.hpp:881
- */
-static int cv_stereoRectify2(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *cameraMatrix1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *distCoeffs1 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  const Mat *cameraMatrix2 = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  const Mat *distCoeffs2 = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  Size *imageSize = *((Size **)luaL_checkudata(L, 5, "cv.Size"));
-  const Mat *R = *((const Mat **)luaL_checkudata(L, 6, "cv.Mat"));
-  const Mat *T = *((const Mat **)luaL_checkudata(L, 7, "cv.Mat"));
-  Mat *R1 = *((Mat **)luaL_checkudata(L, 8, "cv.Mat"));
-  Mat *R2 = *((Mat **)luaL_checkudata(L, 9, "cv.Mat"));
-  Mat *P1 = *((Mat **)luaL_checkudata(L, 10, "cv.Mat"));
-  Mat *P2 = *((Mat **)luaL_checkudata(L, 11, "cv.Mat"));
-  Mat *Q = *((Mat **)luaL_checkudata(L, 12, "cv.Mat"));
-  double alpha = luaL_checknumber(L, 13);
-  if (top__ < 14) {
-    stereoRectify(*cameraMatrix1, *distCoeffs1, *cameraMatrix2, *distCoeffs2, *imageSize, *R, *T, *R1, *R2, *P1, *P2, *Q, alpha);
-  } else {
-    Size *newImageSize = *((Size **)luaL_checkudata(L, 14, "cv.Size"));
-    if (top__ < 15) {
-      stereoRectify(*cameraMatrix1, *distCoeffs1, *cameraMatrix2, *distCoeffs2, *imageSize, *R, *T, *R1, *R2, *P1, *P2, *Q, alpha, *newImageSize);
-    } else {
-      Rect *validPixROI1 = *((Rect **)luaL_checkudata(L, 15, "cv.Rect"));
-      if (top__ < 16) {
-        stereoRectify(*cameraMatrix1, *distCoeffs1, *cameraMatrix2, *distCoeffs2, *imageSize, *R, *T, *R1, *R2, *P1, *P2, *Q, alpha, *newImageSize, validPixROI1);
-      } else {
-        Rect *validPixROI2 = *((Rect **)luaL_checkudata(L, 16, "cv.Rect"));
-        if (top__ < 17) {
-          stereoRectify(*cameraMatrix1, *distCoeffs1, *cameraMatrix2, *distCoeffs2, *imageSize, *R, *T, *R1, *R2, *P1, *P2, *Q, alpha, *newImageSize, validPixROI1, validPixROI2);
-        } else {
-          int flags = luaL_checkint(L, 17);
-          stereoRectify(*cameraMatrix1, *distCoeffs1, *cameraMatrix2, *distCoeffs2, *imageSize, *R, *T, *R1, *R2, *P1, *P2, *Q, alpha, *newImageSize, validPixROI1, validPixROI2, flags);
-        }
-      }
-    }
-  }
-  return 0;
-}
-
-
 
 /** Overloaded function chooser for stereoRectify(...) */
 static int cv_stereoRectify(lua_State *L) {
   int type__ = lua_type(L, 1);
-  int top__  = lua_gettop(L);
   if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Mat")) {
-    type__ = lua_type(L, 2);
-    if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "cv.Mat")) {
-      type__ = lua_type(L, 3);
-      if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "cv.Mat")) {
-        type__ = lua_type(L, 4);
-        if (type__ == LUA_TUSERDATA && is_userdata(L, 4, "cv.Mat")) {
-          type__ = lua_type(L, 5);
-          if (type__ == LUA_TUSERDATA && is_userdata(L, 5, "cv.Size")) {
-            type__ = lua_type(L, 6);
-            if (type__ == LUA_TUSERDATA && is_userdata(L, 6, "cv.Mat")) {
-              type__ = lua_type(L, 7);
-              if (type__ == LUA_TUSERDATA && is_userdata(L, 7, "cv.Mat")) {
-                type__ = lua_type(L, 8);
-                if (type__ == LUA_TUSERDATA && is_userdata(L, 8, "cv.Mat")) {
-                  type__ = lua_type(L, 9);
-                  if (type__ == LUA_TUSERDATA && is_userdata(L, 9, "cv.Mat")) {
-                    type__ = lua_type(L, 10);
-                    if (type__ == LUA_TUSERDATA && is_userdata(L, 10, "cv.Mat")) {
-                      type__ = lua_type(L, 11);
-                      if (type__ == LUA_TUSERDATA && is_userdata(L, 11, "cv.Mat")) {
-                        type__ = lua_type(L, 12);
-                        if (type__ == LUA_TUSERDATA && is_userdata(L, 12, "cv.Mat")) {
-                          type__ = lua_type(L, 13);
-                          if (type__ == LUA_TNUMBER) {
-                            type__ = lua_type(L, 14);
-                            if (top__ < 14) {
-                              return cv_stereoRectify1(L);
-                            } else if (type__ == LUA_TUSERDATA && is_userdata(L, 14, "cv.Size")) {
-                              return cv_stereoRectify2(L);
-                            } else {
-                              // use any to raise errors
-                              return cv_stereoRectify2(L);
-                            }
-                          } else {
-                            // use any to raise errors
-                            return cv_stereoRectify2(L);
-                          }
-                        } else {
-                          // use any to raise errors
-                          return cv_stereoRectify2(L);
-                        }
-                      } else {
-                        // use any to raise errors
-                        return cv_stereoRectify2(L);
-                      }
-                    } else {
-                      // use any to raise errors
-                      return cv_stereoRectify2(L);
-                    }
-                  } else {
-                    // use any to raise errors
-                    return cv_stereoRectify2(L);
-                  }
-                } else {
-                  // use any to raise errors
-                  return cv_stereoRectify2(L);
-                }
-              } else {
-                // use any to raise errors
-                return cv_stereoRectify2(L);
-              }
-            } else {
-              // use any to raise errors
-              return cv_stereoRectify2(L);
-            }
-          } else {
-            // use any to raise errors
-            return cv_stereoRectify2(L);
-          }
-        } else {
-          // use any to raise errors
-          return cv_stereoRectify2(L);
-        }
-      } else {
-        // use any to raise errors
-        return cv_stereoRectify2(L);
-      }
-    } else {
-      // use any to raise errors
-      return cv_stereoRectify2(L);
-    }
+    return cv_stereoRectify1(L);
   } else {
     // use any to raise errors
-    return cv_stereoRectify2(L);
+    return cv_stereoRectify1(L);
   }
 }
 
@@ -5831,7 +4990,7 @@ static int cv_stereoRectifyUncalibrated(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::subtract(const Mat &a, const Mat &b, Mat &c, const Mat &mask)
- * include/opencv/cxcore.hpp:1080
+ * include/opencv/cxcore.hpp:1086
  */
 static int cv_subtract1(lua_State *L) {
   const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -5844,7 +5003,7 @@ static int cv_subtract1(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::subtract(const Mat &a, const Mat &b, Mat &c)
- * include/opencv/cxcore.hpp:1082
+ * include/opencv/cxcore.hpp:1094
  */
 static int cv_subtract2(lua_State *L) {
   const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -5856,7 +5015,7 @@ static int cv_subtract2(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::subtract(const Mat &a, const Scalar &s, Mat &c, const Mat &mask=Mat())
- * include/opencv/cxcore.hpp:1084
+ * include/opencv/cxcore.hpp:1096
  */
 static int cv_subtract3(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -5874,7 +5033,7 @@ static int cv_subtract3(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::subtract(const Scalar &s, const Mat &a, Mat &c, const Mat &mask=Mat())
- * include/opencv/cxcore.hpp:1090
+ * include/opencv/cxcore.hpp:1102
  */
 static int cv_subtract4(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -5892,7 +5051,7 @@ static int cv_subtract4(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::subtract(const MatND &a, const MatND &b, MatND &c, const MatND &mask)
- * include/opencv/cxcore.hpp:1737
+ * include/opencv/cxcore.hpp:1749
  */
 static int cv_subtract5(lua_State *L) {
   const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
@@ -5905,7 +5064,7 @@ static int cv_subtract5(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::subtract(const MatND &a, const MatND &b, MatND &c)
- * include/opencv/cxcore.hpp:1739
+ * include/opencv/cxcore.hpp:1751
  */
 static int cv_subtract6(lua_State *L) {
   const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
@@ -5917,7 +5076,7 @@ static int cv_subtract6(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::subtract(const Scalar &s, const MatND &a, MatND &c, const MatND &mask=MatND())
- * include/opencv/cxcore.hpp:1746
+ * include/opencv/cxcore.hpp:1758
  */
 static int cv_subtract7(lua_State *L) {
   int top__ = lua_gettop(L);
@@ -6005,7 +5164,7 @@ static int cv_subtract(lua_State *L) {
 
 
 /** CV_EXPORTS Scalar cv::sum(const Mat &m)
- * include/opencv/cxcore.hpp:1097
+ * include/opencv/cxcore.hpp:1109
  */
 static int cv_sum1(lua_State *L) {
   const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -6016,7 +5175,7 @@ static int cv_sum1(lua_State *L) {
 
 
 /** CV_EXPORTS Scalar cv::sum(const MatND &m)
- * include/opencv/cxcore.hpp:1751
+ * include/opencv/cxcore.hpp:1763
  */
 static int cv_sum2(lua_State *L) {
   const MatND *m = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
@@ -6043,7 +5202,7 @@ static int cv_sum(lua_State *L) {
 
 
 /** CV_EXPORTS RNG& cv::theRNG()
- * include/opencv/cxcore.hpp:1252
+ * include/opencv/cxcore.hpp:1264
  */
 static int cv_theRNG(lua_State *L) {
   RNG  retval__ = theRNG();
@@ -6082,7 +5241,7 @@ static int cv_toUtf16(lua_State *L) {
 
 
 /** CV_EXPORTS Scalar cv::trace(const Mat &m)
- * include/opencv/cxcore.hpp:1187
+ * include/opencv/cxcore.hpp:1199
  */
 static int cv_trace(lua_State *L) {
   const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -6094,7 +5253,7 @@ static int cv_trace(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::transform(const Mat &src, Mat &dst, const Mat &m)
- * include/opencv/cxcore.hpp:1181
+ * include/opencv/cxcore.hpp:1193
  */
 static int cv_transform(lua_State *L) {
   const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -6107,7 +5266,7 @@ static int cv_transform(lua_State *L) {
 
 
 /** CV_EXPORTS void cv::transpose(const Mat &a, Mat &b)
- * include/opencv/cxcore.hpp:1180
+ * include/opencv/cxcore.hpp:1192
  */
 static int cv_transpose(lua_State *L) {
   const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
@@ -6308,10 +5467,8 @@ static const struct luaL_Reg cv_functions[] = {
   {"borderInterpolate"             , cv_borderInterpolate},
   {"boundingRect"                  , cv_boundingRect},
   {"boxFilter"                     , cv_boxFilter},
-  {"calcBackProject"               , cv_calcBackProject},
   {"calcCovarMatrix"               , cv_calcCovarMatrix},
   {"calcGlobalOrientation"         , cv_calcGlobalOrientation},
-  {"calcHist"                      , cv_calcHist},
   {"calcMotionGradient"            , cv_calcMotionGradient},
   {"calcOpticalFlowFarneback"      , cv_calcOpticalFlowFarneback},
   {"calibrationMatrixValues"       , cv_calibrationMatrixValues},
@@ -6348,17 +5505,13 @@ static const struct luaL_Reg cv_functions[] = {
   {"error"                         , cv_error},
   {"estimateRigidTransform"        , cv_estimateRigidTransform},
   {"exp"                           , cv_exp},
-  {"extractImageCOI"               , cv_extractImageCOI},
   {"fastAtan2"                     , cv_fastAtan2},
-  {"fillConvexPoly"                , cv_fillConvexPoly},
-  {"fillPoly"                      , cv_fillPoly},
   {"filter2D"                      , cv_filter2D},
   {"filterSpeckles"                , cv_filterSpeckles},
   {"findFundamentalMat"            , cv_findFundamentalMat},
   {"fitEllipse"                    , cv_fitEllipse},
   {"fitLine"                       , cv_fitLine},
   {"flip"                          , cv_flip},
-  {"floodFill"                     , cv_floodFill},
   {"fromUtf16"                     , cv_fromUtf16},
   {"gemm"                          , cv_gemm},
   {"getCPUTickCount"               , cv_getCPUTickCount},
@@ -6369,7 +5522,6 @@ static const struct luaL_Reg cv_functions[] = {
   {"getKernelType"                 , cv_getKernelType},
   {"getNumThreads"                 , cv_getNumThreads},
   {"getOptimalDFTSize"             , cv_getOptimalDFTSize},
-  {"getOptimalNewCameraMatrix"     , cv_getOptimalNewCameraMatrix},
   {"getRectSubPix"                 , cv_getRectSubPix},
   {"getRotationMatrix2D"           , cv_getRotationMatrix2D},
   {"getStructuringElement"         , cv_getStructuringElement},
@@ -6383,12 +5535,10 @@ static const struct luaL_Reg cv_functions[] = {
   {"inRange"                       , cv_inRange},
   {"initUndistortRectifyMap"       , cv_initUndistortRectifyMap},
   {"inpaint"                       , cv_inpaint},
-  {"insertImageCOI"                , cv_insertImageCOI},
   {"integral"                      , cv_integral},
   {"invert"                        , cv_invert},
   {"invertAffineTransform"         , cv_invertAffineTransform},
   {"isContourConvex"               , cv_isContourConvex},
-  {"kmeans"                        , cv_kmeans},
   {"line"                          , cv_line},
   {"log"                           , cv_log},
   {"magnitude"                     , cv_magnitude},
@@ -6400,12 +5550,10 @@ static const struct luaL_Reg cv_functions[] = {
   {"meanShift"                     , cv_meanShift},
   {"meanStdDev"                    , cv_meanStdDev},
   {"medianBlur"                    , cv_medianBlur},
-  {"merge"                         , cv_merge},
   {"min"                           , cv_min},
   {"minAreaRect"                   , cv_minAreaRect},
   {"minEnclosingCircle"            , cv_minEnclosingCircle},
   {"minMaxLoc"                     , cv_minMaxLoc},
-  {"mixChannels"                   , cv_mixChannels},
   {"moments"                       , cv_moments},
   {"morphologyDefaultBorderValue"  , cv_morphologyDefaultBorderValue},
   {"morphologyEx"                  , cv_morphologyEx},
@@ -6418,13 +5566,11 @@ static const struct luaL_Reg cv_functions[] = {
   {"phase"                         , cv_phase},
   {"pointPolygonTest"              , cv_pointPolygonTest},
   {"polarToCart"                   , cv_polarToCart},
-  {"polylines"                     , cv_polylines},
   {"pow"                           , cv_pow},
   {"preCornerDetect"               , cv_preCornerDetect},
   {"putText"                       , cv_putText},
   {"pyrDown"                       , cv_pyrDown},
   {"pyrUp"                         , cv_pyrUp},
-  {"randShuffle"                   , cv_randShuffle},
   {"randn"                         , cv_randn},
   {"randu"                         , cv_randu},
   {"rectangle"                     , cv_rectangle},
@@ -6445,7 +5591,6 @@ static const struct luaL_Reg cv_functions[] = {
   {"solvePoly"                     , cv_solvePoly},
   {"sort"                          , cv_sort},
   {"sortIdx"                       , cv_sortIdx},
-  {"split"                         , cv_split},
   {"sqrt"                          , cv_sqrt},
   {"stereoRectify"                 , cv_stereoRectify},
   {"stereoRectifyUncalibrated"     , cv_stereoRectifyUncalibrated},
@@ -6600,34 +5745,6 @@ static const struct lua_constants_Reg cv_namespace_constants[] = {
   {"FONT_HERSHEY_SCRIPT_COMPLEX"   , cv::FONT_HERSHEY_SCRIPT_COMPLEX},
   {"FONT_ITALIC"                   , cv::FONT_ITALIC},
   
-  {"CV_8UC1"                       , CV_8UC1},
-  {"CV_8UC2"                       , CV_8UC2},
-  {"CV_8UC3"                       , CV_8UC3},
-  {"CV_8UC4"                       , CV_8UC4},
-  {"CV_8SC1"                       , CV_8SC1},
-  {"CV_8SC2"                       , CV_8SC2},
-  {"CV_8SC3"                       , CV_8SC3},
-  {"CV_8SC4"                       , CV_8SC4},
-  {"CV_16UC1"                      , CV_16UC1},
-  {"CV_16UC2"                      , CV_16UC2},
-  {"CV_16UC3"                      , CV_16UC3},
-  {"CV_16UC4"                      , CV_16UC4},
-  {"CV_16SC1"                      , CV_16SC1},
-  {"CV_16SC2"                      , CV_16SC2},
-  {"CV_16SC3"                      , CV_16SC3},
-  {"CV_16SC4"                      , CV_16SC4},
-  {"CV_32SC1"                      , CV_32SC1},
-  {"CV_32SC2"                      , CV_32SC2},
-  {"CV_32SC3"                      , CV_32SC3},
-  {"CV_32SC4"                      , CV_32SC4},
-  {"CV_32FC1"                      , CV_32FC1},
-  {"CV_32FC2"                      , CV_32FC2},
-  {"CV_32FC3"                      , CV_32FC3},
-  {"CV_32FC4"                      , CV_32FC4},
-  {"CV_64FC1"                      , CV_64FC1},
-  {"CV_64FC2"                      , CV_64FC2},
-  {"CV_64FC3"                      , CV_64FC3},
-  {"CV_64FC4"                      , CV_64FC4},
   {"CV_BGR2BGRA"                   , CV_BGR2BGRA},
   {"CV_RGB2RGBA"                   , CV_RGB2RGBA},
   {"CV_BGRA2BGR"                   , CV_BGRA2BGR},
@@ -6700,6 +5817,34 @@ static const struct lua_constants_Reg cv_namespace_constants[] = {
   {"CV_Luv2RGB"                    , CV_Luv2RGB},
   {"CV_HLS2BGR"                    , CV_HLS2BGR},
   {"CV_HLS2RGB"                    , CV_HLS2RGB},
+  {"CV_8UC1"                       , CV_8UC1},
+  {"CV_8UC2"                       , CV_8UC2},
+  {"CV_8UC3"                       , CV_8UC3},
+  {"CV_8UC4"                       , CV_8UC4},
+  {"CV_8SC1"                       , CV_8SC1},
+  {"CV_8SC2"                       , CV_8SC2},
+  {"CV_8SC3"                       , CV_8SC3},
+  {"CV_8SC4"                       , CV_8SC4},
+  {"CV_16UC1"                      , CV_16UC1},
+  {"CV_16UC2"                      , CV_16UC2},
+  {"CV_16UC3"                      , CV_16UC3},
+  {"CV_16UC4"                      , CV_16UC4},
+  {"CV_16SC1"                      , CV_16SC1},
+  {"CV_16SC2"                      , CV_16SC2},
+  {"CV_16SC3"                      , CV_16SC3},
+  {"CV_16SC4"                      , CV_16SC4},
+  {"CV_32SC1"                      , CV_32SC1},
+  {"CV_32SC2"                      , CV_32SC2},
+  {"CV_32SC3"                      , CV_32SC3},
+  {"CV_32SC4"                      , CV_32SC4},
+  {"CV_32FC1"                      , CV_32FC1},
+  {"CV_32FC2"                      , CV_32FC2},
+  {"CV_32FC3"                      , CV_32FC3},
+  {"CV_32FC4"                      , CV_32FC4},
+  {"CV_64FC1"                      , CV_64FC1},
+  {"CV_64FC2"                      , CV_64FC2},
+  {"CV_64FC3"                      , CV_64FC3},
+  {"CV_64FC4"                      , CV_64FC4},
   {NULL, NULL},
 };
 
