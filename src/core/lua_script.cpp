@@ -37,6 +37,21 @@
 #define RUBYK_THIS_IN_LUA "__this"
 #define LUA_OUTLET_NAME   "Outlet"
 
+extern void luaopen_rk(lua_State *L);
+extern void luaopen_gl(lua_State *L);
+extern void luaopen_glu(lua_State *L);
+
+extern void luaopen_cv(lua_State *L);
+extern void luaopen_cv_Mat(lua_State *L);
+extern void luaopen_cv_Size(lua_State *L);
+extern void luaopen_cv_Point(lua_State *L);
+extern void luaopen_cv_Scalar(lua_State *L);
+
+extern void luaopen_cv_additions(lua_State *L);
+extern void luaopen_oscit_MidiMessage(lua_State *L);
+
+namespace rk {
+
 const Value LuaScript::lua_init(const char *init_script) {
   ScopedLock lock(mutex_);
   // Our own lua context.
@@ -483,19 +498,6 @@ void LuaScript::open_lua_lib(const char *name, lua_CFunction func)
   lua_call(lua_, 1, 0);
 }
 
-extern void luaopen_rk(lua_State *L);
-extern void luaopen_gl(lua_State *L);
-extern void luaopen_glu(lua_State *L);
-
-extern void luaopen_cv(lua_State *L);
-extern void luaopen_cv_Mat(lua_State *L);
-extern void luaopen_cv_Size(lua_State *L);
-extern void luaopen_cv_Point(lua_State *L);
-extern void luaopen_cv_Scalar(lua_State *L);
-
-extern void luaopen_cv_additions(lua_State *L);
-extern void luaopen_oscit_MidiMessage(lua_State *L);
-
 
 int cv_noop_error_handler( int status, const char* func_name,
                     const char* err_msg, const char* file_name, int line, void* userdata ) {
@@ -553,3 +555,5 @@ const Value LuaScript::eval(const char *script, size_t script_size) {
 
   return Value(script);
 }
+
+} // rk

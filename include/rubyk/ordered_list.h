@@ -36,6 +36,8 @@
 
 #include "oscit/non_copyable.h"
   
+namespace rk {
+
 template <class T>
 struct LinkedList {
   LinkedList(T object) : obj(object), next(NULL) {}
@@ -323,5 +325,7 @@ class OrderedList<T*>
 
     LinkedList<T*> * linked_list_;
 };
+
+} // rk
 
 #endif // RUBYK_SRC_CORE_ORDERED_LIST_H_

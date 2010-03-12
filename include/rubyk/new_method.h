@@ -35,6 +35,8 @@
 
 #define NEW_METHOD_INFO "Create new objects from a given url and a hash of parameters."
 
+namespace rk {
+
 class NewMethod;
 typedef const Value (*create_method_t)(Planet *root, NewMethod *new_method, const Value &val);
 
@@ -134,5 +136,7 @@ public:
   create_method_t class_method_;
 
 };
+
+} // rk
 
 #endif // RUBYK_INCLUDE_RUBYK_NEW_METHOD_H_

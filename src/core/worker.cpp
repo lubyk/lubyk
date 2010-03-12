@@ -31,6 +31,8 @@
 #include "rubyk/node.h"
 
 
+namespace rk {
+
 void Worker::register_looped_node(Node *node) {
   free_looped_node(node);
   looped_nodes_.push_back(node);
@@ -153,4 +155,4 @@ void Worker::trigger_loop_events() {
   }
 }
 
-
+} // rk

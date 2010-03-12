@@ -31,6 +31,7 @@
 #include "rubyk/inlet.h"
 #include "rubyk/node.h"
 
+namespace rk {
 
 // FIXME: inline ?
 void Outlet::send(const Value &val)
@@ -52,3 +53,5 @@ void Outlet::unregister_in_node()
 {
   node_->unregister_outlet(this);
 }
+
+} // rk

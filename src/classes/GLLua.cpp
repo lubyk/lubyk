@@ -28,6 +28,9 @@
 */
 
 #include "rubyk.h"
+using namespace rk;
+
+
 #define INIT_SCRIPT "view = {width=0, height=0}\n\
 function draw()\n\
 end\n\

@@ -32,6 +32,8 @@
 
 #include "rubyk/slot.h"
 
+namespace rk {
+
 /** Prototype constructor for Inlets. */
 struct OutletPrototype
 {
@@ -74,5 +76,7 @@ public:
   /** Send the signal to all connections. Do nothing if there are no connections. */
   void send(const Value &val);
 };
+
+} // rk
 
 #endif // RUBYK_INCLUDE_RUBYK_OUTLET_H_

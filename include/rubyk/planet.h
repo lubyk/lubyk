@@ -37,6 +37,8 @@
 #include "rubyk/text_command.h"
 #include "rubyk/worker.h"
 
+namespace rk {
+
 class ClassFinder;
 
 #define DEFAULT_OBJECTS_LIB_PATH "/usr/local/lib/rubyk"
@@ -162,5 +164,7 @@ class Planet : public Root
    */
   bool gui_started_;
 };
+
+} // rk
 
 #endif // RUBYK_INCLUDE_RUBYK_PLANET_H_

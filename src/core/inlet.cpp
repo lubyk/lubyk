@@ -31,6 +31,8 @@
 #include "rubyk/outlet.h"
 #include "rubyk/node.h"
 
+namespace rk {
+
 void Inlet::register_in_node() {
   node_->register_inlet(this);
 }
@@ -43,3 +45,5 @@ const Value Inlet::trigger(const Value &val) {
   receive(val);
   return node_->do_inspect();
 }
+
+} // rk

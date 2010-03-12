@@ -28,6 +28,7 @@
 */
 
 #include "rubyk.h"
+using namespace rk;
 
 class Metro : public Node {
 public:

@@ -34,6 +34,7 @@
 
 #include "rubyk/node.h"
 
+namespace rk {
 
 ///// This should be changed for a link based observer:
 ///// To observe metro/out/bang, you create a "send" Node and a link to listen to an outlet:
@@ -120,5 +121,7 @@ private:
 //  Observer * mObserver;
 //  Node     * mNode;
 //};
+
+} // rk
 
 #endif // RUBYK_INCLUDE_RUBYK_OBSERVER_H_

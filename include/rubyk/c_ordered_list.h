@@ -33,6 +33,8 @@
 #include "rubyk/oscit.h"
 #include "rubyk/ordered_list.h"
 
+namespace rk {
+  
 /** The Concurrent OrderedList template is a thread-safe OrderedList for
  * push, get, get_and_pop and pop operations. If you need to use an iterator
  * or other methods, you have to lock.
@@ -96,5 +98,7 @@ public:
     OrderedList<T*>::pop();
   }
 };
+
+} // rk
 
 #endif // RUBYK_INCLUDE_RUBYK_C_ORDERED_LIST_H_

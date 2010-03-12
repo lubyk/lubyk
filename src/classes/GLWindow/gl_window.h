@@ -34,6 +34,8 @@
 #include "rubyk/node.h"
 #include "rubyk/opengl.h"
 
+namespace rk {
+
 class Planet;
 
 /** This is a wrapper facade around an OpenGL window.
@@ -86,4 +88,7 @@ private:
    */
   int x_,y_,width_,height_;
 };
+
+} // rk
+
 #endif // RUBYK_INCLUDE_RUBYK_GL_WINDOW_H_

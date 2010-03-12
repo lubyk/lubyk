@@ -30,6 +30,8 @@
 #ifndef RUBYK_INCLUDE_RUBYK_NODE_HPP_
 #define RUBYK_INCLUDE_RUBYK_NODE_HPP_
 
+namespace rk {
+
 /* Inline methods that could not live in the class to avoid circular definition */
 
 // template <class T, void(T::*Tmethod)(void *)>
@@ -48,4 +50,6 @@
 //   worker_->register_event( e );
 // }
 // 
+} // rk
+
 #endif // RUBYK_INCLUDE_RUBYK_NODE_HPP_

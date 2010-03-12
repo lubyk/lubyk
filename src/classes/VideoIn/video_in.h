@@ -32,6 +32,8 @@
 
 #include "rubyk/oscit.h"
 
+namespace rk {
+
 /** This is a wrapper facade around a QTCaptureView window or equivalent.
  */
 class VideoIn {
@@ -77,4 +79,7 @@ private:
   class Implementation;
   Implementation *impl_;
 };
+
+} // rk
+
 #endif // RUBYK_INCLUDE_RUBYK_VIDEO_IN_H_

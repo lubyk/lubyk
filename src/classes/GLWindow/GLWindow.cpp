@@ -27,6 +27,8 @@
   ==============================================================================
 */
 #include "rubyk.h"
+using namespace rk;
+
 #include "GLWindow/gl_window.h"
 
 class GLWindowNode : public GLWindow {

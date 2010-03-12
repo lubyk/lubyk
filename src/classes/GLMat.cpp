@@ -28,6 +28,8 @@
 */
 
 #include "rubyk.h"
+using namespace rk;
+
 #include "rubyk/opengl.h"
 #include "oscit/matrix.h"
 

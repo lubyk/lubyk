@@ -32,6 +32,8 @@
 
 #include "rubyk/inlet.h"
 
+namespace rk {
+
 class LuaScript;
 
 class LuaInlet : public Inlet {
@@ -44,5 +46,7 @@ public:
 private:
   LuaScript *lua_script_;
 };
+
+} // rk
 
 #endif // RUBYK_INCLUDE_RUBYK_LUA_INLET_H_

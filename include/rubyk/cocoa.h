@@ -30,8 +30,9 @@
 #ifndef RUBYK_INCLUDE_RUBYK_COCOA_H_
 #define RUBYK_INCLUDE_RUBYK_COCOA_H_
 
-
 #import <Cocoa/Cocoa.h>
+
+namespace rk {
 
 class ScopedPool {
 public:
@@ -46,5 +47,7 @@ public:
 private:
   NSAutoreleasePool *pool_;
 };
+
+} // rk
 
 #endif // RUBYK_INCLUDE_RUBYK_COCOA_H_

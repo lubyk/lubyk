@@ -30,6 +30,8 @@
 #include "rubyk/lua_inlet.h"
 #include "rubyk/lua_script.h"
 
+namespace rk {
+
 // TODO: This looks quite slow...
 
 LuaInlet::LuaInlet(LuaScript *node, const char *name, const Value &type)
@@ -49,3 +51,5 @@ void LuaInlet::receive_method(Inlet *inlet, const Value &val) {
 const Value LuaInlet::trigger(const Value &val) {
   return lua_script_->call_lua(name().c_str(), val);
 }
+
+} // rk

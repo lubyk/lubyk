@@ -34,6 +34,8 @@
 
 #include <ostream>
 
+namespace rk {
+
 class Node;
 class Worker;
 
@@ -119,5 +121,7 @@ private:
     (((T*)node)->*Tmethod)(parameter);
   }
 };
+
+} // rk
 
 #endif // RUBYK_INCLUDE_RUBYK_EVENT_H_

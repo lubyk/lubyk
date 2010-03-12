@@ -34,6 +34,8 @@
 
 #include "rubyk/node.h"
 
+namespace rk {
+
 class Print : public Node
 {
 public:
@@ -74,5 +76,7 @@ public:
 private:
   std::string   prefix_;
 };
+
+} // rk
 
 #endif // RUBYK_INCLUDE_RUBYK_PRINT_H_

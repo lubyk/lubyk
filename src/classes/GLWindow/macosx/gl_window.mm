@@ -28,6 +28,7 @@
 */
 
 #include "GLWindow/gl_window.h"
+using namespace rk;
 
 #include <stdio.h>
 #include <pthread.h>

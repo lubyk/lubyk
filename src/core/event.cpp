@@ -30,6 +30,10 @@
 #include "rubyk/event.h"
 #include "rubyk/node.h"
 
+namespace rk {
+
 void BangEvent::cast_bang_method (Node *receiver, const Value &parameter) {
   receiver->bang(parameter);
 }
+
+} // rk

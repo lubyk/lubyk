@@ -28,6 +28,8 @@
 */
 
 #include "rubyk.h"
+using namespace rk;
+
 #include "VideoIn/video_in.h"
 
 class VideoInNode : public Node {

@@ -31,6 +31,8 @@
 #include "rubyk/inlet.h"
 #include "rubyk/outlet.h"
 
+namespace rk {
+
 size_t Node::sIdCounter(0);
 pthread_key_t Node::sOpenGLThreadKey = NULL;
 
@@ -65,3 +67,5 @@ const Value Node::do_inspect() const {
   }
   return Value(std::string("<").append(class_name).append(":").append(url()).append(" ").append(hash.lazy_json()).append(">"));
 }
+
+} // rk

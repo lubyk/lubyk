@@ -34,9 +34,12 @@
 #include "oscit/mutex.h"
 #include "rubyk/node.h"
 
-class Outlet;
 struct lua_State;
 typedef int (*lua_CFunction) (lua_State *L);
+
+namespace rk {
+
+class Outlet;
 
 class LuaScript : public Node, public Script {
 public:
@@ -180,5 +183,7 @@ private:
    */
   Mutex mutex_;
 };
+
+} // rk
 
 #endif // RUBYK_INCLUDE_RUBYK_LUA_SCRIPT_H_

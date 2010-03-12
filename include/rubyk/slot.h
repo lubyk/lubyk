@@ -33,6 +33,8 @@
 #include "rubyk/oscit.h"
 #include "rubyk/ordered_list.h"
 
+namespace rk {
+
 class Node;
 
 /** Inlets and outlets of nodes are Slots. 
@@ -140,5 +142,7 @@ protected:
   OrderedList<Slot*> connections_; /**< connections are kept sorted, so that we always send values to inlets
     that are rightmost (less important, no bang) first. */
 };
+
+} // rk
 
 #endif // RUBYK_INCLUDE_RUBYK_SLOT_H_

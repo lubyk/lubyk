@@ -30,6 +30,8 @@
 // include all
 #include "rubyk.h"
 
+namespace rk {
+
 //#define DEBUG_PARSER
 
 #ifdef DEBUG_PARSER
@@ -333,3 +335,5 @@ void TextCommand::clear() {
   from_port_  = "";
   to_port_    = "";
 }
+
+} // rk

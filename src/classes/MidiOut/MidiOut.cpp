@@ -1,4 +1,6 @@
 #include "rubyk.h"
+using namespace rk;
+
 #include "MidiOut/RtMidi.h"
 
 /** This class lets you create virtual ports (where possible) or connect

@@ -35,6 +35,7 @@
 
 #include <list>
 
+namespace rk {
 
 /** This is a helper to prepare prototypes to:
   * 1. create nodes
@@ -162,4 +163,7 @@ private:
 #define ADD_SUPER_INLET(klass,  super, method, type) c->add_inlet<klass,  super, &super::method>(#method, type);
 #define INLET(klass,  method, type) c->add_inlet<klass, &klass::method>(#method, type);
 #define OUTLET(klass, name,   type) c->add_outlet(#name, type);
+
+} // rk
+
 #endif // RUBYK_INCLUDE_RUBYK_CLASS_H_

@@ -32,6 +32,8 @@
 #include <cxxtest/TestSuite.h>
 
 #include "rubyk.h"
+using namespace rk;
+
 #include "mock/dummy_node.h"
 
 #include <sys/timeb.h> // ftime

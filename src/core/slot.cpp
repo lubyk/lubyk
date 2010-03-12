@@ -31,6 +31,8 @@
 #include "rubyk/node.h"
 #include "rubyk/planet.h"
 
+namespace rk {
+
 Slot::~Slot() {
   // remove connections with other slots
   Slot * s;
@@ -139,3 +141,5 @@ const Value Slot::change_link(unsigned char operation, const Value &val) {
     return Value(info());
   }
 }
+
+} // rk

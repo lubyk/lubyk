@@ -34,6 +34,8 @@
 #include "rubyk/new_method.h"
 #include "rubyk/class.h"
 
+namespace rk {
+
 /** Special class to handle class listing from a directory. This usually responds at to the '/class' url. */
 class ClassFinder : public Object
 {
@@ -115,5 +117,7 @@ private:
 
   std::string objects_path_; /**< Where to find objects in the filesystem. */
 };
+
+} // rk
 
 #endif // RUBYK_INCLUDE_RUBYK_CLASS_FINDER_H_

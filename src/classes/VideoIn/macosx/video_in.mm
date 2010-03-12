@@ -33,6 +33,8 @@
 #include "rubyk/cocoa.h"
 #import <QTKit/QTKit.h>
 
+using namespace rk;
+
 /* ======================== Capture delegate ============== */
 
 @interface CaptureDelegate : NSObject {

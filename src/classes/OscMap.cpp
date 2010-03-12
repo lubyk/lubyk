@@ -31,6 +31,7 @@
 #include <stdexcept> // runtime_error
 
 #include "rubyk.h"
+using namespace rk;
 
 class OscMap : public Node, public OscMapCommand {
 public:

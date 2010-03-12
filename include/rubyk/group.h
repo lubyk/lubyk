@@ -32,6 +32,8 @@
 
 #include "rubyk/node.h"
 
+namespace rk {
+
 class Group : public Node
 {
 public:
@@ -44,5 +46,7 @@ public:
   virtual void bang(const Value &val) {}
 
 };
+
+} // rk
 
 #endif // RUBYK_INCLUDE_RUBYK_GROUP_H_

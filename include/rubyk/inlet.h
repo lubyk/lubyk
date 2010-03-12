@@ -32,6 +32,8 @@
 
 #include "rubyk/slot.h"
 
+namespace rk {
+
 class Inlet;
 class Node;
 
@@ -111,5 +113,7 @@ public:
 private:
   inlet_method_t method_;        /**< Method to set a new value. */
 };
+
+} // rk
 
 #endif // RUBYK_INCLUDE_RUBYK_INLET_H_

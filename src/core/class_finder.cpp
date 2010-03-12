@@ -31,7 +31,8 @@
 #include "rubyk/planet.h"
 #include <dlfcn.h> // dylib load
 
-
+namespace rk {
+  
 /** This trigger implements "/class". It returns the list of objects in objects_path_. */
 const Value ClassFinder::trigger (const Value &val)
 {
@@ -98,3 +99,5 @@ bool ClassFinder::load(const char * file, const char * init_name)
 
   return true;
 }
+
+} // rk

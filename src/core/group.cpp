@@ -28,3 +28,7 @@
 */
 
 #include "rubyk/group.h"
+
+namespace rk {
+
+} // rk

@@ -36,6 +36,7 @@
 
 #include "rubyk/node.h"
 
+namespace rk {
 
 #define MAX_TOKEN_SIZE 2048
 
@@ -280,5 +281,7 @@ public:
 };
 
 #endif // USE_READLINE
+
+} // rk
 
 #endif // RUBYK_INCLUDE_RUBYK_TEXT_COMMAND_H_

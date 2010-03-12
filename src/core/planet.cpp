@@ -32,6 +32,8 @@
 #include "rubyk/text_command.h"
 #include "rubyk/planet.h"
 
+namespace rk {
+
 void Planet::init() {
   set_context(&worker_);
 
@@ -138,3 +140,5 @@ const Value Planet::inspect(const Value &val) {
   if (!node) return Value(BAD_REQUEST_ERROR, std::string("Bad target '").append(object->url()).append("':inspect only works on Nodes (class is '").append(object->class_path()).append("')."));
   return node->do_inspect();
 }
+
+} // rk

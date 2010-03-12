@@ -43,6 +43,8 @@
 #include "rubyk/outlet.h"
 #include "rubyk/worker.h"
 
+namespace rk {
+
 class Observer;
 
 /** Base class for all nodes in rubyk. You should *NEVER* create sub-classes of Node with
@@ -268,5 +270,7 @@ class Node : public Object {
   std::vector<Inlet*>  inlets_;  /**< List of inlets. FIXME: is this used ? */
   std::vector<Outlet*> outlets_; /**< List of outlets. */
 };
+
+} // rk
 
 #endif // RUBYK_INCLUDE_RUBYK_NODE_H_

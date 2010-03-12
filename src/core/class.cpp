@@ -30,6 +30,7 @@
 #include "rubyk/class.h"
 #include "oscit/alias.h"
 
+namespace rk {
 
 /** Build all inlets for an object from prototypes. */
 void Class::make_inlets(Node *object)
@@ -63,3 +64,5 @@ void Class::make_outlets(Node *object)
     }
   }
 }
+
+} // rk

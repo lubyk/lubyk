@@ -2,6 +2,8 @@
 
 #include "rubyk/cocoa.h"
 
+using namespace rk;
+
 // ======================================== Planet
 bool Planet::s_need_gui_ = false;
 Semaphore Planet::s_need_gui_semaphore_;
@@ -47,6 +49,7 @@ Semaphore Planet::s_start_gui_semaphore_;
 @end
 
 static PlanetHelper *gAppHelper = NULL;
+
 
 const Value Planet::quit(const Value &val) {
   if (gui_started_) {

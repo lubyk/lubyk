@@ -47,7 +47,7 @@ Planet <>--- Worker
 #include "rubyk/c_ordered_list.h"
 #include "rubyk/event.h"
 
-
+namespace rk {
 
 // is 2 [ms] too long ? Testing needed.
 // 0.01 = 10 [us] = 0.00001 [s] = 100'000 [Hz] = 100 [kHz]
@@ -192,5 +192,7 @@ public:
    */
   std::deque<Node*>       looped_nodes_;
 };
+
+} // rk
 
 #endif // RUBYK_INCLUDE_RUBYK_WORKER_H_
