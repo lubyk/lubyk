@@ -31,6 +31,7 @@
 #include <string>
 
 #include "test_helper.h"
+#include "oscit/matrix.h"
 
 class LuaScriptTest : public TestHelper {
 public:
@@ -178,17 +179,21 @@ public:
 
   void test_add_outlet_MidiIO( void ) {
     // also tests loading of rubyk.lua
-    Value res = parse("out = Outlet('boom', MidiIO('Ping pong.'))");
-    // TODO...
+    Value res = parse("boom = Outlet('boom', MidiIO('Ping pong.'))");
+    assert_true(res.is_string());
+    ObjectHandle outlet;
+    assert_true(planet_->get_object_at("/lua/out/boom", &outlet));
+    assert_equal("ms", outlet->type().type_tag());
+    assert_equal("Ping pong.", outlet->type()[1].str()); // info
   }
 
   void test_add_outlet( void ) {
-    Value res = parse("note = Outlet('note', RealIO('Midi note.'))");
+    Value res = parse("force = Outlet('force', RealIO('Dark Force.'))");
     assert_true(res.is_string());
     ObjectHandle outlet;
-    assert_true(planet_->get_object_at("/lua/out/note", &outlet));
+    assert_true(planet_->get_object_at("/lua/out/force", &outlet));
     assert_equal("fs", outlet->type().type_tag());
-    assert_equal("Midi note.", outlet->type()[1].str()); // info
+    assert_equal("Dark Force.", outlet->type()[1].str()); // info
   }
 
   void test_call_lua( void ) {
@@ -203,6 +208,14 @@ public:
     assert_true(res.is_string());
     res = script_->call_lua("foo", gNilValue);
     assert_equal(45.0, res.r);
+  }
+
+  void test_exception_thrown_in_lua( void ) {
+    Value res = parse("function foo()\n cv.subtract(cv.Mat(3,3,cv.CV_32FC1), cv.Mat(3,3,cv.CV_32FC2), cv.Mat(3,3,cv.CV_32FC2))\nend");
+    assert_true(res.is_string());
+    res = script_->call_lua("foo", gNilValue);
+    assert_true(res.is_error());
+    assert_equal("Could not call foo(null): cv.subtract: failed (size == src2.size() && type == src2.type() && func != 0)", res.error_message());
   }
 
   // sending tested in LuaTest

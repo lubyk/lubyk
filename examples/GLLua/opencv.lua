@@ -31,6 +31,7 @@ function video(frame)
   --aperature_size = N
 	--cv.Canny(frame, small, lowThresh*N*N, highThresh*N*N, aperature_size )
   --n = 12.972683264223
+  --cv.subtract(cv.Mat(3,3,cv.CV_32FC1), cv.Mat(3,3,cv.CV_32FC2), cv.Mat(3,3,cv.CV_32FC2))
   n = n + math.pi / 300
   x = math.cos(n / 0.9) * 360 / math.pi
   y = math.sin(n / 0.7) * 360 / math.pi

@@ -10,12 +10,35 @@ using namespace cv;
  * include/opencv/cv.hpp:602
  */
 static int cv_CamShift(lua_State *L) {
-  const Mat *probImage = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Rect *window = *((Rect **)luaL_checkudata(L, 2, "cv.Rect"));
-  TermCriteria *criteria = *((TermCriteria **)luaL_checkudata(L, 3, "cv.TermCriteria"));
-  RotatedRect  retval__ = CamShift(*probImage, *window, *criteria);
-  lua_pushclass<RotatedRect>(L, retval__, "cv.RotatedRect");
-  return 1;
+  try {
+    const Mat *probImage = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Rect *window = *((Rect **)luaL_checkudata(L, 2, "cv.Rect"));
+    TermCriteria *criteria = *((TermCriteria **)luaL_checkudata(L, 3, "cv.TermCriteria"));
+    RotatedRect  retval__ = CamShift(*probImage, *window, *criteria);
+    lua_pushclass<RotatedRect>(L, retval__, "cv.RotatedRect");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.CamShift: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.CamShift: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.CamShift: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -24,23 +47,46 @@ static int cv_CamShift(lua_State *L) {
  * include/opencv/cv.hpp:271
  */
 static int cv_Canny(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *image = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *edges = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  double threshold1 = luaL_checknumber(L, 3);
-  double threshold2 = luaL_checknumber(L, 4);
-  if (top__ < 5) {
-    Canny(*image, *edges, threshold1, threshold2);
-  } else {
-    int apertureSize = luaL_checkint(L, 5);
-    if (top__ < 6) {
-      Canny(*image, *edges, threshold1, threshold2, apertureSize);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *image = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *edges = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    double threshold1 = luaL_checknumber(L, 3);
+    double threshold2 = luaL_checknumber(L, 4);
+    if (top__ < 5) {
+      Canny(*image, *edges, threshold1, threshold2);
     } else {
-      bool L2gradient = lua_toboolean(L, 6);
-      Canny(*image, *edges, threshold1, threshold2, apertureSize, L2gradient);
+      int apertureSize = luaL_checkint(L, 5);
+      if (top__ < 6) {
+        Canny(*image, *edges, threshold1, threshold2, apertureSize);
+      } else {
+        bool L2gradient = lua_toboolean(L, 6);
+        Canny(*image, *edges, threshold1, threshold2, apertureSize, L2gradient);
+      }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Canny: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Canny: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Canny: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -49,23 +95,46 @@ static int cv_Canny(lua_State *L) {
  * include/opencv/cv.hpp:232
  */
 static int cv_GaussianBlur(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Size *ksize = *((Size **)luaL_checkudata(L, 3, "cv.Size"));
-  double sigma1 = luaL_checknumber(L, 4);
-  if (top__ < 5) {
-    GaussianBlur(*src, *dst, *ksize, sigma1);
-  } else {
-    double sigma2 = luaL_checknumber(L, 5);
-    if (top__ < 6) {
-      GaussianBlur(*src, *dst, *ksize, sigma1, sigma2);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Size *ksize = *((Size **)luaL_checkudata(L, 3, "cv.Size"));
+    double sigma1 = luaL_checknumber(L, 4);
+    if (top__ < 5) {
+      GaussianBlur(*src, *dst, *ksize, sigma1);
     } else {
-      int borderType = luaL_checkint(L, 6);
-      GaussianBlur(*src, *dst, *ksize, sigma1, sigma2, borderType);
+      double sigma2 = luaL_checknumber(L, 5);
+      if (top__ < 6) {
+        GaussianBlur(*src, *dst, *ksize, sigma1, sigma2);
+      } else {
+        int borderType = luaL_checkint(L, 6);
+        GaussianBlur(*src, *dst, *ksize, sigma1, sigma2, borderType);
+      }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.GaussianBlur: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.GaussianBlur: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.GaussianBlur: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -74,11 +143,34 @@ static int cv_GaussianBlur(lua_State *L) {
  * include/opencv/cxcore.hpp:1107
  */
 static int cv_LUT(lua_State *L) {
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *lut = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *b = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  LUT(*a, *lut, *b);
-  return 0;
+  try {
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *lut = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *b = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    LUT(*a, *lut, *b);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.LUT: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.LUT: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.LUT: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -87,32 +179,55 @@ static int cv_LUT(lua_State *L) {
  * include/opencv/cv.hpp:267
  */
 static int cv_Laplacian(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  int ddepth = luaL_checkint(L, 3);
-  if (top__ < 4) {
-    Laplacian(*src, *dst, ddepth);
-  } else {
-    int ksize = luaL_checkint(L, 4);
-    if (top__ < 5) {
-      Laplacian(*src, *dst, ddepth, ksize);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    int ddepth = luaL_checkint(L, 3);
+    if (top__ < 4) {
+      Laplacian(*src, *dst, ddepth);
     } else {
-      double scale = luaL_checknumber(L, 5);
-      if (top__ < 6) {
-        Laplacian(*src, *dst, ddepth, ksize, scale);
+      int ksize = luaL_checkint(L, 4);
+      if (top__ < 5) {
+        Laplacian(*src, *dst, ddepth, ksize);
       } else {
-        double delta = luaL_checknumber(L, 6);
-        if (top__ < 7) {
-          Laplacian(*src, *dst, ddepth, ksize, scale, delta);
+        double scale = luaL_checknumber(L, 5);
+        if (top__ < 6) {
+          Laplacian(*src, *dst, ddepth, ksize, scale);
         } else {
-          int borderType = luaL_checkint(L, 7);
-          Laplacian(*src, *dst, ddepth, ksize, scale, delta, borderType);
+          double delta = luaL_checknumber(L, 6);
+          if (top__ < 7) {
+            Laplacian(*src, *dst, ddepth, ksize, scale, delta);
+          } else {
+            int borderType = luaL_checkint(L, 7);
+            Laplacian(*src, *dst, ddepth, ksize, scale, delta, borderType);
+          }
         }
       }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Laplacian: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Laplacian: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Laplacian: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -121,12 +236,35 @@ static int cv_Laplacian(lua_State *L) {
  * include/opencv/cxcore.hpp:1247
  */
 static int cv_Mahalanobis(lua_State *L) {
-  const Mat *v1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *v2 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  const Mat *icovar = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  double  retval__ = Mahalanobis(*v1, *v2, *icovar);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    const Mat *v1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *v2 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *icovar = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    double  retval__ = Mahalanobis(*v1, *v2, *icovar);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Mahalanobis: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Mahalanobis: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Mahalanobis: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -135,12 +273,35 @@ static int cv_Mahalanobis(lua_State *L) {
  * include/opencv/cxcore.hpp:1249
  */
 static int cv_Mahalonobis(lua_State *L) {
-  const Mat *v1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *v2 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  const Mat *icovar = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  double  retval__ = Mahalonobis(*v1, *v2, *icovar);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    const Mat *v1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *v2 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *icovar = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    double  retval__ = Mahalonobis(*v1, *v2, *icovar);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Mahalonobis: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Mahalonobis: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Mahalonobis: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -150,11 +311,34 @@ static int cv_Mahalonobis(lua_State *L) {
  * include/opencv/cv.hpp:760
  */
 static int cv_RQDecomp3x31(lua_State *L) {
-  const Mat *M = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *R = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *Q = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  RQDecomp3x3(*M, *R, *Q);
-  return 0;
+  try {
+    const Mat *M = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *R = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *Q = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    RQDecomp3x3(*M, *R, *Q);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.RQDecomp3x3: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.RQDecomp3x3: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.RQDecomp3x3: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -162,15 +346,38 @@ static int cv_RQDecomp3x31(lua_State *L) {
  * include/opencv/cv.hpp:762
  */
 static int cv_RQDecomp3x32(lua_State *L) {
-  const Mat *M = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *R = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *Q = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  Mat *Qx = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  Mat *Qy = *((Mat **)luaL_checkudata(L, 5, "cv.Mat"));
-  Mat *Qz = *((Mat **)luaL_checkudata(L, 6, "cv.Mat"));
-  Vec3d  retval__ = RQDecomp3x3(*M, *R, *Q, *Qx, *Qy, *Qz);
-  lua_pushclass<Vec3d>(L, retval__, "cv.Vec3d");
-  return 1;
+  try {
+    const Mat *M = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *R = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *Q = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    Mat *Qx = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    Mat *Qy = *((Mat **)luaL_checkudata(L, 5, "cv.Mat"));
+    Mat *Qz = *((Mat **)luaL_checkudata(L, 6, "cv.Mat"));
+    Vec3d  retval__ = RQDecomp3x3(*M, *R, *Q, *Qx, *Qy, *Qz);
+    lua_pushclass<Vec3d>(L, retval__, "cv.Vec3d");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.RQDecomp3x3: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.RQDecomp3x3: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.RQDecomp3x3: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -214,10 +421,33 @@ static int cv_RQDecomp3x3(lua_State *L) {
  * include/opencv/cv.hpp:740
  */
 static int cv_Rodrigues1(lua_State *L) {
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Rodrigues(*src, *dst);
-  return 0;
+  try {
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Rodrigues(*src, *dst);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Rodrigues: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Rodrigues: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Rodrigues: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -225,11 +455,34 @@ static int cv_Rodrigues1(lua_State *L) {
  * include/opencv/cv.hpp:741
  */
 static int cv_Rodrigues2(lua_State *L) {
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *jacobian = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  Rodrigues(*src, *dst, *jacobian);
-  return 0;
+  try {
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *jacobian = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    Rodrigues(*src, *dst, *jacobian);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Rodrigues: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Rodrigues: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Rodrigues: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -266,29 +519,52 @@ static int cv_Rodrigues(lua_State *L) {
  * include/opencv/cv.hpp:263
  */
 static int cv_Scharr(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  int ddepth = luaL_checkint(L, 3);
-  int dx = luaL_checkint(L, 4);
-  int dy = luaL_checkint(L, 5);
-  if (top__ < 6) {
-    Scharr(*src, *dst, ddepth, dx, dy);
-  } else {
-    double scale = luaL_checknumber(L, 6);
-    if (top__ < 7) {
-      Scharr(*src, *dst, ddepth, dx, dy, scale);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    int ddepth = luaL_checkint(L, 3);
+    int dx = luaL_checkint(L, 4);
+    int dy = luaL_checkint(L, 5);
+    if (top__ < 6) {
+      Scharr(*src, *dst, ddepth, dx, dy);
     } else {
-      double delta = luaL_checknumber(L, 7);
-      if (top__ < 8) {
-        Scharr(*src, *dst, ddepth, dx, dy, scale, delta);
+      double scale = luaL_checknumber(L, 6);
+      if (top__ < 7) {
+        Scharr(*src, *dst, ddepth, dx, dy, scale);
       } else {
-        int borderType = luaL_checkint(L, 8);
-        Scharr(*src, *dst, ddepth, dx, dy, scale, delta, borderType);
+        double delta = luaL_checknumber(L, 7);
+        if (top__ < 8) {
+          Scharr(*src, *dst, ddepth, dx, dy, scale, delta);
+        } else {
+          int borderType = luaL_checkint(L, 8);
+          Scharr(*src, *dst, ddepth, dx, dy, scale, delta, borderType);
+        }
       }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Scharr: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Scharr: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Scharr: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -297,34 +573,57 @@ static int cv_Scharr(lua_State *L) {
  * include/opencv/cv.hpp:259
  */
 static int cv_Sobel(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  int ddepth = luaL_checkint(L, 3);
-  int dx = luaL_checkint(L, 4);
-  int dy = luaL_checkint(L, 5);
-  if (top__ < 6) {
-    Sobel(*src, *dst, ddepth, dx, dy);
-  } else {
-    int ksize = luaL_checkint(L, 6);
-    if (top__ < 7) {
-      Sobel(*src, *dst, ddepth, dx, dy, ksize);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    int ddepth = luaL_checkint(L, 3);
+    int dx = luaL_checkint(L, 4);
+    int dy = luaL_checkint(L, 5);
+    if (top__ < 6) {
+      Sobel(*src, *dst, ddepth, dx, dy);
     } else {
-      double scale = luaL_checknumber(L, 7);
-      if (top__ < 8) {
-        Sobel(*src, *dst, ddepth, dx, dy, ksize, scale);
+      int ksize = luaL_checkint(L, 6);
+      if (top__ < 7) {
+        Sobel(*src, *dst, ddepth, dx, dy, ksize);
       } else {
-        double delta = luaL_checknumber(L, 8);
-        if (top__ < 9) {
-          Sobel(*src, *dst, ddepth, dx, dy, ksize, scale, delta);
+        double scale = luaL_checknumber(L, 7);
+        if (top__ < 8) {
+          Sobel(*src, *dst, ddepth, dx, dy, ksize, scale);
         } else {
-          int borderType = luaL_checkint(L, 9);
-          Sobel(*src, *dst, ddepth, dx, dy, ksize, scale, delta, borderType);
+          double delta = luaL_checknumber(L, 8);
+          if (top__ < 9) {
+            Sobel(*src, *dst, ddepth, dx, dy, ksize, scale, delta);
+          } else {
+            int borderType = luaL_checkint(L, 9);
+            Sobel(*src, *dst, ddepth, dx, dy, ksize, scale, delta, borderType);
+          }
         }
       }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Sobel: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Sobel: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Sobel: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -334,11 +633,34 @@ static int cv_Sobel(lua_State *L) {
  * include/opencv/cxcore.hpp:1157
  */
 static int cv_absdiff1(lua_State *L) {
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  absdiff(*a, *b, *c);
-  return 0;
+  try {
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    absdiff(*a, *b, *c);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.absdiff: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.absdiff: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.absdiff: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -346,11 +668,34 @@ static int cv_absdiff1(lua_State *L) {
  * include/opencv/cxcore.hpp:1158
  */
 static int cv_absdiff2(lua_State *L) {
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-  Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  absdiff(*a, *s, *c);
-  return 0;
+  try {
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
+    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    absdiff(*a, *s, *c);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.absdiff: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.absdiff: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.absdiff: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -358,11 +703,34 @@ static int cv_absdiff2(lua_State *L) {
  * include/opencv/cxcore.hpp:1791
  */
 static int cv_absdiff3(lua_State *L) {
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-  MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-  absdiff(*a, *b, *c);
-  return 0;
+  try {
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    absdiff(*a, *b, *c);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.absdiff: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.absdiff: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.absdiff: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -370,11 +738,34 @@ static int cv_absdiff3(lua_State *L) {
  * include/opencv/cxcore.hpp:1792
  */
 static int cv_absdiff4(lua_State *L) {
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-  MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-  absdiff(*a, *s, *c);
-  return 0;
+  try {
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
+    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    absdiff(*a, *s, *c);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.absdiff: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.absdiff: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.absdiff: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -414,16 +805,39 @@ static int cv_absdiff(lua_State *L) {
  * include/opencv/cv.hpp:375
  */
 static int cv_accumulate(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  if (top__ < 3) {
-    accumulate(*src, *dst);
-  } else {
-    const Mat *mask = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    accumulate(*src, *dst, *mask);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    if (top__ < 3) {
+      accumulate(*src, *dst);
+    } else {
+      const Mat *mask = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+      accumulate(*src, *dst, *mask);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.accumulate: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.accumulate: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.accumulate: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -432,17 +846,40 @@ static int cv_accumulate(lua_State *L) {
  * include/opencv/cv.hpp:378
  */
 static int cv_accumulateProduct(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *src2 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  if (top__ < 4) {
-    accumulateProduct(*src1, *src2, *dst);
-  } else {
-    const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-    accumulateProduct(*src1, *src2, *dst, *mask);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *src2 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    if (top__ < 4) {
+      accumulateProduct(*src1, *src2, *dst);
+    } else {
+      const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+      accumulateProduct(*src1, *src2, *dst, *mask);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.accumulateProduct: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.accumulateProduct: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.accumulateProduct: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -451,16 +888,39 @@ static int cv_accumulateProduct(lua_State *L) {
  * include/opencv/cv.hpp:376
  */
 static int cv_accumulateSquare(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  if (top__ < 3) {
-    accumulateSquare(*src, *dst);
-  } else {
-    const Mat *mask = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    accumulateSquare(*src, *dst, *mask);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    if (top__ < 3) {
+      accumulateSquare(*src, *dst);
+    } else {
+      const Mat *mask = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+      accumulateSquare(*src, *dst, *mask);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.accumulateSquare: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.accumulateSquare: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.accumulateSquare: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -469,17 +929,40 @@ static int cv_accumulateSquare(lua_State *L) {
  * include/opencv/cv.hpp:380
  */
 static int cv_accumulateWeighted(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  double alpha = luaL_checknumber(L, 3);
-  if (top__ < 4) {
-    accumulateWeighted(*src, *dst, alpha);
-  } else {
-    const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-    accumulateWeighted(*src, *dst, alpha, *mask);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    double alpha = luaL_checknumber(L, 3);
+    if (top__ < 4) {
+      accumulateWeighted(*src, *dst, alpha);
+    } else {
+      const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+      accumulateWeighted(*src, *dst, alpha, *mask);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.accumulateWeighted: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.accumulateWeighted: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.accumulateWeighted: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -488,15 +971,38 @@ static int cv_accumulateWeighted(lua_State *L) {
  * include/opencv/cv.hpp:391
  */
 static int cv_adaptiveThreshold(lua_State *L) {
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  double maxValue = luaL_checknumber(L, 3);
-  int adaptiveMethod = luaL_checkint(L, 4);
-  int thresholdType = luaL_checkint(L, 5);
-  int blockSize = luaL_checkint(L, 6);
-  double C = luaL_checknumber(L, 7);
-  adaptiveThreshold(*src, *dst, maxValue, adaptiveMethod, thresholdType, blockSize, C);
-  return 0;
+  try {
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    double maxValue = luaL_checknumber(L, 3);
+    int adaptiveMethod = luaL_checkint(L, 4);
+    int thresholdType = luaL_checkint(L, 5);
+    int blockSize = luaL_checkint(L, 6);
+    double C = luaL_checknumber(L, 7);
+    adaptiveThreshold(*src, *dst, maxValue, adaptiveMethod, thresholdType, blockSize, C);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.adaptiveThreshold: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.adaptiveThreshold: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.adaptiveThreshold: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -506,12 +1012,35 @@ static int cv_adaptiveThreshold(lua_State *L) {
  * include/opencv/cxcore.hpp:1079
  */
 static int cv_add1(lua_State *L) {
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  add(*a, *b, *c, *mask);
-  return 0;
+  try {
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    add(*a, *b, *c, *mask);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.add: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.add: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.add: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -519,11 +1048,34 @@ static int cv_add1(lua_State *L) {
  * include/opencv/cxcore.hpp:1087
  */
 static int cv_add2(lua_State *L) {
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  add(*a, *b, *c);
-  return 0;
+  try {
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    add(*a, *b, *c);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.add: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.add: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.add: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -531,17 +1083,40 @@ static int cv_add2(lua_State *L) {
  * include/opencv/cxcore.hpp:1095
  */
 static int cv_add3(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-  Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  if (top__ < 4) {
-    add(*a, *s, *c);
-  } else {
-    const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-    add(*a, *s, *c, *mask);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
+    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    if (top__ < 4) {
+      add(*a, *s, *c);
+    } else {
+      const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+      add(*a, *s, *c, *mask);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.add: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.add: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.add: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -549,12 +1124,35 @@ static int cv_add3(lua_State *L) {
  * include/opencv/cxcore.hpp:1748
  */
 static int cv_add4(lua_State *L) {
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-  MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-  const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
-  add(*a, *b, *c, *mask);
-  return 0;
+  try {
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+    add(*a, *b, *c, *mask);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.add: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.add: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.add: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -562,11 +1160,34 @@ static int cv_add4(lua_State *L) {
  * include/opencv/cxcore.hpp:1750
  */
 static int cv_add5(lua_State *L) {
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-  MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-  add(*a, *b, *c);
-  return 0;
+  try {
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    add(*a, *b, *c);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.add: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.add: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.add: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -574,17 +1195,40 @@ static int cv_add5(lua_State *L) {
  * include/opencv/cxcore.hpp:1752
  */
 static int cv_add6(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-  MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-  if (top__ < 4) {
-    add(*a, *s, *c);
-  } else {
-    const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
-    add(*a, *s, *c, *mask);
+  try {
+    int top__ = lua_gettop(L);
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
+    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    if (top__ < 4) {
+      add(*a, *s, *c);
+    } else {
+      const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+      add(*a, *s, *c, *mask);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.add: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.add: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.add: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -654,14 +1298,37 @@ static int cv_add(lua_State *L) {
  * include/opencv/cxcore.hpp:1105
  */
 static int cv_addWeighted1(lua_State *L) {
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  double alpha = luaL_checknumber(L, 2);
-  const Mat *b = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  double beta = luaL_checknumber(L, 4);
-  double gamma = luaL_checknumber(L, 5);
-  Mat *c = *((Mat **)luaL_checkudata(L, 6, "cv.Mat"));
-  addWeighted(*a, alpha, *b, beta, gamma, *c);
-  return 0;
+  try {
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    double alpha = luaL_checknumber(L, 2);
+    const Mat *b = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    double beta = luaL_checknumber(L, 4);
+    double gamma = luaL_checknumber(L, 5);
+    Mat *c = *((Mat **)luaL_checkudata(L, 6, "cv.Mat"));
+    addWeighted(*a, alpha, *b, beta, gamma, *c);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.addWeighted: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.addWeighted: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.addWeighted: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -669,14 +1336,37 @@ static int cv_addWeighted1(lua_State *L) {
  * include/opencv/cxcore.hpp:1761
  */
 static int cv_addWeighted2(lua_State *L) {
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  double alpha = luaL_checknumber(L, 2);
-  const MatND *b = *((const MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-  double beta = luaL_checknumber(L, 4);
-  double gamma = luaL_checknumber(L, 5);
-  MatND *c = *((MatND **)luaL_checkudata(L, 6, "cv.MatND"));
-  addWeighted(*a, alpha, *b, beta, gamma, *c);
-  return 0;
+  try {
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    double alpha = luaL_checknumber(L, 2);
+    const MatND *b = *((const MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    double beta = luaL_checknumber(L, 4);
+    double gamma = luaL_checknumber(L, 5);
+    MatND *c = *((MatND **)luaL_checkudata(L, 6, "cv.MatND"));
+    addWeighted(*a, alpha, *b, beta, gamma, *c);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.addWeighted: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.addWeighted: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.addWeighted: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -700,11 +1390,34 @@ static int cv_addWeighted(lua_State *L) {
  * include/opencv/cxcore.hpp:159
  */
 static int cv_alignSize(lua_State *L) {
-  size_t sz = luaL_checkint(L, 1);
-  int n = luaL_checkint(L, 2);
-  size_t  retval__ = alignSize(sz, n);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    size_t sz = luaL_checkint(L, 1);
+    int n = luaL_checkint(L, 2);
+    size_t  retval__ = alignSize(sz, n);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.alignSize: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.alignSize: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.alignSize: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -713,11 +1426,34 @@ static int cv_alignSize(lua_State *L) {
  * include/opencv/cv.hpp:559
  */
 static int cv_arcLength(lua_State *L) {
-  const Mat *curve = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  bool closed = lua_toboolean(L, 2);
-  double  retval__ = arcLength(*curve, closed);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    const Mat *curve = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    bool closed = lua_toboolean(L, 2);
+    double  retval__ = arcLength(*curve, closed);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.arcLength: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.arcLength: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.arcLength: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -726,19 +1462,42 @@ static int cv_arcLength(lua_State *L) {
  * include/opencv/cv.hpp:235
  */
 static int cv_bilateralFilter(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  int d = luaL_checkint(L, 3);
-  double sigmaColor = luaL_checknumber(L, 4);
-  double sigmaSpace = luaL_checknumber(L, 5);
-  if (top__ < 6) {
-    bilateralFilter(*src, *dst, d, sigmaColor, sigmaSpace);
-  } else {
-    int borderType = luaL_checkint(L, 6);
-    bilateralFilter(*src, *dst, d, sigmaColor, sigmaSpace, borderType);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    int d = luaL_checkint(L, 3);
+    double sigmaColor = luaL_checknumber(L, 4);
+    double sigmaSpace = luaL_checknumber(L, 5);
+    if (top__ < 6) {
+      bilateralFilter(*src, *dst, d, sigmaColor, sigmaSpace);
+    } else {
+      int borderType = luaL_checkint(L, 6);
+      bilateralFilter(*src, *dst, d, sigmaColor, sigmaSpace, borderType);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.bilateralFilter: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.bilateralFilter: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.bilateralFilter: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -748,17 +1507,40 @@ static int cv_bilateralFilter(lua_State *L) {
  * include/opencv/cxcore.hpp:1150
  */
 static int cv_bitwise_and1(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  if (top__ < 4) {
-    bitwise_and(*a, *b, *c);
-  } else {
-    const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-    bitwise_and(*a, *b, *c, *mask);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    if (top__ < 4) {
+      bitwise_and(*a, *b, *c);
+    } else {
+      const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+      bitwise_and(*a, *b, *c, *mask);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.bitwise_and: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.bitwise_and: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.bitwise_and: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -766,17 +1548,40 @@ static int cv_bitwise_and1(lua_State *L) {
  * include/opencv/cxcore.hpp:1153
  */
 static int cv_bitwise_and2(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-  Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  if (top__ < 4) {
-    bitwise_and(*a, *s, *c);
-  } else {
-    const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-    bitwise_and(*a, *s, *c, *mask);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
+    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    if (top__ < 4) {
+      bitwise_and(*a, *s, *c);
+    } else {
+      const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+      bitwise_and(*a, *s, *c, *mask);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.bitwise_and: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.bitwise_and: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.bitwise_and: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -784,17 +1589,40 @@ static int cv_bitwise_and2(lua_State *L) {
  * include/opencv/cxcore.hpp:1784
  */
 static int cv_bitwise_and3(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-  MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-  if (top__ < 4) {
-    bitwise_and(*a, *b, *c);
-  } else {
-    const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
-    bitwise_and(*a, *b, *c, *mask);
+  try {
+    int top__ = lua_gettop(L);
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    if (top__ < 4) {
+      bitwise_and(*a, *b, *c);
+    } else {
+      const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+      bitwise_and(*a, *b, *c, *mask);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.bitwise_and: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.bitwise_and: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.bitwise_and: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -802,17 +1630,40 @@ static int cv_bitwise_and3(lua_State *L) {
  * include/opencv/cxcore.hpp:1787
  */
 static int cv_bitwise_and4(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-  MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-  if (top__ < 4) {
-    bitwise_and(*a, *s, *c);
-  } else {
-    const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
-    bitwise_and(*a, *s, *c, *mask);
+  try {
+    int top__ = lua_gettop(L);
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
+    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    if (top__ < 4) {
+      bitwise_and(*a, *s, *c);
+    } else {
+      const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+      bitwise_and(*a, *s, *c, *mask);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.bitwise_and: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.bitwise_and: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.bitwise_and: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -853,10 +1704,33 @@ static int cv_bitwise_and(lua_State *L) {
  * include/opencv/cxcore.hpp:1156
  */
 static int cv_bitwise_not1(lua_State *L) {
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *c = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  bitwise_not(*a, *c);
-  return 0;
+  try {
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *c = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    bitwise_not(*a, *c);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.bitwise_not: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.bitwise_not: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.bitwise_not: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -864,10 +1738,33 @@ static int cv_bitwise_not1(lua_State *L) {
  * include/opencv/cxcore.hpp:1790
  */
 static int cv_bitwise_not2(lua_State *L) {
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  MatND *c = *((MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-  bitwise_not(*a, *c);
-  return 0;
+  try {
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    MatND *c = *((MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    bitwise_not(*a, *c);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.bitwise_not: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.bitwise_not: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.bitwise_not: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -892,17 +1789,40 @@ static int cv_bitwise_not(lua_State *L) {
  * include/opencv/cxcore.hpp:1151
  */
 static int cv_bitwise_or1(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  if (top__ < 4) {
-    bitwise_or(*a, *b, *c);
-  } else {
-    const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-    bitwise_or(*a, *b, *c, *mask);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    if (top__ < 4) {
+      bitwise_or(*a, *b, *c);
+    } else {
+      const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+      bitwise_or(*a, *b, *c, *mask);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.bitwise_or: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.bitwise_or: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.bitwise_or: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -910,17 +1830,40 @@ static int cv_bitwise_or1(lua_State *L) {
  * include/opencv/cxcore.hpp:1154
  */
 static int cv_bitwise_or2(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-  Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  if (top__ < 4) {
-    bitwise_or(*a, *s, *c);
-  } else {
-    const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-    bitwise_or(*a, *s, *c, *mask);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
+    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    if (top__ < 4) {
+      bitwise_or(*a, *s, *c);
+    } else {
+      const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+      bitwise_or(*a, *s, *c, *mask);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.bitwise_or: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.bitwise_or: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.bitwise_or: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -928,17 +1871,40 @@ static int cv_bitwise_or2(lua_State *L) {
  * include/opencv/cxcore.hpp:1785
  */
 static int cv_bitwise_or3(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-  MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-  if (top__ < 4) {
-    bitwise_or(*a, *b, *c);
-  } else {
-    const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
-    bitwise_or(*a, *b, *c, *mask);
+  try {
+    int top__ = lua_gettop(L);
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    if (top__ < 4) {
+      bitwise_or(*a, *b, *c);
+    } else {
+      const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+      bitwise_or(*a, *b, *c, *mask);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.bitwise_or: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.bitwise_or: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.bitwise_or: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -946,17 +1912,40 @@ static int cv_bitwise_or3(lua_State *L) {
  * include/opencv/cxcore.hpp:1788
  */
 static int cv_bitwise_or4(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-  MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-  if (top__ < 4) {
-    bitwise_or(*a, *s, *c);
-  } else {
-    const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
-    bitwise_or(*a, *s, *c, *mask);
+  try {
+    int top__ = lua_gettop(L);
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
+    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    if (top__ < 4) {
+      bitwise_or(*a, *s, *c);
+    } else {
+      const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+      bitwise_or(*a, *s, *c, *mask);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.bitwise_or: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.bitwise_or: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.bitwise_or: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -997,17 +1986,40 @@ static int cv_bitwise_or(lua_State *L) {
  * include/opencv/cxcore.hpp:1152
  */
 static int cv_bitwise_xor1(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  if (top__ < 4) {
-    bitwise_xor(*a, *b, *c);
-  } else {
-    const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-    bitwise_xor(*a, *b, *c, *mask);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    if (top__ < 4) {
+      bitwise_xor(*a, *b, *c);
+    } else {
+      const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+      bitwise_xor(*a, *b, *c, *mask);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.bitwise_xor: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.bitwise_xor: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.bitwise_xor: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -1015,17 +2027,40 @@ static int cv_bitwise_xor1(lua_State *L) {
  * include/opencv/cxcore.hpp:1155
  */
 static int cv_bitwise_xor2(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-  Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  if (top__ < 4) {
-    bitwise_xor(*a, *s, *c);
-  } else {
-    const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-    bitwise_xor(*a, *s, *c, *mask);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
+    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    if (top__ < 4) {
+      bitwise_xor(*a, *s, *c);
+    } else {
+      const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+      bitwise_xor(*a, *s, *c, *mask);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.bitwise_xor: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.bitwise_xor: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.bitwise_xor: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -1033,17 +2068,40 @@ static int cv_bitwise_xor2(lua_State *L) {
  * include/opencv/cxcore.hpp:1786
  */
 static int cv_bitwise_xor3(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-  MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-  if (top__ < 4) {
-    bitwise_xor(*a, *b, *c);
-  } else {
-    const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
-    bitwise_xor(*a, *b, *c, *mask);
+  try {
+    int top__ = lua_gettop(L);
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    if (top__ < 4) {
+      bitwise_xor(*a, *b, *c);
+    } else {
+      const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+      bitwise_xor(*a, *b, *c, *mask);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.bitwise_xor: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.bitwise_xor: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.bitwise_xor: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -1051,17 +2109,40 @@ static int cv_bitwise_xor3(lua_State *L) {
  * include/opencv/cxcore.hpp:1789
  */
 static int cv_bitwise_xor4(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-  MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-  if (top__ < 4) {
-    bitwise_xor(*a, *s, *c);
-  } else {
-    const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
-    bitwise_xor(*a, *s, *c, *mask);
+  try {
+    int top__ = lua_gettop(L);
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
+    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    if (top__ < 4) {
+      bitwise_xor(*a, *s, *c);
+    } else {
+      const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+      bitwise_xor(*a, *s, *c, *mask);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.bitwise_xor: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.bitwise_xor: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.bitwise_xor: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -1101,22 +2182,45 @@ static int cv_bitwise_xor(lua_State *L) {
  * include/opencv/cv.hpp:243
  */
 static int cv_blur(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Size *ksize = *((Size **)luaL_checkudata(L, 3, "cv.Size"));
-  if (top__ < 4) {
-    blur(*src, *dst, *ksize);
-  } else {
-    Point *anchor = *((Point **)luaL_checkudata(L, 4, "cv.Point"));
-    if (top__ < 5) {
-      blur(*src, *dst, *ksize, *anchor);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Size *ksize = *((Size **)luaL_checkudata(L, 3, "cv.Size"));
+    if (top__ < 4) {
+      blur(*src, *dst, *ksize);
     } else {
-      int borderType = luaL_checkint(L, 5);
-      blur(*src, *dst, *ksize, *anchor, borderType);
+      Point *anchor = *((Point **)luaL_checkudata(L, 4, "cv.Point"));
+      if (top__ < 5) {
+        blur(*src, *dst, *ksize, *anchor);
+      } else {
+        int borderType = luaL_checkint(L, 5);
+        blur(*src, *dst, *ksize, *anchor, borderType);
+      }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.blur: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.blur: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.blur: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -1125,12 +2229,35 @@ static int cv_blur(lua_State *L) {
  * include/opencv/cv.hpp:58
  */
 static int cv_borderInterpolate(lua_State *L) {
-  int p = luaL_checkint(L, 1);
-  int len = luaL_checkint(L, 2);
-  int borderType = luaL_checkint(L, 3);
-  int  retval__ = borderInterpolate(p, len, borderType);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    int p = luaL_checkint(L, 1);
+    int len = luaL_checkint(L, 2);
+    int borderType = luaL_checkint(L, 3);
+    int  retval__ = borderInterpolate(p, len, borderType);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.borderInterpolate: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.borderInterpolate: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.borderInterpolate: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -1139,10 +2266,33 @@ static int cv_borderInterpolate(lua_State *L) {
  * include/opencv/cv.hpp:560
  */
 static int cv_boundingRect(lua_State *L) {
-  const Mat *points = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Rect  retval__ = boundingRect(*points);
-  lua_pushclass<Rect>(L, retval__, "cv.Rect");
-  return 1;
+  try {
+    const Mat *points = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Rect  retval__ = boundingRect(*points);
+    lua_pushclass<Rect>(L, retval__, "cv.Rect");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.boundingRect: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.boundingRect: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.boundingRect: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -1151,28 +2301,51 @@ static int cv_boundingRect(lua_State *L) {
  * include/opencv/cv.hpp:239
  */
 static int cv_boxFilter(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  int ddepth = luaL_checkint(L, 3);
-  Size *ksize = *((Size **)luaL_checkudata(L, 4, "cv.Size"));
-  if (top__ < 5) {
-    boxFilter(*src, *dst, ddepth, *ksize);
-  } else {
-    Point *anchor = *((Point **)luaL_checkudata(L, 5, "cv.Point"));
-    if (top__ < 6) {
-      boxFilter(*src, *dst, ddepth, *ksize, *anchor);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    int ddepth = luaL_checkint(L, 3);
+    Size *ksize = *((Size **)luaL_checkudata(L, 4, "cv.Size"));
+    if (top__ < 5) {
+      boxFilter(*src, *dst, ddepth, *ksize);
     } else {
-      bool normalize = lua_toboolean(L, 6);
-      if (top__ < 7) {
-        boxFilter(*src, *dst, ddepth, *ksize, *anchor, normalize);
+      Point *anchor = *((Point **)luaL_checkudata(L, 5, "cv.Point"));
+      if (top__ < 6) {
+        boxFilter(*src, *dst, ddepth, *ksize, *anchor);
       } else {
-        int borderType = luaL_checkint(L, 7);
-        boxFilter(*src, *dst, ddepth, *ksize, *anchor, normalize, borderType);
+        bool normalize = lua_toboolean(L, 6);
+        if (top__ < 7) {
+          boxFilter(*src, *dst, ddepth, *ksize, *anchor, normalize);
+        } else {
+          int borderType = luaL_checkint(L, 7);
+          boxFilter(*src, *dst, ddepth, *ksize, *anchor, normalize, borderType);
+        }
       }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.boxFilter: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.boxFilter: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.boxFilter: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -1182,18 +2355,41 @@ static int cv_boxFilter(lua_State *L) {
  * include/opencv/cxcore.hpp:1215
  */
 static int cv_calcCovarMatrix2(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *samples = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *covar = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *mean = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  int flags = luaL_checkint(L, 4);
-  if (top__ < 5) {
-    calcCovarMatrix(*samples, *covar, *mean, flags);
-  } else {
-    int ctype = luaL_checkint(L, 5);
-    calcCovarMatrix(*samples, *covar, *mean, flags, ctype);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *samples = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *covar = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *mean = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    int flags = luaL_checkint(L, 4);
+    if (top__ < 5) {
+      calcCovarMatrix(*samples, *covar, *mean, flags);
+    } else {
+      int ctype = luaL_checkint(L, 5);
+      calcCovarMatrix(*samples, *covar, *mean, flags, ctype);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.calcCovarMatrix: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.calcCovarMatrix: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.calcCovarMatrix: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -1215,14 +2411,37 @@ static int cv_calcCovarMatrix(lua_State *L) {
  * include/opencv/cv.hpp:598
  */
 static int cv_calcGlobalOrientation(lua_State *L) {
-  const Mat *orientation = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *mask = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  const Mat *mhi = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  double timestamp = luaL_checknumber(L, 4);
-  double duration = luaL_checknumber(L, 5);
-  double  retval__ = calcGlobalOrientation(*orientation, *mask, *mhi, timestamp, duration);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    const Mat *orientation = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *mask = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *mhi = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    double timestamp = luaL_checknumber(L, 4);
+    double duration = luaL_checknumber(L, 5);
+    double  retval__ = calcGlobalOrientation(*orientation, *mask, *mhi, timestamp, duration);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.calcGlobalOrientation: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.calcGlobalOrientation: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.calcGlobalOrientation: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -1231,19 +2450,42 @@ static int cv_calcGlobalOrientation(lua_State *L) {
  * include/opencv/cv.hpp:594
  */
 static int cv_calcMotionGradient(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *mhi = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *mask = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *orientation = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  double delta1 = luaL_checknumber(L, 4);
-  double delta2 = luaL_checknumber(L, 5);
-  if (top__ < 6) {
-    calcMotionGradient(*mhi, *mask, *orientation, delta1, delta2);
-  } else {
-    int apertureSize = luaL_checkint(L, 6);
-    calcMotionGradient(*mhi, *mask, *orientation, delta1, delta2, apertureSize);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *mhi = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *mask = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *orientation = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    double delta1 = luaL_checknumber(L, 4);
+    double delta2 = luaL_checknumber(L, 5);
+    if (top__ < 6) {
+      calcMotionGradient(*mhi, *mask, *orientation, delta1, delta2);
+    } else {
+      int apertureSize = luaL_checkint(L, 6);
+      calcMotionGradient(*mhi, *mask, *orientation, delta1, delta2, apertureSize);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.calcMotionGradient: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.calcMotionGradient: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.calcMotionGradient: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -1252,18 +2494,41 @@ static int cv_calcMotionGradient(lua_State *L) {
  * include/opencv/cv.hpp:423
  */
 static int cv_calcOpticalFlowFarneback(lua_State *L) {
-  const Mat *prev0 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *next0 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *flow0 = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  double pyr_scale = luaL_checknumber(L, 4);
-  int levels = luaL_checkint(L, 5);
-  int winsize = luaL_checkint(L, 6);
-  int iterations = luaL_checkint(L, 7);
-  int poly_n = luaL_checkint(L, 8);
-  double poly_sigma = luaL_checknumber(L, 9);
-  int flags = luaL_checkint(L, 10);
-  calcOpticalFlowFarneback(*prev0, *next0, *flow0, pyr_scale, levels, winsize, iterations, poly_n, poly_sigma, flags);
-  return 0;
+  try {
+    const Mat *prev0 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *next0 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *flow0 = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    double pyr_scale = luaL_checknumber(L, 4);
+    int levels = luaL_checkint(L, 5);
+    int winsize = luaL_checkint(L, 6);
+    int iterations = luaL_checkint(L, 7);
+    int poly_n = luaL_checkint(L, 8);
+    double poly_sigma = luaL_checknumber(L, 9);
+    int flags = luaL_checkint(L, 10);
+    calcOpticalFlowFarneback(*prev0, *next0, *flow0, pyr_scale, levels, winsize, iterations, poly_n, poly_sigma, flags);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.calcOpticalFlowFarneback: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.calcOpticalFlowFarneback: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.calcOpticalFlowFarneback: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -1272,17 +2537,40 @@ static int cv_calcOpticalFlowFarneback(lua_State *L) {
  * include/opencv/cv.hpp:856
  */
 static int cv_calibrationMatrixValues(lua_State *L) {
-  const Mat *cameraMatrix = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Size *imageSize = *((Size **)luaL_checkudata(L, 2, "cv.Size"));
-  double apertureWidth = luaL_checknumber(L, 3);
-  double apertureHeight = luaL_checknumber(L, 4);
-  double fovx = luaL_checknumber(L, 5);
-  double fovy = luaL_checknumber(L, 6);
-  double focalLength = luaL_checknumber(L, 7);
-  Point2d *principalPoint = *((Point2d **)luaL_checkudata(L, 8, "cv.Point2d"));
-  double aspectRatio = luaL_checknumber(L, 9);
-  calibrationMatrixValues(*cameraMatrix, *imageSize, apertureWidth, apertureHeight, fovx, fovy, focalLength, *principalPoint, aspectRatio);
-  return 0;
+  try {
+    const Mat *cameraMatrix = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Size *imageSize = *((Size **)luaL_checkudata(L, 2, "cv.Size"));
+    double apertureWidth = luaL_checknumber(L, 3);
+    double apertureHeight = luaL_checknumber(L, 4);
+    double fovx = luaL_checknumber(L, 5);
+    double fovy = luaL_checknumber(L, 6);
+    double focalLength = luaL_checknumber(L, 7);
+    Point2d *principalPoint = *((Point2d **)luaL_checkudata(L, 8, "cv.Point2d"));
+    double aspectRatio = luaL_checknumber(L, 9);
+    calibrationMatrixValues(*cameraMatrix, *imageSize, apertureWidth, apertureHeight, fovx, fovy, focalLength, *principalPoint, aspectRatio);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.calibrationMatrixValues: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.calibrationMatrixValues: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.calibrationMatrixValues: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -1291,18 +2579,41 @@ static int cv_calibrationMatrixValues(lua_State *L) {
  * include/opencv/cxcore.hpp:1180
  */
 static int cv_cartToPolar(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *x = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *y = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *magnitude = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  Mat *angle = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  if (top__ < 5) {
-    cartToPolar(*x, *y, *magnitude, *angle);
-  } else {
-    bool angleInDegrees = lua_toboolean(L, 5);
-    cartToPolar(*x, *y, *magnitude, *angle, angleInDegrees);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *x = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *y = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *magnitude = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    Mat *angle = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    if (top__ < 5) {
+      cartToPolar(*x, *y, *magnitude, *angle);
+    } else {
+      bool angleInDegrees = lua_toboolean(L, 5);
+      cartToPolar(*x, *y, *magnitude, *angle, angleInDegrees);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.cartToPolar: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.cartToPolar: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.cartToPolar: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -1312,34 +2623,57 @@ static int cv_cartToPolar(lua_State *L) {
  * include/opencv/cxcore.hpp:1809
  */
 static int cv_checkRange2(lua_State *L) {
-  int top__ = lua_gettop(L);
-  bool  retval__;
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  if (top__ < 2) {
-    retval__ = checkRange(*a);
-  } else {
-    bool quiet = lua_toboolean(L, 2);
-    if (top__ < 3) {
-      retval__ = checkRange(*a, quiet);
+  try {
+    int top__ = lua_gettop(L);
+    bool  retval__;
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    if (top__ < 2) {
+      retval__ = checkRange(*a);
     } else {
-      
-      DubArgPointer<int> ptr_idx;
-      int *idx = ptr_idx(L, 3);
-      if (top__ < 4) {
-        retval__ = checkRange(*a, quiet, idx);
+      bool quiet = lua_toboolean(L, 2);
+      if (top__ < 3) {
+        retval__ = checkRange(*a, quiet);
       } else {
-        double minVal = luaL_checknumber(L, 4);
-        if (top__ < 5) {
-          retval__ = checkRange(*a, quiet, idx, minVal);
+        
+        DubArgPointer<int> ptr_idx;
+        int *idx = ptr_idx(L, 3);
+        if (top__ < 4) {
+          retval__ = checkRange(*a, quiet, idx);
         } else {
-          double maxVal = luaL_checknumber(L, 5);
-          retval__ = checkRange(*a, quiet, idx, minVal, maxVal);
+          double minVal = luaL_checknumber(L, 4);
+          if (top__ < 5) {
+            retval__ = checkRange(*a, quiet, idx, minVal);
+          } else {
+            double maxVal = luaL_checknumber(L, 5);
+            retval__ = checkRange(*a, quiet, idx, minVal, maxVal);
+          }
         }
       }
     }
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.checkRange: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.checkRange: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.checkRange: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  lua_pushnumber(L, retval__);
-  return 1;
 }
 
 
@@ -1361,28 +2695,51 @@ static int cv_checkRange(lua_State *L) {
  * include/opencv/cxcore.hpp:1287
  */
 static int cv_circle(lua_State *L) {
-  int top__ = lua_gettop(L);
-  Mat *img = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Point *center = *((Point **)luaL_checkudata(L, 2, "cv.Point"));
-  int radius = luaL_checkint(L, 3);
-  const Scalar *color = *((const Scalar **)luaL_checkudata(L, 4, "cv.Scalar"));
-  if (top__ < 5) {
-    circle(*img, *center, radius, *color);
-  } else {
-    int thickness = luaL_checkint(L, 5);
-    if (top__ < 6) {
-      circle(*img, *center, radius, *color, thickness);
+  try {
+    int top__ = lua_gettop(L);
+    Mat *img = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Point *center = *((Point **)luaL_checkudata(L, 2, "cv.Point"));
+    int radius = luaL_checkint(L, 3);
+    const Scalar *color = *((const Scalar **)luaL_checkudata(L, 4, "cv.Scalar"));
+    if (top__ < 5) {
+      circle(*img, *center, radius, *color);
     } else {
-      int lineType = luaL_checkint(L, 6);
-      if (top__ < 7) {
-        circle(*img, *center, radius, *color, thickness, lineType);
+      int thickness = luaL_checkint(L, 5);
+      if (top__ < 6) {
+        circle(*img, *center, radius, *color, thickness);
       } else {
-        int shift = luaL_checkint(L, 7);
-        circle(*img, *center, radius, *color, thickness, lineType, shift);
+        int lineType = luaL_checkint(L, 6);
+        if (top__ < 7) {
+          circle(*img, *center, radius, *color, thickness, lineType);
+        } else {
+          int shift = luaL_checkint(L, 7);
+          circle(*img, *center, radius, *color, thickness, lineType, shift);
+        }
       }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.circle: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.circle: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.circle: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -1392,12 +2749,35 @@ static int cv_circle(lua_State *L) {
  * include/opencv/cxcore.hpp:1308
  */
 static int cv_clipLine1(lua_State *L) {
-  Size *imgSize = *((Size **)luaL_checkudata(L, 1, "cv.Size"));
-  Point *pt1 = *((Point **)luaL_checkudata(L, 2, "cv.Point"));
-  Point *pt2 = *((Point **)luaL_checkudata(L, 3, "cv.Point"));
-  bool  retval__ = clipLine(*imgSize, *pt1, *pt2);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    Size *imgSize = *((Size **)luaL_checkudata(L, 1, "cv.Size"));
+    Point *pt1 = *((Point **)luaL_checkudata(L, 2, "cv.Point"));
+    Point *pt2 = *((Point **)luaL_checkudata(L, 3, "cv.Point"));
+    bool  retval__ = clipLine(*imgSize, *pt1, *pt2);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.clipLine: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.clipLine: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.clipLine: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -1405,12 +2785,35 @@ static int cv_clipLine1(lua_State *L) {
  * include/opencv/cxcore.hpp:1309
  */
 static int cv_clipLine2(lua_State *L) {
-  Rect *img_rect = *((Rect **)luaL_checkudata(L, 1, "cv.Rect"));
-  Point *pt1 = *((Point **)luaL_checkudata(L, 2, "cv.Point"));
-  Point *pt2 = *((Point **)luaL_checkudata(L, 3, "cv.Point"));
-  bool  retval__ = clipLine(*img_rect, *pt1, *pt2);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    Rect *img_rect = *((Rect **)luaL_checkudata(L, 1, "cv.Rect"));
+    Point *pt1 = *((Point **)luaL_checkudata(L, 2, "cv.Point"));
+    Point *pt2 = *((Point **)luaL_checkudata(L, 3, "cv.Point"));
+    bool  retval__ = clipLine(*img_rect, *pt1, *pt2);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.clipLine: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.clipLine: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.clipLine: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -1435,12 +2838,35 @@ static int cv_clipLine(lua_State *L) {
  * include/opencv/cxcore.hpp:1163
  */
 static int cv_compare1(lua_State *L) {
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  int cmpop = luaL_checkint(L, 4);
-  compare(*a, *b, *c, cmpop);
-  return 0;
+  try {
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    int cmpop = luaL_checkint(L, 4);
+    compare(*a, *b, *c, cmpop);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.compare: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.compare: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.compare: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -1448,12 +2874,35 @@ static int cv_compare1(lua_State *L) {
  * include/opencv/cxcore.hpp:1164
  */
 static int cv_compare2(lua_State *L) {
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  double s = luaL_checknumber(L, 2);
-  Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  int cmpop = luaL_checkint(L, 4);
-  compare(*a, s, *c, cmpop);
-  return 0;
+  try {
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    double s = luaL_checknumber(L, 2);
+    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    int cmpop = luaL_checkint(L, 4);
+    compare(*a, s, *c, cmpop);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.compare: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.compare: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.compare: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -1461,12 +2910,35 @@ static int cv_compare2(lua_State *L) {
  * include/opencv/cxcore.hpp:1797
  */
 static int cv_compare3(lua_State *L) {
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-  MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-  int cmpop = luaL_checkint(L, 4);
-  compare(*a, *b, *c, cmpop);
-  return 0;
+  try {
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    int cmpop = luaL_checkint(L, 4);
+    compare(*a, *b, *c, cmpop);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.compare: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.compare: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.compare: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -1474,12 +2946,35 @@ static int cv_compare3(lua_State *L) {
  * include/opencv/cxcore.hpp:1798
  */
 static int cv_compare4(lua_State *L) {
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  double s = luaL_checknumber(L, 2);
-  MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-  int cmpop = luaL_checkint(L, 4);
-  compare(*a, s, *c, cmpop);
-  return 0;
+  try {
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    double s = luaL_checknumber(L, 2);
+    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    int cmpop = luaL_checkint(L, 4);
+    compare(*a, s, *c, cmpop);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.compare: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.compare: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.compare: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -1520,12 +3015,35 @@ static int cv_compare(lua_State *L) {
  * include/opencv/cv.hpp:451
  */
 static int cv_compareHist1(lua_State *L) {
-  const MatND *H1 = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  const MatND *H2 = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-  int method = luaL_checkint(L, 3);
-  double  retval__ = compareHist(*H1, *H2, method);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    const MatND *H1 = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    const MatND *H2 = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    int method = luaL_checkint(L, 3);
+    double  retval__ = compareHist(*H1, *H2, method);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.compareHist: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.compareHist: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.compareHist: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -1533,12 +3051,35 @@ static int cv_compareHist1(lua_State *L) {
  * include/opencv/cv.hpp:453
  */
 static int cv_compareHist2(lua_State *L) {
-  const SparseMat *H1 = *((const SparseMat **)luaL_checkudata(L, 1, "cv.SparseMat"));
-  const SparseMat *H2 = *((const SparseMat **)luaL_checkudata(L, 2, "cv.SparseMat"));
-  int method = luaL_checkint(L, 3);
-  double  retval__ = compareHist(*H1, *H2, method);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    const SparseMat *H1 = *((const SparseMat **)luaL_checkudata(L, 1, "cv.SparseMat"));
+    const SparseMat *H2 = *((const SparseMat **)luaL_checkudata(L, 2, "cv.SparseMat"));
+    int method = luaL_checkint(L, 3);
+    double  retval__ = compareHist(*H1, *H2, method);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.compareHist: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.compareHist: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.compareHist: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -1562,15 +3103,38 @@ static int cv_compareHist(lua_State *L) {
  * include/opencv/cxcore.hpp:1196
  */
 static int cv_completeSymm(lua_State *L) {
-  int top__ = lua_gettop(L);
-  Mat *a = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  if (top__ < 2) {
-    completeSymm(*a);
-  } else {
-    bool lowerToUpper = lua_toboolean(L, 2);
-    completeSymm(*a, lowerToUpper);
+  try {
+    int top__ = lua_gettop(L);
+    Mat *a = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    if (top__ < 2) {
+      completeSymm(*a);
+    } else {
+      bool lowerToUpper = lua_toboolean(L, 2);
+      completeSymm(*a, lowerToUpper);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.completeSymm: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.completeSymm: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.completeSymm: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -1580,14 +3144,37 @@ static int cv_completeSymm(lua_State *L) {
  * include/opencv/cv.hpp:775
  */
 static int cv_composeRT1(lua_State *L) {
-  const Mat *rvec1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *tvec1 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  const Mat *rvec2 = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  const Mat *tvec2 = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  Mat *rvec3 = *((Mat **)luaL_checkudata(L, 5, "cv.Mat"));
-  Mat *tvec3 = *((Mat **)luaL_checkudata(L, 6, "cv.Mat"));
-  composeRT(*rvec1, *tvec1, *rvec2, *tvec2, *rvec3, *tvec3);
-  return 0;
+  try {
+    const Mat *rvec1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *tvec1 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *rvec2 = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *tvec2 = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    Mat *rvec3 = *((Mat **)luaL_checkudata(L, 5, "cv.Mat"));
+    Mat *tvec3 = *((Mat **)luaL_checkudata(L, 6, "cv.Mat"));
+    composeRT(*rvec1, *tvec1, *rvec2, *tvec2, *rvec3, *tvec3);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.composeRT: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.composeRT: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.composeRT: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -1595,22 +3182,45 @@ static int cv_composeRT1(lua_State *L) {
  * include/opencv/cv.hpp:783
  */
 static int cv_composeRT2(lua_State *L) {
-  const Mat *rvec1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *tvec1 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  const Mat *rvec2 = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  const Mat *tvec2 = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  Mat *rvec3 = *((Mat **)luaL_checkudata(L, 5, "cv.Mat"));
-  Mat *tvec3 = *((Mat **)luaL_checkudata(L, 6, "cv.Mat"));
-  Mat *dr3dr1 = *((Mat **)luaL_checkudata(L, 7, "cv.Mat"));
-  Mat *dr3dt1 = *((Mat **)luaL_checkudata(L, 8, "cv.Mat"));
-  Mat *dr3dr2 = *((Mat **)luaL_checkudata(L, 9, "cv.Mat"));
-  Mat *dr3dt2 = *((Mat **)luaL_checkudata(L, 10, "cv.Mat"));
-  Mat *dt3dr1 = *((Mat **)luaL_checkudata(L, 11, "cv.Mat"));
-  Mat *dt3dt1 = *((Mat **)luaL_checkudata(L, 12, "cv.Mat"));
-  Mat *dt3dr2 = *((Mat **)luaL_checkudata(L, 13, "cv.Mat"));
-  Mat *dt3dt2 = *((Mat **)luaL_checkudata(L, 14, "cv.Mat"));
-  composeRT(*rvec1, *tvec1, *rvec2, *tvec2, *rvec3, *tvec3, *dr3dr1, *dr3dt1, *dr3dr2, *dr3dt2, *dt3dr1, *dt3dt1, *dt3dr2, *dt3dt2);
-  return 0;
+  try {
+    const Mat *rvec1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *tvec1 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *rvec2 = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *tvec2 = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    Mat *rvec3 = *((Mat **)luaL_checkudata(L, 5, "cv.Mat"));
+    Mat *tvec3 = *((Mat **)luaL_checkudata(L, 6, "cv.Mat"));
+    Mat *dr3dr1 = *((Mat **)luaL_checkudata(L, 7, "cv.Mat"));
+    Mat *dr3dt1 = *((Mat **)luaL_checkudata(L, 8, "cv.Mat"));
+    Mat *dr3dr2 = *((Mat **)luaL_checkudata(L, 9, "cv.Mat"));
+    Mat *dr3dt2 = *((Mat **)luaL_checkudata(L, 10, "cv.Mat"));
+    Mat *dt3dr1 = *((Mat **)luaL_checkudata(L, 11, "cv.Mat"));
+    Mat *dt3dt1 = *((Mat **)luaL_checkudata(L, 12, "cv.Mat"));
+    Mat *dt3dr2 = *((Mat **)luaL_checkudata(L, 13, "cv.Mat"));
+    Mat *dt3dt2 = *((Mat **)luaL_checkudata(L, 14, "cv.Mat"));
+    composeRT(*rvec1, *tvec1, *rvec2, *tvec2, *rvec3, *tvec3, *dr3dr1, *dr3dt1, *dr3dr2, *dr3dt2, *dt3dr1, *dt3dt1, *dt3dr2, *dt3dt2);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.composeRT: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.composeRT: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.composeRT: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -1671,10 +3281,33 @@ static int cv_composeRT(lua_State *L) {
  * include/opencv/cv.hpp:561
  */
 static int cv_contourArea(lua_State *L) {
-  const Mat *contour = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  double  retval__ = contourArea(*contour);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    const Mat *contour = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    double  retval__ = contourArea(*contour);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.contourArea: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.contourArea: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.contourArea: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -1683,19 +3316,42 @@ static int cv_contourArea(lua_State *L) {
  * include/opencv/cv.hpp:361
  */
 static int cv_convertMaps(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *map1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *map2 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *dstmap1 = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  Mat *dstmap2 = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  int dstmap1type = luaL_checkint(L, 5);
-  if (top__ < 6) {
-    convertMaps(*map1, *map2, *dstmap1, *dstmap2, dstmap1type);
-  } else {
-    bool nninterpolation = lua_toboolean(L, 6);
-    convertMaps(*map1, *map2, *dstmap1, *dstmap2, dstmap1type, nninterpolation);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *map1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *map2 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *dstmap1 = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    Mat *dstmap2 = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    int dstmap1type = luaL_checkint(L, 5);
+    if (top__ < 6) {
+      convertMaps(*map1, *map2, *dstmap1, *dstmap2, dstmap1type);
+    } else {
+      bool nninterpolation = lua_toboolean(L, 6);
+      convertMaps(*map1, *map2, *dstmap1, *dstmap2, dstmap1type, nninterpolation);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.convertMaps: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.convertMaps: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.convertMaps: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -1704,21 +3360,44 @@ static int cv_convertMaps(lua_State *L) {
  * include/opencv/cxcore.hpp:1106
  */
 static int cv_convertScaleAbs(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *c = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  if (top__ < 3) {
-    convertScaleAbs(*a, *c);
-  } else {
-    double alpha = luaL_checknumber(L, 3);
-    if (top__ < 4) {
-      convertScaleAbs(*a, *c, alpha);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *c = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    if (top__ < 3) {
+      convertScaleAbs(*a, *c);
     } else {
-      double beta = luaL_checknumber(L, 4);
-      convertScaleAbs(*a, *c, alpha, beta);
+      double alpha = luaL_checknumber(L, 3);
+      if (top__ < 4) {
+        convertScaleAbs(*a, *c, alpha);
+      } else {
+        double beta = luaL_checknumber(L, 4);
+        convertScaleAbs(*a, *c, alpha, beta);
+      }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.convertScaleAbs: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.convertScaleAbs: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.convertScaleAbs: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -1727,21 +3406,44 @@ static int cv_convertScaleAbs(lua_State *L) {
  * include/opencv/cv.hpp:227
  */
 static int cv_copyMakeBorder(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  int top = luaL_checkint(L, 3);
-  int bottom = luaL_checkint(L, 4);
-  int left = luaL_checkint(L, 5);
-  int right = luaL_checkint(L, 6);
-  int borderType = luaL_checkint(L, 7);
-  if (top__ < 8) {
-    copyMakeBorder(*src, *dst, top, bottom, left, right, borderType);
-  } else {
-    const Scalar *value = *((const Scalar **)luaL_checkudata(L, 8, "cv.Scalar"));
-    copyMakeBorder(*src, *dst, top, bottom, left, right, borderType, *value);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    int top = luaL_checkint(L, 3);
+    int bottom = luaL_checkint(L, 4);
+    int left = luaL_checkint(L, 5);
+    int right = luaL_checkint(L, 6);
+    int borderType = luaL_checkint(L, 7);
+    if (top__ < 8) {
+      copyMakeBorder(*src, *dst, top, bottom, left, right, borderType);
+    } else {
+      const Scalar *value = *((const Scalar **)luaL_checkudata(L, 8, "cv.Scalar"));
+      copyMakeBorder(*src, *dst, top, bottom, left, right, borderType, *value);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.copyMakeBorder: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.copyMakeBorder: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.copyMakeBorder: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -1750,18 +3452,41 @@ static int cv_copyMakeBorder(lua_State *L) {
  * include/opencv/cv.hpp:283
  */
 static int cv_cornerEigenValsAndVecs(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  int blockSize = luaL_checkint(L, 3);
-  int ksize = luaL_checkint(L, 4);
-  if (top__ < 5) {
-    cornerEigenValsAndVecs(*src, *dst, blockSize, ksize);
-  } else {
-    int borderType = luaL_checkint(L, 5);
-    cornerEigenValsAndVecs(*src, *dst, blockSize, ksize, borderType);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    int blockSize = luaL_checkint(L, 3);
+    int ksize = luaL_checkint(L, 4);
+    if (top__ < 5) {
+      cornerEigenValsAndVecs(*src, *dst, blockSize, ksize);
+    } else {
+      int borderType = luaL_checkint(L, 5);
+      cornerEigenValsAndVecs(*src, *dst, blockSize, ksize, borderType);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.cornerEigenValsAndVecs: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.cornerEigenValsAndVecs: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.cornerEigenValsAndVecs: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -1770,19 +3495,42 @@ static int cv_cornerEigenValsAndVecs(lua_State *L) {
  * include/opencv/cv.hpp:279
  */
 static int cv_cornerHarris(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  int blockSize = luaL_checkint(L, 3);
-  int ksize = luaL_checkint(L, 4);
-  double k = luaL_checknumber(L, 5);
-  if (top__ < 6) {
-    cornerHarris(*src, *dst, blockSize, ksize, k);
-  } else {
-    int borderType = luaL_checkint(L, 6);
-    cornerHarris(*src, *dst, blockSize, ksize, k, borderType);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    int blockSize = luaL_checkint(L, 3);
+    int ksize = luaL_checkint(L, 4);
+    double k = luaL_checknumber(L, 5);
+    if (top__ < 6) {
+      cornerHarris(*src, *dst, blockSize, ksize, k);
+    } else {
+      int borderType = luaL_checkint(L, 6);
+      cornerHarris(*src, *dst, blockSize, ksize, k, borderType);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.cornerHarris: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.cornerHarris: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.cornerHarris: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -1791,22 +3539,45 @@ static int cv_cornerHarris(lua_State *L) {
  * include/opencv/cv.hpp:275
  */
 static int cv_cornerMinEigenVal(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  int blockSize = luaL_checkint(L, 3);
-  if (top__ < 4) {
-    cornerMinEigenVal(*src, *dst, blockSize);
-  } else {
-    int ksize = luaL_checkint(L, 4);
-    if (top__ < 5) {
-      cornerMinEigenVal(*src, *dst, blockSize, ksize);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    int blockSize = luaL_checkint(L, 3);
+    if (top__ < 4) {
+      cornerMinEigenVal(*src, *dst, blockSize);
     } else {
-      int borderType = luaL_checkint(L, 5);
-      cornerMinEigenVal(*src, *dst, blockSize, ksize, borderType);
+      int ksize = luaL_checkint(L, 4);
+      if (top__ < 5) {
+        cornerMinEigenVal(*src, *dst, blockSize, ksize);
+      } else {
+        int borderType = luaL_checkint(L, 5);
+        cornerMinEigenVal(*src, *dst, blockSize, ksize, borderType);
+      }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.cornerMinEigenVal: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.cornerMinEigenVal: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.cornerMinEigenVal: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -1816,10 +3587,33 @@ static int cv_cornerMinEigenVal(lua_State *L) {
  * include/opencv/cxcore.hpp:1110
  */
 static int cv_countNonZero1(lua_State *L) {
-  const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  int  retval__ = countNonZero(*m);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    int  retval__ = countNonZero(*m);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.countNonZero: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.countNonZero: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.countNonZero: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -1827,10 +3621,33 @@ static int cv_countNonZero1(lua_State *L) {
  * include/opencv/cxcore.hpp:1764
  */
 static int cv_countNonZero2(lua_State *L) {
-  const MatND *m = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  int  retval__ = countNonZero(*m);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    const MatND *m = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    int  retval__ = countNonZero(*m);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.countNonZero: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.countNonZero: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.countNonZero: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -1854,10 +3671,33 @@ static int cv_countNonZero(lua_State *L) {
  * include/opencv/cxcore.hpp:1174
  */
 static int cv_cubeRoot(lua_State *L) {
-  float val = luaL_checknumber(L, 1);
-  float  retval__ = cubeRoot(val);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    float val = luaL_checknumber(L, 1);
+    float  retval__ = cubeRoot(val);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.cubeRoot: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.cubeRoot: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.cubeRoot: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -1866,17 +3706,40 @@ static int cv_cubeRoot(lua_State *L) {
  * include/opencv/cv.hpp:505
  */
 static int cv_cvtColor(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  int code = luaL_checkint(L, 3);
-  if (top__ < 4) {
-    cvtColor(*src, *dst, code);
-  } else {
-    int dstCn = luaL_checkint(L, 4);
-    cvtColor(*src, *dst, code, dstCn);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    int code = luaL_checkint(L, 3);
+    if (top__ < 4) {
+      cvtColor(*src, *dst, code);
+    } else {
+      int dstCn = luaL_checkint(L, 4);
+      cvtColor(*src, *dst, code, dstCn);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.cvtColor: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.cvtColor: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.cvtColor: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -1885,16 +3748,39 @@ static int cv_cvtColor(lua_State *L) {
  * include/opencv/cxcore.hpp:1253
  */
 static int cv_dct(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  if (top__ < 3) {
-    dct(*src, *dst);
-  } else {
-    int flags = luaL_checkint(L, 3);
-    dct(*src, *dst, flags);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    if (top__ < 3) {
+      dct(*src, *dst);
+    } else {
+      int flags = luaL_checkint(L, 3);
+      dct(*src, *dst, flags);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.dct: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.dct: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.dct: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -1904,12 +3790,35 @@ static int cv_dct(lua_State *L) {
  * include/opencv/cv.hpp:765
  */
 static int cv_decomposeProjectionMatrix1(lua_State *L) {
-  const Mat *projMatrix = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *cameraMatrix = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *rotMatrix = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  Mat *transVect = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  decomposeProjectionMatrix(*projMatrix, *cameraMatrix, *rotMatrix, *transVect);
-  return 0;
+  try {
+    const Mat *projMatrix = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *cameraMatrix = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *rotMatrix = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    Mat *transVect = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    decomposeProjectionMatrix(*projMatrix, *cameraMatrix, *rotMatrix, *transVect);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.decomposeProjectionMatrix: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.decomposeProjectionMatrix: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.decomposeProjectionMatrix: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -1917,16 +3826,39 @@ static int cv_decomposeProjectionMatrix1(lua_State *L) {
  * include/opencv/cv.hpp:769
  */
 static int cv_decomposeProjectionMatrix2(lua_State *L) {
-  const Mat *projMatrix = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *cameraMatrix = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *rotMatrix = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  Mat *transVect = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  Mat *rotMatrixX = *((Mat **)luaL_checkudata(L, 5, "cv.Mat"));
-  Mat *rotMatrixY = *((Mat **)luaL_checkudata(L, 6, "cv.Mat"));
-  Mat *rotMatrixZ = *((Mat **)luaL_checkudata(L, 7, "cv.Mat"));
-  Vec3d *eulerAngles = *((Vec3d **)luaL_checkudata(L, 8, "cv.Vec3d"));
-  decomposeProjectionMatrix(*projMatrix, *cameraMatrix, *rotMatrix, *transVect, *rotMatrixX, *rotMatrixY, *rotMatrixZ, *eulerAngles);
-  return 0;
+  try {
+    const Mat *projMatrix = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *cameraMatrix = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *rotMatrix = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    Mat *transVect = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    Mat *rotMatrixX = *((Mat **)luaL_checkudata(L, 5, "cv.Mat"));
+    Mat *rotMatrixY = *((Mat **)luaL_checkudata(L, 6, "cv.Mat"));
+    Mat *rotMatrixZ = *((Mat **)luaL_checkudata(L, 7, "cv.Mat"));
+    Vec3d *eulerAngles = *((Vec3d **)luaL_checkudata(L, 8, "cv.Vec3d"));
+    decomposeProjectionMatrix(*projMatrix, *cameraMatrix, *rotMatrix, *transVect, *rotMatrixX, *rotMatrixY, *rotMatrixZ, *eulerAngles);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.decomposeProjectionMatrix: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.decomposeProjectionMatrix: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.decomposeProjectionMatrix: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -1975,10 +3907,33 @@ static int cv_decomposeProjectionMatrix(lua_State *L) {
  * include/opencv/cxcore.hpp:1198
  */
 static int cv_determinant(lua_State *L) {
-  const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  double  retval__ = determinant(*m);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    double  retval__ = determinant(*m);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.determinant: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.determinant: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.determinant: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -1987,21 +3942,44 @@ static int cv_determinant(lua_State *L) {
  * include/opencv/cxcore.hpp:1251
  */
 static int cv_dft(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  if (top__ < 3) {
-    dft(*src, *dst);
-  } else {
-    int flags = luaL_checkint(L, 3);
-    if (top__ < 4) {
-      dft(*src, *dst, flags);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    if (top__ < 3) {
+      dft(*src, *dst);
     } else {
-      int nonzeroRows = luaL_checkint(L, 4);
-      dft(*src, *dst, flags, nonzeroRows);
+      int flags = luaL_checkint(L, 3);
+      if (top__ < 4) {
+        dft(*src, *dst, flags);
+      } else {
+        int nonzeroRows = luaL_checkint(L, 4);
+        dft(*src, *dst, flags, nonzeroRows);
+      }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.dft: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.dft: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.dft: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -2010,32 +3988,55 @@ static int cv_dft(lua_State *L) {
  * include/opencv/cv.hpp:317
  */
 static int cv_dilate(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  const Mat *kernel = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  if (top__ < 4) {
-    dilate(*src, *dst, *kernel);
-  } else {
-    Point *anchor = *((Point **)luaL_checkudata(L, 4, "cv.Point"));
-    if (top__ < 5) {
-      dilate(*src, *dst, *kernel, *anchor);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *kernel = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    if (top__ < 4) {
+      dilate(*src, *dst, *kernel);
     } else {
-      int iterations = luaL_checkint(L, 5);
-      if (top__ < 6) {
-        dilate(*src, *dst, *kernel, *anchor, iterations);
+      Point *anchor = *((Point **)luaL_checkudata(L, 4, "cv.Point"));
+      if (top__ < 5) {
+        dilate(*src, *dst, *kernel, *anchor);
       } else {
-        int borderType = luaL_checkint(L, 6);
-        if (top__ < 7) {
-          dilate(*src, *dst, *kernel, *anchor, iterations, borderType);
+        int iterations = luaL_checkint(L, 5);
+        if (top__ < 6) {
+          dilate(*src, *dst, *kernel, *anchor, iterations);
         } else {
-          const Scalar *borderValue = *((const Scalar **)luaL_checkudata(L, 7, "cv.Scalar"));
-          dilate(*src, *dst, *kernel, *anchor, iterations, borderType, *borderValue);
+          int borderType = luaL_checkint(L, 6);
+          if (top__ < 7) {
+            dilate(*src, *dst, *kernel, *anchor, iterations, borderType);
+          } else {
+            const Scalar *borderValue = *((const Scalar **)luaL_checkudata(L, 7, "cv.Scalar"));
+            dilate(*src, *dst, *kernel, *anchor, iterations, borderType, *borderValue);
+          }
         }
       }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.dilate: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.dilate: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.dilate: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -2045,13 +4046,36 @@ static int cv_dilate(lua_State *L) {
  * include/opencv/cv.hpp:480
  */
 static int cv_distanceTransform1(lua_State *L) {
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *labels = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  int distanceType = luaL_checkint(L, 4);
-  int maskSize = luaL_checkint(L, 5);
-  distanceTransform(*src, *dst, *labels, distanceType, maskSize);
-  return 0;
+  try {
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *labels = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    int distanceType = luaL_checkint(L, 4);
+    int maskSize = luaL_checkint(L, 5);
+    distanceTransform(*src, *dst, *labels, distanceType, maskSize);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.distanceTransform: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.distanceTransform: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.distanceTransform: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -2059,12 +4083,35 @@ static int cv_distanceTransform1(lua_State *L) {
  * include/opencv/cv.hpp:483
  */
 static int cv_distanceTransform2(lua_State *L) {
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  int distanceType = luaL_checkint(L, 3);
-  int maskSize = luaL_checkint(L, 4);
-  distanceTransform(*src, *dst, distanceType, maskSize);
-  return 0;
+  try {
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    int distanceType = luaL_checkint(L, 3);
+    int maskSize = luaL_checkint(L, 4);
+    distanceTransform(*src, *dst, distanceType, maskSize);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.distanceTransform: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.distanceTransform: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.distanceTransform: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -2101,17 +4148,40 @@ static int cv_distanceTransform(lua_State *L) {
  * include/opencv/cxcore.hpp:1099
  */
 static int cv_divide1(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  if (top__ < 4) {
-    divide(*a, *b, *c);
-  } else {
-    double scale = luaL_checknumber(L, 4);
-    divide(*a, *b, *c, scale);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    if (top__ < 4) {
+      divide(*a, *b, *c);
+    } else {
+      double scale = luaL_checknumber(L, 4);
+      divide(*a, *b, *c, scale);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.divide: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.divide: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.divide: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -2119,11 +4189,34 @@ static int cv_divide1(lua_State *L) {
  * include/opencv/cxcore.hpp:1100
  */
 static int cv_divide2(lua_State *L) {
-  double scale = luaL_checknumber(L, 1);
-  const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  divide(scale, *b, *c);
-  return 0;
+  try {
+    double scale = luaL_checknumber(L, 1);
+    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    divide(scale, *b, *c);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.divide: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.divide: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.divide: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -2131,17 +4224,40 @@ static int cv_divide2(lua_State *L) {
  * include/opencv/cxcore.hpp:1755
  */
 static int cv_divide3(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-  MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-  if (top__ < 4) {
-    divide(*a, *b, *c);
-  } else {
-    double scale = luaL_checknumber(L, 4);
-    divide(*a, *b, *c, scale);
+  try {
+    int top__ = lua_gettop(L);
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    if (top__ < 4) {
+      divide(*a, *b, *c);
+    } else {
+      double scale = luaL_checknumber(L, 4);
+      divide(*a, *b, *c, scale);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.divide: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.divide: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.divide: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -2149,11 +4265,34 @@ static int cv_divide3(lua_State *L) {
  * include/opencv/cxcore.hpp:1756
  */
 static int cv_divide4(lua_State *L) {
-  double scale = luaL_checknumber(L, 1);
-  const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-  MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-  divide(scale, *b, *c);
-  return 0;
+  try {
+    double scale = luaL_checknumber(L, 1);
+    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    divide(scale, *b, *c);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.divide: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.divide: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.divide: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -2187,12 +4326,35 @@ static int cv_divide(lua_State *L) {
  * include/opencv/cv.hpp:822
  */
 static int cv_drawChessboardCorners(lua_State *L) {
-  Mat *image = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Size *patternSize = *((Size **)luaL_checkudata(L, 2, "cv.Size"));
-  const Mat *corners = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  bool patternWasFound = lua_toboolean(L, 4);
-  drawChessboardCorners(*image, *patternSize, *corners, patternWasFound);
-  return 0;
+  try {
+    Mat *image = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Size *patternSize = *((Size **)luaL_checkudata(L, 2, "cv.Size"));
+    const Mat *corners = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    bool patternWasFound = lua_toboolean(L, 4);
+    drawChessboardCorners(*image, *patternSize, *corners, patternWasFound);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.drawChessboardCorners: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.drawChessboardCorners: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.drawChessboardCorners: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -2202,23 +4364,46 @@ static int cv_drawChessboardCorners(lua_State *L) {
  * include/opencv/cxcore.hpp:1207
  */
 static int cv_eigen1(lua_State *L) {
-  int top__ = lua_gettop(L);
-  bool  retval__;
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *eigenvalues = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  if (top__ < 3) {
-    retval__ = eigen(*a, *eigenvalues);
-  } else {
-    int lowindex = luaL_checkint(L, 3);
-    if (top__ < 4) {
-      retval__ = eigen(*a, *eigenvalues, lowindex);
+  try {
+    int top__ = lua_gettop(L);
+    bool  retval__;
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *eigenvalues = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    if (top__ < 3) {
+      retval__ = eigen(*a, *eigenvalues);
     } else {
-      int highindex = luaL_checkint(L, 4);
-      retval__ = eigen(*a, *eigenvalues, lowindex, highindex);
+      int lowindex = luaL_checkint(L, 3);
+      if (top__ < 4) {
+        retval__ = eigen(*a, *eigenvalues, lowindex);
+      } else {
+        int highindex = luaL_checkint(L, 4);
+        retval__ = eigen(*a, *eigenvalues, lowindex, highindex);
+      }
     }
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.eigen: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.eigen: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.eigen: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  lua_pushnumber(L, retval__);
-  return 1;
 }
 
 
@@ -2226,24 +4411,47 @@ static int cv_eigen1(lua_State *L) {
  * include/opencv/cxcore.hpp:1209
  */
 static int cv_eigen2(lua_State *L) {
-  int top__ = lua_gettop(L);
-  bool  retval__;
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *eigenvalues = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *eigenvectors = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  if (top__ < 4) {
-    retval__ = eigen(*a, *eigenvalues, *eigenvectors);
-  } else {
-    int lowindex = luaL_checkint(L, 4);
-    if (top__ < 5) {
-      retval__ = eigen(*a, *eigenvalues, *eigenvectors, lowindex);
+  try {
+    int top__ = lua_gettop(L);
+    bool  retval__;
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *eigenvalues = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *eigenvectors = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    if (top__ < 4) {
+      retval__ = eigen(*a, *eigenvalues, *eigenvectors);
     } else {
-      int highindex = luaL_checkint(L, 5);
-      retval__ = eigen(*a, *eigenvalues, *eigenvectors, lowindex, highindex);
+      int lowindex = luaL_checkint(L, 4);
+      if (top__ < 5) {
+        retval__ = eigen(*a, *eigenvalues, *eigenvectors, lowindex);
+      } else {
+        int highindex = luaL_checkint(L, 5);
+        retval__ = eigen(*a, *eigenvalues, *eigenvectors, lowindex, highindex);
+      }
     }
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.eigen: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.eigen: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.eigen: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  lua_pushnumber(L, retval__);
-  return 1;
 }
 
 
@@ -2280,31 +4488,54 @@ static int cv_eigen(lua_State *L) {
  * include/opencv/cxcore.hpp:1292
  */
 static int cv_ellipse1(lua_State *L) {
-  int top__ = lua_gettop(L);
-  Mat *img = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Point *center = *((Point **)luaL_checkudata(L, 2, "cv.Point"));
-  Size *axes = *((Size **)luaL_checkudata(L, 3, "cv.Size"));
-  double angle = luaL_checknumber(L, 4);
-  double startAngle = luaL_checknumber(L, 5);
-  double endAngle = luaL_checknumber(L, 6);
-  const Scalar *color = *((const Scalar **)luaL_checkudata(L, 7, "cv.Scalar"));
-  if (top__ < 8) {
-    ellipse(*img, *center, *axes, angle, startAngle, endAngle, *color);
-  } else {
-    int thickness = luaL_checkint(L, 8);
-    if (top__ < 9) {
-      ellipse(*img, *center, *axes, angle, startAngle, endAngle, *color, thickness);
+  try {
+    int top__ = lua_gettop(L);
+    Mat *img = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Point *center = *((Point **)luaL_checkudata(L, 2, "cv.Point"));
+    Size *axes = *((Size **)luaL_checkudata(L, 3, "cv.Size"));
+    double angle = luaL_checknumber(L, 4);
+    double startAngle = luaL_checknumber(L, 5);
+    double endAngle = luaL_checknumber(L, 6);
+    const Scalar *color = *((const Scalar **)luaL_checkudata(L, 7, "cv.Scalar"));
+    if (top__ < 8) {
+      ellipse(*img, *center, *axes, angle, startAngle, endAngle, *color);
     } else {
-      int lineType = luaL_checkint(L, 9);
-      if (top__ < 10) {
-        ellipse(*img, *center, *axes, angle, startAngle, endAngle, *color, thickness, lineType);
+      int thickness = luaL_checkint(L, 8);
+      if (top__ < 9) {
+        ellipse(*img, *center, *axes, angle, startAngle, endAngle, *color, thickness);
       } else {
-        int shift = luaL_checkint(L, 10);
-        ellipse(*img, *center, *axes, angle, startAngle, endAngle, *color, thickness, lineType, shift);
+        int lineType = luaL_checkint(L, 9);
+        if (top__ < 10) {
+          ellipse(*img, *center, *axes, angle, startAngle, endAngle, *color, thickness, lineType);
+        } else {
+          int shift = luaL_checkint(L, 10);
+          ellipse(*img, *center, *axes, angle, startAngle, endAngle, *color, thickness, lineType, shift);
+        }
       }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.ellipse: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.ellipse: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.ellipse: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -2312,22 +4543,45 @@ static int cv_ellipse1(lua_State *L) {
  * include/opencv/cxcore.hpp:1295
  */
 static int cv_ellipse2(lua_State *L) {
-  int top__ = lua_gettop(L);
-  Mat *img = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const RotatedRect *box = *((const RotatedRect **)luaL_checkudata(L, 2, "cv.RotatedRect"));
-  const Scalar *color = *((const Scalar **)luaL_checkudata(L, 3, "cv.Scalar"));
-  if (top__ < 4) {
-    ellipse(*img, *box, *color);
-  } else {
-    int thickness = luaL_checkint(L, 4);
-    if (top__ < 5) {
-      ellipse(*img, *box, *color, thickness);
+  try {
+    int top__ = lua_gettop(L);
+    Mat *img = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const RotatedRect *box = *((const RotatedRect **)luaL_checkudata(L, 2, "cv.RotatedRect"));
+    const Scalar *color = *((const Scalar **)luaL_checkudata(L, 3, "cv.Scalar"));
+    if (top__ < 4) {
+      ellipse(*img, *box, *color);
     } else {
-      int lineType = luaL_checkint(L, 5);
-      ellipse(*img, *box, *color, thickness, lineType);
+      int thickness = luaL_checkint(L, 4);
+      if (top__ < 5) {
+        ellipse(*img, *box, *color, thickness);
+      } else {
+        int lineType = luaL_checkint(L, 5);
+        ellipse(*img, *box, *color, thickness, lineType);
+      }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.ellipse: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.ellipse: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.ellipse: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -2357,10 +4611,33 @@ static int cv_ellipse(lua_State *L) {
  * include/opencv/cv.hpp:455
  */
 static int cv_equalizeHist(lua_State *L) {
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  equalizeHist(*src, *dst);
-  return 0;
+  try {
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    equalizeHist(*src, *dst);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.equalizeHist: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.equalizeHist: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.equalizeHist: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -2369,32 +4646,55 @@ static int cv_equalizeHist(lua_State *L) {
  * include/opencv/cv.hpp:313
  */
 static int cv_erode(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  const Mat *kernel = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  if (top__ < 4) {
-    erode(*src, *dst, *kernel);
-  } else {
-    Point *anchor = *((Point **)luaL_checkudata(L, 4, "cv.Point"));
-    if (top__ < 5) {
-      erode(*src, *dst, *kernel, *anchor);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *kernel = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    if (top__ < 4) {
+      erode(*src, *dst, *kernel);
     } else {
-      int iterations = luaL_checkint(L, 5);
-      if (top__ < 6) {
-        erode(*src, *dst, *kernel, *anchor, iterations);
+      Point *anchor = *((Point **)luaL_checkudata(L, 4, "cv.Point"));
+      if (top__ < 5) {
+        erode(*src, *dst, *kernel, *anchor);
       } else {
-        int borderType = luaL_checkint(L, 6);
-        if (top__ < 7) {
-          erode(*src, *dst, *kernel, *anchor, iterations, borderType);
+        int iterations = luaL_checkint(L, 5);
+        if (top__ < 6) {
+          erode(*src, *dst, *kernel, *anchor, iterations);
         } else {
-          const Scalar *borderValue = *((const Scalar **)luaL_checkudata(L, 7, "cv.Scalar"));
-          erode(*src, *dst, *kernel, *anchor, iterations, borderType, *borderValue);
+          int borderType = luaL_checkint(L, 6);
+          if (top__ < 7) {
+            erode(*src, *dst, *kernel, *anchor, iterations, borderType);
+          } else {
+            const Scalar *borderValue = *((const Scalar **)luaL_checkudata(L, 7, "cv.Scalar"));
+            erode(*src, *dst, *kernel, *anchor, iterations, borderType, *borderValue);
+          }
         }
       }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.erode: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.erode: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.erode: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -2403,9 +4703,32 @@ static int cv_erode(lua_State *L) {
  * include/opencv/cxcore.hpp:111
  */
 static int cv_error(lua_State *L) {
-  const Exception *exc = *((const Exception **)luaL_checkudata(L, 1, "cv.Exception"));
-  error(*exc);
-  return 0;
+  try {
+    const Exception *exc = *((const Exception **)luaL_checkudata(L, 1, "cv.Exception"));
+    error(*exc);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.error: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.error: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.error: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -2414,12 +4737,35 @@ static int cv_error(lua_State *L) {
  * include/opencv/cv.hpp:586
  */
 static int cv_estimateRigidTransform(lua_State *L) {
-  const Mat *A = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *B = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  bool fullAffine = lua_toboolean(L, 3);
-  Mat  retval__ = estimateRigidTransform(*A, *B, fullAffine);
-  lua_pushclass<Mat>(L, retval__, "cv.Mat");
-  return 1;
+  try {
+    const Mat *A = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *B = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    bool fullAffine = lua_toboolean(L, 3);
+    Mat  retval__ = estimateRigidTransform(*A, *B, fullAffine);
+    lua_pushclass<Mat>(L, retval__, "cv.Mat");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.estimateRigidTransform: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.estimateRigidTransform: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.estimateRigidTransform: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -2429,10 +4775,33 @@ static int cv_estimateRigidTransform(lua_State *L) {
  * include/opencv/cxcore.hpp:1172
  */
 static int cv_exp1(lua_State *L) {
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *b = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  exp(*a, *b);
-  return 0;
+  try {
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *b = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    exp(*a, *b);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.exp: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.exp: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.exp: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -2440,10 +4809,33 @@ static int cv_exp1(lua_State *L) {
  * include/opencv/cxcore.hpp:1806
  */
 static int cv_exp2(lua_State *L) {
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  MatND *b = *((MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-  exp(*a, *b);
-  return 0;
+  try {
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    MatND *b = *((MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    exp(*a, *b);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.exp: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.exp: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.exp: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -2467,11 +4859,34 @@ static int cv_exp(lua_State *L) {
  * include/opencv/cxcore.hpp:1175
  */
 static int cv_fastAtan2(lua_State *L) {
-  float y = luaL_checknumber(L, 1);
-  float x = luaL_checknumber(L, 2);
-  float  retval__ = fastAtan2(y, x);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    float y = luaL_checknumber(L, 1);
+    float x = luaL_checknumber(L, 2);
+    float  retval__ = fastAtan2(y, x);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.fastAtan2: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.fastAtan2: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.fastAtan2: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -2480,28 +4895,51 @@ static int cv_fastAtan2(lua_State *L) {
  * include/opencv/cv.hpp:249
  */
 static int cv_filter2D(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  int ddepth = luaL_checkint(L, 3);
-  const Mat *kernel = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  if (top__ < 5) {
-    filter2D(*src, *dst, ddepth, *kernel);
-  } else {
-    Point *anchor = *((Point **)luaL_checkudata(L, 5, "cv.Point"));
-    if (top__ < 6) {
-      filter2D(*src, *dst, ddepth, *kernel, *anchor);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    int ddepth = luaL_checkint(L, 3);
+    const Mat *kernel = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    if (top__ < 5) {
+      filter2D(*src, *dst, ddepth, *kernel);
     } else {
-      double delta = luaL_checknumber(L, 6);
-      if (top__ < 7) {
-        filter2D(*src, *dst, ddepth, *kernel, *anchor, delta);
+      Point *anchor = *((Point **)luaL_checkudata(L, 5, "cv.Point"));
+      if (top__ < 6) {
+        filter2D(*src, *dst, ddepth, *kernel, *anchor);
       } else {
-        int borderType = luaL_checkint(L, 7);
-        filter2D(*src, *dst, ddepth, *kernel, *anchor, delta, borderType);
+        double delta = luaL_checknumber(L, 6);
+        if (top__ < 7) {
+          filter2D(*src, *dst, ddepth, *kernel, *anchor, delta);
+        } else {
+          int borderType = luaL_checkint(L, 7);
+          filter2D(*src, *dst, ddepth, *kernel, *anchor, delta, borderType);
+        }
       }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.filter2D: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.filter2D: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.filter2D: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -2510,13 +4948,36 @@ static int cv_filter2D(lua_State *L) {
  * include/opencv/cv.hpp:963
  */
 static int cv_filterSpeckles(lua_State *L) {
-  Mat *img = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  double newVal = luaL_checknumber(L, 2);
-  int maxSpeckleSize = luaL_checkint(L, 3);
-  double maxDiff = luaL_checknumber(L, 4);
-  Mat *buf = *((Mat **)luaL_checkudata(L, 5, "cv.Mat"));
-  filterSpeckles(*img, newVal, maxSpeckleSize, maxDiff, *buf);
-  return 0;
+  try {
+    Mat *img = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    double newVal = luaL_checknumber(L, 2);
+    int maxSpeckleSize = luaL_checkint(L, 3);
+    double maxDiff = luaL_checknumber(L, 4);
+    Mat *buf = *((Mat **)luaL_checkudata(L, 5, "cv.Mat"));
+    filterSpeckles(*img, newVal, maxSpeckleSize, maxDiff, *buf);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.filterSpeckles: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.filterSpeckles: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.filterSpeckles: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -2526,28 +4987,51 @@ static int cv_filterSpeckles(lua_State *L) {
  * include/opencv/cv.hpp:906
  */
 static int cv_findFundamentalMat2(lua_State *L) {
-  int top__ = lua_gettop(L);
-  Mat  retval__;
-  const Mat *points1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *points2 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  if (top__ < 3) {
-    retval__ = findFundamentalMat(*points1, *points2);
-  } else {
-    int method = luaL_checkint(L, 3);
-    if (top__ < 4) {
-      retval__ = findFundamentalMat(*points1, *points2, method);
+  try {
+    int top__ = lua_gettop(L);
+    Mat  retval__;
+    const Mat *points1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *points2 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    if (top__ < 3) {
+      retval__ = findFundamentalMat(*points1, *points2);
     } else {
-      double param1 = luaL_checknumber(L, 4);
-      if (top__ < 5) {
-        retval__ = findFundamentalMat(*points1, *points2, method, param1);
+      int method = luaL_checkint(L, 3);
+      if (top__ < 4) {
+        retval__ = findFundamentalMat(*points1, *points2, method);
       } else {
-        double param2 = luaL_checknumber(L, 5);
-        retval__ = findFundamentalMat(*points1, *points2, method, param1, param2);
+        double param1 = luaL_checknumber(L, 4);
+        if (top__ < 5) {
+          retval__ = findFundamentalMat(*points1, *points2, method, param1);
+        } else {
+          double param2 = luaL_checknumber(L, 5);
+          retval__ = findFundamentalMat(*points1, *points2, method, param1, param2);
+        }
       }
     }
+    lua_pushclass<Mat>(L, retval__, "cv.Mat");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.findFundamentalMat: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.findFundamentalMat: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.findFundamentalMat: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  lua_pushclass<Mat>(L, retval__, "cv.Mat");
-  return 1;
 }
 
 
@@ -2569,10 +5053,33 @@ static int cv_findFundamentalMat(lua_State *L) {
  * include/opencv/cv.hpp:575
  */
 static int cv_fitEllipse(lua_State *L) {
-  const Mat *points = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  RotatedRect  retval__ = fitEllipse(*points);
-  lua_pushclass<RotatedRect>(L, retval__, "cv.RotatedRect");
-  return 1;
+  try {
+    const Mat *points = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    RotatedRect  retval__ = fitEllipse(*points);
+    lua_pushclass<RotatedRect>(L, retval__, "cv.RotatedRect");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.fitEllipse: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.fitEllipse: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.fitEllipse: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -2581,14 +5088,37 @@ static int cv_fitEllipse(lua_State *L) {
  * include/opencv/cv.hpp:578
  */
 static int cv_fitLine(lua_State *L) {
-  const Mat *points = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Vec4f *line = *((Vec4f **)luaL_checkudata(L, 2, "cv.Vec4f"));
-  int distType = luaL_checkint(L, 3);
-  double param = luaL_checknumber(L, 4);
-  double reps = luaL_checknumber(L, 5);
-  double aeps = luaL_checknumber(L, 6);
-  fitLine(*points, *line, distType, param, reps, aeps);
-  return 0;
+  try {
+    const Mat *points = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Vec4f *line = *((Vec4f **)luaL_checkudata(L, 2, "cv.Vec4f"));
+    int distType = luaL_checkint(L, 3);
+    double param = luaL_checknumber(L, 4);
+    double reps = luaL_checknumber(L, 5);
+    double aeps = luaL_checknumber(L, 6);
+    fitLine(*points, *line, distType, param, reps, aeps);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.fitLine: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.fitLine: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.fitLine: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -2597,11 +5127,34 @@ static int cv_fitLine(lua_State *L) {
  * include/opencv/cxcore.hpp:1141
  */
 static int cv_flip(lua_State *L) {
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *b = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  int flipCode = luaL_checkint(L, 3);
-  flip(*a, *b, flipCode);
-  return 0;
+  try {
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *b = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    int flipCode = luaL_checkint(L, 3);
+    flip(*a, *b, flipCode);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.flip: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.flip: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.flip: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -2610,10 +5163,33 @@ static int cv_flip(lua_State *L) {
  * include/opencv/cxcore.hpp:77
  */
 static int cv_fromUtf16(lua_State *L) {
-  const WString *str = *((const WString **)luaL_checkudata(L, 1, "cv.WString"));
-  string  retval__ = fromUtf16(*str);
-  lua_pushclass<string>(L, retval__, "cv.string");
-  return 1;
+  try {
+    const WString *str = *((const WString **)luaL_checkudata(L, 1, "cv.WString"));
+    string  retval__ = fromUtf16(*str);
+    lua_pushclass<string>(L, retval__, "cv.string");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.fromUtf16: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.fromUtf16: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.fromUtf16: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -2622,20 +5198,43 @@ static int cv_fromUtf16(lua_State *L) {
  * include/opencv/cxcore.hpp:1188
  */
 static int cv_gemm(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  double alpha = luaL_checknumber(L, 3);
-  const Mat *c = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  double gamma = luaL_checknumber(L, 5);
-  Mat *d = *((Mat **)luaL_checkudata(L, 6, "cv.Mat"));
-  if (top__ < 7) {
-    gemm(*a, *b, alpha, *c, gamma, *d);
-  } else {
-    int flags = luaL_checkint(L, 7);
-    gemm(*a, *b, alpha, *c, gamma, *d, flags);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    double alpha = luaL_checknumber(L, 3);
+    const Mat *c = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    double gamma = luaL_checknumber(L, 5);
+    Mat *d = *((Mat **)luaL_checkudata(L, 6, "cv.Mat"));
+    if (top__ < 7) {
+      gemm(*a, *b, alpha, *c, gamma, *d);
+    } else {
+      int flags = luaL_checkint(L, 7);
+      gemm(*a, *b, alpha, *c, gamma, *d, flags);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.gemm: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.gemm: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.gemm: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -2644,9 +5243,32 @@ static int cv_gemm(lua_State *L) {
  * include/opencv/cxcore.hpp:138
  */
 static int cv_getCPUTickCount(lua_State *L) {
-  int64  retval__ = getCPUTickCount();
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    int64  retval__ = getCPUTickCount();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.getCPUTickCount: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.getCPUTickCount: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.getCPUTickCount: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -2655,22 +5277,45 @@ static int cv_getCPUTickCount(lua_State *L) {
  * include/opencv/cv.hpp:407
  */
 static int cv_getDefaultNewCameraMatrix(lua_State *L) {
-  int top__ = lua_gettop(L);
-  Mat  retval__;
-  const Mat *cameraMatrix = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  if (top__ < 2) {
-    retval__ = getDefaultNewCameraMatrix(*cameraMatrix);
-  } else {
-    Size *imgsize = *((Size **)luaL_checkudata(L, 2, "cv.Size"));
-    if (top__ < 3) {
-      retval__ = getDefaultNewCameraMatrix(*cameraMatrix, *imgsize);
+  try {
+    int top__ = lua_gettop(L);
+    Mat  retval__;
+    const Mat *cameraMatrix = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    if (top__ < 2) {
+      retval__ = getDefaultNewCameraMatrix(*cameraMatrix);
     } else {
-      bool centerPrincipalPoint = lua_toboolean(L, 3);
-      retval__ = getDefaultNewCameraMatrix(*cameraMatrix, *imgsize, centerPrincipalPoint);
+      Size *imgsize = *((Size **)luaL_checkudata(L, 2, "cv.Size"));
+      if (top__ < 3) {
+        retval__ = getDefaultNewCameraMatrix(*cameraMatrix, *imgsize);
+      } else {
+        bool centerPrincipalPoint = lua_toboolean(L, 3);
+        retval__ = getDefaultNewCameraMatrix(*cameraMatrix, *imgsize, centerPrincipalPoint);
+      }
     }
+    lua_pushclass<Mat>(L, retval__, "cv.Mat");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.getDefaultNewCameraMatrix: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.getDefaultNewCameraMatrix: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.getDefaultNewCameraMatrix: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  lua_pushclass<Mat>(L, retval__, "cv.Mat");
-  return 1;
 }
 
 
@@ -2679,24 +5324,47 @@ static int cv_getDefaultNewCameraMatrix(lua_State *L) {
  * include/opencv/cv.hpp:187
  */
 static int cv_getDerivKernels(lua_State *L) {
-  int top__ = lua_gettop(L);
-  Mat *kx = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *ky = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  int dx = luaL_checkint(L, 3);
-  int dy = luaL_checkint(L, 4);
-  int ksize = luaL_checkint(L, 5);
-  if (top__ < 6) {
-    getDerivKernels(*kx, *ky, dx, dy, ksize);
-  } else {
-    bool normalize = lua_toboolean(L, 6);
-    if (top__ < 7) {
-      getDerivKernels(*kx, *ky, dx, dy, ksize, normalize);
+  try {
+    int top__ = lua_gettop(L);
+    Mat *kx = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *ky = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    int dx = luaL_checkint(L, 3);
+    int dy = luaL_checkint(L, 4);
+    int ksize = luaL_checkint(L, 5);
+    if (top__ < 6) {
+      getDerivKernels(*kx, *ky, dx, dy, ksize);
     } else {
-      int ktype = luaL_checkint(L, 7);
-      getDerivKernels(*kx, *ky, dx, dy, ksize, normalize, ktype);
+      bool normalize = lua_toboolean(L, 6);
+      if (top__ < 7) {
+        getDerivKernels(*kx, *ky, dx, dy, ksize, normalize);
+      } else {
+        int ktype = luaL_checkint(L, 7);
+        getDerivKernels(*kx, *ky, dx, dy, ksize, normalize, ktype);
+      }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.getDerivKernels: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.getDerivKernels: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.getDerivKernels: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -2705,10 +5373,33 @@ static int cv_getDerivKernels(lua_State *L) {
  * include/opencv/cxcore.hpp:732
  */
 static int cv_getElemSize(lua_State *L) {
-  int type = luaL_checkint(L, 1);
-  size_t  retval__ = getElemSize(type);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    int type = luaL_checkint(L, 1);
+    size_t  retval__ = getElemSize(type);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.getElemSize: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.getElemSize: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.getElemSize: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -2717,18 +5408,41 @@ static int cv_getElemSize(lua_State *L) {
  * include/opencv/cv.hpp:180
  */
 static int cv_getGaussianKernel(lua_State *L) {
-  int top__ = lua_gettop(L);
-  Mat  retval__;
-  int ksize = luaL_checkint(L, 1);
-  double sigma = luaL_checknumber(L, 2);
-  if (top__ < 3) {
-    retval__ = getGaussianKernel(ksize, sigma);
-  } else {
-    int ktype = luaL_checkint(L, 3);
-    retval__ = getGaussianKernel(ksize, sigma, ktype);
+  try {
+    int top__ = lua_gettop(L);
+    Mat  retval__;
+    int ksize = luaL_checkint(L, 1);
+    double sigma = luaL_checknumber(L, 2);
+    if (top__ < 3) {
+      retval__ = getGaussianKernel(ksize, sigma);
+    } else {
+      int ktype = luaL_checkint(L, 3);
+      retval__ = getGaussianKernel(ksize, sigma, ktype);
+    }
+    lua_pushclass<Mat>(L, retval__, "cv.Mat");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.getGaussianKernel: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.getGaussianKernel: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.getGaussianKernel: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  lua_pushclass<Mat>(L, retval__, "cv.Mat");
-  return 1;
 }
 
 
@@ -2737,11 +5451,34 @@ static int cv_getGaussianKernel(lua_State *L) {
  * include/opencv/cv.hpp:152
  */
 static int cv_getKernelType(lua_State *L) {
-  const Mat *kernel = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Point *anchor = *((Point **)luaL_checkudata(L, 2, "cv.Point"));
-  int  retval__ = getKernelType(*kernel, *anchor);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    const Mat *kernel = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Point *anchor = *((Point **)luaL_checkudata(L, 2, "cv.Point"));
+    int  retval__ = getKernelType(*kernel, *anchor);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.getKernelType: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.getKernelType: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.getKernelType: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -2750,9 +5487,32 @@ static int cv_getKernelType(lua_State *L) {
  * include/opencv/cxcore.hpp:133
  */
 static int cv_getNumThreads(lua_State *L) {
-  int  retval__ = getNumThreads();
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    int  retval__ = getNumThreads();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.getNumThreads: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.getNumThreads: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.getNumThreads: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -2761,10 +5521,33 @@ static int cv_getNumThreads(lua_State *L) {
  * include/opencv/cxcore.hpp:1257
  */
 static int cv_getOptimalDFTSize(lua_State *L) {
-  int vecsize = luaL_checkint(L, 1);
-  int  retval__ = getOptimalDFTSize(vecsize);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    int vecsize = luaL_checkint(L, 1);
+    int  retval__ = getOptimalDFTSize(vecsize);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.getOptimalDFTSize: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.getOptimalDFTSize: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.getOptimalDFTSize: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -2773,18 +5556,41 @@ static int cv_getOptimalDFTSize(lua_State *L) {
  * include/opencv/cv.hpp:369
  */
 static int cv_getRectSubPix(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *image = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Size *patchSize = *((Size **)luaL_checkudata(L, 2, "cv.Size"));
-  Point2f *center = *((Point2f **)luaL_checkudata(L, 3, "cv.Point2f"));
-  Mat *patch = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  if (top__ < 5) {
-    getRectSubPix(*image, *patchSize, *center, *patch);
-  } else {
-    int patchType = luaL_checkint(L, 5);
-    getRectSubPix(*image, *patchSize, *center, *patch, patchType);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *image = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Size *patchSize = *((Size **)luaL_checkudata(L, 2, "cv.Size"));
+    Point2f *center = *((Point2f **)luaL_checkudata(L, 3, "cv.Point2f"));
+    Mat *patch = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    if (top__ < 5) {
+      getRectSubPix(*image, *patchSize, *center, *patch);
+    } else {
+      int patchType = luaL_checkint(L, 5);
+      getRectSubPix(*image, *patchSize, *center, *patch, patchType);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.getRectSubPix: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.getRectSubPix: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.getRectSubPix: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -2793,12 +5599,35 @@ static int cv_getRectSubPix(lua_State *L) {
  * include/opencv/cv.hpp:363
  */
 static int cv_getRotationMatrix2D(lua_State *L) {
-  Point2f *center = *((Point2f **)luaL_checkudata(L, 1, "cv.Point2f"));
-  double angle = luaL_checknumber(L, 2);
-  double scale = luaL_checknumber(L, 3);
-  Mat  retval__ = getRotationMatrix2D(*center, angle, scale);
-  lua_pushclass<Mat>(L, retval__, "cv.Mat");
-  return 1;
+  try {
+    Point2f *center = *((Point2f **)luaL_checkudata(L, 1, "cv.Point2f"));
+    double angle = luaL_checknumber(L, 2);
+    double scale = luaL_checknumber(L, 3);
+    Mat  retval__ = getRotationMatrix2D(*center, angle, scale);
+    lua_pushclass<Mat>(L, retval__, "cv.Mat");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.getRotationMatrix2D: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.getRotationMatrix2D: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.getRotationMatrix2D: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -2807,18 +5636,41 @@ static int cv_getRotationMatrix2D(lua_State *L) {
  * include/opencv/cv.hpp:219
  */
 static int cv_getStructuringElement(lua_State *L) {
-  int top__ = lua_gettop(L);
-  Mat  retval__;
-  int shape = luaL_checkint(L, 1);
-  Size *ksize = *((Size **)luaL_checkudata(L, 2, "cv.Size"));
-  if (top__ < 3) {
-    retval__ = getStructuringElement(shape, *ksize);
-  } else {
-    Point *anchor = *((Point **)luaL_checkudata(L, 3, "cv.Point"));
-    retval__ = getStructuringElement(shape, *ksize, *anchor);
+  try {
+    int top__ = lua_gettop(L);
+    Mat  retval__;
+    int shape = luaL_checkint(L, 1);
+    Size *ksize = *((Size **)luaL_checkudata(L, 2, "cv.Size"));
+    if (top__ < 3) {
+      retval__ = getStructuringElement(shape, *ksize);
+    } else {
+      Point *anchor = *((Point **)luaL_checkudata(L, 3, "cv.Point"));
+      retval__ = getStructuringElement(shape, *ksize, *anchor);
+    }
+    lua_pushclass<Mat>(L, retval__, "cv.Mat");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.getStructuringElement: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.getStructuringElement: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.getStructuringElement: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  lua_pushclass<Mat>(L, retval__, "cv.Mat");
-  return 1;
 }
 
 
@@ -2827,16 +5679,39 @@ static int cv_getStructuringElement(lua_State *L) {
  * include/opencv/cxcore.hpp:1349
  */
 static int cv_getTextSize(lua_State *L) {
-  const string *text = *((const string **)luaL_checkudata(L, 1, "cv.string"));
-  int fontFace = luaL_checkint(L, 2);
-  double fontScale = luaL_checknumber(L, 3);
-  int thickness = luaL_checkint(L, 4);
-  
-  DubArgPointer<int> ptr_baseLine;
-  int *baseLine = ptr_baseLine(L, 5);
-  Size  retval__ = getTextSize(*text, fontFace, fontScale, thickness, baseLine);
-  lua_pushclass<Size>(L, retval__, "cv.Size");
-  return 1;
+  try {
+    const string *text = *((const string **)luaL_checkudata(L, 1, "cv.string"));
+    int fontFace = luaL_checkint(L, 2);
+    double fontScale = luaL_checknumber(L, 3);
+    int thickness = luaL_checkint(L, 4);
+    
+    DubArgPointer<int> ptr_baseLine;
+    int *baseLine = ptr_baseLine(L, 5);
+    Size  retval__ = getTextSize(*text, fontFace, fontScale, thickness, baseLine);
+    lua_pushclass<Size>(L, retval__, "cv.Size");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.getTextSize: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.getTextSize: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.getTextSize: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -2845,9 +5720,32 @@ static int cv_getTextSize(lua_State *L) {
  * include/opencv/cxcore.hpp:134
  */
 static int cv_getThreadNum(lua_State *L) {
-  int  retval__ = getThreadNum();
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    int  retval__ = getThreadNum();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.getThreadNum: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.getThreadNum: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.getThreadNum: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -2856,9 +5754,32 @@ static int cv_getThreadNum(lua_State *L) {
  * include/opencv/cxcore.hpp:136
  */
 static int cv_getTickCount(lua_State *L) {
-  int64  retval__ = getTickCount();
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    int64  retval__ = getTickCount();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.getTickCount: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.getTickCount: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.getTickCount: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -2867,9 +5788,32 @@ static int cv_getTickCount(lua_State *L) {
  * include/opencv/cxcore.hpp:137
  */
 static int cv_getTickFrequency(lua_State *L) {
-  double  retval__ = getTickFrequency();
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    double  retval__ = getTickFrequency();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.getTickFrequency: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.getTickFrequency: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.getTickFrequency: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -2878,20 +5822,43 @@ static int cv_getTickFrequency(lua_State *L) {
  * include/opencv/cv.hpp:472
  */
 static int cv_grabCut(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *img = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *mask = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Rect *rect = *((Rect **)luaL_checkudata(L, 3, "cv.Rect"));
-  Mat *bgdModel = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  Mat *fgdModel = *((Mat **)luaL_checkudata(L, 5, "cv.Mat"));
-  int iterCount = luaL_checkint(L, 6);
-  if (top__ < 7) {
-    grabCut(*img, *mask, *rect, *bgdModel, *fgdModel, iterCount);
-  } else {
-    int mode = luaL_checkint(L, 7);
-    grabCut(*img, *mask, *rect, *bgdModel, *fgdModel, iterCount, mode);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *img = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *mask = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Rect *rect = *((Rect **)luaL_checkudata(L, 3, "cv.Rect"));
+    Mat *bgdModel = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    Mat *fgdModel = *((Mat **)luaL_checkudata(L, 5, "cv.Mat"));
+    int iterCount = luaL_checkint(L, 6);
+    if (top__ < 7) {
+      grabCut(*img, *mask, *rect, *bgdModel, *fgdModel, iterCount);
+    } else {
+      int mode = luaL_checkint(L, 7);
+      grabCut(*img, *mask, *rect, *bgdModel, *fgdModel, iterCount, mode);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.grabCut: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.grabCut: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.grabCut: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -2900,16 +5867,39 @@ static int cv_grabCut(lua_State *L) {
  * include/opencv/cxcore.hpp:1254
  */
 static int cv_idct(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  if (top__ < 3) {
-    idct(*src, *dst);
-  } else {
-    int flags = luaL_checkint(L, 3);
-    idct(*src, *dst, flags);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    if (top__ < 3) {
+      idct(*src, *dst);
+    } else {
+      int flags = luaL_checkint(L, 3);
+      idct(*src, *dst, flags);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.idct: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.idct: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.idct: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -2918,21 +5908,44 @@ static int cv_idct(lua_State *L) {
  * include/opencv/cxcore.hpp:1252
  */
 static int cv_idft(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  if (top__ < 3) {
-    idft(*src, *dst);
-  } else {
-    int flags = luaL_checkint(L, 3);
-    if (top__ < 4) {
-      idft(*src, *dst, flags);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    if (top__ < 3) {
+      idft(*src, *dst);
     } else {
-      int nonzeroRows = luaL_checkint(L, 4);
-      idft(*src, *dst, flags, nonzeroRows);
+      int flags = luaL_checkint(L, 3);
+      if (top__ < 4) {
+        idft(*src, *dst, flags);
+      } else {
+        int nonzeroRows = luaL_checkint(L, 4);
+        idft(*src, *dst, flags, nonzeroRows);
+      }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.idft: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.idft: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.idft: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -2942,12 +5955,35 @@ static int cv_idft(lua_State *L) {
  * include/opencv/cxcore.hpp:1160
  */
 static int cv_inRange1(lua_State *L) {
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *lowerb = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  const Mat *upperb = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  inRange(*src, *lowerb, *upperb, *dst);
-  return 0;
+  try {
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *lowerb = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *upperb = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    inRange(*src, *lowerb, *upperb, *dst);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.inRange: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.inRange: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.inRange: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -2955,12 +5991,35 @@ static int cv_inRange1(lua_State *L) {
  * include/opencv/cxcore.hpp:1162
  */
 static int cv_inRange2(lua_State *L) {
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Scalar *lowerb = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-  const Scalar *upperb = *((const Scalar **)luaL_checkudata(L, 3, "cv.Scalar"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  inRange(*src, *lowerb, *upperb, *dst);
-  return 0;
+  try {
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Scalar *lowerb = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
+    const Scalar *upperb = *((const Scalar **)luaL_checkudata(L, 3, "cv.Scalar"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    inRange(*src, *lowerb, *upperb, *dst);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.inRange: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.inRange: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.inRange: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -2968,12 +6027,35 @@ static int cv_inRange2(lua_State *L) {
  * include/opencv/cxcore.hpp:1794
  */
 static int cv_inRange3(lua_State *L) {
-  const MatND *src = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  const MatND *lowerb = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-  const MatND *upperb = *((const MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-  MatND *dst = *((MatND **)luaL_checkudata(L, 4, "cv.MatND"));
-  inRange(*src, *lowerb, *upperb, *dst);
-  return 0;
+  try {
+    const MatND *src = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    const MatND *lowerb = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    const MatND *upperb = *((const MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    MatND *dst = *((MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+    inRange(*src, *lowerb, *upperb, *dst);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.inRange: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.inRange: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.inRange: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -2981,12 +6063,35 @@ static int cv_inRange3(lua_State *L) {
  * include/opencv/cxcore.hpp:1796
  */
 static int cv_inRange4(lua_State *L) {
-  const MatND *src = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  const Scalar *lowerb = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-  const Scalar *upperb = *((const Scalar **)luaL_checkudata(L, 3, "cv.Scalar"));
-  MatND *dst = *((MatND **)luaL_checkudata(L, 4, "cv.MatND"));
-  inRange(*src, *lowerb, *upperb, *dst);
-  return 0;
+  try {
+    const MatND *src = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    const Scalar *lowerb = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
+    const Scalar *upperb = *((const Scalar **)luaL_checkudata(L, 3, "cv.Scalar"));
+    MatND *dst = *((MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+    inRange(*src, *lowerb, *upperb, *dst);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.inRange: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.inRange: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.inRange: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3026,16 +6131,39 @@ static int cv_inRange(lua_State *L) {
  * include/opencv/cv.hpp:402
  */
 static int cv_initUndistortRectifyMap(lua_State *L) {
-  const Mat *cameraMatrix = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *distCoeffs = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  const Mat *R = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  const Mat *newCameraMatrix = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  Size *size = *((Size **)luaL_checkudata(L, 5, "cv.Size"));
-  int m1type = luaL_checkint(L, 6);
-  Mat *map1 = *((Mat **)luaL_checkudata(L, 7, "cv.Mat"));
-  Mat *map2 = *((Mat **)luaL_checkudata(L, 8, "cv.Mat"));
-  initUndistortRectifyMap(*cameraMatrix, *distCoeffs, *R, *newCameraMatrix, *size, m1type, *map1, *map2);
-  return 0;
+  try {
+    const Mat *cameraMatrix = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *distCoeffs = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *R = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *newCameraMatrix = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    Size *size = *((Size **)luaL_checkudata(L, 5, "cv.Size"));
+    int m1type = luaL_checkint(L, 6);
+    Mat *map1 = *((Mat **)luaL_checkudata(L, 7, "cv.Mat"));
+    Mat *map2 = *((Mat **)luaL_checkudata(L, 8, "cv.Mat"));
+    initUndistortRectifyMap(*cameraMatrix, *distCoeffs, *R, *newCameraMatrix, *size, m1type, *map1, *map2);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.initUndistortRectifyMap: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.initUndistortRectifyMap: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.initUndistortRectifyMap: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3044,13 +6172,36 @@ static int cv_initUndistortRectifyMap(lua_State *L) {
  * include/opencv/cv.hpp:477
  */
 static int cv_inpaint(lua_State *L) {
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *inpaintMask = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  double inpaintRange = luaL_checknumber(L, 4);
-  int flags = luaL_checkint(L, 5);
-  inpaint(*src, *inpaintMask, *dst, inpaintRange, flags);
-  return 0;
+  try {
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *inpaintMask = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    double inpaintRange = luaL_checknumber(L, 4);
+    int flags = luaL_checkint(L, 5);
+    inpaint(*src, *inpaintMask, *dst, inpaintRange, flags);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.inpaint: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.inpaint: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.inpaint: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3060,16 +6211,39 @@ static int cv_inpaint(lua_State *L) {
  * include/opencv/cv.hpp:371
  */
 static int cv_integral1(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *sum = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  if (top__ < 3) {
-    integral(*src, *sum);
-  } else {
-    int sdepth = luaL_checkint(L, 3);
-    integral(*src, *sum, sdepth);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *sum = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    if (top__ < 3) {
+      integral(*src, *sum);
+    } else {
+      int sdepth = luaL_checkint(L, 3);
+      integral(*src, *sum, sdepth);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.integral: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.integral: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.integral: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -3077,17 +6251,40 @@ static int cv_integral1(lua_State *L) {
  * include/opencv/cv.hpp:372
  */
 static int cv_integral2(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *sum = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *sqsum = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  if (top__ < 4) {
-    integral(*src, *sum, *sqsum);
-  } else {
-    int sdepth = luaL_checkint(L, 4);
-    integral(*src, *sum, *sqsum, sdepth);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *sum = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *sqsum = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    if (top__ < 4) {
+      integral(*src, *sum, *sqsum);
+    } else {
+      int sdepth = luaL_checkint(L, 4);
+      integral(*src, *sum, *sqsum, sdepth);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.integral: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.integral: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.integral: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -3095,18 +6292,41 @@ static int cv_integral2(lua_State *L) {
  * include/opencv/cv.hpp:373
  */
 static int cv_integral3(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *sum = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *sqsum = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  Mat *tilted = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  if (top__ < 5) {
-    integral(*src, *sum, *sqsum, *tilted);
-  } else {
-    int sdepth = luaL_checkint(L, 5);
-    integral(*src, *sum, *sqsum, *tilted, sdepth);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *sum = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *sqsum = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    Mat *tilted = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    if (top__ < 5) {
+      integral(*src, *sum, *sqsum, *tilted);
+    } else {
+      int sdepth = luaL_checkint(L, 5);
+      integral(*src, *sum, *sqsum, *tilted, sdepth);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.integral: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.integral: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.integral: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -3150,18 +6370,41 @@ static int cv_integral(lua_State *L) {
  * include/opencv/cxcore.hpp:1200
  */
 static int cv_invert(lua_State *L) {
-  int top__ = lua_gettop(L);
-  double  retval__;
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *c = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  if (top__ < 3) {
-    retval__ = invert(*a, *c);
-  } else {
-    int flags = luaL_checkint(L, 3);
-    retval__ = invert(*a, *c, flags);
+  try {
+    int top__ = lua_gettop(L);
+    double  retval__;
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *c = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    if (top__ < 3) {
+      retval__ = invert(*a, *c);
+    } else {
+      int flags = luaL_checkint(L, 3);
+      retval__ = invert(*a, *c, flags);
+    }
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.invert: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.invert: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.invert: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  lua_pushnumber(L, retval__);
-  return 1;
 }
 
 
@@ -3170,10 +6413,33 @@ static int cv_invert(lua_State *L) {
  * include/opencv/cv.hpp:366
  */
 static int cv_invertAffineTransform(lua_State *L) {
-  const Mat *M = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *iM = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  invertAffineTransform(*M, *iM);
-  return 0;
+  try {
+    const Mat *M = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *iM = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    invertAffineTransform(*M, *iM);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.invertAffineTransform: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.invertAffineTransform: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.invertAffineTransform: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3182,10 +6448,33 @@ static int cv_invertAffineTransform(lua_State *L) {
  * include/opencv/cv.hpp:573
  */
 static int cv_isContourConvex(lua_State *L) {
-  const Mat *contour = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  bool  retval__ = isContourConvex(*contour);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    const Mat *contour = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    bool  retval__ = isContourConvex(*contour);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.isContourConvex: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.isContourConvex: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.isContourConvex: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3194,28 +6483,51 @@ static int cv_isContourConvex(lua_State *L) {
  * include/opencv/cxcore.hpp:1275
  */
 static int cv_line(lua_State *L) {
-  int top__ = lua_gettop(L);
-  Mat *img = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Point *pt1 = *((Point **)luaL_checkudata(L, 2, "cv.Point"));
-  Point *pt2 = *((Point **)luaL_checkudata(L, 3, "cv.Point"));
-  const Scalar *color = *((const Scalar **)luaL_checkudata(L, 4, "cv.Scalar"));
-  if (top__ < 5) {
-    line(*img, *pt1, *pt2, *color);
-  } else {
-    int thickness = luaL_checkint(L, 5);
-    if (top__ < 6) {
-      line(*img, *pt1, *pt2, *color, thickness);
+  try {
+    int top__ = lua_gettop(L);
+    Mat *img = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Point *pt1 = *((Point **)luaL_checkudata(L, 2, "cv.Point"));
+    Point *pt2 = *((Point **)luaL_checkudata(L, 3, "cv.Point"));
+    const Scalar *color = *((const Scalar **)luaL_checkudata(L, 4, "cv.Scalar"));
+    if (top__ < 5) {
+      line(*img, *pt1, *pt2, *color);
     } else {
-      int lineType = luaL_checkint(L, 6);
-      if (top__ < 7) {
-        line(*img, *pt1, *pt2, *color, thickness, lineType);
+      int thickness = luaL_checkint(L, 5);
+      if (top__ < 6) {
+        line(*img, *pt1, *pt2, *color, thickness);
       } else {
-        int shift = luaL_checkint(L, 7);
-        line(*img, *pt1, *pt2, *color, thickness, lineType, shift);
+        int lineType = luaL_checkint(L, 6);
+        if (top__ < 7) {
+          line(*img, *pt1, *pt2, *color, thickness, lineType);
+        } else {
+          int shift = luaL_checkint(L, 7);
+          line(*img, *pt1, *pt2, *color, thickness, lineType, shift);
+        }
       }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.line: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.line: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.line: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -3225,10 +6537,33 @@ static int cv_line(lua_State *L) {
  * include/opencv/cxcore.hpp:1173
  */
 static int cv_log1(lua_State *L) {
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *b = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  log(*a, *b);
-  return 0;
+  try {
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *b = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    log(*a, *b);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.log: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.log: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.log: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3236,10 +6571,33 @@ static int cv_log1(lua_State *L) {
  * include/opencv/cxcore.hpp:1807
  */
 static int cv_log2(lua_State *L) {
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  MatND *b = *((MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-  log(*a, *b);
-  return 0;
+  try {
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    MatND *b = *((MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    log(*a, *b);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.log: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.log: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.log: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3263,11 +6621,34 @@ static int cv_log(lua_State *L) {
  * include/opencv/cxcore.hpp:1183
  */
 static int cv_magnitude(lua_State *L) {
-  const Mat *x = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *y = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *arg_magnitude = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  magnitude(*x, *y, *arg_magnitude);
-  return 0;
+  try {
+    const Mat *x = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *y = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *arg_magnitude = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    magnitude(*x, *y, *arg_magnitude);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.magnitude: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.magnitude: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.magnitude: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3276,12 +6657,35 @@ static int cv_magnitude(lua_State *L) {
  * include/opencv/cv.hpp:771
  */
 static int cv_matMulDeriv(lua_State *L) {
-  const Mat *A = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *B = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *dABdA = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  Mat *dABdB = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  matMulDeriv(*A, *B, *dABdA, *dABdB);
-  return 0;
+  try {
+    const Mat *A = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *B = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *dABdA = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    Mat *dABdB = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    matMulDeriv(*A, *B, *dABdA, *dABdB);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.matMulDeriv: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.matMulDeriv: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.matMulDeriv: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3290,13 +6694,36 @@ static int cv_matMulDeriv(lua_State *L) {
  * include/opencv/cv.hpp:567
  */
 static int cv_matchShapes(lua_State *L) {
-  const Mat *contour1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *contour2 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  int method = luaL_checkint(L, 3);
-  double parameter = luaL_checknumber(L, 4);
-  double  retval__ = matchShapes(*contour1, *contour2, method, parameter);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    const Mat *contour1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *contour2 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    int method = luaL_checkint(L, 3);
+    double parameter = luaL_checknumber(L, 4);
+    double  retval__ = matchShapes(*contour1, *contour2, method, parameter);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.matchShapes: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.matchShapes: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.matchShapes: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3305,12 +6732,35 @@ static int cv_matchShapes(lua_State *L) {
  * include/opencv/cv.hpp:529
  */
 static int cv_matchTemplate(lua_State *L) {
-  const Mat *image = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *templ = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *result = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  int method = luaL_checkint(L, 4);
-  matchTemplate(*image, *templ, *result, method);
-  return 0;
+  try {
+    const Mat *image = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *templ = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *result = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    int method = luaL_checkint(L, 4);
+    matchTemplate(*image, *templ, *result, method);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.matchTemplate: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.matchTemplate: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.matchTemplate: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3320,11 +6770,34 @@ static int cv_matchTemplate(lua_State *L) {
  * include/opencv/cxcore.hpp:1167
  */
 static int cv_max1(lua_State *L) {
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  max(*a, *b, *c);
-  return 0;
+  try {
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    max(*a, *b, *c);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.max: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.max: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.max: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3332,11 +6805,34 @@ static int cv_max1(lua_State *L) {
  * include/opencv/cxcore.hpp:1168
  */
 static int cv_max2(lua_State *L) {
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  double alpha = luaL_checknumber(L, 2);
-  Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  max(*a, alpha, *c);
-  return 0;
+  try {
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    double alpha = luaL_checknumber(L, 2);
+    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    max(*a, alpha, *c);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.max: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.max: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.max: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3344,11 +6840,34 @@ static int cv_max2(lua_State *L) {
  * include/opencv/cxcore.hpp:1801
  */
 static int cv_max3(lua_State *L) {
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-  MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-  max(*a, *b, *c);
-  return 0;
+  try {
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    max(*a, *b, *c);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.max: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.max: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.max: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3356,11 +6875,34 @@ static int cv_max3(lua_State *L) {
  * include/opencv/cxcore.hpp:1802
  */
 static int cv_max4(lua_State *L) {
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  double alpha = luaL_checknumber(L, 2);
-  MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-  max(*a, alpha, *c);
-  return 0;
+  try {
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    double alpha = luaL_checknumber(L, 2);
+    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    max(*a, alpha, *c);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.max: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.max: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.max: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3401,10 +6943,33 @@ static int cv_max(lua_State *L) {
  * include/opencv/cxcore.hpp:1112
  */
 static int cv_mean1(lua_State *L) {
-  const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Scalar  retval__ = mean(*m);
-  lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
-  return 1;
+  try {
+    const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Scalar  retval__ = mean(*m);
+    lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.mean: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.mean: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.mean: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3412,11 +6977,34 @@ static int cv_mean1(lua_State *L) {
  * include/opencv/cxcore.hpp:1113
  */
 static int cv_mean2(lua_State *L) {
-  const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *mask = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Scalar  retval__ = mean(*m, *mask);
-  lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
-  return 1;
+  try {
+    const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *mask = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Scalar  retval__ = mean(*m, *mask);
+    lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.mean: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.mean: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.mean: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3424,10 +7012,33 @@ static int cv_mean2(lua_State *L) {
  * include/opencv/cxcore.hpp:1766
  */
 static int cv_mean3(lua_State *L) {
-  const MatND *m = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  Scalar  retval__ = mean(*m);
-  lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
-  return 1;
+  try {
+    const MatND *m = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    Scalar  retval__ = mean(*m);
+    lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.mean: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.mean: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.mean: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3435,11 +7046,34 @@ static int cv_mean3(lua_State *L) {
  * include/opencv/cxcore.hpp:1767
  */
 static int cv_mean4(lua_State *L) {
-  const MatND *m = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  const MatND *mask = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-  Scalar  retval__ = mean(*m, *mask);
-  lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
-  return 1;
+  try {
+    const MatND *m = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    const MatND *mask = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    Scalar  retval__ = mean(*m, *mask);
+    lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.mean: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.mean: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.mean: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3480,12 +7114,35 @@ static int cv_mean(lua_State *L) {
  * include/opencv/cv.hpp:605
  */
 static int cv_meanShift(lua_State *L) {
-  const Mat *probImage = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Rect *window = *((Rect **)luaL_checkudata(L, 2, "cv.Rect"));
-  TermCriteria *criteria = *((TermCriteria **)luaL_checkudata(L, 3, "cv.TermCriteria"));
-  int  retval__ = meanShift(*probImage, *window, *criteria);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    const Mat *probImage = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Rect *window = *((Rect **)luaL_checkudata(L, 2, "cv.Rect"));
+    TermCriteria *criteria = *((TermCriteria **)luaL_checkudata(L, 3, "cv.TermCriteria"));
+    int  retval__ = meanShift(*probImage, *window, *criteria);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.meanShift: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.meanShift: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.meanShift: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3495,17 +7152,40 @@ static int cv_meanShift(lua_State *L) {
  * include/opencv/cxcore.hpp:1114
  */
 static int cv_meanStdDev1(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Scalar *mean = *((Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-  Scalar *stddev = *((Scalar **)luaL_checkudata(L, 3, "cv.Scalar"));
-  if (top__ < 4) {
-    meanStdDev(*m, *mean, *stddev);
-  } else {
-    const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-    meanStdDev(*m, *mean, *stddev, *mask);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Scalar *mean = *((Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
+    Scalar *stddev = *((Scalar **)luaL_checkudata(L, 3, "cv.Scalar"));
+    if (top__ < 4) {
+      meanStdDev(*m, *mean, *stddev);
+    } else {
+      const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+      meanStdDev(*m, *mean, *stddev, *mask);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.meanStdDev: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.meanStdDev: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.meanStdDev: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -3513,17 +7193,40 @@ static int cv_meanStdDev1(lua_State *L) {
  * include/opencv/cxcore.hpp:1768
  */
 static int cv_meanStdDev2(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const MatND *m = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  Scalar *mean = *((Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-  Scalar *stddev = *((Scalar **)luaL_checkudata(L, 3, "cv.Scalar"));
-  if (top__ < 4) {
-    meanStdDev(*m, *mean, *stddev);
-  } else {
-    const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
-    meanStdDev(*m, *mean, *stddev, *mask);
+  try {
+    int top__ = lua_gettop(L);
+    const MatND *m = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    Scalar *mean = *((Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
+    Scalar *stddev = *((Scalar **)luaL_checkudata(L, 3, "cv.Scalar"));
+    if (top__ < 4) {
+      meanStdDev(*m, *mean, *stddev);
+    } else {
+      const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+      meanStdDev(*m, *mean, *stddev, *mask);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.meanStdDev: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.meanStdDev: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.meanStdDev: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -3547,11 +7250,34 @@ static int cv_meanStdDev(lua_State *L) {
  * include/opencv/cv.hpp:229
  */
 static int cv_medianBlur(lua_State *L) {
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  int ksize = luaL_checkint(L, 3);
-  medianBlur(*src, *dst, ksize);
-  return 0;
+  try {
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    int ksize = luaL_checkint(L, 3);
+    medianBlur(*src, *dst, ksize);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.medianBlur: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.medianBlur: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.medianBlur: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3561,11 +7287,34 @@ static int cv_medianBlur(lua_State *L) {
  * include/opencv/cxcore.hpp:1165
  */
 static int cv_min1(lua_State *L) {
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  min(*a, *b, *c);
-  return 0;
+  try {
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    min(*a, *b, *c);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.min: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.min: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.min: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3573,11 +7322,34 @@ static int cv_min1(lua_State *L) {
  * include/opencv/cxcore.hpp:1166
  */
 static int cv_min2(lua_State *L) {
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  double alpha = luaL_checknumber(L, 2);
-  Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  min(*a, alpha, *c);
-  return 0;
+  try {
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    double alpha = luaL_checknumber(L, 2);
+    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    min(*a, alpha, *c);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.min: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.min: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.min: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3585,11 +7357,34 @@ static int cv_min2(lua_State *L) {
  * include/opencv/cxcore.hpp:1799
  */
 static int cv_min3(lua_State *L) {
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-  MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-  min(*a, *b, *c);
-  return 0;
+  try {
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    min(*a, *b, *c);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.min: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.min: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.min: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3597,11 +7392,34 @@ static int cv_min3(lua_State *L) {
  * include/opencv/cxcore.hpp:1800
  */
 static int cv_min4(lua_State *L) {
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  double alpha = luaL_checknumber(L, 2);
-  MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-  min(*a, alpha, *c);
-  return 0;
+  try {
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    double alpha = luaL_checknumber(L, 2);
+    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    min(*a, alpha, *c);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.min: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.min: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.min: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3641,10 +7459,33 @@ static int cv_min(lua_State *L) {
  * include/opencv/cv.hpp:562
  */
 static int cv_minAreaRect(lua_State *L) {
-  const Mat *points = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  RotatedRect  retval__ = minAreaRect(*points);
-  lua_pushclass<RotatedRect>(L, retval__, "cv.RotatedRect");
-  return 1;
+  try {
+    const Mat *points = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    RotatedRect  retval__ = minAreaRect(*points);
+    lua_pushclass<RotatedRect>(L, retval__, "cv.RotatedRect");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.minAreaRect: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.minAreaRect: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.minAreaRect: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3653,11 +7494,34 @@ static int cv_minAreaRect(lua_State *L) {
  * include/opencv/cv.hpp:564
  */
 static int cv_minEnclosingCircle(lua_State *L) {
-  const Mat *points = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Point2f *center = *((Point2f **)luaL_checkudata(L, 2, "cv.Point2f"));
-  float radius = luaL_checknumber(L, 3);
-  minEnclosingCircle(*points, *center, radius);
-  return 0;
+  try {
+    const Mat *points = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Point2f *center = *((Point2f **)luaL_checkudata(L, 2, "cv.Point2f"));
+    float radius = luaL_checknumber(L, 3);
+    minEnclosingCircle(*points, *center, radius);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.minEnclosingCircle: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.minEnclosingCircle: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.minEnclosingCircle: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3667,35 +7531,58 @@ static int cv_minEnclosingCircle(lua_State *L) {
  * include/opencv/cxcore.hpp:1777
  */
 static int cv_minMaxLoc2(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  
-  DubArgPointer<double> ptr_minVal;
-  double *minVal = ptr_minVal(L, 2);
-  
-  DubArgPointer<double> ptr_maxVal;
-  double *maxVal = ptr_maxVal(L, 3);
-  if (top__ < 4) {
-    minMaxLoc(*a, minVal, maxVal);
-  } else {
+  try {
+    int top__ = lua_gettop(L);
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
     
-    DubArgPointer<int> ptr_minIdx;
-    int *minIdx = ptr_minIdx(L, 4);
-    if (top__ < 5) {
-      minMaxLoc(*a, minVal, maxVal, minIdx);
+    DubArgPointer<double> ptr_minVal;
+    double *minVal = ptr_minVal(L, 2);
+    
+    DubArgPointer<double> ptr_maxVal;
+    double *maxVal = ptr_maxVal(L, 3);
+    if (top__ < 4) {
+      minMaxLoc(*a, minVal, maxVal);
     } else {
       
-      DubArgPointer<int> ptr_maxIdx;
-      int *maxIdx = ptr_maxIdx(L, 5);
-      if (top__ < 6) {
-        minMaxLoc(*a, minVal, maxVal, minIdx, maxIdx);
+      DubArgPointer<int> ptr_minIdx;
+      int *minIdx = ptr_minIdx(L, 4);
+      if (top__ < 5) {
+        minMaxLoc(*a, minVal, maxVal, minIdx);
       } else {
-        const MatND *mask = *((const MatND **)luaL_checkudata(L, 6, "cv.MatND"));
-        minMaxLoc(*a, minVal, maxVal, minIdx, maxIdx, *mask);
+        
+        DubArgPointer<int> ptr_maxIdx;
+        int *maxIdx = ptr_maxIdx(L, 5);
+        if (top__ < 6) {
+          minMaxLoc(*a, minVal, maxVal, minIdx, maxIdx);
+        } else {
+          const MatND *mask = *((const MatND **)luaL_checkudata(L, 6, "cv.MatND"));
+          minMaxLoc(*a, minVal, maxVal, minIdx, maxIdx, *mask);
+        }
       }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.minMaxLoc: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.minMaxLoc: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.minMaxLoc: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -3703,30 +7590,53 @@ static int cv_minMaxLoc2(lua_State *L) {
  * include/opencv/cxcore.hpp:2082
  */
 static int cv_minMaxLoc3(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const SparseMat *a = *((const SparseMat **)luaL_checkudata(L, 1, "cv.SparseMat"));
-  
-  DubArgPointer<double> ptr_minVal;
-  double *minVal = ptr_minVal(L, 2);
-  
-  DubArgPointer<double> ptr_maxVal;
-  double *maxVal = ptr_maxVal(L, 3);
-  if (top__ < 4) {
-    minMaxLoc(*a, minVal, maxVal);
-  } else {
+  try {
+    int top__ = lua_gettop(L);
+    const SparseMat *a = *((const SparseMat **)luaL_checkudata(L, 1, "cv.SparseMat"));
     
-    DubArgPointer<int> ptr_minIdx;
-    int *minIdx = ptr_minIdx(L, 4);
-    if (top__ < 5) {
-      minMaxLoc(*a, minVal, maxVal, minIdx);
+    DubArgPointer<double> ptr_minVal;
+    double *minVal = ptr_minVal(L, 2);
+    
+    DubArgPointer<double> ptr_maxVal;
+    double *maxVal = ptr_maxVal(L, 3);
+    if (top__ < 4) {
+      minMaxLoc(*a, minVal, maxVal);
     } else {
       
-      DubArgPointer<int> ptr_maxIdx;
-      int *maxIdx = ptr_maxIdx(L, 5);
-      minMaxLoc(*a, minVal, maxVal, minIdx, maxIdx);
+      DubArgPointer<int> ptr_minIdx;
+      int *minIdx = ptr_minIdx(L, 4);
+      if (top__ < 5) {
+        minMaxLoc(*a, minVal, maxVal, minIdx);
+      } else {
+        
+        DubArgPointer<int> ptr_maxIdx;
+        int *maxIdx = ptr_maxIdx(L, 5);
+        minMaxLoc(*a, minVal, maxVal, minIdx, maxIdx);
+      }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.minMaxLoc: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.minMaxLoc: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.minMaxLoc: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -3750,17 +7660,40 @@ static int cv_minMaxLoc(lua_State *L) {
  * include/opencv/cv.hpp:521
  */
 static int cv_moments(lua_State *L) {
-  int top__ = lua_gettop(L);
-  Moments  retval__;
-  const Mat *array = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  if (top__ < 2) {
-    retval__ = moments(*array);
-  } else {
-    bool binaryImage = lua_toboolean(L, 2);
-    retval__ = moments(*array, binaryImage);
+  try {
+    int top__ = lua_gettop(L);
+    Moments  retval__;
+    const Mat *array = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    if (top__ < 2) {
+      retval__ = moments(*array);
+    } else {
+      bool binaryImage = lua_toboolean(L, 2);
+      retval__ = moments(*array, binaryImage);
+    }
+    lua_pushclass<Moments>(L, retval__, "cv.Moments");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.moments: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.moments: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.moments: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  lua_pushclass<Moments>(L, retval__, "cv.Moments");
-  return 1;
 }
 
 
@@ -3769,9 +7702,32 @@ static int cv_moments(lua_State *L) {
  * include/opencv/cv.hpp:211
  */
 static int cv_morphologyDefaultBorderValue(lua_State *L) {
-  Scalar  retval__ = morphologyDefaultBorderValue();
-  lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
-  return 1;
+  try {
+    Scalar  retval__ = morphologyDefaultBorderValue();
+    lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.morphologyDefaultBorderValue: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.morphologyDefaultBorderValue: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.morphologyDefaultBorderValue: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3780,33 +7736,56 @@ static int cv_morphologyDefaultBorderValue(lua_State *L) {
  * include/opencv/cv.hpp:321
  */
 static int cv_morphologyEx(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  int op = luaL_checkint(L, 3);
-  const Mat *kernel = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  if (top__ < 5) {
-    morphologyEx(*src, *dst, op, *kernel);
-  } else {
-    Point *anchor = *((Point **)luaL_checkudata(L, 5, "cv.Point"));
-    if (top__ < 6) {
-      morphologyEx(*src, *dst, op, *kernel, *anchor);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    int op = luaL_checkint(L, 3);
+    const Mat *kernel = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    if (top__ < 5) {
+      morphologyEx(*src, *dst, op, *kernel);
     } else {
-      int iterations = luaL_checkint(L, 6);
-      if (top__ < 7) {
-        morphologyEx(*src, *dst, op, *kernel, *anchor, iterations);
+      Point *anchor = *((Point **)luaL_checkudata(L, 5, "cv.Point"));
+      if (top__ < 6) {
+        morphologyEx(*src, *dst, op, *kernel, *anchor);
       } else {
-        int borderType = luaL_checkint(L, 7);
-        if (top__ < 8) {
-          morphologyEx(*src, *dst, op, *kernel, *anchor, iterations, borderType);
+        int iterations = luaL_checkint(L, 6);
+        if (top__ < 7) {
+          morphologyEx(*src, *dst, op, *kernel, *anchor, iterations);
         } else {
-          const Scalar *borderValue = *((const Scalar **)luaL_checkudata(L, 8, "cv.Scalar"));
-          morphologyEx(*src, *dst, op, *kernel, *anchor, iterations, borderType, *borderValue);
+          int borderType = luaL_checkint(L, 7);
+          if (top__ < 8) {
+            morphologyEx(*src, *dst, op, *kernel, *anchor, iterations, borderType);
+          } else {
+            const Scalar *borderValue = *((const Scalar **)luaL_checkudata(L, 8, "cv.Scalar"));
+            morphologyEx(*src, *dst, op, *kernel, *anchor, iterations, borderType, *borderValue);
+          }
         }
       }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.morphologyEx: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.morphologyEx: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.morphologyEx: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -3815,18 +7794,41 @@ static int cv_morphologyEx(lua_State *L) {
  * include/opencv/cxcore.hpp:1256
  */
 static int cv_mulSpectrums(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  int flags = luaL_checkint(L, 4);
-  if (top__ < 5) {
-    mulSpectrums(*a, *b, *c, flags);
-  } else {
-    bool conjB = lua_toboolean(L, 5);
-    mulSpectrums(*a, *b, *c, flags, conjB);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    int flags = luaL_checkint(L, 4);
+    if (top__ < 5) {
+      mulSpectrums(*a, *b, *c, flags);
+    } else {
+      bool conjB = lua_toboolean(L, 5);
+      mulSpectrums(*a, *b, *c, flags, conjB);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.mulSpectrums: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.mulSpectrums: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.mulSpectrums: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -3835,27 +7837,50 @@ static int cv_mulSpectrums(lua_State *L) {
  * include/opencv/cxcore.hpp:1191
  */
 static int cv_mulTransposed(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *c = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  bool aTa = lua_toboolean(L, 3);
-  if (top__ < 4) {
-    mulTransposed(*a, *c, aTa);
-  } else {
-    const Mat *delta = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-    if (top__ < 5) {
-      mulTransposed(*a, *c, aTa, *delta);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *c = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    bool aTa = lua_toboolean(L, 3);
+    if (top__ < 4) {
+      mulTransposed(*a, *c, aTa);
     } else {
-      double scale = luaL_checknumber(L, 5);
-      if (top__ < 6) {
-        mulTransposed(*a, *c, aTa, *delta, scale);
+      const Mat *delta = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+      if (top__ < 5) {
+        mulTransposed(*a, *c, aTa, *delta);
       } else {
-        int rtype = luaL_checkint(L, 6);
-        mulTransposed(*a, *c, aTa, *delta, scale, rtype);
+        double scale = luaL_checknumber(L, 5);
+        if (top__ < 6) {
+          mulTransposed(*a, *c, aTa, *delta, scale);
+        } else {
+          int rtype = luaL_checkint(L, 6);
+          mulTransposed(*a, *c, aTa, *delta, scale, rtype);
+        }
       }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.mulTransposed: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.mulTransposed: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.mulTransposed: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -3865,17 +7890,40 @@ static int cv_mulTransposed(lua_State *L) {
  * include/opencv/cxcore.hpp:1098
  */
 static int cv_multiply1(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  if (top__ < 4) {
-    multiply(*a, *b, *c);
-  } else {
-    double scale = luaL_checknumber(L, 4);
-    multiply(*a, *b, *c, scale);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    if (top__ < 4) {
+      multiply(*a, *b, *c);
+    } else {
+      double scale = luaL_checknumber(L, 4);
+      multiply(*a, *b, *c, scale);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.multiply: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.multiply: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.multiply: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -3883,17 +7931,40 @@ static int cv_multiply1(lua_State *L) {
  * include/opencv/cxcore.hpp:1754
  */
 static int cv_multiply2(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-  MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-  if (top__ < 4) {
-    multiply(*a, *b, *c);
-  } else {
-    double scale = luaL_checknumber(L, 4);
-    multiply(*a, *b, *c, scale);
+  try {
+    int top__ = lua_gettop(L);
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    if (top__ < 4) {
+      multiply(*a, *b, *c);
+    } else {
+      double scale = luaL_checknumber(L, 4);
+      multiply(*a, *b, *c, scale);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.multiply: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.multiply: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.multiply: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -3918,17 +7989,40 @@ static int cv_multiply(lua_State *L) {
  * include/opencv/cxcore.hpp:1115
  */
 static int cv_norm1(lua_State *L) {
-  int top__ = lua_gettop(L);
-  double  retval__;
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  if (top__ < 2) {
-    retval__ = norm(*a);
-  } else {
-    int normType = luaL_checkint(L, 2);
-    retval__ = norm(*a, normType);
+  try {
+    int top__ = lua_gettop(L);
+    double  retval__;
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    if (top__ < 2) {
+      retval__ = norm(*a);
+    } else {
+      int normType = luaL_checkint(L, 2);
+      retval__ = norm(*a, normType);
+    }
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.norm: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.norm: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.norm: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  lua_pushnumber(L, retval__);
-  return 1;
 }
 
 
@@ -3936,18 +8030,41 @@ static int cv_norm1(lua_State *L) {
  * include/opencv/cxcore.hpp:1116
  */
 static int cv_norm2(lua_State *L) {
-  int top__ = lua_gettop(L);
-  double  retval__;
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  if (top__ < 3) {
-    retval__ = norm(*a, *b);
-  } else {
-    int normType = luaL_checkint(L, 3);
-    retval__ = norm(*a, *b, normType);
+  try {
+    int top__ = lua_gettop(L);
+    double  retval__;
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    if (top__ < 3) {
+      retval__ = norm(*a, *b);
+    } else {
+      int normType = luaL_checkint(L, 3);
+      retval__ = norm(*a, *b, normType);
+    }
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.norm: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.norm: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.norm: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  lua_pushnumber(L, retval__);
-  return 1;
 }
 
 
@@ -3955,12 +8072,35 @@ static int cv_norm2(lua_State *L) {
  * include/opencv/cxcore.hpp:1117
  */
 static int cv_norm3(lua_State *L) {
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  int normType = luaL_checkint(L, 2);
-  const Mat *mask = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  double  retval__ = norm(*a, normType, *mask);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    int normType = luaL_checkint(L, 2);
+    const Mat *mask = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    double  retval__ = norm(*a, normType, *mask);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.norm: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.norm: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.norm: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3968,13 +8108,36 @@ static int cv_norm3(lua_State *L) {
  * include/opencv/cxcore.hpp:1119
  */
 static int cv_norm4(lua_State *L) {
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  int normType = luaL_checkint(L, 3);
-  const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  double  retval__ = norm(*a, *b, normType, *mask);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    int normType = luaL_checkint(L, 3);
+    const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    double  retval__ = norm(*a, *b, normType, *mask);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.norm: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.norm: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.norm: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -3982,22 +8145,45 @@ static int cv_norm4(lua_State *L) {
  * include/opencv/cxcore.hpp:1769
  */
 static int cv_norm5(lua_State *L) {
-  int top__ = lua_gettop(L);
-  double  retval__;
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  if (top__ < 2) {
-    retval__ = norm(*a);
-  } else {
-    int normType = luaL_checkint(L, 2);
-    if (top__ < 3) {
-      retval__ = norm(*a, normType);
+  try {
+    int top__ = lua_gettop(L);
+    double  retval__;
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    if (top__ < 2) {
+      retval__ = norm(*a);
     } else {
-      const MatND *mask = *((const MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-      retval__ = norm(*a, normType, *mask);
+      int normType = luaL_checkint(L, 2);
+      if (top__ < 3) {
+        retval__ = norm(*a, normType);
+      } else {
+        const MatND *mask = *((const MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+        retval__ = norm(*a, normType, *mask);
+      }
     }
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.norm: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.norm: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.norm: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  lua_pushnumber(L, retval__);
-  return 1;
 }
 
 
@@ -4005,23 +8191,46 @@ static int cv_norm5(lua_State *L) {
  * include/opencv/cxcore.hpp:1771
  */
 static int cv_norm6(lua_State *L) {
-  int top__ = lua_gettop(L);
-  double  retval__;
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-  if (top__ < 3) {
-    retval__ = norm(*a, *b);
-  } else {
-    int normType = luaL_checkint(L, 3);
-    if (top__ < 4) {
-      retval__ = norm(*a, *b, normType);
+  try {
+    int top__ = lua_gettop(L);
+    double  retval__;
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    if (top__ < 3) {
+      retval__ = norm(*a, *b);
     } else {
-      const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
-      retval__ = norm(*a, *b, normType, *mask);
+      int normType = luaL_checkint(L, 3);
+      if (top__ < 4) {
+        retval__ = norm(*a, *b, normType);
+      } else {
+        const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+        retval__ = norm(*a, *b, normType, *mask);
+      }
     }
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.norm: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.norm: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.norm: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  lua_pushnumber(L, retval__);
-  return 1;
 }
 
 
@@ -4029,11 +8238,34 @@ static int cv_norm6(lua_State *L) {
  * include/opencv/cxcore.hpp:2083
  */
 static int cv_norm7(lua_State *L) {
-  const SparseMat *src = *((const SparseMat **)luaL_checkudata(L, 1, "cv.SparseMat"));
-  int normType = luaL_checkint(L, 2);
-  double  retval__ = norm(*src, normType);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    const SparseMat *src = *((const SparseMat **)luaL_checkudata(L, 1, "cv.SparseMat"));
+    int normType = luaL_checkint(L, 2);
+    double  retval__ = norm(*src, normType);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.norm: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.norm: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.norm: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -4099,36 +8331,59 @@ static int cv_norm(lua_State *L) {
  * include/opencv/cxcore.hpp:1121
  */
 static int cv_normalize1(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *b = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  if (top__ < 3) {
-    normalize(*a, *b);
-  } else {
-    double alpha = luaL_checknumber(L, 3);
-    if (top__ < 4) {
-      normalize(*a, *b, alpha);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *b = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    if (top__ < 3) {
+      normalize(*a, *b);
     } else {
-      double beta = luaL_checknumber(L, 4);
-      if (top__ < 5) {
-        normalize(*a, *b, alpha, beta);
+      double alpha = luaL_checknumber(L, 3);
+      if (top__ < 4) {
+        normalize(*a, *b, alpha);
       } else {
-        int norm_type = luaL_checkint(L, 5);
-        if (top__ < 6) {
-          normalize(*a, *b, alpha, beta, norm_type);
+        double beta = luaL_checknumber(L, 4);
+        if (top__ < 5) {
+          normalize(*a, *b, alpha, beta);
         } else {
-          int rtype = luaL_checkint(L, 6);
-          if (top__ < 7) {
-            normalize(*a, *b, alpha, beta, norm_type, rtype);
+          int norm_type = luaL_checkint(L, 5);
+          if (top__ < 6) {
+            normalize(*a, *b, alpha, beta, norm_type);
           } else {
-            const Mat *mask = *((const Mat **)luaL_checkudata(L, 7, "cv.Mat"));
-            normalize(*a, *b, alpha, beta, norm_type, rtype, *mask);
+            int rtype = luaL_checkint(L, 6);
+            if (top__ < 7) {
+              normalize(*a, *b, alpha, beta, norm_type, rtype);
+            } else {
+              const Mat *mask = *((const Mat **)luaL_checkudata(L, 7, "cv.Mat"));
+              normalize(*a, *b, alpha, beta, norm_type, rtype, *mask);
+            }
           }
         }
       }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.normalize: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.normalize: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.normalize: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -4136,36 +8391,59 @@ static int cv_normalize1(lua_State *L) {
  * include/opencv/cxcore.hpp:1773
  */
 static int cv_normalize2(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  MatND *b = *((MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-  if (top__ < 3) {
-    normalize(*a, *b);
-  } else {
-    double alpha = luaL_checknumber(L, 3);
-    if (top__ < 4) {
-      normalize(*a, *b, alpha);
+  try {
+    int top__ = lua_gettop(L);
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    MatND *b = *((MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    if (top__ < 3) {
+      normalize(*a, *b);
     } else {
-      double beta = luaL_checknumber(L, 4);
-      if (top__ < 5) {
-        normalize(*a, *b, alpha, beta);
+      double alpha = luaL_checknumber(L, 3);
+      if (top__ < 4) {
+        normalize(*a, *b, alpha);
       } else {
-        int norm_type = luaL_checkint(L, 5);
-        if (top__ < 6) {
-          normalize(*a, *b, alpha, beta, norm_type);
+        double beta = luaL_checknumber(L, 4);
+        if (top__ < 5) {
+          normalize(*a, *b, alpha, beta);
         } else {
-          int rtype = luaL_checkint(L, 6);
-          if (top__ < 7) {
-            normalize(*a, *b, alpha, beta, norm_type, rtype);
+          int norm_type = luaL_checkint(L, 5);
+          if (top__ < 6) {
+            normalize(*a, *b, alpha, beta, norm_type);
           } else {
-            const MatND *mask = *((const MatND **)luaL_checkudata(L, 7, "cv.MatND"));
-            normalize(*a, *b, alpha, beta, norm_type, rtype, *mask);
+            int rtype = luaL_checkint(L, 6);
+            if (top__ < 7) {
+              normalize(*a, *b, alpha, beta, norm_type, rtype);
+            } else {
+              const MatND *mask = *((const MatND **)luaL_checkudata(L, 7, "cv.MatND"));
+              normalize(*a, *b, alpha, beta, norm_type, rtype, *mask);
+            }
           }
         }
       }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.normalize: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.normalize: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.normalize: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -4173,12 +8451,35 @@ static int cv_normalize2(lua_State *L) {
  * include/opencv/cxcore.hpp:2084
  */
 static int cv_normalize3(lua_State *L) {
-  const SparseMat *src = *((const SparseMat **)luaL_checkudata(L, 1, "cv.SparseMat"));
-  SparseMat *dst = *((SparseMat **)luaL_checkudata(L, 2, "cv.SparseMat"));
-  double alpha = luaL_checknumber(L, 3);
-  int normType = luaL_checkint(L, 4);
-  normalize(*src, *dst, alpha, normType);
-  return 0;
+  try {
+    const SparseMat *src = *((const SparseMat **)luaL_checkudata(L, 1, "cv.SparseMat"));
+    SparseMat *dst = *((SparseMat **)luaL_checkudata(L, 2, "cv.SparseMat"));
+    double alpha = luaL_checknumber(L, 3);
+    int normType = luaL_checkint(L, 4);
+    normalize(*src, *dst, alpha, normType);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.normalize: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.normalize: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.normalize: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -4204,11 +8505,34 @@ static int cv_normalize(lua_State *L) {
  * include/opencv/cxcore.hpp:1194
  */
 static int cv_perspectiveTransform(lua_State *L) {
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  const Mat *m = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  perspectiveTransform(*src, *dst, *m);
-  return 0;
+  try {
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *m = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    perspectiveTransform(*src, *dst, *m);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.perspectiveTransform: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.perspectiveTransform: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.perspectiveTransform: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -4217,17 +8541,40 @@ static int cv_perspectiveTransform(lua_State *L) {
  * include/opencv/cxcore.hpp:1182
  */
 static int cv_phase(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *x = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *y = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *angle = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  if (top__ < 4) {
-    phase(*x, *y, *angle);
-  } else {
-    bool angleInDegrees = lua_toboolean(L, 4);
-    phase(*x, *y, *angle, angleInDegrees);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *x = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *y = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *angle = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    if (top__ < 4) {
+      phase(*x, *y, *angle);
+    } else {
+      bool angleInDegrees = lua_toboolean(L, 4);
+      phase(*x, *y, *angle, angleInDegrees);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.phase: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.phase: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.phase: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -4236,12 +8583,35 @@ static int cv_phase(lua_State *L) {
  * include/opencv/cv.hpp:583
  */
 static int cv_pointPolygonTest(lua_State *L) {
-  const Mat *contour = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Point2f *pt = *((Point2f **)luaL_checkudata(L, 2, "cv.Point2f"));
-  bool measureDist = lua_toboolean(L, 3);
-  double  retval__ = pointPolygonTest(*contour, *pt, measureDist);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    const Mat *contour = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Point2f *pt = *((Point2f **)luaL_checkudata(L, 2, "cv.Point2f"));
+    bool measureDist = lua_toboolean(L, 3);
+    double  retval__ = pointPolygonTest(*contour, *pt, measureDist);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.pointPolygonTest: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.pointPolygonTest: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.pointPolygonTest: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -4250,18 +8620,41 @@ static int cv_pointPolygonTest(lua_State *L) {
  * include/opencv/cxcore.hpp:1177
  */
 static int cv_polarToCart(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *magnitude = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *angle = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *x = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  Mat *y = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  if (top__ < 5) {
-    polarToCart(*magnitude, *angle, *x, *y);
-  } else {
-    bool angleInDegrees = lua_toboolean(L, 5);
-    polarToCart(*magnitude, *angle, *x, *y, angleInDegrees);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *magnitude = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *angle = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *x = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    Mat *y = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    if (top__ < 5) {
+      polarToCart(*magnitude, *angle, *x, *y);
+    } else {
+      bool angleInDegrees = lua_toboolean(L, 5);
+      polarToCart(*magnitude, *angle, *x, *y, angleInDegrees);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.polarToCart: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.polarToCart: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.polarToCart: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -4271,11 +8664,34 @@ static int cv_polarToCart(lua_State *L) {
  * include/opencv/cxcore.hpp:1171
  */
 static int cv_pow1(lua_State *L) {
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  double power = luaL_checknumber(L, 2);
-  Mat *b = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  pow(*a, power, *b);
-  return 0;
+  try {
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    double power = luaL_checknumber(L, 2);
+    Mat *b = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    pow(*a, power, *b);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.pow: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.pow: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.pow: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -4283,11 +8699,34 @@ static int cv_pow1(lua_State *L) {
  * include/opencv/cxcore.hpp:1805
  */
 static int cv_pow2(lua_State *L) {
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  double power = luaL_checknumber(L, 2);
-  MatND *b = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-  pow(*a, power, *b);
-  return 0;
+  try {
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    double power = luaL_checknumber(L, 2);
+    MatND *b = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    pow(*a, power, *b);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.pow: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.pow: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.pow: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -4311,17 +8750,40 @@ static int cv_pow(lua_State *L) {
  * include/opencv/cv.hpp:286
  */
 static int cv_preCornerDetect(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  int ksize = luaL_checkint(L, 3);
-  if (top__ < 4) {
-    preCornerDetect(*src, *dst, ksize);
-  } else {
-    int borderType = luaL_checkint(L, 4);
-    preCornerDetect(*src, *dst, ksize, borderType);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    int ksize = luaL_checkint(L, 3);
+    if (top__ < 4) {
+      preCornerDetect(*src, *dst, ksize);
+    } else {
+      int borderType = luaL_checkint(L, 4);
+      preCornerDetect(*src, *dst, ksize, borderType);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.preCornerDetect: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.preCornerDetect: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.preCornerDetect: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -4330,30 +8792,53 @@ static int cv_preCornerDetect(lua_State *L) {
  * include/opencv/cxcore.hpp:1345
  */
 static int cv_putText(lua_State *L) {
-  int top__ = lua_gettop(L);
-  Mat *img = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const string *text = *((const string **)luaL_checkudata(L, 2, "cv.string"));
-  Point *org = *((Point **)luaL_checkudata(L, 3, "cv.Point"));
-  int fontFace = luaL_checkint(L, 4);
-  double fontScale = luaL_checknumber(L, 5);
-  Scalar *color = *((Scalar **)luaL_checkudata(L, 6, "cv.Scalar"));
-  if (top__ < 7) {
-    putText(*img, *text, *org, fontFace, fontScale, *color);
-  } else {
-    int thickness = luaL_checkint(L, 7);
-    if (top__ < 8) {
-      putText(*img, *text, *org, fontFace, fontScale, *color, thickness);
+  try {
+    int top__ = lua_gettop(L);
+    Mat *img = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const string *text = *((const string **)luaL_checkudata(L, 2, "cv.string"));
+    Point *org = *((Point **)luaL_checkudata(L, 3, "cv.Point"));
+    int fontFace = luaL_checkint(L, 4);
+    double fontScale = luaL_checknumber(L, 5);
+    Scalar *color = *((Scalar **)luaL_checkudata(L, 6, "cv.Scalar"));
+    if (top__ < 7) {
+      putText(*img, *text, *org, fontFace, fontScale, *color);
     } else {
-      int linetype = luaL_checkint(L, 8);
-      if (top__ < 9) {
-        putText(*img, *text, *org, fontFace, fontScale, *color, thickness, linetype);
+      int thickness = luaL_checkint(L, 7);
+      if (top__ < 8) {
+        putText(*img, *text, *org, fontFace, fontScale, *color, thickness);
       } else {
-        bool bottomLeftOrigin = lua_toboolean(L, 9);
-        putText(*img, *text, *org, fontFace, fontScale, *color, thickness, linetype, bottomLeftOrigin);
+        int linetype = luaL_checkint(L, 8);
+        if (top__ < 9) {
+          putText(*img, *text, *org, fontFace, fontScale, *color, thickness, linetype);
+        } else {
+          bool bottomLeftOrigin = lua_toboolean(L, 9);
+          putText(*img, *text, *org, fontFace, fontScale, *color, thickness, linetype, bottomLeftOrigin);
+        }
       }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.putText: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.putText: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.putText: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -4362,16 +8847,39 @@ static int cv_putText(lua_State *L) {
  * include/opencv/cv.hpp:393
  */
 static int cv_pyrDown(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  if (top__ < 3) {
-    pyrDown(*src, *dst);
-  } else {
-    const Size *dstsize = *((const Size **)luaL_checkudata(L, 3, "cv.Size"));
-    pyrDown(*src, *dst, *dstsize);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    if (top__ < 3) {
+      pyrDown(*src, *dst);
+    } else {
+      const Size *dstsize = *((const Size **)luaL_checkudata(L, 3, "cv.Size"));
+      pyrDown(*src, *dst, *dstsize);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.pyrDown: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.pyrDown: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.pyrDown: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -4380,16 +8888,39 @@ static int cv_pyrDown(lua_State *L) {
  * include/opencv/cv.hpp:394
  */
 static int cv_pyrUp(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  if (top__ < 3) {
-    pyrUp(*src, *dst);
-  } else {
-    const Size *dstsize = *((const Size **)luaL_checkudata(L, 3, "cv.Size"));
-    pyrUp(*src, *dst, *dstsize);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    if (top__ < 3) {
+      pyrUp(*src, *dst);
+    } else {
+      const Size *dstsize = *((const Size **)luaL_checkudata(L, 3, "cv.Size"));
+      pyrUp(*src, *dst, *dstsize);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.pyrUp: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.pyrUp: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.pyrUp: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -4398,11 +8929,34 @@ static int cv_pyrUp(lua_State *L) {
  * include/opencv/cxcore.hpp:1270
  */
 static int cv_randn(lua_State *L) {
-  Mat *dst = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Scalar *mean = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-  const Scalar *stddev = *((const Scalar **)luaL_checkudata(L, 3, "cv.Scalar"));
-  randn(*dst, *mean, *stddev);
-  return 0;
+  try {
+    Mat *dst = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Scalar *mean = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
+    const Scalar *stddev = *((const Scalar **)luaL_checkudata(L, 3, "cv.Scalar"));
+    randn(*dst, *mean, *stddev);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.randn: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.randn: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.randn: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -4411,11 +8965,34 @@ static int cv_randn(lua_State *L) {
  * include/opencv/cxcore.hpp:1268
  */
 static int cv_randu(lua_State *L) {
-  Mat *dst = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Scalar *low = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-  const Scalar *high = *((const Scalar **)luaL_checkudata(L, 3, "cv.Scalar"));
-  randu(*dst, *low, *high);
-  return 0;
+  try {
+    Mat *dst = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Scalar *low = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
+    const Scalar *high = *((const Scalar **)luaL_checkudata(L, 3, "cv.Scalar"));
+    randu(*dst, *low, *high);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.randu: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.randu: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.randu: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -4425,28 +9002,51 @@ static int cv_randu(lua_State *L) {
  * include/opencv/cxcore.hpp:1279
  */
 static int cv_rectangle1(lua_State *L) {
-  int top__ = lua_gettop(L);
-  Mat *img = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Point *pt1 = *((Point **)luaL_checkudata(L, 2, "cv.Point"));
-  Point *pt2 = *((Point **)luaL_checkudata(L, 3, "cv.Point"));
-  const Scalar *color = *((const Scalar **)luaL_checkudata(L, 4, "cv.Scalar"));
-  if (top__ < 5) {
-    rectangle(*img, *pt1, *pt2, *color);
-  } else {
-    int thickness = luaL_checkint(L, 5);
-    if (top__ < 6) {
-      rectangle(*img, *pt1, *pt2, *color, thickness);
+  try {
+    int top__ = lua_gettop(L);
+    Mat *img = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Point *pt1 = *((Point **)luaL_checkudata(L, 2, "cv.Point"));
+    Point *pt2 = *((Point **)luaL_checkudata(L, 3, "cv.Point"));
+    const Scalar *color = *((const Scalar **)luaL_checkudata(L, 4, "cv.Scalar"));
+    if (top__ < 5) {
+      rectangle(*img, *pt1, *pt2, *color);
     } else {
-      int lineType = luaL_checkint(L, 6);
-      if (top__ < 7) {
-        rectangle(*img, *pt1, *pt2, *color, thickness, lineType);
+      int thickness = luaL_checkint(L, 5);
+      if (top__ < 6) {
+        rectangle(*img, *pt1, *pt2, *color, thickness);
       } else {
-        int shift = luaL_checkint(L, 7);
-        rectangle(*img, *pt1, *pt2, *color, thickness, lineType, shift);
+        int lineType = luaL_checkint(L, 6);
+        if (top__ < 7) {
+          rectangle(*img, *pt1, *pt2, *color, thickness, lineType);
+        } else {
+          int shift = luaL_checkint(L, 7);
+          rectangle(*img, *pt1, *pt2, *color, thickness, lineType, shift);
+        }
       }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.rectangle: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.rectangle: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.rectangle: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -4454,27 +9054,50 @@ static int cv_rectangle1(lua_State *L) {
  * include/opencv/cxcore.hpp:1283
  */
 static int cv_rectangle2(lua_State *L) {
-  int top__ = lua_gettop(L);
-  Mat *img = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Rect *rec = *((Rect **)luaL_checkudata(L, 2, "cv.Rect"));
-  const Scalar *color = *((const Scalar **)luaL_checkudata(L, 3, "cv.Scalar"));
-  if (top__ < 4) {
-    rectangle(*img, *rec, *color);
-  } else {
-    int thickness = luaL_checkint(L, 4);
-    if (top__ < 5) {
-      rectangle(*img, *rec, *color, thickness);
+  try {
+    int top__ = lua_gettop(L);
+    Mat *img = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Rect *rec = *((Rect **)luaL_checkudata(L, 2, "cv.Rect"));
+    const Scalar *color = *((const Scalar **)luaL_checkudata(L, 3, "cv.Scalar"));
+    if (top__ < 4) {
+      rectangle(*img, *rec, *color);
     } else {
-      int lineType = luaL_checkint(L, 5);
-      if (top__ < 6) {
-        rectangle(*img, *rec, *color, thickness, lineType);
+      int thickness = luaL_checkint(L, 4);
+      if (top__ < 5) {
+        rectangle(*img, *rec, *color, thickness);
       } else {
-        int shift = luaL_checkint(L, 6);
-        rectangle(*img, *rec, *color, thickness, lineType, shift);
+        int lineType = luaL_checkint(L, 5);
+        if (top__ < 6) {
+          rectangle(*img, *rec, *color, thickness, lineType);
+        } else {
+          int shift = luaL_checkint(L, 6);
+          rectangle(*img, *rec, *color, thickness, lineType, shift);
+        }
       }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.rectangle: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.rectangle: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.rectangle: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -4504,18 +9127,41 @@ static int cv_rectangle(lua_State *L) {
  * include/opencv/cxcore.hpp:1126
  */
 static int cv_reduce(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  int dim = luaL_checkint(L, 3);
-  int rtype = luaL_checkint(L, 4);
-  if (top__ < 5) {
-    reduce(*m, *dst, dim, rtype);
-  } else {
-    int dtype = luaL_checkint(L, 5);
-    reduce(*m, *dst, dim, rtype, dtype);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    int dim = luaL_checkint(L, 3);
+    int rtype = luaL_checkint(L, 4);
+    if (top__ < 5) {
+      reduce(*m, *dst, dim, rtype);
+    } else {
+      int dtype = luaL_checkint(L, 5);
+      reduce(*m, *dst, dim, rtype, dtype);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.reduce: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.reduce: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.reduce: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -4524,24 +9170,47 @@ static int cv_reduce(lua_State *L) {
  * include/opencv/cv.hpp:358
  */
 static int cv_remap(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  const Mat *map1 = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  const Mat *map2 = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  int interpolation = luaL_checkint(L, 5);
-  if (top__ < 6) {
-    remap(*src, *dst, *map1, *map2, interpolation);
-  } else {
-    int borderMode = luaL_checkint(L, 6);
-    if (top__ < 7) {
-      remap(*src, *dst, *map1, *map2, interpolation, borderMode);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *map1 = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *map2 = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    int interpolation = luaL_checkint(L, 5);
+    if (top__ < 6) {
+      remap(*src, *dst, *map1, *map2, interpolation);
     } else {
-      const Scalar *borderValue = *((const Scalar **)luaL_checkudata(L, 7, "cv.Scalar"));
-      remap(*src, *dst, *map1, *map2, interpolation, borderMode, *borderValue);
+      int borderMode = luaL_checkint(L, 6);
+      if (top__ < 7) {
+        remap(*src, *dst, *map1, *map2, interpolation, borderMode);
+      } else {
+        const Scalar *borderValue = *((const Scalar **)luaL_checkudata(L, 7, "cv.Scalar"));
+        remap(*src, *dst, *map1, *map2, interpolation, borderMode, *borderValue);
+      }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.remap: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.remap: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.remap: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -4551,12 +9220,35 @@ static int cv_remap(lua_State *L) {
  * include/opencv/cxcore.hpp:1143
  */
 static int cv_repeat1(lua_State *L) {
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  int ny = luaL_checkint(L, 2);
-  int nx = luaL_checkint(L, 3);
-  Mat *b = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  repeat(*a, ny, nx, *b);
-  return 0;
+  try {
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    int ny = luaL_checkint(L, 2);
+    int nx = luaL_checkint(L, 3);
+    Mat *b = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    repeat(*a, ny, nx, *b);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.repeat: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.repeat: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.repeat: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -4564,12 +9256,35 @@ static int cv_repeat1(lua_State *L) {
  * include/opencv/cxcore.hpp:1145
  */
 static int cv_repeat2(lua_State *L) {
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  int ny = luaL_checkint(L, 2);
-  int nx = luaL_checkint(L, 3);
-  Mat  retval__ = repeat(*src, ny, nx);
-  lua_pushclass<Mat>(L, retval__, "cv.Mat");
-  return 1;
+  try {
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    int ny = luaL_checkint(L, 2);
+    int nx = luaL_checkint(L, 3);
+    Mat  retval__ = repeat(*src, ny, nx);
+    lua_pushclass<Mat>(L, retval__, "cv.Mat");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.repeat: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.repeat: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.repeat: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -4612,17 +9327,40 @@ static int cv_repeat(lua_State *L) {
  * include/opencv/cv.hpp:967
  */
 static int cv_reprojectImageTo3D(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *disparity = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *_3dImage = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  const Mat *Q = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  if (top__ < 4) {
-    reprojectImageTo3D(*disparity, *_3dImage, *Q);
-  } else {
-    bool handleMissingValues = lua_toboolean(L, 4);
-    reprojectImageTo3D(*disparity, *_3dImage, *Q, handleMissingValues);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *disparity = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *_3dImage = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *Q = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    if (top__ < 4) {
+      reprojectImageTo3D(*disparity, *_3dImage, *Q);
+    } else {
+      bool handleMissingValues = lua_toboolean(L, 4);
+      reprojectImageTo3D(*disparity, *_3dImage, *Q, handleMissingValues);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.reprojectImageTo3D: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.reprojectImageTo3D: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.reprojectImageTo3D: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -4631,27 +9369,50 @@ static int cv_reprojectImageTo3D(lua_State *L) {
  * include/opencv/cv.hpp:343
  */
 static int cv_resize(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Size *dsize = *((Size **)luaL_checkudata(L, 3, "cv.Size"));
-  if (top__ < 4) {
-    resize(*src, *dst, *dsize);
-  } else {
-    double fx = luaL_checknumber(L, 4);
-    if (top__ < 5) {
-      resize(*src, *dst, *dsize, fx);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Size *dsize = *((Size **)luaL_checkudata(L, 3, "cv.Size"));
+    if (top__ < 4) {
+      resize(*src, *dst, *dsize);
     } else {
-      double fy = luaL_checknumber(L, 5);
-      if (top__ < 6) {
-        resize(*src, *dst, *dsize, fx, fy);
+      double fx = luaL_checknumber(L, 4);
+      if (top__ < 5) {
+        resize(*src, *dst, *dsize, fx);
       } else {
-        int interpolation = luaL_checkint(L, 6);
-        resize(*src, *dst, *dsize, fx, fy, interpolation);
+        double fy = luaL_checknumber(L, 5);
+        if (top__ < 6) {
+          resize(*src, *dst, *dsize, fx, fy);
+        } else {
+          int interpolation = luaL_checkint(L, 6);
+          resize(*src, *dst, *dsize, fx, fy, interpolation);
+        }
       }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.resize: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.resize: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.resize: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -4661,12 +9422,35 @@ static int cv_resize(lua_State *L) {
  * include/opencv/cxcore.hpp:1103
  */
 static int cv_scaleAdd1(lua_State *L) {
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  double alpha = luaL_checknumber(L, 2);
-  const Mat *b = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  Mat *c = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  scaleAdd(*a, alpha, *b, *c);
-  return 0;
+  try {
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    double alpha = luaL_checknumber(L, 2);
+    const Mat *b = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    Mat *c = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    scaleAdd(*a, alpha, *b, *c);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.scaleAdd: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.scaleAdd: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.scaleAdd: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -4674,12 +9458,35 @@ static int cv_scaleAdd1(lua_State *L) {
  * include/opencv/cxcore.hpp:1759
  */
 static int cv_scaleAdd2(lua_State *L) {
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  double alpha = luaL_checknumber(L, 2);
-  const MatND *b = *((const MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-  MatND *c = *((MatND **)luaL_checkudata(L, 4, "cv.MatND"));
-  scaleAdd(*a, alpha, *b, *c);
-  return 0;
+  try {
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    double alpha = luaL_checknumber(L, 2);
+    const MatND *b = *((const MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    MatND *c = *((MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+    scaleAdd(*a, alpha, *b, *c);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.scaleAdd: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.scaleAdd: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.scaleAdd: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -4703,29 +9510,52 @@ static int cv_scaleAdd(lua_State *L) {
  * include/opencv/cv.hpp:254
  */
 static int cv_sepFilter2D(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  int ddepth = luaL_checkint(L, 3);
-  const Mat *kernelX = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  const Mat *kernelY = *((const Mat **)luaL_checkudata(L, 5, "cv.Mat"));
-  if (top__ < 6) {
-    sepFilter2D(*src, *dst, ddepth, *kernelX, *kernelY);
-  } else {
-    Point *anchor = *((Point **)luaL_checkudata(L, 6, "cv.Point"));
-    if (top__ < 7) {
-      sepFilter2D(*src, *dst, ddepth, *kernelX, *kernelY, *anchor);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    int ddepth = luaL_checkint(L, 3);
+    const Mat *kernelX = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    const Mat *kernelY = *((const Mat **)luaL_checkudata(L, 5, "cv.Mat"));
+    if (top__ < 6) {
+      sepFilter2D(*src, *dst, ddepth, *kernelX, *kernelY);
     } else {
-      double delta = luaL_checknumber(L, 7);
-      if (top__ < 8) {
-        sepFilter2D(*src, *dst, ddepth, *kernelX, *kernelY, *anchor, delta);
+      Point *anchor = *((Point **)luaL_checkudata(L, 6, "cv.Point"));
+      if (top__ < 7) {
+        sepFilter2D(*src, *dst, ddepth, *kernelX, *kernelY, *anchor);
       } else {
-        int borderType = luaL_checkint(L, 8);
-        sepFilter2D(*src, *dst, ddepth, *kernelX, *kernelY, *anchor, delta, borderType);
+        double delta = luaL_checknumber(L, 7);
+        if (top__ < 8) {
+          sepFilter2D(*src, *dst, ddepth, *kernelX, *kernelY, *anchor, delta);
+        } else {
+          int borderType = luaL_checkint(L, 8);
+          sepFilter2D(*src, *dst, ddepth, *kernelX, *kernelY, *anchor, delta, borderType);
+        }
       }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.sepFilter2D: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.sepFilter2D: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.sepFilter2D: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -4734,10 +9564,33 @@ static int cv_sepFilter2D(lua_State *L) {
  * include/opencv/cxcore.hpp:112
  */
 static int cv_setBreakOnError(lua_State *L) {
-  bool value = lua_toboolean(L, 1);
-  bool  retval__ = setBreakOnError(value);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    bool value = lua_toboolean(L, 1);
+    bool  retval__ = setBreakOnError(value);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.setBreakOnError: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.setBreakOnError: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.setBreakOnError: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -4746,15 +9599,38 @@ static int cv_setBreakOnError(lua_State *L) {
  * include/opencv/cxcore.hpp:1197
  */
 static int cv_setIdentity(lua_State *L) {
-  int top__ = lua_gettop(L);
-  Mat *c = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  if (top__ < 2) {
-    setIdentity(*c);
-  } else {
-    const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-    setIdentity(*c, *s);
+  try {
+    int top__ = lua_gettop(L);
+    Mat *c = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    if (top__ < 2) {
+      setIdentity(*c);
+    } else {
+      const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
+      setIdentity(*c, *s);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.setIdentity: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.setIdentity: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.setIdentity: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -4763,9 +9639,32 @@ static int cv_setIdentity(lua_State *L) {
  * include/opencv/cxcore.hpp:132
  */
 static int cv_setNumThreads(lua_State *L) {
-  int arg1 = luaL_checkint(L, 1);
-  setNumThreads(arg1);
-  return 0;
+  try {
+    int arg1 = luaL_checkint(L, 1);
+    setNumThreads(arg1);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.setNumThreads: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.setNumThreads: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.setNumThreads: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -4774,9 +9673,32 @@ static int cv_setNumThreads(lua_State *L) {
  * include/opencv/cxcore.hpp:163
  */
 static int cv_setUseOptimized(lua_State *L) {
-  bool arg1 = lua_toboolean(L, 1);
-  setUseOptimized(arg1);
-  return 0;
+  try {
+    bool arg1 = lua_toboolean(L, 1);
+    setUseOptimized(arg1);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.setUseOptimized: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.setUseOptimized: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.setUseOptimized: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -4785,19 +9707,42 @@ static int cv_setUseOptimized(lua_State *L) {
  * include/opencv/cxcore.hpp:1201
  */
 static int cv_solve(lua_State *L) {
-  int top__ = lua_gettop(L);
-  bool  retval__;
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *x = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  if (top__ < 4) {
-    retval__ = solve(*a, *b, *x);
-  } else {
-    int flags = luaL_checkint(L, 4);
-    retval__ = solve(*a, *b, *x, flags);
+  try {
+    int top__ = lua_gettop(L);
+    bool  retval__;
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *x = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    if (top__ < 4) {
+      retval__ = solve(*a, *b, *x);
+    } else {
+      int flags = luaL_checkint(L, 4);
+      retval__ = solve(*a, *b, *x, flags);
+    }
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.solve: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.solve: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.solve: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  lua_pushnumber(L, retval__);
-  return 1;
 }
 
 
@@ -4806,11 +9751,34 @@ static int cv_solve(lua_State *L) {
  * include/opencv/cxcore.hpp:1204
  */
 static int cv_solveCubic(lua_State *L) {
-  const Mat *coeffs = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *roots = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  int  retval__ = solveCubic(*coeffs, *roots);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    const Mat *coeffs = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *roots = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    int  retval__ = solveCubic(*coeffs, *roots);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.solveCubic: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.solveCubic: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.solveCubic: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -4819,20 +9787,43 @@ static int cv_solveCubic(lua_State *L) {
  * include/opencv/cv.hpp:805
  */
 static int cv_solvePnP(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *objectPoints = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *imagePoints = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  const Mat *cameraMatrix = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  const Mat *distCoeffs = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  Mat *rvec = *((Mat **)luaL_checkudata(L, 5, "cv.Mat"));
-  Mat *tvec = *((Mat **)luaL_checkudata(L, 6, "cv.Mat"));
-  if (top__ < 7) {
-    solvePnP(*objectPoints, *imagePoints, *cameraMatrix, *distCoeffs, *rvec, *tvec);
-  } else {
-    bool useExtrinsicGuess = lua_toboolean(L, 7);
-    solvePnP(*objectPoints, *imagePoints, *cameraMatrix, *distCoeffs, *rvec, *tvec, useExtrinsicGuess);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *objectPoints = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *imagePoints = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *cameraMatrix = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *distCoeffs = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    Mat *rvec = *((Mat **)luaL_checkudata(L, 5, "cv.Mat"));
+    Mat *tvec = *((Mat **)luaL_checkudata(L, 6, "cv.Mat"));
+    if (top__ < 7) {
+      solvePnP(*objectPoints, *imagePoints, *cameraMatrix, *distCoeffs, *rvec, *tvec);
+    } else {
+      bool useExtrinsicGuess = lua_toboolean(L, 7);
+      solvePnP(*objectPoints, *imagePoints, *cameraMatrix, *distCoeffs, *rvec, *tvec, useExtrinsicGuess);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.solvePnP: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.solvePnP: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.solvePnP: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -4841,18 +9832,41 @@ static int cv_solvePnP(lua_State *L) {
  * include/opencv/cxcore.hpp:1205
  */
 static int cv_solvePoly(lua_State *L) {
-  int top__ = lua_gettop(L);
-  double  retval__;
-  const Mat *coeffs = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *roots = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  if (top__ < 3) {
-    retval__ = solvePoly(*coeffs, *roots);
-  } else {
-    int maxIters = luaL_checkint(L, 3);
-    retval__ = solvePoly(*coeffs, *roots, maxIters);
+  try {
+    int top__ = lua_gettop(L);
+    double  retval__;
+    const Mat *coeffs = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *roots = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    if (top__ < 3) {
+      retval__ = solvePoly(*coeffs, *roots);
+    } else {
+      int maxIters = luaL_checkint(L, 3);
+      retval__ = solvePoly(*coeffs, *roots, maxIters);
+    }
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.solvePoly: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.solvePoly: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.solvePoly: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  lua_pushnumber(L, retval__);
-  return 1;
 }
 
 
@@ -4861,11 +9875,34 @@ static int cv_solvePoly(lua_State *L) {
  * include/opencv/cxcore.hpp:1202
  */
 static int cv_sort(lua_State *L) {
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *b = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  int flags = luaL_checkint(L, 3);
-  sort(*a, *b, flags);
-  return 0;
+  try {
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *b = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    int flags = luaL_checkint(L, 3);
+    sort(*a, *b, flags);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.sort: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.sort: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.sort: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -4874,11 +9911,34 @@ static int cv_sort(lua_State *L) {
  * include/opencv/cxcore.hpp:1203
  */
 static int cv_sortIdx(lua_State *L) {
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *b = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  int flags = luaL_checkint(L, 3);
-  sortIdx(*a, *b, flags);
-  return 0;
+  try {
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *b = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    int flags = luaL_checkint(L, 3);
+    sortIdx(*a, *b, flags);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.sortIdx: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.sortIdx: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.sortIdx: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -4888,10 +9948,33 @@ static int cv_sortIdx(lua_State *L) {
  * include/opencv/cxcore.hpp:1170
  */
 static int cv_sqrt1(lua_State *L) {
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *b = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  sqrt(*a, *b);
-  return 0;
+  try {
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *b = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    sqrt(*a, *b);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.sqrt: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.sqrt: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.sqrt: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -4899,10 +9982,33 @@ static int cv_sqrt1(lua_State *L) {
  * include/opencv/cxcore.hpp:1804
  */
 static int cv_sqrt2(lua_State *L) {
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  MatND *b = *((MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-  sqrt(*a, *b);
-  return 0;
+  try {
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    MatND *b = *((MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    sqrt(*a, *b);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.sqrt: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.sqrt: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.sqrt: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -4927,26 +10033,49 @@ static int cv_sqrt(lua_State *L) {
  * include/opencv/cv.hpp:873
  */
 static int cv_stereoRectify1(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *cameraMatrix1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *distCoeffs1 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  const Mat *cameraMatrix2 = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  const Mat *distCoeffs2 = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  Size *imageSize = *((Size **)luaL_checkudata(L, 5, "cv.Size"));
-  const Mat *R = *((const Mat **)luaL_checkudata(L, 6, "cv.Mat"));
-  const Mat *T = *((const Mat **)luaL_checkudata(L, 7, "cv.Mat"));
-  Mat *R1 = *((Mat **)luaL_checkudata(L, 8, "cv.Mat"));
-  Mat *R2 = *((Mat **)luaL_checkudata(L, 9, "cv.Mat"));
-  Mat *P1 = *((Mat **)luaL_checkudata(L, 10, "cv.Mat"));
-  Mat *P2 = *((Mat **)luaL_checkudata(L, 11, "cv.Mat"));
-  Mat *Q = *((Mat **)luaL_checkudata(L, 12, "cv.Mat"));
-  if (top__ < 13) {
-    stereoRectify(*cameraMatrix1, *distCoeffs1, *cameraMatrix2, *distCoeffs2, *imageSize, *R, *T, *R1, *R2, *P1, *P2, *Q);
-  } else {
-    int flags = luaL_checkint(L, 13);
-    stereoRectify(*cameraMatrix1, *distCoeffs1, *cameraMatrix2, *distCoeffs2, *imageSize, *R, *T, *R1, *R2, *P1, *P2, *Q, flags);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *cameraMatrix1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *distCoeffs1 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *cameraMatrix2 = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *distCoeffs2 = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    Size *imageSize = *((Size **)luaL_checkudata(L, 5, "cv.Size"));
+    const Mat *R = *((const Mat **)luaL_checkudata(L, 6, "cv.Mat"));
+    const Mat *T = *((const Mat **)luaL_checkudata(L, 7, "cv.Mat"));
+    Mat *R1 = *((Mat **)luaL_checkudata(L, 8, "cv.Mat"));
+    Mat *R2 = *((Mat **)luaL_checkudata(L, 9, "cv.Mat"));
+    Mat *P1 = *((Mat **)luaL_checkudata(L, 10, "cv.Mat"));
+    Mat *P2 = *((Mat **)luaL_checkudata(L, 11, "cv.Mat"));
+    Mat *Q = *((Mat **)luaL_checkudata(L, 12, "cv.Mat"));
+    if (top__ < 13) {
+      stereoRectify(*cameraMatrix1, *distCoeffs1, *cameraMatrix2, *distCoeffs2, *imageSize, *R, *T, *R1, *R2, *P1, *P2, *Q);
+    } else {
+      int flags = luaL_checkint(L, 13);
+      stereoRectify(*cameraMatrix1, *distCoeffs1, *cameraMatrix2, *distCoeffs2, *imageSize, *R, *T, *R1, *R2, *P1, *P2, *Q, flags);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.stereoRectify: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.stereoRectify: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.stereoRectify: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -4968,22 +10097,45 @@ static int cv_stereoRectify(lua_State *L) {
  * include/opencv/cv.hpp:887
  */
 static int cv_stereoRectifyUncalibrated(lua_State *L) {
-  int top__ = lua_gettop(L);
-  bool  retval__;
-  const Mat *points1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *points2 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  const Mat *F = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  Size *imgSize = *((Size **)luaL_checkudata(L, 4, "cv.Size"));
-  Mat *H1 = *((Mat **)luaL_checkudata(L, 5, "cv.Mat"));
-  Mat *H2 = *((Mat **)luaL_checkudata(L, 6, "cv.Mat"));
-  if (top__ < 7) {
-    retval__ = stereoRectifyUncalibrated(*points1, *points2, *F, *imgSize, *H1, *H2);
-  } else {
-    double threshold = luaL_checknumber(L, 7);
-    retval__ = stereoRectifyUncalibrated(*points1, *points2, *F, *imgSize, *H1, *H2, threshold);
+  try {
+    int top__ = lua_gettop(L);
+    bool  retval__;
+    const Mat *points1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *points2 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *F = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    Size *imgSize = *((Size **)luaL_checkudata(L, 4, "cv.Size"));
+    Mat *H1 = *((Mat **)luaL_checkudata(L, 5, "cv.Mat"));
+    Mat *H2 = *((Mat **)luaL_checkudata(L, 6, "cv.Mat"));
+    if (top__ < 7) {
+      retval__ = stereoRectifyUncalibrated(*points1, *points2, *F, *imgSize, *H1, *H2);
+    } else {
+      double threshold = luaL_checknumber(L, 7);
+      retval__ = stereoRectifyUncalibrated(*points1, *points2, *F, *imgSize, *H1, *H2, threshold);
+    }
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.stereoRectifyUncalibrated: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.stereoRectifyUncalibrated: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.stereoRectifyUncalibrated: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  lua_pushnumber(L, retval__);
-  return 1;
 }
 
 
@@ -4993,12 +10145,35 @@ static int cv_stereoRectifyUncalibrated(lua_State *L) {
  * include/opencv/cxcore.hpp:1086
  */
 static int cv_subtract1(lua_State *L) {
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  subtract(*a, *b, *c, *mask);
-  return 0;
+  try {
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    subtract(*a, *b, *c, *mask);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.subtract: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.subtract: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.subtract: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -5006,11 +10181,34 @@ static int cv_subtract1(lua_State *L) {
  * include/opencv/cxcore.hpp:1094
  */
 static int cv_subtract2(lua_State *L) {
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  subtract(*a, *b, *c);
-  return 0;
+  try {
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    subtract(*a, *b, *c);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.subtract: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.subtract: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.subtract: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -5018,17 +10216,40 @@ static int cv_subtract2(lua_State *L) {
  * include/opencv/cxcore.hpp:1096
  */
 static int cv_subtract3(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-  Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  if (top__ < 4) {
-    subtract(*a, *s, *c);
-  } else {
-    const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-    subtract(*a, *s, *c, *mask);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
+    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    if (top__ < 4) {
+      subtract(*a, *s, *c);
+    } else {
+      const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+      subtract(*a, *s, *c, *mask);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.subtract: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.subtract: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.subtract: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -5036,17 +10257,40 @@ static int cv_subtract3(lua_State *L) {
  * include/opencv/cxcore.hpp:1102
  */
 static int cv_subtract4(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Scalar *s = *((const Scalar **)luaL_checkudata(L, 1, "cv.Scalar"));
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  if (top__ < 4) {
-    subtract(*s, *a, *c);
-  } else {
-    const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-    subtract(*s, *a, *c, *mask);
+  try {
+    int top__ = lua_gettop(L);
+    const Scalar *s = *((const Scalar **)luaL_checkudata(L, 1, "cv.Scalar"));
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    if (top__ < 4) {
+      subtract(*s, *a, *c);
+    } else {
+      const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+      subtract(*s, *a, *c, *mask);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.subtract: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.subtract: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.subtract: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -5054,12 +10298,35 @@ static int cv_subtract4(lua_State *L) {
  * include/opencv/cxcore.hpp:1749
  */
 static int cv_subtract5(lua_State *L) {
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-  MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-  const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
-  subtract(*a, *b, *c, *mask);
-  return 0;
+  try {
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+    subtract(*a, *b, *c, *mask);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.subtract: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.subtract: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.subtract: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -5067,11 +10334,34 @@ static int cv_subtract5(lua_State *L) {
  * include/opencv/cxcore.hpp:1751
  */
 static int cv_subtract6(lua_State *L) {
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-  MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-  subtract(*a, *b, *c);
-  return 0;
+  try {
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    subtract(*a, *b, *c);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.subtract: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.subtract: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.subtract: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -5079,17 +10369,40 @@ static int cv_subtract6(lua_State *L) {
  * include/opencv/cxcore.hpp:1758
  */
 static int cv_subtract7(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Scalar *s = *((const Scalar **)luaL_checkudata(L, 1, "cv.Scalar"));
-  const MatND *a = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-  MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-  if (top__ < 4) {
-    subtract(*s, *a, *c);
-  } else {
-    const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
-    subtract(*s, *a, *c, *mask);
+  try {
+    int top__ = lua_gettop(L);
+    const Scalar *s = *((const Scalar **)luaL_checkudata(L, 1, "cv.Scalar"));
+    const MatND *a = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    if (top__ < 4) {
+      subtract(*s, *a, *c);
+    } else {
+      const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+      subtract(*s, *a, *c, *mask);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.subtract: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.subtract: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.subtract: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -5167,10 +10480,33 @@ static int cv_subtract(lua_State *L) {
  * include/opencv/cxcore.hpp:1109
  */
 static int cv_sum1(lua_State *L) {
-  const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Scalar  retval__ = sum(*m);
-  lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
-  return 1;
+  try {
+    const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Scalar  retval__ = sum(*m);
+    lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.sum: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.sum: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.sum: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -5178,10 +10514,33 @@ static int cv_sum1(lua_State *L) {
  * include/opencv/cxcore.hpp:1763
  */
 static int cv_sum2(lua_State *L) {
-  const MatND *m = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-  Scalar  retval__ = sum(*m);
-  lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
-  return 1;
+  try {
+    const MatND *m = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    Scalar  retval__ = sum(*m);
+    lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.sum: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.sum: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.sum: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -5205,9 +10564,32 @@ static int cv_sum(lua_State *L) {
  * include/opencv/cxcore.hpp:1264
  */
 static int cv_theRNG(lua_State *L) {
-  RNG  retval__ = theRNG();
-  lua_pushclass<RNG>(L, retval__, "cv.RNG");
-  return 1;
+  try {
+    RNG  retval__ = theRNG();
+    lua_pushclass<RNG>(L, retval__, "cv.RNG");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.theRNG: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.theRNG: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.theRNG: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -5216,14 +10598,37 @@ static int cv_theRNG(lua_State *L) {
  * include/opencv/cv.hpp:385
  */
 static int cv_threshold(lua_State *L) {
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  double thresh = luaL_checknumber(L, 3);
-  double maxval = luaL_checknumber(L, 4);
-  int type = luaL_checkint(L, 5);
-  double  retval__ = threshold(*src, *dst, thresh, maxval, type);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    double thresh = luaL_checknumber(L, 3);
+    double maxval = luaL_checknumber(L, 4);
+    int type = luaL_checkint(L, 5);
+    double  retval__ = threshold(*src, *dst, thresh, maxval, type);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.threshold: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.threshold: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.threshold: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -5232,10 +10637,33 @@ static int cv_threshold(lua_State *L) {
  * include/opencv/cxcore.hpp:78
  */
 static int cv_toUtf16(lua_State *L) {
-  const string *str = *((const string **)luaL_checkudata(L, 1, "cv.string"));
-  WString  retval__ = toUtf16(*str);
-  lua_pushclass<WString>(L, retval__, "cv.WString");
-  return 1;
+  try {
+    const string *str = *((const string **)luaL_checkudata(L, 1, "cv.string"));
+    WString  retval__ = toUtf16(*str);
+    lua_pushclass<WString>(L, retval__, "cv.WString");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.toUtf16: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.toUtf16: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.toUtf16: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -5244,10 +10672,33 @@ static int cv_toUtf16(lua_State *L) {
  * include/opencv/cxcore.hpp:1199
  */
 static int cv_trace(lua_State *L) {
-  const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Scalar  retval__ = trace(*m);
-  lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
-  return 1;
+  try {
+    const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Scalar  retval__ = trace(*m);
+    lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.trace: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.trace: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.trace: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -5256,11 +10707,34 @@ static int cv_trace(lua_State *L) {
  * include/opencv/cxcore.hpp:1193
  */
 static int cv_transform(lua_State *L) {
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  const Mat *m = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  transform(*src, *dst, *m);
-  return 0;
+  try {
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *m = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    transform(*src, *dst, *m);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.transform: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.transform: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.transform: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -5269,10 +10743,33 @@ static int cv_transform(lua_State *L) {
  * include/opencv/cxcore.hpp:1192
  */
 static int cv_transpose(lua_State *L) {
-  const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *b = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  transpose(*a, *b);
-  return 0;
+  try {
+    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *b = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    transpose(*a, *b);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.transpose: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.transpose: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.transpose: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -5281,18 +10778,41 @@ static int cv_transpose(lua_State *L) {
  * include/opencv/cv.hpp:399
  */
 static int cv_undistort(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  const Mat *cameraMatrix = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  const Mat *distCoeffs = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  if (top__ < 5) {
-    undistort(*src, *dst, *cameraMatrix, *distCoeffs);
-  } else {
-    const Mat *newCameraMatrix = *((const Mat **)luaL_checkudata(L, 5, "cv.Mat"));
-    undistort(*src, *dst, *cameraMatrix, *distCoeffs, *newCameraMatrix);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *cameraMatrix = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *distCoeffs = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    if (top__ < 5) {
+      undistort(*src, *dst, *cameraMatrix, *distCoeffs);
+    } else {
+      const Mat *newCameraMatrix = *((const Mat **)luaL_checkudata(L, 5, "cv.Mat"));
+      undistort(*src, *dst, *cameraMatrix, *distCoeffs, *newCameraMatrix);
+    }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.undistort: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.undistort: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.undistort: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -5302,23 +10822,46 @@ static int cv_undistort(lua_State *L) {
  * include/opencv/cv.hpp:738
  */
 static int cv_undistortPoints2(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  const Mat *cameraMatrix = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  const Mat *distCoeffs = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-  if (top__ < 5) {
-    undistortPoints(*src, *dst, *cameraMatrix, *distCoeffs);
-  } else {
-    const Mat *R = *((const Mat **)luaL_checkudata(L, 5, "cv.Mat"));
-    if (top__ < 6) {
-      undistortPoints(*src, *dst, *cameraMatrix, *distCoeffs, *R);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *cameraMatrix = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *distCoeffs = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    if (top__ < 5) {
+      undistortPoints(*src, *dst, *cameraMatrix, *distCoeffs);
     } else {
-      const Mat *P = *((const Mat **)luaL_checkudata(L, 6, "cv.Mat"));
-      undistortPoints(*src, *dst, *cameraMatrix, *distCoeffs, *R, *P);
+      const Mat *R = *((const Mat **)luaL_checkudata(L, 5, "cv.Mat"));
+      if (top__ < 6) {
+        undistortPoints(*src, *dst, *cameraMatrix, *distCoeffs, *R);
+      } else {
+        const Mat *P = *((const Mat **)luaL_checkudata(L, 6, "cv.Mat"));
+        undistortPoints(*src, *dst, *cameraMatrix, *distCoeffs, *R, *P);
+      }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.undistortPoints: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.undistortPoints: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.undistortPoints: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -5340,12 +10883,35 @@ static int cv_undistortPoints(lua_State *L) {
  * include/opencv/cv.hpp:589
  */
 static int cv_updateMotionHistory(lua_State *L) {
-  const Mat *silhouette = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *mhi = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  double timestamp = luaL_checknumber(L, 3);
-  double duration = luaL_checknumber(L, 4);
-  updateMotionHistory(*silhouette, *mhi, timestamp, duration);
-  return 0;
+  try {
+    const Mat *silhouette = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *mhi = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    double timestamp = luaL_checknumber(L, 3);
+    double duration = luaL_checknumber(L, 4);
+    updateMotionHistory(*silhouette, *mhi, timestamp, duration);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.updateMotionHistory: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.updateMotionHistory: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.updateMotionHistory: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -5354,9 +10920,32 @@ static int cv_updateMotionHistory(lua_State *L) {
  * include/opencv/cxcore.hpp:164
  */
 static int cv_useOptimized(lua_State *L) {
-  bool  retval__ = useOptimized();
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    bool  retval__ = useOptimized();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.useOptimized: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.useOptimized: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.useOptimized: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -5365,28 +10954,51 @@ static int cv_useOptimized(lua_State *L) {
  * include/opencv/cv.hpp:349
  */
 static int cv_warpAffine(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  const Mat *M = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  Size *dsize = *((Size **)luaL_checkudata(L, 4, "cv.Size"));
-  if (top__ < 5) {
-    warpAffine(*src, *dst, *M, *dsize);
-  } else {
-    int flags = luaL_checkint(L, 5);
-    if (top__ < 6) {
-      warpAffine(*src, *dst, *M, *dsize, flags);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *M = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    Size *dsize = *((Size **)luaL_checkudata(L, 4, "cv.Size"));
+    if (top__ < 5) {
+      warpAffine(*src, *dst, *M, *dsize);
     } else {
-      int borderMode = luaL_checkint(L, 6);
-      if (top__ < 7) {
-        warpAffine(*src, *dst, *M, *dsize, flags, borderMode);
+      int flags = luaL_checkint(L, 5);
+      if (top__ < 6) {
+        warpAffine(*src, *dst, *M, *dsize, flags);
       } else {
-        const Scalar *borderValue = *((const Scalar **)luaL_checkudata(L, 7, "cv.Scalar"));
-        warpAffine(*src, *dst, *M, *dsize, flags, borderMode, *borderValue);
+        int borderMode = luaL_checkint(L, 6);
+        if (top__ < 7) {
+          warpAffine(*src, *dst, *M, *dsize, flags, borderMode);
+        } else {
+          const Scalar *borderValue = *((const Scalar **)luaL_checkudata(L, 7, "cv.Scalar"));
+          warpAffine(*src, *dst, *M, *dsize, flags, borderMode, *borderValue);
+        }
       }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.warpAffine: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.warpAffine: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.warpAffine: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -5395,28 +11007,51 @@ static int cv_warpAffine(lua_State *L) {
  * include/opencv/cv.hpp:354
  */
 static int cv_warpPerspective(lua_State *L) {
-  int top__ = lua_gettop(L);
-  const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  const Mat *M = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-  Size *dsize = *((Size **)luaL_checkudata(L, 4, "cv.Size"));
-  if (top__ < 5) {
-    warpPerspective(*src, *dst, *M, *dsize);
-  } else {
-    int flags = luaL_checkint(L, 5);
-    if (top__ < 6) {
-      warpPerspective(*src, *dst, *M, *dsize, flags);
+  try {
+    int top__ = lua_gettop(L);
+    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *M = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    Size *dsize = *((Size **)luaL_checkudata(L, 4, "cv.Size"));
+    if (top__ < 5) {
+      warpPerspective(*src, *dst, *M, *dsize);
     } else {
-      int borderMode = luaL_checkint(L, 6);
-      if (top__ < 7) {
-        warpPerspective(*src, *dst, *M, *dsize, flags, borderMode);
+      int flags = luaL_checkint(L, 5);
+      if (top__ < 6) {
+        warpPerspective(*src, *dst, *M, *dsize, flags);
       } else {
-        const Scalar *borderValue = *((const Scalar **)luaL_checkudata(L, 7, "cv.Scalar"));
-        warpPerspective(*src, *dst, *M, *dsize, flags, borderMode, *borderValue);
+        int borderMode = luaL_checkint(L, 6);
+        if (top__ < 7) {
+          warpPerspective(*src, *dst, *M, *dsize, flags, borderMode);
+        } else {
+          const Scalar *borderValue = *((const Scalar **)luaL_checkudata(L, 7, "cv.Scalar"));
+          warpPerspective(*src, *dst, *M, *dsize, flags, borderMode, *borderValue);
+        }
       }
     }
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.warpPerspective: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.warpPerspective: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.warpPerspective: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  return 0;
 }
 
 
@@ -5425,10 +11060,33 @@ static int cv_warpPerspective(lua_State *L) {
  * include/opencv/cv.hpp:457
  */
 static int cv_watershed(lua_State *L) {
-  const Mat *image = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  Mat *markers = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-  watershed(*image, *markers);
-  return 0;
+  try {
+    const Mat *image = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *markers = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    watershed(*image, *markers);
+    return 0;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.watershed: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.watershed: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.watershed: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -5745,6 +11403,34 @@ static const struct lua_constants_Reg cv_namespace_constants[] = {
   {"FONT_HERSHEY_SCRIPT_COMPLEX"   , cv::FONT_HERSHEY_SCRIPT_COMPLEX},
   {"FONT_ITALIC"                   , cv::FONT_ITALIC},
   
+  {"CV_8UC1"                       , CV_8UC1},
+  {"CV_8UC2"                       , CV_8UC2},
+  {"CV_8UC3"                       , CV_8UC3},
+  {"CV_8UC4"                       , CV_8UC4},
+  {"CV_8SC1"                       , CV_8SC1},
+  {"CV_8SC2"                       , CV_8SC2},
+  {"CV_8SC3"                       , CV_8SC3},
+  {"CV_8SC4"                       , CV_8SC4},
+  {"CV_16UC1"                      , CV_16UC1},
+  {"CV_16UC2"                      , CV_16UC2},
+  {"CV_16UC3"                      , CV_16UC3},
+  {"CV_16UC4"                      , CV_16UC4},
+  {"CV_16SC1"                      , CV_16SC1},
+  {"CV_16SC2"                      , CV_16SC2},
+  {"CV_16SC3"                      , CV_16SC3},
+  {"CV_16SC4"                      , CV_16SC4},
+  {"CV_32SC1"                      , CV_32SC1},
+  {"CV_32SC2"                      , CV_32SC2},
+  {"CV_32SC3"                      , CV_32SC3},
+  {"CV_32SC4"                      , CV_32SC4},
+  {"CV_32FC1"                      , CV_32FC1},
+  {"CV_32FC2"                      , CV_32FC2},
+  {"CV_32FC3"                      , CV_32FC3},
+  {"CV_32FC4"                      , CV_32FC4},
+  {"CV_64FC1"                      , CV_64FC1},
+  {"CV_64FC2"                      , CV_64FC2},
+  {"CV_64FC3"                      , CV_64FC3},
+  {"CV_64FC4"                      , CV_64FC4},
   {"CV_BGR2BGRA"                   , CV_BGR2BGRA},
   {"CV_RGB2RGBA"                   , CV_RGB2RGBA},
   {"CV_BGRA2BGR"                   , CV_BGRA2BGR},
@@ -5817,34 +11503,6 @@ static const struct lua_constants_Reg cv_namespace_constants[] = {
   {"CV_Luv2RGB"                    , CV_Luv2RGB},
   {"CV_HLS2BGR"                    , CV_HLS2BGR},
   {"CV_HLS2RGB"                    , CV_HLS2RGB},
-  {"CV_8UC1"                       , CV_8UC1},
-  {"CV_8UC2"                       , CV_8UC2},
-  {"CV_8UC3"                       , CV_8UC3},
-  {"CV_8UC4"                       , CV_8UC4},
-  {"CV_8SC1"                       , CV_8SC1},
-  {"CV_8SC2"                       , CV_8SC2},
-  {"CV_8SC3"                       , CV_8SC3},
-  {"CV_8SC4"                       , CV_8SC4},
-  {"CV_16UC1"                      , CV_16UC1},
-  {"CV_16UC2"                      , CV_16UC2},
-  {"CV_16UC3"                      , CV_16UC3},
-  {"CV_16UC4"                      , CV_16UC4},
-  {"CV_16SC1"                      , CV_16SC1},
-  {"CV_16SC2"                      , CV_16SC2},
-  {"CV_16SC3"                      , CV_16SC3},
-  {"CV_16SC4"                      , CV_16SC4},
-  {"CV_32SC1"                      , CV_32SC1},
-  {"CV_32SC2"                      , CV_32SC2},
-  {"CV_32SC3"                      , CV_32SC3},
-  {"CV_32SC4"                      , CV_32SC4},
-  {"CV_32FC1"                      , CV_32FC1},
-  {"CV_32FC2"                      , CV_32FC2},
-  {"CV_32FC3"                      , CV_32FC3},
-  {"CV_32FC4"                      , CV_32FC4},
-  {"CV_64FC1"                      , CV_64FC1},
-  {"CV_64FC2"                      , CV_64FC2},
-  {"CV_64FC3"                      , CV_64FC3},
-  {"CV_64FC4"                      , CV_64FC4},
   {NULL, NULL},
 };
 

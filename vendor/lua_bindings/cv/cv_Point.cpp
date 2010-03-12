@@ -13,9 +13,32 @@ using namespace cv;
  * include/opencv/cxcore.hpp:295
  */
 static int Point_Point1(lua_State *L) {
-  Point * retval__ = new Point();
-  lua_pushclass<Point>(L, retval__, "cv.Point");
-  return 1;
+  try {
+    Point * retval__ = new Point();
+    lua_pushclass<Point>(L, retval__, "cv.Point");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Point.Point: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Point.Point: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Point.Point: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -23,11 +46,34 @@ static int Point_Point1(lua_State *L) {
  * include/opencv/cxcore.hpp:296
  */
 static int Point_Point2(lua_State *L) {
-  int _x = luaL_checkint(L, 1);
-  int _y = luaL_checkint(L, 2);
-  Point * retval__ = new Point(_x, _y);
-  lua_pushclass<Point>(L, retval__, "cv.Point");
-  return 1;
+  try {
+    int _x = luaL_checkint(L, 1);
+    int _y = luaL_checkint(L, 2);
+    Point * retval__ = new Point(_x, _y);
+    lua_pushclass<Point>(L, retval__, "cv.Point");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Point.Point: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Point.Point: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Point.Point: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -35,10 +81,33 @@ static int Point_Point2(lua_State *L) {
  * include/opencv/cxcore.hpp:297
  */
 static int Point_Point3(lua_State *L) {
-  const Point2i *pt = *((const Point2i **)luaL_checkudata(L, 1, "cv.Point2i"));
-  Point * retval__ = new Point(*pt);
-  lua_pushclass<Point>(L, retval__, "cv.Point");
-  return 1;
+  try {
+    const Point2i *pt = *((const Point2i **)luaL_checkudata(L, 1, "cv.Point2i"));
+    Point * retval__ = new Point(*pt);
+    lua_pushclass<Point>(L, retval__, "cv.Point");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Point.Point: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Point.Point: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Point.Point: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -46,10 +115,33 @@ static int Point_Point3(lua_State *L) {
  * include/opencv/cxcore.hpp:298
  */
 static int Point_Point4(lua_State *L) {
-  const CvPoint *pt = *((const CvPoint **)luaL_checkudata(L, 1, "cv.CvPoint"));
-  Point * retval__ = new Point(*pt);
-  lua_pushclass<Point>(L, retval__, "cv.Point");
-  return 1;
+  try {
+    const CvPoint *pt = *((const CvPoint **)luaL_checkudata(L, 1, "cv.CvPoint"));
+    Point * retval__ = new Point(*pt);
+    lua_pushclass<Point>(L, retval__, "cv.Point");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Point.Point: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Point.Point: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Point.Point: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -57,10 +149,33 @@ static int Point_Point4(lua_State *L) {
  * include/opencv/cxcore.hpp:299
  */
 static int Point_Point5(lua_State *L) {
-  const CvPoint2D32f *pt = *((const CvPoint2D32f **)luaL_checkudata(L, 1, "cv.CvPoint2D32f"));
-  Point * retval__ = new Point(*pt);
-  lua_pushclass<Point>(L, retval__, "cv.Point");
-  return 1;
+  try {
+    const CvPoint2D32f *pt = *((const CvPoint2D32f **)luaL_checkudata(L, 1, "cv.CvPoint2D32f"));
+    Point * retval__ = new Point(*pt);
+    lua_pushclass<Point>(L, retval__, "cv.Point");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Point.Point: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Point.Point: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Point.Point: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -68,10 +183,33 @@ static int Point_Point5(lua_State *L) {
  * include/opencv/cxcore.hpp:300
  */
 static int Point_Point6(lua_State *L) {
-  const Size *sz = *((const Size **)luaL_checkudata(L, 1, "cv.Size"));
-  Point * retval__ = new Point(*sz);
-  lua_pushclass<Point>(L, retval__, "cv.Point");
-  return 1;
+  try {
+    const Size *sz = *((const Size **)luaL_checkudata(L, 1, "cv.Size"));
+    Point * retval__ = new Point(*sz);
+    lua_pushclass<Point>(L, retval__, "cv.Point");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Point.Point: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Point.Point: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Point.Point: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -79,10 +217,33 @@ static int Point_Point6(lua_State *L) {
  * include/opencv/cxcore.hpp:301
  */
 static int Point_Point7(lua_State *L) {
-  const Vec2i *v = *((const Vec2i **)luaL_checkudata(L, 1, "cv.Vec2i"));
-  Point * retval__ = new Point(*v);
-  lua_pushclass<Point>(L, retval__, "cv.Point");
-  return 1;
+  try {
+    const Vec2i *v = *((const Vec2i **)luaL_checkudata(L, 1, "cv.Vec2i"));
+    Point * retval__ = new Point(*v);
+    lua_pushclass<Point>(L, retval__, "cv.Point");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Point.Point: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Point.Point: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Point.Point: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -91,10 +252,10 @@ static int Point_Point7(lua_State *L) {
 static int Point_Point(lua_State *L) {
   int type__ = lua_type(L, 1);
   int top__  = lua_gettop(L);
-  if (type__ == LUA_TNUMBER) {
-    return Point_Point2(L);
-  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.CvPoint")) {
+  if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.CvPoint")) {
     return Point_Point4(L);
+  } else if (type__ == LUA_TNUMBER) {
+    return Point_Point2(L);
   } else if (top__ < 1) {
     return Point_Point1(L);
   } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Vec2i")) {
@@ -137,12 +298,35 @@ static int Point__tostring(lua_State *L) {
  * include/opencv/cxcore.hpp:309
  */
 static int Point_ddot(lua_State *L) {
-  Point *self__ = *((Point**)luaL_checkudata(L, 1, "cv.Point"));
-  lua_remove(L, 1);
-  const Point2i *pt = *((const Point2i **)luaL_checkudata(L, 1, "cv.Point2i"));
-  double  retval__ = self__->ddot(*pt);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    Point *self__ = *((Point**)luaL_checkudata(L, 1, "cv.Point"));
+    lua_remove(L, 1);
+    const Point2i *pt = *((const Point2i **)luaL_checkudata(L, 1, "cv.Point2i"));
+    double  retval__ = self__->ddot(*pt);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Point.ddot: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Point.ddot: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Point.ddot: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -150,12 +334,35 @@ static int Point_ddot(lua_State *L) {
  * include/opencv/cxcore.hpp:308
  */
 static int Point_dot(lua_State *L) {
-  Point *self__ = *((Point**)luaL_checkudata(L, 1, "cv.Point"));
-  lua_remove(L, 1);
-  const Point2i *pt = *((const Point2i **)luaL_checkudata(L, 1, "cv.Point2i"));
-  int  retval__ = self__->dot(*pt);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    Point *self__ = *((Point**)luaL_checkudata(L, 1, "cv.Point"));
+    lua_remove(L, 1);
+    const Point2i *pt = *((const Point2i **)luaL_checkudata(L, 1, "cv.Point2i"));
+    int  retval__ = self__->dot(*pt);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Point.dot: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Point.dot: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Point.dot: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -163,12 +370,35 @@ static int Point_dot(lua_State *L) {
  * include/opencv/cxcore.hpp:310
  */
 static int Point_inside(lua_State *L) {
-  Point *self__ = *((Point**)luaL_checkudata(L, 1, "cv.Point"));
-  lua_remove(L, 1);
-  const Rect *r = *((const Rect **)luaL_checkudata(L, 1, "cv.Rect"));
-  bool  retval__ = self__->inside(*r);
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    Point *self__ = *((Point**)luaL_checkudata(L, 1, "cv.Point"));
+    lua_remove(L, 1);
+    const Rect *r = *((const Rect **)luaL_checkudata(L, 1, "cv.Rect"));
+    bool  retval__ = self__->inside(*r);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Point.inside: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Point.inside: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Point.inside: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 

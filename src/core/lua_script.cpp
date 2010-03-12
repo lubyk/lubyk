@@ -130,8 +130,9 @@ const Value LuaScript::call_lua(const char *function_name, const Value &val) {
   /* Run the function. */
   status = lua_pcall(lua_, arg_count, 1, 0); // 1 arg, 1 result, no error function
   if (status) {
-    Value err = Value(BAD_REQUEST_ERROR, "Could not call ").append(function_name).append("(").append(val.lazy_json()).append("): ").append(lua_tostring(lua_, -1));
-    std::cerr << err << "\n";
+    const char *error = lua_tostring(lua_, -1);
+    if (!error) error = "Unknown error";
+    Value err = Value(BAD_REQUEST_ERROR, "Could not call ").append(function_name).append("(").append(val.lazy_json()).append("): ").append(error);
     return err;
   }
 
@@ -495,6 +496,13 @@ extern void luaopen_cv_Scalar(lua_State *L);
 extern void luaopen_cv_additions(lua_State *L);
 extern void luaopen_oscit_MidiMessage(lua_State *L);
 
+
+int cv_noop_error_handler( int status, const char* func_name,
+                    const char* err_msg, const char* file_name, int line, void* userdata ) {
+  return 0;
+}
+
+
 void LuaScript::open_lua_libs() {
   luaL_openlibs(lua_);
   open_lua_lib("", luaopen_base);
@@ -515,8 +523,11 @@ void LuaScript::open_lua_libs() {
   luaopen_cv_Point(lua_);
   luaopen_cv_Scalar(lua_);
   luaopen_cv_additions(lua_);
-
   luaopen_oscit_MidiMessage(lua_);
+  void *dummy;
+
+  // we do not want to printout errors like the default error handler does.
+  cv::redirectError(cv_noop_error_handler, NULL , &dummy);
 }
 
 const Value LuaScript::eval(const char *script, size_t script_size) {

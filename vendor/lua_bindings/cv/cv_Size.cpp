@@ -13,9 +13,32 @@ using namespace cv;
  * include/opencv/cxcore.hpp:348
  */
 static int Size_Size1(lua_State *L) {
-  Size * retval__ = new Size();
-  lua_pushclass<Size>(L, retval__, "cv.Size");
-  return 1;
+  try {
+    Size * retval__ = new Size();
+    lua_pushclass<Size>(L, retval__, "cv.Size");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Size.Size: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Size.Size: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Size.Size: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -23,11 +46,34 @@ static int Size_Size1(lua_State *L) {
  * include/opencv/cxcore.hpp:349
  */
 static int Size_Size2(lua_State *L) {
-  int _width = luaL_checkint(L, 1);
-  int _height = luaL_checkint(L, 2);
-  Size * retval__ = new Size(_width, _height);
-  lua_pushclass<Size>(L, retval__, "cv.Size");
-  return 1;
+  try {
+    int _width = luaL_checkint(L, 1);
+    int _height = luaL_checkint(L, 2);
+    Size * retval__ = new Size(_width, _height);
+    lua_pushclass<Size>(L, retval__, "cv.Size");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Size.Size: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Size.Size: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Size.Size: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -35,10 +81,33 @@ static int Size_Size2(lua_State *L) {
  * include/opencv/cxcore.hpp:350
  */
 static int Size_Size3(lua_State *L) {
-  const Size2i *sz = *((const Size2i **)luaL_checkudata(L, 1, "cv.Size2i"));
-  Size * retval__ = new Size(*sz);
-  lua_pushclass<Size>(L, retval__, "cv.Size");
-  return 1;
+  try {
+    const Size2i *sz = *((const Size2i **)luaL_checkudata(L, 1, "cv.Size2i"));
+    Size * retval__ = new Size(*sz);
+    lua_pushclass<Size>(L, retval__, "cv.Size");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Size.Size: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Size.Size: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Size.Size: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -46,10 +115,33 @@ static int Size_Size3(lua_State *L) {
  * include/opencv/cxcore.hpp:351
  */
 static int Size_Size4(lua_State *L) {
-  const CvSize *sz = *((const CvSize **)luaL_checkudata(L, 1, "cv.CvSize"));
-  Size * retval__ = new Size(*sz);
-  lua_pushclass<Size>(L, retval__, "cv.Size");
-  return 1;
+  try {
+    const CvSize *sz = *((const CvSize **)luaL_checkudata(L, 1, "cv.CvSize"));
+    Size * retval__ = new Size(*sz);
+    lua_pushclass<Size>(L, retval__, "cv.Size");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Size.Size: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Size.Size: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Size.Size: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -57,10 +149,33 @@ static int Size_Size4(lua_State *L) {
  * include/opencv/cxcore.hpp:352
  */
 static int Size_Size5(lua_State *L) {
-  const CvSize2D32f *sz = *((const CvSize2D32f **)luaL_checkudata(L, 1, "cv.CvSize2D32f"));
-  Size * retval__ = new Size(*sz);
-  lua_pushclass<Size>(L, retval__, "cv.Size");
-  return 1;
+  try {
+    const CvSize2D32f *sz = *((const CvSize2D32f **)luaL_checkudata(L, 1, "cv.CvSize2D32f"));
+    Size * retval__ = new Size(*sz);
+    lua_pushclass<Size>(L, retval__, "cv.Size");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Size.Size: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Size.Size: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Size.Size: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -68,10 +183,33 @@ static int Size_Size5(lua_State *L) {
  * include/opencv/cxcore.hpp:353
  */
 static int Size_Size6(lua_State *L) {
-  const Point *pt = *((const Point **)luaL_checkudata(L, 1, "cv.Point"));
-  Size * retval__ = new Size(*pt);
-  lua_pushclass<Size>(L, retval__, "cv.Size");
-  return 1;
+  try {
+    const Point *pt = *((const Point **)luaL_checkudata(L, 1, "cv.Point"));
+    Size * retval__ = new Size(*pt);
+    lua_pushclass<Size>(L, retval__, "cv.Size");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Size.Size: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Size.Size: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Size.Size: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -80,10 +218,10 @@ static int Size_Size6(lua_State *L) {
 static int Size_Size(lua_State *L) {
   int type__ = lua_type(L, 1);
   int top__  = lua_gettop(L);
-  if (type__ == LUA_TNUMBER) {
-    return Size_Size2(L);
-  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Point")) {
+  if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.Point")) {
     return Size_Size6(L);
+  } else if (type__ == LUA_TNUMBER) {
+    return Size_Size2(L);
   } else if (top__ < 1) {
     return Size_Size1(L);
   } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "cv.CvSize")) {
@@ -124,11 +262,34 @@ static int Size__tostring(lua_State *L) {
  * include/opencv/cxcore.hpp:355
  */
 static int Size_area(lua_State *L) {
-  Size *self__ = *((Size**)luaL_checkudata(L, 1, "cv.Size"));
-  lua_remove(L, 1);
-  int  retval__ = self__->area();
-  lua_pushnumber(L, retval__);
-  return 1;
+  try {
+    Size *self__ = *((Size**)luaL_checkudata(L, 1, "cv.Size"));
+    lua_remove(L, 1);
+    int  retval__ = self__->area();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Size.area: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Size.area: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Size.area: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 

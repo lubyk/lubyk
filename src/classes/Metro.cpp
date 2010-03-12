@@ -77,11 +77,18 @@ private:
   void change_tempo(Real tempo) {
     if (tempo <= 0) {
       timer_.stop();
-      tempo_ = 0;
+      tempo_ = -1;
     } else if (tempo != tempo_) {
       // tempo changed
-      tempo_ = tempo;
-      timer_.set_interval(ONE_MINUTE / tempo_);
+      if (tempo_ < 0) {
+        // start now (restart)
+        tempo_ = tempo;
+        timer_.start(ONE_MINUTE / tempo_);
+      } else {
+        // change interval (stay in sync)
+        tempo_ = tempo;
+        timer_.set_interval(ONE_MINUTE / tempo_);
+      }
     }
   }
 

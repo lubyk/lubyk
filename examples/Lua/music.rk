@@ -1,0 +1,14 @@
+# Use with Arturia, CE_Mini1
+lib("lib")
+
+m = Metro(1066)
+m => l
+
+l = Lua("music.lua")
+l~note => n
+l~mi => midi
+
+n = NoteOut()
+n => midi
+
+midi = MidiOut()

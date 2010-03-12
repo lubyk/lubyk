@@ -29,8 +29,7 @@
 
 #include "test_helper.h"
 
-class CreateCommandTest : public TestHelper
-{
+class CreateCommandTest : public TestHelper {
 public:
   void test_create( void )
   {
@@ -45,8 +44,7 @@ public:
   }
 };
 
-class ParseCommandTest : public ParseHelper
-{
+class ParseCommandTest : public ParseHelper {
 public:
 
   void test_create_command_should_work( void ) {

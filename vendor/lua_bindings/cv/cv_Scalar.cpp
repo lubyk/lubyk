@@ -13,9 +13,32 @@ using namespace cv;
  * include/opencv/cxcore.hpp:427
  */
 static int Scalar_Scalar1(lua_State *L) {
-  Scalar * retval__ = new Scalar();
-  lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
-  return 1;
+  try {
+    Scalar * retval__ = new Scalar();
+    lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Scalar.Scalar: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Scalar.Scalar: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Scalar.Scalar: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -23,23 +46,46 @@ static int Scalar_Scalar1(lua_State *L) {
  * include/opencv/cxcore.hpp:428
  */
 static int Scalar_Scalar2(lua_State *L) {
-  int top__ = lua_gettop(L);
-  Scalar * retval__;
-  double v0 = luaL_checknumber(L, 1);
-  double v1 = luaL_checknumber(L, 2);
-  if (top__ < 3) {
-    retval__ = new Scalar(v0, v1);
-  } else {
-    double v2 = luaL_checknumber(L, 3);
-    if (top__ < 4) {
-      retval__ = new Scalar(v0, v1, v2);
+  try {
+    int top__ = lua_gettop(L);
+    Scalar * retval__;
+    double v0 = luaL_checknumber(L, 1);
+    double v1 = luaL_checknumber(L, 2);
+    if (top__ < 3) {
+      retval__ = new Scalar(v0, v1);
     } else {
-      double v3 = luaL_checknumber(L, 4);
-      retval__ = new Scalar(v0, v1, v2, v3);
+      double v2 = luaL_checknumber(L, 3);
+      if (top__ < 4) {
+        retval__ = new Scalar(v0, v1, v2);
+      } else {
+        double v3 = luaL_checknumber(L, 4);
+        retval__ = new Scalar(v0, v1, v2, v3);
+      }
     }
+    lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Scalar.Scalar: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Scalar.Scalar: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Scalar.Scalar: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
-  return 1;
 }
 
 
@@ -47,10 +93,33 @@ static int Scalar_Scalar2(lua_State *L) {
  * include/opencv/cxcore.hpp:429
  */
 static int Scalar_Scalar3(lua_State *L) {
-  const CvScalar *s = *((const CvScalar **)luaL_checkudata(L, 1, "cv.CvScalar"));
-  Scalar * retval__ = new Scalar(*s);
-  lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
-  return 1;
+  try {
+    const CvScalar *s = *((const CvScalar **)luaL_checkudata(L, 1, "cv.CvScalar"));
+    Scalar * retval__ = new Scalar(*s);
+    lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Scalar.Scalar: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Scalar.Scalar: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Scalar.Scalar: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -58,10 +127,33 @@ static int Scalar_Scalar3(lua_State *L) {
  * include/opencv/cxcore.hpp:430
  */
 static int Scalar_Scalar4(lua_State *L) {
-  double v0 = luaL_checknumber(L, 1);
-  Scalar * retval__ = new Scalar(v0);
-  lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
-  return 1;
+  try {
+    double v0 = luaL_checknumber(L, 1);
+    Scalar * retval__ = new Scalar(v0);
+    lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Scalar.Scalar: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Scalar.Scalar: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Scalar.Scalar: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -116,10 +208,33 @@ static int Scalar__tostring(lua_State *L) {
  * include/opencv/cxcore.hpp:431
  */
 static int Scalar_all(lua_State *L) {
-  double v0 = luaL_checknumber(L, 1);
-  Scalar  retval__ = Scalar::all(v0);
-  lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
-  return 1;
+  try {
+    double v0 = luaL_checknumber(L, 1);
+    Scalar  retval__ = Scalar::all(v0);
+    lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Scalar.all: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Scalar.all: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Scalar.all: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
 
@@ -127,19 +242,42 @@ static int Scalar_all(lua_State *L) {
  * include/opencv/cxcore.hpp:436
  */
 static int Scalar_mul(lua_State *L) {
-  Scalar *self__ = *((Scalar**)luaL_checkudata(L, 1, "cv.Scalar"));
-  lua_remove(L, 1);
-  int top__ = lua_gettop(L);
-  Scalar  retval__;
-  const Scalar *t = *((const Scalar **)luaL_checkudata(L, 1, "cv.Scalar"));
-  if (top__ < 2) {
-    retval__ = self__->mul(*t);
-  } else {
-    double scale = luaL_checknumber(L, 2);
-    retval__ = self__->mul(*t, scale);
+  try {
+    Scalar *self__ = *((Scalar**)luaL_checkudata(L, 1, "cv.Scalar"));
+    lua_remove(L, 1);
+    int top__ = lua_gettop(L);
+    Scalar  retval__;
+    const Scalar *t = *((const Scalar **)luaL_checkudata(L, 1, "cv.Scalar"));
+    if (top__ < 2) {
+      retval__ = self__->mul(*t);
+    } else {
+      double scale = luaL_checknumber(L, 2);
+      retval__ = self__->mul(*t, scale);
+    }
+    lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
+    return 1;
+  } catch (cv::Exception &e) {
+    std::string *s = new std::string("cv.Scalar.mul: failed (");
+    s->append(e.err);
+    s->append(")");
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Scalar.mul: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Scalar.mul: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
-  return 1;
 }
 
 
