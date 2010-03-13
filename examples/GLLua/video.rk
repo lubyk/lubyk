@@ -1,0 +1,9 @@
+# run from build directory with
+# ./rubyk ../examples/GLLua/video.rk
+w = GLWindow()
+l = GLLua("../examples/GLLua/video.lua")
+w => l
+m = Metro(3000)
+m => w
+v = VideoIn()
+v => video~l

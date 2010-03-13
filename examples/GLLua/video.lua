@@ -1,14 +1,4 @@
---[[
-lib("lib")
-w = GLWindow()
-l = GLLua("../examples/GLLua/video.lua")
-w => l
-m = Metro(3000)
-m => w
-v = VideoIn()
-v => video~l
---]]
-
+require('cv')
 res   = res   or cv.Mat()
 
 -- must be a power of 2 !

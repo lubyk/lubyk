@@ -1,13 +1,3 @@
---[[  Run with (in build directory)
-lib("lib")
-win = GLWindow()
-cv = GLLua("../examples/GLLua/opencv.lua")
-win => cv
-video = VideoIn()
-video => video~cv
-m = Metro(3000)
-m => win
---]]
 require('cv')
 
 res   = res   or cv.Mat()

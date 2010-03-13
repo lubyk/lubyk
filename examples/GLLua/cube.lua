@@ -1,13 +1,3 @@
---[[  Run with (in build directory)
-lib("lib")
-win = GLWindow()
-cube = GLLua("../examples/GLLua/cube.lua")
-win => cube
-m = Metro(3000)
-m => win
-m => advance~cube
---]]
-
 n = n or 0
 x = x or 0
 y = y or 0

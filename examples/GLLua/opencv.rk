@@ -1,0 +1,9 @@
+# run from build directory with
+# ./rubyk ../examples/GLLua/opencv.rk
+win = GLWindow()
+cv = GLLua("../examples/GLLua/opencv.lua")
+win => cv
+video = VideoIn()
+video => video~cv
+m = Metro(3000)
+m => win
