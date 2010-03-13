@@ -37,7 +37,6 @@ class LuaScriptTest : public TestHelper {
 public:
   virtual void setUp() {
     planet_ = new Planet();
-    planet_->call(LIB_URL, Value(TEST_LIB_PATH));
     script_ = planet_->adopt(new LuaScript);
     // all this is done by Class normally
     script_->set_name("lua");
@@ -116,7 +115,7 @@ public:
 
   void test_create_matrix( void ) {
     Value matrix_value(Matrix(2,3,CV_32FC1));
-    Value res = parse("function foo()\n return cv.Mat(2,3,cv.CV_32FC1)\nend");
+    Value res = parse("require('cv'); function foo()\n return cv.Mat(2,3,cv.CV_32FC1)\nend");
     assert_true(res.is_string());
     res = script_->call_lua("foo");
     assert_true(res.is_matrix());
@@ -125,7 +124,7 @@ public:
 
   void test_call_lua_with_matrix( void ) {
     Value matrix_value(Matrix(2,3,CV_32FC1));
-    Value res = parse("function foo(m)\n return m\nend");
+    Value res = parse("require('cv'); function foo(m)\n return m\nend");
     assert_true(res.is_string());
     res = script_->call_lua("foo", matrix_value);
     assert_true(res.is_matrix());
@@ -134,7 +133,7 @@ public:
 
   void test_add_inlet_MatrixIO( void ) {
     // also tests loading of rubyk.lua
-    Value res = parse("inlet('boom', MatrixIO('Ping pong.'))");
+    Value res = parse("require('cv'); inlet('boom', MatrixIO('Ping pong.'))");
     assert_true(res.is_string());
     ObjectHandle inlet;
     assert_true(planet_->get_object_at("/lua/in/boom", &inlet));
@@ -211,11 +210,19 @@ public:
   }
 
   void test_exception_thrown_in_lua( void ) {
-    Value res = parse("function foo()\n cv.subtract(cv.Mat(3,3,cv.CV_32FC1), cv.Mat(3,3,cv.CV_32FC2), cv.Mat(3,3,cv.CV_32FC2))\nend");
+    Value res = parse("require('cv'); function foo()\n cv.subtract(cv.Mat(3,3,cv.CV_32FC1), cv.Mat(3,3,cv.CV_32FC2), cv.Mat(3,3,cv.CV_32FC2))\nend");
     assert_true(res.is_string());
     res = script_->call_lua("foo", gNilValue);
     assert_true(res.is_error());
     assert_equal("Could not call foo(null): cv.subtract: failed (size == src2.size() && type == src2.type() && func != 0)", res.error_message());
+  }
+
+  void test_rk_call( void ) {
+    // also tests loading of rubyk.lua
+    Value res = parse("function foo() return rk.call('/class/lib'); end");
+    assert_true(res.is_string());
+    res = script_->call_lua("foo", gNilValue);
+    assert_equal("\"lib:~/rubyk/lib:/usr/local/lib/rubyk\"", res.to_json());
   }
 
   // sending tested in LuaTest

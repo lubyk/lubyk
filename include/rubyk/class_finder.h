@@ -36,31 +36,37 @@
 
 namespace rk {
 
-/** Special class to handle class listing from a directory. This usually responds at to the '/class' url. */
+/** Special class to handle class listing and loading from a set of directory paths.
+ * This usually responds at to the '/class' url.
+ */
 class ClassFinder : public Object
 {
 public:
   TYPED("Object.ClassFinder")
 
-  ClassFinder(const std::string &name, const char *objects_path) : Object(name), objects_path_(objects_path) {
+  ClassFinder(const std::string &name, const char *objects_path) : Object(name) {
+    lib_path(Value(objects_path));
     init();
   }
 
-  ClassFinder(const std::string &name, std::string &objects_path) : Object(name), objects_path_(objects_path) {
+  ClassFinder(const std::string &name, std::string &objects_path) : Object(name) {
+    lib_path(Value(objects_path));
     init();
   }
 
-  ClassFinder(const char *name, const char *objects_path) : Object(name), objects_path_(objects_path) {
+  ClassFinder(const char *name, const char *objects_path) : Object(name) {
+    lib_path(Value(objects_path));
     init();
   }
 
-  ClassFinder(const char *name, std::string &objects_path) : Object(name), objects_path_(objects_path) {
+  ClassFinder(const char *name, std::string &objects_path) : Object(name) {
+    lib_path(Value(objects_path));
     init();
   }
 
   void init() {
     //          /class/lib
-    adopt(new TMethod<ClassFinder, &ClassFinder::lib_path>(this, Url(LIB_URL).name(), StringIO("File path to load objects files (*.rko).")));
+    adopt(new TMethod<ClassFinder, &ClassFinder::lib_path>(this, Url(LIB_URL).name(), StringIO("File path to load classes (*.rko, lua, etc).")));
   }
 
   virtual ~ClassFinder() {}
@@ -70,9 +76,13 @@ public:
 
   virtual bool build_child(const std::string &class_name, const Value &type, Value *error, ObjectHandle *object);
 
+  /** Takes a list of double dot separated strings as search paths.
+   */
   const Value lib_path(const Value &val) {
-    if (val.is_string()) objects_path_ = val.str();
-    return Value(objects_path_);
+    if (val.is_string()) {
+      search_paths_ = val.split(":");
+    }
+    return search_paths_.join(":");
   }
 
   /** Declare a new class. This template is responsible for generating the "new" method.
@@ -113,9 +123,11 @@ public:
 
 private:
   /** Load an object stored in a dynamic library. */
-  bool load(const char * file, const char * init_name);
+  bool load(const char * file, const char * init_name, Value *error);
 
-  std::string objects_path_; /**< Where to find objects in the filesystem. */
+  /** A list of paths to search for objects in the filesystem.
+   */
+  Value search_paths_;
 };
 
 } // rk

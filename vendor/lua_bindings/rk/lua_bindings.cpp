@@ -64,8 +64,6 @@ static int rk_makeTexture(lua_State *L) {
   return 0;
 }
 
-
-
 // Register namespace
 
 

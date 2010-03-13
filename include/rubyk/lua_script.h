@@ -130,7 +130,11 @@ protected:
 
   static bool lua_is_userdata(lua_State *L, int index, const char *tname);
 
-
+  /** Generic 'call' from lua.
+   * @param parameters passed from Lua
+   * @return number of values on stack
+   */
+  int lua_call_rk(const Value &val);
 private:
   /** Return 'this' object from lua.
    */

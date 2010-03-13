@@ -104,9 +104,13 @@ else(RUBYK_USE_LUA_JIT)
   list(APPEND STATIC_LIBS lua)
 endif(RUBYK_USE_LUA_JIT)
 
-# ------------------------------------------------ lua_bindings
+# ------------------------------------------------ lua_bindings (static)
 add_subdirectory(vendor/lua_bindings)
 list(APPEND STATIC_LIBS lua_bindings)
+
+# ------------------------------------------------ lua_modules
+add_custom_target(lua_modules)
+add_subdirectory(vendor/lua_modules)
 
 # ------------------------------------------------ cv, cxcore, ml, opencv_lapack, flann, zlib
 add_subdirectory(vendor/opencv)
@@ -137,6 +141,7 @@ endforeach (RAGEL_SRC)
 
 add_library(lrubyk STATIC ${RUBYK_SOURCES})
 list(APPEND STATIC_LIBS lrubyk)
+add_dependencies (lrubyk lua_modules)
 
 add_executable(rubyk ${RUBYK_SOURCE_DIR}/src/main.cpp ${CUSTOM_BUILD_DEPENDS})
 

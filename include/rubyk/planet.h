@@ -41,7 +41,7 @@ namespace rk {
 
 class ClassFinder;
 
-#define DEFAULT_OBJECTS_LIB_PATH "/usr/local/lib/rubyk"
+#define DEFAULT_OBJECTS_LIB_PATH "lib:~/rubyk/lib:/usr/local/lib/rubyk"
 #define RUBYK_DEFAULT_NAME "rubyk"
 #define PLANET_VERSION "0.5.0"
 #define PLANET_WELCOME "# Welcome to rubyk !\n# version: 0.5.0\n# \n"

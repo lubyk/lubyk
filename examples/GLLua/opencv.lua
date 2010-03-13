@@ -8,6 +8,7 @@ video => video~cv
 m = Metro(3000)
 m => win
 --]]
+require('cv')
 
 res   = res   or cv.Mat()
 small = small or cv.Mat()

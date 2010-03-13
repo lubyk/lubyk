@@ -1,3 +1,18 @@
+original_require = original_require or require
+rk = rk or {}
+
+-- temporary until 'call_' is registered in 'rk' directly
+rk.call = rk_call
+
+function require(lib_name)
+  local lib_paths = rk.call("/class/lib")
+  local cpath = string.gsub(lib_paths, ":", "/lua/?.so;") .. "/lua/?.so"
+  local path  = string.gsub(lib_paths, ":", "/lua/?.lua;") .. "/lua/?.lua"
+  package.cpath = cpath
+  package.path  = path
+  original_require(lib_name)
+end
+
 function NilIO(info)
   return {nil, info; n=2}
 end

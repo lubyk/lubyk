@@ -37,17 +37,13 @@
 #define RUBYK_THIS_IN_LUA "__this"
 #define LUA_OUTLET_NAME   "Outlet"
 
+
+// FIXME: try to understand why the lua_modules do not load
 extern void luaopen_rk(lua_State *L);
 extern void luaopen_gl(lua_State *L);
 extern void luaopen_glu(lua_State *L);
 
-extern void luaopen_cv(lua_State *L);
-extern void luaopen_cv_Mat(lua_State *L);
-extern void luaopen_cv_Size(lua_State *L);
-extern void luaopen_cv_Point(lua_State *L);
-extern void luaopen_cv_Scalar(lua_State *L);
 
-extern void luaopen_cv_additions(lua_State *L);
 extern void luaopen_oscit_MidiMessage(lua_State *L);
 
 namespace rk {
@@ -71,18 +67,31 @@ const Value LuaScript::lua_init(const char *init_script) {
   // TODO: make sure build_outlet_ and send_ are never accessible from lua (only through Outlet).
   register_lua_method<LuaScript, &LuaScript::lua_build_outlet>("build_outlet_");
   register_lua_method("send_", &LuaScript::lua_send);
+  register_lua_method<LuaScript, &LuaScript::lua_call_rk>("rk_call");
 
   // load rubyk.lua
   Value res = root_->call(LIB_URL);
   if (!res.is_string()) {
     return res;
   } else {
-    std::string path(res.str());
-    path.append("/lua/rubyk.lua");
-    int status = luaL_dofile(lua_, path.c_str());
+    // we must load 'rubyk.lua' by hand because this is the script that contains our clever loader...
+    Value paths = res.split(":");
+    size_t path_count = paths.size();
+    int status;
+    std::string path;
+
+    for(size_t i = 0; i < path_count; ++i) {
+      path = paths[i].str();
+      path.append("/lua/rubyk.lua");
+      status = luaL_dofile(lua_, path.c_str());
+      if (status == 0) {
+        // ok
+        break;
+      }
+    }
+
     if (status) {
-      return Value(INTERNAL_SERVER_ERROR,
-        std::string(lua_tostring(lua_, -1)).append("."));
+      return FValue(INTERNAL_SERVER_ERROR, "%s.", lua_tostring(lua_, -1));
     }
   }
 
@@ -178,6 +187,7 @@ const Value LuaScript::eval_script() {
 }
 
 void LuaScript::register_lua_method(const char *name, lua_CFunction function) {
+  // FIXME: register in 'rk' namespace (luaL_register(L, "rk", xxxxx))
   lua_pushcfunction(lua_, function);
   lua_setglobal(lua_, name);
 }
@@ -249,6 +259,30 @@ int LuaScript::lua_build_outlet(const Value &val) {
 }
 
 
+int LuaScript::lua_call_rk(const Value &val) {
+  Value res;
+  if (val.is_string()) {
+    res = root_->call(val.str());
+  } else if (val.is_list() && val.size() > 1 && val[0].is_string()) {
+    Value params = val[1];
+    std::string path = val[0].str();
+    size_t count = val.size();
+    for(size_t i = 1; i < count; ++i) {
+      params.push_back(val[i]);
+    }
+    res = root_->call(path, params);
+  } else {
+    lua_pushstring(lua_, "Invalid prameters for 'rk.call' method.");
+    return 0;
+  }
+
+  if (lua_pushvalue(lua_, res)) {
+    return 1;
+  } else {
+    // TODO report errors
+    return 0;
+  }
+}
 
 const Value LuaScript::stack_to_value(lua_State *L, int start_index) {
   int top = lua_gettop(L);
@@ -519,12 +553,6 @@ void LuaScript::open_lua_libs() {
   luaopen_gl(lua_);
   luaopen_glu(lua_);
 
-  luaopen_cv(lua_);
-  luaopen_cv_Mat(lua_);
-  luaopen_cv_Size(lua_);
-  luaopen_cv_Point(lua_);
-  luaopen_cv_Scalar(lua_);
-  luaopen_cv_additions(lua_);
   luaopen_oscit_MidiMessage(lua_);
   void *dummy;
 

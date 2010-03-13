@@ -2077,7 +2077,11 @@ static const struct lua_constants_Reg Mat_namespace_constants[] = {
 };
 
 
-void luaopen_cv_Mat(lua_State *L) {
+#ifdef DUB_LUA_NO_OPEN
+int luaload_cv_Mat(lua_State *L) {
+#else
+extern "C" int luaopen_cv_Mat(lua_State *L) {
+#endif
   // Create the metatable which will contain all the member methods
   luaL_newmetatable(L, "cv.Mat");
 

@@ -300,7 +300,11 @@ static const struct luaL_Reg Scalar_namespace_methods[] = {
 
 
 
-void luaopen_cv_Scalar(lua_State *L) {
+#ifdef DUB_LUA_NO_OPEN
+int luaload_cv_Scalar(lua_State *L) {
+#else
+extern "C" int luaopen_cv_Scalar(lua_State *L) {
+#endif
   // Create the metatable which will contain all the member methods
   luaL_newmetatable(L, "cv.Scalar");
 

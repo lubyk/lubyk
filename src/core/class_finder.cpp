@@ -32,7 +32,7 @@
 #include <dlfcn.h> // dylib load
 
 namespace rk {
-  
+
 /** This trigger implements "/class". It returns the list of objects in objects_path_. */
 const Value ClassFinder::trigger (const Value &val)
 {
@@ -41,37 +41,44 @@ const Value ClassFinder::trigger (const Value &val)
 
 bool ClassFinder::build_child(const std::string &class_name, const Value &type, Value *error, ObjectHandle *object) {
   // try to load dynamic lib
-  std::string path = objects_path_;
-  path.append("/").append(class_name).append(".rko");
-  if (load(path.c_str(), "init")) {
-    if (get_child(class_name, object)) {
-      // Found object (everything went fine) !
-      return true;
-    } else {
-      error->set(INTERNAL_SERVER_ERROR, std::string("'").append(path).append("' should declare '").append(class_name).append("'."));
+  // FIXME: support rk patches and/or Lua ==> Lua(...)
+
+  size_t paths_count = search_paths_.size();
+  for (size_t i = 0; i < paths_count; ++i) {
+
+    std::string path = search_paths_[i].str();
+    // FIXME: resolve "~"
+    path.append("/").append(class_name).append(".rko");
+    if (load(path.c_str(), "init", error)) {
+      if (get_child(class_name, object)) {
+        // Found object (everything went fine) !
+        return true;
+      } else {
+        *error = FValue(INTERNAL_SERVER_ERROR, "'%s' should declare '%s'.", path.c_str(), class_name.c_str());
+        return false;
+      }
+    } else if (error->is_error()) {
       return false;
     }
-  } else {
-    error->set(INTERNAL_SERVER_ERROR, std::string("Could not load '").append(path).append("'."));
-    return false;
+    // continue searching
   }
+
+  // not found
+  *error = FValue(BAD_REQUEST_ERROR, "Could not find '%s' in '%s'.", class_name.c_str(), search_paths_.join(", ").c_str());
+  return false;
+
 }
 
 // for help to create a portable version of this load function, read Ruby's dln.c file.
-bool ClassFinder::load(const char * file, const char * init_name)
+bool ClassFinder::load(const char * file, const char * init_name, Value *error)
 {
   void *image;
   void (*function)(Planet*);
-  const char *error = 0;
 
   // load shared extension image into memory
   // --->
   if ((image = (void*)dlopen(file, RTLD_LAZY|RTLD_GLOBAL)) == 0) {
-    printf("Could not open file '%s'.", file);
-    if ( (error = dlerror()) )
-      printf(" %s\n", error);
-    else
-      printf("\n");
+    // do not set error, just return false to continue searching
     return false;
   }
 
@@ -79,11 +86,7 @@ bool ClassFinder::load(const char * file, const char * init_name)
   function = (void(*)(Planet*))dlsym(image, init_name);
   if (function == 0) {
     dlclose(image);
-    printf("Symbol '%s' not found in '%s'.",init_name,file);
-    if ( (error = dlerror()) )
-      printf(" %s\n", error);
-    else
-      printf("\n");
+    *error = FValue("Symbol '%s' not found in '%s'.", init_name, file);
     return false;
   }
 
@@ -93,7 +96,7 @@ bool ClassFinder::load(const char * file, const char * init_name)
   if (planet) {
     (*function)(planet);
   } else {
-    fprintf(stderr, "Could not cast root_ to Planet* !\n");
+    *error = Value(INTERNAL_SERVER_ERROR, "Could not cast root to Planet.");
     return false;
   }
 

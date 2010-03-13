@@ -2634,7 +2634,7 @@ static int cv_checkRange2(lua_State *L) {
       if (top__ < 3) {
         retval__ = checkRange(*a, quiet);
       } else {
-        
+
         DubArgPointer<int> ptr_idx;
         int *idx = ptr_idx(L, 3);
         if (top__ < 4) {
@@ -5684,7 +5684,7 @@ static int cv_getTextSize(lua_State *L) {
     int fontFace = luaL_checkint(L, 2);
     double fontScale = luaL_checknumber(L, 3);
     int thickness = luaL_checkint(L, 4);
-    
+
     DubArgPointer<int> ptr_baseLine;
     int *baseLine = ptr_baseLine(L, 5);
     Size  retval__ = getTextSize(*text, fontFace, fontScale, thickness, baseLine);
@@ -7534,22 +7534,22 @@ static int cv_minMaxLoc2(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    
+
     DubArgPointer<double> ptr_minVal;
     double *minVal = ptr_minVal(L, 2);
-    
+
     DubArgPointer<double> ptr_maxVal;
     double *maxVal = ptr_maxVal(L, 3);
     if (top__ < 4) {
       minMaxLoc(*a, minVal, maxVal);
     } else {
-      
+
       DubArgPointer<int> ptr_minIdx;
       int *minIdx = ptr_minIdx(L, 4);
       if (top__ < 5) {
         minMaxLoc(*a, minVal, maxVal, minIdx);
       } else {
-        
+
         DubArgPointer<int> ptr_maxIdx;
         int *maxIdx = ptr_maxIdx(L, 5);
         if (top__ < 6) {
@@ -7593,22 +7593,22 @@ static int cv_minMaxLoc3(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     const SparseMat *a = *((const SparseMat **)luaL_checkudata(L, 1, "cv.SparseMat"));
-    
+
     DubArgPointer<double> ptr_minVal;
     double *minVal = ptr_minVal(L, 2);
-    
+
     DubArgPointer<double> ptr_maxVal;
     double *maxVal = ptr_maxVal(L, 3);
     if (top__ < 4) {
       minMaxLoc(*a, minVal, maxVal);
     } else {
-      
+
       DubArgPointer<int> ptr_minIdx;
       int *minIdx = ptr_minIdx(L, 4);
       if (top__ < 5) {
         minMaxLoc(*a, minVal, maxVal, minIdx);
       } else {
-        
+
         DubArgPointer<int> ptr_maxIdx;
         int *maxIdx = ptr_maxIdx(L, 5);
         minMaxLoc(*a, minVal, maxVal, minIdx, maxIdx);
@@ -11402,7 +11402,7 @@ static const struct lua_constants_Reg cv_namespace_constants[] = {
   {"FONT_HERSHEY_SCRIPT_SIMPLEX"   , cv::FONT_HERSHEY_SCRIPT_SIMPLEX},
   {"FONT_HERSHEY_SCRIPT_COMPLEX"   , cv::FONT_HERSHEY_SCRIPT_COMPLEX},
   {"FONT_ITALIC"                   , cv::FONT_ITALIC},
-  
+
   {"CV_8UC1"                       , CV_8UC1},
   {"CV_8UC2"                       , CV_8UC2},
   {"CV_8UC3"                       , CV_8UC3},
@@ -11507,11 +11507,16 @@ static const struct lua_constants_Reg cv_namespace_constants[] = {
 };
 
 
-void luaopen_cv(lua_State *L) {
+#ifdef DUB_LUA_NO_OPEN
+int luaload_cv(lua_State *L) {
+#else
+extern "C" int luaopen_cv(lua_State *L) {
+#endif
   // register functions
   luaL_register(L, "cv", cv_functions);
 
   // register namespace enums
   register_constants(L, "cv", cv_namespace_constants);
 
+  return 0;
 }

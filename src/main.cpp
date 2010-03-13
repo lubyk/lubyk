@@ -31,7 +31,7 @@
 #include <iostream>
 
 using namespace rk;
-  
+
 #define VIEW_PATH "."
 
 int main(int argc, char * argv[])
@@ -53,8 +53,6 @@ int main(int argc, char * argv[])
     std::ostringstream oss;
     oss << in.rdbuf();
     in.close();
-
-    std::cout << oss.str() << "\n";
 
     venus.adopt_command(new CommandLine(std::cin, std::cout, oss.str()));
   } else {

@@ -112,7 +112,6 @@ public:
   void setUp() {
     planet_ = new Planet;
     cmd_ = planet_->adopt_command(new TextCommand(input_, output_), false);
-    planet_->call(LIB_URL, Value(TEST_LIB_PATH));
     output_.str(std::string("")); // clear output
     planet_->should_run(true);
   }

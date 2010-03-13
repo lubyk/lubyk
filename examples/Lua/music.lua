@@ -1,12 +1,13 @@
+require('cv')
+
 mi = mi or Outlet("mi", MidiIO("sends midi notes"))
-note = note or Outlet("note", RealIO("note out"))
+
 Note = oscit.MidiMessage_Note
 
 l = l or 85.8
 i = i or 1
 oct = oct or 0
 function bang()
-  --note.send(45)
   i = i + 1
   N = {
     {34, 36, 37, 39, 41, 83},
