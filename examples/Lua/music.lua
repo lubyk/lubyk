@@ -14,7 +14,7 @@ function bang()
     {34, 41, 39, 37, 39, 65, 72},
   }
   n = n or N[1]
-  if i % 10 == 0 then
+  if i % 7 == 0 then
     oct = (oct + 1) % 2
   end
 

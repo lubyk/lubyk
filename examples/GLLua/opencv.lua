@@ -9,7 +9,32 @@ x = x or 0
 y = y or 0
 z = z or 0
 
+function x(val)
+  if val then
+    x = val
+  end
+  return x
+end
+inlet('x', RangeIO(0, 360, "rotation angle in x axis"))
+
+function y(val)
+  if val then
+    y = val
+  end
+  return y
+end
+inlet('y', RangeIO(0, 360, "rotation angle in y axis"))
+
+function z(val)
+  if val then
+    z = val
+  end
+  return z
+end
+inlet('z', RangeIO(0, 360, "rotation angle in z axis"))
+
 function video(frame)
+  if not frame then return nil end
   cv.resize(frame, res, size, 0, 0, cv.INTER_LINEAR)
   frame_changed = true
 
@@ -42,11 +67,11 @@ function draw()
   gl.LineWidth(1.0)
   glut.WireCube(2.6)
 
-  gl.Color(0.5,0.5,0.0,0.1)
+  gl.Color(0.5,0.5,0.0,0.5)
   glut.SolidCube(2.6)
 
   -- simples way to draw a texture
-  gl.Translate(0.0, 0.0, -1.5)
+  gl.Translate(0.0, 0.0, -1.3)
   -- do not forget to set a color or nothing will be drawn
   gl.Color(1,1,1,0.5)
   rk.drawTexture(tex, 1.3, 1.3, -1.3, -1.3)

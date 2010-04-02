@@ -61,7 +61,12 @@ const Value LuaScript::lua_init(const char *init_script) {
 
   // push 'this' into the global field '__this'
   lua_pushlightuserdata(lua_, (void*)this);
-  lua_setglobal(lua_, "__this");
+
+  // TODO: We should forbid __gc on rk.Node
+  //lua_pushclass<Node>(lua_, this, "rk.Node");
+
+  // TODO: SHOULD ALSO PUSH ON THE REGISTRY
+  lua_setglobal(lua_, RUBYK_THIS_IN_LUA);
 
   register_lua_method<LuaScript, &LuaScript::lua_inlet>("inlet");
   // TODO: make sure build_outlet_ and send_ are never accessible from lua (only through Outlet).
@@ -196,7 +201,7 @@ LuaScript *LuaScript::lua_this(lua_State *L) {
   //lua_getfield(L, LUA_REGISTRYINDEX, RUBYK_THIS_IN_LUA);
   lua_getglobal(L, RUBYK_THIS_IN_LUA); // FIXME: Use REGISTRY instead (better protection)
   LuaScript *script = (LuaScript*)lua_touserdata(L,lua_gettop(L));
-  if (!script) fprintf(stderr, "Lua error: '__this' not set.\n");
+  if (!script) fprintf(stderr, "Lua error: '%s' not set.\n", RUBYK_THIS_IN_LUA);
   lua_pop(L,1);
   return script;
 }
