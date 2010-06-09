@@ -39,9 +39,9 @@ function video(frame)
   frame_changed = true
 
   n = n + math.pi / 300
-  x = math.cos(n / 0.9) * 360 / math.pi
+  x = 0 --math.cos(n / 0.9) * 360 / math.pi
   y = math.sin(n / 0.7) * 360 / math.pi
-  z = math.sin(n) * 360 / math.pi
+  z = 0 --math.sin(n) * 360 / math.pi
 end
 inlet('video', MatrixIO('send me images'))
 
@@ -68,13 +68,19 @@ function draw()
   glut.WireCube(2.6)
 
   gl.Color(0.5,0.5,0.0,0.5)
-  glut.SolidCube(2.6)
+  glut.SolidCube(1.6)
 
   -- simples way to draw a texture
-  gl.Translate(0.0, 0.0, -1.3)
+  gl.Translate(0.0, 0.0, 1.6)
   -- do not forget to set a color or nothing will be drawn
   gl.Color(1,1,1,0.5)
   rk.drawTexture(tex, 1.3, 1.3, -1.3, -1.3)
+
+  -- simples way to draw a texture
+  gl.Translate(0.0, 0.0, -1.6)
+  -- do not forget to set a color or nothing will be drawn
+  gl.Color(1,1,1,0.5)
+ -- rk.drawTexture(tex, 1.3, 1.3, -1.3, -1.3)
 end
 
 function resize(width, height)

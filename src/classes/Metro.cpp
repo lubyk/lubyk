@@ -70,7 +70,7 @@ public:
   }
 
   // internal use only (looped call)
-  void bang() {
+  void loop() {
     send(gNilValue);
   }
 
@@ -93,7 +93,7 @@ private:
     }
   }
 
-  Timer<Metro, &Metro::bang> timer_;
+  Timer<Metro, &Metro::loop> timer_;
   Real tempo_;
 };
 

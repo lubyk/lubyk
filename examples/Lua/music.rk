@@ -1,5 +1,7 @@
 # Use with Arturia, CE_Mini1
-m = Metro(1066)
+# run from build directory with
+# ./rubyk ../examples/Lua/music.rk
+m = Metro(460)
 m => l
 
 l = Lua("../examples/Lua/music.lua")

@@ -214,7 +214,7 @@ public:
     assert_true(res.is_string());
     res = script_->call_lua("foo", gNilValue);
     assert_true(res.is_error());
-    assert_equal("Could not call foo(null): cv.subtract: failed (size == src2.size() && type == src2.type() && func != 0)", res.error_message());
+    assert_equal("Could not call foo(null): cv.subtract: failed (-215) size == src2.size() && type == src2.type() && func != 0 in function subtract\n", res.error_message());
   }
 
   void test_rk_call( void ) {
