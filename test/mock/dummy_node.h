@@ -35,7 +35,7 @@ class DummyNode : public Node
 public:
   TYPED("Object.Node.DummyNode")
   
-  DummyNode(Real *value) : SlotTest_value_(value) {}
+  DummyNode(Real *value) : OutletTest_value_(value) {}
   
   DummyNode(Real value) : value_(value) {}
   
@@ -47,7 +47,7 @@ public:
     }
   }
   
-  Real * SlotTest_value_;
+  Real * OutletTest_value_;
   Real value_;
 };
 

@@ -205,9 +205,9 @@ extern "C" void init(Planet &planet) {
   CLASS (GLMat, "GLMat displays a Matrix on an OpenGL window.", "")
   // [1]
   // TODO: send 'gl object' ? (void pointer)
-  INLET (GLMat, draw, Value(Json("[0,0]")).push_back("Receives [width, height] from an OpenGL thread."))
+  METHOD(GLMat, draw, Value(Json("[0,0]")).push_back("Receives [width, height] from an OpenGL thread."))
   // [2]
-  INLET (GLMat, matrix, MatrixIO("Receives a matrix to be drawn on screen."))
+  METHOD(GLMat, matrix, MatrixIO("Receives a matrix to be drawn on screen."))
   // {downsample}
   METHOD(GLMat, downsample, RangeIO(1, 64, "Downsampling factor."))
 }

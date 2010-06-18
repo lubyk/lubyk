@@ -35,10 +35,12 @@ class Lua : public LuaScript {
 
 extern "C" void init(Planet &planet) {
   CLASS(Lua, "Lua script.", "script: [script content] or file: [path to file]")
+  // We use SUPER_LAST_METHOD instead of SUPER_METHOD so that the methods inserted here are kept at the end of the object's method list.
+
   // {1}
-  ADD_SUPER_METHOD(Lua, Script, file, StringIO("Path to script content [filepath]."))
+  SUPER_LAST_METHOD(Lua, Script, file, StringIO("Path to script content [filepath]."))
   // {2}
-  ADD_SUPER_METHOD(Lua, Script, script, StringIO("Script content [lua]."))
+  SUPER_LAST_METHOD(Lua, Script, script, StringIO("Script content [lua]."))
   // {3}
-  ADD_SUPER_METHOD(Lua, Script, reload, RealIO("How often to stat file for reload [s]."))
+  SUPER_LAST_METHOD(Lua, Script, reload, RealIO("How often to stat file for reload [s]."))
 }

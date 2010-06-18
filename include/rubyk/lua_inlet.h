@@ -40,9 +40,16 @@ class LuaInlet : public Inlet {
 public:
   LuaInlet(LuaScript *node, const char *name, const Value &type);
 
+  /** Method called whenever we receive a new value.
+   */
   virtual const Value trigger(const Value &val);
 
-  static void receive_method(Inlet *inlet, const Value &val);
+  /** Dummy method (should never be called since we overwrite trigger).
+   */
+  static const Value dummy(void *receiver, const Value &val) {
+    return gNilValue;
+  }
+
 private:
   LuaScript *lua_script_;
 };

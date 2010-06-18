@@ -80,7 +80,7 @@ public:
     Value res = parse("inlet('tempo', {0.0, 'bpm', 'Main beat machine tempo.'})");
     assert_true(res.is_string());
     ObjectHandle inlet;
-    assert_true(planet_->get_object_at("/lua/in/tempo", &inlet));
+    assert_true(planet_->get_object_at("/lua/tempo", &inlet));
     assert_equal("fss", inlet->type().type_tag());
     assert_equal(0.0, inlet->type()[0].r);
     assert_equal("bpm", inlet->type()[1].str());
@@ -95,7 +95,7 @@ public:
     Value res = parse("inlet('tempo', RealIO('Main beat machine tempo [bpm].'))");
     assert_true(res.is_string());
     ObjectHandle inlet;
-    assert_true(planet_->get_object_at("/lua/in/tempo", &inlet));
+    assert_true(planet_->get_object_at("/lua/tempo", &inlet));
     assert_equal("fs", inlet->type().type_tag());
     assert_equal(0.0, inlet->type()[0].r);
     assert_equal("Main beat machine tempo [bpm].", inlet->type()[1].str());
@@ -106,7 +106,7 @@ public:
     Value res = parse("inlet('boom', NilIO('Ping pong.'))");
     assert_true(res.is_string());
     ObjectHandle inlet;
-    assert_true(planet_->get_object_at("/lua/in/boom", &inlet));
+    assert_true(planet_->get_object_at("/lua/boom", &inlet));
     assert_equal("Ns", inlet->type().type_tag());
     assert_equal("Ping pong.", inlet->type()[1].str());
   }
@@ -136,7 +136,7 @@ public:
     Value res = parse("require('cv'); inlet('boom', MatrixIO('Ping pong.'))");
     assert_true(res.is_string());
     ObjectHandle inlet;
-    assert_true(planet_->get_object_at("/lua/in/boom", &inlet));
+    assert_true(planet_->get_object_at("/lua/boom", &inlet));
     assert_equal("Ms", inlet->type().type_tag());
     assert_equal("Ping pong.", inlet->type()[1].str());
   }
@@ -171,7 +171,7 @@ public:
     Value res = parse("inlet('boom', MidiIO('Ping pong.'))");
     assert_true(res.is_string());
     ObjectHandle inlet;
-    assert_true(planet_->get_object_at("/lua/in/boom", &inlet));
+    assert_true(planet_->get_object_at("/lua/boom", &inlet));
     assert_equal("ms", inlet->type().type_tag());
     assert_equal("Ping pong.", inlet->type()[1].str());
   }

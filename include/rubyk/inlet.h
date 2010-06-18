@@ -30,88 +30,101 @@
 #ifndef RUBYK_INCLUDE_RUBYK_INLET_H_
 #define RUBYK_INCLUDE_RUBYK_INLET_H_
 
-#include "rubyk/slot.h"
+#include <list>
+
+#include "oscit.h"
 
 namespace rk {
 
-class Inlet;
+class Outlet;
 class Node;
 
-typedef void(*inlet_method_t)(Inlet *node, const Value &val);
-
-/** Prototype constructor for Inlets. */
-struct InletPrototype
-{
-  InletPrototype(const char *name, inlet_method_t method, const Value &type) : name_(name), method_(method), type_(type) {}
-  
-  std::string    name_;
-  inlet_method_t method_;
-  Value          type_;
-};
-
-class Inlet : public Slot {
+/** An inlet is a special kind of Method that can handle connections from Outlet.
+ */
+class Inlet : public Method {
 public:
-  TYPED("Object.Slot.Inlet")
-  
+  TYPED("Object.Method.Inlet")
+
   /** Constructor used for testing. */
-  Inlet(Node *node, inlet_method_t method, const Value &type) : Slot(node, type), method_(method) {
+  // Inlet(Node *node, inlet_method_t method, const Value &type) : Slot(node, type), method_(method) {
+  //   register_in_node();
+  // }
+
+  /** Create a new object that call a member method when "triggered" and handles connections from Outlet.
+   */
+  Inlet(Node *node, const char *name, member_method_t method, const Value &type) :
+      Method(node, name, method, type),
+      node_(node) {
     register_in_node();
   }
-  
-  Inlet(Node *node, const char *name, inlet_method_t method, const Value &type) : Slot(node, name, type), method_(method) {
+
+  /** Create a new object that call a member method when "triggered" and handles connections from Outlet.
+   */
+  Inlet(Node *node, const std::string &name, member_method_t method, const Value &type) :
+      Method(node, name, method, type),
+      node_(node) {
     register_in_node();
   }
-  
-  /** Prototype based constructor. */
-  Inlet(Node *node, const InletPrototype &prototype) : Slot(node, prototype.name_, prototype.type_), method_(prototype.method_) {
+
+  /** Prototype based constructor.
+   */
+  Inlet(Node *node, const MethodPrototype &prototype) :
+      Method(node, prototype),
+      node_(node) {
     register_in_node();
   }
-  
-  virtual ~Inlet() {
-    unregister_in_node();
-  }
-  
-  /** Inform the node about the existence of this outlet (direct callback). */
+
+  /** On destruction, inform master node that we no longer exist so the node can remove this inlet
+   * from the list and remove links from outlets.
+   */
+  virtual ~Inlet();
+
+  /** Inform the node about the existence of this inlet.
+   */
   void register_in_node();
-  
-  /** Inform the node that this outlet is about to disappear. */
+
+  /** Inform the node that this inlet is about to disappear.
+   */
   void unregister_in_node();
-  
-  /** The operation to be executed on call. If 'val' is not Nil, send to inlet. */
-  virtual const Value trigger(const Value &val);
-    
-  /** Receive a value. */
-  inline void receive(const Value &val) {
-    (*method_)(this, val);     // use functor
+
+  /** Set inlet id (position in containing node).
+   */
+  void set_id(int id) {
+    id_ = id;
+    sort_incoming_connections();
   }
-  
-  /** Create a callback for an inlet. */
-  template <class T, void(T::*Tmethod)(const Value &val)>
-  static void cast_method(Inlet *inlet, const Value &val) {
-    (((T*)inlet->node_)->*Tmethod)(val);
-  }
-  
-  /** Create a callback for an inlet based on a normal accessor. */
-  template <class T, const Value(T::*Tmethod)(const Value &val)>
-  static void cast_method(Inlet *inlet, const Value &val) {
-    (((T*)inlet->node_)->*Tmethod)(val);
-    // ignore return value
-  }
-  
-  /** Create a callback for an inlet (method in superclass). */
-  template <class R, class T, void(T::*Tmethod)(const Value &val)>
-  static void cast_method(Inlet *inlet, const Value &val) {
-    (((R*)inlet->node_)->*Tmethod)(val);
-  }
-  
-  /** Create a callback for an inlet based on a normal accessor (method in superclass). */
-  template <class R, class T, const Value(T::*Tmethod)(const Value &val)>
-  static void cast_method(Inlet *inlet, const Value &val) {
-    (((R*)inlet->node_)->*Tmethod)(val);
-    // ignore return value
-  }
+
+  /** Sort inlets by rightmost node and rightmost position in the same node.
+   */
+  bool operator>=(const Inlet &other) const;
+
+  /** Make a one-way connection to another slot (@internal: should only be called by Outlet).
+   */
+  bool add_connection(Outlet *outlet);
+
+  /** Remove a one-way connection from an outlet (@internal: should only be called by Outlet).
+   */
+  void remove_connection(Outlet *outlet);
+
+  /** (re)sort connections arriving to this inlet. This is triggered when the
+   * node position changes.
+   */
+  void sort_incoming_connections();
+
 private:
-  inlet_method_t method_;        /**< Method to set a new value. */
+
+  /** Containing node.
+   */
+  Node *node_;
+
+  /** Position in the node, used to sort.
+   */
+  int id_;
+
+  /** Outlets connected.
+   */
+  std::list<Outlet*> connected_outlets_;
+
 };
 
 } // rk

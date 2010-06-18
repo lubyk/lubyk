@@ -57,7 +57,5 @@ extern "C" void init(Planet &planet) {
   c->add_method<Script, &Script::reload>("reload", RealIO("How often to stat file for reload [s]."));
 
   c->add_method<OscMapCommand, &OscMapCommand::port>("number", RealIO("Incomming port number."));
-  c->add_inlet<OscMapCommand,  &OscMapCommand::port>("number", RealIO("Incomming port number."));
   c->add_method<OscMapCommand, &OscMapCommand::reply_port>("number", RealIO("Outgoing reply port number."));
-  c->add_inlet<OscMapCommand,  &OscMapCommand::reply_port>("number", RealIO("Outgoing reply port number."));
 }

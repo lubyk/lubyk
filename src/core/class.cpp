@@ -33,23 +33,12 @@
 namespace rk {
 
 /** Build all inlets for an object from prototypes. */
-void Class::make_inlets(Node *object)
-{
-  std::list<InletPrototype>::iterator it;
-  std::list<InletPrototype>::iterator end = inlet_prototypes_.end();
-  Object * inlets = object->adopt(new Object("in"));
-
-  for (it = inlet_prototypes_.begin(); it != end; it++)
-    inlets->adopt(new Inlet(object, *it));
-}
-
-/** Build all inlets for an object from prototypes. */
 void Class::make_outlets(Node *object)
 {
   std::list<OutletPrototype>::iterator it;
   std::list<OutletPrototype>::iterator begin = outlet_prototypes_.begin();
   std::list<OutletPrototype>::iterator end   = outlet_prototypes_.end();
-  Object * outlets = object->adopt(new Object("out"));
+  Object * outlets = object->adopt(new Object("out", DEFAULT_TYPE, true));
   //FIX: Object * method;
   Outlet * outlet;
 

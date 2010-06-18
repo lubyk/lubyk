@@ -33,14 +33,27 @@
 
 namespace rk {
 
+Outlet::~Outlet() {
+  unregister_in_node();
+
+  // remove connections with other slots
+  LinkedList<Inlet*> *it = connected_inlets_.begin();
+
+  while(it) {
+    it->obj->remove_connection(this);
+    it = it->next;
+  }
+}
+
 // FIXME: inline ?
+// FIXME: thread safety !!
 void Outlet::send(const Value &val)
 {
-  LinkedList<Inlet*> * iterator = (LinkedList<Inlet*> *)(connections_.begin());
+  LinkedList<Inlet*> *it = connected_inlets_.begin();
 
-  while(iterator) {
-    iterator->obj->receive(val);
-    iterator = iterator->next;
+  while(it) {
+    it->obj->trigger(val);
+    it = it->next;
   }
 }
 
@@ -52,6 +65,87 @@ void Outlet::register_in_node()
 void Outlet::unregister_in_node()
 {
   node_->unregister_outlet(this);
+}
+
+bool Outlet::connect(Inlet *inlet) {
+  if (inlet == NULL) return false;
+  // outlet --> inlet
+
+  if (add_connection(inlet)) {
+    // two way connection
+    inlet->add_connection(this);
+    return true;
+  }
+  return false;
+}
+
+void Outlet::disconnect(Inlet *inlet) {
+  remove_connection(inlet);
+  inlet->remove_connection(this);
+}
+
+bool Outlet::add_connection(Inlet *inlet) {
+  if (type_id() == NO_TYPE_TAG_ID ||  inlet->type_id() == NO_TYPE_TAG_ID) return false; // one of them is a NoIO
+  assert(type().size() > 0);
+  assert(inlet->type().size()  > 0);
+  if (inlet->can_receive(type()[0])) {
+    // inlet can receive our type
+    // OrderedList makes sure the link is not created again if it already exists.
+    connected_inlets_.push(inlet);
+    return true;
+  } else {
+    return false;
+  }
+}
+
+void Outlet::remove_connection(Inlet *inlet) {
+  connected_inlets_.remove(inlet);
+}
+
+void Outlet::sort_connections() {
+  connected_inlets_.sort();
+}
+
+
+const Value Outlet::change_link(unsigned char operation, const Value &val) {
+  if (val.is_string()) {
+    // update a link (create/destroy)
+
+    ObjectHandle target;
+    if (!root_->get_object_at(val.str(), &target)) return ErrorValue(NOT_FOUND_ERROR, val.str());
+
+    if (target->kind_of(Node)) {
+      if (target->first_child(&target)) {
+        if (!target->kind_of(Inlet)) {
+          return ErrorValue(NOT_FOUND_ERROR, val.str()).append(": inlet not found (first child is not an Inlet).");
+        }
+      } else {
+        return ErrorValue(NOT_FOUND_ERROR, val.str()).append(": no Inlet found.");
+      }
+    }
+
+    Inlet *inlet = target.type_cast<Inlet>();
+
+    if (!inlet) {
+      return ErrorValue(BAD_REQUEST_ERROR, "Could not update link with ").append(val.to_json()).append(": incompatible).");
+    }
+
+    if (operation == 'c') {
+      // create link
+      if (connect(inlet)) {
+        //std::cout << "LINKED: " << url() << " with " << val << std::endl;
+        return Value(url()).push_back("=>").push_back(target->url());
+      } else {
+        return ErrorValue(BAD_REQUEST_ERROR, "Could not make the connection with (").append(val.to_json()).append(").");
+      }
+    } else {
+      // disconnect
+      disconnect(inlet);
+      return Value(url()).push_back("||").push_back(target->url());
+    }
+  } else {
+    return Value(info());
+  }
 }
 
 } // rk

@@ -28,10 +28,23 @@
 */
 
 #include "rubyk/inlet.h"
-#include "rubyk/outlet.h"
+
 #include "rubyk/node.h"
+#include "rubyk/outlet.h"
 
 namespace rk {
+
+Inlet::~Inlet() {
+  unregister_in_node();
+
+  std::list<Outlet*>::iterator it = connected_outlets_.begin();
+  std::list<Outlet*>::iterator end = connected_outlets_.end();
+
+  while(it != end) {
+    (*it)->remove_connection(this);
+    ++it;
+  }
+}
 
 void Inlet::register_in_node() {
   node_->register_inlet(this);
@@ -41,9 +54,44 @@ void Inlet::unregister_in_node() {
   node_->unregister_inlet(this);
 }
 
-const Value Inlet::trigger(const Value &val) {
-  receive(val);
-  return node_->do_inspect();
+bool Inlet::operator>=(const Inlet &other) const {
+  if (node_ == other.node_) {
+    // same node, sort by position in container, largest first
+    return id_ < other.id_;
+  } else {
+    // different node, sort by node position, greatest first
+    return node_->trigger_position() < other.node_->trigger_position();
+  }
+}
+
+// Called by Outlet once type compatibility is checked.
+bool Inlet::add_connection(Outlet *inlet) {
+  std::list<Outlet*>::iterator it  = connected_outlets_.begin();
+  std::list<Outlet*>::iterator end = connected_outlets_.end();
+
+  while(it != end) {
+    // make sure it is not already in list
+    if (*it == inlet) return true;
+    ++it;
+  }
+
+  connected_outlets_.push_back(inlet);
+  return true;
+}
+
+void Inlet::remove_connection(Outlet *outlet) {
+  connected_outlets_.remove(outlet);
+}
+
+
+void Inlet::sort_incoming_connections() {
+  std::list<Outlet*>::iterator it  = connected_outlets_.begin();
+  std::list<Outlet*>::iterator end = connected_outlets_.end();
+
+  while(it != end) {
+    (*it)->sort_connections();
+    ++it;
+  }
 }
 
 } // rk

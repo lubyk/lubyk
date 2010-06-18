@@ -58,8 +58,9 @@ public:
     send(size_);
   }
 
-  void redraw(const Value &val) {
+  const Value redraw(const Value &val) {
     GLWindow::redraw();
+    return gNilValue;
   }
 
 private:
@@ -69,7 +70,7 @@ private:
 extern "C" void init(Planet &planet) {
   CLASS_NAMED(GLWindowNode, "GLWindow", "OpenGL window", "no options yet")
   // [1]
-  INLET (GLWindowNode, redraw, NilIO("Redraws on bang."))
+  METHOD(GLWindowNode, redraw, NilIO("Redraws on bang."))
   OUTLET(GLWindowNode, draw, Value(Json("[0,0]")).push_back("Sends [width, height] of view to execute OpenGL."))
   // TODO replace 'open' and 'close' by 'xxxx' (open if true, close if false)
   METHOD(GLWindowNode, open,  BangIO("Open a window."))

@@ -89,19 +89,21 @@ class Node : public Object {
 
   virtual void inspect(Value *hash) const {}
 
-  /** Add an inlet with the given callback (used by Class during instantiation). */
+  /** Add an inlet and set the inlet id that is used to sort outlet links.
+   */
   void register_inlet(Inlet *inlet) {
     inlet->set_id(inlets_.size()); /* first inlet has id 0 */
     inlets_.push_back(inlet);
   }
 
-  /** Add an outlet. (used by Class during instantiation). */
+  /** Add an outlet. (used by Class during instantiation).
+   */
   void register_outlet(Outlet *outlet) {
-    outlet->set_id(outlets_.size()); /* first outlet has id 0 */
     outlets_.push_back(outlet);
   }
 
-  /** Remove inlet from inlets list of callbacks. */
+  /** Remove inlet from inlets list of callbacks.
+   */
   void unregister_inlet(Inlet * inlet) {
     std::vector<Inlet*>::iterator it;
     std::vector<Inlet*>::iterator end = inlets_.end();
@@ -114,7 +116,8 @@ class Node : public Object {
     }
   }
 
-  /** Remove outlet from outlets list of callbacks. */
+  /** Remove outlet from outlets list of callbacks.
+   */
   void unregister_outlet(Outlet * outlet) {
     std::vector<Outlet*>::iterator it;
     std::vector<Outlet*>::iterator end = outlets_.end();
@@ -127,7 +130,9 @@ class Node : public Object {
     }
   }
 
-  /**< Sending order from incoming connections should be updated. */
+  /** Sending order from incoming connections should be updated.
+   * This is triggered when our 'trigger_position' changes.
+   */
   void sort_connections();
 
   /** When this method is implemented in subclasses, it is used to
@@ -267,7 +272,7 @@ class Node : public Object {
                                   *   will receive the signal after a node that has a greater trigger_position_. */
   std::string class_url_;        /**< Url for the node's class. */
 
-  std::vector<Inlet*>  inlets_;  /**< List of inlets. FIXME: is this used ? */
+  std::vector<Inlet*>  inlets_;  /**< List of inlets. This is used to sort outlet sending order on position change. */
   std::vector<Outlet*> outlets_; /**< List of outlets. */
 };
 

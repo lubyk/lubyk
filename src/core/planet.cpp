@@ -70,19 +70,21 @@ const Value Planet::link(const Value &val) {
     return val;
   }
 
-  Slot   *slot = source.type_cast<Slot>();
+  Outlet *source_outlet = source.type_cast<Outlet>();
+
   ObjectHandle out, outlet;
-  if (slot != NULL) {
-    return val[1].str() == "||" ? slot->unlink(val[2]) : slot->link(val[2]);
+
+  if (source_outlet != NULL) {
+    return val[1].str() == "||" ? source_outlet->unlink(val[2]) : source_outlet->link(val[2]);
   } else if (source->get_child("out", &out) && out->first_child(&outlet)) {
-    // was a link to/from default slots: /met/out --> /counter/in
-    if ( (slot = outlet.type_cast<Slot>()) ) {
-      return val[1].str() == "||" ? slot->unlink(val[2]) : slot->link(val[2]);
+    // was a link to/from default slots: /met --> /counter
+    if ( (source_outlet = outlet.type_cast<Outlet>()) ) {
+      return val[1].str() == "||" ? source_outlet->unlink(val[2]) : source_outlet->link(val[2]);
     } else {
-      return Value(BAD_REQUEST_ERROR, std::string("Object at '").append(slot->url()).append("' does not support links (using first child of '").append(source->url()).append("')."));
+      return Value(BAD_REQUEST_ERROR, std::string("Object at '").append(source->url()).append("' does not support links (using first child of '").append(source->url()).append("')."));
     }
   } else {
-    return Value(BAD_REQUEST_ERROR, std::string("Object at '").append(source->url()).append("' does not support links (not an Outlet, Inlet or Node)."));
+    return Value(BAD_REQUEST_ERROR, std::string("Object at '").append(source->url()).append("' does not support links (not an Outlet)."));
   }
 }
 

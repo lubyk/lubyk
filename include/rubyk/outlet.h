@@ -30,9 +30,13 @@
 #ifndef RUBYK_INCLUDE_RUBYK_OUTLET_H_
 #define RUBYK_INCLUDE_RUBYK_OUTLET_H_
 
-#include "rubyk/slot.h"
+#include "oscit/object.h"
+#include "rubyk/ordered_list.h"
 
 namespace rk {
+
+class Inlet;
+class Node;
 
 /** Prototype constructor for Inlets. */
 struct OutletPrototype
@@ -42,39 +46,92 @@ struct OutletPrototype
   Value       type_;
 };
 
-class Outlet : public Slot {
+class Outlet : public Object {
 public:
-  TYPED("Object.Slot.Outlet")
-  
-  Outlet(Node *node, const Value &type) : Slot(node, type) {
+  TYPED("Object.Outlet")
+
+  Outlet(Node *node, const Value &type) :
+      Object(type), node_(node) {
     register_in_node();
   }
-  
-  Outlet(Node *node, const std::string &name, const Value &type) : Slot(node, name, type) {
+
+  Outlet(Node *node, const std::string &name, const Value &type) :
+      Object(name, type), node_(node) {
     register_in_node();
   }
-  
-  Outlet(Node *node, const char *name, const Value &type) : Slot(node, name, type) {
+
+  Outlet(Node *node, const char *name, const Value &type) :
+      Object(name, type), node_(node) {
     register_in_node();
   }
-  
+
   /** Prototype based constructor. */
-  Outlet(Node *node, const OutletPrototype &prototype) : Slot(node, prototype.name_, prototype.type_) {
+  Outlet(Node *node, const OutletPrototype &prototype) :
+      Object(prototype.name_, prototype.type_), node_(node) {
     register_in_node();
   }
-  
-  virtual ~Outlet() {
-    unregister_in_node();
-  }
-  
+
+  /** On destruction, unregister in node and remove connections.
+   */
+  virtual ~Outlet();
+
   /** Inform the node about the existence of this outlet (direct callback). */
   void register_in_node();
-  
+
   /** Inform the node that this outlet is about to disappear. */
   void unregister_in_node();
-  
+
   /** Send the signal to all connections. Do nothing if there are no connections. */
   void send(const Value &val);
+
+  /** Create a link.
+   * example: /m/out/counter/link /n/in/tempo  --> create a link
+   */
+  const Value link(const Value &val) {
+    return change_link('c', val);
+  }
+
+  /** Delete a link. */
+  const Value unlink(const Value &val) {
+    return change_link('d', val);
+  }
+
+  /** Add a bi-directional connection to an inlet.
+   */
+  bool connect(Inlet *inlet);
+
+  /** Remove a bi-directional connection to an inlet.
+   */
+  void disconnect(Inlet *inlet);
+
+  /** Make a one-way connection to another inlet.
+   * Create a connection if the type of the other inlet is compatible.
+   */
+  bool add_connection(Inlet *inlet);
+
+  /** Remove a one-way connection to an inlet.
+   */
+  void remove_connection(Inlet *inlet);
+
+  /** Resort connections (triggered by a connected inlet because the id or node moved).
+   */
+  void sort_connections();
+
+private:
+
+  /** If operation is 'c': create a new link, else unlink.
+   */
+  const Value change_link(unsigned char operation, const Value &val);
+
+  /** Containing node.
+   */
+  Node *node_;
+
+  /** Connections are kept sorted, so that we always send values to inlets
+   * that are rightmost first.
+   */
+  OrderedList<Inlet*> connected_inlets_;
+
 };
 
 } // rk

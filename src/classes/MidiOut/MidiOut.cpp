@@ -35,10 +35,10 @@ class MidiOut : public Node {
   }
 
   // [1] Send midi data out
-  void midi(const Value &val) {
+  const Value midi(const Value &val) {
     MidiMessage *msg;
 
-    if (!is_ok() || !val.is_midi()) return;
+    if (!is_ok() || !val.is_midi()) return gNilValue;
 
     msg = val.midi_message_;
 
@@ -48,6 +48,8 @@ class MidiOut : public Node {
       // send now
       bang(val);
     }
+
+    return gNilValue;
   }
 
   // [2] Get/set midi out port
@@ -197,12 +199,10 @@ private:
 };
 
 extern "C" void init(Planet &planet) {
-  CLASS (MidiOut, "Port to send midi values out. If no port is provided, tries to open a virtual port.",
-                  "port: [port number/name]");
-  // using ADD_METHOD so that only the method is added without inlet (first method = port, first inlet = midi)
-  ADD_METHOD(MidiOut, "port", port, AnyIO("Port number or string.")); // TODO: this should be a SelectIO...
-  METHOD(MidiOut, midi, MidiIO("Received values are sent out to the current midi port."));
-  ADD_INLET(MidiOut, "port", port, MidiIO("Received values are sent out to the current midi port."));
+  CLASS(MidiOut, "Port to send midi values out. If no port is provided, tries to open a virtual port.", "port: [port number/name]")
+  // TODO: this should be a SelectIO...
+  METHOD(MidiOut, midi, MidiIO("Received values are sent out to the current midi port."))
+  METHOD(MidiOut, port, AnyIO("Port number or string."))
   // CLASS_METHOD(MidiOut, list)
   // METHOD(MidiOut, clear)
 }

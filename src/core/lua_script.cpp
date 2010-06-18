@@ -212,23 +212,18 @@ int LuaScript::lua_inlet(const Value &val) {
     // TODO: proper error reporting
     fprintf(stderr, "%s: Invalid inlet definition: %s\n", name_.c_str(), val.to_json().c_str());
     return 0;
-  }
-  ObjectHandle in;
-  if (get_child("in", &in)) {
-    ObjectHandle inlet;
-    if (in->get_child(val[0].str().c_str(), &inlet)) {
-      if (inlet->name() != val[0].str() || inlet->type_id() != val[1][0].type_id()) {
-        // TODO: inlet rename = keep connections
-        // TODO: inlet type change = reset connections
-      } else {
-        // TODO: update units/range/...
-      }
+}
+  ObjectHandle inlet;
+  if (get_child(val[0].str().c_str(), &inlet)) {
+    if (inlet->name() != val[0].str() || inlet->type_id() != val[1][0].type_id()) {
+      // TODO: inlet rename = keep connections
+      // TODO: inlet type change = reset connections
     } else {
-      in->adopt(new LuaInlet(this, val[0].str().c_str(), val[1]));
-      // TODO: create method...
+      // TODO: update units/range/...
     }
   } else {
-    fprintf(stderr, "%s: Could not find inlet folder 'in'\n", name_.c_str());
+    adopt(new LuaInlet(this, val[0].str().c_str(), val[1]));
+    // TODO: create method...
   }
   return 0;
 }

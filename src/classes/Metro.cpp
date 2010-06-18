@@ -99,7 +99,7 @@ private:
 
 extern "C" void init(Planet &planet) {
   CLASS( Metro, "Metronome that sends bangs at regular intervals.", "tempo: [initial tempo]")
-  METHOD(Metro, tempo,RangeIO(0, 5000, "Restart metronome | set tempo value [bpm]."))
+  METHOD(Metro, tempo, RangeIO(0, 5000, "Restart metronome | set tempo value [bpm]."))
   METHOD(Metro, start_stop, RealIO("Start/stop metronome [0 = stop, 1 = start]."))
   OUTLET(Metro, bang, BangIO("Regular bangs."))
 }

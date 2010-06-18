@@ -34,8 +34,8 @@
 #include <cstdio>
 #include <vector>
 
-#include "oscit/non_copyable.h"
-  
+#include "oscit.h"
+
 namespace rk {
 
 template <class T>
@@ -47,9 +47,10 @@ struct LinkedList {
 
 /** This class maintains a linked list of elements, ensuring that the elements are kept sorted,
   * the smallest being on top of the list. It also ensures that only one version of an element is stored.
+  * @TODO it would be simpler to use a subclass of std::list and just write 'push' method.
   */
 template <class T>
-class OrderedList : private oscit::NonCopyable {
+class OrderedList : private NonCopyable {
   public:
     OrderedList() {
       linked_list_ = new LinkedList<T>(NULL);

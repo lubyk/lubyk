@@ -88,7 +88,7 @@ public:
       name = url;
     }
 
-    T * node;
+    T *node;
 
     if (parent.ptr()) {
       node = parent->adopt(new T());
@@ -110,9 +110,6 @@ public:
     // used by osc (using url instead of name because we might have class folders/subfolders some day).
     // not very clear why we need this...
     node->set_class_url(new_method->parent_->url());
-
-    // make inlets
-    klass->make_inlets(node);
 
     // make outlets
     klass->make_outlets(node);
