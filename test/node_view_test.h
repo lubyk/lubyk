@@ -27,33 +27,38 @@
   ==============================================================================
 */
 
-#ifndef RUBYK_INCLUDE_RUBYK_OSCIT_H_
-#define RUBYK_INCLUDE_RUBYK_OSCIT_H_
+#include "test_helper.h"
 
-#include "oscit/oscit.h"
-using namespace oscit;
+class NodeViewTest : public TestHelper {
+public:
+  void test_from_hash( void ) {
+    NodeView view;
+    HashValue res;
+    view.from_hash(Value(Json("{x:45, y:12, width:200, height:25, foo:444, hue:13}")), &res);
+    assert_equal("{\"x\":45, \"y\":12, \"width\":200, \"height\":25, \"hue\":13}", res.to_json());
+    assert_equal(45.0, view.x_);
+    assert_equal(12.0, view.y_);
+    assert_equal(200.0, view.width_);
+    assert_equal(25.0, view.height_);
+    assert_equal(13.0, view.hue_);
+  }
 
-#define BangIO NilIO
-#define gBang gNilValue
-#define is_bang is_nil
+  void test_to_hash( void ) {
+    assert_equal("{\"x\":10.5, \"y\":3.2, \"width\":90, \"height\":120}", NodeView(10.5, 3.2, 90, 120, 85).to_hash().to_json());
+  }
 
-// TODO move this in a types.h file ?
-#define CLASS_URL   "/class"
-#define CLASS_URL_LENGTH 6
+  void test_insert_in_hash_result( void ) {
+    Value hash;
+    NodeView view(10.5, 3.2, 90, 120, 85);
+    view.insert_in_hash(&hash);
 
-/** This is where all the dynamic nodes are created.
- */
-#define PATCH_KEY  "patch"
-#define NODE_VIEW_KEY  "@view"
-#define NODE_CLASS_KEY "@class"
+    assert_equal("{\"x\":10.5, \"y\":3.2, \"width\":90, \"height\":120, \"hue\":85}", hash.to_json());
+  }
 
-/** This is ?
- */
-#define LIB_URL     "/class/lib"
-#define INSPECT_URL "/.inspect"
-
-#define RUBYK_URL   "/rubyk"
-#define LINK_URL    "/rubyk/link"
-#define QUIT_URL    "/rubyk/quit"
-
-#endif // RUBYK_INCLUDE_RUBYK_OSCIT_H_
+  void test_to_stream( void ) {
+    NodeView view(10.5, 3.2, 90, 120, 85);
+    std::ostringstream out(std::ostringstream::out);
+    out << view;
+    assert_equal("{\"x\":10.5, \"y\":3.2, \"width\":90, \"height\":120, \"hue\":85}", out.str());
+  }
+};

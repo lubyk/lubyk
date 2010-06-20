@@ -38,6 +38,7 @@
 //#include <pthread.h>
 
 #include "rubyk/oscit.h"
+#include "rubyk/node_view.h"
 #include "rubyk/event.h"
 #include "rubyk/inlet.h"
 #include "rubyk/outlet.h"
@@ -63,8 +64,6 @@ class Node : public Object {
   Node() : Object("n", AnyIO("Node.")), worker_(NULL), looped_(false) {
     // create a key to detect if we are running in an OpenGL thread
     if (!Node::sOpenGLThreadKey) pthread_key_create(&Node::sOpenGLThreadKey, NULL);
-
-    trigger_position_ = ++sIdCounter; // FIXME: atomic operation
   }
 
   virtual ~Node();
@@ -131,7 +130,7 @@ class Node : public Object {
   }
 
   /** Sending order from incoming connections should be updated.
-   * This is triggered when our 'trigger_position' changes.
+   * This is triggered when our position changes.
    */
   void sort_connections();
 
@@ -166,14 +165,53 @@ class Node : public Object {
 
   const std::string &class_url() const { return class_url_; }
 
+  /** Return a hash representation of a Node.
+   * The result is like Object#insert_in_hash but with the 'class' parameter.
+   */
+  virtual void insert_in_hash(Value *result) {
+    result->set(NODE_CLASS_KEY, Url(class_url_).name()); // class_url_ instead of class name ?
+    result->set(NODE_VIEW_KEY, view());
+    this->Object::insert_in_hash(result);
+  }
+
+  /** Set object from a hash representation.
+   */
+  virtual void from_hash(const Value &hash, Value *result) {
+    Value view = hash[NODE_VIEW_KEY];
+    Value view_result;
+
+    // class update ?
+    if (view.is_hash())
+      update_view(view, &view_result);
+
+    // trigger all methods
+    this->Object::from_hash(hash, result);
+
+    if (view.is_hash())
+      result->set(NODE_VIEW_KEY, view_result);
+  }
+
   /** Used to sort outlet connections. A node with a high trigger position receives the value before
    * another node with a small trigger position, if they are both connected to the same outlet.
    */
-  inline Real trigger_position() { return trigger_position_; }
+  inline Real pos_x() { return pos_.x_; }
 
-  void set_trigger_position(Real value) {
-    trigger_position_ = value;
+  /** Patch view changes should only be triggered through Planet::update so that
+   * notifications are properly sent.
+   */
+  void update_view(const Value &hash, Value *result) {
+    pos_.from_hash(hash, result);
     sort_connections();
+  }
+
+  /** Node's patch settings (color, position).
+   */
+  virtual const Value view() const {
+    Value view;
+    // Class to use in view (not the same as class to create Node)
+    view.set("class", "Node");
+    pos_.insert_in_hash(&view);
+    return view;
   }
 
   /** Send a Value out of the first outlet. */
@@ -262,14 +300,16 @@ class Node : public Object {
   Worker * worker_;  /**< Worker that will give life to object. */
 
  private:
-  static size_t    sIdCounter;   ///< Used to set a default trigger position.
 
   bool is_ok_;                   /**< If something bad arrived to the node during initialization or edit, the node goes into
                                   *   broken state and is_ok_ becomes false. In 'broken' mode, the node does nothing. */
   bool looped_;                  /**< Set to true if the node is currently called on every worker loop. */
 
-  Real trigger_position_;        /**< When sending signals from a particular slot, a node with a small trigger_position_
-                                  *   will receive the signal after a node that has a greater trigger_position_. */
+  /** When sending signals from a particular slot, a node with a small pos_.x_ (trigger position)
+   * will receive the signal after a node that has a greater trigger position.
+   */
+  NodeView pos_;
+
   std::string class_url_;        /**< Url for the node's class. */
 
   std::vector<Inlet*>  inlets_;  /**< List of inlets. This is used to sort outlet sending order on position change. */

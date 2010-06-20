@@ -566,7 +566,9 @@ void TextCommand::create_instance() {
   DEBUG(std::cout << "NEW "<< var_ << " = " << class_ << "(" << params << ")");
   list.push_back(var_);
   list.push_back(params);
-
+  
+  // TODO: replace /class/Metro/new 'x' params
+  //       with    /rubyk {"parts":{"x":{"class":"Metro", params}}}
   Value res = root_->call(std::string(CLASS_URL).append("/").append(class_).append("/new"), list);
 
   Value links;

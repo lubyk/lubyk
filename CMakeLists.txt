@@ -198,7 +198,7 @@ endforeach (RUBYK_LIB_OBJECT)
 include_directories (AFTER ${RUBYK_SOURCE_DIR}/test)
 
 # one test for all CxxTests
-file (GLOB RUBYK_TEST_SOURCES test/*_test.h src/objects/*_test.h src/objects/*/*_test.h)
+file (GLOB RUBYK_TEST_SOURCES test/*_test.h src/classes/*_test.h src/classes/*/*_test.h)
 file (GLOB RUBYK_TEST_MOCKS test/mock/*.h)
 add_custom_command (PRE_BUILD
   OUTPUT  test_runner.cpp

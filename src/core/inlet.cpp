@@ -60,7 +60,7 @@ bool Inlet::operator>=(const Inlet &other) const {
     return id_ < other.id_;
   } else {
     // different node, sort by node position, greatest first
-    return node_->trigger_position() < other.node_->trigger_position();
+    return node_->pos_x() < other.node_->pos_x();
   }
 }
 

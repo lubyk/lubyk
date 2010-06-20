@@ -27,33 +27,38 @@
   ==============================================================================
 */
 
-#ifndef RUBYK_INCLUDE_RUBYK_OSCIT_H_
-#define RUBYK_INCLUDE_RUBYK_OSCIT_H_
+#include "rubyk/patch_method.h"
 
-#include "oscit/oscit.h"
-using namespace oscit;
+#include "rubyk/planet.h"
 
-#define BangIO NilIO
-#define gBang gNilValue
-#define is_bang is_nil
+namespace rk {
 
-// TODO move this in a types.h file ?
-#define CLASS_URL   "/class"
-#define CLASS_URL_LENGTH 6
+PatchMethod::~PatchMethod() {
+  // do not save
+}
 
-/** This is where all the dynamic nodes are created.
+/** Read/write the patch content as string.
  */
-#define PATCH_KEY  "patch"
-#define NODE_VIEW_KEY  "@view"
-#define NODE_CLASS_KEY "@class"
+const Value PatchMethod::trigger(const Value &hash) {
+  return planet_ ? planet_->view(hash) : gNilValue;
+}
 
-/** This is ?
+/** Save the patch to the filesystem. The argument is a filepath or nil.
  */
-#define LIB_URL     "/class/lib"
-#define INSPECT_URL "/.inspect"
+const Value PatchMethod::save(const Value &val) {
+  // TODO
+  return gNilValue;
+}
 
-#define RUBYK_URL   "/rubyk"
-#define LINK_URL    "/rubyk/link"
-#define QUIT_URL    "/rubyk/quit"
+void PatchMethod::adopted() {
+  std::cout << "adopted\n";
+  if ( (planet_ = TYPE_CAST(Planet, root_)) ) {
+    std::cout << "adding update method\n";
+    adopt(new TMethod<Planet, &Planet::update_view>(planet_, "update", HashIO("Hash to update patch.")));
+    adopt(new TMethod<PatchMethod, &PatchMethod::save>(this, "save", StringIO("Filepath to save patch to.")));
+  } else {
+    // error
+  }
+}
 
-#endif // RUBYK_INCLUDE_RUBYK_OSCIT_H_
+} // rk

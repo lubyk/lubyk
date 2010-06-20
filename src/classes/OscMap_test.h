@@ -50,15 +50,16 @@ class OscMapTest : public ParseHelper
     Object *o = app2_.adopt(new Object("slider"));
     app2_log_ = o->adopt(new LogObject("1"));  //   /slider/1
   }
-  
+
   void test_send_map_reply( void ) {
     setup("v=Value(4.5)\nmap=OscMap(script:'/slider/1 [0,10] --> /v/value [50,100]' port:7001 reply_port:7002)");
     Value res = planet_->call("/map/port", Value(APP1_PORT));
     assert_equal((double)APP1_PORT, res.r);
     res = planet_->call("/map/reply_port", Value(APP2_PORT));
     assert_equal((double)APP2_PORT, res.r);
-    
-    Object *value_method = planet_->object_at("/v/value"); // to call without passing by root
+
+    ObjectHandle value_method;
+    planet_->get_object_at("/v/value", &value_method); // to call without passing by root
     send("/slider/1", 5.0);
     res = value_method->trigger(gNilValue);
     assert_equal(75.0, res.r);
@@ -66,24 +67,24 @@ class OscMapTest : public ParseHelper
     value_method->trigger(Value(120.0));
     assert_equal("10", reply());
   }
-  
-  
+
+
  private:
   void send(const char *url, Real real) {
     send(url, Value(real));
   }
-  
+
   void send(const char *url, const Value &val) {
     app2_sender_->send(planet_end_point_, url, val);
     millisleep(50);
   }
-  
+
   std::string reply() {
     millisleep(50);
     return app2_log_->str();
   }
-  
-  IpEndpointName planet_end_point_;
+
+  Location planet_end_point_;
   Root app2_;
   OscCommand *app2_sender_;
   LogObject *app2_log_;

@@ -27,14 +27,59 @@
   ==============================================================================
 */
 
-#include "test_helper.h"
+#ifndef RUBYK_INCLUDE_RUBYK_PATCH_METHOD_H_
+#define RUBYK_INCLUDE_RUBYK_PATCH_METHOD_H_
 
+#include <list>
 
-class WorkerTest : public ParseHelper
-{
+#include "oscit.h"
+
+namespace rk {
+
+class Planet;
+
+/** This class implements '/views/patch' method that is a proxy for the CRUD operations on
+ * the Planet. The class also implements 'save' operations.
+ *
+ */
+class PatchMethod : public Object {
 public:
-  void test_socket( void )
-  {
-    // FIXME
-  }
+  TYPED("Object.PatchMethod")
+
+  PatchMethod(const char *name, const char *path)
+      : Object(name, HashIO("Read/write patch content.")),
+        planet_(NULL),
+        file_(path) {}
+
+  PatchMethod(const std::string &name, const std::string &path)
+      : Object(name, HashIO("Read/write patch content.")),
+        planet_(NULL),
+        file_(path) {}
+
+  virtual ~PatchMethod();
+
+  /** Read/write the patch content as a hash.
+   */
+  virtual const Value trigger(const Value &hash);
+
+  /** Save the patch to the filesystem. The argument is a filepath or nil.
+   */
+  const Value save(const Value &val);
+
+  /** Finish initialization when the object is adopted.
+   */
+  virtual void adopted();
+
+private:
+  /** Direct access to planet.
+   */
+  Planet *planet_;
+
+  /** File handle to save patch content.
+   */
+  File file_;
 };
+
+} // rk
+
+#endif RUBYK_INCLUDE_RUBYK_PATCH_METHOD_H_

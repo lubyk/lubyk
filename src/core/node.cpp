@@ -33,7 +33,6 @@
 
 namespace rk {
 
-size_t Node::sIdCounter(0);
 pthread_key_t Node::sOpenGLThreadKey = NULL;
 
 Node::~Node() {

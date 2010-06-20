@@ -33,6 +33,7 @@
 #include <queue>
 
 #include "rubyk/oscit.h"
+#include "rubyk/node_view.h"
 #include "rubyk/group.h"
 #include "rubyk/text_command.h"
 #include "rubyk/worker.h"
@@ -46,17 +47,22 @@ class ClassFinder;
 #define PLANET_VERSION "0.5.0"
 #define PLANET_WELCOME "# Welcome to rubyk !\n# version: 0.5.0\n# \n"
 
-/** A planet is just a root with a worker. */
+/** A planet is just a root with a worker and CRUD operations to update
+ * a patch from Hash based changes. The Create, Update and Delete
+ * operations are all implemented through the 'update' method. Read is
+ * implemented with 'patch' method. The CRUD operations are usually triggered
+ * from the alias '/views/patch' and '/views/patch/update'.
+ */
 class Planet : public Root
 {
  public:
   TYPED("Object.Root.Planet")
 
-  Planet() : Root(RUBYK_DEFAULT_NAME), worker_(this), classes_(NULL), gui_started_(false) {
+  Planet() : Root(RUBYK_DEFAULT_NAME), pos_(10, 10, 500, 300), worker_(this), classes_(NULL), gui_started_(false) {
     init();
   }
 
-  Planet(uint port) : Root(RUBYK_DEFAULT_NAME), worker_(this), classes_(NULL), gui_started_(false) {
+  Planet(uint port) : Root(RUBYK_DEFAULT_NAME), pos_(10, 10, 500, 300), worker_(this), classes_(NULL), gui_started_(false) {
     init();
     open_port(port);
   }
@@ -64,7 +70,7 @@ class Planet : public Root
   /** FIXME: remove this method: we should use "adopt_command". */
   void open_port(uint port) {
     std::cout << "Command on port " << port << "\n";
-    adopt_command(new OscCommand("oscit", "_oscit._udp", port));
+    adopt_command(new OscCommand("oscit", OSCIT_SRV_TYPE, port));
   }
 
   void start_worker() {
@@ -101,6 +107,10 @@ class Planet : public Root
   /** Used to access '/class' when rko objects are loaded. */
   ClassFinder *classes() { return classes_; }
 
+  /** Overwride expose_views to insert our 'patch' pseudo-view.
+   */
+  virtual bool expose_views(const std::string &path, Value *error);
+
   /** Create/remove a link between two slots. */
   const Value link(const Value &val);
 
@@ -119,7 +129,30 @@ class Planet : public Root
    * Called by NSApp or other event loop on quit.
    */
   virtual void quit();
+
+  /** Set the whole patch from a hash representation. If the value is nil,
+   * return the full hash representation.
+   */
+  virtual void from_hash(const Value &hash, Value *results);
+
+  /** Build a hash representation of the whole system (patch for serialization).
+   */
+  virtual void insert_in_hash(Value *result);
+
+  /** Set/get the patch view from a hash representation. If the value is nil,
+   * return the full view.
+   */
+  const Value view(const Value &hash);
+
+  /** Update the content of the patch's view by doing a deep merge.
+   */
+  const Value update_view(const Value &hash);
+
  private:
+  /** Create a new node from a Hash definition.
+   */
+  void create_node(const std::string &name, const Value &hash, Value *result);
+
   /** Add a pending link. */
   const Value add_pending_link(const Value &val) {
     Value params;
@@ -135,9 +168,12 @@ class Planet : public Root
   /** Create pending links. Return a list of created links [[sffs][sffs]...]. */
   const Value create_pending_links();
 
-
   /** Create base objects (public for testing, should not be used). */
   void init();
+
+  /** Patch position (only width and height are used here).
+   */
+  NodeView pos_;
 
   /** List of pending connections waiting for variable assignements.
    */

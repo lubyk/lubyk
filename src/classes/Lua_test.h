@@ -34,13 +34,27 @@ public:
   void test_send( void ) {
     setup_with_print("n=Lua('../test/fixtures/lua_test_send.lua')\n");
     ObjectHandle obj;
-    assert_true(planet_->get_object_at("/n/in/value", &obj));
+    assert_true(planet_->get_object_at("/n/value", &obj));
     assert_true(obj->kind_of(Inlet));
     obj = NULL;
     assert_true(planet_->get_object_at("/n/out/plus", &obj));
     assert_true(obj->kind_of(Outlet));
     assert_print("p: 2\n", "n/in/value(1)\n");
   }
+
+  void test_to_hash( void ) {
+    setup("n=Lua('../test/fixtures/lua_test_send.lua')\n");
+    ObjectHandle lua;
+    planet_->get_object_at("/n", &lua);
+    Node *node = TYPE_CAST(Node, lua.ptr());
+
+    Value hash = node->to_hash();
+    assert_false(hash.has_key("script"));
+
+    // should not contain 'hash', should contain values for lua methods.
+    assert_equal("{\"class\":\"Lua\", \"value\":0, \"file\":\"../test/fixtures/lua_test_send.lua\", \"reload\":1, \"out\":null}", node->to_hash().to_json());
+  }
+
 };
 
 // class LuaTest : public ParseHelper

@@ -340,10 +340,13 @@ public:
     Inlet  inlet2(&receiver2, "", OutletTest_receive_value2, RealIO("Receive real values."));
     Inlet  inlet3(&receiver2, "", OutletTest_receive_value4, RealIO("Receive real values."));
 
-    receiver1.set_trigger_position(2.0); // should trigger first
+
+    Value result;
+
+    receiver1.update_view(Value(Json("{x:2.0}")), &result); // should trigger first
     inlet1.set_id(1); // should not sort with this id               value + 1 = 2
 
-    receiver2.set_trigger_position(1.0); // should trigger last
+    receiver2.update_view(Value(Json("{x:1.0}")), &result); // should trigger last
     inlet2.set_id(8); // sub-sorting by id                  2 * 2 + value + 2 = 7
     inlet3.set_id(7); //                                    2 * 7 + value + 4 = 19
 
@@ -367,10 +370,12 @@ public:
     Inlet  inlet2(&receiver2, "", OutletTest_receive_value2, RealIO("Receive real values."));
     Inlet  inlet3(&receiver2, "", OutletTest_receive_value4, RealIO("Receive real values."));
 
-    receiver1.set_trigger_position(2.0); // should trigger first
+    Value result;
+
+    receiver1.update_view(Value(Json("{x:2.0}")), &result); // should trigger first
     inlet1.set_id(1); // should not sort with this id               value + 1 = 2
 
-    receiver2.set_trigger_position(1.0); // should trigger last
+    receiver2.update_view(Value(Json("{x:1.0}")), &result); // should trigger last
     inlet3.set_id(7); //                                    2 * 2 + value + 4 = 9
     inlet2.set_id(6); // sub-sorting by id                  2 * 9 + value + 2 = 21
 
@@ -390,7 +395,7 @@ public:
     assert_equal(19.0, value); // order is now inlet1, inlet2, inlet3
   }
 
-  void test_update_node_trigger_position( void ) {
+  void test_update_node_position( void ) {
     Real value = 0;
     DummyNode sender(&value);
     DummyNode receiver1(&value);
@@ -404,8 +409,8 @@ public:
     inlet2.set_id(8); // sub-sorting by id                  2 * 2 + x + 2 = 7
     inlet3.set_id(7); //                                    2 * 7 + x + 4 = 19
 
-    assert_true(outlet.connect(&inlet2));
-    assert_true(outlet.connect(&inlet1));
+    assert_true(outlet.connect(&inlet1)); // since receiver1 and receiver2 have same position, sorting is done
+    assert_true(outlet.connect(&inlet2)); // using connection order
     assert_true(outlet.connect(&inlet3));
 
     assert_equal(0.0, value);
@@ -413,8 +418,9 @@ public:
     outlet.send(Value(1.0));
     assert_equal(24.0, value); // order was inlet2, inlet3, inlet1
 
-    receiver1.set_trigger_position(2.0); // should trigger first
-    receiver2.set_trigger_position(1.0); // should trigger last
+    Value result;
+    receiver1.update_view(Value(Json("{x:2.0}")), &result); // should trigger first
+    receiver2.update_view(Value(Json("{x:1.0}")), &result); // should trigger last
 
     value = 0.0;
 

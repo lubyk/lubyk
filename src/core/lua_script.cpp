@@ -108,6 +108,14 @@ const Value LuaScript::lua_init(const char *init_script) {
   return gNilValue;
 }
 
+void LuaScript::insert_in_hash(Value *result) {
+  this->Node::insert_in_hash(result);
+
+  if (result->has_key("file")) {
+    result->remove("script");
+  }
+}
+
 LuaScript::~LuaScript() {
   ScopedLock lock(mutex_);
   lua_close(lua_);

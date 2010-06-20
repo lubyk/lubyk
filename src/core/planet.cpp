@@ -31,6 +31,7 @@
 #include "rubyk/class_finder.h"
 #include "rubyk/text_command.h"
 #include "rubyk/planet.h"
+#include "rubyk/patch_method.h"
 
 namespace rk {
 
@@ -38,16 +39,35 @@ void Planet::init() {
   set_context(&worker_);
 
   // build application methods
+
   //           /.inspect
+  // FIXME: remove /.inspect...
   adopt(new TMethod<Planet, &Planet::inspect>(this, Url(INSPECT_URL).name(), StringIO("Returns inspect information on a given url.")));
+
   //          /class
   classes_ = adopt(new ClassFinder(Url(CLASS_URL).name(), DEFAULT_OBJECTS_LIB_PATH));
+
   //          /rubyk
   Object *rubyk = adopt(new Object(Url(RUBYK_URL).name()));
+
   //          /rubyk/link [[["","source url"],["", "target url"]], "Create a link between two urls."]
   rubyk->adopt(new TMethod<Planet, &Planet::link>(this, Url(LINK_URL).name(), JsonValue("[['','', ''],'url','op','url','Update a link between the two provided urls. Operations are '=>' (link) '||' (unlink) or '?' (pending).']")));
+
   //          /rubyk/quit
   rubyk->adopt(new TMethod<Planet, &Planet::quit>(this, Url(QUIT_URL).name(), NilIO("Stop all operations and quit.")));
+}
+
+bool Planet::expose_views(const std::string &path, Value *error) {
+  if (this->Root::expose_views(path, error)) {
+    // /views/patch
+    ObjectHandle views;
+    if (get_object_at(VIEWS_PATH, &views)) {
+      views->adopt(new PatchMethod(PATCH_KEY, "patch.rks"));
+    }
+    return true;
+  }
+
+  return false;
 }
 
 // typetag: "ss" (inlet, outlet)
@@ -141,6 +161,154 @@ const Value Planet::inspect(const Value &val) {
   Node *node = object.type_cast<Node>();
   if (!node) return Value(BAD_REQUEST_ERROR, std::string("Bad target '").append(object->url()).append("':inspect only works on Nodes (class is '").append(object->class_path()).append("')."));
   return node->do_inspect();
+}
+
+
+/** Set the whole patch from a hash representation. If the value is nil,
+ * return the full hash representation.
+ */
+void Planet::from_hash(const Value &hash, Value *results) {
+  // TODO
+}
+
+/** Return a hash representation of the whole system.
+ */
+void Planet::insert_in_hash(Value *hash) {
+  HashValue patch;
+
+  pos_.insert_in_hash(hash);
+
+  { ScopedRead lock(children_vector_);
+    if (children_vector_.size() > 0) {
+      std::vector<Object*>::iterator it, end = children_vector_.end();
+
+      for(it = children_vector_.begin(); it != end; ++it) {
+        Node *node = TYPE_CAST(Node, *it);
+        if (node) {
+          Value node_hash;
+          node->insert_in_hash(&node_hash);
+          patch.set(node->name(), node_hash);
+        }
+      }
+    }
+  }
+
+  hash->set(PATCH_KEY, patch);
+}
+
+/** Set/get the patch view from a hash representation. If the value is nil,
+ * return the full view.
+ */
+const Value Planet::view(const Value &hash) {
+  if (!hash.is_hash()) {
+    HashValue result;
+    HashValue patch;
+
+    pos_.insert_in_hash(&result);
+
+    { ScopedRead lock(children_vector_);
+      if (children_vector_.size() > 0) {
+        std::vector<Object*>::iterator it, end = children_vector_.end();
+
+        for(it = children_vector_.begin(); it != end; ++it) {
+          Node *node = TYPE_CAST(Node, *it);
+          if (node) {
+            patch.set(node->name(), node->view());
+          }
+        }
+      }
+    }
+
+    result.set(PATCH_KEY, patch);
+    return result;
+  } else {
+    // FIXME: set patch from content...
+    return hash;
+  }
+}
+
+/** Update the content of the patch's view by doing a deep merge.
+ */
+const Value Planet::update_view(const Value &hash) {
+  if (!hash.is_hash()) return gNilValue;
+
+  HashValue result;
+  Value tmp;
+
+  pos_.from_hash(hash, &result);
+
+  if (hash.get(PATCH_KEY, &tmp) && tmp.is_hash()) {
+    HashValue patch_result;
+
+    HashIterator it, end = tmp.end();
+    ObjectHandle obj;
+    Node *node;
+    Value node_value;
+    std::string key;
+
+    for (it = tmp.begin(); it != end; ++it) {
+      key = *it;
+      if (!tmp.get(key, &node_value)) continue; // this should never happen, just in case ;-)
+
+      if (get_child(key, &obj)) {
+        // existing Object
+        if (! (node = TYPE_CAST(Node, obj.ptr()))) continue;
+
+        // It's a Node
+
+        if (node_value.is_hash()) {
+          // update Node
+          Value node_result;
+          node->update_view(node_value, &node_result);
+          patch_result.set(key, node_result);
+        } else if (node_value.is_nil()) {
+          // delete Node
+          node->release();
+          patch_result.set(key, gNilValue);
+        } else {
+          // invalid argument (can only create/update Node from Hash).
+          // Ignore. Insert error ?
+        }
+      } else {
+        // create Node
+        create_node(key, node_value, &patch_result);
+      }
+    }
+    result.set(PATCH_KEY, patch_result);
+  }
+
+  return result;
+}
+
+void Planet::create_node(const std::string &name, const Value &hash, Value *result) {
+  HashValue node_result;
+  Node *node;
+
+  // TODO: find class, build node, set ...
+
+  if (!hash.has_key(POS_X)) {
+    // put it after the last inserted Node.
+    HashValue pos;
+    { ScopedRead lock(children_vector_);
+      size_t size = children_vector_.size();
+      Node *node = NULL;
+
+      // get last child that is a Node
+      for(size_t i = size - 1; i >= 0; --i) {
+        if ( (node = TYPE_CAST(Node, children_vector_[i])) ) break;
+      }
+
+      if (node) {
+        pos.set(POS_X, node->pos_x());
+      } else {
+        pos.set(POS_X, 0);
+      }
+    }
+    node->update_view(pos, &node_result);
+  }
+
+  adopt(node);
+  result->set(node->name(), node_result);
 }
 
 } // rk

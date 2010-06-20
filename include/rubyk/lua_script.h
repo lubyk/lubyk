@@ -84,6 +84,11 @@ public:
    */
   const Value lua_init(const char *init_script = NULL);
 
+  /** Overwrite 'insert_in_hash' to not send script content if file is
+   * set.
+   */
+  virtual void insert_in_hash(Value *result);
+
   /** Convert all the stack as a list value (does not pop).
    */
   static const Value stack_to_value(lua_State *L, int start_index = 1);

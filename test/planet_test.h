@@ -27,33 +27,12 @@
   ==============================================================================
 */
 
-#ifndef RUBYK_INCLUDE_RUBYK_OSCIT_H_
-#define RUBYK_INCLUDE_RUBYK_OSCIT_H_
+#include "test_helper.h"
 
-#include "oscit/oscit.h"
-using namespace oscit;
-
-#define BangIO NilIO
-#define gBang gNilValue
-#define is_bang is_nil
-
-// TODO move this in a types.h file ?
-#define CLASS_URL   "/class"
-#define CLASS_URL_LENGTH 6
-
-/** This is where all the dynamic nodes are created.
- */
-#define PATCH_KEY  "patch"
-#define NODE_VIEW_KEY  "@view"
-#define NODE_CLASS_KEY "@class"
-
-/** This is ?
- */
-#define LIB_URL     "/class/lib"
-#define INSPECT_URL "/.inspect"
-
-#define RUBYK_URL   "/rubyk"
-#define LINK_URL    "/rubyk/link"
-#define QUIT_URL    "/rubyk/quit"
-
-#endif // RUBYK_INCLUDE_RUBYK_OSCIT_H_
+class PlanetTest : public ParseHelper {
+public:
+  void test_to_hash( void ) {
+    setup("m = Metro(115)\nv = Value(15)\nm => v\n");
+    assert_equal("{\"x\":10, \"y\":10, \"width\":500, \"height\":300, \"patch\":{\"m\":{\"tempo\":115, \"out\":{}, \"class\":\"Metro\"}, \"v\":{\"value\":15, \"out\":{}, \"class\":\"Value\"}}}", planet_->to_hash().to_json());
+  }
+};
