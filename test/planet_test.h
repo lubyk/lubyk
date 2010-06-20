@@ -35,4 +35,12 @@ public:
     setup("m = Metro(115)\nv = Value(15)\nm => v\n");
     assert_equal("{\"x\":10, \"y\":10, \"width\":500, \"height\":300, \"patch\":{\"m\":{\"tempo\":115, \"out\":{}, \"class\":\"Metro\"}, \"v\":{\"value\":15, \"out\":{}, \"class\":\"Value\"}}}", planet_->to_hash().to_json());
   }
+
+  // create a node
+  void test_update_view( void ) {
+    Value res = planet_->update_view(Value(Json("{patch:{foo:{\"@class\":\"/class/Value\"}}}")));
+    ObjectHandle foo;
+    assert_true(planet_->get_object_at("/foo", &foo));
+    assert_equal("", foo->to_hash().to_json());
+  }
 };

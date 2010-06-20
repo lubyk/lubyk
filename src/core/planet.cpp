@@ -271,7 +271,13 @@ const Value Planet::update_view(const Value &hash) {
         }
       } else {
         // create Node
-        create_node(key, node_value, &patch_result);
+        Value class_url = node_value[NODE_CLASS_KEY];
+
+        // TODO: get params from def...
+        Value params = node_value["params"];
+        // until the share/copy bug is fixed in Value, make a deep copy to avoid reference loops
+        params.set(NODE_VIEW_KEY, Value(node_value.to_json()));
+        create_node(key, node_value[NODE_CLASS_KEY], params, &patch_result);
       }
     }
     result.set(PATCH_KEY, patch_result);
@@ -280,15 +286,14 @@ const Value Planet::update_view(const Value &hash) {
   return result;
 }
 
-void Planet::create_node(const std::string &name, const Value &hash, Value *result) {
-  HashValue node_result;
-  Node *node;
+void Planet::create_node(const std::string &name, const Value &class_url, const Value &params, Value *result) {
+  if (!class_url.is_string()) return; // ignore
 
-  // TODO: find class, build node, set ...
+  Value view_params = params[NODE_VIEW_KEY];
 
-  if (!hash.has_key(POS_X)) {
-    // put it after the last inserted Node.
-    HashValue pos;
+  if (!view_params.has_key(POS_X)) {
+    // get next location for new Node
+
     { ScopedRead lock(children_vector_);
       size_t size = children_vector_.size();
       Node *node = NULL;
@@ -299,16 +304,44 @@ void Planet::create_node(const std::string &name, const Value &hash, Value *resu
       }
 
       if (node) {
-        pos.set(POS_X, node->pos_x());
-      } else {
-        pos.set(POS_X, 0);
+        view_params.set(POS_X, node->pos_x() + 15);
+        view_params.set(POS_Y, node->pos_y() + 15);
       }
     }
-    node->update_view(pos, &node_result);
   }
 
-  adopt(node);
-  result->set(node->name(), node_result);
+  ObjectHandle obj;
+  Node *node;
+
+  // /class/Metro/new 'x' params
+  Value args;
+  args.push_back(name);
+  args.push_back(params);
+
+  Value name_or_error = call(std::string(class_url.str()).append("/new"), args);
+
+  if (name_or_error.is_string() && get_object_at(name_or_error.str(), &obj)) {
+
+    node = TYPE_CAST(Node, obj.ptr());
+
+    if (!node) {
+      // should never happen
+      assert(false);
+      return;
+    }
+
+  } else {
+    result->set(name, name_or_error);
+    return;
+  }
+
+  HashValue node_result; // content ignored. TODO: make sure there are no errors in the result...
+  node->update_view(view_params, &node_result);
+
+  Value links;
+  links = create_pending_links(); // create pending links
+
+  result->set(Url(name_or_error.str()).name(), node->view());
 }
 
 } // rk

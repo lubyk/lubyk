@@ -45,6 +45,8 @@ using namespace oscit;
  */
 #define PATCH_KEY  "patch"
 #define NODE_VIEW_KEY  "@view"
+
+#define VIEW_CLASS_KEY "class"
 #define NODE_CLASS_KEY "@class"
 
 /** This is ?

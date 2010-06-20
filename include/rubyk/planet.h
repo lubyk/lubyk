@@ -151,7 +151,7 @@ class Planet : public Root
  private:
   /** Create a new node from a Hash definition.
    */
-  void create_node(const std::string &name, const Value &hash, Value *result);
+  void create_node(const std::string &name, const Value &class_url, const Value &params, Value *result);
 
   /** Add a pending link. */
   const Value add_pending_link(const Value &val) {

@@ -169,7 +169,6 @@ class Node : public Object {
    * The result is like Object#insert_in_hash but with the 'class' parameter.
    */
   virtual void insert_in_hash(Value *result) {
-    result->set(NODE_CLASS_KEY, Url(class_url_).name()); // class_url_ instead of class name ?
     result->set(NODE_VIEW_KEY, view());
     this->Object::insert_in_hash(result);
   }
@@ -196,6 +195,11 @@ class Node : public Object {
    */
   inline Real pos_x() { return pos_.x_; }
 
+  /** Used to sort outlet connections. A node with a high trigger position receives the value before
+   * another node with a small trigger position, if they are both connected to the same outlet.
+   */
+  inline Real pos_y() { return pos_.y_; }
+
   /** Patch view changes should only be triggered through Planet::update so that
    * notifications are properly sent.
    */
@@ -210,7 +214,12 @@ class Node : public Object {
     Value view;
     // Class to use in view (not the same as class to create Node)
     view.set("class", "Node");
+
+    // Class used to create this node
+    view.set(NODE_CLASS_KEY, class_url_);
+
     pos_.insert_in_hash(&view);
+
     return view;
   }
 
