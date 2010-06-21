@@ -57,6 +57,18 @@ void Outlet::send(const Value &val)
   }
 }
 
+// FIXME: inline ?
+// FIXME: thread safety !!
+void Outlet::insert_in_hash(Value *result) {
+  LinkedList<Inlet*> *it = connected_inlets_.begin();
+  result->set_type(HASH_VALUE);
+
+  while(it) {
+    result->set(it->obj->url(), HashValue());
+    it = it->next;
+  }
+}
+
 void Outlet::register_in_node()
 {
   node_->register_outlet(this);

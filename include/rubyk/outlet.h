@@ -84,6 +84,11 @@ public:
   /** Send the signal to all connections. Do nothing if there are no connections. */
   void send(const Value &val);
 
+  /** Return a hash representation of an Outlet.
+   * The result is an array of linked targets.
+   */
+  virtual void insert_in_hash(Value *result);
+
   /** Create a link.
    * example: /m/out/counter/link /n/in/tempo  --> create a link
    */

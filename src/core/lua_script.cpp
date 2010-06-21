@@ -244,7 +244,7 @@ int LuaScript::lua_build_outlet(const Value &val) {
     return 1;
   }
   ObjectHandle out;
-  if (get_child("out", &out)) {
+  if (get_child(NODE_OUT_KEY, &out)) {
     ObjectHandle outlet;
     if (out->get_child(val[0].str().c_str(), &outlet)) {
       if (outlet->name() != val[0].str() || outlet->type_id() != val[1][0].type_id()) {

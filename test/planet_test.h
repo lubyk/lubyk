@@ -33,12 +33,14 @@ class PlanetTest : public ParseHelper {
 public:
   void test_to_hash( void ) {
     setup("m = Metro(115)\nv = Value(15)\nm => v\n");
-    assert_equal("{\"x\":10, \"y\":10, \"width\":500, \"height\":300, \"patch\":{\"m\":{\"tempo\":115, \"out\":{}, \"class\":\"Metro\"}, \"v\":{\"value\":15, \"out\":{}, \"class\":\"Value\"}}}", planet_->to_hash().to_json());
+    Value patch_def = planet_->to_hash();
+    assert_equal("{\"x\":10, \"y\":10, \"width\":500, \"height\":300, \"hue\":203}", patch_def[VIEW_KEY].to_json());
+    assert_equal("{\"@class\":\"/class/Metro\", \"@view\":{\"widget\":\"Node\", \"x\":0, \"y\":0, \"width\":60, \"height\":20, \"hue\":203}, \"tempo\":115, \"out\":{\"bang\":{\"/v/value\":{}}}}", patch_def[NODES_KEY]["m"].to_json());
   }
 
   // create a node
-  void test_update_view( void ) {
-    Value res = planet_->update_view(Value(Json("{patch:{foo:{\"@class\":\"/class/Value\"}}}")));
+  void test_update( void ) {
+    Value res = planet_->update(Value(Json("{nodes:{foo:{\"@class\":\"/class/Value\"}}}")));
     ObjectHandle foo;
     assert_true(planet_->get_object_at("/foo", &foo));
     assert_equal("", foo->to_hash().to_json());

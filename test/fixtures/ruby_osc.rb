@@ -48,7 +48,7 @@ class TestSatellite
   def initialize(host,inport,outport)
     @host = host
     @inport = inport
-    @outport = outport
+    outport = outport
     
     @receiver = DebugServer.new
     @receiver.bind(@host, @inport)
@@ -67,7 +67,7 @@ class TestSatellite
   
   def send(url,*args)
     m = OSC::Message.new(url, nil, *args)
-    @sender.send( m, 0, @host, @outport)
+    @sender.send( m, 0, @host, outport)
   end
 end
 

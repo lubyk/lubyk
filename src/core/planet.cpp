@@ -62,7 +62,7 @@ bool Planet::expose_views(const std::string &path, Value *error) {
     // /views/patch
     ObjectHandle views;
     if (get_object_at(VIEWS_PATH, &views)) {
-      views->adopt(new PatchMethod(PATCH_KEY, "patch.rks"));
+      views->adopt(new PatchMethod(Url(PATCH_VIEW_URL).name(), "patch.rks"));
     }
     return true;
   }
@@ -96,7 +96,7 @@ const Value Planet::link(const Value &val) {
 
   if (source_outlet != NULL) {
     return val[1].str() == "||" ? source_outlet->unlink(val[2]) : source_outlet->link(val[2]);
-  } else if (source->get_child("out", &out) && out->first_child(&outlet)) {
+  } else if (source->get_child(NODE_OUT_KEY, &out) && out->first_child(&outlet)) {
     // was a link to/from default slots: /met --> /counter
     if ( (source_outlet = outlet.type_cast<Outlet>()) ) {
       return val[1].str() == "||" ? source_outlet->unlink(val[2]) : source_outlet->link(val[2]);
@@ -163,20 +163,13 @@ const Value Planet::inspect(const Value &val) {
   return node->do_inspect();
 }
 
-
-/** Set the whole patch from a hash representation. If the value is nil,
- * return the full hash representation.
- */
-void Planet::from_hash(const Value &hash, Value *results) {
-  // TODO
-}
-
 /** Return a hash representation of the whole system.
  */
 void Planet::insert_in_hash(Value *hash) {
   HashValue patch;
 
-  pos_.insert_in_hash(hash);
+  // FIXME: remove insert_in_hash method.
+  hash->set(VIEW_KEY, pos_.to_hash());
 
   { ScopedRead lock(children_vector_);
     if (children_vector_.size() > 0) {
@@ -193,62 +186,56 @@ void Planet::insert_in_hash(Value *hash) {
     }
   }
 
-  hash->set(PATCH_KEY, patch);
+  hash->set(NODES_KEY, patch);
 }
 
-/** Set/get the patch view from a hash representation. If the value is nil,
+/** Set/get the patch from a hash representation. If the value is nil,
  * return the full view.
  */
-const Value Planet::view(const Value &hash) {
+const Value Planet::patch(const Value &hash) {
   if (!hash.is_hash()) {
-    HashValue result;
-    HashValue patch;
-
-    pos_.insert_in_hash(&result);
-
-    { ScopedRead lock(children_vector_);
-      if (children_vector_.size() > 0) {
-        std::vector<Object*>::iterator it, end = children_vector_.end();
-
-        for(it = children_vector_.begin(); it != end; ++it) {
-          Node *node = TYPE_CAST(Node, *it);
-          if (node) {
-            patch.set(node->name(), node->view());
-          }
-        }
-      }
-    }
-
-    result.set(PATCH_KEY, patch);
-    return result;
+    return to_hash();
   } else {
-    // FIXME: set patch from content...
-    return hash;
+    // FIXME: set nodes from content...
+    // clear and update
+
+    clear_on_register_callbacks();
+
+    this->Object::clear();
+
+    return update(hash);
   }
 }
 
-/** Update the content of the patch's view by doing a deep merge.
+/** Update the content of the nodes by doing a deep merge.
  */
-const Value Planet::update_view(const Value &hash) {
-  if (!hash.is_hash()) return gNilValue;
+void Planet::from_hash(const Value &hash, Value *result) {
+  if (!hash.is_hash()) return;
 
-  HashValue result;
-  Value tmp;
+  Value nodes;
+  Value view_result, view = hash[VIEW_KEY];
 
-  pos_.from_hash(hash, &result);
+  if (view.is_hash()) {
+    Value view_result;
+    pos_.from_hash(view, &view_result);
+    // FIXME: replace void from_hash(const Value &hash, Value *result)
+    //        by      const Value from_hash(const Value &hash)
+    // ==> result.set(VIEW_KEY, pos_.from_hash(hash[VIEW_KEY]));
+    result->set(VIEW_KEY, view_result);
+  }
 
-  if (hash.get(PATCH_KEY, &tmp) && tmp.is_hash()) {
-    HashValue patch_result;
+  if (hash.get(NODES_KEY, &nodes) && nodes.is_hash()) {
+    HashValue nodes_result;
 
-    HashIterator it, end = tmp.end();
+    HashIterator it, end = nodes.end();
     ObjectHandle obj;
     Node *node;
     Value node_value;
     std::string key;
 
-    for (it = tmp.begin(); it != end; ++it) {
+    for (it = nodes.begin(); it != end; ++it) {
       key = *it;
-      if (!tmp.get(key, &node_value)) continue; // this should never happen, just in case ;-)
+      if (!nodes.get(key, &node_value)) continue; // this should never happen, just in case ;-)
 
       if (get_child(key, &obj)) {
         // existing Object
@@ -259,37 +246,34 @@ const Value Planet::update_view(const Value &hash) {
         if (node_value.is_hash()) {
           // update Node
           Value node_result;
-          node->update_view(node_value, &node_result);
-          patch_result.set(key, node_result);
+          node->from_hash(node_value, &node_result);
+          nodes_result.set(key, node_result);
         } else if (node_value.is_nil()) {
           // delete Node
           node->release();
-          patch_result.set(key, gNilValue);
+          nodes_result.set(key, gNilValue);
         } else {
           // invalid argument (can only create/update Node from Hash).
           // Ignore. Insert error ?
         }
       } else {
         // create Node
-        Value class_url = node_value[NODE_CLASS_KEY];
+        if (!node_value.has_key(CLASS_KEY)) {
+          nodes_result.set(key, ErrorValue(BAD_REQUEST_ERROR, "Missing @class to create new Node."));
+          continue;
+        }
 
-        // TODO: get params from def...
-        Value params = node_value["params"];
-        // until the share/copy bug is fixed in Value, make a deep copy to avoid reference loops
-        params.set(NODE_VIEW_KEY, Value(node_value.to_json()));
-        create_node(key, node_value[NODE_CLASS_KEY], params, &patch_result);
+        create_node(key, node_value[CLASS_KEY], node_value, &nodes_result);
       }
     }
-    result.set(PATCH_KEY, patch_result);
+    result->set(NODES_KEY, nodes_result);
   }
-
-  return result;
 }
 
 void Planet::create_node(const std::string &name, const Value &class_url, const Value &params, Value *result) {
   if (!class_url.is_string()) return; // ignore
 
-  Value view_params = params[NODE_VIEW_KEY];
+  Value view_params = params[VIEW_KEY];
 
   if (!view_params.has_key(POS_X)) {
     // get next location for new Node
@@ -335,13 +319,9 @@ void Planet::create_node(const std::string &name, const Value &class_url, const 
     return;
   }
 
-  HashValue node_result; // content ignored. TODO: make sure there are no errors in the result...
-  node->update_view(view_params, &node_result);
+  Value links = create_pending_links(); // create pending links
 
-  Value links;
-  links = create_pending_links(); // create pending links
-
-  result->set(Url(name_or_error.str()).name(), node->view());
+  result->set(Url(name_or_error.str()).name(), node->to_hash());
 }
 
 } // rk

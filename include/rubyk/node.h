@@ -169,25 +169,41 @@ class Node : public Object {
    * The result is like Object#insert_in_hash but with the 'class' parameter.
    */
   virtual void insert_in_hash(Value *result) {
-    result->set(NODE_VIEW_KEY, view());
+    // Class used to create this node
+    result->set(CLASS_KEY, class_url_);
+
+    result->set(VIEW_KEY, view());
+
     this->Object::insert_in_hash(result);
+  }
+
+  /** View settings (color, position).
+   */
+  virtual const Value view() {
+    Value view;
+    // Class to use in view (not the same as class to create Node)
+    view.set(WIDGET_KEY, "Node");
+
+    pos_.insert_in_hash(&view);
+
+    return view;
   }
 
   /** Set object from a hash representation.
    */
   virtual void from_hash(const Value &hash, Value *result) {
-    Value view = hash[NODE_VIEW_KEY];
+    Value view = hash[VIEW_KEY];
     Value view_result;
 
     // class update ?
-    if (view.is_hash())
-      update_view(view, &view_result);
+    if (view.is_hash()) {
+      pos_.from_hash(view, &view_result);
+      sort_connections();
+      result->set(VIEW_KEY, view_result);
+    }
 
-    // trigger all methods
+    // trigger all normal methods
     this->Object::from_hash(hash, result);
-
-    if (view.is_hash())
-      result->set(NODE_VIEW_KEY, view_result);
   }
 
   /** Used to sort outlet connections. A node with a high trigger position receives the value before
@@ -199,29 +215,6 @@ class Node : public Object {
    * another node with a small trigger position, if they are both connected to the same outlet.
    */
   inline Real pos_y() { return pos_.y_; }
-
-  /** Patch view changes should only be triggered through Planet::update so that
-   * notifications are properly sent.
-   */
-  void update_view(const Value &hash, Value *result) {
-    pos_.from_hash(hash, result);
-    sort_connections();
-  }
-
-  /** Node's patch settings (color, position).
-   */
-  virtual const Value view() const {
-    Value view;
-    // Class to use in view (not the same as class to create Node)
-    view.set("class", "Node");
-
-    // Class used to create this node
-    view.set(NODE_CLASS_KEY, class_url_);
-
-    pos_.insert_in_hash(&view);
-
-    return view;
-  }
 
   /** Send a Value out of the first outlet. */
   inline void send(const Value &val) { send(1, val); }

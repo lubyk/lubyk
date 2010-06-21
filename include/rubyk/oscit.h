@@ -39,15 +39,18 @@ using namespace oscit;
 
 // TODO move this in a types.h file ?
 #define CLASS_URL   "/class"
+#define PATCH_VIEW_URL "/views/patch"
+
 #define CLASS_URL_LENGTH 6
 
 /** This is where all the dynamic nodes are created.
  */
-#define PATCH_KEY  "patch"
-#define NODE_VIEW_KEY  "@view"
+#define NODES_KEY      "nodes"
+#define VIEW_KEY  "@view"
+#define NODE_OUT_KEY   "out"
 
-#define VIEW_CLASS_KEY "class"
-#define NODE_CLASS_KEY "@class"
+#define WIDGET_KEY "widget"
+#define CLASS_KEY "@class"
 
 /** This is ?
  */

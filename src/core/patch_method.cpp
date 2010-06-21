@@ -40,7 +40,7 @@ PatchMethod::~PatchMethod() {
 /** Read/write the patch content as string.
  */
 const Value PatchMethod::trigger(const Value &hash) {
-  return planet_ ? planet_->view(hash) : gNilValue;
+  return planet_ ? planet_->patch(hash) : gNilValue;
 }
 
 /** Save the patch to the filesystem. The argument is a filepath or nil.
@@ -54,8 +54,8 @@ void PatchMethod::adopted() {
   std::cout << "adopted\n";
   if ( (planet_ = TYPE_CAST(Planet, root_)) ) {
     std::cout << "adding update method\n";
-    adopt(new TMethod<Planet, &Planet::update_view>(planet_, "update", HashIO("Hash to update patch.")));
-    adopt(new TMethod<PatchMethod, &PatchMethod::save>(this, "save", StringIO("Filepath to save patch to.")));
+    adopt(new TMethod<Planet, &Planet::update>(planet_, "update", HashIO("Hash to update patch.")));
+//    adopt(new TMethod<PatchMethod, &PatchMethod::save>(this, "save", StringIO("Filepath to save patch to.")));
   } else {
     // error
   }

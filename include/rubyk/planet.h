@@ -130,7 +130,7 @@ class Planet : public Root
    */
   virtual void quit();
 
-  /** Set the whole patch from a hash representation. If the value is nil,
+  /** Set/update the whole patch from a hash representation. If the value is nil,
    * return the full hash representation.
    */
   virtual void from_hash(const Value &hash, Value *results);
@@ -139,14 +139,18 @@ class Planet : public Root
    */
   virtual void insert_in_hash(Value *result);
 
-  /** Set/get the patch view from a hash representation. If the value is nil,
+  /** Set/get the patch from a hash representation. If the value is nil,
    * return the full view.
    */
-  const Value view(const Value &hash);
+  const Value patch(const Value &hash);
 
-  /** Update the content of the patch's view by doing a deep merge.
+  /** Update the content of the patch by doing a deep merge.
    */
-  const Value update_view(const Value &hash);
+  const Value update(const Value &hash) {
+    HashValue result;
+    from_hash(hash, &result);
+    return result;
+  }
 
  private:
   /** Create a new node from a Hash definition.

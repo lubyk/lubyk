@@ -340,13 +340,10 @@ public:
     Inlet  inlet2(&receiver2, "", OutletTest_receive_value2, RealIO("Receive real values."));
     Inlet  inlet3(&receiver2, "", OutletTest_receive_value4, RealIO("Receive real values."));
 
-
-    Value result;
-
-    receiver1.update_view(Value(Json("{x:2.0}")), &result); // should trigger first
+    receiver1.set(Value(Json("{@view:{x:2.0}}"))); // should trigger first
     inlet1.set_id(1); // should not sort with this id               value + 1 = 2
 
-    receiver2.update_view(Value(Json("{x:1.0}")), &result); // should trigger last
+    receiver2.set(Value(Json("{@view:{x:1.0}}"))); // should trigger last
     inlet2.set_id(8); // sub-sorting by id                  2 * 2 + value + 2 = 7
     inlet3.set_id(7); //                                    2 * 7 + value + 4 = 19
 
@@ -370,12 +367,10 @@ public:
     Inlet  inlet2(&receiver2, "", OutletTest_receive_value2, RealIO("Receive real values."));
     Inlet  inlet3(&receiver2, "", OutletTest_receive_value4, RealIO("Receive real values."));
 
-    Value result;
-
-    receiver1.update_view(Value(Json("{x:2.0}")), &result); // should trigger first
+    receiver1.set(Value(Json("{@view:{x:2.0}}"))); // should trigger first
     inlet1.set_id(1); // should not sort with this id               value + 1 = 2
 
-    receiver2.update_view(Value(Json("{x:1.0}")), &result); // should trigger last
+    receiver2.set(Value(Json("{@view:{x:1.0}}"))); // should trigger last
     inlet3.set_id(7); //                                    2 * 2 + value + 4 = 9
     inlet2.set_id(6); // sub-sorting by id                  2 * 9 + value + 2 = 21
 
@@ -418,9 +413,8 @@ public:
     outlet.send(Value(1.0));
     assert_equal(24.0, value); // order was inlet2, inlet3, inlet1
 
-    Value result;
-    receiver1.update_view(Value(Json("{x:2.0}")), &result); // should trigger first
-    receiver2.update_view(Value(Json("{x:1.0}")), &result); // should trigger last
+    receiver1.set(Value(Json("{@view:{x:2.0}}"))); // should trigger first
+    receiver2.set(Value(Json("{@view:{x:1.0}}"))); // should trigger last
 
     value = 0.0;
 
@@ -432,7 +426,7 @@ public:
     Root base;
     Real value = 0;
     DummyNode *sender    = base.adopt(new DummyNode(&value));
-    Object    *out       = sender->adopt(new Object("out"));
+    Object    *out       = sender->adopt(new Object(NODE_OUT_KEY));
     DummyNode *receiver1 = base.adopt(new DummyNode(&value));
     Outlet    *outlet    = out->adopt(new Outlet(sender, "ping", RealIO("Receive real values.")));
     receiver1->adopt(new Inlet(receiver1, "pong", OutletTest_receive_value1, RealIO("Receive real values.")));
@@ -442,6 +436,22 @@ public:
     assert_equal("/n/out/ping", res[0].str());
     assert_equal("=>", res[1].str());
     assert_equal("/n-1/pong", res[2].str());
+  }
+
+  void test_to_hash( void ) {
+    Root base;
+    Real value = 0;
+    DummyNode *sender    = base.adopt(new DummyNode(&value));
+    Object    *out       = sender->adopt(new Object(NODE_OUT_KEY));
+    DummyNode *receiver1 = base.adopt(new DummyNode(&value));
+    Outlet    *outlet    = out->adopt(new Outlet(sender, "ping", RealIO("Receive real values.")));
+    receiver1->adopt(new Inlet(receiver1, "mic", OutletTest_receive_value1, RealIO("Receive real values.")));
+    receiver1->adopt(new Inlet(receiver1, "mac", OutletTest_receive_value1, RealIO("Receive real values.")));
+
+    outlet->link(Value(receiver1->url())); // should find /receiver1/pong
+    outlet->link(Value("/n-1/mac"));
+
+    assert_equal("{\"/n-1/mac\":{}, \"/n-1/mic\":{}}", outlet->to_hash().to_json());
   }
 };
 

@@ -41,7 +41,7 @@ public:
     // all this is done by Class normally
     script_->set_name("lua");
     script_->adopt(new Object("in"));
-    script_->adopt(new Object("out"));
+    script_->adopt(new Object(NODE_OUT_KEY));
     Value res = script_->init();
     if (res.is_error()) {
       std::cout << "Could not init LuaScript !\n" << res << "\n";

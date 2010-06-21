@@ -35,7 +35,7 @@ public:
     Root base;
     Real value = 0;
     DummyNode *sender = base.adopt(new DummyNode(&value));
-    Object *out  = sender->adopt(new Object("out"));
+    Object *out  = sender->adopt(new Object(NODE_OUT_KEY));
     Outlet *ping = out->adopt(new Outlet(sender, "ping", RealIO("Receive real values.")));
 
     Outlet *outlet = sender->outlet_for_value(1, Value(1.0));
@@ -44,5 +44,23 @@ public:
     assert_equal(ping, outlet);
     outlet = sender->outlet_for_value(1, Value("hello"));
     assert_equal((Outlet*)NULL, outlet);
+  }
+
+  void test_view( void ) {
+    Root base;
+    Real value = 0;
+    DummyNode *node = base.adopt(new DummyNode(&value));
+    Object *out  = node->adopt(new Object(NODE_OUT_KEY));
+    out->adopt(new Outlet(node, "ping", RealIO("Sends real values.")));
+    assert_equal("{\"class\":\"Node\", \"@class\":\"\", \"@links\":{\"ping\":[]}, \"x\":0, \"y\":0, \"width\":60, \"height\":20, \"hue\":203}", node->view().to_json());
+  }
+
+  void test_hash( void ) {
+    Root base;
+    Real value = 0;
+    DummyNode *node = base.adopt(new DummyNode(&value));
+    Object *out  = node->adopt(new Object(NODE_OUT_KEY));
+    out->adopt(new Outlet(node, "ping", RealIO("Sends real values.")));
+    assert_equal("{\"class\":\"Node\", \"@class\":\"\", \"@links\":{\"ping\":[]}, \"x\":0, \"y\":0, \"width\":60, \"height\":20, \"hue\":203}", node->view().to_json());
   }
 };
