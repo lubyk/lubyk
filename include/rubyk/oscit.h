@@ -45,12 +45,13 @@ using namespace oscit;
 
 /** This is where all the dynamic nodes are created.
  */
-#define NODES_KEY      "nodes"
-#define VIEW_KEY  "@view"
-#define NODE_OUT_KEY   "out"
+#define NODES_KEY     "nodes"
+#define VIEW_KEY      "@view"
+#define NODE_OUT_KEY  "out"
+#define TYPE_KEY      "@type"
 
-#define WIDGET_KEY "widget"
-#define CLASS_KEY "@class"
+#define WIDGET_KEY    "widget"
+#define CLASS_KEY     "@class"
 
 /** This is ?
  */

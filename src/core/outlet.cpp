@@ -61,7 +61,7 @@ void Outlet::send(const Value &val)
 // FIXME: thread safety !!
 void Outlet::insert_in_hash(Value *result) {
   LinkedList<Inlet*> *it = connected_inlets_.begin();
-  result->set_type(HASH_VALUE);
+  result->set(TYPE_KEY, type().first());
 
   while(it) {
     result->set(it->obj->url(), HashValue());
