@@ -166,8 +166,11 @@ void TextCommand::parse(const std::string &string) {
     string  = '"' ([^"\\] | '\n' | ( '\\' (any | '\n') ))* $a '"' | '\'' ([^'\\] | '\n' | ( '\\' (any | '\n') ))* $a '\'';
     float   = ([\-+]? $a ('0'..'9' digit* '.' digit+) $a );
     integer = ([\-+]? $a ('0'..'9' digit*) $a );
+    nil     = 'null' $a;
+    true    = 'true' $a;
+    false   = 'false' $a;
 
-    value  = (string | float | integer ) %set_value ;
+    value  = (string | float | integer | true | nil | false) %set_value ;
 
     key    = identifier;
 

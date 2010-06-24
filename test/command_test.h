@@ -62,7 +62,7 @@ public:
 
   void test_print( void ) {
     setup_with_print("n = Value(34)\n");
-    assert_print("p: 34\n", "n/value\n");
+    assert_print("p: 34\n", "n/value(true)\n");
   }
 
 

@@ -175,7 +175,7 @@ public:
     assert_true(res.is_midi());
     std::ostringstream oss;
     oss << res;
-    assert_equal("\"MidiMessage +1:F3(68), 0/500\"", oss.str());
+    assert_equal("{\"=m\":[144, 65, 68, 500]}", oss.str());
   }
 
   void test_call_lua_with_MidiValue( void ) {

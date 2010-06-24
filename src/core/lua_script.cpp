@@ -404,6 +404,12 @@ bool LuaScript::lua_pushvalue(lua_State *L, const Value &val) {
       // pass reference to create a new object
       lua_pushclass<MidiMessage>(L, *val.midi_message_, "oscit.MidiMessage");
       break;
+    case TRUE_VALUE:
+      lua_pushboolean(L, true);
+      break;
+    case FALSE_VALUE:
+      lua_pushboolean(L, false);
+      break;
     case ERROR_VALUE:
       // TODO
       /* continue */
