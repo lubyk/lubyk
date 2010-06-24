@@ -54,7 +54,7 @@ void Planet::init() {
   rubyk->adopt(new TMethod<Planet, &Planet::link>(this, Url(LINK_URL).name(), JsonValue("[['','', ''],'url','op','url','Update a link between the two provided urls. Operations are '=>' (link) '||' (unlink) or '?' (pending).']")));
 
   //          /rubyk/quit
-  rubyk->adopt(new TMethod<Planet, &Planet::quit>(this, Url(QUIT_URL).name(), NilIO("Stop all operations and quit.")));
+  rubyk->adopt(new TMethod<Planet, &Planet::quit>(this, Url(QUIT_URL).name(), BangIO("Stop all operations and quit.")));
 }
 
 bool Planet::expose_views(const std::string &path, Value *error) {

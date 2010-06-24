@@ -36,9 +36,11 @@ public:
 
   // [1] set/get value, send value
   const Value value(const Value &val) {
-    if (!val.is_nil()) {
+    if (val.is_nil()) return value_;
+    if (!val.is_bang()) {
       value_ = val;
     }
+
     send(value_);
     return value_;
   }

@@ -107,5 +107,5 @@ extern "C" void init(Planet &planet) {
   METHOD(VideoInNode, device,  StringIO("Input device name or id."))
   METHOD(VideoInNode, preview, RangeIO(0,1,"Open/close a preview window."))
   OUTLET(VideoInNode, frames,  MatrixIO("Video frames as matrix."))
-  CLASS_METHOD(VideoInNode, sources, NilIO("Return a dictionary of video in devices"))
+  CLASS_METHOD(VideoInNode, sources, BangIO("Return a dictionary of video in devices"))
 }

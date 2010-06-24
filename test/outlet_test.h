@@ -60,7 +60,7 @@ public:
     DummyNode counter(&value);
     Outlet o_no(  &counter, NoIO("Not sending anything."));
     Inlet  i_no(  &counter, "", OutletTest_receive_value1, NoIO("Don't hit me."));
-    Inlet  i_bang(&counter, "", OutletTest_receive_value1, NilIO("Receives bang values."));
+    Inlet  i_bang(&counter, "", OutletTest_receive_value1, BangIO("Receives bang values."));
     Inlet  i_real(&counter, "", OutletTest_receive_value1, RealIO("Receive real values."));
     Inlet  i_str( &counter, "", OutletTest_receive_value1, StringIO("Receive string values."));
     Inlet  i_hash(&counter, "", OutletTest_receive_value1, HashIO("Any description."));
@@ -84,7 +84,7 @@ public:
     DummyNode counter(&value);
     Outlet o_bang(&counter, BangIO("Sends current counter value."));
     Inlet  i_no(  &counter, "", OutletTest_receive_value1, NoIO("Don't hit me."));
-    Inlet  i_bang(&counter, "", OutletTest_receive_value1, NilIO("Receives bang values."));
+    Inlet  i_bang(&counter, "", OutletTest_receive_value1, BangIO("Receives bang values."));
     Inlet  i_real(&counter, "", OutletTest_receive_value1, RealIO("Receive real values."));
     Inlet  i_str( &counter, "", OutletTest_receive_value1, StringIO("Receive string values."));
     Inlet  i_hash(&counter, "", OutletTest_receive_value1, HashIO("Any description."));
@@ -96,22 +96,17 @@ public:
 
     // bang --> bang
     assert_true(o_bang.connect(&i_bang));
-    // bang --> real
-    assert_true(o_bang.connect(&i_real));
-    // bang --> str
-    assert_true(o_bang.connect(&i_str ));
-    // bang --> hash
-    assert_true(o_bang.connect(&i_hash));
-    // bang --> mat
-    assert_true(o_bang.connect(&i_mat ));
-    // bang --> list
-    assert_true(o_bang.connect(&i_list));
+
     // bang --> any
     assert_true(o_bang.connect(&i_any));
 
-    // no should fail
-    assert_false(o_bang.connect(&i_no));
-
+    // others should fail
+    assert_false(o_bang.connect(&i_no  ));
+    assert_false(o_bang.connect(&i_real));
+    assert_false(o_bang.connect(&i_str ));
+    assert_false(o_bang.connect(&i_hash));
+    assert_false(o_bang.connect(&i_mat ));
+    assert_false(o_bang.connect(&i_list));
   }
 
   void test_out_real( void ) {
@@ -119,7 +114,7 @@ public:
     DummyNode counter(&value);
     Outlet o_real(&counter, RealIO("Receive real values."));
     Inlet  i_no(  &counter, "", OutletTest_receive_value1, NoIO("Don't hit me."));
-    Inlet  i_bang(&counter, "", OutletTest_receive_value1, NilIO("Receives bang values."));
+    Inlet  i_bang(&counter, "", OutletTest_receive_value1, BangIO("Receives bang values."));
     Inlet  i_real(&counter, "", OutletTest_receive_value1, RealIO("Receive real values."));
     Inlet  i_str( &counter, "", OutletTest_receive_value1, StringIO("Receive string values."));
     Inlet  i_hash(&counter, "", OutletTest_receive_value1, HashIO("Any description."));
@@ -148,7 +143,7 @@ public:
     DummyNode counter(&value);
     Outlet o_str(&counter, StringIO("Receive real values."));
     Inlet  i_no(  &counter, "", OutletTest_receive_value1, NoIO("Don't hit me."));
-    Inlet  i_bang(&counter, "", OutletTest_receive_value1, NilIO("Receives bang values."));
+    Inlet  i_bang(&counter, "", OutletTest_receive_value1, BangIO("Receives bang values."));
     Inlet  i_real(&counter, "", OutletTest_receive_value1, RealIO("Receive real values."));
     Inlet  i_str( &counter, "", OutletTest_receive_value1, StringIO("Receive string values."));
     Inlet  i_hash(&counter, "", OutletTest_receive_value1, HashIO("Any description."));
@@ -177,7 +172,7 @@ public:
     DummyNode counter(&value);
     Outlet o_hash(&counter, HashIO("Any description."));
     Inlet  i_no(  &counter, "", OutletTest_receive_value1, NoIO("Don't hit me."));
-    Inlet  i_bang(&counter, "", OutletTest_receive_value1, NilIO("Receives bang values."));
+    Inlet  i_bang(&counter, "", OutletTest_receive_value1, BangIO("Receives bang values."));
     Inlet  i_real(&counter, "", OutletTest_receive_value1, RealIO("Receive real values."));
     Inlet  i_str( &counter, "", OutletTest_receive_value1, StringIO("Receive string values."));
     Inlet  i_hash(&counter, "", OutletTest_receive_value1, HashIO("Any description."));
@@ -206,7 +201,7 @@ public:
     DummyNode counter(&value);
     Outlet o_mat(&counter, MatrixIO("A matrix."));
     Inlet  i_no(  &counter, "", OutletTest_receive_value1, NoIO("Don't hit me."));
-    Inlet  i_bang(&counter, "", OutletTest_receive_value1, NilIO("Receives bang values."));
+    Inlet  i_bang(&counter, "", OutletTest_receive_value1, BangIO("Receives bang values."));
     Inlet  i_real(&counter, "", OutletTest_receive_value1, RealIO("Receive real values."));
     Inlet  i_str( &counter, "", OutletTest_receive_value1, StringIO("Receive string values."));
     Inlet  i_hash(&counter, "", OutletTest_receive_value1, HashIO("Any description."));
@@ -235,7 +230,7 @@ public:
     DummyNode counter(&value);
     Outlet o_list( &counter, JsonValue("[['',0,''], 'ho', 'ha', 'three', 'Info.']"));
     Inlet  i_no(   &counter, "", OutletTest_receive_value1, NoIO("Don't hit me."));
-    Inlet  i_bang( &counter, "", OutletTest_receive_value1, NilIO("Receives bang values."));
+    Inlet  i_bang( &counter, "", OutletTest_receive_value1, BangIO("Receives bang values."));
     Inlet  i_real( &counter, "", OutletTest_receive_value1, RealIO("Receive real values."));
     Inlet  i_str(  &counter, "", OutletTest_receive_value1, StringIO("Receive string values."));
     Inlet  i_hash( &counter, "", OutletTest_receive_value1, HashIO("Any description."));
@@ -270,7 +265,7 @@ public:
     DummyNode counter(&value);
     Outlet o_any(  &counter, AnyIO("blah."));
     Inlet  i_no(   &counter, "", OutletTest_receive_value1, NoIO("Don't hit me."));
-    Inlet  i_bang( &counter, "", OutletTest_receive_value1, NilIO("Receives bang values."));
+    Inlet  i_bang( &counter, "", OutletTest_receive_value1, BangIO("Receives bang values."));
     Inlet  i_real( &counter, "", OutletTest_receive_value1, RealIO("Receive real values."));
     Inlet  i_str(  &counter, "", OutletTest_receive_value1, StringIO("Receive string values."));
     Inlet  i_hash( &counter, "", OutletTest_receive_value1, HashIO("Any description."));
@@ -451,7 +446,7 @@ public:
     outlet->link(Value(receiver1->url())); // should find /receiver1/pong
     outlet->link(Value("/n-1/mac"));
 
-    assert_equal("{\"/n-1/mac\":{}, \"/n-1/mic\":{}}", outlet->to_hash().to_json());
+    assert_equal("{\"@type\":0, \"/n-1/mac\":{}, \"/n-1/mic\":{}}", outlet->to_hash().to_json());
   }
 };
 

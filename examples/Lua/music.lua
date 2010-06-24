@@ -7,7 +7,7 @@ Note = oscit.MidiMessage_Note
 l = l or 85.8
 i = i or 1
 oct = oct or 0
-function bang()
+function bang(value)
   i = i + 1
   N = {
     {60, nil, 69, 65},
@@ -48,6 +48,8 @@ function bang()
   if nval2 then
     mi.send(Note(12 * oct + nval2 - 19, 74, l))
   end
+
+  return true
 end
 inlet("bang", BangIO("hop"))
 

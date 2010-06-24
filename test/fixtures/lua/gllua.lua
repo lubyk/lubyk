@@ -18,7 +18,7 @@ function bang(sig)
   x = math.cos(n / 0.9) * 360 / math.pi;
   y = math.sin(n) * 360 / math.pi;
 end
-inlet('bang', NilIO('just bang me'))
+inlet('bang', BangIO('just bang me'))
 
 function draw(sig)
   gl.Enable("CULL_FACE")

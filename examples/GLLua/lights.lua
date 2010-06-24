@@ -36,7 +36,7 @@ function bang(sig)
   y = 10 * math.sin(n) / math.pi
   z = 2 --10 * math.sin(n) / math.pi
 end
-inlet('bang', NilIO('just bang me'))
+inlet('bang', BangIO('just bang me'))
 
 function draw(sig)
   gl.PointSize(5.0)

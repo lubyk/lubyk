@@ -71,7 +71,7 @@ public:
 
   // internal use only (looped call)
   void loop() {
-    send(gNilValue);
+    send(gBangValue);
   }
 
 private:

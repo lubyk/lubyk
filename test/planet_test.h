@@ -35,7 +35,8 @@ public:
     setup("m = Metro(115)\nv = Value(15)\nm => v\n");
     Value patch_def = planet_->to_hash();
     assert_equal("{\"x\":10, \"y\":10, \"width\":500, \"height\":300, \"hue\":203}", patch_def[VIEW_KEY].to_json());
-    assert_equal("{\"@class\":\"/class/Metro\", \"@view\":{\"widget\":\"Node\", \"x\":0, \"y\":0, \"width\":60, \"height\":20, \"hue\":203}, \"tempo\":115, \"out\":{\"bang\":{\"/v/value\":{}}}}", patch_def[NODES_KEY]["m"].to_json());
+    // just to make sure objects are inserted
+    assert_equal("115", patch_def[NODES_KEY]["m"]["tempo"].to_json());
   }
 
   // create a node

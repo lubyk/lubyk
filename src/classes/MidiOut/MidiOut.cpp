@@ -38,7 +38,7 @@ class MidiOut : public Node {
   const Value midi(const Value &val) {
     MidiMessage *msg;
 
-    if (!is_ok() || !val.is_midi()) return gNilValue;
+    if (!is_ok() || !val.is_midi()) return MidiValue();
 
     msg = val.midi_message_;
 
@@ -49,7 +49,7 @@ class MidiOut : public Node {
       bang(val);
     }
 
-    return gNilValue;
+    return val;
   }
 
   // [2] Get/set midi out port

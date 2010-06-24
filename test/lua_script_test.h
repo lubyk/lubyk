@@ -101,13 +101,38 @@ public:
     assert_equal("Main beat machine tempo [bpm].", inlet->type()[1].str());
   }
 
-  void test_add_inlet_NilIO( void ) {
+  // ------------------------------------------------------------------------  False
+
+  void test_return_false( void ) {
+    Value res = parse("function foo()\n return false\nend");
+    assert_true(res.is_string());
+    res = script_->call_lua("foo");
+    assert_true(res.is_false());
+  }
+
+  // ------------------------------------------------------------------------  True (Bang)
+
+  void test_return_true( void ) {
+    Value res = parse("function foo()\n return true\nend");
+    assert_true(res.is_string());
+    res = script_->call_lua("foo");
+    assert_true(res.is_true());
+  }
+
+  void test_receive_true( void ) {
+    Value res = parse("function foo(v)\n return v == true\nend");
+    assert_true(res.is_string());
+    res = script_->call_lua("foo", gTrueValue);
+    assert_true(res.is_true());
+  }
+
+  void test_add_inlet_BangIO( void ) {
     // also tests loading of rubyk.lua
-    Value res = parse("inlet('boom', NilIO('Ping pong.'))");
+    Value res = parse("inlet('boom', BangIO('Ping pong.'))");
     assert_true(res.is_string());
     ObjectHandle inlet;
     assert_true(planet_->get_object_at("/lua/boom", &inlet));
-    assert_equal("Ns", inlet->type().type_tag());
+    assert_equal("Ts", inlet->type().type_tag());
     assert_equal("Ping pong.", inlet->type()[1].str());
   }
 

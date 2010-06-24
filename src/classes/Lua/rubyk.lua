@@ -13,12 +13,9 @@ function require(lib_name)
   original_require(lib_name)
 end
 
-function NilIO(info)
-  return {nil, info; n=2}
-end
 
 function BangIO(info)
-  return {nil, info; n=2}
+  return {true, info}
 end
 
 function RealIO(info)

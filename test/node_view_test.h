@@ -44,7 +44,7 @@ public:
   }
 
   void test_to_hash( void ) {
-    assert_equal("{\"x\":10.5, \"y\":3.2, \"width\":90, \"height\":120}", NodeView(10.5, 3.2, 90, 120, 85).to_hash().to_json());
+    assert_equal("{\"x\":10.5, \"y\":3.2, \"width\":90, \"height\":120, \"hue\":85}", NodeView(10.5, 3.2, 90, 120, 85).to_hash().to_json());
   }
 
   void test_insert_in_hash_result( void ) {

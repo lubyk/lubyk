@@ -326,14 +326,18 @@ bool LuaScript::value_from_lua(lua_State *L, int index, Value *res) {
   case LUA_TNIL:
     res->set_nil();
     break;
+  case LUA_TBOOLEAN:
+    if (lua_toboolean(L, index)) {
+      res->set_true();
+    } else {
+      res->set_false();
+    }
+    break;
   case LUA_TNUMBER:
     res->set(lua_tonumber(L, index));
     break;
   case LUA_TSTRING:
     res->set(lua_tostring(L, index));
-    break;
-  case LUA_TBOOLEAN:
-    res->set((Real)lua_toboolean(L, index));
     break;
   case LUA_TTABLE:
     res->set_empty();

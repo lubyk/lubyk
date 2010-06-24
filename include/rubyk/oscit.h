@@ -33,10 +33,6 @@
 #include "oscit/oscit.h"
 using namespace oscit;
 
-#define BangIO NilIO
-#define gBang gNilValue
-#define is_bang is_nil
-
 // TODO move this in a types.h file ?
 #define CLASS_URL   "/class"
 #define PATCH_VIEW_URL "/views/patch"

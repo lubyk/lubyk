@@ -52,7 +52,7 @@ public:
     DummyNode *node = base.adopt(new DummyNode(&value));
     Object *out  = node->adopt(new Object(NODE_OUT_KEY));
     out->adopt(new Outlet(node, "ping", RealIO("Sends real values.")));
-    assert_equal("{\"class\":\"Node\", \"@class\":\"\", \"@links\":{\"ping\":[]}, \"x\":0, \"y\":0, \"width\":60, \"height\":20, \"hue\":203}", node->view().to_json());
+    assert_equal("{\"widget\":\"Node\", \"x\":0, \"y\":0, \"width\":60, \"height\":20, \"hue\":203}", node->view().to_json());
   }
 
   void test_hash( void ) {
@@ -61,6 +61,6 @@ public:
     DummyNode *node = base.adopt(new DummyNode(&value));
     Object *out  = node->adopt(new Object(NODE_OUT_KEY));
     out->adopt(new Outlet(node, "ping", RealIO("Sends real values.")));
-    assert_equal("{\"class\":\"Node\", \"@class\":\"\", \"@links\":{\"ping\":[]}, \"x\":0, \"y\":0, \"width\":60, \"height\":20, \"hue\":203}", node->view().to_json());
+    assert_equal("{\"@class\":\"\", \"@view\":{\"widget\":\"Node\", \"x\":0, \"y\":0, \"width\":60, \"height\":20, \"hue\":203}, \"out\":{\"ping\":{\"@type\":0}}}", node->to_hash().to_json());
   }
 };
