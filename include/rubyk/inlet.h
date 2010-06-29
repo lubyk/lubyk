@@ -123,7 +123,7 @@ private:
 
   /** Outlets connected.
    */
-  std::list<Outlet*> connected_outlets_;
+  CTList<Outlet*> connected_outlets_;
 
 };
 

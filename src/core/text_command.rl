@@ -322,7 +322,7 @@ void TextCommand::execute_command() {
     quit();  // Readline won't quit with a SIGTERM (see doc/prototypes/term_readline.cpp) so
              // we have to use quit() instead of kill().
 
-    res = root_->call(QUIT_URL, gNilValue);
+    res = root_->call(QUIT_URL, gBangValue);
   } else {
     names_to_urls();
     res = root_->call(method_, params);

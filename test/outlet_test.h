@@ -100,13 +100,13 @@ public:
     // bang --> any
     assert_true(o_bang.connect(&i_any));
 
-    // others should fail
-    assert_false(o_bang.connect(&i_no  ));
-    assert_false(o_bang.connect(&i_real));
-    assert_false(o_bang.connect(&i_str ));
-    assert_false(o_bang.connect(&i_hash));
-    assert_false(o_bang.connect(&i_mat ));
-    assert_false(o_bang.connect(&i_list));
+    // bang connects to everything
+    assert_true(o_bang.connect(&i_no  ));
+    assert_true(o_bang.connect(&i_real));
+    assert_true(o_bang.connect(&i_str ));
+    assert_true(o_bang.connect(&i_hash));
+    assert_true(o_bang.connect(&i_mat ));
+    assert_true(o_bang.connect(&i_list));
   }
 
   void test_out_real( void ) {

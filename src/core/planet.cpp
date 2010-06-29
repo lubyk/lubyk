@@ -199,7 +199,7 @@ const Value Planet::patch(const Value &hash) {
     // FIXME: set nodes from content...
     // clear and update
 
-    clear_on_register_callbacks();
+    clear_on_register();
 
     this->Object::clear();
 

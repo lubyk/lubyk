@@ -33,10 +33,14 @@
 
 namespace rk {
 
+// The CorderedList is thread-safe for all operations except iteration
+// where an explicit lock is required.
+
 Outlet::~Outlet() {
   unregister_in_node();
 
   // remove connections with other slots
+  ScopedLock lock(connected_inlets_);
   LinkedList<Inlet*> *it = connected_inlets_.begin();
 
   while(it) {
@@ -45,10 +49,8 @@ Outlet::~Outlet() {
   }
 }
 
-// FIXME: inline ?
-// FIXME: thread safety !!
-void Outlet::send(const Value &val)
-{
+void Outlet::send(const Value &val) {
+  ScopedLock lock(connected_inlets_);
   LinkedList<Inlet*> *it = connected_inlets_.begin();
 
   while(it) {
@@ -57,9 +59,9 @@ void Outlet::send(const Value &val)
   }
 }
 
-// FIXME: inline ?
-// FIXME: thread safety !!
 void Outlet::insert_in_hash(Value *result) {
+  ScopedLock lock(connected_inlets_);
+
   LinkedList<Inlet*> *it = connected_inlets_.begin();
   result->set(TYPE_KEY, type().first());
 
@@ -69,13 +71,11 @@ void Outlet::insert_in_hash(Value *result) {
   }
 }
 
-void Outlet::register_in_node()
-{
+void Outlet::register_in_node() {
   node_->register_outlet(this);
 }
 
-void Outlet::unregister_in_node()
-{
+void Outlet::unregister_in_node() {
   node_->unregister_outlet(this);
 }
 

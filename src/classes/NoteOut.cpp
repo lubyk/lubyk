@@ -37,11 +37,14 @@ class NoteOut : public Node {
   }
 
   // [1] set note, send current note
-  void note(const Value &val) {
+  const Value note(const Value &val) {
     if (val.is_real()) {
       note_.midi_message_->set_note(val.r);
+      send(note_);
+    } else if (val.is_bang()) {
+      send(note_);
     }
-    send(note_);
+    return Value((Real)note_.midi_message_->note());
   }
 
   // [2] velocity
@@ -90,10 +93,11 @@ private:
 
 extern "C" void init(Planet &planet) {
   CLASS (NoteOut, "Helper to create a note.", "note, velocity, length, channel");
-  METHOD(NoteOut, note, RangeIO(0, 127, "Midi note value (sends note out)."));
-  OUTLET(NoteOut, note, MidiIO("Midi note."));
-  METHOD(NoteOut, velocity, RangeIO(0, 127, "Note velocity."));
-  METHOD(NoteOut, length, RangeIO(0, 5000, "Note length."));
-  METHOD(NoteOut, channel,  RangeIO(1, 16, "Midi channel."));
-  METHOD(NoteOut, set_note, RangeIO(0, 127, "Note value (does not send note out)."));
+  METHOD(NoteOut, note,     RangeIO(0, 127,  "Midi note value (sends note out)."));
+  METHOD(NoteOut, velocity, RangeIO(0, 127,  "Note velocity."));
+  METHOD(NoteOut, length,   RangeIO(0, 5000, "Note length."));
+  METHOD(NoteOut, channel,  RangeIO(1, 16,   "Midi channel."));
+  METHOD(NoteOut, set_note, RangeIO(0, 127,  "Note value (does not send note out)."));
+
+  OUTLET(NoteOut, note,     MidiIO("Sends midi notes out."));
 }

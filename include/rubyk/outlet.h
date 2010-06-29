@@ -31,7 +31,7 @@
 #define RUBYK_INCLUDE_RUBYK_OUTLET_H_
 
 #include "oscit/object.h"
-#include "rubyk/ordered_list.h"
+#include "rubyk/c_ordered_list.h"
 
 namespace rk {
 
@@ -135,7 +135,7 @@ private:
   /** Connections are kept sorted, so that we always send values to inlets
    * that are rightmost first.
    */
-  OrderedList<Inlet*> connected_inlets_;
+  COrderedList<Inlet*> connected_inlets_;
 
 };
 

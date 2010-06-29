@@ -37,12 +37,11 @@ namespace rk {
 Inlet::~Inlet() {
   unregister_in_node();
 
-  std::list<Outlet*>::iterator it = connected_outlets_.begin();
-  std::list<Outlet*>::iterator end = connected_outlets_.end();
+  ScopedRead lock(connected_outlets_);
+  CTList<Outlet*>::iterator it, end  = connected_outlets_.end();
 
-  while(it != end) {
+  for(it = connected_outlets_.begin(); it != end; ++it) {
     (*it)->remove_connection(this);
-    ++it;
   }
 }
 
@@ -66,13 +65,12 @@ bool Inlet::operator>=(const Inlet &other) const {
 
 // Called by Outlet once type compatibility is checked.
 bool Inlet::add_connection(Outlet *inlet) {
-  std::list<Outlet*>::iterator it  = connected_outlets_.begin();
-  std::list<Outlet*>::iterator end = connected_outlets_.end();
+  ScopedWrite lock(connected_outlets_);
+  CTList<Outlet*>::iterator it, end  = connected_outlets_.end();
 
-  while(it != end) {
+  for(it = connected_outlets_.begin(); it != end; ++it) {
     // make sure it is not already in list
     if (*it == inlet) return true;
-    ++it;
   }
 
   connected_outlets_.push_back(inlet);
@@ -80,17 +78,17 @@ bool Inlet::add_connection(Outlet *inlet) {
 }
 
 void Inlet::remove_connection(Outlet *outlet) {
+  ScopedWrite lock(connected_outlets_);
   connected_outlets_.remove(outlet);
 }
 
 
 void Inlet::sort_incoming_connections() {
-  std::list<Outlet*>::iterator it  = connected_outlets_.begin();
-  std::list<Outlet*>::iterator end = connected_outlets_.end();
+  ScopedRead lock(connected_outlets_);
+  CTList<Outlet*>::iterator it, end  = connected_outlets_.end();
 
-  while(it != end) {
+  for(it = connected_outlets_.begin(); it != end; ++it) {
     (*it)->sort_connections();
-    ++it;
   }
 }
 

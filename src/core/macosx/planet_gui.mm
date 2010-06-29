@@ -52,17 +52,23 @@ static PlanetHelper *gAppHelper = NULL;
 
 
 const Value Planet::quit(const Value &val) {
-  if (gui_started_) {
-    [NSApp terminate:NULL];
-    // never reached
-  } else {
-    s_need_gui_semaphore_.release();
-    worker_.kill();
-    // clean exit
+  if (!val.is_nil()) {
+    // quit
+
+    if (gui_started_) {
+      [NSApp terminate:NULL];
+      // never reached
+    } else {
+      s_need_gui_semaphore_.release();
+      worker_.kill();
+      // clean exit
+    }
+
+    // We do not 'clear' here to avoid shooting in our own foot. Killing worker
+    // ensures planet joins out in main loop and is normally deleted.
   }
-  // We do not 'clear' here to avoid shooting in our own foot. Killing worker
-  // ensures planet joins out in main loop and is normally deleted.
-  return gNilValue;
+
+  return gBangValue;
 }
 
 // Called by NSApp on termination

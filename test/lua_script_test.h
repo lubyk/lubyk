@@ -136,6 +136,32 @@ public:
     assert_equal("Ping pong.", inlet->type()[1].str());
   }
 
+  // ------------------------------------------------------------------------  Impulse
+  // TODO: we could use a new type for impulse: Impulse
+  // void test_return_true( void ) {
+  //   Value res = parse("function foo()\n return Impulse\nend");
+  //   assert_true(res.is_string());
+  //   res = script_->call_lua("foo");
+  //   assert_true(res.is_bang());
+  // }
+  //
+  // void test_receive_true( void ) {
+  //   Value res = parse("function foo(v)\n return v == Impulse\nend");
+  //   assert_true(res.is_string());
+  //   res = script_->call_lua("foo", gImpulseValue);
+  //   assert_true(res.is_true());
+  // }
+  //
+  // void test_add_inlet_ImpulseIO( void ) {
+  //   // also tests loading of rubyk.lua
+  //   Value res = parse("inlet('boom', ImpulseIO('Ping pong.'))");
+  //   assert_true(res.is_string());
+  //   ObjectHandle inlet;
+  //   assert_true(planet_->get_object_at("/lua/boom", &inlet));
+  //   assert_equal("Is", inlet->type().type_tag());
+  //   assert_equal("Ping pong.", inlet->type()[1].str());
+  // }
+
   // ------------------------------------------------------------------------  Matrix
 
   void test_create_matrix( void ) {
