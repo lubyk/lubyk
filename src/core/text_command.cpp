@@ -681,7 +681,7 @@ void TextCommand::create_instance() {
 
   Value links;
   if (res.is_string()) {
-    links = root_->call(LINK_URL, gNilValue); // create pending links
+    links = root_->call(LINK_URL, gBangValue); // create pending links
   }
 
   if (res.is_string() && !silent_) {
@@ -768,7 +768,7 @@ void TextCommand::execute_command() {
     quit();  // Readline won't quit with a SIGTERM (see doc/prototypes/term_readline.cpp) so
              // we have to use quit() instead of kill().
 
-    res = root_->call(QUIT_URL, gNilValue);
+    res = root_->call(QUIT_URL, gBangValue);
   } else {
     names_to_urls();
     res = root_->call(method_, params);

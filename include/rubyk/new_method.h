@@ -80,7 +80,7 @@ public:
     }
 
     // get parent ["/met", "met"] => "", "/grp/met" => "/grp"
-    if (url.at(0) == '/') {
+    if (url.size() > 0 && url.at(0) == '/') {
       size_t pos = url.rfind("/");
       if (!planet->get_object_at(url.substr(0, pos), &parent)) return ErrorValue(BAD_REQUEST_ERROR, "Invalid parent '").append(url.substr(0, pos)).append("'.");
       name = url.substr(pos + 1, url.length());

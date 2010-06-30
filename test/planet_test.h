@@ -44,6 +44,16 @@ public:
     Value res = planet_->update(Value(Json("{nodes:{foo:{\"@class\":\"/class/Value\"}}}")));
     ObjectHandle foo;
     assert_true(planet_->get_object_at("/foo", &foo));
-    assert_equal("", foo->to_hash().to_json());
+    Value foo_hash = foo->to_hash();
+    assert_equal("/class/Value", foo_hash["@class"].str());
+  }
+
+  // create a link
+  void test_create_link( void ) {
+    setup_with_print("p = Print()\nv = Value(15)\n"); // n => p by default so "v" is not linked to p
+    Value res = planet_->update(Value(Json("{nodes:{v:{out:{value:{\"/p/print\":{}}}}}}")));
+    assert_equal("{}", res["nodes"]["v"]["out"]["value"]["/p/print"].to_json());
+
+    assert_print("p: 123\n", "v(123)\n");
   }
 };

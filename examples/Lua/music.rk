@@ -2,7 +2,7 @@
 # run from build directory with
 # ./rubyk ../examples/Lua/music.rk
 m = Metro(460)
-m => l
+#m => l
 
 l = Lua("../examples/Lua/music.lua")
 l => midi

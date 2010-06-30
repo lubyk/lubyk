@@ -235,7 +235,7 @@ void TextCommand::create_instance() {
 
   Value links;
   if (res.is_string()) {
-    links = root_->call(LINK_URL, gNilValue); // create pending links
+    links = root_->call(LINK_URL, gBangValue); // create pending links
   }
 
   if (res.is_string() && !silent_) {

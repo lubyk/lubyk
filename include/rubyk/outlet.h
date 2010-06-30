@@ -75,6 +75,12 @@ public:
    */
   virtual ~Outlet();
 
+  /** On trigger, the outlet updates its connections.
+   * TODO: replace 'update' by trigger and fix type_ (type is wrong, it's not the
+   * trigger type but the connection type).
+   */
+  virtual void from_hash(const Value &hash, Value *results);
+
   /** Inform the node about the existence of this outlet (direct callback). */
   void register_in_node();
 

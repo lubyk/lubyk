@@ -34,10 +34,6 @@ extern "C" void init(Planet &planet) {
   CLASS (Print, "Print any value received in bang inlet.", "no options")
   // [1] print
   METHOD(Print, print, AnyIO("Received values are printed out."))
-  // {1} prefix
-  ADD_METHOD(Print, "prefix", prefix, StringIO("Prefix to print before values."))
-  // {2} print
-  ADD_METHOD(Print, "print",  print,  AnyIO("Received values are printed out."))
   // [2] prefix
   METHOD(Print, prefix, StringIO("Prefix to print before values."))
 }

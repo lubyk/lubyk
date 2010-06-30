@@ -72,8 +72,9 @@ bool Planet::expose_views(const std::string &path, Value *error) {
 
 // typetag: "ss" (inlet, outlet)
 const Value Planet::link(const Value &val) {
+  if (val.is_nil()) return gNilValue; // no current value ? return pending links ?
   // std::cout << "link: " << val << std::endl;
-  if (val.is_nil()) {
+  if (val.is_bang()) {
     return create_pending_links();
   }
 
@@ -279,11 +280,11 @@ void Planet::create_node(const std::string &name, const Value &class_url, const 
     // get next location for new Node
 
     { ScopedRead lock(children_vector_);
-      size_t size = children_vector_.size();
+      int size = children_vector_.size();
       Node *node = NULL;
 
       // get last child that is a Node
-      for(size_t i = size - 1; i >= 0; --i) {
+      for(int i = size - 1; i >= 0; --i) {
         if ( (node = TYPE_CAST(Node, children_vector_[i])) ) break;
       }
 

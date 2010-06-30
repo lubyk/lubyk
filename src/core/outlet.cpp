@@ -119,6 +119,38 @@ void Outlet::sort_connections() {
 }
 
 
+void Outlet::from_hash(const Value &hash, Value *results) {
+  HashIterator it;
+  HashIterator end = hash.end();
+  Value param;
+  Value change_result;
+
+  for (it = hash.begin(); it != end; ++it) {
+    // ignore methods that start with '@'.
+    if ((*it).size() > 0 && (*it).at(0) == '@') continue;
+
+    if (hash.get(*it, &param)) {
+      if (param.is_nil()) {
+        // disconnect
+        change_result = change_link('d', Value(*it));
+        if (change_result.is_error()) {
+          results->set(*it, change_result);
+        } else {
+          results->set(*it, gNilValue);
+        }
+      } else {
+        // connect
+        change_result = change_link('c', Value(*it));
+        if (change_result.is_error()) {
+          results->set(*it, change_result);
+        } else {
+          results->set(*it, HashValue());
+        }
+      }
+    }
+  }
+}
+
 const Value Outlet::change_link(unsigned char operation, const Value &val) {
   if (val.is_string()) {
     // update a link (create/destroy)
@@ -145,7 +177,7 @@ const Value Outlet::change_link(unsigned char operation, const Value &val) {
     if (operation == 'c') {
       // create link
       if (connect(inlet)) {
-        //std::cout << "LINKED: " << url() << " with " << val << std::endl;
+        // std::cout << "LINKED: " << url() << " with " << val << std::endl;
         return Value(url()).push_back("=>").push_back(target->url());
       } else {
         return ErrorValue(BAD_REQUEST_ERROR, "Could not make the connection with (").append(val.to_json()).append(").");
