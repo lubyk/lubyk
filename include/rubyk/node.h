@@ -299,18 +299,18 @@ class Node : public Object {
   static pthread_key_t sOpenGLThreadKey;
 
  protected:
-  Worker * worker_;  /**< Worker that will give life to object. */
+  Worker *worker_;  /**< Worker that will give life to object. */
 
+  /** When sending signals from a particular slot, a node with a small pos_.x_ (trigger position)
+   * will receive the signal after a node that has a greater trigger position.
+   */
+  NodeView pos_;
  private:
 
   bool is_ok_;                   /**< If something bad arrived to the node during initialization or edit, the node goes into
                                   *   broken state and is_ok_ becomes false. In 'broken' mode, the node does nothing. */
   bool looped_;                  /**< Set to true if the node is currently called on every worker loop. */
 
-  /** When sending signals from a particular slot, a node with a small pos_.x_ (trigger position)
-   * will receive the signal after a node that has a greater trigger position.
-   */
-  NodeView pos_;
 
   std::string class_url_;        /**< Url for the node's class. */
 

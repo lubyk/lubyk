@@ -53,6 +53,10 @@ public:
     planet_ = NULL;
   }
 
+  void test_view() {
+    assert_equal("Script", script_->view()[WIDGET_KEY].str());
+  }
+
   void test_compile( void ) {
     Value res = parse("function foo()\nend");
     assert_true(res.is_string());

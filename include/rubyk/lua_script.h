@@ -43,7 +43,13 @@ class Outlet;
 
 class LuaScript : public Node, public Script {
 public:
+
+  enum Defaults {
+    DefaultHue = 59,
+  };
+
   virtual const Value init() {
+    pos_.hue_ = LuaScript::DefaultHue;
     return lua_init();
   }
 
@@ -83,6 +89,18 @@ public:
    * Thread-safe.
    */
   const Value lua_init(const char *init_script = NULL);
+
+  /** View settings (color, position).
+   */
+  virtual const Value view() {
+    Value view;
+    // Class to use in view (not the same as class to create Node)
+    view.set(WIDGET_KEY, "Script");
+
+    pos_.insert_in_hash(&view);
+
+    return view;
+  }
 
   /** Overwrite 'insert_in_hash' to not send script content if file is
    * set.

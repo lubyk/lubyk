@@ -51,8 +51,8 @@ public:
     Value hash = node->to_hash();
     assert_false(hash.has_key("script"));
 
-    // should not contain 'hash', should contain values for lua methods.
-    assert_equal("{\"class\":\"Lua\", \"value\":0, \"file\":\"../test/fixtures/lua_test_send.lua\", \"reload\":1, \"out\":null}", node->to_hash().to_json());
+    assert_equal("/class/Lua", hash["@class"].str());
+    assert_equal("Script", hash["@view"]["widget"].str());
   }
 
 };
