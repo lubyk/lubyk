@@ -1,7 +1,13 @@
 # dummy makefile for those too lazy to read the README file...
 
-default: build build/MakeFile vendor/oscit/include
+rubyk: build/MakeFile
+	cd build && make rubyk
+
+default: build/MakeFile
 	cd build && make
+
+build/MakeFile: build vendor/oscit/include
+	cd build && cmake ..
 
 build:
 	mkdir build
@@ -9,15 +15,8 @@ build:
 vendor/oscit/include:
 	git submodule init && git submodule update
 
-build/MakeFile: build
-	cd build && cmake ..
-
 clean: build
 	cd build && make clean
-
-rubyk: build build/MakeFile
-	cd build && make rubyk
-
 
 #  OLD MAKEFILE, REMOVE WHEN ALL RKO OBJECTS BUILD
 #
