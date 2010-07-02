@@ -1,12 +1,12 @@
 # dummy makefile for those too lazy to read the README file...
 
-default: build build/MakeFile
+default: build build/MakeFile vendor/oscit/include
 	cd build && make
 
-build: vendor/oscit
+build:
 	mkdir build
 
-vendor/oscit:
+vendor/oscit/include:
 	git submodule init && git submodule update
 
 build/MakeFile: build
