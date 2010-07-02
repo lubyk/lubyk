@@ -1,10 +1,10 @@
 # dummy makefile for those too lazy to read the README file...
 
-rubyk: build/MakeFile
-	cd build && make rubyk
-
 default: build/MakeFile
 	cd build && make
+
+rubyk: build/MakeFile
+	cd build && make rubyk
 
 build/MakeFile: build vendor/oscit/include
 	cd build && cmake ..
