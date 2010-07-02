@@ -3,8 +3,11 @@
 default: build build/MakeFile
 	cd build && make
 
-build:
+build: vendor/oscit
 	mkdir build
+
+vendor/oscit:
+	git submodule init && git submodule update
 
 build/MakeFile: build
 	cd build && cmake ..
