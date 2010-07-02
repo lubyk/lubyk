@@ -88,7 +88,7 @@ set(STATIC_LIBS)
 # ==============================================================================
 
 # ------------------------------------------------ cv, cxcore, ml, opencv_lapack, flann, zlib
-set(OSCIT_WILL_LINK_OPENCV YES)
+set(OSCIT_OPENCV_LINK    OFF)
 set(OSCIT_ENABLE_TESTING OFF)
 add_subdirectory(vendor/oscit)
 list(APPEND STATIC_LIBS oscit)
