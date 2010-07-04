@@ -6,9 +6,9 @@ cmake_minimum_required(VERSION 2.6.2)
 #  Options
 #
 # ==============================================================================
-option (RUBYK_MEMORY_CHECKING    "Enable checking against memory leaks ?"    NO  )
-option (RUBYK_ENABLE_TESTING     "Build and run tests ?"                     YES )
-option (RUBYK_USE_LUA_JIT        "Use Lua Just In Time compiler ?"           NO  )
+option (RUBYK_MEMORY_CHECKING    "Enable checking against memory leaks ?"    OFF )
+option (RUBYK_ENABLE_TESTING     "Build and run tests ?"                     ON  )
+option (RUBYK_USE_LUA_JIT        "Use Lua Just In Time compiler ?"           OFF )
 
 
 # handle memory checking option
@@ -88,8 +88,9 @@ set(STATIC_LIBS)
 # ==============================================================================
 
 # ------------------------------------------------ cv, cxcore, ml, opencv_lapack, flann, zlib
-set(OSCIT_OPENCV_LINK    OFF)
-set(OSCIT_ENABLE_TESTING OFF)
+# we need to cache now so that we overwrite option in OSCIT
+set(OSCIT_OPENCV_LINK    OFF CACHE BOOLEAN "doc")
+set(OSCIT_ENABLE_TESTING OFF CACHE BOOLEAN "doc")
 add_subdirectory(vendor/oscit)
 list(APPEND STATIC_LIBS oscit)
 
