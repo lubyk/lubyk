@@ -36,7 +36,7 @@ public:
     Real value = 0;
     DummyNode *sender = base.adopt(new DummyNode(&value));
     Object *out  = sender->adopt(new Object(NODE_OUT_KEY));
-    Outlet *ping = out->adopt(new Outlet(sender, "ping", RealIO("Receive real values.")));
+    Outlet *ping = out->adopt(new Outlet(sender, "ping", Attribute::real_io("Receive real values.")));
 
     Outlet *outlet = sender->outlet_for_value(1, Value(1.0));
     assert_equal(ping, outlet);
@@ -51,8 +51,8 @@ public:
     Real value = 0;
     DummyNode *node = base.adopt(new DummyNode(&value));
     Object *out  = node->adopt(new Object(NODE_OUT_KEY));
-    out->adopt(new Outlet(node, "ping", RealIO("Sends real values.")));
-    assert_equal("{\"widget\":\"Node\", \"x\":0, \"y\":0, \"width\":60, \"height\":20, \"hue\":203}", node->view().to_json());
+    out->adopt(new Outlet(node, "ping", Attribute::real_io("Sends real values.")));
+    assert_equal("{\"widget\":\"Node\", \"x\":0, \"y\":0, \"width\":60, \"height\":20, \"hue\":203}", node->attributes()[Attribute::VIEW].to_json());
   }
 
   void test_hash( void ) {
@@ -60,7 +60,7 @@ public:
     Real value = 0;
     DummyNode *node = base.adopt(new DummyNode(&value));
     Object *out  = node->adopt(new Object(NODE_OUT_KEY));
-    out->adopt(new Outlet(node, "ping", RealIO("Sends real values.")));
+    out->adopt(new Outlet(node, "ping", Attribute::real_io("Sends real values.")));
     assert_equal("{\"@class\":\"\", \"@view\":{\"widget\":\"Node\", \"x\":0, \"y\":0, \"width\":60, \"height\":20, \"hue\":203}, \"out\":{\"ping\":{\"@type\":0}}}", node->to_hash().to_json());
   }
 };

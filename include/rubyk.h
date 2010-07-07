@@ -32,7 +32,6 @@
 #include "rubyk/lua.h"
 
 // slot management
-#include "rubyk/node_view.h"
 #include "rubyk/inlet.h"
 #include "rubyk/outlet.h"
 #include "rubyk/node.h"

@@ -63,7 +63,7 @@ void Outlet::insert_in_hash(Value *result) {
   ScopedLock lock(connected_inlets_);
 
   LinkedList<Inlet*> *it = connected_inlets_.begin();
-  result->set(TYPE_KEY, type().first());
+  result->set(Attribute::TYPE, type().first());
 
   while(it) {
     result->set(it->obj->url(), HashValue());
@@ -97,10 +97,7 @@ void Outlet::disconnect(Inlet *inlet) {
 }
 
 bool Outlet::add_connection(Inlet *inlet) {
-  if (type_id() == NO_TYPE_TAG_ID ||  inlet->type_id() == NO_TYPE_TAG_ID) return false; // one of them is a NoIO
-  assert(type().size() > 0);
-  assert(inlet->type().size()  > 0);
-  if (inlet->can_receive(type()[0])) {
+  if (inlet->can_receive(type_id())) {
     // inlet can receive our type
     // OrderedList makes sure the link is not created again if it already exists.
     connected_inlets_.push(inlet);
@@ -119,7 +116,7 @@ void Outlet::sort_connections() {
 }
 
 
-void Outlet::from_hash(const Value &hash, Value *results) {
+void Outlet::set(const Value &hash, Value *results) {
   HashIterator it;
   HashIterator end = hash.end();
   Value param;

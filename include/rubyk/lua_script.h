@@ -48,8 +48,16 @@ public:
     DefaultHue = 59,
   };
 
+  /** Set defaults (this method must always call the superclass' implementation).
+   */
   virtual const Value init() {
-    pos_.hue_ = LuaScript::DefaultHue;
+    // call super
+    Node::init();
+
+    // set Script Widget
+    attributes_.set(Attribute::VIEW, Attribute::WIDGET, "Script");
+    attributes_.set(Attribute::VIEW, Attribute::HUE, (float)LuaScript::DefaultHue);
+
     return lua_init();
   }
 
@@ -85,29 +93,19 @@ public:
     }
   }
 
-  /** Initialization (build methods, load libraries, etc).
-   * Thread-safe.
+  /** Serialize object as hash: do not send script content if file path
+   * information is present.
    */
-  const Value lua_init(const char *init_script = NULL);
+  virtual const Value to_hash() {
+   Value result = Object::to_hash();
 
-  /** View settings (color, position).
-   */
-  virtual const Value view() {
-    Value view;
-    // Class to use in view (not the same as class to create Node)
-    view.set(WIDGET_KEY, "Script");
-
-    pos_.insert_in_hash(&view);
-
-    return view;
+   if (result.has_key("file")) {
+     result.remove("script");
+   }
+   return result;
   }
 
-  /** Overwrite 'insert_in_hash' to not send script content if file is
-   * set.
-   */
-  virtual void insert_in_hash(Value *result);
-
-  /** Convert all the stack as a list value (does not pop).
+  /** Convert all the Lua stack as a list value (does not pop).
    */
   static const Value stack_to_value(lua_State *L, int start_index = 1);
 
@@ -134,7 +132,7 @@ protected:
 
   /** @internal.
    * "inlet" method in lua to create/update an inlet.
-   * @param val name of the inlet & type
+   * @param val name of the inlet & type (sH)
    * @return number of values on lua stack (0)
    */
   int lua_inlet(const Value &val);
@@ -158,7 +156,28 @@ protected:
    * @return number of values on stack
    */
   int lua_call_rk(const Value &val);
+
+  /** Evaluate some lua content.
+   * Thread-safe.
+   * @return null on success, an error on failure.
+   */
+  const Value eval(const char *script) {
+    ScopedLock lock(mutex_);
+
+    if (script) {
+      Value res = eval(script, strlen(script));
+      if (res.is_error()) return res;
+    }
+
+    return gNilValue;
+  }
+
 private:
+  /** Initialization (build methods, load libraries, etc).
+   * Thread-safe.
+   */
+  const Value lua_init(const char *init_script = NULL);
+
   /** Return 'this' object from lua.
    */
   static LuaScript *lua_this(lua_State *L);
@@ -168,6 +187,12 @@ private:
    *  a table.
    */
   static bool list_from_lua(lua_State *L, int index, Value *res);
+
+  /** Get a hash from a lua table at the given index.
+   * This method assumes the object at the given index is
+   * a table.
+   */
+  static bool hash_from_lua(lua_State *L, int index, Value *val);
 
   /** Push a value on top of lua stack.
    */

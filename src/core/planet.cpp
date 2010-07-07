@@ -38,11 +38,19 @@ namespace rk {
 void Planet::init() {
   set_context(&worker_);
 
+  // set defaults
+  // TODO: remove x,y coord once we store the "device composition" in the remote GUI.
+  attributes_.set(Attribute::VIEW, Attribute::POS_X,  10);
+  attributes_.set(Attribute::VIEW, Attribute::POS_Y,  10);
+
+  attributes_.set(Attribute::VIEW, Attribute::WIDTH,  500);
+  attributes_.set(Attribute::VIEW, Attribute::HEIGHT, 300);
+
   // build application methods
 
   //           /.inspect
   // FIXME: remove /.inspect...
-  adopt(new TMethod<Planet, &Planet::inspect>(this, Url(INSPECT_URL).name(), StringIO("Returns inspect information on a given url.")));
+  adopt(new TMethod<Planet, &Planet::inspect>(this, Url(INSPECT_URL).name(), Attribute::string_io("Returns inspect information on a given url.")));
 
   //          /class
   classes_ = adopt(new ClassFinder(Url(CLASS_URL).name(), DEFAULT_OBJECTS_LIB_PATH));
@@ -51,10 +59,10 @@ void Planet::init() {
   Object *rubyk = adopt(new Object(Url(RUBYK_URL).name()));
 
   //          /rubyk/link [[["","source url"],["", "target url"]], "Create a link between two urls."]
-  rubyk->adopt(new TMethod<Planet, &Planet::link>(this, Url(LINK_URL).name(), JsonValue("[['','', ''],'url','op','url','Update a link between the two provided urls. Operations are '=>' (link) '||' (unlink) or '?' (pending).']")));
+  rubyk->adopt(new TMethod<Planet, &Planet::link>(this, Url(LINK_URL).name(), Attribute::io("Update a link between the two provided urls. Arguments are (url, op, url). Operations are '=>' (link) '||' (unlink) or '?' (pending).", "link operation", "sss")));
 
   //          /rubyk/quit
-  rubyk->adopt(new TMethod<Planet, &Planet::quit>(this, Url(QUIT_URL).name(), BangIO("Stop all operations and quit.")));
+  rubyk->adopt(new TMethod<Planet, &Planet::quit>(this, Url(QUIT_URL).name(), Attribute::bang_io("Stop all operations and quit.")));
 }
 
 bool Planet::expose_views(const std::string &path, Value *error) {
@@ -112,6 +120,7 @@ const Value Planet::link(const Value &val) {
 // FIXME: on node deletion/replacement, remove/move all pending links related to this node ?.
 // FIXME: thread safety !
 const Value Planet::create_pending_links() {
+  static const uint LinkTypeTagId = hashId("sss");
   std::list<Call>::iterator it  = pending_links_.begin();
   std::list<Call>::iterator end = pending_links_.end();
 
@@ -120,7 +129,7 @@ const Value Planet::create_pending_links() {
 
   while (it != end) {
     res = it->trigger_call(this);
-    if ((res.type_id() == SelectIOTypeId && res[1].str() == "=>") || res.is_error()) {
+    if ((res.type_id() == LinkTypeTagId && res[1].str() == "=>") || res.is_error()) {
       list.push_back(res);
       it = pending_links_.erase(it);  // call succeeded or definitely failed
     } else {
@@ -166,11 +175,9 @@ const Value Planet::inspect(const Value &val) {
 
 /** Return a hash representation of the whole system.
  */
-void Planet::insert_in_hash(Value *hash) {
+const Value Planet::to_hash() {
+  Value result(attributes_);
   HashValue patch;
-
-  // FIXME: remove insert_in_hash method.
-  hash->set(VIEW_KEY, pos_.to_hash());
 
   { ScopedRead lock(children_vector_);
     if (children_vector_.size() > 0) {
@@ -179,15 +186,14 @@ void Planet::insert_in_hash(Value *hash) {
       for(it = children_vector_.begin(); it != end; ++it) {
         Node *node = TYPE_CAST(Node, *it);
         if (node) {
-          Value node_hash;
-          node->insert_in_hash(&node_hash);
-          patch.set(node->name(), node_hash);
+          patch.set(node->name(), node->to_hash());
         }
       }
     }
   }
 
-  hash->set(NODES_KEY, patch);
+  result.set(NODES_KEY, patch);
+  return result;
 }
 
 /** Set/get the patch from a hash representation. If the value is nil,
@@ -204,27 +210,23 @@ const Value Planet::patch(const Value &hash) {
 
     this->Object::clear();
 
-    return update(hash);
+    return set(hash);
   }
 }
 
 /** Update the content of the nodes by doing a deep merge.
  */
-void Planet::from_hash(const Value &hash, Value *result) {
-  if (!hash.is_hash()) return;
+const Value Planet::set(const Value &hash) {
+  if (!hash.is_hash()) return HashValue(); // empty hash ?
 
   Value nodes;
-  Value view_result, view = hash[VIEW_KEY];
+  Value all_but_nodes(hash); // copy
+  all_but_nodes.remove(NODES_KEY);
 
-  if (view.is_hash()) {
-    Value view_result;
-    pos_.from_hash(view, &view_result);
-    // FIXME: replace void from_hash(const Value &hash, Value *result)
-    //        by      const Value from_hash(const Value &hash)
-    // ==> result.set(VIEW_KEY, pos_.from_hash(hash[VIEW_KEY]));
-    result->set(VIEW_KEY, view_result);
-  }
+  // Start by setting attributes
+  Value result(Object::set(all_but_nodes));
 
+  // Update nodes
   if (hash.get(NODES_KEY, &nodes) && nodes.is_hash()) {
     HashValue nodes_result;
 
@@ -246,9 +248,7 @@ void Planet::from_hash(const Value &hash, Value *result) {
 
         if (node_value.is_hash()) {
           // update Node
-          Value node_result;
-          node->from_hash(node_value, &node_result);
-          nodes_result.set(key, node_result);
+          nodes_result.set(key, node->set(node_value));
         } else if (node_value.is_nil()) {
           // delete Node
           node->release();
@@ -259,24 +259,25 @@ void Planet::from_hash(const Value &hash, Value *result) {
         }
       } else {
         // create Node
-        if (!node_value.has_key(CLASS_KEY)) {
+        if (!node_value.has_key(Attribute::CLASS)) {
           nodes_result.set(key, ErrorValue(BAD_REQUEST_ERROR, "Missing @class to create new Node."));
           continue;
         }
 
-        create_node(key, node_value[CLASS_KEY], node_value, &nodes_result);
+        create_node(key, node_value[Attribute::CLASS], node_value, &nodes_result);
       }
     }
-    result->set(NODES_KEY, nodes_result);
+    result.set(NODES_KEY, nodes_result);
   }
+  return result;
 }
 
-void Planet::create_node(const std::string &name, const Value &class_url, const Value &params, Value *result) {
+void Planet::create_node(const std::string &name, const Value &class_url, const Value &create_params, Value *result) {
   if (!class_url.is_string()) return; // ignore
+  Value params(create_params);
+  Value view_params = params[Attribute::VIEW];
 
-  Value view_params = params[VIEW_KEY];
-
-  if (!view_params.has_key(POS_X)) {
+  if (!view_params.has_key(Attribute::POS_X)) {
     // get next location for new Node
 
     { ScopedRead lock(children_vector_);
@@ -289,10 +290,14 @@ void Planet::create_node(const std::string &name, const Value &class_url, const 
       }
 
       if (node) {
-        view_params.set(POS_X, node->pos_x() + 15);
-        view_params.set(POS_Y, node->pos_y() + 15);
+        view_params.set(Attribute::POS_X, node->pos_x() + NEW_NODE_POS_X_DELTA);
+        Value pos_y;
+        if (node->attributes()[Attribute::VIEW].get(Attribute::POS_Y, &pos_y)) {
+          view_params.set(Attribute::POS_Y, pos_y.r + NEW_NODE_POS_Y_DELTA);
+        }
       }
     }
+    params.set(Attribute::VIEW, view_params);
   }
 
   ObjectHandle obj;

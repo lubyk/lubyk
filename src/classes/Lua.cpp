@@ -38,9 +38,9 @@ extern "C" void init(Planet &planet) {
   // We use SUPER_LAST_METHOD instead of SUPER_METHOD so that the methods inserted here are kept at the end of the object's method list.
 
   // {1}
-  SUPER_LAST_METHOD(Lua, Script, file, StringIO("Path to script content [filepath]."))
+  SUPER_LAST_METHOD(Lua, Script, file, Attribute::string_io("Path to script content [filepath]."))
   // {2}
-  SUPER_LAST_METHOD(Lua, Script, script, StringIO("Script content [lua]."))
+  SUPER_LAST_METHOD(Lua, Script, script, Attribute::string_io("Script content [lua]."))
   // {3}
-  SUPER_LAST_METHOD(Lua, Script, reload, RealIO("How often to stat file for reload [s]."))
+  SUPER_LAST_METHOD(Lua, Script, reload, Attribute::real_io("How often to stat file for reload [s]."))
 }

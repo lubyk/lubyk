@@ -54,8 +54,8 @@ void PatchMethod::adopted() {
   std::cout << "adopted\n";
   if ( (planet_ = TYPE_CAST(Planet, root_)) ) {
     std::cout << "adding update method\n";
-    adopt(new TMethod<Planet, &Planet::update>(planet_, "update", HashIO("Hash to update patch.")));
-//    adopt(new TMethod<PatchMethod, &PatchMethod::save>(this, "save", StringIO("Filepath to save patch to.")));
+    adopt(new TMethod<Planet, &Planet::set>(planet_, "update", Attribute::hash_io("Hash to update patch.")));
+//    adopt(new TMethod<PatchMethod, &PatchMethod::save>(this, "save", Attribute::string_io("Filepath to save patch to.")));
   } else {
     // error
   }

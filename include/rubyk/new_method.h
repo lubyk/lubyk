@@ -109,7 +109,7 @@ public:
 
     // used by osc (using url instead of name because we might have class folders/subfolders some day).
     // not very clear why we need this...
-    node->set_class_url(new_method->parent_->url());
+    node->set_class_url(Value(new_method->parent_->url()));
 
     // make outlets
     klass->make_outlets(node);
@@ -117,12 +117,19 @@ public:
     Value res = node->init();
 
     if (!res.is_error() && !params.is_nil()) {
-      // set defaults by calling methods
-      // TODO: deal with errors and return values
-      res = node->trigger(params);
+      // set by calling methods
+      if (params.is_hash()) {
+        res = node->set(params);
+      } else {
+        // trigger first method
+        ObjectHandle handle;
+        if (node->first_child(&handle)) {
+          res = handle->trigger(params);
+        }
+      }
     }
 
-    if (!res.is_error()) res = node->start();
+    if (!res.contains_error()) res = node->start();
 
     node->set_is_ok(!res.is_error());
     if (res.is_error()) return res;

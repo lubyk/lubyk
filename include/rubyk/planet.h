@@ -33,7 +33,6 @@
 #include <queue>
 
 #include "rubyk/oscit.h"
-#include "rubyk/node_view.h"
 #include "rubyk/group.h"
 #include "rubyk/text_command.h"
 #include "rubyk/worker.h"
@@ -53,19 +52,21 @@ class ClassFinder;
  * implemented with 'patch' method. The CRUD operations are usually triggered
  * from the alias '/views/patch' and '/views/patch/update'.
  */
-class Planet : public Root
-{
+class Planet : public Root {
  public:
   TYPED("Object.Root.Planet")
 
-  Planet() : Root(RUBYK_DEFAULT_NAME), pos_(10, 10, 500, 300), worker_(this), classes_(NULL), gui_started_(false) {
+  Planet() : Root(RUBYK_DEFAULT_NAME), worker_(this), classes_(NULL), gui_started_(false) {
     init();
   }
 
-  Planet(uint port) : Root(RUBYK_DEFAULT_NAME), pos_(10, 10, 500, 300), worker_(this), classes_(NULL), gui_started_(false) {
+  Planet(uint port) : Root(RUBYK_DEFAULT_NAME), worker_(this), classes_(NULL), gui_started_(false) {
     init();
     open_port(port);
   }
+
+  static const float NEW_NODE_POS_X_DELTA = 30.0;
+  static const float NEW_NODE_POS_Y_DELTA = 30.0;
 
   /** FIXME: remove this method: we should use "adopt_command". */
   void open_port(uint port) {
@@ -133,24 +134,17 @@ class Planet : public Root
   /** Set/update the whole patch from a hash representation. If the value is nil,
    * return the full hash representation.
    */
-  virtual void from_hash(const Value &hash, Value *results);
+  virtual const Value set(const Value &hash);
 
   /** Build a hash representation of the whole system (patch for serialization).
+   * Only include attributes and Nodes.
    */
-  virtual void insert_in_hash(Value *result);
+  virtual const Value to_hash();
 
   /** Set/get the patch from a hash representation. If the value is nil,
    * return the full view.
    */
   const Value patch(const Value &hash);
-
-  /** Update the content of the patch by doing a deep merge.
-   */
-  const Value update(const Value &hash) {
-    HashValue result;
-    from_hash(hash, &result);
-    return result;
-  }
 
  private:
   /** Create a new node from a Hash definition.
@@ -174,10 +168,6 @@ class Planet : public Root
 
   /** Create base objects (public for testing, should not be used). */
   void init();
-
-  /** Patch position (only width and height are used here).
-   */
-  NodeView pos_;
 
   /** List of pending connections waiting for variable assignements.
    */

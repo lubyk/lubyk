@@ -52,16 +52,16 @@ public:
 
   /** Create a new object that call a member method when "triggered" and handles connections from Outlet.
    */
-  Inlet(Node *node, const char *name, member_method_t method, const Value &type) :
-      Method(node, name, method, type),
+  Inlet(Node *node, const char *name, member_method_t method, const Value &attrs) :
+      Method(node, name, method, attrs),
       node_(node) {
     register_in_node();
   }
 
   /** Create a new object that call a member method when "triggered" and handles connections from Outlet.
    */
-  Inlet(Node *node, const std::string &name, member_method_t method, const Value &type) :
-      Method(node, name, method, type),
+  Inlet(Node *node, const std::string &name, member_method_t method, const Value &attrs) :
+      Method(node, name, method, attrs),
       node_(node) {
     register_in_node();
   }

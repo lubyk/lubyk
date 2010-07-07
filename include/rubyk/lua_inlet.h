@@ -38,7 +38,7 @@ class LuaScript;
 
 class LuaInlet : public Inlet {
 public:
-  LuaInlet(LuaScript *node, const char *name, const Value &type);
+  LuaInlet(LuaScript *node, const char *name, const Value &attrs);
 
   /** Method called whenever we receive a new value.
    */

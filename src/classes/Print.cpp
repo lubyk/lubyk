@@ -33,7 +33,7 @@ using namespace rk;
 extern "C" void init(Planet &planet) {
   CLASS (Print, "Print any value received in bang inlet.", "no options")
   // [1] print
-  METHOD(Print, print, AnyIO("Received values are printed out."))
+  METHOD(Print, print, Attribute::any_io("Received values are printed out."))
   // [2] prefix
-  METHOD(Print, prefix, StringIO("Prefix to print before values."))
+  METHOD(Print, prefix, Attribute::string_io("Prefix to print before values."))
 }

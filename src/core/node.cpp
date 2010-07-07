@@ -59,8 +59,10 @@ const Value Node::do_inspect() const {
   HashValue hash;
   inspect(&hash);
   std::string class_name;
-  if (class_url().length() > CLASS_URL_LENGTH + 1) {
-    class_name = class_url().substr(CLASS_URL_LENGTH + 1);
+  Value class_val(class_url());
+  std::string class_url = class_val.is_string() ? class_val.str() : "";
+  if (class_url.length() > CLASS_URL_LENGTH + 1) {
+    class_name = class_url.substr(CLASS_URL_LENGTH + 1);
   } else {
     class_name = this->class_name();
   }

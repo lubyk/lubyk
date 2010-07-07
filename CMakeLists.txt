@@ -10,7 +10,7 @@ option (RUBYK_MEMORY_CHECKING    "Enable checking against memory leaks ?"    OFF
 option (RUBYK_ENABLE_TESTING     "Build and run tests ?"                     ON  )
 option (RUBYK_USE_LUA_JIT        "Use Lua Just In Time compiler ?"           OFF )
 
-
+set (luaopen)
 # handle memory checking option
 if (RUBYK_MEMORY_CHECKING)
   if (APPLE)

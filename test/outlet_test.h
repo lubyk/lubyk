@@ -58,15 +58,15 @@ public:
   void test_out_no( void ) {
     Real value;
     DummyNode counter(&value);
-    Outlet o_no(  &counter, NoIO("Not sending anything."));
-    Inlet  i_no(  &counter, "", OutletTest_receive_value1, NoIO("Don't hit me."));
-    Inlet  i_bang(&counter, "", OutletTest_receive_value1, BangIO("Receives bang values."));
-    Inlet  i_real(&counter, "", OutletTest_receive_value1, RealIO("Receive real values."));
-    Inlet  i_str( &counter, "", OutletTest_receive_value1, StringIO("Receive string values."));
-    Inlet  i_hash(&counter, "", OutletTest_receive_value1, HashIO("Any description."));
-    Inlet  i_mat( &counter, "", OutletTest_receive_value1, MatrixIO("A matrix."));
-    Inlet  i_list(&counter, "", OutletTest_receive_value1, JsonValue("[[null,null],\"first\", \"second\", \"Info.\"]"));
-    Inlet  i_any( &counter, "", OutletTest_receive_value1, AnyIO("Blah."));
+    Outlet o_no(  &counter, Attribute::no_io("Not sending anything."));
+    Inlet  i_no(  &counter, "", OutletTest_receive_value1, Attribute::no_io("Don't hit me."));
+    Inlet  i_bang(&counter, "", OutletTest_receive_value1, Attribute::bang_io("Receives bang values."));
+    Inlet  i_real(&counter, "", OutletTest_receive_value1, Attribute::real_io("Receive real values."));
+    Inlet  i_str( &counter, "", OutletTest_receive_value1, Attribute::string_io("Receive string values."));
+    Inlet  i_hash(&counter, "", OutletTest_receive_value1, Attribute::hash_io("Any description."));
+    Inlet  i_mat( &counter, "", OutletTest_receive_value1, Attribute::matrix_io("A matrix."));
+    Inlet  i_list(&counter, "", OutletTest_receive_value1, Attribute::io("Info.", "list1", "NN"));
+    Inlet  i_any( &counter, "", OutletTest_receive_value1, Attribute::any_io("Blah."));
 
     // all should fail
     assert_false(o_no.connect(&i_no));
@@ -82,15 +82,15 @@ public:
   void test_out_bang( void ) {
     Real value;
     DummyNode counter(&value);
-    Outlet o_bang(&counter, BangIO("Sends current counter value."));
-    Inlet  i_no(  &counter, "", OutletTest_receive_value1, NoIO("Don't hit me."));
-    Inlet  i_bang(&counter, "", OutletTest_receive_value1, BangIO("Receives bang values."));
-    Inlet  i_real(&counter, "", OutletTest_receive_value1, RealIO("Receive real values."));
-    Inlet  i_str( &counter, "", OutletTest_receive_value1, StringIO("Receive string values."));
-    Inlet  i_hash(&counter, "", OutletTest_receive_value1, HashIO("Any description."));
-    Inlet  i_mat( &counter, "", OutletTest_receive_value1, MatrixIO("A matrix."));
-    Inlet  i_list(&counter, "", OutletTest_receive_value1, JsonValue("[[null,null],\"first\", \"second\", \"Info.\"]"));
-    Inlet  i_any( &counter, "", OutletTest_receive_value1, AnyIO("Blah."));
+    Outlet o_bang(&counter, Attribute::bang_io("Sends current counter value."));
+    Inlet  i_no(  &counter, "", OutletTest_receive_value1, Attribute::no_io("Don't hit me."));
+    Inlet  i_bang(&counter, "", OutletTest_receive_value1, Attribute::bang_io("Receives bang values."));
+    Inlet  i_real(&counter, "", OutletTest_receive_value1, Attribute::real_io("Receive real values."));
+    Inlet  i_str( &counter, "", OutletTest_receive_value1, Attribute::string_io("Receive string values."));
+    Inlet  i_hash(&counter, "", OutletTest_receive_value1, Attribute::hash_io("Any description."));
+    Inlet  i_mat( &counter, "", OutletTest_receive_value1, Attribute::matrix_io("A matrix."));
+    Inlet  i_list(&counter, "", OutletTest_receive_value1, Attribute::io("Info.", "list1", "NN"));
+    Inlet  i_any( &counter, "", OutletTest_receive_value1, Attribute::any_io("Blah."));
 
     // connection initiated by outlet
 
@@ -112,15 +112,15 @@ public:
   void test_out_real( void ) {
     Real value = 0;
     DummyNode counter(&value);
-    Outlet o_real(&counter, RealIO("Receive real values."));
-    Inlet  i_no(  &counter, "", OutletTest_receive_value1, NoIO("Don't hit me."));
-    Inlet  i_bang(&counter, "", OutletTest_receive_value1, BangIO("Receives bang values."));
-    Inlet  i_real(&counter, "", OutletTest_receive_value1, RealIO("Receive real values."));
-    Inlet  i_str( &counter, "", OutletTest_receive_value1, StringIO("Receive string values."));
-    Inlet  i_hash(&counter, "", OutletTest_receive_value1, HashIO("Any description."));
-    Inlet  i_mat( &counter, "", OutletTest_receive_value1, MatrixIO("A matrix."));
-    Inlet  i_list(&counter, "", OutletTest_receive_value1, JsonValue("[[0,0],\"first\", \"second\", \"Info.\"]"));
-    Inlet  i_any( &counter, "", OutletTest_receive_value1, AnyIO("Blah."));
+    Outlet o_real(&counter, Attribute::real_io("Receive real values."));
+    Inlet  i_no(  &counter, "", OutletTest_receive_value1, Attribute::no_io("Don't hit me."));
+    Inlet  i_bang(&counter, "", OutletTest_receive_value1, Attribute::bang_io("Receives bang values."));
+    Inlet  i_real(&counter, "", OutletTest_receive_value1, Attribute::real_io("Receive real values."));
+    Inlet  i_str( &counter, "", OutletTest_receive_value1, Attribute::string_io("Receive string values."));
+    Inlet  i_hash(&counter, "", OutletTest_receive_value1, Attribute::hash_io("Any description."));
+    Inlet  i_mat( &counter, "", OutletTest_receive_value1, Attribute::matrix_io("A matrix."));
+    Inlet  i_list(&counter, "", OutletTest_receive_value1, Attribute::io("Info.", "list1", "ff"));
+    Inlet  i_any( &counter, "", OutletTest_receive_value1, Attribute::any_io("Blah."));
 
     // connection initiated by outlet
 
@@ -141,15 +141,15 @@ public:
   void test_out_str( void ) {
     Real value = 0;
     DummyNode counter(&value);
-    Outlet o_str(&counter, StringIO("Receive real values."));
-    Inlet  i_no(  &counter, "", OutletTest_receive_value1, NoIO("Don't hit me."));
-    Inlet  i_bang(&counter, "", OutletTest_receive_value1, BangIO("Receives bang values."));
-    Inlet  i_real(&counter, "", OutletTest_receive_value1, RealIO("Receive real values."));
-    Inlet  i_str( &counter, "", OutletTest_receive_value1, StringIO("Receive string values."));
-    Inlet  i_hash(&counter, "", OutletTest_receive_value1, HashIO("Any description."));
-    Inlet  i_mat( &counter, "", OutletTest_receive_value1, MatrixIO("A matrix."));
-    Inlet  i_list(&counter, "", OutletTest_receive_value1, JsonValue("[['',''],\"first\", \"second\", \"Info.\"]"));
-    Inlet  i_any( &counter, "", OutletTest_receive_value1, AnyIO("Blah."));
+    Outlet o_str(&counter, Attribute::string_io("Receive real values."));
+    Inlet  i_no(  &counter, "", OutletTest_receive_value1, Attribute::no_io("Don't hit me."));
+    Inlet  i_bang(&counter, "", OutletTest_receive_value1, Attribute::bang_io("Receives bang values."));
+    Inlet  i_real(&counter, "", OutletTest_receive_value1, Attribute::real_io("Receive real values."));
+    Inlet  i_str( &counter, "", OutletTest_receive_value1, Attribute::string_io("Receive string values."));
+    Inlet  i_hash(&counter, "", OutletTest_receive_value1, Attribute::hash_io("Any description."));
+    Inlet  i_mat( &counter, "", OutletTest_receive_value1, Attribute::matrix_io("A matrix."));
+    Inlet  i_list(&counter, "", OutletTest_receive_value1, Attribute::io("Info.", "list1", "ff"));
+    Inlet  i_any( &counter, "", OutletTest_receive_value1, Attribute::any_io("Blah."));
 
     // connection initiated by outlet
 
@@ -170,15 +170,15 @@ public:
   void test_out_hash( void ) {
     Real value = 0;
     DummyNode counter(&value);
-    Outlet o_hash(&counter, HashIO("Any description."));
-    Inlet  i_no(  &counter, "", OutletTest_receive_value1, NoIO("Don't hit me."));
-    Inlet  i_bang(&counter, "", OutletTest_receive_value1, BangIO("Receives bang values."));
-    Inlet  i_real(&counter, "", OutletTest_receive_value1, RealIO("Receive real values."));
-    Inlet  i_str( &counter, "", OutletTest_receive_value1, StringIO("Receive string values."));
-    Inlet  i_hash(&counter, "", OutletTest_receive_value1, HashIO("Any description."));
-    Inlet  i_mat( &counter, "", OutletTest_receive_value1, MatrixIO("A matrix."));
-    Inlet  i_list(&counter, "", OutletTest_receive_value1, JsonValue("[[{},{}],\"first\", \"second\", \"Info.\"]"));
-    Inlet  i_any( &counter, "", OutletTest_receive_value1, AnyIO("Blah."));
+    Outlet o_hash(&counter, Attribute::hash_io("Any description."));
+    Inlet  i_no(  &counter, "", OutletTest_receive_value1, Attribute::no_io("Don't hit me."));
+    Inlet  i_bang(&counter, "", OutletTest_receive_value1, Attribute::bang_io("Receives bang values."));
+    Inlet  i_real(&counter, "", OutletTest_receive_value1, Attribute::real_io("Receive real values."));
+    Inlet  i_str( &counter, "", OutletTest_receive_value1, Attribute::string_io("Receive string values."));
+    Inlet  i_hash(&counter, "", OutletTest_receive_value1, Attribute::hash_io("Any description."));
+    Inlet  i_mat( &counter, "", OutletTest_receive_value1, Attribute::matrix_io("A matrix."));
+    Inlet  i_list(&counter, "", OutletTest_receive_value1, Attribute::io("Info.", "list1", "ff"));
+    Inlet  i_any( &counter, "", OutletTest_receive_value1, Attribute::any_io("Blah."));
 
     // connection initiated by outlet
 
@@ -199,15 +199,15 @@ public:
   void test_out_mat( void ) {
     Real value = 0;
     DummyNode counter(&value);
-    Outlet o_mat(&counter, MatrixIO("A matrix."));
-    Inlet  i_no(  &counter, "", OutletTest_receive_value1, NoIO("Don't hit me."));
-    Inlet  i_bang(&counter, "", OutletTest_receive_value1, BangIO("Receives bang values."));
-    Inlet  i_real(&counter, "", OutletTest_receive_value1, RealIO("Receive real values."));
-    Inlet  i_str( &counter, "", OutletTest_receive_value1, StringIO("Receive string values."));
-    Inlet  i_hash(&counter, "", OutletTest_receive_value1, HashIO("Any description."));
-    Inlet  i_mat( &counter, "", OutletTest_receive_value1, MatrixIO("A matrix."));
-    Inlet  i_list(&counter, "", OutletTest_receive_value1, JsonValue("[[0,0],\"first\", \"second\", \"Info.\"]"));
-    Inlet  i_any( &counter, "", OutletTest_receive_value1, AnyIO("Blah."));
+    Outlet o_mat(&counter, Attribute::matrix_io("A matrix."));
+    Inlet  i_no(  &counter, "", OutletTest_receive_value1, Attribute::no_io("Don't hit me."));
+    Inlet  i_bang(&counter, "", OutletTest_receive_value1, Attribute::bang_io("Receives bang values."));
+    Inlet  i_real(&counter, "", OutletTest_receive_value1, Attribute::real_io("Receive real values."));
+    Inlet  i_str( &counter, "", OutletTest_receive_value1, Attribute::string_io("Receive string values."));
+    Inlet  i_hash(&counter, "", OutletTest_receive_value1, Attribute::hash_io("Any description."));
+    Inlet  i_mat( &counter, "", OutletTest_receive_value1, Attribute::matrix_io("A matrix."));
+    Inlet  i_list(&counter, "", OutletTest_receive_value1, Attribute::io("Info.", "list1", "ff"));
+    Inlet  i_any( &counter, "", OutletTest_receive_value1, Attribute::any_io("Blah."));
 
     // connection initiated by outlet
 
@@ -229,16 +229,16 @@ public:
     Real value = 0;
     DummyNode counter(&value);
     Outlet o_list( &counter, JsonValue("[['',0,''], 'ho', 'ha', 'three', 'Info.']"));
-    Inlet  i_no(   &counter, "", OutletTest_receive_value1, NoIO("Don't hit me."));
-    Inlet  i_bang( &counter, "", OutletTest_receive_value1, BangIO("Receives bang values."));
-    Inlet  i_real( &counter, "", OutletTest_receive_value1, RealIO("Receive real values."));
-    Inlet  i_str(  &counter, "", OutletTest_receive_value1, StringIO("Receive string values."));
-    Inlet  i_hash( &counter, "", OutletTest_receive_value1, HashIO("Any description."));
-    Inlet  i_mat(  &counter, "", OutletTest_receive_value1, MatrixIO("A matrix."));
-    Inlet  i_list( &counter, "", OutletTest_receive_value1, JsonValue("[['',0,''],'first', 'second', 'three', 'Info.']"));
-    Inlet  i_list2(&counter, "", OutletTest_receive_value1, JsonValue("[['',0], 'one', 'two', 'Info.']"));
-    Inlet  i_list3(&counter, "", OutletTest_receive_value1, JsonValue("[['',0,'',''], 'one', 'two', 'Info.']"));
-    Inlet  i_any(  &counter, "", OutletTest_receive_value1, AnyIO("Blah."));
+    Inlet  i_no(   &counter, "", OutletTest_receive_value1, Attribute::no_io("Don't hit me."));
+    Inlet  i_bang( &counter, "", OutletTest_receive_value1, Attribute::bang_io("Receives bang values."));
+    Inlet  i_real( &counter, "", OutletTest_receive_value1, Attribute::real_io("Receive real values."));
+    Inlet  i_str(  &counter, "", OutletTest_receive_value1, Attribute::string_io("Receive string values."));
+    Inlet  i_hash( &counter, "", OutletTest_receive_value1, Attribute::hash_io("Any description."));
+    Inlet  i_mat(  &counter, "", OutletTest_receive_value1, Attribute::matrix_io("A matrix."));
+    Inlet  i_list( &counter, "", OutletTest_receive_value1, Attribute::io("Info.", "list1", "sfs"));  // should connection match take signature or name ?
+    Inlet  i_list2(&counter, "", OutletTest_receive_value1, Attribute::io("Info.", "list2", "sf"));   // should connection match take signature or name ?
+    Inlet  i_list3(&counter, "", OutletTest_receive_value1, Attribute::io("Info.", "list3", "sfss")); // should connection match take signature or name ?
+    Inlet  i_any(  &counter, "", OutletTest_receive_value1, Attribute::any_io("Blah."));
 
     // connection initiated by outlet
 
@@ -263,16 +263,16 @@ public:
   void test_out_any( void ) {
     Real value = 0;
     DummyNode counter(&value);
-    Outlet o_any(  &counter, AnyIO("blah."));
-    Inlet  i_no(   &counter, "", OutletTest_receive_value1, NoIO("Don't hit me."));
-    Inlet  i_bang( &counter, "", OutletTest_receive_value1, BangIO("Receives bang values."));
-    Inlet  i_real( &counter, "", OutletTest_receive_value1, RealIO("Receive real values."));
-    Inlet  i_str(  &counter, "", OutletTest_receive_value1, StringIO("Receive string values."));
-    Inlet  i_hash( &counter, "", OutletTest_receive_value1, HashIO("Any description."));
-    Inlet  i_mat(  &counter, "", OutletTest_receive_value1, MatrixIO("A matrix."));
-    Inlet  i_list( &counter, "", OutletTest_receive_value1, JsonValue("[['',0,''],'first', 'second', 'three', 'Info.']"));
-    Inlet  i_list2(&counter, "", OutletTest_receive_value1, JsonValue("[['',0], 'one', 'two', 'Info.']"));
-    Inlet  i_any(  &counter, "", OutletTest_receive_value1, AnyIO("Blah."));
+    Outlet o_any(  &counter, Attribute::any_io("blah."));
+    Inlet  i_no(   &counter, "", OutletTest_receive_value1, Attribute::no_io("Don't hit me."));
+    Inlet  i_bang( &counter, "", OutletTest_receive_value1, Attribute::bang_io("Receives bang values."));
+    Inlet  i_real( &counter, "", OutletTest_receive_value1, Attribute::real_io("Receive real values."));
+    Inlet  i_str(  &counter, "", OutletTest_receive_value1, Attribute::string_io("Receive string values."));
+    Inlet  i_hash( &counter, "", OutletTest_receive_value1, Attribute::hash_io("Any description."));
+    Inlet  i_mat(  &counter, "", OutletTest_receive_value1, Attribute::matrix_io("A matrix."));
+    Inlet  i_list( &counter, "", OutletTest_receive_value1, Attribute::io("Info.", "list1", "sfs"));
+    Inlet  i_list2(&counter, "", OutletTest_receive_value1, Attribute::io("Info.", "list2", "sf"));
+    Inlet  i_any(  &counter, "", OutletTest_receive_value1, Attribute::any_io("Blah."));
 
     // connection initiated by outlet
 
@@ -294,8 +294,8 @@ public:
     Real value = 0;
     DummyNode sender(&value);
     DummyNode receiver(&value);
-    Outlet outlet(&sender, RealIO("Receive real values."));
-    Inlet  inlet(&receiver, "", OutletTest_receive_value1, RealIO("Receive real values."));
+    Outlet outlet(&sender, Attribute::real_io("Receive real values."));
+    Inlet  inlet(&receiver, "", OutletTest_receive_value1, Attribute::real_io("Receive real values."));
     assert_true(outlet.connect(&inlet));
     assert_equal(0.0, value);
     outlet.send(Value(1.0));
@@ -306,10 +306,10 @@ public:
     Real value = 0;
     DummyNode sender(&value);
     DummyNode receiver(&value);
-    Outlet outlet(&sender, RealIO("Receive real values."));
-    Inlet  inlet1(&receiver, "", OutletTest_receive_value1, RealIO("Receive real values."));
-    Inlet  inlet2(&receiver, "", OutletTest_receive_value2, RealIO("Receive real values."));
-    Inlet  inlet3(&receiver, "", OutletTest_receive_value4, RealIO("Receive real values."));
+    Outlet outlet(&sender, Attribute::real_io("Receive real values."));
+    Inlet  inlet1(&receiver, "", OutletTest_receive_value1, Attribute::real_io("Receive real values."));
+    Inlet  inlet2(&receiver, "", OutletTest_receive_value2, Attribute::real_io("Receive real values."));
+    Inlet  inlet3(&receiver, "", OutletTest_receive_value4, Attribute::real_io("Receive real values."));
     // from their ids, these should be called starting by inlet1, then inlet2 and inlet3 as they share the same receiver (counter)
     inlet1.set_id(4); //         value + 1 = 2
     inlet2.set_id(2); // 2 * 2 + value + 2 = 7
@@ -330,10 +330,10 @@ public:
     DummyNode sender(&value);
     DummyNode receiver1(&value);
     DummyNode receiver2(&value);
-    Outlet outlet(&sender, RealIO("Receive real values."));
-    Inlet  inlet1(&receiver1, "", OutletTest_receive_value1, RealIO("Receive real values."));
-    Inlet  inlet2(&receiver2, "", OutletTest_receive_value2, RealIO("Receive real values."));
-    Inlet  inlet3(&receiver2, "", OutletTest_receive_value4, RealIO("Receive real values."));
+    Outlet outlet(&sender, Attribute::real_io("Receive real values."));
+    Inlet  inlet1(&receiver1, "", OutletTest_receive_value1, Attribute::real_io("Receive real values."));
+    Inlet  inlet2(&receiver2, "", OutletTest_receive_value2, Attribute::real_io("Receive real values."));
+    Inlet  inlet3(&receiver2, "", OutletTest_receive_value4, Attribute::real_io("Receive real values."));
 
     receiver1.set(Value(Json("{@view:{x:2.0}}"))); // should trigger first
     inlet1.set_id(1); // should not sort with this id               value + 1 = 2
@@ -357,10 +357,10 @@ public:
     DummyNode sender(&value);
     DummyNode receiver1(&value);
     DummyNode receiver2(&value);
-    Outlet outlet(&sender, RealIO("Receive real values."));
-    Inlet  inlet1(&receiver1, "", OutletTest_receive_value1, RealIO("Receive real values."));
-    Inlet  inlet2(&receiver2, "", OutletTest_receive_value2, RealIO("Receive real values."));
-    Inlet  inlet3(&receiver2, "", OutletTest_receive_value4, RealIO("Receive real values."));
+    Outlet outlet(&sender, Attribute::real_io("Receive real values."));
+    Inlet  inlet1(&receiver1, "", OutletTest_receive_value1, Attribute::real_io("Receive real values."));
+    Inlet  inlet2(&receiver2, "", OutletTest_receive_value2, Attribute::real_io("Receive real values."));
+    Inlet  inlet3(&receiver2, "", OutletTest_receive_value4, Attribute::real_io("Receive real values."));
 
     receiver1.set(Value(Json("{@view:{x:2.0}}"))); // should trigger first
     inlet1.set_id(1); // should not sort with this id               value + 1 = 2
@@ -390,10 +390,10 @@ public:
     DummyNode sender(&value);
     DummyNode receiver1(&value);
     DummyNode receiver2(&value);
-    Outlet outlet(&sender, RealIO("Receive real values."));
-    Inlet  inlet1(&receiver1, "", OutletTest_receive_value1, RealIO("Receive real values."));
-    Inlet  inlet2(&receiver2, "", OutletTest_receive_value2, RealIO("Receive real values."));
-    Inlet  inlet3(&receiver2, "", OutletTest_receive_value4, RealIO("Receive real values."));
+    Outlet outlet(&sender, Attribute::real_io("Receive real values."));
+    Inlet  inlet1(&receiver1, "", OutletTest_receive_value1, Attribute::real_io("Receive real values."));
+    Inlet  inlet2(&receiver2, "", OutletTest_receive_value2, Attribute::real_io("Receive real values."));
+    Inlet  inlet3(&receiver2, "", OutletTest_receive_value4, Attribute::real_io("Receive real values."));
 
     inlet1.set_id(1); // should not sort with this id       2 * 0 + x + 1 = 2
     inlet2.set_id(8); // sub-sorting by id                  2 * 2 + x + 2 = 7
@@ -423,11 +423,11 @@ public:
     DummyNode *sender    = base.adopt(new DummyNode(&value));
     Object    *out       = sender->adopt(new Object(NODE_OUT_KEY));
     DummyNode *receiver1 = base.adopt(new DummyNode(&value));
-    Outlet    *outlet    = out->adopt(new Outlet(sender, "ping", RealIO("Receive real values.")));
-    receiver1->adopt(new Inlet(receiver1, "pong", OutletTest_receive_value1, RealIO("Receive real values.")));
+    Outlet    *outlet    = out->adopt(new Outlet(sender, "ping", Attribute::real_io("Receive real values.")));
+    receiver1->adopt(new Inlet(receiver1, "pong", OutletTest_receive_value1, Attribute::real_io("Receive real values.")));
 
     Value res = outlet->link(Value(receiver1->url())); // should find /receiver1/in/pong
-    assert_equal((int)res.type_id(), (int)H("sss"));
+    assert_equal((int)res.type_id(), (int)hashId("sss"));
     assert_equal("/n/out/ping", res[0].str());
     assert_equal("=>", res[1].str());
     assert_equal("/n-1/pong", res[2].str());
@@ -439,9 +439,9 @@ public:
     DummyNode *sender    = base.adopt(new DummyNode(&value));
     Object    *out       = sender->adopt(new Object(NODE_OUT_KEY));
     DummyNode *receiver1 = base.adopt(new DummyNode(&value));
-    Outlet    *outlet    = out->adopt(new Outlet(sender, "ping", RealIO("Receive real values.")));
-    receiver1->adopt(new Inlet(receiver1, "mic", OutletTest_receive_value1, RealIO("Receive real values.")));
-    receiver1->adopt(new Inlet(receiver1, "mac", OutletTest_receive_value1, RealIO("Receive real values.")));
+    Outlet    *outlet    = out->adopt(new Outlet(sender, "ping", Attribute::real_io("Receive real values.")));
+    receiver1->adopt(new Inlet(receiver1, "mic", OutletTest_receive_value1, Attribute::real_io("Receive real values.")));
+    receiver1->adopt(new Inlet(receiver1, "mac", OutletTest_receive_value1, Attribute::real_io("Receive real values.")));
 
     outlet->link(Value(receiver1->url())); // should find /receiver1/pong
     outlet->link(Value("/n-1/mac"));

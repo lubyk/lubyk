@@ -70,10 +70,10 @@ private:
 extern "C" void init(Planet &planet) {
   CLASS_NAMED(GLWindowNode, "GLWindow", "OpenGL window", "no options yet")
   // [1]
-  METHOD(GLWindowNode, redraw, BangIO("Redraws on bang."))
-  OUTLET(GLWindowNode, draw, Value(Json("[0,0]")).push_back("Sends [width, height] of view to execute OpenGL."))
+  METHOD(GLWindowNode, redraw, Attribute::bang_io("Redraws on bang."))
+  OUTLET(GLWindowNode, draw,   Attribute::io("Sends [width, height] of view to execute OpenGL.", "opengl", "ff"))
   // TODO replace 'open' and 'close' by 'xxxx' (open if true, close if false)
-  METHOD(GLWindowNode, open,  BangIO("Open a window."))
-  METHOD(GLWindowNode, close, BangIO("Close opened window."))
-  SUPER_METHOD(GLWindowNode, GLWindow, fullscreen, RangeIO(0,1, "1 to go fullscreen, 0 for window mode."))
+  METHOD(GLWindowNode, open,  Attribute::bang_io("Open a window."))
+  METHOD(GLWindowNode, close, Attribute::bang_io("Close opened window."))
+  SUPER_METHOD(GLWindowNode, GLWindow, fullscreen, Attribute::range_io("1 to go fullscreen, 0 for window mode.", 0, 1))
 }

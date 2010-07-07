@@ -32,8 +32,8 @@
 
 namespace rk {
 
-LuaInlet::LuaInlet(LuaScript *node, const char *name, const Value &type)
-    : Inlet(node, name, &LuaInlet::dummy, type),
+LuaInlet::LuaInlet(LuaScript *node, const char *name, const Value &attrs)
+    : Inlet(node, name, &LuaInlet::dummy, attrs),
       lua_script_(node) {}
 
 const Value LuaInlet::trigger(const Value &val) {

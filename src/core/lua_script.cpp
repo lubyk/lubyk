@@ -44,7 +44,7 @@ extern void luaopen_gl(lua_State *L);
 extern void luaopen_glu(lua_State *L);
 
 
-extern void luaopen_oscit_MidiMessage(lua_State *L);
+extern "C" int luaopen_oscit_MidiMessage(lua_State *L);
 
 namespace rk {
 
@@ -100,20 +100,7 @@ const Value LuaScript::lua_init(const char *init_script) {
     }
   }
 
-  if (init_script) {
-    Value res = eval(init_script, strlen(init_script));
-    if (res.is_error()) return res;
-  }
-
   return gNilValue;
-}
-
-void LuaScript::insert_in_hash(Value *result) {
-  this->Node::insert_in_hash(result);
-
-  if (result->has_key("file")) {
-    result->remove("script");
-  }
 }
 
 LuaScript::~LuaScript() {
@@ -215,15 +202,17 @@ LuaScript *LuaScript::lua_this(lua_State *L) {
 }
 
 int LuaScript::lua_inlet(const Value &val) {
-  if (!val.is_list() || !val[0].is_string() || val[1].size() < 2 ) {
+  Value signature(val.is_list() ? val[1][Attribute::TYPE][Attribute::SIGNATURE] : gNilValue);
+  if (!val.is_list() || !val[0].is_string() || !signature.is_string()) {
     // invalid call to 'inlet'
     // TODO: proper error reporting
     fprintf(stderr, "%s: Invalid inlet definition: %s\n", name_.c_str(), val.to_json().c_str());
     return 0;
-}
+  }
+
   ObjectHandle inlet;
   if (get_child(val[0].str().c_str(), &inlet)) {
-    if (inlet->name() != val[0].str() || inlet->type_id() != val[1][0].type_id()) {
+    if (inlet->name() != val[0].str() || inlet->type_id() != hashId(signature.str())) {
       // TODO: inlet rename = keep connections
       // TODO: inlet type change = reset connections
     } else {
@@ -237,17 +226,19 @@ int LuaScript::lua_inlet(const Value &val) {
 }
 
 int LuaScript::lua_build_outlet(const Value &val) {
-  if (!val.is_list() || !val[0].is_string() || val[1].size() < 2 ) {
+  Value signature(val.is_list() ? val[1][Attribute::TYPE][Attribute::SIGNATURE] : gNilValue);
+  if (!val.is_list() || !val[0].is_string() || !signature.is_string() ) {
     // invalid call to 'outlet'
     // TODO: proper error reporting
-    lua_pushstring(lua_, std::string("Cannot build outlet from (").append(val.lazy_json()).append(").").c_str());
+    lua_pushstring(lua_, std::string("Cannot build outlet from: ").append(val.to_json()).c_str());
     return 1;
   }
+
   ObjectHandle out;
   if (get_child(NODE_OUT_KEY, &out)) {
     ObjectHandle outlet;
     if (out->get_child(val[0].str().c_str(), &outlet)) {
-      if (outlet->name() != val[0].str() || outlet->type_id() != val[1][0].type_id()) {
+      if (outlet->name() != val[0].str() || outlet->type_id() != hashId(signature.str())) {
         // TODO: outlet rename = keep connections
         // TODO: outlet type change = reset connections
       } else {
@@ -292,6 +283,7 @@ int LuaScript::lua_call_rk(const Value &val) {
   }
 }
 
+
 const Value LuaScript::stack_to_value(lua_State *L, int start_index) {
   int top = lua_gettop(L);
   Value res, tmp;
@@ -308,6 +300,7 @@ const Value LuaScript::stack_to_value(lua_State *L, int start_index) {
 
 bool LuaScript::value_from_lua(lua_State *L, int index, Value *res) {
   int top = lua_gettop(L);
+
 
   if (index < 0) {
     index = top + index + 1; // -1 == top
@@ -341,7 +334,11 @@ bool LuaScript::value_from_lua(lua_State *L, int index, Value *res) {
     break;
   case LUA_TTABLE:
     res->set_empty();
-    return list_from_lua(L, index, res);
+    if (lua_objlen(L, index) == 0) {
+      return hash_from_lua(L, index, res);
+    } else {
+      return list_from_lua(L, index, res);
+    }
     break;
   case LUA_TUSERDATA:
     if (lua_is_userdata(L, index, "cv.Mat")) {
@@ -382,6 +379,29 @@ bool LuaScript::list_from_lua(lua_State *L, int index, Value *val) {
     lua_pop(L, 1);
   }
 
+  return true;
+}
+
+
+bool LuaScript::hash_from_lua(lua_State *L, int index, Value *res) {
+  int size = lua_objlen(L, index);
+  Value tmp;
+
+  // push a dummy key on the stack (lua_next starts by poping)
+  lua_pushnil(L);
+
+  while (lua_next(L, index) != 0) {
+    // we now have key (at -2) and value (at -1)
+    if (lua_type(L, -2) == LUA_TSTRING) {
+      // get value
+      if (value_from_lua(L, -1, &tmp)) {
+        res->set(lua_tostring(L, -2), tmp);
+      }
+    }
+
+    // remove value (key poped by lua_next)
+    lua_pop(L, 1);
+  }
   return true;
 }
 
@@ -548,6 +568,7 @@ void LuaScript::open_lua_lib(const char *name, lua_CFunction func)
   lua_pushcfunction(lua_, func);
   lua_pushstring(lua_, name);
   lua_call(lua_, 1, 0);
+  lua_settop(lua_, 0); // clear stack
 }
 
 
@@ -594,6 +615,8 @@ const Value LuaScript::eval(const char *script, size_t script_size) {
 
   // Run the script to create the functions.
   status = lua_pcall(lua_, 0, 0, 0); // 0 arg, 1 result, no error function
+  lua_settop(lua_, 0); // clear stack
+
   if (status) {
     // TODO: proper error reporting
     return Value(BAD_REQUEST_ERROR, std::string(lua_tostring(lua_, -1)).append("."));

@@ -54,7 +54,7 @@ public:
   }
 
   void test_view() {
-    assert_equal("Script", script_->view()[WIDGET_KEY].str());
+    assert_equal("\"Script\"", script_->attributes()[Attribute::VIEW][Attribute::WIDGET].to_json());
   }
 
   void test_compile( void ) {
@@ -81,7 +81,7 @@ public:
   }
 
   void test_add_inlet( void ) {
-    Value res = parse("inlet('tempo', {0.0, 'bpm', 'Main beat machine tempo.'})");
+    Value res = parse("inlet('tempo', RealIO('Main beat machine tempo.'))");
     assert_true(res.is_string());
     ObjectHandle inlet;
     assert_true(planet_->get_object_at("/lua/tempo", &inlet));
@@ -90,13 +90,13 @@ public:
     assert_equal("bpm", inlet->type()[1].str());
     assert_equal("Main beat machine tempo.", inlet->type()[2].str());
 
-    res = parse("inlet('tempo', {0.0, 'bpm', 'Main beat machine tempo.'})");
+    res = parse("inlet('tempo', RealIO('Main beat machine tempo.'))");
     assert_true(res.is_string()); // no error
   }
 
   void test_add_inlet_RealIO( void ) {
     // also tests loading of rubyk.lua
-    Value res = parse("inlet('tempo', RealIO('Main beat machine tempo [bpm].'))");
+    Value res = parse("inlet('tempo', Attribute::real_io('Main beat machine tempo [bpm].'))");
     assert_true(res.is_string());
     ObjectHandle inlet;
     assert_true(planet_->get_object_at("/lua/tempo", &inlet));
@@ -132,7 +132,7 @@ public:
 
   void test_add_inlet_BangIO( void ) {
     // also tests loading of rubyk.lua
-    Value res = parse("inlet('boom', BangIO('Ping pong.'))");
+    Value res = parse("inlet('boom', Attribute::bang_io('Ping pong.'))");
     assert_true(res.is_string());
     ObjectHandle inlet;
     assert_true(planet_->get_object_at("/lua/boom", &inlet));
@@ -186,7 +186,7 @@ public:
     assert_equal(matrix_value.matrix_->data, res.matrix_->data);
   }
 
-  void test_add_inlet_MatrixIO( void ) {
+  void test_add_inlet_matrix_io( void ) {
     // also tests loading of rubyk.lua
     Value res = parse("require('cv'); inlet('boom', MatrixIO('Ping pong.'))");
     assert_true(res.is_string());
@@ -194,6 +194,18 @@ public:
     assert_true(planet_->get_object_at("/lua/boom", &inlet));
     assert_equal("Ms", inlet->type().type_tag());
     assert_equal("Ping pong.", inlet->type()[1].str());
+  }
+
+  // ------------------------------------------------------------------------  Hash
+
+  void test_create_hash( void ) {
+    Value res = parse("function foo()\n return {one=1, two=2}\nend");
+    assert_true(res.is_string());
+    res = script_->call_lua("foo");
+    assert_true(res.is_hash());
+    std::ostringstream oss;
+    oss << res;
+    assert_equal("{\"one\":1, \"two\":2}", oss.str());
   }
 
   // ------------------------------------------------------------------------  Midi
@@ -242,7 +254,7 @@ public:
   }
 
   void test_add_outlet( void ) {
-    Value res = parse("force = Outlet('force', RealIO('Dark Force.'))");
+    Value res = parse("force = Outlet('force', Attribute::real_io('Dark Force.'))");
     assert_true(res.is_string());
     ObjectHandle outlet;
     assert_true(planet_->get_object_at("/lua/out/force", &outlet));

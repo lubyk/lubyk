@@ -38,7 +38,6 @@
 //#include <pthread.h>
 
 #include "rubyk/oscit.h"
-#include "rubyk/node_view.h"
 #include "rubyk/event.h"
 #include "rubyk/inlet.h"
 #include "rubyk/outlet.h"
@@ -61,31 +60,26 @@ class Node : public Object {
  public:
   TYPED("Object.Node")
 
-  Node() : Object("n", AnyIO("Node.")), worker_(NULL), looped_(false) {
+  Node() : Object("n", Attribute::string_io("Basic Node")), worker_(NULL), looped_(false) {
     // create a key to detect if we are running in an OpenGL thread
     if (!Node::sOpenGLThreadKey) pthread_key_create(&Node::sOpenGLThreadKey, NULL);
   }
 
-  virtual ~Node();
+  enum Defaults {
+    DefaultHue = 203,
+  };
 
-  /** Trigger for nodes calls methods if hash given or tries to call first inlet. */
+  /** Trigger for nodes is just an inspection method.
+   */
   virtual const Value trigger(const Value &val) {
-    if (val.is_hash()) {
-      return set(val);
-    } else if (!val.is_nil()) {
-      // call first method
-      ObjectHandle child;
-      if (first_child(&child) && child->can_receive(val)) {
-        return child->trigger(val);
-      } else {
-        return Value(BAD_REQUEST_ERROR, std::string("Invalid arguments for first method '").append(child->name()).append("'."));
-      }
-    }
     return do_inspect();
   }
 
+  virtual ~Node();
+
   const Value do_inspect() const;
 
+  /** FIXME: do we need this ? */
   virtual void inspect(Value *hash) const {}
 
   /** Add an inlet and set the inlet id that is used to sort outlet links.
@@ -134,14 +128,21 @@ class Node : public Object {
    */
   void sort_connections();
 
-  /** When this method is implemented in subclasses, it is used to
-   *  do a basic setup with default parameters before these
-   *  are changed by calling methods during runtime.
+  /** Set defaults, initialize before parameters are changed by calling
+   * methods during runtime.
+   * When overwriten by sub-classes, this method must always call the
+   * superclass' implementation.
    */
-  virtual const Value init() { return gNilValue; }
+  virtual const Value init() {
+    // set Script Widget
+    attributes_.set(Attribute::VIEW, Attribute::WIDGET, "Node");
+    attributes_.set(Attribute::VIEW, Attribute::HUE, (float)Node::DefaultHue);
+
+    return gNilValue;
+  }
 
   /** When this method is implemented in subclasses, it is used as
-   *  the last call in the initialization chain.
+   *  the last call in the initialization chain (after parameters are set).
    */
   virtual const Value start() { return gNilValue; }
 
@@ -158,63 +159,40 @@ class Node : public Object {
     fprintf(stderr, "Default Node::bang method called !\n");
   }
 
-  /** Set url for class. TODO: Maybe we should pass a pointer to the class in case it moves ?
-   * But then if it is removed ?
+  /** Set url for class used to create this Node.
    */
-  void set_class_url(const std::string &class_url) { class_url_ = class_url; }
-
-  const std::string &class_url() const { return class_url_; }
-
-  /** Return a hash representation of a Node.
-   * The result is like Object#insert_in_hash but with the 'class' parameter.
-   */
-  virtual void insert_in_hash(Value *result) {
-    // Class used to create this node
-    result->set(CLASS_KEY, class_url_);
-
-    result->set(VIEW_KEY, view());
-
-    this->Object::insert_in_hash(result);
+  void set_class_url(const Value &class_url) {
+    attributes_.set(Attribute::CLASS, class_url);
   }
 
-  /** View settings (color, position).
+  /** Get url of class object used to create this Node.
    */
-  virtual const Value view() {
-    Value view;
-    // Class to use in view (not the same as class to create Node)
-    view.set(WIDGET_KEY, "Node");
-
-    pos_.insert_in_hash(&view);
-
-    return view;
+  const Value class_url() const {
+    return attributes_[Attribute::CLASS];
   }
 
   /** Set object from a hash representation.
    */
-  virtual void from_hash(const Value &hash, Value *result) {
-    Value view = hash[VIEW_KEY];
-    Value view_result;
+  virtual const Value set(const Value &hash) {
+    Value view = hash[Attribute::VIEW];
 
     // class update ?
-    if (view.is_hash()) {
-      pos_.from_hash(view, &view_result);
+
+    // update trigger_position
+    Value pos;
+    if (view.get(Attribute::POS_X, &pos) && pos.is_real()) {
+      trigger_position_ = pos.r;
       sort_connections();
-      result->set(VIEW_KEY, view_result);
     }
 
     // trigger all normal methods
-    this->Object::from_hash(hash, result);
+    return this->Object::set(hash);
   }
 
   /** Used to sort outlet connections. A node with a high trigger position receives the value before
    * another node with a small trigger position, if they are both connected to the same outlet.
    */
-  inline Real pos_x() { return pos_.x_; }
-
-  /** Used to sort outlet connections. A node with a high trigger position receives the value before
-   * another node with a small trigger position, if they are both connected to the same outlet.
-   */
-  inline Real pos_y() { return pos_.y_; }
+  inline Real pos_x() { return trigger_position_; }
 
   /** Send a Value out of the first outlet. */
   inline void send(const Value &val) { send(1, val); }
@@ -304,15 +282,12 @@ class Node : public Object {
   /** When sending signals from a particular slot, a node with a small pos_.x_ (trigger position)
    * will receive the signal after a node that has a greater trigger position.
    */
-  NodeView pos_;
+  float trigger_position_;
  private:
 
   bool is_ok_;                   /**< If something bad arrived to the node during initialization or edit, the node goes into
                                   *   broken state and is_ok_ becomes false. In 'broken' mode, the node does nothing. */
   bool looped_;                  /**< Set to true if the node is currently called on every worker loop. */
-
-
-  std::string class_url_;        /**< Url for the node's class. */
 
   std::vector<Inlet*>  inlets_;  /**< List of inlets. This is used to sort outlet sending order on position change. */
   std::vector<Outlet*> outlets_; /**< List of outlets. */

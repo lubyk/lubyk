@@ -33,7 +33,7 @@ function inlet(port, name, type){
 }
 
 function RealIO(info) {
-  return {0.0, info}
+  return {info = info, type = {name = 'real', signature = 'f'}}
 }
 
 function bang(val)

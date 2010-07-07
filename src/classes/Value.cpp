@@ -55,6 +55,6 @@ private:
 
 extern "C" void init(Planet &planet) {
   Class * c = planet.classes()->declare<ValueNode>("Value", "Stores a value which can be sent again through Bang!.", "value: [initial value]");
-  METHOD(ValueNode, value, AnyIO("Set/get current value."))
-  OUTLET(ValueNode, value, AnyIO("Send the current value out."))
+  METHOD(ValueNode, value, Attribute::any_io("Set/get current value."))
+  OUTLET(ValueNode, value, Attribute::any_io("Send the current value out."))
 }

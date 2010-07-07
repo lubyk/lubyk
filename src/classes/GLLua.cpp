@@ -45,11 +45,16 @@ end"
  */
 class GLLua : public LuaScript {
 public:
-  const Value init() {
-    // insert dummy 'draw' and 'resize' methods
+  virtual const Value init() {
     view_width_  = 0;
     view_height_ = 0;
-    return lua_init(INIT_SCRIPT);
+
+    Value result = LuaScript::init();
+    if (result.is_error()) return result;
+
+
+    // insert dummy 'draw' and 'resize' methods
+    return eval(INIT_SCRIPT);
   }
 
   // inlet 1
@@ -91,7 +96,7 @@ extern "C" void init(Planet &planet) {
   // [1]
   METHOD(GLLua, draw, Value(Json("[0,0]")).push_back("Receives [width, height] from an OpenGL thread."))
 
-  ADD_SUPER_METHOD(GLLua, Script, file, StringIO("Path to script content [filepath]."))
-  ADD_SUPER_METHOD(GLLua, Script, script, StringIO("Script content [lua]."))
-  ADD_SUPER_METHOD(GLLua, Script, reload, RealIO("How often to stat file for reload [s]."))
+  ADD_SUPER_METHOD(GLLua, Script, file, Attribute::string_io("Path to script content [filepath]."))
+  ADD_SUPER_METHOD(GLLua, Script, script, Attribute::string_io("Script content [lua]."))
+  ADD_SUPER_METHOD(GLLua, Script, reload, Attribute::real_io("How often to stat file for reload [s]."))
 }
