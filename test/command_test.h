@@ -57,7 +57,7 @@ public:
   }
 
   void test_hash_argument_should_set( void ) {
-    assert_result("# <Print:/p prefix:\"print\">\n", "p = Print(prefix:'print' foo:34)\n");
+    assert_result("# {\"prefix\":\"print\", \"foo\":\"404 foo\"}\n", "p = Print(prefix:'print' foo:34)\n");
   }
 
   void test_print( void ) {

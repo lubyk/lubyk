@@ -40,7 +40,7 @@ PatchMethod::~PatchMethod() {
 /** Read/write the patch content as string.
  */
 const Value PatchMethod::trigger(const Value &hash) {
-  return planet_ ? planet_->patch(hash) : HashValue;
+  return planet_ ? planet_->patch(hash) : HashValue();
 }
 
 /** Save the patch to the filesystem. The argument is a filepath or nil.

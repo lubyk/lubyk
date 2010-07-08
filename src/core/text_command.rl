@@ -275,6 +275,7 @@ void TextCommand::change_link(char op) {
   print_result(root_->call(LINK_URL, list));
 }
 
+// FIXME: remove
 void TextCommand::execute_method() {
   Value res;
   // why doesn't this work ? Value params(Json(parameter_string_));
@@ -287,10 +288,7 @@ void TextCommand::execute_method() {
     // TODO: should 'set' live in normal tree space ?
     ObjectHandle target;
     if (root_->get_object_at(var_, &target)) {
-      // FIXME: this is not correct: we should make ALL objects thread-safe.
-      target->lock();
-        res = target->set(params);
-      target->unlock();
+      res = target->set(params);
     } else {
       res = ErrorValue(NOT_FOUND_ERROR, var_);
     }
@@ -311,9 +309,10 @@ void TextCommand::execute_class_method() {
   print_result(res);
 }
 
+
 void TextCommand::execute_command() {
   Value res;
-  Value params = Value(Json(parameter_string_));
+  JsonValue params(parameter_string_.c_str());
 
   DEBUG(std::cout << "CMD " << method_ << "(" << params << ")" << std::endl);
   if (method_ == "lib") {
@@ -325,7 +324,30 @@ void TextCommand::execute_command() {
     res = root_->call(QUIT_URL, gBangValue);
   } else {
     names_to_urls();
-    res = root_->call(method_, params);
+
+    ObjectHandle target;
+    if (root_->get_object_at(method_, &target)) {
+      if (target.type_cast<Node>()) {
+        // nodes do not have a trigger method
+        if (params.is_hash()) {
+          // set
+          res = target->set(params);
+        } else if (params.is_nil() || params.is_empty()) {
+          res = target->trigger(gNilValue); // = inspect
+        } else if (!target->first_child(&target)) {
+          // use first child
+          res = ErrorValue(NOT_FOUND_ERROR, method_).append(" no first child found.");
+        } else {
+          res = root_->call(target, params, NULL);
+        }
+      } else {
+        // not a Node
+        res = root_->call(target, params, NULL);
+      }
+    } else {
+      // object not found, let root deal with errors
+      res = root_->call(method_, params);
+    }
   }
   print_result(res);
 }
