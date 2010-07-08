@@ -55,6 +55,18 @@ void Node::sort_connections() {
   }
 }
 
+const Value Node::to_hash() {
+  ScopedRead lock(children_vector_);
+  Value result(attributes_); // make a copy (no need for a deep copy)
+  std::vector<Object*>::iterator it, end = children_vector_.end();
+
+  for(it = children_vector_.begin(); it != end; ++it) {
+    Object *obj = *it;
+    result.set(obj->name(), obj->to_hash());
+  }
+  return result;
+}
+
 const Value Node::do_inspect() const {
   HashValue hash;
   inspect(&hash);

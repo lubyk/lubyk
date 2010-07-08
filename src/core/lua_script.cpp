@@ -384,7 +384,6 @@ bool LuaScript::list_from_lua(lua_State *L, int index, Value *val) {
 
 
 bool LuaScript::hash_from_lua(lua_State *L, int index, Value *res) {
-  int size = lua_objlen(L, index);
   Value tmp;
 
   // push a dummy key on the stack (lua_next starts by poping)
@@ -600,7 +599,6 @@ void LuaScript::open_lua_libs() {
 }
 
 const Value LuaScript::eval(const char *script, size_t script_size) {
-
   int status;
 
   /* set 'current_time' */
@@ -615,13 +613,14 @@ const Value LuaScript::eval(const char *script, size_t script_size) {
 
   // Run the script to create the functions.
   status = lua_pcall(lua_, 0, 0, 0); // 0 arg, 1 result, no error function
-  lua_settop(lua_, 0); // clear stack
 
   if (status) {
-    // TODO: proper error reporting
-    return Value(BAD_REQUEST_ERROR, std::string(lua_tostring(lua_, -1)).append("."));
+    ErrorValue error(BAD_REQUEST_ERROR, std::string(lua_tostring(lua_, -1)).append("."));
+    lua_settop(lua_, 0); // clear stack
+    return error;
   }
 
+  lua_settop(lua_, 0); // clear stack
   return Value(script);
 }
 

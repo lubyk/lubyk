@@ -50,17 +50,22 @@ public:
     Root base;
     Real value = 0;
     DummyNode *node = base.adopt(new DummyNode(&value));
-    Object *out  = node->adopt(new Object(NODE_OUT_KEY));
-    out->adopt(new Outlet(node, "ping", Attribute::real_io("Sends real values.")));
-    assert_equal("{\"widget\":\"Node\", \"x\":0, \"y\":0, \"width\":60, \"height\":20, \"hue\":203}", node->attributes()[Attribute::VIEW].to_json());
+    assert_equal("null", node->attributes()[Attribute::VIEW].to_json());
+    node->init();
+    assert_equal("{\"widget\":\"Node\", \"hue\":203}", node->attributes()[Attribute::VIEW].to_json());
   }
 
-  void test_hash( void ) {
+  void test_to_hash( void ) {
     Root base;
     Real value = 0;
     DummyNode *node = base.adopt(new DummyNode(&value));
+    node->init();
     Object *out  = node->adopt(new Object(NODE_OUT_KEY));
     out->adopt(new Outlet(node, "ping", Attribute::real_io("Sends real values.")));
-    assert_equal("{\"@class\":\"\", \"@view\":{\"widget\":\"Node\", \"x\":0, \"y\":0, \"width\":60, \"height\":20, \"hue\":203}, \"out\":{\"ping\":{\"@type\":0}}}", node->to_hash().to_json());
+    Value hash(node->to_hash());
+    assert_equal("\"Basic Node\"", hash[Attribute::INFO].to_json());
+    assert_equal("{\"name\":\"string\", \"signature\":\"s\"}", hash[Attribute::TYPE].to_json());
+    assert_equal("\"Node\"", hash[Attribute::VIEW][Attribute::WIDGET].to_json());
+    assert_equal("{\"@info\":\"Sends real values.\", \"@type\":{\"name\":\"real\", \"signature\":\"f\"}}", hash[NODE_OUT_KEY]["ping"].to_json());
   }
 };

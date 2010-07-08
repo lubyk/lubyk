@@ -59,16 +59,18 @@ void Outlet::send(const Value &val) {
   }
 }
 
-void Outlet::insert_in_hash(Value *result) {
-  ScopedLock lock(connected_inlets_);
+const Value Outlet::to_hash() {
+  Value result(attributes_);
 
-  LinkedList<Inlet*> *it = connected_inlets_.begin();
-  result->set(Attribute::TYPE, type().first());
-
-  while(it) {
-    result->set(it->obj->url(), HashValue());
-    it = it->next;
+  { ScopedLock lock(connected_inlets_);
+    LinkedList<Inlet*> *it = connected_inlets_.begin();
+    while(it) {
+      result.set(it->obj->url(), HashValue());
+      it = it->next;
+    }
   }
+
+  return result;
 }
 
 void Outlet::register_in_node() {
@@ -97,6 +99,7 @@ void Outlet::disconnect(Inlet *inlet) {
 }
 
 bool Outlet::add_connection(Inlet *inlet) {
+  if (type_id() == NO_TYPE_TAG_ID) return false;
   if (inlet->can_receive(type_id())) {
     // inlet can receive our type
     // OrderedList makes sure the link is not created again if it already exists.

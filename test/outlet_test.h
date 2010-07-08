@@ -100,8 +100,10 @@ public:
     // bang --> any
     assert_true(o_bang.connect(&i_any));
 
-    // bang connects to everything
-    assert_true(o_bang.connect(&i_no  ));
+    // bang does not connect to noIO
+    assert_false(o_bang.connect(&i_no ));
+
+    // bang connects to everything else
     assert_true(o_bang.connect(&i_real));
     assert_true(o_bang.connect(&i_str ));
     assert_true(o_bang.connect(&i_hash));
@@ -228,26 +230,28 @@ public:
   void test_out_list( void ) {
     Real value = 0;
     DummyNode counter(&value);
-    Outlet o_list( &counter, JsonValue("[['',0,''], 'ho', 'ha', 'three', 'Info.']"));
+    Outlet o_list( &counter, Attribute::io("Info.", "blah", "sfs"));
     Inlet  i_no(   &counter, "", OutletTest_receive_value1, Attribute::no_io("Don't hit me."));
     Inlet  i_bang( &counter, "", OutletTest_receive_value1, Attribute::bang_io("Receives bang values."));
     Inlet  i_real( &counter, "", OutletTest_receive_value1, Attribute::real_io("Receive real values."));
     Inlet  i_str(  &counter, "", OutletTest_receive_value1, Attribute::string_io("Receive string values."));
     Inlet  i_hash( &counter, "", OutletTest_receive_value1, Attribute::hash_io("Any description."));
     Inlet  i_mat(  &counter, "", OutletTest_receive_value1, Attribute::matrix_io("A matrix."));
-    Inlet  i_list( &counter, "", OutletTest_receive_value1, Attribute::io("Info.", "list1", "sfs"));  // should connection match take signature or name ?
-    Inlet  i_list2(&counter, "", OutletTest_receive_value1, Attribute::io("Info.", "list2", "sf"));   // should connection match take signature or name ?
-    Inlet  i_list3(&counter, "", OutletTest_receive_value1, Attribute::io("Info.", "list3", "sfss")); // should connection match take signature or name ?
+    Inlet  i_list( &counter, "", OutletTest_receive_value1, Attribute::io("Info.", "list1", "sfs"));  // match on signature or name ?
+    Inlet  i_list2(&counter, "", OutletTest_receive_value1, Attribute::io("Info.", "list2", "sf"));   // match on signature or name ?
+    Inlet  i_list3(&counter, "", OutletTest_receive_value1, Attribute::io("Info.", "list3", "sfss")); // match on signature or name ?
     Inlet  i_any(  &counter, "", OutletTest_receive_value1, Attribute::any_io("Blah."));
 
     // connection initiated by outlet
 
     // list --> list
     assert_true(o_list.connect(&i_list));
+
     // list --> any
     assert_true(o_list.connect(&i_any));
-    // list --> shorter list
-    assert_true(o_list.connect(&i_list2));
+
+    // list --> shorter list (does not match for now)
+    assert_false(o_list.connect(&i_list2));
 
     // others should fail
     assert_false(o_list.connect(&i_no));
@@ -390,6 +394,14 @@ public:
     DummyNode sender(&value);
     DummyNode receiver1(&value);
     DummyNode receiver2(&value);
+
+    receiver1.set(Value(Json("{@view:{x:1.0}}"))); // should trigger last
+    receiver2.set(Value(Json("{@view:{x:2.0}}"))); // should trigger first
+
+    // make sure trigger position is properly set
+    assert_equal(1.0, receiver1.pos_x());
+    assert_equal(2.0, receiver2.pos_x());
+
     Outlet outlet(&sender, Attribute::real_io("Receive real values."));
     Inlet  inlet1(&receiver1, "", OutletTest_receive_value1, Attribute::real_io("Receive real values."));
     Inlet  inlet2(&receiver2, "", OutletTest_receive_value2, Attribute::real_io("Receive real values."));
@@ -446,7 +458,7 @@ public:
     outlet->link(Value(receiver1->url())); // should find /receiver1/pong
     outlet->link(Value("/n-1/mac"));
 
-    assert_equal("{\"@type\":0, \"/n-1/mac\":{}, \"/n-1/mic\":{}}", outlet->to_hash().to_json());
+    assert_equal("{\"@info\":\"Receive real values.\", \"@type\":{\"name\":\"real\", \"signature\":\"f\"}, \"/n-1/mac\":{}, \"/n-1/mic\":{}}", outlet->to_hash().to_json());
   }
 };
 

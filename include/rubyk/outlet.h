@@ -93,7 +93,7 @@ public:
   /** Return a hash representation of an Outlet.
    * The result is an array of linked targets.
    */
-  virtual void insert_in_hash(Value *result);
+  virtual const Value to_hash();
 
   /** Create a link.
    * example: /m/out/counter/link /n/in/tempo  --> create a link

@@ -80,15 +80,42 @@ public:
     assert_false(script_->is_ok());
   }
 
+  void test_exception_thrown_in_lua( void ) {
+    Value res = parse("require('cv'); function foo()\n cv.subtract(cv.Mat(3,3,cv.CV_32FC1), cv.Mat(3,3,cv.CV_32FC2), cv.Mat(3,3,cv.CV_32FC2))\nend");
+    assert_true(res.is_string());
+    res = script_->call_lua("foo", gNilValue);
+    assert_true(res.is_error());
+    assert_equal("Could not call foo(null): cv.subtract: failed (-215) size == src2.size() && type == src2.type() && func != 0 in function subtract\n", res.error_message());
+  }
+
+  // ------------------------------------------------------------------------  rk.
+
+  void test_rk_call( void ) {
+    // also tests loading of rubyk.lua
+    Value res = parse("function foo() return rk.call('/class/lib'); end");
+    assert_true(res.is_string());
+    res = script_->call_lua("foo", gNilValue);
+    assert_equal("\"lib:~/rubyk/lib:/usr/local/lib/rubyk\"", res.to_json());
+  }
+
+  // ------------------------------------------------------------------------  Nil
+
+  void test_call_lua_with_nil( void ) {
+    Value res = parse("function foo()\n return 45\nend");
+    assert_true(res.is_string());
+    res = script_->call_lua("foo", gNilValue);
+    assert_equal(45.0, res.r);
+  }
+
+  // ------------------------------------------------------------------------  Real
+
   void test_add_inlet( void ) {
     Value res = parse("inlet('tempo', RealIO('Main beat machine tempo.'))");
     assert_true(res.is_string());
     ObjectHandle inlet;
     assert_true(planet_->get_object_at("/lua/tempo", &inlet));
-    assert_equal("fss", inlet->type().type_tag());
-    assert_equal(0.0, inlet->type()[0].r);
-    assert_equal("bpm", inlet->type()[1].str());
-    assert_equal("Main beat machine tempo.", inlet->type()[2].str());
+    assert_equal("\"f\"", inlet->attributes()[Attribute::TYPE][Attribute::SIGNATURE].to_json());
+    assert_equal("\"Main beat machine tempo.\"", inlet->attributes()[Attribute::INFO].to_json());
 
     res = parse("inlet('tempo', RealIO('Main beat machine tempo.'))");
     assert_true(res.is_string()); // no error
@@ -96,13 +123,24 @@ public:
 
   void test_add_inlet_RealIO( void ) {
     // also tests loading of rubyk.lua
-    Value res = parse("inlet('tempo', Attribute::real_io('Main beat machine tempo [bpm].'))");
+    Value res = parse("inlet('tempo', RangeIO('Main beat machine tempo [bpm].', 0, 5000))");
     assert_true(res.is_string());
     ObjectHandle inlet;
     assert_true(planet_->get_object_at("/lua/tempo", &inlet));
-    assert_equal("fs", inlet->type().type_tag());
-    assert_equal(0.0, inlet->type()[0].r);
-    assert_equal("Main beat machine tempo [bpm].", inlet->type()[1].str());
+    Value attrs(inlet->attributes());
+    assert_equal("\"f\"", attrs[Attribute::TYPE][Attribute::SIGNATURE].to_json());
+    assert_equal("0", attrs[Attribute::TYPE][Attribute::MIN].to_json());
+    assert_equal("5000", attrs[Attribute::TYPE][Attribute::MAX].to_json());
+    assert_equal("\"Main beat machine tempo [bpm].\"", attrs[Attribute::INFO].to_json());
+  }
+
+  void test_add_outlet_RealIO( void ) {
+    Value res = parse("force = Outlet('force', RealIO('Dark Force.'))");
+    assert_true(res.is_string());
+    ObjectHandle outlet;
+    assert_true(planet_->get_object_at("/lua/out/force", &outlet));
+    assert_equal("\"f\"", outlet->attributes()[Attribute::TYPE][Attribute::SIGNATURE].to_json());
+    assert_equal("\"Dark Force.\"", outlet->attributes()[Attribute::INFO].to_json());
   }
 
   // ------------------------------------------------------------------------  False
@@ -132,12 +170,12 @@ public:
 
   void test_add_inlet_BangIO( void ) {
     // also tests loading of rubyk.lua
-    Value res = parse("inlet('boom', Attribute::bang_io('Ping pong.'))");
+    Value res = parse("inlet('boom', BangIO('Ping pong.'))");
     assert_true(res.is_string());
     ObjectHandle inlet;
     assert_true(planet_->get_object_at("/lua/boom", &inlet));
-    assert_equal("Ts", inlet->type().type_tag());
-    assert_equal("Ping pong.", inlet->type()[1].str());
+    assert_equal("\"T\"", inlet->attributes()[Attribute::TYPE][Attribute::SIGNATURE].to_json());
+    assert_equal("\"Ping pong.\"", inlet->attributes()[Attribute::INFO].to_json());
   }
 
   // ------------------------------------------------------------------------  Impulse
@@ -162,8 +200,8 @@ public:
   //   assert_true(res.is_string());
   //   ObjectHandle inlet;
   //   assert_true(planet_->get_object_at("/lua/boom", &inlet));
-  //   assert_equal("Is", inlet->type().type_tag());
-  //   assert_equal("Ping pong.", inlet->type()[1].str());
+  //   assert_equal("I", inlet->attributes()[Attribute::TYPE][Attribute::SIGNATURE].to_json());
+  //   assert_equal("\"Ping pong.\"", inlet->attributes()[Attribute::INFO].to_json());
   // }
 
   // ------------------------------------------------------------------------  Matrix
@@ -186,14 +224,14 @@ public:
     assert_equal(matrix_value.matrix_->data, res.matrix_->data);
   }
 
-  void test_add_inlet_matrix_io( void ) {
+  void test_add_inlet_MatrixIO( void ) {
     // also tests loading of rubyk.lua
     Value res = parse("require('cv'); inlet('boom', MatrixIO('Ping pong.'))");
     assert_true(res.is_string());
     ObjectHandle inlet;
     assert_true(planet_->get_object_at("/lua/boom", &inlet));
-    assert_equal("Ms", inlet->type().type_tag());
-    assert_equal("Ping pong.", inlet->type()[1].str());
+    assert_equal("\"M\"", inlet->attributes()[Attribute::TYPE][Attribute::SIGNATURE].to_json());
+    assert_equal("\"Ping pong.\"", inlet->attributes()[Attribute::INFO].to_json());
   }
 
   // ------------------------------------------------------------------------  Hash
@@ -239,8 +277,8 @@ public:
     assert_true(res.is_string());
     ObjectHandle inlet;
     assert_true(planet_->get_object_at("/lua/boom", &inlet));
-    assert_equal("ms", inlet->type().type_tag());
-    assert_equal("Ping pong.", inlet->type()[1].str());
+    assert_equal("\"m\"", inlet->attributes()[Attribute::TYPE][Attribute::SIGNATURE].to_json());
+    assert_equal("\"Ping pong.\"", inlet->attributes()[Attribute::INFO].to_json());
   }
 
   void test_add_outlet_MidiIO( void ) {
@@ -249,47 +287,17 @@ public:
     assert_true(res.is_string());
     ObjectHandle outlet;
     assert_true(planet_->get_object_at("/lua/out/boom", &outlet));
-    assert_equal("ms", outlet->type().type_tag());
-    assert_equal("Ping pong.", outlet->type()[1].str()); // info
+    assert_equal("\"m\"", outlet->attributes()[Attribute::TYPE][Attribute::SIGNATURE].to_json());
+    assert_equal("\"Ping pong.\"", outlet->attributes()[Attribute::INFO].to_json());
   }
 
-  void test_add_outlet( void ) {
-    Value res = parse("force = Outlet('force', Attribute::real_io('Dark Force.'))");
-    assert_true(res.is_string());
-    ObjectHandle outlet;
-    assert_true(planet_->get_object_at("/lua/out/force", &outlet));
-    assert_equal("fs", outlet->type().type_tag());
-    assert_equal("Dark Force.", outlet->type()[1].str()); // info
-  }
+  // ------------------------------------------------------------------------  List
 
   void test_call_lua( void ) {
     Value res = parse("function foo(x,y)\n return x+y\nend");
     assert_true(res.is_string());
     res = script_->call_lua("foo", Value(5).push_back(9));
     assert_equal(14.0, res.r);
-  }
-
-  void test_call_lua_with_nil( void ) {
-    Value res = parse("function foo()\n return 45\nend");
-    assert_true(res.is_string());
-    res = script_->call_lua("foo", gNilValue);
-    assert_equal(45.0, res.r);
-  }
-
-  void test_exception_thrown_in_lua( void ) {
-    Value res = parse("require('cv'); function foo()\n cv.subtract(cv.Mat(3,3,cv.CV_32FC1), cv.Mat(3,3,cv.CV_32FC2), cv.Mat(3,3,cv.CV_32FC2))\nend");
-    assert_true(res.is_string());
-    res = script_->call_lua("foo", gNilValue);
-    assert_true(res.is_error());
-    assert_equal("Could not call foo(null): cv.subtract: failed (-215) size == src2.size() && type == src2.type() && func != 0 in function subtract\n", res.error_message());
-  }
-
-  void test_rk_call( void ) {
-    // also tests loading of rubyk.lua
-    Value res = parse("function foo() return rk.call('/class/lib'); end");
-    assert_true(res.is_string());
-    res = script_->call_lua("foo", gNilValue);
-    assert_equal("\"lib:~/rubyk/lib:/usr/local/lib/rubyk\"", res.to_json());
   }
 
   // sending tested in LuaTest

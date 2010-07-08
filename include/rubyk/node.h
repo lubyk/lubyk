@@ -75,6 +75,10 @@ class Node : public Object {
     return do_inspect();
   }
 
+  /** Serialize Node into a hash.
+   */
+  virtual const Value to_hash();
+
   virtual ~Node();
 
   const Value do_inspect() const;

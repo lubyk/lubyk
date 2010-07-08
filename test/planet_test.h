@@ -34,14 +34,14 @@ public:
   void test_to_hash( void ) {
     setup("m = Metro(115)\nv = Value(15)\nm => v\n");
     Value patch_def = planet_->to_hash();
-    assert_equal("{\"x\":10, \"y\":10, \"width\":500, \"height\":300, \"hue\":203}", patch_def[Attribute::VIEW].to_json());
+    assert_equal("{\"x\":10, \"y\":10, \"width\":500, \"height\":300}", patch_def[Attribute::VIEW].to_json());
     // just to make sure objects are inserted
     assert_equal("115", patch_def[NODES_KEY]["m"]["tempo"].to_json());
   }
 
   // create a node
   void test_set( void ) {
-    Value res = planet_->set(Value(Json("{nodes:{foo:{\"@class\":\"/class/Value\"}}}")));
+    Value res = planet_->set(JsonValue("{nodes:{foo:{\"@class\":\"/class/Value\"}}}"));
     ObjectHandle foo;
     assert_true(planet_->get_object_at("/foo", &foo));
     Value foo_hash = foo->to_hash();
