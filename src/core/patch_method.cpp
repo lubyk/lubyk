@@ -40,7 +40,7 @@ PatchMethod::~PatchMethod() {
 /** Read/write the patch content as string.
  */
 const Value PatchMethod::trigger(const Value &hash) {
-  return planet_ ? planet_->patch(hash) : gNilValue;
+  return planet_ ? planet_->patch(hash) : HashValue;
 }
 
 /** Save the patch to the filesystem. The argument is a filepath or nil.
@@ -57,6 +57,7 @@ void PatchMethod::adopted() {
     adopt(new TMethod<Planet, &Planet::set>(planet_, "update", Attribute::hash_io("Hash to update patch.")));
 //    adopt(new TMethod<PatchMethod, &PatchMethod::save>(this, "save", Attribute::string_io("Filepath to save patch to.")));
   } else {
+    std::cerr << "Could not set PatchMethod's 'planet' from 'root'\n";
     // error
   }
 }

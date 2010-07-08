@@ -52,8 +52,8 @@ public:
   void test_create_link( void ) {
     setup_with_print("p = Print()\nv = Value(15)\n"); // n => p by default so "v" is not linked to p
     Value res = planet_->set(Value(Json("{nodes:{v:{out:{value:{\"/p/print\":{}}}}}}")));
-    assert_equal("{}", res["nodes"]["v"]["out"]["value"]["/p/print"].to_json());
+    assert_equal("{}", res[NODES_KEY]["v"]["out"]["value"]["/p/print"].to_json());
 
-    assert_print("p: 123\n", "v(123)\n");
+    assert_print("p: 123\n", "v/value(123)\n");
   }
 };

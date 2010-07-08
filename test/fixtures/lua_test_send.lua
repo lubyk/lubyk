@@ -1,5 +1,5 @@
-inlet('value', Attribute::real_io('Any real value.'))
-plus = Outlet('plus', Attribute::real_io('Input value plus one.'))
+inlet('value', RealIO('Any real value.'))
+plus = Outlet('plus', RealIO('Input value plus one.'))
 
 function value(r)
   if r then

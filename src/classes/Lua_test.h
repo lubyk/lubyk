@@ -39,20 +39,18 @@ public:
     obj = NULL;
     assert_true(planet_->get_object_at("/n/out/plus", &obj));
     assert_true(obj->kind_of(Outlet));
-    assert_print("p: 2\n", "n/in/value(1)\n");
+    assert_print("p: 2\n", "n/value(1)\n");
   }
 
   void test_to_hash( void ) {
     setup("n=Lua('../test/fixtures/lua_test_send.lua')\n");
     ObjectHandle lua;
-    planet_->get_object_at("/n", &lua);
-    Node *node = TYPE_CAST(Node, lua.ptr());
+    assert(planet_->get_object_at("/n", &lua));
 
-    Value hash = node->to_hash();
+    Value hash = lua->to_hash();
     assert_false(hash.has_key("script"));
-
-    assert_equal("/class/Lua", hash["@class"].str());
-    assert_equal("Script", hash["@view"]["widget"].str());
+    assert_equal("\"/class/Lua\"", hash[Attribute::CLASS].to_json());
+    assert_equal("\"Script\"", hash[Attribute::VIEW][Attribute::WIDGET].to_json());
   }
 
 };

@@ -119,7 +119,8 @@ void Outlet::sort_connections() {
 }
 
 
-void Outlet::set(const Value &hash, Value *results) {
+const Value Outlet::set(const Value &hash) {
+  Value result;
   HashIterator it;
   HashIterator end = hash.end();
   Value param;
@@ -134,21 +135,22 @@ void Outlet::set(const Value &hash, Value *results) {
         // disconnect
         change_result = change_link('d', Value(*it));
         if (change_result.is_error()) {
-          results->set(*it, change_result);
+          result.set(*it, change_result);
         } else {
-          results->set(*it, gNilValue);
+          result.set(*it, gNilValue);
         }
       } else {
         // connect
         change_result = change_link('c', Value(*it));
         if (change_result.is_error()) {
-          results->set(*it, change_result);
+          result.set(*it, change_result);
         } else {
-          results->set(*it, HashValue());
+          result.set(*it, HashValue());
         }
       }
     }
   }
+  return result;
 }
 
 const Value Outlet::change_link(unsigned char operation, const Value &val) {

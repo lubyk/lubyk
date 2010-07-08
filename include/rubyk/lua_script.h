@@ -97,7 +97,7 @@ public:
    * information is present.
    */
   virtual const Value to_hash() {
-   Value result = Object::to_hash();
+   Value result = Node::to_hash();
 
    if (result.has_key("file")) {
      result.remove("script");

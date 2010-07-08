@@ -71,6 +71,8 @@ bool Planet::expose_views(const std::string &path, Value *error) {
     ObjectHandle views;
     if (get_object_at(VIEWS_PATH, &views)) {
       views->adopt(new PatchMethod(Url(PATCH_VIEW_URL).name(), "patch.rks"));
+    } else {
+      std::cerr << "Could not expose patch view: " << VIEWS_PATH << " not found.\n";
     }
     return true;
   }
@@ -217,7 +219,7 @@ const Value Planet::patch(const Value &hash) {
 /** Update the content of the nodes by doing a deep merge.
  */
 const Value Planet::set(const Value &hash) {
-  if (!hash.is_hash()) return HashValue(); // empty hash ?
+  if (!hash.is_hash()) return HashValue(); // empty hash
 
   Value nodes;
   Value all_but_nodes(hash); // copy

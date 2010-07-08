@@ -129,10 +129,16 @@ public:
       }
     }
 
-    if (!res.contains_error()) res = node->start();
+    if (res.contains_error()) {
+      node->set_is_ok(false);
+      return res;
+    }
 
-    node->set_is_ok(!res.is_error());
-    if (res.is_error()) return res;
+    res = node->start();
+    if (res.contains_error()) {
+      node->set_is_ok(false);
+      return res;
+    }
 
     return Value(node->url());
   }

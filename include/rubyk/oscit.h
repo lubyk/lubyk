@@ -34,6 +34,7 @@
 using namespace oscit;
 
 // TODO move this in a types.h file ?
+
 #define CLASS_URL   "/class"
 #define PATCH_VIEW_URL "/views/patch"
 

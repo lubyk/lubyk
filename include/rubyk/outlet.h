@@ -79,15 +79,18 @@ public:
    * TODO: replace 'update' by trigger and fix type_ (type is wrong, it's not the
    * trigger type but the connection type).
    */
-  virtual void set(const Value &hash, Value *results);
+  virtual const Value set(const Value &hash);
 
-  /** Inform the node about the existence of this outlet (direct callback). */
+  /** @internal. Inform the node about the existence of this outlet (direct callback).
+   */
   void register_in_node();
 
-  /** Inform the node that this outlet is about to disappear. */
+  /** @internal. Inform the node that this outlet is about to disappear.
+   */
   void unregister_in_node();
 
-  /** Send the signal to all connections. Do nothing if there are no connections. */
+  /** Send the signal to all connections. Do nothing if there are no connections.
+   */
   void send(const Value &val);
 
   /** Return a hash representation of an Outlet.

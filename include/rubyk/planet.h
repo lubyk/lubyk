@@ -131,8 +131,8 @@ class Planet : public Root {
    */
   virtual void quit();
 
-  /** Set/update the whole patch from a hash representation. If the value is nil,
-   * return the full hash representation.
+  /** Update the patch from a hash representation (by doing a deep merge). If the value is nil,
+   * return an empty hash.
    */
   virtual const Value set(const Value &hash);
 
@@ -141,7 +141,7 @@ class Planet : public Root {
    */
   virtual const Value to_hash();
 
-  /** Set/get the patch from a hash representation. If the value is nil,
+  /** Set/get the full patch from a hash representation. If the value is nil,
    * return the full view.
    */
   const Value patch(const Value &hash);
