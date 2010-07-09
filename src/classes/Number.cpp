@@ -33,26 +33,30 @@ using namespace rk;
 class NumberNode : public Node
 {
 public:
-  NumberNode() {
-    printf("[%p] NumberNode\n", this);
-  }
-
-  virtual ~NumberNode() {
-    printf("[%p] ~NumberNode\n", this);
-  }
 
   // [1] set/get value, send value
   const Value value(const Value &val) {
-    printf("[%p] NumberNode::value\n", this);
-    if (!val.is_nil()) {
+    if (val.is_nil()) {
+      return value_;
+    }
+
+    if (!val.is_bang()) {
       value_ = val;
     }
+
     send(value_);
     return value_;
   }
 
   virtual void inspect(Value *hash) const {
-    hash->set("number", value_);
+    hash->set("value", value_);
+  }
+
+  /** Default key to use when creating an object without a hash definition.
+   * This means that Number(3) is the same as Number(value:3).
+   */
+  virtual const char *default_set_key() const {
+    return "value";
   }
 
 private:

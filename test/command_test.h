@@ -65,88 +65,95 @@ public:
     assert_print("p: 34\n", "n/value(true)\n");
   }
 
+  void test_parse_zero( void )
+  { assert_result("# <Number:/v1 value:0>\n", "v1=Number(0)\n"); }
 
-//  void test_parse_zero( void )
-//  { assert_result("v1=Number(0)\n","<Number:/v1 0.00>\n"); }
-//
-//  void test_parse_zero_dot_int( void )
-//  { assert_result("v1=Number(0.1)\n","<Number:/v1 0.10>\n"); }
-//
-//  void test_parse_command_with_spaces( void )
-//  { assert_result("v1 = Number(2)\n\n","<Number:/v1 2.00>\n"); }
-//
-//  void test_parse_multiline_string( void )
-//  { assert_result("t=Test(\"I love you (a lot)\nwhen you're naked...\")\n","<Test:/t \'I love you (a lot)\nwhen you\'re naked...\' counter:0>\n"); }
-//
-//  void test_parse_integer( void )
-//  { assert_result("v1 = Number(2.35)\n\n","<Number:/v1 2.35>\n"); }
-//
-//  void test_parse_real( void )
-//  { assert_result("v1 = Number(2.35)\n\n","<Number:/v1 2.35>\n"); }
-//
-//  void test_parse_negative_integer( void )
-//  { assert_result("v1 = Number(-5)\n\n","<Number:/v1 -5.00>\n"); }
-//
-//  void test_parse_negative_real( void )
-//  { assert_result("v1 = Number(-2.35)\n\n","<Number:/v1 -2.35>\n"); }
-//
-//  void test_execute_method( void )
-//  { assert_result("v1=Counter(3)\nv1.bang\nv1\n","<Counter:/v1 3.00 (+1.00)>\n<Counter:/v1 4.00 (+1.00)>\n"); }
-//
-//  void test_inspect_command( void )
-//  { assert_print("i=Counter(14)\ni\n","<Counter:/i 14.00 (+1.00)>\n"); }
-//
-//  void test_syntax_error( void )
-//  { assert_result("i=Counter(1)\n4\ni\n","<Counter:/i 1.00 (+1.00)>\nSyntax error near '\n4\ni\n'.\n<Counter:/i 1.00 (+1.00)>\n"); }
-//
-//  void test_execute_accessor_with_params( void )
-//  { assert_result("i=Counter(1)\ni.increment(5)\ni.bang\ni\n","<Counter:/i 1.00 (+1.00)>\n5.00\n<Counter:/i 6.00 (+5.00)>\n"); }
-//
-//  void test_execute_set( void )
-//  { assert_result("i=Counter(1)\ni.set(counter:4 increment:5)\ni.bang\ni\n","<Counter:/i 1.00 (+1.00)>\n<Counter:/i 9.00 (+5.00)>\n"); }
-//
-//  void test_execute_set_value( void )
-//  { assert_result("i=Counter(1)\ni.set(5)\ni.bang\ni\n","<Counter:/i 1.00 (+1.00)>\n<Counter:/i 6.00 (+1.00)>\n"); }
-//
-//  void test_bang_shortcut( void )
-//  { assert_result("i=Counter(1)\ni.b\ni\n","<Counter:/i 1.00 (+1.00)>\n<Counter:/i 2.00 (+1.00)>\n"); }
-//
-//  void test_execute_class_method( void )
-//  { assert_result("Test.hello\n","Hello: Nil\n"); }
-//
-//  void test_parse_link( void )
-//  {
-//    assert_result("n.out=>in.p\n",""); // just make sure there is no parse error
-//  }
-//
-//  void test_parse_unLink( void )
-//  {
-//    setup_with_print("n=Number(1)\n");
-//    assert_print("n // p\nn.bang()\n","");
-//  }
-//
-//  void test_print( void )
-//  {
-//    setup_with_print("n=Number(7)\n");
-//    assert_print("n.bang()\n","7.00\n");
-//  }
-//
-//  void test_parse_first_links( void )
-//  { assert_result("n=>p\n",""); }
-//
-//  void test_parse_bad_links( void )
-//  { assert_result("n=>\n","Syntax error near '>\n'.\n"); }
-//
-//  void test_create_same_name( void )
-//  { // It is not very clear what we should have here. I think replacing is not an option.
-//    assert_result("v=>p\nv=Number()\np=Print()\nv=Print()\np=Number()\n",
-//                  "<Number:/v Nil>\n<Print:/p >\n<Print:/v-1 >\n<Number:/p-1 Nil>\n");
-//
-//  }
-//
-//  void test_comment( void )
-//  { assert_result("v1=Number()    # this is a comment\n",     "<Number:/v1 Nil>\n");
-//    assert_result("v2=Number()    # this is a comment\n",      "<Number:/v2 Nil>\n");
-//    assert_result("v3=Number(4.02)#this is a comment\n# bobob\n", "<Number:/v3 4.02>\n");
-//  }
+  void test_parse_zero_dot_int( void )
+  { assert_result("# <Number:/v1 value:0.1>\n", "v1=Number(0.1)\n"); }
+
+  void test_parse_command_with_spaces( void )
+  { assert_result("# <Number:/v1 value:2>\n", "v1 = Number(2)\n\n"); }
+
+  void test_parse_multiline_string( void )
+  { assert_result("<Test:/t \'I love you (a lot)\nwhen you\'re naked...\' counter:0>\n", "t=Test(\"I love you (a lot)\nwhen you're naked...\")\n"); }
+
+  void test_parse_integer( void )
+  { assert_result("# <Number:/v1 value:235>\n", "v1 = Number(235)\n\n"); }
+
+  void test_parse_real( void )
+  { assert_result("# <Number:/v1 value:2.35>\n", "v1 = Number(2.35)\n\n"); }
+
+  void test_parse_negative_integer( void )
+  { assert_result("# <Number:/v1 value:-5>\n", "v1 = Number(-5)\n\n"); }
+
+  void test_parse_negative_real( void )
+  { assert_result("# <Number:/v1 value:-2.35>\n", "v1 = Number(-2.35)\n\n"); }
+
+  // Do we want to keep this ?
+  void test_execute_method( void )
+  { assert_result("<Counter:/v1 3.00 (+1.00)>\n<Counter:/v1 4.00 (+1.00)>\n", "v1=Counter(3)\nv1.bang\nv1\n"); }
+
+  void test_execute_command( void )
+  { assert_result("<Counter:/v1 3.00 (+1.00)>\n<Counter:/v1 4.00 (+1.00)>\n", "v1=Counter(3)\nv1.bang\nv1\n"); }
+
+  void test_execute_bang_command( void )
+  {
+    setup_with_print("n=Number(1)\n");
+    assert_print("p: 1\n", "n/value!\n");
+  }
+
+  void test_inspect_command( void )
+  { assert_result("<Counter:/i 14.00 (+1.00)>\n", "i=Counter(14)\ni\n"); }
+
+  void test_syntax_error( void )
+  { assert_result("<Counter:/i 1.00 (+1.00)>\nSyntax error near '\n4\ni\n'.\n<Counter:/i 1.00 (+1.00)>\n", "i=Counter(1)\n4\ni\n"); }
+
+  void test_execute_accessor_with_params( void )
+  { assert_result("<Counter:/i 1.00 (+1.00)>\n5.00\n<Counter:/i 6.00 (+5.00)>\n", "i=Counter(1)\ni.increment(5)\ni.bang\ni\n"); }
+
+  void test_execute_set( void )
+  { assert_result("<Counter:/i 1.00 (+1.00)>\n<Counter:/i 9.00 (+5.00)>\n", "i=Counter(1)\ni.set(counter:4 increment:5)\ni.bang\ni\n"); }
+
+  void test_execute_set_value( void )
+  { assert_result("<Counter:/i 1.00 (+1.00)>\n<Counter:/i 6.00 (+1.00)>\n", "i=Counter(1)\ni.set(5)\ni.bang\ni\n"); }
+
+  void test_bang_shortcut( void )
+  { assert_result("<Counter:/i 1.00 (+1.00)>\n<Counter:/i 2.00 (+1.00)>\n", "i=Counter(1)\ni.b\ni\n"); }
+
+  void test_execute_class_method( void )
+  { assert_result("Hello: Nil\n", "Test.hello\n"); }
+
+  void test_parse_link( void )
+  {
+    assert_result("# /obj/out/output ? /other/input\n","obj~output => input~other\n"); // just make sure there is no parse error
+  }
+
+  void test_parse_unLink( void )
+  {
+    setup_with_print("n=Number(1)\n");
+    // make sure connection is ok
+    assert_print("p: 1\n", "n/value!\n");
+    assert_print("","n || p\nn/value!\n");
+  }
+
+  void test_parse_first_links( void )
+  { assert_result("# /n ? /p\n", "n=>p\n");
+    assert_result("# <Number:/n value:3>\n", "n=Number(3)\n");
+    // resolve links
+    assert_result("# <Print:/p prefix:\"p\">\n# /n/out/value => /p/print\n", "p=Print()\n");
+  }
+
+  void test_parse_bad_links( void )
+  { assert_result("# Syntax error near \'>\n\'.\n", "n=>\n"); }
+
+  void test_create_same_name( void )
+  { setup("v=Number()\n");
+    assert_result("# <Print:/v-1 prefix:\"v-1\">\n", "v=Print()\n");
+  }
+
+  void test_comment( void )
+  { assert_result("# <Number:/v1 value:null>\n", "v1=Number()    # this is a comment\n");
+    assert_result("# <Number:/v2 value:null>\n", "v2=Number()    # this is a comment\n");
+    assert_result("# <Number:/v3 value:4.02>\n", "v3=Number(4.02)#this is a comment\n# bobob\n");
+  }
 };

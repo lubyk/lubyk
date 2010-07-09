@@ -192,7 +192,7 @@ void TextCommand::parse(const std::string &string) {
 
     execute_class_method = class '~' method ( '(' parameters? ')' )? ; # TODO: remove these lines and simply use execute_command ?
 
-    execute_command = method ( '(' parameters? ')' )?;
+    execute_command = method ( '(' parameters? ')' | '!' $params )?;
 
     main := ((execute_command %execute_command # cannot put comments here :-(
             #| execute_method  %execute_method (ws* comment)?
@@ -269,7 +269,7 @@ void TextCommand::change_link(char op) {
   if (to_port_ == "") {
     list.push_back(std::string(to_node_));
   } else {
-    list.push_back(std::string(to_node_).append("/in/").append(to_port_));
+    list.push_back(std::string(to_node_).append("/").append(to_port_));
   }
 
   print_result(root_->call(LINK_URL, list));
@@ -278,8 +278,8 @@ void TextCommand::change_link(char op) {
 // FIXME: remove
 void TextCommand::execute_method() {
   Value res;
-  // why doesn't this work ? Value params(Json(parameter_string_));
-  Value params = Value(Json(parameter_string_));
+  JsonValue params(parameter_string_);
+
   names_to_urls();
 
   DEBUG(std::cout << "METHOD " << var_ << "." << method_ << "(" << params << ")" << std::endl);
@@ -312,7 +312,13 @@ void TextCommand::execute_class_method() {
 
 void TextCommand::execute_command() {
   Value res;
-  JsonValue params(parameter_string_.c_str());
+  Value params;
+
+  if (parameter_string_ == "!") {
+    params = gBangValue;
+  } else {
+    params = JsonValue(parameter_string_);
+  }
 
   DEBUG(std::cout << "CMD " << method_ << "(" << params << ")" << std::endl);
   if (method_ == "lib") {

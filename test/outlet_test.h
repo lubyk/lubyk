@@ -467,7 +467,7 @@ class OutletCommandTest : public ParseHelper
 public:
   void test_pending_link( void ) {
     assert_result("# /a ? /b\n", "a => b\n");
-    assert_result("# /a/out/value ? /b/in/print\n", "a~value => print~b\n");
+    assert_result("# /a/out/value ? /b/print\n", "a~value => print~b\n");
   }
 
   void test_pending_removed_on_unlink( void ) {
