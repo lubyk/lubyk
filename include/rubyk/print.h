@@ -50,12 +50,14 @@ public:
 
   // [1]
   const Value print(const Value &val) {
-    if (val.is_nil()) {
-      return gBangValue; // how to return any value ?
-    } else {
+    if (val.is_bang()) {
+      *output_ << prefix_ << ": Bang!\n";
+    } else if (val.is_midi()) {
+      *output_ << prefix_ << ": \"" << val.midi_message_->to_s() << "\"\n";
+    } else if (!val.is_nil()) {
       *output_ << prefix_ << ": " << val.lazy_json() << std::endl;
-      return val;
     }
+    return val;
   }
 
   // [2]
@@ -68,6 +70,13 @@ public:
 
   virtual void inspect(Value *hash) const {
     hash->set("prefix", prefix_);
+  }
+
+  /** Default key to use when creating an object without a hash definition.
+   * This means that Print("foo") is the same as Print(prefix:"foo").
+   */
+  virtual const char *default_set_key() const {
+    return "prefix";
   }
 
   void set_output(std::ostream *output) { output_ = output; }

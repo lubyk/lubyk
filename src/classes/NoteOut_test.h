@@ -39,7 +39,12 @@ public:
 
   void test_note_out( void ) {
     setup_with_print("n=NoteOut()\n");
-    assert_print("p: \"MidiMessage +1:C3(80), 0/500\"\n", "n/note\n");
+    // get value should not trigger send
+    assert_print("", "n/note\n");
+    // bang should trigger send
+    assert_print("p: \"MidiMessage +1:C3(80), 0/500\"\n", "n/note(true)\n");
+    // set value should trigger send
+    assert_print("p: \"MidiMessage +1:Eb4(80), 0/500\"\n", "n/note(75)\n");
   }
 
   void test_set_note_no_out( void ) {

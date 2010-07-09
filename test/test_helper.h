@@ -157,9 +157,9 @@ protected:
         output_.str().find("# 404 ") != std::string::npos ||
         output_.str().find("# 500 ") != std::string::npos) {
       // could find a better way to detect errors...
-      fprintf(stderr, "Error while parsing '%s'\n%s\n", input, output_.str().c_str());
+      fprintf(stderr, "Error while parsing %s\n%s\n", input, output_.str().c_str());
     }
-    output_.str(std::string(""));
+    output_.str("");
   }
 
   void _assert_result(const char *file, int lineno, const char *descr, const char *expected, const char *input) {

@@ -33,29 +33,75 @@
 #include "rubyk.h"
 using namespace rk;
 
-class OscMap : public Node, public OscMapCommand {
+/** Encapsulate OscMapCommand into a Node script.
+ */
+class OscMap : public Node {
 public:
-  OscMap() {}
+  OscMap() : cmd_(NULL) {}
 
-  virtual ~OscMap() {
-    kill();
-  }
+  enum Defaults {
+    DefaultHue = 59,
+  };
 
-  virtual const Value start() {
-    // needed so that it's not Thread::start that is called...
+  virtual const Value init() {
+    // call super
+    Node::init();
+
+    // set Script Widget
+    attributes_.set(Attribute::VIEW, Attribute::WIDGET, "Script");
+    attributes_.set(Attribute::VIEW, Attribute::HUE, (float)OscMap::DefaultHue);
+
+    // start listening to incomming messages. We need to start now so that the socket is created if we need to set port number.
+    cmd_ = root_->adopt_command(new OscMapCommand());
     return gNilValue;
   }
+
+  /** Serialize object as hash: do not send script content if file path
+   * information is present.
+   */
+  virtual const Value to_hash() {
+   Value result = Node::to_hash();
+
+   if (result.has_key("file")) {
+     result.remove("script");
+   }
+   return result;
+  }
+
+  const Value file(const Value &val) {
+    return cmd_->file(val);
+  }
+
+  const Value script(const Value &val) {
+    return cmd_->script(val);
+  }
+
+  const Value reload(const Value &val) {
+    return cmd_->reload(val);
+  }
+
+  const Value port(const Value &val) {
+    return cmd_->port(val);
+  }
+
+  const Value reply_port(const Value &val) {
+    return cmd_->reply_port(val);
+  }
+
+private:
+  OscMapCommand *cmd_;
 };
 
 extern "C" void init(Planet &planet) {
-  CLASS (OscMap, "Open udp ports and map calls from these ports.", "script: [mapping definitions] or file: [path to mapping file]")
-  // {1}
-  c->add_method<Script, &Script::file>("file", Attribute::string_io("File path to mappings definitions."));
-  // {2}
-  c->add_method<Script, &Script::script>("script", Attribute::string_io("Mappings definitions."));
-  // {3}
-  c->add_method<Script, &Script::reload>("reload", Attribute::real_io("How often to stat file for reload [s]."));
-
-  c->add_method<OscMapCommand, &OscMapCommand::port>("number", Attribute::real_io("Incomming port number."));
-  c->add_method<OscMapCommand, &OscMapCommand::reply_port>("number", Attribute::real_io("Outgoing reply port number."));
+  CLASS(OscMap, "Open udp ports and map calls from these ports.", "script: [mapping definitions] or file: [path to mapping file]")
+  // [1]
+  METHOD(OscMap, file, Attribute::string_io("File path to mappings definitions."))
+  // [2]
+  METHOD(OscMap, script, Attribute::string_io("Mappings definitions."))
+  // [3]
+  METHOD(OscMap, reload, Attribute::real_io("How often to stat file for reload [s]."))
+  // [4]
+  METHOD(OscMap, port, Attribute::real_io("Incomming port number."))
+  // [5]
+  METHOD(OscMap, reply_port, Attribute::real_io("Outgoing reply port number."))
 }

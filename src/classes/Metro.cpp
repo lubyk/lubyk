@@ -74,6 +74,13 @@ public:
     send(gBangValue);
   }
 
+  /** Default key to use when creating an object without a hash definition.
+   * This means that Metro(115) is the same as Metro(tempo:115).
+   */
+  virtual const char *default_set_key() const {
+    return "tempo";
+  }
+
 private:
   void change_tempo(Real tempo) {
     if (tempo <= 0) {

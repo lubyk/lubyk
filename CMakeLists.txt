@@ -211,7 +211,7 @@ add_executable (test_runner test_runner.cpp ${CUSTOM_BUILD_DEPENDS})
 
 target_link_libraries (test_runner -all_load ${STATIC_LIBS} ${CUSTOM_BUILD_DEPENDS} ${PLAT_LINK})
 
-add_test (oscit_test test_runner)
+add_test (rubyk_test test_runner)
 
 # this is to enable verbose output during testing
 add_custom_target (test_all ALL ${CMAKE_CTEST_COMMAND} -V)

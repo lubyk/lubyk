@@ -36,7 +36,7 @@ public:
 
   void test_bang_bang( void ) {
     setup_with_print("n=Metro(1000)\n"); // 0 [bang] lost (before link to print)
-    assert_run("p: true\np: true\n", (60 * 2) + 10);  // ... 60 [bang] ... 120 [bang] ... 130.
+    assert_run("p: Bang!\np: Bang!\n", (60 * 2) + 10);  // ... 60 [bang] ... 120 [bang] ... 130.
   }
 
   void test_set_tempo( void ) {
@@ -44,6 +44,6 @@ public:
     assert_result("# 10\n", "n(10)\n");
     assert_result("# {\"tempo\":20}\n", "n(tempo:20)\n");
     assert_result("# 30\n", "n/tempo(30)\n");
-    assert_result("# <Metro:/n tempo:40 run:1>\n", "n/in/tempo(40)\n");
+    assert_result("# <Metro:/n tempo:30 run:1>\n", "n\n");
   }
 };

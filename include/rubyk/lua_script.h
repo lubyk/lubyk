@@ -105,6 +105,13 @@ public:
    return result;
   }
 
+  /** Default key to use when creating an object without a hash definition.
+   * This means that Lua("one/two.lua") is the same as Metro(file:"one/two.lua").
+   */
+  virtual const char *default_set_key() const {
+    return "file";
+  }
+
   /** Convert all the Lua stack as a list value (does not pop).
    */
   static const Value stack_to_value(lua_State *L, int start_index = 1);

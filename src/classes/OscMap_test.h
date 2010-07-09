@@ -52,20 +52,28 @@ class OscMapTest : public ParseHelper
   }
 
   void test_send_map_reply( void ) {
-    setup("v=Value(4.5)\nmap=OscMap(script:'/slider/1 [0,10] --> /v/value [50,100]' port:7001 reply_port:7002)");
+    setup("v=Value(4.5)\nmap=OscMap(script:'/slider/1 [0,10] --> /v/value [50,100]' port:7001 reply_port:7002)\n");
     Value res = planet_->call("/map/port", Value(APP1_PORT));
     assert_equal((double)APP1_PORT, res.r);
     res = planet_->call("/map/reply_port", Value(APP2_PORT));
     assert_equal((double)APP2_PORT, res.r);
 
     ObjectHandle value_method;
-    planet_->get_object_at("/v/value", &value_method); // to call without passing by root
+    planet_->get_object_at("/v/value", &value_method);
+
     send("/slider/1", 5.0);
+
+    // make sure we received '/slider/1 5' and mapped to '/v/value 75'
     res = value_method->trigger(gNilValue);
     assert_equal(75.0, res.r);
-    assert_equal("", reply());
-    value_method->trigger(Value(120.0));
-    assert_equal("10", reply());
+
+    // make sure we received a reply with '/slider/1 5'
+    assert_equal("5\n", slider_one());
+
+    planet_->notify_observers("/.reply", Value("/v/value").push_back(120)); // fake external call
+
+    // make sure we received a reply with '/slider/1 10'
+    assert_equal("10\n", slider_one());
   }
 
 
@@ -79,9 +87,11 @@ class OscMapTest : public ParseHelper
     millisleep(50);
   }
 
-  std::string reply() {
+  std::string slider_one() {
     millisleep(50);
-    return app2_log_->str();
+    std::string content = app2_log_->str();
+    app2_log_->clear();
+    return content;
   }
 
   Location planet_end_point_;

@@ -33,62 +33,62 @@ using namespace rk;
 class NoteOut : public Node {
  public:
   NoteOut() {
-    note_.set_as_note(MIDI_NOTE_C0 + 36); // C3
+    midi_note_.set_as_note(MIDI_NOTE_C0 + 36); // C3
   }
 
   // [1] set note, send current note
   const Value note(const Value &val) {
     if (val.is_real()) {
-      note_.midi_message_->set_note(val.r);
-      send(note_);
+      midi_note_.set_note(val.r);
+      send(Value(midi_note_));
     } else if (val.is_bang()) {
-      send(note_);
+      send(Value(midi_note_));
     }
-    return Value((Real)note_.midi_message_->note());
+    return Value((Real)midi_note_.note());
   }
 
   // [2] velocity
   const Value velocity(const Value &val) {
     if (val.is_real()) {
-      note_.midi_message_->set_velocity(val.r);
+      midi_note_.set_velocity(val.r);
     }
-    return Value((Real)note_.midi_message_->velocity());
+    return Value((Real)midi_note_.velocity());
   }
 
   // [3] length
   const Value length(const Value &val) {
     if (val.is_real()) {
-      note_.midi_message_->set_length(val.r);
+      midi_note_.set_length(val.r);
     }
-    return Value((Real)note_.midi_message_->length());
+    return Value((Real)midi_note_.length());
   }
 
   // [4] channel
   const Value channel(const Value &val) {
     if (val.is_real()) {
-      note_.midi_message_->set_channel(val.r);
+      midi_note_.set_channel(val.r);
     }
-    return Value((Real)note_.midi_message_->channel());
+    return Value((Real)midi_note_.channel());
   }
 
   // [5] set note, no send
   const Value set_note(const Value &val) {
     if (val.is_real()) {
-      note_.midi_message_->set_note(val.r);
+      midi_note_.set_note(val.r);
     }
-    return Value((Real)note_.midi_message_->note());
+    return Value((Real)midi_note_.note());
   }
 
   //void clear()
   //{ remove_my_events(); }
 
   virtual void inspect(Value *hash) const {
-    hash->set("note", note_);
+    hash->set("note", midi_note_.to_s());
   }
 
 private:
   /* data */
-  Value  note_;
+  MidiMessage midi_note_;
 };
 
 extern "C" void init(Planet &planet) {

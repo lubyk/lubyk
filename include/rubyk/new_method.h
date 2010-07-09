@@ -115,17 +115,22 @@ public:
     klass->make_outlets(node);
 
     Value res = node->init();
+    if (res.contains_error()) {
+      node->set_is_ok(false);
+      return res;
+    }
 
-    if (!res.is_error() && !params.is_nil()) {
+    if (!params.is_nil()) {
       // set by calling methods
+      const char *key;
+
       if (params.is_hash()) {
         res = node->set(params);
+      } else if ( (key = node->default_set_key()) ) {
+        res = node->set(HashValue(key, params));
       } else {
-        // trigger first method
-        ObjectHandle handle;
-        if (node->first_child(&handle)) {
-          res = handle->trigger(params);
-        }
+        // error
+        res = FValue(BAD_REQUEST_ERROR, "No default key for class %s: cannot set %s.", klass->name().c_str(), params.to_json().c_str());
       }
     }
 

@@ -49,6 +49,13 @@ public:
     hash->set("value", value_);
   }
 
+  /** Default key to use when creating an object without a hash definition.
+   * This means that Value(34) is the same as Value(value:34).
+   */
+  virtual const char *default_set_key() const {
+    return "value";
+  }
+
 private:
   Value value_;
 };

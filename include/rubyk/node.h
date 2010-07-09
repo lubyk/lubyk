@@ -83,9 +83,16 @@ class Node : public Object {
 
   const Value do_inspect() const;
 
-  /** FIXME: do we need this ? */
+  /** This is used as return value / inspect in text command.
+   */
   virtual void inspect(Value *hash) const {}
 
+  /** Default method to use on Node creation if the argument is not a hash.
+   */
+  virtual const char *default_set_key() const {
+    return NULL; // no default method
+  }
+  
   /** Add an inlet and set the inlet id that is used to sort outlet links.
    */
   void register_inlet(Inlet *inlet) {
