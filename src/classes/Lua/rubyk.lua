@@ -38,7 +38,7 @@ function StringIO(info)
 end
 
 function RangeIO(info, min, max)
-  return {[info_key] = info, [type_key] = {[name_key] = 'real', [sign_key] = 'f', [min_key] = min, [max_key] = max}}
+  return {[info_key] = info, [type_key] = {[name_key] = 'range', [sign_key] = 'f', [min_key] = min, [max_key] = max}}
 end
 
 function SelectIO(info, values)

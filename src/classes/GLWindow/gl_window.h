@@ -76,6 +76,12 @@ public:
    */
   virtual void resized(int width, int height) = 0;
 
+  /** Return true if the window is currently opened.
+   */
+  bool is_open() {
+    return impl_ != NULL;
+  }
+
 private:
   bool create_window();
 

@@ -274,6 +274,7 @@ public:
   }
 
   void run(Thread *runner) {
+    should_run_ = true;
     ScopedPool pool;
     runner->thread_ready();
 
@@ -283,6 +284,7 @@ public:
     NSDate *date = [[NSDate alloc] initWithTimeIntervalSinceNow:0.1];
 
     while (should_run_ && [run_loop runMode:NSDefaultRunLoopMode beforeDate:date]) {
+      // FIXME: this loop is never run, why do we keep it, why did we need it ?
       [date release];
       date = [[NSDate alloc] initWithTimeIntervalSinceNow:0.1];
     }
@@ -314,7 +316,7 @@ public:
 GLWindow::GLWindow() : impl_(NULL), should_be_fullscreen_(false) {}
 
 bool GLWindow::create_window() {
-
+    ScopedPool pool;
   if (!impl_) {
     impl_ = new GLWindow::Implementation(this, x_, y_, width_, height_, should_be_fullscreen_);
   }
@@ -330,6 +332,7 @@ bool GLWindow::open_window(int x, int y, int width, int height) {
 }
 
 void GLWindow::close_window() {
+  ScopedPool pool;
   if (impl_) delete impl_;
   impl_ = NULL;
 }

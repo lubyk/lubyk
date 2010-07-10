@@ -35,17 +35,22 @@ class GLWindowNode : public GLWindow {
   Real red_;
 public:
   const Value start() {
-    return open(gNilValue);
+    return open_close(Value(1.0));
   }
 
-  const Value close(const Value &val) {
-    close_window();
-    return gNilValue;
-  }
+  const Value open_close(const Value &val) {
+    if (val.is_real()) {
+      if (val.r == 0) {
+        close_window();
+        send(Value(0).push_back(0));
+        return Value(0.0);
+      } else {
+        open_window(50, 50, 400, 200);
+        return Value(1.0);
+      }
+    }
 
-  const Value open(const Value &val) {
-    open_window(50, 50, 400, 200);
-    return gNilValue;
+    return Value((Real)is_open());
   }
 
   virtual void resized(int width, int height) {
@@ -72,8 +77,6 @@ extern "C" void init(Planet &planet) {
   // [1]
   METHOD(GLWindowNode, redraw, Attribute::bang_io("Redraws on bang."))
   OUTLET(GLWindowNode, draw,   Attribute::io("Sends [width, height] of view to execute OpenGL.", "opengl", "ff"))
-  // TODO replace 'open' and 'close' by 'xxxx' (open if true, close if false)
-  METHOD(GLWindowNode, open,  Attribute::bang_io("Open a window."))
-  METHOD(GLWindowNode, close, Attribute::bang_io("Close opened window."))
+  METHOD(GLWindowNode, open_close,  Attribute::range_io("Open/close a window (1 open, 0 close).", 0, 1))
   SUPER_METHOD(GLWindowNode, GLWindow, fullscreen, Attribute::range_io("1 to go fullscreen, 0 for window mode.", 0, 1))
 }

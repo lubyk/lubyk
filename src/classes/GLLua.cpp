@@ -48,6 +48,7 @@ public:
   virtual const Value init() {
     view_width_  = 0;
     view_height_ = 0;
+    resized_     = true;
 
     Value result = LuaScript::init();
     if (result.is_error()) return result;
@@ -58,19 +59,29 @@ public:
   }
 
   // inlet 1
-  void draw(const Value &val) {
-    if (!is_opengl_thread()) {
-      fprintf(stderr, "%s: cannot call draw (not an OpenGL thread)\n", name_.c_str());
-      return;
+  const Value draw(const Value &val) {
+
+    if (val.is_nil_or_bang()) {
+      return Value(view_width_).push_back(view_height_);
     }
 
     if (val[0].r != view_width_ || val[1].r != view_height_) {
       view_width_  = val[0].r;
       view_height_ = val[1].r;
-      call_lua("resize", val);
+      resized_ = true;
     }
 
-    call_lua("draw", gNilValue);
+    if (!is_opengl_thread()) {
+      fprintf(stderr, "%s: cannot call draw (not an OpenGL thread)\n", name_.c_str());
+      return gNilValue;
+    }
+
+    if (resized_) {
+      resized_ = false;
+      call_lua("resize", val);
+    }
+    call_lua("draw", gTrueValue);
+    return val;
   }
 protected:
   /* open all standard libraries and openGL libraries (called by LuaScript on init) */
@@ -89,12 +100,16 @@ protected:
   /** View's height in pixels.
    */
   double view_height_;
+
+  /** This flag stays true until 'resize' is called in Lua.
+   */
+  bool resized_;
 };
 
 extern "C" void init(Planet &planet) {
   CLASS (GLLua, "GLLua script.", "script: [script content] or file: [path to file]")
   // [1]
-  METHOD(GLLua, draw, Value(Json("[0,0]")).push_back("Receives [width, height] from an OpenGL thread."))
+  METHOD(GLLua, draw, Attribute::io("Receives [width, height] from an OpenGL thread.", "opengl", "ff"))
 
   ADD_SUPER_METHOD(GLLua, Script, file, Attribute::string_io("Path to script content [filepath]."))
   ADD_SUPER_METHOD(GLLua, Script, script, Attribute::string_io("Script content [lua]."))

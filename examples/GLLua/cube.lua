@@ -2,14 +2,23 @@ n = n or 0
 x = x or 0
 y = y or 0
 z = z or 0
+dt = dt or (math.pi / 1000)
 
 function advance()
-  n = n + math.pi / 1000
+  n = n + dt
   x = math.cos(n / 0.9) * 360 / math.pi
   y = math.sin(n / 0.7) * 360 / math.pi
   z = math.sin(n) * 360 / math.pi
 end
 inlet('advance', BangIO('just bang me'))
+
+function speed(sig)
+  if sig then
+    dt = sig
+  end
+  return dt
+end
+inlet('speed', RangeIO('Rotating speed', 0, math.pi / 500))
 
 function draw()
   gl.Clear( "COLOR_BUFFER_BIT, DEPTH_BUFFER_BIT")
