@@ -25,6 +25,8 @@ class MidiOut : public Node {
   }
 
   const Value init () {
+    Node::init();
+
     if (error_.is_error()) {
       return error_;
     } else if (!is_ok()) {
