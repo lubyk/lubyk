@@ -66,7 +66,7 @@ public:
 
   void init() {
     //          /class/lib
-    adopt(new TMethod<ClassFinder, &ClassFinder::lib_path>(this, Url(LIB_URL).name(), Attribute::string_io("File path to load classes (*.rko, lua, etc).")));
+    adopt(new TMethod<ClassFinder, &ClassFinder::lib_path>(this, Url(LIB_URL).name(), Oscit::string_io("File path to load classes (*.rko, lua, etc).")));
   }
 
   virtual ~ClassFinder() {}
@@ -99,7 +99,7 @@ public:
       class_object = NULL;
     }
 
-    klass = adopt(new Class(name, Attribute::no_io(info)));
+    klass = adopt(new Class(name, Oscit::no_io(info)));
 
     if (!klass) return NULL; // FIXME: this will crash !!!
 
@@ -107,7 +107,7 @@ public:
     std::string info_string("Create a new ");
     info_string.append(name).append(" from a given url and optional Hash of parameters (").append(options).append(").");
 
-    klass->adopt(new NewMethod( "new", &NewMethod::cast_create<T>, Attribute::any_io(info_string.c_str())));
+    klass->adopt(new NewMethod( "new", &NewMethod::cast_create<T>, Oscit::any_io(info_string.c_str())));
 
     return klass;
   }

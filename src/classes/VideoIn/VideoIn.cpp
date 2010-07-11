@@ -104,8 +104,8 @@ private:
 
 extern "C" void init(Planet &planet) {
   CLASS_NAMED( VideoInNode, "VideoIn", "Video input.", "device: [input device] preview: [0/1]")
-  METHOD(VideoInNode, device,  Attribute::string_io("Input device name or id."))
-  METHOD(VideoInNode, preview, Attribute::range_io("Open/close a preview window.", 0, 1))
-  OUTLET(VideoInNode, frames,  Attribute::matrix_io("Video frames as matrix."))
-  CLASS_METHOD(VideoInNode, sources, Attribute::bang_io("Return a dictionary of video in devices"))
+  METHOD(VideoInNode, device,  Oscit::string_io("Input device name or id."))
+  METHOD(VideoInNode, preview, Oscit::range_io("Open/close a preview window.", 0, 1))
+  OUTLET(VideoInNode, frames,  Oscit::matrix_io("Video frames as matrix."))
+  CLASS_METHOD(VideoInNode, sources, Oscit::bang_io("Return a dictionary of video in devices"))
 }

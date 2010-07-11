@@ -205,9 +205,9 @@ extern "C" void init(Planet &planet) {
   CLASS (GLMat, "GLMat displays a Matrix on an OpenGL window.", "")
   // [1]
   // TODO: send 'gl object' ? (void pointer)
-  METHOD(GLMat, draw, Attribute::io("Receives [width, height] from an OpenGL thread.", "opengl", "ff"))
+  METHOD(GLMat, draw, Oscit::io("Receives [width, height] from an OpenGL thread.", "opengl", "ff"))
   // [2]
-  METHOD(GLMat, matrix, Attribute::matrix_io("Receives a matrix to be drawn on screen."))
+  METHOD(GLMat, matrix, Oscit::matrix_io("Receives a matrix to be drawn on screen."))
   // {downsample}
-  METHOD(GLMat, downsample, Attribute::range_io("Downsampling factor.", 1, 64))
+  METHOD(GLMat, downsample, Oscit::range_io("Downsampling factor.", 1, 64))
 }

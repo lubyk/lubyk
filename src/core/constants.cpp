@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the OSCIT library (http://rubyk.org/liboscit)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -27,13 +27,15 @@
   ==============================================================================
 */
 
-#include "rubyk.h"
-using namespace rk;
+#include "rubyk/constants.h"
 
-extern "C" void init(Planet &planet) {
-  CLASS (Print, "Print any value received in bang inlet.", "no options")
-  // [1] print
-  METHOD(Print, print, Oscit::any_io("Received values are printed out."))
-  // [2] prefix
-  METHOD(Print, prefix, Oscit::string_io("Prefix to print before values."))
-}
+const char * const Rubyk::CLASS        = "@class";
+
+const char * const Rubyk::NODES_KEY    = "nodes";
+const char * const Rubyk::NODE_OUT_KEY = "out";
+const char * const Rubyk::SCRIPT_EXT   = "script_ext";
+
+const float Rubyk::NODE_DEFAULT_HUE    = 203;
+const float Rubyk::SCRIPT_DEFAULT_HUE  = 59;
+const float Rubyk::NODE_DEFAULT_WIDTH  = 60;
+const float Rubyk::NODE_DEFAULT_HEIGHT = 20;

@@ -48,8 +48,8 @@ public:
     Node::init();
 
     // set Script Widget
-    attributes_.set(Attribute::VIEW, Attribute::WIDGET, "Script");
-    attributes_.set(Attribute::VIEW, Attribute::HUE, (float)OscMap::DefaultHue);
+    attributes_.set(Oscit::VIEW, Oscit::WIDGET, "Script");
+    attributes_.set(Oscit::VIEW, Oscit::HUE, (float)OscMap::DefaultHue);
 
     // start listening to incomming messages. We need to start now so that the socket is created if we need to set port number.
     cmd_ = root_->adopt_command(new OscMapCommand());
@@ -95,13 +95,13 @@ private:
 extern "C" void init(Planet &planet) {
   CLASS(OscMap, "Open udp ports and map calls from these ports.", "script: [mapping definitions] or file: [path to mapping file]")
   // [1]
-  METHOD(OscMap, file, Attribute::string_io("File path to mappings definitions."))
+  METHOD(OscMap, file, Oscit::string_io("File path to mappings definitions."))
   // [2]
-  METHOD(OscMap, script, Attribute::string_io("Mappings definitions."))
+  METHOD(OscMap, script, Oscit::string_io("Mappings definitions."))
   // [3]
-  METHOD(OscMap, reload, Attribute::real_io("How often to stat file for reload [s]."))
+  METHOD(OscMap, reload, Oscit::real_io("How often to stat file for reload [s]."))
   // [4]
-  METHOD(OscMap, port, Attribute::real_io("Incomming port number."))
+  METHOD(OscMap, port, Oscit::real_io("Incomming port number."))
   // [5]
-  METHOD(OscMap, reply_port, Attribute::real_io("Outgoing reply port number."))
+  METHOD(OscMap, reply_port, Oscit::real_io("Outgoing reply port number."))
 }

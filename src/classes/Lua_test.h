@@ -49,8 +49,8 @@ public:
 
     Value hash = lua->to_hash();
     assert_false(hash.has_key("script"));
-    assert_equal("\"/class/Lua\"", hash[Attribute::CLASS].to_json());
-    assert_equal("\"Script\"", hash[Attribute::VIEW][Attribute::WIDGET].to_json());
+    assert_equal("\"/class/Lua\"", hash[Rubyk::CLASS].to_json());
+    assert_equal("\"Script\"", hash[Oscit::VIEW][Oscit::WIDGET].to_json());
   }
 
 };

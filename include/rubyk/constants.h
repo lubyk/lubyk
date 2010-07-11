@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the OSCIT library (http://rubyk.org/liboscit)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -27,13 +27,35 @@
   ==============================================================================
 */
 
-#include "rubyk.h"
-using namespace rk;
 
-extern "C" void init(Planet &planet) {
-  CLASS (Print, "Print any value received in bang inlet.", "no options")
-  // [1] print
-  METHOD(Print, print, Oscit::any_io("Received values are printed out."))
-  // [2] prefix
-  METHOD(Print, prefix, Oscit::string_io("Prefix to print before values."))
-}
+#ifndef RUBYK_INCLUDE_RUBYK_CONSTANTS_H_
+#define RUBYK_INCLUDE_RUBYK_CONSTANTS_H_
+
+/** This class is used to hold Rubyk constants.
+ */
+class Rubyk {
+public:
+  /** Root attribute key for object's class url.
+   */
+  static const char * const CLASS;
+
+  /** Key for the list of nodes in the patch.
+   */
+  static const char * const NODES_KEY;
+
+  /** Key for the Outlet's container.
+   */
+  static const char * const NODE_OUT_KEY;
+
+  static const float NODE_DEFAULT_HUE;
+  static const float SCRIPT_DEFAULT_HUE;
+
+  static const float NODE_DEFAULT_WIDTH;
+  static const float NODE_DEFAULT_HEIGHT;
+
+  /** Key for script extension.
+   */
+  static const char * const SCRIPT_EXT;
+};
+
+#endif RUBYK_INCLUDE_RUBYK_CONSTANTS_H_

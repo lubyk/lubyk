@@ -30,10 +30,55 @@
 #include "rubyk.h"
 using namespace rk;
 
+class MidiValueNode : public Node {
+public:
+  virtual const Value init() {
+    Node::init();
+
+    value_.set(MidiMessage());
+
+    return gNilValue;
+  }
+
+  /** [1] set/get value, send value.
+   */
+  const Value value(const Value &val) {
+    if (val.is_nil()) return value_;
+
+    if (!val.is_bang()) {
+      value_ = val;
+    }
+
+    send(value_);
+    return value_;
+  }
+
+  /** [2] set/get value without sending.
+   */
+  const Value set_value(const Value &val) {
+    if (val.is_midi()) value_ = val;
+
+    return value_;
+  }
+
+  virtual void inspect(Value *hash) const {
+    hash->set("value", value_.midi_message_->to_s());
+  }
+
+  /** Default key to use when creating an object without a hash definition.
+   * This means that Value(34) is the same as Value(value:34).
+   */
+  virtual const char *default_set_key() const {
+    return "value";
+  }
+
+private:
+  Value value_;
+};
+
 extern "C" void init(Planet &planet) {
-  CLASS (Print, "Print any value received in bang inlet.", "no options")
-  // [1] print
-  METHOD(Print, print, Oscit::any_io("Received values are printed out."))
-  // [2] prefix
-  METHOD(Print, prefix, Oscit::string_io("Prefix to print before values."))
+  CLASS_NAMED(MidiValueNode, "MidiValue", "Stores a value which can be sent again through Bang!.", "value: [initial midi value]")
+  METHOD(MidiValueNode, value,     Oscit::midi_io("Set/get current midi value."))
+  METHOD(MidiValueNode, set_value, Oscit::midi_io("Set/get current midi value (do not send)."))
+  OUTLET(MidiValueNode, value,     Oscit::midi_io("Send the current midi value out."))
 }

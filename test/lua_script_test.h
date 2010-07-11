@@ -41,7 +41,7 @@ public:
     // all this is done by Class normally
     script_->set_name("lua");
     script_->adopt(new Object("in"));
-    script_->adopt(new Object(NODE_OUT_KEY));
+    script_->adopt(new Object(Rubyk::NODE_OUT_KEY));
     Value res = script_->init();
     if (res.is_error()) {
       std::cout << "Could not init LuaScript !\n" << res << "\n";
@@ -54,7 +54,7 @@ public:
   }
 
   void test_view() {
-    assert_equal("\"Script\"", script_->attributes()[Attribute::VIEW][Attribute::WIDGET].to_json());
+    assert_equal("\"Script\"", script_->attributes()[Oscit::VIEW][Oscit::WIDGET].to_json());
   }
 
   void test_compile( void ) {
@@ -114,8 +114,8 @@ public:
     assert_true(res.is_string());
     ObjectHandle inlet;
     assert_true(planet_->get_object_at("/lua/tempo", &inlet));
-    assert_equal("\"f\"", inlet->attributes()[Attribute::TYPE][Attribute::SIGNATURE].to_json());
-    assert_equal("\"Main beat machine tempo.\"", inlet->attributes()[Attribute::INFO].to_json());
+    assert_equal("\"f\"", inlet->attributes()[Oscit::TYPE][Oscit::SIGNATURE].to_json());
+    assert_equal("\"Main beat machine tempo.\"", inlet->attributes()[Oscit::INFO].to_json());
 
     res = parse("inlet('tempo', RealIO('Main beat machine tempo.'))");
     assert_true(res.is_string()); // no error
@@ -128,10 +128,10 @@ public:
     ObjectHandle inlet;
     assert_true(planet_->get_object_at("/lua/tempo", &inlet));
     Value attrs(inlet->attributes());
-    assert_equal("\"f\"", attrs[Attribute::TYPE][Attribute::SIGNATURE].to_json());
-    assert_equal("0", attrs[Attribute::TYPE][Attribute::MIN].to_json());
-    assert_equal("5000", attrs[Attribute::TYPE][Attribute::MAX].to_json());
-    assert_equal("\"Main beat machine tempo [bpm].\"", attrs[Attribute::INFO].to_json());
+    assert_equal("\"f\"", attrs[Oscit::TYPE][Oscit::SIGNATURE].to_json());
+    assert_equal("0", attrs[Oscit::TYPE][Oscit::MIN].to_json());
+    assert_equal("5000", attrs[Oscit::TYPE][Oscit::MAX].to_json());
+    assert_equal("\"Main beat machine tempo [bpm].\"", attrs[Oscit::INFO].to_json());
   }
 
   void test_add_outlet_RealIO( void ) {
@@ -139,8 +139,8 @@ public:
     assert_true(res.is_string());
     ObjectHandle outlet;
     assert_true(planet_->get_object_at("/lua/out/force", &outlet));
-    assert_equal("\"f\"", outlet->attributes()[Attribute::TYPE][Attribute::SIGNATURE].to_json());
-    assert_equal("\"Dark Force.\"", outlet->attributes()[Attribute::INFO].to_json());
+    assert_equal("\"f\"", outlet->attributes()[Oscit::TYPE][Oscit::SIGNATURE].to_json());
+    assert_equal("\"Dark Force.\"", outlet->attributes()[Oscit::INFO].to_json());
   }
 
   // ------------------------------------------------------------------------  False
@@ -174,8 +174,8 @@ public:
     assert_true(res.is_string());
     ObjectHandle inlet;
     assert_true(planet_->get_object_at("/lua/boom", &inlet));
-    assert_equal("\"T\"", inlet->attributes()[Attribute::TYPE][Attribute::SIGNATURE].to_json());
-    assert_equal("\"Ping pong.\"", inlet->attributes()[Attribute::INFO].to_json());
+    assert_equal("\"T\"", inlet->attributes()[Oscit::TYPE][Oscit::SIGNATURE].to_json());
+    assert_equal("\"Ping pong.\"", inlet->attributes()[Oscit::INFO].to_json());
   }
 
   // ------------------------------------------------------------------------  Impulse
@@ -200,8 +200,8 @@ public:
   //   assert_true(res.is_string());
   //   ObjectHandle inlet;
   //   assert_true(planet_->get_object_at("/lua/boom", &inlet));
-  //   assert_equal("I", inlet->attributes()[Attribute::TYPE][Attribute::SIGNATURE].to_json());
-  //   assert_equal("\"Ping pong.\"", inlet->attributes()[Attribute::INFO].to_json());
+  //   assert_equal("I", inlet->attributes()[Oscit::TYPE][Oscit::SIGNATURE].to_json());
+  //   assert_equal("\"Ping pong.\"", inlet->attributes()[Oscit::INFO].to_json());
   // }
 
   // ------------------------------------------------------------------------  Matrix
@@ -230,8 +230,8 @@ public:
     assert_true(res.is_string());
     ObjectHandle inlet;
     assert_true(planet_->get_object_at("/lua/boom", &inlet));
-    assert_equal("\"M\"", inlet->attributes()[Attribute::TYPE][Attribute::SIGNATURE].to_json());
-    assert_equal("\"Ping pong.\"", inlet->attributes()[Attribute::INFO].to_json());
+    assert_equal("\"M\"", inlet->attributes()[Oscit::TYPE][Oscit::SIGNATURE].to_json());
+    assert_equal("\"Ping pong.\"", inlet->attributes()[Oscit::INFO].to_json());
   }
 
   // ------------------------------------------------------------------------  Hash
@@ -277,8 +277,8 @@ public:
     assert_true(res.is_string());
     ObjectHandle inlet;
     assert_true(planet_->get_object_at("/lua/boom", &inlet));
-    assert_equal("\"m\"", inlet->attributes()[Attribute::TYPE][Attribute::SIGNATURE].to_json());
-    assert_equal("\"Ping pong.\"", inlet->attributes()[Attribute::INFO].to_json());
+    assert_equal("\"m\"", inlet->attributes()[Oscit::TYPE][Oscit::SIGNATURE].to_json());
+    assert_equal("\"Ping pong.\"", inlet->attributes()[Oscit::INFO].to_json());
   }
 
   void test_add_outlet_MidiIO( void ) {
@@ -287,8 +287,8 @@ public:
     assert_true(res.is_string());
     ObjectHandle outlet;
     assert_true(planet_->get_object_at("/lua/out/boom", &outlet));
-    assert_equal("\"m\"", outlet->attributes()[Attribute::TYPE][Attribute::SIGNATURE].to_json());
-    assert_equal("\"Ping pong.\"", outlet->attributes()[Attribute::INFO].to_json());
+    assert_equal("\"m\"", outlet->attributes()[Oscit::TYPE][Oscit::SIGNATURE].to_json());
+    assert_equal("\"Ping pong.\"", outlet->attributes()[Oscit::INFO].to_json());
   }
 
   // ------------------------------------------------------------------------  List

@@ -44,10 +44,6 @@ class Outlet;
 class LuaScript : public Node, public Script {
 public:
 
-  enum Defaults {
-    DefaultHue = 59,
-  };
-
   /** Set defaults (this method must always call the superclass' implementation).
    */
   virtual const Value init() {
@@ -55,8 +51,11 @@ public:
     Node::init();
 
     // set Script Widget
-    attributes_.set(Attribute::VIEW, Attribute::WIDGET, "Script");
-    attributes_.set(Attribute::VIEW, Attribute::HUE, (float)LuaScript::DefaultHue);
+    attributes_.set(Oscit::VIEW, Oscit::WIDGET, "Script");
+    attributes_.set(Oscit::VIEW, Oscit::HUE, Rubyk::SCRIPT_DEFAULT_HUE);
+
+    // set default Script extension
+    attributes_.set(Oscit::VIEW, Rubyk::SCRIPT_EXT, "lua");
 
     return lua_init();
   }

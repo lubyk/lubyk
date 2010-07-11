@@ -109,9 +109,9 @@ protected:
 extern "C" void init(Planet &planet) {
   CLASS (GLLua, "GLLua script.", "script: [script content] or file: [path to file]")
   // [1]
-  METHOD(GLLua, draw, Attribute::io("Receives [width, height] from an OpenGL thread.", "opengl", "ff"))
+  METHOD(GLLua, draw, Oscit::io("Receives [width, height] from an OpenGL thread.", "opengl", "ff"))
 
-  ADD_SUPER_METHOD(GLLua, Script, file, Attribute::string_io("Path to script content [filepath]."))
-  ADD_SUPER_METHOD(GLLua, Script, script, Attribute::string_io("Script content [lua]."))
-  ADD_SUPER_METHOD(GLLua, Script, reload, Attribute::real_io("How often to stat file for reload [s]."))
+  ADD_SUPER_METHOD(GLLua, Script, file, Oscit::string_io("Path to script content [filepath]."))
+  ADD_SUPER_METHOD(GLLua, Script, script, Oscit::string_io("Script content [lua]."))
+  ADD_SUPER_METHOD(GLLua, Script, reload, Oscit::real_io("How often to stat file for reload [s]."))
 }

@@ -202,7 +202,7 @@ LuaScript *LuaScript::lua_this(lua_State *L) {
 }
 
 int LuaScript::lua_inlet(const Value &val) {
-  Value signature(val.is_list() ? val[1][Attribute::TYPE][Attribute::SIGNATURE] : gNilValue);
+  Value signature(val.is_list() ? val[1][Oscit::TYPE][Oscit::SIGNATURE] : gNilValue);
   if (!val.is_list() || !val[0].is_string() || !signature.is_string()) {
     // invalid call to 'inlet'
     // TODO: proper error reporting
@@ -226,7 +226,7 @@ int LuaScript::lua_inlet(const Value &val) {
 }
 
 int LuaScript::lua_build_outlet(const Value &val) {
-  Value signature(val.is_list() ? val[1][Attribute::TYPE][Attribute::SIGNATURE] : gNilValue);
+  Value signature(val.is_list() ? val[1][Oscit::TYPE][Oscit::SIGNATURE] : gNilValue);
   if (!val.is_list() || !val[0].is_string() || !signature.is_string() ) {
     // invalid call to 'outlet'
     // TODO: proper error reporting
@@ -235,7 +235,7 @@ int LuaScript::lua_build_outlet(const Value &val) {
   }
 
   ObjectHandle out;
-  if (get_child(NODE_OUT_KEY, &out)) {
+  if (get_child(Rubyk::NODE_OUT_KEY, &out)) {
     ObjectHandle outlet;
     if (out->get_child(val[0].str().c_str(), &outlet)) {
       if (outlet->name() != val[0].str() || outlet->type_id() != hashId(signature.str())) {

@@ -60,14 +60,10 @@ class Node : public Object {
  public:
   TYPED("Object.Node")
 
-  Node() : Object("n", Attribute::string_io("Basic Node")), worker_(NULL), looped_(false) {
+  Node() : Object("n", Oscit::string_io("Basic Node")), worker_(NULL), looped_(false) {
     // create a key to detect if we are running in an OpenGL thread
     if (!Node::sOpenGLThreadKey) pthread_key_create(&Node::sOpenGLThreadKey, NULL);
   }
-
-  enum Defaults {
-    DefaultHue = 203,
-  };
 
   /** Trigger for nodes is just an inspection method.
    */
@@ -92,7 +88,7 @@ class Node : public Object {
   virtual const char *default_set_key() const {
     return NULL; // no default method
   }
-  
+
   /** Add an inlet and set the inlet id that is used to sort outlet links.
    */
   void register_inlet(Inlet *inlet) {
@@ -146,8 +142,11 @@ class Node : public Object {
    */
   virtual const Value init() {
     // set Script Widget
-    attributes_.set(Attribute::VIEW, Attribute::WIDGET, "Node");
-    attributes_.set(Attribute::VIEW, Attribute::HUE, (float)Node::DefaultHue);
+    std::cout << url() << "->Node::init()\n";
+    attributes_.set(Oscit::VIEW, Oscit::WIDGET, "Node");
+    attributes_.set(Oscit::VIEW, Oscit::HUE,    Rubyk::NODE_DEFAULT_HUE);
+    attributes_.set(Oscit::VIEW, Oscit::WIDTH,  Rubyk::NODE_DEFAULT_WIDTH);
+    attributes_.set(Oscit::VIEW, Oscit::HEIGHT, Rubyk::NODE_DEFAULT_HEIGHT);
 
     return gNilValue;
   }
@@ -173,25 +172,25 @@ class Node : public Object {
   /** Set url for class used to create this Node.
    */
   void set_class_url(const Value &class_url) {
-    attributes_.set(Attribute::CLASS, class_url);
+    attributes_.set(Rubyk::CLASS, class_url);
   }
 
   /** Get url of class object used to create this Node.
    */
   const Value class_url() const {
-    return attributes_[Attribute::CLASS];
+    return attributes_[Rubyk::CLASS];
   }
 
   /** Set object from a hash representation.
    */
   virtual const Value set(const Value &hash) {
-    Value view = hash[Attribute::VIEW];
+    Value view = hash[Oscit::VIEW];
 
     // class update ?
 
     // update trigger_position
     Value pos;
-    if (view.get(Attribute::POS_X, &pos) && pos.is_real()) {
+    if (view.get(Oscit::POS_X, &pos) && pos.is_real()) {
       trigger_position_ = pos.r;
       sort_connections();
     }

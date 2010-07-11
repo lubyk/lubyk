@@ -27,13 +27,24 @@
   ==============================================================================
 */
 
-#include "rubyk.h"
-using namespace rk;
+#include "test_helper.h"
 
-extern "C" void init(Planet &planet) {
-  CLASS (Print, "Print any value received in bang inlet.", "no options")
-  // [1] print
-  METHOD(Print, print, Oscit::any_io("Received values are printed out."))
-  // [2] prefix
-  METHOD(Print, prefix, Oscit::string_io("Prefix to print before values."))
-}
+class MidiValueTest : public ParseHelper
+{
+public:
+
+  void test_create( void ) {
+    assert_result("# <MidiValue:/n value:\"MidiMessage +1:C3(80), 0/500\">\n", "n=MidiValue()\n");
+  }
+
+  void test_send_method( void ) {
+    setup_with_print("n=MidiValue()\n");
+    assert_print("p: \"MidiMessage +1:C3(80), 0/500\"\n", "n!\n");
+  }
+
+  void test_set_no_send_method( void ) {
+    setup_with_print("n=MidiValue()\n");
+    assert_print("", "n/set_value!\n");
+  }
+
+};

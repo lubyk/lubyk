@@ -33,6 +33,8 @@
 #include "oscit/oscit.h"
 using namespace oscit;
 
+#include "rubyk/constants.h"
+
 // TODO move this in a types.h file ?
 
 #define CLASS_URL   "/class"
@@ -40,10 +42,6 @@ using namespace oscit;
 
 #define CLASS_URL_LENGTH 6
 
-/** This is where all the dynamic nodes are created.
- */
-#define NODES_KEY     "nodes"
-#define NODE_OUT_KEY  "out"
 
 /** This is ?
  */

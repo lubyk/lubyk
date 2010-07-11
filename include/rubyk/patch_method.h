@@ -47,12 +47,12 @@ public:
   TYPED("Object.PatchMethod")
 
   PatchMethod(const char *name, const char *path)
-      : Object(name, Attribute::hash_io("Read/write patch content.")),
+      : Object(name, Oscit::hash_io("Read/write patch content.")),
         planet_(NULL),
         file_(path) {}
 
   PatchMethod(const std::string &name, const std::string &path)
-      : Object(name, Attribute::hash_io("Read/write patch content.")),
+      : Object(name, Oscit::hash_io("Read/write patch content.")),
         planet_(NULL),
         file_(path) {}
 

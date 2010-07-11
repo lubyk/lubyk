@@ -40,17 +40,17 @@ void Planet::init() {
 
   // set defaults
   // TODO: remove x,y coord once we store the "device composition" in the remote GUI.
-  attributes_.set(Attribute::VIEW, Attribute::POS_X,  10);
-  attributes_.set(Attribute::VIEW, Attribute::POS_Y,  10);
+  attributes_.set(Oscit::VIEW, Oscit::POS_X,  10);
+  attributes_.set(Oscit::VIEW, Oscit::POS_Y,  10);
 
-  attributes_.set(Attribute::VIEW, Attribute::WIDTH,  500);
-  attributes_.set(Attribute::VIEW, Attribute::HEIGHT, 300);
+  attributes_.set(Oscit::VIEW, Oscit::WIDTH,  500);
+  attributes_.set(Oscit::VIEW, Oscit::HEIGHT, 300);
 
   // build application methods
 
   //           /.inspect
   // FIXME: remove /.inspect...
-  adopt(new TMethod<Planet, &Planet::inspect>(this, Url(INSPECT_URL).name(), Attribute::string_io("Returns inspect information on a given url.")));
+  adopt(new TMethod<Planet, &Planet::inspect>(this, Url(INSPECT_URL).name(), Oscit::string_io("Returns inspect information on a given url.")));
 
   //          /class
   classes_ = adopt(new ClassFinder(Url(CLASS_URL).name(), DEFAULT_OBJECTS_LIB_PATH));
@@ -59,10 +59,10 @@ void Planet::init() {
   Object *rubyk = adopt(new Object(Url(RUBYK_URL).name()));
 
   //          /rubyk/link [[["","source url"],["", "target url"]], "Create a link between two urls."]
-  rubyk->adopt(new TMethod<Planet, &Planet::link>(this, Url(LINK_URL).name(), Attribute::io("Update a link between the two provided urls. Arguments are (url, op, url). Operations are '=>' (link) '||' (unlink) or '?' (pending).", "link operation", "sss")));
+  rubyk->adopt(new TMethod<Planet, &Planet::link>(this, Url(LINK_URL).name(), Oscit::io("Update a link between the two provided urls. Arguments are (url, op, url). Operations are '=>' (link) '||' (unlink) or '?' (pending).", "link operation", "sss")));
 
   //          /rubyk/quit
-  rubyk->adopt(new TMethod<Planet, &Planet::quit>(this, Url(QUIT_URL).name(), Attribute::bang_io("Stop all operations and quit.")));
+  rubyk->adopt(new TMethod<Planet, &Planet::quit>(this, Url(QUIT_URL).name(), Oscit::bang_io("Stop all operations and quit.")));
 }
 
 bool Planet::expose_views(const std::string &path, Value *error) {
@@ -107,7 +107,7 @@ const Value Planet::link(const Value &val) {
 
   if (source_outlet != NULL) {
     return val[1].str() == "||" ? source_outlet->unlink(val[2]) : source_outlet->link(val[2]);
-  } else if (source->get_child(NODE_OUT_KEY, &out) && out->first_child(&outlet)) {
+  } else if (source->get_child(Rubyk::NODE_OUT_KEY, &out) && out->first_child(&outlet)) {
     // was a link to/from default slots: /met --> /counter
     if ( (source_outlet = outlet.type_cast<Outlet>()) ) {
       return val[1].str() == "||" ? source_outlet->unlink(val[2]) : source_outlet->link(val[2]);
@@ -194,7 +194,7 @@ const Value Planet::to_hash() {
     }
   }
 
-  result.set(NODES_KEY, patch);
+  result.set(Rubyk::NODES_KEY, patch);
   return result;
 }
 
@@ -223,13 +223,13 @@ const Value Planet::set(const Value &hash) {
 
   Value nodes;
   Value all_but_nodes(hash); // copy
-  all_but_nodes.remove(NODES_KEY);
+  all_but_nodes.remove(Rubyk::NODES_KEY);
 
   // Start by setting attributes
   Value result(Object::set(all_but_nodes));
 
   // Update nodes
-  if (hash.get(NODES_KEY, &nodes) && nodes.is_hash()) {
+  if (hash.get(Rubyk::NODES_KEY, &nodes) && nodes.is_hash()) {
     HashValue nodes_result;
 
     HashIterator it, end = nodes.end();
@@ -261,15 +261,22 @@ const Value Planet::set(const Value &hash) {
         }
       } else {
         // create Node
-        if (!node_value.has_key(Attribute::CLASS)) {
-          nodes_result.set(key, ErrorValue(BAD_REQUEST_ERROR, "Missing @class to create new Node."));
+        if (!node_value.has_key(Rubyk::CLASS)) {
+          // Create a widget ?
+          Value widget(node_value[Oscit::VIEW][Oscit::WIDGET]);
+          if (widget.is_nil()) {
+            nodes_result.set(key, ErrorValue(BAD_REQUEST_ERROR, "Missing @class to create new Node."));
+          } else {
+            // just add in attributes ?
+            nodes_result.set(key, node_value);
+          }
           continue;
         }
 
-        create_node(key, node_value[Attribute::CLASS], node_value, &nodes_result);
+        create_node(key, node_value[Rubyk::CLASS], node_value, &nodes_result);
       }
     }
-    result.set(NODES_KEY, nodes_result);
+    result.set(Rubyk::NODES_KEY, nodes_result);
   }
   return result;
 }
@@ -277,9 +284,9 @@ const Value Planet::set(const Value &hash) {
 void Planet::create_node(const std::string &name, const Value &class_url, const Value &create_params, Value *result) {
   if (!class_url.is_string()) return; // ignore
   Value params(create_params);
-  Value view_params = params[Attribute::VIEW];
+  Value view_params = params[Oscit::VIEW];
 
-  if (!view_params.has_key(Attribute::POS_X)) {
+  if (!view_params.has_key(Oscit::POS_X)) {
     // get next location for new Node
 
     { ScopedRead lock(children_vector_);
@@ -292,14 +299,14 @@ void Planet::create_node(const std::string &name, const Value &class_url, const 
       }
 
       if (node) {
-        view_params.set(Attribute::POS_X, node->pos_x() + NEW_NODE_POS_X_DELTA);
+        view_params.set(Oscit::POS_X, node->pos_x() + NEW_NODE_POS_X_DELTA);
         Value pos_y;
-        if (node->attributes()[Attribute::VIEW].get(Attribute::POS_Y, &pos_y)) {
-          view_params.set(Attribute::POS_Y, pos_y.r + NEW_NODE_POS_Y_DELTA);
+        if (node->attributes()[Oscit::VIEW].get(Oscit::POS_Y, &pos_y)) {
+          view_params.set(Oscit::POS_Y, pos_y.r + NEW_NODE_POS_Y_DELTA);
         }
       }
     }
-    params.set(Attribute::VIEW, view_params);
+    params.set(Oscit::VIEW, view_params);
   }
 
   ObjectHandle obj;

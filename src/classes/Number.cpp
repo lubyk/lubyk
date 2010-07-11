@@ -65,6 +65,6 @@ private:
 
 extern "C" void init(Planet &planet) {
   CLASS_NAMED(NumberNode, "Number", "Stores a number which can be sent again through Bang!.", "value: [initial value]");
-  METHOD(NumberNode, value, Attribute::real_io("Current number."))
-  OUTLET(NumberNode, value, Attribute::real_io("Send the current number out."))
+  METHOD(NumberNode, value, Oscit::real_io("Current number."))
+  OUTLET(NumberNode, value, Oscit::real_io("Send the current number out."))
 }

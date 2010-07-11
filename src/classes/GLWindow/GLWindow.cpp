@@ -75,8 +75,8 @@ private:
 extern "C" void init(Planet &planet) {
   CLASS_NAMED(GLWindowNode, "GLWindow", "OpenGL window", "no options yet")
   // [1]
-  METHOD(GLWindowNode, redraw, Attribute::bang_io("Redraws on bang."))
-  OUTLET(GLWindowNode, draw,   Attribute::io("Sends [width, height] of view to execute OpenGL.", "opengl", "ff"))
-  METHOD(GLWindowNode, open_close,  Attribute::range_io("Open/close a window (1 open, 0 close).", 0, 1))
-  SUPER_METHOD(GLWindowNode, GLWindow, fullscreen, Attribute::range_io("1 to go fullscreen, 0 for window mode.", 0, 1))
+  METHOD(GLWindowNode, redraw, Oscit::bang_io("Redraws on bang."))
+  OUTLET(GLWindowNode, draw,   Oscit::io("Sends [width, height] of view to execute OpenGL.", "opengl", "ff"))
+  METHOD(GLWindowNode, open_close,  Oscit::range_io("Open/close a window (1 open, 0 close).", 0, 1))
+  SUPER_METHOD(GLWindowNode, GLWindow, fullscreen, Oscit::range_io("1 to go fullscreen, 0 for window mode.", 0, 1))
 }

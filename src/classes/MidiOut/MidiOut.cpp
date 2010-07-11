@@ -203,8 +203,8 @@ private:
 extern "C" void init(Planet &planet) {
   CLASS(MidiOut, "Port to send midi values out. If no port is provided, tries to open a virtual port.", "port: [port number/name]")
   // TODO: this should be a SelectIO...
-  METHOD(MidiOut, midi, Attribute::midi_io("Received values are sent out to the current midi port."))
-  METHOD(MidiOut, port, Attribute::any_io("Port number or string."))
+  METHOD(MidiOut, midi, Oscit::midi_io("Received values are sent out to the current midi port."))
+  METHOD(MidiOut, port, Oscit::any_io("Port number or string."))
   // CLASS_METHOD(MidiOut, list)
   // METHOD(MidiOut, clear)
 }

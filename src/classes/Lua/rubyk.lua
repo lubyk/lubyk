@@ -45,7 +45,7 @@ function SelectIO(info, values)
   return {[info_key] = info, [type_key] = {[name_key] = 'select', [sign_key] = 's', [values_key] = values}}
 end
 
--- function Attribute::hash_io(info)
+-- function Oscit::hash_io(info)
 --   return {{}, info}
 -- end
 --

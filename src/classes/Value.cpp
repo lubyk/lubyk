@@ -30,13 +30,12 @@
 #include "rubyk.h"
 using namespace rk;
 
-class ValueNode : public Node
-{
+class ValueNode : public Node {
 public:
-
   // [1] set/get value, send value
   const Value value(const Value &val) {
     if (val.is_nil()) return value_;
+
     if (!val.is_bang()) {
       value_ = val;
     }
@@ -61,7 +60,7 @@ private:
 };
 
 extern "C" void init(Planet &planet) {
-  Class * c = planet.classes()->declare<ValueNode>("Value", "Stores a value which can be sent again through Bang!.", "value: [initial value]");
-  METHOD(ValueNode, value, Attribute::any_io("Set/get current value."))
-  OUTLET(ValueNode, value, Attribute::any_io("Send the current value out."))
+  CLASS_NAMED(ValueNode, "Value", "Stores a value which can be sent again through Bang!.", "value: [initial value]")
+  METHOD(ValueNode, value, Oscit::any_io("Set/get current value."))
+  OUTLET(ValueNode, value, Oscit::any_io("Send the current value out."))
 }

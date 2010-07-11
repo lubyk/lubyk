@@ -35,8 +35,8 @@ public:
     Root base;
     Real value = 0;
     DummyNode *sender = base.adopt(new DummyNode(&value));
-    Object *out  = sender->adopt(new Object(NODE_OUT_KEY));
-    Outlet *ping = out->adopt(new Outlet(sender, "ping", Attribute::real_io("Receive real values.")));
+    Object *out  = sender->adopt(new Object(Rubyk::NODE_OUT_KEY));
+    Outlet *ping = out->adopt(new Outlet(sender, "ping", Oscit::real_io("Receive real values.")));
 
     Outlet *outlet = sender->outlet_for_value(1, Value(1.0));
     assert_equal(ping, outlet);
@@ -50,9 +50,9 @@ public:
     Root base;
     Real value = 0;
     DummyNode *node = base.adopt(new DummyNode(&value));
-    assert_equal("null", node->attributes()[Attribute::VIEW].to_json());
+    assert_equal("null", node->attributes()[Oscit::VIEW].to_json());
     node->init();
-    assert_equal("{\"widget\":\"Node\", \"hue\":203}", node->attributes()[Attribute::VIEW].to_json());
+    assert_equal("{\"widget\":\"Node\", \"hue\":203, \"width\":60, \"height\":20}", node->attributes()[Oscit::VIEW].to_json());
   }
 
   void test_to_hash( void ) {
@@ -60,12 +60,12 @@ public:
     Real value = 0;
     DummyNode *node = base.adopt(new DummyNode(&value));
     node->init();
-    Object *out  = node->adopt(new Object(NODE_OUT_KEY));
-    out->adopt(new Outlet(node, "ping", Attribute::real_io("Sends real values.")));
+    Object *out  = node->adopt(new Object(Rubyk::NODE_OUT_KEY));
+    out->adopt(new Outlet(node, "ping", Oscit::real_io("Sends real values.")));
     Value hash(node->to_hash());
-    assert_equal("\"Basic Node\"", hash[Attribute::INFO].to_json());
-    assert_equal("{\"name\":\"string\", \"signature\":\"s\"}", hash[Attribute::TYPE].to_json());
-    assert_equal("\"Node\"", hash[Attribute::VIEW][Attribute::WIDGET].to_json());
-    assert_equal("{\"@info\":\"Sends real values.\", \"@type\":{\"name\":\"real\", \"signature\":\"f\"}}", hash[NODE_OUT_KEY]["ping"].to_json());
+    assert_equal("\"Basic Node\"", hash[Oscit::INFO].to_json());
+    assert_equal("{\"name\":\"string\", \"signature\":\"s\"}", hash[Oscit::TYPE].to_json());
+    assert_equal("\"Node\"", hash[Oscit::VIEW][Oscit::WIDGET].to_json());
+    assert_equal("{\"@info\":\"Sends real values.\", \"@type\":{\"name\":\"real\", \"signature\":\"f\"}}", hash[Rubyk::NODE_OUT_KEY]["ping"].to_json());
   }
 };
