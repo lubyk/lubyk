@@ -60,8 +60,9 @@ void makeTexture(const cv::Mat &mat, int tex);
  * @param start_y bottom of the rectangle in which to draw the texture
  * @param end_x right border of the rectangle in which to draw the texture
  * @param end_y top border of the rectangle in which to draw the texture
+ * @param flip_y (optional) flip image left-right (true = flip, false = no flip)
  */
-void drawTexture(int tex, float start_x, float start_y, float end_x, float end_y);
+void drawTexture(int tex, float start_x, float start_y, float end_x, float end_y, bool flip_y = false);
 
 } // rk
 
@@ -111,5 +112,9 @@ void DrawPixels(const cv::Mat &mat);
 void TexImage(const cv::Mat &mat);
 
 } // gl
+
+namespace cv {
+  cv::Mat LoadImage(const char *path);
+}
 
 #endif // RUBYK_INCLUDE_RUBYK_SUPPORT_DRAW_H_

@@ -39,9 +39,9 @@
 
 
 // FIXME: try to understand why the lua_modules do not load
-extern void luaopen_rk(lua_State *L);
-extern void luaopen_gl(lua_State *L);
-extern void luaopen_glu(lua_State *L);
+extern "C" int luaopen_rk(lua_State *L);
+extern "C" int luaopen_gl(lua_State *L);
+extern "C" int luaopen_glu(lua_State *L);
 
 
 extern "C" int luaopen_oscit_MidiMessage(lua_State *L);

@@ -6,24 +6,37 @@
 using namespace cv;
 
 
-
-/** float cv::rk_mat_at(const cv::Mat &m, uint x, uint y, uint c=0)
+/** float cv::rk_mat_at(const cv::Mat &m, int x, int y, int c=0)
  * rubyk/support/draw.h:78
  */
 static int cv_rk_mat_at(lua_State *L) {
-  int top__ = lua_gettop(L);
-  float  retval__;
-  const cv::Mat *m = *((const cv::Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-  int x = luaL_checkint(L, 2);
-  int y = luaL_checkint(L, 3);
-  if (top__ < 4) {
-    retval__ = rk_mat_at(*m, x, y);
-  } else {
-    int c = luaL_checkint(L, 4);
-    retval__ = rk_mat_at(*m, x, y, c);
+  try {
+    int top__ = lua_gettop(L);
+    float  retval__;
+    const cv::Mat *m = *((const cv::Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    int x = luaL_checkint(L, 2);
+    int y = luaL_checkint(L, 3);
+    if (top__ < 4) {
+      retval__ = rk_mat_at(*m, x, y);
+    } else {
+      int c = luaL_checkint(L, 4);
+      retval__ = rk_mat_at(*m, x, y, c);
+    }
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.Mat.at: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.Mat.at: Unknown exception");
+    lua_error(L);
+    return 0;
   }
-  lua_pushnumber(L, retval__);
-  return 1;
 }
 
 

@@ -11089,7 +11089,30 @@ static int cv_watershed(lua_State *L) {
   }
 }
 
-
+#include "draw.h"
+/** cv::Mat cv::LoadImage(const char *path)
+ * rubyk/support/draw.h:116
+ */
+static int cv_LoadImage(lua_State *L) {
+  try {
+    const char *path = luaL_checkstring(L, 1);
+    cv::Mat  retval__ = LoadImage(path);
+    lua_pushclass<cv::Mat>(L, retval__, "cv.Mat");
+    return 1;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("cv.LoadImage: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "cv.LoadImage: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
+}
 
 // Register namespace
 
@@ -11099,6 +11122,7 @@ static const struct luaL_Reg cv_functions[] = {
   {"Canny"                         , cv_Canny},
   {"GaussianBlur"                  , cv_GaussianBlur},
   {"LUT"                           , cv_LUT},
+  {"LoadImage"                     , cv_LoadImage},
   {"Laplacian"                     , cv_Laplacian},
   {"Mahalanobis"                   , cv_Mahalanobis},
   {"Mahalonobis"                   , cv_Mahalonobis},
