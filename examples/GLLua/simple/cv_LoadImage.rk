@@ -1,7 +1,9 @@
 # run from build directory with
 # cp ../examples/GLLua/opencv.json ./ && ./rubyk ../examples/GLLua/opencv.rk
 win = GLWindow()
-cv = GLLua("../examples/GLLua/simple/cv_LoadImage.lua")
-win => cv
+cv = Lua("../examples/GLLua/simple/cv_LoadImage.lua")
+cv => set_image~draw_img
+draw_img = GLLua("../examples/GLLua/simple/cv_drawImage.lua")
+win => draw_img
 m = Metro(3000)
 m => win

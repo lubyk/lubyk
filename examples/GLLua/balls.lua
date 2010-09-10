@@ -59,7 +59,7 @@ function bang(sig)
   y = math.sin(n / 0.7) * 360 / math.pi
   z = math.sin(n) * 360 / math.pi
 end
-inlet('bang', BangIO('just bang me'))
+Inlet('bang', BangIO('just bang me'))
 
 function draw(sig)
   gl.Enable("POINT_SMOOTH")

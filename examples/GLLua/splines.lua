@@ -152,7 +152,7 @@ function advance()
   y = math.sin(n / 0.7) * 360 / math.pi
   z = math.sin(n) * 360 / math.pi
 end
-inlet('advance', BangIO('just bang me'))
+Inlet('advance', BangIO('just bang me'))
 
 function draw()
   if blend then

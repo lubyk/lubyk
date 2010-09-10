@@ -2,7 +2,7 @@ require('cv')
 
 -- change again
 
-mi = mi or Outlet("mi", MidiIO("sends midi notes"))
+Outlet("mi", MidiIO("sends midi notes"))
 
 Note = oscit.MidiMessage_Note
 
@@ -13,8 +13,8 @@ function bang(value)
   i = i + 1
   N = {
     {60, nil, 69, 65},
---    {65, 60, 67, nil},
---    {63, 60, 50, nil},
+    {65, 60, 67, nil},
+    {63, 60, 50, nil},
 --    {},
 --    {63, 60, 72, nil, 63, 60, 72, 73},
 --    {},
@@ -22,7 +22,7 @@ function bang(value)
 
   N2 = {
     {80, nil, 68, 79},
---    {63, 60, 50, nil},
+    {63, 60, 50, nil},
 --    {63, 60, 72, nil, 63, 60, 72, 73},
 --    {},
 --    {},
@@ -53,7 +53,7 @@ function bang(value)
 
   return true
 end
-inlet("bang", BangIO("Send next note on impulse."))
+Inlet("bang", BangIO("Send next note on impulse."))
 
 
 function length(r)
@@ -62,7 +62,7 @@ function length(r)
   end
   return l
 end
-inlet("length", RangeIO("Set note length", 10, 1000))
+Inlet("length", RangeIO("Set note length", 10, 1000))
 
 function notes(n)
   if n then
@@ -72,7 +72,7 @@ function notes(n)
     return 0
   end
 end
-inlet("notes", RangeIO("Send note out", 1,127))
+Inlet("notes", RangeIO("Send note out", 1,127))
 
 -- Should be
 -- method('notes', n, x, y) do

@@ -9,7 +9,7 @@ function video(frame)
   cv.flip(res, res, -1)
   frame_changed = true
 end
-inlet('video', MatrixIO('send me images'))
+Inlet('video', MatrixIO('send me images'))
 
 function draw()
   gl.Clear( "COLOR_BUFFER_BIT, DEPTH_BUFFER_BIT")

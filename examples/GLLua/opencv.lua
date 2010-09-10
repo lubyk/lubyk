@@ -19,7 +19,7 @@ function x(val)
   end
   return x_
 end
-inlet('x', RangeIO("Rotation angle in x axis.", 0, 360))
+Inlet('x', RangeIO("Rotation angle in x axis.", 0, 360))
 
 function y(val)
   if val then
@@ -27,7 +27,7 @@ function y(val)
   end
   return y_
 end
-inlet('y', RangeIO("Rotation angle in y axis.", 0, 360))
+Inlet('y', RangeIO("Rotation angle in y axis.", 0, 360))
 
 function z(val)
   if val then
@@ -35,7 +35,7 @@ function z(val)
   end
   return z_
 end
-inlet('z', RangeIO("Rotation angle in z axis.", 0, 360))
+Inlet('z', RangeIO("Rotation angle in z axis.", 0, 360))
 
 function opacity(val)
   if val then
@@ -43,7 +43,7 @@ function opacity(val)
   end
   return opacity_
 end
-inlet('opacity', RangeIO("Change video opacity.", 0, 1))
+Inlet('opacity', RangeIO("Change video opacity.", 0, 1))
 
 function blur(val)
   if val then
@@ -52,7 +52,7 @@ function blur(val)
   end
   return blur_
 end
-inlet('blur', RangeIO("Blur image", 1, 16))
+Inlet('blur', RangeIO("Blur image", 1, 16))
 
 -- TODO: create an 'accessor' function:
 -- accessor('z', RangeIO("Rotation angle in z axis.", 0, 360))
@@ -64,11 +64,11 @@ function video(frame)
   frame_changed = true
 
   n = n + math.pi / 300
-  -- x = 0 --math.cos(n / 0.9) * 360 / math.pi
-  -- y = math.sin(n / 0.7) * 360 / math.pi
-  -- z = 0 --math.sin(n) * 360 / math.pi
+  x_ = math.cos(n / 0.9) * 360 / math.pi
+  y_ = math.sin(n / 0.7) * 360 / math.pi
+  z_ = math.sin(n) * 360 / math.pi
 end
-inlet('video', MatrixIO('send me images'))
+Inlet('video', MatrixIO('send me images'))
 
 function draw()
   gl.Clear( "COLOR_BUFFER_BIT, DEPTH_BUFFER_BIT")
@@ -82,6 +82,8 @@ function draw()
   end
 
   gl.Translate(0.0, 0.0, -6.0)
+
+  rk.drawTexture(tex, -3, -3, 3, 3, 1)
 
   gl.Rotate(x_, 1.0, 0.0, 0.0)
   gl.Rotate(y_, 0.0, 1.0, 0.0)

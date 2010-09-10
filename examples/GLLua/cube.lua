@@ -10,7 +10,7 @@ function advance()
   y = math.sin(n / 0.7) * 360 / math.pi
   z = math.sin(n) * 360 / math.pi
 end
-inlet('advance', BangIO('just bang me'))
+Inlet('advance', BangIO('just bang me'))
 
 function speed(sig)
   if sig then
@@ -18,7 +18,7 @@ function speed(sig)
   end
   return dt
 end
-inlet('speed', RangeIO('Rotating speed', 0, math.pi / 500))
+Inlet('speed', RangeIO('Rotating speed', 0, math.pi / 500))
 
 function draw()
   gl.Clear( "COLOR_BUFFER_BIT, DEPTH_BUFFER_BIT")
