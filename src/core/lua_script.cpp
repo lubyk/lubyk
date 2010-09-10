@@ -68,7 +68,8 @@ const Value LuaScript::lua_init(const char *init_script) {
   // TODO: SHOULD ALSO PUSH ON THE REGISTRY
   lua_setglobal(lua_, RUBYK_THIS_IN_LUA);
 
-  register_lua_method<LuaScript, &LuaScript::lua_inlet>("inlet");
+  register_lua_method<LuaScript, &LuaScript::lua_build_inlet>("build_inlet_");
+
   // TODO: make sure build_outlet_ and send_ are never accessible from lua (only through Outlet).
   register_lua_method<LuaScript, &LuaScript::lua_build_outlet>("build_outlet_");
   register_lua_method("send_", &LuaScript::lua_send);
@@ -201,7 +202,7 @@ LuaScript *LuaScript::lua_this(lua_State *L) {
   return script;
 }
 
-int LuaScript::lua_inlet(const Value &val) {
+int LuaScript::lua_build_inlet(const Value &val) {
   Value signature(val.is_list() ? val[1][Oscit::TYPE][Oscit::SIGNATURE] : gNilValue);
   if (!val.is_list() || !val[0].is_string() || !signature.is_string()) {
     // invalid call to 'inlet'
@@ -217,6 +218,7 @@ int LuaScript::lua_inlet(const Value &val) {
       // TODO: inlet type change = reset connections
     } else {
       // TODO: update units/range/...
+      // and notify remote GUI
     }
   } else {
     adopt(new LuaInlet(this, val[0].str().c_str(), val[1]));

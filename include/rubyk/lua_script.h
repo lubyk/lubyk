@@ -137,11 +137,11 @@ protected:
   virtual const Value eval_script();
 
   /** @internal.
-   * "inlet" method in lua to create/update an inlet.
+   * "build_inlet_" method in lua to create/update an inlet.
    * @param val name of the inlet & type (sH)
    * @return number of values on lua stack (0)
    */
-  int lua_inlet(const Value &val);
+  int lua_build_inlet(const Value &val);
 
   /** @internal
    * "build_outlet_" method in lua to create/update an outlet (used by rubyk library).

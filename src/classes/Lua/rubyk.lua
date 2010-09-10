@@ -63,6 +63,9 @@ end
 
 
 function Outlet(name, vtype)
+  if _G[name] then
+    return
+  end
   local self = build_outlet_(name, vtype)
   local send
 
@@ -77,5 +80,12 @@ function Outlet(name, vtype)
       send_(self, v)
     end
   end
-  return { send = send }
+  
+  -- Create a global variable with the name of the outlet
+  _G[name] = {send = send}
+  return _G[name]
+end
+
+function Inlet(name, vtype)
+  build_inlet_(name, vtype)
 end

@@ -29,7 +29,7 @@
 #include "rubyk.h"
 using namespace rk;
 
-#include "MidiOut/RtMidi.h"
+#include "Midi/RtMidi.h"
 
 /** This class lets you create virtual ports (where possible) or connect
  * to midi receivers and send them midi data.

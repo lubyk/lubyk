@@ -43,7 +43,7 @@ public:
    */
   static const char * const NODES_KEY;
 
-  /** Key for the Outlet's container.
+  /** Key for the Outlets container.
    */
   static const char * const NODE_OUT_KEY;
 

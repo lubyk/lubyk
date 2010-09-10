@@ -30,6 +30,14 @@
 #include "rubyk/oscit.h"
 #include "rubyk/lua.h"
 
+namespace rk {
+
+  /** Value used to measure time.
+   * This is a double by default.
+  */
+  typedef double Time;
+} // rk
+
 // slot management
 #include "rubyk/inlet.h"
 #include "rubyk/outlet.h"

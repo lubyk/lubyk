@@ -110,20 +110,20 @@ public:
   // ------------------------------------------------------------------------  Real
 
   void test_add_inlet( void ) {
-    Value res = parse("inlet('tempo', RealIO('Main beat machine tempo.'))");
+    Value res = parse("Inlet('tempo', RealIO('Main beat machine tempo.'))");
     assert_true(res.is_string());
     ObjectHandle inlet;
     assert_true(planet_->get_object_at("/lua/tempo", &inlet));
     assert_equal("\"f\"", inlet->attributes()[Oscit::TYPE][Oscit::SIGNATURE].to_json());
     assert_equal("\"Main beat machine tempo.\"", inlet->attributes()[Oscit::INFO].to_json());
 
-    res = parse("inlet('tempo', RealIO('Main beat machine tempo.'))");
+    res = parse("Inlet('tempo', RealIO('Main beat machine tempo.'))");
     assert_true(res.is_string()); // no error
   }
 
   void test_add_inlet_RealIO( void ) {
     // also tests loading of rubyk.lua
-    Value res = parse("inlet('tempo', RangeIO('Main beat machine tempo [bpm].', 0, 5000))");
+    Value res = parse("Inlet('tempo', RangeIO('Main beat machine tempo [bpm].', 0, 5000))");
     assert_true(res.is_string());
     ObjectHandle inlet;
     assert_true(planet_->get_object_at("/lua/tempo", &inlet));
@@ -135,7 +135,7 @@ public:
   }
 
   void test_add_outlet_RealIO( void ) {
-    Value res = parse("force = Outlet('force', RealIO('Dark Force.'))");
+    Value res = parse("Outlet('force', RealIO('Dark Force.'))");
     assert_true(res.is_string());
     ObjectHandle outlet;
     assert_true(planet_->get_object_at("/lua/out/force", &outlet));
@@ -170,7 +170,7 @@ public:
 
   void test_add_inlet_BangIO( void ) {
     // also tests loading of rubyk.lua
-    Value res = parse("inlet('boom', BangIO('Ping pong.'))");
+    Value res = parse("Inlet('boom', BangIO('Ping pong.'))");
     assert_true(res.is_string());
     ObjectHandle inlet;
     assert_true(planet_->get_object_at("/lua/boom", &inlet));
@@ -196,7 +196,7 @@ public:
   //
   // void test_add_inlet_ImpulseIO( void ) {
   //   // also tests loading of rubyk.lua
-  //   Value res = parse("inlet('boom', ImpulseIO('Ping pong.'))");
+  //   Value res = parse("Inlet('boom', ImpulseIO('Ping pong.'))");
   //   assert_true(res.is_string());
   //   ObjectHandle inlet;
   //   assert_true(planet_->get_object_at("/lua/boom", &inlet));
@@ -226,7 +226,7 @@ public:
 
   void test_add_inlet_MatrixIO( void ) {
     // also tests loading of rubyk.lua
-    Value res = parse("require('cv'); inlet('boom', MatrixIO('Ping pong.'))");
+    Value res = parse("require('cv'); Inlet('boom', MatrixIO('Ping pong.'))");
     assert_true(res.is_string());
     ObjectHandle inlet;
     assert_true(planet_->get_object_at("/lua/boom", &inlet));
@@ -273,7 +273,7 @@ public:
 
   void test_add_inlet_MidiIO( void ) {
     // also tests loading of rubyk.lua
-    Value res = parse("inlet('boom', MidiIO('Ping pong.'))");
+    Value res = parse("Inlet('boom', MidiIO('Ping pong.'))");
     assert_true(res.is_string());
     ObjectHandle inlet;
     assert_true(planet_->get_object_at("/lua/boom", &inlet));
@@ -283,7 +283,7 @@ public:
 
   void test_add_outlet_MidiIO( void ) {
     // also tests loading of rubyk.lua
-    Value res = parse("boom = Outlet('boom', MidiIO('Ping pong.'))");
+    Value res = parse("Outlet('boom', MidiIO('Ping pong.'))");
     assert_true(res.is_string());
     ObjectHandle outlet;
     assert_true(planet_->get_object_at("/lua/out/boom", &outlet));

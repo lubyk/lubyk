@@ -79,11 +79,35 @@ namespace cv {
 inline float rk_mat_at(const cv::Mat &m, int x, int y, int c=0) {
   if ( y < 0 || y >= m.rows || x < 0 || x >= m.cols || c < 0 || c >= m.channels()) return 0;
   switch (m.depth()) {
-    case CV_8U:  return ((const unsigned char* )(m.data + m.step*y))[x];
-    case CV_32F: return ((const float*)(m.data + m.step*y))[x];
+    case CV_8U:  return ((const unsigned char* )(m.data + m.step*y + m.elemSize()*x))[c];
+    case CV_32F: return ((const float*)(m.data + m.step*y + m.elemSize()*x))[c];
     default:
-      return 0; // FIXME get other types
+      return 0; // FIXME get other types, could use m.at<float>(x, y) //
   }
+}
+
+/** Get width (number of cols) of matrix.
+ */
+inline size_t rk_mat_width(const cv::Mat &m) {
+  return m.cols;
+}
+
+/** Get number of cols of matrix.
+ */
+inline size_t rk_mat_cols(const cv::Mat &m) {
+  return m.cols;
+}
+
+/** Get height (number of rows) of matrix.
+ */
+inline size_t rk_mat_height(const cv::Mat &m) {
+  return m.rows;
+}
+
+/** Get number of rows of matrix.
+ */
+inline size_t rk_mat_rows(const cv::Mat &m) {
+  return m.rows;
 }
 } // cv
 
