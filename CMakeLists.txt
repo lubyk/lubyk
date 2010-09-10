@@ -1,14 +1,33 @@
-project (RUBYK)
 cmake_minimum_required(VERSION 2.6.2)
+
+# ==============================================================================
+#
+#  Rubyk
+#
+# ==============================================================================
+
+project (RUBYK)
+set(RUBYK_VERSION "0.5")
 
 # ==============================================================================
 #
 #  Options
 #
 # ==============================================================================
-option (RUBYK_MEMORY_CHECKING    "Enable checking against memory leaks ?"    OFF )
-option (RUBYK_ENABLE_TESTING     "Build and run tests ?"                     ON  )
-option (RUBYK_USE_LUA_JIT        "Use Lua Just In Time compiler ?"           OFF )
+option (RUBYK_MEMORY_CHECKING    "Enable checking against memory leaks ?"       OFF )
+option (RUBYK_ENABLE_TESTING     "Build and run tests ?"                        ON  )
+option (RUBYK_USE_LUA_JIT        "Use Lua Just In Time compiler ?"              OFF )
+
+# ==============================================================================
+#
+#  Doxygen
+#
+# ==============================================================================
+find_package(Doxygen)
+
+if(DOXYGEN_FOUND)
+    set(RUBYK_BUILD_DOXYGEN_DOCS ON CACHE BOOL "Build HTML+XML documentation with Doxygen")
+endif()
 
 set (luaopen)
 # handle memory checking option
@@ -180,11 +199,12 @@ endforeach (RUBYK_OBJECT_SOURCE)
 
 # ----------- classes/xxx (special, complicated builds)
 
-file (GLOB RUBYK_LIB_OBJECTS src/classes/*)
+file (GLOB RUBYK_LIB_OBJECTS   src/classes/*)
 file (GLOB RUBYK_OBJECTS_TESTS src/classes/*.h)
+file (GLOB RUBYK_OBJECTS_BAD   src/classes/.*)
 
 # -- Filter out all *.cpp and *.h from the 'classes' folder
-list (REMOVE_ITEM RUBYK_LIB_OBJECTS ${RUBYK_OBJECT_SOURCES} ${RUBYK_OBJECTS_TESTS})
+list (REMOVE_ITEM RUBYK_LIB_OBJECTS ${RUBYK_OBJECT_SOURCES} ${RUBYK_OBJECTS_TESTS} ${RUBYK_OBJECTS_BAD})
 
 foreach (RUBYK_LIB_OBJECT ${RUBYK_LIB_OBJECTS})
   add_subdirectory (${RUBYK_LIB_OBJECT})
@@ -217,6 +237,19 @@ add_test (rubyk_test test_runner)
 add_custom_target (test_all ALL ${CMAKE_CTEST_COMMAND} -V)
 add_dependencies (test_all test_runner)
 add_dependencies (test_runner objects)
+
+
+# ==============================================================================
+#
+#  Documentation / xml for bindings
+#
+# ==============================================================================
+
+# find_package(Doxygen)
+#
+# if(DOXYGEN_FOUND)
+#     set(BUILD_DOXYGEN_DOCS ON CACHE BOOL "Generate HTML docs using Doxygen")
+# endif()
 
 
 # ==============================================================================

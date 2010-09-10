@@ -31,24 +31,28 @@ using namespace rk;
 
 #include "MidiOut/RtMidi.h"
 
-/** This class lets you create virtual ports (where possible) or connect
- * to midi receivers and send them midi data.
+/** This class lets you receive midi events through virtual ports (where possible)
+ * or connect to midi senders and receive midi data from them.
  */
-class MidiOut : public Node {
+class MidiIn : public Node {
  public:
-  MidiOut() : port_id_(-1), midi_out_(NULL) {
+  MidiIn() : port_id_(-1), midi_in_(NULL) {
     set_is_ok(false);  // port not opened
+
     try {
-      midi_out_ = new RtMidiOut;
+      midi_in_ = new RtMidiIn;
+
+      // set callback
+      midi_in_->setCallback(MidiIn::s_callback, (void*)this);
     } catch (RtError &error) {
-      midi_out_ = NULL;
+      midi_in_ = NULL;
       error_.set(UNKNOWN_ERROR, error.getMessageString());
     }
   }
 
-  virtual ~MidiOut() {
-    if (midi_out_) {
-      delete midi_out_;
+  virtual ~MidiIn() {
+    if (midi_in_) {
+      delete midi_in_;
     }
   }
 
@@ -64,37 +68,26 @@ class MidiOut : public Node {
     }
   }
 
-  // [1] Send midi data out
-  const Value midi(const Value &val) {
-    MidiMessage *msg;
-
-    if (!is_ok() || !val.is_midi()) return MidiValue();
-
-    msg = val.midi_message_;
-
-    if (msg->wait() > 0) {
-      bang_me_in(msg->wait(), val);
-    } else {
-      // send now
-      bang(val);
+  // Send midi data out
+  void receive(const Value &val) {
+    if (val.is_midi()) {
+      send(val);
     }
-
-    return val;
   }
 
-  // [2] Get/set midi out port
+  // [1] Get/set midi out port
   const Value port(const Value &val) {
     if (val.is_real()) {
       return open_port(val.r);
     } else if (val.is_string()) {
-      if (midi_out_ == NULL) return error_;
+      if (midi_in_ == NULL) return error_;
       // 1. find port
-      size_t port_count = midi_out_->getPortCount();
+      size_t port_count = midi_in_->getPortCount();
       std::string name;
 
       for (size_t i = 0; i < port_count; ++i) {
         try {
-          name = midi_out_->getPortName(i);
+          name = midi_in_->getPortName(i);
           if (val.str() == name) {
             return open_port(i);
           }
@@ -107,43 +100,11 @@ class MidiOut : public Node {
     return port_id_ == -1 ? Value(name_) : Value(port_id_);
   }
 
-  /** internal use to send NoteOff or delayed NoteOn.
-   */
-  virtual void bang(const Value &val) {
-    const MidiMessage *msg = val.midi_message_;
-    { ScopedLock lock(mutex_);
-      midi_out_->sendMessage( &(msg->data()) );
-    }
-    if (msg->type() == NoteOn && msg->length() > 0) {
-      Value out(msg); // copy
-      out.midi_message_->note_on_to_off();
-      bang_me_in(msg->length(), out, true);
-    }
-  }
-
-  // void clear() {
-  //   remove_my_events();
-  // }
-  //
-  // // print a list of possible outputs
-  // static void list(std::ostream * pOutput, const Value &p)
-  // {
-  //   std::vector<std::string> ports;
-  //   if (!output_list(pOutput, ports)) return;
-  //   size_t nPorts = ports.size();
-  //
-  //   *pOutput << "Midi out ports (" << nPorts << "):" << std::endl;
-  //
-  //   for (size_t i=0; i<nPorts; i++ ) {
-  //     *pOutput << "  " << i << ": " << ports[i] << std::endl;
-  //   }
-  // }
-
   virtual void inspect(Value *hash) const {
     if (is_ok() && port_id_ >= 0) {
       std::string name;
       try {
-        name = midi_out_->getPortName(port_id_);
+        name = midi_in_->getPortName(port_id_);
         hash->set("port", name);
       } catch (RtError &error) {
         hash->set("port", error.getMessageString());
@@ -155,22 +116,33 @@ class MidiOut : public Node {
     }
   }
 private:
+
+  /** Static callback to trigger when new messages arrive.
+   */
+  static void s_callback(double timestamp, std::vector<unsigned char> *message, void *data) {
+    if (message->size() == 3) {
+      MidiValue m;
+      m.midi_message_->set(*message);
+      ((MidiIn *)data)->receive(m);
+    }
+  }
+
   const Value open_port(int port) {
-    if (midi_out_ == NULL) return error_;
-    midi_out_->closePort();
+    if (midi_in_ == NULL) return error_;
+    midi_in_->closePort();
     set_is_ok(false);
 
     if (port == -1) {
       // create a virtual port
       try {
-        midi_out_->openVirtualPort(name_);
+        midi_in_->openVirtualPort(name_);
       } catch (RtError &error) {
         return error_.set(UNKNOWN_ERROR, error.getMessageString());
       }
     } else {
       // try to connect to the given port
       try {
-        midi_out_->openPort( port );
+        midi_in_->openPort( port );
       } catch (RtError &error) {
         return error_.set(UNKNOWN_ERROR, error.getMessageString());
       }
@@ -180,14 +152,14 @@ private:
     return Value(port_id_);
   }
 
-  // static bool output_list(std::ostream * pOutput, std::vector<std::string>& ports)
+  // static bool input_list(std::ostream * pOutput, std::vector<std::string>& ports)
   // {
-  //   RtMidiOut *midiout = 0;
+  //   RtMidiIn *midiout = 0;
   //   unsigned int i,nPorts;
   //   std::string portName;
   //
   //   try {
-  //     midiout = new RtMidiOut();
+  //     midiout = new RtMidiIn();
   //   }
   //   catch (RtError &error) {
   //     *pOutput << error.getMessageString() << std::endl;
@@ -215,10 +187,10 @@ private:
    */
   int port_id_;
 
-  /** Pointer to our RtMidiOut instance (MidiOut is just a wrapper around
-   *  RtMidiOut).
+  /** Pointer to our RtMidiIn instance (MidiIn is just a wrapper around
+   *  RtMidiIn).
    */
-  RtMidiOut * midi_out_;
+  RtMidiIn *midi_in_;
 
   /** ErrorValue to store the error message that can occur during
    *  object construction.
@@ -229,11 +201,8 @@ private:
 };
 
 extern "C" void init(Planet &planet) {
-  CLASS(MidiOut, "Port to send midi values out. If no port is provided, tries to open a virtual port.", "port: [port number/name]")
-  // TODO: this should be a SelectIO...
-  METHOD(MidiOut, midi, Oscit::midi_io("Received values are sent out to the current midi port."))
-  METHOD(MidiOut, port, Oscit::any_io("Port number or string."))
-  // CLASS_METHOD(MidiOut, list)
-  // METHOD(MidiOut, clear)
+  CLASS (MidiIn, "Receives midi values.", "port: [port number/name]")
+  METHOD(MidiIn, port, Oscit::any_io("Port number or string."))
+  OUTLET(MidiIn, midi, Oscit::midi_io("Midi events."))
 }
 

@@ -12,4 +12,5 @@ else(UNIX)
   endif(WIN32)
 endif(UNIX)
 
+add_rko_object(MidiIn MidiIn.cpp RtMidi.cpp)
 add_rko_object(MidiOut MidiOut.cpp RtMidi.cpp)
