@@ -1,4 +1,5 @@
 -- we are in the global env
+dofile('Node.lua')
 -- rubyk namespace
 rk = {prototype = {}}
 nodes = {}
@@ -7,7 +8,7 @@ nodes = {}
 -- as _G.
 function rk.load(filename, env)
   local code = assert(loadfile(filename))
-  local env = env or {node = {}}
+  local env = env or {node = Node.new()}
   -- inherit global env
   setmetatable(env, {__index = _G})
   -- set function environment to 'env'
@@ -104,5 +105,15 @@ end
 -- should change name
 assert(a:hello() == 'Hello from Alpha')
 assert(b:hello() == 'Hello from Beta')
+
+
+-- we should be able to use the accessors
+assert(a.inlets.input1.call(a, 'hello') == 'hello')
+assert(a.inlets.input1.call(a) == 'hello')
+assert(a.val == 'hello')
+a.input2 = 'foo'
+assert(a.inlets.input2.call(a) == 'foo')
+assert(a.inlets.input2.call(a, 'baz') == 'baz')
+assert(a.input2 == 'baz')
 
 print('all ok')
