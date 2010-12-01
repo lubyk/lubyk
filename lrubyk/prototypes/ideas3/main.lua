@@ -54,7 +54,8 @@ end
 function rk.build(filename)
   local prototype = rk.class(filename)
   -- create new instance of the prototype
-  local node = {}
+  local node = {prototype = prototype}
+  node.outlets = OutletList.new(node, prototype._outlets)
   setmetatable(node, {__index = prototype})
   return node
 end
@@ -108,8 +109,8 @@ assert(b:hello() == 'Hello from Beta')
 
 
 -- we should be able to use the accessors
-assert(a.inlets.input1.call(a, 'hello') == 'hello')
-assert(a.inlets.input1.call(a) == 'hello')
+assert(a.inlets.input.call(a, 'hello') == 'hello')
+assert(a.inlets.input.call(a) == 'hello')
 assert(a.val == 'hello')
 a.input2 = 'foo'
 assert(a.inlets.input2.call(a) == 'foo')

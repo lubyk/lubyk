@@ -1,3 +1,4 @@
+dofile('Outlet.lua')
 Inlet = {}
 
 function Inlet:accessor(inlet, val)
@@ -8,13 +9,13 @@ function Inlet:accessor(inlet, val)
   end
   return self[inlet.name]
 end
-
+-- TODO: rename Node to Prototype ?
 Node = {}
 Node.__index = Node
 
-Node.new = function()
-  -- create a new node instance
-  local node = {inlets = {}, outlets = {}}
+function Node.new()
+  -- create a new node prototype
+  local node = {inlets = {}, _outlets = {}}
   setmetatable(node, Node)
   return node
 end
@@ -25,6 +26,25 @@ function Node:access(name, val)
     self[name] = val
   end
   return self[name]
+end
+
+function Node:notify(name, val)
+  print(string.format("[%s] %s --> '%s'", self.name, name, val))
+end
+
+-- register outlet in prototype.
+function Node:outlet(name)
+  local outlet = self._outlets[name]
+  if not outlet then
+    self._outlets[name] = {} -- outlet definition
+  else
+    -- merge outlet definition
+  end
+end
+
+-- send to an outlet, lazyly creating outlets
+function Node:send(name, val)
+  self.outlets[name]:send(val)
 end
 
 function Node:inlet(name)

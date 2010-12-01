@@ -1,0 +1,12 @@
+h3. prototype
+
+In a script, the 'node' is a prototype created by Node.new. The prototype stores methods
+and outlet/inlet definitions. The script is run in its own private environment. This means
+that it is possible to create private methods but all state information should live inside
+'self' or it will be shared across objects.
+
+h3. instance
+
+An instance is made of an empty table with the prototype as metamethod. The instance also
+contains an empty 'outlets' list with a special index method to create outlets as needed. In
+order to create an outlet, the list searches the prototype's outlet definitions.

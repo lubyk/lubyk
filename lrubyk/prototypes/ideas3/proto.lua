@@ -4,12 +4,17 @@ function node:set(hash)
   end
 end
 
---node:outlet('output')
+node:outlet('output')
 
-node:inlet('input1').call = function(self, val)
+node:inlet('input').call = function(self, val)
   if val then
+    print(string.format("[%s] %s <--- '%s'", self.name, 'input', val))
     -- receiving value
     self.val = val
+    -- can we notify without explicitly adding this line ?
+    self:notify('input', val)
+    -- send to outlet
+    self:send('output', val)
   end
   return self.val
 end
