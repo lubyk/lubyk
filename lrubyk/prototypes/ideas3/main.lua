@@ -7,13 +7,19 @@ nodes = {}
 -- as _G.
 function rk.load(filename, env)
   local code = assert(loadfile(filename))
-  local env = env or {}
+  local env = env or {node = {}}
   -- inherit global env
   setmetatable(env, {__index = _G})
   -- set function environment to 'env'
   setfenv(code, env)
-  -- run code
-  code()
+
+  -- enable sub-patch building
+  local nodes_bak = nodes
+    nodes = env.node
+    -- run code
+    code()
+  -- restore nodes
+  nodes = nodes_bak
   -- use 'node' object as prototype
   local prototype = env.node
   prototype._env = env -- keep track of environment in case we reload
@@ -60,7 +66,9 @@ function rk.set(name, definition)
     node = rk.build(class)
     nodes[name] = node
   end
-  node:set(definition)
+  if node.set then
+    node:set(definition)
+  end
 end
 
 -- execute the first settings and make sure both nodes have their own state
