@@ -58,3 +58,10 @@ function Node:inlet(name)
   end
   return inlet
 end
+
+-- default init/set method
+function Node:set(hash)
+  for k,v in pairs(hash) do
+    self[k] = v
+  end
+end

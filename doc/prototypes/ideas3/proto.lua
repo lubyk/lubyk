@@ -1,8 +1,3 @@
-function node:set(hash)
-  for k,v in pairs(hash) do
-    self[k] = v
-  end
-end
 
 node:outlet('output')
 
@@ -13,8 +8,8 @@ node:inlet('input').call = function(self, val)
     self.val = val
     -- can we notify without explicitly adding this line ?
     self:notify('input', val)
-    -- send to outlet
-    self:send('output', val)
+    -- prepend name and send to outlet
+    self:send('output', self.name .. ': ' .. val)
   end
   return self.val
 end

@@ -73,6 +73,11 @@ function rk.set(name, definition)
   end
 end
 
+function rk.connect(obj1, outlet, obj2, inlet)
+  local target = nodes[obj2]
+  nodes[obj1].outlets[outlet]:connect(target,target.inlets[inlet].call)
+end
+
 -- execute the first settings and make sure both nodes have their own state
 dofile('set1.lua')
 a = nodes['a']
@@ -110,6 +115,12 @@ assert(b:hello() == 'Hello from Beta')
 
 -- we should be able to use the accessors
 assert(a.inlets.input.call(a, 'hello') == 'hello')
+-- value should be sent to b
+assert(b.val == 'Alpha: hello')
+assert(b.inlets.input.call(b, 'goodbye') == 'goodbye')
+-- b should not send to a
+assert(a.val == 'hello')
+
 assert(a.inlets.input.call(a) == 'hello')
 assert(a.val == 'hello')
 a.input2 = 'foo'
