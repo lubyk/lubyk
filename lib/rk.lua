@@ -8,3 +8,5 @@
 
 --]]------------------------------------------------------
 rk = {}
+-- TODO: autoload with __index in metatable
+-- rk = AutoLoad('rk')

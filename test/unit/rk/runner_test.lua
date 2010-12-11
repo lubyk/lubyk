@@ -1,23 +1,15 @@
 require 'rubyk'
-require 'rk/test'
+require 'rk.Test'
 
-local basic = rk.Test.Suite('Basic tests')
+local should = rk.Test.Suite('Basic tests')
 
-function basic.should_add_inlets()
-  assert_equal(1, 1)
+function should.add_inlets()
+  assert_equal(2, 1)
 end
 
-function basic.should_say_hello()
+function should.say_hello()
   assert_equal('887', '887')
+  assert_match('true', 'This is true')
 end
 
-local other = rk.Test.Suite('Other tests')
-
-function other.should_add_ff()
-  assert_equal(1, 1)
-end
-
-function other.should_say_hello()
-  assert_equal('887', '887')
-end
 rk.Test.all()

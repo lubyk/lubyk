@@ -1,0 +1,16 @@
+#!/usr/bin/env lua
+-- Rubyk alters the search path to only work with it's own
+-- global directory, the user's personal lib and the current
+-- path's lib.
+-- local/share/lua/5.1/?.lua;/usr/local/share/lua/5.1/?/init.lua;/usr/local/lib/lua/5.1/?.lua;/usr/local/lib/lua/5.1/?/init.lua
+package.path = "./?.lua;./lib/?.lua"
+require 'rubyk'
+
+local action = arg[1]
+if action == '--test' or action == '-t' then
+  require 'rk.Test'
+  local all = rk.Test.all
+  rk.Test.all = function() end -- dummy
+  rk.Test.load_all()
+  all()
+end

@@ -22,11 +22,20 @@ function lib.all()
   lib.report()
 end
 
+function lib.load_all()
+  require 'util'
+  for file in util.Dir('test'):glob('_test[.]lua$') do
+    print(file)
+    dofile(file)
+  end
+end
+
 function lib.run_suite(suite)
   local test_count = 0
   local fail_count = 0
   local errors = suite._info.errors
   lib.current_suite = suite
+  suite._info.assert_count = 0
   -- run all tests in the current file
   for name,func in pairs(suite) do
     if type(func) == 'function' then
@@ -51,10 +60,11 @@ function lib.run_suite(suite)
 end
 
 function lib.report()
-  local total_test  = 0
+  local total_test = 0
+  local total_asrt = 0
   local total_fail = 0
   local ok_message = ''
-  print('Testing report')
+  print('\n')
   for name, suite in pairs(lib.suites) do
     if suite._info.fail_count == 0 then
       ok_message = 'OK'
@@ -63,11 +73,12 @@ function lib.report()
     end
     print(string.format('==== %s (%i tests): %s', suite._info.name, suite._info.test_count, ok_message))
     total_test = total_test + suite._info.test_count
+    total_asrt = total_asrt + suite._info.assert_count
     if suite._info.fail_count > 0 then
       for name, err in pairs(suite._info.errors) do
         total_fail = total_fail + 1
         local hname = string.gsub(name, '_', ' ')
-        print(string.format('\n  %i. %s\n     %s', total_fail, hname, err))
+        print(string.format('  %i. Should %s\n     %s\n', total_fail, hname, err))
       end
     end
   end
@@ -78,9 +89,9 @@ function lib.report()
     print(string.format('No tests defined. Test functions must end with "_test"'))
   elseif total_fail == 0 then
     if total_test == 1 then
-      print(string.format('Success! Your test passes.', total_test))
+      print(string.format('Success! %i test passes (%i assertions).', total_test, total_asrt))
     else
-      print(string.format('Success! %i tests pass.', total_test))
+      print(string.format('Success! %i tests pass (%i assertions).', total_test, total_asrt))
     end
   elseif total_test == 1 then
     if total_fail == 1 then
@@ -95,19 +106,65 @@ function lib.report()
       print(string.format('Fail... %i failures / %i tests', total_fail, total_test))
     end
   end
+  print('')
 end
 
 ------------------------------------ ASSERTIONS ---------------------------
-function lib.assert(ok, message)
-  if not ok then
-    error(message, 3)
+
+local function format_arg(arg)
+  local argtype = type(arg)
+  if argtype == "string" then
+    return "'"..arg.."'"
+  elseif argtype == "number" or argtype == "boolean" or argtype == "nil" then
+    return tostring(arg)
+  else
+    return "["..tostring(arg).."]"
   end
 end
 
-function assert_equal(a, b)
-  lib.assert(a == b, string.format('Expected %s but found %s', a, b))
+function lib.assert(ok, msg)
+  lib.current_suite._info.assert_count = lib.current_suite._info.assert_count + 1
+  if not ok then
+    error(msg, 3)
+  end
 end
 
+orig_assert = assert
+assert = lib.assert
 
+function fail(msg)
+  lib.assert(false, msg)
+end
 
+function assert_false(ok)
+  lib.assert(not ok, string.format('Should fail but passed.'))
+end
 
+function assert_equal(expected, value)
+  lib.assert(value == expected, string.format('Expected %s but found %s.', format_arg(expected), format_arg(value)))
+end
+
+function assert_not_equal(unexpected, value)
+  lib.assert(value ~= unexpected, string.format('Should not equal %s.', format_arg(unexpected)))
+end
+
+function assert_match(pattern, value)
+  lib.assert(type(value) == 'string', string.format('Should be a string but was a %s.', type(value)))
+  lib.assert(string.find(value, pattern), string.format('Expected to match %s but was %s.', format_arg(pattern), format_arg(value)))
+end
+
+function assert_not_match(pattern, actual, msg)
+  lib.assert(type(value) == 'string', string.format('Should be a string but was a %s.', type(value)))
+  lib.assert(not string.find(value, pattern), string.format('Expected to not match %s but was %s.', format_arg(pattern), format_arg(value)))
+end
+
+function assert_error(pattern, func)
+  local ok, err = pcall(func)
+  lib.assert(not ok, string.format('Should raise an error but none found.'))
+  lib.assert(string.find(err, pattern), string.format('Error expected to match %s but was %s', format_arg(pattern), format_arg(err)))
+end
+
+function assert_pass(func)
+  local ok, err = pcall(func)
+  lib.assert(ok, string.format('Should not raise an error but %s found.', err))
+end
