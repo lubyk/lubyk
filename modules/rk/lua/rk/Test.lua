@@ -24,8 +24,7 @@ end
 
 function lib.load_all()
   require 'util'
-  for file in util.Dir('test'):glob('_test[.]lua$') do
-    print(file)
+  for file in util.Dir('modules'):glob('test/[^/]+_test[.]lua$') do
     dofile(file)
   end
 end
@@ -64,14 +63,13 @@ function lib.report()
   local total_asrt = 0
   local total_fail = 0
   local ok_message = ''
-  print('\n')
   for name, suite in pairs(lib.suites) do
     if suite._info.fail_count == 0 then
       ok_message = 'OK'
     else
       ok_message = string.format('%i Failure(s)', suite._info.fail_count)
     end
-    print(string.format('==== %s (%i tests): %s', suite._info.name, suite._info.test_count, ok_message))
+    print(string.format('==== %-10s (%2i tests): %s', suite._info.name, suite._info.test_count, ok_message))
     total_test = total_test + suite._info.test_count
     total_asrt = total_asrt + suite._info.assert_count
     if suite._info.fail_count > 0 then

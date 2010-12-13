@@ -7,6 +7,7 @@
   changed and loads Rubyk essentials.
 
 --]]------------------------------------------------------
-rk = {}
--- TODO: autoload with __index in metatable
--- rk = AutoLoad('rk')
+require 'Autoload'
+rk = Autoload('rk')
+-- autoload stuff in _G
+Autoload.global()

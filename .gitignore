@@ -10,14 +10,4 @@ ideas
 *.swp
 *.pch
 build
-vendor/lua/lua
-vendor/lua/luac
-test/runner*
-/build/rubyk
-doc/prototypes/test
-doc/prototypes/test
-examples/send
-examples/receive
-examples/beatbox
-misc/iPhone/oscit/build
-vendor/lua_bindings/doc
+lib
