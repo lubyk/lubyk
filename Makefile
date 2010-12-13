@@ -1,10 +1,7 @@
 # dummy makefile for those too lazy to read the README file...
 # and for me when I do not want to go into the build directory.
 
-default: lib
-	./rtest
-
-lib: build/MakeFile
+default: build/MakeFile
 	cd build && make
 
 rubyk: build/MakeFile

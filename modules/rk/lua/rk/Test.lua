@@ -24,7 +24,7 @@ end
 
 function lib.load_all()
   require 'util'
-  for file in util.Dir('modules'):glob('test/[^/]+_test[.]lua$') do
+  for file in util.Dir('modules'):glob('test/.+_test[.]lua$') do
     dofile(file)
   end
 end
