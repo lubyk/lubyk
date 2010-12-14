@@ -94,3 +94,7 @@ dummy/dummy.h
 rubyk.h
 /Users/gaspard/git/rubyk/modules/dummy/src/rubyk.h
 
+/Users/gaspard/git/rubyk/modules/dummy/src/macosx/dummy_osx.cpp
+dummy/dummy.h
+/Users/gaspard/git/rubyk/modules/dummy/src/macosx/dummy/dummy.h
+

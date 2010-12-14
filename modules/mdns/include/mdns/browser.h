@@ -31,22 +31,13 @@
 #define MDNS_INCLUDE_MDNS_BROWSER_H_
 #include <string>
 
+#include "mdns/location.h"
 #include "rubyk/mutex.h"
-#include "oscit/location.h"
-#include "oscit/root_proxy.h"
 
-namespace oscit {
+namespace mdns {
 
-#define FOUND_DEVICE_HASH_SIZE 100
-
-class ProxyFactory;
-class Command;
-
-/** This class let's you easily found applications providing a certain
- * service. To make sure that everything works as expected, you should
- * do all the setup work (set ProxyFactory for example), BEFORE the
- * browser is adopted by a command (since this operation starts the
- * service browsing).
+/** This class let's you easily find applications providing a certain
+ * service.
  */
 class ZeroConfBrowser : public Mutex {
  public:
@@ -56,36 +47,17 @@ class ZeroConfBrowser : public Mutex {
 
   /** This method is called just after a new proxy has been added to the list.
    */
-  virtual void added_proxy(RootProxy *proxy) {}
+  virtual void add_device(const Location &location) = 0;
 
   /** This method is called so that you have an opportunity to delete it cleanly.
    */
-  virtual void delete_proxy(RootProxy *proxy) {
-    delete proxy;
-  }
-
-  template<class T>
-  T *adopt_proxy_factory(T *factory) {
-    do_adopt_proxy_factory(factory);
-    return factory;
-  }
-
-  /** FIXME: make this internal and use command->adopt_browser
-   */
-  void set_command(Command *command);
+  virtual void remove_device(const char *name) = 0;
 
   bool get_location_from_name(const char *service_name, Location *location) const;
 
-  /** @internal. */
-  void add_device(const Location &location);
-
-  /** @internal. */
-  void remove_device(const char *name);
-
  protected:
 
-  /** This method is called when the command_ is set. Sub-classes can call this
-   * method if they want to use the browser without creating proxies (without a command).
+  /** This method should be called when the browser is ready.
    */
   virtual void start();
 
@@ -107,15 +79,11 @@ class ZeroConfBrowser : public Mutex {
 
   void get_protocol_from_service_type();
 
-  void add_proxy(const Location &location);
-
-  void remove_proxy(const Location &location);
-
   /** This value is on if the browser is running (listening for new devices).
    */
   bool          running_;
 
-  /** Protocol used in communication (usually 'oscit').
+  /** Protocol used in communication (usually 'rubyk').
    */
   std::string   protocol_;
 
@@ -123,24 +91,11 @@ class ZeroConfBrowser : public Mutex {
    */
   std::string   service_type_;
 
-  /** Pointer to a Command that can be used to build proxy objects.
-   */
-  Command      *command_;
-
-  /** Factory to use to bild proxy objects. If this value is NULL, the
-   * browser does not build proxies.
-   */
-  ProxyFactory *proxy_factory_;
-
  private:
-  void do_adopt_proxy_factory(ProxyFactory *factory);
-
   class Implementation;
   Implementation *impl_;
-
-  THash<std::string, Location> found_devices_;
 };
 
-} // oscit
+} // mdns
 
-#endif // MDNS_INCLUDE_MDNS_REGISTRATION_H_
+#endif // MDNS_INCLUDE_MDNS_BROWSER_H_

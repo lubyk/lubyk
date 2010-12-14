@@ -113,6 +113,34 @@ dummy/fast:
 .PHONY : dummy/fast
 
 # Convenience name for target.
+modules/CMakeFiles/mdns_core.dir/rule:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f CMakeFiles/Makefile2 modules/CMakeFiles/mdns_core.dir/rule
+.PHONY : modules/CMakeFiles/mdns_core.dir/rule
+
+# Convenience name for target.
+mdns_core: modules/CMakeFiles/mdns_core.dir/rule
+.PHONY : mdns_core
+
+# fast build rule for target.
+mdns_core/fast:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/mdns_core.dir/build.make modules/CMakeFiles/mdns_core.dir/build
+.PHONY : mdns_core/fast
+
+# Convenience name for target.
+modules/CMakeFiles/mdns_lua.dir/rule:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f CMakeFiles/Makefile2 modules/CMakeFiles/mdns_lua.dir/rule
+.PHONY : modules/CMakeFiles/mdns_lua.dir/rule
+
+# Convenience name for target.
+mdns_lua: modules/CMakeFiles/mdns_lua.dir/rule
+.PHONY : mdns_lua
+
+# fast build rule for target.
+mdns_lua/fast:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/mdns_lua.dir/build.make modules/CMakeFiles/mdns_lua.dir/build
+.PHONY : mdns_lua/fast
+
+# Convenience name for target.
 modules/CMakeFiles/rk_Timer.dir/rule:
 	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f CMakeFiles/Makefile2 modules/CMakeFiles/rk_Timer.dir/rule
 .PHONY : modules/CMakeFiles/rk_Timer.dir/rule
@@ -229,6 +257,150 @@ dummy/src/macosx/dummy_osx.s: dummy/src/macosx/dummy_osx.cpp.s
 dummy/src/macosx/dummy_osx.cpp.s:
 	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/dummy.dir/build.make modules/CMakeFiles/dummy.dir/dummy/src/macosx/dummy_osx.cpp.s
 .PHONY : dummy/src/macosx/dummy_osx.cpp.s
+
+mdns/sub/core/browser.o: mdns/sub/core/browser.cpp.o
+.PHONY : mdns/sub/core/browser.o
+
+# target to build an object file
+mdns/sub/core/browser.cpp.o:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/mdns_core.dir/build.make modules/CMakeFiles/mdns_core.dir/mdns/sub/core/browser.cpp.o
+.PHONY : mdns/sub/core/browser.cpp.o
+
+mdns/sub/core/browser.i: mdns/sub/core/browser.cpp.i
+.PHONY : mdns/sub/core/browser.i
+
+# target to preprocess a source file
+mdns/sub/core/browser.cpp.i:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/mdns_core.dir/build.make modules/CMakeFiles/mdns_core.dir/mdns/sub/core/browser.cpp.i
+.PHONY : mdns/sub/core/browser.cpp.i
+
+mdns/sub/core/browser.s: mdns/sub/core/browser.cpp.s
+.PHONY : mdns/sub/core/browser.s
+
+# target to generate assembly for a file
+mdns/sub/core/browser.cpp.s:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/mdns_core.dir/build.make modules/CMakeFiles/mdns_core.dir/mdns/sub/core/browser.cpp.s
+.PHONY : mdns/sub/core/browser.cpp.s
+
+mdns/sub/core/browser_common.o: mdns/sub/core/browser_common.cpp.o
+.PHONY : mdns/sub/core/browser_common.o
+
+# target to build an object file
+mdns/sub/core/browser_common.cpp.o:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/mdns_core.dir/build.make modules/CMakeFiles/mdns_core.dir/mdns/sub/core/browser_common.cpp.o
+.PHONY : mdns/sub/core/browser_common.cpp.o
+
+mdns/sub/core/browser_common.i: mdns/sub/core/browser_common.cpp.i
+.PHONY : mdns/sub/core/browser_common.i
+
+# target to preprocess a source file
+mdns/sub/core/browser_common.cpp.i:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/mdns_core.dir/build.make modules/CMakeFiles/mdns_core.dir/mdns/sub/core/browser_common.cpp.i
+.PHONY : mdns/sub/core/browser_common.cpp.i
+
+mdns/sub/core/browser_common.s: mdns/sub/core/browser_common.cpp.s
+.PHONY : mdns/sub/core/browser_common.s
+
+# target to generate assembly for a file
+mdns/sub/core/browser_common.cpp.s:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/mdns_core.dir/build.make modules/CMakeFiles/mdns_core.dir/mdns/sub/core/browser_common.cpp.s
+.PHONY : mdns/sub/core/browser_common.cpp.s
+
+mdns/sub/core/location_common.o: mdns/sub/core/location_common.cpp.o
+.PHONY : mdns/sub/core/location_common.o
+
+# target to build an object file
+mdns/sub/core/location_common.cpp.o:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/mdns_core.dir/build.make modules/CMakeFiles/mdns_core.dir/mdns/sub/core/location_common.cpp.o
+.PHONY : mdns/sub/core/location_common.cpp.o
+
+mdns/sub/core/location_common.i: mdns/sub/core/location_common.cpp.i
+.PHONY : mdns/sub/core/location_common.i
+
+# target to preprocess a source file
+mdns/sub/core/location_common.cpp.i:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/mdns_core.dir/build.make modules/CMakeFiles/mdns_core.dir/mdns/sub/core/location_common.cpp.i
+.PHONY : mdns/sub/core/location_common.cpp.i
+
+mdns/sub/core/location_common.s: mdns/sub/core/location_common.cpp.s
+.PHONY : mdns/sub/core/location_common.s
+
+# target to generate assembly for a file
+mdns/sub/core/location_common.cpp.s:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/mdns_core.dir/build.make modules/CMakeFiles/mdns_core.dir/mdns/sub/core/location_common.cpp.s
+.PHONY : mdns/sub/core/location_common.cpp.s
+
+mdns/sub/core/macosx/browser.o: mdns/sub/core/macosx/browser.cpp.o
+.PHONY : mdns/sub/core/macosx/browser.o
+
+# target to build an object file
+mdns/sub/core/macosx/browser.cpp.o:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/mdns_core.dir/build.make modules/CMakeFiles/mdns_core.dir/mdns/sub/core/macosx/browser.cpp.o
+.PHONY : mdns/sub/core/macosx/browser.cpp.o
+
+mdns/sub/core/macosx/browser.i: mdns/sub/core/macosx/browser.cpp.i
+.PHONY : mdns/sub/core/macosx/browser.i
+
+# target to preprocess a source file
+mdns/sub/core/macosx/browser.cpp.i:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/mdns_core.dir/build.make modules/CMakeFiles/mdns_core.dir/mdns/sub/core/macosx/browser.cpp.i
+.PHONY : mdns/sub/core/macosx/browser.cpp.i
+
+mdns/sub/core/macosx/browser.s: mdns/sub/core/macosx/browser.cpp.s
+.PHONY : mdns/sub/core/macosx/browser.s
+
+# target to generate assembly for a file
+mdns/sub/core/macosx/browser.cpp.s:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/mdns_core.dir/build.make modules/CMakeFiles/mdns_core.dir/mdns/sub/core/macosx/browser.cpp.s
+.PHONY : mdns/sub/core/macosx/browser.cpp.s
+
+mdns/sub/core/macosx/location.o: mdns/sub/core/macosx/location.cpp.o
+.PHONY : mdns/sub/core/macosx/location.o
+
+# target to build an object file
+mdns/sub/core/macosx/location.cpp.o:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/mdns_core.dir/build.make modules/CMakeFiles/mdns_core.dir/mdns/sub/core/macosx/location.cpp.o
+.PHONY : mdns/sub/core/macosx/location.cpp.o
+
+mdns/sub/core/macosx/location.i: mdns/sub/core/macosx/location.cpp.i
+.PHONY : mdns/sub/core/macosx/location.i
+
+# target to preprocess a source file
+mdns/sub/core/macosx/location.cpp.i:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/mdns_core.dir/build.make modules/CMakeFiles/mdns_core.dir/mdns/sub/core/macosx/location.cpp.i
+.PHONY : mdns/sub/core/macosx/location.cpp.i
+
+mdns/sub/core/macosx/location.s: mdns/sub/core/macosx/location.cpp.s
+.PHONY : mdns/sub/core/macosx/location.s
+
+# target to generate assembly for a file
+mdns/sub/core/macosx/location.cpp.s:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/mdns_core.dir/build.make modules/CMakeFiles/mdns_core.dir/mdns/sub/core/macosx/location.cpp.s
+.PHONY : mdns/sub/core/macosx/location.cpp.s
+
+mdns/sub/core/macosx/registration.o: mdns/sub/core/macosx/registration.cpp.o
+.PHONY : mdns/sub/core/macosx/registration.o
+
+# target to build an object file
+mdns/sub/core/macosx/registration.cpp.o:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/mdns_core.dir/build.make modules/CMakeFiles/mdns_core.dir/mdns/sub/core/macosx/registration.cpp.o
+.PHONY : mdns/sub/core/macosx/registration.cpp.o
+
+mdns/sub/core/macosx/registration.i: mdns/sub/core/macosx/registration.cpp.i
+.PHONY : mdns/sub/core/macosx/registration.i
+
+# target to preprocess a source file
+mdns/sub/core/macosx/registration.cpp.i:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/mdns_core.dir/build.make modules/CMakeFiles/mdns_core.dir/mdns/sub/core/macosx/registration.cpp.i
+.PHONY : mdns/sub/core/macosx/registration.cpp.i
+
+mdns/sub/core/macosx/registration.s: mdns/sub/core/macosx/registration.cpp.s
+.PHONY : mdns/sub/core/macosx/registration.s
+
+# target to generate assembly for a file
+mdns/sub/core/macosx/registration.cpp.s:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/mdns_core.dir/build.make modules/CMakeFiles/mdns_core.dir/mdns/sub/core/macosx/registration.cpp.s
+.PHONY : mdns/sub/core/macosx/registration.cpp.s
 
 rk/sub/Timer.o: rk/sub/Timer.cpp.o
 .PHONY : rk/sub/Timer.o
@@ -358,6 +530,8 @@ help:
 	@echo "... depend"
 	@echo "... dummy"
 	@echo "... edit_cache"
+	@echo "... mdns_core"
+	@echo "... mdns_lua"
 	@echo "... rebuild_cache"
 	@echo "... rk_Timer"
 	@echo "... rk_lua"
@@ -370,6 +544,24 @@ help:
 	@echo "... dummy/src/macosx/dummy_osx.o"
 	@echo "... dummy/src/macosx/dummy_osx.i"
 	@echo "... dummy/src/macosx/dummy_osx.s"
+	@echo "... mdns/sub/core/browser.o"
+	@echo "... mdns/sub/core/browser.i"
+	@echo "... mdns/sub/core/browser.s"
+	@echo "... mdns/sub/core/browser_common.o"
+	@echo "... mdns/sub/core/browser_common.i"
+	@echo "... mdns/sub/core/browser_common.s"
+	@echo "... mdns/sub/core/location_common.o"
+	@echo "... mdns/sub/core/location_common.i"
+	@echo "... mdns/sub/core/location_common.s"
+	@echo "... mdns/sub/core/macosx/browser.o"
+	@echo "... mdns/sub/core/macosx/browser.i"
+	@echo "... mdns/sub/core/macosx/browser.s"
+	@echo "... mdns/sub/core/macosx/location.o"
+	@echo "... mdns/sub/core/macosx/location.i"
+	@echo "... mdns/sub/core/macosx/location.s"
+	@echo "... mdns/sub/core/macosx/registration.o"
+	@echo "... mdns/sub/core/macosx/registration.i"
+	@echo "... mdns/sub/core/macosx/registration.s"
 	@echo "... rk/sub/Timer.o"
 	@echo "... rk/sub/Timer.i"
 	@echo "... rk/sub/Timer.s"

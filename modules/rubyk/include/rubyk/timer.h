@@ -82,6 +82,11 @@ public:
     }
   }
 
+  void join() {
+    if (running_)
+      thread_.join();
+  }
+
   void set_interval(time_t interval) {
     ScopedLock lock(mutex_);
     last_interval_ = interval_;
@@ -89,6 +94,15 @@ public:
     if (running_) {
       interrupt();
     }
+  }
+
+  void stop_from_loop() {
+    should_run_ = false;
+  }
+
+  void set_interval_from_loop(time_t interval) {
+    last_interval_ = interval_;
+    interval_ = interval;
   }
 
   bool running() const {

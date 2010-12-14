@@ -27,11 +27,8 @@
   ==============================================================================
 */
 
-#include "oscit/zeroconf_browser.h"
-#include "oscit/thread.h"
-#include "oscit/proxy_factory.h"
-#include "oscit/root_proxy.h"
-#include "oscit/object_proxy.h"
+#include "mdns/browser.h"
+#include "rubyk/thread.h"
 
 #include <iostream>
 
@@ -54,7 +51,7 @@ typedef	int	pid_t;
 
 #include <dns_sd.h>     // zeroconf
 
-namespace oscit {
+namespace mdns {
 
 // Note: the select() implementation on Windows (Winsock2)
 //       fails with any timeout much larger than this

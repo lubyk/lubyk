@@ -83,9 +83,11 @@ foreach (MODULE ${MODULES})
         list(REMOVE_ITEM SUB_MODULES ${SUB_MODULES_CPP})
       endif(NOT ${SUB_MODULES_CPP} STREQUAL "")
 
+      list(REMOVE_ITEM SUB_MODULES ${MODULE}/sub/.DS_Store)
+
       foreach (SUB_MODULE ${SUB_MODULES})
         get_filename_component (SUB_MODULE_NAME ${SUB_MODULE} NAME_WE)
-        file(GLOB SUB_MODULE_SOURCES ${SUB_MODULE}/*.cpp)
+        file(GLOB SUB_MODULE_SOURCES ${SUB_MODULE}/*.cpp ${SUB_MODULE}/${PLAT}/*.cpp)
 
         # create name/[SUB_MOD_NAME].so library
         add_library("${target}_${SUB_MODULE_NAME}" MODULE ${SUB_MODULE_SOURCES})

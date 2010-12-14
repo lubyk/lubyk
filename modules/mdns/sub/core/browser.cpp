@@ -27,129 +27,98 @@
   ==============================================================================
 */
 #include "rubyk.h"
-#include "rubyk/timer.h"
+#include "mdns/browser.h"
 
-class LuaTimer
+class LuaBrowser : public mdns::Browser
 {
 public:
-  LuaTimer(Worker *worker, float interval, int func_idx) :
-    worker_(worker), timer_(this, interval), func_idx_(func_idx) {}
+  LuaBrowser(Worker *worker, const char *service_type, int func_idx) : mdns::Browser(service_type)
+    worker_(worker), func_idx_(func_idx) {
+    start();
+  }
 
-  ~LuaTimer() {
+  ~LuaBrowser() {
     // release function
+    stop();
     luaL_unref(worker_->lua_, LUA_REGISTRYINDEX, func_idx_);
   }
 
-  void stop() {
-    timer_.stop();
-  }
-
-  void start() {
-    timer_.start();
-  }
-
-  void join() {
-    ScopedUnlock unlock(worker_);
-    timer_.join();
-  }
-private:
-  void bang() {
+  virtual void add_device(const Location &location) {
     lua_State *L = worker_->lua_;
-    // find function and call
     ScopedLock lock(worker_);
-    // push LUA_REGISTRYINDEX on top
     lua_rawgeti(L, LUA_REGISTRYINDEX, func_idx_);
-    int status = lua_pcall(L, 0, 1, 0);
+    lua_pushstring(L, "add");
+    lua_pushstring(L, location.name().c_str());
+    int status = lua_pcall(L, 1, 0, 0);
 
     if (status) {
-      printf("Error triggering timer: %s\n", lua_tostring(L, -1));
+      printf("Error in add_device: %s\n", lua_tostring(L, -1));
     }
+    // clear stack
+    lua_settop(worker_->lua_, 0);
+  }
 
-    if (lua_type(L, -1) == LUA_TNUMBER) {
-      float interval = lua_tonumber(L, -1);
-      if (interval == 0) {
-        timer_.stop_from_loop();
-      } else if (interval < 0) {
-        luaL_error(L, "Timer interval must be a positive value (got %f)\n", interval);
-      }
-      timer_.set_interval_from_loop(interval);
+  virtual void remove_device(const char *name) {
+    lua_State *L = worker_->lua_;
+    ScopedLock lock(worker_);
+    lua_rawgeti(L, LUA_REGISTRYINDEX, func_idx_);
+    lua_pushstring(L, "remove");
+    lua_pushstring(L, name);
+    int status = lua_pcall(L, 1, 0, 0);
+
+    if (status) {
+      printf("Error in remove_device: %s\n", lua_tostring(L, -1));
     }
-
     // clear stack
     lua_settop(worker_->lua_, 0);
   }
 private:
   Worker *worker_;
-  Timer<LuaTimer, &LuaTimer::bang> timer_;
   int func_idx_;
 };
 
-static int LuaTimer_destructor(lua_State *L) {
-  LuaTimer **userdata = (LuaTimer**)luaL_checkudata(L, 1, "rk.Timer");
+static int LuaBrowser_destructor(lua_State *L) {
+  LuaBrowser **userdata = (LuaBrowser**)luaL_checkudata(L, 1, "mdns.Browser");
   if (*userdata) delete *userdata;
   *userdata = NULL;
   return 0;
 }
 
-static int LuaTimer_LuaTimer(lua_State *L) {
-  float interval = luaL_checknumber(L, 1);
-  if (interval < 0) {
-    luaL_error(L, "Timer interval must be a positive value (got %f)\n", interval);
-  }
+static int LuaBrowser_LuaBrowser(lua_State *L) {
+  const char *service_type = luaL_checkstring(L, 1);
   luaL_checktype(L, 2, LUA_TFUNCTION);
-  // remove interval from stack
   lua_pushvalue( L, -1 );
   int func_idx = luaL_ref(L, LUA_REGISTRYINDEX);
-  LuaTimer *retval__ = new LuaTimer(gWorker, interval, func_idx);
-  lua_pushclass<LuaTimer>(L, retval__, "rk.Timer");
+  LuaBrowser *retval__ = new LuaBrowser(gWorker, service_type, func_idx);
+  lua_pushclass<LuaBrowser>(L, retval__, "mdns.Browser");
   return 1;
 }
 
-static int LuaTimer_start(lua_State *L) {
-  LuaTimer *self__ = *((LuaTimer**)luaL_checkudata(L, 1, "rk.Timer"));
-  self__->start();
-  return 0;
-}
-
-static int LuaTimer_stop(lua_State *L) {
-  LuaTimer *self__ = *((LuaTimer**)luaL_checkudata(L, 1, "rk.Timer"));
-  self__->stop();
-  return 0;
-}
-
-static int LuaTimer_join(lua_State *L) {
-  LuaTimer *self__ = *((LuaTimer**)luaL_checkudata(L, 1, "rk.Timer"));
-  self__->join();
-  return 0;
-}
 /* ============================ Lua Registration ====================== */
 
-static const struct luaL_Reg LuaTimer_member_methods[] = {
-  {"start"             , LuaTimer_start},
-  {"stop"              , LuaTimer_stop},
-  {"join"              , LuaTimer_join},
-  {"__gc"              , LuaTimer_destructor},
+static const struct luaL_Reg LuaBrowser_member_methods[] = {
+  {"__gc"              , LuaBrowser_destructor},
   {NULL, NULL},
 };
 
-static const struct luaL_Reg LuaTimer_namespace_methods[] = {
-  {"Timer"             , LuaTimer_LuaTimer},
+static const struct luaL_Reg LuaBrowser_namespace_methods[] = {
+  {"Browser"           , LuaBrowser_LuaBrowser},
   {NULL, NULL},
 };
 
 
-extern "C" int luaopen_rk_Timer(lua_State *L) {
+extern "C" int luaopen_mdns_Browser(lua_State *L) {
   // Create the metatable which will contain all the member methods
-  luaL_newmetatable(L, "rk.Timer");
+  luaL_newmetatable(L, "mdns.Browser");
 
   // metatable.__index = metatable (find methods in the table itself)
   lua_pushvalue(L, -1);
   lua_setfield(L, -2, "__index");
 
   // register member methods
-  luaL_register(L, NULL, LuaTimer_member_methods);
+  luaL_register(L, NULL, LuaBrowser_member_methods);
 
   // register class methods in a global namespace table
-  luaL_register(L, "rk", LuaTimer_namespace_methods);
+  luaL_register(L, "mdns", LuaBrowser_namespace_methods);
   return 0;
 }
