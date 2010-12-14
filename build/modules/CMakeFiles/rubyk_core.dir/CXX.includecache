@@ -1,0 +1,14 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/gaspard/git/rubyk/modules/rubyk/core/src/time_ref.cpp
+oscit/time_ref.h
+/Users/gaspard/git/rubyk/modules/rubyk/core/src/oscit/time_ref.h
+sys/timeb.h
+-
+

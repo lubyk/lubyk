@@ -26,28 +26,15 @@
 
   ==============================================================================
 */
-#include "dummy/dummy.h"
-#include "rubyk.h"
 
-using namespace dummy;
+#ifndef CORE_INCLUDE_CORE_LUA_H_
+#define CORE_INCLUDE_CORE_LUA_H_
 
-/** void Dummy::plat()
- * dummy.h
+/** Include Lua
  */
-static int lib_plat(lua_State *L) {
-  lua_pushstring(L, Dummy::plat());
-  return 1;
+extern "C" {
+  #include "lua/lua.h"
+  #include "lua/lauxlib.h"
 }
 
-// Register namespace
-static const struct luaL_Reg lib_functions[] = {
-  {"plat"                          , lib_plat},
-  {NULL, NULL},
-};
-
-extern "C" int luaopen_dummy(lua_State *L) {
-  // register functions
-  luaL_register(L, "dummy", lib_functions);
-
-  return 0;
-}
+#endif // CORE_INCLUDE_CORE_LUA_H_

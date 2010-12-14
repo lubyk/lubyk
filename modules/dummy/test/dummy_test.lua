@@ -9,10 +9,10 @@
 --]]------------------------------------------------------
 require 'rubyk'
 
-local should = rk.Test.Suite('dummy')
+local should = test.Suite('dummy')
 
 function should.respond_to_plat()
   assert_equal('macosx', dummy.plat())
 end
 
-rk.Test.all()
+test.all()

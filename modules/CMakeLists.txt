@@ -8,7 +8,7 @@ project(modules)
 # ----------------------------------------------------------------------------------
 #  Include common directories
 # ----------------------------------------------------------------------------------
-include_directories(core/include lua/include)
+include_directories(rubyk/include lua/include rubyk/include)
 
 # ----------------------------------------------------------------------------------
 #  Build each module
@@ -53,6 +53,24 @@ foreach (MODULE ${MODULES})
       add_dependencies (modules ${target})
     endif(EXISTS ${MODULE}/src)
 
+    if(EXISTS ${MODULE}/core/include)
+      include_directories(${MODULE}/rubyk/include)
+    endif(EXISTS ${MODULE}/core/include)
+
+    if(EXISTS ${MODULE}/core/src)
+      file (GLOB MODULE_SOURCES ${MODULE}/core/src/*.cpp ${MODULE}/core/src/${PLAT}/*.cpp)
+
+      # create name/core.so library
+      add_library("${target}_core" MODULE ${MODULE_SOURCES})
+      set_target_properties("${target}_core"
+        PROPERTIES OUTPUT_NAME core
+        LINK_FLAGS ${PLAT_OBJ_FLAGS}
+        LIBRARY_OUTPUT_DIRECTORY ${RUBYK_SOURCE_DIR}/lib/${MODULE_NAME}
+        PREFIX ""
+        SUFFIX ".so"
+      )
+      add_dependencies (modules "${target}_core")
+    endif(EXISTS ${MODULE}/core/src)
 
     if(EXISTS ${MODULE}/lua)
       file (GLOB MODULE_SOURCES ${MODULE}/lua/*)

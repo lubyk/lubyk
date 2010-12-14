@@ -1,8 +1,8 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
-   Copyright (c) 2007-2011 by Gaspard Bucher - Buma (http://teti.ch).
+   This file is part of the OSCIT library (http://rubyk.org/liboscit)
+   Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
 
@@ -26,28 +26,20 @@
 
   ==============================================================================
 */
-#include "dummy/dummy.h"
-#include "rubyk.h"
 
-using namespace dummy;
+#ifndef RUBYK_INCLUDE_CORE_NON_COPYABLE_H_
+#define RUBYK_INCLUDE_CORE_NON_COPYABLE_H_
 
-/** void Dummy::plat()
- * dummy.h
- */
-static int lib_plat(lua_State *L) {
-  lua_pushstring(L, Dummy::plat());
-  return 1;
-}
-
-// Register namespace
-static const struct luaL_Reg lib_functions[] = {
-  {"plat"                          , lib_plat},
-  {NULL, NULL},
+namespace rubyk {
+class NonCopyable {
+ protected:
+  NonCopyable() {}
+  ~NonCopyable() {}
+ private:
+  NonCopyable(const NonCopyable &other);
+  NonCopyable &operator=(const NonCopyable &other);
 };
 
-extern "C" int luaopen_dummy(lua_State *L) {
-  // register functions
-  luaL_register(L, "dummy", lib_functions);
+} // core
 
-  return 0;
-}
+#endif  // RUBYK_INCLUDE_CORE_NON_COPYABLE_H_

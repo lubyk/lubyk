@@ -26,28 +26,44 @@
 
   ==============================================================================
 */
-#include "dummy/dummy.h"
 #include "rubyk.h"
+#include "rubyk/thread.h"
 
-using namespace dummy;
-
-/** void Dummy::plat()
- * dummy.h
+/** Global definitions.
  */
-static int lib_plat(lua_State *L) {
-  lua_pushstring(L, Dummy::plat());
+Worker *gWorker = NULL;
+
+static int lib_destroy(lua_State *L) {
+  gWorker->unlock();
+  delete gWorker;
+  return 0;
+}
+
+static int lib_sleep(lua_State *L) {
+  float duration = luaL_checknumber(L, 1);
+  { ScopedUnlock unlock(gWorker);
+    Thread::millisleep(duration);
+  }
+  return 0;
+}
+
+static int lib_now(lua_State *L) {
+  lua_pushnumber(L, gWorker->time_ref_.elapsed());
   return 1;
 }
 
 // Register namespace
 static const struct luaL_Reg lib_functions[] = {
-  {"plat"                          , lib_plat},
+  {"sleep"           , lib_sleep},
+  {"now"             , lib_now},
+  {"__gc"            , lib_destroy},
   {NULL, NULL},
 };
 
-extern "C" int luaopen_dummy(lua_State *L) {
+extern "C" int luaopen_rubyk_core(lua_State *L) {
   // register functions
-  luaL_register(L, "dummy", lib_functions);
-
+  luaL_register(L, "rubyk", lib_functions);
+  gWorker = new Worker();
+  gWorker->lock();
   return 0;
 }

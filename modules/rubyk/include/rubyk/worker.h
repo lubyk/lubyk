@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the RUBYK project (http://rubyk.org)
-   Copyright (c) 2007-2011 by Gaspard Bucher - Buma (http://teti.ch).
+   Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
 
@@ -26,28 +26,41 @@
 
   ==============================================================================
 */
-#include "dummy/dummy.h"
-#include "rubyk.h"
 
-using namespace dummy;
+#ifndef RUBYK_INCLUDE_RUBYK_WORKER_H_
+#define RUBYK_INCLUDE_RUBYK_WORKER_H_
+/*
+Structure of a running planet:
 
-/** void Dummy::plat()
- * dummy.h
- */
-static int lib_plat(lua_State *L) {
-  lua_pushstring(L, Dummy::plat());
-  return 1;
-}
+The Planet is an oscit::Root:
+Root   <- Planet
 
-// Register namespace
-static const struct luaL_Reg lib_functions[] = {
-  {"plat"                          , lib_plat},
-  {NULL, NULL},
+It contains a single Worker that is passed to subnodes as context
+Planet <>--- Worker
+*/
+#include "rubyk/lua.h"
+#include "rubyk/mutex.h"
+#include "rubyk/time_ref.h"
+
+namespace rubyk {
+
+class Worker : public Mutex
+{
+public:
+  /** Lua State where all the processing takes place.
+   */
+//  LuaState *lua_;
+
+  /** Time reference. All times are [ms] from this reference.
+   * It's the worker's birthdate !
+   */
+  TimeRef time_ref_;
+public:
+  Worker() {}
+
+  ~Worker() {}
 };
 
-extern "C" int luaopen_dummy(lua_State *L) {
-  // register functions
-  luaL_register(L, "dummy", lib_functions);
+} // rubyk
 
-  return 0;
-}
+#endif // RUBYK_INCLUDE_RUBYK_WORKER_H_

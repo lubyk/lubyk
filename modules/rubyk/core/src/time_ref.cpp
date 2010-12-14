@@ -1,8 +1,8 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
-   Copyright (c) 2007-2011 by Gaspard Bucher - Buma (http://teti.ch).
+   This file is part of the OSCIT library (http://rubyk.org/liboscit)
+   Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
 
@@ -26,28 +26,34 @@
 
   ==============================================================================
 */
-#include "dummy/dummy.h"
-#include "rubyk.h"
 
-using namespace dummy;
+#include "rubyk/time_ref.h"
 
-/** void Dummy::plat()
- * dummy.h
+#include <sys/timeb.h> // ftime
+
+namespace rubyk {
+struct TimeRef::TimeRefData : public timeb {};
+
+TimeRef::TimeRef() {
+  reference_ = new TimeRefData;
+  ftime(reference_);
+}
+
+TimeRef::~TimeRef() {
+  delete reference_;
+}
+
+/** Get current real time in [ms] since the time ref object was created.
  */
-static int lib_plat(lua_State *L) {
-  lua_pushstring(L, Dummy::plat());
-  return 1;
+time_t TimeRef::elapsed() {
+  TimeRefData t;
+  /* FIXME: Use clock_gettime instead of ftime.
+
+  int clock_gettime(clockid_t clock_id, struct timespec *tp);
+  int clock_getres(clockid_t clock_id, struct timespec *res);
+  */
+  ftime(&t);
+  return ((t.time - reference_->time) * 1000) + t.millitm - reference_->millitm;
 }
 
-// Register namespace
-static const struct luaL_Reg lib_functions[] = {
-  {"plat"                          , lib_plat},
-  {NULL, NULL},
-};
-
-extern "C" int luaopen_dummy(lua_State *L) {
-  // register functions
-  luaL_register(L, "dummy", lib_functions);
-
-  return 0;
-}
+} // rubyk

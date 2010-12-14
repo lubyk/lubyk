@@ -26,28 +26,44 @@
 
   ==============================================================================
 */
-#include "dummy/dummy.h"
-#include "rubyk.h"
 
-using namespace dummy;
+#ifndef MDNS_INCLUDE_MDNS_REGISTRATION_H_
+#define MDNS_INCLUDE_MDNS_REGISTRATION_H_
+#include <string>
 
-/** void Dummy::plat()
- * dummy.h
+#include "rubyk/mutex.h"
+#include "oscit/location.h"
+
+namespace oscit {
+
+/** This class let's you easily register an application as providing a certain type of
+ *  service.
  */
-static int lib_plat(lua_State *L) {
-  lua_pushstring(L, Dummy::plat());
-  return 1;
-}
+class ZeroConfRegistration : public Mutex {
+ public:
+  ZeroConfRegistration(const std::string &name, const char *service_type, uint16_t port);
 
-// Register namespace
-static const struct luaL_Reg lib_functions[] = {
-  {"plat"                          , lib_plat},
-  {NULL, NULL},
+  virtual ~ZeroConfRegistration();
+
+  virtual void registration_done() {}
+
+ protected:
+  /** This method *must* be called from sub-classes in their destructors to
+   * make sure the callback (registration_done) is not called in the middle of
+	 * a class destruction.
+	 */
+  virtual void stop();
+
+  std::string name_;
+  std::string host_;
+  std::string service_type_;
+  uint16_t    port_;
+
+ private:
+  class Implementation;
+  Implementation *impl_;
 };
 
-extern "C" int luaopen_dummy(lua_State *L) {
-  // register functions
-  luaL_register(L, "dummy", lib_functions);
+} // oscit
 
-  return 0;
-}
+#endif // MDNS_INCLUDE_MDNS_REGISTRATION_H_

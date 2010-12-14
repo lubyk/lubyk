@@ -26,28 +26,11 @@
 
   ==============================================================================
 */
-#include "dummy/dummy.h"
-#include "rubyk.h"
+#include "rubyk/lua.h"
+#include "rubyk/worker.h"
 
-using namespace dummy;
+using namespace rubyk;
 
-/** void Dummy::plat()
- * dummy.h
+/** Globals
  */
-static int lib_plat(lua_State *L) {
-  lua_pushstring(L, Dummy::plat());
-  return 1;
-}
-
-// Register namespace
-static const struct luaL_Reg lib_functions[] = {
-  {"plat"                          , lib_plat},
-  {NULL, NULL},
-};
-
-extern "C" int luaopen_dummy(lua_State *L) {
-  // register functions
-  luaL_register(L, "dummy", lib_functions);
-
-  return 0;
-}
+extern Worker *gWorker;

@@ -62,3 +62,16 @@ folder organized as follow:
 
             .../doc             All documentation should be kept here in textile format if
                                 possible.
+
+            .../core            It is sometimes better to write just the core in cpp and wrap
+                                this code with some Lua. Since we cannot have a binary library
+                                and a lua based library with the same name, we should create a
+                                sub-director named 'core' with the 'include' and 'src' code.
+
+=== Main modules
+
+  * rubyk                       Contains all the code and helpers but without any classes.
+
+  * rk                          Contains classes such as (Dir, Node, Outlet, etc).
+
+  * test                        Testing infrastructure.

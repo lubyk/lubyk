@@ -11,3 +11,6 @@ require 'Autoload'
 rk = Autoload('rk')
 -- autoload stuff in _G
 Autoload.global()
+
+-- loads 'rubyk'
+require 'rubyk.core'
