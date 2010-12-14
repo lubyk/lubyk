@@ -4,10 +4,10 @@ SET(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 SET(CMAKE_DEPENDS_CHECK_CXX
-  "/Users/gaspard/git/rubyk/modules/rubyk/core/src/bindings.cpp" "/Users/gaspard/git/rubyk/build/modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/bindings.cpp.o"
-  "/Users/gaspard/git/rubyk/modules/rubyk/core/src/semaphore.cpp" "/Users/gaspard/git/rubyk/build/modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/semaphore.cpp.o"
-  "/Users/gaspard/git/rubyk/modules/rubyk/core/src/thread.cpp" "/Users/gaspard/git/rubyk/build/modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/thread.cpp.o"
-  "/Users/gaspard/git/rubyk/modules/rubyk/core/src/time_ref.cpp" "/Users/gaspard/git/rubyk/build/modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/time_ref.cpp.o"
+  "/Users/gaspard/git/rubyk/modules/rubyk/sub/core/bindings.cpp" "/Users/gaspard/git/rubyk/build/modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/bindings.cpp.o"
+  "/Users/gaspard/git/rubyk/modules/rubyk/sub/core/semaphore.cpp" "/Users/gaspard/git/rubyk/build/modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/semaphore.cpp.o"
+  "/Users/gaspard/git/rubyk/modules/rubyk/sub/core/thread.cpp" "/Users/gaspard/git/rubyk/build/modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/thread.cpp.o"
+  "/Users/gaspard/git/rubyk/modules/rubyk/sub/core/time_ref.cpp" "/Users/gaspard/git/rubyk/build/modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/time_ref.cpp.o"
   )
 SET(CMAKE_CXX_COMPILER_ID "GNU")
 

@@ -1,8 +1,8 @@
 FILE(REMOVE_RECURSE
-  "CMakeFiles/rubyk_core.dir/rubyk/core/src/bindings.cpp.o"
-  "CMakeFiles/rubyk_core.dir/rubyk/core/src/semaphore.cpp.o"
-  "CMakeFiles/rubyk_core.dir/rubyk/core/src/thread.cpp.o"
-  "CMakeFiles/rubyk_core.dir/rubyk/core/src/time_ref.cpp.o"
+  "CMakeFiles/rubyk_core.dir/rubyk/sub/core/bindings.cpp.o"
+  "CMakeFiles/rubyk_core.dir/rubyk/sub/core/semaphore.cpp.o"
+  "CMakeFiles/rubyk_core.dir/rubyk/sub/core/thread.cpp.o"
+  "CMakeFiles/rubyk_core.dir/rubyk/sub/core/time_ref.cpp.o"
   "../../lib/rubyk/core.pdb"
   "../../lib/rubyk/core.so"
 )

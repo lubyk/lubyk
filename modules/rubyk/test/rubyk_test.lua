@@ -18,17 +18,6 @@ function should.sleep_in_main()
   assert(rubyk.now() <= now + 202)
 end
 
--- function should.spawn_external_thread()
---   local timer = rubyk.timer(10, function()
---     counter = counter + 1
---     -- continue until 'timer' is gc or stopped.
---   end)
---   rubyk.sleep(100)
---   print(counter)
---   rubyk.sleep(100)
---   print(counter)
--- end
-
 test.all()
 
 

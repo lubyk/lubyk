@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the RUBYK project (http://rubyk.org)
-   Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
+   Copyright (c) 2007-2011 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
 
@@ -49,14 +49,16 @@ class Worker : public Mutex
 public:
   /** Lua State where all the processing takes place.
    */
-//  LuaState *lua_;
+//  lua_State *lua_;
 
   /** Time reference. All times are [ms] from this reference.
    * It's the worker's birthdate !
    */
   TimeRef time_ref_;
+  
+  lua_State *lua_;
 public:
-  Worker() {}
+  Worker(lua_State *L) : lua_(L) {}
 
   ~Worker() {}
 };

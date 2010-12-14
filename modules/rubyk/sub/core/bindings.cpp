@@ -63,7 +63,7 @@ static const struct luaL_Reg lib_functions[] = {
 extern "C" int luaopen_rubyk_core(lua_State *L) {
   // register functions
   luaL_register(L, "rubyk", lib_functions);
-  gWorker = new Worker();
+  gWorker = new Worker(L);
   gWorker->lock();
   return 0;
 }

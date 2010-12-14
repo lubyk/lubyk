@@ -74,15 +74,23 @@ rubyk/non_copyable.h
 
 ../modules/rubyk/include/rubyk/non_copyable.h
 
+../modules/rubyk/include/rubyk/time_ref.h
+sys/types.h
+-
+rubyk/non_copyable.h
+../modules/rubyk/include/rubyk/rubyk/non_copyable.h
+
 ../modules/rubyk/include/rubyk/worker.h
+rubyk/lua.h
+../modules/rubyk/include/rubyk/rubyk/lua.h
 rubyk/mutex.h
 ../modules/rubyk/include/rubyk/rubyk/mutex.h
+rubyk/time_ref.h
+../modules/rubyk/include/rubyk/rubyk/time_ref.h
 
 /Users/gaspard/git/rubyk/modules/dummy/src/dummy.cpp
+dummy/dummy.h
+/Users/gaspard/git/rubyk/modules/dummy/src/dummy/dummy.h
 rubyk.h
 /Users/gaspard/git/rubyk/modules/dummy/src/rubyk.h
-
-/Users/gaspard/git/rubyk/modules/dummy/src/macosx/dummy_osx.cpp
-dummy/dummy.h
-/Users/gaspard/git/rubyk/modules/dummy/src/macosx/dummy/dummy.h
 

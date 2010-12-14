@@ -1,8 +1,8 @@
 /*
   ==============================================================================
 
-   This file is part of the OSCIT library (http://rubyk.org/liboscit)
-   Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
+   This file is part of the RUBYK project (http://rubyk.org)
+   Copyright (c) 2007-2011 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
 
@@ -27,8 +27,8 @@
   ==============================================================================
 */
 
-#ifndef OSCIT_INCLUDE_OSCIT_SEMAPHORE_H_
-#define OSCIT_INCLUDE_OSCIT_SEMAPHORE_H_
+#ifndef RUBYK_INCLUDE_RUBYK_SEMAPHORE_H_
+#define RUBYK_INCLUDE_RUBYK_SEMAPHORE_H_
 
 #include <assert.h>
 #include <semaphore.h>
@@ -96,4 +96,4 @@ public:
 
 }  // core
 
-#endif  // OSCIT_INCLUDE_OSCIT_SEMAPHORE_H_
+#endif  // RUBYK_INCLUDE_RUBYK_SEMAPHORE_H_

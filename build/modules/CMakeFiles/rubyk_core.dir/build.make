@@ -49,116 +49,116 @@ include modules/CMakeFiles/rubyk_core.dir/progress.make
 # Include the compile flags for this target's objects.
 include modules/CMakeFiles/rubyk_core.dir/flags.make
 
-modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/bindings.cpp.o: modules/CMakeFiles/rubyk_core.dir/flags.make
-modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/bindings.cpp.o: ../modules/rubyk/core/src/bindings.cpp
+modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/bindings.cpp.o: modules/CMakeFiles/rubyk_core.dir/flags.make
+modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/bindings.cpp.o: ../modules/rubyk/sub/core/bindings.cpp
 	$(CMAKE_COMMAND) -E cmake_progress_report /Users/gaspard/git/rubyk/build/CMakeFiles $(CMAKE_PROGRESS_1)
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/bindings.cpp.o"
-	cd /Users/gaspard/git/rubyk/build/modules && /usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/rubyk_core.dir/rubyk/core/src/bindings.cpp.o -c /Users/gaspard/git/rubyk/modules/rubyk/core/src/bindings.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/bindings.cpp.o"
+	cd /Users/gaspard/git/rubyk/build/modules && /usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/rubyk_core.dir/rubyk/sub/core/bindings.cpp.o -c /Users/gaspard/git/rubyk/modules/rubyk/sub/core/bindings.cpp
 
-modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/bindings.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/rubyk_core.dir/rubyk/core/src/bindings.cpp.i"
-	cd /Users/gaspard/git/rubyk/build/modules && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /Users/gaspard/git/rubyk/modules/rubyk/core/src/bindings.cpp > CMakeFiles/rubyk_core.dir/rubyk/core/src/bindings.cpp.i
+modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/bindings.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/rubyk_core.dir/rubyk/sub/core/bindings.cpp.i"
+	cd /Users/gaspard/git/rubyk/build/modules && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /Users/gaspard/git/rubyk/modules/rubyk/sub/core/bindings.cpp > CMakeFiles/rubyk_core.dir/rubyk/sub/core/bindings.cpp.i
 
-modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/bindings.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/rubyk_core.dir/rubyk/core/src/bindings.cpp.s"
-	cd /Users/gaspard/git/rubyk/build/modules && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /Users/gaspard/git/rubyk/modules/rubyk/core/src/bindings.cpp -o CMakeFiles/rubyk_core.dir/rubyk/core/src/bindings.cpp.s
+modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/bindings.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/rubyk_core.dir/rubyk/sub/core/bindings.cpp.s"
+	cd /Users/gaspard/git/rubyk/build/modules && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /Users/gaspard/git/rubyk/modules/rubyk/sub/core/bindings.cpp -o CMakeFiles/rubyk_core.dir/rubyk/sub/core/bindings.cpp.s
 
-modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/bindings.cpp.o.requires:
-.PHONY : modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/bindings.cpp.o.requires
+modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/bindings.cpp.o.requires:
+.PHONY : modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/bindings.cpp.o.requires
 
-modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/bindings.cpp.o.provides: modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/bindings.cpp.o.requires
-	$(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/bindings.cpp.o.provides.build
-.PHONY : modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/bindings.cpp.o.provides
+modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/bindings.cpp.o.provides: modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/bindings.cpp.o.requires
+	$(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/bindings.cpp.o.provides.build
+.PHONY : modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/bindings.cpp.o.provides
 
-modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/bindings.cpp.o.provides.build: modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/bindings.cpp.o
-.PHONY : modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/bindings.cpp.o.provides.build
+modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/bindings.cpp.o.provides.build: modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/bindings.cpp.o
+.PHONY : modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/bindings.cpp.o.provides.build
 
-modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/semaphore.cpp.o: modules/CMakeFiles/rubyk_core.dir/flags.make
-modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/semaphore.cpp.o: ../modules/rubyk/core/src/semaphore.cpp
+modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/semaphore.cpp.o: modules/CMakeFiles/rubyk_core.dir/flags.make
+modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/semaphore.cpp.o: ../modules/rubyk/sub/core/semaphore.cpp
 	$(CMAKE_COMMAND) -E cmake_progress_report /Users/gaspard/git/rubyk/build/CMakeFiles $(CMAKE_PROGRESS_2)
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/semaphore.cpp.o"
-	cd /Users/gaspard/git/rubyk/build/modules && /usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/rubyk_core.dir/rubyk/core/src/semaphore.cpp.o -c /Users/gaspard/git/rubyk/modules/rubyk/core/src/semaphore.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/semaphore.cpp.o"
+	cd /Users/gaspard/git/rubyk/build/modules && /usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/rubyk_core.dir/rubyk/sub/core/semaphore.cpp.o -c /Users/gaspard/git/rubyk/modules/rubyk/sub/core/semaphore.cpp
 
-modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/semaphore.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/rubyk_core.dir/rubyk/core/src/semaphore.cpp.i"
-	cd /Users/gaspard/git/rubyk/build/modules && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /Users/gaspard/git/rubyk/modules/rubyk/core/src/semaphore.cpp > CMakeFiles/rubyk_core.dir/rubyk/core/src/semaphore.cpp.i
+modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/semaphore.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/rubyk_core.dir/rubyk/sub/core/semaphore.cpp.i"
+	cd /Users/gaspard/git/rubyk/build/modules && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /Users/gaspard/git/rubyk/modules/rubyk/sub/core/semaphore.cpp > CMakeFiles/rubyk_core.dir/rubyk/sub/core/semaphore.cpp.i
 
-modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/semaphore.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/rubyk_core.dir/rubyk/core/src/semaphore.cpp.s"
-	cd /Users/gaspard/git/rubyk/build/modules && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /Users/gaspard/git/rubyk/modules/rubyk/core/src/semaphore.cpp -o CMakeFiles/rubyk_core.dir/rubyk/core/src/semaphore.cpp.s
+modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/semaphore.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/rubyk_core.dir/rubyk/sub/core/semaphore.cpp.s"
+	cd /Users/gaspard/git/rubyk/build/modules && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /Users/gaspard/git/rubyk/modules/rubyk/sub/core/semaphore.cpp -o CMakeFiles/rubyk_core.dir/rubyk/sub/core/semaphore.cpp.s
 
-modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/semaphore.cpp.o.requires:
-.PHONY : modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/semaphore.cpp.o.requires
+modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/semaphore.cpp.o.requires:
+.PHONY : modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/semaphore.cpp.o.requires
 
-modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/semaphore.cpp.o.provides: modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/semaphore.cpp.o.requires
-	$(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/semaphore.cpp.o.provides.build
-.PHONY : modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/semaphore.cpp.o.provides
+modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/semaphore.cpp.o.provides: modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/semaphore.cpp.o.requires
+	$(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/semaphore.cpp.o.provides.build
+.PHONY : modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/semaphore.cpp.o.provides
 
-modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/semaphore.cpp.o.provides.build: modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/semaphore.cpp.o
-.PHONY : modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/semaphore.cpp.o.provides.build
+modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/semaphore.cpp.o.provides.build: modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/semaphore.cpp.o
+.PHONY : modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/semaphore.cpp.o.provides.build
 
-modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/thread.cpp.o: modules/CMakeFiles/rubyk_core.dir/flags.make
-modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/thread.cpp.o: ../modules/rubyk/core/src/thread.cpp
+modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/thread.cpp.o: modules/CMakeFiles/rubyk_core.dir/flags.make
+modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/thread.cpp.o: ../modules/rubyk/sub/core/thread.cpp
 	$(CMAKE_COMMAND) -E cmake_progress_report /Users/gaspard/git/rubyk/build/CMakeFiles $(CMAKE_PROGRESS_3)
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/thread.cpp.o"
-	cd /Users/gaspard/git/rubyk/build/modules && /usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/rubyk_core.dir/rubyk/core/src/thread.cpp.o -c /Users/gaspard/git/rubyk/modules/rubyk/core/src/thread.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/thread.cpp.o"
+	cd /Users/gaspard/git/rubyk/build/modules && /usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/rubyk_core.dir/rubyk/sub/core/thread.cpp.o -c /Users/gaspard/git/rubyk/modules/rubyk/sub/core/thread.cpp
 
-modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/thread.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/rubyk_core.dir/rubyk/core/src/thread.cpp.i"
-	cd /Users/gaspard/git/rubyk/build/modules && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /Users/gaspard/git/rubyk/modules/rubyk/core/src/thread.cpp > CMakeFiles/rubyk_core.dir/rubyk/core/src/thread.cpp.i
+modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/thread.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/rubyk_core.dir/rubyk/sub/core/thread.cpp.i"
+	cd /Users/gaspard/git/rubyk/build/modules && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /Users/gaspard/git/rubyk/modules/rubyk/sub/core/thread.cpp > CMakeFiles/rubyk_core.dir/rubyk/sub/core/thread.cpp.i
 
-modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/thread.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/rubyk_core.dir/rubyk/core/src/thread.cpp.s"
-	cd /Users/gaspard/git/rubyk/build/modules && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /Users/gaspard/git/rubyk/modules/rubyk/core/src/thread.cpp -o CMakeFiles/rubyk_core.dir/rubyk/core/src/thread.cpp.s
+modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/thread.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/rubyk_core.dir/rubyk/sub/core/thread.cpp.s"
+	cd /Users/gaspard/git/rubyk/build/modules && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /Users/gaspard/git/rubyk/modules/rubyk/sub/core/thread.cpp -o CMakeFiles/rubyk_core.dir/rubyk/sub/core/thread.cpp.s
 
-modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/thread.cpp.o.requires:
-.PHONY : modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/thread.cpp.o.requires
+modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/thread.cpp.o.requires:
+.PHONY : modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/thread.cpp.o.requires
 
-modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/thread.cpp.o.provides: modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/thread.cpp.o.requires
-	$(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/thread.cpp.o.provides.build
-.PHONY : modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/thread.cpp.o.provides
+modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/thread.cpp.o.provides: modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/thread.cpp.o.requires
+	$(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/thread.cpp.o.provides.build
+.PHONY : modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/thread.cpp.o.provides
 
-modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/thread.cpp.o.provides.build: modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/thread.cpp.o
-.PHONY : modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/thread.cpp.o.provides.build
+modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/thread.cpp.o.provides.build: modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/thread.cpp.o
+.PHONY : modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/thread.cpp.o.provides.build
 
-modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/time_ref.cpp.o: modules/CMakeFiles/rubyk_core.dir/flags.make
-modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/time_ref.cpp.o: ../modules/rubyk/core/src/time_ref.cpp
+modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/time_ref.cpp.o: modules/CMakeFiles/rubyk_core.dir/flags.make
+modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/time_ref.cpp.o: ../modules/rubyk/sub/core/time_ref.cpp
 	$(CMAKE_COMMAND) -E cmake_progress_report /Users/gaspard/git/rubyk/build/CMakeFiles $(CMAKE_PROGRESS_4)
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/time_ref.cpp.o"
-	cd /Users/gaspard/git/rubyk/build/modules && /usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/rubyk_core.dir/rubyk/core/src/time_ref.cpp.o -c /Users/gaspard/git/rubyk/modules/rubyk/core/src/time_ref.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/time_ref.cpp.o"
+	cd /Users/gaspard/git/rubyk/build/modules && /usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/rubyk_core.dir/rubyk/sub/core/time_ref.cpp.o -c /Users/gaspard/git/rubyk/modules/rubyk/sub/core/time_ref.cpp
 
-modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/time_ref.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/rubyk_core.dir/rubyk/core/src/time_ref.cpp.i"
-	cd /Users/gaspard/git/rubyk/build/modules && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /Users/gaspard/git/rubyk/modules/rubyk/core/src/time_ref.cpp > CMakeFiles/rubyk_core.dir/rubyk/core/src/time_ref.cpp.i
+modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/time_ref.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/rubyk_core.dir/rubyk/sub/core/time_ref.cpp.i"
+	cd /Users/gaspard/git/rubyk/build/modules && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /Users/gaspard/git/rubyk/modules/rubyk/sub/core/time_ref.cpp > CMakeFiles/rubyk_core.dir/rubyk/sub/core/time_ref.cpp.i
 
-modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/time_ref.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/rubyk_core.dir/rubyk/core/src/time_ref.cpp.s"
-	cd /Users/gaspard/git/rubyk/build/modules && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /Users/gaspard/git/rubyk/modules/rubyk/core/src/time_ref.cpp -o CMakeFiles/rubyk_core.dir/rubyk/core/src/time_ref.cpp.s
+modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/time_ref.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/rubyk_core.dir/rubyk/sub/core/time_ref.cpp.s"
+	cd /Users/gaspard/git/rubyk/build/modules && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /Users/gaspard/git/rubyk/modules/rubyk/sub/core/time_ref.cpp -o CMakeFiles/rubyk_core.dir/rubyk/sub/core/time_ref.cpp.s
 
-modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/time_ref.cpp.o.requires:
-.PHONY : modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/time_ref.cpp.o.requires
+modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/time_ref.cpp.o.requires:
+.PHONY : modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/time_ref.cpp.o.requires
 
-modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/time_ref.cpp.o.provides: modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/time_ref.cpp.o.requires
-	$(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/time_ref.cpp.o.provides.build
-.PHONY : modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/time_ref.cpp.o.provides
+modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/time_ref.cpp.o.provides: modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/time_ref.cpp.o.requires
+	$(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/time_ref.cpp.o.provides.build
+.PHONY : modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/time_ref.cpp.o.provides
 
-modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/time_ref.cpp.o.provides.build: modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/time_ref.cpp.o
-.PHONY : modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/time_ref.cpp.o.provides.build
+modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/time_ref.cpp.o.provides.build: modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/time_ref.cpp.o
+.PHONY : modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/time_ref.cpp.o.provides.build
 
 # Object files for target rubyk_core
 rubyk_core_OBJECTS = \
-"CMakeFiles/rubyk_core.dir/rubyk/core/src/bindings.cpp.o" \
-"CMakeFiles/rubyk_core.dir/rubyk/core/src/semaphore.cpp.o" \
-"CMakeFiles/rubyk_core.dir/rubyk/core/src/thread.cpp.o" \
-"CMakeFiles/rubyk_core.dir/rubyk/core/src/time_ref.cpp.o"
+"CMakeFiles/rubyk_core.dir/rubyk/sub/core/bindings.cpp.o" \
+"CMakeFiles/rubyk_core.dir/rubyk/sub/core/semaphore.cpp.o" \
+"CMakeFiles/rubyk_core.dir/rubyk/sub/core/thread.cpp.o" \
+"CMakeFiles/rubyk_core.dir/rubyk/sub/core/time_ref.cpp.o"
 
 # External object files for target rubyk_core
 rubyk_core_EXTERNAL_OBJECTS =
 
-../lib/rubyk/core.so: modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/bindings.cpp.o
-../lib/rubyk/core.so: modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/semaphore.cpp.o
-../lib/rubyk/core.so: modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/thread.cpp.o
-../lib/rubyk/core.so: modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/time_ref.cpp.o
+../lib/rubyk/core.so: modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/bindings.cpp.o
+../lib/rubyk/core.so: modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/semaphore.cpp.o
+../lib/rubyk/core.so: modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/thread.cpp.o
+../lib/rubyk/core.so: modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/time_ref.cpp.o
 ../lib/rubyk/core.so: modules/CMakeFiles/rubyk_core.dir/build.make
 ../lib/rubyk/core.so: modules/CMakeFiles/rubyk_core.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking CXX shared module ../../lib/rubyk/core.so"
@@ -168,10 +168,10 @@ rubyk_core_EXTERNAL_OBJECTS =
 modules/CMakeFiles/rubyk_core.dir/build: ../lib/rubyk/core.so
 .PHONY : modules/CMakeFiles/rubyk_core.dir/build
 
-modules/CMakeFiles/rubyk_core.dir/requires: modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/bindings.cpp.o.requires
-modules/CMakeFiles/rubyk_core.dir/requires: modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/semaphore.cpp.o.requires
-modules/CMakeFiles/rubyk_core.dir/requires: modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/thread.cpp.o.requires
-modules/CMakeFiles/rubyk_core.dir/requires: modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/time_ref.cpp.o.requires
+modules/CMakeFiles/rubyk_core.dir/requires: modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/bindings.cpp.o.requires
+modules/CMakeFiles/rubyk_core.dir/requires: modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/semaphore.cpp.o.requires
+modules/CMakeFiles/rubyk_core.dir/requires: modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/thread.cpp.o.requires
+modules/CMakeFiles/rubyk_core.dir/requires: modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/time_ref.cpp.o.requires
 .PHONY : modules/CMakeFiles/rubyk_core.dir/requires
 
 modules/CMakeFiles/rubyk_core.dir/clean:

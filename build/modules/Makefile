@@ -113,6 +113,20 @@ dummy/fast:
 .PHONY : dummy/fast
 
 # Convenience name for target.
+modules/CMakeFiles/rk_Timer.dir/rule:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f CMakeFiles/Makefile2 modules/CMakeFiles/rk_Timer.dir/rule
+.PHONY : modules/CMakeFiles/rk_Timer.dir/rule
+
+# Convenience name for target.
+rk_Timer: modules/CMakeFiles/rk_Timer.dir/rule
+.PHONY : rk_Timer
+
+# fast build rule for target.
+rk_Timer/fast:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/rk_Timer.dir/build.make modules/CMakeFiles/rk_Timer.dir/build
+.PHONY : rk_Timer/fast
+
+# Convenience name for target.
 modules/CMakeFiles/rk_lua.dir/rule:
 	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f CMakeFiles/Makefile2 modules/CMakeFiles/rk_lua.dir/rule
 .PHONY : modules/CMakeFiles/rk_lua.dir/rule
@@ -216,101 +230,125 @@ dummy/src/macosx/dummy_osx.cpp.s:
 	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/dummy.dir/build.make modules/CMakeFiles/dummy.dir/dummy/src/macosx/dummy_osx.cpp.s
 .PHONY : dummy/src/macosx/dummy_osx.cpp.s
 
-rubyk/core/src/bindings.o: rubyk/core/src/bindings.cpp.o
-.PHONY : rubyk/core/src/bindings.o
+rk/sub/Timer.o: rk/sub/Timer.cpp.o
+.PHONY : rk/sub/Timer.o
 
 # target to build an object file
-rubyk/core/src/bindings.cpp.o:
-	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/bindings.cpp.o
-.PHONY : rubyk/core/src/bindings.cpp.o
+rk/sub/Timer.cpp.o:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/rk_Timer.dir/build.make modules/CMakeFiles/rk_Timer.dir/rk/sub/Timer.cpp.o
+.PHONY : rk/sub/Timer.cpp.o
 
-rubyk/core/src/bindings.i: rubyk/core/src/bindings.cpp.i
-.PHONY : rubyk/core/src/bindings.i
+rk/sub/Timer.i: rk/sub/Timer.cpp.i
+.PHONY : rk/sub/Timer.i
 
 # target to preprocess a source file
-rubyk/core/src/bindings.cpp.i:
-	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/bindings.cpp.i
-.PHONY : rubyk/core/src/bindings.cpp.i
+rk/sub/Timer.cpp.i:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/rk_Timer.dir/build.make modules/CMakeFiles/rk_Timer.dir/rk/sub/Timer.cpp.i
+.PHONY : rk/sub/Timer.cpp.i
 
-rubyk/core/src/bindings.s: rubyk/core/src/bindings.cpp.s
-.PHONY : rubyk/core/src/bindings.s
+rk/sub/Timer.s: rk/sub/Timer.cpp.s
+.PHONY : rk/sub/Timer.s
 
 # target to generate assembly for a file
-rubyk/core/src/bindings.cpp.s:
-	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/bindings.cpp.s
-.PHONY : rubyk/core/src/bindings.cpp.s
+rk/sub/Timer.cpp.s:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/rk_Timer.dir/build.make modules/CMakeFiles/rk_Timer.dir/rk/sub/Timer.cpp.s
+.PHONY : rk/sub/Timer.cpp.s
 
-rubyk/core/src/semaphore.o: rubyk/core/src/semaphore.cpp.o
-.PHONY : rubyk/core/src/semaphore.o
+rubyk/sub/core/bindings.o: rubyk/sub/core/bindings.cpp.o
+.PHONY : rubyk/sub/core/bindings.o
 
 # target to build an object file
-rubyk/core/src/semaphore.cpp.o:
-	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/semaphore.cpp.o
-.PHONY : rubyk/core/src/semaphore.cpp.o
+rubyk/sub/core/bindings.cpp.o:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/bindings.cpp.o
+.PHONY : rubyk/sub/core/bindings.cpp.o
 
-rubyk/core/src/semaphore.i: rubyk/core/src/semaphore.cpp.i
-.PHONY : rubyk/core/src/semaphore.i
+rubyk/sub/core/bindings.i: rubyk/sub/core/bindings.cpp.i
+.PHONY : rubyk/sub/core/bindings.i
 
 # target to preprocess a source file
-rubyk/core/src/semaphore.cpp.i:
-	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/semaphore.cpp.i
-.PHONY : rubyk/core/src/semaphore.cpp.i
+rubyk/sub/core/bindings.cpp.i:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/bindings.cpp.i
+.PHONY : rubyk/sub/core/bindings.cpp.i
 
-rubyk/core/src/semaphore.s: rubyk/core/src/semaphore.cpp.s
-.PHONY : rubyk/core/src/semaphore.s
+rubyk/sub/core/bindings.s: rubyk/sub/core/bindings.cpp.s
+.PHONY : rubyk/sub/core/bindings.s
 
 # target to generate assembly for a file
-rubyk/core/src/semaphore.cpp.s:
-	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/semaphore.cpp.s
-.PHONY : rubyk/core/src/semaphore.cpp.s
+rubyk/sub/core/bindings.cpp.s:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/bindings.cpp.s
+.PHONY : rubyk/sub/core/bindings.cpp.s
 
-rubyk/core/src/thread.o: rubyk/core/src/thread.cpp.o
-.PHONY : rubyk/core/src/thread.o
+rubyk/sub/core/semaphore.o: rubyk/sub/core/semaphore.cpp.o
+.PHONY : rubyk/sub/core/semaphore.o
 
 # target to build an object file
-rubyk/core/src/thread.cpp.o:
-	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/thread.cpp.o
-.PHONY : rubyk/core/src/thread.cpp.o
+rubyk/sub/core/semaphore.cpp.o:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/semaphore.cpp.o
+.PHONY : rubyk/sub/core/semaphore.cpp.o
 
-rubyk/core/src/thread.i: rubyk/core/src/thread.cpp.i
-.PHONY : rubyk/core/src/thread.i
+rubyk/sub/core/semaphore.i: rubyk/sub/core/semaphore.cpp.i
+.PHONY : rubyk/sub/core/semaphore.i
 
 # target to preprocess a source file
-rubyk/core/src/thread.cpp.i:
-	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/thread.cpp.i
-.PHONY : rubyk/core/src/thread.cpp.i
+rubyk/sub/core/semaphore.cpp.i:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/semaphore.cpp.i
+.PHONY : rubyk/sub/core/semaphore.cpp.i
 
-rubyk/core/src/thread.s: rubyk/core/src/thread.cpp.s
-.PHONY : rubyk/core/src/thread.s
+rubyk/sub/core/semaphore.s: rubyk/sub/core/semaphore.cpp.s
+.PHONY : rubyk/sub/core/semaphore.s
 
 # target to generate assembly for a file
-rubyk/core/src/thread.cpp.s:
-	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/thread.cpp.s
-.PHONY : rubyk/core/src/thread.cpp.s
+rubyk/sub/core/semaphore.cpp.s:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/semaphore.cpp.s
+.PHONY : rubyk/sub/core/semaphore.cpp.s
 
-rubyk/core/src/time_ref.o: rubyk/core/src/time_ref.cpp.o
-.PHONY : rubyk/core/src/time_ref.o
+rubyk/sub/core/thread.o: rubyk/sub/core/thread.cpp.o
+.PHONY : rubyk/sub/core/thread.o
 
 # target to build an object file
-rubyk/core/src/time_ref.cpp.o:
-	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/time_ref.cpp.o
-.PHONY : rubyk/core/src/time_ref.cpp.o
+rubyk/sub/core/thread.cpp.o:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/thread.cpp.o
+.PHONY : rubyk/sub/core/thread.cpp.o
 
-rubyk/core/src/time_ref.i: rubyk/core/src/time_ref.cpp.i
-.PHONY : rubyk/core/src/time_ref.i
+rubyk/sub/core/thread.i: rubyk/sub/core/thread.cpp.i
+.PHONY : rubyk/sub/core/thread.i
 
 # target to preprocess a source file
-rubyk/core/src/time_ref.cpp.i:
-	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/time_ref.cpp.i
-.PHONY : rubyk/core/src/time_ref.cpp.i
+rubyk/sub/core/thread.cpp.i:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/thread.cpp.i
+.PHONY : rubyk/sub/core/thread.cpp.i
 
-rubyk/core/src/time_ref.s: rubyk/core/src/time_ref.cpp.s
-.PHONY : rubyk/core/src/time_ref.s
+rubyk/sub/core/thread.s: rubyk/sub/core/thread.cpp.s
+.PHONY : rubyk/sub/core/thread.s
 
 # target to generate assembly for a file
-rubyk/core/src/time_ref.cpp.s:
-	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/core/src/time_ref.cpp.s
-.PHONY : rubyk/core/src/time_ref.cpp.s
+rubyk/sub/core/thread.cpp.s:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/thread.cpp.s
+.PHONY : rubyk/sub/core/thread.cpp.s
+
+rubyk/sub/core/time_ref.o: rubyk/sub/core/time_ref.cpp.o
+.PHONY : rubyk/sub/core/time_ref.o
+
+# target to build an object file
+rubyk/sub/core/time_ref.cpp.o:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/time_ref.cpp.o
+.PHONY : rubyk/sub/core/time_ref.cpp.o
+
+rubyk/sub/core/time_ref.i: rubyk/sub/core/time_ref.cpp.i
+.PHONY : rubyk/sub/core/time_ref.i
+
+# target to preprocess a source file
+rubyk/sub/core/time_ref.cpp.i:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/time_ref.cpp.i
+.PHONY : rubyk/sub/core/time_ref.cpp.i
+
+rubyk/sub/core/time_ref.s: rubyk/sub/core/time_ref.cpp.s
+.PHONY : rubyk/sub/core/time_ref.s
+
+# target to generate assembly for a file
+rubyk/sub/core/time_ref.cpp.s:
+	cd /Users/gaspard/git/rubyk/build && $(MAKE) -f modules/CMakeFiles/rubyk_core.dir/build.make modules/CMakeFiles/rubyk_core.dir/rubyk/sub/core/time_ref.cpp.s
+.PHONY : rubyk/sub/core/time_ref.cpp.s
 
 # Help Target
 help:
@@ -321,6 +359,7 @@ help:
 	@echo "... dummy"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... rk_Timer"
 	@echo "... rk_lua"
 	@echo "... rubyk_core"
 	@echo "... rubyk_lua"
@@ -331,18 +370,21 @@ help:
 	@echo "... dummy/src/macosx/dummy_osx.o"
 	@echo "... dummy/src/macosx/dummy_osx.i"
 	@echo "... dummy/src/macosx/dummy_osx.s"
-	@echo "... rubyk/core/src/bindings.o"
-	@echo "... rubyk/core/src/bindings.i"
-	@echo "... rubyk/core/src/bindings.s"
-	@echo "... rubyk/core/src/semaphore.o"
-	@echo "... rubyk/core/src/semaphore.i"
-	@echo "... rubyk/core/src/semaphore.s"
-	@echo "... rubyk/core/src/thread.o"
-	@echo "... rubyk/core/src/thread.i"
-	@echo "... rubyk/core/src/thread.s"
-	@echo "... rubyk/core/src/time_ref.o"
-	@echo "... rubyk/core/src/time_ref.i"
-	@echo "... rubyk/core/src/time_ref.s"
+	@echo "... rk/sub/Timer.o"
+	@echo "... rk/sub/Timer.i"
+	@echo "... rk/sub/Timer.s"
+	@echo "... rubyk/sub/core/bindings.o"
+	@echo "... rubyk/sub/core/bindings.i"
+	@echo "... rubyk/sub/core/bindings.s"
+	@echo "... rubyk/sub/core/semaphore.o"
+	@echo "... rubyk/sub/core/semaphore.i"
+	@echo "... rubyk/sub/core/semaphore.s"
+	@echo "... rubyk/sub/core/thread.o"
+	@echo "... rubyk/sub/core/thread.i"
+	@echo "... rubyk/sub/core/thread.s"
+	@echo "... rubyk/sub/core/time_ref.o"
+	@echo "... rubyk/sub/core/time_ref.i"
+	@echo "... rubyk/sub/core/time_ref.s"
 .PHONY : help
 
 
