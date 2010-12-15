@@ -12,5 +12,9 @@ rk = Autoload('rk')
 -- autoload stuff in _G
 Autoload.global()
 
--- loads 'rubyk'
+rubyk = Autoload('rubyk')
+-------------------------------- CONSTANTS
+rubyk.service_type = '_rubyk._tcp'
+
+-------------------------------- rubyk.core
 require 'rubyk.core'

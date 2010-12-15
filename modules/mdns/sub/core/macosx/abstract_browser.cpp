@@ -58,17 +58,17 @@ namespace mdns {
 #define LONG_TIME 100000000
 
 struct BrowsedDevice {
-  BrowsedDevice(ZeroConfBrowser *browser, const char *name, const char *host, DNSServiceFlags flags) :
+  BrowsedDevice(AbstractBrowser *browser, const char *name, const char *host, DNSServiceFlags flags) :
                 name_(name), host_(host), browser_(browser), flags_(flags) {}
   std::string name_;
   std::string host_;
-  ZeroConfBrowser *browser_;
+  AbstractBrowser *browser_;
   DNSServiceFlags flags_;
 };
 
-class ZeroConfBrowser::Implementation : public Thread {
+class AbstractBrowser::Implementation : public Thread {
 public:
-  Implementation(ZeroConfBrowser *master)
+  Implementation(AbstractBrowser *master)
       : browser_(master) {}
 
   void start() {
@@ -176,7 +176,7 @@ public:
     }
 
     DNSServiceRef resolve_service;
-    BrowsedDevice *device = new BrowsedDevice((ZeroConfBrowser*)context, name, domain, flags);
+    BrowsedDevice *device = new BrowsedDevice((AbstractBrowser*)context, name, domain, flags);
     error = DNSServiceResolve(&resolve_service,
                0,    // flags
                interface_index,
@@ -199,29 +199,25 @@ public:
     delete device;
   }
 
-  ZeroConfBrowser *browser_;
+  AbstractBrowser *browser_;
 };
 
-ZeroConfBrowser::ZeroConfBrowser(const char *service_type)
+AbstractBrowser::AbstractBrowser(const char *service_type)
     : running_(false),
-      service_type_(service_type),
-      command_(NULL),
-      proxy_factory_(NULL),
-      found_devices_(FOUND_DEVICE_HASH_SIZE) {
+      service_type_(service_type) {
   get_protocol_from_service_type();
-  impl_ = new ZeroConfBrowser::Implementation(this);
+  impl_ = new AbstractBrowser::Implementation(this);
 }
 
-ZeroConfBrowser::~ZeroConfBrowser() {
+AbstractBrowser::~AbstractBrowser() {
   delete impl_;
-  if (proxy_factory_) delete proxy_factory_;
 }
 
-void ZeroConfBrowser::start() {
+void AbstractBrowser::start() {
   impl_->start();
 }
 
-void ZeroConfBrowser::stop() {
+void AbstractBrowser::stop() {
   impl_->kill();
 }
 

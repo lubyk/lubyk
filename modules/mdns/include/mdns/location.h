@@ -33,6 +33,7 @@
 #include <ostream>
 
 //#include "oscit/thash.h"
+typedef unsigned int uint;
 
 namespace mdns {
 
@@ -125,8 +126,6 @@ public:
    */
   const std::string inspect() const;
 
-  void resolve_with(const ZeroConfBrowser *browser);
-
   static unsigned long ip_from_hostname(const char *hostname);
   static const std::string name_from_ip(unsigned long ip);
 
@@ -159,7 +158,7 @@ private:
   uint port_;
 };
 
-std::ostream &operator<< (std::ostream &out_stream, const std::list<Location> &locations);
+std::ostream &operator<<(std::ostream &out_stream, const Location &location);
 
 } // mdns
 

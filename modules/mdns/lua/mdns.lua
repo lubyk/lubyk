@@ -3,9 +3,8 @@
   mdns
   ----
 
-  This module contains utility functions to do directory
-  listing and such.
+  ZeroConf (Bonjour) multi cast DNS bindings.
 
 --]]------------------------------------------------------
-mdns = Autoload()
+mdns = Autoload('mdns')
 require 'mdns.core'

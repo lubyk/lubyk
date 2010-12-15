@@ -1,8 +1,8 @@
 /*
   ==============================================================================
 
-   This file is part of the OSCIT library (http://rubyk.org/liboscit)
-   Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
+   This file is part of the RUBYK library (http://rubyk.org)
+   Copyright (c) 2007-2011 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
 
@@ -27,7 +27,7 @@
   ==============================================================================
 */
 
-#include "oscit/location.h"
+#include "mdns/location.h"
 
 #include <sstream>
 
@@ -35,6 +35,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 
+#include <iostream>
 /*
 
 struct addrinfo {
@@ -51,7 +52,7 @@ struct addrinfo {
 // For other structs related to this topic: http://beej.us/guide/bgnet/output/html/multipage/sockaddr_inman.html
 
 */
-namespace oscit {
+namespace mdns {
 
 unsigned long Location::ip_from_hostname(const char *hostname) {
   struct addrinfo *result, *result0;
@@ -83,4 +84,4 @@ unsigned long Location::ip_from_hostname(const char *hostname) {
   return ip;
 }
 
-} // oscit
+} // mdns

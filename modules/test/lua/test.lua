@@ -126,8 +126,6 @@ function lib.assert(ok, msg)
   end
 end
 
-orig_assert = assert
-
 function fail(msg)
   lib.assert(false, msg)
 end
@@ -136,7 +134,7 @@ function assert_false(ok)
   lib.assert(not ok, string.format('Should fail but passed.'))
 end
 
-function assert(ok)
+function assert_true(ok)
   lib.assert(ok, string.format('True expected but was false.'))
 end
 

@@ -5,6 +5,7 @@ Autoload   = lib
 setmetatable(lib, {
   -- new method
  __call = function(table, prefix)
+  assert(prefix, 'Autoload needs a name')
   local instance = {prefix = prefix}
   setmetatable(instance, lib)
   return instance
@@ -13,17 +14,12 @@ end})
 
 --- Autoload method
 function lib.__index(table, name)
-  -- Trying to load new lib with rk.Foobar
-  local ok, new_lib = require(table.prefix..'.'..name)
+  -- Trying to load new lib like rk.Foobar
+  local ok, new_lib_or_error = require(table.prefix..'.'..name)
   if ok then
-    print("Loaded "..name, type(new_lib))
-    pcall(function()
-      -- load rk.Foobar_post if it exists
-      require(table.prefix..'.'..name..'_post')
-    end)
-    return new_lib or table[name]
+    return new_lib_or_error or table[name]
   else
-    print(new_lib)
+    print(new_lib_or_error)
     return nil
   end
 end
@@ -36,10 +32,11 @@ end
 --- Autoload for _G
 function lib2.__index(table, name)
   -- Trying to load new lib with rk.XXXX
-  local ok, new_lib = require(name)
+  local ok, new_lib_or_error = require(name)
   if ok then
-    return new_lib or table[name]
+    return new_lib_or_error or table[name]
   else
+    print(new_lib_or_error)
     return nil
   end
 end

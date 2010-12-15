@@ -27,55 +27,22 @@
   ==============================================================================
 */
 
-#include "mdns/location.h"
+#include "mdns/browser.h"
 
-#include <netdb.h>     // gethostbyname
-#include <arpa/inet.h> // inet_addr
+#include <stdio.h>
 
-#include <sstream>
-
-#include "mdns/abstract_browser.h"
-
-
+#include <iostream>
+#include <string>
 
 namespace mdns {
 
-std::ostream &operator<<(std::ostream &out_stream, const Location &location) {
-  if (location.name_ == "") return out_stream;
-  if (location.protocol_ != "") {
-    out_stream << location.protocol_ << "://";
-  }
-
-  if (location.reference_by_hostname_) {
-    out_stream << location.name_;
-    if (location.port_ != Location::NO_PORT) {
-      out_stream << ":" << location.port_;
-    }
+void AbstractBrowser::get_protocol_from_service_type() {
+  size_t dot_index = service_type_.find(".");
+  if (dot_index != std::string::npos) {
+    protocol_ = service_type_.substr(1, dot_index - 1);
   } else {
-    // TODO: escape double quotes in name_
-    out_stream << "\"" << location.name_ << "\"";
-  }
-  return out_stream;
-}
-
-const std::string Location::inspect() const {
-  std::ostringstream out;
-  out << protocol_ << "://" << name_from_ip(ip_) << ":" << port_;
-  return out.str();
-}
-
-const std::string Location::name_from_ip(unsigned long ip) {
-  if (ip == NO_IP) {
-    return std::string("");
-	} else if (ip == ANY_IP) {
-    return std::string("localhost");
-  } else {
-	  std::ostringstream out;
-    out <<        ((ip >> 24) & 0xFF);
-    out << "." << ((ip >> 16) & 0xFF);
-    out << "." << ((ip >> 8)  & 0xFF);
-    out << "." << ( ip        & 0xFF);
-    return out.str();
+    // Bad service type
+    std::cerr << "Could not get protocol from service type: " << service_type_ << "\n";
   }
 }
 

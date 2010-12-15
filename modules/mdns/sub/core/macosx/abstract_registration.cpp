@@ -26,7 +26,6 @@
 
   ==============================================================================
 */
-
 #include <stdio.h>			// For stdout, stderr
 #include <string.h>			// For strlen(), strcpy(), bzero()
 #include <errno.h>      // For errno, EINTR
@@ -48,11 +47,11 @@ typedef	int	pid_t;
 
 #include <dns_sd.h>     // zeroconf
 
-#include "oscit/thread.h"
-#include "oscit/zeroconf_registration.h"
+#include "rubyk/thread.h"
+#include "mdns/abstract_registration.h"
 
 
-namespace oscit {
+namespace mdns {
 
 static void registration_cleanup(void *data) {
   DNSServiceRef *service = (DNSServiceRef*)data;
@@ -63,9 +62,9 @@ static void registration_cleanup(void *data) {
 //       fails with any timeout much larger than this
 #define LONG_TIME 100000000
 
-class ZeroConfRegistration::Implementation : public Thread {
+class AbstractRegistration::Implementation : public Thread {
 public:
-  Implementation(ZeroConfRegistration *master) : master_(master) {
+  Implementation(AbstractRegistration *master) : master_(master) {
     start_thread<Implementation, &Implementation::registration>(this, NULL);
   }
 
@@ -95,7 +94,7 @@ public:
         }
       }	else if (errno != EINTR) {
         // Error.
-        fprintf(stderr, "ZeroConf error (%d %s)\n", errno, strerror(errno));
+        fprintf(stderr, "mdns.Registration error (%d %s)\n", errno, strerror(errno));
         if (errno != EINTR) quit();
       }
     }
@@ -144,27 +143,27 @@ public:
     if (error != kDNSServiceErr_NoError) {
       fprintf(stderr, "DNSServiceRegister error (%d).\n", error);
     } else {
-      ZeroConfRegistration *reg = (ZeroConfRegistration*)context;
+      AbstractRegistration *reg = (AbstractRegistration*)context;
       reg->name_ = name;
       reg->host_ = host;
       reg->registration_done();
     }
   }
-  ZeroConfRegistration *master_;
+  AbstractRegistration *master_;
 };
 
 
-ZeroConfRegistration::ZeroConfRegistration(const std::string &name, const char *service_type, uint16_t port) : name_(name), service_type_(service_type), port_(port) {
-  impl_ = new ZeroConfRegistration::Implementation(this);
+AbstractRegistration::AbstractRegistration(const char *service_type, const char *name, uint port) : name_(name), service_type_(service_type), port_(port) {
+  impl_ = new AbstractRegistration::Implementation(this);
 }
 
-ZeroConfRegistration::~ZeroConfRegistration() {
+AbstractRegistration::~AbstractRegistration() {
   stop();
   delete impl_;
 }
 
-void ZeroConfRegistration::stop() {
+void AbstractRegistration::stop() {
   impl_->kill();
 }
 
-} // oscit
+} // mdns

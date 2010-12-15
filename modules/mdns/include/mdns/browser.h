@@ -26,76 +26,68 @@
 
   ==============================================================================
 */
+#ifndef RUBYK_INCLUDE_MDNS_BROWSER_H_
+#define RUBYK_INCLUDE_MDNS_BROWSER_H_
 
-#ifndef MDNS_INCLUDE_MDNS_BROWSER_H_
-#define MDNS_INCLUDE_MDNS_BROWSER_H_
-#include <string>
+#include "mdns/abstract_browser.h"
 
-#include "mdns/location.h"
-#include "rubyk/mutex.h"
+#include "rubyk.h"
+using namespace rubyk;
 
 namespace mdns {
 
-/** This class let's you easily find applications providing a certain
- * service.
- */
-class ZeroConfBrowser : public Mutex {
- public:
-  ZeroConfBrowser(const char *service_type);
-
-  virtual ~ZeroConfBrowser();
-
-  /** This method is called just after a new proxy has been added to the list.
-   */
-  virtual void add_device(const Location &location) = 0;
-
-  /** This method is called so that you have an opportunity to delete it cleanly.
-   */
-  virtual void remove_device(const char *name) = 0;
-
-  bool get_location_from_name(const char *service_name, Location *location) const;
-
- protected:
-
-  /** This method should be called when the browser is ready.
-   */
-  virtual void start();
-
-  /** This method *must* be called from sub-classes in their destructors to
-   * make sure the callbacks (add_device, remove_device) are not called in the
-	 * middle of a class destruction.
-	 */
-  virtual void stop();
-
-  /** Return true if the browser is running (searching for devices).
-   */
-  bool is_running() {
-    return running_;
+class Browser : public AbstractBrowser
+{
+  rubyk::Worker *worker_;
+  int func_idx_;
+public:
+  Browser(rubyk::Worker *worker, const char *service_type, int lua_func_idx) :
+    AbstractBrowser(service_type),
+    worker_(worker),
+    func_idx_(lua_func_idx) {
+    start();
   }
 
-  void set_running(bool is_running) {
-    running_ = is_running;
+  ~Browser() {
+    // release function
+    stop();
+    luaL_unref(worker_->lua_, LUA_REGISTRYINDEX, func_idx_);
   }
 
-  void get_protocol_from_service_type();
+  virtual void add_device(const Location &location) {
+    lua_State *L = worker_->lua_;
+    ScopedLock lock(worker_);
+    lua_rawgeti(L, LUA_REGISTRYINDEX, func_idx_);
+    lua_pushstring(L, "add");
+    lua_pushstring(L, location.name().c_str());
+    int status = lua_pcall(L, 2, 0, 0);
 
-  /** This value is on if the browser is running (listening for new devices).
-   */
-  bool          running_;
+    if (status) {
+      printf("Error in add_device: %s\n", lua_tostring(L, -1));
+    }
+    // clear stack
+    lua_settop(worker_->lua_, 0);
+  }
 
-  /** Protocol used in communication (usually 'rubyk').
-   */
-  std::string   protocol_;
+  virtual void remove_device(const char *name) {
+    lua_State *L = worker_->lua_;
+    ScopedLock lock(worker_);
+    lua_rawgeti(L, LUA_REGISTRYINDEX, func_idx_);
+    lua_pushstring(L, "remove");
+    lua_pushstring(L, name);
+    int status = lua_pcall(L, 2, 0, 0);
 
-  /** Service-type to browse.
-   */
-  std::string   service_type_;
+    if (status) {
+      printf("Error in remove_device: %s\n", lua_tostring(L, -1));
+    }
+    // clear stack
+    lua_settop(worker_->lua_, 0);
+  }
 
- private:
-  class Implementation;
-  Implementation *impl_;
+  const char *service_type() {
+    return service_type_.c_str();
+  }
 };
-
 } // mdns
 
-#endif // MDNS_INCLUDE_MDNS_BROWSER_H_
+#endif // RUBYK_INCLUDE_MDNS_BROWSER_H_

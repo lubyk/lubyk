@@ -31,14 +31,27 @@ end
     'Timer' => {
       :string_format => '%li',
       :string_args   => '(*userdata)->interval()',
-    }
+      :lib_name      => 'Timer_core'
+    },
   },
   'rubyk' => {
     'Worker' => {
       :string_format => '%f',
       :string_args   => '(*userdata)->now()',
-    }
-  }
+    },
+  },
+  'mdns' => {
+    'Browser' => {
+      :string_format => '%s',
+      :string_args   => '(*userdata)->service_type()',
+      :lib_name      => 'Browser_core'
+    },
+    'Registration' => {
+      :string_format => '%s',
+      :string_args   => '(*userdata)->name()',
+      :lib_name      => 'Registration_core'
+    },
+  },
 }.each do |mod_name, classes|
   namespace = Dub.parse(XML_DOC_PATH + "namespace#{mod_name}.xml")[mod_name.to_sym]
   Dub::Lua.bind(namespace)
@@ -50,11 +63,10 @@ end
   classes.each do |class_name, definitions|
     klass = namespace[class_name]
     # Set custom tostring formats
-    klass.string_format = definitions[:string_format]
-    klass.string_args   = definitions[:string_args]
+    klass.opts.merge!(definitions)
     klass.header = "#{mod_name}/#{class_name}.h"
 
-    File.open(BINDINGS_PATH + "modules/#{mod_name}/sub/#{class_name}.cpp", 'wb') do |f|
+    File.open(BINDINGS_PATH + "modules/#{mod_name}/sub/#{klass.lib_name}.cpp", 'wb') do |f|
       f.puts klass
     end
   end

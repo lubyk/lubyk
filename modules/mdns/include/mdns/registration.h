@@ -26,44 +26,45 @@
 
   ==============================================================================
 */
+#ifndef RUBYK_INCLUDE_MDNS_REGISTRATION_H_
+#define RUBYK_INCLUDE_MDNS_REGISTRATION_H_
 
-#ifndef MDNS_INCLUDE_MDNS_REGISTRATION_H_
-#define MDNS_INCLUDE_MDNS_REGISTRATION_H_
-#include <string>
+#include "mdns/abstract_registration.h"
 
-#include "rubyk/mutex.h"
-#include "oscit/location.h"
+#include "rubyk.h"
+using namespace rubyk;
 
-namespace oscit {
+namespace mdns {
 
-/** This class let's you easily register an application as providing a certain type of
- *  service.
- */
-class ZeroConfRegistration : public Mutex {
- public:
-  ZeroConfRegistration(const std::string &name, const char *service_type, uint16_t port);
+class Registration : public AbstractRegistration
+{
+  rubyk::Worker *worker_;
+  int func_idx_;
+public:
+  Registration(rubyk::Worker *worker, const char *service_type, const char *name, uint port, int lua_func_idx) :
+    AbstractRegistration(service_type, name, port),
+    worker_(worker),
+    func_idx_(lua_func_idx) {}
 
-  virtual ~ZeroConfRegistration();
+  ~Registration() {
+    // release function
+    stop();
+    luaL_unref(worker_->lua_, LUA_REGISTRYINDEX, func_idx_);
+  }
 
-  virtual void registration_done() {}
+  virtual void registration_done() {
+    lua_State *L = worker_->lua_;
+    ScopedLock lock(worker_);
+    lua_rawgeti(L, LUA_REGISTRYINDEX, func_idx_);
+    int status = lua_pcall(L, 0, 0, 0);
 
- protected:
-  /** This method *must* be called from sub-classes in their destructors to
-   * make sure the callback (registration_done) is not called in the middle of
-	 * a class destruction.
-	 */
-  virtual void stop();
-
-  std::string name_;
-  std::string host_;
-  std::string service_type_;
-  uint16_t    port_;
-
- private:
-  class Implementation;
-  Implementation *impl_;
+    if (status) {
+      printf("Error in registration_done: %s\n", lua_tostring(L, -1));
+    }
+    // clear stack
+    lua_settop(worker_->lua_, 0);
+  }
 };
+} // mdns
 
-} // oscit
-
-#endif // MDNS_INCLUDE_MDNS_REGISTRATION_H_
+#endif // RUBYK_INCLUDE_MDNS_REGISTRATION_H_
