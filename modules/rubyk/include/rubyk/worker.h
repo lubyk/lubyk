@@ -39,28 +39,43 @@ It contains a single Worker that is passed to subnodes as context
 Planet <>--- Worker
 */
 #include "rubyk/lua.h"
-#include "rubyk/mutex.h"
+#include "rubyk/thread.h"
 #include "rubyk/time_ref.h"
 
 namespace rubyk {
 
+/** The worker should be created only once and is responsible for
+ * timing and lua locking.
+ */
 class Worker : public Mutex
 {
 public:
-  /** Lua State where all the processing takes place.
-   */
-//  lua_State *lua_;
-
-  /** Time reference. All times are [ms] from this reference.
-   * It's the worker's birthdate !
+  /** Time reference. All times are in milliseconds (as double) from this reference.
+   * 0.0 = The worker's birthdate !
    */
   TimeRef time_ref_;
-  
-  lua_State *lua_;
-public:
-  Worker(lua_State *L) : lua_(L) {}
 
-  ~Worker() {}
+  lua_State *lua_;
+
+public:
+  Worker(lua_State *L) : lua_(L) {
+    lock();
+  }
+
+  ~Worker() {
+    unlock();
+  }
+
+  /** Sleep for a given number of ms.
+   */
+  void sleep(double duration) {
+    ScopedUnlock unlock(this);
+    Thread::millisleep(duration);
+  }
+
+  double now() {
+    return time_ref_.elapsed();
+  }
 };
 
 } // rubyk

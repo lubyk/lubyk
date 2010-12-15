@@ -56,11 +56,35 @@ add_definitions(-D__${PLAT}__ -DUSE_READLINE)
 #
 # ==============================================================================
 find_package(Doxygen)
+set(DOXYGEN_OUTPUT_DIR ${CMAKE_BINARY_DIR}/doc)
+set(DOXYGEN_OUTPUT ${DOXYGEN_OUTPUT_DIR}/xml/index.xml)
+set(RUBYK_BUILD_DOXYGEN_DOCS ON CACHE BOOL "Build HTML+XML documentation with Doxygen")
 
-if(DOXYGEN_FOUND)
-  set(RUBYK_BUILD_DOXYGEN_DOCS ON CACHE BOOL "Build HTML+XML documentation with Doxygen")
-  add_subdirectory(doc)
+# The code below is moved here so that 'dub' target (Doxygen based binding generator
+# can depend on this action).
+if(RUBYK_BUILD_DOXYGEN_DOCS AND DOXYGEN_FOUND)
+  file (GLOB MODULES ${RUBYK_SOURCE_DIR}/modules/*)
+  foreach(MODULE ${MODULES})
+    get_filename_component (MODULE_NAME ${MODULE} NAME_WE)
+    file(GLOB MODULE_DUB_HEADERS ${MODULE}/include/${MODULE_NAME}/*.h)
+    list(APPEND DOXYGEN_INPUT_LIST_B ${MODULE_DUB_HEADERS})
+  endforeach(MODULE ${MODULES})
+
+  string(REGEX REPLACE ";" " " DOXYGEN_INPUT_LIST "${DOXYGEN_INPUT_LIST_B}")
+
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doc/Doxyfile.in ${CMAKE_BINARY_DIR}/Doxyfile)
+
+  add_custom_command(
+    OUTPUT ${DOXYGEN_OUTPUT}
+    COMMAND ${CMAKE_COMMAND} -E echo_append "Building API Documentation..."
+    COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/Doxyfile >/dev/null
+    COMMAND ${CMAKE_COMMAND} -E echo "Done."
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    DEPENDS ${DOXYGEN_INPUT} ${CMAKE_BINARY_DIR}/Doxyfile
+    )
+  add_custom_target(doc ALL DEPENDS ${DOXYGEN_OUTPUT})
 endif()
+
 
 # ==============================================================================
 #

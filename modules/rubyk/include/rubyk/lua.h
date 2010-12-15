@@ -37,20 +37,4 @@ extern "C" {
   #include "lua/lauxlib.h"
 }
 
-/** Push a custom type on the stack.
- * Since the value is passed as a pointer, we assume it has been created
- * using 'new' and Lua can safely call delete when it needs to garbage-
- * -collect it.
- */
-template<class T>
-void lua_pushclass(lua_State *L, T *ptr, const char *type_name) {
-  T **userdata = (T**)lua_newuserdata(L, sizeof(T*));
-  *userdata = ptr;
-
-  // the userdata is now on top of the stack
-
-  // set metatable (contains methods)
-  luaL_getmetatable(L, type_name);
-  lua_setmetatable(L, -2);
-}
 #endif // CORE_INCLUDE_CORE_LUA_H_

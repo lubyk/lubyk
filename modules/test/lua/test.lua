@@ -8,7 +8,7 @@ end
 
 function lib.Suite(name)
   local suite = {_info = {name = name, tests = {}, errors = {}}}
-  lib.suites[name] = suite
+  table.insert(lib.suites, suite)
   -- default setup and teardown functions
   suite.setup    = function() end
   suite.teardown = function() end
@@ -16,7 +16,7 @@ function lib.Suite(name)
 end
 
 function lib.all()
-  for name, suite in pairs(lib.suites) do
+  for i, suite in ipairs(lib.suites) do
     lib.run_suite(suite)
   end
   lib.report()

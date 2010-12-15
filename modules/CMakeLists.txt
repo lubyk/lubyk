@@ -16,6 +16,7 @@ include_directories(rubyk/include lua/include rubyk/include)
 
 file (GLOB MODULES ${CMAKE_CURRENT_SOURCE_DIR}/*)
 list(REMOVE_ITEM MODULES ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
+list(REMOVE_ITEM MODULES ${CMAKE_CURRENT_SOURCE_DIR}/bind.rb)
 
 # set(CMAKE_CXX_FLAGS "-fno-common")
 #
@@ -24,6 +25,13 @@ list(REMOVE_ITEM MODULES ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
 
 # replace luaopen_xx by luaload_xx
 # add_definitions(-DDUB_LUA_NO_OPEN)
+
+# Build files from dub
+add_custom_target(dub ALL
+   COMMAND ruby ${RUBYK_SOURCE_DIR}/modules/bind.rb
+   DEPENDS ${DOXYGEN_OUTPUT})
+
+add_dependencies(modules dub)
 
 foreach (MODULE ${MODULES})
   if(EXISTS ${MODULE}/CMakeLists.txt)
@@ -54,12 +62,13 @@ foreach (MODULE ${MODULES})
     endif(EXISTS ${MODULE}/src)
 
     if(EXISTS ${MODULE}/sub)
-
       # ----------------------------------------------------------------------------------
       #  Build each sub-module defined by a single cpp file
       # ----------------------------------------------------------------------------------
+      file(GLOB SUB_MODULES ${MODULE}/sub/*)
       file (GLOB SUB_MODULES_CPP ${MODULE}/sub/*.cpp)
       foreach (SUB_MODULE_CPP ${SUB_MODULES_CPP})
+        list(REMOVE_ITEM SUB_MODULES "${SUB_MODULE_CPP}")
         get_filename_component (SUB_MODULE_NAME ${SUB_MODULE_CPP} NAME_WE)
 
         # create name/[SUB_MOD_NAME].so library
@@ -78,11 +87,6 @@ foreach (MODULE ${MODULES})
       # ----------------------------------------------------------------------------------
       #  Build each sub-module defined by a folder
       # ----------------------------------------------------------------------------------
-      file(GLOB SUB_MODULES ${MODULE}/sub/*)
-      if(NOT ${SUB_MODULES_CPP} STREQUAL "")
-        list(REMOVE_ITEM SUB_MODULES ${SUB_MODULES_CPP})
-      endif(NOT ${SUB_MODULES_CPP} STREQUAL "")
-
       list(REMOVE_ITEM SUB_MODULES ${MODULE}/sub/.DS_Store)
 
       foreach (SUB_MODULE ${SUB_MODULES})

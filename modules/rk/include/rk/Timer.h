@@ -1,13 +1,16 @@
 #include "rubyk.h"
 #include "rubyk/timer.h"
+#include "rubyk/worker.h"
 
-class LuaTimer
+namespace rk {
+
+class Timer
 {
 public:
-  LuaTimer(Worker *worker, float interval, int func_idx) :
-    worker_(worker), timer_(this, interval), func_idx_(func_idx) {}
+  Timer(rubyk::Worker *worker, float interval, int lua_func_idx) :
+    worker_(worker), timer_(this, interval), func_idx_(lua_func_idx) {}
 
-  ~LuaTimer() {
+  ~Timer() {
     // release function
     luaL_unref(worker_->lua_, LUA_REGISTRYINDEX, func_idx_);
   }
@@ -21,14 +24,18 @@ public:
   }
 
   void join() {
-    ScopedUnlock unlock(worker_);
+    rubyk::ScopedUnlock unlock(worker_);
     timer_.join();
+  }
+
+  time_t interval() {
+    return timer_.interval();
   }
 private:
   void bang() {
     lua_State *L = worker_->lua_;
     // find function and call
-    ScopedLock lock(worker_);
+    rubyk::ScopedLock lock(worker_);
     // push LUA_REGISTRYINDEX on top
     lua_rawgeti(L, LUA_REGISTRYINDEX, func_idx_);
     int status = lua_pcall(L, 0, 1, 0);
@@ -38,7 +45,7 @@ private:
     }
 
     if (lua_type(L, -1) == LUA_TNUMBER) {
-      float interval = lua_tonumber(L, -1);
+      double interval = lua_tonumber(L, -1);
       if (interval == 0) {
         timer_.stop_from_loop();
       } else if (interval < 0) {
@@ -51,7 +58,9 @@ private:
     lua_settop(worker_->lua_, 0);
   }
 private:
-  Worker *worker_;
-  Timer<LuaTimer, &LuaTimer::bang> timer_;
+  rubyk::Worker *worker_;
+  rubyk::Timer<rk::Timer, &rk::Timer::bang> timer_;
   int func_idx_;
 };
+
+} // rk

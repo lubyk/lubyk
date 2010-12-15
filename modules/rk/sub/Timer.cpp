@@ -1,88 +1,194 @@
-/*
-  ==============================================================================
+#include "rk/Timer.h"
 
-   This file is part of the RUBYK project (http://rubyk.org)
-   Copyright (c) 2007-2011 by Gaspard Bucher - Buma (http://teti.ch).
+#include "lua_cpp_helper.h"
 
-  ------------------------------------------------------------------------------
 
-   Permission is hereby granted, free of charge, to any person obtaining a copy
-   of this software and associated documentation files (the "Software"), to deal
-   in the Software without restriction, including without limitation the rights
-   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-   copies of the Software, and to permit persons to whom the Software is
-   furnished to do so, subject to the following conditions:
+using namespace rk;
 
-   The above copyright notice and this permission notice shall be included in
-   all copies or substantial portions of the Software.
 
-   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-   THE SOFTWARE.
+/* ============================ Constructors     ====================== */
 
-  ==============================================================================
-*/
-#include "rubyk.h"
+/** rk::Timer::Timer(rubyk::Worker *worker, float interval, int lua_func_idx)
+ * include/rk/Timer.h:11
+ */
+static int Timer_Timer(lua_State *L) {
+  try {
+    rubyk::Worker *worker = *((rubyk::Worker **)luaL_checkudata(L, 1, "rubyk.Worker"));
+    float interval = luaL_checknumber(L, 2);
+    
+    luaL_checktype(L, 3, LUA_TFUNCTION);
+    // push on top
+    lua_pushvalue(L, 3);
+    int lua_func_idx = luaL_ref(L, LUA_REGISTRYINDEX);
+    lua_pop(L, 1);
+    
+    Timer * retval__ = new Timer(worker, interval, lua_func_idx);
+    lua_pushclass<Timer>(L, retval__, "rk.Timer");
+    return 1;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("rk.Timer.Timer: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "rk.Timer.Timer: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
+}
 
-static int LuaTimer_destructor(lua_State *L) {
-  LuaTimer **userdata = (LuaTimer**)luaL_checkudata(L, 1, "rk.Timer");
+/* ============================ Destructor       ====================== */
+
+static int Timer_destructor(lua_State *L) {
+  Timer **userdata = (Timer**)luaL_checkudata(L, 1, "rk.Timer");
   if (*userdata) delete *userdata;
   *userdata = NULL;
   return 0;
 }
 
-static int LuaTimer_LuaTimer(lua_State *L) {
-  float interval = luaL_checknumber(L, 1);
-  if (interval < 0) {
-    luaL_error(L, "Timer interval must be a positive value (got %f)\n", interval);
-  }
-  luaL_checktype(L, 2, LUA_TFUNCTION);
-  // remove interval from stack
-  lua_pushvalue( L, -1 );
-  int func_idx = luaL_ref(L, LUA_REGISTRYINDEX);
-  LuaTimer *retval__ = new LuaTimer(gWorker, interval, func_idx);
-  lua_pushclass<LuaTimer>(L, retval__, "rk.Timer");
+/* ============================ tostring         ====================== */
+
+static int Timer__tostring(lua_State *L) {
+  Timer **userdata = (Timer**)luaL_checkudata(L, 1, "rk.Timer");
+  
+  lua_pushfstring(L, "<rk.Timer: %p %li>", *userdata, (*userdata)->interval());
+  
   return 1;
 }
 
-static int LuaTimer_start(lua_State *L) {
-  LuaTimer *self__ = *((LuaTimer**)luaL_checkudata(L, 1, "rk.Timer"));
-  self__->start();
-  return 0;
+/* ============================ Member Methods   ====================== */
+
+
+/** time_t rk::Timer::interval()
+ * include/rk/Timer.h:31
+ */
+static int Timer_interval(lua_State *L) {
+  try {
+    Timer *self__ = *((Timer**)luaL_checkudata(L, 1, "rk.Timer"));
+    lua_remove(L, 1);
+    time_t  retval__ = self__->interval();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("rk.Timer.interval: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "rk.Timer.interval: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
-static int LuaTimer_stop(lua_State *L) {
-  LuaTimer *self__ = *((LuaTimer**)luaL_checkudata(L, 1, "rk.Timer"));
-  self__->stop();
-  return 0;
+
+/** void rk::Timer::join()
+ * include/rk/Timer.h:26
+ */
+static int Timer_join(lua_State *L) {
+  try {
+    Timer *self__ = *((Timer**)luaL_checkudata(L, 1, "rk.Timer"));
+    lua_remove(L, 1);
+    self__->join();
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("rk.Timer.join: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "rk.Timer.join: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
 
-static int LuaTimer_join(lua_State *L) {
-  LuaTimer *self__ = *((LuaTimer**)luaL_checkudata(L, 1, "rk.Timer"));
-  self__->join();
-  return 0;
+
+/** void rk::Timer::start()
+ * include/rk/Timer.h:22
+ */
+static int Timer_start(lua_State *L) {
+  try {
+    Timer *self__ = *((Timer**)luaL_checkudata(L, 1, "rk.Timer"));
+    lua_remove(L, 1);
+    self__->start();
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("rk.Timer.start: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "rk.Timer.start: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
 }
+
+
+/** void rk::Timer::stop()
+ * include/rk/Timer.h:18
+ */
+static int Timer_stop(lua_State *L) {
+  try {
+    Timer *self__ = *((Timer**)luaL_checkudata(L, 1, "rk.Timer"));
+    lua_remove(L, 1);
+    self__->stop();
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("rk.Timer.stop: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "rk.Timer.stop: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
+}
+
+
+
+
 /* ============================ Lua Registration ====================== */
 
-static const struct luaL_Reg LuaTimer_member_methods[] = {
-  {"start"             , LuaTimer_start},
-  {"stop"              , LuaTimer_stop},
-  {"join"              , LuaTimer_join},
-  {"__gc"              , LuaTimer_destructor},
+static const struct luaL_Reg Timer_member_methods[] = {
+  {"interval"          , Timer_interval},
+  {"join"              , Timer_join},
+  {"start"             , Timer_start},
+  {"stop"              , Timer_stop},
+  {"__tostring"        , Timer__tostring},
+  {"__gc"              , Timer_destructor},
   {NULL, NULL},
 };
 
-static const struct luaL_Reg LuaTimer_namespace_methods[] = {
-  {"Timer"             , LuaTimer_LuaTimer},
+static const struct luaL_Reg Timer_namespace_methods[] = {
+  {"Timer"             , Timer_Timer},
   {NULL, NULL},
 };
 
 
+
+#ifdef DUB_LUA_NO_OPEN
+int luaload_rk_Timer(lua_State *L) {
+#else
 extern "C" int luaopen_rk_Timer(lua_State *L) {
+#endif
   // Create the metatable which will contain all the member methods
   luaL_newmetatable(L, "rk.Timer");
 
@@ -91,9 +197,11 @@ extern "C" int luaopen_rk_Timer(lua_State *L) {
   lua_setfield(L, -2, "__index");
 
   // register member methods
-  luaL_register(L, NULL, LuaTimer_member_methods);
+  luaL_register(L, NULL, Timer_member_methods);
 
   // register class methods in a global namespace table
-  luaL_register(L, "rk", LuaTimer_namespace_methods);
-  return 0;
+  luaL_register(L, "rk", Timer_namespace_methods);
+
+
+	return 1;
 }

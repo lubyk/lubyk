@@ -88,7 +88,7 @@ class Thread : public Mutex {
   }
 
   /** Start a new thread with the given parameter. The class should check if it
-   *  should stop using a typical @while (thread->run())@. If the thread is interrupted with
+   *  should stop using a typical "while (thread->run())". If the thread is interrupted with
    *  a SIGTERM, the class's terminate() method is called. */
   template<class T, void(T::*Tmethod)(Thread*)>
   void start_thread(T *owner, void *parameter = NULL) {
@@ -108,7 +108,7 @@ class Thread : public Mutex {
   }
 
   /** Start a new thread with the given parameter. The class should check if it
-   *  should stop using a typical @while (thread->run())@. If the thread is interrupted with
+   *  should stop using a typical "while (thread->run())". If the thread is interrupted with
    *  a SIGTERM, the class's terminate() method is called. */
   template<class T, void(T::*Tmethod)()>
   void start_thread(T *owner, void *parameter = NULL) {

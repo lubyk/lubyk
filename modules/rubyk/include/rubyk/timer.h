@@ -87,6 +87,12 @@ public:
       thread_.join();
   }
 
+  time_t interval() {
+    return interval_;
+  }
+
+  /** Set interval in [ms].
+   */
   void set_interval(time_t interval) {
     ScopedLock lock(mutex_);
     last_interval_ = interval_;

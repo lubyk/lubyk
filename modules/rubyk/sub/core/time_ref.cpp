@@ -45,7 +45,7 @@ TimeRef::~TimeRef() {
 
 /** Get current real time in [ms] since the time ref object was created.
  */
-time_t TimeRef::elapsed() {
+double TimeRef::elapsed() {
   TimeRefData t;
   /* FIXME: Use clock_gettime instead of ftime.
 

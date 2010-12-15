@@ -13,9 +13,14 @@ end})
 
 --- Autoload method
 function lib.__index(table, name)
-  -- Trying to load new lib with rk.XXXX
+  -- Trying to load new lib with rk.Foobar
   local ok, new_lib = require(table.prefix..'.'..name)
   if ok then
+    print("Loaded "..name, type(new_lib))
+    pcall(function()
+      -- load rk.Foobar_post if it exists
+      require(table.prefix..'.'..name..'_post')
+    end)
     return new_lib or table[name]
   else
     print(new_lib)

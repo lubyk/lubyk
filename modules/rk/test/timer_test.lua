@@ -18,9 +18,9 @@ function should.loop_timer_in_external_thread()
   end)
   timer:start()
   -- first trigger now
-  rubyk.sleep(91)
+  worker:sleep(91)
   assert_equal(10, counter)
-  rubyk.sleep(100)
+  worker:sleep(100)
   assert_equal(20, counter)
   counter = 0
   timer:stop()

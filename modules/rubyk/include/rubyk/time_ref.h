@@ -43,7 +43,7 @@ public:
 
   /** Get current real time in [ms] since the time ref object was created.
    */
-  time_t elapsed();
+  double elapsed();
 private:
   struct TimeRefData;
   TimeRefData *reference_;

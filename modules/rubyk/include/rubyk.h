@@ -28,9 +28,3 @@
 */
 #include "rubyk/lua.h"
 #include "rubyk/worker.h"
-
-using namespace rubyk;
-
-/** Globals
- */
-extern Worker *gWorker;
