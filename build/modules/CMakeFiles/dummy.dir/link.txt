@@ -1,1 +1,0 @@
-/usr/bin/c++   -mmacosx-version-min=10.6 -g -Wall -bundle -headerpad_max_install_names -flat_namespace -undefined suppress -dynamic -bundle -o ../../lib/dummy.so CMakeFiles/dummy.dir/dummy/src/dummy.cpp.o CMakeFiles/dummy.dir/dummy/src/macosx/dummy_osx.cpp.o 

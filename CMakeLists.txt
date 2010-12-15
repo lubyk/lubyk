@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 2.6.2)
 # ==============================================================================
 
 project (RUBYK)
-set(RUBYK_VERSION "0.5")
+set(RUBYK_VERSION "0.8")
 
 # ==============================================================================
 #
@@ -52,12 +52,23 @@ add_definitions(-D__${PLAT}__ -DUSE_READLINE)
 
 # ==============================================================================
 #
+#  Doxygen
+#
+# ==============================================================================
+find_package(Doxygen)
+
+if(DOXYGEN_FOUND)
+  set(RUBYK_BUILD_DOXYGEN_DOCS ON CACHE BOOL "Build HTML+XML documentation with Doxygen")
+  add_subdirectory(doc)
+endif()
+
+# ==============================================================================
+#
 #  Build all modules in 'modules'
 #
 # ==============================================================================
 add_custom_target(modules)
 add_subdirectory(modules)
-
 
 # ==============================================================================
 #
