@@ -10,7 +10,36 @@ file(GLOB MIMAS_FORMS ui/*.ui)
 # CMAKE_CURRENT_BINARY_DIR (generated files are stored here)
 include_directories(include ${CMAKE_CURRENT_BINARY_DIR})
 
-# Header pre-processing
+
+# ==============================================================================
+#
+#  Dependencies to rubyk sources
+#
+# ==============================================================================
+
+# === mdns
+include_directories(${RUBYK_SOURCE_DIR}/modules/mdns/include)
+file(GLOB MOD_SOURCES ${RUBYK_SOURCE_DIR}/modules/mdns/sub/core/*.cpp ${RUBYK_SOURCE_DIR}/modules/mdns/sub/core/${PLAT}/*.cpp)
+list(REMOVE_ITEM MOD_SOURCES ${RUBYK_SOURCE_DIR}/modules/mdns/sub/core/bindings.cpp)
+list(APPEND MIMAS_SOURCES ${MOD_SOURCES})
+
+# === rubyk
+# we could load the 'so' instead of doing all this...
+include_directories(${RUBYK_SOURCE_DIR}/modules/rubyk/include)
+file(GLOB MOD_SOURCES ${RUBYK_SOURCE_DIR}/modules/rubyk/sub/core/*.cpp ${RUBYK_SOURCE_DIR}/modules/rubyk/sub/core/${PLAT}/*.cpp)
+list(REMOVE_ITEM MOD_SOURCES ${RUBYK_SOURCE_DIR}/modules/rubyk/sub/core/bindings.cpp)
+list(APPEND MIMAS_SOURCES ${MOD_SOURCES})
+
+set(INCLUDE_MODULES "lua")
+foreach(MODULE_NAME ${INCLUDE_MODULES})
+  include_directories("${RUBYK_SOURCE_DIR}/modules/${MODULE_NAME}/include")
+endforeach(MODULE_NAME INCLUDE_MODULES)
+
+# ==============================================================================
+#
+#  Qt header and forms pre-processing
+#
+# ==============================================================================
 QT4_WRAP_CPP(MIMAS_HEADERS_MOC ${MIMAS_HEADERS})
 QT4_WRAP_UI(MIMAS_FORMS_HEADERS ${MIMAS_FORMS})
 

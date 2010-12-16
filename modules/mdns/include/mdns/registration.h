@@ -36,6 +36,12 @@ using namespace rubyk;
 
 namespace mdns {
 
+/** Register a service for a given service type.
+ *
+ * @dub string_format:'%%s'
+ *      string_args:'(*userdata)->name()'
+ *      lib_name:'Registration_core'
+ */
 class Registration : public AbstractRegistration
 {
   rubyk::Worker *worker_;

@@ -8,7 +8,7 @@ project(modules)
 # ----------------------------------------------------------------------------------
 #  Include common directories
 # ----------------------------------------------------------------------------------
-include_directories(rubyk/include lua/include rubyk/include)
+include_directories(rubyk/include lua/include)
 
 # ----------------------------------------------------------------------------------
 #  Build each module

@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+class DeviceBrowser;
+
 namespace Ui {
     class MimasWindow;
 }
@@ -17,6 +19,7 @@ public:
 
 private:
     Ui::MimasWindow *ui;
+    DeviceBrowser   *device_browser_;
 };
 
 #endif // MIMASWINDOW_H

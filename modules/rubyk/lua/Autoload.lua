@@ -31,7 +31,10 @@ end
 
 --- Autoload for _G
 function lib2.__index(table, name)
-  -- Trying to load new lib with rk.XXXX
+  if name == '_PROMPT' or name == '_PROMPT2' then
+    -- special case for lua interactive
+    return nil
+  end
   local ok, new_lib_or_error = require(name)
   if ok then
     return new_lib_or_error or table[name]

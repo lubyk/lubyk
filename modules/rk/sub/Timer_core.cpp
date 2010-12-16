@@ -9,7 +9,7 @@ using namespace rk;
 /* ============================ Constructors     ====================== */
 
 /** rk::Timer::Timer(rubyk::Worker *worker, float interval, int lua_func_idx)
- * include/rk/Timer.h:11
+ * include/rk/Timer.h:16
  */
 static int Timer_Timer(lua_State *L) {
   try {
@@ -63,7 +63,7 @@ static int Timer__tostring(lua_State *L) {
 
 
 /** time_t rk::Timer::interval()
- * include/rk/Timer.h:31
+ * include/rk/Timer.h:36
  */
 static int Timer_interval(lua_State *L) {
   try {
@@ -89,7 +89,7 @@ static int Timer_interval(lua_State *L) {
 
 
 /** void rk::Timer::join()
- * include/rk/Timer.h:26
+ * include/rk/Timer.h:31
  */
 static int Timer_join(lua_State *L) {
   try {
@@ -114,7 +114,7 @@ static int Timer_join(lua_State *L) {
 
 
 /** void rk::Timer::start()
- * include/rk/Timer.h:22
+ * include/rk/Timer.h:27
  */
 static int Timer_start(lua_State *L) {
   try {
@@ -139,7 +139,7 @@ static int Timer_start(lua_State *L) {
 
 
 /** void rk::Timer::stop()
- * include/rk/Timer.h:18
+ * include/rk/Timer.h:23
  */
 static int Timer_stop(lua_State *L) {
   try {

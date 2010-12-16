@@ -9,7 +9,7 @@ using namespace mdns;
 /* ============================ Constructors     ====================== */
 
 /** mdns::Browser::Browser(rubyk::Worker *worker, const char *service_type, int lua_func_idx)
- * include/mdns/Browser.h:47
+ * include/mdns/Browser.h:54
  */
 static int Browser_Browser(lua_State *L) {
   try {
@@ -63,7 +63,7 @@ static int Browser__tostring(lua_State *L) {
 
 
 /** virtual void mdns::Browser::add_device(const Location &location)
- * include/mdns/Browser.h:57
+ * include/mdns/Browser.h:64
  */
 static int Browser_add_device(lua_State *L) {
   try {
@@ -89,7 +89,7 @@ static int Browser_add_device(lua_State *L) {
 
 
 /** virtual void mdns::Browser::remove_device(const char *name)
- * include/mdns/Browser.h:72
+ * include/mdns/Browser.h:79
  */
 static int Browser_remove_device(lua_State *L) {
   try {

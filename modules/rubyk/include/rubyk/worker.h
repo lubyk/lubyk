@@ -46,6 +46,9 @@ namespace rubyk {
 
 /** The worker should be created only once and is responsible for
  * timing and lua locking.
+ *
+ * @dub string_format:'%%f'
+ *      string_args:'(*userdata)->now()'
  */
 class Worker : public Mutex
 {

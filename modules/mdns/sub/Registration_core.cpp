@@ -9,7 +9,7 @@ using namespace mdns;
 /* ============================ Constructors     ====================== */
 
 /** mdns::Registration::Registration(rubyk::Worker *worker, const char *service_type, const char *name, uint port, int lua_func_idx)
- * include/mdns/Registration.h:47
+ * include/mdns/Registration.h:53
  */
 static int Registration_Registration(lua_State *L) {
   try {
@@ -65,7 +65,7 @@ static int Registration__tostring(lua_State *L) {
 
 
 /** virtual void mdns::Registration::registration_done()
- * include/mdns/Registration.h:55
+ * include/mdns/Registration.h:61
  */
 static int Registration_registration_done(lua_State *L) {
   try {

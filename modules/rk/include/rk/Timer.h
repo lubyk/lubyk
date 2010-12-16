@@ -3,7 +3,12 @@
 #include "rubyk/worker.h"
 
 namespace rk {
-
+/** Calls a lua function back at regular intervals. If the called function returns
+ * a number, the number sets the new interval (0 = stop).
+ * @dub string_format:'%%li'
+ *      string_args:'(*userdata)->interval()'
+ *      lib_name:'Timer_core'
+ */
 class Timer
 {
 public:

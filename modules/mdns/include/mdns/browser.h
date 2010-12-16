@@ -36,6 +36,13 @@ using namespace rubyk;
 
 namespace mdns {
 
+/** Browse for devices matching a give service type. Call a lua function
+ * when devices are added or removed.
+ *
+ * @dub string_format:'%%s'
+ *      string_args:'(*userdata)->service_type()'
+ *      lib_name:'Browser_core'
+ */
 class Browser : public AbstractBrowser
 {
   rubyk::Worker *worker_;
