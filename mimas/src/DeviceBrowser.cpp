@@ -4,11 +4,11 @@
 /** This method is called just after a new proxy has been added to the list.
  */
 void DeviceBrowser::add_device(const mdns::Location &location) {
-  std::cout << "ADD: " << location << "\n";
+  emit(message(QString("Adding %1").arg(location.name())));
 }
 
 /** This method is called so that you have an opportunity to delete it cleanly.
  */
 void DeviceBrowser::remove_device(const char *name) {
-  std::cout << "DEL: " << name << "\n";
+  emit(message(QString("Removing %1").arg(name)));
 }

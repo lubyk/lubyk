@@ -66,7 +66,7 @@ public:
     ScopedLock lock(worker_);
     lua_rawgeti(L, LUA_REGISTRYINDEX, func_idx_);
     lua_pushstring(L, "add");
-    lua_pushstring(L, location.name().c_str());
+    lua_pushstring(L, location.name());
     int status = lua_pcall(L, 2, 0, 0);
 
     if (status) {

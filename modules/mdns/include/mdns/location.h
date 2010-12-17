@@ -102,12 +102,12 @@ public:
            );
   }
 
-  const std::string &name() const {
-    return name_;
+  const char *name() const {
+    return name_.c_str();
   }
 
-  const std::string &protocol() const {
-    return protocol_;
+  const char *protocol() const {
+    return protocol_.c_str();
   }
 
   const unsigned long &ip() const {
