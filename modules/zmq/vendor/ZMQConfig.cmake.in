@@ -1,0 +1,55 @@
+#-----------------------------------------------------------------------------
+#
+# ZMQConfig.cmake - ZMQ CMake configuration file for external projects.
+#
+# This file is configured by ZMQ and used by the UseZMQ.cmake module
+# to load ZMQ's settings for an external project.
+@ZMQ_CONFIG_CODE@
+
+# The ZMQ include file directories.
+SET(ZMQ_INCLUDE_DIRS "@ZMQ_INCLUDE_DIRS_CONFIG@")
+
+# The ZMQ library directories.
+SET(ZMQ_LIBRARY_DIRS "@ZMQ_LIBRARY_DIRS_CONFIG@")
+
+# The C and C++ flags added by ZMQ to the cmake-configured flags.
+SET(ZMQ_REQUIRED_C_FLAGS "@ZMQ_REQUIRED_C_FLAGS@")
+SET(ZMQ_REQUIRED_CXX_FLAGS "@ZMQ_REQUIRED_CXX_FLAGS@")
+SET(ZMQ_REQUIRED_LINK_FLAGS "@ZMQ_REQUIRED_LINK_FLAGS@")
+
+# The ZMQ version number
+SET(ZMQ_VERSION_MAJOR "@ZMQ_VERSION_MAJOR@")
+SET(ZMQ_VERSION_MINOR "@ZMQ_VERSION_MINOR@")
+SET(ZMQ_VERSION_PATCH "@ZMQ_VERSION_PATCH@")
+
+# The location of the UseZMQ.cmake file.
+SET(ZMQ_USE_FILE "@ZMQ_USE_FILE@")
+
+# The build settings file.
+SET(ZMQ_BUILD_SETTINGS_FILE "@ZMQ_BUILD_SETTINGS_FILE@")
+
+# The library dependencies file.
+SET(ZMQ_LIBRARY_DEPENDS_FILE "@ZMQ_LIBRARY_DEPENDS_FILE@")
+
+# Whether ZMQ was built with shared libraries.
+SET(ZMQ_BUILD_SHARED "@BUILD_SHARED_LIBS@")
+
+# Whether ZMQ was built with Tcl wrapping support.
+SET(ZMQ_CSWIG_TCL "@ZMQ_CSWIG_TCL@")
+SET(ZMQ_CSWIG_PYTHON "@ZMQ_CSWIG_PYTHON@")
+SET(ZMQ_CSWIG_JAVA "@ZMQ_CSWIG_JAVA@")
+
+# Path to CableSwig configuration used by ZMQ.
+SET(ZMQ_CableSwig_DIR "@ZMQ_CableSwig_DIR_CONFIG@")
+
+# A list of all libraries for ZMQ.  Those listed here should
+# automatically pull in their dependencies.
+#SET(ZMQ_LIBRARIES ZMQAlgorithms ZMQStatistics ZMQFEM)
+SET(ZMQ_LIBRARIES ZMQ)
+
+# The ZMQ library dependencies.
+IF(NOT ZMQ_NO_LIBRARY_DEPENDS AND
+    EXISTS "${ZMQ_LIBRARY_DEPENDS_FILE}")
+  INCLUDE("${ZMQ_LIBRARY_DEPENDS_FILE}")
+ENDIF(NOT ZMQ_NO_LIBRARY_DEPENDS AND
+  EXISTS "${ZMQ_LIBRARY_DEPENDS_FILE}")
