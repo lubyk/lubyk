@@ -1,0 +1,59 @@
+zmq_term(3)
+===========
+
+
+NAME
+----
+zmq_term - terminate 0MQ context
+
+
+SYNOPSIS
+--------
+*int zmq_term (void '*context');*
+
+
+DESCRIPTION
+-----------
+The _zmq_term()_ function terminates the 0MQ context 'context'.
+
+If there are no longer any sockets open within 'context' at the time
+_zmq_term()_ is called then 'context' shall be shut down and all associated
+resources shall be released immediately.
+
+Otherwise, the following applies:
+
+* The _zmq_term()_ function shall return immediately.
+
+* Any blocking operations currently in progress on sockets open within
+  'context' shall return immediately with an error code of ETERM.
+
+* With the exception of _zmq_close()_, any further operations on sockets open
+  within 'context' shall fail with an error code of ETERM.
+
+* The actual shutdown of 'context', and release of any associated resources,
+  *shall be delayed* until the last socket within it is closed with
+  _zmq_close()_.
+
+
+RETURN VALUE
+------------
+The _zmq_term()_ function shall return zero if successful. Otherwise it shall
+return `-1` and set 'errno' to one of the values defined below.
+
+
+ERRORS
+------
+*EFAULT*::
+The provided 'context' was not valid (NULL).
+
+
+SEE ALSO
+--------
+linkzmq:zmq[7]
+linkzmq:zmq_init[3]
+
+
+AUTHORS
+-------
+The 0MQ documentation was written by Martin Sustrik <sustrik@250bpm.com> and
+Martin Lucina <mato@kotelna.sk>.

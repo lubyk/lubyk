@@ -1,0 +1,48 @@
+zmq_close(3)
+============
+
+
+NAME
+----
+zmq_close - close 0MQ socket
+
+
+SYNOPSIS
+--------
+*int zmq_close (void '*socket');*
+
+
+DESCRIPTION
+-----------
+The _zmq_close()_ function shall destroy the socket referenced by the 'socket'
+argument. All active connections on the socket shall be terminated and
+resources associated with the socket shall be released. Any outstanding
+messages sent with _zmq_send()_ but not yet physically sent to the network
+shall be dropped. Likewise, any outstanding messages physically received from
+the network but not yet received by the application with _zmq_recv()_ shall
+also be dropped.
+
+
+RETURN VALUE
+------------
+The _zmq_close()_ function shall return zero if successful. Otherwise it shall
+return `-1` and set 'errno' to one of the values defined below.
+
+
+ERRORS
+------
+*EFAULT*::
+The provided 'socket' was not valid (NULL).
+
+
+SEE ALSO
+--------
+linkzmq:zmq_socket[3]
+linkzmq:zmq_term[3]
+linkzmq:zmq[7]
+
+
+AUTHORS
+-------
+The 0MQ documentation was written by Martin Sustrik <sustrik@250bpm.com> and
+Martin Lucina <mato@kotelna.sk>.
