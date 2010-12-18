@@ -64,6 +64,7 @@ public:
   }
 
   ~Receive() {
+    thread_.kill();
     zmq_close(socket_);
     zmq_term(context_);
   }
@@ -71,12 +72,12 @@ public:
   const char *location() {
     return location_.c_str();
   }
+
 private:
   void receive(Thread *runner) {
     runner->thread_ready();
     while(runner->should_run() && receive_message())
       ;
-    printf("Finished receiving...\n");
   }
 
   bool receive_message() {

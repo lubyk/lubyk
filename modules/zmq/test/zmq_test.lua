@@ -38,8 +38,10 @@ function should.send_and_receive()
 
   sender:send("Hello Rubyk!")
   while not continue do
-    worker:sleep(10)
+    worker:sleep(1)
   end
+
+  assert_true(continue)
 end
 
 test.all()
