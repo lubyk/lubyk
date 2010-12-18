@@ -1,6 +1,9 @@
 ##############################################################
 # This CMakeLists.txt supports Windows/MSVC, Linux, and OSX
 # http://github.com/pieper/CTK
+# 
+# CMakeList created by https://github.com/PatrickCheng/zeromq2
+# and slightly adapted for Rubyk (see [rubyk])
 ##############################################################
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
@@ -259,8 +262,29 @@ CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/platform.hpp.in
                ${PROJECT_BINARY_DIR}/platform.hpp
                @ONLY IMMEDIATE)
 
-ADD_LIBRARY(ZMQ ${ZMQ_SRC} )
-TARGET_LINK_LIBRARIES(ZMQ ${LIB_DEP})
+# ----------------------------------------------------------------------------------
+#  [rubyk]
+# ----------------------------------------------------------------------------------
+#ADD_LIBRARY(ZMQ ${ZMQ_SRC} )
+#TARGET_LINK_LIBRARIES(ZMQ ${LIB_DEP})
+list(APPEND ZMQ_SRC)
+set(SUB_MODULE_NAME "core")
+set(SUB_MODULE_SOURCES ${ZMQ_SRC} rubyk.cpp)
+
+
+add_library("${target}_${SUB_MODULE_NAME}" MODULE ${SUB_MODULE_SOURCES})
+set_target_properties("${target}_${SUB_MODULE_NAME}"
+  PROPERTIES OUTPUT_NAME ${SUB_MODULE_NAME}
+  LINK_FLAGS ${PLAT_OBJ_FLAGS}
+  LIBRARY_OUTPUT_DIRECTORY ${RUBYK_SOURCE_DIR}/lib/${MODULE_NAME}
+  PREFIX ""
+  SUFFIX ".so"
+)
+add_dependencies (modules "${target}_${SUB_MODULE_NAME}")
+
+# ----------------------------------------------------------------------------------
+#  [/rubyk]
+# ----------------------------------------------------------------------------------
 
 #####################################################
 # Devices and performance tests
