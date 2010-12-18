@@ -46,6 +46,7 @@ end
   'rk'    => %w{Timer},
   'rubyk' => %w{Worker},
   'mdns'  => %w{Browser Registration},
+  'zmq'   => %w{Send Receive}
 }.each do |mod_name, classes|
   namespace = Dub.parse(XML_DOC_PATH + "namespace#{mod_name}.xml")[mod_name.to_sym]
   Dub::Lua.bind(namespace)
@@ -63,6 +64,7 @@ end
     klass.header = "#{mod_name}/#{class_name}.h"
 
     File.open(BINDINGS_PATH + "modules/#{mod_name}/sub/#{klass.lib_name}.cpp", 'wb') do |f|
+      puts klass.lib_name
       f.puts klass
     end
   end

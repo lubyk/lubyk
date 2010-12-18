@@ -3,8 +3,8 @@
   test mDNS for Lua
   -----------------
 
-  This file ends with '_test_' so that it is not run with
-  all the tests.
+  mDNS implementation with callbacks to integrate with
+  rubyk.
 
 --]]------------------------------------------------------
 require 'rubyk'

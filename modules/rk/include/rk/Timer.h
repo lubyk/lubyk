@@ -9,16 +9,14 @@ namespace rk {
  *      string_args:'(*userdata)->interval()'
  *      lib_name:'Timer_core'
  */
-class Timer
+class Timer : public rubyk::LuaCallback
 {
 public:
-  Timer(rubyk::Worker *worker, float interval, int lua_func_idx) :
-    worker_(worker), timer_(this, interval), func_idx_(lua_func_idx) {}
+  Timer(rubyk::Worker *worker, float interval, int lua_func_idx)
+    : rubyk::LuaCallback(worker, lua_func_idx),
+      timer_(this, interval) {}
 
-  ~Timer() {
-    // release function
-    luaL_unref(worker_->lua_, LUA_REGISTRYINDEX, func_idx_);
-  }
+  ~Timer() {}
 
   void stop() {
     timer_.stop();
@@ -41,10 +39,10 @@ private:
     lua_State *L = worker_->lua_;
     // find function and call
     rubyk::ScopedLock lock(worker_);
-    // push LUA_REGISTRYINDEX on top
-    lua_rawgeti(L, LUA_REGISTRYINDEX, func_idx_);
-    int status = lua_pcall(L, 0, 1, 0);
 
+    push_lua_callback();
+
+    int status = lua_pcall(worker_->lua_, 0, 1, 0);
     if (status) {
       printf("Error triggering timer: %s\n", lua_tostring(L, -1));
     }
@@ -62,10 +60,8 @@ private:
     // clear stack
     lua_settop(worker_->lua_, 0);
   }
-private:
-  rubyk::Worker *worker_;
+
   rubyk::Timer<rk::Timer, &rk::Timer::bang> timer_;
-  int func_idx_;
 };
 
 } // rk

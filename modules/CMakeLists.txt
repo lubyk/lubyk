@@ -70,9 +70,10 @@ foreach (MODULE ${MODULES})
       foreach (SUB_MODULE_CPP ${SUB_MODULES_CPP})
         list(REMOVE_ITEM SUB_MODULES "${SUB_MODULE_CPP}")
         get_filename_component (SUB_MODULE_NAME ${SUB_MODULE_CPP} NAME_WE)
-
+        
         # create name/[SUB_MOD_NAME].so library
         add_library("${target}_${SUB_MODULE_NAME}" MODULE ${SUB_MODULE_CPP})
+
         set_target_properties("${target}_${SUB_MODULE_NAME}"
           PROPERTIES OUTPUT_NAME ${SUB_MODULE_NAME}
           LINK_FLAGS ${PLAT_OBJ_FLAGS}
@@ -105,7 +106,11 @@ foreach (MODULE ${MODULES})
         add_dependencies (modules "${target}_${SUB_MODULE_NAME}")
       endforeach (SUB_MODULE ${SUB_MODULES})
     endif(EXISTS ${MODULE}/sub)
-
+      
+    if(EXISTS ${MODULE}/vendor/CMakeLists.txt)
+      add_subdirectory(${MODULE}/vendor)
+    endif(EXISTS ${MODULE}/vendor/CMakeLists.txt)
+        
     if(EXISTS ${MODULE}/lua)
       file (GLOB MODULE_SOURCES ${MODULE}/lua/*)
 

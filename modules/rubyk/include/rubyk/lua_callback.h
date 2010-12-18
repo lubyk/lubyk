@@ -26,6 +26,36 @@
 
   ==============================================================================
 */
-#include "rubyk/lua.h"
-#include "rubyk/worker.h"
-#include "rubyk/lua_callback.h"
+#ifndef RUBYK_INCLUDE_RUBYK_LUA_CALLBACK_H_
+#define RUBYK_INCLUDE_RUBYK_LUA_CALLBACK_H_
+
+namespace rubyk {
+/** Calls a lua function back.
+ */
+class LuaCallback
+{
+public:
+  LuaCallback(rubyk::Worker *worker, int lua_func_idx) :
+    worker_(worker), func_idx_(lua_func_idx) {}
+
+  virtual ~LuaCallback() {
+    // release function
+    luaL_unref(worker_->lua_, LUA_REGISTRYINDEX, func_idx_);
+  }
+
+protected:
+  /** The caller should lock before calling this.
+   */
+  void push_lua_callback() {
+    // push LUA_REGISTRYINDEX on top
+    lua_rawgeti(worker_->lua_, LUA_REGISTRYINDEX, func_idx_);
+  }
+
+  rubyk::Worker *worker_;
+private:
+  int func_idx_;
+};
+
+} // rubyk
+
+#endif // RUBYK_INCLUDE_RUBYK_LUA_CALLBACK_H_

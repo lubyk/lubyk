@@ -1,9 +1,9 @@
 ##############################################################
 # This CMakeLists.txt supports Windows/MSVC, Linux, and OSX
 # http://github.com/pieper/CTK
-# 
+#
 # CMakeList created by https://github.com/PatrickCheng/zeromq2
-# and slightly adapted for Rubyk (see [rubyk])
+# and adapted for Rubyk (see [rubyk])
 ##############################################################
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
@@ -15,148 +15,16 @@ PROJECT(ZMQ)
 
 SET(PACKAGE "ZMQ")
 SET(PACKAGE_NAME "zeroMQ")
-SET(PACKAGE_VERSION "2.0.6")
+SET(PACKAGE_VERSION "2.0.10")
 
 SET(PACKAGE_VERSION_MAJOR 2)
 SET(PACKAGE_VERSION_MINOR 0)
-SET(PACKAGE_VERSION_PATCH 6)
-
-# Build with shared libraries
-
-OPTION(BUILD_SHARED_LIBS "Build with shared libraries" OFF)
-
-# Build "./devices"
-OPTION(ZMQ_BUILD_DEVICES "Build forwarder, queue, and streamer" OFF)
-
-# Build "./perf"
-OPTION(ZMQ_BUILD_PERFORMANCE_TESTS "Build performance test programs" OFF)
+SET(PACKAGE_VERSION_PATCH 10)
 
 SET(SRC_DIR ${ZMQ_SOURCE_DIR}/src)
 SET(INCLUDE_DIR ${ZMQ_SOURCE_DIR}/include)
 
-SET(ZMQ_SRC
-  ${SRC_DIR}/app_thread.cpp
-  ${SRC_DIR}/app_thread.hpp
-  ${SRC_DIR}/atomic_counter.hpp
-  ${SRC_DIR}/atomic_ptr.hpp
-  ${SRC_DIR}/blob.hpp
-  ${SRC_DIR}/command.cpp
-  ${SRC_DIR}/command.hpp
-  ${SRC_DIR}/config.hpp
-  ${SRC_DIR}/ctx.cpp
-  ${SRC_DIR}/ctx.hpp
-  ${SRC_DIR}/decoder.hpp
-  ${SRC_DIR}/devpoll.cpp
-  ${SRC_DIR}/devpoll.hpp
-  ${SRC_DIR}/downstream.cpp
-  ${SRC_DIR}/downstream.hpp
-  ${SRC_DIR}/encoder.hpp
-  ${SRC_DIR}/epoll.cpp
-  ${SRC_DIR}/epoll.hpp
-  ${SRC_DIR}/err.cpp
-  ${SRC_DIR}/err.hpp
-  ${SRC_DIR}/fd.hpp
-  ${SRC_DIR}/forwarder.cpp
-  ${SRC_DIR}/forwarder.hpp
-  ${SRC_DIR}/fq.cpp
-  ${SRC_DIR}/fq.hpp
-  ${SRC_DIR}/i_endpoint.hpp
-  ${SRC_DIR}/i_engine.hpp
-  ${SRC_DIR}/i_inout.hpp
-  ${SRC_DIR}/i_poll_events.hpp
-  ${SRC_DIR}/io_object.cpp
-  ${SRC_DIR}/io_object.hpp
-  ${SRC_DIR}/io_thread.cpp
-  ${SRC_DIR}/io_thread.hpp
-  ${SRC_DIR}/ip.cpp
-  ${SRC_DIR}/ip.hpp
-  ${SRC_DIR}/kqueue.cpp
-  ${SRC_DIR}/kqueue.hpp
-  ${SRC_DIR}/lb.cpp
-  ${SRC_DIR}/lb.hpp
-  ${SRC_DIR}/likely.hpp
-  ${SRC_DIR}/msg_content.hpp
-  ${SRC_DIR}/mutex.hpp
-  ${SRC_DIR}/object.cpp
-  ${SRC_DIR}/object.hpp
-  ${SRC_DIR}/options.cpp
-  ${SRC_DIR}/options.hpp
-  ${SRC_DIR}/owned.cpp
-  ${SRC_DIR}/owned.hpp
-  ${SRC_DIR}/pair.cpp
-  ${SRC_DIR}/pair.hpp
-  ${SRC_DIR}/pgm_receiver.cpp
-  ${SRC_DIR}/pgm_receiver.hpp
-  ${SRC_DIR}/pgm_sender.cpp
-  ${SRC_DIR}/pgm_sender.hpp
-  ${SRC_DIR}/pgm_socket.cpp
-  ${SRC_DIR}/pgm_socket.hpp
-  ${SRC_DIR}/pipe.cpp
-  ${SRC_DIR}/pipe.hpp
-  ${SRC_DIR}/poll.cpp
-  ${SRC_DIR}/poll.hpp
-  ${SRC_DIR}/poller.hpp
-  ${SRC_DIR}/prefix_tree.cpp
-  ${SRC_DIR}/prefix_tree.hpp
-  ${SRC_DIR}/pub.cpp
-  ${SRC_DIR}/pub.hpp
-  ${SRC_DIR}/queue.cpp
-  ${SRC_DIR}/queue.hpp
-  ${SRC_DIR}/rep.cpp
-  ${SRC_DIR}/rep.hpp
-  ${SRC_DIR}/req.cpp
-  ${SRC_DIR}/req.hpp
-  ${SRC_DIR}/select.cpp
-  ${SRC_DIR}/select.hpp
-  ${SRC_DIR}/session.cpp
-  ${SRC_DIR}/session.hpp
-  ${SRC_DIR}/signaler.cpp
-  ${SRC_DIR}/signaler.hpp
-  ${SRC_DIR}/socket_base.cpp
-  ${SRC_DIR}/socket_base.hpp
-  ${SRC_DIR}/stdint.hpp
-  ${SRC_DIR}/streamer.cpp
-  ${SRC_DIR}/streamer.hpp
-  ${SRC_DIR}/sub.cpp
-  ${SRC_DIR}/sub.hpp
-  ${SRC_DIR}/tcp_connecter.cpp
-  ${SRC_DIR}/tcp_connecter.hpp
-  ${SRC_DIR}/tcp_listener.cpp
-  ${SRC_DIR}/tcp_listener.hpp
-  ${SRC_DIR}/tcp_socket.cpp
-  ${SRC_DIR}/tcp_socket.hpp
-  ${SRC_DIR}/thread.cpp
-  ${SRC_DIR}/thread.hpp
-  ${SRC_DIR}/upstream.cpp
-  ${SRC_DIR}/upstream.hpp
-  ${SRC_DIR}/uuid.cpp
-  ${SRC_DIR}/uuid.hpp
-  ${SRC_DIR}/windows.hpp
-  ${SRC_DIR}/wire.hpp
-  ${SRC_DIR}/xrep.cpp
-  ${SRC_DIR}/xrep.hpp
-  ${SRC_DIR}/xreq.cpp
-  ${SRC_DIR}/xreq.hpp
-  ${SRC_DIR}/yarray.hpp
-  ${SRC_DIR}/yarray_item.hpp
-  ${SRC_DIR}/ypipe.hpp
-  ${SRC_DIR}/yqueue.hpp
-  ${SRC_DIR}/zmq.cpp
-  ${SRC_DIR}/zmq_connecter.cpp
-  ${SRC_DIR}/zmq_connecter.hpp
-  ${SRC_DIR}/zmq_decoder.cpp
-  ${SRC_DIR}/zmq_decoder.hpp
-  ${SRC_DIR}/zmq_encoder.cpp
-  ${SRC_DIR}/zmq_encoder.hpp
-  ${SRC_DIR}/zmq_engine.cpp
-  ${SRC_DIR}/zmq_engine.hpp
-  ${SRC_DIR}/zmq_init.cpp
-  ${SRC_DIR}/zmq_init.hpp
-  ${SRC_DIR}/zmq_listener.cpp
-  ${SRC_DIR}/zmq_listener.hpp
-  ${INCLUDE_DIR}/zmq.h
-  ${INCLUDE_DIR}/zmq.hpp
-)
+file(GLOB ZMQ_SRC rubyk.cpp ${SRC_DIR}/*.cpp ${SRC_DIR}/*.hpp ${INCLUDE_DIR}/zmq.h ${INCLUDE_DIR}/zmq.hpp)
 
 # Create the list of include directories needed for ZMQ header files.
 INCLUDE(${ZMQ_SOURCE_DIR}/ZMQIncludeDirectories.cmake)
@@ -186,9 +54,7 @@ IF(WIN32)
   SET(ZMQ_HAVE_WINDOWS 1)
   SET(_WINSOCKAPI_ 1)
   SET(NOMINMAX 1)
-  IF(BUILD_SHARED_LIBS)
-    SET(DLL_EXPORT 1)
-  ENDIF()
+  SET(DLL_EXPORT 1)
   SET(LIB_DEP ws2_32 rpcrt4)
 ENDIF(WIN32)
 
@@ -285,96 +151,3 @@ add_dependencies (modules "${target}_${SUB_MODULE_NAME}")
 # ----------------------------------------------------------------------------------
 #  [/rubyk]
 # ----------------------------------------------------------------------------------
-
-#####################################################
-# Devices and performance tests
-#####################################################
-IF(ZMQ_BUILD_DEVICES)
-  ADD_EXECUTABLE(zmq_forwarder ${ZMQ_SOURCE_DIR}/devices/zmq_forwarder/zmq_forwarder.cpp)
-  TARGET_LINK_LIBRARIES(zmq_forwarder ZMQ)
-
-  ADD_EXECUTABLE(zmq_queue ${ZMQ_SOURCE_DIR}/devices/zmq_queue/zmq_queue.cpp)
-  TARGET_LINK_LIBRARIES(zmq_queue ZMQ)
-
-  ADD_EXECUTABLE(zmq_streamer ${ZMQ_SOURCE_DIR}/devices/zmq_streamer/zmq_streamer.cpp)
-  TARGET_LINK_LIBRARIES(zmq_streamer ZMQ)
-ENDIF(ZMQ_BUILD_DEVICES)
-
-IF(ZMQ_BUILD_PERFORMANCE_TESTS)
-  ADD_EXECUTABLE(local_lat ${ZMQ_SOURCE_DIR}/perf/local_lat.cpp)
-  TARGET_LINK_LIBRARIES(local_lat ZMQ)
-
-  ADD_EXECUTABLE(local_thr ${ZMQ_SOURCE_DIR}/perf/local_thr.cpp)
-  TARGET_LINK_LIBRARIES(local_thr ZMQ)
-
-  ADD_EXECUTABLE(remote_lat ${ZMQ_SOURCE_DIR}/perf/remote_lat.cpp)
-  TARGET_LINK_LIBRARIES(remote_lat ZMQ)
-
-  ADD_EXECUTABLE(remote_thr ${ZMQ_SOURCE_DIR}/perf/remote_thr.cpp)
-  TARGET_LINK_LIBRARIES(remote_thr ZMQ)
-ENDIF(ZMQ_BUILD_PERFORMANCE_TESTS)
-
-
-#####################################################
-# Help other projects use ZMQ.
-#####################################################
-
-# Copy the UseZMQ.cmake file to the binary tree for backward compatability.
-CONFIGURE_FILE(${ZMQ_SOURCE_DIR}/UseZMQ.cmake.in
-${ZMQ_BINARY_DIR}/UseZMQ.cmake COPYONLY IMMEDIATE)
-
-# Create the ZMQConfig.cmake file containing the ZMQ configuration.
-INCLUDE (${ZMQ_SOURCE_DIR}/GenerateZMQConfig.cmake)
-
-# Save the compiler settings so another project can import them.
-#INCLUDE(${CMAKE_ROOT}/Modules/CMakeExportBuildSettings.cmake)
-#CMAKE_EXPORT_BUILD_SETTINGS(${ZMQ_BINARY_DIR}/ZMQBuildSettings.cmake)
-
-# Save library dependencies.
-EXPORT_LIBRARY_DEPENDENCIES(${ZMQ_BINARY_DIR}/ZMQLibraryDepends.cmake)
-
-
-#-----------------------------------------------------------------------------
-# Installation vars.
-# ZMQ_INSTALL_BIN_DIR          - binary dir (executables)
-# ZMQ_INSTALL_LIB_DIR          - library dir (libs)
-# ZMQ_INSTALL_DATA_DIR         - share dir (say, examples, data, etc)
-# ZMQ_INSTALL_INCLUDE_DIR      - include dir (headers)
-# ZMQ_INSTALL_PACKAGE_DIR      - package/export configuration files
-# ZMQ_INSTALL_NO_DEVELOPMENT   - do not install development files
-# ZMQ_INSTALL_NO_RUNTIME       - do not install runtime files
-# ZMQ_INSTALL_NO_DOCUMENTATION - do not install documentation files
-
-IF(NOT ZMQ_INSTALL_BIN_DIR)
-  SET(ZMQ_INSTALL_BIN_DIR "bin")
-ENDIF(NOT ZMQ_INSTALL_BIN_DIR)
-
-IF(NOT ZMQ_INSTALL_LIB_DIR)
-  SET(ZMQ_INSTALL_LIB_DIR "lib/zmq")
-ENDIF(NOT ZMQ_INSTALL_LIB_DIR)
-
-IF(NOT ZMQ_INSTALL_DATA_DIR)
-  SET(ZMQ_INSTALL_DATA_DIR "share/zmq")
-ENDIF(NOT ZMQ_INSTALL_DATA_DIR)
-
-IF(NOT ZMQ_INSTALL_INCLUDE_DIR)
-  SET(ZMQ_INSTALL_INCLUDE_DIR "include/zmq")
-ENDIF(NOT ZMQ_INSTALL_INCLUDE_DIR)
-
-IF(NOT ZMQ_INSTALL_PACKAGE_DIR)
-  SET(ZMQ_INSTALL_PACKAGE_DIR ${ZMQ_INSTALL_LIB_DIR}
-    CACHE INTERNAL "")
-ENDIF(NOT ZMQ_INSTALL_PACKAGE_DIR)
-
-IF(NOT ZMQ_INSTALL_NO_DOCUMENTATION)
-  SET(ZMQ_INSTALL_NO_DOCUMENTATION 0)
-ENDIF(NOT ZMQ_INSTALL_NO_DOCUMENTATION)
-
-INSTALL(FILES
-  ${ZMQ_BINARY_DIR}/ZMQBuildSettings.cmake
-  ${ZMQ_BINARY_DIR}/ZMQLibraryDepends.cmake
-  ${ZMQ_BINARY_DIR}/UseZMQ.cmake
-  DESTINATION ${ZMQ_INSTALL_PACKAGE_DIR}
-  COMPONENT Development
-  )
-

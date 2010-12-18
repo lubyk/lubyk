@@ -27,7 +27,6 @@
   ==============================================================================
 */
 #include "rubyk.h"
-#include "rubyk/thread.h"
 
 /////////////  This is a dummy Lua module just to load all rubyk core cpp code //
 

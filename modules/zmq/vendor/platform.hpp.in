@@ -208,7 +208,7 @@
 
 /* Define for Solaris 2.5.1 so the uint32_t typedef from <sys/synch.h>,
    <pthread.h>, or <semaphore.h> is not used. If the typedef were allowed, the
-   #cmakedefine below would cause a syntax error. */
+   cmakedefine below would cause a syntax error. */
 #cmakedefine _UINT32_T
 
 /* Define to empty if `const' does not conform to ANSI C. */
