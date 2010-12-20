@@ -44,4 +44,19 @@ function should.send_and_receive()
   assert_true(continue)
 end
 
+function should.send_and_receive_many()
+  local sender   = zmq.Send("tcp://*:4456")
+  local received = 0
+  local receiver = zmq.Receive("tcp://localhost:4456", function(message)
+    received = received + 1
+  end)
+
+  while received < 10 do
+    sender:send("anything")
+    worker:sleep(1)
+  end
+
+  assert_equal(10, received)
+end
+
 test.all()
