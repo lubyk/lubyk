@@ -15,7 +15,7 @@ end})
 --- Autoload method
 function lib.__index(table, name)
   -- Trying to load new lib like rk.Foobar
-  local ok, new_lib_or_error = require(table.prefix..'.'..name)
+  local ok, new_lib_or_error = pcall(function() require(table.prefix..'.'..name); end)
   if ok then
     return new_lib_or_error or table[name]
   else
@@ -35,11 +35,11 @@ function lib2.__index(table, name)
     -- special case for lua interactive
     return nil
   end
-  local ok, new_lib_or_error = require(name)
+  local ok, new_lib_or_error = pcall(function() require(name); end)
   if ok then
     return new_lib_or_error or table[name]
   else
-    print(new_lib_or_error)
+    error(string.format("Unknown var '%s' (could not autoload)", name))
     return nil
   end
 end

@@ -68,7 +68,7 @@ function lib.report()
     else
       ok_message = string.format('%i Failure(s)', suite._info.fail_count)
     end
-    print(string.format('==== %-10s (%2i tests): %s', suite._info.name, suite._info.test_count, ok_message))
+    print(string.format('==== %-13s (%2i tests): %s', suite._info.name, suite._info.test_count, ok_message))
     total_test = total_test + suite._info.test_count
     total_asrt = total_asrt + suite._info.assert_count
     if suite._info.fail_count > 0 then
