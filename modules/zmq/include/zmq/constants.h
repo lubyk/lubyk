@@ -26,67 +26,62 @@
 
   ==============================================================================
 */
-#ifndef RUBYK_INCLUDE_ZMQ_SEND_H_
-#define RUBYK_INCLUDE_ZMQ_SEND_H_
+#ifndef RUBYK_INCLUDE_ZMQ_CONSTANTS_H_
+#define RUBYK_INCLUDE_ZMQ_CONSTANTS_H_
 
 #include "../vendor/include/zmq.h"
 
 #include "rubyk.h"
 
 #include <string>
-#include <string.h>
-
-using namespace rubyk;
-typedef int LuaStackSize;
 
 namespace zmq {
 
-/** Send messages for incoming messages on a given port.
- *
- * @dub string_format:'%%s'
- *      string_args:'(*userdata)->location()'
- *      lib_name:'Send_core'
+/** List of zmq socket types for receiving sockets.
  */
-class Send
-{
-  Worker *worker_;
-  void *context_;
-  void *socket_;
-  std::string location_;
-public:
-  Send(rubyk::Worker *worker, const char *location)
-    : worker_(worker), location_(location) {
-    // FIXME: make sure we do not need more the 1 io_threads.
-    context_ = zmq_init(1);
-    socket_ = zmq_socket(context_, ZMQ_PUSH);
-    zmq_bind(socket_, location);
-  }
-
-  ~Send() {
-    zmq_close(socket_);
-    zmq_term(context_);
-  }
-
-  /** Send a string.
-   */
-  void send(const char *message) {
-    int rc;
-    zmq_msg_t msg;
-    zmq_msg_init_size(&msg, strlen(message));
-    memcpy (zmq_msg_data(&msg), message, strlen(message));
-    rc = zmq_send(socket_, &msg, 0);
-    if (rc) {
-      lua_pushstring(worker_->lua_, "Error sending message");
-      lua_error(worker_->lua_);
-      // never reached
-    }
-    zmq_msg_close(&msg);
-  }
-
-  const char *location() {
-    return location_.c_str();
-  }
+enum ReceiveSocketTypes {
+  //ZMQ_PAIR
+  //ZMQ_PUB
+  SUB = ZMQ_SUB,
+  //ZMQ_REQ
+  //ZMQ_REP
+  //ZMQ_XREQ
+  //ZMQ_XREP
+  PULL = ZMQ_PULL,
+  //ZMQ_PUSH
 };
-}
 
-#endif // RUBYK_INCLUDE_ZMQ_SEND_H_
+/** List of zmq socket types for sending sockets.
+ */
+enum SendSocketTypes {
+  //ZMQ_PAIR
+  PUB = ZMQ_PUB,
+  //ZMQ_SUB
+  //ZMQ_REQ
+  //ZMQ_REP
+  //ZMQ_XREQ
+  //ZMQ_XREP
+  //ZMQ_PULL
+  PUSH = ZMQ_PUSH,
+};
+
+/** List of zmq socket options to be set with setsockopt.
+ */
+enum SocketOptions {
+  //ZMQ_HWM 1
+  //ZMQ_SWAP 3
+  //ZMQ_AFFINITY 4
+  //ZMQ_IDENTITY 5
+  SUBSCRIBE   = ZMQ_SUBSCRIBE,
+  UNSUBSCRIBE = ZMQ_UNSUBSCRIBE,
+  //ZMQ_RATE 8
+  //ZMQ_RECOVERY_IVL 9
+  //ZMQ_MCAST_LOOP 10
+  //ZMQ_SNDBUF 11
+  //ZMQ_RCVBUF 12
+  //ZMQ_RCVMORE 13
+};
+
+} // zmq
+
+#endif // RUBYK_INCLUDE_ZMQ_CONSTANTS_H_

@@ -35,7 +35,7 @@ static const struct luaL_Reg lib_functions[] = {
   {NULL, NULL},
 };
 
-extern "C" int luaopen_zmq_core(lua_State *L) {
+extern "C" int luaopen_zmq_vendor(lua_State *L) {
   // register functions
   luaL_register(L, "zmq", lib_functions);
   return 0;

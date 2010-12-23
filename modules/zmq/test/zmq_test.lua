@@ -44,7 +44,7 @@ function should.send_and_receive()
   assert_true(continue)
 end
 
-function should.send_and_receive_many()
+function should.send_and_receive_many_messages()
   local sender   = zmq.Send("tcp://*:4456")
   local received = 0
   local receiver = zmq.Receive("tcp://localhost:4456", function(message)
@@ -57,6 +57,43 @@ function should.send_and_receive_many()
   end
 
   assert_equal(10, received)
+end
+
+function should.publish_and_subscribe()
+  local sender   = zmq.Publish("tcp://*:4457")
+  local received = 0
+  local receiver = zmq.Subscribe("tcp://localhost:4457", function(message)
+    received = received + 1
+  end)
+
+  while received < 10 do
+    sender:send("anything")
+    worker:sleep(1)
+  end
+
+  assert_equal(10, received)
+end
+
+function should.publish_and_subscribe_many()
+  local sender   = zmq.Publish("tcp://*:4458")
+  local received = 0
+  local receiver1 = zmq.Subscribe("tcp://localhost:4458", function(message)
+    received = received + 1
+  end)
+  local receiver2 = zmq.Subscribe("tcp://localhost:4458", function(message)
+    received = received + 1
+  end)
+
+  -- make sure receivers are ready before starting to send
+  worker:sleep(10)
+
+  sender:send("anything")
+
+  while received < 2 do
+    worker:sleep(10)
+  end
+
+  assert_equal(2, received)
 end
 
 test.all()

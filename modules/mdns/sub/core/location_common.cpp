@@ -46,14 +46,14 @@ std::ostream &operator<<(std::ostream &out_stream, const Location &location) {
     out_stream << location.protocol_ << "://";
   }
 
-  if (location.reference_by_hostname_) {
-    out_stream << location.name_;
+  if (location.name_ != "") {
+    // TODO: escape double quotes in name_
+    out_stream << "\"" << location.name_ << "\"";
+  } else {
+    out_stream << location.host_;
     if (location.port_ != Location::NO_PORT) {
       out_stream << ":" << location.port_;
     }
-  } else {
-    // TODO: escape double quotes in name_
-    out_stream << "\"" << location.name_ << "\"";
   }
   return out_stream;
 }

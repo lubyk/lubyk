@@ -46,8 +46,15 @@ end
   'rk'    => %w{Timer},
   'rubyk' => %w{Worker},
   'mdns'  => %w{Browser Registration},
-  'zmq'   => %w{Send Receive}
-}.each do |mod_name, classes|
+  'zmq'   => {
+    'class' => %w{SendSocket ReceiveSocket},
+    'const' => true,
+  }
+}.each do |mod_name, opts|
+  if !opts.kind_of?(Hash)
+    opts = {'class' => opts}
+  end
+
   namespace = Dub.parse(XML_DOC_PATH + "namespace#{mod_name}.xml")[mod_name.to_sym]
   Dub::Lua.bind(namespace)
   # Dub::Lua.function_generator.template_path = (BINDINGS_PATH + 'lua_function.cpp.erb')
@@ -55,7 +62,7 @@ end
   # ==============================================================================
   # ================    Classes     ==============================================
   # ==============================================================================
-  classes.each do |class_name, definitions|
+  (opts['class'] || {}).each do |class_name, definitions|
     klass = namespace[class_name]
     if dub_info = get_dub_info(klass.xml)
       # Set custom tostring formats
@@ -64,9 +71,20 @@ end
     klass.header = "#{mod_name}/#{class_name}.h"
 
     File.open(BINDINGS_PATH + "modules/#{mod_name}/sub/#{klass.lib_name}.cpp", 'wb') do |f|
-      puts klass.lib_name
       f.puts klass
     end
   end
-end
 
+  if opts['const']
+    (opts['groups'] || {}).each do |name, filename|
+      group = Dub.parse(XML_DOC_PATH + "group___#{filename}.xml")[name]
+      Dub::Lua.bind(group)
+      namespace.merge!(group)
+    end
+    namespace.header = "#{mod_name}/#{namespace.header}"
+    namespace.lib_name = "#{mod_name}_constants"
+    File.open(BINDINGS_PATH + "modules/#{mod_name}/sub/constants.cpp", 'wb') do |f|
+      f.puts namespace
+    end
+  end
+end

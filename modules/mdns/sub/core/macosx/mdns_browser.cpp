@@ -154,7 +154,8 @@ public:
                                device->browser_->protocol_.c_str(),
                                device->name_.c_str(),
                                hostname,
-                               ntohs(port)
+                               ntohs(port),
+                               interface_index
                                ));
     } else {
       device->browser_->remove_device(device->name_.c_str());

@@ -52,40 +52,47 @@ public:
   static const unsigned long ANY_IP = 0xFFFFFFFF;
   static const unsigned long LOOPBACK = (127<<24) + 1; // 127.0.0.1
   static const uint NO_PORT = 0;
+  static const uint DEFAULT_INTERFACE = 0;
 
-  Location() : reference_by_hostname_(false), ip_(NO_IP), port_(NO_PORT) {}
-  Location(const char *protocol, const char *service_name) :
-                      protocol_(protocol), name_(service_name),
-                      reference_by_hostname_(false), ip_(NO_IP), port_(NO_PORT) {}
-  Location(const char *protocol, const char *service_name, const char *hostname, uint port) :
-                      protocol_(protocol), name_(service_name),
-                      reference_by_hostname_(false), ip_(NO_IP), port_(port){
-    ip_ = ip_from_hostname(hostname);
-  }
-  Location(const char *protocol, const char *hostname, uint port) :
-                      protocol_(protocol), name_(hostname),
-                      reference_by_hostname_(true), ip_(NO_IP), port_(port) {}
-  Location(const char *protocol, unsigned long ip, uint port) :
-                      protocol_(protocol),
-                      reference_by_hostname_(true), ip_(ip), port_(port) {
-    name_ = name_from_ip(ip_);
-  }
-  Location(const char *service_name) :
-                      protocol_(DEFAULT_PROTOCOL), name_(service_name),
-                      reference_by_hostname_(false), ip_(NO_IP), port_(NO_PORT) {}
-  Location(const char *hostname, uint port) :
-                      protocol_(DEFAULT_PROTOCOL), name_(hostname),
-                      reference_by_hostname_(true), ip_(NO_IP), port_(port) {}
-  Location(unsigned long ip, uint port) :
-                      protocol_(DEFAULT_PROTOCOL),
-                      reference_by_hostname_(true), ip_(ip), port_(port) {
-    name_ = name_from_ip(ip_);
-  }
+  Location(const char *protocol,
+           const char *service_name,
+           const char *hostname,
+           uint port = NO_PORT,
+           uint interface = DEFAULT_INTERFACE)
+           : protocol_(protocol),
+             name_(service_name),
+             host_(hostname),
+             ip_(ip_from_hostname(hostname)),
+             port_(port),
+             interface_(interface) {}
+
+  Location(const char *protocol,
+           const char *hostname,
+           uint port)
+           : protocol_(protocol),
+             host_(hostname),
+             ip_(ip_from_hostname(hostname)),
+             port_(port) {}
+
+  Location(const char *protocol,
+           unsigned long ip,
+           uint port)
+           : protocol_(protocol),
+             host_(name_from_ip(ip_)),
+             ip_(ip),
+             port_(port) {}
+
+  Location(const char *protocol,
+           const char *service_name)
+           : protocol_(protocol),
+             name_(service_name),
+             ip_(NO_IP),
+             port_(NO_PORT) {}
 
   void clear() {
     protocol_ = "";
     name_ = "";
-    reference_by_hostname_ = false;
+    host_ = "";
     ip_   = NO_IP;
     port_ = NO_PORT;
   }
@@ -98,16 +105,20 @@ public:
     return protocol_ == other.protocol_ &&
            (
              (ip_ != Location::NO_IP && ip_ == other.ip_ && port_ == other.port_) ||
-             (reference_by_hostname_ == other.reference_by_hostname_ && name_ == other.name_)
+             (host_ == other.host_ && port_ == other.port_)
            );
+  }
+
+  const char *protocol() const {
+    return protocol_.c_str();
   }
 
   const char *name() const {
     return name_.c_str();
   }
 
-  const char *protocol() const {
-    return protocol_.c_str();
+  const char *host() const {
+    return host_.c_str();
   }
 
   const unsigned long &ip() const {
@@ -116,6 +127,10 @@ public:
 
   const uint &port() const {
     return port_;
+  }
+
+  const uint &interface() const {
+    return interface_;
   }
 
   void set_port(uint port) {
@@ -139,15 +154,13 @@ private:
    */
   std::string protocol_;
 
-  /** This can contain either a hostname (example.com) or a service
-   *  name ("stage camera").
+  /** This contains the service's name ("stage camera").
    */
   std::string name_;
 
-  /** This tells us if the name_ contains a hostname or a
-   *  service name (true if it is a hostname).
+  /** This is the host's name ('gaspard.local', 'example.com').
    */
-  bool reference_by_hostname_;
+  std::string host_;
 
   /** Once the location has been resolved, we have an IP.
    */
@@ -156,6 +169,10 @@ private:
   /** Port of the remote object (set when location is resolved)
    */
   uint port_;
+
+  /** Interface used to connect to this location (set by mdns Browser).
+   */
+  uint interface_;
 };
 
 std::ostream &operator<<(std::ostream &out_stream, const Location &location);

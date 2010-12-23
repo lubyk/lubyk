@@ -62,13 +62,33 @@ public:
     lua_State *L = worker_->lua_;
     ScopedLock lock(worker_);
     lua_rawgeti(L, LUA_REGISTRYINDEX, func_idx_);
-    int status = lua_pcall(L, 0, 0, 0);
+
+    // create table {name = 'x', host = '10.0.0.34', port = 7500}
+    lua_newtable(L);
+    int top = lua_gettop(L);
+
+    // name = 'xxxxx'
+    lua_pushstring(L, "name");
+    lua_pushstring(L, name_.c_str());
+    lua_settable(L, top);
+
+    // host = 'xxxx'
+    lua_pushstring(L, "host");
+    lua_pushstring(L, host_.c_str());
+    lua_settable(L, top);
+
+    // port = 7500
+    lua_pushstring(L, "port");
+    lua_pushnumber(L, port_);
+    lua_settable(L, top);
+
+    int status = lua_pcall(L, 1, 0, 0);
 
     if (status) {
       printf("Error in registration_done: %s\n", lua_tostring(L, -1));
     }
     // clear stack
-    lua_settop(worker_->lua_, 0);
+    lua_settop(L, 0);
   }
 };
 } // mdns

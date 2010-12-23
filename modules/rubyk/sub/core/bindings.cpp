@@ -28,6 +28,41 @@
 */
 #include "rubyk.h"
 
+void rubyk::dump_lua_stack(lua_State *L, const char *msg) {
+  int i;
+  int top = lua_gettop(L);
+
+  printf("%s (top: %d)\n", msg, top);
+
+  for (i = 1; i <= top; ++i) {
+    switch (lua_type(L, i)) {
+      case LUA_TSTRING:
+        printf("%3i: '%s'\n", i, lua_tostring(L, i));
+        break;
+      case LUA_TBOOLEAN:
+        printf("%3i: %s\n", i, lua_toboolean(L, i) ? "true" : "false");
+        break;
+      case LUA_TNUMBER:
+        printf("%3i: %g\n", i, lua_tonumber(L, i));
+        break;
+      case LUA_TTABLE:
+        printf("%3i: {...}\n", i);
+        break;
+      case LUA_TNONE:
+        printf("%3i: --\n", i);
+      case LUA_TNIL:
+        printf("%3i: nil\n", i);
+        break;
+      case LUA_TFUNCTION:
+        printf("%3i: function\n", i);
+        break;
+      default:
+        printf("%3i: %s\n", i, lua_typename(L, i));
+    }
+  }
+  printf("\n");  /* end the listing */
+}
+
 /////////////  This is a dummy Lua module just to load all rubyk core cpp code //
 
 // Register namespace

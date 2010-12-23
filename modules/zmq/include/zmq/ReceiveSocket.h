@@ -44,29 +44,42 @@ namespace zmq {
  *
  * @dub string_format:'%%s'
  *      string_args:'(*userdata)->location()'
- *      lib_name:'Receive_core'
  */
-class Receive : public LuaCallback
+class ReceiveSocket : public LuaCallback
 {
   Thread thread_;
   void *context_;
   void *socket_;
   std::string location_;
 public:
-  Receive(rubyk::Worker *worker, const char *location, int lua_func_idx)
-    : LuaCallback(worker, lua_func_idx), location_(location) {
+
+  ReceiveSocket(rubyk::Worker *worker, int type, int lua_func_idx)
+    : LuaCallback(worker, lua_func_idx) {
     // FIXME: make sure we do not need more the 1 io_threads.
     context_ = zmq_init(1);
-    socket_ = zmq_socket(context_, ZMQ_PULL);
-    zmq_connect(socket_, location);
+    socket_  = zmq_socket(context_, type);
 
-    thread_.start_thread<Receive, &Receive::receive>(this, NULL);
+    thread_.start_thread<ReceiveSocket, &ReceiveSocket::receive>(this, NULL);
   }
 
-  ~Receive() {
+  ~ReceiveSocket() {
     thread_.kill();
     zmq_close(socket_);
     zmq_term(context_);
+  }
+
+  void connect(const char *location) {
+    // TODO: make sure we can zmq_connect while in recv
+    zmq_connect(socket_, location);
+    location_ = location; // store last connection for info string
+  }
+
+  void setsockopt(int type, const char *filter = NULL) {
+    if (filter) {
+      zmq_setsockopt(socket_, type, filter, strlen(filter));
+    } else {
+      zmq_setsockopt(socket_, type, NULL, 0);
+    }
   }
 
   const char *location() {
@@ -104,6 +117,6 @@ private:
     return true;
   }
 };
-}
+} // zmq
 
 #endif // RUBYK_INCLUDE_ZMQ_RECEIVE_H_

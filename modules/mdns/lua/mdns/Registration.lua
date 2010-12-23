@@ -9,6 +9,7 @@
   registration).
 
 --]]------------------------------------------------------
+require 'mdns'
 require 'mdns.Registration_core'
 require 'worker'
 local worker = worker

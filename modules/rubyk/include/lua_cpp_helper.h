@@ -113,8 +113,10 @@ inline void register_constants(lua_State *L, const char *name_space, const lua_c
     int size = libsize(l);
 
     /* try global variable (and create one if it does not exist) */
-    if (luaL_findtable(L, LUA_GLOBALSINDEX, name_space, size) != NULL)
-      luaL_error(L, "name conflict for module " LUA_QS, name_space);
+    if (luaL_findtable(L, LUA_GLOBALSINDEX, name_space, size) != NULL) {
+      // create global table
+      assert(false); //TODO
+    }
 
     /* found name_space in global index ==> stack -1 */
   }

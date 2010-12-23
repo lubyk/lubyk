@@ -65,30 +65,70 @@ public:
     lua_State *L = worker_->lua_;
     ScopedLock lock(worker_);
     lua_rawgeti(L, LUA_REGISTRYINDEX, func_idx_);
+
+    // create table {add = true, name = 'x', host = '10.0.0.34', port = 7500, interface = 2}
+    lua_newtable(L);
+    int top = lua_gettop(L);
+
+    // add = true
     lua_pushstring(L, "add");
+    lua_pushboolean(L, 1);
+    lua_settable(L, top);
+
+    // name = 'xxxx'
+    lua_pushstring(L, "name");
     lua_pushstring(L, location.name());
-    int status = lua_pcall(L, 2, 0, 0);
+    lua_settable(L, top);
+
+    // host = 'gaspard.local' / '10.3.4.5'
+    lua_pushstring(L, "host");
+    lua_pushstring(L, location.host());
+    lua_settable(L, top);
+
+    // port = 7500
+    lua_pushstring(L, "port");
+    lua_pushnumber(L, location.port());
+    lua_settable(L, top);
+
+    // interface = 2
+    lua_pushstring(L, "interface");
+    lua_pushnumber(L, location.interface());
+    lua_settable(L, top);
+
+    int status = lua_pcall(L, 1, 0, 0);
 
     if (status) {
       printf("Error in add_device: %s\n", lua_tostring(L, -1));
     }
     // clear stack
-    lua_settop(worker_->lua_, 0);
+    lua_settop(L, 0);
   }
 
   virtual void remove_device(const char *name) {
     lua_State *L = worker_->lua_;
     ScopedLock lock(worker_);
     lua_rawgeti(L, LUA_REGISTRYINDEX, func_idx_);
-    lua_pushstring(L, "remove");
+
+    // create table {add = false, name = 'x'}
+    lua_newtable(L);
+    int top = lua_gettop(L);
+    // add = false
+    lua_pushstring(L, "add");
+    lua_pushboolean(L, 0);
+    lua_settable(L, top);
+
+    // name = 'xxxx'
+    lua_pushstring(L, "name");
     lua_pushstring(L, name);
-    int status = lua_pcall(L, 2, 0, 0);
+    lua_settable(L, top);
+
+    int status = lua_pcall(L, 1, 0, 0);
 
     if (status) {
       printf("Error in remove_device: %s\n", lua_tostring(L, -1));
     }
     // clear stack
-    lua_settop(worker_->lua_, 0);
+    lua_settop(L, 0);
   }
 
   const char *service_type() {

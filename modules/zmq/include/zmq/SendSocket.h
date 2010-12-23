@@ -26,23 +26,70 @@
 
   ==============================================================================
 */
+#ifndef RUBYK_INCLUDE_ZMQ_SEND_SOCKET_H_
+#define RUBYK_INCLUDE_ZMQ_SEND_SOCKET_H_
 
-#ifndef CORE_INCLUDE_CORE_LUA_H_
-#define CORE_INCLUDE_CORE_LUA_H_
+#include "../vendor/include/zmq.h"
 
-/** Include Lua
+#include "rubyk.h"
+
+#include <string>
+#include <string.h>
+
+using namespace rubyk;
+typedef int LuaStackSize;
+
+namespace zmq {
+
+/** Send messages for incoming messages on a given port.
+ *
+ * @dub string_format:'%%s'
+ *      string_args:'(*userdata)->location()'
  */
-extern "C" {
-  #include "lua/lua.h"
-  #include "lua/lauxlib.h"
+class SendSocket
+{
+  Worker *worker_;
+  void *context_;
+  void *socket_;
+  std::string location_;
+public:
+  SendSocket(rubyk::Worker *worker, int type)
+    : worker_(worker) {
+    // FIXME: make sure we do not need more the 1 io_threads.
+    context_ = zmq_init(1);
+    socket_  = zmq_socket(context_, type);
+  }
+
+  ~SendSocket() {
+    zmq_close(socket_);
+    zmq_term(context_);
+  }
+
+  void bind(const char *location) {
+    zmq_bind(socket_, location);
+    location_ = location; // save last location for info string
+  }
+
+  /** Publish a string.
+   */
+  void send(const char *message) {
+    int rc;
+    zmq_msg_t msg;
+    zmq_msg_init_size(&msg, strlen(message));
+    memcpy (zmq_msg_data(&msg), message, strlen(message));
+    rc = zmq_send(socket_, &msg, 0);
+    if (rc) {
+      lua_pushstring(worker_->lua_, "Error sending message");
+      lua_error(worker_->lua_);
+      // never reached
+    }
+    zmq_msg_close(&msg);
+  }
+
+  const char *location() {
+    return location_.c_str();
+  }
+};
 }
 
-namespace rubyk {
-
-/** Output debugging information on the current lua stack.
- */
-void dump_lua_stack(lua_State *L, const char *msg);
-
-} // rubyk
-
-#endif // CORE_INCLUDE_CORE_LUA_H_
+#endif // RUBYK_INCLUDE_ZMQ_SEND_SOCKET_H_

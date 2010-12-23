@@ -34,6 +34,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include <arpa/inet.h> // inet_ntop
 
 #include <iostream>
 /*
@@ -55,32 +56,40 @@ struct addrinfo {
 namespace mdns {
 
 unsigned long Location::ip_from_hostname(const char *hostname) {
-  struct addrinfo *result, *result0;
-  unsigned long ip;
+  struct addrinfo hints, *res, *result_list;
+  unsigned long ip = 0;
   int error;
 
-  error = getaddrinfo(hostname, NULL, NULL, &result0);
+  memset(&hints, 0, sizeof(hints));
+  error = getaddrinfo(hostname, NULL, &hints, &result_list);
   if (error) {
     std::cerr << "Could not resolve '" << hostname << "' (" << gai_strerror(error) << ")\n";
     return Location::NO_IP;
   }
 
-  for (result = result0; result; result = result->ai_next) {
-    if (result->ai_family == AF_INET) {
+  for (res = result_list; res; res = res->ai_next) {
+    char addrstr[100];
+    inet_ntop (res->ai_family, res->ai_addr->sa_data, addrstr, 100);
+
+    if (res->ai_family == AF_INET) {
       // only support AF_INET for now (no IPv6)
 
       // sockaddr is a generic raw bunch of bytes, we must cast it first to
       // an IPv4 struct:
-      struct sockaddr_in *ipv4 = (sockaddr_in*) result->ai_addr;
+      struct sockaddr_in *ipv4 = (sockaddr_in*) res->ai_addr;
 
       // ip is in sin_addr
       // we must convert the 32-bit IP from network to host
       ip = ntohl(ipv4->sin_addr.s_addr);
-      break;
+
+      // we do not break so that we display the last IPv4 address because
+      // mac os X automatically assigns 172.16.xxx.xxx addresses and they
+      // come first and we prefer showing the address assigned with DHCP.
+      // break;
     }
   }
 
-  freeaddrinfo(result0);
+  freeaddrinfo(result_list);
   return ip;
 }
 

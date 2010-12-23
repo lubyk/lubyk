@@ -1,7 +1,7 @@
 --[[------------------------------------------------------
 
-  zmq.Send
-  --------
+  zmq.Publish
+  -----------
 
   Lets you send lua messages using 0MQ.
 
@@ -12,8 +12,8 @@ require 'worker'
 
 local constr = zmq.SendSocket
 local worker = worker
-function zmq.Send(location)
-  local sender = constr(worker, zmq.PUSH)
+function zmq.Publish(location)
+  local sender = constr(worker, zmq.PUB)
   sender:bind(location)
   return sender
 end

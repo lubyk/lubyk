@@ -25,11 +25,13 @@ function should.register()
 end
 
 function should.browse()
-  local continue = false
-  local condition = 'add'
+  local continue    = false
+  local should_add  = true
+  local hostname    = nil
   local device_list = {}
   -- register a service at port 12345
-  local registration = mdns.Registration(rubyk.service_type, 'Service for browse', 12346, function()
+  local registration = mdns.Registration(rubyk.service_type, 'Service for browse', 12346, function(service)
+    hostname = service.host
     continue = true
   end)
   -- wait (and give time for callback to enter Lua State)
@@ -38,8 +40,8 @@ function should.browse()
   end
   continue = false
 
-  local browser = mdns.Browser(rubyk.service_type, function(what, service)
-    if what == condition and service == 'Service for browse' then
+  local browser = mdns.Browser(rubyk.service_type, function(service)
+    if service.add == should_add and service.name == 'Service for browse' then
       continue = true
     end
   end)
@@ -48,8 +50,8 @@ function should.browse()
     worker:sleep(10)
   end
 
-  continue  = false
-  condition = 'remove'
+  continue   = false
+  should_add = false
   registration:__gc() -- explicit kill
   registration = nil  -- dangling pointer
 

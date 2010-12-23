@@ -7,4 +7,5 @@
 
 --]]------------------------------------------------------
 zmq = Autoload('zmq')
-require 'zmq.core'
+require 'zmq.constants'
+require 'zmq.vendor'
