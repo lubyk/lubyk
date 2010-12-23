@@ -3,23 +3,20 @@
   rk.ServiceBrowser
   -----------------
 
-  This is a ZeroMQ based connection announced with Bonjour
-  (zmq + mDNS).
+  The ServiceBrowser is responsible for managing pending
+  connections, connecting zmq pub-sub when the remote
+  service is found on the network.
 
 --]]------------------------------------------------------
-require 'mdns.Browser'
-
 local lib = {}
 lib.__index = lib
 rk.ServiceBrowser  = lib
-
-print("Loading ServiceBrowser")
 
 local browsers = {}
 
 --- Helper function to subscribe a service to a given device
 local function subscribe_to_service(service, device)
-  service.receiver:subscribe(string.format('tcp://%s:%i', device.host, device.port))
+  service.receiver:connect(string.format('tcp://%s:%i', device.host, device.port))
 end
 
 --- Helper function triggered whenever a new remote service is found on the network.
@@ -31,9 +28,10 @@ local function browser_add_remote_service(self, remote_service)
   self.services[remote_service.name] = remote_service
   local pending = self.pending[remote_service.name]
   if pending then
-    for k, service in ipairs(pending) do
+    for _, connection in ipairs(pending) do
       -- service found, bind
-      subscribe_to_service(service, remote_service)
+      subscribe_to_service(connection.local_service, remote_service)
+      connection.connected = true
     end
     self.pending[remote_service.name] = nil
   end
@@ -63,16 +61,19 @@ end})
 
 --- Connect a Service to another remote service.
 --
-function lib:connect_service(service, remote_name)
-  local remote_service = self.services[remote_name]
+function lib:connect_service(service, connection)
+  local remote_service = self.services[connection.remote_name]
   if remote_service then
+    -- already found service on network
+    -- connect
     subscribe_to_service(service, remote_service)
+    connection.connected = true
   else
-    local pending = self.pending[remote_name]
+    local pending = self.pending[connection.remote_name]
     if not pending then
       pending = {}
-      self.pending[remote_name] = pending
+      self.pending[connection.remote_name] = pending
     end
-    table.insert(pending, service)
+    table.insert(pending, connection)
   end
 end

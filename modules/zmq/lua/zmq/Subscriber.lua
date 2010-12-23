@@ -12,9 +12,8 @@ require 'worker'
 
 local constr = zmq.ReceiveSocket
 local worker = worker
-function zmq.Subscribe(location, func)
+function zmq.Subscriber(func)
   local receiver = constr(worker, zmq.SUB, func)
-  receiver:connect(location)
   receiver:setsockopt(zmq.SUBSCRIBE) -- filter none
   return receiver
 end

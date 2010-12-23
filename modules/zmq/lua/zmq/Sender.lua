@@ -12,7 +12,7 @@ require 'worker'
 
 local constr = zmq.SendSocket
 local worker = worker
-function zmq.Send(location)
+function zmq.Sender(location)
   local sender = constr(worker, zmq.PUSH)
   sender:bind(location)
   return sender

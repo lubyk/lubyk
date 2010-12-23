@@ -30,9 +30,9 @@ require 'rubyk'
 local should = test.Suite('zmq')
 
 function should.send_and_receive()
-  local sender   = zmq.Send("tcp://*:4455")
+  local sender   = zmq.Sender("tcp://*:4455")
   local continue = false
-  local receiver = zmq.Receive("tcp://localhost:4455", function(message)
+  local receiver = zmq.Receiver("tcp://localhost:4455", function(message)
     continue = true
   end)
 
@@ -45,9 +45,9 @@ function should.send_and_receive()
 end
 
 function should.send_and_receive_many_messages()
-  local sender   = zmq.Send("tcp://*:4456")
+  local sender   = zmq.Sender("tcp://*:4456")
   local received = 0
-  local receiver = zmq.Receive("tcp://localhost:4456", function(message)
+  local receiver = zmq.Receiver("tcp://localhost:4456", function(message)
     received = received + 1
   end)
 
@@ -60,11 +60,13 @@ function should.send_and_receive_many_messages()
 end
 
 function should.publish_and_subscribe()
-  local sender   = zmq.Publish("tcp://*:4457")
+  local sender   = zmq.Publisher("tcp://*:4457")
   local received = 0
-  local receiver = zmq.Subscribe("tcp://localhost:4457", function(message)
+  local receiver = zmq.Subscriber(function(message)
     received = received + 1
   end)
+
+  receiver:connect("tcp://localhost:4457")
 
   while received < 10 do
     sender:send("anything")
@@ -77,12 +79,14 @@ end
 function should.publish_and_subscribe_many()
   local sender   = zmq.Publish("tcp://*:4458")
   local received = 0
-  local receiver1 = zmq.Subscribe("tcp://localhost:4458", function(message)
+  local function receive_callback(message)
     received = received + 1
-  end)
-  local receiver2 = zmq.Subscribe("tcp://localhost:4458", function(message)
-    received = received + 1
-  end)
+  end
+  local receiver1 = zmq.Subscriber(receive_callback)
+  local receiver2 = zmq.Subscriber(receive_callback)
+
+  receiver1:connect("tcp://localhost:4458")
+  receiver2:connect("tcp://localhost:4458")
 
   -- make sure receivers are ready before starting to send
   worker:sleep(10)
