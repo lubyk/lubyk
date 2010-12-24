@@ -46,6 +46,7 @@ end
   'rk'    => %w{Timer},
   'rubyk' => %w{Worker},
   'mdns'  => %w{Browser Registration},
+  'mimas' => %w{Application Callback HBoxLayout Label PushButton Widget},
   'zmq'   => {
     'class' => %w{SendSocket ReceiveSocket},
     'const' => true,
@@ -64,6 +65,11 @@ end
   # ==============================================================================
   (opts['class'] || {}).each do |class_name, definitions|
     klass = namespace[class_name]
+    if not klass
+      puts "Could not find xml for #{class_name}"
+      next
+    end
+
     if dub_info = get_dub_info(klass.xml)
       # Set custom tostring formats
       klass.opts.merge!(dub_info)

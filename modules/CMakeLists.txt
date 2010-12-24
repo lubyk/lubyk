@@ -18,13 +18,13 @@ file (GLOB MODULES ${CMAKE_CURRENT_SOURCE_DIR}/*)
 list(REMOVE_ITEM MODULES ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
 list(REMOVE_ITEM MODULES ${CMAKE_CURRENT_SOURCE_DIR}/bind.rb)
 
-# set(CMAKE_CXX_FLAGS "-fno-common")
-#
-# g++ -O2 -fno-common -c -o test.o -I../../include/rubyk/lua MODULE.cpp
-# gcc -bundle -undefined dynamic_lookup -o test.so test.o -lstdc++
 
-# replace luaopen_xx by luaload_xx
-# add_definitions(-DDUB_LUA_NO_OPEN)
+# ==============================================================================
+#
+#  Update bindings with 'dub'
+#
+# ==============================================================================
+
 
 # Build files from dub
 add_custom_target(dub ALL
@@ -32,6 +32,14 @@ add_custom_target(dub ALL
    DEPENDS ${DOXYGEN_OUTPUT})
 
 add_dependencies(modules dub)
+
+
+# ==============================================================================
+#
+#  Create all targets for module (lua, core, sub, vendor)
+#
+# ==============================================================================
+
 
 foreach (MODULE ${MODULES})
   if(EXISTS ${MODULE}/CMakeLists.txt)
@@ -70,7 +78,7 @@ foreach (MODULE ${MODULES})
       foreach (SUB_MODULE_CPP ${SUB_MODULES_CPP})
         list(REMOVE_ITEM SUB_MODULES "${SUB_MODULE_CPP}")
         get_filename_component (SUB_MODULE_NAME ${SUB_MODULE_CPP} NAME_WE)
-        
+
         # create name/[SUB_MOD_NAME].so library
         add_library("${target}_${SUB_MODULE_NAME}" MODULE ${SUB_MODULE_CPP})
 
@@ -91,26 +99,30 @@ foreach (MODULE ${MODULES})
       list(REMOVE_ITEM SUB_MODULES ${MODULE}/sub/.DS_Store)
 
       foreach (SUB_MODULE ${SUB_MODULES})
-        get_filename_component (SUB_MODULE_NAME ${SUB_MODULE} NAME_WE)
-        file(GLOB SUB_MODULE_SOURCES ${SUB_MODULE}/*.cpp ${SUB_MODULE}/${PLAT}/*.cpp)
+        if(EXISTS ${SUB_MODULE}/CMakeLists.txt)
+          add_subdirectory(${SUB_MODULE})
+        else(EXISTS ${SUB_MODULE}/CMakeLists.txt)
+          get_filename_component (SUB_MODULE_NAME ${SUB_MODULE} NAME_WE)
+          file(GLOB SUB_MODULE_SOURCES ${SUB_MODULE}/*.cpp ${SUB_MODULE}/${PLAT}/*.cpp)
 
-        # create name/[SUB_MOD_NAME].so library
-        add_library("${target}_${SUB_MODULE_NAME}" MODULE ${SUB_MODULE_SOURCES})
-        set_target_properties("${target}_${SUB_MODULE_NAME}"
-          PROPERTIES OUTPUT_NAME ${SUB_MODULE_NAME}
-          LINK_FLAGS ${PLAT_OBJ_FLAGS}
-          LIBRARY_OUTPUT_DIRECTORY ${RUBYK_SOURCE_DIR}/lib/${MODULE_NAME}
-          PREFIX ""
-          SUFFIX ".so"
-        )
-        add_dependencies (modules "${target}_${SUB_MODULE_NAME}")
+          # create name/[SUB_MOD_NAME].so library
+          add_library("${target}_${SUB_MODULE_NAME}" MODULE ${SUB_MODULE_SOURCES})
+          set_target_properties("${target}_${SUB_MODULE_NAME}"
+            PROPERTIES OUTPUT_NAME ${SUB_MODULE_NAME}
+            LINK_FLAGS ${PLAT_OBJ_FLAGS}
+            LIBRARY_OUTPUT_DIRECTORY ${RUBYK_SOURCE_DIR}/lib/${MODULE_NAME}
+            PREFIX ""
+            SUFFIX ".so"
+          )
+          add_dependencies (modules "${target}_${SUB_MODULE_NAME}")
+        endif(EXISTS ${SUB_MODULE}/CMakeLists.txt)
       endforeach (SUB_MODULE ${SUB_MODULES})
     endif(EXISTS ${MODULE}/sub)
-      
+
     if(EXISTS ${MODULE}/vendor/CMakeLists.txt)
       add_subdirectory(${MODULE}/vendor)
     endif(EXISTS ${MODULE}/vendor/CMakeLists.txt)
-        
+
     if(EXISTS ${MODULE}/lua)
       file (GLOB MODULE_SOURCES ${MODULE}/lua/*)
 
