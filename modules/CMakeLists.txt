@@ -66,7 +66,10 @@ foreach (MODULE ${MODULES})
         PREFIX ""
         SUFFIX ".so"
       )
-      add_dependencies (modules ${target})
+      add_dependencies(modules ${target})
+    else(EXISTS ${MODULE}/src)
+      add_custom_target(${target} true) # noop
+      add_dependencies(modules "${target}")
     endif(EXISTS ${MODULE}/src)
 
     if(EXISTS ${MODULE}/sub)
@@ -89,7 +92,7 @@ foreach (MODULE ${MODULES})
           PREFIX ""
           SUFFIX ".so"
         )
-        add_dependencies (modules "${target}_${SUB_MODULE_NAME}")
+        add_dependencies(${target} "${target}_${SUB_MODULE_NAME}")
       endforeach (SUB_MODULE_CPP ${SUB_MODULES_CPP})
 
 
@@ -103,7 +106,7 @@ foreach (MODULE ${MODULES})
           add_subdirectory(${SUB_MODULE})
         else(EXISTS ${SUB_MODULE}/CMakeLists.txt)
           get_filename_component (SUB_MODULE_NAME ${SUB_MODULE} NAME_WE)
-          file(GLOB SUB_MODULE_SOURCES ${SUB_MODULE}/*.cpp ${SUB_MODULE}/${PLAT}/*.cpp)
+          file(GLOB SUB_MODULE_SOURCES ${SUB_MODULE}/*.cpp ${SUB_MODULE}/${PLAT}/*.cpp ${SUB_MODULE}/${PLAT}/*.mm)
 
           # create name/[SUB_MOD_NAME].so library
           add_library("${target}_${SUB_MODULE_NAME}" MODULE ${SUB_MODULE_SOURCES})
@@ -114,7 +117,7 @@ foreach (MODULE ${MODULES})
             PREFIX ""
             SUFFIX ".so"
           )
-          add_dependencies (modules "${target}_${SUB_MODULE_NAME}")
+          add_dependencies(${target} "${target}_${SUB_MODULE_NAME}")
         endif(EXISTS ${SUB_MODULE}/CMakeLists.txt)
       endforeach (SUB_MODULE ${SUB_MODULES})
     endif(EXISTS ${MODULE}/sub)
@@ -129,7 +132,7 @@ foreach (MODULE ${MODULES})
       add_custom_target("${target}_lua" ALL
          COMMAND ${CMAKE_COMMAND} -E copy_directory ${MODULE}/lua ${RUBYK_SOURCE_DIR}/lib)
 
-      add_dependencies(modules "${target}_lua")
+      add_dependencies(${target} "${target}_lua")
 
     endif(EXISTS ${MODULE}/lua)
 

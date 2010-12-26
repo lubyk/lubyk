@@ -36,7 +36,7 @@
 
 namespace mimas {
 
-/** PushButton widget.
+/** Label widget.
  */
 class Label : public QLabel
 {
@@ -47,6 +47,13 @@ public:
 
   ~Label() {}
 
+  void setText(const char *text) {
+    QLabel::setText(QString(text));
+  }
+
+  QWidget *widget() {
+    return this;
+  }
 };
 
 } // mimas

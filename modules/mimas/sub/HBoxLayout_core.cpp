@@ -9,7 +9,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::HBoxLayout::HBoxLayout(Widget *widget)
- * include/mimas/HBoxLayout.h:49
+ * include/mimas/HBoxLayout.h:50
  */
 static int HBoxLayout_HBoxLayout(lua_State *L) {
   try {
@@ -54,14 +54,14 @@ static int HBoxLayout__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
-/** void mimas::HBoxLayout::addWidget(PushButton *widget)
- * include/mimas/HBoxLayout.h:53
+/** void mimas::HBoxLayout::addWidget(QWidget *widget)
+ * include/mimas/HBoxLayout.h:54
  */
 static int HBoxLayout_addWidget(lua_State *L) {
   try {
     HBoxLayout *self__ = *((HBoxLayout**)luaL_checkudata(L, 1, "mimas.HBoxLayout"));
     lua_remove(L, 1);
-    PushButton *widget = *((PushButton **)luaL_checkudata(L, 1, "mimas.PushButton"));
+    QWidget *widget = *((QWidget **)luaL_checkudata(L, 1, "mimas.QWidget"));
     self__->addWidget(widget);
     return 0;
   } catch (std::exception &e) {
@@ -99,9 +99,9 @@ static const struct luaL_Reg HBoxLayout_namespace_methods[] = {
 
 
 #ifdef DUB_LUA_NO_OPEN
-int luaload_mimas_HBoxLayout(lua_State *L) {
+int luaload_mimas_HBoxLayout_core(lua_State *L) {
 #else
-extern "C" int luaopen_mimas_HBoxLayout(lua_State *L) {
+extern "C" int luaopen_mimas_HBoxLayout_core(lua_State *L) {
 #endif
   // Create the metatable which will contain all the member methods
   luaL_newmetatable(L, "mimas.HBoxLayout");

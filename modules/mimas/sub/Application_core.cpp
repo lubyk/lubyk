@@ -9,7 +9,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::Application::Application(rubyk::Worker *worker)
- * include/mimas/Application.h:56
+ * include/mimas/Application.h:59
  */
 static int Application_Application(lua_State *L) {
   try {
@@ -55,7 +55,7 @@ static int Application__tostring(lua_State *L) {
 
 
 /** int mimas::Application::exec()
- * include/mimas/Application.h:62
+ * include/mimas/Application.h:65
  */
 static int Application_exec(lua_State *L) {
   try {
@@ -80,8 +80,40 @@ static int Application_exec(lua_State *L) {
 }
 
 
+/** void mimas::Application::post(int lua_func_idx)
+ * include/mimas/Application.h:70
+ */
+static int Application_post(lua_State *L) {
+  try {
+    Application *self__ = *((Application**)luaL_checkudata(L, 1, "mimas.Application"));
+    lua_remove(L, 1);
+    
+    luaL_checktype(L, 1, LUA_TFUNCTION);
+    // push on top
+    lua_pushvalue(L, 1);
+    int lua_func_idx = luaL_ref(L, LUA_REGISTRYINDEX);
+    lua_pop(L, 1);
+    
+    self__->post(lua_func_idx);
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("mimas.Application.post: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "mimas.Application.post: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
+}
+
+
 /** void mimas::Application::quit()
- * include/mimas/Application.h:67
+ * include/mimas/Application.h:76
  */
 static int Application_quit(lua_State *L) {
   try {
@@ -111,6 +143,7 @@ static int Application_quit(lua_State *L) {
 
 static const struct luaL_Reg Application_member_methods[] = {
   {"exec"              , Application_exec},
+  {"post"              , Application_post},
   {"quit"              , Application_quit},
   {"__tostring"        , Application__tostring},
   {"__gc"              , Application_destructor},

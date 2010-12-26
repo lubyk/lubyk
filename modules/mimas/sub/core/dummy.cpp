@@ -27,6 +27,10 @@
   ==============================================================================
 */
 #include "rubyk.h"
+#include "mimas/Callback.h"
+
+// create value for Callback::Event type here
+const QEvent::Type mimas::Callback::EventType = static_cast<QEvent::Type>(QEvent::registerEventType());
 
 // Register namespace
 static const struct luaL_Reg lib_functions[] = {
@@ -34,6 +38,10 @@ static const struct luaL_Reg lib_functions[] = {
 };
 
 extern "C" int luaopen_mimas_core(lua_State *L) {
+  // declare metatables for cast signature mimas.QObject and mimas.QWidget
+  luaL_newmetatable(L, "mimas.QObject");
+  luaL_newmetatable(L, "mimas.QWidget");
+
   // register functions
   luaL_register(L, "mimas", lib_functions);
   return 0;

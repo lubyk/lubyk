@@ -53,8 +53,33 @@ static int Widget__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
+/** void mimas::Widget::activateWindow()
+ * include/mimas/Widget.h:61
+ */
+static int Widget_activateWindow(lua_State *L) {
+  try {
+    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    lua_remove(L, 1);
+    self__->activateWindow();
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("mimas.Widget.activateWindow: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "mimas.Widget.activateWindow: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
+}
+
+
 /** void mimas::Widget::resize(int w, int h)
- * include/mimas/Widget.h:49
+ * include/mimas/Widget.h:53
  */
 static int Widget_resize(lua_State *L) {
   try {
@@ -81,7 +106,7 @@ static int Widget_resize(lua_State *L) {
 
 
 /** void mimas::Widget::show()
- * include/mimas/Widget.h:53
+ * include/mimas/Widget.h:57
  */
 static int Widget_show(lua_State *L) {
   try {
@@ -105,13 +130,41 @@ static int Widget_show(lua_State *L) {
 }
 
 
+/** QWidget* mimas::Widget::widget()
+ * include/mimas/Widget.h:49
+ */
+static int Widget_widget(lua_State *L) {
+  try {
+    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    lua_remove(L, 1);
+    QWidget * retval__ = self__->widget();
+    lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
+    return 1;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("mimas.Widget.widget: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "mimas.Widget.widget: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
+}
+
+
 
 
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg Widget_member_methods[] = {
+  {"activateWindow"    , Widget_activateWindow},
   {"resize"            , Widget_resize},
   {"show"              , Widget_show},
+  {"widget"            , Widget_widget},
   {"__tostring"        , Widget__tostring},
   {"__gc"              , Widget_destructor},
   {NULL, NULL},

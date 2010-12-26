@@ -32,6 +32,7 @@
 #include "rubyk.h"
 
 #include <QtCore/QObject>
+#include <QtCore/QEvent>
 
 #include "mimas/PushButton.h"
 
@@ -44,21 +45,20 @@ class Callback : public QObject
 {
   Q_OBJECT
 public:
+  // Our own custom event id
+  static const QEvent::Type EventType;
+
   Callback(rubyk::Worker *worker, int lua_func_idx)
    : worker_(worker),
-     func_idx_(lua_func_idx) {}
+     func_idx_(lua_func_idx),
+     delete_on_call_(false) {}
 
   virtual ~Callback() {
     // release function
     luaL_unref(worker_->lua_, LUA_REGISTRYINDEX, func_idx_);
   }
 
-  void connect(lua_State *L, const char *method) {
-    // FIXME
-    // get first parameter and make sure it is compatible with a
-    // QObject and has the given callback...
-//    QObject *obj = (QObject *)lua_touserdata(L, 1);
-    PushButton *obj = *((PushButton**)luaL_checkudata(L, 1, "mimas.PushButton"));
+  void connect(QObject *obj, const char *method) {
     // TODO: get remote method signature (defines which callback we should use)
     //printf("connect '%s'\n", SIGNAL(clicked()));
     QObject::connect(
@@ -66,6 +66,21 @@ public:
       this, SLOT(callback()));
   }
 
+  void delete_on_call(bool should_delete) {
+    delete_on_call_ = should_delete;
+  }
+
+  /** Simple event that should execute a callback on reception.
+   */
+  class Event : public QEvent
+  {
+    public:
+      Callback *callback_;
+
+      Event(Callback *clbk)
+        : QEvent(Callback::EventType),
+          callback_(clbk) {}
+  };
 public slots:
   void callback() {
     rubyk::ScopedLock lock(worker_);
@@ -81,11 +96,14 @@ public slots:
 
     // clear stack
     lua_settop(worker_->lua_, 0);
+
+    if (delete_on_call_) delete this;
   }
 
 private:
   rubyk::Worker *worker_;
-  int func_idx_;
+  int  func_idx_;
+  bool delete_on_call_;
 };
 
 } // mimas

@@ -41,6 +41,7 @@ namespace mimas {
 
 /** HBoxLayout (arrange widgets horizontally).
  *
+ * @dub lib_name:'HBoxLayout_core'
  */
 class HBoxLayout : public QHBoxLayout
 {
@@ -50,13 +51,9 @@ public:
 
   ~HBoxLayout() {}
 
-  void addWidget(PushButton *widget) {
+  void addWidget(QWidget *widget) {
     this->QHBoxLayout::addWidget(widget);
   }
-  
-  //void addWidget(Label *widget) {
-  //  this->QHBoxLayout::addWidget(widget);
-  //}
 };
 
 } // mimas

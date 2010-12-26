@@ -46,12 +46,20 @@ public:
 
   ~Widget() {}
 
+  QWidget *widget() {
+    return this;
+  }
+
   void resize(int w, int h) {
-    this->QWidget::resize(w, h);
+    QWidget::resize(w, h);
   }
 
   void show() {
-    this->QWidget::show();
+    QWidget::show();
+  }
+
+  void activateWindow() {
+    QWidget::activateWindow();
   }
 };
 

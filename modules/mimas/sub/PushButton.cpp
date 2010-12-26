@@ -60,11 +60,65 @@ static int PushButton__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
+/** QObject* mimas::PushButton::object()
+ * include/mimas/PushButton.h:56
+ */
+static int PushButton_object(lua_State *L) {
+  try {
+    PushButton *self__ = *((PushButton**)luaL_checkudata(L, 1, "mimas.PushButton"));
+    lua_remove(L, 1);
+    QObject * retval__ = self__->object();
+    lua_pushclass<QObject>(L, retval__, "mimas.QObject");
+    return 1;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("mimas.PushButton.object: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "mimas.PushButton.object: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
+}
+
+
+/** QWidget* mimas::PushButton::widget()
+ * include/mimas/PushButton.h:52
+ */
+static int PushButton_widget(lua_State *L) {
+  try {
+    PushButton *self__ = *((PushButton**)luaL_checkudata(L, 1, "mimas.PushButton"));
+    lua_remove(L, 1);
+    QWidget * retval__ = self__->widget();
+    lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
+    return 1;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("mimas.PushButton.widget: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "mimas.PushButton.widget: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
+}
+
+
 
 
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg PushButton_member_methods[] = {
+  {"object"            , PushButton_object},
+  {"widget"            , PushButton_widget},
   {"__tostring"        , PushButton__tostring},
   {"__gc"              , PushButton_destructor},
   {NULL, NULL},

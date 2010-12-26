@@ -49,6 +49,13 @@ public:
 
   ~PushButton() {}
 
+  QWidget *widget() {
+    return this;
+  }
+  
+  QObject *object() {
+    return this;
+  }
 };
 
 } // mimas

@@ -9,7 +9,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::Callback::Callback(rubyk::Worker *worker, int lua_func_idx)
- * include/mimas/Callback.h:49
+ * include/mimas/Callback.h:53
  */
 static int Callback_Callback(lua_State *L) {
   try {
@@ -61,16 +61,16 @@ static int Callback__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
-/** void mimas::Callback::connect(lua_State *L, const char *method)
- * include/mimas/Callback.h:56
+/** void mimas::Callback::connect(QObject *obj, const char *method)
+ * include/mimas/Callback.h:60
  */
 static int Callback_connect(lua_State *L) {
   try {
     Callback *self__ = *((Callback**)luaL_checkudata(L, 1, "mimas.Callback"));
     lua_remove(L, 1);
-    
+    QObject *obj = *((QObject **)luaL_checkudata(L, 1, "mimas.QObject"));
     const char *method = luaL_checkstring(L, 2);
-    self__->connect(L, method);
+    self__->connect(obj, method);
     return 0;
   } catch (std::exception &e) {
     std::string *s = new std::string("mimas.Callback.connect: ");
@@ -88,12 +88,39 @@ static int Callback_connect(lua_State *L) {
 }
 
 
+/** void mimas::Callback::delete_on_call(bool should_delete)
+ * include/mimas/Callback.h:68
+ */
+static int Callback_delete_on_call(lua_State *L) {
+  try {
+    Callback *self__ = *((Callback**)luaL_checkudata(L, 1, "mimas.Callback"));
+    lua_remove(L, 1);
+    bool should_delete = lua_toboolean(L, 1);
+    self__->delete_on_call(should_delete);
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("mimas.Callback.delete_on_call: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "mimas.Callback.delete_on_call: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
+}
+
+
 
 
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg Callback_member_methods[] = {
   {"connect"           , Callback_connect},
+  {"delete_on_call"    , Callback_delete_on_call},
   {"__tostring"        , Callback__tostring},
   {"__gc"              , Callback_destructor},
   {NULL, NULL},

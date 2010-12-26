@@ -1,24 +1,24 @@
 --[[------------------------------------------------------
 
-  test mDNS for Lua
-  -----------------
+  Basic tests for rubyk GUI
+  -------------------------
 
-  mDNS implementation with callbacks to integrate with
-  rubyk.
+  This tests multi-threading and event posting / triggering.
 
 --]]------------------------------------------------------
 require 'rubyk'
 
---local should = test.Suite('mimas')
---
---function should.create_empty_window()
+local should = test.Suite('mimas')
+
+function should.create_empty_window()
   local app = mimas.Application()
   local win = mimas.Widget()
+  local quit_called = false
   win:resize(320, 240)
 
   local layout = mimas.HBoxLayout(win)
-  --local label  = mimas.Label("Hello Mimas!")
-  --layout:addWidget(label)
+  local label  = mimas.Label("Hello Mimas!")
+  layout:addWidget(label)
 
   local quit_btn = mimas.PushButton("Quit")
 
@@ -27,21 +27,49 @@ require 'rubyk'
   -- callbacks (will make the whole thing easier
   -- and more portable).
   local callback = mimas.Callback(function()
-    print("quit ?")
+    quit_called = true
     app:quit()
   end)
 
   -- callback listens for quit_btn's clicked events.
-  callback:connect(quit_btn, '2clicked()')
+  callback:connect(quit_btn, 'clicked')
 
   layout:addWidget(quit_btn)
 
   local browser = mdns.Browser(rubyk.service_type, function(service)
-    label:setText(service.name)
+    -- FIXME: we are not in the GUI thread !
+    -- FIXME: how do we do this safely ?
+    app:post(function()
+      label:setText(service.name)
+    end)
   end)
 
+  local counter = 0
+  -- execute 100ms after app started
+  local timer = rk.Timer(1000, function()
+    counter = counter + 1
+    -- FIXME: we are not in the GUI thread !
+    -- FIXME: how do we do this safely ?
+    -- Is this a good solution ?
+    -- This implies
+    -- 1. An signal that emits a Callback pointer.
+    -- 2. A slot that executes the callback and deletes.
+    -- ==> Create/delete the callback all in C++
+    app:post(function()
+      label:setText(string.format("count: %i", counter))
+    end)
+    if counter >= 3 then
+      app:quit()
+      return 0
+    end
+    -- continue until 'timer' is gc or stopped.
+  end)
+  timer:start()
   win:show()
   app:exec()
---end
+  assert_true(quit_called or counter >= 3)
+  print("OK, OK...")
+end
 
---test.all()
+
+test.all()
