@@ -18,13 +18,19 @@ function mimas.Callback(func)
     -- access the metatable and rewrite the "connect" method.
     mt = getmetatable(instance)
     local connect = mt.connect
-    function mt.connect(self, other, meth)
-      if not string.match(meth, '\\(') then
-        meth = string.format("2%s()", meth)
+    function mt.connect(self, other, target)
+      local callback = nil
+      if string.match(target, '%(int%)') then
+        callback = '1callback(int)'
       else
-        meth = string.format("2%s", meth)
+        callback = '1callback()'
       end
-      connect(self, other:object(), meth)
+      if not string.match(target, '%(') then
+        target = string.format("2%s()", target)
+      else
+        target = string.format("2%s", target)
+      end
+      connect(self, other:object(), target, callback)
     end
   end
   return instance

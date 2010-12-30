@@ -26,39 +26,40 @@
 
   ==============================================================================
 */
-#ifndef RUBYK_INCLUDE_MIMAS_LABEL_H_
-#define RUBYK_INCLUDE_MIMAS_LABEL_H_
+#ifndef RUBYK_INCLUDE_MIMAS_V_BOX_LAYOUT_H_
+#define RUBYK_INCLUDE_MIMAS_V_BOX_LAYOUT_H_
 
 #include "rubyk.h"
-#include <QtGui/QLabel>
+#include <QtGui/QVBoxLayout>
 
 #include <iostream>
 
 namespace mimas {
 
-/** Label widget.
+/** VBoxLayout (arrange widgets vertically).
+ *
+ * @dub lib_name:'VBoxLayout_core'
  */
-class Label : public QLabel
+class VBoxLayout : public QVBoxLayout
 {
-  Q_OBJECT
+ Q_OBJECT
 public:
-  Label(const char *title = NULL)
-   : QLabel(title) {}
+  VBoxLayout(QWidget *widget) : QVBoxLayout(widget) {}
 
-  ~Label() {}
+  ~VBoxLayout() {}
 
-  void setText(const char *text) {
-    QLabel::setText(QString(text));
+  void addWidget(QWidget *widget) {
+    QVBoxLayout::addWidget(widget);
+  }
+  
+  void addLayout(QLayout *layout) {
+    QVBoxLayout::addLayout(layout);
   }
 
-  QWidget *widget() {
-    return this;
-  }
-
-  QObject *object() {
+  QLayout *layout() {
     return this;
   }
 };
 
 } // mimas
-#endif // RUBYK_INCLUDE_MIMAS_LABEL_H_
+#endif // RUBYK_INCLUDE_MIMAS_V_BOX_LAYOUT_H_

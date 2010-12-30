@@ -32,9 +32,6 @@
 #include "rubyk.h"
 #include <QtGui/QHBoxLayout>
 
-#include "mimas/PushButton.h"
-#include "mimas/Label.h"
-
 #include <iostream>
 
 namespace mimas {
@@ -47,12 +44,21 @@ class HBoxLayout : public QHBoxLayout
 {
  Q_OBJECT
 public:
-  HBoxLayout(Widget *widget) : QHBoxLayout(widget) {}
+  HBoxLayout(QWidget *parent)
+   : QHBoxLayout(parent) {}
 
   ~HBoxLayout() {}
 
   void addWidget(QWidget *widget) {
-    this->QHBoxLayout::addWidget(widget);
+    QHBoxLayout::addWidget(widget);
+  }
+  
+  void addLayout(QLayout *layout) {
+    QHBoxLayout::addLayout(layout);
+  }
+
+  QLayout *layout() {
+    return this;
   }
 };
 

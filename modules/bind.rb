@@ -46,7 +46,7 @@ end
   'rk'    => %w{Timer},
   'rubyk' => %w{Worker},
   'mdns'  => %w{Browser Registration},
-  'mimas' => %w{Application Callback HBoxLayout Label PushButton Widget},
+  'mimas' => %w{Application Callback HBoxLayout Label PushButton Slider VBoxLayout Widget},
   'zmq'   => {
     'class' => %w{SendSocket ReceiveSocket},
     'const' => true,

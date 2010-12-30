@@ -4,13 +4,15 @@
   -------------------------
 
   This tests multi-threading and event posting / triggering.
+  We cannot trigger these tests with other tests because Qt
+  does not like beeing started and stopped multiple times.
 
 --]]------------------------------------------------------
 require 'rubyk'
 
 local should = test.Suite('mimas')
 
-function should.create_empty_window()
+function should.post_to_gui_thread()
   local app = mimas.Application()
   local win = mimas.Widget()
   local quit_called = false
@@ -46,7 +48,7 @@ function should.create_empty_window()
 
   local counter = 0
   -- execute 100ms after app started
-  local timer = rk.Timer(1000, function()
+  local timer = rk.Timer(100, function()
     counter = counter + 1
     -- FIXME: we are not in the GUI thread !
     -- FIXME: how do we do this safely ?
@@ -69,6 +71,5 @@ function should.create_empty_window()
   app:exec()
   assert_true(quit_called or counter >= 3)
 end
-
 
 test.all()

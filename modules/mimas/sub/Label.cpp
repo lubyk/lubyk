@@ -60,6 +60,32 @@ static int Label__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
+/** QObject* mimas::Label::object()
+ * include/mimas/Label.h:58
+ */
+static int Label_object(lua_State *L) {
+  try {
+    Label *self__ = *((Label**)luaL_checkudata(L, 1, "mimas.Label"));
+    lua_remove(L, 1);
+    QObject * retval__ = self__->object();
+    lua_pushclass<QObject>(L, retval__, "mimas.QObject");
+    return 1;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("mimas.Label.object: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "mimas.Label.object: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
+}
+
+
 /** void mimas::Label::setText(const char *text)
  * include/mimas/Label.h:50
  */
@@ -117,6 +143,7 @@ static int Label_widget(lua_State *L) {
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg Label_member_methods[] = {
+  {"object"            , Label_object},
   {"setText"           , Label_setText},
   {"widget"            , Label_widget},
   {"__tostring"        , Label__tostring},

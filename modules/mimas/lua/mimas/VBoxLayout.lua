@@ -1,15 +1,15 @@
 --[[------------------------------------------------------
 
-  mimas.HBoxLayout
+  mimas.VBoxLayout
   ----------------
 
-  Horizontal layout of GUI widgets.
+  Vertical layout of GUI widgets.
 
 --]]------------------------------------------------------
-require 'mimas.HBoxLayout_core'
-local constr = mimas.HBoxLayout
+require 'mimas.VBoxLayout_core'
+local constr = mimas.VBoxLayout
 local mt = nil
-function mimas.HBoxLayout(parent)
+function mimas.VBoxLayout(parent)
   local instance = constr(parent:widget())
   if not mt then
     -- we have to wait for the first instance in order to

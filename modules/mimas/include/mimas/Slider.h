@@ -26,29 +26,39 @@
 
   ==============================================================================
 */
-#ifndef RUBYK_INCLUDE_MIMAS_LABEL_H_
-#define RUBYK_INCLUDE_MIMAS_LABEL_H_
+#ifndef RUBYK_INCLUDE_MIMAS_SLIDER_H_
+#define RUBYK_INCLUDE_MIMAS_SLIDER_H_
 
 #include "rubyk.h"
-#include <QtGui/QLabel>
+
+#include <QtGui/QSlider>
 
 #include <iostream>
 
+using namespace rubyk;
+
 namespace mimas {
 
-/** Label widget.
+/** Slider (async slider).
+ *
+ * @dub lib_name:'Slider_core'
  */
-class Label : public QLabel
+class Slider : public QSlider
 {
-  Q_OBJECT
+ Q_OBJECT
+
+ Worker *worker_;
 public:
-  Label(const char *title = NULL)
-   : QLabel(title) {}
+  Slider(rubyk::Worker *worker, int orientation = (int)Qt::Horizontal, QWidget *parent = 0)
+   : QSlider((Qt::Orientation)orientation, parent),
+     worker_(worker) {}
 
-  ~Label() {}
+  ~Slider() {}
 
-  void setText(const char *text) {
-    QLabel::setText(QString(text));
+  void setValue(int value) {
+    // we unlock in case the 'setValue' triggers a Callback
+    ScopedUnlock  unlock(worker_);
+    QSlider::setValue(value);
   }
 
   QWidget *widget() {
@@ -61,4 +71,4 @@ public:
 };
 
 } // mimas
-#endif // RUBYK_INCLUDE_MIMAS_LABEL_H_
+#endif // RUBYK_INCLUDE_MIMAS_SLIDER_H_

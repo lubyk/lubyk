@@ -36,6 +36,8 @@
 
 #include "mimas/PushButton.h"
 
+#include <string>
+
 namespace mimas {
 /** Calls a lua function back.
  *
@@ -58,12 +60,10 @@ public:
     luaL_unref(worker_->lua_, LUA_REGISTRYINDEX, func_idx_);
   }
 
-  void connect(QObject *obj, const char *method) {
-    // TODO: get remote method signature (defines which callback we should use)
-    //printf("connect '%s'\n", SIGNAL(clicked()));
+  void connect(QObject *obj, const char *method, const char *callback) {
     QObject::connect(
       obj,  method,
-      this, SLOT(callback()));
+      this, callback);
   }
 
   void delete_on_call(bool should_delete) {
@@ -83,19 +83,42 @@ public:
   };
 public slots:
   void callback() {
+    lua_State *L = worker_->lua_;
+
     rubyk::ScopedLock lock(worker_);
     // push LUA_REGISTRYINDEX on top
-    lua_rawgeti(worker_->lua_, LUA_REGISTRYINDEX, func_idx_);
+    lua_rawgeti(L, LUA_REGISTRYINDEX, func_idx_);
 
-    // push params...
+    // no params...
 
-    int status = lua_pcall(worker_->lua_, 0, 0, 0);
+    int status = lua_pcall(L, 0, 0, 0);
     if (status) {
-      printf("Error in receive callback: %s\n", lua_tostring(worker_->lua_, -1));
+      printf("Error in receive callback: %s\n", lua_tostring(L, -1));
     }
 
     // clear stack
-    lua_settop(worker_->lua_, 0);
+    lua_settop(L, 0);
+
+    if (delete_on_call_) delete this;
+  }
+
+  void callback(int value) {
+    lua_State *L = worker_->lua_;
+
+    rubyk::ScopedLock lock(worker_);
+    // push LUA_REGISTRYINDEX on top
+    lua_rawgeti(L, LUA_REGISTRYINDEX, func_idx_);
+
+    // 1 number param
+    lua_pushnumber(L, value);
+
+    int status = lua_pcall(L, 1, 0, 0);
+    if (status) {
+      printf("Error in receive callback(int): %s\n", lua_tostring(L, -1));
+    }
+
+    // clear stack
+    lua_settop(L, 0);
 
     if (delete_on_call_) delete this;
   }

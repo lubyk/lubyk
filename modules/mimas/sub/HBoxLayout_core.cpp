@@ -8,13 +8,13 @@ using namespace mimas;
 
 /* ============================ Constructors     ====================== */
 
-/** mimas::HBoxLayout::HBoxLayout(Widget *widget)
- * include/mimas/HBoxLayout.h:50
+/** mimas::HBoxLayout::HBoxLayout(QWidget *parent)
+ * include/mimas/HBoxLayout.h:48
  */
 static int HBoxLayout_HBoxLayout(lua_State *L) {
   try {
-    Widget *widget = *((Widget **)luaL_checkudata(L, 1, "mimas.Widget"));
-    HBoxLayout * retval__ = new HBoxLayout(widget);
+    QWidget *parent = *((QWidget **)luaL_checkudata(L, 1, "mimas.QWidget"));
+    HBoxLayout * retval__ = new HBoxLayout(parent);
     lua_pushclass<HBoxLayout>(L, retval__, "mimas.HBoxLayout");
     return 1;
   } catch (std::exception &e) {
@@ -54,8 +54,34 @@ static int HBoxLayout__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
+/** void mimas::HBoxLayout::addLayout(QLayout *layout)
+ * include/mimas/HBoxLayout.h:56
+ */
+static int HBoxLayout_addLayout(lua_State *L) {
+  try {
+    HBoxLayout *self__ = *((HBoxLayout**)luaL_checkudata(L, 1, "mimas.HBoxLayout"));
+    lua_remove(L, 1);
+    QLayout *layout = *((QLayout **)luaL_checkudata(L, 1, "mimas.QLayout"));
+    self__->addLayout(layout);
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("mimas.HBoxLayout.addLayout: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "mimas.HBoxLayout.addLayout: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
+}
+
+
 /** void mimas::HBoxLayout::addWidget(QWidget *widget)
- * include/mimas/HBoxLayout.h:54
+ * include/mimas/HBoxLayout.h:52
  */
 static int HBoxLayout_addWidget(lua_State *L) {
   try {
@@ -80,12 +106,40 @@ static int HBoxLayout_addWidget(lua_State *L) {
 }
 
 
+/** QLayout* mimas::HBoxLayout::layout()
+ * include/mimas/HBoxLayout.h:60
+ */
+static int HBoxLayout_layout(lua_State *L) {
+  try {
+    HBoxLayout *self__ = *((HBoxLayout**)luaL_checkudata(L, 1, "mimas.HBoxLayout"));
+    lua_remove(L, 1);
+    QLayout * retval__ = self__->layout();
+    lua_pushclass<QLayout>(L, retval__, "mimas.QLayout");
+    return 1;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("mimas.HBoxLayout.layout: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "mimas.HBoxLayout.layout: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
+}
+
+
 
 
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg HBoxLayout_member_methods[] = {
+  {"addLayout"         , HBoxLayout_addLayout},
   {"addWidget"         , HBoxLayout_addWidget},
+  {"layout"            , HBoxLayout_layout},
   {"__tostring"        , HBoxLayout__tostring},
   {"__gc"              , HBoxLayout_destructor},
   {NULL, NULL},

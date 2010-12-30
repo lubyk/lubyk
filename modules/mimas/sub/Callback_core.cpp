@@ -9,7 +9,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::Callback::Callback(rubyk::Worker *worker, int lua_func_idx)
- * include/mimas/Callback.h:53
+ * include/mimas/Callback.h:56
  */
 static int Callback_Callback(lua_State *L) {
   try {
@@ -61,8 +61,8 @@ static int Callback__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
-/** void mimas::Callback::connect(QObject *obj, const char *method)
- * include/mimas/Callback.h:60
+/** void mimas::Callback::connect(QObject *obj, const char *method, const char *callback)
+ * include/mimas/Callback.h:63
  */
 static int Callback_connect(lua_State *L) {
   try {
@@ -70,7 +70,8 @@ static int Callback_connect(lua_State *L) {
     lua_remove(L, 1);
     QObject *obj = *((QObject **)luaL_checkudata(L, 1, "mimas.QObject"));
     const char *method = luaL_checkstring(L, 2);
-    self__->connect(obj, method);
+    const char *callback = luaL_checkstring(L, 3);
+    self__->connect(obj, method, callback);
     return 0;
   } catch (std::exception &e) {
     std::string *s = new std::string("mimas.Callback.connect: ");
@@ -89,7 +90,7 @@ static int Callback_connect(lua_State *L) {
 
 
 /** void mimas::Callback::delete_on_call(bool should_delete)
- * include/mimas/Callback.h:68
+ * include/mimas/Callback.h:69
  */
 static int Callback_delete_on_call(lua_State *L) {
   try {
