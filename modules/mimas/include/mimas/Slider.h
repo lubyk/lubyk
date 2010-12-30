@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the RUBYK project (http://rubyk.org)
-   Copyright (c) 2007-2011 by Gaspard Bucher - Buma (http://teti.ch).
+   Copyright (c) 2007-2011 by Gaspard Bucher (http://teti.ch).
 
   ------------------------------------------------------------------------------
 
@@ -43,22 +43,41 @@ namespace mimas {
  *
  * @dub lib_name:'Slider_core'
  */
-class Slider : public QSlider
+class Slider : public QWidget
 {
- Q_OBJECT
-
- Worker *worker_;
+  Q_OBJECT
+  Q_PROPERTY(double value_ READ value WRITE setValue)
+  Q_PROPERTY(QColor color_ READ color WRITE setColor)
+  
+  Worker *worker_;
+  double value_;
+  QColor color_;
 public:
   Slider(rubyk::Worker *worker, int orientation = (int)Qt::Horizontal, QWidget *parent = 0)
    : QSlider((Qt::Orientation)orientation, parent),
      worker_(worker) {}
 
   ~Slider() {}
-
-  void setValue(int value) {
+  
+  QColor color() const {
+    return color_;
+  }
+  
+  void setColor(const QColor &color) {
+    color_ = color;
+  }
+  
+  double value() const {
+    return value_;
+  }
+  
+  void setValue(double value) {
     // we unlock in case the 'setValue' triggers a Callback
+    // FIXME: this looks like a HACK: what happens if the unlock code
+    // gets fired through a gui --> setValue ? We should move this into
+    // the bindings...
     ScopedUnlock  unlock(worker_);
-    QSlider::setValue(value);
+    value_ = value;
   }
 
   QWidget *widget() {
@@ -68,6 +87,10 @@ public:
   QObject *object() {
     return this;
   }
+protected:
+  void mousePressEvent(QMouseEvent *event);
+  void mouseMoveEvent(QMouseEvent *event);
+  void paintEvent(QPaintEvent *event);
 };
 
 } // mimas

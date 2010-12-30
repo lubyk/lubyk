@@ -1,8 +1,8 @@
 /*
   ==============================================================================
 
-   This file is part of the OSCIT library (http://rubyk.org/liboscit)
-   Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
+   This file is part of the RUBYK project (http://rubyk.org)
+   Copyright (c) 2007-2011 by Gaspard Bucher (http://teti.ch).
 
   ------------------------------------------------------------------------------
 

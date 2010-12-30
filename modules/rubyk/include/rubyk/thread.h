@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the RUBYK library (http://rubyk.org)
-   Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
+   Copyright (c) 2007-2011 by Gaspard Bucher (http://teti.ch).
 
   ------------------------------------------------------------------------------
 
