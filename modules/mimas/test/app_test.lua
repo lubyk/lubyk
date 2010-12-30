@@ -68,7 +68,6 @@ function should.create_empty_window()
   win:show()
   app:exec()
   assert_true(quit_called or counter >= 3)
-  print("OK, OK...")
 end
 
 

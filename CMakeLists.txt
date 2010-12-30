@@ -21,7 +21,7 @@ if(UNIX)
     add_definitions(-D__MACOSX_CORE__)
     # CoreFoundation needed by Midi and cannot be added in dylib
     set(PLAT_LINK "-all_load -flat_namespace -lreadline -framework Accelerate -framework CoreFoundation -framework OpenGL -framework GLUT -framework Cocoa -lobjc") # -framework Cocoa -lobjc ===> planet_gui.mm
-    set(PLAT_OBJ_FLAGS "-flat_namespace -undefined suppress -dynamic -bundle")
+    set(PLAT_OBJ_FLAGS "-flat_namespace -undefined suppress -dynamic -bundle -fPIC")
 
     # set(CMAKE_CXX_FLAGS "-mmacosx-version-min=10.6 -g -Wall")
     set(CMAKE_CXX_FLAGS "-g -Wall")
@@ -33,7 +33,7 @@ if(UNIX)
     set(CMAKE_CXX_FLAGS "-g -Wall")
     add_definitions(-D__LINUX_ALSASEQ__)
     set(PLAT_LINK "-lavahi-client -lrt -lreadline -lasound")
-    set(PLAT_OBJ_FLAGS "${PLAT_LINK} -dynamic")
+    set(PLAT_OBJ_FLAGS "${PLAT_LINK} -dynamic -fPIC")
   endif(APPLE)
 else(UNIX)
   if(WIN32)
@@ -101,4 +101,3 @@ add_subdirectory(modules)
 # ==============================================================================
 add_custom_target(test_all ALL cd .. && ./rtest)
 add_dependencies (test_all modules)
-
