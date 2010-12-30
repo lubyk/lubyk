@@ -77,7 +77,7 @@ function should.publish_and_subscribe()
 end
 
 function should.publish_and_subscribe_many()
-  local sender   = zmq.Publish("tcp://*:4458")
+  local sender   = zmq.Publisher("tcp://*:4458")
   local received = 0
   local function receive_callback(message)
     received = received + 1

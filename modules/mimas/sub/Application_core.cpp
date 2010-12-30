@@ -9,7 +9,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::Application::Application(rubyk::Worker *worker)
- * include/mimas/Application.h:60
+ * include/mimas/Application.h:62
  */
 static int Application_Application(lua_State *L) {
   try {
@@ -55,7 +55,7 @@ static int Application__tostring(lua_State *L) {
 
 
 /** int mimas::Application::exec()
- * include/mimas/Application.h:66
+ * include/mimas/Application.h:68
  */
 static int Application_exec(lua_State *L) {
   try {
@@ -81,7 +81,7 @@ static int Application_exec(lua_State *L) {
 
 
 /** void mimas::Application::post(int lua_func_idx)
- * include/mimas/Application.h:72
+ * include/mimas/Application.h:74
  */
 static int Application_post(lua_State *L) {
   try {
@@ -113,7 +113,7 @@ static int Application_post(lua_State *L) {
 
 
 /** void mimas::Application::quit()
- * include/mimas/Application.h:78
+ * include/mimas/Application.h:80
  */
 static int Application_quit(lua_State *L) {
   try {

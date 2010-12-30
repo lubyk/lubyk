@@ -8,23 +8,22 @@ using namespace mimas;
 
 /* ============================ Constructors     ====================== */
 
-/** mimas::Slider::Slider(rubyk::Worker *worker, int orientation=(int) Qt::Horizontal, QWidget *parent=0)
- * include/mimas/Slider.h:54
+/** mimas::Slider::Slider(int type=(int) VerticalSliderType, QWidget *parent=0)
+ * include/mimas/Slider.h:68
  */
 static int Slider_Slider(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     Slider * retval__;
-    rubyk::Worker *worker = *((rubyk::Worker **)luaL_checkudata(L, 1, "rubyk.Worker"));
-    if (top__ < 2) {
-      retval__ = new Slider(worker);
+    if (top__ < 1) {
+      retval__ = new Slider();
     } else {
-      int orientation = luaL_checkint(L, 2);
-      if (top__ < 3) {
-        retval__ = new Slider(worker, orientation);
+      int type = luaL_checkint(L, 1);
+      if (top__ < 2) {
+        retval__ = new Slider(type);
       } else {
-        QWidget *parent = *((QWidget **)luaL_checkudata(L, 3, "mimas.QWidget"));
-        retval__ = new Slider(worker, orientation, parent);
+        QWidget *parent = *((QWidget **)luaL_checkudata(L, 2, "mimas.QWidget"));
+        retval__ = new Slider(type, parent);
       }
     }
     lua_pushclass<Slider>(L, retval__, "mimas.Slider");
@@ -67,7 +66,7 @@ static int Slider__tostring(lua_State *L) {
 
 
 /** QObject* mimas::Slider::object()
- * include/mimas/Slider.h:68
+ * include/mimas/Slider.h:76
  */
 static int Slider_object(lua_State *L) {
   try {
@@ -92,15 +91,41 @@ static int Slider_object(lua_State *L) {
 }
 
 
-/** void mimas::Slider::setValue(int value)
- * include/mimas/Slider.h:58
+/** void mimas::Slider::setHue(int hue)
+ * include/mimas/Slider.h:80
+ */
+static int Slider_setHue(lua_State *L) {
+  try {
+    Slider *self__ = *((Slider**)luaL_checkudata(L, 1, "mimas.Slider"));
+    lua_remove(L, 1);
+    int hue = luaL_checkint(L, 1);
+    self__->setHue(hue);
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("mimas.Slider.setHue: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "mimas.Slider.setHue: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
+}
+
+
+/** void mimas::Slider::setValue(double remote_value)
+ * include/mimas/Slider.h:96
  */
 static int Slider_setValue(lua_State *L) {
   try {
     Slider *self__ = *((Slider**)luaL_checkudata(L, 1, "mimas.Slider"));
     lua_remove(L, 1);
-    int value = luaL_checkint(L, 1);
-    self__->setValue(value);
+    double remote_value = luaL_checknumber(L, 1);
+    self__->setValue(remote_value);
     return 0;
   } catch (std::exception &e) {
     std::string *s = new std::string("mimas.Slider.setValue: ");
@@ -118,8 +143,34 @@ static int Slider_setValue(lua_State *L) {
 }
 
 
+/** virtual QSize mimas::Slider::sizeHint() const 
+ * include/mimas/Slider.h:84
+ */
+static int Slider_sizeHint(lua_State *L) {
+  try {
+    Slider *self__ = *((Slider**)luaL_checkudata(L, 1, "mimas.Slider"));
+    lua_remove(L, 1);
+    QSize  retval__ = self__->sizeHint();
+    lua_pushclass<QSize>(L, retval__, "mimas.QSize");
+    return 1;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("mimas.Slider.sizeHint: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "mimas.Slider.sizeHint: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
+}
+
+
 /** QWidget* mimas::Slider::widget()
- * include/mimas/Slider.h:64
+ * include/mimas/Slider.h:72
  */
 static int Slider_widget(lua_State *L) {
   try {
@@ -150,7 +201,9 @@ static int Slider_widget(lua_State *L) {
 
 static const struct luaL_Reg Slider_member_methods[] = {
   {"object"            , Slider_object},
+  {"setHue"            , Slider_setHue},
   {"setValue"          , Slider_setValue},
+  {"sizeHint"          , Slider_sizeHint},
   {"widget"            , Slider_widget},
   {"__tostring"        , Slider__tostring},
   {"__gc"              , Slider_destructor},
@@ -162,6 +215,14 @@ static const struct luaL_Reg Slider_namespace_methods[] = {
   {NULL, NULL},
 };
 
+
+static const struct lua_constants_Reg Slider_namespace_constants[] = {
+  {"DefaultWidth"      , mimas::Slider::DefaultWidth},
+  {"DefaultHeight"     , mimas::Slider::DefaultHeight},
+  {"HorizontalSliderType", mimas::Slider::HorizontalSliderType},
+  {"VerticalSliderType", mimas::Slider::VerticalSliderType},
+  {NULL, NULL},
+};
 
 
 #ifdef DUB_LUA_NO_OPEN
@@ -182,6 +243,9 @@ extern "C" int luaopen_mimas_Slider_core(lua_State *L) {
   // register class methods in a global namespace table
   luaL_register(L, "mimas", Slider_namespace_methods);
 
+
+  // register class enums
+  register_constants(L, "mimas.Slider_const", Slider_namespace_constants);
 
 	return 1;
 }

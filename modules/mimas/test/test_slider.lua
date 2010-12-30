@@ -49,9 +49,8 @@ function should.sync_two_sliders()
   local app = mimas.Application()
   local win = mimas.Widget()
   local quit_called = false
-  win:resize(320, 240)
 
-  local layout = mimas.VBoxLayout(win)
+  local layout = mimas.HBoxLayout(win)
   local label  = mimas.Label("Move to zero to quit...")
   layout:addWidget(label)
 
@@ -72,14 +71,14 @@ function should.sync_two_sliders()
 
   local callback2 = mimas.Callback(function(value)
     slider1:setValue(value)
-    label:setText(string.format('value: %i', value))
+    label:setText(string.format('value: %f', value))
   end)
 
   -- callback listens for quit_btn's clicked events.
-  callback1:connect(slider1, 'valueChanged(int)')
+  callback1:connect(slider1, 'valueChanged(double)')
 
   -- callback listens for quit_btn's clicked events.
-  callback2:connect(slider2, 'valueChanged(int)')
+  callback2:connect(slider2, 'valueChanged(double)')
 
   win:show()
   app:exec()

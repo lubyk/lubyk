@@ -102,6 +102,27 @@ public slots:
     if (delete_on_call_) delete this;
   }
 
+  void callback(double value) {
+    lua_State *L = worker_->lua_;
+
+    rubyk::ScopedLock lock(worker_);
+    // push LUA_REGISTRYINDEX on top
+    lua_rawgeti(L, LUA_REGISTRYINDEX, func_idx_);
+
+    // 1 number param
+    lua_pushnumber(L, value);
+
+    int status = lua_pcall(L, 1, 0, 0);
+    if (status) {
+      printf("Error in receive callback(double): %s\n", lua_tostring(L, -1));
+    }
+
+    // clear stack
+    lua_settop(L, 0);
+
+    if (delete_on_call_) delete this;
+  }
+
   void callback(int value) {
     lua_State *L = worker_->lua_;
 

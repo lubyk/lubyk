@@ -26,8 +26,20 @@
 
   ==============================================================================
 */
-#include "rubyk/lua.h"
-#include "rubyk/worker.h"
-#include "rubyk/lua_callback.h"
 
-typedef double Real;
+#include "mimas/Widget.h"
+
+#define SLIDER_BORDER_WIDTH 2
+
+namespace mimas {
+
+// Widget::paintEvent is in paint.cpp
+
+void Widget::setHue(float hue) {
+  hue_ = (hue < 0 || hue >= 360) ? 0 : hue;
+  //                    hue   sat   bri  alpha
+  border_color_.setHsv( hue_, 255,  255, 255);
+  fill_color_.setHsv(   hue_, 127,  127, 255);
+}
+
+} // mimas

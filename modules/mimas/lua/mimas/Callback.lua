@@ -20,7 +20,9 @@ function mimas.Callback(func)
     local connect = mt.connect
     function mt.connect(self, other, target)
       local callback = nil
-      if string.match(target, '%(int%)') then
+      if string.match(target, '%(double%)') then
+        callback = '1callback(double)'
+      elseif string.match(target, '%(int%)') then
         callback = '1callback(int)'
       else
         callback = '1callback()'

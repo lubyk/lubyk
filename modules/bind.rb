@@ -65,6 +65,7 @@ end
   # ==============================================================================
   (opts['class'] || {}).each do |class_name, definitions|
     klass = namespace[class_name]
+
     if not klass
       puts "Could not find xml for #{class_name}"
       next

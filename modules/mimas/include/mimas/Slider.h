@@ -31,6 +31,9 @@
 
 #include "rubyk.h"
 
+#include "mimas/RangeWidget.h"
+#include "mimas/Widget.h"
+
 #include <QtGui/QSlider>
 
 #include <iostream>
@@ -43,42 +46,28 @@ namespace mimas {
  *
  * @dub lib_name:'Slider_core'
  */
-class Slider : public QWidget
+class Slider : public Widget
 {
   Q_OBJECT
-  Q_PROPERTY(double value_ READ value WRITE setValue)
-  Q_PROPERTY(QColor color_ READ color WRITE setColor)
-  
-  Worker *worker_;
-  double value_;
-  QColor color_;
+
 public:
-  Slider(rubyk::Worker *worker, int orientation = (int)Qt::Horizontal, QWidget *parent = 0)
-   : QSlider((Qt::Orientation)orientation, parent),
-     worker_(worker) {}
+
+  enum Defaults {
+    DefaultWidth  = 30,
+    DefaultHeight = 150
+  };
+
+  enum SliderType {
+    HorizontalSliderType = 1,
+    VerticalSliderType = 2,
+  };
+
+
+  Slider(int type = (int)VerticalSliderType, QWidget *parent = 0)
+   : slider_type_((SliderType)type),
+     range_(this) {}
 
   ~Slider() {}
-  
-  QColor color() const {
-    return color_;
-  }
-  
-  void setColor(const QColor &color) {
-    color_ = color;
-  }
-  
-  double value() const {
-    return value_;
-  }
-  
-  void setValue(double value) {
-    // we unlock in case the 'setValue' triggers a Callback
-    // FIXME: this looks like a HACK: what happens if the unlock code
-    // gets fired through a gui --> setValue ? We should move this into
-    // the bindings...
-    ScopedUnlock  unlock(worker_);
-    value_ = value;
-  }
 
   QWidget *widget() {
     return this;
@@ -87,10 +76,44 @@ public:
   QObject *object() {
     return this;
   }
+
+  void setHue(int hue) {
+    Widget::setHue(hue);
+  }
+
+  virtual QSize sizeHint() const {
+    if (slider_type_ == VerticalSliderType) {
+      return QSize(DefaultWidth, DefaultHeight);
+    } else {
+      return QSize(DefaultHeight, DefaultWidth);
+    }
+  }
+
+public slots:
+  /** Update slider when remote changes.
+   * This is called by zmq when it receives a value change notification.
+   */
+  void setValue(double remote_value) {
+    if (range_.setValue(remote_value)) {
+      update();
+    }
+  }
+
+signals:
+
+  /** Emit when the user drags and changes the value.
+   */
+  void valueChanged(double);
+
 protected:
-  void mousePressEvent(QMouseEvent *event);
-  void mouseMoveEvent(QMouseEvent *event);
-  void paintEvent(QPaintEvent *event);
+  virtual void mousePressEvent(QMouseEvent *event);
+  virtual void mouseMoveEvent(QMouseEvent *event);
+  virtual void mouseReleaseEvent(QMouseEvent* event);
+  virtual void paintEvent(QPaintEvent *event);
+
+private:
+  SliderType slider_type_;
+  RangeWidget range_;
 };
 
 } // mimas

@@ -26,8 +26,36 @@
 
   ==============================================================================
 */
-#include "rubyk/lua.h"
-#include "rubyk/worker.h"
-#include "rubyk/lua_callback.h"
 
-typedef double Real;
+#include "mimas/Slider.h"
+
+#include <QMouseEvent>
+
+#define SLIDER_BORDER_WIDTH 2
+
+namespace mimas {
+
+// Slider::paintEvent is in paint.cpp
+
+void Slider::mousePressEvent(QMouseEvent *event) {
+  range_.setDragged(true);
+}
+
+void Slider::mouseMoveEvent(QMouseEvent *event) {
+  if (range_.isDragged()) {
+    if (slider_type_ == HorizontalSliderType) {
+      if (range_.setPosition(event->x(), width()))
+        emit valueChanged(range_.value());
+    } else {
+      if (range_.setPosition(height() - event->y(), height()))
+        emit valueChanged(range_.value());
+    }
+    update();
+  }
+}
+
+void Slider::mouseReleaseEvent(QMouseEvent* event) {
+  range_.setDragged(false);
+}
+
+} // mimas

@@ -41,8 +41,10 @@ namespace mimas {
 class Widget : public QWidget
 {
   Q_OBJECT
+
 public:
-  Widget() {}
+  Widget()
+   : hue_(80.0f) {}
 
   ~Widget() {}
 
@@ -61,6 +63,27 @@ public:
   void activateWindow() {
     QWidget::activateWindow();
   }
+
+  /** Set widget color.
+   */
+  void setHue(float hue);
+
+protected:
+  //virtual void mousePressEvent(QMouseEvent *event);
+  //virtual void mouseMoveEvent(QMouseEvent *event);
+  //virtual void paintEvent(QPaintEvent *event);
+
+  /** The component's color.
+   */
+  float hue_;
+
+  /** Cached border color.
+   */
+  QColor border_color_;
+
+  /** Cached fill color.
+   */
+  QColor fill_color_;
 };
 
 } // mimas

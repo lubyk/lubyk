@@ -18,7 +18,7 @@ function should.post_to_gui_thread()
   local quit_called = false
   win:resize(320, 240)
 
-  local layout = mimas.HBoxLayout(win)
+  local layout = mimas.VBoxLayout(win)
   local label  = mimas.Label("Hello Mimas!")
   layout:addWidget(label)
 
