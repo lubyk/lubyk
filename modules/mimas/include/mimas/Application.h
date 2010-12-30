@@ -40,8 +40,10 @@ using namespace rubyk;
 
 namespace mimas {
 
-static char app_name[] = "mimas";
-static char *app_argv[] = {&app_name[0], NULL};
+static char arg0[] = "mimas";
+static char arg1[] = "-style";
+static char arg2[] = "Plastique";
+static char *app_argv[] = {&arg0[0], &arg1[0], &arg2[0], NULL};
 static int   app_argc   = (int)(sizeof(app_argv) / sizeof(app_argv[0])) - 1;
 
 /** Application (starts the GUI and manages the event loop).

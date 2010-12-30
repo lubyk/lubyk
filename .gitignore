@@ -11,3 +11,5 @@ ideas
 *.pch
 build
 lib
+zcpp/doc/prototypes/test
+vendor
