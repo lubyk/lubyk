@@ -227,7 +227,11 @@ int msgpack_zmq_to_lua(lua_State *L, zmq_msg_t *msg) {
     luaL_error(L, "Could not unpack zmq message...");
     return 0;
   }
-
+#if 0
+  printf("Receiving..: ");
+  msgpack_object_print(stdout, obj);
+  printf("\n");
+#endif
   // true = array_as_arglist
   int arg_count = unpack_object(L, &obj, true);
 

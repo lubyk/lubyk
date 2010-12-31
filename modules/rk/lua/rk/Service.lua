@@ -17,7 +17,7 @@ rk.Service  = lib
 local port_nb = 7000
 setmetatable(lib, {
   -- new method
- __call = function(table, name, service_type, callback)
+ __call = function(table, name, service_type, callback, port)
   if not callback then
     callback = service_type
     service_type = rubyk.service_type
@@ -29,7 +29,7 @@ setmetatable(lib, {
   local instance = {name = name, browser = rk.ServiceBrowser(service_type), callback = callback, connections = {}}
 
   port_nb = port_nb + 1
-  instance.port = port_nb
+  instance.port = port or port_nb
 
   -- receives zmq packets
   instance.receiver = zmq.Subscriber(function(message)
@@ -39,9 +39,9 @@ setmetatable(lib, {
 
   -- sends zmq packets
   port_nb = port_nb + 1
-  instance.publisher = zmq.Publisher(string.format("tcp://*:%i", port_nb))
+  instance.publisher = zmq.Publisher(string.format("tcp://*:%i", (port or port_nb) + 1))
   -- announce publisher
-  instance.registration = mdns.Registration(service_type, name, port_nb)
+  instance.registration = mdns.Registration(service_type, name, (port or port_nb) + 1)
 
   setmetatable(instance, lib)
   return instance

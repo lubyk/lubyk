@@ -82,37 +82,6 @@ function should.sync_two_sliders()
   win:show()
 end
 
-
-function should.sync_slider_with_remote()
-  local win = mimas.Widget()
-  win:move(100, 400)
-
-  local layout = mimas.VBoxLayout(win)
-  local label  = mimas.Label("Start 'Venus' service")
-  layout:addWidget(label)
-
-  local slider = mimas.Slider(mimas.Vertical)
-  slider:setValue(50)
-  layout:addWidget(slider)
-
-  local service = rk.Service('Mimas', function(self, message)
-    slider:setValue(message)
-  end)
-
-  -- Mimas listens to messages from planet Saturn
-  service:connect('Saturn')
-
-  local callback = mimas.Callback(function(value)
-    service:send(value)
-  end)
-
-  -- callback listens for slider's valueChanged and
-  -- sends notifications
-  callback:connect(slider, 'valueChanged(double)')
-
-  win:show()
-end
-
 app:post(function()
   test.all()
 end)
