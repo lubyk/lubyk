@@ -36,6 +36,8 @@
 #include <string.h>
 #include <stdio.h>
 
+static void pack_lua(lua_State *L, msgpack_packer *pk, int index);
+
 static void free_msgpack_msg(void *data, void *buffer) {
   msgpack_sbuffer_free((msgpack_sbuffer*)buffer);
 }
@@ -50,6 +52,41 @@ inline void pack_string(lua_State *L, msgpack_packer *pk, int index) {
   }
   msgpack_pack_raw(pk, sz);
   msgpack_pack_raw_body(pk, str, sz);
+}
+
+inline void pack_array(lua_State *L, msgpack_packer *pk, int index, size_t sz) {
+  msgpack_pack_array(pk, sz);
+
+  size_t i;
+  for (i = 1; i <= sz; ++i) {
+    lua_rawgeti(L, index, i);
+    pack_lua(L, pk, -1);
+    lua_pop(L, 1);
+  }
+}
+
+inline void pack_hash(lua_State *L, msgpack_packer *pk, int index) {
+  size_t sz = 0;
+  // get hash size
+  for(lua_pushnil(L); lua_next(L, index) != 0; lua_pop(L, 1)) ++sz;
+
+  msgpack_pack_map(pk, sz);
+
+  for(lua_pushnil(L); lua_next(L, index) != 0; lua_pop(L, 1)) {
+    // push key
+    pack_lua(L, pk, -2);
+    // push value
+    pack_lua(L, pk, -1);
+  }
+}
+
+inline void pack_table(lua_State *L, msgpack_packer *pk, int index) {
+  size_t sz = lua_objlen(L, index);
+  if (sz > 0) {
+    pack_array(L, pk, index, sz);
+  } else {
+    pack_hash(L, pk, index);
+  }
 }
 
 static void pack_lua(lua_State *L, msgpack_packer *pk, int index) {
@@ -72,8 +109,8 @@ static void pack_lua(lua_State *L, msgpack_packer *pk, int index) {
     msgpack_pack_nil(pk);
     return;
   case LUA_TTABLE:
-    //  packTable(pk, index);
-    //  break;
+    pack_table(L, pk, index);
+    return;
   case LUA_TUSERDATA:
     // TODO: support serialization (trying __serialize method?)
     // memory leak (msgpack_packer and buffer not freed if we use luaL_error)
@@ -85,9 +122,8 @@ static void pack_lua(lua_State *L, msgpack_packer *pk, int index) {
   }
 }
 
-
 static int unpack_object(lua_State *L, msgpack_object *o, bool array_as_arglist) {
-  
+
   switch(o->type) {
 	case MSGPACK_OBJECT_NIL:
     lua_pushnil(L);
@@ -131,29 +167,20 @@ static int unpack_object(lua_State *L, msgpack_object *o, bool array_as_arglist)
         unpack_object(L, o->via.array.ptr + i, false);
         lua_rawseti(L, tbl_pos, i + 1);
       }
-      return sz;
+      return 1;
     }
-
-
-	//case MSGPACK_OBJECT_MAP:
-	//	fprintf(out, "{");
-	//	if(o->via.map.size != 0) {
-	//		msgpack_object_kv* p = o->via.map.ptr;
-	//		msgpack_object_print(out, p->key);
-	//		fprintf(out, "=>");
-	//		msgpack_object_print(out, p->val);
-	//		++p;
-	//		msgpack_object_kv* const pend = o->via.map.ptr + o->via.map.size;
-	//		for(; p < pend; ++p) {
-	//			fprintf(out, ", ");
-	//			msgpack_object_print(out, p->key);
-	//			fprintf(out, "=>");
-	//			msgpack_object_print(out, p->val);
-	//		}
-	//	}
-	//	fprintf(out, "}");
-	//	break;
-
+	case MSGPACK_OBJECT_MAP:
+    lua_newtable(L);
+    size_t tbl_pos = lua_gettop(L);
+    size_t i  = 0;
+    size_t sz = o->via.array.size;
+    for (i = 0; i < sz; ++i) {
+  	 	msgpack_object_kv *key_value = o->via.map.ptr + i;
+      unpack_object(L, &key_value->key, false);
+      unpack_object(L, &key_value->val, false);
+      lua_rawset(L, tbl_pos);
+    }
+    return 1;
 	default:
     fprintf(stderr, "Unknown type in msg packet (%hu).\n", o->type);
     return 0;

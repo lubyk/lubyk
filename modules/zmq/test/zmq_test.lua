@@ -73,7 +73,12 @@ function should.send_and_receive()
   send_and_receive(1, {1, 2, 3})
 
   send_and_receive(1, {1, 2, {4, 5}})
+
+  send_and_receive("1", {1, "zombie", {4.44, 5}})
+
   -- hash
+  send_and_receive("/one/two", {one=2, three="four"})
+
   -- multi values
   send_and_receive(1,2,3)
   send_and_receive("/amp/gain", 3.5)
