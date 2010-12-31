@@ -60,7 +60,7 @@ function should.post_to_gui_thread()
     app:post(function()
       label:setText(string.format("count: %i", counter))
     end)
-    if counter >= 3g then
+    if counter >= 3 then
       app:quit()
       return 0
     end

@@ -3,39 +3,23 @@
   zmq for Lua
   -----------
 
-  zmq with callbacks to integrate with rubyk.
+  zmq using msgpack to send/receive packets. The API is
+  slightly different from ØMQ because of the callback
+  nature of Rubyk bindings.
 
 --]]------------------------------------------------------
 require 'rubyk'
 
--- zmq + mDNS = rk.Service
--- service = rk.Service("This is my name", "_rubyk._tcp", function(message)
---   print('Received', message)
--- end)
-
--- Url based slot:
--- service = rk.Service("This is my name", "_rubyk._tcp")
-
--- slot = service:slot("/some/url", function(message)
---   -- do something with message
---   return 343 ?
---   notify ?
--- end)
-
--- signal = rk.Signal(service) -- uses service for network connections
--- signal:connect("Other service", "/other/url")
--- signal:connect("/local/url")
--- signal:emit(4.5)
 
 local should = test.Suite('zmq')
 
 local port = 5000
-function send_url()
+local function send_url()
   port = port + 1
   return string.format("tcp://*:%i", port)
 end
 
-function receive_url()
+local function receive_url()
   return string.format("tcp://localhost:%i", port)
 end
 
@@ -53,8 +37,9 @@ function should.send_and_receive()
     -- cannot use ... or arg is set to nil
     sender:send(unpack(arg))
     while not continue do
-      worker:sleep(1)
+      worker:sleep(10)
     end
+
     for i, v in ipairs(arg) do
       assert_equal(arg[i], received[i])
     end
