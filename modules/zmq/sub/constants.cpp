@@ -15,12 +15,27 @@ static const struct luaL_Reg zmq_functions[] = {
 
 
 static const struct lua_constants_Reg zmq_namespace_constants[] = {
-  {"SUB"                           , zmq::SUB},
-  {"PULL"                          , zmq::PULL},
+  {"PAIR"                          , zmq::PAIR},
   {"PUB"                           , zmq::PUB},
+  {"SUB"                           , zmq::SUB},
+  {"REQ"                           , zmq::REQ},
+  {"REP"                           , zmq::REP},
+  {"XREQ"                          , zmq::XREQ},
+  {"XREP"                          , zmq::XREP},
+  {"PULL"                          , zmq::PULL},
   {"PUSH"                          , zmq::PUSH},
+  {"HWM"                           , zmq::HWM},
+  {"SWAP"                          , zmq::SWAP},
+  {"AFFINITY"                      , zmq::AFFINITY},
+  {"IDENTITY"                      , zmq::IDENTITY},
   {"SUBSCRIBE"                     , zmq::SUBSCRIBE},
   {"UNSUBSCRIBE"                   , zmq::UNSUBSCRIBE},
+  {"RATE"                          , zmq::RATE},
+  {"RECOVERY_IVL"                  , zmq::RECOVERY_IVL},
+  {"MCAST_LOOP"                    , zmq::MCAST_LOOP},
+  {"SNDBUF"                        , zmq::SNDBUF},
+  {"RCVBUF"                        , zmq::RCVBUF},
+  {"RCVMORE"                       , zmq::RCVMORE},
   {NULL, NULL},
 };
 

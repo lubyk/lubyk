@@ -31,17 +31,29 @@ setmetatable(lib, {
   port_nb = port_nb + 1
   instance.port = port or port_nb
 
-  -- receives zmq packets
-  instance.receiver = zmq.Subscriber(function(message)
+  -- subscribe to zmq packets
+  instance.subscriber = zmq.Subscriber(function(message)
     -- we do not pass callback directly so that we can update the function with instance.callback=..
     instance.callback(instance, message)
   end)
 
+  -- receive zmq packets
+  print("Receiver", string.format("tcp://localhost:%i", (port or port_nb) - 1))
+  instance.receiver = zmq.ReceiveSocket(worker, zmq.REP, function(message)
+    -- we do not pass callback directly so that we can update the function with instance.callback=..
+    print("Receive...", message)
+    instance.callback(instance, message)
+  end)
+  instance.receiver:bind(string.format("tcp://localhost:%i", (port or port_nb) - 1))
+
+  -- used to send zmq packets
+  instance.sender = zmq.Sender()
+
   -- sends zmq packets
   port_nb = port_nb + 1
-  instance.publisher = zmq.Publisher(string.format("tcp://*:%i", (port or port_nb) + 1))
+  instance.publisher = zmq.Publisher(string.format("tcp://*:%i", port or port_nb))
   -- announce publisher
-  instance.registration = mdns.Registration(service_type, name, (port or port_nb) + 1)
+  instance.registration = mdns.Registration(service_type, name, port or port_nb)
 
   setmetatable(instance, lib)
   return instance
@@ -49,22 +61,33 @@ end})
 
 
 function lib:connect(remote_name)
-  for _, connection in ipairs(self.connections) do
-    if connection.remote_name == remote_name then
-      return
-    end
+  local connection = self.connections[remote_name]
+  if connection then
+    return
   end
-  local connection = {local_service = self, remote_name = remote_name}
-  table.insert(self.connections, connection)
+  connection = {local_service = self, remote_name = remote_name}
+  self.connections[remote_name] = connection
   self.browser:connect_service(self, connection)
 end
 
-function lib:send(message)
+function lib:send(service_name, message)
+  local service = self.browser.services[service_name]
+  if not service then
+    print(string.format('Cannot send to %s (service not found)', service_name))
+    return
+  end
+  self.sender:bind(service.rcv_uri)
+  print('Bound to', service.rcv_uri)
+  self.sender:send(message)
+  print('Sending done')
+end
+
+function lib:notify(message)
   self.publisher:send(message)
 end
 
 function lib:connected()
-  for _, connection in ipairs(self.connections) do
+  for _, connection in pairs(self.connections) do
     if not connection.connected then
       return false
     end

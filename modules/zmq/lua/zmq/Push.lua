@@ -7,11 +7,10 @@
 
 --]]------------------------------------------------------
 require 'zmq'
-require 'zmq.SendSocket'
+require 'zmq.Socket'
 
-local constr = zmq.SendSocket
-function zmq.Sender(location)
-  local sender = constr(zmq.PUSH)
-  sender:bind(location)
-  return sender
+function zmq.Push(location)
+  local instance = zmq.Socket(zmq.PUSH)
+  instance:bind(location)
+  return instance
 end

@@ -16,7 +16,7 @@ local browsers = {}
 
 --- Helper function to subscribe a service to a given device
 local function subscribe_to_service(service, device)
-  service.receiver:connect(string.format('tcp://%s:%i', device.host, device.port))
+  service.subscriber:connect(device.pub_uri)
 end
 
 --- Helper function triggered whenever a new remote service is found on the network.
@@ -26,6 +26,8 @@ end
 -- If there is any pending connections matching the service name, create connections.
 local function browser_add_remote_service(self, remote_service)
   self.services[remote_service.name] = remote_service
+  remote_service.rcv_uri = string.format('tcp://%s:%i', remote_service.host, remote_service.port - 1)
+  remote_service.pub_uri = string.format('tcp://%s:%i', remote_service.host, remote_service.port)
   local pending = self.pending[remote_service.name]
   if pending then
     for _, connection in ipairs(pending) do

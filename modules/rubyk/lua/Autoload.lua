@@ -17,7 +17,7 @@ function lib.__index(table, name)
   -- Trying to load new lib like rk.Foobar
   local ok, new_lib_or_error = pcall(function() require(table.prefix..'.'..name); end)
   if ok then
-    return new_lib_or_error or table[name]
+    return new_lib_or_error or rawget(table, name)
   else
     print(new_lib_or_error)
     return nil

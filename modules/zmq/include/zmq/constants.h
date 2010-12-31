@@ -37,49 +37,35 @@
 
 namespace zmq {
 
-/** List of zmq socket types for receiving sockets.
+/** List of zmq socket types for 'client' sockets.
  */
-enum ReceiveSocketTypes {
-  //ZMQ_PAIR
-  //ZMQ_PUB
-  SUB = ZMQ_SUB,
-  //ZMQ_REQ
-  //ZMQ_REP
-  //ZMQ_XREQ
-  //ZMQ_XREP
+enum SocketTypes {
+  PAIR = ZMQ_PAIR,
+  PUB  = ZMQ_PUB,
+  SUB  = ZMQ_SUB,
+  REQ  = ZMQ_REQ,
+  REP  = ZMQ_REP,
+  XREQ = ZMQ_XREQ,
+  XREP = ZMQ_XREP,
   PULL = ZMQ_PULL,
-  //ZMQ_PUSH
-};
-
-/** List of zmq socket types for sending sockets.
- */
-enum SendSocketTypes {
-  //ZMQ_PAIR
-  PUB = ZMQ_PUB,
-  //ZMQ_SUB
-  //ZMQ_REQ
-  //ZMQ_REP
-  //ZMQ_XREQ
-  //ZMQ_XREP
-  //ZMQ_PULL
   PUSH = ZMQ_PUSH,
 };
 
 /** List of zmq socket options to be set with setsockopt.
  */
 enum SocketOptions {
-  //ZMQ_HWM 1
-  //ZMQ_SWAP 3
-  //ZMQ_AFFINITY 4
-  //ZMQ_IDENTITY 5
-  SUBSCRIBE   = ZMQ_SUBSCRIBE,
-  UNSUBSCRIBE = ZMQ_UNSUBSCRIBE,
-  //ZMQ_RATE 8
-  //ZMQ_RECOVERY_IVL 9
-  //ZMQ_MCAST_LOOP 10
-  //ZMQ_SNDBUF 11
-  //ZMQ_RCVBUF 12
-  //ZMQ_RCVMORE 13
+  HWM          = ZMQ_HWM,
+  SWAP         = ZMQ_SWAP,
+  AFFINITY     = ZMQ_AFFINITY,
+  IDENTITY     = ZMQ_IDENTITY,
+  SUBSCRIBE    = ZMQ_SUBSCRIBE,
+  UNSUBSCRIBE  = ZMQ_UNSUBSCRIBE,
+  RATE         = ZMQ_RATE,
+  RECOVERY_IVL = ZMQ_RECOVERY_IVL,
+  MCAST_LOOP   = ZMQ_MCAST_LOOP,
+  SNDBUF       = ZMQ_SNDBUF,
+  RCVBUF       = ZMQ_RCVBUF,
+  RCVMORE      = ZMQ_RCVMORE,
 };
 
 } // zmq

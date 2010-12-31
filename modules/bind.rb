@@ -48,7 +48,7 @@ end
   'mdns'  => %w{Browser Registration},
   'mimas' => %w{Application Callback HBoxLayout Label PushButton Slider VBoxLayout Widget},
   'zmq'   => {
-    'class' => %w{SendSocket ReceiveSocket},
+    'class' => %w{Socket},
     'const' => true,
   }
 }.each do |mod_name, opts|

@@ -32,7 +32,7 @@ local callback = mimas.Callback(function(val)
     end
     value = val
     print('Mimas --->', value)
-    service:send(value)
+    service:send('Saturn', value)
   end
 end)
 
