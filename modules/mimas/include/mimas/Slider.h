@@ -65,7 +65,9 @@ public:
 
   Slider(int type = (int)VerticalSliderType, QWidget *parent = 0)
    : slider_type_((SliderType)type),
-     range_(this) {}
+     range_(this) {
+    setHue(80);
+}
 
   ~Slider() {}
 

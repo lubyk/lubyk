@@ -29,25 +29,61 @@ require 'rubyk'
 
 local should = test.Suite('zmq')
 
+local port = 5000
+function send_url()
+  port = port + 1
+  return string.format("tcp://*:%i", port)
+end
+
+function receive_url()
+  return string.format("tcp://localhost:%i", port)
+end
+
 function should.send_and_receive()
-  local sender   = zmq.Sender("tcp://*:4455")
+  local sender   = zmq.Sender(send_url())
   local continue = false
-  local receiver = zmq.Receiver("tcp://localhost:4455", function(message)
+  local received = nil
+  local receiver = zmq.Receiver(receive_url(), function(...)
     continue = true
+    received = arg
   end)
 
-  sender:send("Hello Rubyk!")
-  while not continue do
-    worker:sleep(1)
+  local function send_and_receive(...)
+    continue = false
+    -- cannot use ... or arg is set to nil
+    sender:send(unpack(arg))
+    while not continue do
+      worker:sleep(1)
+    end
+    for i, v in ipairs(arg) do
+      assert_equal(arg[i], received[i])
+    end
   end
 
-  assert_true(continue)
+  -- string
+  send_and_receive("Hello Rubyk!")
+  -- number, nil, bool
+  send_and_receive(1.234567)
+  send_and_receive(nil)
+  send_and_receive(true)
+  send_and_receive(false)
+  -- array
+  -- we cannot send an array like this
+  -- send_and_receive({1, 2, 3}) ===> received as (1, 2, 3) (not {1, 2, 3})
+  send_and_receive(1, {1, 2, 3})
+
+  send_and_receive(1, {1, 2, {4, 5}})
+  -- hash
+  -- multi values
+  send_and_receive(1,2,3)
+  send_and_receive("/amp/gain", 3.5)
+  send_and_receive("/amp/gain", {1, 2, {"foo", "bar", 5}})
 end
 
 function should.send_and_receive_many_messages()
-  local sender   = zmq.Sender("tcp://*:4456")
+  local sender   = zmq.Sender(send_url())
   local received = 0
-  local receiver = zmq.Receiver("tcp://localhost:4456", function(message)
+  local receiver = zmq.Receiver(receive_url(), function(message)
     received = received + 1
   end)
 
@@ -60,13 +96,13 @@ function should.send_and_receive_many_messages()
 end
 
 function should.publish_and_subscribe()
-  local sender   = zmq.Publisher("tcp://*:4457")
+  local sender   = zmq.Publisher(send_url())
   local received = 0
   local receiver = zmq.Subscriber(function(message)
     received = received + 1
   end)
 
-  receiver:connect("tcp://localhost:4457")
+  receiver:connect(receive_url())
 
   while received < 10 do
     sender:send("anything")
@@ -77,7 +113,7 @@ function should.publish_and_subscribe()
 end
 
 function should.publish_and_subscribe_many()
-  local sender   = zmq.Publisher("tcp://*:4458")
+  local sender   = zmq.Publisher(send_url())
   local received = 0
   local function receive_callback(message)
     received = received + 1
@@ -85,8 +121,8 @@ function should.publish_and_subscribe_many()
   local receiver1 = zmq.Subscriber(receive_callback)
   local receiver2 = zmq.Subscriber(receive_callback)
 
-  receiver1:connect("tcp://localhost:4458")
-  receiver2:connect("tcp://localhost:4458")
+  receiver1:connect(receive_url())
+  receiver2:connect(receive_url())
 
   -- make sure receivers are ready before starting to send
   worker:sleep(10)

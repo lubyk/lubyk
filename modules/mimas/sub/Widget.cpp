@@ -9,7 +9,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::Widget::Widget()
- * include/mimas/Widget.h:47
+ * include/mimas/Widget.h:46
  */
 static int Widget_Widget(lua_State *L) {
   try {
@@ -54,7 +54,7 @@ static int Widget__tostring(lua_State *L) {
 
 
 /** void mimas::Widget::activateWindow()
- * include/mimas/Widget.h:63
+ * include/mimas/Widget.h:68
  */
 static int Widget_activateWindow(lua_State *L) {
   try {
@@ -78,8 +78,35 @@ static int Widget_activateWindow(lua_State *L) {
 }
 
 
+/** void mimas::Widget::move(int x, int y)
+ * include/mimas/Widget.h:60
+ */
+static int Widget_move(lua_State *L) {
+  try {
+    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    lua_remove(L, 1);
+    int x = luaL_checkint(L, 1);
+    int y = luaL_checkint(L, 2);
+    self__->move(x, y);
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("mimas.Widget.move: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "mimas.Widget.move: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
+}
+
+
 /** void mimas::Widget::resize(int w, int h)
- * include/mimas/Widget.h:55
+ * include/mimas/Widget.h:56
  */
 static int Widget_resize(lua_State *L) {
   try {
@@ -106,7 +133,7 @@ static int Widget_resize(lua_State *L) {
 
 
 /** void mimas::Widget::setHue(float hue)
- * include/mimas/Widget.h:69
+ * include/mimas/Widget.h:74
  */
 static int Widget_setHue(lua_State *L) {
   try {
@@ -132,7 +159,7 @@ static int Widget_setHue(lua_State *L) {
 
 
 /** void mimas::Widget::show()
- * include/mimas/Widget.h:59
+ * include/mimas/Widget.h:64
  */
 static int Widget_show(lua_State *L) {
   try {
@@ -157,7 +184,7 @@ static int Widget_show(lua_State *L) {
 
 
 /** QWidget* mimas::Widget::widget()
- * include/mimas/Widget.h:51
+ * include/mimas/Widget.h:52
  */
 static int Widget_widget(lua_State *L) {
   try {
@@ -188,6 +215,7 @@ static int Widget_widget(lua_State *L) {
 
 static const struct luaL_Reg Widget_member_methods[] = {
   {"activateWindow"    , Widget_activateWindow},
+  {"move"              , Widget_move},
   {"resize"            , Widget_resize},
   {"setHue"            , Widget_setHue},
   {"show"              , Widget_show},

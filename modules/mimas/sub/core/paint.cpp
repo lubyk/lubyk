@@ -41,10 +41,11 @@ namespace mimas {
 // ==             Widget                      ==
 // =============================================
 
-// void Widget::paintEvent(QPaintEvent *event) {
-//   QPainter p(this);
-//   p.fillRect(rect(), fill_color_);
-// }
+void Widget::paintEvent(QPaintEvent *event) {
+  QPainter p(this);
+  p.fillRect(rect(), fill_color_);
+  QWidget::paintEvent(event);
+}
 
 // =============================================
 // ==             Slider                      ==
@@ -91,7 +92,7 @@ void Slider::paintEvent(QPaintEvent *event) {
         height() - local_pos - WIDGET_THUMB_SIZE / 2,
         width(),
         WIDGET_THUMB_SIZE,
-        Qt::red
+        QColor(255, 255, 255, 32)
       );
     }
 
@@ -117,7 +118,7 @@ void Slider::paintEvent(QPaintEvent *event) {
         0,
         WIDGET_THUMB_SIZE,
         height(),
-        Qt::red
+        QColor(255, 255, 255, 32)
       );
     }
   }
@@ -125,10 +126,10 @@ void Slider::paintEvent(QPaintEvent *event) {
   p.setPen(QPen(border_color_, SLIDER_BORDER_WIDTH));
   p.setBrush(Qt::NoBrush);
   p.drawRect(
-    0,
-    0,
-    width(),
-    height()
+    SLIDER_BORDER_WIDTH / 2,
+    SLIDER_BORDER_WIDTH / 2,
+    width() -  SLIDER_BORDER_WIDTH,
+    height() - SLIDER_BORDER_WIDTH
   );
 }
 

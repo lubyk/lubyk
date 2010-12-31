@@ -72,7 +72,7 @@ end
     end
 
     if dub_info = get_dub_info(klass.xml)
-      # Set custom tostring formats
+      # Set custom tostring formats and ignore methods
       klass.opts.merge!(dub_info)
     end
     klass.header = "#{mod_name}/#{class_name}.h"

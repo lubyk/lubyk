@@ -9,3 +9,5 @@
 zmq = Autoload('zmq')
 require 'zmq.constants'
 require 'zmq.vendor'
+-- implements the pack/unpack methods for messages
+require 'msgpack.vendor'

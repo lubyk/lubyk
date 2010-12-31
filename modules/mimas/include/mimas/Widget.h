@@ -43,8 +43,9 @@ class Widget : public QWidget
   Q_OBJECT
 
 public:
-  Widget()
-   : hue_(80.0f) {}
+  Widget() {
+    fill_color_.setRgbF(0.15, 0.15, 0.15);
+  }
 
   ~Widget() {}
 
@@ -54,6 +55,10 @@ public:
 
   void resize(int w, int h) {
     QWidget::resize(w, h);
+  }
+
+  void move(int x, int y) {
+    QWidget::move(x, y);
   }
 
   void show() {
@@ -71,7 +76,7 @@ public:
 protected:
   //virtual void mousePressEvent(QMouseEvent *event);
   //virtual void mouseMoveEvent(QMouseEvent *event);
-  //virtual void paintEvent(QPaintEvent *event);
+  virtual void paintEvent(QPaintEvent *event);
 
   /** The component's color.
    */

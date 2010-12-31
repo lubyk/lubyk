@@ -8,12 +8,10 @@
 --]]------------------------------------------------------
 require 'zmq'
 require 'zmq.SendSocket'
-require 'worker'
 
 local constr = zmq.SendSocket
-local worker = worker
 function zmq.Sender(location)
-  local sender = constr(worker, zmq.PUSH)
+  local sender = constr(zmq.PUSH)
   sender:bind(location)
   return sender
 end

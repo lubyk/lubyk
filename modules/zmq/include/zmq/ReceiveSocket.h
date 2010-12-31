@@ -30,6 +30,7 @@
 #define RUBYK_INCLUDE_ZMQ_RECEIVE_H_
 
 #include "../vendor/include/zmq.h"
+#include "zmq/msgpack_zmq.h"
 
 #include "rubyk.h"
 
@@ -37,6 +38,8 @@
 
 using namespace rubyk;
 typedef int LuaStackSize;
+
+extern int msgpack_zmq_to_lua(lua_State *L);
 
 namespace zmq {
 
@@ -94,6 +97,7 @@ private:
   }
 
   bool receive_message() {
+    lua_State *L = worker_->lua_;
     zmq_msg_t message;
     zmq_msg_init(&message);
     int status = zmq_recv(socket_, &message, 0);
@@ -103,16 +107,16 @@ private:
     { rubyk::ScopedLock lock(worker_);
       push_lua_callback();
 
-      // push string on Lua stack
-      lua_pushlstring(worker_->lua_, (const char *)zmq_msg_data(&message), zmq_msg_size(&message));
+      // unpack message
+      int arg_size = msgpack_zmq_to_lua(L, &message);
 
-      int status = lua_pcall(worker_->lua_, 1, 1, 0);
+      int status = lua_pcall(L, arg_size, 0, 0);
       if (status) {
-        printf("Error in receive callback: %s\n", lua_tostring(worker_->lua_, -1));
+        printf("Error in receive callback: %s\n", lua_tostring(L, -1));
       }
 
       // clear stack
-      lua_settop(worker_->lua_, 0);
+      lua_settop(L, 0);
     }
     return true;
   }

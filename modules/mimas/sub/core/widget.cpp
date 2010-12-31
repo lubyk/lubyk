@@ -37,9 +37,9 @@ namespace mimas {
 
 void Widget::setHue(float hue) {
   hue_ = (hue < 0 || hue >= 360) ? 0 : hue;
-  //                    hue   sat   bri  alpha
-  border_color_.setHsv( hue_, 255,  255, 255);
-  fill_color_.setHsv(   hue_, 127,  127, 255);
+  //                    hue   sat   bri   alpha // FIXME: true == enabled?
+  border_color_.setHsvF( hue_ / 360.0f, 1.0f, 1.0f, true ? 1.0f : 0.3f);
+  fill_color_.setHsvF(   hue_ / 360.0f, 0.5f, 0.5f, true ? 1.0f : 0.3f);
 }
 
 } // mimas

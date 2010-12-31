@@ -66,7 +66,7 @@ static int Slider__tostring(lua_State *L) {
 
 
 /** QObject* mimas::Slider::object()
- * include/mimas/Slider.h:76
+ * include/mimas/Slider.h:78
  */
 static int Slider_object(lua_State *L) {
   try {
@@ -92,7 +92,7 @@ static int Slider_object(lua_State *L) {
 
 
 /** void mimas::Slider::setHue(int hue)
- * include/mimas/Slider.h:80
+ * include/mimas/Slider.h:82
  */
 static int Slider_setHue(lua_State *L) {
   try {
@@ -118,7 +118,7 @@ static int Slider_setHue(lua_State *L) {
 
 
 /** void mimas::Slider::setValue(double remote_value)
- * include/mimas/Slider.h:96
+ * include/mimas/Slider.h:98
  */
 static int Slider_setValue(lua_State *L) {
   try {
@@ -144,7 +144,7 @@ static int Slider_setValue(lua_State *L) {
 
 
 /** virtual QSize mimas::Slider::sizeHint() const 
- * include/mimas/Slider.h:84
+ * include/mimas/Slider.h:86
  */
 static int Slider_sizeHint(lua_State *L) {
   try {
@@ -170,7 +170,7 @@ static int Slider_sizeHint(lua_State *L) {
 
 
 /** QWidget* mimas::Slider::widget()
- * include/mimas/Slider.h:72
+ * include/mimas/Slider.h:74
  */
 static int Slider_widget(lua_State *L) {
   try {

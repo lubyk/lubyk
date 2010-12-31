@@ -30,6 +30,7 @@
 #define RUBYK_INCLUDE_ZMQ_SEND_SOCKET_H_
 
 #include "../vendor/include/zmq.h"
+#include "zmq/msgpack_zmq.h"
 
 #include "rubyk.h"
 
@@ -38,6 +39,8 @@
 
 using namespace rubyk;
 typedef int LuaStackSize;
+
+extern void msgpack_lua_to_zmq(lua_State *L, zmq_msg_t *msg);
 
 namespace zmq {
 
@@ -48,13 +51,11 @@ namespace zmq {
  */
 class SendSocket
 {
-  Worker *worker_;
   void *context_;
   void *socket_;
   std::string location_;
 public:
-  SendSocket(rubyk::Worker *worker, int type)
-    : worker_(worker) {
+  SendSocket(int type) {
     // FIXME: make sure we do not need more the 1 io_threads.
     context_ = zmq_init(1);
     socket_  = zmq_socket(context_, type);
@@ -70,18 +71,16 @@ public:
     location_ = location; // save last location for info string
   }
 
-  /** Publish a string.
-   */
-  void send(const char *message) {
+  void send(lua_State *L) {
     int rc;
     zmq_msg_t msg;
-    zmq_msg_init_size(&msg, strlen(message));
-    memcpy (zmq_msg_data(&msg), message, strlen(message));
+    msgpack_lua_to_zmq(L, &msg);
+
     rc = zmq_send(socket_, &msg, 0);
     if (rc) {
-      lua_pushstring(worker_->lua_, "Error sending message");
-      lua_error(worker_->lua_);
-      // never reached
+      lua_pushstring(L, "Error sending message");
+      lua_error(L);
+      // never reached: FIXME: memory leak... (msg)
     }
     zmq_msg_close(&msg);
   }

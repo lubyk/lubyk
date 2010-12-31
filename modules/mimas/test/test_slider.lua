@@ -12,11 +12,11 @@ require 'rubyk'
 
 local should = test.Suite('mimas')
 
+local app = mimas.Application()
+
 function should.draw_one_slider()
-  local app = mimas.Application()
   local win = mimas.Widget()
-  local quit_called = false
-  win:resize(320, 240)
+  win:move(100, 100)
 
   local layout = mimas.VBoxLayout(win)
   local label  = mimas.Label("Move to zero to quit...")
@@ -27,38 +27,37 @@ function should.draw_one_slider()
   layout:addWidget(slider)
 
   local callback = mimas.Callback(function(value)
+    -- do something with value change
     if value == 0 then
       app:quit()
     end
   end)
 
   -- callback listens for quit_btn's clicked events.
-  callback:connect(slider, 'valueChanged(int)')
+  callback:connect(slider, 'valueChanged(double)')
 
   local callback2 = mimas.Callback(function(value)
-    label:setText(string.format('value: %i', value))
+    label:setText(string.format('value: %f', value))
   end)
   -- callback listens for quit_btn's clicked events.
-  callback2:connect(slider, 'valueChanged(int)')
+  callback2:connect(slider, 'valueChanged(double)')
 
   win:show()
-  app:exec()
 end
 
 function should.sync_two_sliders()
-  local app = mimas.Application()
   local win = mimas.Widget()
-  local quit_called = false
+  win:move(300, 100)
 
   local layout = mimas.HBoxLayout(win)
   local label  = mimas.Label("Move to zero to quit...")
   layout:addWidget(label)
 
-  local slider1 = mimas.Slider(mimas.Horizontal)
+  local slider1 = mimas.Slider(mimas.Vertical)
   slider1:setValue(50)
   layout:addWidget(slider1)
 
-  local slider2 = mimas.Slider(mimas.Horizontal)
+  local slider2 = mimas.Slider(mimas.Vertical)
   slider2:setValue(50)
   layout:addWidget(slider2)
 
@@ -81,8 +80,41 @@ function should.sync_two_sliders()
   callback2:connect(slider2, 'valueChanged(double)')
 
   win:show()
-  app:exec()
 end
 
-should.sync_two_sliders()
---test.all()
+
+function should.sync_slider_with_remote()
+  local win = mimas.Widget()
+  win:move(100, 400)
+
+  local layout = mimas.VBoxLayout(win)
+  local label  = mimas.Label("Start 'Venus' service")
+  layout:addWidget(label)
+
+  local slider = mimas.Slider(mimas.Vertical)
+  slider:setValue(50)
+  layout:addWidget(slider)
+
+  local service = rk.Service('Mimas', function(self, message)
+    slider:setValue(message)
+  end)
+
+  -- Mimas listens to messages from planet Saturn
+  service:connect('Saturn')
+
+  local callback = mimas.Callback(function(value)
+    service:send(value)
+  end)
+
+  -- callback listens for slider's valueChanged and
+  -- sends notifications
+  callback:connect(slider, 'valueChanged(double)')
+
+  win:show()
+end
+
+app:post(function()
+  test.all()
+end)
+
+app:exec()

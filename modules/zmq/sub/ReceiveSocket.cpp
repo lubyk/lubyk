@@ -9,7 +9,7 @@ using namespace zmq;
 /* ============================ Constructors     ====================== */
 
 /** zmq::ReceiveSocket::ReceiveSocket(rubyk::Worker *worker, int type, int lua_func_idx)
- * include/zmq/ReceiveSocket.h:57
+ * include/zmq/ReceiveSocket.h:60
  */
 static int ReceiveSocket_ReceiveSocket(lua_State *L) {
   try {
@@ -63,7 +63,7 @@ static int ReceiveSocket__tostring(lua_State *L) {
 
 
 /** void zmq::ReceiveSocket::connect(const char *location)
- * include/zmq/ReceiveSocket.h:71
+ * include/zmq/ReceiveSocket.h:74
  */
 static int ReceiveSocket_connect(lua_State *L) {
   try {
@@ -89,7 +89,7 @@ static int ReceiveSocket_connect(lua_State *L) {
 
 
 /** void zmq::ReceiveSocket::setsockopt(int type, const char *filter=NULL)
- * include/zmq/ReceiveSocket.h:77
+ * include/zmq/ReceiveSocket.h:80
  */
 static int ReceiveSocket_setsockopt(lua_State *L) {
   try {

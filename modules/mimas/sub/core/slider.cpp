@@ -39,6 +39,7 @@ namespace mimas {
 
 void Slider::mousePressEvent(QMouseEvent *event) {
   range_.setDragged(true);
+  mouseMoveEvent(event);
 }
 
 void Slider::mouseMoveEvent(QMouseEvent *event) {

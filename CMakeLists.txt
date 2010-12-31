@@ -108,3 +108,10 @@ add_subdirectory(Mimas)
 # ==============================================================================
 add_custom_target(test_all ALL cd .. && ./rtest)
 add_dependencies (test_all modules)
+
+# ==============================================================================
+#
+#  Rebuild bindings on header changes
+#
+# ==============================================================================
+add_custom_target(head rm -rf ${CMAKE_BINARY_DIR}/dox/xml && make doc && make dub && cmake .. && make modules)

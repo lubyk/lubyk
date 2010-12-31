@@ -8,7 +8,7 @@ project(modules)
 # ----------------------------------------------------------------------------------
 #  Include common directories
 # ----------------------------------------------------------------------------------
-include_directories(rubyk/include lua/include)
+include_directories(rubyk/include lua/include ${CMAKE_CURRENT_SOURCE_DIR})
 
 # ----------------------------------------------------------------------------------
 #  Build each module

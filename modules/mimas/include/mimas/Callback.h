@@ -42,6 +42,7 @@ namespace mimas {
 /** Calls a lua function back.
  *
  * @dub lib_name:'Callback_core'
+ *      ignore: 'callback'
  */
 class Callback : public QObject
 {

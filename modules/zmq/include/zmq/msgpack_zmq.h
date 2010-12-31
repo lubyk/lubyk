@@ -26,20 +26,15 @@
 
   ==============================================================================
 */
+#ifndef RUBYK_INCLUDE_ZMQ_MSGPACK_H_
+#define RUBYK_INCLUDE_ZMQ_MSGPACK_H_
 
-#ifndef CORE_INCLUDE_CORE_LUA_H_
-#define CORE_INCLUDE_CORE_LUA_H_
+#include "zmq/vendor/include/zmq.h"
+#include "rubyk.h"
 
-/** Include Lua
- */
 extern "C" {
-  #include "lua/lua.h"
-  #include "lua/lauxlib.h"
-
-  /** Output debugging information on the current lua stack.
-   */
-  void dump_lua_stack(lua_State *L, const char *msg);
+  void msgpack_lua_to_zmq(lua_State *L, zmq_msg_t *msg);
+  int  msgpack_zmq_to_lua(lua_State *L, zmq_msg_t *msg);
 }
 
-
-#endif // CORE_INCLUDE_CORE_LUA_H_
+#endif // RUBYK_INCLUDE_ZMQ_MSGPACK_H_

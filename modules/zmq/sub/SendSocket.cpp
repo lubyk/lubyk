@@ -8,14 +8,13 @@ using namespace zmq;
 
 /* ============================ Constructors     ====================== */
 
-/** zmq::SendSocket::SendSocket(rubyk::Worker *worker, int type)
- * include/zmq/SendSocket.h:57
+/** zmq::SendSocket::SendSocket(int type)
+ * include/zmq/SendSocket.h:58
  */
 static int SendSocket_SendSocket(lua_State *L) {
   try {
-    rubyk::Worker *worker = *((rubyk::Worker **)luaL_checkudata(L, 1, "rubyk.Worker"));
-    int type = luaL_checkint(L, 2);
-    SendSocket * retval__ = new SendSocket(worker, type);
+    int type = luaL_checkint(L, 1);
+    SendSocket * retval__ = new SendSocket(type);
     lua_pushclass<SendSocket>(L, retval__, "zmq.SendSocket");
     return 1;
   } catch (std::exception &e) {
@@ -56,7 +55,7 @@ static int SendSocket__tostring(lua_State *L) {
 
 
 /** void zmq::SendSocket::bind(const char *location)
- * include/zmq/SendSocket.h:68
+ * include/zmq/SendSocket.h:69
  */
 static int SendSocket_bind(lua_State *L) {
   try {
@@ -81,15 +80,15 @@ static int SendSocket_bind(lua_State *L) {
 }
 
 
-/** void zmq::SendSocket::send(const char *message)
- * include/zmq/SendSocket.h:75
+/** void zmq::SendSocket::send(lua_State *L)
+ * include/zmq/SendSocket.h:74
  */
 static int SendSocket_send(lua_State *L) {
   try {
     SendSocket *self__ = *((SendSocket**)luaL_checkudata(L, 1, "zmq.SendSocket"));
     lua_remove(L, 1);
-    const char *message = luaL_checkstring(L, 1);
-    self__->send(message);
+    
+    self__->send(L);
     return 0;
   } catch (std::exception &e) {
     std::string *s = new std::string("zmq.SendSocket.send: ");

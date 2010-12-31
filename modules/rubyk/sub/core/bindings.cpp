@@ -28,37 +28,49 @@
 */
 #include "rubyk.h"
 
-void rubyk::dump_lua_stack(lua_State *L, const char *msg) {
+static void print_lua_value(lua_State *L, int i) {
+  switch (lua_type(L, i)) {
+    case LUA_TSTRING:
+      printf("%3i: '%s'\n", i, lua_tostring(L, i));
+      break;
+    case LUA_TBOOLEAN:
+      printf("%3i: %s\n", i, lua_toboolean(L, i) ? "true" : "false");
+      break;
+    case LUA_TNUMBER:
+      printf("%3i: %g\n", i, lua_tonumber(L, i));
+      break;
+    case LUA_TTABLE:
+      printf("%3i: {\n", i);
+      lua_pushvalue(L, i);
+      for (lua_pushnil(L); lua_next(L, -2); lua_pop(L, 1)) {
+        // inspect table content
+        print_lua_value(L, -1);
+      }
+      lua_pop(L, 1);
+      printf("%3i: }\n", i);
+
+      break;
+    case LUA_TNONE:
+      printf("%3i: --\n", i);
+    case LUA_TNIL:
+      printf("%3i: nil\n", i);
+      break;
+    case LUA_TFUNCTION:
+      printf("%3i: function\n", i);
+      break;
+    default:
+      printf("%3i: %s\n", i, lua_typename(L, i));
+  }
+}
+
+extern "C" void dump_lua_stack(lua_State *L, const char *msg) {
   int i;
   int top = lua_gettop(L);
 
   printf("%s (top: %d)\n", msg, top);
 
   for (i = 1; i <= top; ++i) {
-    switch (lua_type(L, i)) {
-      case LUA_TSTRING:
-        printf("%3i: '%s'\n", i, lua_tostring(L, i));
-        break;
-      case LUA_TBOOLEAN:
-        printf("%3i: %s\n", i, lua_toboolean(L, i) ? "true" : "false");
-        break;
-      case LUA_TNUMBER:
-        printf("%3i: %g\n", i, lua_tonumber(L, i));
-        break;
-      case LUA_TTABLE:
-        printf("%3i: {...}\n", i);
-        break;
-      case LUA_TNONE:
-        printf("%3i: --\n", i);
-      case LUA_TNIL:
-        printf("%3i: nil\n", i);
-        break;
-      case LUA_TFUNCTION:
-        printf("%3i: function\n", i);
-        break;
-      default:
-        printf("%3i: %s\n", i, lua_typename(L, i));
-    }
+    print_lua_value(L, i);
   }
   printf("\n");  /* end the listing */
 }
