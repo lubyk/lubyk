@@ -187,7 +187,7 @@ static int unpack_object(lua_State *L, msgpack_object *o, bool array_as_arglist)
 	}
 }
 
-void msgpack_lua_to_zmq(lua_State *L, zmq_msg_t *msg) {
+void msgpack_lua_to_zmq(lua_State *L, zmq_msg_t *msg, int skip_index) {
   /* creates buffer and serializer instance. */
   msgpack_sbuffer* buffer = msgpack_sbuffer_new();
   msgpack_sbuffer_init(buffer);
@@ -196,17 +196,17 @@ void msgpack_lua_to_zmq(lua_State *L, zmq_msg_t *msg) {
 
   // copy from Lua to buffer
   // This is the only copy from Lua to zmq
-  int top = lua_gettop(L);
+  int top = lua_gettop(L) - skip_index;
   if (top == 0) {
     msgpack_pack_nil(pk);
   } else if (top == 1) {
-    pack_lua(L, pk, 1);
+    pack_lua(L, pk, 1 + skip_index);
   } else {
-    // multiple objects are send into an array
+    // multiple objects are sent into an array
     msgpack_pack_array(pk, top);
     int i;
     for(i=1; i <= top; ++i) {
-      pack_lua(L, pk, i);
+      pack_lua(L, pk, i + skip_index);
     }
   }
 

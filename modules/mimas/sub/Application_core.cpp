@@ -60,7 +60,6 @@ static int Application__tostring(lua_State *L) {
 static int Application_exec(lua_State *L) {
   try {
     Application *self__ = *((Application**)luaL_checkudata(L, 1, "mimas.Application"));
-    lua_remove(L, 1);
     int  retval__ = self__->exec();
     lua_pushnumber(L, retval__);
     return 1;
@@ -86,11 +85,10 @@ static int Application_exec(lua_State *L) {
 static int Application_post(lua_State *L) {
   try {
     Application *self__ = *((Application**)luaL_checkudata(L, 1, "mimas.Application"));
-    lua_remove(L, 1);
     
-    luaL_checktype(L, 1, LUA_TFUNCTION);
+    luaL_checktype(L, 2, LUA_TFUNCTION);
     // push on top
-    lua_pushvalue(L, 1);
+    lua_pushvalue(L, 2);
     int lua_func_idx = luaL_ref(L, LUA_REGISTRYINDEX);
     lua_pop(L, 1);
     
@@ -118,7 +116,6 @@ static int Application_post(lua_State *L) {
 static int Application_quit(lua_State *L) {
   try {
     Application *self__ = *((Application**)luaL_checkudata(L, 1, "mimas.Application"));
-    lua_remove(L, 1);
     self__->quit();
     return 0;
   } catch (std::exception &e) {

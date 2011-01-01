@@ -70,7 +70,6 @@ static int Registration__tostring(lua_State *L) {
 static int Registration_registration_done(lua_State *L) {
   try {
     Registration *self__ = *((Registration**)luaL_checkudata(L, 1, "mdns.Registration"));
-    lua_remove(L, 1);
     self__->registration_done();
     return 0;
   } catch (std::exception &e) {

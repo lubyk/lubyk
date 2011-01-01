@@ -34,6 +34,8 @@
 
 #include "rubyk.h"
 
+#include <stdlib.h> // rand()
+#include <time.h>   // time()
 #include <string>
 
 using namespace rubyk;
@@ -55,7 +57,6 @@ class Socket : public LuaCallback
   void *socket_;
   std::string location_;
 public:
-
   Socket(rubyk::Worker *worker, int type)
     : LuaCallback(worker) {
     // FIXME: make sure we do not need more the 1 io_threads.
@@ -71,23 +72,47 @@ public:
 
   void setsockopt(int type, const char *filter = NULL) {
     if (filter) {
-      zmq_setsockopt(socket_, type, filter, strlen(filter));
+      if (zmq_setsockopt(socket_, type, filter, strlen(filter)))
+        throw Exception("Could not set socket option %i (filter: '%s').", type, filter);
     } else {
-      zmq_setsockopt(socket_, type, NULL, 0);
+      if (zmq_setsockopt(socket_, type, NULL, 0))
+        throw Exception("Could not set socket option %i (empty filter).", type);
     }
   }
 
   /** Bind a service to a location like "tcp://\*:5500"
    */
   void bind(const char *location) {
-    zmq_bind(socket_, location);
+    if (zmq_bind(socket_, location))
+      throw Exception("Could not bind to '%s'", location);
     location_ = location; // store last connection for info string
+  }
+
+  /** Bind to a random port.
+   * @return bound port or raise on failure
+   * FIXME: when Dub is fixed with overloaded member functions, use 'bind'
+   */
+  int bind_to_random_port(int min_port = 2000, int max_port = 20000, int retries = 100) {
+    static const int buf_size = 50;
+    srand((unsigned)time(0));
+    char buffer[buf_size];
+    for(int i = 0; i < retries; ++i) {
+      int port = min_port + ((float)rand() * (max_port - min_port))/RAND_MAX;
+      snprintf(buffer, buf_size, "tcp://*:%i", port);
+      if (!zmq_bind(socket_, buffer)) {
+        // success
+        location_ = buffer;
+        return port;
+      }
+    }
+    throw Exception("Could not bind to any port in range '%i-%i' (%i retries).", min_port, max_port, retries);
   }
 
   /** Connect to a server.
    */
   void connect(const char *location) {
-    zmq_connect(socket_, location);
+    if (zmq_connect(socket_, location))
+      throw Exception("Could not connect to '%s'.", location);
     location_ = location; // store last connection for info string
   }
 
@@ -96,29 +121,31 @@ public:
    * We pass the lua_State to avoid mixing thread contexts.
    */
   LuaStackSize recv(lua_State *L) {
-    zmq_msg_t message;
-    zmq_msg_init(&message);
+    zmq_msg_t msg;
+    zmq_msg_init(&msg);
 
     // unlock while waiting
     { rubyk::ScopedUnlock unlock(worker_);
-      int status = zmq_recv(socket_, &message, 0);
-      if (status) return 0;
+      if (zmq_recv(socket_, &msg, 0)) {
+        zmq_msg_close(&msg);
+        throw Exception("Could not receive.");
+      }
     }
 
-    return msgpack_zmq_to_lua(L, &message);
+    int arg_size = msgpack_zmq_to_lua(L, &msg);
+    zmq_msg_close(&msg);
+    return arg_size;
   }
 
   /** Send a message packed with msgpack.
+   * Varying parameters.
    */
   void send(lua_State *L) {
-    int rc;
     zmq_msg_t msg;
-    msgpack_lua_to_zmq(L, &msg);
-    rc = zmq_send(socket_, &msg, 0);
-    if (rc) {
-      lua_pushstring(L, "Error sending message");
-      lua_error(L);
-      // never reached: FIXME: memory leak... (msg)
+    msgpack_lua_to_zmq(L, &msg, 1);
+    if (zmq_send(socket_, &msg, 0)) {
+      zmq_msg_close(&msg);
+      throw Exception("Could not send message.");
     }
     zmq_msg_close(&msg);
   }
@@ -153,6 +180,15 @@ public:
 
   const char *location() {
     return location_.c_str();
+  }
+
+  int port() {
+    size_t pos = location_.rfind(":");
+    if (pos != std::string::npos) {
+      return atoi(location_.substr(pos + 1).c_str());
+    } else {
+      throw Exception("Could not get port from localtion '%s'.", location_.c_str());
+    }
   }
 
 private:

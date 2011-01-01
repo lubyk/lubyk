@@ -66,7 +66,6 @@ static int Label__tostring(lua_State *L) {
 static int Label_object(lua_State *L) {
   try {
     Label *self__ = *((Label**)luaL_checkudata(L, 1, "mimas.Label"));
-    lua_remove(L, 1);
     QObject * retval__ = self__->object();
     lua_pushclass<QObject>(L, retval__, "mimas.QObject");
     return 1;
@@ -92,8 +91,7 @@ static int Label_object(lua_State *L) {
 static int Label_setText(lua_State *L) {
   try {
     Label *self__ = *((Label**)luaL_checkudata(L, 1, "mimas.Label"));
-    lua_remove(L, 1);
-    const char *text = luaL_checkstring(L, 1);
+    const char *text = luaL_checkstring(L, 2);
     self__->setText(text);
     return 0;
   } catch (std::exception &e) {
@@ -118,7 +116,6 @@ static int Label_setText(lua_State *L) {
 static int Label_widget(lua_State *L) {
   try {
     Label *self__ = *((Label**)luaL_checkudata(L, 1, "mimas.Label"));
-    lua_remove(L, 1);
     QWidget * retval__ = self__->widget();
     lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
     return 1;

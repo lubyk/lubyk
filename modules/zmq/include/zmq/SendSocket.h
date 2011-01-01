@@ -40,7 +40,7 @@
 using namespace rubyk;
 typedef int LuaStackSize;
 
-extern void msgpack_lua_to_zmq(lua_State *L, zmq_msg_t *msg);
+extern void msgpack_lua_to_zmq(lua_State *L, zmq_msg_t *msg, int start_index);
 
 namespace zmq {
 
@@ -74,7 +74,7 @@ public:
   void send(lua_State *L) {
     int rc;
     zmq_msg_t msg;
-    msgpack_lua_to_zmq(L, &msg);
+    msgpack_lua_to_zmq(L, &msg, 2);
 
     rc = zmq_send(socket_, &msg, 0);
     if (rc) {

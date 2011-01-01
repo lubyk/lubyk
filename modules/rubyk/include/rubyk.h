@@ -29,5 +29,6 @@
 #include "rubyk/lua.h"
 #include "rubyk/worker.h"
 #include "rubyk/lua_callback.h"
+#include "rubyk/exception.h"
 
 typedef double Real;

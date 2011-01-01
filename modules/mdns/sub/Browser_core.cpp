@@ -68,8 +68,7 @@ static int Browser__tostring(lua_State *L) {
 static int Browser_add_device(lua_State *L) {
   try {
     Browser *self__ = *((Browser**)luaL_checkudata(L, 1, "mdns.Browser"));
-    lua_remove(L, 1);
-    const Location *location = *((const Location **)luaL_checkudata(L, 1, "mdns.Location"));
+    const Location *location = *((const Location **)luaL_checkudata(L, 2, "mdns.Location"));
     self__->add_device(*location);
     return 0;
   } catch (std::exception &e) {
@@ -94,8 +93,7 @@ static int Browser_add_device(lua_State *L) {
 static int Browser_remove_device(lua_State *L) {
   try {
     Browser *self__ = *((Browser**)luaL_checkudata(L, 1, "mdns.Browser"));
-    lua_remove(L, 1);
-    const char *name = luaL_checkstring(L, 1);
+    const char *name = luaL_checkstring(L, 2);
     self__->remove_device(name);
     return 0;
   } catch (std::exception &e) {

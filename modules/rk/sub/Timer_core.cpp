@@ -68,7 +68,6 @@ static int Timer__tostring(lua_State *L) {
 static int Timer_interval(lua_State *L) {
   try {
     Timer *self__ = *((Timer**)luaL_checkudata(L, 1, "rk.Timer"));
-    lua_remove(L, 1);
     time_t  retval__ = self__->interval();
     lua_pushnumber(L, retval__);
     return 1;
@@ -94,7 +93,6 @@ static int Timer_interval(lua_State *L) {
 static int Timer_join(lua_State *L) {
   try {
     Timer *self__ = *((Timer**)luaL_checkudata(L, 1, "rk.Timer"));
-    lua_remove(L, 1);
     self__->join();
     return 0;
   } catch (std::exception &e) {
@@ -119,7 +117,6 @@ static int Timer_join(lua_State *L) {
 static int Timer_start(lua_State *L) {
   try {
     Timer *self__ = *((Timer**)luaL_checkudata(L, 1, "rk.Timer"));
-    lua_remove(L, 1);
     self__->start();
     return 0;
   } catch (std::exception &e) {
@@ -144,7 +141,6 @@ static int Timer_start(lua_State *L) {
 static int Timer_stop(lua_State *L) {
   try {
     Timer *self__ = *((Timer**)luaL_checkudata(L, 1, "rk.Timer"));
-    lua_remove(L, 1);
     self__->stop();
     return 0;
   } catch (std::exception &e) {

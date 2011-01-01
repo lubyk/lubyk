@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the RUBYK library (http://rubyk.org)
    Copyright (c) 2007-2011 by Gaspard Bucher (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -26,15 +26,36 @@
 
   ==============================================================================
 */
-#ifndef RUBYK_INCLUDE_ZMQ_MSGPACK_H_
-#define RUBYK_INCLUDE_ZMQ_MSGPACK_H_
 
-#include "zmq/vendor/include/zmq.h"
-#include "rubyk.h"
+#ifndef RUBYK_INCLUDE_RUBYK_EXCEPTION_H_
+#define RUBYK_INCLUDE_RUBYK_EXCEPTION_H_
 
-extern "C" {
-  void msgpack_lua_to_zmq(lua_State *L, zmq_msg_t *msg, int skip_index = 0);
-  int  msgpack_zmq_to_lua(lua_State *L, zmq_msg_t *msg);
-}
+#include <exception>
 
-#endif // RUBYK_INCLUDE_ZMQ_MSGPACK_H_
+#define EXCEPTION_BUFFER_SIZE 256
+
+namespace rubyk {
+
+class Exception : public std::exception
+{
+  std::string message_;
+public:
+  explicit Exception(const char *format, ...) {
+    char buffer[EXCEPTION_BUFFER_SIZE];
+    va_list args;
+    va_start(args, format);
+      vsnprintf(buffer, EXCEPTION_BUFFER_SIZE, format, args);
+    va_end(args);
+    message_ = buffer;
+  }
+
+  ~Exception() throw() {}
+
+  const char* what() const throw() {
+    return message_.c_str();
+  }
+};
+
+} // rubyk
+
+#endif // RUBYK_INCLUDE_RUBYK_EXCEPTION_H_

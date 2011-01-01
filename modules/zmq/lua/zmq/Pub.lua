@@ -11,6 +11,11 @@ require 'zmq.Socket'
 
 function zmq.Pub(location)
   local instance = zmq.Socket(zmq.PUB)
-  instance:bind(location)
+  if location then
+    instance:bind(location)
+  else
+    -- choose a random port with "tcp://*"
+    instance:bind_to_random_port()
+  end
   return instance
 end

@@ -13,21 +13,26 @@ require 'rubyk'
 
 local should = test.Suite('zmq')
 
-local port = 5010
-local function bind_url()
-  port = port + 1
-  return string.format("tcp://*:%i", port)
-end
+function should.bind_to_random_port()
+  local socket = zmq.Socket(zmq.PUSH)
+  local port = socket:bind_to_random_port()
 
-local function remote_url()
-  return string.format("tcp://localhost:%i", port)
+  assert_true(port <= 20000)
+  assert_true(port >= 2000)
+  assert_equal(port, socket:port())
+
+  local socket2 = zmq.Socket(zmq.PUSH)
+  local port2 = socket2:bind_to_random_port()
+  assert_true(port2 <= 20000)
+  assert_true(port2 >= 2000)
+  assert_equal(port2, socket2:port())
 end
 
 function should.send_and_receive()
-  local sender   = zmq.Push(bind_url())
+  local sender   = zmq.Push()
   local continue = false
   local received = nil
-  local receiver = zmq.Pull(remote_url(), function(...)
+  local receiver = zmq.Pull(string.format("tcp://localhost:%i", sender:port()), function(...)
     continue = true
     received = arg
   end)
@@ -73,9 +78,9 @@ function should.send_and_receive()
 end
 
 function should.push_pull_many_messages()
-  local sender   = zmq.Push(bind_url())
+  local sender   = zmq.Push()
   local received = 0
-  local receiver = zmq.Pull(remote_url(), function(message)
+  local receiver = zmq.Pull(string.format("tcp://localhost:%i", sender:port()), function(message)
     received = received + 1
   end)
 
@@ -89,13 +94,13 @@ function should.push_pull_many_messages()
 end
 
 function should.publish_and_subscribe()
-  local sender   = zmq.Pub(bind_url())
+  local sender   = zmq.Pub()
   local received = 0
   local receiver = zmq.Sub(function(message)
     received = received + 1
   end)
 
-  receiver:connect(remote_url())
+  receiver:connect(string.format("tcp://localhost:%i", sender:port()))
 
   while received < 10 do
     sender:send("anything")
@@ -107,7 +112,7 @@ function should.publish_and_subscribe()
 end
 
 function should.publish_and_subscribe_many()
-  local sender   = zmq.Pub(bind_url())
+  local sender   = zmq.Pub()
   local received = 0
   local function receive_callback(message)
     received = received + 1
@@ -115,8 +120,8 @@ function should.publish_and_subscribe_many()
   local receiver1 = zmq.Sub(receive_callback)
   local receiver2 = zmq.Sub(receive_callback)
 
-  receiver1:connect(remote_url())
-  receiver2:connect(remote_url())
+  receiver1:connect(string.format("tcp://localhost:%i", sender:port()))
+  receiver2:connect(string.format("tcp://localhost:%i", sender:port()))
 
   -- make sure receivers are ready before starting to send
   worker:sleep(100)
@@ -133,14 +138,14 @@ function should.publish_and_subscribe_many()
 end
 
 function should.request_reply()
-  local server = zmq.Rep(bind_url(), function(msg)
+  local server = zmq.Rep(function(msg)
     return msg + 4
   end)
 
   local total = 0
   -- requester
   local req = zmq.Req()
-  req:connect(remote_url())
+  req:connect(string.format("tcp://localhost:%i", server:port()))
   assert_equal(9, req:request(5))
   server:kill()
 end

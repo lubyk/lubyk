@@ -66,7 +66,6 @@ static int PushButton__tostring(lua_State *L) {
 static int PushButton_object(lua_State *L) {
   try {
     PushButton *self__ = *((PushButton**)luaL_checkudata(L, 1, "mimas.PushButton"));
-    lua_remove(L, 1);
     QObject * retval__ = self__->object();
     lua_pushclass<QObject>(L, retval__, "mimas.QObject");
     return 1;
@@ -92,7 +91,6 @@ static int PushButton_object(lua_State *L) {
 static int PushButton_widget(lua_State *L) {
   try {
     PushButton *self__ = *((PushButton**)luaL_checkudata(L, 1, "mimas.PushButton"));
-    lua_remove(L, 1);
     QWidget * retval__ = self__->widget();
     lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
     return 1;

@@ -71,7 +71,6 @@ static int Slider__tostring(lua_State *L) {
 static int Slider_object(lua_State *L) {
   try {
     Slider *self__ = *((Slider**)luaL_checkudata(L, 1, "mimas.Slider"));
-    lua_remove(L, 1);
     QObject * retval__ = self__->object();
     lua_pushclass<QObject>(L, retval__, "mimas.QObject");
     return 1;
@@ -97,8 +96,7 @@ static int Slider_object(lua_State *L) {
 static int Slider_setHue(lua_State *L) {
   try {
     Slider *self__ = *((Slider**)luaL_checkudata(L, 1, "mimas.Slider"));
-    lua_remove(L, 1);
-    int hue = luaL_checkint(L, 1);
+    int hue = luaL_checkint(L, 2);
     self__->setHue(hue);
     return 0;
   } catch (std::exception &e) {
@@ -123,8 +121,7 @@ static int Slider_setHue(lua_State *L) {
 static int Slider_setValue(lua_State *L) {
   try {
     Slider *self__ = *((Slider**)luaL_checkudata(L, 1, "mimas.Slider"));
-    lua_remove(L, 1);
-    double remote_value = luaL_checknumber(L, 1);
+    double remote_value = luaL_checknumber(L, 2);
     self__->setValue(remote_value);
     return 0;
   } catch (std::exception &e) {
@@ -149,7 +146,6 @@ static int Slider_setValue(lua_State *L) {
 static int Slider_sizeHint(lua_State *L) {
   try {
     Slider *self__ = *((Slider**)luaL_checkudata(L, 1, "mimas.Slider"));
-    lua_remove(L, 1);
     QSize  retval__ = self__->sizeHint();
     lua_pushclass<QSize>(L, retval__, "mimas.QSize");
     return 1;
@@ -175,7 +171,6 @@ static int Slider_sizeHint(lua_State *L) {
 static int Slider_widget(lua_State *L) {
   try {
     Slider *self__ = *((Slider**)luaL_checkudata(L, 1, "mimas.Slider"));
-    lua_remove(L, 1);
     QWidget * retval__ = self__->widget();
     lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
     return 1;

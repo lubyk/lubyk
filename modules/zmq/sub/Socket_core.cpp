@@ -9,7 +9,7 @@ using namespace zmq;
 /* ============================ Constructors     ====================== */
 
 /** zmq::Socket::Socket(rubyk::Worker *worker, int type)
- * include/zmq/Socket.h:60
+ * include/zmq/Socket.h:61
  */
 static int Socket_Socket(lua_State *L) {
   try {
@@ -56,13 +56,12 @@ static int Socket__tostring(lua_State *L) {
 
 
 /** void zmq::Socket::bind(const char *location)
- * include/zmq/Socket.h:82
+ * include/zmq/Socket.h:85
  */
 static int Socket_bind(lua_State *L) {
   try {
     Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "zmq.Socket"));
-    lua_remove(L, 1);
-    const char *location = luaL_checkstring(L, 1);
+    const char *location = luaL_checkstring(L, 2);
     self__->bind(location);
     return 0;
   } catch (std::exception &e) {
@@ -81,14 +80,55 @@ static int Socket_bind(lua_State *L) {
 }
 
 
+/** int zmq::Socket::bind_to_random_port(int min_port=2000, int max_port=20000, int retries=100)
+ * include/zmq/Socket.h:95
+ */
+static int Socket_bind_to_random_port(lua_State *L) {
+  try {
+    Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "zmq.Socket"));
+    int top__ = lua_gettop(L);
+    int  retval__;
+    if (top__ < 2) {
+      retval__ = self__->bind_to_random_port();
+    } else {
+      int min_port = luaL_checkint(L, 2);
+      if (top__ < 3) {
+        retval__ = self__->bind_to_random_port(min_port);
+      } else {
+        int max_port = luaL_checkint(L, 3);
+        if (top__ < 4) {
+          retval__ = self__->bind_to_random_port(min_port, max_port);
+        } else {
+          int retries = luaL_checkint(L, 4);
+          retval__ = self__->bind_to_random_port(min_port, max_port, retries);
+        }
+      }
+    }
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("zmq.Socket.bind_to_random_port: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "zmq.Socket.bind_to_random_port: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
+}
+
+
 /** void zmq::Socket::connect(const char *location)
- * include/zmq/Socket.h:89
+ * include/zmq/Socket.h:113
  */
 static int Socket_connect(lua_State *L) {
   try {
     Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "zmq.Socket"));
-    lua_remove(L, 1);
-    const char *location = luaL_checkstring(L, 1);
+    const char *location = luaL_checkstring(L, 2);
     self__->connect(location);
     return 0;
   } catch (std::exception &e) {
@@ -108,12 +148,11 @@ static int Socket_connect(lua_State *L) {
 
 
 /** void zmq::Socket::kill()
- * include/zmq/Socket.h:150
+ * include/zmq/Socket.h:176
  */
 static int Socket_kill(lua_State *L) {
   try {
     Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "zmq.Socket"));
-    lua_remove(L, 1);
     self__->kill();
     return 0;
   } catch (std::exception &e) {
@@ -133,16 +172,15 @@ static int Socket_kill(lua_State *L) {
 
 
 /** void zmq::Socket::loop(int lua_func_idx)
- * include/zmq/Socket.h:136
+ * include/zmq/Socket.h:162
  */
 static int Socket_loop(lua_State *L) {
   try {
     Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "zmq.Socket"));
-    lua_remove(L, 1);
     
-    luaL_checktype(L, 1, LUA_TFUNCTION);
+    luaL_checktype(L, 2, LUA_TFUNCTION);
     // push on top
-    lua_pushvalue(L, 1);
+    lua_pushvalue(L, 2);
     int lua_func_idx = luaL_ref(L, LUA_REGISTRYINDEX);
     lua_pop(L, 1);
     
@@ -164,13 +202,37 @@ static int Socket_loop(lua_State *L) {
 }
 
 
+/** int zmq::Socket::port()
+ * include/zmq/Socket.h:185
+ */
+static int Socket_port(lua_State *L) {
+  try {
+    Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "zmq.Socket"));
+    int  retval__ = self__->port();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("zmq.Socket.port: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "zmq.Socket.port: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
+}
+
+
 /** void zmq::Socket::quit()
- * include/zmq/Socket.h:143
+ * include/zmq/Socket.h:169
  */
 static int Socket_quit(lua_State *L) {
   try {
     Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "zmq.Socket"));
-    lua_remove(L, 1);
     self__->quit();
     return 0;
   } catch (std::exception &e) {
@@ -190,12 +252,11 @@ static int Socket_quit(lua_State *L) {
 
 
 /** LuaStackSize zmq::Socket::recv(lua_State *L)
- * include/zmq/Socket.h:98
+ * include/zmq/Socket.h:123
  */
 static int Socket_recv(lua_State *L) {
   try {
     Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "zmq.Socket"));
-    lua_remove(L, 1);
     
     LuaStackSize  retval__ = self__->recv(L);
     return retval__;
@@ -216,12 +277,11 @@ static int Socket_recv(lua_State *L) {
 
 
 /** LuaStackSize zmq::Socket::request(lua_State *L)
- * include/zmq/Socket.h:129
+ * include/zmq/Socket.h:155
  */
 static int Socket_request(lua_State *L) {
   try {
     Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "zmq.Socket"));
-    lua_remove(L, 1);
     
     LuaStackSize  retval__ = self__->request(L);
     return retval__;
@@ -242,12 +302,11 @@ static int Socket_request(lua_State *L) {
 
 
 /** void zmq::Socket::send(lua_State *L)
- * include/zmq/Socket.h:113
+ * include/zmq/Socket.h:143
  */
 static int Socket_send(lua_State *L) {
   try {
     Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "zmq.Socket"));
-    lua_remove(L, 1);
     
     self__->send(L);
     return 0;
@@ -268,18 +327,17 @@ static int Socket_send(lua_State *L) {
 
 
 /** void zmq::Socket::setsockopt(int type, const char *filter=NULL)
- * include/zmq/Socket.h:72
+ * include/zmq/Socket.h:73
  */
 static int Socket_setsockopt(lua_State *L) {
   try {
     Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "zmq.Socket"));
-    lua_remove(L, 1);
     int top__ = lua_gettop(L);
-    int type = luaL_checkint(L, 1);
-    if (top__ < 2) {
+    int type = luaL_checkint(L, 2);
+    if (top__ < 3) {
       self__->setsockopt(type);
     } else {
-      const char *filter = luaL_checkstring(L, 2);
+      const char *filter = luaL_checkstring(L, 3);
       self__->setsockopt(type, filter);
     }
     return 0;
@@ -305,9 +363,11 @@ static int Socket_setsockopt(lua_State *L) {
 
 static const struct luaL_Reg Socket_member_methods[] = {
   {"bind"              , Socket_bind},
+  {"bind_to_random_port", Socket_bind_to_random_port},
   {"connect"           , Socket_connect},
   {"kill"              , Socket_kill},
   {"loop"              , Socket_loop},
+  {"port"              , Socket_port},
   {"quit"              , Socket_quit},
   {"recv"              , Socket_recv},
   {"request"           , Socket_request},

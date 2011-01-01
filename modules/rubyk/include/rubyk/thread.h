@@ -27,8 +27,8 @@
   ==============================================================================
 */
 
-#ifndef RUBYK_INCLUDE_CORE_THREAD_H_
-#define RUBYK_INCLUDE_CORE_THREAD_H_
+#ifndef RUBYK_INCLUDE_RUBYK_THREAD_H_
+#define RUBYK_INCLUDE_RUBYK_THREAD_H_
 
 // TODO: refactor all this to move all thread specific code into 'cpp' file !
 #include <errno.h>   // errno
@@ -307,4 +307,4 @@ class Thread : public Mutex {
 
 } // core
 
-#endif // RUBYK_INCLUDE_CORE_THREAD_H_
+#endif // RUBYK_INCLUDE_RUBYK_THREAD_H_

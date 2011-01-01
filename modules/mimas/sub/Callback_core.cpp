@@ -67,10 +67,9 @@ static int Callback__tostring(lua_State *L) {
 static int Callback_connect(lua_State *L) {
   try {
     Callback *self__ = *((Callback**)luaL_checkudata(L, 1, "mimas.Callback"));
-    lua_remove(L, 1);
-    QObject *obj = *((QObject **)luaL_checkudata(L, 1, "mimas.QObject"));
-    const char *method = luaL_checkstring(L, 2);
-    const char *callback = luaL_checkstring(L, 3);
+    QObject *obj = *((QObject **)luaL_checkudata(L, 2, "mimas.QObject"));
+    const char *method = luaL_checkstring(L, 3);
+    const char *callback = luaL_checkstring(L, 4);
     self__->connect(obj, method, callback);
     return 0;
   } catch (std::exception &e) {
@@ -95,8 +94,7 @@ static int Callback_connect(lua_State *L) {
 static int Callback_delete_on_call(lua_State *L) {
   try {
     Callback *self__ = *((Callback**)luaL_checkudata(L, 1, "mimas.Callback"));
-    lua_remove(L, 1);
-    bool should_delete = lua_toboolean(L, 1);
+    bool should_delete = lua_toboolean(L, 2);
     self__->delete_on_call(should_delete);
     return 0;
   } catch (std::exception &e) {

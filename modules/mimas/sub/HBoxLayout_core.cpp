@@ -60,8 +60,7 @@ static int HBoxLayout__tostring(lua_State *L) {
 static int HBoxLayout_addLayout(lua_State *L) {
   try {
     HBoxLayout *self__ = *((HBoxLayout**)luaL_checkudata(L, 1, "mimas.HBoxLayout"));
-    lua_remove(L, 1);
-    QLayout *layout = *((QLayout **)luaL_checkudata(L, 1, "mimas.QLayout"));
+    QLayout *layout = *((QLayout **)luaL_checkudata(L, 2, "mimas.QLayout"));
     self__->addLayout(layout);
     return 0;
   } catch (std::exception &e) {
@@ -86,8 +85,7 @@ static int HBoxLayout_addLayout(lua_State *L) {
 static int HBoxLayout_addWidget(lua_State *L) {
   try {
     HBoxLayout *self__ = *((HBoxLayout**)luaL_checkudata(L, 1, "mimas.HBoxLayout"));
-    lua_remove(L, 1);
-    QWidget *widget = *((QWidget **)luaL_checkudata(L, 1, "mimas.QWidget"));
+    QWidget *widget = *((QWidget **)luaL_checkudata(L, 2, "mimas.QWidget"));
     self__->addWidget(widget);
     return 0;
   } catch (std::exception &e) {
@@ -112,7 +110,6 @@ static int HBoxLayout_addWidget(lua_State *L) {
 static int HBoxLayout_layout(lua_State *L) {
   try {
     HBoxLayout *self__ = *((HBoxLayout**)luaL_checkudata(L, 1, "mimas.HBoxLayout"));
-    lua_remove(L, 1);
     QLayout * retval__ = self__->layout();
     lua_pushclass<QLayout>(L, retval__, "mimas.QLayout");
     return 1;

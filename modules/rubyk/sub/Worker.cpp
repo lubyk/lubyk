@@ -60,7 +60,6 @@ static int Worker__tostring(lua_State *L) {
 static int Worker_now(lua_State *L) {
   try {
     Worker *self__ = *((Worker**)luaL_checkudata(L, 1, "rubyk.Worker"));
-    lua_remove(L, 1);
     double  retval__ = self__->now();
     lua_pushnumber(L, retval__);
     return 1;
@@ -86,8 +85,7 @@ static int Worker_now(lua_State *L) {
 static int Worker_sleep(lua_State *L) {
   try {
     Worker *self__ = *((Worker**)luaL_checkudata(L, 1, "rubyk.Worker"));
-    lua_remove(L, 1);
-    double duration = luaL_checknumber(L, 1);
+    double duration = luaL_checknumber(L, 2);
     self__->sleep(duration);
     return 0;
   } catch (std::exception &e) {

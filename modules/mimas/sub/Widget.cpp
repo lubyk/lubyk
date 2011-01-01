@@ -59,7 +59,6 @@ static int Widget__tostring(lua_State *L) {
 static int Widget_activateWindow(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
-    lua_remove(L, 1);
     self__->activateWindow();
     return 0;
   } catch (std::exception &e) {
@@ -84,9 +83,8 @@ static int Widget_activateWindow(lua_State *L) {
 static int Widget_move(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
-    lua_remove(L, 1);
-    int x = luaL_checkint(L, 1);
-    int y = luaL_checkint(L, 2);
+    int x = luaL_checkint(L, 2);
+    int y = luaL_checkint(L, 3);
     self__->move(x, y);
     return 0;
   } catch (std::exception &e) {
@@ -111,9 +109,8 @@ static int Widget_move(lua_State *L) {
 static int Widget_resize(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
-    lua_remove(L, 1);
-    int w = luaL_checkint(L, 1);
-    int h = luaL_checkint(L, 2);
+    int w = luaL_checkint(L, 2);
+    int h = luaL_checkint(L, 3);
     self__->resize(w, h);
     return 0;
   } catch (std::exception &e) {
@@ -138,8 +135,7 @@ static int Widget_resize(lua_State *L) {
 static int Widget_setHue(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
-    lua_remove(L, 1);
-    float hue = luaL_checknumber(L, 1);
+    float hue = luaL_checknumber(L, 2);
     self__->setHue(hue);
     return 0;
   } catch (std::exception &e) {
@@ -164,7 +160,6 @@ static int Widget_setHue(lua_State *L) {
 static int Widget_show(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
-    lua_remove(L, 1);
     self__->show();
     return 0;
   } catch (std::exception &e) {
@@ -189,7 +184,6 @@ static int Widget_show(lua_State *L) {
 static int Widget_widget(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
-    lua_remove(L, 1);
     QWidget * retval__ = self__->widget();
     lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
     return 1;
