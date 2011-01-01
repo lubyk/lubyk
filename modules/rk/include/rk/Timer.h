@@ -42,9 +42,9 @@ private:
 
     // find function and call
     rubyk::ScopedLock lock(worker_);
-
+    lua_settop(L, 0);
     push_lua_callback();
-
+    dump_lua_stack(L, "bang");
     int status = lua_pcall(L, 0, 1, 0);
     if (status) {
       printf("Error triggering timer: %s\n", lua_tostring(L, -1));

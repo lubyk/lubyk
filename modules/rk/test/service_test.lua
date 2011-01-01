@@ -8,28 +8,28 @@
 --]]------------------------------------------------------
 require 'rubyk'
 
-local should = test.Suite('rk.Service')
+local should = test.Suite('rk.Client / rk.Service')
 
 function should.connect_when_remote_appears()
   local continue = false
   local received_count = 0
-  local function receive_message(self, message)
+  local function receive_message(message)
     received_count = received_count + 1
-    if self.name == 'Venus' and message == 'message from Mars' then
+    if message == 'message from Mars' then
       continue = true
     end
   end
 
-  -- create a first service called 'Venus' that checks for 'message from Mars'
-  local venus = rk.Service('Venus', receive_message)
+  -- create a client that checks for 'message from Mars'
+  local venus = rk.Client(receive_message)
 
-  -- 'Venus' listens to messages from 'Mars'
+  -- subscribe to messages from 'Mars'
   -- connection goes from subscriber to publisher and can be initiated before
   -- Mars is even created.
-  venus:connect('Mars')
+  venus:subscribe('Mars')
 
-  -- create a second service called 'Mars' with default service type '_rubyk._tcp'
-  -- and that does nothing when receiving messages.
+  -- create a service called 'Mars' with default service type '_rubyk._tcp'
+  -- and that replies to all messages with nil.
   local mars = rk.Service('Mars')
 
   -- connected becomes true when 'Mars' appears on the network
@@ -37,8 +37,8 @@ function should.connect_when_remote_appears()
     worker:sleep(10) -- make sure everything is ready before sending
   end
 
-  mars:send('One')
-  mars:send('message from Mars')
+  mars:notify('One')
+  mars:notify('message from Mars')
 
   while not continue do
     worker:sleep(5)

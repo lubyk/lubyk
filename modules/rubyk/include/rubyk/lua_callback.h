@@ -38,13 +38,13 @@ public:
   LuaCallback(rubyk::Worker *worker) :
     worker_(worker), func_idx_(-1) {
     L = lua_newthread(worker_->lua_);
-    thread_idx_ = luaL_ref(worker_->lua_, LUA_REGISTRYINDEX);
+    thread_idx_ = luaL_ref(L, LUA_REGISTRYINDEX);
     lua_pop(worker_->lua_, 1);
   }
 
   virtual ~LuaCallback() {
     // release thread
-    luaL_unref(worker_->lua_, LUA_REGISTRYINDEX, thread_idx_);
+    luaL_unref(L, LUA_REGISTRYINDEX, thread_idx_);
     // release function
     set_callback(-1);
   }
@@ -52,7 +52,7 @@ public:
 protected:
   void set_callback(int func_id) {
     if (func_idx_ != -1) {
-      luaL_unref(worker_->lua_, LUA_REGISTRYINDEX, func_idx_);
+      luaL_unref(L, LUA_REGISTRYINDEX, func_idx_);
     }
     func_idx_ = func_id;
   }

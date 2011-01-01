@@ -12,28 +12,43 @@ local lib = {}
 lib.__index = lib
 rk.ServiceBrowser  = lib
 
+
+local srv = {}
+srv.__index = srv
+
 local browsers = {}
 
---- Helper function to subscribe a service to a given device
-local function subscribe_to_service(service, device)
-  service.subscriber:connect(device.pub_uri)
+--- Methods for service
+function srv:request(...)
+  return self.req:request(...)
+end
+
+-- Return the subscribe url for the service
+function srv:sub_url()
+  local url = self.cached_sub_url
+  if url then
+    return url
+  end
+  self.cached_sub_url = string.format('tcp://%s:%i', self.host, self:request(rubyk.sub_port_url))
+  return self.cached_sub_url
 end
 
 --- Helper function triggered whenever a new remote service is found on the network.
--- If the service can be used (on an interface we want to use), the service
--- is added to the list of services for the current service type.
+-- The service is added to the list of services for the current service type.
 --
 -- If there is any pending connections matching the service name, create connections.
 local function browser_add_remote_service(self, remote_service)
   self.services[remote_service.name] = remote_service
-  remote_service.rcv_uri = string.format('tcp://%s:%i', remote_service.host, remote_service.port - 1)
-  remote_service.pub_uri = string.format('tcp://%s:%i', remote_service.host, remote_service.port)
+  remote_service.req = zmq.Req()
+  remote_service.req:connect(string.format('tcp://%s:%i', remote_service.host, remote_service.port))
+  setmetatable(remote_service, srv)
+
   local pending = self.pending[remote_service.name]
   if pending then
-    for _, connection in ipairs(pending) do
-      -- service found, bind
-      subscribe_to_service(connection.local_service, remote_service)
-      connection.connected = true
+    for _, subscription in ipairs(pending) do
+      -- service found, connect
+      subscription.subscriber:connect(remote_service:sub_url())
+      subscription.connected = true
     end
     self.pending[remote_service.name] = nil
   end
@@ -61,21 +76,21 @@ setmetatable(lib, {
   return instance
 end})
 
---- Connect a Service to another remote service.
+--- Connect a Subscriber to another remote service.
 --
-function lib:connect_service(service, connection)
-  local remote_service = self.services[connection.remote_name]
+function lib:connect(remote_name, subscription)
+  local remote_service = self.services[remote_name]
   if remote_service then
     -- already found service on network
     -- connect
-    subscribe_to_service(service, remote_service)
-    connection.connected = true
+    subscription.subscriber:connect(remote_service:sub_url())
+    subscription.connected = true
   else
-    local pending = self.pending[connection.remote_name]
+    local pending = self.pending[remote_name]
     if not pending then
       pending = {}
-      self.pending[connection.remote_name] = pending
+      self.pending[remote_name] = pending
     end
-    table.insert(pending, connection)
+    table.insert(pending, subscription)
   end
 end

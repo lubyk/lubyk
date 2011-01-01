@@ -15,6 +15,7 @@ Autoload.global()
 rubyk = Autoload('rubyk')
 -------------------------------- CONSTANTS
 rubyk.service_type = '_rubyk._tcp'
+rubyk.sub_port_url = '/rk/sub_port'
 
 -------------------------------- rubyk.core
 require 'rubyk.core'
