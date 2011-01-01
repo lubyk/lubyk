@@ -13,8 +13,10 @@ class Timer : public rubyk::LuaCallback
 {
 public:
   Timer(rubyk::Worker *worker, float interval, int lua_func_idx)
-    : rubyk::LuaCallback(worker, lua_func_idx),
-      timer_(this, interval) {}
+    : rubyk::LuaCallback(worker),
+      timer_(this, interval) {
+    set_callback(lua_func_idx);
+  }
 
   ~Timer() {}
 
@@ -36,13 +38,14 @@ public:
   }
 private:
   void bang() {
-    lua_State *L = worker_->lua_;
+    // L = LuaCallback's thread state
+
     // find function and call
     rubyk::ScopedLock lock(worker_);
 
     push_lua_callback();
 
-    int status = lua_pcall(worker_->lua_, 0, 1, 0);
+    int status = lua_pcall(L, 0, 1, 0);
     if (status) {
       printf("Error triggering timer: %s\n", lua_tostring(L, -1));
     }
@@ -58,7 +61,7 @@ private:
     }
 
     // clear stack
-    lua_settop(worker_->lua_, 0);
+    lua_settop(L, 0);
   }
 
   rubyk::Timer<rk::Timer, &rk::Timer::bang> timer_;

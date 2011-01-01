@@ -93,9 +93,9 @@ public:
 
   /** Receive a message (blocks).
    * For a server, this should typically be used inside the loop.
+   * We pass the lua_State to avoid mixing thread contexts.
    */
-  LuaStackSize recv() {
-    lua_State *L = worker_->lua_;
+  LuaStackSize recv(lua_State *L) {
     zmq_msg_t message;
     zmq_msg_init(&message);
 
@@ -114,7 +114,6 @@ public:
     int rc;
     zmq_msg_t msg;
     msgpack_lua_to_zmq(L, &msg);
-
     rc = zmq_send(socket_, &msg, 0);
     if (rc) {
       lua_pushstring(L, "Error sending message");
@@ -122,6 +121,13 @@ public:
       // never reached: FIXME: memory leak... (msg)
     }
     zmq_msg_close(&msg);
+  }
+
+  /** Request = remote call.
+   */
+  LuaStackSize request(lua_State *L) {
+    send(L);
+    return recv(L);
   }
 
   /** Execute a loop in a new thread.
@@ -151,14 +157,12 @@ public:
 
 private:
   void run(Thread *runner) {
-    lua_State *L = worker_->lua_;
-
+    // L = LuaCallback's lua thread context
     runner->thread_ready();
 
     while(runner->should_run()) {
       // trigger callback
       { rubyk::ScopedLock lock(worker_);
-        lua_settop(L, 0);
         push_lua_callback();
         int status = lua_pcall(L, 0, 1, 0);
         if (status) {

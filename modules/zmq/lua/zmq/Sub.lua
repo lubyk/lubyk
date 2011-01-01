@@ -13,11 +13,7 @@ function zmq.Sub(func)
   local instance = zmq.Socket(zmq.SUB)
   instance:setsockopt(zmq.SUBSCRIBE) -- filter none
   instance:loop(function()
-  print("loop")
-  worker:sleep(100)
-    --local msg = {instance:recv()}
-    --print(unpack(msg))
-    --return func(unpack(msg))
+    return func(instance:recv())
   end)
   return instance
 end

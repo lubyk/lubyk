@@ -11,6 +11,7 @@ require 'zmq.Socket'
 
 function zmq.Rep(location, func)
   local instance = zmq.Socket(zmq.REP)
+  instance:bind(location)
   instance:loop(function()
     -- receive, send, receive, ...
     instance:send(func(instance:recv()))
