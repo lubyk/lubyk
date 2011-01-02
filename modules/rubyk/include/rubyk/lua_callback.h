@@ -35,26 +35,27 @@ namespace rubyk {
 class LuaCallback
 {
 public:
-  LuaCallback(rubyk::Worker *worker) :
+  LuaCallback(rubyk::Worker *worker, int lua_func_idx = -1) :
     worker_(worker), func_idx_(-1) {
     L = lua_newthread(worker_->lua_);
     thread_idx_ = luaL_ref(L, LUA_REGISTRYINDEX);
     lua_pop(worker_->lua_, 1);
+
+    set_lua_callback(lua_func_idx);
   }
 
   virtual ~LuaCallback() {
     // release thread
     luaL_unref(L, LUA_REGISTRYINDEX, thread_idx_);
-    // release function
-    set_callback(-1);
+    set_lua_callback(-1);
   }
-
 protected:
-  void set_callback(int func_id) {
+  void set_lua_callback(int lua_func_idx) {
     if (func_idx_ != -1) {
+      // release function
       luaL_unref(L, LUA_REGISTRYINDEX, func_idx_);
     }
-    func_idx_ = func_id;
+    func_idx_ = lua_func_idx;
   }
 
   /** The caller should lock before calling this.
