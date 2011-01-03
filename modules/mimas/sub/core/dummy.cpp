@@ -41,6 +41,7 @@ extern "C" int luaopen_mimas_core(lua_State *L) {
   // declare metatables for cast signature mimas.QObject and mimas.QWidget
   luaL_newmetatable(L, "mimas.QObject");
   luaL_newmetatable(L, "mimas.QWidget");
+  luaL_newmetatable(L, "mimas.QLayout");
 
   // register functions
   luaL_register(L, "mimas", lib_functions);

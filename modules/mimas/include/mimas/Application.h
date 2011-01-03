@@ -71,9 +71,12 @@ public:
     return QApplication::exec();
   }
 
-  void post(int lua_func_idx) {
-    Callback *clbk = new Callback(worker_, lua_func_idx);
-    clbk->delete_on_call(true);
+  /** Create a callback to execute events in the GUI thread.
+   * Arguments should be 1. self, 2. function
+   */
+  void post(lua_State *L) {
+    Callback *clbk = new Callback(worker_);
+    clbk->set_callback_from_app(L);
     postEvent(&lua_events_processor_, new Callback::Event(clbk));
   }
 

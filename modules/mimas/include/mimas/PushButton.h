@@ -39,6 +39,8 @@
 namespace mimas {
 
 /** PushButton widget.
+ *
+ * @dub lib_name:'PushButton_core'
  */
 class PushButton : public QPushButton
 {
@@ -47,12 +49,15 @@ public:
   PushButton(const char *title = NULL)
    : QPushButton(title) {}
 
+  PushButton(const char *title, QWidget *parent)
+   : QPushButton(title, parent) {}
+
   ~PushButton() {}
 
   QWidget *widget() {
     return this;
   }
-  
+
   QObject *object() {
     return this;
   }

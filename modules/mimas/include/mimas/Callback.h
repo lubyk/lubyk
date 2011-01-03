@@ -30,6 +30,7 @@
 #define RUBYK_INCLUDE_MIMAS_CALLBACK_H_
 
 #include "rubyk.h"
+#include "lua_cpp_helper.h"
 
 #include <QtCore/QObject>
 #include <QtCore/QEvent>
@@ -39,36 +40,30 @@
 #include <string>
 
 namespace mimas {
+
+class Application;
 /** Calls a lua function back.
  *
  * @dub lib_name:'Callback_core'
  *      ignore: 'callback'
  */
-class Callback : public QObject
+class Callback : public QObject, public rubyk::LuaCallback
 {
   Q_OBJECT
 public:
   // Our own custom event id
   static const QEvent::Type EventType;
 
-  Callback(rubyk::Worker *worker, int lua_func_idx)
-   : worker_(worker),
-     func_idx_(lua_func_idx),
-     delete_on_call_(false) {}
+  Callback(rubyk::Worker *worker)
+   : rubyk::LuaCallback(worker),
+     self_in_registry_idx_(-1) {}
 
-  virtual ~Callback() {
-    // release function
-    luaL_unref(worker_->lua_, LUA_REGISTRYINDEX, func_idx_);
-  }
+  virtual ~Callback() {}
 
   void connect(QObject *obj, const char *method, const char *callback) {
     QObject::connect(
       obj,  method,
       this, callback);
-  }
-
-  void delete_on_call(bool should_delete) {
-    delete_on_call_ = should_delete;
   }
 
   /** Simple event that should execute a callback on reception.
@@ -82,73 +77,94 @@ public:
         : QEvent(Callback::EventType),
           callback_(clbk) {}
   };
+
+  /** Set callback function.
+   */
+  void set_callback(lua_State *L) {
+    set_lua_callback(L);
+  }
 public slots:
   void callback() {
-    lua_State *L = worker_->lua_;
-
-    rubyk::ScopedLock lock(worker_);
-    // push LUA_REGISTRYINDEX on top
-    lua_rawgeti(L, LUA_REGISTRYINDEX, func_idx_);
-
-    // no params...
-
-    int status = lua_pcall(L, 0, 0, 0);
-    if (status) {
-      printf("Error in receive callback: %s\n", lua_tostring(L, -1));
+    if (!callback_set()) {
+      fprintf(stderr, "Callback triggered when function not set.");
+      return;
     }
 
-    // clear stack
-    lua_settop(L, 0);
+    rubyk::ScopedLock lock(worker_);
 
-    if (delete_on_call_) delete this;
+    // do not push self
+    push_lua_callback(false);
+
+    // lua_ = LuaCallback's thread state
+    int status = lua_pcall(lua_, 0, 0, 0);
+    if (status) {
+      printf("Error in receive callback: %s\n", lua_tostring(lua_, -1));
+    }
+
+    delete_on_call();
   }
 
   void callback(double value) {
-    lua_State *L = worker_->lua_;
-
-    rubyk::ScopedLock lock(worker_);
-    // push LUA_REGISTRYINDEX on top
-    lua_rawgeti(L, LUA_REGISTRYINDEX, func_idx_);
-
-    // 1 number param
-    lua_pushnumber(L, value);
-
-    int status = lua_pcall(L, 1, 0, 0);
-    if (status) {
-      printf("Error in receive callback(double): %s\n", lua_tostring(L, -1));
+    if (!callback_set()) {
+      fprintf(stderr, "Callback triggered when function not set.");
+      return;
     }
 
-    // clear stack
-    lua_settop(L, 0);
+    rubyk::ScopedLock lock(worker_);
 
-    if (delete_on_call_) delete this;
+    // do not push self
+    push_lua_callback(false);
+
+    // 1 number param
+    lua_pushnumber(lua_, value);
+
+    // lua_ = LuaCallback's thread state
+    int status = lua_pcall(lua_, 1, 0, 0);
+
+    if (status) {
+      fprintf(stderr, "Error in receive callback: %s\n", lua_tostring(lua_, -1));
+    }
+
+    delete_on_call();
   }
 
   void callback(int value) {
-    lua_State *L = worker_->lua_;
-
-    rubyk::ScopedLock lock(worker_);
-    // push LUA_REGISTRYINDEX on top
-    lua_rawgeti(L, LUA_REGISTRYINDEX, func_idx_);
-
-    // 1 number param
-    lua_pushnumber(L, value);
-
-    int status = lua_pcall(L, 1, 0, 0);
-    if (status) {
-      printf("Error in receive callback(int): %s\n", lua_tostring(L, -1));
-    }
-
-    // clear stack
-    lua_settop(L, 0);
-
-    if (delete_on_call_) delete this;
+    callback((double)value);
   }
 
 private:
-  rubyk::Worker *worker_;
-  int  func_idx_;
-  bool delete_on_call_;
+  friend class Application;
+
+  /** When called from Application, the stack is
+   * 1. app
+   * 2. function
+   */
+  void set_callback_from_app(lua_State *L) {
+    // push self
+    lua_pushclass<Callback>(L, this, "mimas.Callback");
+    lua_pushvalue(L, 2);
+    lua_remove(L, 1); // remove app
+    lua_remove(L, 2); // remove function
+    /* Stack is now
+     * 1. self
+     * 2. function
+     */
+    lua_pushvalue(L, 1);
+    // avoid GC
+    self_in_registry_idx_ = luaL_ref(L, LUA_REGISTRYINDEX);
+    set_callback(L);
+  }
+
+
+  void delete_on_call() {
+    if (self_in_registry_idx_ != -1) {
+      // remove from registry and let Lua GC
+      luaL_unref(lua_, LUA_REGISTRYINDEX, self_in_registry_idx_);
+      self_in_registry_idx_ = -1;
+    }
+  }
+
+  int self_in_registry_idx_;
 };
 
 } // mimas

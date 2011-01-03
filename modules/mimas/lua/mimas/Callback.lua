@@ -12,7 +12,8 @@ local worker = worker
 local constr = mimas.Callback
 local mt = nil
 function mimas.Callback(func)
-  local instance = constr(worker, func)
+  local instance = constr(worker)
+  instance:set_callback(func)
   if not mt then
     -- we have to wait for the first instance in order to
     -- access the metatable and rewrite the "connect" method.

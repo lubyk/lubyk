@@ -8,13 +8,14 @@ using namespace mimas;
 
 /* ============================ Constructors     ====================== */
 
-/** mimas::VBoxLayout::VBoxLayout(QWidget *widget)
- * include/mimas/VBoxLayout.h:47
+
+/** mimas::VBoxLayout::VBoxLayout(QWidget *parent)
+ * include/mimas/VBoxLayout.h:50
  */
-static int VBoxLayout_VBoxLayout(lua_State *L) {
+static int VBoxLayout_VBoxLayout1(lua_State *L) {
   try {
-    QWidget *widget = *((QWidget **)luaL_checkudata(L, 1, "mimas.QWidget"));
-    VBoxLayout * retval__ = new VBoxLayout(widget);
+    QWidget *parent = *((QWidget **)luaL_checkudata(L, 1, "mimas.QWidget"));
+    VBoxLayout * retval__ = new VBoxLayout(parent);
     lua_pushclass<VBoxLayout>(L, retval__, "mimas.VBoxLayout");
     return 1;
   } catch (std::exception &e) {
@@ -29,6 +30,46 @@ static int VBoxLayout_VBoxLayout(lua_State *L) {
     lua_pushstring(L, "mimas.VBoxLayout.VBoxLayout: Unknown exception");
     lua_error(L);
     return 0;
+  }
+}
+
+
+/** mimas::VBoxLayout::VBoxLayout()
+ * include/mimas/VBoxLayout.h:52
+ */
+static int VBoxLayout_VBoxLayout2(lua_State *L) {
+  try {
+    VBoxLayout * retval__ = new VBoxLayout();
+    lua_pushclass<VBoxLayout>(L, retval__, "mimas.VBoxLayout");
+    return 1;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("mimas.VBoxLayout.VBoxLayout: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "mimas.VBoxLayout.VBoxLayout: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
+}
+
+
+
+/** Overloaded function chooser for VBoxLayout(...) */
+static int VBoxLayout_VBoxLayout(lua_State *L) {
+  int type__ = lua_type(L, 2);
+  int top__  = lua_gettop(L);
+  if (top__ < 2) {
+    return VBoxLayout_VBoxLayout2(L);
+  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.QWidget")) {
+    return VBoxLayout_VBoxLayout1(L);
+  } else {
+    // use any to raise errors
+    return VBoxLayout_VBoxLayout1(L);
   }
 }
 
@@ -55,7 +96,7 @@ static int VBoxLayout__tostring(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::addLayout(QLayout *layout)
- * include/mimas/VBoxLayout.h:55
+ * include/mimas/VBoxLayout.h:60
  */
 static int VBoxLayout_addLayout(lua_State *L) {
   try {
@@ -80,7 +121,7 @@ static int VBoxLayout_addLayout(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::addWidget(QWidget *widget)
- * include/mimas/VBoxLayout.h:51
+ * include/mimas/VBoxLayout.h:56
  */
 static int VBoxLayout_addWidget(lua_State *L) {
   try {
@@ -105,7 +146,7 @@ static int VBoxLayout_addWidget(lua_State *L) {
 
 
 /** QLayout* mimas::VBoxLayout::layout()
- * include/mimas/VBoxLayout.h:59
+ * include/mimas/VBoxLayout.h:64
  */
 static int VBoxLayout_layout(lua_State *L) {
   try {

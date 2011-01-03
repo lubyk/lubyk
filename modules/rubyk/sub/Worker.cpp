@@ -55,7 +55,7 @@ static int Worker__tostring(lua_State *L) {
 
 
 /** double rubyk::Worker::now()
- * include/rubyk/worker.h:116
+ * include/rubyk/worker.h:117
  */
 static int Worker_now(lua_State *L) {
   try {
@@ -80,7 +80,7 @@ static int Worker_now(lua_State *L) {
 
 
 /** void rubyk::Worker::sleep(double duration)
- * include/rubyk/worker.h:111
+ * include/rubyk/worker.h:112
  */
 static int Worker_sleep(lua_State *L) {
   try {

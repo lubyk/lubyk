@@ -8,10 +8,11 @@ using namespace mimas;
 
 /* ============================ Constructors     ====================== */
 
+
 /** mimas::PushButton::PushButton(const char *title=NULL)
- * include/mimas/PushButton.h:48
+ * include/mimas/PushButton.h:50
  */
-static int PushButton_PushButton(lua_State *L) {
+static int PushButton_PushButton1(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     PushButton * retval__;
@@ -38,6 +39,54 @@ static int PushButton_PushButton(lua_State *L) {
   }
 }
 
+
+/** mimas::PushButton::PushButton(const char *title, QWidget *parent)
+ * include/mimas/PushButton.h:53
+ */
+static int PushButton_PushButton2(lua_State *L) {
+  try {
+    const char *title = luaL_checkstring(L, 1);
+    QWidget *parent = *((QWidget **)luaL_checkudata(L, 2, "mimas.QWidget"));
+    PushButton * retval__ = new PushButton(title, parent);
+    lua_pushclass<PushButton>(L, retval__, "mimas.PushButton");
+    return 1;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("mimas.PushButton.PushButton: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "mimas.PushButton.PushButton: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
+}
+
+
+
+/** Overloaded function chooser for PushButton(...) */
+static int PushButton_PushButton(lua_State *L) {
+  int type__ = lua_type(L, 1);
+  int top__  = lua_gettop(L);
+  if (type__ == LUA_TSTRING) {
+    type__ = lua_type(L, 2);
+    if (top__ < 2) {
+      return PushButton_PushButton1(L);
+    } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.QWidget")) {
+      return PushButton_PushButton2(L);
+    } else {
+      // use any to raise errors
+      return PushButton_PushButton2(L);
+    }
+  } else {
+    // use any to raise errors
+    return PushButton_PushButton2(L);
+  }
+}
+
 /* ============================ Destructor       ====================== */
 
 static int PushButton_destructor(lua_State *L) {
@@ -61,7 +110,7 @@ static int PushButton__tostring(lua_State *L) {
 
 
 /** QObject* mimas::PushButton::object()
- * include/mimas/PushButton.h:56
+ * include/mimas/PushButton.h:61
  */
 static int PushButton_object(lua_State *L) {
   try {
@@ -86,7 +135,7 @@ static int PushButton_object(lua_State *L) {
 
 
 /** QWidget* mimas::PushButton::widget()
- * include/mimas/PushButton.h:52
+ * include/mimas/PushButton.h:57
  */
 static int PushButton_widget(lua_State *L) {
   try {
@@ -130,9 +179,9 @@ static const struct luaL_Reg PushButton_namespace_methods[] = {
 
 
 #ifdef DUB_LUA_NO_OPEN
-int luaload_mimas_PushButton(lua_State *L) {
+int luaload_mimas_PushButton_core(lua_State *L) {
 #else
-extern "C" int luaopen_mimas_PushButton(lua_State *L) {
+extern "C" int luaopen_mimas_PushButton_core(lua_State *L) {
 #endif
   // Create the metatable which will contain all the member methods
   luaL_newmetatable(L, "mimas.PushButton");

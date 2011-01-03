@@ -55,7 +55,7 @@ static int Thread__tostring(lua_State *L) {
 
 
 /** void rk::Thread::join()
- * include/rk/Thread.h:56
+ * include/rk/Thread.h:59
  */
 static int Thread_join(lua_State *L) {
   try {
@@ -79,7 +79,7 @@ static int Thread_join(lua_State *L) {
 
 
 /** void rk::Thread::kill()
- * include/rk/Thread.h:52
+ * include/rk/Thread.h:54
  */
 static int Thread_kill(lua_State *L) {
   try {
@@ -103,7 +103,7 @@ static int Thread_kill(lua_State *L) {
 
 
 /** void rk::Thread::quit()
- * include/rk/Thread.h:48
+ * include/rk/Thread.h:50
  */
 static int Thread_quit(lua_State *L) {
   try {
@@ -127,7 +127,7 @@ static int Thread_quit(lua_State *L) {
 
 
 /** bool rk::Thread::should_run()
- * include/rk/Thread.h:61
+ * include/rk/Thread.h:64
  */
 static int Thread_should_run(lua_State *L) {
   try {
@@ -152,7 +152,7 @@ static int Thread_should_run(lua_State *L) {
 
 
 /** void rk::Thread::start(lua_State *L)
- * include/rk/Thread.h:65
+ * include/rk/Thread.h:68
  */
 static int Thread_start(lua_State *L) {
   try {

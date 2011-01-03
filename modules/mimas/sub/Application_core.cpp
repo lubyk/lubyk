@@ -79,19 +79,14 @@ static int Application_exec(lua_State *L) {
 }
 
 
-/** void mimas::Application::post(int lua_func_idx)
- * include/mimas/Application.h:74
+/** void mimas::Application::post(lua_State *L)
+ * include/mimas/Application.h:77
  */
 static int Application_post(lua_State *L) {
   try {
     Application *self__ = *((Application**)luaL_checkudata(L, 1, "mimas.Application"));
     
-    luaL_checktype(L, 2, LUA_TFUNCTION);
-    // push on top
-    lua_pushvalue(L, 2);
-    int lua_func_idx = luaL_ref(L, LUA_REGISTRYINDEX);
-    
-    self__->post(lua_func_idx);
+    self__->post(L);
     return 0;
   } catch (std::exception &e) {
     std::string *s = new std::string("mimas.Application.post: ");
@@ -110,7 +105,7 @@ static int Application_post(lua_State *L) {
 
 
 /** void mimas::Application::quit()
- * include/mimas/Application.h:80
+ * include/mimas/Application.h:83
  */
 static int Application_quit(lua_State *L) {
   try {

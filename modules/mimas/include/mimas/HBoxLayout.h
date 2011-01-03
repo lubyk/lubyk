@@ -47,12 +47,14 @@ public:
   HBoxLayout(QWidget *parent)
    : QHBoxLayout(parent) {}
 
+  HBoxLayout() {}
+
   ~HBoxLayout() {}
 
   void addWidget(QWidget *widget) {
     QHBoxLayout::addWidget(widget);
   }
-  
+
   void addLayout(QLayout *layout) {
     QHBoxLayout::addLayout(layout);
   }

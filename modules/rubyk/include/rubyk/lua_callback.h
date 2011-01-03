@@ -82,24 +82,29 @@ protected:
     self_idx_ = luaL_ref(L, -2);
     lua_pop(L, 1); // remove weak table
 
+    // FIXME: callbacks created in callbacks loose the global environment _G ...
   }
 
   /** The caller should lock before calling this.
    */
-  void push_lua_callback() {
-    if (func_idx_ == -1) throw Exception("Callback function not set.");
+  void push_lua_callback(bool push_self = true) {
+    if (!callback_set()) throw Exception("Callback function not set.");
 
     // push weak table on top and get function + self
     lua_rawgeti(lua_, LUA_REGISTRYINDEX, worker_->lua_weak_idx_);
     lua_rawgeti(lua_, 1, func_idx_);
-    lua_rawgeti(lua_, 1, self_idx_);
-    
+    if (push_self) lua_rawgeti(lua_, 1, self_idx_);
+
     // remove weak index from stack
-    lua_remove(lua_, 1); 
+    lua_remove(lua_, 1);
   }
 
   rubyk::Worker *worker_;
   lua_State *lua_;
+
+  bool callback_set() {
+    return func_idx_ != -1;
+  }
 private:
   int func_idx_;
   int self_idx_;

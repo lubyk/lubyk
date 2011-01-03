@@ -8,19 +8,13 @@ using namespace mimas;
 
 /* ============================ Constructors     ====================== */
 
-/** mimas::Callback::Callback(rubyk::Worker *worker, int lua_func_idx)
- * include/mimas/Callback.h:57
+/** mimas::Callback::Callback(rubyk::Worker *worker)
+ * include/mimas/Callback.h:59
  */
 static int Callback_Callback(lua_State *L) {
   try {
     rubyk::Worker *worker = *((rubyk::Worker **)luaL_checkudata(L, 1, "rubyk.Worker"));
-    
-    luaL_checktype(L, 2, LUA_TFUNCTION);
-    // push on top
-    lua_pushvalue(L, 2);
-    int lua_func_idx = luaL_ref(L, LUA_REGISTRYINDEX);
-    
-    Callback * retval__ = new Callback(worker, lua_func_idx);
+    Callback * retval__ = new Callback(worker);
     lua_pushclass<Callback>(L, retval__, "mimas.Callback");
     return 1;
   } catch (std::exception &e) {
@@ -61,7 +55,7 @@ static int Callback__tostring(lua_State *L) {
 
 
 /** void mimas::Callback::connect(QObject *obj, const char *method, const char *callback)
- * include/mimas/Callback.h:64
+ * include/mimas/Callback.h:63
  */
 static int Callback_connect(lua_State *L) {
   try {
@@ -87,17 +81,17 @@ static int Callback_connect(lua_State *L) {
 }
 
 
-/** void mimas::Callback::delete_on_call(bool should_delete)
- * include/mimas/Callback.h:70
+/** void mimas::Callback::set_callback(lua_State *L)
+ * include/mimas/Callback.h:83
  */
-static int Callback_delete_on_call(lua_State *L) {
+static int Callback_set_callback(lua_State *L) {
   try {
     Callback *self__ = *((Callback**)luaL_checkudata(L, 1, "mimas.Callback"));
-    bool should_delete = lua_toboolean(L, 2);
-    self__->delete_on_call(should_delete);
+    
+    self__->set_callback(L);
     return 0;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.Callback.delete_on_call: ");
+    std::string *s = new std::string("mimas.Callback.set_callback: ");
     s->append(e.what());
     lua_pushstring(L, s->c_str());
     delete s;
@@ -105,7 +99,7 @@ static int Callback_delete_on_call(lua_State *L) {
     // never reached
     return 0;
   } catch (...) {
-    lua_pushstring(L, "mimas.Callback.delete_on_call: Unknown exception");
+    lua_pushstring(L, "mimas.Callback.set_callback: Unknown exception");
     lua_error(L);
     return 0;
   }
@@ -118,7 +112,7 @@ static int Callback_delete_on_call(lua_State *L) {
 
 static const struct luaL_Reg Callback_member_methods[] = {
   {"connect"           , Callback_connect},
-  {"delete_on_call"    , Callback_delete_on_call},
+  {"set_callback"      , Callback_set_callback},
   {"__tostring"        , Callback__tostring},
   {"__gc"              , Callback_destructor},
   {NULL, NULL},

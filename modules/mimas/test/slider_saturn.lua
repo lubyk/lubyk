@@ -18,18 +18,20 @@ local function set_value(message)
   value = message
   -- value changed, notify
   print("Saturn --->", value)
-  --saturn:notify(value)
+  saturn:notify(value)
 end
 
 -- create a service called 'Saturn' that checks for messages from Mimas
 saturn = rk.Service('Saturn', function(message)
   print("Saturn <---", message)
-  --set_value(message)
+  set_value(message)
 end)
 
+local i = 0
 -- random update of value
-local timer = rk.Timer(1000, function()
-  set_value(math.random())
+local timer = rk.Timer(20, function()
+  i = i + 1
+  set_value(0.5 + 0.49 * math.sin(i * math.pi / 20))
 end)
 timer:start()
 
