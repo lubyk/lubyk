@@ -8,21 +8,14 @@ using namespace rk;
 
 /* ============================ Constructors     ====================== */
 
-/** rk::Timer::Timer(rubyk::Worker *worker, float interval, int lua_func_idx)
- * include/rk/Timer.h:47
+/** rk::Timer::Timer(rubyk::Worker *worker, float interval)
+ * include/rk/Timer.h:48
  */
 static int Timer_Timer(lua_State *L) {
   try {
     rubyk::Worker *worker = *((rubyk::Worker **)luaL_checkudata(L, 1, "rubyk.Worker"));
     float interval = luaL_checknumber(L, 2);
-    
-    luaL_checktype(L, 3, LUA_TFUNCTION);
-    // push on top
-    lua_pushvalue(L, 3);
-    int lua_func_idx = luaL_ref(L, LUA_REGISTRYINDEX);
-    lua_pop(L, 1);
-    
-    Timer * retval__ = new Timer(worker, interval, lua_func_idx);
+    Timer * retval__ = new Timer(worker, interval);
     lua_pushclass<Timer>(L, retval__, "rk.Timer");
     return 1;
   } catch (std::exception &e) {
@@ -63,7 +56,7 @@ static int Timer__tostring(lua_State *L) {
 
 
 /** time_t rk::Timer::interval()
- * include/rk/Timer.h:64
+ * include/rk/Timer.h:66
  */
 static int Timer_interval(lua_State *L) {
   try {
@@ -88,7 +81,7 @@ static int Timer_interval(lua_State *L) {
 
 
 /** void rk::Timer::join()
- * include/rk/Timer.h:59
+ * include/rk/Timer.h:61
  */
 static int Timer_join(lua_State *L) {
   try {
@@ -111,8 +104,33 @@ static int Timer_join(lua_State *L) {
 }
 
 
+/** void rk::Timer::set_callback(lua_State *L)
+ * include/rk/Timer.h:70
+ */
+static int Timer_set_callback(lua_State *L) {
+  try {
+    Timer *self__ = *((Timer**)luaL_checkudata(L, 1, "rk.Timer"));
+    
+    self__->set_callback(L);
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("rk.Timer.set_callback: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "rk.Timer.set_callback: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
+}
+
+
 /** void rk::Timer::start()
- * include/rk/Timer.h:55
+ * include/rk/Timer.h:56
  */
 static int Timer_start(lua_State *L) {
   try {
@@ -136,7 +154,7 @@ static int Timer_start(lua_State *L) {
 
 
 /** void rk::Timer::stop()
- * include/rk/Timer.h:51
+ * include/rk/Timer.h:52
  */
 static int Timer_stop(lua_State *L) {
   try {
@@ -166,6 +184,7 @@ static int Timer_stop(lua_State *L) {
 static const struct luaL_Reg Timer_member_methods[] = {
   {"interval"          , Timer_interval},
   {"join"              , Timer_join},
+  {"set_callback"      , Timer_set_callback},
   {"start"             , Timer_start},
   {"stop"              , Timer_stop},
   {"__tostring"        , Timer__tostring},

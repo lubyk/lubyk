@@ -30,6 +30,7 @@
 #define RUBYK_INCLUDE_RK_SOCKET_H_
 
 #include "rubyk.h"
+#include "rubyk/msgpack.h"
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -66,17 +67,13 @@ class Socket : public LuaCallback
   std::string remote_host_;
   int remote_port_;
 public:
-  Socket(rubyk::Worker *worker, int port = 0, int lua_func_idx = -1)
+  Socket(rubyk::Worker *worker)
     : LuaCallback(worker),
       socket_fd_(-1),
       local_host_("*"),
       local_port_(-1),
       remote_host_("?"),
       remote_port_(-1) {
-
-    if (lua_func_idx != -1) {
-      loop(lua_func_idx);
-    }
   }
 
   ~Socket() {
@@ -239,32 +236,36 @@ public:
    * We pass the lua_State to avoid mixing thread contexts.
    */
   LuaStackSize recv(lua_State *L) {
-    // TODO
-    return 0;
+    char buffer[1024]; // fix make this part of the Socket and tune size from data..
+    int len;
     // unlock while waiting
-    //{ rubyk::ScopedUnlock unlock(worker_);
-    //  if (zmq_recv(socket_, &msg, 0)) {
-    //    zmq_msg_close(&msg);
-    //    throw Exception("Could not receive.");
-    //  }
-    //}
+    { rubyk::ScopedUnlock unlock(worker_);
+      len = ::recv(socket_fd_, &buffer, 1023, 0);
+      if (len == 0) {
+        return 0; // connection closed
+      } else if (len < 0) {
+        throw Exception("Could not receive (%s).", strerror(errno));
+      }
+    }
 
-    //int arg_size = msgpack_zmq_to_lua(L, &msg);
+    //int arg_size = msgpack_bin_to_lua(L, buffer, len);
     //return arg_size;
+    buffer[len] = '\0';
+    lua_pushstring(L, buffer);
+    return 1;
   }
 
   /** Send a message packed with msgpack.
    * Varying parameters.
    */
   void send(lua_State *L) {
-    // TODO
-    // zmq_msg_t msg;
-    // msgpack_lua_to_zmq(L, &msg, 1);
-    // if (zmq_send(socket_, &msg, 0)) {
-    //   zmq_msg_close(&msg);
-    //   throw Exception("Could not send message.");
-    // }
-    // zmq_msg_close(&msg);
+    msgpack_sbuffer* buffer;
+    msgpack_lua_to_bin(L, &buffer, 1);
+    //if (::send(socket_fd_, buffer->data, buffer->size, 0)) {
+    if (::send(socket_fd_, "Hello, World!", 13, 0)) {
+      throw Exception("Could not send message (%s).", strerror(errno));
+    }
+    free_msgpack_msg(NULL, buffer);
   }
 
   /** Request = remote call.
@@ -276,8 +277,8 @@ public:
 
   /** Execute a loop in a new thread.
    */
-  void loop(int lua_func_idx) {
-    set_lua_callback(lua_func_idx);
+  void loop(lua_State *L) {
+    set_lua_callback(L);
     thread_.start_thread<Socket, &Socket::run>(this, NULL);
   }
 
@@ -346,20 +347,20 @@ private:
   }
 
   void run(Thread *runner) {
-    // L = LuaCallback's lua thread context
+    // lua_ = LuaCallback's lua thread context
     runner->thread_ready();
 
     while(runner->should_run()) {
       // trigger callback
       { rubyk::ScopedLock lock(worker_);
         push_lua_callback();
-        int status = lua_pcall(L, 0, 1, 0);
+        int status = lua_pcall(lua_, 0, 1, 0);
         if (status) {
-          printf("Error in loop callback: %s\n", lua_tostring(L, -1));
+          printf("Error in loop callback: %s\n", lua_tostring(lua_, -1));
           return;
         }
 
-        if (lua_type(L, -1) == LUA_TBOOLEAN && !lua_toboolean(L, -1)) {
+        if (lua_type(lua_, -1) == LUA_TBOOLEAN && !lua_toboolean(lua_, -1)) {
           // exit loop on return false
           return;
         }

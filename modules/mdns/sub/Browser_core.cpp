@@ -20,7 +20,6 @@ static int Browser_Browser(lua_State *L) {
     // push on top
     lua_pushvalue(L, 3);
     int lua_func_idx = luaL_ref(L, LUA_REGISTRYINDEX);
-    lua_pop(L, 1);
     
     Browser * retval__ = new Browser(worker, service_type, lua_func_idx);
     lua_pushclass<Browser>(L, retval__, "mdns.Browser");
@@ -112,6 +111,31 @@ static int Browser_remove_device(lua_State *L) {
 }
 
 
+/** const char* mdns::Browser::service_type()
+ * include/mdns/Browser.h:134
+ */
+static int Browser_service_type(lua_State *L) {
+  try {
+    Browser *self__ = *((Browser**)luaL_checkudata(L, 1, "mdns.Browser"));
+    const char * retval__ = self__->service_type();
+    lua_pushstring(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("mdns.Browser.service_type: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "mdns.Browser.service_type: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
+}
+
+
 
 
 /* ============================ Lua Registration ====================== */
@@ -119,6 +143,7 @@ static int Browser_remove_device(lua_State *L) {
 static const struct luaL_Reg Browser_member_methods[] = {
   {"add_device"        , Browser_add_device},
   {"remove_device"     , Browser_remove_device},
+  {"service_type"      , Browser_service_type},
   {"__tostring"        , Browser__tostring},
   {"__gc"              , Browser_destructor},
   {NULL, NULL},

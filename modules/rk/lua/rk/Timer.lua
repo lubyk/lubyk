@@ -13,6 +13,10 @@ require 'worker'
 
 local constr = rk.Timer
 local worker = worker
-function rk.Timer(...)
-  return constr(worker, ...)
+function rk.Timer(interval, func)
+  local instance = constr(worker, interval)
+  if func then
+    instance:set_callback(func)
+  end
+  return instance
 end

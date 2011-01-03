@@ -90,7 +90,6 @@ static int Application_post(lua_State *L) {
     // push on top
     lua_pushvalue(L, 2);
     int lua_func_idx = luaL_ref(L, LUA_REGISTRYINDEX);
-    lua_pop(L, 1);
     
     self__->post(lua_func_idx);
     return 0;

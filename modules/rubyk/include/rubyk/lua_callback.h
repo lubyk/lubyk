@@ -29,47 +29,71 @@
 #ifndef RUBYK_INCLUDE_RUBYK_LUA_CALLBACK_H_
 #define RUBYK_INCLUDE_RUBYK_LUA_CALLBACK_H_
 
+#include "rubyk.h"
+
 namespace rubyk {
 /** Calls a lua function back.
  */
 class LuaCallback
 {
 public:
-  LuaCallback(rubyk::Worker *worker, int lua_func_idx = -1) :
-    worker_(worker), func_idx_(-1) {
-    L = lua_newthread(worker_->lua_);
-    thread_idx_ = luaL_ref(L, LUA_REGISTRYINDEX);
-    lua_pop(worker_->lua_, 1);
-
-    set_lua_callback(lua_func_idx);
+  LuaCallback(rubyk::Worker *worker) :
+    worker_(worker),
+    lua_(NULL),
+    func_idx_(-1) {
   }
 
-  virtual ~LuaCallback() {
-    // release thread
-    luaL_unref(L, LUA_REGISTRYINDEX, thread_idx_);
-    set_lua_callback(-1);
-  }
+  virtual ~LuaCallback() {}
+
 protected:
-  void set_lua_callback(int lua_func_idx) {
-    if (func_idx_ != -1) {
-      // release function
-      luaL_unref(L, LUA_REGISTRYINDEX, func_idx_);
-    }
-    func_idx_ = lua_func_idx;
+
+  /** Set a callback. The stack should be
+   * 1. userdata from rk.Thread / rk.Socket / etc
+   * 2. function()
+   */
+  void set_lua_callback(lua_State *L) {
+    luaL_checktype(L, 2, LUA_TFUNCTION);
+
+    // Store the function and the thread in the Thread/Socket's environment table so it is not GC too soon
+    lua_getfenv(L, 1); // get environment for 'self'
+
+    // env.callback = func
+    lua_pushstring(L, "callback");
+    lua_pushvalue(L, 2); // push func on top
+    lua_settable(L, 3);
+
+    // env.thread = thread
+    lua_pushstring(L, "thread");
+    lua_ = lua_newthread(L);
+    lua_settable(L, 3);
+
+    lua_pop(L, 1); // remove env table
+
+    // get weak table
+    lua_rawgeti(L, LUA_REGISTRYINDEX, worker_->lua_weak_idx_);
+
+    // create reference
+    // push func on top
+    lua_pushvalue(L, 2);
+    func_idx_ = luaL_ref(L, -2);
+    lua_pop(L, 1); // remove weak table
   }
 
   /** The caller should lock before calling this.
    */
   void push_lua_callback() {
-    // push LUA_REGISTRYINDEX on top
-    lua_rawgeti(L, LUA_REGISTRYINDEX, func_idx_);
+    if (func_idx_ == -1) throw Exception("Callback function not set.");
+
+    // push weak table on top and get function
+    lua_rawgeti(lua_, LUA_REGISTRYINDEX, worker_->lua_weak_idx_);
+    lua_rawgeti(lua_, -1, func_idx_);
+    lua_remove(lua_, -2); // remove weak index from stack
   }
 
   rubyk::Worker *worker_;
-  lua_State *L;
+  lua_State *lua_;
 private:
   int func_idx_;
-  int thread_idx_;
 };
 
 } // rubyk

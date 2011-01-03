@@ -29,12 +29,21 @@
 #ifndef RUBYK_INCLUDE_ZMQ_MSGPACK_H_
 #define RUBYK_INCLUDE_ZMQ_MSGPACK_H_
 
-#include "zmq/vendor/include/zmq.h"
 #include "rubyk.h"
 
+// methods defined in msgpack/vendor/rubyk.c
 extern "C" {
-  void msgpack_lua_to_zmq(lua_State *L, zmq_msg_t *msg, int skip_index = 0);
-  int  msgpack_zmq_to_lua(lua_State *L, zmq_msg_t *msg);
+  typedef struct msgpack_sbuffer {
+  	size_t size;
+  	char* data;
+  	size_t alloc;
+  } msgpack_sbuffer;
+
+  void msgpack_lua_to_bin(lua_State *L, msgpack_sbuffer **buffer, int skip_index = 0);
+  int  msgpack_bin_to_lua(lua_State *L, void *msg, size_t msg_len);
+  void free_msgpack_msg(void *data, void *buffer);
+
 }
+
 
 #endif // RUBYK_INCLUDE_ZMQ_MSGPACK_H_

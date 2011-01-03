@@ -9,7 +9,7 @@ using namespace rubyk;
 /* ============================ Constructors     ====================== */
 
 /** rubyk::Worker::Worker(lua_State *L)
- * include/rubyk/worker.h:64
+ * include/rubyk/worker.h:85
  */
 static int Worker_Worker(lua_State *L) {
   try {
@@ -55,7 +55,7 @@ static int Worker__tostring(lua_State *L) {
 
 
 /** double rubyk::Worker::now()
- * include/rubyk/worker.h:79
+ * include/rubyk/worker.h:116
  */
 static int Worker_now(lua_State *L) {
   try {
@@ -80,7 +80,7 @@ static int Worker_now(lua_State *L) {
 
 
 /** void rubyk::Worker::sleep(double duration)
- * include/rubyk/worker.h:74
+ * include/rubyk/worker.h:111
  */
 static int Worker_sleep(lua_State *L) {
   try {

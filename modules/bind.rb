@@ -38,7 +38,6 @@ luaL_checktype(L, #{stack_pos}, LUA_TFUNCTION);
 // push on top
 lua_pushvalue(L, #{stack_pos});
 #{type_def} = luaL_ref(L, LUA_REGISTRYINDEX);
-lua_pop(L, 1);
 }
 end
 

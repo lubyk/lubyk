@@ -8,31 +8,13 @@ using namespace rk;
 
 /* ============================ Constructors     ====================== */
 
-/** rk::Socket::Socket(rubyk::Worker *worker, int port=0, int lua_func_idx=-1)
- * include/rk/Socket.h:75
+/** rk::Socket::Socket(rubyk::Worker *worker)
+ * include/rk/Socket.h:76
  */
 static int Socket_Socket(lua_State *L) {
   try {
-    int top__ = lua_gettop(L);
-    Socket * retval__;
     rubyk::Worker *worker = *((rubyk::Worker **)luaL_checkudata(L, 1, "rubyk.Worker"));
-    if (top__ < 2) {
-      retval__ = new Socket(worker);
-    } else {
-      int port = luaL_checkint(L, 2);
-      if (top__ < 3) {
-        retval__ = new Socket(worker, port);
-      } else {
-        
-        luaL_checktype(L, 3, LUA_TFUNCTION);
-        // push on top
-        lua_pushvalue(L, 3);
-        int lua_func_idx = luaL_ref(L, LUA_REGISTRYINDEX);
-        lua_pop(L, 1);
-    
-        retval__ = new Socket(worker, port, lua_func_idx);
-      }
-    }
+    Socket * retval__ = new Socket(worker);
     lua_pushclass<Socket>(L, retval__, "rk.Socket");
     return 1;
   } catch (std::exception &e) {
@@ -73,7 +55,7 @@ static int Socket__tostring(lua_State *L) {
 
 
 /** LuaStackSize rk::Socket::accept(lua_State *L)
- * include/rk/Socket.h:197
+ * include/rk/Socket.h:194
  */
 static int Socket_accept(lua_State *L) {
   try {
@@ -98,7 +80,7 @@ static int Socket_accept(lua_State *L) {
 
 
 /** int rk::Socket::bind(const char *localhost=NULL, int port=0)
- * include/rk/Socket.h:92
+ * include/rk/Socket.h:89
  */
 static int Socket_bind(lua_State *L) {
   try {
@@ -135,7 +117,7 @@ static int Socket_bind(lua_State *L) {
 
 
 /** void rk::Socket::connect(const char *host, int port)
- * include/rk/Socket.h:146
+ * include/rk/Socket.h:143
  */
 static int Socket_connect(lua_State *L) {
   try {
@@ -161,7 +143,7 @@ static int Socket_connect(lua_State *L) {
 
 
 /** void rk::Socket::kill()
- * include/rk/Socket.h:289
+ * include/rk/Socket.h:294
  */
 static int Socket_kill(lua_State *L) {
   try {
@@ -185,7 +167,7 @@ static int Socket_kill(lua_State *L) {
 
 
 /** void rk::Socket::listen()
- * include/rk/Socket.h:185
+ * include/rk/Socket.h:182
  */
 static int Socket_listen(lua_State *L) {
   try {
@@ -209,7 +191,7 @@ static int Socket_listen(lua_State *L) {
 
 
 /** const char* rk::Socket::local_host() const 
- * include/rk/Socket.h:294
+ * include/rk/Socket.h:299
  */
 static int Socket_local_host(lua_State *L) {
   try {
@@ -234,7 +216,7 @@ static int Socket_local_host(lua_State *L) {
 
 
 /** int rk::Socket::local_port() const 
- * include/rk/Socket.h:298
+ * include/rk/Socket.h:303
  */
 static int Socket_local_port(lua_State *L) {
   try {
@@ -258,20 +240,14 @@ static int Socket_local_port(lua_State *L) {
 }
 
 
-/** void rk::Socket::loop(int lua_func_idx)
- * include/rk/Socket.h:275
+/** void rk::Socket::loop(lua_State *L)
+ * include/rk/Socket.h:280
  */
 static int Socket_loop(lua_State *L) {
   try {
     Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "rk.Socket"));
     
-    luaL_checktype(L, 2, LUA_TFUNCTION);
-    // push on top
-    lua_pushvalue(L, 2);
-    int lua_func_idx = luaL_ref(L, LUA_REGISTRYINDEX);
-    lua_pop(L, 1);
-    
-    self__->loop(lua_func_idx);
+    self__->loop(L);
     return 0;
   } catch (std::exception &e) {
     std::string *s = new std::string("rk.Socket.loop: ");
@@ -290,7 +266,7 @@ static int Socket_loop(lua_State *L) {
 
 
 /** int rk::Socket::port() const 
- * include/rk/Socket.h:310
+ * include/rk/Socket.h:315
  */
 static int Socket_port(lua_State *L) {
   try {
@@ -315,7 +291,7 @@ static int Socket_port(lua_State *L) {
 
 
 /** void rk::Socket::quit()
- * include/rk/Socket.h:282
+ * include/rk/Socket.h:287
  */
 static int Socket_quit(lua_State *L) {
   try {
@@ -339,7 +315,7 @@ static int Socket_quit(lua_State *L) {
 
 
 /** LuaStackSize rk::Socket::recv(lua_State *L)
- * include/rk/Socket.h:237
+ * include/rk/Socket.h:238
  */
 static int Socket_recv(lua_State *L) {
   try {
@@ -364,7 +340,7 @@ static int Socket_recv(lua_State *L) {
 
 
 /** const char* rk::Socket::remote_host() const 
- * include/rk/Socket.h:302
+ * include/rk/Socket.h:307
  */
 static int Socket_remote_host(lua_State *L) {
   try {
@@ -389,7 +365,7 @@ static int Socket_remote_host(lua_State *L) {
 
 
 /** int rk::Socket::remote_port() const 
- * include/rk/Socket.h:306
+ * include/rk/Socket.h:311
  */
 static int Socket_remote_port(lua_State *L) {
   try {
@@ -414,7 +390,7 @@ static int Socket_remote_port(lua_State *L) {
 
 
 /** LuaStackSize rk::Socket::request(lua_State *L)
- * include/rk/Socket.h:268
+ * include/rk/Socket.h:273
  */
 static int Socket_request(lua_State *L) {
   try {
@@ -439,7 +415,7 @@ static int Socket_request(lua_State *L) {
 
 
 /** void rk::Socket::send(lua_State *L)
- * include/rk/Socket.h:255
+ * include/rk/Socket.h:261
  */
 static int Socket_send(lua_State *L) {
   try {

@@ -28,6 +28,7 @@
 */
 #ifndef RUBYK_INCLUDE_RK_TIMER_H_
 #define RUBYK_INCLUDE_RK_TIMER_H_
+
 #include "rubyk.h"
 #include "rubyk/timer.h"
 #include "rubyk/worker.h"
@@ -42,8 +43,8 @@ namespace rk {
 class Timer : public rubyk::LuaCallback
 {
 public:
-  Timer(rubyk::Worker *worker, float interval, int lua_func_idx)
-    : rubyk::LuaCallback(worker, lua_func_idx),
+  Timer(rubyk::Worker *worker, float interval)
+    : rubyk::LuaCallback(worker),
       timer_(this, interval) {}
 
   ~Timer() {}
@@ -53,6 +54,7 @@ public:
   }
 
   void start() {
+    if (!lua_) throw rubyk::Exception("Staring timer without a callback.");
     timer_.start();
   }
 
@@ -64,32 +66,36 @@ public:
   time_t interval() {
     return timer_.interval();
   }
+
+  void set_callback(lua_State *L) {
+    set_lua_callback(L);
+  }
 private:
   void bang() {
-    // L = LuaCallback's thread state
+    // lua_ = LuaCallback's thread state
 
     // find function and call
     rubyk::ScopedLock lock(worker_);
     // FIXME: when all is clean, we should not need this
-    lua_settop(L, 0);
+    lua_settop(lua_, 0);
     push_lua_callback();
-    int status = lua_pcall(L, 0, 1, 0);
+    int status = lua_pcall(lua_, 0, 1, 0);
     if (status) {
-      printf("Error triggering timer: %s\n", lua_tostring(L, -1));
+      printf("Error triggering timer: %s\n", lua_tostring(lua_, -1));
     }
 
-    if (lua_type(L, -1) == LUA_TNUMBER) {
-      double interval = lua_tonumber(L, -1);
+    if (lua_type(lua_, -1) == LUA_TNUMBER) {
+      double interval = lua_tonumber(lua_, -1);
       if (interval == 0) {
         timer_.stop_from_loop();
       } else if (interval < 0) {
-        luaL_error(L, "Timer interval must be a positive value (got %f)\n", interval);
+        luaL_error(lua_, "Timer interval must be a positive value (got %f)\n", interval);
       }
       timer_.set_interval_from_loop(interval);
     }
 
     // clear stack
-    lua_settop(L, 0);
+    lua_settop(lua_, 0);
   }
 
   rubyk::Timer<rk::Timer, &rk::Timer::bang> timer_;

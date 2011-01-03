@@ -38,7 +38,7 @@ extern "C" {
 
   /** Output debugging information on the current lua stack.
    */
-  void dump_lua_stack(lua_State *L, const char *msg);
+  void dump_lua_stack(lua_State *L, const char *msg, bool inspect_tables = true);
 }
 
 

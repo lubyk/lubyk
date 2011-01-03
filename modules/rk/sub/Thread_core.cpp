@@ -8,20 +8,13 @@ using namespace rk;
 
 /* ============================ Constructors     ====================== */
 
-/** rk::Thread::Thread(rubyk::Worker *worker, int lua_func_idx)
+/** rk::Thread::Thread(rubyk::Worker *worker)
  * include/rk/Thread.h:44
  */
 static int Thread_Thread(lua_State *L) {
   try {
     rubyk::Worker *worker = *((rubyk::Worker **)luaL_checkudata(L, 1, "rubyk.Worker"));
-    
-    luaL_checktype(L, 2, LUA_TFUNCTION);
-    // push on top
-    lua_pushvalue(L, 2);
-    int lua_func_idx = luaL_ref(L, LUA_REGISTRYINDEX);
-    lua_pop(L, 1);
-    
-    Thread * retval__ = new Thread(worker, lua_func_idx);
+    Thread * retval__ = new Thread(worker);
     lua_pushclass<Thread>(L, retval__, "rk.Thread");
     return 1;
   } catch (std::exception &e) {
@@ -52,9 +45,9 @@ static int Thread_destructor(lua_State *L) {
 
 static int Thread__tostring(lua_State *L) {
   Thread **userdata = (Thread**)luaL_checkudata(L, 1, "rk.Thread");
-  
+
   lua_pushfstring(L, "<rk.Thread: %p>", *userdata);
-  
+
   return 1;
 }
 
@@ -62,7 +55,7 @@ static int Thread__tostring(lua_State *L) {
 
 
 /** void rk::Thread::join()
- * include/rk/Thread.h:58
+ * include/rk/Thread.h:56
  */
 static int Thread_join(lua_State *L) {
   try {
@@ -86,7 +79,7 @@ static int Thread_join(lua_State *L) {
 
 
 /** void rk::Thread::kill()
- * include/rk/Thread.h:54
+ * include/rk/Thread.h:52
  */
 static int Thread_kill(lua_State *L) {
   try {
@@ -110,7 +103,7 @@ static int Thread_kill(lua_State *L) {
 
 
 /** void rk::Thread::quit()
- * include/rk/Thread.h:50
+ * include/rk/Thread.h:48
  */
 static int Thread_quit(lua_State *L) {
   try {
@@ -134,7 +127,7 @@ static int Thread_quit(lua_State *L) {
 
 
 /** bool rk::Thread::should_run()
- * include/rk/Thread.h:63
+ * include/rk/Thread.h:61
  */
 static int Thread_should_run(lua_State *L) {
   try {
@@ -158,6 +151,31 @@ static int Thread_should_run(lua_State *L) {
 }
 
 
+/** void rk::Thread::start(lua_State *L)
+ * include/rk/Thread.h:65
+ */
+static int Thread_start(lua_State *L) {
+  try {
+    Thread *self__ = *((Thread**)luaL_checkudata(L, 1, "rk.Thread"));
+
+    self__->start(L);
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("rk.Thread.start: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "rk.Thread.start: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
+}
+
+
 
 
 /* ============================ Lua Registration ====================== */
@@ -167,6 +185,7 @@ static const struct luaL_Reg Thread_member_methods[] = {
   {"kill"              , Thread_kill},
   {"quit"              , Thread_quit},
   {"should_run"        , Thread_should_run},
+  {"start"             , Thread_start},
   {"__tostring"        , Thread__tostring},
   {"__gc"              , Thread_destructor},
   {NULL, NULL},

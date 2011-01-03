@@ -28,7 +28,7 @@
 */
 #include "rubyk.h"
 
-static void print_lua_value(lua_State *L, int i) {
+static void print_lua_value(lua_State *L, int i, bool inspect_tables) {
   switch (lua_type(L, i)) {
     case LUA_TSTRING:
       printf("%3i: '%s'\n", i, lua_tostring(L, i));
@@ -40,14 +40,18 @@ static void print_lua_value(lua_State *L, int i) {
       printf("%3i: %g\n", i, lua_tonumber(L, i));
       break;
     case LUA_TTABLE:
-      printf("%3i: {\n", i);
-      lua_pushvalue(L, i);
-      for (lua_pushnil(L); lua_next(L, -2); lua_pop(L, 1)) {
-        // inspect table content
-        print_lua_value(L, -1);
+      if (inspect_tables) {
+        printf("%3i: {\n", i);
+        lua_pushvalue(L, i);
+        for (lua_pushnil(L); lua_next(L, -2); lua_pop(L, 1)) {
+          // inspect table content
+          print_lua_value(L, -1, false);
+        }
+        lua_pop(L, 1);
+        printf("%3i: }\n", i);
+      } else {
+        printf("%3i: {}\n", i);
       }
-      lua_pop(L, 1);
-      printf("%3i: }\n", i);
 
       break;
     case LUA_TNONE:
@@ -59,18 +63,18 @@ static void print_lua_value(lua_State *L, int i) {
       printf("%3i: function\n", i);
       break;
     default:
-      printf("%3i: %s\n", i, lua_typename(L, i));
+      printf("%3i: %s\n", i, lua_typename(L, lua_type(L, i)));
   }
 }
 
-extern "C" void dump_lua_stack(lua_State *L, const char *msg) {
+extern "C" void dump_lua_stack(lua_State *L, const char *msg, bool inspect_tables) {
   int i;
   int top = lua_gettop(L);
 
   printf("%s (top: %d)\n", msg, top);
 
   for (i = 1; i <= top; ++i) {
-    print_lua_value(L, i);
+    print_lua_value(L, i, inspect_tables);
   }
   printf("\n");  /* end the listing */
 }
@@ -83,6 +87,9 @@ static const struct luaL_Reg lib_functions[] = {
 };
 
 extern "C" int luaopen_rubyk_core(lua_State *L) {
+  // initialize the global weak table to store functions that should
+  // still be garbage collected.
+
   // register functions
   luaL_register(L, "rubyk", lib_functions);
   return 0;

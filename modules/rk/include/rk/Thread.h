@@ -40,12 +40,10 @@ namespace rk {
 class Thread : public rubyk::LuaCallback, public rubyk::Thread
 {
 public:
-  Thread(rubyk::Worker *worker, int lua_func_idx)
-    : rubyk::LuaCallback(worker, lua_func_idx) {
-    start_thread<Thread, &Thread::run>(this, NULL);
-  }
+  Thread(rubyk::Worker *worker)
+    : rubyk::LuaCallback(worker) {}
 
-  ~Thread() {}
+  ~Thread() {printf("~Thread\n");}
 
   void quit() {
     rubyk::Thread::quit();
@@ -64,27 +62,30 @@ public:
     return rubyk::Thread::should_run();
   }
 
+  void start(lua_State *L) {
+    // no GC during thread creation (function might get deleted before being used).
+    set_lua_callback(L);
+    start_thread<Thread, &Thread::run>(this, NULL);
+  }
+
 private:
   void run(rubyk::Thread *runner) {
-    // L = LuaCallback's thread state
+    // lua_ = LuaCallback's thread state
 
     runner->thread_ready();
 
     rubyk::ScopedLock lock(worker_);
 
     // FIXME: when all is clean, we should not need this
-    lua_settop(L, 0);
+    lua_settop(lua_, 0);
 
     push_lua_callback();
 
-    int status = lua_pcall(L, 0, 0, 0);
+    int status = lua_pcall(lua_, 0, 0, 0);
 
     if (status) {
-      printf("Error starting thread function: %s\n", lua_tostring(L, -1));
+      printf("Error starting thread function: %s\n", lua_tostring(lua_, -1));
     }
-
-    // FIXME: maybe we should release LuaCallback thread_idx_ to allow GC here
-    // FIXME: how to ensure this rk.Thread is not GC during callback ?
   }
 };
 

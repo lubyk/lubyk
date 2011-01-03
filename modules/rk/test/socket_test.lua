@@ -43,7 +43,7 @@ end
 
 function should.connect()
   local socket = rk.Socket()
-  socket:connect("rubyk.org", 80)
+  socket:connect('rubyk.org', 80)
   assert_match('--> rubyk.org:80', socket:__tostring())
 end
 
@@ -63,10 +63,88 @@ function should.listen_and_accept()
 
   -- I can now connect to this remote
   local socket2 = rk.Socket()
-  socket2:connect("localhost", port)
+  socket2:connect('localhost', port)
   while not continue do
     worker:sleep(20)
   end
+end
+
+function should.send_and_recv()
+  local server = rk.Socket()
+  local port   = server:bind()
+  server:listen()
+  local client = rk.Socket()
+print("connecting")
+  client:connect('localhost', port)
+  local acc = server:accept()
+print("sending")
+  client:send(1, 2, "hello")
+print("send done")
+  received = {acc:recv()}
+  assert_equal({1, 2, "hello"}, received)
+end
+
+function should.send_and_receive()
+  local server   = rk.Socket()
+  local port     = server:bind()
+  server:listen()
+
+  local client = rk.Socket()
+
+  client:connect('localhost', port)
+
+  local sender = server:accept()
+
+  local continue = false
+  local received = nil
+  local thread
+  thread = rk.Thread(function()
+    while thread:should_run() do
+      continue = true
+      received = {client:recv()}
+    end
+  end)
+
+  worker:sleep(20)
+
+  local function send_and_receive(...)
+    continue = false
+    -- cannot use ... or arg is set to nil
+    sender:send(unpack(arg))
+    while not continue do
+      worker:sleep(10)
+    end
+
+    for i, v in ipairs(arg) do
+      assert_equal(arg[i], received[i])
+    end
+  end
+
+  -- string
+  send_and_receive("Hello Rubyk!")
+  -- number, nil, bool
+  send_and_receive(1.234567)
+  send_and_receive(nil)
+  send_and_receive(true)
+  send_and_receive(false)
+  -- array
+  -- we cannot send an array like this
+  -- send_and_receive({1, 2, 3}) ===> received as (1, 2, 3) (not {1, 2, 3})
+  send_and_receive(1, {1, 2, 3})
+
+  send_and_receive(1, {1, 2, {4, 5}})
+
+  send_and_receive("1", {1, "zombie", {4.44, 5}})
+
+  -- hash
+  send_and_receive("/one/two", {one=2, three="four"})
+
+  -- multi values
+  send_and_receive(1,2,3)
+  send_and_receive("/amp/gain", 3.5)
+  send_and_receive("/amp/gain", {1, 2, {"foo", "bar", 5}})
+
+  receiver:kill()
 end
 
 test.all()

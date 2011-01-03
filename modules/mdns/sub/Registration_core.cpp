@@ -22,7 +22,6 @@ static int Registration_Registration(lua_State *L) {
     // push on top
     lua_pushvalue(L, 5);
     int lua_func_idx = luaL_ref(L, LUA_REGISTRYINDEX);
-    lua_pop(L, 1);
     
     Registration * retval__ = new Registration(worker, service_type, name, port, lua_func_idx);
     lua_pushclass<Registration>(L, retval__, "mdns.Registration");

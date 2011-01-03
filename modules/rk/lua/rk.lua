@@ -21,3 +21,6 @@ rubyk.rem_service_url = '/rk/rem_service'
 
 -------------------------------- rubyk.core
 require 'rubyk.core'
+
+-------------------------------- pack/unpack (msgpack.vendor)
+require 'msgpack.vendor'

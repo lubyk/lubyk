@@ -19,7 +19,6 @@ static int Callback_Callback(lua_State *L) {
     // push on top
     lua_pushvalue(L, 2);
     int lua_func_idx = luaL_ref(L, LUA_REGISTRYINDEX);
-    lua_pop(L, 1);
     
     Callback * retval__ = new Callback(worker, lua_func_idx);
     lua_pushclass<Callback>(L, retval__, "mimas.Callback");
