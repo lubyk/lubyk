@@ -43,13 +43,16 @@ public:
   Thread(rubyk::Worker *worker)
     : rubyk::LuaCallback(worker) {}
 
-  ~Thread() {printf("~Thread\n");}
+  ~Thread() {
+    kill();
+  }
 
   void quit() {
     rubyk::Thread::quit();
   }
 
   void kill() {
+    rubyk::ScopedUnlock unlock(worker_);
     rubyk::Thread::kill();
   }
 
@@ -63,25 +66,25 @@ public:
   }
 
   void start(lua_State *L) {
-    // no GC during thread creation (function might get deleted before being used).
     set_lua_callback(L);
     start_thread<Thread, &Thread::run>(this, NULL);
   }
 
 private:
   void run(rubyk::Thread *runner) {
-    // lua_ = LuaCallback's thread state
 
     runner->thread_ready();
 
     rubyk::ScopedLock lock(worker_);
 
-    // FIXME: when all is clean, we should not need this
-    lua_settop(lua_, 0);
+    // we may get a kill before even starting
+    if (!should_run()) return;
 
     push_lua_callback();
 
-    int status = lua_pcall(lua_, 0, 0, 0);
+    // lua_ = LuaCallback's thread state
+    // first argument is self
+    int status = lua_pcall(lua_, 1, 0, 0);
 
     if (status) {
       printf("Error starting thread function: %s\n", lua_tostring(lua_, -1));

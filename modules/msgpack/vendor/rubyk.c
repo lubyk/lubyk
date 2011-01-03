@@ -30,7 +30,6 @@
 
 #include "lua/lua.h"
 #include "lua/lauxlib.h"
-#include "zmq/vendor/include/zmq.h"
 #include "msgpack.h"
 
 #include <string.h>
@@ -38,7 +37,7 @@
 
 static void pack_lua(lua_State *L, msgpack_packer *pk, int index);
 
-static void free_msgpack_msg(void *data, void *buffer) {
+void free_msgpack_msg(void *data, void *buffer) {
   msgpack_sbuffer_free((msgpack_sbuffer*)buffer);
 }
 
@@ -187,15 +186,15 @@ static int unpack_object(lua_State *L, msgpack_object *o, bool array_as_arglist)
 	}
 }
 
-void msgpack_lua_to_zmq(lua_State *L, zmq_msg_t *msg, int skip_index) {
+void msgpack_lua_to_bin(lua_State *L, msgpack_sbuffer **buffer, int skip_index) {
   /* creates buffer and serializer instance. */
-  msgpack_sbuffer* buffer = msgpack_sbuffer_new();
-  msgpack_sbuffer_init(buffer);
+  *buffer = msgpack_sbuffer_new();
+  msgpack_sbuffer_init(*buffer);
 
-  msgpack_packer*  pk     = msgpack_packer_new(buffer, msgpack_sbuffer_write);
+  msgpack_packer* pk = msgpack_packer_new(*buffer, msgpack_sbuffer_write);
 
   // copy from Lua to buffer
-  // This is the only copy from Lua to zmq
+  // This is the only copy from Lua to binary data
   int top = lua_gettop(L) - skip_index;
   if (top == 0) {
     msgpack_pack_nil(pk);
@@ -209,13 +208,12 @@ void msgpack_lua_to_zmq(lua_State *L, zmq_msg_t *msg, int skip_index) {
       pack_lua(L, pk, i + skip_index);
     }
   }
-
-  zmq_msg_init_data(msg, buffer->data, buffer->size, free_msgpack_msg, buffer);
   msgpack_packer_free(pk);
 }
 
-int msgpack_zmq_to_lua(lua_State *L, zmq_msg_t *msg) {
-  // deserialize zmq message to Lua.
+int msgpack_bin_to_lua(lua_State *L, void *data, size_t msg_len) {
+  //printf("[msgpack_bin_to_lua] L = %p, msg = %p\n", L, msg);
+  // deserialize bin message to Lua.
   msgpack_unpacked values;
   msgpack_unpacked_init(&values);
   // FIXME: allocate zone in worker_ and reuse ?
@@ -223,8 +221,8 @@ int msgpack_zmq_to_lua(lua_State *L, zmq_msg_t *msg) {
   msgpack_zone_init(&zone, 512);
   msgpack_object obj;
 
-  if (!msgpack_unpack(zmq_msg_data(msg), zmq_msg_size(msg), NULL, &zone, &obj)) {
-    luaL_error(L, "Could not unpack zmq message...");
+  if (!msgpack_unpack(data, msg_len, NULL, &zone, &obj)) {
+    luaL_error(L, "Could not unpack binary message...");
     return 0;
   }
 #if 0

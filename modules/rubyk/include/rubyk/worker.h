@@ -90,8 +90,9 @@ public:
     lua_newtable(L);
     // mt = {}
     lua_newtable(L);
-    // mt.__mode = 'v'
+    // mt.__mode = 'kv'
     lua_pushstring(L, "__mode");
+    // weak values
     lua_pushstring(L, "v");
     lua_settable(L, -3);
     // setmetatable(t, mt)

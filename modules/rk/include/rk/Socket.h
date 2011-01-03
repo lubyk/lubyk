@@ -350,21 +350,19 @@ private:
     // lua_ = LuaCallback's lua thread context
     runner->thread_ready();
 
-    while(runner->should_run()) {
-      // trigger callback
-      { rubyk::ScopedLock lock(worker_);
-        push_lua_callback();
-        int status = lua_pcall(lua_, 0, 1, 0);
-        if (status) {
-          printf("Error in loop callback: %s\n", lua_tostring(lua_, -1));
-          return;
-        }
+    // trigger callback
 
-        if (lua_type(lua_, -1) == LUA_TBOOLEAN && !lua_toboolean(lua_, -1)) {
-          // exit loop on return false
-          return;
-        }
-      }
+    rubyk::ScopedLock lock(worker_);
+
+    push_lua_callback();
+
+    // lua_ = LuaCallback's thread state
+    // first argument is self
+    int status = lua_pcall(lua_, 1, 0, 0);
+
+    if (status) {
+      printf("Error in Socket callback: %s\n", lua_tostring(lua_, -1));
+      return;
     }
   }
 };

@@ -55,7 +55,7 @@ protected:
     luaL_checktype(L, 2, LUA_TFUNCTION);
 
     // Store the function and the thread in the Thread/Socket's environment table so it is not GC too soon
-    lua_getfenv(L, 1); // get environment for 'self'
+    lua_newtable(L);
 
     // env.callback = func
     lua_pushstring(L, "callback");
@@ -67,16 +67,21 @@ protected:
     lua_ = lua_newthread(L);
     lua_settable(L, 3);
 
-    lua_pop(L, 1); // remove env table
+    if (!lua_setfenv(L, 1)) {
+      throw Exception("Could not set function env on '%s'.", lua_typename(L, lua_type(L, 1)));
+    }
 
     // get weak table
     lua_rawgeti(L, LUA_REGISTRYINDEX, worker_->lua_weak_idx_);
 
-    // create reference
-    // push func on top
+    // create reference to func
     lua_pushvalue(L, 2);
     func_idx_ = luaL_ref(L, -2);
+    // create reference to self
+    lua_pushvalue(L, 1);
+    self_idx_ = luaL_ref(L, -2);
     lua_pop(L, 1); // remove weak table
+
   }
 
   /** The caller should lock before calling this.
@@ -84,16 +89,20 @@ protected:
   void push_lua_callback() {
     if (func_idx_ == -1) throw Exception("Callback function not set.");
 
-    // push weak table on top and get function
+    // push weak table on top and get function + self
     lua_rawgeti(lua_, LUA_REGISTRYINDEX, worker_->lua_weak_idx_);
-    lua_rawgeti(lua_, -1, func_idx_);
-    lua_remove(lua_, -2); // remove weak index from stack
+    lua_rawgeti(lua_, 1, func_idx_);
+    lua_rawgeti(lua_, 1, self_idx_);
+    
+    // remove weak index from stack
+    lua_remove(lua_, 1); 
   }
 
   rubyk::Worker *worker_;
   lua_State *lua_;
 private:
   int func_idx_;
+  int self_idx_;
 };
 
 } // rubyk

@@ -45,9 +45,9 @@ static int Thread_destructor(lua_State *L) {
 
 static int Thread__tostring(lua_State *L) {
   Thread **userdata = (Thread**)luaL_checkudata(L, 1, "rk.Thread");
-
+  
   lua_pushfstring(L, "<rk.Thread: %p>", *userdata);
-
+  
   return 1;
 }
 
@@ -157,7 +157,7 @@ static int Thread_should_run(lua_State *L) {
 static int Thread_start(lua_State *L) {
   try {
     Thread *self__ = *((Thread**)luaL_checkudata(L, 1, "rk.Thread"));
-
+    
     self__->start(L);
     return 0;
   } catch (std::exception &e) {
