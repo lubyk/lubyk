@@ -43,7 +43,7 @@ lua_pop(L, 1);
 end
 
 {
-  'rk'    => %w{Timer},
+  'rk'    => %w{Socket Timer Thread},
   'rubyk' => %w{Worker},
   'mdns'  => %w{Browser Registration},
   'mimas' => %w{Application Callback HBoxLayout Label PushButton Slider VBoxLayout Widget},

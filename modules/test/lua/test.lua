@@ -45,8 +45,12 @@ function lib.run_suite(suite)
           local ok, err = pcall(func)
           if not ok then
             fail_count = fail_count + 1
-            local file, line, message = string.match(err, "([^/\.]+\.lua):(%d+): (.+)")
-            errors[name] = message
+            --local file, line, message = string.match(err, "([^/\.]+\.lua):(%d+): (.+)")
+            --if message then
+            --  errors[name] = message
+            --else
+              errors[name] = err
+            --end
           end
         suite.teardown()
       end
@@ -68,7 +72,7 @@ function lib.report()
     else
       ok_message = string.format('%i Failure(s)', suite._info.fail_count)
     end
-    print(string.format('==== %-13s (%2i tests): %s', suite._info.name, suite._info.test_count, ok_message))
+    print(string.format('==== %-18s (%2i tests): %s', suite._info.name, suite._info.test_count, ok_message))
     total_test = total_test + suite._info.test_count
     total_asrt = total_asrt + suite._info.assert_count
     if suite._info.fail_count > 0 then

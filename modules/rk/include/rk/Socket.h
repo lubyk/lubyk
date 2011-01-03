@@ -40,6 +40,10 @@
 
 #include <string>
 
+#include "lua_cpp_helper.h"
+
+// How many pending connections should wait for 'accept'.
+#define BACKLOG 10
 
 using namespace rubyk;
 
@@ -98,11 +102,6 @@ public:
       }
     }
 
-    if (socket_fd_ != -1) {
-      close(socket_fd_);
-    }
-
-    // bind
     struct addrinfo hints, *res;
 
     memset(&hints, 0, sizeof(hints));
@@ -118,6 +117,10 @@ public:
       throw Exception("Could not getaddrinfo for %s:%i.", local_host_.c_str(), port);
     }
 
+    if (socket_fd_ != -1) {
+      close(socket_fd_);
+    }
+
     // we use getaddrinfo to stay IPv4/IPv6 agnostic
     socket_fd_ = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
     if (socket_fd_ == -1) {
@@ -130,19 +133,7 @@ public:
     }
 
     if (port == 0) {
-      // get bound port
-      struct sockaddr sa;
-      memset(&sa, 0, sizeof(struct sockaddr));
-      // length has to be in a variable
-      socklen_t sa_len = sizeof(sa);
-      if (getsockname(socket_fd_, &sa, &sa_len)) {
-        throw Exception("Could not get bound port (%s).", strerror(errno));
-      }
-      if (sa.sa_family == AF_INET) {
-        local_port_ = ntohs(((struct sockaddr_in *)&sa)->sin_port);
-      } else {
-        local_port_ = ntohs(((struct sockaddr_in6 *)&sa)->sin6_port);
-      }
+      local_port_ = get_port(socket_fd_);
     } else {
       local_port_ = port;
     }
@@ -153,9 +144,94 @@ public:
   }
 
   void connect(const char *host, int port) {
-    // TODO
+    char port_str[10];
+    snprintf(port_str, 10, "%i", port);
+    struct addrinfo hints, *res;
+
+    memset(&hints, 0, sizeof(hints));
+
+    // we do not care if we get an IPv4 or IPv6 address
+    hints.ai_family = AF_UNSPEC;
+    // TCP
+    hints.ai_socktype = SOCK_STREAM;
+
+    if (getaddrinfo(host, port_str, &hints, &res)) {
+      throw Exception("Could not getaddrinfo for %s:%i.", host, port);
+    }
+
+    if (socket_fd_ != -1) {
+      close(socket_fd_);
+    }
+
+    // we use getaddrinfo to stay IPv4/IPv6 agnostic
+    socket_fd_ = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+    if (socket_fd_ == -1) {
+      throw Exception("Could not create socket for %s:%i (%s).", host, port, strerror(errno));
+    }
+
+    // connect
+    if (::connect(socket_fd_, res->ai_addr, res->ai_addrlen)) {
+      throw Exception("Could not connect socket to %s:%i (%s).", host, port, strerror(errno));
+    }
+
+    freeaddrinfo(res);
+
     remote_host_ = host;
     remote_port_ = port;
+  }
+
+  /** Start listening for incoming connections.
+   */
+  void listen() {
+    if (local_port_ == -1)
+      throw Exception("Listen called before bind.");
+
+    if (::listen(socket_fd_, BACKLOG)) {
+      throw Exception("Could not listen (%s).", strerror(errno));
+    }
+  }
+
+  /** Accept a new incomming connection.
+   * @return a new rk.Socket connected to the remote end.
+   */
+  LuaStackSize accept(lua_State *L) {
+
+    if (local_port_ == -1)
+      throw Exception("Accept called before bind.");
+
+    struct sockaddr sa;
+    memset(&sa, 0, sizeof(struct sockaddr));
+    // length has to be in a variable
+    socklen_t sa_len = sizeof(sa);
+
+    int fd;
+
+    { ScopedUnlock unlock(worker_);
+      fd = ::accept(socket_fd_, &sa, &sa_len);
+    }
+
+    if (fd == -1) {
+      throw Exception("Error while accepting connection (%s).", strerror(errno));
+    }
+
+    // get remote name / port
+    int remote_port;
+    if (sa.sa_family == AF_INET) {
+      remote_port = ntohs(((struct sockaddr_in *)&sa)->sin_port);
+    } else {
+      remote_port = ntohs(((struct sockaddr_in6 *)&sa)->sin6_port);
+    }
+
+    char remote_host[NI_MAXHOST];
+
+    if (getnameinfo(&sa, sizeof(sa), remote_host, sizeof(remote_host), NULL, 0, 0)) {
+      throw Exception("Could not get remote host name (%s).", strerror(errno));
+    }
+
+    Socket *new_socket = new Socket(worker_, fd, local_host_.c_str(), remote_host, remote_port);
+
+    lua_pushclass<Socket>(L, new_socket, "rk.Socket");
+    return 1;
   }
 
   /** Receive a message (blocks).
@@ -240,6 +316,35 @@ public:
   }
 
 private:
+   /** Create a socket with an existing file descriptor.
+    * This is used as the result of an 'accept()' call.
+    */
+   Socket(rubyk::Worker *worker, int fd, const char *local_host, const char *remote_host, int remote_port)
+    : LuaCallback(worker),
+      socket_fd_(fd),
+      local_host_(local_host),
+      local_port_(get_port(fd)),
+      remote_host_(remote_host),
+      remote_port_(remote_port) {
+
+  }
+
+  static int get_port(int fd) {
+    // get bound port
+    struct sockaddr sa;
+    memset(&sa, 0, sizeof(struct sockaddr));
+    // length has to be in a variable
+    socklen_t sa_len = sizeof(sa);
+    if (getsockname(fd, &sa, &sa_len)) {
+      throw Exception("Could not get bound port (%s).", strerror(errno));
+    }
+    if (sa.sa_family == AF_INET) {
+      return ntohs(((struct sockaddr_in *)&sa)->sin_port);
+    } else {
+      return ntohs(((struct sockaddr_in6 *)&sa)->sin6_port);
+    }
+  }
+
   void run(Thread *runner) {
     // L = LuaCallback's lua thread context
     runner->thread_ready();

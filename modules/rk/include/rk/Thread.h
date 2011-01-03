@@ -26,75 +26,67 @@
 
   ==============================================================================
 */
-#ifndef RUBYK_INCLUDE_RK_TIMER_H_
-#define RUBYK_INCLUDE_RK_TIMER_H_
+#ifndef RUBYK_INCLUDE_RK_THREAD_H_
+#define RUBYK_INCLUDE_RK_THREAD_H_
+
 #include "rubyk.h"
-#include "rubyk/timer.h"
+#include "rubyk/thread.h"
 #include "rubyk/worker.h"
 
 namespace rk {
-/** Calls a lua function back at regular intervals. If the called function returns
- * a number, the number sets the new interval (0 = stop).
- * @dub string_format:'%%li'
- *      string_args:'(*userdata)->interval()'
- *      lib_name:'Timer_core'
+/** Starts a new OS Thread with a given function.
+ * @dub lib_name:'Thread_core'
  */
-class Timer : public rubyk::LuaCallback
+class Thread : public rubyk::LuaCallback, public rubyk::Thread
 {
 public:
-  Timer(rubyk::Worker *worker, float interval, int lua_func_idx)
-    : rubyk::LuaCallback(worker, lua_func_idx),
-      timer_(this, interval) {}
-
-  ~Timer() {}
-
-  void stop() {
-    timer_.stop();
+  Thread(rubyk::Worker *worker, int lua_func_idx)
+    : rubyk::LuaCallback(worker, lua_func_idx) {
+    start_thread<Thread, &Thread::run>(this, NULL);
   }
 
-  void start() {
-    timer_.start();
+  ~Thread() {}
+
+  void quit() {
+    rubyk::Thread::quit();
+  }
+
+  void kill() {
+    rubyk::Thread::kill();
   }
 
   void join() {
     rubyk::ScopedUnlock unlock(worker_);
-    timer_.join();
+    rubyk::Thread::join();
   }
 
-  time_t interval() {
-    return timer_.interval();
+  bool should_run() {
+    return rubyk::Thread::should_run();
   }
+
 private:
-  void bang() {
+  void run(rubyk::Thread *runner) {
     // L = LuaCallback's thread state
 
-    // find function and call
+    runner->thread_ready();
+
     rubyk::ScopedLock lock(worker_);
+
     // FIXME: when all is clean, we should not need this
     lua_settop(L, 0);
+
     push_lua_callback();
-    int status = lua_pcall(L, 0, 1, 0);
+
+    int status = lua_pcall(L, 0, 0, 0);
+
     if (status) {
-      printf("Error triggering timer: %s\n", lua_tostring(L, -1));
+      printf("Error starting thread function: %s\n", lua_tostring(L, -1));
     }
 
-    if (lua_type(L, -1) == LUA_TNUMBER) {
-      double interval = lua_tonumber(L, -1);
-      if (interval == 0) {
-        timer_.stop_from_loop();
-      } else if (interval < 0) {
-        luaL_error(L, "Timer interval must be a positive value (got %f)\n", interval);
-      }
-      timer_.set_interval_from_loop(interval);
-    }
-
-    // clear stack
-    lua_settop(L, 0);
+    // FIXME: maybe we should release LuaCallback thread_idx_ to allow GC here
+    // FIXME: how to ensure this rk.Thread is not GC during callback ?
   }
-
-  rubyk::Timer<rk::Timer, &rk::Timer::bang> timer_;
 };
 
 } // rk
-
-#endif // RUBYK_INCLUDE_RK_TIMER_H_
+#endif // RUBYK_INCLUDE_RK_THREAD_H_

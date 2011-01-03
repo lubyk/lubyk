@@ -14,14 +14,14 @@ layout:addWidget(slider)
 
 local value = nil
 
-local service = rk.Service('Mimas', rubyk.service_type, function(self, val)
+local client = rk.Client(function(val)
   print('Mimas <---', val)
   value = val
   slider:setValue(val)
-end, 7020)
+end)
 
 -- Mimas listens to messages from planet Saturn
-service:connect('Saturn')
+client:subscribe('Saturn')
 
 local callback = mimas.Callback(function(val)
   if val ~= value then
@@ -32,15 +32,16 @@ local callback = mimas.Callback(function(val)
     end
     value = val
     print('Mimas --->', value)
-    service:send('Saturn', value)
+    client:send('Saturn', value)
   end
 end)
 
 -- callback listens for slider's valueChanged and
 -- sends notifications
 callback:connect(slider, 'valueChanged(double)')
+
 -- connected becomes true when 'Mars' appears on the network
-while not service:connected() do
+while not client:connected() do
   worker:sleep(100) -- make sure everything is ready before sending
 end
 print("Connected")

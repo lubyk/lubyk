@@ -13,6 +13,6 @@ require 'worker'
 
 local constr = rk.Timer
 local worker = worker
-function rk.Timer(interval, func)
-  return constr(worker, interval, func)
+function rk.Timer(...)
+  return constr(worker, ...)
 end

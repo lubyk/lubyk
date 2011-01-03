@@ -8,7 +8,7 @@
 --]]------------------------------------------------------
 require 'rubyk'
 
-local should = test.Suite('rk.Client / rk.Service')
+local should = test.Suite('rk.Client/Service')
 
 function should.connect_when_remote_appears()
   local continue = false
@@ -36,6 +36,8 @@ function should.connect_when_remote_appears()
   while not venus:connected() do
     worker:sleep(10) -- make sure everything is ready before sending
   end
+
+  print("Connected")
 
   mars:notify('One')
   mars:notify('message from Mars')

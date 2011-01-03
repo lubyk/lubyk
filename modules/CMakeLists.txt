@@ -124,6 +124,7 @@ foreach (MODULE ${MODULES})
 
     if(EXISTS ${MODULE}/vendor/CMakeLists.txt)
       add_subdirectory(${MODULE}/vendor)
+      add_dependencies(${target} "${target}_vendor")
     endif(EXISTS ${MODULE}/vendor/CMakeLists.txt)
 
     if(EXISTS ${MODULE}/lua)

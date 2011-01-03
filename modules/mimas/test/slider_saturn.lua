@@ -18,14 +18,14 @@ local function set_value(message)
   value = message
   -- value changed, notify
   print("Saturn --->", value)
-  saturn:notify(value)
+  --saturn:notify(value)
 end
 
 -- create a service called 'Saturn' that checks for messages from Mimas
-saturn = rk.Service('Saturn', rubyk.service_type, function(self, message)
+saturn = rk.Service('Saturn', function(message)
   print("Saturn <---", message)
-  set_value(message)
-end, 7010)
+  --set_value(message)
+end)
 
 -- random update of value
 local timer = rk.Timer(1000, function()
