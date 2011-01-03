@@ -69,13 +69,13 @@ static int PushButton_PushButton2(lua_State *L) {
 
 /** Overloaded function chooser for PushButton(...) */
 static int PushButton_PushButton(lua_State *L) {
-  int type__ = lua_type(L, 1);
+  int type__ = lua_type(L, 2);
   int top__  = lua_gettop(L);
   if (type__ == LUA_TSTRING) {
-    type__ = lua_type(L, 2);
-    if (top__ < 2) {
+    type__ = lua_type(L, 3);
+    if (top__ < 3) {
       return PushButton_PushButton1(L);
-    } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.QWidget")) {
+    } else if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "mimas.QWidget")) {
       return PushButton_PushButton2(L);
     } else {
       // use any to raise errors

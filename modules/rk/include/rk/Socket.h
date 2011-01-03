@@ -35,6 +35,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>  // getaddrinfo
+//#include <arpa/inet.h> // inet_ntop
 
 #include <errno.h>  // errno
 #include <string.h> // strerror
@@ -62,14 +63,22 @@ class Socket : public LuaCallback
 {
   Thread thread_;
   int socket_fd_;
+  int socket_type_;
   std::string local_host_;
   int local_port_;
   std::string remote_host_;
   int remote_port_;
 public:
-  Socket(rubyk::Worker *worker)
+
+  enum SocketType {
+    TCP = SOCK_STREAM,
+    UDP = SOCK_DGRAM,
+  };
+
+  Socket(rubyk::Worker *worker, int socket_type)
     : LuaCallback(worker),
       socket_fd_(-1),
+      socket_type_(socket_type),
       local_host_("*"),
       local_port_(-1),
       remote_host_("?"),
@@ -79,6 +88,7 @@ public:
   ~Socket() {
     kill();
     if (socket_fd_ != -1) {
+      printf("close(%i)\n", socket_fd_);
       close(socket_fd_);
     }
   }
@@ -120,6 +130,7 @@ public:
 
     // we use getaddrinfo to stay IPv4/IPv6 agnostic
     socket_fd_ = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+    printf("socket --> %i\n", socket_fd_);
     if (socket_fd_ == -1) {
       throw Exception("Could not create socket for %s:%i (%s).", local_host_.c_str(), port, strerror(errno));
     }
@@ -152,16 +163,19 @@ public:
     // TCP
     hints.ai_socktype = SOCK_STREAM;
 
-    if (getaddrinfo(host, port_str, &hints, &res)) {
-      throw Exception("Could not getaddrinfo for %s:%i.", host, port);
+    int status;
+    if ( (status = getaddrinfo(host, port_str, &hints, &res)) ) {
+      throw Exception("Could not getaddrinfo for %s:%i (%s).", host, port, gai_strerror(status));
     }
 
     if (socket_fd_ != -1) {
+      printf("close(%i)\n", socket_fd_);
       close(socket_fd_);
     }
 
     // we use getaddrinfo to stay IPv4/IPv6 agnostic
     socket_fd_ = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+    printf("socket --> %i\n", socket_fd_);
     if (socket_fd_ == -1) {
       throw Exception("Could not create socket for %s:%i (%s).", host, port, strerror(errno));
     }
@@ -170,6 +184,14 @@ public:
     if (::connect(socket_fd_, res->ai_addr, res->ai_addrlen)) {
       throw Exception("Could not connect socket to %s:%i (%s).", host, port, strerror(errno));
     }
+
+    // char info[INET6_ADDRSTRLEN];
+    // if (res->ai_family == AF_INET) {
+    //   inet_ntop(res->ai_family, &(((struct sockaddr_in*)res)->sin_addr), info, sizeof(info));
+    // } else {
+    //   inet_ntop(res->ai_family, &(((struct sockaddr_in6*)res)->sin6_addr), info, sizeof(info));
+    // }
+    // printf("Connected to %s:%i (%s)\n", host, port, info);
 
     freeaddrinfo(res);
 
@@ -205,6 +227,8 @@ public:
 
     { ScopedUnlock unlock(worker_);
       fd = ::accept(socket_fd_, &sa, &sa_len);
+
+      printf("accept(%i) --> %i\n", socket_fd_, fd);
     }
 
     if (fd == -1) {
@@ -240,6 +264,7 @@ public:
     int len;
     // unlock while waiting
     { rubyk::ScopedUnlock unlock(worker_);
+      printf("recv(%i)\n", socket_fd_);
       len = ::recv(socket_fd_, &buffer, 1023, 0);
       if (len == 0) {
         return 0; // connection closed
@@ -248,11 +273,8 @@ public:
       }
     }
 
-    //int arg_size = msgpack_bin_to_lua(L, buffer, len);
-    //return arg_size;
-    buffer[len] = '\0';
-    lua_pushstring(L, buffer);
-    return 1;
+    int arg_size = msgpack_bin_to_lua(L, buffer, len);
+    return arg_size;
   }
 
   /** Send a message packed with msgpack.
@@ -261,8 +283,8 @@ public:
   void send(lua_State *L) {
     msgpack_sbuffer* buffer;
     msgpack_lua_to_bin(L, &buffer, 1);
-    //if (::send(socket_fd_, buffer->data, buffer->size, 0)) {
-    if (::send(socket_fd_, "Hello, World!", 13, 0)) {
+    printf("send(%i)\n", socket_fd_);
+    if (::send(socket_fd_, buffer->data, buffer->size, 0)) {
       throw Exception("Could not send message (%s).", strerror(errno));
     }
     free_msgpack_msg(NULL, buffer);

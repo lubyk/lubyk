@@ -8,13 +8,14 @@ using namespace rk;
 
 /* ============================ Constructors     ====================== */
 
-/** rk::Socket::Socket(rubyk::Worker *worker)
- * include/rk/Socket.h:76
+/** rk::Socket::Socket(rubyk::Worker *worker, int socket_type)
+ * include/rk/Socket.h:84
  */
 static int Socket_Socket(lua_State *L) {
   try {
     rubyk::Worker *worker = *((rubyk::Worker **)luaL_checkudata(L, 1, "rubyk.Worker"));
-    Socket * retval__ = new Socket(worker);
+    int socket_type = luaL_checkint(L, 2);
+    Socket * retval__ = new Socket(worker, socket_type);
     lua_pushclass<Socket>(L, retval__, "rk.Socket");
     return 1;
   } catch (std::exception &e) {
@@ -55,7 +56,7 @@ static int Socket__tostring(lua_State *L) {
 
 
 /** LuaStackSize rk::Socket::accept(lua_State *L)
- * include/rk/Socket.h:194
+ * include/rk/Socket.h:202
  */
 static int Socket_accept(lua_State *L) {
   try {
@@ -80,7 +81,7 @@ static int Socket_accept(lua_State *L) {
 
 
 /** int rk::Socket::bind(const char *localhost=NULL, int port=0)
- * include/rk/Socket.h:89
+ * include/rk/Socket.h:97
  */
 static int Socket_bind(lua_State *L) {
   try {
@@ -117,7 +118,7 @@ static int Socket_bind(lua_State *L) {
 
 
 /** void rk::Socket::connect(const char *host, int port)
- * include/rk/Socket.h:143
+ * include/rk/Socket.h:151
  */
 static int Socket_connect(lua_State *L) {
   try {
@@ -143,7 +144,7 @@ static int Socket_connect(lua_State *L) {
 
 
 /** void rk::Socket::kill()
- * include/rk/Socket.h:294
+ * include/rk/Socket.h:302
  */
 static int Socket_kill(lua_State *L) {
   try {
@@ -167,7 +168,7 @@ static int Socket_kill(lua_State *L) {
 
 
 /** void rk::Socket::listen()
- * include/rk/Socket.h:182
+ * include/rk/Socket.h:190
  */
 static int Socket_listen(lua_State *L) {
   try {
@@ -191,7 +192,7 @@ static int Socket_listen(lua_State *L) {
 
 
 /** const char* rk::Socket::local_host() const 
- * include/rk/Socket.h:299
+ * include/rk/Socket.h:307
  */
 static int Socket_local_host(lua_State *L) {
   try {
@@ -216,7 +217,7 @@ static int Socket_local_host(lua_State *L) {
 
 
 /** int rk::Socket::local_port() const 
- * include/rk/Socket.h:303
+ * include/rk/Socket.h:311
  */
 static int Socket_local_port(lua_State *L) {
   try {
@@ -241,7 +242,7 @@ static int Socket_local_port(lua_State *L) {
 
 
 /** void rk::Socket::loop(lua_State *L)
- * include/rk/Socket.h:280
+ * include/rk/Socket.h:288
  */
 static int Socket_loop(lua_State *L) {
   try {
@@ -266,7 +267,7 @@ static int Socket_loop(lua_State *L) {
 
 
 /** int rk::Socket::port() const 
- * include/rk/Socket.h:315
+ * include/rk/Socket.h:323
  */
 static int Socket_port(lua_State *L) {
   try {
@@ -291,7 +292,7 @@ static int Socket_port(lua_State *L) {
 
 
 /** void rk::Socket::quit()
- * include/rk/Socket.h:287
+ * include/rk/Socket.h:295
  */
 static int Socket_quit(lua_State *L) {
   try {
@@ -315,7 +316,7 @@ static int Socket_quit(lua_State *L) {
 
 
 /** LuaStackSize rk::Socket::recv(lua_State *L)
- * include/rk/Socket.h:238
+ * include/rk/Socket.h:246
  */
 static int Socket_recv(lua_State *L) {
   try {
@@ -340,7 +341,7 @@ static int Socket_recv(lua_State *L) {
 
 
 /** const char* rk::Socket::remote_host() const 
- * include/rk/Socket.h:307
+ * include/rk/Socket.h:315
  */
 static int Socket_remote_host(lua_State *L) {
   try {
@@ -365,7 +366,7 @@ static int Socket_remote_host(lua_State *L) {
 
 
 /** int rk::Socket::remote_port() const 
- * include/rk/Socket.h:311
+ * include/rk/Socket.h:319
  */
 static int Socket_remote_port(lua_State *L) {
   try {
@@ -390,7 +391,7 @@ static int Socket_remote_port(lua_State *L) {
 
 
 /** LuaStackSize rk::Socket::request(lua_State *L)
- * include/rk/Socket.h:273
+ * include/rk/Socket.h:281
  */
 static int Socket_request(lua_State *L) {
   try {
@@ -415,7 +416,7 @@ static int Socket_request(lua_State *L) {
 
 
 /** void rk::Socket::send(lua_State *L)
- * include/rk/Socket.h:261
+ * include/rk/Socket.h:269
  */
 static int Socket_send(lua_State *L) {
   try {
@@ -470,6 +471,12 @@ static const struct luaL_Reg Socket_namespace_methods[] = {
 };
 
 
+static const struct lua_constants_Reg Socket_namespace_constants[] = {
+  {"TCP"               , rk::Socket::TCP},
+  {"UDP"               , rk::Socket::UDP},
+  {NULL, NULL},
+};
+
 
 #ifdef DUB_LUA_NO_OPEN
 int luaload_rk_Socket_core(lua_State *L) {
@@ -489,6 +496,9 @@ extern "C" int luaopen_rk_Socket_core(lua_State *L) {
   // register class methods in a global namespace table
   luaL_register(L, "rk", Socket_namespace_methods);
 
+
+  // register class enums
+  register_constants(L, "rk.Socket_const", Socket_namespace_constants);
 
 	return 1;
 }

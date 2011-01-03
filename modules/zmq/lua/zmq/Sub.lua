@@ -32,24 +32,32 @@ function zmq.Sub(a, b, c)
     func       = a
   end
 
-  instance = zmq.Socket(zmq.SUB, function()
+  if func then
+    instance = zmq.Socket(zmq.SUB, function()
+      if filter then
+        instance:setsockopt(zmq.SUBSCRIBE, filter)
+      else
+        instance:setsockopt(zmq.SUBSCRIBE) -- filter none = get all
+      end
+
+      if setup_func then
+        setup_func(instance)
+      end
+
+      while instance:should_run() do
+        -- receive, receive
+        func(instance:recv())
+      end
+    end)
+    -- Sleep so that we let server start
+    worker:sleep(10)
+  else
+    instance = zmq.Socket(zmq.SUB)
     if filter then
       instance:setsockopt(zmq.SUBSCRIBE, filter)
     else
       instance:setsockopt(zmq.SUBSCRIBE) -- filter none = get all
     end
-
-    if setup_func then
-      setup_func(instance)
-    end
-
-    while instance:should_run() do
-      -- receive, receive
-      func(instance:recv())
-    end
-  end)
-  -- Sleep so that we let server start
-  -- in order to have port and initialize the instance
-  worker:sleep(10)
+  end
   return instance
 end
