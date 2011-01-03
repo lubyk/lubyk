@@ -4,16 +4,16 @@
     This file is part of 0MQ.
 
     0MQ is free software; you can redistribute it and/or modify it under
-    the terms of the Lesser GNU General Public License as published by
+    the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation; either version 3 of the License, or
     (at your option) any later version.
 
     0MQ is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    Lesser GNU General Public License for more details.
+    GNU Lesser General Public License for more details.
 
-    You should have received a copy of the Lesser GNU General Public License
+    You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
@@ -54,10 +54,6 @@ zmq::kqueue_t::kqueue_t () :
 zmq::kqueue_t::~kqueue_t ()
 {
     worker.stop ();
-
-    //  Make sure there are no fds registered on shutdown.
-    zmq_assert (load.get () == 0);
-
     close (kqueue_fd);
 }
 
@@ -74,7 +70,7 @@ void zmq::kqueue_t::kevent_delete (fd_t fd_, short filter_)
 {
     struct kevent ev;
 
-    EV_SET (&ev, fd_, filter_, EV_DELETE, 0, 0, (kevent_udata_t)NULL);
+    EV_SET (&ev, fd_, filter_, EV_DELETE, 0, 0, 0);
     int rc = kevent (kqueue_fd, &ev, 1, NULL, 0, NULL);
     errno_assert (rc != -1);
 }
@@ -90,6 +86,8 @@ zmq::kqueue_t::handle_t zmq::kqueue_t::add_fd (fd_t fd_,
     pe->flag_pollout = 0;
     pe->reactor = reactor_;
 
+    adjust_load (1);
+
     return pe;
 }
 
@@ -102,6 +100,8 @@ void zmq::kqueue_t::rm_fd (handle_t handle_)
         kevent_delete (pe->fd, EVFILT_WRITE);
     pe->fd = retired_fd;
     retired.push_back (pe);
+
+    adjust_load (-1);
 }
 
 void zmq::kqueue_t::set_pollin (handle_t handle_)
@@ -132,23 +132,6 @@ void zmq::kqueue_t::reset_pollout (handle_t handle_)
     kevent_delete (pe->fd, EVFILT_WRITE);
 }
 
-void zmq::kqueue_t::add_timer (i_poll_events *events_)
-{
-     timers.push_back (events_);
-}
-
-void zmq::kqueue_t::cancel_timer (i_poll_events *events_)
-{
-    timers_t::iterator it = std::find (timers.begin (), timers.end (), events_);
-    if (it != timers.end ())
-        timers.erase (it);
-}
-
-int zmq::kqueue_t::get_load ()
-{
-    return load.get ();
-}
-
 void zmq::kqueue_t::start ()
 {
     worker.start (worker_routine, this);
@@ -163,33 +146,17 @@ void zmq::kqueue_t::loop ()
 {
     while (!stopping) {
 
-        struct kevent ev_buf [max_io_events];
-
-        //  Compute time interval to wait.
-        timespec timeout = {max_timer_period / 1000,
-            (max_timer_period % 1000) * 1000000};
+        //  Execute any due timers.
+        int timeout = (int) execute_timers ();
 
         //  Wait for events.
-        int n = kevent (kqueue_fd, NULL, 0,
-             &ev_buf [0], max_io_events, timers.empty () ? NULL : &timeout);
+        struct kevent ev_buf [max_io_events];
+        timespec ts = {timeout / 1000, (timeout % 1000) * 1000000};
+        int n = kevent (kqueue_fd, NULL, 0, &ev_buf [0], max_io_events,
+            timeout ? &ts: NULL);
         if (n == -1 && errno == EINTR)
             continue;
         errno_assert (n != -1);
-
-        //  Handle timer.
-        if (!n) {
-
-            //  Use local list of timers as timer handlers may fill new timers
-            //  into the original array.
-            timers_t t;
-            std::swap (timers, t);
-
-            //  Trigger all the timers.
-            for (timers_t::iterator it = t.begin (); it != t.end (); it ++)
-                (*it)->timer_event ();
-
-            continue;
-        }
 
         for (int i = 0; i < n; i ++) {
             poll_entry_t *pe = (poll_entry_t*) ev_buf [i].udata;

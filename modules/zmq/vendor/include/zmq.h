@@ -4,16 +4,16 @@
     This file is part of 0MQ.
 
     0MQ is free software; you can redistribute it and/or modify it under
-    the terms of the Lesser GNU General Public License as published by
+    the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation; either version 3 of the License, or
     (at your option) any later version.
 
     0MQ is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    Lesser GNU General Public License for more details.
+    GNU Lesser General Public License for more details.
 
-    You should have received a copy of the Lesser GNU General Public License
+    You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
@@ -30,7 +30,7 @@ extern "C" {
 #include "winsock2.h"
 #endif
 
-/*  Win32 needs special handling for DLL exports                              */
+/*  Handle DSO symbol visibility                                             */
 #if defined _WIN32
 #   if defined DLL_EXPORT
 #       define ZMQ_EXPORT __declspec(dllexport)
@@ -38,7 +38,13 @@ extern "C" {
 #       define ZMQ_EXPORT __declspec(dllimport)
 #   endif
 #else
-#   define ZMQ_EXPORT
+#   if defined __SUNPRO_C  || defined __SUNPRO_CC
+#       define ZMQ_EXPORT __global
+#   elif (defined __GNUC__ && __GNUC__ >= 4) || defined __INTEL_COMPILER
+#       define ZMQ_EXPORT __attribute__ ((visibility("default")))
+#   else
+#       define ZMQ_EXPORT
+#   endif
 #endif
 
 /******************************************************************************/
@@ -47,8 +53,8 @@ extern "C" {
 
 /*  Version macros for compile-time API version detection                     */
 #define ZMQ_VERSION_MAJOR 2
-#define ZMQ_VERSION_MINOR 0
-#define ZMQ_VERSION_PATCH 10
+#define ZMQ_VERSION_MINOR 1
+#define ZMQ_VERSION_PATCH 0
 
 #define ZMQ_MAKE_VERSION(major, minor, patch) \
     ((major) * 10000 + (minor) * 100 + (patch))
@@ -93,10 +99,10 @@ ZMQ_EXPORT void zmq_version (int *major, int *minor, int *patch);
 #endif
 
 /*  Native 0MQ error codes.                                                   */
-#define EMTHREAD (ZMQ_HAUSNUMERO + 50)
 #define EFSM (ZMQ_HAUSNUMERO + 51)
 #define ENOCOMPATPROTO (ZMQ_HAUSNUMERO + 52)
 #define ETERM (ZMQ_HAUSNUMERO + 53)
+#define EMTHREAD (ZMQ_HAUSNUMERO + 54)
 
 /*  This function retrieves the errno as it is known to 0MQ library. The goal */
 /*  of this function is to make the code 100% portable, including where 0MQ   */
@@ -188,6 +194,12 @@ ZMQ_EXPORT int zmq_term (void *context);
 #define ZMQ_SNDBUF 11
 #define ZMQ_RCVBUF 12
 #define ZMQ_RCVMORE 13
+#define ZMQ_FD 14
+#define ZMQ_EVENTS 15
+#define ZMQ_TYPE 16
+#define ZMQ_LINGER 17
+#define ZMQ_RECONNECT_IVL 18
+#define ZMQ_BACKLOG 19
 
 /*  Send/recv options.                                                        */
 #define ZMQ_NOBLOCK 1

@@ -600,7 +600,7 @@ colon and the TCP port number to use.</p></div>
 <div class="ulist"><ul>
 <li>
 <p>
-The wildcard <tt>*</tt>, meaning all available interfaces.
+The wild-card <tt>*</tt>, meaning all available interfaces.
 </p>
 </li>
 <li>
@@ -711,10 +711,10 @@ exceeding 254 octets:</p></div>
 <pre><tt>/* TCP port 5555 on all available interfaces */
 rc = zmq_bind(socket, "tcp://*:5555");
 assert (rc == 0);
-/* TCP port 5555 on the local loopback interface on all platforms */
+/* TCP port 5555 on the local loop-back interface on all platforms */
 rc = zmq_bind(socket, "tcp://127.0.0.1:5555");
 assert (rc == 0);
-/* TCP port 5555 on the first ethernet network interface on Linux */
+/* TCP port 5555 on the first Ethernet network interface on Linux */
 rc = zmq_bind(socket, "tcp://eth0:5555");
 assert (rc == 0);</tt></pre>
 </div></div>
@@ -747,8 +747,8 @@ Martin Lucina &lt;<a href="mailto:mato@kotelna.sk">mato@kotelna.sk</a>&gt;.</p><
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-ØMQ 2.0.10<br />
-Last updated 2010-10-15 19:26:37 CEST
+ØMQ 2.1.0<br />
+Last updated 2010-12-01 10:58:42 CEST
 </div>
 </div>
 </body>

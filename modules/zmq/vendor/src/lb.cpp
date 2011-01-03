@@ -4,16 +4,16 @@
     This file is part of 0MQ.
 
     0MQ is free software; you can redistribute it and/or modify it under
-    the terms of the Lesser GNU General Public License as published by
+    the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation; either version 3 of the License, or
     (at your option) any later version.
 
     0MQ is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    Lesser GNU General Public License for more details.
+    GNU Lesser General Public License for more details.
 
-    You should have received a copy of the Lesser GNU General Public License
+    You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
@@ -22,31 +22,48 @@
 #include "lb.hpp"
 #include "pipe.hpp"
 #include "err.hpp"
+#include "own.hpp"
 
-zmq::lb_t::lb_t () :
+zmq::lb_t::lb_t (own_t *sink_) :
     active (0),
     current (0),
-    more (false)
+    more (false),
+    sink (sink_),
+    terminating (false)
 {
 }
 
 zmq::lb_t::~lb_t ()
 {
-    for (pipes_t::size_type i = 0; i != pipes.size (); i++)
-        pipes [i]->term ();
+    zmq_assert (pipes.empty ());
 }
 
 void zmq::lb_t::attach (writer_t *pipe_)
 {
+    pipe_->set_event_sink (this);
+
     pipes.push_back (pipe_);
     pipes.swap (active, pipes.size () - 1);
     active++;
+
+    if (terminating) {
+        sink->register_term_acks (1);
+        pipe_->terminate ();
+    }
 }
 
-void zmq::lb_t::detach (writer_t *pipe_)
+void zmq::lb_t::terminate ()
 {
-    zmq_assert (!more || pipes [current] != pipe_);
+    zmq_assert (!terminating);
+    terminating = true;
 
+    sink->register_term_acks (pipes.size ());
+    for (pipes_t::size_type i = 0; i != pipes.size (); i++)
+        pipes [i]->terminate ();
+}
+
+void zmq::lb_t::terminated (writer_t *pipe_)
+{
     //  Remove the pipe from the list; adjust number of active pipes
     //  accordingly.
     if (pipes.index (pipe_) < active) {
@@ -55,9 +72,12 @@ void zmq::lb_t::detach (writer_t *pipe_)
             current = 0;
     }
     pipes.erase (pipe_);
+
+    if (terminating)
+        sink->unregister_term_ack ();
 }
 
-void zmq::lb_t::revive (writer_t *pipe_)
+void zmq::lb_t::activated (writer_t *pipe_)
 {
     //  Move the pipe to the list of active pipes.
     pipes.swap (pipes.index (pipe_), active);
@@ -111,10 +131,10 @@ bool zmq::lb_t::has_out ()
         if (pipes [current]->check_write ())
             return true;
 
+        //  Deactivate the pipe.
         active--;
-        if (current < active)
-            pipes.swap (current, active);
-        else
+        pipes.swap (current, active);
+        if (current == active)
             current = 0;
     }
 

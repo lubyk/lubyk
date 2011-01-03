@@ -11,7 +11,7 @@
 require 'rubyk'
 
 
-local should = test.Suite('zmq.Pub / zmq.Sub')
+local should = test.Suite('zmq.Pub/Sub')
 
 function should.publish_and_subscribe()
   local sender   = zmq.Pub()

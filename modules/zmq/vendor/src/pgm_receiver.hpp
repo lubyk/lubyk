@@ -4,16 +4,16 @@
     This file is part of 0MQ.
 
     0MQ is free software; you can redistribute it and/or modify it under
-    the terms of the Lesser GNU General Public License as published by
+    the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation; either version 3 of the License, or
     (at your option) any later version.
 
     0MQ is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    Lesser GNU General Public License for more details.
+    GNU Lesser General Public License for more details.
 
-    You should have received a copy of the Lesser GNU General Public License
+    You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
@@ -34,7 +34,7 @@
 #include "io_object.hpp"
 #include "i_engine.hpp"
 #include "options.hpp"
-#include "zmq_decoder.hpp"
+#include "decoder.hpp"
 #include "pgm_socket.hpp"
 
 namespace zmq
@@ -51,15 +51,23 @@ namespace zmq
         int init (bool udp_encapsulation_, const char *network_);
 
         //  i_engine interface implementation.
-        void plug (struct i_inout *inout_);
+        void plug (class io_thread_t *io_thread_, struct i_inout *inout_);
         void unplug ();
-        void revive ();
-        void resume_input ();
+        void terminate ();
+        void activate_in ();
+        void activate_out ();
 
         //  i_poll_events interface implementation.
         void in_event ();
+        void timer_event (int token);
 
     private:
+
+        //  RX timeout timer ID.
+        enum {rx_timer_id = 0xa1};
+
+        //  RX timer is running.
+        bool has_rx_timer;
 
         //  If joined is true we are already getting messages from the peer.
         //  It it's false, we are getting data but still we haven't seen
@@ -67,20 +75,18 @@ namespace zmq
         struct peer_info_t
         {
             bool joined;
-            zmq_decoder_t *decoder;
+            decoder_t *decoder;
         };
 
         struct tsi_comp
         {
-            inline bool operator () (const pgm_tsi_t &ltsi,
+            bool operator () (const pgm_tsi_t &ltsi,
                 const pgm_tsi_t &rtsi) const
             {
-                if (ltsi.sport < rtsi.sport)
-                    return true;
-
-                return (std::lexicographical_compare (ltsi.gsi.identifier, 
-                    ltsi.gsi.identifier + 6, 
-                    rtsi.gsi.identifier, rtsi.gsi.identifier + 6));
+                uint32_t ll[2], rl[2];
+                memcpy (ll, &ltsi, sizeof (ll));
+                memcpy (rl, &rtsi, sizeof (rl));
+                return (ll[0] < rl[0]) || (ll[0] == rl[0] && ll[1] < rl[1]);
             }
         };
 
@@ -97,7 +103,7 @@ namespace zmq
         i_inout *inout;
 
         //  Most recently used decoder.
-        zmq_decoder_t *mru_decoder;
+        decoder_t *mru_decoder;
 
         //  Number of bytes not consumed by the decoder due to pipe overflow.
         size_t pending_bytes;

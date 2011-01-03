@@ -586,37 +586,41 @@ zmq_term(3) Manual Page
 </div>
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>The <em>zmq_term()</em> function terminates the ØMQ context <em>context</em>.</p></div>
-<div class="paragraph"><p>If there are no longer any sockets open within <em>context</em> at the time
-<em>zmq_term()</em> is called then <em>context</em> shall be shut down and all associated
-resources shall be released immediately.</p></div>
-<div class="paragraph"><p>Otherwise, the following applies:</p></div>
-<div class="ulist"><ul>
-<li>
-<p>
-The <em>zmq_term()</em> function shall return immediately.
-</p>
-</li>
+<div class="paragraph"><p>The <em>zmq_term()</em> function shall terminate the ØMQ context <em>context</em>.</p></div>
+<div class="paragraph"><p>Context termination is performed in the following steps:</p></div>
+<div class="olist arabic"><ol class="arabic">
 <li>
 <p>
 Any blocking operations currently in progress on sockets open within
-  <em>context</em> shall return immediately with an error code of ETERM.
+   <em>context</em> shall return immediately with an error code of ETERM.  With the
+   exception of <em>zmq_close()</em>, any further operations on sockets open within
+   <em>context</em> shall fail with an error code of ETERM.
 </p>
 </li>
 <li>
 <p>
-With the exception of <em>zmq_close()</em>, any further operations on sockets open
-  within <em>context</em> shall fail with an error code of ETERM.
+After interrupting all blocking calls, <em>zmq_term()</em> shall <em>block</em> until the
+   following conditions are satisfied:
+</p>
+<div class="ulist"><ul>
+<li>
+<p>
+All sockets open within <em>context</em> have been closed with <em>zmq_close()</em>.
 </p>
 </li>
 <li>
 <p>
-The actual shutdown of <em>context</em>, and release of any associated resources,
-  <strong>shall be delayed</strong> until the last socket within it is closed with
-  <em>zmq_close()</em>.
+For each socket within <em>context</em>, all messages sent by the application
+     with <em>zmq_send()</em> have either been physically transferred to a network
+     peer, or the socket&#8217;s linger period set with the <em>ZMQ_LINGER</em> socket
+     option has expired.
 </p>
 </li>
 </ul></div>
+</li>
+</ol></div>
+<div class="paragraph"><p>For further details regarding socket linger behaviour refer to the <em>ZMQ_LINGER</em>
+option in <a href="zmq_setsockopt.html">zmq_setsockopt(3)</a>.</p></div>
 </div>
 <h2 id="_return_value">RETURN VALUE</h2>
 <div class="sectionbody">
@@ -639,7 +643,9 @@ The provided <em>context</em> was not valid (NULL).
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph"><p><a href="zmq.html">zmq(7)</a>
-<a href="zmq_init.html">zmq_init(3)</a></p></div>
+<a href="zmq_init.html">zmq_init(3)</a>
+<a href="zmq_close.html">zmq_close(3)</a>
+<a href="zmq_setsockopt.html">zmq_setsockopt(3)</a></p></div>
 </div>
 <h2 id="_authors">AUTHORS</h2>
 <div class="sectionbody">
@@ -650,8 +656,8 @@ Martin Lucina &lt;<a href="mailto:mato@kotelna.sk">mato@kotelna.sk</a>&gt;.</p><
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-ØMQ 2.0.10<br />
-Last updated 2010-10-15 19:26:37 CEST
+ØMQ 2.1.0<br />
+Last updated 2010-12-01 10:58:42 CEST
 </div>
 </div>
 </body>

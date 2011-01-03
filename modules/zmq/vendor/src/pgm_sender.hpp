@@ -4,16 +4,16 @@
     This file is part of 0MQ.
 
     0MQ is free software; you can redistribute it and/or modify it under
-    the terms of the Lesser GNU General Public License as published by
+    the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation; either version 3 of the License, or
     (at your option) any later version.
 
     0MQ is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    Lesser GNU General Public License for more details.
+    GNU Lesser General Public License for more details.
 
-    You should have received a copy of the Lesser GNU General Public License
+    You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
@@ -33,7 +33,7 @@
 #include "i_engine.hpp"
 #include "options.hpp"
 #include "pgm_socket.hpp"
-#include "zmq_encoder.hpp"
+#include "encoder.hpp"
 
 namespace zmq
 {
@@ -49,19 +49,28 @@ namespace zmq
         int init (bool udp_encapsulation_, const char *network_);
 
         //  i_engine interface implementation.
-        void plug (struct i_inout *inout_);
+        void plug (class io_thread_t *io_thread_, struct i_inout *inout_);
         void unplug ();
-        void revive ();
-        void resume_input ();
+        void terminate ();
+        void activate_in ();
+        void activate_out ();
 
         //  i_poll_events interface implementation.
         void in_event ();
         void out_event ();
+        void timer_event (int token);
 
     private:
 
+        //  TX and RX timeout timer ID's.
+        enum {tx_timer_id = 0xa0, rx_timer_id = 0xa1};
+
+        //  Timers are running.
+        bool has_tx_timer;
+        bool has_rx_timer;
+
         //  Message encoder.
-        zmq_encoder_t encoder;
+        encoder_t encoder;
 
         //  PGM socket.
         pgm_socket_t pgm_socket;

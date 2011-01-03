@@ -4,16 +4,16 @@
     This file is part of 0MQ.
 
     0MQ is free software; you can redistribute it and/or modify it under
-    the terms of the Lesser GNU General Public License as published by
+    the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation; either version 3 of the License, or
     (at your option) any later version.
 
     0MQ is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    Lesser GNU General Public License for more details.
+    GNU Lesser General Public License for more details.
 
-    You should have received a copy of the Lesser GNU General Public License
+    You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
@@ -28,6 +28,7 @@
 #include "windows.hpp"
 #endif
 
+#define __PGM_WININT_H__
 #include <pgm/pgm.h>
 
 #include "options.hpp"
@@ -39,9 +40,8 @@ namespace zmq
     {
 
     public:
+
         //  If receiver_ is true PGM transport is not generating SPM packets.
-        //  interface format: iface;mcast_group:port for raw PGM socket
-        //                    udp:iface;mcast_goup:port for UDP encapsulacion
         pgm_socket_t (bool receiver_, const options_t &options_);
 
         //  Closes the transport.
@@ -67,14 +67,19 @@ namespace zmq
         //  Receive data from pgm socket.
         ssize_t receive (void **data_, const pgm_tsi_t **tsi_);
 
+        long get_rx_timeout ();
+        long get_tx_timeout ();
+
         //  POLLIN on sender side should mean NAK or SPMR receiving. 
         //  process_upstream function is used to handle such a situation.
         void process_upstream ();
 
     private:
     
-        //  OpenPGM transport
-        pgm_transport_t* transport;
+        //  OpenPGM transport.
+        pgm_sock_t* sock;
+
+        int last_rx_status, last_tx_status;
 
         //  Associated socket options.
         options_t options;

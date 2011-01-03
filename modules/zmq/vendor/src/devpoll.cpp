@@ -4,16 +4,16 @@
     This file is part of 0MQ.
 
     0MQ is free software; you can redistribute it and/or modify it under
-    the terms of the Lesser GNU General Public License as published by
+    the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation; either version 3 of the License, or
     (at your option) any later version.
 
     0MQ is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    Lesser GNU General Public License for more details.
+    GNU Lesser General Public License for more details.
 
-    You should have received a copy of the Lesser GNU General Public License
+    You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
@@ -56,10 +56,6 @@ zmq::devpoll_t::devpoll_t () :
 zmq::devpoll_t::~devpoll_t ()
 {
     worker.stop ();
-
-    //  Make sure there are no fds registered on shutdown.
-    zmq_assert (load.get () == 0);
-
     close (devpoll_fd);
 }
 
@@ -84,7 +80,7 @@ zmq::devpoll_t::handle_t zmq::devpoll_t::add_fd (fd_t fd_,
     pending_list.push_back (fd_);
 
     //  Increase the load metric of the thread.
-    load.add (1);
+    adjust_load (1);
 
     return fd_;
 }
@@ -97,7 +93,7 @@ void zmq::devpoll_t::rm_fd (handle_t handle_)
     fd_table [handle_].valid = false;
 
     //  Decrease the load metric of the thread.
-    load.sub (1);
+    adjust_load (-1);
 }
 
 void zmq::devpoll_t::set_pollin (handle_t handle_)
@@ -128,23 +124,6 @@ void zmq::devpoll_t::reset_pollout (handle_t handle_)
     devpoll_ctl (handle_, fd_table [handle_].events);
 }
 
-void zmq::devpoll_t::add_timer (i_poll_events *events_)
-{
-     timers.push_back (events_);
-}
-
-void zmq::devpoll_t::cancel_timer (i_poll_events *events_)
-{
-    timers_t::iterator it = std::find (timers.begin (), timers.end (), events_);
-    if (it != timers.end ())
-        timers.erase (it);
-}
-
-int zmq::devpoll_t::get_load ()
-{
-    return load.get ();
-}
-
 void zmq::devpoll_t::start ()
 {
     worker.start (worker_routine, this);
@@ -157,10 +136,6 @@ void zmq::devpoll_t::stop ()
 
 void zmq::devpoll_t::loop ()
 {
-    //  According to the poll(7d) man page, we can retrieve
-    //  no more then (OPEN_MAX - 1) events.
-    int nfds = std::min ((int) max_io_events, OPEN_MAX - 1);
-
     while (!stopping) {
 
         struct pollfd ev_buf [max_io_events];
@@ -170,30 +145,22 @@ void zmq::devpoll_t::loop ()
             fd_table [pending_list [i]].accepted = true;
         pending_list.clear ();
 
-        poll_req.dp_fds = &ev_buf [0];
-        poll_req.dp_nfds = nfds;
-        poll_req.dp_timeout = timers.empty () ? -1 : max_timer_period;
+        //  Execute any due timers.
+        int timeout = (int) execute_timers ();
 
         //  Wait for events.
+        //  On Solaris, we can retrieve no more then (OPEN_MAX - 1) events.
+        poll_req.dp_fds = &ev_buf [0];
+#if defined ZMQ_HAVE_SOLARIS
+        poll_req.dp_nfds = std::min ((int) max_io_events, OPEN_MAX - 1);
+#else
+        poll_req.dp_nfds = max_io_events;
+#endif
+        poll_req.dp_timeout = timeout ? timeout : -1;
         int n = ioctl (devpoll_fd, DP_POLL, &poll_req);
         if (n == -1 && errno == EINTR)
             continue;
         errno_assert (n != -1);
-
-        //  Handle timer.
-        if (!n) {
-
-            //  Use local list of timers as timer handlers may fill new timers
-            //  into the original array.
-            timers_t t;
-            std::swap (timers, t);
-
-            //  Trigger all the timers.
-            for (timers_t::iterator it = t.begin (); it != t.end (); it ++)
-                (*it)->timer_event ();
-
-            continue;
-        }
 
         for (int i = 0; i < n; i ++) {
 

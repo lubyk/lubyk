@@ -620,9 +620,14 @@ Terminate ØMQ context
 </dl></div>
 <h4 id="_thread_safety">Thread safety</h4>
 <div class="paragraph"><p>A ØMQ <em>context</em> is thread safe and may be shared among as many application
-threads as necessary, without any additional locking required on the part of the
-caller.  Each ØMQ socket belonging to a particular <em>context</em> may only be used
-by <strong>the thread that created it</strong> using <em>zmq_socket()</em>.</p></div>
+threads as necessary, without any additional locking required on the part of
+the caller.</p></div>
+<div class="paragraph"><p>Individual ØMQ <em>sockets</em> are <em>not</em> thread safe except in the case where full
+memory barriers are issued when migrating a socket from one thread to another.
+In practice this means applications can create a socket in one thread with
+<em>zmq_socket()</em> and then pass it to a <em>newly created</em> thread as part of thread
+initialization, for example via a structure passed as an argument to
+<em>pthread_create()</em>.</p></div>
 <h4 id="_multiple_contexts">Multiple contexts</h4>
 <div class="paragraph"><p>Multiple <em>contexts</em> may coexist within a single application. Thus, an
 application can use ØMQ directly and at the same time make use of any number of
@@ -858,8 +863,8 @@ included with the ØMQ distribution.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-ØMQ 2.0.10<br />
-Last updated 2010-10-15 19:26:37 CEST
+ØMQ 2.1.0<br />
+Last updated 2010-12-01 10:58:42 CEST
 </div>
 </div>
 </body>

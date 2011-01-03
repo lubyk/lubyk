@@ -11,7 +11,7 @@
 require 'rubyk'
 
 
-local should = test.Suite('zmq.Req / zmq.Rep')
+local should = test.Suite('zmq.Req/Rep')
 
 function should.request_reply()
   local server = zmq.Rep(function(msg)

@@ -4,16 +4,16 @@
     This file is part of 0MQ.
 
     0MQ is free software; you can redistribute it and/or modify it under
-    the terms of the Lesser GNU General Public License as published by
+    the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation; either version 3 of the License, or
     (at your option) any later version.
 
     0MQ is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    Lesser GNU General Public License for more details.
+    GNU Lesser General Public License for more details.
 
-    You should have received a copy of the Lesser GNU General Public License
+    You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
@@ -27,8 +27,8 @@
 #include "i_engine.hpp"
 #include "io_object.hpp"
 #include "tcp_socket.hpp"
-#include "zmq_encoder.hpp"
-#include "zmq_decoder.hpp"
+#include "encoder.hpp"
+#include "decoder.hpp"
 #include "options.hpp"
 
 namespace zmq
@@ -38,16 +38,15 @@ namespace zmq
     {
     public:
 
-        zmq_engine_t (class io_thread_t *parent_, fd_t fd_,
-            const options_t &options_, bool reconnect_, 
-            const char *protocol_, const char *address_);
+        zmq_engine_t (fd_t fd_, const options_t &options_);
         ~zmq_engine_t ();
 
         //  i_engine interface implementation.
-        void plug (struct i_inout *inout_);
+        void plug (class io_thread_t *io_thread_, struct i_inout *inout_);
         void unplug ();
-        void revive ();
-        void resume_input ();
+        void terminate ();
+        void activate_in ();
+        void activate_out ();
 
         //  i_poll_events interface implementation.
         void in_event ();
@@ -63,19 +62,17 @@ namespace zmq
 
         unsigned char *inpos;
         size_t insize;
-        zmq_decoder_t decoder;
+        decoder_t decoder;
 
         unsigned char *outpos;
         size_t outsize;
-        zmq_encoder_t encoder;
+        encoder_t encoder;
 
         i_inout *inout;
 
         options_t options;
 
-        bool reconnect;
-        std::string protocol;
-        std::string address;
+        bool plugged;
 
         zmq_engine_t (const zmq_engine_t&);
         void operator = (const zmq_engine_t&);

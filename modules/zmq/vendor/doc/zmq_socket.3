@@ -2,12 +2,12 @@
 .\"     Title: zmq_socket
 .\"    Author: [see the "AUTHORS" section]
 .\" Generator: DocBook XSL Stylesheets v1.75.2 <http://docbook.sf.net/>
-.\"      Date: 10/15/2010
+.\"      Date: 12/01/2010
 .\"    Manual: 0MQ Manual
-.\"    Source: 0MQ 2.0.10
+.\"    Source: 0MQ 2.1.0
 .\"  Language: English
 .\"
-.TH "ZMQ_SOCKET" "3" "10/15/2010" "0MQ 2\&.0\&.10" "0MQ Manual"
+.TH "ZMQ_SOCKET" "3" "12/01/2010" "0MQ 2\&.1\&.0" "0MQ Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -44,9 +44,15 @@ interface to either connection\-oriented reliable byte streams (SOCK_STREAM), or
 \fImessage queue\fR, with the exact queueing semantics depending on the socket type in use\&. Where conventional sockets transfer streams of bytes or discrete datagrams, 0MQ sockets transfer discrete
 \fImessages\fR\&.
 .sp
-0MQ sockets being \fIasynchronous\fR means that the timings of the physical connection setup and teardown, reconnect and effective delivery are transparent to the user and organized by 0MQ itself\&. Further, messages may be \fIqueued\fR in the event that a peer is unavailable to receive them\&.
+0MQ sockets being \fIasynchronous\fR means that the timings of the physical connection setup and tear down, reconnect and effective delivery are transparent to the user and organized by 0MQ itself\&. Further, messages may be \fIqueued\fR in the event that a peer is unavailable to receive them\&.
 .sp
 Conventional sockets allow only strict one\-to\-one (two peers), many\-to\-one (many clients, one server), or in some cases one\-to\-many (multicast) relationships\&. With the exception of \fIZMQ_PAIR\fR, 0MQ sockets may be connected \fBto multiple endpoints\fR using \fIzmq_connect()\fR, while simultaneously accepting incoming connections \fBfrom multiple endpoints\fR bound to the socket using \fIzmq_bind()\fR, thus allowing many\-to\-many relationships\&.
+.PP
+\fBThread safety\fR. A 0MQ
+\fIcontext\fR
+is thread safe and may be shared among as many application threads as necessary, without any additional locking required on the part of the caller\&.
+.sp
+Individual 0MQ \fIsockets\fR are \fInot\fR thread safe except in the case where full memory barriers are issued when migrating a socket from one thread to another\&. In practice this means applications can create a socket in one thread with \fIzmq_socket()\fR and then pass it to a \fInewly created\fR thread as part of thread initialization, for example via a structure passed as an argument to \fIpthread_create()\fR\&.
 .PP
 \fBSocket types\fR. The following sections present the socket types defined by 0MQ, grouped by the general
 \fImessaging pattern\fR
@@ -181,7 +187,7 @@ Fair\-queued
 T}
 T{
 .sp
-Outgoing routing stratagy
+Outgoing routing strategy
 T}:T{
 .sp
 Last peer
@@ -344,7 +350,7 @@ T}
 .RE
 .SS "Publish\-subscribe pattern"
 .sp
-The publish\-subscribe pattern is used for one\-to\-many distribution of data from a single \fIpublisher\fR to multiple \fIsubscribers\fR in a fanout fashion\&.
+The publish\-subscribe pattern is used for one\-to\-many distribution of data from a single \fIpublisher\fR to multiple \fIsubscribers\fR in a fan out fashion\&.
 .sp
 .it 1 an-trap
 .nr an-no-space-flag 1
@@ -354,7 +360,7 @@ The publish\-subscribe pattern is used for one\-to\-many distribution of data fr
 \fBZMQ_PUB\fR
 .RS 4
 .sp
-A socket of type \fIZMQ_PUB\fR is used by a \fIpublisher\fR to distribute data\&. Messages sent are distributed in a fanout fashion to all connected peers\&. The \fBzmq_recv\fR(3) function is not implemented for this socket type\&.
+A socket of type \fIZMQ_PUB\fR is used by a \fIpublisher\fR to distribute data\&. Messages sent are distributed in a fan out fashion to all connected peers\&. The \fBzmq_recv\fR(3) function is not implemented for this socket type\&.
 .sp
 When a \fIZMQ_PUB\fR socket enters an exceptional state due to having reached the high water mark for a \fIsubscriber\fR, then any messages that would be sent to the \fIsubscriber\fR in question shall instead be dropped until the exceptional state ends\&.
 .sp
@@ -404,7 +410,7 @@ T{
 Outgoing routing strategy
 T}:T{
 .sp
-Fanout
+Fan out
 T}
 T{
 .sp
@@ -732,13 +738,6 @@ The \fIzmq_socket()\fR function shall return an opaque handle to the newly creat
 The requested socket
 \fItype\fR
 is invalid\&.
-.RE
-.PP
-\fBEMTHREAD\fR
-.RS 4
-The maximum number of sockets within this
-\fIcontext\fR
-has been exceeded\&.
 .RE
 .PP
 \fBEFAULT\fR

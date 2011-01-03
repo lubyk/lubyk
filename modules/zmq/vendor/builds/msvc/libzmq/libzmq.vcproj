@@ -40,7 +40,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="-DDLL_EXPORT"
+				AdditionalOptions="-DDLL_EXPORT -DFD_SETSIZE=1024"
 				Optimization="0"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -112,7 +112,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="-DDLL_EXPORT"
+				AdditionalOptions="-DDLL_EXPORT -DFD_SETSIZE=1024"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				RuntimeLibrary="2"
@@ -170,7 +170,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\..\src\app_thread.cpp"
+				RelativePath="..\..\..\src\clock.cpp"
 				>
 			</File>
 			<File
@@ -178,7 +178,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\connect_session.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\ctx.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\decoder.cpp"
 				>
 			</File>
 			<File
@@ -186,7 +194,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\push.cpp"
+				RelativePath="..\..\..\src\encoder.cpp"
 				>
 			</File>
 			<File
@@ -226,7 +234,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\msg_store.cpp"
+				RelativePath="..\..\..\src\mailbox.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\named_session.cpp"
 				>
 			</File>
 			<File
@@ -238,7 +250,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\owned.cpp"
+				RelativePath="..\..\..\src\own.cpp"
 				>
 			</File>
 			<File
@@ -266,11 +278,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\prefix_tree.cpp"
+				RelativePath="..\..\..\src\poller_base.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\src\pub.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\pull.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\push.cpp"
 				>
 			</File>
 			<File
@@ -294,10 +314,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\signaler.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\socket_base.cpp"
 				>
 			</File>
@@ -307,6 +323,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\sub.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\swap.cpp"
 				>
 			</File>
 			<File
@@ -326,7 +346,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\pull.cpp"
+				RelativePath="..\..\..\src\transient_session.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\trie.cpp"
 				>
 			</File>
 			<File
@@ -350,14 +374,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\zmq_decoder.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\zmq_encoder.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\zmq_engine.cpp"
 				>
 			</File>
@@ -376,7 +392,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\..\src\app_thread.hpp"
+				RelativePath="..\..\..\src\array.hpp"
 				>
 			</File>
 			<File
@@ -388,11 +404,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\blob.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\clock.hpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\command.hpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\src\config.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\connect_session.hpp"
 				>
 			</File>
 			<File
@@ -405,10 +433,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\devpoll.hpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\push.hpp"
 				>
 			</File>
 			<File
@@ -433,10 +457,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\fq.hpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\i_endpoint.hpp"
 				>
 			</File>
 			<File
@@ -472,15 +492,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\likely.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\mailbox.hpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\msg_content.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\msg_store.hpp"
+				RelativePath="..\..\..\src\mutex.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\mutex.hpp"
+				RelativePath="..\..\..\src\named_session.hpp"
 				>
 			</File>
 			<File
@@ -492,7 +520,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\owned.hpp"
+				RelativePath="..\..\..\src\own.hpp"
 				>
 			</File>
 			<File
@@ -516,7 +544,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform.hpp"
+				RelativePath="..\..\..\src\platform.hpp"
 				>
 			</File>
 			<File
@@ -524,11 +552,23 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\prefix_tree.hpp"
+				RelativePath="..\..\..\src\poller.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\poller_base.hpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\src\pub.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\pull.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\push.hpp"
 				>
 			</File>
 			<File
@@ -548,11 +588,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\session.hpp"
+				RelativePath="..\..\..\src\semaphore.hpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\signaler.hpp"
+				RelativePath="..\..\..\src\session.hpp"
 				>
 			</File>
 			<File
@@ -572,6 +612,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\swap.hpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\tcp_connecter.hpp"
 				>
 			</File>
@@ -588,7 +632,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\pull.hpp"
+				RelativePath="..\..\..\src\transient_session.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\trie.hpp"
 				>
 			</File>
 			<File
@@ -621,14 +669,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\zmq_connecter.hpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\zmq_decoder.hpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\zmq_encoder.hpp"
 				>
 			</File>
 			<File

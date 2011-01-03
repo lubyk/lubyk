@@ -4,16 +4,16 @@
     This file is part of 0MQ.
 
     0MQ is free software; you can redistribute it and/or modify it under
-    the terms of the Lesser GNU General Public License as published by
+    the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation; either version 3 of the License, or
     (at your option) any later version.
 
     0MQ is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    Lesser GNU General Public License for more details.
+    GNU Lesser General Public License for more details.
 
-    You should have received a copy of the Lesser GNU General Public License
+    You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
@@ -22,8 +22,8 @@
 
 #include "zmq.h"
 
-#include <assert.h>
-#include <string.h>
+#include <cassert>
+#include <cstring>
 #include <exception>
 
 namespace zmq
@@ -41,6 +41,11 @@ namespace zmq
         virtual const char *what () const throw ()
         {
             return zmq_strerror (errnum);
+        }
+
+        int num () const
+        {
+            return errnum;
         }
 
     private:
@@ -94,8 +99,7 @@ namespace zmq
         inline ~message_t ()
         {
             int rc = zmq_msg_close (this);
-            if (rc != 0)
-                throw error_t ();
+            assert (rc == 0);
         }
 
         inline void rebuild ()
@@ -202,8 +206,7 @@ namespace zmq
         inline ~socket_t ()
         {
             int rc = zmq_close (ptr);
-            if (rc != 0)
-                throw error_t ();
+            assert (rc == 0);
         }
 
         inline operator void* ()

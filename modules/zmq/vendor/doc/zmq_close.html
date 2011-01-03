@@ -587,12 +587,21 @@ zmq_close(3) Manual Page
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>The <em>zmq_close()</em> function shall destroy the socket referenced by the <em>socket</em>
-argument. All active connections on the socket shall be terminated and
-resources associated with the socket shall be released. Any outstanding
-messages sent with <em>zmq_send()</em> but not yet physically sent to the network
-shall be dropped. Likewise, any outstanding messages physically received from
-the network but not yet received by the application with <em>zmq_recv()</em> shall
-also be dropped.</p></div>
+argument. Any outstanding messages physically received from the network but not
+yet received by the application with <em>zmq_recv()</em> shall be discarded. The
+behaviour for discarding messages sent by the application with <em>zmq_send()</em> but
+not yet physically transferred to the network depends on the value of the
+<em>ZMQ_LINGER</em> socket option for the specified <em>socket</em>.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">The default setting of <em>ZMQ_LINGER</em> does not discard unsent messages;
+this behaviour may cause the application to block when calling <em>zmq_term()</em>.
+For details refer to <a href="zmq_setsockopt.html">zmq_setsockopt(3)</a> and <a href="zmq_term.html">zmq_term(3)</a>.</td>
+</tr></table>
+</div>
 </div>
 <h2 id="_return_value">RETURN VALUE</h2>
 <div class="sectionbody">
@@ -616,6 +625,7 @@ The provided <em>socket</em> was not valid (NULL).
 <div class="sectionbody">
 <div class="paragraph"><p><a href="zmq_socket.html">zmq_socket(3)</a>
 <a href="zmq_term.html">zmq_term(3)</a>
+<a href="zmq_setsockopt.html">zmq_setsockopt(3)</a>
 <a href="zmq.html">zmq(7)</a></p></div>
 </div>
 <h2 id="_authors">AUTHORS</h2>
@@ -627,8 +637,8 @@ Martin Lucina &lt;<a href="mailto:mato@kotelna.sk">mato@kotelna.sk</a>&gt;.</p><
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-ØMQ 2.0.10<br />
-Last updated 2010-10-15 19:26:37 CEST
+ØMQ 2.1.0<br />
+Last updated 2010-12-01 10:58:42 CEST
 </div>
 </div>
 </body>

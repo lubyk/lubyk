@@ -594,7 +594,7 @@ UDP datagrams (the <em>epgm</em> transport).</p></div>
 <div class="paragraph"><p>The <em>pgm</em> and <em>epgm</em> transports can only be used with the <em>ZMQ_PUB</em> and
 <em>ZMQ_SUB</em> socket types.</p></div>
 <div class="paragraph"><p>Further, PGM sockets are rate limited by default and incur a performance
-penalty when used over a loopback interface. For details, refer to the
+penalty when used over a loop-back interface. For details, refer to the
 <em>ZMQ_RATE</em>, <em>ZMQ_RECOVERY_IVL</em> and <em>ZMQ_MCAST_LOOP</em> options documented in
 <a href="zmq_setsockopt.html">zmq_setsockopt(3)</a>.</p></div>
 <div class="admonitionblock">
@@ -653,7 +653,7 @@ representation.</p></div>
 </div>
 <h2 id="_wire_format">WIRE FORMAT</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>Consecutive PGM datagrams are interpreted by ØMQ as a single continous stream
+<div class="paragraph"><p>Consecutive PGM datagrams are interpreted by ØMQ as a single continuous stream
 of data where ØMQ messages are not necessarily aligned with PGM datagram
 boundaries and a single ØMQ message may span several PGM datagrams. This stream
 of data consists of ØMQ messages encapsulated in <em>frames</em> as described in
@@ -708,7 +708,7 @@ Third datagram payload
 <div class="title">Connecting a socket</div>
 <div class="content">
 <pre><tt>/* Connecting to the multicast address 239.192.1.1, port 5555, */
-/* using the first ethernet network interface on Linux */
+/* using the first Ethernet network interface on Linux */
 /* and the Encapsulated PGM protocol */
 rc = zmq_connect(socket, "epgm://eth0;239.192.1.1:5555");
 assert (rc == 0);
@@ -737,8 +737,8 @@ Martin Lucina &lt;<a href="mailto:mato@kotelna.sk">mato@kotelna.sk</a>&gt;.</p><
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-ØMQ 2.0.10<br />
-Last updated 2010-10-15 19:26:37 CEST
+ØMQ 2.1.0<br />
+Last updated 2010-12-01 10:58:42 CEST
 </div>
 </div>
 </body>

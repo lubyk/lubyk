@@ -2,12 +2,12 @@
 .\"     Title: zmq_poll
 .\"    Author: [see the "AUTHORS" section]
 .\" Generator: DocBook XSL Stylesheets v1.75.2 <http://docbook.sf.net/>
-.\"      Date: 10/15/2010
+.\"      Date: 12/01/2010
 .\"    Manual: 0MQ Manual
-.\"    Source: 0MQ 2.0.10
+.\"    Source: 0MQ 2.1.0
 .\"  Language: English
 .\"
-.TH "ZMQ_POLL" "3" "10/15/2010" "0MQ 2\&.0\&.10" "0MQ Manual"
+.TH "ZMQ_POLL" "3" "12/01/2010" "0MQ 2\&.1\&.0" "0MQ Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -70,11 +70,11 @@ All 0MQ sockets passed to the \fIzmq_poll()\fR function must share the same 0MQ 
 .sp .5v
 .RE
 .sp
-For each \fBzmq_pollitem_t\fR item, \fIzmq_poll()\fR shall first clear the \fIrevents\fR member, and then indicate any requested events that have occured by setting the bit corresponding to the event condition in the \fIrevents\fR member\&.
+For each \fBzmq_pollitem_t\fR item, \fIzmq_poll()\fR shall first clear the \fIrevents\fR member, and then indicate any requested events that have occurred by setting the bit corresponding to the event condition in the \fIrevents\fR member\&.
 .sp
-If none of the requested events have occured on any \fBzmq_pollitem_t\fR item, \fIzmq_poll()\fR shall wait up to \fItimeout\fR microseconds for an event to occur on any of the requested items\&. If the value of \fItimeout\fR is 0, \fIzmq_poll()\fR shall return immediately\&. If the value of \fItimeout\fR is \-1, \fIzmq_poll()\fR shall block indefinitely until a requested event has occured on at least one \fBzmq_pollitem_t\fR\&.
+If none of the requested events have occurred on any \fBzmq_pollitem_t\fR item, \fIzmq_poll()\fR shall wait \fItimeout\fR microseconds for an event to occur on any of the requested items\&. If the value of \fItimeout\fR is 0, \fIzmq_poll()\fR shall return immediately\&. If the value of \fItimeout\fR is \-1, \fIzmq_poll()\fR shall block indefinitely until a requested event has occurred on at least one \fBzmq_pollitem_t\fR\&.
 .sp
-The \fIevents\fR and \fIrevents\fR members of \fBzmq_pollitem_t\fR are bitmasks constructed by OR\(cqing a combination of the following event flags:
+The \fIevents\fR and \fIrevents\fR members of \fBzmq_pollitem_t\fR are bit masks constructed by OR\(cqing a combination of the following event flags:
 .PP
 \fBZMQ_POLLIN\fR
 .RS 4
@@ -134,32 +134,7 @@ The \fIzmq_poll()\fR function may be implemented or emulated using operating sys
 .SH "RETURN VALUE"
 .sp
 Upon successful completion, the \fIzmq_poll()\fR function shall return the number of \fBzmq_pollitem_t\fR structures with events signaled in \fIrevents\fR or 0 if no events have been signaled\&. Upon failure, \fIzmq_poll()\fR shall return \-1 and set \fIerrno\fR to one of the values defined below\&.
-.if n \{\
-.sp
-.\}
-.RS 4
-.it 1 an-trap
-.nr an-no-space-flag 1
-.nr an-break-flag 1
-.br
-.ps +1
-\fBImportant\fR
-.ps -1
-.br
-.sp
-The \fIzmq_poll()\fR function may return \fBbefore\fR the \fItimeout\fR period has expired even if no events have been signaled\&.
-.sp .5v
-.RE
 .SH "ERRORS"
-.PP
-\fBEFAULT\fR
-.RS 4
-At least one of the members of the
-\fIitems\fR
-array refers to a
-\fIsocket\fR
-belonging to a different application thread\&.
-.RE
 .PP
 \fBETERM\fR
 .RS 4
@@ -177,6 +152,11 @@ was terminated\&.
 The provided
 \fIitems\fR
 was not valid (NULL)\&.
+.RE
+.PP
+\fBEINTR\fR
+.RS 4
+The operation was interrupted by delivery of a signal before any events were available\&.
 .RE
 .SH "EXAMPLE"
 .PP

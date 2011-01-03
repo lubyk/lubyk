@@ -603,7 +603,7 @@ queueing semantics depending on the socket type in use. Where conventional
 sockets transfer streams of bytes or discrete datagrams, ØMQ sockets transfer
 discrete <em>messages</em>.</p></div>
 <div class="paragraph"><p>ØMQ sockets being <em>asynchronous</em> means that the timings of the physical
-connection setup and teardown, reconnect and effective delivery are transparent
+connection setup and tear down, reconnect and effective delivery are transparent
 to the user and organized by ØMQ itself. Further, messages may be <em>queued</em> in
 the event that a peer is unavailable to receive them.</p></div>
 <div class="paragraph"><p>Conventional sockets allow only strict one-to-one (two peers), many-to-one
@@ -612,6 +612,15 @@ relationships. With the exception of <em>ZMQ_PAIR</em>, ØMQ sockets may be conn
 <strong>to multiple endpoints</strong> using <em>zmq_connect()</em>, while simultaneously accepting
 incoming connections <strong>from multiple endpoints</strong> bound to the socket using
 <em>zmq_bind()</em>, thus allowing many-to-many relationships.</p></div>
+<div class="paragraph"><div class="title">Thread safety</div><p>A ØMQ <em>context</em> is thread safe and may be shared among as many application
+threads as necessary, without any additional locking required on the part of
+the caller.</p></div>
+<div class="paragraph"><p>Individual ØMQ <em>sockets</em> are <em>not</em> thread safe except in the case where full
+memory barriers are issued when migrating a socket from one thread to another.
+In practice this means applications can create a socket in one thread with
+<em>zmq_socket()</em> and then pass it to a <em>newly created</em> thread as part of thread
+initialization, for example via a structure passed as an argument to
+<em>pthread_create()</em>.</p></div>
 <div class="paragraph"><div class="title">Socket types</div><p>The following sections present the socket types defined by ØMQ, grouped by the
 general <em>messaging pattern</em> which is built from related socket types.</p></div>
 <h3 id="_request_reply_pattern">Request-reply pattern</h3><div style="clear:left"></div>
@@ -753,7 +762,7 @@ Fair-queued
 </tr>
 <tr>
 <td class="hdlist1">
-Outgoing routing stratagy
+Outgoing routing strategy
 <br />
 </td>
 <td class="hdlist2">
@@ -943,10 +952,10 @@ Drop
 </table></div>
 <h3 id="_publish_subscribe_pattern">Publish-subscribe pattern</h3><div style="clear:left"></div>
 <div class="paragraph"><p>The publish-subscribe pattern is used for one-to-many distribution of data from
-a single <em>publisher</em> to multiple <em>subscribers</em> in a fanout fashion.</p></div>
+a single <em>publisher</em> to multiple <em>subscribers</em> in a fan out fashion.</p></div>
 <h4 id="_zmq_pub">ZMQ_PUB</h4>
 <div class="paragraph"><p>A socket of type <em>ZMQ_PUB</em> is used by a <em>publisher</em> to distribute data.
-Messages sent are distributed in a fanout fashion to all connected peers.
+Messages sent are distributed in a fan out fashion to all connected peers.
 The <a href="zmq_recv.html">zmq_recv(3)</a> function is not implemented for this socket type.</p></div>
 <div class="paragraph"><p>When a <em>ZMQ_PUB</em> socket enters an exceptional state due to having reached the
 high water mark for a <em>subscriber</em>, then any messages that would be sent to the
@@ -1004,7 +1013,7 @@ Outgoing routing strategy
 </td>
 <td class="hdlist2">
 <p style="margin-top: 0;">
-Fanout
+Fan out
 </p>
 </td>
 </tr>
@@ -1359,14 +1368,6 @@ The requested socket <em>type</em> is invalid.
 </p>
 </dd>
 <dt class="hdlist1">
-<strong>EMTHREAD</strong>
-</dt>
-<dd>
-<p>
-The maximum number of sockets within this <em>context</em> has been exceeded.
-</p>
-</dd>
-<dt class="hdlist1">
 <strong>EFAULT</strong>
 </dt>
 <dd>
@@ -1395,8 +1396,8 @@ Martin Lucina &lt;<a href="mailto:mato@kotelna.sk">mato@kotelna.sk</a>&gt;.</p><
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-ØMQ 2.0.10<br />
-Last updated 2010-10-15 19:26:37 CEST
+ØMQ 2.1.0<br />
+Last updated 2010-12-01 10:58:42 CEST
 </div>
 </div>
 </body>

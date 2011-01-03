@@ -760,7 +760,7 @@ N/A
 </table></div>
 <h3 id="_zmq_identity_set_socket_identity">ZMQ_IDENTITY: Set socket identity</h3><div style="clear:left"></div>
 <div class="paragraph"><p>The <em>ZMQ_IDENTITY</em> option shall set the identity of the specified <em>socket</em>.
-Socket identity determines if existing ØMQ infastructure (<em>message queues</em>,
+Socket identity determines if existing ØMQ infrastructure (<em>message queues</em>,
 <em>forwarding devices</em>) shall be identified with a specific application and
 persist across multiple runs of the application.</p></div>
 <div class="paragraph"><p>If the socket has no identity, each run of an application is completely
@@ -822,7 +822,7 @@ socket. Newly created <em>ZMQ_SUB</em> sockets shall filter out all incoming mes
 therefore you should call this option to establish an initial message filter.</p></div>
 <div class="paragraph"><p>An empty <em>option_value</em> of length zero shall subscribe to all incoming
 messages. A non-empty <em>option_value</em> shall subscribe to all messages beginning
-with the specified prefix. Mutiple filters may be attached to a single
+with the specified prefix. Multiple filters may be attached to a single
 <em>ZMQ_SUB</em> socket, in which case a message shall be accepted if it matches at
 least one filter.</p></div>
 <div class="hdlist"><table>
@@ -982,7 +982,7 @@ before unrecoverable data loss will occur.</p></div>
 <td class="icon">
 <div class="title">Caution</div>
 </td>
-<td class="content">Excersize care when setting large recovery intervals as the data
+<td class="content">Exercise care when setting large recovery intervals as the data
 needed for recovery will be held in memory. For example, a 1 minute recovery
 interval at a data rate of 1Gbps requires a 7GB in-memory buffer.</td>
 </tr></table>
@@ -1033,12 +1033,12 @@ all, when using multicast transports
 </td>
 </tr>
 </table></div>
-<h3 id="_zmq_mcast_loop_control_multicast_loopback">ZMQ_MCAST_LOOP: Control multicast loopback</h3><div style="clear:left"></div>
+<h3 id="_zmq_mcast_loop_control_multicast_loop_back">ZMQ_MCAST_LOOP: Control multicast loop-back</h3><div style="clear:left"></div>
 <div class="paragraph"><p>The <em>ZMQ_MCAST_LOOP</em> option shall control whether data sent via multicast
 transports using the specified <em>socket</em> can also be received by the sending
-host via loopback. A value of zero disables the loopback functionality, while
-the default value of 1 enables the loopback functionality. Leaving multicast
-loopback enabled when it is not required can have a negative impact on
+host via loop-back. A value of zero disables the loop-back functionality, while
+the default value of 1 enables the loop-back functionality. Leaving multicast
+loop-back enabled when it is not required can have a negative impact on
 performance. Where possible, disable <em>ZMQ_MCAST_LOOP</em> in production
 environments.</p></div>
 <div class="hdlist"><table>
@@ -1189,6 +1189,195 @@ all
 </td>
 </tr>
 </table></div>
+<h3 id="_zmq_linger_set_linger_period_for_socket_shutdown">ZMQ_LINGER: Set linger period for socket shutdown</h3><div style="clear:left"></div>
+<div class="paragraph"><p>The <em>ZMQ_LINGER</em> option shall set the linger period for the specified <em>socket</em>.
+The linger period determines how long pending messages which have yet to be
+sent to a peer shall linger in memory after a socket is closed with
+<a href="zmq_close.html">zmq_close(3)</a>, and further affects the termination of the socket&#8217;s
+context with <a href="zmq_term.html">zmq_term(3)</a>. The following outlines the different
+behaviours:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+The default value of <em>-1</em> specifies an infinite linger period. Pending
+  messages shall not be discarded after a call to <em>zmq_close()</em>; attempting to
+  terminate the socket&#8217;s context with <em>zmq_term()</em> shall block until all
+  pending messages have been sent to a peer.
+</p>
+</li>
+<li>
+<p>
+The value of <em>0</em> specifies no linger period. Pending messages shall be
+  discarded immediately when the socket is closed with <em>zmq_close()</em>.
+</p>
+</li>
+<li>
+<p>
+Positive values specify an upper bound for the linger period in milliseconds.
+  Pending messages shall not be discarded after a call to <em>zmq_close()</em>;
+  attempting to terminate the socket&#8217;s context with <em>zmq_term()</em> shall block
+  until either all pending messages have been sent to a peer, or the linger
+  period expires, after which any pending messages shall be discarded.
+</p>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Option value type
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+int
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Option value unit
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+milliseconds
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Default value
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+-1 (infinite)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Applicable socket types
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+all
+</p>
+</td>
+</tr>
+</table></div>
+</li>
+</ul></div>
+<h3 id="_zmq_reconnect_ivl_set_reconnection_interval">ZMQ_RECONNECT_IVL: Set reconnection interval</h3><div style="clear:left"></div>
+<div class="paragraph"><p>The <em>ZMQ_RECONNECT_IVL</em> option shall set the reconnection interval for the
+specified <em>socket</em>.  The reconnection interval is the maximum period ØMQ shall
+wait between attempts to reconnect disconnected peers when using
+connection-oriented transports.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">The reconnection interval may be randomized by ØMQ to prevent
+reconnection storms in topologies with a large number of peers per socket.</td>
+</tr></table>
+</div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Option value type
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+int
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Option value unit
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+milliseconds
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Default value
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+100
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Applicable socket types
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+all, only for connection-oriented transports
+</p>
+</td>
+</tr>
+</table></div>
+<h3 id="_zmq_backlog_set_maximum_length_of_the_queue_of_outstanding_connections">ZMQ_BACKLOG: Set maximum length of the queue of outstanding connections</h3><div style="clear:left"></div>
+<div class="paragraph"><p>The <em>ZMQ_BACKLOG</em> option shall set the maximum length of the queue of
+outstanding peer connections for the specified <em>socket</em>; this only applies to
+connection-oriented transports. For details refer to your operating system
+documentation for the <em>listen</em> function.</p></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Option value type
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+int
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Option value unit
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+connections
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Default value
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+100
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Applicable socket types
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+all, only for connection-oriented transports.
+</p>
+</td>
+</tr>
+</table></div>
 </div>
 <h2 id="_return_value">RETURN VALUE</h2>
 <div class="sectionbody">
@@ -1221,6 +1410,14 @@ The ØMQ <em>context</em> associated with the specified <em>socket</em> was term
 <dd>
 <p>
 The provided <em>socket</em> was not valid (NULL).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>EINTR</strong>
+</dt>
+<dd>
+<p>
+The operation was interrupted by delivery of a signal.
 </p>
 </dd>
 </dl></div>
@@ -1269,8 +1466,8 @@ Martin Lucina &lt;<a href="mailto:mato@kotelna.sk">mato@kotelna.sk</a>&gt;.</p><
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-ØMQ 2.0.10<br />
-Last updated 2010-10-15 19:40:36 CEST
+ØMQ 2.1.0<br />
+Last updated 2010-12-01 10:58:42 CEST
 </div>
 </div>
 </body>

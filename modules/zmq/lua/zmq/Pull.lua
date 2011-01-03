@@ -10,10 +10,17 @@ require 'zmq'
 require 'zmq.Socket'
 
 function zmq.Pull(location, func)
-  local instance = zmq.Socket(zmq.PULL)
-  instance:connect(location)
-  instance:loop(function()
-    return func(instance:recv())
+  local instance
+  instance = zmq.Socket(zmq.PULL, function()
+    instance:connect(location)
+    while instance:should_run() do
+      -- receive, receive, ...
+      func(instance:recv())
+    end
   end)
+  -- Sleep so that we let server start
+  -- in order to have port and initialize the instance
+  worker:sleep(10)
+
   return instance
 end

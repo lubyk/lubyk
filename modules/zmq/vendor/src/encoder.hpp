@@ -4,26 +4,21 @@
     This file is part of 0MQ.
 
     0MQ is free software; you can redistribute it and/or modify it under
-    the terms of the Lesser GNU General Public License as published by
+    the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation; either version 3 of the License, or
     (at your option) any later version.
 
     0MQ is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    Lesser GNU General Public License for more details.
+    GNU Lesser General Public License for more details.
 
-    You should have received a copy of the Lesser GNU General Public License
+    You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #ifndef __ZMQ_ENCODER_HPP_INCLUDED__
 #define __ZMQ_ENCODER_HPP_INCLUDED__
-
-#include "platform.hpp"
-#if defined ZMQ_HAVE_WINDOWS
-#include "windows.hpp"
-#endif
 
 #include <stddef.h>
 #include <string.h>
@@ -32,6 +27,8 @@
 
 #include "err.hpp"
 
+#include "../include/zmq.h"
+
 namespace zmq
 {
 
@@ -39,20 +36,20 @@ namespace zmq
     //  fills the outgoing buffer. Derived classes should implement individual
     //  state machine actions.
 
-    template <typename T> class encoder_t
+    template <typename T> class encoder_base_t
     {
     public:
 
-        inline encoder_t (size_t bufsize_) :
+        inline encoder_base_t (size_t bufsize_) :
             bufsize (bufsize_)
         {
             buf = (unsigned char*) malloc (bufsize_);
             zmq_assert (buf);
         }
 
-        //  The destructor doesn't have to be virtual. It is mad virtual
+        //  The destructor doesn't have to be virtual. It is made virtual
         //  just to keep ICC and code checking tools from complaining.
-        inline virtual ~encoder_t ()
+        inline virtual ~encoder_base_t ()
         {
             free (buf);
         }
@@ -153,10 +150,34 @@ namespace zmq
         size_t bufsize;
         unsigned char *buf;
 
+        encoder_base_t (const encoder_base_t&);
+        void operator = (const encoder_base_t&);
+    };
+
+    //  Encoder for 0MQ framing protocol. Converts messages into data batches.
+
+    class encoder_t : public encoder_base_t <encoder_t>
+    {
+    public:
+
+        encoder_t (size_t bufsize_);
+        ~encoder_t ();
+
+        void set_inout (struct i_inout *source_);
+
+    private:
+
+        bool size_ready ();
+        bool message_ready ();
+
+        struct i_inout *source;
+        ::zmq_msg_t in_progress;
+        unsigned char tmpbuf [10];
+
         encoder_t (const encoder_t&);
         void operator = (const encoder_t&);
     };
-
 }
 
 #endif
+

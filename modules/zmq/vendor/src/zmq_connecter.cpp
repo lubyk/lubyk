@@ -4,20 +4,28 @@
     This file is part of 0MQ.
 
     0MQ is free software; you can redistribute it and/or modify it under
-    the terms of the Lesser GNU General Public License as published by
+    the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation; either version 3 of the License, or
     (at your option) any later version.
 
     0MQ is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    Lesser GNU General Public License for more details.
+    GNU Lesser General Public License for more details.
 
-    You should have received a copy of the Lesser GNU General Public License
+    You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <new>
+
+#include "platform.hpp"
+#if defined ZMQ_HAVE_WINDOWS
+#include "windows.hpp"
+#else
+#include <sys/types.h>
+#include <unistd.h>
+#endif
 
 #include "zmq_connecter.hpp"
 #include "zmq_engine.hpp"
@@ -25,47 +33,44 @@
 #include "io_thread.hpp"
 #include "err.hpp"
 
-zmq::zmq_connecter_t::zmq_connecter_t (io_thread_t *parent_,
-      socket_base_t *owner_, const options_t &options_,
-      uint64_t session_ordinal_, bool wait_) :
-    owned_t (parent_, owner_),
-    io_object_t (parent_),
+zmq::zmq_connecter_t::zmq_connecter_t (class io_thread_t *io_thread_,
+      class session_t *session_, const options_t &options_,
+      const char *protocol_, const char *address_) :
+    own_t (io_thread_, options_),
+    io_object_t (io_thread_),
     handle_valid (false),
-    wait (wait_),
-    session_ordinal (session_ordinal_),
-    options (options_)
+    wait (wait_before_connect),
+    session (session_)
 {
+     int rc = tcp_connecter.set_address (protocol_, address_);
+     zmq_assert (rc == 0);
 }
 
 zmq::zmq_connecter_t::~zmq_connecter_t ()
 {
+    if (wait)
+        cancel_timer (reconnect_timer_id);
+    if (handle_valid)
+        rm_fd (handle);
 }
 
-int zmq::zmq_connecter_t::set_address (const char *protocol_,
-    const char *address_)
+int zmq::zmq_connecter_t::get_reconnect_ivl ()
 {
-     int rc = tcp_connecter.set_address (protocol_, address_);
-     if (rc != 0)
-         return rc;
-     protocol = protocol_;
-     address = address_;
-     return 0;
+#if defined ZMQ_HAVE_WINDOWS
+    return (options.reconnect_ivl + (((int) GetCurrentProcessId () * 13)
+        % options.reconnect_ivl));
+#else
+    return (options.reconnect_ivl + (((int) getpid () * 13)
+        % options.reconnect_ivl));
+#endif
 }
 
 void zmq::zmq_connecter_t::process_plug ()
 {
     if (wait)
-        add_timer ();
+        add_timer (get_reconnect_ivl (), reconnect_timer_id);
     else
         start_connecting ();
-}
-
-void zmq::zmq_connecter_t::process_unplug ()
-{
-    if (wait)
-        cancel_timer ();
-    if (handle_valid)
-        rm_fd (handle);
 }
 
 void zmq::zmq_connecter_t::in_event ()
@@ -86,25 +91,28 @@ void zmq::zmq_connecter_t::out_event ()
     if (fd == retired_fd) {
         tcp_connecter.close ();
         wait = true;
-        add_timer ();
+        add_timer (get_reconnect_ivl (), reconnect_timer_id);
         return;
     }
 
-    //  Create an init object. 
-    zmq_init_t *init = new (std::nothrow) zmq_init_t (
-        choose_io_thread (options.affinity), owner,
-        fd, options, true, protocol.c_str (), address.c_str (),
-        session_ordinal);
-    zmq_assert (init);
-    send_plug (init);
-    send_own (owner, init);
+    //  Choose I/O thread to run connecter in. Given that we are already
+    //  running in an I/O thread, there must be at least one available.
+    io_thread_t *io_thread = choose_io_thread (options.affinity);
+    zmq_assert (io_thread);
 
-    //  Ask owner socket to shut the connecter down.
-    term ();
+    //  Create an init object. 
+    zmq_init_t *init = new (std::nothrow) zmq_init_t (io_thread, NULL,
+        session, fd, options);
+    zmq_assert (init);
+    launch_sibling (init);
+
+    //  Shut the connecter down.
+    terminate ();
 }
 
-void zmq::zmq_connecter_t::timer_event ()
+void zmq::zmq_connecter_t::timer_event (int id_)
 {
+    zmq_assert (id_ == reconnect_timer_id);
     wait = false;
     start_connecting ();
 }
@@ -132,5 +140,5 @@ void zmq::zmq_connecter_t::start_connecting ()
 
     //  Handle any other error condition by eventual reconnect.
     wait = true;
-    add_timer ();
+    add_timer (get_reconnect_ivl (), reconnect_timer_id);
 }

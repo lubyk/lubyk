@@ -4,16 +4,16 @@
     This file is part of 0MQ.
 
     0MQ is free software; you can redistribute it and/or modify it under
-    the terms of the Lesser GNU General Public License as published by
+    the terms of the GNU Lesser General Public License as published by
     the Free Software Foundation; either version 3 of the License, or
     (at your option) any later version.
 
     0MQ is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    Lesser GNU General Public License for more details.
+    GNU Lesser General Public License for more details.
 
-    You should have received a copy of the Lesser GNU General Public License
+    You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
@@ -22,29 +22,42 @@
 #include "fq.hpp"
 #include "pipe.hpp"
 #include "err.hpp"
+#include "own.hpp"
 
-zmq::fq_t::fq_t () :
+zmq::fq_t::fq_t (own_t *sink_) :
     active (0),
     current (0),
-    more (false)
+    more (false),
+    sink (sink_),
+    terminating (false)
 {
 }
 
 zmq::fq_t::~fq_t ()
 {
-    for (pipes_t::size_type i = 0; i != pipes.size (); i++)
-        pipes [i]->term ();
+    zmq_assert (pipes.empty ());
 }
 
 void zmq::fq_t::attach (reader_t *pipe_)
 {
+    pipe_->set_event_sink (this);
+
     pipes.push_back (pipe_);
     pipes.swap (active, pipes.size () - 1);
     active++;
+
+    //  If we are already terminating, ask the pipe to terminate straight away.
+    if (terminating) {
+        sink->register_term_acks (1);
+        pipe_->terminate ();
+    }
 }
 
-void zmq::fq_t::detach (reader_t *pipe_)
+void zmq::fq_t::terminated (reader_t *pipe_)
 {
+    //  TODO: This is a problem with session-initiated termination. It breaks
+    //  message atomicity. However, for socket initiated termination it's
+    //  just fine.
     zmq_assert (!more || pipes [current] != pipe_);
 
     //  Remove the pipe from the list; adjust number of active pipes
@@ -55,18 +68,26 @@ void zmq::fq_t::detach (reader_t *pipe_)
             current = 0;
     }
     pipes.erase (pipe_);
+
+    if (terminating)
+        sink->unregister_term_ack ();
 }
 
-void zmq::fq_t::kill (reader_t *pipe_)
+void zmq::fq_t::delimited (reader_t *pipe_)
 {
-    //  Move the pipe to the list of inactive pipes.
-    active--;
-    if (current == active)
-        current = 0;
-    pipes.swap (pipes.index (pipe_), active);
 }
 
-void zmq::fq_t::revive (reader_t *pipe_)
+void zmq::fq_t::terminate ()
+{
+    zmq_assert (!terminating);
+    terminating = true;
+
+    sink->register_term_acks (pipes.size ());
+    for (pipes_t::size_type i = 0; i != pipes.size (); i++)
+        pipes [i]->terminate ();
+}
+
+void zmq::fq_t::activated (reader_t *pipe_)
 {
     //  Move the pipe to the list of active pipes.
     pipes.swap (pipes.index (pipe_), active);
@@ -84,10 +105,14 @@ int zmq::fq_t::recv (zmq_msg_t *msg_, int flags_)
         //  Try to fetch new message. If we've already read part of the message
         //  subsequent part should be immediately available.
         bool fetched = pipes [current]->read (msg_);
+
+        //  Check the atomicity of the message. If we've already received the
+        //  first part of the message we should get the remaining parts
+        //  without blocking.
         zmq_assert (!(more && !fetched));
 
-        //  Note that when message is not fetched, current pipe is killed and
-        //  replaced by another active pipe. Thus we don't have to increase
+        //  Note that when message is not fetched, current pipe is deactivated
+        //  and replaced by another active pipe. Thus we don't have to increase
         //  the 'current' pointer.
         if (fetched) {
             more = msg_->flags & ZMQ_MSG_MORE;
@@ -97,6 +122,12 @@ int zmq::fq_t::recv (zmq_msg_t *msg_, int flags_)
                     current = 0;
             }
             return 0;
+        }
+        else {
+            active--;
+            pipes.swap (current, active);
+            if (current == active)
+                current = 0;
         }
     }
 
@@ -120,8 +151,11 @@ bool zmq::fq_t::has_in ()
     for (int count = active; count != 0; count--) {
         if (pipes [current]->check_read ())
             return true;
-        current++;
-        if (current >= active)
+
+        //  Deactivate the pipe.
+        active--;
+        pipes.swap (current, active);
+        if (current == active)
             current = 0;
     }
 

@@ -2,12 +2,12 @@
 .\"     Title: zmq_pgm
 .\"    Author: [see the "AUTHORS" section]
 .\" Generator: DocBook XSL Stylesheets v1.75.2 <http://docbook.sf.net/>
-.\"      Date: 10/15/2010
+.\"      Date: 12/01/2010
 .\"    Manual: 0MQ Manual
-.\"    Source: 0MQ 2.0.10
+.\"    Source: 0MQ 2.1.0
 .\"  Language: English
 .\"
-.TH "ZMQ_PGM" "7" "10/15/2010" "0MQ 2\&.0\&.10" "0MQ Manual"
+.TH "ZMQ_PGM" "7" "12/01/2010" "0MQ 2\&.1\&.0" "0MQ Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -38,7 +38,7 @@ PGM (Pragmatic General Multicast) is a protocol for reliable multicast transport
 .sp
 The \fIpgm\fR and \fIepgm\fR transports can only be used with the \fIZMQ_PUB\fR and \fIZMQ_SUB\fR socket types\&.
 .sp
-Further, PGM sockets are rate limited by default and incur a performance penalty when used over a loopback interface\&. For details, refer to the \fIZMQ_RATE\fR, \fIZMQ_RECOVERY_IVL\fR and \fIZMQ_MCAST_LOOP\fR options documented in \fBzmq_setsockopt\fR(3)\&.
+Further, PGM sockets are rate limited by default and incur a performance penalty when used over a loop\-back interface\&. For details, refer to the \fIZMQ_RATE\fR, \fIZMQ_RECOVERY_IVL\fR and \fIZMQ_MCAST_LOOP\fR options documented in \fBzmq_setsockopt\fR(3)\&.
 .if n \{\
 .sp
 .\}
@@ -105,7 +105,7 @@ Interface names are not standardised in any way and should be assumed to be arbi
 A \fImulticast address\fR is specified by an IPv4 multicast address in it\(cqs numeric representation\&.
 .SH "WIRE FORMAT"
 .sp
-Consecutive PGM datagrams are interpreted by 0MQ as a single continous stream of data where 0MQ messages are not necessarily aligned with PGM datagram boundaries and a single 0MQ message may span several PGM datagrams\&. This stream of data consists of 0MQ messages encapsulated in \fIframes\fR as described in \fBzmq_tcp\fR(7)\&.
+Consecutive PGM datagrams are interpreted by 0MQ as a single continuous stream of data where 0MQ messages are not necessarily aligned with PGM datagram boundaries and a single 0MQ message may span several PGM datagrams\&. This stream of data consists of 0MQ messages encapsulated in \fIframes\fR as described in \fBzmq_tcp\fR(7)\&.
 .SS "PGM datagram payload"
 .sp
 The following ABNF grammar represents the payload of a single PGM datagram as used by 0MQ:
@@ -174,7 +174,7 @@ Third datagram payload
 .\}
 .nf
 /* Connecting to the multicast address 239\&.192\&.1\&.1, port 5555, */
-/* using the first ethernet network interface on Linux */
+/* using the first Ethernet network interface on Linux */
 /* and the Encapsulated PGM protocol */
 rc = zmq_connect(socket, "epgm://eth0;239\&.192\&.1\&.1:5555");
 assert (rc == 0);

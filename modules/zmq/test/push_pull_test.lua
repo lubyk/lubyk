@@ -11,7 +11,7 @@
 require 'rubyk'
 
 
-local should = test.Suite('zmq.Push / zmq.Pull')
+local should = test.Suite('zmq.Push/Pull')
 
 function should.send_and_receive()
   local sender   = zmq.Push()
