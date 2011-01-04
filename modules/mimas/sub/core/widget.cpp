@@ -29,15 +29,13 @@
 
 #include "mimas/Widget.h"
 
-#define SLIDER_BORDER_WIDTH 2
-
 namespace mimas {
 
 // Widget::paintEvent is in paint.cpp
 
 void Widget::setHue(float hue) {
   hue_ = (hue < 0 || hue >= 360) ? 0 : hue;
-  //                    hue   sat   bri   alpha // FIXME: true == enabled?
+  //                              hue   sat   bri   alpha // FIXME: true == enabled?
   border_color_.setHsvF( hue_ / 360.0f, 1.0f, 1.0f, true ? 1.0f : 0.3f);
   fill_color_.setHsvF(   hue_ / 360.0f, 0.5f, 0.5f, true ? 1.0f : 0.3f);
 }

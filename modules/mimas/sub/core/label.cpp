@@ -26,70 +26,22 @@
 
   ==============================================================================
 */
-#ifndef RUBYK_INCLUDE_MIMAS_LABEL_H_
-#define RUBYK_INCLUDE_MIMAS_LABEL_H_
 
-#include "rubyk.h"
-#include <QtGui/QLabel>
-
-#include <iostream>
+#include "mimas/Label.h"
 
 namespace mimas {
 
-/** Label widget.
- * @dub lib_name:'Label_core'
- */
-class Label : public QLabel
-{
-  Q_OBJECT
-public:
-  Label(const char *title = NULL)
-   : QLabel(title) {}
+// Label::paintEvent is in paint.cpp
 
-  Label(const char *title, QWidget *parent)
-   : QLabel(title, parent) {}
+void Label::setHue(float hue) {
+  hue_ = (hue < 0 || hue >= 360) ? 0 : hue;
+  //                   hue            sat   bri   alpha // FIXME: true == enabled?
+  QColor text_color;
+  text_color.setHsvF( hue_ / 360.0f, 1.0f, 1.0f, true ? 1.0f : 0.3f);
 
-  ~Label() {}
-
-  void setText(const char *text) {
-    QLabel::setText(QString(text));
-  }
-
-  void setStyle(const char *text) {
-    QLabel::setStyleSheet(QString("QLabel { %1 }").arg(text));
-  }
-
-  QWidget *widget() {
-    return this;
-  }
-
-  QObject *object() {
-    return this;
-  }
-
-  /** Set widget color.
-   */
-  void setHue(float hue);
-
-  void move(int x, int y) {
-    QWidget::move(x, y);
-  }
-
-  void resize(int w, int h) {
-    QWidget::resize(w, h);
-  }
-
-protected:
-  //virtual void paintEvent(QPaintEvent *event);
-
-  /** The component's color.
-   */
-  float hue_;
-
-  /** Cached text color.
-   */
-  QColor text_color_;
-};
+  QPalette palette = this->palette();
+  palette.setColor(QPalette::Foreground, text_color);
+  setPalette(palette);
+}
 
 } // mimas
-#endif // RUBYK_INCLUDE_MIMAS_LABEL_H_

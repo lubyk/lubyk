@@ -48,6 +48,15 @@ void Widget::paintEvent(QPaintEvent *event) {
 }
 
 // =============================================
+// ==             Label                       ==
+// =============================================
+// No custom draw for the moment
+//void Label::paintEvent(QPaintEvent *event) {
+//  QPainter p(this);
+//
+//}
+
+// =============================================
 // ==             Slider                      ==
 // =============================================
 

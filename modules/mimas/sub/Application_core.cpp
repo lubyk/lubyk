@@ -128,6 +128,31 @@ static int Application_quit(lua_State *L) {
 }
 
 
+/** void mimas::Application::setStyleSheet(const char *text)
+ * include/mimas/Application.h:87
+ */
+static int Application_setStyleSheet(lua_State *L) {
+  try {
+    Application *self__ = *((Application**)luaL_checkudata(L, 1, "mimas.Application"));
+    const char *text = luaL_checkstring(L, 2);
+    self__->setStyleSheet(text);
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("mimas.Application.setStyleSheet: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "mimas.Application.setStyleSheet: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
+}
+
+
 
 
 /* ============================ Lua Registration ====================== */
@@ -136,6 +161,7 @@ static const struct luaL_Reg Application_member_methods[] = {
   {"exec"              , Application_exec},
   {"post"              , Application_post},
   {"quit"              , Application_quit},
+  {"setStyleSheet"     , Application_setStyleSheet},
   {"__tostring"        , Application__tostring},
   {"__gc"              , Application_destructor},
   {NULL, NULL},

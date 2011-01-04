@@ -83,6 +83,11 @@ public:
   void quit() {
     QApplication::quit();
   }
+
+  void setStyleSheet(const char *text) {
+    QApplication::setStyleSheet(QString(text));
+  }
+
 private:
   class LuaEventsProcessor : public QObject
   {

@@ -61,11 +61,11 @@ static int HBoxLayout_HBoxLayout2(lua_State *L) {
 
 /** Overloaded function chooser for HBoxLayout(...) */
 static int HBoxLayout_HBoxLayout(lua_State *L) {
-  int type__ = lua_type(L, 2);
+  int type__ = lua_type(L, 1);
   int top__  = lua_gettop(L);
-  if (top__ < 2) {
+  if (top__ < 1) {
     return HBoxLayout_HBoxLayout2(L);
-  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.QWidget")) {
+  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "mimas.QWidget")) {
     return HBoxLayout_HBoxLayout1(L);
   } else {
     // use any to raise errors

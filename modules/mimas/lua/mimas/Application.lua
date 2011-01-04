@@ -11,5 +11,9 @@ require 'worker'
 local worker = worker
 local constr = mimas.Application
 function mimas.Application()
-  return constr(worker)
+  local instance = constr(worker)
+  instance:setStyleSheet([[
+    QLabel { background: transparent; color: #ccc; }
+  ]])
+  return instance
 end

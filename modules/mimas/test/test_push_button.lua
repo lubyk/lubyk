@@ -12,19 +12,39 @@ require 'rubyk'
 
 local should = test.Suite('mimas.PushButton')
 
-function should.display_button()
-  local app = mimas.Application()
+local app = mimas.Application()
+
+function should.draw_button()
   local win = mimas.Widget()
-  local btn = mimas.PushButton("Quit", win)
-  win:resize(320, 240)
+  win:move(100, 100)
+
+  local lbl = mimas.Label("Button without layout", win)
+
   local callback = mimas.Callback(function()
     app:quit()
   end)
 
   callback:connect(btn, 'clicked')
-
   win:show()
-  app:exec()
 end
 
-test.all()
+function should.insert_button_in_layout()
+  local win = mimas.Widget()
+  win:move(100, 100)
+  local lay = mimas.HBoxLayout(win)
+  local lbl = mimas.Label("Button with layout")
+  lay:addWidget(lbl)
+  local callback = mimas.Callback(function()
+    app:quit()
+  end)
+
+  callback:connect(lbl, 'clicked')
+
+  win:show()
+end
+
+app:post(function()
+  test.all()
+end)
+
+app:exec()

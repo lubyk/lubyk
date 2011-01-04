@@ -10,13 +10,13 @@
 --]]------------------------------------------------------
 require 'rubyk'
 
-local should = test.Suite('mimas.HBoxLayout')
+local should = test.Suite('mimas.VBoxLayout')
 
 local app = mimas.Application()
 
 function should.display_widgets()
   local win = mimas.Widget()
-  local lay = mimas.HBoxLayout(win)
+  local lay = mimas.VBoxLayout(win)
   local btn1 = mimas.PushButton("Hello")
   local btn2 = mimas.PushButton("Quit")
   lay:addWidget(btn1)
@@ -32,6 +32,31 @@ function should.display_widgets()
 
   win:show()
 end
+
+function should.nest_layouts()
+  local win = mimas.Widget()
+  local lay = mimas.VBoxLayout(win)
+  local sub = mimas.HBoxLayout()
+  local labl = mimas.Label("Title")
+  lay:addWidget(labl)
+  lay:addLayout(sub)
+
+  local btn1 = mimas.PushButton("Hello")
+  local btn2 = mimas.PushButton("Quit")
+  sub:addWidget(btn1)
+  sub:addWidget(btn2)
+
+  win:move(100, 100)
+  local callback = mimas.Callback(function()
+    app:quit()
+  end)
+
+  callback:connect(btn1, 'clicked')
+  callback:connect(btn2, 'clicked')
+
+  win:show()
+end
+
 
 app:post(function()
   test.all()
