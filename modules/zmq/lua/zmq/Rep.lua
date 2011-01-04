@@ -24,9 +24,12 @@ function zmq.Rep(location, func)
     end
 
     while instance:should_run() do
+      print("===", instance:should_run())
       -- receive, send, receive, ...
       instance:send(func(instance:recv()))
+      print("===", instance:should_run())
     end
+    print("===", instance:should_run())
   end)
   -- Sleep so that we let server start
   -- in order to have port and initialize the instance

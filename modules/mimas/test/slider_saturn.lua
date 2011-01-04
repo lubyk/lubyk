@@ -21,10 +21,14 @@ local function set_value(message)
   saturn:notify(value)
 end
 
--- create a service called 'Saturn' that checks for messages from Mimas
+-- create a service called 'Saturn' with a Reply socket
 saturn = rk.Service('Saturn', function(message)
   print("Saturn <---", message)
-  set_value(message)
+  --set_value(message)
+  if message == 1 then
+    saturn:quit()
+  end
+  return message
 end)
 
 local i = 0
@@ -33,8 +37,6 @@ local timer = rk.Timer(20, function()
   i = i + 1
   set_value(0.5 + 0.49 * math.sin(i * math.pi / 20))
 end)
-timer:start()
+--timer:start()
 
-while not continue do
-  worker:sleep(20)
-end
+saturn:join()

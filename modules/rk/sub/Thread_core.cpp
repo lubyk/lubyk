@@ -133,7 +133,7 @@ static int Thread_should_run(lua_State *L) {
   try {
     Thread *self__ = *((Thread**)luaL_checkudata(L, 1, "rk.Thread"));
     bool  retval__ = self__->should_run();
-    lua_pushnumber(L, retval__);
+    lua_pushboolean(L, retval__);
     return 1;
   } catch (std::exception &e) {
     std::string *s = new std::string("rk.Thread.should_run: ");

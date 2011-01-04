@@ -54,4 +54,15 @@ function lib:notify(...)
   self.pub:send(...)
 end
 
+function lib:join(...)
+  self.rep:join(...)
+end
+
+function lib:kill(...)
+  self.rep:kill(...)
+end
+
+function lib:quit(...)
+  self.rep:quit(...)
+end
 

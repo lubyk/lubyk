@@ -414,7 +414,7 @@ static int Socket_should_run(lua_State *L) {
   try {
     Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "zmq.Socket"));
     bool  retval__ = self__->should_run();
-    lua_pushnumber(L, retval__);
+    lua_pushboolean(L, retval__);
     return 1;
   } catch (std::exception &e) {
     std::string *s = new std::string("zmq.Socket.should_run: ");
