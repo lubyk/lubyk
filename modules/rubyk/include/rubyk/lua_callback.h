@@ -39,8 +39,7 @@ class LuaCallback
 public:
   LuaCallback(rubyk::Worker *worker) :
     worker_(worker),
-    lua_(NULL),
-    func_idx_(-1) {
+    lua_(NULL) {
   }
 
   virtual ~LuaCallback() {}
@@ -50,37 +49,35 @@ protected:
   /** Set a callback. The stack should be
    * 1. userdata from rk.Thread / rk.Socket / etc
    * 2. function()
+   *
+   * Thanks to Robert G. Jakabosky for the idea to use lua_xmove
+   * instead of weak tables to store the function reference.
    */
   void set_lua_callback(lua_State *L) {
     luaL_checktype(L, 2, LUA_TFUNCTION);
 
-    // Store the function and the thread in the Thread/Socket's environment table so it is not GC too soon
+    // Create env table
     lua_newtable(L);
 
-    // env.callback = func
-    lua_pushstring(L, "callback");
-    lua_pushvalue(L, 2); // push func on top
-    lua_settable(L, 3);
-
-    // env.thread = thread
-    lua_pushstring(L, "thread");
+    // Create new thread
     lua_ = lua_newthread(L);
-    lua_settable(L, 3);
 
+    // Store the thread in the Thread/Socket's environment table so it is not GC too soon
+    // <self> <func> <fenv> <thread>
+    luaL_ref(L, -2);
+
+    // Set fenv as environment table for "self" (Thread, Socket, etc).
+    // <self> <func> <fenv>
     if (!lua_setfenv(L, 1)) {
       throw Exception("Could not set function env on '%s'.", lua_typename(L, lua_type(L, 1)));
     }
 
-    // get weak table
-    lua_rawgeti(L, LUA_REGISTRYINDEX, worker_->lua_weak_idx_);
-
-    // create reference to func
+    // Transfer copies of <self> and <func> to thread stack
     lua_pushvalue(L, 2);
-    func_idx_ = luaL_ref(L, -2);
-    // create reference to self
     lua_pushvalue(L, 1);
-    self_idx_ = luaL_ref(L, -2);
-    lua_pop(L, 1); // remove weak table
+
+    // <self> <func> <func> <self>
+    lua_xmove(L, lua_, 2);
 
     // FIXME: callbacks created in callbacks loose the global environment _G ...
   }
@@ -90,24 +87,17 @@ protected:
   void push_lua_callback(bool push_self = true) {
     if (!callback_set()) throw Exception("Callback function not set.");
 
-    // push weak table on top and get function + self
-    lua_rawgeti(lua_, LUA_REGISTRYINDEX, worker_->lua_weak_idx_);
-    lua_rawgeti(lua_, 1, func_idx_);
-    if (push_self) lua_rawgeti(lua_, 1, self_idx_);
-
-    // remove weak index from stack
-    lua_remove(lua_, 1);
+    // <func> <self>
+    lua_pushvalue(lua_, 1);
+    if (push_self) lua_pushvalue(lua_, 2);
   }
 
   rubyk::Worker *worker_;
   lua_State *lua_;
 
   bool callback_set() {
-    return func_idx_ != -1;
+    return lua_ != NULL;
   }
-private:
-  int func_idx_;
-  int self_idx_;
 };
 
 } // rubyk

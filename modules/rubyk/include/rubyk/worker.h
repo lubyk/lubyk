@@ -71,34 +71,11 @@ public:
    */
   size_t zmq_context_refcount_;
 
-  /** Weak table index in the registry.
-   * The weak table is used to store the callback functions without
-   * marking them as used (this is done by the Thread/Socket/etc in their
-   * environment tables = gc with the userdata).
-   */
-  int lua_weak_idx_;
-
 public:
   Worker(lua_State *L)
    : lua_(L),
     zmq_context_(NULL),
     zmq_context_refcount_(0) {
-
-    //// create weak table
-
-    // t = {}
-    lua_newtable(L);
-    // mt = {}
-    lua_newtable(L);
-    // mt.__mode = 'kv'
-    lua_pushstring(L, "__mode");
-    // weak values
-    lua_pushstring(L, "v");
-    lua_settable(L, -3);
-    // setmetatable(t, mt)
-    lua_setmetatable(L, -2);
-    // insert weak table in registry
-    lua_weak_idx_ = luaL_ref(L, LUA_REGISTRYINDEX);
 
     lock();
   }

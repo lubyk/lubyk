@@ -78,16 +78,16 @@ private:
     rubyk::ScopedLock lock(worker_);
 
 
-    push_lua_callback();
+    push_lua_callback(false);
 
     // lua_ = LuaCallback's thread state
-    // first argument is self
-    int status = lua_pcall(lua_, 1, 1, 0);
-    
+    // @return new interval or 0 to stop or nil to not change interval
+    int status = lua_pcall(lua_, 0, 1, 0);
+
     if (status) {
       printf("Error triggering timer: %s\n", lua_tostring(lua_, -1));
     }
-    
+
     if (lua_type(lua_, -1) == LUA_TNUMBER) {
       double interval = lua_tonumber(lua_, -1);
       if (interval == 0) {
@@ -97,7 +97,8 @@ private:
       }
       timer_.set_interval_from_loop(interval);
     }
-    lua_settop(lua_, 0);
+
+    lua_pop(lua_, 1);
   }
 
   rubyk::Timer<rk::Timer, &rk::Timer::bang> timer_;
