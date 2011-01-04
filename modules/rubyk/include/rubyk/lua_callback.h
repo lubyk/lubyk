@@ -79,7 +79,8 @@ protected:
     // <self> <func> <func> <self>
     lua_xmove(L, lua_, 2);
 
-    // FIXME: callbacks created in callbacks loose the global environment _G ...
+    // lua_ stack is now
+    // <func> <self>
   }
 
   /** The caller should lock before calling this.

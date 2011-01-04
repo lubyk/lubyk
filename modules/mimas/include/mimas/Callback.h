@@ -144,7 +144,7 @@ private:
     lua_pushclass<Callback>(L, this, "mimas.Callback");
     lua_pushvalue(L, 2);
     lua_remove(L, 1); // remove app
-    lua_remove(L, 2); // remove function
+    lua_remove(L, 1); // remove function
     /* Stack is now
      * 1. self
      * 2. function
