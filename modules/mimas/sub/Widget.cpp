@@ -9,7 +9,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::Widget::Widget()
- * include/mimas/Widget.h:46
+ * include/mimas/Widget.h:47
  */
 static int Widget_Widget(lua_State *L) {
   try {
@@ -54,7 +54,7 @@ static int Widget__tostring(lua_State *L) {
 
 
 /** void mimas::Widget::activateWindow()
- * include/mimas/Widget.h:68
+ * include/mimas/Widget.h:103
  */
 static int Widget_activateWindow(lua_State *L) {
   try {
@@ -77,8 +77,58 @@ static int Widget_activateWindow(lua_State *L) {
 }
 
 
+/** QString mimas::Widget::cssClass() const 
+ * include/mimas/Widget.h:52
+ */
+static int Widget_cssClass(lua_State *L) {
+  try {
+    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    QString  retval__ = self__->cssClass();
+    lua_pushclass<QString>(L, retval__, "mimas.QString");
+    return 1;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("mimas.Widget.cssClass: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "mimas.Widget.cssClass: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
+}
+
+
+/** float mimas::Widget::hue()
+ * include/mimas/Widget.h:93
+ */
+static int Widget_hue(lua_State *L) {
+  try {
+    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    float  retval__ = self__->hue();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("mimas.Widget.hue: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "mimas.Widget.hue: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
+}
+
+
 /** void mimas::Widget::move(int x, int y)
- * include/mimas/Widget.h:60
+ * include/mimas/Widget.h:77
  */
 static int Widget_move(lua_State *L) {
   try {
@@ -103,8 +153,58 @@ static int Widget_move(lua_State *L) {
 }
 
 
+/** LuaStackSize mimas::Widget::name(lua_State *L)
+ * include/mimas/Widget.h:66
+ */
+static int Widget_name(lua_State *L) {
+  try {
+    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    
+    LuaStackSize  retval__ = self__->name(L);
+    return retval__;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("mimas.Widget.name: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "mimas.Widget.name: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
+}
+
+
+/** QObject* mimas::Widget::object()
+ * include/mimas/Widget.h:60
+ */
+static int Widget_object(lua_State *L) {
+  try {
+    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    QObject * retval__ = self__->object();
+    lua_pushclass<QObject>(L, retval__, "mimas.QObject");
+    return 1;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("mimas.Widget.object: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "mimas.Widget.object: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
+}
+
+
 /** void mimas::Widget::resize(int w, int h)
- * include/mimas/Widget.h:56
+ * include/mimas/Widget.h:81
  */
 static int Widget_resize(lua_State *L) {
   try {
@@ -130,7 +230,7 @@ static int Widget_resize(lua_State *L) {
 
 
 /** void mimas::Widget::setHue(float hue)
- * include/mimas/Widget.h:74
+ * include/mimas/Widget.h:89
  */
 static int Widget_setHue(lua_State *L) {
   try {
@@ -154,8 +254,58 @@ static int Widget_setHue(lua_State *L) {
 }
 
 
+/** void mimas::Widget::setName(const char *name)
+ * include/mimas/Widget.h:73
+ */
+static int Widget_setName(lua_State *L) {
+  try {
+    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    const char *name = luaL_checkstring(L, 2);
+    self__->setName(name);
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("mimas.Widget.setName: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "mimas.Widget.setName: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
+}
+
+
+/** void mimas::Widget::setStyle(const char *text)
+ * include/mimas/Widget.h:85
+ */
+static int Widget_setStyle(lua_State *L) {
+  try {
+    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    const char *text = luaL_checkstring(L, 2);
+    self__->setStyle(text);
+    return 0;
+  } catch (std::exception &e) {
+    std::string *s = new std::string("mimas.Widget.setStyle: ");
+    s->append(e.what());
+    lua_pushstring(L, s->c_str());
+    delete s;
+    lua_error(L);
+    // never reached
+    return 0;
+  } catch (...) {
+    lua_pushstring(L, "mimas.Widget.setStyle: Unknown exception");
+    lua_error(L);
+    return 0;
+  }
+}
+
+
 /** void mimas::Widget::show()
- * include/mimas/Widget.h:64
+ * include/mimas/Widget.h:99
  */
 static int Widget_show(lua_State *L) {
   try {
@@ -179,7 +329,7 @@ static int Widget_show(lua_State *L) {
 
 
 /** QWidget* mimas::Widget::widget()
- * include/mimas/Widget.h:52
+ * include/mimas/Widget.h:56
  */
 static int Widget_widget(lua_State *L) {
   try {
@@ -209,9 +359,15 @@ static int Widget_widget(lua_State *L) {
 
 static const struct luaL_Reg Widget_member_methods[] = {
   {"activateWindow"    , Widget_activateWindow},
+  {"cssClass"          , Widget_cssClass},
+  {"hue"               , Widget_hue},
   {"move"              , Widget_move},
+  {"name"              , Widget_name},
+  {"object"            , Widget_object},
   {"resize"            , Widget_resize},
   {"setHue"            , Widget_setHue},
+  {"setName"           , Widget_setName},
+  {"setStyle"          , Widget_setStyle},
   {"show"              , Widget_show},
   {"widget"            , Widget_widget},
   {"__tostring"        , Widget__tostring},

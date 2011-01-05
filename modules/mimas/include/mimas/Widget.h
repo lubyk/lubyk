@@ -29,7 +29,7 @@
 #ifndef RUBYK_INCLUDE_MIMAS_WIDGET_H_
 #define RUBYK_INCLUDE_MIMAS_WIDGET_H_
 
-#include "rubyk.h"
+#include "mimas/mimas.h"
 #include <QtGui/QWidget>
 
 #include <iostream>
@@ -41,25 +41,61 @@ namespace mimas {
 class Widget : public QWidget
 {
   Q_OBJECT
-
+  Q_PROPERTY(QString class READ cssClass)
+  Q_PROPERTY(float hue READ hue WRITE setHue)
 public:
-  Widget() {
-    fill_color_.setRgbF(0.15, 0.15, 0.15);
-  }
+  Widget() {}
 
   ~Widget() {}
 
+  // ============================ common code to all mimas Widgets
+  QString cssClass() const {
+    return parent() ? QString("window") : QString("widget");
+  }
+
   QWidget *widget() {
     return this;
+  }
+
+  QObject *object() {
+    return this;
+  }
+
+  /** Get the widget's name.
+   */
+  LuaStackSize name(lua_State *L) {
+    lua_pushstring(L, QObject::objectName().toUtf8().data());
+    return 1;
+  }
+
+  /** Set the widget's name.
+   */
+  void setName(const char *name) {
+    QObject::setObjectName(QString(name));
+  }
+
+  void move(int x, int y) {
+    QWidget::move(x, y);
   }
 
   void resize(int w, int h) {
     QWidget::resize(w, h);
   }
 
-  void move(int x, int y) {
-    QWidget::move(x, y);
+  void setStyle(const char *text) {
+    QWidget::setStyleSheet(QString(".%1 { %2 }").arg(cssClass()).arg(text));
   }
+
+  void setHue(float hue) {
+    hue_ = hue;
+    update();
+  }
+
+  float hue() {
+    return hue_;
+  }
+
+  // =============================================================
 
   void show() {
     QWidget::show();
@@ -68,11 +104,6 @@ public:
   void activateWindow() {
     QWidget::activateWindow();
   }
-
-  /** Set widget color.
-   */
-  void setHue(float hue);
-
 protected:
   //virtual void mousePressEvent(QMouseEvent *event);
   //virtual void mouseMoveEvent(QMouseEvent *event);
@@ -81,14 +112,6 @@ protected:
   /** The component's color.
    */
   float hue_;
-
-  /** Cached border color.
-   */
-  QColor border_color_;
-
-  /** Cached fill color.
-   */
-  QColor fill_color_;
 };
 
 } // mimas

@@ -13,7 +13,17 @@ local constr = mimas.Application
 function mimas.Application()
   local instance = constr(worker)
   instance:setStyleSheet([[
-    QLabel { background: transparent; color: #ccc; }
+    .window { background:rgb(38, 38, 38); }
+    .widget { background:rgb(38, 38, 38); }
+    .label { background: transparent; color: rgb(180,180,180); }
+    .slider { qproperty-border:2;
+      background:transparent;
+      color:hsva(80,255,255,75%);
+      alternate-background-color:hsv(80,255,255);
+      selection-color:rgba(255,255,255,80);
+    }
+    #test_name { color: hsva(20, 255, 255, 80%); }
+    #test_name.slider { color:hsv(30,200,200); }
   ]])
   return instance
 end

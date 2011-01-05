@@ -29,7 +29,7 @@
 #ifndef RUBYK_INCLUDE_MIMAS_H_BOX_LAYOUT_H_
 #define RUBYK_INCLUDE_MIMAS_H_BOX_LAYOUT_H_
 
-#include "rubyk.h"
+#include "mimas/mimas.h"
 #include <QtGui/QHBoxLayout>
 
 #include <iostream>

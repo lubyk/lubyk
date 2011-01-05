@@ -40,8 +40,6 @@
 
 using namespace rubyk;
 
-typedef int LuaStackSize;
-
 namespace zmq {
 
 /** Listen for incoming messages on a given port.

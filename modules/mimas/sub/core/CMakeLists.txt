@@ -3,6 +3,7 @@ set(SUB_MODULE_NAME "core")
 
 file(GLOB SUB_MODULE_SOURCES *.cpp ${PLAT}/*.cpp)
 file(GLOB SUB_MODULE_HEADERS ../../include/mimas/*.h)
+list(REMOVE_ITEM SUB_MODULE_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/../../include/mimas/mimas.h)
 
 # ==============================================================================
 #
@@ -33,7 +34,7 @@ set_target_properties("${target}_${SUB_MODULE_NAME}"
   SUFFIX ".so"
 )
 target_link_libraries("${target}_${SUB_MODULE_NAME}" ${QT_LIBRARIES})
-add_dependencies (modules "${target}_${SUB_MODULE_NAME}")
+add_dependencies(${target} "${target}_${SUB_MODULE_NAME}")
 
 
 # CMake with Qt ref:

@@ -30,6 +30,11 @@
 #ifndef CORE_INCLUDE_CORE_LUA_H_
 #define CORE_INCLUDE_CORE_LUA_H_
 
+/** Pseudo return value for complex types or to push
+ * variable args on stack.
+ */
+typedef int LuaStackSize;
+
 /** Include Lua
  */
 extern "C" {

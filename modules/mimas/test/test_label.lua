@@ -42,9 +42,13 @@ function should.insert_label_in_layout()
     tests[style_test] = lbl
   end
 
-  local lbl4 = mimas.Label("setHue")
-  lay:addWidget(lbl4)
-  lbl4:setHue(70)
+  local lbl1 = mimas.Label("setHue")
+  lay:addWidget(lbl1)
+  lbl1:setHue(210)
+
+  local lbl2 = mimas.Label("name = test_name")
+  lbl2:setName("test_name")
+  lay:addWidget(lbl2)
 
   -- visual check
   assert_true(true)

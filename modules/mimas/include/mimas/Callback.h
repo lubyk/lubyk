@@ -29,7 +29,7 @@
 #ifndef RUBYK_INCLUDE_MIMAS_CALLBACK_H_
 #define RUBYK_INCLUDE_MIMAS_CALLBACK_H_
 
-#include "rubyk.h"
+#include "mimas/mimas.h"
 #include "lua_cpp_helper.h"
 
 #include <QtCore/QObject>
@@ -42,6 +42,8 @@
 namespace mimas {
 
 class Application;
+class Slider;
+
 /** Calls a lua function back.
  *
  * @dub lib_name:'Callback_core'
@@ -134,9 +136,10 @@ public slots:
 
 private:
   friend class Application;
+  friend class Slider;
 
   /** When called from Application, the stack is
-   * 1. app
+   * 1. app or widget
    * 2. function
    */
   void set_callback_from_app(lua_State *L) {

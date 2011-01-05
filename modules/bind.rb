@@ -32,6 +32,10 @@ Dub::Lua.function_generator.custom_type(/lua_State /) do |type_def, arg, stack_p
   end
 end
 
+# Dub::Lua.function_generator.custom_type(/QString/) do |type_def, arg, stack_pos|
+#   # Does this work for return types ?
+# end
+
 Dub::Lua.function_generator.custom_type(/int\s+lua_func_idx/) do |type_def, arg, stack_pos|
 %Q{
 luaL_checktype(L, #{stack_pos}, LUA_TFUNCTION);

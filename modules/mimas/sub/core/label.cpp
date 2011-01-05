@@ -33,15 +33,4 @@ namespace mimas {
 
 // Label::paintEvent is in paint.cpp
 
-void Label::setHue(float hue) {
-  hue_ = (hue < 0 || hue >= 360) ? 0 : hue;
-  //                   hue            sat   bri   alpha // FIXME: true == enabled?
-  QColor text_color;
-  text_color.setHsvF( hue_ / 360.0f, 1.0f, 1.0f, true ? 1.0f : 0.3f);
-
-  QPalette palette = this->palette();
-  palette.setColor(QPalette::Foreground, text_color);
-  setPalette(palette);
-}
-
 } // mimas

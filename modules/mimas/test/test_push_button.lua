@@ -18,7 +18,7 @@ function should.draw_button()
   local win = mimas.Widget()
   win:move(100, 100)
 
-  local lbl = mimas.Label("Button without layout", win)
+  local btn = mimas.PushButton("Button without layout", win)
 
   local callback = mimas.Callback(function()
     app:quit()
@@ -32,13 +32,13 @@ function should.insert_button_in_layout()
   local win = mimas.Widget()
   win:move(100, 100)
   local lay = mimas.HBoxLayout(win)
-  local lbl = mimas.Label("Button with layout")
-  lay:addWidget(lbl)
+  local btn = mimas.PushButton("Button with layout")
+  lay:addWidget(btn)
   local callback = mimas.Callback(function()
     app:quit()
   end)
 
-  callback:connect(lbl, 'clicked')
+  callback:connect(btn, 'clicked')
 
   win:show()
 end

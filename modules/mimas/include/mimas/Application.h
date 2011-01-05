@@ -29,7 +29,7 @@
 #ifndef RUBYK_INCLUDE_MIMAS_APPLICATION_H_
 #define RUBYK_INCLUDE_MIMAS_APPLICATION_H_
 
-#include "rubyk.h"
+#include "mimas/mimas.h"
 #include "mimas/Callback.h"
 
 #include <QtGui/QApplication>

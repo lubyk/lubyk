@@ -29,7 +29,7 @@
 #ifndef RUBYK_INCLUDE_MIMAS_PUSH_BUTTON_H_
 #define RUBYK_INCLUDE_MIMAS_PUSH_BUTTON_H_
 
-#include "rubyk.h"
+#include "mimas/mimas.h"
 #include <QtGui/QPushButton>
 
 #include "mimas/widget.h"
@@ -45,6 +45,9 @@ namespace mimas {
 class PushButton : public QPushButton
 {
   Q_OBJECT
+  Q_PROPERTY(QString class READ cssClass)
+  Q_PROPERTY(float hue READ hue WRITE setHue)
+
 public:
   PushButton(const char *title = NULL)
    : QPushButton(title) {}
@@ -54,6 +57,11 @@ public:
 
   ~PushButton() {}
 
+  // ============================ common code to all mimas Widgets
+  QString cssClass() const {
+    return QString("button");
+  }
+
   QWidget *widget() {
     return this;
   }
@@ -61,6 +69,44 @@ public:
   QObject *object() {
     return this;
   }
+
+  /** Get the widget's name.
+   */
+  LuaStackSize name(lua_State *L) {
+    lua_pushstring(L, QObject::objectName().toUtf8().data());
+    return 1;
+  }
+
+  /** Set the widget's name.
+   */
+  void setName(const char *name) {
+    QObject::setObjectName(QString(name));
+  }
+
+  void move(int x, int y) {
+    QWidget::move(x, y);
+  }
+
+  void resize(int w, int h) {
+    QWidget::resize(w, h);
+  }
+
+  void setStyle(const char *text) {
+    QWidget::setStyleSheet(QString(".%1 { %2 }").arg(cssClass()).arg(text));
+  }
+
+  void setHue(float hue) {
+    hue_ = hue;
+    update();
+  }
+
+  float hue() {
+    return hue_;
+  }
+
+  // =============================================================
+private:
+  float hue_;
 };
 
 } // mimas

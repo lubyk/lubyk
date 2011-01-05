@@ -29,7 +29,7 @@
 #ifndef RUBYK_INCLUDE_MIMAS_LABEL_H_
 #define RUBYK_INCLUDE_MIMAS_LABEL_H_
 
-#include "rubyk.h"
+#include "mimas/mimas.h"
 #include <QtGui/QLabel>
 
 #include <iostream>
@@ -42,21 +42,21 @@ namespace mimas {
 class Label : public QLabel
 {
   Q_OBJECT
+  Q_PROPERTY(QString class READ cssClass)
 public:
   Label(const char *title = NULL)
-   : QLabel(title) {}
+   : QLabel(title),
+     hue_(-1) {}
 
   Label(const char *title, QWidget *parent)
-   : QLabel(title, parent) {}
+   : QLabel(title, parent),
+     hue_(-1) {}
 
   ~Label() {}
 
-  void setText(const char *text) {
-    QLabel::setText(QString(text));
-  }
-
-  void setStyle(const char *text) {
-    QLabel::setStyleSheet(QString("QLabel { %1 }").arg(text));
+  // ============================ common code to all mimas Widgets
+  QString cssClass() const {
+    return QString("label");
   }
 
   QWidget *widget() {
@@ -67,9 +67,18 @@ public:
     return this;
   }
 
-  /** Set widget color.
+  /** Get the widget's name.
    */
-  void setHue(float hue);
+  LuaStackSize name(lua_State *L) {
+    lua_pushstring(L, QObject::objectName().toUtf8().data());
+    return 1;
+  }
+
+  /** Set the widget's name.
+   */
+  void setName(const char *name) {
+    QObject::setObjectName(QString(name));
+  }
 
   void move(int x, int y) {
     QWidget::move(x, y);
@@ -79,8 +88,26 @@ public:
     QWidget::resize(w, h);
   }
 
+  void setStyle(const char *text) {
+    setStyleSheet(QString(".%1 { %2 }").arg(cssClass()).arg(text));
+  }
+
+  void setHue(float hue) {
+    hue_ = hue;
+    update();
+  }
+
+  float hue() {
+    return hue_;
+  }
+
+  // =============================================================
+
+  void setText(const char *text) {
+    QLabel::setText(QString(text));
+  }
 protected:
-  //virtual void paintEvent(QPaintEvent *event);
+  virtual void paintEvent(QPaintEvent *event);
 
   /** The component's color.
    */

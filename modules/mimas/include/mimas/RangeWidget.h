@@ -25,6 +25,7 @@
 #ifndef RUBYK_INCLUDE_MIMAS_RANGE_WIDGET_H_
 #define RUBYK_INCLUDE_MIMAS_RANGE_WIDGET_H_
 
+#include "mimas/mimas.h"
 #include "mimas/Widget.h"
 
 namespace mimas {
@@ -32,9 +33,8 @@ namespace mimas {
 class RangeWidget
 {
 public:
-  RangeWidget(Widget *widget)
-   : widget_(widget),
-     min_(0.0),
+  RangeWidget()
+   : min_(0.0),
      max_(1.0),
      value_(0.0),
      remote_value_(0.0),
@@ -110,11 +110,6 @@ public:
   }
 
 private:
-
-  /** Widget using this range.
-   */
-  Widget *widget_;
-
   /** Smallest possible value.
    */
   double min_;

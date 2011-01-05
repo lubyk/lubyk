@@ -28,12 +28,13 @@
 */
 
 #include "mimas/Widget.h"
+#include "mimas/Label.h"
 #include "mimas/Slider.h"
 
 #include <QPainter>
 
 #define SLIDER_BORDER_WIDTH 2
-#define WIDGET_THUMB_SIZE 16
+#define WIDGET_THUMB_SIZE 14
 
 namespace mimas {
 
@@ -43,18 +44,23 @@ namespace mimas {
 
 void Widget::paintEvent(QPaintEvent *event) {
   QPainter p(this);
-  p.fillRect(rect(), fill_color_);
+  if (!parent()) {
+    // window
+    p.fillRect(rect(), palette().color(QPalette::Window));
+  }
   QWidget::paintEvent(event);
 }
 
 // =============================================
 // ==             Label                       ==
 // =============================================
-// No custom draw for the moment
-//void Label::paintEvent(QPaintEvent *event) {
-//  QPainter p(this);
-//
-//}
+void Label::paintEvent(QPaintEvent *event) {
+  if (hue_ != -1) {
+    int hue = (hue_ < 0 || hue_ >= 360) ? 0 : hue_;
+    setStyleSheet(QString(".%1 { color:hsv(%2, 255, 255) }").arg(cssClass()).arg(hue));
+  }
+  QLabel::paintEvent(event);
+}
 
 // =============================================
 // ==             Slider                      ==
@@ -62,61 +68,76 @@ void Widget::paintEvent(QPaintEvent *event) {
 
 void Slider::paintEvent(QPaintEvent *event) {
   QPainter p(this);
+  QPalette palette = this->palette();
+  int w = width();
+  int h = height();
 
-  // if (connected()) {
-  //   g.fillAll(mimas_->bg_color());
-  // } else {
-  //   g.fillAll(mimas_->color(MTheme::Disconnected));
-  // }
+  if (hue_ != -1) {
+    mimas::setHue(palette, hue_);
+  }
+
+  // color = slider value (WindowText)
+  // background = background (Window)
+  // alternate-background-color = border color (AlternateBase)
+  // selection-background-color: not used (Highlighted)
+  // selection-color: slider button (HighlightedText)
+
+  // background
+  p.fillRect(
+    0,
+    0,
+    w,
+    h,
+    palette.color(QPalette::Window)
+  );
 
   if (slider_type_ == VerticalSliderType) {
     // vertical slider
-    int remote_pos = range_.remotePosition(height());
-    int local_pos  = range_.position(height());
+    int remote_pos = range_.remotePosition(h);
+    int local_pos  = range_.position(h);
 
     // filled slider value
     p.fillRect(
       0,
-      height() - remote_pos,
-      width(),
+      h - remote_pos,
+      w,
       remote_pos,
-      fill_color_
+      palette.color(QPalette::WindowText)
     );
 
     // line on top of value
     // g.setColour(border_color_);
     //g.drawLine(
-    //  SLIDER_BORDER_WIDTH / 2,
-    //  h - SLIDER_BORDER_WIDTH / 2,
-    //  getWidth() - SLIDER_BORDER_WIDTH,
-    //  h - SLIDER_BORDER_WIDTH / 2,
-    //  SLIDER_BORDER_WIDTH
+    //  border_width / 2,
+    //  h - border_width / 2,
+    //  getWidth() - border_width,
+    //  h - border_width / 2,
+    //  border_width
     //);
 
     if (range_.isDragged() || remote_pos != local_pos) {
       // thumb
-      //g.setColour(mimas_->color(MTheme::WidgetThumbBG));
       p.fillRect(
         0,
-        height() - local_pos - WIDGET_THUMB_SIZE / 2,
-        width(),
+        h - local_pos - WIDGET_THUMB_SIZE / 2,
+        w,
         WIDGET_THUMB_SIZE,
-        QColor(255, 255, 255, 32)
+        palette.color(QPalette::HighlightedText)
       );
     }
 
   } else {
     // horizontal slider
-    int remote_pos = range_.remotePosition(width());
-    int local_pos  = range_.position(width());
+    int remote_pos = range_.remotePosition(w);
+    int local_pos  = range_.position(w);
 
     // filled slider value
     p.fillRect(
       0,
       0,
       remote_pos,
-      height(),
-      fill_color_
+      h,
+      palette.color(QPalette::WindowText)
     );
 
     if (range_.isDragged() || remote_pos != local_pos) {
@@ -126,19 +147,21 @@ void Slider::paintEvent(QPaintEvent *event) {
         local_pos - WIDGET_THUMB_SIZE / 2,
         0,
         WIDGET_THUMB_SIZE,
-        height(),
-        QColor(255, 255, 255, 32)
+        h,
+        palette.color(QPalette::HighlightedText)
       );
     }
   }
 
-  p.setPen(QPen(border_color_, SLIDER_BORDER_WIDTH));
+  QPen pen(palette.color(QPalette::AlternateBase), border_width_);
+  pen.setJoinStyle(Qt::MiterJoin);
+  p.setPen(pen);
   p.setBrush(Qt::NoBrush);
   p.drawRect(
-    SLIDER_BORDER_WIDTH / 2,
-    SLIDER_BORDER_WIDTH / 2,
-    width() -  SLIDER_BORDER_WIDTH,
-    height() - SLIDER_BORDER_WIDTH
+    border_width_ / 2,
+    border_width_ / 2,
+    w -  border_width_,
+    h - border_width_
   );
 }
 

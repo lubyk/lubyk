@@ -26,24 +26,16 @@
 
   ==============================================================================
 */
+#ifndef RUBYK_INCLUDE_MIMAS_MIMAS_H_
+#define RUBYK_INCLUDE_MIMAS_MIMAS_H_
+
 #include "rubyk.h"
-#include "mimas/Callback.h"
+#include <QtGui/QWidget>
 
-// create value for Callback::Event type here
-const QEvent::Type mimas::Callback::EventType = static_cast<QEvent::Type>(QEvent::registerEventType());
 
-// Register namespace
-static const struct luaL_Reg lib_functions[] = {
-  {NULL, NULL},
-};
+namespace mimas {
 
-extern "C" int luaopen_mimas_core(lua_State *L) {
-  // declare metatables for cast signature mimas.QObject and mimas.QWidget
-  luaL_newmetatable(L, "mimas.QObject");
-  luaL_newmetatable(L, "mimas.QWidget");
-  luaL_newmetatable(L, "mimas.QLayout");
+void setHue(QPalette &palette, float hue);
 
-  // register functions
-  luaL_register(L, "mimas", lib_functions);
-  return 0;
-}
+} // mimas
+#endif // RUBYK_INCLUDE_MIMAS_MIMAS_H_
