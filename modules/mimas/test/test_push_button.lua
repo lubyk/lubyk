@@ -15,7 +15,7 @@ local should = test.Suite('mimas.PushButton')
 local app = mimas.Application()
 
 function should.draw_button()
-  local win = mimas.Widget()
+  local win = mimas.Window()
   win:move(100, 100)
 
   local btn = mimas.PushButton("Button without layout", win)
@@ -29,7 +29,7 @@ function should.draw_button()
 end
 
 function should.insert_button_in_layout()
-  local win = mimas.Widget()
+  local win = mimas.Window()
   win:move(100, 100)
   local lay = mimas.HBoxLayout(win)
   local btn = mimas.PushButton("Button with layout")

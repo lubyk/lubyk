@@ -18,17 +18,9 @@ static int Worker_Worker(lua_State *L) {
     lua_pushclass<Worker>(L, retval__, "rubyk.Worker");
     return 1;
   } catch (std::exception &e) {
-    std::string *s = new std::string("rubyk.Worker.Worker: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "rubyk.Worker.Worker: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "rubyk.Worker.Worker: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "rubyk.Worker.Worker: Unknown exception");
   }
 }
 
@@ -36,7 +28,9 @@ static int Worker_Worker(lua_State *L) {
 
 static int Worker_destructor(lua_State *L) {
   Worker **userdata = (Worker**)luaL_checkudata(L, 1, "rubyk.Worker");
+  
   if (*userdata) delete *userdata;
+  
   *userdata = NULL;
   return 0;
 }
@@ -45,6 +39,7 @@ static int Worker_destructor(lua_State *L) {
 
 static int Worker__tostring(lua_State *L) {
   Worker **userdata = (Worker**)luaL_checkudata(L, 1, "rubyk.Worker");
+  
   
   lua_pushfstring(L, "<rubyk.Worker: %p %f>", *userdata, (*userdata)->now());
   
@@ -64,17 +59,9 @@ static int Worker_now(lua_State *L) {
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    std::string *s = new std::string("rubyk.Worker.now: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "rubyk.Worker.now: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "rubyk.Worker.now: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "rubyk.Worker.now: Unknown exception");
   }
 }
 
@@ -89,17 +76,9 @@ static int Worker_sleep(lua_State *L) {
     self__->sleep(duration);
     return 0;
   } catch (std::exception &e) {
-    std::string *s = new std::string("rubyk.Worker.sleep: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "rubyk.Worker.sleep: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "rubyk.Worker.sleep: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "rubyk.Worker.sleep: Unknown exception");
   }
 }
 

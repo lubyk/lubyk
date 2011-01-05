@@ -25,17 +25,9 @@ static int Browser_Browser(lua_State *L) {
     lua_pushclass<Browser>(L, retval__, "mdns.Browser");
     return 1;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mdns.Browser.Browser: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mdns.Browser.Browser: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mdns.Browser.Browser: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mdns.Browser.Browser: Unknown exception");
   }
 }
 
@@ -43,7 +35,9 @@ static int Browser_Browser(lua_State *L) {
 
 static int Browser_destructor(lua_State *L) {
   Browser **userdata = (Browser**)luaL_checkudata(L, 1, "mdns.Browser");
+  
   if (*userdata) delete *userdata;
+  
   *userdata = NULL;
   return 0;
 }
@@ -52,6 +46,7 @@ static int Browser_destructor(lua_State *L) {
 
 static int Browser__tostring(lua_State *L) {
   Browser **userdata = (Browser**)luaL_checkudata(L, 1, "mdns.Browser");
+  
   
   lua_pushfstring(L, "<mdns.Browser: %p %s>", *userdata, (*userdata)->service_type());
   
@@ -71,17 +66,9 @@ static int Browser_add_device(lua_State *L) {
     self__->add_device(*location);
     return 0;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mdns.Browser.add_device: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mdns.Browser.add_device: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mdns.Browser.add_device: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mdns.Browser.add_device: Unknown exception");
   }
 }
 
@@ -96,17 +83,9 @@ static int Browser_remove_device(lua_State *L) {
     self__->remove_device(name);
     return 0;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mdns.Browser.remove_device: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mdns.Browser.remove_device: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mdns.Browser.remove_device: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mdns.Browser.remove_device: Unknown exception");
   }
 }
 
@@ -121,17 +100,9 @@ static int Browser_service_type(lua_State *L) {
     lua_pushstring(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mdns.Browser.service_type: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mdns.Browser.service_type: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mdns.Browser.service_type: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mdns.Browser.service_type: Unknown exception");
   }
 }
 

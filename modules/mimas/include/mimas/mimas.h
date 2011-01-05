@@ -30,8 +30,14 @@
 #define RUBYK_INCLUDE_MIMAS_MIMAS_H_
 
 #include "rubyk.h"
+#include "lua_cpp_helper.h"
 #include <QtGui/QWidget>
 
+#if 0
+#define MIMAS_DEBUG_GC printf("[%p] ~%s\n", this, this->metaObject()->className());
+#else
+#define MIMAS_DEBUG_GC
+#endif
 
 namespace mimas {
 

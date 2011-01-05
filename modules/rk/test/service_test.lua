@@ -34,7 +34,7 @@ function should.connect_when_remote_appears()
 
   -- connected becomes true when 'Mars' appears on the network
   while not venus:connected() do
-    worker:sleep(10) -- make sure everything is ready before sending
+    sleep(10) -- make sure everything is ready before sending
   end
 
   print("Connected")
@@ -43,7 +43,7 @@ function should.connect_when_remote_appears()
   mars:notify('message from Mars')
 
   while not continue do
-    worker:sleep(5)
+    sleep(5)
   end
 
   assert_equal(2, received_count)

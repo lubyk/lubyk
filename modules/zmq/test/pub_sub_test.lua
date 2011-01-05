@@ -24,7 +24,7 @@ function should.publish_and_subscribe()
 
   while received < 10 do
     sender:send("anything")
-    worker:sleep(1)
+    sleep(1)
   end
 
   assert_equal(10, received)
@@ -44,12 +44,12 @@ function should.publish_and_subscribe_many()
   receiver2:connect(string.format("tcp://localhost:%i", sender:port()))
 
   -- make sure receivers are ready before starting to send
-  worker:sleep(100)
+  sleep(100)
 
   sender:send("anything")
 
   while received < 2 do
-    worker:sleep(10)
+    sleep(10)
   end
 
   assert_equal(2, received)

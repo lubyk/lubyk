@@ -9,26 +9,18 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::Application::Application(rubyk::Worker *worker)
- * include/mimas/Application.h:62
+ * include/mimas/Application.h:63
  */
 static int Application_Application(lua_State *L) {
   try {
     rubyk::Worker *worker = *((rubyk::Worker **)luaL_checkudata(L, 1, "rubyk.Worker"));
     Application * retval__ = new Application(worker);
-    lua_pushclass<Application>(L, retval__, "mimas.Application");
+    lua_pushclass2<Application>(L, retval__, "mimas.Application");
     return 1;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.Application.Application: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.Application.Application: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.Application.Application: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.Application.Application: Unknown exception");
   }
 }
 
@@ -36,15 +28,32 @@ static int Application_Application(lua_State *L) {
 
 static int Application_destructor(lua_State *L) {
   Application **userdata = (Application**)luaL_checkudata(L, 1, "mimas.Application");
-  if (*userdata) delete *userdata;
+  
+  // custom destructor
+  if (*userdata) (*userdata)->dub_destroy();
+  
   *userdata = NULL;
   return 0;
+}
+
+
+// test if class is deleted
+static int Application_deleted(lua_State *L) {
+  Application **userdata = (Application**)luaL_checkudata(L, 1, "mimas.Application");
+  lua_pushboolean(L, *userdata == NULL);
+  return 1;
 }
 
 /* ============================ tostring         ====================== */
 
 static int Application__tostring(lua_State *L) {
   Application **userdata = (Application**)luaL_checkudata(L, 1, "mimas.Application");
+  
+  if (!*userdata) {
+    lua_pushstring(L, "<mimas.Application: NULL>");
+    return 1;
+  }
+  
   
   lua_pushfstring(L, "<mimas.Application: %p>", *userdata);
   
@@ -55,100 +64,72 @@ static int Application__tostring(lua_State *L) {
 
 
 /** int mimas::Application::exec()
- * include/mimas/Application.h:68
+ * include/mimas/Application.h:77
  */
 static int Application_exec(lua_State *L) {
   try {
     Application *self__ = *((Application**)luaL_checkudata(L, 1, "mimas.Application"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Application in exec");
     int  retval__ = self__->exec();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.Application.exec: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.Application.exec: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.Application.exec: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.Application.exec: Unknown exception");
   }
 }
 
 
 /** void mimas::Application::post(lua_State *L)
- * include/mimas/Application.h:77
+ * include/mimas/Application.h:86
  */
 static int Application_post(lua_State *L) {
   try {
     Application *self__ = *((Application**)luaL_checkudata(L, 1, "mimas.Application"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Application in post");
     
     self__->post(L);
     return 0;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.Application.post: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.Application.post: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.Application.post: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.Application.post: Unknown exception");
   }
 }
 
 
 /** void mimas::Application::quit()
- * include/mimas/Application.h:83
+ * include/mimas/Application.h:92
  */
 static int Application_quit(lua_State *L) {
   try {
     Application *self__ = *((Application**)luaL_checkudata(L, 1, "mimas.Application"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Application in quit");
     self__->quit();
     return 0;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.Application.quit: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.Application.quit: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.Application.quit: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.Application.quit: Unknown exception");
   }
 }
 
 
 /** void mimas::Application::setStyleSheet(const char *text)
- * include/mimas/Application.h:87
+ * include/mimas/Application.h:96
  */
 static int Application_setStyleSheet(lua_State *L) {
   try {
     Application *self__ = *((Application**)luaL_checkudata(L, 1, "mimas.Application"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Application in setStyleSheet");
     const char *text = luaL_checkstring(L, 2);
     self__->setStyleSheet(text);
     return 0;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.Application.setStyleSheet: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.Application.setStyleSheet: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.Application.setStyleSheet: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.Application.setStyleSheet: Unknown exception");
   }
 }
 
@@ -164,6 +145,7 @@ static const struct luaL_Reg Application_member_methods[] = {
   {"setStyleSheet"     , Application_setStyleSheet},
   {"__tostring"        , Application__tostring},
   {"__gc"              , Application_destructor},
+  {"deleted"           , Application_deleted},
   {NULL, NULL},
 };
 

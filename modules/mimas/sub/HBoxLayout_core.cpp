@@ -10,50 +10,34 @@ using namespace mimas;
 
 
 /** mimas::HBoxLayout::HBoxLayout(QWidget *parent)
- * include/mimas/HBoxLayout.h:48
+ * include/mimas/HBoxLayout.h:49
  */
 static int HBoxLayout_HBoxLayout1(lua_State *L) {
   try {
     QWidget *parent = *((QWidget **)luaL_checkudata(L, 1, "mimas.QWidget"));
     HBoxLayout * retval__ = new HBoxLayout(parent);
-    lua_pushclass<HBoxLayout>(L, retval__, "mimas.HBoxLayout");
+    lua_pushclass2<HBoxLayout>(L, retval__, "mimas.HBoxLayout");
     return 1;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.HBoxLayout.HBoxLayout: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.HBoxLayout.HBoxLayout: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.HBoxLayout.HBoxLayout: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.HBoxLayout.HBoxLayout: Unknown exception");
   }
 }
 
 
 /** mimas::HBoxLayout::HBoxLayout()
- * include/mimas/HBoxLayout.h:50
+ * include/mimas/HBoxLayout.h:51
  */
 static int HBoxLayout_HBoxLayout2(lua_State *L) {
   try {
     HBoxLayout * retval__ = new HBoxLayout();
-    lua_pushclass<HBoxLayout>(L, retval__, "mimas.HBoxLayout");
+    lua_pushclass2<HBoxLayout>(L, retval__, "mimas.HBoxLayout");
     return 1;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.HBoxLayout.HBoxLayout: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.HBoxLayout.HBoxLayout: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.HBoxLayout.HBoxLayout: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.HBoxLayout.HBoxLayout: Unknown exception");
   }
 }
 
@@ -77,15 +61,32 @@ static int HBoxLayout_HBoxLayout(lua_State *L) {
 
 static int HBoxLayout_destructor(lua_State *L) {
   HBoxLayout **userdata = (HBoxLayout**)luaL_checkudata(L, 1, "mimas.HBoxLayout");
-  if (*userdata) delete *userdata;
+  
+  // custom destructor
+  if (*userdata) (*userdata)->dub_destroy();
+  
   *userdata = NULL;
   return 0;
+}
+
+
+// test if class is deleted
+static int HBoxLayout_deleted(lua_State *L) {
+  HBoxLayout **userdata = (HBoxLayout**)luaL_checkudata(L, 1, "mimas.HBoxLayout");
+  lua_pushboolean(L, *userdata == NULL);
+  return 1;
 }
 
 /* ============================ tostring         ====================== */
 
 static int HBoxLayout__tostring(lua_State *L) {
   HBoxLayout **userdata = (HBoxLayout**)luaL_checkudata(L, 1, "mimas.HBoxLayout");
+  
+  if (!*userdata) {
+    lua_pushstring(L, "<mimas.HBoxLayout: NULL>");
+    return 1;
+  }
+  
   
   lua_pushfstring(L, "<mimas.HBoxLayout: %p>", *userdata);
   
@@ -96,76 +97,55 @@ static int HBoxLayout__tostring(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::addLayout(QLayout *layout)
- * include/mimas/HBoxLayout.h:58
+ * include/mimas/HBoxLayout.h:61
  */
 static int HBoxLayout_addLayout(lua_State *L) {
   try {
     HBoxLayout *self__ = *((HBoxLayout**)luaL_checkudata(L, 1, "mimas.HBoxLayout"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.HBoxLayout in addLayout");
     QLayout *layout = *((QLayout **)luaL_checkudata(L, 2, "mimas.QLayout"));
     self__->addLayout(layout);
     return 0;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.HBoxLayout.addLayout: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.HBoxLayout.addLayout: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.HBoxLayout.addLayout: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.HBoxLayout.addLayout: Unknown exception");
   }
 }
 
 
 /** void mimas::HBoxLayout::addWidget(QWidget *widget)
- * include/mimas/HBoxLayout.h:54
+ * include/mimas/HBoxLayout.h:57
  */
 static int HBoxLayout_addWidget(lua_State *L) {
   try {
     HBoxLayout *self__ = *((HBoxLayout**)luaL_checkudata(L, 1, "mimas.HBoxLayout"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.HBoxLayout in addWidget");
     QWidget *widget = *((QWidget **)luaL_checkudata(L, 2, "mimas.QWidget"));
     self__->addWidget(widget);
     return 0;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.HBoxLayout.addWidget: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.HBoxLayout.addWidget: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.HBoxLayout.addWidget: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.HBoxLayout.addWidget: Unknown exception");
   }
 }
 
 
 /** QLayout* mimas::HBoxLayout::layout()
- * include/mimas/HBoxLayout.h:62
+ * include/mimas/HBoxLayout.h:65
  */
 static int HBoxLayout_layout(lua_State *L) {
   try {
     HBoxLayout *self__ = *((HBoxLayout**)luaL_checkudata(L, 1, "mimas.HBoxLayout"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.HBoxLayout in layout");
     QLayout * retval__ = self__->layout();
     lua_pushclass<QLayout>(L, retval__, "mimas.QLayout");
     return 1;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.HBoxLayout.layout: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.HBoxLayout.layout: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.HBoxLayout.layout: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.HBoxLayout.layout: Unknown exception");
   }
 }
 
@@ -180,6 +160,7 @@ static const struct luaL_Reg HBoxLayout_member_methods[] = {
   {"layout"            , HBoxLayout_layout},
   {"__tostring"        , HBoxLayout__tostring},
   {"__gc"              , HBoxLayout_destructor},
+  {"deleted"           , HBoxLayout_deleted},
   {NULL, NULL},
 };
 

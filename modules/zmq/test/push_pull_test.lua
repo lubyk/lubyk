@@ -27,7 +27,7 @@ function should.send_and_receive()
     -- cannot use ... or arg is set to nil
     sender:send(unpack(arg))
     while not continue do
-      worker:sleep(10)
+      sleep(10)
     end
 
     for i, v in ipairs(arg) do
@@ -71,7 +71,7 @@ function should.push_pull_many_messages()
 
   while received < 10 do
     sender:send("anything")
-    worker:sleep(1)
+    sleep(1)
   end
 
   assert_equal(10, received)

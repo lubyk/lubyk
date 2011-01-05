@@ -15,7 +15,7 @@ local should = test.Suite('mimas.VBoxLayout')
 local app = mimas.Application()
 
 function should.display_widgets()
-  local win = mimas.Widget()
+  local win = mimas.Window()
   local lay = mimas.VBoxLayout(win)
   local btn1 = mimas.PushButton("Hello")
   local btn2 = mimas.PushButton("Quit")
@@ -34,7 +34,7 @@ function should.display_widgets()
 end
 
 function should.nest_layouts()
-  local win = mimas.Widget()
+  local win = mimas.Window()
   local lay = mimas.VBoxLayout(win)
   local sub = mimas.HBoxLayout()
   local labl = mimas.Label("Title")

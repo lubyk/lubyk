@@ -9,26 +9,18 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::Callback::Callback(rubyk::Worker *worker)
- * include/mimas/Callback.h:61
+ * include/mimas/Callback.h:62
  */
 static int Callback_Callback(lua_State *L) {
   try {
     rubyk::Worker *worker = *((rubyk::Worker **)luaL_checkudata(L, 1, "rubyk.Worker"));
     Callback * retval__ = new Callback(worker);
-    lua_pushclass<Callback>(L, retval__, "mimas.Callback");
+    lua_pushclass2<Callback>(L, retval__, "mimas.Callback");
     return 1;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.Callback.Callback: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.Callback.Callback: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.Callback.Callback: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.Callback.Callback: Unknown exception");
   }
 }
 
@@ -36,15 +28,32 @@ static int Callback_Callback(lua_State *L) {
 
 static int Callback_destructor(lua_State *L) {
   Callback **userdata = (Callback**)luaL_checkudata(L, 1, "mimas.Callback");
-  if (*userdata) delete *userdata;
+  
+  // custom destructor
+  if (*userdata) (*userdata)->dub_destroy();
+  
   *userdata = NULL;
   return 0;
+}
+
+
+// test if class is deleted
+static int Callback_deleted(lua_State *L) {
+  Callback **userdata = (Callback**)luaL_checkudata(L, 1, "mimas.Callback");
+  lua_pushboolean(L, *userdata == NULL);
+  return 1;
 }
 
 /* ============================ tostring         ====================== */
 
 static int Callback__tostring(lua_State *L) {
   Callback **userdata = (Callback**)luaL_checkudata(L, 1, "mimas.Callback");
+  
+  if (!*userdata) {
+    lua_pushstring(L, "<mimas.Callback: NULL>");
+    return 1;
+  }
+  
   
   lua_pushfstring(L, "<mimas.Callback: %p>", *userdata);
   
@@ -55,53 +64,39 @@ static int Callback__tostring(lua_State *L) {
 
 
 /** void mimas::Callback::connect(QObject *obj, const char *method, const char *callback)
- * include/mimas/Callback.h:65
+ * include/mimas/Callback.h:68
  */
 static int Callback_connect(lua_State *L) {
   try {
     Callback *self__ = *((Callback**)luaL_checkudata(L, 1, "mimas.Callback"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Callback in connect");
     QObject *obj = *((QObject **)luaL_checkudata(L, 2, "mimas.QObject"));
     const char *method = luaL_checkstring(L, 3);
     const char *callback = luaL_checkstring(L, 4);
     self__->connect(obj, method, callback);
     return 0;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.Callback.connect: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.Callback.connect: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.Callback.connect: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.Callback.connect: Unknown exception");
   }
 }
 
 
 /** void mimas::Callback::set_callback(lua_State *L)
- * include/mimas/Callback.h:85
+ * include/mimas/Callback.h:88
  */
 static int Callback_set_callback(lua_State *L) {
   try {
     Callback *self__ = *((Callback**)luaL_checkudata(L, 1, "mimas.Callback"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Callback in set_callback");
     
     self__->set_callback(L);
     return 0;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.Callback.set_callback: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.Callback.set_callback: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.Callback.set_callback: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.Callback.set_callback: Unknown exception");
   }
 }
 
@@ -115,6 +110,7 @@ static const struct luaL_Reg Callback_member_methods[] = {
   {"set_callback"      , Callback_set_callback},
   {"__tostring"        , Callback__tostring},
   {"__gc"              , Callback_destructor},
+  {"deleted"           , Callback_deleted},
   {NULL, NULL},
 };
 

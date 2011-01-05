@@ -26,17 +26,9 @@ static int Socket_Socket(lua_State *L) {
     lua_pushclass<Socket>(L, retval__, "zmq.Socket");
     return 1;
   } catch (std::exception &e) {
-    std::string *s = new std::string("zmq.Socket.Socket: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "zmq.Socket.Socket: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "zmq.Socket.Socket: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "zmq.Socket.Socket: Unknown exception");
   }
 }
 
@@ -44,7 +36,9 @@ static int Socket_Socket(lua_State *L) {
 
 static int Socket_destructor(lua_State *L) {
   Socket **userdata = (Socket**)luaL_checkudata(L, 1, "zmq.Socket");
+  
   if (*userdata) delete *userdata;
+  
   *userdata = NULL;
   return 0;
 }
@@ -53,6 +47,7 @@ static int Socket_destructor(lua_State *L) {
 
 static int Socket__tostring(lua_State *L) {
   Socket **userdata = (Socket**)luaL_checkudata(L, 1, "zmq.Socket");
+  
   
   lua_pushfstring(L, "<zmq.Socket: %p %s (%s)>", *userdata, (*userdata)->location(), (*userdata)->type());
   
@@ -72,17 +67,9 @@ static int Socket_bind(lua_State *L) {
     self__->bind(location);
     return 0;
   } catch (std::exception &e) {
-    std::string *s = new std::string("zmq.Socket.bind: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "zmq.Socket.bind: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "zmq.Socket.bind: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "zmq.Socket.bind: Unknown exception");
   }
 }
 
@@ -114,17 +101,9 @@ static int Socket_bind_to_random_port(lua_State *L) {
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    std::string *s = new std::string("zmq.Socket.bind_to_random_port: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "zmq.Socket.bind_to_random_port: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "zmq.Socket.bind_to_random_port: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "zmq.Socket.bind_to_random_port: Unknown exception");
   }
 }
 
@@ -139,17 +118,9 @@ static int Socket_connect(lua_State *L) {
     self__->connect(location);
     return 0;
   } catch (std::exception &e) {
-    std::string *s = new std::string("zmq.Socket.connect: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "zmq.Socket.connect: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "zmq.Socket.connect: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "zmq.Socket.connect: Unknown exception");
   }
 }
 
@@ -163,17 +134,9 @@ static int Socket_join(lua_State *L) {
     self__->join();
     return 0;
   } catch (std::exception &e) {
-    std::string *s = new std::string("zmq.Socket.join: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "zmq.Socket.join: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "zmq.Socket.join: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "zmq.Socket.join: Unknown exception");
   }
 }
 
@@ -187,17 +150,9 @@ static int Socket_kill(lua_State *L) {
     self__->kill();
     return 0;
   } catch (std::exception &e) {
-    std::string *s = new std::string("zmq.Socket.kill: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "zmq.Socket.kill: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "zmq.Socket.kill: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "zmq.Socket.kill: Unknown exception");
   }
 }
 
@@ -212,17 +167,9 @@ static int Socket_location(lua_State *L) {
     lua_pushstring(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    std::string *s = new std::string("zmq.Socket.location: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "zmq.Socket.location: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "zmq.Socket.location: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "zmq.Socket.location: Unknown exception");
   }
 }
 
@@ -237,17 +184,9 @@ static int Socket_port(lua_State *L) {
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    std::string *s = new std::string("zmq.Socket.port: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "zmq.Socket.port: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "zmq.Socket.port: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "zmq.Socket.port: Unknown exception");
   }
 }
 
@@ -261,17 +200,9 @@ static int Socket_quit(lua_State *L) {
     self__->quit();
     return 0;
   } catch (std::exception &e) {
-    std::string *s = new std::string("zmq.Socket.quit: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "zmq.Socket.quit: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "zmq.Socket.quit: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "zmq.Socket.quit: Unknown exception");
   }
 }
 
@@ -286,17 +217,9 @@ static int Socket_recv(lua_State *L) {
     LuaStackSize  retval__ = self__->recv(L);
     return retval__;
   } catch (std::exception &e) {
-    std::string *s = new std::string("zmq.Socket.recv: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "zmq.Socket.recv: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "zmq.Socket.recv: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "zmq.Socket.recv: Unknown exception");
   }
 }
 
@@ -311,17 +234,9 @@ static int Socket_request(lua_State *L) {
     LuaStackSize  retval__ = self__->request(L);
     return retval__;
   } catch (std::exception &e) {
-    std::string *s = new std::string("zmq.Socket.request: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "zmq.Socket.request: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "zmq.Socket.request: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "zmq.Socket.request: Unknown exception");
   }
 }
 
@@ -336,17 +251,9 @@ static int Socket_send(lua_State *L) {
     self__->send(L);
     return 0;
   } catch (std::exception &e) {
-    std::string *s = new std::string("zmq.Socket.send: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "zmq.Socket.send: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "zmq.Socket.send: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "zmq.Socket.send: Unknown exception");
   }
 }
 
@@ -361,17 +268,9 @@ static int Socket_set_callback(lua_State *L) {
     self__->set_callback(L);
     return 0;
   } catch (std::exception &e) {
-    std::string *s = new std::string("zmq.Socket.set_callback: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "zmq.Socket.set_callback: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "zmq.Socket.set_callback: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "zmq.Socket.set_callback: Unknown exception");
   }
 }
 
@@ -392,17 +291,9 @@ static int Socket_setsockopt(lua_State *L) {
     }
     return 0;
   } catch (std::exception &e) {
-    std::string *s = new std::string("zmq.Socket.setsockopt: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "zmq.Socket.setsockopt: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "zmq.Socket.setsockopt: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "zmq.Socket.setsockopt: Unknown exception");
   }
 }
 
@@ -417,17 +308,9 @@ static int Socket_should_run(lua_State *L) {
     lua_pushboolean(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    std::string *s = new std::string("zmq.Socket.should_run: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "zmq.Socket.should_run: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "zmq.Socket.should_run: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "zmq.Socket.should_run: Unknown exception");
   }
 }
 
@@ -442,17 +325,9 @@ static int Socket_type(lua_State *L) {
     lua_pushstring(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    std::string *s = new std::string("zmq.Socket.type: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "zmq.Socket.type: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "zmq.Socket.type: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "zmq.Socket.type: Unknown exception");
   }
 }
 

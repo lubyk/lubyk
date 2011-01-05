@@ -49,7 +49,7 @@ end
   'rk'    => %w{Socket Timer Thread},
   'rubyk' => %w{Worker},
   'mdns'  => %w{Browser Registration},
-  'mimas' => %w{Application Callback HBoxLayout Label PushButton Slider VBoxLayout Widget},
+  'mimas' => %w{Application Callback HBoxLayout Label PushButton Slider VBoxLayout Window},
   'zmq'   => {
     'class' => %w{Socket},
     'const' => true,

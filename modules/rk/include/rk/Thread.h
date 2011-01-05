@@ -87,7 +87,7 @@ private:
     int status = lua_pcall(lua_, 1, 0, 0);
 
     if (status) {
-      printf("Error starting thread function: %s\n", lua_tostring(lua_, -1));
+      printf("Error in thread function: %s\n", lua_tostring(lua_, -1));
     }
   }
 };

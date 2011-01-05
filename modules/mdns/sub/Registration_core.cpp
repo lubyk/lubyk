@@ -27,17 +27,9 @@ static int Registration_Registration(lua_State *L) {
     lua_pushclass<Registration>(L, retval__, "mdns.Registration");
     return 1;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mdns.Registration.Registration: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mdns.Registration.Registration: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mdns.Registration.Registration: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mdns.Registration.Registration: Unknown exception");
   }
 }
 
@@ -45,7 +37,9 @@ static int Registration_Registration(lua_State *L) {
 
 static int Registration_destructor(lua_State *L) {
   Registration **userdata = (Registration**)luaL_checkudata(L, 1, "mdns.Registration");
+  
   if (*userdata) delete *userdata;
+  
   *userdata = NULL;
   return 0;
 }
@@ -54,6 +48,7 @@ static int Registration_destructor(lua_State *L) {
 
 static int Registration__tostring(lua_State *L) {
   Registration **userdata = (Registration**)luaL_checkudata(L, 1, "mdns.Registration");
+  
   
   lua_pushfstring(L, "<mdns.Registration: %p %s>", *userdata, (*userdata)->name());
   
@@ -72,17 +67,9 @@ static int Registration_registration_done(lua_State *L) {
     self__->registration_done();
     return 0;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mdns.Registration.registration_done: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mdns.Registration.registration_done: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mdns.Registration.registration_done: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mdns.Registration.registration_done: Unknown exception");
   }
 }
 

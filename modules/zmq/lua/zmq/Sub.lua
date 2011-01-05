@@ -50,7 +50,7 @@ function zmq.Sub(a, b, c)
       end
     end)
     -- Sleep so that we let server start
-    worker:sleep(10)
+    sleep(10)
   else
     instance = zmq.Socket(zmq.SUB)
     if filter then

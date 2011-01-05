@@ -32,8 +32,6 @@
 #include "mimas/mimas.h"
 #include <QtGui/QPushButton>
 
-#include "mimas/widget.h"
-
 #include <iostream>
 
 namespace mimas {
@@ -41,8 +39,9 @@ namespace mimas {
 /** PushButton widget.
  *
  * @dub lib_name:'PushButton_core'
+ *      destructor: 'dub_destroy'
  */
-class PushButton : public QPushButton
+class PushButton : public QPushButton, public DeletableOutOfLua
 {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
@@ -55,9 +54,12 @@ public:
   PushButton(const char *title, QWidget *parent)
    : QPushButton(title, parent) {}
 
-  ~PushButton() {}
+  ~PushButton() {
+    MIMAS_DEBUG_GC
+  }
 
   // ============================ common code to all mimas Widgets
+
   QString cssClass() const {
     return QString("button");
   }

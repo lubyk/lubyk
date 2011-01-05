@@ -10,21 +10,52 @@
 --]]------------------------------------------------------
 require 'rubyk'
 
-local should = test.Suite('mimas')
+local should = test.Suite('mimas.Label')
 
-local app = mimas.Application()
-local widgets
 
-function should.insert_label_in_layout()
-  local win = mimas.Widget()
-  win:move(100, 100)
-  local lb = mimas.Label("Label not in layout", win)
-  lb:move(180, 0)
-  lb:resize(180, 20)
+function should.accept_destroy_from_gui()
+  local win = mimas.Window()
+  win:resize(50, 50)
+  win:show()
+  local label = mimas.Label("Hop", win)
 
-  local lay = mimas.VBoxLayout(win)
-  local lbl1 = mimas.Label("Label in layout")
-  lay:addWidget(lbl1)
+  thread = rk.Thread(function()
+    win = nil
+    collectgarbage('collect')
+    -- not deleted by Lua, but marked as deleted in C++
+    assert_true(label:deleted())
+  end)
+end
+
+function should.accept_destroy_from_Lua(t)
+  t.win = mimas.Window()
+  t.win:move(100,50)
+  t.layout = mimas.HBoxLayout(t.win)
+  local label = mimas.Label("Label destroyed by Lua in 1s")
+  t.layout:addWidget(label)
+  t.win:show()
+  t.thread = rk.Thread(function()
+    sleep(1000)
+    label = nil
+    collectgarbage('collect')
+    -- Label destroyed by Lua
+    sleep(1000)
+    assert_true(t.win:close()) -- visual feedback needed..
+  end)
+end
+
+
+function should.style_labels(t)
+  t.win = mimas.Window()
+  t.win:move(100, 120)
+  t.lb = mimas.Label("Label not in layout", t.win)
+  t.lb:move(180, 0)
+  t.lb:resize(180, 20)
+
+  t.lay = mimas.VBoxLayout(t.win)
+  local lay = t.lay
+  t.lbl1 = mimas.Label("Label in layout")
+  t.lay:addWidget(t.lbl1)
 
   -- can use rgb(), rgba(), hsv(), hsva() or #00FA88 (caps)
   local tests = {
@@ -39,24 +70,24 @@ function should.insert_label_in_layout()
     lay:addWidget(lbl)
     lbl:setStyle(style_test)
     -- avoid GC
-    tests[style_test] = lbl
+    t[style_test] = lbl
   end
 
-  local lbl1 = mimas.Label("setHue")
-  lay:addWidget(lbl1)
-  lbl1:setHue(210)
+  t.lbl2 = mimas.Label("setHue")
+  lay:addWidget(t.lbl2)
+  t.lbl2:setHue(210)
 
-  local lbl2 = mimas.Label("name = test_name")
-  lbl2:setName("test_name")
-  lay:addWidget(lbl2)
+  t.lbl3 = mimas.Label("name = test_name")
+  t.lbl3:setName("test_name")
+  lay:addWidget(t.lbl3)
 
   -- visual check
   assert_true(true)
-  win:show()
+  t.win:show()
+  t.thread = rk.Thread(function()
+    sleep(2000)
+    t.win:close()
+  end)
 end
 
-app:post(function()
-  test.all()
-end)
-
-app:exec()
+test.gui()

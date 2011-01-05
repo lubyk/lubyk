@@ -13,3 +13,7 @@ worker = rubyk.Worker()
 function rubyk.Worker()
   error('Already one worker created (lives in _worker).')
 end
+
+function sleep(duration)
+  worker:sleep(duration)
+end

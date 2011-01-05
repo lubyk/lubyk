@@ -16,14 +16,14 @@ function should.run_thread()
     while true do
       counter = counter + 1
       -- continue until 'timer' is gc or stopped.
-      worker:sleep(10)
+      sleep(10)
     end
   end)
 
   -- first trigger now
-  worker:sleep(98)
+  sleep(98)
   assert_equal(10, counter)
-  worker:sleep(100)
+  sleep(100)
   assert_equal(20, counter)
 end
 
@@ -31,7 +31,7 @@ function should.join_threads()
   local counter = 0
   local thread = rk.Thread(function()
     while counter < 5 do
-      worker:sleep(10)
+      sleep(10)
       counter = counter + 1
     end
   end)
@@ -45,10 +45,10 @@ function should.kill_threads()
   local thread = nil
   thread = rk.Thread(function()
     while thread:should_run() do
-      worker:sleep(30)
+      sleep(30)
     end
   end)
-  worker:sleep(20) -- let thread start
+  sleep(20) -- let thread start
 
   thread:kill()
 
@@ -67,7 +67,7 @@ local function make_threads()
       local j = 0
       while j < 10 do
         j = j + 1
-        worker:sleep(20)
+        sleep(20)
       end
     end))
   end
@@ -122,11 +122,11 @@ function should.get_killed_on_destroy()
   local thread = rk.Thread(function(runner)
     run_once = true
     while true do
-      worker:sleep(10)
+      sleep(10)
     end
   end)
   -- start thread
-  worker:sleep(10)
+  sleep(10)
   -- destroy
   thread = nil
   collectgarbage('collect')

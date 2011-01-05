@@ -31,9 +31,9 @@
 
 #include "mimas/mimas.h"
 
-#include "mimas/RangeWidget.h"
+#include "mimas/range_widget.h"
 
-#include <QtGui/QFrame>
+#include <QtGui/QWidget>
 
 #include <iostream>
 
@@ -44,8 +44,9 @@ namespace mimas {
 /** Slider (async slider).
  *
  * @dub lib_name:'Slider_core'
+ *      destructor: 'dub_destroy'
  */
-class Slider : public QFrame, public LuaCallback
+class Slider : public QWidget, public LuaCallback, public DeletableOutOfLua
 {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
@@ -65,14 +66,29 @@ public:
 
 
   Slider(rubyk::Worker *worker, int type = (int)VerticalSliderType, QWidget *parent = 0)
-   : LuaCallback(worker),
+   : QWidget(parent),
+     LuaCallback(worker),
      slider_type_((SliderType)type),
      hue_(-1),
      border_width_(2) {}
 
-  ~Slider() {}
+  virtual ~Slider() {
+    MIMAS_DEBUG_GC
+  }
 
+  // Destructor method called when the object goes out of Lua scope
+  void dub_destroy() {
+    dub_cleanup();
+    if (parent()) {
+      // the callback function is now dead, make sure it is never called
+      QObject::disconnect(this, 0, this, 0);
+      lua_ = NULL;
+    }
+    delete this;
+  }
+  
   // ============================ common code to all mimas Widgets
+
   QString cssClass() const {
     return QString("slider");
   }
@@ -118,7 +134,6 @@ public:
   float hue() {
     return hue_;
   }
-
   // =============================================================
 
   virtual QSize sizeHint() const {
@@ -138,7 +153,8 @@ public:
   }
 
   /** Stack is
-   * <self> <func>
+   * 1. self
+   * 2. func
    */
   void set_callback(lua_State *L) {
     set_lua_callback(L);
@@ -147,6 +163,7 @@ public:
       this,  SIGNAL(valueChanged(double)),
       this,  SLOT(callback(double)));
   }
+
 public slots:
   /** Update slider when remote changes.
    * This is called by zmq when it receives a value change notification.

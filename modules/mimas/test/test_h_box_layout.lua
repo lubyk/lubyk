@@ -15,7 +15,7 @@ local should = test.Suite('mimas.HBoxLayout')
 local app = mimas.Application()
 
 function should.display_widgets()
-  local win = mimas.Widget()
+  local win = mimas.Window()
   local lay = mimas.HBoxLayout(win)
   local btn1 = mimas.PushButton("Hello")
   local btn2 = mimas.PushButton("Quit")

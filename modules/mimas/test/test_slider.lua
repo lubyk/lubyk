@@ -10,61 +10,82 @@
 --]]------------------------------------------------------
 require 'rubyk'
 require 'mimas'
-local should = test.Suite('mimas')
--- until we fix ownership
-collectgarbage('stop')
-local app = mimas.Application()
+local should = test.Suite('mimas.Slider')
 
-local i = 0
-local tim_slider
--- cannot create timer in function.. Why ?
-local tim = rk.Timer(20, function()
-  i = i + 0.05
-  local val = 0.5 + 0.5 * math.sin(i)
-  app:post(function()
-    tim_slider:setStyle(string.format('color:hsv(%i, 255, 255)', val * 360))
-    tim_slider:setValue(val)
-  end)
-end)
-
-function should.draw_one_slider()
-  local win = mimas.Widget()
-  win:move(100, 100)
-
-  local layout = mimas.VBoxLayout(win)
-  local label  = mimas.Label("Move to zero to quit...")
-  layout:addWidget(label)
-
-  local slider = mimas.Slider(mimas.Horizontal)
-  slider:setValue(50)
-  layout:addWidget(slider)
-
-  local callback = mimas.Callback(function(value)
-    -- do something with value change
-    if value == 0 then
-      app:quit()
-    end
-  end)
-
-  -- callback listens for quit_btn's clicked events.
-  callback:connect(slider, 'valueChanged(double)')
-
-  local callback2 = mimas.Callback(function(value)
-    label:setText(string.format('value: %f', value))
-  end)
-  -- callback listens for quit_btn's clicked events.
-  callback2:connect(slider, 'valueChanged(double)')
-
+function should.accept_destroy_from_gui()
+  local win = mimas.Window()
+  win:resize(200, 200)
   win:show()
+  local slider = mimas.Slider(mimas.Horizontal, win)
+
+  thread = rk.Thread(function()
+    win = nil
+    collectgarbage('collect')
+    -- not deleted by Lua, but marked as deleted in C++
+    assert_true(slider:deleted())
+  end)
 end
 
-function should.style_slider()
-  local win = mimas.Widget()
-  win:move(100, 200)
+function should.accept_destroy_from_Lua(t)
+  t.win = mimas.Window()
+  t.win:move(100,50)
+  t.layout = mimas.VBoxLayout(t.win)
+  t.label  = mimas.Label("Slider destroyed by Lua in 1s")
+  t.layout:addWidget(t.label)
+  t.slider = mimas.Slider(mimas.Horizontal)
+  t.slider:setValue(0.5)
+  t.layout:addWidget(t.slider)
+  t.win:show()
+  t.thread = rk.Thread(function()
+    sleep(1000)
+    t.slider = nil
+    collectgarbage('collect')
+    -- Slider destroyed by Lua
+    app:post(function()
+      t.label:setText("Slider should be deleted")
+    end)
+    sleep(1000)
+    assert_true(t.win:close()) -- visual feedback needed..
+  end)
+end
 
-  local layout = mimas.VBoxLayout(win)
-  local label  = mimas.Label("Styling tests...")
-  layout:addWidget(label)
+function should.draw_one_slider(t)
+  t.win = mimas.Window()
+  t.win:move(100, 150)
+
+  t.layout = mimas.VBoxLayout(t.win)
+  t.label  = mimas.Label("Move to zero to close...")
+  t.layout:addWidget(t.label)
+
+  t.slider = mimas.Slider(mimas.Horizontal)
+  t.slider:setValue(50)
+  t.layout:addWidget(t.slider)
+
+  t.callback = mimas.Callback(function(value)
+    -- do something with value change
+    if value == 0 then
+      t.win:close()
+    end
+    t.label:setText(string.format('value: %f', value))
+  end)
+
+  -- callback listens for Slider events
+  t.callback:connect(t.slider, 'valueChanged(double)')
+  t.thread = rk.Thread(function()
+    sleep(1000)
+    t.win:close()
+  end)
+  t.win:show()
+end
+
+function should.style_slider(t)
+  t.win = mimas.Window()
+  t.win:move(100, 250)
+
+  t.layout = mimas.VBoxLayout(t.win)
+  local layout = t.layout
+  t.label  = mimas.Label("Styling tests...")
+  layout:addWidget(t.label)
 
   -- can use rgb(), rgba(), hsv(), hsva() or #00FA88 (caps)
   -- color = slider value (WindowText)
@@ -85,19 +106,21 @@ function should.style_slider()
   }
 
   for _, style_test in ipairs(tests) do
-    local label  = mimas.Label(style_test)
-    layout:addWidget(label)
-    local slider = mimas.Slider(mimas.Horizontal, function(self, value)
+    local d = {}
+    t[style_test] = d
+    d.label  = mimas.Label(style_test)
+    layout:addWidget(d.label)
+    d.slider = mimas.Slider(mimas.Horizontal, function(self, value)
       self:setValue(value)
     end)
-    layout:addWidget(slider)
-    slider:setStyle(style_test)
-    slider:setValue(0.3 + math.random() * 0.5)
+    layout:addWidget(d.slider)
+    d.slider:setStyle(style_test)
+    d.slider:setValue(0.3 + math.random() * 0.5)
   end
 
-  local label  = mimas.Label("Slider has 'test_name'. Move to change hue (0=>-1).")
-  layout:addWidget(label)
-  local slider = mimas.Slider(mimas.Horizontal, function(self, value)
+  t.label2  = mimas.Label("Slider has 'test_name'. Move to change hue (0=>-1).")
+  layout:addWidget(t.label2)
+  t.slider2 = mimas.Slider(mimas.Horizontal, function(self, value)
     if value == 0 then
       self:setHue(-1)
       self:setValue(0.5)
@@ -106,61 +129,76 @@ function should.style_slider()
       self:setValue(value)
     end
   end)
-  slider:setName('test_name')
-  slider:setValue(0.5)
-  layout:addWidget(slider)
+  t.slider2:setName('test_name')
+  t.slider2:setValue(0.5)
+  layout:addWidget(t.slider2)
 
-  local label  = mimas.Label("Move to change color hue.")
-  layout:addWidget(label)
-  tim_slider = mimas.Slider(mimas.Horizontal, function(self, value)
+  t.label3  = mimas.Label("Move to change color hue.")
+  layout:addWidget(t.label3)
+  t.slider3 = mimas.Slider(mimas.Horizontal, function(self, value)
     self:setStyle(string.format('color:hsv(%i, 255, 255)', value * 360))
     self:setValue(value)
   end)
-  tim_slider:setValue(80/360)
-  layout:addWidget(tim_slider)
-  tim:start()
-  win:show()
+  t.slider3:setValue(80/360)
+  layout:addWidget(t.slider3)
+
+  -- Make the slider move
+  t.i = 0
+  print('Create timer')
+  t.timer = rk.Timer(100, function()
+    print('Start timer')
+    t.i = t.i + 0.05
+    local val = 0.5 + 0.5 * math.sin(t.i)
+    app:post(function()
+      -- BUG...
+      t.slider3:setStyle(string.format('color:hsv(%i, 255, 255)', val * 360))
+      t.slider3:setValue(val)
+    end)
+  end)
+  t.timer:start()
+
+  t.thread = rk.Thread(function()
+    sleep(3000)
+    t.win:close()
+  end)
+  t.win:show()
 end
 
-function should.sync_two_sliders()
-  local win = mimas.Widget()
-  win:move(300, 100)
+--function should.sync_two_sliders()
+--  local win = mimas.Window()
+--  win:move(300, 100)
+--
+--  local layout = mimas.HBoxLayout(win)
+--  local label  = mimas.Label("Move to zero to quit...")
+--  layout:addWidget(label)
+--
+--  local slider1 = mimas.Slider(mimas.Vertical)
+--  slider1:setValue(50)
+--  layout:addWidget(slider1)
+--
+--  local slider2 = mimas.Slider(mimas.Vertical)
+--  slider2:setValue(50)
+--  layout:addWidget(slider2)
+--
+--  local callback1 = mimas.Callback(function(value)
+--    if value == 0 then
+--      app:quit()
+--    end
+--    slider2:setValue(value)
+--  end)
+--
+--  local callback2 = mimas.Callback(function(value)
+--    slider1:setValue(value)
+--    label:setText(string.format('value: %f', value))
+--  end)
+--
+--  -- callback listens for quit_btn's clicked events.
+--  callback1:connect(slider1, 'valueChanged(double)')
+--
+--  -- callback listens for quit_btn's clicked events.
+--  callback2:connect(slider2, 'valueChanged(double)')
+--
+--  win:show()
+--end
 
-  local layout = mimas.HBoxLayout(win)
-  local label  = mimas.Label("Move to zero to quit...")
-  layout:addWidget(label)
-
-  local slider1 = mimas.Slider(mimas.Vertical)
-  slider1:setValue(50)
-  layout:addWidget(slider1)
-
-  local slider2 = mimas.Slider(mimas.Vertical)
-  slider2:setValue(50)
-  layout:addWidget(slider2)
-
-  local callback1 = mimas.Callback(function(value)
-    if value == 0 then
-      app:quit()
-    end
-    slider2:setValue(value)
-  end)
-
-  local callback2 = mimas.Callback(function(value)
-    slider1:setValue(value)
-    label:setText(string.format('value: %f', value))
-  end)
-
-  -- callback listens for quit_btn's clicked events.
-  callback1:connect(slider1, 'valueChanged(double)')
-
-  -- callback listens for quit_btn's clicked events.
-  callback2:connect(slider2, 'valueChanged(double)')
-
-  win:show()
-end
-
-app:post(function()
-  test.all()
-end)
-
-app:exec()
+test.gui()

@@ -10,50 +10,34 @@ using namespace mimas;
 
 
 /** mimas::VBoxLayout::VBoxLayout(QWidget *parent)
- * include/mimas/VBoxLayout.h:50
+ * include/mimas/VBoxLayout.h:49
  */
 static int VBoxLayout_VBoxLayout1(lua_State *L) {
   try {
     QWidget *parent = *((QWidget **)luaL_checkudata(L, 1, "mimas.QWidget"));
     VBoxLayout * retval__ = new VBoxLayout(parent);
-    lua_pushclass<VBoxLayout>(L, retval__, "mimas.VBoxLayout");
+    lua_pushclass2<VBoxLayout>(L, retval__, "mimas.VBoxLayout");
     return 1;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.VBoxLayout.VBoxLayout: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.VBoxLayout.VBoxLayout: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.VBoxLayout.VBoxLayout: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.VBoxLayout.VBoxLayout: Unknown exception");
   }
 }
 
 
 /** mimas::VBoxLayout::VBoxLayout()
- * include/mimas/VBoxLayout.h:52
+ * include/mimas/VBoxLayout.h:51
  */
 static int VBoxLayout_VBoxLayout2(lua_State *L) {
   try {
     VBoxLayout * retval__ = new VBoxLayout();
-    lua_pushclass<VBoxLayout>(L, retval__, "mimas.VBoxLayout");
+    lua_pushclass2<VBoxLayout>(L, retval__, "mimas.VBoxLayout");
     return 1;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.VBoxLayout.VBoxLayout: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.VBoxLayout.VBoxLayout: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.VBoxLayout.VBoxLayout: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.VBoxLayout.VBoxLayout: Unknown exception");
   }
 }
 
@@ -77,15 +61,32 @@ static int VBoxLayout_VBoxLayout(lua_State *L) {
 
 static int VBoxLayout_destructor(lua_State *L) {
   VBoxLayout **userdata = (VBoxLayout**)luaL_checkudata(L, 1, "mimas.VBoxLayout");
-  if (*userdata) delete *userdata;
+  
+  // custom destructor
+  if (*userdata) (*userdata)->dub_destroy();
+  
   *userdata = NULL;
   return 0;
+}
+
+
+// test if class is deleted
+static int VBoxLayout_deleted(lua_State *L) {
+  VBoxLayout **userdata = (VBoxLayout**)luaL_checkudata(L, 1, "mimas.VBoxLayout");
+  lua_pushboolean(L, *userdata == NULL);
+  return 1;
 }
 
 /* ============================ tostring         ====================== */
 
 static int VBoxLayout__tostring(lua_State *L) {
   VBoxLayout **userdata = (VBoxLayout**)luaL_checkudata(L, 1, "mimas.VBoxLayout");
+  
+  if (!*userdata) {
+    lua_pushstring(L, "<mimas.VBoxLayout: NULL>");
+    return 1;
+  }
+  
   
   lua_pushfstring(L, "<mimas.VBoxLayout: %p>", *userdata);
   
@@ -96,76 +97,55 @@ static int VBoxLayout__tostring(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::addLayout(QLayout *layout)
- * include/mimas/VBoxLayout.h:60
+ * include/mimas/VBoxLayout.h:61
  */
 static int VBoxLayout_addLayout(lua_State *L) {
   try {
     VBoxLayout *self__ = *((VBoxLayout**)luaL_checkudata(L, 1, "mimas.VBoxLayout"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.VBoxLayout in addLayout");
     QLayout *layout = *((QLayout **)luaL_checkudata(L, 2, "mimas.QLayout"));
     self__->addLayout(layout);
     return 0;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.VBoxLayout.addLayout: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.VBoxLayout.addLayout: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.VBoxLayout.addLayout: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.VBoxLayout.addLayout: Unknown exception");
   }
 }
 
 
 /** void mimas::VBoxLayout::addWidget(QWidget *widget)
- * include/mimas/VBoxLayout.h:56
+ * include/mimas/VBoxLayout.h:57
  */
 static int VBoxLayout_addWidget(lua_State *L) {
   try {
     VBoxLayout *self__ = *((VBoxLayout**)luaL_checkudata(L, 1, "mimas.VBoxLayout"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.VBoxLayout in addWidget");
     QWidget *widget = *((QWidget **)luaL_checkudata(L, 2, "mimas.QWidget"));
     self__->addWidget(widget);
     return 0;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.VBoxLayout.addWidget: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.VBoxLayout.addWidget: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.VBoxLayout.addWidget: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.VBoxLayout.addWidget: Unknown exception");
   }
 }
 
 
 /** QLayout* mimas::VBoxLayout::layout()
- * include/mimas/VBoxLayout.h:64
+ * include/mimas/VBoxLayout.h:65
  */
 static int VBoxLayout_layout(lua_State *L) {
   try {
     VBoxLayout *self__ = *((VBoxLayout**)luaL_checkudata(L, 1, "mimas.VBoxLayout"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.VBoxLayout in layout");
     QLayout * retval__ = self__->layout();
     lua_pushclass<QLayout>(L, retval__, "mimas.QLayout");
     return 1;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.VBoxLayout.layout: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.VBoxLayout.layout: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.VBoxLayout.layout: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.VBoxLayout.layout: Unknown exception");
   }
 }
 
@@ -180,6 +160,7 @@ static const struct luaL_Reg VBoxLayout_member_methods[] = {
   {"layout"            , VBoxLayout_layout},
   {"__tostring"        , VBoxLayout__tostring},
   {"__gc"              , VBoxLayout_destructor},
+  {"deleted"           , VBoxLayout_deleted},
   {NULL, NULL},
 };
 

@@ -3,7 +3,7 @@ require 'rubyk'
 collectgarbage('stop') -- avoid problems until we fix
 
 app = mimas.Application()
-local win = mimas.Widget()
+local win = mimas.Window()
 win:move(100, 400)
 
 local mlayout = mimas.VBoxLayout(win)
@@ -32,7 +32,7 @@ local client = rk.Client(function(val)
   slider:setValue(val)
 end)
 
-worker:sleep(100)
+sleep(100)
 -- Mimas listens to messages from planet Saturn
 client:subscribe('Saturn')
 
@@ -58,7 +58,7 @@ callback:connect(slider, 'valueChanged(double)')
 
 -- connected becomes true when 'Mars' appears on the network
 while not client:connected() do
-  worker:sleep(100) -- make sure everything is ready before sending
+  sleep(100) -- make sure everything is ready before sending
 end
 print("Connected")
 win:show()

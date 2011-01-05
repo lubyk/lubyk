@@ -38,8 +38,9 @@ namespace mimas {
 
 /** Label widget.
  * @dub lib_name:'Label_core'
+ *      destructor: 'dub_destroy'
  */
-class Label : public QLabel
+class Label : public QLabel, public DeletableOutOfLua
 {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
@@ -52,9 +53,12 @@ public:
    : QLabel(title, parent),
      hue_(-1) {}
 
-  ~Label() {}
+  ~Label() {
+    MIMAS_DEBUG_GC
+  }
 
   // ============================ common code to all mimas Widgets
+
   QString cssClass() const {
     return QString("label");
   }
@@ -106,7 +110,8 @@ public:
   void setText(const char *text) {
     QLabel::setText(QString(text));
   }
-protected:
+
+private:
   virtual void paintEvent(QPaintEvent *event);
 
   /** The component's color.

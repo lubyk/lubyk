@@ -36,13 +36,12 @@
 
 namespace mimas {
 
-// FIXME: as soon as a widget has a parent, mark as non-gc from lua.
-
 /** VBoxLayout (arrange widgets vertically).
  *
  * @dub lib_name:'VBoxLayout_core'
+ *      destructor: 'dub_destroy'
  */
-class VBoxLayout : public QVBoxLayout
+class VBoxLayout : public QVBoxLayout, public DeletableOutOfLua
 {
  Q_OBJECT
 public:
@@ -51,7 +50,9 @@ public:
 
   VBoxLayout() {}
 
-  ~VBoxLayout() {}
+  ~VBoxLayout() {
+    MIMAS_DEBUG_GC
+  }
 
   void addWidget(QWidget *widget) {
     QVBoxLayout::addWidget(widget);

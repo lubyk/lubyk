@@ -49,8 +49,9 @@ static int   app_argc   = (int)(sizeof(app_argv) / sizeof(app_argv[0])) - 1;
 /** Application (starts the GUI and manages the event loop).
  *
  * @dub lib_name:'Application_core'
+ *      destructor: 'dub_destroy'
  */
-class Application : public QApplication
+class Application : public QApplication, public DeletableOutOfLua
 {
   Q_OBJECT
 
@@ -61,7 +62,15 @@ public:
      worker_(worker),
      lua_events_processor_(worker) {}
 
-  ~Application() {}
+  ~Application() {
+    MIMAS_DEBUG_GC
+  }
+
+  // Destructor method called when the object goes out of Lua scope
+  virtual void dub_destroy() {
+    dub_cleanup();
+    deleteLater();
+  }
 
   /** Start event loop.
    */

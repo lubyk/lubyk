@@ -18,9 +18,9 @@ function should.loop_timer_in_external_thread()
   end)
   timer:start()
   -- first trigger now
-  worker:sleep(91)
+  sleep(91)
   assert_equal(10, counter)
-  worker:sleep(100)
+  sleep(100)
   assert_equal(20, counter)
   counter = 0
   timer:stop()

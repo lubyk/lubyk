@@ -18,7 +18,7 @@ function should.register()
     continue = true
   end)
   while not continue do
-    worker:sleep(10)
+    sleep(10)
   end
   -- if it does not hang: it works.
   assert_true(true)
@@ -36,7 +36,7 @@ function should.browse()
   end)
   -- wait (and give time for callback to enter Lua State)
   while not continue do
-    worker:sleep(10)
+    sleep(10)
   end
   continue = false
 
@@ -47,7 +47,7 @@ function should.browse()
   end)
   -- wait (and give time for callback to enter Lua State)
   while not continue do
-    worker:sleep(10)
+    sleep(10)
   end
 
   continue   = false
@@ -57,7 +57,7 @@ function should.browse()
 
   -- wait (and give time for callback to enter Lua State)
   while not continue do
-    worker:sleep(10)
+    sleep(10)
   end
   -- if it does not hang: it works.
   assert_true(true)

@@ -36,19 +36,26 @@
 
 namespace mimas {
 
-/** Display view.
+/** Window.
+ *
+ * @dub destructor: 'dub_destroy'
  */
-class Widget : public QWidget
+class Window : public QWidget, public DeletableOutOfLua
 {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
   Q_PROPERTY(float hue READ hue WRITE setHue)
 public:
-  Widget() {}
+  Window() {
+    setAttribute(Qt::WA_DeleteOnClose);
+  }
 
-  ~Widget() {}
+  ~Window() {
+    MIMAS_DEBUG_GC
+  }
 
   // ============================ common code to all mimas Widgets
+
   QString cssClass() const {
     return parent() ? QString("window") : QString("widget");
   }
@@ -97,6 +104,16 @@ public:
 
   // =============================================================
 
+  /** Close and delete the window.
+   */
+  bool close() {
+    return QWidget::close();
+  }
+
+  bool isVisible() const {
+    return QWidget::isVisible();
+  }
+  
   void show() {
     QWidget::show();
   }

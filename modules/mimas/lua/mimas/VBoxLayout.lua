@@ -27,8 +27,8 @@ function mimas.VBoxLayout(parent)
 
     local addLayout = mt.addLayout
     function mt.addLayout(self, other)
-      print(self, other)
-      addLayout(self, other:layout())
+      print('????')
+--      addLayout(self, other:layout())
     end
   end
   return instance

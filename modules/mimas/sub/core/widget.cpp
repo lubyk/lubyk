@@ -27,7 +27,7 @@
   ==============================================================================
 */
 
-#include "mimas/Widget.h"
+#include "mimas/Window.h"
 
 namespace mimas {
 

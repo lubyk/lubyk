@@ -26,7 +26,6 @@
 #define RUBYK_INCLUDE_MIMAS_RANGE_WIDGET_H_
 
 #include "mimas/mimas.h"
-#include "mimas/Widget.h"
 
 namespace mimas {
 

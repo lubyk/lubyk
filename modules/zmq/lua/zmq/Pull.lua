@@ -20,7 +20,7 @@ function zmq.Pull(location, func)
   end)
   -- Sleep so that we let server start
   -- in order to have port and initialize the instance
-  worker:sleep(10)
+  sleep(10)
 
   return instance
 end

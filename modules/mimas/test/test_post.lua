@@ -14,7 +14,7 @@ local should = test.Suite('mimas')
 
 function should.post_to_gui_thread()
   local app = mimas.Application()
-  local win = mimas.Widget()
+  local win = mimas.Window()
   local quit_called = false
   win:resize(320, 240)
 

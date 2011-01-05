@@ -39,8 +39,9 @@ namespace mimas {
 /** HBoxLayout (arrange widgets horizontally).
  *
  * @dub lib_name:'HBoxLayout_core'
+ *      destructor: 'dub_destroy'
  */
-class HBoxLayout : public QHBoxLayout
+class HBoxLayout : public QHBoxLayout, public DeletableOutOfLua
 {
  Q_OBJECT
 public:
@@ -49,7 +50,9 @@ public:
 
   HBoxLayout() {}
 
-  ~HBoxLayout() {}
+  ~HBoxLayout() {
+    MIMAS_DEBUG_GC
+  }
 
   void addWidget(QWidget *widget) {
     QHBoxLayout::addWidget(widget);

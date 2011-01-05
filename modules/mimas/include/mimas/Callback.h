@@ -48,8 +48,9 @@ class Slider;
  *
  * @dub lib_name:'Callback_core'
  *      ignore: 'callback'
+ *      destructor: 'dub_destroy'
  */
-class Callback : public QObject, public rubyk::LuaCallback
+class Callback : public QObject, public rubyk::LuaCallback, public DeletableOutOfLua
 {
   Q_OBJECT
 public:
@@ -60,7 +61,9 @@ public:
    : rubyk::LuaCallback(worker),
      self_in_registry_idx_(-1) {}
 
-  virtual ~Callback() {}
+  virtual ~Callback() {
+    MIMAS_DEBUG_GC
+  }
 
   void connect(QObject *obj, const char *method, const char *callback) {
     QObject::connect(
@@ -145,7 +148,9 @@ private:
   void set_callback_from_app(lua_State *L) {
     // push self
     lua_pushclass<Callback>(L, this, "mimas.Callback");
+    // <app> <func> <clbk>
     lua_pushvalue(L, 2);
+    // <app> <func> <clbk> <func>
     lua_remove(L, 1); // remove app
     lua_remove(L, 1); // remove function
     /* Stack is now
@@ -154,15 +159,14 @@ private:
      */
     lua_pushvalue(L, 1);
     // avoid GC
-    self_in_registry_idx_ = luaL_ref(L, LUA_REGISTRYINDEX);
+    self_in_registry_idx_ = luaL_ref(worker_->lua_, LUA_REGISTRYINDEX);
     set_callback(L);
   }
-
 
   void delete_on_call() {
     if (self_in_registry_idx_ != -1) {
       // remove from registry and let Lua GC
-      luaL_unref(lua_, LUA_REGISTRYINDEX, self_in_registry_idx_);
+      luaL_unref(worker_->lua_, LUA_REGISTRYINDEX, self_in_registry_idx_);
       self_in_registry_idx_ = -1;
     }
   }

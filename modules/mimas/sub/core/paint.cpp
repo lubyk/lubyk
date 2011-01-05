@@ -27,7 +27,7 @@
   ==============================================================================
 */
 
-#include "mimas/Widget.h"
+#include "mimas/Window.h"
 #include "mimas/Label.h"
 #include "mimas/Slider.h"
 
@@ -39,10 +39,10 @@
 namespace mimas {
 
 // =============================================
-// ==             Widget                      ==
+// ==             Window                      ==
 // =============================================
 
-void Widget::paintEvent(QPaintEvent *event) {
+void Window::paintEvent(QPaintEvent *event) {
   QPainter p(this);
   if (!parent()) {
     // window

@@ -22,6 +22,19 @@ function lib.all()
   lib.report()
 end
 
+function lib.gui()
+  app = mimas.Application()
+  app:post(function()
+    for i, suite in ipairs(lib.suites) do
+      lib.run_suite(suite)
+    end
+  end)
+
+  app:exec()
+  -- get report when all threads have finished (all windows closed)
+  lib.report()
+end
+
 function lib.load_all()
   for file in rk.Dir('modules'):glob('test/.+_test[.]lua$') do
     dofile(file)
@@ -34,15 +47,18 @@ function lib.run_suite(suite)
   local errors = suite._info.errors
   lib.current_suite = suite
   suite._info.assert_count = 0
+  -- list of objects protected from gc
+  suite._info.gc_protect = {}
+  local gc_protect = suite._info.gc_protect
   -- run all tests in the current file
   for name,func in pairs(suite) do
     if type(func) == 'function' then
       -- make sure it's a test
       if name ~= '_info' and name ~= 'setup' and name ~= 'teardown' then
         test_count = test_count + 1
-
+        gc_protect[name] = {}
         suite.setup()
-          local ok, err = pcall(func)
+          local ok, err = pcall(func, gc_protect[name])
           if not ok then
             fail_count = fail_count + 1
             --local file, line, message = string.match(err, "([^/\.]+\.lua):(%d+): (.+)")

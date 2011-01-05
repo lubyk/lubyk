@@ -10,7 +10,7 @@ using namespace mimas;
 
 
 /** mimas::PushButton::PushButton(const char *title=NULL)
- * include/mimas/PushButton.h:53
+ * include/mimas/PushButton.h:52
  */
 static int PushButton_PushButton1(lua_State *L) {
   try {
@@ -22,46 +22,30 @@ static int PushButton_PushButton1(lua_State *L) {
       const char *title = luaL_checkstring(L, 1);
       retval__ = new PushButton(title);
     }
-    lua_pushclass<PushButton>(L, retval__, "mimas.PushButton");
+    lua_pushclass2<PushButton>(L, retval__, "mimas.PushButton");
     return 1;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.PushButton.PushButton: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.PushButton.PushButton: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.PushButton.PushButton: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.PushButton.PushButton: Unknown exception");
   }
 }
 
 
 /** mimas::PushButton::PushButton(const char *title, QWidget *parent)
- * include/mimas/PushButton.h:56
+ * include/mimas/PushButton.h:55
  */
 static int PushButton_PushButton2(lua_State *L) {
   try {
     const char *title = luaL_checkstring(L, 1);
     QWidget *parent = *((QWidget **)luaL_checkudata(L, 2, "mimas.QWidget"));
     PushButton * retval__ = new PushButton(title, parent);
-    lua_pushclass<PushButton>(L, retval__, "mimas.PushButton");
+    lua_pushclass2<PushButton>(L, retval__, "mimas.PushButton");
     return 1;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.PushButton.PushButton: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.PushButton.PushButton: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.PushButton.PushButton: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.PushButton.PushButton: Unknown exception");
   }
 }
 
@@ -91,15 +75,32 @@ static int PushButton_PushButton(lua_State *L) {
 
 static int PushButton_destructor(lua_State *L) {
   PushButton **userdata = (PushButton**)luaL_checkudata(L, 1, "mimas.PushButton");
-  if (*userdata) delete *userdata;
+  
+  // custom destructor
+  if (*userdata) (*userdata)->dub_destroy();
+  
   *userdata = NULL;
   return 0;
+}
+
+
+// test if class is deleted
+static int PushButton_deleted(lua_State *L) {
+  PushButton **userdata = (PushButton**)luaL_checkudata(L, 1, "mimas.PushButton");
+  lua_pushboolean(L, *userdata == NULL);
+  return 1;
 }
 
 /* ============================ tostring         ====================== */
 
 static int PushButton__tostring(lua_State *L) {
   PushButton **userdata = (PushButton**)luaL_checkudata(L, 1, "mimas.PushButton");
+  
+  if (!*userdata) {
+    lua_pushstring(L, "<mimas.PushButton: NULL>");
+    return 1;
+  }
+  
   
   lua_pushfstring(L, "<mimas.PushButton: %p>", *userdata);
   
@@ -110,253 +111,183 @@ static int PushButton__tostring(lua_State *L) {
 
 
 /** QString mimas::PushButton::cssClass() const 
- * include/mimas/PushButton.h:61
+ * include/mimas/PushButton.h:63
  */
 static int PushButton_cssClass(lua_State *L) {
   try {
     PushButton *self__ = *((PushButton**)luaL_checkudata(L, 1, "mimas.PushButton"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.PushButton in cssClass");
     QString  retval__ = self__->cssClass();
     lua_pushclass<QString>(L, retval__, "mimas.QString");
     return 1;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.PushButton.cssClass: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.PushButton.cssClass: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.PushButton.cssClass: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.PushButton.cssClass: Unknown exception");
   }
 }
 
 
 /** float mimas::PushButton::hue()
- * include/mimas/PushButton.h:102
+ * include/mimas/PushButton.h:105
  */
 static int PushButton_hue(lua_State *L) {
   try {
     PushButton *self__ = *((PushButton**)luaL_checkudata(L, 1, "mimas.PushButton"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.PushButton in hue");
     float  retval__ = self__->hue();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.PushButton.hue: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.PushButton.hue: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.PushButton.hue: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.PushButton.hue: Unknown exception");
   }
 }
 
 
 /** void mimas::PushButton::move(int x, int y)
- * include/mimas/PushButton.h:86
+ * include/mimas/PushButton.h:88
  */
 static int PushButton_move(lua_State *L) {
   try {
     PushButton *self__ = *((PushButton**)luaL_checkudata(L, 1, "mimas.PushButton"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.PushButton in move");
     int x = luaL_checkint(L, 2);
     int y = luaL_checkint(L, 3);
     self__->move(x, y);
     return 0;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.PushButton.move: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.PushButton.move: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.PushButton.move: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.PushButton.move: Unknown exception");
   }
 }
 
 
 /** LuaStackSize mimas::PushButton::name(lua_State *L)
- * include/mimas/PushButton.h:75
+ * include/mimas/PushButton.h:77
  */
 static int PushButton_name(lua_State *L) {
   try {
     PushButton *self__ = *((PushButton**)luaL_checkudata(L, 1, "mimas.PushButton"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.PushButton in name");
     
     LuaStackSize  retval__ = self__->name(L);
     return retval__;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.PushButton.name: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.PushButton.name: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.PushButton.name: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.PushButton.name: Unknown exception");
   }
 }
 
 
 /** QObject* mimas::PushButton::object()
- * include/mimas/PushButton.h:69
+ * include/mimas/PushButton.h:71
  */
 static int PushButton_object(lua_State *L) {
   try {
     PushButton *self__ = *((PushButton**)luaL_checkudata(L, 1, "mimas.PushButton"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.PushButton in object");
     QObject * retval__ = self__->object();
     lua_pushclass<QObject>(L, retval__, "mimas.QObject");
     return 1;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.PushButton.object: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.PushButton.object: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.PushButton.object: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.PushButton.object: Unknown exception");
   }
 }
 
 
 /** void mimas::PushButton::resize(int w, int h)
- * include/mimas/PushButton.h:90
+ * include/mimas/PushButton.h:92
  */
 static int PushButton_resize(lua_State *L) {
   try {
     PushButton *self__ = *((PushButton**)luaL_checkudata(L, 1, "mimas.PushButton"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.PushButton in resize");
     int w = luaL_checkint(L, 2);
     int h = luaL_checkint(L, 3);
     self__->resize(w, h);
     return 0;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.PushButton.resize: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.PushButton.resize: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.PushButton.resize: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.PushButton.resize: Unknown exception");
   }
 }
 
 
 /** void mimas::PushButton::setHue(float hue)
- * include/mimas/PushButton.h:98
+ * include/mimas/PushButton.h:100
  */
 static int PushButton_setHue(lua_State *L) {
   try {
     PushButton *self__ = *((PushButton**)luaL_checkudata(L, 1, "mimas.PushButton"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.PushButton in setHue");
     float hue = luaL_checknumber(L, 2);
     self__->setHue(hue);
     return 0;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.PushButton.setHue: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.PushButton.setHue: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.PushButton.setHue: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.PushButton.setHue: Unknown exception");
   }
 }
 
 
 /** void mimas::PushButton::setName(const char *name)
- * include/mimas/PushButton.h:82
+ * include/mimas/PushButton.h:84
  */
 static int PushButton_setName(lua_State *L) {
   try {
     PushButton *self__ = *((PushButton**)luaL_checkudata(L, 1, "mimas.PushButton"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.PushButton in setName");
     const char *name = luaL_checkstring(L, 2);
     self__->setName(name);
     return 0;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.PushButton.setName: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.PushButton.setName: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.PushButton.setName: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.PushButton.setName: Unknown exception");
   }
 }
 
 
 /** void mimas::PushButton::setStyle(const char *text)
- * include/mimas/PushButton.h:94
+ * include/mimas/PushButton.h:96
  */
 static int PushButton_setStyle(lua_State *L) {
   try {
     PushButton *self__ = *((PushButton**)luaL_checkudata(L, 1, "mimas.PushButton"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.PushButton in setStyle");
     const char *text = luaL_checkstring(L, 2);
     self__->setStyle(text);
     return 0;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.PushButton.setStyle: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.PushButton.setStyle: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.PushButton.setStyle: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.PushButton.setStyle: Unknown exception");
   }
 }
 
 
 /** QWidget* mimas::PushButton::widget()
- * include/mimas/PushButton.h:65
+ * include/mimas/PushButton.h:67
  */
 static int PushButton_widget(lua_State *L) {
   try {
     PushButton *self__ = *((PushButton**)luaL_checkudata(L, 1, "mimas.PushButton"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.PushButton in widget");
     QWidget * retval__ = self__->widget();
     lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
     return 1;
   } catch (std::exception &e) {
-    std::string *s = new std::string("mimas.PushButton.widget: ");
-    s->append(e.what());
-    lua_pushstring(L, s->c_str());
-    delete s;
-    lua_error(L);
-    // never reached
-    return 0;
+    return luaL_error(L, "mimas.PushButton.widget: %s", e.what());
   } catch (...) {
-    lua_pushstring(L, "mimas.PushButton.widget: Unknown exception");
-    lua_error(L);
-    return 0;
+    return luaL_error(L, "mimas.PushButton.widget: Unknown exception");
   }
 }
 
@@ -378,6 +309,7 @@ static const struct luaL_Reg PushButton_member_methods[] = {
   {"widget"            , PushButton_widget},
   {"__tostring"        , PushButton__tostring},
   {"__gc"              , PushButton_destructor},
+  {"deleted"           , PushButton_deleted},
   {NULL, NULL},
 };
 

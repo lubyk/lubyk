@@ -60,13 +60,13 @@ local counter = 0
 --    assert_not_equal(port, sock2:remote_port())
 --  end)
 --
---  worker:sleep(20) -- start thread
+--  sleep(20) -- start thread
 --
 --  -- I can now connect to this remote
 --  local socket2 = rk.TCPSocket()
 --  socket2:connect('localhost', port)
 --  while not continue do
---    worker:sleep(20)
+--    sleep(20)
 --  end
 --end
 --
@@ -81,7 +81,7 @@ function should.send_and_recv()
     print("send done")
     --acc:send(5)
   end)
-  worker:sleep(20) -- start server
+  sleep(20) -- start server
 
   local client = rk.TCPSocket()
   print("connecting")
@@ -113,7 +113,7 @@ end
 --      continue = true
 --    end
 --  end)
---  worker:sleep(20) -- start server
+--  sleep(20) -- start server
 --
 --  local client = rk.TCPSocket()
 --  client:connect('localhost', port)
@@ -125,7 +125,7 @@ end
 --    -- cannot use ... or arg is set to nil
 --    client:send(unpack(arg))
 --    while not continue do
---      worker:sleep(10)
+--      sleep(10)
 --    end
 --
 --    for i, v in ipairs(arg) do
