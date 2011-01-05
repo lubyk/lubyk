@@ -3,30 +3,22 @@ require 'rubyk'
 collectgarbage('stop') -- avoid problems until we fix
 
 app = mimas.Application()
-local win = mimas.Window()
+win = mimas.Window()
 win:move(100, 400)
 
-local mlayout = mimas.VBoxLayout(win)
-local label   = mimas.Label("Start 'Venus' service")
+mlayout = mimas.VBoxLayout(win)
+label   = mimas.Label("Start 'Venus' service")
 
 mlayout:addWidget(label)
 
-local layout = mimas.HBoxLayout()
-mlayout:addLayout(layout)
 
-local slider = mimas.Slider(mimas.Vertical)
+slider = mimas.Slider(mimas.Vertical)
 slider:setValue(50)
-layout:addWidget(slider)
+mlayout:addWidget(slider)
 
-local slider2 = mimas.Slider(mimas.Vertical)
-slider2:setValue(50)
-layout:addWidget(slider2)
+value = 0
 
-
-
-local value = nil
-
-local client = rk.Client(function(val)
+client = rk.Client(function(val)
   print('Mimas <---', val)
   value = val
   slider:setValue(val)
@@ -36,9 +28,9 @@ sleep(100)
 -- Mimas listens to messages from planet Saturn
 client:subscribe('Saturn')
 
-local callback = mimas.Callback(function(val)
+callback = mimas.Callback(function(val)
   -- move app into local env until _G is properly shared in sub func
-  local app = app
+--  local app = app
   if val ~= value then
     if val == 1.0 then
       app:post(function()

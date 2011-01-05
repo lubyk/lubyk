@@ -8,10 +8,10 @@
 --]]------------------------------------------------------
 require 'rubyk'
 
-local continue = false
-local value = 0
+continue = false
+value = 0
 
-local function set_value(message)
+function set_value(message)
   if message == 1.0 then
     continue = true
   end
@@ -24,19 +24,19 @@ end
 -- create a service called 'Saturn' with a Reply socket
 saturn = rk.Service('Saturn', function(message)
   print("Saturn <---", message)
-  --set_value(message)
+  set_value(message)
   if message == 1 then
     saturn:quit()
   end
   return message
 end)
 
-local i = 0
+i = 0
 -- random update of value
-local timer = rk.Timer(20, function()
+timer = rk.Timer(100, function()
   i = i + 1
   set_value(0.5 + 0.49 * math.sin(i * math.pi / 20))
 end)
---timer:start()
+timer:start()
 
 saturn:join()

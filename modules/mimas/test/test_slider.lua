@@ -145,17 +145,18 @@ function should.style_slider(t)
   -- Make the slider move
   t.i = 0
   print('Create timer')
-  t.timer = rk.Timer(100, function()
-    print('Start timer')
-    t.i = t.i + 0.05
-    local val = 0.5 + 0.5 * math.sin(t.i)
-    app:post(function()
-      -- BUG...
-      t.slider3:setStyle(string.format('color:hsv(%i, 255, 255)', val * 360))
-      t.slider3:setValue(val)
-    end)
-  end)
-  t.timer:start()
+  --t.timer = rk.Timer(100, function()
+  --  --- BUGS ---
+  --  print('Start timer')
+  --  t.i = t.i + 0.05
+  --  local val = 0.5 + 0.5 * math.sin(t.i)
+  --  app:post(function()
+  --    -- BUG...
+  --    t.slider3:setStyle(string.format('color:hsv(%i, 255, 255)', val * 360))
+  --    t.slider3:setValue(val)
+  --  end)
+  --end)
+  --t.timer:start()
 
   t.thread = rk.Thread(function()
     sleep(3000)
@@ -164,41 +165,45 @@ function should.style_slider(t)
   t.win:show()
 end
 
---function should.sync_two_sliders()
---  local win = mimas.Window()
---  win:move(300, 100)
---
---  local layout = mimas.HBoxLayout(win)
---  local label  = mimas.Label("Move to zero to quit...")
---  layout:addWidget(label)
---
---  local slider1 = mimas.Slider(mimas.Vertical)
---  slider1:setValue(50)
---  layout:addWidget(slider1)
---
---  local slider2 = mimas.Slider(mimas.Vertical)
---  slider2:setValue(50)
---  layout:addWidget(slider2)
---
---  local callback1 = mimas.Callback(function(value)
---    if value == 0 then
---      app:quit()
---    end
---    slider2:setValue(value)
---  end)
---
---  local callback2 = mimas.Callback(function(value)
---    slider1:setValue(value)
---    label:setText(string.format('value: %f', value))
---  end)
---
---  -- callback listens for quit_btn's clicked events.
---  callback1:connect(slider1, 'valueChanged(double)')
---
---  -- callback listens for quit_btn's clicked events.
---  callback2:connect(slider2, 'valueChanged(double)')
---
---  win:show()
---end
+function should.sync_two_sliders(t)
+  t.win = mimas.Window()
+  t.win:move(320, 50)
+
+  t.layout = mimas.HBoxLayout(t.win)
+  t.label  = mimas.Label("Move to zero to quit...")
+  t.layout:addWidget(t.label)
+
+  t.slider1 = mimas.Slider(mimas.Vertical)
+  t.slider1:setValue(50)
+  t.layout:addWidget(t.slider1)
+
+  t.slider2 = mimas.Slider(mimas.Vertical)
+  t.slider2:setValue(50)
+  t.layout:addWidget(t.slider2)
+
+  t.callback1 = mimas.Callback(function(value)
+    if value == 0 then
+      app:quit()
+    end
+    t.slider2:setValue(value)
+  end)
+
+  t.callback2 = mimas.Callback(function(value)
+    t.slider1:setValue(value)
+    t.label:setText(string.format('value: %f', value))
+  end)
+
+  -- callback listens for quit_btn's clicked events.
+  t.callback1:connect(t.slider1, 'valueChanged(double)')
+
+  -- callback listens for quit_btn's clicked events.
+  t.callback2:connect(t.slider2, 'valueChanged(double)')
+
+  t.thread = rk.Thread(function()
+    sleep(3000)
+    t.win:close()
+  end)
+  t.win:show()
+end
 
 test.gui()
