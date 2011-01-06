@@ -11,10 +11,8 @@ table.remove(arg, 1)
 if action == '--test' or action == '-t' then
   require 'test'
   local all = test.all
-  local gui = test.gui
   test.all = function() end -- dummy
-  test.gui = function() end -- dummy
 
   test.load_all(unpack(arg))
-  gui()
+  all()
 end

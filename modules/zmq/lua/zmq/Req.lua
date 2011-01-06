@@ -15,17 +15,10 @@
 require 'zmq'
 require 'zmq.Socket'
 
-function zmq.Req()
-  return zmq.Socket(zmq.REQ)
-end
-
 function zmq.Req(location)
-  local instance = zmq.Socket(zmq.PUSH)
+  local instance = zmq.Socket(zmq.REQ)
   if location then
-    instance:bind(location)
-  else
-    -- choose a random port with "tcp://*"
-    instance:bind()
+    instance:connect(location)
   end
   return instance
 end

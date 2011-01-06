@@ -206,4 +206,4 @@ function should.sync_two_sliders(t)
   t.win:show()
 end
 
-test.gui()
+test.all()

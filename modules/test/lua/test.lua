@@ -16,10 +16,14 @@ function lib.Suite(name)
 end
 
 function lib.all()
-  for i, suite in ipairs(lib.suites) do
-    lib.run_suite(suite)
+  if rawget(_G, 'mimas') then
+    lib.gui()
+  else
+    for i, suite in ipairs(lib.suites) do
+      lib.run_suite(suite)
+    end
+    lib.report()
   end
-  lib.report()
 end
 
 function lib.gui()

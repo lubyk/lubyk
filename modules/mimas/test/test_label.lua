@@ -90,4 +90,4 @@ function should.style_labels(t)
   end)
 end
 
-test.gui()
+test.all()

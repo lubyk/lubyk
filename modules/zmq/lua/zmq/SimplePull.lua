@@ -6,7 +6,7 @@
   Pull server with a loop already in place.
 
 --]]------------------------------------------------------
-require 'zmq.Rep'
+require 'zmq.Pull'
 
 function zmq.SimplePull(location, func)
   if not func then
@@ -15,7 +15,7 @@ function zmq.SimplePull(location, func)
   end
   return zmq.Pull(location, function(server)
     while server:should_run() do
-      server:send(func(server:recv()))
+      func(server:recv())
     end
   end)
 end

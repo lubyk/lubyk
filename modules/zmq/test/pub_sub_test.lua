@@ -71,14 +71,12 @@ function should.publish_and_subscribe_many(t)
   local sender   = zmq.Pub()
   local received = 0
 
-  function receive_server(server)
-    while server:should_run() do
-      received = received + server:recv()
-    end
+  local function receive_func(val)
+    received = received + val
   end
 
-  local receiver1 = zmq.Sub(receive_server)
-  local receiver2 = zmq.Sub(receive_server)
+  local receiver1 = zmq.SimpleSub(receive_func)
+  local receiver2 = zmq.SimpleSub(receive_func)
 
   receiver1:connect(string.format("tcp://localhost:%i", sender:port()))
   receiver2:connect(string.format("tcp://localhost:%i", sender:port()))

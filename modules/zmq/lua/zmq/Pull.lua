@@ -16,7 +16,7 @@ function zmq.Pull(location, func)
   end
   local instance = zmq.Socket(zmq.PULL, func)
   if location then
-    instance:bind(location)
+    instance:connect(location)
   else
     -- choose a random port with "tcp://*"
     instance:bind()

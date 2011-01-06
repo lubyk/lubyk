@@ -1,6 +1,6 @@
 --[[------------------------------------------------------
 
-  zmq.Send
+  zmq.Push
   --------
 
   Lets you push work encoded in lua messages using 0MQ.

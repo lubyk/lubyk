@@ -74,12 +74,12 @@ public:
     if (!socket_) {
       switch (errno) {
       case EINVAL:
-        throw Exception("Could not create Socket (invalid socket type: %i).", type_);
+        throw Exception("Invalid socket type: %i).", type_);
       case EMTHREAD:
-        throw Exception("Could not create Socket (The maximum number of sockets within this context has been exceeded).");
+        throw Exception("The maximum number of sockets within this context has been exceeded.");
       case EFAULT: // continue
       default:
-        throw Exception("Could not create Socket (The provided context was not valid).");
+        throw Exception("The provided context was not valid.");
       }
     }
   }
@@ -114,8 +114,9 @@ public:
    * Should NOT be used while in a request() or recv().
    */
   void bind(const char *location) {
-    if (zmq_bind(socket_, location))
-      throw Exception("Could not bind to '%s'", location);
+    if (zmq_bind(socket_, location)) {
+      throw_bind_error(errno, location);
+    }
     location_ = location; // store last connection for info string
   }
 
@@ -123,16 +124,19 @@ public:
    * Should NOT be used while in a request() or recv().
    */
   int bind(int min_port = 2000, int max_port = 20000, int retries = 100) {
+    // do not use rand() --> not random in higher bits
+    srandom((unsigned)time(0));
     static const int buf_size = 50;
-    srand((unsigned)time(0));
     char buffer[buf_size];
     for(int i = 0; i < retries; ++i) {
-      int port = min_port + ((float)rand() * (max_port - min_port))/RAND_MAX;
+      int port = min_port + (max_port - min_port) * ((float)random()/RAND_MAX);
       snprintf(buffer, buf_size, "tcp://*:%i", port);
       if (!zmq_bind(socket_, buffer)) {
         // success
         location_ = buffer;
         return port;
+      } else if (errno != EADDRINUSE) {
+        throw_bind_error(errno, "*");
       }
     }
     throw Exception("Could not bind to any port in range '%i-%i' (%i retries).", min_port, max_port, retries);
@@ -164,7 +168,7 @@ public:
 
       if (zmq_recv(socket_, &msg, 0)) {
         zmq_msg_close(&msg);
-        throw Exception("Could not receive.");
+        throw_recv_error(errno);
       }
     }
 
@@ -187,7 +191,7 @@ public:
 
     if (zmq_send(socket_, &msg, 0)) {
       zmq_msg_close(&msg);
-      throw Exception("Could not send message.");
+      throw_send_error(errno);
     }
     zmq_msg_close(&msg);
   }
@@ -210,7 +214,7 @@ public:
 
       if (zmq_send(socket_, &msg, 0)) {
         zmq_msg_close(&msg);
-        throw Exception("Could not send message.");
+        throw_send_error(errno);
       }
 
       zmq_msg_close(&msg);
@@ -219,7 +223,7 @@ public:
 
       if (zmq_recv(socket_, &msg, 0)) {
         zmq_msg_close(&msg);
-        throw Exception("Could not receive.");
+        throw_recv_error(errno);
       }
     }
 
@@ -245,15 +249,15 @@ public:
    */
   const char *type() const {
     switch(type_) {
-      case ZMQ_PAIR: return "PAIR";
-      case ZMQ_PUB : return "PUB" ;
-      case ZMQ_SUB : return "SUB" ;
-      case ZMQ_REQ : return "REQ" ;
-      case ZMQ_REP : return "REP" ;
-      case ZMQ_XREQ: return "XREQ";
-      case ZMQ_XREP: return "XREP";
-      case ZMQ_PULL: return "PULL";
-      case ZMQ_PUSH: return "PUSH";
+      case ZMQ_PAIR: return "zmq.PAIR";
+      case ZMQ_PUB : return "zmq.PUB" ;
+      case ZMQ_SUB : return "zmq.SUB" ;
+      case ZMQ_REQ : return "zmq.REQ" ;
+      case ZMQ_REP : return "zmq.REP" ;
+      case ZMQ_XREQ: return "zmq.XREQ";
+      case ZMQ_XREP: return "zmq.XREP";
+      case ZMQ_PULL: return "zmq.PULL";
+      case ZMQ_PUSH: return "zmq.PUSH";
       default: return "???";
     }
   }
@@ -263,49 +267,103 @@ public:
    * garbage collected.
    */
 
-   /** @internal: DO NOT USE.
-    */
-   void set_callback(lua_State *L) {
-     set_lua_callback(L);
-     thread_   = new Thread();
-     thread_->start_thread<Socket, &Socket::run>(this, NULL);
+  /** @internal: DO NOT USE.
+  */
+  void set_callback(lua_State *L) {
+   set_lua_callback(L);
+   thread_   = new Thread();
+   thread_->start_thread<Socket, &Socket::run>(this, NULL);
+  }
+
+  void quit() {
+   if (thread_) thread_->quit();
+  }
+
+  void kill() {
+   req_mutex_.unlock(); // unlock if not locked should be ok
+   if (thread_) thread_->kill();
+  }
+
+  void join() {
+   ScopedUnlock unlock(worker_);
+   if (thread_) thread_->join();
+  }
+
+  bool should_run() {
+   if (thread_) return thread_->should_run();
+   return false;
+  }
+
+private:
+
+  void throw_bind_error(int err, const char *location) {
+    switch(err) {
+    case EPROTONOSUPPORT:
+      throw Exception("The requested transport protocol is not supported (%s).", location);
+    case ENOCOMPATPROTO:
+      throw Exception("The requested transport protocol (%s) is not compatible with the socket type (%s).", location, type());
+    case EADDRINUSE:
+      throw Exception("The requested address is already in use (%s).", location);
+    case EADDRNOTAVAIL:
+      throw Exception("The requested address was not local (%s).", location);
+    case ENODEV:
+      throw Exception("The requested address specifies a nonexistent interface (%s). Did you mean connect ?.", location);
+    case ETERM:
+      throw Exception("The ZMQ context associated with the specified socket was terminated (%s).", location);
+    case EFAULT: // continue
+    default:
+      throw Exception("The provided socket was not valid (%s).", location);
+    }
+  }
+
+  void throw_recv_error(int err) {
+    switch(err) {
+    case EAGAIN:
+      throw Exception("Non-blocking mode was requested and no messages are available at the moment.");
+    case ENOTSUP:
+      throw Exception("The zmq_recv() operation is not supported by this socket type (%s).", type());
+    case EFSM:
+      throw Exception("The zmq_recv() operation cannot be performed on this socket at the moment due to the socket not being in the appropriate state. This error may occur with socket types that switch between several states, such as ZMQ_REP (%s).", type());
+    case ETERM:
+      throw Exception("The ZMQ context associated with the specified socket was terminated.");
+    case EFAULT: // continue
+    default:
+      throw Exception("The provided context was not valid (NULL).");
+    }
+  }
+
+  void throw_send_error(int err) {
+    switch(err) {
+    case EAGAIN:
+      throw Exception("Non-blocking mode was requested and no messages are available at the moment.");
+    case ENOTSUP:
+      throw Exception("The zmq_send() operation is not supported by this socket type (%s).", type());
+    case EFSM:
+      throw Exception("The zmq_send() operation cannot be performed on this socket at the moment due to the socket not being in the appropriate state. This error may occur with socket types that switch between several states, such as ZMQ_REP (%s).", type());
+    case ETERM:
+      throw Exception("The ZMQ context associated with the specified socket was terminated.");
+    case EFAULT: // continue
+    default:
+      throw Exception("The provided context was not valid (NULL).");
+    }
+  }
+
+  void run(Thread *runner) {
+
+   runner->thread_ready();
+
+   ScopedLock lock(worker_);
+
+   push_lua_callback();
+
+   // lua_ = LuaCallback's thread state
+   // first argument is self
+   int status = lua_pcall(lua_, 1, 0, 0);
+
+   if (status) {
+     printf("Error starting Socket function: %s\n", lua_tostring(lua_, -1));
    }
-
-   void quit() {
-     if (thread_) thread_->quit();
-   }
-
-   void kill() {
-     req_mutex_.unlock(); // unlock if not locked should be ok
-     if (thread_) thread_->kill();
-   }
-
-   void join() {
-     ScopedUnlock unlock(worker_);
-     if (thread_) thread_->join();
-   }
-
-   bool should_run() {
-     if (thread_) return thread_->should_run();
-     return false;
-   }
- private:
-   void run(Thread *runner) {
-
-     runner->thread_ready();
-
-     ScopedLock lock(worker_);
-
-     push_lua_callback();
-
-     // lua_ = LuaCallback's thread state
-     // first argument is self
-     int status = lua_pcall(lua_, 1, 0, 0);
-
-     if (status) {
-       printf("Error starting Socket function: %s\n", lua_tostring(lua_, -1));
-     }
-   }
+  }
 };
 } // zmq
 

@@ -62,4 +62,4 @@ function should.accept_destroy_from_Lua()
   end)
 end
 
-test.gui()
+test.all()
