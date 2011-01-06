@@ -1,26 +1,25 @@
 --[[------------------------------------------------------
 
-  zmq.Receive
-  -----------
+  zmq.Pull
+  --------
 
-  Lets you receive lua messages using 0MQ.
+  Lets you pull work encoded in lua messages using 0MQ.
 
 --]]------------------------------------------------------
 require 'zmq'
 require 'zmq.Socket'
 
 function zmq.Pull(location, func)
-  local instance
-  instance = zmq.Socket(zmq.PULL, function()
-    instance:connect(location)
-    while instance:should_run() do
-      -- receive, receive, ...
-      func(instance:recv())
-    end
-  end)
-  -- Sleep so that we let server start
-  -- in order to have port and initialize the instance
-  sleep(10)
-
+  if not func then
+    func = location
+    location = nil
+  end
+  local instance = zmq.Socket(zmq.PULL, func)
+  if location then
+    instance:bind(location)
+  else
+    -- choose a random port with "tcp://*"
+    instance:bind()
+  end
   return instance
 end

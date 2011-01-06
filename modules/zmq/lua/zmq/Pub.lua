@@ -1,9 +1,9 @@
 --[[------------------------------------------------------
 
-  zmq.Publisher
-  -------------
+  zmq.Pub
+  -------
 
-  Lets you send lua messages using 0MQ.
+  Lets you publish lua messages using 0MQ.
 
 --]]------------------------------------------------------
 require 'zmq'
@@ -15,7 +15,7 @@ function zmq.Pub(location)
     instance:bind(location)
   else
     -- choose a random port with "tcp://*"
-    instance:bind_to_random_port()
+    instance:bind()
   end
   return instance
 end

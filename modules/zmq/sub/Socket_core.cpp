@@ -8,21 +8,14 @@ using namespace zmq;
 
 /* ============================ Constructors     ====================== */
 
-/** zmq::Socket::Socket(rubyk::Worker *worker, int type, bool create_sock=true)
- * include/zmq/Socket.h:61
+/** zmq::Socket::Socket(rubyk::Worker *worker, int type)
+ * include/zmq/Socket.h:64
  */
 static int Socket_Socket(lua_State *L) {
   try {
-    int top__ = lua_gettop(L);
-    Socket * retval__;
     rubyk::Worker *worker = *((rubyk::Worker **)luaL_checkudata(L, 1, "rubyk.Worker"));
     int type = luaL_checkint(L, 2);
-    if (top__ < 3) {
-      retval__ = new Socket(worker, type);
-    } else {
-      bool create_sock = lua_toboolean(L, 3);
-      retval__ = new Socket(worker, type, create_sock);
-    }
+    Socket * retval__ = new Socket(worker, type);
     lua_pushclass<Socket>(L, retval__, "zmq.Socket");
     return 1;
   } catch (std::exception &e) {
@@ -57,10 +50,11 @@ static int Socket__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
+
 /** void zmq::Socket::bind(const char *location)
- * include/zmq/Socket.h:101
+ * include/zmq/Socket.h:104
  */
-static int Socket_bind(lua_State *L) {
+static int Socket_bind1(lua_State *L) {
   try {
     Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "zmq.Socket"));
     const char *location = luaL_checkstring(L, 2);
@@ -74,42 +68,57 @@ static int Socket_bind(lua_State *L) {
 }
 
 
-/** int zmq::Socket::bind_to_random_port(int min_port=2000, int max_port=20000, int retries=100)
- * include/zmq/Socket.h:111
+/** int zmq::Socket::bind(int min_port=2000, int max_port=20000, int retries=100)
+ * include/zmq/Socket.h:114
  */
-static int Socket_bind_to_random_port(lua_State *L) {
+static int Socket_bind2(lua_State *L) {
   try {
     Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "zmq.Socket"));
     int top__ = lua_gettop(L);
     int  retval__;
     if (top__ < 2) {
-      retval__ = self__->bind_to_random_port();
+      retval__ = self__->bind();
     } else {
       int min_port = luaL_checkint(L, 2);
       if (top__ < 3) {
-        retval__ = self__->bind_to_random_port(min_port);
+        retval__ = self__->bind(min_port);
       } else {
         int max_port = luaL_checkint(L, 3);
         if (top__ < 4) {
-          retval__ = self__->bind_to_random_port(min_port, max_port);
+          retval__ = self__->bind(min_port, max_port);
         } else {
           int retries = luaL_checkint(L, 4);
-          retval__ = self__->bind_to_random_port(min_port, max_port, retries);
+          retval__ = self__->bind(min_port, max_port, retries);
         }
       }
     }
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "zmq.Socket.bind_to_random_port: %s", e.what());
+    return luaL_error(L, "zmq.Socket.bind: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "zmq.Socket.bind_to_random_port: Unknown exception");
+    return luaL_error(L, "zmq.Socket.bind: Unknown exception");
+  }
+}
+
+
+
+/** Overloaded function chooser for bind(...) */
+static int Socket_bind(lua_State *L) {
+  int type__ = lua_type(L, 2);
+  if (type__ == LUA_TSTRING) {
+    return Socket_bind1(L);
+  } else if (type__ == LUA_TNUMBER) {
+    return Socket_bind2(L);
+  } else {
+    // use any to raise errors
+    return Socket_bind2(L);
   }
 }
 
 
 /** void zmq::Socket::connect(const char *location)
- * include/zmq/Socket.h:129
+ * include/zmq/Socket.h:134
  */
 static int Socket_connect(lua_State *L) {
   try {
@@ -126,7 +135,7 @@ static int Socket_connect(lua_State *L) {
 
 
 /** void zmq::Socket::join()
- * include/zmq/Socket.h:234
+ * include/zmq/Socket.h:272
  */
 static int Socket_join(lua_State *L) {
   try {
@@ -142,7 +151,7 @@ static int Socket_join(lua_State *L) {
 
 
 /** void zmq::Socket::kill()
- * include/zmq/Socket.h:230
+ * include/zmq/Socket.h:267
  */
 static int Socket_kill(lua_State *L) {
   try {
@@ -158,7 +167,7 @@ static int Socket_kill(lua_State *L) {
 
 
 /** const char* zmq::Socket::location()
- * include/zmq/Socket.h:181
+ * include/zmq/Socket.h:220
  */
 static int Socket_location(lua_State *L) {
   try {
@@ -175,7 +184,7 @@ static int Socket_location(lua_State *L) {
 
 
 /** int zmq::Socket::port()
- * include/zmq/Socket.h:185
+ * include/zmq/Socket.h:224
  */
 static int Socket_port(lua_State *L) {
   try {
@@ -192,7 +201,7 @@ static int Socket_port(lua_State *L) {
 
 
 /** void zmq::Socket::quit()
- * include/zmq/Socket.h:226
+ * include/zmq/Socket.h:263
  */
 static int Socket_quit(lua_State *L) {
   try {
@@ -208,7 +217,7 @@ static int Socket_quit(lua_State *L) {
 
 
 /** LuaStackSize zmq::Socket::recv(lua_State *L)
- * include/zmq/Socket.h:139
+ * include/zmq/Socket.h:146
  */
 static int Socket_recv(lua_State *L) {
   try {
@@ -225,7 +234,7 @@ static int Socket_recv(lua_State *L) {
 
 
 /** LuaStackSize zmq::Socket::request(lua_State *L)
- * include/zmq/Socket.h:176
+ * include/zmq/Socket.h:186
  */
 static int Socket_request(lua_State *L) {
   try {
@@ -242,7 +251,7 @@ static int Socket_request(lua_State *L) {
 
 
 /** void zmq::Socket::send(lua_State *L)
- * include/zmq/Socket.h:159
+ * include/zmq/Socket.h:169
  */
 static int Socket_send(lua_State *L) {
   try {
@@ -259,7 +268,7 @@ static int Socket_send(lua_State *L) {
 
 
 /** void zmq::Socket::set_callback(lua_State *L)
- * include/zmq/Socket.h:218
+ * include/zmq/Socket.h:257
  */
 static int Socket_set_callback(lua_State *L) {
   try {
@@ -276,7 +285,7 @@ static int Socket_set_callback(lua_State *L) {
 
 
 /** void zmq::Socket::setsockopt(int type, const char *filter=NULL)
- * include/zmq/Socket.h:89
+ * include/zmq/Socket.h:91
  */
 static int Socket_setsockopt(lua_State *L) {
   try {
@@ -299,7 +308,7 @@ static int Socket_setsockopt(lua_State *L) {
 
 
 /** bool zmq::Socket::should_run()
- * include/zmq/Socket.h:239
+ * include/zmq/Socket.h:277
  */
 static int Socket_should_run(lua_State *L) {
   try {
@@ -316,7 +325,7 @@ static int Socket_should_run(lua_State *L) {
 
 
 /** const char* zmq::Socket::type() const 
- * include/zmq/Socket.h:196
+ * include/zmq/Socket.h:235
  */
 static int Socket_type(lua_State *L) {
   try {
@@ -338,7 +347,6 @@ static int Socket_type(lua_State *L) {
 
 static const struct luaL_Reg Socket_member_methods[] = {
   {"bind"              , Socket_bind},
-  {"bind_to_random_port", Socket_bind_to_random_port},
   {"connect"           , Socket_connect},
   {"join"              , Socket_join},
   {"kill"              , Socket_kill},

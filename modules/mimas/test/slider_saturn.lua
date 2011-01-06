@@ -33,7 +33,7 @@ end)
 
 i = 0
 -- random update of value
-timer = rk.Timer(100, function()
+timer = rk.Timer(20, function()
   i = i + 1
   set_value(0.5 + 0.49 * math.sin(i * math.pi / 20))
 end)

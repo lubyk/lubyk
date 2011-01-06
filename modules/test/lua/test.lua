@@ -23,21 +23,30 @@ function lib.all()
 end
 
 function lib.gui()
-  app = mimas.Application()
-  app:post(function()
-    for i, suite in ipairs(lib.suites) do
-      lib.run_suite(suite)
-    end
-  end)
+  if lib.suites[1] then
+    app = mimas.Application()
+    app:post(function()
+      for i, suite in ipairs(lib.suites) do
+        lib.run_suite(suite)
+      end
+    end)
 
-  app:exec()
+    app:exec()
+  end
   -- get report when all threads have finished (all windows closed)
   lib.report()
 end
 
-function lib.load_all()
-  for file in rk.Dir('modules'):glob('test/.+_test[.]lua$') do
-    dofile(file)
+function lib.load_all(...)
+  if not arg[1] then
+    arg = {'modules'}
+  end
+  for _, mod in ipairs(arg) do
+    print('globing', mod)
+    for file in rk.Dir(mod):glob('test/.+_test[.]lua$') do
+      print('loading', file)
+      dofile(file)
+    end
   end
 end
 
@@ -103,7 +112,7 @@ function lib.report()
   print('\n')
 
   if total_test == 0 then
-    print(string.format('No tests defined. Test functions must end with "_test"'))
+    print(string.format('No tests defined. Test functions must end with "_test.lua"'))
   elseif total_fail == 0 then
     if total_test == 1 then
       print(string.format('Success! %i test passes (%i assertions).', total_test, total_asrt))

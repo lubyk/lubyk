@@ -54,28 +54,39 @@ class Socket : LuaCallback
   std::string location_;
   Thread *thread_;
   int type_;
+  /** Mutex used to enable zmq.REQ sharing between threads.
+   */
+  Mutex req_mutex_;
 public:
-  Socket(rubyk::Worker *worker, int type, bool create_sock = true)
+  Socket(rubyk::Worker *worker, int type)
    : LuaCallback(worker),
      thread_(NULL),
      type_(type) {
 
     if (!worker->zmq_context_) {
       // initialize zmq context
-      worker->zmq_context_ = zmq_init(10);
+      worker->zmq_context_ = zmq_init(4);
     }
     ++worker->zmq_context_refcount_;
 
-    if (create_sock) {
-      socket_ = zmq_socket(worker->zmq_context_, type_);
-    } else {
-      socket_ = NULL;
+    socket_ = zmq_socket(worker->zmq_context_, type_);
+
+    if (!socket_) {
+      switch (errno) {
+      case EINVAL:
+        throw Exception("Could not create Socket (invalid socket type: %i).", type_);
+      case EMTHREAD:
+        throw Exception("Could not create Socket (The maximum number of sockets within this context has been exceeded).");
+      case EFAULT: // continue
+      default:
+        throw Exception("Could not create Socket (The provided context was not valid).");
+      }
     }
   }
 
   ~Socket() {
     if (thread_) {
-      thread_->kill();
+      kill();
       delete thread_;
     }
 
@@ -86,6 +97,9 @@ public:
     }
   }
 
+  /** Set socket options.
+   * Should NOT be used while in a request() or recv().
+   */
   void setsockopt(int type, const char *filter = NULL) {
     if (filter) {
       if (zmq_setsockopt(socket_, type, filter, strlen(filter)))
@@ -97,6 +111,7 @@ public:
   }
 
   /** Bind a service to a location like "tcp://\*:5500"
+   * Should NOT be used while in a request() or recv().
    */
   void bind(const char *location) {
     if (zmq_bind(socket_, location))
@@ -105,10 +120,9 @@ public:
   }
 
   /** Bind to a random port.
-   * @return bound port or raise on failure
-   * FIXME: when Dub is fixed with overloaded member functions, use 'bind'
+   * Should NOT be used while in a request() or recv().
    */
-  int bind_to_random_port(int min_port = 2000, int max_port = 20000, int retries = 100) {
+  int bind(int min_port = 2000, int max_port = 20000, int retries = 100) {
     static const int buf_size = 50;
     srand((unsigned)time(0));
     char buffer[buf_size];
@@ -125,14 +139,18 @@ public:
   }
 
   /** Connect to a server.
+   * It is safe to use this while in a request() but NOT while in a
+   * send() or recv().
    */
   void connect(const char *location) {
+    ScopedLock lock(req_mutex_);
     if (zmq_connect(socket_, location))
       throw Exception("Could not connect to '%s'.", location);
     location_ = location; // store last connection for info string
   }
 
   /** Receive a message (blocks).
+   * Should NOT be used while already in a request() or recv().
    * For a server, this should typically be used inside the loop.
    * We pass the lua_State to avoid mixing thread contexts.
    */
@@ -140,8 +158,10 @@ public:
     zmq_msg_t msg;
     zmq_msg_init(&msg);
 
-    // unlock while waiting
-    { rubyk::ScopedUnlock unlock(worker_);
+
+    { // unlock worker
+      ScopedUnlock unlock(worker_);
+
       if (zmq_recv(socket_, &msg, 0)) {
         zmq_msg_close(&msg);
         throw Exception("Could not receive.");
@@ -154,6 +174,7 @@ public:
   }
 
   /** Send a message packed with msgpack.
+   * Should NOT be used while in a request() or recv().
    * Varying parameters.
    */
   void send(lua_State *L) {
@@ -171,11 +192,40 @@ public:
     zmq_msg_close(&msg);
   }
 
-  /** Request = remote call.
+  /** Request = remote call. Can be used by multiple threads.
    */
   LuaStackSize request(lua_State *L) {
-    send(L);
-    return recv(L);
+
+    msgpack_sbuffer *buffer;
+
+    msgpack_lua_to_bin(L, &buffer, 1);
+
+    zmq_msg_t msg;
+    zmq_msg_init_data(&msg, buffer->data, buffer->size, free_msgpack_msg, buffer);
+
+    { // unlock worker
+      ScopedUnlock unlock(worker_);
+      // lock socket
+      ScopedLock lock(req_mutex_);
+
+      if (zmq_send(socket_, &msg, 0)) {
+        zmq_msg_close(&msg);
+        throw Exception("Could not send message.");
+      }
+
+      zmq_msg_close(&msg);
+
+      zmq_msg_init(&msg);
+
+      if (zmq_recv(socket_, &msg, 0)) {
+        zmq_msg_close(&msg);
+        throw Exception("Could not receive.");
+      }
+    }
+
+    int arg_size = msgpack_bin_to_lua(L, zmq_msg_data(&msg), zmq_msg_size(&msg));
+    zmq_msg_close(&msg);
+    return arg_size;
   }
 
   const char *location() {
@@ -216,8 +266,6 @@ public:
    /** @internal: DO NOT USE.
     */
    void set_callback(lua_State *L) {
-     if (socket_) throw Exception("Socket already created: cannot set callback.");
-
      set_lua_callback(L);
      thread_   = new Thread();
      thread_->start_thread<Socket, &Socket::run>(this, NULL);
@@ -228,11 +276,12 @@ public:
    }
 
    void kill() {
+     req_mutex_.unlock(); // unlock if not locked should be ok
      if (thread_) thread_->kill();
    }
 
    void join() {
-     rubyk::ScopedUnlock unlock(worker_);
+     ScopedUnlock unlock(worker_);
      if (thread_) thread_->join();
    }
 
@@ -242,13 +291,10 @@ public:
    }
  private:
    void run(Thread *runner) {
-     // Create socket in new thread
-     socket_ = zmq_socket(worker_->zmq_context_, type_);
-
 
      runner->thread_ready();
 
-     rubyk::ScopedLock lock(worker_);
+     ScopedLock lock(worker_);
 
      push_lua_callback();
 

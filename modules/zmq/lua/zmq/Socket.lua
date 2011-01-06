@@ -18,7 +18,7 @@ local constr = zmq.Socket
 local worker = worker
 function zmq.Socket(type, func)
   -- if func exists: do not create socket yet (wait for set_callback)
-  local instance = constr(worker, type, not func)
+  local instance = constr(worker, type)
   if func then
     instance:set_callback(func)
   end

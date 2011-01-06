@@ -27,9 +27,7 @@ setmetatable(lib, {
   end
   instance = {service_type = service_type, pending = {}, services = {}}
 
-  -- We must bind before any client does a subscribe...
-  -- It is ok to create zmq.PUB socket in this thread and then only use
-  -- it in the callback thread starting with zmq 2.1.0.
+  -- We must bind before any client does a subscribe.
   instance.pub = zmq.Pub(string.format('inproc://%s', service_type))
 
   instance.browser = mdns.Browser(service_type, function(remote_service)

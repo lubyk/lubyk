@@ -33,7 +33,7 @@
 #include "lua_cpp_helper.h"
 #include <QtGui/QWidget>
 
-#if 0
+#if 1
 #define MIMAS_DEBUG_GC printf("[%p] ~%s\n", this, this->metaObject()->className());
 #else
 #define MIMAS_DEBUG_GC
