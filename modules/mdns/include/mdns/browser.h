@@ -29,9 +29,9 @@
 #ifndef RUBYK_INCLUDE_MDNS_BROWSER_H_
 #define RUBYK_INCLUDE_MDNS_BROWSER_H_
 
+#include "rubyk.h"
 #include "mdns/abstract_browser.h"
 
-#include "rubyk.h"
 using namespace rubyk;
 
 namespace mdns {
@@ -42,93 +42,102 @@ namespace mdns {
  * @dub string_format:'%%s'
  *      string_args:'(*userdata)->service_type()'
  *      lib_name:'Browser_core'
+ *      constructor: 'MakeInstance'
  */
-class Browser : public AbstractBrowser
+class Browser : public AbstractBrowser, public LuaCallback
 {
-  rubyk::Worker *worker_;
-  int func_idx_;
 public:
-  Browser(rubyk::Worker *worker, const char *service_type, int lua_func_idx) :
+  Browser(rubyk::Worker *worker, const char *service_type) :
     AbstractBrowser(service_type),
-    worker_(worker),
-    func_idx_(lua_func_idx) {
+    LuaCallback(worker) {
     start();
   }
 
   ~Browser() {
     // release function
     stop();
-    luaL_unref(worker_->lua_, LUA_REGISTRYINDEX, func_idx_);
+  }
+
+  static LuaStackSize MakeInstance(rubyk::Worker *worker, const char *service_type, lua_State *L) {
+    Browser *instance = new Browser(worker, service_type);
+    luaL_checktype(L, -1, LUA_TFUNCTION);
+    lua_pushclass<Browser>(L, instance, "mdns.Browser");
+    lua_pushvalue(L, -2);
+    // ... <self> <func>
+    instance->set_lua_callback(L);
+    instance->start();
+    lua_pop(L, 1);
+    // ... <self>
+    return 1;
   }
 
   virtual void add_device(const Location &location) {
-    lua_State *L = worker_->lua_;
+    lua_State *L = lua_;
     ScopedLock lock(worker_);
-    lua_rawgeti(L, LUA_REGISTRYINDEX, func_idx_);
 
-    // create table {add = true, name = 'x', host = '10.0.0.34', port = 7500, interface = 2}
+    // do not push self
+    push_lua_callback(false);
+
+    // create table {op = 'add', name = 'x', host = '10.0.0.34', port = 7500, interface = 2}
     lua_newtable(L);
-    int top = lua_gettop(L);
 
-    // add = true
+    // op = 'add'
+    lua_pushstring(L, "op");
     lua_pushstring(L, "add");
-    lua_pushboolean(L, 1);
-    lua_settable(L, top);
+    lua_settable(L, -3);
 
     // name = 'xxxx'
     lua_pushstring(L, "name");
     lua_pushstring(L, location.name());
-    lua_settable(L, top);
+    lua_settable(L, -3);
 
     // host = 'gaspard.local' / '10.3.4.5'
     lua_pushstring(L, "host");
     lua_pushstring(L, location.host());
-    lua_settable(L, top);
+    lua_settable(L, -3);
 
     // port = 7500
     lua_pushstring(L, "port");
     lua_pushnumber(L, location.port());
-    lua_settable(L, top);
+    lua_settable(L, -3);
 
     // interface = 2
     lua_pushstring(L, "interface");
     lua_pushnumber(L, location.interface());
-    lua_settable(L, top);
+    lua_settable(L, -3);
 
     int status = lua_pcall(L, 1, 0, 0);
 
     if (status) {
       printf("Error in add_device: %s\n", lua_tostring(L, -1));
     }
-    // clear stack
-    lua_settop(L, 0);
   }
 
   virtual void remove_device(const char *name) {
-    lua_State *L = worker_->lua_;
+    lua_State *L = lua_;
     ScopedLock lock(worker_);
-    lua_rawgeti(L, LUA_REGISTRYINDEX, func_idx_);
 
-    // create table {add = false, name = 'x'}
+    // do not push self
+    push_lua_callback(false);
+
+    // create table {op = 'remove', name = 'x'}
     lua_newtable(L);
-    int top = lua_gettop(L);
-    // add = false
-    lua_pushstring(L, "add");
-    lua_pushboolean(L, 0);
-    lua_settable(L, top);
+
+    // op = 'remove'
+    lua_pushstring(L, "op");
+    lua_pushstring(L, "remove");
+    lua_settable(L, -3);
 
     // name = 'xxxx'
     lua_pushstring(L, "name");
     lua_pushstring(L, name);
-    lua_settable(L, top);
+    lua_settable(L, -3);
 
     int status = lua_pcall(L, 1, 0, 0);
 
     if (status) {
       printf("Error in remove_device: %s\n", lua_tostring(L, -1));
     }
-    // clear stack
-    lua_settop(L, 0);
   }
 
   const char *service_type() {

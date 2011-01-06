@@ -8,41 +8,22 @@ using namespace mdns;
 
 /* ============================ Constructors     ====================== */
 
-/** mdns::Registration::Registration(rubyk::Worker *worker, const char *service_type, const char *name, uint port, int lua_func_idx)
- * include/mdns/Registration.h:53
- */
-static int Registration_Registration(lua_State *L) {
-  try {
-    rubyk::Worker *worker = *((rubyk::Worker **)luaL_checkudata(L, 1, "rubyk.Worker"));
-    const char *service_type = luaL_checkstring(L, 2);
-    const char *name = luaL_checkstring(L, 3);
-    uint port = luaL_checkint(L, 4);
-    
-    luaL_checktype(L, 5, LUA_TFUNCTION);
-    // push on top
-    lua_pushvalue(L, 5);
-    int lua_func_idx = luaL_ref(L, LUA_REGISTRYINDEX);
-    
-    Registration * retval__ = new Registration(worker, service_type, name, port, lua_func_idx);
-    lua_pushclass<Registration>(L, retval__, "mdns.Registration");
-    return 1;
-  } catch (std::exception &e) {
-    return luaL_error(L, "mdns.Registration.Registration: %s", e.what());
-  } catch (...) {
-    return luaL_error(L, "mdns.Registration.Registration: Unknown exception");
-  }
-}
+
+
 
 /* ============================ Destructor       ====================== */
 
 static int Registration_destructor(lua_State *L) {
   Registration **userdata = (Registration**)luaL_checkudata(L, 1, "mdns.Registration");
+
   
   if (*userdata) delete *userdata;
   
   *userdata = NULL;
   return 0;
 }
+
+
 
 /* ============================ tostring         ====================== */
 
@@ -58,8 +39,28 @@ static int Registration__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
+/** static LuaStackSize mdns::Registration::MakeInstance(rubyk::Worker *worker, const char *service_type, const char *name, uint port, lua_State *L)
+ * include/mdns/Registration.h:59
+ */
+static int Registration_MakeInstance(lua_State *L) {
+  try {
+    rubyk::Worker *worker = *((rubyk::Worker **)luaL_checkudata(L, 1, "rubyk.Worker"));
+    const char *service_type = luaL_checkstring(L, 2);
+    const char *name = luaL_checkstring(L, 3);
+    uint port = luaL_checkint(L, 4);
+    
+    LuaStackSize  retval__ = Registration::MakeInstance(worker, service_type, name, port, L);
+    return retval__;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mdns.Registration.MakeInstance: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mdns.Registration.MakeInstance: Unknown exception");
+  }
+}
+
+
 /** virtual void mdns::Registration::registration_done()
- * include/mdns/Registration.h:61
+ * include/mdns/Registration.h:71
  */
 static int Registration_registration_done(lua_State *L) {
   try {
@@ -86,7 +87,7 @@ static const struct luaL_Reg Registration_member_methods[] = {
 };
 
 static const struct luaL_Reg Registration_namespace_methods[] = {
-  {"Registration"      , Registration_Registration},
+  {"Registration"      , Registration_MakeInstance},
   {NULL, NULL},
 };
 

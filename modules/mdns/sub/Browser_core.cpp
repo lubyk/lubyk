@@ -8,39 +8,22 @@ using namespace mdns;
 
 /* ============================ Constructors     ====================== */
 
-/** mdns::Browser::Browser(rubyk::Worker *worker, const char *service_type, int lua_func_idx)
- * include/mdns/Browser.h:54
- */
-static int Browser_Browser(lua_State *L) {
-  try {
-    rubyk::Worker *worker = *((rubyk::Worker **)luaL_checkudata(L, 1, "rubyk.Worker"));
-    const char *service_type = luaL_checkstring(L, 2);
-    
-    luaL_checktype(L, 3, LUA_TFUNCTION);
-    // push on top
-    lua_pushvalue(L, 3);
-    int lua_func_idx = luaL_ref(L, LUA_REGISTRYINDEX);
-    
-    Browser * retval__ = new Browser(worker, service_type, lua_func_idx);
-    lua_pushclass<Browser>(L, retval__, "mdns.Browser");
-    return 1;
-  } catch (std::exception &e) {
-    return luaL_error(L, "mdns.Browser.Browser: %s", e.what());
-  } catch (...) {
-    return luaL_error(L, "mdns.Browser.Browser: Unknown exception");
-  }
-}
+
+
 
 /* ============================ Destructor       ====================== */
 
 static int Browser_destructor(lua_State *L) {
   Browser **userdata = (Browser**)luaL_checkudata(L, 1, "mdns.Browser");
+
   
   if (*userdata) delete *userdata;
   
   *userdata = NULL;
   return 0;
 }
+
+
 
 /* ============================ tostring         ====================== */
 
@@ -56,8 +39,26 @@ static int Browser__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
+/** static LuaStackSize mdns::Browser::MakeInstance(rubyk::Worker *worker, const char *service_type, lua_State *L)
+ * include/mdns/Browser.h:61
+ */
+static int Browser_MakeInstance(lua_State *L) {
+  try {
+    rubyk::Worker *worker = *((rubyk::Worker **)luaL_checkudata(L, 1, "rubyk.Worker"));
+    const char *service_type = luaL_checkstring(L, 2);
+    
+    LuaStackSize  retval__ = Browser::MakeInstance(worker, service_type, L);
+    return retval__;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mdns.Browser.MakeInstance: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mdns.Browser.MakeInstance: Unknown exception");
+  }
+}
+
+
 /** virtual void mdns::Browser::add_device(const Location &location)
- * include/mdns/Browser.h:64
+ * include/mdns/Browser.h:74
  */
 static int Browser_add_device(lua_State *L) {
   try {
@@ -74,7 +75,7 @@ static int Browser_add_device(lua_State *L) {
 
 
 /** virtual void mdns::Browser::remove_device(const char *name)
- * include/mdns/Browser.h:107
+ * include/mdns/Browser.h:116
  */
 static int Browser_remove_device(lua_State *L) {
   try {
@@ -91,7 +92,7 @@ static int Browser_remove_device(lua_State *L) {
 
 
 /** const char* mdns::Browser::service_type()
- * include/mdns/Browser.h:134
+ * include/mdns/Browser.h:143
  */
 static int Browser_service_type(lua_State *L) {
   try {
@@ -121,7 +122,7 @@ static const struct luaL_Reg Browser_member_methods[] = {
 };
 
 static const struct luaL_Reg Browser_namespace_methods[] = {
-  {"Browser"           , Browser_Browser},
+  {"Browser"           , Browser_MakeInstance},
   {NULL, NULL},
 };
 
