@@ -87,7 +87,7 @@ function should.create_many_threads_and_properly_gc()
 
   collectgarbage('collect')
   local after = collectgarbage('count')
-  assert_equal(before, after)
+  assert(after <= before)
 end
 
 function should.get_killed_before_starting()

@@ -37,13 +37,11 @@ function should.connect_when_remote_appears()
     sleep(10) -- make sure everything is ready before sending
   end
 
-  print("Connected")
-
   mars:notify('One')
   mars:notify('message from Mars')
 
   while not continue do
-    sleep(5)
+    sleep(10)
   end
 
   assert_equal(2, received_count)

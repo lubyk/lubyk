@@ -56,7 +56,7 @@ namespace rk {
 /** Listen for incoming messages on a given port.
  *
  * @dub lib_name:'Socket_core'
-        string_format:'%%s:%%d --> %%s:%%d'
+ *      string_format:'%%s:%%d --> %%s:%%d'
  *      string_args:'(*userdata)->local_host(), (*userdata)->local_port(), (*userdata)->remote_host(), (*userdata)->remote_port()'
  */
 class Socket : public LuaCallback

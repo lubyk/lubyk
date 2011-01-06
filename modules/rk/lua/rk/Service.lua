@@ -32,7 +32,7 @@ setmetatable(lib, {
   instance.pub = zmq.Pub()
 
   --======================================= REP server
-  instance.rep = zmq.Rep(function(...)
+  instance.rep = zmq.SimpleRep(function(...)
     -- we do not pass callback directly so that we can update the function with instance.callback=..
     if ... == rubyk.sub_port_url then
       -- rubyk special commands

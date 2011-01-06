@@ -25,16 +25,20 @@ static int Timer_Timer(lua_State *L) {
   }
 }
 
+
 /* ============================ Destructor       ====================== */
 
 static int Timer_destructor(lua_State *L) {
   Timer **userdata = (Timer**)luaL_checkudata(L, 1, "rk.Timer");
+
   
   if (*userdata) delete *userdata;
   
   *userdata = NULL;
   return 0;
 }
+
+
 
 /* ============================ tostring         ====================== */
 

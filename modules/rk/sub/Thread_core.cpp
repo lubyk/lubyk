@@ -24,16 +24,20 @@ static int Thread_Thread(lua_State *L) {
   }
 }
 
+
 /* ============================ Destructor       ====================== */
 
 static int Thread_destructor(lua_State *L) {
   Thread **userdata = (Thread**)luaL_checkudata(L, 1, "rk.Thread");
+
   
   if (*userdata) delete *userdata;
   
   *userdata = NULL;
   return 0;
 }
+
+
 
 /* ============================ tostring         ====================== */
 

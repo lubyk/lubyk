@@ -25,16 +25,20 @@ static int Socket_Socket(lua_State *L) {
   }
 }
 
+
 /* ============================ Destructor       ====================== */
 
 static int Socket_destructor(lua_State *L) {
   Socket **userdata = (Socket**)luaL_checkudata(L, 1, "rk.Socket");
+
   
   if (*userdata) delete *userdata;
   
   *userdata = NULL;
   return 0;
 }
+
+
 
 /* ============================ tostring         ====================== */
 

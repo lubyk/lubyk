@@ -28,11 +28,7 @@ setmetatable(lib, {
 
   --======================================= SUB client
 
-  instance.sub = zmq.Sub(function(sub)
-    -- setup function
-    -- connect via ipc call to ServiceBrowser so that the latter can send messages to connect.
-    sub:connect(string.format('inproc://%s', service_type))
-  end, function(...)
+  instance.sub = zmq.SimpleSub(function(...)
     local url, remote_service = ...
     if url == rubyk.add_service_url then
       -- resolve pending
@@ -56,6 +52,8 @@ setmetatable(lib, {
       instance.callback(...)
     end
   end)
+  -- so we can get connection commands from the service browser
+  instance.sub:connect(string.format('inproc://%s', service_type))
 
   --======================================= REQ client
   instance.req = zmq.Req()

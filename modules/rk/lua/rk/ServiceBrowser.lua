@@ -31,7 +31,7 @@ setmetatable(lib, {
   instance.pub = zmq.Pub(string.format('inproc://%s', service_type))
 
   instance.browser = mdns.Browser(service_type, function(remote_service)
-    if remote_service.add then
+    if remote_service.op == 'add' then
       if not instance.services[remote_service.name] then
         remote_service.url = string.format('tcp://%s:%i', remote_service.host, remote_service.port)
         instance.services[remote_service.name] = remote_service
