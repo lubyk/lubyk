@@ -16,11 +16,15 @@ function lib.Suite(name)
 end
 
 function lib.all()
+  lib.total_test = 0
+  lib.total_asrt = 0
+  lib.total_fail = 0
   if rawget(_G, 'mimas') then
     lib.gui()
   else
     for i, suite in ipairs(lib.suites) do
       lib.run_suite(suite)
+      lib.report_suite(suite)
     end
     lib.report()
   end
@@ -32,6 +36,7 @@ function lib.gui()
     app:post(function()
       for i, suite in ipairs(lib.suites) do
         lib.run_suite(suite)
+        lib.report_suite(suite)
       end
     end)
 
@@ -46,9 +51,7 @@ function lib.load_all(...)
     arg = {'modules'}
   end
   for _, mod in ipairs(arg) do
-    print('globing', mod)
     for file in rk.Dir(mod):glob('test/.+_test[.]lua$') do
-      print('loading', file)
       dofile(file)
     end
   end
@@ -90,50 +93,47 @@ function lib.run_suite(suite)
   suite._info.fail_count = fail_count
 end
 
-function lib.report()
-  local total_test = 0
-  local total_asrt = 0
-  local total_fail = 0
-  local ok_message = ''
-  for name, suite in pairs(lib.suites) do
-    if suite._info.fail_count == 0 then
-      ok_message = 'OK'
-    else
-      ok_message = string.format('%i Failure(s)', suite._info.fail_count)
-    end
-    print(string.format('==== %-18s (%2i tests): %s', suite._info.name, suite._info.test_count, ok_message))
-    total_test = total_test + suite._info.test_count
-    total_asrt = total_asrt + suite._info.assert_count
-    if suite._info.fail_count > 0 then
-      for name, err in pairs(suite._info.errors) do
-        total_fail = total_fail + 1
-        local hname = string.gsub(name, '_', ' ')
-        print(string.format('  %i. Should %s\n     %s\n', total_fail, hname, err))
-      end
+function lib.report_suite(suite)
+  lib.ok_message = ''
+  if suite._info.fail_count == 0 then
+    ok_message = 'OK'
+  else
+    ok_message = string.format('%i Failure(s)', suite._info.fail_count)
+  end
+  print(string.format('==== %-18s (%2i tests): %s', suite._info.name, suite._info.test_count, ok_message))
+  lib.total_test = lib.total_test + suite._info.test_count
+  lib.total_asrt = lib.total_asrt + suite._info.assert_count
+  if suite._info.fail_count > 0 then
+    for name, err in pairs(suite._info.errors) do
+      lib.total_fail = lib.total_fail + 1
+      local hname = string.gsub(name, '_', ' ')
+      print(string.format('  %i. Should %s\n     %s\n', lib.total_fail, hname, err))
     end
   end
+end
 
+function lib.report()
   print('\n')
 
-  if total_test == 0 then
+  if lib.total_test == 0 then
     print(string.format('No tests defined. Test functions must end with "_test.lua"'))
-  elseif total_fail == 0 then
-    if total_test == 1 then
-      print(string.format('Success! %i test passes (%i assertions).', total_test, total_asrt))
+  elseif lib.total_fail == 0 then
+    if lib.total_test == 1 then
+      print(string.format('Success! %i test passes (%i assertions).', lib.total_test, lib.total_asrt))
     else
-      print(string.format('Success! %i tests pass (%i assertions).', total_test, total_asrt))
+      print(string.format('Success! %i tests pass (%i assertions).', lib.total_test, lib.total_asrt))
     end
-  elseif total_test == 1 then
-    if total_fail == 1 then
-      print(string.format('Fail... %i failure / %i test', total_fail, total_test))
+  elseif lib.total_test == 1 then
+    if lib.total_fail == 1 then
+      print(string.format('Fail... %i failure / %i test', lib.total_fail, lib.total_test))
     else
-      print(string.format('Fail... %i failures / %i test', total_fail, total_test))
+      print(string.format('Fail... %i failures / %i test', lib.total_fail, lib.total_test))
     end
   else
-    if total_fail == 1 then
-      print(string.format('Fail... %i failure / %i tests', total_fail, total_test))
+    if lib.total_fail == 1 then
+      print(string.format('Fail... %i failure / %i tests', lib.total_fail, lib.total_test))
     else
-      print(string.format('Fail... %i failures / %i tests', total_fail, total_test))
+      print(string.format('Fail... %i failures / %i tests', lib.total_fail, lib.total_test))
     end
   end
   print('')

@@ -24,14 +24,6 @@ BINDINGS_PATH = (Pathname(__FILE__).dirname + '..').expand_path
 
 Dub.logger.level = Logger::WARN
 
-Dub::Lua.function_generator.custom_type(/lua_State /) do |type_def, arg, stack_pos|
-  if type_def =~ /lua_State\s*\*\s*L/
-    ""
-  else
-    "#{type_def} = L;"
-  end
-end
-
 # Dub::Lua.function_generator.custom_type(/QString/) do |type_def, arg, stack_pos|
 #   # Does this work for return types ?
 # end

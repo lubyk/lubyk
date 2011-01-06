@@ -72,11 +72,11 @@ public:
   size_t zmq_context_refcount_;
 
 public:
+
   Worker(lua_State *L)
    : lua_(L),
     zmq_context_(NULL),
     zmq_context_refcount_(0) {
-
     lock();
   }
 

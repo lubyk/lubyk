@@ -9,7 +9,7 @@ using namespace rubyk;
 /* ============================ Constructors     ====================== */
 
 /** rubyk::Worker::Worker(lua_State *L)
- * include/rubyk/worker.h:78
+ * include/rubyk/worker.h:79
  */
 static int Worker_Worker(lua_State *L) {
   try {
@@ -24,16 +24,20 @@ static int Worker_Worker(lua_State *L) {
   }
 }
 
+
 /* ============================ Destructor       ====================== */
 
 static int Worker_destructor(lua_State *L) {
   Worker **userdata = (Worker**)luaL_checkudata(L, 1, "rubyk.Worker");
+
   
   if (*userdata) delete *userdata;
   
   *userdata = NULL;
   return 0;
 }
+
+
 
 /* ============================ tostring         ====================== */
 

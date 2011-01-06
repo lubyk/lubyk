@@ -46,38 +46,40 @@ public:
 
 protected:
 
-  /** Set a callback. The stack should be
-   * 1. userdata from rk.Thread / rk.Socket / etc
-   * 2. function()
+  /** Set a callback. The top of the stack should be
+   * -2. userdata from rk.Thread / rk.Socket / mimas.Callback / etc
+   * -1. function()
    *
    * Thanks to Robert G. Jakabosky for the idea to use lua_xmove
    * instead of weak tables to store the function reference.
    */
   void set_lua_callback(lua_State *L) {
-    luaL_checktype(L, 2, LUA_TFUNCTION);
+    // ... <self> <func>
+    luaL_checktype(L, -1, LUA_TFUNCTION);
 
     // Create env table
     lua_newtable(L);
-
-    // Create new thread
+    // ... <self> <func> <env>
     lua_ = lua_newthread(L);
+    // ... <self> <func> <env> <thread>
 
     // Store the thread in the Thread/Socket's environment table so it is not GC too soon
-    // <self> <func> <fenv> <thread>
     luaL_ref(L, -2);
+    // ... <self> <func> <env>
 
     // Set fenv as environment table for "self" (Thread, Socket, etc).
-    // <self> <func> <fenv>
-    if (!lua_setfenv(L, 1)) {
+    if (!lua_setfenv(L, -3)) {
       throw Exception("Could not set function env on '%s'.", lua_typename(L, lua_type(L, 1)));
     }
+    // ... <self> <func>
 
     // Transfer copies of <self> and <func> to thread stack
-    lua_pushvalue(L, 2);
-    lua_pushvalue(L, 1);
-
-    // <self> <func> <func> <self>
+    lua_pushvalue(L, -1);
+    // ... <self> <func> <func>
+    lua_pushvalue(L, -3);
+    // ... <self> <func> <func> <self>
     lua_xmove(L, lua_, 2);
+    // ... <self> <func>
 
     // lua_ stack is now
     // <func> <self>
