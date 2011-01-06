@@ -71,10 +71,12 @@ static int PushButton_PushButton(lua_State *L) {
   }
 }
 
+
 /* ============================ Destructor       ====================== */
 
 static int PushButton_destructor(lua_State *L) {
   PushButton **userdata = (PushButton**)luaL_checkudata(L, 1, "mimas.PushButton");
+
   
   // custom destructor
   if (*userdata) (*userdata)->dub_destroy();
@@ -82,6 +84,8 @@ static int PushButton_destructor(lua_State *L) {
   *userdata = NULL;
   return 0;
 }
+
+
 
 
 // test if class is deleted

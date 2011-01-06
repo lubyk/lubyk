@@ -30,7 +30,6 @@
 #define RUBYK_INCLUDE_MIMAS_CALLBACK_H_
 
 #include "mimas/mimas.h"
-#include "lua_cpp_helper.h"
 
 #include <QtCore/QObject>
 #include <QtCore/QEvent>
@@ -48,9 +47,8 @@ class Slider;
  *
  * @dub lib_name:'Callback_core'
  *      ignore: 'callback'
- *      destructor: 'dub_destroy'
  */
-class Callback : public QObject, public rubyk::LuaCallback, public DeletableOutOfLua
+class Callback : public QObject, public rubyk::LuaCallback
 {
   Q_OBJECT
 public:
@@ -59,7 +57,7 @@ public:
 
   Callback(rubyk::Worker *worker)
    : rubyk::LuaCallback(worker),
-     self_in_registry_idx_(-1) {}
+     self_in_app_env_(-1) {}
 
   virtual ~Callback() {
     MIMAS_DEBUG_GC
@@ -147,31 +145,47 @@ private:
    */
   void set_callback_from_app(lua_State *L) {
     // push self
+    // ... <app> <func>
+    lua_getfenv(L, -2);
+    // ... <app> <func> <env>
     lua_pushclass<Callback>(L, this, "mimas.Callback");
-    // <app> <func> <clbk>
-    lua_pushvalue(L, 2);
-    // <app> <func> <clbk> <func>
-    lua_remove(L, 1); // remove app
-    lua_remove(L, 1); // remove function
-    /* Stack is now
-     * 1. self
-     * 2. function
-     */
-    lua_pushvalue(L, 1);
-    // avoid GC
-    self_in_registry_idx_ = luaL_ref(worker_->lua_, LUA_REGISTRYINDEX);
+    // ... <app> <func> <env> <clbk>
+    lua_pushvalue(L, -1);
+    // ... <app> <func> <env> <clbk> <clbk>
+    self_in_app_env_ = luaL_ref(L, -3);
+    // ... <app> <func> <env> <clbk>
+    lua_pushvalue(L, -3);
+    // ... <app> <func> <env> <clbk> <func>
     set_callback(L);
+    // ... <app> <func> <env> <clbk> <func>
+    lua_pushvalue(L, -3);
+    // ... <app> <func> <env> <clbk> <func> <env>
+    lua_xmove(L, lua_, 1);
+    // L = <app> <func> <env> <clbk> <func>
+    // lua_ = ... <env>
+    app_env_in_thread_ = luaL_ref(lua_, LUA_REGISTRYINDEX);
+    // lua_ = ...
+    lua_settop(L, -4);
+    // ... <app> <func>
   }
 
   void delete_on_call() {
-    if (self_in_registry_idx_ != -1) {
-      // remove from registry and let Lua GC
-      luaL_unref(worker_->lua_, LUA_REGISTRYINDEX, self_in_registry_idx_);
-      self_in_registry_idx_ = -1;
+    if (self_in_app_env_ != -1) {
+      lua_rawgeti(lua_, LUA_REGISTRYINDEX, app_env_in_thread_);
+      // ... <env>
+      luaL_unref(lua_, -1, self_in_app_env_);
+      // Lua will GC this
+      self_in_app_env_ = -1;
     }
   }
 
-  int self_in_registry_idx_;
+  /** To protect from garbage collection before app is deleted.
+   */
+  int self_in_app_env_;
+
+  /** To unprotect self from garbage collection when deleted.
+   */
+  int app_env_in_thread_;
 };
 
 } // mimas

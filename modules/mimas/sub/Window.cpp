@@ -23,10 +23,12 @@ static int Window_Window(lua_State *L) {
   }
 }
 
+
 /* ============================ Destructor       ====================== */
 
 static int Window_destructor(lua_State *L) {
   Window **userdata = (Window**)luaL_checkudata(L, 1, "mimas.Window");
+
   
   // custom destructor
   if (*userdata) (*userdata)->dub_destroy();
@@ -34,6 +36,8 @@ static int Window_destructor(lua_State *L) {
   *userdata = NULL;
   return 0;
 }
+
+
 
 
 // test if class is deleted

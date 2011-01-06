@@ -144,19 +144,17 @@ function should.style_slider(t)
 
   -- Make the slider move
   t.i = 0
-  print('Create timer')
-  --t.timer = rk.Timer(100, function()
-  --  --- BUGS ---
-  --  print('Start timer')
-  --  t.i = t.i + 0.05
-  --  local val = 0.5 + 0.5 * math.sin(t.i)
-  --  app:post(function()
-  --    -- BUG...
-  --    t.slider3:setStyle(string.format('color:hsv(%i, 255, 255)', val * 360))
-  --    t.slider3:setValue(val)
-  --  end)
-  --end)
-  --t.timer:start()
+  t.timer = rk.Timer(100, function()
+    --- BUGS ---
+    t.i = t.i + 0.05
+    local val = 0.5 + 0.5 * math.sin(t.i)
+    app:post(function()
+      -- BUG...
+      t.slider3:setStyle(string.format('color:hsv(%i, 255, 255)', val * 360))
+      t.slider3:setValue(val)
+    end)
+  end)
+  t.timer:start()
 
   t.thread = rk.Thread(function()
     sleep(3000)

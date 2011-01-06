@@ -36,10 +36,12 @@ static int Slider_Slider(lua_State *L) {
   }
 }
 
+
 /* ============================ Destructor       ====================== */
 
 static int Slider_destructor(lua_State *L) {
   Slider **userdata = (Slider**)luaL_checkudata(L, 1, "mimas.Slider");
+
   
   // custom destructor
   if (*userdata) (*userdata)->dub_destroy();
@@ -47,6 +49,8 @@ static int Slider_destructor(lua_State *L) {
   *userdata = NULL;
   return 0;
 }
+
+
 
 
 // test if class is deleted

@@ -57,10 +57,12 @@ static int VBoxLayout_VBoxLayout(lua_State *L) {
   }
 }
 
+
 /* ============================ Destructor       ====================== */
 
 static int VBoxLayout_destructor(lua_State *L) {
   VBoxLayout **userdata = (VBoxLayout**)luaL_checkudata(L, 1, "mimas.VBoxLayout");
+
   
   // custom destructor
   if (*userdata) (*userdata)->dub_destroy();
@@ -68,6 +70,8 @@ static int VBoxLayout_destructor(lua_State *L) {
   *userdata = NULL;
   return 0;
 }
+
+
 
 
 // test if class is deleted

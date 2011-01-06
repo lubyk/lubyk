@@ -46,9 +46,11 @@ static char arg2[] = "Plastique";
 static char *app_argv[] = {&arg0[0], &arg1[0], &arg2[0], NULL};
 static int   app_argc   = (int)(sizeof(app_argv) / sizeof(app_argv[0])) - 1;
 
-/** Application (starts the GUI and manages the event loop).
+/** Application (starts the GUI and manages the event loop). We do not
+ * really need to use DeletableOutOfLua here but we never know.
  *
  * @dub lib_name:'Application_core'
+ *      constructor: 'MakeApplication'
  *      destructor: 'dub_destroy'
  */
 class Application : public QApplication, public DeletableOutOfLua
@@ -57,10 +59,26 @@ class Application : public QApplication, public DeletableOutOfLua
 
   rubyk::Worker *worker_;
 public:
+  /** Private constructor. Use MakeApplication instead.
+   */
   Application(rubyk::Worker *worker)
    : QApplication(app_argc, app_argv),
      worker_(worker),
      lua_events_processor_(worker) {}
+
+  /** Custom constructor so that we can set the env table that is
+   * needed by mimas.Callback.
+   */
+  static LuaStackSize MakeApplication(rubyk::Worker *worker, lua_State *L) {
+   Application *app = new Application(worker);
+
+   lua_pushclass2<Application>(L, app, "mimas.Application");
+   // new env table
+   lua_newtable(L);
+   // ... <app> <env>
+   lua_setfenv(L, -2);
+   return 1;
+  }
 
   ~Application() {
     MIMAS_DEBUG_GC
@@ -96,7 +114,6 @@ public:
   void setStyleSheet(const char *text) {
     QApplication::setStyleSheet(QString(text));
   }
-
 private:
   class LuaEventsProcessor : public QObject
   {

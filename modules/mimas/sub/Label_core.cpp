@@ -71,10 +71,12 @@ static int Label_Label(lua_State *L) {
   }
 }
 
+
 /* ============================ Destructor       ====================== */
 
 static int Label_destructor(lua_State *L) {
   Label **userdata = (Label**)luaL_checkudata(L, 1, "mimas.Label");
+
   
   // custom destructor
   if (*userdata) (*userdata)->dub_destroy();
@@ -82,6 +84,8 @@ static int Label_destructor(lua_State *L) {
   *userdata = NULL;
   return 0;
 }
+
+
 
 
 // test if class is deleted

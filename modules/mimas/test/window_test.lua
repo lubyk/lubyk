@@ -11,7 +11,6 @@
 require 'rubyk'
 
 local should = test.Suite('mimas')
-local app = mimas.Application()
 
 function should.display_window(t)
   -- we use the test env to protect from gc

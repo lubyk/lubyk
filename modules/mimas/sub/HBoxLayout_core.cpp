@@ -57,10 +57,12 @@ static int HBoxLayout_HBoxLayout(lua_State *L) {
   }
 }
 
+
 /* ============================ Destructor       ====================== */
 
 static int HBoxLayout_destructor(lua_State *L) {
   HBoxLayout **userdata = (HBoxLayout**)luaL_checkudata(L, 1, "mimas.HBoxLayout");
+
   
   // custom destructor
   if (*userdata) (*userdata)->dub_destroy();
@@ -68,6 +70,8 @@ static int HBoxLayout_destructor(lua_State *L) {
   *userdata = NULL;
   return 0;
 }
+
+
 
 
 // test if class is deleted

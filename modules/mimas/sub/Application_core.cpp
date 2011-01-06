@@ -8,26 +8,14 @@ using namespace mimas;
 
 /* ============================ Constructors     ====================== */
 
-/** mimas::Application::Application(rubyk::Worker *worker)
- * include/mimas/Application.h:63
- */
-static int Application_Application(lua_State *L) {
-  try {
-    rubyk::Worker *worker = *((rubyk::Worker **)luaL_checkudata(L, 1, "rubyk.Worker"));
-    Application * retval__ = new Application(worker);
-    lua_pushclass2<Application>(L, retval__, "mimas.Application");
-    return 1;
-  } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Application.Application: %s", e.what());
-  } catch (...) {
-    return luaL_error(L, "mimas.Application.Application: Unknown exception");
-  }
-}
+
+
 
 /* ============================ Destructor       ====================== */
 
 static int Application_destructor(lua_State *L) {
   Application **userdata = (Application**)luaL_checkudata(L, 1, "mimas.Application");
+
   
   // custom destructor
   if (*userdata) (*userdata)->dub_destroy();
@@ -35,6 +23,8 @@ static int Application_destructor(lua_State *L) {
   *userdata = NULL;
   return 0;
 }
+
+
 
 
 // test if class is deleted
@@ -63,8 +53,25 @@ static int Application__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
+/** static LuaStackSize mimas::Application::MakeApplication(rubyk::Worker *worker, lua_State *L)
+ * include/mimas/Application.h:72
+ */
+static int Application_MakeApplication(lua_State *L) {
+  try {
+    rubyk::Worker *worker = *((rubyk::Worker **)luaL_checkudata(L, 1, "rubyk.Worker"));
+    
+    LuaStackSize  retval__ = Application::MakeApplication(worker, L);
+    return retval__;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Application.MakeApplication: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Application.MakeApplication: Unknown exception");
+  }
+}
+
+
 /** int mimas::Application::exec()
- * include/mimas/Application.h:77
+ * include/mimas/Application.h:95
  */
 static int Application_exec(lua_State *L) {
   try {
@@ -82,7 +89,7 @@ static int Application_exec(lua_State *L) {
 
 
 /** void mimas::Application::post(lua_State *L)
- * include/mimas/Application.h:86
+ * include/mimas/Application.h:104
  */
 static int Application_post(lua_State *L) {
   try {
@@ -100,7 +107,7 @@ static int Application_post(lua_State *L) {
 
 
 /** void mimas::Application::quit()
- * include/mimas/Application.h:92
+ * include/mimas/Application.h:110
  */
 static int Application_quit(lua_State *L) {
   try {
@@ -117,7 +124,7 @@ static int Application_quit(lua_State *L) {
 
 
 /** void mimas::Application::setStyleSheet(const char *text)
- * include/mimas/Application.h:96
+ * include/mimas/Application.h:114
  */
 static int Application_setStyleSheet(lua_State *L) {
   try {
@@ -150,7 +157,7 @@ static const struct luaL_Reg Application_member_methods[] = {
 };
 
 static const struct luaL_Reg Application_namespace_methods[] = {
-  {"Application"       , Application_Application},
+  {"Application"       , Application_MakeApplication},
   {NULL, NULL},
 };
 
