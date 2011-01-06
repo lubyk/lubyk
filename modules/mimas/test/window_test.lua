@@ -10,7 +10,7 @@
 --]]------------------------------------------------------
 require 'rubyk'
 
-local should = test.Suite('mimas')
+local should = test.Suite('mimas.Window')
 
 function should.display_window(t)
   -- we use the test env to protect from gc

@@ -32,6 +32,16 @@ end
 
 function lib.gui()
   if lib.suites[1] then
+    -- test threads first (or they fail because of mimas widgets creation)
+    for i, suite in ipairs(lib.suites) do
+      if string.match('rk.Thread', suite._info.name) then
+        lib.run_suite(suite)
+        lib.report_suite(suite)
+        table.remove(lib.suites, i)
+        break
+      end
+    end
+
     app = mimas.Application()
     app:post(function()
       for i, suite in ipairs(lib.suites) do
@@ -206,10 +216,14 @@ end
 function assert_error(pattern, func)
   local ok, err = pcall(func)
   lib.assert(not ok, string.format('Should raise an error but none found.'))
-  lib.assert(string.find(err, pattern), string.format('Error expected to match %s but was %s', format_arg(pattern), format_arg(err)))
+  lib.assert(string.find(err, pattern), string.format('Error expected to match %s but was %s.', format_arg(pattern), format_arg(err)))
 end
 
 function assert_pass(func)
   local ok, err = pcall(func)
   lib.assert(ok, string.format('Should not raise an error but %s found.', err))
+end
+
+function assert_less_then(expected, value)
+  lib.assert(value < expected, string.format('Should be less then %f but was %f.', expected, value))
 end

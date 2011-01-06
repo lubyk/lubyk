@@ -87,14 +87,13 @@ function should.create_many_threads_and_properly_gc()
 
   collectgarbage('collect')
   local after = collectgarbage('count')
-  assert(after <= before)
+  assert_equal(before, after)
 end
 
 function should.get_killed_before_starting()
   local run_once = false
   local thread = rk.Thread(function(runner)
     run_once = true
-    print(runner)
   end)
 
   -- stop

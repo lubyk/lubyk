@@ -158,6 +158,7 @@ function should.style_slider(t)
 
   t.thread = rk.Thread(function()
     sleep(3000)
+    t.timer:stop()
     t.win:close()
   end)
   t.win:show()
