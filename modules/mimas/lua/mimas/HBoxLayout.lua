@@ -6,8 +6,9 @@
   Horizontal layout of GUI widgets.
 
 --]]------------------------------------------------------
-require 'mimas.HBoxLayout_core'
-local constr = mimas.HBoxLayout
+require 'mimas'
+local constr = mimas.HBoxLayout_core
+mimas.HBoxLayout_core = nil
 local mt = nil
 function mimas.HBoxLayout(parent)
   local instance

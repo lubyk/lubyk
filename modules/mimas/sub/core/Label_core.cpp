@@ -337,7 +337,7 @@ static const struct luaL_Reg Label_member_methods[] = {
 };
 
 static const struct luaL_Reg Label_namespace_methods[] = {
-  {"Label"             , Label_Label},
+  {"Label_core"        , Label_Label},
   {NULL, NULL},
 };
 

@@ -72,8 +72,14 @@ end
     end
     klass.header = "#{mod_name}/#{class_name}.h"
 
-    File.open(BINDINGS_PATH + "modules/#{mod_name}/sub/#{klass.lib_name}.cpp", 'wb') do |f|
-      f.puts klass
+    if mod_name == 'mimas'
+      File.open(BINDINGS_PATH + "modules/#{mod_name}/sub/core/#{klass.lib_name}.cpp", 'wb') do |f|
+        f.puts klass
+      end
+    else
+      File.open(BINDINGS_PATH + "modules/#{mod_name}/sub/#{klass.lib_name}.cpp", 'wb') do |f|
+        f.puts klass
+      end
     end
   end
 

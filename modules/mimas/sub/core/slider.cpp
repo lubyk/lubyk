@@ -29,7 +29,7 @@
 
 #include "mimas/Slider.h"
 
-#include <QMouseEvent>
+#include <QtGui/QMouseEvent>
 
 #define SLIDER_BORDER_WIDTH 2
 

@@ -31,7 +31,7 @@
 #include "mimas/Label.h"
 #include "mimas/Slider.h"
 
-#include <QPainter>
+#include <QtGui/QPainter>
 
 #define SLIDER_BORDER_WIDTH 2
 #define WIDGET_THUMB_SIZE 14

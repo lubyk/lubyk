@@ -10,7 +10,7 @@ using namespace mimas;
 
 
 /** mimas::PushButton::PushButton(const char *title=NULL)
- * include/mimas/PushButton.h:52
+ * include/mimas/PushButton.h:55
  */
 static int PushButton_PushButton1(lua_State *L) {
   try {
@@ -33,7 +33,7 @@ static int PushButton_PushButton1(lua_State *L) {
 
 
 /** mimas::PushButton::PushButton(const char *title, QWidget *parent)
- * include/mimas/PushButton.h:55
+ * include/mimas/PushButton.h:58
  */
 static int PushButton_PushButton2(lua_State *L) {
   try {
@@ -114,8 +114,26 @@ static int PushButton__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
+/** void mimas::PushButton::add_to_env(lua_State *L)
+ * include/mimas/PushButton.h:117
+ */
+static int PushButton_add_to_env(lua_State *L) {
+  try {
+    PushButton *self__ = *((PushButton**)luaL_checkudata(L, 1, "mimas.PushButton"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.PushButton in add_to_env");
+    
+    self__->add_to_env(L);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.PushButton.add_to_env: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.PushButton.add_to_env: Unknown exception");
+  }
+}
+
+
 /** QString mimas::PushButton::cssClass() const 
- * include/mimas/PushButton.h:63
+ * include/mimas/PushButton.h:66
  */
 static int PushButton_cssClass(lua_State *L) {
   try {
@@ -133,7 +151,7 @@ static int PushButton_cssClass(lua_State *L) {
 
 
 /** float mimas::PushButton::hue()
- * include/mimas/PushButton.h:105
+ * include/mimas/PushButton.h:108
  */
 static int PushButton_hue(lua_State *L) {
   try {
@@ -151,7 +169,7 @@ static int PushButton_hue(lua_State *L) {
 
 
 /** void mimas::PushButton::move(int x, int y)
- * include/mimas/PushButton.h:88
+ * include/mimas/PushButton.h:91
  */
 static int PushButton_move(lua_State *L) {
   try {
@@ -170,7 +188,7 @@ static int PushButton_move(lua_State *L) {
 
 
 /** LuaStackSize mimas::PushButton::name(lua_State *L)
- * include/mimas/PushButton.h:77
+ * include/mimas/PushButton.h:80
  */
 static int PushButton_name(lua_State *L) {
   try {
@@ -188,7 +206,7 @@ static int PushButton_name(lua_State *L) {
 
 
 /** QObject* mimas::PushButton::object()
- * include/mimas/PushButton.h:71
+ * include/mimas/PushButton.h:74
  */
 static int PushButton_object(lua_State *L) {
   try {
@@ -206,7 +224,7 @@ static int PushButton_object(lua_State *L) {
 
 
 /** void mimas::PushButton::resize(int w, int h)
- * include/mimas/PushButton.h:92
+ * include/mimas/PushButton.h:95
  */
 static int PushButton_resize(lua_State *L) {
   try {
@@ -225,7 +243,7 @@ static int PushButton_resize(lua_State *L) {
 
 
 /** void mimas::PushButton::setHue(float hue)
- * include/mimas/PushButton.h:100
+ * include/mimas/PushButton.h:103
  */
 static int PushButton_setHue(lua_State *L) {
   try {
@@ -243,7 +261,7 @@ static int PushButton_setHue(lua_State *L) {
 
 
 /** void mimas::PushButton::setName(const char *name)
- * include/mimas/PushButton.h:84
+ * include/mimas/PushButton.h:87
  */
 static int PushButton_setName(lua_State *L) {
   try {
@@ -261,7 +279,7 @@ static int PushButton_setName(lua_State *L) {
 
 
 /** void mimas::PushButton::setStyle(const char *text)
- * include/mimas/PushButton.h:96
+ * include/mimas/PushButton.h:99
  */
 static int PushButton_setStyle(lua_State *L) {
   try {
@@ -279,7 +297,7 @@ static int PushButton_setStyle(lua_State *L) {
 
 
 /** QWidget* mimas::PushButton::widget()
- * include/mimas/PushButton.h:67
+ * include/mimas/PushButton.h:70
  */
 static int PushButton_widget(lua_State *L) {
   try {
@@ -301,6 +319,7 @@ static int PushButton_widget(lua_State *L) {
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg PushButton_member_methods[] = {
+  {"add_to_env"        , PushButton_add_to_env},
   {"cssClass"          , PushButton_cssClass},
   {"hue"               , PushButton_hue},
   {"move"              , PushButton_move},
@@ -318,7 +337,7 @@ static const struct luaL_Reg PushButton_member_methods[] = {
 };
 
 static const struct luaL_Reg PushButton_namespace_methods[] = {
-  {"PushButton"        , PushButton_PushButton},
+  {"PushButton_core"   , PushButton_PushButton},
   {NULL, NULL},
 };
 

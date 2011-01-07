@@ -151,7 +151,7 @@ static const struct luaL_Reg Thread_member_methods[] = {
 };
 
 static const struct luaL_Reg Thread_namespace_methods[] = {
-  {"Thread"            , Thread_Thread},
+  {"Thread_core"       , Thread_Thread},
   {NULL, NULL},
 };
 

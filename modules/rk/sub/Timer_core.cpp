@@ -152,7 +152,7 @@ static const struct luaL_Reg Timer_member_methods[] = {
 };
 
 static const struct luaL_Reg Timer_namespace_methods[] = {
-  {"Timer"             , Timer_Timer},
+  {"Timer_core"        , Timer_Timer},
   {NULL, NULL},
 };
 

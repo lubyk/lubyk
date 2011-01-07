@@ -7,9 +7,9 @@
 
 --]]------------------------------------------------------
 require 'mimas'
-require 'mimas.Label_core'
 
-local constr = mimas.Label
+local constr = mimas.Label_core
+mimas.Label_core = nil
 local mt = nil
 function mimas.Label(title, parent)
   local instance

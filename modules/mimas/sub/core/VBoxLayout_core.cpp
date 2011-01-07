@@ -169,7 +169,7 @@ static const struct luaL_Reg VBoxLayout_member_methods[] = {
 };
 
 static const struct luaL_Reg VBoxLayout_namespace_methods[] = {
-  {"VBoxLayout"        , VBoxLayout_VBoxLayout},
+  {"VBoxLayout_core"   , VBoxLayout_VBoxLayout},
   {NULL, NULL},
 };
 

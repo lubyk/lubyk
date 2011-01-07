@@ -40,7 +40,7 @@ static int Registration__tostring(lua_State *L) {
 
 
 /** static LuaStackSize mdns::Registration::MakeInstance(rubyk::Worker *worker, const char *service_type, const char *name, uint port, lua_State *L)
- * include/mdns/Registration.h:59
+ * include/mdns/Registration.h:58
  */
 static int Registration_MakeInstance(lua_State *L) {
   try {
@@ -60,7 +60,7 @@ static int Registration_MakeInstance(lua_State *L) {
 
 
 /** virtual void mdns::Registration::registration_done()
- * include/mdns/Registration.h:71
+ * include/mdns/Registration.h:70
  */
 static int Registration_registration_done(lua_State *L) {
   try {
@@ -87,7 +87,7 @@ static const struct luaL_Reg Registration_member_methods[] = {
 };
 
 static const struct luaL_Reg Registration_namespace_methods[] = {
-  {"Registration"      , Registration_MakeInstance},
+  {"Registration_core" , Registration_MakeInstance},
   {NULL, NULL},
 };
 

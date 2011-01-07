@@ -6,8 +6,9 @@
   Vertical layout of GUI widgets.
 
 --]]------------------------------------------------------
-require 'mimas.VBoxLayout_core'
-local constr = mimas.VBoxLayout
+require 'mimas'
+local constr = mimas.VBoxLayout_core
+mimas.VBoxLayout_core = nil
 local mt = nil
 function mimas.VBoxLayout(parent)
   local instance

@@ -26,11 +26,57 @@
 
   ==============================================================================
 */
-#include "rubyk/lua.h"
-#include "rubyk/worker.h"
-#include "rubyk/lua_callback.h"
-#include "rubyk/lua_userdata_env.h"
-#include "rubyk/exception.h"
-#include "lua_cpp_helper.h"
+#ifndef RUBYK_INCLUDE_RUBYK_LUA_USERDATA_PROPS_H_
+#define RUBYK_INCLUDE_RUBYK_LUA_USERDATA_PROPS_H_
 
-typedef double Real;
+#include "rubyk.h"
+
+namespace rubyk {
+/** Lets Lua set/get properties on the userdata.
+ */
+class LuaUserdataEnv
+{
+  bool has_env_;
+public:
+  LuaUserdataEnv()
+   : has_env_(false) {}
+
+  ~LuaUserdataEnv() {}
+
+  // This method inserts the given object to this environment table
+  // Stack should be
+  // ... <self> <value>
+  void add_to_env(lua_State *L) {
+    int top = lua_gettop(L);
+    if (top < 2) {
+      throw Exception("Missing value to add_to_env.");
+    }
+    get_env(L);
+    // ... <self> <value> <env>
+    lua_pushvalue(L, -2);
+    // ... <self> <value> <env> <value>
+    luaL_ref(L, -2);
+    // ... <self> <value> <env>
+    lua_pop(L, 1);
+    // ... <self> <value>
+  }
+
+  protected:
+    void get_env(lua_State *L, int self_pos = -2) {
+      if (!has_env_) {
+        lua_newtable(L);
+        // ... <self> <value> <env>
+        lua_pushvalue(L, -1);
+        // ... <self> <value> <env> <env>
+        lua_setfenv(L, -4);
+        // ... <self> <value> <env>
+      } else {
+        lua_getfenv(L, -2);
+        // ... <self> <value> <env>
+      }
+    }
+};
+
+} // rubyk
+
+#endif // RUBYK_INCLUDE_RUBYK_LUA_USERDATA_PROPS_H_

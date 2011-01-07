@@ -6,10 +6,11 @@
   Async slider.
 
 --]]------------------------------------------------------
-require 'mimas.Slider_core'
+require 'mimas'
 require 'worker'
 local worker = worker
-local constr = mimas.Slider
+local constr = mimas.Slider_core
+mimas.Slider_core = nil
 function mimas.Slider(slider_type, func, parent)
   local instance
   if type(func) == 'userdata' then

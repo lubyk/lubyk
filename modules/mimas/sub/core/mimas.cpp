@@ -61,6 +61,11 @@ static const struct luaL_Reg lib_functions[] = {
   {NULL, NULL},
 };
 
+int luaload_mimas_Application_core(lua_State *L);
+int luaload_mimas_Callback_core(lua_State *L);
+int luaload_mimas_Window(lua_State *L);
+int luaload_mimas_PushButton_core(lua_State *L);
+
 extern "C" int luaopen_mimas_core(lua_State *L) {
   // declare metatables for cast signature mimas.QObject and mimas.QWidget
   luaL_newmetatable(L, "mimas.QObject");
@@ -69,5 +74,9 @@ extern "C" int luaopen_mimas_core(lua_State *L) {
 
   // register functions
   luaL_register(L, "mimas", lib_functions);
+  luaload_mimas_Application_core(L);
+  luaload_mimas_Callback_core(L);
+  luaload_mimas_Window(L);
+  luaload_mimas_PushButton_core(L);
   return 0;
 }

@@ -169,7 +169,7 @@ static const struct luaL_Reg HBoxLayout_member_methods[] = {
 };
 
 static const struct luaL_Reg HBoxLayout_namespace_methods[] = {
-  {"HBoxLayout"        , HBoxLayout_HBoxLayout},
+  {"HBoxLayout_core"   , HBoxLayout_HBoxLayout},
   {NULL, NULL},
 };
 

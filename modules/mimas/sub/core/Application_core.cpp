@@ -157,7 +157,7 @@ static const struct luaL_Reg Application_member_methods[] = {
 };
 
 static const struct luaL_Reg Application_namespace_methods[] = {
-  {"Application"       , Application_MakeApplication},
+  {"Application_core"  , Application_MakeApplication},
   {NULL, NULL},
 };
 

@@ -29,6 +29,9 @@
 #ifndef RUBYK_INCLUDE_MIMAS_PUSH_BUTTON_H_
 #define RUBYK_INCLUDE_MIMAS_PUSH_BUTTON_H_
 
+#include "rubyk.h"
+using namespace rubyk;
+
 #include "mimas/mimas.h"
 #include <QtGui/QPushButton>
 
@@ -41,7 +44,7 @@ namespace mimas {
  * @dub lib_name:'PushButton_core'
  *      destructor: 'dub_destroy'
  */
-class PushButton : public QPushButton, public DeletableOutOfLua
+class PushButton : public QPushButton, public DeletableOutOfLua, public LuaUserdataEnv
 {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
@@ -107,6 +110,13 @@ public:
   }
 
   // =============================================================
+
+  // This method inserts the given object to this environment table
+  // Stack should be
+  // ... <self> <value>
+  void add_to_env(lua_State *L) {
+    LuaUserdataEnv::add_to_env(L);
+  }
 private:
   float hue_;
 };

@@ -122,7 +122,7 @@ static const struct luaL_Reg Browser_member_methods[] = {
 };
 
 static const struct luaL_Reg Browser_namespace_methods[] = {
-  {"Browser"           , Browser_MakeInstance},
+  {"Browser_core"      , Browser_MakeInstance},
   {NULL, NULL},
 };
 
