@@ -71,7 +71,7 @@ static int Application_MakeApplication(lua_State *L) {
 
 
 /** int mimas::Application::exec()
- * include/mimas/Application.h:95
+ * include/mimas/Application.h:97
  */
 static int Application_exec(lua_State *L) {
   try {
@@ -89,7 +89,7 @@ static int Application_exec(lua_State *L) {
 
 
 /** void mimas::Application::post(lua_State *L)
- * include/mimas/Application.h:104
+ * include/mimas/Application.h:106
  */
 static int Application_post(lua_State *L) {
   try {
@@ -107,7 +107,7 @@ static int Application_post(lua_State *L) {
 
 
 /** void mimas::Application::quit()
- * include/mimas/Application.h:110
+ * include/mimas/Application.h:112
  */
 static int Application_quit(lua_State *L) {
   try {
@@ -124,7 +124,7 @@ static int Application_quit(lua_State *L) {
 
 
 /** void mimas::Application::setStyleSheet(const char *text)
- * include/mimas/Application.h:114
+ * include/mimas/Application.h:116
  */
 static int Application_setStyleSheet(lua_State *L) {
   try {
@@ -157,7 +157,7 @@ static const struct luaL_Reg Application_member_methods[] = {
 };
 
 static const struct luaL_Reg Application_namespace_methods[] = {
-  {"Application_core"  , Application_MakeApplication},
+  {"Application"       , Application_MakeApplication},
   {NULL, NULL},
 };
 

@@ -87,7 +87,7 @@ static const struct luaL_Reg Registration_member_methods[] = {
 };
 
 static const struct luaL_Reg Registration_namespace_methods[] = {
-  {"Registration_core" , Registration_MakeInstance},
+  {"Registration"      , Registration_MakeInstance},
   {NULL, NULL},
 };
 

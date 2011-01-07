@@ -102,7 +102,7 @@ static const struct luaL_Reg Callback_member_methods[] = {
 };
 
 static const struct luaL_Reg Callback_namespace_methods[] = {
-  {"Callback_core"     , Callback_Callback},
+  {"Callback"          , Callback_Callback},
   {NULL, NULL},
 };
 

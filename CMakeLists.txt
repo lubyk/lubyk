@@ -11,6 +11,13 @@ set(RUBYK_VERSION "0.8")
 
 # ==============================================================================
 #
+#  Options
+#
+# ==============================================================================
+set(QT_SRC_PATH "" CACHE STRING    "Use static qt build (provide qt src path)")
+
+# ==============================================================================
+#
 #  Platform guessing
 #
 # ==============================================================================
@@ -122,3 +129,17 @@ add_dependencies (test_all modules)
 #
 # ==============================================================================
 add_custom_target(head rm -rf ${CMAKE_BINARY_DIR}/doc/xml && make doc && make dub && cmake .. && make modules)
+
+
+message (STATUS "===========================================================================")
+message (STATUS "   RUBYK build configuration settings                                      ")
+message (STATUS "===========================================================================")
+message (STATUS "   Platform                                                       = ${PLAT}")
+message (STATUS "   Release                                                        = ${RELEASE}")
+if(QT_SRC_PATH STREQUAL "")
+message (STATUS "   QT_SRC_PATH              (build using Qt frameworks)           = ${QT_SRC_PATH}")
+else(QT_SRC_PATH STREQUAL "")
+message (STATUS "   QT_SRC_PATH                                                    = ${QT_SRC_PATH}")
+endif(QT_SRC_PATH STREQUAL "")
+message (STATUS "   Type: 'ccmake <path to rubyk>' to change settings")
+message (STATUS "===========================================================================")

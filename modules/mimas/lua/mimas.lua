@@ -6,5 +6,6 @@
   Portable GUI scripted in Lua and compatible with Rubyk.
 
 --]]------------------------------------------------------
-mimas = Autoload('mimas')
 require 'mimas.core'
+mimas_core = mimas
+mimas = Autoload('mimas')

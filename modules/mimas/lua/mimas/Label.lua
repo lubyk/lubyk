@@ -6,10 +6,7 @@
   ...
 
 --]]------------------------------------------------------
-require 'mimas'
-
-local constr = mimas.Label_core
-mimas.Label_core = nil
+local constr = mimas_core.Label
 local mt = nil
 function mimas.Label(title, parent)
   local instance

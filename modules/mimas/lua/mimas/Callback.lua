@@ -6,11 +6,9 @@
   GUI event callback (can be connected to widget signals).
 
 --]]------------------------------------------------------
-require 'mimas'
 require 'worker'
 local worker = worker
-local constr = mimas.Callback_core
-mimas.Callback_core = nil
+local constr = mimas_core.Callback
 local mt = nil
 function mimas.Callback(func)
   local instance = constr(worker)

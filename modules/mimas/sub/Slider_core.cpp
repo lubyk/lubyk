@@ -397,7 +397,7 @@ static const struct luaL_Reg Slider_member_methods[] = {
 };
 
 static const struct luaL_Reg Slider_namespace_methods[] = {
-  {"Slider_core"       , Slider_Slider},
+  {"Slider"            , Slider_Slider},
   {NULL, NULL},
 };
 

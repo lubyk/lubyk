@@ -70,14 +70,16 @@ public:
    * needed by mimas.Callback.
    */
   static LuaStackSize MakeApplication(rubyk::Worker *worker, lua_State *L) {
-   Application *app = new Application(worker);
+    // avoid qt_menu.nib loading
+    QApplication::setAttribute(Qt::AA_MacPluginApplication, true);
+    Application *app = new Application(worker);
 
-   lua_pushclass2<Application>(L, app, "mimas.Application");
-   // new env table
-   lua_newtable(L);
-   // ... <app> <env>
-   lua_setfenv(L, -2);
-   return 1;
+    lua_pushclass2<Application>(L, app, "mimas.Application");
+    // new env table
+    lua_newtable(L);
+    // ... <app> <env>
+    lua_setfenv(L, -2);
+    return 1;
   }
 
   ~Application() {

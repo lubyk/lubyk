@@ -6,10 +6,7 @@
   ...
 
 --]]------------------------------------------------------
-require 'mimas'
-
-local constr = mimas.PushButton_core
-mimas.PushButton_core = nil
+local constr = mimas_core.PushButton
 local mt = nil
 function mimas.PushButton(title, parent, func)
   local instance

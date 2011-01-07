@@ -370,7 +370,7 @@ static const struct luaL_Reg Socket_member_methods[] = {
 };
 
 static const struct luaL_Reg Socket_namespace_methods[] = {
-  {"Socket_core"       , Socket_Socket},
+  {"Socket"            , Socket_Socket},
   {NULL, NULL},
 };
 

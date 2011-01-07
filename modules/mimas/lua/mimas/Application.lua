@@ -6,11 +6,9 @@
   GUI Application.
 
 --]]------------------------------------------------------
-require 'mimas'
 require 'worker'
 local worker = worker
-local constr = mimas.Application_core
-mimas.Application_core = nil
+local constr = mimas_core.Application
 function mimas.Application()
   local instance = constr(worker)
   instance:setStyleSheet([[

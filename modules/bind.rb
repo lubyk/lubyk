@@ -37,7 +37,11 @@ lua_pushvalue(L, #{stack_pos});
 }
 end
 
-{
+# Special bindings file for mimas: we load everything in the call for mimas.core
+mimas_declare = []
+mimas_load = []
+
+modules = {
   'rk'    => %w{Socket Timer Thread},
   'rubyk' => %w{Worker},
   'mdns'  => %w{Browser Registration},
@@ -53,6 +57,7 @@ end
 
   namespace = Dub.parse(XML_DOC_PATH + "namespace#{mod_name}.xml")[mod_name.to_sym]
   Dub::Lua.bind(namespace)
+
   # Dub::Lua.function_generator.template_path = (BINDINGS_PATH + 'lua_function.cpp.erb')
 
   # ==============================================================================
@@ -72,14 +77,13 @@ end
     end
     klass.header = "#{mod_name}/#{class_name}.h"
 
+    File.open(BINDINGS_PATH + "modules/#{mod_name}/sub/#{klass.lib_name}.cpp", 'wb') do |f|
+      f.puts klass
+    end
+
     if mod_name == 'mimas'
-      File.open(BINDINGS_PATH + "modules/#{mod_name}/sub/core/#{klass.lib_name}.cpp", 'wb') do |f|
-        f.puts klass
-      end
-    else
-      File.open(BINDINGS_PATH + "modules/#{mod_name}/sub/#{klass.lib_name}.cpp", 'wb') do |f|
-        f.puts klass
-      end
+      mimas_declare << "int luaload_mimas_#{klass.lib_name}(lua_State *L);"
+      mimas_load    << "luaload_mimas_#{klass.lib_name}(L);"
     end
   end
 
@@ -95,4 +99,21 @@ end
       f.puts namespace
     end
   end
+end
+
+# Update the mimas/core/mimas.cpp file
+mimas_file = BINDINGS_PATH + "modules/mimas/sub/core/mimas.cpp"
+file = File.read(mimas_file)
+File.open(mimas_file, 'wb') do |f|
+  file.sub!(%r{//\s*\[\[DECLARE.*?\]\]}m,
+%Q{// [[DECLARE
+#{mimas_declare.join("\n")}
+// ]]})
+
+  file.sub!(%r{//\s*\[\[LOAD.*?\]\]}m,
+%Q{// [[LOAD
+  #{mimas_load.join("\n  ")}
+  // ]]})
+
+  f.puts file
 end

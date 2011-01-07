@@ -74,42 +74,23 @@ foreach (MODULE ${MODULES})
 
     if(EXISTS ${MODULE}/sub)
       # ----------------------------------------------------------------------------------
-      #  Build each sub-module defined by a single cpp file
+      #  sub: module_xxx, module_yyy, ...
       # ----------------------------------------------------------------------------------
-      file(GLOB SUB_MODULES ${MODULE}/sub/*)
-      file (GLOB SUB_MODULES_CPP ${MODULE}/sub/*.cpp)
-      foreach (SUB_MODULE_CPP ${SUB_MODULES_CPP})
-        list(REMOVE_ITEM SUB_MODULES "${SUB_MODULE_CPP}")
-        get_filename_component (SUB_MODULE_NAME ${SUB_MODULE_CPP} NAME_WE)
-
-        # create name/[SUB_MOD_NAME].so library
-        add_library("${target}_${SUB_MODULE_NAME}" MODULE ${SUB_MODULE_CPP})
-
-        set_target_properties("${target}_${SUB_MODULE_NAME}"
-          PROPERTIES OUTPUT_NAME ${SUB_MODULE_NAME}
-          LINK_FLAGS ${PLAT_OBJ_FLAGS}
-          LIBRARY_OUTPUT_DIRECTORY ${RUBYK_SOURCE_DIR}/lib/${MODULE_NAME}
-          PREFIX ""
-          SUFFIX ".so"
-        )
-        add_dependencies(${target} "${target}_${SUB_MODULE_NAME}")
-      endforeach (SUB_MODULE_CPP ${SUB_MODULES_CPP})
-
-
-      # ----------------------------------------------------------------------------------
-      #  Build each sub-module defined by a folder
-      # ----------------------------------------------------------------------------------
-      list(REMOVE_ITEM SUB_MODULES ${MODULE}/sub/.DS_Store)
-
-      foreach (SUB_MODULE ${SUB_MODULES})
-        if(EXISTS ${SUB_MODULE}/CMakeLists.txt)
-          add_subdirectory(${SUB_MODULE})
-        else(EXISTS ${SUB_MODULE}/CMakeLists.txt)
-          get_filename_component (SUB_MODULE_NAME ${SUB_MODULE} NAME_WE)
-          file(GLOB SUB_MODULE_SOURCES ${SUB_MODULE}/*.cpp ${SUB_MODULE}/${PLAT}/*.cpp ${SUB_MODULE}/${PLAT}/*.mm)
+      if(EXISTS ${MODULE}/sub/CMakeLists.txt)
+        add_subdirectory(${MODULE}/sub)
+      else(EXISTS ${MODULE}/sub/CMakeLists.txt)
+        # ----------------------------------------------------------------------------------
+        #  Build each sub-module defined by a single cpp file
+        # ----------------------------------------------------------------------------------
+        file(GLOB SUB_MODULES ${MODULE}/sub/*)
+        file (GLOB SUB_MODULES_CPP ${MODULE}/sub/*.cpp)
+        foreach (SUB_MODULE_CPP ${SUB_MODULES_CPP})
+          list(REMOVE_ITEM SUB_MODULES "${SUB_MODULE_CPP}")
+          get_filename_component (SUB_MODULE_NAME ${SUB_MODULE_CPP} NAME_WE)
 
           # create name/[SUB_MOD_NAME].so library
-          add_library("${target}_${SUB_MODULE_NAME}" MODULE ${SUB_MODULE_SOURCES})
+          add_library("${target}_${SUB_MODULE_NAME}" MODULE ${SUB_MODULE_CPP})
+
           set_target_properties("${target}_${SUB_MODULE_NAME}"
             PROPERTIES OUTPUT_NAME ${SUB_MODULE_NAME}
             LINK_FLAGS ${PLAT_OBJ_FLAGS}
@@ -118,15 +99,49 @@ foreach (MODULE ${MODULES})
             SUFFIX ".so"
           )
           add_dependencies(${target} "${target}_${SUB_MODULE_NAME}")
-        endif(EXISTS ${SUB_MODULE}/CMakeLists.txt)
-      endforeach (SUB_MODULE ${SUB_MODULES})
+        endforeach (SUB_MODULE_CPP ${SUB_MODULES_CPP})
+
+
+        # ----------------------------------------------------------------------------------
+        #  Build each sub-module defined by a folder
+        # ----------------------------------------------------------------------------------
+        list(REMOVE_ITEM SUB_MODULES ${MODULE}/sub/.DS_Store)
+        list(REMOVE_ITEM SUB_MODULES ${MODULE}/sub/CMake.txt)
+
+        foreach (SUB_MODULE ${SUB_MODULES})
+          if(EXISTS ${SUB_MODULE}/CMakeLists.txt)
+            add_subdirectory(${SUB_MODULE})
+          else(EXISTS ${SUB_MODULE}/CMakeLists.txt)
+            get_filename_component (SUB_MODULE_NAME ${SUB_MODULE} NAME_WE)
+            file(GLOB SUB_MODULE_SOURCES ${SUB_MODULE}/*.cpp ${SUB_MODULE}/${PLAT}/*.cpp ${SUB_MODULE}/${PLAT}/*.mm)
+
+            # create name/[SUB_MOD_NAME].so library
+            add_library("${target}_${SUB_MODULE_NAME}" MODULE ${SUB_MODULE_SOURCES})
+            set_target_properties("${target}_${SUB_MODULE_NAME}"
+              PROPERTIES OUTPUT_NAME ${SUB_MODULE_NAME}
+              LINK_FLAGS ${PLAT_OBJ_FLAGS}
+              LIBRARY_OUTPUT_DIRECTORY ${RUBYK_SOURCE_DIR}/lib/${MODULE_NAME}
+              PREFIX ""
+              SUFFIX ".so"
+            )
+            add_dependencies(${target} "${target}_${SUB_MODULE_NAME}")
+          endif(EXISTS ${SUB_MODULE}/CMakeLists.txt)
+        endforeach (SUB_MODULE ${SUB_MODULES})
+        
+      endif(EXISTS ${MODULE}/sub/CMakeLists.txt)
     endif(EXISTS ${MODULE}/sub)
 
+    # ----------------------------------------------------------------------------------
+    #  module_vendor
+    # ----------------------------------------------------------------------------------
     if(EXISTS ${MODULE}/vendor/CMakeLists.txt)
       add_subdirectory(${MODULE}/vendor)
       add_dependencies(${target} "${target}_vendor")
     endif(EXISTS ${MODULE}/vendor/CMakeLists.txt)
 
+    # ----------------------------------------------------------------------------------
+    #  module_lua
+    # ----------------------------------------------------------------------------------
     if(EXISTS ${MODULE}/lua)
       file (GLOB MODULE_SOURCES ${MODULE}/lua/*)
 

@@ -337,7 +337,7 @@ static const struct luaL_Reg PushButton_member_methods[] = {
 };
 
 static const struct luaL_Reg PushButton_namespace_methods[] = {
-  {"PushButton_core"   , PushButton_PushButton},
+  {"PushButton"        , PushButton_PushButton},
   {NULL, NULL},
 };
 
