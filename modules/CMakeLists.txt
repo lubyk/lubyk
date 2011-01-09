@@ -49,6 +49,7 @@ foreach (MODULE ${MODULES})
     # get name
     get_filename_component (MODULE_NAME ${MODULE} NAME_WE)
     set(target "${MODULE_NAME}")
+    set(MODULE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${MODULE_NAME}")
 
     if(EXISTS ${MODULE}/include)
       include_directories(${MODULE}/include)
@@ -79,6 +80,9 @@ foreach (MODULE ${MODULES})
       if(EXISTS ${MODULE}/sub/CMakeLists.txt)
         add_subdirectory(${MODULE}/sub)
       else(EXISTS ${MODULE}/sub/CMakeLists.txt)
+        if(EXISTS ${MODULE}/sub/CMake.txt)
+          include(${MODULE}/sub/CMake.txt)
+        endif(EXISTS ${MODULE}/sub/CMake.txt)
         # ----------------------------------------------------------------------------------
         #  Build each sub-module defined by a single cpp file
         # ----------------------------------------------------------------------------------
@@ -127,7 +131,7 @@ foreach (MODULE ${MODULES})
             add_dependencies(${target} "${target}_${SUB_MODULE_NAME}")
           endif(EXISTS ${SUB_MODULE}/CMakeLists.txt)
         endforeach (SUB_MODULE ${SUB_MODULES})
-        
+
       endif(EXISTS ${MODULE}/sub/CMakeLists.txt)
     endif(EXISTS ${MODULE}/sub)
 

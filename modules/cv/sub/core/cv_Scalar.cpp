@@ -1,4 +1,4 @@
-#include "opencv/cv.h"
+#include "cv/cv.h"
 
 #include "lua_cpp_helper.h"
 
@@ -195,9 +195,9 @@ static int Scalar_destructor(lua_State *L) {
 
 static int Scalar__tostring(lua_State *L) {
   Scalar **userdata = (Scalar**)luaL_checkudata(L, 1, "cv.Scalar");
-  
+
   lua_pushfstring(L, "<cv.Scalar: %p>", *userdata);
-  
+
   return 1;
 }
 
@@ -238,7 +238,7 @@ static int Scalar_all(lua_State *L) {
 }
 
 
-/** Scalar<_Tp> cv::Scalar< _Tp >::mul(const Scalar< _Tp > &t, double scale=1) const 
+/** Scalar<_Tp> cv::Scalar< _Tp >::mul(const Scalar< _Tp > &t, double scale=1) const
  * include/opencv/cxcore.hpp:436
  */
 static int Scalar_mul(lua_State *L) {

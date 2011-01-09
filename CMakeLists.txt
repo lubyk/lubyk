@@ -113,7 +113,8 @@ add_subdirectory(Mimas)
 #  Build lua binary (not mandatory: used to have debug info)
 #
 # ==============================================================================
-add_subdirectory(lua)
+# we do not shipt with a lua binary yet
+#add_subdirectory(lua)
 
 # ==============================================================================
 #

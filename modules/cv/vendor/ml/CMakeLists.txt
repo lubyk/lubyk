@@ -5,15 +5,14 @@ project(ml)
 
 file(GLOB lib_srcs "*.cpp")
 source_group("Src" FILES ${lib_srcs})
-set(lib_hdrs ${RUBYK_SOURCE_DIR}/include/opencv/ml.h)
+set(lib_hdrs ${MODULE_SOURCE_DIR}/include/cv/ml.h)
 source_group("Include\\External" FILES ${lib_hdrs})
 file(GLOB lib_int_hdrs "*.h*")
 source_group("Include\\Internal" FILES ${lib_int_hdrs})
 
 add_definitions(-DCVAPI_EXPORTS)
 
-include_directories("${RUBYK_SOURCE_DIR}/include/opencv"
-                    "${CMAKE_CURRENT_SOURCE_DIR}"
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}"
                     "${CMAKE_CURRENT_BINARY_DIR}")
 
 set(the_target "ml")

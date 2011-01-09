@@ -1,4 +1,4 @@
-#include "opencv/cv.h"
+#include "cv/cv.h"
 
 #include "lua_cpp_helper.h"
 
@@ -489,9 +489,9 @@ static int Mat_destructor(lua_State *L) {
 
 static int Mat__tostring(lua_State *L) {
   Mat **userdata = (Mat**)luaL_checkudata(L, 1, "cv.Mat");
-  
+
   lua_pushfstring(L, "<cv.Mat: %p %dx%d>", *userdata, (*userdata)->rows, (*userdata)->cols);
-  
+
   return 1;
 }
 
@@ -571,7 +571,7 @@ static int Mat_adjustROI(lua_State *L) {
 }
 
 
-/** void cv::Mat::assignTo(Mat &m, int type=-1) const 
+/** void cv::Mat::assignTo(Mat &m, int type=-1) const
  * include/opencv/cxcore.hpp:846
  */
 static int Mat_assignTo(lua_State *L) {
@@ -612,7 +612,7 @@ static int Mat_assignTo(lua_State *L) {
 }
 
 
-/** int cv::Mat::channels() const 
+/** int cv::Mat::channels() const
  * include/opencv/cxcore.hpp:968
  */
 static int Mat_channels(lua_State *L) {
@@ -647,7 +647,7 @@ static int Mat_channels(lua_State *L) {
 }
 
 
-/** Mat cv::Mat::clone() const 
+/** Mat cv::Mat::clone() const
  * include/opencv/cxcore.hpp:824
  */
 static int Mat_clone(lua_State *L) {
@@ -682,7 +682,7 @@ static int Mat_clone(lua_State *L) {
 }
 
 
-/** Mat cv::Mat::col(int x) const 
+/** Mat cv::Mat::col(int x) const
  * include/opencv/cxcore.hpp:804
  */
 static int Mat_col(lua_State *L) {
@@ -719,7 +719,7 @@ static int Mat_col(lua_State *L) {
 
 
 
-/** Mat cv::Mat::colRange(int startcol, int endcol) const 
+/** Mat cv::Mat::colRange(int startcol, int endcol) const
  * include/opencv/cxcore.hpp:809
  */
 static int Mat_colRange1(lua_State *L) {
@@ -756,7 +756,7 @@ static int Mat_colRange1(lua_State *L) {
 }
 
 
-/** Mat cv::Mat::colRange(const Range &r) const 
+/** Mat cv::Mat::colRange(const Range &r) const
  * include/opencv/cxcore.hpp:810
  */
 static int Mat_colRange2(lua_State *L) {
@@ -807,7 +807,7 @@ static int Mat_colRange(lua_State *L) {
 }
 
 
-/** void cv::Mat::convertTo(Mat &m, int rtype, double alpha=1, double beta=0) const 
+/** void cv::Mat::convertTo(Mat &m, int rtype, double alpha=1, double beta=0) const
  * include/opencv/cxcore.hpp:844
  */
 static int Mat_convertTo(lua_State *L) {
@@ -855,7 +855,7 @@ static int Mat_convertTo(lua_State *L) {
 
 
 
-/** void cv::Mat::copyTo(Mat &m) const 
+/** void cv::Mat::copyTo(Mat &m) const
  * include/opencv/cxcore.hpp:829
  */
 static int Mat_copyTo1(lua_State *L) {
@@ -890,7 +890,7 @@ static int Mat_copyTo1(lua_State *L) {
 }
 
 
-/** void cv::Mat::copyTo(Mat &m, const Mat &mask) const 
+/** void cv::Mat::copyTo(Mat &m, const Mat &mask) const
  * include/opencv/cxcore.hpp:831
  */
 static int Mat_copyTo2(lua_State *L) {
@@ -1037,7 +1037,7 @@ static int Mat_create(lua_State *L) {
 }
 
 
-/** Mat cv::Mat::cross(const Mat &m) const 
+/** Mat cv::Mat::cross(const Mat &m) const
  * include/opencv/cxcore.hpp:871
  */
 static int Mat_cross(lua_State *L) {
@@ -1073,7 +1073,7 @@ static int Mat_cross(lua_State *L) {
 }
 
 
-/** int cv::Mat::depth() const 
+/** int cv::Mat::depth() const
  * include/opencv/cxcore.hpp:962
  */
 static int Mat_depth(lua_State *L) {
@@ -1109,7 +1109,7 @@ static int Mat_depth(lua_State *L) {
 
 
 
-/** Mat cv::Mat::diag(int d=0) const 
+/** Mat cv::Mat::diag(int d=0) const
  * include/opencv/cxcore.hpp:815
  */
 static int Mat_diag1(lua_State *L) {
@@ -1200,7 +1200,7 @@ static int Mat_diag(lua_State *L) {
 }
 
 
-/** double cv::Mat::dot(const Mat &m) const 
+/** double cv::Mat::dot(const Mat &m) const
  * include/opencv/cxcore.hpp:873
  */
 static int Mat_dot(lua_State *L) {
@@ -1236,7 +1236,7 @@ static int Mat_dot(lua_State *L) {
 }
 
 
-/** size_t cv::Mat::elemSize() const 
+/** size_t cv::Mat::elemSize() const
  * include/opencv/cxcore.hpp:943
  */
 static int Mat_elemSize(lua_State *L) {
@@ -1271,7 +1271,7 @@ static int Mat_elemSize(lua_State *L) {
 }
 
 
-/** size_t cv::Mat::elemSize1() const 
+/** size_t cv::Mat::elemSize1() const
  * include/opencv/cxcore.hpp:949
  */
 static int Mat_elemSize1(lua_State *L) {
@@ -1306,7 +1306,7 @@ static int Mat_elemSize1(lua_State *L) {
 }
 
 
-/** bool cv::Mat::empty() const 
+/** bool cv::Mat::empty() const
  * include/opencv/cxcore.hpp:984
  */
 static int Mat_empty(lua_State *L) {
@@ -1428,7 +1428,7 @@ static int Mat_eye(lua_State *L) {
 }
 
 
-/** bool cv::Mat::isContinuous() const 
+/** bool cv::Mat::isContinuous() const
  * include/opencv/cxcore.hpp:937
  */
 static int Mat_isContinuous(lua_State *L) {
@@ -1463,7 +1463,7 @@ static int Mat_isContinuous(lua_State *L) {
 }
 
 
-/** void cv::Mat::locateROI(Size &wholeSize, Point &ofs) const 
+/** void cv::Mat::locateROI(Size &wholeSize, Point &ofs) const
  * include/opencv/cxcore.hpp:898
  */
 static int Mat_locateROI(lua_State *L) {
@@ -1620,7 +1620,7 @@ static int Mat_release(lua_State *L) {
 }
 
 
-/** Mat cv::Mat::reshape(int _cn, int _rows=0) const 
+/** Mat cv::Mat::reshape(int _cn, int _rows=0) const
  * include/opencv/cxcore.hpp:854
  */
 static int Mat_reshape(lua_State *L) {
@@ -1663,7 +1663,7 @@ static int Mat_reshape(lua_State *L) {
 }
 
 
-/** Mat cv::Mat::row(int y) const 
+/** Mat cv::Mat::row(int y) const
  * include/opencv/cxcore.hpp:802
  */
 static int Mat_row(lua_State *L) {
@@ -1700,7 +1700,7 @@ static int Mat_row(lua_State *L) {
 
 
 
-/** Mat cv::Mat::rowRange(int startrow, int endrow) const 
+/** Mat cv::Mat::rowRange(int startrow, int endrow) const
  * include/opencv/cxcore.hpp:806
  */
 static int Mat_rowRange1(lua_State *L) {
@@ -1737,7 +1737,7 @@ static int Mat_rowRange1(lua_State *L) {
 }
 
 
-/** Mat cv::Mat::rowRange(const Range &r) const 
+/** Mat cv::Mat::rowRange(const Range &r) const
  * include/opencv/cxcore.hpp:807
  */
 static int Mat_rowRange2(lua_State *L) {
@@ -1831,7 +1831,7 @@ static int Mat_setTo(lua_State *L) {
 }
 
 
-/** Size cv::Mat::size() const 
+/** Size cv::Mat::size() const
  * include/opencv/cxcore.hpp:982
  */
 static int Mat_size(lua_State *L) {
@@ -1866,7 +1866,7 @@ static int Mat_size(lua_State *L) {
 }
 
 
-/** size_t cv::Mat::step1() const 
+/** size_t cv::Mat::step1() const
  * include/opencv/cxcore.hpp:975
  */
 static int Mat_step1(lua_State *L) {
@@ -1901,7 +1901,7 @@ static int Mat_step1(lua_State *L) {
 }
 
 
-/** int cv::Mat::type() const 
+/** int cv::Mat::type() const
  * include/opencv/cxcore.hpp:956
  */
 static int Mat_type(lua_State *L) {

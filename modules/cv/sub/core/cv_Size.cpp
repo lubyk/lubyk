@@ -1,4 +1,4 @@
-#include "opencv/cv.h"
+#include "cv/cv.h"
 
 #include "lua_cpp_helper.h"
 
@@ -249,16 +249,16 @@ static int Size_destructor(lua_State *L) {
 
 static int Size__tostring(lua_State *L) {
   Size **userdata = (Size**)luaL_checkudata(L, 1, "cv.Size");
-  
+
   lua_pushfstring(L, "<cv.Size: %p %dx%d>", *userdata, (*userdata)->width, (*userdata)->height);
-  
+
   return 1;
 }
 
 /* ============================ Member Methods   ====================== */
 
 
-/** _Tp cv::Size2i< _Tp >::area() const 
+/** _Tp cv::Size2i< _Tp >::area() const
  * include/opencv/cxcore.hpp:355
  */
 static int Size_area(lua_State *L) {

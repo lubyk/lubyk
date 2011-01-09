@@ -8,19 +8,17 @@ source_group("Src" FILES ${lib_srcs})
 
 add_definitions(-DCVAPI_EXPORTS)
 
-include_directories("${RUBYK_SOURCE_DIR}/include/opencv")
-
 set(lib_hdr_names cv.h cv.hpp cvcompat.h cvtypes.h)
 set(lib_hdrs)
 foreach(h ${lib_hdr_names})
-    list(APPEND lib_hdrs "${RUBYK_SOURCE_DIR}/include/opencv/${h}")
+    list(APPEND lib_hdrs "${MODULE_SOURCE_DIR}/include/cv/${h}")
 endforeach()
 source_group("Include\\External" FILES ${lib_hdrs})
 
 file(GLOB lib_int_hdrs "*.h*")
 source_group("Include\\Internal" FILES ${lib_int_hdrs})
 
-set(the_target "cv")
+set(the_target "libcv")
 
 add_library(${the_target} STATIC ${lib_srcs} ${lib_hdrs} ${lib_int_hdrs})
 

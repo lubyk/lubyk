@@ -1,4 +1,4 @@
-#include "opencv/cv.h"
+#include "cv/cv.h"
 
 #include "lua_cpp_helper.h"
 
@@ -285,16 +285,16 @@ static int Point_destructor(lua_State *L) {
 
 static int Point__tostring(lua_State *L) {
   Point **userdata = (Point**)luaL_checkudata(L, 1, "cv.Point");
-  
+
   lua_pushfstring(L, "<cv.Point: %p>", *userdata);
-  
+
   return 1;
 }
 
 /* ============================ Member Methods   ====================== */
 
 
-/** double cv::Point2i< _Tp >::ddot(const Point2i &pt) const 
+/** double cv::Point2i< _Tp >::ddot(const Point2i &pt) const
  * include/opencv/cxcore.hpp:309
  */
 static int Point_ddot(lua_State *L) {
@@ -330,7 +330,7 @@ static int Point_ddot(lua_State *L) {
 }
 
 
-/** _Tp cv::Point2i< _Tp >::dot(const Point2i &pt) const 
+/** _Tp cv::Point2i< _Tp >::dot(const Point2i &pt) const
  * include/opencv/cxcore.hpp:308
  */
 static int Point_dot(lua_State *L) {
@@ -366,7 +366,7 @@ static int Point_dot(lua_State *L) {
 }
 
 
-/** bool cv::Point2i< _Tp >::inside(const Rect_< _Tp > &r) const 
+/** bool cv::Point2i< _Tp >::inside(const Rect_< _Tp > &r) const
  * include/opencv/cxcore.hpp:310
  */
 static int Point_inside(lua_State *L) {

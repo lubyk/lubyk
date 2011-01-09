@@ -1,4 +1,4 @@
-
+#if 0
 #include "draw.h"
 
 #include "lua_cpp_helper.h"
@@ -171,3 +171,4 @@ extern "C" int luaopen_cv_additions(lua_State *L) {
   // register member methods
   luaL_register(L, NULL, Mat_additions_functions);
 }
+#endif

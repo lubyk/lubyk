@@ -13,7 +13,7 @@ source_group(Src\\VideoSurveillance FILES ${aux_srcs_vs})
 set(aux_hdr_names cvaux.h cvaux.hpp cvvidsurv.hpp)
 set(aux_hdrs_ext)
 foreach(h ${aux_hdr_names})
-    list(APPEND aux_hdrs_ext "${CMAKE_CURRENT_SOURCE_DIR}/../../include/opencv/${h}")
+    list(APPEND aux_hdrs_ext "${MODULE_SOURCE_DIR}/include/cv/${h}")
 endforeach()
 
 file(GLOB_RECURSE aux_hdrs_int *.h)
@@ -24,8 +24,7 @@ source_group("Include\\Internal" FILES ${aux_hdrs_int})
 
 add_definitions(-DCVAPI_EXPORTS)
 
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../include/opencv"
-                    "${CMAKE_CURRENT_SOURCE_DIR}"
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}"
                     "${CMAKE_CURRENT_BINARY_DIR}"
                     "${CMAKE_CURRENT_SOURCE_DIR}/../cv" ".")
 
