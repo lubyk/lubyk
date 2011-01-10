@@ -205,6 +205,7 @@ public:
     msgpack_lua_to_bin(L, &buffer, 1);
 
     zmq_msg_t msg;
+    zmq_msg_t recv_msg;
     zmq_msg_init_data(&msg, buffer->data, buffer->size, free_msgpack_msg, buffer);
 
     { // unlock worker
@@ -219,16 +220,16 @@ public:
 
       zmq_msg_close(&msg);
 
-      zmq_msg_init(&msg);
+      zmq_msg_init(&recv_msg);
 
-      if (zmq_recv(socket_, &msg, 0)) {
-        zmq_msg_close(&msg);
+      if (zmq_recv(socket_, &recv_msg, 0)) {
+        zmq_msg_close(&recv_msg);
         throw_recv_error(errno);
       }
     }
 
-    int arg_size = msgpack_bin_to_lua(L, zmq_msg_data(&msg), zmq_msg_size(&msg));
-    zmq_msg_close(&msg);
+    int arg_size = msgpack_bin_to_lua(L, zmq_msg_data(&recv_msg), zmq_msg_size(&recv_msg));
+    zmq_msg_close(&recv_msg);
     return arg_size;
   }
 

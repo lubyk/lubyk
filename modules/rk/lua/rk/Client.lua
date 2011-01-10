@@ -6,6 +6,9 @@
   The Client can subscribe and send requests to named
   services (discovered on the network with mDNS).
 
+  TODO: Requests should be sent asynchronously with the
+  zmq.Push sockets or synchronously with zmq.Req.
+
 --]]------------------------------------------------------
 
 local lib = {}
@@ -29,26 +32,21 @@ setmetatable(lib, {
   --======================================= SUB client
 
   instance.sub = zmq.SimpleSub(function(...)
-    local url, remote_service = ...
+    -- receive message from remote server or local ServiceBrowser
+    local url, service_name = ...
     if url == rubyk.add_service_url then
       -- resolve pending
-      local subscription = instance.subscriptions[remote_service.name]
+      local remote_service = instance.browser.services[service_name]
+      local subscription = instance.subscriptions[service_name]
       if subscription then
-        if not instance.req then
-          -- create zmq.REQ socket in the thread that's using it
-          instance.req = zmq.Req()
-        end
-
-        instance.req:connect(remote_service.url)
-        local sub_url = string.format('tcp://%s:%i', remote_service.host, instance.req:request(rubyk.sub_port_url))
-        subscription.subscriber:connect(sub_url)
+        subscription.subscriber:connect(remote_service.sub_url)
         subscription.connected = true
       end
     elseif url == rubyk.rem_service_url then
       -- remove connection
       -- ignore
     else
-      -- handle other data with callback
+      -- data received from remote server
       instance.callback(...)
     end
   end)
@@ -81,14 +79,20 @@ end
 function lib:request(service_name, ...)
   local service = self.browser.services[service_name]
   if not service then
-    print(string.format('Cannot send to %s (service not found)', service_name))
+    print(string.format('Cannot request to %s (service not found)', service_name))
     return nil
   end
   self.req:connect(service.url)
   return self.req:request(...)
 end
 
-lib.send = lib.request
+function lib:send(service_name, ...)
+  local service = self.browser.services[service_name]
+  if not service then
+    print(string.format('Cannot send to %s (service not found)', service_name))
+  end
+  service.push:send(...)
+end
 
 function lib:connected()
   for _, connection in pairs(self.subscriptions) do

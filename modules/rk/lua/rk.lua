@@ -15,7 +15,7 @@ Autoload.global()
 rubyk = Autoload('rubyk')
 -------------------------------- CONSTANTS
 rubyk.service_type    = '_rubyk._tcp'
-rubyk.sub_port_url    = '/rk/sub_port'
+rubyk.info_url        = '/rk/info'
 rubyk.add_service_url = '/rk/add_service'
 rubyk.rem_service_url = '/rk/rem_service'
 

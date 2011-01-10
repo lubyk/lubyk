@@ -1,3 +1,5 @@
+include_directories("${MODULE_SOURCE_DIR}/include/cv")
+
 add_subdirectory(3rdparty)
 add_subdirectory(cxcore)
 add_subdirectory(cv)
@@ -5,7 +7,6 @@ add_subdirectory(cv)
 add_subdirectory(ml)
 #add_subdirectory(highgui)
 
-include_directories("${MODULE_SOURCE_NAME}/include/cv")
 # ----------------------------------------------------------------------------------
 #  [rubyk]
 # ----------------------------------------------------------------------------------

@@ -11,6 +11,13 @@ label   = mimas.Label("Start 'Venus' service")
 
 mlayout:addWidget(label)
 
+quit_btn = mimas.PushButton('Quit', function()
+  app:quit()
+  -- send message to 'Saturn' service
+  client:send('Saturn', nil)
+end)
+mlayout:addWidget(quit_btn)
+
 
 slider = mimas.Slider(mimas.Vertical)
 slider:setValue(50)
@@ -29,17 +36,15 @@ sleep(100)
 client:subscribe('Saturn')
 
 callback = mimas.Callback(function(val)
-  -- move app into local env until _G is properly shared in sub func
---  local app = app
   if val ~= value then
-    if val == 1.0 then
-      app:post(function()
-        app:quit()
-      end)
-    end
+    --if val == 1.0 then
+    --  app:post(function()
+    --    app:quit()
+    --  end)
+    --end
     value = val
     print('Mimas --->', value)
-    -- client not created in this thread, let's hope zmq handles this
+    -- send message to 'Saturn' service
     client:send('Saturn', value)
   end
 end)

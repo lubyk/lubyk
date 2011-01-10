@@ -50,6 +50,7 @@ public:
   Browser(rubyk::Worker *worker, const char *service_type) :
     AbstractBrowser(service_type),
     LuaCallback(worker) {
+    lua_ = NULL;
     start();
   }
 
@@ -72,6 +73,11 @@ public:
   }
 
   virtual void add_device(const Location &location) {
+    if (!lua_) {
+      fprintf(stderr, "Browser callback not set while adding '%s' (%s:%i)!\n", location.name(), location.host(), location.port());
+      return;
+    }
+
     lua_State *L = lua_;
     ScopedLock lock(worker_);
 

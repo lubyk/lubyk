@@ -31,16 +31,23 @@ setmetatable(lib, {
   --======================================= PUB server
   instance.pub = zmq.Pub()
 
-  --======================================= REP server
+  --======================================= REP server (sync)
   instance.rep = zmq.SimpleRep(function(...)
     -- we do not pass callback directly so that we can update the function with instance.callback=..
-    if ... == rubyk.sub_port_url then
+    if ... == rubyk.info_url then
       -- rubyk special commands
-      return instance.pub:port()
+      -- publish and pull ports
+      return {pub = instance.pub:port(), pull = instance.pull:port()}
     else
       -- handle requests here
       instance.callback(...)
     end
+  end)
+
+  --======================================= PULL server (async)
+  instance.pull = zmq.SimplePull(function(...)
+    -- handle requests here
+    instance.callback(...)
   end)
 
   --======================================= announce REP server
@@ -56,13 +63,16 @@ end
 
 function lib:join(...)
   self.rep:join(...)
+  self.pull:join(...)
 end
 
 function lib:kill(...)
   self.rep:kill(...)
+  self.pull:kill(...)
 end
 
 function lib:quit(...)
   self.rep:quit(...)
+  self.pull:quit(...)
 end
 

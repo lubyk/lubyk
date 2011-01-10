@@ -30,12 +30,22 @@ setmetatable(lib, {
   -- We must bind before any client does a subscribe.
   instance.pub = zmq.Pub(string.format('inproc://%s', service_type))
 
+  instance.req = zmq.Req()
+
   instance.browser = mdns.Browser(service_type, function(remote_service)
     if remote_service.op == 'add' then
       if not instance.services[remote_service.name] then
         remote_service.url = string.format('tcp://%s:%i', remote_service.host, remote_service.port)
+        -- XXX
+        instance.req:connect(remote_service.url)
+        remote_service.info = instance.req:request(rubyk.info_url)
+        remote_service.sub_url  = string.format('tcp://%s:%i', remote_service.host, remote_service.info.pub)
+        remote_service.push_url = string.format('tcp://%s:%i', remote_service.host, remote_service.info.pull)
+        remote_service.push = zmq.Push()
+        remote_service.push:connect(remote_service.push_url)
+        -- XXX
         instance.services[remote_service.name] = remote_service
-        instance.pub:send(rubyk.add_service_url, remote_service)
+        instance.pub:send(rubyk.add_service_url, remote_service.name)
       end
     elseif instance.services[remote_service.name] then
       instance.pub:send(rubyk.rem_service_url, remote_service)
