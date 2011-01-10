@@ -44,8 +44,6 @@ public:
 
   virtual ~LuaCallback() {}
 
-protected:
-
   /** Set a callback. The top of the stack should be
    * -2. userdata from rk.Thread / rk.Socket / mimas.Callback / etc
    * -1. function()

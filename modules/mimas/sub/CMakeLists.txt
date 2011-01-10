@@ -45,7 +45,7 @@ else(QT_SRC_PATH STREQUAL "")
   set(QT_INCLUDE_PATH ${QT_SRC_PATH}/include)
   set(QT_LIB_PATH ${QT_SRC_PATH}/lib)
   include_directories(${QT_INCLUDE_PATH})
-  set(PLAT_OBJ_FLAGS "${PLAT_OBJ_FLAGS} -framework Carbon -framework AppKit -framework ApplicationServices ${QT_LIB_PATH}/libQtGui.a ${QT_LIB_PATH}/libQtCore.a /usr/lib/libz.dylib")
+  set(PLAT_OBJ_FLAGS "${PLAT_OBJ_FLAGS} -framework Carbon -framework AppKit -framework ApplicationServices ${QT_LIB_PATH}/libQtGui.a ${QT_LIB_PATH}/libQtOpenGL.a ${QT_LIB_PATH}/libQtCore.a /usr/lib/libz.dylib")
 endif(QT_SRC_PATH STREQUAL "")
 
 # ==============================================================================

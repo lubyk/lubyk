@@ -1668,25 +1668,25 @@ static int gl_draw_elements(lua_State *L)
 // {
 //    GLenum e;
 //    GLfloat *pixels;
-// 
+//
 //    /* test arguments type */
 //    if(!(lua_isnumber(L, 1) && lua_isnumber(L, 2) &&
 //         lua_isstring(L, 3) && lua_istable (L, 4)) )
 //       luaL_error(L, "incorrect argument to function 'gl.DrawPixels'");
-// 
+//
 //    /* get parameters */
 //    e = get_gl_enum(L, 3);
 //    get_arrayf(L, 4, &pixels);
-// 
+//
 //    /* test argument */
 //    if(e == ENUM_ERROR)
 //       luaL_error(L, "incorrect string argument to function 'gl.DrawPixels'");
-// 
+//
 //    /* call opengl function */
 //    glDrawPixels((GLsizei)lua_tonumber(L, 1), (GLsizei)lua_tonumber(L, 2), e, GL_FLOAT, pixels);
-// 
+//
 //    free(pixels);
-// 
+//
 //    return 0;
 // }
 
@@ -4308,20 +4308,20 @@ int static gl_tex_gen(lua_State *L)
 //    GLfloat *pixels;
 //    GLsizei width, height;
 //    int iformat;
-// 
+//
 //    /* test arguments type */
 //    if(!( lua_isnumber(L, 1) && lua_isnumber(L, 2) &&
 //          lua_isstring(L, 3) && lua_istable(L, 4) ))
 //       luaL_error(L, "incorrect argument to function 'gl.TexImage'");
-// 
+//
 //    e = get_gl_enum(L, 3);
-// 
+//
 //    /* test argument */
 //    if(e == ENUM_ERROR)
 //       luaL_error(L, "incorrect string argument to function 'gl.TexImage'");
-// 
+//
 //    iformat = (int)lua_tonumber(L, 2);
-// 
+//
 //    if((height = get_array2f(L, 4, &pixels, &width)) != -1)
 //    {
 //       glTexImage2D(GL_TEXTURE_2D, (GLint)lua_tonumber(L, 1),
@@ -4336,7 +4336,7 @@ int static gl_tex_gen(lua_State *L)
 //       return 0;
 //    }
 // }
-// 
+//
 /*TexSubImage (level, format, pixels, xoffset) -> none
   TexSubImage (level, format, pixels, xoffset, yoffset) -> none*/
 static int gl_tex_sub_image(lua_State *L)
@@ -4724,7 +4724,9 @@ static const luaL_reg gllib[] = {
   {NULL, NULL}
 };
 
-LUAGL_API int luaopen_opengl (lua_State *L) {
-  luaL_openlib(L, "gl", gllib, 0);
+LUAGL_API int luaopen_gl_vendor(lua_State *L) {
+  //luaL_openlib(L, "gl", gllib, 0);
+  //
+  luaL_register(L, "gl", gllib);
   return 1;
 }

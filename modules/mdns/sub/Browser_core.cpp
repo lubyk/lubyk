@@ -40,7 +40,7 @@ static int Browser__tostring(lua_State *L) {
 
 
 /** static LuaStackSize mdns::Browser::MakeInstance(rubyk::Worker *worker, const char *service_type, lua_State *L)
- * include/mdns/browser.h:61
+ * include/mdns/browser.h:62
  */
 static int Browser_MakeInstance(lua_State *L) {
   try {
@@ -58,7 +58,7 @@ static int Browser_MakeInstance(lua_State *L) {
 
 
 /** virtual void mdns::Browser::add_device(const Location &location)
- * include/mdns/browser.h:74
+ * include/mdns/browser.h:75
  */
 static int Browser_add_device(lua_State *L) {
   try {
@@ -75,7 +75,7 @@ static int Browser_add_device(lua_State *L) {
 
 
 /** virtual void mdns::Browser::remove_device(const char *name)
- * include/mdns/browser.h:116
+ * include/mdns/browser.h:122
  */
 static int Browser_remove_device(lua_State *L) {
   try {
@@ -92,7 +92,7 @@ static int Browser_remove_device(lua_State *L) {
 
 
 /** const char* mdns::Browser::service_type()
- * include/mdns/browser.h:143
+ * include/mdns/browser.h:149
  */
 static int Browser_service_type(lua_State *L) {
   try {

@@ -3,6 +3,8 @@ require 'dub'
 require 'dub/lua'
 require 'pathname'
 require 'htmlentities'
+require 'fileutils'
+
 HtmlDecode = HTMLEntities.new
 
 def get_dub_info(xml)
@@ -42,10 +44,11 @@ mimas_declare = []
 mimas_load = []
 
 modules = {
+  'dummy' => %w{Dummy},
   'rk'    => %w{Socket Timer Thread},
   'rubyk' => %w{Worker},
   'mdns'  => %w{Browser Registration},
-  'mimas' => %w{Application Callback HBoxLayout Label PushButton Slider VBoxLayout Window},
+  'mimas' => %w{Application Callback GLWindow HBoxLayout Label PushButton Slider VBoxLayout Window},
   'zmq'   => {
     'class' => %w{Socket},
     'const' => true,
@@ -77,7 +80,12 @@ modules = {
     end
     klass.header = "#{mod_name}/#{class_name}.h"
 
-    File.open(BINDINGS_PATH + "modules/#{mod_name}/sub/#{klass.lib_name}.cpp", 'wb') do |f|
+    dir = BINDINGS_PATH + "modules/#{mod_name}/sub"
+    if !File.exist?(dir)
+      FileUtils::mkdir(dir)
+    end
+
+    File.open(dir + "#{klass.opts[:filename] || klass.lib_name}.cpp", 'wb') do |f|
       f.puts klass
     end
 

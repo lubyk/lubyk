@@ -65,6 +65,7 @@ static const struct luaL_Reg lib_functions[] = {
 // [[DECLARE
 int luaload_mimas_Application_core(lua_State *L);
 int luaload_mimas_Callback_core(lua_State *L);
+int luaload_mimas_GLWindow(lua_State *L);
 int luaload_mimas_HBoxLayout_core(lua_State *L);
 int luaload_mimas_Label_core(lua_State *L);
 int luaload_mimas_PushButton_core(lua_State *L);
@@ -86,6 +87,7 @@ extern "C" int luaopen_mimas_core(lua_State *L) {
   // [[LOAD
   luaload_mimas_Application_core(L);
   luaload_mimas_Callback_core(L);
+  luaload_mimas_GLWindow(L);
   luaload_mimas_HBoxLayout_core(L);
   luaload_mimas_Label_core(L);
   luaload_mimas_PushButton_core(L);
