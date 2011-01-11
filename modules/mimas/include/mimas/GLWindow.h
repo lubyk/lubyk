@@ -49,16 +49,20 @@ class GLWindow : public QGLWidget, public DeletableOutOfLua
 {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
-  Q_PROPERTY(float hue READ hue WRITE setHue)
 
   LuaCallback initializeGL_;
   LuaCallback resizeGL_;
   LuaCallback paintGL_;
+  /** Set to true if we are in the 'show' method
+   * to avoid locking in initializeGL and resizeGL.
+   */
+  bool in_show_;
 public:
   GLWindow(rubyk::Worker *worker)
    : initializeGL_(worker),
      resizeGL_(worker),
-     paintGL_(worker) {
+     paintGL_(worker),
+     in_show_(false) {
     setAttribute(Qt::WA_DeleteOnClose);
   }
 
@@ -98,20 +102,9 @@ public:
   }
 
   void resize(int w, int h) {
-    QWidget::resize(w, h);
-  }
-
-  void setStyle(const char *text) {
-    QWidget::setStyleSheet(QString(".%1 { %2 }").arg(cssClass()).arg(text));
-  }
-
-  void setHue(float hue) {
-    hue_ = hue;
-    update();
-  }
-
-  float hue() {
-    return hue_;
+    in_show_ = true;
+      QWidget::resize(w, h);
+    in_show_ = false;
   }
 
   // =============================================================
@@ -127,11 +120,20 @@ public:
   }
 
   void show() {
-    QWidget::show();
+    // show directly calls initializeGL
+    in_show_ = true;
+      QWidget::show();
+    in_show_ = false;
   }
 
   void activateWindow() {
     QWidget::activateWindow();
+  }
+
+  void updateGL() {
+    in_show_ = true;
+      QGLWidget::updateGL();
+    in_show_ = false;
   }
 
   /** Set a callback function.
@@ -145,7 +147,6 @@ public:
     // ... <self> <key> <value> <self>
     lua_pushvalue(L, -2);
     // ... <self> <key> <value> <self> <value>
-    dump_lua_stack(L, "__newindex");
     if (key == "initializeGL") {
       initializeGL_.set_lua_callback(L);
     } else if (key == "resizeGL") {
@@ -160,8 +161,9 @@ public:
 
   virtual void initializeGL() {
     lua_State *L = initializeGL_.lua_;
-      printf("initializeGL... [%p]\n", L);
     if (!L) return;
+    // cannot lock because this is called by Lua through 'show'...
+    if (!in_show_) initializeGL_.worker_->lock();
 
     initializeGL_.push_lua_callback(false);
 
@@ -171,12 +173,13 @@ public:
       printf("Error in initializeGL function: %s\n", lua_tostring(L, -1));
     }
 
+    if (!in_show_) initializeGL_.worker_->unlock();
   }
 
   virtual void resizeGL(int width, int height) {
     lua_State *L = resizeGL_.lua_;
-      printf("resizeGL_... [%p]\n", L);
     if (!L) return;
+    if (!in_show_) resizeGL_.worker_->lock();
 
     resizeGL_.push_lua_callback(false);
     lua_pushnumber(L, width);
@@ -188,12 +191,13 @@ public:
       printf("Error in resizeGL function: %s\n", lua_tostring(L, -1));
     }
 
+    if (!in_show_) resizeGL_.worker_->unlock();
   }
 
   virtual void paintGL() {
     lua_State *L = paintGL_.lua_;
-      printf("paintGL_... [%p]\n", L);
     if (!L) return;
+    if (!in_show_) paintGL_.worker_->lock();
 
     paintGL_.push_lua_callback(false);
 
@@ -202,6 +206,7 @@ public:
     if (status) {
       printf("Error in paintGL function: %s\n", lua_tostring(L, -1));
     }
+    if (!in_show_) paintGL_.worker_->unlock();
   }
 
 protected:
@@ -209,10 +214,6 @@ protected:
   //virtual void mouseMoveEvent(QMouseEvent *event);
   //virtual void mouseDoubleClickEvent(QMouseEvent *event);
   //virtual void paintEvent(QPaintEvent *event);
-
-  /** The component's color.
-   */
-  float hue_;
 };
 
 } // mimas

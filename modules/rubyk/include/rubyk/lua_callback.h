@@ -55,14 +55,27 @@ public:
     // ... <self> <func>
     luaL_checktype(L, -1, LUA_TFUNCTION);
 
-    // Create env table
-    lua_newtable(L);
+    // ... <self> <func>
+    lua_getfenv(L, -1);
     // ... <self> <func> <env>
+    if (lua_rawequal(L, -1, LUA_ENVIRONINDEX)) {
+      // does not have it's own env table
+      lua_pop(L, 1);
+      // ... <self> <func>
+      // Create env table
+      lua_newtable(L);
+    }
+    // ... <self> <func> <env>
+    if (lua_) {
+      // remove from env
+      luaL_unref(L, -1, thread_in_env_idx_);
+    }
+    
     lua_ = lua_newthread(L);
     // ... <self> <func> <env> <thread>
 
     // Store the thread in the Thread/Socket's environment table so it is not GC too soon
-    luaL_ref(L, -2);
+    thread_in_env_idx_ = luaL_ref(L, -2);
     // ... <self> <func> <env>
 
     // Set fenv as environment table for "self" (Thread, Socket, etc).
@@ -99,6 +112,8 @@ public:
   bool callback_set() {
     return lua_ != NULL;
   }
+private:
+  int thread_in_env_idx_;
 };
 
 } // rubyk

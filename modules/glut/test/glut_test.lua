@@ -7,10 +7,10 @@
 
 --]]------------------------------------------------------
 require 'rubyk'
-local should = test.Suite('gl (TODO)')
+local should = test.Suite('glut (TODO)')
 
-function should.load_gl()
-  assert_true(gl)
+function should.load_glut()
+  assert_true(glut)
 end
 
 test.all()

@@ -9,7 +9,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::GLWindow::GLWindow(rubyk::Worker *worker)
- * include/mimas/GLWindow.h:60
+ * include/mimas/GLWindow.h:66
  */
 static int GLWindow_GLWindow(lua_State *L) {
   try {
@@ -68,7 +68,7 @@ static int GLWindow__tostring(lua_State *L) {
 
 
 /** void mimas::GLWindow::__newindex(lua_State *L)
- * include/mimas/GLWindow.h:139
+ * include/mimas/GLWindow.h:138
  */
 static int GLWindow___newindex(lua_State *L) {
   try {
@@ -86,7 +86,7 @@ static int GLWindow___newindex(lua_State *L) {
 
 
 /** void mimas::GLWindow::activateWindow()
- * include/mimas/GLWindow.h:132
+ * include/mimas/GLWindow.h:127
  */
 static int GLWindow_activateWindow(lua_State *L) {
   try {
@@ -103,7 +103,7 @@ static int GLWindow_activateWindow(lua_State *L) {
 
 
 /** bool mimas::GLWindow::close()
- * include/mimas/GLWindow.h:120
+ * include/mimas/GLWindow.h:113
  */
 static int GLWindow_close(lua_State *L) {
   try {
@@ -121,7 +121,7 @@ static int GLWindow_close(lua_State *L) {
 
 
 /** QString mimas::GLWindow::cssClass() const 
- * include/mimas/GLWindow.h:70
+ * include/mimas/GLWindow.h:76
  */
 static int GLWindow_cssClass(lua_State *L) {
   try {
@@ -138,26 +138,8 @@ static int GLWindow_cssClass(lua_State *L) {
 }
 
 
-/** float mimas::GLWindow::hue()
- * include/mimas/GLWindow.h:112
- */
-static int GLWindow_hue(lua_State *L) {
-  try {
-    GLWindow *self__ = *((GLWindow**)luaL_checkudata(L, 1, "mimas.GLWindow"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.GLWindow in hue");
-    float  retval__ = self__->hue();
-    lua_pushnumber(L, retval__);
-    return 1;
-  } catch (std::exception &e) {
-    return luaL_error(L, "mimas.GLWindow.hue: %s", e.what());
-  } catch (...) {
-    return luaL_error(L, "mimas.GLWindow.hue: Unknown exception");
-  }
-}
-
-
 /** bool mimas::GLWindow::isVisible() const 
- * include/mimas/GLWindow.h:124
+ * include/mimas/GLWindow.h:117
  */
 static int GLWindow_isVisible(lua_State *L) {
   try {
@@ -175,7 +157,7 @@ static int GLWindow_isVisible(lua_State *L) {
 
 
 /** void mimas::GLWindow::move(int x, int y)
- * include/mimas/GLWindow.h:95
+ * include/mimas/GLWindow.h:101
  */
 static int GLWindow_move(lua_State *L) {
   try {
@@ -194,7 +176,7 @@ static int GLWindow_move(lua_State *L) {
 
 
 /** LuaStackSize mimas::GLWindow::name(lua_State *L)
- * include/mimas/GLWindow.h:84
+ * include/mimas/GLWindow.h:90
  */
 static int GLWindow_name(lua_State *L) {
   try {
@@ -212,7 +194,7 @@ static int GLWindow_name(lua_State *L) {
 
 
 /** QObject* mimas::GLWindow::object()
- * include/mimas/GLWindow.h:78
+ * include/mimas/GLWindow.h:84
  */
 static int GLWindow_object(lua_State *L) {
   try {
@@ -230,7 +212,7 @@ static int GLWindow_object(lua_State *L) {
 
 
 /** void mimas::GLWindow::resize(int w, int h)
- * include/mimas/GLWindow.h:99
+ * include/mimas/GLWindow.h:105
  */
 static int GLWindow_resize(lua_State *L) {
   try {
@@ -248,26 +230,8 @@ static int GLWindow_resize(lua_State *L) {
 }
 
 
-/** void mimas::GLWindow::setHue(float hue)
- * include/mimas/GLWindow.h:107
- */
-static int GLWindow_setHue(lua_State *L) {
-  try {
-    GLWindow *self__ = *((GLWindow**)luaL_checkudata(L, 1, "mimas.GLWindow"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.GLWindow in setHue");
-    float hue = luaL_checknumber(L, 2);
-    self__->setHue(hue);
-    return 0;
-  } catch (std::exception &e) {
-    return luaL_error(L, "mimas.GLWindow.setHue: %s", e.what());
-  } catch (...) {
-    return luaL_error(L, "mimas.GLWindow.setHue: Unknown exception");
-  }
-}
-
-
 /** void mimas::GLWindow::setName(const char *name)
- * include/mimas/GLWindow.h:91
+ * include/mimas/GLWindow.h:97
  */
 static int GLWindow_setName(lua_State *L) {
   try {
@@ -284,26 +248,8 @@ static int GLWindow_setName(lua_State *L) {
 }
 
 
-/** void mimas::GLWindow::setStyle(const char *text)
- * include/mimas/GLWindow.h:103
- */
-static int GLWindow_setStyle(lua_State *L) {
-  try {
-    GLWindow *self__ = *((GLWindow**)luaL_checkudata(L, 1, "mimas.GLWindow"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.GLWindow in setStyle");
-    const char *text = luaL_checkstring(L, 2);
-    self__->setStyle(text);
-    return 0;
-  } catch (std::exception &e) {
-    return luaL_error(L, "mimas.GLWindow.setStyle: %s", e.what());
-  } catch (...) {
-    return luaL_error(L, "mimas.GLWindow.setStyle: Unknown exception");
-  }
-}
-
-
 /** void mimas::GLWindow::show()
- * include/mimas/GLWindow.h:128
+ * include/mimas/GLWindow.h:121
  */
 static int GLWindow_show(lua_State *L) {
   try {
@@ -319,8 +265,25 @@ static int GLWindow_show(lua_State *L) {
 }
 
 
+/** void mimas::GLWindow::updateGL()
+ * include/mimas/GLWindow.h:131
+ */
+static int GLWindow_updateGL(lua_State *L) {
+  try {
+    GLWindow *self__ = *((GLWindow**)luaL_checkudata(L, 1, "mimas.GLWindow"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.GLWindow in updateGL");
+    self__->updateGL();
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.GLWindow.updateGL: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.GLWindow.updateGL: Unknown exception");
+  }
+}
+
+
 /** QWidget* mimas::GLWindow::widget()
- * include/mimas/GLWindow.h:74
+ * include/mimas/GLWindow.h:80
  */
 static int GLWindow_widget(lua_State *L) {
   try {
@@ -346,16 +309,14 @@ static const struct luaL_Reg GLWindow_member_methods[] = {
   {"activateWindow"    , GLWindow_activateWindow},
   {"close"             , GLWindow_close},
   {"cssClass"          , GLWindow_cssClass},
-  {"hue"               , GLWindow_hue},
   {"isVisible"         , GLWindow_isVisible},
   {"move"              , GLWindow_move},
   {"name"              , GLWindow_name},
   {"object"            , GLWindow_object},
   {"resize"            , GLWindow_resize},
-  {"setHue"            , GLWindow_setHue},
   {"setName"           , GLWindow_setName},
-  {"setStyle"          , GLWindow_setStyle},
   {"show"              , GLWindow_show},
+  {"updateGL"          , GLWindow_updateGL},
   {"widget"            , GLWindow_widget},
   {"__tostring"        , GLWindow__tostring},
   {"__gc"              , GLWindow_destructor},

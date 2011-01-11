@@ -16,7 +16,6 @@ function should.display_window(t)
   -- we use the test env to protect from gc
   t.win = mimas.GLWindow()
   function t.win.initializeGL()
-    print("init")
     gl.Enable("POINT_SMOOTH")
     gl.Enable("SMOOTH")
     gl.Enable("BLEND")                                -- Enable alpha blending
@@ -31,10 +30,8 @@ function should.display_window(t)
     gl.Hint("PERSPECTIVE_CORRECTION_HINT", "NICEST") -- Really nice perspective
     gl.ClearColor(0.2,0.2,0.2,0.5)
   end
-  
+
   function t.win.resizeGL(width, height)
-    print("resize")
-    
     gl.Enable("BLEND")
     gl.Disable("DEPTH_TEST")
     gl.BlendFunc("SRC_ALPHA", "ONE_MINUS_SRC_ALPHA")
@@ -46,13 +43,54 @@ function should.display_window(t)
     gl.LoadIdentity()
     -- Calculate the aspect ratio of the view
     gl.Perspective(
-      45.0,             -- Field of view angle
+      45,               -- Field of view angle
       width / height,   -- Aspect ration
-      1.0,              -- zNear
-      100.0             -- zFar
+      1,                -- zNear
+      100               -- zFar
     )
   end
-  
+  t.n = 0
+  t.x = 0
+  t.y = 0
+  t.z = 0
+  t.dt = (math.pi / 100)
+  t.now = worker:now()
+
+  t.timer = rk.Timer(20, function()
+    t.n = t.n + t.dt
+    t.x = math.cos(t.n / 0.9) * 360 / math.pi
+    t.y = math.sin(t.n / 0.7) * 360 / math.pi
+    t.z = math.sin(t.n) * 360 / math.pi
+    t.win:updateGL()
+    if worker:now() > t.now + 1500 then
+      app:post(function()
+        t.timer:stop()
+        -- proves that the window was open and all is fine
+        assert_true(t.win:close())
+      end)
+    end
+  end)
+  t.timer:start()
+
+  function t.win.paintGL()
+    gl.Clear( "COLOR_BUFFER_BIT, DEPTH_BUFFER_BIT")
+    gl.MatrixMode("MODELVIEW")
+    gl.LoadIdentity()
+
+    gl.Translate(0.0, 0.0, -6.0)
+
+    gl.Rotate(t.x, 1.0, 0.0, 0.0)
+    gl.Rotate(t.y, 0.0, 1.0, 0.0)
+    gl.Rotate(t.z, 0.0, 0.0, 1.0)
+
+    gl.Color(0.5,0.5,0.0,0.3)
+    gl.LineWidth(1.0)
+    glut.WireCube(2.6)
+
+    gl.Color(0.5,0.5,0.0,0.1)
+    glut.SolidCube(2.6)
+  end
+
   t.win:show()
 end
 

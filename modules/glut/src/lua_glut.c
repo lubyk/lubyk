@@ -356,7 +356,7 @@ static const luaL_reg glutlib[] = {
   {NULL, NULL}
 };
 
-LUAGLUT_API int luaopen_glut (lua_State *L){
+LUAGLUT_API int luaopen_glut(lua_State *L){
   luaL_openlib(L, "glut", glutlib, 0);
   return 1;
 }

@@ -32,8 +32,8 @@
 
 */
 
-#ifndef RUBYK_VENDOR_LUA_ADDONS_GLUT_LUA_GLUT_H_
-#define RUBYK_VENDOR_LUA_ADDONS_GLUT_LUA_GLUT_H_
+#ifndef RUBYK_GL_GLUT_H_
+#define RUBYK_GL_GLUT_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -64,4 +64,4 @@ LUAGLUT_API int luaopen_glut(lua_State *L);
 }
 #endif
 
-#endif // RUBYK_VENDOR_LUA_ADDONS_GLUT_LUA_GLUT_H_
+#endif // RUBYK_GL_GLUT_H_
