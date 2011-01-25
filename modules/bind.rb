@@ -52,7 +52,8 @@ modules = {
   'zmq'   => {
     'class' => %w{Socket},
     'const' => true,
-  }
+  },
+  'wii'   => %w{Remote},
 }.each do |mod_name, opts|
   if !opts.kind_of?(Hash)
     opts = {'class' => opts}

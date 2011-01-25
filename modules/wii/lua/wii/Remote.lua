@@ -1,6 +1,6 @@
 --[[------------------------------------------------------
 
-  zmq.Socket
+  wii.Remote
   ----------
 
   Lets you send and receive lua messages using 0MQ. Since
@@ -9,15 +9,13 @@
   if you need to.
 
 --]]------------------------------------------------------
-require 'zmq'
--- Do we need this require ?
---require 'rk' -- we use rk::Thread internally
-require 'zmq.Socket_core'
+require 'wii'
+require 'wii.Remote_core'
 require 'worker'
 
-local constr = zmq.Socket
+local constr = wii.Remote
 local worker = worker
-function zmq.Socket(type, func)
+function wii.Remote(type, func)
   -- if func exists: do not create socket yet (wait for set_callback)
   local instance = constr(worker, type)
   if func then
