@@ -32,7 +32,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-namespace rk {
+namespace rubyk {
 
 class ScopedPool {
 public:

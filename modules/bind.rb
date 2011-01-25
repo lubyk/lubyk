@@ -53,7 +53,7 @@ modules = {
     'class' => %w{Socket},
     'const' => true,
   },
-  'wii'   => %w{Remote},
+  'wii'   => %w{Browser Remote},
 }.each do |mod_name, opts|
   if !opts.kind_of?(Hash)
     opts = {'class' => opts}

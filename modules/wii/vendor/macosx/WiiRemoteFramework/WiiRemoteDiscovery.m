@@ -15,7 +15,7 @@
 - (id) init
 {
 	self = [super init];
-	
+
 	if (self != nil) {
 		// cam: calling IOBluetoothLocalDeviceAvailable has two advantages:
 		// 1. it sets up a event source in the run loop (bug for C version of the bluetooth api )
@@ -24,22 +24,24 @@
 		{
 			[self release];
 			self = nil;
-			
+
 			[NSException raise:NSGenericException format:@"Bluetooth hardware not available"];
-		}		
+		}
 	}
-	
+
 	return self;
 }
 
 + (WiiRemoteDiscovery*) discoveryWithDelegate:(id) delegate
 {
 	// cam: when using this convention, we must autorelease the returned object
-	return [[[WiiRemoteDiscovery alloc] initWithDelegate:delegate] autorelease];
+	WiiRemoteDiscovery *discovery = [[WiiRemoteDiscovery alloc] init];
+  [discovery setDelegate:delegate];
+  return [discovery autorelease];
 }
 
 - (void) dealloc
-{	
+{
 	NSLogDebug (@"Wiimote Discovery released");
 	[super dealloc];
 }
@@ -51,6 +53,7 @@
 
 - (void) setDelegate:(id) delegate
 {
+  printf("Set delegate... %p\n", delegate);
 	// only retain a shallow reference to the delegate, could be problematic if the delegate went to be
 	// dealloced, but in the most general case, the delegate 'owns' the WiiRemoteDiscovery
 	_delegate = delegate;
@@ -62,15 +65,15 @@
 	// we don't know if the user has not turned it off meanwhile
 	if (IOBluetoothLocalDeviceAvailable () == FALSE)
 		return kIOReturnNotAttached;
-	
+
 	// if we are currently discovering, we can't start a new discovery right now.
 	if ([self isDiscovering])
 		return kIOReturnSuccess;
-	
+
 	if (!_delegate) {
 		NSLog (@"Warning: starting WiiRemoteDiscovery without delegate set");
 	}
-	
+
 	// to start all over again, first stop the discovery
 	[self close];
 
@@ -93,7 +96,7 @@
 		[_inquiry setDelegate:nil];
 		_inquiry = nil;
 	}
-	
+
 	return status;
 }
 
@@ -105,15 +108,15 @@
 - (IOReturn) close
 {
 	IOReturn ret = kIOReturnSuccess;
-	
+
 	ret = [_inquiry stop];
 	if (ret != kIOReturnNotPermitted)
 		LogIOReturn (ret);
-	
+
 	[_inquiry setDelegate:nil];
 	[_inquiry release];
 	_inquiry = nil;
-	
+
 	NSLogDebug (@"Discovery closed");
 	return ret;
 }
@@ -141,7 +144,7 @@
 	[self setIsDiscovering:YES];
 }
 
-- (void) deviceInquiryDeviceFound:(IOBluetoothDeviceInquiry *) sender 
+- (void) deviceInquiryDeviceFound:(IOBluetoothDeviceInquiry *) sender
 						   device:(IOBluetoothDevice *) device
 {
 	// here we limit the search to only one device, we could search for more, but it is not necessary.
@@ -149,13 +152,13 @@
 	[_inquiry stop];
 }
 
-- (void) deviceInquiryComplete:(IOBluetoothDeviceInquiry*) sender 
+- (void) deviceInquiryComplete:(IOBluetoothDeviceInquiry*) sender
 						 error:(IOReturn) error
 					   aborted:(BOOL) aborted
-{	
+{
 	// the inquiry has completed, we can now process what we have found
 	[self setIsDiscovering:NO];
-	
+
 	// unlikely to be called, but handle it anyway
 	if ((error != kIOReturnSuccess) && !aborted) {
 		[_delegate WiiRemoteDiscoveryError:error];
@@ -167,7 +170,7 @@
 	// animated hourglass cursor during the connection process.
 	if ([[_inquiry foundDevices] count])
 		[_delegate willStartWiimoteConnections];
-	
+
 	[self connectToFoundDevices];
 }
 
@@ -182,13 +185,13 @@
 	while ((device = [en nextObject]) != nil) {
 		WiiRemote * wii = [[[WiiRemote alloc] init] autorelease];
 		IOReturn ret = [wii connectTo:device];
-		
+
 		if (ret == kIOReturnSuccess)
 			[_delegate WiiRemoteDiscovered:wii];
 		else
 			[_delegate WiiRemoteDiscoveryError:ret];
 	}
-	
+
 	// we passed through all devices, clear the search for now
 	[_inquiry clearFoundDevices];
 }

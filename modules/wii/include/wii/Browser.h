@@ -26,40 +26,29 @@
 
   ==============================================================================
 */
-#ifndef RUBYK_INCLUDE_WII_REMOTE_H_
-#define RUBYK_INCLUDE_WII_REMOTE_H_
+#ifndef RUBYK_INCLUDE_WII_BROWSER_H_
+#define RUBYK_INCLUDE_WII_BROWSER_H_
 
 #include "rubyk.h"
 using namespace rubyk;
 
+#include "wii/Remote.h"
+
 namespace wii {
 
-class Browser;
-
-/** Receive data from a Wiimote.
+/** Browse for Wii Remotes.
  *
- * @dub lib_name:'Remote_core'
- *      string_format:'%%s'
- *      string_args:'(*userdata)->name()'
- *      ignore:'set_remote'
+ * @dub lib_name:'Browser_core'
  */
-class Remote
+class Browser : public LuaCallback
 {
-  std::string name_;
-  LuaCallback acceleration_;
-  LuaCallback button_;
-
   class Implementation;
   Implementation *impl_;
   friend class Implementation;
 public:
-  Remote(rubyk::Worker *worker, const char *remote_name);
+  Browser(rubyk::Worker *worker);
 
-  ~Remote();
-
-  const char *name() const {
-    return name_.c_str();
-  }
+  ~Browser();
 
   /** Set a callback function.
    *
@@ -72,53 +61,29 @@ public:
     // ... <self> <key> <value> <self>
     lua_pushvalue(L, -2);
     // ... <self> <key> <value> <self> <value>
-    if (key == "acceleration") {
-      acceleration_.set_lua_callback(L);
-    } else if (key == "button") {
-      button_.set_lua_callback(L);
+    if (key == "found") {
+      set_lua_callback(L);
     } else {
-      luaL_error(L, "Invalid function name '%s' (valid names are 'acceleration' and 'button').", key.c_str());
+      luaL_error(L, "Invalid function name '%s' (valid name is 'found').", key.c_str());
     }
   }
 
-  void acceleration(const char *sensor, float x, float y, float z) {
-    lua_State *L = acceleration_.lua_;
+  void found(Remote *wii) {
+    lua_State *L = lua_;
     if (!L) return;
-    ScopedLock lock(acceleration_.worker_);
+    ScopedLock lock(worker_);
 
-    acceleration_.push_lua_callback(false);
-    lua_pushstring(L, sensor);
-    lua_pushnumber(L, x);
-    lua_pushnumber(L, y);
-    lua_pushnumber(L, z);
-    // <func> <sensor name> <x> <y> <z>
-    int status = lua_pcall(L, 4, 0, 0);
+    push_lua_callback(false);
+    // Lua takes ownership of the remote
+    lua_pushclass<wii::Remote>(L, wii, "wii.Remote");
+    // <func> <wii>
+    int status = lua_pcall(L, 1, 0, 0);
 
     if (status) {
-      printf("Error in acceleration callback: %s\n", lua_tostring(L, -1));
+      printf("Error in found callback: %s\n", lua_tostring(L, -1));
     }
   }
-
-  void button(const char *type, bool pressed) {
-    lua_State *L = acceleration_.lua_;
-    if (!L) return;
-    ScopedLock lock(acceleration_.worker_);
-
-    acceleration_.push_lua_callback(false);
-    lua_pushstring(L, type);
-    lua_pushboolean(L, pressed);
-    // <func> <btn name> <pressed>
-    int status = lua_pcall(L, 2, 0, 0);
-
-    if (status) {
-      printf("Error in button callback: %s\n", lua_tostring(L, -1));
-    }
-  }
-
-  /** @internal
-   */
-  void set_remote(void *remote);
 };
 } // wii
 
-#endif // RUBYK_INCLUDE_WII_REMOTE_H_
+#endif // RUBYK_INCLUDE_WII_BROWSER_H_

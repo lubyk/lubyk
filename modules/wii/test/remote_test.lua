@@ -1,11 +1,9 @@
 --[[------------------------------------------------------
 
-  zmq for Lua
-  -----------
+  wii.Remote
+  ----------
 
-  zmq using msgpack to send/receive packets. The API is
-  slightly different from ØMQ because of the callback
-  nature of Rubyk bindings.
+  Access wii Remote.
 
 --]]------------------------------------------------------
 require 'rubyk'
@@ -31,4 +29,5 @@ function should.set_callbacks()
   end
   --assert_true(remote:connected())
 end
+
 test.all()
