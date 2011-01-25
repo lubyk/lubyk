@@ -2,6 +2,7 @@
 
 #include "lua_cpp_helper.h"
 
+
 using namespace wii;
 
 
@@ -30,9 +31,9 @@ static int Remote_Remote(lua_State *L) {
 static int Remote_destructor(lua_State *L) {
   Remote **userdata = (Remote**)luaL_checkudata(L, 1, "wii.Remote");
 
-
+  
   if (*userdata) delete *userdata;
-
+  
   *userdata = NULL;
   return 0;
 }
@@ -43,10 +44,10 @@ static int Remote_destructor(lua_State *L) {
 
 static int Remote__tostring(lua_State *L) {
   Remote **userdata = (Remote**)luaL_checkudata(L, 1, "wii.Remote");
-
-
+  
+  
   lua_pushfstring(L, "<wii.Remote: %p %s>", *userdata, (*userdata)->name());
-
+  
   return 1;
 }
 
@@ -59,7 +60,7 @@ static int Remote__tostring(lua_State *L) {
 static int Remote___newindex(lua_State *L) {
   try {
     Remote *self__ = *((Remote**)luaL_checkudata(L, 1, "wii.Remote"));
-
+    
     self__->__newindex(L);
     return 0;
   } catch (std::exception &e) {
@@ -108,7 +109,7 @@ static int Remote_button(lua_State *L) {
 }
 
 
-/** const char* wii::Remote::name() const
+/** const char* wii::Remote::name() const 
  * include/wii/Remote.h:60
  */
 static int Remote_name(lua_State *L) {

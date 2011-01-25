@@ -64,8 +64,8 @@
 - (id) initWithRemote:(wii::Remote*)master;
 
 //////// WiiRemoteDelegate ///////////
-- (void) accelerationChanged:(WiiAccelerationSensorType)type accX:(unsigned char)accX accY:(unsigned char)accY accZ:(unsigned char)accZ wiiRemote:(WiiRemote*)wiiRemote;
-- (void) buttonChanged:(WiiButtonType)type isPressed:(BOOL)isPressed wiiRemote:(WiiRemote*)wiiRemote;
+- (void) accelerationChanged:(WiiAccelerationSensorType)type accX:(unsigned char)accX accY:(unsigned char)accY accZ:(unsigned char)accZ;
+- (void) buttonChanged:(WiiButtonType)type isPressed:(BOOL)isPressed;
 @end
 
 /* ======================== LWiiRemoteDelegate @implementation ===================== */
@@ -144,7 +144,7 @@ static const char *button_name_from_type(WiiButtonType type) {
   return self;
 }
 
-- (void) accelerationChanged:(WiiAccelerationSensorType)type accX:(unsigned char)x accY:(unsigned char)y accZ:(unsigned char)z wiiRemote:(WiiRemote*)wiiRemote {
+- (void) accelerationChanged:(WiiAccelerationSensorType)type accX:(unsigned char)x accY:(unsigned char)y accZ:(unsigned char)z {
   master_->acceleration(
     type == WiiRemoteAccelerationSensor ? "Remote" : "Nunchuk",
     (float)x / 0xff,
@@ -153,7 +153,7 @@ static const char *button_name_from_type(WiiButtonType type) {
   );
 }
 
-- (void) buttonChanged:(WiiButtonType)type isPressed:(BOOL)isPressed wiiRemote:(WiiRemote*)wiiRemote {
+- (void) buttonChanged:(WiiButtonType)type isPressed:(BOOL)isPressed {
   master_->button(
     button_name_from_type(type),
     isPressed
@@ -269,7 +269,7 @@ void Remote::set_remote(void *remote) {
 - (void) WiiRemoteDiscovered:(WiiRemote*)wiimote {
   printf("Found !\n");
   wii::Remote *remote = new wii::Remote(worker_, [[wiimote address] UTF8String]);
-  remote->set_remote(remote);
+  remote->set_remote(wiimote);
   master_->found(remote);
 }
 

@@ -57,7 +57,7 @@ foreach (MODULE ${MODULES})
     endif(EXISTS ${MODULE}/include)
 
     if(EXISTS ${MODULE}/src)
-      file (GLOB MODULE_SOURCES ${MODULE}/src/*.cpp ${MODULE}/src/${PLAT}/*.cpp ${MODULE}/src/*.c ${MODULE}/src/${PLAT}/*.c)
+      file (GLOB MODULE_SOURCES ${MODULE}/src/*.cpp ${MODULE}/src/${PLAT}/*.cpp ${MODULE}/src/*.c ${MODULE}/src/${PLAT}/*.c ${MODULE}/src/*.mm ${MODULE}/src/${PLAT}/*.mm)
 
       # create name.so library
       add_library(${target} MODULE ${MODULE_SOURCES})

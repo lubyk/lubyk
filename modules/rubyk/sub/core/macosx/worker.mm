@@ -26,73 +26,50 @@
 
   ==============================================================================
 */
+#include "rubyk/worker.h"
+#include "rubyk/cocoa.h"
 
-#ifndef RUBYK_INCLUDE_RUBYK_WORKER_H_
-#define RUBYK_INCLUDE_RUBYK_WORKER_H_
-/*
-Structure of a running planet:
+using namespace rubyk;
 
-The Planet is an oscit::Root:
-Root   <- Planet
-
-It contains a single Worker that is passed to subnodes as context
-Planet <>--- Worker
-*/
-#include "rubyk/lua.h"
-#include "rubyk/thread.h"
-#include "rubyk/time_ref.h"
-
-namespace rubyk {
-
-/** The worker should be created only once and is responsible for
- * timing and lua locking.
- *
- * @dub string_format:'%%f'
- *      string_args:'(*userdata)->now()'
- */
-class Worker : public Mutex
-{
-  class Implementation;
-  Implementation *impl_;
+class Worker::Implementation : public rubyk::Thread {
 public:
-  /** Time reference. All times are in milliseconds (as double) from this reference.
-   * 0.0 = The worker's birthdate !
-   */
-  TimeRef time_ref_;
-
-  /** Main Lua state in which the worker was required.
-   */
-  lua_State *lua_;
-
-  /** Context use by zmq::Socket.
-   */
-  void *zmq_context_;
-
-  /** Counts the number of zmq::Socket depending on the
-   * socket.
-   */
-  size_t zmq_context_refcount_;
-
-public:
-
-  Worker(lua_State *L);
-
-  ~Worker();
-
-  /** Sleep for a given number of ms.
-   */
-  void sleep(double duration) {
-    ScopedUnlock unlock(this);
-    Thread::millisleep(duration);
+  Implementation() {
+    // create a thread that will run NSApp
+    start_thread<Implementation, &Implementation::run>(this, NULL);
   }
 
-  void run();
+  ~Implementation() {
+    CFRunLoopStop(CFRunLoopGetCurrent());
+    //[[NSRunLoop currentRunLoop] halt];
+  }
 
-  double now() {
-    return time_ref_.elapsed();
+  void run(Thread *thread) {
+    //  release calling thread semaphore
+    thread_ready();
+    ScopedPool pool;
+    printf("Run Loop\n");
+    [NSApplication sharedApplication];
+    [NSApp run];
+    //[[NSRunLoop currentRunLoop] configureAsServer];
+    //[[NSRunLoop currentRunLoop] run];
   }
 };
 
-} // rubyk
+Worker::Worker(lua_State *L)
+ : lua_(L),
+  zmq_context_(NULL),
+  zmq_context_refcount_(0) {
+  //impl_ = new Worker::Implementation;
+  lock();
+}
 
-#endif // RUBYK_INCLUDE_RUBYK_WORKER_H_
+Worker::~Worker() {
+  //delete impl_;
+  unlock();
+}
+
+void Worker::run() {
+  printf("Run App\n");
+  [NSApplication sharedApplication];
+  [NSApp run];
+}

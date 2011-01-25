@@ -9,7 +9,7 @@ using namespace rubyk;
 /* ============================ Constructors     ====================== */
 
 /** rubyk::Worker::Worker(lua_State *L)
- * include/rubyk/worker.h:79
+ * include/rubyk/worker.h:78
  */
 static int Worker_Worker(lua_State *L) {
   try {
@@ -54,7 +54,7 @@ static int Worker__tostring(lua_State *L) {
 
 
 /** double rubyk::Worker::now()
- * include/rubyk/worker.h:94
+ * include/rubyk/worker.h:91
  */
 static int Worker_now(lua_State *L) {
   try {
@@ -70,8 +70,24 @@ static int Worker_now(lua_State *L) {
 }
 
 
-/** void rubyk::Worker::sleep(double duration)
+/** void rubyk::Worker::run()
  * include/rubyk/worker.h:89
+ */
+static int Worker_run(lua_State *L) {
+  try {
+    Worker *self__ = *((Worker**)luaL_checkudata(L, 1, "rubyk.Worker"));
+    self__->run();
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "rubyk.Worker.run: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "rubyk.Worker.run: Unknown exception");
+  }
+}
+
+
+/** void rubyk::Worker::sleep(double duration)
+ * include/rubyk/worker.h:84
  */
 static int Worker_sleep(lua_State *L) {
   try {
@@ -93,6 +109,7 @@ static int Worker_sleep(lua_State *L) {
 
 static const struct luaL_Reg Worker_member_methods[] = {
   {"now"               , Worker_now},
+  {"run"               , Worker_run},
   {"sleep"             , Worker_sleep},
   {"__tostring"        , Worker__tostring},
   {"__gc"              , Worker_destructor},

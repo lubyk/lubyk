@@ -2,6 +2,7 @@
 
 #include "lua_cpp_helper.h"
 
+
 using namespace wii;
 
 
@@ -29,9 +30,9 @@ static int Browser_Browser(lua_State *L) {
 static int Browser_destructor(lua_State *L) {
   Browser **userdata = (Browser**)luaL_checkudata(L, 1, "wii.Browser");
 
-
+  
   if (*userdata) delete *userdata;
-
+  
   *userdata = NULL;
   return 0;
 }
@@ -42,10 +43,10 @@ static int Browser_destructor(lua_State *L) {
 
 static int Browser__tostring(lua_State *L) {
   Browser **userdata = (Browser**)luaL_checkudata(L, 1, "wii.Browser");
-
-
+  
+  
   lua_pushfstring(L, "<wii.Browser: %p>", *userdata);
-
+  
   return 1;
 }
 
@@ -58,7 +59,7 @@ static int Browser__tostring(lua_State *L) {
 static int Browser___newindex(lua_State *L) {
   try {
     Browser *self__ = *((Browser**)luaL_checkudata(L, 1, "wii.Browser"));
-
+    
     self__->__newindex(L);
     return 0;
   } catch (std::exception &e) {

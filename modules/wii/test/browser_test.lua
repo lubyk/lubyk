@@ -21,6 +21,7 @@ function should.find_first_remote(t)
     t.wiimote = found_wii
   end)
 
+  worker:run()
   while not t.wiimote do
     print('.')
     sleep(100)
