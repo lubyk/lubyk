@@ -41,7 +41,7 @@ class Browser;
  * @dub lib_name:'Remote_core'
  *      string_format:'%%s'
  *      string_args:'(*userdata)->name()'
- *      ignore:'set_remote'
+ *      ignore:'set_remote,acceleration,button'
  */
 class Remote
 {
@@ -81,6 +81,12 @@ public:
     }
   }
 
+  /** Set remote leds.
+   */
+  void set_leds(bool led1, bool led2, bool led3, bool led4);
+
+  //*********** CALLBACKS
+
   void acceleration(const char *sensor, float x, float y, float z) {
     lua_State *L = acceleration_.lua_;
     if (!L) return;
@@ -100,11 +106,11 @@ public:
   }
 
   void button(const char *type, bool pressed) {
-    lua_State *L = acceleration_.lua_;
+    lua_State *L = button_.lua_;
     if (!L) return;
-    ScopedLock lock(acceleration_.worker_);
+    ScopedLock lock(button_.worker_);
 
-    acceleration_.push_lua_callback(false);
+    button_.push_lua_callback(false);
     lua_pushstring(L, type);
     lua_pushboolean(L, pressed);
     // <func> <btn name> <pressed>

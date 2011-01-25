@@ -126,6 +126,26 @@ static int Remote_name(lua_State *L) {
 }
 
 
+/** void wii::Remote::set_leds(bool led1, bool led2, bool led3, bool led4)
+ * include/wii/Remote.h:118
+ */
+static int Remote_set_leds(lua_State *L) {
+  try {
+    Remote *self__ = *((Remote**)luaL_checkudata(L, 1, "wii.Remote"));
+    bool led1 = lua_toboolean(L, 2);
+    bool led2 = lua_toboolean(L, 3);
+    bool led3 = lua_toboolean(L, 4);
+    bool led4 = lua_toboolean(L, 5);
+    self__->set_leds(led1, led2, led3, led4);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "wii.Remote.set_leds: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "wii.Remote.set_leds: Unknown exception");
+  }
+}
+
+
 
 
 /* ============================ Lua Registration ====================== */
@@ -135,6 +155,7 @@ static const struct luaL_Reg Remote_member_methods[] = {
   {"acceleration"      , Remote_acceleration},
   {"button"            , Remote_button},
   {"name"              , Remote_name},
+  {"set_leds"          , Remote_set_leds},
   {"__tostring"        , Remote__tostring},
   {"__gc"              , Remote_destructor},
   {NULL, NULL},

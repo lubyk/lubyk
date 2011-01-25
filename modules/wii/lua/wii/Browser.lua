@@ -11,12 +11,13 @@
 --]]------------------------------------------------------
 require 'wii'
 require 'wii.Browser_core'
+require 'wii.Remote_core'
 require 'worker'
 
 local constr = wii.Browser
 local worker = worker
-function wii.Browser(type, func)
-  local instance = constr(worker, type)
+function wii.Browser(func)
+  local instance = constr(worker)
   if func then
     instance.found = func
   end

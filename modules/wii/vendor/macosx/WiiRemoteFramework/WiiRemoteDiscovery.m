@@ -53,7 +53,6 @@
 
 - (void) setDelegate:(id) delegate
 {
-  printf("Set delegate... %p\n", delegate);
 	// only retain a shallow reference to the delegate, could be problematic if the delegate went to be
 	// dealloced, but in the most general case, the delegate 'owns' the WiiRemoteDiscovery
 	_delegate = delegate;

@@ -70,6 +70,7 @@ Worker::~Worker() {
 
 void Worker::run() {
   printf("Run App\n");
+  ScopedUnlock unlock(this);
   [NSApplication sharedApplication];
   [NSApp run];
 }

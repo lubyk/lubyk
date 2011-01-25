@@ -70,12 +70,17 @@ public:
 
   void found(Remote *wii) {
     lua_State *L = lua_;
-    if (!L) return;
+    if (!L) {
+      printf("Remote found without browser callback.\n");
+      return;
+    }
+    
     ScopedLock lock(worker_);
 
     push_lua_callback(false);
     // Lua takes ownership of the remote
-    lua_pushclass<wii::Remote>(L, wii, "wii.Remote");
+    lua_pushclass<Remote>(L, wii, "wii.Remote");
+    
     // <func> <wii>
     int status = lua_pcall(L, 1, 0, 0);
 

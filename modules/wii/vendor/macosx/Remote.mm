@@ -191,6 +191,10 @@ public:
   	[wii_remote_ setDelegate:wii_remote_delegate_];
   }
 
+  void set_leds(bool led1, bool led2, bool led3, bool led4) {
+    [wii_remote_ setLEDEnabled1:led1 enabled2:led2 enabled3:led3 enabled4:led4];
+  }
+
   ~Implementation() {
     if (wii_remote_) {
       [wii_remote_ release];
@@ -215,6 +219,10 @@ Remote::~Remote() {
 
 void Remote::set_remote(void *remote) {
   impl_->set_remote((WiiRemote *)remote);
+}
+
+void Remote::set_leds(bool led1, bool led2, bool led3, bool led4) {
+  impl_->set_leds(led1, led2, led3, led4);
 }
 
 } // wii
