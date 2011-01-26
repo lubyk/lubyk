@@ -91,7 +91,7 @@ function lib.run_suite(suite)
       if name ~= '_info' and name ~= 'setup' and name ~= 'teardown' then
         test_count = test_count + 1
         gc_protect[name] = {}
-        suite.setup()
+        suite.setup(gc_protect[name])
           local ok, err = pcall(func, gc_protect[name])
           if not ok then
             fail_count = fail_count + 1
@@ -102,7 +102,7 @@ function lib.run_suite(suite)
               errors[name] = err
             --end
           end
-        suite.teardown()
+        suite.teardown(gc_protect[name])
       end
     end
   end
