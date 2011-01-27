@@ -235,3 +235,8 @@ end
 function assert_less_then(expected, value)
   lib.assert(value < expected, string.format('Should be less then %f but was %f.', expected, value))
 end
+
+function assert_type(expected, value)
+  lib.assert(type(value) == expected, string.format('Should be a %s but was %s.', expected, type(value)))
+end
+
