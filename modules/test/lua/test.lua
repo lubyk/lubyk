@@ -1,3 +1,5 @@
+require 'debug'
+
 local lib = {suites = {}}
 test = lib
 
@@ -75,10 +77,49 @@ function lib.load_all(...)
   end
 end
 
+-- Compatibility: Lua-5.1
+local function split(str, pat)
+  local t = {}  -- NOTE: use {n = 0} in Lua-5.0
+  local fpat = "(.-)" .. pat
+  local last_end = 1
+  local s, e, cap = str:find(fpat, 1)
+  while s do
+    if s ~= 1 or cap ~= "" then
+      table.insert(t,cap)
+    end
+    last_end = e+1
+    s, e, cap = str:find(fpat, last_end)
+  end
+  if last_end <= #str then
+    cap = str:sub(last_end)
+    table.insert(t, cap)
+  end
+  return t
+end
+
+local function error_handler(err)
+  local tb = split(debug.traceback(), '\n')
+  local max_i
+  local message = err
+  for i = 4,#tb do
+    if string.find(tb[i], 'lubyk/lib/test.lua') then
+      max_i = i - 2
+      break
+    end
+  end
+  for i = 4,max_i do
+    message = message .. '\n' .. tb[i]
+  end
+  return message
+end
+
 function lib.run_suite(suite)
   local test_count = 0
   local fail_count = 0
   local errors = suite._info.errors
+  local test_var
+  local test_func
+  local function pass_args() return test_func(test_var) end
   lib.current_suite = suite
   suite._info.assert_count = 0
   -- list of objects protected from gc
@@ -91,8 +132,10 @@ function lib.run_suite(suite)
       if name ~= '_info' and name ~= 'setup' and name ~= 'teardown' then
         test_count = test_count + 1
         gc_protect[name] = {}
+        test_var  = gc_protect[name]
+        test_func = func
         suite.setup(gc_protect[name])
-          local ok, err = pcall(func, gc_protect[name])
+          local ok, err = xpcall(pass_args, error_handler)
           if not ok then
             fail_count = fail_count + 1
             --local file, line, message = string.match(err, "([^/\.]+\.lua):(%d+): (.+)")
@@ -125,7 +168,7 @@ function lib.report_suite(suite)
     for name, err in pairs(suite._info.errors) do
       lib.total_fail = lib.total_fail + 1
       local hname = string.gsub(name, '_', ' ')
-      print(string.format('  %i. Should %s\n     %s\n', lib.total_fail, hname, err))
+      print(string.format('  %i. Should %s\n     %s\n', lib.total_fail, hname, string.gsub(err, '\n', '\n     ')))
     end
   end
 end
@@ -240,3 +283,6 @@ function assert_type(expected, value)
   lib.assert(type(value) == expected, string.format('Should be a %s but was %s.', expected, type(value)))
 end
 
+function assert_nil(value)
+  lib.assert(type(value) == 'nil', string.format('Should be a Nil but was %s.', type(value)))
+end
