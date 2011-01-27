@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -26,12 +26,12 @@
 
   ==============================================================================
 */
-#include "rubyk/support/draw.h"
+#include "lubyk/support/draw.h"
 
 #include "oscit/matrix.h"
 
 
-#include "rubyk/cocoa.h"
+#include "lubyk/cocoa.h"
 
 using namespace rk;
 

@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the OSCIT library (http://rubyk.org/liboscit)
+   This file is part of the OSCIT library (http://lubyk.org/liboscit)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------

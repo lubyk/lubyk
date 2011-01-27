@@ -1,4 +1,4 @@
-#include "rubyk.h"
+#include "lubyk.h"
 
 class Average : public Node
 {

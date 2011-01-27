@@ -3,7 +3,7 @@
 # http://github.com/pieper/CTK
 #
 # CMakeList created by https://github.com/PatrickCheng/zeromq2
-# and adapted for Rubyk (see [rubyk])
+# and adapted for Lubyk (see [lubyk])
 ##############################################################
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
@@ -24,7 +24,7 @@ SET(PACKAGE_VERSION_PATCH 10)
 SET(SRC_DIR ${ZMQ_SOURCE_DIR}/src)
 SET(INCLUDE_DIR ${ZMQ_SOURCE_DIR}/include)
 
-file(GLOB ZMQ_SRC rubyk.cpp ${SRC_DIR}/*.cpp ${SRC_DIR}/*.hpp ${INCLUDE_DIR}/zmq.h ${INCLUDE_DIR}/zmq.hpp)
+file(GLOB ZMQ_SRC lubyk.cpp ${SRC_DIR}/*.cpp ${SRC_DIR}/*.hpp ${INCLUDE_DIR}/zmq.h ${INCLUDE_DIR}/zmq.hpp)
 
 # Create the list of include directories needed for ZMQ header files.
 INCLUDE(${ZMQ_SOURCE_DIR}/ZMQIncludeDirectories.cmake)
@@ -129,25 +129,25 @@ CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/platform.hpp.in
                @ONLY IMMEDIATE)
 
 # ----------------------------------------------------------------------------------
-#  [rubyk]
+#  [lubyk]
 # ----------------------------------------------------------------------------------
 #ADD_LIBRARY(ZMQ ${ZMQ_SRC} )
 #TARGET_LINK_LIBRARIES(ZMQ ${LIB_DEP})
 list(APPEND ZMQ_SRC)
 set(SUB_MODULE_NAME "vendor")
-set(SUB_MODULE_SOURCES ${ZMQ_SRC} rubyk.cpp)
+set(SUB_MODULE_SOURCES ${ZMQ_SRC} lubyk.cpp)
 
 
 add_library("${target}_${SUB_MODULE_NAME}" MODULE ${SUB_MODULE_SOURCES})
 set_target_properties("${target}_${SUB_MODULE_NAME}"
   PROPERTIES OUTPUT_NAME ${SUB_MODULE_NAME}
   LINK_FLAGS ${PLAT_OBJ_FLAGS}
-  LIBRARY_OUTPUT_DIRECTORY ${RUBYK_SOURCE_DIR}/lib/${MODULE_NAME}
+  LIBRARY_OUTPUT_DIRECTORY ${LUBYK_SOURCE_DIR}/lib/${MODULE_NAME}
   PREFIX ""
   SUFFIX ".so"
 )
 add_dependencies (modules "${target}_${SUB_MODULE_NAME}")
 
 # ----------------------------------------------------------------------------------
-#  [/rubyk]
+#  [/lubyk]
 # ----------------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -27,8 +27,8 @@
   ==============================================================================
 */
 
-#include "rubyk/class_finder.h"
-#include "rubyk/planet.h"
+#include "lubyk/class_finder.h"
+#include "lubyk/planet.h"
 #include <dlfcn.h> // dylib load
 
 namespace rk {

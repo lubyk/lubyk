@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2011 by Gaspard Bucher (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -26,8 +26,8 @@
 
   ==============================================================================
 */
-#ifndef RUBYK_INCLUDE_MIMAS_WIDGET_H_
-#define RUBYK_INCLUDE_MIMAS_WIDGET_H_
+#ifndef LUBYK_INCLUDE_MIMAS_WIDGET_H_
+#define LUBYK_INCLUDE_MIMAS_WIDGET_H_
 
 #include "mimas/mimas.h"
 #include <QtGui/QWidget>
@@ -132,4 +132,4 @@ protected:
 };
 
 } // mimas
-#endif // RUBYK_INCLUDE_MIMAS_WIDGET_H_
+#endif // LUBYK_INCLUDE_MIMAS_WIDGET_H_

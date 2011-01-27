@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the OSCIT library (http://rubyk.org/liboscit)
+   This file is part of the OSCIT library (http://lubyk.org/liboscit)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -28,12 +28,12 @@
 */
 
 
-#ifndef RUBYK_INCLUDE_RUBYK_CONSTANTS_H_
-#define RUBYK_INCLUDE_RUBYK_CONSTANTS_H_
+#ifndef LUBYK_INCLUDE_LUBYK_CONSTANTS_H_
+#define LUBYK_INCLUDE_LUBYK_CONSTANTS_H_
 
-/** This class is used to hold Rubyk constants.
+/** This class is used to hold Lubyk constants.
  */
-class Rubyk {
+class Lubyk {
 public:
   /** Root attribute key for object's class url.
    */
@@ -58,4 +58,4 @@ public:
   static const char * const SCRIPT_EXT;
 };
 
-#endif RUBYK_INCLUDE_RUBYK_CONSTANTS_H_
+#endif LUBYK_INCLUDE_LUBYK_CONSTANTS_H_

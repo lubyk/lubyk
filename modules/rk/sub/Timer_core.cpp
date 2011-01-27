@@ -8,12 +8,12 @@ using namespace rk;
 
 /* ============================ Constructors     ====================== */
 
-/** rk::Timer::Timer(rubyk::Worker *worker, float interval)
+/** rk::Timer::Timer(lubyk::Worker *worker, float interval)
  * include/rk/Timer.h:48
  */
 static int Timer_Timer(lua_State *L) {
   try {
-    rubyk::Worker *worker = *((rubyk::Worker **)luaL_checkudata(L, 1, "rubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
     float interval = luaL_checknumber(L, 2);
     Timer * retval__ = new Timer(worker, interval);
     lua_pushclass<Timer>(L, retval__, "rk.Timer");
@@ -93,7 +93,7 @@ static int Timer_join(lua_State *L) {
 static int Timer_set_callback(lua_State *L) {
   try {
     Timer *self__ = *((Timer**)luaL_checkudata(L, 1, "rk.Timer"));
-    
+    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "rk.lua_State"));
     self__->set_callback(L);
     return 0;
   } catch (std::exception &e) {

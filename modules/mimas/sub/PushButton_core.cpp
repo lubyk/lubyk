@@ -121,7 +121,7 @@ static int PushButton_add_to_env(lua_State *L) {
   try {
     PushButton *self__ = *((PushButton**)luaL_checkudata(L, 1, "mimas.PushButton"));
     if (!self__) return luaL_error(L, "Using deleted mimas.PushButton in add_to_env");
-    
+    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "mimas.lua_State"));
     self__->add_to_env(L);
     return 0;
   } catch (std::exception &e) {
@@ -194,7 +194,7 @@ static int PushButton_name(lua_State *L) {
   try {
     PushButton *self__ = *((PushButton**)luaL_checkudata(L, 1, "mimas.PushButton"));
     if (!self__) return luaL_error(L, "Using deleted mimas.PushButton in name");
-    
+    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "mimas.lua_State"));
     LuaStackSize  retval__ = self__->name(L);
     return retval__;
   } catch (std::exception &e) {

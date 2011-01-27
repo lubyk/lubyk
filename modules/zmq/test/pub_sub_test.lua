@@ -5,10 +5,10 @@
 
   zmq using msgpack to send/receive packets. The API is
   slightly different from ØMQ because of the callback
-  nature of Rubyk bindings.
+  nature of Lubyk bindings.
 
 --]]------------------------------------------------------
-require 'rubyk'
+require 'lubyk'
 
 
 local should = test.Suite('zmq.Pub/Sub')

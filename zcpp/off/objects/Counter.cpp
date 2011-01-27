@@ -1,4 +1,4 @@
-#include "rubyk.h"
+#include "lubyk.h"
 /** This is a very basic object to see what an object definition could look like. */
 
 class Counter : public Node

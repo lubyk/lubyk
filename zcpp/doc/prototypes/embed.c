@@ -31,7 +31,7 @@ int main () {
   
   ruby_init();
   ruby_init_loadpath();
-  ruby_script("rubyk");
+  ruby_script("lubyk");
   rb_require("embed_loader.rb");
   
   file_name = rb_str_new2("embed.rb");

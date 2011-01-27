@@ -1,7 +1,7 @@
 #include "lua_script.h"
 #include "text_command.h"
 
-/*** Lua script with macro capability (can execute rubyk commands). */
+/*** Lua script with macro capability (can execute lubyk commands). */
 class Macro : public LuaScript
 {
 public:

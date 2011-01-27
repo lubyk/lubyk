@@ -11091,7 +11091,7 @@ static int cv_watershed(lua_State *L) {
 
 // #include "draw.h"
 // /** cv::Mat cv::LoadImage(const char *path)
-//  * rubyk/support/draw.h:141
+//  * lubyk/support/draw.h:141
 //  */
 // static int cv_LoadImage(lua_State *L) {
 //   try {

@@ -117,7 +117,7 @@ namespace CxxTest
                 expression << endl;
         }
         
-        // adapted for rubyk
+        // adapted for lubyk
         // gaspard
         void failedAssertEquals( const char *file, unsigned line,
                                  const char *xStr, const char *yStr,

@@ -1,6 +1,6 @@
 --[[------------------------------------------------------
 
-  Basic tests for rubyk GUI
+  Basic tests for lubyk GUI
   -------------------------
 
   This tests multi-threading and event posting / triggering.
@@ -8,7 +8,7 @@
   does not like beeing started and stopped multiple times.
 
 --]]------------------------------------------------------
-require 'rubyk'
+require 'lubyk'
 
 local should = test.Suite('mimas.Label')
 

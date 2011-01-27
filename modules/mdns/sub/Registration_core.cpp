@@ -8,7 +8,24 @@ using namespace mdns;
 
 /* ============================ Constructors     ====================== */
 
-
+/** mdns::Registration::Registration(lubyk::Worker *worker, const char *service_type, const char *name, uint port)
+ * include/mdns/registration.h:52
+ */
+static int Registration_Registration(lua_State *L) {
+  try {
+    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
+    const char *service_type = luaL_checkstring(L, 2);
+    const char *name = luaL_checkstring(L, 3);
+    uint port = luaL_checkint(L, 4);
+    Registration * retval__ = new Registration(worker, service_type, name, port);
+    lua_pushclass<Registration>(L, retval__, "mdns.Registration");
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mdns.Registration.Registration: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mdns.Registration.Registration: Unknown exception");
+  }
+}
 
 
 /* ============================ Destructor       ====================== */
@@ -39,16 +56,16 @@ static int Registration__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
-/** static LuaStackSize mdns::Registration::MakeInstance(rubyk::Worker *worker, const char *service_type, const char *name, uint port, lua_State *L)
+/** static LuaStackSize mdns::Registration::MakeInstance(lubyk::Worker *worker, const char *service_type, const char *name, uint port, lua_State *L)
  * include/mdns/registration.h:58
  */
 static int Registration_MakeInstance(lua_State *L) {
   try {
-    rubyk::Worker *worker = *((rubyk::Worker **)luaL_checkudata(L, 1, "rubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
     const char *service_type = luaL_checkstring(L, 2);
     const char *name = luaL_checkstring(L, 3);
     uint port = luaL_checkint(L, 4);
-    
+    lua_State *L = *((lua_State **)luaL_checkudata(L, 5, "mdns.lua_State"));
     LuaStackSize  retval__ = Registration::MakeInstance(worker, service_type, name, port, L);
     return retval__;
   } catch (std::exception &e) {
@@ -87,7 +104,8 @@ static const struct luaL_Reg Registration_member_methods[] = {
 };
 
 static const struct luaL_Reg Registration_namespace_methods[] = {
-  {"Registration"      , Registration_MakeInstance},
+  {"Registration"      , Registration_Registration},
+  {"Registration_MakeInstance", Registration_MakeInstance},
   {NULL, NULL},
 };
 

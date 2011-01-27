@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ public:
     Value patch_def = planet_->to_hash();
     assert_equal("{\"x\":10, \"y\":10, \"width\":500, \"height\":300}", patch_def[Oscit::VIEW].to_json());
     // just to make sure objects are inserted
-    assert_equal("115", patch_def[Rubyk::NODES_KEY]["m"]["tempo"].to_json());
+    assert_equal("115", patch_def[Lubyk::NODES_KEY]["m"]["tempo"].to_json());
   }
 
   // create a node
@@ -52,7 +52,7 @@ public:
   void test_create_link( void ) {
     setup_with_print("p = Print()\nv = Value(15)\n"); // n => p by default so "v" is not linked to p
     Value res = planet_->set(Value(Json("{nodes:{v:{out:{value:{\"/p/print\":{}}}}}}")));
-    assert_equal("{}", res[Rubyk::NODES_KEY]["v"]["out"]["value"]["/p/print"].to_json());
+    assert_equal("{}", res[Lubyk::NODES_KEY]["v"]["out"]["value"]["/p/print"].to_json());
 
     assert_print("p: 123\n", "v/value(123)\n");
   }

@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -27,8 +27,8 @@
   ==============================================================================
 */
 
-#ifndef RUBYK_INCLUDE_RUBYK_OPENGL_H_
-#define RUBYK_INCLUDE_RUBYK_OPENGL_H_
+#ifndef LUBYK_INCLUDE_LUBYK_OPENGL_H_
+#define LUBYK_INCLUDE_LUBYK_OPENGL_H_
 
 #ifdef __macosx__
 #include <GLUT/glut.h>
@@ -36,4 +36,4 @@
 #include <GL/gl.h>
 #endif
 
-#endif // RUBYK_INCLUDE_RUBYK_OPENGL_H_
+#endif // LUBYK_INCLUDE_LUBYK_OPENGL_H_

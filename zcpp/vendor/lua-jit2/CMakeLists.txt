@@ -30,9 +30,9 @@ set_target_properties(${the_target}
 #set(CMAKE_OSX_ARCHITECTURES "i386" CACHE STRING "Build architectures for OSX" FORCE)
 #message("Forcing i386 architecture to build with Lua JIT")
 #message("   (you need to build oscit with cd vendor/oscit && mkdir build && cmake -D RELEASE=ON .. && make")
-#set(LUA_DIR   "${RUBYK_SOURCE_DIR}/vendor/lua_jit2/src")
+#set(LUA_DIR   "${LUBYK_SOURCE_DIR}/vendor/lua_jit2/src")
 #set(LUA_LIB   "${LUA_DIR}/libluajit.a")
-#set(LUA_BUILD cd ${RUBYK_SOURCE_DIR}/vendor/lua-jit2 && make)
+#set(LUA_BUILD cd ${LUBYK_SOURCE_DIR}/vendor/lua-jit2 && make)
 #
 #add_custom_command ( # PRE_BUILD
 #  OUTPUT ${LUA_LIB}

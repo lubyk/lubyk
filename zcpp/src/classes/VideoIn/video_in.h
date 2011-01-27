@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -27,10 +27,10 @@
   ==============================================================================
 */
 
-#ifndef RUBYK_INCLUDE_RUBYK_VIDEO_IN_H_
-#define RUBYK_INCLUDE_RUBYK_VIDEO_IN_H_
+#ifndef LUBYK_INCLUDE_LUBYK_VIDEO_IN_H_
+#define LUBYK_INCLUDE_LUBYK_VIDEO_IN_H_
 
-#include "rubyk/oscit.h"
+#include "lubyk/oscit.h"
 
 namespace rk {
 
@@ -82,4 +82,4 @@ private:
 
 } // rk
 
-#endif // RUBYK_INCLUDE_RUBYK_VIDEO_IN_H_
+#endif // LUBYK_INCLUDE_LUBYK_VIDEO_IN_H_

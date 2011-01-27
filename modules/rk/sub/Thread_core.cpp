@@ -8,12 +8,12 @@ using namespace rk;
 
 /* ============================ Constructors     ====================== */
 
-/** rk::Thread::Thread(rubyk::Worker *worker)
+/** rk::Thread::Thread(lubyk::Worker *worker)
  * include/rk/Thread.h:44
  */
 static int Thread_Thread(lua_State *L) {
   try {
-    rubyk::Worker *worker = *((rubyk::Worker **)luaL_checkudata(L, 1, "rubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
     Thread * retval__ = new Thread(worker);
     lua_pushclass<Thread>(L, retval__, "rk.Thread");
     return 1;
@@ -124,7 +124,7 @@ static int Thread_should_run(lua_State *L) {
 static int Thread_start(lua_State *L) {
   try {
     Thread *self__ = *((Thread**)luaL_checkudata(L, 1, "rk.Thread"));
-    
+    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "rk.lua_State"));
     self__->start(L);
     return 0;
   } catch (std::exception &e) {

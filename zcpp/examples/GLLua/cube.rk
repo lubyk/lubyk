@@ -1,5 +1,5 @@
 # run from build directory with
-# ./rubyk ../examples/GLLua/cube.rk
+# ./lubyk ../examples/GLLua/cube.rk
 win = GLWindow()
 cube = GLLua("../examples/GLLua/cube.lua")
 win => cube

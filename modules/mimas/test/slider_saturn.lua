@@ -6,7 +6,7 @@
   zmq + mDNS
 
 --]]------------------------------------------------------
-require 'rubyk'
+require 'lubyk'
 
 continue = false
 value = 0

@@ -1,6 +1,6 @@
 /** compile and test with
 
-g++ -O2 -fno-common -c -o test.o -I../../include/rubyk/lua lua_module.cpp
+g++ -O2 -fno-common -c -o test.o -I../../include/lubyk/lua lua_module.cpp
 gcc -bundle -undefined dynamic_lookup -o test.so test.o -lstdc++
 lua
 > require 'test'
@@ -14,7 +14,7 @@ extern "C" {
 }
 
 /** void rk::makeTexture(const cv::Mat &mat, int tex)
- * rubyk/support/draw.h:54
+ * lubyk/support/draw.h:54
  */
 static int test_hello(lua_State *L) {
   int x = luaL_checkint(L, 1);

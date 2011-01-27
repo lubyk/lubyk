@@ -8,12 +8,12 @@ using namespace wii;
 
 /* ============================ Constructors     ====================== */
 
-/** wii::Browser::Browser(rubyk::Worker *worker)
+/** wii::Browser::Browser(lubyk::Worker *worker)
  * include/wii/Browser.h:49
  */
 static int Browser_Browser(lua_State *L) {
   try {
-    rubyk::Worker *worker = *((rubyk::Worker **)luaL_checkudata(L, 1, "rubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
     Browser * retval__ = new Browser(worker);
     lua_pushclass<Browser>(L, retval__, "wii.Browser");
     return 1;
@@ -59,7 +59,7 @@ static int Browser__tostring(lua_State *L) {
 static int Browser___newindex(lua_State *L) {
   try {
     Browser *self__ = *((Browser**)luaL_checkudata(L, 1, "wii.Browser"));
-    
+    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "wii.lua_State"));
     self__->__newindex(L);
     return 0;
   } catch (std::exception &e) {

@@ -6,7 +6,7 @@
   Storage with notification on change.
 
 --]]------------------------------------------------------
-require 'rubyk'
+require 'lubyk'
 
 local should = test.Suite('rk.Properties')
 

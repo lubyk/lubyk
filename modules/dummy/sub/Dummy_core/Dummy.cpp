@@ -8,12 +8,13 @@ using namespace dummy;
 
 /* ============================ Constructors     ====================== */
 
-/** dummy::Dummy::Dummy(rubyk::Worker *worker)
- * include/dummy/dummy.h:48
+
+/** dummy::Dummy::Dummy(lubyk::Worker *worker)
+ * include/db/dummy.h:48
  */
-static int Dummy_Dummy(lua_State *L) {
+static int Dummy_Dummy1(lua_State *L) {
   try {
-    rubyk::Worker *worker = *((rubyk::Worker **)luaL_checkudata(L, 1, "rubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
     Dummy * retval__ = new Dummy(worker);
     lua_pushclass<Dummy>(L, retval__, "dummy.Dummy");
     return 1;
@@ -21,6 +22,43 @@ static int Dummy_Dummy(lua_State *L) {
     return luaL_error(L, "dummy.Dummy.Dummy: %s", e.what());
   } catch (...) {
     return luaL_error(L, "dummy.Dummy.Dummy: Unknown exception");
+  }
+}
+
+
+/** dummy::Dummy::Dummy(lubyk::Worker *worker)
+ * include/dummy/dummy.h:48
+ */
+static int Dummy_Dummy2(lua_State *L) {
+  try {
+    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
+    Dummy * retval__ = new Dummy(worker);
+    lua_pushclass<Dummy>(L, retval__, "dummy.Dummy");
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "dummy.Dummy.Dummy: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "dummy.Dummy.Dummy: Unknown exception");
+  }
+}
+
+
+
+/** Overloaded function chooser for Dummy(...) */
+static int Dummy_Dummy(lua_State *L) {
+  int type__ = lua_type(L, 1);
+  int top__  = lua_gettop(L);
+  if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "lubyk.Worker")) {
+    type__ = lua_type(L, 2);
+    if (top__ < 2) {
+      return Dummy_Dummy1(L);
+    } else {
+      // use any to raise errors
+      return Dummy_Dummy1(L);
+    }
+  } else {
+    // use any to raise errors
+    return Dummy_Dummy1(L);
   }
 }
 
@@ -53,13 +91,14 @@ static int Dummy__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
+
 /** void dummy::Dummy::__newindex(lua_State *L)
- * include/dummy/dummy.h:53
+ * include/db/dummy.h:53
  */
-static int Dummy___newindex(lua_State *L) {
+static int Dummy___newindex1(lua_State *L) {
   try {
     Dummy *self__ = *((Dummy**)luaL_checkudata(L, 1, "dummy.Dummy"));
-    
+    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "dummy.lua_State"));
     self__->__newindex(L);
     return 0;
   } catch (std::exception &e) {
@@ -70,10 +109,48 @@ static int Dummy___newindex(lua_State *L) {
 }
 
 
-/** void dummy::Dummy::callback()
- * include/dummy/dummy.h:68
+/** void dummy::Dummy::__newindex(lua_State *L)
+ * include/dummy/dummy.h:53
  */
-static int Dummy_callback(lua_State *L) {
+static int Dummy___newindex2(lua_State *L) {
+  try {
+    Dummy *self__ = *((Dummy**)luaL_checkudata(L, 1, "dummy.Dummy"));
+    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "dummy.lua_State"));
+    self__->__newindex(L);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "dummy.Dummy.__newindex: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "dummy.Dummy.__newindex: Unknown exception");
+  }
+}
+
+
+
+/** Overloaded function chooser for __newindex(...) */
+static int Dummy___newindex(lua_State *L) {
+  int type__ = lua_type(L, 2);
+  int top__  = lua_gettop(L);
+  if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "dummy.lua_State")) {
+    type__ = lua_type(L, 3);
+    if (top__ < 3) {
+      return Dummy___newindex1(L);
+    } else {
+      // use any to raise errors
+      return Dummy___newindex1(L);
+    }
+  } else {
+    // use any to raise errors
+    return Dummy___newindex1(L);
+  }
+}
+
+
+
+/** void dummy::Dummy::callback()
+ * include/db/dummy.h:68
+ */
+static int Dummy_callback1(lua_State *L) {
   try {
     Dummy *self__ = *((Dummy**)luaL_checkudata(L, 1, "dummy.Dummy"));
     self__->callback();
@@ -86,10 +163,41 @@ static int Dummy_callback(lua_State *L) {
 }
 
 
-/** static const char* dummy::Dummy::plat()
- * include/dummy/dummy.h:83
+/** void dummy::Dummy::callback()
+ * include/dummy/dummy.h:68
  */
-static int Dummy_plat(lua_State *L) {
+static int Dummy_callback2(lua_State *L) {
+  try {
+    Dummy *self__ = *((Dummy**)luaL_checkudata(L, 1, "dummy.Dummy"));
+    self__->callback();
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "dummy.Dummy.callback: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "dummy.Dummy.callback: Unknown exception");
+  }
+}
+
+
+
+/** Overloaded function chooser for callback(...) */
+static int Dummy_callback(lua_State *L) {
+  int type__ = lua_type(L, 2);
+  int top__  = lua_gettop(L);
+  if (top__ < 2) {
+    return Dummy_callback1(L);
+  } else {
+    // use any to raise errors
+    return Dummy_callback1(L);
+  }
+}
+
+
+
+/** static const char* dummy::Dummy::plat()
+ * include/db/dummy.h:83
+ */
+static int Dummy_plat1(lua_State *L) {
   try {
     const char * retval__ = Dummy::plat();
     lua_pushstring(L, retval__);
@@ -98,6 +206,36 @@ static int Dummy_plat(lua_State *L) {
     return luaL_error(L, "dummy.Dummy.plat: %s", e.what());
   } catch (...) {
     return luaL_error(L, "dummy.Dummy.plat: Unknown exception");
+  }
+}
+
+
+/** static const char* dummy::Dummy::plat()
+ * include/dummy/dummy.h:83
+ */
+static int Dummy_plat2(lua_State *L) {
+  try {
+    const char * retval__ = Dummy::plat();
+    lua_pushstring(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "dummy.Dummy.plat: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "dummy.Dummy.plat: Unknown exception");
+  }
+}
+
+
+
+/** Overloaded function chooser for plat(...) */
+static int Dummy_plat(lua_State *L) {
+  int type__ = lua_type(L, 2);
+  int top__  = lua_gettop(L);
+  if (top__ < 2) {
+    return Dummy_plat1(L);
+  } else {
+    // use any to raise errors
+    return Dummy_plat1(L);
   }
 }
 

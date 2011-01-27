@@ -25,11 +25,11 @@ set(SUB_MODULE_HEADERS_MOC "")
 foreach(MOC_SRC ${SUB_MODULE_HEADERS})
   get_filename_component(MOC_SRC_NAME ${MOC_SRC} NAME_WE)
   add_custom_command( PRE_BUILD
-    OUTPUT  ${RUBYK_SOURCE_DIR}/modules/mimas/sub/moc/${MOC_SRC_NAME}.cpp
-    COMMAND ${MOC} ${MOC_SRC} -o ${RUBYK_SOURCE_DIR}/modules/mimas/sub/moc/${MOC_SRC_NAME}.cpp
+    OUTPUT  ${LUBYK_SOURCE_DIR}/modules/mimas/sub/moc/${MOC_SRC_NAME}.cpp
+    COMMAND ${MOC} ${MOC_SRC} -o ${LUBYK_SOURCE_DIR}/modules/mimas/sub/moc/${MOC_SRC_NAME}.cpp
     DEPENDS ${MOC_SRC}
   )
-  list(APPEND SUB_MODULE_HEADERS_MOC ${RUBYK_SOURCE_DIR}/modules/mimas/sub/moc/${MOC_SRC_NAME}.cpp)
+  list(APPEND SUB_MODULE_HEADERS_MOC ${LUBYK_SOURCE_DIR}/modules/mimas/sub/moc/${MOC_SRC_NAME}.cpp)
 endforeach(MOC_SRC SUB_MODULE_HEADERS)
 
 if(QT_SRC_PATH STREQUAL "")
@@ -57,7 +57,7 @@ add_library("${target}_${SUB_MODULE_NAME}" MODULE ${SUB_MODULE_SOURCES} ${SUB_MO
 set_target_properties("${target}_${SUB_MODULE_NAME}"
   PROPERTIES OUTPUT_NAME ${SUB_MODULE_NAME}
   LINK_FLAGS ${PLAT_OBJ_FLAGS}
-  LIBRARY_OUTPUT_DIRECTORY ${RUBYK_SOURCE_DIR}/lib/${MODULE_NAME}
+  LIBRARY_OUTPUT_DIRECTORY ${LUBYK_SOURCE_DIR}/lib/${MODULE_NAME}
   PREFIX ""
   SUFFIX ".so"
 )

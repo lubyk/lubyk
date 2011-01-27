@@ -21,7 +21,7 @@
   Home: quit
 
 --]]------------------------------------------------------
-require 'rubyk'
+require 'lubyk'
 
 app = mimas.Application()
 

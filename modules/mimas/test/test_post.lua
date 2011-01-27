@@ -1,6 +1,6 @@
 --[[------------------------------------------------------
 
-  Basic tests for rubyk GUI
+  Basic tests for lubyk GUI
   -------------------------
 
   This tests multi-threading and event posting / triggering.
@@ -8,7 +8,7 @@
   does not like beeing started and stopped multiple times.
 
 --]]------------------------------------------------------
-require 'rubyk'
+require 'lubyk'
 
 local should = test.Suite('mimas')
 
@@ -38,7 +38,7 @@ function should.post_to_gui_thread()
 
   layout:addWidget(quit_btn)
 
-  local browser = mdns.Browser(rubyk.service_type, function(service)
+  local browser = mdns.Browser(lubyk.service_type, function(service)
     -- FIXME: we are not in the GUI thread !
     -- FIXME: how do we do this safely ?
     app:post(function()

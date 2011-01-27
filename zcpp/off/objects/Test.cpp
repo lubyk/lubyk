@@ -1,4 +1,4 @@
-#include "rubyk.h"
+#include "lubyk.h"
 #include <sstream>
 
 class Test : public Node

@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2011 by Gaspard Bucher (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -26,43 +26,43 @@
 
   ==============================================================================
 */
-#ifndef RUBYK_INCLUDE_RK_THREAD_H_
-#define RUBYK_INCLUDE_RK_THREAD_H_
+#ifndef LUBYK_INCLUDE_RK_THREAD_H_
+#define LUBYK_INCLUDE_RK_THREAD_H_
 
-#include "rubyk.h"
-#include "rubyk/thread.h"
-#include "rubyk/worker.h"
+#include "lubyk.h"
+#include "lubyk/thread.h"
+#include "lubyk/worker.h"
 
 namespace rk {
 /** Starts a new OS Thread with a given function.
  * @dub lib_name:'Thread_core'
  */
-class Thread : public rubyk::LuaCallback, public rubyk::Thread
+class Thread : public lubyk::LuaCallback, public lubyk::Thread
 {
 public:
-  Thread(rubyk::Worker *worker)
-    : rubyk::LuaCallback(worker) {}
+  Thread(lubyk::Worker *worker)
+    : lubyk::LuaCallback(worker) {}
 
   ~Thread() {
     kill();
   }
 
   void quit() {
-    rubyk::Thread::quit();
+    lubyk::Thread::quit();
   }
 
   void kill() {
-    rubyk::ScopedUnlock unlock(worker_);
-    rubyk::Thread::kill();
+    lubyk::ScopedUnlock unlock(worker_);
+    lubyk::Thread::kill();
   }
 
   void join() {
-    rubyk::ScopedUnlock unlock(worker_);
-    rubyk::Thread::join();
+    lubyk::ScopedUnlock unlock(worker_);
+    lubyk::Thread::join();
   }
 
   bool should_run() {
-    return rubyk::Thread::should_run();
+    return lubyk::Thread::should_run();
   }
 
   void start(lua_State *L) {
@@ -71,11 +71,11 @@ public:
   }
 
 private:
-  void run(rubyk::Thread *runner) {
+  void run(lubyk::Thread *runner) {
 
     runner->thread_ready();
 
-    rubyk::ScopedLock lock(worker_);
+    lubyk::ScopedLock lock(worker_);
 
     // we may get a kill before even starting
     if (!should_run()) return;
@@ -93,4 +93,4 @@ private:
 };
 
 } // rk
-#endif // RUBYK_INCLUDE_RK_THREAD_H_
+#endif // LUBYK_INCLUDE_RK_THREAD_H_

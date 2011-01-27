@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2011 by Gaspard Bucher (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -26,19 +26,19 @@
 
   ==============================================================================
 */
-#ifndef RUBYK_INCLUDE_ZMQ_SOCKET_H_
-#define RUBYK_INCLUDE_ZMQ_SOCKET_H_
+#ifndef LUBYK_INCLUDE_ZMQ_SOCKET_H_
+#define LUBYK_INCLUDE_ZMQ_SOCKET_H_
 
 #include "../vendor/include/zmq.h"
-#include "rubyk/msgpack.h"
+#include "lubyk/msgpack.h"
 
-#include "rubyk.h"
+#include "lubyk.h"
 
 #include <stdlib.h> // rand()
 #include <time.h>   // time()
 #include <string>
 
-using namespace rubyk;
+using namespace lubyk;
 
 namespace zmq {
 
@@ -58,7 +58,7 @@ class Socket : LuaCallback
    */
   Mutex req_mutex_;
 public:
-  Socket(rubyk::Worker *worker, int type)
+  Socket(lubyk::Worker *worker, int type)
    : LuaCallback(worker),
      thread_(NULL),
      type_(type) {
@@ -368,4 +368,4 @@ private:
 };
 } // zmq
 
-#endif // RUBYK_INCLUDE_ZMQ_SOCKET_H_
+#endif // LUBYK_INCLUDE_ZMQ_SOCKET_H_

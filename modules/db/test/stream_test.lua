@@ -8,7 +8,7 @@
   unique names such as "x", "y", etc.
 
 --]]------------------------------------------------------
-require 'rubyk'
+require 'lubyk'
 
 local should = test.Suite('db.Stream')
 

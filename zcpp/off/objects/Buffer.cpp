@@ -1,4 +1,4 @@
-#include "rubyk.h"
+#include "lubyk.h"
 #include "buffer.h"
 
 #define DEFAULT_WINDOW_COUNT 5

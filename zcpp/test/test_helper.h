@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -31,7 +31,7 @@
 #define _TEST_HELPER_H_
 #include <cxxtest/TestSuite.h>
 
-#include "rubyk.h"
+#include "lubyk.h"
 using namespace rk;
 
 #include "mock/dummy_node.h"

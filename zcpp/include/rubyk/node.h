@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -27,8 +27,8 @@
   ==============================================================================
 */
 
-#ifndef RUBYK_INCLUDE_RUBYK_NODE_H_
-#define RUBYK_INCLUDE_RUBYK_NODE_H_
+#ifndef LUBYK_INCLUDE_LUBYK_NODE_H_
+#define LUBYK_INCLUDE_LUBYK_NODE_H_
 
 #include <sstream>
 #include <cstdio>
@@ -37,17 +37,17 @@
 #include <list>
 //#include <pthread.h>
 
-#include "rubyk/oscit.h"
-#include "rubyk/event.h"
-#include "rubyk/inlet.h"
-#include "rubyk/outlet.h"
-#include "rubyk/worker.h"
+#include "lubyk/oscit.h"
+#include "lubyk/event.h"
+#include "lubyk/inlet.h"
+#include "lubyk/outlet.h"
+#include "lubyk/worker.h"
 
 namespace rk {
 
 class Observer;
 
-/** Base class for all nodes in rubyk. You should *NEVER* create sub-classes of Node with
+/** Base class for all nodes in lubyk. You should *NEVER* create sub-classes of Node with
  * multiple inheritance (cannot cast).
  *
  *  Initialization is done in the following order:
@@ -144,9 +144,9 @@ class Node : public Object {
     // set Script Widget
     std::cout << url() << "->Node::init()\n";
     attributes_.set(Oscit::VIEW, Oscit::WIDGET, "Node");
-    attributes_.set(Oscit::VIEW, Oscit::HUE,    Rubyk::NODE_DEFAULT_HUE);
-    attributes_.set(Oscit::VIEW, Oscit::WIDTH,  Rubyk::NODE_DEFAULT_WIDTH);
-    attributes_.set(Oscit::VIEW, Oscit::HEIGHT, Rubyk::NODE_DEFAULT_HEIGHT);
+    attributes_.set(Oscit::VIEW, Oscit::HUE,    Lubyk::NODE_DEFAULT_HUE);
+    attributes_.set(Oscit::VIEW, Oscit::WIDTH,  Lubyk::NODE_DEFAULT_WIDTH);
+    attributes_.set(Oscit::VIEW, Oscit::HEIGHT, Lubyk::NODE_DEFAULT_HEIGHT);
 
     return gNilValue;
   }
@@ -172,13 +172,13 @@ class Node : public Object {
   /** Set url for class used to create this Node.
    */
   void set_class_url(const Value &class_url) {
-    attributes_.set(Rubyk::CLASS, class_url);
+    attributes_.set(Lubyk::CLASS, class_url);
   }
 
   /** Get url of class object used to create this Node.
    */
   const Value class_url() const {
-    return attributes_[Rubyk::CLASS];
+    return attributes_[Lubyk::CLASS];
   }
 
   /** Set object from a hash representation.
@@ -305,4 +305,4 @@ class Node : public Object {
 
 } // rk
 
-#endif // RUBYK_INCLUDE_RUBYK_NODE_H_
+#endif // LUBYK_INCLUDE_LUBYK_NODE_H_

@@ -8,7 +8,21 @@ using namespace mimas;
 
 /* ============================ Constructors     ====================== */
 
-
+/** mimas::Application::Application(lubyk::Worker *worker)
+ * include/mimas/Application.h:67
+ */
+static int Application_Application(lua_State *L) {
+  try {
+    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
+    Application * retval__ = new Application(worker);
+    lua_pushclass2<Application>(L, retval__, "mimas.Application");
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Application.Application: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Application.Application: Unknown exception");
+  }
+}
 
 
 /* ============================ Destructor       ====================== */
@@ -53,13 +67,13 @@ static int Application__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
-/** static LuaStackSize mimas::Application::MakeApplication(rubyk::Worker *worker, lua_State *L)
+/** static LuaStackSize mimas::Application::MakeApplication(lubyk::Worker *worker, lua_State *L)
  * include/mimas/Application.h:72
  */
 static int Application_MakeApplication(lua_State *L) {
   try {
-    rubyk::Worker *worker = *((rubyk::Worker **)luaL_checkudata(L, 1, "rubyk.Worker"));
-    
+    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
+    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "mimas.lua_State"));
     LuaStackSize  retval__ = Application::MakeApplication(worker, L);
     return retval__;
   } catch (std::exception &e) {
@@ -95,7 +109,7 @@ static int Application_post(lua_State *L) {
   try {
     Application *self__ = *((Application**)luaL_checkudata(L, 1, "mimas.Application"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Application in post");
-    
+    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "mimas.lua_State"));
     self__->post(L);
     return 0;
   } catch (std::exception &e) {
@@ -157,7 +171,8 @@ static const struct luaL_Reg Application_member_methods[] = {
 };
 
 static const struct luaL_Reg Application_namespace_methods[] = {
-  {"Application"       , Application_MakeApplication},
+  {"Application"       , Application_Application},
+  {"Application_MakeApplication", Application_MakeApplication},
   {NULL, NULL},
 };
 

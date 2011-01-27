@@ -1,5 +1,5 @@
 # run from build directory with
-# cp ../examples/GLLua/opencv.json ./ && ./rubyk ../examples/GLLua/opencv.rk
+# cp ../examples/GLLua/opencv.json ./ && ./lubyk ../examples/GLLua/opencv.rk
 win = GLWindow()
 cv = Lua("../examples/GLLua/simple/cv_LoadImage.lua")
 cv => set_image~draw_img

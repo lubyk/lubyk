@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2011 by Gaspard Bucher (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -26,11 +26,11 @@
 
   ==============================================================================
 */
-#ifndef RUBYK_INCLUDE_WII_REMOTE_H_
-#define RUBYK_INCLUDE_WII_REMOTE_H_
+#ifndef LUBYK_INCLUDE_WII_REMOTE_H_
+#define LUBYK_INCLUDE_WII_REMOTE_H_
 
-#include "rubyk.h"
-using namespace rubyk;
+#include "lubyk.h"
+using namespace lubyk;
 
 namespace wii {
 
@@ -53,7 +53,7 @@ class Remote
   Implementation *impl_;
   friend class Implementation;
 public:
-  Remote(rubyk::Worker *worker, const char *remote_name);
+  Remote(lubyk::Worker *worker, const char *remote_name);
 
   ~Remote();
 
@@ -127,4 +127,4 @@ public:
 };
 } // wii
 
-#endif // RUBYK_INCLUDE_WII_REMOTE_H_
+#endif // LUBYK_INCLUDE_WII_REMOTE_H_

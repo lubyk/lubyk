@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2011 by Gaspard Bucher (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -26,13 +26,13 @@
 
   ==============================================================================
 */
-#ifndef RUBYK_INCLUDE_MDNS_BROWSER_H_
-#define RUBYK_INCLUDE_MDNS_BROWSER_H_
+#ifndef LUBYK_INCLUDE_MDNS_BROWSER_H_
+#define LUBYK_INCLUDE_MDNS_BROWSER_H_
 
-#include "rubyk.h"
+#include "lubyk.h"
 #include "mdns/abstract_browser.h"
 
-using namespace rubyk;
+using namespace lubyk;
 
 namespace mdns {
 
@@ -47,7 +47,7 @@ namespace mdns {
 class Browser : public AbstractBrowser, public LuaCallback
 {
 public:
-  Browser(rubyk::Worker *worker, const char *service_type) :
+  Browser(lubyk::Worker *worker, const char *service_type) :
     AbstractBrowser(service_type),
     LuaCallback(worker) {
     lua_ = NULL;
@@ -59,7 +59,7 @@ public:
     stop();
   }
 
-  static LuaStackSize MakeInstance(rubyk::Worker *worker, const char *service_type, lua_State *L) {
+  static LuaStackSize MakeInstance(lubyk::Worker *worker, const char *service_type, lua_State *L) {
     Browser *instance = new Browser(worker, service_type);
     luaL_checktype(L, -1, LUA_TFUNCTION);
     lua_pushclass<Browser>(L, instance, "mdns.Browser");
@@ -152,4 +152,4 @@ public:
 };
 } // mdns
 
-#endif // RUBYK_INCLUDE_MDNS_BROWSER_H_
+#endif // LUBYK_INCLUDE_MDNS_BROWSER_H_

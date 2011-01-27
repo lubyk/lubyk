@@ -5,7 +5,7 @@
 
   The Service is a zmq.REP (reply) servier announced with
   mDNS and a zmq.PUB whose port can be queried with the
-  rubyk.sub_port_url query.
+  lubyk.sub_port_url query.
 
 --]]------------------------------------------------------
 
@@ -18,7 +18,7 @@ setmetatable(lib, {
  __call = function(table, name, service_type, callback, port)
   if not callback then
     callback = service_type
-    service_type = rubyk.service_type
+    service_type = lubyk.service_type
   end
   if not callback then
     -- dummy
@@ -34,8 +34,8 @@ setmetatable(lib, {
   --======================================= REP server (sync)
   instance.rep = zmq.SimpleRep(function(...)
     -- we do not pass callback directly so that we can update the function with instance.callback=..
-    if ... == rubyk.info_url then
-      -- rubyk special commands
+    if ... == lubyk.info_url then
+      -- lubyk special commands
       -- publish and pull ports
       return {pub = instance.pub:port(), pull = instance.pull:port()}
     else

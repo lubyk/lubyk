@@ -1,4 +1,4 @@
-#include "rubyk.h"
+#include "lubyk.h"
 #include "midi_message.h"
 #include <sstream>
 

@@ -62,8 +62,8 @@ void *mimas::Callback::qt_metacast(const char *_clname)
     if (!_clname) return 0;
     if (!strcmp(_clname, qt_meta_stringdata_mimas__Callback))
         return static_cast<void*>(const_cast< Callback*>(this));
-    if (!strcmp(_clname, "rubyk::LuaCallback"))
-        return static_cast< rubyk::LuaCallback*>(const_cast< Callback*>(this));
+    if (!strcmp(_clname, "lubyk::LuaCallback"))
+        return static_cast< lubyk::LuaCallback*>(const_cast< Callback*>(this));
     return QObject::qt_metacast(_clname);
 }
 

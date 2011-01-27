@@ -6,7 +6,7 @@
   Access wii Remote.
 
 --]]------------------------------------------------------
-require 'rubyk'
+require 'lubyk'
 
 local should = test.Suite('wii.Remote')
 

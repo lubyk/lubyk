@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -27,14 +27,14 @@
   ==============================================================================
 */
 
-#include "rubyk/lua_script.h"
-#include "rubyk/lua_inlet.h"
+#include "lubyk/lua_script.h"
+#include "lubyk/lua_inlet.h"
 
-#include "rubyk/lua.h"
+#include "lubyk/lua.h"
 #include "lua_cpp_helper.h"
 #include "oscit/matrix.h"
 
-#define RUBYK_THIS_IN_LUA "__this"
+#define LUBYK_THIS_IN_LUA "__this"
 #define LUA_OUTLET_NAME   "Outlet"
 
 
@@ -66,7 +66,7 @@ const Value LuaScript::lua_init(const char *init_script) {
   //lua_pushclass<Node>(lua_, this, "rk.Node");
 
   // TODO: SHOULD ALSO PUSH ON THE REGISTRY
-  lua_setglobal(lua_, RUBYK_THIS_IN_LUA);
+  lua_setglobal(lua_, LUBYK_THIS_IN_LUA);
 
   register_lua_method<LuaScript, &LuaScript::lua_build_inlet>("build_inlet_");
 
@@ -75,12 +75,12 @@ const Value LuaScript::lua_init(const char *init_script) {
   register_lua_method("send_", &LuaScript::lua_send);
   register_lua_method<LuaScript, &LuaScript::lua_call_rk>("rk_call");
 
-  // load rubyk.lua
+  // load lubyk.lua
   Value res = root_->call(LIB_URL);
   if (!res.is_string()) {
     return res;
   } else {
-    // we must load 'rubyk.lua' by hand because this is the script that contains our clever loader...
+    // we must load 'lubyk.lua' by hand because this is the script that contains our clever loader...
     Value paths = res.split(":");
     size_t path_count = paths.size();
     int status;
@@ -88,7 +88,7 @@ const Value LuaScript::lua_init(const char *init_script) {
 
     for(size_t i = 0; i < path_count; ++i) {
       path = paths[i].str();
-      path.append("/lua/rubyk.lua");
+      path.append("/lua/lubyk.lua");
       status = luaL_dofile(lua_, path.c_str());
       if (status == 0) {
         // ok
@@ -194,10 +194,10 @@ void LuaScript::register_lua_method(const char *name, lua_CFunction function) {
 }
 
 LuaScript *LuaScript::lua_this(lua_State *L) {
-  //lua_getfield(L, LUA_REGISTRYINDEX, RUBYK_THIS_IN_LUA);
-  lua_getglobal(L, RUBYK_THIS_IN_LUA); // FIXME: Use REGISTRY instead (better protection)
+  //lua_getfield(L, LUA_REGISTRYINDEX, LUBYK_THIS_IN_LUA);
+  lua_getglobal(L, LUBYK_THIS_IN_LUA); // FIXME: Use REGISTRY instead (better protection)
   LuaScript *script = (LuaScript*)lua_touserdata(L,lua_gettop(L));
-  if (!script) fprintf(stderr, "Lua error: '%s' not set.\n", RUBYK_THIS_IN_LUA);
+  if (!script) fprintf(stderr, "Lua error: '%s' not set.\n", LUBYK_THIS_IN_LUA);
   lua_pop(L,1);
   return script;
 }
@@ -237,7 +237,7 @@ int LuaScript::lua_build_outlet(const Value &val) {
   }
 
   ObjectHandle out;
-  if (get_child(Rubyk::NODE_OUT_KEY, &out)) {
+  if (get_child(Lubyk::NODE_OUT_KEY, &out)) {
     ObjectHandle outlet;
     if (out->get_child(val[0].str().c_str(), &outlet)) {
       if (outlet->name() != val[0].str() || outlet->type_id() != hashId(signature.str())) {

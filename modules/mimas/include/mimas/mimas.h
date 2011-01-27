@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2011 by Gaspard Bucher (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -26,10 +26,10 @@
 
   ==============================================================================
 */
-#ifndef RUBYK_INCLUDE_MIMAS_MIMAS_H_
-#define RUBYK_INCLUDE_MIMAS_MIMAS_H_
+#ifndef LUBYK_INCLUDE_MIMAS_MIMAS_H_
+#define LUBYK_INCLUDE_MIMAS_MIMAS_H_
 
-#include "rubyk.h"
+#include "lubyk.h"
 #include <QtGui/QWidget>
 
 #if 0
@@ -43,4 +43,4 @@ namespace mimas {
 void setHue(QPalette &palette, float hue);
 
 } // mimas
-#endif // RUBYK_INCLUDE_MIMAS_MIMAS_H_
+#endif // LUBYK_INCLUDE_MIMAS_MIMAS_H_

@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -433,7 +433,7 @@ public:
     Root base;
     Real value = 0;
     DummyNode *sender    = base.adopt(new DummyNode(&value));
-    Object    *out       = sender->adopt(new Object(Rubyk::NODE_OUT_KEY));
+    Object    *out       = sender->adopt(new Object(Lubyk::NODE_OUT_KEY));
     DummyNode *receiver1 = base.adopt(new DummyNode(&value));
     Outlet    *outlet    = out->adopt(new Outlet(sender, "ping", Oscit::real_io("Receive real values.")));
     receiver1->adopt(new Inlet(receiver1, "pong", OutletTest_receive_value1, Oscit::real_io("Receive real values.")));
@@ -449,7 +449,7 @@ public:
     Root base;
     Real value = 0;
     DummyNode *sender    = base.adopt(new DummyNode(&value));
-    Object    *out       = sender->adopt(new Object(Rubyk::NODE_OUT_KEY));
+    Object    *out       = sender->adopt(new Object(Lubyk::NODE_OUT_KEY));
     DummyNode *receiver1 = base.adopt(new DummyNode(&value));
     Outlet    *outlet    = out->adopt(new Outlet(sender, "ping", Oscit::real_io("Receive real values.")));
     receiver1->adopt(new Inlet(receiver1, "mic", OutletTest_receive_value1, Oscit::real_io("Receive real values.")));

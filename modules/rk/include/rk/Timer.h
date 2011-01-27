@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2011 by Gaspard Bucher (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -26,12 +26,12 @@
 
   ==============================================================================
 */
-#ifndef RUBYK_INCLUDE_RK_TIMER_H_
-#define RUBYK_INCLUDE_RK_TIMER_H_
+#ifndef LUBYK_INCLUDE_RK_TIMER_H_
+#define LUBYK_INCLUDE_RK_TIMER_H_
 
-#include "rubyk.h"
-#include "rubyk/timer.h"
-#include "rubyk/worker.h"
+#include "lubyk.h"
+#include "lubyk/timer.h"
+#include "lubyk/worker.h"
 
 namespace rk {
 /** Calls a lua function back at regular intervals. If the called function returns
@@ -40,11 +40,11 @@ namespace rk {
  *      string_args:'(*userdata)->interval()'
  *      lib_name:'Timer_core'
  */
-class Timer : public rubyk::LuaCallback
+class Timer : public lubyk::LuaCallback
 {
 public:
-  Timer(rubyk::Worker *worker, float interval)
-    : rubyk::LuaCallback(worker),
+  Timer(lubyk::Worker *worker, float interval)
+    : lubyk::LuaCallback(worker),
       timer_(this, interval) {}
 
   ~Timer() {}
@@ -54,12 +54,12 @@ public:
   }
 
   void start() {
-    if (!lua_) throw rubyk::Exception("Staring timer without a callback.");
+    if (!lua_) throw lubyk::Exception("Staring timer without a callback.");
     timer_.start();
   }
 
   void join() {
-    rubyk::ScopedUnlock unlock(worker_);
+    lubyk::ScopedUnlock unlock(worker_);
     timer_.join();
   }
 
@@ -75,7 +75,7 @@ private:
     // lua_ = LuaCallback's thread state
 
     // find function and call
-    rubyk::ScopedLock lock(worker_);
+    lubyk::ScopedLock lock(worker_);
 
 
     push_lua_callback(false);
@@ -101,9 +101,9 @@ private:
     lua_pop(lua_, 1);
   }
 
-  rubyk::Timer<rk::Timer, &rk::Timer::bang> timer_;
+  lubyk::Timer<rk::Timer, &rk::Timer::bang> timer_;
 };
 
 } // rk
 
-#endif // RUBYK_INCLUDE_RK_TIMER_H_
+#endif // LUBYK_INCLUDE_RK_TIMER_H_

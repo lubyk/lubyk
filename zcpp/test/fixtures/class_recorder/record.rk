@@ -1,4 +1,4 @@
-#!/usr/local/bin/rubyk
+#!/usr/local/bin/lubyk
 bang = Metro(5000)
 bang => c
 c=Lua(load:"12_sig.lua")

@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -26,11 +26,11 @@
 
   ==============================================================================
 */
-#include "rubyk/planet.h"
+#include "lubyk/planet.h"
 #include "VideoIn/video_in.h"
 
 #include "oscit/matrix.h"
-#include "rubyk/cocoa.h"
+#include "lubyk/cocoa.h"
 #import <QTKit/QTKit.h>
 
 using namespace rk;

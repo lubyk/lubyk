@@ -1,4 +1,4 @@
-require 'rubyk'
+require 'lubyk'
 require 'test'
 
 local should = test.Suite('test')

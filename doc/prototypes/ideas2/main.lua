@@ -1,5 +1,5 @@
 -- we are in the global env
--- rubyk namespace
+-- lubyk namespace
 rk = {loaded = {}}
 nodes = {}
 

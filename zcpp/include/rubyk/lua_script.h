@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -27,12 +27,12 @@
   ==============================================================================
 */
 
-#ifndef RUBYK_INCLUDE_RUBYK_LUA_SCRIPT_H_
-#define RUBYK_INCLUDE_RUBYK_LUA_SCRIPT_H_
+#ifndef LUBYK_INCLUDE_LUBYK_LUA_SCRIPT_H_
+#define LUBYK_INCLUDE_LUBYK_LUA_SCRIPT_H_
 
 #include "oscit/script.h"
 #include "oscit/mutex.h"
-#include "rubyk/node.h"
+#include "lubyk/node.h"
 
 struct lua_State;
 typedef int (*lua_CFunction) (lua_State *L);
@@ -52,10 +52,10 @@ public:
 
     // set Script Widget
     attributes_.set(Oscit::VIEW, Oscit::WIDGET, "Script");
-    attributes_.set(Oscit::VIEW, Oscit::HUE, Rubyk::SCRIPT_DEFAULT_HUE);
+    attributes_.set(Oscit::VIEW, Oscit::HUE, Lubyk::SCRIPT_DEFAULT_HUE);
 
     // set default Script extension
-    attributes_.set(Oscit::VIEW, Rubyk::SCRIPT_EXT, "lua");
+    attributes_.set(Oscit::VIEW, Lubyk::SCRIPT_EXT, "lua");
 
     return lua_init();
   }
@@ -144,7 +144,7 @@ protected:
   int lua_build_inlet(const Value &val);
 
   /** @internal
-   * "build_outlet_" method in lua to create/update an outlet (used by rubyk library).
+   * "build_outlet_" method in lua to create/update an outlet (used by lubyk library).
    * @param val name of the outlet & type
    * @return number of values on stack: 1 = pointer to outlet
    */
@@ -208,7 +208,7 @@ private:
    */
   static bool lua_pushlist(lua_State *L, const Value &val);
 
-  /** "send_" method in lua (used by rubyk library in Outlet 'class').
+  /** "send_" method in lua (used by lubyk library in Outlet 'class').
    */
   static int lua_send(lua_State *L);
 
@@ -244,4 +244,4 @@ private:
 
 } // rk
 
-#endif // RUBYK_INCLUDE_RUBYK_LUA_SCRIPT_H_
+#endif // LUBYK_INCLUDE_LUBYK_LUA_SCRIPT_H_

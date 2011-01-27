@@ -7,7 +7,7 @@ using namespace cv;
 
 
 /** float cv::rk_mat_at(const cv::Mat &m, int x, int y, int c=0)
- * rubyk/support/draw.h:79
+ * lubyk/support/draw.h:79
  */
 static int cv_rk_mat_at(lua_State *L) {
   try {
@@ -40,7 +40,7 @@ static int cv_rk_mat_at(lua_State *L) {
 }
 
 /** size_t cv::rk_mat_cols(const cv::Mat &m)
- * rubyk/support/draw.h:97
+ * lubyk/support/draw.h:97
  */
 static int cv_rk_mat_cols(lua_State *L) {
   try {
@@ -66,7 +66,7 @@ static int cv_rk_mat_cols(lua_State *L) {
 
 
 /** size_t cv::rk_mat_height(const cv::Mat &m)
- * rubyk/support/draw.h:103
+ * lubyk/support/draw.h:103
  */
 static int cv_rk_mat_height(lua_State *L) {
   try {
@@ -92,7 +92,7 @@ static int cv_rk_mat_height(lua_State *L) {
 
 
 /** size_t cv::rk_mat_rows(const cv::Mat &m)
- * rubyk/support/draw.h:109
+ * lubyk/support/draw.h:109
  */
 static int cv_rk_mat_rows(lua_State *L) {
   try {
@@ -118,7 +118,7 @@ static int cv_rk_mat_rows(lua_State *L) {
 
 
 /** size_t cv::rk_mat_width(const cv::Mat &m)
- * rubyk/support/draw.h:91
+ * lubyk/support/draw.h:91
  */
 static int cv_rk_mat_width(lua_State *L) {
   try {

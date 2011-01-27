@@ -7,7 +7,7 @@ using namespace gl;
 
 
 /** void gl::DrawPixels(const cv::Mat &mat)
- * rubyk/support/draw.h:131
+ * lubyk/support/draw.h:131
  */
 static int gl_DrawPixels(lua_State *L) {
   try {
@@ -32,7 +32,7 @@ static int gl_DrawPixels(lua_State *L) {
 
 
 /** void gl::TexImage(const cv::Mat &mat)
- * rubyk/support/draw.h:136
+ * lubyk/support/draw.h:136
  */
 static int gl_TexImage(lua_State *L) {
   try {

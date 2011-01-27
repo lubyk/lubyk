@@ -1,5 +1,5 @@
 # run from build directory with
-# ./rubyk ../examples/GLLua/video.rk
+# ./lubyk ../examples/GLLua/video.rk
 w = GLWindow()
 l = GLLua("../examples/GLLua/video.lua")
 w => l

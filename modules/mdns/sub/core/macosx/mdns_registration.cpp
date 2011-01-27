@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2011 by Gaspard Bucher (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -47,7 +47,7 @@ typedef	int	pid_t;
 
 #include <dns_sd.h>     // zeroconf
 
-#include "rubyk/thread.h"
+#include "lubyk/thread.h"
 #include "mdns/abstract_registration.h"
 
 

@@ -7,7 +7,7 @@
   the LuaSQLite examples and tests.
 
 --]]------------------------------------------------------
-require 'rubyk'
+require 'lubyk'
 
 local should = test.Suite('sqlite3')
 

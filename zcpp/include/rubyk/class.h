@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -27,13 +27,13 @@
   ==============================================================================
 */
 
-#ifndef RUBYK_INCLUDE_RUBYK_CLASS_H_
-#define RUBYK_INCLUDE_RUBYK_CLASS_H_
+#ifndef LUBYK_INCLUDE_LUBYK_CLASS_H_
+#define LUBYK_INCLUDE_LUBYK_CLASS_H_
 
-#include "rubyk/node.h"
-#include "rubyk/planet.h"
+#include "lubyk/node.h"
+#include "lubyk/planet.h"
 
-#include "rubyk/inlet.h"
+#include "lubyk/inlet.h"
 
 #include <list>
 
@@ -138,4 +138,4 @@ private:
 
 } // rk
 
-#endif // RUBYK_INCLUDE_RUBYK_CLASS_H_
+#endif // LUBYK_INCLUDE_LUBYK_CLASS_H_

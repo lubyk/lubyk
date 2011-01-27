@@ -1,4 +1,4 @@
-require 'rubyk'
+require 'lubyk'
 
 flooder = zmq.Pub()
 print(flooder:port())

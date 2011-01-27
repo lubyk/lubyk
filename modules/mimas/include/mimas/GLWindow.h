@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2011 by Gaspard Bucher (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -26,11 +26,11 @@
 
   ==============================================================================
 */
-#ifndef RUBYK_INCLUDE_MIMAS_WIDGET_H_
-#define RUBYK_INCLUDE_MIMAS_WIDGET_H_
+#ifndef LUBYK_INCLUDE_MIMAS_WIDGET_H_
+#define LUBYK_INCLUDE_MIMAS_WIDGET_H_
 
-#include "rubyk.h"
-using namespace rubyk;
+#include "lubyk.h"
+using namespace lubyk;
 
 #include "mimas/mimas.h"
 #include <QtGui/QWidget>
@@ -58,7 +58,7 @@ class GLWindow : public QGLWidget, public DeletableOutOfLua
    */
   bool in_show_;
 public:
-  GLWindow(rubyk::Worker *worker)
+  GLWindow(lubyk::Worker *worker)
    : initializeGL_(worker),
      resizeGL_(worker),
      paintGL_(worker),
@@ -217,4 +217,4 @@ protected:
 };
 
 } // mimas
-#endif // RUBYK_INCLUDE_MIMAS_WIDGET_H_
+#endif // LUBYK_INCLUDE_MIMAS_WIDGET_H_

@@ -3,8 +3,8 @@
 default: build/MakeFile
 	cd build && make
 
-rubyk: build/MakeFile
-	cd build && make rubyk
+lubyk: build/MakeFile
+	cd build && make lubyk
 
 build/MakeFile: build vendor/oscit/include
 	cd build && cmake ..
@@ -27,7 +27,7 @@ clean: build
 #  LIBDIR=$(PREFIX)/lib
 #  BINDIR=$(PREFIX)/bin
 #
-#  RUBYK_LIBDIR=$(LIBDIR)/rubyk
+#  LUBYK_LIBDIR=$(LIBDIR)/lubyk
 #
 #  DOT_CMD=/Applications/Graphviz.app/Contents/MacOS/dot
 #  RAGEL=ragel
@@ -50,8 +50,8 @@ clean: build
 #  test: test/runner test/runner.cpp
 #  	./test/runner && rm test/runner
 #
-#  rubyk: src/core/main.cpp $(LINKER_OBJECTS) test_objects
-#  	$(CC) $(CFLAGS) $(LFLAGS) $(INCLUDE_HEADERS) src/core/main.cpp $(LINKER_OBJECTS) -o rubyk
+#  lubyk: src/core/main.cpp $(LINKER_OBJECTS) test_objects
+#  	$(CC) $(CFLAGS) $(LFLAGS) $(INCLUDE_HEADERS) src/core/main.cpp $(LINKER_OBJECTS) -o lubyk
 #
 #  lib:
 #  	mkdir lib
@@ -61,7 +61,7 @@ clean: build
 #
 #  test_objects: lib lib/lua lib/Value.rko lib/Print.rko lib/Metro.rko lib/MidiOut.rko lib/NoteOut.rko lib/Lua.rko
 #
-#  objects: lib lib/Test.rko lib/Number.rko lib/Add.rko lib/Inlet.rko lib/Group.rko lib/Alias.rko lib/Outlet.rko lib/Print.rko lib/Counter.rko lib/Metro.rko lib/lua/rubyk.lua
+#  objects: lib lib/Test.rko lib/Number.rko lib/Add.rko lib/Inlet.rko lib/Group.rko lib/Alias.rko lib/Outlet.rko lib/Print.rko lib/Counter.rko lib/Metro.rko lib/lua/lubyk.lua
 #
 #  off: lib/Serial.rko lib/Turing.rko lib/Keyboard.rko lib/Cabox.rko lib/Svm.rko lib/Buffer.rko lib/GLWindow.rko lib/Cut.rko lib/MaxCount.rko lib/FFT.rko lib/VQ.rko lib/ClassRecorder.rko lib/PCA.rko lib/Average.rko lib/Peak.rko lib/Minus.rko lib/Replay.rko lib/Kmeans.rko lib/Abs.rko lib/Sum.rko lib/Ctrl.rko lib/Diff.rko lib/Bang.rko lib/Macro.rko lib/MidiIn.rko lib/GLLua.rko lib/GLPlot.rko lib/Group.rko lib/System.rko
 #
@@ -135,16 +135,16 @@ clean: build
 #  src/core/text_command.png: src/core/text_command.dot
 #  	${DOT_CMD} -Tpng src/core/text_command.dot -o src/core/text_command.png
 #
-#  install: install_rubyk install_libs
+#  install: install_lubyk install_libs
 #
-#  install_rubyk:
+#  install_lubyk:
 #  	$(MKDIR) $(BINDIR)
-#  	$(INSTALL) rubyk $(BINDIR)
+#  	$(INSTALL) lubyk $(BINDIR)
 #
 #  install_libs:
-#  	$(MKDIR) $(RUBYK_LIBDIR)
-#  	cd lib && for e in *.rko ; do echo $(RUBYK_LIBDIR)/$$e && $(INSTALL) $$e $(RUBYK_LIBDIR) ; done
+#  	$(MKDIR) $(LUBYK_LIBDIR)
+#  	cd lib && for e in *.rko ; do echo $(LUBYK_LIBDIR)/$$e && $(INSTALL) $$e $(LUBYK_LIBDIR) ; done
 #
 #  clean:
-#  	rm -rf *.o *.dSYM lib/*.rko lib/*.dSYM rubyk src/core/text_command.png src/core/text_command.dot test/runner test/runner.cpp test/*.dSYM
+#  	rm -rf *.o *.dSYM lib/*.rko lib/*.dSYM lubyk src/core/text_command.png src/core/text_command.dot test/runner test/runner.cpp test/*.dSYM
 #

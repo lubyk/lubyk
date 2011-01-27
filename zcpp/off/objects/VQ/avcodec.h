@@ -25,7 +25,7 @@
 #include <limits.h>  // INT_MAX
 
 // redefine av_malloc, av_free without memory alignement. Some day it could be good to use memaligned for 
-// the all rubyk...
+// the all lubyk...
 
 /** mem.c **/
 #include <cstdlib>

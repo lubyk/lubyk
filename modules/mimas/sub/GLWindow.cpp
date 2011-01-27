@@ -8,12 +8,12 @@ using namespace mimas;
 
 /* ============================ Constructors     ====================== */
 
-/** mimas::GLWindow::GLWindow(rubyk::Worker *worker)
+/** mimas::GLWindow::GLWindow(lubyk::Worker *worker)
  * include/mimas/GLWindow.h:65
  */
 static int GLWindow_GLWindow(lua_State *L) {
   try {
-    rubyk::Worker *worker = *((rubyk::Worker **)luaL_checkudata(L, 1, "rubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
     GLWindow * retval__ = new GLWindow(worker);
     lua_pushclass2<GLWindow>(L, retval__, "mimas.GLWindow");
     return 1;
@@ -74,7 +74,7 @@ static int GLWindow___newindex(lua_State *L) {
   try {
     GLWindow *self__ = *((GLWindow**)luaL_checkudata(L, 1, "mimas.GLWindow"));
     if (!self__) return luaL_error(L, "Using deleted mimas.GLWindow in __newindex");
-    
+    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "mimas.lua_State"));
     self__->__newindex(L);
     return 0;
   } catch (std::exception &e) {
@@ -182,7 +182,7 @@ static int GLWindow_name(lua_State *L) {
   try {
     GLWindow *self__ = *((GLWindow**)luaL_checkudata(L, 1, "mimas.GLWindow"));
     if (!self__) return luaL_error(L, "Using deleted mimas.GLWindow in name");
-    
+    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "mimas.lua_State"));
     LuaStackSize  retval__ = self__->name(L);
     return retval__;
   } catch (std::exception &e) {

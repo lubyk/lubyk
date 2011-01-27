@@ -1,4 +1,4 @@
-#include "rubyk.h"
+#include "lubyk.h"
 
 enum replay_modes_t {
   WaitingMode = 0, /**< No data to playback, recording not started. */

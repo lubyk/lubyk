@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -27,11 +27,11 @@
   ==============================================================================
 */
 
-#ifndef RUBYK_INCLUDE_RUBYK_NEW_METHOD_H_
-#define RUBYK_INCLUDE_RUBYK_NEW_METHOD_H_
+#ifndef LUBYK_INCLUDE_LUBYK_NEW_METHOD_H_
+#define LUBYK_INCLUDE_LUBYK_NEW_METHOD_H_
 
-#include "rubyk/planet.h"
-#include "rubyk/class.h"
+#include "lubyk/planet.h"
+#include "lubyk/class.h"
 
 #define NEW_METHOD_INFO "Create new objects from a given url and a hash of parameters."
 
@@ -154,4 +154,4 @@ public:
 
 } // rk
 
-#endif // RUBYK_INCLUDE_RUBYK_NEW_METHOD_H_
+#endif // LUBYK_INCLUDE_LUBYK_NEW_METHOD_H_

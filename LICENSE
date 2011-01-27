@@ -1,6 +1,6 @@
 
-Rubyk is licensed under the terms of the MIT license reproduced below.
-This means that Rubyk is free software and can be used for both academic
+Lubyk is licensed under the terms of the MIT license reproduced below.
+This means that Lubyk is free software and can be used for both academic
 and commercial purposes at absolutely no cost.
 
 We try very hard not to include code with other licenses but this could not
@@ -18,7 +18,7 @@ libraries (Lua, libsvm, ...).
 
 ===============================================================================
 
-Copyright (c) 2007-2010 Gaspard Buma (http://rubyk.org)
+Copyright (c) 2007-2010 Gaspard Buma (http://lubyk.org)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

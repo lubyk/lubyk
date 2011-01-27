@@ -1,4 +1,4 @@
-#include "rubyk.h"
+#include "lubyk.h"
 
 class Bang : public Node
 {

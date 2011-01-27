@@ -2,12 +2,12 @@ cmake_minimum_required(VERSION 2.6.2)
 
 # ==============================================================================
 #
-#  Rubyk
+#  Lubyk
 #
 # ==============================================================================
 
-project (RUBYK)
-set(RUBYK_VERSION "0.8")
+project (LUBYK)
+set(LUBYK_VERSION "0.8")
 
 # ==============================================================================
 #
@@ -65,12 +65,12 @@ add_definitions(-D__${PLAT}__ -DUSE_READLINE)
 find_package(Doxygen)
 set(DOXYGEN_OUTPUT_DIR ${CMAKE_BINARY_DIR}/doc)
 set(DOXYGEN_OUTPUT ${DOXYGEN_OUTPUT_DIR}/xml/index.xml)
-set(RUBYK_BUILD_DOXYGEN_DOCS ON CACHE BOOL "Build HTML+XML documentation with Doxygen")
+set(LUBYK_BUILD_DOXYGEN_DOCS ON CACHE BOOL "Build HTML+XML documentation with Doxygen")
 
 # The code below is moved here so that 'dub' target (Doxygen based binding generator
 # can depend on this action).
-if(RUBYK_BUILD_DOXYGEN_DOCS AND DOXYGEN_FOUND)
-  file (GLOB MODULES ${RUBYK_SOURCE_DIR}/modules/*)
+if(LUBYK_BUILD_DOXYGEN_DOCS AND DOXYGEN_FOUND)
+  file (GLOB MODULES ${LUBYK_SOURCE_DIR}/modules/*)
   foreach(MODULE ${MODULES})
     get_filename_component (MODULE_NAME ${MODULE} NAME_WE)
     file(GLOB MODULE_DUB_HEADERS ${MODULE}/include/${MODULE_NAME}/*.h)
@@ -133,7 +133,7 @@ add_custom_target(head rm -rf ${CMAKE_BINARY_DIR}/doc/xml && make doc && make du
 
 
 message (STATUS "===========================================================================")
-message (STATUS "   RUBYK build configuration settings                                      ")
+message (STATUS "   LUBYK build configuration settings                                      ")
 message (STATUS "===========================================================================")
 message (STATUS "   Platform                                                       = ${PLAT}")
 message (STATUS "   Release                                                        = ${RELEASE}")
@@ -142,5 +142,5 @@ message (STATUS "   QT_SRC_PATH              (build using Qt frameworks)        
 else(QT_SRC_PATH STREQUAL "")
 message (STATUS "   QT_SRC_PATH                                                    = ${QT_SRC_PATH}")
 endif(QT_SRC_PATH STREQUAL "")
-message (STATUS "   Type: 'ccmake <path to rubyk>' to change settings")
+message (STATUS "   Type: 'ccmake <path to lubyk>' to change settings")
 message (STATUS "===========================================================================")

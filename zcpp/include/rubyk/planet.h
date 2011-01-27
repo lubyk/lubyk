@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -27,24 +27,24 @@
   ==============================================================================
 */
 
-#ifndef RUBYK_INCLUDE_RUBYK_PLANET_H_
-#define RUBYK_INCLUDE_RUBYK_PLANET_H_
+#ifndef LUBYK_INCLUDE_LUBYK_PLANET_H_
+#define LUBYK_INCLUDE_LUBYK_PLANET_H_
 
 #include <queue>
 
-#include "rubyk/oscit.h"
-#include "rubyk/group.h"
-#include "rubyk/text_command.h"
-#include "rubyk/worker.h"
+#include "lubyk/oscit.h"
+#include "lubyk/group.h"
+#include "lubyk/text_command.h"
+#include "lubyk/worker.h"
 
 namespace rk {
 
 class ClassFinder;
 
-#define DEFAULT_OBJECTS_LIB_PATH "lib:~/rubyk/lib:/usr/local/lib/rubyk"
-#define RUBYK_DEFAULT_NAME "rubyk"
+#define DEFAULT_OBJECTS_LIB_PATH "lib:~/lubyk/lib:/usr/local/lib/lubyk"
+#define LUBYK_DEFAULT_NAME "lubyk"
 #define PLANET_VERSION "0.5.0"
-#define PLANET_WELCOME "# Welcome to rubyk !\n# version: 0.5.0\n# \n"
+#define PLANET_WELCOME "# Welcome to lubyk !\n# version: 0.5.0\n# \n"
 
 /** A planet is just a root with a worker and CRUD operations to update
  * a patch from Hash based changes. The Create, Update and Delete
@@ -56,11 +56,11 @@ class Planet : public Root {
  public:
   TYPED("Object.Root.Planet")
 
-  Planet() : Root(RUBYK_DEFAULT_NAME), worker_(this), classes_(NULL), gui_started_(false) {
+  Planet() : Root(LUBYK_DEFAULT_NAME), worker_(this), classes_(NULL), gui_started_(false) {
     init();
   }
 
-  Planet(uint port) : Root(RUBYK_DEFAULT_NAME), worker_(this), classes_(NULL), gui_started_(false) {
+  Planet(uint port) : Root(LUBYK_DEFAULT_NAME), worker_(this), classes_(NULL), gui_started_(false) {
     init();
     open_port(port);
   }
@@ -197,4 +197,4 @@ class Planet : public Root {
 
 } // rk
 
-#endif // RUBYK_INCLUDE_RUBYK_PLANET_H_
+#endif // LUBYK_INCLUDE_LUBYK_PLANET_H_

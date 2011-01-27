@@ -1,4 +1,4 @@
-#include "rubyk.h"
+#include "lubyk.h"
 #include "opengl.h"
 
 typedef enum {

@@ -6,7 +6,7 @@
   ...
 
 --]]------------------------------------------------------
-require 'rubyk'
+require 'lubyk'
 local should = test.Suite('glut (TODO)')
 
 function should.load_glut()

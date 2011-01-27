@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2011 by Gaspard Bucher (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -27,14 +27,14 @@
   ==============================================================================
 */
 
-#ifndef RUBYK_INCLUDE_MDNS_ABSTRACT_REGISTRATION_H_
-#define RUBYK_INCLUDE_MDNS_ABSTRACT_REGISTRATION_H_
+#ifndef LUBYK_INCLUDE_MDNS_ABSTRACT_REGISTRATION_H_
+#define LUBYK_INCLUDE_MDNS_ABSTRACT_REGISTRATION_H_
 #include <string>
 
-#include "rubyk/mutex.h"
+#include "lubyk/mutex.h"
 #include "mdns/location.h"
 
-using namespace rubyk;
+using namespace lubyk;
 
 namespace mdns {
 
@@ -71,4 +71,4 @@ class AbstractRegistration : public Mutex {
 
 } // mdns
 
-#endif // RUBYK_INCLUDE_MDNS_ABSTRACT_REGISTRATION_H_
+#endif // LUBYK_INCLUDE_MDNS_ABSTRACT_REGISTRATION_H_

@@ -8,7 +8,7 @@ project(modules)
 # ----------------------------------------------------------------------------------
 #  Include common directories
 # ----------------------------------------------------------------------------------
-include_directories(rubyk/include lua/include ${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(lubyk/include lua/include ${CMAKE_CURRENT_SOURCE_DIR})
 
 # ----------------------------------------------------------------------------------
 #  Build each module
@@ -29,7 +29,7 @@ list(REMOVE_ITEM MODULES ${CMAKE_CURRENT_SOURCE_DIR}/bind.rb)
 
 # Build files from dub
 add_custom_target(dub ALL
-   COMMAND ruby ${RUBYK_SOURCE_DIR}/modules/bind.rb
+   COMMAND ruby ${LUBYK_SOURCE_DIR}/modules/bind.rb
    DEPENDS ${DOXYGEN_OUTPUT})
 
 add_dependencies(modules dub)
@@ -64,7 +64,7 @@ foreach (MODULE ${MODULES})
       set_target_properties(${target}
         PROPERTIES OUTPUT_NAME ${target}
         LINK_FLAGS ${PLAT_OBJ_FLAGS}
-        LIBRARY_OUTPUT_DIRECTORY ${RUBYK_SOURCE_DIR}/lib
+        LIBRARY_OUTPUT_DIRECTORY ${LUBYK_SOURCE_DIR}/lib
         PREFIX ""
         SUFFIX ".so"
       )
@@ -81,7 +81,7 @@ foreach (MODULE ${MODULES})
       if(EXISTS ${MODULE}/sub/CMakeLists.txt)
         add_subdirectory(${MODULE}/sub)
       else(EXISTS ${MODULE}/sub/CMakeLists.txt)
-        include(${RUBYK_SOURCE_DIR}/modules/CMakeSub.txt)
+        include(${LUBYK_SOURCE_DIR}/modules/CMakeSub.txt)
       endif(EXISTS ${MODULE}/sub/CMakeLists.txt)
     endif(EXISTS ${MODULE}/sub)
 
@@ -100,7 +100,7 @@ foreach (MODULE ${MODULES})
       file (GLOB MODULE_SOURCES ${MODULE}/lua/*)
 
       add_custom_target("${target}_lua" ALL
-         COMMAND ${CMAKE_COMMAND} -E copy_directory ${MODULE}/lua ${RUBYK_SOURCE_DIR}/lib)
+         COMMAND ${CMAKE_COMMAND} -E copy_directory ${MODULE}/lua ${LUBYK_SOURCE_DIR}/lib)
 
       add_dependencies(${target} "${target}_lua")
 

@@ -1,7 +1,7 @@
 # This makefile just copies "*.lua" files from lib_objects/lua into "lib/lua" (compilation result directory)
 
-file (GLOB LUA_FILES ${RUBYK_SOURCE_DIR}/src/classes/Lua/*.lua)
-set  (LUA_LIB_DIR ${RUBYK_SOURCE_DIR}/build/lib/lua)
+file (GLOB LUA_FILES ${LUBYK_SOURCE_DIR}/src/classes/Lua/*.lua)
+set  (LUA_LIB_DIR ${LUBYK_SOURCE_DIR}/build/lib/lua)
 
 foreach(LUA_FILE ${LUA_FILES})
 	get_filename_component (LUA_FILE_NAME ${LUA_FILE} NAME)

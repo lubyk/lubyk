@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2011 by Gaspard Bucher (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -26,13 +26,13 @@
 
   ==============================================================================
 */
-#ifndef RUBYK_INCLUDE_MDNS_REGISTRATION_H_
-#define RUBYK_INCLUDE_MDNS_REGISTRATION_H_
+#ifndef LUBYK_INCLUDE_MDNS_REGISTRATION_H_
+#define LUBYK_INCLUDE_MDNS_REGISTRATION_H_
 
 #include "mdns/abstract_registration.h"
 
-#include "rubyk.h"
-using namespace rubyk;
+#include "lubyk.h"
+using namespace lubyk;
 
 
 namespace mdns {
@@ -47,7 +47,7 @@ namespace mdns {
 class Registration : public AbstractRegistration, public LuaCallback
 {
 public:
-  Registration(rubyk::Worker *worker, const char *service_type, const char *name, uint port) :
+  Registration(lubyk::Worker *worker, const char *service_type, const char *name, uint port) :
     AbstractRegistration(service_type, name, port),
     LuaCallback(worker) {}
 
@@ -55,7 +55,7 @@ public:
     stop();
   }
 
-  static LuaStackSize MakeInstance(rubyk::Worker *worker, const char *service_type, const char *name, uint port, lua_State *L) {
+  static LuaStackSize MakeInstance(lubyk::Worker *worker, const char *service_type, const char *name, uint port, lua_State *L) {
     Registration *instance = new Registration(worker, service_type, name, port);
     luaL_checktype(L, -1, LUA_TFUNCTION);
     lua_pushclass<Registration>(L, instance, "mdns.Registration");
@@ -101,4 +101,4 @@ public:
 };
 } // mdns
 
-#endif // RUBYK_INCLUDE_MDNS_REGISTRATION_H_
+#endif // LUBYK_INCLUDE_MDNS_REGISTRATION_H_

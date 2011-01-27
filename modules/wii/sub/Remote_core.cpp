@@ -8,12 +8,12 @@ using namespace wii;
 
 /* ============================ Constructors     ====================== */
 
-/** wii::Remote::Remote(rubyk::Worker *worker, const char *remote_name)
+/** wii::Remote::Remote(lubyk::Worker *worker, const char *remote_name)
  * include/wii/Remote.h:56
  */
 static int Remote_Remote(lua_State *L) {
   try {
-    rubyk::Worker *worker = *((rubyk::Worker **)luaL_checkudata(L, 1, "rubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
     const char *remote_name = luaL_checkstring(L, 2);
     Remote * retval__ = new Remote(worker, remote_name);
     lua_pushclass<Remote>(L, retval__, "wii.Remote");
@@ -60,51 +60,13 @@ static int Remote__tostring(lua_State *L) {
 static int Remote___newindex(lua_State *L) {
   try {
     Remote *self__ = *((Remote**)luaL_checkudata(L, 1, "wii.Remote"));
-    
+    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "wii.lua_State"));
     self__->__newindex(L);
     return 0;
   } catch (std::exception &e) {
     return luaL_error(L, "wii.Remote.__newindex: %s", e.what());
   } catch (...) {
     return luaL_error(L, "wii.Remote.__newindex: Unknown exception");
-  }
-}
-
-
-/** void wii::Remote::acceleration(const char *sensor, float x, float y, float z)
- * include/wii/Remote.h:84
- */
-static int Remote_acceleration(lua_State *L) {
-  try {
-    Remote *self__ = *((Remote**)luaL_checkudata(L, 1, "wii.Remote"));
-    const char *sensor = luaL_checkstring(L, 2);
-    float x = luaL_checknumber(L, 3);
-    float y = luaL_checknumber(L, 4);
-    float z = luaL_checknumber(L, 5);
-    self__->acceleration(sensor, x, y, z);
-    return 0;
-  } catch (std::exception &e) {
-    return luaL_error(L, "wii.Remote.acceleration: %s", e.what());
-  } catch (...) {
-    return luaL_error(L, "wii.Remote.acceleration: Unknown exception");
-  }
-}
-
-
-/** void wii::Remote::button(const char *type, bool pressed)
- * include/wii/Remote.h:102
- */
-static int Remote_button(lua_State *L) {
-  try {
-    Remote *self__ = *((Remote**)luaL_checkudata(L, 1, "wii.Remote"));
-    const char *type = luaL_checkstring(L, 2);
-    bool pressed = lua_toboolean(L, 3);
-    self__->button(type, pressed);
-    return 0;
-  } catch (std::exception &e) {
-    return luaL_error(L, "wii.Remote.button: %s", e.what());
-  } catch (...) {
-    return luaL_error(L, "wii.Remote.button: Unknown exception");
   }
 }
 
@@ -127,7 +89,7 @@ static int Remote_name(lua_State *L) {
 
 
 /** void wii::Remote::set_leds(bool led1, bool led2, bool led3, bool led4)
- * include/wii/Remote.h:118
+ * include/wii/Remote.h:86
  */
 static int Remote_set_leds(lua_State *L) {
   try {
@@ -152,8 +114,6 @@ static int Remote_set_leds(lua_State *L) {
 
 static const struct luaL_Reg Remote_member_methods[] = {
   {"__newindex"        , Remote___newindex},
-  {"acceleration"      , Remote_acceleration},
-  {"button"            , Remote_button},
   {"name"              , Remote_name},
   {"set_leds"          , Remote_set_leds},
   {"__tostring"        , Remote__tostring},

@@ -1,5 +1,5 @@
 
-#include "rubyk.h"
+#include "lubyk.h"
 #include <sys/types.h> // directory listing
 #include <dirent.h>    // directory listing
 

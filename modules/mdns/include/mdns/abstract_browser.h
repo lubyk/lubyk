@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2011 by Gaspard Bucher (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -32,14 +32,14 @@
 #include <string>
 
 #include "mdns/location.h"
-#include "rubyk/mutex.h"
+#include "lubyk/mutex.h"
 
 namespace mdns {
 
 /** This class let's you easily find applications providing a certain
  * service.
  */
-class AbstractBrowser : public rubyk::Mutex {
+class AbstractBrowser : public lubyk::Mutex {
   class Implementation;
   Implementation *impl_;
 protected:
@@ -47,7 +47,7 @@ protected:
   */
   bool          running_;
 
-  /** Protocol used in communication (usually 'rubyk').
+  /** Protocol used in communication (usually 'lubyk').
   */
   std::string   protocol_;
 

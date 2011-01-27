@@ -20,7 +20,7 @@ setmetatable(lib, {
  __call = function(table, service_type, callback)
   if not callback then
     callback     = service_type
-    service_type = rubyk.service_type
+    service_type = lubyk.service_type
   end
   if not callback then
     -- dummy
@@ -34,7 +34,7 @@ setmetatable(lib, {
   instance.sub = zmq.SimpleSub(function(...)
     -- receive message from remote server or local ServiceBrowser
     local url, service_name = ...
-    if url == rubyk.add_service_url then
+    if url == lubyk.add_service_url then
       -- resolve pending
       local remote_service = instance.browser.services[service_name]
       local subscription = instance.subscriptions[service_name]
@@ -42,7 +42,7 @@ setmetatable(lib, {
         subscription.subscriber:connect(remote_service.sub_url)
         subscription.connected = true
       end
-    elseif url == rubyk.rem_service_url then
+    elseif url == lubyk.rem_service_url then
       -- remove connection
       -- ignore
     else

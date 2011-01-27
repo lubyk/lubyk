@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -27,11 +27,11 @@
   ==============================================================================
 */
 
-#include "rubyk/node.h"
-#include "rubyk/class_finder.h"
-#include "rubyk/text_command.h"
-#include "rubyk/planet.h"
-#include "rubyk/patch_method.h"
+#include "lubyk/node.h"
+#include "lubyk/class_finder.h"
+#include "lubyk/text_command.h"
+#include "lubyk/planet.h"
+#include "lubyk/patch_method.h"
 
 namespace rk {
 
@@ -55,14 +55,14 @@ void Planet::init() {
   //          /class
   classes_ = adopt(new ClassFinder(Url(CLASS_URL).name(), DEFAULT_OBJECTS_LIB_PATH));
 
-  //          /rubyk
-  Object *rubyk = adopt(new Object(Url(RUBYK_URL).name()));
+  //          /lubyk
+  Object *lubyk = adopt(new Object(Url(LUBYK_URL).name()));
 
-  //          /rubyk/link [[["","source url"],["", "target url"]], "Create a link between two urls."]
-  rubyk->adopt(new TMethod<Planet, &Planet::link>(this, Url(LINK_URL).name(), Oscit::io("Update a link between the two provided urls. Arguments are (url, op, url). Operations are '=>' (link) '||' (unlink) or '?' (pending).", "link operation", "sss")));
+  //          /lubyk/link [[["","source url"],["", "target url"]], "Create a link between two urls."]
+  lubyk->adopt(new TMethod<Planet, &Planet::link>(this, Url(LINK_URL).name(), Oscit::io("Update a link between the two provided urls. Arguments are (url, op, url). Operations are '=>' (link) '||' (unlink) or '?' (pending).", "link operation", "sss")));
 
-  //          /rubyk/quit
-  rubyk->adopt(new TMethod<Planet, &Planet::quit>(this, Url(QUIT_URL).name(), Oscit::bang_io("Stop all operations and quit.")));
+  //          /lubyk/quit
+  lubyk->adopt(new TMethod<Planet, &Planet::quit>(this, Url(QUIT_URL).name(), Oscit::bang_io("Stop all operations and quit.")));
 }
 
 bool Planet::expose_views(const std::string &path, Value *error) {
@@ -107,7 +107,7 @@ const Value Planet::link(const Value &val) {
 
   if (source_outlet != NULL) {
     return val[1].str() == "||" ? source_outlet->unlink(val[2]) : source_outlet->link(val[2]);
-  } else if (source->get_child(Rubyk::NODE_OUT_KEY, &out) && out->first_child(&outlet)) {
+  } else if (source->get_child(Lubyk::NODE_OUT_KEY, &out) && out->first_child(&outlet)) {
     // was a link to/from default slots: /met --> /counter
     if ( (source_outlet = outlet.type_cast<Outlet>()) ) {
       return val[1].str() == "||" ? source_outlet->unlink(val[2]) : source_outlet->link(val[2]);
@@ -194,7 +194,7 @@ const Value Planet::to_hash() {
     }
   }
 
-  result.set(Rubyk::NODES_KEY, patch);
+  result.set(Lubyk::NODES_KEY, patch);
   return result;
 }
 
@@ -223,13 +223,13 @@ const Value Planet::set(const Value &hash) {
 
   Value nodes;
   Value all_but_nodes(hash); // copy
-  all_but_nodes.remove(Rubyk::NODES_KEY);
+  all_but_nodes.remove(Lubyk::NODES_KEY);
 
   // Start by setting attributes
   Value result(Object::set(all_but_nodes));
 
   // Update nodes
-  if (hash.get(Rubyk::NODES_KEY, &nodes) && nodes.is_hash()) {
+  if (hash.get(Lubyk::NODES_KEY, &nodes) && nodes.is_hash()) {
     HashValue nodes_result;
 
     HashIterator it, end = nodes.end();
@@ -261,7 +261,7 @@ const Value Planet::set(const Value &hash) {
         }
       } else {
         // create Node
-        if (!node_value.has_key(Rubyk::CLASS)) {
+        if (!node_value.has_key(Lubyk::CLASS)) {
           // Create a widget ?
           Value widget(node_value[Oscit::VIEW][Oscit::WIDGET]);
           if (widget.is_nil()) {
@@ -273,10 +273,10 @@ const Value Planet::set(const Value &hash) {
           continue;
         }
 
-        create_node(key, node_value[Rubyk::CLASS], node_value, &nodes_result);
+        create_node(key, node_value[Lubyk::CLASS], node_value, &nodes_result);
       }
     }
-    result.set(Rubyk::NODES_KEY, nodes_result);
+    result.set(Lubyk::NODES_KEY, nodes_result);
   }
   return result;
 }

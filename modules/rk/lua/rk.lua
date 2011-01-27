@@ -4,7 +4,7 @@
   -----
 
   This file is loaded just after the load paths have been
-  changed and loads Rubyk essentials.
+  changed and loads Lubyk essentials.
 
 --]]------------------------------------------------------
 require 'Autoload'
@@ -12,15 +12,15 @@ rk = Autoload('rk')
 -- autoload stuff in _G
 Autoload.global()
 
-rubyk = Autoload('rubyk')
+lubyk = Autoload('lubyk')
 -------------------------------- CONSTANTS
-rubyk.service_type    = '_rubyk._tcp'
-rubyk.info_url        = '/rk/info'
-rubyk.add_service_url = '/rk/add_service'
-rubyk.rem_service_url = '/rk/rem_service'
+lubyk.service_type    = '_lubyk._tcp'
+lubyk.info_url        = '/rk/info'
+lubyk.add_service_url = '/rk/add_service'
+lubyk.rem_service_url = '/rk/rem_service'
 
--------------------------------- rubyk.core
-require 'rubyk.core'
+-------------------------------- lubyk.core
+require 'lubyk.core'
 
 -------------------------------- pack/unpack (msgpack.vendor)
 require 'msgpack.vendor'

@@ -4,10 +4,10 @@
   -----------------
 
   mDNS implementation with callbacks to integrate with
-  rubyk.
+  lubyk.
 
 --]]------------------------------------------------------
-require 'rubyk'
+require 'lubyk'
 
 local should = test.Suite('mdns')
 local timeout = 5000
@@ -15,7 +15,7 @@ local timeout = 5000
 function should.register()
   local continue = false
   -- register our service at port 12345
-  local registration = mdns.Registration(rubyk.service_type, 'Service1', 12345, function()
+  local registration = mdns.Registration(lubyk.service_type, 'Service1', 12345, function()
     continue = true
   end)
   local now = worker:now()
@@ -31,7 +31,7 @@ function should.browse()
   local hostname    = nil
   local device_list = {}
   -- register a service at port 12345
-  local registration = mdns.Registration(rubyk.service_type, 'Service for browse', 12346, function(service)
+  local registration = mdns.Registration(lubyk.service_type, 'Service for browse', 12346, function(service)
     hostname = service.host
     continue = true
   end)
@@ -42,7 +42,7 @@ function should.browse()
   end
   continue = false
 
-  local browser = mdns.Browser(rubyk.service_type, function(service)
+  local browser = mdns.Browser(lubyk.service_type, function(service)
     if service.op == should_op and service.name == 'Service for browse' then
       continue = true
     end

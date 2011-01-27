@@ -8,7 +8,22 @@ using namespace mdns;
 
 /* ============================ Constructors     ====================== */
 
-
+/** mdns::Browser::Browser(lubyk::Worker *worker, const char *service_type)
+ * include/mdns/browser.h:52
+ */
+static int Browser_Browser(lua_State *L) {
+  try {
+    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
+    const char *service_type = luaL_checkstring(L, 2);
+    Browser * retval__ = new Browser(worker, service_type);
+    lua_pushclass<Browser>(L, retval__, "mdns.Browser");
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mdns.Browser.Browser: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mdns.Browser.Browser: Unknown exception");
+  }
+}
 
 
 /* ============================ Destructor       ====================== */
@@ -39,14 +54,14 @@ static int Browser__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
-/** static LuaStackSize mdns::Browser::MakeInstance(rubyk::Worker *worker, const char *service_type, lua_State *L)
+/** static LuaStackSize mdns::Browser::MakeInstance(lubyk::Worker *worker, const char *service_type, lua_State *L)
  * include/mdns/browser.h:62
  */
 static int Browser_MakeInstance(lua_State *L) {
   try {
-    rubyk::Worker *worker = *((rubyk::Worker **)luaL_checkudata(L, 1, "rubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
     const char *service_type = luaL_checkstring(L, 2);
-    
+    lua_State *L = *((lua_State **)luaL_checkudata(L, 3, "mdns.lua_State"));
     LuaStackSize  retval__ = Browser::MakeInstance(worker, service_type, L);
     return retval__;
   } catch (std::exception &e) {
@@ -122,7 +137,8 @@ static const struct luaL_Reg Browser_member_methods[] = {
 };
 
 static const struct luaL_Reg Browser_namespace_methods[] = {
-  {"Browser"           , Browser_MakeInstance},
+  {"Browser"           , Browser_Browser},
+  {"Browser_MakeInstance", Browser_MakeInstance},
   {NULL, NULL},
 };
 

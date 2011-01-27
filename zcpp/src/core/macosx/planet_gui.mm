@@ -1,6 +1,6 @@
-#include "rubyk/planet.h"
+#include "lubyk/planet.h"
 
-#include "rubyk/cocoa.h"
+#include "lubyk/cocoa.h"
 
 using namespace rk;
 

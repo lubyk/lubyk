@@ -7,7 +7,7 @@ using namespace rk;
 
 
 /** void rk::drawMatrix(const cv::Mat &mat, float start_x, float start_y, float end_x, float end_y, float alpha=1.0, float z_mul=0, bool strips=false)
- * rubyk/support/draw.h:48
+ * lubyk/support/draw.h:48
  */
 static int rk_drawMatrix(lua_State *L) {
   try {
@@ -52,7 +52,7 @@ static int rk_drawMatrix(lua_State *L) {
 
 
 /** void rk::drawTexture(int tex, float start_x, float start_y, float end_x, float end_y, bool flip_y=false)
- * rubyk/support/draw.h:65
+ * lubyk/support/draw.h:65
  */
 static int rk_drawTexture(lua_State *L) {
   try {
@@ -87,7 +87,7 @@ static int rk_drawTexture(lua_State *L) {
 
 
 /** void rk::makeTexture(const cv::Mat &mat, int tex)
- * rubyk/support/draw.h:54
+ * lubyk/support/draw.h:54
  */
 static int rk_makeTexture(lua_State *L) {
   try {

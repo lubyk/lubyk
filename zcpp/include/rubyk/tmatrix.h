@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -29,7 +29,7 @@
 
 #ifndef _MATRIX_H_
 #define _MATRIX_H_
-#include "rubyk_types.h"
+#include "lubyk_types.h"
 #include <Accelerate/Accelerate.h>
 #include <cstdlib> // fopen, etc.
 

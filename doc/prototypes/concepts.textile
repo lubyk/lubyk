@@ -1,10 +1,10 @@
-* *planet*: process executing Rubyk (Lua)
+* *planet*: process executing Lubyk (Lua)
 * *satellite*: graphical interface (Qt)
 * *patch*: stores a processing definition with parameters (Lua)
 * *prototype*: stores a prototype for a processing node (Lua)
 * *view*: a view contains widget organization and behavior to control a planet from a satellite (QML).
 
-h2. Rubyk files
+h2. Lubyk files
 
 h3. prototype file
 

@@ -7,7 +7,7 @@
   in the fls distribution (vendor/tests)
 
 --]]------------------------------------------------------
-require 'rubyk'
+require 'lubyk'
 require 'lfs'
 local should = test.Suite('lfs')
 

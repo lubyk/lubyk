@@ -261,7 +261,7 @@ private:
       //pthread_exit(0);
     
       /* glutDestroyWindow(node->mId); */
-      /* glutDestroyWindow makes rubyk die. Bad, bad, bad. */
+      /* glutDestroyWindow makes lubyk die. Bad, bad, bad. */
       return;
     }
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

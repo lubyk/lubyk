@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -32,8 +32,8 @@
 
 */
 
-#ifndef RUBYK_GL_GLUT_H_
-#define RUBYK_GL_GLUT_H_
+#ifndef LUBYK_GL_GLUT_H_
+#define LUBYK_GL_GLUT_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -64,4 +64,4 @@ LUAGLUT_API int luaopen_glut(lua_State *L);
 }
 #endif
 
-#endif // RUBYK_GL_GLUT_H_
+#endif // LUBYK_GL_GLUT_H_

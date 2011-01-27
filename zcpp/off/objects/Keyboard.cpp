@@ -1,4 +1,4 @@
-#include "rubyk.h"
+#include "lubyk.h"
 #include <stdio.h>
 #include <termios.h>
 #include <unistd.h>

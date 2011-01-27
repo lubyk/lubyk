@@ -10,7 +10,7 @@ add_library(${target} MODULE ${MODULE_SOURCES})
 set_target_properties(${target}
   PROPERTIES OUTPUT_NAME ${target}
   LINK_FLAGS ${PLAT_OBJ_FLAGS}
-  LIBRARY_OUTPUT_DIRECTORY ${RUBYK_SOURCE_DIR}/lib
+  LIBRARY_OUTPUT_DIRECTORY ${LUBYK_SOURCE_DIR}/lib
   PREFIX ""
   SUFFIX ".so"
 )

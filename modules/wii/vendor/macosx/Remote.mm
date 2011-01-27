@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -28,10 +28,10 @@
 */
 #define DEBUG 1
 
-// Rubyk wii::Remote
+// Lubyk wii::Remote
 #include "wii/Remote.h"
 
-#include "rubyk/cocoa.h"
+#include "lubyk/cocoa.h"
 
 // WiiRemoteFramework WiiRemote
 #import "WiiRemote.h"
@@ -205,7 +205,7 @@ public:
   }
 };
 
-Remote::Remote(rubyk::Worker *worker, const char *remote_name)
+Remote::Remote(lubyk::Worker *worker, const char *remote_name)
  : acceleration_(worker),
    button_(worker) {
   ScopedPool pool;
@@ -232,11 +232,11 @@ void Remote::set_leds(bool led1, bool led2, bool led3, bool led4) {
 
 /* ================================================================================================== BROWSER */
 
-// Rubyk wii::Browser
+// Lubyk wii::Browser
 #include "wii/Browser.h"
 #include "wii/Remote.h"
 
-#include "rubyk/cocoa.h"
+#include "lubyk/cocoa.h"
 
 // WiiRemoteFramework WiiRemoteDiscovery
 #import "WiiRemoteDiscovery.h"
@@ -244,10 +244,10 @@ void Remote::set_leds(bool led1, bool led2, bool led3, bool led4) {
 /* ======================== LWiiDiscoveryDelegate ===================================== */
 @interface LWiiDiscoveryDelegate : NSObject {
   wii::Browser *master_;
-  rubyk::Worker *worker_;
+  lubyk::Worker *worker_;
 }
 
-- (id) initWithBrowser:(wii::Browser*)master worker:(rubyk::Worker*) worker;
+- (id) initWithBrowser:(wii::Browser*)master worker:(lubyk::Worker*) worker;
 
 //////// WiiDiscoveryDelegate ///////////
 
@@ -259,7 +259,7 @@ void Remote::set_leds(bool led1, bool led2, bool led3, bool led4) {
 
 @implementation LWiiDiscoveryDelegate
 
-- (id) initWithBrowser:(wii::Browser*)master worker:(rubyk::Worker*) worker {
+- (id) initWithBrowser:(wii::Browser*)master worker:(lubyk::Worker*) worker {
   self = [super init];
 
   if (self) {
@@ -314,7 +314,7 @@ public:
   }
 };
 
-Browser::Browser(rubyk::Worker *worker)
+Browser::Browser(lubyk::Worker *worker)
  : LuaCallback(worker) {
   ScopedPool pool;
   // we need to run the browser in an NSThread

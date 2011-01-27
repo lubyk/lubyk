@@ -2,7 +2,7 @@ oscit
 -----
   brief     : A protocol to ease interaction between OpenSoundControl enabled applications / hardware.
   authors   : Gaspard Bucher <gaspard@teti.ch>
-  website   : http://rubyk.org/en/oscit
+  website   : http://lubyk.org/en/oscit
   copyright : see vendor/oscit/LICENSE
   license   : MIT license
 
@@ -11,7 +11,7 @@ oscpack
   brief    : Oscpack is simply a set of C++ classes for packing and unpacking Open Sound Control packets.
   author   : Ross Bencina <rossb@audiomulch.com>
   website  : http://www.audiomulch.com/~rossb/code/oscpack/
-  copyright: see rubyk/src/lib/osc/LICENSE
+  copyright: see lubyk/src/lib/osc/LICENSE
   license  : MIT license
   comment  : used by OSCIT
 

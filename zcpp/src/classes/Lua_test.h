@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -49,7 +49,7 @@ public:
 
     Value hash = lua->to_hash();
     assert_false(hash.has_key("script"));
-    assert_equal("\"/class/Lua\"", hash[Rubyk::CLASS].to_json());
+    assert_equal("\"/class/Lua\"", hash[Lubyk::CLASS].to_json());
     assert_equal("\"Script\"", hash[Oscit::VIEW][Oscit::WIDGET].to_json());
   }
 

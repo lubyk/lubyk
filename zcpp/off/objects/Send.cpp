@@ -1,4 +1,4 @@
-#include "rubyk.h"
+#include "lubyk.h"
 #include "oscit/alias.h"
 
 /** This objects either sends received data to a remote url through OSC or to an alias. */

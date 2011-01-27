@@ -3,7 +3,7 @@
   mimas
   -----
 
-  Portable GUI scripted in Lua and compatible with Rubyk.
+  Portable GUI scripted in Lua and compatible with Lubyk.
 
 --]]------------------------------------------------------
 require 'mimas.core'

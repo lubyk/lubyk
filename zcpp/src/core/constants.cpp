@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the OSCIT library (http://rubyk.org/liboscit)
+   This file is part of the OSCIT library (http://lubyk.org/liboscit)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -27,15 +27,15 @@
   ==============================================================================
 */
 
-#include "rubyk/constants.h"
+#include "lubyk/constants.h"
 
-const char * const Rubyk::CLASS        = "@class";
+const char * const Lubyk::CLASS        = "@class";
 
-const char * const Rubyk::NODES_KEY    = "nodes";
-const char * const Rubyk::NODE_OUT_KEY = "out";
-const char * const Rubyk::SCRIPT_EXT   = "script_ext";
+const char * const Lubyk::NODES_KEY    = "nodes";
+const char * const Lubyk::NODE_OUT_KEY = "out";
+const char * const Lubyk::SCRIPT_EXT   = "script_ext";
 
-const float Rubyk::NODE_DEFAULT_HUE    = 203;
-const float Rubyk::SCRIPT_DEFAULT_HUE  = 59;
-const float Rubyk::NODE_DEFAULT_WIDTH  = 60;
-const float Rubyk::NODE_DEFAULT_HEIGHT = 20;
+const float Lubyk::NODE_DEFAULT_HUE    = 203;
+const float Lubyk::SCRIPT_DEFAULT_HUE  = 59;
+const float Lubyk::NODE_DEFAULT_WIDTH  = 60;
+const float Lubyk::NODE_DEFAULT_HEIGHT = 20;

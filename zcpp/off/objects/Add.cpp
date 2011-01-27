@@ -1,4 +1,4 @@
-#include "rubyk.h"
+#include "lubyk.h"
 
 //////////  Used for testing. Do not modify (Use 'Plus' object). ///////////
 

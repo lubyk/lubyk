@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -27,10 +27,10 @@
   ==============================================================================
 */
 
-#ifndef RUBYK_INCLUDE_RUBYK_GROUP_H_
-#define RUBYK_INCLUDE_RUBYK_GROUP_H_
+#ifndef LUBYK_INCLUDE_LUBYK_GROUP_H_
+#define LUBYK_INCLUDE_LUBYK_GROUP_H_
 
-#include "rubyk/node.h"
+#include "lubyk/node.h"
 
 namespace rk {
 
@@ -49,4 +49,4 @@ public:
 
 } // rk
 
-#endif // RUBYK_INCLUDE_RUBYK_GROUP_H_
+#endif // LUBYK_INCLUDE_LUBYK_GROUP_H_

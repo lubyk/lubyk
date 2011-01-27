@@ -1,4 +1,4 @@
-require 'rubyk'
+require 'lubyk'
 --------------- /////////////////  FIXME: Mimas Widgets should not be GC (they are gc by app).
 collectgarbage('stop') -- avoid problems until we fix
 

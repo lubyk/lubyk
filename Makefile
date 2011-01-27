@@ -4,8 +4,8 @@
 default: build/MakeFile
 	cd build && make
 
-rubyk: build/MakeFile
-	cd build && make rubyk
+lubyk: build/MakeFile
+	cd build && make lubyk
 
 build/MakeFile: build
 	cd build && cmake ..

@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -27,8 +27,8 @@
   ==============================================================================
 */
 
-#ifndef RUBYK_SRC_CORE_ORDERED_LIST_H_
-#define RUBYK_SRC_CORE_ORDERED_LIST_H_
+#ifndef LUBYK_SRC_CORE_ORDERED_LIST_H_
+#define LUBYK_SRC_CORE_ORDERED_LIST_H_
 
 #include <cstdlib>
 #include <cstdio>
@@ -329,4 +329,4 @@ class OrderedList<T*>
 
 } // rk
 
-#endif // RUBYK_SRC_CORE_ORDERED_LIST_H_
+#endif // LUBYK_SRC_CORE_ORDERED_LIST_H_

@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -27,8 +27,8 @@
   ==============================================================================
 */
 
-#ifndef RUBYK_INCLUDE_RUBYK_WORKER_H_
-#define RUBYK_INCLUDE_RUBYK_WORKER_H_
+#ifndef LUBYK_INCLUDE_LUBYK_WORKER_H_
+#define LUBYK_INCLUDE_LUBYK_WORKER_H_
 /*
 Structure of a running planet:
 
@@ -44,8 +44,8 @@ Planet <>--- Worker
 #include <queue>
 
 #include "oscit/mutex.h"
-#include "rubyk/c_ordered_list.h"
-#include "rubyk/event.h"
+#include "lubyk/c_ordered_list.h"
+#include "lubyk/event.h"
 
 namespace rk {
 
@@ -195,4 +195,4 @@ public:
 
 } // rk
 
-#endif // RUBYK_INCLUDE_RUBYK_WORKER_H_
+#endif // LUBYK_INCLUDE_LUBYK_WORKER_H_

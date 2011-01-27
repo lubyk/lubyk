@@ -2,21 +2,21 @@ cmake_minimum_required(VERSION 2.6.2)
 
 # ==============================================================================
 #
-#  Rubyk
+#  Lubyk
 #
 # ==============================================================================
 
-project (RUBYK)
-set(RUBYK_VERSION "0.5")
+project (LUBYK)
+set(LUBYK_VERSION "0.5")
 
 # ==============================================================================
 #
 #  Options
 #
 # ==============================================================================
-option (RUBYK_MEMORY_CHECKING    "Enable checking against memory leaks ?"       OFF )
-option (RUBYK_ENABLE_TESTING     "Build and run tests ?"                        ON  )
-option (RUBYK_USE_LUA_JIT        "Use Lua Just In Time compiler ?"              OFF )
+option (LUBYK_MEMORY_CHECKING    "Enable checking against memory leaks ?"       OFF )
+option (LUBYK_ENABLE_TESTING     "Build and run tests ?"                        ON  )
+option (LUBYK_USE_LUA_JIT        "Use Lua Just In Time compiler ?"              OFF )
 
 # ==============================================================================
 #
@@ -26,12 +26,12 @@ option (RUBYK_USE_LUA_JIT        "Use Lua Just In Time compiler ?"              
 find_package(Doxygen)
 
 if(DOXYGEN_FOUND)
-    set(RUBYK_BUILD_DOXYGEN_DOCS ON CACHE BOOL "Build HTML+XML documentation with Doxygen")
+    set(LUBYK_BUILD_DOXYGEN_DOCS ON CACHE BOOL "Build HTML+XML documentation with Doxygen")
 endif()
 
 set (luaopen)
 # handle memory checking option
-if (RUBYK_MEMORY_CHECKING)
+if (LUBYK_MEMORY_CHECKING)
   if (APPLE)
     find_library (HAVE_MALLOC_DEBUG MallocDebug ${lib_locations})
 
@@ -41,12 +41,12 @@ if (RUBYK_MEMORY_CHECKING)
       set (HAVE_MALLOC_DEBUG NO)
     endif (HAVE_MALLOC_DEBUG)
   endif (APPLE)
-endif (RUBYK_MEMORY_CHECKING)
+endif (LUBYK_MEMORY_CHECKING)
 
 # handle testing option
-if (RUBYK_ENABLE_TESTING)
+if (LUBYK_ENABLE_TESTING)
   enable_testing()
-endif (RUBYK_ENABLE_TESTING)
+endif (LUBYK_ENABLE_TESTING)
 
 # ragel executable
 set(RAGEL "ragel")
@@ -113,16 +113,16 @@ set(OSCIT_ENABLE_TESTING OFF CACHE BOOLEAN "doc")
 add_subdirectory(vendor/oscit)
 list(APPEND STATIC_LIBS oscit)
 
-if (RUBYK_USE_LUA_JIT)
+if (LUBYK_USE_LUA_JIT)
 # ------------------------------------------------ luajit
   add_subdirectory(vendor/lua-jit2)
   list(APPEND STATIC_LIBS luajit)
-else(RUBYK_USE_LUA_JIT)
+else(LUBYK_USE_LUA_JIT)
 
 # ------------------------------------------------ lua
   add_subdirectory(vendor/lua)
   list(APPEND STATIC_LIBS lua)
-endif(RUBYK_USE_LUA_JIT)
+endif(LUBYK_USE_LUA_JIT)
 
 # ------------------------------------------------ lua_bindings (static)
 add_subdirectory(vendor/lua_bindings)
@@ -138,35 +138,35 @@ list(APPEND STATIC_LIBS cv cxcore ml opencv_lapack flann zlib)
 
 # ==============================================================================
 #
-#  rubyk build
+#  lubyk build
 #
 # ==============================================================================
 
-file (GLOB RUBYK_SOURCES src/core/*.cpp src/core/${PLAT}/* src/support/*)
+file (GLOB LUBYK_SOURCES src/core/*.cpp src/core/${PLAT}/* src/support/*)
 
-include_directories (${RUBYK_SOURCE_DIR}/include ${RUBYK_SOURCE_DIR}/include/rubyk/lua  ${RUBYK_SOURCE_DIR}/vendor/oscit/include ${RUBYK_SOURCE_DIR}/vendor/oscit/oscpack ${RUBYK_SOURCE_DIR}/src/classes)
+include_directories (${LUBYK_SOURCE_DIR}/include ${LUBYK_SOURCE_DIR}/include/lubyk/lua  ${LUBYK_SOURCE_DIR}/vendor/oscit/include ${LUBYK_SOURCE_DIR}/vendor/oscit/oscpack ${LUBYK_SOURCE_DIR}/src/classes)
 
 file (GLOB RAGEL_SOURCES src/core/*.rl)
 foreach (RAGEL_SRC ${RAGEL_SOURCES})
   get_filename_component (RAGEL_SRC_NAME ${RAGEL_SRC} NAME_WE)
   add_custom_command ( PRE_BUILD
-    OUTPUT  ${RUBYK_SOURCE_DIR}/src/core/${RAGEL_SRC_NAME}.cpp
-    COMMAND ${RAGEL} ${RAGEL_SRC} -o ${RUBYK_SOURCE_DIR}/src/core/${RAGEL_SRC_NAME}.cpp
+    OUTPUT  ${LUBYK_SOURCE_DIR}/src/core/${RAGEL_SRC_NAME}.cpp
+    COMMAND ${RAGEL} ${RAGEL_SRC} -o ${LUBYK_SOURCE_DIR}/src/core/${RAGEL_SRC_NAME}.cpp
     DEPENDS ${RAGEL_SRC}
   )
-  # make sure output is included in RUBYK_SOURCES in case 'make clean' removes cached cpp file
+  # make sure output is included in LUBYK_SOURCES in case 'make clean' removes cached cpp file
   # TODO: how to make sure 'clean' does not remove these generated files ?
-  set (RUBYK_SOURCES ${RUBYK_SOURCES} ${RUBYK_SOURCE_DIR}/src/core/${RAGEL_SRC_NAME}.cpp)
+  set (LUBYK_SOURCES ${LUBYK_SOURCES} ${LUBYK_SOURCE_DIR}/src/core/${RAGEL_SRC_NAME}.cpp)
 endforeach (RAGEL_SRC)
 
-add_library(lrubyk STATIC ${RUBYK_SOURCES})
-list(APPEND STATIC_LIBS lrubyk)
-add_dependencies (lrubyk lua_modules)
+add_library(llubyk STATIC ${LUBYK_SOURCES})
+list(APPEND STATIC_LIBS llubyk)
+add_dependencies (llubyk lua_modules)
 
-add_executable(rubyk ${RUBYK_SOURCE_DIR}/src/main.cpp ${CUSTOM_BUILD_DEPENDS})
+add_executable(lubyk ${LUBYK_SOURCE_DIR}/src/main.cpp ${CUSTOM_BUILD_DEPENDS})
 
 
-target_link_libraries (rubyk ${STATIC_LIBS} ${CUSTOM_BUILD_DEPENDS} ${PLAT_LINK})
+target_link_libraries (lubyk ${STATIC_LIBS} ${CUSTOM_BUILD_DEPENDS} ${PLAT_LINK})
 
 # ==============================================================================
 #
@@ -179,7 +179,7 @@ add_custom_target(objects)
 macro (add_rko_object RKO_NAME)
   add_library (${RKO_NAME} MODULE ${ARGN}) # ARGN = list of arguments passed after RKO_NAME
   set_target_properties (${RKO_NAME} PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY ${RUBYK_SOURCE_DIR}/build/lib
+    LIBRARY_OUTPUT_DIRECTORY ${LUBYK_SOURCE_DIR}/build/lib
     LINK_FLAGS ${PLAT_OBJ_FLAGS}
     PREFIX ""
     SUFFIX ".rko"
@@ -189,26 +189,26 @@ endmacro(add_rko_object)
 
 # ----------- classes (simple build)
 
-file (GLOB RUBYK_OBJECT_SOURCES src/classes/*.cpp)
+file (GLOB LUBYK_OBJECT_SOURCES src/classes/*.cpp)
 
-foreach (RUBYK_OBJECT_SOURCE ${RUBYK_OBJECT_SOURCES})
-  get_filename_component (RUBYK_OBJECT_NAME ${RUBYK_OBJECT_SOURCE} NAME_WE)
+foreach (LUBYK_OBJECT_SOURCE ${LUBYK_OBJECT_SOURCES})
+  get_filename_component (LUBYK_OBJECT_NAME ${LUBYK_OBJECT_SOURCE} NAME_WE)
 
-  add_rko_object (${RUBYK_OBJECT_NAME} ${RUBYK_OBJECT_SOURCE})
-endforeach (RUBYK_OBJECT_SOURCE)
+  add_rko_object (${LUBYK_OBJECT_NAME} ${LUBYK_OBJECT_SOURCE})
+endforeach (LUBYK_OBJECT_SOURCE)
 
 # ----------- classes/xxx (special, complicated builds)
 
-file (GLOB RUBYK_LIB_OBJECTS   src/classes/*)
-file (GLOB RUBYK_OBJECTS_TESTS src/classes/*.h)
-file (GLOB RUBYK_OBJECTS_BAD   src/classes/.*)
+file (GLOB LUBYK_LIB_OBJECTS   src/classes/*)
+file (GLOB LUBYK_OBJECTS_TESTS src/classes/*.h)
+file (GLOB LUBYK_OBJECTS_BAD   src/classes/.*)
 
 # -- Filter out all *.cpp and *.h from the 'classes' folder
-list (REMOVE_ITEM RUBYK_LIB_OBJECTS ${RUBYK_OBJECT_SOURCES} ${RUBYK_OBJECTS_TESTS} ${RUBYK_OBJECTS_BAD})
+list (REMOVE_ITEM LUBYK_LIB_OBJECTS ${LUBYK_OBJECT_SOURCES} ${LUBYK_OBJECTS_TESTS} ${LUBYK_OBJECTS_BAD})
 
-foreach (RUBYK_LIB_OBJECT ${RUBYK_LIB_OBJECTS})
-  add_subdirectory (${RUBYK_LIB_OBJECT})
-endforeach (RUBYK_LIB_OBJECT)
+foreach (LUBYK_LIB_OBJECT ${LUBYK_LIB_OBJECTS})
+  add_subdirectory (${LUBYK_LIB_OBJECT})
+endforeach (LUBYK_LIB_OBJECT)
 
 # ==============================================================================
 #
@@ -216,22 +216,22 @@ endforeach (RUBYK_LIB_OBJECT)
 #
 # ==============================================================================
 
-include_directories (AFTER ${RUBYK_SOURCE_DIR}/test)
+include_directories (AFTER ${LUBYK_SOURCE_DIR}/test)
 
 # one test for all CxxTests
-file (GLOB RUBYK_TEST_SOURCES test/*_test.h src/classes/*_test.h src/classes/*/*_test.h)
-file (GLOB RUBYK_TEST_MOCKS test/mock/*.h)
+file (GLOB LUBYK_TEST_SOURCES test/*_test.h src/classes/*_test.h src/classes/*/*_test.h)
+file (GLOB LUBYK_TEST_MOCKS test/mock/*.h)
 add_custom_command (PRE_BUILD
   OUTPUT  test_runner.cpp
-  COMMAND ${RUBYK_SOURCE_DIR}/test/cxxtest/cxxtestgen.pl --error-printer -o test_runner.cpp ${RUBYK_TEST_SOURCES}
-  DEPENDS ${RUBYK_TEST_SOURCES} ${OSCIT_TEST_MOCKS}
+  COMMAND ${LUBYK_SOURCE_DIR}/test/cxxtest/cxxtestgen.pl --error-printer -o test_runner.cpp ${LUBYK_TEST_SOURCES}
+  DEPENDS ${LUBYK_TEST_SOURCES} ${OSCIT_TEST_MOCKS}
 )
 
 add_executable (test_runner test_runner.cpp ${CUSTOM_BUILD_DEPENDS})
 
 target_link_libraries (test_runner -all_load ${STATIC_LIBS} ${CUSTOM_BUILD_DEPENDS} ${PLAT_LINK})
 
-add_test (rubyk_test test_runner)
+add_test (lubyk_test test_runner)
 
 # this is to enable verbose output during testing
 add_custom_target (test_all ALL ${CMAKE_CTEST_COMMAND} -V)
@@ -259,25 +259,25 @@ add_dependencies (test_runner objects)
 # ==============================================================================
 
 message (STATUS "===========================================================================")
-message (STATUS "   RUBYK build configuration settings                                      ")
+message (STATUS "   LUBYK build configuration settings                                      ")
 message (STATUS "===========================================================================")
 message (STATUS "   Platform                                                     = ${PLAT}")
 
-# ================= RUBYK_ENABLE_TESTING
-message (STATUS "   RUBYK_ENABLE_TESTING  (Build and run tests)                  = ${RUBYK_ENABLE_TESTING}")
-if(RUBYK_ENABLE_TESTING)
-else(RUBYK_ENABLE_TESTING)
+# ================= LUBYK_ENABLE_TESTING
+message (STATUS "   LUBYK_ENABLE_TESTING  (Build and run tests)                  = ${LUBYK_ENABLE_TESTING}")
+if(LUBYK_ENABLE_TESTING)
+else(LUBYK_ENABLE_TESTING)
   message (STATUS "")
   message (STATUS "   Type: 'make objects' to build rko objects")
-endif(RUBYK_ENABLE_TESTING)
+endif(LUBYK_ENABLE_TESTING)
 
-# ================= RUBYK_MEMORY_CHECKING
-message (STATUS "   RUBYK_MEMORY_CHECKING (Enable checking against memory leaks) = ${RUBYK_MEMORY_CHECKING}")
-if(RUBYK_MEMORY_CHECKING)
+# ================= LUBYK_MEMORY_CHECKING
+message (STATUS "   LUBYK_MEMORY_CHECKING (Enable checking against memory leaks) = ${LUBYK_MEMORY_CHECKING}")
+if(LUBYK_MEMORY_CHECKING)
 message (STATUS "       you should run test_runner with")
 message (STATUS "       > export MallocStackLogging=1;./test_runner")
-endif(RUBYK_MEMORY_CHECKING)
+endif(LUBYK_MEMORY_CHECKING)
 
-# ================= RUBYK_USE_LUA_JIT
-message (STATUS "   RUBYK_USE_LUA_JIT     (Experimental Lua JIT compiler)        = ${RUBYK_USE_LUA_JIT}")
+# ================= LUBYK_USE_LUA_JIT
+message (STATUS "   LUBYK_USE_LUA_JIT     (Experimental Lua JIT compiler)        = ${LUBYK_USE_LUA_JIT}")
 message (STATUS "===========================================================================")

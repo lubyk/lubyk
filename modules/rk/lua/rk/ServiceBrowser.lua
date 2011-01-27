@@ -38,17 +38,17 @@ setmetatable(lib, {
         remote_service.url = string.format('tcp://%s:%i', remote_service.host, remote_service.port)
         -- XXX
         instance.req:connect(remote_service.url)
-        remote_service.info = instance.req:request(rubyk.info_url)
+        remote_service.info = instance.req:request(lubyk.info_url)
         remote_service.sub_url  = string.format('tcp://%s:%i', remote_service.host, remote_service.info.pub)
         remote_service.push_url = string.format('tcp://%s:%i', remote_service.host, remote_service.info.pull)
         remote_service.push = zmq.Push()
         remote_service.push:connect(remote_service.push_url)
         -- XXX
         instance.services[remote_service.name] = remote_service
-        instance.pub:send(rubyk.add_service_url, remote_service.name)
+        instance.pub:send(lubyk.add_service_url, remote_service.name)
       end
     elseif instance.services[remote_service.name] then
-      instance.pub:send(rubyk.rem_service_url, remote_service)
+      instance.pub:send(lubyk.rem_service_url, remote_service)
       instance.services[remote_service.name] = nil
     end
   end)

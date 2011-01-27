@@ -1,4 +1,4 @@
-require('rubyk')
+require('lubyk')
 
 local app = mimas.Application()
 local win = mimas.Widget()

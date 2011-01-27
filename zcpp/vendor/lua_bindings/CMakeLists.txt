@@ -7,10 +7,10 @@ project(lua_addons)
 file (GLOB lib_includes ${CMAKE_CURRENT_SOURCE_DIR}/*)
 list(REMOVE_ITEM lib_includes ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile ${CMAKE_CURRENT_SOURCE_DIR}/generate.rb ${CMAKE_CURRENT_SOURCE_DIR}/doc ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt ${CMAKE_CURRENT_SOURCE_DIR}/.DS_Store)
 include_directories(${lib_includes}
-  ${RUBYK_SOURCE_DIR}/include
-  ${RUBYK_SOURCE_DIR}/include/rubyk/lua
-  ${RUBYK_SOURCE_DIR}/include/rubyk/support
-  ${RUBYK_SOURCE_DIR}/vendor/oscit/include)
+  ${LUBYK_SOURCE_DIR}/include
+  ${LUBYK_SOURCE_DIR}/include/lubyk/lua
+  ${LUBYK_SOURCE_DIR}/include/lubyk/support
+  ${LUBYK_SOURCE_DIR}/vendor/oscit/include)
 
 # ----------------------------------------------------------------------------------
 # 				Define the library target:

@@ -1,6 +1,6 @@
 -- we are in the global env
 dofile('Node.lua')
--- rubyk namespace
+-- lubyk namespace
 rk = {prototype = {}}
 nodes = {}
 

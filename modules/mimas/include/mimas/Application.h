@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2011 by Gaspard Bucher (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -26,8 +26,8 @@
 
   ==============================================================================
 */
-#ifndef RUBYK_INCLUDE_MIMAS_APPLICATION_H_
-#define RUBYK_INCLUDE_MIMAS_APPLICATION_H_
+#ifndef LUBYK_INCLUDE_MIMAS_APPLICATION_H_
+#define LUBYK_INCLUDE_MIMAS_APPLICATION_H_
 
 #include "mimas/mimas.h"
 #include "mimas/Callback.h"
@@ -36,7 +36,7 @@
 
 #include <iostream>
 
-using namespace rubyk;
+using namespace lubyk;
 
 namespace mimas {
 
@@ -57,11 +57,11 @@ class Application : public QApplication, public DeletableOutOfLua
 {
   Q_OBJECT
 
-  rubyk::Worker *worker_;
+  lubyk::Worker *worker_;
 public:
   /** Private constructor. Use MakeApplication instead.
    */
-  Application(rubyk::Worker *worker)
+  Application(lubyk::Worker *worker)
    : QApplication(app_argc, app_argv),
      worker_(worker),
      lua_events_processor_(worker) {}
@@ -69,7 +69,7 @@ public:
   /** Custom constructor so that we can set the env table that is
    * needed by mimas.Callback.
    */
-  static LuaStackSize MakeApplication(rubyk::Worker *worker, lua_State *L) {
+  static LuaStackSize MakeApplication(lubyk::Worker *worker, lua_State *L) {
     // avoid qt_menu.nib loading
     QApplication::setAttribute(Qt::AA_MacPluginApplication, true);
     Application *app = new Application(worker);
@@ -119,9 +119,9 @@ public:
 private:
   class LuaEventsProcessor : public QObject
   {
-    rubyk::Worker *worker_;
+    lubyk::Worker *worker_;
   public:
-    LuaEventsProcessor(rubyk::Worker *worker)
+    LuaEventsProcessor(lubyk::Worker *worker)
       : worker_(worker) {}
 
     virtual bool event(QEvent *e) {
@@ -138,4 +138,4 @@ private:
 };
 
 } // mimas
-#endif // RUBYK_INCLUDE_MIMAS_APPLICATION_H_
+#endif // LUBYK_INCLUDE_MIMAS_APPLICATION_H_

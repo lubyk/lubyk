@@ -163,7 +163,7 @@ sub scanLineForStandardLibrary($) {
 
 sub scanLineForSuiteStart($$$) {
   my ($fileName, $lineNo, $line) = @_;
-  # changed regexp for rubyk
+  # changed regexp for lubyk
   # gaspard
   if ( $line =~ m/\bclass\s+(\w+Test)/ ) {
     startSuite( $1, $fileName, $lineNo, 0 );

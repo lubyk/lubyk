@@ -8,12 +8,12 @@ using namespace zmq;
 
 /* ============================ Constructors     ====================== */
 
-/** zmq::Socket::Socket(rubyk::Worker *worker, int type)
+/** zmq::Socket::Socket(lubyk::Worker *worker, int type)
  * include/zmq/Socket.h:64
  */
 static int Socket_Socket(lua_State *L) {
   try {
-    rubyk::Worker *worker = *((rubyk::Worker **)luaL_checkudata(L, 1, "rubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
     int type = luaL_checkint(L, 2);
     Socket * retval__ = new Socket(worker, type);
     lua_pushclass<Socket>(L, retval__, "zmq.Socket");
@@ -226,7 +226,7 @@ static int Socket_quit(lua_State *L) {
 static int Socket_recv(lua_State *L) {
   try {
     Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "zmq.Socket"));
-    
+    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "zmq.lua_State"));
     LuaStackSize  retval__ = self__->recv(L);
     return retval__;
   } catch (std::exception &e) {
@@ -243,7 +243,7 @@ static int Socket_recv(lua_State *L) {
 static int Socket_request(lua_State *L) {
   try {
     Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "zmq.Socket"));
-    
+    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "zmq.lua_State"));
     LuaStackSize  retval__ = self__->request(L);
     return retval__;
   } catch (std::exception &e) {
@@ -260,7 +260,7 @@ static int Socket_request(lua_State *L) {
 static int Socket_send(lua_State *L) {
   try {
     Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "zmq.Socket"));
-    
+    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "zmq.lua_State"));
     self__->send(L);
     return 0;
   } catch (std::exception &e) {
@@ -277,7 +277,7 @@ static int Socket_send(lua_State *L) {
 static int Socket_set_callback(lua_State *L) {
   try {
     Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "zmq.Socket"));
-    
+    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "zmq.lua_State"));
     self__->set_callback(L);
     return 0;
   } catch (std::exception &e) {

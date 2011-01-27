@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2011 by Gaspard Bucher (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -27,8 +27,8 @@
   ==============================================================================
 */
 
-#ifndef RUBYK_INCLUDE_MDNS_LOCATION_H_
-#define RUBYK_INCLUDE_MDNS_LOCATION_H_
+#ifndef LUBYK_INCLUDE_MDNS_LOCATION_H_
+#define LUBYK_INCLUDE_MDNS_LOCATION_H_
 #include <string>
 #include <ostream>
 
@@ -37,7 +37,7 @@ typedef unsigned int uint;
 
 namespace mdns {
 
-#define DEFAULT_PROTOCOL "rubyk"
+#define DEFAULT_PROTOCOL "lubyk"
 
 class ZeroConfBrowser;
 
@@ -179,4 +179,4 @@ std::ostream &operator<<(std::ostream &out_stream, const Location &location);
 
 } // mdns
 
-#endif // RUBYK_INCLUDE_MDNS_LOCATION_H_
+#endif // LUBYK_INCLUDE_MDNS_LOCATION_H_

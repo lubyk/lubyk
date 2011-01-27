@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -27,12 +27,12 @@
   ==============================================================================
 */
 
-#ifndef RUBYK_INCLUDE_RUBYK_SUPPORT_DRAW_H_
-#define RUBYK_INCLUDE_RUBYK_SUPPORT_DRAW_H_
+#ifndef LUBYK_INCLUDE_LUBYK_SUPPORT_DRAW_H_
+#define LUBYK_INCLUDE_LUBYK_SUPPORT_DRAW_H_
 
 #include "opencv/cv.h"
 
-/** Main namespace for rubyk.
+/** Main namespace for lubyk.
  */
 namespace rk {
 
@@ -141,4 +141,4 @@ namespace cv {
   cv::Mat LoadImage(const char *path);
 }
 
-#endif // RUBYK_INCLUDE_RUBYK_SUPPORT_DRAW_H_
+#endif // LUBYK_INCLUDE_LUBYK_SUPPORT_DRAW_H_

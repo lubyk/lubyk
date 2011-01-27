@@ -6,7 +6,7 @@
   Browse for wii remotes.
 
 --]]------------------------------------------------------
-require 'rubyk'
+require 'lubyk'
 require 'mimas'
 local should = test.Suite('wii.Browser')
 

@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2011 by Gaspard Bucher (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -26,8 +26,8 @@
 
   ==============================================================================
 */
-#ifndef RUBYK_INCLUDE_MIMAS_CALLBACK_H_
-#define RUBYK_INCLUDE_MIMAS_CALLBACK_H_
+#ifndef LUBYK_INCLUDE_MIMAS_CALLBACK_H_
+#define LUBYK_INCLUDE_MIMAS_CALLBACK_H_
 
 #include "mimas/mimas.h"
 
@@ -48,15 +48,15 @@ class Slider;
  * @dub lib_name:'Callback_core'
  *      ignore: 'callback'
  */
-class Callback : public QObject, public rubyk::LuaCallback
+class Callback : public QObject, public lubyk::LuaCallback
 {
   Q_OBJECT
 public:
   // Our own custom event id
   static const QEvent::Type EventType;
 
-  Callback(rubyk::Worker *worker)
-   : rubyk::LuaCallback(worker),
+  Callback(lubyk::Worker *worker)
+   : lubyk::LuaCallback(worker),
      self_in_app_env_(-1) {}
 
   virtual ~Callback() {
@@ -93,7 +93,7 @@ public slots:
       return;
     }
 
-    rubyk::ScopedLock lock(worker_);
+    lubyk::ScopedLock lock(worker_);
 
     // do not push self
     push_lua_callback(false);
@@ -113,7 +113,7 @@ public slots:
       return;
     }
 
-    rubyk::ScopedLock lock(worker_);
+    lubyk::ScopedLock lock(worker_);
 
     // do not push self
     push_lua_callback(false);
@@ -190,4 +190,4 @@ private:
 
 } // mimas
 
-#endif // RUBYK_INCLUDE_MIMAS_CALLBACK_H_
+#endif // LUBYK_INCLUDE_MIMAS_CALLBACK_H_

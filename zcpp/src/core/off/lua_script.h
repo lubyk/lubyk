@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -27,8 +27,8 @@
   ==============================================================================
 */
 
-#ifndef RUBYK_SRC_CORE_LUA_SCRIPT_H_
-#define RUBYK_SRC_CORE_LUA_SCRIPT_H_
+#ifndef LUBYK_SRC_CORE_LUA_SCRIPT_H_
+#define LUBYK_SRC_CORE_LUA_SCRIPT_H_
 
 extern "C" {
 // we compiled as C code
@@ -172,4 +172,4 @@ private:
 #define METHOD_FOR_LUA(klass,method) {Class::find(#klass)->add_method_for_lua(#method, &LuaScript::cast_method_for_lua<klass, &klass::method>);}
 #define SUPER_METHOD_FOR_LUA(klass,super,method) {Class::find(#klass)->add_method_for_lua(#method, &LuaScript::cast_method_for_lua<klass, super, &super::method>);}
 
-#endif // RUBYK_SRC_CORE_LUA_SCRIPT_H_
+#endif // LUBYK_SRC_CORE_LUA_SCRIPT_H_

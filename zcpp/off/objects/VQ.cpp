@@ -1,4 +1,4 @@
-#include "rubyk.h"
+#include "lubyk.h"
 #include <float.h>  // DBL_MAX
 #define INITIAL_TRAINING_DATA_SIZE 512
 

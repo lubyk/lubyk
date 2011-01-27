@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ public:
     // all this is done by Class normally
     script_->set_name("lua");
     script_->adopt(new Object("in"));
-    script_->adopt(new Object(Rubyk::NODE_OUT_KEY));
+    script_->adopt(new Object(Lubyk::NODE_OUT_KEY));
     Value res = script_->init();
     if (res.is_error()) {
       std::cout << "Could not init LuaScript !\n" << res << "\n";
@@ -91,11 +91,11 @@ public:
   // ------------------------------------------------------------------------  rk.
 
   void test_rk_call( void ) {
-    // also tests loading of rubyk.lua
+    // also tests loading of lubyk.lua
     Value res = parse("function foo() return rk.call('/class/lib'); end");
     assert_true(res.is_string());
     res = script_->call_lua("foo", gNilValue);
-    assert_equal("\"lib:~/rubyk/lib:/usr/local/lib/rubyk\"", res.to_json());
+    assert_equal("\"lib:~/lubyk/lib:/usr/local/lib/lubyk\"", res.to_json());
   }
 
   // ------------------------------------------------------------------------  Nil
@@ -122,7 +122,7 @@ public:
   }
 
   void test_add_inlet_RealIO( void ) {
-    // also tests loading of rubyk.lua
+    // also tests loading of lubyk.lua
     Value res = parse("Inlet('tempo', RangeIO('Main beat machine tempo [bpm].', 0, 5000))");
     assert_true(res.is_string());
     ObjectHandle inlet;
@@ -169,7 +169,7 @@ public:
   }
 
   void test_add_inlet_BangIO( void ) {
-    // also tests loading of rubyk.lua
+    // also tests loading of lubyk.lua
     Value res = parse("Inlet('boom', BangIO('Ping pong.'))");
     assert_true(res.is_string());
     ObjectHandle inlet;
@@ -195,7 +195,7 @@ public:
   // }
   //
   // void test_add_inlet_ImpulseIO( void ) {
-  //   // also tests loading of rubyk.lua
+  //   // also tests loading of lubyk.lua
   //   Value res = parse("Inlet('boom', ImpulseIO('Ping pong.'))");
   //   assert_true(res.is_string());
   //   ObjectHandle inlet;
@@ -225,7 +225,7 @@ public:
   }
 
   void test_add_inlet_MatrixIO( void ) {
-    // also tests loading of rubyk.lua
+    // also tests loading of lubyk.lua
     Value res = parse("require('cv'); Inlet('boom', MatrixIO('Ping pong.'))");
     assert_true(res.is_string());
     ObjectHandle inlet;
@@ -272,7 +272,7 @@ public:
   }
 
   void test_add_inlet_MidiIO( void ) {
-    // also tests loading of rubyk.lua
+    // also tests loading of lubyk.lua
     Value res = parse("Inlet('boom', MidiIO('Ping pong.'))");
     assert_true(res.is_string());
     ObjectHandle inlet;
@@ -282,7 +282,7 @@ public:
   }
 
   void test_add_outlet_MidiIO( void ) {
-    // also tests loading of rubyk.lua
+    // also tests loading of lubyk.lua
     Value res = parse("Outlet('boom', MidiIO('Ping pong.'))");
     assert_true(res.is_string());
     ObjectHandle outlet;

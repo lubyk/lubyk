@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -27,17 +27,17 @@
   ==============================================================================
 */
 
-#ifndef RUBYK_INCLUDE_RUBYK_LUA_H_
-#define RUBYK_INCLUDE_RUBYK_LUA_H_
+#ifndef LUBYK_INCLUDE_LUBYK_LUA_H_
+#define LUBYK_INCLUDE_LUBYK_LUA_H_
 
 extern "C" {
 // we compiled Lua as C code
 // not sure of that...
-#include "rubyk/lua/lua.h"
-#include "rubyk/lua/lauxlib.h"
-#include "rubyk/lua/lualib.h"
-#include "rubyk/lua/gl.h"
-#include "rubyk/lua/glut.h"
+#include "lubyk/lua/lua.h"
+#include "lubyk/lua/lauxlib.h"
+#include "lubyk/lua/lualib.h"
+#include "lubyk/lua/gl.h"
+#include "lubyk/lua/glut.h"
 }
 
-#endif // RUBYK_INCLUDE_RUBYK_LUA_H_
+#endif // LUBYK_INCLUDE_LUBYK_LUA_H_

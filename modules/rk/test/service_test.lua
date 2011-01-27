@@ -6,7 +6,7 @@
   zmq + mDNS
 
 --]]------------------------------------------------------
-require 'rubyk'
+require 'lubyk'
 
 local should = test.Suite('rk.Client/Service')
 
@@ -28,7 +28,7 @@ function should.connect_when_remote_appears()
   -- Mars is even created.
   venus:subscribe('Mars')
 
-  -- create a service called 'Mars' with default service type '_rubyk._tcp'
+  -- create a service called 'Mars' with default service type '_lubyk._tcp'
   -- and that replies to all messages with nil.
   local mars = rk.Service('Mars')
 

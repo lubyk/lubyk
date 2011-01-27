@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -27,10 +27,10 @@
   ==============================================================================
 */
 
-#include "rubyk/inlet.h"
+#include "lubyk/inlet.h"
 
-#include "rubyk/node.h"
-#include "rubyk/outlet.h"
+#include "lubyk/node.h"
+#include "lubyk/outlet.h"
 
 namespace rk {
 

@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -34,8 +34,8 @@ using namespace rk;
 #include <pthread.h>
 #include <string.h>
 
-#include "rubyk/planet.h"
-#include "rubyk/cocoa.h"
+#include "lubyk/planet.h"
+#include "lubyk/cocoa.h"
 
 /* ======================== OpenGLWindow =================================== */
 

@@ -5,7 +5,7 @@
 # ==============================================================================
 
 set(SUB_MODULE_NAME "vendor")
-set(SUB_MODULE_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/rubyk.cpp)
+set(SUB_MODULE_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/lubyk.cpp)
 
 # ==============================================================================
 #

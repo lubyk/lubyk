@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2011 by Gaspard Bucher (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -26,11 +26,11 @@
 
   ==============================================================================
 */
-#ifndef RUBYK_INCLUDE_RK_SOCKET_H_
-#define RUBYK_INCLUDE_RK_SOCKET_H_
+#ifndef LUBYK_INCLUDE_RK_SOCKET_H_
+#define LUBYK_INCLUDE_RK_SOCKET_H_
 
-#include "rubyk.h"
-#include "rubyk/msgpack.h"
+#include "lubyk.h"
+#include "lubyk/msgpack.h"
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -47,7 +47,7 @@
 // How many pending connections should wait for 'accept'.
 #define BACKLOG 10
 
-using namespace rubyk;
+using namespace lubyk;
 
 typedef int LuaStackSize;
 
@@ -75,7 +75,7 @@ public:
     UDP = SOCK_DGRAM,
   };
 
-  Socket(rubyk::Worker *worker, int socket_type)
+  Socket(lubyk::Worker *worker, int socket_type)
     : LuaCallback(worker),
       socket_fd_(-1),
       socket_type_(socket_type),
@@ -263,7 +263,7 @@ public:
     char buffer[1024]; // fix make this part of the Socket and tune size from data..
     int len;
     // unlock while waiting
-    { rubyk::ScopedUnlock unlock(worker_);
+    { lubyk::ScopedUnlock unlock(worker_);
       printf("recv(%i)\n", socket_fd_);
       len = ::recv(socket_fd_, &buffer, 1023, 0);
       if (len == 0) {
@@ -342,7 +342,7 @@ private:
    /** Create a socket with an existing file descriptor.
     * This is used as the result of an 'accept()' call.
     */
-   Socket(rubyk::Worker *worker, int fd, const char *local_host, const char *remote_host, int remote_port)
+   Socket(lubyk::Worker *worker, int fd, const char *local_host, const char *remote_host, int remote_port)
     : LuaCallback(worker),
       socket_fd_(fd),
       local_host_(local_host),
@@ -374,7 +374,7 @@ private:
 
     // trigger callback
 
-    rubyk::ScopedLock lock(worker_);
+    lubyk::ScopedLock lock(worker_);
 
     push_lua_callback();
 
@@ -390,4 +390,4 @@ private:
 };
 } // rk
 
-#endif // RUBYK_INCLUDE_RK_SOCKET_H_
+#endif // LUBYK_INCLUDE_RK_SOCKET_H_

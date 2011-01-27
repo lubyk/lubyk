@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2011 by Gaspard Bucher (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -26,8 +26,8 @@
 
   ==============================================================================
 */
-#ifndef RUBYK_INCLUDE_MIMAS_SLIDER_H_
-#define RUBYK_INCLUDE_MIMAS_SLIDER_H_
+#ifndef LUBYK_INCLUDE_MIMAS_SLIDER_H_
+#define LUBYK_INCLUDE_MIMAS_SLIDER_H_
 
 #include "mimas/mimas.h"
 
@@ -37,7 +37,7 @@
 
 #include <iostream>
 
-using namespace rubyk;
+using namespace lubyk;
 
 namespace mimas {
 
@@ -65,7 +65,7 @@ public:
   };
 
 
-  Slider(rubyk::Worker *worker, int type = (int)VerticalSliderType, QWidget *parent = 0)
+  Slider(lubyk::Worker *worker, int type = (int)VerticalSliderType, QWidget *parent = 0)
    : QWidget(parent),
      LuaCallback(worker),
      slider_type_((SliderType)type),
@@ -183,7 +183,7 @@ public slots:
       return;
     }
 
-    rubyk::ScopedLock lock(worker_);
+    lubyk::ScopedLock lock(worker_);
 
     // push self
     push_lua_callback();
@@ -219,4 +219,4 @@ private:
 };
 
 } // mimas
-#endif // RUBYK_INCLUDE_MIMAS_SLIDER_H_
+#endif // LUBYK_INCLUDE_MIMAS_SLIDER_H_

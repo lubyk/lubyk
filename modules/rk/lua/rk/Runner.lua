@@ -5,7 +5,7 @@
 
   The Runner library is the starting point for running
   patches or running tests. The Runner does not alter
-  the search path: this is done by the 'rubyk' executable.
+  the search path: this is done by the 'lubyk' executable.
 
 --]]------------------------------------------------------
 

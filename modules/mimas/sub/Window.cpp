@@ -181,7 +181,7 @@ static int Window_name(lua_State *L) {
   try {
     Window *self__ = *((Window**)luaL_checkudata(L, 1, "mimas.Window"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Window in name");
-    
+    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "mimas.lua_State"));
     LuaStackSize  retval__ = self__->name(L);
     return retval__;
   } catch (std::exception &e) {

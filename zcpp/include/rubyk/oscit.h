@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -27,13 +27,13 @@
   ==============================================================================
 */
 
-#ifndef RUBYK_INCLUDE_RUBYK_OSCIT_H_
-#define RUBYK_INCLUDE_RUBYK_OSCIT_H_
+#ifndef LUBYK_INCLUDE_LUBYK_OSCIT_H_
+#define LUBYK_INCLUDE_LUBYK_OSCIT_H_
 
 #include "oscit/oscit.h"
 using namespace oscit;
 
-#include "rubyk/constants.h"
+#include "lubyk/constants.h"
 
 // TODO move this in a types.h file ?
 
@@ -48,8 +48,8 @@ using namespace oscit;
 #define LIB_URL     "/class/lib"
 #define INSPECT_URL "/.inspect"
 
-#define RUBYK_URL   "/rubyk"
-#define LINK_URL    "/rubyk/link"
-#define QUIT_URL    "/rubyk/quit"
+#define LUBYK_URL   "/lubyk"
+#define LINK_URL    "/lubyk/link"
+#define QUIT_URL    "/lubyk/quit"
 
-#endif // RUBYK_INCLUDE_RUBYK_OSCIT_H_
+#endif // LUBYK_INCLUDE_LUBYK_OSCIT_H_

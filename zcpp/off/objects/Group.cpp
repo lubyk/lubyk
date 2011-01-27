@@ -1,4 +1,4 @@
-#include "rubyk.h"
+#include "lubyk.h"
 #include "group.h"
 
 extern "C" void init(Planet &planet) {

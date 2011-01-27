@@ -585,7 +585,7 @@ RtMidiOut :: ~RtMidiOut()
   if ( data->endpoint ) MIDIEndpointDispose( data->endpoint );
   delete data;
 }
-                               // rubyk changed to 'const'
+                               // lubyk changed to 'const'
 void RtMidiOut :: sendMessage( const std::vector<unsigned char> *message )
 {
   unsigned int nBytes = message->size();
@@ -1224,7 +1224,7 @@ RtMidiOut :: ~RtMidiOut()
   snd_seq_close( data->seq );
   delete data;
 }
-                               // rubyk changed to 'const'
+                               // lubyk changed to 'const'
 void RtMidiOut :: sendMessage( const std::vector<unsigned char> *message )
 {
   int result;

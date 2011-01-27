@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -30,7 +30,7 @@
 #include <list>
 #include <stdexcept> // runtime_error
 
-#include "rubyk.h"
+#include "lubyk.h"
 using namespace rk;
 
 /** Encapsulate OscMapCommand into a Node script.

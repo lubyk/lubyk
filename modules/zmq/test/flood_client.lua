@@ -1,4 +1,4 @@
-require 'rubyk'
+require 'lubyk'
 
 client = zmq.Sub()
 client:connect(string.format('tcp://localhost:%i', arg[1]))

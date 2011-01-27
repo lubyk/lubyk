@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -41,9 +41,9 @@ bool LuaScript::eval_script(const std::string &script) {
     lua_ = lua_open();
     /* Load Lua libraries */
     luaL_openlibs(lua_);
-    /* push 'this' into the global field 'rubyk_this' */
+    /* push 'this' into the global field 'lubyk_this' */
     lua_pushlightuserdata(lua_, (void*)this);
-    lua_setglobal(lua_, "rubyk_this");
+    lua_setglobal(lua_, "lubyk_this");
 
     /* register methods */
     register_lua_methods();

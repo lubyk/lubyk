@@ -7,7 +7,7 @@
   BSD socket.
 
 --]]------------------------------------------------------
-require 'rubyk'
+require 'lubyk'
 
 local should = test.Suite('rk.Socket')
 local counter = 0
@@ -44,8 +44,8 @@ local counter = 0
 --
 --function should.connect()
 --  local socket = rk.TCPSocket()
---  socket:connect('rubyk.org', 80)
---  assert_match('--> rubyk.org:80', socket:__tostring())
+--  socket:connect('lubyk.org', 80)
+--  assert_match('--> lubyk.org:80', socket:__tostring())
 --end
 --
 --function should.listen_and_accept()
@@ -134,7 +134,7 @@ end
 --  end
 --
 --  -- string
---  send_and_receive("Hello Rubyk!")
+--  send_and_receive("Hello Lubyk!")
 --  -- number, nil, bool
 --  send_and_receive(1.234567)
 --  send_and_receive(nil)

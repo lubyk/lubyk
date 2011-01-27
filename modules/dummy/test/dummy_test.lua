@@ -7,7 +7,7 @@
   to make sure the build process is ok.
 
 --]]------------------------------------------------------
-require 'rubyk'
+require 'lubyk'
 require 'dummy.Dummy'
 
 local should = test.Suite('dummy')

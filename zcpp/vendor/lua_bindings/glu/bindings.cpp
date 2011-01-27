@@ -7,7 +7,7 @@ using namespace glu;
 
 
 /** void glu::Build2DMipmaps(const cv::Mat &mat)
- * rubyk/support/draw.h:120
+ * lubyk/support/draw.h:120
  */
 static int glu_Build2DMipmaps(lua_State *L) {
   try {

@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-   This file is part of the RUBYK project (http://rubyk.org)
+   This file is part of the LUBYK project (http://lubyk.org)
    Copyright (c) 2007-2010 by Gaspard Bucher - Buma (http://teti.ch).
 
   ------------------------------------------------------------------------------
@@ -27,8 +27,8 @@
   ==============================================================================
 */
 
-#ifndef RUBYK_TEST_MOCK_DUMMY_NODE_H_
-#define RUBYK_TEST_MOCK_DUMMY_NODE_H_
+#ifndef LUBYK_TEST_MOCK_DUMMY_NODE_H_
+#define LUBYK_TEST_MOCK_DUMMY_NODE_H_
 
 class DummyNode : public Node
 {
@@ -52,4 +52,4 @@ public:
 };
 
 
-#endif // RUBYK_TEST_MOCK_DUMMY_NODE_H_
+#endif // LUBYK_TEST_MOCK_DUMMY_NODE_H_

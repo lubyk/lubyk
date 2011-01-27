@@ -1,11 +1,11 @@
-== Rubyk
+== Lubyk
 
-Rubyk is an open source tool written in C++/Lua for real time signal processing.
+Lubyk is an open source tool written in C++/Lua for real time signal processing.
 This tool uses zeromq to between instances and with the graphical interfaces.
 
-website: http://rubyk.org
+website: http://lubyk.org
 
-bug tracker: http://rubyk.lighthouseapp.com/projects/17616-rubyk
+bug tracker: http://lubyk.lighthouseapp.com/projects/17616-lubyk
 
 license: MIT
 
@@ -13,7 +13,7 @@ author: Gaspard Buma (http://gaspardbuma.org)
 
 == History
 
-This is the 3rd incarnation of Rubyk (without counting the early Ruby prototype). The first version was a
+This is the 3rd incarnation of Lubyk (without counting the early Ruby prototype). The first version was a
 very rough draft that worked pretty well but crashed often during startup and/or quit. The second version
 was a big C++ rewrite with the creation of a super library (oscit) and many great C++ templates (Hash, etc)
 but it never really worked. This big rewrite made me learn how to use CMake and how to code C++, integrate
@@ -26,8 +26,8 @@ at home in the purely visual patchers where you can get lost quite quickly if yo
 
 Due to speed issues with the first prototype in Ruby, I decided to write the whole thing in C. As I quickly
 felt like reinventing object orientation I thought it would be more natural to use C++. The project now uses
-Lua for scripting for its speed and ease of integration but the name rubyk (Ruby Kontroller) was kept. In my
-country (Switzerland) rubies are used in clockworks so Rubyk is also a reference to this tradition.
+Lua for scripting for its speed and ease of integration but the name lubyk (Ruby Kontroller) was kept. In my
+country (Switzerland) rubies are used in clockworks so Lubyk is also a reference to this tradition.
 
 === File organization
 
@@ -70,7 +70,7 @@ folder organized as follow:
 
 === Main modules
 
-  * rubyk                       Contains all the code and helpers but without any classes.
+  * lubyk                       Contains all the code and helpers but without any classes.
 
   * rk                          Contains classes such as (Dir, Node, Outlet, etc).
 
