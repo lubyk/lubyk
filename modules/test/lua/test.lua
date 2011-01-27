@@ -99,7 +99,7 @@ end
 
 local function error_handler(err)
   local tb = split(debug.traceback(), '\n')
-  local max_i
+  local max_i = 5
   local message = err
   for i = 4,#tb do
     if string.find(tb[i], 'lubyk/lib/test.lua') then
@@ -285,4 +285,8 @@ end
 
 function assert_nil(value)
   lib.assert(type(value) == 'nil', string.format('Should be a Nil but was %s.', type(value)))
+end
+
+function assert_in_range(t1, t2, value)
+  lib.assert(value >= t1 and value < t2, string.format('Should be in [%f, %f[ but was %f.', t1, t2, value))
 end

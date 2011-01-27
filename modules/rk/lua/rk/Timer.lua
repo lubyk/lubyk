@@ -17,6 +17,7 @@ function rk.Timer(interval, func)
   local instance = constr(worker, interval)
   if func then
     instance:set_callback(func)
+    instance:start()
   end
   return instance
 end

@@ -10,9 +10,9 @@
 --]]------------------------------------------------------
 require 'sqlite3'
 
-local lib = {}
-lib.__index = lib
-db.Stream = lib
+----------------------------------------------------------
+----             PRIVATE                              ----
+----------------------------------------------------------
 
 -- Execute the given function in a transaction.
 local function transaction(db, func)
@@ -37,17 +37,53 @@ local function prepare_db(self, ...)
   end)
   self.get_event_stmt                = db:prepare[[ SELECT id FROM events WHERE t = :t ]]
   self.add_event_stmt                = db:prepare[[ INSERT INTO events VALUES (NULL, :t) ]]
-  self.get_next_event_stmt           = db:prepare[[ SELECT id, t FROM events WHERE t > :t ORDER BY t ASC LIMIT 1 ]]
-  self.get_next_event_for_track_stmt = db:prepare[[ SELECT id, t FROM events INNER JOIN data ON data.event_id = events.id WHERE t > :t AND track_id = :track_id ORDER BY t ASC LIMIT 1 ]]
+  self.get_next_event_stmt           = db:prepare[[ SELECT t FROM events WHERE t > :t ORDER BY t ASC LIMIT 1 ]]
 
-  self.get_track_name_stmt           = db:prepare[[ SELECT name FROM tracks WHERE id = :id ]]
   self.get_track_id_stmt             = db:prepare[[ SELECT id FROM tracks WHERE name = :name ]]
   self.add_track_stmt                = db:prepare[[ INSERT INTO tracks VALUES (NULL, :name) ]]
 
-  self.get_data_event_stmt           = db:prepare[[ SELECT tracks.name, value FROM data INNER JOIN tracks ON tracks.id = track_id WHERE event_id = :id ]]
-  self.get_data_stmt                 = db:prepare[[ SELECT tracks.name, value FROM data INNER JOIN tracks ON tracks.id = track_id INNER JOIN events ON events.id == event_id WHERE events.t = :t ]]
-  self.get_data_track_stmt           = db:prepare[[ SELECT value FROM data INNER JOIN tracks ON tracks.id = track_id INNER JOIN events ON events.id == event_id WHERE events.t = :t AND tracks.name = :track ]]
   self.add_or_update_data_stmt       = db:prepare[[ INSERT OR REPLACE INTO data VALUES (:event_id, :track_id, :value) ]]
+
+  -- all data at event t
+  self.get_data_stmt = db:prepare[[
+    SELECT tracks.name, value
+    FROM data
+      INNER JOIN tracks ON tracks.id = track_id
+      INNER JOIN events ON events.id == event_id
+    WHERE
+      events.t = :t
+  ]]
+
+  --------------------------------------------------------- db.Track queries
+  self.get_next_event_for_track_stmt = db:prepare[[
+    SELECT t
+    FROM events
+      INNER JOIN data ON data.event_id = events.id
+    WHERE
+      t > :t AND
+      track_id = :id
+    ORDER BY t ASC
+    LIMIT 1
+  ]]
+
+  -- all data in rage [t1, t2[
+  self.get_data_range_track_stmt = db:prepare[[
+    SELECT events.t, value
+    FROM data
+      INNER JOIN events ON events.id == event_id
+    WHERE
+      events.t >= :t1 AND events.t < :t2 AND
+      track_id = :id
+    ORDER BY events.t ASC
+  ]]
+
+  self.get_data_track_stmt = db:prepare[[
+    SELECT value
+    FROM data
+      INNER JOIN events ON events.id == event_id
+    WHERE
+      events.t = :t AND
+      track_id = :id ]]
 end
 
 local function get_event_id(self, t)
@@ -70,25 +106,6 @@ local function add_event(self, t)
   return self.db:last_insert_rowid()
 end
 
--- Find a track name from a given track id.
--- The track name is cached in memory.
-local function get_track_name(self, id)
-  local name = self.track_name_from_id[id]
-  if name then
-    return name
-  end
-  local stmt = self.get_track_name_stmt
-  stmt:bind_names{id = id}
-  local row = stmt:first_row()
-  if row then
-    self.track_name_from_id[id] = row[1]
-    self.track_id_from_name[row[1]] = id
-    return row[1]
-  else
-    return nil
-  end
-end
-
 -- Add a new track. Returns new track id.
 local function add_track(self, name)
   local stmt = self.add_track_stmt
@@ -96,7 +113,6 @@ local function add_track(self, name)
   stmt:step()
   stmt:reset()
   local id = self.db:last_insert_rowid()
-  self.track_name_from_id[id] = name
   self.track_id_from_name[name] = id
   return id
 end
@@ -114,23 +130,12 @@ local function get_track_id(self, name, should_create)
   local row = stmt:first_row()
   if row then
     self.track_id_from_name[name] = row[1]
-    self.track_name_from_id[row[1]] = name
     return row[1]
   elseif should_create then
     return add_track(self, name)
   else
     return nil
   end
-end
-
-local function get_data_with_event_id(self, event_id)
-  local stmt = self.get_data_event_stmt
-  local res = {}
-  stmt:bind_names{id = event_id}
-  for row in stmt:rows() do
-    res[row[1]] = row[2]
-  end
-  return res
 end
 
 -- Add a new event. Returns new event id.
@@ -146,7 +151,7 @@ end
 -- @returns nil if the event does not exist.
 local function get_data(self, t)
   local stmt = self.get_data_stmt
-  local res = {}
+  local res = {t = t}
   local has_values = false
   stmt:bind_names{t = t}
   for row in stmt:rows() do
@@ -162,12 +167,20 @@ local function get_data(self, t)
 end
 
 -- Get values for all tracks for this event.
+-- @returns an iterator over a list of rows or nil if nothing is found.
+local function get_data_range_for_track_id(self, t1, t2, track_id)
+  local stmt = self.get_data_range_track_stmt
+  stmt:bind_names{t1 = t1, t2 = t2, id = track_id}
+  return stmt:rows()
+end
+
+-- Get values for all tracks for this event.
 -- @returns nil if the event does not exist.
-local function get_data_for_track(self, t, track_name)
+local function get_data_for_track_id(self, t, track_id)
   local stmt = self.get_data_track_stmt
   local res = {}
   local has_values = false
-  stmt:bind_names{t = t, track = track_name}
+  stmt:bind_names{t = t, id = track_id}
   local row = stmt:first_row()
   if row then
     -- value
@@ -182,35 +195,35 @@ local function get_next_event(self, t)
   stmt:bind_names{t = t}
   local row = stmt:first_row()
   if row then
-    self.next_id = row[1]
-    self.next_t  = row[2]
-    return row[2]
+    return row[1]
   else
     return nil
   end
 end
 
-local function get_next_event_for_track(self, t, track_name)
+local function get_next_event_for_track(self, t, track_id)
   local stmt = self.get_next_event_for_track_stmt
-  local track_id = get_track_id(self, track_name, false)
-  if not track_id then
-    return nil
-  end
-  stmt:bind_names{t = t, track_id = track_id}
+  stmt:bind_names{t = t, id = track_id}
   local row = stmt:first_row()
   if row then
-    self.next_id = row[1]
-    self.next_t  = row[2]
-    return row[2]
+    return row[1]
   else
     return nil
   end
 end
+
+----------------------------------------------------------
+----             PUBLIC  db.Stream                    ----
+----------------------------------------------------------
+
+local lib = {}
+lib.__index = lib
+db.Stream = lib
 
 setmetatable(lib, {
   -- new method
  __call = function(table, ...)
-  local instance = {track_name_from_id = {}, track_id_from_name = {}, last_t = 0, last_id = nil, next_t = 0, next_id = nil}
+  local instance = {tracks = {}, track_id_from_name = {}, last_t = 0, last_id = nil, playing = false, t = 0}
   prepare_db(instance)
   setmetatable(instance, lib)
   return instance
@@ -250,23 +263,65 @@ function lib:set(hash)
   end)
 end
 
-function lib:next(t, track_name)
-  if track_name then
-    return get_next_event_for_track(self, t, track_name)
-  else
-    return get_next_event(self, t)
+function lib:rec(hash)
+  hash.t = worker:now()
+  self:set(hash)
+end
+
+function lib:play(t, func)
+  if not func then
+    func = t
+    -- default start is self.t
+    t = self.t
+  end
+
+  self.playing = true
+
+  -- 10 = default timer value will be updated after first call
+  self.playback = rk.Timer(10, function()
+    -- triggered right after start (no delay)
+    local data = self:at(t)
+    if data then
+      -- move head to where we are playing
+      self.t = t
+      func(data)
+    end
+    local next_t = self:next(t)
+    if next_t then
+      local sleep_t = next_t - t
+      t = next_t
+      return sleep_t
+    else
+      self.playing = false
+      -- move head back to 0 after everything is played
+      self.t = 0
+      return 0 -- stop
+    end
+  end)
+end
+
+function lib:stop()
+  if self.playback then
+    self.playback:kill()
+    self.playback = nil
   end
 end
 
-function lib:at(t, track_name)
-  if track_name then
-    return get_data_for_track(self, t, track_name)
-  else
-    return get_data(self, t)
-  end
+function lib:first()
+  return self:next(-1)
 end
 
-function lib:isopen()
+function lib:next(t)
+  return get_next_event(self, t)
+end
+
+-- Find values at a given point in time. The returned hash contains the values with
+-- the event time 't'.
+function lib:at(t)
+  return get_data(self, t)
+end
+
+function lib:is_open()
   return self.db:isopen()
 end
 
@@ -291,4 +346,46 @@ function lib:debug()
   for r in db:nrows("SELECT events.t, tracks.name, value FROM data INNER JOIN tracks ON tracks.id = track_id INNER JOIN events ON events.id == event_id") do
     print(r.t, r.name, r.value)
   end
+end
+
+function lib:track(track_name)
+  local track = self.tracks[track_name]
+  if not track then
+    track = db.Track(self, track_name, get_track_id(self, track_name, true))
+    self.tracks[track_name] = track
+  end
+  return track
+end
+
+----------------------------------------------------------
+----             PUBLIC  db.Track                     ----
+----------------------------------------------------------
+
+local lib = {}
+lib.__index = lib
+db.Track = lib
+
+setmetatable(lib, {
+  -- new method
+ __call = function(table, stream, track_name, track_id)
+  local instance = {db = stream.db, stream = stream, name = track_name, id = track_id}
+  setmetatable(instance, lib)
+  return instance
+end})
+
+function lib:at(t)
+  return get_data_for_track_id(self.stream, t, self.id)
+end
+
+-- Return events in range [t1, t2[
+function lib:range(t1, t2)
+  return get_data_range_for_track_id(self.stream, t1, t2, self.id)
+end
+
+function lib:next(t)
+  return get_next_event_for_track(self.stream, t, self.id)
+end
+
+function lib:first()
+  return self:next(-1)
 end

@@ -48,7 +48,9 @@ public:
   ~Timer() {
     // we could let Thread cancel the loop in ~Thread, but we
     // prefer to ensure we don't access stale data.
-    stop();
+    if (running_) {
+      thread_.send_signal(SIGINT);
+    }
   }
 
   void start(time_t interval) {
