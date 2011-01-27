@@ -67,6 +67,10 @@ end
 function should.record(t)
   t.stream = db.Stream('tmp.db')
   local now = worker:now()
+  t.stream:rec_start()
+  assert_true(t.stream.recording)
+  assert_equal(now, t.stream.rec_offset)
+  t.stream.recording = true
   t.stream:rec({a = 1})
   worker:sleep(10)
   t.stream:rec({a = 1})
@@ -79,10 +83,11 @@ end
 function should.play(t)
   setup_basic_data(t)
   local start = worker:now()
-  t.stream:play(function(row)
+  function t.stream.playback(row)
     assert_equal(ROWS[row.t], row)
     assert_in_range(start + row.t, start + row.t + 3, worker:now())
-  end)
+  end
+  t.stream:play()
   while t.stream.playing do
     worker:sleep(25)
   end
@@ -96,10 +101,11 @@ function should.not_drift(t)
     t.stream:set({t = j, a = i})
   end
   local now = worker:now()
-  t.stream:play(function(row)
+  function t.stream.playback(row)
     -- no cumulated drift
     assert_in_range(now + row.t, now + row.t + 3, worker:now())
-  end)
+  end
+  t.stream:play()
   while t.stream.playing do
     worker:sleep(10)
   end

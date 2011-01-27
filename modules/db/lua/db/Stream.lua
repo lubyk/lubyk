@@ -223,7 +223,20 @@ db.Stream = lib
 setmetatable(lib, {
   -- new method
  __call = function(table, ...)
-  local instance = {tracks = {}, track_id_from_name = {}, last_t = 0, last_id = nil, playing = false, t = 0}
+  local instance = {tracks = {},
+    track_id_from_name = {},
+    last_t = 0,
+    last_id = nil,
+    -- playback
+    playing = false,
+    -- playback head
+    t = 0,
+    loop = false,
+    -- recording
+    recording = false,
+    -- recoding start time (offset)
+    rec_offset = 0
+  }
   prepare_db(instance)
   setmetatable(instance, lib)
   return instance
@@ -251,7 +264,7 @@ function lib:set(hash)
       event_id = get_event_id(self, t)
       if not event_id then
         -- create
-        event_id = add_event(self, v)
+        event_id = add_event(self, t)
       end
     end
     -- create or update: insert values
@@ -263,30 +276,54 @@ function lib:set(hash)
   end)
 end
 
+-- Record incoming data with the current time. This
+-- method only records after rec_start() has been
+-- called (while recording is true).
 function lib:rec(hash)
-  hash.t = worker:now()
-  self:set(hash)
+  if self.recording then
+    hash.t = worker:now() - self.rec_offset
+    self:set(hash)
+  end
 end
 
-function lib:play(t, func)
-  if not func then
-    func = t
-    -- default start is self.t
+function lib:rec_start()
+  self.rec_offset = worker:now()
+  self.recording  = true
+end
+
+function lib:rec_stop()
+  self.recording = false
+end
+
+function lib:play(t)
+  if not self.playback then
+    error("Cannot play without a playback function.")
+  end
+
+  if not t then
+    -- default start is self.t (current head position)
     t = self.t
   end
 
   self.playing = true
 
   -- 10 = default timer value will be updated after first call
-  self.playback = rk.Timer(10, function()
+  self.playback_timer = rk.Timer(10, function()
     -- triggered right after start (no delay)
     local data = self:at(t)
     if data then
       -- move head to where we are playing
       self.t = t
-      func(data)
+      self.playback(data)
     end
+
     local next_t = self:next(t)
+
+    if not next_t and self.loop then
+      t = 0
+      next_t = self:next(-1)
+    end
+
     if next_t then
       local sleep_t = next_t - t
       t = next_t
@@ -298,12 +335,14 @@ function lib:play(t, func)
       return 0 -- stop
     end
   end)
+  self.playback_timer:start()
 end
 
 function lib:stop()
-  if self.playback then
-    self.playback:kill()
-    self.playback = nil
+  if self.playback_timer then
+    self.playback_timer:stop()
+    self.playback_timer = nil
+    self.playing = false
   end
 end
 
