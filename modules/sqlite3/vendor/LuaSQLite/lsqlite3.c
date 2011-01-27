@@ -1528,6 +1528,14 @@ static int dbvm_rows(lua_State *L) {
     return dbvm_do_rows(L, db_next_packed_row);
 }
 
+static int dbvm_first_row(lua_State *L) {
+    /* sdb_vm *svm =  */
+    sdb_vm *svm = lsqlite_checkvm(L, 1);
+    int res = db_next_packed_row(L);
+    sqlite3_reset(svm->vm);
+    return res;
+}
+
 static int dbvm_nrows(lua_State *L) {
     return dbvm_do_rows(L, db_next_named_row);
 }
@@ -1793,6 +1801,7 @@ static const luaL_reg vmlib[] = {
     {"get_named_types",     dbvm_get_named_types    },
 
     {"rows",                dbvm_rows               },
+    {"first_row",           dbvm_first_row          },
     {"urows",               dbvm_urows              },
     {"nrows",               dbvm_nrows              },
 
@@ -1855,7 +1864,7 @@ static void create_meta(lua_State *L, const char *name, const luaL_reg *lib) {
     lua_pop(L, 1);
 }
 
-LUALIB_API int luaopen_lsqlite3(lua_State *L) {
+LUALIB_API int luaopen_sqlite3_vendor(lua_State *L) {
     create_meta(L, sqlite_meta, dblib);
     create_meta(L, sqlite_vm_meta, vmlib);
     create_meta(L, sqlite_ctx_meta, ctxlib);

@@ -68,7 +68,8 @@ function should.prepare_select(t)
   local db = t.db
   local stmt = db:prepare[[ SELECT content FROM test WHERE id = :id ]]
   stmt:bind_names{id = 2}
-  assert_equal('Hello Lua', stmt:get_value(1))
+  assert_equal('Hello Lua', stmt:first_row()[1])
+  assert_equal('Hello Lua', stmt:first_row()[1])
 end
 
 test.all()
