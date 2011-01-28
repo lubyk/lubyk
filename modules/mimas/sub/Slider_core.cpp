@@ -177,7 +177,7 @@ static int Slider_name(lua_State *L) {
   try {
     Slider *self__ = *((Slider**)luaL_checkudata(L, 1, "mimas.Slider"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Slider in name");
-    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "mimas.lua_State"));
+    
     LuaStackSize  retval__ = self__->name(L);
     return retval__;
   } catch (std::exception &e) {
@@ -322,7 +322,7 @@ static int Slider_set_callback(lua_State *L) {
   try {
     Slider *self__ = *((Slider**)luaL_checkudata(L, 1, "mimas.Slider"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Slider in set_callback");
-    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "mimas.lua_State"));
+    
     self__->set_callback(L);
     return 0;
   } catch (std::exception &e) {

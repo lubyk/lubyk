@@ -13,24 +13,8 @@ file (GLOB SUB_MODULES_CPP ${MODULE}/sub/*.cpp)
 foreach (SUB_MODULE_CPP ${SUB_MODULES_CPP})
   list(REMOVE_ITEM SUB_MODULES "${SUB_MODULE_CPP}")
   get_filename_component (SUB_MODULE_NAME ${SUB_MODULE_CPP} NAME_WE)
-  #if(EXISTS ${MODULE}/sub/${SUB_MODULE_NAME})
-  #  # If we have a sub module file Foobar.cpp and a folder named Foobar, we merge everything in a single
-  #  file(GLOB SUB_MODULES_ADD_CPP ${MODULE}/sub/${SUB_MODULE_NAME}/*.cpp ${MODULE}/sub/${SUB_MODULE_NAME}/${PLAT}/*.cpp)
-  #  list(APPEND SUB_MODULE_CPP ${SUB_MODULES_ADD_CPP})
-  #  list(REMOVE_ITEM SUB_MODULES "${MODULE}/sub/${SUB_MODULE_NAME}")
-  #endif(EXISTS ${MODULE}/sub/${SUB_MODULE_NAME})
-
-  # create name/[SUB_MOD_NAME].so library
-  add_library("${target}_${SUB_MODULE_NAME}" MODULE ${SUB_MODULE_CPP})
-
-  set_target_properties("${target}_${SUB_MODULE_NAME}"
-    PROPERTIES OUTPUT_NAME ${SUB_MODULE_NAME}
-    LINK_FLAGS ${PLAT_OBJ_FLAGS}
-    LIBRARY_OUTPUT_DIRECTORY ${LUBYK_SOURCE_DIR}/lib/${MODULE_NAME}
-    PREFIX ""
-    SUFFIX ".so"
-  )
-  add_dependencies(${target} "${target}_${SUB_MODULE_NAME}")
+  message("build_sub_module(${SUB_MODULE_NAME} ${SUB_MODULE_CPP})")
+  build_sub_module(${SUB_MODULE_NAME} ${SUB_MODULE_CPP})
 endforeach (SUB_MODULE_CPP ${SUB_MODULES_CPP})
 
 
@@ -44,18 +28,7 @@ foreach (SUB_MODULE ${SUB_MODULES})
   if(EXISTS ${SUB_MODULE}/CMakeLists.txt)
     add_subdirectory(${SUB_MODULE})
   else(EXISTS ${SUB_MODULE}/CMakeLists.txt)
-    get_filename_component (SUB_MODULE_NAME ${SUB_MODULE} NAME_WE)
-    file(GLOB SUB_MODULE_SOURCES ${SUB_MODULE}/*.cpp ${SUB_MODULE}/${PLAT}/*.cpp ${SUB_MODULE}/${PLAT}/*.mm)
-
-    # create name/[SUB_MOD_NAME].so library
-    add_library("${target}_${SUB_MODULE_NAME}" MODULE ${SUB_MODULE_SOURCES})
-    set_target_properties("${target}_${SUB_MODULE_NAME}"
-      PROPERTIES OUTPUT_NAME ${SUB_MODULE_NAME}
-      LINK_FLAGS ${PLAT_OBJ_FLAGS}
-      LIBRARY_OUTPUT_DIRECTORY ${LUBYK_SOURCE_DIR}/lib/${MODULE_NAME}
-      PREFIX ""
-      SUFFIX ".so"
-    )
-    add_dependencies(${target} "${target}_${SUB_MODULE_NAME}")
+    # Macro defined in the top level Lubyk CMakeLists.txt
+    build_sub_module_with_defaults()
   endif(EXISTS ${SUB_MODULE}/CMakeLists.txt)
 endforeach (SUB_MODULE ${SUB_MODULES})

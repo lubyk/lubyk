@@ -124,7 +124,7 @@ static int Thread_should_run(lua_State *L) {
 static int Thread_start(lua_State *L) {
   try {
     Thread *self__ = *((Thread**)luaL_checkudata(L, 1, "rk.Thread"));
-    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "rk.lua_State"));
+    
     self__->start(L);
     return 0;
   } catch (std::exception &e) {

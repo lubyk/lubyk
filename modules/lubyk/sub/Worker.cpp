@@ -13,7 +13,7 @@ using namespace lubyk;
  */
 static int Worker_Worker(lua_State *L) {
   try {
-    lua_State *L = *((lua_State **)luaL_checkudata(L, 1, "lubyk.lua_State"));
+    
     Worker * retval__ = new Worker(L);
     lua_pushclass<Worker>(L, retval__, "lubyk.Worker");
     return 1;

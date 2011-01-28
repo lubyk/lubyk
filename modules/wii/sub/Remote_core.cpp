@@ -60,7 +60,7 @@ static int Remote__tostring(lua_State *L) {
 static int Remote___newindex(lua_State *L) {
   try {
     Remote *self__ = *((Remote**)luaL_checkudata(L, 1, "wii.Remote"));
-    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "wii.lua_State"));
+    
     self__->__newindex(L);
     return 0;
   } catch (std::exception &e) {

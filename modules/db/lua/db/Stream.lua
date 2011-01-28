@@ -31,7 +31,7 @@ local function prepare_db(self, ...)
       CREATE UNIQUE INDEX evetns_idx ON events(t);
 
       CREATE TABLE tracks (id INTEGER PRIMARY KEY, name TEXT);
-      CREATE TABLE data   (event_id INTEGER, track_id INTEGER, value REAL);
+      CREATE TABLE data   (event_id INTEGER, track_id INTEGER, value);
       CREATE UNIQUE INDEX data_idx ON data(event_id, track_id);
     ]]
   end)

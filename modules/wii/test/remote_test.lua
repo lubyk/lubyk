@@ -15,19 +15,30 @@ function should.load_wii_code()
 end
 
 function should.find_first_remote()
-  local remote = wii.Remote("Foobar")
+  local remote = wii.Remote('Foo')
 
-  assert_match('Foobar', remote:name())
+  assert_match('Foo', remote:name())
   --assert_true(remote:connected())
 end
 
-function should.set_callbacks()
-  local remote = wii.Remote("Foobar")
+function should.set_button_callback()
+  local remote = wii.Remote('Foo')
 
-  function remote:button(btn, pressed)
-    print(btn, pressed)
-  end
-  --assert_true(remote:connected())
+  assert_pass(function()
+    function remote.button(btn, pressed)
+      -- button callback
+    end
+  end)
+end
+
+function should.set_acceleration_callback()
+  local remote = wii.Remote('Foo')
+
+  assert_pass(function()
+    function remote.acceleration(device, x, y, z)
+      -- button callback
+    end
+  end)
 end
 
 test.all()

@@ -98,7 +98,7 @@ public:
 
   void setHue(float hue) {
     hue_ = hue;
-    update();
+    QWidget::update();
   }
 
   float hue() {
@@ -109,6 +109,7 @@ public:
 
   void setText(const char *text) {
     QLabel::setText(QString(text));
+    QWidget::update();
   }
 
 private:

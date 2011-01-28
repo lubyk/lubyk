@@ -98,7 +98,7 @@ static int Dummy__tostring(lua_State *L) {
 static int Dummy___newindex1(lua_State *L) {
   try {
     Dummy *self__ = *((Dummy**)luaL_checkudata(L, 1, "dummy.Dummy"));
-    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "dummy.lua_State"));
+    
     self__->__newindex(L);
     return 0;
   } catch (std::exception &e) {
@@ -115,7 +115,7 @@ static int Dummy___newindex1(lua_State *L) {
 static int Dummy___newindex2(lua_State *L) {
   try {
     Dummy *self__ = *((Dummy**)luaL_checkudata(L, 1, "dummy.Dummy"));
-    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "dummy.lua_State"));
+    
     self__->__newindex(L);
     return 0;
   } catch (std::exception &e) {

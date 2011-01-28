@@ -72,9 +72,9 @@ function win.paintGL()
 
   gl.Translate(0.0, 0.0, -6.0)
 
-  gl.Rotate(x * 360, 1.0, 0.0, 0.0)
+  gl.Rotate(z * 360, 1.0, 0.0, 0.0)
   gl.Rotate(y * 360, 0.0, 1.0, 0.0)
-  gl.Rotate(z * 360, 0.0, 0.0, 1.0)
+  gl.Rotate(x * 360, 0.0, 0.0, 1.0)
 
 
   gl.Color(0.5,0.5,0.5,0.8)

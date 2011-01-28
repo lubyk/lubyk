@@ -93,7 +93,7 @@ static int Timer_join(lua_State *L) {
 static int Timer_set_callback(lua_State *L) {
   try {
     Timer *self__ = *((Timer**)luaL_checkudata(L, 1, "rk.Timer"));
-    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "rk.lua_State"));
+    
     self__->set_callback(L);
     return 0;
   } catch (std::exception &e) {

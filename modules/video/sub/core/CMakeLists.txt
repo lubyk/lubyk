@@ -1,7 +1,8 @@
 if(UNIX)
   if(APPLE)
     set(PLAT_OBJ_FLAGS "${PLAT_OBJ_FLAGS} -lobjc -Wno-import -framework QTKit")
-    add_rko_object(VideoIn VideoIn.cpp macosx/video_in.mm)
+    # Macro defined in the top level Lubyk CMakeLists.txt
+    build_sub_module_with_defaults()
   else(APPLE)
 
   endif(APPLE)

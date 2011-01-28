@@ -98,7 +98,7 @@ endif()
 #  Build all modules in 'modules'
 #
 # ==============================================================================
-add_custom_target(modules)
+add_custom_target(modules ALL)
 add_subdirectory(modules)
 
 # ==============================================================================
@@ -121,8 +121,8 @@ add_subdirectory(Mimas)
 #  Test all
 #
 # ==============================================================================
-add_custom_target(test_all ALL cd .. && ./rtest)
-add_dependencies (test_all modules)
+add_custom_target(test_all cd .. && ./rtest)
+add_dependencies(test_all modules)
 
 # ==============================================================================
 #

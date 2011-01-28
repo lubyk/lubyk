@@ -226,7 +226,7 @@ static int Socket_quit(lua_State *L) {
 static int Socket_recv(lua_State *L) {
   try {
     Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "zmq.Socket"));
-    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "zmq.lua_State"));
+    
     LuaStackSize  retval__ = self__->recv(L);
     return retval__;
   } catch (std::exception &e) {
@@ -243,7 +243,7 @@ static int Socket_recv(lua_State *L) {
 static int Socket_request(lua_State *L) {
   try {
     Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "zmq.Socket"));
-    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "zmq.lua_State"));
+    
     LuaStackSize  retval__ = self__->request(L);
     return retval__;
   } catch (std::exception &e) {
@@ -260,7 +260,7 @@ static int Socket_request(lua_State *L) {
 static int Socket_send(lua_State *L) {
   try {
     Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "zmq.Socket"));
-    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "zmq.lua_State"));
+    
     self__->send(L);
     return 0;
   } catch (std::exception &e) {
@@ -277,7 +277,7 @@ static int Socket_send(lua_State *L) {
 static int Socket_set_callback(lua_State *L) {
   try {
     Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "zmq.Socket"));
-    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "zmq.lua_State"));
+    
     self__->set_callback(L);
     return 0;
   } catch (std::exception &e) {

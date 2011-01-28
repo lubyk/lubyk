@@ -26,7 +26,6 @@
 
   ==============================================================================
 */
-#define DEBUG 1
 
 // Lubyk wii::Remote
 #include "wii/Remote.h"
@@ -42,17 +41,19 @@
 
 @interface NSObject( WiiRemoteDelegate )
 
-- (void) irPointMovedX:(float)px Y:(float)py wiiRemote:(WiiRemote*)wiiRemote;
-- (void) rawIRData: (IRData[4])irData wiiRemote:(WiiRemote*)wiiRemote;
-- (void) buttonChanged:(WiiButtonType)type isPressed:(BOOL)isPressed wiiRemote:(WiiRemote*)wiiRemote;
-- (void) accelerationChanged:(WiiAccelerationSensorType)type accX:(unsigned char)accX accY:(unsigned char)accY accZ:(unsigned char)accZ wiiRemote:(WiiRemote*)wiiRemote;
-- (void) joyStickChanged:(WiiJoyStickType)type tiltX:(unsigned char)tiltX tiltY:(unsigned char)tiltY wiiRemote:(WiiRemote*)wiiRemote;
-- (void) analogButtonChanged:(WiiButtonType)type amount:(unsigned)press wiiRemote:(WiiRemote*)wiiRemote;
-- (void) wiiRemoteDisconnected:(IOBluetoothDevice*)device;
+- (void) wiimoteWillSendData;
+- (void) wiimoteDidSendData;
 
-
-//- (void) dataChanged:(unsigned short)buttonData accX:(unsigned char)accX accY:(unsigned char)accY accZ:(unsigned char)accZ mouseX:(float)mx mouseY:(float)my;
-
+- (void) irPointMovedX:(float) px Y:(float) py;
+- (void) rawIRData: (IRData[4]) irData;
+- (void) joyStickChanged:(WiiJoyStickType) type tiltX:(unsigned short) tiltX tiltY:(unsigned short) tiltY;
+- (void) analogButtonChanged:(WiiButtonType) type amount:(unsigned short) press;
+- (void) pressureChanged:(WiiPressureSensorType) type pressureTR:(float) bPressureTR pressureBR:(float) bPressureBR
+			  pressureTL:(float) bPressureTL pressureBL:(float) bPressureBL;
+- (void) batteryLevelChanged:(double) level;
+- (void) gotMiiData: (Mii*) mii_data_buf at: (int) slot;
+- (void) rawPressureChanged:(WiiBalanceBoardGrid) bbData;
+- (void) allPressureChanged:(WiiPressureSensorType) type bbData:(WiiBalanceBoardGrid) bbData bbDataInKg:(WiiBalanceBoardGrid) bbDataInKg;
 
 @end
 
@@ -64,8 +65,9 @@
 - (id) initWithRemote:(wii::Remote*)master;
 
 //////// WiiRemoteDelegate ///////////
-- (void) accelerationChanged:(WiiAccelerationSensorType)type accX:(unsigned char)accX accY:(unsigned char)accY accZ:(unsigned char)accZ;
-- (void) buttonChanged:(WiiButtonType)type isPressed:(BOOL)isPressed;
+- (void) accelerationChanged:(WiiAccelerationSensorType) type accX:(unsigned short) accX accY:(unsigned short) accY accZ:(unsigned short) accZ;
+- (void) buttonChanged:(WiiButtonType) type isPressed:(BOOL) isPressed;
+- (void) wiiRemoteDisconnected:(IOBluetoothDevice*) device;
 @end
 
 /* ======================== LWiiRemoteDelegate @implementation ===================== */
@@ -144,20 +146,24 @@ static const char *button_name_from_type(WiiButtonType type) {
   return self;
 }
 
-- (void) accelerationChanged:(WiiAccelerationSensorType)type accX:(unsigned char)x accY:(unsigned char)y accZ:(unsigned char)z {
+- (void) accelerationChanged:(WiiAccelerationSensorType) type accX:(unsigned short) accX accY:(unsigned short) accY accZ:(unsigned short) accZ {
   master_->acceleration(
     type == WiiRemoteAccelerationSensor ? "Remote" : "Nunchuk",
-    (float)x / 0xff,
-    (float)y / 0xff,
-    (float)z / 0xff
+    (float)accX / 0xff,
+    (float)accY / 0xff,
+    (float)accZ / 0xff
   );
 }
 
-- (void) buttonChanged:(WiiButtonType)type isPressed:(BOOL)isPressed {
+- (void) buttonChanged:(WiiButtonType) type isPressed:(BOOL) isPressed {
   master_->button(
     button_name_from_type(type),
     isPressed
   );
+}
+
+- (void) wiiRemoteDisconnected:(IOBluetoothDevice*) device {
+  master_->disconnected();
 }
 
 @end // LWiiRemoteDelegate
@@ -182,12 +188,9 @@ public:
   void set_remote(WiiRemote *remote) {
     if (wii_remote_ == remote) return;
 
-  	if (wii_remote_) {
-  		[wii_remote_ release];
-      wii_remote_ = nil;
-  	}
+    unlink_wii();
 
-  	wii_remote_ = remote;
+    wii_remote_ = [remote retain];
   	[wii_remote_ setDelegate:wii_remote_delegate_];
   }
 
@@ -195,11 +198,16 @@ public:
     [wii_remote_ setLEDEnabled1:led1 enabled2:led2 enabled3:led3 enabled4:led4];
   }
 
-  ~Implementation() {
+  void unlink_wii() {
     if (wii_remote_) {
+      [wii_remote_ closeConnection];
       [wii_remote_ release];
       wii_remote_ = nil;
     }
+  }
+
+  ~Implementation() {
+    unlink_wii();
 
     [wii_remote_delegate_ release];
   }

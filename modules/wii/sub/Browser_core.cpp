@@ -59,7 +59,7 @@ static int Browser__tostring(lua_State *L) {
 static int Browser___newindex(lua_State *L) {
   try {
     Browser *self__ = *((Browser**)luaL_checkudata(L, 1, "wii.Browser"));
-    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "wii.lua_State"));
+    
     self__->__newindex(L);
     return 0;
   } catch (std::exception &e) {

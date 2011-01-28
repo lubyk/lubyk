@@ -11,7 +11,7 @@
 require 'lubyk.Worker'
 worker = lubyk.Worker()
 function lubyk.Worker()
-  error('Already one worker created (lives in _worker).')
+  error('Already one worker created (lives as \'worker\' in global namespace).')
 end
 
 function sleep(duration)

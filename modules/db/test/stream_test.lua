@@ -44,6 +44,12 @@ function should.get_first_timestamp(t)
   assert_equal(10, t.stream:first())
 end
 
+function should.write_strings(t)
+  setup_basic_data(t)
+  t.stream:set({t=25, name='hello'})
+  assert_equal({t=25, name='hello'}, t.stream:at(25))
+end
+
 function should.get_next_timestamp(t)
   setup_basic_data(t)
   -- get first event time

@@ -102,6 +102,10 @@ public:
     return hue_;
   }
 
+  void update() {
+    QWidget::update();
+  }
+
   // =============================================================
 
   /** Close and delete the window.

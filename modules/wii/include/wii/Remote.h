@@ -41,7 +41,7 @@ class Browser;
  * @dub lib_name:'Remote_core'
  *      string_format:'%%s'
  *      string_args:'(*userdata)->name()'
- *      ignore:'set_remote,acceleration,button'
+ *      ignore:'set_remote,acceleration,button,disconnected'
  */
 class Remote
 {
@@ -87,6 +87,8 @@ public:
 
   //*********** CALLBACKS
 
+  /** This callback is called on new accelerator data.
+   */
   void acceleration(const char *sensor, float x, float y, float z) {
     lua_State *L = acceleration_.lua_;
     if (!L) return;
@@ -105,6 +107,8 @@ public:
     }
   }
 
+  /** This callback is called on button changes.
+   */
   void button(const char *type, bool pressed) {
     lua_State *L = button_.lua_;
     if (!L) return;
@@ -119,6 +123,12 @@ public:
     if (status) {
       printf("Error in button callback: %s\n", lua_tostring(L, -1));
     }
+  }
+
+  /** This callback is called when the wii Remote is disconnected.
+   */
+  void disconnected() {
+    // noop for the moment
   }
 
   /** @internal

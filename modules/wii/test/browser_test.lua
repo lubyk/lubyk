@@ -15,23 +15,43 @@ function should.load_wii_code()
 end
 
 function should.find_first_remote(t)
+  t.win = mimas.Window()
+  t.lay = mimas.VBoxLayout(t.win)
+  t.title = mimas.Label('wii.Remote: Press 1+2')
+  t.lay:addWidget(t.title)
+  t.label = mimas.Label('')
+  t.lay:addWidget(t.label)
+  t.win:show()
+  t.continue = false
+
   -- this will not work until we have an event loop running on OS X.
   t.remote = wii.Browser(function(found_wii)
-    print('Found', found_wii)
     t.wiimote = found_wii
-    print('Set leds')
-    found_wii:set_leds(false, true, false, true)
+    t.title:setText('Connected. Press home to stop.')
     function t.wiimote.button(name,state)
-      print(name, state)
+      t.wiimote:set_leds(false, true, false, true)
+      if state then
+        t.label:setText(name .. ': ON')
+      else
+        t.label:setText(name .. ': OFF')
+      end
+
+      if name == 'Remote.H' then
+        t.continue = true
+      end
     end
   end)
-
-  worker:run()
-  while not t.wiimote do
-    print('.')
-    sleep(100)
-  end
-  assert_true(t.wiimote)
+  t.now = worker:now()
+  t.test = rk.Thread(function()
+    while not t.continue and (worker:now() < t.now + 2000 or t.wiimote) do
+      sleep(20)
+    end
+    if not t.wiimote then
+      print("No wiimote test")
+    end
+    assert_true(true)
+    t.win:close()
+  end)
 end
 
-test.all()
+test.gui()

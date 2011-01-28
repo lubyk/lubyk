@@ -41,6 +41,9 @@ function lib.all()
 end
 
 function lib.gui()
+  lib.total_test = 0
+  lib.total_asrt = 0
+  lib.total_fail = 0
   if lib.suites[1] then
     -- test threads first (or they fail because of mimas widgets creation)
     for i, suite in ipairs(lib.suites) do
@@ -272,7 +275,11 @@ end
 
 function assert_pass(func)
   local ok, err = pcall(func)
-  lib.assert(ok, string.format('Should not raise an error but %s found.', err))
+  if ok then
+    lib.assert(true)
+  else
+    lib.assert(false, string.format('Should not raise an error but %s found.', err))
+  end
 end
 
 function assert_less_then(expected, value)

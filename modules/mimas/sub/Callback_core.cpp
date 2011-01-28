@@ -78,7 +78,7 @@ static int Callback_connect(lua_State *L) {
 static int Callback_set_callback(lua_State *L) {
   try {
     Callback *self__ = *((Callback**)luaL_checkudata(L, 1, "mimas.Callback"));
-    lua_State *L = *((lua_State **)luaL_checkudata(L, 2, "mimas.lua_State"));
+    
     self__->set_callback(L);
     return 0;
   } catch (std::exception &e) {
