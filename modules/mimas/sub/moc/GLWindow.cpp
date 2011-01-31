@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'GLWindow.h'
 **
-** Created: Thu Jan 27 21:57:04 2011
+** Created: Sun Jan 30 09:05:04 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.1)
 **
 ** WARNING! All changes made in this file will be lost!

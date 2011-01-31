@@ -94,8 +94,9 @@ private:
         timer_.stop_from_loop();
       } else if (interval < 0) {
         luaL_error(lua_, "Timer interval must be a positive value (got %f)\n", interval);
+      } else {
+        timer_.set_interval_from_loop(interval);
       }
-      timer_.set_interval_from_loop(interval);
     }
 
     lua_pop(lua_, 1);

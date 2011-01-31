@@ -11,7 +11,7 @@ local worker = worker
 local constr = mimas_core.Application
 function mimas.Application()
   local instance = constr(worker)
-  instance:setStyleSheet([[
+  instance:setStyleSheet [[
     .window { background:rgb(38, 38, 38); }
     .widget { background:rgb(38, 38, 38); }
     .label { background: transparent; color: rgb(180,180,180); }
@@ -23,7 +23,7 @@ function mimas.Application()
     }
     #test_name { color: hsva(20, 255, 255, 80%); }
     #test_name.slider { color:hsv(30,200,200); }
-  ]])
+  ]]
 
   -- TODO: rewrite 'post' to keep a pool of Callback objects (or accept an existing Callback).
   return instance

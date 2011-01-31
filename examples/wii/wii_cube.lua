@@ -27,7 +27,20 @@ app = mimas.Application()
 
 x, y, z = 0, 0, 0
 alpha = 0.5
-color = 'red'
+color = {r=0.8, g=0.2, b=0.2}
+size  = 2.6
+a     = 0
+
+-- cube animation (button B)
+timer = rk.Timer(30, function()
+  a = a + 9
+  size = 1.6 + math.cos(math.pi * a / 180)
+  win:updateGL()
+  if a >= 360 then
+    size = 2.6
+    return 0
+  end
+end)
 
 win = mimas.GLWindow()
 function win.initializeGL()
@@ -43,7 +56,7 @@ function win.initializeGL()
   -- glEnable(GL_DEPTH_TEST);
 
   gl.Hint("PERSPECTIVE_CORRECTION_HINT", "NICEST") -- Really nice perspective
-  gl.ClearColor(0.2,0.2,0.2,0.5)
+  gl.ClearColor(0.2,0.2,0.2,0.01)
 end
 
 function win.resizeGL(width, height)
@@ -72,21 +85,23 @@ function win.paintGL()
 
   gl.Translate(0.0, 0.0, -6.0)
 
-  gl.Rotate(z * 360, 1.0, 0.0, 0.0)
+  gl.Rotate(x * 360, 1.0, 0.0, 0.0)
   gl.Rotate(y * 360, 0.0, 1.0, 0.0)
-  gl.Rotate(x * 360, 0.0, 0.0, 1.0)
-
+  gl.Rotate(z * 360, 0.0, 0.0, 1.0)
 
   gl.Color(0.5,0.5,0.5,0.8)
   gl.LineWidth(1.0)
-  glut.WireCube(2.6)
 
-  if color == 'red' then
-    gl.Color(0.8,0.2,0.2,alpha)
-  else
-    gl.Color(0.2,0.2,0.8,alpha)
-  end
-  glut.SolidCube(2.6)
+  -- mini cube
+  gl.Translate(0.0, -1.0, 0.0)
+  glut.WireCube(0.6)
+  gl.Translate(0.0, 1.0, 0.0)
+
+  -- big cube
+  gl.Translate(0.0, -(2.6 - size)/2, 0.0)
+  glut.WireCube(size)
+  gl.Color(color.r, color.g, color.b, alpha)
+  glut.SolidCube(size)
 end
 win:show()
 
@@ -110,15 +125,34 @@ function stream.playback(row)
 end
 
 function process_button(btn)
-  if btn == 'Remote.1' then
-    color = 'red'
+  if btn == 'Remote.U' then
+    -- red
+    color = {r=0.8, g=0.2, b=0.2}
+  elseif btn == 'Remote.L' then
+    -- blue
+    color = {r=0.2, g=0.2, b=0.8}
+  elseif btn == 'Remote.R' then
+    -- green
+    color = {r=0.2, g=0.8, b=0.2}
+  elseif btn == 'Remote.D' then
+    -- pink
+    color = {r=0.8, g=0.2, b=0.8}
+  elseif btn == 'Remote.1' then
+    -- orange
+    color = {r=1.0, g=0.5, b=0.0}
   elseif btn == 'Remote.2' then
-    color = 'blue'
+    -- purple
+    color = {r=0.6, g=0.1, b=0.9}
   elseif btn == 'Remote.-' then
     alpha = alpha - 0.1
-    if alpha < 0.1 then
-      alpha = 0.1
+    if alpha < 0 then
+      alpha = 0
     end
+  elseif btn == 'Remote.B' then
+    -- shrink and grow
+    size = 2.6
+    a = 0
+    timer:start()
   elseif btn == 'Remote.+' then
     alpha = alpha + 0.1
     if alpha > 1.0 then

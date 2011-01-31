@@ -43,7 +43,7 @@ namespace mimas {
 /** GLWindow.
  *
  * @dub destructor: 'dub_destroy'
- *      ignore: 'initializeGL,paintGL,resizeGL'
+ *      ignore: 'initializeGL,paintGL,resizeGL,keyboard'
  */
 class GLWindow : public QGLWidget, public DeletableOutOfLua
 {
@@ -53,6 +53,7 @@ class GLWindow : public QGLWidget, public DeletableOutOfLua
   LuaCallback initializeGL_;
   LuaCallback resizeGL_;
   LuaCallback paintGL_;
+  LuaCallback keyboard_;
   /** Set to true if we are in the 'show' method
    * to avoid locking in initializeGL and resizeGL.
    */
@@ -62,8 +63,11 @@ public:
    : initializeGL_(worker),
      resizeGL_(worker),
      paintGL_(worker),
+     keyboard_(worker),
      in_show_(false) {
     setAttribute(Qt::WA_DeleteOnClose);
+    // get focus on tab and click
+    setFocusPolicy(Qt::StrongFocus);
   }
 
   ~GLWindow() {
@@ -153,8 +157,10 @@ public:
       resizeGL_.set_lua_callback(L);
     } else if (key == "paintGL") {
       paintGL_.set_lua_callback(L);
+    } else if (key == "keyboard") {
+      keyboard_.set_lua_callback(L);
     } else {
-      luaL_error(L, "Invalid function name '%s' (valid names are initializeGL, resizeGL and paintGL).", key.c_str());
+      luaL_error(L, "Invalid function name '%s' (valid names are initializeGL, resizeGL, paintGL, keyboard).", key.c_str());
     }
   }
 
@@ -170,7 +176,7 @@ public:
     int status = lua_pcall(L, 0, 0, 0);
 
     if (status) {
-      printf("Error in initializeGL function: %s\n", lua_tostring(L, -1));
+      printf("Error in initializeGL callback: %s\n", lua_tostring(L, -1));
     }
 
     if (!in_show_) initializeGL_.worker_->unlock();
@@ -188,7 +194,7 @@ public:
     int status = lua_pcall(L, 2, 0, 0);
 
     if (status) {
-      printf("Error in resizeGL function: %s\n", lua_tostring(L, -1));
+      printf("Error in resizeGL callback: %s\n", lua_tostring(L, -1));
     }
 
     if (!in_show_) resizeGL_.worker_->unlock();
@@ -204,16 +210,38 @@ public:
     int status = lua_pcall(L, 0, 0, 0);
 
     if (status) {
-      printf("Error in paintGL function: %s\n", lua_tostring(L, -1));
+      printf("Error in paintGL callback: %s\n", lua_tostring(L, -1));
     }
     if (!in_show_) paintGL_.worker_->unlock();
   }
-
 protected:
   //virtual void mousePressEvent(QMouseEvent *event);
   //virtual void mouseMoveEvent(QMouseEvent *event);
   //virtual void mouseDoubleClickEvent(QMouseEvent *event);
   //virtual void paintEvent(QPaintEvent *event);
+  void keyPressEvent(QKeyEvent *event) {
+    keyboard(event, true);
+  }
+
+  void keyReleaseEvent(QKeyEvent *event) {
+    keyboard(event, false);
+  }
+private:
+  void keyboard(QKeyEvent *event, bool isPressed) {
+    lua_State *L = keyboard_.lua_;
+    if (!L) return;
+    ScopedLock lock(keyboard_.worker_);
+
+    keyboard_.push_lua_callback(false);
+    lua_pushnumber(L, event->key());
+    lua_pushboolean(L, isPressed);
+    lua_pushstring(L, event->text().toUtf8());
+    int status = lua_pcall(L, 3, 0, 0);
+
+    if (status) {
+      printf("Error in keyboard callback: %s\n", lua_tostring(L, -1));
+    }
+  }
 };
 
 } // mimas
