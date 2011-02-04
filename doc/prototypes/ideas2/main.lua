@@ -1,34 +1,44 @@
+require 'lubyk'
+
+print(worker)
+
 -- we are in the global env
 -- lubyk namespace
 rk = {loaded = {}}
 nodes = {}
 
--- build a new object from a lua file
-function rk.build(filename)
-  local code = rk.loaded[filename]
-  if not code then
-    code = assert(loadfile(filename))
-    rk.loaded[filename] = code
-  end
-  -- new env on each chunk execution (we will optimize to reuse env later)
-  local env = {}
-  -- inherit global env
-  setmetatable(env, {__index = _G})
+-- metatable for the new global env in each node
+local mt = {}
+function mt.__index(env, name)
+  -- if the variable exists in original _G, cache locally
+  local gvar = _G[name]
+  rawset(env, name, gvar)
+  return gvar
+end
 
+lk = rk
+
+-- Create a new node environment from a given file
+function lk.Environment(filepath)
+  local code = assert(loadfile(filepath))
+  -- new environment
+  local env  = {}
+  -- install our global env inheritance system
+  setmetatable(env, mt)
   -- set function environment to 'env'
   setfenv(code, env)
   -- run code
   code()
-  -- return 'node' object
+  -- return global 'node' object from the new environment
   return env.node
 end
 
 -- create and initialize an object if it does not exist or change its settings
-function rk.set(name, definition)
+function lk.set(name, definition)
   local node = nodes[name]
   if not node then
     local class = definition.class
-    node = rk.build(class)
+    node = rk.Environment(class)
     nodes[name] = node
   end
   node:set(definition)

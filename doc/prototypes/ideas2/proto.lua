@@ -6,3 +6,6 @@ function node:set(hash)
     self[k] = v
   end
 end
+
+print('1', dummy)
+print('2', dummy)
