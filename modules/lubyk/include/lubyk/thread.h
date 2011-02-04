@@ -40,7 +40,7 @@
 #include "assert.h"
 
 #include "lubyk/mutex.h"
-#include "lubyk/semaphore.h"
+#include "lubyk/condition.h"
 
 namespace lubyk {
 
@@ -53,6 +53,7 @@ class Thread : public Mutex {
   /** Start a new thread with a class method. */
   template<void(*Tmethod)(Thread*)>
   void start_thread(void *parameter = NULL) {
+    ScopedLock lock(condition_);
     if (is_running()) {
       fprintf(stderr, "Trying to start thread when it is already running ! (in Thread::start)");
       return;
@@ -63,28 +64,31 @@ class Thread : public Mutex {
     parameter_  = parameter;
     should_run_ = true;
 
+
     pthread_create( &thread_id_, NULL, &s_start_static_thread, (void*)this);
 
     // make sure thread is properly started (signals registered) in case we die right after
-    semaphore_.acquire();
+    // TODO: we could use timedwait if something goes wrong during thread initialization... ?
+    condition_.wait();
   }
 
   /** Start a new thread with a static function. */
   void start_thread(void (*static_method)(Thread*), void *parameter = NULL) {
-     if (is_running()) {
-       fprintf(stderr, "Trying to start thread when it is already running ! (in Thread::start)");
-       return;
-     }
+    ScopedLock lock(condition_);
+    if (is_running()) {
+     fprintf(stderr, "Trying to start thread when it is already running ! (in Thread::start)");
+     return;
+    }
 
-     owner_      = NULL;
-     static_method_ = static_method;
-     parameter_  = parameter;
-     should_run_ = true;
+    owner_      = NULL;
+    static_method_ = static_method;
+    parameter_  = parameter;
+    should_run_ = true;
 
-     pthread_create( &thread_id_, NULL, &s_start_static_thread, (void*)this);
+    pthread_create( &thread_id_, NULL, &s_start_static_thread, (void*)this);
 
-     // make sure thread is properly started (signals registered) in case we die right after
-     semaphore_.acquire();
+    // make sure thread is properly started (signals registered) in case we die right after
+    condition_.wait();
   }
 
   /** Start a new thread with the given parameter. The class should check if it
@@ -92,6 +96,7 @@ class Thread : public Mutex {
    *  a SIGTERM, the class's terminate() method is called. */
   template<class T, void(T::*Tmethod)(Thread*)>
   void start_thread(T *owner, void *parameter = NULL) {
+    ScopedLock lock(condition_);
     if (is_running()) {
       fprintf(stderr, "Trying to start thread when it is already running ! (in Thread::start)");
       return;
@@ -104,7 +109,7 @@ class Thread : public Mutex {
     pthread_create( &thread_id_, NULL, &s_start_thread<T,Tmethod>, (void*)this);
 
     // make sure thread is properly started (signals registered) in case we die right after
-    semaphore_.acquire();
+    condition_.wait();
   }
 
   /** Start a new thread with the given parameter. The class should check if it
@@ -112,6 +117,7 @@ class Thread : public Mutex {
    *  a SIGTERM, the class's terminate() method is called. */
   template<class T, void(T::*Tmethod)()>
   void start_thread(T *owner, void *parameter = NULL) {
+    ScopedLock lock(condition_);
     if (is_running()) {
       fprintf(stderr, "Trying to start thread when it is already running ! (in Thread::start)");
       return;
@@ -124,7 +130,7 @@ class Thread : public Mutex {
     pthread_create( &thread_id_, NULL, &s_start_thread<T,Tmethod>, (void*)this);
 
     // make sure thread is properly started (signals registered) in case we die right after
-    semaphore_.acquire();
+    condition_.wait();
   }
 
   inline bool should_run() {
@@ -195,11 +201,7 @@ class Thread : public Mutex {
    */
   void thread_ready() {
     // signals installed, we can free parent thread
-    semaphore_.release();
-  }
-
-  Semaphore &semaphore() {
-    return semaphore_;
+    condition_.signal();
   }
 
   /** Get "this" (used in static callbacks).
@@ -301,7 +303,7 @@ class Thread : public Mutex {
   bool should_run_;
 
  private:
-  Semaphore semaphore_;
+  Condition condition_;
 
 };
 

@@ -42,9 +42,8 @@ namespace lubyk {
  */
 class Mutex : private NonCopyable
 {
-
   pthread_mutex_t mutex_;
-
+  friend class Condition;
 public:
   Mutex() {
     int status = pthread_mutex_init(&mutex_, NULL);
