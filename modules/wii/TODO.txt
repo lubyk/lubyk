@@ -1,0 +1,5 @@
+1. Change wii.Remote to automagically start wii.Browser and get connection when
+   a wiimote appears (use wii name in ctor wii.Remote('ff2-ssf-...') or let wii.Remote
+   assignation happen by the users...
+2. WiiYourself on Windows + Linux
+
