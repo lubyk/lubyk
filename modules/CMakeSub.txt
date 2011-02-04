@@ -13,7 +13,6 @@ file (GLOB SUB_MODULES_CPP ${MODULE}/sub/*.cpp)
 foreach (SUB_MODULE_CPP ${SUB_MODULES_CPP})
   list(REMOVE_ITEM SUB_MODULES "${SUB_MODULE_CPP}")
   get_filename_component (SUB_MODULE_NAME ${SUB_MODULE_CPP} NAME_WE)
-  message("build_sub_module(${SUB_MODULE_NAME} ${SUB_MODULE_CPP})")
   build_sub_module(${SUB_MODULE_NAME} ${SUB_MODULE_CPP})
 endforeach (SUB_MODULE_CPP ${SUB_MODULES_CPP})
 

@@ -67,7 +67,7 @@ static int Window__tostring(lua_State *L) {
 
 
 /** void mimas::Window::activateWindow()
- * include/mimas/Window.h:121
+ * include/mimas/Window.h:125
  */
 static int Window_activateWindow(lua_State *L) {
   try {
@@ -84,7 +84,7 @@ static int Window_activateWindow(lua_State *L) {
 
 
 /** bool mimas::Window::close()
- * include/mimas/Window.h:109
+ * include/mimas/Window.h:113
  */
 static int Window_close(lua_State *L) {
   try {
@@ -138,7 +138,7 @@ static int Window_hue(lua_State *L) {
 
 
 /** bool mimas::Window::isVisible() const 
- * include/mimas/Window.h:113
+ * include/mimas/Window.h:117
  */
 static int Window_isVisible(lua_State *L) {
   try {
@@ -284,7 +284,7 @@ static int Window_setStyle(lua_State *L) {
 
 
 /** void mimas::Window::show()
- * include/mimas/Window.h:117
+ * include/mimas/Window.h:121
  */
 static int Window_show(lua_State *L) {
   try {
@@ -296,6 +296,23 @@ static int Window_show(lua_State *L) {
     return luaL_error(L, "mimas.Window.show: %s", e.what());
   } catch (...) {
     return luaL_error(L, "mimas.Window.show: Unknown exception");
+  }
+}
+
+
+/** void mimas::Window::update()
+ * include/mimas/Window.h:105
+ */
+static int Window_update(lua_State *L) {
+  try {
+    Window *self__ = *((Window**)luaL_checkudata(L, 1, "mimas.Window"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Window in update");
+    self__->update();
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Window.update: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Window.update: Unknown exception");
   }
 }
 
@@ -336,6 +353,7 @@ static const struct luaL_Reg Window_member_methods[] = {
   {"setName"           , Window_setName},
   {"setStyle"          , Window_setStyle},
   {"show"              , Window_show},
+  {"update"            , Window_update},
   {"widget"            , Window_widget},
   {"__tostring"        , Window__tostring},
   {"__gc"              , Window_destructor},

@@ -121,7 +121,7 @@ add_subdirectory(Mimas)
 #  Test all
 #
 # ==============================================================================
-add_custom_target(test_all cd .. && ./rtest)
+add_custom_target(test_all cd .. && ./ltest)
 add_dependencies(test_all modules)
 
 # ==============================================================================
