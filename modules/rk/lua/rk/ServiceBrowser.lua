@@ -30,25 +30,29 @@ setmetatable(lib, {
   -- We must bind before any client does a subscribe.
   instance.pub = zmq.Pub(string.format('inproc://%s', service_type))
 
-  instance.req = zmq.Req()
-
   instance.browser = mdns.Browser(service_type, function(remote_service)
+    local found_service = instance.services[remote_service.name]
     if remote_service.op == 'add' then
-      if not instance.services[remote_service.name] then
+      if not found_service then
+        local req = zmq.Req()
+        -- new device
         remote_service.url = string.format('tcp://%s:%i', remote_service.host, remote_service.port)
         -- XXX
-        instance.req:connect(remote_service.url)
-        remote_service.info = instance.req:request(lubyk.info_url)
+        req:connect(remote_service.url)
+        remote_service.info = req:request(lubyk.info_url)
         remote_service.sub_url  = string.format('tcp://%s:%i', remote_service.host, remote_service.info.pub)
         remote_service.push_url = string.format('tcp://%s:%i', remote_service.host, remote_service.info.pull)
         remote_service.push = zmq.Push()
+        -- do not keep unsent messages on quit
+        remote_service.push:setsockopt(zmq.LINGER, 0)
         remote_service.push:connect(remote_service.push_url)
         -- XXX
         instance.services[remote_service.name] = remote_service
         instance.pub:send(lubyk.add_service_url, remote_service.name)
       end
-    elseif instance.services[remote_service.name] then
-      instance.pub:send(lubyk.rem_service_url, remote_service)
+    elseif found_service then
+      -- removed device
+      instance.pub:send(lubyk.rem_service_url, remote_service.name)
       instance.services[remote_service.name] = nil
     end
   end)

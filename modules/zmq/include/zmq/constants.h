@@ -66,6 +66,12 @@ enum SocketOptions {
   SNDBUF       = ZMQ_SNDBUF,
   RCVBUF       = ZMQ_RCVBUF,
   RCVMORE      = ZMQ_RCVMORE,
+  FD           = ZMQ_FD,
+  EVENTS       = ZMQ_EVENTS,
+  TYPE         = ZMQ_TYPE,
+  LINGER       = ZMQ_LINGER,
+  RECONNECT_IVL= ZMQ_RECONNECT_IVL,
+  BACKLOG      = ZMQ_BACKLOG,
 };
 
 } // zmq

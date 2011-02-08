@@ -1,10 +1,16 @@
+--[[------------------------------------------------------
+
+  Run this file along with slider_saturn.lua
+  --------------------------------------------
+
+  zmq + mDNS (Basic test for GUI / process sync)
+
+--]]------------------------------------------------------
 require 'lubyk'
---------------- /////////////////  FIXME: Mimas Widgets should not be GC (they are gc by app).
-collectgarbage('stop') -- avoid problems until we fix
 
 app = mimas.Application()
 win = mimas.Window()
-win:move(100, 400)
+win:move(10, 10)
 
 mlayout = mimas.VBoxLayout(win)
 label   = mimas.Label("Start 'Venus' service")
@@ -13,8 +19,6 @@ mlayout:addWidget(label)
 
 quit_btn = mimas.PushButton('Quit', function()
   app:quit()
-  -- send message to 'Saturn' service
-  client:send('Saturn', nil)
 end)
 mlayout:addWidget(quit_btn)
 
@@ -26,7 +30,6 @@ mlayout:addWidget(slider)
 value = 0
 
 client = rk.Client(function(val)
-  print('Mimas <---', val)
   value = val
   slider:setValue(val)
 end)
@@ -37,15 +40,17 @@ client:subscribe('Saturn')
 
 callback = mimas.Callback(function(val)
   if val ~= value then
-    --if val == 1.0 then
-    --  app:post(function()
-    --    app:quit()
-    --  end)
-    --end
     value = val
-    print('Mimas --->', value)
-    -- send message to 'Saturn' service
-    client:send('Saturn', value)
+    if value == 0 then
+      -- quit remote
+      client:send('Saturn', nil)
+    else
+      -- send value to 'Saturn' service
+      local ok, err = client:send('Saturn', value)
+      if not ok then
+        print(err)
+      end
+    end
   end
 end)
 
@@ -53,10 +58,5 @@ end)
 -- sends notifications
 callback:connect(slider, 'valueChanged(double)')
 
--- connected becomes true when 'Mars' appears on the network
-while not client:connected() do
-  sleep(100) -- make sure everything is ready before sending
-end
-print("Connected")
 win:show()
 app:exec()

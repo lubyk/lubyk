@@ -65,7 +65,7 @@ public:
 
     if (!worker->zmq_context_) {
       // initialize zmq context
-      worker->zmq_context_ = zmq_init(4);
+      worker->zmq_context_ = zmq_init(4); // TODO: why 4 ?
     }
     ++worker->zmq_context_refcount_;
 
@@ -100,13 +100,37 @@ public:
   /** Set socket options.
    * Should NOT be used while in a request() or recv().
    */
-  void setsockopt(int type, const char *filter = NULL) {
-    if (filter) {
-      if (zmq_setsockopt(socket_, type, filter, strlen(filter)))
-        throw Exception("Could not set socket option %i (filter: '%s').", type, filter);
+  void setsockopt(int type, lua_State *L) {
+    const void *ptr;
+    size_t ptr_len;
+
+    // different types for the option value
+    int i;
+    const char *str;
+
+    if (lua_isnumber(L, 3)) {
+      i = lua_tonumber(L, 3);
+      ptr = &i;
+      ptr_len = sizeof(i);
+    } else if (lua_isstring(L, 3)) {
+      str = lua_tostring(L, 3);
+      ptr = str;
+      ptr_len = strlen(str);
+    } else {
+      ptr = NULL;
+      ptr_len = 0;
+    }
+
+    if (ptr) {
+      if (zmq_setsockopt(socket_, type, ptr, ptr_len)) {
+        if (lua_isstring(L, -1))
+          throw Exception("Could not set socket option %i (value: '%s').", type, str);
+        else
+          throw Exception("Could not set socket option %i (value: '%i').", type, i);
+      }
     } else {
       if (zmq_setsockopt(socket_, type, NULL, 0))
-        throw Exception("Could not set socket option %i (empty filter).", type);
+        throw Exception("Could not set socket option %i (no value).", type);
     }
   }
 

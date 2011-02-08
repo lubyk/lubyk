@@ -38,13 +38,17 @@ setmetatable(lib, {
       -- resolve pending
       local remote_service = instance.browser.services[service_name]
       local subscription = instance.subscriptions[service_name]
-      if subscription then
+      if subscription and not subscription.connected then
         subscription.subscriber:connect(remote_service.sub_url)
         subscription.connected = true
       end
     elseif url == lubyk.rem_service_url then
       -- remove connection
-      -- ignore
+      local subscription = instance.subscriptions[service_name]
+      if subscription then
+        -- TODO: do we need to disconnect ?
+        subscription.connected = false
+      end
     else
       -- data received from remote server
       instance.callback(...)
@@ -70,8 +74,7 @@ function lib:subscribe(remote_name)
   self.subscriptions[remote_name] = subscription
   local service = self.browser.services[remote_name]
   if service then
-    -- FIXME: make sure this is ok (as 'sub' was not created in this thread)
-    self.sub:connect(service.url)
+    self.sub:connect(service.sub_url)
     subscription.connected = true
   end
 end
@@ -79,8 +82,7 @@ end
 function lib:request(service_name, ...)
   local service = self.browser.services[service_name]
   if not service then
-    print(string.format('Cannot request to %s (service not found)', service_name))
-    return nil
+    return false, string.format('Cannot request to %s (service not found)', service_name)
   end
   self.req:connect(service.url)
   return self.req:request(...)
@@ -89,9 +91,11 @@ end
 function lib:send(service_name, ...)
   local service = self.browser.services[service_name]
   if not service then
-    print(string.format('Cannot send to %s (service not found)', service_name))
+    return false, string.format('Cannot send to %s (service not found)', service_name)
+  else
+    service.push:send(...)
+    return true
   end
-  service.push:send(...)
 end
 
 function lib:connected()

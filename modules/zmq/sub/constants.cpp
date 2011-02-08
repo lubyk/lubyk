@@ -36,6 +36,12 @@ static const struct lua_constants_Reg zmq_namespace_constants[] = {
   {"SNDBUF"                        , zmq::SNDBUF},
   {"RCVBUF"                        , zmq::RCVBUF},
   {"RCVMORE"                       , zmq::RCVMORE},
+  {"FD"                            , zmq::FD},
+  {"EVENTS"                        , zmq::EVENTS},
+  {"TYPE"                          , zmq::TYPE},
+  {"LINGER"                        , zmq::LINGER},
+  {"RECONNECT_IVL"                 , zmq::RECONNECT_IVL},
+  {"BACKLOG"                       , zmq::BACKLOG},
   {NULL, NULL},
 };
 
