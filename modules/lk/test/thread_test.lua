@@ -87,7 +87,13 @@ function should.create_many_threads_and_properly_gc()
 
   collectgarbage('collect')
   local after = collectgarbage('count')
-  assert_equal(before, after)
+  if testing_gui then
+    -- with other tests messing around, we have to be more tolerant
+    assert_less_then(before * 1.01, after)
+  else
+    -- when running the test alone
+    assert_equal(before, after)
+  end
 end
 
 function should.get_killed_before_starting()

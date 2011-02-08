@@ -58,19 +58,29 @@ public:
     // ... <self> <func>
     lua_getfenv(L, -1);
     // ... <self> <func> <env>
-    if (lua_rawequal(L, -1, LUA_ENVIRONINDEX)) {
+    lua_pushstring(L, ".");
+    // ... <self> <func> <env> "."
+    lua_rawget(L, -2);
+    // ... <self> <func> <env>  (<self> or <nil>)
+    if (!lua_rawequal(L, -1, -4)) {
       // does not have it's own env table
-      lua_pop(L, 1);
+      lua_pop(L, 2);
       // ... <self> <func>
       // Create env table
       lua_newtable(L);
+      // ... <self> <func> <env>
+      lua_pushstring(L, ".");
+      // ... <self> <func> <env> "."
+      lua_pushvalue(L, -4);
+      // ... <self> <func> <env> "." <self>
+      lua_rawset(L, -3); // env["."] = self
     }
     // ... <self> <func> <env>
     if (lua_) {
       // remove from env
       luaL_unref(L, -1, thread_in_env_idx_);
     }
-    
+
     lua_ = lua_newthread(L);
     // ... <self> <func> <env> <thread>
 

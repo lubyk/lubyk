@@ -60,7 +60,7 @@ public:
     // ... <self> <key> <value> <self> <value>
     callback_.set_lua_callback(L);
   }
-  
+
   /** Used to test if the callback is properly set.
    * In a normal class, the callback method is called from a C context and should
    * protect the worker_ with ScopedLock lock(worker_);

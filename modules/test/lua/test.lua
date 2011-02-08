@@ -21,15 +21,15 @@ function lib.all()
   lib.total_test = 0
   lib.total_asrt = 0
   lib.total_fail = 0
-  local has_gui = false
+  testing_gui = false
   for i, suite in ipairs(lib.suites) do
     if string.match(suite._info.name, 'mimas') then
-      has_gui = true
+      testing_gui = true
       break
     end
   end
 
-  if has_gui then
+  if testing_gui then
     lib.gui()
   else
     for i, suite in ipairs(lib.suites) do
