@@ -12,5 +12,5 @@
 -- local/share/lua/5.1/?.lua;/usr/local/share/lua/5.1/?/init.lua;/usr/local/lib/lua/5.1/?.lua;/usr/local/lib/lua/5.1/?/init.lua
 package.path = "./?.lua;./lib/?.lua;/usr/local/lib/lubyk/?.lua;" .. package.path
 package.cpath = "./?.so;./lib/?.so;/usr/local/lib/lubyk/?.so;" .. package.cpath
--- rk loads 'lubyk' table
-require 'rk'
+-- lk loads 'lubyk' table
+require 'lk'

@@ -33,7 +33,7 @@
 #include "lubyk/cocoa.h"
 #import <QTKit/QTKit.h>
 
-using namespace rk;
+using namespace lk;
 
 /* ======================== Capture delegate ============== */
 

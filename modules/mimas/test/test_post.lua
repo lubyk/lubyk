@@ -48,7 +48,7 @@ function should.post_to_gui_thread()
 
   local counter = 0
   -- execute 100ms after app started
-  local timer = rk.Timer(100, function()
+  local timer = lk.Timer(100, function()
     local string = string
     counter = counter + 1
     -- FIXME: we are not in the GUI thread !

@@ -11,7 +11,7 @@
 --]]------------------------------------------------------
 require 'zmq'
 -- Do we need this require ?
---require 'rk' -- we use rk::Thread internally
+--require 'lk' -- we use lk::Thread internally
 require 'zmq.Socket_core'
 require 'worker'
 

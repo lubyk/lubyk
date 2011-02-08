@@ -38,7 +38,7 @@ function should.create_with_function(t)
   -- the button's env
   t.lay:addWidget(t.btn)
   t.win:show()
-  t.timeout = rk.Thread(function()
+  t.timeout = lk.Thread(function()
     sleep(3000)
     t.win:close()
   end)

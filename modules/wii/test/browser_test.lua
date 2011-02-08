@@ -42,7 +42,7 @@ function should.find_first_remote(t)
     end
   end)
   t.now = worker:now()
-  t.test = rk.Thread(function()
+  t.test = lk.Thread(function()
     while not t.continue and (worker:now() < t.now + 2000 or t.wiimote) do
       sleep(20)
     end

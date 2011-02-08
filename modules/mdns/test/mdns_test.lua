@@ -35,7 +35,7 @@ function should.browse()
     hostname = service.host
     continue = true
   end)
-  
+
   -- wait (and give time for callback to enter Lua State)
   while not continue do
     sleep(10)

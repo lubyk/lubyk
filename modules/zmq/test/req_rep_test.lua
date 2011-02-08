@@ -40,7 +40,7 @@ end
 --
 --  t.threads = {}
 --  for i=1,thread_count do
---    t.threads[i] = rk.Thread(function()
+--    t.threads[i] = lk.Thread(function()
 --      for j=1,up_count do
 --        local val = t.req:request(i, j)
 --        --print(i, j, val)

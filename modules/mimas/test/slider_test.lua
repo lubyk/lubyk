@@ -18,7 +18,7 @@ function should.accept_destroy_from_gui()
   win:show()
   local slider = mimas.Slider(mimas.Horizontal, win)
 
-  thread = rk.Thread(function()
+  thread = lk.Thread(function()
     win = nil
     collectgarbage('collect')
     -- not deleted by Lua, but marked as deleted in C++
@@ -36,7 +36,7 @@ function should.accept_destroy_from_Lua(t)
   t.slider:setValue(0.5)
   t.layout:addWidget(t.slider)
   t.win:show()
-  t.thread = rk.Thread(function()
+  t.thread = lk.Thread(function()
     sleep(1000)
     t.slider = nil
     collectgarbage('collect')
@@ -71,7 +71,7 @@ function should.draw_one_slider(t)
 
   -- callback listens for Slider events
   t.callback:connect(t.slider, 'valueChanged(double)')
-  t.thread = rk.Thread(function()
+  t.thread = lk.Thread(function()
     sleep(1000)
     t.win:close()
   end)
@@ -144,7 +144,7 @@ function should.style_slider(t)
 
   -- Make the slider move
   t.i = 0
-  t.timer = rk.Timer(100, function()
+  t.timer = lk.Timer(100, function()
     --- BUGS ---
     t.i = t.i + 0.05
     local val = 0.5 + 0.5 * math.sin(t.i)
@@ -156,7 +156,7 @@ function should.style_slider(t)
   end)
   t.timer:start()
 
-  t.thread = rk.Thread(function()
+  t.thread = lk.Thread(function()
     sleep(3000)
     t.timer:stop()
     t.win:close()
@@ -198,7 +198,7 @@ function should.sync_two_sliders(t)
   -- callback listens for quit_btn's clicked events.
   t.callback2:connect(t.slider2, 'valueChanged(double)')
 
-  t.thread = rk.Thread(function()
+  t.thread = lk.Thread(function()
     sleep(3000)
     t.win:close()
   end)

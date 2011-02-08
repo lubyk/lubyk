@@ -29,7 +29,7 @@ mlayout:addWidget(slider)
 
 value = 0
 
-client = rk.Client(function(val)
+client = lk.Client(function(val)
   value = val
   slider:setValue(val)
 end)

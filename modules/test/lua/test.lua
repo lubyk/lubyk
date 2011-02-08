@@ -47,7 +47,7 @@ function lib.gui()
   if lib.suites[1] then
     -- test threads first (or they fail because of mimas widgets creation)
     for i, suite in ipairs(lib.suites) do
-      if string.match('rk.Thread', suite._info.name) then
+      if string.match('lk.Thread', suite._info.name) then
         lib.run_suite(suite)
         lib.report_suite(suite)
         table.remove(lib.suites, i)
@@ -74,7 +74,7 @@ function lib.load_all(...)
     arg = {'modules'}
   end
   for _, mod in ipairs(arg) do
-    for file in rk.Dir(mod):glob('test/.+_test[.]lua$') do
+    for file in lk.Dir(mod):glob('test/.+_test[.]lua$') do
       dofile(file)
     end
   end

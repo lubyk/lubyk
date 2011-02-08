@@ -19,7 +19,7 @@ function should.accept_destroy_from_gui()
   win:show()
   local label = mimas.Label("Hop", win)
 
-  thread = rk.Thread(function()
+  thread = lk.Thread(function()
     win = nil
     collectgarbage('collect')
     -- not deleted by Lua, but marked as deleted in C++
@@ -34,7 +34,7 @@ function should.accept_destroy_from_Lua(t)
   local label = mimas.Label("Label destroyed by Lua in 1s")
   t.layout:addWidget(label)
   t.win:show()
-  t.thread = rk.Thread(function()
+  t.thread = lk.Thread(function()
     sleep(1000)
     label = nil
     collectgarbage('collect')
@@ -84,7 +84,7 @@ function should.style_labels(t)
   -- visual check
   assert_true(true)
   t.win:show()
-  t.thread = rk.Thread(function()
+  t.thread = lk.Thread(function()
     sleep(2000)
     t.win:close()
   end)

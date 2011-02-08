@@ -28,7 +28,7 @@
 */
 
 #include "lubyk.h"
-using namespace rk;
+using namespace lk;
 
 #include "VideoIn/video_in.h"
 

@@ -21,7 +21,7 @@ function should.display_window(t)
   t.label = mimas.Label("Window closes in 200ms")
   t.layout:addWidget(t.label)
 
-  t.thread = rk.Thread(function()
+  t.thread = lk.Thread(function()
     sleep(200)
     t.win:close()
     assert_true(true)
@@ -34,7 +34,7 @@ end
 --  t.win:resize(50, 50)
 --  t.win:show()
 --
---  t.thread = rk.Thread(function()
+--  t.thread = lk.Thread(function()
 --    sleep(200)
 --    t.win:close()
 --    while not t.win:deleted() do
@@ -52,7 +52,7 @@ end
 --  win:show()
 --  local label = mimas.Label("Hop", win)
 --
---  thread = rk.Thread(function()
+--  thread = lk.Thread(function()
 --    win = nil
 --    collectgarbage('collect')
 --    -- not deleted by Lua, but marked as deleted in C++

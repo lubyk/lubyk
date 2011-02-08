@@ -308,7 +308,7 @@ function lib:play(t)
   self.playing = true
 
   -- 10 = default timer value will be updated after first call
-  self.playback_timer = rk.Timer(10, function()
+  self.playback_timer = lk.Timer(10, function()
     -- triggered right after start (no delay)
     local data = self:at(t)
     if data then

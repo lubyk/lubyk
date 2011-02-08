@@ -8,7 +8,7 @@
   WARNING: You cannot connect to a new publisher while
   receiving. To do this, you should use another Publisher
   using 'inproc' and subscribe to this publisher before
-  entering the recv() loop (see rk.Service)
+  entering the recv() loop (see lk.Service)
 
 --]]------------------------------------------------------
 require 'zmq'

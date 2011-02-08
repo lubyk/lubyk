@@ -56,7 +56,7 @@ function should.display_window(t)
   t.dt = (math.pi / 100)
   t.now = worker:now()
 
-  t.timer = rk.Timer(20, function()
+  t.timer = lk.Timer(20, function()
     t.n = t.n + t.dt
     t.x = math.cos(t.n / 0.9) * 360 / math.pi
     t.y = math.sin(t.n / 0.7) * 360 / math.pi
@@ -100,7 +100,7 @@ function should.accept_destroy_from_gui(t)
   t.win:resize(50, 50)
   t.win:show()
 
-  t.thread = rk.Thread(function()
+  t.thread = lk.Thread(function()
     sleep(200)
     t.win:close()
     while not t.win:deleted() do
@@ -118,7 +118,7 @@ function should.accept_destroy_from_Lua()
   win:show()
   local label = mimas.Label("Hop", win)
 
-  thread = rk.Thread(function()
+  thread = lk.Thread(function()
     win = nil
     collectgarbage('collect')
     -- not deleted by Lua, but marked as deleted in C++

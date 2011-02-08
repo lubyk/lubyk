@@ -45,7 +45,7 @@ mimas_load = []
 
 modules = {
   'dummy' => %w{Dummy},
-  'rk'    => %w{Socket Timer Thread},
+  'lk'    => %w{Socket Timer Thread},
   'lubyk' => %w{Worker},
   'mdns'  => %w{Browser Registration},
   'mimas' => %w{Application Callback GLWindow HBoxLayout Label PushButton Slider VBoxLayout Window},

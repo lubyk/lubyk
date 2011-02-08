@@ -32,7 +32,7 @@
 
 #include "lubyk/oscit.h"
 
-namespace rk {
+namespace lk {
 
 /** This is a wrapper facade around a QTCaptureView window or equivalent.
  */
@@ -80,6 +80,6 @@ private:
   Implementation *impl_;
 };
 
-} // rk
+} // lk
 
 #endif // LUBYK_INCLUDE_LUBYK_VIDEO_IN_H_

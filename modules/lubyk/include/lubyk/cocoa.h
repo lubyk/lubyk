@@ -48,6 +48,6 @@ private:
   NSAutoreleasePool *pool_;
 };
 
-} // rk
+} // lk
 
 #endif // LUBYK_INCLUDE_LUBYK_COCOA_H_

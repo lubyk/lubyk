@@ -50,6 +50,9 @@ add_dependencies(modules dub)
 
 
 macro(build_sub_module SUB_MODULE_NAME)
+  # create lib/name directory
+  file(MAKE_DIRECTORY ${LUBYK_SOURCE_DIR}/lib/${MODULE_NAME})
+
   # create name/[SUB_MOD_NAME].so library
   add_library("${MODULE_NAME}_${SUB_MODULE_NAME}" MODULE ${ARGN}) # ARGN = list of arguments passed after SUB_MODULE_NAME
   set_target_properties("${MODULE_NAME}_${SUB_MODULE_NAME}"
@@ -83,6 +86,8 @@ endmacro(build_sub_module_with_defaults)
 #
 # ==============================================================================
 macro(build_module MODULE_NAME)
+  # make lib directory
+  file(MAKE_DIRECTORY ${LUBYK_SOURCE_DIR}/lib)
 
   # create name.so library
   add_library(${MODULE_NAME} MODULE ${ARGN})

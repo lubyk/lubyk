@@ -31,7 +31,7 @@ function set_value(message)
 end
 
 -- create a service called 'Saturn' with a Reply socket
-saturn = rk.Service('Saturn', function(message)
+saturn = lk.Service('Saturn', function(message)
   if message == nil then
     print('Quit')
     saturn.rep:kill()
@@ -44,7 +44,7 @@ end)
 
 i = 0
 -- random update of value
-timer = rk.Timer(100, function()
+timer = lk.Timer(100, function()
   i = i + 1
   set_value(0.5 + 0.49 * math.sin(i * math.pi / 20))
 end)

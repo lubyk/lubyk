@@ -45,7 +45,7 @@ public:
   virtual ~LuaCallback() {}
 
   /** Set a callback. The top of the stack should be
-   * -2. userdata from rk.Thread / rk.Socket / mimas.Callback / etc
+   * -2. userdata from lk.Thread / lk.Socket / mimas.Callback / etc
    * -1. function()
    *
    * Thanks to Robert G. Jakabosky for the idea to use lua_xmove
