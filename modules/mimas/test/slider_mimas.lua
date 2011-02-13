@@ -46,6 +46,7 @@ callback = mimas.Callback(function(val)
       client:send('Saturn', nil)
     else
       -- send value to 'Saturn' service
+      --print(client:request('Saturn', value))
       local ok, err = client:send('Saturn', value)
       if not ok then
         print(err)

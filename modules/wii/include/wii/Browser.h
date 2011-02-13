@@ -66,6 +66,9 @@ public:
     } else {
       luaL_error(L, "Invalid function name '%s' (valid name is 'found').", key.c_str());
     }
+
+    lua_pop(L, 2);
+    // ... <self> <key> <value>
   }
 
   void found(Remote *wii) {

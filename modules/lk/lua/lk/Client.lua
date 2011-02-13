@@ -57,9 +57,6 @@ setmetatable(lib, {
   -- so we can get connection commands from the service browser
   instance.sub:connect(string.format('inproc://%s', service_type))
 
-  --======================================= REQ client
-  instance.req = zmq.Req()
-
   setmetatable(instance, lib)
   return instance
 end})
@@ -84,8 +81,7 @@ function lib:request(service_name, ...)
   if not service then
     return false, string.format('Cannot request to %s (service not found)', service_name)
   end
-  self.req:connect(service.url)
-  return self.req:request(...)
+  return service.req:request(...)
 end
 
 function lib:send(service_name, ...)

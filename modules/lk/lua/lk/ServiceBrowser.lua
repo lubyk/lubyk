@@ -34,12 +34,12 @@ setmetatable(lib, {
     local found_service = instance.services[remote_service.name]
     if remote_service.op == 'add' then
       if not found_service then
-        local req = zmq.Req()
+        remote_service.req = zmq.Req()
         -- new device
         remote_service.url = string.format('tcp://%s:%i', remote_service.host, remote_service.port)
         -- XXX
-        req:connect(remote_service.url)
-        remote_service.info = req:request(lubyk.info_url)
+        remote_service.req:connect(remote_service.url)
+        remote_service.info = remote_service.req:request(lubyk.info_url)
         remote_service.sub_url  = string.format('tcp://%s:%i', remote_service.host, remote_service.info.pub)
         remote_service.push_url = string.format('tcp://%s:%i', remote_service.host, remote_service.info.pull)
         remote_service.push = zmq.Push()

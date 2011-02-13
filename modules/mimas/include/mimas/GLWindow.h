@@ -54,20 +54,22 @@ class GLWindow : public QGLWidget, public DeletableOutOfLua
   LuaCallback resizeGL_;
   LuaCallback paintGL_;
   LuaCallback keyboard_;
-  /** Set to true if we are in the 'show' method
-   * to avoid locking in initializeGL and resizeGL.
+
+  /** Set to true while we are already holding the worker
+   * lock (avoids deadlock).
    */
-  bool in_show_;
+  lubyk::Worker *worker_;
 public:
   GLWindow(lubyk::Worker *worker)
    : initializeGL_(worker),
      resizeGL_(worker),
      paintGL_(worker),
      keyboard_(worker),
-     in_show_(false) {
+     worker_(worker) {
     setAttribute(Qt::WA_DeleteOnClose);
     // get focus on tab and click
     setFocusPolicy(Qt::StrongFocus);
+    printf("[%p] GLWindow\n", this);
   }
 
   ~GLWindow() {
@@ -105,10 +107,10 @@ public:
     QWidget::move(x, y);
   }
 
-  void resize(int w, int h) {
-    in_show_ = true;
-      QWidget::resize(w, h);
-    in_show_ = false;
+  // We add lua_State to make sure this is only called by Lua
+  void resize(int w, int h, lua_State *L) {
+    ScopedUnlock unlock(worker_);
+    QWidget::resize(w, h);
   }
 
   // =============================================================
@@ -123,21 +125,21 @@ public:
     return QWidget::isVisible();
   }
 
-  void show() {
-    // show directly calls initializeGL
-    in_show_ = true;
-      QWidget::show();
-    in_show_ = false;
+  // We add lua_State to make sure this is only called by Lua
+  void show(lua_State *L) {
+    ScopedUnlock unlock(worker_);
+    QWidget::show();
   }
 
-  void activateWindow() {
+  void activateWindow(lua_State *L) {
+    ScopedUnlock unlock(worker_);
     QWidget::activateWindow();
   }
 
-  void updateGL() {
-    in_show_ = true;
-      QGLWidget::updateGL();
-    in_show_ = false;
+  // We add lua_State to make sure this is only called by Lua
+  void updateGL(lua_State *L) {
+    ScopedUnlock unlock(worker_);
+    QGLWidget::updateGL();
   }
 
   /** Set a callback function.
@@ -146,6 +148,7 @@ public:
   void __newindex(lua_State *L) {
     // Stack should be ... <self> <key> <value>
     std::string key(luaL_checkstring(L, -2));
+    printf("[%p] GLWindow:__newindex %s\n", this, key.c_str());
     luaL_checktype(L, -1, LUA_TFUNCTION);
     lua_pushvalue(L, -3);
     // ... <self> <key> <value> <self>
@@ -162,6 +165,9 @@ public:
     } else {
       luaL_error(L, "Invalid function name '%s' (valid names are initializeGL, resizeGL, paintGL, keyboard).", key.c_str());
     }
+
+    lua_pop(L, 2);
+    // ... <self> <key> <value>
   }
 
 
@@ -169,7 +175,7 @@ public:
     lua_State *L = initializeGL_.lua_;
     if (!L) return;
     // cannot lock because this is called by Lua through 'show'...
-    if (!in_show_) initializeGL_.worker_->lock();
+    ScopedLock lock(worker_);
 
     initializeGL_.push_lua_callback(false);
 
@@ -178,14 +184,12 @@ public:
     if (status) {
       printf("Error in initializeGL callback: %s\n", lua_tostring(L, -1));
     }
-
-    if (!in_show_) initializeGL_.worker_->unlock();
   }
 
   virtual void resizeGL(int width, int height) {
     lua_State *L = resizeGL_.lua_;
     if (!L) return;
-    if (!in_show_) resizeGL_.worker_->lock();
+    ScopedLock lock(worker_);
 
     resizeGL_.push_lua_callback(false);
     lua_pushnumber(L, width);
@@ -196,14 +200,12 @@ public:
     if (status) {
       printf("Error in resizeGL callback: %s\n", lua_tostring(L, -1));
     }
-
-    if (!in_show_) resizeGL_.worker_->unlock();
   }
 
   virtual void paintGL() {
     lua_State *L = paintGL_.lua_;
     if (!L) return;
-    if (!in_show_) paintGL_.worker_->lock();
+    ScopedLock lock(worker_);
 
     paintGL_.push_lua_callback(false);
 
@@ -212,7 +214,6 @@ public:
     if (status) {
       printf("Error in paintGL callback: %s\n", lua_tostring(L, -1));
     }
-    if (!in_show_) paintGL_.worker_->unlock();
   }
 protected:
   //virtual void mousePressEvent(QMouseEvent *event);
@@ -230,7 +231,7 @@ private:
   void keyboard(QKeyEvent *event, bool isPressed) {
     lua_State *L = keyboard_.lua_;
     if (!L) return;
-    ScopedLock lock(keyboard_.worker_);
+    ScopedLock lock(worker_);
 
     keyboard_.push_lua_callback(false);
     lua_pushnumber(L, event->key());

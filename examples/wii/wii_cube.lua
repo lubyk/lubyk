@@ -32,7 +32,7 @@ size  = 2.6
 a     = 0
 
 -- cube animation (button B)
-timer = rk.Timer(30, function()
+timer = lk.Timer(30, function()
   a = a + 9
   size = 1.6 + math.cos(math.pi * a / 180)
   win:updateGL()

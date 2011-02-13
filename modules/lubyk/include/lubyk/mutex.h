@@ -52,7 +52,7 @@ public:
     }
   }
 
-  // FIXME: remove virtual, typed and sub-classes (Thread, ZeroConf..)
+  // FIXME: remove virtual and sub-classes (Thread, ZeroConf..)
   virtual ~Mutex() {
     int status = pthread_mutex_destroy(&mutex_);
     if (status != 0) {

@@ -59,6 +59,9 @@ public:
     lua_pushvalue(L, -2);
     // ... <self> <key> <value> <self> <value>
     callback_.set_lua_callback(L);
+
+    lua_pop(L, 2);
+    // ... <self> <key> <value>
   }
   
   /** Used to test if the callback is properly set.

@@ -79,6 +79,9 @@ public:
     } else {
       luaL_error(L, "Invalid function name '%s' (valid names are 'acceleration' and 'button').", key.c_str());
     }
+    
+    lua_pop(L, 2);
+    // ... <self> <key> <value>
   }
 
   /** Set remote leds.

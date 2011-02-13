@@ -148,7 +148,7 @@ static int Dummy___newindex(lua_State *L) {
 
 
 /** void dummy::Dummy::callback()
- * include/db/dummy.h:68
+ * include/db/dummy.h:71
  */
 static int Dummy_callback1(lua_State *L) {
   try {
@@ -164,7 +164,7 @@ static int Dummy_callback1(lua_State *L) {
 
 
 /** void dummy::Dummy::callback()
- * include/dummy/dummy.h:68
+ * include/dummy/dummy.h:71
  */
 static int Dummy_callback2(lua_State *L) {
   try {
@@ -195,7 +195,7 @@ static int Dummy_callback(lua_State *L) {
 
 
 /** static const char* dummy::Dummy::plat()
- * include/db/dummy.h:83
+ * include/db/dummy.h:86
  */
 static int Dummy_plat1(lua_State *L) {
   try {
@@ -211,7 +211,7 @@ static int Dummy_plat1(lua_State *L) {
 
 
 /** static const char* dummy::Dummy::plat()
- * include/dummy/dummy.h:83
+ * include/dummy/dummy.h:86
  */
 static int Dummy_plat2(lua_State *L) {
   try {

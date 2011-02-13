@@ -25,6 +25,8 @@ require 'lubyk'
 
 app = mimas.Application()
 
+--============================================== constants
+
 colors = {
   red    = {r=0.8, g=0.2, b=0.2},
   green  = {r=0.2, g=0.8, b=0.2},
@@ -34,7 +36,21 @@ colors = {
   purple = {r=0.6, g=0.1, b=0.9}
 }
 
-function make_col(sy)
+--============================================== World
+World = {}
+World.__index = World
+
+setmetatable(World, {
+  -- new method
+ __call = function(table, base)
+  local instance = base
+  setmetatable(instance, World)
+  instance:reset()
+  return instance
+end})
+
+-- Helper to build a single column in the world grid.
+local function make_col(sy)
   local col = {}
   for i = 1,sy do
     table.insert(col, 0)
@@ -42,7 +58,9 @@ function make_col(sy)
   return col
 end
 
-function make_grid(sx, sy)
+-- Build a grid for the pixels that can be occupied or left empty.
+local function make_grid(sx, sy)
+  print('make_grid', sx, sy)
   local grid = {}
   for i = 1,sx do
     table.insert(grid, make_col(sy))
@@ -50,73 +68,24 @@ function make_grid(sx, sy)
   return grid
 end
 
-world = {
-  size_x = {-3.0, 3.0, 80},  -- 200 = grid size
-  size_y = {-2.0, 2.0, 60},
-  color = colors.orange,
-  -- 33 fps
-  tick  = 30
-}
 -- compute real pos to grid ratio
-function make_ratio(size)
+local function make_ratio(size)
   size[4] = size[3] / (size[2] - size[1])
 end
-make_ratio(world.size_x)
-make_ratio(world.size_y)
 
-function reset()
-  world:reset()
-  for _, snake in ipairs(snakes) do
-    snake:reset()
-  end
-end
-
-function world:reset()
+function World:reset()
   self.grid = make_grid(self.size_x[3] + 1, self.size_y[3] + 1)
+  make_ratio(self.size_x)
+  make_ratio(self.size_y)
 end
 
-world:reset()
-
-Snake = {}
-Snake.__index = Snake
-
-setmetatable(Snake, {
-  -- new method
- __call = function(table, id, color)
-  local instance = {id = id, color = color, actions = {}}
-  setmetatable(instance, Snake)
-  instance:reset()
-  return instance
-end})
-
-local function rand_pos(sz)
-  return sz[1] + math.random() * (sz[2] - sz[1])
-end
-
-function Snake:reset()
-  self.x = rand_pos(world.size_x)
-  self.y = rand_pos(world.size_y)
-  -- direction
-  self.vx = 1
-  self.vy = 0
-  -- draw size
-  self.sz = 0.05
-  -- speed
-  self.speed  = 0.0012 * world.tick
-  -- color
-  self.alpha = 0.8
-  self.dead  = false
-end
-
-snakes = {Snake('Player 1', colors.orange), Snake('Player 2', colors.pink)}
-
-function world:real_to_grid(x, y)
+function World:real_to_grid(x, y)
   local x = 1 + math.floor((x - self.size_x[1]) * self.size_x[4])
   local y = 1 + math.floor((y - self.size_y[1]) * self.size_y[4])
   return x, y
 end
 
-function world:bomb(snake)
+function World:bomb(snake)
   local x, y = self:real_to_grid(snake.x + 1.2 * snake.vx, snake.y + 1.2 * snake.vy)
   for i=-1,1 do
     local px = x + i
@@ -137,7 +106,7 @@ function world:bomb(snake)
   end
 end
 
-function world:mark(snake)
+function World:mark(snake)
   local x, y = self:real_to_grid(snake.x, snake.y)
 
   if snake.w_x ~= x or snake.w_y ~= y then
@@ -155,7 +124,7 @@ function world:mark(snake)
 end
 
 
-function world:paint()
+function World:paint()
   gl.PushMatrix()
   local s_x = self.size_x
   local s_y = self.size_y
@@ -219,13 +188,46 @@ local function world_map(pos, size)
   end
 end
 
+--============================================== Snake
+
+Snake = {}
+Snake.__index = Snake
+
+setmetatable(Snake, {
+  -- new method
+ __call = function(table, id, world, color)
+  local instance = {id = id, world = world, color = color, actions = {}}
+  setmetatable(instance, Snake)
+  instance:reset()
+  return instance
+end})
+
+local function rand_pos(sz)
+  return sz[1] + math.random() * (sz[2] - sz[1])
+end
+
+function Snake:reset()
+  self.x = rand_pos(self.world.size_x)
+  self.y = rand_pos(self.world.size_y)
+  -- direction
+  self.vx = 1
+  self.vy = 0
+  -- draw size
+  self.sz = 0.05
+  -- speed
+  self.speed  = 0.0012 * self.world.tick
+  -- color
+  self.alpha = 0.8
+  self.dead  = false
+end
+
 function Snake:step()
   if self.dead then
     return
   end
-  self.x = world_map(self.x + self.vx * self.speed, world.size_x)
-  self.y = world_map(self.y + self.vy * self.speed, world.size_y)
-  if world:mark(self) ~= 0 then
+  self.x = world_map(self.x + self.vx * self.speed, self.world.size_x)
+  self.y = world_map(self.y + self.vy * self.speed, self.world.size_y)
+  if self.world:mark(self) ~= 0 then
     -- dead
     self.dead  = true
     self.alpha = 0.3
@@ -235,12 +237,12 @@ end
 function Snake:paint()
   gl.PushMatrix()
   -- draw our head
-  local x, y = world:real_to_grid(self.x, self.y)
-  local sx = 1 / world.size_x[4]
-  local sy = 1 / world.size_y[4]
+  local x, y = self.world:real_to_grid(self.x, self.y)
+  local sx = 1 / self.world.size_x[4]
+  local sy = 1 / self.world.size_y[4]
 
   -- the world is off ?
-  gl.Translate(world.size_x[1] + x * sx, world.size_y[1] + y * sy, 0)
+  gl.Translate(self.world.size_x[1] + x * sx, self.world.size_y[1] + y * sy, 0)
 
   local color = self.color
   gl.Color(color.r, color.g, color.b, 1.0)
@@ -289,20 +291,14 @@ function Snake:action(event)
       self.vy = 0
       self.vx = -1
     elseif action == 'FIRE' then
-      world:bomb(self)
+      self.world:bomb(self)
     end
   end
 end
 
-win = mimas.GLWindow()
+--============================================== OpenGL
 
--- cube animation (button B)
-anim = rk.Timer(world.tick, function()
-  for _, snake in ipairs(snakes) do
-    snake:step()
-  end
-  win:updateGL()
-end)
+win = mimas.GLWindow()
 
 function win.initializeGL()
   gl.Enable("POINT_SMOOTH")
@@ -367,19 +363,27 @@ function win.keyboard(key, on, txt)
     end
   end
 end
-win:show()
 
+--============================================== wii.Remote
+
+wiimotes = {}
+wiimote_id = 0
 browser = wii.Browser(function(found_wii)
-  wiimote = found_wii
-  function wiimote.acceleration(device, lx, ly, lz)
-    -- noop
-  end
+  wiimote_id = wiimote_id + 1
+  wiimotes[wiimote_id] = found_wii
+  --function found_wii.acceleration(device, lx, ly, lz)
+  --  -- noop
+  --end
 
-  function wiimote.button(btn, on)
+  function found_wii.button(btn, on)
     if on then
       if btn == 'Remote.H' then
         app:quit()
+      elseif btn == 'Remote.A' then
+        reset()
       else
+        -- differenciate between remote 1 and remote 2
+        btn = string.format('%s.%i', btn, wiimote_id)
         for _, snake in ipairs(snakes) do
           if snake:action(btn) then
             break
@@ -390,8 +394,38 @@ browser = wii.Browser(function(found_wii)
   end
 end)
 
+--============================================== Main
+
+world = World{
+  size_x = {-3.0, 3.0, 80},  -- 200 = grid size
+  size_y = {-2.0, 2.0, 60},
+  color = colors.orange,
+  -- 33 fps
+  tick  = 30
+}
+
+snakes = {Snake('Player 1', world, colors.orange), Snake('Player 2', world, colors.pink)}
+
+function reset()
+  world:reset()
+  for _, snake in ipairs(snakes) do
+    snake:reset()
+  end
+end
+
+world:reset()
+win:show()
+
+-- game main loop
+anim = lk.Timer(world.tick, function()
+  for _, snake in ipairs(snakes) do
+    snake:step()
+  end
+  win:updateGL()
+end)
+
 app:post(function()
-  learning = rk.Thread(function()
+  learning = lk.Thread(function()
     for _, snake in ipairs(snakes) do
       snake:learn()
     end

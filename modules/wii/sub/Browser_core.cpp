@@ -71,7 +71,7 @@ static int Browser___newindex(lua_State *L) {
 
 
 /** void wii::Browser::found(Remote *wii)
- * include/wii/Browser.h:71
+ * include/wii/Browser.h:74
  */
 static int Browser_found(lua_State *L) {
   try {

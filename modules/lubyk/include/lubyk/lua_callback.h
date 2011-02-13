@@ -42,7 +42,8 @@ public:
     lua_(NULL) {
   }
 
-  virtual ~LuaCallback() {}
+  virtual ~LuaCallback() {
+  }
 
   /** Set a callback. The top of the stack should be
    * -2. userdata from lk.Thread / lk.Socket / mimas.Callback / etc
@@ -56,13 +57,13 @@ public:
     luaL_checktype(L, -1, LUA_TFUNCTION);
 
     // ... <self> <func>
-    lua_getfenv(L, -1);
+    lua_getfenv(L, -2);
     // ... <self> <func> <env>
     lua_pushstring(L, ".");
     // ... <self> <func> <env> "."
     lua_rawget(L, -2);
-    // ... <self> <func> <env>  (<self> or <nil>)
     if (!lua_rawequal(L, -1, -4)) {
+      // ... <self> <func> <env> <nil>
       // does not have it's own env table
       lua_pop(L, 2);
       // ... <self> <func>
@@ -74,7 +75,20 @@ public:
       lua_pushvalue(L, -4);
       // ... <self> <func> <env> "." <self>
       lua_rawset(L, -3); // env["."] = self
+      // ... <self> <func> <env>
+      lua_pushvalue(L, -1);
+      // ... <self> <func> <env> <env>
+      if (!lua_setfenv(L, -4)) {
+        throw Exception("Could not set userdata env on '%s'.", lua_typename(L, lua_type(L, -4)));
+      }
+      // ... <self> <func> <env>
+    } else {
+      // ... <self> <func> <env> <self>
+      // has its own env table
+      lua_pop(L, 1);
+      // ... <self> <func> <env>
     }
+
     // ... <self> <func> <env>
     if (lua_) {
       // remove from env
@@ -88,10 +102,7 @@ public:
     thread_in_env_idx_ = luaL_ref(L, -2);
     // ... <self> <func> <env>
 
-    // Set fenv as environment table for "self" (Thread, Socket, etc).
-    if (!lua_setfenv(L, -3)) {
-      throw Exception("Could not set function env on '%s'.", lua_typename(L, lua_type(L, 1)));
-    }
+    lua_pop(L, 1);
     // ... <self> <func>
 
     // Transfer copies of <self> and <func> to thread stack

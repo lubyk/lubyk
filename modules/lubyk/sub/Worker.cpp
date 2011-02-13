@@ -53,8 +53,24 @@ static int Worker__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
+/** void lubyk::Worker::lock()
+ * include/lubyk/worker.h:89
+ */
+static int Worker_lock(lua_State *L) {
+  try {
+    Worker *self__ = *((Worker**)luaL_checkudata(L, 1, "lubyk.Worker"));
+    self__->lock();
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "lubyk.Worker.lock: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "lubyk.Worker.lock: Unknown exception");
+  }
+}
+
+
 /** double lubyk::Worker::now()
- * include/lubyk/worker.h:91
+ * include/lubyk/worker.h:95
  */
 static int Worker_now(lua_State *L) {
   try {
@@ -71,7 +87,7 @@ static int Worker_now(lua_State *L) {
 
 
 /** void lubyk::Worker::run()
- * include/lubyk/worker.h:89
+ * include/lubyk/worker.h:93
  */
 static int Worker_run(lua_State *L) {
   try {
@@ -108,6 +124,7 @@ static int Worker_sleep(lua_State *L) {
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg Worker_member_methods[] = {
+  {"lock"              , Worker_lock},
   {"now"               , Worker_now},
   {"run"               , Worker_run},
   {"sleep"             , Worker_sleep},

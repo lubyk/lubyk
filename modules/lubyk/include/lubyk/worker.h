@@ -86,6 +86,10 @@ public:
     Thread::millisleep(duration);
   }
 
+  void lock() {
+    ScopedLock lock(this);
+  }
+
   void run();
 
   double now() {

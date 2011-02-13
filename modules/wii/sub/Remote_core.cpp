@@ -89,7 +89,7 @@ static int Remote_name(lua_State *L) {
 
 
 /** void wii::Remote::set_leds(bool led1, bool led2, bool led3, bool led4)
- * include/wii/Remote.h:86
+ * include/wii/Remote.h:89
  */
 static int Remote_set_leds(lua_State *L) {
   try {
