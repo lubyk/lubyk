@@ -192,6 +192,8 @@ public:
 
     wii_remote_ = [remote retain];
   	[wii_remote_ setDelegate:wii_remote_delegate_];
+  	master_->name_ = [[remote address] UTF8String];
+    master_->connected();
   }
 
   void set_leds(bool led1, bool led2, bool led3, bool led4) {
@@ -215,7 +217,8 @@ public:
 
 Remote::Remote(lubyk::Worker *worker, const char *remote_name)
  : acceleration_(worker),
-   button_(worker) {
+   button_(worker),
+   connected_(worker) {
   ScopedPool pool;
   if (remote_name) name_ = remote_name;
   impl_ = new Implementation(this);
@@ -283,10 +286,13 @@ void Remote::set_leds(bool led1, bool led2, bool led3, bool led4) {
 }
 
 - (void) WiiRemoteDiscovered:(WiiRemote*)wiimote {
-  printf("Found !\n");
-  wii::Remote *remote = new wii::Remote(worker_, [[wiimote address] UTF8String]);
-  remote->set_remote(wiimote);
-  master_->found(remote);
+  // get a wii.Remote and connect
+  wii::Remote *remote = master_->found([[wiimote address] UTF8String]);
+  if (remote) {
+    remote->set_remote(wiimote);
+  } else {
+    printf("Could not connect..\n");
+  }
 }
 
 - (void) WiiRemoteDiscoveryError:(int)code {

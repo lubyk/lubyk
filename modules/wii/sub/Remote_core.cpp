@@ -8,14 +8,20 @@ using namespace wii;
 
 /* ============================ Constructors     ====================== */
 
-/** wii::Remote::Remote(lubyk::Worker *worker, const char *remote_name)
- * include/wii/Remote.h:56
+/** wii::Remote::Remote(lubyk::Worker *worker, const char *remote_name=NULL)
+ * include/wii/Remote.h:57
  */
 static int Remote_Remote(lua_State *L) {
   try {
+    int top__ = lua_gettop(L);
+    Remote * retval__;
     lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
-    const char *remote_name = luaL_checkstring(L, 2);
-    Remote * retval__ = new Remote(worker, remote_name);
+    if (top__ < 2) {
+      retval__ = new Remote(worker);
+    } else {
+      const char *remote_name = luaL_checkstring(L, 2);
+      retval__ = new Remote(worker, remote_name);
+    }
     lua_pushclass<Remote>(L, retval__, "wii.Remote");
     return 1;
   } catch (std::exception &e) {
@@ -55,7 +61,7 @@ static int Remote__tostring(lua_State *L) {
 
 
 /** void wii::Remote::__newindex(lua_State *L)
- * include/wii/Remote.h:67
+ * include/wii/Remote.h:68
  */
 static int Remote___newindex(lua_State *L) {
   try {
@@ -71,8 +77,24 @@ static int Remote___newindex(lua_State *L) {
 }
 
 
+/** void wii::Remote::connected()
+ * include/wii/Remote.h:142
+ */
+static int Remote_connected(lua_State *L) {
+  try {
+    Remote *self__ = *((Remote**)luaL_checkudata(L, 1, "wii.Remote"));
+    self__->connected();
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "wii.Remote.connected: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "wii.Remote.connected: Unknown exception");
+  }
+}
+
+
 /** const char* wii::Remote::name() const 
- * include/wii/Remote.h:60
+ * include/wii/Remote.h:61
  */
 static int Remote_name(lua_State *L) {
   try {
@@ -89,7 +111,7 @@ static int Remote_name(lua_State *L) {
 
 
 /** void wii::Remote::set_leds(bool led1, bool led2, bool led3, bool led4)
- * include/wii/Remote.h:89
+ * include/wii/Remote.h:92
  */
 static int Remote_set_leds(lua_State *L) {
   try {
@@ -114,6 +136,7 @@ static int Remote_set_leds(lua_State *L) {
 
 static const struct luaL_Reg Remote_member_methods[] = {
   {"__newindex"        , Remote___newindex},
+  {"connected"         , Remote_connected},
   {"name"              , Remote_name},
   {"set_leds"          , Remote_set_leds},
   {"__tostring"        , Remote__tostring},

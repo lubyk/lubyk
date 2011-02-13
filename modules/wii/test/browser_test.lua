@@ -25,29 +25,38 @@ function should.find_first_remote(t)
   t.continue = false
 
   -- this will not work until we have an event loop running on OS X.
-  t.remote = wii.Browser(function(found_wii)
-    t.wiimote = found_wii
-    t.title:setText('Connected. Press home to stop.')
-    function t.wiimote.button(name,state)
-      t.wiimote:set_leds(false, true, false, true)
-      if state then
-        t.label:setText(name .. ': ON')
-      else
-        t.label:setText(name .. ': OFF')
-      end
+  t.remote = wii.Remote()
+  t.remote2 = wii.Remote()
 
-      if name == 'Remote.H' then
-        t.continue = true
-      end
+  function t.remote.button(name, state)
+    t.remote:set_leds(false, true, false, true)
+    if state then
+      t.label:setText(name .. ': ON')
+    else
+      t.label:setText(name .. ': OFF')
     end
-  end)
+
+    if name == 'Remote.H' then
+      t.continue = true
+    end
+  end
+
+  function t.remote.connected()
+    t.title:setText('Connected. Press home to stop.')
+  end
+
+  function t.remote2.connected()
+    t.title:setText('Connected [2]')
+    t.remote2:set_leds(false, true, false, true)
+  end
+
   t.now = worker:now()
   t.test = lk.Thread(function()
-    while not t.continue and (worker:now() < t.now + 2000 or t.wiimote) do
+    while not t.continue and (worker:now() < t.now + 20000 or t.wiimote) do
       sleep(20)
     end
-    if not t.wiimote then
-      print("No wiimote test")
+    if not t.continue then
+      print("No wiimote found")
     end
     assert_true(true)
     t.win:close()

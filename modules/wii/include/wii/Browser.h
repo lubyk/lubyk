@@ -39,6 +39,7 @@ namespace wii {
 /** Browse for Wii Remotes.
  *
  * @dub lib_name:'Browser_core'
+ *      ignore: 'found'
  */
 class Browser : public LuaCallback
 {
@@ -71,24 +72,34 @@ public:
     // ... <self> <key> <value>
   }
 
-  void found(Remote *wii) {
+  /** A wiimote has been found, ask for a wii.Remote to create
+   * connection.
+   */
+  wii::Remote *found(const char *name) {
     lua_State *L = lua_;
     if (!L) {
       printf("Remote found without browser callback.\n");
-      return;
+      return NULL;
     }
-    
+
     ScopedLock lock(worker_);
 
     push_lua_callback(false);
-    // Lua takes ownership of the remote
-    lua_pushclass<Remote>(L, wii, "wii.Remote");
-    
-    // <func> <wii>
-    int status = lua_pcall(L, 1, 0, 0);
+
+    lua_pushstring(L, name);
+
+    // <func> <name>
+    int status = lua_pcall(L, 1, 1, 0);
 
     if (status) {
-      printf("Error in found callback: %s\n", lua_tostring(L, -1));
+      printf("Error in 'found' callback: %s\n", lua_tostring(L, -1));
+    }
+
+    if (lua_type(lua_, -1) == LUA_TNIL) {
+      // no wii.Remote.. cannot link
+      return NULL;
+    } else {
+      return *((wii::Remote **)luaL_checkudata(L, -1, "wii.Remote"));
     }
   }
 };

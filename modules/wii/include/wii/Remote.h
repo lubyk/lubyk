@@ -48,12 +48,13 @@ class Remote
   std::string name_;
   LuaCallback acceleration_;
   LuaCallback button_;
+  LuaCallback connected_;
 
   class Implementation;
   Implementation *impl_;
   friend class Implementation;
 public:
-  Remote(lubyk::Worker *worker, const char *remote_name);
+  Remote(lubyk::Worker *worker, const char *remote_name = NULL);
 
   ~Remote();
 
@@ -76,10 +77,12 @@ public:
       acceleration_.set_lua_callback(L);
     } else if (key == "button") {
       button_.set_lua_callback(L);
+    } else if (key == "connected") {
+      connected_.set_lua_callback(L);
     } else {
-      luaL_error(L, "Invalid function name '%s' (valid names are 'acceleration' and 'button').", key.c_str());
+      luaL_error(L, "Invalid function name '%s' (valid names are 'connected', 'acceleration' and 'button').", key.c_str());
     }
-    
+
     lua_pop(L, 2);
     // ... <self> <key> <value>
   }
@@ -106,7 +109,7 @@ public:
     int status = lua_pcall(L, 4, 0, 0);
 
     if (status) {
-      printf("Error in acceleration callback: %s\n", lua_tostring(L, -1));
+      printf("Error in 'acceleration' callback: %s\n", lua_tostring(L, -1));
     }
   }
 
@@ -124,7 +127,7 @@ public:
     int status = lua_pcall(L, 2, 0, 0);
 
     if (status) {
-      printf("Error in button callback: %s\n", lua_tostring(L, -1));
+      printf("Error in 'button' callback: %s\n", lua_tostring(L, -1));
     }
   }
 
@@ -132,6 +135,24 @@ public:
    */
   void disconnected() {
     // noop for the moment
+  }
+
+  /** This callback is called when the wii Remote is disconnected.
+   */
+  void connected() {
+    lua_State *L = connected_.lua_;
+    if (!L) return;
+    ScopedLock lock(connected_.worker_);
+
+    connected_.push_lua_callback(false);
+    lua_pushstring(L, name_.c_str());
+
+    // <func> <name>
+    int status = lua_pcall(L, 1, 0, 0);
+
+    if (status) {
+      printf("Error in 'connected' callback: %s\n", lua_tostring(L, -1));
+    }
   }
 
   /** @internal

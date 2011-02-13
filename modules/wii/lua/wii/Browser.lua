@@ -1,12 +1,9 @@
 --[[------------------------------------------------------
 
-  wii.Remote
-  ----------
+  wii.Browser
+  -----------
 
-  Lets you send and receive lua messages using 0MQ. Since
-  a socket should only be used from a single thread, you
-  can pass a function that will be executed in a new thread
-  if you need to.
+  @internal (used to browse for wiimotes)
 
 --]]------------------------------------------------------
 require 'wii'
@@ -14,12 +11,15 @@ require 'wii.Browser_core'
 require 'wii.Remote_core'
 require 'worker'
 
-local constr = wii.Browser
-local worker = worker
-function wii.Browser(func)
-  local instance = constr(worker)
-  if func then
-    instance.found = func
-  end
-  return instance
-end
+-- Singleton
+wii.Browser = wii.Browser(worker)
+--local constr = wii.Browser
+--function wii.Browser()
+--  local instance = constr(worker)
+--  if func then
+--    instance.found = func
+--  else
+--    function instance.found
+--  end
+--  return instance
+--end

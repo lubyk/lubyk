@@ -69,7 +69,6 @@ public:
     setAttribute(Qt::WA_DeleteOnClose);
     // get focus on tab and click
     setFocusPolicy(Qt::StrongFocus);
-    printf("[%p] GLWindow\n", this);
   }
 
   ~GLWindow() {
@@ -148,7 +147,7 @@ public:
   void __newindex(lua_State *L) {
     // Stack should be ... <self> <key> <value>
     std::string key(luaL_checkstring(L, -2));
-    printf("[%p] GLWindow:__newindex %s\n", this, key.c_str());
+
     luaL_checktype(L, -1, LUA_TFUNCTION);
     lua_pushvalue(L, -3);
     // ... <self> <key> <value> <self>
@@ -182,7 +181,7 @@ public:
     int status = lua_pcall(L, 0, 0, 0);
 
     if (status) {
-      printf("Error in initializeGL callback: %s\n", lua_tostring(L, -1));
+      fprintf(stderr, "Error in initializeGL callback: %s\n", lua_tostring(L, -1));
     }
   }
 
@@ -198,7 +197,7 @@ public:
     int status = lua_pcall(L, 2, 0, 0);
 
     if (status) {
-      printf("Error in resizeGL callback: %s\n", lua_tostring(L, -1));
+      fprintf(stderr, "Error in resizeGL callback: %s\n", lua_tostring(L, -1));
     }
   }
 
@@ -212,7 +211,7 @@ public:
     int status = lua_pcall(L, 0, 0, 0);
 
     if (status) {
-      printf("Error in paintGL callback: %s\n", lua_tostring(L, -1));
+      fprintf(stderr, "Error in paintGL callback: %s\n", lua_tostring(L, -1));
     }
   }
 protected:
@@ -240,7 +239,7 @@ private:
     int status = lua_pcall(L, 3, 0, 0);
 
     if (status) {
-      printf("Error in keyboard callback: %s\n", lua_tostring(L, -1));
+      fprintf(stderr, "Error in keyboard callback: %s\n", lua_tostring(L, -1));
     }
   }
 };

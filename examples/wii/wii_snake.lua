@@ -60,7 +60,6 @@ end
 
 -- Build a grid for the pixels that can be occupied or left empty.
 local function make_grid(sx, sy)
-  print('make_grid', sx, sy)
   local grid = {}
   for i = 1,sx do
     table.insert(grid, make_col(sy))
@@ -367,15 +366,10 @@ end
 --============================================== wii.Remote
 
 wiimotes = {}
-wiimote_id = 0
-browser = wii.Browser(function(found_wii)
-  wiimote_id = wiimote_id + 1
-  wiimotes[wiimote_id] = found_wii
-  --function found_wii.acceleration(device, lx, ly, lz)
-  --  -- noop
-  --end
-
-  function found_wii.button(btn, on)
+for wiimote_id=1,2 do
+  local wiimote = wii.Remote()
+  wiimotes[wiimote_id] = wiimote
+  function wiimote.button(btn, on)
     if on then
       if btn == 'Remote.H' then
         app:quit()
@@ -392,7 +386,7 @@ browser = wii.Browser(function(found_wii)
       end
     end
   end
-end)
+end
 
 --============================================== Main
 

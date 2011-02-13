@@ -163,36 +163,34 @@ function process_button(btn)
   end
 end
 
-browser = wii.Browser(function(found_wii)
-  wiimote = found_wii
-  function wiimote.acceleration(device, lx, ly, lz)
-    stream:rec{x = lx, y = ly, z = lz}
-    if not stream.playing then
-      process_acceleration(lx, ly, lz)
-    end
+wiimote = wii.Remote()
+function wiimote.acceleration(device, lx, ly, lz)
+  stream:rec{x = lx, y = ly, z = lz}
+  if not stream.playing then
+    process_acceleration(lx, ly, lz)
   end
+end
 
-  function wiimote.button(btn, on)
-    if on then
-      if btn == 'Remote.A' then
-        if stream.recording then
-          print("Stop recording and start playback.")
-          stream:rec_stop()
-          stream:play()
-        elseif stream.playing then
-          print("Playback stop.")
-          stream:stop()
-        else
-          print("Started recording...")
-          stream:rec_start()
-        end
-      elseif not stream.playing then
-        stream:rec{b=btn}
-        process_button(btn)
+function wiimote.button(btn, on)
+  if on then
+    if btn == 'Remote.A' then
+      if stream.recording then
+        print("Stop recording and start playback.")
+        stream:rec_stop()
+        stream:play()
+      elseif stream.playing then
+        print("Playback stop.")
+        stream:stop()
+      else
+        print("Started recording...")
+        stream:rec_start()
       end
+    elseif not stream.playing then
+      stream:rec{b=btn}
+      process_button(btn)
     end
-    win:updateGL()
   end
-end)
+  win:updateGL()
+end
 
 app:exec()
