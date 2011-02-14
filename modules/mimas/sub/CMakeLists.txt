@@ -9,6 +9,9 @@ file(GLOB SUB_MODULE_SOURCES *.cpp core/*.cpp core/${PLAT}/*.cpp)
 file(GLOB SUB_MODULE_HEADERS ../include/mimas/*.h)
 list(REMOVE_ITEM SUB_MODULE_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/../include/mimas/mimas.h)
 list(REMOVE_ITEM SUB_MODULE_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/../include/mimas/range_widget.h)
+list(REMOVE_ITEM SUB_MODULE_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/../include/mimas/Brush.h)
+list(REMOVE_ITEM SUB_MODULE_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/../include/mimas/Pen.h)
+list(REMOVE_ITEM SUB_MODULE_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/../include/mimas/Painter.h)
 
 # ==============================================================================
 #

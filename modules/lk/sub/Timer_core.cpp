@@ -55,7 +55,7 @@ static int Timer__tostring(lua_State *L) {
 
 
 /** time_t lk::Timer::interval()
- * include/lk/Timer.h:66
+ * include/lk/Timer.h:68
  */
 static int Timer_interval(lua_State *L) {
   try {
@@ -72,7 +72,7 @@ static int Timer_interval(lua_State *L) {
 
 
 /** void lk::Timer::join()
- * include/lk/Timer.h:61
+ * include/lk/Timer.h:63
  */
 static int Timer_join(lua_State *L) {
   try {
@@ -88,7 +88,7 @@ static int Timer_join(lua_State *L) {
 
 
 /** void lk::Timer::set_callback(lua_State *L)
- * include/lk/Timer.h:70
+ * include/lk/Timer.h:72
  */
 static int Timer_set_callback(lua_State *L) {
   try {
@@ -105,7 +105,7 @@ static int Timer_set_callback(lua_State *L) {
 
 
 /** void lk::Timer::start()
- * include/lk/Timer.h:56
+ * include/lk/Timer.h:58
  */
 static int Timer_start(lua_State *L) {
   try {
@@ -121,7 +121,7 @@ static int Timer_start(lua_State *L) {
 
 
 /** void lk::Timer::stop()
- * include/lk/Timer.h:52
+ * include/lk/Timer.h:54
  */
 static int Timer_stop(lua_State *L) {
   try {

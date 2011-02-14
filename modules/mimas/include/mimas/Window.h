@@ -30,11 +30,16 @@
 #define LUBYK_INCLUDE_MIMAS_WIDGET_H_
 
 #include "mimas/mimas.h"
+using namespace lubyk;
+
 #include <QtGui/QWidget>
 
 #include <iostream>
 
+
 namespace mimas {
+
+class Painter;
 
 /** Window.
  *
@@ -45,8 +50,13 @@ class Window : public QWidget, public DeletableOutOfLua
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
   Q_PROPERTY(float hue READ hue WRITE setHue)
+
+  Worker *worker_;
+  LuaCallback paint_clbk_;
 public:
-  Window() {
+  Window(lubyk::Worker *worker) :
+   worker_(worker),
+   paint_clbk_(worker) {
     setAttribute(Qt::WA_DeleteOnClose);
   }
 
@@ -117,13 +127,36 @@ public:
   bool isVisible() const {
     return QWidget::isVisible();
   }
-  
+
   void show() {
+    ScopedUnlock unlock(worker_);
     QWidget::show();
   }
 
   void activateWindow() {
     QWidget::activateWindow();
+  }
+
+  /** Set a callback function.
+   *
+   */
+  void __newindex(lua_State *L) {
+    // Stack should be ... <self> <key> <value>
+    std::string key(luaL_checkstring(L, -2));
+
+    luaL_checktype(L, -1, LUA_TFUNCTION);
+    lua_pushvalue(L, -3);
+    // ... <self> <key> <value> <self>
+    lua_pushvalue(L, -2);
+    // ... <self> <key> <value> <self> <value>
+    if (key == "paint") {
+      paint_clbk_.set_lua_callback(L);
+    } else {
+      luaL_error(L, "Invalid function name '%s' (valid name is 'paint').", key.c_str());
+    }
+
+    lua_pop(L, 2);
+    // ... <self> <key> <value>
   }
 protected:
   //virtual void mousePressEvent(QMouseEvent *event);
@@ -133,6 +166,9 @@ protected:
   /** The component's color.
    */
   float hue_;
+
+private:
+  void paint(Painter &p);
 };
 
 } // mimas

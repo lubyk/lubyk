@@ -30,7 +30,7 @@
 #include "mimas/Window.h"
 #include "mimas/Label.h"
 #include "mimas/Slider.h"
-
+#include "mimas/Painter.h"
 #include <QtGui/QPainter>
 
 #define SLIDER_BORDER_WIDTH 2
@@ -43,14 +43,34 @@ namespace mimas {
 // =============================================
 
 void Window::paintEvent(QPaintEvent *event) {
-  QPainter p(this);
+  // has to be on the heap
+  Painter *p = new Painter(this);
   if (!parent()) {
     // window
-    p.fillRect(rect(), palette().color(QPalette::Window));
+    p->QPainter::fillRect(rect(), palette().color(QPalette::Window));
   }
+  paint(*p);
+  delete p;
   QWidget::paintEvent(event);
 }
 
+void Window::paint(Painter &p) {
+  lua_State *L = paint_clbk_.lua_;
+  if (!L) return;
+
+  ScopedLock lock(worker_);
+
+  paint_clbk_.push_lua_callback(false);
+
+  // Deletable out of Lua
+  lua_pushclass2<Painter>(L, &p, "mimas.Painter");
+
+  int status = lua_pcall(L, 1, 0, 0);
+
+  if (status) {
+    fprintf(stderr, "Error in 'paint' callback: %s\n", lua_tostring(L, -1));
+  }
+}
 // =============================================
 // ==             Label                       ==
 // =============================================

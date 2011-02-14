@@ -28,37 +28,56 @@ function should.display_window(t)
   end)
 end
 
---function should.accept_destroy_from_gui(t)
---  t.win = mimas.Window()
---  t.win:move(100, 170)
---  t.win:resize(50, 50)
---  t.win:show()
---
---  t.thread = lk.Thread(function()
---    sleep(200)
---    t.win:close()
---    while not t.win:deleted() do
---      sleep(200)
---    end
---    -- should be deleted by GUI
---    assert_match('NULL', t.win:__tostring())
---  end)
---end
---
---function should.accept_destroy_from_Lua()
---  local win = mimas.Window()
---  win:move(100, 240)
---  win:resize(50, 50)
---  win:show()
---  local label = mimas.Label("Hop", win)
---
---  thread = lk.Thread(function()
---    win = nil
---    collectgarbage('collect')
---    -- not deleted by Lua, but marked as deleted in C++
---    -- proof that win was deleted in C++
---    assert_true(label:deleted())
---  end)
---end
+function should.use_custom_paint(t)
+  -- we use the test env to protect from gc
+  t.win = mimas.Window()
+  t.win:move(300, 100)
+  t.win:resize(100, 100)
+  function t.win.paint(p)
+    for i=0,40,10 do
+      p:fillRect(10+i, 10+i, 80-2*i, 80-2*i, mimas.Color(0.2 + i/50, 0.5, 0.8, 0.5))
+    end
+  end
+  t.win:show()
+
+  t.thread = lk.Thread(function()
+    sleep(400)
+    t.win:close()
+    assert_true(true)
+  end)
+end
+
+function should.accept_destroy_from_gui(t)
+  t.win = mimas.Window()
+  t.win:move(100, 170)
+  t.win:resize(50, 50)
+  t.win:show()
+
+  t.thread = lk.Thread(function()
+    sleep(200)
+    t.win:close()
+    while not t.win:deleted() do
+      sleep(200)
+    end
+    -- should be deleted by GUI
+    assert_match('NULL', t.win:__tostring())
+  end)
+end
+
+function should.accept_destroy_from_Lua()
+  local win = mimas.Window()
+  win:move(100, 240)
+  win:resize(50, 50)
+  win:show()
+  local label = mimas.Label("Hop", win)
+
+  thread = lk.Thread(function()
+    win = nil
+    collectgarbage('collect')
+    -- not deleted by Lua, but marked as deleted in C++
+    -- proof that win was deleted in C++
+    assert_true(label:deleted())
+  end)
+end
 
 test.all()

@@ -8,12 +8,13 @@ using namespace mimas;
 
 /* ============================ Constructors     ====================== */
 
-/** mimas::Window::Window()
- * include/mimas/Window.h:49
+/** mimas::Window::Window(lubyk::Worker *worker)
+ * include/mimas/Window.h:55
  */
 static int Window_Window(lua_State *L) {
   try {
-    Window * retval__ = new Window();
+    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
+    Window * retval__ = new Window(worker);
     lua_pushclass2<Window>(L, retval__, "mimas.Window");
     return 1;
   } catch (std::exception &e) {
@@ -66,8 +67,26 @@ static int Window__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
+/** void mimas::Window::__newindex(lua_State *L)
+ * include/mimas/Window.h:138
+ */
+static int Window___newindex(lua_State *L) {
+  try {
+    Window *self__ = *((Window**)luaL_checkudata(L, 1, "mimas.Window"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Window in __newindex");
+    
+    self__->__newindex(L);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Window.__newindex: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Window.__newindex: Unknown exception");
+  }
+}
+
+
 /** void mimas::Window::activateWindow()
- * include/mimas/Window.h:125
+ * include/mimas/Window.h:131
  */
 static int Window_activateWindow(lua_State *L) {
   try {
@@ -84,7 +103,7 @@ static int Window_activateWindow(lua_State *L) {
 
 
 /** bool mimas::Window::close()
- * include/mimas/Window.h:113
+ * include/mimas/Window.h:119
  */
 static int Window_close(lua_State *L) {
   try {
@@ -102,7 +121,7 @@ static int Window_close(lua_State *L) {
 
 
 /** QString mimas::Window::cssClass() const 
- * include/mimas/Window.h:59
+ * include/mimas/Window.h:65
  */
 static int Window_cssClass(lua_State *L) {
   try {
@@ -120,7 +139,7 @@ static int Window_cssClass(lua_State *L) {
 
 
 /** float mimas::Window::hue()
- * include/mimas/Window.h:101
+ * include/mimas/Window.h:107
  */
 static int Window_hue(lua_State *L) {
   try {
@@ -138,7 +157,7 @@ static int Window_hue(lua_State *L) {
 
 
 /** bool mimas::Window::isVisible() const 
- * include/mimas/Window.h:117
+ * include/mimas/Window.h:123
  */
 static int Window_isVisible(lua_State *L) {
   try {
@@ -156,7 +175,7 @@ static int Window_isVisible(lua_State *L) {
 
 
 /** void mimas::Window::move(int x, int y)
- * include/mimas/Window.h:84
+ * include/mimas/Window.h:90
  */
 static int Window_move(lua_State *L) {
   try {
@@ -175,7 +194,7 @@ static int Window_move(lua_State *L) {
 
 
 /** LuaStackSize mimas::Window::name(lua_State *L)
- * include/mimas/Window.h:73
+ * include/mimas/Window.h:79
  */
 static int Window_name(lua_State *L) {
   try {
@@ -193,7 +212,7 @@ static int Window_name(lua_State *L) {
 
 
 /** QObject* mimas::Window::object()
- * include/mimas/Window.h:67
+ * include/mimas/Window.h:73
  */
 static int Window_object(lua_State *L) {
   try {
@@ -211,7 +230,7 @@ static int Window_object(lua_State *L) {
 
 
 /** void mimas::Window::resize(int w, int h)
- * include/mimas/Window.h:88
+ * include/mimas/Window.h:94
  */
 static int Window_resize(lua_State *L) {
   try {
@@ -230,7 +249,7 @@ static int Window_resize(lua_State *L) {
 
 
 /** void mimas::Window::setHue(float hue)
- * include/mimas/Window.h:96
+ * include/mimas/Window.h:102
  */
 static int Window_setHue(lua_State *L) {
   try {
@@ -248,7 +267,7 @@ static int Window_setHue(lua_State *L) {
 
 
 /** void mimas::Window::setName(const char *name)
- * include/mimas/Window.h:80
+ * include/mimas/Window.h:86
  */
 static int Window_setName(lua_State *L) {
   try {
@@ -266,7 +285,7 @@ static int Window_setName(lua_State *L) {
 
 
 /** void mimas::Window::setStyle(const char *text)
- * include/mimas/Window.h:92
+ * include/mimas/Window.h:98
  */
 static int Window_setStyle(lua_State *L) {
   try {
@@ -284,7 +303,7 @@ static int Window_setStyle(lua_State *L) {
 
 
 /** void mimas::Window::show()
- * include/mimas/Window.h:121
+ * include/mimas/Window.h:127
  */
 static int Window_show(lua_State *L) {
   try {
@@ -301,7 +320,7 @@ static int Window_show(lua_State *L) {
 
 
 /** void mimas::Window::update()
- * include/mimas/Window.h:105
+ * include/mimas/Window.h:111
  */
 static int Window_update(lua_State *L) {
   try {
@@ -318,7 +337,7 @@ static int Window_update(lua_State *L) {
 
 
 /** QWidget* mimas::Window::widget()
- * include/mimas/Window.h:63
+ * include/mimas/Window.h:69
  */
 static int Window_widget(lua_State *L) {
   try {
@@ -340,6 +359,7 @@ static int Window_widget(lua_State *L) {
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg Window_member_methods[] = {
+  {"__newindex"        , Window___newindex},
   {"activateWindow"    , Window_activateWindow},
   {"close"             , Window_close},
   {"cssClass"          , Window_cssClass},
