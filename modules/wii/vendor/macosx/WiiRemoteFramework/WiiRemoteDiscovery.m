@@ -171,6 +171,8 @@
 		[_delegate willStartWiimoteConnections];
 
 	[self connectToFoundDevices];
+
+  [_delegate WiiRemoteStopped];
 }
 
 #pragma mark -

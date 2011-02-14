@@ -25,7 +25,7 @@ function should.find_first_remote(t)
   t.continue = false
 
   -- this will not work until we have an event loop running on OS X.
-  t.remote = wii.Remote()
+  t.remote  = wii.Remote()
   t.remote2 = wii.Remote()
 
   function t.remote.button(name, state)
@@ -42,12 +42,13 @@ function should.find_first_remote(t)
   end
 
   function t.remote.connected()
+    t.remote:set_leds(true, false, false, false)
     t.title:setText('Connected. Press home to stop.')
   end
 
   function t.remote2.connected()
+    t.remote2:set_leds(false, true, false, false)
     t.title:setText('Connected [2]')
-    t.remote2:set_leds(false, true, false, true)
   end
 
   t.now = worker:now()

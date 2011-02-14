@@ -236,6 +236,10 @@ void Remote::set_leds(bool led1, bool led2, bool led3, bool led4) {
   impl_->set_leds(led1, led2, led3, led4);
 }
 
+void Remote::disconnect() {
+  impl_->unlink_wii();
+}
+
 } // wii
 
 
@@ -264,6 +268,7 @@ void Remote::set_leds(bool led1, bool led2, bool led3, bool led4) {
 
 - (void) WiiRemoteDiscovered:(WiiRemote*)wiimote;
 - (void) WiiRemoteDiscoveryError:(int)code;
+- (void) WiiRemoteStopped;
 @end
 
 /* ======================== LWiiDiscoveryDelegate @implementation ===================== */
@@ -274,7 +279,6 @@ void Remote::set_leds(bool led1, bool led2, bool led3, bool led4) {
   self = [super init];
 
   if (self) {
-    printf("Start discovery delegate !\n");
     master_ = master;
     worker_ = worker;
   }
@@ -285,18 +289,29 @@ void Remote::set_leds(bool led1, bool led2, bool led3, bool led4) {
   // do nothing
 }
 
+// They appear one at a time so we have to restart if we need more.
 - (void) WiiRemoteDiscovered:(WiiRemote*)wiimote {
   // get a wii.Remote and connect
   wii::Remote *remote = master_->found([[wiimote address] UTF8String]);
   if (remote) {
     remote->set_remote(wiimote);
   } else {
-    printf("Could not connect..\n");
+    fprintf(stderr, "Could not connect..\n");
+  }
+
+  if (master_->need_more()) {
+    master_->find_more();
   }
 }
 
 - (void) WiiRemoteDiscoveryError:(int)code {
-  printf("WiiRemoteDiscoveryError %i\n", code);
+  fprintf(stderr, "WiiRemoteDiscoveryError %i\n", code);
+}
+
+- (void) WiiRemoteStopped {
+  if (master_->need_more()) {
+    master_->find_more();
+  }
 }
 
 @end // LWiiDiscoveryDelegate
@@ -315,10 +330,6 @@ public:
     wii_discovery_delegate_ = [[LWiiDiscoveryDelegate alloc] initWithBrowser:master_ worker:master_->worker_];
     discovery_ =  [WiiRemoteDiscovery discoveryWithDelegate:wii_discovery_delegate_];
     [discovery_ retain];
-    IOReturn ret = [discovery_ start];
-    if (ret != kIOReturnSuccess) {
-      printf("Error starting wii Browser.\n");
-    }
   }
 
   ~Implementation() {
@@ -326,10 +337,23 @@ public:
   	[discovery_ release];
     [wii_discovery_delegate_ release];
   }
+
+  // called each time we need more wiimotes
+  void find() {
+    // TODO: Mutex?
+    if (![discovery_ isDiscovering]) {
+      IOReturn ret = [discovery_ start];
+      if (ret != kIOReturnSuccess) {
+        fprintf(stderr, "Error starting wii Browser.\n");
+      }
+    }
+  }
 };
 
 Browser::Browser(lubyk::Worker *worker)
- : LuaCallback(worker) {
+ : LuaCallback(worker),
+   need_count_(0),
+   need_more_(false) {
   ScopedPool pool;
   // we need to run the browser in an NSThread
   // or something else that has an event loop so that we
@@ -342,6 +366,17 @@ Browser::Browser(lubyk::Worker *worker)
 
 Browser::~Browser() {
   delete impl_;
+}
+
+// called by Lua on new wii.Remote
+void Browser::find() {
+  need_count_++;
+  impl_->find();
+}
+
+// called by objC
+void Browser::find_more() {
+  impl_->find();
 }
 
 } // wii

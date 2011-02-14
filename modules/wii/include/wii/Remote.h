@@ -62,6 +62,8 @@ public:
     return name_.c_str();
   }
 
+  void disconnect();
+
   /** Set a callback function.
    *
    */
@@ -141,7 +143,11 @@ public:
    */
   void connected() {
     lua_State *L = connected_.lua_;
-    if (!L) return;
+    if (!L) {
+      // default action
+      set_leds(true, false, false, false);
+      return;
+    }
     ScopedLock lock(connected_.worker_);
 
     connected_.push_lua_callback(false);

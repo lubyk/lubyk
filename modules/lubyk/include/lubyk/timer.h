@@ -49,7 +49,8 @@ public:
     // we could let Thread cancel the loop in ~Thread, but we
     // prefer to ensure we don't access stale data.
     if (running_) {
-      thread_.send_signal(SIGINT);
+      should_run_ = false;
+      interrupt();
     }
   }
 

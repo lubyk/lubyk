@@ -63,7 +63,7 @@ typedef enum {
 	kWiiClassicControllerLButton		= 0x2000,
 	kWiiClassicControllerDownButton		= 0x4000,
 	kWiiClassicControllerRightButton	= 0x8000
-	
+
 } WiiButtonBitMask;
 
 @interface WiiRemote (Private)
@@ -75,11 +75,11 @@ typedef enum {
 - (id) init
 {
 	self = [super init];
-	
+
 	NSLogDebug (@"Wii instantiated");
 
 	if (self != nil) {
-		
+
 #ifdef DEBUG
 		/* Allow full protocol logging */
 		_dump = TRUE;
@@ -97,18 +97,18 @@ typedef enum {
 		_shouldReadExpansionCalibration = NO;
 		_shouldSetInitialConfiguration = YES; //Used as dirty hack to make sure the Initial configuration is set _after_ device has be indentified
 		_wiiDevice = nil;
-		
+
 		_opened = NO;
-	
+
 		_ichan = nil;
 		_cchan = nil;
-		
+
 		_isIRSensorEnabled = NO;
 		_isMotionSensorEnabled = NO;
 		_isVibrationEnabled = NO;
 		_isExpansionPortEnabled = NO;
 		_isExpansionPortAttached = NO;
-		
+
 		wiiIRMode = kWiiIRModeExtended;
 		expType = WiiExpUknown;
 	}
@@ -130,15 +130,15 @@ typedef enum {
 {
 	if ((_wiiDevice != nil) && (_cchan != nil) && (_ichan != nil))
 		return YES;
-	
+
 	return NO;
 }
 
 - (IOReturn) connectTo:(IOBluetoothDevice *) device
-{ 
-	_wiiDevice = device; 
+{
+	_wiiDevice = device;
 	if (_wiiDevice == nil)
-		return kIOReturnBadArgument; 
+		return kIOReturnBadArgument;
 
 	IOReturn ret = kIOReturnSuccess;
 
@@ -151,27 +151,27 @@ typedef enum {
 	_ichan = [self openL2CAPChannelWithPSM:kBluetoothL2CAPPSMHIDInterrupt delegate:self];
 	if (!_ichan)
 		return kIOReturnNotOpen;
-	
+
 	NSLogDebug(@"Allow bluetooth stack to 'settle', wait few milliseconds");
 	usleep (20000);
-	
+
     //statusTimer = [[NSTimer scheduledTimerWithTimeInterval:60 target:self selector:@selector(getCurrentStatus:) userInfo:nil repeats:YES] retain];
-	
+
 	//Initial polling - find out of status of current device
-	ret = [self getCurrentStatus:nil];	
-    
-	/* Allow recoginition of device, BB for example is kind of slow in startup ;-) 
+	ret = [self getCurrentStatus:nil];
+
+	/* Allow recoginition of device, BB for example is kind of slow in startup ;-)
 	 * Value determined by experimenting:
 	 * *20000 is causing timeouts
 	 * *1000 causes WiiBalanceBoard not be be detected
-	 */ 
+	 */
 	usleep (10000);
-	 
+
 	/* Moved initial intitalization after device recognising scheme, as Balanance Board dieds while polling the IRSensor
-	 * Find a more clever way to detect we are actually talking to the Wii Device 
+	 * Find a more clever way to detect we are actually talking to the Wii Device
 	*/
 
-	
+
 	if ((ret == kIOReturnSuccess) && [self available]) {
 		disconnectNotification = [_wiiDevice registerForDisconnectNotification:self selector:@selector(disconnected:fromDevice:)];
 		_opened = YES;
@@ -194,7 +194,7 @@ typedef enum {
 }
 
 - (IOReturn) sendCommand:(const unsigned char *) data length:(size_t) length
-{		
+{
 	unsigned char buf[40];
 	memset (buf, 0, 40);
 
@@ -202,8 +202,8 @@ typedef enum {
 	memcpy (buf+1, data, length);
 	if (buf[1] == 0x16) length = 23;
 	else				length++;
-	
-#ifdef DEBUG	
+
+#ifdef DEBUG
 	if (_dump) {
 		int i;
 		printf ("channel:%i - send%3u:", [_cchan getPSM], (unsigned int)length);
@@ -212,17 +212,17 @@ typedef enum {
 		}
 		printf("\n");
 	}
-#endif	
+#endif
 
 	IOReturn ret = kIOReturnSuccess;
-	
+
 	int i;
 	// cam: i think there is no need to do the loop many times in order to see there is an error
 	// if there's an error it must be managed right away
 	for (i=0; i<10 ; i++) {
-		ret = [_cchan writeSync:buf length:length];		
+		ret = [_cchan writeSync:buf length:length];
 		if (ret != kIOReturnSuccess) {
-			NSLogDebug(@"Write Error for command 0x%x:", buf[1], ret);		
+			NSLogDebug(@"Write Error for command 0x%x:", buf[1], ret);
 			LogIOReturn (ret);
 //			[self closeConnection];
 			usleep (10000);
@@ -253,7 +253,7 @@ typedef enum {
 	}
 
 	// this variable indicate a desire, and should be updated regardless of the sucess of sending the command
-	_isMotionSensorEnabled = enabled;	
+	_isMotionSensorEnabled = enabled;
 
 	[self updateReportMode];
 }
@@ -274,20 +274,21 @@ typedef enum {
 	if (enabled2)	cmd[1] |= 0x20;
 	if (enabled3)	cmd[1] |= 0x40;
 	if (enabled4)	cmd[1] |= 0x80;
-	
+
 	_isLED1Illuminated = enabled1;
 	_isLED2Illuminated = enabled2;
 	_isLED3Illuminated = enabled3;
 	_isLED4Illuminated = enabled4;
-	
-	IOReturn ret = [self sendCommand:cmd length:2];
-	LogIOReturn (ret);
+
+	//IOReturn ret =
+	[self sendCommand:cmd length:2];
+	//LogIOReturn (ret);
 }
 
 - (void) updateReportMode
 {
 	_shouldUpdateReportMode = YES;
-	
+
 	if (!_cchan)
 		[self closeConnection];
 }
@@ -302,19 +303,19 @@ typedef enum {
 	NSLogDebug (@"Updating Report Mode");
 	// Set the report type the Wiimote should send.
 	unsigned char cmd[] = {0x12, 0x02, 0x30}; // Just buttons.
-	
+
 	/*
 		There are numerous status report types that can be requested.
 		The IR reports must be matched with the data format set when initializing the IR camera:
 			0x36, 0x37	- 10 IR bytes go with Basic mode
 			0x33		- 12 IR bytes go with Extended mode
 			0x3e/0x3f	- 36 IR bytes go with Full mode
-		
+
 		The Nunchuk and Classic controller use 6 bytes to report their state, so the reports that
 		give more extension bytes don't provide any more info.
-		
+
 				Buttons		|	Accelerometer	|	IR		|	Extension
-		--------------------+-------------------+-----------+-------------		
+		--------------------+-------------------+-----------+-------------
 		0x30: Core Buttons	|					|			|
 		0x31: Core Buttons	|	Accelerometer	|			|
 		0x32: Core Buttons	|					|			|	 8 bytes
@@ -325,50 +326,50 @@ typedef enum {
 		0x37: Core Buttons	|	Accelerometer	| 10 bytes	|	 6 bytes
 		?? 0x38: Core Buttons and Accelerometer with 16 IR bytes ??
 		0x3d:				|					|			|	21 bytes
-		
+
 		0x3e / 0x3f: Interleaved Core Buttons and Accelerometer with 16/36 IR bytes
-		
+
 	*/
-		
+
 	if (_isIRSensorEnabled) {
 		cmd[2] = _isExpansionPortEnabled ? 0x36 : 0x33;	// Buttons, 10 IR Bytes, 9 Extension Bytes
 		wiiIRMode = _isExpansionPortEnabled ? kWiiIRModeBasic : kWiiIRModeExtended;
-		
+
 		// Set IR Mode
 		NSLogDebug (@"Setting IR Mode to finish initialization.");
-		// I don't think it should be here ...		
+		// I don't think it should be here ...
 		[self writeData:(darr){ wiiIRMode } at:0x04B00033 length:1];
 		usleep(10000);
 	} else {
-		cmd[2] = _isExpansionPortEnabled ? 0x34 : 0x30;	// Buttons, 19 Extension Bytes	 
+		cmd[2] = _isExpansionPortEnabled ? 0x34 : 0x30;	// Buttons, 19 Extension Bytes
 	}
-	
+
 	if (_isVibrationEnabled)
 		cmd[1] |= 0x01;
 
 	if (_isMotionSensorEnabled)
 		cmd[2] |= 0x01;	// Add Accelerometer
-	
+
 	usleep(10000);
 	return [self sendCommand:cmd length:3];
 
 } // updateReportMode
 
 - (void) setExpansionPortEnabled:(BOOL) enabled
-{	
+{
 	IOReturn ret = kIOReturnSuccess;
-	
+
 	if (enabled)
 		NSLogDebug (@"Enabling expansion port.");
 	else
-		NSLogDebug (@"Disabling expansion port.");	
+		NSLogDebug (@"Disabling expansion port.");
 
 	if (_isExpansionPortAttached) {
-		_isExpansionPortEnabled = enabled;		
+		_isExpansionPortEnabled = enabled;
 		// get expansion device calibration data
 		_shouldReadExpansionCalibration = YES;
 		/* Calibration of WiiRemote takes up only 16 bytes, BalanceBoard however uses 32 bytes
-		 * http://wiibrew.org/wiki/Wii_Balance_Board#Calibration_Data as second set of bytes on WiiRemote 
+		 * http://wiibrew.org/wiki/Wii_Balance_Board#Calibration_Data as second set of bytes on WiiRemote
 		 * are zero http://wiibrew.org/wiki/Wiimote#Extension_Controller no harm of fetching the full 32 bytes :-)
 		 */
 		NSLogDebug (@"Requesting expansion calibration data");
@@ -383,7 +384,7 @@ typedef enum {
 - (void) setIRSensorEnabled:(BOOL) enabled
 {
 	_isIRSensorEnabled = enabled;
-		
+
 	// ir enable 1
 	IOReturn ret = kIOReturnSuccess;
 	unsigned char cmd[] = {0x13, 0x00};
@@ -392,7 +393,7 @@ typedef enum {
 	ret = [self sendCommand:cmd length:2];
 	LogIOReturn (ret);
 	usleep(10000);
-	
+
 	// set register 0x1a (ir enable 2)
 	unsigned char cmd2[] = {0x1a, 0x00};
 	if (_isIRSensorEnabled)	cmd2[1] |= 0x04;
@@ -402,7 +403,7 @@ typedef enum {
 
 	if (_isIRSensorEnabled) {
 		NSLogDebug (@"Enabling IR Sensor");
-		
+
 		// based on marcan's method, found on wiili wiki:
 		// tweaked to include some aspects of cliff's setup procedure in the hopes
 		// of it actually turning on 100% of the time (was seeing 30-40% failure rate before)
@@ -412,22 +413,22 @@ typedef enum {
 		ret = [self writeData:(darr){0x01} at:0x04B00030 length:1];
 		LogIOReturn (ret);
 		usleep(10000);
-		
+
 		// set sensitivity block 1
 		ret = [self writeData:(darr){0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x90, 0x00, 0xC0} at:0x04B00000 length:9];
 		LogIOReturn (ret);
 		usleep(10000);
-		
+
 		// set sensitivity block 2
 		ret = [self writeData:(darr){0x40, 0x00} at:0x04B0001A length:2];
 		LogIOReturn (ret);
 		usleep(10000);
-				
+
 		// finish initializing camera
 		ret = [self writeData:(darr){0x08} at:0x04B00030 length:1];
 		LogIOReturn (ret);
 		usleep(10000);
-		
+
 		if (ret != kIOReturnSuccess) {
 			NSLogDebug (@"Set IR Enabled failed, closing connection");
 //			[self closeConnection];
@@ -435,7 +436,7 @@ typedef enum {
 			return;
 		}
 	}
-	
+
 	[self updateReportMode];
 }
 
@@ -458,10 +459,10 @@ typedef enum {
 	cmd[2] = (address >> 16) & 0xFF;
 	cmd[3] = (address >>  8) & 0xFF;
 	cmd[4] = (address >>  0) & 0xFF;
-	
+
 	// data length
 	cmd[5] = length;
-	
+
 	// and of course the vibration flag, as usual
 	if (_isVibrationEnabled)
 		cmd[1] |= 0x01;
@@ -471,23 +472,23 @@ typedef enum {
 
 
 - (IOReturn) readData:(unsigned long) address length:(unsigned short) length
-{	
+{
 	unsigned char cmd[7];
 	unsigned long addr = address;
 	unsigned short len = length;
-	
+
 	cmd[0] = 0x17; // read memory
-	
+
 	// address
 	cmd[1] = (addr >> 24) & 0xFF;  // bit 2 being set indicates read from control registers, 0 indicates EEPROM Memory
 	cmd[2] = (addr >> 16) & 0xFF;
 	cmd[3] = (addr >>  8) & 0xFF;
 	cmd[4] = (addr >>  0) & 0xFF;
-	
+
 	// Number of bytes to read
 	cmd[5] = (len >> 8) & 0xFF;
 	cmd[6] = (len >> 0) & 0xFF;
-	
+
 	if (_isVibrationEnabled)
 		cmd[1] |= 0x01;
 
@@ -510,7 +511,7 @@ typedef enum {
 	ret = [_cchan closeChannel];
 	_cchan = nil;
 	LogIOReturn (ret);
-	
+
 	[_ichan setDelegate:nil];
 	ret = [_ichan closeChannel];
 	_ichan = nil;
@@ -524,7 +525,7 @@ typedef enum {
 	[statusTimer invalidate];
 	[statusTimer release];
 	statusTimer = nil;
-	
+
 	return ret;
 }
 
@@ -533,19 +534,19 @@ typedef enum {
 	if (_shouldSetInitialConfiguration) {
 		if (expType != WiiBalanceBoard) {
 			NSLogDebug(@"Setting default wiimote values");
-				
+
 			IOReturn ret = [self readData:0x0020 length:7]; // Get Accelerometer calibration data
-				
+
 			if (ret == kIOReturnSuccess) {
 				[self setMotionSensorEnabled:YES];
 				[self setIRSensorEnabled:NO];
 				[self setForceFeedbackEnabled:NO];
-				[self setLEDEnabled1:YES enabled2:NO enabled3:NO enabled4:NO];
+				//[self setLEDEnabled1:YES enabled2:NO enabled3:NO enabled4:NO];
 				[self updateReportMode];
 				//ret = [self doUpdateReportMode];
 			}
 		}
-		
+
 		_shouldSetInitialConfiguration = NO;
 	}
 }
@@ -556,13 +557,13 @@ typedef enum {
 	NSLogDebug (@"Write data response: %00x %00x %00x %00x", dp[2], dp[3], dp[4], dp[5]);
 }
 
-	/** Also see: http://wiibrew.org/wiki/Wiimote#Reading_and_Writing 
+	/** Also see: http://wiibrew.org/wiki/Wiimote#Reading_and_Writing
 	 * Handle report 0x21 (Read Data) from wiimote.
 	 * dp[0] = Bluetooth header
 	 * dp[1] = (0x21) Report/Channel ID
 	 * dp[2] = Wiimote Buttons
 	 * dp[3] = Wiimote Buttons
-	 * dp[4] = High 4 bits = payload size; Low 4 bits = Error flag (0 = all good)	 
+	 * dp[4] = High 4 bits = payload size; Low 4 bits = Error flag (0 = all good)
 	 * dp[5] = Offset of memory read
 	 * dp[6] = Offset of memory read
 	 * dp[7+] = the Data.
@@ -572,7 +573,7 @@ typedef enum {
 	/**
 	if (dp[1] == 0x21){
 		int i;
-		
+
 		printf ("ack%3d:", dataLength);
 		for(i=0 ; i<dataLength ; i++) {
 			printf(" %02X", dp[i]);
@@ -582,9 +583,9 @@ typedef enum {
 
 	unsigned short addr = (dp[5] * 256) + dp[6];
 	NSLogDebug (@"handleRAMData (0x21) addr=0x%x", addr);
-	
+
 	//mii data
-	if ((dataLength >= 20) && (addr >= WIIMOTE_MII_DATA_BEGIN_ADDR) && (addr <= WIIMOTE_MII_CHECKSUM1_ADDR)) { 
+	if ((dataLength >= 20) && (addr >= WIIMOTE_MII_DATA_BEGIN_ADDR) && (addr <= WIIMOTE_MII_CHECKSUM1_ADDR)) {
 		if ([_delegate respondsToSelector:@selector (gotMiidata:at:)]) {
 			int slot = MII_SLOT(addr);
 			int len = dataLength - 7;
@@ -592,13 +593,13 @@ typedef enum {
 			mii_data_offset += len;
 			if (mii_data_offset >= WIIMOTE_MII_DATA_BYTES_PER_SLOT)
 				[_delegate gotMiiData: (Mii *)mii_data_buf at: slot];
-		}		
+		}
 	}
 
 	// specify attached expasion device
 	if (addr == 0x00F0) {
 		NSLogDebug (@"Expansion device connected.");
-		
+
 		switch (WII_DECRYPT(dp[21])) {
 			case 0x00:
 				NSLogDebug (@"Nunchuk connected.");
@@ -611,7 +612,7 @@ typedef enum {
 				NSLogDebug (@"Classic controller connected.");
 				if (expType != WiiClassicController) {
 					expType = WiiClassicController;
-					[[NSNotificationCenter defaultCenter] postNotificationName:WiiRemoteExpansionPortChangedNotification object:self];					
+					[[NSNotificationCenter defaultCenter] postNotificationName:WiiRemoteExpansionPortChangedNotification object:self];
 				}
 				break;
 			case 0x2a:
@@ -636,7 +637,7 @@ typedef enum {
 		[self setInitialConfiguration];
 		return;
 	}
-		
+
 	// wiimote calibration data
 	if (!_shouldReadExpansionCalibration && (addr == 0x0020)) {
 		NSLogDebug (@"Read Wii calibration");
@@ -649,8 +650,8 @@ typedef enum {
 		wiiCalibData.accZ_1g = dp[13] << 1;
 		return;
 	}
-	
-	// expansion device calibration data.		
+
+	// expansion device calibration data.
 	if (_shouldReadExpansionCalibration && (addr == 0x0020)) {
 		if (expType == WiiNunchuk) {
 			NSLogDebug (@"Read nunchuk calibration");
@@ -658,19 +659,19 @@ typedef enum {
 			nunchukCalibData.accX_zero =  WII_DECRYPT(dp[7]);
 			nunchukCalibData.accY_zero =  WII_DECRYPT(dp[8]);
 			nunchukCalibData.accZ_zero =  WII_DECRYPT(dp[9]);
-			
+
 			nunchukCalibData.accX_1g =  WII_DECRYPT(dp[11]);
 			nunchukCalibData.accY_1g =  WII_DECRYPT(dp[12]);
 			nunchukCalibData.accZ_1g =  WII_DECRYPT(dp[13]);
-			
+
 			nunchukJoyStickCalibData.x_max =  WII_DECRYPT(dp[15]);
 			nunchukJoyStickCalibData.x_min =  WII_DECRYPT(dp[16]);
 			nunchukJoyStickCalibData.x_center =  WII_DECRYPT(dp[17]);
-			
+
 			nunchukJoyStickCalibData.y_max =  WII_DECRYPT(dp[18]);
 			nunchukJoyStickCalibData.y_min =  WII_DECRYPT(dp[19]);
-			nunchukJoyStickCalibData.y_center =  WII_DECRYPT(dp[20]);	
-			
+			nunchukJoyStickCalibData.y_center =  WII_DECRYPT(dp[20]);
+
 			_shouldReadExpansionCalibration = NO;
 			return;
 		} else if (expType == WiiBalanceBoard) {
@@ -685,7 +686,7 @@ typedef enum {
 			balanceBoardCalibData.kg0.bl = BIT_2x8_16(dp[17], dp[18]);
 			balanceBoardCalibData.kg17.tr = BIT_2x8_16(dp[19], dp[20]);
 			balanceBoardCalibData.kg17.br = BIT_2x8_16(dp[21], dp[22]);
-			
+
 			/* Not yet fully configured, so keep the _shouldReadExpansionCalibration set */
 			return;
 		} else if (expType == WiiClassicController) {
@@ -695,18 +696,18 @@ typedef enum {
 		if (expType == WiiBalanceBoard) {
 			balanceBoardCalibData.kg17.tl = BIT_2x8_16(dp[7], dp[8]);
 			balanceBoardCalibData.kg17.bl = BIT_2x8_16(dp[9], dp[10]);
-			
+
 			balanceBoardCalibData.kg34.tr = BIT_2x8_16(dp[11], dp[12]);
 			balanceBoardCalibData.kg34.br = BIT_2x8_16(dp[13], dp[14]);
 			balanceBoardCalibData.kg34.tl = BIT_2x8_16(dp[15], dp[16]);
 			balanceBoardCalibData.kg34.bl = BIT_2x8_16(dp[17], dp[18]);
 			/* Usage of last 4 values also unkown */
-			
+
 			PRINT_BB_GRID(balanceBoardCalibData.kg0, (float)0);
 			PRINT_BB_GRID(balanceBoardCalibData.kg17, (float)17);
 			PRINT_BB_GRID(balanceBoardCalibData.kg34, (float)34);
-			
-			/* All data read, as 0x0020 data is presented to us already */ 
+
+			/* All data read, as 0x0020 data is presented to us already */
 			_shouldReadExpansionCalibration = NO;
 		}
 	} // expansion device calibration data
@@ -727,16 +728,16 @@ typedef enum {
 		if ([_delegate respondsToSelector:@selector (batteryLevelChanged:)])
 			[_delegate batteryLevelChanged:_batteryLevel];
 	}
-		
+
 	if (_batteryLevel < _warningBatteryLevel)
 		[[NSNotificationCenter defaultCenter] postNotificationName:@"WiiRemoteBatteryLowNotification" object:self];
-		
+
 	IOReturn ret = kIOReturnSuccess;
 	if (dp[4] & 0x02) { //some device attached to Wiimote
 		NSLogDebug (@"Expantion device Attached");
 		if (!_isExpansionPortAttached) {
 			/* Initialize the device, reason unknown see for example
-			 * http://www.wiili.org/index.php/Wiimote/Extension_Controllers/Nunchuk#Communication 
+			 * http://www.wiili.org/index.php/Wiimote/Extension_Controllers/Nunchuk#Communication
 			 */
 			ret = [self writeData:(darr){0x00} at:(unsigned long)0x04A40040 length:1];
 			usleep (10000);
@@ -750,14 +751,14 @@ typedef enum {
 			/* Purpose unkown, but only succesfull when controller attached */
 			IOReturn ret = [self readData:0x04A400F0 length:16]; // read expansion device type
 			LogIOReturn (ret);
-			
+
 			_isExpansionPortAttached = (ret == kIOReturnSuccess);
-			
+
 			if (ret == kIOReturnSuccess) {
 				NSLogDebug (@"Expansion Device initialized");
 			} else
 				NSLogDebug (@"Failed to initialize Expansion Device");
-			
+
 			return;
 		}
 	} else { // unplugged
@@ -769,7 +770,7 @@ typedef enum {
 			[[NSNotificationCenter defaultCenter] postNotificationName:WiiRemoteExpansionPortChangedNotification object:self];
 		}
 	}
-	
+
 	[self setInitialConfiguration];
 
 	_isLED1Illuminated = (dp[4] & 0x10);
@@ -801,7 +802,7 @@ typedef enum {
 - (void) handleExtensionData:(unsigned char *) dp length:(size_t) dataLength
 {
 	unsigned char startByte;
-		
+
 	switch (dp[1]) {
 		case 0x34 :
 			startByte = 4;
@@ -819,7 +820,7 @@ typedef enum {
 			NSLogDebug (@"Unsupported Report mode for extension data.");
 			return; // This shouldn't ever happen.
 	}
-	
+
 	switch (expType) {
 		case WiiNunchuk:
 			nStickX		= WII_DECRYPT(dp[startByte +0]);
@@ -830,64 +831,64 @@ typedef enum {
 			nButtonData	= WII_DECRYPT(dp[startByte +5]);
 
 			[self sendWiiNunchukButtonEvent:nButtonData];
-			
+
 			if ([_delegate respondsToSelector:@selector (accelerationChanged:accX:accY:accZ:)])
 				[_delegate accelerationChanged:WiiNunchukAccelerationSensor accX:nAccX accY:nAccY accZ:nAccZ];
-				
+
 			if ([_delegate respondsToSelector:@selector (joyStickChanged:tiltX:tiltY:)])
 				[_delegate joyStickChanged:WiiNunchukJoyStick tiltX:nStickX tiltY:nStickY];
-			
+
 			break;
-			
+
 		case WiiClassicController:
 			cButtonData = (unsigned short)((WII_DECRYPT(dp[startByte+4]) << 8) + WII_DECRYPT(dp[startByte+5]));
 
 			cStickX1 = WII_DECRYPT(dp[startByte +0]) & 0x3F;
 			cStickY1 = WII_DECRYPT(dp[startByte +1]) & 0x3F;
-			
+
 			cStickX2 =
 				(((WII_DECRYPT(dp[startByte +0]) & 0xC0) >> 3) |
 				 ((WII_DECRYPT(dp[startByte +1]) & 0xC0) >> 5) |
 				 ((WII_DECRYPT(dp[startByte +2]) & 0x80) >> 7)) & 0x1F;
 			cStickY2 = WII_DECRYPT(dp[startByte +2]) & 0x1F;
-			
+
 			cAnalogL =
 				(((WII_DECRYPT(dp[startByte +2]) & 0x60) >> 2) |
 				 ((WII_DECRYPT(dp[startByte +3]) & 0xE0) >> 5)) & 0x1F;
 			cAnalogR =  WII_DECRYPT(dp[startByte +3]) & 0x1F;
-			
+
 			[self sendWiiClassicControllerButtonEvent:cButtonData];
 			if ([_delegate respondsToSelector:@selector (joyStickChanged:tiltX:tiltY:)]) {
 				[_delegate joyStickChanged:WiiClassicControllerLeftJoyStick tiltX:cStickX1 tiltY:cStickY1];
 				[_delegate joyStickChanged:WiiClassicControllerRightJoyStick tiltX:cStickX2 tiltY:cStickY2];
 			}
-				
+
 			if ([_delegate respondsToSelector:@selector (analogButtonChanged:amount:)]) {
 				[_delegate analogButtonChanged:WiiClassicControllerLButton amount:cAnalogL];
 				[_delegate analogButtonChanged:WiiClassicControllerRButton amount:cAnalogR];
-			}			
+			}
 
 			break;
 		case WiiBalanceBoard:
 			/* http://www.wiili.org/index.php/Wii_Balance_Board_PC_Drivers
-			 * 34 00 00 AA AA BB BB CC CC DD DD? ? ? ? EE.. 
+			 * 34 00 00 AA AA BB BB CC CC DD DD? ? ? ? EE..
 			 * AA AA right-top (L)
-             * BB BB right-bottom (S) 
+             * BB BB right-bottom (S)
              * CC CC left-top (S)
 			 * DD DD left-bottom (L)
              *
 			 *  (AA AA... are BigEndian)
              *
-		     * It seems that some value is also in EE, but the usage is unclear. There are four sensors. 
+		     * It seems that some value is also in EE, but the usage is unclear. There are four sensors.
 			 * It seems that they are placed at each of the 4 feet of the balance board itself.
              *
              *  +--------------------+
-			 *	| C0C1 (S)  A0A1 (L) | bPressureTL | bPressureTR // b(alance board) Pressure (sensor) [T(top)|B(bottom)][L(eft)|R(ight)] 
+			 *	| C0C1 (S)  A0A1 (L) | bPressureTL | bPressureTR // b(alance board) Pressure (sensor) [T(top)|B(bottom)][L(eft)|R(ight)]
 			 *	| D0D1 (L)  B0B1 (S) | bPressureBL | bPressureBR
 			 *	|        POWER       |
 			 *	+--------------------+
 			 */
-			
+
 			bPressure.tr = BIT_2x8_16(dp[startByte +0], dp[startByte +1]);
 			bPressure.br = BIT_2x8_16(dp[startByte +2], dp[startByte +3]);
 			bPressure.tl = BIT_2x8_16(dp[startByte +4], dp[startByte +5]);
@@ -907,23 +908,26 @@ typedef enum {
 			if ([_delegate respondsToSelector:@selector (allPressureChanged:bbData:bbDataInKg:)])
 				[_delegate allPressureChanged:WiiBalanceBoardPressureSensor bbData:bPressure bbDataInKg:bKg];
 			break;
+		default:
+		  // ignore
+      break;
 	}
 } // handleExtensionData
 
 - (void) handleIRData:(unsigned char *) dp length:(size_t) dataLength
 {
-	
+
 	/* Set all IR data to array, based on input format */
-//	NSLog(@"Handling IR Data for 0x%00x", dp[1]);	
+//	NSLog(@"Handling IR Data for 0x%00x", dp[1]);
 	int i = 0;
 	if (dp[1] == 0x33) { // 12 IR bytes
 		int startByte = 0;
-		for(i=0 ; i < 4 ; i++) { 
+		for(i=0 ; i < 4 ; i++) {
 			startByte = 7 + 3 * i;
 			irData[i].x = (dp[startByte +0] | ((dp[startByte +2] & 0x30) << 4)) & 0x3FF;
 			irData[i].y = (dp[startByte +1] | ((dp[startByte +2] & 0xC0) << 2)) & 0x3FF;
 			irData[i].s =  dp[startByte +2] & 0x0F;
-		} 	
+		}
  	} else { // 10 IR bytes
 		int shift = (dp[1] == 0x36) ? 4 : 7;
 		int startByte = 0;
@@ -961,7 +965,7 @@ typedef enum {
 			}
 		}
 	}
-	
+
 //	NSLogDebug (@"p1=%i ; p2=%i", p1, p2);
 
 	double ox, oy;
@@ -979,9 +983,9 @@ typedef enum {
 
 			leftPoint = l;
 		}
-		
+
 		int r = 1-l;
-		
+
 		/* Calculate space between point L,R  */
 		double dx = irData[r].x - irData[l].x;
 		double dy = irData[r].y - irData[l].y;
@@ -995,7 +999,7 @@ typedef enum {
 		/* RvdZ: What is happening over here? */
 		double cx = (irData[l].x + irData[r].x)/kWiiIRPixelsWidth - 1;
 		double cy = (irData[l].y + irData[r].y)/kWiiIRPixelsHeight - 1;
-		
+
 		/* RvdZ: What is happening over here? */
 		ox = -dy*cy-dx*cx;
 		oy = -dx*cy+dy*cx;
@@ -1006,11 +1010,11 @@ typedef enum {
 		// space on the image sensor to travel without one of the points going off the image.
 		// note: it is working very well ...
 		double gain = 4;
-		if (d < (0.75 * kWiiIRPixelsHeight)) 
+		if (d < (0.75 * kWiiIRPixelsHeight))
 			gain = 1 / (1 - d/kWiiIRPixelsHeight);
-		
+
 		ox *= gain;
-		oy *= gain;		
+		oy *= gain;
 //		NSLog(@"x:%5.2f;  y: %5.2f;  angle: %5.1f\n", ox, oy, angle*180/M_PI);
 	} else {
 		ox = oy = -100;
@@ -1019,13 +1023,13 @@ typedef enum {
 			leftPoint = -1;
 		}
 	}
-	
+
 	if ([_delegate respondsToSelector:@selector (irPointMovedX:Y:)])
 		[_delegate irPointMovedX:ox Y:oy];
 
 	if ([_delegate respondsToSelector:@selector (rawIRData:)])
 		[_delegate rawIRData:irData];
-	
+
 } // handleIRData
 
 - (void) handleButtonReport:(unsigned char *) dp length:(size_t) dataLength
@@ -1033,8 +1037,8 @@ typedef enum {
 	// wiimote buttons
 	buttonData = ((short)dp[2] << 8) + dp[3];
 	[self sendWiiRemoteButtonEvent:buttonData];
-				
-	// report contains extension data		
+
+	// report contains extension data
 	switch (dp[1]) {
 		case 0x34:
 		case 0x35:
@@ -1043,17 +1047,17 @@ typedef enum {
 			[self handleExtensionData:dp length:dataLength];
 			break;
 	}
-	
+
 	/* Balance Board does not have any motion or IR sensors */
 	if (expType == WiiBalanceBoard) {
 		return;
 	}
-	
+
 	// report contains IR data
 	if (dp[1] & 0x02) {
 		[self handleIRData: dp length: dataLength];
 	} // report contains IR data
-	
+
 	// report contains motion sensor data
 	if (dp[1] & 0x01) {
 		// cam: added 9th bit of resolution to the wii acceleration
@@ -1062,18 +1066,18 @@ typedef enum {
 		accX = (dp[4] << 1) | (buttonData & 0x0040) >> 6;
 		accY = (dp[5] << 1) | (buttonData & 0x2000) >> 13;
 		accZ = (dp[6] << 1) | (buttonData & 0x4000) >> 14;
-		
+
 		[_delegate accelerationChanged:WiiRemoteAccelerationSensor accX:accX accY:accY accZ:accZ];
-		
+
 		_lowZ = _lowZ * 0.9 + accZ * 0.1;
 		_lowX = _lowX * 0.9 + accX * 0.1;
-		
+
 		float absx = fabsf (_lowX - WIR_HALFRANGE);
 		float absz = fabsf (_lowZ - WIR_HALFRANGE);
-		
+
 		if (orientation == 0 || orientation == 2) absx -= WIR_INTERVAL;
 		if (orientation == 1 || orientation == 3) absz -= WIR_INTERVAL;
-		
+
 		if (absz >= absx) {
 			if (absz > WIR_INTERVAL)
 				orientation = (_lowZ > WIR_HALFRANGE) ? 0 : 2;
@@ -1108,7 +1112,7 @@ typedef enum {
 			[_delegate buttonChanged:WiiRemoteOneButton isPressed:buttonState[WiiRemoteOneButton]];
 		}
 	}
-	
+
 	if (data & kWiiRemoteAButton){
 		if (!buttonState[WiiRemoteAButton]){
 			buttonState[WiiRemoteAButton] = YES;
@@ -1120,7 +1124,7 @@ typedef enum {
 			[_delegate buttonChanged:WiiRemoteAButton isPressed:buttonState[WiiRemoteAButton]];
 		}
 	}
-	
+
 	if (data & kWiiRemoteBButton){
 		if (!buttonState[WiiRemoteBButton]){
 			buttonState[WiiRemoteBButton] = YES;
@@ -1132,7 +1136,7 @@ typedef enum {
 			[_delegate buttonChanged:WiiRemoteBButton isPressed:buttonState[WiiRemoteBButton]];
 		}
 	}
-	
+
 	if (data & kWiiRemoteMinusButton){
 		if (!buttonState[WiiRemoteMinusButton]){
 			buttonState[WiiRemoteMinusButton] = YES;
@@ -1144,7 +1148,7 @@ typedef enum {
 			[_delegate buttonChanged:WiiRemoteMinusButton isPressed:buttonState[WiiRemoteMinusButton]];
 		}
 	}
-	
+
 	if (data & kWiiRemoteHomeButton){
 		if (!buttonState[WiiRemoteHomeButton]){
 			buttonState[WiiRemoteHomeButton] = YES;
@@ -1156,7 +1160,7 @@ typedef enum {
 			[_delegate buttonChanged:WiiRemoteHomeButton isPressed:buttonState[WiiRemoteHomeButton]];
 		}
 	}
-	
+
 	if (data & kWiiRemotePlusButton){
 		if (!buttonState[WiiRemotePlusButton]){
 			buttonState[WiiRemotePlusButton] = YES;
@@ -1168,7 +1172,7 @@ typedef enum {
 			[_delegate buttonChanged:WiiRemotePlusButton isPressed:buttonState[WiiRemotePlusButton]];
 		}
 	}
-	
+
 	if (data & kWiiRemoteUpButton){
 		if (!buttonState[WiiRemoteUpButton]){
 			buttonState[WiiRemoteUpButton] = YES;
@@ -1180,7 +1184,7 @@ typedef enum {
 			[_delegate buttonChanged:WiiRemoteUpButton isPressed:buttonState[WiiRemoteUpButton]];
 		}
 	}
-	
+
 	if (data & kWiiRemoteDownButton){
 		if (!buttonState[WiiRemoteDownButton]){
 			buttonState[WiiRemoteDownButton] = YES;
@@ -1204,8 +1208,8 @@ typedef enum {
 			[_delegate buttonChanged:WiiRemoteLeftButton isPressed:buttonState[WiiRemoteLeftButton]];
 		}
 	}
-	
-	
+
+
 	if (data & kWiiRemoteRightButton){
 		if (!buttonState[WiiRemoteRightButton]){
 			buttonState[WiiRemoteRightButton] = YES;
@@ -1231,7 +1235,7 @@ typedef enum {
 			[_delegate buttonChanged:WiiNunchukCButton isPressed:buttonState[WiiNunchukCButton]];
 		}
 	}
-	
+
 	if (!(data & kWiiNunchukZButton)){
 
 		if (!buttonState[WiiNunchukZButton]){
@@ -1248,7 +1252,7 @@ typedef enum {
 
 - (void)sendWiiClassicControllerButtonEvent:(UInt16)data{
 	if (!(data & kWiiClassicControllerXButton)){
-		
+
 		if (!buttonState[WiiClassicControllerXButton]){
 			buttonState[WiiClassicControllerXButton] = YES;
 			[_delegate buttonChanged:WiiClassicControllerXButton isPressed:buttonState[WiiClassicControllerXButton]];
@@ -1257,12 +1261,12 @@ typedef enum {
 		if (buttonState[WiiClassicControllerXButton]){
 			buttonState[WiiClassicControllerXButton] = NO;
 			[_delegate buttonChanged:WiiClassicControllerXButton isPressed:buttonState[WiiClassicControllerXButton]];
-			
+
 		}
 	}
 
 	if (!(data & kWiiClassicControllerYButton)){
-		
+
 		if (!buttonState[WiiClassicControllerYButton]){
 			buttonState[WiiClassicControllerYButton] = YES;
 			[_delegate buttonChanged:WiiClassicControllerYButton isPressed:buttonState[WiiClassicControllerYButton]];
@@ -1271,12 +1275,12 @@ typedef enum {
 		if (buttonState[WiiClassicControllerYButton]){
 			buttonState[WiiClassicControllerYButton] = NO;
 			[_delegate buttonChanged:WiiClassicControllerYButton isPressed:buttonState[WiiClassicControllerYButton]];
-			
+
 		}
 	}
-	
+
 	if (!(data & kWiiClassicControllerAButton)){
-		
+
 		if (!buttonState[WiiClassicControllerAButton]){
 			buttonState[WiiClassicControllerAButton] = YES;
 			[_delegate buttonChanged:WiiClassicControllerAButton isPressed:buttonState[WiiClassicControllerAButton]];
@@ -1285,12 +1289,12 @@ typedef enum {
 		if (buttonState[WiiClassicControllerAButton]){
 			buttonState[WiiClassicControllerAButton] = NO;
 			[_delegate buttonChanged:WiiClassicControllerAButton isPressed:buttonState[WiiClassicControllerAButton]];
-			
+
 		}
 	}
-	
+
 	if (!(data & kWiiClassicControllerBButton)){
-		
+
 		if (!buttonState[WiiClassicControllerBButton]){
 			buttonState[WiiClassicControllerBButton] = YES;
 			[_delegate buttonChanged:WiiClassicControllerBButton isPressed:buttonState[WiiClassicControllerBButton]];
@@ -1299,12 +1303,12 @@ typedef enum {
 		if (buttonState[WiiClassicControllerBButton]){
 			buttonState[WiiClassicControllerBButton] = NO;
 			[_delegate buttonChanged:WiiClassicControllerBButton isPressed:buttonState[WiiClassicControllerBButton]];
-			
+
 		}
 	}
-	
+
 	if (!(data & kWiiClassicControllerLButton)){
-		
+
 		if (!buttonState[WiiClassicControllerLButton]){
 			buttonState[WiiClassicControllerLButton] = YES;
 			[_delegate buttonChanged:WiiClassicControllerLButton isPressed:buttonState[WiiClassicControllerLButton]];
@@ -1313,12 +1317,12 @@ typedef enum {
 		if (buttonState[WiiClassicControllerLButton]){
 			buttonState[WiiClassicControllerLButton] = NO;
 			[_delegate buttonChanged:WiiClassicControllerLButton isPressed:buttonState[WiiClassicControllerLButton]];
-			
+
 		}
 	}
-	
+
 	if (!(data & kWiiClassicControllerRButton)){
-		
+
 		if (!buttonState[WiiClassicControllerRButton]){
 			buttonState[WiiClassicControllerRButton] = YES;
 			[_delegate buttonChanged:WiiClassicControllerRButton isPressed:buttonState[WiiClassicControllerRButton]];
@@ -1327,12 +1331,12 @@ typedef enum {
 		if (buttonState[WiiClassicControllerRButton]){
 			buttonState[WiiClassicControllerRButton] = NO;
 			[_delegate buttonChanged:WiiClassicControllerRButton isPressed:buttonState[WiiClassicControllerRButton]];
-			
+
 		}
 	}
-	
+
 	if (!(data & kWiiClassicControllerZLButton)){
-		
+
 		if (!buttonState[WiiClassicControllerZLButton]){
 			buttonState[WiiClassicControllerZLButton] = YES;
 			[_delegate buttonChanged:WiiClassicControllerZLButton isPressed:buttonState[WiiClassicControllerZLButton]];
@@ -1341,12 +1345,12 @@ typedef enum {
 		if (buttonState[WiiClassicControllerZLButton]){
 			buttonState[WiiClassicControllerZLButton] = NO;
 			[_delegate buttonChanged:WiiClassicControllerZLButton isPressed:buttonState[WiiClassicControllerZLButton]];
-			
+
 		}
 	}
-	
+
 	if (!(data & kWiiClassicControllerZRButton)){
-		
+
 		if (!buttonState[WiiClassicControllerZRButton]){
 			buttonState[WiiClassicControllerZRButton] = YES;
 			[_delegate buttonChanged:WiiClassicControllerZRButton isPressed:buttonState[WiiClassicControllerZRButton]];
@@ -1355,13 +1359,13 @@ typedef enum {
 		if (buttonState[WiiClassicControllerZRButton]){
 			buttonState[WiiClassicControllerZRButton] = NO;
 			[_delegate buttonChanged:WiiClassicControllerZRButton isPressed:buttonState[WiiClassicControllerZRButton]];
-			
+
 		}
 	}
-	
-	
+
+
 	if (!(data & kWiiClassicControllerUpButton)){
-		
+
 		if (!buttonState[WiiClassicControllerUpButton]){
 			buttonState[WiiClassicControllerUpButton] = YES;
 			[_delegate buttonChanged:WiiClassicControllerUpButton isPressed:buttonState[WiiClassicControllerUpButton]];
@@ -1370,13 +1374,13 @@ typedef enum {
 		if (buttonState[WiiClassicControllerUpButton]){
 			buttonState[WiiClassicControllerUpButton] = NO;
 			[_delegate buttonChanged:WiiClassicControllerUpButton isPressed:buttonState[WiiClassicControllerUpButton]];
-			
+
 		}
 	}
-	
-	
+
+
 	if (!(data & kWiiClassicControllerDownButton)){
-		
+
 		if (!buttonState[WiiClassicControllerDownButton]){
 			buttonState[WiiClassicControllerDownButton] = YES;
 			[_delegate buttonChanged:WiiClassicControllerDownButton isPressed:buttonState[WiiClassicControllerDownButton]];
@@ -1385,12 +1389,12 @@ typedef enum {
 		if (buttonState[WiiClassicControllerDownButton]){
 			buttonState[WiiClassicControllerDownButton] = NO;
 			[_delegate buttonChanged:WiiClassicControllerDownButton isPressed:buttonState[WiiClassicControllerDownButton]];
-			
+
 		}
 	}
-	
+
 	if (!(data & kWiiClassicControllerLeftButton)){
-		
+
 		if (!buttonState[WiiClassicControllerLeftButton]){
 			buttonState[WiiClassicControllerLeftButton] = YES;
 			[_delegate buttonChanged:WiiClassicControllerLeftButton isPressed:buttonState[WiiClassicControllerLeftButton]];
@@ -1399,12 +1403,12 @@ typedef enum {
 		if (buttonState[WiiClassicControllerLeftButton]){
 			buttonState[WiiClassicControllerLeftButton] = NO;
 			[_delegate buttonChanged:WiiClassicControllerLeftButton isPressed:buttonState[WiiClassicControllerLeftButton]];
-			
+
 		}
 	}
-	
+
 	if (!(data & kWiiClassicControllerRightButton)){
-		
+
 		if (!buttonState[WiiClassicControllerRightButton]){
 			buttonState[WiiClassicControllerRightButton] = YES;
 			[_delegate buttonChanged:WiiClassicControllerRightButton isPressed:buttonState[WiiClassicControllerRightButton]];
@@ -1413,12 +1417,12 @@ typedef enum {
 		if (buttonState[WiiClassicControllerRightButton]){
 			buttonState[WiiClassicControllerRightButton] = NO;
 			[_delegate buttonChanged:WiiClassicControllerRightButton isPressed:buttonState[WiiClassicControllerRightButton]];
-			
+
 		}
 	}
-	
+
 	if (!(data & kWiiClassicControllerMinusButton)){
-		
+
 		if (!buttonState[WiiClassicControllerMinusButton]){
 			buttonState[WiiClassicControllerMinusButton] = YES;
 			[_delegate buttonChanged:WiiClassicControllerMinusButton isPressed:buttonState[WiiClassicControllerMinusButton]];
@@ -1427,12 +1431,12 @@ typedef enum {
 		if (buttonState[WiiClassicControllerMinusButton]){
 			buttonState[WiiClassicControllerMinusButton] = NO;
 			[_delegate buttonChanged:WiiClassicControllerMinusButton isPressed:buttonState[WiiClassicControllerMinusButton]];
-			
+
 		}
 	}
-	
+
 	if (!(data & kWiiClassicControllerHomeButton)){
-		
+
 		if (!buttonState[WiiClassicControllerHomeButton]){
 			buttonState[WiiClassicControllerHomeButton] = YES;
 			[_delegate buttonChanged:WiiClassicControllerHomeButton isPressed:buttonState[WiiClassicControllerHomeButton]];
@@ -1441,12 +1445,12 @@ typedef enum {
 		if (buttonState[WiiClassicControllerHomeButton]){
 			buttonState[WiiClassicControllerHomeButton] = NO;
 			[_delegate buttonChanged:WiiClassicControllerHomeButton isPressed:buttonState[WiiClassicControllerHomeButton]];
-			
+
 		}
 	}
-	
+
 	if (!(data & kWiiClassicControllerPlusButton)){
-		
+
 		if (!buttonState[WiiClassicControllerPlusButton]){
 			buttonState[WiiClassicControllerPlusButton] = YES;
 			[_delegate buttonChanged:WiiClassicControllerPlusButton isPressed:buttonState[WiiClassicControllerPlusButton]];
@@ -1455,7 +1459,7 @@ typedef enum {
 		if (buttonState[WiiClassicControllerPlusButton]){
 			buttonState[WiiClassicControllerPlusButton] = NO;
 			[_delegate buttonChanged:WiiClassicControllerPlusButton isPressed:buttonState[WiiClassicControllerPlusButton]];
-			
+
 		}
 	}
 }
@@ -1472,7 +1476,7 @@ typedef enum {
 	IOReturn ret = [self sendCommand:cmd length:2];
 	if (ret != kIOReturnSuccess)
 		NSLogDebug (@"getCurrentStatus: failed.");
-	
+
 	return ret;
 }
 
@@ -1544,13 +1548,13 @@ typedef enum {
 
 	if (l2capChannel == _ichan)
 		_ichan = nil;
-	
+
 	[self closeConnection];
-} 
+}
 
 // thanks to Ian!
 - (void) l2capChannelData:(IOBluetoothL2CAPChannel*) l2capChannel data:(void *) dataPointer length:(size_t) dataLength
-{	
+{
 	if (!([self available] && _opened)) {
 //		[self closeConnection];
 		return;
@@ -1558,7 +1562,7 @@ typedef enum {
 
 	unsigned char * dp = (unsigned char *) dataPointer;
 
-#ifdef DEBUG	
+#ifdef DEBUG
 	if (_dump) {
 		int i;
 		printf ("channel:%i - ack%3u:", [l2capChannel getPSM], (unsigned int)dataLength);
@@ -1571,7 +1575,7 @@ typedef enum {
 
 	if ([_delegate respondsToSelector:@selector (wiimoteWillSendData)])
 		[_delegate wiimoteWillSendData];
-	
+
 	// controller status (expansion port and battery level data) - received when report 0x15 sent to Wiimote (getCurrentStatus:) or status of expansion port changes.
 	if (dp[1] == 0x20 && dataLength >= 8) {
 		[self handleStatusReport:dp length:dataLength];
@@ -1584,7 +1588,7 @@ typedef enum {
 		// report contains button info
 		[self handleButtonReport:dp length:dataLength];
 	}
-	
+
 	if ([_delegate respondsToSelector:@selector (wiimoteDidSendData)])
 		[_delegate wiimoteDidSendData];
 
@@ -1592,7 +1596,7 @@ typedef enum {
 	if (ret != kIOReturnSuccess) {
 		_shouldUpdateReportMode = YES;
 		[self doUpdateReportMode];
-		
+
 		if (ret != kIOReturnSuccess) {
 			NSLogDebug (@"Can't update report mode after two retries, bailing out.");
 			[self closeConnection];
@@ -1614,7 +1618,7 @@ typedef enum {
 {
 	IOBluetoothL2CAPChannel * channel = nil;
 	IOReturn ret = kIOReturnSuccess;
-	
+
 	NSLogDebug(@"Open channel (PSM:%i) ...", psm);
 	if ((ret = [_wiiDevice openL2CAPChannelSync:&channel withPSM:psm delegate:delegate]) != kIOReturnSuccess) {
 //	if ((ret = [_wiiDevice openL2CAPChannel:psm findExisting:NO newChannel:&channel]) != kIOReturnSuccess) {
@@ -1623,7 +1627,7 @@ typedef enum {
 		channel = nil;
 		[self closeConnection];
 	}
-	
+
 	return channel;
 }
 

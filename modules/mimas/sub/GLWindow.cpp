@@ -68,7 +68,7 @@ static int GLWindow__tostring(lua_State *L) {
 
 
 /** void mimas::GLWindow::__newindex(lua_State *L)
- * include/mimas/GLWindow.h:148
+ * include/mimas/GLWindow.h:147
  */
 static int GLWindow___newindex(lua_State *L) {
   try {
@@ -86,7 +86,7 @@ static int GLWindow___newindex(lua_State *L) {
 
 
 /** void mimas::GLWindow::activateWindow(lua_State *L)
- * include/mimas/GLWindow.h:134
+ * include/mimas/GLWindow.h:133
  */
 static int GLWindow_activateWindow(lua_State *L) {
   try {
@@ -104,7 +104,7 @@ static int GLWindow_activateWindow(lua_State *L) {
 
 
 /** bool mimas::GLWindow::close()
- * include/mimas/GLWindow.h:120
+ * include/mimas/GLWindow.h:119
  */
 static int GLWindow_close(lua_State *L) {
   try {
@@ -122,7 +122,7 @@ static int GLWindow_close(lua_State *L) {
 
 
 /** QString mimas::GLWindow::cssClass() const 
- * include/mimas/GLWindow.h:81
+ * include/mimas/GLWindow.h:80
  */
 static int GLWindow_cssClass(lua_State *L) {
   try {
@@ -140,7 +140,7 @@ static int GLWindow_cssClass(lua_State *L) {
 
 
 /** bool mimas::GLWindow::isVisible() const 
- * include/mimas/GLWindow.h:124
+ * include/mimas/GLWindow.h:123
  */
 static int GLWindow_isVisible(lua_State *L) {
   try {
@@ -158,7 +158,7 @@ static int GLWindow_isVisible(lua_State *L) {
 
 
 /** void mimas::GLWindow::move(int x, int y)
- * include/mimas/GLWindow.h:106
+ * include/mimas/GLWindow.h:105
  */
 static int GLWindow_move(lua_State *L) {
   try {
@@ -177,7 +177,7 @@ static int GLWindow_move(lua_State *L) {
 
 
 /** LuaStackSize mimas::GLWindow::name(lua_State *L)
- * include/mimas/GLWindow.h:95
+ * include/mimas/GLWindow.h:94
  */
 static int GLWindow_name(lua_State *L) {
   try {
@@ -195,7 +195,7 @@ static int GLWindow_name(lua_State *L) {
 
 
 /** QObject* mimas::GLWindow::object()
- * include/mimas/GLWindow.h:89
+ * include/mimas/GLWindow.h:88
  */
 static int GLWindow_object(lua_State *L) {
   try {
@@ -213,7 +213,7 @@ static int GLWindow_object(lua_State *L) {
 
 
 /** void mimas::GLWindow::resize(int w, int h, lua_State *L)
- * include/mimas/GLWindow.h:111
+ * include/mimas/GLWindow.h:110
  */
 static int GLWindow_resize(lua_State *L) {
   try {
@@ -233,7 +233,7 @@ static int GLWindow_resize(lua_State *L) {
 
 
 /** void mimas::GLWindow::setName(const char *name)
- * include/mimas/GLWindow.h:102
+ * include/mimas/GLWindow.h:101
  */
 static int GLWindow_setName(lua_State *L) {
   try {
@@ -251,7 +251,7 @@ static int GLWindow_setName(lua_State *L) {
 
 
 /** void mimas::GLWindow::show(lua_State *L)
- * include/mimas/GLWindow.h:129
+ * include/mimas/GLWindow.h:128
  */
 static int GLWindow_show(lua_State *L) {
   try {
@@ -269,7 +269,7 @@ static int GLWindow_show(lua_State *L) {
 
 
 /** void mimas::GLWindow::updateGL(lua_State *L)
- * include/mimas/GLWindow.h:140
+ * include/mimas/GLWindow.h:139
  */
 static int GLWindow_updateGL(lua_State *L) {
   try {
@@ -287,7 +287,7 @@ static int GLWindow_updateGL(lua_State *L) {
 
 
 /** QWidget* mimas::GLWindow::widget()
- * include/mimas/GLWindow.h:85
+ * include/mimas/GLWindow.h:84
  */
 static int GLWindow_widget(lua_State *L) {
   try {

@@ -61,7 +61,7 @@ static int Remote__tostring(lua_State *L) {
 
 
 /** void wii::Remote::__newindex(lua_State *L)
- * include/wii/Remote.h:68
+ * include/wii/Remote.h:70
  */
 static int Remote___newindex(lua_State *L) {
   try {
@@ -78,7 +78,7 @@ static int Remote___newindex(lua_State *L) {
 
 
 /** void wii::Remote::connected()
- * include/wii/Remote.h:142
+ * include/wii/Remote.h:144
  */
 static int Remote_connected(lua_State *L) {
   try {
@@ -89,6 +89,22 @@ static int Remote_connected(lua_State *L) {
     return luaL_error(L, "wii.Remote.connected: %s", e.what());
   } catch (...) {
     return luaL_error(L, "wii.Remote.connected: Unknown exception");
+  }
+}
+
+
+/** void wii::Remote::disconnect()
+ * include/wii/Remote.h:65
+ */
+static int Remote_disconnect(lua_State *L) {
+  try {
+    Remote *self__ = *((Remote**)luaL_checkudata(L, 1, "wii.Remote"));
+    self__->disconnect();
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "wii.Remote.disconnect: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "wii.Remote.disconnect: Unknown exception");
   }
 }
 
@@ -111,7 +127,7 @@ static int Remote_name(lua_State *L) {
 
 
 /** void wii::Remote::set_leds(bool led1, bool led2, bool led3, bool led4)
- * include/wii/Remote.h:92
+ * include/wii/Remote.h:94
  */
 static int Remote_set_leds(lua_State *L) {
   try {
@@ -137,6 +153,7 @@ static int Remote_set_leds(lua_State *L) {
 static const struct luaL_Reg Remote_member_methods[] = {
   {"__newindex"        , Remote___newindex},
   {"connected"         , Remote_connected},
+  {"disconnect"        , Remote_disconnect},
   {"name"              , Remote_name},
   {"set_leds"          , Remote_set_leds},
   {"__tostring"        , Remote__tostring},

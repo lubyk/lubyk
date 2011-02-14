@@ -47,7 +47,9 @@ public:
     : lubyk::LuaCallback(worker),
       timer_(this, interval) {}
 
-  ~Timer() {}
+  ~Timer() {
+    stop();
+  }
 
   void stop() {
     timer_.stop();

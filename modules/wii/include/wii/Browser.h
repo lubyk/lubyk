@@ -39,17 +39,23 @@ namespace wii {
 /** Browse for Wii Remotes.
  *
  * @dub lib_name:'Browser_core'
- *      ignore: 'found'
+ *      ignore: 'found,need_more,find_more'
  */
 class Browser : public LuaCallback
 {
   class Implementation;
   Implementation *impl_;
   friend class Implementation;
+  size_t need_count_;
+  bool need_more_;
 public:
   Browser(lubyk::Worker *worker);
 
   ~Browser();
+
+  /** Should be called each time we need to connect to a new remote.
+   */
+  void find();
 
   /** Set a callback function.
    *
@@ -83,6 +89,8 @@ public:
     }
 
     ScopedLock lock(worker_);
+    need_count_--;
+    need_more_ = (need_count_ > 0);
 
     push_lua_callback(false);
 
@@ -102,6 +110,16 @@ public:
       return *((wii::Remote **)luaL_checkudata(L, -1, "wii.Remote"));
     }
   }
+
+  /** @internal.
+   */
+  bool need_more() {
+    return need_more_;
+  }
+
+  /** @internal
+   */
+  void find_more();
 };
 } // wii
 

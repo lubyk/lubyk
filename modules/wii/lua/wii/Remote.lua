@@ -17,16 +17,12 @@ local unconnected_remotes = {}
 local connected_remotes = {}
 function wii.Remote(name)
   local instance = nil
-  if name then
-    if connected_remotes[name] then
-      instance = connected_remotes[name]
-      connected_remotes[name] = nil
-    else
-      instance = constr(worker, name)
-    end
+  if connected_remotes[name] then
+    instance = connected_remotes[name]
+    connected_remotes[name] = nil
   elseif connected_remotes[1] then
     instance = connected_remotes[1]
-    table.remove(connected_remotes)
+    table.remove(connected_remotes, 1)
   else
     instance = constr(worker)
     if name then
@@ -34,6 +30,7 @@ function wii.Remote(name)
     else
       table.insert(unconnected_remotes, instance)
     end
+    wii.Browser:find()
   end
   return instance
 end
@@ -44,7 +41,7 @@ function wii.Browser.found(name)
     unconnected_remotes[name] = nil
   elseif unconnected_remotes[1] then
     instance = unconnected_remotes[1]
-    table.remove(unconnected_remotes)
+    table.remove(unconnected_remotes, 1)
   else
     instance = constr(worker, name)
     if name then

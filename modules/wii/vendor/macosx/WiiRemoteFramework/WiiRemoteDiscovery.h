@@ -7,14 +7,14 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import <IOBluetooth/objc/IOBluetoothDeviceInquiry.h> 
+#import <IOBluetooth/objc/IOBluetoothDeviceInquiry.h>
 #import "WiiRemote.h"
 
 
 @interface WiiRemoteDiscovery : NSObject {
 	IOBluetoothDeviceInquiry * _inquiry;
 	BOOL _isDiscovering;
-	
+
 	id _delegate;
 }
 
@@ -40,5 +40,5 @@
 - (void) willStartWiimoteConnections;
 - (void) WiiRemoteDiscovered:(WiiRemote*)wiimote;
 - (void) WiiRemoteDiscoveryError:(int)code;
-
+- (void) WiiRemoteStopped;
 @end;

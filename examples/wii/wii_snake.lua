@@ -373,7 +373,7 @@ for wiimote_id=1,2 do
     if on then
       if btn == 'Remote.H' then
         app:quit()
-      elseif btn == 'Remote.A' then
+      elseif btn == 'Remote.+' then
         reset()
       else
         -- differenciate between remote 1 and remote 2

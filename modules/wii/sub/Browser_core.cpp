@@ -9,7 +9,7 @@ using namespace wii;
 /* ============================ Constructors     ====================== */
 
 /** wii::Browser::Browser(lubyk::Worker *worker)
- * include/wii/Browser.h:50
+ * include/wii/Browser.h:52
  */
 static int Browser_Browser(lua_State *L) {
   try {
@@ -54,7 +54,7 @@ static int Browser__tostring(lua_State *L) {
 
 
 /** void wii::Browser::__newindex(lua_State *L)
- * include/wii/Browser.h:57
+ * include/wii/Browser.h:63
  */
 static int Browser___newindex(lua_State *L) {
   try {
@@ -70,12 +70,29 @@ static int Browser___newindex(lua_State *L) {
 }
 
 
+/** void wii::Browser::find()
+ * include/wii/Browser.h:58
+ */
+static int Browser_find(lua_State *L) {
+  try {
+    Browser *self__ = *((Browser**)luaL_checkudata(L, 1, "wii.Browser"));
+    self__->find();
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "wii.Browser.find: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "wii.Browser.find: Unknown exception");
+  }
+}
+
+
 
 
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg Browser_member_methods[] = {
   {"__newindex"        , Browser___newindex},
+  {"find"              , Browser_find},
   {"__tostring"        , Browser__tostring},
   {"__gc"              , Browser_destructor},
   {NULL, NULL},
