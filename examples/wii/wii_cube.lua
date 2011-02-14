@@ -178,12 +178,15 @@ function wiimote.button(btn, on)
         print("Stop recording and start playback.")
         stream:rec_stop()
         stream:play()
+        wiimote:set_leds(false, false, false, true)
       elseif stream.playing then
         print("Playback stop.")
         stream:stop()
+        wiimote:set_leds(true, false, false, false)
       else
         print("Started recording...")
         stream:rec_start()
+        wiimote:set_leds(false, true, true, false)
       end
     elseif not stream.playing then
       stream:rec{b=btn}

@@ -333,6 +333,7 @@ public:
   }
 
   ~Implementation() {
+    ScopedPool pool;
     [discovery_ stop];
   	[discovery_ release];
     [wii_discovery_delegate_ release];
@@ -340,6 +341,7 @@ public:
 
   // called each time we need more wiimotes
   void find() {
+    ScopedPool pool;
     // TODO: Mutex?
     if (![discovery_ isDiscovering]) {
       IOReturn ret = [discovery_ start];
