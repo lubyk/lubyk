@@ -182,6 +182,8 @@ extern "C" int luaopen_wii_Remote_core(lua_State *L) {
 
   // register member methods
   luaL_register(L, NULL, Remote_member_methods);
+  // save meta-table in wii.Remote_
+  register_mt(L, "wii", "Remote");
 
   // register class methods in a global namespace table
   luaL_register(L, "wii", Remote_namespace_methods);

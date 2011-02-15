@@ -40,12 +40,12 @@ using namespace lubyk;
 
 namespace mimas {
 
-/** GLWindow.
+/** GLWidget.
  *
  * @dub destructor: 'dub_destroy'
  *      ignore: 'initializeGL,paintGL,resizeGL,keyboard'
  */
-class GLWindow : public QGLWidget, public DeletableOutOfLua
+class GLWidget : public QGLWidget, public DeletableOutOfLua
 {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
@@ -60,7 +60,7 @@ class GLWindow : public QGLWidget, public DeletableOutOfLua
    */
   lubyk::Worker *worker_;
 public:
-  GLWindow(lubyk::Worker *worker)
+  GLWidget(lubyk::Worker *worker)
    : initializeGL_(worker),
      resizeGL_(worker),
      paintGL_(worker),
@@ -71,7 +71,7 @@ public:
     setFocusPolicy(Qt::StrongFocus);
   }
 
-  ~GLWindow() {
+  ~GLWidget() {
     MIMAS_DEBUG_GC
   }
 

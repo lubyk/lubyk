@@ -385,6 +385,8 @@ extern "C" int luaopen_zmq_Socket_core(lua_State *L) {
 
   // register member methods
   luaL_register(L, NULL, Socket_member_methods);
+  // save meta-table in zmq.Socket_
+  register_mt(L, "zmq", "Socket");
 
   // register class methods in a global namespace table
   luaL_register(L, "zmq", Socket_namespace_methods);

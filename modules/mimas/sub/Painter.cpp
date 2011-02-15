@@ -283,6 +283,8 @@ extern "C" int luaopen_mimas_Painter(lua_State *L) {
 
   // register member methods
   luaL_register(L, NULL, Painter_member_methods);
+  // save meta-table in mimas.Painter_
+  register_mt(L, "mimas", "Painter");
 
   // register class methods in a global namespace table
   luaL_register(L, "mimas", Painter_namespace_methods);

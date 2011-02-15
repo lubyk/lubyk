@@ -357,6 +357,8 @@ extern "C" int luaopen_mimas_Label_core(lua_State *L) {
 
   // register member methods
   luaL_register(L, NULL, Label_member_methods);
+  // save meta-table in mimas.Label_
+  register_mt(L, "mimas", "Label");
 
   // register class methods in a global namespace table
   luaL_register(L, "mimas", Label_namespace_methods);

@@ -27,7 +27,7 @@
   ==============================================================================
 */
 
-#include "mimas/Window.h"
+#include "mimas/Widget.h"
 #include "mimas/Label.h"
 #include "mimas/Slider.h"
 #include "mimas/Painter.h"
@@ -39,10 +39,10 @@
 namespace mimas {
 
 // =============================================
-// ==             Window                      ==
+// ==             Widget                      ==
 // =============================================
 
-void Window::paintEvent(QPaintEvent *event) {
+void Widget::paintEvent(QPaintEvent *event) {
   // has to be on the heap
   Painter *p = new Painter(this);
   if (!parent()) {
@@ -54,33 +54,13 @@ void Window::paintEvent(QPaintEvent *event) {
   QWidget::paintEvent(event);
 }
 
-void Window::paint(Painter &p) {
-  lua_State *L = paint_clbk_.lua_;
-  if (!L) return;
-
-  ScopedLock lock(worker_);
-
-  paint_clbk_.push_lua_callback(false);
-
-  // Deletable out of Lua
-  lua_pushclass2<Painter>(L, &p, "mimas.Painter");
-  lua_pushnumber(L, width());
-  lua_pushnumber(L, height());
-
-  // <func> <Painter> <width> <height>
-  int status = lua_pcall(L, 3, 0, 0);
-
-  if (status) {
-    fprintf(stderr, "Error in 'paint' callback: %s\n", lua_tostring(L, -1));
-  }
-}
 // =============================================
 // ==             Label                       ==
 // =============================================
 void Label::paintEvent(QPaintEvent *event) {
   if (hue_ != -1) {
-    int hue = (hue_ < 0 || hue_ >= 360) ? 0 : hue_;
-    setStyleSheet(QString(".%1 { color:hsv(%2, 255, 255) }").arg(cssClass()).arg(hue));
+    int hue = (hue_ < 0 || hue_ >= 1.0) ? 0 : hue_;
+    setStyleSheet(QString(".%1 { color:hsv(%2, 255, 255) }").arg(cssClass()).arg(hue * 360));
   }
   QLabel::paintEvent(event);
 }

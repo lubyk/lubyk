@@ -285,6 +285,8 @@ extern "C" int luaopen_mimas_Pen(lua_State *L) {
 
   // register member methods
   luaL_register(L, NULL, Pen_member_methods);
+  // save meta-table in mimas.Pen_
+  register_mt(L, "mimas", "Pen");
 
   // register class methods in a global namespace table
   luaL_register(L, "mimas", Pen_namespace_methods);

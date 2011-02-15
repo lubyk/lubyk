@@ -44,6 +44,9 @@ class Color : public QColor
 public:
   Color() {}
 
+  /** Create a color from a given hue, saturation, value and alpha.
+   * All values are in the range 0..1
+   */
   Color(float h, float s=1.0, float v=1.0, float a=1.0) {
     setHsvF(h, s, v, a);
   }

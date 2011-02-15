@@ -26,7 +26,7 @@ static int Color_Color1(lua_State *L) {
 
 
 /** mimas::Color::Color(float h, float s=1.0, float v=1.0, float a=1.0)
- * include/mimas/Color.h:47
+ * include/mimas/Color.h:50
  */
 static int Color_Color2(lua_State *L) {
   try {
@@ -104,7 +104,7 @@ static int Color__tostring(lua_State *L) {
 
 
 /** void mimas::Color::setHsva(float h, float s, float v, float a)
- * include/mimas/Color.h:59
+ * include/mimas/Color.h:62
  */
 static int Color_setHsva(lua_State *L) {
   try {
@@ -124,7 +124,7 @@ static int Color_setHsva(lua_State *L) {
 
 
 /** void mimas::Color::setRgba(float r, float g, float b, float a=1.0)
- * include/mimas/Color.h:55
+ * include/mimas/Color.h:58
  */
 static int Color_setRgba(lua_State *L) {
   try {
@@ -181,6 +181,8 @@ extern "C" int luaopen_mimas_Color(lua_State *L) {
 
   // register member methods
   luaL_register(L, NULL, Color_member_methods);
+  // save meta-table in mimas.Color_
+  register_mt(L, "mimas", "Color");
 
   // register class methods in a global namespace table
   luaL_register(L, "mimas", Color_namespace_methods);

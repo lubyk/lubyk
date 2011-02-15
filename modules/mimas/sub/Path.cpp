@@ -165,6 +165,8 @@ extern "C" int luaopen_mimas_Path(lua_State *L) {
 
   // register member methods
   luaL_register(L, NULL, Path_member_methods);
+  // save meta-table in mimas.Path_
+  register_mt(L, "mimas", "Path");
 
   // register class methods in a global namespace table
   luaL_register(L, "mimas", Path_namespace_methods);

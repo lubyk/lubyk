@@ -154,6 +154,8 @@ extern "C" int luaopen_lubyk_Worker(lua_State *L) {
 
   // register member methods
   luaL_register(L, NULL, Worker_member_methods);
+  // save meta-table in lubyk.Worker_
+  register_mt(L, "lubyk", "Worker");
 
   // register class methods in a global namespace table
   luaL_register(L, "lubyk", Worker_namespace_methods);

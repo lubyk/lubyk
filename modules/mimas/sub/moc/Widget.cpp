@@ -1,15 +1,15 @@
 /****************************************************************************
-** Meta object code from reading C++ file 'Window.h'
+** Meta object code from reading C++ file 'Widget.h'
 **
-** Created: Tue Feb 15 13:32:19 2011
+** Created: Tue Feb 15 23:41:52 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.1)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
-#include "../../include/mimas/Window.h"
+#include "../../include/mimas/Widget.h"
 #if !defined(Q_MOC_OUTPUT_REVISION)
-#error "The header file 'Window.h' doesn't include <QObject>."
+#error "The header file 'Widget.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 62
 #error "This file was generated using the moc from 4.7.1. It"
 #error "cannot be used with the include files from this version of Qt."
@@ -17,7 +17,7 @@
 #endif
 
 QT_BEGIN_MOC_NAMESPACE
-static const uint qt_meta_data_mimas__Window[] = {
+static const uint qt_meta_data_mimas__Widget[] = {
 
  // content:
        5,       // revision
@@ -37,35 +37,35 @@ static const uint qt_meta_data_mimas__Window[] = {
        0        // eod
 };
 
-static const char qt_meta_stringdata_mimas__Window[] = {
-    "mimas::Window\0QString\0class\0float\0hue\0"
+static const char qt_meta_stringdata_mimas__Widget[] = {
+    "mimas::Widget\0QString\0class\0float\0hue\0"
 };
 
-const QMetaObject mimas::Window::staticMetaObject = {
-    { &QWidget::staticMetaObject, qt_meta_stringdata_mimas__Window,
-      qt_meta_data_mimas__Window, 0 }
+const QMetaObject mimas::Widget::staticMetaObject = {
+    { &QWidget::staticMetaObject, qt_meta_stringdata_mimas__Widget,
+      qt_meta_data_mimas__Widget, 0 }
 };
 
 #ifdef Q_NO_DATA_RELOCATION
-const QMetaObject &mimas::Window::getStaticMetaObject() { return staticMetaObject; }
+const QMetaObject &mimas::Widget::getStaticMetaObject() { return staticMetaObject; }
 #endif //Q_NO_DATA_RELOCATION
 
-const QMetaObject *mimas::Window::metaObject() const
+const QMetaObject *mimas::Widget::metaObject() const
 {
     return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
 }
 
-void *mimas::Window::qt_metacast(const char *_clname)
+void *mimas::Widget::qt_metacast(const char *_clname)
 {
     if (!_clname) return 0;
-    if (!strcmp(_clname, qt_meta_stringdata_mimas__Window))
-        return static_cast<void*>(const_cast< Window*>(this));
+    if (!strcmp(_clname, qt_meta_stringdata_mimas__Widget))
+        return static_cast<void*>(const_cast< Widget*>(this));
     if (!strcmp(_clname, "DeletableOutOfLua"))
-        return static_cast< DeletableOutOfLua*>(const_cast< Window*>(this));
+        return static_cast< DeletableOutOfLua*>(const_cast< Widget*>(this));
     return QWidget::qt_metacast(_clname);
 }
 
-int mimas::Window::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+int mimas::Widget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
     _id = QWidget::qt_metacall(_c, _id, _a);
     if (_id < 0)

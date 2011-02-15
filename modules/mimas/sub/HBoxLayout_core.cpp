@@ -189,6 +189,8 @@ extern "C" int luaopen_mimas_HBoxLayout_core(lua_State *L) {
 
   // register member methods
   luaL_register(L, NULL, HBoxLayout_member_methods);
+  // save meta-table in mimas.HBoxLayout_
+  register_mt(L, "mimas", "HBoxLayout");
 
   // register class methods in a global namespace table
   luaL_register(L, "mimas", HBoxLayout_namespace_methods);

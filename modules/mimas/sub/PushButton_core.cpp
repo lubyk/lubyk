@@ -357,6 +357,8 @@ extern "C" int luaopen_mimas_PushButton_core(lua_State *L) {
 
   // register member methods
   luaL_register(L, NULL, PushButton_member_methods);
+  // save meta-table in mimas.PushButton_
+  register_mt(L, "mimas", "PushButton");
 
   // register class methods in a global namespace table
   luaL_register(L, "mimas", PushButton_namespace_methods);

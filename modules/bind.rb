@@ -49,7 +49,7 @@ modules = {
   'lubyk' => %w{Worker},
   'mdns'  => %w{Browser Registration},
   'mimas' => {
-    'class' => %w{Application Brush Callback Color GLWindow HBoxLayout Label Path Painter Pen PushButton Slider VBoxLayout Window},
+    'class' => %w{Application Brush Callback Color GLWidget HBoxLayout Label Path Painter Pen PushButton Slider VBoxLayout Widget},
     'const' => true,
   },
   'zmq'   => {

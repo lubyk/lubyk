@@ -125,7 +125,7 @@ function should.style_slider(t)
       self:setHue(-1)
       self:setValue(0.5)
     else
-      self:setHue(value * 360)
+      self:setHue(value)
       self:setValue(value)
     end
   end)

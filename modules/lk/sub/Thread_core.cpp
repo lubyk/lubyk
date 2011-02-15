@@ -171,6 +171,8 @@ extern "C" int luaopen_lk_Thread_core(lua_State *L) {
 
   // register member methods
   luaL_register(L, NULL, Thread_member_methods);
+  // save meta-table in lk.Thread_
+  register_mt(L, "lk", "Thread");
 
   // register class methods in a global namespace table
   luaL_register(L, "lk", Thread_namespace_methods);

@@ -34,17 +34,17 @@ const QEvent::Type mimas::Callback::EventType = static_cast<QEvent::Type>(QEvent
 
 
 void mimas::setHue(QPalette &palette, float hue) {
-  hue = (hue < 0 || hue >= 360) ? 0 : hue;
+  hue = (hue < 0 || hue >= 1.0) ? 0 : hue;
 
   //                              hue   sat   bri   alpha // FIXME: true == enabled?
   QColor border_color;
-  border_color.setHsvF( hue / 360.0f, 1.0f, 1.0f, true ? 1.0f : 0.3f);
+  border_color.setHsvF( hue, 1.0f, 1.0f, true ? 1.0f : 0.3f);
   QColor fill_color;
-  fill_color.setHsvF(   hue / 360.0f, 0.5f, 0.5f, true ? 1.0f : 0.3f);
+  fill_color.setHsvF(   hue, 0.5f, 0.5f, true ? 1.0f : 0.3f);
 
   //                   hue            sat   bri   alpha // FIXME: true == enabled?
   QColor text_color;
-  text_color.setHsvF( hue / 360.0f, 1.0f, 1.0f, true ? 1.0f : 0.3f);
+  text_color.setHsvF( hue, 1.0f, 1.0f, true ? 1.0f : 0.3f);
 
   // color = slider value (WindowText)
   // background = background (Window)
@@ -67,7 +67,7 @@ int luaload_mimas_Application_core(lua_State *L);
 int luaload_mimas_Brush(lua_State *L);
 int luaload_mimas_Callback_core(lua_State *L);
 int luaload_mimas_Color(lua_State *L);
-int luaload_mimas_GLWindow(lua_State *L);
+int luaload_mimas_GLWidget(lua_State *L);
 int luaload_mimas_HBoxLayout_core(lua_State *L);
 int luaload_mimas_Label_core(lua_State *L);
 int luaload_mimas_Path(lua_State *L);
@@ -76,7 +76,7 @@ int luaload_mimas_Pen(lua_State *L);
 int luaload_mimas_PushButton_core(lua_State *L);
 int luaload_mimas_Slider_core(lua_State *L);
 int luaload_mimas_VBoxLayout_core(lua_State *L);
-int luaload_mimas_Window(lua_State *L);
+int luaload_mimas_Widget(lua_State *L);
 int luaload_mimas_constants(lua_State *L);
 // ]]
 
@@ -95,7 +95,7 @@ extern "C" int luaopen_mimas_core(lua_State *L) {
   luaload_mimas_Brush(L);
   luaload_mimas_Callback_core(L);
   luaload_mimas_Color(L);
-  luaload_mimas_GLWindow(L);
+  luaload_mimas_GLWidget(L);
   luaload_mimas_HBoxLayout_core(L);
   luaload_mimas_Label_core(L);
   luaload_mimas_Path(L);
@@ -104,7 +104,7 @@ extern "C" int luaopen_mimas_core(lua_State *L) {
   luaload_mimas_PushButton_core(L);
   luaload_mimas_Slider_core(L);
   luaload_mimas_VBoxLayout_core(L);
-  luaload_mimas_Window(L);
+  luaload_mimas_Widget(L);
   luaload_mimas_constants(L);
   // ]]
 

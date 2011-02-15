@@ -166,6 +166,8 @@ extern "C" int luaopen_mimas_Brush(lua_State *L) {
 
   // register member methods
   luaL_register(L, NULL, Brush_member_methods);
+  // save meta-table in mimas.Brush_
+  register_mt(L, "mimas", "Brush");
 
   // register class methods in a global namespace table
   luaL_register(L, "mimas", Brush_namespace_methods);

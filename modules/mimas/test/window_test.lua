@@ -47,6 +47,27 @@ function should.use_custom_paint(t)
   end)
 end
 
+function should.set_resized_callback(t)
+  t.win = mimas.Window()
+  t.win:move(100, 170)
+  t.ok = false
+  function t.win.resized(w, h)
+    assert_equal(10, w)
+    assert_equal(20, h)
+    t.ok = true
+  end
+  t.win:resize(10, 20)
+  t.win:show()
+
+  t.thread = lk.Thread(function()
+    sleep(200)
+    t.win:close()
+    while not t.ok do
+      sleep(200)
+    end
+  end)
+end
+
 function should.accept_destroy_from_gui(t)
   t.win = mimas.Window()
   t.win:move(100, 170)
@@ -80,4 +101,8 @@ function should.accept_destroy_from_Lua()
   end)
 end
 
+function should.compute_text_size()
+  local win = mimas.Window()
+  assert_equal(4, win:textSize("Hello Lubyk!"))
+end
 test.all()

@@ -107,6 +107,8 @@ extern "C" int luaopen_mdns_Registration_core(lua_State *L) {
 
   // register member methods
   luaL_register(L, NULL, Registration_member_methods);
+  // save meta-table in mdns.Registration_
+  register_mt(L, "mdns", "Registration");
 
   // register class methods in a global namespace table
   luaL_register(L, "mdns", Registration_namespace_methods);

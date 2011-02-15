@@ -274,6 +274,8 @@ extern "C" int luaopen_dummy_Dummy_core(lua_State *L) {
 
   // register member methods
   luaL_register(L, NULL, Dummy_member_methods);
+  // save meta-table in dummy.Dummy_
+  register_mt(L, "dummy", "Dummy");
 
   // register class methods in a global namespace table
   luaL_register(L, "dummy", Dummy_namespace_methods);

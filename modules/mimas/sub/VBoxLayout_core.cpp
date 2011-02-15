@@ -189,6 +189,8 @@ extern "C" int luaopen_mimas_VBoxLayout_core(lua_State *L) {
 
   // register member methods
   luaL_register(L, NULL, VBoxLayout_member_methods);
+  // save meta-table in mimas.VBoxLayout_
+  register_mt(L, "mimas", "VBoxLayout");
 
   // register class methods in a global namespace table
   luaL_register(L, "mimas", VBoxLayout_namespace_methods);

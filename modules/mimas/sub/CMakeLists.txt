@@ -5,7 +5,7 @@
 # We manually load all modules from core.so
 add_definitions(-DDUB_LUA_NO_OPEN)
 
-file(GLOB SUB_MODULE_SOURCES *.cpp core/*.cpp core/${PLAT}/*.cpp)
+file(GLOB SUB_MODULE_SOURCES *.cpp core/*.cpp core/${PLAT}/*.cpp core/${PLAT}/*.mm)
 file(GLOB SUB_MODULE_HEADERS ../include/mimas/*.h)
 list(REMOVE_ITEM SUB_MODULE_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/../include/mimas/Brush.h)
 list(REMOVE_ITEM SUB_MODULE_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/../include/mimas/Color.h)
@@ -14,6 +14,7 @@ list(REMOVE_ITEM SUB_MODULE_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/../include/mimas
 list(REMOVE_ITEM SUB_MODULE_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/../include/mimas/Pen.h)
 list(REMOVE_ITEM SUB_MODULE_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/../include/mimas/Painter.h)
 list(REMOVE_ITEM SUB_MODULE_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/../include/mimas/Path.h)
+list(REMOVE_ITEM SUB_MODULE_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/../include/mimas/qt_config.h)
 list(REMOVE_ITEM SUB_MODULE_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/../include/mimas/range_widget.h)
 
 # ==============================================================================

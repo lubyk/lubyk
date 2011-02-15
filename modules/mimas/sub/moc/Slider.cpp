@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'Slider.h'
 **
-** Created: Tue Feb 8 20:41:11 2011
+** Created: Tue Feb 15 14:30:30 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.1)
 **
 ** WARNING! All changes made in this file will be lost!

@@ -119,6 +119,8 @@ extern "C" int luaopen_wii_Browser_core(lua_State *L) {
 
   // register member methods
   luaL_register(L, NULL, Browser_member_methods);
+  // save meta-table in wii.Browser_
+  register_mt(L, "wii", "Browser");
 
   // register class methods in a global namespace table
   luaL_register(L, "wii", Browser_namespace_methods);

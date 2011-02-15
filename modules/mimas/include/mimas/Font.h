@@ -26,52 +26,47 @@
 
   ==============================================================================
 */
+#ifndef LUBYK_INCLUDE_MIMAS_FONT_H_
+#define LUBYK_INCLUDE_MIMAS_FONT_H_
 
-#include "mimas/Widget.h"
-#include "mimas/Painter.h"
+#include "mimas/mimas.h"
+#include <QtGui/QFont>
+#include <QtGui/QFontMetrics>
+
+#include <iostream>
 
 namespace mimas {
 
-// Widget::paintEvent is in paint.cpp
+/** Pen used by Painter.
+ *
+ */
+class Path : public QPainterPath
+{
+public:
+  Path() {}
 
-void Widget::paint(Painter &p) {
-  lua_State *L = paint_clbk_.lua_;
-  if (!L) return;
-
-  ScopedLock lock(worker_);
-
-  paint_clbk_.push_lua_callback(false);
-
-  // Deletable out of Lua
-  lua_pushclass2<Painter>(L, &p, "mimas.Painter");
-  lua_pushnumber(L, width());
-  lua_pushnumber(L, height());
-
-  // <func> <Painter> <width> <height>
-  int status = lua_pcall(L, 3, 0, 0);
-
-  if (status) {
-    fprintf(stderr, "Error in 'paint' callback: %s\n", lua_tostring(L, -1));
+  ~Path() {
+    MIMAS_DEBUG_GC
   }
-}
 
-void Widget::resizeEvent(QResizeEvent *event) {
-  lua_State *L = resized_clbk_.lua_;
-  if (!L) return;
-
-  ScopedLock lock(worker_);
-
-  resized_clbk_.push_lua_callback(false);
-
-  lua_pushnumber(L, width());
-  lua_pushnumber(L, height());
-
-  // <func> <Painter> <width> <height>
-  int status = lua_pcall(L, 2, 0, 0);
-
-  if (status) {
-    fprintf(stderr, "Error in 'resized' callback: %s\n", lua_tostring(L, -1));
+  void moveTo(float x, float y) {
+    QPainterPath::moveTo(x, y);
   }
-}
+
+  /** Bezier curve from current point to endPoint with control points c1, c2.
+   */
+  void cubicTo(float c1X, float c1Y, float c2X, float c2Y, float endPointX, float endPointY) {
+    QPainterPath::cubicTo(c1X, c1Y, c2X, c2Y, endPointX, endPointY);
+  }
+
+  void addRect(float x, float y, float w, float h) {
+    QPainterPath::addRect(x, y, w, h);
+  }
+
+  void lineTo(float x, float y) {
+    QPainterPath::lineTo(x, y);
+  }
+};
 
 } // mimas
+#endif // LUBYK_INCLUDE_MIMAS_FONT_H_

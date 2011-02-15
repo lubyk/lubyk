@@ -425,6 +425,8 @@ extern "C" int luaopen_mimas_Slider_core(lua_State *L) {
 
   // register member methods
   luaL_register(L, NULL, Slider_member_methods);
+  // save meta-table in mimas.Slider_
+  register_mt(L, "mimas", "Slider");
 
   // register class methods in a global namespace table
   luaL_register(L, "mimas", Slider_namespace_methods);

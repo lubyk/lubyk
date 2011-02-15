@@ -75,7 +75,7 @@ function should.style_labels(t)
 
   t.lbl2 = mimas.Label("setHue")
   lay:addWidget(t.lbl2)
-  t.lbl2:setHue(210)
+  t.lbl2:setHue(210 / 360)
 
   t.lbl3 = mimas.Label("name = test_name")
   t.lbl3:setName("test_name")

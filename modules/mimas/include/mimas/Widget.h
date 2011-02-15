@@ -41,11 +41,11 @@ namespace mimas {
 
 class Painter;
 
-/** Window.
+/** The Widget is used to display custom elements or windows.
  *
  * @dub destructor: 'dub_destroy'
  */
-class Window : public QWidget, public DeletableOutOfLua
+class Widget : public QWidget, public DeletableOutOfLua
 {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
@@ -53,14 +53,16 @@ class Window : public QWidget, public DeletableOutOfLua
 
   Worker *worker_;
   LuaCallback paint_clbk_;
+  LuaCallback resized_clbk_;
 public:
-  Window(lubyk::Worker *worker) :
+  Widget(lubyk::Worker *worker) :
    worker_(worker),
-   paint_clbk_(worker) {
+   paint_clbk_(worker),
+   resized_clbk_(worker) {
     setAttribute(Qt::WA_DeleteOnClose);
   }
 
-  ~Window() {
+  ~Widget() {
     MIMAS_DEBUG_GC
   }
 
@@ -72,6 +74,12 @@ public:
 
   QWidget *widget() {
     return this;
+  }
+
+  void addWidget(QWidget *widget, float x=0, float y=0) {
+    widget->setParent(this);
+    widget->move(x, y);
+    widget->show();
   }
 
   QObject *object() {
@@ -96,6 +104,7 @@ public:
   }
 
   void resize(int w, int h) {
+    ScopedUnlock unlock(worker_);
     QWidget::resize(w, h);
   }
 
@@ -113,7 +122,21 @@ public:
   }
 
   void update() {
+    ScopedUnlock unlock(worker_);
     QWidget::update();
+  }
+
+  /** Get size of text with current widget font.
+   */
+  LuaStackSize textSize(const char *text, lua_State *L) {
+    lua_pushnumber(L, fontMetrics().width(text));
+    lua_pushnumber(L, fontMetrics().height());
+    return 2;
+  }
+
+  void setMinimumSize(float w, float h) {
+    ScopedUnlock unlock(worker_);
+    QWidget::setMinimumSize(w, h);
   }
 
   // =============================================================
@@ -152,8 +175,10 @@ public:
     // ... <self> <key> <value> <self> <value>
     if (key == "paint") {
       paint_clbk_.set_lua_callback(L);
+    } else if (key == "resized") {
+      resized_clbk_.set_lua_callback(L);
     } else {
-      luaL_error(L, "Invalid function name '%s' (valid name is 'paint').", key.c_str());
+      luaL_error(L, "Invalid function name '%s' (valid names are 'paint' and 'resized').", key.c_str());
     }
 
     lua_pop(L, 2);
@@ -163,6 +188,7 @@ protected:
   //virtual void mousePressEvent(QMouseEvent *event);
   //virtual void mouseMoveEvent(QMouseEvent *event);
   virtual void paintEvent(QPaintEvent *event);
+  virtual void resizeEvent(QResizeEvent *event);
 
   /** The component's color.
    */

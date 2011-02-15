@@ -18,7 +18,7 @@ end
 
 function should.paint_path(t)
   -- we use the test env to protect from gc
-  t.win = mimas.Window()
+  t.win = mimas.Widget()
   t.win:move(300, 300)
   t.win:resize(100, 100)
   function t.win.paint(p, w, h)
@@ -42,7 +42,7 @@ function should.paint_path(t)
   t.win:show()
 
   t.thread = lk.Thread(function()
-    sleep(8400)
+    sleep(400)
     t.win:close()
     assert_true(true)
   end)
@@ -50,7 +50,7 @@ end
 
 function should.draw_rounded_rect(t)
   -- we use the test env to protect from gc
-  t.win = mimas.Window()
+  t.win = mimas.Widget()
   t.win:move(300, 450)
   t.win:resize(100, 100)
   function t.win.paint(p, w, h)
@@ -69,15 +69,15 @@ function should.draw_rounded_rect(t)
   t.win:show()
 
   t.thread = lk.Thread(function()
-    sleep(8400)
+    sleep(400)
     t.win:close()
     assert_true(true)
   end)
 end
 
-function should.draw_ect(t)
+function should.drawRect(t)
   -- we use the test env to protect from gc
-  t.win = mimas.Window()
+  t.win = mimas.Widget()
   t.win:move(300, 600)
   t.win:resize(100, 100)
   function t.win.paint(p, w, h)
@@ -96,7 +96,7 @@ function should.draw_ect(t)
   t.win:show()
 
   t.thread = lk.Thread(function()
-    sleep(8400)
+    sleep(400)
     t.win:close()
     assert_true(true)
   end)
