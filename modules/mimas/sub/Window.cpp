@@ -9,7 +9,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::Window::Window(lubyk::Worker *worker)
- * include/mimas/Window.h:55
+ * include/mimas/Window.h:59
  */
 static int Window_Window(lua_State *L) {
   try {
@@ -68,7 +68,7 @@ static int Window__tostring(lua_State *L) {
 
 
 /** void mimas::Window::__newindex(lua_State *L)
- * include/mimas/Window.h:138
+ * include/mimas/Window.h:143
  */
 static int Window___newindex(lua_State *L) {
   try {
@@ -86,7 +86,7 @@ static int Window___newindex(lua_State *L) {
 
 
 /** void mimas::Window::activateWindow()
- * include/mimas/Window.h:131
+ * include/mimas/Window.h:136
  */
 static int Window_activateWindow(lua_State *L) {
   try {
@@ -103,7 +103,7 @@ static int Window_activateWindow(lua_State *L) {
 
 
 /** bool mimas::Window::close()
- * include/mimas/Window.h:119
+ * include/mimas/Window.h:123
  */
 static int Window_close(lua_State *L) {
   try {
@@ -121,7 +121,7 @@ static int Window_close(lua_State *L) {
 
 
 /** QString mimas::Window::cssClass() const 
- * include/mimas/Window.h:65
+ * include/mimas/Window.h:69
  */
 static int Window_cssClass(lua_State *L) {
   try {
@@ -139,7 +139,7 @@ static int Window_cssClass(lua_State *L) {
 
 
 /** float mimas::Window::hue()
- * include/mimas/Window.h:107
+ * include/mimas/Window.h:111
  */
 static int Window_hue(lua_State *L) {
   try {
@@ -157,7 +157,7 @@ static int Window_hue(lua_State *L) {
 
 
 /** bool mimas::Window::isVisible() const 
- * include/mimas/Window.h:123
+ * include/mimas/Window.h:127
  */
 static int Window_isVisible(lua_State *L) {
   try {
@@ -175,7 +175,7 @@ static int Window_isVisible(lua_State *L) {
 
 
 /** void mimas::Window::move(int x, int y)
- * include/mimas/Window.h:90
+ * include/mimas/Window.h:94
  */
 static int Window_move(lua_State *L) {
   try {
@@ -194,7 +194,7 @@ static int Window_move(lua_State *L) {
 
 
 /** LuaStackSize mimas::Window::name(lua_State *L)
- * include/mimas/Window.h:79
+ * include/mimas/Window.h:83
  */
 static int Window_name(lua_State *L) {
   try {
@@ -212,7 +212,7 @@ static int Window_name(lua_State *L) {
 
 
 /** QObject* mimas::Window::object()
- * include/mimas/Window.h:73
+ * include/mimas/Window.h:77
  */
 static int Window_object(lua_State *L) {
   try {
@@ -230,7 +230,7 @@ static int Window_object(lua_State *L) {
 
 
 /** void mimas::Window::resize(int w, int h)
- * include/mimas/Window.h:94
+ * include/mimas/Window.h:98
  */
 static int Window_resize(lua_State *L) {
   try {
@@ -249,7 +249,7 @@ static int Window_resize(lua_State *L) {
 
 
 /** void mimas::Window::setHue(float hue)
- * include/mimas/Window.h:102
+ * include/mimas/Window.h:106
  */
 static int Window_setHue(lua_State *L) {
   try {
@@ -267,7 +267,7 @@ static int Window_setHue(lua_State *L) {
 
 
 /** void mimas::Window::setName(const char *name)
- * include/mimas/Window.h:86
+ * include/mimas/Window.h:90
  */
 static int Window_setName(lua_State *L) {
   try {
@@ -285,7 +285,7 @@ static int Window_setName(lua_State *L) {
 
 
 /** void mimas::Window::setStyle(const char *text)
- * include/mimas/Window.h:98
+ * include/mimas/Window.h:102
  */
 static int Window_setStyle(lua_State *L) {
   try {
@@ -303,7 +303,7 @@ static int Window_setStyle(lua_State *L) {
 
 
 /** void mimas::Window::show()
- * include/mimas/Window.h:127
+ * include/mimas/Window.h:131
  */
 static int Window_show(lua_State *L) {
   try {
@@ -320,7 +320,7 @@ static int Window_show(lua_State *L) {
 
 
 /** void mimas::Window::update()
- * include/mimas/Window.h:111
+ * include/mimas/Window.h:115
  */
 static int Window_update(lua_State *L) {
   try {
@@ -337,7 +337,7 @@ static int Window_update(lua_State *L) {
 
 
 /** QWidget* mimas::Window::widget()
- * include/mimas/Window.h:69
+ * include/mimas/Window.h:73
  */
 static int Window_widget(lua_State *L) {
   try {

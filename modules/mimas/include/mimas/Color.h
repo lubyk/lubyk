@@ -45,7 +45,7 @@ public:
   Color() {}
 
   Color(float h, float s=1.0, float v=1.0, float a=1.0) {
-    setHsva(h, s, v, a);
+    setHsvF(h, s, v, a);
   }
 
   ~Color() {

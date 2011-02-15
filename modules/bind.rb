@@ -48,7 +48,10 @@ modules = {
   'lk'    => %w{Socket Timer Thread},
   'lubyk' => %w{Worker},
   'mdns'  => %w{Browser Registration},
-  'mimas' => %w{Application Callback Color GLWindow HBoxLayout Label Painter Pen PushButton Slider VBoxLayout Window},
+  'mimas' => {
+    'class' => %w{Application Brush Callback Color GLWindow HBoxLayout Label Path Painter Pen PushButton Slider VBoxLayout Window},
+    'const' => true,
+  },
   'zmq'   => {
     'class' => %w{Socket},
     'const' => true,
@@ -106,6 +109,11 @@ modules = {
     namespace.lib_name = "#{mod_name}_constants"
     File.open(BINDINGS_PATH + "modules/#{mod_name}/sub/constants.cpp", 'wb') do |f|
       f.puts namespace
+    end
+
+    if mod_name == 'mimas'
+      mimas_declare << "int luaload_mimas_constants(lua_State *L);"
+      mimas_load    << "luaload_mimas_constants(L);"
     end
   end
 end

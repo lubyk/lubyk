@@ -30,6 +30,7 @@
 #define LUBYK_INCLUDE_MIMAS_PEN_H_
 
 #include "mimas/mimas.h"
+#include "mimas/Color.h"
 #include <QtGui/QPen>
 
 #include <iostream>
@@ -44,9 +45,13 @@ class Pen : public QPen
 public:
   Pen() : QPen() {
     setWidthF(1.0);
-    setCapStyle(Qt::RoundCap);
-    setJoinStyle(Qt::RoundJoin);
+    setStyle(Qt::SolidLine);
+    setCapStyle(Qt::SquareCap);
+    setJoinStyle(Qt::BevelJoin);
   }
+
+  Pen(float width, const Color &color)
+   : QPen(QBrush(color, Qt::SolidPattern), width, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin) {}
 
   ~Pen() {
     MIMAS_DEBUG_GC
@@ -56,11 +61,15 @@ public:
     QPen::setWidthF(w);
   }
 
-  void setColor(float r, float g, float b, float a) {
+  void setRgba(float r, float g, float b, float a=1.0) {
     QPen::setColor(QColor(r,g,b,a));
   }
 
-  void setHsva(float h, float s, float v, float a) {
+  void setColor(const Color &color) {
+    QPen::setColor(color);
+  }
+
+  void setHsva(float h, float s=1.0, float v=1.0, float a=1.0) {
     QColor color;
     color.setHsvF(h, s, v, a);
     QPen::setColor(color);

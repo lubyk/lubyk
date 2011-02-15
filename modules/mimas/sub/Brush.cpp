@@ -1,0 +1,175 @@
+#include "mimas/Brush.h"
+
+#include "lua_cpp_helper.h"
+
+
+using namespace mimas;
+
+
+/* ============================ Constructors     ====================== */
+
+
+/** mimas::Brush::Brush(int style=Qt::NoBrush)
+ * include/mimas/Brush.h:46
+ */
+static int Brush_Brush1(lua_State *L) {
+  try {
+    int top__ = lua_gettop(L);
+    Brush * retval__;
+    if (top__ < 1) {
+      retval__ = new Brush();
+    } else {
+      int style = luaL_checkint(L, 1);
+      retval__ = new Brush(style);
+    }
+    lua_pushclass<Brush>(L, retval__, "mimas.Brush");
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Brush.Brush: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Brush.Brush: Unknown exception");
+  }
+}
+
+
+/** mimas::Brush::Brush(const Color &color, int style=Qt::SolidPattern)
+ * include/mimas/Brush.h:48
+ */
+static int Brush_Brush2(lua_State *L) {
+  try {
+    int top__ = lua_gettop(L);
+    Brush * retval__;
+    const Color *color = *((const Color **)luaL_checkudata(L, 1, "mimas.Color"));
+    if (top__ < 2) {
+      retval__ = new Brush(*color);
+    } else {
+      int style = luaL_checkint(L, 2);
+      retval__ = new Brush(*color, style);
+    }
+    lua_pushclass<Brush>(L, retval__, "mimas.Brush");
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Brush.Brush: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Brush.Brush: Unknown exception");
+  }
+}
+
+
+
+/** Overloaded function chooser for Brush(...) */
+static int Brush_Brush(lua_State *L) {
+  int type__ = lua_type(L, 1);
+  if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "mimas.Color")) {
+    return Brush_Brush2(L);
+  } else if (type__ == LUA_TNUMBER) {
+    return Brush_Brush1(L);
+  } else {
+    // use any to raise errors
+    return Brush_Brush1(L);
+  }
+}
+
+
+/* ============================ Destructor       ====================== */
+
+static int Brush_destructor(lua_State *L) {
+  Brush **userdata = (Brush**)luaL_checkudata(L, 1, "mimas.Brush");
+
+  
+  if (*userdata) delete *userdata;
+  
+  *userdata = NULL;
+  return 0;
+}
+
+
+
+/* ============================ tostring         ====================== */
+
+static int Brush__tostring(lua_State *L) {
+  Brush **userdata = (Brush**)luaL_checkudata(L, 1, "mimas.Brush");
+  
+  
+  lua_pushfstring(L, "<mimas.Brush: %p>", *userdata);
+  
+  return 1;
+}
+
+/* ============================ Member Methods   ====================== */
+
+
+/** void mimas::Brush::setColor(const Color &color)
+ * include/mimas/Brush.h:58
+ */
+static int Brush_setColor(lua_State *L) {
+  try {
+    Brush *self__ = *((Brush**)luaL_checkudata(L, 1, "mimas.Brush"));
+    const Color *color = *((const Color **)luaL_checkudata(L, 2, "mimas.Color"));
+    self__->setColor(*color);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Brush.setColor: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Brush.setColor: Unknown exception");
+  }
+}
+
+
+/** void mimas::Brush::setStyle(int style)
+ * include/mimas/Brush.h:54
+ */
+static int Brush_setStyle(lua_State *L) {
+  try {
+    Brush *self__ = *((Brush**)luaL_checkudata(L, 1, "mimas.Brush"));
+    int style = luaL_checkint(L, 2);
+    self__->setStyle(style);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Brush.setStyle: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Brush.setStyle: Unknown exception");
+  }
+}
+
+
+
+
+/* ============================ Lua Registration ====================== */
+
+static const struct luaL_Reg Brush_member_methods[] = {
+  {"setColor"          , Brush_setColor},
+  {"setStyle"          , Brush_setStyle},
+  {"__tostring"        , Brush__tostring},
+  {"__gc"              , Brush_destructor},
+  {NULL, NULL},
+};
+
+static const struct luaL_Reg Brush_namespace_methods[] = {
+  {"Brush"             , Brush_Brush},
+  {NULL, NULL},
+};
+
+
+
+#ifdef DUB_LUA_NO_OPEN
+int luaload_mimas_Brush(lua_State *L) {
+#else
+extern "C" int luaopen_mimas_Brush(lua_State *L) {
+#endif
+  // Create the metatable which will contain all the member methods
+  luaL_newmetatable(L, "mimas.Brush");
+
+  // metatable.__index = metatable (find methods in the table itself)
+  lua_pushvalue(L, -1);
+  lua_setfield(L, -2, "__index");
+
+  // register member methods
+  luaL_register(L, NULL, Brush_member_methods);
+
+  // register class methods in a global namespace table
+  luaL_register(L, "mimas", Brush_namespace_methods);
+
+
+	return 1;
+}

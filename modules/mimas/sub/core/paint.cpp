@@ -64,8 +64,11 @@ void Window::paint(Painter &p) {
 
   // Deletable out of Lua
   lua_pushclass2<Painter>(L, &p, "mimas.Painter");
+  lua_pushnumber(L, width());
+  lua_pushnumber(L, height());
 
-  int status = lua_pcall(L, 1, 0, 0);
+  // <func> <Painter> <width> <height>
+  int status = lua_pcall(L, 3, 0, 0);
 
   if (status) {
     fprintf(stderr, "Error in 'paint' callback: %s\n", lua_tostring(L, -1));

@@ -26,64 +26,46 @@
 
   ==============================================================================
 */
-#ifndef LUBYK_INCLUDE_MIMAS_PAINTER_H_
-#define LUBYK_INCLUDE_MIMAS_PAINTER_H_
+#ifndef LUBYK_INCLUDE_MIMAS_PATH_H_
+#define LUBYK_INCLUDE_MIMAS_PATH_H_
 
 #include "mimas/mimas.h"
-#include "mimas/Color.h"
-#include "mimas/Path.h"
-#include "mimas/Pen.h"
-#include "mimas/Brush.h"
-
-#include <QtGui/QPainter>
-//#include <QtGui/QPainter>
+#include <QtGui/QPen>
 
 #include <iostream>
 
 namespace mimas {
 
-/** Painter.
+/** Pen used by Painter.
  *
- * @dub destructor: 'dub_destroy'
  */
-class Painter : public QPainter, public DeletableOutOfLua
+class Path : public QPainterPath
 {
 public:
-  Painter(QWidget *widget) :
-   QPainter(widget) {
-    setRenderHints(QPainter::Antialiasing);
-  }
+  Path() {}
 
-  ~Painter() {
+  ~Path() {
     MIMAS_DEBUG_GC
   }
 
-  void fillRect( int x, int y, int width, int height, const Color &color) {
-    QPainter::fillRect(x, y, width, height, color);
+  void moveTo(float x, float y) {
+    QPainterPath::moveTo(x, y);
   }
 
-  void drawPath(const Path &path) {
-    QPainter::drawPath(path);
+  /** Bezier curve from current point to endPoint with control points c1, c2.
+   */
+  void cubicTo(float c1X, float c1Y, float c2X, float c2Y, float endPointX, float endPointY) {
+    QPainterPath::cubicTo(c1X, c1Y, c2X, c2Y, endPointX, endPointY);
   }
 
-  void setPen(const Pen &pen) {
-    QPainter::setPen(pen);
+  void addRect(float x, float y, float w, float h) {
+    QPainterPath::addRect(x, y, w, h);
   }
 
-  void setBrush(const Brush &brush) {
-    QPainter::setBrush(brush);
+  void lineTo(float x, float y) {
+    QPainterPath::lineTo(x, y);
   }
-
-  void setBrush(const Color &color) {
-    QPainter::setBrush(color);
-  }
-
-  void drawText(float x, float y, float w, float h, int flags, const char *text) {
-    QPainter::drawText(QRectF(x, y, w, h), flags, QString(text));
-  }
-  //drawRoundedRect
-  //void drawRect
 };
 
 } // mimas
-#endif // LUBYK_INCLUDE_MIMAS_PAINTER_H_
+#endif // LUBYK_INCLUDE_MIMAS_PATH_H_

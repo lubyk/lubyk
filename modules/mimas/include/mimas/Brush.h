@@ -26,64 +26,39 @@
 
   ==============================================================================
 */
-#ifndef LUBYK_INCLUDE_MIMAS_PAINTER_H_
-#define LUBYK_INCLUDE_MIMAS_PAINTER_H_
+#ifndef LUBYK_INCLUDE_MIMAS_BRUSH_H_
+#define LUBYK_INCLUDE_MIMAS_BRUSH_H_
 
 #include "mimas/mimas.h"
 #include "mimas/Color.h"
-#include "mimas/Path.h"
-#include "mimas/Pen.h"
-#include "mimas/Brush.h"
-
-#include <QtGui/QPainter>
-//#include <QtGui/QPainter>
+#include <QtGui/QBrush>
 
 #include <iostream>
 
 namespace mimas {
 
-/** Painter.
+/** Brush used by Painter.
  *
- * @dub destructor: 'dub_destroy'
  */
-class Painter : public QPainter, public DeletableOutOfLua
+class Brush : public QBrush
 {
 public:
-  Painter(QWidget *widget) :
-   QPainter(widget) {
-    setRenderHints(QPainter::Antialiasing);
-  }
+  Brush(int style = Qt::NoBrush) : QBrush((Qt::BrushStyle)style) {}
 
-  ~Painter() {
+  Brush(const Color &color, int style = Qt::SolidPattern) : QBrush(color, (Qt::BrushStyle)style) {}
+
+  ~Brush() {
     MIMAS_DEBUG_GC
   }
 
-  void fillRect( int x, int y, int width, int height, const Color &color) {
-    QPainter::fillRect(x, y, width, height, color);
+  void setStyle(int style) {
+    QBrush::setStyle((Qt::BrushStyle)style);
   }
 
-  void drawPath(const Path &path) {
-    QPainter::drawPath(path);
+  void setColor(const Color &color) {
+    QBrush::setColor(color);
   }
-
-  void setPen(const Pen &pen) {
-    QPainter::setPen(pen);
-  }
-
-  void setBrush(const Brush &brush) {
-    QPainter::setBrush(brush);
-  }
-
-  void setBrush(const Color &color) {
-    QPainter::setBrush(color);
-  }
-
-  void drawText(float x, float y, float w, float h, int flags, const char *text) {
-    QPainter::drawText(QRectF(x, y, w, h), flags, QString(text));
-  }
-  //drawRoundedRect
-  //void drawRect
 };
 
 } // mimas
-#endif // LUBYK_INCLUDE_MIMAS_PAINTER_H_
+#endif // LUBYK_INCLUDE_MIMAS_BRUSH_H_

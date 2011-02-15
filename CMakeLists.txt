@@ -129,7 +129,7 @@ add_dependencies(test_all modules)
 #  Rebuild bindings on header changes
 #
 # ==============================================================================
-add_custom_target(head rm -rf ${CMAKE_BINARY_DIR}/doc/xml && make doc && make dub && cmake .. && make modules)
+add_custom_target(head rm -rf ${CMAKE_BINARY_DIR}/doc/xml && make doc && make dub)
 
 
 message (STATUS "===========================================================================")
