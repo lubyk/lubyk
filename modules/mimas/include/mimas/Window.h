@@ -121,6 +121,7 @@ public:
   /** Close and delete the window.
    */
   bool close() {
+    ScopedUnlock unlock(worker_);
     return QWidget::close();
   }
 

@@ -68,7 +68,7 @@ static int Window__tostring(lua_State *L) {
 
 
 /** void mimas::Window::__newindex(lua_State *L)
- * include/mimas/Window.h:143
+ * include/mimas/Window.h:144
  */
 static int Window___newindex(lua_State *L) {
   try {
@@ -86,7 +86,7 @@ static int Window___newindex(lua_State *L) {
 
 
 /** void mimas::Window::activateWindow()
- * include/mimas/Window.h:136
+ * include/mimas/Window.h:137
  */
 static int Window_activateWindow(lua_State *L) {
   try {
@@ -157,7 +157,7 @@ static int Window_hue(lua_State *L) {
 
 
 /** bool mimas::Window::isVisible() const 
- * include/mimas/Window.h:127
+ * include/mimas/Window.h:128
  */
 static int Window_isVisible(lua_State *L) {
   try {
@@ -303,7 +303,7 @@ static int Window_setStyle(lua_State *L) {
 
 
 /** void mimas::Window::show()
- * include/mimas/Window.h:131
+ * include/mimas/Window.h:132
  */
 static int Window_show(lua_State *L) {
   try {

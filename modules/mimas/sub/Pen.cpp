@@ -25,14 +25,31 @@ static int Pen_Pen1(lua_State *L) {
 }
 
 
-/** mimas::Pen::Pen(float width, const Color &color)
+/** mimas::Pen::Pen(float width, const Color &color, int style=Qt::SolidLine, int cap=Qt::SquareCap, int join=Qt::MiterJoin)
  * include/mimas/Pen.h:54
  */
 static int Pen_Pen2(lua_State *L) {
   try {
+    int top__ = lua_gettop(L);
+    Pen * retval__;
     float width = luaL_checknumber(L, 1);
     const Color *color = *((const Color **)luaL_checkudata(L, 2, "mimas.Color"));
-    Pen * retval__ = new Pen(width, *color);
+    if (top__ < 3) {
+      retval__ = new Pen(width, *color);
+    } else {
+      int style = luaL_checkint(L, 3);
+      if (top__ < 4) {
+        retval__ = new Pen(width, *color, style);
+      } else {
+        int cap = luaL_checkint(L, 4);
+        if (top__ < 5) {
+          retval__ = new Pen(width, *color, style, cap);
+        } else {
+          int join = luaL_checkint(L, 5);
+          retval__ = new Pen(width, *color, style, cap, join);
+        }
+      }
+    }
     lua_pushclass<Pen>(L, retval__, "mimas.Pen");
     return 1;
   } catch (std::exception &e) {
@@ -87,6 +104,23 @@ static int Pen__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
+/** void mimas::Pen::setCapStyle(int style)
+ * include/mimas/Pen.h:82
+ */
+static int Pen_setCapStyle(lua_State *L) {
+  try {
+    Pen *self__ = *((Pen**)luaL_checkudata(L, 1, "mimas.Pen"));
+    int style = luaL_checkint(L, 2);
+    self__->setCapStyle(style);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Pen.setCapStyle: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Pen.setCapStyle: Unknown exception");
+  }
+}
+
+
 /** void mimas::Pen::setColor(const Color &color)
  * include/mimas/Pen.h:68
  */
@@ -137,6 +171,23 @@ static int Pen_setHsva(lua_State *L) {
 }
 
 
+/** void mimas::Pen::setJoinStyle(int style)
+ * include/mimas/Pen.h:86
+ */
+static int Pen_setJoinStyle(lua_State *L) {
+  try {
+    Pen *self__ = *((Pen**)luaL_checkudata(L, 1, "mimas.Pen"));
+    int style = luaL_checkint(L, 2);
+    self__->setJoinStyle(style);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Pen.setJoinStyle: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Pen.setJoinStyle: Unknown exception");
+  }
+}
+
+
 /** void mimas::Pen::setRgba(float r, float g, float b, float a=1.0)
  * include/mimas/Pen.h:64
  */
@@ -158,6 +209,23 @@ static int Pen_setRgba(lua_State *L) {
     return luaL_error(L, "mimas.Pen.setRgba: %s", e.what());
   } catch (...) {
     return luaL_error(L, "mimas.Pen.setRgba: Unknown exception");
+  }
+}
+
+
+/** void mimas::Pen::setStyle(int style)
+ * include/mimas/Pen.h:78
+ */
+static int Pen_setStyle(lua_State *L) {
+  try {
+    Pen *self__ = *((Pen**)luaL_checkudata(L, 1, "mimas.Pen"));
+    int style = luaL_checkint(L, 2);
+    self__->setStyle(style);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Pen.setStyle: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Pen.setStyle: Unknown exception");
   }
 }
 
@@ -184,9 +252,12 @@ static int Pen_setWidth(lua_State *L) {
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg Pen_member_methods[] = {
+  {"setCapStyle"       , Pen_setCapStyle},
   {"setColor"          , Pen_setColor},
   {"setHsva"           , Pen_setHsva},
+  {"setJoinStyle"      , Pen_setJoinStyle},
   {"setRgba"           , Pen_setRgba},
+  {"setStyle"          , Pen_setStyle},
   {"setWidth"          , Pen_setWidth},
   {"__tostring"        , Pen__tostring},
   {"__gc"              , Pen_destructor},

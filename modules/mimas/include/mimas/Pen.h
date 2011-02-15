@@ -47,11 +47,11 @@ public:
     setWidthF(1.0);
     setStyle(Qt::SolidLine);
     setCapStyle(Qt::SquareCap);
-    setJoinStyle(Qt::BevelJoin);
+    setJoinStyle(Qt::MiterJoin);
   }
 
-  Pen(float width, const Color &color)
-   : QPen(QBrush(color, Qt::SolidPattern), width, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin) {}
+  Pen(float width, const Color &color, int style = Qt::SolidLine, int cap = Qt::SquareCap, int join = Qt::MiterJoin)
+   : QPen(QBrush(color, Qt::SolidPattern), width, (Qt::PenStyle)style, (Qt::PenCapStyle)cap, (Qt::PenJoinStyle)join) {}
 
   ~Pen() {
     MIMAS_DEBUG_GC
@@ -73,6 +73,18 @@ public:
     QColor color;
     color.setHsvF(h, s, v, a);
     QPen::setColor(color);
+  }
+
+  void setStyle(int style) {
+    QPen::setStyle((Qt::PenStyle)style);
+  }
+
+  void setCapStyle(int style) {
+    QPen::setCapStyle((Qt::PenCapStyle)style);
+  }
+
+  void setJoinStyle(int style) {
+    QPen::setJoinStyle((Qt::PenJoinStyle)style);
   }
 };
 

@@ -42,7 +42,61 @@ function should.paint_path(t)
   t.win:show()
 
   t.thread = lk.Thread(function()
-    sleep(4400)
+    sleep(8400)
+    t.win:close()
+    assert_true(true)
+  end)
+end
+
+function should.draw_rounded_rect(t)
+  -- we use the test env to protect from gc
+  t.win = mimas.Window()
+  t.win:move(300, 450)
+  t.win:resize(100, 100)
+  function t.win.paint(p, w, h)
+    local box_padding = 5
+    local hpen_width = 2 -- half pen width
+    local bp = hpen_width + box_padding -- full box padding
+    local arc_radius = 15
+    local text_padding = 20
+    local pen = mimas.Pen(hpen_width * 2, mimas.Color(0.2, 0.8, 0.8, 0.8))
+    pen:setStyle(mimas.DashLine)
+    p:setBrush(mimas.Color(0.5, 0.5, 0.5))
+    p:setPen(pen)
+    p:drawRoundedRect(bp, bp, w + arc_radius + bp, h - 2 * bp, arc_radius)
+    p:drawText(text_padding, text_padding, w - 2*text_padding, h - 2*text_padding, mimas.AlignCenter, 'Saturn')
+  end
+  t.win:show()
+
+  t.thread = lk.Thread(function()
+    sleep(8400)
+    t.win:close()
+    assert_true(true)
+  end)
+end
+
+function should.draw_ect(t)
+  -- we use the test env to protect from gc
+  t.win = mimas.Window()
+  t.win:move(300, 600)
+  t.win:resize(100, 100)
+  function t.win.paint(p, w, h)
+    local box_padding = 5
+    local hpen_width = 5 -- half pen width
+    local bp = hpen_width + box_padding -- full box padding
+    local arc_radius = 15
+    local text_padding = 20
+    local pen = mimas.Pen(hpen_width * 2, mimas.Color(0.1, 0.8, 0.8, 0.8))
+    pen:setJoinStyle(mimas.RoundJoin)
+    p:setBrush(mimas.Color(0.5, 0.5, 0.5))
+    p:setPen(pen)
+    p:drawRect(bp, bp, w - 2*bp, h - 2*bp)
+    p:drawText(text_padding, text_padding, w - 2*text_padding, h - 2*text_padding, mimas.AlignCenter, 'Saturn')
+  end
+  t.win:show()
+
+  t.thread = lk.Thread(function()
+    sleep(8400)
     t.win:close()
     assert_true(true)
   end)

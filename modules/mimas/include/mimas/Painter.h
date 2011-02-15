@@ -81,7 +81,17 @@ public:
   void drawText(float x, float y, float w, float h, int flags, const char *text) {
     QPainter::drawText(QRectF(x, y, w, h), flags, QString(text));
   }
-  //drawRoundedRect
+
+  /** Default value for yRadius = xRadius.
+   */
+  void drawRoundedRect(float x, float y, float w, float h, float xRadius, lua_State *L) {
+    float yRadius = lua_gettop(L) > 6 ? luaL_checknumber(L, 7) : xRadius;
+    QPainter::drawRoundedRect(QRectF(x, y, w, h), xRadius, yRadius);
+  }
+
+  void drawRect(float x, float y, float w, float h) {
+    QPainter::drawRect(QRectF(x, y, w, h));
+  }
   //void drawRect
 };
 

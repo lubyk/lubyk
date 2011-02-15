@@ -37,7 +37,7 @@
 
 namespace mimas {
 
-/** List of Brush types.
+/** List of Brush styles.
  */
 enum BrushStyles {
   NoBrush                 = Qt::NoBrush,
@@ -60,6 +60,36 @@ enum BrushStyles {
   RadialGradientPattern   = Qt::RadialGradientPattern,
   TexturePattern          = Qt::TexturePattern,
 };
+
+/** Pen styles.
+ */
+enum PenStyles {
+  NoPen          = Qt::NoPen,
+  SolidLine      = Qt::SolidLine,
+  DashLine       = Qt::DashLine,
+  DotLine        = Qt::DotLine,
+  DashDotLine    = Qt::DashDotLine,
+  DashDotDotLine = Qt::DashDotDotLine,
+  CustomDashLine = Qt::CustomDashLine,
+};
+
+/** List of Pen cap styles.
+ */
+enum CapStyles {
+  FlatCap   = Qt::FlatCap,
+  SquareCap = Qt::SquareCap,
+  RoundCap  = Qt::RoundCap,
+};
+
+/** List of Pen join styles.
+ */
+enum JoinStyles {
+  MiterJoin    = Qt::MiterJoin,
+  BevelJoin    = Qt::BevelJoin,
+  RoundJoin    = Qt::RoundJoin,
+  SvgMiterJoin = Qt::SvgMiterJoin,
+};
+
 
 enum TextFlags {
   AlignLeft                 = Qt::AlignLeft,
