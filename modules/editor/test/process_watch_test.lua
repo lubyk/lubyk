@@ -39,28 +39,20 @@ function should.add_widgets_to_list(t)
   local service_count = 5
   for i=1,service_count do
     t.threads[i] = lk.Thread(function()
-      local sl = 400 + 1000 * math.random()
-      print(sl)
-      io.flush()
-      sleep(sl)
-      print('new', string.format('Process %i', i))
+      sleep(500 * math.random())
       t.services[i] = lk.Service(string.format('Process %i', i))
       t.services[i].info.hue = math.random()
-      sl = 1400 + 5000 * math.random()
-      print(sl)
-      io.flush()
-      sleep(sl)
-      print('kill', string.format('Process %i', i))
+      sleep(2000 + 2000 * math.random())
       t.services[i]:kill()
+      sleep(1000)
     end)
   end
 
   t.thread = lk.Thread(function()
-    sleep(6000)
+    sleep(2000)
     app:post(function()
       t.win:resize(300, 300)
     end)
-    sleep(6000)
     for i=1,service_count do
       t.threads[i]:join()
     end

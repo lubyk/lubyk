@@ -65,7 +65,7 @@ public:
 
     if (!worker->zmq_context_) {
       // initialize zmq context
-      worker->zmq_context_ = zmq_init(4); // TODO: why 4 ?
+      worker->zmq_context_ = zmq_init(1); // TODO: why 4 ?
     }
     ++worker->zmq_context_refcount_;
 
@@ -194,7 +194,6 @@ public:
         zmq_msg_close(&msg);
         throw_recv_error(errno);
       }
-      printf("[%p] zmq_recv\n", socket_);
     }
 
     int arg_size = msgpack_bin_to_lua(L, zmq_msg_data(&msg), zmq_msg_size(&msg));
@@ -217,15 +216,13 @@ public:
     if (zmq_send(socket_, &msg, 0)) {
       zmq_msg_close(&msg);
       throw_send_error(errno);
-    }  
-    printf("[%p] zmq_send\n", socket_);
+    }
     zmq_msg_close(&msg);
   }
 
   /** Request = remote call. Can be used by multiple threads.
    */
   LuaStackSize request(lua_State *L) {
-
     msgpack_sbuffer *buffer;
 
     msgpack_lua_to_bin(L, &buffer, 1);
@@ -243,7 +240,6 @@ public:
         zmq_msg_close(&msg);
         throw_send_error(errno);
       }
-      printf("[%p] zmq_send\n", socket_);
 
       zmq_msg_close(&msg);
 
@@ -253,7 +249,6 @@ public:
         zmq_msg_close(&recv_msg);
         throw_recv_error(errno);
       }
-      printf("[%p] zmq_recv\n", socket_);
     }
 
     int arg_size = msgpack_bin_to_lua(L, zmq_msg_data(&recv_msg), zmq_msg_size(&recv_msg));
@@ -390,7 +385,7 @@ private:
    int status = lua_pcall(lua_, 1, 0, 0);
 
    if (status) {
-     printf("Error starting Socket function: %s\n", lua_tostring(lua_, -1));
+     fprintf(stderr, "Error starting Socket function: %s\n", lua_tostring(lua_, -1));
    }
   }
 };

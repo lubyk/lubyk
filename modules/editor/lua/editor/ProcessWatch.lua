@@ -30,7 +30,6 @@ setmetatable(lib, {
         -- allready found
         return
       end
-      print("NEW", service_name)
 
       local remote_service = instance.browser.services[service_name]
       app:post(function()
@@ -40,7 +39,6 @@ setmetatable(lib, {
         instance.view:addProcess(process)
       end)
     elseif url == lubyk.rem_service_url then
-      print("REM", service_name)
       -- remove connection
       if instance.list[service_name] then
         instance.list[service_name] = nil

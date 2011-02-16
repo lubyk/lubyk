@@ -34,15 +34,12 @@ setmetatable(lib, {
     local found_service = instance.services[remote_service.name]
     if remote_service.op == 'add' then
       if not found_service then
-        print('ADD', remote_service.name)
         remote_service.req = zmq.Req()
         -- new device
         remote_service.url = string.format('tcp://%s:%i', remote_service.host, remote_service.port)
         -- XXX
-        print('REQUEST', remote_service.url)
         remote_service.req:connect(remote_service.url)
         remote_service.info = remote_service.req:request(lubyk.info_url)
-        print('REQUEST DONE')
         remote_service.sub_url  = string.format('tcp://%s:%i', remote_service.host, remote_service.info.pub)
         remote_service.push_url = string.format('tcp://%s:%i', remote_service.host, remote_service.info.pull)
         remote_service.push = zmq.Push()
@@ -54,7 +51,6 @@ setmetatable(lib, {
         instance.pub:send(lubyk.add_service_url, remote_service.name)
       end
     elseif remote_service.op == 'remove' and found_service then
-        print('DEL', remote_service.name)
       -- removed device
       instance.pub:send(lubyk.rem_service_url, remote_service.name)
       instance.services[remote_service.name] = nil
