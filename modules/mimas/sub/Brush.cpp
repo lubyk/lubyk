@@ -56,14 +56,62 @@ static int Brush_Brush2(lua_State *L) {
 }
 
 
+/** mimas::Brush::Brush(float h, float s=1.0, float v=1.0, float a=1.0, int style=Qt::SolidPattern)
+ * include/mimas/Brush.h:50
+ */
+static int Brush_Brush3(lua_State *L) {
+  try {
+    int top__ = lua_gettop(L);
+    Brush * retval__;
+    float h = luaL_checknumber(L, 1);
+    if (top__ < 2) {
+      retval__ = new Brush(h);
+    } else {
+      float s = luaL_checknumber(L, 2);
+      if (top__ < 3) {
+        retval__ = new Brush(h, s);
+      } else {
+        float v = luaL_checknumber(L, 3);
+        if (top__ < 4) {
+          retval__ = new Brush(h, s, v);
+        } else {
+          float a = luaL_checknumber(L, 4);
+          if (top__ < 5) {
+            retval__ = new Brush(h, s, v, a);
+          } else {
+            int style = luaL_checkint(L, 5);
+            retval__ = new Brush(h, s, v, a, style);
+          }
+        }
+      }
+    }
+    lua_pushclass<Brush>(L, retval__, "mimas.Brush");
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Brush.Brush: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Brush.Brush: Unknown exception");
+  }
+}
+
+
 
 /** Overloaded function chooser for Brush(...) */
 static int Brush_Brush(lua_State *L) {
   int type__ = lua_type(L, 1);
+  int top__  = lua_gettop(L);
   if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "mimas.Color")) {
     return Brush_Brush2(L);
   } else if (type__ == LUA_TNUMBER) {
-    return Brush_Brush1(L);
+    type__ = lua_type(L, 2);
+    if (type__ == LUA_TNUMBER) {
+      return Brush_Brush3(L);
+    } else if (top__ < 2) {
+      return Brush_Brush1(L);
+    } else {
+      // use any to raise errors
+      return Brush_Brush1(L);
+    }
   } else {
     // use any to raise errors
     return Brush_Brush1(L);
@@ -100,7 +148,7 @@ static int Brush__tostring(lua_State *L) {
 
 
 /** void mimas::Brush::setColor(const Color &color)
- * include/mimas/Brush.h:58
+ * include/mimas/Brush.h:60
  */
 static int Brush_setColor(lua_State *L) {
   try {
@@ -117,7 +165,7 @@ static int Brush_setColor(lua_State *L) {
 
 
 /** void mimas::Brush::setStyle(int style)
- * include/mimas/Brush.h:54
+ * include/mimas/Brush.h:56
  */
 static int Brush_setStyle(lua_State *L) {
   try {

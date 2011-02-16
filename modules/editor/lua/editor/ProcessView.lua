@@ -12,7 +12,7 @@ editor.ProcessView = lib
 
 -- constants
 local box_padding = 1
-local hpen_width = 2 -- half pen width
+local hpen_width = 1 -- half pen width
 local bp = hpen_width + box_padding -- full box padding
 local arc_radius = 8
 local text_padding = 5
@@ -34,13 +34,18 @@ end
 
 -- custom paint
 function lib:paint(p, w, h)
-  local pen   = mimas.Pen(hpen_width * 2, mimas.Color(self.process.hue, 0.5, 1.0, 0.8))
-  local brush = mimas.Brush(mimas.Color(self.process.hue, 0.5, 0.5))
+  local pen   = mimas.Pen(hpen_width * 2, mimas.Color(self.process.hue, 0.3, 0.8, 0.8))
+  local brush = mimas.Brush(self.process.hue, 0.5, 0.5, 0.5)
 
   -- label width/height
   local lw = self.lbl_w
   local lh = self.lbl_h
   local path = mimas.Path()
+
+  -- draw rounded surface
+  p:setBrush(self.process.hue, 0.2, 0.2) -- dark background
+  p:setPen(pen)
+  p:drawRoundedRect(bp, bp, w - 2 * bp, h - 2 * bp, arc_radius / 2)
 
   -- draw label background
   p:setPen(mimas.Pen()) -- no pen
@@ -56,12 +61,9 @@ function lib:paint(p, w, h)
   path:lineTo(lw+pad, pad)
   p:drawPath(path)
 
-  -- draw rounded surface
-  p:setBrush(mimas.Brush()) -- no background
-  p:setPen(pen)
-  p:drawRoundedRect(bp, bp, w - 2 * bp, h - 2 * bp, arc_radius / 2)
-
   -- draw label border (only bottom and right)
+  p:setBrush(mimas.Brush())
+  p:setPen(pen)
   local pad2 = bp + 2*hpen_width -- do not overlap with background
   path = mimas.Path()
   path:moveTo(pad2, lh + pad2)

@@ -37,8 +37,8 @@ end
 
 -- custom paint
 function lib:paint(p, w, h)
-  local pen   = mimas.Pen(hpen_width * 2, mimas.Color(self.process.hue, 0.5, 1.0, 0.8))
-  local brush = mimas.Brush(mimas.Color(self.process.hue, 0.5, 0.5))
+  local pen   = mimas.Pen(hpen_width * 2, mimas.Color(self.process.hue, 0.3, 0.8, 0.8))
+  local brush = mimas.Brush(mimas.Color(self.process.hue, 0.3, 0.3, 0.8))
   p:setBrush(brush)
   p:setPen(pen)
   p:drawRoundedRect(bp, bp, w + arc_radius + bp, h - 2 * bp, arc_radius)

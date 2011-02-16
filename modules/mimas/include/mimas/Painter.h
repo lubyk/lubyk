@@ -78,6 +78,12 @@ public:
     QPainter::setBrush(color);
   }
 
+  /** Set brush with the given hsva color.
+   */
+  void setBrush(float h, float s=1.0, float v=1.0, float a=1.0) {
+    QPainter::setBrush(Brush(h, s, v, a));
+  }
+
   void drawText(float x, float y, float w, float h, int flags, const char *text) {
     QPainter::drawText(QRectF(x, y, w, h), flags, QString(text));
   }

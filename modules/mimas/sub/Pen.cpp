@@ -26,7 +26,7 @@ static int Pen_Pen1(lua_State *L) {
 
 
 /** mimas::Pen::Pen(float width, const Color &color, int style=Qt::SolidLine, int cap=Qt::SquareCap, int join=Qt::MiterJoin)
- * include/mimas/Pen.h:54
+ * include/mimas/Pen.h:49
  */
 static int Pen_Pen2(lua_State *L) {
   try {
@@ -105,7 +105,7 @@ static int Pen__tostring(lua_State *L) {
 
 
 /** void mimas::Pen::setCapStyle(int style)
- * include/mimas/Pen.h:82
+ * include/mimas/Pen.h:77
  */
 static int Pen_setCapStyle(lua_State *L) {
   try {
@@ -122,7 +122,7 @@ static int Pen_setCapStyle(lua_State *L) {
 
 
 /** void mimas::Pen::setColor(const Color &color)
- * include/mimas/Pen.h:68
+ * include/mimas/Pen.h:63
  */
 static int Pen_setColor(lua_State *L) {
   try {
@@ -139,7 +139,7 @@ static int Pen_setColor(lua_State *L) {
 
 
 /** void mimas::Pen::setHsva(float h, float s=1.0, float v=1.0, float a=1.0)
- * include/mimas/Pen.h:72
+ * include/mimas/Pen.h:67
  */
 static int Pen_setHsva(lua_State *L) {
   try {
@@ -172,7 +172,7 @@ static int Pen_setHsva(lua_State *L) {
 
 
 /** void mimas::Pen::setJoinStyle(int style)
- * include/mimas/Pen.h:86
+ * include/mimas/Pen.h:81
  */
 static int Pen_setJoinStyle(lua_State *L) {
   try {
@@ -189,7 +189,7 @@ static int Pen_setJoinStyle(lua_State *L) {
 
 
 /** void mimas::Pen::setRgba(float r, float g, float b, float a=1.0)
- * include/mimas/Pen.h:64
+ * include/mimas/Pen.h:59
  */
 static int Pen_setRgba(lua_State *L) {
   try {
@@ -214,7 +214,7 @@ static int Pen_setRgba(lua_State *L) {
 
 
 /** void mimas::Pen::setStyle(int style)
- * include/mimas/Pen.h:78
+ * include/mimas/Pen.h:73
  */
 static int Pen_setStyle(lua_State *L) {
   try {
@@ -231,7 +231,7 @@ static int Pen_setStyle(lua_State *L) {
 
 
 /** void mimas::Pen::setWidth(float w)
- * include/mimas/Pen.h:60
+ * include/mimas/Pen.h:55
  */
 static int Pen_setWidth(lua_State *L) {
   try {

@@ -119,7 +119,7 @@ static int Socket_connect(lua_State *L) {
 
 
 /** void lk::Socket::kill()
- * include/lk/Socket.h:316
+ * include/lk/Socket.h:314
  */
 static int Socket_kill(lua_State *L) {
   try {
@@ -151,7 +151,7 @@ static int Socket_listen(lua_State *L) {
 
 
 /** const char* lk::Socket::local_host() const 
- * include/lk/Socket.h:321
+ * include/lk/Socket.h:319
  */
 static int Socket_local_host(lua_State *L) {
   try {
@@ -168,7 +168,7 @@ static int Socket_local_host(lua_State *L) {
 
 
 /** int lk::Socket::local_port() const 
- * include/lk/Socket.h:325
+ * include/lk/Socket.h:323
  */
 static int Socket_local_port(lua_State *L) {
   try {
@@ -185,7 +185,7 @@ static int Socket_local_port(lua_State *L) {
 
 
 /** void lk::Socket::loop(lua_State *L)
- * include/lk/Socket.h:302
+ * include/lk/Socket.h:300
  */
 static int Socket_loop(lua_State *L) {
   try {
@@ -202,7 +202,7 @@ static int Socket_loop(lua_State *L) {
 
 
 /** int lk::Socket::port() const 
- * include/lk/Socket.h:337
+ * include/lk/Socket.h:335
  */
 static int Socket_port(lua_State *L) {
   try {
@@ -219,7 +219,7 @@ static int Socket_port(lua_State *L) {
 
 
 /** void lk::Socket::quit()
- * include/lk/Socket.h:309
+ * include/lk/Socket.h:307
  */
 static int Socket_quit(lua_State *L) {
   try {
@@ -252,7 +252,7 @@ static int Socket_recv(lua_State *L) {
 
 
 /** const char* lk::Socket::remote_host() const 
- * include/lk/Socket.h:329
+ * include/lk/Socket.h:327
  */
 static int Socket_remote_host(lua_State *L) {
   try {
@@ -269,7 +269,7 @@ static int Socket_remote_host(lua_State *L) {
 
 
 /** int lk::Socket::remote_port() const 
- * include/lk/Socket.h:333
+ * include/lk/Socket.h:331
  */
 static int Socket_remote_port(lua_State *L) {
   try {
@@ -286,7 +286,7 @@ static int Socket_remote_port(lua_State *L) {
 
 
 /** LuaStackSize lk::Socket::request(lua_State *L)
- * include/lk/Socket.h:295
+ * include/lk/Socket.h:293
  */
 static int Socket_request(lua_State *L) {
   try {
@@ -303,7 +303,7 @@ static int Socket_request(lua_State *L) {
 
 
 /** void lk::Socket::send(lua_State *L)
- * include/lk/Socket.h:283
+ * include/lk/Socket.h:282
  */
 static int Socket_send(lua_State *L) {
   try {

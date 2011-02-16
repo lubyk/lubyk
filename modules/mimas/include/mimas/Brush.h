@@ -47,6 +47,8 @@ public:
 
   Brush(const Color &color, int style = Qt::SolidPattern) : QBrush(color, (Qt::BrushStyle)style) {}
 
+  Brush(float h, float s=1.0, float v=1.0, float a=1.0, int style = Qt::SolidPattern) : QBrush(Color(h, s, v, a), (Qt::BrushStyle)style) {}
+
   ~Brush() {
     MIMAS_DEBUG_GC
   }
