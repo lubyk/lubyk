@@ -33,6 +33,7 @@ function should.add_widgets_to_list(t)
 
   t.threads  = {}
   t.services = {}
+  t.name = {'Dune', 'Hyperion', 'Dorsai', 'Andromeda', 'Pandora'}
 
   math.randomseed(os.time())
 
@@ -40,7 +41,7 @@ function should.add_widgets_to_list(t)
   for i=1,service_count do
     t.threads[i] = lk.Thread(function()
       sleep(500 * math.random())
-      t.services[i] = lk.Service(string.format('Process %i', i))
+      t.services[i] = lk.Service(t.name[i] or string.format('Process %i', i))
       t.services[i].info.hue = math.random()
       sleep(2000 + 2000 * math.random())
       t.services[i]:kill()
