@@ -1,23 +1,14 @@
 --[[------------------------------------------------------
 
-  Use the wii.Remote to control OpenGL
-  ------------------------------------
+  Use the wii.Remote or keyboard to control the snakes
+  ----------------------------------------------------
 
   Start the script and then press buttons '1' and '2' on
-  the Remote to connect. The cube rotates depending on the
-  data from the x, y and z axis. Press '1' or '2' to
-  change the color, press '-' or '+' to change
-  transparency. Press 'A' to start recording, 'A' again to
-  stop and playback recorded data in a loop.
+  the Remote to connect. Follow the instructions to set
+  the controls for Player1 and Player2.
 
-  Commands summary:
-
-  1+2: discovery
-  1: red
-  2: blue
-  +: opaque
-  -: transparent
-  A: record - playback - stop - record ...
+  Special commands:
+  +: new game
   Home: quit
 
 --]]------------------------------------------------------

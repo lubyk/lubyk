@@ -33,6 +33,7 @@
 using namespace lubyk;
 
 #include <QtGui/QWidget>
+#include <QtGui/QMouseEvent>
 
 #include <iostream>
 
@@ -54,12 +55,16 @@ class Widget : public QWidget, public DeletableOutOfLua
   Worker *worker_;
   LuaCallback paint_clbk_;
   LuaCallback resized_clbk_;
+  LuaCallback mouse_clbk_;
+  LuaCallback click_clbk_;
   QSize size_hint_;
 public:
   Widget(lubyk::Worker *worker) :
    worker_(worker),
    paint_clbk_(worker),
-   resized_clbk_(worker) {
+   resized_clbk_(worker),
+   mouse_clbk_(worker),
+   click_clbk_(worker) {
     setAttribute(Qt::WA_DeleteOnClose);
   }
 
@@ -198,18 +203,23 @@ public:
       paint_clbk_.set_lua_callback(L);
     } else if (key == "resized") {
       resized_clbk_.set_lua_callback(L);
+    } else if (key == "mouse") {
+      mouse_clbk_.set_lua_callback(L);
+    } else if (key == "click") {
+      click_clbk_.set_lua_callback(L);
     } else {
-      luaL_error(L, "Invalid function name '%s' (valid names are 'paint' and 'resized').", key.c_str());
+      luaL_error(L, "Invalid function name '%s' (valid names are 'paint', 'mouse', 'click' and 'resized').", key.c_str());
     }
 
     lua_pop(L, 2);
     // ... <self> <key> <value>
   }
 protected:
-  //virtual void mousePressEvent(QMouseEvent *event);
-  //virtual void mouseMoveEvent(QMouseEvent *event);
+  virtual void mouseMoveEvent(QMouseEvent *event);
+  virtual void mousePressEvent(QMouseEvent *event);
   virtual void paintEvent(QPaintEvent *event);
   virtual void resizeEvent(QResizeEvent *event);
+
   virtual QSize sizeHint() const {
     return size_hint_;
   }

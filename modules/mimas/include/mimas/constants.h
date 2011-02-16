@@ -121,6 +121,17 @@ enum SizePolicy {
   Ignored          = QSizePolicy::Ignored,
 };
 
+// mouse
+enum MouseButtons {
+  NoButton     = Qt::NoButton,
+  LeftButton   = Qt::LeftButton,
+  RightButton  = Qt::RightButton,
+  MidButton    = Qt::MidButton,
+  MiddleButton = Qt::MiddleButton,
+  XButton1     = Qt::XButton1,
+  XButton2     = Qt::XButton2,
+};
+
 } // mimas
 
 #endif // LUBYK_INCLUDE_MIMAS_CONSTANTS_H_

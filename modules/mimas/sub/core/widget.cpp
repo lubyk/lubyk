@@ -74,4 +74,43 @@ void Widget::resizeEvent(QResizeEvent *event) {
   }
 }
 
+void Widget::mouseMoveEvent(QMouseEvent *event) {
+  lua_State *L = mouse_clbk_.lua_;
+  if (!L) return;
+
+  ScopedLock lock(worker_);
+
+  mouse_clbk_.push_lua_callback(false);
+
+  lua_pushnumber(L, event->x());
+  lua_pushnumber(L, event->y());
+
+  // <func> <Painter> <width> <height>
+  int status = lua_pcall(L, 2, 0, 0);
+
+  if (status) {
+    fprintf(stderr, "Error in 'mouse' callback: %s\n", lua_tostring(L, -1));
+  }
+}
+
+void Widget::mousePressEvent(QMouseEvent *event) {
+  lua_State *L = click_clbk_.lua_;
+  if (!L) return;
+
+  ScopedLock lock(worker_);
+
+  click_clbk_.push_lua_callback(false);
+
+  lua_pushnumber(L, event->x());
+  lua_pushnumber(L, event->y());
+  lua_pushnumber(L, event->button());
+
+  // <func> <Painter> <width> <height>
+  int status = lua_pcall(L, 3, 0, 0);
+
+  if (status) {
+    fprintf(stderr, "Error in 'click' callback: %s\n", lua_tostring(L, -1));
+  }
+}
+
 } // mimas

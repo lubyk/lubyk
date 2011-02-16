@@ -86,7 +86,7 @@ static int Painter_drawPath(lua_State *L) {
 
 
 /** void mimas::Painter::drawRect(float x, float y, float w, float h)
- * include/mimas/Painter.h:96
+ * include/mimas/Painter.h:98
  */
 static int Painter_drawRect(lua_State *L) {
   try {
@@ -107,7 +107,7 @@ static int Painter_drawRect(lua_State *L) {
 
 
 /** void mimas::Painter::drawRoundedRect(float x, float y, float w, float h, float xRadius, lua_State *L)
- * include/mimas/Painter.h:91
+ * include/mimas/Painter.h:93
  */
 static int Painter_drawRoundedRect(lua_State *L) {
   try {
@@ -130,7 +130,7 @@ static int Painter_drawRoundedRect(lua_State *L) {
 
 
 /** void mimas::Painter::drawText(float x, float y, float w, float h, int flags, const char *text)
- * include/mimas/Painter.h:85
+ * include/mimas/Painter.h:87
  */
 static int Painter_drawText(lua_State *L) {
   try {
@@ -212,7 +212,7 @@ static int Painter_setBrush2(lua_State *L) {
 
 
 /** void mimas::Painter::setBrush(float h, float s=1.0, float v=1.0, float a=1.0)
- * include/mimas/Painter.h:81
+ * include/mimas/Painter.h:83
  */
 static int Painter_setBrush3(lua_State *L) {
   try {

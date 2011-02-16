@@ -9,7 +9,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::Widget::Widget(lubyk::Worker *worker)
- * include/mimas/Widget.h:62
+ * include/mimas/Widget.h:66
  */
 static int Widget_Widget(lua_State *L) {
   try {
@@ -68,7 +68,7 @@ static int Widget__tostring(lua_State *L) {
 
 
 /** void mimas::Widget::__newindex(lua_State *L)
- * include/mimas/Widget.h:188
+ * include/mimas/Widget.h:192
  */
 static int Widget___newindex(lua_State *L) {
   try {
@@ -86,7 +86,7 @@ static int Widget___newindex(lua_State *L) {
 
 
 /** void mimas::Widget::activateWindow()
- * include/mimas/Widget.h:181
+ * include/mimas/Widget.h:185
  */
 static int Widget_activateWindow(lua_State *L) {
   try {
@@ -103,7 +103,7 @@ static int Widget_activateWindow(lua_State *L) {
 
 
 /** void mimas::Widget::addWidget(QWidget *widget, float x=0, float y=0)
- * include/mimas/Widget.h:80
+ * include/mimas/Widget.h:84
  */
 static int Widget_addWidget(lua_State *L) {
   try {
@@ -132,7 +132,7 @@ static int Widget_addWidget(lua_State *L) {
 
 
 /** bool mimas::Widget::close()
- * include/mimas/Widget.h:167
+ * include/mimas/Widget.h:171
  */
 static int Widget_close(lua_State *L) {
   try {
@@ -150,7 +150,7 @@ static int Widget_close(lua_State *L) {
 
 
 /** QString mimas::Widget::cssClass() const 
- * include/mimas/Widget.h:72
+ * include/mimas/Widget.h:76
  */
 static int Widget_cssClass(lua_State *L) {
   try {
@@ -168,7 +168,7 @@ static int Widget_cssClass(lua_State *L) {
 
 
 /** float mimas::Widget::hue()
- * include/mimas/Widget.h:123
+ * include/mimas/Widget.h:127
  */
 static int Widget_hue(lua_State *L) {
   try {
@@ -186,7 +186,7 @@ static int Widget_hue(lua_State *L) {
 
 
 /** bool mimas::Widget::isVisible() const 
- * include/mimas/Widget.h:172
+ * include/mimas/Widget.h:176
  */
 static int Widget_isVisible(lua_State *L) {
   try {
@@ -204,7 +204,7 @@ static int Widget_isVisible(lua_State *L) {
 
 
 /** void mimas::Widget::move(int x, int y)
- * include/mimas/Widget.h:104
+ * include/mimas/Widget.h:108
  */
 static int Widget_move(lua_State *L) {
   try {
@@ -223,7 +223,7 @@ static int Widget_move(lua_State *L) {
 
 
 /** LuaStackSize mimas::Widget::name(lua_State *L)
- * include/mimas/Widget.h:93
+ * include/mimas/Widget.h:97
  */
 static int Widget_name(lua_State *L) {
   try {
@@ -241,7 +241,7 @@ static int Widget_name(lua_State *L) {
 
 
 /** QObject* mimas::Widget::object()
- * include/mimas/Widget.h:87
+ * include/mimas/Widget.h:91
  */
 static int Widget_object(lua_State *L) {
   try {
@@ -259,7 +259,7 @@ static int Widget_object(lua_State *L) {
 
 
 /** void mimas::Widget::resize(int w, int h)
- * include/mimas/Widget.h:109
+ * include/mimas/Widget.h:113
  */
 static int Widget_resize(lua_State *L) {
   try {
@@ -278,7 +278,7 @@ static int Widget_resize(lua_State *L) {
 
 
 /** void mimas::Widget::setHue(float hue)
- * include/mimas/Widget.h:118
+ * include/mimas/Widget.h:122
  */
 static int Widget_setHue(lua_State *L) {
   try {
@@ -296,7 +296,7 @@ static int Widget_setHue(lua_State *L) {
 
 
 /** void mimas::Widget::setMinimumSize(float w, float h)
- * include/mimas/Widget.h:158
+ * include/mimas/Widget.h:162
  */
 static int Widget_setMinimumSize(lua_State *L) {
   try {
@@ -315,7 +315,7 @@ static int Widget_setMinimumSize(lua_State *L) {
 
 
 /** void mimas::Widget::setName(const char *name)
- * include/mimas/Widget.h:100
+ * include/mimas/Widget.h:104
  */
 static int Widget_setName(lua_State *L) {
   try {
@@ -333,7 +333,7 @@ static int Widget_setName(lua_State *L) {
 
 
 /** void mimas::Widget::setSizeHint(float w, float h)
- * include/mimas/Widget.h:143
+ * include/mimas/Widget.h:147
  */
 static int Widget_setSizeHint(lua_State *L) {
   try {
@@ -352,7 +352,7 @@ static int Widget_setSizeHint(lua_State *L) {
 
 
 /** void mimas::Widget::setSizePolicy(int horizontal, int vertical)
- * include/mimas/Widget.h:151
+ * include/mimas/Widget.h:155
  */
 static int Widget_setSizePolicy(lua_State *L) {
   try {
@@ -371,7 +371,7 @@ static int Widget_setSizePolicy(lua_State *L) {
 
 
 /** void mimas::Widget::setStyle(const char *text)
- * include/mimas/Widget.h:114
+ * include/mimas/Widget.h:118
  */
 static int Widget_setStyle(lua_State *L) {
   try {
@@ -389,7 +389,7 @@ static int Widget_setStyle(lua_State *L) {
 
 
 /** void mimas::Widget::show()
- * include/mimas/Widget.h:176
+ * include/mimas/Widget.h:180
  */
 static int Widget_show(lua_State *L) {
   try {
@@ -406,7 +406,7 @@ static int Widget_show(lua_State *L) {
 
 
 /** LuaStackSize mimas::Widget::textSize(const char *text, lua_State *L)
- * include/mimas/Widget.h:134
+ * include/mimas/Widget.h:138
  */
 static int Widget_textSize(lua_State *L) {
   try {
@@ -425,7 +425,7 @@ static int Widget_textSize(lua_State *L) {
 
 
 /** void mimas::Widget::update()
- * include/mimas/Widget.h:127
+ * include/mimas/Widget.h:131
  */
 static int Widget_update(lua_State *L) {
   try {
@@ -442,7 +442,7 @@ static int Widget_update(lua_State *L) {
 
 
 /** QWidget* mimas::Widget::widget()
- * include/mimas/Widget.h:76
+ * include/mimas/Widget.h:80
  */
 static int Widget_widget(lua_State *L) {
   try {
