@@ -57,6 +57,7 @@ function should.add_widgets_to_list(t)
     for i=1,service_count do
       t.threads[i]:join()
     end
+    assert_true(true)
     t.win:close()
   end)
 end

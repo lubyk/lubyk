@@ -65,7 +65,7 @@ public:
 
     if (!worker->zmq_context_) {
       // initialize zmq context
-      worker->zmq_context_ = zmq_init(1); // TODO: why 4 ?
+      worker->zmq_context_ = zmq_init(1);
     }
     ++worker->zmq_context_refcount_;
 
