@@ -43,12 +43,7 @@ namespace mimas {
 class Pen : public QPen
 {
 public:
-  Pen() : QPen() {
-    setWidthF(1.0);
-    setStyle(Qt::SolidLine);
-    setCapStyle(Qt::SquareCap);
-    setJoinStyle(Qt::MiterJoin);
-  }
+  Pen() : QPen(Qt::NoPen) {}
 
   Pen(float width, const Color &color, int style = Qt::SolidLine, int cap = Qt::SquareCap, int join = Qt::MiterJoin)
    : QPen(QBrush(color, Qt::SolidPattern), width, (Qt::PenStyle)style, (Qt::PenCapStyle)cap, (Qt::PenJoinStyle)join) {}
