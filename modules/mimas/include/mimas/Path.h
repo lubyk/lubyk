@@ -30,7 +30,7 @@
 #define LUBYK_INCLUDE_MIMAS_PATH_H_
 
 #include "mimas/mimas.h"
-#include <QtGui/QPen>
+#include <QtGui/QPainterPath>
 
 #include <iostream>
 

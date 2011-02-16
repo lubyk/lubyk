@@ -91,7 +91,7 @@ enum JoinStyles {
 };
 
 
-enum TextFlags {
+enum AlignFlags {
   AlignLeft                 = Qt::AlignLeft,
   AlignRight                = Qt::AlignRight,
   AlignHCenter              = Qt::AlignHCenter,
@@ -100,12 +100,25 @@ enum TextFlags {
   AlignBottom               = Qt::AlignBottom,
   AlignVCenter              = Qt::AlignVCenter,
   AlignCenter               = Qt::AlignCenter,
+};
+
+enum TextFlags {
   TextDontClip              = Qt::TextDontClip,
   TextSingleLine            = Qt::TextSingleLine,
   TextExpandTabs            = Qt::TextExpandTabs,
   TextShowMnemonic          = Qt::TextShowMnemonic,
   TextWordWrap              = Qt::TextWordWrap,
   TextIncludeTrailingSpaces = Qt::TextIncludeTrailingSpaces,
+};
+
+enum SizePolicy {
+  Fixed            = QSizePolicy::Fixed,
+  Minimum          = QSizePolicy::Minimum,
+  Maximum          = QSizePolicy::Maximum,
+  Preferred        = QSizePolicy::Preferred,
+  Expanding        = QSizePolicy::Expanding,
+  MinimumExpanding = QSizePolicy::MinimumExpanding,
+  Ignored          = QSizePolicy::Ignored,
 };
 
 } // mimas

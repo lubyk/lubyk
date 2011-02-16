@@ -54,6 +54,7 @@ class Widget : public QWidget, public DeletableOutOfLua
   Worker *worker_;
   LuaCallback paint_clbk_;
   LuaCallback resized_clbk_;
+  QSize size_hint_;
 public:
   Widget(lubyk::Worker *worker) :
    worker_(worker),
@@ -79,6 +80,7 @@ public:
   void addWidget(QWidget *widget, float x=0, float y=0) {
     widget->setParent(this);
     widget->move(x, y);
+    ScopedUnlock unlock(worker_);
     widget->show();
   }
 
@@ -100,6 +102,7 @@ public:
   }
 
   void move(int x, int y) {
+    ScopedUnlock unlock(worker_);
     QWidget::move(x, y);
   }
 
@@ -134,6 +137,24 @@ public:
     return 2;
   }
 
+  /** Set the prefered size. Use setSizePolicy to define how the
+   * widget resizes compared to this value.
+   */
+  void setSizeHint(float w, float h) {
+    size_hint_ = QSize(w, h);
+    ScopedUnlock unlock(worker_);
+    updateGeometry();
+  }
+
+  /** Control how the widget behaves in a layout related to it's sizeHint().
+   */
+  void setSizePolicy(int horizontal, int vertical) {
+    QWidget::setSizePolicy((QSizePolicy::Policy)horizontal, (QSizePolicy::Policy)vertical);
+    ScopedUnlock unlock(worker_);
+    updateGeometry();
+  }
+
+  // FIXME: maybe we can remove this and only use setSizeHint + setSizePolicy...
   void setMinimumSize(float w, float h) {
     ScopedUnlock unlock(worker_);
     QWidget::setMinimumSize(w, h);
@@ -189,6 +210,9 @@ protected:
   //virtual void mouseMoveEvent(QMouseEvent *event);
   virtual void paintEvent(QPaintEvent *event);
   virtual void resizeEvent(QResizeEvent *event);
+  virtual QSize sizeHint() const {
+    return size_hint_;
+  }
 
   /** The component's color.
    */

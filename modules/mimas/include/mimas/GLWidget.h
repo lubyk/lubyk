@@ -26,8 +26,8 @@
 
   ==============================================================================
 */
-#ifndef LUBYK_INCLUDE_MIMAS_WIDGET_H_
-#define LUBYK_INCLUDE_MIMAS_WIDGET_H_
+#ifndef LUBYK_INCLUDE_MIMAS_GLWIDGET_H_
+#define LUBYK_INCLUDE_MIMAS_GLWIDGET_H_
 
 #include "lubyk.h"
 using namespace lubyk;
@@ -43,7 +43,6 @@ namespace mimas {
 /** GLWidget.
  *
  * @dub destructor: 'dub_destroy'
- *      ignore: 'initializeGL,paintGL,resizeGL,keyboard'
  */
 class GLWidget : public QGLWidget, public DeletableOutOfLua
 {
@@ -106,8 +105,7 @@ public:
     QWidget::move(x, y);
   }
 
-  // We add lua_State to make sure this is only called by Lua
-  void resize(int w, int h, lua_State *L) {
+  void resize(int w, int h) {
     ScopedUnlock unlock(worker_);
     QWidget::resize(w, h);
   }
@@ -124,19 +122,17 @@ public:
     return QWidget::isVisible();
   }
 
-  // We add lua_State to make sure this is only called by Lua
-  void show(lua_State *L) {
+  void show() {
     ScopedUnlock unlock(worker_);
     QWidget::show();
   }
 
-  void activateWindow(lua_State *L) {
+  void activateWindow() {
     ScopedUnlock unlock(worker_);
     QWidget::activateWindow();
   }
 
-  // We add lua_State to make sure this is only called by Lua
-  void updateGL(lua_State *L) {
+  void updateGL() {
     ScopedUnlock unlock(worker_);
     QGLWidget::updateGL();
   }
@@ -169,7 +165,7 @@ public:
     // ... <self> <key> <value>
   }
 
-
+protected:
   virtual void initializeGL() {
     lua_State *L = initializeGL_.lua_;
     if (!L) return;
@@ -214,7 +210,7 @@ public:
       fprintf(stderr, "Error in paintGL callback: %s\n", lua_tostring(L, -1));
     }
   }
-protected:
+
   //virtual void mousePressEvent(QMouseEvent *event);
   //virtual void mouseMoveEvent(QMouseEvent *event);
   //virtual void mouseDoubleClickEvent(QMouseEvent *event);
@@ -226,6 +222,7 @@ protected:
   void keyReleaseEvent(QKeyEvent *event) {
     keyboard(event, false);
   }
+
 private:
   void keyboard(QKeyEvent *event, bool isPressed) {
     lua_State *L = keyboard_.lua_;
@@ -245,4 +242,4 @@ private:
 };
 
 } // mimas
-#endif // LUBYK_INCLUDE_MIMAS_WIDGET_H_
+#endif // LUBYK_INCLUDE_MIMAS_GLWIDGET_H_

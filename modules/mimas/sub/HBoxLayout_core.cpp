@@ -118,15 +118,67 @@ static int HBoxLayout_addLayout(lua_State *L) {
 }
 
 
-/** void mimas::HBoxLayout::addWidget(QWidget *widget)
+/** void mimas::HBoxLayout::addSpacing(int size)
+ * include/mimas/HBoxLayout.h:73
+ */
+static int HBoxLayout_addSpacing(lua_State *L) {
+  try {
+    HBoxLayout *self__ = *((HBoxLayout**)luaL_checkudata(L, 1, "mimas.HBoxLayout"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.HBoxLayout in addSpacing");
+    int size = luaL_checkint(L, 2);
+    self__->addSpacing(size);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.HBoxLayout.addSpacing: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.HBoxLayout.addSpacing: Unknown exception");
+  }
+}
+
+
+/** void mimas::HBoxLayout::addStretch(int stretch=0)
+ * include/mimas/HBoxLayout.h:67
+ */
+static int HBoxLayout_addStretch(lua_State *L) {
+  try {
+    HBoxLayout *self__ = *((HBoxLayout**)luaL_checkudata(L, 1, "mimas.HBoxLayout"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.HBoxLayout in addStretch");
+    int top__ = lua_gettop(L);
+    if (top__ < 2) {
+      self__->addStretch();
+    } else {
+      int stretch = luaL_checkint(L, 2);
+      self__->addStretch(stretch);
+    }
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.HBoxLayout.addStretch: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.HBoxLayout.addStretch: Unknown exception");
+  }
+}
+
+
+/** void mimas::HBoxLayout::addWidget(QWidget *widget, int stretch=0, int alignment=0)
  * include/mimas/HBoxLayout.h:57
  */
 static int HBoxLayout_addWidget(lua_State *L) {
   try {
     HBoxLayout *self__ = *((HBoxLayout**)luaL_checkudata(L, 1, "mimas.HBoxLayout"));
     if (!self__) return luaL_error(L, "Using deleted mimas.HBoxLayout in addWidget");
+    int top__ = lua_gettop(L);
     QWidget *widget = *((QWidget **)luaL_checkudata(L, 2, "mimas.QWidget"));
-    self__->addWidget(widget);
+    if (top__ < 3) {
+      self__->addWidget(widget);
+    } else {
+      int stretch = luaL_checkint(L, 3);
+      if (top__ < 4) {
+        self__->addWidget(widget, stretch);
+      } else {
+        int alignment = luaL_checkint(L, 4);
+        self__->addWidget(widget, stretch, alignment);
+      }
+    }
     return 0;
   } catch (std::exception &e) {
     return luaL_error(L, "mimas.HBoxLayout.addWidget: %s", e.what());
@@ -137,7 +189,7 @@ static int HBoxLayout_addWidget(lua_State *L) {
 
 
 /** QLayout* mimas::HBoxLayout::layout()
- * include/mimas/HBoxLayout.h:65
+ * include/mimas/HBoxLayout.h:87
  */
 static int HBoxLayout_layout(lua_State *L) {
   try {
@@ -154,14 +206,57 @@ static int HBoxLayout_layout(lua_State *L) {
 }
 
 
+/** void mimas::HBoxLayout::setContentsMargins(int left, int top, int right, int bottom)
+ * include/mimas/HBoxLayout.h:83
+ */
+static int HBoxLayout_setContentsMargins(lua_State *L) {
+  try {
+    HBoxLayout *self__ = *((HBoxLayout**)luaL_checkudata(L, 1, "mimas.HBoxLayout"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.HBoxLayout in setContentsMargins");
+    int left = luaL_checkint(L, 2);
+    int top = luaL_checkint(L, 3);
+    int right = luaL_checkint(L, 4);
+    int bottom = luaL_checkint(L, 5);
+    self__->setContentsMargins(left, top, right, bottom);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.HBoxLayout.setContentsMargins: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.HBoxLayout.setContentsMargins: Unknown exception");
+  }
+}
+
+
+/** void mimas::HBoxLayout::setSpacing(int space)
+ * include/mimas/HBoxLayout.h:79
+ */
+static int HBoxLayout_setSpacing(lua_State *L) {
+  try {
+    HBoxLayout *self__ = *((HBoxLayout**)luaL_checkudata(L, 1, "mimas.HBoxLayout"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.HBoxLayout in setSpacing");
+    int space = luaL_checkint(L, 2);
+    self__->setSpacing(space);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.HBoxLayout.setSpacing: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.HBoxLayout.setSpacing: Unknown exception");
+  }
+}
+
+
 
 
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg HBoxLayout_member_methods[] = {
   {"addLayout"         , HBoxLayout_addLayout},
+  {"addSpacing"        , HBoxLayout_addSpacing},
+  {"addStretch"        , HBoxLayout_addStretch},
   {"addWidget"         , HBoxLayout_addWidget},
   {"layout"            , HBoxLayout_layout},
+  {"setContentsMargins", HBoxLayout_setContentsMargins},
+  {"setSpacing"        , HBoxLayout_setSpacing},
   {"__tostring"        , HBoxLayout__tostring},
   {"__gc"              , HBoxLayout_destructor},
   {"deleted"           , HBoxLayout_deleted},

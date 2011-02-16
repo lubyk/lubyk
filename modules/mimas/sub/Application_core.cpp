@@ -89,7 +89,7 @@ static int Application_exec(lua_State *L) {
 
 
 /** void mimas::Application::post(lua_State *L)
- * include/mimas/Application.h:106
+ * include/mimas/Application.h:105
  */
 static int Application_post(lua_State *L) {
   try {
@@ -107,7 +107,7 @@ static int Application_post(lua_State *L) {
 
 
 /** void mimas::Application::quit()
- * include/mimas/Application.h:112
+ * include/mimas/Application.h:111
  */
 static int Application_quit(lua_State *L) {
   try {
@@ -124,7 +124,7 @@ static int Application_quit(lua_State *L) {
 
 
 /** void mimas::Application::setStyleSheet(const char *text)
- * include/mimas/Application.h:116
+ * include/mimas/Application.h:115
  */
 static int Application_setStyleSheet(lua_State *L) {
   try {

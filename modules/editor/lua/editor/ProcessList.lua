@@ -17,12 +17,12 @@ local elem_height = 40
 function lib:init()
   self.list  = {}
   self.width = width
-  function self.super.resized(w, h)
-    self:resized(w, h)
-  end
+  self:setSizePolicy(mimas.Fixed, mimas.Minimum)
 end
 
-function lib:addTab(process_tab)
+function lib:addProcess(process)
+  local process_tab = editor.ProcessTab(process)
+  process.tab = process_tab
   -- keep list sorted
   local add_pos = -1
   for i, elem in ipairs(self.list) do
@@ -42,15 +42,24 @@ function lib:addTab(process_tab)
   self:resizeToFit()
 end
 
-function lib:removeTab(tab_name)
+function lib:removeProcess(process)
+  local process_name = process.name
   for i, v in ipairs(self.list) do
-    if v.name == tab_name then
+    if v.name == process_name then
       v.super:__gc() -- delete
       table.remove(self.list, i)
       break
     end
   end
   self:resizeToFit()
+end
+
+local function placeElements(self, w)
+  local y = padding
+  for _, elem in ipairs(self.list) do
+    elem:move(w - elem.width, y)
+    y = y + padding + elem.height
+  end
 end
 
 function lib:resizeToFit()
@@ -64,15 +73,11 @@ function lib:resizeToFit()
     y = y + padding + elem.height
   end
 
-  self:setMinimumSize(width, y-padding)
-  self:resize(self.width, y-padding)
+  self:setSizeHint(width, y-padding)
+  placeElements(self, self.width)
 end
 
 function lib:resized(w, h)
   self.width  = w
-  local y = padding
-  for _, elem in ipairs(self.list) do
-    elem:move(w - elem.width, y)
-    y = y + padding + elem.height
-  end
+  placeElements(self, w)
 end

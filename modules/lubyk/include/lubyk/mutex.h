@@ -27,8 +27,8 @@
   ==============================================================================
 */
 
-#ifndef LUBYK_INCLUDE_CORE_MUTEX_H_
-#define LUBYK_INCLUDE_CORE_MUTEX_H_
+#ifndef LUBYK_INCLUDE_LUBYK_MUTEX_H_
+#define LUBYK_INCLUDE_LUBYK_MUTEX_H_
 #include <pthread.h>
 #include <assert.h>
 #include <cstdio>

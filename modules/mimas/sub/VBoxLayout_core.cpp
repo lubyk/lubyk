@@ -118,15 +118,67 @@ static int VBoxLayout_addLayout(lua_State *L) {
 }
 
 
-/** void mimas::VBoxLayout::addWidget(QWidget *widget)
+/** void mimas::VBoxLayout::addSpacing(int size)
+ * include/mimas/VBoxLayout.h:73
+ */
+static int VBoxLayout_addSpacing(lua_State *L) {
+  try {
+    VBoxLayout *self__ = *((VBoxLayout**)luaL_checkudata(L, 1, "mimas.VBoxLayout"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.VBoxLayout in addSpacing");
+    int size = luaL_checkint(L, 2);
+    self__->addSpacing(size);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.VBoxLayout.addSpacing: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.VBoxLayout.addSpacing: Unknown exception");
+  }
+}
+
+
+/** void mimas::VBoxLayout::addStretch(int stretch=0)
+ * include/mimas/VBoxLayout.h:67
+ */
+static int VBoxLayout_addStretch(lua_State *L) {
+  try {
+    VBoxLayout *self__ = *((VBoxLayout**)luaL_checkudata(L, 1, "mimas.VBoxLayout"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.VBoxLayout in addStretch");
+    int top__ = lua_gettop(L);
+    if (top__ < 2) {
+      self__->addStretch();
+    } else {
+      int stretch = luaL_checkint(L, 2);
+      self__->addStretch(stretch);
+    }
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.VBoxLayout.addStretch: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.VBoxLayout.addStretch: Unknown exception");
+  }
+}
+
+
+/** void mimas::VBoxLayout::addWidget(QWidget *widget, int stretch=0, int alignment=0)
  * include/mimas/VBoxLayout.h:57
  */
 static int VBoxLayout_addWidget(lua_State *L) {
   try {
     VBoxLayout *self__ = *((VBoxLayout**)luaL_checkudata(L, 1, "mimas.VBoxLayout"));
     if (!self__) return luaL_error(L, "Using deleted mimas.VBoxLayout in addWidget");
+    int top__ = lua_gettop(L);
     QWidget *widget = *((QWidget **)luaL_checkudata(L, 2, "mimas.QWidget"));
-    self__->addWidget(widget);
+    if (top__ < 3) {
+      self__->addWidget(widget);
+    } else {
+      int stretch = luaL_checkint(L, 3);
+      if (top__ < 4) {
+        self__->addWidget(widget, stretch);
+      } else {
+        int alignment = luaL_checkint(L, 4);
+        self__->addWidget(widget, stretch, alignment);
+      }
+    }
     return 0;
   } catch (std::exception &e) {
     return luaL_error(L, "mimas.VBoxLayout.addWidget: %s", e.what());
@@ -137,7 +189,7 @@ static int VBoxLayout_addWidget(lua_State *L) {
 
 
 /** QLayout* mimas::VBoxLayout::layout()
- * include/mimas/VBoxLayout.h:65
+ * include/mimas/VBoxLayout.h:87
  */
 static int VBoxLayout_layout(lua_State *L) {
   try {
@@ -154,14 +206,57 @@ static int VBoxLayout_layout(lua_State *L) {
 }
 
 
+/** void mimas::VBoxLayout::setContentsMargins(int left, int top, int right, int bottom)
+ * include/mimas/VBoxLayout.h:83
+ */
+static int VBoxLayout_setContentsMargins(lua_State *L) {
+  try {
+    VBoxLayout *self__ = *((VBoxLayout**)luaL_checkudata(L, 1, "mimas.VBoxLayout"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.VBoxLayout in setContentsMargins");
+    int left = luaL_checkint(L, 2);
+    int top = luaL_checkint(L, 3);
+    int right = luaL_checkint(L, 4);
+    int bottom = luaL_checkint(L, 5);
+    self__->setContentsMargins(left, top, right, bottom);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.VBoxLayout.setContentsMargins: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.VBoxLayout.setContentsMargins: Unknown exception");
+  }
+}
+
+
+/** void mimas::VBoxLayout::setSpacing(int space)
+ * include/mimas/VBoxLayout.h:79
+ */
+static int VBoxLayout_setSpacing(lua_State *L) {
+  try {
+    VBoxLayout *self__ = *((VBoxLayout**)luaL_checkudata(L, 1, "mimas.VBoxLayout"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.VBoxLayout in setSpacing");
+    int space = luaL_checkint(L, 2);
+    self__->setSpacing(space);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.VBoxLayout.setSpacing: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.VBoxLayout.setSpacing: Unknown exception");
+  }
+}
+
+
 
 
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg VBoxLayout_member_methods[] = {
   {"addLayout"         , VBoxLayout_addLayout},
+  {"addSpacing"        , VBoxLayout_addSpacing},
+  {"addStretch"        , VBoxLayout_addStretch},
   {"addWidget"         , VBoxLayout_addWidget},
   {"layout"            , VBoxLayout_layout},
+  {"setContentsMargins", VBoxLayout_setContentsMargins},
+  {"setSpacing"        , VBoxLayout_setSpacing},
   {"__tostring"        , VBoxLayout__tostring},
   {"__gc"              , VBoxLayout_destructor},
   {"deleted"           , VBoxLayout_deleted},

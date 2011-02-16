@@ -9,7 +9,7 @@ using namespace lubyk;
 /* ============================ Constructors     ====================== */
 
 /** lubyk::Worker::Worker(lua_State *L)
- * include/lubyk/worker.h:78
+ * include/lubyk/worker.h:79
  */
 static int Worker_Worker(lua_State *L) {
   try {
@@ -53,24 +53,8 @@ static int Worker__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
-/** void lubyk::Worker::lock()
- * include/lubyk/worker.h:89
- */
-static int Worker_lock(lua_State *L) {
-  try {
-    Worker *self__ = *((Worker**)luaL_checkudata(L, 1, "lubyk.Worker"));
-    self__->lock();
-    return 0;
-  } catch (std::exception &e) {
-    return luaL_error(L, "lubyk.Worker.lock: %s", e.what());
-  } catch (...) {
-    return luaL_error(L, "lubyk.Worker.lock: Unknown exception");
-  }
-}
-
-
 /** double lubyk::Worker::now()
- * include/lubyk/worker.h:95
+ * include/lubyk/worker.h:102
  */
 static int Worker_now(lua_State *L) {
   try {
@@ -87,7 +71,7 @@ static int Worker_now(lua_State *L) {
 
 
 /** void lubyk::Worker::run()
- * include/lubyk/worker.h:93
+ * include/lubyk/worker.h:100
  */
 static int Worker_run(lua_State *L) {
   try {
@@ -103,7 +87,7 @@ static int Worker_run(lua_State *L) {
 
 
 /** void lubyk::Worker::sleep(double duration)
- * include/lubyk/worker.h:84
+ * include/lubyk/worker.h:85
  */
 static int Worker_sleep(lua_State *L) {
   try {
@@ -119,15 +103,48 @@ static int Worker_sleep(lua_State *L) {
 }
 
 
+/** void lubyk::Worker::test_lock()
+ * include/lubyk/worker.h:91
+ */
+static int Worker_test_lock(lua_State *L) {
+  try {
+    Worker *self__ = *((Worker**)luaL_checkudata(L, 1, "lubyk.Worker"));
+    self__->test_lock();
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "lubyk.Worker.test_lock: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "lubyk.Worker.test_lock: Unknown exception");
+  }
+}
+
+
+/** void lubyk::Worker::test_unlock()
+ * include/lubyk/worker.h:96
+ */
+static int Worker_test_unlock(lua_State *L) {
+  try {
+    Worker *self__ = *((Worker**)luaL_checkudata(L, 1, "lubyk.Worker"));
+    self__->test_unlock();
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "lubyk.Worker.test_unlock: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "lubyk.Worker.test_unlock: Unknown exception");
+  }
+}
+
+
 
 
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg Worker_member_methods[] = {
-  {"lock"              , Worker_lock},
   {"now"               , Worker_now},
   {"run"               , Worker_run},
   {"sleep"             , Worker_sleep},
+  {"test_lock"         , Worker_test_lock},
+  {"test_unlock"       , Worker_test_unlock},
   {"__tostring"        , Worker__tostring},
   {"__gc"              , Worker_destructor},
   {NULL, NULL},

@@ -54,12 +54,34 @@ public:
     MIMAS_DEBUG_GC
   }
 
-  void addWidget(QWidget *widget) {
-    QHBoxLayout::addWidget(widget);
+  void addWidget(QWidget *widget, int stretch = 0, int alignment = 0) {
+    QHBoxLayout::addWidget(widget, stretch, (Qt::Alignment)alignment);
   }
 
   void addLayout(QLayout *layout) {
     QHBoxLayout::addLayout(layout);
+  }
+
+  /** Add a strechable item.
+   */
+  void addStretch(int stretch = 0) {
+    QHBoxLayout::addStretch(stretch);
+  }
+
+  /** Add a single fixed space.
+   */
+  void addSpacing(int size) {
+    QHBoxLayout::addSpacing(size);
+  }
+
+  /** Fixed spacing between items.
+   */
+  void setSpacing(int space) {
+    QHBoxLayout::setSpacing(space);
+  }
+
+  void setContentsMargins(int left, int top, int right, int bottom) {
+    QHBoxLayout::setContentsMargins(left, top, right, bottom);
   }
 
   QLayout *layout() {

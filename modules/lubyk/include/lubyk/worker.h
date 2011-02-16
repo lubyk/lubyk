@@ -40,6 +40,7 @@ Planet <>--- Worker
 */
 #include "lubyk/lua.h"
 #include "lubyk/thread.h"
+#include "lubyk/mutex.h"
 #include "lubyk/time_ref.h"
 
 namespace lubyk {
@@ -86,8 +87,14 @@ public:
     Thread::millisleep(duration);
   }
 
-  void lock() {
-    ScopedLock lock(this);
+  /** Used for testing. */
+  void test_lock() {
+    lock();
+  }
+
+  /** Used for testing. */
+  void test_unlock() {
+    unlock();
   }
 
   void run();

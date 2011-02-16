@@ -96,7 +96,6 @@ public:
    */
   int exec() {
     ScopedUnlock unlock(worker_);
-    // is this dumb ?
     return QApplication::exec();
   }
 

@@ -21,6 +21,9 @@ function mimas.WidgetClass()
     function instance.super.paint(p, w, h)
       instance:paint(p, w, h)
     end
+    function instance.super.resized(w, h)
+      instance:resized(w, h)
+    end
     setmetatable(instance, lib)
     instance:init(...)
     return instance
@@ -31,6 +34,10 @@ function mimas.WidgetClass()
   end
 
   function lib:paint(p, w, h)
+    -- default = noop
+  end
+
+  function lib:resized(w, h)
     -- default = noop
   end
 
@@ -52,8 +59,20 @@ function mimas.WidgetClass()
     self.super:resize(...)
   end
 
+  function lib:setSizeHint(...)
+    self.super:setSizeHint(...)
+  end
+
+  function lib:setSizePolicy(...)
+    self.super:setSizePolicy(...)
+  end
+
   function lib:setMinimumSize(...)
     self.super:setMinimumSize(...)
+  end
+
+  function lib:update()
+    self.super:update()
   end
 
   function lib:show()

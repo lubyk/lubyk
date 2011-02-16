@@ -69,6 +69,13 @@ static const struct lua_constants_Reg mimas_namespace_constants[] = {
   {"TextShowMnemonic"              , mimas::TextShowMnemonic},
   {"TextWordWrap"                  , mimas::TextWordWrap},
   {"TextIncludeTrailingSpaces"     , mimas::TextIncludeTrailingSpaces},
+  {"Fixed"                         , mimas::Fixed},
+  {"Minimum"                       , mimas::Minimum},
+  {"Maximum"                       , mimas::Maximum},
+  {"Preferred"                     , mimas::Preferred},
+  {"Expanding"                     , mimas::Expanding},
+  {"MinimumExpanding"              , mimas::MinimumExpanding},
+  {"Ignored"                       , mimas::Ignored},
   {NULL, NULL},
 };
 

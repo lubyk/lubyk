@@ -16,7 +16,7 @@ editor.ProcessWatch = lib
 setmetatable(lib, {
   -- new method
  __call = function(table)
-  local instance = {browser = lk.ServiceBrowser(lubyk.service_type), list = {}, list_view = editor.ProcessList()}
+  local instance = {browser = lk.ServiceBrowser(lubyk.service_type), list = {}, view = editor.ProcessList()}
 
   --======================================= SUB client
 
@@ -33,12 +33,15 @@ setmetatable(lib, {
       local remote_service = instance.browser.services[service_name]
       local process = editor.Process(remote_service)
       instance.list[service_name] = process
-      instance.list_view:addTab(process.tab)
+      app:post(function()
+        -- Adding widgets must be done in the GUI thread
+        instance.view:addProcess(process)
+      end)
     elseif url == lubyk.rem_service_url then
       -- remove connection
       if instance.list[service_name] then
         instance.list[service_name] = nil
-        instance.list_view:removeTab(service_name)
+        instance.view:removeProcess(service_name)
       end
     else
       -- ???
@@ -50,45 +53,3 @@ setmetatable(lib, {
   setmetatable(instance, lib)
   return instance
 end})
-
-
-function lib:subscribe(remote_name)
-  if self.subscriptions[remote_name] then
-    -- allready subscribed, abort
-    return
-  end
-  subscription = {subscriber = self.sub}
-  self.subscriptions[remote_name] = subscription
-  local service = self.browser.services[remote_name]
-  if service then
-    self.sub:connect(service.sub_url)
-    subscription.connected = true
-  end
-end
-
-function lib:request(service_name, ...)
-  local service = self.browser.services[service_name]
-  if not service then
-    return false, string.format('Cannot request to %s (service not found)', service_name)
-  end
-  return service.req:request(...)
-end
-
-function lib:send(service_name, ...)
-  local service = self.browser.services[service_name]
-  if not service then
-    return false, string.format('Cannot send to %s (service not found)', service_name)
-  else
-    service.push:send(...)
-    return true
-  end
-end
-
-function lib:connected()
-  for _, connection in pairs(self.subscriptions) do
-    if not connection.connected then
-      return false
-    end
-  end
-  return true
-end

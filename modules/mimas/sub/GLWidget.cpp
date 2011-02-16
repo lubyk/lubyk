@@ -9,7 +9,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::GLWidget::GLWidget(lubyk::Worker *worker)
- * include/mimas/GLWidget.h:68
+ * include/mimas/GLWidget.h:67
  */
 static int GLWidget_GLWidget(lua_State *L) {
   try {
@@ -68,7 +68,7 @@ static int GLWidget__tostring(lua_State *L) {
 
 
 /** void mimas::GLWidget::__newindex(lua_State *L)
- * include/mimas/GLWidget.h:147
+ * include/mimas/GLWidget.h:143
  */
 static int GLWidget___newindex(lua_State *L) {
   try {
@@ -85,15 +85,14 @@ static int GLWidget___newindex(lua_State *L) {
 }
 
 
-/** void mimas::GLWidget::activateWindow(lua_State *L)
- * include/mimas/GLWidget.h:133
+/** void mimas::GLWidget::activateWindow()
+ * include/mimas/GLWidget.h:130
  */
 static int GLWidget_activateWindow(lua_State *L) {
   try {
     GLWidget *self__ = *((GLWidget**)luaL_checkudata(L, 1, "mimas.GLWidget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.GLWidget in activateWindow");
-    
-    self__->activateWindow(L);
+    self__->activateWindow();
     return 0;
   } catch (std::exception &e) {
     return luaL_error(L, "mimas.GLWidget.activateWindow: %s", e.what());
@@ -104,7 +103,7 @@ static int GLWidget_activateWindow(lua_State *L) {
 
 
 /** bool mimas::GLWidget::close()
- * include/mimas/GLWidget.h:119
+ * include/mimas/GLWidget.h:117
  */
 static int GLWidget_close(lua_State *L) {
   try {
@@ -122,7 +121,7 @@ static int GLWidget_close(lua_State *L) {
 
 
 /** QString mimas::GLWidget::cssClass() const 
- * include/mimas/GLWidget.h:80
+ * include/mimas/GLWidget.h:79
  */
 static int GLWidget_cssClass(lua_State *L) {
   try {
@@ -140,7 +139,7 @@ static int GLWidget_cssClass(lua_State *L) {
 
 
 /** bool mimas::GLWidget::isVisible() const 
- * include/mimas/GLWidget.h:123
+ * include/mimas/GLWidget.h:121
  */
 static int GLWidget_isVisible(lua_State *L) {
   try {
@@ -158,7 +157,7 @@ static int GLWidget_isVisible(lua_State *L) {
 
 
 /** void mimas::GLWidget::move(int x, int y)
- * include/mimas/GLWidget.h:105
+ * include/mimas/GLWidget.h:104
  */
 static int GLWidget_move(lua_State *L) {
   try {
@@ -177,7 +176,7 @@ static int GLWidget_move(lua_State *L) {
 
 
 /** LuaStackSize mimas::GLWidget::name(lua_State *L)
- * include/mimas/GLWidget.h:94
+ * include/mimas/GLWidget.h:93
  */
 static int GLWidget_name(lua_State *L) {
   try {
@@ -195,7 +194,7 @@ static int GLWidget_name(lua_State *L) {
 
 
 /** QObject* mimas::GLWidget::object()
- * include/mimas/GLWidget.h:88
+ * include/mimas/GLWidget.h:87
  */
 static int GLWidget_object(lua_State *L) {
   try {
@@ -212,8 +211,8 @@ static int GLWidget_object(lua_State *L) {
 }
 
 
-/** void mimas::GLWidget::resize(int w, int h, lua_State *L)
- * include/mimas/GLWidget.h:110
+/** void mimas::GLWidget::resize(int w, int h)
+ * include/mimas/GLWidget.h:108
  */
 static int GLWidget_resize(lua_State *L) {
   try {
@@ -221,8 +220,7 @@ static int GLWidget_resize(lua_State *L) {
     if (!self__) return luaL_error(L, "Using deleted mimas.GLWidget in resize");
     int w = luaL_checkint(L, 2);
     int h = luaL_checkint(L, 3);
-    
-    self__->resize(w, h, L);
+    self__->resize(w, h);
     return 0;
   } catch (std::exception &e) {
     return luaL_error(L, "mimas.GLWidget.resize: %s", e.what());
@@ -233,7 +231,7 @@ static int GLWidget_resize(lua_State *L) {
 
 
 /** void mimas::GLWidget::setName(const char *name)
- * include/mimas/GLWidget.h:101
+ * include/mimas/GLWidget.h:100
  */
 static int GLWidget_setName(lua_State *L) {
   try {
@@ -250,15 +248,14 @@ static int GLWidget_setName(lua_State *L) {
 }
 
 
-/** void mimas::GLWidget::show(lua_State *L)
- * include/mimas/GLWidget.h:128
+/** void mimas::GLWidget::show()
+ * include/mimas/GLWidget.h:125
  */
 static int GLWidget_show(lua_State *L) {
   try {
     GLWidget *self__ = *((GLWidget**)luaL_checkudata(L, 1, "mimas.GLWidget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.GLWidget in show");
-    
-    self__->show(L);
+    self__->show();
     return 0;
   } catch (std::exception &e) {
     return luaL_error(L, "mimas.GLWidget.show: %s", e.what());
@@ -268,15 +265,14 @@ static int GLWidget_show(lua_State *L) {
 }
 
 
-/** void mimas::GLWidget::updateGL(lua_State *L)
- * include/mimas/GLWidget.h:139
+/** void mimas::GLWidget::updateGL()
+ * include/mimas/GLWidget.h:135
  */
 static int GLWidget_updateGL(lua_State *L) {
   try {
     GLWidget *self__ = *((GLWidget**)luaL_checkudata(L, 1, "mimas.GLWidget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.GLWidget in updateGL");
-    
-    self__->updateGL(L);
+    self__->updateGL();
     return 0;
   } catch (std::exception &e) {
     return luaL_error(L, "mimas.GLWidget.updateGL: %s", e.what());
@@ -287,7 +283,7 @@ static int GLWidget_updateGL(lua_State *L) {
 
 
 /** QWidget* mimas::GLWidget::widget()
- * include/mimas/GLWidget.h:84
+ * include/mimas/GLWidget.h:83
  */
 static int GLWidget_widget(lua_State *L) {
   try {

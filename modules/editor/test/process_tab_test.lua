@@ -20,7 +20,7 @@ function should.draw_process_tab(t)
   t.tab:show()
 
   t.thread = lk.Thread(function()
-    sleep(1000)
+    sleep(800)
     t.tab:close()
     assert_true(true)
   end)
