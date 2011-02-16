@@ -40,6 +40,10 @@ setmetatable(lib, {
         -- XXX
         remote_service.req:connect(remote_service.url)
         remote_service.info = remote_service.req:request(lubyk.info_url)
+        if not remote_service.info then
+          -- Server died on us
+          return
+        end
         remote_service.sub_url  = string.format('tcp://%s:%i', remote_service.host, remote_service.info.pub)
         remote_service.push_url = string.format('tcp://%s:%i', remote_service.host, remote_service.info.pull)
         remote_service.push = zmq.Push()

@@ -33,24 +33,27 @@ function should.add_widgets_to_list(t)
 
   t.threads  = {}
   t.services = {}
-  t.name = {'Dune', 'Hyperion', 'Dorsai', 'Andromeda', 'Pandora'}
+  t.name  = {'Dune', 'Hyperion', 'Dorsai', 'Andromeda', 'Pandora'}
+  -- The short values are to test servers going out before
+  -- we can connect.
+  t.sleep = {500, 3000, 1500}
 
   math.randomseed(os.time())
 
-  local service_count = 5
+  local service_count = 7
   for i=1,service_count do
     t.threads[i] = lk.Thread(function()
       sleep(500 * math.random())
       t.services[i] = lk.Service(t.name[i] or string.format('Process %i', i))
       t.services[i].info.hue = math.random()
-      sleep(2000 + 2000 * math.random())
+      sleep(t.sleep[i] or 1000 + 5000 * math.random())
       t.services[i]:kill()
       sleep(1000)
     end)
   end
 
   t.thread = lk.Thread(function()
-    sleep(2000)
+    sleep(1000)
     app:post(function()
       t.win:resize(300, 300)
     end)

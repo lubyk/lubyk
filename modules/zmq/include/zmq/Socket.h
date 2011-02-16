@@ -31,6 +31,7 @@
 
 #include "../vendor/include/zmq.h"
 #include "lubyk/msgpack.h"
+#include "lubyk/time_ref.h"
 
 #include "lubyk.h"
 
@@ -57,6 +58,10 @@ class Socket : LuaCallback
   /** Mutex used to enable zmq.REQ sharing between threads.
    */
   Mutex req_mutex_;
+
+  /** Timer used for timeout in request.
+   */
+  TimeRef time_ref_;
 public:
   Socket(lubyk::Worker *worker, int type)
    : LuaCallback(worker),
@@ -223,6 +228,7 @@ public:
   /** Request = remote call. Can be used by multiple threads.
    */
   LuaStackSize request(lua_State *L) {
+    bool timed_out = false;
     msgpack_sbuffer *buffer;
 
     msgpack_lua_to_bin(L, &buffer, 1);
@@ -230,6 +236,11 @@ public:
     zmq_msg_t msg;
     zmq_msg_t recv_msg;
     zmq_msg_init_data(&msg, buffer->data, buffer->size, free_msgpack_msg, buffer);
+
+    //  Initialize poll set
+    zmq_pollitem_t items[] = {
+        { socket_,    0, ZMQ_POLLIN, 0 }
+    };
 
     { // unlock worker
       ScopedUnlock unlock(worker_);
@@ -245,15 +256,47 @@ public:
 
       zmq_msg_init(&recv_msg);
 
-      if (zmq_recv(socket_, &recv_msg, 0)) {
-        zmq_msg_close(&recv_msg);
-        throw_recv_error(errno);
+
+      double start = time_ref_.elapsed();
+      static const long total_timeout = 200000;
+      long timeout = total_timeout;
+      // Receive with (relatively short) timeout
+      // [us] = 200ms
+      while (1) {
+        if (zmq_poll(items, 1, timeout) == -1) {
+          zmq_msg_close(&recv_msg);
+          throw_poll_error(errno);
+        }
+
+        if (!items[0].revents & ZMQ_POLLIN) {
+          // timeout: no message
+          double now = time_ref_.elapsed();
+          if (now >= start + total_timeout/1000) {
+            timed_out = true;
+            break;
+          } else {
+            // poll can return before total_timeout
+            // wait the rest of the timeout
+            timeout = total_timeout - (now - start);
+          }
+        } else {
+          if (zmq_recv(socket_, &recv_msg, 0)) {
+            zmq_msg_close(&recv_msg);
+            throw_recv_error(errno);
+          }
+          break;
+        }
       }
     }
 
-    int arg_size = msgpack_bin_to_lua(L, zmq_msg_data(&recv_msg), zmq_msg_size(&recv_msg));
-    zmq_msg_close(&recv_msg);
-    return arg_size;
+    if (timed_out) {
+      lua_pushnil(L);
+      return 1;
+    } else {
+      int arg_size = msgpack_bin_to_lua(L, zmq_msg_data(&recv_msg), zmq_msg_size(&recv_msg));
+      zmq_msg_close(&recv_msg);
+      return arg_size;
+    }
   }
 
   const char *location() {
@@ -294,28 +337,30 @@ public:
   /** @internal: DO NOT USE.
   */
   void set_callback(lua_State *L) {
-   set_lua_callback(L);
-   thread_   = new Thread();
-   thread_->start_thread<Socket, &Socket::run>(this, NULL);
+    set_lua_callback(L);
+    thread_   = new Thread();
+    thread_->start_thread<Socket, &Socket::run>(this, NULL);
   }
 
   void quit() {
-   if (thread_) thread_->quit();
+    if (thread_) thread_->quit();
   }
 
   void kill() {
-   req_mutex_.unlock(); // unlock if not locked should be ok
-   if (thread_) thread_->kill();
+    { ScopedLock lock(req_mutex_);
+      // just to make sure we are not in zmq_poll
+    }
+    if (thread_) thread_->kill();
   }
 
   void join() {
-   ScopedUnlock unlock(worker_);
-   if (thread_) thread_->join();
+    ScopedUnlock unlock(worker_);
+    if (thread_) thread_->join();
   }
 
   bool should_run() {
-   if (thread_) return thread_->should_run();
-   return false;
+    if (thread_) return thread_->should_run();
+    return false;
   }
 
 private:
@@ -351,6 +396,17 @@ private:
     case ETERM:
       throw Exception("The ZMQ context associated with the specified socket was terminated.");
     case EFAULT: // continue
+    default:
+      throw Exception("The provided context was not valid (NULL).");
+    }
+  }
+
+  void throw_poll_error(int err) {
+    switch(err) {
+    case ETERM:
+      throw Exception("At least one of the members of the items array refers to a socket whose associated ØMQ context was terminated.");
+    case EFAULT:
+      throw Exception("At least one of the members of the items array refers to a socket belonging to a different application thread.");
     default:
       throw Exception("The provided context was not valid (NULL).");
     }
