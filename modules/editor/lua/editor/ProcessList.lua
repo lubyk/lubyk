@@ -42,8 +42,7 @@ function lib:addProcess(process)
   self:resizeToFit()
 end
 
-function lib:removeProcess(process)
-  local process_name = process.name
+function lib:removeProcess(process_name)
   for i, v in ipairs(self.list) do
     if v.name == process_name then
       v.super:__gc() -- delete

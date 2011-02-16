@@ -17,8 +17,8 @@ setmetatable(lib, {
   -- new method
  __call = function(table, remote_service)
   local instance = {name = remote_service.name, push = remote_service.push}
-  if remote_service.hue then
-    instance.hue = remote_service.hue
+  if remote_service.info.hue then
+    instance.hue = remote_service.info.hue
   else
     instance.hue = 0.5
   end

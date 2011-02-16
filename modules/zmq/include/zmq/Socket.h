@@ -194,6 +194,7 @@ public:
         zmq_msg_close(&msg);
         throw_recv_error(errno);
       }
+      printf("[%p] zmq_recv\n", socket_);
     }
 
     int arg_size = msgpack_bin_to_lua(L, zmq_msg_data(&msg), zmq_msg_size(&msg));
@@ -216,7 +217,8 @@ public:
     if (zmq_send(socket_, &msg, 0)) {
       zmq_msg_close(&msg);
       throw_send_error(errno);
-    }
+    }  
+    printf("[%p] zmq_send\n", socket_);
     zmq_msg_close(&msg);
   }
 
@@ -241,6 +243,7 @@ public:
         zmq_msg_close(&msg);
         throw_send_error(errno);
       }
+      printf("[%p] zmq_send\n", socket_);
 
       zmq_msg_close(&msg);
 
@@ -250,6 +253,7 @@ public:
         zmq_msg_close(&recv_msg);
         throw_recv_error(errno);
       }
+      printf("[%p] zmq_recv\n", socket_);
     }
 
     int arg_size = msgpack_bin_to_lua(L, zmq_msg_data(&recv_msg), zmq_msg_size(&recv_msg));

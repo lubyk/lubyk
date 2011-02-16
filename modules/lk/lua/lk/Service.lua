@@ -26,7 +26,7 @@ setmetatable(lib, {
       return nil
     end
   end
-  local instance = {name = name, browser = lk.ServiceBrowser(service_type), callback = callback}
+  local instance = {name = name, callback = callback, info = {}}
 
   --======================================= PUB server
   instance.pub = zmq.Pub()
@@ -36,8 +36,12 @@ setmetatable(lib, {
     -- we do not pass callback directly so that we can update the function with instance.callback=..
     if ... == lubyk.info_url then
       -- lubyk special commands
-      -- publish and pull ports
-      return {pub = instance.pub:port(), pull = instance.pull:port()}
+      if not instance.info.pub then
+        -- publish and pull ports
+        instance.info.pub  = instance.pub:port()
+        instance.info.pull = instance.pull:port()
+      end
+      return instance.info
     else
       -- handle requests here
       instance.callback(...)
@@ -67,6 +71,8 @@ function lib:join(...)
 end
 
 function lib:kill(...)
+  self.registration:__gc()
+  self.registration = nil
   self.rep:kill(...)
   self.pull:kill(...)
 end

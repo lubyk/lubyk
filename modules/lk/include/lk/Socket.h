@@ -264,7 +264,6 @@ public:
     int len;
     // unlock while waiting
     { lubyk::ScopedUnlock unlock(worker_);
-      printf("recv(%i)\n", socket_fd_);
       len = ::recv(socket_fd_, &buffer, 1023, 0);
       if (len == 0) {
         return 0; // connection closed
@@ -283,7 +282,6 @@ public:
   void send(lua_State *L) {
     msgpack_sbuffer* buffer;
     msgpack_lua_to_bin(L, &buffer, 1);
-    printf("send(%i)\n", socket_fd_);
     if (::send(socket_fd_, buffer->data, buffer->size, 0)) {
       throw Exception("Could not send message (%s).", strerror(errno));
     }

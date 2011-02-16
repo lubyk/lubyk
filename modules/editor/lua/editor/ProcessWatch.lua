@@ -16,7 +16,8 @@ editor.ProcessWatch = lib
 setmetatable(lib, {
   -- new method
  __call = function(table)
-  local instance = {browser = lk.ServiceBrowser(lubyk.service_type), list = {}, view = editor.ProcessList()}
+  local service_type = lubyk.service_type
+  local instance = {browser = lk.ServiceBrowser(service_type), list = {}, view = editor.ProcessList()}
 
   --======================================= SUB client
 
@@ -29,19 +30,23 @@ setmetatable(lib, {
         -- allready found
         return
       end
+      print("NEW", service_name)
 
       local remote_service = instance.browser.services[service_name]
-      local process = editor.Process(remote_service)
-      instance.list[service_name] = process
       app:post(function()
+        local process = editor.Process(remote_service)
+        instance.list[service_name] = process
         -- Adding widgets must be done in the GUI thread
         instance.view:addProcess(process)
       end)
     elseif url == lubyk.rem_service_url then
+      print("REM", service_name)
       -- remove connection
       if instance.list[service_name] then
         instance.list[service_name] = nil
-        instance.view:removeProcess(service_name)
+        app:post(function()
+          instance.view:removeProcess(service_name)
+        end)
       end
     else
       -- ???

@@ -25,6 +25,7 @@ function should.draw_process_list(t)
   assert_equal('Two', t.list.list[3].name)
 
   t.list:move(100, 100)
+  t.list:resize(100, 300)
   t.list:show()
 
   t.thread = lk.Thread(function()
@@ -34,7 +35,7 @@ function should.draw_process_list(t)
       t.list:addProcess{name = 'Dune', hue = 0.2}
     end)
     sleep(800)
-    t.list:removeProcess{name = 'Process One'}
+    t.list:removeProcess('Process One')
     sleep(800)
     t.list:close()
     assert_true(true)
@@ -44,7 +45,7 @@ end
 function should.remove_process_tab(t)
   t.list = editor.ProcessList()
   add_tabs(t.list)
-  t.list:removeProcess{name = 'Process One'}
+  t.list:removeProcess('Process One')
   assert_equal('Armand', t.list.list[1].name)
   assert_equal('Two', t.list.list[2].name)
   assert_nil(t.list.list[3])
