@@ -10,7 +10,7 @@ require 'lubyk'
 
 local should = test.Suite('editor.ProcessTab')
 
-function mock_process()
+local function mock_process()
   return {name = 'Dummy ProcessTab', hue = 0.9}
 end
 

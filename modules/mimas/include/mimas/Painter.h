@@ -98,7 +98,25 @@ public:
   void drawRect(float x, float y, float w, float h) {
     QPainter::drawRect(QRectF(x, y, w, h));
   }
-  //void drawRect
+
+  /** Draw a chord (filled arc). TODO: How the rectangle is used is not clear...
+   * Angles are specified in degrees.
+   */
+  void drawChord(int x, int y, int width, int height, float startAngle, float spanAngle) {
+    QPainter::drawChord(x, y, width, height, startAngle * 16, spanAngle * 16);
+  }
+
+  /** Draw an ellipse in the given rectangle.
+   */
+  void drawEllipse(int x, int y, int width, int height) {
+    QPainter::drawEllipse(x, y, width, height);
+  }
+
+  /** Draw a single point with the current pen.
+   */
+  void drawPoint(int x, int y) {
+    QPainter::drawPoint(x, y);
+  }
 };
 
 } // mimas

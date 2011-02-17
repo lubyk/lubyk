@@ -76,6 +76,13 @@ static const struct lua_constants_Reg mimas_namespace_constants[] = {
   {"Expanding"                     , mimas::Expanding},
   {"MinimumExpanding"              , mimas::MinimumExpanding},
   {"Ignored"                       , mimas::Ignored},
+  {"NoButton"                      , mimas::NoButton},
+  {"LeftButton"                    , mimas::LeftButton},
+  {"RightButton"                   , mimas::RightButton},
+  {"MidButton"                     , mimas::MidButton},
+  {"MiddleButton"                  , mimas::MiddleButton},
+  {"XButton1"                      , mimas::XButton1},
+  {"XButton2"                      , mimas::XButton2},
   {NULL, NULL},
 };
 

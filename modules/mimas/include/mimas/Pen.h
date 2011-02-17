@@ -48,6 +48,9 @@ public:
   Pen(float width, const Color &color, int style = Qt::SolidLine, int cap = Qt::SquareCap, int join = Qt::MiterJoin)
    : QPen(QBrush(color, Qt::SolidPattern), width, (Qt::PenStyle)style, (Qt::PenCapStyle)cap, (Qt::PenJoinStyle)join) {}
 
+ Pen(float width, float h, float s=1.0, float v=1.0, float a=1.0)
+  : QPen(Color(h, s, v, a), width, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin) {}
+
   ~Pen() {
     MIMAS_DEBUG_GC
   }

@@ -67,6 +67,50 @@ static int Painter__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
+/** void mimas::Painter::drawChord(int x, int y, int width, int height, float startAngle, float spanAngle)
+ * include/mimas/Painter.h:105
+ */
+static int Painter_drawChord(lua_State *L) {
+  try {
+    Painter *self__ = *((Painter**)luaL_checkudata(L, 1, "mimas.Painter"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Painter in drawChord");
+    int x = luaL_checkint(L, 2);
+    int y = luaL_checkint(L, 3);
+    int width = luaL_checkint(L, 4);
+    int height = luaL_checkint(L, 5);
+    float startAngle = luaL_checknumber(L, 6);
+    float spanAngle = luaL_checknumber(L, 7);
+    self__->drawChord(x, y, width, height, startAngle, spanAngle);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Painter.drawChord: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Painter.drawChord: Unknown exception");
+  }
+}
+
+
+/** void mimas::Painter::drawEllipse(int x, int y, int width, int height)
+ * include/mimas/Painter.h:111
+ */
+static int Painter_drawEllipse(lua_State *L) {
+  try {
+    Painter *self__ = *((Painter**)luaL_checkudata(L, 1, "mimas.Painter"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Painter in drawEllipse");
+    int x = luaL_checkint(L, 2);
+    int y = luaL_checkint(L, 3);
+    int width = luaL_checkint(L, 4);
+    int height = luaL_checkint(L, 5);
+    self__->drawEllipse(x, y, width, height);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Painter.drawEllipse: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Painter.drawEllipse: Unknown exception");
+  }
+}
+
+
 /** void mimas::Painter::drawPath(const Path &path)
  * include/mimas/Painter.h:65
  */
@@ -81,6 +125,25 @@ static int Painter_drawPath(lua_State *L) {
     return luaL_error(L, "mimas.Painter.drawPath: %s", e.what());
   } catch (...) {
     return luaL_error(L, "mimas.Painter.drawPath: Unknown exception");
+  }
+}
+
+
+/** void mimas::Painter::drawPoint(int x, int y)
+ * include/mimas/Painter.h:117
+ */
+static int Painter_drawPoint(lua_State *L) {
+  try {
+    Painter *self__ = *((Painter**)luaL_checkudata(L, 1, "mimas.Painter"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Painter in drawPoint");
+    int x = luaL_checkint(L, 2);
+    int y = luaL_checkint(L, 3);
+    self__->drawPoint(x, y);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Painter.drawPoint: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Painter.drawPoint: Unknown exception");
   }
 }
 
@@ -285,7 +348,10 @@ static int Painter_setPen(lua_State *L) {
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg Painter_member_methods[] = {
+  {"drawChord"         , Painter_drawChord},
+  {"drawEllipse"       , Painter_drawEllipse},
   {"drawPath"          , Painter_drawPath},
+  {"drawPoint"         , Painter_drawPoint},
   {"drawRect"          , Painter_drawRect},
   {"drawRoundedRect"   , Painter_drawRoundedRect},
   {"drawText"          , Painter_drawText},

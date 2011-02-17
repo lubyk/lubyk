@@ -60,13 +60,56 @@ static int Pen_Pen2(lua_State *L) {
 }
 
 
+/** mimas::Pen::Pen(float width, float h, float s=1.0, float v=1.0, float a=1.0)
+ * include/mimas/Pen.h:52
+ */
+static int Pen_Pen3(lua_State *L) {
+  try {
+    int top__ = lua_gettop(L);
+    Pen * retval__;
+    float width = luaL_checknumber(L, 1);
+    float h = luaL_checknumber(L, 2);
+    if (top__ < 3) {
+      retval__ = new Pen(width, h);
+    } else {
+      float s = luaL_checknumber(L, 3);
+      if (top__ < 4) {
+        retval__ = new Pen(width, h, s);
+      } else {
+        float v = luaL_checknumber(L, 4);
+        if (top__ < 5) {
+          retval__ = new Pen(width, h, s, v);
+        } else {
+          float a = luaL_checknumber(L, 5);
+          retval__ = new Pen(width, h, s, v, a);
+        }
+      }
+    }
+    lua_pushclass<Pen>(L, retval__, "mimas.Pen");
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Pen.Pen: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Pen.Pen: Unknown exception");
+  }
+}
+
+
 
 /** Overloaded function chooser for Pen(...) */
 static int Pen_Pen(lua_State *L) {
   int type__ = lua_type(L, 1);
   int top__  = lua_gettop(L);
   if (type__ == LUA_TNUMBER) {
-    return Pen_Pen2(L);
+    type__ = lua_type(L, 2);
+    if (type__ == LUA_TNUMBER) {
+      return Pen_Pen3(L);
+    } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.Color")) {
+      return Pen_Pen2(L);
+    } else {
+      // use any to raise errors
+      return Pen_Pen2(L);
+    }
   } else if (top__ < 1) {
     return Pen_Pen1(L);
   } else {
@@ -105,7 +148,7 @@ static int Pen__tostring(lua_State *L) {
 
 
 /** void mimas::Pen::setCapStyle(int style)
- * include/mimas/Pen.h:77
+ * include/mimas/Pen.h:80
  */
 static int Pen_setCapStyle(lua_State *L) {
   try {
@@ -122,7 +165,7 @@ static int Pen_setCapStyle(lua_State *L) {
 
 
 /** void mimas::Pen::setColor(const Color &color)
- * include/mimas/Pen.h:63
+ * include/mimas/Pen.h:66
  */
 static int Pen_setColor(lua_State *L) {
   try {
@@ -139,7 +182,7 @@ static int Pen_setColor(lua_State *L) {
 
 
 /** void mimas::Pen::setHsva(float h, float s=1.0, float v=1.0, float a=1.0)
- * include/mimas/Pen.h:67
+ * include/mimas/Pen.h:70
  */
 static int Pen_setHsva(lua_State *L) {
   try {
@@ -172,7 +215,7 @@ static int Pen_setHsva(lua_State *L) {
 
 
 /** void mimas::Pen::setJoinStyle(int style)
- * include/mimas/Pen.h:81
+ * include/mimas/Pen.h:84
  */
 static int Pen_setJoinStyle(lua_State *L) {
   try {
@@ -189,7 +232,7 @@ static int Pen_setJoinStyle(lua_State *L) {
 
 
 /** void mimas::Pen::setRgba(float r, float g, float b, float a=1.0)
- * include/mimas/Pen.h:59
+ * include/mimas/Pen.h:62
  */
 static int Pen_setRgba(lua_State *L) {
   try {
@@ -214,7 +257,7 @@ static int Pen_setRgba(lua_State *L) {
 
 
 /** void mimas::Pen::setStyle(int style)
- * include/mimas/Pen.h:73
+ * include/mimas/Pen.h:76
  */
 static int Pen_setStyle(lua_State *L) {
   try {
@@ -231,7 +274,7 @@ static int Pen_setStyle(lua_State *L) {
 
 
 /** void mimas::Pen::setWidth(float w)
- * include/mimas/Pen.h:55
+ * include/mimas/Pen.h:58
  */
 static int Pen_setWidth(lua_State *L) {
   try {
