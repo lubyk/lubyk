@@ -70,6 +70,14 @@ public:
     QPainter::setPen(pen);
   }
 
+  void setPen(float width, const Color &color) {
+    QPainter::setPen(Pen(width, color));
+  }
+
+  void setPen(float width, float h, float s=1.0, float v=1.0, float a=1.0) {
+    QPainter::setPen(Pen(width, h, s, v, a));
+  }
+
   void setBrush(const Brush &brush) {
     QPainter::setBrush(brush);
   }

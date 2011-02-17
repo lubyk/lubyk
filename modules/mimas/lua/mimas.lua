@@ -22,3 +22,12 @@ mimas.Color   = mimas_core.Color
 mimas.Pen     = mimas_core.Pen
 mimas.Painter = mimas_core.Painter
 mimas.Path    = mimas_core.Path
+
+mimas.whiteColor = mimas.Color(0, 0, 1)
+mimas.whitePen   = mimas.Pen(1, 0, 0, 1)
+
+mimas.blackColor = mimas.Color(0, 0, 0)
+mimas.blackPen   = mimas.Pen(1, 0, 0, 0)
+
+mimas.noPen   = mimas.Pen()
+mimas.noBrush = mimas.Brush()

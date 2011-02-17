@@ -101,7 +101,7 @@ public slots:
     // lua_ = LuaCallback's thread state
     int status = lua_pcall(lua_, 0, 0, 0);
     if (status) {
-      printf("Error in receive callback: %s\n", lua_tostring(lua_, -1));
+      printf("Error in callback: %s\n", lua_tostring(lua_, -1));
     }
 
     delete_on_call();

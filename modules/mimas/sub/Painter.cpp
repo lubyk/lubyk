@@ -68,7 +68,7 @@ static int Painter__tostring(lua_State *L) {
 
 
 /** void mimas::Painter::drawChord(int x, int y, int width, int height, float startAngle, float spanAngle)
- * include/mimas/Painter.h:105
+ * include/mimas/Painter.h:113
  */
 static int Painter_drawChord(lua_State *L) {
   try {
@@ -91,7 +91,7 @@ static int Painter_drawChord(lua_State *L) {
 
 
 /** void mimas::Painter::drawEllipse(int x, int y, int width, int height)
- * include/mimas/Painter.h:111
+ * include/mimas/Painter.h:119
  */
 static int Painter_drawEllipse(lua_State *L) {
   try {
@@ -130,7 +130,7 @@ static int Painter_drawPath(lua_State *L) {
 
 
 /** void mimas::Painter::drawPoint(int x, int y)
- * include/mimas/Painter.h:117
+ * include/mimas/Painter.h:125
  */
 static int Painter_drawPoint(lua_State *L) {
   try {
@@ -149,7 +149,7 @@ static int Painter_drawPoint(lua_State *L) {
 
 
 /** void mimas::Painter::drawRect(float x, float y, float w, float h)
- * include/mimas/Painter.h:98
+ * include/mimas/Painter.h:106
  */
 static int Painter_drawRect(lua_State *L) {
   try {
@@ -170,7 +170,7 @@ static int Painter_drawRect(lua_State *L) {
 
 
 /** void mimas::Painter::drawRoundedRect(float x, float y, float w, float h, float xRadius, lua_State *L)
- * include/mimas/Painter.h:93
+ * include/mimas/Painter.h:101
  */
 static int Painter_drawRoundedRect(lua_State *L) {
   try {
@@ -193,7 +193,7 @@ static int Painter_drawRoundedRect(lua_State *L) {
 
 
 /** void mimas::Painter::drawText(float x, float y, float w, float h, int flags, const char *text)
- * include/mimas/Painter.h:87
+ * include/mimas/Painter.h:95
  */
 static int Painter_drawText(lua_State *L) {
   try {
@@ -239,7 +239,7 @@ static int Painter_fillRect(lua_State *L) {
 
 
 /** void mimas::Painter::setBrush(const Brush &brush)
- * include/mimas/Painter.h:73
+ * include/mimas/Painter.h:81
  */
 static int Painter_setBrush1(lua_State *L) {
   try {
@@ -257,7 +257,7 @@ static int Painter_setBrush1(lua_State *L) {
 
 
 /** void mimas::Painter::setBrush(const Color &color)
- * include/mimas/Painter.h:77
+ * include/mimas/Painter.h:85
  */
 static int Painter_setBrush2(lua_State *L) {
   try {
@@ -275,7 +275,7 @@ static int Painter_setBrush2(lua_State *L) {
 
 
 /** void mimas::Painter::setBrush(float h, float s=1.0, float v=1.0, float a=1.0)
- * include/mimas/Painter.h:83
+ * include/mimas/Painter.h:91
  */
 static int Painter_setBrush3(lua_State *L) {
   try {
@@ -325,10 +325,11 @@ static int Painter_setBrush(lua_State *L) {
 }
 
 
+
 /** void mimas::Painter::setPen(const Pen &pen)
  * include/mimas/Painter.h:69
  */
-static int Painter_setPen(lua_State *L) {
+static int Painter_setPen1(lua_State *L) {
   try {
     Painter *self__ = *((Painter**)luaL_checkudata(L, 1, "mimas.Painter"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Painter in setPen");
@@ -339,6 +340,83 @@ static int Painter_setPen(lua_State *L) {
     return luaL_error(L, "mimas.Painter.setPen: %s", e.what());
   } catch (...) {
     return luaL_error(L, "mimas.Painter.setPen: Unknown exception");
+  }
+}
+
+
+/** void mimas::Painter::setPen(float width, const Color &color)
+ * include/mimas/Painter.h:73
+ */
+static int Painter_setPen2(lua_State *L) {
+  try {
+    Painter *self__ = *((Painter**)luaL_checkudata(L, 1, "mimas.Painter"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Painter in setPen");
+    float width = luaL_checknumber(L, 2);
+    const Color *color = *((const Color **)luaL_checkudata(L, 3, "mimas.Color"));
+    self__->setPen(width, *color);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Painter.setPen: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Painter.setPen: Unknown exception");
+  }
+}
+
+
+/** void mimas::Painter::setPen(float width, float h, float s=1.0, float v=1.0, float a=1.0)
+ * include/mimas/Painter.h:77
+ */
+static int Painter_setPen3(lua_State *L) {
+  try {
+    Painter *self__ = *((Painter**)luaL_checkudata(L, 1, "mimas.Painter"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Painter in setPen");
+    int top__ = lua_gettop(L);
+    float width = luaL_checknumber(L, 2);
+    float h = luaL_checknumber(L, 3);
+    if (top__ < 4) {
+      self__->setPen(width, h);
+    } else {
+      float s = luaL_checknumber(L, 4);
+      if (top__ < 5) {
+        self__->setPen(width, h, s);
+      } else {
+        float v = luaL_checknumber(L, 5);
+        if (top__ < 6) {
+          self__->setPen(width, h, s, v);
+        } else {
+          float a = luaL_checknumber(L, 6);
+          self__->setPen(width, h, s, v, a);
+        }
+      }
+    }
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Painter.setPen: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Painter.setPen: Unknown exception");
+  }
+}
+
+
+
+/** Overloaded function chooser for setPen(...) */
+static int Painter_setPen(lua_State *L) {
+  int type__ = lua_type(L, 2);
+  if (type__ == LUA_TNUMBER) {
+    type__ = lua_type(L, 3);
+    if (type__ == LUA_TNUMBER) {
+      return Painter_setPen3(L);
+    } else if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "mimas.Color")) {
+      return Painter_setPen2(L);
+    } else {
+      // use any to raise errors
+      return Painter_setPen2(L);
+    }
+  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.Pen")) {
+    return Painter_setPen1(L);
+  } else {
+    // use any to raise errors
+    return Painter_setPen1(L);
   }
 }
 

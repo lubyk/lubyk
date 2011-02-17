@@ -15,7 +15,7 @@ local should = test.Suite('editor.NodeView')
 editor.main = {dragging = {}}
 
 local function mock_node()
-  return {
+  return editor.Node{
     name = 'Dummy ProcessTab',
     hue  = 0.9,
     inlets = {
