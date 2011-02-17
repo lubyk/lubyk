@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>saveActiveFile</string>
+	<key>command</key>
+	<string>RUBYLIB="$TM_BUNDLE_SUPPORT/lib:$RUBYLIB"
+"${TM_RUBY:=ruby}" -- "${TM_BUNDLE_SUPPORT}/bin/run_alternate_test.rb"</string>
+	<key>input</key>
+	<string>none</string>
+	<key>keyEquivalent</key>
+	<string>@R</string>
+	<key>name</key>
+	<string>Run Test</string>
+	<key>output</key>
+	<string>showAsHTML</string>
+	<key>scope</key>
+	<string>source.lua</string>
+	<key>uuid</key>
+	<string>561C9D92-047C-4D0B-A8E0-7C10CF0A5114</string>
+</dict>
+</plist>

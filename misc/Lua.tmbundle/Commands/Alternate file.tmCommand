@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>saveActiveFile</string>
+	<key>command</key>
+	<string>RUBYLIB="$TM_BUNDLE_SUPPORT/lib:$RUBYLIB"
+"${TM_RUBY:=ruby}" -- "${TM_BUNDLE_SUPPORT}/bin/go_alternate_file.rb"</string>
+	<key>input</key>
+	<string>none</string>
+	<key>keyEquivalent</key>
+	<string>@1</string>
+	<key>name</key>
+	<string>Alternate file</string>
+	<key>output</key>
+	<string>showAsTooltip</string>
+	<key>scope</key>
+	<string>source.lua</string>
+	<key>uuid</key>
+	<string>6A25B731-93C2-4E5F-9D50-DB8316A9678E</string>
+</dict>
+</plist>
