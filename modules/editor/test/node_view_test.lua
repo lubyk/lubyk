@@ -10,32 +10,46 @@ require 'lubyk'
 
 local should = test.Suite('editor.NodeView')
 
+-- editor needs a 'main' state with currently selected objects
+-- and such things
+editor.main = {dragging = {}}
+
 local function mock_node()
   return {
     name = 'Dummy ProcessTab',
     hue  = 0.9,
     inlets = {
-      {hue = 0.2},
-      {hue = 0.4},
+      {},
+      {},
     },
     outlets = {
-      {hue = 0.6},
-      {hue = 0.2},
-      {hue = 0.9},
-      {hue = 0.9},
-      {hue = 0.9},
+      {},
+      {},
+      {},
+      {},
+      {},
     }
   }
 end
 
 function should.draw_node_view(t)
-  t.tab = editor.NodeView(mock_node())
-  t.tab:move(100, 100)
-  t.tab:show()
+  t.view = editor.NodeView(mock_node())
+  t.view:move(100, 100)
+  t.view:show()
 
   t.thread = lk.Thread(function()
-    sleep(9800)
-    t.tab:close()
+    sleep(1000)
+    editor.main.dragging.type = 'outlet'
+    app:post(function()
+      t.view:update()
+    end)
+    sleep(1000)
+    editor.main.dragging.type = 'inlet'
+    app:post(function()
+      t.view:update()
+    end)
+    sleep(1000)
+    t.view:close()
     assert_true(true)
   end)
 end

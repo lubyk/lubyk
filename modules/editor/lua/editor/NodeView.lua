@@ -17,8 +17,8 @@ local arc_radius = 0
 local text_hpadding = 10
 local text_vpadding = 6
 local pad  = bp + hpen_width -- padding for inner shape (top/left)
-local slotw = 10
-local sloth = 6
+local slotw = 9
+local sloth = 5
 local slot_padding = 14 -- space between slots
 
 function lib:init(node)
@@ -38,10 +38,10 @@ function lib:setName(name)
   end)
 end
 
-local function draw_slots(list, p, w, h, x, y, sign)
+local function draw_slots(list, p, w, h, x, y, color)
   p:setPen(mimas.Pen())
+  p:setBrush(color)
   for i, slot in ipairs(list) do
-    p:setBrush(slot.hue, 0.5, 0.7, 0.7)
     p:drawRect(x, y, slotw, sloth)
     x = x + slotw + slot_padding
     if x > w then
@@ -52,7 +52,8 @@ end
 
 -- custom paint
 function lib:paint(p, w, h)
-  local pen   = mimas.Pen(hpen_width * 2, mimas.Color(self.node.hue, 0.3, 0.8, 0.8))
+  local border_color = mimas.Color(self.node.hue, 0.3, 0.8, 0.8)
+  local pen   = mimas.Pen(hpen_width * 2, border_color)
   local brush = mimas.Brush(self.node.hue, 0.5, 0.5, 0.5)
 
   -- label width/height
@@ -70,7 +71,18 @@ function lib:paint(p, w, h)
   p:drawText(pad+text_hpadding, pad+text_vpadding, w-2*text_hpadding-2*pad, h - 2*text_vpadding - 2*pad, mimas.AlignLeft + mimas.AlignVCenter, self.name)
 
   -- draw inlets
-  draw_slots(self.node.inlets, p, w, h, pad+text_hpadding, pad, -1)
+  local icolor = border_color
+  local ocolor = border_color
+  local dragging = editor.main.dragging
+  if dragging then
+    if dragging.type == 'inlet' then
+      icolor = border_color:colorWithValue(0.38)
+    elseif dragging.type == 'outlet' then
+      ocolor = border_color:colorWithValue(0.38)
+    end
+  end
+
+  draw_slots(self.node.inlets, p, w, h, pad+text_hpadding, pad, icolor)
   -- draw outlets
-  draw_slots(self.node.outlets, p, w, h, pad+text_hpadding, h - pad - sloth, 1)
+  draw_slots(self.node.outlets, p, w, h, pad+text_hpadding, h - pad - sloth, ocolor)
 end

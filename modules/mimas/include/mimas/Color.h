@@ -55,14 +55,61 @@ public:
     MIMAS_DEBUG_GC
   }
 
+  float hue() const {
+    return hueF();
+  }
+
+  float saturation() const {
+    return saturationF();
+  }
+
+  float value() const {
+    return valueF();
+  }
+
+  float alpha() const {
+    return alphaF();
+  }
+
   void setRgba(float r, float g, float b, float a=1.0) {
     setRgbF(r, g, b, a);
   }
 
-  void setHsva(float h, float s, float v, float a) {
+  void setHsva(float h, float s=1.0, float v=1.0, float a=1.0) {
     setHsvF(h, s, v, a);
   }
 
+  void setHue(float h) {
+    setHsvF(h, saturationF(), valueF(), alphaF());
+  }
+
+  void setSaturation(float s) {
+    setHsvF(hueF(), s, valueF(), alphaF());
+  }
+
+  void setValue(float v) {
+    setHsvF(hueF(), saturationF(), v, alphaF());
+  }
+
+  void setAlpha(float a) {
+    setHsvF(hueF(), saturationF(), valueF(), a);
+  }
+
+  Color *colorWithHue(float h) {
+    return new Color(h, saturationF(), valueF(), alphaF());
+  }
+
+  Color *colorWithSaturation(float s) {
+    return new Color(hueF(), s, valueF(), alphaF());
+  }
+
+  Color *colorWithValue(float v) {
+    return new Color(hueF(), saturationF(), v, alphaF());
+  }
+
+  Color *colorWithAlpha(float a) {
+    return new Color(hueF(), saturationF(), valueF(), a);
+  }
 };
 
 } // mimas
