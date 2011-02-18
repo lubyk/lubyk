@@ -20,10 +20,6 @@ setmetatable(lib, {
   instance.inlets = instance.inlets or {}
   instance.outlet = instance.outlet or {}
   instance:setHue(info.hue or 0.2)
-  app:post(function()
-    -- always create views in GUI thread
-    instance.view = editor.NodeView(instance)
-  end)
   return instance
 end})
 

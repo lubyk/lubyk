@@ -53,4 +53,37 @@ function should.create_new_color()
   assert_in_range(0.32999, 0.33001, other:alpha())
   assert_not_equal(color, other)
 end
+
+local Col = mimas.WidgetClass()
+function Col:init(name, color)
+  self.name  = name
+  self.color = color
+end
+
+function Col:paint(p, w, h)
+  p:fillRect(0, 0, w, h, self.color)
+  if self.name == 'white' then
+    p:setPen(mimas.blackPen)
+  else
+    p:setPen(mimas.whitePen)
+  end
+  p:drawText(0, 0, w, h, mimas.AlignCenter, self.name)
+end
+
+function should.create_constant_colors(t)
+  t.win = mimas.Window()
+  t.win:resize(200,340)
+  t.lay = mimas.VBoxLayout(t.win)
+  t.col = {}
+  for k, color in pairs(mimas.colors) do
+    t.col[k] = Col(k, color)
+    t.lay:addWidget(t.col[k])
+  end
+  t.timer = lk.Thread(function()
+    sleep(3000)
+    t.win:close()
+  end)
+  t.win:show()
+  assert_true(true)
+end
 test.all()

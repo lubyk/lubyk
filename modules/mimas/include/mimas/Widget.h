@@ -34,6 +34,7 @@ using namespace lubyk;
 
 #include <QtGui/QWidget>
 #include <QtGui/QMouseEvent>
+#include <QPoint>
 
 #include <iostream>
 
@@ -185,6 +186,23 @@ public:
 
   void activateWindow() {
     QWidget::activateWindow();
+  }
+
+  /** Returns (x,y) position of the widget in the global
+   * screen coordinates.
+   */
+  LuaStackSize globalPosition(lua_State *L) {
+    QPoint pt = mapToGlobal(QPoint(0, 0));
+    lua_pushnumber(L, pt.x());
+    lua_pushnumber(L, pt.y());
+    return 2;
+  }
+
+  /** Move the widget to the given global coordinates.
+   */
+  void globalMove(float x, float y) {
+    ScopedUnlock unlock(worker_);
+    QWidget::move(mapToParent(mapFromGlobal(QPoint(x, y))));
   }
 
   /** Set a callback function.

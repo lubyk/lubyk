@@ -83,5 +83,12 @@ function mimas.WidgetClass()
     return self.super:close()
   end
 
+  function lib:globalPosition()
+    return self.super:globalPosition()
+  end
+
+  function lib:globalMove(...)
+    return self.super:globalMove(...)
+  end
   return lib
 end

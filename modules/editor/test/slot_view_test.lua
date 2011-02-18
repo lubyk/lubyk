@@ -11,12 +11,12 @@ require 'lubyk'
 local should = test.Suite('editor.SlotView')
 
 local function mock_slot()
-  return {node = {color = mimas.Color(0.9)}}
+  return {node = {color = mimas.Color(0.9, 0.3, 0.8, 0.8)}}
 end
 
 -- editor needs a 'main' state with currently selected objects
 -- and such things
-editor.main = {dragging = {}}
+editor.main = {}
 
 function should.draw_slot(t)
   t.view = editor.SlotView(mock_slot())

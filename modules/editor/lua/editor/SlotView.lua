@@ -1,9 +1,9 @@
 --[[------------------------------------------------------
 
-  editor.NodeView
+  editor.SlotView
   ---------------
 
-  The NodeView show a single node with inlets and outlets.
+  The SlotView show a single slot (inlet or outlet).
 
 --]]------------------------------------------------------
 local lib = mimas.WidgetClass()
@@ -21,13 +21,15 @@ local slotw = 9
 local sloth = 5
 local slot_padding = 14 -- space between slots
 
--- Needed for placement by NodeView
+-- Needed by NodeView and LinkView
 lib.slotw = slotw
 lib.sloth = sloth
 lib.slot_padding = slot_padding
 
 function lib:init(slot)
+  self.type = slot.type
   self.slot = slot
+  slot.view = self
   self.node = slot.node
   self:resize(slotw, sloth)
 end

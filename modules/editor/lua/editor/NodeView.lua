@@ -42,7 +42,7 @@ local function placeElements(self)
 
   x = pad+text_hpadding
   y = self.height - pad - sloth
-  for _, slot in ipairs(self.node.inlets) do
+  for _, slot in ipairs(self.node.outlets) do
     slot.view:move(x, y)
     x = x + slotw + slot_padding
   end
@@ -50,6 +50,7 @@ end
 
 --============================================= PUBLIC
 function lib:init(node)
+  node.view = self
   self.node = node
   self:setName(node.name)
   makeSlotViews(self, self.node.inlets, 'inlet')
