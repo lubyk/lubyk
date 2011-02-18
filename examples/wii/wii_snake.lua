@@ -341,7 +341,7 @@ end
 
 function win.keyboard(key, on, txt)
   if on then
-    if key == 16777216 then
+    if key == mimas.ESC then
       -- ESC
       reset()
     else

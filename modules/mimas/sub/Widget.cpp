@@ -9,7 +9,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::Widget::Widget(lubyk::Worker *worker)
- * include/mimas/Widget.h:68
+ * include/mimas/Widget.h:70
  */
 static int Widget_Widget(lua_State *L) {
   try {
@@ -68,7 +68,7 @@ static int Widget__tostring(lua_State *L) {
 
 
 /** void mimas::Widget::__newindex(lua_State *L)
- * include/mimas/Widget.h:210
+ * include/mimas/Widget.h:245
  */
 static int Widget___newindex(lua_State *L) {
   try {
@@ -86,7 +86,7 @@ static int Widget___newindex(lua_State *L) {
 
 
 /** void mimas::Widget::activateWindow()
- * include/mimas/Widget.h:187
+ * include/mimas/Widget.h:200
  */
 static int Widget_activateWindow(lua_State *L) {
   try {
@@ -103,7 +103,7 @@ static int Widget_activateWindow(lua_State *L) {
 
 
 /** void mimas::Widget::addWidget(QWidget *widget, float x=0, float y=0)
- * include/mimas/Widget.h:86
+ * include/mimas/Widget.h:88
  */
 static int Widget_addWidget(lua_State *L) {
   try {
@@ -132,7 +132,7 @@ static int Widget_addWidget(lua_State *L) {
 
 
 /** bool mimas::Widget::close()
- * include/mimas/Widget.h:173
+ * include/mimas/Widget.h:181
  */
 static int Widget_close(lua_State *L) {
   try {
@@ -150,7 +150,7 @@ static int Widget_close(lua_State *L) {
 
 
 /** QString mimas::Widget::cssClass() const 
- * include/mimas/Widget.h:78
+ * include/mimas/Widget.h:80
  */
 static int Widget_cssClass(lua_State *L) {
   try {
@@ -168,7 +168,7 @@ static int Widget_cssClass(lua_State *L) {
 
 
 /** void mimas::Widget::globalMove(float x, float y)
- * include/mimas/Widget.h:203
+ * include/mimas/Widget.h:237
  */
 static int Widget_globalMove(lua_State *L) {
   try {
@@ -187,7 +187,7 @@ static int Widget_globalMove(lua_State *L) {
 
 
 /** LuaStackSize mimas::Widget::globalPosition(lua_State *L)
- * include/mimas/Widget.h:194
+ * include/mimas/Widget.h:228
  */
 static int Widget_globalPosition(lua_State *L) {
   try {
@@ -204,8 +204,25 @@ static int Widget_globalPosition(lua_State *L) {
 }
 
 
+/** void mimas::Widget::hide()
+ * include/mimas/Widget.h:195
+ */
+static int Widget_hide(lua_State *L) {
+  try {
+    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in hide");
+    self__->hide();
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Widget.hide: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Widget.hide: Unknown exception");
+  }
+}
+
+
 /** float mimas::Widget::hue()
- * include/mimas/Widget.h:129
+ * include/mimas/Widget.h:131
  */
 static int Widget_hue(lua_State *L) {
   try {
@@ -222,8 +239,26 @@ static int Widget_hue(lua_State *L) {
 }
 
 
+/** bool mimas::Widget::isFullScreen()
+ * include/mimas/Widget.h:215
+ */
+static int Widget_isFullScreen(lua_State *L) {
+  try {
+    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in isFullScreen");
+    bool  retval__ = self__->isFullScreen();
+    lua_pushboolean(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Widget.isFullScreen: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Widget.isFullScreen: Unknown exception");
+  }
+}
+
+
 /** bool mimas::Widget::isVisible() const 
- * include/mimas/Widget.h:178
+ * include/mimas/Widget.h:186
  */
 static int Widget_isVisible(lua_State *L) {
   try {
@@ -241,7 +276,7 @@ static int Widget_isVisible(lua_State *L) {
 
 
 /** void mimas::Widget::move(int x, int y)
- * include/mimas/Widget.h:110
+ * include/mimas/Widget.h:112
  */
 static int Widget_move(lua_State *L) {
   try {
@@ -260,7 +295,7 @@ static int Widget_move(lua_State *L) {
 
 
 /** LuaStackSize mimas::Widget::name(lua_State *L)
- * include/mimas/Widget.h:99
+ * include/mimas/Widget.h:101
  */
 static int Widget_name(lua_State *L) {
   try {
@@ -278,7 +313,7 @@ static int Widget_name(lua_State *L) {
 
 
 /** QObject* mimas::Widget::object()
- * include/mimas/Widget.h:93
+ * include/mimas/Widget.h:95
  */
 static int Widget_object(lua_State *L) {
   try {
@@ -296,7 +331,7 @@ static int Widget_object(lua_State *L) {
 
 
 /** void mimas::Widget::resize(int w, int h)
- * include/mimas/Widget.h:115
+ * include/mimas/Widget.h:117
  */
 static int Widget_resize(lua_State *L) {
   try {
@@ -315,7 +350,7 @@ static int Widget_resize(lua_State *L) {
 
 
 /** void mimas::Widget::setHue(float hue)
- * include/mimas/Widget.h:124
+ * include/mimas/Widget.h:126
  */
 static int Widget_setHue(lua_State *L) {
   try {
@@ -333,7 +368,7 @@ static int Widget_setHue(lua_State *L) {
 
 
 /** void mimas::Widget::setMinimumSize(float w, float h)
- * include/mimas/Widget.h:164
+ * include/mimas/Widget.h:166
  */
 static int Widget_setMinimumSize(lua_State *L) {
   try {
@@ -351,8 +386,26 @@ static int Widget_setMinimumSize(lua_State *L) {
 }
 
 
+/** void mimas::Widget::setMouseTracking(bool enable)
+ * include/mimas/Widget.h:173
+ */
+static int Widget_setMouseTracking(lua_State *L) {
+  try {
+    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in setMouseTracking");
+    bool enable = lua_toboolean(L, 2);
+    self__->setMouseTracking(enable);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Widget.setMouseTracking: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Widget.setMouseTracking: Unknown exception");
+  }
+}
+
+
 /** void mimas::Widget::setName(const char *name)
- * include/mimas/Widget.h:106
+ * include/mimas/Widget.h:108
  */
 static int Widget_setName(lua_State *L) {
   try {
@@ -370,7 +423,7 @@ static int Widget_setName(lua_State *L) {
 
 
 /** void mimas::Widget::setSizeHint(float w, float h)
- * include/mimas/Widget.h:149
+ * include/mimas/Widget.h:151
  */
 static int Widget_setSizeHint(lua_State *L) {
   try {
@@ -389,7 +442,7 @@ static int Widget_setSizeHint(lua_State *L) {
 
 
 /** void mimas::Widget::setSizePolicy(int horizontal, int vertical)
- * include/mimas/Widget.h:157
+ * include/mimas/Widget.h:159
  */
 static int Widget_setSizePolicy(lua_State *L) {
   try {
@@ -408,7 +461,7 @@ static int Widget_setSizePolicy(lua_State *L) {
 
 
 /** void mimas::Widget::setStyle(const char *text)
- * include/mimas/Widget.h:120
+ * include/mimas/Widget.h:122
  */
 static int Widget_setStyle(lua_State *L) {
   try {
@@ -426,7 +479,7 @@ static int Widget_setStyle(lua_State *L) {
 
 
 /** void mimas::Widget::show()
- * include/mimas/Widget.h:182
+ * include/mimas/Widget.h:190
  */
 static int Widget_show(lua_State *L) {
   try {
@@ -442,8 +495,48 @@ static int Widget_show(lua_State *L) {
 }
 
 
+/** void mimas::Widget::showFullScreen(bool enable=true)
+ * include/mimas/Widget.h:206
+ */
+static int Widget_showFullScreen(lua_State *L) {
+  try {
+    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in showFullScreen");
+    int top__ = lua_gettop(L);
+    if (top__ < 2) {
+      self__->showFullScreen();
+    } else {
+      bool enable = lua_toboolean(L, 2);
+      self__->showFullScreen(enable);
+    }
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Widget.showFullScreen: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Widget.showFullScreen: Unknown exception");
+  }
+}
+
+
+/** void mimas::Widget::swapFullScreen()
+ * include/mimas/Widget.h:221
+ */
+static int Widget_swapFullScreen(lua_State *L) {
+  try {
+    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in swapFullScreen");
+    self__->swapFullScreen();
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Widget.swapFullScreen: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Widget.swapFullScreen: Unknown exception");
+  }
+}
+
+
 /** LuaStackSize mimas::Widget::textSize(const char *text, lua_State *L)
- * include/mimas/Widget.h:140
+ * include/mimas/Widget.h:142
  */
 static int Widget_textSize(lua_State *L) {
   try {
@@ -462,7 +555,7 @@ static int Widget_textSize(lua_State *L) {
 
 
 /** void mimas::Widget::update()
- * include/mimas/Widget.h:133
+ * include/mimas/Widget.h:135
  */
 static int Widget_update(lua_State *L) {
   try {
@@ -479,7 +572,7 @@ static int Widget_update(lua_State *L) {
 
 
 /** QWidget* mimas::Widget::widget()
- * include/mimas/Widget.h:82
+ * include/mimas/Widget.h:84
  */
 static int Widget_widget(lua_State *L) {
   try {
@@ -508,7 +601,9 @@ static const struct luaL_Reg Widget_member_methods[] = {
   {"cssClass"          , Widget_cssClass},
   {"globalMove"        , Widget_globalMove},
   {"globalPosition"    , Widget_globalPosition},
+  {"hide"              , Widget_hide},
   {"hue"               , Widget_hue},
+  {"isFullScreen"      , Widget_isFullScreen},
   {"isVisible"         , Widget_isVisible},
   {"move"              , Widget_move},
   {"name"              , Widget_name},
@@ -516,11 +611,14 @@ static const struct luaL_Reg Widget_member_methods[] = {
   {"resize"            , Widget_resize},
   {"setHue"            , Widget_setHue},
   {"setMinimumSize"    , Widget_setMinimumSize},
+  {"setMouseTracking"  , Widget_setMouseTracking},
   {"setName"           , Widget_setName},
   {"setSizeHint"       , Widget_setSizeHint},
   {"setSizePolicy"     , Widget_setSizePolicy},
   {"setStyle"          , Widget_setStyle},
   {"show"              , Widget_show},
+  {"showFullScreen"    , Widget_showFullScreen},
+  {"swapFullScreen"    , Widget_swapFullScreen},
   {"textSize"          , Widget_textSize},
   {"update"            , Widget_update},
   {"widget"            , Widget_widget},

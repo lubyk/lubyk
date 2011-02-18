@@ -39,7 +39,7 @@ function lib2.__index(table, name)
   if ok then
     return new_lib_or_error or table[name]
   else
-    error(string.format("Unknown var '%s' (could not autoload)", name))
+    -- nil value
     return nil
   end
 end

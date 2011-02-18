@@ -44,3 +44,6 @@ mimas.colors = {
   pink      = mimas.Color(300 / 360),
   purple    = mimas.Color(275 / 360),
 }
+
+mimas.ESC   = 16777216
+mimas.Space = 32

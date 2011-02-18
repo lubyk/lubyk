@@ -113,4 +113,20 @@ void Widget::mousePressEvent(QMouseEvent *event) {
   }
 }
 
+void Widget::keyboard(QKeyEvent *event, bool isPressed) {
+  lua_State *L = keyboard_clbk_.lua_;
+  if (!L) return;
+  ScopedLock lock(worker_);
+
+  keyboard_clbk_.push_lua_callback(false);
+  lua_pushnumber(L, event->key());
+  lua_pushboolean(L, isPressed);
+  lua_pushstring(L, event->text().toUtf8());
+  int status = lua_pcall(L, 3, 0, 0);
+
+  if (status) {
+    fprintf(stderr, "Error in keyboard callback: %s\n", lua_tostring(L, -1));
+  }
+}
+
 } // mimas

@@ -58,6 +58,7 @@ class Widget : public QWidget, public DeletableOutOfLua
   LuaCallback resized_clbk_;
   LuaCallback mouse_clbk_;
   LuaCallback click_clbk_;
+  LuaCallback keyboard_clbk_;
   QSize size_hint_;
 public:
   Widget(lubyk::Worker *worker) :
@@ -65,7 +66,8 @@ public:
    paint_clbk_(worker),
    resized_clbk_(worker),
    mouse_clbk_(worker),
-   click_clbk_(worker) {
+   click_clbk_(worker),
+   keyboard_clbk_(worker) {
     setAttribute(Qt::WA_DeleteOnClose);
   }
 
@@ -166,6 +168,12 @@ public:
     QWidget::setMinimumSize(w, h);
   }
 
+  /** Receive mouse move events even if no button is pressed.
+   */
+  void setMouseTracking(bool enable) {
+    QWidget::setMouseTracking(enable);
+  }
+
   // =============================================================
 
   /** Close and delete the window.
@@ -184,8 +192,34 @@ public:
     QWidget::show();
   }
 
+  void hide() {
+    ScopedUnlock unlock(worker_);
+    QWidget::hide();
+  }
+
   void activateWindow() {
     QWidget::activateWindow();
+  }
+
+  /** Enter or exit fullscreen mode.
+   */
+  void showFullScreen(bool enable=true) {
+    ScopedUnlock unlock(worker_);
+    if (enable) {
+      QWidget::showFullScreen();
+    } else {
+      showNormal();
+    }
+  }
+
+  bool isFullScreen() {
+    return QWidget::isFullScreen();
+  }
+
+  /** Swap fullscreen mode.
+   */
+  void swapFullScreen() {
+    showFullScreen(!QWidget::isFullScreen());
   }
 
   /** Returns (x,y) position of the widget in the global
@@ -225,8 +259,10 @@ public:
       mouse_clbk_.set_lua_callback(L);
     } else if (key == "click") {
       click_clbk_.set_lua_callback(L);
+    } else if (key == "keyboard") {
+      keyboard_clbk_.set_lua_callback(L);
     } else {
-      luaL_error(L, "Invalid function name '%s' (valid names are 'paint', 'mouse', 'click' and 'resized').", key.c_str());
+      luaL_error(L, "Invalid function name '%s' (valid names are 'paint', 'mouse', 'click', 'keyboard' and 'resized').", key.c_str());
     }
 
     lua_pop(L, 2);
@@ -238,6 +274,14 @@ protected:
   virtual void paintEvent(QPaintEvent *event);
   virtual void resizeEvent(QResizeEvent *event);
 
+  void keyPressEvent(QKeyEvent *event) {
+    keyboard(event, true);
+  }
+
+  void keyReleaseEvent(QKeyEvent *event) {
+    keyboard(event, false);
+  }
+
   virtual QSize sizeHint() const {
     return size_hint_;
   }
@@ -248,6 +292,7 @@ protected:
 
 private:
   void paint(Painter &p);
+  void keyboard(QKeyEvent *event, bool isPressed);
 };
 
 } // mimas

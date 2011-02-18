@@ -7,27 +7,17 @@
   provide links and introspection).
 
 --]]------------------------------------------------------
-
 local lib = {}
-lk.Environment = lib
+lk.Node   = lib
 
 setmetatable(lib, {
   -- new method
  __call = function(table, code_str)
+  code_str = 'node = node or lk.Node()'
   local code = assert(loadstring(code_str))
   -- new environment
   local env  = {}
   setmetatable(env, lib)
   setfenv(code, env)
-  return code
+  return code()
 end})
-
--- metatable for the new global env in each
--- node
-function lib.__index(env, name)
-  -- if the variable exists in original _G,
-  -- cache locally
-  local gvar = _G[name]
-  rawset(env, name, gvar)
-  return gvar
-end
