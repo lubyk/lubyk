@@ -29,7 +29,7 @@ local function make_moons()
       cy    = 150,
       r     = 3+dist*math.random()/8,
       a     = 6.28*math.random(),
-      v     = 0.06*math.random(),
+      v     = 0.02*math.random(),
       dist  = 15+dist*math.random(),
       pen   = mimas.Pen(2, hue, 0.8, 0.8, 0.8),
       brush = mimas.Brush(hue, 0.5, 0.5, 0.5),

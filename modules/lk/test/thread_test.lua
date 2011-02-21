@@ -82,12 +82,14 @@ function should.create_many_threads_and_properly_gc()
   make_threads()
 
   collectgarbage('collect')
+  collectgarbage('collect')
   local before = collectgarbage('count')
   make_threads()
 
   collectgarbage('collect')
+  collectgarbage('collect')
   local after = collectgarbage('count')
-  if testing_gui then
+  if #test.suites > 1 then
     -- with other tests messing around, we have to be more tolerant
     assert_less_then(before * 1.01, after)
   else
