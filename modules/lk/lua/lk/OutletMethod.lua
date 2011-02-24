@@ -8,14 +8,18 @@
 
 --]]------------------------------------------------------
 -- 'outlet' accessor metamethod
-local lib = {}
+local lib = {type='lk.OutletMethod'}
+lib.__index     = lib
+lk.OutletMethod = lib
 
-function lk.OutletMethod(node)
-  -- Create inlet() method/accessor for a given node
+setmetatable(lib, {
+  -- new method
+ __call = function(table, node)
+  -- Create outlet() method/accessor for a given node
   local instance = {node = node}
   setmetatable(instance, lib)
   return instance
-end
+end})
 
 function lib.__call(self, ...)
   -- outlet(name, info)

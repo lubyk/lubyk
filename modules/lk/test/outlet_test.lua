@@ -11,7 +11,7 @@ require 'lubyk'
 local should = test.Suite('lk.Outlet')
 
 local function mock_node()
-  return {outlets = {}, inlets = {}}
+  return {outlets = {}, inlets = {}, inlets_pending={}}
 end
 
 function should.create_outlet()

@@ -25,10 +25,10 @@ function should.create_new_outlets_on_call()
   local outlet = lk.OutletMethod(node)
   assert_pass(function()
     outlet('bang', 'Bang.')
-    local i = node.outlets.bang
+    local outl = node.outlets.bang
     outlet('bang', 'Send bang.')
     -- multiple calls do not create new outlets
-    assert_true(i == node.outlets.bang)
+    assert_equal(outl, node.outlets.bang)
   end)
   local bang = node.outlets.bang
   assert_equal('bang', bang.name)

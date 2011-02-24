@@ -55,9 +55,9 @@ public:
     timer_.stop();
   }
 
-  void start() {
+  void start(bool trigger_on_start = true) {
     if (!lua_) throw lubyk::Exception("Staring timer without a callback.");
-    timer_.start();
+    timer_.start(trigger_on_start);
   }
 
   void join() {
@@ -67,6 +67,10 @@ public:
 
   time_t interval() {
     return timer_.interval();
+  }
+
+  void set_interval(float interval) {
+    timer_.set_interval(interval);
   }
 
   void set_callback(lua_State *L) {
@@ -91,7 +95,7 @@ private:
     }
 
     if (lua_type(lua_, -1) == LUA_TNUMBER) {
-      double interval = lua_tonumber(lua_, -1);
+      float interval = lua_tonumber(lua_, -1);
       if (interval == 0) {
         timer_.stop_from_loop();
       } else if (interval < 0) {

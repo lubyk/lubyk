@@ -8,7 +8,7 @@
   url.
 
 --]]------------------------------------------------------
-local lib = {}
+local lib = {type='lk.ServiceBrowser'}
 lib.__index = lib
 lk.ServiceBrowser  = lib
 

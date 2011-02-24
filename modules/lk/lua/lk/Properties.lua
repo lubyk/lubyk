@@ -18,7 +18,7 @@
   the callbacks, you can use prop.values[foo] = 'xxx'.
 
 --]]------------------------------------------------------
-local lib = {}
+local lib = {type='lk.Properties'}
 lk.Properties = lib
 
 -- node.property('foo', 'info message')

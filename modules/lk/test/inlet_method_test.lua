@@ -11,7 +11,7 @@ require 'lubyk'
 local should = test.Suite('lk.InletMethod')
 
 local function mock_node()
-  return {inlets = {}}
+  return {inlets = {}, inlets_pending={}}
 end
 
 function should.create_inlet_method()
@@ -25,10 +25,29 @@ function should.create_new_inlets_on_call()
   local inlet = lk.InletMethod(node)
   assert_pass(function()
     inlet('tempo', 'Set tempo.')
-    local i = node.inlets.tempo
+    local inl = node.inlets.tempo
     inlet('tempo', 'Set tempo [bpm].')
     -- multiple calls do not create new inlets
-    assert_true(i == node.inlets.tempo)
+    assert_equal(inl, node.inlets.tempo)
+  end)
+  local tempo = node.inlets.tempo
+  assert_equal('tempo', tempo.name)
+  assert_equal('Set tempo [bpm].', tempo.info)
+end
+
+function should.use_inlets_pending_on_call()
+  local node = mock_node()
+  local inl = lk.Inlet('tempo')
+  -- this happens when the patch has pending connections to
+  -- be resolved
+  node.inlets_pending.tempo = inl
+  local inlet = lk.InletMethod(node)
+  assert_pass(function()
+    inlet('tempo', 'Set tempo.')
+    assert_equal(inl, node.inlets.tempo)
+    inlet('tempo', 'Set tempo [bpm].')
+    -- multiple calls do not create new inlets
+    assert_equal(inl, node.inlets.tempo)
   end)
   local tempo = node.inlets.tempo
   assert_equal('tempo', tempo.name)

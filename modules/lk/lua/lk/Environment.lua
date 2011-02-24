@@ -8,7 +8,7 @@
 
 --]]------------------------------------------------------
 
-local lib = {}
+local lib = {type='lk.Environment'}
 lk.Environment = lib
 
 setmetatable(lib, {

@@ -8,15 +8,18 @@
 
 --]]------------------------------------------------------
 -- 'inlet' accessor metamethod
-local lib = {}
-lk.InletMethod = {}
+local lib = {type='lk.InletMethod'}
+lib.__index    = lib
+lk.InletMethod = lib
 
-function lk.InletMethod(node)
+setmetatable(lib, {
+  -- new method
+ __call = function(table, node)
   -- Create inlet() method/accessor for a given node
   local instance = {node = node}
   setmetatable(instance, lib)
   return instance
-end
+end})
 
 function lib.__call(self, ...)
   -- inlet(name, info)

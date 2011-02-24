@@ -1,0 +1,33 @@
+bang:
+  source: metro.lua
+  #class: lk.Metro
+  x: 30
+  y: 15
+  links:
+    out: pass/in/input
+  params:
+    tempo: 120
+
+pass:
+  source: pass.lua
+  x: 30
+  y: 55
+  links:
+    output: add/in/val1
+  params:
+    value: 15
+
+add:
+  source: add.lua
+  x: 70
+  y: 95
+  links:
+    sum: store/in/value
+  params:
+    val1: 0
+    val2: 5
+
+store:
+  source: store.lua
+  x: 70
+  y: 135

@@ -8,7 +8,7 @@
 --]]------------------------------------------------------
 require 'lfs'
 
-local lib = {sep = '/', ignore_pattern = '^[.]'}
+local lib = {sep = '/', ignore_pattern = '^[.]', type='lk.Dir'}
 lib.__index = lib
 lk.Dir = lib
 

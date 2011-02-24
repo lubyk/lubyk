@@ -39,11 +39,12 @@ namespace lubyk {
 template<class T, void(T::*Tmethod)()>
 class Timer {
 public:
-  Timer(T *owner, time_t interval = 0)
+  Timer(T *owner, time_t interval = 0, bool trigger_on_start = true)
       : owner_(owner),
         interval_(interval),
         last_interval_(interval),
-        running_(false) {}
+        running_(false),
+        trigger_on_start_(true) {}
 
   ~Timer() {
     // we could let Thread cancel the loop in ~Thread, but we
@@ -54,8 +55,9 @@ public:
     }
   }
 
-  void start(time_t interval) {
+  void start(time_t interval, bool trigger_on_start = true) {
     ScopedLock lock(mutex_);
+    trigger_on_start_ = trigger_on_start;
     last_interval_ = interval_;
     interval_ = interval;
     if (running_) {
@@ -66,8 +68,9 @@ public:
     thread_.start_thread<Timer, &Timer::start_thread>(this, NULL);
   }
 
-  void start() {
+  void start(bool trigger_on_start = true) {
     ScopedLock lock(mutex_);
+    trigger_on_start_ = trigger_on_start;
     if (running_) {
       should_run_ = false;
       interrupt();
@@ -122,7 +125,8 @@ private:
   void run() {
     time_t wait_duration;
     time_t now;
-    time_t next_fire = time_ref_.elapsed(); // this is our anchor
+    // time_ref_.elapsed() is our time anchor
+    time_t next_fire = time_ref_.elapsed() + (trigger_on_start_ ? 0 : interval_);
     struct timespec sleeper;
 
     while (should_run_) {
@@ -226,6 +230,10 @@ private:
   /** Flag indicating that we want the timer to fire or die.
    */
   bool should_run_;
+
+  /** Set this to true to trigger right away on timer start.
+   */
+  bool trigger_on_start_;
 };
 
 } // lubyk

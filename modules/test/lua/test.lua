@@ -80,28 +80,9 @@ function lib.load_all(...)
   end
 end
 
--- Compatibility: Lua-5.1
-local function split(str, pat)
-  local t = {}  -- NOTE: use {n = 0} in Lua-5.0
-  local fpat = "(.-)" .. pat
-  local last_end = 1
-  local s, e, cap = str:find(fpat, 1)
-  while s do
-    if s ~= 1 or cap ~= "" then
-      table.insert(t,cap)
-    end
-    last_end = e+1
-    s, e, cap = str:find(fpat, last_end)
-  end
-  if last_end <= #str then
-    cap = str:sub(last_end)
-    table.insert(t, cap)
-  end
-  return t
-end
-
+-- FIXME: traceback not working good enough
 local function error_handler(err)
-  local tb = split(debug.traceback(), '\n')
+  local tb = lk.split(debug.traceback(), '\n')
   local max_i = 5
   local message = err
   for i = 4,#tb do
@@ -139,6 +120,7 @@ function lib.run_suite(suite)
         test_func = func
         suite.setup(gc_protect[name])
           local ok, err = xpcall(pass_args, error_handler)
+          --local ok, err = pcall(pass_args)
           if not ok then
             fail_count = fail_count + 1
             --local file, line, message = string.match(err, "([^/\.]+\.lua):(%d+): (.+)")
@@ -236,11 +218,7 @@ function assert_true(ok)
 end
 
 function assert_equal(expected, value)
-  if type(expected) == 'table' then
-    assert_table_equal(expected, value)
-  else
-    lib.assert(value == expected, string.format('Expected %s but found %s.', format_arg(expected), format_arg(value)))
-  end
+  lib.assert(value == expected, string.format('Expected %s but found %s.', format_arg(expected), format_arg(value)))
 end
 
 function assert_table_equal(expected, value)

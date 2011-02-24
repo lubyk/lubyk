@@ -7,7 +7,7 @@
 
 --]]------------------------------------------------------
 -- 'inlet' accessor metamethod
-local lib   = {}
+local lib   = {type = 'lk.Outlet'}
 lib.__index = lib
 lk.Outlet   = lib
 

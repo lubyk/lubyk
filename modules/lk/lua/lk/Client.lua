@@ -11,7 +11,7 @@
 
 --]]------------------------------------------------------
 
-local lib = {}
+local lib = {type='lk.Client'}
 lib.__index = lib
 lk.Client   = lib
 

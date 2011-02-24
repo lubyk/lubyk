@@ -1,4 +1,4 @@
-require 'lfs'
+require 'lubyk'
 local dofile_without_chdir = dofile
 
 -- We rewrite 'dofile' to chdir into the file's directory before loading file

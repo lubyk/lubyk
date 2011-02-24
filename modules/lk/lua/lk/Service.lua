@@ -9,7 +9,7 @@
 
 --]]------------------------------------------------------
 
-local lib = {}
+local lib = {type='lk.Service'}
 lib.__index = lib
 lk.Service  = lib
 

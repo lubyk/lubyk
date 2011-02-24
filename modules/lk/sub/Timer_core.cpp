@@ -88,7 +88,7 @@ static int Timer_join(lua_State *L) {
 
 
 /** void lk::Timer::set_callback(lua_State *L)
- * include/lk/Timer.h:72
+ * include/lk/Timer.h:76
  */
 static int Timer_set_callback(lua_State *L) {
   try {
@@ -104,13 +104,36 @@ static int Timer_set_callback(lua_State *L) {
 }
 
 
-/** void lk::Timer::start()
+/** void lk::Timer::set_interval(float interval)
+ * include/lk/Timer.h:72
+ */
+static int Timer_set_interval(lua_State *L) {
+  try {
+    Timer *self__ = *((Timer**)luaL_checkudata(L, 1, "lk.Timer"));
+    float interval = luaL_checknumber(L, 2);
+    self__->set_interval(interval);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "lk.Timer.set_interval: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "lk.Timer.set_interval: Unknown exception");
+  }
+}
+
+
+/** void lk::Timer::start(bool trigger_on_start=true)
  * include/lk/Timer.h:58
  */
 static int Timer_start(lua_State *L) {
   try {
     Timer *self__ = *((Timer**)luaL_checkudata(L, 1, "lk.Timer"));
-    self__->start();
+    int top__ = lua_gettop(L);
+    if (top__ < 2) {
+      self__->start();
+    } else {
+      bool trigger_on_start = lua_toboolean(L, 2);
+      self__->start(trigger_on_start);
+    }
     return 0;
   } catch (std::exception &e) {
     return luaL_error(L, "lk.Timer.start: %s", e.what());
@@ -144,6 +167,7 @@ static const struct luaL_Reg Timer_member_methods[] = {
   {"interval"          , Timer_interval},
   {"join"              , Timer_join},
   {"set_callback"      , Timer_set_callback},
+  {"set_interval"      , Timer_set_interval},
   {"start"             , Timer_start},
   {"stop"              , Timer_stop},
   {"__tostring"        , Timer__tostring},

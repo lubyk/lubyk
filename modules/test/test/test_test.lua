@@ -12,4 +12,8 @@ function should.say_hello()
   assert_match('true', 'This is true')
 end
 
+function should.find_fixtures()
+  assert_equal('887', test.fixture('aaa'))
+end
+
 test.all()
