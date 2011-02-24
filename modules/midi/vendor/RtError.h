@@ -15,7 +15,7 @@
 #include <iostream>
 #include <string>
 
-class RtError
+class RtError : public std::exception
 {
 public:
   //! Defined RtError types.
@@ -42,7 +42,7 @@ public:
   RtError(const std::string &message, Type type = RtError::UNSPECIFIED) : message_(message), type_(type) {}
 
   //! The destructor.
-  virtual ~RtError(void) {};
+  virtual ~RtError(void) throw() {};
 
   //! Prints thrown error message to stderr.
   virtual void printMessage(void) { std::cerr << '\n' << message_ << "\n\n"; }
@@ -54,7 +54,12 @@ public:
   virtual const std::string &getMessage(void) { return message_; }
 
   //! Returns the thrown error message as a C string.
-  virtual const char *getMessageString(void) { return message_.c_str(); }
+  virtual const char *getMessageString(void) const { return message_.c_str(); }
+
+
+  virtual const char *what() const throw () {
+    return getMessageString();
+  }
 };
 
 #endif
