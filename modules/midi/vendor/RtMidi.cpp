@@ -361,7 +361,7 @@ void RtMidiIn :: openPort( unsigned int portNumber )
 
   // Get the desired input source identifier.
   MIDIEndpointRef endpoint = MIDIGetSource( portNumber );
-  if ( endpoint == NULL ) {
+  if ( !endpoint) {
     MIDIPortDispose( port );
     MIDIClientDispose( data->client );
     errorString_ = "RtMidiIn::openPort: error getting MIDI input source reference.";
@@ -528,7 +528,7 @@ void RtMidiOut :: openPort( unsigned int portNumber )
 
   // Get the desired output port identifier.
   MIDIEndpointRef destination = MIDIGetDestination( portNumber );
-  if ( destination == NULL ) {
+  if ( !destination ) {
     MIDIPortDispose( port );
     MIDIClientDispose( data->client );
     errorString_ = "RtMidiOut::openPort: error getting MIDI output destination reference.";

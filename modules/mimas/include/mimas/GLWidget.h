@@ -158,7 +158,7 @@ public:
     } else if (key == "keyboard") {
       keyboard_clbk_.set_lua_callback(L);
     } else {
-      luaL_error(L, "Invalid function name '%s' (valid names are initializeGL, resizeGL, paintGL, keyboard).", key.c_str());
+      luaL_error(L, "Invalid callback name '%s' (valid names are 'initializeGL', 'resizeGL', 'paintGL', 'keyboard').", key.c_str());
     }
 
     lua_pop(L, 2);
@@ -169,7 +169,6 @@ protected:
   virtual void initializeGL() {
     lua_State *L = initializeGL_clbk_.lua_;
     if (!L) return;
-    // cannot lock because this is called by Lua through 'show'...
     ScopedLock lock(worker_);
 
     initializeGL_clbk_.push_lua_callback(false);
@@ -177,7 +176,7 @@ protected:
     int status = lua_pcall(L, 0, 0, 0);
 
     if (status) {
-      fprintf(stderr, "Error in initializeGL callback: %s\n", lua_tostring(L, -1));
+      fprintf(stderr, "Error in 'initializeGL' callback: %s\n", lua_tostring(L, -1));
     }
   }
 
@@ -193,7 +192,7 @@ protected:
     int status = lua_pcall(L, 2, 0, 0);
 
     if (status) {
-      fprintf(stderr, "Error in resizeGL callback: %s\n", lua_tostring(L, -1));
+      fprintf(stderr, "Error in 'resizeGL' callback: %s\n", lua_tostring(L, -1));
     }
   }
 
@@ -207,7 +206,7 @@ protected:
     int status = lua_pcall(L, 0, 0, 0);
 
     if (status) {
-      fprintf(stderr, "Error in paintGL callback: %s\n", lua_tostring(L, -1));
+      fprintf(stderr, "Error in 'paintGL' callback: %s\n", lua_tostring(L, -1));
     }
   }
 
@@ -236,7 +235,7 @@ private:
     int status = lua_pcall(L, 3, 0, 0);
 
     if (status) {
-      fprintf(stderr, "Error in keyboard callback: %s\n", lua_tostring(L, -1));
+      fprintf(stderr, "Error in 'keyboard' callback: %s\n", lua_tostring(L, -1));
     }
   }
 };

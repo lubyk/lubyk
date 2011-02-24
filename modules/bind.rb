@@ -48,6 +48,7 @@ modules = {
   'lk'    => %w{Socket Timer Thread},
   'lubyk' => %w{Worker},
   'mdns'  => %w{Browser Registration},
+  'midi'  => %w{In},
   'mimas' => {
     'class' => %w{Application Brush Callback Color GLWidget HBoxLayout Label Path Painter Pen PushButton Slider VBoxLayout Widget},
     'const' => true,
