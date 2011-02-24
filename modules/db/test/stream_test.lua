@@ -47,7 +47,7 @@ end
 function should.write_strings(t)
   setup_basic_data(t)
   t.stream:set({t=25, name='hello'})
-  assert_equal({t=25, name='hello'}, t.stream:at(25))
+  assert_table_equal({t=25, name='hello'}, t.stream:at(25))
 end
 
 function should.get_next_timestamp(t)
@@ -63,9 +63,9 @@ end
 function should.get_data_with_at(t)
   setup_basic_data(t)
   -- get all data at event time '10'
-  assert_equal({a=1.1, b=2, c=3}, t.stream:at(10))
+  assert_table_equal({a=1.1, b=2, c=3}, t.stream:at(10))
   -- get all data at event time '15'
-  assert_equal({a=5, b=3}, t.stream:at(15))
+  assert_table_equal({a=5, b=3}, t.stream:at(15))
   -- no data at event time '123'
   assert_nil(t.stream:at(123))
 end
@@ -90,7 +90,7 @@ function should.play(t)
   setup_basic_data(t)
   local start = worker:now()
   function t.stream.playback(row)
-    assert_equal(ROWS[row.t], row)
+    assert_table_equal(ROWS[row.t], row)
     assert_in_range(start + row.t, start + row.t + 3, worker:now())
   end
   t.stream:play()
