@@ -1,0 +1,8 @@
+all:
+- &0
+  name: Jane
+- &1
+  name: Bob
+roles:
+  boss: *0
+  wife: *0
