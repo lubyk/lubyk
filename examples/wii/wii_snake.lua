@@ -27,6 +27,49 @@ colors = {
   purple = {r=0.6, g=0.1, b=0.9}
 }
 
+--============================================== wii.Remote
+
+wiimotes = {}
+for wiimote_id=1,2 do
+  local wiimote = wii.Remote()
+  wiimotes[wiimote_id] = wiimote
+  function wiimote.button(btn, on)
+    if on then
+      if btn == 'Remote.H' then
+        app:quit()
+      elseif btn == 'Remote.+' then
+        reset()
+      else
+        -- differenciate between remote 1 and remote 2
+        btn = string.format('%s.%i', btn, wiimote_id)
+        for _, snake in ipairs(snakes) do
+          if snake:action(btn) then
+            break
+          end
+        end
+      end
+    end
+  end
+end
+
+--============================================== Sound
+
+effect = {mi = midi.Out('lubyk')}
+print(effect.mi)
+effect.sounds = {
+  die  = {chan = 1, note = 24, velocity = 60},
+  turn = {chan = 1, note = 25, velocity = 30},
+  fire = {chan = 1, note = 26, velocity = 30},
+}
+
+function effect:play(key)
+  local sound = self.sounds[key]
+  if not sound then
+    print('Unknown effect', key)
+    return
+  end
+  self.mi:send(143 + sound.chan, sound.note, sound.velocity)
+end
 --============================================== World
 World = {}
 World.__index = World
@@ -219,6 +262,7 @@ function Snake:step()
   self.y = world_map(self.y + self.vy * self.speed, self.world.size_y)
   if self.world:mark(self) ~= 0 then
     -- dead
+    effect:play('die')
     self.dead  = true
     self.alpha = 0.3
   end
@@ -271,17 +315,22 @@ function Snake:action(event)
     elseif action == 'UP' then
       self.vy = 1
       self.vx = 0
+      effect:play('turn')
     elseif action == 'RIGHT' then
       self.vy = 0
       self.vx = 1
+      effect:play('turn')
     elseif action == 'DOWN' then
       self.vy = -1
       self.vx = 0
+      effect:play('turn')
     elseif action == 'LEFT' then
       self.vy = 0
       self.vx = -1
+      effect:play('turn')
     elseif action == 'FIRE' then
       self.world:bomb(self)
+      effect:play('fire')
     end
   end
 end

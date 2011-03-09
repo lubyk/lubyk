@@ -56,7 +56,7 @@ function should.draw_slot(t)
   --t.timer:start()
 
   t.thread = lk.Thread(function()
-    sleep(2000)
+    sleep(20000)
     --r = sz/5
     sleep(5000)
     t.win:close()
