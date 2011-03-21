@@ -16,7 +16,7 @@ local worker = worker
 function lk.Timer(interval, func)
   local instance = constr(worker, interval)
   if func then
-    instance:set_callback(func)
+    instance.tick = func
   end
   return instance
 end

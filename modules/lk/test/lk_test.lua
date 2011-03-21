@@ -49,4 +49,12 @@ function should.test_file_existence()
   assert_equal(nil, lk.file_type(nil))
 end
 
+function should.findcode_locally()
+  assert_match('Passes input values to output', lk.findcode(lk.dir(), 'fixtures.pass'))
+end
+
+function should.findcode_in_libs()
+  assert_match('Triggers regular bangs', lk.findcode(lk.dir(), 'lubyk.Metro'))
+end
+
 test.all()

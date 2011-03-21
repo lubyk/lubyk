@@ -1,6 +1,5 @@
-bang:
-  source: metro.lua
-  #class: lk.Metro
+beat:
+  class: lubyk.Metro
   x: 30
   y: 15
   links:
@@ -9,7 +8,7 @@ bang:
     tempo: 120
 
 pass:
-  source: pass.lua
+  class: pass
   x: 30
   y: 55
   links:
@@ -18,7 +17,7 @@ pass:
     value: 15
 
 add:
-  source: add.lua
+  class: add
   x: 70
   y: 95
   links:
@@ -28,6 +27,6 @@ add:
     val2: 5
 
 store:
-  source: store.lua
+  class: lubyk.Value
   x: 70
   y: 135

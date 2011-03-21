@@ -73,11 +73,29 @@ public:
     timer_.set_interval(interval);
   }
 
-  void set_callback(lua_State *L) {
-    set_lua_callback(L);
+  /** Set a callback function.
+   *
+   */
+  void __newindex(lua_State *L) {
+    // Stack should be ... <self> <key> <value>
+    std::string key(luaL_checkstring(L, -2));
+    luaL_checktype(L, -1, LUA_TFUNCTION);
+    lua_pushvalue(L, -3);
+    // ... <self> <key> <value> <self>
+    lua_pushvalue(L, -2);
+    // ... <self> <key> <value> <self> <value>
+    if (key == "tick") {
+      set_lua_callback(L);
+    } else {
+      luaL_error(L, "Invalid function name '%s' (should be 'trigger').", key.c_str());
+    }
+
+    lua_pop(L, 2);
+    // ... <self> <key> <value>
   }
+
 private:
-  void bang() {
+  void tick() {
     // lua_ = LuaCallback's thread state
 
     // find function and call
@@ -108,7 +126,7 @@ private:
     lua_pop(lua_, 1);
   }
 
-  lubyk::Timer<lk::Timer, &lk::Timer::bang> timer_;
+  lubyk::Timer<lk::Timer, &lk::Timer::tick> timer_;
 };
 
 } // lk

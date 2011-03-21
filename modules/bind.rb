@@ -44,10 +44,13 @@ mimas_declare = []
 mimas_load = []
 
 modules = {
-#  'dummy' => %w{Dummy},
-#  'lk'    => %w{Socket Timer Thread},
-#  'lubyk' => %w{Worker},
-#  'mdns'  => %w{Browser Registration},
+  'dummy' => %w{Dummy},
+  'lk' => {
+    'class' => %w{Socket Timer Thread},
+    'const' => true,
+  },
+  'lubyk' => %w{Worker},
+  'mdns'  => %w{Browser Registration},
   'midi'  => %w{In Out},
   'mimas' => {
     'class' => %w{Application Brush Callback Color GLWidget HBoxLayout Label Path Painter Pen PushButton Slider VBoxLayout Widget},

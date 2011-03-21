@@ -68,8 +68,11 @@ end
 
 function lib:set(definition)
   -- should protect with pcall to avoid breaking all if it fails
-  if definition.source then
-    local code = lk.readall(definition.source)
+  if definition.class then
+    local class_name = definition.class
+    -- find source in package.paths
+    local code = lk.Lib.find(class_name)
+    local code = lk.readall(definition.class)
     self:eval(code)
   end
 

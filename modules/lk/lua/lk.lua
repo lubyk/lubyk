@@ -25,6 +25,9 @@ require 'lubyk.core'
 -------------------------------- pack/unpack (msgpack.vendor)
 require 'msgpack.vendor'
 
+-------------------------------- lk.findfile
+require 'lk.constants'
+
 -------------------------------- lk.readall(path)
 
 function lk.readall(basepath, path)
@@ -107,4 +110,26 @@ lk.exist = lk.file_type
 -- Load a file relative to the current file.
 function lk.dofile(path)
   return dofile(lk.dir(1) .. '/' .. path, path)
+end
+
+-------------------------------- lk.findcode(class_name)
+-- Find source code from a given class name of the
+-- form 'lubyk.Metro' or 'my.super.complicated.Thing'. The
+-- loader searches locally first and then into package.paths.
+function lk.findcode(basedir, class_name)
+  -- FIXME: Beware to only optimize this by storing fullpaths
+  local path = string.gsub(class_name, '%.', '/') .. '.lua'
+  local fullpath = basedir .. '/' .. path
+  if lk.file_type(fullpath) == 'file' then
+    -- Found local file relative to patch
+    return lk.readall(fullpath)
+  else
+    -- Search in lib paths
+    local file = lk.findfile(class_name, 'path')
+    if file then
+      return lk.readall(file)
+    else
+      return nil
+    end
+  end
 end
