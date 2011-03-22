@@ -117,6 +117,10 @@ end
 -- form 'lubyk.Metro' or 'my.super.complicated.Thing'. The
 -- loader searches locally first and then into package.paths.
 function lk.findcode(basedir, class_name)
+  if not class_name then
+    class_name = basedir
+    basedir = lfs.currentdir()
+  end
   -- FIXME: Beware to only optimize this by storing fullpaths
   local path = string.gsub(class_name, '%.', '/') .. '.lua'
   local fullpath = basedir .. '/' .. path

@@ -100,21 +100,21 @@ static int Brush_Brush3(lua_State *L) {
 static int Brush_Brush(lua_State *L) {
   int type__ = lua_type(L, 1);
   int top__  = lua_gettop(L);
-  if (type__ == LUA_TNUMBER) {
+  if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "mimas.Color")) {
+    return Brush_Brush2(L);
+  } else if (type__ == LUA_TNUMBER) {
     type__ = lua_type(L, 2);
-    if (type__ == LUA_TNUMBER) {
-      return Brush_Brush3(L);
-    } else if (top__ < 2) {
+    if (top__ < 2) {
       return Brush_Brush1(L);
+    } else if (type__ == LUA_TNUMBER) {
+      return Brush_Brush3(L);
     } else {
       // use any to raise errors
-      return Brush_Brush1(L);
+      return Brush_Brush3(L);
     }
-  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "mimas.Color")) {
-    return Brush_Brush2(L);
   } else {
     // use any to raise errors
-    return Brush_Brush2(L);
+    return Brush_Brush3(L);
   }
 }
 

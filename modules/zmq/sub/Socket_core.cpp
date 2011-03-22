@@ -110,13 +110,13 @@ static int Socket_bind2(lua_State *L) {
 /** Overloaded function chooser for bind(...) */
 static int Socket_bind(lua_State *L) {
   int type__ = lua_type(L, 2);
-  if (type__ == LUA_TNUMBER) {
-    return Socket_bind2(L);
-  } else if (type__ == LUA_TSTRING) {
+  if (type__ == LUA_TSTRING) {
     return Socket_bind1(L);
+  } else if (type__ == LUA_TNUMBER) {
+    return Socket_bind2(L);
   } else {
     // use any to raise errors
-    return Socket_bind1(L);
+    return Socket_bind2(L);
   }
 }
 

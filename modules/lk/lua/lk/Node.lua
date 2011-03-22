@@ -69,11 +69,16 @@ end
 function lib:set(definition)
   -- should protect with pcall to avoid breaking all if it fails
   if definition.class then
-    local class_name = definition.class
     -- find source in package.paths
-    local code = lk.Lib.find(class_name)
-    local code = lk.readall(definition.class)
-    self:eval(code)
+    local code = lk.findcode(definition.class)
+    if code then
+      self:eval(code)
+    else
+      -- FIXME: set error on Node
+      error(string.format("Could not find source code for '%s'.", definition.class))
+    end
+  elseif definition.script then
+    self:eval(definition.script)
   end
 
   for k, v in pairs(definition) do

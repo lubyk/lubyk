@@ -111,13 +111,13 @@ static int In_open_port2(lua_State *L) {
 /** Overloaded function chooser for open_port(...) */
 static int In_open_port(lua_State *L) {
   int type__ = lua_type(L, 2);
-  if (type__ == LUA_TNUMBER) {
-    return In_open_port1(L);
-  } else if (type__ == LUA_TSTRING) {
+  if (type__ == LUA_TSTRING) {
     return In_open_port2(L);
+  } else if (type__ == LUA_TNUMBER) {
+    return In_open_port1(L);
   } else {
     // use any to raise errors
-    return In_open_port2(L);
+    return In_open_port1(L);
   }
 }
 

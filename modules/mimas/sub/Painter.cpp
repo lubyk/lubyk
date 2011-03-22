@@ -312,10 +312,10 @@ static int Painter_setBrush3(lua_State *L) {
 /** Overloaded function chooser for setBrush(...) */
 static int Painter_setBrush(lua_State *L) {
   int type__ = lua_type(L, 2);
-  if (type__ == LUA_TNUMBER) {
-    return Painter_setBrush3(L);
-  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.Color")) {
+  if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.Color")) {
     return Painter_setBrush2(L);
+  } else if (type__ == LUA_TNUMBER) {
+    return Painter_setBrush3(L);
   } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.Brush")) {
     return Painter_setBrush1(L);
   } else {
@@ -402,21 +402,21 @@ static int Painter_setPen3(lua_State *L) {
 /** Overloaded function chooser for setPen(...) */
 static int Painter_setPen(lua_State *L) {
   int type__ = lua_type(L, 2);
-  if (type__ == LUA_TNUMBER) {
+  if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.Pen")) {
+    return Painter_setPen1(L);
+  } else if (type__ == LUA_TNUMBER) {
     type__ = lua_type(L, 3);
-    if (type__ == LUA_TNUMBER) {
-      return Painter_setPen3(L);
-    } else if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "mimas.Color")) {
+    if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "mimas.Color")) {
       return Painter_setPen2(L);
+    } else if (type__ == LUA_TNUMBER) {
+      return Painter_setPen3(L);
     } else {
       // use any to raise errors
-      return Painter_setPen2(L);
+      return Painter_setPen3(L);
     }
-  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.Pen")) {
-    return Painter_setPen1(L);
   } else {
     // use any to raise errors
-    return Painter_setPen1(L);
+    return Painter_setPen3(L);
   }
 }
 

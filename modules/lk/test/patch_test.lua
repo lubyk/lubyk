@@ -28,6 +28,13 @@ function should.create_patch_with_new_filename()
   assert_equal('lk.Patch', patch.type)
 end
 
+function should.create_patch_with_inline_code()
+  local patch = lk.Patch(fixture.path('inline.yml'))
+  assert_equal('lk.Patch', patch.type)
+  assert_equal(patch.nodes.store,               patch:get('store'))
+  assert_equal(patch.nodes.add,                 patch:get('add'))
+end
+
 function should.add_nodes()
   local patch = make_patch()
   assert_type('table', patch.nodes.add)

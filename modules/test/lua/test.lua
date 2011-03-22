@@ -217,17 +217,27 @@ function assert_true(ok)
   lib.assert(ok, string.format('True expected but was false.'))
 end
 
+-- Test raw equality (same table)
 function assert_equal(expected, value)
   lib.assert(value == expected, string.format('Expected %s but found %s.', format_arg(expected), format_arg(value)))
+end
+
+-- Test value equality (same table content)
+function assert_value_equal(expected, value)
+  if type(expected) == 'table' then
+    assert_table_equal(expected, value)
+  else
+    assert_equal(expected, value)
+  end
 end
 
 function assert_table_equal(expected, value)
   assert_equal('table', type(value))
   for i, v in ipairs(expected) do
-    assert_equal(v, value[i])
+    assert_value_equal(v, value[i])
   end
   for k, v in pairs(expected) do
-    assert_equal(v, value[k])
+    assert_value_equal(v, value[k])
   end
 end
 

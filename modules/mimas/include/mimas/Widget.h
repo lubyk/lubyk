@@ -34,7 +34,7 @@ using namespace lubyk;
 
 #include <QtGui/QWidget>
 #include <QtGui/QMouseEvent>
-#include <QPoint>
+#include <QtCore/QPoint>
 
 #include <iostream>
 

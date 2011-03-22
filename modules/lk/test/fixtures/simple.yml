@@ -1,5 +1,5 @@
 add:
-  source: add.lua
+  class: add
   x: 70
   y: 95
   links:
@@ -9,6 +9,6 @@ add:
     val2: 5
 
 store:
-  source: store.lua
+  class: store
   x: 70
   y: 135

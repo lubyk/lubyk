@@ -157,7 +157,7 @@ function should.style_slider(t)
   t.timer:start()
 
   t.thread = lk.Thread(function()
-    sleep(30000)
+    sleep(3000)
     t.timer:stop()
     t.win:close()
   end)

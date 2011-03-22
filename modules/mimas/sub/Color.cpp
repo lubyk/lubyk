@@ -64,13 +64,13 @@ static int Color_Color2(lua_State *L) {
 static int Color_Color(lua_State *L) {
   int type__ = lua_type(L, 1);
   int top__  = lua_gettop(L);
-  if (type__ == LUA_TNUMBER) {
-    return Color_Color2(L);
-  } else if (top__ < 1) {
+  if (top__ < 1) {
     return Color_Color1(L);
+  } else if (type__ == LUA_TNUMBER) {
+    return Color_Color2(L);
   } else {
     // use any to raise errors
-    return Color_Color1(L);
+    return Color_Color2(L);
   }
 }
 

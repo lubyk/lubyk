@@ -103,6 +103,6 @@ end
 
 function should.compute_text_size()
   local win = mimas.Window()
-  assert_equal(4, win:textSize("Hello Lubyk!"))
+  assert_equal(78, win:textSize("Hello Lubyk!"))
 end
 test.all()

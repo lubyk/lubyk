@@ -30,9 +30,7 @@ function should.send_and_receive()
       sleep(10)
     end
 
-    for i, v in ipairs(arg) do
-      assert_equal(arg[i], received[i])
-    end
+    assert_value_equal(arg, received)
   end
 
   -- string
