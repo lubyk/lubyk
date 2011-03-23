@@ -31,9 +31,9 @@ static int Timer_Timer(lua_State *L) {
 static int Timer_destructor(lua_State *L) {
   Timer **userdata = (Timer**)luaL_checkudata(L, 1, "lk.Timer");
 
-  
+
   if (*userdata) delete *userdata;
-  
+
   *userdata = NULL;
   return 0;
 }
@@ -44,10 +44,10 @@ static int Timer_destructor(lua_State *L) {
 
 static int Timer__tostring(lua_State *L) {
   Timer **userdata = (Timer**)luaL_checkudata(L, 1, "lk.Timer");
-  
-  
-  lua_pushfstring(L, "<lk.Timer: %p %li>", *userdata, (*userdata)->interval());
-  
+
+
+  lua_pushfstring(L, "<lk.Timer: %p %f (%f)>", *userdata, (float)(*userdata)->interval(), (float)(*userdata)->running());
+
   return 1;
 }
 
@@ -60,7 +60,7 @@ static int Timer__tostring(lua_State *L) {
 static int Timer___newindex(lua_State *L) {
   try {
     Timer *self__ = *((Timer**)luaL_checkudata(L, 1, "lk.Timer"));
-    
+
     self__->__newindex(L);
     return 0;
   } catch (std::exception &e) {

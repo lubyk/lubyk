@@ -51,14 +51,13 @@ function lk.with_filepath(filepath, func)
     abs_path = string.format('%s/%s', cur_path, filepath)
   end
   local new_dir = string.gsub(abs_path, '/[^/]+$', '')
-
   -- change into the loaded file's directory before reading
   lfs.chdir(new_dir)
   -- load file
   local ok, err = pcall(func)
   -- change back to actual directory
   lfs.chdir(cur_path)
-  assert(ok, err)
+  assert(ok, string.format("%s (with current path '%s')", err or '', new_dir))
 end
 
 -------------------------------- lk.split(string, sep)
@@ -82,18 +81,30 @@ function lk.split(str, pat)
 end
 
 -------------------------------- lk.source()
--- Find the source of the current file.
+-- Find the source of the current file or the
+-- file up x levels in the call chain (-1 = up
+-- one level).
 function lk.source(level)
   local level = level or 0
-  return debug.getinfo(level + 2).source
+  return debug.getinfo(2 - level).source
+end
+
+-------------------------------- lk.file(level = 0)
+-- Find the the current file or the
+-- file up x levels in the call chain (-1 = up
+-- one level).
+function lk.file(level)
+  local level = level or 0
+  return string.match(lk.source(level - 1), '^@(.*)$')
 end
 
 -------------------------------- lk.dir()
--- Find the directory of the current file.
+-- Find the directory of the current file or the
+-- direcotyr of the file up x levels in the call
+-- chain (-1 = up one level).
 function lk.dir(level)
   local level = level or 0
-  local source = string.gsub(lk.source(level+1), '/[^/]+$', '')
-  return string.match(source, '^@(.*)$')
+  return string.gsub(lk.file(level - 1), '/[^/]+$', '')
 end
 
 -------------------------------- lk.file_type(path)
@@ -109,7 +120,7 @@ lk.exist = lk.file_type
 -------------------------------- lk.dofile(path)
 -- Load a file relative to the current file.
 function lk.dofile(path)
-  return dofile(lk.dir(1) .. '/' .. path, path)
+  return dofile(lk.dir(-1) .. '/' .. path, path)
 end
 
 -------------------------------- lk.findcode(class_name)

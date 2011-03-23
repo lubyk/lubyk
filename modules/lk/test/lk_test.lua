@@ -42,6 +42,10 @@ function should.provide_dir()
   assert_match('modules/lk/test$', lk.dir())
 end
 
+function should.provide_file()
+  assert_match('modules/lk/test/lk_test.lua$', lk.file())
+end
+
 function should.test_file_existence()
   assert_equal('file', lk.file_type(fixture.path('simple.yml')))
   assert_equal(nil, lk.file_type(fixture.path('complex.yml')))

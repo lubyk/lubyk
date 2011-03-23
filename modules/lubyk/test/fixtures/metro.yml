@@ -1,13 +1,13 @@
-bang:
+beat:
   class: lubyk.Metro
   x: 70
   y: 95
   links:
-    sum: store/in/value
+    bang: store/in/value
   params:
     tempo: 100
 
 store:
-  source: lubyk.Value
+  class: lubyk.Value
   x: 70
   y: 135

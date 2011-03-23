@@ -14,3 +14,4 @@ package.path = "./?.lua;./lib/?.lua;/usr/local/lib/lubyk/?.lua;" .. package.path
 package.cpath = "./?.so;./lib/?.so;/usr/local/lib/lubyk/?.so;" .. package.cpath
 -- lk loads 'lubyk' table
 require 'lk'
+

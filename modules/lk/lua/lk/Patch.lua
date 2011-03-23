@@ -3,22 +3,59 @@
   lk.Patch
   --------
 
-  A patch provides introspection and edit/restore features
-  for nodes.
+  A Patch provides introspection and edit/restore features
+  for a set of nodes.
 
 --]]------------------------------------------------------
 local lib   = {type='lk.Patch'}
 lib.__index = lib
 lk.Patch    = lib
 
-setmetatable(lib, {
-  -- new method
- __call = function(table, filepath)
-  local instance = {nodes = {}, filepath=filepath, pending_nodes={}}
-  setmetatable(instance, lib)
+-- PRIVATE
+
+local function load_from_filepath(self, filepath)
   if lk.exist(filepath) then
     -- only load if file exists
-    instance:load(filepath)
+    local nodes = yaml.loadpath(filepath)
+    -- clear before loading (yaml contains a full definition)
+    self.nodes = {}
+    self:set(nodes)
+  else
+    --print(string.format("'%s' not found.", filepath))
+  end
+end
+
+local function load_from_yaml(self, yaml_code)
+  local nodes = yaml.load(yaml_code)
+  -- clear before loading (yaml contains a full definition)
+  self.nodes = {}
+  self:set(nodes)
+end
+
+
+-- PUBLIC
+
+setmetatable(lib, {
+  -- new method
+ __call = function(table, filepath_or_code)
+  local instance = {nodes = {}, pending_nodes={}}
+  setmetatable(instance, lib)
+  if not filepath_or_code then
+    return instance
+  end
+
+  if string.match(filepath_or_code, '\n') then
+    -- set filepath to the script containing calling lk.Patch()
+    -- this is where the content will be saved
+    instance.filepath  = lk.file(-1)
+    -- store full script in filepath
+    instance.inline   = true
+    load_from_yaml(instance, filepath_or_code)
+  else
+    instance.filepath = filepath_or_code
+    -- store only yaml in filepath
+    instance.inline   = false
+    load_from_filepath(instance, filepath_or_code)
   end
   return instance
 end})
@@ -37,11 +74,6 @@ function lib:set(definitions)
   end)
 end
 
-function lib:load(path)
-  local nodes = yaml.loadpath(path)
-  self.filepath = path
-  self:set(nodes)
-end
 
 function lib:inlet_pending(node_name, inlet_name)
   local node = self.nodes[node_name]

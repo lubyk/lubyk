@@ -67,6 +67,12 @@ function lib:eval(code_str)
 end
 
 function lib:set(definition)
+  -- load params before evaluating script code
+  local params = definition.params
+  if params then
+    self:set_params(params)
+  end
+
   -- should protect with pcall to avoid breaking all if it fails
   if definition.class then
     -- find source in package.paths
@@ -89,11 +95,6 @@ function lib:set(definition)
     else
       self[k] = v
     end
-  end
-
-  local params = definition.params
-  if params then
-    self:set_params(params)
   end
 
   local links = definition.links

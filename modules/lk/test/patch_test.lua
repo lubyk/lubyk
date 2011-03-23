@@ -26,6 +26,43 @@ end
 function should.create_patch_with_new_filename()
   local patch = lk.Patch(fixture.path('foo.yml'))
   assert_equal('lk.Patch', patch.type)
+  assert_false(patch.inline)
+end
+
+function should.create_literal_patch()
+  local patch = lk.Patch [[
+add:
+  script: |
+    inlet('val1', 'First value [number].')
+    inlet('val2', 'Second value [number].')
+    sum = outlet('sum', 'Sends sum of first and second values [number].')
+
+    val1 = val1 or 0
+    val2 = val2 or 0
+
+    function inlet.val1(v)
+      val1 = v
+      sum(val1 + val2)
+    end
+
+    function inlet.val2(v)
+      val2 = v
+      sum(val1 + val2)
+    end
+  x: 70
+  y: 95
+  links:
+    sum: store/in/value
+  params:
+    val1: 0
+    val2: 5
+
+store:
+  class: fixtures.store
+  x: 70
+  y: 135
+]]
+  assert_true(patch.inline)
 end
 
 function should.create_patch_with_inline_code()

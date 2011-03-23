@@ -36,8 +36,8 @@
 namespace lk {
 /** Calls a lua function back at regular intervals. If the called function returns
  * a number, the number sets the new interval (0 = stop).
- * @dub string_format:'%%li'
- *      string_args:'(*userdata)->interval()'
+ * @dub string_format:'%%f (%%f)'
+ *      string_args:'(float)(*userdata)->interval(), (float)(*userdata)->running()'
  *      lib_name:'Timer_core'
  */
 class Timer : public lubyk::LuaCallback
@@ -56,13 +56,17 @@ public:
   }
 
   void start(bool trigger_on_start = true) {
-    if (!lua_) throw lubyk::Exception("Staring timer without a callback.");
+    if (!lua_) throw lubyk::Exception("Starting timer without a callback.");
     timer_.start(trigger_on_start);
   }
 
   void join() {
     lubyk::ScopedUnlock unlock(worker_);
     timer_.join();
+  }
+
+  bool running() {
+    return timer_.running();
   }
 
   time_t interval() {

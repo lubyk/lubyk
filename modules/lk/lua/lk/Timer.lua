@@ -13,10 +13,15 @@ require 'worker'
 
 local constr = lk.Timer
 local worker = worker
+local function dummy_func()
+end
+
 function lk.Timer(interval, func)
   local instance = constr(worker, interval)
   if func then
     instance.tick = func
+  else
+    instance.tick = dummy_func
   end
   return instance
 end
