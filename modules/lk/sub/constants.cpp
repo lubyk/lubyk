@@ -7,7 +7,7 @@ using namespace lk;
 
 
 /** LuaStackSize lk::findfile(lua_State *L)
- * include/lk/constants.h:38
+ * include/lk/constants.h:60
  */
 static int lk_findfile(lua_State *L) {
   try {
@@ -23,11 +23,50 @@ static int lk_findfile(lua_State *L) {
 
 
 
+/** static const char* lk::pushnexttemplate(lua_State *L, const char *path)
+ * include/lk/constants.h:47
+ */
+static int lk_pushnexttemplate(lua_State *L) {
+  try {
+    
+    const char *path = luaL_checkstring(L, 2);
+    const char * retval__ = pushnexttemplate(L, path);
+    lua_pushstring(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "lk.pushnexttemplate: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "lk.pushnexttemplate: Unknown exception");
+  }
+}
+
+
+
+/** static int lk::readable(const char *filename)
+ * include/lk/constants.h:39
+ */
+static int lk_readable(lua_State *L) {
+  try {
+    const char *filename = luaL_checkstring(L, 1);
+    int  retval__ = readable(filename);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "lk.readable: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "lk.readable: Unknown exception");
+  }
+}
+
+
+
 // Register namespace
 
 static const struct luaL_Reg lk_functions[] = {
 
   {"findfile"                      , lk_findfile},
+  {"pushnexttemplate"              , lk_pushnexttemplate},
+  {"readable"                      , lk_readable},
 
   {NULL, NULL},
 };

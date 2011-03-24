@@ -31,9 +31,9 @@ static int Timer_Timer(lua_State *L) {
 static int Timer_destructor(lua_State *L) {
   Timer **userdata = (Timer**)luaL_checkudata(L, 1, "lk.Timer");
 
-
+  
   if (*userdata) delete *userdata;
-
+  
   *userdata = NULL;
   return 0;
 }
@@ -44,10 +44,10 @@ static int Timer_destructor(lua_State *L) {
 
 static int Timer__tostring(lua_State *L) {
   Timer **userdata = (Timer**)luaL_checkudata(L, 1, "lk.Timer");
-
-
+  
+  
   lua_pushfstring(L, "<lk.Timer: %p %f (%f)>", *userdata, (float)(*userdata)->interval(), (float)(*userdata)->running());
-
+  
   return 1;
 }
 
@@ -55,12 +55,12 @@ static int Timer__tostring(lua_State *L) {
 
 
 /** void lk::Timer::__newindex(lua_State *L)
- * include/lk/Timer.h:79
+ * include/lk/Timer.h:83
  */
 static int Timer___newindex(lua_State *L) {
   try {
     Timer *self__ = *((Timer**)luaL_checkudata(L, 1, "lk.Timer"));
-
+    
     self__->__newindex(L);
     return 0;
   } catch (std::exception &e) {
@@ -72,7 +72,7 @@ static int Timer___newindex(lua_State *L) {
 
 
 /** time_t lk::Timer::interval()
- * include/lk/Timer.h:68
+ * include/lk/Timer.h:72
  */
 static int Timer_interval(lua_State *L) {
   try {
@@ -104,8 +104,25 @@ static int Timer_join(lua_State *L) {
 }
 
 
+/** bool lk::Timer::running()
+ * include/lk/Timer.h:68
+ */
+static int Timer_running(lua_State *L) {
+  try {
+    Timer *self__ = *((Timer**)luaL_checkudata(L, 1, "lk.Timer"));
+    bool  retval__ = self__->running();
+    lua_pushboolean(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "lk.Timer.running: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "lk.Timer.running: Unknown exception");
+  }
+}
+
+
 /** void lk::Timer::set_interval(float interval)
- * include/lk/Timer.h:72
+ * include/lk/Timer.h:76
  */
 static int Timer_set_interval(lua_State *L) {
   try {
@@ -167,6 +184,7 @@ static const struct luaL_Reg Timer_member_methods[] = {
   {"__newindex"        , Timer___newindex},
   {"interval"          , Timer_interval},
   {"join"              , Timer_join},
+  {"running"           , Timer_running},
   {"set_interval"      , Timer_set_interval},
   {"start"             , Timer_start},
   {"stop"              , Timer_stop},
