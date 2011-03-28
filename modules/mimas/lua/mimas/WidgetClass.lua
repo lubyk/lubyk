@@ -79,6 +79,10 @@ function mimas.WidgetClass()
     return self.super:show()
   end
 
+  function lib:hide()
+    return self.super:hide()
+  end
+
   function lib:close()
     return self.super:close()
   end

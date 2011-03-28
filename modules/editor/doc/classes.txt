@@ -1,0 +1,12 @@
+The classes to build the GUI are:
+
+ProcessWatch    -- watches for new processes on the network
+Process         -- contains local information on remote lk.Process
+                -- notifies ProcessView/ProcessList of any changes
+ProcessView     -- draws an editor.Process (open view)
+                -- (contains a weak ref to editor.Process)
+ProcessList     -- draws a list of editor.Process
+Node            -- contains local information on remote lk.Node
+                -- notifies NodeView of any changes
+NodeView        -- draws an editor.Node inside an editor.ProcessView
+                -- (contains a weak ref to editor.Node)

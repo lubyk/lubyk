@@ -16,7 +16,7 @@ end
 
 -- editor needs a 'main' state with currently selected objects
 -- and such things
-editor.main = {}
+editor.main = editor.main or {}
 
 function should.draw_slot(t)
   t.view = editor.SlotView(mock_slot())

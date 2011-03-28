@@ -17,7 +17,7 @@ local env_mt= {}
 
 setmetatable(lib, {
   -- new method
- __call = function(table, patch, name, code_str)
+ __call = function(table, process, name, code_str)
   -- new environment
   local env  = {}
   -- new node
@@ -27,7 +27,7 @@ setmetatable(lib, {
     env            = env,
     errors         = {},
     name           = name,
-    patch          = patch,
+    process        = process,
   }
   setmetatable(instance, lib)
   -- method to declare inlets
@@ -37,10 +37,10 @@ setmetatable(lib, {
   -- env has read access to _G
   setmetatable(env, env_mt)
 
-  patch.nodes[name] = instance
+  process.nodes[name] = instance
   -- pending connection resolution
-  instance.inlets_pending = patch.pending_nodes[name] or {}
-  patch.pending_nodes[name] = nil
+  instance.inlets_pending = process.pending_nodes[name] or {}
+  process.pending_nodes[name] = nil
 
   if code_str then
     instance:eval(code_str)
@@ -115,12 +115,12 @@ function lib:error(...)
 --  table.insert(self.errors, string.format(...))
 end
 
-local function set_link(self, out_name, in_url, patch)
+local function set_link(self, out_name, in_url, process)
   local outlet = self.outlets[out_name]
   if not outlet then
     self:error("Outlet name '%s' does not exist.", out_name)
   else
-    local slot, err = patch:get(in_url, lk.Inlet)
+    local slot, err = process:get(in_url, lk.Inlet)
     if slot == false then
       -- error
       self:error(err)
@@ -130,9 +130,9 @@ local function set_link(self, out_name, in_url, patch)
       -- when the node creates the real inlet.
       local parts = lk.split(in_url, '/')
       if #parts == 3 and parts[2] == 'in' then
-        slot = patch:inlet_pending(parts[1], parts[3])
+        slot = process:inlet_pending(parts[1], parts[3])
       else
-        -- FIXME: store absolute path for 'in_url' in patch pending list
+        -- FIXME: store absolute path for 'in_url' in process pending list
         -- and resolve this list on node creation
         self:error("Invalid link url '%s' (target not found and cannot create temporary).", in_url)
         return
@@ -144,16 +144,15 @@ local function set_link(self, out_name, in_url, patch)
 end
 
 function lib:set_links(links)
-  local patch = self.patch
-  local env   = self.env
+  local process = self.process
   for out_name, def in pairs(links) do
     if type(def) == 'table' then
       -- multiple links
       for _, ldef in ipairs(def) do
-        set_link(self, out_name, ldef, patch)
+        set_link(self, out_name, ldef, process)
       end
     else
-      set_link(self, out_name, def, patch)
+      set_link(self, out_name, def, process)
     end
   end
 end

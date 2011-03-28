@@ -38,7 +38,10 @@ end
 setmetatable(lib, {
   -- new method
  __call = function(table, filepath_or_code)
-  local instance = {nodes = {}, pending_nodes={}}
+  local instance  = {
+    nodes         = {},
+    pending_nodes = {},
+  }
   setmetatable(instance, lib)
   if not filepath_or_code then
     return instance
@@ -74,8 +77,18 @@ function lib:set(definitions)
   end)
 end
 
+-- Create a pending inlet.
+function lib:inlet_pending(inlet_url)
+  local parts = lk.split(inlet_url, '/')
+  local node_name, inlet_name
+  if #parts == 3 and parts[2] == 'in' then
+    node_name, inlet_name = parts[1], parts[3]
+  else
+    -- FIXME: store absolute path for 'in_url' in process pending list
+    -- and resolve this list on node creation
+    return nil, string.format("Invalid link url '%s' (target not found and cannot create temporary).", in_url)
+  end
 
-function lib:inlet_pending(node_name, inlet_name)
   local node = self.nodes[node_name]
   local inlet = nil
   if node then
@@ -98,6 +111,7 @@ function lib:inlet_pending(node_name, inlet_name)
   return inlet
 end
 
+-- Find an element from an url (also used by editor.Process)
 function lib:get(url, mt)
   local parts = lk.split(url, '/')
   local c = self

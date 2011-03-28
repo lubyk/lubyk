@@ -114,7 +114,7 @@ static int Brush_Brush(lua_State *L) {
     }
   } else {
     // use any to raise errors
-    return Brush_Brush3(L);
+    return Brush_Brush1(L);
   }
 }
 
@@ -124,9 +124,9 @@ static int Brush_Brush(lua_State *L) {
 static int Brush_destructor(lua_State *L) {
   Brush **userdata = (Brush**)luaL_checkudata(L, 1, "mimas.Brush");
 
-  
+
   if (*userdata) delete *userdata;
-  
+
   *userdata = NULL;
   return 0;
 }
@@ -137,10 +137,10 @@ static int Brush_destructor(lua_State *L) {
 
 static int Brush__tostring(lua_State *L) {
   Brush **userdata = (Brush**)luaL_checkudata(L, 1, "mimas.Brush");
-  
-  
+
+
   lua_pushfstring(L, "<mimas.Brush: %p>", *userdata);
-  
+
   return 1;
 }
 

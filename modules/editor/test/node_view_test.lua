@@ -18,6 +18,8 @@ local function mock_node()
   return editor.Node{
     name = 'Dummy ProcessTab',
     hue  = 0.9,
+    x    = 100,
+    y    = 200,
     inlets = {
       {},
       {},
@@ -34,7 +36,6 @@ end
 
 function should.draw_node_view(t)
   t.view = editor.NodeView(mock_node())
-  t.view:move(100, 100)
   t.view:show()
 
   t.thread = lk.Thread(function()

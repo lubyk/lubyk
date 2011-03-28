@@ -19,6 +19,7 @@ local text_padding = 5
 
 function lib:init(process)
   self.process = process
+  self.nodes   = {}
   self:setName(process.name)
 end
 

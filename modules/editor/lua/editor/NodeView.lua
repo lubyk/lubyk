@@ -16,7 +16,7 @@ local hpen_width = 1 -- half pen width
 local bp = hpen_width + box_padding -- full box padding
 local arc_radius = 0
 local text_hpadding = 10
-local text_vpadding = 6
+local text_vpadding = 4
 local pad  = bp + hpen_width -- padding for inner shape (top/left)
 local sloth        = editor.SlotView.sloth
 local slotw        = editor.SlotView.slotw
@@ -32,27 +32,51 @@ local function makeSlotViews(self, list, type)
   end
 end
 
-local function placeElements(self)
-  local x = pad+text_hpadding
-  local y = pad
-  for _, slot in ipairs(self.node.inlets) do
-    slot.view:move(x, y)
-    x = x + slotw + slot_padding
-  end
-
-  x = pad+text_hpadding
-  y = self.height - pad - sloth
-  for _, slot in ipairs(self.node.outlets) do
-    slot.view:move(x, y)
+local function placeSlots(slot_list, x, y, max_x)
+  for _, slot in ipairs(slot_list) do
+    if slot.view then
+      if x > max_x then
+        slot.view:hide()
+      else
+        slot.view:show()
+      end
+      slot.view:move(x, y)
+    end
     x = x + slotw + slot_padding
   end
 end
 
+local function placeElements(self)
+  -- inlets
+  placeSlots(self.node.inlets,
+    -- start x
+    pad + text_hpadding,
+    -- start y
+    pad,
+    -- max x
+    self.width - slotw - pad
+  )
+
+  placeSlots(self.node.outlets,
+    -- start x
+    pad + text_hpadding,
+    -- start y
+    self.height - pad - sloth,
+    -- max x
+    self.width - slotw - pad
+  )
+end
+
 --============================================= PUBLIC
-function lib:init(node)
+function lib:init(node, parent_view)
   node.view = self
   self.node = node
   self:setName(node.name)
+  if parent_view then
+    parent_view:addWidget(self)
+    self:resize(self.width, self.height)
+  end
+  self:move(node.x, node.y)
   makeSlotViews(self, self.node.inlets, 'inlet')
   makeSlotViews(self, self.node.outlets, 'outlet')
   placeElements(self)
