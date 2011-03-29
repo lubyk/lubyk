@@ -16,20 +16,20 @@ local counter = 0
 --  local socket = lk.TCPSocket()
 --  local port = socket:bind()
 --
---  assert_true(port < 65535)
---  assert_true(port > 1024)
---  assert_equal(port, socket:port())
+--  assertTrue(port < 65535)
+--  assertTrue(port > 1024)
+--  assertEqual(port, socket:port())
 --
 --  local socket2 = lk.TCPSocket()
 --  local port2 = socket2:bind()
---  assert_true(port2 < 65535)
---  assert_true(port2 > 1024)
---  assert_equal(port2, socket2:port())
+--  assertTrue(port2 < 65535)
+--  assertTrue(port2 > 1024)
+--  assertEqual(port2, socket2:port())
 --  assert_not_equal(port, port2)
 --end
 --
 --function should.convert_to_string()
---  assert_equal('string', type(lk.TCPSocket():__tostring()))
+--  assertEqual('string', type(lk.TCPSocket():__tostring()))
 --end
 --
 --function should.create_many_sockets()
@@ -39,13 +39,13 @@ local counter = 0
 --    sock_list[i]:bind() -- creates socket fd + bind
 --  end
 --  -- should just work
---  assert_equal('userdata', type(sock_list[100]))
+--  assertEqual('userdata', type(sock_list[100]))
 --end
 --
 --function should.connect()
 --  local socket = lk.TCPSocket()
 --  socket:connect('lubyk.org', 80)
---  assert_match('--> lubyk.org:80', socket:__tostring())
+--  assertMatch('--> lubyk.org:80', socket:__tostring())
 --end
 --
 --function should.listen_and_accept()
@@ -89,11 +89,11 @@ function should.send_and_recv()
   print('client', client)
   local received = {client:recv()}
 
-  assert_equal({1, 2, "hello"}, received)
+  assertEqual({1, 2, "hello"}, received)
 
   received = {client:recv()}
 
-  assert_equal({5}, received)
+  assertEqual({5}, received)
 end
 
 --function should.send_and_receive()
@@ -129,7 +129,7 @@ end
 --    end
 --
 --    for i, v in ipairs(arg) do
---      assert_equal(arg, received)
+--      assertEqual(arg, received)
 --    end
 --  end
 --

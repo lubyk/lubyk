@@ -74,7 +74,7 @@ function should.push_pull_many_messages()
     sleep(10)
   end
 
-  assert_equal(10, received)
+  assertEqual(10, received)
   receiver:kill()
 end
 

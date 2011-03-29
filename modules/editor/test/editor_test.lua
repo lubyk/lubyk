@@ -11,7 +11,7 @@ require 'lubyk'
 local should = test.Suite('editor')
 
 function should.auto_load()
-  assert_true(editor)
+  assertTrue(editor)
 end
 
 test.all()

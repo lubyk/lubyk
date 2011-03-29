@@ -60,7 +60,7 @@ local function update_nodes(self, nodes_def)
       end
     elseif node_def then
       -- create new node
-      node = editor.Node(node_def, self)
+      node = editor.Node(self, node_def)
       nodes[node_name] = node
     end
   end
@@ -99,10 +99,10 @@ end
 -- find a node in the current process (same as lk.Patch.get).
 lib.get = lk.Patch.get
 
--- Create a pending inlet (same as lk.Patch.inlet_pending).
+-- Create a pending inlet (same as lk.Patch.pendingInlet).
 
 -- Create a pending inlet.
-function lib:inlet_pending(inlet_url)
+function lib:pendingInlet(inlet_url)
   local parts = lk.split(inlet_url, '/')
   local node_name, inlet_name
   if #parts == 3 and parts[2] == 'in' then
@@ -116,9 +116,8 @@ function lib:inlet_pending(inlet_url)
   local node = self.nodes[node_name]
   local inlet = nil
   if node then
-    -- inlet not created yet
-    inlet = editor.Inlet(inlet_name)
-    node.inlets_pending[node_name] = inlet
+    -- inlet not created yet. Error.
+    return nil, string.format("Unknown inlet '%s' in node '%s'", inlet_name, node_name)
   else
     -- node not created yet
     local pending_node = self.pending_nodes[node_name]

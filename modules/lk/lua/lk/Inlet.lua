@@ -26,9 +26,9 @@ setmetatable(lib, {
   else
     local instance = node.inlets[name]
     if not instance then
-      instance = node.inlets_pending[name]
+      instance = node.pending_inlets[name]
       if instance then
-        node.inlets_pending[name] = nil
+        node.pending_inlets[name] = nil
       else
         instance = {}
         setmetatable(instance, lib)

@@ -18,7 +18,7 @@ local function create_link(self, target_url)
   local process = self.node.process
   local target  = process:get(target_url, 'editor.Inlet')
   if not target then
-    local target, err = process:inlet_pending(target_url)
+    local target, err = process:pendingInlet(target_url)
     if not target then
       error(err)
     end
@@ -29,20 +29,31 @@ end
 -- PUBLIC
 setmetatable(lib, {
   -- new method
- __call = function(table, name, definition, node)
+ __call = function(table, node, name, def)
   local instance = {
     node  = node,
     name  = name,
     links = {},
   }
   setmetatable(instance, lib)
-  if links then
-    for _, target_url in ipairs(links) do
+  if def.links then
+    for _, target_url in ipairs(def.links) do
       create_link(instance, target_url)
     end
   end
+
+  if node.process.view then
+    instance:updateView()
+  end
   return instance
 end})
+
+-- Create or update view.
+function lib:updateView()
+  if not self.view then
+    self.view = editor.SlotView(self)
+  end
+end
 
 function lib:connect(inlet)
   app:post(function()

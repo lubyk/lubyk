@@ -314,13 +314,13 @@ static int Painter_setBrush(lua_State *L) {
   int type__ = lua_type(L, 2);
   if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.Color")) {
     return Painter_setBrush2(L);
-  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.Brush")) {
-    return Painter_setBrush1(L);
   } else if (type__ == LUA_TNUMBER) {
     return Painter_setBrush3(L);
+  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.Brush")) {
+    return Painter_setBrush1(L);
   } else {
     // use any to raise errors
-    return Painter_setBrush3(L);
+    return Painter_setBrush1(L);
   }
 }
 

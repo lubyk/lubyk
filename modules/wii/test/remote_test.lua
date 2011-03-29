@@ -14,7 +14,7 @@ local should = test.Suite('wii.Remote')
 function should.set_button_callback()
   local remote = wii.Remote()
 
-  assert_pass(function()
+  assertPass(function()
     function remote.button(btn, pressed)
       -- button callback
     end
@@ -24,7 +24,7 @@ end
 function should.set_acceleration_callback()
   local remote = wii.Remote('Foo')
 
-  assert_pass(function()
+  assertPass(function()
     function remote.acceleration(device, x, y, z)
       -- button callback
     end

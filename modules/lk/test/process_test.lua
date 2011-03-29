@@ -9,19 +9,19 @@
 require 'lubyk'
 
 local should = test.Suite('lk.Process')
-local timeout = 1000
+local timeout = 3000
 
-function should.load_code()
-  assert_true(lk.Process)
+function should.loadCode()
+  assertTrue(lk.Process)
 end
 
-function should.create_patch()
+function should.createPatch()
   local process = lk.Process(fixture.path('simple.yml'))
-  assert_type('table', process.nodes.add)
-  assert_type('table', process.nodes.store)
+  assertType('table', process.nodes.add)
+  assertType('table', process.nodes.store)
 end
 
-function should.announce_service()
+function should.announceService()
   local continue = false
   local browser = mdns.Browser(lubyk.service_type, function(service)
     if service.op == 'add' and service.name == 'simple' then
@@ -33,6 +33,6 @@ function should.announce_service()
   while not continue and worker:now() < now + timeout do
     sleep(10)
   end
-  assert_true(continue)
+  assertTrue(continue)
 end
 test.all()

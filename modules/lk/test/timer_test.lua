@@ -10,7 +10,7 @@ require 'lubyk'
 
 local should = test.Suite('lk.Timer')
 
-function should.loop_timer_in_external_thread()
+function should.loopTimerInExternalThread()
   local counter = 0
   local timer = lk.Timer(10, function()
     counter = counter + 1
@@ -19,14 +19,14 @@ function should.loop_timer_in_external_thread()
   timer:start() -- default = trigger on start
   -- first trigger now
   sleep(91)
-  assert_equal(10, counter)
+  assertEqual(10, counter)
   sleep(100)
-  assert_equal(20, counter)
+  assertEqual(20, counter)
   counter = 0
   timer:stop()
 end
 
-function should.set_interval()
+function should.setInterval()
   local counter = 0
   local timer = lk.Timer(10000, function()
     counter = counter + 1
@@ -34,19 +34,19 @@ function should.set_interval()
   end)
   timer:start(false) -- do not trigger on start
   sleep(10)
-  assert_equal(0, counter)
-  timer:set_interval(10)
-  assert_equal(0, counter)
+  assertEqual(0, counter)
+  timer:setInterval(10)
+  assertEqual(0, counter)
   sleep(91) -- triggers:
   -- 10, 20, 30, 40, 50, 60, 70, 80, 90
-  assert_equal(10, counter)
+  assertEqual(10, counter)
   sleep(100)
-  assert_equal(20, counter)
+  assertEqual(20, counter)
   counter = 0
   timer:stop()
 end
 
-function should.set_callback()
+function should.setCallback()
   local counter = 0
   local timer = lk.Timer(10000)
   function timer.tick()
@@ -55,19 +55,19 @@ function should.set_callback()
   end
   timer:start(false) -- do not trigger on start
   sleep(10)
-  assert_equal(0, counter)
-  timer:set_interval(10)
-  assert_equal(0, counter)
+  assertEqual(0, counter)
+  timer:setInterval(10)
+  assertEqual(0, counter)
   sleep(91) -- triggers:
   -- 10, 20, 30, 40, 50, 60, 70, 80, 90
-  assert_equal(10, counter)
+  assertEqual(10, counter)
   sleep(100)
-  assert_equal(20, counter)
+  assertEqual(20, counter)
   counter = 0
   timer:stop()
 end
 
-function should.join_timer()
+function should.joinTimer()
   local counter = 0
   local timer = lk.Timer(10, function()
     counter = counter + 1
@@ -79,7 +79,7 @@ function should.join_timer()
   timer:start()
   -- wait for timer to finish
   timer:join()
-  assert_equal(5, counter)
+  assertEqual(5, counter)
 end
 
 test.all()

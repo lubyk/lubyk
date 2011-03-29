@@ -61,13 +61,13 @@ public:
     lubyk::Thread::join();
   }
 
-  bool should_run() {
+  bool shouldRun() {
     return lubyk::Thread::should_run();
   }
 
   void start(lua_State *L) {
     set_lua_callback(L);
-    start_thread<Thread, &Thread::run>(this, NULL);
+    startThread<Thread, &Thread::run>(this, NULL);
   }
 
 private:

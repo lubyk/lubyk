@@ -11,23 +11,23 @@ require 'lubyk'
 local should = test.Suite('lk.Outlet')
 
 local function mock_node()
-  return {outlets = {}, inlets = {}, inlets_pending={}}
+  return {outlets = {}, inlets = {}, pending_inlets={}}
 end
 
-function should.create_outlet()
+function should.createOutlet()
   local node = mock_node()
   local bang = lk.Outlet(node, 'bang', 'Bangs on every beat.')
-  assert_type('function', bang)
-  assert_equal('bang', node.outlets.bang.name)
-  assert_equal(bang, node.outlets.bang.send)
-  assert_equal('Bangs on every beat.', node.outlets.bang.info)
+  assertType('function', bang)
+  assertEqual('bang', node.outlets.bang.name)
+  assertEqual(bang, node.outlets.bang.send)
+  assertEqual('Bangs on every beat.', node.outlets.bang.info)
 end
 
-function should.connect_to_inlets()
+function should.connectToInlets()
   local node = mock_node()
   local bang = lk.Outlet(node, 'bang', 'Send bang.')
   local beep = lk.Inlet(node, 'beep', 'Receives bangs.')
-  assert_pass(function()
+  assertPass(function()
     node.outlets.bang:connect(node.inlets.beep)
   end)
   local t = 0
@@ -35,7 +35,7 @@ function should.connect_to_inlets()
     t = value
   end
   bang(120)
-  assert_equal(120, t)
+  assertEqual(120, t)
 end
 
 

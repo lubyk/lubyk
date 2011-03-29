@@ -52,7 +52,7 @@ class Thread : public Mutex {
 
   /** Start a new thread with a class method. */
   template<void(*Tmethod)(Thread*)>
-  void start_thread(void *parameter = NULL) {
+  void startThread(void *parameter = NULL) {
     ScopedLock lock(condition_);
     if (is_running()) {
       fprintf(stderr, "Trying to start thread when it is already running ! (in Thread::start)");
@@ -73,7 +73,7 @@ class Thread : public Mutex {
   }
 
   /** Start a new thread with a static function. */
-  void start_thread(void (*static_method)(Thread*), void *parameter = NULL) {
+  void startThread(void (*static_method)(Thread*), void *parameter = NULL) {
     ScopedLock lock(condition_);
     if (is_running()) {
      fprintf(stderr, "Trying to start thread when it is already running ! (in Thread::start)");
@@ -95,7 +95,7 @@ class Thread : public Mutex {
    *  should stop using a typical "while (thread->run())". If the thread is interrupted with
    *  a SIGTERM, the class's terminate() method is called. */
   template<class T, void(T::*Tmethod)(Thread*)>
-  void start_thread(T *owner, void *parameter = NULL) {
+  void startThread(T *owner, void *parameter = NULL) {
     ScopedLock lock(condition_);
     if (is_running()) {
       fprintf(stderr, "Trying to start thread when it is already running ! (in Thread::start)");
@@ -106,7 +106,7 @@ class Thread : public Mutex {
     parameter_  = parameter;
     should_run_ = true;
 
-    pthread_create( &thread_id_, NULL, &s_start_thread<T,Tmethod>, (void*)this);
+    pthread_create( &thread_id_, NULL, &s_startThread<T,Tmethod>, (void*)this);
 
     // make sure thread is properly started (signals registered) in case we die right after
     condition_.wait();
@@ -116,7 +116,7 @@ class Thread : public Mutex {
    *  should stop using a typical "while (thread->run())". If the thread is interrupted with
    *  a SIGTERM, the class's terminate() method is called. */
   template<class T, void(T::*Tmethod)()>
-  void start_thread(T *owner, void *parameter = NULL) {
+  void startThread(T *owner, void *parameter = NULL) {
     ScopedLock lock(condition_);
     if (is_running()) {
       fprintf(stderr, "Trying to start thread when it is already running ! (in Thread::start)");
@@ -127,7 +127,7 @@ class Thread : public Mutex {
     parameter_  = parameter;
     should_run_ = true;
 
-    pthread_create( &thread_id_, NULL, &s_start_thread<T,Tmethod>, (void*)this);
+    pthread_create( &thread_id_, NULL, &s_startThread<T,Tmethod>, (void*)this);
 
     // make sure thread is properly started (signals registered) in case we die right after
     condition_.wait();
@@ -249,7 +249,7 @@ class Thread : public Mutex {
 
   /** Static function to start a new thread. */
   template<class T, void(T::*Tmethod)(Thread*)>
-  static void *s_start_thread(void *thread_ptr) {
+  static void *s_startThread(void *thread_ptr) {
     Thread * thread = (Thread*)thread_ptr;
      // begin of new thread
     set_thread_this(thread);
@@ -270,7 +270,7 @@ class Thread : public Mutex {
 
   /** Static function to start a new thread. */
   template<class T, void(T::*Tmethod)()>
-  static void * s_start_thread(void *thread_ptr) {
+  static void * s_startThread(void *thread_ptr) {
     Thread * thread = (Thread*)thread_ptr;
      // begin of new thread
     set_thread_this(thread);

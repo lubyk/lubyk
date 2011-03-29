@@ -152,7 +152,7 @@ function lib.report_suite(suite)
   if suite._info.fail_count > 0 then
     for name, err in pairs(suite._info.errors) do
       lib.total_fail = lib.total_fail + 1
-      local hname = string.gsub(name, '_', ' ')
+      local hname = string.gsub(name, '([A-Z])', function(x) return ' '..string.lower(x) end)
       print(string.format('  %i. Should %s\n     %s\n', lib.total_fail, hname, string.gsub(err, '\n', '\n     ')))
     end
   end
@@ -187,7 +187,7 @@ end
 
 ------------------------------------ ASSERTIONS ---------------------------
 
-local function format_arg(arg)
+local function formatArg(arg)
   local argtype = type(arg)
   if argtype == "string" then
     return "'"..arg.."'"
@@ -209,59 +209,59 @@ function fail(msg)
   lib.assert(false, msg)
 end
 
-function assert_false(ok)
+function assertFalse(ok)
   lib.assert(not ok, string.format('Should fail but passed.'))
 end
 
-function assert_true(ok)
+function assertTrue(ok)
   lib.assert(ok, string.format('True expected but was false.'))
 end
 
 -- Test raw equality (same table)
-function assert_equal(expected, value)
-  lib.assert(value == expected, string.format('Expected %s but found %s.', format_arg(expected), format_arg(value)))
+function assertEqual(expected, value)
+  lib.assert(value == expected, string.format('Expected %s but found %s.', formatArg(expected), formatArg(value)))
 end
 
 -- Test value equality (same table content)
-function assert_value_equal(expected, value)
+function assertValueEqual(expected, value)
   if type(expected) == 'table' then
-    assert_table_equal(expected, value)
+    assertTableEqual(expected, value)
   else
-    assert_equal(expected, value)
+    assertEqual(expected, value)
   end
 end
 
-function assert_table_equal(expected, value)
+function assertTableEqual(expected, value)
   assert_equal('table', type(value))
   for i, v in ipairs(expected) do
-    assert_value_equal(v, value[i])
+    assertValueEqual(v, value[i])
   end
   for k, v in pairs(expected) do
-    assert_value_equal(v, value[k])
+    assertValueEqual(v, value[k])
   end
 end
 
-function assert_not_equal(unexpected, value)
-  lib.assert(value ~= unexpected, string.format('Should not equal %s.', format_arg(unexpected)))
+function assertNotEqual(unexpected, value)
+  lib.assert(value ~= unexpected, string.format('Should not equal %s.', formatArg(unexpected)))
 end
 
-function assert_match(pattern, value)
+function assertMatch(pattern, value)
   lib.assert(type(value) == 'string', string.format('Should be a string but was a %s.', type(value)))
-  lib.assert(string.find(value, pattern), string.format('Expected to match %s but was %s.', format_arg(pattern), format_arg(value)))
+  lib.assert(string.find(value, pattern), string.format('Expected to match %s but was %s.', formatArg(pattern), formatArg(value)))
 end
 
-function assert_not_match(pattern, actual, msg)
+function assertNotMatch(pattern, actual, msg)
   lib.assert(type(value) == 'string', string.format('Should be a string but was a %s.', type(value)))
-  lib.assert(not string.find(value, pattern), string.format('Expected to not match %s but was %s.', format_arg(pattern), format_arg(value)))
+  lib.assert(not string.find(value, pattern), string.format('Expected to not match %s but was %s.', formatArg(pattern), formatArg(value)))
 end
 
-function assert_error(pattern, func)
+function assertError(pattern, func)
   local ok, err = pcall(func)
   lib.assert(not ok, string.format('Should raise an error but none found.'))
-  lib.assert(string.find(err, pattern), string.format('Error expected to match %s but was %s.', format_arg(pattern), format_arg(err)))
+  lib.assert(string.find(err, pattern), string.format('Error expected to match %s but was %s.', formatArg(pattern), formatArg(err)))
 end
 
-function assert_pass(func)
+function assertPass(func)
   local ok, err = pcall(func)
   if ok then
     lib.assert(true)
@@ -270,18 +270,18 @@ function assert_pass(func)
   end
 end
 
-function assert_less_then(expected, value)
+function assertLessThen(expected, value)
   lib.assert(value < expected, string.format('Should be less then %f but was %f.', expected, value))
 end
 
-function assert_type(expected, value)
+function assertType(expected, value)
   lib.assert(type(value) == expected, string.format('Should be a %s but was %s.', expected, type(value)))
 end
 
-function assert_nil(value)
+function assertNil(value)
   lib.assert(type(value) == 'nil', string.format('Should be a Nil but was %s.', type(value)))
 end
 
-function assert_in_range(t1, t2, value)
+function assertInRange(t1, t2, value)
   lib.assert(value >= t1 and value < t2, string.format('Should be in [%f, %f[ but was %f.', t1, t2, value))
 end

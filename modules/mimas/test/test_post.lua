@@ -70,7 +70,7 @@ function should.post_to_gui_thread()
   timer:start()
   win:show()
   app:exec()
-  assert_true(quit_called or counter >= 3)
+  assertTrue(quit_called or counter >= 3)
 end
 
 test.all()

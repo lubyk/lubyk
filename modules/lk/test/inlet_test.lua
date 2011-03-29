@@ -10,38 +10,38 @@ require 'lubyk'
 
 local should = test.Suite('lk.Inlet')
 
-local function mock_node()
-  return {inlets = {}, inlets_pending = {}}
+local function mockNode()
+  return {inlets = {}, pending_inlets = {}}
 end
 
-function should.create_inlet()
-  local inlet = lk.Inlet(mock_node(), 'tempo', 'Set tempo [bpm].')
-  assert_equal('tempo', inlet.name)
-  assert_equal('Set tempo [bpm].', inlet.info)
+function should.createInlet()
+  local inlet = lk.Inlet(mockNode(), 'tempo', 'Set tempo [bpm].')
+  assertEqual('tempo', inlet.name)
+  assertEqual('Set tempo [bpm].', inlet.info)
 end
 
-function should.create_pending_inlet()
+function should.createPendingInlet()
   local inlet = lk.Inlet('tempo')
-  assert_equal('tempo', inlet.name)
-  assert_equal(nil, inlet.node)
+  assertEqual('tempo', inlet.name)
+  assertEqual(nil, inlet.node)
 end
 
-function should.use_pending_inlet_on_create()
-  local node = mock_node()
+function should.usePendingInletOnCreate()
+  local node = mockNode()
   -- pending inlet
   local inlet = lk.Inlet('tempo')
-  node.inlets_pending = {tempo=inlet}
+  node.pending_inlets = {tempo=inlet}
 
-  assert_equal(inlet, lk.Inlet(node, 'tempo', 'Set tempo [bpm].'))
-  assert_equal('Set tempo [bpm].', inlet.info)
+  assertEqual(inlet, lk.Inlet(node, 'tempo', 'Set tempo [bpm].'))
+  assertEqual('Set tempo [bpm].', inlet.info)
 end
 
-function should.add_inlet_to_node_once()
-  local node  = mock_node()
+function should.addInletToNodeOnce()
+  local node  = mockNode()
   local inlet = lk.Inlet(node, 'tempo', 'Set tempo [bpm].')
   local inlet2= lk.Inlet(node, 'tempo', 'Set tempo [bpm].')
-  assert_equal(inlet, inlet2)
-  assert_equal(inlet, node.inlets.tempo)
+  assertEqual(inlet, inlet2)
+  assertEqual(inlet, node.inlets.tempo)
 end
 
 test.all()

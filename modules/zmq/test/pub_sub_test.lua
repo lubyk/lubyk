@@ -29,7 +29,7 @@ function should.publish_and_subscribe()
     sleep(10)
   end
 
-  assert_equal(10, received)
+  assertEqual(10, received)
   receiver:kill()
 end
 
@@ -63,7 +63,7 @@ function should.share_request_betwen_threads(t)
     t.threads[i]:join()
   end
 
-  assert_equal(up_count * thread_count, t.total)
+  assertEqual(up_count * thread_count, t.total)
   t.sub:kill()
 end
 
@@ -90,7 +90,7 @@ function should.publish_and_subscribe_many(t)
     sleep(10)
   end
 
-  assert_equal(2, received)
+  assertEqual(2, received)
   receiver1:kill()
   receiver2:kill()
 end

@@ -24,7 +24,7 @@ function should.display_window(t)
   t.thread = lk.Thread(function()
     sleep(200)
     t.win:close()
-    assert_true(true)
+    assertTrue(true)
   end)
 end
 
@@ -43,7 +43,7 @@ function should.use_custom_paint(t)
   t.thread = lk.Thread(function()
     sleep(400)
     t.win:close()
-    assert_true(true)
+    assertTrue(true)
   end)
 end
 
@@ -52,8 +52,8 @@ function should.set_resized_callback(t)
   t.win:move(100, 170)
   t.ok = false
   function t.win.resized(w, h)
-    assert_equal(10, w)
-    assert_equal(20, h)
+    assertEqual(10, w)
+    assertEqual(20, h)
     t.ok = true
   end
   t.win:resize(10, 20)
@@ -81,7 +81,7 @@ function should.accept_destroy_from_gui(t)
       sleep(200)
     end
     -- should be deleted by GUI
-    assert_match('NULL', t.win:__tostring())
+    assertMatch('NULL', t.win:__tostring())
   end)
 end
 
@@ -97,12 +97,12 @@ function should.accept_destroy_from_Lua()
     collectgarbage('collect')
     -- not deleted by Lua, but marked as deleted in C++
     -- proof that win was deleted in C++
-    assert_true(label:deleted())
+    assertTrue(label:deleted())
   end)
 end
 
 function should.compute_text_size()
   local win = mimas.Window()
-  assert_equal(78, win:textSize("Hello Lubyk!"))
+  assertEqual(78, win:textSize("Hello Lubyk!"))
 end
 test.all()

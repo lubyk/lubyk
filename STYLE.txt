@@ -1,0 +1,18 @@
+=== developers
+
+The code written here roughly conforms to http://code.google.com/p/soc/wiki/PythonStyleGuide#Naming. Please follow these guidelines if you want to contribute both in C++ and in Lua.
+
+Naming conventions:
+
+Classes             CapWords
+Functions & methods firstLowerCapWords()
+Constants           CAPS_WITH_UNDER
+Instance Variables	lower_with_under_
+Variables	& params  lower_with_under	
+
+As an addition to these guidelines, please write tests.
+
+== additions
+
+- Only accessors/finders that return true or false on success should start with "get".
+- "*" and "&" (C++ pointers and references) should be glued to the variable: const char *str.

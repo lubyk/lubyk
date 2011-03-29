@@ -10,29 +10,29 @@ require 'lubyk'
 
 local should = test.Suite('lk.OutletMethod')
 
-local function mock_node()
+local function mockNode()
   return {outlets = {}}
 end
 
-function should.create_outlet_method()
-  local node = mock_node()
+function should.createOutletMethod()
+  local node = mockNode()
   local outlet = lk.OutletMethod(node)
-  assert_type('table', outlet)
+  assertType('table', outlet)
 end
 
-function should.create_new_outlets_on_call()
-  local node = mock_node()
+function should.createNewOutletOnCall()
+  local node = mockNode()
   local outlet = lk.OutletMethod(node)
-  assert_pass(function()
+  assertPass(function()
     outlet('bang', 'Bang.')
     local outl = node.outlets.bang
     outlet('bang', 'Send bang.')
     -- multiple calls do not create new outlets
-    assert_equal(outl, node.outlets.bang)
+    assertEqual(outl, node.outlets.bang)
   end)
   local bang = node.outlets.bang
-  assert_equal('bang', bang.name)
-  assert_equal('Send bang.', bang.info)
+  assertEqual('bang', bang.name)
+  assertEqual('Send bang.', bang.info)
 end
 
 test.all()

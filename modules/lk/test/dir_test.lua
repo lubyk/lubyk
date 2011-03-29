@@ -14,7 +14,7 @@ function should.list_files_matching_pattern()
   local dir = lk.Dir('modules/lubyk')
   local pattern = '[.]lua$'
   for file in dir:glob(pattern) do
-    assert_match(pattern, file)
+    assertMatch(pattern, file)
   end
 end
 

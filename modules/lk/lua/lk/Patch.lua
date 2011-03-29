@@ -78,15 +78,15 @@ function lib:set(definitions)
 end
 
 -- Create a pending inlet.
-function lib:inlet_pending(inlet_url)
+function lib:pendingInlet(inlet_url)
   local parts = lk.split(inlet_url, '/')
   local node_name, inlet_name
   if #parts == 3 and parts[2] == 'in' then
     node_name, inlet_name = parts[1], parts[3]
   else
-    -- FIXME: store absolute path for 'in_url' in process pending list
+    -- FIXME: store absolute path for 'inlet_url' in process pending list
     -- and resolve this list on node creation
-    return nil, string.format("Invalid link url '%s' (target not found and cannot create temporary).", in_url)
+    return nil, string.format("Invalid link url '%s' (target not found and cannot create temporary).", inlet_url)
   end
 
   local node = self.nodes[node_name]
@@ -94,7 +94,7 @@ function lib:inlet_pending(inlet_url)
   if node then
     -- inlet not created yet
     inlet = lk.Inlet(inlet_name)
-    node.inlets_pending[node_name] = inlet
+    node.pending_inlets[node_name] = inlet
   else
     -- node not created yet
     local pending_node = self.pending_nodes[node_name]

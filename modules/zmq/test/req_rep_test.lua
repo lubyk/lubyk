@@ -22,7 +22,7 @@ function should.request_reply()
   -- requester
   local req = zmq.Req()
   req:connect(string.format("tcp://localhost:%i", server:port()))
-  assert_equal(9, req:request(5))
+  assertEqual(9, req:request(5))
   server:kill()
 end
 
@@ -57,7 +57,7 @@ end
 --    t.threads[i]:join()
 --  end
 --
---  assert_equal(up_count * thread_count, t.total)
+--  assertEqual(up_count * thread_count, t.total)
 --  t.server:kill()
 --end
 

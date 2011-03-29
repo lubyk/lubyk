@@ -10,7 +10,7 @@ require 'lubyk'
 
 local should = test.Suite('editor.SlotView')
 
-local function mock_slot(hue)
+local function mockSlot(hue)
   return {node = {color = mimas.Color(hue, 0.3, 0.8, 0.8)}}
 end
 
@@ -19,18 +19,18 @@ end
 editor.main = {sdragging = {}}
 
 local sz = 600
-function should.draw_slot(t)
+function should.drawSlot(t)
   t.win = mimas.Window()
   t.win:move(100, 100)
   t.win:resize(sz, sz)
 
   -- outlet
-  t.oview = editor.SlotView(mock_slot(0.2))
+  t.oview = editor.SlotView(mockSlot(0.2))
   t.win:addWidget(t.oview)
   t.oview:move(2*sz/3, 2*sz/3)
 
   -- inlet
-  t.iview = editor.SlotView(mock_slot(0.9))
+  t.iview = editor.SlotView(mockSlot(0.9))
   t.win:addWidget(t.iview)
   t.iview:move(sz/2, sz/2)
 
@@ -60,7 +60,7 @@ function should.draw_slot(t)
     --r = sz/5
     sleep(5000)
     t.win:close()
-    assert_true(true)
+    assertTrue(true)
   end)
 end
 

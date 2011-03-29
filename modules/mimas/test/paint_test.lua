@@ -13,7 +13,7 @@ require 'lubyk'
 local should = test.Suite('mimas.Painter')
 
 function should.load_constants()
-  assert_equal(1, mimas.SolidPattern)
+  assertEqual(1, mimas.SolidPattern)
 end
 
 function should.paint_path(t)
@@ -44,7 +44,7 @@ function should.paint_path(t)
   t.thread = lk.Thread(function()
     sleep(400)
     t.win:close()
-    assert_true(true)
+    assertTrue(true)
   end)
 end
 
@@ -71,7 +71,7 @@ function should.draw_rounded_rect(t)
   t.thread = lk.Thread(function()
     sleep(400)
     t.win:close()
-    assert_true(true)
+    assertTrue(true)
   end)
 end
 
@@ -98,7 +98,7 @@ function should.drawRect(t)
   t.thread = lk.Thread(function()
     sleep(400)
     t.win:close()
-    assert_true(true)
+    assertTrue(true)
   end)
 end
 
@@ -115,7 +115,7 @@ function should.accept_destroy_from_gui(t)
       sleep(200)
     end
     -- should be deleted by GUI
-    assert_match('NULL', t.win:__tostring())
+    assertMatch('NULL', t.win:__tostring())
   end)
 end
 
@@ -131,7 +131,7 @@ function should.accept_destroy_from_Lua()
     collectgarbage('collect')
     -- not deleted by Lua, but marked as deleted in C++
     -- proof that win was deleted in C++
-    assert_true(label:deleted())
+    assertTrue(label:deleted())
   end)
 end
 

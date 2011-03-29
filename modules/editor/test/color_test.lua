@@ -35,10 +35,10 @@ function should.create_many_colors_and_gc(t)
   local after = collectgarbage('count')
   if testing_gui then
     -- with other tests messing around, we have to be more tolerant
-    assert_less_then(before * 1.01, after)
+    assertLessThen(before * 1.01, after)
   else
     -- when running the test alone
-    assert_equal(before, after)
+    assertEqual(before, after)
   end
   t.win:show()
   t.win:close()
@@ -84,6 +84,6 @@ function should.create_constant_colors(t)
     t.win:close()
   end)
   t.win:show()
-  assert_true(true)
+  assertTrue(true)
 end
 test.all()

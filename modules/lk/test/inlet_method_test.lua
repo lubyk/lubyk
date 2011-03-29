@@ -10,52 +10,52 @@ require 'lubyk'
 
 local should = test.Suite('lk.InletMethod')
 
-local function mock_node()
-  return {inlets = {}, inlets_pending={}}
+local function mockNode()
+  return {inlets = {}, pending_inlets={}}
 end
 
-function should.create_inlet_method()
-  local node = mock_node()
+function should.createInlet_method()
+  local node = mockNode()
   local inlet = lk.InletMethod(node)
-  assert_type('table', inlet)
+  assertType('table', inlet)
 end
 
-function should.create_new_inlets_on_call()
-  local node = mock_node()
+function should.create_newInletsOnCall()
+  local node = mockNode()
   local inlet = lk.InletMethod(node)
-  assert_pass(function()
+  assertPass(function()
     inlet('tempo', 'Set tempo.')
     local inl = node.inlets.tempo
     inlet('tempo', 'Set tempo [bpm].')
     -- multiple calls do not create new inlets
-    assert_equal(inl, node.inlets.tempo)
+    assertEqual(inl, node.inlets.tempo)
   end)
   local tempo = node.inlets.tempo
-  assert_equal('tempo', tempo.name)
-  assert_equal('Set tempo [bpm].', tempo.info)
+  assertEqual('tempo', tempo.name)
+  assertEqual('Set tempo [bpm].', tempo.info)
 end
 
-function should.use_inlets_pending_on_call()
-  local node = mock_node()
+function should.usePendingInletsOnCall()
+  local node = mockNode()
   local inl = lk.Inlet('tempo')
   -- this happens when the patch has pending connections to
   -- be resolved
-  node.inlets_pending.tempo = inl
+  node.pending_inlets.tempo = inl
   local inlet = lk.InletMethod(node)
-  assert_pass(function()
+  assertPass(function()
     inlet('tempo', 'Set tempo.')
-    assert_equal(inl, node.inlets.tempo)
+    assertEqual(inl, node.inlets.tempo)
     inlet('tempo', 'Set tempo [bpm].')
     -- multiple calls do not create new inlets
-    assert_equal(inl, node.inlets.tempo)
+    assertEqual(inl, node.inlets.tempo)
   end)
   local tempo = node.inlets.tempo
-  assert_equal('tempo', tempo.name)
-  assert_equal('Set tempo [bpm].', tempo.info)
+  assertEqual('tempo', tempo.name)
+  assertEqual('Set tempo [bpm].', tempo.info)
 end
 
-function should.set_inlet_callback_on_index()
-  local node  = mock_node()
+function should.setInletCallbackOnIndex()
+  local node  = mockNode()
   local inlet = lk.InletMethod(node)
   local tempo = inlet('tempo', 'Set tempo [bpm].')
   local t = 0
@@ -63,13 +63,13 @@ function should.set_inlet_callback_on_index()
     t = x
   end
   tempo.receive(120)
-  assert_equal(120, t)
+  assertEqual(120, t)
 end
 
-function should.raise_error_on_index_without_declaration()
-  local node  = mock_node()
+function should.raiseErrorOnIndex_without_declaration()
+  local node  = mockNode()
   local inlet = lk.InletMethod(node)
-  assert_error("Inlet 'tempo' not declared", function()
+  assertError("Inlet 'tempo' not declared", function()
     function inlet.tempo(x)
     end
   end)

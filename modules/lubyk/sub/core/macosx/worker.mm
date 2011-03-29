@@ -35,7 +35,7 @@ class Worker::Implementation : public lubyk::Thread {
 public:
   Implementation() {
     // create a thread that will run NSApp
-    start_thread<Implementation, &Implementation::run>(this, NULL);
+    startThread<Implementation, &Implementation::run>(this, NULL);
   }
 
   ~Implementation() {

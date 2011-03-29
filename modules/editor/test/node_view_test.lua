@@ -14,8 +14,9 @@ local should = test.Suite('editor.NodeView')
 -- and such things
 editor.main = {dragging = {}}
 
-local function mock_node()
+local function mockNode()
   return editor.Node{
+    process = {},
     name = 'Dummy ProcessTab',
     hue  = 0.9,
     x    = 100,
@@ -34,8 +35,8 @@ local function mock_node()
   }
 end
 
-function should.draw_node_view(t)
-  t.view = editor.NodeView(mock_node())
+function should.drawNodeView(t)
+  t.view = editor.NodeView(mockNode())
   t.view:show()
 
   t.thread = lk.Thread(function()
@@ -51,7 +52,7 @@ function should.draw_node_view(t)
     end)
     sleep(1000)
     t.view:close()
-    assert_true(true)
+    assertTrue(true)
   end)
 end
 

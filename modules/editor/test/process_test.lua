@@ -25,16 +25,16 @@ local function patch(name)
   return instance
 end
 
-function should.update_name_from_definition()
+function should.updateName()
   local process = patch('dummy')
   process:update {
     name = 'hello'
   }
-  assert_equal('hello', process.name)
-  assert_equal('editor.Process', process.type)
+  assertEqual('hello', process.name)
+  assertEqual('editor.Process', process.type)
 end
 
-function should.create_nodes_from_definition()
+function should.createNodes()
   local process = patch('dummy')
   process:update {
     nodes = {
@@ -42,31 +42,33 @@ function should.create_nodes_from_definition()
       bar = {},
     }
   }
-  assert_equal('editor.Node', process.nodes.foo.type)
-  assert_equal('editor.Node', process.nodes.bar.type)
+  assertEqual('editor.Node', process.nodes.foo.type)
+  assertEqual('editor.Node', process.nodes.bar.type)
 end
 
-function should.create_and_link_links_from_definition()
+function should.resolveLinks()
   local process = patch('dummy')
   process:update {
     nodes = {
       foo = {
         outlets = {
-          a = {'bar/in/x'}
-        }
+          a = {
+            links = {'bar/in/x'},
+          },
+        },
       },
       bar = {
         inlets = {
-          x = {}
-        }
+          x = {},
+        },
       },
     }
   }
   -- source.node.process:get(target_name)
   local link = process.nodes.foo.outlets.a.links[1]
-  assert_equal('editor.Link', link.type)
-  assert_equal(process.nodes.foo.outlets.a, link.source)
-  assert_equal(process.nodes.bar.inlets.x, link.target)
+  assertEqual('editor.Link', link.type)
+  assertEqual(process.nodes.foo.outlets.a, link.source)
+  assertEqual(process.nodes.bar.inlets.x, link.target)
 end
 
 

@@ -23,7 +23,7 @@ function should.accept_destroy_from_gui()
     win = nil
     collectgarbage('collect')
     -- not deleted by Lua, but marked as deleted in C++
-    assert_true(label:deleted())
+    assertTrue(label:deleted())
   end)
 end
 
@@ -40,7 +40,7 @@ function should.accept_destroy_from_Lua(t)
     collectgarbage('collect')
     -- Label destroyed by Lua
     sleep(1000)
-    assert_true(t.win:close()) -- visual feedback needed..
+    assertTrue(t.win:close()) -- visual feedback needed..
   end)
 end
 
@@ -82,7 +82,7 @@ function should.style_labels(t)
   lay:addWidget(t.lbl3)
 
   -- visual check
-  assert_true(true)
+  assertTrue(true)
   t.win:show()
   t.thread = lk.Thread(function()
     sleep(2000)

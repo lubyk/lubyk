@@ -10,13 +10,13 @@ require 'lubyk'
 
 local should = test.Suite('lk.Node')
 
-local function make_patch()
+local function makePatch()
   return lk.Patch(fixture.path('foo.yml'))
 end
 
-local function make_node(patch, name)
+local function makeNode(patch, name)
   name = name or 'foo'
-  return lk.Node(patch or make_patch(), name, [[
+  return lk.Node(patch or makePatch(), name, [[
     inlet('raw', 'Receive raw value [float].')
     scaled = outlet('scaled', 'Sends scaled value [float].')
     scale = scale or 1
@@ -26,45 +26,45 @@ local function make_node(patch, name)
       scaled(x * scale)
     end
 
-    function assert_received(x)
-      assert_equal(x, received)
+    function assertReceived(x)
+      assertEqual(x, received)
     end
   ]])
 end
 
 function should.run_code()
-  local node = make_node()
-  assert_equal(1, node.env.scale)
+  local node = makeNode()
+  assertEqual(1, node.env.scale)
 end
 
-function should.merge_params_in_env()
-  local node = make_node()
-  node:set_params{scale=2.0}
-  assert_equal(2.0, node.env.scale)
+function should.mergeParams_in_env()
+  local node = makeNode()
+  node:setParams{scale=2.0}
+  assertEqual(2.0, node.env.scale)
 end
 
 function should.set()
-  local node = make_node()
+  local node = makeNode()
   node:set{params={scale=2.0},x=10,y=30}
-  assert_equal(2.0, node.env.scale)
-  assert_equal(10, node.x)
-  assert_equal(30, node.y)
+  assertEqual(2.0, node.env.scale)
+  assertEqual(10, node.x)
+  assertEqual(30, node.y)
 end
 
 function should.declare_inlets()
-  local node = make_node()
-  assert_equal('raw', node.inlets.raw.name)
+  local node = makeNode()
+  assertEqual('raw', node.inlets.raw.name)
 end
 
-function should.declare_outlets()
-  local node = make_node()
-  assert_equal('scaled', node.outlets.scaled.name)
+function should.declareOutlets()
+  local node = makeNode()
+  assertEqual('scaled', node.outlets.scaled.name)
 end
 
 function should.read_global_env()
-  local node = lk.Node(make_patch(), 'foo', [[
+  local node = lk.Node(makePatch(), 'foo', [[
     function test(x)
-      assert_equal(x, node_test_global)
+      assertEqual(x, node_test_global)
     end
 
     function set(x)
@@ -81,10 +81,10 @@ function should.read_global_env()
   -- change does not propagage outside
 end
 
-function should.not_write_global_env()
-  local node = lk.Node(make_patch(), 'foo', [[
+function should.notWriteGlobalEnv()
+  local node = lk.Node(makePatch(), 'foo', [[
     function test(x)
-      assert_equal(x, node_test_global)
+      assertEqual(x, node_test_global)
     end
 
     function set(x)
@@ -95,27 +95,27 @@ function should.not_write_global_env()
   node.env.set(3)
   node.env.test(3)
   -- change does not propagage outside
-  assert_equal(1, node_test_global)
+  assertEqual(1, node_test_global)
 end
 
-function should.connect_slots()
-  local a = make_node()
-  local b = make_node()
+function should.connectSlots()
+  local a = makeNode()
+  local b = makeNode()
   a.outlets.scaled:connect(b.inlets.raw)
-  a:set_params{scale=3}
+  a:setParams{scale=3}
   a.inlets.raw.receive(5)
-  b.env.assert_received(15)
+  b.env.assertReceived(15)
 end
 
-function should.connect_slots_on_set()
-  local p = make_patch()
-  local a = make_node(p)
+function should.connectSlotsOnSet()
+  local p = makePatch()
+  local a = makeNode(p)
   -- pending links
   a:set{params={scale=3}, links={scaled='b/in/raw'}}
   -- should resolve links now
-  local b = make_node(p, 'b')
+  local b = makeNode(p, 'b')
   a.inlets.raw.receive(5)
-  b.env.assert_received(15)
+  b.env.assertReceived(15)
 end
 
 test.all()

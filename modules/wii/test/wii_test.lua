@@ -11,7 +11,7 @@ require 'mimas'
 local should = test.Suite('wii.Browser')
 
 function should.load_wii_code()
-  assert_true(wii)
+  assertTrue(wii)
 end
 
 function should.find_first_remote(t)
@@ -59,7 +59,7 @@ function should.find_first_remote(t)
     if not t.continue then
       print("No wiimote found")
     end
-    assert_true(true)
+    assertTrue(true)
     t.win:close()
   end)
 end

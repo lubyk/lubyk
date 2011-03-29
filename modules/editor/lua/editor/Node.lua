@@ -16,30 +16,78 @@ setmetatable(lib, {
   --- Create a new editor.Node reflecting the content of a remote
   -- node. If the process view is not shown, do not create views. If
   -- the view exists, this method must be called in the GUI thread.
- __call = function(table, def, process)
+ __call = function(table, process, def)
+  if not def then
+    def     = process
+    process = def.process
+  end
   local instance = {
     name    = def.name,
     x       = def.x,
     y       = def.y,
-    inlets  = def.inlets  or {},
-    outlets = def.outlets or {},
-    links   = {},
+    inlets  = {},
+    outlets = {},
+    process = process,
   }
   setmetatable(instance, lib)
-  instance:setHue(def.hue or 0.2)
-  instance:set_inlets(def.inlets)
-  instance:set_inlets(def.outlets)
-  if process.view then
-    instance.process = process
-    instance.view = editor.NodeView(instance, process.view)
-  end
+  instance:update(def)
   return instance
 end})
+
+function lib:update(def)
+  self:setHue(def.hue or 0.2)
+
+  if def.inlets then
+    self:setInlets(def.inlets)
+  end
+
+  if def.outlets then
+    self:setOutlets(def.outlets)
+  end
+
+  if self.process.view then
+    self:updateView(def)
+  end
+end
+
+function lib:updateView(def)
+  if not self.view then
+    self.view = editor.NodeView(self, self.process.view)
+  else
+    -- update needed views
+  end
+end
 
 function lib:setHue(hue)
   self.hue      = hue
   self.color    = mimas.Color(self.hue, 0.3, 0.8, 0.8)
   self.bg_color = mimas.Color(self.hue, 0.2, 0.2)
+end
+
+--- Create inlets from a list of defined slots.
+function lib:setInlets(list)
+  local inlets = self.inlets
+
+  for name, def in pairs(list) do
+    if inlets[name] then
+      -- update ?
+    else
+      inlets[name] = editor.Inlet(self, name, def)
+    end
+  end
+end
+
+--- Create outlets from a list of defined slots.
+function lib:setOutlets(list)
+  local outlets = self.outlets
+
+  for name, def in pairs(list) do
+    if outlets[name] then
+      -- update ?
+    else
+      outlets[name] = editor.Outlet(self, name, def)
+    end
+  end
 end
 
 function lib:error(...)
@@ -61,7 +109,7 @@ local function set_link(self, out_name, in_url, process)
       -- If the slot does not exist yet, make a draft to be used
       -- when the node creates the real inlet.
       local err
-      slot, err = process:inlet_pending(in_url)
+      slot, err = process:pendingInlet(in_url)
       if not slot then
         self:error(err)
         return

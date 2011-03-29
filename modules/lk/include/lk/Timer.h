@@ -73,8 +73,8 @@ public:
     return timer_.interval();
   }
 
-  void set_interval(float interval) {
-    timer_.set_interval(interval);
+  void setInterval(float interval) {
+    timer_.setInterval(interval);
   }
 
   /** Set a callback function.
@@ -119,11 +119,11 @@ private:
     if (lua_type(lua_, -1) == LUA_TNUMBER) {
       float interval = lua_tonumber(lua_, -1);
       if (interval == 0) {
-        timer_.stop_from_loop();
+        timer_.stopFromLoop();
       } else if (interval < 0) {
         luaL_error(lua_, "Timer interval must be a positive value (got %f)\n", interval);
       } else {
-        timer_.set_interval_from_loop(interval);
+        timer_.setIntervalFromLoop(interval);
       }
     }
 

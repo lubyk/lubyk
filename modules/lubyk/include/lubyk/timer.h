@@ -65,7 +65,7 @@ public:
       interrupt();
       thread_.join();
     }
-    thread_.start_thread<Timer, &Timer::start_thread>(this, NULL);
+    thread_.startThread<Timer, &Timer::startThread>(this, NULL);
   }
 
   void start(bool trigger_on_start = true) {
@@ -76,7 +76,7 @@ public:
       interrupt();
       thread_.join();
     }
-    thread_.start_thread<Timer, &Timer::start_thread>(this, NULL);
+    thread_.startThread<Timer, &Timer::startThread>(this, NULL);
   }
 
   void stop() {
@@ -99,7 +99,7 @@ public:
 
   /** Set interval in [ms].
    */
-  void set_interval(time_t interval) {
+  void setInterval(time_t interval) {
     ScopedLock lock(mutex_);
     last_interval_ = interval_;
     interval_ = interval;
@@ -108,11 +108,11 @@ public:
     }
   }
 
-  void stop_from_loop() {
+  void stopFromLoop() {
     should_run_ = false;
   }
 
-  void set_interval_from_loop(time_t interval) {
+  void setIntervalFromLoop(time_t interval) {
     last_interval_ = interval_;
     interval_ = interval;
   }
@@ -176,9 +176,9 @@ private:
     running_ = false;
   }
 
-  static void interrupt_sleep(int sig) {
+  static void interruptSleep(int sig) {
     // we need to reregister signal
-    signal(SIGUSR1, Timer::interrupt_sleep);
+    signal(SIGUSR1, Timer::interruptSleep);
     // we just interrupted sleep, let the loop continue
     return;
   }
@@ -189,8 +189,8 @@ private:
     thread_.send_signal(SIGUSR1);
   }
 
-  void start_thread(Thread *runner) {
-    signal(SIGUSR1, Timer::interrupt_sleep);
+  void startThread(Thread *runner) {
+    signal(SIGUSR1, Timer::interruptSleep);
     should_run_ = true;
     running_ = true;
     runner->high_priority();

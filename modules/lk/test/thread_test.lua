@@ -10,7 +10,7 @@ require 'lubyk'
 
 local should = test.Suite('lk.Thread')
 
-function should.run_thread()
+function should.runThread()
   local counter = 0
   local thread = lk.Thread(function()
     while true do
@@ -22,12 +22,12 @@ function should.run_thread()
 
   -- first trigger now
   sleep(98)
-  assert_equal(10, counter)
+  assertEqual(10, counter)
   sleep(100)
-  assert_equal(20, counter)
+  assertEqual(20, counter)
 end
 
-function should.join_threads()
+function should.joinThreads()
   local counter = 0
   local thread = lk.Thread(function()
     while counter < 5 do
@@ -38,13 +38,13 @@ function should.join_threads()
 
   -- wait for thread to finish
   thread:join()
-  assert_equal(5, counter)
+  assertEqual(5, counter)
 end
 
-function should.kill_threads()
+function should.killThreads()
   local thread = nil
   thread = lk.Thread(function()
-    while thread:should_run() do
+    while thread:shouldRun() do
       sleep(30)
     end
   end)
@@ -54,10 +54,10 @@ function should.kill_threads()
 
   thread:join()
   -- should not hang
-  assert_true(true)
+  assertTrue(true)
 end
 
-local function make_threads()
+local function makeThreads()
 
   collectgarbage('collect')
   local threads = {}
@@ -77,43 +77,43 @@ local function make_threads()
   end
 end
 
-function should.create_many_threads_and_properly_gc()
+function should.createManyThreadsAndProperlyGc()
   -- warmup
-  make_threads()
+  makeThreads()
 
   collectgarbage('collect')
   collectgarbage('collect')
   local before = collectgarbage('count')
-  make_threads()
+  makeThreads()
 
   collectgarbage('collect')
   collectgarbage('collect')
   local after = collectgarbage('count')
   if #test.suites > 1 then
     -- with other tests messing around, we have to be more tolerant
-    assert_less_then(before * 1.01, after)
+    assertLessThen(before * 1.01, after)
   else
     -- when running the test alone
-    assert_equal(before, after)
+    assertEqual(before, after)
   end
 end
 
-function should.get_killed_before_starting()
-  local run_once = false
+function should.getKilledBeforeStarting()
+  local runOnce = false
   local thread = lk.Thread(function(runner)
-    run_once = true
+    runOnce = true
   end)
 
   -- stop
   thread:kill()
 
-  assert_false(run_once)
+  assertFalse(runOnce)
 end
 
-function should.get_destroyed_before_starting()
-  local run_once = false
+function should.getDestroyedBeforeStarting()
+  local runOnce = false
   local thread = lk.Thread(function(runner)
-    run_once = true
+    runOnce = true
     print(runner)
   end)
 
@@ -121,13 +121,13 @@ function should.get_destroyed_before_starting()
   thread = nil
   collectgarbage('collect')
 
-  assert_false(run_once)
+  assertFalse(runOnce)
 end
 
-function should.get_killed_on_destroy()
-  local run_once = false
+function should.getKilledOnDestroy()
+  local runOnce = false
   local thread = lk.Thread(function(runner)
-    run_once = true
+    runOnce = true
     while true do
       sleep(10)
     end
@@ -138,7 +138,7 @@ function should.get_killed_on_destroy()
   thread = nil
   collectgarbage('collect')
 
-  assert_true(run_once)
+  assertTrue(runOnce)
 end
 
 test.all()

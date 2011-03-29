@@ -299,7 +299,7 @@ public:
    */
   void loop(lua_State *L) {
     set_lua_callback(L);
-    thread_.start_thread<Socket, &Socket::run>(this, NULL);
+    thread_.startThread<Socket, &Socket::run>(this, NULL);
   }
 
   /** Halt loop.

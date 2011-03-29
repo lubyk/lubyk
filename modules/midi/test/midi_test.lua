@@ -11,7 +11,7 @@ require 'lubyk'
 local should = test.Suite('midi')
 
 function should.auto_load()
-  assert_true(midi)
+  assertTrue(midi)
 end
 
 test.all()

@@ -339,7 +339,7 @@ public:
   void set_callback(lua_State *L) {
     set_lua_callback(L);
     thread_   = new Thread();
-    thread_->start_thread<Socket, &Socket::run>(this, NULL);
+    thread_->startThread<Socket, &Socket::run>(this, NULL);
   }
 
   void quit() {

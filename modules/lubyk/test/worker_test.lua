@@ -15,8 +15,8 @@ local should  = test.Suite('worker')
 function should.sleep_in_main()
   local now = worker:now() -- time since process started
   sleep(20)
-  assert_true(worker:now() >= now + 20)
-  assert_true(worker:now() <= now + 21)
+  assertTrue(worker:now() >= now + 20)
+  assertTrue(worker:now() <= now + 21)
 end
 
 test.all()

@@ -39,9 +39,8 @@ setmetatable(lib, {
 
   process.nodes[name] = instance
   -- pending connection resolution
-  instance.inlets_pending = process.pending_nodes[name] or {}
+  instance.pending_inlets = process.pending_nodes[name] or {}
   process.pending_nodes[name] = nil
-
   if code_str then
     instance:eval(code_str)
   end
@@ -70,7 +69,7 @@ function lib:set(definition)
   -- load params before evaluating script code
   local params = definition.params
   if params then
-    self:set_params(params)
+    self:setParams(params)
   end
 
   -- should protect with pcall to avoid breaking all if it fails
@@ -99,11 +98,11 @@ function lib:set(definition)
 
   local links = definition.links
   if links then
-    self:set_links(links)
+    self:setLinks(links)
   end
 end
 
-function lib:set_params(params)
+function lib:setParams(params)
   local env = self.env
   for k, v in pairs(params) do
     env[k] = v
@@ -115,12 +114,12 @@ function lib:error(...)
 --  table.insert(self.errors, string.format(...))
 end
 
-local function set_link(self, out_name, in_url, process)
+local function setLink(self, out_name, target_url, process)
   local outlet = self.outlets[out_name]
   if not outlet then
     self:error("Outlet name '%s' does not exist.", out_name)
   else
-    local slot, err = process:get(in_url, lk.Inlet)
+    local slot, err = process:get(target_url, lk.Inlet)
     if slot == false then
       -- error
       self:error(err)
@@ -128,13 +127,11 @@ local function set_link(self, out_name, in_url, process)
       -- slot not found
       -- If the slot does not exist yet, make a draft to be used
       -- when the node creates the real inlet.
-      local parts = lk.split(in_url, '/')
-      if #parts == 3 and parts[2] == 'in' then
-        slot = process:inlet_pending(parts[1], parts[3])
-      else
-        -- FIXME: store absolute path for 'in_url' in process pending list
+      slot, err = process:pendingInlet(target_url)
+      if not slot then
+        -- FIXME: store absolute path for 'target_url' in process pending list
         -- and resolve this list on node creation
-        self:error("Invalid link url '%s' (target not found and cannot create temporary).", in_url)
+        self:error(err)
         return
       end
     end
@@ -143,16 +140,16 @@ local function set_link(self, out_name, in_url, process)
   end
 end
 
-function lib:set_links(links)
+function lib:setLinks(links)
   local process = self.process
   for out_name, def in pairs(links) do
     if type(def) == 'table' then
       -- multiple links
       for _, ldef in ipairs(def) do
-        set_link(self, out_name, ldef, process)
+        setLink(self, out_name, ldef, process)
       end
     else
-      set_link(self, out_name, def, process)
+      setLink(self, out_name, def, process)
     end
   end
 end

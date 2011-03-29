@@ -54,7 +54,7 @@ function should.add_widgets_to_window(t)
   t.thread = lk.Thread(function()
     sleep(400)
     t.win:close()
-    assert_true(true)
+    assertTrue(true)
   end)
 end
 

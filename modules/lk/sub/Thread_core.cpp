@@ -101,19 +101,19 @@ static int Thread_quit(lua_State *L) {
 }
 
 
-/** bool lk::Thread::should_run()
+/** bool lk::Thread::shouldRun()
  * include/lk/Thread.h:64
  */
-static int Thread_should_run(lua_State *L) {
+static int Thread_shouldRun(lua_State *L) {
   try {
     Thread *self__ = *((Thread**)luaL_checkudata(L, 1, "lk.Thread"));
-    bool  retval__ = self__->should_run();
+    bool  retval__ = self__->shouldRun();
     lua_pushboolean(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Thread.should_run: %s", e.what());
+    return luaL_error(L, "lk.Thread.shouldRun: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Thread.should_run: Unknown exception");
+    return luaL_error(L, "lk.Thread.shouldRun: Unknown exception");
   }
 }
 
@@ -143,7 +143,7 @@ static const struct luaL_Reg Thread_member_methods[] = {
   {"join"              , Thread_join},
   {"kill"              , Thread_kill},
   {"quit"              , Thread_quit},
-  {"should_run"        , Thread_should_run},
+  {"shouldRun"         , Thread_shouldRun},
   {"start"             , Thread_start},
   {"__tostring"        , Thread__tostring},
   {"__gc"              , Thread_destructor},

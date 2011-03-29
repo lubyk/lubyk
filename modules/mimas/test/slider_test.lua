@@ -22,7 +22,7 @@ function should.accept_destroy_from_gui()
     win = nil
     collectgarbage('collect')
     -- not deleted by Lua, but marked as deleted in C++
-    assert_true(slider:deleted())
+    assertTrue(slider:deleted())
   end)
 end
 
@@ -45,7 +45,7 @@ function should.accept_destroy_from_Lua(t)
       t.label:setText("Slider should be deleted")
     end)
     sleep(1000)
-    assert_true(t.win:close()) -- visual feedback needed..
+    assertTrue(t.win:close()) -- visual feedback needed..
   end)
 end
 

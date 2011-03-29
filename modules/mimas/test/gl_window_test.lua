@@ -66,7 +66,7 @@ function should.display_window(t)
       app:post(function()
         t.timer:stop()
         -- proves that the window was open and all is fine
-        assert_true(t.win:close())
+        assertTrue(t.win:close())
       end)
     end
   end)
@@ -107,7 +107,7 @@ function should.accept_destroy_from_gui(t)
       sleep(200)
     end
     -- should be deleted by GUI
-    assert_match('NULL', t.win:__tostring())
+    assertMatch('NULL', t.win:__tostring())
   end)
 end
 
@@ -123,7 +123,7 @@ function should.accept_destroy_from_Lua()
     collectgarbage('collect')
     -- not deleted by Lua, but marked as deleted in C++
     -- proof that win was deleted in C++
-    assert_true(label:deleted())
+    assertTrue(label:deleted())
   end)
 end
 
