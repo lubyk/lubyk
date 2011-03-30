@@ -70,3 +70,8 @@ function lib:paint(p, w, h)
   p:setPen(2*hpen_width, color)
   p:drawPath(self.path)
 end
+
+function lib:click(x, y, btn)
+  print('Click in LinkView', x, y)
+  return true
+end

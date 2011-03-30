@@ -85,11 +85,16 @@ void Widget::mouseMoveEvent(QMouseEvent *event) {
   lua_pushnumber(L, event->x());
   lua_pushnumber(L, event->y());
 
-  // <func> <Painter> <width> <height>
-  int status = lua_pcall(L, 2, 0, 0);
+  // <func> <x> <y>
+  int status = lua_pcall(L, 2, 1, 0);
 
   if (status) {
     fprintf(stderr, "Error in 'mouse' callback: %s\n", lua_tostring(L, -1));
+  }
+
+  if (!lua_isnil(L, -1)) {
+    // Pass up
+    event->ignore();
   }
 }
 
@@ -105,12 +110,18 @@ void Widget::mousePressEvent(QMouseEvent *event) {
   lua_pushnumber(L, event->y());
   lua_pushnumber(L, event->button());
 
-  // <func> <Painter> <width> <height>
-  int status = lua_pcall(L, 3, 0, 0);
+  // <func> <x> <y> <btn>
+  int status = lua_pcall(L, 3, 1, 0);
 
   if (status) {
     fprintf(stderr, "Error in 'click' callback: %s\n", lua_tostring(L, -1));
   }
+
+  if (!lua_isnil(L, -1)) {
+    // Pass up
+    event->ignore();
+  }
+
 }
 
 void Widget::keyboard(QKeyEvent *event, bool isPressed) {

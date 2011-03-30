@@ -7,7 +7,9 @@
 
 --]]------------------------------------------------------
 
-local function noop(...) end
+local function noop(...)
+  return true -- ignore event
+end
 -- helper to create sub-classes
 -- MyWidget = mimas.WidgetClass()
 function mimas.WidgetClass()
@@ -34,10 +36,10 @@ function mimas.WidgetClass()
       instance:resized(w, h)
     end
     function instance.super.mouse(x, y)
-      instance:mouse(x, y)
+      return instance:mouse(x, y)
     end
     function instance.super.click(x, y, btn)
-      instance:click(x, y, btn)
+      return instance:click(x, y, btn)
     end
     instance:init(...)
     return instance

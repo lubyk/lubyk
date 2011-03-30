@@ -239,6 +239,18 @@ public:
     QWidget::move(mapToParent(mapFromGlobal(QPoint(x, y))));
   }
 
+  /** Bring to bottom of parent widget.
+   */
+  void lower() {
+    QWidget::lower();
+  }
+
+  /** Bring to top of parent widget.
+   */
+  void raise() {
+    QWidget::raise();
+  }
+
   /** Set a callback function.
    *
    */

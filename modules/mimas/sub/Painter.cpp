@@ -30,10 +30,10 @@ static int Painter_Painter(lua_State *L) {
 static int Painter_destructor(lua_State *L) {
   Painter **userdata = (Painter**)luaL_checkudata(L, 1, "mimas.Painter");
 
-  
+
   // custom destructor
   if (*userdata) (*userdata)->dub_destroy();
-  
+
   *userdata = NULL;
   return 0;
 }
@@ -52,15 +52,15 @@ static int Painter_deleted(lua_State *L) {
 
 static int Painter__tostring(lua_State *L) {
   Painter **userdata = (Painter**)luaL_checkudata(L, 1, "mimas.Painter");
-  
+
   if (!*userdata) {
     lua_pushstring(L, "<mimas.Painter: NULL>");
     return 1;
   }
-  
-  
+
+
   lua_pushfstring(L, "<mimas.Painter: %p>", *userdata);
-  
+
   return 1;
 }
 
@@ -181,7 +181,7 @@ static int Painter_drawRoundedRect(lua_State *L) {
     float w = luaL_checknumber(L, 4);
     float h = luaL_checknumber(L, 5);
     float xRadius = luaL_checknumber(L, 6);
-    
+
     self__->drawRoundedRect(x, y, w, h, xRadius, L);
     return 0;
   } catch (std::exception &e) {
@@ -314,10 +314,10 @@ static int Painter_setBrush(lua_State *L) {
   int type__ = lua_type(L, 2);
   if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.Color")) {
     return Painter_setBrush2(L);
-  } else if (type__ == LUA_TNUMBER) {
-    return Painter_setBrush3(L);
   } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.Brush")) {
     return Painter_setBrush1(L);
+  } else if (type__ == LUA_TNUMBER) {
+    return Painter_setBrush3(L);
   } else {
     // use any to raise errors
     return Painter_setBrush1(L);
