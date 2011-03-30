@@ -68,7 +68,7 @@ static int Widget__tostring(lua_State *L) {
 
 
 /** void mimas::Widget::__newindex(lua_State *L)
- * include/mimas/Widget.h:245
+ * include/mimas/Widget.h:257
  */
 static int Widget___newindex(lua_State *L) {
   try {
@@ -275,6 +275,23 @@ static int Widget_isVisible(lua_State *L) {
 }
 
 
+/** void mimas::Widget::lower()
+ * include/mimas/Widget.h:244
+ */
+static int Widget_lower(lua_State *L) {
+  try {
+    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in lower");
+    self__->lower();
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Widget.lower: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Widget.lower: Unknown exception");
+  }
+}
+
+
 /** void mimas::Widget::move(int x, int y)
  * include/mimas/Widget.h:112
  */
@@ -326,6 +343,23 @@ static int Widget_object(lua_State *L) {
     return luaL_error(L, "mimas.Widget.object: %s", e.what());
   } catch (...) {
     return luaL_error(L, "mimas.Widget.object: Unknown exception");
+  }
+}
+
+
+/** void mimas::Widget::raise()
+ * include/mimas/Widget.h:250
+ */
+static int Widget_raise(lua_State *L) {
+  try {
+    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in raise");
+    self__->raise();
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Widget.raise: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Widget.raise: Unknown exception");
   }
 }
 
@@ -605,9 +639,11 @@ static const struct luaL_Reg Widget_member_methods[] = {
   {"hue"               , Widget_hue},
   {"isFullScreen"      , Widget_isFullScreen},
   {"isVisible"         , Widget_isVisible},
+  {"lower"             , Widget_lower},
   {"move"              , Widget_move},
   {"name"              , Widget_name},
   {"object"            , Widget_object},
+  {"raise"             , Widget_raise},
   {"resize"            , Widget_resize},
   {"setHue"            , Widget_setHue},
   {"setMinimumSize"    , Widget_setMinimumSize},

@@ -38,8 +38,8 @@ function mimas.WidgetClass()
     function instance.super.mouse(x, y)
       return instance:mouse(x, y)
     end
-    function instance.super.click(x, y, btn)
-      return instance:click(x, y, btn)
+    function instance.super.click(x, y, type, btn)
+      return instance:click(x, y, type, btn)
     end
     instance:init(...)
     return instance
@@ -61,6 +61,14 @@ function mimas.WidgetClass()
 
   function lib:resize(...)
     self.super:resize(...)
+  end
+
+  function lib:lower(...)
+    self.super:lower(...)
+  end
+
+  function lib:raise(...)
+    self.super:raise(...)
   end
 
   function lib:setSizeHint(...)

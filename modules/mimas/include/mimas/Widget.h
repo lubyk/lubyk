@@ -30,6 +30,8 @@
 #define LUBYK_INCLUDE_MIMAS_WIDGET_H_
 
 #include "mimas/mimas.h"
+#include "mimas/constants.h"
+
 using namespace lubyk;
 
 #include <QtGui/QWidget>
@@ -282,7 +284,19 @@ public:
   }
 protected:
   virtual void mouseMoveEvent(QMouseEvent *event);
-  virtual void mousePressEvent(QMouseEvent *event);
+
+  virtual void mousePressEvent(QMouseEvent *event) {
+    click(event, MousePress);
+  }
+
+  virtual void mouseDoubleClickEvent(QMouseEvent *event) {
+    click(event, DoubleClick);
+  }
+
+  virtual void mouseReleaseEvent(QMouseEvent *event) {
+    click(event, MouseRelease);
+  }
+
   virtual void paintEvent(QPaintEvent *event);
   virtual void resizeEvent(QResizeEvent *event);
 
@@ -305,6 +319,7 @@ protected:
 private:
   void paint(Painter &p);
   void keyboard(QKeyEvent *event, bool isPressed);
+  void click(QMouseEvent *event, int type);
 };
 
 } // mimas

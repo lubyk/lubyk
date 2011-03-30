@@ -32,6 +32,7 @@ function lib:updateView()
     -- Create link view
     self.view = editor.LinkView(self.source.view, self.target.view)
     self.source.node.process.view:addWidget(self.view)
+    self.view:lower() -- send to back
   end
 
   if self.view then

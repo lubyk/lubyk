@@ -83,6 +83,9 @@ static const struct lua_constants_Reg mimas_namespace_constants[] = {
   {"MiddleButton"                  , mimas::MiddleButton},
   {"XButton1"                      , mimas::XButton1},
   {"XButton2"                      , mimas::XButton2},
+  {"MousePress"                    , mimas::MousePress},
+  {"MouseRelease"                  , mimas::MouseRelease},
+  {"DoubleClick"                   , mimas::DoubleClick},
   {NULL, NULL},
 };
 

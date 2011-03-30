@@ -17,21 +17,21 @@ local arc_radius = 0
 local text_hpadding = 10
 local text_vpadding = 6
 local pad  = bp + hpen_width -- padding for inner shape (top/left)
-local slotw = 7
-local sloth = 4
-local slot_padding = 10 -- space between slots
+local SLOTW = 7
+local SLOTH = 4
+local SLOT_PADDING = 10 -- space between slots
 
 -- Needed by NodeView and LinkView
-lib.slotw = slotw
-lib.sloth = sloth
-lib.slot_padding = slot_padding
+lib.SLOTW = SLOTW
+lib.SLOTH = SLOTH
+lib.SLOT_PADDING = SLOT_PADDING
 
 function lib:init(slot)
   self.type = slot.type
   self.slot = slot
   slot.view = self
   self.node = slot.node
-  self:resize(slotw, sloth)
+  self:resize(SLOTW, SLOTH)
 end
 
 -- custom paint

@@ -11,17 +11,18 @@ editor.NodeView = lib
 
 --============================================= PRIVATE
 -- constants
-local box_padding = 1
-local hpen_width = 1 -- half pen width
-local bp = hpen_width + box_padding -- full box padding
-local arc_radius = 0
-local text_hpadding = 10
-local text_vpadding = 2
-local pad  = bp + hpen_width -- padding for inner shape (top/left)
-local sloth        = editor.SlotView.sloth
-local slotw        = editor.SlotView.slotw
-local slot_padding = editor.SlotView.slot_padding
-local minw         = 60
+local BOX_PADDING = 1
+local HPEN_WIDTH  = 1 -- half pen width
+local BP = HPEN_WIDTH + BOX_PADDING -- full box padding
+local ARC_RADIUS = 0
+local TEXT_HPADDING = 10
+local TEXT_VPADDING = 2
+local PAD  = BP + HPEN_WIDTH -- padding for inner shape (top/left)
+local SLOTH        = editor.SlotView.SLOTH
+local SLOTW        = editor.SlotView.SLOTW
+local SLOT_PADDING = editor.SlotView.SLOT_PADDING
+local MINW         = 60
+local GHOST_ALPHA  = 0.3
 
 local function updateSlotViews(self, list, type)
   for _, slot in pairs(list) do
@@ -46,7 +47,7 @@ local function placeSlots(slot_list, x, y, max_x)
       slot.view:move(x, y)
       slot:updateLinkViews()
     end
-    x = x + slotw + slot_padding
+    x = x + SLOTW + SLOT_PADDING
   end
 end
 
@@ -54,37 +55,40 @@ local function placeElements(self)
   -- inlets
   placeSlots(self.node.inlets,
     -- start x
-    pad + text_hpadding,
+    PAD + TEXT_HPADDING,
     -- start y
-    pad,
+    PAD,
     -- max x
-    self.width - slotw - pad
+    self.width - SLOTW - PAD
   )
 
   placeSlots(self.node.outlets,
     -- start x
-    pad + text_hpadding,
+    PAD + TEXT_HPADDING,
     -- start y
-    self.height - pad - sloth,
+    self.height - PAD - SLOTH,
     -- max x
-    self.width - slotw - pad
+    self.width - SLOTW - PAD
   )
 end
 
 --============================================= PUBLIC
 function lib:init(node, parent_view)
-  node.view = self
   self.node = node
   self:setName(node.name)
   if parent_view then
     parent_view:addWidget(self)
     self:resize(self.width, self.height)
   end
-  self:updateView()
 end
 
 function lib:updateView()
   local node = self.node
+  if self.ghost then
+    -- remove ghost
+    self.ghost.super:__gc()
+    self.ghost = nil
+  end
   self:move(node.x, node.y)
   updateSlotViews(self, node.inlets, 'inlet')
   updateSlotViews(self, node.outlets, 'outlet')
@@ -94,8 +98,8 @@ end
 function lib:setName(name)
   self.name  = name
   local w, h = self.super:textSize(name)
-  self.width = math.max(w + 2 * text_hpadding + 2*pad, minw)
-  self.height = h + 2 * text_vpadding + 2*pad
+  self.width = math.max(w + 2 * TEXT_HPADDING + 2*PAD, MINW)
+  self.height = h + 2 * TEXT_VPADDING + 2*PAD
   self:setSizePolicy(mimas.Minimum, mimas.Fixed)
   self:setSizeHint(self.width, self.height)
   app:post(function()
@@ -135,29 +139,54 @@ function lib:paint(p, w, h)
   local path = mimas.Path()
 
   -- draw node surface
-  p:setBrush(self.node.bg_color) -- dark background
-  p:setPen(hpen_width * 2, self.node.color)
-  p:drawRoundedRect(bp, bp, w - 2 * bp, h - 2 * bp, arc_radius / 2)
+  if self.is_ghost then
+    p:setBrush(self.node.bg_color:colorWithAlpha(GHOST_ALPHA)) -- dark background
+    p:setPen(HPEN_WIDTH * 2, self.node.color:colorWithAlpha(GHOST_ALPHA))
+  else
+    p:setBrush(self.node.bg_color) -- dark background
+    p:setPen(HPEN_WIDTH * 2, self.node.color)
+  end
+  p:drawRoundedRect(BP, BP, w - 2 * BP, h - 2 * BP, ARC_RADIUS / 2)
 
   -- draw label text
-  p:setPen(mimas.whitePen)
-  p:drawText(pad+text_hpadding, pad+text_vpadding, w-2*text_hpadding-2*pad, h - 2*text_vpadding - 2*pad, mimas.AlignLeft + mimas.AlignVCenter, self.name)
+  if self.is_ghost then
+    p:setPen(1, mimas.Color(0, 0, 1, GHOST_ALPHA))
+  else
+    p:setPen(mimas.whitePen)
+  end
+  p:drawText(PAD+TEXT_HPADDING, PAD+TEXT_VPADDING, w-2*TEXT_HPADDING-2*PAD, h - 2*TEXT_VPADDING - 2*PAD, mimas.AlignLeft + mimas.AlignVCenter, self.name)
 end
 
-function lib:click(x, y, btn)
-  print('click in NodeView', x, y)
+local MousePress, MouseRelease = mimas.MousePress, mimas.MouseRelease
+
+function lib:click(x, y, type)
   local node = self.node
-  self.click_position = {x = x, y = y}
-  self.base_position = {x = node.x, y = node.y}
+  if type == MousePress then
+    -- create ghost
+    self.ghost = editor.NodeView(self.node, self.node.process.view)
+    self.ghost.is_ghost = true
+    self.ghost:raise()
+    self.click_position = {x = x, y = y}
+    self.ghost:move(
+      node.x,
+      node.y
+    )
+  elseif type == MouseRelease then
+    -- drop
+    node:set {
+      x = node.x + x - self.click_position.x,
+      y = node.y + y - self.click_position.y,
+    }
+  end
 end
 
-print('lib', lib)
 
 function lib:mouse(x, y)
-  print('move', x, y)
   local node = self.node
-  node:set {
-    x = self.base_position.x - self.click_position.x + x,
-    y = self.base_position.y - self.click_position.y + y,
-  }
+  if self.ghost then
+    self.ghost:move(
+      node.x + x - self.click_position.x,
+      node.y + y - self.click_position.y
+    )
+  end
 end

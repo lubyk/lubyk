@@ -98,7 +98,7 @@ void Widget::mouseMoveEvent(QMouseEvent *event) {
   }
 }
 
-void Widget::mousePressEvent(QMouseEvent *event) {
+void Widget::click(QMouseEvent *event, int type) {
   lua_State *L = click_clbk_.lua_;
   if (!L) return;
 
@@ -108,10 +108,11 @@ void Widget::mousePressEvent(QMouseEvent *event) {
 
   lua_pushnumber(L, event->x());
   lua_pushnumber(L, event->y());
+  lua_pushnumber(L, type);
   lua_pushnumber(L, event->button());
 
-  // <func> <x> <y> <btn>
-  int status = lua_pcall(L, 3, 1, 0);
+  // <func> <x> <y> <type> <btn>
+  int status = lua_pcall(L, 4, 1, 0);
 
   if (status) {
     fprintf(stderr, "Error in 'click' callback: %s\n", lua_tostring(L, -1));

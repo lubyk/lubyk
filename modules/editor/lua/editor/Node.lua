@@ -70,10 +70,9 @@ end
 function lib:updateView()
   if not self.view then
     self.view = editor.NodeView(self, self.process.view)
-  else
-    -- update needed views
-    self.view:updateView()
   end
+  -- update needed views
+  self.view:updateView()
 end
 
 function lib:setHue(hue)
