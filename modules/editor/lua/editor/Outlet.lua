@@ -14,7 +14,10 @@ editor.Outlet = lib
 
 -- PRIVATE
 -- Create a single link
-local function create_link(self, target_url)
+local function createLink(self, target_url)
+  if self.links[target_url] then
+    return
+  end
   local process = self.node.process
   local target, err  = process:get(target_url, editor.Inlet)
   if target == false then
@@ -25,7 +28,11 @@ local function create_link(self, target_url)
       error(err)
     end
   end
-  table.insert(self.links, editor.Link(self, target))
+  local link = editor.Link(self, target)
+  self.links[target_url] = link
+  if self.view then
+    link:updateView()
+  end
 end
 
 -- PUBLIC
@@ -38,11 +45,8 @@ setmetatable(lib, {
     links = {},
   }
   setmetatable(instance, lib)
-  if def.links then
-    for _, target_url in ipairs(def.links) do
-      create_link(instance, target_url)
-    end
-  end
+
+  instance:set(def)
 
   if node.view then
     instance:updateView()
@@ -50,12 +54,31 @@ setmetatable(lib, {
   return instance
 end})
 
+function lib:set(def)
+  if def.links then
+    for _, target_url in ipairs(def.links) do
+      createLink(self, target_url)
+    end
+  end
+end
+
 -- Create or update view.
 function lib:updateView()
   if not self.view then
     self.view = editor.SlotView(self)
+    self.node.view:addWidget(self.view)
+  else
+    self:updateLinkViews()
   end
 end
+
+-- Called when slot moved
+function lib:updateLinkViews()
+  for _,link in pairs(self.links) do
+    link:updateView()
+  end
+end
+
 
 function lib:connect(inlet)
   app:post(function()

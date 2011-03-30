@@ -39,7 +39,7 @@ function should.buildLinks()
   local node   = mockNode('dummy')
   local outlet = editor.Outlet(node, 'bang', {links = {'counter/in/trigger'}})
 
-  assertEqual('editor.Link', outlet.links[1].type)
+  assertEqual('editor.Link', outlet.links['counter/in/trigger'].type)
 end
 
 test.all()

@@ -16,20 +16,21 @@ local hpen_width = 1 -- half pen width
 local bp = hpen_width + box_padding -- full box padding
 local arc_radius = 0
 local text_hpadding = 10
-local text_vpadding = 4
+local text_vpadding = 2
 local pad  = bp + hpen_width -- padding for inner shape (top/left)
 local sloth        = editor.SlotView.sloth
 local slotw        = editor.SlotView.slotw
 local slot_padding = editor.SlotView.slot_padding
 local minw         = 60
 
-local function makeSlotViews(self, list, type)
+local function updateSlotViews(self, list, type)
   for _, slot in pairs(list) do
     -- create views for each slot
-    slot.node = self.node
-    slot.type = type
-    slot.view = editor.SlotView(slot)
-    self.super:addWidget(slot.view)
+    slot:updateView()
+    --slot.node = self.node
+    --slot.type = type
+    --slot.view = editor.SlotView(slot)
+    --self.super:addWidget(slot.view)
   end
 end
 
@@ -43,6 +44,7 @@ local function placeSlots(slot_list, x, y, max_x)
         slot.view:show()
       end
       slot.view:move(x, y)
+      slot:updateLinkViews()
     end
     x = x + slotw + slot_padding
   end
@@ -78,9 +80,14 @@ function lib:init(node, parent_view)
     parent_view:addWidget(self)
     self:resize(self.width, self.height)
   end
+  self:updateView()
+end
+
+function lib:updateView()
+  local node = self.node
   self:move(node.x, node.y)
-  makeSlotViews(self, self.node.inlets, 'inlet')
-  makeSlotViews(self, self.node.outlets, 'outlet')
+  updateSlotViews(self, node.inlets, 'inlet')
+  updateSlotViews(self, node.outlets, 'outlet')
   placeElements(self)
 end
 
@@ -135,4 +142,22 @@ function lib:paint(p, w, h)
   -- draw label text
   p:setPen(mimas.whitePen)
   p:drawText(pad+text_hpadding, pad+text_vpadding, w-2*text_hpadding-2*pad, h - 2*text_vpadding - 2*pad, mimas.AlignLeft + mimas.AlignVCenter, self.name)
+end
+
+function lib:click(x, y, btn)
+  print('click in NodeView', x, y)
+  local node = self.node
+  self.click_position = {x = x, y = y}
+  self.base_position = {x = node.x, y = node.y}
+end
+
+print('lib', lib)
+
+function lib:mouse(x, y)
+  print('move', x, y)
+  local node = self.node
+  node:set {
+    x = self.base_position.x - self.click_position.x + x,
+    y = self.base_position.y - self.click_position.y + y,
+  }
 end

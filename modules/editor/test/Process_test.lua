@@ -52,10 +52,10 @@ function should.createSlots()
     nodes = {
       foo = {
         inlets = {
-          a = {},
+          {name = 'a'},
         },
         outlets = {
-          z = {},
+          {name = 'z'},
         },
       },
     }
@@ -75,7 +75,7 @@ function should.resolveLinksOnMissingTarget()
     nodes = {
       foo = {
         outlets = {
-          a = {
+          { name  = 'a',
             links = {'bar/in/x'},
           },
         },
@@ -88,13 +88,13 @@ function should.resolveLinksOnMissingTarget()
     nodes = {
       bar = {
         inlets = {
-          x = {},
+          {name = 'x'},
         },
       },
     }
   }
   -- source.node.process:get(target_name)
-  local link = process.nodes.foo.outlets.a.links[1]
+  local link = process.nodes.foo.outlets.a.links['bar/in/x']
   assertEqual('editor.Link', link.type)
   assertEqual(process.nodes.foo.outlets.a, link.source)
   assertEqual(process.nodes.bar.inlets.x, link.target)
@@ -106,7 +106,7 @@ function should.resolveLinksOnExistingTarget()
     nodes = {
       bar = {
         inlets = {
-          x = {},
+          {name = 'x'},
         },
       },
     }
@@ -117,7 +117,8 @@ function should.resolveLinksOnExistingTarget()
     nodes = {
       foo = {
         outlets = {
-          a = {
+          {
+            name  = 'a',
             links = {'bar/in/x'},
           },
         },
@@ -125,7 +126,7 @@ function should.resolveLinksOnExistingTarget()
     }
   }
   -- source.node.process:get(target_name)
-  local link = process.nodes.foo.outlets.a.links[1]
+  local link = process.nodes.foo.outlets.a.links['bar/in/x']
   assertEqual('editor.Link', link.type)
   assertEqual(process.nodes.foo.outlets.a, link.source)
   assertEqual(process.nodes.bar.inlets.x, link.target)

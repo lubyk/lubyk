@@ -48,13 +48,13 @@ local function mockNode(name, hue, x, y, links)
     x    = x,
     y    = y,
     inlets = {
-      in1  = {},
-      in2  = {},
+      {name = 'in1'},
+      {name = 'in2'},
     },
     outlets = {
-      out1 = {},
-      out2 = {links = links},
-      out3 = {},
+      {name = 'out1'},
+      {name = 'out2', links = links},
+      {name = 'out3'},
     },
   }
   return node
@@ -73,15 +73,47 @@ function should.drawNodesInProcessView(t)
   t.view:show()
 
   t.thread = lk.Thread(function()
-    sleep(500)
+    sleep(300)
     process:set {
       nodes = {
-        metro = mockNode('metro', 0.9, 120, 100, {'value/in/in1'}),
+        metro = mockNode('metro', 0.9, 120, 100),
+      },
+    }
+    sleep(300)
+    process:set {
+      nodes = {
         value = mockNode('value', 0.7, 100, 200),
       },
     }
-    sleep(5000)
-    t.view:close()
+    sleep(300)
+    process:set {
+      nodes = {
+        metro = {outlets = {{name = 'out1', links = {'value/in/in1'}}}},
+        value = mockNode('value', 0.7, 100, 200),
+      },
+    }
+    sleep(300)
+    process:set {
+      nodes = {
+        value = {outlets = {{name = 'out1', links = {'foo/in/in2'}}}},
+      },
+    }
+    sleep(10)
+    process:set {
+      nodes = {
+        foo   = mockNode('foo', 0.5, 280, 80),
+      },
+    }
+    for t=0,1,0.01 do
+      sleep(10)
+      process:set {
+        nodes = {
+          foo = {y = 80 + 200 * t, x = 280 + 100*math.sin(t*5)},
+        },
+      }
+    end
+    sleep(5800)
+    --t.view:close()
     assertTrue(true)
   end)
 end

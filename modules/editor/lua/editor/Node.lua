@@ -25,10 +25,13 @@ setmetatable(lib, {
 
   local instance = {
     name    = name,
-    x       = def.x,
-    y       = def.y,
+    hue     = 0.2,
+    x       = 100,
+    y       = 100,
     inlets  = {},
+    sorted_inlets = {},
     outlets = {},
+    sorted_outlets = {},
     process = process,
   }
 
@@ -46,7 +49,10 @@ setmetatable(lib, {
 end})
 
 function lib:set(def)
-  self:setHue(def.hue or 0.2)
+  self.x = def.x or self.x
+  self.y = def.y or self.y
+
+  self:setHue(def.hue or self.hue)
 
   if def.inlets then
     self:setInlets(def.inlets)
@@ -66,6 +72,7 @@ function lib:updateView()
     self.view = editor.NodeView(self, self.process.view)
   else
     -- update needed views
+    self.view:updateView()
   end
 end
 
@@ -77,26 +84,36 @@ end
 
 --- Create inlets from a list of defined slots.
 function lib:setInlets(list)
-  local inlets = self.inlets
+  local sorted_inlets = self.sorted_inlets
+  local inlets        = self.inlets
 
-  for name, def in pairs(list) do
+  for _, def in ipairs(list) do
+    local name = def.name
     if inlets[name] then
       -- update ?
+      inlets[name]:set(def)
     else
-      inlets[name] = editor.Inlet(self, name, def)
+      local inlet = editor.Inlet(self, name, def)
+      table.insert(sorted_inlets, inlet)
+      inlets[name] = inlet
     end
   end
 end
 
 --- Create outlets from a list of defined slots.
 function lib:setOutlets(list)
-  local outlets = self.outlets
+  local sorted_outlets = self.sorted_outlets
+  local outlets        = self.outlets
 
-  for name, def in pairs(list) do
+  for _, def in ipairs(list) do
+    local name = def.name
     if outlets[name] then
       -- update ?
+      outlets[name]:set(def)
     else
-      outlets[name] = editor.Outlet(self, name, def)
+      local outlet = editor.Outlet(self, name, def)
+      table.insert(sorted_outlets, outlet)
+      outlets[name] = outlet
     end
   end
 end

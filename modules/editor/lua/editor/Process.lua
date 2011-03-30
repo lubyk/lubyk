@@ -101,8 +101,8 @@ function lib:updateView()
   end
 
   for _,node in pairs(self.nodes) do
-    for _,outlet in pairs(node.outlets) do
-      for _,link in ipairs(outlet.links) do
+    for _,outlet in ipairs(node.outlets) do
+      for _,link in pairs(outlet.links) do
         link:updateView()
       end
     end

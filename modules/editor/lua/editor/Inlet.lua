@@ -30,8 +30,12 @@ setmetatable(lib, {
     instance = {
       node  = node,
       name  = name,
+      links = {},
     }
     setmetatable(instance, lib)
+  else
+    -- resolving node relation for pending inlet
+    instance.node = node
   end
 
   if not definition then
@@ -42,6 +46,8 @@ setmetatable(lib, {
     -- real
     pending_inlets[name] = nil
   end
+
+  instance:set(definition)
 
   -- only executed if real
   if node and node.view then
@@ -55,5 +61,18 @@ end})
 function lib:updateView()
   if not self.view then
     self.view = editor.SlotView(self)
+    self.node.view:addWidget(self.view)
+  else
+    self:updateLinkViews()
   end
+end
+
+-- Called when slot moved
+function lib:updateLinkViews()
+  for _,link in ipairs(self.links) do
+    link:updateView()
+  end
+end
+
+function lib:set(def)
 end

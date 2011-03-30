@@ -17,20 +17,24 @@ setmetatable(lib, {
   --- Create a new editor.Link reflecting the content of a remote
   -- link. If the process view is not shown, the LinkView is not
   -- created.
- __call = function(table, source, target)
+ __call = function(base, source, target)
   local instance = {
     source  = source,
     target  = target,
   }
+  table.insert(target.links, instance)
   setmetatable(instance, lib)
   return instance
 end})
 
 function lib:updateView()
-  if not self.view then
+  if not self.view and self.target.view then
     -- Create link view
     self.view = editor.LinkView(self.source.view, self.target.view)
     self.source.node.process.view:addWidget(self.view)
+  end
+
+  if self.view then
     self.view:slotMoved()
   end
 end
