@@ -16,6 +16,7 @@ local SLOTH = editor.SlotView.SLOTH
 local VECV  = 80      -- force vertical start/end
 local PADV  = VECV/3  -- vertical pad needed to draw up/down curve when
                          -- outlet is lower from inlet
+local GHOST_ALPHA = 0.3
 
 function lib:init(outlet_view, inlet_view)
   self.outlet = outlet_view.slot
@@ -58,6 +59,9 @@ function lib:slotMoved()
   -- own global position
   self:globalMove(x, y)
   self:resize(w, h)
+  -- force redraw in case we do not move but are
+  -- in the end of a drag operation (ghost looking)
+  self:update()
 end
 
 -- custom paint
@@ -66,6 +70,8 @@ function lib:paint(p, w, h)
   local dragging = editor.main.dragging
   if dragging then
     color = color:colorWithValue(0.38)
+  elseif self.inlet.node.view.is_ghost or self.outlet.node.view.is_ghost then
+    color = color:colorWithAlpha(GHOST_ALPHA)
   end
   p:setPen(2*HPEN_WIDTH, color)
   p:drawPath(self.path)

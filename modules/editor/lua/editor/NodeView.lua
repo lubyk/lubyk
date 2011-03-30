@@ -88,11 +88,14 @@ function lib:updateView()
     -- remove ghost
     self.ghost.super:__gc()
     self.ghost = nil
+    self.is_ghost = nil
   end
   self:move(node.x, node.y)
   updateSlotViews(self, node.inlets, 'inlet')
   updateSlotViews(self, node.outlets, 'outlet')
   placeElements(self)
+  -- forces redraw
+  self:update()
 end
 
 function lib:setName(name)
@@ -162,20 +165,15 @@ local MousePress, MouseRelease = mimas.MousePress, mimas.MouseRelease
 function lib:click(x, y, type)
   local node = self.node
   if type == MousePress then
-    -- create ghost
-    self.ghost = editor.NodeView(self.node, self.node.process.view)
-    self.ghost.is_ghost = true
-    self.ghost:raise()
+    self.is_ghost = true
     self.click_position = {x = x, y = y}
-    self.ghost:move(
-      node.x,
-      node.y
-    )
+    self.current_pos    = {x = node.x, y = node.y}
   elseif type == MouseRelease then
     -- drop
+    self.is_ghost = nil
     node:set {
-      x = node.x + x - self.click_position.x,
-      y = node.y + y - self.click_position.y,
+      x = self.current_pos.x,
+      y = self.current_pos.y,
     }
   end
 end
@@ -183,10 +181,16 @@ end
 
 function lib:mouse(x, y)
   local node = self.node
-  if self.ghost then
-    self.ghost:move(
-      node.x + x - self.click_position.x,
-      node.y + y - self.click_position.y
+  if self.is_ghost then
+    local x = self.current_pos.x + x - self.click_position.x
+    local y = self.current_pos.y + y - self.click_position.y
+    self:move(
+      x,
+      y
     )
+    self.current_pos = {x = x, y = y}
+    -- Forces link redraw
+    updateSlotViews(self, node.inlets, 'inlet')
+    updateSlotViews(self, node.outlets, 'outlet')
   end
 end
