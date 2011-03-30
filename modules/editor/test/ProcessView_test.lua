@@ -16,10 +16,10 @@ local should = test.Suite('editor.ProcessView')
 
 function mockProcess()
   local process = {
-    name          = 'Dummy ProcessView',
-    hue           = 0.3,
-    nodes         = {},
-    pendingNodes = {},
+    name           = 'Dummy ProcessView',
+    hue            = 0.3,
+    nodes          = {},
+    pending_inlets = {},
   }
   setmetatable(process, editor.Process)
   return process
@@ -53,12 +53,17 @@ local function mockNode(name, hue, x, y, links)
     },
     outlets = {
       out1 = {},
-      out2 = {},
+      out2 = {links = links},
       out3 = {},
     },
-    links = links,
   }
   return node
+end
+
+function should.setViewInProcess()
+  local process = mockProcess()
+  local view    = editor.ProcessView(process)
+  assertEqual(view, process.view)
 end
 
 function should.drawNodesInProcessView(t)
@@ -69,9 +74,11 @@ function should.drawNodesInProcessView(t)
 
   t.thread = lk.Thread(function()
     sleep(500)
-    process:update {
-      a = mockNode('metro', 0.9, 120, 100, {out1 = 'b/in/in1'}),
-      b = mockNode('value', 0.7, 100, 200),
+    process:set {
+      nodes = {
+        metro = mockNode('metro', 0.9, 120, 100, {'value/in/in1'}),
+        value = mockNode('value', 0.7, 100, 200),
+      },
     }
     sleep(5000)
     t.view:close()

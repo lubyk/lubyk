@@ -16,25 +16,36 @@ setmetatable(lib, {
   --- Create a new editor.Node reflecting the content of a remote
   -- node. If the process view is not shown, do not create views. If
   -- the view exists, this method must be called in the GUI thread.
- __call = function(table, process, def)
-  if not def then
+ __call = function(table, process, name, def)
+  if not name then
     def     = process
     process = def.process
+    name    = def.name
   end
+
   local instance = {
-    name    = def.name,
+    name    = name,
     x       = def.x,
     y       = def.y,
     inlets  = {},
     outlets = {},
     process = process,
   }
+
+  -- List of inlet prototypes (already linked) to use
+  -- on inlet creation.
+  if process.pending_inlets[name] then
+    instance.pending_inlets = process.pending_inlets[name]
+    process.pending_inlets[name] = nil
+  else
+    instance.pending_inlets = {}
+  end
   setmetatable(instance, lib)
-  instance:update(def)
+  instance:set(def)
   return instance
 end})
 
-function lib:update(def)
+function lib:set(def)
   self:setHue(def.hue or 0.2)
 
   if def.inlets then
@@ -46,11 +57,11 @@ function lib:update(def)
   end
 
   if self.process.view then
-    self:updateView(def)
+    self:updateView()
   end
 end
 
-function lib:updateView(def)
+function lib:updateView()
   if not self.view then
     self.view = editor.NodeView(self, self.process.view)
   else

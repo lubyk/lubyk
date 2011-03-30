@@ -17,10 +17,14 @@ local bp = hpen_width + box_padding -- full box padding
 local arc_radius = 8
 local text_padding = 5
 
+-- This method runs in the GUI thread.
 function lib:init(process)
+  process.view = self
   self.process = process
   self.nodes   = {}
   self:setName(process.name)
+  -- trigger a full view rebuild
+  process:updateView()
 end
 
 function lib:setName(name)

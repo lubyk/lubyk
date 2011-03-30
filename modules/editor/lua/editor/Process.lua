@@ -18,10 +18,10 @@ setmetatable(lib, {
   -- new method
  __call = function(table, remote_service)
   local instance = {
-    name          = remote_service.name,
-    push          = remote_service.push,
-    nodes         = {},
-    pending_nodes = {},
+    name           = remote_service.name,
+    push           = remote_service.push,
+    nodes          = {},
+    pending_inlets = {},
   }
 
   if remote_service.info.hue then
@@ -45,14 +45,14 @@ end})
 
 --- Nodes in patch changed, store change and update view if needed.
 -- To remove a node, set it's value to false.
-local function update_nodes(self, nodes_def)
+local function setNodes(self, nodes_def)
   local nodes = self.nodes
   for node_name, node_def in pairs(nodes_def) do
     local node = nodes[node_name]
     if node then
       if node_def then
-        -- update existing node
-        node:update(node_def)
+        -- set existing node
+        node:set(node_def)
       else
         -- remove node
         node:remove()
@@ -60,13 +60,13 @@ local function update_nodes(self, nodes_def)
       end
     elseif node_def then
       -- create new node
-      node = editor.Node(self, node_def)
+      node = editor.Node(self, node_name, node_def)
       nodes[node_name] = node
     end
   end
 end
 
-local function do_update(self, definition)
+local function doSet(self, definition)
   if definition.name then
     self.name = definition.name
     if self.view then
@@ -76,19 +76,36 @@ local function do_update(self, definition)
 
   local nodes = definition.nodes
   if nodes then
-    update_nodes(self, nodes)
+    setNodes(self, nodes)
   end
 end
 
--- If self.view is nil, only update the data without
+-- If self.view is nil, only set the data without
 -- creating/changing views.
-function lib:update(definition)
+function lib:set(definition)
   if self.view then
     app:post(function()
-      do_update(self, definition)
+      doSet(self, definition)
+      self:updateView()
     end)
   else
-    do_update(self, definition)
+    doSet(self, definition)
+  end
+end
+
+-- When the ProcessView is created, it triggers this method
+-- to build/update views
+function lib:updateView()
+  for _,node in pairs(self.nodes) do
+    node:updateView()
+  end
+
+  for _,node in pairs(self.nodes) do
+    for _,outlet in pairs(node.outlets) do
+      for _,link in ipairs(outlet.links) do
+        link:updateView()
+      end
+    end
   end
 end
 
@@ -116,19 +133,20 @@ function lib:pendingInlet(inlet_url)
   local node = self.nodes[node_name]
   local inlet = nil
   if node then
-    -- inlet not created yet. Error.
+    -- Node exists but inlet is not created yet.
+    -- inlet = editor.Inlet(inlet_name)
+    -- node.pending_inlets[inlet_name] = inlet
     return nil, string.format("Unknown inlet '%s' in node '%s'", inlet_name, node_name)
   else
     -- node not created yet
-    local pending_node = self.pending_nodes[node_name]
-    if not pending_node then
-      pending_node = {}
-      self.pending_nodes[node_name] = pending_node
+    local pending_inlets = self.pending_inlets[node_name]
+    if not pending_inlets then
+      pending_inlets = {}
+      self.pending_inlets[node_name] = pending_inlets
     end
-    inlet = pending_node[inlet_name]
+    inlet = pending_inlets[inlet_name]
     if not inlet then
-      inlet = editor.Inlet(inlet_name)
-      pending_node[inlet_name] = inlet
+      inlet = editor.Inlet(pending_inlets, inlet_name)
     end
   end
   return inlet

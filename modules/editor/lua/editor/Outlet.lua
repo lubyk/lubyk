@@ -16,9 +16,11 @@ editor.Outlet = lib
 -- Create a single link
 local function create_link(self, target_url)
   local process = self.node.process
-  local target  = process:get(target_url, 'editor.Inlet')
-  if not target then
-    local target, err = process:pendingInlet(target_url)
+  local target, err  = process:get(target_url, editor.Inlet)
+  if target == false then
+    error(err)
+  elseif not target then
+    target, err = process:pendingInlet(target_url)
     if not target then
       error(err)
     end
@@ -42,7 +44,7 @@ setmetatable(lib, {
     end
   end
 
-  if node.process.view then
+  if node.view then
     instance:updateView()
   end
   return instance

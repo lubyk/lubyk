@@ -74,7 +74,7 @@ public:
   void start() {
     if (!browser_->running_) {
       browser_->running_ = true;
-      start_thread<Implementation, &Implementation::browse>(this, NULL);
+      startThread<Implementation, &Implementation::browse>(this, NULL);
     }
   }
 

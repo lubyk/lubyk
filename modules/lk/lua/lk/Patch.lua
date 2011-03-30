@@ -94,7 +94,7 @@ function lib:pendingInlet(inlet_url)
   if node then
     -- inlet not created yet
     inlet = lk.Inlet(inlet_name)
-    node.pending_inlets[node_name] = inlet
+    node.pending_inlets[inlet_name] = inlet
   else
     -- node not created yet
     local pending_node = self.pending_nodes[node_name]
@@ -137,7 +137,7 @@ function lib:get(url, mt)
       c = nil
     end
     if c == nil then
-      return nil, string.format("Cannot find '%s' in '%s'.", name, url)
+      return nil, string.format("Cannot find '%s' while resolving '%s'.", name, url)
     end
   end
   local c_mt = getmetatable(c)

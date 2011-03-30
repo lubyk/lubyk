@@ -22,6 +22,7 @@ function lib:init(outlet_view, inlet_view)
   self.inlet  = inlet_view.slot
   -- cache
   self.pen = mimas.Pen(2 * hpen_width, self.outlet.node.color)
+
   self:slotMoved()
 end
 

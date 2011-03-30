@@ -16,21 +16,21 @@ editor.main = {dragging = {}}
 
 local function mockNode()
   return editor.Node{
-    process = {},
+    process = {pending_inlets = {}},
     name = 'Dummy ProcessTab',
     hue  = 0.9,
     x    = 100,
     y    = 200,
     inlets = {
-      {},
-      {},
+      a = {},
+      b = {},
     },
     outlets = {
-      {},
-      {},
-      {},
-      {},
-      {},
+      c = {},
+      d = {},
+      e = {},
+      f = {},
+      g = {},
     }
   }
 end

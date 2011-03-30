@@ -25,3 +25,12 @@ setmetatable(lib, {
   setmetatable(instance, lib)
   return instance
 end})
+
+function lib:updateView()
+  if not self.view then
+    -- Create link view
+    self.view = editor.LinkView(self.source.view, self.target.view)
+    self.source.node.process.view:addWidget(self.view)
+    self.view:slotMoved()
+  end
+end

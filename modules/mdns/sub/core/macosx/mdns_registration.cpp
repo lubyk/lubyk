@@ -65,7 +65,7 @@ static void registration_cleanup(void *data) {
 class AbstractRegistration::Implementation : public Thread {
 public:
   Implementation(AbstractRegistration *master) : master_(master) {
-    start_thread<Implementation, &Implementation::registration>(this, NULL);
+    startThread<Implementation, &Implementation::registration>(this, NULL);
   }
 
   void register_service(DNSServiceRef service) {

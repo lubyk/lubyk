@@ -17,9 +17,9 @@ local should = test.Suite('editor.Node')
 -- Mock a process without network connectivity
 local function patch(name)
   local instance = {
-    name          = name,
-    nodes         = {},
-    pending_nodes = {}
+    name           = name,
+    nodes          = {},
+    pending_inlets = {}
   }
   setmetatable(instance, editor.Process)
   return instance
@@ -55,6 +55,23 @@ function should.createInlets()
     }
   }
   assertEqual('editor.Inlet', node.inlets.a.type)
+end
+
+function should.usePendingInlets()
+  local process = patch('dummy')
+  process.pending_inlets.foo = {}
+  -- create pending Inlet
+  local inlet = editor.Inlet(process.pending_inlets.foo, 'a')
+  local node = editor.Node {
+    process = process,
+    name    = 'foo',
+    inlets = {
+      a = {}
+    }
+  }
+  assertNil(process.pending_inlets.foo)
+  assertEqual('editor.Inlet', node.inlets.a.type)
+  assertEqual(inlet, node.inlets.a)
 end
 
 test.all()

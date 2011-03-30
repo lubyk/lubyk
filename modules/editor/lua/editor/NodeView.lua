@@ -21,9 +21,10 @@ local pad  = bp + hpen_width -- padding for inner shape (top/left)
 local sloth        = editor.SlotView.sloth
 local slotw        = editor.SlotView.slotw
 local slot_padding = editor.SlotView.slot_padding
+local minw         = 60
 
 local function makeSlotViews(self, list, type)
-  for _, slot in ipairs(list) do
+  for _, slot in pairs(list) do
     -- create views for each slot
     slot.node = self.node
     slot.type = type
@@ -33,7 +34,8 @@ local function makeSlotViews(self, list, type)
 end
 
 local function placeSlots(slot_list, x, y, max_x)
-  for _, slot in ipairs(slot_list) do
+  -- TODO: sort by key name...
+  for _, slot in pairs(slot_list) do
     if slot.view then
       if x > max_x then
         slot.view:hide()
@@ -85,7 +87,7 @@ end
 function lib:setName(name)
   self.name  = name
   local w, h = self.super:textSize(name)
-  self.width = w + 2 * text_hpadding + 2*pad
+  self.width = math.max(w + 2 * text_hpadding + 2*pad, minw)
   self.height = h + 2 * text_vpadding + 2*pad
   self:setSizePolicy(mimas.Minimum, mimas.Fixed)
   self:setSizeHint(self.width, self.height)

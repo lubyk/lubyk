@@ -15,18 +15,36 @@ editor.Inlet  = lib
 -- PUBLIC
 setmetatable(lib, {
   -- new method
- __call = function(table, node, name, definition)
-  if not name then
-    node, name = nil, node
+ __call = function(table, node_or_list, name, definition)
+  local instance, node, pending_inlets
+  if definition then
+    node = node_or_list
+    pending_inlets = node.pending_inlets
+  else
+    pending_inlets = node_or_list
   end
 
-  local instance = {
-    node  = node,
-    name  = name,
-  }
-  setmetatable(instance, lib)
+  instance = pending_inlets[name]
 
-  if node and node.process.view then
+  if not instance then
+    instance = {
+      node  = node,
+      name  = name,
+    }
+    setmetatable(instance, lib)
+  end
+
+  if not definition then
+    -- pending inlet
+    pending_inlets[name] = instance
+    return instance
+  else
+    -- real
+    pending_inlets[name] = nil
+  end
+
+  -- only executed if real
+  if node and node.view then
     instance:updateView()
   end
 
