@@ -78,6 +78,13 @@ function should.addNodes()
   assertType('table', patch.nodes.store)
 end
 
+function should.dumpNodes()
+  local patch = makePatch()
+  local dump  = patch:dump()
+  assertType('table', dump.nodes.add)
+  assertType('table', dump.nodes.store)
+end
+
 function should.set_defaultValues()
   local nodes = makePatch().nodes
   assertEqual(5, nodes.add.env.val2)

@@ -153,3 +153,27 @@ function lib:setLinks(links)
     end
   end
 end
+
+local function dumpSlots(list)
+  local res = {}
+  local has_slots = false
+  for _,slot in ipairs(list) do
+    has_slots = true
+    table.insert(res, slot:dump())
+  end
+
+  if has_slots then
+    return res
+  else
+    return nil
+  end
+end
+
+function lib:dump()
+  return {
+    name = self.name,
+    hue = self.hue,
+    inlets  = dumpSlots(self.inlets),
+    outlets = dumpSlots(self.outlets),
+  }
+end

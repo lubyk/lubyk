@@ -3,17 +3,24 @@ require 'test'
 
 local should = test.Suite('test')
 
-function should.add_inlets()
-  assert_equal(1, 1)
+function should.runTest()
+  assertEqual(1, 1)
 end
 
-function should.say_hello()
-  assert_equal('887', '887')
-  assert_match('true', 'This is true')
+function should.sayHello()
+  assertEqual('887', '887')
+  assertMatch('true', 'This is true')
 end
 
-function should.find_fixtures()
-  assert_equal('887', test.fixture('aaa'))
+function should.findFixtures()
+  assertMatch('modules/test/test/fixtures/aaa', fixture.path('aaa'))
+end
+
+function should.compareTables()
+  assertValueEqual(
+    {1, {a='a'}},
+    {1, {a='a'}}
+  )
 end
 
 test.all()

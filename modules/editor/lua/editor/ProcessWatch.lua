@@ -15,9 +15,13 @@ editor.ProcessWatch = lib
 
 setmetatable(lib, {
   -- new method
- __call = function(table)
+ __call = function(table, delegate)
   local service_type = lubyk.service_type
-  local instance = {browser = lk.ServiceBrowser(service_type), list = {}, view = editor.ProcessList()}
+  local instance = {
+    browser = lk.ServiceBrowser(service_type),
+    list = {},
+    delegate = delegate,
+  }
 
   --======================================= SUB client
 
@@ -32,19 +36,15 @@ setmetatable(lib, {
       end
 
       local remote_service = instance.browser.services[service_name]
-      app:post(function()
-        local process = editor.Process(remote_service)
-        instance.list[service_name] = process
-        -- Adding widgets must be done in the GUI thread
-        instance.view:addProcess(process)
-      end)
+      local process = editor.Process(remote_service)
+      instance.list[service_name] = process
+      instance.delegate:addProcess(process)
     elseif url == lubyk.rem_service_url then
+      local process = instance.list[service_name]
       -- remove connection
-      if instance.list[service_name] then
+      if process then
         instance.list[service_name] = nil
-        app:post(function()
-          instance.view:removeProcess(service_name)
-        end)
+        instance.delegate:removeProcess(process)
       end
     else
       -- ???
@@ -54,5 +54,12 @@ setmetatable(lib, {
   instance.sub:connect(string.format('inproc://%s', service_type))
 
   setmetatable(instance, lib)
+  instance:updateView()
   return instance
 end})
+
+function lib:updateView()
+  if not self.delegate.process_list_view then
+    self.delegate.process_list_view = editor.ProcessList()
+  end
+end

@@ -43,8 +43,9 @@ setmetatable(lib, {
       end
       return instance.info
     else
-      -- handle requests here
-      instance.callback(...)
+      -- handle requests here. Maybe we need two different callbacks
+      -- for reply and pull...
+      return instance.callback(...)
     end
   end)
 

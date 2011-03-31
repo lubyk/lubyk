@@ -23,6 +23,15 @@ function should.createOutlet()
   assertEqual('Bangs on every beat.', node.outlets.bang.info)
 end
 
+function should.dump()
+  local node = mock_node()
+  local bang = lk.Outlet(node, 'bang', 'Bangs on every beat.')
+  local dump = node.outlets.bang:dump()
+  assertEqual('bang', dump.name)
+  assertEqual('Bangs on every beat.', dump.info)
+  assertType('table', dump.links)
+end
+
 function should.connectToInlets()
   local node = mock_node()
   local bang = lk.Outlet(node, 'bang', 'Send bang.')

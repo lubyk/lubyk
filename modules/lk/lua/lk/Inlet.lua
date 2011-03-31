@@ -51,3 +51,13 @@ function lib.receive(...)
   print('Inlet receive function not set.')
 end
 
+function lib:dump()
+  return {
+    name = self.name,
+    info = self.info
+  }
+end
+
+function lib:url()
+  return self.node.name .. '/in/' .. self.name
+end

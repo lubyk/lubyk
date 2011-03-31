@@ -11,16 +11,17 @@ local lib   = {type='lk.Process'}
 lib.__index = lib
 lk.Process  = lib
 -- lk.Process inherits from lk.Patch
-setmetatable(lib, lk.Patch)
+--setmetatable(lib, lk.Patch)
 
 setmetatable(lib, {
   -- new method
  __call = function(table, filepath_or_code)
   local instance = lk.Patch(filepath_or_code)
   instance.name = string.match(instance.filepath, '([^%./]+)%.[a-z]+')
-  instance.service = lk.Service(instance.name)
-  setmetatable(instance, lib)
+  -- TODO: can we avoid this extra step by passing
+  -- self in callback ?
+  instance.service = lk.Service(instance.name, function(...)
+    return instance:callback(...)
+  end)
   return instance
 end})
-
--- TODO

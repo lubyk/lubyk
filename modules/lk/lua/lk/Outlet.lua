@@ -49,3 +49,20 @@ function lib:connect(inlet)
   end
   table.insert(self.connections, inlet)
 end
+
+local function dumpLinks(self)
+  local res = {}
+  for _,link in ipairs(self.connections) do
+    table.insert(res, slot:url())
+  end
+  return res
+end
+
+function lib:dump()
+  local res = {
+    name = self.name,
+    info = self.info,
+    links = dumpLinks(self)
+  }
+  return res
+end

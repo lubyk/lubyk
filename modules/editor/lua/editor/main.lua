@@ -43,3 +43,25 @@ end
 function lib:deselectNodeView(node_view)
   self.selected_node_views[node_view] = nil
 end
+
+--- When a new process is discovered on the network, this method
+-- is called by ProcessWatch.
+function lib:addProcess(process)
+  if self.process_list_view then
+    app:post(function()
+      -- Adding widgets must be done in the GUI thread
+      -- FIXME: use updateView()
+      self.process_list_view:addProcess(process)
+    end)
+  end
+end
+
+--- When a process goes offline, this method is called.
+function lib:removeProcess(process)
+  if self.process_list_view then
+    app:post(function()
+      self.process_list_view:removeProcess(process.name)
+    end)
+  end
+end
+

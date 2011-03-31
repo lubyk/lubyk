@@ -15,8 +15,13 @@ Autoload.global()
 lubyk = Autoload('lubyk')
 -------------------------------- CONSTANTS
 lubyk.service_type    = '_lubyk._tcp'
+-- Get patch basic information
 lubyk.info_url        = '/lk/info'
+-- Get all patch information at once
+lubyk.sync_url        = '/lk/sync'
+-- Notification for new service (in-process)
 lubyk.add_service_url = '/lk/add_service'
+-- Notification for removed service (in-process)
 lubyk.rem_service_url = '/lk/rem_service'
 
 -------------------------------- lubyk.core

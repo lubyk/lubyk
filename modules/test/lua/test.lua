@@ -232,7 +232,7 @@ function assertValueEqual(expected, value)
 end
 
 function assertTableEqual(expected, value)
-  assert_equal('table', type(value))
+  assertEqual('table', type(value))
   for i, v in ipairs(expected) do
     assertValueEqual(v, value[i])
   end

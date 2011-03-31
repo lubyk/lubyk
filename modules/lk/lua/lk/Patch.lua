@@ -157,3 +157,24 @@ function lib:get(url, mt)
     return c
   end
 end
+
+-- Serialize current patch as a lua table.
+function lib:dump()
+  local res = {nodes = {}}
+  local nodes = res.nodes
+  for k, node in pairs(self.nodes) do
+    nodes[k] = node:dump()
+  end
+  print(yaml.dump(res))
+  return res
+end
+
+--- Process related stuff ---
+
+--- Answering requests to Process.
+function lib:callback(url)
+  if url == lubyk.sync_url then
+    print("Returning...")
+    return "THIS IS DUMB" --self:dump()
+  end
+end

@@ -61,6 +61,15 @@ function should.declareOutlets()
   assertEqual('scaled', node.outlets.scaled.name)
 end
 
+function should.dump()
+  local node = makeNode()
+  local dump = node:dump()
+  assertEqual('foo', dump.name)
+  assertType('table', dump.inlets)
+  assertType('table', dump.outlets)
+end
+
+
 function should.read_global_env()
   local node = lk.Node(makePatch(), 'foo', [[
     function test(x)

@@ -30,7 +30,7 @@ function should.send_and_receive()
       sleep(10)
     end
 
-    assert_value_equal(arg, received)
+    assertValueEqual(arg, received)
   end
 
   -- string
@@ -51,6 +51,8 @@ function should.send_and_receive()
 
   -- hash
   send_and_receive("/one/two", {one=2, three="four"})
+  -- nested hash
+  send_and_receive("/one/two", {one=2, three={'four', 5, 'six'}})
 
   -- multi values
   send_and_receive(1,2,3)

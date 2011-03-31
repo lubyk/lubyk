@@ -20,12 +20,15 @@ setmetatable(lib, {
   local instance = {
     name           = remote_service.name,
     push           = remote_service.push,
+    req            = remote_service.req,
     nodes          = {},
     pending_inlets = {},
   }
 
   if remote_service.info.hue then
     instance.hue = remote_service.info.hue
+    -- query for data
+
   else
     instance.hue = 0.5
   end
@@ -40,6 +43,9 @@ setmetatable(lib, {
   instance.sub:connect(remote_service.sub_url)
 
   setmetatable(instance, lib)
+
+  instance:sync()
+
   return instance
 end})
 
@@ -80,6 +86,12 @@ local function doSet(self, definition)
   end
 end
 
+-- Synchronize with remote process.
+function lib:sync()
+  local definition = self.req:request(lubyk.sync_url)
+  print(definition)
+  self:set(definition)
+end
 -- If self.view is nil, only set the data without
 -- creating/changing views.
 function lib:set(definition)

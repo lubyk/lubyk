@@ -115,28 +115,31 @@ function should.drawNodesInProcessView(t)
   end)
 end
 
-function should2.drawOverlayProcessView(t)
-  t.win = mimas.Window()
-  t.view = editor.ProcessView(mockProcess())
-  t.win:addWidget(t.view)
-  t.view:move(30, 40)
-  t.view:resize(260, 240)
-  t.win:move(100, 100)
-  t.win:resize(320, 300)
-  t.win:show()
+local function mockDelegate(t)
+  local delegate = {}
 
-  function t.win.mouse(x, y)
-    t.view:move(x - 10, y - 10)
-    t.win:update()
+  function delegate:addProcess(process)
+    app:post(function()
+      t.view = editor.ProcessView(process)
+      t.view:move(100, 100)
+      t.view:show()
+    end)
   end
 
-  t.thread = lk.Thread(function()
-    sleep(2000)
-    t.view:setName('Home Run')
-    sleep(1400)
-    t.win:close()
-    assertTrue(true)
-  end)
+  function delegate:removeProcess(process)
+    t.view:close()
+    t.view = nil
+  end
+
+  return delegate
+end
+
+function should.syncFromRemote(t)
+  t.remote   = lk.Process(fixture.path('simple.yml'))
+  t.delegate = mockDelegate(t)
+  t.watch    = editor.ProcessWatch(t.delegate)
+  sleep(2000)
+  --t.remote:delete()
 end
 
 test.gui()

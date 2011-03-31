@@ -14,8 +14,13 @@ require 'lubyk'
 
 local should = test.Suite('editor.ProcessWatch')
 
+local function mockDelegate()
+  return editor.Main()
+end
+
 function should.add_widgets_to_list(t)
-  t.watch = editor.ProcessWatch()
+  t.delegate = mockDelegate()
+  t.watch = editor.ProcessWatch(t.delegate)
   t.win = mimas.Window()
   t.lay = mimas.HBoxLayout(t.win)
   t.label = mimas.Label('Control')
@@ -23,7 +28,7 @@ function should.add_widgets_to_list(t)
   t.lay:addWidget(t.label, 2, mimas.AlignCenter)
   --t.lay:setSpacing(0)
   t.lay:setContentsMargins(0,0,0,0)
-  t.lay:addWidget(t.watch.view, 0, mimas.AlignRight + mimas.AlignTop)
+  t.lay:addWidget(t.delegate.process_list_view, 0, mimas.AlignRight + mimas.AlignTop)
 
   t.win:resize(200, 200)
   t.win:move(100, 100)
