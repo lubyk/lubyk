@@ -15,7 +15,7 @@ editor.Inlet  = lib
 -- PUBLIC
 setmetatable(lib, {
   -- new method
- __call = function(table, node_or_list, name, definition)
+ __call = function(lib, node_or_list, name, definition)
   local instance, node, pending_inlets
   if definition then
     node = node_or_list

@@ -13,7 +13,7 @@ lk.Debug = lib
 
 setmetatable(lib, {
   -- new method
- __call = function(table, arg)
+ __call = function(lib, arg)
   local instance = {path = arg}
   setmetatable(instance, lib)
   return instance

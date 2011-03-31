@@ -9,6 +9,7 @@
 require 'lubyk'
 
 local should = test.Suite('editor.ProcessView')
+local should2 = {}
 
 function mockProcess()
   local process = {
@@ -21,7 +22,6 @@ function mockProcess()
   return process
 end
 
-local should2 = {}
 
 function should2.drawProcessView(t)
   t.view = editor.ProcessView(mockProcess())
@@ -56,13 +56,13 @@ local function mockNode(name, hue, x, y, links)
   return node
 end
 
-function should.setViewInProcess()
+function should2.setViewInProcess()
   local process = mockProcess()
   local view    = editor.ProcessView(process)
   assertEqual(view, process.view)
 end
 
-function should.drawNodesInProcessView(t)
+function should2.drawNodesInProcessView(t)
   local process = mockProcess()
   t.view = editor.ProcessView(process)
   t.view:move(100, 100)
@@ -138,7 +138,7 @@ function should.syncFromRemote(t)
   t.remote   = lk.Process(fixture.path('simple.yml'))
   t.delegate = mockDelegate(t)
   t.watch    = editor.ProcessWatch(t.delegate)
-  sleep(2000)
+  --sleep(2000)
   --t.remote:delete()
 end
 

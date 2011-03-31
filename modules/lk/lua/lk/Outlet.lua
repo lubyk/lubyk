@@ -15,12 +15,13 @@ setmetatable(lib, {
   -- lk.Outlet(node)
   -- Create a new outlet and insert it into
   -- node.
- __call = function(table, node, name, ...)
+ __call = function(lib, node, name, ...)
   local instance = node.outlets[name]
   if not instance then
     instance = {node = node, connections = {}}
     setmetatable(instance, lib)
     node.outlets[name] = instance
+    table.insert(node.sorted_outlets, instance)
     function instance.send(...)
       lib.send(instance, ...)
     end
@@ -47,12 +48,13 @@ function lib:connect(inlet)
       return
     end
   end
+  print('connected', self.name, 'to', inlet:url())
   table.insert(self.connections, inlet)
 end
 
 local function dumpLinks(self)
   local res = {}
-  for _,link in ipairs(self.connections) do
+  for _,slot in ipairs(self.connections) do
     table.insert(res, slot:url())
   end
   return res

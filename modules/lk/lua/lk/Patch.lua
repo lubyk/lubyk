@@ -37,7 +37,7 @@ end
 
 setmetatable(lib, {
   -- new method
- __call = function(table, filepath_or_code)
+ __call = function(lib, filepath_or_code)
   local instance  = {
     nodes         = {},
     pending_nodes = {},
@@ -165,7 +165,6 @@ function lib:dump()
   for k, node in pairs(self.nodes) do
     nodes[k] = node:dump()
   end
-  print(yaml.dump(res))
   return res
 end
 
@@ -174,7 +173,6 @@ end
 --- Answering requests to Process.
 function lib:callback(url)
   if url == lubyk.sync_url then
-    print("Returning...")
-    return "THIS IS DUMB" --self:dump()
+    return self:dump()
   end
 end

@@ -17,13 +17,15 @@ local env_mt= {}
 
 setmetatable(lib, {
   -- new method
- __call = function(table, process, name, code_str)
+ __call = function(lib, process, name, code_str)
   -- new environment
   local env  = {}
   -- new node
   local instance = {
     inlets         = {},
+    sorted_inlets  = {},
     outlets        = {},
+    sorted_outlets = {},
     env            = env,
     errors         = {},
     name           = name,
@@ -172,8 +174,10 @@ end
 function lib:dump()
   return {
     name = self.name,
-    hue = self.hue,
-    inlets  = dumpSlots(self.inlets),
-    outlets = dumpSlots(self.outlets),
+    hue  = self.hue,
+    x    = self.x,
+    y    = self.y,
+    inlets  = dumpSlots(self.sorted_inlets),
+    outlets = dumpSlots(self.sorted_outlets),
   }
 end

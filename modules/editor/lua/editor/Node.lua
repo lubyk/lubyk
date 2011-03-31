@@ -16,7 +16,7 @@ setmetatable(lib, {
   --- Create a new editor.Node reflecting the content of a remote
   -- node. If the process view is not shown, do not create views. If
   -- the view exists, this method must be called in the GUI thread.
- __call = function(table, process, name, def)
+ __call = function(lib, process, name, def)
   if not name then
     def     = process
     process = def.process

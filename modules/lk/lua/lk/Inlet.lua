@@ -16,7 +16,7 @@ lk.Inlet    = lib
 setmetatable(lib, {
   -- lk.Inlet(node)
   -- Create a new inlet
- __call = function(table, node, name, ...)
+ __call = function(lib, node, name, ...)
   if type(node) == 'string' then
     name = node
     -- pending inlet
@@ -36,6 +36,7 @@ setmetatable(lib, {
       -- set node
       instance.node = node
       node.inlets[name] = instance
+      table.insert(node.sorted_inlets, instance)
     end
     instance:set(name, ...)
     return instance

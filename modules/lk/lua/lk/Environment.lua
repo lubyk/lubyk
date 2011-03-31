@@ -13,7 +13,7 @@ lk.Environment = lib
 
 setmetatable(lib, {
   -- new method
- __call = function(table, code_str)
+ __call = function(lib, code_str)
   local code = assert(loadstring(code_str))
   -- new environment
   local env  = {}

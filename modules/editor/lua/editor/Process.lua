@@ -16,7 +16,7 @@ editor.Process = lib
 
 setmetatable(lib, {
   -- new method
- __call = function(table, remote_service)
+ __call = function(lib, remote_service)
   local instance = {
     name           = remote_service.name,
     push           = remote_service.push,
@@ -25,15 +25,7 @@ setmetatable(lib, {
     pending_inlets = {},
   }
 
-  if remote_service.info.hue then
-    instance.hue = remote_service.info.hue
-    -- query for data
-
-  else
-    instance.hue = 0.5
-  end
-  -- the little view on the side
-  instance.tab = editor.ProcessTab(instance)
+  instance.hue = remote_service.info.hue or 0.5
 
   --======================================= SUB client
   instance.sub = zmq.SimpleSub(function(...)
@@ -89,7 +81,7 @@ end
 -- Synchronize with remote process.
 function lib:sync()
   local definition = self.req:request(lubyk.sync_url)
-  print(definition)
+  --print(yaml.dump(definition))
   self:set(definition)
 end
 -- If self.view is nil, only set the data without
@@ -108,6 +100,10 @@ end
 -- When the ProcessView is created, it triggers this method
 -- to build/update views
 function lib:updateView()
+  -- the little view on the side
+  -- TODO: add to delegate process_list_view
+  --instance.tab = editor.ProcessTab(instance)
+
   for _,node in pairs(self.nodes) do
     node:updateView()
   end

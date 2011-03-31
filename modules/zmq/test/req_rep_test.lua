@@ -52,7 +52,7 @@ function should.request_reply()
   -- multi values
   send_and_receive(1,2,3)
   send_and_receive("/amp/gain", 3.5)
-  send_and_receive("/amp/gain", {1, 2, {"foo", "bar", 5}})
+  send_and_receive("/amp/gain", {{x = "foo"}, {bar = 5}})
 
   receiver:kill()
 end

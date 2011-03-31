@@ -20,7 +20,7 @@ local browsers = {}
 --
 setmetatable(lib, {
   -- new method
- __call = function(table, service_type)
+ __call = function(lib, service_type)
   local instance = browsers[service_type]
   if instance then
     return instance

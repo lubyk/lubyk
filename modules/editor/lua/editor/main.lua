@@ -15,7 +15,7 @@ editor.Main  = lib
 -- PUBLIC
 setmetatable(lib, {
   -- new method
- __call = function(table)
+ __call = function(lib)
   local instance = {
     selected_node_views = {},
   }

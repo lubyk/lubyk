@@ -15,7 +15,7 @@ editor.ProcessWatch = lib
 
 setmetatable(lib, {
   -- new method
- __call = function(table, delegate)
+ __call = function(lib, delegate)
   local service_type = lubyk.service_type
   local instance = {
     browser = lk.ServiceBrowser(service_type),

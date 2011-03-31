@@ -31,7 +31,7 @@ setmetatable(lib, {
 end})
 
 function lib:updateView()
-  if not self.view and self.target.view then
+  if not self.view and self.target.view and self.source.view then
     -- Create link view
     self.view = editor.LinkView(self.source.view, self.target.view)
     self.source.node.process.view:addWidget(self.view)

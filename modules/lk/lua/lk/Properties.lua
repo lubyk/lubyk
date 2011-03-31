@@ -136,7 +136,7 @@ end
 
 setmetatable(lib, {
   -- new method
- __call = function(table, node)
+ __call = function(lib, node)
   local instance = {properties = {}, node = node, values = {}}
   -- declare property methods
   -- FIXME: move these into lk.Node

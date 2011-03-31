@@ -25,7 +25,7 @@ function mimas.WidgetClass()
 
   setmetatable(lib, {
     -- new method
-   __call = function(table, ...)
+   __call = function(lib, ...)
     local instance = {}
     setmetatable(instance, lib)
     instance.super = mimas.Widget()

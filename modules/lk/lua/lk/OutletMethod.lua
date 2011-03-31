@@ -14,7 +14,7 @@ lk.OutletMethod = lib
 
 setmetatable(lib, {
   -- new method
- __call = function(table, node)
+ __call = function(lib, node)
   -- Create outlet() method/accessor for a given node
   local instance = {node = node}
   setmetatable(instance, lib)

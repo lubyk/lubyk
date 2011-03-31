@@ -41,7 +41,7 @@ void free_msgpack_msg(void *data, void *buffer) {
   msgpack_sbuffer_free((msgpack_sbuffer*)buffer);
 }
 
-inline void pack_string(lua_State *L, msgpack_packer *pk, int index) {
+static void pack_string(lua_State *L, msgpack_packer *pk, int index) {
   size_t sz;
   const char* str = lua_tolstring(L, index, &sz);
   if (!str) {
@@ -53,10 +53,10 @@ inline void pack_string(lua_State *L, msgpack_packer *pk, int index) {
   msgpack_pack_raw_body(pk, str, sz);
 }
 
-inline void pack_array(lua_State *L, msgpack_packer *pk, int index, size_t sz) {
+static void pack_array(lua_State *L, msgpack_packer *pk, int index, int sz) {
+  int i;
   msgpack_pack_array(pk, sz);
 
-  size_t i;
   for (i = 1; i <= sz; ++i) {
     lua_rawgeti(L, index, i);
     pack_lua(L, pk, -1);
@@ -64,13 +64,12 @@ inline void pack_array(lua_State *L, msgpack_packer *pk, int index, size_t sz) {
   }
 }
 
-inline void pack_hash(lua_State *L, msgpack_packer *pk, int index) {
+static void pack_hash(lua_State *L, msgpack_packer *pk, int index) {
   size_t sz = 0;
   // get hash size
   for(lua_pushnil(L); lua_next(L, index) != 0; lua_pop(L, 1)) ++sz;
-
   msgpack_pack_map(pk, sz);
-
+  // ... <table> ...
   for(lua_pushnil(L); lua_next(L, index) != 0; lua_pop(L, 1)) {
     // push key
     pack_lua(L, pk, -2);
@@ -79,8 +78,9 @@ inline void pack_hash(lua_State *L, msgpack_packer *pk, int index) {
   }
 }
 
-inline void pack_table(lua_State *L, msgpack_packer *pk, int index) {
-  size_t sz = lua_objlen(L, index);
+static void pack_table(lua_State *L, msgpack_packer *pk, int index) {
+  int sz = luaL_getn(L, index);
+
   if (sz > 0) {
     pack_array(L, pk, index, sz);
   } else {
@@ -89,6 +89,10 @@ inline void pack_table(lua_State *L, msgpack_packer *pk, int index) {
 }
 
 static void pack_lua(lua_State *L, msgpack_packer *pk, int index) {
+  if (index < 0) {
+    // resolve negative index so that it is consistent on recursive table handling
+    index = lua_gettop(L) + index + 1;
+  }
   int type = lua_type(L, index);
   switch (type) {
   case LUA_TNUMBER:

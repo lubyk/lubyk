@@ -17,7 +17,7 @@ lk.Client   = lib
 
 setmetatable(lib, {
   -- new method
- __call = function(table, service_type, callback)
+ __call = function(lib, service_type, callback)
   if not callback then
     callback     = service_type
     service_type = lubyk.service_type

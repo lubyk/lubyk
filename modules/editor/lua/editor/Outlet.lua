@@ -41,7 +41,7 @@ end
 -- PUBLIC
 setmetatable(lib, {
   -- new method
- __call = function(table, node, name, def)
+ __call = function(lib, node, name, def)
   local instance = {
     node  = node,
     name  = name,

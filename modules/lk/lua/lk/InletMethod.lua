@@ -14,7 +14,7 @@ lk.InletMethod = lib
 
 setmetatable(lib, {
   -- new method
- __call = function(table, node)
+ __call = function(lib, node)
   -- Create inlet() method/accessor for a given node
   local instance = {node = node}
   setmetatable(instance, lib)
