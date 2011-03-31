@@ -29,17 +29,17 @@ function mimas.WidgetClass()
     local instance = {}
     setmetatable(instance, lib)
     instance.super = mimas.Widget()
-    function instance.super.paint(p, w, h)
-      instance:paint(p, w, h)
+    function instance.super.paint(...)
+      instance:paint(...)
     end
-    function instance.super.resized(w, h)
-      instance:resized(w, h)
+    function instance.super.resized(...)
+      instance:resized(...)
     end
-    function instance.super.mouse(x, y)
-      return instance:mouse(x, y)
+    function instance.super.mouse(...)
+      return instance:mouse(...)
     end
-    function instance.super.click(x, y, type, btn)
-      return instance:click(x, y, type, btn)
+    function instance.super.click(...)
+      return instance:click(...)
     end
     instance:init(...)
     return instance

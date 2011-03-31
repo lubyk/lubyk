@@ -74,7 +74,7 @@ function lib:updateView()
 
   if self.ghost and not self.dragging then
     -- value updated, remove ghost
-    self.ghost.super:__gc()
+    self.ghost:delete()
     self.ghost = nil
   end
   -- update needed views

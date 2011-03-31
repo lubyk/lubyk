@@ -23,6 +23,8 @@ local SLOTW        = editor.SlotView.SLOTW
 local SLOT_PADDING = editor.SlotView.SLOT_PADDING
 local MINW         = 60
 local GHOST_ALPHA  = 0.3
+local SELECTED_COLOR_VALUE = 0.6
+local START_DRAG_DIST = 4
 
 local function updateSlotViews(self, list, type)
   for _, slot in pairs(list) do
@@ -136,10 +138,13 @@ function lib:paint(p, w, h)
 
   -- draw node surface
   if self.is_ghost then
-    p:setBrush(self.node.bg_color:colorWithAlpha(GHOST_ALPHA)) -- dark background
+    p:setBrush(self.node.bg_color:colorWithAlpha(GHOST_ALPHA))
     p:setPen(HPEN_WIDTH * 2, self.node.color:colorWithAlpha(GHOST_ALPHA))
+  elseif self.selected then
+    p:setBrush(self.node.bg_color:colorWithValue(SELECTED_COLOR_VALUE))
+    p:setPen(HPEN_WIDTH * 2, self.node.color)
   else
-    p:setBrush(self.node.bg_color) -- dark background
+    p:setBrush(self.node.bg_color)
     p:setPen(HPEN_WIDTH * 2, self.node.color)
   end
   p:drawRoundedRect(BP, BP, w - 2 * BP, h - 2 * BP, ARC_RADIUS / 2)
@@ -166,17 +171,20 @@ local function makeGhost(self)
   node.view:updateView()
 end
 
-function lib:click(x, y, type)
+function lib:click(x, y, type, btn, mod)
   local node = self.node
   if type == MousePress then
-    -- start drag operation: self becomes ghost
-    self.node.dragging = true
+    -- store position but only start drag when moved START_DRAG_DIST away
     self.click_position = {x = x, y = y}
     self.current_pos    = {x = node.x, y = node.y}
-    makeGhost(self)
+    self:update()
   elseif type == MouseRelease then
-    -- drop
-    self.node.dragging = false
+    if self.node.dragging then
+      -- drop
+      self.node.dragging = false
+    else
+      editor.main:selectNodeView(self, mod == mimas.ShiftModifier)
+    end
     app:post(function()
       node:set {
         x = self.current_pos.x,
@@ -186,9 +194,18 @@ function lib:click(x, y, type)
   end
 end
 
+local function manhattanDist(a, b)
+  return math.abs(b.x - a.x) + math.abs(b.y - a.y)
+end
 
 function lib:mouse(x, y)
   local node = self.node
+  if not node.dragging and manhattanDist(self.click_position, {x=x,y=y}) > START_DRAG_DIST then
+    -- start drag operation: self becomes ghost
+    node.dragging = true
+    makeGhost(self)
+  end
+
   if self.is_ghost then
     local x = self.current_pos.x + x - self.click_position.x
     local y = self.current_pos.y + y - self.click_position.y
@@ -201,4 +218,12 @@ function lib:mouse(x, y)
     updateSlotViews(self, node.inlets, 'inlet')
     updateSlotViews(self, node.outlets, 'outlet')
   end
+end
+
+function lib:delete()
+  if self.selected then
+    -- remove ghost from selection
+    editor.main:deselectNodeView(self)
+  end
+  self.super:__gc()
 end

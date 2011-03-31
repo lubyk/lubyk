@@ -86,6 +86,13 @@ static const struct lua_constants_Reg mimas_namespace_constants[] = {
   {"MousePress"                    , mimas::MousePress},
   {"MouseRelease"                  , mimas::MouseRelease},
   {"DoubleClick"                   , mimas::DoubleClick},
+  {"NoModifier"                    , mimas::NoModifier},
+  {"ShiftModifier"                 , mimas::ShiftModifier},
+  {"ControlModifier"               , mimas::ControlModifier},
+  {"AltModifier"                   , mimas::AltModifier},
+  {"MetaModifier"                  , mimas::MetaModifier},
+  {"KeypadModifier"                , mimas::KeypadModifier},
+  {"GroupSwitchModifier"           , mimas::GroupSwitchModifier},
   {NULL, NULL},
 };
 

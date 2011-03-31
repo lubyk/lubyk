@@ -110,9 +110,10 @@ void Widget::click(QMouseEvent *event, int type) {
   lua_pushnumber(L, event->y());
   lua_pushnumber(L, type);
   lua_pushnumber(L, event->button());
+  lua_pushnumber(L, event->modifiers());
 
-  // <func> <x> <y> <type> <btn>
-  int status = lua_pcall(L, 4, 1, 0);
+  // <func> <x> <y> <type> <btn> <modifiers>
+  int status = lua_pcall(L, 5, 1, 0);
 
   if (status) {
     fprintf(stderr, "Error in 'click' callback: %s\n", lua_tostring(L, -1));

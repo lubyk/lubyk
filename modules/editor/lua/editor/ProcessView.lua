@@ -81,3 +81,7 @@ function lib:paint(p, w, h)
   p:setPen(mimas.Pen(1, mimas.Color(0, 0, 1)))
   p:drawText(pad+2*text_padding, pad+text_padding, lw - 4*text_padding, lh - 2*text_padding, mimas.AlignRight + mimas.AlignVCenter, self.name)
 end
+
+function lib:click(x, y)
+  editor.main:selectNodeView(nil)
+end

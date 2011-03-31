@@ -58,6 +58,67 @@ function should.add_widgets_to_window(t)
   end)
 end
 
+local function opName(op)
+  if op == mimas.MousePress then
+    return 'MousePress'
+  elseif op == mimas.MouseRelease then
+    return 'MouseRelease'
+  elseif op == mimas.DoubleClick then
+    return 'DoubleClick'
+  else
+    return '???'
+  end
+end
+
+local function modName(mod)
+  if mod == mimas.NoModifier then
+    return 'NoModifier'
+  elseif mod == mimas.ShiftModifier then
+    return 'ShiftModifier'
+  elseif mod == mimas.ControlModifier then
+    return 'ControlModifier'
+  elseif mod == mimas.AltModifier then
+    return 'AltModifier'
+  elseif mod == mimas.MetaModifier then
+    return 'MetaModifier'
+  elseif mod == mimas.KeypadModifier then
+    return 'KeypadModifier'
+  elseif mod == mimas.GroupSwitchModifier then
+    return 'GroupSwitchModifier'
+  else
+    return '???'
+  end
+end
+
+function should.respond_to_click(t)
+  -- we use the test env to protect from gc
+  t.win = mimas.Window()
+  function t.win.click(x, y, op, btn, mod)
+    t.label:setText(
+      string.format('x:%i y:%i op:%s btn:%i mod:%s',
+        x,
+        y,
+        opName(op),
+        btn,
+        modName(mod)
+      )
+    )
+  end
+
+
+  t.lay = mimas.VBoxLayout(t.win)
+  t.label = mimas.Label('Click on window (not on me)')
+  t.lay:addWidget(t.label)
+  t.win:move(100, 300)
+  t.win:resize(400, 400)
+  t.win:show()
+
+  t.thread = lk.Thread(function()
+    sleep(14000)
+    t.win:close()
+    assertTrue(true)
+  end)
+end
 -- other tests for Widget are in window_test
 
 

@@ -8,10 +8,6 @@
 --]]------------------------------------------------------
 require 'lubyk'
 
--- editor needs a 'main' state with currently selected objects
--- and such things. FIXME: remove.
-editor.main = {}
-
 local should = test.Suite('editor.ProcessView')
 
 function mockProcess()

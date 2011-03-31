@@ -138,6 +138,16 @@ enum ClickTypes {
   DoubleClick  = 3,
 };
 
+enum KeyboardModifiers {
+  NoModifier          = Qt::NoModifier,
+  ShiftModifier       = Qt::ShiftModifier,
+  ControlModifier     = Qt::ControlModifier,
+  AltModifier         = Qt::AltModifier,
+  MetaModifier        = Qt::MetaModifier,
+  KeypadModifier      = Qt::KeypadModifier,
+  GroupSwitchModifier = Qt::GroupSwitchModifier,
+};
+
 } // mimas
 
 #endif // LUBYK_INCLUDE_MIMAS_CONSTANTS_H_
