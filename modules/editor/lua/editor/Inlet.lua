@@ -57,14 +57,48 @@ setmetatable(lib, {
   return instance
 end})
 
+local function makeGhost(self)
+  -- started drag operation (view became ghost), copy
+  -- slot into non-ghost NodeView.
+  self.ghost = self.view
+  self.ghost.is_ghost = true
+  self.view  = editor.SlotView(self)
+  self.node.view:addWidget(self.view)
+  -- duplicate links
+  self.ghost_links  = self.links
+  self.links  = {}
+  for _, link in ipairs(self.ghost_links) do
+    -- current link becomes a ghost (position set in ghost NodeView)
+    link.is_ghost = true
+    -- automatically registers in self.links
+    editor.Link(link.source, self, link.target_url)
+  end
+end
+
+local function removeGhost(self)
+  self.ghost = nil
+  -- remove ghost links
+  for _,link in ipairs(self.ghost_links) do
+    link:delete()
+  end
+  self.ghost_links = nil
+end
+
 -- Create or update view.
 function lib:updateView()
   if not self.view then
     self.view = editor.SlotView(self)
     self.node.view:addWidget(self.view)
-  else
-    self:updateLinkViews()
+  elseif self.node.ghost then
+    -- not has a ghost but we don't, create one
+    if not self.ghost then
+      makeGhost(self)
+    end
+  elseif self.ghost then
+    -- we have a ghost but node hasn't, remove
+    removeGhost(self)
   end
+  self:updateLinkViews()
 end
 
 -- Called when slot moved
@@ -72,7 +106,13 @@ function lib:updateLinkViews()
   for _,link in ipairs(self.links) do
     link:updateView()
   end
+  if self.ghost_links then
+    for _,link in ipairs(self.ghost_links) do
+      link:updateView()
+    end
+  end
 end
+
 
 function lib:set(def)
 end

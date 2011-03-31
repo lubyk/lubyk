@@ -15,9 +15,12 @@ editor.Outlet = lib
 -- PRIVATE
 -- Create a single link
 local function createLink(self, target_url)
-  if self.links[target_url] then
-    return
+  for i,link in ipairs(self.links) do
+    if link.target_url == target_url then
+      return
+    end
   end
+
   local process = self.node.process
   local target, err  = process:get(target_url, editor.Inlet)
   if target == false then
@@ -28,10 +31,10 @@ local function createLink(self, target_url)
       error(err)
     end
   end
-  local link = editor.Link(self, target)
-  self.links[target_url] = link
+  -- automatically registers in self.links
+  local link = editor.Link(self, target, target_url)
   if self.view then
-    link:updateView()
+    link = link:updateView()
   end
 end
 
@@ -42,6 +45,8 @@ setmetatable(lib, {
   local instance = {
     node  = node,
     name  = name,
+    -- array contains all links including ghost links
+    -- dictionary contains keys of created targets
     links = {},
   }
   setmetatable(instance, lib)
@@ -62,28 +67,56 @@ function lib:set(def)
   end
 end
 
+local function makeGhost(self)
+  -- started drag operation (view became ghost), copy
+  -- slot into non-ghost NodeView.
+  self.ghost = self.view
+  self.ghost.is_ghost = true
+  self.view  = editor.SlotView(self)
+  self.node.view:addWidget(self.view)
+  -- duplicate links
+  self.ghost_links  = self.links
+  self.links  = {}
+  for _, link in ipairs(self.ghost_links) do
+    -- current link becomes a ghost
+    link.is_ghost = true
+    -- automatically registers in self.links
+    editor.Link(self, link.target, link.target_url)
+  end
+end
+
+local function removeGhost(self)
+  self.ghost = nil
+  -- remove ghost links
+  for _,link in ipairs(self.ghost_links) do
+    link:delete()
+  end
+  self.ghost_links = nil
+end
+
 -- Create or update view.
 function lib:updateView()
   if not self.view then
     self.view = editor.SlotView(self)
     self.node.view:addWidget(self.view)
-  else
-    self:updateLinkViews()
+  elseif self.node.ghost then
+    if not self.ghost then
+      makeGhost(self)
+    end
+  elseif self.ghost then
+    removeGhost(self)
   end
+  self:updateLinkViews()
 end
 
 -- Called when slot moved
 function lib:updateLinkViews()
-  for _,link in pairs(self.links) do
+  for _,link in ipairs(self.links) do
     link:updateView()
   end
-end
-
-
-function lib:connect(inlet)
-  app:post(function()
-    local link = editor.LinkView(self.view, inlet.view)
-    node.patch.view:addWidget(link)
-    table.insert(self.links, link)
-  end)
+  if self.ghost_links then
+    for _,link in ipairs(self.ghost_links) do
+      link:updateView()
+    end
+  end
 end

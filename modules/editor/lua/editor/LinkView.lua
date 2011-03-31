@@ -18,9 +18,11 @@ local PADV  = VECV/3  -- vertical pad needed to draw up/down curve when
                          -- outlet is lower from inlet
 local GHOST_ALPHA = 0.3
 
-function lib:init(outlet_view, inlet_view)
-  self.outlet = outlet_view.slot
-  self.inlet  = inlet_view.slot
+function lib:init(source, target)
+  self.source = source
+  self.target = target
+  self.outlet = source.slot
+  self.inlet  = target.slot
   -- cache
   self.pen = mimas.Pen(2 * HPEN_WIDTH, self.outlet.node.color)
 
@@ -44,11 +46,11 @@ end
 -- must be called whenever a slot (or a NodeView/Patch) is moved.
 function lib:slotMoved()
   -- global start position
-  local x1, y1 = self.outlet.view:globalPosition()
+  local x1, y1 = self.source:globalPosition()
   x1 = x1 + SLOTW/2
   y1 = y1 + SLOTH
   -- global end position
-  local x2, y2 = self.inlet.view:globalPosition()
+  local x2, y2 = self.target:globalPosition()
   x2 = x2 + SLOTW/2
   -- global position of this widget
   local x = math.min(x1, x2) - HPEN_WIDTH
@@ -70,14 +72,9 @@ function lib:paint(p, w, h)
   local dragging = editor.main.dragging
   if dragging then
     color = color:colorWithValue(0.38)
-  elseif self.inlet.node.view.is_ghost or self.outlet.node.view.is_ghost then
+  elseif self.source.is_ghost or self.target.is_ghost then
     color = color:colorWithAlpha(GHOST_ALPHA)
   end
   p:setPen(2*HPEN_WIDTH, color)
   p:drawPath(self.path)
-end
-
-function lib:click(x, y, btn)
-  print('Click in LinkView', x, y)
-  return true
 end

@@ -26,8 +26,8 @@ local GHOST_ALPHA  = 0.3
 
 local function updateSlotViews(self, list, type)
   for _, slot in pairs(list) do
-    -- create views for each slot
-    slot:updateView()
+    -- create/update views for each slot
+    slot:updateView(self)
     --slot.node = self.node
     --slot.type = type
     --slot.view = editor.SlotView(slot)
@@ -36,8 +36,7 @@ local function updateSlotViews(self, list, type)
 end
 
 local function placeSlots(slot_list, x, y, max_x)
-  -- TODO: sort by key name...
-  for _, slot in pairs(slot_list) do
+  for _, slot in ipairs(slot_list) do
     if slot.view then
       if x > max_x then
         slot.view:hide()
@@ -53,7 +52,7 @@ end
 
 local function placeElements(self)
   -- inlets
-  placeSlots(self.node.inlets,
+  placeSlots(self.node.sorted_inlets,
     -- start x
     PAD + TEXT_HPADDING,
     -- start y
@@ -62,7 +61,7 @@ local function placeElements(self)
     self.width - SLOTW - PAD
   )
 
-  placeSlots(self.node.outlets,
+  placeSlots(self.node.sorted_outlets,
     -- start x
     PAD + TEXT_HPADDING,
     -- start y
@@ -84,12 +83,6 @@ end
 
 function lib:updateView()
   local node = self.node
-  if self.ghost then
-    -- remove ghost
-    self.ghost.super:__gc()
-    self.ghost = nil
-    self.is_ghost = nil
-  end
   self:move(node.x, node.y)
   updateSlotViews(self, node.inlets, 'inlet')
   updateSlotViews(self, node.outlets, 'outlet')
@@ -162,19 +155,34 @@ end
 
 local MousePress, MouseRelease = mimas.MousePress, mimas.MouseRelease
 
+local function makeGhost(self)
+  local node = self.node
+  node.ghost = self
+  self.is_ghost = true
+  -- copy
+  node.view = editor.NodeView(node, node.process.view)
+  self:raise()
+  -- duplicate links
+  node.view:updateView()
+end
+
 function lib:click(x, y, type)
   local node = self.node
   if type == MousePress then
-    self.is_ghost = true
+    -- start drag operation: self becomes ghost
+    self.node.dragging = true
     self.click_position = {x = x, y = y}
     self.current_pos    = {x = node.x, y = node.y}
+    makeGhost(self)
   elseif type == MouseRelease then
     -- drop
-    self.is_ghost = nil
-    node:set {
-      x = self.current_pos.x,
-      y = self.current_pos.y,
-    }
+    self.node.dragging = false
+    app:post(function()
+      node:set {
+        x = self.current_pos.x,
+        y = self.current_pos.y,
+      }
+    end)
   end
 end
 

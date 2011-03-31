@@ -29,7 +29,6 @@ lib.SLOT_PADDING = SLOT_PADDING
 function lib:init(slot)
   self.type = slot.type
   self.slot = slot
-  slot.view = self
   self.node = slot.node
   self:resize(SLOTW, SLOTH)
 end

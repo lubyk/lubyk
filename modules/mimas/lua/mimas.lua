@@ -32,17 +32,17 @@ mimas.noPen   = mimas.Pen()
 mimas.noBrush = mimas.Brush()
 
 mimas.colors = {
-  black     = mimas.Color(0, 0, 0),
-  lightGrey = mimas.Color(0, 0, 0.75),
-  grey      = mimas.Color(0, 0, 0.5),
-  darkGrey  = mimas.Color(0, 0, 0.25),
-  white     = mimas.Color(0, 0, 1),
-  red       = mimas.Color(0   / 360),
-  green     = mimas.Color(120 / 360),
-  orange    = mimas.Color(33  / 360),
-  blue      = mimas.Color(240 / 360),
-  pink      = mimas.Color(300 / 360),
-  purple    = mimas.Color(275 / 360),
+  Black     = mimas.Color(0, 0, 0),
+  LightGrey = mimas.Color(0, 0, 0.75),
+  Grey      = mimas.Color(0, 0, 0.5),
+  DarkGrey  = mimas.Color(0, 0, 0.25),
+  White     = mimas.Color(0, 0, 1),
+  Red       = mimas.Color(0   / 360),
+  Green     = mimas.Color(120 / 360),
+  Orange    = mimas.Color(33  / 360),
+  Blue      = mimas.Color(240 / 360),
+  Pink      = mimas.Color(300 / 360),
+  Purple    = mimas.Color(275 / 360),
 }
 
 mimas.ESC   = 16777216

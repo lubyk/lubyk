@@ -104,7 +104,8 @@ function should.drawNodesInProcessView(t)
         foo   = mockNode('foo', 0.5, 280, 80),
       },
     }
-    for t=0,1,0.01 do
+    sleep(800)
+    for t=0,1,0.005 do
       sleep(10)
       process:set {
         nodes = {

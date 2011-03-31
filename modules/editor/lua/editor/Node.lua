@@ -71,6 +71,12 @@ function lib:updateView()
   if not self.view then
     self.view = editor.NodeView(self, self.process.view)
   end
+
+  if self.ghost and not self.dragging then
+    -- value updated, remove ghost
+    self.ghost.super:__gc()
+    self.ghost = nil
+  end
   -- update needed views
   self.view:updateView()
 end
@@ -122,7 +128,7 @@ function lib:error(...)
 --  table.insert(self.errors, string.format(...))
 end
 
-local function set_link(self, out_name, in_url, process)
+local function setLink(self, out_name, in_url, process)
   local outlet = self.outlets[out_name]
   if not outlet then
     self:error("Outlet name '%s' does not exist.", out_name)
@@ -147,16 +153,16 @@ local function set_link(self, out_name, in_url, process)
   end
 end
 
-function lib:set_links(links)
+function lib:setLinks(links)
   local process = self.process
   for out_name, def in pairs(links) do
     if type(def) == 'table' then
       -- multiple links
       for _, ldef in ipairs(def) do
-        set_link(self, out_name, ldef, process)
+        setLink(self, out_name, ldef, process)
       end
     else
-      set_link(self, out_name, def, process)
+      setLink(self, out_name, def, process)
     end
   end
 end
