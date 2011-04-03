@@ -68,7 +68,7 @@ static int TableView__tostring(lua_State *L) {
 
 
 /** void mimas::TableView::__newindex(lua_State *L)
- * include/mimas/TableView.h:249
+ * include/mimas/TableView.h:264
  */
 static int TableView___newindex(lua_State *L) {
   try {
@@ -86,7 +86,7 @@ static int TableView___newindex(lua_State *L) {
 
 
 /** bool mimas::TableView::close()
- * include/mimas/TableView.h:198
+ * include/mimas/TableView.h:213
  */
 static int TableView_close(lua_State *L) {
   try {
@@ -104,7 +104,7 @@ static int TableView_close(lua_State *L) {
 
 
 /** QString mimas::TableView::cssClass() const 
- * include/mimas/TableView.h:104
+ * include/mimas/TableView.h:119
  */
 static int TableView_cssClass(lua_State *L) {
   try {
@@ -122,7 +122,7 @@ static int TableView_cssClass(lua_State *L) {
 
 
 /** void mimas::TableView::globalMove(float x, float y)
- * include/mimas/TableView.h:229
+ * include/mimas/TableView.h:244
  */
 static int TableView_globalMove(lua_State *L) {
   try {
@@ -141,7 +141,7 @@ static int TableView_globalMove(lua_State *L) {
 
 
 /** LuaStackSize mimas::TableView::globalPosition(lua_State *L)
- * include/mimas/TableView.h:220
+ * include/mimas/TableView.h:235
  */
 static int TableView_globalPosition(lua_State *L) {
   try {
@@ -159,7 +159,7 @@ static int TableView_globalPosition(lua_State *L) {
 
 
 /** void mimas::TableView::hide()
- * include/mimas/TableView.h:212
+ * include/mimas/TableView.h:227
  */
 static int TableView_hide(lua_State *L) {
   try {
@@ -176,7 +176,7 @@ static int TableView_hide(lua_State *L) {
 
 
 /** float mimas::TableView::hue()
- * include/mimas/TableView.h:148
+ * include/mimas/TableView.h:163
  */
 static int TableView_hue(lua_State *L) {
   try {
@@ -194,7 +194,7 @@ static int TableView_hue(lua_State *L) {
 
 
 /** bool mimas::TableView::isVisible() const 
- * include/mimas/TableView.h:203
+ * include/mimas/TableView.h:218
  */
 static int TableView_isVisible(lua_State *L) {
   try {
@@ -212,7 +212,7 @@ static int TableView_isVisible(lua_State *L) {
 
 
 /** void mimas::TableView::lower()
- * include/mimas/TableView.h:236
+ * include/mimas/TableView.h:251
  */
 static int TableView_lower(lua_State *L) {
   try {
@@ -229,7 +229,7 @@ static int TableView_lower(lua_State *L) {
 
 
 /** void mimas::TableView::move(int x, int y)
- * include/mimas/TableView.h:129
+ * include/mimas/TableView.h:144
  */
 static int TableView_move(lua_State *L) {
   try {
@@ -248,7 +248,7 @@ static int TableView_move(lua_State *L) {
 
 
 /** LuaStackSize mimas::TableView::name(lua_State *L)
- * include/mimas/TableView.h:118
+ * include/mimas/TableView.h:133
  */
 static int TableView_name(lua_State *L) {
   try {
@@ -266,7 +266,7 @@ static int TableView_name(lua_State *L) {
 
 
 /** QObject* mimas::TableView::object()
- * include/mimas/TableView.h:112
+ * include/mimas/TableView.h:127
  */
 static int TableView_object(lua_State *L) {
   try {
@@ -284,7 +284,7 @@ static int TableView_object(lua_State *L) {
 
 
 /** void mimas::TableView::raise()
- * include/mimas/TableView.h:242
+ * include/mimas/TableView.h:257
  */
 static int TableView_raise(lua_State *L) {
   try {
@@ -301,7 +301,7 @@ static int TableView_raise(lua_State *L) {
 
 
 /** void mimas::TableView::resize(int w, int h)
- * include/mimas/TableView.h:134
+ * include/mimas/TableView.h:149
  */
 static int TableView_resize(lua_State *L) {
   try {
@@ -319,26 +319,44 @@ static int TableView_resize(lua_State *L) {
 }
 
 
-/** void mimas::TableView::setHeaders(lua_State *L)
- * include/mimas/TableView.h:92
+/** void mimas::TableView::setAlternatingRowColors(bool should_enable)
+ * include/mimas/TableView.h:113
  */
-static int TableView_setHeaders(lua_State *L) {
+static int TableView_setAlternatingRowColors(lua_State *L) {
   try {
     TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.TableView in setHeaders");
-    
-    self__->setHeaders(L);
+    if (!self__) return luaL_error(L, "Using deleted mimas.TableView in setAlternatingRowColors");
+    bool should_enable = lua_toboolean(L, 2);
+    self__->setAlternatingRowColors(should_enable);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.TableView.setHeaders: %s", e.what());
+    return luaL_error(L, "mimas.TableView.setAlternatingRowColors: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.TableView.setHeaders: Unknown exception");
+    return luaL_error(L, "mimas.TableView.setAlternatingRowColors: Unknown exception");
+  }
+}
+
+
+/** void mimas::TableView::setGridStyle(int style)
+ * include/mimas/TableView.h:107
+ */
+static int TableView_setGridStyle(lua_State *L) {
+  try {
+    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.TableView in setGridStyle");
+    int style = luaL_checkint(L, 2);
+    self__->setGridStyle(style);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.TableView.setGridStyle: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.TableView.setGridStyle: Unknown exception");
   }
 }
 
 
 /** void mimas::TableView::setHue(float hue)
- * include/mimas/TableView.h:143
+ * include/mimas/TableView.h:158
  */
 static int TableView_setHue(lua_State *L) {
   try {
@@ -356,7 +374,7 @@ static int TableView_setHue(lua_State *L) {
 
 
 /** void mimas::TableView::setMinimumSize(float w, float h)
- * include/mimas/TableView.h:183
+ * include/mimas/TableView.h:198
  */
 static int TableView_setMinimumSize(lua_State *L) {
   try {
@@ -375,7 +393,7 @@ static int TableView_setMinimumSize(lua_State *L) {
 
 
 /** void mimas::TableView::setMouseTracking(bool enable)
- * include/mimas/TableView.h:190
+ * include/mimas/TableView.h:205
  */
 static int TableView_setMouseTracking(lua_State *L) {
   try {
@@ -393,7 +411,7 @@ static int TableView_setMouseTracking(lua_State *L) {
 
 
 /** void mimas::TableView::setName(const char *name)
- * include/mimas/TableView.h:125
+ * include/mimas/TableView.h:140
  */
 static int TableView_setName(lua_State *L) {
   try {
@@ -411,7 +429,7 @@ static int TableView_setName(lua_State *L) {
 
 
 /** void mimas::TableView::setSizeHint(float w, float h)
- * include/mimas/TableView.h:168
+ * include/mimas/TableView.h:183
  */
 static int TableView_setSizeHint(lua_State *L) {
   try {
@@ -430,7 +448,7 @@ static int TableView_setSizeHint(lua_State *L) {
 
 
 /** void mimas::TableView::setSizePolicy(int horizontal, int vertical)
- * include/mimas/TableView.h:176
+ * include/mimas/TableView.h:191
  */
 static int TableView_setSizePolicy(lua_State *L) {
   try {
@@ -449,7 +467,7 @@ static int TableView_setSizePolicy(lua_State *L) {
 
 
 /** void mimas::TableView::setStyle(const char *text)
- * include/mimas/TableView.h:139
+ * include/mimas/TableView.h:154
  */
 static int TableView_setStyle(lua_State *L) {
   try {
@@ -466,8 +484,27 @@ static int TableView_setStyle(lua_State *L) {
 }
 
 
+/** void mimas::TableView::setVisibleHeaders(int orientation, bool visible)
+ * include/mimas/TableView.h:90
+ */
+static int TableView_setVisibleHeaders(lua_State *L) {
+  try {
+    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.TableView in setVisibleHeaders");
+    int orientation = luaL_checkint(L, 2);
+    bool visible = lua_toboolean(L, 3);
+    self__->setVisibleHeaders(orientation, visible);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.TableView.setVisibleHeaders: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.TableView.setVisibleHeaders: Unknown exception");
+  }
+}
+
+
 /** void mimas::TableView::show()
- * include/mimas/TableView.h:207
+ * include/mimas/TableView.h:222
  */
 static int TableView_show(lua_State *L) {
   try {
@@ -484,7 +521,7 @@ static int TableView_show(lua_State *L) {
 
 
 /** LuaStackSize mimas::TableView::textSize(const char *text, lua_State *L)
- * include/mimas/TableView.h:159
+ * include/mimas/TableView.h:174
  */
 static int TableView_textSize(lua_State *L) {
   try {
@@ -503,7 +540,7 @@ static int TableView_textSize(lua_State *L) {
 
 
 /** void mimas::TableView::update()
- * include/mimas/TableView.h:152
+ * include/mimas/TableView.h:167
  */
 static int TableView_update(lua_State *L) {
   try {
@@ -520,7 +557,7 @@ static int TableView_update(lua_State *L) {
 
 
 /** QWidget* mimas::TableView::widget()
- * include/mimas/TableView.h:108
+ * include/mimas/TableView.h:123
  */
 static int TableView_widget(lua_State *L) {
   try {
@@ -556,7 +593,8 @@ static const struct luaL_Reg TableView_member_methods[] = {
   {"object"            , TableView_object},
   {"raise"             , TableView_raise},
   {"resize"            , TableView_resize},
-  {"setHeaders"        , TableView_setHeaders},
+  {"setAlternatingRowColors", TableView_setAlternatingRowColors},
+  {"setGridStyle"      , TableView_setGridStyle},
   {"setHue"            , TableView_setHue},
   {"setMinimumSize"    , TableView_setMinimumSize},
   {"setMouseTracking"  , TableView_setMouseTracking},
@@ -564,6 +602,7 @@ static const struct luaL_Reg TableView_member_methods[] = {
   {"setSizeHint"       , TableView_setSizeHint},
   {"setSizePolicy"     , TableView_setSizePolicy},
   {"setStyle"          , TableView_setStyle},
+  {"setVisibleHeaders" , TableView_setVisibleHeaders},
   {"show"              , TableView_show},
   {"textSize"          , TableView_textSize},
   {"update"            , TableView_update},

@@ -17,6 +17,10 @@ local data = {
 }
 function should.displayTable(t)
   t.view = mimas.TableView()
+  t.view:setAlternatingRowColors(true)
+  t.view:setVisibleHeaders(mimas.Vertical, false)
+  t.view:setGridStyle(mimas.NoPen)
+
   function t.view.columnCount()
     return #data[1]
   end

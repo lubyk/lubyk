@@ -102,6 +102,12 @@ public:
     }
   }
 
+  /** Show/hide grid (set to NoPen to hide).
+   */
+  void setGridStyle(int style) {
+    QTableView::setGridStyle((Qt::PenStyle)style);
+  }
+
   /** Enable/disable alternating row background.
    */
   void setAlternatingRowColors(bool should_enable) {
