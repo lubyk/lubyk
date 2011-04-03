@@ -1,4 +1,5 @@
 /*
+   QVariant variantFromLua(lua_State *L, int index);
   ==============================================================================
 
    This file is part of the LUBYK project (http://lubyk.org)
@@ -29,6 +30,8 @@
 #include "mimas/mimas.h"
 #include "mimas/Callback.h"
 
+#include <QtCore/QVariant>
+
 // create value for Callback::Event type here
 const QEvent::Type mimas::Callback::EventType = static_cast<QEvent::Type>(QEvent::registerEventType());
 
@@ -56,6 +59,26 @@ void mimas::setHue(QPalette &palette, float hue) {
   palette.setColor(QPalette::WindowText, fill_color);
 }
 
+QVariant mimas::variantFromLua(lua_State *L, int index) {
+  int type = lua_type(L, index);
+  switch (type) {
+  case LUA_TNUMBER:
+    return QVariant(lua_tonumber(L, index));
+  case LUA_TBOOLEAN:
+    return QVariant((bool)lua_toboolean(L, index));
+  case LUA_TSTRING:
+    return QVariant(QString::fromUtf8(lua_tostring(L, index)));
+  // case LUA_TNIL:           // continue
+  // case LUA_TTABLE:         // continue
+  // case LUA_TUSERDATA:      // continue
+  // case LUA_TUSERDATA:      // continue
+  // case LUA_TTHREAD:        // continue
+  // case LUA_TLIGHTUSERDATA: // continue
+  default:
+    return QVariant();
+  }
+}
+
 // Register namespace
 static const struct luaL_Reg lib_functions[] = {
   {NULL, NULL},
@@ -75,6 +98,7 @@ int luaload_mimas_Painter(lua_State *L);
 int luaload_mimas_Pen(lua_State *L);
 int luaload_mimas_PushButton_core(lua_State *L);
 int luaload_mimas_Slider_core(lua_State *L);
+int luaload_mimas_TableView(lua_State *L);
 int luaload_mimas_VBoxLayout_core(lua_State *L);
 int luaload_mimas_Widget(lua_State *L);
 int luaload_mimas_constants(lua_State *L);
@@ -103,6 +127,7 @@ extern "C" int luaopen_mimas_core(lua_State *L) {
   luaload_mimas_Pen(L);
   luaload_mimas_PushButton_core(L);
   luaload_mimas_Slider_core(L);
+  luaload_mimas_TableView(L);
   luaload_mimas_VBoxLayout_core(L);
   luaload_mimas_Widget(L);
   luaload_mimas_constants(L);

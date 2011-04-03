@@ -12,7 +12,12 @@ local constr = mimas_core.Application
 function mimas.Application()
   local instance = constr(worker)
   instance:setStyleSheet [[
-    .window { background:rgb(38, 38, 38); }
+    .window { background:rgb(38, 38, 38); color: rgb(180,180,180);}
+    .table {
+      background:rgb(38, 38, 38);
+      color: rgb(180,180,180);
+      alternate-background-color:rgb(52, 52, 52);
+    }
     .widget { background:rgb(38, 38, 38); }
     .label { background: transparent; color: rgb(180,180,180); }
     .slider { qproperty-border:2;

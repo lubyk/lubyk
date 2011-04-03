@@ -20,6 +20,12 @@ function should.load_hash()
   assertEqual('lubyk', simple.hash.b)
 end
 
+function should.load_number()
+  local simple = yaml.loadpath(fixture.path('simple.yml'))
+  assertEqual(0.5, simple.number.a)
+  assertEqual(3, simple.number.b)
+end
+
 function should.load_list()
   local simple = yaml.load(fixture.readall('simple.yml'))
   assertEqual('first',  simple.list[1])
@@ -43,5 +49,6 @@ end
 function should.dump()
   assertMatch('b: 4', yaml.dump {a = {b = 4}})
 end
+
 
 test.all()

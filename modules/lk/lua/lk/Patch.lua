@@ -18,6 +18,7 @@ local function load_from_filepath(self, filepath)
     -- only load if file exists
     local nodes = yaml.loadpath(filepath)
     -- clear before loading (yaml contains a full definition)
+    print(yaml.dump(nodes), type(nodes.store.bug), nodes.store.bug)
     self.nodes = {}
     self:set(nodes)
   else

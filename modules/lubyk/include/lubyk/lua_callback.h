@@ -119,7 +119,7 @@ public:
 
   /** The caller should lock before calling this.
    */
-  void push_lua_callback(bool push_self = true) {
+  void push_lua_callback(bool push_self = true) const {
     if (!callback_set()) throw Exception("Callback function not set.");
 
     // <func> <self>
@@ -130,7 +130,7 @@ public:
   lubyk::Worker *worker_;
   lua_State *lua_;
 
-  bool callback_set() {
+  bool callback_set() const {
     return lua_ != NULL;
   }
 private:

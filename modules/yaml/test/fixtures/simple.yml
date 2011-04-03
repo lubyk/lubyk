@@ -5,3 +5,7 @@ hash:
 list:
   - first
   - second
+
+number:
+  a: 0.5
+  b: 3

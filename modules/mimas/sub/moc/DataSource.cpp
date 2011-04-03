@@ -1,15 +1,15 @@
 /****************************************************************************
-** Meta object code from reading C++ file 'Application.h'
+** Meta object code from reading C++ file 'DataSource.h'
 **
-** Created: Sun Apr 3 16:41:09 2011
+** Created: Sun Apr 3 16:52:31 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.1)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
-#include "../../include/mimas/Application.h"
+#include "../../include/mimas/DataSource.h"
 #if !defined(Q_MOC_OUTPUT_REVISION)
-#error "The header file 'Application.h' doesn't include <QObject>."
+#error "The header file 'DataSource.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 62
 #error "This file was generated using the moc from 4.7.1. It"
 #error "cannot be used with the include files from this version of Qt."
@@ -17,7 +17,7 @@
 #endif
 
 QT_BEGIN_MOC_NAMESPACE
-static const uint qt_meta_data_mimas__Application[] = {
+static const uint qt_meta_data_mimas__DataSource[] = {
 
  // content:
        5,       // revision
@@ -33,37 +33,37 @@ static const uint qt_meta_data_mimas__Application[] = {
        0        // eod
 };
 
-static const char qt_meta_stringdata_mimas__Application[] = {
-    "mimas::Application\0"
+static const char qt_meta_stringdata_mimas__DataSource[] = {
+    "mimas::DataSource\0"
 };
 
-const QMetaObject mimas::Application::staticMetaObject = {
-    { &QApplication::staticMetaObject, qt_meta_stringdata_mimas__Application,
-      qt_meta_data_mimas__Application, 0 }
+const QMetaObject mimas::DataSource::staticMetaObject = {
+    { &QAbstractItemModel::staticMetaObject, qt_meta_stringdata_mimas__DataSource,
+      qt_meta_data_mimas__DataSource, 0 }
 };
 
 #ifdef Q_NO_DATA_RELOCATION
-const QMetaObject &mimas::Application::getStaticMetaObject() { return staticMetaObject; }
+const QMetaObject &mimas::DataSource::getStaticMetaObject() { return staticMetaObject; }
 #endif //Q_NO_DATA_RELOCATION
 
-const QMetaObject *mimas::Application::metaObject() const
+const QMetaObject *mimas::DataSource::metaObject() const
 {
     return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
 }
 
-void *mimas::Application::qt_metacast(const char *_clname)
+void *mimas::DataSource::qt_metacast(const char *_clname)
 {
     if (!_clname) return 0;
-    if (!strcmp(_clname, qt_meta_stringdata_mimas__Application))
-        return static_cast<void*>(const_cast< Application*>(this));
+    if (!strcmp(_clname, qt_meta_stringdata_mimas__DataSource))
+        return static_cast<void*>(const_cast< DataSource*>(this));
     if (!strcmp(_clname, "DeletableOutOfLua"))
-        return static_cast< DeletableOutOfLua*>(const_cast< Application*>(this));
-    return QApplication::qt_metacast(_clname);
+        return static_cast< DeletableOutOfLua*>(const_cast< DataSource*>(this));
+    return QAbstractItemModel::qt_metacast(_clname);
 }
 
-int mimas::Application::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+int mimas::DataSource::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
-    _id = QApplication::qt_metacall(_c, _id, _a);
+    _id = QAbstractItemModel::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     return _id;

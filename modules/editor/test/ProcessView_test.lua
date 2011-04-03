@@ -62,7 +62,7 @@ function should2.setViewInProcess()
   assertEqual(view, process.view)
 end
 
-function should2.drawNodesInProcessView(t)
+function should.drawNodesInProcessView(t)
   local process = mockProcess()
   t.view = editor.ProcessView(process)
   t.view:move(100, 100)
@@ -100,7 +100,7 @@ function should2.drawNodesInProcessView(t)
         foo   = mockNode('foo', 0.5, 280, 80),
       },
     }
-    sleep(800)
+    sleep(1800)
     for t=0,1,0.005 do
       sleep(10)
       process:set {
@@ -121,7 +121,7 @@ local function mockDelegate(t)
   function delegate:addProcess(process)
     app:post(function()
       t.view = editor.ProcessView(process)
-      t.view:move(100, 100)
+      t.view:move(100, 500)
       t.view:show()
     end)
   end

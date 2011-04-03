@@ -1,5 +1,6 @@
 add:
   class: add
+  hue: 0,9
   x: 70
   y: 95
   links:
@@ -10,5 +11,7 @@ add:
 
 store:
   class: store
-  x: 70
-  y: 135
+  hue: 0,2
+  bug: 0,7
+  x: 90
+  y: 155

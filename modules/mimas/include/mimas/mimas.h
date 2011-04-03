@@ -41,6 +41,7 @@
 namespace mimas {
 
 void setHue(QPalette &palette, float hue);
+QVariant variantFromLua(lua_State *L, int index);
 
 } // mimas
 #endif // LUBYK_INCLUDE_MIMAS_MIMAS_H_
