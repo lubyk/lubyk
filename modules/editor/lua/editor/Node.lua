@@ -48,9 +48,23 @@ setmetatable(lib, {
   return instance
 end})
 
+local function setCode(self, code)
+  self.code = code
+  self.need_code_write = true
+end
+
 function lib:set(def)
-  self.x = def.x or self.x
-  self.y = def.y or self.y
+  for k, v in pairs(def) do
+    if k == 'code' then
+      setCode(self, v)
+    elseif k == 'hue' or
+           k == 'inlets' or
+           k == 'outlets' then
+      -- skip
+    else
+      self[k] = v
+    end
+  end
 
   self:setHue(def.hue or self.hue)
 
@@ -165,4 +179,19 @@ function lib:setLinks(links)
       setLink(self, out_name, def, process)
     end
   end
+end
+
+-- edit code in external editor
+function lib:edit()
+  local filepath = self:filepath()
+  if self.need_code_write then
+    -- write to file
+    lk.writeall(filepath, self.code)
+    self.need_code_write = false
+  end
+  editor.main:editFile(filepath)
+end
+
+function lib:filepath()
+  return editor.main:workPath() .. '/' .. self.process.name .. '/' .. self.name .. '.lua'
 end

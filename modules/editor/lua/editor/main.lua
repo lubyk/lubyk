@@ -65,3 +65,18 @@ function lib:removeProcess(process)
   end
 end
 
+local work_path = _lubyk_settings.editor.work_path or string.format('%s/.lk_editor', os.getenv('HOME'))
+
+function lib:workPath()
+  return work_path
+end
+
+local editor_cmd = _lubyk_settings.editor.edit_cmd
+
+function lib:editFile(filepath)
+  if editor_cmd then
+    os.execute(string.format("%s '%s'", editor_cmd, filepath))
+  else
+    -- use internal editor
+  end
+end

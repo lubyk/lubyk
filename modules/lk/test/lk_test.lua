@@ -13,6 +13,27 @@ function should.change_dir()
   end)
 end
 
+function should.makePath()
+  local path = 'foo/bar/baz'
+  lk.rmTree('foo')
+  assertPass(function()
+    lk.makePath('foo/bar/baz')
+  end)
+  assertEqual('directory', lk.fileType('foo'))
+  assertEqual('directory', lk.fileType('foo/bar'))
+  assertEqual('directory', lk.fileType('foo/bar/baz'))
+  lk.rmTree('foo')
+end
+
+function should.writeall()
+  lk.rmTree('foo')
+  local tmp_path = 'foo/bar/lk_test_writeall.txt'
+  os.remove(tmp_path)
+  lk.writeall(tmp_path, 'This is the message')
+  assertEqual('This is the message', lk.readall(tmp_path))
+  lk.rmTree('foo')
+end
+
 function should.change_dir_before_dofile()
   dofile(fixture.path('dofile.lua'))
   assertEqual(2, lk_test_dofile_val)
@@ -47,10 +68,10 @@ function should.provide_file()
 end
 
 function should.test_file_existence()
-  assertEqual('file', lk.file_type(fixture.path('simple.yml')))
-  assertEqual(nil, lk.file_type(fixture.path('complex.yml')))
-  assertEqual('directory', lk.file_type(lk.dir()))
-  assertEqual(nil, lk.file_type(nil))
+  assertEqual('file', lk.fileType(fixture.path('simple.yml')))
+  assertEqual(nil, lk.fileType(fixture.path('complex.yml')))
+  assertEqual('directory', lk.fileType(lk.dir()))
+  assertEqual(nil, lk.fileType(nil))
 end
 
 function should.findcode_locally()

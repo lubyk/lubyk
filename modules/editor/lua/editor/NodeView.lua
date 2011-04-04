@@ -158,7 +158,8 @@ function lib:paint(p, w, h)
   p:drawText(PAD+TEXT_HPADDING, PAD+TEXT_VPADDING, w-2*TEXT_HPADDING-2*PAD, h - 2*TEXT_VPADDING - 2*PAD, mimas.AlignLeft + mimas.AlignVCenter, self.name)
 end
 
-local MousePress, MouseRelease = mimas.MousePress, mimas.MouseRelease
+local MousePress,       MouseRelease,       DoubleClick =
+      mimas.MousePress, mimas.MouseRelease, mimas.DoubleClick
 
 local function makeGhost(self)
   local node = self.node
@@ -178,6 +179,9 @@ function lib:click(x, y, type, btn, mod)
     self.click_position = {x = x, y = y}
     self.current_pos    = {x = node.x, y = node.y}
     self:update()
+  elseif type == DoubleClick then
+    -- open external editor
+    node:edit()
   elseif type == MouseRelease then
     if self.node.dragging then
       -- drop

@@ -9,9 +9,10 @@
 
 --]]------------------------------------------------------
 local code = loadfile(string.format('%s/.lubyk', os.getenv('HOME')))
-local user_settings = {paths = {}, cpaths = {}}
+_lubyk_settings = {paths = {}, cpaths = {}, editor = {}}
 if code then
-  user_settings = code()
+  _lubyk_settings = code()
+  _lubyk_settings.editor = _lubyk_settings.editor or {}
 end
 -- search order:
 local lua_paths  = package.path
@@ -20,10 +21,10 @@ local lua_cpaths = package.cpath
 package.path  = './?.lua;./lib/?.lua;'
 package.cpath = './?.so;./lib/?.so;'
 -- 2. user libs
-for _, path in ipairs(user_settings.paths) do
+for _, path in ipairs(_lubyk_settings.paths) do
   package.path = package.path .. path .. ';'
 end
-for _, cpath in ipairs(user_settings.cpaths) do
+for _, cpath in ipairs(_lubyk_settings.cpaths) do
   package.cpath = package.cpath .. cpath .. ';'
 end
 -- 3. Installed lubyk libs

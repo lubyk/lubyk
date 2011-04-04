@@ -202,6 +202,11 @@ protected:
 
     ScopedLock lock(worker_);
 
+    // FIXME: all callbacks should push 'self' so that we can define generic callbacks
+    // in a sub-class without redefinition in each instance with a closure on self ?
+    // function self.super.mouse(x, y)
+    //   self:mouse(x, y)
+    // end
     header_clbk_.push_lua_callback(false);
 
     lua_pushnumber(L, section + 1);

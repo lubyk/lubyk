@@ -33,8 +33,21 @@ require 'msgpack.vendor'
 -------------------------------- lk.findfile
 require 'lk.constants'
 
--------------------------------- lk.readall(path)
 
+--- Return the parent folder and filename from a filepath.
+function lk.directory(filepath)
+  local base, file = string.match(filepath, '(.*)/(.*)$')
+  if not base then
+    return '.', filepath
+  elseif base == '' then
+    -- '/' == root ?
+    return '/', file
+  else
+    return base, file
+  end
+end
+
+--- Read all the content from a given path (or basepath and path).
 function lk.readall(basepath, path)
   if path then
     path = string.format('%s/%s', basepath, path)
@@ -47,14 +60,56 @@ function lk.readall(basepath, path)
   return s
 end
 
+local function relativeToAbsolutePath(path)
+  if string.match(path, '^/') then
+    return path
+  else
+    return string.format('%s/%s', lfs.currentdir(), path)
+  end
+end
+
+local function makePathPart(path, fullpath)
+  local file_type = lk.fileType(path)
+  if file_type == 'file' then
+    error(string.format("Could not build path '%s' ('%s' is a file).", fullpath, path))
+  elseif file_type == 'directory' then
+    return -- done
+  else
+    local base = lk.directory(path)
+    makePathPart(base, fullpath)
+    -- base should exist or an error has been raised
+    lfs.mkdir(path)
+    -- done
+  end
+end
+
+--- Build necessary folders to create the given path.
+function lk.makePath(path)
+  local fullpath = relativeToAbsolutePath(path)
+  makePathPart(fullpath, fullpath)
+end
+
+--- Remove a directory recursively
+function lk.rmTree(path)
+  local fullpath = relativeToAbsolutePath(path)
+  os.execute(string.format("rm -rf '%s'", path))
+end
+
+--- Write data to a filepath, creating path folder if necessary.
+function lk.writeall(filepath, data)
+  -- get base directory and build components if necessary
+  lk.makePath(lk.directory(filepath))
+  local f = assert(io.open(filepath, 'wb'))
+  local s = f:write(data)
+  f:close()
+  return s
+end
+
 -------------------------------- lk.with_filepath(filepath, func)
 
 function lk.with_filepath(filepath, func)
   local cur_path = lfs.currentdir()
-  local abs_path = filepath
-  if not string.match(abs_path, '^/') then
-    abs_path = string.format('%s/%s', cur_path, filepath)
-  end
+  local abs_path = relativeToAbsolutePath(filepath)
   local new_dir = string.gsub(abs_path, '/[^/]+$', '')
   -- change into the loaded file's directory before reading
   lfs.chdir(new_dir)
@@ -112,15 +167,15 @@ function lk.dir(level)
   return string.gsub(lk.file(level - 1), '/[^/]+$', '')
 end
 
--------------------------------- lk.file_type(path)
+-------------------------------- lk.fileType(path)
 -- Test for file/directory existence and/or type.
-function lk.file_type(filepath)
+function lk.fileType(filepath)
   if not filepath then return nil end
   local attrs = lfs.attributes(filepath)
   return attrs and attrs.mode
 end
 
-lk.exist = lk.file_type
+lk.exist = lk.fileType
 
 -------------------------------- lk.dofile(path)
 -- Load a file relative to the current file.
@@ -140,7 +195,7 @@ function lk.findcode(basedir, class_name)
   -- FIXME: Beware to only optimize this by storing fullpaths
   local path = string.gsub(class_name, '%.', '/') .. '.lua'
   local fullpath = basedir .. '/' .. path
-  if lk.file_type(fullpath) == 'file' then
+  if lk.fileType(fullpath) == 'file' then
     -- Found local file relative to patch
     return lk.readall(fullpath)
   else

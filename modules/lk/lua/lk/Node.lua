@@ -65,6 +65,7 @@ function lib:eval(code_str)
   -- code will execute in node's environment
   setfenv(code, self.env)
   code()
+  self.code = code_str
 end
 
 function lib:set(definition)
@@ -177,6 +178,7 @@ function lib:dump()
     hue  = self.hue,
     x    = self.x,
     y    = self.y,
+    code = self.code,
     inlets  = dumpSlots(self.sorted_inlets),
     outlets = dumpSlots(self.sorted_outlets),
   }

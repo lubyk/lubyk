@@ -8,10 +8,6 @@
 --]]------------------------------------------------------
 require 'lubyk'
 
--- editor needs a 'main' state with currently selected objects
--- and such things. FIXME: remove.
-editor.main = {}
-
 local should = test.Suite('editor.Node')
 
 -- Mock a process without network connectivity
@@ -35,12 +31,21 @@ function should.createNode()
   assertEqual('editor.Node', node.type)
 end
 
+function should.returnFilePath()
+  local process = patch('dummy')
+  local node = editor.Node {
+    name    = 'buz',
+    process = process
+  }
+  assertMatch('.lk_editor/dummy/buz.lua', node:filepath())
+end
+
 function should.createOutlets()
   local process = patch('dummy')
   local node = editor.Node {
     process = process,
     outlets = {
-      a = {}
+      {name = 'a'}
     }
   }
   assertEqual('editor.Outlet', node.outlets.a.type)
@@ -51,7 +56,7 @@ function should.createInlets()
   local node = editor.Node {
     process = process,
     inlets = {
-      a = {}
+      {name = 'a'}
     }
   }
   assertEqual('editor.Inlet', node.inlets.a.type)
@@ -66,7 +71,7 @@ function should.usePendingInlets()
     process = process,
     name    = 'foo',
     inlets = {
-      a = {}
+      {name = 'a'}
     }
   }
   assertNil(process.pending_inlets.foo)
