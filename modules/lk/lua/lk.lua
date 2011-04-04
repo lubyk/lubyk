@@ -60,7 +60,7 @@ function lk.readall(basepath, path)
   return s
 end
 
-local function relativeToAbsolutePath(path)
+function lk.absolutizePath(path)
   if string.match(path, '^/') then
     return path
   else
@@ -85,13 +85,13 @@ end
 
 --- Build necessary folders to create the given path.
 function lk.makePath(path)
-  local fullpath = relativeToAbsolutePath(path)
+  local fullpath = lk.absolutizePath(path)
   makePathPart(fullpath, fullpath)
 end
 
 --- Remove a directory recursively
 function lk.rmTree(path)
-  local fullpath = relativeToAbsolutePath(path)
+  local fullpath = lk.absolutizePath(path)
   os.execute(string.format("rm -rf '%s'", path))
 end
 
@@ -109,7 +109,7 @@ end
 
 function lk.with_filepath(filepath, func)
   local cur_path = lfs.currentdir()
-  local abs_path = relativeToAbsolutePath(filepath)
+  local abs_path = lk.absolutizePath(filepath)
   local new_dir = string.gsub(abs_path, '/[^/]+$', '')
   -- change into the loaded file's directory before reading
   lfs.chdir(new_dir)

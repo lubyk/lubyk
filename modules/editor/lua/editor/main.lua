@@ -18,9 +18,15 @@ setmetatable(lib, {
  __call = function(lib)
   local instance = {
     selected_node_views = {},
+    -- files edited in external editor
+    observed_files      = {},
+    file_observer       = mimas.FileObserver(),
   }
   setmetatable(instance, lib)
 
+  function instance.file_observer.pathChanged(path)
+    instance:pathChanged(path)
+  end
   return instance
 end})
 
@@ -71,12 +77,24 @@ function lib:workPath()
   return work_path
 end
 
-local editor_cmd = _lubyk_settings.editor.edit_cmd
+local editor_cmd = _lubyk_settings.editor.editor_cmd
 
-function lib:editFile(filepath)
+function lib:editFile(filepath, node)
+  -- FIXME: holds node reference (make it weak ?)
+  -- FIXME: when do we remove paths ?
+  self.file_observer:addPath(filepath)
+  self.observed_files[filepath] = node
   if editor_cmd then
+    print(editor_cmd, filepath)
     os.execute(string.format("%s '%s'", editor_cmd, filepath))
   else
     -- use internal editor
+  end
+end
+
+function lib:pathChanged(path)
+  local node = self.observed_files[path]
+  if node then
+    node:fileChanged(path)
   end
 end

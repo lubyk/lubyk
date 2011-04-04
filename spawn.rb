@@ -55,8 +55,8 @@ require 'lubyk'
 
 local should = test.Suite('#{name}')
 
-function should.auto_load()
-  assert_true(#{name})
+function should.autoLoad()
+  assertTrue(#{name})
 end
 
 test.all()

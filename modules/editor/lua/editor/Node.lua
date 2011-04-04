@@ -53,6 +53,8 @@ local function setCode(self, code)
   self.need_code_write = true
 end
 
+--- Called when we receive a change notification from the
+-- remote. To actually change the remote Node, use "change".
 function lib:set(def)
   for k, v in pairs(def) do
     if k == 'code' then
@@ -181,6 +183,13 @@ function lib:setLinks(links)
   end
 end
 
+--- Try to update the remote end with new data.
+function lib:change(definition)
+  -- FIXME...
+  print('CHANGE', yaml.dump(definition))
+  self:set(definition)
+end
+
 -- edit code in external editor
 function lib:edit()
   local filepath = self:filepath()
@@ -189,9 +198,17 @@ function lib:edit()
     lk.writeall(filepath, self.code)
     self.need_code_write = false
   end
-  editor.main:editFile(filepath)
+  editor.main:editFile(filepath, self)
 end
 
 function lib:filepath()
   return editor.main:workPath() .. '/' .. self.process.name .. '/' .. self.name .. '.lua'
+end
+
+function lib:fileChanged(path)
+  local code = lk.readall(path)
+  if code ~= self.code then
+    -- send remote update
+    self:change {code = code}
+  end
 end

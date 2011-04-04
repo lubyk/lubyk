@@ -13,6 +13,11 @@ function should.change_dir()
   end)
 end
 
+function should.absolutizePath()
+  assertEqual(lfs.currentdir() .. '/foo/bar', lk.absolutizePath('foo/bar'))
+  assertEqual('/foo/bar', lk.absolutizePath('/foo/bar'))
+end
+
 function should.makePath()
   local path = 'foo/bar/baz'
   lk.rmTree('foo')
