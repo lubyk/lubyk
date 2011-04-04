@@ -31,38 +31,40 @@ end
 
 function should.createLiteralPatch()
   local patch = lk.Patch [[
-add:
-  script: |
-    inlet('val1', 'First value [number].')
-    inlet('val2', 'Second value [number].')
-    sum = outlet('sum', 'Sends sum of first and second values [number].')
+nodes:
+  add:
+    code: |
+      inlet('val1', 'First value [number].')
+      inlet('val2', 'Second value [number].')
+      sum = outlet('sum', 'Sends sum of first and second values [number].')
 
-    val1 = val1 or 0
-    val2 = val2 or 0
+      val1 = val1 or 0
+      val2 = val2 or 0
 
-    function inlet.val1(v)
-      val1 = v
-      sum(val1 + val2)
-    end
+      function inlet.val1(v)
+        val1 = v
+        sum(val1 + val2)
+      end
 
-    function inlet.val2(v)
-      val2 = v
-      sum(val1 + val2)
-    end
-  x: 70
-  y: 95
-  links:
-    sum: store/in/value
-  params:
-    val1: 0
-    val2: 5
+      function inlet.val2(v)
+        val2 = v
+        sum(val1 + val2)
+      end
+    x: 70
+    y: 95
+    links:
+      sum: store/in/value
+    params:
+      val1: 0
+      val2: 5
 
-store:
-  class: fixtures.store
-  x: 70
-  y: 135
+  store:
+    class: fixtures.store
+    x: 70
+    y: 135
 ]]
   assertTrue(patch.inline)
+  assertMatch('Patch_test.lua', patch.filepath)
 end
 
 function should.createPatchWithInlineCode()
@@ -85,7 +87,13 @@ function should.dumpNodes()
   assertType('table', dump.nodes.store)
 end
 
-function should.set_defaultValues()
+function should.partialDump()
+  local patch = makePatch()
+  local dump  = patch:partialDump{nodes={add={x=true}}}
+  assertValueEqual({nodes={add={x=70}}}, dump)
+end
+
+function should.setDefaultValues()
   local nodes = makePatch().nodes
   assertEqual(5, nodes.add.env.val2)
 end

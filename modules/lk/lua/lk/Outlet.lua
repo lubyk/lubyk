@@ -48,7 +48,6 @@ function lib:connect(inlet)
       return
     end
   end
-  print('connected', self.name, 'to', inlet:url())
   table.insert(self.connections, inlet)
 end
 

@@ -64,6 +64,10 @@ end
 
 function should.drawNodesInProcessView(t)
   local process = mockProcess()
+  -- Make as if changes are directly notified back without
+  -- a remote.
+  process.change = editor.Process.set
+
   t.view = editor.ProcessView(process)
   t.view:move(100, 100)
   t.view:show()
@@ -117,18 +121,22 @@ end
 
 local function mockDelegate(t)
   local delegate = {}
-
+  t.views = {}
   function delegate:addProcess(process)
     app:post(function()
-      t.view = editor.ProcessView(process)
-      t.view:move(100, 500)
-      t.view:show()
+      local view = editor.ProcessView(process)
+      view:move(100, 500)
+      view:show()
+      t.views[process.name] = view
     end)
   end
 
   function delegate:removeProcess(process)
-    t.view:close()
-    t.view = nil
+    local view = t.views[process.name]
+    if view then
+      view:close()
+      t.views[process.name] = nil
+    end
   end
 
   return delegate
@@ -138,8 +146,8 @@ function should.syncFromRemote(t)
   t.remote   = lk.Process(fixture.path('simple.yml'))
   t.delegate = mockDelegate(t)
   t.watch    = editor.ProcessWatch(t.delegate)
-  --sleep(2000)
-  --t.remote:delete()
+  sleep(2000)
+  t.remote:delete()
 end
 
 test.gui()

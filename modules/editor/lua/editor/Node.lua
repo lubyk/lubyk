@@ -185,9 +185,11 @@ end
 
 --- Try to update the remote end with new data.
 function lib:change(definition)
-  -- FIXME...
-  print('CHANGE', yaml.dump(definition))
-  self:set(definition)
+  self.process:change {
+    nodes = {
+      [self.name] = definition
+    }
+  }
 end
 
 -- edit code in external editor

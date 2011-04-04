@@ -190,7 +190,7 @@ function lib:click(x, y, type, btn, mod)
       editor.main:selectNodeView(self, mod == mimas.ShiftModifier)
     end
     app:post(function()
-      node:set {
+      node:change {
         x = self.current_pos.x,
         y = self.current_pos.y,
       }

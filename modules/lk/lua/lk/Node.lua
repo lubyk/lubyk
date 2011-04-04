@@ -85,8 +85,8 @@ function lib:set(definition)
       -- FIXME: set error on Node
       error(string.format("Could not find source code for '%s'.", definition.class))
     end
-  elseif definition.script then
-    self:eval(definition.script)
+  elseif definition.code and definition.code ~= self.code then
+    self:eval(definition.code)
   end
 
   for k, v in pairs(definition) do
@@ -182,4 +182,21 @@ function lib:dump()
     inlets  = dumpSlots(self.sorted_inlets),
     outlets = dumpSlots(self.sorted_outlets),
   }
+end
+
+function lib:partialDump(data)
+  local res = {}
+  for k, v in pairs(data) do
+    -- 'inlets' and 'outlets' should never be in the data
+    if k ~= 'inlets' or k ~= 'outlets' then
+      res[k] = self[k]
+    end
+  end
+
+  if data.code then
+    -- add slots
+    res.inlets  = dumpSlots(self.sorted_inlets)
+    res.outlets = dumpSlots(self.sorted_outlets)
+  end
+  return res
 end

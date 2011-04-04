@@ -28,9 +28,9 @@ setmetatable(lib, {
   instance.hue = remote_service.info.hue or 0.5
 
   --======================================= SUB client
-  instance.sub = zmq.SimpleSub(function(...)
-    -- we receive notifications
-    -- ...
+  instance.sub = zmq.SimpleSub(function(changes)
+    -- we receive notifications, update content
+    instance:set(changes)
   end)
   instance.sub:connect(remote_service.sub_url)
 
@@ -80,10 +80,16 @@ end
 
 -- Synchronize with remote process.
 function lib:sync()
-  local definition = self.req:request(lubyk.sync_url)
+  local definition = self.req:request(lubyk.dump_url)
   --print(yaml.dump(definition))
   self:set(definition)
 end
+
+--- Change remote content.
+function lib:change(definition)
+  self.push:send(lubyk.update_url, definition)
+end
+
 -- If self.view is nil, only set the data without
 -- creating/changing views.
 function lib:set(definition)
@@ -115,10 +121,6 @@ function lib:updateView()
       end
     end
   end
-end
-
-function lib:send(...)
-  self.push:send(...)
 end
 
 -- find a node in the current process (same as lk.Patch.get).

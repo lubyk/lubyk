@@ -13,24 +13,23 @@ lk.Patch    = lib
 
 -- PRIVATE
 
-local function load_from_filepath(self, filepath)
+local function loadFromFilepath(self, filepath)
   if lk.exist(filepath) then
     -- only load if file exists
-    local nodes = yaml.loadpath(filepath)
+    local data = yaml.loadpath(filepath)
     -- clear before loading (yaml contains a full definition)
-    print(yaml.dump(nodes), type(nodes.store.bug), nodes.store.bug)
     self.nodes = {}
-    self:set(nodes)
+    self:set(data)
   else
     --print(string.format("'%s' not found.", filepath))
   end
 end
 
-local function load_from_yaml(self, yaml_code)
-  local nodes = yaml.load(yaml_code)
+local function loadFromYaml(self, yaml_code)
+  local data = yaml.load(yaml_code)
   -- clear before loading (yaml contains a full definition)
   self.nodes = {}
-  self:set(nodes)
+  self:set(data)
 end
 
 
@@ -38,7 +37,7 @@ end
 
 setmetatable(lib, {
   -- new method
- __call = function(lib, filepath_or_code)
+ __call = function(lib, filepath_or_code, is_process)
   local instance  = {
     nodes         = {},
     pending_nodes = {},
@@ -51,31 +50,50 @@ setmetatable(lib, {
   if string.match(filepath_or_code, '\n') then
     -- set filepath to the script containing calling lk.Patch()
     -- this is where the content will be saved
-    instance.filepath  = lk.file(-1)
+    if is_process then
+      instance.filepath   = lk.file(-2)
+      instance.is_process = true
+    else
+      instance.filepath = lk.file(-1)
+    end
+
+    print('NAME--->', instance.filepath)
     -- store full script in filepath
     instance.inline   = true
-    load_from_yaml(instance, filepath_or_code)
+    loadFromYaml(instance, filepath_or_code)
   else
     instance.filepath = filepath_or_code
     -- store only yaml in filepath
     instance.inline   = false
-    load_from_filepath(instance, filepath_or_code)
+    loadFromFilepath(instance, filepath_or_code)
   end
   return instance
 end})
 
-function lib:set(definitions)
+local function setNodes(self, nodes_definition)
+  local nodes = self.nodes
   lk.with_filepath(self.filepath, function()
     -- move to patch file directory
-    for name, def in pairs(definitions) do
+    for name, def in pairs(nodes_definition) do
       -- parsing each node
-      local node = self.nodes[name]
+      local node = nodes[name]
       if not node then
         node = lk.Node(self, name)
       end
       node:set(def, self)
     end
   end)
+end
+
+function lib:set(definitions)
+  for k, v in pairs(definitions) do
+    if k == 'nodes' then
+      setNodes(self, v)
+    else
+      -- TODO: allow Patch attribute changes here
+      -- self[k] = v
+    end
+  end
 end
 
 -- Create a pending inlet.
@@ -159,8 +177,10 @@ function lib:get(url, mt)
   end
 end
 
--- Serialize current patch as a lua table.
-function lib:dump()
+--- Serialize current patch as a lua table. If a
+-- data table is provided, only dump parts that contain
+-- keys in the table.
+function lib:dump(data)
   local res = {nodes = {}}
   local nodes = res.nodes
   for k, node in pairs(self.nodes) do
@@ -169,11 +189,41 @@ function lib:dump()
   return res
 end
 
+--- Serialize part of the current patch as a lua table by only returning
+-- data for parts that contain keys in the given table.
+function lib:partialDump(data)
+  local res = {nodes = {}}
+  local nodes = res.nodes
+  if data and data.nodes then
+    local data_nodes = data.nodes
+    for k, node in pairs(self.nodes) do
+      local node_data = data_nodes[k]
+      if node_data then
+        nodes[k] = node:partialDump(node_data)
+      end
+    end
+  end
+  return res
+end
+
 --- Process related stuff ---
 
 --- Answering requests to Process.
-function lib:callback(url)
-  if url == lubyk.sync_url then
+function lib:callback(url, data)
+  if url == lubyk.dump_url then
+    -- sync call, return content
     return self:dump()
+  elseif url == lubyk.update_url then
+    -- async call, no return value
+    self:set(data)
+    self:notify(self:partialDump(data))
+  end
+end
+
+--- Inform listening editors that something changed.
+function lib:notify(changes)
+  local service = self.service
+  if service then
+    service:notify(changes)
   end
 end

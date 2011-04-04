@@ -70,6 +70,13 @@ function should.dump()
 end
 
 
+function should.partialDump()
+  local node = makeNode()
+  node.foo = 5
+  local dump = node:partialDump{foo = 1}
+  assertValueEqual({foo = 5}, dump)
+end
+
 function should.read_global_env()
   local node = lk.Node(makePatch(), 'foo', [[
     function test(x)

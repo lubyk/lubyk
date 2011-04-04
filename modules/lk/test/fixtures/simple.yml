@@ -1,17 +1,18 @@
-add:
-  class: add
-  hue: 0,9
-  x: 70
-  y: 95
-  links:
-    sum: store/in/value
-  params:
-    val1: 0
-    val2: 5
+nodes:
+  add:
+    class: add
+    hue: 0,9
+    x: 70
+    y: 95
+    links:
+      sum: store/in/value
+    params:
+      val1: 0
+      val2: 5
 
-store:
-  class: store
-  hue: 0,2
-  bug: 0,7
-  x: 90
-  y: 155
+  store:
+    class: store
+    hue: 0,2
+    bug: 0,7
+    x: 90
+    y: 155

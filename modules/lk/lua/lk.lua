@@ -18,7 +18,9 @@ lubyk.service_type    = '_lubyk._tcp'
 -- Get patch basic information
 lubyk.info_url        = '/lk/info'
 -- Get all patch information at once
-lubyk.sync_url        = '/lk/sync'
+lubyk.dump_url        = '/lk/dump'
+-- (Partial) update of a patch
+lubyk.update_url      = '/lk/update'
 -- Notification for new service (in-process)
 lubyk.add_service_url = '/lk/add_service'
 -- Notification for removed service (in-process)
@@ -26,6 +28,7 @@ lubyk.rem_service_url = '/lk/rem_service'
 
 -------------------------------- lubyk.core
 require 'lubyk.core'
+require 'worker' -- declares global 'sleep'
 
 -------------------------------- pack/unpack (msgpack.vendor)
 require 'msgpack.vendor'
