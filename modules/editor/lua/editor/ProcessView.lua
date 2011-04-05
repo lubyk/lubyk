@@ -133,7 +133,7 @@ function lib:click(x, y, type, btn, mod)
       -- resize
       self.resize_position = {x = x, y = y}
     else
-      print(x, self.width - DRAG_CORNER, y, self.height - DRAG_CORNER)
+
     end
   elseif type == DoubleClick then
     if x < self.lbl_w + PAD and y < self.lbl_h + PAD then

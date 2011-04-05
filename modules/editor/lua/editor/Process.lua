@@ -192,8 +192,9 @@ inlet('input', 'Information on input [type].')
 output = outlet('output', 'Information on output [type].')
 
 function inlet.input(val)
-  -- pass through
-  output:send(val)
+  -- print and pass through
+  print(val)
+  output(val)
 end
 ]]
   self:change {nodes = {[definition.name or 'new node'] = definition}}

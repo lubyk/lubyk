@@ -143,16 +143,15 @@ local function setLink(self, out_name, target_url, process)
   end
 end
 
-function lib:setLinks(links)
+function lib:setLinks(all_links)
   local process = self.process
-  for out_name, def in pairs(links) do
-    if type(def) == 'table' then
-      -- multiple links
-      for _, ldef in ipairs(def) do
-        setLink(self, out_name, ldef, process)
+  for out_name, links in pairs(all_links) do
+    for target_url, link_def in pairs(links) do
+      if link_def then
+        setLink(self, out_name, target_url, process)
+      else
+        removeLink(self, out_name, target_url)
       end
-    else
-      setLink(self, out_name, def, process)
     end
   end
 end
@@ -193,7 +192,7 @@ function lib:partialDump(data)
     end
   end
 
-  if data.code then
+  if data.code or data.links then
     -- add slots
     res.inlets  = dumpSlots(self.sorted_inlets)
     res.outlets = dumpSlots(self.sorted_outlets)

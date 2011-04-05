@@ -79,3 +79,7 @@ function lib:paint(p, w, h)
   p:setPen(2*HPEN_WIDTH, color)
   p:drawPath(self.path)
 end
+
+function lib:delete()
+  self.super:__gc()
+end

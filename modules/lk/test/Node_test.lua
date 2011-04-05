@@ -127,7 +127,7 @@ function should.connectSlotsOnSet()
   local p = makePatch()
   local a = makeNode(p)
   -- pending links
-  a:set{params={scale=3}, links={scaled='b/in/raw'}}
+  a:set{params={scale=3}, links={scaled={['b/in/raw']=true}}}
   -- should resolve links now
   local b = makeNode(p, 'b')
   a.inlets.raw.receive(5)

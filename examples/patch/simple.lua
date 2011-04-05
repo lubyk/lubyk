@@ -10,7 +10,8 @@ nodes:
     y: 45
     hue: 0
     links:
-      bang: play/in/trigger
+      bang:
+        play/in/trigger: true
     params:
       tempo: 580
 

@@ -68,13 +68,16 @@ function lib:click(x, y, type, btn, mod)
         local other_slot = other_view.slot
         self.delegate.closest_slot_view = nil
         other_view:update()
+        self.ghost.link_view:delete()
         self.ghost = nil
         if slot.type == 'editor.Inlet' then
           slot, other_slot = other_slot, slot
         end
         slot.node:change {
           links = {
-            [slot.name] = other_slot:url()
+            [slot.name] = {
+              [other_slot:url()] = true
+            }
           }
         }
       end
