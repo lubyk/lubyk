@@ -23,6 +23,9 @@ local DEFAULT_W = 400
 local DEFAULT_H = 400
 local DRAG_CORNER = 20
 
+local PAD  = BP + HPEN_WIDTH -- padding for inner shape (top/left)
+local PAD2 = BP + 2*HPEN_WIDTH -- do not overlap with background
+
 -- This method runs in the GUI thread.
 function lib:init(process)
   process.view  = self
@@ -81,30 +84,29 @@ function lib:paint(p, w, h)
   p:setPen(mimas.Pen()) -- no pen
   p:setBrush(brush)
 
-  local pad  = BP + HPEN_WIDTH -- padding for inner shape (top/left)
-  path:moveTo(lw+pad, pad)
-  path:lineTo(pad + ARC_RADIUS, pad)
-  path:cubicTo(pad-1, pad-1, pad-1, pad-1, pad, pad + ARC_RADIUS)
-  path:lineTo(pad, lh + pad)
-  path:lineTo(lw - ARC_RADIUS + pad, lh + pad)
-  path:cubicTo(lw+pad+1, lh+pad+1, lw+pad+1, lh+pad+1, lw+pad, lh+pad-ARC_RADIUS)
-  path:lineTo(lw+pad, pad)
+  path:moveTo(lw+PAD, PAD)
+  path:lineTo(PAD + ARC_RADIUS, PAD)
+  path:cubicTo(PAD-1, PAD-1, PAD-1, PAD-1, PAD, PAD + ARC_RADIUS)
+  path:lineTo(PAD, lh + PAD)
+  path:lineTo(lw - ARC_RADIUS + PAD, lh + PAD)
+  path:cubicTo(lw+PAD+1, lh+PAD+1, lw+PAD+1, lh+PAD+1, lw+PAD, lh+PAD-ARC_RADIUS)
+  path:lineTo(lw+PAD, PAD)
   p:drawPath(path)
 
   -- draw label border (only bottom and right)
   p:setBrush(mimas.Brush())
   p:setPen(pen)
-  local pad2 = BP + 2*HPEN_WIDTH -- do not overlap with background
+
   path = mimas.Path()
-  path:moveTo(pad2, lh + pad2)
-  path:lineTo(lw - ARC_RADIUS + pad2, lh + pad2)
-  path:cubicTo(lw+pad2, lh+pad2, lw+pad2, lh+pad2, lw+pad2, lh+pad2-ARC_RADIUS)
-  path:lineTo(lw+pad2, pad2)
+  path:moveTo(PAD2, lh + PAD2)
+  path:lineTo(lw - ARC_RADIUS + PAD2, lh + PAD2)
+  path:cubicTo(lw+PAD2, lh+PAD2, lw+PAD2, lh+PAD2, lw+PAD2, lh+PAD2-ARC_RADIUS)
+  path:lineTo(lw+PAD2, PAD2)
   p:drawPath(path)
 
   -- draw label text
   p:setPen(mimas.Pen(1, mimas.Color(0, 0, 1)))
-  p:drawText(pad+2*TEXT_PADDING, pad+TEXT_PADDING, lw - 4*TEXT_PADDING, lh - 2*TEXT_PADDING, mimas.AlignRight + mimas.AlignVCenter, self.name)
+  p:drawText(PAD+2*TEXT_PADDING, PAD+TEXT_PADDING, lw - 4*TEXT_PADDING, lh - 2*TEXT_PADDING, mimas.AlignRight + mimas.AlignVCenter, self.name)
 end
 
 function lib:delete()
@@ -122,9 +124,8 @@ end
 function lib:click(x, y, type, btn, mod)
   local process = self.process
   if type == MousePress then
-    local pad = BP + HPEN_WIDTH
     -- only drag when click is in the title
-    if x < self.lbl_w + pad and y < self.lbl_h + pad then
+    if x < self.lbl_w + PAD and y < self.lbl_h + PAD then
       -- store position but only start drag when moved START_DRAG_DIST away
       self.click_position = {x = x, y = y}
       self.current_pos    = {x = process.x, y = process.y}
@@ -135,7 +136,12 @@ function lib:click(x, y, type, btn, mod)
       print(x, self.width - DRAG_CORNER, y, self.height - DRAG_CORNER)
     end
   elseif type == DoubleClick then
-    -- close ?
+    if x < self.lbl_w + PAD and y < self.lbl_h + PAD then
+      -- close ?
+    else
+      -- create new empty node
+      process:newNode { x = x - 30, y = y - 10 }
+    end
   elseif type == MouseRelease then
     if process.resizing then
       -- resizing
@@ -192,3 +198,41 @@ function lib:mouse(x, y)
     end
   end
 end
+
+local function distanceToSlot(gx, gy, view)
+  local vx, vy = view:globalPosition()
+  vx = gx - vx
+  vy = gy - vy
+  return math.sqrt(vx*vx + vy*vy)
+end
+
+local SLOTW = editor.SlotView.SLOTW
+local SLOTH = editor.SlotView.SLOTH
+
+--- Find the closest slot view from the global x and global y coordinates.
+-- @return closest slot and distance to center of slot.
+function lib:closestSlotView(gx, gy, for_type, skip_node)
+  gx = gx - SLOTW/2
+  gy = gy - SLOTH/2
+  -- find the closest slot
+  local d, view, list_name = nil
+  if for_type == 'editor.Outlet' then
+    list_name = 'sorted_inlets'
+  else
+    list_name = 'sorted_outlets'
+  end
+
+  for _, node in pairs(self.process.nodes) do
+    if node ~= skip_node then
+      for _, slot in ipairs(node[list_name]) do
+        local di = distanceToSlot(gx, gy, slot.view)
+        if not d or di < d then
+          d = di
+          view = slot.view
+        end
+      end
+    end
+  end
+  return view, d
+end
+

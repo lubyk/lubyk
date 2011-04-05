@@ -4,16 +4,17 @@ patch = lk.Process [[
 w: 150
 h: 150
 nodes:
-  beat:
+  metro:
     class: lubyk.Metro
     x: 30
     y: 45
+    hue: 0
     links:
-      bang: beep/in/trigger
+      bang: play/in/trigger
     params:
       tempo: 580
 
-  beep:
+  play:
     code: |
       inlet('trigger', 'Trigger midi note [bang].')
       mo = mo or midi.Out('lubyk')
@@ -42,6 +43,7 @@ nodes:
       end
     x: 70
     y: 95
+    hue: 0.3
     params:
       channel: 2
 ]]

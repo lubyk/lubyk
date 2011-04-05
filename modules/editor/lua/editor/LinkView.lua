@@ -63,6 +63,7 @@ function lib:slotMoved()
   self:resize(w, h)
   -- force redraw in case we do not move but are
   -- in the end of a drag operation (ghost looking)
+  self:lower()
   self:update()
 end
 

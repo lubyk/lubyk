@@ -183,3 +183,18 @@ function lib:deleteView()
     self.view = nil
   end
 end
+
+--- Make a new node in the remote process with the given
+-- definition.
+function lib:newNode(definition)
+  definition.code = definition.code or [[
+inlet('input', 'Information on input [type].')
+output = outlet('output', 'Information on output [type].')
+
+function inlet.input(val)
+  -- pass through
+  output:send(val)
+end
+]]
+  self:change {nodes = {[definition.name or 'new node'] = definition}}
+end
