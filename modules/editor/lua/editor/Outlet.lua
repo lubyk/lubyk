@@ -15,12 +15,6 @@ editor.Outlet = lib
 -- PRIVATE
 -- Create a single link
 local function createLink(self, target_url)
-  for i,link in ipairs(self.links) do
-    if link.target_url == target_url then
-      return
-    end
-  end
-
   local process = self.node.process
   local target, err  = process:get(target_url, editor.Inlet)
   if target == false then
@@ -31,7 +25,7 @@ local function createLink(self, target_url)
       error(err)
     end
   end
-  -- automatically registers in self.links
+  -- automatically registers in self.links and self.links_by_target
   local link = editor.Link(self, target, target_url)
   if self.view then
     link = link:updateView()
@@ -48,6 +42,7 @@ setmetatable(lib, {
     -- array contains all links including ghost links
     -- dictionary contains keys of created targets
     links = {},
+    links_by_target = {},
   }
   setmetatable(instance, lib)
 
@@ -60,9 +55,21 @@ setmetatable(lib, {
 end})
 
 function lib:set(def)
+  local links_by_target = self.links_by_target
   if def.links then
-    for _, target_url in ipairs(def.links) do
-      createLink(self, target_url)
+    for target_url, link_def in pairs(def.links) do
+      local link = links_by_target[target_url]
+      if link then
+        -- update/remove
+        if not link_def then
+          -- FIXME: remove link
+        else
+          -- FIXME: update link
+        end
+      elseif link_def then
+        -- create
+        createLink(self, target_url)
+      end
     end
   end
 end

@@ -61,17 +61,22 @@ function lib:click(x, y, type, btn, mod)
     self.click_position = {x = x, y = y}
   elseif type == MouseRelease then
     if slot.dragging then
-      local other_slot = self.delegate.closest_slot_view
+      local other_view = self.delegate.closest_slot_view
       -- create link
       slot.dragging = false
-      if other_slot then
+      if other_view then
+        local other_slot = other_view.slot
         self.delegate.closest_slot_view = nil
-        other_slot:update()
+        other_view:update()
         self.ghost = nil
-        --slot.node:change {
-        --  x = self.current_pos.x,
-        --  y = self.current_pos.y,
-        --}
+        if slot.type == 'editor.Inlet' then
+          slot, other_slot = other_slot, slot
+        end
+        slot.node:change {
+          links = {
+            [slot.name] = other_slot:url()
+          }
+        }
       end
     end
   end

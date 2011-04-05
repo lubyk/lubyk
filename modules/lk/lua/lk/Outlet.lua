@@ -54,7 +54,7 @@ end
 local function dumpLinks(self)
   local res = {}
   for _,slot in ipairs(self.connections) do
-    table.insert(res, slot:url())
+    res[slot:url()] = true
   end
   return res
 end

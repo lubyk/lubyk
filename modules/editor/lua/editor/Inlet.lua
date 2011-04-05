@@ -133,3 +133,7 @@ function lib:deleteViews()
     self.view = nil
   end
 end
+
+function lib:url()
+  return self.node.name .. '/in/' .. self.name
+end
