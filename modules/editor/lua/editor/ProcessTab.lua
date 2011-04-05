@@ -45,3 +45,13 @@ function lib:paint(p, w, h)
   p:setPen(mimas.Pen(1, mimas.Color(0, 0, 1)))
   p:drawText(2 * text_padding, text_padding, w - 4*text_padding, h - 2*text_padding, mimas.AlignRight + mimas.AlignVCenter, self.name)
 end
+
+local MousePress,       MouseRelease,       DoubleClick =
+      mimas.MousePress, mimas.MouseRelease, mimas.DoubleClick
+
+function lib:click(x, y, type, btn, mod)
+  if type == MouseRelease then
+    -- open process in PatchingView
+    self.process:toggleView()
+  end
+end

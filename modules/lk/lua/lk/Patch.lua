@@ -57,7 +57,6 @@ setmetatable(lib, {
       instance.filepath = lk.file(-1)
     end
 
-    print('NAME--->', instance.filepath)
     -- store full script in filepath
     instance.inline   = true
     loadFromYaml(instance, filepath_or_code)
@@ -89,9 +88,8 @@ function lib:set(definitions)
   for k, v in pairs(definitions) do
     if k == 'nodes' then
       setNodes(self, v)
-    else
-      -- TODO: allow Patch attribute changes here
-      -- self[k] = v
+    elseif k == 'x' or k == 'y' or k == 'w' or k == 'h' then
+      self[k] = v
     end
   end
 end
@@ -181,7 +179,13 @@ end
 -- data table is provided, only dump parts that contain
 -- keys in the table.
 function lib:dump(data)
-  local res = {nodes = {}}
+  local res = {
+    nodes = {},
+    x = self.x,
+    y = self.y,
+    w = self.w,
+    h = self.h,
+  }
   local nodes = res.nodes
   for k, node in pairs(self.nodes) do
     nodes[k] = node:dump()
@@ -192,15 +196,21 @@ end
 --- Serialize part of the current patch as a lua table by only returning
 -- data for parts that contain keys in the given table.
 function lib:partialDump(data)
-  local res = {nodes = {}}
-  local nodes = res.nodes
-  if data and data.nodes then
-    local data_nodes = data.nodes
-    for k, node in pairs(self.nodes) do
-      local node_data = data_nodes[k]
-      if node_data then
-        nodes[k] = node:partialDump(node_data)
+  local res = {}
+  for k, v in pairs(data) do
+    if k == 'nodes' then
+      res.nodes = {}
+      local nodes = res.nodes
+      for k,node_data in pairs(v) do
+        local node = self.nodes[k]
+        if node then
+          nodes[k] = node:partialDump(node_data)
+        else
+          nodes[k] = false
+        end
       end
+    elseif k == 'x' or k == 'y' or k == 'w' or k == 'h' then
+      res[k] = self[k]
     end
   end
   return res

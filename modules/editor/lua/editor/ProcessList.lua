@@ -10,13 +10,12 @@ local lib = mimas.WidgetClass()
 editor.ProcessList = lib
 
 -- constants
-local width       = 120
-local padding     = 10
-local elem_height = 40
+local WIDTH       = 120
+local PADDING     = 10
 
 function lib:init()
   self.list  = {}
-  self.width = width
+  self.width = WIDTH
   self:setSizePolicy(mimas.Fixed, mimas.Minimum)
 end
 
@@ -54,29 +53,33 @@ function lib:removeProcess(process_name)
 end
 
 local function placeElements(self, w)
-  local y = padding
+  local y = PADDING
   for _, elem in ipairs(self.list) do
     elem:move(w - elem.width, y)
-    y = y + padding + elem.height
+    y = y + PADDING + elem.height
   end
 end
 
 function lib:resizeToFit()
-  local y = padding
+  local y = PADDING
   local width = 0
   -- find biggest
   for _, elem in ipairs(self.list) do
     if elem.width > width then
       width = elem.width
     end
-    y = y + padding + elem.height
+    y = y + PADDING + elem.height
   end
 
-  self:setSizeHint(width, y-padding)
-  placeElements(self, self.width)
+  self:setSizeHint(width, y - PADDING)
+  self:resize(width, y - PADDING)
 end
 
 function lib:resized(w, h)
   self.width  = w
   placeElements(self, w)
 end
+
+-- function lib:paint(p, w, h)
+--   p:fillRect(0, 0, w, h, mimas.colors.Green:colorWithAlpha(0.2))
+-- end

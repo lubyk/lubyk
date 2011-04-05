@@ -30,6 +30,7 @@ function lib:init(slot)
   self.type = slot.type
   self.slot = slot
   self.node = slot.node
+  self.delegate = slot.node.delegate
   self:resize(SLOTW, SLOTH)
 end
 
@@ -40,7 +41,7 @@ function lib:paint(p, w, h)
   -- draw inlets
   local color = self.node.color
 
-  local dragging = editor.main.dragging
+  local dragging = self.delegate.dragging
   if not dragging or dragging.type == self.type then
     color = color:colorWithValue(0.5)
   end

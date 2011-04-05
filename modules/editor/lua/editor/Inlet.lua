@@ -116,3 +116,20 @@ end
 
 function lib:set(def)
 end
+
+-- Delete all links and views related to this slot.
+function lib:deleteViews()
+  for _,link in ipairs(self.links) do
+    link:deleteView()
+  end
+
+  if self.ghost_links then
+    for _,link in ipairs(self.ghost_links) do
+      link:deleteView()
+    end
+  end
+
+  if self.view then
+    self.view = nil
+  end
+end

@@ -24,15 +24,16 @@ setmetatable(lib, {
   end
 
   local instance = {
-    name    = name,
-    hue     = 0.2,
-    x       = 100,
-    y       = 100,
-    inlets  = {},
-    sorted_inlets = {},
-    outlets = {},
+    name           = name,
+    hue            = 0.2,
+    x              = 100,
+    y              = 100,
+    inlets         = {},
+    sorted_inlets  = {},
+    outlets        = {},
     sorted_outlets = {},
-    process = process,
+    process        = process,
+    delegate       = process.delegate,
   }
 
   -- List of inlet prototypes (already linked) to use
@@ -212,5 +213,16 @@ function lib:fileChanged(path)
   if code ~= self.code then
     -- send remote update
     self:change {code = code}
+  end
+end
+
+function lib:deleteView()
+  self.view = nil
+  for _, slot in ipairs(self.sorted_outlets) do
+    slot:deleteViews()
+  end
+
+  for _, slot in ipairs(self.sorted_inlets) do
+    slot:deleteViews()
   end
 end

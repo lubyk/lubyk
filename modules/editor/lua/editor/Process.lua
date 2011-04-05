@@ -16,9 +16,13 @@ editor.Process = lib
 
 setmetatable(lib, {
   -- new method
- __call = function(lib, remote_service)
+ __call = function(lib, remote_service, delegate)
   local instance = {
     name           = remote_service.name,
+    x              = 100,
+    y              = 100,
+    -- The delegate is used by views.
+    delegate       = delegate,
     push           = remote_service.push,
     req            = remote_service.req,
     nodes          = {},
@@ -65,16 +69,17 @@ local function setNodes(self, nodes_def)
 end
 
 local function doSet(self, definition)
-  if definition.name then
-    self.name = definition.name
-    if self.view then
-      self.view:setName(self.name)
+  for k, v in pairs(definition) do
+    if k == 'name' then
+      self.name = v
+      if self.view then
+        self.view:setName(v)
+      end
+    elseif k == 'nodes' then
+      setNodes(self, v)
+    else
+      self[k] = v
     end
-  end
-
-  local nodes = definition.nodes
-  if nodes then
-    setNodes(self, nodes)
   end
 end
 
@@ -98,6 +103,7 @@ function lib:set(definition)
       doSet(self, definition)
       self:updateView()
     end)
+    self.view:processChanged()
   else
     doSet(self, definition)
   end
@@ -106,10 +112,6 @@ end
 -- When the ProcessView is created, it triggers this method
 -- to build/update views
 function lib:updateView()
-  -- the little view on the side
-  -- TODO: add to delegate process_list_view
-  --instance.tab = editor.ProcessTab(instance)
-
   for _,node in pairs(self.nodes) do
     node:updateView()
   end
@@ -121,6 +123,8 @@ function lib:updateView()
       end
     end
   end
+
+  self.view:processChanged()
 end
 
 -- find a node in the current process (same as lk.Patch.get).
@@ -160,4 +164,22 @@ function lib:pendingInlet(inlet_url)
     end
   end
   return inlet
+end
+
+--- Display ProcessView in the PatchingView.
+-- Should be called from withing GUI thread.
+function lib:toggleView()
+  self.delegate:toggleView(self)
+end
+
+function lib:deleteView()
+  -- TODO: why don't we use Qt signals and slots ?
+  for k, node in pairs(self.nodes) do
+    node:deleteView()
+  end
+
+  if self.view then
+    self.view:delete()
+    self.view = nil
+  end
 end

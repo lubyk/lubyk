@@ -51,11 +51,15 @@ local function removeFromList(self, links)
     end
   end
 end
+
 -- called from Outlet (source)
 function lib:delete()
   removeFromList(self, self.source.links)
   removeFromList(self, self.target.links)
+  self:deleteView()
+end
 
+function lib:deleteView()
   if self.view then
     self.view.super:__gc()
     self.view = nil

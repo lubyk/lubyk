@@ -76,6 +76,7 @@ end
 --============================================= PUBLIC
 function lib:init(node, parent_view)
   self.node = node
+  self.delegate = node.delegate
   self:setName(node.name)
   if parent_view then
     parent_view:addWidget(self)
@@ -178,23 +179,21 @@ function lib:click(x, y, type, btn, mod)
     -- store position but only start drag when moved START_DRAG_DIST away
     self.click_position = {x = x, y = y}
     self.current_pos    = {x = node.x, y = node.y}
-    self:update()
   elseif type == DoubleClick then
     -- open external editor
     node:edit()
+    self.delegate:selectNodeView(self)
   elseif type == MouseRelease then
-    if self.node.dragging then
+    if node.dragging then
       -- drop
-      self.node.dragging = false
-    else
-      editor.main:selectNodeView(self, mod == mimas.ShiftModifier)
-    end
-    app:post(function()
+      node.dragging = false
       node:change {
         x = self.current_pos.x,
         y = self.current_pos.y,
       }
-    end)
+    else
+      self.delegate:selectNodeView(self, mod == mimas.ShiftModifier)
+    end
   end
 end
 
@@ -213,10 +212,7 @@ function lib:mouse(x, y)
   if self.is_ghost then
     local x = self.current_pos.x + x - self.click_position.x
     local y = self.current_pos.y + y - self.click_position.y
-    self:move(
-      x,
-      y
-    )
+    self:move(x, y)
     self.current_pos = {x = x, y = y}
     -- Forces link redraw
     updateSlotViews(self, node.inlets, 'inlet')
@@ -226,8 +222,8 @@ end
 
 function lib:delete()
   if self.selected then
-    -- remove ghost from selection
-    editor.main:deselectNodeView(self)
+    -- remove ghost from selection my selecting only self
+    self.delegate:selectNodeView(self)
   end
   self.super:__gc()
 end

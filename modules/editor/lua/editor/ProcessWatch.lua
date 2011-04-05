@@ -36,7 +36,7 @@ setmetatable(lib, {
       end
 
       local remote_service = instance.browser.services[service_name]
-      local process = editor.Process(remote_service)
+      local process = editor.Process(remote_service, delegate)
       instance.list[service_name] = process
       instance.delegate:addProcess(process)
     elseif url == lubyk.rem_service_url then

@@ -20,6 +20,19 @@ function should.observeFiles(t)
 
   lk.writeall(filepath, 'Hello')
   t.observer = mimas.FileObserver(filepath)
+  -- DUMMY WINDOW TO STOP TEST ON CLOSE
+  t.win = mimas.Window()
+  t.label = mimas.Label('Please edit file')
+  t.win:addWidget(t.label)
+  t.win:show()
+  t.win:move(100,100)
+  t.win:resize(100,100)
+  ---------------------------------------
+
+  -- adding path twice should not raise
+  assertPass(function()
+    t.observer:addPath(filepath)
+  end)
 
   function t.observer.pathChanged(path)
     print(path, 'changed')

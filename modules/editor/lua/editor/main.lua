@@ -58,6 +58,7 @@ function lib:addProcess(process)
       -- Adding widgets must be done in the GUI thread
       -- FIXME: use updateView()
       self.process_list_view:addProcess(process)
+      self.main_view:placeElements()
     end)
   end
 end
@@ -67,7 +68,18 @@ function lib:removeProcess(process)
   if self.process_list_view then
     app:post(function()
       self.process_list_view:removeProcess(process.name)
+      process:deleteView()
+      self.main_view:placeElements()
     end)
+  end
+end
+
+function lib:toggleView(process)
+  if not process.view then
+    process.view = editor.ProcessView(process)
+    self.main_view:addProcessView(process.view)
+  else
+    process:deleteView()
   end
 end
 
@@ -82,13 +94,16 @@ local editor_cmd = _lubyk_settings.editor.editor_cmd
 function lib:editFile(filepath, node)
   -- FIXME: holds node reference (make it weak ?)
   -- FIXME: when do we remove paths ?
-  self.file_observer:addPath(filepath)
+  if not self.observed_files[filepath] then
+    self.file_observer:addPath(filepath)
+  end
   self.observed_files[filepath] = node
   if editor_cmd then
-    print(editor_cmd, filepath)
     os.execute(string.format("%s '%s'", editor_cmd, filepath))
   else
+    -- FIXME
     -- use internal editor
+    os.execute(string.format("open '%s'", filepath))
   end
 end
 
@@ -97,4 +112,9 @@ function lib:pathChanged(path)
   if node then
     node:fileChanged(path)
   end
+end
+
+function lib:setView(main_view)
+  self.main_view = main_view
+  self.process_list_view = main_view.process_list_view
 end
