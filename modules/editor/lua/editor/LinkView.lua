@@ -106,5 +106,13 @@ function lib:click(x, y, type)
     else
       self.delegate:selectLinkView(self)
     end
+  else
+    -- pass up
+    return false
   end
+end
+
+function lib:resized(w, h)
+  self.width  = w
+  self.height = h
 end

@@ -121,6 +121,35 @@ function lib:resized(w, h)
   self.height = h
 end
 
+-- loop in all links to find click
+local function clickOnLink(self, x, y, type, btn, mod)
+  local sx, sy = self:globalPosition()
+  -- click global position
+  local gx, gy = x + sx, y + sy
+  for _, node in pairs(self.process.nodes) do
+    for _, outlet in ipairs(node.sorted_outlets) do
+      for _, link in ipairs(outlet.links) do
+        local link_view = link.view
+        if link_view then
+          -- link_view global position
+          local lx, ly = link_view:globalPosition()
+          -- position in link_view
+          local rx, ry = gx - lx, gy - ly
+          if rx >= 0 and rx <= link_view.width and
+            ry >= 0 and ry <= link_view.height then
+
+            if link_view.outline:contains(rx, ry) then
+              link_view:click(rx, ry, type, btn, mod)
+              return true
+            end
+          end
+        end
+      end
+    end
+  end
+  return false
+end
+
 function lib:click(x, y, type, btn, mod)
   local process = self.process
   if type == MousePress then
@@ -133,12 +162,13 @@ function lib:click(x, y, type, btn, mod)
       -- resize
       self.resize_position = {x = x, y = y}
     else
-
+      -- Test if any link is clicked
+      clickOnLink(self, x, y, type, btn, mod)
     end
   elseif type == DoubleClick then
     if x < self.lbl_w + PAD and y < self.lbl_h + PAD then
       -- close ?
-    else
+    elseif not clickOnLink(self, x, y, type, btn, mod) then
       -- create new empty node
       process:newNode { x = x - 30, y = y - 10 }
     end
@@ -157,7 +187,7 @@ function lib:click(x, y, type, btn, mod)
         x = self.current_pos.x,
         y = self.current_pos.y,
       }
-    else
+    elseif not clickOnLink(self, x, y, type, btn, mod) then
       -- deselect all
       self.delegate:selectNodeView(nil)
       self.delegate:selectLinkView(nil)
