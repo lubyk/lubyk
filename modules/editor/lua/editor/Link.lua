@@ -56,13 +56,20 @@ end
 -- called from Outlet (source)
 function lib:delete()
   removeFromList(self, self.source.links)
-  self.source.links_by_target[self.target_url] = nil
+  local link = self.source.links_by_target[self.target_url]
+  if link == self then
+    self.source.links_by_target[self.target_url] = nil
+  end
   removeFromList(self, self.target.links)
   self:deleteView()
 end
 
 function lib:deleteView()
   if self.view then
+    local delegate = self.source.node.delegate
+    if delegate.selected_link_view == self.view then
+      delegate.selected_link_view = nil
+    end
     self.view.super:__gc()
     self.view = nil
   end

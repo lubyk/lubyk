@@ -122,9 +122,9 @@ end
 
 --- User clicked on a link: select it.
 function lib:selectLinkView(link_view)
-  local old_selection = self.selected_link
+  local old_selection = self.selected_link_view
   -- select link
-  self.selected_link = link_view
+  self.selected_link_view = link_view
   if old_selection then
     old_selection:update()
   end

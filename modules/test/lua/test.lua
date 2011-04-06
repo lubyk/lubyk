@@ -97,6 +97,23 @@ local function error_handler(err)
   return message
 end
 
+-- Prints traceback on error
+function lib.trace(fun, ...)
+  local some_args = {...}
+  local n = select("#", ...)
+  local function runner()
+    return fun(unpack(some_args, 1, n))
+  end
+  local res = { xpcall(runner, debug.traceback) }
+  if res[1] == true then
+    table.remove(res, 1)
+    return unpack(res)
+  else
+    print(res[2])
+    return nil
+  end
+end
+
 function lib.run_suite(suite)
   local test_count = 0
   local fail_count = 0
