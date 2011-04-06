@@ -61,11 +61,19 @@ end
 
 -- function to reload code
 function lib:eval(code_str)
-  local code = assert(loadstring(code_str))
+  local code, err = loadstring(code_str)
+  if not code then
+    self:error(err)
+    return
+  end
   -- code will execute in node's environment
   setfenv(code, self.env)
-  code()
-  self.code = code_str
+  local ok, err = pcall(code)
+  if not ok then
+    self:error(err)
+  else
+    self.code = code_str
+  end
 end
 
 function lib:set(definition)
