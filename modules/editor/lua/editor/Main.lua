@@ -43,6 +43,7 @@ function lib:selectNodeView(node_view, add_to_selection)
   if node_view then
     self.selected_node_views[node_view] = node_view
     node_view.selected = true
+    node_view:update()
   end
 end
 
@@ -117,4 +118,18 @@ end
 function lib:setView(main_view)
   self.main_view = main_view
   self.process_list_view = main_view.process_list_view
+end
+
+--- User clicked on a link: select it.
+function lib:selectLinkView(link_view)
+  local old_selection = self.selected_link
+  -- select link
+  self.selected_link = link_view
+  if old_selection then
+    old_selection:update()
+  end
+
+  if link_view then
+    link_view:update()
+  end
 end

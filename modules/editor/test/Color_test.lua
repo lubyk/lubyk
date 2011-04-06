@@ -65,7 +65,7 @@ function Col:paint(p, w, h)
   if self.name == 'white' then
     p:setPen(mimas.blackPen)
   else
-    p:setPen(mimas.whitePen)
+    p:setPen(mimas.WhitePen)
   end
   p:drawText(0, 0, w, h, mimas.AlignCenter, self.name)
 end

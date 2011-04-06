@@ -154,7 +154,7 @@ function lib:paint(p, w, h)
   if self.is_ghost then
     p:setPen(1, mimas.Color(0, 0, 1, GHOST_ALPHA))
   else
-    p:setPen(mimas.whitePen)
+    p:setPen(mimas.WhitePen)
   end
   p:drawText(PAD+TEXT_HPADDING, PAD+TEXT_VPADDING, w-2*TEXT_HPADDING-2*PAD, h - 2*TEXT_VPADDING - 2*PAD, mimas.AlignLeft + mimas.AlignVCenter, self.name)
 end

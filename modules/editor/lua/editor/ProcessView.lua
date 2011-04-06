@@ -157,6 +157,10 @@ function lib:click(x, y, type, btn, mod)
         x = self.current_pos.x,
         y = self.current_pos.y,
       }
+    else
+      -- deselect all
+      self.delegate:selectNodeView(nil)
+      self.delegate:selectLinkView(nil)
     end
   end
 end

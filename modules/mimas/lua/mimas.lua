@@ -23,13 +23,13 @@ mimas.Pen     = mimas_core.Pen
 mimas.Painter = mimas_core.Painter
 mimas.Path    = mimas_core.Path
 
-mimas.whitePen   = mimas.Pen(1, 0, 0, 1)
-mimas.whiteBrush = mimas.Brush(0, 0, 1)
-mimas.blackPen   = mimas.Pen(1, 0, 0, 0)
-mimas.blackBrush = mimas.Brush(0, 0, 0)
+mimas.WhitePen   = mimas.Pen(1, 0, 0, 1)
+mimas.WhiteBrush = mimas.Brush(0, 0, 1)
+mimas.BlackPen   = mimas.Pen(1, 0, 0, 0)
+mimas.BlackBrush = mimas.Brush(0, 0, 0)
 
-mimas.noPen   = mimas.Pen()
-mimas.noBrush = mimas.Brush()
+mimas.NoPen   = mimas.Pen()
+mimas.NoBrush = mimas.Brush()
 
 mimas.colors = {
   Black     = mimas.Color(0, 0, 0),
@@ -38,8 +38,9 @@ mimas.colors = {
   DarkGrey  = mimas.Color(0, 0, 0.25),
   White     = mimas.Color(0, 0, 1),
   Red       = mimas.Color(0   / 360),
-  Green     = mimas.Color(120 / 360),
   Orange    = mimas.Color(33  / 360),
+  Yellow    = mimas.Color(60  / 360),
+  Green     = mimas.Color(120 / 360),
   Blue      = mimas.Color(240 / 360),
   Pink      = mimas.Color(300 / 360),
   Purple    = mimas.Color(275 / 360),

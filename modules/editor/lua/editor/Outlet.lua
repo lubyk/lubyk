@@ -62,7 +62,7 @@ function lib:set(def)
       if link then
         -- update/remove
         if not link_def then
-          -- FIXME: remove link
+          link:delete()
         else
           -- FIXME: update link
         end

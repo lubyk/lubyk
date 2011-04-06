@@ -143,6 +143,13 @@ local function setLink(self, out_name, target_url, process)
   end
 end
 
+local function removeLink(self, out_name, target_url)
+  local outlet = self.outlets[out_name]
+  if outlet then
+    outlet:disconnect(target_url)
+  end
+end
+
 function lib:setLinks(all_links)
   local process = self.process
   for out_name, links in pairs(all_links) do
@@ -156,12 +163,12 @@ function lib:setLinks(all_links)
   end
 end
 
-local function dumpSlots(list)
+local function dumpSlots(list, links)
   local res = {}
   local has_slots = false
   for _,slot in ipairs(list) do
     has_slots = true
-    table.insert(res, slot:dump())
+    table.insert(res, slot:dump(links))
   end
 
   if has_slots then
@@ -193,9 +200,10 @@ function lib:partialDump(data)
   end
 
   if data.code or data.links then
-    -- add slots
+    -- add slots (with links)
     res.inlets  = dumpSlots(self.sorted_inlets)
-    res.outlets = dumpSlots(self.sorted_outlets)
+    res.outlets = dumpSlots(self.sorted_outlets, data.links)
   end
+
   return res
 end

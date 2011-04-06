@@ -11,7 +11,7 @@ local lib = mimas.WidgetClass()
 editor.MainView = lib
 
 -- constants
-local WIDTH   = 400
+local WIDTH   = 600
 local HEIGHT  = 400
 local PADDING = 2
 

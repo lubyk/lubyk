@@ -38,7 +38,7 @@ end
 
 -- custom paint
 function lib:paint(p, w, h)
---  p:setPen(mimas.noPen)
+--  p:setPen(mimas.NoPen)
 
   -- draw inlets
   local color
@@ -68,8 +68,6 @@ function lib:click(x, y, type, btn, mod)
         local other_slot = other_view.slot
         self.delegate.closest_slot_view = nil
         other_view:update()
-        self.ghost.link_view:delete()
-        self.ghost = nil
         if slot.type == 'editor.Inlet' then
           slot, other_slot = other_slot, slot
         end
@@ -80,7 +78,12 @@ function lib:click(x, y, type, btn, mod)
             }
           }
         }
+      else
+        -- aborted link creation
       end
+
+      self.ghost.link_view:delete()
+      self.ghost = nil
     end
   end
 end

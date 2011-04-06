@@ -41,11 +41,19 @@ namespace mimas {
  */
 class Path : public QPainterPath
 {
+  QPainterPathStroker *stroker_;
 public:
-  Path() {}
+  Path() : stroker_(NULL) {}
+
+  Path(const QPainterPath &path)
+   : QPainterPath(path),
+     stroker_(NULL) {}
 
   ~Path() {
     MIMAS_DEBUG_GC
+    if (stroker_) {
+      delete stroker_;
+    }
   }
 
   void moveTo(float x, float y) {
@@ -64,6 +72,26 @@ public:
 
   void lineTo(float x, float y) {
     QPainterPath::lineTo(x, y);
+  }
+
+  /** Return a new path that corresponds to the outline of the current
+   * path (takes a curve, returns a surface). This new path can be used
+   * to check intersection for example.
+   */
+  Path outlineForWidth(float width) {
+    if (!stroker_) {
+      stroker_ = new QPainterPathStroker();
+    }
+    stroker_->setWidth(width);
+    return Path(stroker_->createStroke(*this));
+  }
+
+  /** Return true if the *shape* contains the given point.
+   * This is a test against a surface. To test intersection with a
+   * line, use 'outlineForWidth' first.
+   */
+  bool contains(float x, float y) {
+    return QPainterPath::contains(QPointF(x, y));
   }
 };
 

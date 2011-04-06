@@ -8,10 +8,11 @@ using namespace mimas;
 
 /* ============================ Constructors     ====================== */
 
+
 /** mimas::Path::Path()
- * include/mimas/Path.h:45
+ * include/mimas/Path.h:46
  */
-static int Path_Path(lua_State *L) {
+static int Path_Path1(lua_State *L) {
   try {
     Path * retval__ = new Path();
     lua_pushclass<Path>(L, retval__, "mimas.Path");
@@ -20,6 +21,39 @@ static int Path_Path(lua_State *L) {
     return luaL_error(L, "mimas.Path.Path: %s", e.what());
   } catch (...) {
     return luaL_error(L, "mimas.Path.Path: Unknown exception");
+  }
+}
+
+
+/** mimas::Path::Path(const QPainterPath &path)
+ * include/mimas/Path.h:50
+ */
+static int Path_Path2(lua_State *L) {
+  try {
+    const QPainterPath *path = *((const QPainterPath **)luaL_checkudata(L, 1, "mimas.QPainterPath"));
+    Path * retval__ = new Path(*path);
+    lua_pushclass<Path>(L, retval__, "mimas.Path");
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Path.Path: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Path.Path: Unknown exception");
+  }
+}
+
+
+
+/** Overloaded function chooser for Path(...) */
+static int Path_Path(lua_State *L) {
+  int type__ = lua_type(L, 1);
+  int top__  = lua_gettop(L);
+  if (top__ < 1) {
+    return Path_Path1(L);
+  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "mimas.QPainterPath")) {
+    return Path_Path2(L);
+  } else {
+    // use any to raise errors
+    return Path_Path2(L);
   }
 }
 
@@ -53,7 +87,7 @@ static int Path__tostring(lua_State *L) {
 
 
 /** void mimas::Path::addRect(float x, float y, float w, float h)
- * include/mimas/Path.h:61
+ * include/mimas/Path.h:69
  */
 static int Path_addRect(lua_State *L) {
   try {
@@ -72,8 +106,27 @@ static int Path_addRect(lua_State *L) {
 }
 
 
+/** bool mimas::Path::contains(float x, float y)
+ * include/mimas/Path.h:93
+ */
+static int Path_contains(lua_State *L) {
+  try {
+    Path *self__ = *((Path**)luaL_checkudata(L, 1, "mimas.Path"));
+    float x = luaL_checknumber(L, 2);
+    float y = luaL_checknumber(L, 3);
+    bool  retval__ = self__->contains(x, y);
+    lua_pushboolean(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Path.contains: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Path.contains: Unknown exception");
+  }
+}
+
+
 /** void mimas::Path::cubicTo(float c1X, float c1Y, float c2X, float c2Y, float endPointX, float endPointY)
- * include/mimas/Path.h:57
+ * include/mimas/Path.h:65
  */
 static int Path_cubicTo(lua_State *L) {
   try {
@@ -95,7 +148,7 @@ static int Path_cubicTo(lua_State *L) {
 
 
 /** void mimas::Path::lineTo(float x, float y)
- * include/mimas/Path.h:65
+ * include/mimas/Path.h:73
  */
 static int Path_lineTo(lua_State *L) {
   try {
@@ -113,7 +166,7 @@ static int Path_lineTo(lua_State *L) {
 
 
 /** void mimas::Path::moveTo(float x, float y)
- * include/mimas/Path.h:51
+ * include/mimas/Path.h:59
  */
 static int Path_moveTo(lua_State *L) {
   try {
@@ -130,15 +183,35 @@ static int Path_moveTo(lua_State *L) {
 }
 
 
+/** Path mimas::Path::outlineForWidth(float width)
+ * include/mimas/Path.h:81
+ */
+static int Path_outlineForWidth(lua_State *L) {
+  try {
+    Path *self__ = *((Path**)luaL_checkudata(L, 1, "mimas.Path"));
+    float width = luaL_checknumber(L, 2);
+    Path  retval__ = self__->outlineForWidth(width);
+    lua_pushclass<Path>(L, retval__, "mimas.Path");
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Path.outlineForWidth: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Path.outlineForWidth: Unknown exception");
+  }
+}
+
+
 
 
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg Path_member_methods[] = {
   {"addRect"           , Path_addRect},
+  {"contains"          , Path_contains},
   {"cubicTo"           , Path_cubicTo},
   {"lineTo"            , Path_lineTo},
   {"moveTo"            , Path_moveTo},
+  {"outlineForWidth"   , Path_outlineForWidth},
   {"__tostring"        , Path__tostring},
   {"__gc"              , Path_destructor},
   {NULL, NULL},

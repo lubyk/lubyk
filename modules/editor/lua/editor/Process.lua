@@ -98,6 +98,7 @@ end
 -- If self.view is nil, only set the data without
 -- creating/changing views.
 function lib:set(definition)
+  --print(yaml.dump(definition))
   if self.view then
     app:post(function()
       doSet(self, definition)

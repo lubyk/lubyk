@@ -54,7 +54,7 @@ static int FileObserver__tostring(lua_State *L) {
 
 
 /** void mimas::FileObserver::__newindex(lua_State *L)
- * include/mimas/FileObserver.h:71
+ * include/mimas/FileObserver.h:74
  */
 static int FileObserver___newindex(lua_State *L) {
   try {
@@ -71,7 +71,7 @@ static int FileObserver___newindex(lua_State *L) {
 
 
 /** void mimas::FileObserver::addPath(const char *path)
- * include/mimas/FileObserver.h:91
+ * include/mimas/FileObserver.h:94
  */
 static int FileObserver_addPath(lua_State *L) {
   try {
@@ -88,7 +88,7 @@ static int FileObserver_addPath(lua_State *L) {
 
 
 /** void mimas::FileObserver::removePath(const char *path)
- * include/mimas/FileObserver.h:95
+ * include/mimas/FileObserver.h:98
  */
 static int FileObserver_removePath(lua_State *L) {
   try {

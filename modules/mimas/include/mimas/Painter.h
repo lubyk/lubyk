@@ -83,7 +83,13 @@ public:
   }
 
   void setBrush(const Color &color) {
-    QPainter::setBrush(color);
+    // if we do not wrap, it seems that the brush is changed
+    // BUG:
+    // p:setBrush(mimas.NoBrush)
+    // p:setBrush(mimas.colors.Red)
+    // ...
+    // p:setBrush(mimas.NoBrush) --- creates red surfaces
+    QPainter::setBrush(QBrush(color));
   }
 
   /** Set brush with the given hsva color.

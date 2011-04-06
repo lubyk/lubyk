@@ -145,45 +145,6 @@ function lib:error(...)
 --  table.insert(self.errors, string.format(...))
 end
 
-local function setLink(self, out_name, in_url, process)
-  local outlet = self.outlets[out_name]
-  if not outlet then
-    self:error("Outlet name '%s' does not exist.", out_name)
-  else
-    local slot, err = process:get(in_url, lk.Inlet)
-    if slot == false then
-      -- error
-      self:error(err)
-    elseif not slot then
-      -- slot not found
-      -- If the slot does not exist yet, make a draft to be used
-      -- when the node creates the real inlet.
-      local err
-      slot, err = process:pendingInlet(in_url)
-      if not slot then
-        self:error(err)
-        return
-      end
-    end
-    -- connect to real or pending slot
-    outlet:connect(slot)
-  end
-end
-
-function lib:setLinks(links)
-  local process = self.process
-  for out_name, def in pairs(links) do
-    if type(def) == 'table' then
-      -- multiple links
-      for _, ldef in ipairs(def) do
-        setLink(self, out_name, ldef, process)
-      end
-    else
-      setLink(self, out_name, def, process)
-    end
-  end
-end
-
 --- Try to update the remote end with new data.
 function lib:change(definition)
   self.process:change {
