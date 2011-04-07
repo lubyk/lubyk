@@ -72,11 +72,8 @@ end
 -- custom paint
 function lib:paint(p, w, h)
   local color = self.outlet.node.color
-  local dragging = editor.main.dragging
   if self.delegate.selected_link_view == self then
     color = mimas.colors.White
-  elseif dragging then
-    color = color:colorWithValue(0.38)
   elseif self.source.is_ghost or self.target.is_ghost then
     color = color:colorWithAlpha(GHOST_ALPHA)
   end

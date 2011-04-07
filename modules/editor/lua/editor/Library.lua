@@ -17,6 +17,9 @@ editor.Library = lib
 local function prepare_db(self)
   local db = self.db
   -- FIXME: only create tables if db tables do not exist yet
+
+  -- TODO: store hue
+
   if not false then
     db:exec[[
       CREATE TABLE nodes (id INTEGER PRIMARY KEY, name TEXT, path TEXT, code TEXT, keywords TEXT);
@@ -46,7 +49,7 @@ local function addNode(self, lib_name, filepath)
   local stmt = self.add_node_stmt
   local code = lk.readall(filepath)
   -- TODO: extract information from first comment such as
-  -- 'keywords', 'author', 'help', etc.
+  -- 'keywords', 'hue', 'author', 'help', etc.
   stmt:bind_names {
     name = name,
     path = filepath,
@@ -61,11 +64,13 @@ setmetatable(lib, {
   --- Create a new editor.Link reflecting the content of a remote
   -- link. If the process view is not shown, the LinkView is not
   -- created.
- __call = function(table, db)
+ __call = function(table, db, delegate)
   local self = {
+    -- delegate used for drag&drop operations in LinkView
+    delegate = delegate,
     -- Dir patterns to glob for files.
     sources = {
-      lubyk = _lubyk_settings.lubyk_lib_path .. '/lua/lubyk'
+      lubyk = _lubyk_settings.lubyk_lib_path .. '/lua/lubyk',
     },
   }
   if db then

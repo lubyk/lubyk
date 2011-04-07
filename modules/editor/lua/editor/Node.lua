@@ -162,11 +162,11 @@ function lib:edit()
     lk.writeall(filepath, self.code)
     self.need_code_write = false
   end
-  editor.main:editFile(filepath, self)
+  self.delegate:editFile(filepath, self)
 end
 
 function lib:filepath()
-  return editor.main:workPath() .. '/' .. self.process.name .. '/' .. self.name .. '.lua'
+  return self.delegate:workPath() .. '/' .. self.process.name .. '/' .. self.name .. '.lua'
 end
 
 function lib:fileChanged(path)

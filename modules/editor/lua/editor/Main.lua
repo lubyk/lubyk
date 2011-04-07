@@ -21,8 +21,11 @@ setmetatable(lib, {
     -- files edited in external editor
     observed_files      = {},
     file_observer       = mimas.FileObserver(),
-    library             = editor.Library(),
+    process_list        = {},
   }
+  -- delegate in Library is used by LibraryView for drag&drop operations.
+  instance.library = editor.Library(nil, instance)
+
   setmetatable(instance, lib)
 
   function instance.file_observer.pathChanged(path)
@@ -59,7 +62,10 @@ function lib:addProcess(process)
       -- FIXME: use updateView()
       self.process_list_view:addProcess(process)
       self.main_view:placeElements()
+      self.process_list[process.name] = process
     end)
+  else
+    self.process_list[process.name] = process
   end
 end
 
@@ -70,7 +76,10 @@ function lib:removeProcess(process)
       self.process_list_view:removeProcess(process.name)
       process:deleteView()
       self.main_view:placeElements()
+      self.process_list[process.name] = nil
     end)
+  else
+    self.process_list[process.name] = nil
   end
 end
 
@@ -134,4 +143,19 @@ function lib:selectLinkView(link_view)
   if link_view then
     link_view:update()
   end
+end
+
+-- Find a process from global position gx, gy.
+function lib:processViewAtGlobal(gx, gy)
+  for _, process in pairs(self.process_list) do
+    if process.view then
+      local view = process.view
+      local vx, vy = view:globalPosition()
+      if gx > vx and gx < vx + view.width and
+         gy > vy and gy < vy + view.height then
+        return view
+      end
+    end
+  end
+  return nil
 end

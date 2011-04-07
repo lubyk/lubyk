@@ -16,6 +16,9 @@ local PADDING     = 10
 local ROW_HEIGHT  = 10
 local BAR_HEIGHT  = 50 -- toolbar at the top
 local MIN_HEIGHT  = BAR_HEIGHT + ROW_HEIGHT + 50
+local DRAG_POS_X  = 10
+local DRAG_POS_Y  = 10
+local START_DRAG_DIST = 4
 
 local function placeElements(self)
   local w, h = self.width, self.height
@@ -24,9 +27,103 @@ local function placeElements(self)
   self.list_view:update()
 end
 
+local MousePress,       MouseRelease,       DoubleClick =
+      mimas.MousePress, mimas.MouseRelease, mimas.DoubleClick
+
+local function makeGhost(self)
+  local node_def = self.click_position.node_def
+  -- mock a node for NodeView
+  local node = {
+    name           = node_def.name,
+    x              = 0,
+    y              = 0,
+    sorted_inlets  = {},
+    sorted_outlets = {},
+    delegate       = self.delegate,
+  }
+  editor.Node.setHue(node, node_def.hue or 0.2)
+  self.ghost = editor.NodeView(node, node.delegate.main_view)
+  self.ghost:updateView()
+end
+
+local function clickInList(self, node_def, x, y, type, btn, mod)
+  if type == MousePress and node_def then
+    -- store position but only start drag when moved START_DRAG_DIST away
+    self.click_position = {
+      x        = x,
+      y        = y,
+      node_def = node_def,
+    }
+
+  elseif type == DoubleClick then
+    -- noop
+  elseif type == MouseRelease then
+    if self.dragging then
+      -- drop
+      local node_def = self.click_position.node_def
+      local process_view = self.delegate.process_view_under
+      if process_view then
+        local process = process_view.process
+        -- create node
+        -- target:change {}
+        local vx, vy = process_view:globalPosition()
+        local x = self.ghost.gx - vx
+        local y = self.ghost.gy - vy
+        process:newNode {
+          x = self.ghost.gx - vx,
+          y = self.ghost.gy - vy,
+          code = node_def.code,
+          name = node_def.name,
+        }
+        process_view:update()
+      end
+
+      -- clear
+      self.delegate.process_view_under = nil
+      self.ghost:delete()
+      self.ghost = nil
+      self.click_position = nil
+      self.dragging = nil
+    else
+      -- select row ?
+    end
+  end
+  return false -- Pass to normal list selection and click handling
+end
+
+local function manhattanDist(a, b)
+  return math.abs(b.x - a.x) + math.abs(b.y - a.y)
+end
+
+local function mouseInList(self, x, y)
+  if not self.dragging and self.click_position and manhattanDist(self.click_position, {x=x,y=y}) > START_DRAG_DIST then
+    -- start drag operation: self becomes ghost
+    self.dragging = true
+    self.gx, self.gy = self.list_view:globalPosition()
+    makeGhost(self)
+  end
+
+  local ghost = self.ghost
+  if ghost then
+    ghost.gx = self.gx + x - DRAG_POS_X
+    ghost.gy = self.gy + y - DRAG_POS_Y
+    ghost:globalMove(ghost.gx, ghost.gy)
+    local delegate = self.delegate
+    local old_process_view_under = delegate.process_view_under
+    delegate.process_view_under = delegate:processViewAtGlobal(ghost.gx + DRAG_POS_X, ghost.gy + DRAG_POS_Y)
+    if delegate.process_view_under then
+      delegate.process_view_under:update()
+    end
+    if old_process_view_under then
+      old_process_view_under:update()
+    end
+  end
+end
+
 -------------------------------------------------------- PUBLIC
 function lib:init(library)
-  self.library = library
+  self.library  = library
+  self.delegate = library.delegate
 
   --============ ListView ===============
   -- Display list of found prototypes
@@ -40,6 +137,17 @@ function lib:init(library)
     return library:node(row_i).name
   end
 
+  function self.list_view.click(x, y, type, btn, mod)
+    local row_i, node_def = self.list_view:indexAt(x, y)
+    if row_i then
+      node_def = library:node(row_i)
+    end
+    return clickInList(self, node_def, x, y, type, btn, mod)
+  end
+
+  function self.list_view.mouse(x, y)
+    mouseInList(self, x, y)
+  end
   --=====================================
 
   self.width  = WIDTH

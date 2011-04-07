@@ -10,7 +10,7 @@ using namespace mimas;
 
 
 /** mimas::HBoxLayout::HBoxLayout(lubyk::Worker *worker, QWidget *parent)
- * include/mimas/HBoxLayout.h:50
+ * include/mimas/HBoxLayout.h:55
  */
 static int HBoxLayout_HBoxLayout1(lua_State *L) {
   try {
@@ -28,7 +28,7 @@ static int HBoxLayout_HBoxLayout1(lua_State *L) {
 
 
 /** mimas::HBoxLayout::HBoxLayout()
- * include/mimas/HBoxLayout.h:52
+ * include/mimas/HBoxLayout.h:57
  */
 static int HBoxLayout_HBoxLayout2(lua_State *L) {
   try {
@@ -102,7 +102,7 @@ static int HBoxLayout__tostring(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::addLayout(QLayout *layout)
- * include/mimas/HBoxLayout.h:63
+ * include/mimas/HBoxLayout.h:68
  */
 static int HBoxLayout_addLayout(lua_State *L) {
   try {
@@ -120,7 +120,7 @@ static int HBoxLayout_addLayout(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::addSpacing(int size)
- * include/mimas/HBoxLayout.h:76
+ * include/mimas/HBoxLayout.h:81
  */
 static int HBoxLayout_addSpacing(lua_State *L) {
   try {
@@ -138,7 +138,7 @@ static int HBoxLayout_addSpacing(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::addStretch(int stretch=0)
- * include/mimas/HBoxLayout.h:70
+ * include/mimas/HBoxLayout.h:75
  */
 static int HBoxLayout_addStretch(lua_State *L) {
   try {
@@ -161,7 +161,7 @@ static int HBoxLayout_addStretch(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::addWidget(QWidget *widget, int stretch=0, int alignment=0)
- * include/mimas/HBoxLayout.h:58
+ * include/mimas/HBoxLayout.h:63
  */
 static int HBoxLayout_addWidget(lua_State *L) {
   try {
@@ -190,7 +190,7 @@ static int HBoxLayout_addWidget(lua_State *L) {
 
 
 /** QLayout* mimas::HBoxLayout::layout()
- * include/mimas/HBoxLayout.h:90
+ * include/mimas/HBoxLayout.h:95
  */
 static int HBoxLayout_layout(lua_State *L) {
   try {
@@ -208,7 +208,7 @@ static int HBoxLayout_layout(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::setContentsMargins(int left, int top, int right, int bottom)
- * include/mimas/HBoxLayout.h:86
+ * include/mimas/HBoxLayout.h:91
  */
 static int HBoxLayout_setContentsMargins(lua_State *L) {
   try {
@@ -229,7 +229,7 @@ static int HBoxLayout_setContentsMargins(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::setSpacing(int space)
- * include/mimas/HBoxLayout.h:82
+ * include/mimas/HBoxLayout.h:87
  */
 static int HBoxLayout_setSpacing(lua_State *L) {
   try {

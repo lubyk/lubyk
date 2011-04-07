@@ -59,8 +59,8 @@ class ListView : public QListView, public DeletableOutOfLua
   Worker *worker_;
   //LuaCallback paint_clbk_;
   //LuaCallback resized_clbk_;
-  //LuaCallback mouse_clbk_;
-  //LuaCallback click_clbk_;
+  LuaCallback mouse_clbk_;
+  LuaCallback click_clbk_;
   //LuaCallback keyboard_clbk_;
   QSize size_hint_;
 
@@ -70,14 +70,18 @@ public:
    worker_(worker),
    // paint_clbk_(worker),
    // resized_clbk_(worker),
-   // mouse_clbk_(worker),
-   // click_clbk_(worker),
+   mouse_clbk_(worker),
+   click_clbk_(worker),
    // keyboard_clbk_(worker),
    data_source_(worker) {
     setAttribute(Qt::WA_DeleteOnClose);
+    setSelectionMode(QAbstractItemView::SingleSelection);
     setModel(&data_source_);
     // Not editable
     setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    // FIXME: find another way to remove the dotted lines around text after click.
+    clearFocus();
   }
 
   ~ListView() {
@@ -229,6 +233,22 @@ public:
 
   // ============================================================= ListView
 
+  /** Return the index of the model at the given x,y position.
+   * @return x, y
+   */
+  LuaStackSize indexAt(float x, float y, lua_State *L) {
+    ScopedUnlock unlock(worker_);
+    // indexAt calls "data" method in data_source_ (don't ask why...)
+    QModelIndex idx = QListView::indexAt(QPoint(x, y));
+    if (idx.isValid()) {
+      lua_pushnumber(L, idx.row() + 1);
+      lua_pushnumber(L, idx.column() + 1);
+      return 2;
+    } else {
+      return 0;
+    }
+  }
+
   //void dataChanged(int top_row = -1, int top_col = -1, int bottom_row = -1, int bottom_col = -1) {
   //  // -1 == ALL changed
   //  data_source_.dataChanged(top_row, top_col, bottom_row, bottom_col);
@@ -252,15 +272,16 @@ public:
       paint_clbk_.set_lua_callback(L);
     } else if (key == "resized") {
       resized_clbk_.set_lua_callback(L);
-    } else if (key == "mouse") {
-      mouse_clbk_.set_lua_callback(L);
-    } else if (key == "click") {
-      click_clbk_.set_lua_callback(L);
     } else if (key == "keyboard") {
       keyboard_clbk_.set_lua_callback(L);
     } else if (key == "data") {
+    } else
     */
-    if (key == "data" || key == "header" || key == "rowCount" || key == "columnCount" || key == "index") {
+    if (key == "click") {
+      click_clbk_.set_lua_callback(L);
+    } else if (key == "mouse") {
+      mouse_clbk_.set_lua_callback(L);
+    } else if (key == "data" || key == "header" || key == "rowCount" || key == "columnCount" || key == "index") {
       lua_pop(L, 2);
       data_source_.__newindex(L);
       return;
@@ -271,7 +292,25 @@ public:
     lua_pop(L, 2);
     // ... <self> <key> <value>
   }
+
 protected:
+  virtual void mouseMoveEvent(QMouseEvent *event);
+
+  virtual void mousePressEvent(QMouseEvent *event) {
+    if (!click(event, MousePress))
+      QListView::mousePressEvent(event);
+  }
+
+  virtual void mouseDoubleClickEvent(QMouseEvent *event) {
+    if (!click(event, DoubleClick))
+      QListView::mouseDoubleClickEvent(event);
+  }
+
+  virtual void mouseReleaseEvent(QMouseEvent *event) {
+    if (!click(event, MouseRelease))
+      QListView::mouseReleaseEvent(event);
+  }
+
   virtual QSize sizeHint() const {
     return size_hint_;
   }
@@ -281,6 +320,7 @@ protected:
   float hue_;
 
 private:
+  bool click(QMouseEvent *event, int type);
 };
 
 } // mimas

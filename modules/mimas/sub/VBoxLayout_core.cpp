@@ -10,7 +10,7 @@ using namespace mimas;
 
 
 /** mimas::VBoxLayout::VBoxLayout(lubyk::Worker *worker, QWidget *parent)
- * include/mimas/VBoxLayout.h:52
+ * include/mimas/VBoxLayout.h:55
  */
 static int VBoxLayout_VBoxLayout1(lua_State *L) {
   try {
@@ -28,7 +28,7 @@ static int VBoxLayout_VBoxLayout1(lua_State *L) {
 
 
 /** mimas::VBoxLayout::VBoxLayout()
- * include/mimas/VBoxLayout.h:54
+ * include/mimas/VBoxLayout.h:57
  */
 static int VBoxLayout_VBoxLayout2(lua_State *L) {
   try {
@@ -102,7 +102,7 @@ static int VBoxLayout__tostring(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::addLayout(QLayout *layout)
- * include/mimas/VBoxLayout.h:65
+ * include/mimas/VBoxLayout.h:68
  */
 static int VBoxLayout_addLayout(lua_State *L) {
   try {
@@ -120,7 +120,7 @@ static int VBoxLayout_addLayout(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::addSpacing(int size)
- * include/mimas/VBoxLayout.h:78
+ * include/mimas/VBoxLayout.h:81
  */
 static int VBoxLayout_addSpacing(lua_State *L) {
   try {
@@ -138,7 +138,7 @@ static int VBoxLayout_addSpacing(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::addStretch(int stretch=0)
- * include/mimas/VBoxLayout.h:72
+ * include/mimas/VBoxLayout.h:75
  */
 static int VBoxLayout_addStretch(lua_State *L) {
   try {
@@ -161,7 +161,7 @@ static int VBoxLayout_addStretch(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::addWidget(QWidget *widget, int stretch=0, int alignment=0)
- * include/mimas/VBoxLayout.h:60
+ * include/mimas/VBoxLayout.h:63
  */
 static int VBoxLayout_addWidget(lua_State *L) {
   try {
@@ -190,7 +190,7 @@ static int VBoxLayout_addWidget(lua_State *L) {
 
 
 /** QLayout* mimas::VBoxLayout::layout()
- * include/mimas/VBoxLayout.h:92
+ * include/mimas/VBoxLayout.h:95
  */
 static int VBoxLayout_layout(lua_State *L) {
   try {
@@ -208,7 +208,7 @@ static int VBoxLayout_layout(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::setContentsMargins(int left, int top, int right, int bottom)
- * include/mimas/VBoxLayout.h:88
+ * include/mimas/VBoxLayout.h:91
  */
 static int VBoxLayout_setContentsMargins(lua_State *L) {
   try {
@@ -229,7 +229,7 @@ static int VBoxLayout_setContentsMargins(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::setSpacing(int space)
- * include/mimas/VBoxLayout.h:84
+ * include/mimas/VBoxLayout.h:87
  */
 static int VBoxLayout_setSpacing(lua_State *L) {
   try {

@@ -21,7 +21,18 @@ function mimas.Application()
     .list {
       background:rgb(38, 38, 38);
       color: rgb(180,180,180);
+      border:0;
+      padding:3px;
     }
+    .list::item {
+      padding:2px;
+    }
+    .list::item:selected {
+        border: 0;
+        color: rgb(180,180,180);
+        background: rgb(55, 55, 55);
+        padding:0px;
+     }
     .widget { background:rgb(38, 38, 38); }
     .label { background: transparent; color: rgb(180,180,180); }
     .slider { qproperty-border:2;

@@ -27,7 +27,7 @@ local SELECTED_COLOR_VALUE = 0.6
 local START_DRAG_DIST = 4
 
 local function updateSlotViews(self, list, type)
-  for _, slot in pairs(list) do
+  for _, slot in ipairs(list) do
     -- create/update views for each slot
     slot:updateView(self)
     --slot.node = self.node
@@ -87,8 +87,8 @@ end
 function lib:updateView()
   local node = self.node
   self:move(node.x, node.y)
-  updateSlotViews(self, node.inlets, 'inlet')
-  updateSlotViews(self, node.outlets, 'outlet')
+  updateSlotViews(self, node.sorted_inlets, 'inlet')
+  updateSlotViews(self, node.sorted_outlets, 'outlet')
   placeElements(self)
   -- forces redraw
   self:update()
@@ -106,25 +106,25 @@ function lib:setName(name)
   end)
 end
 
-function lib:addInlet(inlet)
-  addSlot(self.node.inlets, inlet)
-  placeElements(self)
-end
-
-function lib:removeInlet(inlet_name)
-  removeSlot(self.node.inlets, inlet_name)
-  placeElements(self)
-end
-
-function lib:addOutlet(outlet)
-  addSlot(self.node.outlets, outlet)
-  placeElements(self)
-end
-
-function lib:removeOutlet(outlet_name)
-  removeSlot(self.node.outlets, outlet_name)
-  placeElements(self)
-end
+-- function lib:addInlet(inlet)
+--   addSlot(self.node.inlets, inlet)
+--   placeElements(self)
+-- end
+--
+-- function lib:removeInlet(inlet_name)
+--   removeSlot(self.node.inlets, inlet_name)
+--   placeElements(self)
+-- end
+--
+-- function lib:addOutlet(outlet)
+--   addSlot(self.node.outlets, outlet)
+--   placeElements(self)
+-- end
+--
+-- function lib:removeOutlet(outlet_name)
+--   removeSlot(self.node.outlets, outlet_name)
+--   placeElements(self)
+-- end
 
 function lib:resized(w, h)
   self.width  = w
@@ -215,8 +215,8 @@ function lib:mouse(x, y)
     self:move(x, y)
     self.current_pos = {x = x, y = y}
     -- Forces link redraw
-    updateSlotViews(self, node.inlets, 'inlet')
-    updateSlotViews(self, node.outlets, 'outlet')
+    updateSlotViews(self, node.sorted_inlets, 'inlet')
+    updateSlotViews(self, node.sorted_outlets, 'outlet')
   end
 end
 

@@ -68,7 +68,7 @@ static int ListView__tostring(lua_State *L) {
 
 
 /** void mimas::ListView::__newindex(lua_State *L)
- * include/mimas/ListView.h:241
+ * include/mimas/ListView.h:255
  */
 static int ListView___newindex(lua_State *L) {
   try {
@@ -189,6 +189,26 @@ static int ListView_hue(lua_State *L) {
     return luaL_error(L, "mimas.ListView.hue: %s", e.what());
   } catch (...) {
     return luaL_error(L, "mimas.ListView.hue: Unknown exception");
+  }
+}
+
+
+/** LuaStackSize mimas::ListView::indexAt(float x, float y, lua_State *L)
+ * include/mimas/ListView.h:235
+ */
+static int ListView_indexAt(lua_State *L) {
+  try {
+    ListView *self__ = *((ListView**)luaL_checkudata(L, 1, "mimas.ListView"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.ListView in indexAt");
+    float x = luaL_checknumber(L, 2);
+    float y = luaL_checknumber(L, 3);
+    
+    LuaStackSize  retval__ = self__->indexAt(x, y, L);
+    return retval__;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.ListView.indexAt: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.ListView.indexAt: Unknown exception");
   }
 }
 
@@ -531,6 +551,7 @@ static const struct luaL_Reg ListView_member_methods[] = {
   {"globalPosition"    , ListView_globalPosition},
   {"hide"              , ListView_hide},
   {"hue"               , ListView_hue},
+  {"indexAt"           , ListView_indexAt},
   {"isVisible"         , ListView_isVisible},
   {"lower"             , ListView_lower},
   {"move"              , ListView_move},
