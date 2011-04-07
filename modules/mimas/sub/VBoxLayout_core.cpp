@@ -9,13 +9,14 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 
-/** mimas::VBoxLayout::VBoxLayout(QWidget *parent)
- * include/mimas/VBoxLayout.h:49
+/** mimas::VBoxLayout::VBoxLayout(lubyk::Worker *worker, QWidget *parent)
+ * include/mimas/VBoxLayout.h:52
  */
 static int VBoxLayout_VBoxLayout1(lua_State *L) {
   try {
-    QWidget *parent = *((QWidget **)luaL_checkudata(L, 1, "mimas.QWidget"));
-    VBoxLayout * retval__ = new VBoxLayout(parent);
+    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
+    QWidget *parent = *((QWidget **)luaL_checkudata(L, 2, "mimas.QWidget"));
+    VBoxLayout * retval__ = new VBoxLayout(worker, parent);
     lua_pushclass2<VBoxLayout>(L, retval__, "mimas.VBoxLayout");
     return 1;
   } catch (std::exception &e) {
@@ -27,7 +28,7 @@ static int VBoxLayout_VBoxLayout1(lua_State *L) {
 
 
 /** mimas::VBoxLayout::VBoxLayout()
- * include/mimas/VBoxLayout.h:51
+ * include/mimas/VBoxLayout.h:54
  */
 static int VBoxLayout_VBoxLayout2(lua_State *L) {
   try {
@@ -47,13 +48,13 @@ static int VBoxLayout_VBoxLayout2(lua_State *L) {
 static int VBoxLayout_VBoxLayout(lua_State *L) {
   int type__ = lua_type(L, 1);
   int top__  = lua_gettop(L);
-  if (top__ < 1) {
-    return VBoxLayout_VBoxLayout2(L);
-  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "mimas.QWidget")) {
+  if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "lubyk.Worker")) {
     return VBoxLayout_VBoxLayout1(L);
+  } else if (top__ < 1) {
+    return VBoxLayout_VBoxLayout2(L);
   } else {
     // use any to raise errors
-    return VBoxLayout_VBoxLayout1(L);
+    return VBoxLayout_VBoxLayout2(L);
   }
 }
 
@@ -101,7 +102,7 @@ static int VBoxLayout__tostring(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::addLayout(QLayout *layout)
- * include/mimas/VBoxLayout.h:61
+ * include/mimas/VBoxLayout.h:65
  */
 static int VBoxLayout_addLayout(lua_State *L) {
   try {
@@ -119,7 +120,7 @@ static int VBoxLayout_addLayout(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::addSpacing(int size)
- * include/mimas/VBoxLayout.h:73
+ * include/mimas/VBoxLayout.h:78
  */
 static int VBoxLayout_addSpacing(lua_State *L) {
   try {
@@ -137,7 +138,7 @@ static int VBoxLayout_addSpacing(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::addStretch(int stretch=0)
- * include/mimas/VBoxLayout.h:67
+ * include/mimas/VBoxLayout.h:72
  */
 static int VBoxLayout_addStretch(lua_State *L) {
   try {
@@ -160,7 +161,7 @@ static int VBoxLayout_addStretch(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::addWidget(QWidget *widget, int stretch=0, int alignment=0)
- * include/mimas/VBoxLayout.h:57
+ * include/mimas/VBoxLayout.h:60
  */
 static int VBoxLayout_addWidget(lua_State *L) {
   try {
@@ -189,7 +190,7 @@ static int VBoxLayout_addWidget(lua_State *L) {
 
 
 /** QLayout* mimas::VBoxLayout::layout()
- * include/mimas/VBoxLayout.h:87
+ * include/mimas/VBoxLayout.h:92
  */
 static int VBoxLayout_layout(lua_State *L) {
   try {
@@ -207,7 +208,7 @@ static int VBoxLayout_layout(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::setContentsMargins(int left, int top, int right, int bottom)
- * include/mimas/VBoxLayout.h:83
+ * include/mimas/VBoxLayout.h:88
  */
 static int VBoxLayout_setContentsMargins(lua_State *L) {
   try {
@@ -228,7 +229,7 @@ static int VBoxLayout_setContentsMargins(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::setSpacing(int space)
- * include/mimas/VBoxLayout.h:79
+ * include/mimas/VBoxLayout.h:84
  */
 static int VBoxLayout_setSpacing(lua_State *L) {
   try {

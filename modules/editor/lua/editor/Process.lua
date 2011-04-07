@@ -199,6 +199,8 @@ function inlet.input(val)
   output(val)
 end
 --]]
+
+
 ]=]
   self:change {nodes = {[definition.name or 'new node'] = definition}}
 end

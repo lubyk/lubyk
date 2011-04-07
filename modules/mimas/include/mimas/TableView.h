@@ -45,8 +45,6 @@ using namespace lubyk;
 
 namespace mimas {
 
-class Painter;
-
 /** The TableView is used to display data in a table.
  *
  * @dub destructor: 'dub_destroy'

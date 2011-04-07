@@ -22,7 +22,7 @@ function should.displayTable(t)
   t.view:setGridStyle(mimas.NoPen)
 
   function t.view.columnCount()
-    return #data.header
+    return #data.head
   end
 
   function t.view.rowCount()

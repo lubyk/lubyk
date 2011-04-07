@@ -1,15 +1,15 @@
 /****************************************************************************
-** Meta object code from reading C++ file 'TableView.h'
+** Meta object code from reading C++ file 'ListView.h'
 **
-** Created: Thu Apr 7 09:39:32 2011
+** Created: Thu Apr 7 17:33:51 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.1)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
-#include "../../include/mimas/TableView.h"
+#include "../../include/mimas/ListView.h"
 #if !defined(Q_MOC_OUTPUT_REVISION)
-#error "The header file 'TableView.h' doesn't include <QObject>."
+#error "The header file 'ListView.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 62
 #error "This file was generated using the moc from 4.7.1. It"
 #error "cannot be used with the include files from this version of Qt."
@@ -17,7 +17,7 @@
 #endif
 
 QT_BEGIN_MOC_NAMESPACE
-static const uint qt_meta_data_mimas__TableView[] = {
+static const uint qt_meta_data_mimas__ListView[] = {
 
  // content:
        5,       // revision
@@ -31,44 +31,44 @@ static const uint qt_meta_data_mimas__TableView[] = {
        0,       // signalCount
 
  // properties: name, type, flags
-      25,   17, 0x0a095001,
-      37,   31, 0x87095103,
+      24,   16, 0x0a095001,
+      36,   30, 0x87095103,
 
        0        // eod
 };
 
-static const char qt_meta_stringdata_mimas__TableView[] = {
-    "mimas::TableView\0QString\0class\0float\0"
+static const char qt_meta_stringdata_mimas__ListView[] = {
+    "mimas::ListView\0QString\0class\0float\0"
     "hue\0"
 };
 
-const QMetaObject mimas::TableView::staticMetaObject = {
-    { &QTableView::staticMetaObject, qt_meta_stringdata_mimas__TableView,
-      qt_meta_data_mimas__TableView, 0 }
+const QMetaObject mimas::ListView::staticMetaObject = {
+    { &QListView::staticMetaObject, qt_meta_stringdata_mimas__ListView,
+      qt_meta_data_mimas__ListView, 0 }
 };
 
 #ifdef Q_NO_DATA_RELOCATION
-const QMetaObject &mimas::TableView::getStaticMetaObject() { return staticMetaObject; }
+const QMetaObject &mimas::ListView::getStaticMetaObject() { return staticMetaObject; }
 #endif //Q_NO_DATA_RELOCATION
 
-const QMetaObject *mimas::TableView::metaObject() const
+const QMetaObject *mimas::ListView::metaObject() const
 {
     return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
 }
 
-void *mimas::TableView::qt_metacast(const char *_clname)
+void *mimas::ListView::qt_metacast(const char *_clname)
 {
     if (!_clname) return 0;
-    if (!strcmp(_clname, qt_meta_stringdata_mimas__TableView))
-        return static_cast<void*>(const_cast< TableView*>(this));
+    if (!strcmp(_clname, qt_meta_stringdata_mimas__ListView))
+        return static_cast<void*>(const_cast< ListView*>(this));
     if (!strcmp(_clname, "DeletableOutOfLua"))
-        return static_cast< DeletableOutOfLua*>(const_cast< TableView*>(this));
-    return QTableView::qt_metacast(_clname);
+        return static_cast< DeletableOutOfLua*>(const_cast< ListView*>(this));
+    return QListView::qt_metacast(_clname);
 }
 
-int mimas::TableView::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+int mimas::ListView::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
-    _id = QTableView::qt_metacall(_c, _id, _a);
+    _id = QListView::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     

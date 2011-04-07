@@ -30,6 +30,9 @@
 #define LUBYK_INCLUDE_MIMAS_V_BOX_LAYOUT_H_
 
 #include "mimas/mimas.h"
+
+using namespace lubyk;
+
 #include <QtGui/QVBoxLayout>
 
 #include <iostream>
@@ -43,10 +46,13 @@ namespace mimas {
  */
 class VBoxLayout : public QVBoxLayout, public DeletableOutOfLua
 {
- Q_OBJECT
+  Q_OBJECT
+
+  Worker *worker_;
 public:
-  VBoxLayout(QWidget *parent)
-   : QVBoxLayout(parent) {}
+  VBoxLayout(lubyk::Worker *worker, QWidget *parent)
+   : QVBoxLayout(parent),
+     worker_(worker) {}
 
   VBoxLayout() {}
 
@@ -55,10 +61,12 @@ public:
   }
 
   void addWidget(QWidget *widget, int stretch = 0, int alignment = 0) {
+    ScopedUnlock unlock(worker_);
     QVBoxLayout::addWidget(widget, stretch, (Qt::Alignment)alignment);
   }
 
   void addLayout(QLayout *layout) {
+    ScopedUnlock unlock(worker_);
     QVBoxLayout::addLayout(layout);
   }
 

@@ -9,13 +9,14 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 
-/** mimas::HBoxLayout::HBoxLayout(QWidget *parent)
- * include/mimas/HBoxLayout.h:49
+/** mimas::HBoxLayout::HBoxLayout(lubyk::Worker *worker, QWidget *parent)
+ * include/mimas/HBoxLayout.h:50
  */
 static int HBoxLayout_HBoxLayout1(lua_State *L) {
   try {
-    QWidget *parent = *((QWidget **)luaL_checkudata(L, 1, "mimas.QWidget"));
-    HBoxLayout * retval__ = new HBoxLayout(parent);
+    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
+    QWidget *parent = *((QWidget **)luaL_checkudata(L, 2, "mimas.QWidget"));
+    HBoxLayout * retval__ = new HBoxLayout(worker, parent);
     lua_pushclass2<HBoxLayout>(L, retval__, "mimas.HBoxLayout");
     return 1;
   } catch (std::exception &e) {
@@ -27,7 +28,7 @@ static int HBoxLayout_HBoxLayout1(lua_State *L) {
 
 
 /** mimas::HBoxLayout::HBoxLayout()
- * include/mimas/HBoxLayout.h:51
+ * include/mimas/HBoxLayout.h:52
  */
 static int HBoxLayout_HBoxLayout2(lua_State *L) {
   try {
@@ -47,13 +48,13 @@ static int HBoxLayout_HBoxLayout2(lua_State *L) {
 static int HBoxLayout_HBoxLayout(lua_State *L) {
   int type__ = lua_type(L, 1);
   int top__  = lua_gettop(L);
-  if (top__ < 1) {
-    return HBoxLayout_HBoxLayout2(L);
-  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "mimas.QWidget")) {
+  if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "lubyk.Worker")) {
     return HBoxLayout_HBoxLayout1(L);
+  } else if (top__ < 1) {
+    return HBoxLayout_HBoxLayout2(L);
   } else {
     // use any to raise errors
-    return HBoxLayout_HBoxLayout1(L);
+    return HBoxLayout_HBoxLayout2(L);
   }
 }
 
@@ -101,7 +102,7 @@ static int HBoxLayout__tostring(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::addLayout(QLayout *layout)
- * include/mimas/HBoxLayout.h:61
+ * include/mimas/HBoxLayout.h:63
  */
 static int HBoxLayout_addLayout(lua_State *L) {
   try {
@@ -119,7 +120,7 @@ static int HBoxLayout_addLayout(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::addSpacing(int size)
- * include/mimas/HBoxLayout.h:73
+ * include/mimas/HBoxLayout.h:76
  */
 static int HBoxLayout_addSpacing(lua_State *L) {
   try {
@@ -137,7 +138,7 @@ static int HBoxLayout_addSpacing(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::addStretch(int stretch=0)
- * include/mimas/HBoxLayout.h:67
+ * include/mimas/HBoxLayout.h:70
  */
 static int HBoxLayout_addStretch(lua_State *L) {
   try {
@@ -160,7 +161,7 @@ static int HBoxLayout_addStretch(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::addWidget(QWidget *widget, int stretch=0, int alignment=0)
- * include/mimas/HBoxLayout.h:57
+ * include/mimas/HBoxLayout.h:58
  */
 static int HBoxLayout_addWidget(lua_State *L) {
   try {
@@ -189,7 +190,7 @@ static int HBoxLayout_addWidget(lua_State *L) {
 
 
 /** QLayout* mimas::HBoxLayout::layout()
- * include/mimas/HBoxLayout.h:87
+ * include/mimas/HBoxLayout.h:90
  */
 static int HBoxLayout_layout(lua_State *L) {
   try {
@@ -207,7 +208,7 @@ static int HBoxLayout_layout(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::setContentsMargins(int left, int top, int right, int bottom)
- * include/mimas/HBoxLayout.h:83
+ * include/mimas/HBoxLayout.h:86
  */
 static int HBoxLayout_setContentsMargins(lua_State *L) {
   try {
@@ -228,7 +229,7 @@ static int HBoxLayout_setContentsMargins(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::setSpacing(int space)
- * include/mimas/HBoxLayout.h:79
+ * include/mimas/HBoxLayout.h:82
  */
 static int HBoxLayout_setSpacing(lua_State *L) {
   try {

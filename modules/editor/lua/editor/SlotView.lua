@@ -38,7 +38,7 @@ end
 
 -- custom paint
 function lib:paint(p, w, h)
---  p:setPen(mimas.NoPen)
+--  p:setPen(mimas.EmptyPen)
 
   -- draw inlets
   local color

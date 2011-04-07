@@ -28,8 +28,8 @@ mimas.WhiteBrush = mimas.Brush(0, 0, 1)
 mimas.BlackPen   = mimas.Pen(1, 0, 0, 0)
 mimas.BlackBrush = mimas.Brush(0, 0, 0)
 
-mimas.NoPen   = mimas.Pen()
-mimas.NoBrush = mimas.Brush()
+mimas.EmptyPen   = mimas.Pen()
+mimas.EmptyBrush = mimas.Brush()
 
 mimas.colors = {
   Black     = mimas.Color(0, 0, 0),

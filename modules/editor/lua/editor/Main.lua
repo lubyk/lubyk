@@ -21,6 +21,7 @@ setmetatable(lib, {
     -- files edited in external editor
     observed_files      = {},
     file_observer       = mimas.FileObserver(),
+    library             = editor.Library(),
   }
   setmetatable(instance, lib)
 
@@ -29,8 +30,6 @@ setmetatable(lib, {
   end
   return instance
 end})
-
-editor.main = editor.Main() -- singleton
 
 function lib:selectNodeView(node_view, add_to_selection)
   if not add_to_selection then
@@ -84,7 +83,10 @@ function lib:toggleView(process)
   end
 end
 
-local work_path = _lubyk_settings.editor.work_path or string.format('%s/.lk_editor', os.getenv('HOME'))
+local work_path = _lubyk_settings.editor.work_path or
+                  string.format('%s/.lubyk/editor/tmp', os.getenv('HOME'))
+
+lk.makePath(work_path)
 
 function lib:workPath()
   return work_path

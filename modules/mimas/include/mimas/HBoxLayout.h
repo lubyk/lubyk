@@ -30,6 +30,9 @@
 #define LUBYK_INCLUDE_MIMAS_H_BOX_LAYOUT_H_
 
 #include "mimas/mimas.h"
+
+using namespace lubyk;
+
 #include <QtGui/QHBoxLayout>
 
 #include <iostream>
@@ -43,10 +46,13 @@ namespace mimas {
  */
 class HBoxLayout : public QHBoxLayout, public DeletableOutOfLua
 {
- Q_OBJECT
+  Q_OBJECT
+
+  Worker *worker_;
 public:
-  HBoxLayout(QWidget *parent)
-   : QHBoxLayout(parent) {}
+  HBoxLayout(lubyk::Worker *worker, QWidget *parent)
+   : QHBoxLayout(parent),
+     worker_(worker) {}
 
   HBoxLayout() {}
 
@@ -55,10 +61,12 @@ public:
   }
 
   void addWidget(QWidget *widget, int stretch = 0, int alignment = 0) {
+    ScopedUnlock unlock(worker_);
     QHBoxLayout::addWidget(widget, stretch, (Qt::Alignment)alignment);
   }
 
   void addLayout(QLayout *layout) {
+    ScopedUnlock unlock(worker_);
     QHBoxLayout::addLayout(layout);
   }
 

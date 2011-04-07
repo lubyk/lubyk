@@ -17,7 +17,7 @@ local PADDING = 2
 
 function lib:init(main)
   self.layout = mimas.HBoxLayout(self.super)
-  self.library_view = editor.LibraryView()
+  self.library_view = editor.LibraryView(main.library)
   self.layout:addWidget(self.library_view)
   self.patching_view   = editor.PatchingView()
   self.layout:addWidget(self.patching_view)

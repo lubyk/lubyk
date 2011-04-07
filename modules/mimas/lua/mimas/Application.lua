@@ -18,6 +18,10 @@ function mimas.Application()
       color: rgb(180,180,180);
       alternate-background-color:rgb(52, 52, 52);
     }
+    .list {
+      background:rgb(38, 38, 38);
+      color: rgb(180,180,180);
+    }
     .widget { background:rgb(38, 38, 38); }
     .label { background: transparent; color: rgb(180,180,180); }
     .slider { qproperty-border:2;

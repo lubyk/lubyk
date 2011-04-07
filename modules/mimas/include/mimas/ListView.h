@@ -26,15 +26,17 @@
 
   ==============================================================================
 */
-#ifndef LUBYK_INCLUDE_MIMAS_WIDGET_H_
-#define LUBYK_INCLUDE_MIMAS_WIDGET_H_
+#ifndef LUBYK_INCLUDE_MIMAS_TABLE_VIEW_H_
+#define LUBYK_INCLUDE_MIMAS_TABLE_VIEW_H_
 
 #include "mimas/mimas.h"
 #include "mimas/constants.h"
+#include "mimas/DataSource.h"
 
 using namespace lubyk;
 
-#include <QtGui/QWidget>
+#include <QtGui/QListView>
+#include <QtGui/QHeaderView>
 #include <QtGui/QMouseEvent>
 #include <QtCore/QPoint>
 
@@ -43,55 +45,53 @@ using namespace lubyk;
 
 namespace mimas {
 
-class Painter;
 
-/** The Widget is used to display custom elements or windows.
+/** The ListView is used to display data as a list.
  *
  * @dub destructor: 'dub_destroy'
  */
-class Widget : public QWidget, public DeletableOutOfLua
+class ListView : public QListView, public DeletableOutOfLua
 {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
   Q_PROPERTY(float hue READ hue WRITE setHue)
 
   Worker *worker_;
-  LuaCallback paint_clbk_;
-  LuaCallback resized_clbk_;
-  LuaCallback mouse_clbk_;
-  LuaCallback click_clbk_;
-  LuaCallback keyboard_clbk_;
+  //LuaCallback paint_clbk_;
+  //LuaCallback resized_clbk_;
+  //LuaCallback mouse_clbk_;
+  //LuaCallback click_clbk_;
+  //LuaCallback keyboard_clbk_;
   QSize size_hint_;
+
+  DataSource  data_source_;
 public:
-  Widget(lubyk::Worker *worker) :
+  ListView(lubyk::Worker *worker) :
    worker_(worker),
-   paint_clbk_(worker),
-   resized_clbk_(worker),
-   mouse_clbk_(worker),
-   click_clbk_(worker),
-   keyboard_clbk_(worker) {
+   // paint_clbk_(worker),
+   // resized_clbk_(worker),
+   // mouse_clbk_(worker),
+   // click_clbk_(worker),
+   // keyboard_clbk_(worker),
+   data_source_(worker) {
     setAttribute(Qt::WA_DeleteOnClose);
+    setModel(&data_source_);
+    // Not editable
+    setEditTriggers(QAbstractItemView::NoEditTriggers);
   }
 
-  ~Widget() {
+  ~ListView() {
     MIMAS_DEBUG_GC
   }
 
-  // ============================ common code to all mimas Widgets
+  // ============================ [ all Widgets
 
   QString cssClass() const {
-    return parent() ? QString("window") : QString("widget");
+    return QString("list");
   }
 
   QWidget *widget() {
     return this;
-  }
-
-  void addWidget(QWidget *widget, float x=0, float y=0) {
-    ScopedUnlock unlock(worker_);
-    widget->setParent(this);
-    widget->move(x, y);
-    widget->show();
   }
 
   QObject *object() {
@@ -176,8 +176,6 @@ public:
     QWidget::setMouseTracking(enable);
   }
 
-  // =============================================================
-
   /** Close and delete the window.
    */
   bool close() {
@@ -197,31 +195,6 @@ public:
   void hide() {
     ScopedUnlock unlock(worker_);
     QWidget::hide();
-  }
-
-  void activateWindow() {
-    QWidget::activateWindow();
-  }
-
-  /** Enter or exit fullscreen mode.
-   */
-  void showFullScreen(bool enable=true) {
-    ScopedUnlock unlock(worker_);
-    if (enable) {
-      QWidget::showFullScreen();
-    } else {
-      showNormal();
-    }
-  }
-
-  bool isFullScreen() {
-    return QWidget::isFullScreen();
-  }
-
-  /** Swap fullscreen mode.
-   */
-  void swapFullScreen() {
-    showFullScreen(!QWidget::isFullScreen());
   }
 
   /** Returns (x,y) position of the widget in the global
@@ -252,6 +225,15 @@ public:
   void raise() {
     QWidget::raise();
   }
+  // ============================================================= all Widgets ]
+
+  // ============================================================= ListView
+
+  //void dataChanged(int top_row = -1, int top_col = -1, int bottom_row = -1, int bottom_col = -1) {
+  //  // -1 == ALL changed
+  //  data_source_.dataChanged(top_row, top_col, bottom_row, bottom_col);
+  //}
+  // void setViewMode()
 
   /** Set a callback function.
    *
@@ -265,6 +247,7 @@ public:
     // ... <self> <key> <value> <self>
     lua_pushvalue(L, -2);
     // ... <self> <key> <value> <self> <value>
+    /*
     if (key == "paint") {
       paint_clbk_.set_lua_callback(L);
     } else if (key == "resized") {
@@ -275,39 +258,20 @@ public:
       click_clbk_.set_lua_callback(L);
     } else if (key == "keyboard") {
       keyboard_clbk_.set_lua_callback(L);
+    } else if (key == "data") {
+    */
+    if (key == "data" || key == "header" || key == "rowCount" || key == "columnCount" || key == "index") {
+      lua_pop(L, 2);
+      data_source_.__newindex(L);
+      return;
     } else {
-      luaL_error(L, "Invalid function name '%s' (valid names are 'paint', 'mouse', 'click', 'keyboard' and 'resized').", key.c_str());
+      luaL_error(L, "Invalid function name '%s' (valid names are 'data', 'header', 'rowCount', 'columnCount' and 'index').", key.c_str());
     }
 
     lua_pop(L, 2);
     // ... <self> <key> <value>
   }
 protected:
-  virtual void mouseMoveEvent(QMouseEvent *event);
-
-  virtual void mousePressEvent(QMouseEvent *event) {
-    click(event, MousePress);
-  }
-
-  virtual void mouseDoubleClickEvent(QMouseEvent *event) {
-    click(event, DoubleClick);
-  }
-
-  virtual void mouseReleaseEvent(QMouseEvent *event) {
-    click(event, MouseRelease);
-  }
-
-  virtual void paintEvent(QPaintEvent *event);
-  virtual void resizeEvent(QResizeEvent *event);
-
-  void keyPressEvent(QKeyEvent *event) {
-    keyboard(event, true);
-  }
-
-  void keyReleaseEvent(QKeyEvent *event) {
-    keyboard(event, false);
-  }
-
   virtual QSize sizeHint() const {
     return size_hint_;
   }
@@ -317,10 +281,7 @@ protected:
   float hue_;
 
 private:
-  void paint(Painter &p);
-  void keyboard(QKeyEvent *event, bool isPressed);
-  void click(QMouseEvent *event, int type);
 };
 
 } // mimas
-#endif // LUBYK_INCLUDE_MIMAS_WIDGET_H_
+#endif // LUBYK_INCLUDE_MIMAS_TABLE_VIEW_H_
