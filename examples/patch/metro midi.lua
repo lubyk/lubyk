@@ -37,7 +37,7 @@ nodes:
         if n then
           mo:send(143 + 1, n, 50)
           mo:send(143 + 2, n2, 70)
-          sleep(100)
+          sleep(20)
           mo:send(127 + 2, n2, 70) -- noteOff
           mo:send(127 + 1, n, 70) -- noteOff
         end
