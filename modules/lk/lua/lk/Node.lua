@@ -121,6 +121,7 @@ function lib:setParams(params)
 end
 
 function lib:error(...)
+  print(debug.traceback())
   print(string.format(...))
 --  table.insert(self.errors, string.format(...))
 end

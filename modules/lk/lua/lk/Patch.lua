@@ -71,7 +71,7 @@ end})
 
 local function setNodes(self, nodes_definition)
   local nodes = self.nodes
-  lk.with_filepath(self.filepath, function()
+  lk.withFilepath(self.filepath, function()
     -- move to patch file directory
     for name, def in pairs(nodes_definition) do
       -- parsing each node
@@ -225,8 +225,13 @@ function lib:callback(url, data)
     return self:dump()
   elseif url == lubyk.update_url then
     -- async call, no return value
-    self:set(data)
-    self:notify(self:partialDump(data))
+    --print(yaml.dump(data))
+    app:post(function()
+      -- We eval code in app (GUI) thread so that
+      -- object (Widgets) creation is done in this thread.
+      self:set(data)
+      self:notify(self:partialDump(data))
+    end)
   end
 end
 

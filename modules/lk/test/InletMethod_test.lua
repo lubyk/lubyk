@@ -11,16 +11,21 @@ require 'lubyk'
 local should = test.Suite('lk.InletMethod')
 
 local function mockNode()
-  return {inlets = {}, pending_inlets={}}
+  return {
+    inlets = {},
+    sorted_inlets = {},
+    pending_inlets = {},
+    name = 'foo'
+  }
 end
 
-function should.createInlet_method()
+function should.createInletMethod()
   local node = mockNode()
   local inlet = lk.InletMethod(node)
   assertType('table', inlet)
 end
 
-function should.create_newInletsOnCall()
+function should.createNewInletsOnCall()
   local node = mockNode()
   local inlet = lk.InletMethod(node)
   assertPass(function()

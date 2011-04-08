@@ -10,12 +10,19 @@ require 'lubyk'
 
 local should = test.Suite('lk.Outlet')
 
-local function mock_node()
-  return {outlets = {}, inlets = {}, pending_inlets={}, name='foo'}
+local function mockNode()
+  return {
+    inlets         = {},
+    sorted_inlets  = {},
+    pending_inlets = {},
+    outlets        = {},
+    sorted_outlets = {},
+    name           = 'foo'
+  }
 end
 
 function should.createOutlet()
-  local node = mock_node()
+  local node = mockNode()
   local bang = lk.Outlet(node, 'bang', 'Bangs on every beat.')
   assertType('function', bang)
   assertEqual('bang', node.outlets.bang.name)
@@ -24,7 +31,7 @@ function should.createOutlet()
 end
 
 function should.dump()
-  local node = mock_node()
+  local node = mockNode()
   local bang = lk.Outlet(node, 'bang', 'Bangs on every beat.')
   local beep = lk.Inlet(node, 'beep', 'Receives bangs.')
   node.outlets.bang:connect(node.inlets.beep)
@@ -32,11 +39,11 @@ function should.dump()
   assertEqual('bang', dump.name)
   assertEqual('Bangs on every beat.', dump.info)
   assertType('table', dump.links)
-  assertEqual('foo/in/beep', dump.links[1])
+  assertTrue(dump.links['foo/in/beep'])
 end
 
 function should.connectToInlets()
-  local node = mock_node()
+  local node = mockNode()
   local bang = lk.Outlet(node, 'bang', 'Send bang.')
   local beep = lk.Inlet(node, 'beep', 'Receives bangs.')
   assertPass(function()

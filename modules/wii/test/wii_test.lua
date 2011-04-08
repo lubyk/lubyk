@@ -10,10 +10,16 @@ require 'lubyk'
 require 'mimas'
 local should = test.Suite('wii.Browser')
 
-function should.load_wii_code()
-  assertTrue(wii)
+function should.loadWiiCodeInOtherThread(t)
+  t.win = mimas.Window()
+  t.win:show()
+  app:post(function()
+    print(wii)
+    assertTrue(wii)
+  end)
 end
 
+--[[
 function should.find_first_remote(t)
   t.win = mimas.Window()
   t.lay = mimas.VBoxLayout(t.win)
@@ -63,5 +69,5 @@ function should.find_first_remote(t)
     t.win:close()
   end)
 end
-
+--]]
 test.gui()

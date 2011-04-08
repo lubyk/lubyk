@@ -6,9 +6,9 @@ function should.readall()
   assertEqual('Hello Lubyk!', lk.readall(fixture.path('io.txt')))
 end
 
-function should.change_dir()
+function should.changeDir()
   local current = lk.dir()
-  lk.with_filepath(current .. '/fixtures/baz.lua', function()
+  lk.withFilepath(current .. '/fixtures/baz.lua', function()
     assertMatch(current .. '/fixtures$', lfs.currentdir())
   end)
 end
@@ -52,7 +52,7 @@ function should.split()
   assertEqual(3, #list)
 end
 
-function should.return_empty_on_spit_starting_with_sep()
+function should.returnEmptyOnSpitStartingWithSep()
   local list = lk.split('/my/home', '/')
   assertEqual(''    , list[1])
   assertEqual('my'  , list[2])
@@ -60,30 +60,30 @@ function should.return_empty_on_spit_starting_with_sep()
   assertEqual(3, #list)
 end
 
-function should.provide_source()
+function should.provideSource()
   assertMatch('modules/lk/test/lk_test.lua$', lk.source())
 end
 
-function should.provide_dir()
+function should.provideDir()
   assertMatch('modules/lk/test$', lk.dir())
 end
 
-function should.provide_file()
+function should.provideFile()
   assertMatch('modules/lk/test/lk_test.lua$', lk.file())
 end
 
-function should.test_file_existence()
+function should.testFileExistence()
   assertEqual('file', lk.fileType(fixture.path('simple.yml')))
   assertEqual(nil, lk.fileType(fixture.path('complex.yml')))
   assertEqual('directory', lk.fileType(lk.dir()))
   assertEqual(nil, lk.fileType(nil))
 end
 
-function should.findcode_locally()
-  assertMatch('Passes input values to output', lk.findcode(lk.dir(), 'fixtures.pass'))
+function should.findcodeLocally()
+  assertMatch('Passes input values to output', lk.findcode(fixture.path(), 'pass'))
 end
 
-function should.findcode_in_libs()
+function should.findcodeInLibs()
   assertMatch('Triggers regular bangs', lk.findcode(lk.dir(), 'lubyk.Metro'))
 end
 

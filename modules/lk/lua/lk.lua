@@ -108,9 +108,9 @@ function lk.writeall(filepath, data)
   return s
 end
 
--------------------------------- lk.with_filepath(filepath, func)
+-------------------------------- lk.withFilepath(filepath, func)
 
-function lk.with_filepath(filepath, func)
+function lk.withFilepath(filepath, func)
   local cur_path = lfs.currentdir()
   local abs_path = lk.absolutizePath(filepath)
   local new_dir = string.gsub(abs_path, '/[^/]+$', '')
@@ -197,7 +197,7 @@ function lk.findcode(basedir, class_name)
   end
   -- FIXME: Beware to only optimize this by storing fullpaths
   local path = string.gsub(class_name, '%.', '/') .. '.lua'
-  local fullpath = basedir .. '/' .. path
+  local fullpath = basedir .. '/lib/' .. path
   if lk.fileType(fullpath) == 'file' then
     -- Found local file relative to patch
     return lk.readall(fullpath)

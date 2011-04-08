@@ -7,4 +7,8 @@
 
 --]]------------------------------------------------------
 wii = Autoload('wii')
-require 'wii.vendor'
+print('Loading wii')
+test.trace(function()
+  require 'wii.vendor'
+end)
+

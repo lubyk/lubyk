@@ -53,13 +53,14 @@ nodes:
     x: 70
     y: 95
     links:
-      sum: store/in/value
+      sum:
+        store/in/value: true
     params:
       val1: 0
       val2: 5
 
   store:
-    class: fixtures.store
+    class: store
     x: 70
     y: 135
 ]]

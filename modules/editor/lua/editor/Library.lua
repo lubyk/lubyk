@@ -98,9 +98,7 @@ end
 -- Recreate database from content in filesystem.
 function lib:sync()
   local db = self.db
-  db:exec[[
-    TRUNCATE nodes;
-  ]]
+  db:exec 'DELETE from nodes;'
   for lib_name, path in pairs(self.sources) do
     local dir = lk.Dir(path)
     for file in dir:glob('[.]lua$') do

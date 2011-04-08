@@ -11,7 +11,10 @@ require 'lubyk'
 local should = test.Suite('lk.OutletMethod')
 
 local function mockNode()
-  return {outlets = {}}
+  return {
+    outlets        = {},
+    sorted_outlets = {},
+  }
 end
 
 function should.createOutletMethod()

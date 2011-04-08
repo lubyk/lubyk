@@ -6,5 +6,9 @@ function lib.readall(test_file)
 end
 
 function lib.path(test_file, basepath)
-  return string.format('%s/fixtures/%s', basepath or lk.dir(-1), test_file)
+  if test_file then
+    return string.format('%s/fixtures/%s', basepath or lk.dir(-1), test_file)
+  else
+    return string.format('%s/fixtures', basepath or lk.dir(-1))
+  end
 end

@@ -50,5 +50,5 @@ nodes:
 ]]
 
 --sleep(40000)
-worker:run()
+app:exec()
 -- FIXME: when patch is deleted, all nodes do not seem to die...

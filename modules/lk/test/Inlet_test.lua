@@ -11,7 +11,13 @@ require 'lubyk'
 local should = test.Suite('lk.Inlet')
 
 local function mockNode()
-  return {inlets = {}, pending_inlets = {}, name = 'foo'}
+  return {
+    inlets         = {},
+    sorted_inlets  = {},
+    pending_inlets = {},
+    name           = 'foo'
+  }
+
 end
 
 function should.createInlet()
