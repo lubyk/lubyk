@@ -114,6 +114,25 @@ function should.notWriteGlobalEnv()
   assertEqual(1, node_test_global)
 end
 
+function should.respondToUrl()
+  local a = makeNode(nil, 'a')
+  local b = makeNode(nil, 'b')
+  b.parent = a
+  -- absolute path contains patch name
+  assertEqual('/fixtures/a', a:url())
+  assertEqual('/fixtures/a/b', b:url())
+end
+
+function should.respondToMakeAbsoluteUrl()
+  local a = makeNode(nil, 'a')
+  local b = makeNode(nil, 'b')
+  b.parent = a
+  -- absolute path contains patch name
+  assertEqual('/fixtures/bar/baz', a:makeAbsoluteUrl('bar/baz'))
+  assertEqual('/bar/baz', a:makeAbsoluteUrl('/bar/baz'))
+  assertEqual('/fixtures/a/bar/baz', b:makeAbsoluteUrl('bar/baz'))
+end
+
 function should.connectSlots()
   local a = makeNode()
   local b = makeNode()
@@ -126,7 +145,7 @@ end
 function should.connectSlotsOnSet()
   local p = makePatch()
   local a = makeNode(p)
-  -- pending links
+  -- pending links (relative url to parent/patch)
   a:set{params={scale=3}, links={scaled={['b/in/raw']=true}}}
   -- should resolve links now
   local b = makeNode(p, 'b')

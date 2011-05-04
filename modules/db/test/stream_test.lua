@@ -73,7 +73,7 @@ end
 function should.record(t)
   t.stream = db.Stream('tmp.db')
   local now = worker:now()
-  t.stream:rec_start()
+  t.stream:recStart()
   assert_true(t.stream.recording)
   assert_equal(now, t.stream.rec_offset)
   t.stream.recording = true

@@ -15,13 +15,13 @@ editor.Inlet  = lib
 -- PUBLIC
 setmetatable(lib, {
   -- new method
- __call = function(lib, node_or_list, name, definition)
+ __call = function(lib, node_or_pending, name, definition)
   local instance, node, pending_inlets
   if definition then
-    node = node_or_list
+    node = node_or_pending
     pending_inlets = node.pending_inlets
   else
-    pending_inlets = node_or_list
+    pending_inlets = node_or_pending
   end
 
   instance = pending_inlets[name]

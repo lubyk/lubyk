@@ -10,12 +10,15 @@ require 'lubyk'
 
 local should = test.Suite('lk.Patch')
 
+--local should2 = test.Suite('lk.Patch')
+--local should = {}
+
 function should.loadCode()
   assertTrue(lk.Patch)
 end
 
 local function makePatch()
-  return lk.Patch(fixture.path('simple.yml'))
+  return lk.Patch(fixture.path('project/simple/_patch.yml'))
 end
 
 function should.createEmptyPatch()
@@ -60,7 +63,6 @@ nodes:
       val2: 5
 
   store:
-    class: store
     x: 70
     y: 135
 ]]
@@ -71,8 +73,8 @@ end
 function should.createPatchWithInlineCode()
   local patch = lk.Patch(fixture.path('inline.yml'))
   assertEqual('lk.Patch', patch.type)
-  assertEqual(patch.nodes.store,               patch:get('store'))
-  assertEqual(patch.nodes.add,                 patch:get('add'))
+  assertEqual(patch.nodes.store, patch:get('/inline/store'))
+  assertEqual(patch.nodes.add,   patch:get('/inline/add'))
 end
 
 function should.addNodes()
@@ -101,24 +103,24 @@ end
 
 function should.getElementsFromUrl()
   local patch = makePatch()
-  assertEqual(patch.nodes.store,               patch:get('store'))
-  assertEqual(patch.nodes.add,                 patch:get('add'))
-  assertEqual(patch.nodes.add.inlets.val1,     patch:get('add/in/val1'))
-  assertEqual(patch.nodes.add.inlets.val2,     patch:get('add/in/val2'))
-  assertEqual(patch.nodes.add.outlets.sum,     patch:get('add/out/sum'))
-  assertEqual(patch.nodes.store.inlets.value,  patch:get('store/in/value'))
-  assertEqual(patch.nodes.store.outlets.value, patch:get('store/out/value'))
+  assertEqual(patch.nodes.store,               patch:get('/simple/store'))
+  assertEqual(patch.nodes.add,                 patch:get('/simple/add'))
+  assertEqual(patch.nodes.add.inlets.val1,     patch:get('/simple/add/in/val1'))
+  assertEqual(patch.nodes.add.inlets.val2,     patch:get('/simple/add/in/val2'))
+  assertEqual(patch.nodes.add.outlets.sum,     patch:get('/simple/add/out/sum'))
+  assertEqual(patch.nodes.store.inlets.value,  patch:get('/simple/store/in/value'))
+  assertEqual(patch.nodes.store.outlets.value, patch:get('/simple/store/out/value'))
 end
 
 function should.assertElementTypeFromUrl()
   local patch = makePatch()
-  local obj, err = patch:get('store', lk.Node)
+  local obj, err = patch:get('/simple/store', lk.Node)
   assertTrue(obj)
-  obj, err = patch:get('store', lk.Inlet)
+  obj, err = patch:get('/simple/store', lk.Inlet)
   assertMatch('expected lk.Inlet, found lk.Node', err)
-  obj, err = patch:get('add/in/val1', lk.Inlet)
+  obj, err = patch:get('/simple/add/in/val1', lk.Inlet)
   assertTrue(obj)
-  obj, err = patch:get('add/in/val1', lk.Outlet)
+  obj, err = patch:get('/simple/add/in/val1', lk.Outlet)
   assertMatch('expected lk.Outlet, found lk.Inlet', err)
 end
 

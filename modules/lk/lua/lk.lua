@@ -108,19 +108,18 @@ function lk.writeall(filepath, data)
   return s
 end
 
--------------------------------- lk.withFilepath(filepath, func)
+-------------------------------- lk.withDirectory(directory, func)
 
-function lk.withFilepath(filepath, func)
+function lk.withDirectory(new_dir, func)
   local cur_path = lfs.currentdir()
-  local abs_path = lk.absolutizePath(filepath)
-  local new_dir = string.gsub(abs_path, '/[^/]+$', '')
+  local abs_path = lk.absolutizePath(new_dir)
   -- change into the loaded file's directory before reading
-  lfs.chdir(new_dir)
+  lfs.chdir(abs_path)
   -- load file
   local ok, err = pcall(func)
   -- change back to actual directory
   lfs.chdir(cur_path)
-  assert(ok, string.format("%s (with current path '%s')", err or '', new_dir))
+  assert(ok, string.format("%s (with current path '%s')", err or '', abs_path))
 end
 
 -------------------------------- lk.split(string, sep)
@@ -128,17 +127,30 @@ end
 -- Compatibility: Lua-5.1
 function lk.split(str, pat)
   local t = {}  -- NOTE: use {n = 0} in Lua-5.0
-  local fpat = '(.-)' .. pat
-  local last_end = 1
-  local s, e, cap = str:find(fpat, 1)
-  while s do
-    table.insert(t,cap)
-    last_end = e+1
-    s, e, cap = str:find(fpat, last_end)
-  end
-  if last_end <= #str then
-    cap = str:sub(last_end)
-    table.insert(t, cap)
+  if not pat then
+    local i = 1
+    while true do
+      local s = string.sub(str, i, i)
+      if s == '' then
+        break
+      else
+        table.insert(t, s)
+      end
+      i = i + 1
+    end
+  else
+    local fpat = '(.-)' .. pat
+    local last_end = 1
+    local s, e, cap = str:find(fpat, 1)
+    while s do
+      table.insert(t,cap)
+      last_end = e+1
+      s, e, cap = str:find(fpat, last_end)
+    end
+    if last_end <= #str then
+      cap = str:sub(last_end)
+      table.insert(t, cap)
+    end
   end
   return t
 end

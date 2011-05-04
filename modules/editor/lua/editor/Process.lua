@@ -102,8 +102,8 @@ function lib:set(definition)
     app:post(function()
       doSet(self, definition)
       self:updateView()
+      self.view:processChanged()
     end)
-    self.view:processChanged()
   else
     doSet(self, definition)
   end
@@ -127,30 +127,32 @@ function lib:updateView()
   self.view:processChanged()
 end
 
--- find a node in the current process (same as lk.Patch.get).
+--- Find a node from a given url (same as lk.Patch.get).
 lib.get = lk.Patch.get
 
--- Create a pending inlet (same as lk.Patch.pendingInlet).
+--- Find a process by name.
+-- FIXME: write our own...
+lib.findProcess = lk.Patch.findProcess
 
--- Create a pending inlet.
+-- Create a pending inlet from an url relative to this process (nearly the same
+-- as lk.Patch.pendingInlet).
 function lib:pendingInlet(inlet_url)
+  -- inlet_url example:
+  --   node/in/slot
   local parts = lk.split(inlet_url, '/')
   local node_name, inlet_name
   if #parts == 3 and parts[2] == 'in' then
     node_name, inlet_name = parts[1], parts[3]
   else
-    -- FIXME: store absolute path for 'in_url' in process pending list
-    -- and resolve this list on node creation
-    return nil, string.format("Invalid link url '%s' (target not found and cannot create temporary).", in_url)
+    return nil, string.format("Invalid link url '%s'.")
   end
 
   local node = self.nodes[node_name]
   local inlet = nil
   if node then
     -- Node exists but inlet is not created yet.
-    -- inlet = editor.Inlet(inlet_name)
-    -- node.pending_inlets[inlet_name] = inlet
-    return nil, string.format("Unknown inlet '%s' in node '%s'", inlet_name, node_name)
+    inlet = editor.Inlet(node.pending_inlets, inlet_name)
+    node.pending_inlets[inlet_name] = inlet
   else
     -- node not created yet
     local pending_inlets = self.pending_inlets[node_name]
@@ -161,6 +163,7 @@ function lib:pendingInlet(inlet_url)
     inlet = pending_inlets[inlet_name]
     if not inlet then
       inlet = editor.Inlet(pending_inlets, inlet_name)
+      pending_inlets[inlet_name] = inlet
     end
   end
   return inlet

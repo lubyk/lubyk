@@ -277,7 +277,7 @@ function lib:set(hash)
 end
 
 -- Record incoming data with the current time. This
--- method only records after rec_start() has been
+-- method only records after recStart() has been
 -- called (while recording is true).
 function lib:rec(hash)
   if self.recording then
@@ -286,12 +286,12 @@ function lib:rec(hash)
   end
 end
 
-function lib:rec_start()
+function lib:recStart()
   self.rec_offset = worker:now()
   self.recording  = true
 end
 
-function lib:rec_stop()
+function lib:recStop()
   self.recording = false
 end
 

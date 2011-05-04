@@ -13,13 +13,25 @@ lib.__index   = lib
 editor.Outlet = lib
 
 -- PRIVATE
--- Create a single link
+-- Create a single link from an absolute target url of the form:
+--   /process/parent_node/node/in/slot
+-- or
+--   node/in/slot
+-- In the latter form, the "node" is searched in the same parent
+-- as the outlet's node.
 local function createLink(self, target_url)
   local process = self.node.process
   local target, err  = process:get(target_url, editor.Inlet)
+  
   if target == false then
     error(err)
   elseif not target then
+    local process_name, sub_url = string.match(target_url, '^/([^/]+)/(.+)$')
+    if process_name then
+      -- Resolve process
+      process = process:findProcess(process_name)
+      target_url = sub_url
+    end
     target, err = process:pendingInlet(target_url)
     if not target then
       error(err)

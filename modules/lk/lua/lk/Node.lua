@@ -59,6 +59,13 @@ function env_mt.__index(env, name)
   return gvar
 end
 
+function lib:url()
+  if self.parent then
+    return self.parent:url() .. '/' .. self.name
+  else
+    return self.process:url() .. '/' .. self.name
+  end
+end
 -- function to reload code
 function lib:eval(code_str)
   local code, err = loadstring(code_str)
@@ -83,18 +90,26 @@ function lib:set(definition)
     self:setParams(params)
   end
 
-  -- should protect with pcall to avoid breaking all if it fails
-  if definition.class then
-    -- find source in package.paths
-    local code = lk.findcode(definition.class)
+  if definition.code and definition.code ~= self.code then
+    self:eval(definition.code)
+  elseif definition.class then
+    local code = self.process:findClass(definition.class)
+    if code then
+      self.class = definition.class
+      self:eval(code)
+    else
+      -- FIXME: set error on Node
+      error(string.format("Could not find source code for '%s'.", self:url()))
+    end
+  elseif not self.code then
+    -- Try to find code
+    local code = self.process:findCode(self:url())
     if code then
       self:eval(code)
     else
       -- FIXME: set error on Node
-      error(string.format("Could not find source code for '%s'.", definition.class))
+      error(string.format("Could not find source code for '%s'.", self:url()))
     end
-  elseif definition.code and definition.code ~= self.code then
-    self:eval(definition.code)
   end
 
   for k, v in pairs(definition) do
@@ -121,9 +136,18 @@ function lib:setParams(params)
 end
 
 function lib:error(...)
-  print(debug.traceback())
   print(string.format(...))
+  print(debug.traceback())
+  print('----------------')
 --  table.insert(self.errors, string.format(...))
+end
+
+function lib:makeAbsoluteUrl(url)
+  if string.match(url, '^/') then
+    return url
+  else
+    return (self.parent or self.process):url() .. '/' .. url
+  end
 end
 
 local function setLink(self, out_name, target_url, process)
@@ -131,7 +155,8 @@ local function setLink(self, out_name, target_url, process)
   if not outlet then
     self:error("Outlet name '%s' does not exist.", out_name)
   else
-    local slot, err = process:get(target_url, lk.Inlet)
+    -- change relative url to absolute url
+    local slot, err = process:get(self:makeAbsoluteUrl(target_url), lk.Inlet)
     if slot == false then
       -- error
       self:error(err)
@@ -162,11 +187,15 @@ end
 function lib:setLinks(all_links)
   local process = self.process
   for out_name, links in pairs(all_links) do
-    for target_url, link_def in pairs(links) do
-      if link_def then
-        setLink(self, out_name, target_url, process)
-      else
-        removeLink(self, out_name, target_url)
+    if type(links) ~= 'table' then
+      setLink(self, out_name, links, process)
+    else
+      for target_url, link_def in pairs(links) do
+        if link_def then
+          setLink(self, out_name, target_url, process)
+        else
+          removeLink(self, out_name, target_url)
+        end
       end
     end
   end

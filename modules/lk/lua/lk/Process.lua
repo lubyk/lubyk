@@ -17,7 +17,6 @@ setmetatable(lib, {
   -- new method
  __call = function(lib, filepath_or_code)
   local instance = lk.Patch(filepath_or_code, true)
-  instance.name = string.match(instance.filepath, '([^%./]+)%.[a-z]+')
   -- TODO: can we avoid this extra step by passing
   -- self in callback ?
   instance.service = lk.Service(instance.name, function(...)

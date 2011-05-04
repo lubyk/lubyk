@@ -17,20 +17,19 @@ setmetatable(lib, {
   -- lk.Inlet(node)
   -- Create a new inlet
  __call = function(lib, node, name, ...)
+  local instance
   if type(node) == 'string' then
-    name = node
+    instance = {name = node}
     -- pending inlet
-    local instance = {name = name}
     setmetatable(instance, lib)
-    return instance
   else
-    local instance = node.inlets[name]
+    instance = node.inlets[name]
     if not instance then
       instance = node.pending_inlets[name]
       if instance then
         node.pending_inlets[name] = nil
       else
-        instance = {}
+        instance = {name = name}
         setmetatable(instance, lib)
       end
       -- set node
@@ -39,8 +38,14 @@ setmetatable(lib, {
       table.insert(node.sorted_inlets, instance)
     end
     instance:set(name, ...)
-    return instance
   end
+  if not instance.receive then
+    -- temporary dummy method
+    function instance.receive(...)
+      print(string.format("'function inlet.%s' not defined.", instance.name))
+    end
+  end
+  return instance
 end})
 
 function lib:set(name, info)
@@ -49,7 +54,7 @@ function lib:set(name, info)
 end
 
 function lib.receive(...)
-  print('Inlet receive function not set.')
+  print('Inlet function not set.')
 end
 
 function lib:dump()

@@ -8,7 +8,7 @@ end
 
 function should.changeDir()
   local current = lk.dir()
-  lk.withFilepath(current .. '/fixtures/baz.lua', function()
+  lk.withDirectory(current .. '/fixtures', function()
     assertMatch(current .. '/fixtures$', lfs.currentdir())
   end)
 end
@@ -49,6 +49,14 @@ function should.split()
   assertEqual('cat'  , list[1])
   assertEqual('dog'  , list[2])
   assertEqual('mouse', list[3])
+  assertEqual(3, #list)
+end
+
+function should.split_chars()
+  local list = lk.split('cat')
+  assertEqual('c', list[1])
+  assertEqual('a', list[2])
+  assertEqual('t', list[3])
   assertEqual(3, #list)
 end
 
