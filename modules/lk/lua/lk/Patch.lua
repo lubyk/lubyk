@@ -97,6 +97,7 @@ setmetatable(lib, {
   return self
 end})
 
+
 local function setNodes(self, nodes_definition)
   local nodes = self.nodes
   lk.withDirectory(self.work_dir, function()
@@ -179,7 +180,7 @@ function lib:get(url, mt)
 
   local res = process:findByPath(path)
   local res_mt = getmetatable(res)
-  if mt and mt ~= res_mt then
+  if res and mt and mt ~= res_mt then
     local msg = ''
     if mt.type and res_mt.type then
       msg = string.format('expected %s, found %s', mt.type, res_mt.type)
@@ -197,6 +198,8 @@ function lib:get(url, mt)
 end
 
 -- FIXME: cache relative url !
+--
+-- ALSO USED BY editor.Process
 function lib:findByPath(path)
   local parts = lk.split(path, '/')
   -- current object

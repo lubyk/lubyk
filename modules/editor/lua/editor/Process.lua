@@ -16,33 +16,17 @@ editor.Process = lib
 
 setmetatable(lib, {
   -- new method
- __call = function(lib, remote_service, delegate)
-  local instance = {
-    name           = remote_service.name,
+ __call = function(lib, name)
+  local self = {
+    name           = name,
     x              = 100,
     y              = 100,
-    -- The delegate is used by views.
-    delegate       = delegate,
-    push           = remote_service.push,
-    req            = remote_service.req,
     nodes          = {},
     pending_inlets = {},
   }
 
-  instance.hue = remote_service.info.hue or 0.5
-
-  --======================================= SUB client
-  instance.sub = zmq.SimpleSub(function(changes)
-    -- we receive notifications, update content
-    instance:set(changes)
-  end)
-  instance.sub:connect(remote_service.sub_url)
-
-  setmetatable(instance, lib)
-
-  instance:sync()
-
-  return instance
+  setmetatable(self, lib)
+  return self
 end})
 
 --- Nodes in patch changed, store change and update view if needed.
@@ -129,8 +113,11 @@ end
 --- Find a node from a given url (same as lk.Patch.get).
 lib.get = lk.Patch.get
 
+--- Find a node from a path (same as lk.Patch.findByPath).
+lib.findByPath = lk.Patch.findByPath
+
 --- Find a process by name.
--- FIXME: write our own...
+-- FIXME: write our own... Why ?
 lib.findProcess = lk.Patch.findProcess
 
 -- Create a pending inlet from an url relative to this process (nearly the same
@@ -204,4 +191,33 @@ end
 
 ]=]
   self:change {nodes = {[definition.name or 'new node'] = definition}}
+end
+
+-- Process is going offline. TODO: All inlets that are linked should
+-- become pending_inlets.
+function lib:connect(remote_service, delegate, process_watch)
+  -- The delegate is used by views.
+  self.delegate       = delegate
+  -- This is used to resolve links.
+  self.process_watch  = process_watch
+  self.push           = remote_service.push
+  self.req            = remote_service.req
+
+  self.hue = remote_service.info.hue or 0.5
+
+  --======================================= SUB client
+  self.sub = zmq.SimpleSub(function(changes)
+    -- we receive notifications, update content
+    self:set(changes)
+  end)
+  self.sub:connect(remote_service.sub_url)
+
+  self:sync()
+end
+
+-- Process is going offline. TODO: All inlets that are linked should
+-- become pending_inlets.
+function lib:disconnect()
+  -- Find linked inlets....
+  -- disconnect self.sub ?
 end

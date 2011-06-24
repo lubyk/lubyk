@@ -22,7 +22,7 @@ editor.Outlet = lib
 local function createLink(self, target_url)
   local process = self.node.process
   local target, err  = process:get(target_url, editor.Inlet)
-  
+
   if target == false then
     error(err)
   elseif not target then
