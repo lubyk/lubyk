@@ -21,5 +21,18 @@ function mt:addLayout(other)
 end
 
 function mimas.Widget(...)
-  return constr(worker, ...)
+  local win = constr(worker, ...)
+  -- default keyboard action
+  -- TODO: add CMD+W
+  function win.keyboard(key, on)
+    if on then
+      if key == mimas.ESC then
+        -- ESC
+        win:close()
+      elseif key == mimas.Space then
+        win:swapFullScreen()
+      end
+    end
+  end
+  return win
 end

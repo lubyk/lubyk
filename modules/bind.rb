@@ -5,6 +5,8 @@ require 'pathname'
 require 'htmlentities'
 require 'fileutils'
 
+modules_to_bind = ARGV
+
 HtmlDecode = HTMLEntities.new
 
 def get_dub_info(xml)
@@ -62,6 +64,8 @@ modules = {
   },
   'wii'   => %w{Browser Remote},
 }.each do |mod_name, opts|
+  next unless modules_to_bind.nil? || modules_to_bind.include?(mod_name)
+  puts "Binding #{mod_name}"
   if !opts.kind_of?(Hash)
     opts = {'class' => opts}
   end
@@ -122,19 +126,21 @@ modules = {
   end
 end
 
-# Update the mimas/core/mimas.cpp file
-mimas_file = BINDINGS_PATH + "modules/mimas/sub/core/mimas.cpp"
-file = File.read(mimas_file)
-File.open(mimas_file, 'wb') do |f|
-  file.sub!(%r{//\s*\[\[DECLARE.*?\]\]}m,
-%Q{// [[DECLARE
-#{mimas_declare.join("\n")}
-// ]]})
-
-  file.sub!(%r{//\s*\[\[LOAD.*?\]\]}m,
-%Q{// [[LOAD
-  #{mimas_load.join("\n  ")}
+if modules_to_bind.nil? || modules_to_bind.include?('mimas')
+  # Update the mimas/core/mimas.cpp file
+  mimas_file = BINDINGS_PATH + "modules/mimas/sub/core/mimas.cpp"
+  file = File.read(mimas_file)
+  File.open(mimas_file, 'wb') do |f|
+    file.sub!(%r{//\s*\[\[DECLARE.*?\]\]}m,
+  %Q{// [[DECLARE
+  #{mimas_declare.join("\n")}
   // ]]})
 
-  f.puts file
+    file.sub!(%r{//\s*\[\[LOAD.*?\]\]}m,
+  %Q{// [[LOAD
+    #{mimas_load.join("\n  ")}
+    // ]]})
+
+    f.puts file
+  end
 end

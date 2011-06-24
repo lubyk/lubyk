@@ -112,6 +112,17 @@ function should.getElementsFromUrl()
   assertEqual(patch.nodes.store.outlets.value, patch:get('/simple/store/out/value'))
 end
 
+function should.getElementsFromPath()
+  local patch = makePatch()
+  assertEqual(patch.nodes.store,               patch:findByPath('store'))
+  assertEqual(patch.nodes.add,                 patch:findByPath('add'))
+  assertEqual(patch.nodes.add.inlets.val1,     patch:findByPath('add/in/val1'))
+  assertEqual(patch.nodes.add.inlets.val2,     patch:findByPath('add/in/val2'))
+  assertEqual(patch.nodes.add.outlets.sum,     patch:findByPath('add/out/sum'))
+  assertEqual(patch.nodes.store.inlets.value,  patch:findByPath('store/in/value'))
+  assertEqual(patch.nodes.store.outlets.value, patch:findByPath('store/out/value'))
+end
+
 function should.assertElementTypeFromUrl()
   local patch = makePatch()
   local obj, err = patch:get('/simple/store', lk.Node)
@@ -128,6 +139,13 @@ function should.connectNodes()
   local nodes = makePatch().nodes
   nodes.add.inlets.val1.receive(15)
   assertEqual(20, nodes.store.env.value)
+end
+
+function should.findProcess()
+  local patch = makePatch()
+  patch.process_watch = {pending_processes = {}}
+  local other = patch:findProcess('foobar')
+  assertEqual('lk.RemoteProcess', other.type)
 end
 
 test.all()

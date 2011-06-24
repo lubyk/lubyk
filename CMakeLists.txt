@@ -67,8 +67,8 @@ set(DOXYGEN_OUTPUT_DIR ${CMAKE_BINARY_DIR}/doc)
 set(DOXYGEN_OUTPUT ${DOXYGEN_OUTPUT_DIR}/xml/index.xml)
 set(LUBYK_BUILD_DOXYGEN_DOCS ON CACHE BOOL "Build HTML+XML documentation with Doxygen")
 
-# The code below is moved here so that 'dub' target (Doxygen based binding generator
-# can depend on this action).
+# The code below is moved here so that 'dub' target (Doxygen based binding generator)
+# can depend on this action.
 if(LUBYK_BUILD_DOXYGEN_DOCS AND DOXYGEN_FOUND)
   file (GLOB MODULES ${LUBYK_SOURCE_DIR}/modules/*)
   foreach(MODULE ${MODULES})

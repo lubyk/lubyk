@@ -35,7 +35,11 @@ function lib:updateView()
   if not self.view and self.target.view and self.source.view then
     -- Create link view
     self.view = editor.LinkView(self.source.view, self.target.view)
-    self.source.node.process.view:addWidget(self.view)
+    if self:isCrossProcess() then
+      self.source.node.process.delegate.main_view:addWidget(self.view)
+    else
+      self.source.node.process.view:addWidget(self.view)
+    end
     self.view:lower() -- send to back
   end
 
@@ -73,4 +77,8 @@ function lib:deleteView()
     self.view.super:__gc()
     self.view = nil
   end
+end
+
+function lib:isCrossProcess()
+  return self.source.node.process ~= self.target.node.process
 end

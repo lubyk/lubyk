@@ -11,6 +11,8 @@
 --]]------------------------------------------------------
 local lib = {}
 midi.Note = lib
+local reverse = {}
+midi.Note.name = reverse
 
 local OCTAVES = {[''] = 0}
 for i=-1,9 do
@@ -39,7 +41,11 @@ local BASE_NOTES = {
 
 for oct_name, delta in pairs(OCTAVES) do
   for note, base_value in pairs(BASE_NOTES) do
-    lib[string.format('%s%s', note, oct_name)] = base_value + 12 * delta
+    local value = base_value + 12 * delta
+    local name  = string.format('%s%s', note, oct_name)
+    lib[name] = value
+    if oct_name ~= '' then
+      reverse[value] = name
+    end
   end
 end
-

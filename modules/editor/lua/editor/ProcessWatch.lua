@@ -3,9 +3,9 @@
   editor.ProcessWatch
   -------------------
 
-  Watches for remote Processes and creates new Processes
-  when they are found. When a process disappears: remove
-  the given Process.
+  Watches for remote lk.Processes and creates new
+  editor.Process when they are found. When a process
+  disappears: remove said Process.
 
 --]]------------------------------------------------------
 

@@ -18,6 +18,7 @@ file (GLOB MODULES ${CMAKE_CURRENT_SOURCE_DIR}/*)
 list(REMOVE_ITEM MODULES ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
 list(REMOVE_ITEM MODULES ${CMAKE_CURRENT_SOURCE_DIR}/CMakeSub.txt)
 list(REMOVE_ITEM MODULES ${CMAKE_CURRENT_SOURCE_DIR}/bind.rb)
+list(REMOVE_ITEM MODULES ${CMAKE_CURRENT_SOURCE_DIR}/.DS_Store)
 
 
 # ==============================================================================
@@ -146,6 +147,17 @@ foreach (MODULE ${MODULES})
       add_subdirectory(${MODULE}/vendor)
       add_dependencies(${MODULE_NAME} "${MODULE_NAME}_vendor")
     endif(EXISTS ${MODULE}/vendor/CMakeLists.txt)
+
+    # ----------------------------------------------------------------------------------
+    #  module_bind
+    # ----------------------------------------------------------------------------------
+    file(GLOB MODULE_HEADERS ${MODULE}/include/${MODULE}/*.h)
+    add_custom_target("${MODULE_NAME}_bind" ALL
+       COMMAND ruby ${LUBYK_SOURCE_DIR}/modules/bind.rb ${MODULE_NAME}
+       DEPENDS ${MODULE_HEADERS})
+
+    add_dependencies(${MODULE_NAME} "${MODULE_NAME}_bind")
+
 
     # ----------------------------------------------------------------------------------
     #  module_lua

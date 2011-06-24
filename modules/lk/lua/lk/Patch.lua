@@ -44,6 +44,9 @@ local function setFilePath(self, filepath)
   self.filepath = filepath
   -- [work_dir]/PatchName/patch_file.[lua|yml]
   local patch_base = lk.directory(filepath)
+  if patch_base == '.' then
+    patch_base = lfs.currentdir()
+  end
   self.name = string.match(patch_base, '([^%./]+)$')
   self.work_dir = lk.directory(patch_base)
 end
@@ -61,6 +64,15 @@ setmetatable(lib, {
   setmetatable(self, lib)
   if not filepath_or_code then
     return self
+  end
+
+  if is_process then
+    -- Create processes watch before loading code (to resolve remote
+    -- processes).
+    --
+    --- Watch for other processes on the network and create
+    -- lk.RemoteProcess proxies when needed.
+    self.process_watch = lk.ProcessWatch(self)
   end
 
   if string.match(filepath_or_code, '\n') then
@@ -94,6 +106,7 @@ local function setNodes(self, nodes_definition)
       local node = nodes[name]
       if not node then
         node = lk.Node(self, name)
+        nodes[name] = node
       end
       node:set(def)
     end
@@ -120,9 +133,7 @@ function lib:pendingInlet(inlet_url)
   if #parts == 3 and parts[2] == 'in' then
     node_name, inlet_name = parts[1], parts[3]
   else
-    -- FIXME: store absolute path for 'inlet_url' in process pending list
-    -- and resolve this list on node creation
-    return nil, string.format("Invalid link url '%s' (target not found and cannot create temporary).", inlet_url)
+    return nil, string.format("Invalid pendingInlet url '%s'.")
   end
 
   local node = self.nodes[node_name]
@@ -155,24 +166,45 @@ end
 --
 -- ALSO USED BY editor.Process
 function lib:get(url, mt)
-  local parts = lk.split(url, '/')
-  -- current object
-  local c
+  -- not greedy regexp
+  local process_name, path = string.match(url, '^/([^/]*)/(.*)$')
 
-  -- type of next current object
-  local c_next
-  if string.match(url, '^/') then
-    c_next = 'process'
-    table.remove(parts, 1)
+  local process
+  if process_name then
+    process = self:findProcess(process_name)
   else
-    c = self
-    c_next = 'node'
+    process = self
+    path    = url
   end
 
+  local res = process:findByPath(path)
+  local res_mt = getmetatable(res)
+  if mt and mt ~= res_mt then
+    local msg = ''
+    if mt.type and res_mt.type then
+      msg = string.format('expected %s, found %s', mt.type, res_mt.type)
+    elseif res.__tostring then
+      msg = string.format('found %s', res:to__string())
+    elseif not res then
+      msg = 'found nil'
+    else
+      msg = 'found ?'
+    end
+    return false, string.format("Invalid object at '%s' (%s).", url, msg)
+  else
+    return res
+  end
+end
+
+-- FIXME: cache relative url !
+function lib:findByPath(path)
+  local parts = lk.split(path, '/')
+  -- current object
+  local c = self
+  local c_next = 'node'
+
   for i, name in ipairs(parts) do
-    if c_next == 'process' then
-      c, c_next = self:findProcess(name), 'node'
-    elseif c_next == 'node' then
+    if c_next == 'node' then
       -- Find node
       if name == 'in' then
         c, c_next = c.inlets, 'slot'
@@ -190,25 +222,10 @@ function lib:get(url, mt)
       c = nil
     end
     if c == nil then
-      return nil, string.format("Cannot find '%s' while resolving '%s'.", name, url)
+      return nil, string.format("Cannot find '%s' while resolving '%s'.", name, path)
     end
   end
-  local c_mt = getmetatable(c)
-  if mt and mt ~= c_mt then
-    local msg = ''
-    if mt.type and c_mt.type then
-      msg = string.format('expected %s, found %s', mt.type, c_mt.type)
-    elseif c.__tostring then
-      msg = string.format('found %s', c:to__string())
-    elseif not c then
-      msg = 'found nil'
-    else
-      msg = 'found ?'
-    end
-    return false, string.format("Invalid object at '%s' (%s).", url, msg)
-  else
-    return c
-  end
+  return c
 end
 
 function lib:url()
@@ -291,11 +308,12 @@ end
 --================= Process related methods ===========================
 
 --- Answering requests to Process.
-function lib:callback(url, data)
+function lib:callback(url, ...)
   if url == lubyk.dump_url then
     -- sync call, return content
     return self:dump()
   elseif url == lubyk.update_url then
+    local data = ...
     -- async call, no return value
     --print(yaml.dump(data))
     app:post(function()
@@ -304,6 +322,14 @@ function lib:callback(url, data)
       self:set(data)
       self:notify(self:partialDump(data))
     end)
+  else
+    -- Inter process communication
+    local inlet = self:get(url)
+    if inlet then
+      inlet.receive(...)
+    else
+      print('Received calls on missing inlet', url)
+    end
   end
 end
 
@@ -317,11 +343,15 @@ end
 
 --- In order to resolve cross-process links, return a process by a given name.
 -- ALSO USED BY editor.Process
-function lib:findProcess(name)
-  if name == self.name then
+function lib:findProcess(process_name)
+  if process_name == self.name then
     return self
+  elseif self.process_watch then
+    -- RemoteProcess
+    return self.process_watch:findProcess(process_name)
   else
-    -- FIXME: found process on network...
+    -- TODO: better error handling
+    print(string.format("Cannot find process '%s' (no lk.ProcessWatch).", process_name))
     return nil
   end
 end
@@ -329,5 +359,28 @@ end
 --- Return the patches url. This is the same as the patch's name for non-nested
 -- nodes.
 function lib:url()
+  if not self.name then
+    print(debug.traceback())
+  end
   return '/' .. self.name
+end
+
+-- Callback on found process in ProcessWatch. Not used for the moment.
+function lib:addProcess(remote_process)
+  if remote_process.name == self.name then
+    -- do not register
+  else
+    -- Registration in done in the process watch
+    --print(self.name, 'ADD', remote_process.name)
+  end
+end
+
+-- Callback on removed process in ProcessWatch. Not used for the moment.
+function lib:removeProcess(remote_process)
+  if remote_process.name == self.name then
+    -- do not register
+  else
+    -- Unregistration in done in the process watch
+    --print(self.name, 'REMOVE', remote_process.name)
+  end
 end

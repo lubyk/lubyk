@@ -91,7 +91,7 @@ public:
     if (key == "tick") {
       set_lua_callback(L);
     } else {
-      luaL_error(L, "Invalid function name '%s' (should be 'trigger').", key.c_str());
+      luaL_error(L, "Invalid function name '%s' (should be 'tick').", key.c_str());
     }
 
     lua_pop(L, 2);

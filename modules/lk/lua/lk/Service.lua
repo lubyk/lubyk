@@ -26,40 +26,41 @@ setmetatable(lib, {
       return nil
     end
   end
-  local instance = {name = name, callback = callback, info = {}}
+  local self = {name = name, callback = callback, info = {}}
 
   --======================================= PUB server
-  instance.pub = zmq.Pub()
+  self.pub = zmq.Pub()
 
   --======================================= REP server (sync)
-  instance.rep = zmq.SimpleRep(function(...)
-    -- we do not pass callback directly so that we can update the function with instance.callback=..
+  self.rep = zmq.SimpleRep(function(...)
+    -- we do not pass callback directly so that we can update the function with self.callback=..
     if ... == lubyk.info_url then
       -- lubyk special commands
-      if not instance.info.pub then
+      if not self.info.pub then
         -- publish and pull ports
-        instance.info.pub  = instance.pub:port()
-        instance.info.pull = instance.pull:port()
+        self.info.pub  = self.pub:port()
+        self.info.pull = self.pull:port()
       end
-      return instance.info
+      return self.info
     else
       -- handle requests here. Maybe we need two different callbacks
       -- for reply and pull...
-      return instance.callback(...)
+      return self.callback(...)
     end
   end)
 
   --======================================= PULL server (async)
-  instance.pull = zmq.SimplePull(function(...)
+  self.pull = zmq.SimplePull(function(...)
     -- handle requests here
-    instance.callback(...)
+    self.callback(...)
   end)
 
   --======================================= announce REP server
-  instance.registration = mdns.Registration(service_type, name, instance.rep:port())
+  print('Service', service_type, name, self.pull:port())
+  self.registration = mdns.Registration(service_type, name, self.rep:port())
 
-  setmetatable(instance, lib)
-  return instance
+  setmetatable(self, lib)
+  return self
 end})
 
 function lib:notify(...)

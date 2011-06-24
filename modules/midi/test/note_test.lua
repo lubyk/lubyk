@@ -17,4 +17,8 @@ end
 function should.mapMiddleC()
   assertEqual(60, midi.Note['C4'])
 end
+
+function should.reverseMap()
+  assertEqual('C4', midi.Note.name[60])
+end
 test.all()

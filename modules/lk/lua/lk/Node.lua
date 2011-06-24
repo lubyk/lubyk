@@ -18,10 +18,9 @@ local env_mt= {}
 setmetatable(lib, {
   -- new method
  __call = function(lib, process, name, code_str)
-  -- new environment
   local env  = {}
   -- new node
-  local instance = {
+  local self = {
     inlets         = {},
     sorted_inlets  = {},
     outlets        = {},
@@ -31,22 +30,22 @@ setmetatable(lib, {
     name           = name,
     process        = process,
   }
-  setmetatable(instance, lib)
-  -- method to declare inlets
-  env.inlet  = lk.InletMethod(instance)
-  -- method to declare outlets
-  env.outlet = lk.OutletMethod(instance)
+  setmetatable(self, lib)
   -- env has read access to _G
   setmetatable(env, env_mt)
+  -- method to declare inlets
+  env.inlet  = lk.InletMethod(self)
+  -- method to declare outlets
+  env.outlet = lk.OutletMethod(self)
 
-  process.nodes[name] = instance
+  process.nodes[name] = self
   -- pending connection resolution
-  instance.pending_inlets = process.pending_nodes[name] or {}
+  self.pending_inlets = process.pending_nodes[name] or {}
   process.pending_nodes[name] = nil
   if code_str then
-    instance:eval(code_str)
+    self:eval(code_str)
   end
-  return instance
+  return self
 end})
 
 -- metatable for the new global env in each
@@ -66,6 +65,7 @@ function lib:url()
     return self.process:url() .. '/' .. self.name
   end
 end
+
 -- function to reload code
 function lib:eval(code_str)
   local code, err = loadstring(code_str)
@@ -94,6 +94,7 @@ function lib:set(definition)
     self:eval(definition.code)
   elseif definition.class then
     local code = self.process:findClass(definition.class)
+
     if code then
       self.class = definition.class
       self:eval(code)

@@ -142,7 +142,11 @@ private:
           // we do not fire on interval change
           next_fire -= last_interval_;
         } else {
+          // trigger
+          // TODO: add 't' value (loop count from start so that we can be informed if
+          // some occurences had to be skipped).
           (owner_->*Tmethod)();
+          now = time_ref_.elapsed();
         }
 
        /* Timer sync issues:

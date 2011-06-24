@@ -54,7 +54,7 @@ static int Worker__tostring(lua_State *L) {
 
 
 /** double lubyk::Worker::now()
- * include/lubyk/worker.h:102
+ * include/lubyk/worker.h:109
  */
 static int Worker_now(lua_State *L) {
   try {
@@ -71,7 +71,7 @@ static int Worker_now(lua_State *L) {
 
 
 /** void lubyk::Worker::run()
- * include/lubyk/worker.h:100
+ * include/lubyk/worker.h:107
  */
 static int Worker_run(lua_State *L) {
   try {
@@ -104,7 +104,7 @@ static int Worker_sleep(lua_State *L) {
 
 
 /** void lubyk::Worker::test_lock()
- * include/lubyk/worker.h:91
+ * include/lubyk/worker.h:98
  */
 static int Worker_test_lock(lua_State *L) {
   try {
@@ -120,7 +120,7 @@ static int Worker_test_lock(lua_State *L) {
 
 
 /** void lubyk::Worker::test_unlock()
- * include/lubyk/worker.h:96
+ * include/lubyk/worker.h:103
  */
 static int Worker_test_unlock(lua_State *L) {
   try {
@@ -135,6 +135,23 @@ static int Worker_test_unlock(lua_State *L) {
 }
 
 
+/** void lubyk::Worker::wait(double duration)
+ * include/lubyk/worker.h:92
+ */
+static int Worker_wait(lua_State *L) {
+  try {
+    Worker *self__ = *((Worker**)luaL_checkudata(L, 1, "lubyk.Worker"));
+    double duration = luaL_checknumber(L, 2);
+    self__->wait(duration);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "lubyk.Worker.wait: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "lubyk.Worker.wait: Unknown exception");
+  }
+}
+
+
 
 
 /* ============================ Lua Registration ====================== */
@@ -145,6 +162,7 @@ static const struct luaL_Reg Worker_member_methods[] = {
   {"sleep"             , Worker_sleep},
   {"test_lock"         , Worker_test_lock},
   {"test_unlock"       , Worker_test_unlock},
+  {"wait"              , Worker_wait},
   {"__tostring"        , Worker__tostring},
   {"__gc"              , Worker_destructor},
   {NULL, NULL},

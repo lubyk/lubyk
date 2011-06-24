@@ -230,8 +230,8 @@ function assertFalse(ok)
   lib.assert(not ok, string.format('Should fail but passed.'))
 end
 
-function assertTrue(ok)
-  lib.assert(ok, string.format('True expected but was false.'))
+function assertTrue(ok, msg)
+  lib.assert(ok, msg or string.format('True expected but was false.'))
 end
 
 -- Test raw equality (same table)

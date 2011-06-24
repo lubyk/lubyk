@@ -17,3 +17,7 @@ end
 function sleep(duration)
   worker:sleep(duration)
 end
+
+function wait(duration)
+  worker:wait(duration)
+end

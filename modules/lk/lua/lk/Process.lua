@@ -16,11 +16,14 @@ lk.Process  = lib
 setmetatable(lib, {
   -- new method
  __call = function(lib, filepath_or_code)
-  local instance = lk.Patch(filepath_or_code, true)
+  local self = lk.Patch(filepath_or_code, true)
   -- TODO: can we avoid this extra step by passing
   -- self in callback ?
-  instance.service = lk.Service(instance.name, function(...)
-    return instance:callback(...)
+  self.service = lk.Service(self.name, function(...)
+    return self:callback(...)
   end)
-  return instance
+
+  return self
 end})
+
+--- All code is in lk.Patch (Patch.lua)

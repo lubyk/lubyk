@@ -17,35 +17,37 @@ setmetatable(lib, {
   -- lk.Inlet(node)
   -- Create a new inlet
  __call = function(lib, node, name, ...)
-  local instance
+  local self
   if type(node) == 'string' then
-    instance = {name = node}
+    self = {name = node}
+    print('pending', name)
     -- pending inlet
-    setmetatable(instance, lib)
+    setmetatable(self, lib)
   else
-    instance = node.inlets[name]
-    if not instance then
-      instance = node.pending_inlets[name]
-      if instance then
+    self = node.inlets[name]
+    if not self then
+      self = node.pending_inlets[name]
+      if self then
         node.pending_inlets[name] = nil
       else
-        instance = {name = name}
-        setmetatable(instance, lib)
+        self = {name = name}
+        setmetatable(self, lib)
       end
       -- set node
-      instance.node = node
-      node.inlets[name] = instance
-      table.insert(node.sorted_inlets, instance)
+      self.node = node
+      node.inlets[name] = self
+      table.insert(node.sorted_inlets, self)
     end
-    instance:set(name, ...)
+    self:set(name, ...)
   end
-  if not instance.receive then
+
+  if not self.receive then
     -- temporary dummy method
-    function instance.receive(...)
-      print(string.format("'function inlet.%s' not defined.", instance.name))
+    function self.receive(...)
+      print(string.format("'function inlet.%s' not defined.", self.name))
     end
   end
-  return instance
+  return self
 end})
 
 function lib:set(name, info)
@@ -65,5 +67,10 @@ function lib:dump()
 end
 
 function lib:url()
-  return self.node.name .. '/in/' .. self.name
+  if self.target_url then
+    -- remote
+    return self.target_url
+  else
+    return self.node.name .. '/in/' .. self.name
+  end
 end

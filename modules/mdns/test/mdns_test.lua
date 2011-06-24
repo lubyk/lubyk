@@ -22,7 +22,7 @@ function should.register()
   while not continue and worker:now() < now + timeout do
     sleep(10)
   end
-  assert_true(continue)
+  assertTrue(continue)
 end
 
 function should.browse()
@@ -52,7 +52,7 @@ function should.browse()
   while not continue and worker:now() < now + timeout do
     sleep(10)
   end
-  assert_true(continue)
+  assertTrue(continue)
 
   continue   = false
   should_op  = 'remove'
@@ -64,7 +64,7 @@ function should.browse()
   while not continue and worker:now() < now + timeout do
     sleep(10)
   end
-  assert_true(continue)
+  assertTrue(continue)
 end
 
 test.all()

@@ -80,10 +80,16 @@ public:
 
   ~Worker();
 
-  /** Sleep for a given number of ms.
+  /** Sleep for a given number of ms. Should not be used in nodes (risk of Lua State corruption).
    */
   void sleep(double duration) {
     ScopedUnlock unlock(this);
+    Thread::millisleep(duration);
+  }
+
+  /** Wait (lock sleep) for a given number of ms.
+   */
+  void wait(double duration) {
     Thread::millisleep(duration);
   }
 

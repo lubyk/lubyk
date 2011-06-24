@@ -3,20 +3,12 @@ require 'lubyk'
 app = mimas.Application()
 
 patch = lk.Process [[
+x: 110
+y: 200
 w: 150
 h: 150
+hue: 0,3
 nodes:
-  metro:
-    class: lubyk.Metro
-    x: 30
-    y: 45
-    hue: 0
-    links:
-      bang:
-        play/in/trigger: true
-    params:
-      tempo: 500
-
   play:
     x: 70
     y: 95

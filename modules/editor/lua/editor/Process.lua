@@ -86,7 +86,6 @@ end
 -- Synchronize with remote process.
 function lib:sync()
   local definition = self.req:request(lubyk.dump_url)
-  --print(yaml.dump(definition))
   self:set(definition)
 end
 
@@ -144,7 +143,7 @@ function lib:pendingInlet(inlet_url)
   if #parts == 3 and parts[2] == 'in' then
     node_name, inlet_name = parts[1], parts[3]
   else
-    return nil, string.format("Invalid link url '%s'.")
+    return nil, string.format("Invalid pendingInlet url '%s'.")
   end
 
   local node = self.nodes[node_name]

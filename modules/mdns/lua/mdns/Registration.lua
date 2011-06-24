@@ -1,7 +1,7 @@
 --[[------------------------------------------------------
 
-  mdns.Browser
-  ------------
+  mdns.Registration
+  -----------------
 
   This class registers a service name for a give service
   type and calls a callback when the service is announced.
@@ -18,6 +18,7 @@ local constr = mdns.Registration
 local function dummy_callback()
 end
 function mdns.Registration(service_type, name, port, func)
+  print('Registration...', service_type, name)
   func = func or dummy_callback
   return constr(worker, service_type, name, port, func)
 end
