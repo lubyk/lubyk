@@ -15,6 +15,11 @@ function mt:addWidget(other, ...)
   addWidget(self, other:widget(), ...)
 end
 
+local setParent = mt.setParent
+function mt:setParent(other, ...)
+  setParent(self, other:widget(), ...)
+end
+
 local addLayout = mt.addLayout
 function mt:addLayout(other)
   addLayout(self, other:layout())

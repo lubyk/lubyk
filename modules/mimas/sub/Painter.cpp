@@ -30,10 +30,10 @@ static int Painter_Painter(lua_State *L) {
 static int Painter_destructor(lua_State *L) {
   Painter **userdata = (Painter**)luaL_checkudata(L, 1, "mimas.Painter");
 
-
+  
   // custom destructor
   if (*userdata) (*userdata)->dub_destroy();
-
+  
   *userdata = NULL;
   return 0;
 }
@@ -52,15 +52,15 @@ static int Painter_deleted(lua_State *L) {
 
 static int Painter__tostring(lua_State *L) {
   Painter **userdata = (Painter**)luaL_checkudata(L, 1, "mimas.Painter");
-
+  
   if (!*userdata) {
     lua_pushstring(L, "<mimas.Painter: NULL>");
     return 1;
   }
-
-
+  
+  
   lua_pushfstring(L, "<mimas.Painter: %p>", *userdata);
-
+  
   return 1;
 }
 
@@ -68,7 +68,7 @@ static int Painter__tostring(lua_State *L) {
 
 
 /** void mimas::Painter::drawChord(int x, int y, int width, int height, float startAngle, float spanAngle)
- * include/mimas/Painter.h:113
+ * include/mimas/Painter.h:119
  */
 static int Painter_drawChord(lua_State *L) {
   try {
@@ -91,7 +91,7 @@ static int Painter_drawChord(lua_State *L) {
 
 
 /** void mimas::Painter::drawEllipse(int x, int y, int width, int height)
- * include/mimas/Painter.h:119
+ * include/mimas/Painter.h:125
  */
 static int Painter_drawEllipse(lua_State *L) {
   try {
@@ -130,7 +130,7 @@ static int Painter_drawPath(lua_State *L) {
 
 
 /** void mimas::Painter::drawPoint(int x, int y)
- * include/mimas/Painter.h:125
+ * include/mimas/Painter.h:131
  */
 static int Painter_drawPoint(lua_State *L) {
   try {
@@ -149,7 +149,7 @@ static int Painter_drawPoint(lua_State *L) {
 
 
 /** void mimas::Painter::drawRect(float x, float y, float w, float h)
- * include/mimas/Painter.h:106
+ * include/mimas/Painter.h:112
  */
 static int Painter_drawRect(lua_State *L) {
   try {
@@ -170,7 +170,7 @@ static int Painter_drawRect(lua_State *L) {
 
 
 /** void mimas::Painter::drawRoundedRect(float x, float y, float w, float h, float xRadius, lua_State *L)
- * include/mimas/Painter.h:101
+ * include/mimas/Painter.h:107
  */
 static int Painter_drawRoundedRect(lua_State *L) {
   try {
@@ -181,7 +181,7 @@ static int Painter_drawRoundedRect(lua_State *L) {
     float w = luaL_checknumber(L, 4);
     float h = luaL_checknumber(L, 5);
     float xRadius = luaL_checknumber(L, 6);
-
+    
     self__->drawRoundedRect(x, y, w, h, xRadius, L);
     return 0;
   } catch (std::exception &e) {
@@ -193,7 +193,7 @@ static int Painter_drawRoundedRect(lua_State *L) {
 
 
 /** void mimas::Painter::drawText(float x, float y, float w, float h, int flags, const char *text)
- * include/mimas/Painter.h:95
+ * include/mimas/Painter.h:101
  */
 static int Painter_drawText(lua_State *L) {
   try {
@@ -275,7 +275,7 @@ static int Painter_setBrush2(lua_State *L) {
 
 
 /** void mimas::Painter::setBrush(float h, float s=1.0, float v=1.0, float a=1.0)
- * include/mimas/Painter.h:91
+ * include/mimas/Painter.h:97
  */
 static int Painter_setBrush3(lua_State *L) {
   try {
@@ -320,7 +320,7 @@ static int Painter_setBrush(lua_State *L) {
     return Painter_setBrush3(L);
   } else {
     // use any to raise errors
-    return Painter_setBrush1(L);
+    return Painter_setBrush3(L);
   }
 }
 

@@ -102,7 +102,10 @@ local function makeGhostLink(self)
   else
     self.ghost.link_view = editor.LinkView(self, self.ghost.slot_view)
   end
-  slot.node.process.view:addWidget(self.ghost.link_view)
+
+  -- We add the slot in the main view in case it is used for
+  -- inter-process linking.
+  slot.node.process.delegate.main_view:addWidget(self.ghost.link_view)
   self.ghost.link_view:lower()
 end
 
@@ -132,6 +135,7 @@ function lib:mouse(x, y)
       self.delegate.closest_slot_view = nil
       old_closest:update()
     end
+
     self.ghost.slot_view:globalMove(gx - SLOTW/2, gy - SLOTH/2)
     self.ghost.link_view:slotMoved()
   end

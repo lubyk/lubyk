@@ -55,6 +55,10 @@ function mimas.WidgetClass()
     self.super:addWidget(...)
   end
 
+  function lib:setParent(...)
+    self.super:setParent(...)
+  end
+
   function lib:move(...)
     self.super:move(...)
   end

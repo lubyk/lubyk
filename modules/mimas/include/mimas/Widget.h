@@ -94,6 +94,10 @@ public:
     widget->show();
   }
 
+  void setParent(QWidget *parent) {
+    QWidget::setParent(parent);
+  }
+
   QObject *object() {
     return this;
   }
