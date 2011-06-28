@@ -33,8 +33,6 @@ function lib:init(process)
   self.delegate = process.delegate
   self.nodes    = {}
   self:setName(process.name)
-  -- trigger a full view rebuild
-  process:updateView()
 end
 
 function lib:setName(name)
@@ -225,6 +223,8 @@ function lib:mouse(x, y)
       local y = self.current_pos.y + y - self.click_position.y
       self:move(x, y)
       self.current_pos = {x = x, y = y}
+      -- redraw global links
+      self.process:redrawViews()
     elseif self.resize_position then
       -- resizing
       local w = self.width  + x - self.resize_position.x

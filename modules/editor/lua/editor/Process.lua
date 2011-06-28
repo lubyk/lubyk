@@ -95,6 +95,13 @@ end
 -- When the ProcessView is created, it triggers this method
 -- to build/update views
 function lib:updateView()
+  self:redrawViews()
+
+  self.view:processChanged()
+end
+
+--- Used when the process is dragged
+function lib:redrawViews()
   for _,node in pairs(self.nodes) do
     node:updateView()
   end
@@ -106,8 +113,6 @@ function lib:updateView()
       end
     end
   end
-
-  self.view:processChanged()
 end
 
 --- Find a node from a given url (same as lk.Patch.get).

@@ -53,4 +53,6 @@ function lib:addProcessView(view)
   local process = view.process
   self.patching_view:addWidget(view)
   view:move(process.x or 100, process.y or 100)
+  -- trigger a full view rebuild once it is positioned
+  process:updateView()
 end
