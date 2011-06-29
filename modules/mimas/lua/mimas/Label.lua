@@ -10,12 +10,12 @@ local constr = mimas_core.Label
 local mt = nil
 function mimas.Label(title, parent)
   title = title or ''
-  local instance
+  local self
   if parent then
-    instance = constr(title, parent:widget())
+    self = constr(title, parent:widget())
   else
-    instance = constr(title)
+    self = constr(title)
   end
-  return instance
+  return self
 end
 

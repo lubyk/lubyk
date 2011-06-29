@@ -29,6 +29,7 @@
 
 #include "mimas/Widget.h"
 #include "mimas/Label.h"
+#include "mimas/LineEdit.h"
 #include "mimas/Slider.h"
 #include "mimas/Painter.h"
 #include <QtGui/QPainter>
@@ -63,6 +64,17 @@ void Label::paintEvent(QPaintEvent *event) {
     setStyleSheet(QString(".%1 { color:hsv(%2, 255, 255) }").arg(cssClass()).arg(hue * 360));
   }
   QLabel::paintEvent(event);
+}
+
+// =============================================
+// ==             LineEdit                    ==
+// =============================================
+void LineEdit::paintEvent(QPaintEvent *event) {
+  if (hue_ != -1) {
+    int hue = (hue_ < 0 || hue_ >= 1.0) ? 0 : hue_;
+    setStyleSheet(QString(".%1 { color:hsv(%2, 255, 255) }").arg(cssClass()).arg(hue * 360));
+  }
+  QLineEdit::paintEvent(event);
 }
 
 // =============================================

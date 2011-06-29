@@ -30,23 +30,6 @@ end
 local MousePress,       MouseRelease,       DoubleClick =
       mimas.MousePress, mimas.MouseRelease, mimas.DoubleClick
 
-local function makeGhost(self)
-  local node_def = self.click_position.node_def
-  -- mock a node for NodeView
-  local node = {
-    name           = node_def.name,
-    x              = 0,
-    y              = 0,
-    sorted_inlets  = {},
-    sorted_outlets = {},
-    delegate       = self.delegate,
-  }
-  editor.Node.setHue(node, node_def.hue or 0.2)
-  self.ghost = editor.NodeView(node, node.delegate.main_view)
-  self.ghost.is_ghost = true
-  self.ghost:updateView()
-end
-
 local function clickInList(self, node_def, x, y, type, btn, mod)
   if type == MousePress and node_def then
     -- store position but only start drag when moved START_DRAG_DIST away
@@ -61,30 +44,32 @@ local function clickInList(self, node_def, x, y, type, btn, mod)
   elseif type == MouseRelease then
     if self.dragging then
       -- drop
-      local node_def = self.click_position.node_def
-      local process_view = self.delegate.process_view_under
-      if process_view then
-        local process = process_view.process
-        -- create node
-        -- target:change {}
-        local vx, vy = process_view:globalPosition()
-        local x = self.ghost.gx - vx
-        local y = self.ghost.gy - vy
-        process:newNode {
-          x = self.ghost.gx - vx,
-          y = self.ghost.gy - vy,
-          code = node_def.code,
-          name = node_def.name,
-        }
-        process_view:update()
-      end
+      self.ghost:openEditor(function()
+        local node_def = self.click_position.node_def
+        local process_view = self.delegate.process_view_under
+        if process_view then
+          local process = process_view.process
+          -- create node
+          -- target:change {}
+          local vx, vy = process_view:globalPosition()
+          local x = self.ghost.gx - vx
+          local y = self.ghost.gy - vy
+          process:newNode {
+            x = self.ghost.gx - vx,
+            y = self.ghost.gy - vy,
+            code = node_def.code,
+            name = node_def.name,
+          }
+          process_view:update()
+        end
 
-      -- clear
-      self.delegate.process_view_under = nil
-      self.ghost:delete()
-      self.ghost = nil
-      self.click_position = nil
-      self.dragging = nil
+        -- clear
+        self.delegate.process_view_under = nil
+        self.ghost:delete()
+        self.ghost = nil
+        self.click_position = nil
+        self.dragging = nil
+      end)
     else
       -- select row ?
     end
@@ -101,7 +86,8 @@ local function mouseInList(self, x, y)
     -- start drag operation: self becomes ghost
     self.dragging = true
     self.gx, self.gy = self.list_view:globalPosition()
-    makeGhost(self)
+    -- mock a node for NodeView
+    self.ghost = editor.Node.makeGhost(self.click_position.node_def, self.delegate)
   end
 
   local ghost = self.ghost

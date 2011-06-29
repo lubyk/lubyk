@@ -118,10 +118,6 @@ private:
   /** The component's color.
    */
   float hue_;
-
-  /** Cached text color.
-   */
-  QColor text_color_;
 };
 
 } // mimas

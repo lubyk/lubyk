@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'Label.h'
 **
-** Created: Tue Feb 15 14:30:30 2011
+** Created: Wed Jun 29 23:22:52 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.1)
 **
 ** WARNING! All changes made in this file will be lost!

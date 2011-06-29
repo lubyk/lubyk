@@ -192,3 +192,36 @@ end
 function lib:url()
   return self.parent:url() .. '/' .. self.name
 end
+
+
+-- ========== HELPERS
+
+-- Create a ghost node (before it is droped or name is set)
+function lib.makeGhost(node_def, delegate)
+  -- mock a node for NodeView
+  local node = {
+    name           = node_def.name,
+    x              = 0,
+    y              = 0,
+    sorted_inlets  = {},
+    sorted_outlets = {},
+    delegate       = delegate,
+  }
+  editor.Node.setHue(node, node_def.hue or 0.2)
+  local ghost = editor.NodeView(node, node.delegate.main_view)
+  ghost.is_ghost = true
+  ghost:updateView()
+
+  -- this function will be called when the ghost is dropped
+  -- or when it appears after double-click
+  function ghost:openEditor(finish_func)
+    -- add a LineEdit on top of self
+    local edit = mimas.LineEdit(node.name)
+    edit:move(0, 0)
+    edit:resize(ghost.width, ghost.height)
+    ghost.super:addWidget(edit)
+    edit.editingFinished = finish_func
+    ghost.edit = edit
+  end
+  return ghost
+end
