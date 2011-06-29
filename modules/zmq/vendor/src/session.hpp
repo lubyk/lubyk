@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -141,7 +142,7 @@ namespace zmq
         } state;
 
         session_t (const session_t&);
-        void operator = (const session_t&);
+        const session_t &operator = (const session_t&);
     };
 
 }

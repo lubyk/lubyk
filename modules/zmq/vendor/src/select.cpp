@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -83,7 +84,7 @@ void zmq::select_t::rm_fd (handle_t handle_)
 {
     //  Mark the descriptor as retired.
     fd_set_t::iterator it;
-    for (it = fds.begin (); it != fds.end (); it ++)
+    for (it = fds.begin (); it != fds.end (); ++it)
         if (it->fd == handle_)
             break;
     zmq_assert (it != fds.end ());
@@ -104,7 +105,7 @@ void zmq::select_t::rm_fd (handle_t handle_)
     //  highest-numbered file descriptor.
     if (handle_ == maxfd) {
         maxfd = retired_fd;
-        for (fd_set_t::iterator it = fds.begin (); it != fds.end (); it ++)
+        for (fd_set_t::iterator it = fds.begin (); it != fds.end (); ++it)
             if (it->fd > maxfd)
                 maxfd = it->fd;
     }

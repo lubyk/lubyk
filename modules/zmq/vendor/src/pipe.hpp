@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -113,7 +114,7 @@ namespace zmq
         bool terminating;
 
         reader_t (const reader_t&);
-        void operator = (const reader_t&);
+        const reader_t &operator = (const reader_t&);
     };
 
     struct i_writer_events
@@ -134,10 +135,10 @@ namespace zmq
         //  Specifies the object to get events from the writer.
         void set_event_sink (i_writer_events *endpoint_);
 
-        //  Checks whether a message can be written to the pipe.
+        //  Checks whether messages can be written to the pipe.
         //  If writing the message would cause high watermark and (optionally)
-        //  swap to be exceeded, the function returns false.
-        bool check_write ();
+        //  if the swap is full, the function returns false.
+        bool check_write (zmq_msg_t *msg_);
 
         //  Writes a message to the underlying pipe. Returns false if the
         //  message cannot be written because high watermark was reached.
@@ -205,7 +206,7 @@ namespace zmq
         bool terminating;
 
         writer_t (const writer_t&);
-        void operator = (const writer_t&);
+        const writer_t &operator = (const writer_t&);
     };
 
 }

@@ -7,6 +7,8 @@
  * License: public domain.
  */
 
+//  g++ getaddrinfo.c -o geta
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -14,6 +16,8 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+// gethostname
+#include <unistd.h>
 
 int
 lookup_host (const char *host)
@@ -63,5 +67,9 @@ main (int argc, char *argv[])
 {
   if (argc < 2)
     exit (1);
+  char buffer[1024];
+  if (!gethostname(buffer, 1024)) {
+    printf("hostname = %s\n", buffer);
+  }
   return lookup_host (argv[1]);
 }

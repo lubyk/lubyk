@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -54,7 +55,7 @@ namespace zmq
             bufsize (bufsize_)
         {
             buf = (unsigned char*) malloc (bufsize_);
-            zmq_assert (buf);
+            alloc_assert (buf);
         }
 
         //  The destructor doesn't have to be virtual. It is mad virtual
@@ -91,6 +92,10 @@ namespace zmq
         //  bytes actually processed.
         inline size_t process_buffer (unsigned char *data_, size_t size_)
         {
+            //  Check if we had an error in previous attempt.
+            if (unlikely (!(static_cast <T*> (this)->next)))
+                return (size_t) -1;
+
             //  In case of zero-copy simply adjust the pointers, no copying
             //  is required. Also, run the state machine in case all the data
             //  were processed.
@@ -167,7 +172,7 @@ namespace zmq
         unsigned char *buf;
 
         decoder_base_t (const decoder_base_t&);
-        void operator = (const decoder_base_t&);
+        const decoder_base_t &operator = (const decoder_base_t&);
     };
 
     //  Decoder for 0MQ framing protocol. Converts data batches into messages.

@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -58,7 +59,7 @@ namespace zmq
         class socket_base_t *socket;
 
         zmq_listener_t (const zmq_listener_t&);
-        void operator = (const zmq_listener_t&);
+        const zmq_listener_t &operator = (const zmq_listener_t&);
     };
 
 }

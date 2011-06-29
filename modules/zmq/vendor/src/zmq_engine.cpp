@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -40,6 +41,7 @@ zmq::zmq_engine_t::zmq_engine_t (fd_t fd_, const options_t &options_) :
     outsize (0),
     encoder (out_batch_size),
     inout (NULL),
+    ephemeral_inout (NULL),
     options (options_),
     plugged (false)
 {
@@ -57,8 +59,9 @@ void zmq::zmq_engine_t::plug (io_thread_t *io_thread_, i_inout *inout_)
 {
     zmq_assert (!plugged);
     plugged = true;
+    ephemeral_inout = NULL;
 
-    //  Conncet to session/init object.
+    //  Connect to session/init object.
     zmq_assert (!inout);
     zmq_assert (inout_);
     encoder.set_inout (inout_);
@@ -89,6 +92,7 @@ void zmq::zmq_engine_t::unplug ()
     //  Disconnect from init/session object.
     encoder.set_inout (NULL);
     decoder.set_inout (NULL);
+    ephemeral_inout = inout;
     inout = NULL;
 }
 
@@ -130,7 +134,8 @@ void zmq::zmq_engine_t::in_event ()
             //  This may happen if queue limits are in effect or when
             //  init object reads all required information from the socket
             //  and rejects to read more data.
-            reset_pollin (handle);
+            if (plugged)
+                reset_pollin (handle);
         }
 
         //  Adjust the buffer.
@@ -139,9 +144,15 @@ void zmq::zmq_engine_t::in_event ()
     }
 
     //  Flush all messages the decoder may have produced.
-    inout->flush ();
+    //  If IO handler has unplugged engine, flush transient IO handler.
+    if (unlikely (!plugged)) {
+        zmq_assert (ephemeral_inout);
+        ephemeral_inout->flush ();
+    } else {
+        inout->flush ();
+    }
 
-    if (disconnection)
+    if (inout && disconnection)
         error ();
 }
 
@@ -152,7 +163,14 @@ void zmq::zmq_engine_t::out_event ()
 
         outpos = NULL;
         encoder.get_data (&outpos, &outsize);
-        
+
+        //  If IO handler has unplugged engine, flush transient IO handler.
+        if (unlikely (!plugged)) {
+            zmq_assert (ephemeral_inout);
+            ephemeral_inout->flush ();
+            return;
+        }
+
         //  If there is no data to send, stop polling for output.
         if (outsize == 0) {
             reset_pollout (handle);

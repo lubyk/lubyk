@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -45,7 +46,10 @@ namespace zmq
             pipe_term_ack,
             term_req,
             term,
-            term_ack
+            term_ack,
+            reap,
+            reaped,
+            done
         } type;
 
         union {
@@ -116,6 +120,21 @@ namespace zmq
             //  shut down.
             struct {
             } term_ack;
+
+            //  Transfers the ownership of the closed socket
+            //  to the reaper thread.
+            struct {
+                class socket_base_t *socket;
+            } reap;
+
+            //  Closed socket notifies the reaper that it's already deallocated.
+            struct {
+            } reaped;
+
+            //  Sent by reaper thread to the term thread when all the sockets
+            //  are successfully deallocated.
+            struct {
+            } done;
 
         } args;
     };

@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -34,6 +35,7 @@ zmq::zmq_init_t::zmq_init_t (io_thread_t *io_thread_,
       socket_base_t *socket_, session_t *session_, fd_t fd_,
       const options_t &options_) :
     own_t (io_thread_, options_),
+    ephemeral_engine (NULL),
     sent (false),
     received (false),
     socket (socket_),
@@ -42,7 +44,7 @@ zmq::zmq_init_t::zmq_init_t (io_thread_t *io_thread_,
 {
     //  Create the engine object for this connection.
     engine = new (std::nothrow) zmq_engine_t (fd_, options);
-    zmq_assert (engine);
+    alloc_assert (engine);
 }
 
 zmq::zmq_init_t::~zmq_init_t ()
@@ -64,8 +66,7 @@ bool zmq::zmq_init_t::read (::zmq_msg_t *msg_)
         options.identity.size ());
     sent = true;
 
-    //  If initialisation is done, pass the engine to the session and
-    //  destroy the init object.
+    //  Try finalize initialization.
     finalise_initialisation ();
 
     return true;
@@ -89,8 +90,13 @@ bool zmq::zmq_init_t::write (::zmq_msg_t *msg_)
         peer_identity.assign ((const unsigned char*) zmq_msg_data (msg_),
             zmq_msg_size (msg_));
     }
+    int rc = zmq_msg_close (msg_);
+    zmq_assert (rc == 0);
 
     received = true;
+
+    //  Try finalize initialization.
+    finalise_initialisation ();
 
     return true;
 }
@@ -101,9 +107,9 @@ void zmq::zmq_init_t::flush ()
     if (!received)
         return;
 
-    //  If initialisation is done, pass the engine to the session and
-    //  destroy the init object.
-    finalise_initialisation ();
+    //  Initialization is done, dispatch engine.
+    if (ephemeral_engine)
+        dispatch_engine ();
 }
 
 void zmq::zmq_init_t::detach ()
@@ -135,7 +141,22 @@ void zmq::zmq_init_t::process_unplug ()
 
 void zmq::zmq_init_t::finalise_initialisation ()
 {
+     //  Unplug and prepare to dispatch engine.
+     if (sent && received) {
+        ephemeral_engine = engine;
+        engine = NULL;
+        ephemeral_engine->unplug ();
+        return;
+    }
+}
+
+void zmq::zmq_init_t::dispatch_engine ()
+{
     if (sent && received) {
+
+        //  Engine must be detached.
+        zmq_assert (!engine);
+        zmq_assert (ephemeral_engine);
 
         //  If we know what session we belong to, it's easy, just send the
         //  engine to that session and destroy the init object. Note that we
@@ -143,9 +164,7 @@ void zmq::zmq_init_t::finalise_initialisation ()
         //  lifetime of this object in contained in the lifetime of the session
         //  so the pointer cannot become invalid without notice.
         if (session) {
-            engine->unplug ();
-            send_attach (session, engine, peer_identity, true);
-            engine = NULL;
+            send_attach (session, ephemeral_engine, peer_identity, true);
             terminate ();
             return;
         }
@@ -162,12 +181,10 @@ void zmq::zmq_init_t::finalise_initialisation ()
         if (peer_identity [0] == 0) {
             session = new (std::nothrow) transient_session_t (io_thread,
                 socket, options);
-            zmq_assert (session);
+            alloc_assert (session);
             session->inc_seqnum ();
             launch_sibling (session);
-            engine->unplug ();
-            send_attach (session, engine, peer_identity, false);
-            engine = NULL;
+            send_attach (session, ephemeral_engine, peer_identity, false);
             terminate ();
             return;
         }
@@ -178,9 +195,7 @@ void zmq::zmq_init_t::finalise_initialisation ()
         //  than by send_attach.
         session = socket->find_session (peer_identity);
         if (session) {
-            engine->unplug ();
-            send_attach (session, engine, peer_identity, false);
-            engine = NULL;
+            send_attach (session, ephemeral_engine, peer_identity, false);
             terminate ();
             return;
         }
@@ -191,12 +206,10 @@ void zmq::zmq_init_t::finalise_initialisation ()
         //  being attached.
         session = new (std::nothrow) named_session_t (io_thread, socket,
             options, peer_identity);
-        zmq_assert (session);
+        alloc_assert (session);
         session->inc_seqnum ();
         launch_sibling (session);
-        engine->unplug ();
-        send_attach (session, engine, peer_identity, false);
-        engine = NULL;
+        send_attach (session, ephemeral_engine, peer_identity, false);
         terminate ();
         return;
     }

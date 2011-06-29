@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -73,7 +74,8 @@ namespace zmq
             bool accepted;
         };
 
-        std::vector <fd_entry_t> fd_table;
+        typedef std::vector <fd_entry_t> fd_table_t;
+        fd_table_t fd_table;
 
         typedef std::vector <fd_t> pending_list_t;
         pending_list_t pending_list;
@@ -88,7 +90,7 @@ namespace zmq
         thread_t worker;
 
         devpoll_t (const devpoll_t&);
-        void operator = (const devpoll_t&);
+        const devpoll_t &operator = (const devpoll_t&);
     };
 
 }

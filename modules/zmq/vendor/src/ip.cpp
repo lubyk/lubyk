@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -21,6 +22,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <string>
+
+#include "../include/zmq.h"
 
 #include "ip.hpp"
 #include "platform.hpp"
@@ -50,8 +53,8 @@ static int resolve_nic_name (in_addr* addr_, char const *interface_)
     //  Allocate memory to get interface names.
     size_t ifr_size = sizeof (struct lifreq) * ifn.lifn_count;
     char *ifr = (char*) malloc (ifr_size);
-    errno_assert (ifr);
-    
+    alloc_assert (ifr);
+
     //  Retrieve interface names.
     lifconf ifc;
     ifc.lifc_family = AF_UNSPEC;
@@ -102,7 +105,7 @@ static int resolve_nic_name (in_addr* addr_, char const *interface_)
     int sd = socket (AF_INET, SOCK_DGRAM, 0);
     zmq_assert (sd != -1);
 
-    struct ifreq ifr; 
+    struct ifreq ifr;
 
     //  Copy interface name for ioctl get.
     strncpy (ifr.ifr_name, interface_, sizeof (ifr.ifr_name));
@@ -120,7 +123,7 @@ static int resolve_nic_name (in_addr* addr_, char const *interface_)
 
     struct sockaddr *sa = (struct sockaddr *) &ifr.ifr_addr;
     *addr_ = ((sockaddr_in*)sa)->sin_addr;
-    return 0;    
+    return 0;
 }
 
 #elif ((defined ZMQ_HAVE_LINUX || defined ZMQ_HAVE_FREEBSD ||\
@@ -137,14 +140,14 @@ static int resolve_nic_name (in_addr* addr_, char const *interface_)
     //  Get the addresses.
     ifaddrs* ifa = NULL;
     int rc = getifaddrs (&ifa);
-    zmq_assert (rc == 0);    
+    zmq_assert (rc == 0);
     zmq_assert (ifa != NULL);
 
     //  Find the corresponding network interface.
     bool found = false;
     for (ifaddrs *ifp = ifa; ifp != NULL ;ifp = ifp->ifa_next)
-        if (ifp->ifa_addr && ifp->ifa_addr->sa_family == AF_INET 
-            && !strcmp (interface_, ifp->ifa_name)) 
+        if (ifp->ifa_addr && ifp->ifa_addr->sa_family == AF_INET
+            && !strcmp (interface_, ifp->ifa_name))
         {
             *addr_ = ((sockaddr_in*) ifp->ifa_addr)->sin_addr;
             found = true;
@@ -228,10 +231,13 @@ int zmq::resolve_ip_interface (sockaddr_storage* addr_, socklen_t *addr_len_,
     }
 
     //  There's no such interface name. Assume literal address.
+#if defined ZMQ_HAVE_OPENVMS && defined __ia64
+    __addrinfo64 *res = NULL;
+    __addrinfo64 req;
+#else
     addrinfo *res = NULL;
-
-    //  Set up the query.
     addrinfo req;
+#endif
     memset (&req, 0, sizeof (req));
 
     //  We only support IPv4 addresses for now.
@@ -264,10 +270,14 @@ int zmq::resolve_ip_interface (sockaddr_storage* addr_, socklen_t *addr_len_,
     return 0;
 }
 
+// gethostname
+#include <unistd.h>
+
 int zmq::resolve_ip_hostname (sockaddr_storage *addr_, socklen_t *addr_len_,
     const char *hostname_)
 {
     //  Find the ':' that separates hostname name from service.
+    printf("Resolving '%s'\n", hostname_);
     const char *delimiter = strchr (hostname_, ':');
     if (!delimiter) {
         errno = EINVAL;
@@ -288,7 +298,7 @@ int zmq::resolve_ip_hostname (sockaddr_storage *addr_, socklen_t *addr_len_,
     //  Need to choose one to avoid duplicate results from getaddrinfo() - this
     //  doesn't really matter, since it's not included in the addr-output.
     req.ai_socktype = SOCK_STREAM;
-    
+
     //  Avoid named services due to unclear socktype.
     req.ai_flags = AI_NUMERICSERV;
 
@@ -297,25 +307,77 @@ int zmq::resolve_ip_hostname (sockaddr_storage *addr_, socklen_t *addr_len_,
     addrinfo *res;
     int rc = getaddrinfo (hostname.c_str (), service.c_str (), &req, &res);
     if (rc) {
-        errno = EINVAL;
-        return -1;
+        switch(rc) {
+          case EAI_ADDRFAMILY:
+            printf("Address family for nodename not supported.");
+            break;
+          case EAI_AGAIN:
+            printf("Temporary failure in name resolution.");
+            break;
+          case EAI_BADFLAGS:
+            printf("Invalid value for ai_flags.");
+            break;
+          case EAI_FAIL:
+            printf("Non-recoverable failure in name resolution.");
+            break;
+          case EAI_FAMILY:
+            printf("ai_family not supported.");
+            break;
+          case EAI_MEMORY:
+            printf("Memory allocation failure.");
+            break;
+          case EAI_NODATA:
+            printf("No address associated with nodename.");
+            break;
+          case EAI_NONAME:
+            printf("nodename nor servname provided, or not known.");
+            break;
+          case EAI_SERVICE:
+            printf("servname not supported for ai_socktype.");
+            break;
+          case EAI_SOCKTYPE:
+            printf("ai_socktype not supported.");
+            break;
+          case EAI_SYSTEM:
+            printf("System error returned in errno.");
+            break;
+        }
+
+        char buffer[1024];
+        if (!gethostname(buffer, 1024)) {
+          printf("%s // %s\n", hostname.c_str(), buffer);
+          if (hostname == buffer) {
+            // localhost
+            int rc = getaddrinfo("localhost", service.c_str (), &req, &res);
+            if (rc) {
+              errno = EINVAL;
+              return -1;
+            }
+          }
+        } else {
+          // error
+          errno = EINVAL;
+          return -1;
+        }
     }
 
     //  Copy first result to output addr with hostname and service.
     zmq_assert ((size_t) (res->ai_addrlen) <= sizeof (*addr_));
     memcpy (addr_, res->ai_addr, res->ai_addrlen);
     *addr_len_ = res->ai_addrlen;
- 
+
     freeaddrinfo (res);
-    
+
     return 0;
 }
-
-#if !defined ZMQ_HAVE_WINDOWS && !defined ZMQ_HAVE_OPENVMS
 
 int zmq::resolve_local_path (sockaddr_storage *addr_, socklen_t *addr_len_,
     const char *path_)
 {
+#if defined ZMQ_HAVE_WINDOWS || defined ZMQ_HAVE_OPENVMS
+    errno = EPROTONOSUPPORT;
+    return -1;
+#else
     sockaddr_un *un = (sockaddr_un*) addr_;
     if (strlen (path_) >= sizeof (un->sun_path))
     {
@@ -326,7 +388,6 @@ int zmq::resolve_local_path (sockaddr_storage *addr_, socklen_t *addr_len_,
     un->sun_family = AF_UNIX;
     *addr_len_ = sizeof (sockaddr_un);
     return 0;
-}
-
 #endif
+}
 

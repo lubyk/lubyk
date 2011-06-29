@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -22,7 +23,7 @@
 #include <pthread.h>
 #include <stddef.h>
 
-#define THREAD_COUNT 100
+#define THREAD_COUNT 10
 
 extern "C"
 {
@@ -30,7 +31,7 @@ extern "C"
     {
         int rc;
 
-        rc = zmq_connect (s, "tcp://127.0.0.1:5555");
+        rc = zmq_connect (s, "tcp://127.0.0.1:5560");
         assert (rc == 0);
 
         //  Start closing the socket while the connecting process is underway.
@@ -60,7 +61,7 @@ int main (int argc, char *argv [])
         s1 = zmq_socket (ctx, ZMQ_REP);
         assert (s1);
 
-        rc = zmq_bind (s1, "tcp://127.0.0.1:5555");
+        rc = zmq_bind (s1, "tcp://127.0.0.1:5560");
         assert (rc == 0);
 
         for (i = 0; i != THREAD_COUNT; i++) {

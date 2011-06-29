@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta name="generator" content="AsciiDoc 8.5.2" />
-<title>zmq_forwarder(1)</title>
+<title>zmq_device(3)</title>
 <style type="text/css">
 /* Debug borders */
 p, li, dt, dd, div, pre, h1, h2, h3, h4, h5, h6 {
@@ -570,43 +570,166 @@ footnotes: function () {
 <body>
 <div id="header">
 <h1>
-zmq_forwarder(1) Manual Page
+zmq_device(3) Manual Page
 </h1>
 <h2>NAME</h2>
 <div class="sectionbody">
-<p>zmq_forwarder -
-   forwarding device for publish-subscribe messaging
+<p>zmq_device -
+   start built-in 0MQ device
 </p>
 </div>
 </div>
 <div id="content">
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>To be written.</p></div>
+<div class="paragraph"><p><strong>int zmq_device (int <em>device</em>, const void <em>*frontend</em>, const void <em>*backend</em>);</strong></p></div>
 </div>
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>To be written.</p></div>
+<div class="paragraph"><p>The <em>zmq_device()</em> function starts a built-in ØMQ device. The <em>device</em> argument
+is one of:</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<em>ZMQ_QUEUE</em>
+</dt>
+<dd>
+<p>
+    starts a queue device
+</p>
+</dd>
+<dt class="hdlist1">
+<em>ZMQ_FORWARDER</em>
+</dt>
+<dd>
+<p>
+    starts a forwarder device
+</p>
+</dd>
+<dt class="hdlist1">
+<em>ZMQ_STREAMER</em>
+</dt>
+<dd>
+<p>
+    starts a streamer device
+</p>
+</dd>
+</dl></div>
+<div class="paragraph"><p>The device connects a frontend socket to a backend socket. Conceptually, data
+flows from frontend to backend. Depending on the socket types, replies may flow
+in the opposite direction.</p></div>
+<div class="paragraph"><p>Before calling <em>zmq_device()</em> you must set any socket options, and connect or
+bind both frontend and backend sockets. The two conventional device models are:</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>proxy</strong>
+</dt>
+<dd>
+<p>
+    bind frontend socket to an endpoint, and connect backend socket to
+    downstream components. A proxy device model does not require changes to
+    the downstream topology but that topology is static (any changes require
+    reconfiguring the device).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>broker</strong>
+</dt>
+<dd>
+<p>
+    bind frontend socket to one endpoint and bind backend socket to a second
+    endpoint. Downstream components must now connect into the device. A broker
+    device model allows a dynamic downstream topology (components can come and
+    go at any time).
+</p>
+</dd>
+</dl></div>
+<div class="paragraph"><p><em>zmq_device()</em> runs in the current thread and returns only if/when the current
+context is closed.</p></div>
 </div>
-<h2 id="_options">OPTIONS</h2>
+<h2 id="_queue_device">QUEUE DEVICE</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>To be written.</p></div>
+<div class="paragraph"><p><em>ZMQ_QUEUE</em> creates a shared queue that collects requests from a set of clients,
+and distributes these fairly among a set of services. Requests are fair-queued
+from frontend connections and load-balanced between backend connections.
+Replies automatically return to the client that made the original request.</p></div>
+<div class="paragraph"><p>This device is part of the <em>request-reply</em> pattern. The frontend speaks to
+clients and the backend speaks to services. You should use <em>ZMQ_QUEUE</em> with a
+<em>ZMQ_XREP</em> socket for the frontend and a <em>ZMQ_XREQ</em> socket for the backend.
+Other combinations are not documented.</p></div>
+<div class="paragraph"><p>Refer to <a href="zmq_socket.html">zmq_socket(3)</a> for a description of these socket types.</p></div>
+</div>
+<h2 id="_forwarder_device">FORWARDER DEVICE</h2>
+<div class="sectionbody">
+<div class="paragraph"><p><em>ZMQ_FORWARDER</em> collects messages from a set of publishers and forwards these to
+a set of subscribers. You will generally use this to bridge networks, e.g. read
+on TCP unicast and forward on multicast.</p></div>
+<div class="paragraph"><p>This device is part of the <em>publish-subscribe</em> pattern. The frontend speaks to
+publishers and the backend speaks to subscribers. You should use
+<em>ZMQ_FORWARDER</em> with a <em>ZMQ_SUB</em> socket for the frontend and a <em>ZMQ_PUB</em> socket
+for the backend. Other combinations are not documented.</p></div>
+<div class="paragraph"><p>Refer to <a href="zmq_socket.html">zmq_socket(3)</a> for a description of these socket types.</p></div>
+</div>
+<h2 id="_streamer_device">STREAMER DEVICE</h2>
+<div class="sectionbody">
+<div class="paragraph"><p><em>ZMQ_STREAMER</em> collects tasks from a set of pushers and forwards these to a set
+of pullers. You will generally use this to bridge networks. Messages are
+fair-queued from pushers and load-balanced to pullers.</p></div>
+<div class="paragraph"><p>This device is part of the <em>pipeline</em> pattern. The frontend speaks to pushers
+and the backend speaks to pullers. You should use <em>ZMQ_STREAMER</em> with a
+<em>ZMQ_PULL</em> socket for the frontend and a <em>ZMQ_PUSH</em> socket for the backend.
+Other combinations are not documented.</p></div>
+<div class="paragraph"><p>Refer to <a href="zmq_socket.html">zmq_socket(3)</a> for a description of these socket types.</p></div>
+</div>
+<h2 id="_return_value">RETURN VALUE</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The <em>zmq_device()</em> function always returns <tt>-1</tt> and <em>errno</em> set to <strong>ETERM</strong> (the
+ØMQ <em>context</em> associated with either of the specified sockets was terminated).</p></div>
+</div>
+<h2 id="_example">EXAMPLE</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="title">Creating a queue broker</div>
+<div class="content">
+<pre><tt>//  Create frontend and backend sockets
+void *frontend = zmq_socket (context, ZMQ_XREP);
+assert (backend);
+void *backend = zmq_socket (context, ZMQ_XREQ);
+assert (frontend);
+//  Bind both sockets to TCP ports
+assert (zmq_bind (frontend, "tcp://*:5555") == 0);
+assert (zmq_bind (backend, "tcp://*:5556") == 0);
+//  Start a queue device
+zmq_device (ZMQ_QUEUE, frontend, backend);</tt></pre>
+</div></div>
 </div>
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
-<div class="paragraph"><p><a href="zmq.html">zmq(7)</a></p></div>
+<div class="paragraph"><p><a href="zmq_bind.html">zmq_bind(3)</a>
+<a href="zmq_connect.html">zmq_connect(3)</a>
+<a href="zmq_socket.html">zmq_socket(3)</a>
+<a href="zmq.html">zmq(7)</a></p></div>
 </div>
 <h2 id="_authors">AUTHORS</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>The ØMQ documentation was written by Martin Sustrik &lt;<a href="mailto:sustrik@250bpm.com">sustrik@250bpm.com</a>&gt; and
-Martin Lucina &lt;<a href="mailto:mato@kotelna.sk">mato@kotelna.sk</a>&gt;.</p></div>
+<div class="paragraph"><p>This ØMQ manual page was written by Pieter Hintjens &lt;<a href="mailto:ph@imatix.com">ph@imatix.com</a>&gt;</p></div>
+</div>
+<h2 id="_resources">RESOURCES</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Main web site: <a href="http://www.zeromq.org/">http://www.zeromq.org/</a></p></div>
+<div class="paragraph"><p>Report bugs to the ØMQ development mailing list: &lt;<a href="mailto:zeromq-dev@lists.zeromq.org">zeromq-dev@lists.zeromq.org</a>&gt;</p></div>
+</div>
+<h2 id="_copying">COPYING</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Free use of this software is granted under the terms of the GNU Lesser General
+Public License (LGPL). For details see the files <tt>COPYING</tt> and <tt>COPYING.LESSER</tt>
+included with the ØMQ distribution.</p></div>
 </div>
 </div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-ØMQ 2.1.0<br />
-Last updated 2010-09-09 14:03:03 CEST
+ØMQ 2.1.4<br />
+Last updated 2011-03-13 18:00:00 CEST
 </div>
 </div>
 </body>

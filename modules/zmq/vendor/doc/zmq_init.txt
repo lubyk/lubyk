@@ -20,6 +20,11 @@ The 'io_threads' argument specifies the size of the 0MQ thread pool to handle
 I/O operations. If your application is using only the 'inproc' transport for
 messaging you may set this to zero, otherwise set it to at least one.
 
+.Thread safety
+A 0MQ 'context' is thread safe and may be shared among as many application
+threads as necessary, without any additional locking required on the part of
+the caller.
+
 
 RETURN VALUE
 ------------
@@ -42,5 +47,5 @@ linkzmq:zmq_term[3]
 
 AUTHORS
 -------
-The 0MQ documentation was written by Martin Sustrik <sustrik@250bpm.com> and
+This 0MQ manual page was written by Martin Sustrik <sustrik@250bpm.com> and
 Martin Lucina <mato@kotelna.sk>.

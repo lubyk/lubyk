@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -46,6 +47,7 @@ namespace zmq
             const blob_t &peer_identity_);
         int xsend (zmq_msg_t *msg_, int flags_);
         int xrecv (zmq_msg_t *msg_, int flags_);
+        int rollback ();
         bool xhas_in ();
         bool xhas_out ();
 
@@ -106,7 +108,7 @@ namespace zmq
         bool terminating;
 
         xrep_t (const xrep_t&);
-        void operator = (const xrep_t&);
+        const xrep_t &operator = (const xrep_t&);
     };
 
 }

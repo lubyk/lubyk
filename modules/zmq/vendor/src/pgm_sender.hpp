@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -95,7 +96,7 @@ namespace zmq
         size_t write_size;
 
         pgm_sender_t (const pgm_sender_t&);
-        void operator = (const pgm_sender_t&);
+        const pgm_sender_t &operator = (const pgm_sender_t&);
     };
 
 }

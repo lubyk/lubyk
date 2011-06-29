@@ -608,6 +608,15 @@ supplied to <em>zmq_msg_init_data()</em>.</p></div>
 <td class="icon">
 <div class="title">Caution</div>
 </td>
+<td class="content">The deallocation function <em>ffn</em> needs to be thread-safe, since it
+will be called from an arbitrary thread.</td>
+</tr></table>
+</div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Caution</div>
+</td>
 <td class="content">The functions <em>zmq_msg_init()</em>, <em>zmq_msg_init_data()</em> and
 <em>zmq_msg_init_size()</em> are mutually exclusive. Never initialize the same
 <em>zmq_msg_t</em> twice.</td>
@@ -654,15 +663,15 @@ assert (rc == 0);</tt></pre>
 </div>
 <h2 id="_authors">AUTHORS</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>The ØMQ documentation was written by Martin Sustrik &lt;<a href="mailto:sustrik@250bpm.com">sustrik@250bpm.com</a>&gt; and
+<div class="paragraph"><p>This ØMQ manual page was written by Martin Sustrik &lt;<a href="mailto:sustrik@250bpm.com">sustrik@250bpm.com</a>&gt; and
 Martin Lucina &lt;<a href="mailto:mato@kotelna.sk">mato@kotelna.sk</a>&gt;.</p></div>
 </div>
 </div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-ØMQ 2.1.0<br />
-Last updated 2010-09-09 14:03:03 CEST
+ØMQ 2.1.5<br />
+Last updated 2011-04-16 10:29:20 CEST
 </div>
 </div>
 </body>

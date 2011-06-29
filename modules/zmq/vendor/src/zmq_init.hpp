@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -44,6 +45,7 @@ namespace zmq
     private:
 
         void finalise_initialisation ();
+        void dispatch_engine ();
 
         //  i_inout interface implementation.
         bool read (::zmq_msg_t *msg_);
@@ -57,6 +59,9 @@ namespace zmq
 
         //  Associated wire-protocol engine.
         i_engine *engine;
+
+        //  Detached transient engine.
+        i_engine *ephemeral_engine;
 
         //  True if our own identity was already sent to the peer.
         bool sent;
@@ -80,7 +85,7 @@ namespace zmq
         class io_thread_t *io_thread;
 
         zmq_init_t (const zmq_init_t&);
-        void operator = (const zmq_init_t&);
+        const zmq_init_t &operator = (const zmq_init_t&);
     };
 
 }

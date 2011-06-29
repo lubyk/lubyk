@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -16,8 +17,6 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#include <new>
 
 #include "session.hpp"
 #include "socket_base.hpp"
@@ -234,6 +233,7 @@ void zmq::session_t::process_attach (i_engine *engine_,
     //  If the session already has an engine attached, destroy new one.
     //  Note new engine is not plugged in yet, we don't have to unplug it.
     if (engine) {
+        log ("DPID: duplicate peer identity - disconnecting peer");
         delete engine_;
         return;
     }

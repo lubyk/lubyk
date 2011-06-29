@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -64,9 +65,6 @@ namespace zmq
 
         //  Maximum number of events the I/O thread can process in one go.
         max_io_events = 256,
-
-        //  Should initial connection attempts be delayed?
-        wait_before_connect = false,
 
         //  Maximal delay to process command in API thread (in CPU ticks).
         //  3,000,000 ticks equals to 1 - 2 milliseconds on current CPUs.

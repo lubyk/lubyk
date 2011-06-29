@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -57,11 +58,14 @@ namespace zmq
         sockaddr_storage addr;
         socklen_t addr_len;
 
+        //  True, if the undelying file for UNIX domain socket exists.
+        bool has_file;
+
         //  Underlying socket.
         fd_t s;
 
         tcp_listener_t (const tcp_listener_t&);
-        void operator = (const tcp_listener_t&);
+        const tcp_listener_t &operator = (const tcp_listener_t&);
     };
 
 }

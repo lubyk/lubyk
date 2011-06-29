@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -45,7 +46,7 @@ extern "C" {
 /*  about minutiae of time-related functions on different OS platforms.       */
 
 /*  Starts the stopwatch. Returns the handle to the watch.                    */
-ZMQ_EXPORT void *zmq_stopwatch_start ();
+ZMQ_EXPORT void *zmq_stopwatch_start (void);
 
 /*  Stops the stopwatch. Returns the number of microseconds elapsed since     */
 /*  the stopwatch was started.                                                */

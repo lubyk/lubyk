@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -76,7 +77,8 @@ namespace zmq
         };
 
         //  This table stores data for registered descriptors.
-        std::vector <fd_entry_t> fd_table;
+        typedef std::vector <fd_entry_t> fd_table_t;
+        fd_table_t fd_table;
 
         //  Pollset to pass to the poll function.
         typedef std::vector <pollfd> pollset_t;
@@ -92,7 +94,7 @@ namespace zmq
         thread_t worker;
 
         poll_t (const poll_t&);
-        void operator = (const poll_t&);
+        const poll_t &operator = (const poll_t&);
     };
 
 }

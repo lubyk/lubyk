@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -54,7 +55,7 @@ extern "C" {
 /*  Version macros for compile-time API version detection                     */
 #define ZMQ_VERSION_MAJOR 2
 #define ZMQ_VERSION_MINOR 1
-#define ZMQ_VERSION_PATCH 0
+#define ZMQ_VERSION_PATCH 7
 
 #define ZMQ_MAKE_VERSION(major, minor, patch) \
     ((major) * 10000 + (minor) * 100 + (patch))
@@ -68,7 +69,7 @@ ZMQ_EXPORT void zmq_version (int *major, int *minor, int *patch);
 /*  0MQ errors.                                                               */
 /******************************************************************************/
 
-/*  A number random anough not to collide with different errno ranges on      */
+/*  A number random enough not to collide with different errno ranges on      */
 /*  different OSes. The assumption is that error_t is at least 32-bit type.   */
 #define ZMQ_HAUSNUMERO 156384712
 
@@ -97,6 +98,9 @@ ZMQ_EXPORT void zmq_version (int *major, int *minor, int *patch);
 #ifndef EINPROGRESS
 #define EINPROGRESS (ZMQ_HAUSNUMERO + 8)
 #endif
+#ifndef ENOTSOCK
+#define ENOTSOCK (ZMQ_HAUSNUMERO + 9)
+#endif
 
 /*  Native 0MQ error codes.                                                   */
 #define EFSM (ZMQ_HAUSNUMERO + 51)
@@ -108,7 +112,7 @@ ZMQ_EXPORT void zmq_version (int *major, int *minor, int *patch);
 /*  of this function is to make the code 100% portable, including where 0MQ   */
 /*  compiled with certain CRT library (on Windows) is linked to an            */
 /*  application that uses different CRT library.                              */
-ZMQ_EXPORT int zmq_errno ();
+ZMQ_EXPORT int zmq_errno (void);
 
 /*  Resolves system errors and 0MQ errors to human-readable string.           */
 ZMQ_EXPORT const char *zmq_strerror (int errnum);
@@ -133,6 +137,7 @@ ZMQ_EXPORT const char *zmq_strerror (int errnum);
 /*  allows us to pack the stucture tigher and thus improve performance.       */
 #define ZMQ_MSG_MORE 1
 #define ZMQ_MSG_SHARED 128
+#define ZMQ_MSG_MASK 129 /* Merges all the flags */
 
 /*  A message. Note that 'content' is not a pointer to the raw data.          */
 /*  Rather it is pointer to zmq::msg_content_t structure                      */
@@ -174,10 +179,14 @@ ZMQ_EXPORT int zmq_term (void *context);
 #define ZMQ_SUB 2
 #define ZMQ_REQ 3
 #define ZMQ_REP 4
-#define ZMQ_XREQ 5
-#define ZMQ_XREP 6
+#define ZMQ_DEALER 5
+#define ZMQ_ROUTER 6
 #define ZMQ_PULL 7
 #define ZMQ_PUSH 8
+#define ZMQ_XPUB 9
+#define ZMQ_XSUB 10
+#define ZMQ_XREQ ZMQ_DEALER        /*  Old alias, remove in 3.x               */
+#define ZMQ_XREP ZMQ_ROUTER        /*  Old alias, remove in 3.x               */
 #define ZMQ_UPSTREAM ZMQ_PULL      /*  Old alias, remove in 3.x               */
 #define ZMQ_DOWNSTREAM ZMQ_PUSH    /*  Old alias, remove in 3.x               */
 
@@ -200,7 +209,9 @@ ZMQ_EXPORT int zmq_term (void *context);
 #define ZMQ_LINGER 17
 #define ZMQ_RECONNECT_IVL 18
 #define ZMQ_BACKLOG 19
-
+#define ZMQ_RECOVERY_IVL_MSEC 20   /*  opt. recovery time, reconcile in 3.x   */
+#define ZMQ_RECONNECT_IVL_MAX 21
+    
 /*  Send/recv options.                                                        */
 #define ZMQ_NOBLOCK 1
 #define ZMQ_SNDMORE 2
@@ -239,7 +250,7 @@ typedef struct
 ZMQ_EXPORT int zmq_poll (zmq_pollitem_t *items, int nitems, long timeout);
 
 /******************************************************************************/
-/*  Devices - Experimental.                                                   */
+/*  Built-in devices                                                          */
 /******************************************************************************/
 
 #define ZMQ_STREAMER 1

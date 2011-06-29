@@ -2,12 +2,12 @@
 .\"     Title: zmq_socket
 .\"    Author: [see the "AUTHORS" section]
 .\" Generator: DocBook XSL Stylesheets v1.75.2 <http://docbook.sf.net/>
-.\"      Date: 12/01/2010
+.\"      Date: 05/06/2011
 .\"    Manual: 0MQ Manual
-.\"    Source: 0MQ 2.1.0
+.\"    Source: 0MQ 2.1.6
 .\"  Language: English
 .\"
-.TH "ZMQ_SOCKET" "3" "12/01/2010" "0MQ 2\&.1\&.0" "0MQ Manual"
+.TH "ZMQ_SOCKET" "3" "05/06/2011" "0MQ 2\&.1\&.6" "0MQ Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -48,11 +48,11 @@ interface to either connection\-oriented reliable byte streams (SOCK_STREAM), or
 .sp
 Conventional sockets allow only strict one\-to\-one (two peers), many\-to\-one (many clients, one server), or in some cases one\-to\-many (multicast) relationships\&. With the exception of \fIZMQ_PAIR\fR, 0MQ sockets may be connected \fBto multiple endpoints\fR using \fIzmq_connect()\fR, while simultaneously accepting incoming connections \fBfrom multiple endpoints\fR bound to the socket using \fIzmq_bind()\fR, thus allowing many\-to\-many relationships\&.
 .PP
-\fBThread safety\fR. A 0MQ
-\fIcontext\fR
-is thread safe and may be shared among as many application threads as necessary, without any additional locking required on the part of the caller\&.
-.sp
-Individual 0MQ \fIsockets\fR are \fInot\fR thread safe except in the case where full memory barriers are issued when migrating a socket from one thread to another\&. In practice this means applications can create a socket in one thread with \fIzmq_socket()\fR and then pass it to a \fInewly created\fR thread as part of thread initialization, for example via a structure passed as an argument to \fIpthread_create()\fR\&.
+\fBThread safety\fR. 0MQ
+\fIsockets\fR
+are
+\fInot\fR
+thread safe\&. Applications MUST NOT use a socket from multiple threads except after migrating a socket from one thread to another with a "full fence" memory barrier\&.
 .PP
 \fBSocket types\fR. The following sections present the socket types defined by 0MQ, grouped by the general
 \fImessaging pattern\fR
@@ -140,7 +140,7 @@ T}
 \fBZMQ_REP\fR
 .RS 4
 .sp
-A socket of type \fIZMQ_REP\fR is used by a \fIservice\fR to receive requests from and send replies to a \fIclient\fR\&. This socket type allows only an alternating sequence of \fIzmq_recv(request)\fR and subsequent \fIzmq_send(reply)\fR calls\&. Each request received is fair\-queued from among all \fIclients\fR, and each reply sent is routed to the \fIclient\fR that issued the last request\&.
+A socket of type \fIZMQ_REP\fR is used by a \fIservice\fR to receive requests from and send replies to a \fIclient\fR\&. This socket type allows only an alternating sequence of \fIzmq_recv(request)\fR and subsequent \fIzmq_send(reply)\fR calls\&. Each request received is fair\-queued from among all \fIclients\fR, and each reply sent is routed to the \fIclient\fR that issued the last request\&. If the original requester doesn\(cqt exist any more the reply is silently discarded\&.
 .sp
 When a \fIZMQ_REP\fR socket enters an exceptional state due to having reached the high water mark for a \fIclient\fR, then any replies sent to the \fIclient\fR in question shall be dropped until the exceptional state ends\&.
 .sp
@@ -208,20 +208,22 @@ T}
 .nr an-break-flag 1
 .br
 .ps +1
-\fBZMQ_XREQ\fR
+\fBZMQ_DEALER\fR
 .RS 4
 .sp
-A socket of type \fIZMQ_XREQ\fR is an advanced pattern used for extending request/reply sockets\&. Each message sent is load\-balanced among all connected peers, and each message received is fair\-queued from all connected peers\&.
+A socket of type \fIZMQ_DEALER\fR is an advanced pattern used for extending request/reply sockets\&. Each message sent is load\-balanced among all connected peers, and each message received is fair\-queued from all connected peers\&.
 .sp
-When a \fIZMQ_XREQ\fR socket enters an exceptional state due to having reached the high water mark for all peers, or if there are no peers at all, then any \fBzmq_send\fR(3) operations on the socket shall block until the exceptional state ends or at least one peer becomes available for sending; messages are not discarded\&.
+Previously this socket was called \fIZMQ_XREQ\fR and that name remains available for backwards compatibility\&.
 .sp
-When a \fIZMQ_XREQ\fR socket is connected to a \fIZMQ_REP\fR socket each message sent must consist of an empty message part, the \fIdelimiter\fR, followed by one or more \fIbody parts\fR\&.
+When a \fIZMQ_DEALER\fR socket enters an exceptional state due to having reached the high water mark for all peers, or if there are no peers at all, then any \fBzmq_send\fR(3) operations on the socket shall block until the exceptional state ends or at least one peer becomes available for sending; messages are not discarded\&.
+.sp
+When a \fIZMQ_DEALER\fR socket is connected to a \fIZMQ_REP\fR socket each message sent must consist of an empty message part, the \fIdelimiter\fR, followed by one or more \fIbody parts\fR\&.
 .sp
 .it 1 an-trap
 .nr an-no-space-flag 1
 .nr an-break-flag 1
 .br
-.B Table\ \&3.\ \&Summary of ZMQ_XREQ characteristics
+.B Table\ \&3.\ \&Summary of ZMQ_DEALER characteristics
 .TS
 tab(:);
 lt lt
@@ -235,7 +237,7 @@ T{
 Compatible peer sockets
 T}:T{
 .sp
-\fIZMQ_XREP\fR, \fIZMQ_REP\fR
+\fIZMQ_ROUTER\fR, \fIZMQ_REP\fR
 T}
 T{
 .sp
@@ -281,20 +283,22 @@ T}
 .nr an-break-flag 1
 .br
 .ps +1
-\fBZMQ_XREP\fR
+\fBZMQ_ROUTER\fR
 .RS 4
 .sp
-A socket of type \fIZMQ_XREP\fR is an advanced pattern used for extending request/reply sockets\&. When receiving messages a \fIZMQ_XREP\fR socket shall prepend a message part containing the \fIidentity\fR of the originating peer to the message before passing it to the application\&. Messages received are fair\-queued from among all connected peers\&. When sending messages a \fIZMQ_XREP\fR socket shall remove the first part of the message and use it to determine the \fIidentity\fR of the peer the message shall be routed to\&.
+A socket of type \fIZMQ_ROUTER\fR is an advanced pattern used for extending request/reply sockets\&. When receiving messages a \fIZMQ_ROUTER\fR socket shall prepend a message part containing the \fIidentity\fR of the originating peer to the message before passing it to the application\&. Messages received are fair\-queued from among all connected peers\&. When sending messages a \fIZMQ_ROUTER\fR socket shall remove the first part of the message and use it to determine the \fIidentity\fR of the peer the message shall be routed to\&. If the peer does not exist anymore the message shall be silently discarded\&.
 .sp
-When a \fIZMQ_XREP\fR socket enters an exceptional state due to having reached the high water mark for all peers, or if there are no peers at all, then any messages sent to the socket shall be dropped until the exceptional state ends\&. Likewise, any messages routed to a non\-existent peer or a peer for which the individual high water mark has been reached shall also be dropped\&.
+Previously this socket was called \fIZMQ_XREP\fR and that name remains available for backwards compatibility\&.
 .sp
-When a \fIZMQ_REQ\fR socket is connected to a \fIZMQ_XREP\fR socket, in addition to the \fIidentity\fR of the originating peer each message received shall contain an empty \fIdelimiter\fR message part\&. Hence, the entire structure of each received message as seen by the application becomes: one or more \fIidentity\fR parts, \fIdelimiter\fR part, one or more \fIbody parts\fR\&. When sending replies to a \fIZMQ_REQ\fR socket the application must include the \fIdelimiter\fR part\&.
+When a \fIZMQ_ROUTER\fR socket enters an exceptional state due to having reached the high water mark for all peers, or if there are no peers at all, then any messages sent to the socket shall be dropped until the exceptional state ends\&. Likewise, any messages routed to a non\-existent peer or a peer for which the individual high water mark has been reached shall also be dropped\&.
+.sp
+When a \fIZMQ_REQ\fR socket is connected to a \fIZMQ_ROUTER\fR socket, in addition to the \fIidentity\fR of the originating peer each message received shall contain an empty \fIdelimiter\fR message part\&. Hence, the entire structure of each received message as seen by the application becomes: one or more \fIidentity\fR parts, \fIdelimiter\fR part, one or more \fIbody parts\fR\&. When sending replies to a \fIZMQ_REQ\fR socket the application must include the \fIdelimiter\fR part\&.
 .sp
 .it 1 an-trap
 .nr an-no-space-flag 1
 .nr an-break-flag 1
 .br
-.B Table\ \&4.\ \&Summary of ZMQ_XREP characteristics
+.B Table\ \&4.\ \&Summary of ZMQ_ROUTER characteristics
 .TS
 tab(:);
 lt lt
@@ -308,7 +312,7 @@ T{
 Compatible peer sockets
 T}:T{
 .sp
-\fIZMQ_XREQ\fR, \fIZMQ_REQ\fR
+\fIZMQ_DEALER\fR, \fIZMQ_REQ\fR
 T}
 T{
 .sp
@@ -362,7 +366,7 @@ The publish\-subscribe pattern is used for one\-to\-many distribution of data fr
 .sp
 A socket of type \fIZMQ_PUB\fR is used by a \fIpublisher\fR to distribute data\&. Messages sent are distributed in a fan out fashion to all connected peers\&. The \fBzmq_recv\fR(3) function is not implemented for this socket type\&.
 .sp
-When a \fIZMQ_PUB\fR socket enters an exceptional state due to having reached the high water mark for a \fIsubscriber\fR, then any messages that would be sent to the \fIsubscriber\fR in question shall instead be dropped until the exceptional state ends\&.
+When a \fIZMQ_PUB\fR socket enters an exceptional state due to having reached the high water mark for a \fIsubscriber\fR, then any messages that would be sent to the \fIsubscriber\fR in question shall instead be dropped until the exceptional state ends\&. The \fIzmq_send()\fR function shall never block for this socket type\&.
 .sp
 .it 1 an-trap
 .nr an-no-space-flag 1
@@ -486,7 +490,7 @@ T{
 ZMQ_HWM option action
 T}:T{
 .sp
-N/A
+Drop
 T}
 .TE
 .sp 1
@@ -640,7 +644,7 @@ T}
 .RE
 .SS "Exclusive pair pattern"
 .sp
-The exclusive pair is an advanced pattern used for communicating exclusively between two peers\&.
+The exclusive pair pattern is used to connect a peer to precisely one other peer\&. This pattern is used for inter\-thread communication across the inproc transport\&.
 .sp
 .it 1 an-trap
 .nr an-no-space-flag 1
@@ -666,7 +670,7 @@ When a \fIZMQ_PAIR\fR socket enters an exceptional state due to having reached t
 .ps -1
 .br
 .sp
-\fIZMQ_PAIR\fR sockets are experimental, and are currently missing several features such as auto\-reconnection\&.
+\fIZMQ_PAIR\fR sockets are designed for inter\-thread communication across the \fBzmq_inproc\fR(7) transport and do not implement functionality such as auto\-reconnection\&. \fIZMQ_PAIR\fR sockets are considered experimental and may have other missing or broken aspects\&.
 .sp .5v
 .RE
 .sp
@@ -744,14 +748,24 @@ is invalid\&.
 .RS 4
 The provided
 \fIcontext\fR
-was not valid (NULL)\&.
+is invalid\&.
+.RE
+.PP
+\fBEMFILE\fR
+.RS 4
+The limit on the total number of open 0MQ sockets has been reached\&.
+.RE
+.PP
+\fBETERM\fR
+.RS 4
+The context specified was terminated\&.
 .RE
 .SH "SEE ALSO"
 .sp
-\fBzmq_init\fR(3) \fBzmq_setsockopt\fR(3) \fBzmq_bind\fR(3) \fBzmq_connect\fR(3) \fBzmq_send\fR(3) \fBzmq_recv\fR(3) \fBzmq\fR(7)
+\fBzmq_init\fR(3) \fBzmq_setsockopt\fR(3) \fBzmq_bind\fR(3) \fBzmq_connect\fR(3) \fBzmq_send\fR(3) \fBzmq_recv\fR(3) \fBzmq_inproc\fR(7) \fBzmq\fR(7)
 .SH "AUTHORS"
 .sp
-The 0MQ documentation was written by Martin Sustrik <\m[blue]\fBsustrik@250bpm\&.com\fR\m[]\&\s-2\u[1]\d\s+2> and Martin Lucina <\m[blue]\fBmato@kotelna\&.sk\fR\m[]\&\s-2\u[2]\d\s+2>\&.
+This 0MQ manual page was written by Martin Sustrik <\m[blue]\fBsustrik@250bpm\&.com\fR\m[]\&\s-2\u[1]\d\s+2> and Martin Lucina <\m[blue]\fBmato@kotelna\&.sk\fR\m[]\&\s-2\u[2]\d\s+2>\&.
 .SH "NOTES"
 .IP " 1." 4
 sustrik@250bpm.com

@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -65,6 +66,8 @@ bool zmq::decoder_t::one_byte_size_ready ()
         //  message and thus we can treat it as uninitialised...
         int rc = zmq_msg_init_size (&in_progress, *tmpbuf - 1);
         if (rc != 0 && errno == ENOMEM) {
+            rc = zmq_msg_init (&in_progress);
+            errno_assert (rc == 0);
             decoding_error ();
             return false;
         }
@@ -92,6 +95,8 @@ bool zmq::decoder_t::eight_byte_size_ready ()
     //  message and thus we can treat it as uninitialised...
     int rc = zmq_msg_init_size (&in_progress, size - 1);
     if (rc != 0 && errno == ENOMEM) {
+        rc = zmq_msg_init (&in_progress);
+        errno_assert (rc == 0);
         decoding_error ();
         return false;
     }
@@ -104,11 +109,11 @@ bool zmq::decoder_t::eight_byte_size_ready ()
 bool zmq::decoder_t::flags_ready ()
 {
     //  Store the flags from the wire into the message structure.
-    in_progress.flags = tmpbuf [0];
+    in_progress.flags = tmpbuf [0] | ~ZMQ_MSG_MASK;
 
     next_step (zmq_msg_data (&in_progress), zmq_msg_size (&in_progress),
         &decoder_t::message_ready);
-    
+
     return true;
 }
 

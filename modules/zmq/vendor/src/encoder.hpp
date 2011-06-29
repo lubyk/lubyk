@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -44,7 +45,7 @@ namespace zmq
             bufsize (bufsize_)
         {
             buf = (unsigned char*) malloc (bufsize_);
-            zmq_assert (buf);
+            alloc_assert (buf);
         }
 
         //  The destructor doesn't have to be virtual. It is made virtual
@@ -175,7 +176,7 @@ namespace zmq
         unsigned char tmpbuf [10];
 
         encoder_t (const encoder_t&);
-        void operator = (const encoder_t&);
+        const encoder_t &operator = (const encoder_t&);
     };
 }
 

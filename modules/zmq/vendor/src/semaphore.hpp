@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -25,6 +26,8 @@
 
 #if defined ZMQ_HAVE_WINDOWS
 #include "windows.hpp"
+#elif defined ZMQ_HAVE_OPENVMS
+#include <pthread.h>
 #else
 #include <semaphore.h>
 #endif
@@ -77,7 +80,7 @@ namespace zmq
         HANDLE ev;
 
         semaphore_t (const semaphore_t&);
-        void operator = (const semaphore_t&);
+        const semaphore_t &operator = (const semaphore_t&);
     };
 
 #elif defined ZMQ_HAVE_LINUX || defined ZMQ_HAVE_OSX || defined ZMQ_HAVE_OPENVMS
@@ -130,7 +133,7 @@ namespace zmq
         pthread_mutex_t mutex;
 
         semaphore_t (const semaphore_t&);
-        void operator = (const semaphore_t&);
+        const semaphore_t &operator = (const semaphore_t&);
     };
 
 #else
@@ -175,7 +178,7 @@ namespace zmq
         sem_t sem;
 
         semaphore_t (const semaphore_t&);
-        void operator = (const semaphore_t&);
+        const semaphore_t &operator = (const semaphore_t&);
     };
 
 #endif

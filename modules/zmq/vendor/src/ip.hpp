@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -59,11 +60,9 @@ namespace zmq
     int resolve_ip_hostname (sockaddr_storage *addr_, socklen_t *addr_len_,
         const char *hostname_);
 
-#if !defined ZMQ_HAVE_WINDOWS && !defined ZMQ_HAVE_OPENVMS
     // This function sets up address for UNIX domain transport.
     int resolve_local_path (sockaddr_storage *addr_, socklen_t *addr_len_,
         const char* pathname_);
-#endif
 }
 
 #endif 

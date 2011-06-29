@@ -48,7 +48,7 @@ _zmq_poll()_ shall wait 'timeout' microseconds for an event to occur on
 any of the requested items. If the value of 'timeout' is `0`, _zmq_poll()_
 shall return immediately. If the value of 'timeout' is `-1`, _zmq_poll()_ shall
 block indefinitely until a requested event has occurred on at least one
-*zmq_pollitem_t*.
+*zmq_pollitem_t*. The resolution of 'timeout' is 1 millisecond.
 
 The 'events' and 'revents' members of *zmq_pollitem_t* are bit masks constructed
 by OR'ing a combination of the following event flags:
@@ -128,5 +128,5 @@ Your operating system documentation for the _poll()_ system call.
 
 AUTHORS
 -------
-The 0MQ documentation was written by Martin Sustrik <sustrik@250bpm.com> and
+This 0MQ manual page was written by Martin Sustrik <sustrik@250bpm.com> and
 Martin Lucina <mato@kotelna.sk>.

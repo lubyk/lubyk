@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -170,7 +171,10 @@ bool zmq::pair_t::xhas_out ()
     if (!outpipe || !outpipe_alive)
         return false;
 
-    outpipe_alive = outpipe->check_write ();
+    zmq_msg_t msg;
+    zmq_msg_init (&msg);
+    outpipe_alive = outpipe->check_write (&msg);
+    zmq_msg_close (&msg);
     return outpipe_alive;
 }
 

@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -73,7 +74,7 @@ void zmq::trie_t::add (unsigned char *prefix_, size_t size_)
             count = (min < c ? c - min : min - c) + 1;
             next.table = (trie_t**)
                 malloc (sizeof (trie_t*) * count);
-            zmq_assert (next.table);
+            alloc_assert (next.table);
             for (unsigned short i = 0; i != count; ++i)
                 next.table [i] = 0;
             min = std::min (min, c);
@@ -110,14 +111,14 @@ void zmq::trie_t::add (unsigned char *prefix_, size_t size_)
     if (count == 1) {
         if (!next.node) {
             next.node = new (std::nothrow) trie_t;
-            zmq_assert (next.node);
+            alloc_assert (next.node);
         }
         next.node->add (prefix_ + 1, size_ - 1);
     }
     else {
         if (!next.table [c - min]) {
             next.table [c - min] = new (std::nothrow) trie_t;
-            zmq_assert (next.table [c - min]);
+            alloc_assert (next.table [c - min]);
         }
         next.table [c - min]->add (prefix_ + 1, size_ - 1);
     }

@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -46,14 +47,14 @@ zmq::epoll_t::~epoll_t ()
     worker.stop ();
 
     close (epoll_fd);
-    for (retired_t::iterator it = retired.begin (); it != retired.end (); it ++)
+    for (retired_t::iterator it = retired.begin (); it != retired.end (); ++it)
         delete *it;
 }
 
 zmq::epoll_t::handle_t zmq::epoll_t::add_fd (fd_t fd_, i_poll_events *events_)
 {
     poll_entry_t *pe = new (std::nothrow) poll_entry_t;
-    zmq_assert (pe != NULL);
+    alloc_assert (pe);
 
     //  The memset is not actually needed. It's here to prevent debugging
     //  tools to complain about using uninitialised memory.
@@ -162,7 +163,7 @@ void zmq::epoll_t::loop ()
 
         //  Destroy retired event sources.
         for (retired_t::iterator it = retired.begin (); it != retired.end ();
-              it ++)
+              ++it)
             delete *it;
         retired.clear ();
     }

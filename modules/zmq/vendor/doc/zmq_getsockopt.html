@@ -1023,6 +1023,62 @@ all, when using multicast transports
 </td>
 </tr>
 </table></div>
+<h3 id="_zmq_recovery_ivl_msec_get_multicast_recovery_interval_in_milliseconds">ZMQ_RECOVERY_IVL_MSEC: Get multicast recovery interval in milliseconds</h3><div style="clear:left"></div>
+<div class="paragraph"><p>The <em>ZMQ_RECOVERY_IVL&#8217;_MSEC option shall retrieve the recovery interval, in
+milliseconds, for multicast transports using the specified 'socket</em>.  The
+recovery interval determines the maximum time in seconds that a receiver
+can be absent from a multicast group before unrecoverable data loss will
+occur.</p></div>
+<div class="paragraph"><p>For backward compatibility, the default value of <em>ZMQ_RECOVERY_IVL_MSEC</em> is
+-1 indicating that the recovery interval should be obtained from the
+<em>ZMQ_RECOVERY_IVL</em> option. However, if the <em>ZMQ_RECOVERY_IVL_MSEC</em> value is
+not zero, then it will take precedence, and be used.</p></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Option value type
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+int64_t
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Option value unit
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+milliseconds
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Default value
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+-1
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Applicable socket types
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+all, when using multicast transports
+</p>
+</td>
+</tr>
+</table></div>
 <h3 id="_zmq_mcast_loop_control_multicast_loop_back">ZMQ_MCAST_LOOP: Control multicast loop-back</h3><div style="clear:left"></div>
 <div class="paragraph"><p>The <em>ZMQ_MCAST_LOOP</em> option controls whether data sent via multicast
 transports can also be received by the sending host via loop-back.  A value of
@@ -1258,8 +1314,8 @@ all
 </li>
 </ul></div>
 <h3 id="_zmq_reconnect_ivl_retrieve_reconnection_interval">ZMQ_RECONNECT_IVL: Retrieve reconnection interval</h3><div style="clear:left"></div>
-<div class="paragraph"><p>The <em>ZMQ_RECONNECT_IVL</em> option shall retrieve the reconnection interval for the
-specified <em>socket</em>.  The reconnection interval is the maximum period ØMQ shall
+<div class="paragraph"><p>The <em>ZMQ_RECONNECT_IVL</em> option shall retrieve the initial reconnection interval
+for the specified <em>socket</em>.  The reconnection interval is the period ØMQ shall
 wait between attempts to reconnect disconnected peers when using
 connection-oriented transports.</p></div>
 <div class="admonitionblock">
@@ -1313,6 +1369,67 @@ Applicable socket types
 <td class="hdlist2">
 <p style="margin-top: 0;">
 all, only for connection-oriented transports
+</p>
+</td>
+</tr>
+</table></div>
+<h3 id="_zmq_reconnect_ivl_max_retrieve_maximum_reconnection_interval">ZMQ_RECONNECT_IVL_MAX: Retrieve maximum reconnection interval</h3><div style="clear:left"></div>
+<div class="paragraph"><p>The <em>ZMQ_RECONNECT_IVL_MAX</em> option shall retrieve the maximum reconnection
+interval for the specified <em>socket</em>.  This is the maximum period ØMQ shall wait
+between attempts to reconnect. On each reconnect attempt, the previous interval
+shall be doubled untill ZMQ_RECONNECT_IVL_MAX is reached. This allows for
+exponential backoff strategy. Default value means no exponential backoff is
+performed and reconnect interval calculations are only based on ZMQ_RECONNECT_IVL.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">Values less than ZMQ_RECONNECT_IVL will be ignored.</td>
+</tr></table>
+</div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Option value type
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+int
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Option value unit
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+milliseconds
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Default value
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+0 (only use ZMQ_RECONNECT_IVL)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Applicable socket types
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+all, only for connection-oriented transport
 </p>
 </td>
 </tr>
@@ -1392,7 +1509,7 @@ state with a subsequent retrieval of the <em>ZMQ_EVENTS</em> option.</td>
 </td>
 <td class="content">The returned file descriptor is intended for use with a <em>poll</em> or
 similar system call only. Applications must never attempt to read or write data
-to it directly.</td>
+to it directly, neither should they try to close it.</td>
 </tr></table>
 </div>
 <div class="hdlist"><table>
@@ -1544,11 +1661,11 @@ The ØMQ <em>context</em> associated with the specified <em>socket</em> was term
 </p>
 </dd>
 <dt class="hdlist1">
-<strong>EFAULT</strong>
+<strong>ENOTSOCK</strong>
 </dt>
 <dd>
 <p>
-The provided <em>socket</em> was not valid (NULL).
+The provided <em>socket</em> was invalid.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -1581,15 +1698,15 @@ assert (rc == 0);</tt></pre>
 </div>
 <h2 id="_authors">AUTHORS</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>The ØMQ documentation was written by Martin Sustrik &lt;<a href="mailto:sustrik@250bpm.com">sustrik@250bpm.com</a>&gt; and
+<div class="paragraph"><p>This ØMQ manual page was written by Martin Sustrik &lt;<a href="mailto:sustrik@250bpm.com">sustrik@250bpm.com</a>&gt; and
 Martin Lucina &lt;<a href="mailto:mato@kotelna.sk">mato@kotelna.sk</a>&gt;.</p></div>
 </div>
 </div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-ØMQ 2.1.0<br />
-Last updated 2010-12-01 10:58:42 CEST
+ØMQ 2.1.6<br />
+Last updated 2011-05-07 07:13:32 CEST
 </div>
 </div>
 </body>

@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -46,19 +47,16 @@ namespace zmq
 
         //  Using following function, socket is able to access global
         //  repository of inproc endpoints.
-        int register_endpoint (const char *addr_, class socket_base_t *socket_);
+        int register_endpoint (const char *addr_, struct endpoint_t &endpoint_);
         void unregister_endpoints (class socket_base_t *socket_);
-        class socket_base_t *find_endpoint (const char *addr_);
+        struct endpoint_t find_endpoint (const char *addr_);
+        void destroy_socket (class socket_base_t *socket_);
 
         //  Logs an message.
-        void log (zmq_msg_t *msg_);
+        void log (const char *format_, ...);
 
         //  Chooses least loaded I/O thread.
         class io_thread_t *choose_io_thread (uint64_t affinity_);
-
-        //  Zombify particular socket. In other words, pass the ownership to
-        //  the context.
-        void zombify_socket (class socket_base_t *socket_);
 
         //  Derived object can use these functions to send commands
         //  to other objects.
@@ -82,6 +80,9 @@ namespace zmq
             class own_t *object_);
         void send_term (class own_t *destination_, int linger_);
         void send_term_ack (class own_t *destination_);
+        void send_reap (class socket_base_t *socket_);
+        void send_reaped ();
+        void send_done ();
 
         //  These handlers can be overloaded by the derived objects. They are
         //  called when command arrives from another thread.
@@ -99,6 +100,8 @@ namespace zmq
         virtual void process_term_req (class own_t *object_);
         virtual void process_term (int linger_);
         virtual void process_term_ack ();
+        virtual void process_reap (class socket_base_t *socket_);
+        virtual void process_reaped ();
 
         //  Special handler called after a command that requires a seqnum
         //  was processed. The implementation should catch up with its counter
@@ -116,7 +119,7 @@ namespace zmq
         void send_command (command_t &cmd_);
 
         object_t (const object_t&);
-        void operator = (const object_t&);
+        const object_t &operator = (const object_t&);
     };
 
 }

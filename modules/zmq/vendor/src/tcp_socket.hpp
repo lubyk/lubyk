@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -63,7 +64,7 @@ namespace zmq
 
         //  Disable copy construction of tcp_socket.
         tcp_socket_t (const tcp_socket_t&);
-        void operator = (const tcp_socket_t&);
+        const tcp_socket_t &operator = (const tcp_socket_t&);
     };
 
 }

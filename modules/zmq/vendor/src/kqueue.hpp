@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -92,7 +93,7 @@ namespace zmq
         thread_t worker;
 
         kqueue_t (const kqueue_t&);
-        void operator = (const kqueue_t&);
+        const kqueue_t &operator = (const kqueue_t&);
     };
 
 }

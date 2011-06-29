@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -66,6 +67,11 @@ namespace zmq
         int rc = zmq_device (device_, insocket_, outsocket_);
         if (rc != 0)
             throw error_t ();
+    }
+
+    inline void version (int *major_, int *minor_, int *patch_)
+    {
+        zmq_version (major_, minor_, patch_);
     }
 
     class message_t : private zmq_msg_t
@@ -184,6 +190,14 @@ namespace zmq
             assert (rc == 0);
         }
 
+        //  Be careful with this, it's probably only useful for
+        //  using the C api together with an existing C++ api.
+        //  Normally you should never need to use this.
+        inline operator void* ()
+        {
+            return ptr;
+        }
+
     private:
 
         void *ptr;
@@ -205,13 +219,23 @@ namespace zmq
 
         inline ~socket_t ()
         {
-            int rc = zmq_close (ptr);
-            assert (rc == 0);
+            close();
         }
 
         inline operator void* ()
         {
             return ptr;
+        }
+
+        inline void close()
+        {
+            if(ptr == NULL)
+                // already closed
+                return ;
+            int rc = zmq_close (ptr);
+            if (rc != 0)
+                throw error_t ();
+            ptr = 0 ;
         }
 
         inline void setsockopt (int option_, const void *optval_,

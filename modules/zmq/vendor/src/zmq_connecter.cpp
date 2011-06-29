@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -35,15 +36,16 @@
 
 zmq::zmq_connecter_t::zmq_connecter_t (class io_thread_t *io_thread_,
       class session_t *session_, const options_t &options_,
-      const char *protocol_, const char *address_) :
+      const char *protocol_, const char *address_, bool wait_) :
     own_t (io_thread_, options_),
     io_object_t (io_thread_),
     handle_valid (false),
-    wait (wait_before_connect),
-    session (session_)
+    wait (wait_),
+    session (session_),
+    current_reconnect_ivl(options.reconnect_ivl)
 {
-     int rc = tcp_connecter.set_address (protocol_, address_);
-     zmq_assert (rc == 0);
+    int rc = tcp_connecter.set_address (protocol_, address_);
+    zmq_assert (rc == 0);
 }
 
 zmq::zmq_connecter_t::~zmq_connecter_t ()
@@ -54,21 +56,10 @@ zmq::zmq_connecter_t::~zmq_connecter_t ()
         rm_fd (handle);
 }
 
-int zmq::zmq_connecter_t::get_reconnect_ivl ()
-{
-#if defined ZMQ_HAVE_WINDOWS
-    return (options.reconnect_ivl + (((int) GetCurrentProcessId () * 13)
-        % options.reconnect_ivl));
-#else
-    return (options.reconnect_ivl + (((int) getpid () * 13)
-        % options.reconnect_ivl));
-#endif
-}
-
 void zmq::zmq_connecter_t::process_plug ()
 {
     if (wait)
-        add_timer (get_reconnect_ivl (), reconnect_timer_id);
+        add_reconnect_timer();
     else
         start_connecting ();
 }
@@ -91,7 +82,7 @@ void zmq::zmq_connecter_t::out_event ()
     if (fd == retired_fd) {
         tcp_connecter.close ();
         wait = true;
-        add_timer (get_reconnect_ivl (), reconnect_timer_id);
+        add_reconnect_timer();
         return;
     }
 
@@ -103,7 +94,7 @@ void zmq::zmq_connecter_t::out_event ()
     //  Create an init object. 
     zmq_init_t *init = new (std::nothrow) zmq_init_t (io_thread, NULL,
         session, fd, options);
-    zmq_assert (init);
+    alloc_assert (init);
     launch_sibling (init);
 
     //  Shut the connecter down.
@@ -140,5 +131,36 @@ void zmq::zmq_connecter_t::start_connecting ()
 
     //  Handle any other error condition by eventual reconnect.
     wait = true;
-    add_timer (get_reconnect_ivl (), reconnect_timer_id);
+    add_reconnect_timer();
+}
+
+void zmq::zmq_connecter_t::add_reconnect_timer()
+{
+    add_timer (get_new_reconnect_ivl(), reconnect_timer_id);
+}
+
+int zmq::zmq_connecter_t::get_new_reconnect_ivl ()
+{
+#if defined ZMQ_HAVE_WINDOWS
+    int pid = (int) GetCurrentProcessId ();
+#else
+    int pid = (int) getpid ();
+#endif
+
+    //  The new interval is the current interval + random value.
+    int this_interval = current_reconnect_ivl +
+        ((pid * 13) % options.reconnect_ivl);
+
+    //  Only change the current reconnect interval  if the maximum reconnect
+    //  interval was set and if it's larger than the reconnect interval.
+    if (options.reconnect_ivl_max > 0 && 
+        options.reconnect_ivl_max > options.reconnect_ivl) {
+
+        //  Calculate the next interval
+        current_reconnect_ivl = current_reconnect_ivl * 2;
+        if(current_reconnect_ivl >= options.reconnect_ivl_max) {
+            current_reconnect_ivl = options.reconnect_ivl_max;
+        }   
+    }
+    return this_interval;
 }

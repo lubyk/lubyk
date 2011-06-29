@@ -46,7 +46,9 @@ return `-1` and set 'errno' to one of the values defined below.
 ERRORS
 ------
 *EFAULT*::
-The provided 'context' was not valid (NULL).
+The provided 'context' was invalid.
+*EINTR*::
+Termination was interrupted by a signal. It can be restarted if needed.
 
 
 SEE ALSO
@@ -59,5 +61,5 @@ linkzmq:zmq_setsockopt[3]
 
 AUTHORS
 -------
-The 0MQ documentation was written by Martin Sustrik <sustrik@250bpm.com> and
+This 0MQ manual page was written by Martin Sustrik <sustrik@250bpm.com> and
 Martin Lucina <mato@kotelna.sk>.

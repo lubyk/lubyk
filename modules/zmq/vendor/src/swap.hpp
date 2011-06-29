@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -59,8 +60,12 @@ namespace zmq
         //  Returns true if the swap is empty; false otherwise.
         bool empty ();
 
-        //  Returns true if and only if the swap is full.
-        bool full ();
+
+//        //  Returns true if and only if the swap is full.
+//        bool full ();
+
+        //  Returns true if the message fits into swap.
+        bool fits (zmq_msg_t *msg_);
 
     private:
 
@@ -107,6 +112,10 @@ namespace zmq
         char *write_buf;
 
         int64_t write_buf_start_addr;
+
+        //  Disable copying of the swap object.
+        swap_t (const swap_t&);
+        const swap_t &operator = (const swap_t&);
     };
 
 }

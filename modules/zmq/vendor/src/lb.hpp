@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -60,6 +61,9 @@ namespace zmq
         //  True if last we are in the middle of a multipart message.
         bool more;
 
+        //  True if we are dropping current message.
+        bool dropping;
+
         //  Object to send events to.
         class own_t *sink;
 
@@ -67,7 +71,7 @@ namespace zmq
         bool terminating;
 
         lb_t (const lb_t&);
-        void operator = (const lb_t&);
+        const lb_t &operator = (const lb_t&);
     };
 
 }

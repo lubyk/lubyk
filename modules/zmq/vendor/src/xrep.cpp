@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -62,7 +63,7 @@ void zmq::xrep_t::xattach_pipes (reader_t *inpipe_, writer_t *outpipe_,
 
         if (terminating) {
             register_term_acks (1);
-            outpipe_->terminate ();        
+            outpipe_->terminate ();
         }
     }
 
@@ -87,10 +88,10 @@ void zmq::xrep_t::process_term (int linger_)
     register_term_acks (inpipes.size () + outpipes.size ());
 
     for (inpipes_t::iterator it = inpipes.begin (); it != inpipes.end ();
-          it++)
+          ++it)
         it->reader->terminate ();
     for (outpipes_t::iterator it = outpipes.begin (); it != outpipes.end ();
-          it++)
+          ++it)
         it->second.writer->terminate ();
 
     socket_base_t::process_term (linger_);
@@ -99,13 +100,15 @@ void zmq::xrep_t::process_term (int linger_)
 void zmq::xrep_t::terminated (reader_t *pipe_)
 {
     for (inpipes_t::iterator it = inpipes.begin (); it != inpipes.end ();
-          it++) {
+          ++it) {
         if (it->reader == pipe_) {
+            if ((inpipes_t::size_type) (it - inpipes.begin ()) < current_in)
+                current_in--;
             inpipes.erase (it);
-            if (terminating)
-                unregister_term_ack ();
             if (current_in >= inpipes.size ())
                 current_in = 0;
+            if (terminating)
+                unregister_term_ack ();
             return;
         }
     }
@@ -135,7 +138,7 @@ void zmq::xrep_t::delimited (reader_t *pipe_)
 void zmq::xrep_t::activated (reader_t *pipe_)
 {
     for (inpipes_t::iterator it = inpipes.begin (); it != inpipes.end ();
-          it++) {
+          ++it) {
         if (it->reader == pipe_) {
             zmq_assert (!it->active);
             it->active = true;
@@ -176,8 +179,24 @@ int zmq::xrep_t::xsend (zmq_msg_t *msg_, int flags_)
             blob_t identity ((unsigned char*) zmq_msg_data (msg_),
                 zmq_msg_size (msg_));
             outpipes_t::iterator it = outpipes.find (identity);
-            if (it != outpipes.end ())
+
+            if (it != outpipes.end ()) {
                 current_out = it->second.writer;
+                zmq_msg_t empty;
+                int rc = zmq_msg_init (&empty);
+                zmq_assert (rc == 0);
+                if (!current_out->check_write (&empty)) {
+                    it->second.active = false;
+                    more_out = false;
+                    current_out = NULL;
+                    rc = zmq_msg_close (&empty);
+                    zmq_assert (rc == 0);
+                    errno = EAGAIN;
+                    return -1;
+                }
+                rc = zmq_msg_close (&empty);
+                zmq_assert (rc == 0);
+            }
         }
 
         int rc = zmq_msg_close (msg_);
@@ -252,7 +271,7 @@ int zmq::xrep_t::xrecv (zmq_msg_t *msg_, int flags_)
             zmq_assert (rc == 0);
             memcpy (zmq_msg_data (msg_), inpipes [current_in].identity.data (),
                 zmq_msg_size (msg_));
-            msg_->flags = ZMQ_MSG_MORE;
+            msg_->flags |= ZMQ_MSG_MORE;
             return 0;
         }
 
@@ -269,6 +288,16 @@ int zmq::xrep_t::xrecv (zmq_msg_t *msg_, int flags_)
     zmq_msg_init (msg_);
     errno = EAGAIN;
     return -1;
+}
+
+int zmq::xrep_t::rollback (void)
+{
+    if (current_out) {
+        current_out->rollback ();
+        current_out = NULL;
+        more_out = false;
+    }
+    return 0;
 }
 
 bool zmq::xrep_t::xhas_in ()

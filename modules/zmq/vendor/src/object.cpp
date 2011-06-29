@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -18,6 +19,7 @@
 */
 
 #include <string.h>
+#include <stdarg.h>
 
 #include "object.hpp"
 #include "ctx.hpp"
@@ -114,6 +116,14 @@ void zmq::object_t::process_command (command_t &cmd_)
         process_term_ack ();
         break;
 
+    case command_t::reap:
+        process_reap (cmd_.args.reap.socket);
+        break;
+
+    case command_t::reaped:
+        process_reaped ();
+        break;
+
     default:
         zmq_assert (false);
     }
@@ -123,9 +133,9 @@ void zmq::object_t::process_command (command_t &cmd_)
     deallocate_command (&cmd_);
 }
 
-int zmq::object_t::register_endpoint (const char *addr_, socket_base_t *socket_)
+int zmq::object_t::register_endpoint (const char *addr_, endpoint_t &endpoint_)
 {
-    return ctx->register_endpoint (addr_, socket_);
+    return ctx->register_endpoint (addr_, endpoint_);
 }
 
 void zmq::object_t::unregister_endpoints (socket_base_t *socket_)
@@ -133,24 +143,27 @@ void zmq::object_t::unregister_endpoints (socket_base_t *socket_)
     return ctx->unregister_endpoints (socket_);
 }
 
-zmq::socket_base_t *zmq::object_t::find_endpoint (const char *addr_)
+zmq::endpoint_t zmq::object_t::find_endpoint (const char *addr_)
 {
     return ctx->find_endpoint (addr_);
 }
 
-void zmq::object_t::log (zmq_msg_t *msg_)
+void zmq::object_t::destroy_socket (socket_base_t *socket_)
 {
-    ctx->log (msg_);
+    ctx->destroy_socket (socket_);
+}
+
+void zmq::object_t::log (const char *format_, ...)
+{
+    va_list args;
+    va_start (args, format_);
+    ctx->log (format_, args);
+    va_end (args);
 }
 
 zmq::io_thread_t *zmq::object_t::choose_io_thread (uint64_t affinity_)
 {
     return ctx->choose_io_thread (affinity_);
-}
-
-void zmq::object_t::zombify_socket (socket_base_t *socket_)
-{
-    ctx->zombify_socket (socket_);
 }
 
 void zmq::object_t::send_stop ()
@@ -216,7 +229,7 @@ void zmq::object_t::send_attach (session_t *destination_, i_engine *engine_,
             (unsigned char) peer_identity_.size ();
         cmd.args.attach.peer_identity =
             (unsigned char*) malloc (peer_identity_.size ());
-        zmq_assert (cmd.args.attach.peer_identity_size);
+        alloc_assert (cmd.args.attach.peer_identity_size);
         memcpy (cmd.args.attach.peer_identity, peer_identity_.data (),
             peer_identity_.size ());
     }
@@ -247,7 +260,7 @@ void zmq::object_t::send_bind (own_t *destination_, reader_t *in_pipe_,
             (unsigned char) peer_identity_.size ();
         cmd.args.bind.peer_identity =
             (unsigned char*) malloc (peer_identity_.size ());
-        zmq_assert (cmd.args.bind.peer_identity_size);
+        alloc_assert (cmd.args.bind.peer_identity_size);
         memcpy (cmd.args.bind.peer_identity, peer_identity_.data (),
             peer_identity_.size ());
     }
@@ -336,6 +349,40 @@ void zmq::object_t::send_term_ack (own_t *destination_)
     send_command (cmd);
 }
 
+void zmq::object_t::send_reap (class socket_base_t *socket_)
+{
+    command_t cmd;
+#if defined ZMQ_MAKE_VALGRIND_HAPPY
+    memset (&cmd, 0, sizeof (cmd));
+#endif
+    cmd.destination = ctx->get_reaper ();
+    cmd.type = command_t::reap;
+    cmd.args.reap.socket = socket_;
+    send_command (cmd);
+}
+
+void zmq::object_t::send_reaped ()
+{
+    command_t cmd;
+#if defined ZMQ_MAKE_VALGRIND_HAPPY
+    memset (&cmd, 0, sizeof (cmd));
+#endif
+    cmd.destination = ctx->get_reaper ();
+    cmd.type = command_t::reaped;
+    send_command (cmd);
+}
+
+void zmq::object_t::send_done ()
+{
+    command_t cmd;
+#if defined ZMQ_MAKE_VALGRIND_HAPPY
+    memset (&cmd, 0, sizeof (cmd));
+#endif
+    cmd.destination = NULL;
+    cmd.type = command_t::done;
+    ctx->send_command (ctx_t::term_tid, cmd);
+}
+
 void zmq::object_t::process_stop ()
 {
     zmq_assert (false);
@@ -394,6 +441,16 @@ void zmq::object_t::process_term (int linger_)
 }
 
 void zmq::object_t::process_term_ack ()
+{
+    zmq_assert (false);
+}
+
+void zmq::object_t::process_reap (class socket_base_t *socket_)
+{
+    zmq_assert (false);
+}
+
+void zmq::object_t::process_reaped ()
 {
     zmq_assert (false);
 }

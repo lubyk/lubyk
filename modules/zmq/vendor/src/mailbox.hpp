@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -53,7 +54,7 @@ namespace zmq
 
         //  Disable copying of mailbox_t object.
         mailbox_t (const mailbox_t&);
-        void operator = (const mailbox_t&);
+        const mailbox_t &operator = (const mailbox_t&);
     };
 
 }

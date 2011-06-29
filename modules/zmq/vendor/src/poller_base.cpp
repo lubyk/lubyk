@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -54,7 +55,7 @@ void zmq::poller_base_t::add_timer (int timeout_, i_poll_events *sink_, int id_)
 void zmq::poller_base_t::cancel_timer (i_poll_events *sink_, int id_)
 {
     //  Complexity of this operation is O(n). We assume it is rarely used.
-    for (timers_t::iterator it = timers.begin (); it != timers.end (); it++)
+    for (timers_t::iterator it = timers.begin (); it != timers.end (); ++it)
         if (it->second.sink == sink_ && it->second.id == id_) {
             timers.erase (it);
             return;

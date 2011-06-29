@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -140,7 +141,7 @@ namespace zmq
 #endif
 
         atomic_counter_t (const atomic_counter_t&);
-        void operator = (const atomic_counter_t&);
+        const atomic_counter_t& operator = (const atomic_counter_t&);
     };
 
 }

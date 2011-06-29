@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -46,7 +47,7 @@ namespace zmq
         void detached ();
 
         //  Start the connection process.
-        void start_connecting ();
+        void start_connecting (bool wait_);
 
         //  Command handlers.
         void process_plug ();
@@ -56,7 +57,7 @@ namespace zmq
         std::string address;
 
         connect_session_t (const connect_session_t&);
-        void operator = (const connect_session_t&);
+        const connect_session_t &operator = (const connect_session_t&);
     };
 
 }

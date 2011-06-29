@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -44,6 +45,8 @@ namespace zmq
 
         //  Reliability time interval [s]. Default 10s.
         uint32_t recovery_ivl;
+        //  Reliability time interval [ms]. Default -1 = not used.
+        int32_t recovery_ivl_msec;
 
         //  Enable multicast loopback. Default disabled (false).
         bool use_multicast_loop;
@@ -57,8 +60,12 @@ namespace zmq
         //  Linger time, in milliseconds.
         int linger;
 
-        //  Interval between attempts to reconnect, in milliseconds.
+        //  Minimum interval between attempts to reconnect, in milliseconds.
+        //  Default 100ms
         int reconnect_ivl;
+        //  Maximum interval between attempts to reconnect, in milliseconds.
+        //  Default 0 (unused)
+        int reconnect_ivl_max;
 
         //  Maximum backlog for pending connections.
         int backlog;

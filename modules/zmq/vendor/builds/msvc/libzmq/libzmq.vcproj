@@ -160,6 +160,83 @@
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
+		<Configuration
+			Name="WithOpenPGM|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="2"
+			CharacterSet="2"
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="copy ..\platform.hpp ..\..\..\src"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalOptions="-DDLL_EXPORT -DFD_SETSIZE=1024"
+				Optimization="2"
+				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="../../../../OpenPGM/include"
+				PreprocessorDefinitions="ZMQ_HAVE_OPENPGM"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="true"
+				WarningLevel="3"
+				DebugInformationFormat="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="Ws2_32.lib Rpcrt4.lib libpgm.lib"
+				OutputFile="../../../lib/libzmq.dll"
+				AdditionalLibraryDirectories="../../../../OpenPGM/lib"
+				GenerateDebugInformation="true"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
 	</Configurations>
 	<References>
 	</References>
@@ -190,7 +267,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\device.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\devpoll.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\dist.cpp"
 				>
 			</File>
 			<File
@@ -203,10 +288,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\err.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\forwarder.cpp"
 				>
 			</File>
 			<File
@@ -294,7 +375,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\queue.cpp"
+				RelativePath="..\..\..\src\reaper.cpp"
 				>
 			</File>
 			<File
@@ -315,10 +396,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\socket_base.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\streamer.cpp"
 				>
 			</File>
 			<File
@@ -358,11 +435,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\xpub.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\xrep.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\src\xreq.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\xsub.cpp"
 				>
 			</File>
 			<File
@@ -432,7 +517,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\device.hpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\devpoll.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\dist.hpp"
 				>
 			</File>
 			<File
@@ -449,10 +542,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\fd.hpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\forwarder.hpp"
 				>
 			</File>
 			<File
@@ -572,7 +661,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\queue.hpp"
+				RelativePath="..\..\..\src\reaper.hpp"
 				>
 			</File>
 			<File
@@ -601,10 +690,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\stdint.hpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\streamer.hpp"
 				>
 			</File>
 			<File
@@ -652,11 +737,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\xpub.hpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\xrep.hpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\src\xreq.hpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\xsub.hpp"
 				>
 			</File>
 			<File

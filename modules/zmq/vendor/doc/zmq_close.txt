@@ -34,8 +34,8 @@ return `-1` and set 'errno' to one of the values defined below.
 
 ERRORS
 ------
-*EFAULT*::
-The provided 'socket' was not valid (NULL).
+*ENOTSOCK*::
+The provided 'socket' was invalid.
 
 
 SEE ALSO
@@ -48,5 +48,5 @@ linkzmq:zmq[7]
 
 AUTHORS
 -------
-The 0MQ documentation was written by Martin Sustrik <sustrik@250bpm.com> and
+This 0MQ manual page was written by Martin Sustrik <sustrik@250bpm.com> and
 Martin Lucina <mato@kotelna.sk>.

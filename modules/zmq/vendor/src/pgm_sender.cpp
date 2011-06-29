@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -55,7 +56,7 @@ int zmq::pgm_sender_t::init (bool udp_encapsulation_, const char *network_)
 
     out_buffer_size = pgm_socket.get_max_tsdu_size ();
     out_buffer = (unsigned char*) malloc (out_buffer_size);
-    zmq_assert (out_buffer);
+    alloc_assert (out_buffer);
 
     return rc;
 }

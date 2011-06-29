@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -30,7 +31,7 @@ zmq::io_thread_t::io_thread_t (ctx_t *ctx_, uint32_t tid_) :
     object_t (ctx_, tid_)
 {
     poller = new (std::nothrow) poller_t;
-    zmq_assert (poller);
+    alloc_assert (poller);
 
     mailbox_handle = poller->add_fd (mailbox.get_fd (), this);
     poller->set_pollin (mailbox_handle);
@@ -75,7 +76,7 @@ void zmq::io_thread_t::in_event ()
         if (rc != 0 && errno == EINTR)
             continue;
         if (rc != 0 && errno == EAGAIN)
-             break;
+            break;
         errno_assert (rc == 0);
 
         //  Process the command.

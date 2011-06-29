@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -73,7 +74,7 @@ void zmq::pgm_receiver_t::plug (io_thread_t *io_thread_, i_inout *inout_)
 void zmq::pgm_receiver_t::unplug ()
 {
     //  Delete decoders.
-    for (peers_t::iterator it = peers.begin (); it != peers.end (); it++) {
+    for (peers_t::iterator it = peers.begin (); it != peers.end (); ++it) {
         if (it->second.decoder != NULL)
             delete it->second.decoder;
     }
@@ -150,7 +151,10 @@ void zmq::pgm_receiver_t::in_event ()
     while (true) {
 
         //  Get new batch of data.
-        ssize_t received = pgm_socket.receive ((void**) &data, &tsi);
+        //  Note the workaround made not to break strict-aliasing rules.
+        void *tmp = NULL;
+        ssize_t received = pgm_socket.receive (&tmp, &tsi);
+        data = (unsigned char*) tmp;
 
         //  No data to process. This may happen if the packet received is
         //  neither ODATA nor ODATA.
@@ -212,6 +216,7 @@ void zmq::pgm_receiver_t::in_event ()
 
             //  Create and connect decoder for the peer.
             it->second.decoder = new (std::nothrow) decoder_t (0);
+            alloc_assert (it->second.decoder);
             it->second.decoder->set_inout (inout);
         }
 
@@ -226,6 +231,12 @@ void zmq::pgm_receiver_t::in_event ()
             //  Stop polling.
             reset_pollin (pipe_handle);
             reset_pollin (socket_handle);
+
+            //  Reset outstanding timer.
+            if (has_rx_timer) {
+                cancel_timer (rx_timer_id);
+                has_rx_timer = false;
+            }
 
             break;
         }

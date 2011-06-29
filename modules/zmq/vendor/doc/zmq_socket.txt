@@ -47,16 +47,9 @@ incoming connections *from multiple endpoints* bound to the socket using
 _zmq_bind()_, thus allowing many-to-many relationships.
 
 .Thread safety
-A 0MQ 'context' is thread safe and may be shared among as many application
-threads as necessary, without any additional locking required on the part of
-the caller.
-
-Individual 0MQ 'sockets' are _not_ thread safe except in the case where full
-memory barriers are issued when migrating a socket from one thread to another.
-In practice this means applications can create a socket in one thread with
-_zmq_socket()_ and then pass it to a _newly created_ thread as part of thread
-initialization, for example via a structure passed as an argument to
-_pthread_create()_.
+0MQ 'sockets' are _not_ thread safe. Applications MUST NOT use a socket
+from multiple threads except after migrating a socket from one thread to 
+another with a "full fence" memory barrier.
 
 .Socket types
 The following sections present the socket types defined by 0MQ, grouped by the
@@ -100,7 +93,8 @@ A socket of type 'ZMQ_REP' is used by a _service_ to receive requests from and
 send replies to a _client_. This socket type allows only an alternating
 sequence of _zmq_recv(request)_ and subsequent _zmq_send(reply)_ calls. Each
 request received is fair-queued from among all _clients_, and each reply sent
-is routed to the _client_ that issued the last request.
+is routed to the _client_ that issued the last request. If the original
+requester doesn't exist any more the reply is silently discarded.
 
 When a 'ZMQ_REP' socket enters an exceptional state due to having reached the
 high water mark for a _client_, then any replies sent to the _client_ in
@@ -116,25 +110,28 @@ Outgoing routing strategy:: Last peer
 ZMQ_HWM option action:: Drop
 
 
-ZMQ_XREQ
-^^^^^^^^
-A socket of type 'ZMQ_XREQ' is an advanced pattern used for extending
+ZMQ_DEALER
+^^^^^^^^^^
+A socket of type 'ZMQ_DEALER' is an advanced pattern used for extending
 request/reply sockets. Each message sent is load-balanced among all connected
 peers, and each message received is fair-queued from all connected peers.
 
-When a 'ZMQ_XREQ' socket enters an exceptional state due to having reached the
+Previously this socket was called 'ZMQ_XREQ' and that name remains available
+for backwards compatibility.
+
+When a 'ZMQ_DEALER' socket enters an exceptional state due to having reached the
 high water mark for all peers, or if there are no peers at all, then any
 linkzmq:zmq_send[3] operations on the socket shall block until the exceptional
 state ends or at least one peer becomes available for sending; messages are not
 discarded.
 
-When a 'ZMQ_XREQ' socket is connected to a 'ZMQ_REP' socket each message sent
+When a 'ZMQ_DEALER' socket is connected to a 'ZMQ_REP' socket each message sent
 must consist of an empty message part, the _delimiter_, followed by one or more
 _body parts_.
 
 [horizontal]
-.Summary of ZMQ_XREQ characteristics
-Compatible peer sockets:: 'ZMQ_XREP', 'ZMQ_REP'
+.Summary of ZMQ_DEALER characteristics
+Compatible peer sockets:: 'ZMQ_ROUTER', 'ZMQ_REP'
 Direction:: Bidirectional
 Send/receive pattern:: Unrestricted
 Outgoing routing strategy:: Load-balanced
@@ -142,23 +139,27 @@ Incoming routing strategy:: Fair-queued
 ZMQ_HWM option action:: Block
 
 
-ZMQ_XREP
-^^^^^^^^
-A socket of type 'ZMQ_XREP' is an advanced pattern used for extending
-request/reply sockets. When receiving messages a 'ZMQ_XREP' socket shall
+ZMQ_ROUTER
+^^^^^^^^^^
+A socket of type 'ZMQ_ROUTER' is an advanced pattern used for extending
+request/reply sockets. When receiving messages a 'ZMQ_ROUTER' socket shall
 prepend a message part containing the _identity_ of the originating peer to the
 message before passing it to the application. Messages received are fair-queued
-from among all connected peers. When sending messages a 'ZMQ_XREP' socket shall
+from among all connected peers. When sending messages a 'ZMQ_ROUTER' socket shall
 remove the first part of the message and use it to determine the _identity_ of
-the peer the message shall be routed to.
+the peer the message shall be routed to. If the peer does not exist anymore
+the message shall be silently discarded.
 
-When a 'ZMQ_XREP' socket enters an exceptional state due to having reached the
+Previously this socket was called 'ZMQ_XREP' and that name remains available
+for backwards compatibility.
+
+When a 'ZMQ_ROUTER' socket enters an exceptional state due to having reached the
 high water mark for all peers, or if there are no peers at all, then any
 messages sent to the socket shall be dropped until the exceptional state ends.
 Likewise, any messages routed to a non-existent peer or a peer for which the
 individual high water mark has been reached shall also be dropped.
 
-When a 'ZMQ_REQ' socket is connected to a 'ZMQ_XREP' socket, in addition to the
+When a 'ZMQ_REQ' socket is connected to a 'ZMQ_ROUTER' socket, in addition to the
 _identity_ of the originating peer each message received shall contain an empty
 _delimiter_ message part. Hence, the entire structure of each received message
 as seen by the application becomes: one or more _identity_ parts, _delimiter_
@@ -166,8 +167,8 @@ part, one or more _body parts_. When sending replies to a 'ZMQ_REQ' socket the
 application must include the _delimiter_ part.
 
 [horizontal]
-.Summary of ZMQ_XREP characteristics
-Compatible peer sockets:: 'ZMQ_XREQ', 'ZMQ_REQ'
+.Summary of ZMQ_ROUTER characteristics
+Compatible peer sockets:: 'ZMQ_DEALER', 'ZMQ_REQ'
 Direction:: Bidirectional
 Send/receive pattern:: Unrestricted
 Outgoing routing strategy:: See text
@@ -190,7 +191,7 @@ The linkzmq:zmq_recv[3] function is not implemented for this socket type.
 When a 'ZMQ_PUB' socket enters an exceptional state due to having reached the
 high water mark for a _subscriber_, then any messages that would be sent to the
 _subscriber_ in question shall instead be dropped until the exceptional state
-ends.
+ends. The _zmq_send()_ function shall never block for this socket type.
 
 [horizontal]
 .Summary of ZMQ_PUB characteristics
@@ -217,7 +218,7 @@ Direction:: Unidirectional
 Send/receive pattern:: Receive only
 Incoming routing strategy:: Fair-queued
 Outgoing routing strategy:: N/A
-ZMQ_HWM option action:: N/A
+ZMQ_HWM option action:: Drop
 
 
 Pipeline pattern
@@ -274,8 +275,9 @@ ZMQ_HWM option action:: N/A
 
 Exclusive pair pattern
 ~~~~~~~~~~~~~~~~~~~~~~
-The exclusive pair is an advanced pattern used for communicating exclusively
-between two peers.
+The exclusive pair pattern is used to connect a peer to precisely one other
+peer. This pattern is used for inter-thread communication across the inproc
+transport.
 
 
 ZMQ_PAIR
@@ -289,8 +291,10 @@ high water mark for the connected peer, or if no peer is connected, then
 any linkzmq:zmq_send[3] operations on the socket shall block until the peer
 becomes available for sending; messages are not discarded.
 
-NOTE: 'ZMQ_PAIR' sockets are experimental, and are currently missing several
-features such as auto-reconnection.
+NOTE: 'ZMQ_PAIR' sockets are designed for inter-thread communication across
+the linkzmq:zmq_inproc[7] transport and do not implement functionality such 
+as auto-reconnection. 'ZMQ_PAIR' sockets are considered experimental and may
+have other missing or broken aspects.
 
 [horizontal]
 .Summary of ZMQ_PAIR characteristics
@@ -314,8 +318,11 @@ ERRORS
 *EINVAL*::
 The requested socket 'type' is invalid.
 *EFAULT*::
-The provided 'context' was not valid (NULL).
-
+The provided 'context' is invalid.
+*EMFILE*::
+The limit on the total number of open 0MQ sockets has been reached.
+*ETERM*::
+The context specified was terminated.
 
 SEE ALSO
 --------
@@ -325,10 +332,11 @@ linkzmq:zmq_bind[3]
 linkzmq:zmq_connect[3]
 linkzmq:zmq_send[3]
 linkzmq:zmq_recv[3]
+linkzmq:zmq_inproc[7]
 linkzmq:zmq[7]
 
 
 AUTHORS
 -------
-The 0MQ documentation was written by Martin Sustrik <sustrik@250bpm.com> and
+This 0MQ manual page was written by Martin Sustrik <sustrik@250bpm.com> and
 Martin Lucina <mato@kotelna.sk>.

@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -22,7 +23,7 @@
 
 #include "platform.hpp"
 
-#ifdef ZMQ_HAVE_SOLARIS
+#if defined ZMQ_HAVE_SOLARIS || defined ZMQ_HAVE_OPENVMS
 
 #include <inttypes.h>
 
@@ -52,14 +53,6 @@ typedef unsigned __int32 uint32_t;
 #ifndef uint64_t
 typedef unsigned __int64 uint64_t;
 #endif
-
-#elif defined ZMQ_HAVE_OPENVMS
-
-#include <types.h>
-typedef unsigned __int8 uint8_t;
-typedef unsigned __int16 uint16_t;
-typedef unsigned __int32 uint32_t;
-typedef unsigned __int64 uint64_t;
 
 #else
 

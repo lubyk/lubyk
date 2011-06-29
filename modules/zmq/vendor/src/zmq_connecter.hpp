@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -36,7 +37,7 @@ namespace zmq
         //  connection process.
         zmq_connecter_t (class io_thread_t *io_thread_,
             class session_t *session_, const options_t &options_,
-            const char *protocol_, const char *address_);
+            const char *protocol_, const char *address_, bool delay_);
         ~zmq_connecter_t ();
 
     private:
@@ -55,8 +56,13 @@ namespace zmq
         //  Internal function to start the actual connection establishment.
         void start_connecting ();
 
-        //  Internal function to return the reconnect backoff delay.
-        int get_reconnect_ivl ();
+        //  Internal function to add a reconnect timer
+        void add_reconnect_timer();
+
+        //  Internal function to return a reconnect backoff delay.
+        //  Will modify the current_reconnect_ivl used for next call
+        //  Returns the currently used interval
+        int get_new_reconnect_ivl ();
 
         //  Actual connecting socket.
         tcp_connecter_t tcp_connecter;
@@ -74,8 +80,11 @@ namespace zmq
         //  Reference to the session we belong to.
         class session_t *session;
 
+        //  Current reconnect ivl, updated for backoff strategy
+        int current_reconnect_ivl;
+
         zmq_connecter_t (const zmq_connecter_t&);
-        void operator = (const zmq_connecter_t&);
+        const zmq_connecter_t &operator = (const zmq_connecter_t&);
     };
 
 }

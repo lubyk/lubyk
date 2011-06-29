@@ -590,6 +590,9 @@ zmq_init(3) Manual Page
 <div class="paragraph"><p>The <em>io_threads</em> argument specifies the size of the ØMQ thread pool to handle
 I/O operations. If your application is using only the <em>inproc</em> transport for
 messaging you may set this to zero, otherwise set it to at least one.</p></div>
+<div class="paragraph"><div class="title">Thread safety</div><p>A ØMQ <em>context</em> is thread safe and may be shared among as many application
+threads as necessary, without any additional locking required on the part of
+the caller.</p></div>
 </div>
 <h2 id="_return_value">RETURN VALUE</h2>
 <div class="sectionbody">
@@ -617,15 +620,15 @@ An invalid number of <em>io_threads</em> was requested.
 </div>
 <h2 id="_authors">AUTHORS</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>The ØMQ documentation was written by Martin Sustrik &lt;<a href="mailto:sustrik@250bpm.com">sustrik@250bpm.com</a>&gt; and
+<div class="paragraph"><p>This ØMQ manual page was written by Martin Sustrik &lt;<a href="mailto:sustrik@250bpm.com">sustrik@250bpm.com</a>&gt; and
 Martin Lucina &lt;<a href="mailto:mato@kotelna.sk">mato@kotelna.sk</a>&gt;.</p></div>
 </div>
 </div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-ØMQ 2.1.0<br />
-Last updated 2010-09-09 14:03:03 CEST
+ØMQ 2.1.4<br />
+Last updated 2011-03-13 17:59:17 CEST
 </div>
 </div>
 </body>

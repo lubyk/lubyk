@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -51,7 +52,7 @@ namespace zmq
         uint64_t last_time;
 
         clock_t (const clock_t&);
-        void operator = (const clock_t&);
+        const clock_t &operator = (const clock_t&);
     };
 
 }

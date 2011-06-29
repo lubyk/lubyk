@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -50,7 +51,7 @@ namespace zmq
         inline yqueue_t ()
         {
              begin_chunk = (chunk_t*) malloc (sizeof (chunk_t));
-             zmq_assert (begin_chunk);
+             alloc_assert (begin_chunk);
              begin_pos = 0;
              back_chunk = NULL;
              back_pos = 0;
@@ -105,7 +106,7 @@ namespace zmq
                 sc->prev = end_chunk;
             } else {
                 end_chunk->next = (chunk_t*) malloc (sizeof (chunk_t));
-                zmq_assert (end_chunk->next);
+                alloc_assert (end_chunk->next);
                 end_chunk->next->prev = end_chunk;
             }
             end_chunk = end_chunk->next;
@@ -189,7 +190,7 @@ namespace zmq
 
         //  Disable copying of yqueue.
         yqueue_t (const yqueue_t&);
-        void operator = (const yqueue_t&);
+        const yqueue_t &operator = (const yqueue_t&);
     };
 
 }

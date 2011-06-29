@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -182,7 +183,7 @@ zmq::writer_t::writer_t (object_t *parent_, pipe_t *pipe_, reader_t *reader_,
     //  Open the swap file, if required.
     if (swap_size_ > 0) {
         swap = new (std::nothrow) swap_t (swap_size_);
-        zmq_assert (swap);
+        alloc_assert (swap);
         int rc = swap->init ();
         zmq_assert (rc == 0);
     }
@@ -200,15 +201,15 @@ void zmq::writer_t::set_event_sink (i_writer_events *sink_)
     sink = sink_;
 }
 
-bool zmq::writer_t::check_write ()
+bool zmq::writer_t::check_write (zmq_msg_t *msg_)
 {
     //  We've already checked and there's no space free for the new message.
     //  There's no point in checking once again.
     if (unlikely (!active))
         return false;
-    
+
     if (unlikely (swapping)) {
-        if (unlikely (swap->full ())) {
+        if (unlikely (!swap->fits (msg_))) {
             active = false;
             return false;
         }
@@ -229,7 +230,7 @@ bool zmq::writer_t::check_write ()
 
 bool zmq::writer_t::write (zmq_msg_t *msg_)
 {
-    if (unlikely (!check_write ()))
+    if (unlikely (!check_write (msg_)))
         return false;
 
     if (unlikely (swapping)) {
@@ -275,6 +276,7 @@ void zmq::writer_t::terminate ()
     //  Prevent double termination.
     if (terminating)
         return;
+    terminating = true;
 
     //  Mark the pipe as not available for writing.
     active = false;
@@ -339,7 +341,7 @@ void zmq::writer_t::process_activate_writer (uint64_t msgs_read_)
 
     //  If the writer was non-active before, let's make it active
     //  (available for writing messages to).
-    if (!active) {
+    if (!active && !terminating) {
         active = true;
         zmq_assert (sink);
         sink->activated (this);
@@ -398,10 +400,10 @@ void zmq::create_pipe (object_t *reader_parent_, object_t *writer_parent_,
     //  writer. The pipe will be handled by reader and writer, its never passed
     //  to the user. Reader and writer are returned to the user.
     pipe_t *pipe = new (std::nothrow) pipe_t ();
-    zmq_assert (pipe);
+    alloc_assert (pipe);
     *reader_ = new (std::nothrow) reader_t (reader_parent_, pipe, lwm);
-    zmq_assert (*reader_);
+    alloc_assert (*reader_);
     *writer_ = new (std::nothrow) writer_t (writer_parent_, pipe, *reader_,
         hwm_, swap_size_);
-    zmq_assert (*writer_);
+    alloc_assert (*writer_);
 }

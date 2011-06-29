@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -79,7 +80,7 @@ zmq::kqueue_t::handle_t zmq::kqueue_t::add_fd (fd_t fd_,
     i_poll_events *reactor_)
 {
     poll_entry_t *pe = new (std::nothrow) poll_entry_t;
-    zmq_assert (pe != NULL);
+    alloc_assert (pe);
 
     pe->fd = fd_;
     pe->flag_pollin = 0;
@@ -177,7 +178,7 @@ void zmq::kqueue_t::loop ()
 
         //  Destroy retired event sources.
         for (retired_t::iterator it = retired.begin (); it != retired.end ();
-              it ++)
+              ++it)
             delete *it;
         retired.clear ();
     }

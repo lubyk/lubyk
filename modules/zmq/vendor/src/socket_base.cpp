@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -46,6 +47,8 @@
 #include "ctx.hpp"
 #include "platform.hpp"
 #include "likely.hpp"
+#include "uuid.hpp"
+
 #include "pair.hpp"
 #include "pub.hpp"
 #include "sub.hpp"
@@ -55,7 +58,13 @@
 #include "push.hpp"
 #include "xreq.hpp"
 #include "xrep.hpp"
-#include "uuid.hpp"
+#include "xpub.hpp"
+#include "xsub.hpp"
+
+bool zmq::socket_base_t::check_tag ()
+{
+    return tag == 0xbaddecaf;
+}
 
 zmq::socket_base_t *zmq::socket_base_t::create (int type_, class ctx_t *parent_,
     uint32_t tid_)
@@ -83,23 +92,30 @@ zmq::socket_base_t *zmq::socket_base_t::create (int type_, class ctx_t *parent_,
         break;
     case ZMQ_XREP:
         s = new (std::nothrow) xrep_t (parent_, tid_);
-        break;     
+        break;
     case ZMQ_PULL:
         s = new (std::nothrow) pull_t (parent_, tid_);
         break;
     case ZMQ_PUSH:
         s = new (std::nothrow) push_t (parent_, tid_);
         break;
+    case ZMQ_XPUB:
+        s = new (std::nothrow) xpub_t (parent_, tid_);
+        break;
+    case ZMQ_XSUB:
+        s = new (std::nothrow) xsub_t (parent_, tid_);
+        break;
     default:
         errno = EINVAL;
         return NULL;
     }
-    zmq_assert (s);
+    alloc_assert (s);
     return s;
 }
 
 zmq::socket_base_t::socket_base_t (ctx_t *parent_, uint32_t tid_) :
     own_t (parent_, tid_),
+    tag (0xbaddecaf),
     ctx_terminated (false),
     destroyed (false),
     last_tsc (0),
@@ -116,6 +132,9 @@ zmq::socket_base_t::~socket_base_t ()
     sessions_sync.lock ();
     zmq_assert (sessions.empty ());
     sessions_sync.unlock ();
+
+    //  Mark the socket as dead.
+    tag = 0xdeadbeef;
 }
 
 zmq::mailbox_t *zmq::socket_base_t::get_mailbox ()
@@ -130,6 +149,26 @@ void zmq::socket_base_t::stop ()
     //  the thread owning the socket. This way, blocking call in the
     //  owner thread can be interrupted.
     send_stop ();
+}
+
+int zmq::socket_base_t::parse_uri (const char *uri_,
+                        std::string &protocol_, std::string &address_)
+{
+    zmq_assert (uri_ != NULL);
+
+    std::string uri (uri_);
+    std::string::size_type pos = uri.find ("://");
+    if (pos == std::string::npos) {
+        errno = EINVAL;
+        return -1;
+    }
+    protocol_ = uri.substr (0, pos);
+    address_ = uri.substr (pos + 3);
+    if (protocol_.empty () || address_.empty ()) {
+        errno = EINVAL;
+        return -1;
+    }
+    return 0;
 }
 
 int zmq::socket_base_t::check_protocol (const std::string &protocol_)
@@ -163,7 +202,8 @@ int zmq::socket_base_t::check_protocol (const std::string &protocol_)
     //  Specifically, multicast protocols can't be combined with
     //  bi-directional messaging patterns (socket types).
     if ((protocol_ == "pgm" || protocol_ == "epgm") &&
-          options.requires_in && options.requires_out) {
+          options.type != ZMQ_PUB && options.type != ZMQ_SUB &&
+          options.type != ZMQ_XPUB && options.type != ZMQ_XSUB) {
         errno = ENOCOMPATPROTO;
         return -1;
     }
@@ -238,7 +278,7 @@ int zmq::socket_base_t::getsockopt (int option_, void *optval_,
             return -1;
         }
         int rc = process_commands (false, false);
-        if (rc != 0 && errno == EINTR)
+        if (rc != 0 && (errno == EINTR || errno == ETERM))
             return -1;
         errno_assert (rc == 0);
         *((uint32_t*) optval_) = 0;
@@ -263,23 +303,18 @@ int zmq::socket_base_t::bind (const char *addr_)
     //  Parse addr_ string.
     std::string protocol;
     std::string address;
-    {
-        std::string addr (addr_);
-        std::string::size_type pos = addr.find ("://");
-        if (pos == std::string::npos) {
-            errno = EINVAL;
-            return -1;
-        }
-        protocol = addr.substr (0, pos);
-        address = addr.substr (pos + 3);
-    }
-
-    int rc = check_protocol (protocol);
+    int rc = parse_uri (addr_, protocol, address);
     if (rc != 0)
         return -1;
 
-    if (protocol == "inproc" || protocol == "sys")
-        return register_endpoint (addr_, this);
+    rc = check_protocol (protocol);
+    if (rc != 0)
+        return -1;
+
+    if (protocol == "inproc" || protocol == "sys") {
+        endpoint_t endpoint = {this, options};
+        return register_endpoint (addr_, endpoint);
+    }
 
     if (protocol == "tcp" || protocol == "ipc") {
 
@@ -293,7 +328,7 @@ int zmq::socket_base_t::bind (const char *addr_)
         //  Create and run the listener.
         zmq_listener_t *listener = new (std::nothrow) zmq_listener_t (
             io_thread, this, options);
-        zmq_assert (listener);
+        alloc_assert (listener);
         int rc = listener->set_address (protocol.c_str(), address.c_str ());
         if (rc != 0) {
             delete listener;
@@ -308,7 +343,7 @@ int zmq::socket_base_t::bind (const char *addr_)
 
         //  For convenience's sake, bind can be used interchageable with
         //  connect for PGM and EPGM transports.
-        return connect (addr_); 
+        return connect (addr_);
     }
 
     zmq_assert (false);
@@ -325,18 +360,11 @@ int zmq::socket_base_t::connect (const char *addr_)
     //  Parse addr_ string.
     std::string protocol;
     std::string address;
-    {
-        std::string addr (addr_);
-        std::string::size_type pos = addr.find ("://");
-        if (pos == std::string::npos) {
-            errno = EINVAL;
-            return -1;
-        }
-        protocol = addr.substr (0, pos);
-        address = addr.substr (pos + 3);
-    }
+    int rc = parse_uri (addr_, protocol, address);
+    if (rc != 0)
+        return -1;
 
-    int rc = check_protocol (protocol);
+    rc = check_protocol (protocol);
     if (rc != 0)
         return -1;
 
@@ -346,33 +374,47 @@ int zmq::socket_base_t::connect (const char *addr_)
         //  as there's no 'reconnect' functionality implemented. Once that
         //  is in place we should follow generic pipe creation algorithm.
 
-        //  Find the peer socket.
-        socket_base_t *peer = find_endpoint (addr_);
-        if (!peer)
+        //  Find the peer endpoint.
+        endpoint_t peer = find_endpoint (addr_);
+        if (!peer.socket)
             return -1;
 
         reader_t *inpipe_reader = NULL;
         writer_t *inpipe_writer = NULL;
         reader_t *outpipe_reader = NULL;
         writer_t *outpipe_writer = NULL;
- 
+
+        // The total HWM for an inproc connection should be the sum of
+        // the binder's HWM and the connector's HWM.  (Similarly for the
+        // SWAP.)
+        int64_t  hwm;
+        if (options.hwm == 0 || peer.options.hwm == 0)
+            hwm = 0;
+        else
+            hwm = options.hwm + peer.options.hwm;
+        int64_t swap;
+        if (options.swap == 0 && peer.options.swap == 0)
+            swap = 0;
+        else
+            swap = options.swap + peer.options.swap;
+
         //  Create inbound pipe, if required.
         if (options.requires_in)
-            create_pipe (this, peer, options.hwm, options.swap,
+            create_pipe (this, peer.socket, hwm, swap,
                 &inpipe_reader, &inpipe_writer);
 
         //  Create outbound pipe, if required.
         if (options.requires_out)
-            create_pipe (peer, this, options.hwm, options.swap,
+            create_pipe (peer.socket, this, hwm, swap,
                 &outpipe_reader, &outpipe_writer);
 
         //  Attach the pipes to this socket object.
-        attach_pipes (inpipe_reader, outpipe_writer, blob_t ());
+        attach_pipes (inpipe_reader, outpipe_writer, peer.options.identity);
 
         //  Attach the pipes to the peer socket. Note that peer's seqnum
         //  was incremented in find_endpoint function. We don't need it
         //  increased here.
-        send_bind (peer, outpipe_reader, inpipe_writer,
+        send_bind (peer.socket, outpipe_reader, inpipe_writer,
             options.identity, false);
 
         return 0;
@@ -388,7 +430,7 @@ int zmq::socket_base_t::connect (const char *addr_)
     //  Create session.
     connect_session_t *session = new (std::nothrow) connect_session_t (
         io_thread, this, options, protocol.c_str (), address.c_str ());
-    zmq_assert (session);
+    alloc_assert (session);
 
     //  If 'immediate connect' feature is required, we'll create the pipes
     //  to the session straight away. Otherwise, they'll be created by the
@@ -425,8 +467,15 @@ int zmq::socket_base_t::connect (const char *addr_)
 
 int zmq::socket_base_t::send (::zmq_msg_t *msg_, int flags_)
 {
+    //  Check whether the library haven't been shut down yet.
     if (unlikely (ctx_terminated)) {
         errno = ETERM;
+        return -1;
+    }
+
+    //  Check whether message passed to the function is valid.
+    if (unlikely ((msg_->flags | ZMQ_MSG_MASK) != 0xff)) {
+        errno = EFAULT;
         return -1;
     }
 
@@ -463,8 +512,15 @@ int zmq::socket_base_t::send (::zmq_msg_t *msg_, int flags_)
 
 int zmq::socket_base_t::recv (::zmq_msg_t *msg_, int flags_)
 {
+    //  Check whether the library haven't been shut down yet.
     if (unlikely (ctx_terminated)) {
         errno = ETERM;
+        return -1;
+    }
+
+    //  Check whether message passed to the function is valid.
+    if (unlikely ((msg_->flags | ZMQ_MSG_MASK) != 0xff)) {
+        errno = EFAULT;
         return -1;
     }
 
@@ -538,13 +594,10 @@ int zmq::socket_base_t::recv (::zmq_msg_t *msg_, int flags_)
 
 int zmq::socket_base_t::close ()
 {
-    //  Start termination of associated I/O object hierarchy.
-    terminate ();
-
-    //  Ask context to zombify this socket. In other words, transfer
-    //  the ownership of the socket from this application thread
-    //  to the context which will take care of the rest of shutdown process.
-    zombify_socket (this);
+    //  Transfer the ownership of the socket from this application thread
+    //  to the reaper thread which will take care of the rest of shutdown
+    //  process.
+    send_reap (this);
 
     return 0;
 }
@@ -592,22 +645,14 @@ zmq::session_t *zmq::socket_base_t::find_session (const blob_t &name_)
     session->inc_seqnum ();
 
     sessions_sync.unlock ();
-    return session;    
+    return session;
 }
 
-bool zmq::socket_base_t::dezombify ()
+void zmq::socket_base_t::start_reaping (poller_t *poller_)
 {
-    //  Process any commands from other threads/sockets that may be available
-    //  at the moment. Ultimately, socket will be destroyed.
-    process_commands (false, false);
-
-    //  If the object was already marked as destroyed, finish the deallocation.
-    if (destroyed) {
-        own_t::process_destroy ();
-        return true;
-    }
-
-    return false;
+    poller = poller_;
+    handle = poller->add_fd (mailbox.get_fd (), this);
+    poller->set_pollin (handle);
 }
 
 int zmq::socket_base_t::process_commands (bool block_, bool throttle_)
@@ -728,3 +773,39 @@ int zmq::socket_base_t::xrecv (zmq_msg_t *msg_, int options_)
     return -1;
 }
 
+void zmq::socket_base_t::in_event ()
+{
+    //  Process any commands from other threads/sockets that may be available
+    //  at the moment. Ultimately, socket will be destroyed.
+    process_commands (false, false);
+    check_destroy ();
+}
+
+void zmq::socket_base_t::out_event ()
+{
+    zmq_assert (false);
+}
+
+void zmq::socket_base_t::timer_event (int id_)
+{
+    zmq_assert (false);
+}
+
+void zmq::socket_base_t::check_destroy ()
+{
+    //  If the object was already marked as destroyed, finish the deallocation.
+    if (destroyed) {
+
+        //  Remove the socket from the reaper's poller.
+        poller->rm_fd (handle);
+
+        //  Remove the socket from the context.
+        destroy_socket (this);
+
+        //  Notify the reaper about the fact.
+        send_reaped ();
+
+        //  Deallocate.
+        own_t::process_destroy ();
+    }
+}

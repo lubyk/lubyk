@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -45,6 +46,7 @@ namespace zmq
 namespace zmq
 {
     const char *wsa_error ();
+    const char *wsa_error_no (int no_);
     void win_error (char *buffer_, size_t buffer_size_);
     void wsa_error_to_errno (); 
 }
@@ -59,6 +61,17 @@ namespace zmq
                     __FILE__, __LINE__);\
                 abort ();\
             }\
+        }\
+    } while (false)
+
+//  Provides convenient way to assert on WSA-style errors on Windows.
+#define wsa_assert_no(no) \
+    do {\
+        const char *errstr = zmq::wsa_error_no (no);\
+        if (errstr != NULL) {\
+            fprintf (stderr, "Assertion failed: %s (%s:%d)\n", errstr, \
+                __FILE__, __LINE__);\
+            abort ();\
         }\
     } while (false)
 
@@ -98,7 +111,7 @@ namespace zmq
         }\
     } while (false)
 
-// Provides convenient way to check for POSIX errors.
+//  Provides convenient way to check for POSIX errors.
 #define posix_assert(x) \
     do {\
         if (unlikely (x)) {\
@@ -107,7 +120,7 @@ namespace zmq
         }\
     } while (false)
 
-// Provides convenient way to check for errors from getaddrinfo.
+//  Provides convenient way to check for errors from getaddrinfo.
 #define gai_assert(x) \
     do {\
         if (unlikely (x)) {\
@@ -117,10 +130,16 @@ namespace zmq
         }\
     } while (false)
 
+//  Provides convenient way to check whether memory allocation have succeeded.
+#define alloc_assert(x) \
+    do {\
+        if (unlikely (!x)) {\
+            fprintf (stderr, "FATAL ERROR: OUT OF MEMORY (%s:%d)\n",\
+                __FILE__, __LINE__);\
+            abort ();\
+        }\
+    } while (false)
+
 #endif
 
-#define zmq_not_implemented() \
-    do {\
-        fprintf (stderr, "Hic sunt leones (%s:%d)\n", __FILE__, __LINE__);\
-        abort ();\
-    } while (false)
+

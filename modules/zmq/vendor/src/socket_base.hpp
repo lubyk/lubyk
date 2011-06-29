@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -29,7 +30,9 @@
 #include "array.hpp"
 #include "mutex.hpp"
 #include "stdint.hpp"
+#include "poller.hpp"
 #include "atomic_counter.hpp"
+#include "i_poll_events.hpp"
 #include "mailbox.hpp"
 #include "stdint.hpp"
 #include "blob.hpp"
@@ -40,9 +43,15 @@ namespace zmq
 
     class socket_base_t :
         public own_t,
-        public array_item_t
+        public array_item_t,
+        public i_poll_events
     {
+        friend class reaper_t;
+
     public:
+
+        //  Returns false if object is not a socket.
+        bool check_tag ();
 
         //  Create a socket of a specified type.
         static socket_base_t *create (int type_, class ctx_t *parent_,
@@ -82,9 +91,19 @@ namespace zmq
         void activated (class writer_t *pipe_);
         void terminated (class writer_t *pipe_);
 
-        //  This function should be called only on zombie sockets. It tries
-        //  to deallocate the zombie. Returns true is object is destroyed.
-        bool dezombify ();
+        //  Using this function reaper thread ask the socket to regiter with
+        //  its poller.
+        void start_reaping (poller_t *poller_);
+
+        //  i_poll_events implementation. This interface is used when socket
+        //  is handled by the poller in the reaper thread.
+        void in_event ();
+        void out_event ();
+        void timer_event (int id_);
+
+        //  To be called after processing commands or invoking any command
+        //  handlers explicitly. If required, it will deallocate the socket.
+        void check_destroy ();
 
     protected:
 
@@ -120,6 +139,9 @@ namespace zmq
 
     private:
 
+        //  Used to check whether the object is a socket.
+        uint32_t tag;
+
         //  If true, associated context was already terminated.
         bool ctx_terminated;
 
@@ -127,6 +149,10 @@ namespace zmq
         //  destruction is delayed while we unwind the stack to the point
         //  where it doesn't intersect the object being destroyed.
         bool destroyed;
+
+        //  Parse URI string.
+        int parse_uri (const char *uri_, std::string &protocol_,
+            std::string &address_);
 
         //  Check whether transport protocol, as specified in connect or
         //  bind, is available and compatible with the socket type.
@@ -151,6 +177,10 @@ namespace zmq
         //  Socket's mailbox object.
         mailbox_t mailbox;
 
+        //  Reaper's poller and handle of this socket within it.
+        poller_t *poller;
+        poller_t::handle_t handle;
+
         //  Timestamp of when commands were processed the last time.
         uint64_t last_tsc;
 
@@ -169,7 +199,7 @@ namespace zmq
         mutex_t sessions_sync;
 
         socket_base_t (const socket_base_t&);
-        void operator = (const socket_base_t&);
+        const socket_base_t &operator = (const socket_base_t&);
     };
 
 }

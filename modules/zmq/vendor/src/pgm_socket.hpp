@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -30,6 +31,10 @@
 
 #define __PGM_WININT_H__
 #include <pgm/pgm.h>
+
+#ifdef ZMQ_HAVE_OSX
+#include <pgm/in.h>
+#endif
 
 #include "options.hpp"
 
@@ -75,6 +80,9 @@ namespace zmq
         void process_upstream ();
 
     private:
+
+        //  Compute size of the buffer based on rate and recovery interval.
+        int compute_sqns (int tpdu_);
     
         //  OpenPGM transport.
         pgm_sock_t* sock;

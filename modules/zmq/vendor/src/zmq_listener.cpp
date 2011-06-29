@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -71,7 +72,7 @@ void zmq::zmq_listener_t::in_event ()
     //  Create and launch an init object. 
     zmq_init_t *init = new (std::nothrow) zmq_init_t (io_thread, socket,
         NULL, fd, options);
-    zmq_assert (init);
-    launch_sibling (init);
+    alloc_assert (init);
+    launch_child (init);
 }
 

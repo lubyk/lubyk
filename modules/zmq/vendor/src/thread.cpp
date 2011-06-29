@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -46,6 +47,8 @@ void zmq::thread_t::stop ()
 {
     DWORD rc = WaitForSingleObject (descriptor, INFINITE);
     win_assert (rc != WAIT_FAILED);
+    BOOL rc2 = CloseHandle (descriptor);
+    win_assert (rc2 != 0);
 }
 
 #else

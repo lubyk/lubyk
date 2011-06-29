@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -75,7 +76,7 @@ namespace zmq
         atomic_counter_t load;
 
         poller_base_t (const poller_base_t&);
-        void operator = (const poller_base_t&);
+        const poller_base_t &operator = (const poller_base_t&);
     };
 
 }

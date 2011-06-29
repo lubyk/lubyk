@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -53,10 +54,10 @@ zmq::swap_t::swap_t (int64_t filesize_) :
     zmq_assert (block_size > 0);
 
     buf1 = new (std::nothrow) char [block_size];
-    zmq_assert (buf1);
+    alloc_assert (buf1);
 
     buf2 = new (std::nothrow) char [block_size];
-    zmq_assert (buf2);
+    alloc_assert (buf2);
 
     read_buf = write_buf = buf1;
 }
@@ -189,10 +190,23 @@ bool zmq::swap_t::empty ()
     return read_pos == write_pos;
 }
 
+/*
 bool zmq::swap_t::full ()
 {
-    return buffer_space () == 1;
+    //  Check that at least the message size can be written to the swap.
+    return buffer_space () < (int64_t) (sizeof (size_t) + 1);
 }
+*/
+
+bool zmq::swap_t::fits (zmq_msg_t *msg_)
+{
+    //  Check whether whole binary representation of the message
+    //  fits into the swap.
+    size_t msg_size = zmq_msg_size (msg_);
+    if (buffer_space () <= (int64_t) (sizeof msg_size + 1 + msg_size))
+        return false;
+    return true;
+ }
 
 void zmq::swap_t::copy_from_file (void *buffer_, size_t count_)
 {
@@ -265,7 +279,8 @@ void zmq::swap_t::fill_buf (char *buf, int64_t pos)
 #ifdef ZMQ_HAVE_WINDOWS
         int rc = _read (fd, &buf [octets_stored], octets_total - octets_stored);
 #else
-        ssize_t rc = read (fd, &buf [octets_stored], octets_total - octets_stored);
+        ssize_t rc = read (fd, &buf [octets_stored],
+            octets_total - octets_stored);
 #endif
         errno_assert (rc > 0);
         octets_stored += rc;
@@ -289,9 +304,11 @@ void zmq::swap_t::save_write_buf ()
 
     while (octets_stored < octets_total) {
 #ifdef ZMQ_HAVE_WINDOWS
-        int rc = _write (fd, &write_buf [octets_stored], octets_total - octets_stored);
+        int rc = _write (fd, &write_buf [octets_stored],
+            octets_total - octets_stored);
 #else
-        ssize_t rc = write (fd, &write_buf [octets_stored], octets_total - octets_stored);
+        ssize_t rc = write (fd, &write_buf [octets_stored],
+            octets_total - octets_stored);
 #endif
         errno_assert (rc > 0);
         octets_stored += rc;

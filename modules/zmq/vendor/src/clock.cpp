@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -106,6 +107,11 @@ uint64_t zmq::clock_t::rdtsc ()
     } tsc;
     asm("rdtsc" : "=a" (tsc.u32val [0]), "=d" (tsc.u32val [1]));
     return tsc.u64val;
+#elif defined(__s390__)
+    uint64_t tsc;
+    asm("\tstck\t%0\n" : "=Q" (tsc) : : "cc");
+    tsc >>= 12;		/* convert to microseconds just to be consistent */
+    return(tsc);
 #else
     return 0;
 #endif

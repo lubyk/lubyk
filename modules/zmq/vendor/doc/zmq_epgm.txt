@@ -93,6 +93,11 @@ order specifying either the offset of the first message 'frame' in the datagram
 or containing the value `0xFFFF` if the datagram contains solely an
 intermediate part of a larger message.
 
+Note that offset specifies where the first message begins rather than the first
+message part. Thus, if there are trailing message parts at the beginning of
+the packet the offset ignores them and points to first initial message part
+in the packet.
+
 The following diagram illustrates the layout of a single PGM datagram payload:
 
 ....
@@ -153,5 +158,5 @@ linkzmq:zmq[7]
 
 AUTHORS
 -------
-The 0MQ documentation was written by Martin Sustrik <sustrik@250bpm.com> and
+This 0MQ manual page was written by Martin Sustrik <sustrik@250bpm.com> and
 Martin Lucina <mato@kotelna.sk>.

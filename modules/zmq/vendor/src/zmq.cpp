@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -39,13 +40,12 @@
 #include <stdlib.h>
 #include <new>
 
-#include "forwarder.hpp"
-#include "queue.hpp"
-#include "streamer.hpp"
+#include "device.hpp"
 #include "socket_base.hpp"
 #include "msg_content.hpp"
 #include "stdint.hpp"
 #include "config.hpp"
+#include "likely.hpp"
 #include "clock.hpp"
 #include "ctx.hpp"
 #include "err.hpp"
@@ -58,10 +58,12 @@
 #if defined ZMQ_HAVE_OPENPGM
 #define __PGM_WININT_H__
 #include <pgm/pgm.h>
+
+//  TODO: OpenPGM redefines bool -- remove this once OpenPGM is fixed.
+#if defined bool
+#undef bool
 #endif
 
-#if defined __GNUC__ && __GNUC__ >= 4 && !defined ZMQ_HAVE_WINDOWS
-#pragma GCC visibility push(default)
 #endif
 
 void zmq_version (int *major_, int *minor_, int *patch_)
@@ -79,7 +81,7 @@ const char *zmq_strerror (int errnum_)
 int zmq_msg_init (zmq_msg_t *msg_)
 {
     msg_->content = (zmq::msg_content_t*) ZMQ_VSM;
-    msg_->flags = 0;
+    msg_->flags = (unsigned char) ~ZMQ_MSG_MASK;
     msg_->vsm_size = 0;
     return 0;
 }
@@ -88,7 +90,7 @@ int zmq_msg_init_size (zmq_msg_t *msg_, size_t size_)
 {
     if (size_ <= ZMQ_MAX_VSM_SIZE) {
         msg_->content = (zmq::msg_content_t*) ZMQ_VSM;
-        msg_->flags = 0;
+        msg_->flags = (unsigned char) ~ZMQ_MSG_MASK;
         msg_->vsm_size = (uint8_t) size_;
     }
     else {
@@ -98,8 +100,8 @@ int zmq_msg_init_size (zmq_msg_t *msg_, size_t size_)
             errno = ENOMEM;
             return -1;
         }
-        msg_->flags = 0;
-        
+        msg_->flags = (unsigned char) ~ZMQ_MSG_MASK;
+
         zmq::msg_content_t *content = (zmq::msg_content_t*) msg_->content;
         content->data = (void*) (content + 1);
         content->size = size_;
@@ -114,8 +116,8 @@ int zmq_msg_init_data (zmq_msg_t *msg_, void *data_, size_t size_,
     zmq_free_fn *ffn_, void *hint_)
 {
     msg_->content = (zmq::msg_content_t*) malloc (sizeof (zmq::msg_content_t));
-    zmq_assert (msg_->content);
-    msg_->flags = 0;
+    alloc_assert (msg_->content);
+    msg_->flags = (unsigned char) ~ZMQ_MSG_MASK;
     zmq::msg_content_t *content = (zmq::msg_content_t*) msg_->content;
     content->data = data_;
     content->size = size_;
@@ -127,6 +129,12 @@ int zmq_msg_init_data (zmq_msg_t *msg_, void *data_, size_t size_,
 
 int zmq_msg_close (zmq_msg_t *msg_)
 {
+    //  Check the validity tag.
+    if (unlikely (msg_->flags | ZMQ_MSG_MASK) != 0xff) {
+        errno = EFAULT;
+        return -1;
+    }
+
     //  For VSMs and delimiters there are no resources to free.
     if (msg_->content != (zmq::msg_content_t*) ZMQ_DELIMITER &&
           msg_->content != (zmq::msg_content_t*) ZMQ_VSM) {
@@ -146,17 +154,22 @@ int zmq_msg_close (zmq_msg_t *msg_)
         }
     }
 
-    //  As a safety measure, let's make the deallocated message look like
-    //  an empty message.
-    msg_->content = (zmq::msg_content_t*) ZMQ_VSM;
+    //  Remove the validity tag from the message.
     msg_->flags = 0;
-    msg_->vsm_size = 0;
 
     return 0;
 }
 
 int zmq_msg_move (zmq_msg_t *dest_, zmq_msg_t *src_)
 {
+#if 0
+    //  Check the validity tags.
+    if (unlikely ((dest_->flags | ZMQ_MSG_MASK) != 0xff ||
+          (src_->flags | ZMQ_MSG_MASK) != 0xff)) {
+        errno = EFAULT;
+        return -1;
+    }
+#endif
     zmq_msg_close (dest_);
     *dest_ = *src_;
     zmq_msg_init (src_);
@@ -165,6 +178,13 @@ int zmq_msg_move (zmq_msg_t *dest_, zmq_msg_t *src_)
 
 int zmq_msg_copy (zmq_msg_t *dest_, zmq_msg_t *src_)
 {
+    //  Check the validity tags.
+    if (unlikely ((dest_->flags | ZMQ_MSG_MASK) != 0xff ||
+          (src_->flags | ZMQ_MSG_MASK) != 0xff)) {
+        errno = EFAULT;
+        return -1;
+    }
+
     zmq_msg_close (dest_);
 
     //  VSMs and delimiters require no special handling.
@@ -188,6 +208,8 @@ int zmq_msg_copy (zmq_msg_t *dest_, zmq_msg_t *src_)
 
 void *zmq_msg_data (zmq_msg_t *msg_)
 {
+    zmq_assert ((msg_->flags | ZMQ_MSG_MASK) == 0xff);
+
     if (msg_->content == (zmq::msg_content_t*) ZMQ_VSM)
         return msg_->vsm_data;
     if (msg_->content == (zmq::msg_content_t*) ZMQ_DELIMITER)
@@ -198,6 +220,8 @@ void *zmq_msg_data (zmq_msg_t *msg_)
 
 size_t zmq_msg_size (zmq_msg_t *msg_)
 {
+    zmq_assert ((msg_->flags | ZMQ_MSG_MASK) == 0xff);
+
     if (msg_->content == (zmq::msg_content_t*) ZMQ_VSM)
         return msg_->vsm_size;
     if (msg_->content == (zmq::msg_content_t*) ZMQ_DELIMITER)
@@ -220,8 +244,8 @@ void *zmq_init (int io_threads_)
     //  openPGM timing, set environment variables PGM_TIMER to "GTOD" and
     //  PGM_SLEEP to "USLEEP".
     pgm_error_t *pgm_error = NULL;
-    const bool rc = pgm_init (&pgm_error);
-    if (rc != TRUE) {
+    const bool ok = pgm_init (&pgm_error);
+    if (ok != TRUE) {
 
         //  Invalid parameters don't set pgm_error_t
         zmq_assert (pgm_error != NULL);
@@ -239,21 +263,40 @@ void *zmq_init (int io_threads_)
     }
 #endif
 
+#ifdef ZMQ_HAVE_WINDOWS
+    //  Intialise Windows sockets. Note that WSAStartup can be called multiple
+    //  times given that WSACleanup will be called for each WSAStartup.
+   //  We do this before the ctx constructor since its embedded mailbox_t
+   //  object needs Winsock to be up and running.
+    WORD version_requested = MAKEWORD (2, 2);
+    WSADATA wsa_data;
+    int rc = WSAStartup (version_requested, &wsa_data);
+    zmq_assert (rc == 0);
+    zmq_assert (LOBYTE (wsa_data.wVersion) == 2 &&
+        HIBYTE (wsa_data.wVersion) == 2);
+#endif
+
     //  Create 0MQ context.
     zmq::ctx_t *ctx = new (std::nothrow) zmq::ctx_t ((uint32_t) io_threads_);
-    zmq_assert (ctx);
+    alloc_assert (ctx);
     return (void*) ctx;
 }
 
 int zmq_term (void *ctx_)
 {
-    if (!ctx_) {
+    if (!ctx_ || !((zmq::ctx_t*) ctx_)->check_tag ()) {
         errno = EFAULT;
         return -1;
     }
 
     int rc = ((zmq::ctx_t*) ctx_)->terminate ();
     int en = errno;
+
+#ifdef ZMQ_HAVE_WINDOWS
+    //  On Windows, uninitialise socket layer.
+    rc = WSACleanup ();
+    wsa_assert (rc != SOCKET_ERROR);
+#endif
 
 #if defined ZMQ_HAVE_OPENPGM
     //  Shut down the OpenPGM library.
@@ -267,7 +310,7 @@ int zmq_term (void *ctx_)
 
 void *zmq_socket (void *ctx_, int type_)
 {
-    if (!ctx_) {
+    if (!ctx_ || !((zmq::ctx_t*) ctx_)->check_tag ()) {
         errno = EFAULT;
         return NULL;
     }
@@ -276,8 +319,8 @@ void *zmq_socket (void *ctx_, int type_)
 
 int zmq_close (void *s_)
 {
-    if (!s_) {
-        errno = EFAULT;
+    if (!s_ || !((zmq::socket_base_t*) s_)->check_tag ()) {
+        errno = ENOTSOCK;
         return -1;
     }
     ((zmq::socket_base_t*) s_)->close ();
@@ -287,8 +330,8 @@ int zmq_close (void *s_)
 int zmq_setsockopt (void *s_, int option_, const void *optval_,
     size_t optvallen_)
 {
-    if (!s_) {
-        errno = EFAULT;
+    if (!s_ || !((zmq::socket_base_t*) s_)->check_tag ()) {
+        errno = ENOTSOCK;
         return -1;
     }
     return (((zmq::socket_base_t*) s_)->setsockopt (option_, optval_,
@@ -297,8 +340,8 @@ int zmq_setsockopt (void *s_, int option_, const void *optval_,
 
 int zmq_getsockopt (void *s_, int option_, void *optval_, size_t *optvallen_)
 {
-    if (!s_) {
-        errno = EFAULT;
+    if (!s_ || !((zmq::socket_base_t*) s_)->check_tag ()) {
+        errno = ENOTSOCK;
         return -1;
     }
     return (((zmq::socket_base_t*) s_)->getsockopt (option_, optval_,
@@ -307,8 +350,8 @@ int zmq_getsockopt (void *s_, int option_, void *optval_, size_t *optvallen_)
 
 int zmq_bind (void *s_, const char *addr_)
 {
-    if (!s_) {
-        errno = EFAULT;
+    if (!s_ || !((zmq::socket_base_t*) s_)->check_tag ()) {
+        errno = ENOTSOCK;
         return -1;
     }
     return (((zmq::socket_base_t*) s_)->bind (addr_));
@@ -316,8 +359,8 @@ int zmq_bind (void *s_, const char *addr_)
 
 int zmq_connect (void *s_, const char *addr_)
 {
-    if (!s_) {
-        errno = EFAULT;
+    if (!s_ || !((zmq::socket_base_t*) s_)->check_tag ()) {
+        errno = ENOTSOCK;
         return -1;
     }
     return (((zmq::socket_base_t*) s_)->connect (addr_));
@@ -325,8 +368,8 @@ int zmq_connect (void *s_, const char *addr_)
 
 int zmq_send (void *s_, zmq_msg_t *msg_, int flags_)
 {
-    if (!s_) {
-        errno = EFAULT;
+    if (!s_ || !((zmq::socket_base_t*) s_)->check_tag ()) {
+        errno = ENOTSOCK;
         return -1;
     }
     return (((zmq::socket_base_t*) s_)->send (msg_, flags_));
@@ -334,8 +377,8 @@ int zmq_send (void *s_, zmq_msg_t *msg_, int flags_)
 
 int zmq_recv (void *s_, zmq_msg_t *msg_, int flags_)
 {
-    if (!s_) {
-        errno = EFAULT;
+    if (!s_ || !((zmq::socket_base_t*) s_)->check_tag ()) {
+        errno = ENOTSOCK;
         return -1;
     }
     return (((zmq::socket_base_t*) s_)->recv (msg_, flags_));
@@ -358,6 +401,20 @@ int zmq_recv (void *s_, zmq_msg_t *msg_, int flags_)
 int zmq_poll (zmq_pollitem_t *items_, int nitems_, long timeout_)
 {
 #if defined ZMQ_POLL_BASED_ON_POLL
+    if (unlikely (nitems_ < 0)) {
+        errno = EINVAL;
+        return -1;
+    }
+    if (unlikely (nitems_ == 0)) {
+        if (timeout_ == 0)
+            return 0;
+#if defined ZMQ_HAVE_WINDOWS
+        Sleep (timeout_ > 0 ? timeout_ / 1000 : INFINITE);
+        return 0;
+#else
+        return usleep (timeout_);
+#endif
+    }
 
     if (!items_) {
         errno = EFAULT;
@@ -369,7 +426,7 @@ int zmq_poll (zmq_pollitem_t *items_, int nitems_, long timeout_)
     uint64_t end = 0;
 
     pollfd *pollfds = (pollfd*) malloc (nitems_ * sizeof (pollfd));
-    zmq_assert (pollfds);
+    alloc_assert (pollfds);
 
     //  Build pollset for poll () system call.
     for (int i = 0; i != nitems_; i++) {
@@ -496,6 +553,21 @@ int zmq_poll (zmq_pollitem_t *items_, int nitems_, long timeout_)
     return nevents;
 
 #elif defined ZMQ_POLL_BASED_ON_SELECT
+
+    if (unlikely (nitems_ < 0)) {
+        errno = EINVAL;
+        return -1;
+    }
+    if (unlikely (nitems_ == 0)) {
+        if (timeout_ == 0)
+            return 0;
+#if defined ZMQ_HAVE_WINDOWS
+        Sleep (timeout_ > 0 ? timeout_ / 1000 : INFINITE);
+        return 0;
+#else
+        return usleep (timeout_);
+#endif
+    }
 
     if (!items_) {
         errno = EFAULT;
@@ -685,19 +757,15 @@ int zmq_device (int device_, void *insocket_, void *outsocket_)
         errno = EFAULT;
         return -1;
     }
-    switch (device_) {
-    case ZMQ_FORWARDER:
-        return zmq::forwarder ((zmq::socket_base_t*) insocket_,
-            (zmq::socket_base_t*) outsocket_);
-    case ZMQ_QUEUE:
-        return zmq::queue ((zmq::socket_base_t*) insocket_,
-            (zmq::socket_base_t*) outsocket_);
-    case ZMQ_STREAMER:
-        return zmq::streamer ((zmq::socket_base_t*) insocket_,
-            (zmq::socket_base_t*) outsocket_);
-    default:
-        return EINVAL;
+
+    if (device_ != ZMQ_FORWARDER && device_ != ZMQ_QUEUE &&
+          device_ != ZMQ_STREAMER) {
+       errno = EINVAL;
+       return -1;
     }
+
+    return zmq::device ((zmq::socket_base_t*) insocket_,
+        (zmq::socket_base_t*) outsocket_);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -716,7 +784,7 @@ void zmq_sleep (int seconds_)
 void *zmq_stopwatch_start ()
 {
     uint64_t *watch = (uint64_t*) malloc (sizeof (uint64_t));
-    assert (watch);
+    alloc_assert (watch);
     *watch = zmq::clock_t::now_us ();
     return (void*) watch;
 }
@@ -728,8 +796,3 @@ unsigned long zmq_stopwatch_stop (void *watch_)
     free (watch_);
     return (unsigned long) (end - start);
 }
-
-#if defined __GNUC__ && __GNUC__ >= 4 && !defined ZMQ_HAVE_WINDOWS
-#pragma GCC visibility pop
-#endif
-

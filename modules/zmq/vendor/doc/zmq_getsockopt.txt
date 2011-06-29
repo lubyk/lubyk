@@ -167,6 +167,26 @@ Default value:: 10
 Applicable socket types:: all, when using multicast transports
 
 
+ZMQ_RECOVERY_IVL_MSEC: Get multicast recovery interval in milliseconds
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The 'ZMQ_RECOVERY_IVL'_MSEC option shall retrieve the recovery interval, in
+milliseconds, for multicast transports using the specified 'socket'.  The
+recovery interval determines the maximum time in seconds that a receiver
+can be absent from a multicast group before unrecoverable data loss will
+occur.
+
+For backward compatibility, the default value of 'ZMQ_RECOVERY_IVL_MSEC' is
+-1 indicating that the recovery interval should be obtained from the
+'ZMQ_RECOVERY_IVL' option. However, if the 'ZMQ_RECOVERY_IVL_MSEC' value is
+not zero, then it will take precedence, and be used.
+
+[horizontal]
+Option value type:: int64_t
+Option value unit:: milliseconds
+Default value:: -1
+Applicable socket types:: all, when using multicast transports
+
+
 ZMQ_MCAST_LOOP: Control multicast loop-back
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The 'ZMQ_MCAST_LOOP' option controls whether data sent via multicast
@@ -241,10 +261,11 @@ Option value unit:: milliseconds
 Default value:: -1 (infinite)
 Applicable socket types:: all
 
+
 ZMQ_RECONNECT_IVL: Retrieve reconnection interval
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The 'ZMQ_RECONNECT_IVL' option shall retrieve the reconnection interval for the
-specified 'socket'.  The reconnection interval is the maximum period 0MQ shall
+The 'ZMQ_RECONNECT_IVL' option shall retrieve the initial reconnection interval
+for the specified 'socket'.  The reconnection interval is the period 0MQ shall
 wait between attempts to reconnect disconnected peers when using
 connection-oriented transports.
 
@@ -256,6 +277,24 @@ Option value type:: int
 Option value unit:: milliseconds
 Default value:: 100
 Applicable socket types:: all, only for connection-oriented transports
+
+
+ZMQ_RECONNECT_IVL_MAX: Retrieve maximum reconnection interval
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The 'ZMQ_RECONNECT_IVL_MAX' option shall retrieve the maximum reconnection 
+interval for the specified 'socket'.  This is the maximum period 0MQ shall wait 
+between attempts to reconnect. On each reconnect attempt, the previous interval 
+shall be doubled untill ZMQ_RECONNECT_IVL_MAX is reached. This allows for 
+exponential backoff strategy. Default value means no exponential backoff is 
+performed and reconnect interval calculations are only based on ZMQ_RECONNECT_IVL.
+
+NOTE:  Values less than ZMQ_RECONNECT_IVL will be ignored.
+
+[horizontal]
+Option value type:: int
+Option value unit:: milliseconds
+Default value:: 0 (only use ZMQ_RECONNECT_IVL)
+Applicable socket types:: all, only for connection-oriented transport
 
 
 ZMQ_BACKLOG: Retrieve maximum length of the queue of outstanding connections
@@ -287,7 +326,7 @@ state with a subsequent retrieval of the 'ZMQ_EVENTS' option.
 
 CAUTION: The returned file descriptor is intended for use with a 'poll' or
 similar system call only. Applications must never attempt to read or write data
-to it directly.
+to it directly, neither should they try to close it.
 
 [horizontal]
 Option value type:: int on POSIX systems, SOCKET on Windows
@@ -337,8 +376,8 @@ _option_value_, as specified by _option_len_, is insufficient for storing the
 option value.
 *ETERM*::
 The 0MQ 'context' associated with the specified 'socket' was terminated.
-*EFAULT*::
-The provided 'socket' was not valid (NULL).
+*ENOTSOCK*::
+The provided 'socket' was invalid.
 *EINTR*::
 The operation was interrupted by delivery of a signal.
 
@@ -364,5 +403,5 @@ linkzmq:zmq[7]
 
 AUTHORS
 -------
-The 0MQ documentation was written by Martin Sustrik <sustrik@250bpm.com> and
+This 0MQ manual page was written by Martin Sustrik <sustrik@250bpm.com> and
 Martin Lucina <mato@kotelna.sk>.

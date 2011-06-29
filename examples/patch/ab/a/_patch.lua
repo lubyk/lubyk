@@ -26,8 +26,6 @@ nodes:
     links:
       count:
         /b/play/in/trigger: true
-    params:
-      tempo: 580
 ]]
 
 app:exec()

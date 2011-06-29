@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -158,7 +159,7 @@ void zmq::own_t::process_term (int linger_)
     zmq_assert (!terminating);
 
     //  Send termination request to all owned objects.
-    for (owned_t::iterator it = owned.begin (); it != owned.end (); it++)
+    for (owned_t::iterator it = owned.begin (); it != owned.end (); ++it)
         send_term (*it, linger_);
     register_term_acks (owned.size ());
     owned.clear ();

@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -89,8 +90,8 @@ int zmq::pgm_socket_t::init (bool udp_encapsulation_, const char *network_)
         errno = EINVAL;
         return -1;
     }
-    //  Recovery interval [s]. 
-    if (options.recovery_ivl <= 0) {
+    //  Recovery interval [s] or [ms] - based on the user's call 
+    if ((options.recovery_ivl <= 0) && (options.recovery_ivl_msec <= 0)) {
         errno = EINVAL;
         return -1;
     }
@@ -151,8 +152,9 @@ int zmq::pgm_socket_t::init (bool udp_encapsulation_, const char *network_)
         //  All options are of data type int
         const int encapsulation_port = port_number;
         if (!pgm_setsockopt (sock, IPPROTO_PGM, PGM_UDP_ENCAP_UCAST_PORT,
-                &encapsulation_port, sizeof (encapsulation_port)) ||
-            !pgm_setsockopt (sock, IPPROTO_PGM, PGM_UDP_ENCAP_MCAST_PORT,
+                &encapsulation_port, sizeof (encapsulation_port)))
+            goto err_abort;
+        if (!pgm_setsockopt (sock, IPPROTO_PGM, PGM_UDP_ENCAP_MCAST_PORT,
                 &encapsulation_port, sizeof (encapsulation_port)))
             goto err_abort;
     }
@@ -199,8 +201,8 @@ int zmq::pgm_socket_t::init (bool udp_encapsulation_, const char *network_)
 
     if (receiver) {
         const int recv_only        = 1,
-                  rxw_max_rte      = options.rate * 1000 / 8,
-                  rxw_secs         = options.recovery_ivl,
+                  rxw_max_tpdu     = (int) pgm_max_tpdu,
+                  rxw_sqns         = compute_sqns (rxw_max_tpdu),
                   peer_expiry      = pgm_secs (300),
                   spmr_expiry      = pgm_msecs (25),
                   nak_bo_ivl       = pgm_msecs (50),
@@ -211,10 +213,8 @@ int zmq::pgm_socket_t::init (bool udp_encapsulation_, const char *network_)
 
         if (!pgm_setsockopt (sock, IPPROTO_PGM, PGM_RECV_ONLY, &recv_only,
                 sizeof (recv_only)) ||
-            !pgm_setsockopt (sock, IPPROTO_PGM, PGM_RXW_MAX_RTE, &rxw_max_rte,
-                sizeof (rxw_max_rte)) ||
-            !pgm_setsockopt (sock, IPPROTO_PGM, PGM_RXW_SECS, &rxw_secs,
-                sizeof (rxw_secs)) ||
+            !pgm_setsockopt (sock, IPPROTO_PGM, PGM_RXW_SQNS, &rxw_sqns,
+                sizeof (rxw_sqns)) ||
             !pgm_setsockopt (sock, IPPROTO_PGM, PGM_PEER_EXPIRY, &peer_expiry,
                 sizeof (peer_expiry)) ||
             !pgm_setsockopt (sock, IPPROTO_PGM, PGM_SPMR_EXPIRY, &spmr_expiry,
@@ -232,8 +232,9 @@ int zmq::pgm_socket_t::init (bool udp_encapsulation_, const char *network_)
             goto err_abort;
     } else {
         const int send_only        = 1,
-                  txw_max_rte      = options.rate * 1000 / 8,
-                  txw_secs         = options.recovery_ivl,
+                  max_rte          = (int) ((options.rate * 1000) / 8),
+                  txw_max_tpdu     = (int) pgm_max_tpdu,
+                  txw_sqns         = compute_sqns (txw_max_tpdu),
                   ambient_spm      = pgm_secs (30),
                   heartbeat_spm[]  = { pgm_msecs (100),
                                        pgm_msecs (100),
@@ -247,10 +248,10 @@ int zmq::pgm_socket_t::init (bool udp_encapsulation_, const char *network_)
 
         if (!pgm_setsockopt (sock, IPPROTO_PGM, PGM_SEND_ONLY,
                 &send_only, sizeof (send_only)) ||
-            !pgm_setsockopt (sock, IPPROTO_PGM, PGM_TXW_MAX_RTE,
-                &txw_max_rte, sizeof (txw_max_rte)) ||
-            !pgm_setsockopt (sock, IPPROTO_PGM, PGM_TXW_SECS,
-                &txw_secs, sizeof (txw_secs)) ||
+            !pgm_setsockopt (sock, IPPROTO_PGM, PGM_ODATA_MAX_RTE,
+                &max_rte, sizeof (max_rte)) ||
+            !pgm_setsockopt (sock, IPPROTO_PGM, PGM_TXW_SQNS,
+                &txw_sqns, sizeof (txw_sqns)) ||
             !pgm_setsockopt (sock, IPPROTO_PGM, PGM_AMBIENT_SPM,
                 &ambient_spm, sizeof (ambient_spm)) ||
             !pgm_setsockopt (sock, IPPROTO_PGM, PGM_HEARTBEAT_SPM,
@@ -361,6 +362,7 @@ int zmq::pgm_socket_t::init (bool udp_encapsulation_, const char *network_)
         zmq_assert (pgm_msgv_len);
 
         pgm_msgv = (pgm_msgv_t*) malloc (sizeof (pgm_msgv_t) * pgm_msgv_len);
+        alloc_assert (pgm_msgv);
     }
 
     return 0;
@@ -605,7 +607,7 @@ ssize_t zmq::pgm_socket_t::receive (void **raw_data_, const pgm_tsi_t **tsi_)
         //  Data loss.
         if (status == PGM_IO_STATUS_RESET) {
 
-            struct pgm_sk_buff_t* skb = pgm_msgv[0].msgv_skb[0];
+            struct pgm_sk_buff_t* skb = pgm_msgv [0].msgv_skb [0];
 
             //  Save lost data TSI.
             *tsi_ = &skb->tsi;
@@ -674,6 +676,29 @@ void zmq::pgm_socket_t::process_upstream ()
         errno = ENOMEM;
     else
         errno = EAGAIN;
+}
+
+int zmq::pgm_socket_t::compute_sqns (int tpdu_)
+{
+    //  Convert rate into B/ms.
+    uint64_t rate = ((uint64_t) options.rate) / 8;
+
+    //  Get recovery interval in milliseconds.
+    uint64_t interval = options.recovery_ivl_msec >= 0 ?
+        options.recovery_ivl_msec :
+        options.recovery_ivl * 1000;
+        
+    //  Compute the size of the buffer in bytes.
+    uint64_t size = interval * rate;
+
+    //  Translate the size into number of packets.
+    uint64_t sqns = size / tpdu_;
+
+    //  Buffer should be able to contain at least one packet.
+    if (sqns == 0)
+        sqns = 1;
+
+    return (int) sqns;
 }
 
 #endif

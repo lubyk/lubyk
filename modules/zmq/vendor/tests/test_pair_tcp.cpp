@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2007-2010 iMatix Corporation
+    Copyright (c) 2007-2011 iMatix Corporation
+    Copyright (c) 2007-2011 Other contributors as noted in the AUTHORS file
 
     This file is part of 0MQ.
 
@@ -24,7 +25,7 @@ using namespace zmqtestutil;
 
 int main (int argc, char *argv [])
 {
-    const char *transport = "tcp://127.0.0.1:5555" ;
+    const char *transport = "tcp://127.0.0.1:5560";
     basic_tests (transport, ZMQ_PAIR, ZMQ_PAIR);
     return 0 ;
 }
