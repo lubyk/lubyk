@@ -219,8 +219,12 @@ function lib.makeGhost(node_def, delegate)
     local edit = mimas.LineEdit(node.name)
     edit:move(0, 0)
     edit:resize(ghost.width, ghost.height)
+    edit:selectAll()
     ghost.super:addWidget(edit)
-    edit.editingFinished = finish_func
+    edit:setFocus()
+    edit.editingFinished = function()
+      app:post(finish_func)
+    end
     ghost.edit = edit
   end
   return ghost
