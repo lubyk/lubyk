@@ -198,8 +198,7 @@ end
   self:change {nodes = {[definition.name or 'new node'] = definition}}
 end
 
--- Process is going offline. TODO: All inlets that are linked should
--- become pending_inlets.
+-- Process is coming online.
 function lib:connect(remote_service, delegate, process_watch)
   -- The delegate is used by views.
   self.delegate       = delegate
@@ -225,4 +224,8 @@ end
 function lib:disconnect()
   -- Find linked inlets....
   -- disconnect self.sub ?
+end
+
+function lib:url()
+  return '/' .. self.name
 end

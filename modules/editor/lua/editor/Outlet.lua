@@ -30,9 +30,10 @@ local function createLink(self, target_url)
     if process_name then
       -- Resolve process
       process = process:findProcess(process_name)
-      target_url = sub_url
+      target, err = process:pendingInlet(sub_url)
+    else
+      target, err = process:pendingInlet(target_url)
     end
-    target, err = process:pendingInlet(target_url)
     if not target then
       error(err)
     end

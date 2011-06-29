@@ -135,5 +135,6 @@ function lib:deleteViews()
 end
 
 function lib:url()
-  return self.node.name .. '/in/' .. self.name
+  local url = self.node:url() .. '/in/' .. self.name
+  return url
 end

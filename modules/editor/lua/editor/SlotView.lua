@@ -6,7 +6,7 @@
   The SlotView show a single slot (inlet or outlet).
 
 --]]------------------------------------------------------
-local lib = mimas.WidgetClass()
+local lib = mimas.WidgetClass('editor.SlotView')
 editor.SlotView = lib
 
 -- constants
@@ -71,10 +71,11 @@ function lib:click(x, y, type, btn, mod)
         if slot.type == 'editor.Inlet' then
           slot, other_slot = other_slot, slot
         end
+        local url = lk.absToRel(other_slot:url(), slot.node.parent:url())
         slot.node:change {
           links = {
             [slot.name] = {
-              [other_slot:url()] = true
+              [url] = true
             }
           }
         }
@@ -105,7 +106,7 @@ local function makeGhostLink(self)
 
   -- We add the slot in the main view in case it is used for
   -- inter-process linking.
-  slot.node.process.delegate.main_view:addWidget(self.ghost.link_view)
+  slot.node.process.delegate.main_view:addLinkView(self.ghost.link_view)
   self.ghost.link_view:lower()
 end
 
@@ -121,7 +122,7 @@ function lib:mouse(x, y)
     local gx, gy = self:globalPosition()
     gx = gx + x
     gy = gy + y
-    local view, d = self.node.process.view:closestSlotView(gx, gy, self.type, slot.node)
+    local view, d = self.node.process.delegate:closestSlotView(gx, gy, self.type, slot.node)
     local old_closest = self.delegate.closest_slot_view
     if d < LINK_DISTANCE then
       self.delegate.closest_slot_view = view

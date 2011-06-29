@@ -46,7 +46,6 @@ setmetatable(lib, {
         end
         remote_service.sub_url  = string.format('tcp://%s:%i', remote_service.host, remote_service.info.pub)
         remote_service.push_url = string.format('tcp://%s:%i', remote_service.host, remote_service.info.pull)
-        print("FOUND", remote_service.push_url)
         remote_service.push = zmq.Push()
         -- do not keep unsent messages on quit
         remote_service.push:setsockopt(zmq.LINGER, 0)

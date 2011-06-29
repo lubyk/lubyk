@@ -155,6 +155,22 @@ function lk.split(str, pat)
   return t
 end
 
+-------------------------------- lk.absToRel(abs_string, base)
+-- Transform an absolute url to a relative with given base
+function lk.absToRel(abs_string, base)
+  local l = string.len(base)
+  local s = string.sub(abs_string, 1, l)
+  if s == base then
+    if base == abs_string then
+      return abs_string
+    else
+      return string.sub(abs_string, l+2, -1)
+    end
+  else
+    return abs_string
+  end
+end
+
 -------------------------------- lk.source()
 -- Find the source of the current file or the
 -- file up x levels in the call chain (-1 = up

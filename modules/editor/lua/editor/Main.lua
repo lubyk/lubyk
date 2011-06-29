@@ -148,8 +148,8 @@ end
 -- Find a process from global position gx, gy.
 function lib:processViewAtGlobal(gx, gy)
   for _, process in pairs(self.process_list) do
-    if process.view then
-      local view = process.view
+    local view = process.view
+    if view then
       local vx, vy = view:globalPosition()
       if gx > vx and gx < vx + view.width and
          gy > vy and gy < vy + view.height then
@@ -158,4 +158,22 @@ function lib:processViewAtGlobal(gx, gy)
     end
   end
   return nil
+end
+
+--- Find the closest slotView in all processes from the global
+-- x and global y coordinates.
+-- @return closest slot and distance to center of slot.
+function lib:closestSlotView(gx, gy, for_type, skip_node)
+  local best_slot, best_dist
+  for _, process in pairs(self.process_list) do
+    local view = process.view
+    if view then
+      local slot, dist = view:closestSlotView(gx, gy, for_type, skip_node)
+      if slot and (not best_slot or dist < best_dist) then
+        best_dist = dist
+        best_slot = slot
+      end
+    end
+  end
+  return best_slot, best_dist
 end

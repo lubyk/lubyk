@@ -1,4 +1,6 @@
 ideas
+*.bak
+*.logic
 *.perspectivev3
 *.o
 *.a

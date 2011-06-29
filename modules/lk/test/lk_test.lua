@@ -52,12 +52,18 @@ function should.split()
   assertEqual(3, #list)
 end
 
-function should.split_chars()
+function should.splitChars()
   local list = lk.split('cat')
   assertEqual('c', list[1])
   assertEqual('a', list[2])
   assertEqual('t', list[3])
   assertEqual(3, #list)
+end
+
+function should.absToRel()
+  assertEqual('play/in/trigger', lk.absToRel('/foo/play/in/trigger', '/foo'))
+  assertEqual('/foo/bar', lk.absToRel('/foo/bar', '/foo/bar'))
+  assertEqual('/foo/baz/boom', lk.absToRel('/foo/baz/boom', '/foo/bar'))
 end
 
 function should.returnEmptyOnSpitStartingWithSep()

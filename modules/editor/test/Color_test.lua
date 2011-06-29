@@ -54,7 +54,7 @@ function should.create_new_color()
   assert_not_equal(color, other)
 end
 
-local Col = mimas.WidgetClass()
+local Col = mimas.WidgetClass('test.Col')
 function Col:init(name, color)
   self.name  = name
   self.color = color

@@ -6,7 +6,7 @@
   Displays the LibraryView.
 
 --]]------------------------------------------------------
-local lib = mimas.WidgetClass()
+local lib = mimas.WidgetClass('editor.LibraryView')
 editor.LibraryView = lib
 
 -------------------------------------------------------- PRIVATE

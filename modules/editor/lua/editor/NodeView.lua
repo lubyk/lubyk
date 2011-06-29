@@ -6,7 +6,7 @@
   The NodeView show a single node with inlets and outlets.
 
 --]]------------------------------------------------------
-local lib = mimas.WidgetClass()
+local lib = mimas.WidgetClass('editor.NodeView')
 editor.NodeView = lib
 
 --============================================= PRIVATE

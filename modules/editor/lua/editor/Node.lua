@@ -33,6 +33,7 @@ setmetatable(lib, {
     outlets        = {},
     sorted_outlets = {},
     process        = process,
+    parent         = process,
     delegate       = process.delegate,
   }
 
@@ -186,4 +187,8 @@ function lib:deleteView()
   for _, slot in ipairs(self.sorted_inlets) do
     slot:deleteViews()
   end
+end
+
+function lib:url()
+  return self.parent:url() .. '/' .. self.name
 end

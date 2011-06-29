@@ -6,7 +6,7 @@
   Displays all the ProcessViews.
 
 --]]------------------------------------------------------
-local lib = mimas.WidgetClass()
+local lib = mimas.WidgetClass('editor.PatchingView')
 editor.PatchingView = lib
 
 -- constants

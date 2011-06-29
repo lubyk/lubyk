@@ -7,7 +7,7 @@
   inlet.
 
 --]]------------------------------------------------------
-local lib = mimas.WidgetClass()
+local lib = mimas.WidgetClass('editor.LinkView')
 editor.LinkView = lib
 -- constants
 local HPEN_WIDTH = 1 -- half pen width
@@ -93,10 +93,11 @@ function lib:click(x, y, type)
     if type == DoubleClick then
       local slot = self.outlet
       -- remove link
+      local url = lk.absToRel(self.inlet:url(), slot.node.parent:url())
       slot.node:change {
         links = {
           [slot.name] = {
-            [self.inlet:url()] = false
+            [url] = false
           }
         }
       }

@@ -11,38 +11,39 @@ local function noop(...)
   return true -- ignore event
 end
 -- helper to create sub-classes
--- MyWidget = mimas.WidgetClass()
-function mimas.WidgetClass()
+-- MyWidget = mimas.WidgetClass('MyWidget')
+function mimas.WidgetClass(class_name)
   local lib         = {
     -- default methods
     init    = noop,
     paint   = noop,
     resized = noop,
     mouse   = noop,
-    click   = noop
+    click   = noop,
+    ['type']= class_name,
   }
   lib.__index       = lib
 
   setmetatable(lib, {
     -- new method
    __call = function(lib, ...)
-    local instance = {}
-    setmetatable(instance, lib)
-    instance.super = mimas.Widget()
-    function instance.super.paint(...)
-      instance:paint(...)
+    local self = {}
+    setmetatable(self, lib)
+    self.super = mimas.Widget()
+    function self.super.paint(...)
+      self:paint(...)
     end
-    function instance.super.resized(...)
-      instance:resized(...)
+    function self.super.resized(...)
+      self:resized(...)
     end
-    function instance.super.mouse(...)
-      return instance:mouse(...)
+    function self.super.mouse(...)
+      return self:mouse(...)
     end
-    function instance.super.click(...)
-      return instance:click(...)
+    function self.super.click(...)
+      return self:click(...)
     end
-    instance:init(...)
-    return instance
+    self:init(...)
+    return self
   end})
 
   -- FIXME: We need a better way to sub-class !

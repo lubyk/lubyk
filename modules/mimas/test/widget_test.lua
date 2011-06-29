@@ -15,7 +15,7 @@ local should = test.Suite('mimas.Widget')
 --==================== Widget sub-class example =======
 
 -- This is how you create a sub-class of mimas.Widget
-local lib = mimas.WidgetClass()
+local lib = mimas.WidgetClass('test.MyWidget')
 MyWidget  = lib
 
 function lib:init(name)

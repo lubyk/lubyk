@@ -7,7 +7,7 @@
   (LibraryView, HelpView, PatchView and ControlView).
 
 --]]------------------------------------------------------
-local lib = mimas.WidgetClass()
+local lib = mimas.WidgetClass('editor.MainView')
 editor.MainView = lib
 
 -- constants
@@ -25,7 +25,7 @@ function lib:init(main)
   self.layout = mimas.HBoxLayout(self.layout_holder)
   self.library_view = editor.LibraryView(main.library)
   self.layout:addWidget(self.library_view)
-  self.patching_view   = editor.PatchingView()
+  self.patching_view = editor.PatchingView()
   self.layout:addWidget(self.patching_view)
   self.layout:setSpacing(PADDING)
   self.layout:setContentsMargins(0, 0, 0, 0)
@@ -55,4 +55,8 @@ function lib:addProcessView(view)
   view:move(process.x or 100, process.y or 100)
   -- trigger a full view rebuild once it is positioned
   process:updateView()
+end
+
+function lib:addLinkView(view)
+  self.patching_view:addWidget(view)
 end

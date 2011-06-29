@@ -7,7 +7,7 @@
   displayed and edited.
 
 --]]------------------------------------------------------
-local lib = mimas.WidgetClass()
+local lib = mimas.WidgetClass('editor.ProcessView')
 editor.ProcessView = lib
 
 -- constants

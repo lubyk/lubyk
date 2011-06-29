@@ -6,7 +6,7 @@
   Displays the list of ProcessTabs.
 
 --]]------------------------------------------------------
-local lib = mimas.WidgetClass()
+local lib = mimas.WidgetClass('editor.ProcessList')
 editor.ProcessList = lib
 
 -- constants
