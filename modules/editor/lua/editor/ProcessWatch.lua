@@ -58,9 +58,8 @@ setmetatable(lib, {
       -- remove connection
       if process then
         self.found_processes[service_name] = nil
-        instance.pending_processes[service_name] = process
-        process:disconnect()
         self.delegate:removeProcess(process)
+        process:disconnect()
       end
     else
       -- ???

@@ -71,16 +71,21 @@ end
 
 --- When a process goes offline, this method is called.
 function lib:removeProcess(process)
-  if self.process_list_view then
-    app:post(function()
+  app:post(function()
+    -- This should run in the GUI thread
+    if self.process_list_view then
       self.process_list_view:removeProcess(process.name)
       process:deleteView()
-      self.main_view:placeElements()
-      self.process_list[process.name] = nil
-    end)
-  else
+    end
+    self.main_view:placeElements()
     self.process_list[process.name] = nil
-  end
+    -- this could run anywhere but it has to run after the process is removed
+    -- from process_list
+    for _, p in pairs(self.process_list) do
+      -- transform outgoing links to the dying process to pending links.
+      p:disconnectProcess(process.name)
+    end
+  end)
 end
 
 function lib:toggleView(process)

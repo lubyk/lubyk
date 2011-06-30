@@ -22,7 +22,10 @@ setmetatable(lib, {
 end})
 
 function lib.__call(self, ...)
+  local name = ...
   -- outlet(name, info)
   -- Declare a new outlet
-  return lk.Outlet(self.node, ...)
+  local outlet = lk.Outlet(self.node, ...)
+  self.node.env[name] = outlet
+  return outlet
 end

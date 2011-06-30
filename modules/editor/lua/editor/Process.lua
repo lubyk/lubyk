@@ -128,6 +128,7 @@ lib.findProcess = lk.Patch.findProcess
 -- Create a pending inlet from an url relative to this process (nearly the same
 -- as lk.Patch.pendingInlet).
 function lib:pendingInlet(inlet_url)
+  print('pendingInlet', inlet_url)
   -- inlet_url example:
   --   node/in/slot
   local parts = lk.split(inlet_url, '/')
@@ -135,7 +136,7 @@ function lib:pendingInlet(inlet_url)
   if #parts == 3 and parts[2] == 'in' then
     node_name, inlet_name = parts[1], parts[3]
   else
-    return nil, string.format("Invalid pendingInlet url '%s'.")
+    return nil, string.format("Invalid pendingInlet url '%s'.", inlet_url)
   end
 
   local node = self.nodes[node_name]
@@ -219,10 +220,17 @@ function lib:connect(remote_service, delegate, process_watch)
   self:sync()
 end
 
--- Process is going offline. TODO: All inlets that are linked should
--- become pending_inlets.
+-- A process is going offline, disconnect all links to this dying
+-- process and mark them as pending.
+function lib:disconnectProcess(process_name)
+  -- Disconnect all linked inlets
+  for _, node in pairs(self.nodes) do
+    node:disconnectProcess(process_name)
+  end
+end
+
+-- The remote process is dying.
 function lib:disconnect()
-  -- Find linked inlets....
   -- disconnect self.sub ?
 end
 

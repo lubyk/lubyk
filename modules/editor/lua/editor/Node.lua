@@ -123,6 +123,14 @@ function lib:setInlets(list)
   end
 end
 
+-- The process is going offline, we need to transform connected
+-- inlets from other processes to pending_inlets.
+function lib:disconnectProcess(process_name)
+  for _, outlet in ipairs(self.sorted_outlets) do
+    outlet:disconnectProcess(process_name)
+  end
+end
+
 --- Create outlets from a list of defined slots.
 function lib:setOutlets(list)
   local sorted_outlets = self.sorted_outlets
