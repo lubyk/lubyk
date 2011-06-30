@@ -12,7 +12,7 @@ require 'lubyk'
 
 local should = test.Suite('mimas.Painter')
 
-function should.load_constants()
+function should.loadConstants()
   assertEqual(1, mimas.SolidPattern)
 end
 
@@ -135,40 +135,5 @@ function should.accept_destroy_from_Lua()
   end)
 end
 
-function should.drawPathOutline(t)
-  t.win = mimas.Window()
-  t.win:move(10, 10)
-  t.win:resize(200, 200)
-  t.win:show()
-  t.path = mimas.Path()
-  t.path:moveTo(50, 50)
-  t.path:cubicTo(
-    50,  50  + 35,
-    150, 150 - 35,
-    150, 150
-  )
-  t.outline = t.path:outlineForWidth(20)
-  function t.win.paint(p, w, h)
-    p:setBrush(mimas.colors.Red:colorWithAlpha(0.2))
-    p:setPen(1, mimas.colors.Blue)
-    p:drawPath(t.outline)
-    p:setPen(1, mimas.colors.Yellow)
-    p:setBrush(mimas.NoBrush)
-    p:drawPath(t.path)
-  end
-
-  function t.win.click(x, y)
-    if t.outline:contains(x, y) then
-      t.win:close()
-    end
-  end
-
-  t.win:update()
-  t.thread = lk.Thread(function()
-    sleep(2000)
-    t.win:close()
-    assertTrue(true)
-  end)
-end
 
 test.all()
