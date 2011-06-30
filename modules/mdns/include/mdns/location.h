@@ -38,9 +38,16 @@ typedef unsigned int uint;
 namespace mdns {
 
 #define DEFAULT_PROTOCOL "lubyk"
+typedef int LuaStackSize;
 
 class ZeroConfBrowser;
 
+/** Browse for devices matching a give service type. Call a lua function
+ * when devices are added or removed.
+ *
+ * @dub string_format:'%%s'
+ *      string_args:'(*userdata)->inspect().c_str()'
+ */
 class Location
 {
 public:

@@ -70,6 +70,14 @@ const std::string Location::name_from_ip(unsigned long ip) {
 	} else if (ip == ANY_IP) {
     return std::string("localhost");
   } else {
+    //const char[INET_ADDRSTRLEN] buffer;
+    //struct in_addr sin_addr;
+    //sin_addr.s_addr = ip_;
+    //
+    //const char *res = inet_ntop(AF_INET, &sin_addr, buffer, INET_ADDRSTRLEN);
+    //if (res) {
+    //  ...
+    //}
 	  std::ostringstream out;
     out <<        ((ip >> 24) & 0xFF);
     out << "." << ((ip >> 16) & 0xFF);

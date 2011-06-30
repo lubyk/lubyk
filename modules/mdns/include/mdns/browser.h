@@ -102,6 +102,11 @@ public:
     lua_pushstring(L, location.host());
     lua_settable(L, -3);
 
+    // ip = '10.3.4.5' / 'localhost'
+    lua_pushstring(L, "ip");
+    lua_pushstring(L, location.name_from_ip(location.ip()).c_str());
+    lua_settable(L, -3);
+
     // port = 7500
     lua_pushstring(L, "port");
     lua_pushnumber(L, location.port());

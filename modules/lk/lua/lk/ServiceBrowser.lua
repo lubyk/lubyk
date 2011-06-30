@@ -36,7 +36,7 @@ setmetatable(lib, {
       if not found_service then
         remote_service.req = zmq.Req()
         -- new device
-        remote_service.url = string.format('tcp://%s:%i', remote_service.host, remote_service.port)
+        remote_service.url = string.format('tcp://%s:%i', remote_service.ip, remote_service.port)
         -- XXX
         remote_service.req:connect(remote_service.url)
         remote_service.info = remote_service.req:request(lubyk.info_url)
@@ -44,8 +44,8 @@ setmetatable(lib, {
           -- Server died on us
           return
         end
-        remote_service.sub_url  = string.format('tcp://%s:%i', remote_service.host, remote_service.info.pub)
-        remote_service.push_url = string.format('tcp://%s:%i', remote_service.host, remote_service.info.pull)
+        remote_service.sub_url  = string.format('tcp://%s:%i', remote_service.ip, remote_service.info.pub)
+        remote_service.push_url = string.format('tcp://%s:%i', remote_service.ip, remote_service.info.pull)
         remote_service.push = zmq.Push()
         -- do not keep unsent messages on quit
         remote_service.push:setsockopt(zmq.LINGER, 0)

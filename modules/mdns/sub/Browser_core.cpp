@@ -75,7 +75,7 @@ static int Browser_add_device(lua_State *L) {
 
 
 /** virtual void mdns::Browser::remove_device(const char *name)
- * include/mdns/browser.h:122
+ * include/mdns/browser.h:127
  */
 static int Browser_remove_device(lua_State *L) {
   try {
@@ -92,7 +92,7 @@ static int Browser_remove_device(lua_State *L) {
 
 
 /** const char* mdns::Browser::service_type()
- * include/mdns/browser.h:149
+ * include/mdns/browser.h:154
  */
 static int Browser_service_type(lua_State *L) {
   try {

@@ -29,6 +29,8 @@
 
 #include "mdns/location.h"
 
+#include "lubyk/lua.h"
+
 #include <sstream>
 
 #include <sys/types.h>
