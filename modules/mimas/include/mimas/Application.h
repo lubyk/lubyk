@@ -40,12 +40,6 @@ using namespace lubyk;
 
 namespace mimas {
 
-static char arg0[] = "mimas";
-static char arg1[] = "-style";
-static char arg2[] = "Plastique";
-static char *app_argv[] = {&arg0[0], &arg1[0], &arg2[0], NULL};
-static int   app_argc   = (int)(sizeof(app_argv) / sizeof(app_argv[0])) - 1;
-
 /** Application (starts the GUI and manages the event loop). We do not
  * really need to use DeletableOutOfLua here but we never know.
  *
@@ -61,10 +55,7 @@ class Application : public QApplication, public DeletableOutOfLua
 public:
   /** Private constructor. Use MakeApplication instead.
    */
-  Application(lubyk::Worker *worker)
-   : QApplication(app_argc, app_argv),
-     worker_(worker),
-     lua_events_processor_(worker) {}
+  Application(lubyk::Worker *worker);
 
   /** Custom constructor so that we can set the env table that is
    * needed by mimas.Callback.
@@ -94,10 +85,14 @@ public:
 
   /** Start event loop.
    */
-  int exec() {
-    ScopedUnlock unlock(worker_);
-    return QApplication::exec();
-  }
+  int exec();
+
+  /** Key to retrieve 'this' value from a running thread.
+   */
+  static pthread_key_t sAppKey;
+
+  /** Thread should stop. */
+  static void terminate(int sig);
 
   /** Create a callback to execute events in the GUI thread.
    * Arguments should be 1. self, 2. function
@@ -115,6 +110,7 @@ public:
   void setStyleSheet(const char *text) {
     QApplication::setStyleSheet(QString(text));
   }
+
 private:
   class LuaEventsProcessor : public QObject
   {

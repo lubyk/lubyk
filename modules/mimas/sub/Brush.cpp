@@ -5,7 +5,7 @@
 
 using namespace mimas;
 
-/// FIXED (dub screws this file up)
+
 /* ============================ Constructors     ====================== */
 
 
@@ -104,17 +104,17 @@ static int Brush_Brush(lua_State *L) {
     return Brush_Brush2(L);
   } else if (type__ == LUA_TNUMBER) {
     type__ = lua_type(L, 2);
-    if (type__ == LUA_TNUMBER) {
-      return Brush_Brush3(L);
-    } else if (top__ < 2) {
+    if (top__ < 2) {
       return Brush_Brush1(L);
+    } else if (type__ == LUA_TNUMBER) {
+      return Brush_Brush3(L);
     } else {
       // use any to raise errors
-      return Brush_Brush1(L);
+      return Brush_Brush3(L);
     }
   } else {
     // use any to raise errors
-    return Brush_Brush1(L);
+    return Brush_Brush3(L);
   }
 }
 
@@ -124,9 +124,9 @@ static int Brush_Brush(lua_State *L) {
 static int Brush_destructor(lua_State *L) {
   Brush **userdata = (Brush**)luaL_checkudata(L, 1, "mimas.Brush");
 
-
+  
   if (*userdata) delete *userdata;
-
+  
   *userdata = NULL;
   return 0;
 }
@@ -137,10 +137,10 @@ static int Brush_destructor(lua_State *L) {
 
 static int Brush__tostring(lua_State *L) {
   Brush **userdata = (Brush**)luaL_checkudata(L, 1, "mimas.Brush");
-
-
+  
+  
   lua_pushfstring(L, "<mimas.Brush: %p>", *userdata);
-
+  
   return 1;
 }
 

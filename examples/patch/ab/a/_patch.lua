@@ -4,7 +4,7 @@ app = mimas.Application()
 
 patch = lk.Process [[
 x: 100
-y: 100
+y: 40
 w: 150
 h: 150
 hue: 0
@@ -21,7 +21,7 @@ nodes:
       tempo: 580
   counter:
     x: 30
-    y: 45
+    y: 75
     hue: 0
     links:
       count:

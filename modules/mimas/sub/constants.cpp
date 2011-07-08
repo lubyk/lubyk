@@ -4,9 +4,52 @@
 
 using namespace mimas;
 
+
+
+/** void mimas::setHue(QPalette &palette, float hue)
+ * include/mimas/mimas.h:43
+ */
+static int mimas_setHue(lua_State *L) {
+  try {
+    QPalette *palette = *((QPalette **)luaL_checkudata(L, 1, "mimas.QPalette"));
+    float hue = luaL_checknumber(L, 2);
+    setHue(*palette, hue);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.setHue: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.setHue: Unknown exception");
+  }
+}
+
+
+
+/** QVariant mimas::variantFromLua(lua_State *L, int index)
+ * include/mimas/mimas.h:44
+ */
+static int mimas_variantFromLua(lua_State *L) {
+  try {
+    
+    int index = luaL_checkint(L, 2);
+    QVariant  retval__ = variantFromLua(L, index);
+    lua_pushclass<QVariant>(L, retval__, "mimas.QVariant");
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.variantFromLua: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.variantFromLua: Unknown exception");
+  }
+}
+
+
+
 // Register namespace
 
 static const struct luaL_Reg mimas_functions[] = {
+
+  {"setHue"                        , mimas_setHue},
+  {"variantFromLua"                , mimas_variantFromLua},
+
   {NULL, NULL},
 };
 
