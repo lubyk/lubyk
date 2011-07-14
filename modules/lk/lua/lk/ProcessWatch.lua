@@ -15,7 +15,7 @@ lk.ProcessWatch = lib
 
 setmetatable(lib, {
   -- new method
- __call = function(lib, delegate)
+ __call = function(lib, delegate, createProcess)
   local service_type = lubyk.service_type
   local self = {
     browser = lk.ServiceBrowser(service_type),
@@ -41,12 +41,13 @@ setmetatable(lib, {
 
       if process then
         -- connect
-        process:connect(remote_service)
         self.pending_processes[service_name] = nil
       else
         -- create new
-        process = lk.RemoteProcess(service_name, remote_service)
+        process = createProcess(service_name, remote_service)
       end
+
+      process:connect(remote_service)
 
       self.found_processes[service_name] = process
       self.delegate:addProcess(process)

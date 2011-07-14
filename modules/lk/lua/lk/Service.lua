@@ -15,18 +15,22 @@ lk.Service  = lib
 
 setmetatable(lib, {
   -- new method
- __call = function(lib, name, service_type, callback, port)
-  if not callback then
-    callback = service_type
-    service_type = lubyk.service_type
+ __call = function(lib, name, opts)
+  if type(opts) == 'function' then
+    opts = {callback = opts}
+  elseif not opts then
+    opts = {}
   end
+  local service_type, callback, type_name = opts.service_type, opts.callback, opts.type
+  type_name = type_name or lib.type
+  service_type = service_type or lubyk.service_type
   if not callback then
     -- dummy
     callback = function()
       return nil
     end
   end
-  local self = {name = name, callback = callback, info = {}}
+  local self = {name = name, callback = callback, info = {type = type_name}}
 
   --======================================= PUB server
   self.pub = zmq.Pub()

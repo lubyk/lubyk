@@ -51,8 +51,11 @@ setmetatable(lib, {
 end})
 
 local function setCode(self, code)
-  self.code = code
-  self.need_code_write = true
+  if self.code ~= code then
+    self.code = code
+    self.need_code_write = true
+  end
+  self.changed_code = nil
 end
 
 --- Called when we receive a change notification from the
@@ -180,7 +183,10 @@ end
 
 function lib:fileChanged(path)
   local code = lk.readall(path)
-  if code ~= self.code then
+  if code ~= self.code and code ~= self.changed_code then
+    -- Sometimes, the os gives us 2 notifications for the same change
+    -- this is to avoid sending change notifications twice (reset on notification).
+    self.changed_code = code
     -- send remote update
     self:change {code = code}
   end

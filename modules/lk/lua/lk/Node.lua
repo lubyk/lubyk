@@ -219,7 +219,6 @@ end
 
 function lib:dump()
   return {
-    name = self.name,
     hue  = self.hue,
     x    = self.x,
     y    = self.y,
@@ -233,13 +232,13 @@ function lib:partialDump(data)
   local res = {}
   for k, v in pairs(data) do
     -- 'inlets' and 'outlets' should never be in the data
-    if k ~= 'inlets' or k ~= 'outlets' then
+    if k ~= 'inlets' and k ~= 'outlets' and k ~= 'name' then
       res[k] = self[k]
     end
   end
 
   if data.code or data.links then
-    -- add slots (with links)
+    -- code changes can alter slots: dump them
     res.inlets  = dumpSlots(self.sorted_inlets)
     res.outlets = dumpSlots(self.sorted_outlets, data.links)
   end

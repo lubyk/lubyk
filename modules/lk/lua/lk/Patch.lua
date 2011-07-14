@@ -72,7 +72,7 @@ setmetatable(lib, {
     --
     --- Watch for other processes on the network and create
     -- lk.RemoteProcess proxies when needed.
-    self.process_watch = lk.ProcessWatch(self)
+    self.process_watch = lk.ProcessWatch(self, lk.RemoteProcess)
   end
 
   if string.match(filepath_or_code, '\n') then
