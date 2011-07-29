@@ -176,7 +176,13 @@ public:
   }
 
   void setStyle(const char *text) {
+    ScopedUnlock unlock(worker_);
     QWidget::setStyleSheet(QString(".%1 { %2 }").arg(cssClass()).arg(text));
+  }
+
+  void setStyleSheet(const char *text) {
+    ScopedUnlock unlock(worker_);
+    QWidget::setStyleSheet(text);
   }
 
   void setHue(float hue) {

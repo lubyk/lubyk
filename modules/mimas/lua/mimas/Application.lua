@@ -23,7 +23,7 @@ function mimas.Application()
       background:rgb(38, 38, 38);
       color: rgb(180,180,180);
       border:0;
-      padding:3px;
+      padding:0;
     }
     .list::item {
       padding:2px;
@@ -34,6 +34,12 @@ function mimas.Application()
         background: rgb(55, 55, 55);
         padding:0px;
      }
+    .line_edit {
+      background:rgb(55,55,55);
+      color:white;
+      selection-color:white;
+      selection-background-color: rgb(40,85,140);
+    }
     .widget { background:rgb(38, 38, 38); }
     .label { background: transparent; color: rgb(180,180,180); }
     .slider { qproperty-border:2;

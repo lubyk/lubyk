@@ -147,6 +147,10 @@ public:
     QWidget::setStyleSheet(QString(".%1 { %2 }").arg(cssClass()).arg(text));
   }
 
+  void setStyleSheet(const char *text) {
+    QWidget::setStyleSheet(text);
+  }
+
   void setHue(float hue) {
     hue_ = hue;
     update();

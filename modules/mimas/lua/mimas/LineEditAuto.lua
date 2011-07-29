@@ -13,6 +13,9 @@ local LineEdit = mimas.LineEdit
 local super_mt = mimas_core.LineEdit_
 lib.__index = lib
 
+-- contants
+local POS = 23
+
 --function lib.__index(lib, key)
 --  local m = rawget(lib, key)
 --  if m then
@@ -48,7 +51,7 @@ setmetatable(lib, {
 
   function line.moved(x, y)
     if self.list then
-      self.list:move(x, y + 20)
+      self.list:move(x, y + POS)
     end
   end
   return self
@@ -90,22 +93,20 @@ end
 ----------------- LineEditAuto methods
 local function createList(self)
   local line = self.line
-  local list = mimas.TableView()
+  local list = mimas.ListView()
   self.list = list
 
-  --list:setAlternatingRowColors(true)
-  list:setVisibleHeaders(mimas.Vertical + mimas.Horizontal, false)
-  list:setGridStyle(mimas.NoPen)
   -- FIXME: we cannot use line:parent():addWidget
   self.parent:addWidget(list)
   list:resize(line:width(), 100)
-  list:move(line:x(), line:y() + 20)
+  list:move(line:x(), line:y() + POS)
+  list:setStyleSheet[[
+    .list { background:rgb(60,60,60); color:white; padding:0;}
+    .list::item:selected { background:rgb(40,85,140); color:white; }
+  ]]
   list:show()
   --self.list_hidden = true
 
-  function list.columnCount()
-    return 1
-  end
 
   function list.rowCount()
     if self.cue then
@@ -115,12 +116,8 @@ local function createList(self)
     end
   end
 
-  function list.data(row, column)
-    if column == 1 then
-      return self:data(row)
-    else
-      return nil
-    end
+  function list.data(row)
+    return self:data(row)
   end
 
   function list.header()

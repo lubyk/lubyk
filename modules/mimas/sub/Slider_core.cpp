@@ -80,7 +80,7 @@ static int Slider__tostring(lua_State *L) {
 
 
 /** int mimas::Slider::borderWidth() const 
- * include/mimas/Slider.h:168
+ * include/mimas/Slider.h:172
  */
 static int Slider_borderWidth(lua_State *L) {
   try {
@@ -98,7 +98,7 @@ static int Slider_borderWidth(lua_State *L) {
 
 
 /** void mimas::Slider::callback(double value)
- * include/mimas/Slider.h:197
+ * include/mimas/Slider.h:201
  */
 static int Slider_callback(lua_State *L) {
   try {
@@ -152,7 +152,7 @@ static int Slider_height(lua_State *L) {
 
 
 /** float mimas::Slider::hue()
- * include/mimas/Slider.h:151
+ * include/mimas/Slider.h:155
  */
 static int Slider_hue(lua_State *L) {
   try {
@@ -244,7 +244,7 @@ static int Slider_resize(lua_State *L) {
 
 
 /** void mimas::Slider::setBorderWidth(int width)
- * include/mimas/Slider.h:164
+ * include/mimas/Slider.h:168
  */
 static int Slider_setBorderWidth(lua_State *L) {
   try {
@@ -262,7 +262,7 @@ static int Slider_setBorderWidth(lua_State *L) {
 
 
 /** void mimas::Slider::setHue(float hue)
- * include/mimas/Slider.h:146
+ * include/mimas/Slider.h:150
  */
 static int Slider_setHue(lua_State *L) {
   try {
@@ -315,8 +315,26 @@ static int Slider_setStyle(lua_State *L) {
 }
 
 
+/** void mimas::Slider::setStyleSheet(const char *text)
+ * include/mimas/Slider.h:146
+ */
+static int Slider_setStyleSheet(lua_State *L) {
+  try {
+    Slider *self__ = *((Slider**)luaL_checkudata(L, 1, "mimas.Slider"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Slider in setStyleSheet");
+    const char *text = luaL_checkstring(L, 2);
+    self__->setStyleSheet(text);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Slider.setStyleSheet: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Slider.setStyleSheet: Unknown exception");
+  }
+}
+
+
 /** void mimas::Slider::setValue(double remote_value)
- * include/mimas/Slider.h:188
+ * include/mimas/Slider.h:192
  */
 static int Slider_setValue(lua_State *L) {
   try {
@@ -334,7 +352,7 @@ static int Slider_setValue(lua_State *L) {
 
 
 /** void mimas::Slider::set_callback(lua_State *L)
- * include/mimas/Slider.h:176
+ * include/mimas/Slider.h:180
  */
 static int Slider_set_callback(lua_State *L) {
   try {
@@ -352,7 +370,7 @@ static int Slider_set_callback(lua_State *L) {
 
 
 /** virtual QSize mimas::Slider::sizeHint() const 
- * include/mimas/Slider.h:156
+ * include/mimas/Slider.h:160
  */
 static int Slider_sizeHint(lua_State *L) {
   try {
@@ -459,6 +477,7 @@ static const struct luaL_Reg Slider_member_methods[] = {
   {"setHue"            , Slider_setHue},
   {"setName"           , Slider_setName},
   {"setStyle"          , Slider_setStyle},
+  {"setStyleSheet"     , Slider_setStyleSheet},
   {"setValue"          , Slider_setValue},
   {"set_callback"      , Slider_set_callback},
   {"sizeHint"          , Slider_sizeHint},

@@ -47,6 +47,7 @@ namespace mimas {
  * TreeView.
  *
  * @dub destructor: 'dub_destroy'
+ *      ignore: 'index'
  */
 class DataSource : public QAbstractItemModel, public DeletableOutOfLua
 {
@@ -117,13 +118,14 @@ public:
   void emitLayoutChanged() {
     emit(layoutChanged());
   }
-protected:
+
   //  index(), parent(), rowCount(), columnCount(), and data()
   virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const {
     // ignore parent (hierarchical views) for now
     return createIndex(row, column);
   }
 
+protected:
   virtual QModelIndex parent (const QModelIndex &child) const {
     return QModelIndex(); // no parent
   }

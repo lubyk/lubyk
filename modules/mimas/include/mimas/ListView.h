@@ -142,7 +142,13 @@ public:
   }
 
   void setStyle(const char *text) {
+    ScopedUnlock unlock(worker_);
     QWidget::setStyleSheet(QString(".%1 { %2 }").arg(cssClass()).arg(text));
+  }
+
+  void setStyleSheet(const char *text) {
+    ScopedUnlock unlock(worker_);
+    QWidget::setStyleSheet(text);
   }
 
   void setHue(float hue) {
@@ -265,11 +271,19 @@ public:
     }
   }
 
-  //void dataChanged(int top_row = -1, int top_col = -1, int bottom_row = -1, int bottom_col = -1) {
-  //  // -1 == ALL changed
-  //  data_source_.dataChanged(top_row, top_col, bottom_row, bottom_col);
-  //}
-  // void setViewMode()
+  void selectRow(int row) {
+    ScopedUnlock unlock(worker_);
+    QModelIndex index = data_source_.index(row - 1, 0);
+    if ( index.isValid() )
+        selectionModel()->select( index, QItemSelectionModel::ClearAndSelect );
+  }
+
+  /** Call this method to reload view when data changes.
+   */
+  void dataChanged() {
+    ScopedUnlock unlock(worker_);
+    data_source_.reset();
+  }
 
   /** Set a callback function.
    *

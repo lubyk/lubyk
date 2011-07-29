@@ -133,7 +133,7 @@ static int Label_cssClass(lua_State *L) {
 
 
 /** int mimas::Label::height()
- * include/mimas/Label.h:108
+ * include/mimas/Label.h:107
  */
 static int Label_height(lua_State *L) {
   try {
@@ -151,7 +151,7 @@ static int Label_height(lua_State *L) {
 
 
 /** float mimas::Label::hue()
- * include/mimas/Label.h:121
+ * include/mimas/Label.h:120
  */
 static int Label_hue(lua_State *L) {
   try {
@@ -243,7 +243,7 @@ static int Label_resize(lua_State *L) {
 
 
 /** void mimas::Label::setHue(float hue)
- * include/mimas/Label.h:116
+ * include/mimas/Label.h:115
  */
 static int Label_setHue(lua_State *L) {
   try {
@@ -279,7 +279,7 @@ static int Label_setName(lua_State *L) {
 
 
 /** void mimas::Label::setStyle(const char *text)
- * include/mimas/Label.h:112
+ * include/mimas/Label.h:111
  */
 static int Label_setStyle(lua_State *L) {
   try {
@@ -297,7 +297,7 @@ static int Label_setStyle(lua_State *L) {
 
 
 /** void mimas::Label::setText(const char *text)
- * include/mimas/Label.h:127
+ * include/mimas/Label.h:126
  */
 static int Label_setText(lua_State *L) {
   try {
@@ -333,7 +333,7 @@ static int Label_widget(lua_State *L) {
 
 
 /** int mimas::Label::width()
- * include/mimas/Label.h:104
+ * include/mimas/Label.h:103
  */
 static int Label_width(lua_State *L) {
   try {
@@ -351,7 +351,7 @@ static int Label_width(lua_State *L) {
 
 
 /** int mimas::Label::x()
- * include/mimas/Label.h:96
+ * include/mimas/Label.h:95
  */
 static int Label_x(lua_State *L) {
   try {
@@ -369,7 +369,7 @@ static int Label_x(lua_State *L) {
 
 
 /** int mimas::Label::y()
- * include/mimas/Label.h:100
+ * include/mimas/Label.h:99
  */
 static int Label_y(lua_State *L) {
   try {
