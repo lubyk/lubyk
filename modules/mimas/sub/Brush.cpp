@@ -9,19 +9,12 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 
-/** mimas::Brush::Brush(int style=Qt::NoBrush)
+/** mimas::Brush::Brush()
  * include/mimas/Brush.h:46
  */
 static int Brush_Brush1(lua_State *L) {
   try {
-    int top__ = lua_gettop(L);
-    Brush * retval__;
-    if (top__ < 1) {
-      retval__ = new Brush();
-    } else {
-      int style = luaL_checkint(L, 1);
-      retval__ = new Brush(style);
-    }
+    Brush * retval__ = new Brush();
     lua_pushclass<Brush>(L, retval__, "mimas.Brush");
     return 1;
   } catch (std::exception &e) {
@@ -102,16 +95,10 @@ static int Brush_Brush(lua_State *L) {
   int top__  = lua_gettop(L);
   if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "mimas.Color")) {
     return Brush_Brush2(L);
+  } else if (top__ < 1) {
+    return Brush_Brush1(L);
   } else if (type__ == LUA_TNUMBER) {
-    type__ = lua_type(L, 2);
-    if (top__ < 2) {
-      return Brush_Brush1(L);
-    } else if (type__ == LUA_TNUMBER) {
-      return Brush_Brush3(L);
-    } else {
-      // use any to raise errors
-      return Brush_Brush3(L);
-    }
+    return Brush_Brush3(L);
   } else {
     // use any to raise errors
     return Brush_Brush3(L);

@@ -167,6 +167,19 @@ public:
     QWidget::update();
   }
 
+  /** Call this method to reload view when data changes.
+   */
+  void dataChanged() {
+    ScopedUnlock unlock(worker_);
+    data_source_.reset();
+  }
+
+  /** Call this method to force view update when data layout changes (column count, headers).
+   */
+  void layoutChanged() {
+    data_source_.emitLayoutChanged();
+  }
+
   /** Get size of text with current widget font.
    */
   LuaStackSize textSize(const char *text, lua_State *L) {

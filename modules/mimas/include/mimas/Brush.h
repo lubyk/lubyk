@@ -43,7 +43,7 @@ namespace mimas {
 class Brush : public QBrush
 {
 public:
-  Brush(int style = Qt::NoBrush) : QBrush((Qt::BrushStyle)style) {}
+  Brush() : QBrush(Qt::NoBrush) {}
 
   Brush(const Color &color, int style = Qt::SolidPattern) : QBrush(color, (Qt::BrushStyle)style) {}
 

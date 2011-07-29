@@ -148,6 +148,11 @@ enum KeyboardModifiers {
   GroupSwitchModifier = Qt::GroupSwitchModifier,
 };
 
+enum Orientation {
+  Horizontal = Qt::Horizontal,
+  Vertical   = Qt::Vertical,
+};
+
 } // mimas
 
 #endif // LUBYK_INCLUDE_MIMAS_CONSTANTS_H_

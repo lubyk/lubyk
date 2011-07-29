@@ -9,7 +9,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::LineEdit::LineEdit(lubyk::Worker *worker, const char *content=NULL, QWidget *parent=NULL)
- * include/mimas/LineEdit.h:59
+ * include/mimas/LineEdit.h:61
  */
 static int LineEdit_LineEdit(lua_State *L) {
   try {
@@ -80,7 +80,7 @@ static int LineEdit__tostring(lua_State *L) {
 
 
 /** void mimas::LineEdit::__newindex(lua_State *L)
- * include/mimas/LineEdit.h:139
+ * include/mimas/LineEdit.h:145
  */
 static int LineEdit___newindex(lua_State *L) {
   try {
@@ -98,7 +98,7 @@ static int LineEdit___newindex(lua_State *L) {
 
 
 /** QString mimas::LineEdit::cssClass() const 
- * include/mimas/LineEdit.h:67
+ * include/mimas/LineEdit.h:73
  */
 static int LineEdit_cssClass(lua_State *L) {
   try {
@@ -116,7 +116,7 @@ static int LineEdit_cssClass(lua_State *L) {
 
 
 /** float mimas::LineEdit::hue()
- * include/mimas/LineEdit.h:109
+ * include/mimas/LineEdit.h:115
  */
 static int LineEdit_hue(lua_State *L) {
   try {
@@ -134,7 +134,7 @@ static int LineEdit_hue(lua_State *L) {
 
 
 /** void mimas::LineEdit::move(int x, int y)
- * include/mimas/LineEdit.h:92
+ * include/mimas/LineEdit.h:98
  */
 static int LineEdit_move(lua_State *L) {
   try {
@@ -153,7 +153,7 @@ static int LineEdit_move(lua_State *L) {
 
 
 /** LuaStackSize mimas::LineEdit::name(lua_State *L)
- * include/mimas/LineEdit.h:81
+ * include/mimas/LineEdit.h:87
  */
 static int LineEdit_name(lua_State *L) {
   try {
@@ -171,7 +171,7 @@ static int LineEdit_name(lua_State *L) {
 
 
 /** QObject* mimas::LineEdit::object()
- * include/mimas/LineEdit.h:75
+ * include/mimas/LineEdit.h:81
  */
 static int LineEdit_object(lua_State *L) {
   try {
@@ -189,7 +189,7 @@ static int LineEdit_object(lua_State *L) {
 
 
 /** void mimas::LineEdit::resize(int w, int h)
- * include/mimas/LineEdit.h:96
+ * include/mimas/LineEdit.h:102
  */
 static int LineEdit_resize(lua_State *L) {
   try {
@@ -208,7 +208,7 @@ static int LineEdit_resize(lua_State *L) {
 
 
 /** void mimas::LineEdit::selectAll()
- * include/mimas/LineEdit.h:128
+ * include/mimas/LineEdit.h:134
  */
 static int LineEdit_selectAll(lua_State *L) {
   try {
@@ -225,7 +225,7 @@ static int LineEdit_selectAll(lua_State *L) {
 
 
 /** void mimas::LineEdit::setFocus()
- * include/mimas/LineEdit.h:132
+ * include/mimas/LineEdit.h:138
  */
 static int LineEdit_setFocus(lua_State *L) {
   try {
@@ -242,7 +242,7 @@ static int LineEdit_setFocus(lua_State *L) {
 
 
 /** void mimas::LineEdit::setHue(float hue)
- * include/mimas/LineEdit.h:104
+ * include/mimas/LineEdit.h:110
  */
 static int LineEdit_setHue(lua_State *L) {
   try {
@@ -260,7 +260,7 @@ static int LineEdit_setHue(lua_State *L) {
 
 
 /** void mimas::LineEdit::setName(const char *name)
- * include/mimas/LineEdit.h:88
+ * include/mimas/LineEdit.h:94
  */
 static int LineEdit_setName(lua_State *L) {
   try {
@@ -278,7 +278,7 @@ static int LineEdit_setName(lua_State *L) {
 
 
 /** void mimas::LineEdit::setSelection(int start, int length)
- * include/mimas/LineEdit.h:124
+ * include/mimas/LineEdit.h:130
  */
 static int LineEdit_setSelection(lua_State *L) {
   try {
@@ -297,7 +297,7 @@ static int LineEdit_setSelection(lua_State *L) {
 
 
 /** void mimas::LineEdit::setStyle(const char *text)
- * include/mimas/LineEdit.h:100
+ * include/mimas/LineEdit.h:106
  */
 static int LineEdit_setStyle(lua_State *L) {
   try {
@@ -315,7 +315,7 @@ static int LineEdit_setStyle(lua_State *L) {
 
 
 /** void mimas::LineEdit::setText(const char *text)
- * include/mimas/LineEdit.h:115
+ * include/mimas/LineEdit.h:121
  */
 static int LineEdit_setText(lua_State *L) {
   try {
@@ -333,7 +333,7 @@ static int LineEdit_setText(lua_State *L) {
 
 
 /** const char* mimas::LineEdit::text() const 
- * include/mimas/LineEdit.h:120
+ * include/mimas/LineEdit.h:126
  */
 static int LineEdit_text(lua_State *L) {
   try {
@@ -351,7 +351,7 @@ static int LineEdit_text(lua_State *L) {
 
 
 /** QWidget* mimas::LineEdit::widget()
- * include/mimas/LineEdit.h:71
+ * include/mimas/LineEdit.h:77
  */
 static int LineEdit_widget(lua_State *L) {
   try {

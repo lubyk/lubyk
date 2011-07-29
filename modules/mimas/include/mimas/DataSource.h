@@ -108,6 +108,15 @@ public:
     lua_pop(L, 2);
     // ... <self> <key> <value>
   }
+
+  void reset() {
+    // reload all data
+    QAbstractItemModel::reset();
+  }
+
+  void emitLayoutChanged() {
+    emit(layoutChanged());
+  }
 protected:
   //  index(), parent(), rowCount(), columnCount(), and data()
   virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const {

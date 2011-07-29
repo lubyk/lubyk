@@ -48,6 +48,7 @@ class LineEdit : public QLineEdit, public DeletableOutOfLua
 
   Worker *worker_;
   LuaCallback editing_finished_clbk_;
+  LuaCallback text_edited_clbk_;
   /** The component's color.
    */
   float hue_;
@@ -56,9 +57,14 @@ public:
    : QLineEdit(content),
      worker_(worker),
      editing_finished_clbk_(worker),
+     text_edited_clbk_(worker),
      hue_(-1) {
     QObject::connect(this, SIGNAL(editingFinished()),
                      this, SLOT(editingFinished())
+    );
+
+    QObject::connect(this, SIGNAL(textEdited(QString)),
+                     this, SLOT(textEdited(QString))
     );
   }
 
@@ -147,8 +153,10 @@ public:
     // ... <self> <key> <value> <self> <value>
     if (key == "editingFinished") {
       editing_finished_clbk_.set_lua_callback(L);
+    } else if (key == "textEdited") {
+      text_edited_clbk_.set_lua_callback(L);
     } else {
-      luaL_error(L, "Invalid function name '%s' (valid names are 'editingFinished').", key.c_str());
+      luaL_error(L, "Invalid function name '%s' (valid names are 'editingFinished', 'textEdited').", key.c_str());
     }
 
     lua_pop(L, 2);
@@ -180,6 +188,26 @@ private slots:
     if (status) {
       // cannot raise an error here...
       fprintf(stderr, "Error in 'editingFinished' callback: %s\n", lua_tostring(L, -1));
+    }
+  }
+
+  // connected to the textEdited signal
+	void textEdited(const QString &text) {
+    // get data from Lua
+    lua_State *L = text_edited_clbk_.lua_;
+    if (!L) return;
+
+    ScopedLock lock(worker_);
+
+    text_edited_clbk_.push_lua_callback(false);
+
+    lua_pushstring(L, text.toUtf8().data());
+    // <func> <text>
+    int status = lua_pcall(L, 1, 0, 0);
+
+    if (status) {
+      // cannot raise an error here...
+      fprintf(stderr, "Error in 'textEdited' callback: %s\n", lua_tostring(L, -1));
     }
   }
 };

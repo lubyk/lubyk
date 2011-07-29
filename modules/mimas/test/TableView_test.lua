@@ -15,6 +15,11 @@ local data = {
        {'Marina',     'Abramović', 'Perormance artist'},
        {'Damian',     'Marley',    'Musician'},
 }
+
+function should.loadCode()
+  assertTrue(mimas.TableView)
+end
+
 function should.displayTable(t)
   t.view = mimas.TableView()
   t.view:setAlternatingRowColors(true)
@@ -46,6 +51,21 @@ function should.displayTable(t)
     end
   end
   t.view:show()
+  assertTrue(true)
+
+  t.thread = lk.Thread(function()
+    sleep(800)
+    t.view:close()
+  end)
+end
+
+function should.respondToUpdate(t)
+  t.view = mimas.TableView()
+  t.view:show()
+  assertPass(function()
+    t.view:update()
+  end)
+  t.view:close()
 end
 test.all()
 

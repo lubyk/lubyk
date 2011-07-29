@@ -54,7 +54,7 @@ static int Application__tostring(lua_State *L) {
 
 
 /** static LuaStackSize mimas::Application::MakeApplication(lubyk::Worker *worker, lua_State *L)
- * include/mimas/Application.h:72
+ * include/mimas/Application.h:63
  */
 static int Application_MakeApplication(lua_State *L) {
   try {
@@ -71,7 +71,7 @@ static int Application_MakeApplication(lua_State *L) {
 
 
 /** int mimas::Application::exec()
- * include/mimas/Application.h:97
+ * include/mimas/Application.h:88
  */
 static int Application_exec(lua_State *L) {
   try {
@@ -89,7 +89,7 @@ static int Application_exec(lua_State *L) {
 
 
 /** void mimas::Application::post(lua_State *L)
- * include/mimas/Application.h:105
+ * include/mimas/Application.h:100
  */
 static int Application_post(lua_State *L) {
   try {
@@ -107,7 +107,7 @@ static int Application_post(lua_State *L) {
 
 
 /** void mimas::Application::quit()
- * include/mimas/Application.h:111
+ * include/mimas/Application.h:106
  */
 static int Application_quit(lua_State *L) {
   try {
@@ -124,7 +124,7 @@ static int Application_quit(lua_State *L) {
 
 
 /** void mimas::Application::setStyleSheet(const char *text)
- * include/mimas/Application.h:115
+ * include/mimas/Application.h:110
  */
 static int Application_setStyleSheet(lua_State *L) {
   try {
@@ -137,6 +137,22 @@ static int Application_setStyleSheet(lua_State *L) {
     return luaL_error(L, "mimas.Application.setStyleSheet: %s", e.what());
   } catch (...) {
     return luaL_error(L, "mimas.Application.setStyleSheet: Unknown exception");
+  }
+}
+
+
+/** static void mimas::Application::terminate(int sig)
+ * include/mimas/Application.h:95
+ */
+static int Application_terminate(lua_State *L) {
+  try {
+    int sig = luaL_checkint(L, 1);
+    Application::terminate(sig);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Application.terminate: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Application.terminate: Unknown exception");
   }
 }
 
@@ -158,6 +174,7 @@ static const struct luaL_Reg Application_member_methods[] = {
 
 static const struct luaL_Reg Application_namespace_methods[] = {
   {"Application"       , Application_MakeApplication},
+  {"Application_terminate", Application_terminate},
   {NULL, NULL},
 };
 
