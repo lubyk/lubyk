@@ -71,6 +71,10 @@ modules = {
   end
 
   namespace = Dub.parse(XML_DOC_PATH + "namespace#{mod_name}.xml")[mod_name.to_sym]
+  if mod_name == 'mimas'
+    # ignore setHue, variantFromLua
+    namespace.ignore %w{setHue variantFromLua}
+  end
   Dub::Lua.bind(namespace)
 
   # Dub::Lua.function_generator.template_path = (BINDINGS_PATH + 'lua_function.cpp.erb')
@@ -115,6 +119,7 @@ modules = {
     end
     namespace.header = "#{mod_name}/#{namespace.header}"
     namespace.lib_name = "#{mod_name}_constants"
+
     File.open(BINDINGS_PATH + "modules/#{mod_name}/sub/constants.cpp", 'wb') do |f|
       f.puts namespace
     end

@@ -17,6 +17,7 @@ function mimas.Application()
       background:rgb(38, 38, 38);
       color: rgb(180,180,180);
       alternate-background-color:rgb(52, 52, 52);
+      border:0;
     }
     .list {
       background:rgb(38, 38, 38);

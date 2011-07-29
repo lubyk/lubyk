@@ -110,6 +110,22 @@ public:
     QWidget::resize(w, h);
   }
 
+  int x() {
+    return QWidget::x();
+  }
+
+  int y() {
+    return QWidget::y();
+  }
+
+  int width() {
+    return QWidget::width();
+  }
+
+  int height() {
+    return QWidget::height();
+  }
+
   // =============================================================
 
   /** Close and delete the window.

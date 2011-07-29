@@ -186,7 +186,8 @@ inline void register_constants(lua_State *L, const char *name_space, const lua_c
 inline void register_mt(lua_State *L, const char *libname, const char *class_name) {
   size_t len = strlen(class_name) + 2;
   char *buffer = (char*)malloc(sizeof(char) * len);
-  snprintf(buffer, len, "%s_", class_name);
+  snprintf(buffer, len, "%s_", class_name); // we could save in libname.mt.ClassName (easy transfer from
+                                            // 'mimas_core' to 'mimas' table for example.)
 
   // meta-table should be on top
   // <mt>
@@ -195,11 +196,12 @@ inline void register_mt(lua_State *L, const char *libname, const char *class_nam
   lua_pushstring(L, buffer);
   // <mt> <lib> "Foobar_"
   lua_pushvalue(L, -3);
-  // <mt> <lib> "Foobar" <mt>
+  // <mt> <lib> "Foobar_" <mt>
   lua_settable(L, -3);
   // <mt> <lib>
   lua_pop(L, 1);
   // <mt>
+  free(buffer);
 }
 
 #endif // LUBYK_INCLUDE_LUA_CPP_HELPER_H_

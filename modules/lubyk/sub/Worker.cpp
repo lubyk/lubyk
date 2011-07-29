@@ -54,7 +54,7 @@ static int Worker__tostring(lua_State *L) {
 
 
 /** double lubyk::Worker::now()
- * include/lubyk/worker.h:109
+ * include/lubyk/worker.h:108
  */
 static int Worker_now(lua_State *L) {
   try {
@@ -71,7 +71,7 @@ static int Worker_now(lua_State *L) {
 
 
 /** void lubyk::Worker::run()
- * include/lubyk/worker.h:107
+ * include/lubyk/worker.h:106
  */
 static int Worker_run(lua_State *L) {
   try {
@@ -104,7 +104,7 @@ static int Worker_sleep(lua_State *L) {
 
 
 /** void lubyk::Worker::test_lock()
- * include/lubyk/worker.h:98
+ * include/lubyk/worker.h:97
  */
 static int Worker_test_lock(lua_State *L) {
   try {
@@ -120,7 +120,7 @@ static int Worker_test_lock(lua_State *L) {
 
 
 /** void lubyk::Worker::test_unlock()
- * include/lubyk/worker.h:103
+ * include/lubyk/worker.h:102
  */
 static int Worker_test_unlock(lua_State *L) {
   try {

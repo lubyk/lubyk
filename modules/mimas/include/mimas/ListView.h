@@ -125,6 +125,22 @@ public:
     QWidget::resize(w, h);
   }
 
+  int x() {
+    return QWidget::x();
+  }
+
+  int y() {
+    return QWidget::y();
+  }
+
+  int width() {
+    return QWidget::width();
+  }
+
+  int height() {
+    return QWidget::height();
+  }
+
   void setStyle(const char *text) {
     QWidget::setStyleSheet(QString(".%1 { %2 }").arg(cssClass()).arg(text));
   }

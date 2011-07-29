@@ -8,7 +8,7 @@ project(modules)
 # ----------------------------------------------------------------------------------
 #  Include common directories
 # ----------------------------------------------------------------------------------
-include_directories(lubyk/include lua/include ${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(lubyk/include lubyk/include/lua ${CMAKE_CURRENT_SOURCE_DIR})
 
 # ----------------------------------------------------------------------------------
 #  Build each module
@@ -152,11 +152,12 @@ foreach (MODULE ${MODULES})
     #  module_bind
     # ----------------------------------------------------------------------------------
     file(GLOB MODULE_HEADERS ${MODULE}/include/${MODULE}/*.h)
-    add_custom_target("${MODULE_NAME}_bind" ALL
+    add_custom_target("${MODULE_NAME}_bind"
        COMMAND ruby ${LUBYK_SOURCE_DIR}/modules/bind.rb ${MODULE_NAME}
        DEPENDS ${MODULE_HEADERS})
 
-    add_dependencies(${MODULE_NAME} "${MODULE_NAME}_bind")
+    # run manually
+    #add_dependencies(${MODULE_NAME} "${MODULE_NAME}_bind")
 
 
     # ----------------------------------------------------------------------------------

@@ -112,6 +112,16 @@ public:
     QTableView::setAlternatingRowColors(should_enable);
   }
 
+  virtual void selectRow(int row) {
+    ScopedUnlock unlock(worker_);
+    QTableView::selectRow(row - 1);
+  }
+
+  virtual void selectColumn(int row) {
+    ScopedUnlock unlock(worker_);
+    QTableView::selectColumn(row - 1);
+  }
+
   // ============================ common code to all mimas Widgets
 
   QString cssClass() const {
@@ -147,6 +157,22 @@ public:
   void resize(int w, int h) {
     ScopedUnlock unlock(worker_);
     QWidget::resize(w, h);
+  }
+
+  int x() {
+    return QWidget::x();
+  }
+
+  int y() {
+    return QWidget::y();
+  }
+
+  int width() {
+    return QWidget::width();
+  }
+
+  int height() {
+    return QWidget::height();
   }
 
   void setStyle(const char *text) {

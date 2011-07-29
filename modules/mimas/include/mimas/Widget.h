@@ -58,6 +58,7 @@ class Widget : public QWidget, public DeletableOutOfLua
   Worker *worker_;
   LuaCallback paint_clbk_;
   LuaCallback resized_clbk_;
+  LuaCallback moved_clbk_;
   LuaCallback mouse_clbk_;
   LuaCallback click_clbk_;
   LuaCallback keyboard_clbk_;
@@ -67,6 +68,7 @@ public:
    worker_(worker),
    paint_clbk_(worker),
    resized_clbk_(worker),
+   moved_clbk_(worker),
    mouse_clbk_(worker),
    click_clbk_(worker),
    keyboard_clbk_(worker) {
@@ -123,6 +125,22 @@ public:
   void resize(int w, int h) {
     ScopedUnlock unlock(worker_);
     QWidget::resize(w, h);
+  }
+
+  int x() {
+    return QWidget::x();
+  }
+
+  int y() {
+    return QWidget::y();
+  }
+
+  int width() {
+    return QWidget::width();
+  }
+
+  int height() {
+    return QWidget::height();
   }
 
   void setStyle(const char *text) {
@@ -273,6 +291,8 @@ public:
       paint_clbk_.set_lua_callback(L);
     } else if (key == "resized") {
       resized_clbk_.set_lua_callback(L);
+    } else if (key == "moved") {
+      moved_clbk_.set_lua_callback(L);
     } else if (key == "mouse") {
       mouse_clbk_.set_lua_callback(L);
     } else if (key == "click") {
@@ -280,7 +300,7 @@ public:
     } else if (key == "keyboard") {
       keyboard_clbk_.set_lua_callback(L);
     } else {
-      luaL_error(L, "Invalid function name '%s' (valid names are 'paint', 'mouse', 'click', 'keyboard' and 'resized').", key.c_str());
+      luaL_error(L, "Invalid function name '%s' (valid names are 'paint', 'mouse', 'click', 'keyboard', 'moved' and 'resized').", key.c_str());
     }
 
     lua_pop(L, 2);
@@ -304,11 +324,30 @@ protected:
   virtual void paintEvent(QPaintEvent *event);
   virtual void resizeEvent(QResizeEvent *event);
 
-  void keyPressEvent(QKeyEvent *event) {
+  virtual void moveEvent(QMoveEvent * event) {
+    lua_State *L = moved_clbk_.lua_;
+    if (!L) return;
+
+    ScopedLock lock(worker_);
+
+    moved_clbk_.push_lua_callback(false);
+
+    lua_pushnumber(L, event->pos().x());
+    lua_pushnumber(L, event->pos().y());
+
+    // <func> <Painter> <width> <height>
+    int status = lua_pcall(L, 2, 0, 0);
+
+    if (status) {
+      fprintf(stderr, "Error in 'moved' callback: %s\n", lua_tostring(L, -1));
+    }
+  }
+
+  virtual void keyPressEvent(QKeyEvent *event) {
     keyboard(event, true);
   }
 
-  void keyReleaseEvent(QKeyEvent *event) {
+  virtual void keyReleaseEvent(QKeyEvent *event) {
     keyboard(event, false);
   }
 

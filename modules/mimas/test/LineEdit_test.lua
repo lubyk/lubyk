@@ -73,6 +73,28 @@ function should.respondToSetText()
   assertEqual("Goodbye Mimas", lb:text())
 end
 
+function should.haveKeyboardCallback(t)
+  t.win = mimas.Window()
+  t.win:move(100, 120)
+  t.lb = mimas.LineEdit("type up key to close")
+  t.lb:selectAll()
+  t.lay = mimas.VBoxLayout(t.win)
+  t.lay:addWidget(t.lb)
+  function t.lb.keyboard(key, on)
+    if key == mimas.Key_Up then
+      t.lb:setText('UP')
+      t.win:close()
+    else
+      return false
+    end
+  end
+  t.win:show()
+  t.thread = lk.Thread(function()
+    sleep(10000)
+    t.win:close()
+  end)
+end
+
 function should.styleLineEdits(t)
   t.win = mimas.Window()
   t.win:move(100, 120)

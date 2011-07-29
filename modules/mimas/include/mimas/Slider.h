@@ -119,7 +119,24 @@ public:
   }
 
   void resize(int w, int h) {
+    ScopedUnlock unlock(worker_);
     QWidget::resize(w, h);
+  }
+
+  int x() {
+    return QWidget::x();
+  }
+
+  int y() {
+    return QWidget::y();
+  }
+
+  int width() {
+    return QWidget::width();
+  }
+
+  int height() {
+    return QWidget::height();
   }
 
   void setStyle(const char *text) {

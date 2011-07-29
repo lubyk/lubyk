@@ -115,7 +115,7 @@ static int PushButton__tostring(lua_State *L) {
 
 
 /** void mimas::PushButton::add_to_env(lua_State *L)
- * include/mimas/PushButton.h:117
+ * include/mimas/PushButton.h:134
  */
 static int PushButton_add_to_env(lua_State *L) {
   try {
@@ -150,8 +150,26 @@ static int PushButton_cssClass(lua_State *L) {
 }
 
 
+/** int mimas::PushButton::height()
+ * include/mimas/PushButton.h:112
+ */
+static int PushButton_height(lua_State *L) {
+  try {
+    PushButton *self__ = *((PushButton**)luaL_checkudata(L, 1, "mimas.PushButton"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.PushButton in height");
+    int  retval__ = self__->height();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.PushButton.height: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.PushButton.height: Unknown exception");
+  }
+}
+
+
 /** float mimas::PushButton::hue()
- * include/mimas/PushButton.h:108
+ * include/mimas/PushButton.h:125
  */
 static int PushButton_hue(lua_State *L) {
   try {
@@ -243,7 +261,7 @@ static int PushButton_resize(lua_State *L) {
 
 
 /** void mimas::PushButton::setHue(float hue)
- * include/mimas/PushButton.h:103
+ * include/mimas/PushButton.h:120
  */
 static int PushButton_setHue(lua_State *L) {
   try {
@@ -279,7 +297,7 @@ static int PushButton_setName(lua_State *L) {
 
 
 /** void mimas::PushButton::setStyle(const char *text)
- * include/mimas/PushButton.h:99
+ * include/mimas/PushButton.h:116
  */
 static int PushButton_setStyle(lua_State *L) {
   try {
@@ -314,6 +332,60 @@ static int PushButton_widget(lua_State *L) {
 }
 
 
+/** int mimas::PushButton::width()
+ * include/mimas/PushButton.h:108
+ */
+static int PushButton_width(lua_State *L) {
+  try {
+    PushButton *self__ = *((PushButton**)luaL_checkudata(L, 1, "mimas.PushButton"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.PushButton in width");
+    int  retval__ = self__->width();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.PushButton.width: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.PushButton.width: Unknown exception");
+  }
+}
+
+
+/** int mimas::PushButton::x()
+ * include/mimas/PushButton.h:100
+ */
+static int PushButton_x(lua_State *L) {
+  try {
+    PushButton *self__ = *((PushButton**)luaL_checkudata(L, 1, "mimas.PushButton"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.PushButton in x");
+    int  retval__ = self__->x();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.PushButton.x: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.PushButton.x: Unknown exception");
+  }
+}
+
+
+/** int mimas::PushButton::y()
+ * include/mimas/PushButton.h:104
+ */
+static int PushButton_y(lua_State *L) {
+  try {
+    PushButton *self__ = *((PushButton**)luaL_checkudata(L, 1, "mimas.PushButton"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.PushButton in y");
+    int  retval__ = self__->y();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.PushButton.y: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.PushButton.y: Unknown exception");
+  }
+}
+
+
 
 
 /* ============================ Lua Registration ====================== */
@@ -321,6 +393,7 @@ static int PushButton_widget(lua_State *L) {
 static const struct luaL_Reg PushButton_member_methods[] = {
   {"add_to_env"        , PushButton_add_to_env},
   {"cssClass"          , PushButton_cssClass},
+  {"height"            , PushButton_height},
   {"hue"               , PushButton_hue},
   {"move"              , PushButton_move},
   {"name"              , PushButton_name},
@@ -330,6 +403,9 @@ static const struct luaL_Reg PushButton_member_methods[] = {
   {"setName"           , PushButton_setName},
   {"setStyle"          , PushButton_setStyle},
   {"widget"            , PushButton_widget},
+  {"width"             , PushButton_width},
+  {"x"                 , PushButton_x},
+  {"y"                 , PushButton_y},
   {"__tostring"        , PushButton__tostring},
   {"__gc"              , PushButton_destructor},
   {"deleted"           , PushButton_deleted},

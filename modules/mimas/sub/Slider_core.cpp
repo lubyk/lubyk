@@ -80,7 +80,7 @@ static int Slider__tostring(lua_State *L) {
 
 
 /** int mimas::Slider::borderWidth() const 
- * include/mimas/Slider.h:151
+ * include/mimas/Slider.h:168
  */
 static int Slider_borderWidth(lua_State *L) {
   try {
@@ -98,7 +98,7 @@ static int Slider_borderWidth(lua_State *L) {
 
 
 /** void mimas::Slider::callback(double value)
- * include/mimas/Slider.h:180
+ * include/mimas/Slider.h:197
  */
 static int Slider_callback(lua_State *L) {
   try {
@@ -133,8 +133,26 @@ static int Slider_cssClass(lua_State *L) {
 }
 
 
+/** int mimas::Slider::height()
+ * include/mimas/Slider.h:138
+ */
+static int Slider_height(lua_State *L) {
+  try {
+    Slider *self__ = *((Slider**)luaL_checkudata(L, 1, "mimas.Slider"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Slider in height");
+    int  retval__ = self__->height();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Slider.height: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Slider.height: Unknown exception");
+  }
+}
+
+
 /** float mimas::Slider::hue()
- * include/mimas/Slider.h:134
+ * include/mimas/Slider.h:151
  */
 static int Slider_hue(lua_State *L) {
   try {
@@ -226,7 +244,7 @@ static int Slider_resize(lua_State *L) {
 
 
 /** void mimas::Slider::setBorderWidth(int width)
- * include/mimas/Slider.h:147
+ * include/mimas/Slider.h:164
  */
 static int Slider_setBorderWidth(lua_State *L) {
   try {
@@ -244,7 +262,7 @@ static int Slider_setBorderWidth(lua_State *L) {
 
 
 /** void mimas::Slider::setHue(float hue)
- * include/mimas/Slider.h:129
+ * include/mimas/Slider.h:146
  */
 static int Slider_setHue(lua_State *L) {
   try {
@@ -280,7 +298,7 @@ static int Slider_setName(lua_State *L) {
 
 
 /** void mimas::Slider::setStyle(const char *text)
- * include/mimas/Slider.h:125
+ * include/mimas/Slider.h:142
  */
 static int Slider_setStyle(lua_State *L) {
   try {
@@ -298,7 +316,7 @@ static int Slider_setStyle(lua_State *L) {
 
 
 /** void mimas::Slider::setValue(double remote_value)
- * include/mimas/Slider.h:171
+ * include/mimas/Slider.h:188
  */
 static int Slider_setValue(lua_State *L) {
   try {
@@ -316,7 +334,7 @@ static int Slider_setValue(lua_State *L) {
 
 
 /** void mimas::Slider::set_callback(lua_State *L)
- * include/mimas/Slider.h:159
+ * include/mimas/Slider.h:176
  */
 static int Slider_set_callback(lua_State *L) {
   try {
@@ -334,7 +352,7 @@ static int Slider_set_callback(lua_State *L) {
 
 
 /** virtual QSize mimas::Slider::sizeHint() const 
- * include/mimas/Slider.h:139
+ * include/mimas/Slider.h:156
  */
 static int Slider_sizeHint(lua_State *L) {
   try {
@@ -369,6 +387,60 @@ static int Slider_widget(lua_State *L) {
 }
 
 
+/** int mimas::Slider::width()
+ * include/mimas/Slider.h:134
+ */
+static int Slider_width(lua_State *L) {
+  try {
+    Slider *self__ = *((Slider**)luaL_checkudata(L, 1, "mimas.Slider"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Slider in width");
+    int  retval__ = self__->width();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Slider.width: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Slider.width: Unknown exception");
+  }
+}
+
+
+/** int mimas::Slider::x()
+ * include/mimas/Slider.h:126
+ */
+static int Slider_x(lua_State *L) {
+  try {
+    Slider *self__ = *((Slider**)luaL_checkudata(L, 1, "mimas.Slider"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Slider in x");
+    int  retval__ = self__->x();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Slider.x: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Slider.x: Unknown exception");
+  }
+}
+
+
+/** int mimas::Slider::y()
+ * include/mimas/Slider.h:130
+ */
+static int Slider_y(lua_State *L) {
+  try {
+    Slider *self__ = *((Slider**)luaL_checkudata(L, 1, "mimas.Slider"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Slider in y");
+    int  retval__ = self__->y();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Slider.y: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Slider.y: Unknown exception");
+  }
+}
+
+
 
 
 /* ============================ Lua Registration ====================== */
@@ -377,6 +449,7 @@ static const struct luaL_Reg Slider_member_methods[] = {
   {"borderWidth"       , Slider_borderWidth},
   {"callback"          , Slider_callback},
   {"cssClass"          , Slider_cssClass},
+  {"height"            , Slider_height},
   {"hue"               , Slider_hue},
   {"move"              , Slider_move},
   {"name"              , Slider_name},
@@ -390,6 +463,9 @@ static const struct luaL_Reg Slider_member_methods[] = {
   {"set_callback"      , Slider_set_callback},
   {"sizeHint"          , Slider_sizeHint},
   {"widget"            , Slider_widget},
+  {"width"             , Slider_width},
+  {"x"                 , Slider_x},
+  {"y"                 , Slider_y},
   {"__tostring"        , Slider__tostring},
   {"__gc"              , Slider_destructor},
   {"deleted"           , Slider_deleted},

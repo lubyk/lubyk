@@ -68,7 +68,7 @@ static int GLWidget__tostring(lua_State *L) {
 
 
 /** void mimas::GLWidget::__newindex(lua_State *L)
- * include/mimas/GLWidget.h:143
+ * include/mimas/GLWidget.h:159
  */
 static int GLWidget___newindex(lua_State *L) {
   try {
@@ -86,7 +86,7 @@ static int GLWidget___newindex(lua_State *L) {
 
 
 /** void mimas::GLWidget::activateWindow()
- * include/mimas/GLWidget.h:130
+ * include/mimas/GLWidget.h:146
  */
 static int GLWidget_activateWindow(lua_State *L) {
   try {
@@ -103,7 +103,7 @@ static int GLWidget_activateWindow(lua_State *L) {
 
 
 /** bool mimas::GLWidget::close()
- * include/mimas/GLWidget.h:117
+ * include/mimas/GLWidget.h:133
  */
 static int GLWidget_close(lua_State *L) {
   try {
@@ -138,8 +138,26 @@ static int GLWidget_cssClass(lua_State *L) {
 }
 
 
+/** int mimas::GLWidget::height()
+ * include/mimas/GLWidget.h:125
+ */
+static int GLWidget_height(lua_State *L) {
+  try {
+    GLWidget *self__ = *((GLWidget**)luaL_checkudata(L, 1, "mimas.GLWidget"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.GLWidget in height");
+    int  retval__ = self__->height();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.GLWidget.height: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.GLWidget.height: Unknown exception");
+  }
+}
+
+
 /** bool mimas::GLWidget::isVisible() const 
- * include/mimas/GLWidget.h:121
+ * include/mimas/GLWidget.h:137
  */
 static int GLWidget_isVisible(lua_State *L) {
   try {
@@ -249,7 +267,7 @@ static int GLWidget_setName(lua_State *L) {
 
 
 /** void mimas::GLWidget::show()
- * include/mimas/GLWidget.h:125
+ * include/mimas/GLWidget.h:141
  */
 static int GLWidget_show(lua_State *L) {
   try {
@@ -266,7 +284,7 @@ static int GLWidget_show(lua_State *L) {
 
 
 /** void mimas::GLWidget::updateGL()
- * include/mimas/GLWidget.h:135
+ * include/mimas/GLWidget.h:151
  */
 static int GLWidget_updateGL(lua_State *L) {
   try {
@@ -300,6 +318,60 @@ static int GLWidget_widget(lua_State *L) {
 }
 
 
+/** int mimas::GLWidget::width()
+ * include/mimas/GLWidget.h:121
+ */
+static int GLWidget_width(lua_State *L) {
+  try {
+    GLWidget *self__ = *((GLWidget**)luaL_checkudata(L, 1, "mimas.GLWidget"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.GLWidget in width");
+    int  retval__ = self__->width();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.GLWidget.width: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.GLWidget.width: Unknown exception");
+  }
+}
+
+
+/** int mimas::GLWidget::x()
+ * include/mimas/GLWidget.h:113
+ */
+static int GLWidget_x(lua_State *L) {
+  try {
+    GLWidget *self__ = *((GLWidget**)luaL_checkudata(L, 1, "mimas.GLWidget"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.GLWidget in x");
+    int  retval__ = self__->x();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.GLWidget.x: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.GLWidget.x: Unknown exception");
+  }
+}
+
+
+/** int mimas::GLWidget::y()
+ * include/mimas/GLWidget.h:117
+ */
+static int GLWidget_y(lua_State *L) {
+  try {
+    GLWidget *self__ = *((GLWidget**)luaL_checkudata(L, 1, "mimas.GLWidget"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.GLWidget in y");
+    int  retval__ = self__->y();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.GLWidget.y: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.GLWidget.y: Unknown exception");
+  }
+}
+
+
 
 
 /* ============================ Lua Registration ====================== */
@@ -309,6 +381,7 @@ static const struct luaL_Reg GLWidget_member_methods[] = {
   {"activateWindow"    , GLWidget_activateWindow},
   {"close"             , GLWidget_close},
   {"cssClass"          , GLWidget_cssClass},
+  {"height"            , GLWidget_height},
   {"isVisible"         , GLWidget_isVisible},
   {"move"              , GLWidget_move},
   {"name"              , GLWidget_name},
@@ -318,6 +391,9 @@ static const struct luaL_Reg GLWidget_member_methods[] = {
   {"show"              , GLWidget_show},
   {"updateGL"          , GLWidget_updateGL},
   {"widget"            , GLWidget_widget},
+  {"width"             , GLWidget_width},
+  {"x"                 , GLWidget_x},
+  {"y"                 , GLWidget_y},
   {"__tostring"        , GLWidget__tostring},
   {"__gc"              , GLWidget_destructor},
   {"deleted"           , GLWidget_deleted},

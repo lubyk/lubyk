@@ -38,6 +38,7 @@ require 'lk.constants'
 
 
 --- Return the parent folder and filename from a filepath.
+-- FIXME: rename this to lk.basePath (directory seems like isDirectory)
 function lk.directory(filepath)
   local base, file = string.match(filepath, '(.*)/(.*)$')
   if not base then

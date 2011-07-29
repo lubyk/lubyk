@@ -44,7 +44,29 @@ function should.findWithFilter()
   assertValueEqual({
     name = 'lubyk.Foo',
     keywords = 'lubyk.Foo',
-  }, lib:node(1, 'oo'))
+  }, lib:node('oo'))
+end
+
+function should.notAddPercentInFilter()
+  local lib = makeLib()
+  assertNil(lib:node('Foo%'))
+end
+
+function should.paginateWithFilter()
+  local lib = makeLib()
+  assertValueEqual({
+    name = 'lubyk.Bar',
+    keywords = 'lubyk.Bar',
+  }, lib:node('lubyk'))
+  assertValueEqual({
+    name = 'lubyk.Foo',
+    keywords = 'lubyk.Foo',
+  }, lib:node('lubyk', 2))
+end
+
+function should.returnNilOnNotFound()
+  local lib = makeLib()
+  assertEqual(nil, lib:node('xx'))
 end
 
 test.all()

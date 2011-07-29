@@ -113,18 +113,31 @@ function lib:nodeCount(filter)
   return stmt:first_row()[1]
 end
 
-function lib:node(pos, filter)
+function lib:node(filter, pos)
+  if type(filter) == 'number' then
+    pos = filter
+    filter = ''
+  elseif not filter then
+    filter = ''
+  end
   local stmt = self.get_node_by_position_and_filter_stmt
+  if not string.match(filter, '%%') then
+    filter = '%' .. (filter or '') .. '%'
+  end
   stmt:bind_names {
     p = (pos or 1) - 1,
-    filter = '%' .. (filter or '') .. '%',
+    filter = filter,
   }
   local row = stmt:first_row()
-  return {
-    name = row[1],
-    name = row[2],
-    path = row[3],
-    code = row[4],
-    keywords = row[5],
-  }
+  if row then
+    return {
+      name = row[1],
+      name = row[2],
+      path = row[3],
+      code = row[4],
+      keywords = row[5],
+    }
+  else
+    return nil
+  end
 end

@@ -33,6 +33,7 @@
 
 using namespace lubyk;
 
+#include <QtGui/QWidget>
 #include <QtGui/QLineEdit>
 
 namespace mimas {
@@ -49,6 +50,9 @@ class LineEdit : public QLineEdit, public DeletableOutOfLua
   Worker *worker_;
   LuaCallback editing_finished_clbk_;
   LuaCallback text_edited_clbk_;
+  LuaCallback keyboard_clbk_;
+  LuaCallback resized_clbk_;
+  LuaCallback moved_clbk_;
   /** The component's color.
    */
   float hue_;
@@ -58,6 +62,9 @@ public:
      worker_(worker),
      editing_finished_clbk_(worker),
      text_edited_clbk_(worker),
+     keyboard_clbk_(worker),
+     resized_clbk_(worker),
+     moved_clbk_(worker),
      hue_(-1) {
     QObject::connect(this, SIGNAL(editingFinished()),
                      this, SLOT(editingFinished())
@@ -76,6 +83,10 @@ public:
 
   QWidget *widget() {
     return this;
+  }
+
+  void setParent(QWidget *parent) {
+    QWidget::setParent(parent);
   }
 
   QObject *object() {
@@ -100,7 +111,24 @@ public:
   }
 
   void resize(int w, int h) {
+    ScopedUnlock unlock(worker_);
     QWidget::resize(w, h);
+  }
+
+  int x() {
+    return QWidget::x();
+  }
+
+  int y() {
+    return QWidget::y();
+  }
+
+  int width() {
+    return QWidget::width();
+  }
+
+  int height() {
+    return QWidget::height();
   }
 
   void setStyle(const char *text) {
@@ -114,6 +142,10 @@ public:
 
   float hue() {
     return hue_;
+  }
+
+  void hide() {
+    QWidget::hide();
   }
 
   // =============================================================
@@ -155,16 +187,40 @@ public:
       editing_finished_clbk_.set_lua_callback(L);
     } else if (key == "textEdited") {
       text_edited_clbk_.set_lua_callback(L);
+    } else if (key == "keyboard") {
+      keyboard_clbk_.set_lua_callback(L);
+    } else if (key == "resized") {
+      resized_clbk_.set_lua_callback(L);
+    } else if (key == "moved") {
+      moved_clbk_.set_lua_callback(L);
     } else {
-      luaL_error(L, "Invalid function name '%s' (valid names are 'editingFinished', 'textEdited').", key.c_str());
+      luaL_error(L, "Invalid function name '%s' (valid names are 'editingFinished', 'textEdited', 'keyboard', 'resized', 'moved').", key.c_str());
     }
 
     lua_pop(L, 2);
     // ... <self> <key> <value>
   }
 
+protected:
+
+  virtual void keyPressEvent(QKeyEvent *event) {
+    if (!keyboard(event, true)) {
+      QLineEdit::keyPressEvent(event);
+    }
+  }
+
+  virtual void keyReleaseEvent(QKeyEvent *event) {
+    if (!keyboard(event, false)) {
+      QLineEdit::keyReleaseEvent(event);
+    }
+  }
+
+  virtual void moveEvent(QMoveEvent * event);
+  virtual void resizeEvent(QResizeEvent *event);
+
 private:
   virtual void paintEvent(QPaintEvent *event);
+  bool keyboard(QKeyEvent *event, bool isPressed);
 
 private slots:
 

@@ -132,8 +132,26 @@ static int Label_cssClass(lua_State *L) {
 }
 
 
+/** int mimas::Label::height()
+ * include/mimas/Label.h:108
+ */
+static int Label_height(lua_State *L) {
+  try {
+    Label *self__ = *((Label**)luaL_checkudata(L, 1, "mimas.Label"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Label in height");
+    int  retval__ = self__->height();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Label.height: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Label.height: Unknown exception");
+  }
+}
+
+
 /** float mimas::Label::hue()
- * include/mimas/Label.h:104
+ * include/mimas/Label.h:121
  */
 static int Label_hue(lua_State *L) {
   try {
@@ -225,7 +243,7 @@ static int Label_resize(lua_State *L) {
 
 
 /** void mimas::Label::setHue(float hue)
- * include/mimas/Label.h:99
+ * include/mimas/Label.h:116
  */
 static int Label_setHue(lua_State *L) {
   try {
@@ -261,7 +279,7 @@ static int Label_setName(lua_State *L) {
 
 
 /** void mimas::Label::setStyle(const char *text)
- * include/mimas/Label.h:95
+ * include/mimas/Label.h:112
  */
 static int Label_setStyle(lua_State *L) {
   try {
@@ -279,7 +297,7 @@ static int Label_setStyle(lua_State *L) {
 
 
 /** void mimas::Label::setText(const char *text)
- * include/mimas/Label.h:110
+ * include/mimas/Label.h:127
  */
 static int Label_setText(lua_State *L) {
   try {
@@ -314,12 +332,67 @@ static int Label_widget(lua_State *L) {
 }
 
 
+/** int mimas::Label::width()
+ * include/mimas/Label.h:104
+ */
+static int Label_width(lua_State *L) {
+  try {
+    Label *self__ = *((Label**)luaL_checkudata(L, 1, "mimas.Label"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Label in width");
+    int  retval__ = self__->width();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Label.width: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Label.width: Unknown exception");
+  }
+}
+
+
+/** int mimas::Label::x()
+ * include/mimas/Label.h:96
+ */
+static int Label_x(lua_State *L) {
+  try {
+    Label *self__ = *((Label**)luaL_checkudata(L, 1, "mimas.Label"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Label in x");
+    int  retval__ = self__->x();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Label.x: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Label.x: Unknown exception");
+  }
+}
+
+
+/** int mimas::Label::y()
+ * include/mimas/Label.h:100
+ */
+static int Label_y(lua_State *L) {
+  try {
+    Label *self__ = *((Label**)luaL_checkudata(L, 1, "mimas.Label"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Label in y");
+    int  retval__ = self__->y();
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Label.y: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Label.y: Unknown exception");
+  }
+}
+
+
 
 
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg Label_member_methods[] = {
   {"cssClass"          , Label_cssClass},
+  {"height"            , Label_height},
   {"hue"               , Label_hue},
   {"move"              , Label_move},
   {"name"              , Label_name},
@@ -330,6 +403,9 @@ static const struct luaL_Reg Label_member_methods[] = {
   {"setStyle"          , Label_setStyle},
   {"setText"           , Label_setText},
   {"widget"            , Label_widget},
+  {"width"             , Label_width},
+  {"x"                 , Label_x},
+  {"y"                 , Label_y},
   {"__tostring"        , Label__tostring},
   {"__gc"              , Label_destructor},
   {"deleted"           , Label_deleted},
