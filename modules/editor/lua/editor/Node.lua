@@ -12,6 +12,9 @@ local lib   = {type='editor.Node'}
 lib.__index = lib
 editor.Node = lib
 
+-- Minimal width of LineEdit to create node
+local MINW = 100
+
 setmetatable(lib, {
   --- Create a new editor.Node reflecting the content of a remote
   -- node. If the process view is not shown, do not create views. If
@@ -230,16 +233,18 @@ function lib.makeGhost(node_def, delegate)
   -- or when it appears after double-click
   function ghost:openEditor(finish_func)
     -- add a LineEdit on top of self
-    local edit = mimas.LineEdit(node.name)
-    edit:move(0, 0)
-    edit:resize(ghost.width, ghost.height)
-    edit:selectAll()
-    ghost.super:addWidget(edit)
-    edit:setFocus()
-    edit.editingFinished = function()
+    self.edit = editor.NodeLineEdit(delegate.main_view, node.name, delegate.library)
+    self.edit:resize(math.max(self.width, MINW), self.height)
+    self.edit:selectAll()
+    delegate.main_view:addWidget(self.edit)
+    self.edit:globalMove(self.super:globalPosition())
+    self.edit:setFocus()
+    self.edit.editingFinished = function()
+      -- call cleanup
+      self.edit:autoFinished()
+      self.edit.editingFinished = nil
       app:post(finish_func)
     end
-    ghost.edit = edit
   end
   return ghost
 end

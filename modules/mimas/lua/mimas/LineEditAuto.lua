@@ -11,33 +11,38 @@ mimas.LineEditAuto = lib
 local LineEdit = mimas.LineEdit
 
 local super_mt = mimas_core.LineEdit_
-lib.__index = lib
 
 -- contants
 local POS = 23
 
---function lib.__index(lib, key)
---  local m = rawget(lib, key)
---  if m then
---    return m
---  else
---    m = rawget(super_mt, key)
---    if m then
---      return function(self, ...)
---        return m(self.line, ...)
---      end
---    end
---  end
---end
+-- Methods not in 'LineEditAuto' are mapped to calls on self.line
+function lib:__index(key)
+  local m = rawget(lib, key)
+  if m then
+    return m
+  else
+    m = rawget(super_mt, key)
+    if m then
+      local function f(self, ...)
+        return m(self.line, ...)
+      end
+      lib[key] = f
+      return f
+    end
+  end
+end
 
 setmetatable(lib, {
   -- new method
- __call = function(lib, initial_text, pattern)
+ __call = function(lib, parent, initial_text, pattern)
   local line = LineEdit(initial_text)
   local self = {
     line      = line,
     pattern   = pattern,
     show_list = true,
+    -- FIXME: we need this because we cannot find a useable Lua object with
+    -- LineEdit:parent(). This could be fixed with minimal bindings for QWidget (not mimas::Widget).
+    parent    = parent,
   }
   setmetatable(self, lib)
 
@@ -54,19 +59,23 @@ setmetatable(lib, {
       self.list:move(x, y + POS)
     end
   end
+
+  function line.editingFinished()
+    self:editingFinished()
+  end
   return self
 end})
 
-function lib:widget()
-  return self.line:widget()
+function lib:editingFinished()
+  self:autoFinished()
 end
 
-function lib:selectAll()
-  self.line:selectAll()
-end
-
-function lib:move(...)
-  self.line:move(...)
+-- Cleanup after editing finished.
+function lib:autoFinished()
+  if self.list then
+    self.list:__gc()
+    self.list = nil
+  end
 end
 
 -- Methods to overwrite in instance
@@ -122,13 +131,6 @@ local function createList(self)
 
   function list.header()
     return nil
-  end
-end
-
-local function removeList(self)
-  if self.list then
-    self.list:delete()
-    self.list = nil
   end
 end
 
@@ -200,10 +202,6 @@ function lib:keyboard(key, on)
       end
     end
     -- do not continue processing
-    return
-  elseif key == mimas.Key_Return then
-    self.list:hide()
-    self.line:hide()
     return
   end
   -- normal op

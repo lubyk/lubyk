@@ -21,13 +21,10 @@ function should.callback(t)
   t.db = editor.Library(sqlite3.open_memory())
   t.db:sync()
 
-  t.lb = mimas.LineEditAuto("type 'm=l'", '^(.+= *)(.+)')
+  t.lb = mimas.LineEditAuto(t.win, "type 'm=l'", '^(.+= *)(.+)')
   t.lb:selectAll()
 
   t.win:addWidget(t.lb)
-  -- FIXME: we need this because we cannot find a useable Lua object with
-  -- LineEdit:parent(). This could be fixed with minimal bindings for QWidget (not mimas::Widget).
-  t.lb.parent = t.win
   t.lb:move(40, 40)
 
   -- ====================================================

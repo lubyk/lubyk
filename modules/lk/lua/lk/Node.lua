@@ -68,6 +68,10 @@ end
 
 -- function to reload code
 function lib:eval(code_str)
+  -- FIXME: remove slots that are not declared (mark and sweep)
+  -- 1. mark inlets/outlets
+  -- 2. eval
+  -- 3. remove dirty slots
   local code, err = loadstring(code_str)
   if not code then
     self:error(err)

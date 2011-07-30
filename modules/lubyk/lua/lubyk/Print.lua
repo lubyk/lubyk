@@ -1,9 +1,9 @@
 --[[------------------------------------------------------
 
-  Value
+  Print
   -----
 
-  Stores value in 'value'.
+  Print incomming values.
 
 --]]------------------------------------------------------
 inlet('print', 'Print/dump incoming value [any].')

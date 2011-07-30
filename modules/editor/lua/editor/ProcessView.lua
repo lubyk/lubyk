@@ -198,7 +198,8 @@ function lib:click(x, y, type, btn, mod)
         self:update()
 
         -- clear
-        self.ghost_node:delete()
+        ghost.edit.line:hide()
+        ghost:hide()
         self.ghost_node = nil
       end)
     end
