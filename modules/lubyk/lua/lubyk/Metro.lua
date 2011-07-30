@@ -7,7 +7,7 @@
 
 --]]------------------------------------------------------
 inlet('tempo', 'Set tempo [float: bpm].')
-bang = outlet('bang', 'Sends a bang on every beat [true].')
+outlet('bang', 'Sends a bang on every beat [true].')
 
 -- Public values
 tempo = tempo or 120

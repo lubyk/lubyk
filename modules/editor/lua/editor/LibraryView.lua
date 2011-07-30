@@ -60,6 +60,7 @@ local function clickInList(self, node_def, x, y, type, btn, mod)
             y = self.ghost.gy - vy,
             code = node_def.code,
             name = node_def.name,
+            hue  = process.hue,
           }
           process_view:update()
         end

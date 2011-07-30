@@ -183,8 +183,13 @@ function lib:click(x, y, type, btn, mod)
         local name, proto = string.match(text, '^(.*)= *(.*)$')
         if name then
           node_def.name  = name
-          node_def.class = proto
-          node_def.code  = nil
+          local code = self.delegate.library:code(proto)
+          if code then
+            node_def.code = code
+          else
+            -- error
+            node_def.code  = string.format('-- Could not find code for "%s"\n\n', proto)
+          end
         else
           node_def.name = text
         end

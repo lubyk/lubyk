@@ -47,6 +47,11 @@ function should.findWithFilter()
   }, lib:node('oo'))
 end
 
+function should.findCodeByName()
+  local lib = makeLib()
+  assertMatch('This is Foo.lua', lib:code('lubyk.Foo'))
+end
+
 function should.notAddPercentInFilter()
   local lib = makeLib()
   assertNil(lib:node('Foo%'))

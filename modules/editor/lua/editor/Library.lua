@@ -34,6 +34,10 @@ local function prepare_db(self)
     SELECT * FROM nodes WHERE keywords LIKE :filter ORDER BY name LIMIT 1 OFFSET :p;
   ]]
 
+  self.get_code_by_name_stmt = db:prepare[[
+    SELECT code FROM nodes WHERE name = :name LIMIT 1;
+  ]]
+
   self.get_node_count_with_filter_stmt = db:prepare[[
     SELECT COUNT(*) FROM nodes WHERE keywords LIKE :filter;
   ]]
@@ -113,6 +117,17 @@ function lib:nodeCount(filter)
   return stmt:first_row()[1]
 end
 
+function lib:code(name)
+  local stmt = self.get_code_by_name_stmt
+  stmt:bind_names {name = name}
+  local row = stmt:first_row()
+  if row then
+    return row[1]
+  else
+    return nil
+  end
+end
+
 function lib:node(filter, pos)
   if type(filter) == 'number' then
     pos = filter
@@ -131,7 +146,7 @@ function lib:node(filter, pos)
   local row = stmt:first_row()
   if row then
     return {
-      name = row[1],
+      --id   = row[1],
       name = row[2],
       path = row[3],
       code = row[4],

@@ -23,6 +23,7 @@ function lib:init(main)
   self:addWidget(self.layout_holder)
   self.layout_holder:move(0,0)
   self.layout = mimas.HBoxLayout(self.layout_holder)
+  self.library = main.library
   self.library_view = editor.LibraryView(main.library)
   self.layout:addWidget(self.library_view)
   self.patching_view = editor.PatchingView()
