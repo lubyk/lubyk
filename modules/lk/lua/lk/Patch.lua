@@ -303,8 +303,8 @@ function lib:findCode(url)
 end
 
 function lib:findClass(class_name)
-  -- TODO: adapt for Mnémosyne
-  return lk.findcode(class_name)
+  -- TODO: adapt for Morph
+  return lk.findCode(class_name)
 end
 
 --=====================================================================

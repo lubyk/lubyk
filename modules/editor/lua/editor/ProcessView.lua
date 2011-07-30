@@ -171,7 +171,31 @@ function lib:click(x, y, type, btn, mod)
       -- close ?
     elseif not clickOnLink(self, x, y, type, btn, mod) then
       -- create new empty node
-      process:newNode { x = x - 30, y = y - 10 }
+      local vx, vy = self:globalPosition()
+      local node_def = { x = x - 15, y = y - 12, name = '', hue = self.process.hue}
+      self.ghost_node = editor.Node.makeGhost(node_def, self.delegate)
+      local ghost = self.ghost_node
+      ghost.gx = vx + node_def.x
+      ghost.gy = vy + node_def.y
+      ghost:globalMove(ghost.gx, ghost.gy)
+      ghost:openEditor(function()
+        local text = ghost.edit:text()
+        local name, proto = string.match(text, '^(.*)= *(.*)$')
+        if name then
+          node_def.name  = name
+          node_def.class = proto
+          node_def.code  = nil
+        else
+          node_def.name = text
+        end
+        -- create node
+        self.process:newNode(node_def)
+        self:update()
+
+        -- clear
+        self.ghost_node:delete()
+        self.ghost_node = nil
+      end)
     end
   elseif type == MouseRelease then
     if process.resizing then

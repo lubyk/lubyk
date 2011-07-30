@@ -33,7 +33,7 @@ require 'worker' -- declares global 'sleep'
 -------------------------------- pack/unpack (msgpack.vendor)
 require 'msgpack.vendor'
 
--------------------------------- lk.findfile
+-------------------------------- lk.findFile
 require 'lk.constants'
 
 
@@ -215,11 +215,11 @@ function lk.dofile(path)
   return dofile(lk.dir(-1) .. '/' .. path, path)
 end
 
--------------------------------- lk.findcode(class_name)
+-------------------------------- lk.findCode(class_name)
 -- Find source code from a given class name of the
 -- form 'lubyk.Metro' or 'my.super.complicated.Thing'. The
 -- loader searches locally first and then into package.paths.
-function lk.findcode(basedir, class_name)
+function lk.findCode(basedir, class_name)
   if not class_name then
     class_name = basedir
     basedir = lfs.currentdir()
@@ -232,7 +232,7 @@ function lk.findcode(basedir, class_name)
     return lk.readall(fullpath)
   else
     -- Search in lib paths
-    local file = lk.findfile(class_name, 'path')
+    local file = lk.findFile(class_name)
     if file then
       return lk.readall(file)
     else

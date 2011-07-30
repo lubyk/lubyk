@@ -182,7 +182,8 @@ end
 --- Make a new node in the remote process with the given
 -- definition.
 function lib:newNode(definition)
-  definition.code = definition.code or [=[
+  if not definition.class then
+    definition.code = definition.code or [=[
 --[[
 inlet('input', 'Information on input [type].')
 output = outlet('output', 'Information on output [type].')
@@ -196,6 +197,7 @@ end
 
 
 ]=]
+  end
   self:change {nodes = {[definition.name or 'new node'] = definition}}
 end
 

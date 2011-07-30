@@ -57,7 +57,7 @@ static const char *pushnexttemplate (lua_State *L, const char *path) {
 
 // <class_name>
 // Taken from loadlib.c (Lua 5.1)
-LuaStackSize findfile(lua_State *L) {
+LuaStackSize findFile(lua_State *L) {
   const char *name  = luaL_checkstring(L, 1);
   const char *pname = "path";
   const char *path;

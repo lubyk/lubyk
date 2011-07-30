@@ -93,12 +93,12 @@ function should.testFileExistence()
   assertEqual(nil, lk.fileType(nil))
 end
 
-function should.findcodeLocally()
-  assertMatch('Passes input values to output', lk.findcode(fixture.path(), 'pass'))
+function should.findCodeLocally()
+  assertMatch('Passes input values to output', lk.findCode(fixture.path(), 'pass'))
 end
 
-function should.findcodeInLibs()
-  assertMatch('Triggers regular bangs', lk.findcode(lk.dir(), 'lubyk.Metro'))
+function should.findCodeInLibs()
+  assertMatch('Triggers regular bangs', lk.findCode(lk.dir(), 'lubyk.Metro'))
 end
 
 test.all()

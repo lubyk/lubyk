@@ -96,7 +96,9 @@ function lib:set(definition)
     local code = self.process:findClass(definition.class)
 
     if code then
-      self.class = definition.class
+      -- Once the prototype is resolved, we remove 'class' information.
+      definition.class = nil
+      definition.code  = code
       self:eval(code)
     else
       -- FIXME: set error on Node

@@ -6,18 +6,18 @@ using namespace lk;
 
 
 
-/** LuaStackSize lk::findfile(lua_State *L)
+/** LuaStackSize lk::findFile(lua_State *L)
  * include/lk/constants.h:60
  */
-static int lk_findfile(lua_State *L) {
+static int lk_findFile(lua_State *L) {
   try {
     
-    LuaStackSize  retval__ = findfile(L);
+    LuaStackSize  retval__ = findFile(L);
     return retval__;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.findfile: %s", e.what());
+    return luaL_error(L, "lk.findFile: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.findfile: Unknown exception");
+    return luaL_error(L, "lk.findFile: Unknown exception");
   }
 }
 
@@ -64,7 +64,7 @@ static int lk_readable(lua_State *L) {
 
 static const struct luaL_Reg lk_functions[] = {
 
-  {"findfile"                      , lk_findfile},
+  {"findFile"                      , lk_findFile},
   {"pushnexttemplate"              , lk_pushnexttemplate},
   {"readable"                      , lk_readable},
 

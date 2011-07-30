@@ -222,7 +222,7 @@ function lib.makeGhost(node_def, delegate)
     delegate       = delegate,
   }
   editor.Node.setHue(node, node_def.hue or 0.2)
-  local ghost = editor.NodeView(node, node.delegate.main_view)
+  local ghost = editor.NodeView(node, delegate.main_view)
   ghost.is_ghost = true
   ghost:updateView()
 
