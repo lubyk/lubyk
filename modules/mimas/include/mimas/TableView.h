@@ -113,12 +113,10 @@ public:
   }
 
   virtual void selectRow(int row) {
-    ScopedUnlock unlock(worker_);
     QTableView::selectRow(row - 1);
   }
 
   virtual void selectColumn(int row) {
-    ScopedUnlock unlock(worker_);
     QTableView::selectColumn(row - 1);
   }
 
@@ -150,12 +148,10 @@ public:
   }
 
   void move(int x, int y) {
-    ScopedUnlock unlock(worker_);
     QWidget::move(x, y);
   }
 
   void resize(int w, int h) {
-    ScopedUnlock unlock(worker_);
     QWidget::resize(w, h);
   }
 
@@ -176,12 +172,10 @@ public:
   }
 
   void setStyle(const char *text) {
-    ScopedUnlock unlock(worker_);
     QWidget::setStyleSheet(QString(".%1 { %2 }").arg(cssClass()).arg(text));
   }
 
   void setStyleSheet(const char *text) {
-    ScopedUnlock unlock(worker_);
     QWidget::setStyleSheet(text);
   }
 
@@ -195,14 +189,12 @@ public:
   }
 
   void update() {
-    ScopedUnlock unlock(worker_);
     QWidget::update();
   }
 
   /** Call this method to reload view when data changes.
    */
   void dataChanged() {
-    ScopedUnlock unlock(worker_);
     data_source_.reset();
   }
 
@@ -225,7 +217,6 @@ public:
    */
   void setSizeHint(float w, float h) {
     size_hint_ = QSize(w, h);
-    ScopedUnlock unlock(worker_);
     updateGeometry();
   }
 
@@ -233,13 +224,11 @@ public:
    */
   void setSizePolicy(int horizontal, int vertical) {
     QWidget::setSizePolicy((QSizePolicy::Policy)horizontal, (QSizePolicy::Policy)vertical);
-    ScopedUnlock unlock(worker_);
     updateGeometry();
   }
 
   // FIXME: maybe we can remove this and only use setSizeHint + setSizePolicy...
   void setMinimumSize(float w, float h) {
-    ScopedUnlock unlock(worker_);
     QWidget::setMinimumSize(w, h);
   }
 
@@ -254,7 +243,6 @@ public:
   /** Close and delete the window.
    */
   bool close() {
-    ScopedUnlock unlock(worker_);
     return QWidget::close();
   }
 
@@ -263,12 +251,10 @@ public:
   }
 
   void show() {
-    ScopedUnlock unlock(worker_);
     QWidget::show();
   }
 
   void hide() {
-    ScopedUnlock unlock(worker_);
     QWidget::hide();
   }
 
@@ -285,7 +271,6 @@ public:
   /** Move the widget to the given global coordinates.
    */
   void globalMove(float x, float y) {
-    ScopedUnlock unlock(worker_);
     QWidget::move(mapToParent(mapFromGlobal(QPoint(x, y))));
   }
 

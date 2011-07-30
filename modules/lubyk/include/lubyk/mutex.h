@@ -75,19 +75,19 @@ public:
 };
 
 
-/** Scoped Mutex Lock for exclusive access to a resource.
+/** Scoped simple Mutex Lock for exclusive access to a resource.
  */
-class ScopedLock : private NonCopyable {
+class ScopedSLock : private NonCopyable {
 public:
-  ScopedLock(Mutex *mutex) : mutex_ptr_(mutex) {
+  ScopedSLock(Mutex *mutex) : mutex_ptr_(mutex) {
     mutex_ptr_->lock();
   }
 
-  ScopedLock(Mutex &mutex) : mutex_ptr_(&mutex) {
+  ScopedSLock(Mutex &mutex) : mutex_ptr_(&mutex) {
     mutex_ptr_->lock();
   }
 
-  ~ScopedLock() {
+  ~ScopedSLock() {
     mutex_ptr_->unlock();
   }
  private:
@@ -95,22 +95,22 @@ public:
 };
 
 
-/** Scoped Mutex Unlock to release exclusive access to a resource.
+/** Scoped simple Mutex Unlock to release exclusive access to a resource.
  */
-class ScopedUnlock : private NonCopyable
+class ScopedSUnlock : private NonCopyable
 {
   Mutex *mutex_ptr_;
 
 public:
-  ScopedUnlock(Mutex *mutex) : mutex_ptr_(mutex) {
+  ScopedSUnlock(Mutex *mutex) : mutex_ptr_(mutex) {
     mutex_ptr_->unlock();
   }
 
-  ScopedUnlock(Mutex &mutex) : mutex_ptr_(&mutex) {
+  ScopedSUnlock(Mutex &mutex) : mutex_ptr_(&mutex) {
     mutex_ptr_->unlock();
   }
 
-  ~ScopedUnlock() {
+  ~ScopedSUnlock() {
     mutex_ptr_->lock();
   }
 };

@@ -106,7 +106,6 @@ public:
   /** Move the widget to the given global coordinates.
    */
   void globalMove(float x, float y) {
-    ScopedUnlock unlock(worker_);
     QWidget::move(mapToParent(mapFromGlobal(QPoint(x, y))));
   }
 
@@ -128,7 +127,6 @@ public:
   }
 
   void resize(int w, int h) {
-    ScopedUnlock unlock(worker_);
     QWidget::resize(w, h);
   }
 
@@ -162,8 +160,6 @@ public:
   }
 
   void hide() {
-    // We need to unlock if we hide in editingFinished...
-    ScopedUnlock unlock(worker_);
     QWidget::hide();
   }
 

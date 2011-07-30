@@ -26,74 +26,38 @@
 
   ==============================================================================
 */
-#ifndef LUBYK_INCLUDE_MIMAS_V_BOX_LAYOUT_H_
-#define LUBYK_INCLUDE_MIMAS_V_BOX_LAYOUT_H_
+#ifndef LUBYK_INCLUDE_LK_MUTEX_H_
+#define LUBYK_INCLUDE_LK_MUTEX_H_
 
-#include "mimas/mimas.h"
+#include "lubyk/rmutex.h"
 
-using namespace lubyk;
-
-#include <QtGui/QVBoxLayout>
-
-#include <iostream>
-
-namespace mimas {
-
-/** VBoxLayout (arrange widgets vertically).
- *
- * @dub lib_name:'VBoxLayout_core'
- *      destructor: 'dub_destroy'
+namespace lk {
+/** The sole purpose of this class is to ease mutex testing from Lua.
  */
-class VBoxLayout : public QVBoxLayout, public DeletableOutOfLua
+class Mutex : public lubyk::RMutex
 {
-  Q_OBJECT
-
-  Worker *worker_;
 public:
-  VBoxLayout(lubyk::Worker *worker, QWidget *parent)
-   : QVBoxLayout(parent),
-     worker_(worker) {}
+  Mutex() {}
 
-  VBoxLayout() {}
-
-  ~VBoxLayout() {
-    MIMAS_DEBUG_GC
-  }
-
-  void addWidget(QWidget *widget, int stretch = 0, int alignment = 0) {
-    QVBoxLayout::addWidget(widget, stretch, (Qt::Alignment)alignment);
-  }
-
-  void addLayout(QLayout *layout) {
-    QVBoxLayout::addLayout(layout);
-  }
-
-  /** Add a strechable item.
+  /** Lock mutex (hangs if mutex is locked by another thread).
    */
-  void addStretch(int stretch = 0) {
-    QVBoxLayout::addStretch(stretch);
+  void lock() {
+    lubyk::RMutex::lock();
   }
 
-  /** Add a single fixed space.
+  /** Unlock mutex (can only be called by owning thread).
    */
-  void addSpacing(int size) {
-    QVBoxLayout::addSpacing(size);
+  void unlock() {
+    lubyk::RMutex::unlock();
   }
 
-  /** Fixed spacing between items.
+  /** Return the lock count.
    */
-  void setSpacing(int space) {
-    QVBoxLayout::setSpacing(space);
-  }
-
-  void setContentsMargins(int left, int top, int right, int bottom) {
-    QVBoxLayout::setContentsMargins(left, top, right, bottom);
-  }
-
-  QLayout *layout() {
-    return this;
+  int lockCount() {
+    return lubyk::RMutex::lockCount();
   }
 };
 
-} // mimas
-#endif // LUBYK_INCLUDE_MIMAS_V_BOX_LAYOUT_H_
+} // lk
+
+#endif // LUBYK_INCLUDE_LK_MUTEX_H_

@@ -61,12 +61,10 @@ public:
   }
 
   void addWidget(QWidget *widget, int stretch = 0, int alignment = 0) {
-    ScopedUnlock unlock(worker_);
     QHBoxLayout::addWidget(widget, stretch, (Qt::Alignment)alignment);
   }
 
   void addLayout(QLayout *layout) {
-    ScopedUnlock unlock(worker_);
     QHBoxLayout::addLayout(layout);
   }
 

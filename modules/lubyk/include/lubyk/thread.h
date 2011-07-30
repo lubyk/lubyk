@@ -53,7 +53,7 @@ class Thread : public Mutex {
   /** Start a new thread with a class method. */
   template<void(*Tmethod)(Thread*)>
   void startThread(void *parameter = NULL) {
-    ScopedLock lock(condition_);
+    ScopedSLock lock(condition_);
     if (is_running()) {
       fprintf(stderr, "Trying to start thread when it is already running ! (in Thread::start)");
       return;
@@ -74,7 +74,7 @@ class Thread : public Mutex {
 
   /** Start a new thread with a static function. */
   void startThread(void (*static_method)(Thread*), void *parameter = NULL) {
-    ScopedLock lock(condition_);
+    ScopedSLock lock(condition_);
     if (is_running()) {
      fprintf(stderr, "Trying to start thread when it is already running ! (in Thread::start)");
      return;
@@ -96,7 +96,7 @@ class Thread : public Mutex {
    *  a SIGTERM, the class's terminate() method is called. */
   template<class T, void(T::*Tmethod)(Thread*)>
   void startThread(T *owner, void *parameter = NULL) {
-    ScopedLock lock(condition_);
+    ScopedSLock lock(condition_);
     if (is_running()) {
       fprintf(stderr, "Trying to start thread when it is already running ! (in Thread::start)");
       return;
@@ -117,7 +117,7 @@ class Thread : public Mutex {
    *  a SIGTERM, the class's terminate() method is called. */
   template<class T, void(T::*Tmethod)()>
   void startThread(T *owner, void *parameter = NULL) {
-    ScopedLock lock(condition_);
+    ScopedSLock lock(condition_);
     if (is_running()) {
       fprintf(stderr, "Trying to start thread when it is already running ! (in Thread::start)");
       return;

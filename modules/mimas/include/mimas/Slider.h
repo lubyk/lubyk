@@ -86,7 +86,7 @@ public:
     }
     delete this;
   }
-  
+
   // ============================ common code to all mimas Widgets
 
   QString cssClass() const {
@@ -119,7 +119,6 @@ public:
   }
 
   void resize(int w, int h) {
-    ScopedUnlock unlock(worker_);
     QWidget::resize(w, h);
   }
 

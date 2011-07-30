@@ -40,7 +40,7 @@ Planet <>--- Worker
 */
 #include "lubyk/lua.h"
 #include "lubyk/thread.h"
-#include "lubyk/mutex.h"
+#include "lubyk/rmutex.h"
 #include "lubyk/time_ref.h"
 
 namespace lubyk {
@@ -51,7 +51,7 @@ namespace lubyk {
  * @dub string_format:'%%f'
  *      string_args:'(*userdata)->now()'
  */
-class Worker : public Mutex
+class Worker : public RMutex
 {
   class Implementation;
   Implementation *impl_;

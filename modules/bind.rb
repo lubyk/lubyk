@@ -48,7 +48,7 @@ mimas_load = []
 modules = {
   'dummy' => %w{Dummy},
   'lk' => {
-    'class' => %w{Socket Timer Thread},
+    'class' => %w{Socket Mutex Timer Thread},
     'const' => true,
   },
   'lubyk' => %w{Worker},

@@ -44,7 +44,7 @@ namespace lubyk {
 class RMutex : private NonCopyable
 {
   Mutex mutex_;
-  uint  counter_;
+  int counter_;
   pthread_t owner_;
 public:
   RMutex()
@@ -74,7 +74,53 @@ public:
       mutex_.unlock();
     }
   }
+
+protected:
+  /** Used for debugging and testing. */
+  int lockCount() const {
+    return counter_;
+  }
 };
+
+
+/** Scoped recursive Mutex Lock for exclusive access to a resource.
+ */
+class ScopedLock : private NonCopyable {
+  RMutex *mutex_ptr_;
+public:
+  ScopedLock(RMutex *mutex) : mutex_ptr_(mutex) {
+    mutex_ptr_->lock();
+  }
+
+  ScopedLock(RMutex &mutex) : mutex_ptr_(&mutex) {
+    mutex_ptr_->lock();
+  }
+
+  ~ScopedLock() {
+    mutex_ptr_->unlock();
+  }
+};
+
+
+/** Scoped recursive Mutex Unlock to release exclusive access to a resource.
+ */
+class ScopedUnlock : private NonCopyable
+{
+  RMutex *mutex_ptr_;
+public:
+  ScopedUnlock(RMutex *mutex) : mutex_ptr_(mutex) {
+    mutex_ptr_->unlock();
+  }
+
+  ScopedUnlock(RMutex &mutex) : mutex_ptr_(&mutex) {
+    mutex_ptr_->unlock();
+  }
+
+  ~ScopedUnlock() {
+    mutex_ptr_->lock();
+  }
+};
+
 
 } // lubyk
 

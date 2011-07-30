@@ -61,7 +61,7 @@ public:
    */
   inline void acquire(size_t count) {
     assert(count <= resource_count_);
-    ScopedLock lock(acquire_mutex_);
+    ScopedSLock lock(acquire_mutex_);
     for (size_t i=0; i < count; ++i) {
       acquire();
     }

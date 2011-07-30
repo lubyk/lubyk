@@ -221,7 +221,8 @@ private:
 
   /** Protect internals.
    */
-  Mutex mutex_;
+  // Change to RMutex should remove the need for 'stop' and 'stopFromLoop'.
+  RMutex mutex_;
 
   /** Running thread.
    */

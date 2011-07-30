@@ -26,8 +26,8 @@
 
   ==============================================================================
 */
-#ifndef LUBYK_INCLUDE_RK_SOCKET_H_
-#define LUBYK_INCLUDE_RK_SOCKET_H_
+#ifndef LUBYK_INCLUDE_LK_SOCKET_H_
+#define LUBYK_INCLUDE_LK_SOCKET_H_
 
 #include "lubyk.h"
 #include "lubyk/msgpack.h"
@@ -388,4 +388,4 @@ private:
 };
 } // lk
 
-#endif // LUBYK_INCLUDE_RK_SOCKET_H_
+#endif // LUBYK_INCLUDE_LK_SOCKET_H_

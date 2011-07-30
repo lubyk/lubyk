@@ -60,7 +60,7 @@ Worker::Worker(lua_State *L)
   zmq_context_(NULL),
   zmq_context_refcount_(0) {
   //impl_ = new Worker::Implementation;
-  Mutex::lock();
+  lock();
 }
 
 Worker::~Worker() {

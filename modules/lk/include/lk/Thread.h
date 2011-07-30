@@ -26,8 +26,8 @@
 
   ==============================================================================
 */
-#ifndef LUBYK_INCLUDE_RK_THREAD_H_
-#define LUBYK_INCLUDE_RK_THREAD_H_
+#ifndef LUBYK_INCLUDE_LK_THREAD_H_
+#define LUBYK_INCLUDE_LK_THREAD_H_
 
 #include "lubyk.h"
 #include "lubyk/thread.h"
@@ -93,4 +93,4 @@ private:
 };
 
 } // lk
-#endif // LUBYK_INCLUDE_RK_THREAD_H_
+#endif // LUBYK_INCLUDE_LK_THREAD_H_

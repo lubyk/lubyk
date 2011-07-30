@@ -106,7 +106,6 @@ public:
   }
 
   void resize(int w, int h) {
-    ScopedUnlock unlock(worker_);
     QWidget::resize(w, h);
   }
 
@@ -139,17 +138,14 @@ public:
   }
 
   void show() {
-    ScopedUnlock unlock(worker_);
     QWidget::show();
   }
 
   void activateWindow() {
-    ScopedUnlock unlock(worker_);
     QWidget::activateWindow();
   }
 
   void updateGL() {
-    ScopedUnlock unlock(worker_);
     QGLWidget::updateGL();
   }
 

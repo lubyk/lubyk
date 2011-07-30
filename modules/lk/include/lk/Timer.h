@@ -26,8 +26,8 @@
 
   ==============================================================================
 */
-#ifndef LUBYK_INCLUDE_RK_TIMER_H_
-#define LUBYK_INCLUDE_RK_TIMER_H_
+#ifndef LUBYK_INCLUDE_LK_TIMER_H_
+#define LUBYK_INCLUDE_LK_TIMER_H_
 
 #include "lubyk.h"
 #include "lubyk/timer.h"
@@ -135,4 +135,4 @@ private:
 
 } // lk
 
-#endif // LUBYK_INCLUDE_RK_TIMER_H_
+#endif // LUBYK_INCLUDE_LK_TIMER_H_

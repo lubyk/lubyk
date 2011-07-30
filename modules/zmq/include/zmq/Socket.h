@@ -176,7 +176,7 @@ public:
    * send() or recv().
    */
   void connect(const char *location) {
-    ScopedLock lock(req_mutex_);
+    ScopedSLock lock(req_mutex_);
     if (zmq_connect(socket_, location))
       throw Exception("Could not connect to '%s'.", location);
     location_ = location; // store last connection for info string
@@ -245,7 +245,7 @@ public:
     { // unlock worker
       ScopedUnlock unlock(worker_);
       // lock socket
-      ScopedLock lock(req_mutex_);
+      ScopedSLock lock(req_mutex_);
 
       if (zmq_send(socket_, &msg, 0)) {
         zmq_msg_close(&msg);
@@ -347,7 +347,7 @@ public:
   }
 
   void kill() {
-    { ScopedLock lock(req_mutex_);
+    { ScopedSLock lock(req_mutex_);
       // just to make sure we are not in zmq_poll
     }
     if (thread_) thread_->kill();

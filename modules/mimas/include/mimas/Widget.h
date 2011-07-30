@@ -90,7 +90,6 @@ public:
   }
 
   void addWidget(QWidget *widget, float x=0, float y=0) {
-    ScopedUnlock unlock(worker_);
     widget->setParent(this);
     widget->move(x, y);
     widget->show();
@@ -118,12 +117,10 @@ public:
   }
 
   void move(int x, int y) {
-    ScopedUnlock unlock(worker_);
     QWidget::move(x, y);
   }
 
   void resize(int w, int h) {
-    ScopedUnlock unlock(worker_);
     QWidget::resize(w, h);
   }
 
@@ -161,7 +158,6 @@ public:
   }
 
   void update() {
-    ScopedUnlock unlock(worker_);
     QWidget::update();
   }
 
@@ -178,7 +174,6 @@ public:
    */
   void setSizeHint(float w, float h) {
     size_hint_ = QSize(w, h);
-    ScopedUnlock unlock(worker_);
     updateGeometry();
   }
 
@@ -186,13 +181,11 @@ public:
    */
   void setSizePolicy(int horizontal, int vertical) {
     QWidget::setSizePolicy((QSizePolicy::Policy)horizontal, (QSizePolicy::Policy)vertical);
-    ScopedUnlock unlock(worker_);
     updateGeometry();
   }
 
   // FIXME: maybe we can remove this and only use setSizeHint + setSizePolicy...
   void setMinimumSize(float w, float h) {
-    ScopedUnlock unlock(worker_);
     QWidget::setMinimumSize(w, h);
   }
 
@@ -207,7 +200,6 @@ public:
   /** Close and delete the window.
    */
   bool close() {
-    ScopedUnlock unlock(worker_);
     return QWidget::close();
   }
 
@@ -216,12 +208,10 @@ public:
   }
 
   void show() {
-    ScopedUnlock unlock(worker_);
     QWidget::show();
   }
 
   void hide() {
-    ScopedUnlock unlock(worker_);
     QWidget::hide();
   }
 
@@ -232,7 +222,6 @@ public:
   /** Enter or exit fullscreen mode.
    */
   void showFullScreen(bool enable=true) {
-    ScopedUnlock unlock(worker_);
     if (enable) {
       QWidget::showFullScreen();
     } else {
@@ -263,7 +252,6 @@ public:
   /** Move the widget to the given global coordinates.
    */
   void globalMove(float x, float y) {
-    ScopedUnlock unlock(worker_);
     QWidget::move(mapToParent(mapFromGlobal(QPoint(x, y))));
   }
 
