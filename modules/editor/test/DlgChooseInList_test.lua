@@ -9,8 +9,8 @@
 require 'lubyk'
 local should = test.Suite('editor.DlgChooseInList')
 
-local function mockNetworks()
-  local self = {'dune', 'hyperion'}
+local function mockList(list)
+  local self = list or {'dune', 'hyperion'}
   function self:count()
     return #self
   end
@@ -26,7 +26,7 @@ function should.loadCode()
 end
 
 function should.displayDialog(t)
-  t.data = mockNetworks()
+  t.data = mockList()
   t.dlg = editor.DlgChooseInList {
     data    = t.data,
     message = 'Choose network',
@@ -44,6 +44,7 @@ function should.displayDialog(t)
   end
 
   t.dlg:show()
+  t.dlg:move(100, 50)
   t.timeout = lk.Thread(function()
     sleep(3000)
     t.dlg:close()
@@ -52,7 +53,7 @@ end
 
 
 function should.displayDialogWithoutButtons(t)
-  t.data = mockNetworks()
+  t.data = mockList()
   t.dlg = editor.DlgChooseInList {
     data    = t.data,
     message = 'Choose host',
@@ -64,10 +65,47 @@ function should.displayDialogWithoutButtons(t)
   end
 
   t.dlg:show()
-  t.dlg:move(100,200)
+  t.dlg:move(100, 250)
   t.timeout = lk.Thread(function()
     sleep(2000)
     t.dlg:close()
+  end)
+end
+
+function should.displayNextView(t)
+  t.win = mimas.Window()
+  t.lay = mimas.VBoxLayout(t.win)
+  t.dlg = editor.DlgChooseInList {
+    data    = mockList(),
+    message = 'Choose network (press new)',
+    new     = 'New network',
+  }
+  t.lay:addWidget(t.dlg)
+
+  function t.dlg:new(name)
+    t.dlg:close()
+    t.dlg = editor.DlgChooseInList {
+      data    = mockList{'localhost', 'example.com'},
+      message = 'Choose host',
+      cancel  = 'Abort'
+    }
+
+    function t.dlg:selected(name)
+      t.win:close()
+    end
+
+    function t.dlg:cancel()
+      t.win:close()
+    end
+    t.lay:addWidget(t.dlg)
+  end
+
+
+  t.win:show()
+  t.win:move(100, 450)
+  t.timeout = lk.Thread(function()
+    sleep(12000)
+    t.win:close()
   end)
 end
 
