@@ -45,7 +45,9 @@ end
 
 function mt:close()
   -- close is like delete: ensure it only runs in GUI thread
-  app:post(function()
-    close(self)
-  end)
+  if not self:deleted() then
+    app:post(function()
+      close(self)
+    end)
+  end
 end
