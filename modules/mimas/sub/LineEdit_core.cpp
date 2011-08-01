@@ -80,7 +80,7 @@ static int LineEdit__tostring(lua_State *L) {
 
 
 /** void mimas::LineEdit::__newindex(lua_State *L)
- * include/mimas/LineEdit.h:194
+ * include/mimas/LineEdit.h:192
  */
 static int LineEdit___newindex(lua_State *L) {
   try {
@@ -153,7 +153,7 @@ static int LineEdit_globalPosition(lua_State *L) {
 
 
 /** int mimas::LineEdit::height()
- * include/mimas/LineEdit.h:147
+ * include/mimas/LineEdit.h:145
  */
 static int LineEdit_height(lua_State *L) {
   try {
@@ -171,7 +171,7 @@ static int LineEdit_height(lua_State *L) {
 
 
 /** void mimas::LineEdit::hide()
- * include/mimas/LineEdit.h:164
+ * include/mimas/LineEdit.h:162
  */
 static int LineEdit_hide(lua_State *L) {
   try {
@@ -188,7 +188,7 @@ static int LineEdit_hide(lua_State *L) {
 
 
 /** float mimas::LineEdit::hue()
- * include/mimas/LineEdit.h:160
+ * include/mimas/LineEdit.h:158
  */
 static int LineEdit_hue(lua_State *L) {
   try {
@@ -206,7 +206,7 @@ static int LineEdit_hue(lua_State *L) {
 
 
 /** void mimas::LineEdit::move(int x, int y)
- * include/mimas/LineEdit.h:126
+ * include/mimas/LineEdit.h:125
  */
 static int LineEdit_move(lua_State *L) {
   try {
@@ -225,7 +225,7 @@ static int LineEdit_move(lua_State *L) {
 
 
 /** LuaStackSize mimas::LineEdit::name(lua_State *L)
- * include/mimas/LineEdit.h:115
+ * include/mimas/LineEdit.h:114
  */
 static int LineEdit_name(lua_State *L) {
   try {
@@ -261,7 +261,7 @@ static int LineEdit_object(lua_State *L) {
 
 
 /** void mimas::LineEdit::resize(int w, int h)
- * include/mimas/LineEdit.h:130
+ * include/mimas/LineEdit.h:129
  */
 static int LineEdit_resize(lua_State *L) {
   try {
@@ -280,7 +280,7 @@ static int LineEdit_resize(lua_State *L) {
 
 
 /** void mimas::LineEdit::selectAll()
- * include/mimas/LineEdit.h:183
+ * include/mimas/LineEdit.h:181
  */
 static int LineEdit_selectAll(lua_State *L) {
   try {
@@ -297,7 +297,7 @@ static int LineEdit_selectAll(lua_State *L) {
 
 
 /** void mimas::LineEdit::setFocus()
- * include/mimas/LineEdit.h:187
+ * include/mimas/LineEdit.h:185
  */
 static int LineEdit_setFocus(lua_State *L) {
   try {
@@ -314,7 +314,7 @@ static int LineEdit_setFocus(lua_State *L) {
 
 
 /** void mimas::LineEdit::setHue(float hue)
- * include/mimas/LineEdit.h:155
+ * include/mimas/LineEdit.h:153
  */
 static int LineEdit_setHue(lua_State *L) {
   try {
@@ -332,7 +332,7 @@ static int LineEdit_setHue(lua_State *L) {
 
 
 /** void mimas::LineEdit::setName(const char *name)
- * include/mimas/LineEdit.h:122
+ * include/mimas/LineEdit.h:121
  */
 static int LineEdit_setName(lua_State *L) {
   try {
@@ -368,7 +368,7 @@ static int LineEdit_setParent(lua_State *L) {
 
 
 /** void mimas::LineEdit::setSelection(int start, int length)
- * include/mimas/LineEdit.h:179
+ * include/mimas/LineEdit.h:177
  */
 static int LineEdit_setSelection(lua_State *L) {
   try {
@@ -387,7 +387,7 @@ static int LineEdit_setSelection(lua_State *L) {
 
 
 /** void mimas::LineEdit::setStyle(const char *text)
- * include/mimas/LineEdit.h:151
+ * include/mimas/LineEdit.h:149
  */
 static int LineEdit_setStyle(lua_State *L) {
   try {
@@ -405,7 +405,7 @@ static int LineEdit_setStyle(lua_State *L) {
 
 
 /** void mimas::LineEdit::setText(const char *text)
- * include/mimas/LineEdit.h:170
+ * include/mimas/LineEdit.h:168
  */
 static int LineEdit_setText(lua_State *L) {
   try {
@@ -423,7 +423,7 @@ static int LineEdit_setText(lua_State *L) {
 
 
 /** const char* mimas::LineEdit::text() const 
- * include/mimas/LineEdit.h:175
+ * include/mimas/LineEdit.h:173
  */
 static int LineEdit_text(lua_State *L) {
   try {
@@ -459,7 +459,7 @@ static int LineEdit_widget(lua_State *L) {
 
 
 /** int mimas::LineEdit::width()
- * include/mimas/LineEdit.h:143
+ * include/mimas/LineEdit.h:141
  */
 static int LineEdit_width(lua_State *L) {
   try {
@@ -477,7 +477,7 @@ static int LineEdit_width(lua_State *L) {
 
 
 /** int mimas::LineEdit::x()
- * include/mimas/LineEdit.h:135
+ * include/mimas/LineEdit.h:133
  */
 static int LineEdit_x(lua_State *L) {
   try {
@@ -495,7 +495,7 @@ static int LineEdit_x(lua_State *L) {
 
 
 /** int mimas::LineEdit::y()
- * include/mimas/LineEdit.h:139
+ * include/mimas/LineEdit.h:137
  */
 static int LineEdit_y(lua_State *L) {
   try {

@@ -73,7 +73,9 @@ end
 -- Cleanup after editing finished.
 function lib:autoFinished()
   if self.list then
-    self.list:__gc()
+    app:post(function()
+      self.list:__gc()
+    end)
     self.list = nil
   end
 end

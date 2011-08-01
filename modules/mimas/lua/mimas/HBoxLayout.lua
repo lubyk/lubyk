@@ -11,22 +11,21 @@ local mt = mimas_core.HBoxLayout_
 local worker = worker
 
 local addWidget = mt.addWidget
-function mt.addWidget(self, other)
-  addWidget(self, other:widget())
-end
-
 local addLayout = mt.addLayout
-function mt.addLayout(self, other)
-  addLayout(self, other:layout())
+function mt.addWidget(self, other)
+  if other.layout then
+    -- sub layout
+    addLayout(self, other:layout())
+  else
+    addWidget(self, other:widget())
+  end
 end
 
 function mimas.HBoxLayout(parent)
-  local instance
   if parent then
-    instance = constr(worker, parent:widget())
+    return constr(parent:widget())
   else
-    instance = constr(worker)
+    return constr()
   end
-  return instance
 end
 

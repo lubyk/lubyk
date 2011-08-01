@@ -67,6 +67,9 @@ function lib:addProcess(process)
   else
     self.process_list[process.name] = process
   end
+  app:post(function()
+    self:toggleView(process)
+  end)
 end
 
 --- When a process goes offline, this method is called.

@@ -48,13 +48,9 @@ class HBoxLayout : public QHBoxLayout, public DeletableOutOfLua
 {
   Q_OBJECT
 
-  Worker *worker_;
 public:
-  HBoxLayout(lubyk::Worker *worker, QWidget *parent)
-   : QHBoxLayout(parent),
-     worker_(worker) {}
-
-  HBoxLayout() {}
+  HBoxLayout(QWidget *parent = NULL)
+   : QHBoxLayout(parent) {}
 
   ~HBoxLayout() {
     MIMAS_DEBUG_GC

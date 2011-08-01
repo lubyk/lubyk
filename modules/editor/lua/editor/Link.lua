@@ -74,7 +74,7 @@ function lib:deleteView()
     if delegate.selected_link_view == self.view then
       delegate.selected_link_view = nil
     end
-    self.view.super:__gc()
+    self.view:delete()
     self.view = nil
   end
 end

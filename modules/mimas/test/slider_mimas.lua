@@ -17,7 +17,7 @@ label   = mimas.Label("Start 'Venus' service")
 
 mlayout:addWidget(label)
 
-quit_btn = mimas.PushButton('Quit', function()
+quit_btn = mimas.Button('Quit', function()
   app:quit()
 end)
 mlayout:addWidget(quit_btn)

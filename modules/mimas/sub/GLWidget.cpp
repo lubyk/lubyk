@@ -68,7 +68,7 @@ static int GLWidget__tostring(lua_State *L) {
 
 
 /** void mimas::GLWidget::__newindex(lua_State *L)
- * include/mimas/GLWidget.h:159
+ * include/mimas/GLWidget.h:155
  */
 static int GLWidget___newindex(lua_State *L) {
   try {
@@ -86,7 +86,7 @@ static int GLWidget___newindex(lua_State *L) {
 
 
 /** void mimas::GLWidget::activateWindow()
- * include/mimas/GLWidget.h:146
+ * include/mimas/GLWidget.h:144
  */
 static int GLWidget_activateWindow(lua_State *L) {
   try {
@@ -103,7 +103,7 @@ static int GLWidget_activateWindow(lua_State *L) {
 
 
 /** bool mimas::GLWidget::close()
- * include/mimas/GLWidget.h:133
+ * include/mimas/GLWidget.h:132
  */
 static int GLWidget_close(lua_State *L) {
   try {
@@ -139,7 +139,7 @@ static int GLWidget_cssClass(lua_State *L) {
 
 
 /** int mimas::GLWidget::height()
- * include/mimas/GLWidget.h:125
+ * include/mimas/GLWidget.h:124
  */
 static int GLWidget_height(lua_State *L) {
   try {
@@ -157,7 +157,7 @@ static int GLWidget_height(lua_State *L) {
 
 
 /** bool mimas::GLWidget::isVisible() const 
- * include/mimas/GLWidget.h:137
+ * include/mimas/GLWidget.h:136
  */
 static int GLWidget_isVisible(lua_State *L) {
   try {
@@ -267,7 +267,7 @@ static int GLWidget_setName(lua_State *L) {
 
 
 /** void mimas::GLWidget::show()
- * include/mimas/GLWidget.h:141
+ * include/mimas/GLWidget.h:140
  */
 static int GLWidget_show(lua_State *L) {
   try {
@@ -284,7 +284,7 @@ static int GLWidget_show(lua_State *L) {
 
 
 /** void mimas::GLWidget::updateGL()
- * include/mimas/GLWidget.h:151
+ * include/mimas/GLWidget.h:148
  */
 static int GLWidget_updateGL(lua_State *L) {
   try {
@@ -319,7 +319,7 @@ static int GLWidget_widget(lua_State *L) {
 
 
 /** int mimas::GLWidget::width()
- * include/mimas/GLWidget.h:121
+ * include/mimas/GLWidget.h:120
  */
 static int GLWidget_width(lua_State *L) {
   try {
@@ -337,7 +337,7 @@ static int GLWidget_width(lua_State *L) {
 
 
 /** int mimas::GLWidget::x()
- * include/mimas/GLWidget.h:113
+ * include/mimas/GLWidget.h:112
  */
 static int GLWidget_x(lua_State *L) {
   try {
@@ -355,7 +355,7 @@ static int GLWidget_x(lua_State *L) {
 
 
 /** int mimas::GLWidget::y()
- * include/mimas/GLWidget.h:117
+ * include/mimas/GLWidget.h:116
  */
 static int GLWidget_y(lua_State *L) {
   try {

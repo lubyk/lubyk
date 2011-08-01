@@ -48,13 +48,9 @@ class VBoxLayout : public QVBoxLayout, public DeletableOutOfLua
 {
   Q_OBJECT
 
-  Worker *worker_;
 public:
-  VBoxLayout(lubyk::Worker *worker, QWidget *parent)
-   : QVBoxLayout(parent),
-     worker_(worker) {}
-
-  VBoxLayout() {}
+  VBoxLayout(QWidget *parent = NULL)
+   : QVBoxLayout(parent) {}
 
   ~VBoxLayout() {
     MIMAS_DEBUG_GC

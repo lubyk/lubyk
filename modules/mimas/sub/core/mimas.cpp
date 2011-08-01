@@ -88,6 +88,7 @@ static const struct luaL_Reg lib_functions[] = {
 // [[DECLARE
   int luaload_mimas_Application_core(lua_State *L);
 int luaload_mimas_Brush(lua_State *L);
+int luaload_mimas_Button_core(lua_State *L);
 int luaload_mimas_Callback_core(lua_State *L);
 int luaload_mimas_Color(lua_State *L);
 int luaload_mimas_FileObserver(lua_State *L);
@@ -99,7 +100,6 @@ int luaload_mimas_ListView(lua_State *L);
 int luaload_mimas_Path(lua_State *L);
 int luaload_mimas_Painter(lua_State *L);
 int luaload_mimas_Pen(lua_State *L);
-int luaload_mimas_PushButton_core(lua_State *L);
 int luaload_mimas_Slider_core(lua_State *L);
 int luaload_mimas_TableView(lua_State *L);
 int luaload_mimas_VBoxLayout_core(lua_State *L);
@@ -120,6 +120,7 @@ extern "C" int luaopen_mimas_core(lua_State *L) {
   // [[LOAD
     luaload_mimas_Application_core(L);
   luaload_mimas_Brush(L);
+  luaload_mimas_Button_core(L);
   luaload_mimas_Callback_core(L);
   luaload_mimas_Color(L);
   luaload_mimas_FileObserver(L);
@@ -131,7 +132,6 @@ extern "C" int luaopen_mimas_core(lua_State *L) {
   luaload_mimas_Path(L);
   luaload_mimas_Painter(L);
   luaload_mimas_Pen(L);
-  luaload_mimas_PushButton_core(L);
   luaload_mimas_Slider_core(L);
   luaload_mimas_TableView(L);
   luaload_mimas_VBoxLayout_core(L);

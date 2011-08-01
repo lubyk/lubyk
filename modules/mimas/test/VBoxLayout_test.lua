@@ -17,8 +17,8 @@ local app = mimas.Application()
 function should.display_widgets()
   local win = mimas.Window()
   local lay = mimas.VBoxLayout(win)
-  local btn1 = mimas.PushButton("Hello")
-  local btn2 = mimas.PushButton("Quit")
+  local btn1 = mimas.Button("Hello")
+  local btn2 = mimas.Button("Quit")
   lay:addWidget(btn1)
   lay:addWidget(btn2)
 
@@ -33,7 +33,7 @@ function should.display_widgets()
   win:show()
 end
 
-function should.nest_layouts()
+function should.nestLayouts()
   local win = mimas.Window()
   local lay = mimas.VBoxLayout(win)
   local sub = mimas.HBoxLayout()
@@ -41,8 +41,8 @@ function should.nest_layouts()
   lay:addWidget(labl)
   lay:addLayout(sub)
 
-  local btn1 = mimas.PushButton("Hello")
-  local btn2 = mimas.PushButton("Quit")
+  local btn1 = mimas.Button("Hello")
+  local btn2 = mimas.Button("Quit")
   sub:addWidget(btn1)
   sub:addWidget(btn2)
 
@@ -57,9 +57,4 @@ function should.nest_layouts()
   win:show()
 end
 
-
-app:post(function()
-  test.all()
-end)
-
-app:exec()
+test.all()

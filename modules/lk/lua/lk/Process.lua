@@ -17,11 +17,15 @@ setmetatable(lib, {
   -- new method
  __call = function(lib, filepath_or_code)
   local self = lk.Patch(filepath_or_code, true)
+  local opts = {
+    callback = function(...)
+      return self:callback(...)
+    end,
+    
+  }
   -- TODO: can we avoid this extra step by passing
   -- self in callback ?
-  self.service = lk.Service(self.name, function(...)
-    return self:callback(...)
-  end)
+  self.service = lk.Service(self.name, opts)
 
   return self
 end})

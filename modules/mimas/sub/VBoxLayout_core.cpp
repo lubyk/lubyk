@@ -8,53 +8,25 @@ using namespace mimas;
 
 /* ============================ Constructors     ====================== */
 
-
-/** mimas::VBoxLayout::VBoxLayout(lubyk::Worker *worker, QWidget *parent)
- * include/mimas/VBoxLayout.h:55
+/** mimas::VBoxLayout::VBoxLayout(QWidget *parent=NULL)
+ * include/mimas/VBoxLayout.h:53
  */
-static int VBoxLayout_VBoxLayout1(lua_State *L) {
-  try {
-    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
-    QWidget *parent = *((QWidget **)luaL_checkudata(L, 2, "mimas.QWidget"));
-    VBoxLayout * retval__ = new VBoxLayout(worker, parent);
-    lua_pushclass2<VBoxLayout>(L, retval__, "mimas.VBoxLayout");
-    return 1;
-  } catch (std::exception &e) {
-    return luaL_error(L, "mimas.VBoxLayout.VBoxLayout: %s", e.what());
-  } catch (...) {
-    return luaL_error(L, "mimas.VBoxLayout.VBoxLayout: Unknown exception");
-  }
-}
-
-
-/** mimas::VBoxLayout::VBoxLayout()
- * include/mimas/VBoxLayout.h:57
- */
-static int VBoxLayout_VBoxLayout2(lua_State *L) {
-  try {
-    VBoxLayout * retval__ = new VBoxLayout();
-    lua_pushclass2<VBoxLayout>(L, retval__, "mimas.VBoxLayout");
-    return 1;
-  } catch (std::exception &e) {
-    return luaL_error(L, "mimas.VBoxLayout.VBoxLayout: %s", e.what());
-  } catch (...) {
-    return luaL_error(L, "mimas.VBoxLayout.VBoxLayout: Unknown exception");
-  }
-}
-
-
-
-/** Overloaded function chooser for VBoxLayout(...) */
 static int VBoxLayout_VBoxLayout(lua_State *L) {
-  int type__ = lua_type(L, 1);
-  int top__  = lua_gettop(L);
-  if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "lubyk.Worker")) {
-    return VBoxLayout_VBoxLayout1(L);
-  } else if (top__ < 1) {
-    return VBoxLayout_VBoxLayout2(L);
-  } else {
-    // use any to raise errors
-    return VBoxLayout_VBoxLayout2(L);
+  try {
+    int top__ = lua_gettop(L);
+    VBoxLayout * retval__;
+    if (top__ < 1) {
+      retval__ = new VBoxLayout();
+    } else {
+      QWidget *parent = *((QWidget **)luaL_checkudata(L, 1, "mimas.QWidget"));
+      retval__ = new VBoxLayout(parent);
+    }
+    lua_pushclass2<VBoxLayout>(L, retval__, "mimas.VBoxLayout");
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.VBoxLayout.VBoxLayout: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.VBoxLayout.VBoxLayout: Unknown exception");
   }
 }
 
@@ -102,7 +74,7 @@ static int VBoxLayout__tostring(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::addLayout(QLayout *layout)
- * include/mimas/VBoxLayout.h:68
+ * include/mimas/VBoxLayout.h:63
  */
 static int VBoxLayout_addLayout(lua_State *L) {
   try {
@@ -120,7 +92,7 @@ static int VBoxLayout_addLayout(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::addSpacing(int size)
- * include/mimas/VBoxLayout.h:81
+ * include/mimas/VBoxLayout.h:75
  */
 static int VBoxLayout_addSpacing(lua_State *L) {
   try {
@@ -138,7 +110,7 @@ static int VBoxLayout_addSpacing(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::addStretch(int stretch=0)
- * include/mimas/VBoxLayout.h:75
+ * include/mimas/VBoxLayout.h:69
  */
 static int VBoxLayout_addStretch(lua_State *L) {
   try {
@@ -161,7 +133,7 @@ static int VBoxLayout_addStretch(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::addWidget(QWidget *widget, int stretch=0, int alignment=0)
- * include/mimas/VBoxLayout.h:63
+ * include/mimas/VBoxLayout.h:59
  */
 static int VBoxLayout_addWidget(lua_State *L) {
   try {
@@ -190,7 +162,7 @@ static int VBoxLayout_addWidget(lua_State *L) {
 
 
 /** QLayout* mimas::VBoxLayout::layout()
- * include/mimas/VBoxLayout.h:95
+ * include/mimas/VBoxLayout.h:89
  */
 static int VBoxLayout_layout(lua_State *L) {
   try {
@@ -208,7 +180,7 @@ static int VBoxLayout_layout(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::setContentsMargins(int left, int top, int right, int bottom)
- * include/mimas/VBoxLayout.h:91
+ * include/mimas/VBoxLayout.h:85
  */
 static int VBoxLayout_setContentsMargins(lua_State *L) {
   try {
@@ -229,7 +201,7 @@ static int VBoxLayout_setContentsMargins(lua_State *L) {
 
 
 /** void mimas::VBoxLayout::setSpacing(int space)
- * include/mimas/VBoxLayout.h:87
+ * include/mimas/VBoxLayout.h:81
  */
 static int VBoxLayout_setSpacing(lua_State *L) {
   try {

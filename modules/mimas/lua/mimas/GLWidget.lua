@@ -8,6 +8,7 @@
 --]]------------------------------------------------------
 local constr = mimas_core.GLWidget
 local mt = mimas_core.GLWidget_
+local close  = mt.close
 local worker = worker
 
 local addWidget = mt.addWidget
@@ -24,3 +25,9 @@ function mimas.GLWidget()
   return constr(worker)
 end
 
+function mt:close()
+  -- close is like delete: ensure it only runs in GUI thread
+  app:post(function()
+    close(self)
+  end)
+end

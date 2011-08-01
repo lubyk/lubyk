@@ -34,7 +34,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QEvent>
 
-#include "mimas/PushButton.h"
+#include "mimas/Button.h"
 
 #include <string>
 

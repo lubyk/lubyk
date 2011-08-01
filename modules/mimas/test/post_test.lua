@@ -22,7 +22,7 @@ function should.post_to_gui_thread()
   local label  = mimas.Label("Hello Mimas!")
   layout:addWidget(label)
 
-  local quit_btn = mimas.PushButton("Quit")
+  local quit_btn = mimas.Button("Quit")
 
   -- this is the only difference with Qt:
   -- instead of using signals/slots, we use Lua

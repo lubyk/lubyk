@@ -17,8 +17,8 @@ local app = mimas.Application()
 function should.display_widgets()
   local win = mimas.Window()
   local lay = mimas.HBoxLayout(win)
-  local btn1 = mimas.PushButton("Hello")
-  local btn2 = mimas.PushButton("Quit")
+  local btn1 = mimas.Button("Hello")
+  local btn2 = mimas.Button("Quit")
   lay:addWidget(btn1)
   lay:addWidget(btn2)
 
@@ -33,8 +33,4 @@ function should.display_widgets()
   win:show()
 end
 
-app:post(function()
-  test.all()
-end)
-
-app:exec()
+test.all()

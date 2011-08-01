@@ -8,53 +8,25 @@ using namespace mimas;
 
 /* ============================ Constructors     ====================== */
 
-
-/** mimas::HBoxLayout::HBoxLayout(lubyk::Worker *worker, QWidget *parent)
- * include/mimas/HBoxLayout.h:55
+/** mimas::HBoxLayout::HBoxLayout(QWidget *parent=NULL)
+ * include/mimas/HBoxLayout.h:53
  */
-static int HBoxLayout_HBoxLayout1(lua_State *L) {
-  try {
-    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
-    QWidget *parent = *((QWidget **)luaL_checkudata(L, 2, "mimas.QWidget"));
-    HBoxLayout * retval__ = new HBoxLayout(worker, parent);
-    lua_pushclass2<HBoxLayout>(L, retval__, "mimas.HBoxLayout");
-    return 1;
-  } catch (std::exception &e) {
-    return luaL_error(L, "mimas.HBoxLayout.HBoxLayout: %s", e.what());
-  } catch (...) {
-    return luaL_error(L, "mimas.HBoxLayout.HBoxLayout: Unknown exception");
-  }
-}
-
-
-/** mimas::HBoxLayout::HBoxLayout()
- * include/mimas/HBoxLayout.h:57
- */
-static int HBoxLayout_HBoxLayout2(lua_State *L) {
-  try {
-    HBoxLayout * retval__ = new HBoxLayout();
-    lua_pushclass2<HBoxLayout>(L, retval__, "mimas.HBoxLayout");
-    return 1;
-  } catch (std::exception &e) {
-    return luaL_error(L, "mimas.HBoxLayout.HBoxLayout: %s", e.what());
-  } catch (...) {
-    return luaL_error(L, "mimas.HBoxLayout.HBoxLayout: Unknown exception");
-  }
-}
-
-
-
-/** Overloaded function chooser for HBoxLayout(...) */
 static int HBoxLayout_HBoxLayout(lua_State *L) {
-  int type__ = lua_type(L, 1);
-  int top__  = lua_gettop(L);
-  if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "lubyk.Worker")) {
-    return HBoxLayout_HBoxLayout1(L);
-  } else if (top__ < 1) {
-    return HBoxLayout_HBoxLayout2(L);
-  } else {
-    // use any to raise errors
-    return HBoxLayout_HBoxLayout2(L);
+  try {
+    int top__ = lua_gettop(L);
+    HBoxLayout * retval__;
+    if (top__ < 1) {
+      retval__ = new HBoxLayout();
+    } else {
+      QWidget *parent = *((QWidget **)luaL_checkudata(L, 1, "mimas.QWidget"));
+      retval__ = new HBoxLayout(parent);
+    }
+    lua_pushclass2<HBoxLayout>(L, retval__, "mimas.HBoxLayout");
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.HBoxLayout.HBoxLayout: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.HBoxLayout.HBoxLayout: Unknown exception");
   }
 }
 
@@ -102,7 +74,7 @@ static int HBoxLayout__tostring(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::addLayout(QLayout *layout)
- * include/mimas/HBoxLayout.h:68
+ * include/mimas/HBoxLayout.h:63
  */
 static int HBoxLayout_addLayout(lua_State *L) {
   try {
@@ -120,7 +92,7 @@ static int HBoxLayout_addLayout(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::addSpacing(int size)
- * include/mimas/HBoxLayout.h:81
+ * include/mimas/HBoxLayout.h:75
  */
 static int HBoxLayout_addSpacing(lua_State *L) {
   try {
@@ -138,7 +110,7 @@ static int HBoxLayout_addSpacing(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::addStretch(int stretch=0)
- * include/mimas/HBoxLayout.h:75
+ * include/mimas/HBoxLayout.h:69
  */
 static int HBoxLayout_addStretch(lua_State *L) {
   try {
@@ -161,7 +133,7 @@ static int HBoxLayout_addStretch(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::addWidget(QWidget *widget, int stretch=0, int alignment=0)
- * include/mimas/HBoxLayout.h:63
+ * include/mimas/HBoxLayout.h:59
  */
 static int HBoxLayout_addWidget(lua_State *L) {
   try {
@@ -190,7 +162,7 @@ static int HBoxLayout_addWidget(lua_State *L) {
 
 
 /** QLayout* mimas::HBoxLayout::layout()
- * include/mimas/HBoxLayout.h:95
+ * include/mimas/HBoxLayout.h:89
  */
 static int HBoxLayout_layout(lua_State *L) {
   try {
@@ -208,7 +180,7 @@ static int HBoxLayout_layout(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::setContentsMargins(int left, int top, int right, int bottom)
- * include/mimas/HBoxLayout.h:91
+ * include/mimas/HBoxLayout.h:85
  */
 static int HBoxLayout_setContentsMargins(lua_State *L) {
   try {
@@ -229,7 +201,7 @@ static int HBoxLayout_setContentsMargins(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::setSpacing(int space)
- * include/mimas/HBoxLayout.h:87
+ * include/mimas/HBoxLayout.h:81
  */
 static int HBoxLayout_setSpacing(lua_State *L) {
   try {

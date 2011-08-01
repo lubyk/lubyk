@@ -225,5 +225,7 @@ function lib:delete()
     -- remove ghost from selection my selecting only self
     self.delegate:selectNodeView(self)
   end
-  self.super:__gc()
+  app:post(function()
+    self.super:__gc()
+  end)
 end

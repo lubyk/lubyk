@@ -33,31 +33,35 @@
 using namespace lubyk;
 
 #include "mimas/mimas.h"
+#include "mimas/constants.h"
+
 #include <QtGui/QPushButton>
+#include <QtGui/QMouseEvent>
 
 #include <iostream>
 
 namespace mimas {
 
-/** PushButton widget.
+/** Button widget.
  *
- * @dub lib_name:'PushButton_core'
+ * @dub lib_name:'Button_core'
  *      destructor: 'dub_destroy'
  */
-class PushButton : public QPushButton, public DeletableOutOfLua, public LuaUserdataEnv
+class Button : public QPushButton, public DeletableOutOfLua, public LuaUserdataEnv
 {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
   Q_PROPERTY(float hue READ hue WRITE setHue)
 
+  Worker *worker_;
+  LuaCallback click_clbk_;
 public:
-  PushButton(const char *title = NULL)
-   : QPushButton(title) {}
+  Button(lubyk::Worker *worker, const char *title = NULL, QWidget *parent = NULL)
+   : QPushButton(title, parent),
+     worker_(worker),
+     click_clbk_(worker) {}
 
-  PushButton(const char *title, QWidget *parent)
-   : QPushButton(title, parent) {}
-
-  ~PushButton() {
+  ~Button() {
     MIMAS_DEBUG_GC
   }
 
@@ -131,6 +135,44 @@ public:
 
   // =============================================================
 
+
+  /** Set a callback function.
+   *
+   */
+  void __newindex(lua_State *L) {
+    // Stack should be ... <self> <key> <value>
+    std::string key(luaL_checkstring(L, -2));
+
+    luaL_checktype(L, -1, LUA_TFUNCTION);
+    lua_pushvalue(L, -3);
+    // ... <self> <key> <value> <self>
+    lua_pushvalue(L, -2);
+    // ... <self> <key> <value> <self> <value>
+    if (key == "click") {
+      click_clbk_.set_lua_callback(L);
+    } else {
+      luaL_error(L, "Invalid function name '%s' (valid names are 'click').", key.c_str());
+    }
+
+    lua_pop(L, 2);
+    // ... <self> <key> <value>
+  }
+protected:
+
+  virtual void mousePressEvent(QMouseEvent *event) {
+    click(event, MousePress);
+  }
+
+  virtual void mouseDoubleClickEvent(QMouseEvent *event) {
+    click(event, DoubleClick);
+  }
+
+  virtual void mouseReleaseEvent(QMouseEvent *event) {
+    click(event, MouseRelease);
+  }
+
+  /// What is this ????
+
   // This method inserts the given object to this environment table
   // Stack should be
   // ... <self> <value>
@@ -138,6 +180,8 @@ public:
     LuaUserdataEnv::add_to_env(L);
   }
 private:
+  void click(QMouseEvent *event, int type);
+
   float hue_;
 };
 
