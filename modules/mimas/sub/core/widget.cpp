@@ -29,6 +29,7 @@
 
 #include "mimas/Widget.h"
 #include "mimas/Painter.h"
+#include "mimas/Region.h"
 
 namespace mimas {
 
@@ -140,6 +141,10 @@ void Widget::keyboard(QKeyEvent *event, bool isPressed) {
   if (status) {
     fprintf(stderr, "Error in keyboard callback: %s\n", lua_tostring(L, -1));
   }
+}
+
+void Widget::setMask(mimas::Region *region) {
+  QWidget::setMask(*region);
 }
 
 } // mimas

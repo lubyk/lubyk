@@ -33,6 +33,7 @@
 #include "mimas/Callback.h"
 
 #include <QtGui/QApplication>
+#include <QtGui/QDesktopWidget>
 
 #include <iostream>
 
@@ -109,6 +110,15 @@ public:
 
   void setStyleSheet(const char *text) {
     QApplication::setStyleSheet(QString(text));
+  }
+
+  /** Return the size of the desktop as a pair (width, height).
+   */
+  LuaStackSize screenSize(lua_State *L) {
+    QRect rect = desktop()->geometry();
+    lua_pushnumber(L, rect.width());
+    lua_pushnumber(L, rect.height());
+    return 2;
   }
 
 private:

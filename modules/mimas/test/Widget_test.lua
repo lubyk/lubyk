@@ -39,7 +39,24 @@ end
 
 --=====================================================
 
-function should.add_widgets_to_window(t)
+function should.centerWidget(t)
+  t.win = mimas.Window()
+  t.win:setStyle 'background:transparent'
+  t.lay = mimas.VBoxLayout(t.win)
+  t.lbl = mimas.Label("This should be centered")
+  t.win:resize(300,200)
+  t.win:center()
+  t.lbl:setStyle "color:#fee; text-align:center; background:orange"
+  t.lay:addWidget(t.lbl)
+  t.win:show()
+  t.thread = lk.Thread(function()
+    sleep(1400)
+    t.win:close()
+    assertTrue(true)
+  end)
+end
+
+function should.addWidgetsToWindow(t)
   -- we use the test env to protect from gc
   t.win = mimas.Window()
   t.lay = mimas.VBoxLayout(t.win)
@@ -52,7 +69,7 @@ function should.add_widgets_to_window(t)
   t.win:show()
 
   t.thread = lk.Thread(function()
-    sleep(400)
+    sleep(2400)
     t.win:close()
     assertTrue(true)
   end)
@@ -90,7 +107,7 @@ local function modName(mod)
   end
 end
 
-function should.respond_to_click(t)
+function should.respondToClick(t)
   -- we use the test env to protect from gc
   t.win = mimas.Window()
   function t.win.click(x, y, op, btn, mod)
@@ -114,7 +131,7 @@ function should.respond_to_click(t)
   t.win:show()
 
   t.thread = lk.Thread(function()
-    sleep(14000)
+    sleep(2000)
     t.win:close()
     assertTrue(true)
   end)

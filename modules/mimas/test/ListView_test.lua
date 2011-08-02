@@ -55,5 +55,26 @@ function should.respondToClick(t)
   end)
 end
 
+function should.useDataSource(t)
+  t.view = mimas.ListView()
+  t.data = mimas.DataSource()
+
+  function t.data.rowCount()
+    return #data
+  end
+
+  function t.data.data(row)
+    return data[row]
+  end
+
+  t.view:setModel(t.data)
+
+  function t.view.select(row)
+    assertTrue(2, row)
+    t.view:close()
+  end
+  t.view:show()
+end
+
 test.all()
 

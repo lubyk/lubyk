@@ -57,26 +57,22 @@ class ListView : public QListView, public DeletableOutOfLua
   Q_PROPERTY(float hue READ hue WRITE setHue)
 
   Worker *worker_;
-  //LuaCallback paint_clbk_;
-  //LuaCallback resized_clbk_;
   LuaCallback mouse_clbk_;
   LuaCallback click_clbk_;
-  //LuaCallback keyboard_clbk_;
+  LuaCallback select_clbk_;
   QSize size_hint_;
 
   DataSource  data_source_;
 public:
   ListView(lubyk::Worker *worker) :
    worker_(worker),
-   // paint_clbk_(worker),
-   // resized_clbk_(worker),
    mouse_clbk_(worker),
    click_clbk_(worker),
-   // keyboard_clbk_(worker),
+   select_clbk_(worker),
    data_source_(worker) {
     setAttribute(Qt::WA_DeleteOnClose);
     setSelectionMode(QAbstractItemView::SingleSelection);
-    setModel(&data_source_);
+    QListView::setModel(&data_source_);
     // Not editable
     setEditTriggers(QAbstractItemView::NoEditTriggers);
 
@@ -259,7 +255,7 @@ public:
   }
 
   void selectRow(int row) {
-    QModelIndex index = data_source_.index(row - 1, 0);
+    QModelIndex index = model()->index(row - 1, 0);
     if ( index.isValid() )
         selectionModel()->select( index, QItemSelectionModel::ClearAndSelect );
   }
@@ -268,6 +264,16 @@ public:
    */
   void dataChanged() {
     data_source_.reset();
+  }
+
+  /** Use an external model instead of the default one.
+   */
+  void setModel(DataSource *model = NULL) {
+    if (model) {
+      QListView::setModel(model);
+    } else {
+      QListView::setModel(&data_source_);
+    }
   }
 
   /** Set a callback function.
@@ -282,18 +288,10 @@ public:
     // ... <self> <key> <value> <self>
     lua_pushvalue(L, -2);
     // ... <self> <key> <value> <self> <value>
-    /*
-    if (key == "paint") {
-      paint_clbk_.set_lua_callback(L);
-    } else if (key == "resized") {
-      resized_clbk_.set_lua_callback(L);
-    } else if (key == "keyboard") {
-      keyboard_clbk_.set_lua_callback(L);
-    } else if (key == "data") {
-    } else
-    */
     if (key == "click") {
       click_clbk_.set_lua_callback(L);
+    } else if (key == "select") {
+      select_clbk_.set_lua_callback(L);
     } else if (key == "mouse") {
       mouse_clbk_.set_lua_callback(L);
     } else if (key == "data" || key == "header" || key == "rowCount" || key == "columnCount" || key == "index") {
@@ -336,6 +334,7 @@ protected:
 
 private:
   bool click(QMouseEvent *event, int type);
+  bool select(QMouseEvent *event, int type);
 };
 
 } // mimas

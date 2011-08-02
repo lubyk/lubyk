@@ -151,7 +151,7 @@ static int Label_height(lua_State *L) {
 
 
 /** float mimas::Label::hue()
- * include/mimas/Label.h:120
+ * include/mimas/Label.h:124
  */
 static int Label_hue(lua_State *L) {
   try {
@@ -243,7 +243,7 @@ static int Label_resize(lua_State *L) {
 
 
 /** void mimas::Label::setHue(float hue)
- * include/mimas/Label.h:115
+ * include/mimas/Label.h:119
  */
 static int Label_setHue(lua_State *L) {
   try {
@@ -296,8 +296,26 @@ static int Label_setStyle(lua_State *L) {
 }
 
 
+/** void mimas::Label::setStyleSheet(const char *text)
+ * include/mimas/Label.h:115
+ */
+static int Label_setStyleSheet(lua_State *L) {
+  try {
+    Label *self__ = *((Label**)luaL_checkudata(L, 1, "mimas.Label"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Label in setStyleSheet");
+    const char *text = luaL_checkstring(L, 2);
+    self__->setStyleSheet(text);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Label.setStyleSheet: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Label.setStyleSheet: Unknown exception");
+  }
+}
+
+
 /** void mimas::Label::setText(const char *text)
- * include/mimas/Label.h:126
+ * include/mimas/Label.h:130
  */
 static int Label_setText(lua_State *L) {
   try {
@@ -401,6 +419,7 @@ static const struct luaL_Reg Label_member_methods[] = {
   {"setHue"            , Label_setHue},
   {"setName"           , Label_setName},
   {"setStyle"          , Label_setStyle},
+  {"setStyleSheet"     , Label_setStyleSheet},
   {"setText"           , Label_setText},
   {"widget"            , Label_widget},
   {"width"             , Label_width},

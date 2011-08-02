@@ -54,7 +54,7 @@ static int Application__tostring(lua_State *L) {
 
 
 /** static LuaStackSize mimas::Application::MakeApplication(lubyk::Worker *worker, lua_State *L)
- * include/mimas/Application.h:63
+ * include/mimas/Application.h:64
  */
 static int Application_MakeApplication(lua_State *L) {
   try {
@@ -71,7 +71,7 @@ static int Application_MakeApplication(lua_State *L) {
 
 
 /** int mimas::Application::exec()
- * include/mimas/Application.h:88
+ * include/mimas/Application.h:89
  */
 static int Application_exec(lua_State *L) {
   try {
@@ -89,7 +89,7 @@ static int Application_exec(lua_State *L) {
 
 
 /** void mimas::Application::post(lua_State *L)
- * include/mimas/Application.h:100
+ * include/mimas/Application.h:101
  */
 static int Application_post(lua_State *L) {
   try {
@@ -107,7 +107,7 @@ static int Application_post(lua_State *L) {
 
 
 /** void mimas::Application::quit()
- * include/mimas/Application.h:106
+ * include/mimas/Application.h:107
  */
 static int Application_quit(lua_State *L) {
   try {
@@ -123,8 +123,26 @@ static int Application_quit(lua_State *L) {
 }
 
 
+/** LuaStackSize mimas::Application::screenSize(lua_State *L)
+ * include/mimas/Application.h:117
+ */
+static int Application_screenSize(lua_State *L) {
+  try {
+    Application *self__ = *((Application**)luaL_checkudata(L, 1, "mimas.Application"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Application in screenSize");
+    
+    LuaStackSize  retval__ = self__->screenSize(L);
+    return retval__;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Application.screenSize: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Application.screenSize: Unknown exception");
+  }
+}
+
+
 /** void mimas::Application::setStyleSheet(const char *text)
- * include/mimas/Application.h:110
+ * include/mimas/Application.h:111
  */
 static int Application_setStyleSheet(lua_State *L) {
   try {
@@ -142,7 +160,7 @@ static int Application_setStyleSheet(lua_State *L) {
 
 
 /** static void mimas::Application::terminate(int sig)
- * include/mimas/Application.h:95
+ * include/mimas/Application.h:96
  */
 static int Application_terminate(lua_State *L) {
   try {
@@ -165,6 +183,7 @@ static const struct luaL_Reg Application_member_methods[] = {
   {"exec"              , Application_exec},
   {"post"              , Application_post},
   {"quit"              , Application_quit},
+  {"screenSize"        , Application_screenSize},
   {"setStyleSheet"     , Application_setStyleSheet},
   {"__tostring"        , Application__tostring},
   {"__gc"              , Application_destructor},

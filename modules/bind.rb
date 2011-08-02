@@ -55,7 +55,7 @@ modules = {
   'mdns'  => %w{Browser Registration},
   'midi'  => %w{In Out},
   'mimas' => {
-    'class' => %w{Application Brush Button Callback Color FileObserver GLWidget HBoxLayout Label LineEdit ListView Path Painter Pen  Slider TableView VBoxLayout Widget},
+    'class' => %w{Application Brush Button Callback Color DataSource FileObserver GLWidget HBoxLayout Label LineEdit ListView Path Painter Pen Slider TableView VBoxLayout Widget},
     'const' => true,
   },
   'zmq'   => {

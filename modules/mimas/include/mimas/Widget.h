@@ -44,6 +44,7 @@ using namespace lubyk;
 namespace mimas {
 
 class Painter;
+class Region;
 
 /** The Widget is used to display custom elements or windows.
  *
@@ -64,7 +65,7 @@ class Widget : public QWidget, public DeletableOutOfLua
   LuaCallback keyboard_clbk_;
   QSize size_hint_;
 public:
-  Widget(lubyk::Worker *worker) :
+  Widget(lubyk::Worker *worker, int window_flags = 0) :
    worker_(worker),
    paint_clbk_(worker),
    resized_clbk_(worker),
@@ -73,6 +74,7 @@ public:
    click_clbk_(worker),
    keyboard_clbk_(worker) {
     setAttribute(Qt::WA_DeleteOnClose);
+    setWindowFlags((Qt::WindowFlags)window_flags);
   }
 
   ~Widget() {
@@ -138,6 +140,15 @@ public:
 
   int height() {
     return QWidget::height();
+  }
+
+  /** Return the size of the widget as a pair (width, height).
+   */
+  LuaStackSize size(lua_State *L) {
+    QRect rect = QWidget::geometry();
+    lua_pushnumber(L, rect.width());
+    lua_pushnumber(L, rect.height());
+    return 2;
   }
 
   void setStyle(const char *text) {

@@ -51,3 +51,9 @@ function mt:close()
     end)
   end
 end
+
+function mt:center()
+  local w, h = app:screenSize()
+  local sw, sh = self:size()
+  self:move((w - sw) / 2, (h - sh) / 2)
+end

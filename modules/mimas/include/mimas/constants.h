@@ -573,6 +573,21 @@ enum Key {
   Key_Zoom = Qt::Key_Zoom,
   Key_Cancel = Qt::Key_Cancel,
 };
+
+enum WindowFlags {
+  WidgetFlag       = Qt::Widget,
+  WindowFlag       = Qt::Window,
+  DialogFlag       = Qt::Dialog,
+  SheetFlag        = Qt::Sheet,
+  DrawerFlag       = Qt::Drawer,
+  PopupFlag        = Qt::Popup,
+  ToolFlag         = Qt::Tool,
+  ToolTipFlag      = Qt::ToolTip,
+  SplashScreenFlag = Qt::SplashScreen,
+  DesktopFlag      = Qt::Desktop,
+  SubWindowFlag    = Qt::SubWindow,
+};
+
 } // mimas
 
 #endif // LUBYK_INCLUDE_MIMAS_CONSTANTS_H_

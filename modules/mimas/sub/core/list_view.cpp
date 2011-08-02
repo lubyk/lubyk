@@ -57,7 +57,11 @@ void ListView::mouseMoveEvent(QMouseEvent *event) {
 }
 
 bool ListView::click(QMouseEvent *event, int type) {
+  if (select_clbk_.lua_) {
+    return select(event, type);
+  }
   lua_State *L = click_clbk_.lua_;
+
   if (!L) return false;
 
   ScopedLock lock(worker_);
@@ -82,7 +86,43 @@ bool ListView::click(QMouseEvent *event, int type) {
     // Pass to ListView
     return false;
   }
-  // done
+
+  return true;
+}
+
+bool ListView::select(QMouseEvent *event, int type) {
+  if (type != MousePress) {
+    return true; // ignore
+  }
+  lua_State *L = select_clbk_.lua_;
+
+  if (!L) return false;
+
+  ScopedLock lock(worker_);
+
+  QModelIndex idx = QListView::indexAt(QPoint(event->x(), event->y()));
+  if (!idx.isValid()) {
+    return false;
+  }
+
+  select_clbk_.push_lua_callback(false);
+  // <fun>
+  lua_pushnumber(L, idx.row() + 1);
+  lua_pushnumber(L, idx.column() + 1);
+  // <fun> <row> <col>
+  int status = lua_pcall(L, 2, 1, 0);
+
+  if (status) {
+    fprintf(stderr, "Error in 'select' callback: %s\n", lua_tostring(L, -1));
+  }
+
+  // FIXME: find another way to remove the dotted lines around text after click.
+  clearFocus();
+  if (!lua_isnil(L, -1)) {
+    // Pass to ListView
+    return false;
+  }
+
   return true;
 }
 

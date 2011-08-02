@@ -12,7 +12,7 @@ require 'lubyk'
 
 local should = test.Suite('mimas.Window')
 
-function should.display_window(t)
+function should.displayWindow(t)
   -- we use the test env to protect from gc
   t.win = mimas.Window()
   t.layout = mimas.HBoxLayout(t.win)
@@ -23,6 +23,24 @@ function should.display_window(t)
 
   t.thread = lk.Thread(function()
     sleep(200)
+    t.win:close()
+    assertTrue(true)
+  end)
+end
+
+function should.displayRoundedWindow(t)
+  -- we use the test env to protect from gc
+  t.win = mimas.SplashScreen()
+  t.layout = mimas.HBoxLayout(t.win)
+  t.win:move(100, 100)
+  t.win:resize(300, 100)
+  t.win:roundedCorners(30)
+  t.win:show()
+  t.label = mimas.Label("Window closes in 200ms")
+  t.layout:addWidget(t.label)
+
+  t.thread = lk.Thread(function()
+    sleep(12200)
     t.win:close()
     assertTrue(true)
   end)

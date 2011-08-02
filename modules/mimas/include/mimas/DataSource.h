@@ -110,6 +110,27 @@ public:
     // ... <self> <key> <value>
   }
 
+  // get a callback
+  LuaStackSize __index(lua_State *L) {
+    // <self> <key>
+    std::string key(luaL_checkstring(L, -1));
+    lua_pop(L, 2);
+    //
+    if (key == "data") {
+      lua_State *dL = data_clbk_.lua_;
+      if (dL) {
+        data_clbk_.push_lua_callback(false);
+        lua_xmove(dL, L, 1);
+        // <fun>
+        return 1;
+      } else {
+        return 0;
+      }
+    } else {
+      return 0;
+    }
+  }
+
   void reset() {
     // reload all data
     QAbstractItemModel::reset();
@@ -124,7 +145,6 @@ public:
     // ignore parent (hierarchical views) for now
     return createIndex(row, column);
   }
-
 protected:
   virtual QModelIndex parent (const QModelIndex &child) const {
     return QModelIndex(); // no parent

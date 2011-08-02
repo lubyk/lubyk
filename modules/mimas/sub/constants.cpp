@@ -493,6 +493,17 @@ static const struct lua_constants_Reg mimas_namespace_constants[] = {
   {"Key_Sleep"                     , mimas::Key_Sleep},
   {"Key_Zoom"                      , mimas::Key_Zoom},
   {"Key_Cancel"                    , mimas::Key_Cancel},
+  {"WidgetFlag"                    , mimas::WidgetFlag},
+  {"WindowFlag"                    , mimas::WindowFlag},
+  {"DialogFlag"                    , mimas::DialogFlag},
+  {"SheetFlag"                     , mimas::SheetFlag},
+  {"DrawerFlag"                    , mimas::DrawerFlag},
+  {"PopupFlag"                     , mimas::PopupFlag},
+  {"ToolFlag"                      , mimas::ToolFlag},
+  {"ToolTipFlag"                   , mimas::ToolTipFlag},
+  {"SplashScreenFlag"              , mimas::SplashScreenFlag},
+  {"DesktopFlag"                   , mimas::DesktopFlag},
+  {"SubWindowFlag"                 , mimas::SubWindowFlag},
   {NULL, NULL},
 };
 

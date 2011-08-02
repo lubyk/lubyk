@@ -9,14 +9,15 @@
 require 'lubyk'
 local should = test.Suite('editor.SimpleDialog')
 
-local function mockList(list)
-  local self = list or {'dune', 'hyperion'}
-  function self:count()
-    return #self
+local function mockList(data)
+  local self = mimas.DataSource()
+  data = data or {'dune', 'hyperion'}
+  function self.rowCount()
+    return #data
   end
 
-  function self:data(row)
-    return self[row]
+  function self.data(row)
+    return data[row]
   end
   return self
 end
@@ -31,15 +32,15 @@ function should.displayDialog(t)
     data    = t.data,
     message = 'Choose network',
     cancel  = 'Cancel',
-    new     = 'New',
+    ok      = 'New',
   }
 
-  function t.dlg:selected(name)
-    assertEqual('hyperion', name)
-    self:delete()
+  function t.dlg:select(row)
+    assertEqual(2, row)
+    self:close()
   end
 
-  function t.dlg:new()
+  function t.dlg:ok()
     self:close()
   end
 
@@ -59,8 +60,8 @@ function should.displayDialogWithoutButtons(t)
     message = 'Choose host',
   }
 
-  function t.dlg:selected(name)
-    assertEqual('hyperion', name)
+  function t.dlg:select(row)
+    assertEqual(2, row)
     self:close()
   end
 
@@ -78,11 +79,11 @@ function should.displayNextView(t)
   t.dlg = editor.SimpleDialog {
     data    = mockList(),
     message = 'Choose network (press new)',
-    new     = 'New network',
+    ok      = 'New network',
   }
   t.lay:addWidget(t.dlg)
 
-  function t.dlg:new(name)
+  function t.dlg:ok(name)
     t.dlg:close()
     t.dlg = editor.SimpleDialog {
       data    = mockList{'localhost', 'example.com'},
@@ -91,7 +92,7 @@ function should.displayNextView(t)
       line    = 'name'
     }
 
-    function t.dlg:selected(name)
+    function t.dlg:select(row)
       t.win:close()
     end
 
@@ -105,7 +106,7 @@ function should.displayNextView(t)
   t.win:show()
   t.win:move(100, 450)
   t.timeout = lk.Thread(function()
-    sleep(  4000)
+    sleep(4000)
     t.win:close()
   end)
 end

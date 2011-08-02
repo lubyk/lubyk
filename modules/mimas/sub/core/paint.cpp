@@ -59,10 +59,10 @@ void Widget::paintEvent(QPaintEvent *event) {
 // ==             Label                       ==
 // =============================================
 void Label::paintEvent(QPaintEvent *event) {
-  if (hue_ != -1) {
-    int hue = (hue_ < 0 || hue_ >= 1.0) ? 0 : hue_;
-    setStyleSheet(QString(".%1 { color:hsv(%2, 255, 255) }").arg(cssClass()).arg(hue * 360));
-  }
+  // if (hue_ != -1) {
+  //   int hue = (hue_ < 0 || hue_ >= 1.0) ? 0 : hue_;
+  //   QWidget::setStyleSheet(QString(".%1 { color:hsv(%2, 255, 255) }").arg(cssClass()).arg(hue * 360));
+  // }
   QLabel::paintEvent(event);
 }
 
@@ -72,7 +72,7 @@ void Label::paintEvent(QPaintEvent *event) {
 void LineEdit::paintEvent(QPaintEvent *event) {
   if (hue_ != -1) {
     int hue = (hue_ < 0 || hue_ >= 1.0) ? 0 : hue_;
-    setStyleSheet(QString(".%1 { color:hsv(%2, 255, 255) }").arg(cssClass()).arg(hue * 360));
+    QWidget::setStyleSheet(QString(".%1 { color:hsv(%2, 255, 255) }").arg(cssClass()).arg(hue * 360));
   }
   QLineEdit::paintEvent(event);
 }
