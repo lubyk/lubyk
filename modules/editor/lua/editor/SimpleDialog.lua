@@ -1,6 +1,6 @@
 --[[------------------------------------------------------
 
-  editor.DlgChooseInList
+  editor.SimpleDialog
   -----------------------
 
   This is the first widget seen when launching the editor:
@@ -8,8 +8,8 @@
   proposes to create a new network.
 
 --]]------------------------------------------------------
-local lib = mimas.WidgetClass('editor.DlgChooseInList')
-editor.DlgChooseInList = lib
+local lib = mimas.WidgetClass('editor.SimpleDialog')
+editor.SimpleDialog = lib
 
 --============================================= PRIVATE
 -- constants
@@ -20,7 +20,6 @@ function lib:init(opts)
   -- Compose widget
   local w = {}
   self.widgets = w
-  self.data = opts.data
   w.lay = mimas.VBoxLayout(self.super)
 
   if opts.message then
@@ -28,20 +27,34 @@ function lib:init(opts)
     w.lay:addWidget(w.select)
   end
 
-  ---------------------------- List
-  w.list = mimas.ListView()
-  function w.list.rowCount() return self.data:count()   end
-  function w.list.data(row)  return self.data:data(row) end
-  function w.list.click(x, y)
-    local i, j = w.list:indexAt(x, y)
-    self:selected(opts.data[i])
+  if opts.data then
+    ---------------------------- List
+    w.list = mimas.ListView()
+    function w.list.rowCount() return opts.data:count()   end
+    function w.list.data(row)  return opts.data:data(row) end
+    function w.list.click(x, y)
+      local i, j = w.list:indexAt(x, y)
+      self:selected(opts.data[i])
+    end
+
+    w.lay:addWidget(w.list)
+    w.list:setStyleSheet[[
+      .list {background:#333; border:1px solid #666}
+      .list::item { border-bottom:1px solid #666; color:white; background:#6E4E24}
+    ]]
   end
 
-  w.lay:addWidget(w.list)
-  w.list:setStyleSheet[[
-    .list {background:#333; border:1px solid #666}
-    .list::item { border-bottom:1px solid #666; color:white; background:#6E4E24}
-  ]]
+  if opts.line then
+    ---------------------------- LineEdit
+    w.edit_lay = mimas.HBoxLayout()
+    --- Label
+    w.line_lbl = mimas.Label(opts.line)
+    w.edit_lay:addWidget(w.line_lbl)
+    --- LineEdit
+    w.line     = mimas.LineEdit(opts.line_value or '')
+    w.edit_lay:addWidget(w.line)
+    w.lay:addWidget(w.edit_lay)
+  end
 
   w.btn_lay = mimas.HBoxLayout()
   w.btn_lay:addStretch()
@@ -70,20 +83,12 @@ function lib:init(opts)
   w.lay:addWidget(w.btn_lay)
 end
 
-function lib:delete()
-  self.widget = nil
-  -- Delete widget
-  app:post(function()
-    self.super:__gc()
-  end)
-end
-
 function lib:selected()
-  error("Please set 'selected' callback for DlgChooseInList")
+  error("Please set 'selected' callback for SimpleDialog")
 end
 
 function lib:new()
-  error("Please set 'new' callback for DlgChooseInList")
+  error("Please set 'new' callback for SimpleDialog")
 end
 
 function lib:cancel()

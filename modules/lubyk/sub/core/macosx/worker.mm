@@ -28,8 +28,12 @@
 */
 #include "lubyk/worker.h"
 #include "lubyk/cocoa.h"
+#include "lubyk/lua.h"
 
 using namespace lubyk;
+
+#include <mach-o/dyld.h> // _NSGetExecutablePath
+
 
 class Worker::Implementation : public lubyk::Thread {
 public:
@@ -73,4 +77,86 @@ void Worker::run() {
   ScopedUnlock unlock(this);
   [NSApplication sharedApplication];
   [NSApp run];
+}
+
+static char *getExecPath() {
+
+  // http://stackoverflow.com/questions/1023306/finding-current-executables-path-without-proc-self-exe
+  uint32_t bufsize = 200;
+  char *buf = (char*)malloc(bufsize * sizeof(char));
+  if (_NSGetExecutablePath(buf, &bufsize)) {
+    // buffer too small
+    char * nbuf = (char*)realloc(buf, bufsize * sizeof(char));
+    if (nbuf) {
+      if (_NSGetExecutablePath(nbuf, &bufsize)) {
+        // error again .... ?
+        free(nbuf);
+        return NULL;
+      } else {
+        return nbuf;
+      }
+    } else {
+      // could not allocate memory
+      free(buf);
+      return NULL;
+    }
+  } else {
+    // ok
+    return buf;
+  }
+}
+/** Get the current executable's path.
+ */
+LuaStackSize Worker::execPath(lua_State *L) {
+  char *path = getExecPath();
+  if (path) {
+    lua_pushstring(L, path);
+    free(path);
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+/** Start a new process with the given Lua script.
+ */
+LuaStackSize Worker::spawn(const char *script, lua_State *L) {
+  char *path = getExecPath();
+  if (path) {
+    char arg1[] = "-e";
+    char *argv[] = {path, arg1, const_cast<char*>(script), NULL};
+
+    int pid = fork();
+    if (pid == 0) {
+      // child process
+      execv(argv[0], argv);
+      // unreachable
+      exit(0);
+      return 0;
+    } else {
+      // parent process
+      free(path);
+      lua_pushnumber(L, pid);
+      return 1;
+    }
+  } else {
+    // could not get executable path
+    return 0;
+  }
+}
+
+void Worker::exit(int status) {
+  unlock();
+  ::exit(status);
+}
+
+int Worker::waitpid(int pid) {
+  int child_status;
+  ScopedUnlock unlock(this);
+  ::waitpid(pid, &child_status, 0);
+  if (WIFEXITED(child_status)) {
+    return WEXITSTATUS(child_status);
+  } else {
+    return -1;
+  }
 }

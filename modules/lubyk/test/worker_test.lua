@@ -28,4 +28,31 @@ function should.wait_in_main()
   assertTrue(worker:now() <= now + 21)
 end
 
+function should.returnExecPath()
+  assertMatch('bin/lua', worker:execPath())
+end
+
+function should.spawnProcess()
+  io.write('concurrent: ')
+  io.flush()
+  -- concurrent execution of the two loops
+  local pid = worker:spawn[[
+    require 'lubyk'
+    for i=1,6 do
+      sleep(20)
+      io.write('.')
+      io.flush()
+    end
+    worker:exit(5)
+  ]]
+
+  for i=1,5 do
+    sleep(20)
+    io.write('x')
+    io.flush()
+  end
+  -- wait for pid to finish
+  assertEqual(5, worker:waitpid(pid))
+  print('')
+end
 test.all()

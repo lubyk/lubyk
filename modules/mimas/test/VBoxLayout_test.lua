@@ -39,7 +39,7 @@ function should.nestLayouts()
   local sub = mimas.HBoxLayout()
   local labl = mimas.Label("Title")
   lay:addWidget(labl)
-  lay:addLayout(sub)
+  lay:addWidget(sub)
 
   local btn1 = mimas.Button("Hello")
   local btn2 = mimas.Button("Quit")

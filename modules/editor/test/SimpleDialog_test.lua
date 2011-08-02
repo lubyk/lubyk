@@ -1,13 +1,13 @@
 --[[------------------------------------------------------
 
-  Basic tests for DlgChooseInList
+  Basic tests for SimpleDialog
   --------------------------------
 
   ...
 
 --]]------------------------------------------------------
 require 'lubyk'
-local should = test.Suite('editor.DlgChooseInList')
+local should = test.Suite('editor.SimpleDialog')
 
 local function mockList(list)
   local self = list or {'dune', 'hyperion'}
@@ -22,12 +22,12 @@ local function mockList(list)
 end
 
 function should.loadCode()
-  assertTrue(editor.DlgChooseInList)
+  assertTrue(editor.SimpleDialog)
 end
 
 function should.displayDialog(t)
   t.data = mockList()
-  t.dlg = editor.DlgChooseInList {
+  t.dlg = editor.SimpleDialog {
     data    = t.data,
     message = 'Choose network',
     cancel  = 'Cancel',
@@ -54,7 +54,7 @@ end
 
 function should.displayDialogWithoutButtons(t)
   t.data = mockList()
-  t.dlg = editor.DlgChooseInList {
+  t.dlg = editor.SimpleDialog {
     data    = t.data,
     message = 'Choose host',
   }
@@ -75,7 +75,7 @@ end
 function should.displayNextView(t)
   t.win = mimas.Window()
   t.lay = mimas.VBoxLayout(t.win)
-  t.dlg = editor.DlgChooseInList {
+  t.dlg = editor.SimpleDialog {
     data    = mockList(),
     message = 'Choose network (press new)',
     new     = 'New network',
@@ -84,10 +84,11 @@ function should.displayNextView(t)
 
   function t.dlg:new(name)
     t.dlg:close()
-    t.dlg = editor.DlgChooseInList {
+    t.dlg = editor.SimpleDialog {
       data    = mockList{'localhost', 'example.com'},
       message = 'Choose host',
-      cancel  = 'Abort'
+      cancel  = 'Abort',
+      line    = 'name'
     }
 
     function t.dlg:selected(name)
@@ -104,7 +105,7 @@ function should.displayNextView(t)
   t.win:show()
   t.win:move(100, 450)
   t.timeout = lk.Thread(function()
-    sleep(12000)
+    sleep(  4000)
     t.win:close()
   end)
 end

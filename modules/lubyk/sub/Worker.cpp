@@ -53,8 +53,42 @@ static int Worker__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
+/** LuaStackSize lubyk::Worker::execPath(lua_State *L)
+ * include/lubyk/worker.h:111
+ */
+static int Worker_execPath(lua_State *L) {
+  try {
+    Worker *self__ = *((Worker**)luaL_checkudata(L, 1, "lubyk.Worker"));
+    
+    LuaStackSize  retval__ = self__->execPath(L);
+    return retval__;
+  } catch (std::exception &e) {
+    return luaL_error(L, "lubyk.Worker.execPath: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "lubyk.Worker.execPath: Unknown exception");
+  }
+}
+
+
+/** void lubyk::Worker::exit(int status)
+ * include/lubyk/worker.h:107
+ */
+static int Worker_exit(lua_State *L) {
+  try {
+    Worker *self__ = *((Worker**)luaL_checkudata(L, 1, "lubyk.Worker"));
+    int status = luaL_checkint(L, 2);
+    self__->exit(status);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "lubyk.Worker.exit: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "lubyk.Worker.exit: Unknown exception");
+  }
+}
+
+
 /** double lubyk::Worker::now()
- * include/lubyk/worker.h:108
+ * include/lubyk/worker.h:125
  */
 static int Worker_now(lua_State *L) {
   try {
@@ -71,7 +105,7 @@ static int Worker_now(lua_State *L) {
 
 
 /** void lubyk::Worker::run()
- * include/lubyk/worker.h:106
+ * include/lubyk/worker.h:123
  */
 static int Worker_run(lua_State *L) {
   try {
@@ -103,8 +137,26 @@ static int Worker_sleep(lua_State *L) {
 }
 
 
+/** LuaStackSize lubyk::Worker::spawn(const char *script, lua_State *L)
+ * include/lubyk/worker.h:99
+ */
+static int Worker_spawn(lua_State *L) {
+  try {
+    Worker *self__ = *((Worker**)luaL_checkudata(L, 1, "lubyk.Worker"));
+    const char *script = luaL_checkstring(L, 2);
+    
+    LuaStackSize  retval__ = self__->spawn(script, L);
+    return retval__;
+  } catch (std::exception &e) {
+    return luaL_error(L, "lubyk.Worker.spawn: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "lubyk.Worker.spawn: Unknown exception");
+  }
+}
+
+
 /** void lubyk::Worker::test_lock()
- * include/lubyk/worker.h:97
+ * include/lubyk/worker.h:114
  */
 static int Worker_test_lock(lua_State *L) {
   try {
@@ -120,7 +172,7 @@ static int Worker_test_lock(lua_State *L) {
 
 
 /** void lubyk::Worker::test_unlock()
- * include/lubyk/worker.h:102
+ * include/lubyk/worker.h:119
  */
 static int Worker_test_unlock(lua_State *L) {
   try {
@@ -152,17 +204,39 @@ static int Worker_wait(lua_State *L) {
 }
 
 
+/** int lubyk::Worker::waitpid(int pid)
+ * include/lubyk/worker.h:103
+ */
+static int Worker_waitpid(lua_State *L) {
+  try {
+    Worker *self__ = *((Worker**)luaL_checkudata(L, 1, "lubyk.Worker"));
+    int pid = luaL_checkint(L, 2);
+    int  retval__ = self__->waitpid(pid);
+    lua_pushnumber(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    return luaL_error(L, "lubyk.Worker.waitpid: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "lubyk.Worker.waitpid: Unknown exception");
+  }
+}
+
+
 
 
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg Worker_member_methods[] = {
+  {"execPath"          , Worker_execPath},
+  {"exit"              , Worker_exit},
   {"now"               , Worker_now},
   {"run"               , Worker_run},
   {"sleep"             , Worker_sleep},
+  {"spawn"             , Worker_spawn},
   {"test_lock"         , Worker_test_lock},
   {"test_unlock"       , Worker_test_unlock},
   {"wait"              , Worker_wait},
+  {"waitpid"           , Worker_waitpid},
   {"__tostring"        , Worker__tostring},
   {"__gc"              , Worker_destructor},
   {NULL, NULL},

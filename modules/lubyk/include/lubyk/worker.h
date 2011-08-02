@@ -93,6 +93,23 @@ public:
     Thread::millisleep(duration);
   }
 
+  /** Start a new process with the given Lua script.
+   * @return new process id or nil on failure
+   */
+  LuaStackSize spawn(const char *script, lua_State *L);
+
+  /** Wait for another process to finish.
+   */
+  int waitpid(int pid);
+
+  /** Exit with a given status.
+   */
+  void exit(int status);
+
+  /** Get the current executable's path.
+   */
+  LuaStackSize execPath(lua_State *L);
+
   /** Used for testing. */
   void test_lock() {
     lock();
