@@ -1,0 +1,3 @@
+* OpenGL bindings with luajit FFI (see https://github.com/Neopallium/lua-zmq/blob/master/src/zmq_ffi.nobj.lua)
+* Video grabing/recording (using FFI ? OpenCV ? FFMPEG ?). See https://github.com/mkottman/ffi_fun/blob/master/ffmpeg_audio.lua
+* Morph saves

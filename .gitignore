@@ -11,7 +11,12 @@ ideas
 *~
 *.swp
 *.pch
+*.nki
+*.aiff
 build
 lib
 zcpp/doc/prototypes/test
 tmp
+rename.rb
+modules/lua
+lua
