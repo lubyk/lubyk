@@ -43,19 +43,54 @@ function lib:init(opts)
 
   if opts.line then
     ---------------------------- LineEdit
-    w.edit_lay = mimas.HBoxLayout()
+    w.line_lay = mimas.HBoxLayout()
     --- Label
     w.line_lbl = mimas.Label(opts.line)
-    w.edit_lay:addWidget(w.line_lbl)
+    w.line_lay:addWidget(w.line_lbl)
     --- LineEdit
     w.line     = mimas.LineEdit(opts.line_value or '')
     if opts.ok then
-      function w.line.editingFinished(text)
-        self:ok()
+      function w.line.keyboard(key, on)
+        if key == mimas.Key_Enter and on then
+          self:ok()
+        else
+          -- pass to LineEdit
+          return false
+        end
       end
     end
-    w.edit_lay:addWidget(w.line)
-    w.lay:addWidget(w.edit_lay)
+    w.line_lay:addWidget(w.line)
+    w.lay:addWidget(w.line_lay)
+  end
+
+  if opts.line2 then
+    ---------------------------- LineEdit
+    w.line2_lay = mimas.HBoxLayout()
+    --- Label
+    w.line2_lbl = mimas.Label(opts.line2)
+    w.line2_lay:addWidget(w.line2_lbl)
+    --- LineEdit
+    w.line2     = mimas.LineEdit(opts.line2_value or '')
+    if opts.ok then
+      function w.line2.keyboard(key, on)
+        if key == mimas.Key_Enter and on then
+          self:ok()
+        else
+          -- pass to LineEdit
+          return false
+        end
+      end
+    end
+    w.line2_lay:addWidget(w.line2)
+
+    if opts.line2_file_dialog then
+      w.line2_btn = mimas.Button('Open...')
+      function w.line2_btn.click()
+        self:openFileDialog()
+      end
+      w.line2_lay:addWidget(w.line2_btn)
+    end
+    w.lay:addWidget(w.line2_lay)
   end
 
   w.btn_lay = mimas.HBoxLayout()
@@ -94,7 +129,7 @@ function lib:ok()
 end
 
 --- Return the value in the LineEdit.
-function lib:text()
+function lib:line()
   local line = self.widgets.line
   if line then
     return line:text()
@@ -103,6 +138,36 @@ function lib:text()
   end
 end
 
+--- Return the value in the LineEdit.
+function lib:line2()
+  local line2 = self.widgets.line2
+  if line2 then
+    return line2:text()
+  else
+    return nil
+  end
+end
+
 function lib:cancel()
   self:close()
+end
+
+function lib:openFileDialog()
+  local line2 = self.widgets.line2
+  if line2 then
+    local path = self:getOpenFileName('Select lua script', nil, 'Lua files (*.lua)')
+    if path then
+      line2:setText(path)
+    end
+  end
+end
+
+function lib:openProjectDialog()
+  local line2 = self.widgets.line2
+  if line2 then
+    local path = self:getExistingDirectory('Select project directory')
+    if path then
+      line2:setText(path)
+    end
+  end
 end

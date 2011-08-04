@@ -1,6 +1,8 @@
 #include "mimas/Application.h"
 #include <csignal>
 
+#include <QtGui/QFileDialog>
+
 static char arg0[] = "mimas";
 static char arg1[] = "-style";
 static char arg2[] = "Plastique";

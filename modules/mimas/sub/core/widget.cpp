@@ -29,7 +29,8 @@
 
 #include "mimas/Widget.h"
 #include "mimas/Painter.h"
-#include "mimas/Region.h"
+
+#include <QtGui/QFileDialog>
 
 namespace mimas {
 
@@ -143,8 +144,41 @@ void Widget::keyboard(QKeyEvent *event, bool isPressed) {
   }
 }
 
-void Widget::setMask(mimas::Region *region) {
-  QWidget::setMask(*region);
+LuaStackSize Widget::getOpenFileName(const char *caption,
+                        const char *the_base_dir,
+                        const char *the_filter,
+                        int options,
+                        lua_State *L) {
+  QString base_dir(the_base_dir);
+  if (base_dir.isEmpty()) base_dir = QString();
+
+  QString filter(the_filter);
+  if (filter.isEmpty()) filter = QString();
+
+  QString path = QFileDialog::getOpenFileName(this, caption, base_dir, filter, 0, (QFileDialog::Option)options);
+  if (path.isNull()) {
+    return 0;
+  } else {
+    lua_pushstring(L, path.toUtf8().data());
+    return 1;
+  }
+}
+
+
+LuaStackSize Widget::getExistingDirectory(const char *caption,
+                        const char *the_base_dir,
+                        int options,
+                        lua_State *L) {
+  QString base_dir(the_base_dir);
+  if (base_dir.isEmpty()) base_dir = QString();
+
+  QString path = QFileDialog::getExistingDirectory(this, caption, base_dir, (QFileDialog::Option)options);
+  if (path.isNull()) {
+    return 0;
+  } else {
+    lua_pushstring(L, path.toUtf8().data());
+    return 1;
+  }
 }
 
 } // mimas

@@ -136,7 +136,23 @@ function should.respondToClick(t)
     assertTrue(true)
   end)
 end
--- other tests for Widget are in window_test
 
+function should.openFileDialog(t)
+  local path = lk.file()
+  local basedir, filename = lk.directory(path)
+  t.win = mimas.Window()
+  t.win:show()
+  assertEqual(path, t.win:getOpenFileName(string.format('Select "%s"', filename), basedir, 'Lua files (*.lua)'))
+  t.win:close()
+end
+
+function should.getExistingDirectory(t)
+  local path = lk.directory(lk.file())
+  local basedir, dirname = lk.directory(path)
+  t.win = mimas.Window()
+  t.win:show()
+  assertEqual(path, t.win:getExistingDirectory(string.format('Select "%s"', dirname), basedir))
+  t.win:close()
+end
 
 test.all()

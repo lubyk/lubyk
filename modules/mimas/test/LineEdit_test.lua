@@ -10,12 +10,18 @@ require 'lubyk'
 
 local should = test.Suite('mimas.LineEdit')
 
+local pos = 10
+local function stack(win)
+  win:move(10, pos)
+  win:resize(200, 50)
+  pos = pos + 100
+end
+
 function should.acceptDestroyFromGui()
   local win = mimas.Window()
-  win:resize(50, 50)
+  stack(win)
   win:show()
   local edit = mimas.LineEdit("Hop", win)
-
   thread = lk.Thread(function()
     win = nil
     collectgarbage('collect')
@@ -26,7 +32,7 @@ end
 
 function should.acceptDestroyFromLua(t)
   t.win = mimas.Window()
-  t.win:move(100,50)
+  stack(t.win)
   t.layout = mimas.HBoxLayout(t.win)
   local edit = mimas.LineEdit("LineEdit destroyed by Lua in 1s")
   t.layout:addWidget(edit)
@@ -37,13 +43,14 @@ function should.acceptDestroyFromLua(t)
     collectgarbage('collect')
     -- LineEdit destroyed by Lua
     sleep(1000)
-    assertTrue(t.win:close()) -- visual feedback needed..
+    t.win:close()
+    assertTrue(true) -- visual feedback needed..
   end)
 end
 
 function should.callback(t)
   t.win = mimas.Window()
-  t.win:move(100, 120)
+  stack(t.win)
   t.lb = mimas.LineEdit("Change this to close")
   t.lb:selectAll()
   t.lay = mimas.VBoxLayout(t.win)
@@ -57,7 +64,7 @@ function should.callback(t)
   assertTrue(true)
   t.win:show()
   t.thread = lk.Thread(function()
-    sleep(12000)
+    sleep(2000)
     t.win:close()
   end)
 end
@@ -75,7 +82,7 @@ end
 
 function should.haveKeyboardCallback(t)
   t.win = mimas.Window()
-  t.win:move(100, 120)
+  stack(t.win)
   t.lb = mimas.LineEdit("type up key to close")
   t.lb:selectAll()
   t.lay = mimas.VBoxLayout(t.win)
@@ -95,9 +102,26 @@ function should.haveKeyboardCallback(t)
   end)
 end
 
+function should.haveClickCallback(t)
+  t.win = mimas.Window()
+  stack(t.win)
+  t.lb = mimas.LineEdit("click to close")
+  t.lb:selectAll()
+  t.lay = mimas.VBoxLayout(t.win)
+  t.lay:addWidget(t.lb)
+  function t.lb.click(x, y, type, btn, mod)
+    t.win:close()
+  end
+  t.win:show()
+  t.thread = lk.Thread(function()
+    sleep(10000)
+    t.win:close()
+  end)
+end
+
 function should.styleLineEdits(t)
   t.win = mimas.Window()
-  t.win:move(100, 120)
+  stack(t.win)
   t.lb = mimas.LineEdit("LineEdit not in layout", t.win)
   t.lb:move(180, 0)
   t.lb:resize(180, 20)
@@ -141,3 +165,5 @@ function should.styleLineEdits(t)
 end
 
 test.all()
+
+print('done')

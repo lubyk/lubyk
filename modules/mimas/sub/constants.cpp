@@ -504,6 +504,13 @@ static const struct lua_constants_Reg mimas_namespace_constants[] = {
   {"SplashScreenFlag"              , mimas::SplashScreenFlag},
   {"DesktopFlag"                   , mimas::DesktopFlag},
   {"SubWindowFlag"                 , mimas::SubWindowFlag},
+  {"ShowDirsOnly"                  , mimas::ShowDirsOnly},
+  {"DontResolveSymlinks"           , mimas::DontResolveSymlinks},
+  {"DontConfirmOverwrite"          , mimas::DontConfirmOverwrite},
+  {"DontUseNativeDialog"           , mimas::DontUseNativeDialog},
+  {"ReadOnly"                      , mimas::ReadOnly},
+  {"HideNameFilterDetails"         , mimas::HideNameFilterDetails},
+  {"DontUseSheet"                  , mimas::DontUseSheet},
   {NULL, NULL},
 };
 

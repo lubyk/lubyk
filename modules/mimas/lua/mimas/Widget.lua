@@ -57,3 +57,14 @@ function mt:center()
   local sw, sh = self:size()
   self:move((w - sw) / 2, (h - sh) / 2)
 end
+
+local getOpenFileName = mt.getOpenFileName
+
+function mt:getOpenFileName(caption, base_dir, filter, options)
+  return getOpenFileName(self, caption, base_dir or '', filter or '', options or 0)
+end
+
+local getExistingDirectory = mt.getExistingDirectory
+function mt:getExistingDirectory(caption, base_dir, options)
+  return getExistingDirectory(self, caption, base_dir or '', options or mimas.ShowDirsOnly)
+end

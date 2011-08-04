@@ -30,6 +30,7 @@
 #define LUBYK_INCLUDE_MIMAS_CONSTANTS_H_
 
 #include "mimas/mimas.h"
+#include <QtGui/QFileDialog>
 
 #include "lubyk.h"
 
@@ -574,6 +575,10 @@ enum Key {
   Key_Cancel = Qt::Key_Cancel,
 };
 
+// FIXME: what can we do with these flags ?
+// Is this better: mimas.Widget.Dialog, mimas.Widget.ShowDirsOnly ?
+// Or this: mimas.WidgetFlag, mimas.ShowDirsOnlyFlag ?
+// Or this: mimas.WidgetFlag, mimas.ShowDirsOnly (but we must make sure we do not need flag names as classes...)
 enum WindowFlags {
   WidgetFlag       = Qt::Widget,
   WindowFlag       = Qt::Window,
@@ -586,6 +591,16 @@ enum WindowFlags {
   SplashScreenFlag = Qt::SplashScreen,
   DesktopFlag      = Qt::Desktop,
   SubWindowFlag    = Qt::SubWindow,
+};
+
+enum FileDialogFlags {
+  ShowDirsOnly          = QFileDialog::ShowDirsOnly,
+  DontResolveSymlinks   = QFileDialog::DontResolveSymlinks,
+  DontConfirmOverwrite  = QFileDialog::DontConfirmOverwrite,
+  DontUseNativeDialog   = QFileDialog::DontUseNativeDialog,
+  ReadOnly              = QFileDialog::ReadOnly,
+  HideNameFilterDetails = QFileDialog::HideNameFilterDetails,
+  DontUseSheet          = QFileDialog::DontUseSheet,
 };
 
 } // mimas

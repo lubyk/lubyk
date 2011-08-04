@@ -30,11 +30,13 @@
 #define LUBYK_INCLUDE_MIMAS_LINE_EDIT_H_
 
 #include "mimas/mimas.h"
+#include "mimas/constants.h"
 
 using namespace lubyk;
 
 #include <QtGui/QWidget>
 #include <QtGui/QLineEdit>
+#include <QtGui/QMouseEvent>
 
 namespace mimas {
 
@@ -51,6 +53,7 @@ class LineEdit : public QLineEdit, public DeletableOutOfLua
   LuaCallback editing_finished_clbk_;
   LuaCallback text_edited_clbk_;
   LuaCallback keyboard_clbk_;
+  LuaCallback click_clbk_;
   LuaCallback resized_clbk_;
   LuaCallback moved_clbk_;
   /** The component's color.
@@ -58,11 +61,12 @@ class LineEdit : public QLineEdit, public DeletableOutOfLua
   float hue_;
 public:
   LineEdit(lubyk::Worker *worker, const char *content = NULL, QWidget *parent = NULL)
-   : QLineEdit(content),
+   : QLineEdit(content, parent),
      worker_(worker),
      editing_finished_clbk_(worker),
      text_edited_clbk_(worker),
      keyboard_clbk_(worker),
+     click_clbk_(worker),
      resized_clbk_(worker),
      moved_clbk_(worker),
      hue_(-1) {
@@ -73,6 +77,10 @@ public:
     QObject::connect(this, SIGNAL(textEdited(QString)),
                      this, SLOT(textEdited(QString))
     );
+  }
+
+  ~LineEdit() {
+    MIMAS_DEBUG_GC
   }
 
   // ============================ common code to all mimas Widgets
@@ -202,6 +210,8 @@ public:
       editing_finished_clbk_.set_lua_callback(L);
     } else if (key == "textEdited") {
       text_edited_clbk_.set_lua_callback(L);
+    } else if (key == "click") {
+      click_clbk_.set_lua_callback(L);
     } else if (key == "keyboard") {
       keyboard_clbk_.set_lua_callback(L);
     } else if (key == "resized") {
@@ -230,12 +240,28 @@ protected:
     }
   }
 
+  virtual void mousePressEvent(QMouseEvent *event) {
+    if (!click(event, MousePress))
+      QLineEdit::mousePressEvent(event);
+  }
+
+  virtual void mouseDoubleClickEvent(QMouseEvent *event) {
+    if (!click(event, DoubleClick))
+      QLineEdit::mouseDoubleClickEvent(event);
+  }
+
+  virtual void mouseReleaseEvent(QMouseEvent *event) {
+    if (!click(event, MouseRelease))
+      QLineEdit::mouseReleaseEvent(event);
+  }
+
   virtual void moveEvent(QMoveEvent * event);
   virtual void resizeEvent(QResizeEvent *event);
 
 private:
   virtual void paintEvent(QPaintEvent *event);
   bool keyboard(QKeyEvent *event, bool isPressed);
+  bool click(QMouseEvent *event, int type);
 
 private slots:
 

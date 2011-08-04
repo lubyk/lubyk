@@ -1,13 +1,13 @@
 --[[------------------------------------------------------
 
-  Basic tests for NetworkChooser
+  Basic tests for ZoneChooser
   -----------------------------
 
   ...
 
 --]]------------------------------------------------------
 require 'lubyk'
-local should = test.Suite('editor.NetworkChooser')
+local should = test.Suite('editor.ZoneChooser')
 
 local function mockList(data)
   local self = mimas.DataSource()
@@ -42,11 +42,11 @@ local function mockDelegate()
 end
 
 function should.loadCode()
-  assertTrue(editor.NetworkChooser)
+  assertTrue(editor.ZoneChooser)
 end
 
 function should.displayDialog(t)
-  t.dlg = editor.NetworkChooser(mockDelegate())
+  t.dlg = editor.ZoneChooser(mockDelegate())
   t.timeout = lk.Thread(function()
     sleep(13000)
     t.dlg:close()

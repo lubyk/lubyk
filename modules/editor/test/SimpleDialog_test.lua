@@ -89,7 +89,10 @@ function should.displayNextView(t)
       data    = mockList{'localhost', 'example.com'},
       message = 'Choose host',
       cancel  = 'Abort',
-      line    = 'name'
+      line    = 'first name',
+      line_value = 'Gaspard',
+      line2   = 'last name',
+      line2_value = 'Bucher',
     }
 
     function t.dlg:select(row)

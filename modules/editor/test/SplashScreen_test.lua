@@ -1,6 +1,6 @@
 --[[------------------------------------------------------
 
-  Basic tests for NetworkChooser
+  Basic tests for ZoneChooser
   -----------------------------
 
   ...
@@ -8,6 +8,10 @@
 --]]------------------------------------------------------
 require 'lubyk'
 local should = test.Suite('editor.SplashScreen')
+
+function should.loadCode()
+  assertTrue(editor.SplashScreen)
+end
 
 local function mockList(data)
   local self = mimas.DataSource()
@@ -41,14 +45,10 @@ local function mockDelegate()
   return self
 end
 
-function should.loadCode()
-  assertTrue(editor.SplashScreen)
-end
-
 function should.displayDialog(t)
   t.dlg = editor.SplashScreen(mockDelegate())
   t.timeout = lk.Thread(function()
-    sleep(113000)
+    sleep(11000)
     t.dlg:close()
   end)
 end

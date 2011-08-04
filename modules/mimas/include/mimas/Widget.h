@@ -44,7 +44,6 @@ using namespace lubyk;
 namespace mimas {
 
 class Painter;
-class Region;
 
 /** The Widget is used to display custom elements or windows.
  *
@@ -309,6 +308,18 @@ public:
     lua_pop(L, 2);
     // ... <self> <key> <value>
   }
+
+  // ============================================================ Dialog
+  LuaStackSize getOpenFileName(const char *caption,
+                          const char *base_dir,
+                          const char *filter,
+                          int options,
+                          lua_State *L);
+
+  LuaStackSize getExistingDirectory(const char *caption,
+                          const char *base_dir,
+                          int options,
+                          lua_State *L);
 protected:
   virtual void mouseMoveEvent(QMouseEvent *event);
 

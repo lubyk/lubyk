@@ -93,4 +93,35 @@ void LineEdit::resizeEvent(QResizeEvent *event) {
     fprintf(stderr, "Error in 'resized' callback: %s\n", lua_tostring(L, -1));
   }
 }
+
+bool LineEdit::click(QMouseEvent *event, int type) {
+  lua_State *L = click_clbk_.lua_;
+
+  if (!L) return false;
+
+  ScopedLock lock(worker_);
+
+  click_clbk_.push_lua_callback(false);
+
+  lua_pushnumber(L, event->x());
+  lua_pushnumber(L, event->y());
+  lua_pushnumber(L, type);
+  lua_pushnumber(L, event->button());
+  lua_pushnumber(L, event->modifiers());
+
+  // <func> <x> <y> <type> <btn> <modifiers>
+  int status = lua_pcall(L, 5, 1, 0);
+
+  if (status) {
+    fprintf(stderr, "Error in 'click' callback: %s\n", lua_tostring(L, -1));
+  }
+  // FIXME: find another way to remove the dotted lines around text after click.
+  clearFocus();
+  if (!lua_isnil(L, -1)) {
+    // Pass to ListView
+    return false;
+  }
+
+  return true;
+}
 } // mimas
