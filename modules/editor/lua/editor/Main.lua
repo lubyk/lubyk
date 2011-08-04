@@ -16,7 +16,7 @@ editor.Main  = lib
 setmetatable(lib, {
   -- new method
  __call = function(lib)
-  local instance = {
+  local self = {
     selected_node_views = {},
     -- files edited in external editor
     observed_files      = {},
@@ -24,15 +24,22 @@ setmetatable(lib, {
     process_list        = {},
   }
   -- delegate in Library is used by LibraryView for drag&drop operations.
-  instance.library = editor.Library(nil, instance)
+  self.library = editor.Library(nil, self)
+  -- Update library
+  self.library:sync()
+  -- Start listening for processes and zones on the network
+  self.process_watch = editor.ProcessWatch(self)
 
-  setmetatable(instance, lib)
+  setmetatable(self, lib)
 
-  function instance.file_observer.pathChanged(path)
-    instance:pathChanged(path)
+  function self.file_observer.pathChanged(path)
+    self:pathChanged(path)
   end
-  return instance
+  return self
 end})
+
+function lib:startProcessWatch()
+end
 
 function lib:selectNodeView(node_view, add_to_selection)
   if not add_to_selection then
@@ -184,4 +191,38 @@ function lib:closestSlotView(gx, gy, for_type, skip_node)
     end
   end
   return best_slot, best_dist
+end
+
+--============================================= ZoneChooser delegate
+
+local function mockList(data)
+  local self = mimas.DataSource()
+  function self.rowCount()
+    return #data
+  end
+  function self.data(row)
+    return data[row]
+  end
+  return self
+end
+
+function lib:networksDataSource()
+  return mockList{'foobar', 'baz'}
+end
+
+function lib:hostsDataSource()
+  return mockList{'localhost', 'example.com'}
+end
+
+function lib:selectNetwork(network_name)
+  print('selected', network_name)
+end
+
+function lib:startNetwork(host_name, path)
+  print(string.format('start network with "%s" on "%s"', path, host_name))
+  self.main_view = editor.MainView(self)
+  self.splash_view:close()
+  self.splash_view = nil
+  self.main_view:show()
+  main.main_view:move(50, 50)
 end
