@@ -15,7 +15,7 @@ function should.autoLoad()
 end
 
 function should.createMain()
-  assertEqual('editor.Main', editor.main.type)
+  assertEqual('editor.Zone', editor.main.type)
 end
 
 function should.shouldEditFile()

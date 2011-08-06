@@ -15,15 +15,15 @@ lk.ProcessWatch = lib
 
 setmetatable(lib, {
   -- new method
- __call = function(lib, delegate, createProcess)
+ __call = function(lib, delegate)
   local service_type = lubyk.service_type
   local self = {
-    browser = lk.ServiceBrowser(service_type),
-    found_processes   = {},
-    -- Dummy proxy needed to link.
-    pending_processes = {},
-    delegate = delegate,
+    browser        = lk.ServiceBrowser(service_type),
+    found_services = {},
+    -- weak table
+    delegates      = setmetatable({}, {__mode = 'v'}),
   }
+  setmetatable(self, lib)
 
   --======================================= SUB client
   self.sub = zmq.SimpleSub(function(...)
@@ -31,52 +31,48 @@ setmetatable(lib, {
     local url, service_name = ...
     if url == lubyk.add_service_url then
       -- resolve pending
-      if self.found_processes[service_name] then
+      if self.found_services[service_name] then
         -- allready found
         return
       end
 
-      local remote_service = self.browser.services[service_name]
-      local process = self.pending_processes[service_name]
-
-      if process then
-        -- connect
-        self.pending_processes[service_name] = nil
-      else
-        -- create new
-        process = createProcess(service_name, remote_service)
+      local service = self.browser.services[service_name]
+      local zone, name = string.match(service_name, '^([^:]+):(.*)$')
+      if not zone then
+        print('Error in ProcessWatch: found service without zone', service_name)
+        return
       end
 
-      process:connect(remote_service)
+      service.zone = zone
+      service.name = name
 
-      self.found_processes[service_name] = process
-      self.delegate:addProcess(process)
+      self.found_services[service_name] = service
+
+      for _, delegate in ipairs(self.delegates) do
+        delegate:addService(service)
+      end
     elseif url == lubyk.rem_service_url then
-      local process = self.found_processes[service_name]
-      -- remove connection (make dummy)
-      if process then
-        self.found_processes[service_name] = nil
-        self.pending_processes[service_name] = process
-        process:disconnect()
-        self.delegate:removeProcess(process)
+      local service = self.found_services[service_name]
+      if service then
+        -- remove
+        self.found_services[service_name] = nil
+        for _, delegate in ipairs(self.delegates) do
+          delegate:removeService(service)
+        end
       end
-    else
-      -- ???
     end
   end)
+
   -- so we can get connection commands from the service browser
   self.sub:connect(string.format('inproc://%s', service_type))
 
-  setmetatable(self, lib)
+  self:addDelegate(delegate)
   return self
 end})
 
-function lib:findProcess(process_name)
-  local process = self.found_processes[process_name] or
-                  self.pending_processes[process_name]
-  if not process then
-    process = lk.RemoteProcess(process_name)
-    self.pending_processes[process_name] = process
+function lib:addDelegate(delegate)
+  table.insert(self.delegates, delegate)
+  for _, service in pairs(self.found_services) do
+    delegate:addService(service)
   end
-  return process
 end

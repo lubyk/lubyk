@@ -17,7 +17,7 @@ function mockProcess()
     hue            = 0.3,
     nodes          = {},
     pending_inlets = {},
-    delegate       = editor.Main(),
+    delegate       = editor.Zone(),
   }
   setmetatable(process, editor.Process)
   return process
@@ -146,7 +146,7 @@ end
 function should.syncFromRemote(t)
   t.remote   = lk.Process(fixture.path('simple.yml'))
   t.delegate = mockDelegate(t)
-  t.watch    = editor.ProcessWatch(t.delegate)
+  t.watch    = lk.ProcessWatch(t.delegate)
 end
 
 test.gui()

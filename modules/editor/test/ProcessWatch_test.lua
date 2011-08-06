@@ -15,7 +15,7 @@ require 'lubyk'
 local should = test.Suite('editor.ProcessWatch')
 
 local function mockDelegate()
-  return editor.Main()
+  return editor.Zone()
 end
 
 function should.add_widgets_to_list(t)

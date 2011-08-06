@@ -1,14 +1,14 @@
 --[[------------------------------------------------------
 
-  editor.MainView
+  editor.ZoneView
   ---------------
 
   Main view holding the different parts of the editor
   (LibraryView, HelpView, PatchView and ControlView).
 
 --]]------------------------------------------------------
-local lib = mimas.WidgetClass('editor.MainView')
-editor.MainView = lib
+local lib = mimas.WidgetClass('editor.ZoneView')
+editor.ZoneView = lib
 
 -- constants
 local WIDTH   = 600

@@ -48,7 +48,7 @@ local makeZoneChooser, makeHostChooser, makePathSelector
 -- 1. Choose network
 function makeZoneChooser(self)
   self.dlg = editor.SimpleDialog {
-    data    = self.networks_data_source,
+    data    = self.zone_data,
     message = 'Choose zone',
     ok      = 'New',
     cancel  = 'Quit',
@@ -57,11 +57,11 @@ function makeZoneChooser(self)
 
   function self.dlg.select(dlg, row)
     self.network_id = row
-    local name = self.networks_data_source.data(row)
+    local name = self.zone_data.data(row)
     -- The user has selected a network. We
     -- are done.
     dlg:close()
-    self.delegate:selectNetwork(name)
+    self.delegate:selectZone(name)
   end
 
   function self.dlg.ok(dlg)
@@ -77,7 +77,7 @@ end
 -- 2. New network --> choose host
 function makeHostChooser(self)
   self.dlg = editor.SimpleDialog {
-    data    = self.hosts_data_source,
+    data    = self.host_data,
     message = 'Choose host',
     cancel  = 'Back',
     ok      = 'Local',
@@ -85,7 +85,7 @@ function makeHostChooser(self)
 
   function self.dlg.select(dlg, row)
     -- The user has selected a host.
-    self.host_name = self.hosts_data_source.data(row)
+    self.host_name = self.host_data.data(row)
     dlg:close()
     -- Ask for project path
     makePathSelector(self)
@@ -131,7 +131,7 @@ function makePathSelector(self)
     self.zone = dlg:line()
     self.project_path = dlg:line2()
     dlg:close()
-    self.delegate:startNetwork(self.host_name, self.project_path)
+    self.delegate:startZone(self.zone, self.host_name, self.project_path)
   end
 
   self.lay:addWidget(self.dlg)
@@ -151,8 +151,8 @@ end
 function lib:init(delegate)
   self.delegate = delegate
 
-  self.hosts_data_source    = delegate:hostsDataSource()
-  self.networks_data_source = delegate:networksDataSource()
+  self.host_data = delegate:hostsDataSource()
+  self.zone_data = delegate:zonesDataSource()
   self.lay  = mimas.VBoxLayout(self)
   makeZoneChooser(self)
   self:resize(300, 300)

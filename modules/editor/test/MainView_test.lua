@@ -1,6 +1,6 @@
 --[[------------------------------------------------------
 
-  editor.MainView test
+  editor.ZoneView test
   --------------------
 
   ...
@@ -8,13 +8,13 @@
 --]]------------------------------------------------------
 require 'lubyk'
 
-local should = test.Suite('editor.MainView')
+local should = test.Suite('editor.ZoneView')
 
 function should.drawMainView(t)
   t.remote   = lk.Process(fixture.path('simple.yml'))
-  t.editor   = editor.Main()
-  t.watch    = editor.ProcessWatch(t.editor)
-  t.editor:setView(editor.MainView(t.editor))
+  t.editor   = editor.Zone()
+  t.watch    = lk.ProcessWatch(t.editor)
+  t.editor:setView(editor.ZoneView(t.editor))
   t.editor.main_view:show()
   sleep(2000)
 end

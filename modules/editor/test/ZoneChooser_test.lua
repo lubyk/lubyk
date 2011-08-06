@@ -22,7 +22,7 @@ end
 
 local function mockDelegate()
   local self = {}
-  function self:networksDataSource()
+  function self:zonesDataSource()
     return mockList{'foobar', 'baz'}
   end
 
@@ -30,12 +30,12 @@ local function mockDelegate()
     return mockList{'localhost', 'example.com'}
   end
 
-  function self:selectNetwork(network_name)
+  function self:selectZone(network_name)
     print('selected', network_name)
   end
 
-  function self:startNetwork(host_name, path)
-    print(string.format('start network with "%s" on "%s"', path, host_name))
+  function self:startZone(zone_name, host_name, path)
+    print(string.format("Start zone '%s' with morph path '%s' on '%s'", zone_name, host_name, path))
   end
 
   return self

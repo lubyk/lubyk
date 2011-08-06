@@ -55,30 +55,35 @@ end
 
 setmetatable(lib, {
   -- new method
- __call = function(lib, filepath_or_code, is_process)
+ __call = function(lib, filepath_or_code, zone)
   local self  = {
-    nodes         = {},
-    pending_nodes = {},
-    work_dir      = lfs.currentdir(),
+    zone              = zone,
+    nodes             = {},
+    pending_nodes     = {},
+    pending_processes = {},
+    found_processes   = {},
+    work_dir          = lfs.currentdir(),
   }
   setmetatable(self, lib)
   if not filepath_or_code then
     return self
   end
-
-  if is_process then
+  if zone then
     -- Create processes watch before loading code (to resolve remote
     -- processes).
     --
     --- Watch for other processes on the network and create
     -- lk.RemoteProcess proxies when needed.
-    self.process_watch = lk.ProcessWatch(self, lk.RemoteProcess)
+    self.process_watch = lk.ProcessWatch(self)
   end
 
   if string.match(filepath_or_code, '\n') then
     -- set filepath to the script containing calling lk.Patch()
     -- this is where the content will be saved
-    if is_process then
+    if zone then
+      -- this is a process
+      -- When we load from morph, we must set file loader to be the
+      -- remote morph server. (find code)
       setFilePath(self, lk.file(-2))
       self.is_process = true
     else
@@ -307,7 +312,7 @@ function lib:findClass(class_name)
   return lk.findCode(class_name)
 end
 
---=====================================================================
+--===========================================================
 --================= Process related methods ===========================
 
 --- Answering requests to Process.
@@ -345,13 +350,18 @@ function lib:notify(changes)
 end
 
 --- In order to resolve cross-process links, return a process by a given name.
--- ALSO USED BY editor.Process
 function lib:findProcess(process_name)
   if process_name == self.name then
     return self
   elseif self.process_watch then
     -- RemoteProcess
-    return self.process_watch:findProcess(process_name)
+    local process = self.found_processes[process_name] or
+                    self.pending_processes[process_name]
+    if not process then
+      process = lk.RemoteProcess(process_name)
+      self.pending_processes[process_name] = process
+    end
+    return process
   else
     -- TODO: better error handling
     print(string.format("Cannot find process '%s' (no lk.ProcessWatch).", process_name))
@@ -368,22 +378,52 @@ function lib:url()
   return '/' .. self.name
 end
 
+--=============================================== ProcessWatch delegate
+
 -- Callback on found process in ProcessWatch. Not used for the moment.
-function lib:addProcess(remote_process)
-  if remote_process.name == self.name then
-    -- do not register
+function lib:addService(remote_service)
+  if remote_service.zone ~= self.zone then
+    -- not in our zone: ignore
+    return
+  end
+
+  local service_name = remote_service.name
+  if service_name then
+    -- this is a process
+    local process = self.pending_processes[service_name]
+
+    if process then
+      -- connect
+      self.pending_processes[service_name] = nil
+    else
+      -- create new
+      process = lk.RemoteProcess(service_name, remote_service)
+    end
+    self.found_processes[service_name] = process
+    process:connect(remote_service)
   else
-    -- Registration in done in the process watch
-    --print(self.name, 'ADD', remote_process.name)
+    -- this is the morph server
   end
 end
 
 -- Callback on removed process in ProcessWatch. Not used for the moment.
-function lib:removeProcess(remote_process)
-  if remote_process.name == self.name then
-    -- do not register
+function lib:removeService(remote_service)
+  if remote_service.zone ~= self.zone then
+    -- not in our zone: ignore
+    return
+  end
+
+  local service_name = remote_service.name
+  if service_name then
+    -- process
+    -- transform to pending process
+    local process = self.found_processes[service_name]
+    if process then
+      process:disconnect()
+      self.found_processes[service_name] = nil
+      self.pending_processes[service_name] = process
+    end
   else
-    -- Unregistration in done in the process watch
-    --print(self.name, 'REMOVE', remote_process.name)
+    -- morph going offline
   end
 end

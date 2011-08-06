@@ -122,13 +122,22 @@ lib.get = lk.Patch.get
 lib.findByPath = lk.Patch.findByPath
 
 --- Find a process by name.
--- FIXME: write our own... Why ?
-lib.findProcess = lk.Patch.findProcess
+function lib:findProcess(process_name)
+  if process_name == self.name then
+    return self
+  elseif self.delegate then
+    -- ask editor.Zone for process
+    return self.delegate:findProcess(process_name)
+  else
+    -- TODO: better error handling
+    print(string.format("Cannot find process '%s' (no lk.ProcessWatch).", process_name))
+    return nil
+  end
+end
 
 -- Create a pending inlet from an url relative to this process (nearly the same
 -- as lk.Patch.pendingInlet).
 function lib:pendingInlet(inlet_url)
-  print('pendingInlet', inlet_url)
   -- inlet_url example:
   --   node/in/slot
   local parts = lk.split(inlet_url, '/')
@@ -202,11 +211,9 @@ end
 end
 
 -- Process is coming online.
-function lib:connect(remote_service, delegate, process_watch)
+function lib:connect(remote_service, delegate)
   -- The delegate is used by views.
   self.delegate       = delegate
-  -- This is used to resolve links.
-  self.process_watch  = process_watch
   self.push           = remote_service.push
   self.req            = remote_service.req
 

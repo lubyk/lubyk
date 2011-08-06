@@ -1,15 +1,15 @@
 --[[------------------------------------------------------
 
-  editor.main
+  editor.Main
   -----------
 
-  Singleton to hold editor state information (such as
-  current selection, etc).
+  Singleton to start splash screen and open editor
+  windows (editor.Zone). This class has no public methods.
 
 --]]------------------------------------------------------
 
-local lib    = {type='editor.Main'}
-lib.__index  = lib
+local lib   = {type='editor.Main'}
+lib.__index = lib
 editor.Main  = lib
 
 -- PUBLIC
@@ -17,212 +17,89 @@ setmetatable(lib, {
   -- new method
  __call = function(lib)
   local self = {
-    selected_node_views = {},
-    -- files edited in external editor
-    observed_files      = {},
-    file_observer       = mimas.FileObserver(),
-    process_list        = {},
+    -- editing windows' models
+    zones     = {},
+    -- found zones
+    zone_list = {},
+    -- hosts
+    host_list = {'localhost'},
   }
-  -- delegate in Library is used by LibraryView for drag&drop operations.
-  self.library = editor.Library(nil, self)
-  -- Update library
-  self.library:sync()
-  -- Start listening for processes and zones on the network
-  self.process_watch = editor.ProcessWatch(self)
-
   setmetatable(self, lib)
 
-  function self.file_observer.pathChanged(path)
-    self:pathChanged(path)
-  end
+  -- Start listening for processes and zones on the network
+  self.process_watch = lk.ProcessWatch(self)
+  -- Data source for zones
+  self.zone_data = mimas.DataSource(self.zone_list)
+  -- Data source for hosts
+  self.host_data = mimas.DataSource(self.host_list)
+
+  self.splash_view = editor.SplashScreen(self)
+  self.splash_view:show()
   return self
 end})
 
-function lib:startProcessWatch()
+
+--=============================================== ProcessWatch delegate
+local function addZone(self, remote_service)
+  table.insert(self.zone_list, remote_service)
+  -- update zone list
+  self.zone_data:reset()
 end
 
-function lib:selectNodeView(node_view, add_to_selection)
-  if not add_to_selection then
-    for _, view in pairs(self.selected_node_views) do
-      view.selected = false
-      view:update()
+local function removeZone(self, remote_service)
+  -- update zone list
+  for i, srv in ipairs(self.zone_list) do
+    if srv.zone == remote_service.zone then
+      table.remove(self.zone_list, i)
+      break
     end
-    self.selected_node_views = {}
   end
-  if node_view then
-    self.selected_node_views[node_view] = node_view
-    node_view.selected = true
-    node_view:update()
-  end
+  self.zone_data:reset()
 end
 
-function lib:deselectNodeView(node_view)
-  self.selected_node_views[node_view] = nil
-end
-
---- When a new process is discovered on the network, this method
--- is called by ProcessWatch.
-function lib:addProcess(process)
-  if self.process_list_view then
-    app:post(function()
-      -- Adding widgets must be done in the GUI thread
-      -- FIXME: use updateView()
-      self.process_list_view:addProcess(process)
-      self.main_view:placeElements()
-      self.process_list[process.name] = process
-    end)
+function lib:addService(remote_service)
+  local service_name = remote_service.name
+  if service_name then
+    -- process
+    -- we are not interested in processes in Main
   else
-    self.process_list[process.name] = process
+    -- morph
+    -- found new zone
+    addZone(self, remote_service)
   end
-  app:post(function()
-    self:toggleView(process)
-  end)
 end
 
---- When a process goes offline, this method is called.
-function lib:removeProcess(process)
-  app:post(function()
-    -- This should run in the GUI thread
-    if self.process_list_view then
-      self.process_list_view:removeProcess(process.name)
-      process:deleteView()
-    end
-    self.main_view:placeElements()
-    self.process_list[process.name] = nil
-    -- this could run anywhere but it has to run after the process is removed
-    -- from process_list
-    for _, p in pairs(self.process_list) do
-      -- transform outgoing links to the dying process to pending links.
-      p:disconnectProcess(process.name)
-    end
-  end)
-end
-
-function lib:toggleView(process)
-  if not process.view then
-    process.view = editor.ProcessView(process)
-    self.main_view:addProcessView(process.view)
+function lib:removeService(remote_service)
+  local service_name = remote_service.name
+  if service_name then
+    -- process
+    -- we are not interested in processes in Main
   else
-    process:deleteView()
+    -- morph
+    removeZone(self, remote_service)
   end
-end
-
-local work_path = _lubyk_settings.editor.work_path or
-                  string.format('%s/.lubyk/editor/tmp', os.getenv('HOME'))
-
-lk.makePath(work_path)
-
-function lib:workPath()
-  return work_path
-end
-
-local editor_cmd = _lubyk_settings.editor.editor_cmd
-
-function lib:editFile(filepath, node)
-  -- FIXME: holds node reference (make it weak ?)
-  -- FIXME: when do we remove paths ?
-  if not self.observed_files[filepath] then
-    self.file_observer:addPath(filepath)
-  end
-  self.observed_files[filepath] = node
-  if editor_cmd then
-    os.execute(string.format("%s '%s'", editor_cmd, filepath))
-  else
-    -- FIXME
-    -- use internal editor
-    os.execute(string.format("open '%s'", filepath))
-  end
-end
-
-function lib:pathChanged(path)
-  local node = self.observed_files[path]
-  if node then
-    node:fileChanged(path)
-  end
-end
-
-function lib:setView(main_view)
-  self.main_view = main_view
-  self.process_list_view = main_view.process_list_view
-end
-
---- User clicked on a link: select it.
-function lib:selectLinkView(link_view)
-  local old_selection = self.selected_link_view
-  -- select link
-  self.selected_link_view = link_view
-  if old_selection then
-    old_selection:update()
-  end
-
-  if link_view then
-    link_view:update()
-  end
-end
-
--- Find a process from global position gx, gy.
-function lib:processViewAtGlobal(gx, gy)
-  for _, process in pairs(self.process_list) do
-    local view = process.view
-    if view then
-      local vx, vy = view:globalPosition()
-      if gx > vx and gx < vx + view.width and
-         gy > vy and gy < vy + view.height then
-        return view
-      end
-    end
-  end
-  return nil
-end
-
---- Find the closest slotView in all processes from the global
--- x and global y coordinates.
--- @return closest slot and distance to center of slot.
-function lib:closestSlotView(gx, gy, for_type, skip_node)
-  local best_slot, best_dist
-  for _, process in pairs(self.process_list) do
-    local view = process.view
-    if view then
-      local slot, dist = view:closestSlotView(gx, gy, for_type, skip_node)
-      if slot and (not best_slot or dist < best_dist) then
-        best_dist = dist
-        best_slot = slot
-      end
-    end
-  end
-  return best_slot, best_dist
 end
 
 --============================================= ZoneChooser delegate
 
-local function mockList(data)
-  local self = mimas.DataSource()
-  function self.rowCount()
-    return #data
-  end
-  function self.data(row)
-    return data[row]
-  end
-  return self
-end
-
-function lib:networksDataSource()
-  return mockList{'foobar', 'baz'}
+function lib:zonesDataSource()
+  return self.zone_data
 end
 
 function lib:hostsDataSource()
-  return mockList{'localhost', 'example.com'}
+  return self.host_data
 end
 
-function lib:selectNetwork(network_name)
+function lib:selectZone(network_name)
   print('selected', network_name)
 end
 
-function lib:startNetwork(host_name, path)
-  print(string.format('start network with "%s" on "%s"', path, host_name))
-  self.main_view = editor.MainView(self)
+function lib:startZone(zone_name, host_name, path)
+  local zone = editor.Zone(zone_name, self.process_watch)
+  self.zones[zone_name] = zone
+  zone.main_view = editor.ZoneView(zone)
   self.splash_view:close()
   self.splash_view = nil
-  self.main_view:show()
-  main.main_view:move(50, 50)
+  zone.main_view:show()
+  zone.main_view:move(50, 50)
 end
