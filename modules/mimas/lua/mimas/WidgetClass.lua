@@ -43,8 +43,7 @@ function mimas.WidgetClass(class_name, flags)
   setmetatable(lib, {
     -- new method
    __call = function(lib, ...)
-    local self = {}
-    setmetatable(self, lib)
+    local self = setmetatable({}, lib)
     self.super = mimas.Widget(flags or 0)
     function self.super.paint(...)
       self:paint(...)
@@ -58,6 +57,7 @@ function mimas.WidgetClass(class_name, flags)
     function self.super.click(...)
       return self:click(...)
     end
+
     self:init(...)
     return self
   end})

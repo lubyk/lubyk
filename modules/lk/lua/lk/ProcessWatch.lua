@@ -15,7 +15,7 @@ lk.ProcessWatch = lib
 
 setmetatable(lib, {
   -- new method
- __call = function(lib, delegate)
+ __call = function(lib)
   local service_type = lubyk.service_type
   local self = {
     browser        = lk.ServiceBrowser(service_type),
@@ -66,7 +66,6 @@ setmetatable(lib, {
   -- so we can get connection commands from the service browser
   self.sub:connect(string.format('inproc://%s', service_type))
 
-  self:addDelegate(delegate)
   return self
 end})
 
@@ -75,4 +74,5 @@ function lib:addDelegate(delegate)
   for _, service in pairs(self.found_services) do
     delegate:addService(service)
   end
+  return self
 end

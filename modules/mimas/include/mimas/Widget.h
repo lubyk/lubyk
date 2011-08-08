@@ -65,6 +65,7 @@ class Widget : public QWidget, public DeletableOutOfLua
   QSize size_hint_;
 public:
   Widget(lubyk::Worker *worker, int window_flags = 0) :
+   QWidget(NULL, (Qt::WindowFlags)window_flags),
    worker_(worker),
    paint_clbk_(worker),
    resized_clbk_(worker),
@@ -73,7 +74,6 @@ public:
    click_clbk_(worker),
    keyboard_clbk_(worker) {
     setAttribute(Qt::WA_DeleteOnClose);
-    setWindowFlags((Qt::WindowFlags)window_flags);
   }
 
   ~Widget() {

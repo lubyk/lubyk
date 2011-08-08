@@ -18,7 +18,30 @@ local lib    = {type='editor.Zone'}
 lib.__index  = lib
 editor.Zone  = lib
 
--- PUBLIC
+--=============================================== PRIVATE
+local function setupLibrary(self)
+  -- delegate in Library is used by LibraryView for drag&drop operations.
+  self.library = editor.Library(nil, self)
+  -- Update library
+  self.library:sync()
+end
+
+local function setupProcessWatch(self, process_watch)
+  -- Start listening for processes and zones on the network
+  self.process_watch = process_watch:addDelegate(self)
+
+  -- Data source for zones
+  self.zone_data = mimas.DataSource(self.zone_list)
+end
+
+local function setupView(self)
+  local view = editor.ZoneView(self)
+  self.main_view = view
+  self.process_list_view = view.process_list_view
+  view:show()
+end
+
+--=============================================== PUBLIC
 setmetatable(lib, {
   -- new method
  __call = function(lib, zone, process_watch)
@@ -36,27 +59,17 @@ setmetatable(lib, {
   }
   setmetatable(self, lib)
 
-  -- delegate in Library is used by LibraryView for drag&drop operations.
-  self.library = editor.Library(nil, self)
-  -- Update library
-  self.library:sync()
-  -- Start listening for processes and zones on the network
-  if process_watch then
-    self.process_watch = process_watch:addDelegate(self)
-  else
-    self.process_watch = lk.ProcessWatch(self)
-  end
-  -- Data source for zones
-  self.zone_data = mimas.DataSource(self.zone_list)
+  setupLibrary(self)
+
+  setupProcessWatch(self, process_watch or lk.ProcessWatch())
+
+  setupView(self)
 
   function self.file_observer.pathChanged(path)
     self:pathChanged(path)
   end
   return self
 end})
-
-function lib:startProcessWatch()
-end
 
 function lib:selectNodeView(node_view, add_to_selection)
   if not add_to_selection then
@@ -120,11 +133,6 @@ function lib:pathChanged(path)
   end
 end
 
-function lib:setView(main_view)
-  self.main_view = main_view
-  self.process_list_view = main_view.process_list_view
-end
-
 --- User clicked on a link: select it.
 function lib:selectLinkView(link_view)
   local old_selection = self.selected_link_view
@@ -170,11 +178,6 @@ function lib:closestSlotView(gx, gy, for_type, skip_node)
     end
   end
   return best_slot, best_dist
-end
-
-function lib:setProcessWatch(process_watch)
-  self.process_watch = process_watch
-  process_watch:addDelegate(self)
 end
 
 --=============================================== editor.Process delegate
@@ -259,7 +262,7 @@ function lib:removeService(remote_service)
       -- not in our zone: ignore
       return
     end
-    
+
     local process = self.found_processes[service_name]
     if process then
       process:disconnect()

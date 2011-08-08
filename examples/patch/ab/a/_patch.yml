@@ -1,8 +1,3 @@
-require 'lubyk'
-
-app = mimas.Application()
-
-patch = lk.Process [[
 x: 100
 y: 40
 w: 150
@@ -26,6 +21,3 @@ nodes:
     links:
       count:
         /b/play/in/trigger: true
-]]
-
-app:exec()

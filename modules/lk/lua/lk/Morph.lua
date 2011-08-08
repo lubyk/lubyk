@@ -7,6 +7,8 @@
   "Morpheus" name. It's role is to provide save and restore
   functionality to a processing network.
 
+  TODO: automatic versioning of saved changes (git)
+
 --]]------------------------------------------------------
 
 local lib = {type='lk.Morph'}
@@ -18,12 +20,79 @@ processProxy.__index = processProxy
 
 setmetatable(lib, {
   -- new method
- __call = function(lib)
-  local self = {}
+ __call = function(lib, settings)
+  local self = {
+    zone = settings.zone,
+    -- Holds the list of all the processes that need to be running
+    -- for the project to work (not just the once actually running).
+    process_list = {},
+  }
   setmetatable(self, lib)
-  self.process_watch = lk.ProcessWatch(self, function(...) return self:newProcess(...) end)
+  -- We need to watch for stem cells (or other ways to spawn new
+  -- processes that are not local) and we need to know which processes
+  -- are already running and which ones we need to create.
+  --
+  -- TODO: implement callbacks before enabling
+  -- self.process_watch = lk.ProcessWatch():addDelegate(self)
+  -- This is similar to a file open...
+  local opts = {
+    callback = function(...)
+      return self:callback(...)
+    end,
+  }
+
+  self.service = lk.Service(self.zone .. ':', opts)
+  self:openProject(settings.path)
   return self
 end})
+
+function lib:openProject(path)
+  -- TODO: close currently opened project (stop remote processes)
+  self.dir = lk.Dir(path)
+  -- Find the list of processes. A process is a folder with a patch definition:
+  -- .../foo/_patch.yml
+  -- .../bar/_patch.yml
+  self:startProcesses()
+end
+
+function lib:startProcesses()
+  self.process_list = {}
+  for file in self.dir:glob('[^/]+/_patch.yml') do
+    local basepath, _ = lk.directory(file)
+    local _, basename = lk.directory(basepath)
+    -- Read mapping (process_name --> hostname)...
+    print('Starting', basename)
+    -- Spawn new process
+    self:spawn('localhost', basename)
+  end
+end
+
+-- Spawn a new process that will callback to get data (yml definition, assets).
+function lib:spawn(host_name, process_name)
+  -- spawn Process
+  -- We start a mimas.Application in case the process needs GUI elements.
+  worker:spawn([[
+  require 'lubyk'
+  app = mimas.Application()
+  process = lk.Process(%s)
+  app:exec()
+  ]], {
+    name = process_name,
+    zone = self.zone,
+    -- will find the morph's ip/port by it's own service discovery
+  })
+  -- spawn 
+  local code = string.format([[
+  require 'lubyk'
+  process = lk.Process(yaml.load [%s[
+  %s
+  ]%s])
+  ]], sep, yaml.dump {
+    zone = zone_name,
+    path = path,
+  }, sep)
+  worker:spawn(code)
+end
 
 function lib:newProcess(name)
   -- Create a new process proxy
@@ -136,4 +205,22 @@ end
 
 function lib:addProcess(process)
   -- do nothing
+end
+
+--- Return the content of the file at the given path in the
+-- current project.
+function lib:get(path)
+  print('Reading', path)
+  return lk.readall(self.path .. '/' .. path)
+end
+--============================================= lk.Service delegate
+
+--- Answering requests to Morph.
+function lib:callback(url, ...)
+  if url == lubyk.get_url then
+    return self:get(...)
+  else
+    -- ignore
+    print('Bad message to lk.Morph', url)
+  end
 end

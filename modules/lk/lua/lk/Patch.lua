@@ -65,6 +65,16 @@ setmetatable(lib, {
     work_dir          = lfs.currentdir(),
   }
   setmetatable(self, lib)
+
+  -- TODO: Why would we want to start a Process without a Morph server ?
+  --       Do we need to keep this compatibility with localfile based asset
+  --       fetching ?
+  --       We could make the Process without Morph some specialized version
+  --       of this one by reimplementing some kind of 'getCode' callback.
+  --
+  -- TODO: Cleanup so that the only way to start it is with a table that
+  -- can contain 'patch' (patch information), 'zone' (zone name)
+  -- or 'name' (the name of the process).
   if not filepath_or_code then
     return self
   end
@@ -74,7 +84,7 @@ setmetatable(lib, {
     --
     --- Watch for other processes on the network and create
     -- lk.RemoteProcess proxies when needed.
-    self.process_watch = lk.ProcessWatch(self)
+    self.process_watch = lk.ProcessWatch():addDelegate(self)
   end
 
   if string.match(filepath_or_code, '\n') then
@@ -302,14 +312,22 @@ end
     .../lib             <== searched for required code
 --]]
 function lib:findCode(url)
-  local filepath = '.' .. url .. '.lua'
-  -- TODO: adapt for Mnémosyne
-  return lk.readall(filepath)
+  -- TODO: make async
+  if self.morph then
+    return self.morph:request(lubyk.get_url, self:url() .. '/' .. url)
+  else
+    -- error
+    return nil
+  end
 end
 
 function lib:findClass(class_name)
-  -- TODO: adapt for Morph
-  return lk.findCode(class_name)
+  local code
+  -- if self.morph then
+  --   code = self.morph:request(lubyk.get_url, '/lib/' .. class_name)
+  -- end
+  -- TODO: make async
+  return code or lk.findCode(class_name)
 end
 
 --===========================================================
@@ -378,6 +396,26 @@ function lib:url()
   return '/' .. self.name
 end
 
+--- We found the morph server, load patch
+function lib:setMorph(service)
+  if service then
+    self.morph = service.req
+    self:sync()
+  else
+    self.morph = nil
+  end
+end
+
+--- Reload everything from morph
+function lib:sync()
+  local patch = self:findCode('_patch.yml')
+  if patch then
+    loadFromYaml(self, patch)
+  else
+    print("Could not sync: no _patch.yml")
+  end
+end
+
 --=============================================== ProcessWatch delegate
 
 -- Callback on found process in ProcessWatch. Not used for the moment.
@@ -403,6 +441,7 @@ function lib:addService(remote_service)
     process:connect(remote_service)
   else
     -- this is the morph server
+    self:setMorph(remote_service)
   end
 end
 
@@ -425,5 +464,6 @@ function lib:removeService(remote_service)
     end
   else
     -- morph going offline
+    self:setMorph(nil)
   end
 end

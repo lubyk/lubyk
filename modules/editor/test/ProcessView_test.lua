@@ -146,7 +146,7 @@ end
 function should.syncFromRemote(t)
   t.remote   = lk.Process(fixture.path('simple.yml'))
   t.delegate = mockDelegate(t)
-  t.watch    = lk.ProcessWatch(t.delegate)
+  t.watch    = lk.ProcessWatch():addDelegate(t.delegate)
 end
 
 test.gui()

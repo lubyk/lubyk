@@ -36,7 +36,8 @@ namespace mimas {
 
 // Widget::paintEvent is in paint.cpp
 
-void Widget::paint(Painter &p) {
+void Widget::paint(Painter &p)
+{
   lua_State *L = paint_clbk_.lua_;
   if (!L) return;
 
@@ -57,7 +58,8 @@ void Widget::paint(Painter &p) {
   }
 }
 
-void Widget::resizeEvent(QResizeEvent *event) {
+void Widget::resizeEvent(QResizeEvent *event)
+{
   lua_State *L = resized_clbk_.lua_;
   if (!L) return;
 
@@ -76,7 +78,8 @@ void Widget::resizeEvent(QResizeEvent *event) {
   }
 }
 
-void Widget::mouseMoveEvent(QMouseEvent *event) {
+void Widget::mouseMoveEvent(QMouseEvent *event)
+{
   lua_State *L = mouse_clbk_.lua_;
   if (!L) return;
 
@@ -100,7 +103,8 @@ void Widget::mouseMoveEvent(QMouseEvent *event) {
   }
 }
 
-void Widget::click(QMouseEvent *event, int type) {
+void Widget::click(QMouseEvent *event, int type)
+{
   lua_State *L = click_clbk_.lua_;
   if (!L) return;
 
@@ -128,7 +132,8 @@ void Widget::click(QMouseEvent *event, int type) {
 
 }
 
-void Widget::keyboard(QKeyEvent *event, bool isPressed) {
+void Widget::keyboard(QKeyEvent *event, bool isPressed)
+{
   lua_State *L = keyboard_clbk_.lua_;
   if (!L) return;
   ScopedLock lock(worker_);
@@ -148,7 +153,8 @@ LuaStackSize Widget::getOpenFileName(const char *caption,
                         const char *the_base_dir,
                         const char *the_filter,
                         int options,
-                        lua_State *L) {
+                        lua_State *L)
+{
   QString base_dir(the_base_dir);
   if (base_dir.isEmpty()) base_dir = QString();
 

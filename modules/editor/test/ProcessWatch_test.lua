@@ -20,7 +20,7 @@ end
 
 function should.add_widgets_to_list(t)
   t.delegate = mockDelegate()
-  t.watch = editor.ProcessWatch(t.delegate)
+  t.watch = editor.ProcessWatch():addDelegate(t.delegate)
   t.win = mimas.Window()
   t.lay = mimas.HBoxLayout(t.win)
   t.label = mimas.Label('Control')

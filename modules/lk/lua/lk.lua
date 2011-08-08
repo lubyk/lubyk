@@ -15,6 +15,8 @@ Autoload.global()
 lubyk = Autoload('lubyk')
 -------------------------------- CONSTANTS
 lubyk.service_type    = '_lubyk._tcp'
+-- Get content at path (used with lk.Morph)
+lubyk.get_url         = '/lk/get'
 -- Get patch basic information
 lubyk.info_url        = '/lk/info'
 -- Get all patch information at once

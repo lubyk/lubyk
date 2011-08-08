@@ -27,9 +27,11 @@ setmetatable(lib, {
   setmetatable(self, lib)
 
   -- Start listening for processes and zones on the network
-  self.process_watch = lk.ProcessWatch(self)
+  self.process_watch = lk.ProcessWatch():addDelegate(self)
+
   -- Data source for zones
   self.zone_data = mimas.DataSource(self.zone_list)
+
   -- Data source for hosts
   self.host_data = mimas.DataSource(self.host_list)
 
@@ -90,16 +92,27 @@ function lib:hostsDataSource()
   return self.host_data
 end
 
-function lib:selectZone(network_name)
-  print('selected', network_name)
+function lib:selectZone(zone_name)
+  print('selected', zone_name)
+  local zone = editor.Zone(zone_name, self.process_watch)
+  self.zones[zone_name] = zone
+  self.splash_view:close()
+  self.splash_view = nil
 end
 
 function lib:startZone(zone_name, host_name, path)
-  local zone = editor.Zone(zone_name, self.process_watch)
-  self.zones[zone_name] = zone
-  zone.main_view = editor.ZoneView(zone)
-  self.splash_view:close()
-  self.splash_view = nil
-  zone.main_view:show()
-  zone.main_view:move(50, 50)
+  -- spawn Morph server
+  -- TODO: Could we replace mimas.Application by something else worker:join() or worker:run() ?
+  worker:spawn([[
+  require 'lubyk'
+  app = mimas.Application()
+  morph = lk.Morph(%s)
+  app:exec()
+  ]], {
+    zone = zone_name,
+    path = path
+  })
+
+  -- Maybe we should make sure it started ok before selecting the zone.
+  self:selectZone(zone_name)
 end

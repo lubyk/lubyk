@@ -39,7 +39,7 @@ local function mockDelegate()
   end
 
   function self:startZone(zone_name, host_name, path)
-    print(string.format("Start zone '%s' with morph path '%s' on '%s'", zone_name, host, path))
+    print(string.format("Start zone '%s' with morph path '%s' on '%s'", zone_name, host_name, path))
   end
 
   return self
