@@ -37,9 +37,9 @@ setmetatable(lib, {
 
   --======================================= REP server (sync)
   self.rep = zmq.SimpleRep(function(...)
-    -- we do not pass callback directly so that we can update the function with self.callback=..
+    print(name, "RECEIVED REQUEST", ...)
     if ... == lubyk.info_url then
-      -- lubyk special commands
+      -- get other ports from service
       if not self.info.pub then
         -- publish and pull ports
         self.info.pub  = self.pub:port()

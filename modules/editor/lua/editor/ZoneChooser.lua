@@ -26,23 +26,6 @@ editor.ZoneChooser = lib
 --============================================= PRIVATE
 -- constants
 
--- dummy (no prior networks)
-local function mockList(data)
-  data = data or {}
-  function self:count()
-    return #data
-  end
-
-  function self:data(row)
-    return data[row]
-  end
-
-  function self:addObserver(observer)
-    -- noop
-  end
-  return self
-end
-
 local makeZoneChooser, makeHostChooser, makePathSelector
 
 -- 1. Choose network

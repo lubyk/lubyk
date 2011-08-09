@@ -14,10 +14,10 @@ lk.Dir = lib
 
 setmetatable(lib, {
   -- new method
- __call = function(lib, arg)
-  local instance = {path = arg}
-  setmetatable(instance, lib)
-  return instance
+ __call = function(lib, path)
+  local self = {path = path}
+  setmetatable(self, lib)
+  return self
 end})
 
 local function glob_list(base, pattern)

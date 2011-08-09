@@ -19,8 +19,10 @@ setmetatable(lib, {
   local self = {
     -- editing windows' models
     zones     = {},
-    -- found zones
+    -- list of found zones
     zone_list = {},
+    -- found morph by zone name
+    morphs     = {},
     -- hosts
     host_list = {'localhost'},
   }
@@ -43,15 +45,18 @@ end})
 
 --=============================================== ProcessWatch delegate
 local function addZone(self, remote_service)
-  table.insert(self.zone_list, remote_service)
+  table.insert(self.zone_list, remote_service.zone)
+  -- TODO: use editor.Morph and share with editor.Zone ?
+  self.morphs[remote_service.zone] = remote_service
   -- update zone list
   self.zone_data:reset()
 end
 
 local function removeZone(self, remote_service)
+  self.morphs[remote_service.zone] = nil
   -- update zone list
-  for i, srv in ipairs(self.zone_list) do
-    if srv.zone == remote_service.zone then
+  for i, zone in ipairs(self.zone_list) do
+    if zone == remote_service.zone then
       table.remove(self.zone_list, i)
       break
     end

@@ -38,6 +38,10 @@ setmetatable(lib, {
 
       local service = self.browser.services[service_name]
       local zone, name = string.match(service_name, '^([^:]+):(.*)$')
+      if name == '' then
+        name = nil
+      end
+      
       if not zone then
         print('Error in ProcessWatch: found service without zone', service_name)
         return

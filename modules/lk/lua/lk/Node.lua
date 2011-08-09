@@ -110,7 +110,7 @@ function lib:set(definition)
     end
   elseif not self.code then
     -- Try to find code
-    local code = self.process:findCode(self:url())
+    local code = self.process:findCode(self:url() .. '.lua' )
     if code then
       self:eval(code)
     else

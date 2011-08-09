@@ -25,6 +25,7 @@ function wait(duration)
 end
 
 local spawn = lubyk.Worker_.spawn
+--- We use yaml to pass arguments from one process to the other.
 function mt:spawn(code, args)
   local dump = yaml.dump(args)
   local sep = ''
@@ -35,6 +36,6 @@ function mt:spawn(code, args)
   end
 
   local args = string.format("yaml.load [%s[\n%s\n]%s]", sep, dump, sep)
-  -- spawn
+
   return spawn(self, string.format(code, args))
 end

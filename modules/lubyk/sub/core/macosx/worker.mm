@@ -107,7 +107,8 @@ static char *getExecPath() {
 }
 /** Get the current executable's path.
  */
-LuaStackSize Worker::execPath(lua_State *L) {
+LuaStackSize Worker::execPath(lua_State *L)
+{
   char *path = getExecPath();
   if (path) {
     lua_pushstring(L, path);
@@ -120,7 +121,8 @@ LuaStackSize Worker::execPath(lua_State *L) {
 
 /** Start a new process with the given Lua script.
  */
-LuaStackSize Worker::spawn(const char *script, lua_State *L) {
+LuaStackSize Worker::spawn(const char *script, lua_State *L)
+{
   char *path = getExecPath();
   if (path) {
     char arg1[] = "-e";

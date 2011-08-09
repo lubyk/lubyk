@@ -111,7 +111,7 @@ public:
   }
 
   // get a callback
-  LuaStackSize __index(lua_State *L) {
+  LuaStackSize getCallback(lua_State *L) {
     // <self> <key>
     std::string key(luaL_checkstring(L, -1));
     lua_pop(L, 2);
@@ -128,7 +128,7 @@ public:
       }
     } else {
       return 0;
-    }
+    } 
   }
 
   void reset() {

@@ -20,9 +20,9 @@ processProxy.__index = processProxy
 
 setmetatable(lib, {
   -- new method
- __call = function(lib, settings)
+ __call = function(lib, opts)
   local self = {
-    zone = settings.zone,
+    zone = opts.zone,
     -- Holds the list of all the processes that need to be running
     -- for the project to work (not just the once actually running).
     process_list = {},
@@ -35,14 +35,17 @@ setmetatable(lib, {
   -- TODO: implement callbacks before enabling
   -- self.process_watch = lk.ProcessWatch():addDelegate(self)
   -- This is similar to a file open...
-  local opts = {
+  local srv_opts = {
     callback = function(...)
       return self:callback(...)
     end,
   }
 
-  self.service = lk.Service(self.zone .. ':', opts)
-  self:openProject(settings.path)
+  self.service = lk.Service(self.zone .. ':', srv_opts)
+  -- let service properly start.... ?
+  -- FIXME: use a 'started' callback
+  sleep(1000)
+  self:openProject(opts.path)
   return self
 end})
 
@@ -57,41 +60,33 @@ end
 
 function lib:startProcesses()
   self.process_list = {}
+  print('startProcesses', self.dir.path)
   for file in self.dir:glob('[^/]+/_patch.yml') do
+    print('FILE', file)
     local basepath, _ = lk.directory(file)
     local _, basename = lk.directory(basepath)
     -- Read mapping (process_name --> hostname)...
-    print('Starting', basename)
     -- Spawn new process
     self:spawn('localhost', basename)
   end
+  print('OK')
 end
 
 -- Spawn a new process that will callback to get data (yml definition, assets).
 function lib:spawn(host_name, process_name)
+  print('Starting', process_name)
   -- spawn Process
   -- We start a mimas.Application in case the process needs GUI elements.
   worker:spawn([[
   require 'lubyk'
-  app = mimas.Application()
+  app     = mimas.Application()
   process = lk.Process(%s)
   app:exec()
   ]], {
     name = process_name,
     zone = self.zone,
-    -- will find the morph's ip/port by it's own service discovery
   })
-  -- spawn 
-  local code = string.format([[
-  require 'lubyk'
-  process = lk.Process(yaml.load [%s[
-  %s
-  ]%s])
-  ]], sep, yaml.dump {
-    zone = zone_name,
-    path = path,
-  }, sep)
-  worker:spawn(code)
+  -- the process will find the morph's ip/port by it's own service discovery
 end
 
 function lib:newProcess(name)
@@ -210,14 +205,21 @@ end
 --- Return the content of the file at the given path in the
 -- current project.
 function lib:get(path)
-  print('Reading', path)
-  return lk.readall(self.path .. '/' .. path)
+  return lk.readall(self.dir.path .. '/' .. path)
 end
 --============================================= lk.Service delegate
 
 --- Answering requests to Morph.
 function lib:callback(url, ...)
-  if url == lubyk.get_url then
+  if url == lubyk.dump_url then
+    return {
+      zone = self.zone,
+    }
+  elseif url == lubyk.update_url then
+    local data = ...
+    -- async call, no return value
+    -- update state
+  elseif url == lubyk.get_url then
     return self:get(...)
   else
     -- ignore

@@ -28,3 +28,9 @@ function mimas.DataSource(data)
 
   return self
 end
+
+local mt = mimas_core.DataSource_
+
+function mt:__index(key)
+  return rawget(mt, key) or mt.getCallback(self, key)
+end

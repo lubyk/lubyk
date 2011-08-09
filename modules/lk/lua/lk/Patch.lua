@@ -21,18 +21,6 @@ local ALLOWED_KEYS = {
   hue = true,
 }
 
-local function loadFromFilepath(self, filepath)
-  if lk.exist(filepath) then
-    -- only load if file exists
-    local data = yaml.loadpath(filepath)
-    -- clear before loading (yaml contains a full definition)
-    self.nodes = {}
-    self:set(data)
-  else
-    --print(string.format("'%s' not found.", filepath))
-  end
-end
-
 local function loadFromYaml(self, yaml_code)
   local data = yaml.load(yaml_code)
   -- clear before loading (yaml contains a full definition)
@@ -55,14 +43,14 @@ end
 
 setmetatable(lib, {
   -- new method
- __call = function(lib, filepath_or_code, zone)
+ __call = function(lib, opts)
   local self  = {
-    zone              = zone,
+    zone              = opts.zone,
+    name              = opts.name,
     nodes             = {},
     pending_nodes     = {},
     pending_processes = {},
     found_processes   = {},
-    work_dir          = lfs.currentdir(),
   }
   setmetatable(self, lib)
 
@@ -75,10 +63,7 @@ setmetatable(lib, {
   -- TODO: Cleanup so that the only way to start it is with a table that
   -- can contain 'patch' (patch information), 'zone' (zone name)
   -- or 'name' (the name of the process).
-  if not filepath_or_code then
-    return self
-  end
-  if zone then
+  if self.zone then
     -- Create processes watch before loading code (to resolve remote
     -- processes).
     --
@@ -87,7 +72,7 @@ setmetatable(lib, {
     self.process_watch = lk.ProcessWatch():addDelegate(self)
   end
 
-  if string.match(filepath_or_code, '\n') then
+  if opts.patch then
     -- set filepath to the script containing calling lk.Patch()
     -- this is where the content will be saved
     if zone then
@@ -102,12 +87,7 @@ setmetatable(lib, {
 
     -- store full script in filepath
     self.inline   = true
-    loadFromYaml(self, filepath_or_code)
-  else
-    setFilePath(self, filepath_or_code)
-    -- store only yaml in filepath
-    self.inline   = false
-    loadFromFilepath(self, filepath_or_code)
+    loadFromYaml(self, opts.patch)
   end
   return self
 end})
@@ -115,18 +95,15 @@ end})
 
 local function setNodes(self, nodes_definition)
   local nodes = self.nodes
-  lk.withDirectory(self.work_dir, function()
-    -- move to patch file directory
-    for name, def in pairs(nodes_definition) do
-      -- parsing each node
-      local node = nodes[name]
-      if not node then
-        node = lk.Node(self, name)
-        nodes[name] = node
-      end
-      node:set(def)
+  for name, def in pairs(nodes_definition) do
+    -- parsing each node
+    local node = nodes[name]
+    if not node then
+      node = lk.Node(self, name)
+      nodes[name] = node
     end
-  end)
+    node:set(def)
+  end
 end
 
 function lib:set(definitions)
@@ -314,9 +291,11 @@ end
 function lib:findCode(url)
   -- TODO: make async
   if self.morph then
-    return self.morph:request(lubyk.get_url, self:url() .. '/' .. url)
+    print("lk.Patch requests", url)
+    return self.morph:request(lubyk.get_url, url)
   else
     -- error
+    print("No morph?")
     return nil
   end
 end
@@ -408,9 +387,10 @@ end
 
 --- Reload everything from morph
 function lib:sync()
-  local patch = self:findCode('_patch.yml')
+  local patch = self:findCode(self:url() .. '/_patch.yml')
   if patch then
     loadFromYaml(self, patch)
+    self:notify(self:dump())
   else
     print("Could not sync: no _patch.yml")
   end

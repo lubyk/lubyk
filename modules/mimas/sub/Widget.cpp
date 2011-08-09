@@ -9,7 +9,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::Widget::Widget(lubyk::Worker *worker, int window_flags=0)
- * include/mimas/Widget.h:74
+ * include/mimas/Widget.h:75
  */
 static int Widget_Widget(lua_State *L) {
   try {

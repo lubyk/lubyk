@@ -7,11 +7,6 @@
   holds editor state information (such as
   current selection, etc).
 
-  TODO: we could run this in a new process (not with
-  editor.Main). If we don't, we should probably share
-  zone_list and process_watch with editor.Main.
-
-
 --]]------------------------------------------------------
 
 local lib    = {type='editor.Zone'}
@@ -29,9 +24,6 @@ end
 local function setupProcessWatch(self, process_watch)
   -- Start listening for processes and zones on the network
   self.process_watch = process_watch:addDelegate(self)
-
-  -- Data source for zones
-  self.zone_data = mimas.DataSource(self.zone_list)
 end
 
 local function setupView(self)
@@ -54,8 +46,6 @@ setmetatable(lib, {
     -- Manage processes found
     pending_processes   = {},
     found_processes     = {},
-    -- found zones
-    zone_list           = {},
   }
   setmetatable(self, lib)
 
@@ -194,20 +184,19 @@ end
 
 --=============================================== lk.ProcessWatch delegate
 local function addZone(self, remote_service)
-  table.insert(self.zone_list, remote_service)
-  -- update zone list
-  self.zone_data:reset()
+  if remote_service == self.zone then
+    -- TODO: create editor.Morph to proxy calls to morph server
+    self.morph = remote_service
+    -- TODO: create editor.MorphView to show morph server
+  end
 end
 
 local function removeZone(self, remote_service)
-  -- update zone list
-  for i, srv in ipairs(self.zone_list) do
-    if srv.zone == remote_service.zone then
-      table.remove(self.zone_list, i)
-      break
-    end
+  if remote_service.zone == self.zone then
+    -- TODO: disconnect morph
+    self.morph = nil
+    self.morph_view = nil
   end
-  self.zone_data:reset()
 end
 
 function lib:addService(remote_service)

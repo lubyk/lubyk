@@ -67,24 +67,6 @@ static int DataSource__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
-/** LuaStackSize mimas::DataSource::__index(lua_State *L)
- * include/mimas/DataSource.h:114
- */
-static int DataSource___index(lua_State *L) {
-  try {
-    DataSource *self__ = *((DataSource**)luaL_checkudata(L, 1, "mimas.DataSource"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.DataSource in __index");
-    
-    LuaStackSize  retval__ = self__->__index(L);
-    return retval__;
-  } catch (std::exception &e) {
-    return luaL_error(L, "mimas.DataSource.__index: %s", e.what());
-  } catch (...) {
-    return luaL_error(L, "mimas.DataSource.__index: Unknown exception");
-  }
-}
-
-
 /** void mimas::DataSource::__newindex(lua_State *L)
  * include/mimas/DataSource.h:81
  */
@@ -120,6 +102,24 @@ static int DataSource_emitLayoutChanged(lua_State *L) {
 }
 
 
+/** LuaStackSize mimas::DataSource::getCallback(lua_State *L)
+ * include/mimas/DataSource.h:114
+ */
+static int DataSource_getCallback(lua_State *L) {
+  try {
+    DataSource *self__ = *((DataSource**)luaL_checkudata(L, 1, "mimas.DataSource"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.DataSource in getCallback");
+    
+    LuaStackSize  retval__ = self__->getCallback(L);
+    return retval__;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.DataSource.getCallback: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.DataSource.getCallback: Unknown exception");
+  }
+}
+
+
 /** void mimas::DataSource::reset()
  * include/mimas/DataSource.h:134
  */
@@ -142,9 +142,9 @@ static int DataSource_reset(lua_State *L) {
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg DataSource_member_methods[] = {
-  {"__index"           , DataSource___index},
   {"__newindex"        , DataSource___newindex},
   {"emitLayoutChanged" , DataSource_emitLayoutChanged},
+  {"getCallback"       , DataSource_getCallback},
   {"reset"             , DataSource_reset},
   {"__tostring"        , DataSource__tostring},
   {"__gc"              , DataSource_destructor},
