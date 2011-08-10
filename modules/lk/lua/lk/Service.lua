@@ -46,6 +46,14 @@ setmetatable(lib, {
         self.info.pull = self.pull:port()
       end
       return self.info
+    elseif ... == lubyk.quit_url then
+      -- quit
+      if app then
+        app:quit()
+      else
+        -- just clear this process
+        self:quit()
+      end
     else
       -- handle requests here. Maybe we need two different callbacks
       -- for reply and pull...

@@ -15,6 +15,7 @@ Autoload.global()
 lubyk = Autoload('lubyk')
 -------------------------------- CONSTANTS
 lubyk.service_type    = '_lubyk._tcp'
+
 -- Get content at path (used with lk.Morph)
 lubyk.get_url         = '/lk/get'
 -- Get patch basic information
@@ -23,6 +24,9 @@ lubyk.info_url        = '/lk/info'
 lubyk.dump_url        = '/lk/dump'
 -- (Partial) update of a patch
 lubyk.update_url      = '/lk/update'
+-- Quit process
+lubyk.quit_url        = '/lk/quit'
+
 -- Notification for new service (in-process)
 lubyk.add_service_url = '/lk/add_service'
 -- Notification for removed service (in-process)

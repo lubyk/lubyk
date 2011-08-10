@@ -16,3 +16,31 @@ if action == '--test' or action == '-t' then
   test.load_all(unpack(arg))
   all()
 end
+
+-- TODO: Transform this to a command line (lk.Command()) that we could use to do everything that
+-- we can do with the GUI.
+--
+-- For now simply enable the "-e" (exec) mode with the command to halt all local processes related to
+-- lubyk:
+-- > lubyk --zone default '/*/lk/quit'
+-- Which is the same as
+-- > lubyk --zone default quit
+-- Or (by using .lubykrc for default zone)
+-- > lubyk quit
+--
+-- To stop only process "a"
+-- > lubyk --zone default /a/lk/quit
+-- > lubyk --zone default quit a
+--
+-- Command format:
+-- /[URL] {arg, ...}
+--
+-- CMD {target (default=*)} {arg, ...}
+-- ==
+-- /target/lk/CMD {arg, ...}
+
+if action == 'quit' then
+  lk.Command'/*/lk/quit'
+else
+  lk.Command(action)
+end

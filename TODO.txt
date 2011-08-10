@@ -2,3 +2,7 @@
 * Video grabing/recording (using FFI ? OpenCV ? FFMPEG ?). See https://github.com/mkottman/ffi_fun/blob/master/ffmpeg_audio.lua
 * Morph opens with zone and path
 * lk.Process starts with morph role (=name), IP and port.
+* WebDAV adaptor for lk.Morph so that we can use the pseudo-filesystem to 
+  * create process (mkdir)
+  * change process script (edit [process].lua file)
+  * change patch (edit _patch.yml)
