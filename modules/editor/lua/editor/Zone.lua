@@ -201,7 +201,7 @@ end
 
 function lib:addService(remote_service)
   local service_name = remote_service.name
-  if service_name then
+  if service_name ~= '' then
     -- process
     if remote_service.zone ~= self.zone then
       -- not in our zone: ignore
@@ -245,7 +245,7 @@ end
 
 function lib:removeService(remote_service)
   local service_name = remote_service.name
-  if service_name then
+  if service_name ~= '' then
     -- process
     if remote_service.zone ~= self.zone then
       -- not in our zone: ignore

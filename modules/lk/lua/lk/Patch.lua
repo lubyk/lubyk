@@ -406,7 +406,7 @@ function lib:addService(remote_service)
   end
 
   local service_name = remote_service.name
-  if service_name then
+  if service_name ~= '' then
     -- this is a process
     local process = self.pending_processes[service_name]
 
@@ -433,7 +433,7 @@ function lib:removeService(remote_service)
   end
 
   local service_name = remote_service.name
-  if service_name then
+  if service_name ~= '' then
     -- process
     -- transform to pending process
     local process = self.found_processes[service_name]

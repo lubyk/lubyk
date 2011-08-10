@@ -29,7 +29,7 @@ setmetatable(lib, {
   }
   if url then
     local target, cmd = getTarget(url)
-    if target then
+    if target ~= '*' then
       -- just find this target, execute command and quit
       self.target = target
       self.cmd = {url, ...}
@@ -61,26 +61,21 @@ setmetatable(lib, {
 end})
 
 function getTarget(url)
-  local cmd = string.match(url, '^/%*(.*)$')
-  if cmd then
-    return nil, cmd
-  else
-    return string.match(url, '/([^/]+)(.*)$')
-  end
+  return string.match(url, '^/([^/]*)(.*)$')
 end
 
 function lib:call(url, ...)
   local target_name, cmd = getTarget(url)
-  if target_name then
+  if target_name == '*' then
+    for _, service in pairs(self.current) do
+      print(service.req:send(cmd, ...))
+    end
+  elseif target_name then
     local service = self.current[target_name]
     if service then
       print(service.req:send(cmd, ...))
     else
       print(string.format("Process '%s' not found.", target_name))
-    end
-  elseif cmd then
-    for _, service in pairs(self.current) do
-      print(service.req:send(cmd, ...))
     end
   else
     print(string.format("Bad url '%s' (could not find process name)."))
@@ -96,7 +91,7 @@ function lib:addService(service)
     self.zones[service.zone] = {}
     zone = {}
   end
-  zone[service.name or ''] = service
+  zone[service.name] = service
   if self.target and service.zone == self.zone and service.name == self.target then
     self:call(unpack(self.cmd))
     self.abort = true
@@ -106,7 +101,7 @@ end
 function lib:removeService(service)
   local zone = self.zones[service.zone]
   if zone then
-    zone[service.name or ''] = nil
+    zone[service.name] = nil
   end
 end
 

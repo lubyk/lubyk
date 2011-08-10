@@ -66,24 +66,24 @@ end
 
 function lib:addService(remote_service)
   local service_name = remote_service.name
-  if service_name then
-    -- process
-    -- we are not interested in processes in Main
-  else
+  if service_name == '' then
     -- morph
     -- found new zone
     addZone(self, remote_service)
+  else
+    -- process
+    -- we are not interested in processes in Main
   end
 end
 
 function lib:removeService(remote_service)
   local service_name = remote_service.name
-  if service_name then
-    -- process
-    -- we are not interested in processes in Main
-  else
+  if service_name == '' then
     -- morph
     removeZone(self, remote_service)
+  else
+    -- process
+    -- we are not interested in processes in Main
   end
 end
 
