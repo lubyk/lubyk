@@ -1,0 +1,14 @@
+This is the fork by Michal Kottman from the LuaCrypto library by Keith Howe.
+
+Version: https://github.com/mkottman/luacrypto  commit: 362d18f8f32cf2eea9a5
+         last change 2010-05-27.
+
+-----------------------------------------------------------------------------
+
+LuaCrypto provides a Lua frontend to the OpenSSL cryptographic library.
+The OpenSSL features that are currently exposed are digests (MD5, SHA-1,
+HMAC, and more) and crypto-grade random number generators.
+
+LuaCrypto also supports encryption and decryption (warning - beta quality code).
+
+Please see docs at doc/us/index.html or http://luacrypto.luaforge.net/.
