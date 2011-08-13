@@ -11,6 +11,8 @@ local lib = {type='lk.DavServer'}
 lib.__index  = lib
 lk.DavServer = lib
 
+local xml = require 'xml'
+
 -- the DavServer is an extension of the WebServer
 for k, v in pairs(lk.WebServer) do
   if k ~= 'type' and k ~= '__index' then
