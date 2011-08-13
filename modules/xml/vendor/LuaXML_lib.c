@@ -26,6 +26,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+/** THIS IS A MODIFIED VERSION OF LuaXML THAT USES THE 'xml' attribute for
+ * the tag name instead of [0]. 
+ */
+
 #if defined __WIN32__ || defined WIN32
 # include <windows.h>
 # define _EXPORT __declspec(dllexport)
@@ -310,7 +314,7 @@ int Xml_eval(lua_State *L) {
 		lua_setmetatable(L, -2);
 		
 		// parse tag and content:
-		lua_pushnumber(L,0); // use index 0 for storing the tag
+    lua_pushstring(L, "xml"); // use 'xml' to store the tag
 		lua_pushstring(L, Tokenizer_next(tok));
 		lua_settable(L, -3);
 		
@@ -407,8 +411,8 @@ int Xml_encode(lua_State *L) {
 int _EXPORT luaopen_xml_vendor(lua_State* L) {
 	static const struct luaL_Reg funcs[] = {
 		{"load", Xml_load},
-		{"eval", Xml_eval},
-		{"encode", Xml_encode},
+		{"parse", Xml_eval},
+		{"raw_encode", Xml_encode},
 		{"registerCode", Xml_registerCode},
 		{NULL, NULL}
 	};
