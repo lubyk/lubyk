@@ -15,10 +15,13 @@ include_directories(lubyk/include lubyk/include/lua ${CMAKE_CURRENT_SOURCE_DIR})
 # ----------------------------------------------------------------------------------
 
 file (GLOB MODULES ${CMAKE_CURRENT_SOURCE_DIR}/*)
+file (GLOB TMP_FILES ${CMAKE_CURRENT_SOURCE_DIR}/.*)
+foreach(TMP_FILE ${TMP_FILES})
+  list(REMOVE_ITEM MODULES ${TMP_FILE})
+endforeach(TMP_FILE)
 list(REMOVE_ITEM MODULES ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
 list(REMOVE_ITEM MODULES ${CMAKE_CURRENT_SOURCE_DIR}/CMakeSub.txt)
 list(REMOVE_ITEM MODULES ${CMAKE_CURRENT_SOURCE_DIR}/bind.rb)
-list(REMOVE_ITEM MODULES ${CMAKE_CURRENT_SOURCE_DIR}/.DS_Store)
 
 
 # ==============================================================================
@@ -114,7 +117,7 @@ foreach (MODULE ${MODULES})
   else(EXISTS ${MODULE}/CMakeLists.txt)
     # Simple build
     # get name
-    get_filename_component (MODULE_NAME ${MODULE} NAME_WE)
+    get_filename_component(MODULE_NAME ${MODULE} NAME_WE)
     set(MODULE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${MODULE_NAME}")
 
     if(EXISTS ${MODULE}/include)
