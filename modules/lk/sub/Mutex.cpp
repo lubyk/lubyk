@@ -53,7 +53,7 @@ static int Mutex__tostring(lua_State *L) {
 
 
 /** void lk::Mutex::lock()
- * include/lk/Mutex.h:43
+ * include/lk/Mutex.h:44
  */
 static int Mutex_lock(lua_State *L) {
   try {
@@ -69,7 +69,7 @@ static int Mutex_lock(lua_State *L) {
 
 
 /** int lk::Mutex::lockCount()
- * include/lk/Mutex.h:53
+ * include/lk/Mutex.h:56
  */
 static int Mutex_lockCount(lua_State *L) {
   try {
@@ -86,7 +86,7 @@ static int Mutex_lockCount(lua_State *L) {
 
 
 /** void lk::Mutex::unlock()
- * include/lk/Mutex.h:47
+ * include/lk/Mutex.h:50
  */
 static int Mutex_unlock(lua_State *L) {
   try {

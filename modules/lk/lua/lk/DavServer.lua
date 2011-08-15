@@ -11,7 +11,6 @@ local lib = {type='lk.DavServer'}
 lib.__index  = lib
 lk.DavServer = lib
 
-local xml = require 'xml'
 
 -- the DavServer is an extension of the WebServer
 for k, v in pairs(lk.WebServer) do
@@ -25,16 +24,12 @@ setmetatable(lib, {
  __call = function(lib, port)
   local self = {
     should_run = true,
-    server     = socket.bind("*", port or 0),
+    server     = lk.Socket(),
   }
-  self.ip, self.port = self.server:getsockname()
-  local hostname
-  if self.ip == '0.0.0.0' then
-    hostname = 'localhost'
-  else
-    hostname = self.ip
-  end
-  self.href_base = 'http://' .. hostname .. ':' .. self.port
+  self.server:bind()
+  self.server:listen()
+  self.host, self.port = self.server:localHost(), self.server:localPort()
+  self.href_base = 'http://' .. self.host .. ':' .. self.port
   setmetatable(self, lib)
   return self
 end})
@@ -167,6 +162,7 @@ function lib:GET(request)
 end
 
 function lib:PUT(request)
+  print("PUT...")
   local resource = self:find(request.path)
   if resource then
     return self:update(resource, request.body)

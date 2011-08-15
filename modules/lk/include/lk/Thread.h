@@ -76,7 +76,6 @@ private:
     runner->thread_ready();
 
     lubyk::ScopedLock lock(worker_);
-
     // we may get a kill before even starting
     if (!should_run()) return;
 

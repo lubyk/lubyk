@@ -35,7 +35,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>  // getaddrinfo
-//#include <arpa/inet.h> // inet_ntop
+#include <arpa/inet.h> // inet_ntop
 
 #include <errno.h>  // errno
 #include <string.h> // strerror
@@ -46,6 +46,8 @@
 
 // How many pending connections should wait for 'accept'.
 #define BACKLOG 10
+// recv buffer size
+#define MAX_BUFF_SIZE 8192
 
 using namespace lubyk;
 
@@ -57,7 +59,7 @@ namespace lk {
  *
  * @dub lib_name:'Socket_core'
  *      string_format:'%%s:%%d --> %%s:%%d'
- *      string_args:'(*userdata)->local_host(), (*userdata)->local_port(), (*userdata)->remote_host(), (*userdata)->remote_port()'
+ *      string_args:'(*userdata)->localHost(), (*userdata)->localPort(), (*userdata)->remoteHost(), (*userdata)->remotePort()'
  */
 class Socket : public LuaCallback
 {
@@ -68,6 +70,20 @@ class Socket : public LuaCallback
   int local_port_;
   std::string remote_host_;
   int remote_port_;
+
+  // buffer management
+  /** Number of bytes already received in the buffer.
+   */
+  int buffer_length_;
+
+  /** Bytes already used in the buffer.
+   * If buffer_i_ == buffer_length_: there is no more data in the buffer.
+   */
+  int buffer_i_;
+
+  /** Buffer that contains received data not yet used by Lua.
+   */
+  char buffer_[MAX_BUFF_SIZE];
 public:
 
   enum SocketType {
@@ -77,19 +93,28 @@ public:
 
   Socket(lubyk::Worker *worker, int socket_type)
     : LuaCallback(worker),
+      // When changing this, also change the private
+      // constructor.
       socket_fd_(-1),
       socket_type_(socket_type),
       local_host_("*"),
       local_port_(-1),
       remote_host_("?"),
-      remote_port_(-1) {
+      remote_port_(-1),
+      buffer_length_(0),
+      buffer_i_(0) {
   }
 
   ~Socket() {
     kill();
+    close();
+  }
+
+  void close() {
     if (socket_fd_ != -1) {
-      printf("close(%i)\n", socket_fd_);
-      close(socket_fd_);
+      // printf("close(%i)\n", socket_fd_);
+      ::close(socket_fd_);
+      socket_fd_ = -1;
     }
   }
 
@@ -116,6 +141,7 @@ public:
     // we do not care if we get an IPv4 or IPv6 address
     hints.ai_family = AF_UNSPEC;
     // TCP
+    // TODO: Use socket_type_ info
     hints.ai_socktype = SOCK_STREAM;
     // fill our own IP
     hints.ai_flags = AI_PASSIVE;
@@ -125,12 +151,12 @@ public:
     }
 
     if (socket_fd_ != -1) {
-      close(socket_fd_);
+      ::close(socket_fd_);
     }
 
     // we use getaddrinfo to stay IPv4/IPv6 agnostic
     socket_fd_ = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-    printf("socket --> %i\n", socket_fd_);
+    // printf("socket --> %i\n", socket_fd_);
     if (socket_fd_ == -1) {
       throw Exception("Could not create socket for %s:%i (%s).", local_host_.c_str(), port, strerror(errno));
     }
@@ -169,13 +195,13 @@ public:
     }
 
     if (socket_fd_ != -1) {
-      printf("close(%i)\n", socket_fd_);
-      close(socket_fd_);
+      // printf("close(%i)\n", socket_fd_);
+      ::close(socket_fd_);
     }
 
     // we use getaddrinfo to stay IPv4/IPv6 agnostic
     socket_fd_ = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-    printf("socket --> %i\n", socket_fd_);
+    // printf("socket --> %i\n", socket_fd_);
     if (socket_fd_ == -1) {
       throw Exception("Could not create socket for %s:%i (%s).", host, port, strerror(errno));
     }
@@ -185,12 +211,12 @@ public:
       throw Exception("Could not connect socket to %s:%i (%s).", host, port, strerror(errno));
     }
 
-    // char info[INET6_ADDRSTRLEN];
-    // if (res->ai_family == AF_INET) {
-    //   inet_ntop(res->ai_family, &(((struct sockaddr_in*)res)->sin_addr), info, sizeof(info));
-    // } else {
-    //   inet_ntop(res->ai_family, &(((struct sockaddr_in6*)res)->sin6_addr), info, sizeof(info));
-    // }
+    char info[INET6_ADDRSTRLEN];
+    if (res->ai_family == AF_INET) {
+      inet_ntop(res->ai_family, &(((struct sockaddr_in*)res)->sin_addr), info, sizeof(info));
+    } else {
+      inet_ntop(res->ai_family, &(((struct sockaddr_in6*)res)->sin6_addr), info, sizeof(info));
+    }
     // printf("Connected to %s:%i (%s)\n", host, port, info);
 
     freeaddrinfo(res);
@@ -228,7 +254,7 @@ public:
     { ScopedUnlock unlock(worker_);
       fd = ::accept(socket_fd_, &sa, &sa_len);
 
-      printf("accept(%i) --> %i\n", socket_fd_, fd);
+      // printf("accept(%i) --> %i\n", socket_fd_, fd);
     }
 
     if (fd == -1) {
@@ -255,45 +281,102 @@ public:
     return 1;
   }
 
-  /** Receive a message (blocks).
+  void setRecvTimeout(int timeout) {
+    setTimeout(timeout, SO_RCVTIMEO);
+  }
+    
+  void setSendTimeout(int timeout) {
+    setTimeout(timeout, SO_SNDTIMEO);
+  }
+
+  /** Receive a message encoded by msgpack (blocks).
    * For a server, this should typically be used inside the loop.
    * We pass the lua_State to avoid mixing thread contexts.
    */
+  // LuaStackSize recvMsg(lua_State *L) {
+  //   // TODO: second param = timeout ?
+  //   // FIXME: We need to pass size of msg pack in first line ! (if there is no other way to 
+  //   // encode a "packet" with msgpack)
+  //   // unlock while waiting
+  //   { lubyk::ScopedUnlock unlock(worker_);
+  //     buffer_length_ = ::recv(socket_fd_, &buffer_, MAX_BUFF_SIZE, 0);
+  //     if (buffer_length_ == 0) {
+  //       return 0;
+  //     } else if (buffer_length_ < 0) {
+  //       buffer_length_ = 0;
+  //       throw Exception("Could not receive (%s).", strerror(errno));
+  //     }
+  //   }
+
+  //   buffer_length_ = 0;
+  //   buffer_i_ = 0;
+  //   int arg_size = msgpack_bin_to_lua(L, buffer, len);
+  //   return arg_size;
+  // }
+
+  /** Receive a raw string (not encoded by msgpack).
+   * This IO call blocks.
+   * We pass the lua_State to avoid mixing thread contexts.
+   */
   LuaStackSize recv(lua_State *L) {
-    char buffer[1024]; // fix make this part of the Socket and tune size from data..
-    int len;
-    // unlock while waiting
-    { lubyk::ScopedUnlock unlock(worker_);
-      len = ::recv(socket_fd_, &buffer, 1023, 0);
-      if (len == 0) {
-        return 0; // connection closed
-      } else if (len < 0) {
-        throw Exception("Could not receive (%s).", strerror(errno));
-      }
+    if (lua_isnumber(L, 3)) {
+      setRecvTimeout(lua_tonumber(L, 3));
     }
 
-    int arg_size = msgpack_bin_to_lua(L, buffer, len);
-    return arg_size;
+    if (lua_isnumber(L, 2)) {
+      // <self> <num_bytes> [<timeout>]
+      return recvBytes(L, lua_tonumber(L, 2));
+    } else if (lua_isstring(L, 2)) {
+      // <self> <mode> [<timeout>]
+      const char *mode = lua_tostring(L, 2);
+      if (mode[0] == '*' && mode[1] == 'a') {
+        return recvAll(L);
+      } else if (mode[0] == '*' && mode[1] == 'l') {
+        return recvLine(L);
+      } else {
+        throw Exception("Bad mode to recv (should be '*a' or '*l' but found '%s')", mode);
+      }
+    } 
+    // receive a single line (not returning \r or \n).
+    return recvLine(L);
+
+    return 1;
   }
 
-  /** Send a message packed with msgpack.
-   * Varying parameters.
+  /** Send raw bytes without encoding with msgpack.
+   * param: string to send.
    */
   void send(lua_State *L) {
-    msgpack_sbuffer* buffer;
-    msgpack_lua_to_bin(L, &buffer, 1);
-    if (::send(socket_fd_, buffer->data, buffer->size, 0)) {
+    // <string>
+    size_t size;
+    const char *data = luaL_checklstring(L, -1, &size);
+    // send raw bytes
+    if (::send(socket_fd_, data, size, 0) == -1) {
       throw Exception("Could not send message (%s).", strerror(errno));
     }
-    free_msgpack_msg(NULL, buffer);
   }
 
-  /** Request = remote call.
+  // /** Send a message packed with msgpack.
+  //  * Varying parameters.
+  //  */
+  // void sendMsg(lua_State *L) {
+  //   msgpack_sbuffer* buffer;
+  //   msgpack_lua_to_bin(L, &buffer, 1);
+  //   // FIXME: We need to encode a "packet" with msgpack (size of msg on first line for
+  //   // example.
+  //   if (::send(socket_fd_, buffer->data, buffer->size, 0) == -1) {
+  //     throw Exception("Could not send message (%s).", strerror(errno));
+  //   }
+  //   free_msgpack_msg(NULL, buffer);
+  // }
+
+  /** Request = remote call (uses msgpack to encode data).
+   * This is really just a sendMsg with a recvMsg.
    */
-  LuaStackSize request(lua_State *L) {
-    send(L);
-    return recv(L);
-  }
+  // LuaStackSize request(lua_State *L) {
+  //   sendMsg(L);
+  //   return recvMsg(L);
+  // }
 
   /** Execute a loop in a new thread.
    */
@@ -316,19 +399,19 @@ public:
     thread_.send_signal(SIGINT);
   }
 
-  const char *local_host() const {
+  const char *localHost() const {
     return local_host_.c_str();
   }
 
-  int local_port() const {
+  int localPort() const {
     return local_port_;
   }
 
-  const char *remote_host() const {
+  const char *remoteHost() const {
     return remote_host_.c_str();
   }
 
-  int remote_port() const {
+  int remotePort() const {
     return remote_port_;
   }
 
@@ -346,8 +429,9 @@ private:
       local_host_(local_host),
       local_port_(get_port(fd)),
       remote_host_(remote_host),
-      remote_port_(remote_port) {
-
+      remote_port_(remote_port),
+      buffer_length_(0),
+      buffer_i_(0) {
   }
 
   static int get_port(int fd) {
@@ -381,8 +465,127 @@ private:
     int status = lua_pcall(lua_, 1, 0, 0);
 
     if (status) {
-      printf("Error in Socket callback: %s\n", lua_tostring(lua_, -1));
+      printf("Error in Socket callback: %s.\n", lua_tostring(lua_, -1));
       return;
+    }
+  }
+
+  int recvLine(lua_State *L) {
+    luaL_Buffer buffer;
+    luaL_buffinit(L, &buffer);
+
+    while (true) {
+      while (buffer_i_ < buffer_length_) {
+        char c = buffer_[buffer_i_++];
+        if (c == '\n') {
+          // found end of line
+          // push string
+          luaL_pushresult(&buffer);
+          return 1;
+        } else if (c != '\r') {
+          // ignore \r
+          // add char to lua buffer
+          luaL_putchar(&buffer, c);
+        }
+      }
+        
+      // read more data
+      { lubyk::ScopedUnlock unlock(worker_);
+        buffer_length_ = ::recv(socket_fd_, buffer_, MAX_BUFF_SIZE, 0);
+        if (buffer_length_ == 0) {
+          // connection closed
+          return 0;
+        } else if (buffer_length_ < 0) {
+          buffer_length_ = 0;
+          throw Exception("Could not receive (%s).", strerror(errno));
+        }
+      }
+      buffer_i_ = 0;
+    }                             
+    return 0;
+  }
+
+  int recvBytes(lua_State *L, int sz) {
+    luaL_Buffer buffer;
+
+    if (buffer_i_ < buffer_length_) {
+      if (sz <= (buffer_length_-buffer_i_)) {
+        // everything is in the buffer already
+        lua_pushlstring(L, buffer_ + buffer_i_, sz);
+        buffer_i_ += sz;
+        return 1;
+      }
+      luaL_buffinit(L, &buffer);
+      // add current content
+      luaL_addlstring(&buffer, buffer_ + buffer_i_, buffer_length_ - buffer_i_);
+      sz -= buffer_length_ - buffer_i_;
+    } else {
+      luaL_buffinit(L, &buffer);
+    }
+
+    while (sz) {
+      // read more data
+      { lubyk::ScopedUnlock unlock(worker_);
+        // we prefer not reading too much so that we might simplify read operation
+        // with a single pushlstring
+        buffer_length_ = ::recv(socket_fd_, buffer_, sz < MAX_BUFF_SIZE ? sz : MAX_BUFF_SIZE, 0);
+        if (buffer_length_ == 0) {
+          // connection closed
+          // abort
+          return 0;
+        } else if (buffer_length_ < 0) {
+          buffer_length_ = 0;
+          throw Exception("Could not receive (%s).", strerror(errno));
+        }
+      }
+      
+      luaL_addlstring(&buffer, buffer_, buffer_length_);
+
+      sz -= buffer_length_;
+      buffer_i_ = buffer_length_;
+    }                             
+    
+    luaL_pushresult(&buffer);
+    return 1;
+  }
+
+  int recvAll(lua_State *L) {
+    luaL_Buffer buffer;
+    luaL_buffinit(L, &buffer);
+
+    if (buffer_i_ < buffer_length_) {
+      luaL_addlstring(&buffer, buffer_ + buffer_i_, buffer_length_ - buffer_i_);
+    }
+
+    while (true) {
+      // read more data
+      { lubyk::ScopedUnlock unlock(worker_);
+        buffer_length_ = ::recv(socket_fd_, buffer_, MAX_BUFF_SIZE, 0);
+        if (buffer_length_ == 0) {
+          // connection closed
+          // done
+          break;
+        } else if (buffer_length_ < 0) {
+          buffer_length_ = 0;
+          throw Exception("Could not receive (%s).", strerror(errno));
+        }
+      }
+      luaL_addlstring(&buffer, buffer_, buffer_length_);
+    }                             
+    
+    luaL_pushresult(&buffer);
+    return 1;
+  }
+
+  void setTimeout(int timeout, int opt_name) {
+    if (socket_fd_ == -1) {
+      throw Exception("Cannot set timeout before bind or connect.");
+    }
+    struct timeval tv;
+    tv.tv_sec = timeout/1000;
+    tv.tv_usec = (timeout % 1000) * 1000;
+    if (setsockopt(socket_fd_, SOL_SOCKET, opt_name, (char*)&tv, sizeof tv) == -1) {
+      throw Exception("Could not set timeout (%s).", strerror(errno));
     }
   }
 };

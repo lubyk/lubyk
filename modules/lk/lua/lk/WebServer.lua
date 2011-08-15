@@ -16,9 +16,11 @@ setmetatable(lib, {
  __call = function(lib, port)
   local self = {
     should_run = true,
-    server     = socket.bind("*", port or 0),
+    server     = lk.Socket(),
   }
-  self.ip, self.port = self.server:getsockname()
+  self.server:bind()
+  self.server:listen()
+  self.host, self.port = self.server:localHost(), self.server:localPort()
   setmetatable(self, lib)
   return self
 end})
@@ -95,20 +97,20 @@ end
 
 -- TODO: protection against DOS attack ?
 local function getRequest(client)
-  client:settimeout(0.1)
   local request = {}
   print("==================================================")
-  local line, err = client:receive()
+  local line, err = client:recv()
   if err then
     return nil, err
   end
   print('STATUS', line)
+  -- GET /foo/bar.html HTTP/1.1
   request.method, request.path, request.http = string.match(line, '(%S+)%s+(%S+)%s+(%S+)')
 
   local headers = {}
   request.headers = headers
   while true do
-    local line, err = client:receive()
+    local line, err = client:recv()
     if err then
       return nil, err
     end
@@ -124,7 +126,7 @@ local function getRequest(client)
 
   local content_length = tonumber(headers['Content-Length']) or 0
   if content_length > 0 then
-    request.body, err = client:receive(content_length)
+    request.body, err = client:recv(content_length)
     if err then
       return nil, err
     end

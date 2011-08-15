@@ -59,10 +59,14 @@ function srv:findChildren(resource)
 end
 
 function srv:update(resource, content)
-  resource.body = content
+  resource.body = content or ''
   resource.getcontentlength = string.len(resource.body)
   return nil, {status = "200"}
 end
 
+function srv:create(path, content)
+  -- TODO...
+  return nil, {status = "403"}
+end
 print(string.format("Starting server on port %i...\nConnect with: http://localhost:%i", srv.port, srv.port))
 srv:listen()
