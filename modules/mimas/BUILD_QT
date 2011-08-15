@@ -1,0 +1,11 @@
+# To build Qt as static library:
+# clone the repository
+cd ~/git
+git clone git://gitorious.org/qt/qt.git
+cd ~/git/qt
+git remote add -t 4.7-stable
+git checkout 4.7-stable
+# configure with the proper sdk
+./configure -static -fast -sdk /Developer/SDKs/MacOSX10.6.sdk
+# build
+make

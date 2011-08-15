@@ -21,8 +21,12 @@ endforeach (SUB_MODULE_CPP ${SUB_MODULES_CPP})
 # ----------------------------------------------------------------------------------
 #  Build each sub-module defined by a folder
 # ----------------------------------------------------------------------------------
-list(REMOVE_ITEM SUB_MODULES ${MODULE}/sub/.DS_Store)
 list(REMOVE_ITEM SUB_MODULES ${MODULE}/sub/CMakeLists.txt)
+# TODO: create a macro to get folders only
+file (GLOB TMP_FILES ${MODULE}/sub/.*)
+foreach(TMP_FILE ${TMP_FILES})
+  list(REMOVE_ITEM SUB_MODULES ${TMP_FILE})
+endforeach(TMP_FILE)
 
 foreach (SUB_MODULE ${SUB_MODULES})
   if(EXISTS ${SUB_MODULE}/CMakeLists.txt)

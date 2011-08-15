@@ -68,7 +68,7 @@ static int Painter__tostring(lua_State *L) {
 
 
 /** void mimas::Painter::drawChord(int x, int y, int width, int height, float startAngle, float spanAngle)
- * include/mimas/Painter.h:119
+ * include/mimas/Painter.h:116
  */
 static int Painter_drawChord(lua_State *L) {
   try {
@@ -91,7 +91,7 @@ static int Painter_drawChord(lua_State *L) {
 
 
 /** void mimas::Painter::drawEllipse(int x, int y, int width, int height)
- * include/mimas/Painter.h:125
+ * include/mimas/Painter.h:135
  */
 static int Painter_drawEllipse(lua_State *L) {
   try {
@@ -107,6 +107,27 @@ static int Painter_drawEllipse(lua_State *L) {
     return luaL_error(L, "mimas.Painter.drawEllipse: %s", e.what());
   } catch (...) {
     return luaL_error(L, "mimas.Painter.drawEllipse: Unknown exception");
+  }
+}
+
+
+/** void mimas::Painter::drawLine(int x1, int y1, int x2, int y2)
+ * include/mimas/Painter.h:109
+ */
+static int Painter_drawLine(lua_State *L) {
+  try {
+    Painter *self__ = *((Painter**)luaL_checkudata(L, 1, "mimas.Painter"));
+    if (!self__) return luaL_error(L, "Using deleted mimas.Painter in drawLine");
+    int x1 = luaL_checkint(L, 2);
+    int y1 = luaL_checkint(L, 3);
+    int x2 = luaL_checkint(L, 4);
+    int y2 = luaL_checkint(L, 5);
+    self__->drawLine(x1, y1, x2, y2);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "mimas.Painter.drawLine: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "mimas.Painter.drawLine: Unknown exception");
   }
 }
 
@@ -130,7 +151,7 @@ static int Painter_drawPath(lua_State *L) {
 
 
 /** void mimas::Painter::drawPoint(int x, int y)
- * include/mimas/Painter.h:131
+ * include/mimas/Painter.h:103
  */
 static int Painter_drawPoint(lua_State *L) {
   try {
@@ -149,7 +170,7 @@ static int Painter_drawPoint(lua_State *L) {
 
 
 /** void mimas::Painter::drawRect(float x, float y, float w, float h)
- * include/mimas/Painter.h:112
+ * include/mimas/Painter.h:122
  */
 static int Painter_drawRect(lua_State *L) {
   try {
@@ -170,7 +191,7 @@ static int Painter_drawRect(lua_State *L) {
 
 
 /** void mimas::Painter::drawRoundedRect(float x, float y, float w, float h, float xRadius, lua_State *L)
- * include/mimas/Painter.h:107
+ * include/mimas/Painter.h:128
  */
 static int Painter_drawRoundedRect(lua_State *L) {
   try {
@@ -193,7 +214,7 @@ static int Painter_drawRoundedRect(lua_State *L) {
 
 
 /** void mimas::Painter::drawText(float x, float y, float w, float h, int flags, const char *text)
- * include/mimas/Painter.h:101
+ * include/mimas/Painter.h:141
  */
 static int Painter_drawText(lua_State *L) {
   try {
@@ -428,6 +449,7 @@ static int Painter_setPen(lua_State *L) {
 static const struct luaL_Reg Painter_member_methods[] = {
   {"drawChord"         , Painter_drawChord},
   {"drawEllipse"       , Painter_drawEllipse},
+  {"drawLine"          , Painter_drawLine},
   {"drawPath"          , Painter_drawPath},
   {"drawPoint"         , Painter_drawPoint},
   {"drawRect"          , Painter_drawRect},

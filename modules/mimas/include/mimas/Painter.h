@@ -98,19 +98,16 @@ public:
     QPainter::setBrush(Brush(h, s, v, a));
   }
 
-  void drawText(float x, float y, float w, float h, int flags, const char *text) {
-    QPainter::drawText(QRectF(x, y, w, h), flags, QString(text));
-  }
-
-  /** Default value for yRadius = xRadius.
+  /** Draw a single point with the current pen.
    */
-  void drawRoundedRect(float x, float y, float w, float h, float xRadius, lua_State *L) {
-    float yRadius = lua_gettop(L) > 6 ? luaL_checknumber(L, 7) : xRadius;
-    QPainter::drawRoundedRect(QRectF(x, y, w, h), xRadius, yRadius);
+  void drawPoint(int x, int y) {
+    QPainter::drawPoint(x, y);
   }
 
-  void drawRect(float x, float y, float w, float h) {
-    QPainter::drawRect(QRectF(x, y, w, h));
+  /** Draw a single line with the current pen.
+   */
+  void drawLine(int x1, int y1, int x2, int y2) {
+    QPainter::drawLine(x1, y1, x2, y2);
   }
 
   /** Draw a chord (filled arc). TODO: How the rectangle is used is not clear...
@@ -120,16 +117,29 @@ public:
     QPainter::drawChord(x, y, width, height, startAngle * 16, spanAngle * 16);
   }
 
+  /** Draw a rectangle.
+   */
+  void drawRect(float x, float y, float w, float h) {
+    QPainter::drawRect(QRectF(x, y, w, h));
+  }
+
+  /** Default value for yRadius = xRadius.
+   */
+  void drawRoundedRect(float x, float y, float w, float h, float xRadius, lua_State *L) {
+    float yRadius = lua_gettop(L) > 6 ? luaL_checknumber(L, 7) : xRadius;
+    QPainter::drawRoundedRect(QRectF(x, y, w, h), xRadius, yRadius);
+  }
+
   /** Draw an ellipse in the given rectangle.
    */
   void drawEllipse(int x, int y, int width, int height) {
     QPainter::drawEllipse(x, y, width, height);
   }
 
-  /** Draw a single point with the current pen.
+  /** Draw some text.
    */
-  void drawPoint(int x, int y) {
-    QPainter::drawPoint(x, y);
+  void drawText(float x, float y, float w, float h, int flags, const char *text) {
+    QPainter::drawText(QRectF(x, y, w, h), flags, QString(text));
   }
 };
 
