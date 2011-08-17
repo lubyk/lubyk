@@ -41,6 +41,19 @@ end
 
 if action == 'quit' then
   lk.Command'/*/lk/quit'
+elseif action == 'hello' then
+  app = mimas.Application()
+  dlg = editor.SimpleDialog {
+    message = 'Lubyk works!',
+    ok = 'Ok',
+  }
+  function dlg:ok()
+    app:quit()
+  end
+  dlg:resize(200,200)
+  dlg:move(400, 400)
+  dlg:show()
+  app:exec()
 else
   lk.Command(action)
 end

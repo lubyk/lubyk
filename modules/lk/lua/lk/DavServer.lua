@@ -26,7 +26,7 @@ setmetatable(lib, {
     should_run = true,
     server     = lk.Socket(),
   }
-  self.server:bind()
+  self.server:bind('*', port or 0)
   self.server:listen()
   self.host, self.port = self.server:localHost(), self.server:localPort()
   self.href_base = 'http://' .. self.host .. ':' .. self.port
@@ -162,13 +162,20 @@ function lib:GET(request)
 end
 
 function lib:PUT(request)
-  print("PUT...")
   local resource = self:find(request.path)
   if resource then
     return self:update(resource, request.body)
   else
     return self:create(request.path, request.body)
   end
+end
+
+function lib:DELETE(request)
+  local resource = self:find(request.path)
+  if not resource then
+    return nil, {status = '204'}
+  end
+  return self:delete(resource)
 end
 
 function lib:find(path)
@@ -187,4 +194,8 @@ end
 function lib:update(resource, content)
   -- forbidden
   return nil, {status = "403"}
+end
+
+function lib:delete(resource)
+  error("'delete(resource)' callback not implemented for DAVServer")
 end

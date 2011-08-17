@@ -9,7 +9,7 @@ using namespace lk;
 /* ============================ Constructors     ====================== */
 
 /** lk::Socket::Socket(lubyk::Worker *worker, int socket_type)
- * include/lk/Socket.h:105
+ * include/lk/Socket.h:108
  */
 static int Socket_Socket(lua_State *L) {
   try {
@@ -55,7 +55,7 @@ static int Socket__tostring(lua_State *L) {
 
 
 /** LuaStackSize lk::Socket::accept(lua_State *L)
- * include/lk/Socket.h:242
+ * include/lk/Socket.h:138
  */
 static int Socket_accept(lua_State *L) {
   try {
@@ -72,7 +72,7 @@ static int Socket_accept(lua_State *L) {
 
 
 /** int lk::Socket::bind(const char *localhost=NULL, int port=0)
- * include/lk/Socket.h:124
+ * include/lk/Socket.h:127
  */
 static int Socket_bind(lua_State *L) {
   try {
@@ -101,7 +101,7 @@ static int Socket_bind(lua_State *L) {
 
 
 /** void lk::Socket::close()
- * include/lk/Socket.h:113
+ * include/lk/Socket.h:116
  */
 static int Socket_close(lua_State *L) {
   try {
@@ -117,7 +117,7 @@ static int Socket_close(lua_State *L) {
 
 
 /** void lk::Socket::connect(const char *host, int port)
- * include/lk/Socket.h:180
+ * include/lk/Socket.h:129
  */
 static int Socket_connect(lua_State *L) {
   try {
@@ -135,7 +135,7 @@ static int Socket_connect(lua_State *L) {
 
 
 /** void lk::Socket::kill()
- * include/lk/Socket.h:397
+ * include/lk/Socket.h:194
  */
 static int Socket_kill(lua_State *L) {
   try {
@@ -151,7 +151,7 @@ static int Socket_kill(lua_State *L) {
 
 
 /** void lk::Socket::listen()
- * include/lk/Socket.h:230
+ * include/lk/Socket.h:133
  */
 static int Socket_listen(lua_State *L) {
   try {
@@ -167,7 +167,7 @@ static int Socket_listen(lua_State *L) {
 
 
 /** const char* lk::Socket::localHost() const 
- * include/lk/Socket.h:402
+ * include/lk/Socket.h:199
  */
 static int Socket_localHost(lua_State *L) {
   try {
@@ -184,7 +184,7 @@ static int Socket_localHost(lua_State *L) {
 
 
 /** int lk::Socket::localPort() const 
- * include/lk/Socket.h:406
+ * include/lk/Socket.h:203
  */
 static int Socket_localPort(lua_State *L) {
   try {
@@ -201,7 +201,7 @@ static int Socket_localPort(lua_State *L) {
 
 
 /** void lk::Socket::loop(lua_State *L)
- * include/lk/Socket.h:383
+ * include/lk/Socket.h:180
  */
 static int Socket_loop(lua_State *L) {
   try {
@@ -218,7 +218,7 @@ static int Socket_loop(lua_State *L) {
 
 
 /** int lk::Socket::port() const 
- * include/lk/Socket.h:418
+ * include/lk/Socket.h:215
  */
 static int Socket_port(lua_State *L) {
   try {
@@ -235,7 +235,7 @@ static int Socket_port(lua_State *L) {
 
 
 /** void lk::Socket::quit()
- * include/lk/Socket.h:390
+ * include/lk/Socket.h:187
  */
 static int Socket_quit(lua_State *L) {
   try {
@@ -251,7 +251,7 @@ static int Socket_quit(lua_State *L) {
 
 
 /** LuaStackSize lk::Socket::recv(lua_State *L)
- * include/lk/Socket.h:321
+ * include/lk/Socket.h:158
  */
 static int Socket_recv(lua_State *L) {
   try {
@@ -267,8 +267,25 @@ static int Socket_recv(lua_State *L) {
 }
 
 
+/** LuaStackSize lk::Socket::recvMsg(lua_State *L)
+ * include/lk/Socket.h:152
+ */
+static int Socket_recvMsg(lua_State *L) {
+  try {
+    Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "lk.Socket"));
+    
+    LuaStackSize  retval__ = self__->recvMsg(L);
+    return retval__;
+  } catch (std::exception &e) {
+    return luaL_error(L, "lk.Socket.recvMsg: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "lk.Socket.recvMsg: Unknown exception");
+  }
+}
+
+
 /** const char* lk::Socket::remoteHost() const 
- * include/lk/Socket.h:410
+ * include/lk/Socket.h:207
  */
 static int Socket_remoteHost(lua_State *L) {
   try {
@@ -285,7 +302,7 @@ static int Socket_remoteHost(lua_State *L) {
 
 
 /** int lk::Socket::remotePort() const 
- * include/lk/Socket.h:414
+ * include/lk/Socket.h:211
  */
 static int Socket_remotePort(lua_State *L) {
   try {
@@ -301,8 +318,25 @@ static int Socket_remotePort(lua_State *L) {
 }
 
 
+/** LuaStackSize lk::Socket::request(lua_State *L)
+ * include/lk/Socket.h:173
+ */
+static int Socket_request(lua_State *L) {
+  try {
+    Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "lk.Socket"));
+    
+    LuaStackSize  retval__ = self__->request(L);
+    return retval__;
+  } catch (std::exception &e) {
+    return luaL_error(L, "lk.Socket.request: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "lk.Socket.request: Unknown exception");
+  }
+}
+
+
 /** void lk::Socket::send(lua_State *L)
- * include/lk/Socket.h:349
+ * include/lk/Socket.h:163
  */
 static int Socket_send(lua_State *L) {
   try {
@@ -318,8 +352,25 @@ static int Socket_send(lua_State *L) {
 }
 
 
+/** void lk::Socket::sendMsg(lua_State *L)
+ * include/lk/Socket.h:168
+ */
+static int Socket_sendMsg(lua_State *L) {
+  try {
+    Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "lk.Socket"));
+    
+    self__->sendMsg(L);
+    return 0;
+  } catch (std::exception &e) {
+    return luaL_error(L, "lk.Socket.sendMsg: %s", e.what());
+  } catch (...) {
+    return luaL_error(L, "lk.Socket.sendMsg: Unknown exception");
+  }
+}
+
+
 /** void lk::Socket::setRecvTimeout(int timeout)
- * include/lk/Socket.h:284
+ * include/lk/Socket.h:140
  */
 static int Socket_setRecvTimeout(lua_State *L) {
   try {
@@ -336,7 +387,7 @@ static int Socket_setRecvTimeout(lua_State *L) {
 
 
 /** void lk::Socket::setSendTimeout(int timeout)
- * include/lk/Socket.h:288
+ * include/lk/Socket.h:144
  */
 static int Socket_setSendTimeout(lua_State *L) {
   try {
@@ -369,9 +420,12 @@ static const struct luaL_Reg Socket_member_methods[] = {
   {"port"              , Socket_port},
   {"quit"              , Socket_quit},
   {"recv"              , Socket_recv},
+  {"recvMsg"           , Socket_recvMsg},
   {"remoteHost"        , Socket_remoteHost},
   {"remotePort"        , Socket_remotePort},
+  {"request"           , Socket_request},
   {"send"              , Socket_send},
+  {"sendMsg"           , Socket_sendMsg},
   {"setRecvTimeout"    , Socket_setRecvTimeout},
   {"setSendTimeout"    , Socket_setSendTimeout},
   {"__tostring"        , Socket__tostring},

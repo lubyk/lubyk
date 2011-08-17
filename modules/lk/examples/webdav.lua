@@ -3,28 +3,14 @@ require 'lubyk'
 srv = lk.DavServer(1024)
 cache = {}
 
-local function mockResource(path)
-  local self = {davProperty = rawget, path = path}
+local function mockResource(path, body)
+  local self = {davProperty = rawget, path = path, body = body or ''}
   if path == '/' then
     self.resourcetype = {xml = 'collection'}
-    self.contentlength = 100 -- ???
     self.getlastmodified = 9298347
     self.creationdate    = 8909234
     return self
-  elseif path == '/foo.lua' then
-    self.body = [[
--- This is "foo.lua"
-require 'lubyk'
-print('ok!')
-]]
-  elseif path == '/bar.lua' then
-    self.body = [[
--- This is "bar.lua"
-require 'lubyk'
-print('ok!')
-]]
   end
-  -- common to foo.lua and bar.lua
   self.getcontentlength = string.len(self.body)
   self.contenttype = 'text/plain'
   self.getlastmodified = 9298447
@@ -65,8 +51,21 @@ function srv:update(resource, content)
 end
 
 function srv:create(path, content)
-  -- TODO...
-  return nil, {status = "403"}
+  if string.match(path, '[a-z]+.lua') then
+    local res = mockResource(path, content)
+    cache[path] = res
+    table.insert(self:findChildren(self:find('/')), res)
+    return nil, {status = "201"}
+  else
+    return nil, {status = "400"}
+  end
 end
+
+function srv:delete(resource)
+  cache[resource.path] = nil
+  collectgarbage()
+  return nil, {status = "204"}
+end
+
 print(string.format("Starting server on port %i...\nConnect with: http://localhost:%i", srv.port, srv.port))
 srv:listen()
