@@ -13,7 +13,7 @@ using namespace lk;
  */
 static int Thread_Thread(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
     Thread * retval__ = new Thread(worker);
     lua_pushclass<Thread>(L, retval__, "lk.Thread");
     return 1;
@@ -23,6 +23,7 @@ static int Thread_Thread(lua_State *L) {
     return luaL_error(L, "lk.Thread.Thread: Unknown exception");
   }
 }
+
 
 
 /* ============================ Destructor       ====================== */
@@ -58,7 +59,7 @@ static int Thread__tostring(lua_State *L) {
  */
 static int Thread_join(lua_State *L) {
   try {
-    Thread *self__ = *((Thread**)luaL_checkudata(L, 1, "lk.Thread"));
+    Thread *self__ = *((Thread**)dubL_checkudata(L, 1, "lk.Thread"));
     self__->join();
     return 0;
   } catch (std::exception &e) {
@@ -69,12 +70,13 @@ static int Thread_join(lua_State *L) {
 }
 
 
+
 /** void lk::Thread::kill()
  * include/lk/Thread.h:54
  */
 static int Thread_kill(lua_State *L) {
   try {
-    Thread *self__ = *((Thread**)luaL_checkudata(L, 1, "lk.Thread"));
+    Thread *self__ = *((Thread**)dubL_checkudata(L, 1, "lk.Thread"));
     self__->kill();
     return 0;
   } catch (std::exception &e) {
@@ -85,12 +87,13 @@ static int Thread_kill(lua_State *L) {
 }
 
 
+
 /** void lk::Thread::quit()
  * include/lk/Thread.h:50
  */
 static int Thread_quit(lua_State *L) {
   try {
-    Thread *self__ = *((Thread**)luaL_checkudata(L, 1, "lk.Thread"));
+    Thread *self__ = *((Thread**)dubL_checkudata(L, 1, "lk.Thread"));
     self__->quit();
     return 0;
   } catch (std::exception &e) {
@@ -101,12 +104,13 @@ static int Thread_quit(lua_State *L) {
 }
 
 
+
 /** bool lk::Thread::shouldRun()
  * include/lk/Thread.h:64
  */
 static int Thread_shouldRun(lua_State *L) {
   try {
-    Thread *self__ = *((Thread**)luaL_checkudata(L, 1, "lk.Thread"));
+    Thread *self__ = *((Thread**)dubL_checkudata(L, 1, "lk.Thread"));
     bool  retval__ = self__->shouldRun();
     lua_pushboolean(L, retval__);
     return 1;
@@ -118,12 +122,13 @@ static int Thread_shouldRun(lua_State *L) {
 }
 
 
+
 /** void lk::Thread::start(lua_State *L)
  * include/lk/Thread.h:68
  */
 static int Thread_start(lua_State *L) {
   try {
-    Thread *self__ = *((Thread**)luaL_checkudata(L, 1, "lk.Thread"));
+    Thread *self__ = *((Thread**)dubL_checkudata(L, 1, "lk.Thread"));
     
     self__->start(L);
     return 0;
@@ -133,6 +138,7 @@ static int Thread_start(lua_State *L) {
     return luaL_error(L, "lk.Thread.start: Unknown exception");
   }
 }
+
 
 
 

@@ -23,13 +23,14 @@ static int lk_findFile(lua_State *L) {
 
 
 
+
 /** static const char* lk::pushnexttemplate(lua_State *L, const char *path)
  * include/lk/constants.h:47
  */
 static int lk_pushnexttemplate(lua_State *L) {
   try {
     
-    const char *path = luaL_checkstring(L, 2);
+    const char *path = dubL_checkstring(L, 2);
     const char * retval__ = pushnexttemplate(L, path);
     lua_pushstring(L, retval__);
     return 1;
@@ -42,12 +43,13 @@ static int lk_pushnexttemplate(lua_State *L) {
 
 
 
+
 /** static int lk::readable(const char *filename)
  * include/lk/constants.h:39
  */
 static int lk_readable(lua_State *L) {
   try {
-    const char *filename = luaL_checkstring(L, 1);
+    const char *filename = dubL_checkstring(L, 1);
     int  retval__ = readable(filename);
     lua_pushnumber(L, retval__);
     return 1;
@@ -57,6 +59,7 @@ static int lk_readable(lua_State *L) {
     return luaL_error(L, "lk.readable: Unknown exception");
   }
 }
+
 
 
 

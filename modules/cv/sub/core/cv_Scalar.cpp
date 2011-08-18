@@ -49,16 +49,16 @@ static int Scalar_Scalar2(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     Scalar * retval__;
-    double v0 = luaL_checknumber(L, 1);
-    double v1 = luaL_checknumber(L, 2);
+    double v0 = dubL_checknumber(L, 1);
+    double v1 = dubL_checknumber(L, 2);
     if (top__ < 3) {
       retval__ = new Scalar(v0, v1);
     } else {
-      double v2 = luaL_checknumber(L, 3);
+      double v2 = dubL_checknumber(L, 3);
       if (top__ < 4) {
         retval__ = new Scalar(v0, v1, v2);
       } else {
-        double v3 = luaL_checknumber(L, 4);
+        double v3 = dubL_checknumber(L, 4);
         retval__ = new Scalar(v0, v1, v2, v3);
       }
     }
@@ -94,7 +94,7 @@ static int Scalar_Scalar2(lua_State *L) {
  */
 static int Scalar_Scalar3(lua_State *L) {
   try {
-    const CvScalar *s = *((const CvScalar **)luaL_checkudata(L, 1, "cv.CvScalar"));
+    const CvScalar *s = *((const CvScalar **)dubL_checkudata(L, 1, "cv.CvScalar"));
     Scalar * retval__ = new Scalar(*s);
     lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
     return 1;
@@ -128,7 +128,7 @@ static int Scalar_Scalar3(lua_State *L) {
  */
 static int Scalar_Scalar4(lua_State *L) {
   try {
-    double v0 = luaL_checknumber(L, 1);
+    double v0 = dubL_checknumber(L, 1);
     Scalar * retval__ = new Scalar(v0);
     lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
     return 1;
@@ -185,7 +185,7 @@ static int Scalar_Scalar(lua_State *L) {
 /* ============================ Destructor       ====================== */
 
 static int Scalar_destructor(lua_State *L) {
-  Scalar **userdata = (Scalar**)luaL_checkudata(L, 1, "cv.Scalar");
+  Scalar **userdata = (Scalar**)dubL_checkudata(L, 1, "cv.Scalar");
   if (*userdata) delete *userdata;
   *userdata = NULL;
   return 0;
@@ -194,7 +194,7 @@ static int Scalar_destructor(lua_State *L) {
 /* ============================ tostring         ====================== */
 
 static int Scalar__tostring(lua_State *L) {
-  Scalar **userdata = (Scalar**)luaL_checkudata(L, 1, "cv.Scalar");
+  Scalar **userdata = (Scalar**)dubL_checkudata(L, 1, "cv.Scalar");
 
   lua_pushfstring(L, "<cv.Scalar: %p>", *userdata);
 
@@ -209,7 +209,7 @@ static int Scalar__tostring(lua_State *L) {
  */
 static int Scalar_all(lua_State *L) {
   try {
-    double v0 = luaL_checknumber(L, 1);
+    double v0 = dubL_checknumber(L, 1);
     Scalar  retval__ = Scalar::all(v0);
     lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
     return 1;
@@ -243,15 +243,15 @@ static int Scalar_all(lua_State *L) {
  */
 static int Scalar_mul(lua_State *L) {
   try {
-    Scalar *self__ = *((Scalar**)luaL_checkudata(L, 1, "cv.Scalar"));
+    Scalar *self__ = *((Scalar**)dubL_checkudata(L, 1, "cv.Scalar"));
     lua_remove(L, 1);
     int top__ = lua_gettop(L);
     Scalar  retval__;
-    const Scalar *t = *((const Scalar **)luaL_checkudata(L, 1, "cv.Scalar"));
+    const Scalar *t = *((const Scalar **)dubL_checkudata(L, 1, "cv.Scalar"));
     if (top__ < 2) {
       retval__ = self__->mul(*t);
     } else {
-      double scale = luaL_checknumber(L, 2);
+      double scale = dubL_checknumber(L, 2);
       retval__ = self__->mul(*t, scale);
     }
     lua_pushclass<Scalar>(L, retval__, "cv.Scalar");

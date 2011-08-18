@@ -14,7 +14,7 @@ using namespace dummy;
  */
 static int Dummy_Dummy1(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
     Dummy * retval__ = new Dummy(worker);
     lua_pushclass<Dummy>(L, retval__, "dummy.Dummy");
     return 1;
@@ -24,6 +24,7 @@ static int Dummy_Dummy1(lua_State *L) {
     return luaL_error(L, "dummy.Dummy.Dummy: Unknown exception");
   }
 }
+
 
 
 /** dummy::Dummy::Dummy(lubyk::Worker *worker)
@@ -31,7 +32,7 @@ static int Dummy_Dummy1(lua_State *L) {
  */
 static int Dummy_Dummy2(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
     Dummy * retval__ = new Dummy(worker);
     lua_pushclass<Dummy>(L, retval__, "dummy.Dummy");
     return 1;
@@ -41,6 +42,7 @@ static int Dummy_Dummy2(lua_State *L) {
     return luaL_error(L, "dummy.Dummy.Dummy: Unknown exception");
   }
 }
+
 
 
 
@@ -97,7 +99,7 @@ static int Dummy__tostring(lua_State *L) {
  */
 static int Dummy___newindex1(lua_State *L) {
   try {
-    Dummy *self__ = *((Dummy**)luaL_checkudata(L, 1, "dummy.Dummy"));
+    Dummy *self__ = *((Dummy**)dubL_checkudata(L, 1, "dummy.Dummy"));
     
     self__->__newindex(L);
     return 0;
@@ -107,6 +109,7 @@ static int Dummy___newindex1(lua_State *L) {
     return luaL_error(L, "dummy.Dummy.__newindex: Unknown exception");
   }
 }
+
 
 
 /** void dummy::Dummy::__newindex(lua_State *L)
@@ -114,7 +117,7 @@ static int Dummy___newindex1(lua_State *L) {
  */
 static int Dummy___newindex2(lua_State *L) {
   try {
-    Dummy *self__ = *((Dummy**)luaL_checkudata(L, 1, "dummy.Dummy"));
+    Dummy *self__ = *((Dummy**)dubL_checkudata(L, 1, "dummy.Dummy"));
     
     self__->__newindex(L);
     return 0;
@@ -124,6 +127,7 @@ static int Dummy___newindex2(lua_State *L) {
     return luaL_error(L, "dummy.Dummy.__newindex: Unknown exception");
   }
 }
+
 
 
 
@@ -152,7 +156,7 @@ static int Dummy___newindex(lua_State *L) {
  */
 static int Dummy_callback1(lua_State *L) {
   try {
-    Dummy *self__ = *((Dummy**)luaL_checkudata(L, 1, "dummy.Dummy"));
+    Dummy *self__ = *((Dummy**)dubL_checkudata(L, 1, "dummy.Dummy"));
     self__->callback();
     return 0;
   } catch (std::exception &e) {
@@ -161,6 +165,7 @@ static int Dummy_callback1(lua_State *L) {
     return luaL_error(L, "dummy.Dummy.callback: Unknown exception");
   }
 }
+
 
 
 /** void dummy::Dummy::callback()
@@ -168,7 +173,7 @@ static int Dummy_callback1(lua_State *L) {
  */
 static int Dummy_callback2(lua_State *L) {
   try {
-    Dummy *self__ = *((Dummy**)luaL_checkudata(L, 1, "dummy.Dummy"));
+    Dummy *self__ = *((Dummy**)dubL_checkudata(L, 1, "dummy.Dummy"));
     self__->callback();
     return 0;
   } catch (std::exception &e) {
@@ -177,6 +182,7 @@ static int Dummy_callback2(lua_State *L) {
     return luaL_error(L, "dummy.Dummy.callback: Unknown exception");
   }
 }
+
 
 
 
@@ -210,6 +216,7 @@ static int Dummy_plat1(lua_State *L) {
 }
 
 
+
 /** static const char* dummy::Dummy::plat()
  * include/dummy/dummy.h:86
  */
@@ -224,6 +231,7 @@ static int Dummy_plat2(lua_State *L) {
     return luaL_error(L, "dummy.Dummy.plat: Unknown exception");
   }
 }
+
 
 
 

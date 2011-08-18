@@ -44,10 +44,10 @@ static int Registration__tostring(lua_State *L) {
  */
 static int Registration_MakeInstance(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
-    const char *service_type = luaL_checkstring(L, 2);
-    const char *name = luaL_checkstring(L, 3);
-    uint port = luaL_checkint(L, 4);
+    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
+    const char *service_type = dubL_checkstring(L, 2);
+    const char *name = dubL_checkstring(L, 3);
+    uint port = dubL_checkint(L, 4);
     
     LuaStackSize  retval__ = Registration::MakeInstance(worker, service_type, name, port, L);
     return retval__;
@@ -59,12 +59,13 @@ static int Registration_MakeInstance(lua_State *L) {
 }
 
 
+
 /** virtual void mdns::Registration::registration_done()
  * include/mdns/registration.h:70
  */
 static int Registration_registration_done(lua_State *L) {
   try {
-    Registration *self__ = *((Registration**)luaL_checkudata(L, 1, "mdns.Registration"));
+    Registration *self__ = *((Registration**)dubL_checkudata(L, 1, "mdns.Registration"));
     self__->registration_done();
     return 0;
   } catch (std::exception &e) {
@@ -73,6 +74,7 @@ static int Registration_registration_done(lua_State *L) {
     return luaL_error(L, "mdns.Registration.registration_done: Unknown exception");
   }
 }
+
 
 
 

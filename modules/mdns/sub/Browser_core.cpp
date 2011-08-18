@@ -44,8 +44,8 @@ static int Browser__tostring(lua_State *L) {
  */
 static int Browser_MakeInstance(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
-    const char *service_type = luaL_checkstring(L, 2);
+    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
+    const char *service_type = dubL_checkstring(L, 2);
     
     LuaStackSize  retval__ = Browser::MakeInstance(worker, service_type, L);
     return retval__;
@@ -57,13 +57,14 @@ static int Browser_MakeInstance(lua_State *L) {
 }
 
 
+
 /** virtual void mdns::Browser::add_device(const Location &location)
  * include/mdns/browser.h:75
  */
 static int Browser_add_device(lua_State *L) {
   try {
-    Browser *self__ = *((Browser**)luaL_checkudata(L, 1, "mdns.Browser"));
-    const Location *location = *((const Location **)luaL_checkudata(L, 2, "mdns.Location"));
+    Browser *self__ = *((Browser**)dubL_checkudata(L, 1, "mdns.Browser"));
+    const Location *location = *((const Location **)dubL_checkudata(L, 2, "mdns.Location"));
     self__->add_device(*location);
     return 0;
   } catch (std::exception &e) {
@@ -74,13 +75,14 @@ static int Browser_add_device(lua_State *L) {
 }
 
 
+
 /** virtual void mdns::Browser::remove_device(const char *name)
  * include/mdns/browser.h:127
  */
 static int Browser_remove_device(lua_State *L) {
   try {
-    Browser *self__ = *((Browser**)luaL_checkudata(L, 1, "mdns.Browser"));
-    const char *name = luaL_checkstring(L, 2);
+    Browser *self__ = *((Browser**)dubL_checkudata(L, 1, "mdns.Browser"));
+    const char *name = dubL_checkstring(L, 2);
     self__->remove_device(name);
     return 0;
   } catch (std::exception &e) {
@@ -91,12 +93,13 @@ static int Browser_remove_device(lua_State *L) {
 }
 
 
+
 /** const char* mdns::Browser::service_type()
  * include/mdns/browser.h:154
  */
 static int Browser_service_type(lua_State *L) {
   try {
-    Browser *self__ = *((Browser**)luaL_checkudata(L, 1, "mdns.Browser"));
+    Browser *self__ = *((Browser**)dubL_checkudata(L, 1, "mdns.Browser"));
     const char * retval__ = self__->service_type();
     lua_pushstring(L, retval__);
     return 1;
@@ -106,6 +109,7 @@ static int Browser_service_type(lua_State *L) {
     return luaL_error(L, "mdns.Browser.service_type: Unknown exception");
   }
 }
+
 
 
 

@@ -15,11 +15,11 @@ static int Widget_Widget(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     Widget * retval__;
-    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
     if (top__ < 2) {
       retval__ = new Widget(worker);
     } else {
-      int window_flags = luaL_checkint(L, 2);
+      int window_flags = dubL_checkint(L, 2);
       retval__ = new Widget(worker, window_flags);
     }
     lua_pushclass2<Widget>(L, retval__, "mimas.Widget");
@@ -30,6 +30,7 @@ static int Widget_Widget(lua_State *L) {
     return luaL_error(L, "mimas.Widget.Widget: Unknown exception");
   }
 }
+
 
 
 /* ============================ Destructor       ====================== */
@@ -79,7 +80,7 @@ static int Widget__tostring(lua_State *L) {
  */
 static int Widget___newindex(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in __newindex");
     
     self__->__newindex(L);
@@ -92,12 +93,13 @@ static int Widget___newindex(lua_State *L) {
 }
 
 
+
 /** void mimas::Widget::activateWindow()
  * include/mimas/Widget.h:228
  */
 static int Widget_activateWindow(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in activateWindow");
     self__->activateWindow();
     return 0;
@@ -109,23 +111,24 @@ static int Widget_activateWindow(lua_State *L) {
 }
 
 
+
 /** void mimas::Widget::addWidget(QWidget *widget, float x=0, float y=0)
  * include/mimas/Widget.h:93
  */
 static int Widget_addWidget(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in addWidget");
     int top__ = lua_gettop(L);
-    QWidget *widget = *((QWidget **)luaL_checkudata(L, 2, "mimas.QWidget"));
+    QWidget *widget = *((QWidget **)dubL_checkudata(L, 2, "mimas.QWidget"));
     if (top__ < 3) {
       self__->addWidget(widget);
     } else {
-      float x = luaL_checknumber(L, 3);
+      float x = dubL_checknumber(L, 3);
       if (top__ < 4) {
         self__->addWidget(widget, x);
       } else {
-        float y = luaL_checknumber(L, 4);
+        float y = dubL_checknumber(L, 4);
         self__->addWidget(widget, x, y);
       }
     }
@@ -138,12 +141,13 @@ static int Widget_addWidget(lua_State *L) {
 }
 
 
+
 /** bool mimas::Widget::close()
  * include/mimas/Widget.h:212
  */
 static int Widget_close(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in close");
     bool  retval__ = self__->close();
     lua_pushboolean(L, retval__);
@@ -156,12 +160,13 @@ static int Widget_close(lua_State *L) {
 }
 
 
+
 /** QString mimas::Widget::cssClass() const 
  * include/mimas/Widget.h:85
  */
 static int Widget_cssClass(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in cssClass");
     QString  retval__ = self__->cssClass();
     lua_pushclass<QString>(L, retval__, "mimas.QString");
@@ -174,16 +179,17 @@ static int Widget_cssClass(lua_State *L) {
 }
 
 
+
 /** LuaStackSize mimas::Widget::getExistingDirectory(const char *caption, const char *base_dir, int options, lua_State *L)
  * include/mimas/Widget.h:322
  */
 static int Widget_getExistingDirectory(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in getExistingDirectory");
-    const char *caption = luaL_checkstring(L, 2);
-    const char *base_dir = luaL_checkstring(L, 3);
-    int options = luaL_checkint(L, 4);
+    const char *caption = dubL_checkstring(L, 2);
+    const char *base_dir = dubL_checkstring(L, 3);
+    int options = dubL_checkint(L, 4);
     
     LuaStackSize  retval__ = self__->getExistingDirectory(caption, base_dir, options, L);
     return retval__;
@@ -195,17 +201,18 @@ static int Widget_getExistingDirectory(lua_State *L) {
 }
 
 
+
 /** LuaStackSize mimas::Widget::getOpenFileName(const char *caption, const char *base_dir, const char *filter, int options, lua_State *L)
  * include/mimas/Widget.h:317
  */
 static int Widget_getOpenFileName(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in getOpenFileName");
-    const char *caption = luaL_checkstring(L, 2);
-    const char *base_dir = luaL_checkstring(L, 3);
-    const char *filter = luaL_checkstring(L, 4);
-    int options = luaL_checkint(L, 5);
+    const char *caption = dubL_checkstring(L, 2);
+    const char *base_dir = dubL_checkstring(L, 3);
+    const char *filter = dubL_checkstring(L, 4);
+    int options = dubL_checkint(L, 5);
     
     LuaStackSize  retval__ = self__->getOpenFileName(caption, base_dir, filter, options, L);
     return retval__;
@@ -217,15 +224,16 @@ static int Widget_getOpenFileName(lua_State *L) {
 }
 
 
+
 /** void mimas::Widget::globalMove(float x, float y)
  * include/mimas/Widget.h:264
  */
 static int Widget_globalMove(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in globalMove");
-    float x = luaL_checknumber(L, 2);
-    float y = luaL_checknumber(L, 3);
+    float x = dubL_checknumber(L, 2);
+    float y = dubL_checknumber(L, 3);
     self__->globalMove(x, y);
     return 0;
   } catch (std::exception &e) {
@@ -236,12 +244,13 @@ static int Widget_globalMove(lua_State *L) {
 }
 
 
+
 /** LuaStackSize mimas::Widget::globalPosition(lua_State *L)
  * include/mimas/Widget.h:255
  */
 static int Widget_globalPosition(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in globalPosition");
     
     LuaStackSize  retval__ = self__->globalPosition(L);
@@ -254,12 +263,13 @@ static int Widget_globalPosition(lua_State *L) {
 }
 
 
+
 /** int mimas::Widget::height()
  * include/mimas/Widget.h:140
  */
 static int Widget_height(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in height");
     int  retval__ = self__->height();
     lua_pushnumber(L, retval__);
@@ -272,12 +282,13 @@ static int Widget_height(lua_State *L) {
 }
 
 
+
 /** void mimas::Widget::hide()
  * include/mimas/Widget.h:224
  */
 static int Widget_hide(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in hide");
     self__->hide();
     return 0;
@@ -289,12 +300,13 @@ static int Widget_hide(lua_State *L) {
 }
 
 
+
 /** float mimas::Widget::hue()
  * include/mimas/Widget.h:166
  */
 static int Widget_hue(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in hue");
     float  retval__ = self__->hue();
     lua_pushnumber(L, retval__);
@@ -307,12 +319,13 @@ static int Widget_hue(lua_State *L) {
 }
 
 
+
 /** bool mimas::Widget::isFullScreen()
  * include/mimas/Widget.h:242
  */
 static int Widget_isFullScreen(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in isFullScreen");
     bool  retval__ = self__->isFullScreen();
     lua_pushboolean(L, retval__);
@@ -325,12 +338,13 @@ static int Widget_isFullScreen(lua_State *L) {
 }
 
 
+
 /** bool mimas::Widget::isVisible() const 
  * include/mimas/Widget.h:216
  */
 static int Widget_isVisible(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in isVisible");
     bool  retval__ = self__->isVisible();
     lua_pushboolean(L, retval__);
@@ -343,12 +357,13 @@ static int Widget_isVisible(lua_State *L) {
 }
 
 
+
 /** void mimas::Widget::lower()
  * include/mimas/Widget.h:270
  */
 static int Widget_lower(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in lower");
     self__->lower();
     return 0;
@@ -360,15 +375,16 @@ static int Widget_lower(lua_State *L) {
 }
 
 
+
 /** void mimas::Widget::move(int x, int y)
  * include/mimas/Widget.h:120
  */
 static int Widget_move(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in move");
-    int x = luaL_checkint(L, 2);
-    int y = luaL_checkint(L, 3);
+    int x = dubL_checkint(L, 2);
+    int y = dubL_checkint(L, 3);
     self__->move(x, y);
     return 0;
   } catch (std::exception &e) {
@@ -379,12 +395,13 @@ static int Widget_move(lua_State *L) {
 }
 
 
+
 /** LuaStackSize mimas::Widget::name(lua_State *L)
  * include/mimas/Widget.h:109
  */
 static int Widget_name(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in name");
     
     LuaStackSize  retval__ = self__->name(L);
@@ -397,12 +414,13 @@ static int Widget_name(lua_State *L) {
 }
 
 
+
 /** QObject* mimas::Widget::object()
  * include/mimas/Widget.h:103
  */
 static int Widget_object(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in object");
     QObject * retval__ = self__->object();
     lua_pushclass<QObject>(L, retval__, "mimas.QObject");
@@ -415,12 +433,13 @@ static int Widget_object(lua_State *L) {
 }
 
 
+
 /** void mimas::Widget::raise()
  * include/mimas/Widget.h:276
  */
 static int Widget_raise(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in raise");
     self__->raise();
     return 0;
@@ -432,15 +451,16 @@ static int Widget_raise(lua_State *L) {
 }
 
 
+
 /** void mimas::Widget::resize(int w, int h)
  * include/mimas/Widget.h:124
  */
 static int Widget_resize(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in resize");
-    int w = luaL_checkint(L, 2);
-    int h = luaL_checkint(L, 3);
+    int w = dubL_checkint(L, 2);
+    int h = dubL_checkint(L, 3);
     self__->resize(w, h);
     return 0;
   } catch (std::exception &e) {
@@ -451,14 +471,15 @@ static int Widget_resize(lua_State *L) {
 }
 
 
+
 /** void mimas::Widget::setHue(float hue)
  * include/mimas/Widget.h:161
  */
 static int Widget_setHue(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in setHue");
-    float hue = luaL_checknumber(L, 2);
+    float hue = dubL_checknumber(L, 2);
     self__->setHue(hue);
     return 0;
   } catch (std::exception &e) {
@@ -469,15 +490,16 @@ static int Widget_setHue(lua_State *L) {
 }
 
 
+
 /** void mimas::Widget::setMinimumSize(float w, float h)
  * include/mimas/Widget.h:198
  */
 static int Widget_setMinimumSize(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in setMinimumSize");
-    float w = luaL_checknumber(L, 2);
-    float h = luaL_checknumber(L, 3);
+    float w = dubL_checknumber(L, 2);
+    float h = dubL_checknumber(L, 3);
     self__->setMinimumSize(w, h);
     return 0;
   } catch (std::exception &e) {
@@ -488,12 +510,13 @@ static int Widget_setMinimumSize(lua_State *L) {
 }
 
 
+
 /** void mimas::Widget::setMouseTracking(bool enable)
  * include/mimas/Widget.h:204
  */
 static int Widget_setMouseTracking(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in setMouseTracking");
     bool enable = lua_toboolean(L, 2);
     self__->setMouseTracking(enable);
@@ -506,14 +529,15 @@ static int Widget_setMouseTracking(lua_State *L) {
 }
 
 
+
 /** void mimas::Widget::setName(const char *name)
  * include/mimas/Widget.h:116
  */
 static int Widget_setName(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in setName");
-    const char *name = luaL_checkstring(L, 2);
+    const char *name = dubL_checkstring(L, 2);
     self__->setName(name);
     return 0;
   } catch (std::exception &e) {
@@ -524,14 +548,15 @@ static int Widget_setName(lua_State *L) {
 }
 
 
+
 /** void mimas::Widget::setParent(QWidget *parent)
  * include/mimas/Widget.h:99
  */
 static int Widget_setParent(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in setParent");
-    QWidget *parent = *((QWidget **)luaL_checkudata(L, 2, "mimas.QWidget"));
+    QWidget *parent = *((QWidget **)dubL_checkudata(L, 2, "mimas.QWidget"));
     self__->setParent(parent);
     return 0;
   } catch (std::exception &e) {
@@ -542,15 +567,16 @@ static int Widget_setParent(lua_State *L) {
 }
 
 
+
 /** void mimas::Widget::setSizeHint(float w, float h)
  * include/mimas/Widget.h:185
  */
 static int Widget_setSizeHint(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in setSizeHint");
-    float w = luaL_checknumber(L, 2);
-    float h = luaL_checknumber(L, 3);
+    float w = dubL_checknumber(L, 2);
+    float h = dubL_checknumber(L, 3);
     self__->setSizeHint(w, h);
     return 0;
   } catch (std::exception &e) {
@@ -561,15 +587,16 @@ static int Widget_setSizeHint(lua_State *L) {
 }
 
 
+
 /** void mimas::Widget::setSizePolicy(int horizontal, int vertical)
  * include/mimas/Widget.h:192
  */
 static int Widget_setSizePolicy(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in setSizePolicy");
-    int horizontal = luaL_checkint(L, 2);
-    int vertical = luaL_checkint(L, 3);
+    int horizontal = dubL_checkint(L, 2);
+    int vertical = dubL_checkint(L, 3);
     self__->setSizePolicy(horizontal, vertical);
     return 0;
   } catch (std::exception &e) {
@@ -580,14 +607,15 @@ static int Widget_setSizePolicy(lua_State *L) {
 }
 
 
+
 /** void mimas::Widget::setStyle(const char *text)
  * include/mimas/Widget.h:153
  */
 static int Widget_setStyle(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in setStyle");
-    const char *text = luaL_checkstring(L, 2);
+    const char *text = dubL_checkstring(L, 2);
     self__->setStyle(text);
     return 0;
   } catch (std::exception &e) {
@@ -598,14 +626,15 @@ static int Widget_setStyle(lua_State *L) {
 }
 
 
+
 /** void mimas::Widget::setStyleSheet(const char *text)
  * include/mimas/Widget.h:157
  */
 static int Widget_setStyleSheet(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in setStyleSheet");
-    const char *text = luaL_checkstring(L, 2);
+    const char *text = dubL_checkstring(L, 2);
     self__->setStyleSheet(text);
     return 0;
   } catch (std::exception &e) {
@@ -616,12 +645,13 @@ static int Widget_setStyleSheet(lua_State *L) {
 }
 
 
+
 /** void mimas::Widget::show()
  * include/mimas/Widget.h:220
  */
 static int Widget_show(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in show");
     self__->show();
     return 0;
@@ -633,12 +663,13 @@ static int Widget_show(lua_State *L) {
 }
 
 
+
 /** void mimas::Widget::showFullScreen(bool enable=true)
  * include/mimas/Widget.h:234
  */
 static int Widget_showFullScreen(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in showFullScreen");
     int top__ = lua_gettop(L);
     if (top__ < 2) {
@@ -656,12 +687,13 @@ static int Widget_showFullScreen(lua_State *L) {
 }
 
 
+
 /** LuaStackSize mimas::Widget::size(lua_State *L)
  * include/mimas/Widget.h:146
  */
 static int Widget_size(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in size");
     
     LuaStackSize  retval__ = self__->size(L);
@@ -674,12 +706,13 @@ static int Widget_size(lua_State *L) {
 }
 
 
+
 /** void mimas::Widget::swapFullScreen()
  * include/mimas/Widget.h:248
  */
 static int Widget_swapFullScreen(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in swapFullScreen");
     self__->swapFullScreen();
     return 0;
@@ -691,14 +724,15 @@ static int Widget_swapFullScreen(lua_State *L) {
 }
 
 
+
 /** LuaStackSize mimas::Widget::textSize(const char *text, lua_State *L)
  * include/mimas/Widget.h:176
  */
 static int Widget_textSize(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in textSize");
-    const char *text = luaL_checkstring(L, 2);
+    const char *text = dubL_checkstring(L, 2);
     
     LuaStackSize  retval__ = self__->textSize(text, L);
     return retval__;
@@ -710,12 +744,13 @@ static int Widget_textSize(lua_State *L) {
 }
 
 
+
 /** void mimas::Widget::update()
  * include/mimas/Widget.h:170
  */
 static int Widget_update(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in update");
     self__->update();
     return 0;
@@ -727,12 +762,13 @@ static int Widget_update(lua_State *L) {
 }
 
 
+
 /** QWidget* mimas::Widget::widget()
  * include/mimas/Widget.h:89
  */
 static int Widget_widget(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in widget");
     QWidget * retval__ = self__->widget();
     lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
@@ -745,12 +781,13 @@ static int Widget_widget(lua_State *L) {
 }
 
 
+
 /** int mimas::Widget::width()
  * include/mimas/Widget.h:136
  */
 static int Widget_width(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in width");
     int  retval__ = self__->width();
     lua_pushnumber(L, retval__);
@@ -763,12 +800,13 @@ static int Widget_width(lua_State *L) {
 }
 
 
+
 /** int mimas::Widget::x()
  * include/mimas/Widget.h:128
  */
 static int Widget_x(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in x");
     int  retval__ = self__->x();
     lua_pushnumber(L, retval__);
@@ -781,12 +819,13 @@ static int Widget_x(lua_State *L) {
 }
 
 
+
 /** int mimas::Widget::y()
  * include/mimas/Widget.h:132
  */
 static int Widget_y(lua_State *L) {
   try {
-    Widget *self__ = *((Widget**)luaL_checkudata(L, 1, "mimas.Widget"));
+    Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Widget in y");
     int  retval__ = self__->y();
     lua_pushnumber(L, retval__);
@@ -797,6 +836,7 @@ static int Widget_y(lua_State *L) {
     return luaL_error(L, "mimas.Widget.y: Unknown exception");
   }
 }
+
 
 
 

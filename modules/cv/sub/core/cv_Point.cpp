@@ -47,8 +47,8 @@ static int Point_Point1(lua_State *L) {
  */
 static int Point_Point2(lua_State *L) {
   try {
-    int _x = luaL_checkint(L, 1);
-    int _y = luaL_checkint(L, 2);
+    int _x = dubL_checkint(L, 1);
+    int _y = dubL_checkint(L, 2);
     Point * retval__ = new Point(_x, _y);
     lua_pushclass<Point>(L, retval__, "cv.Point");
     return 1;
@@ -82,7 +82,7 @@ static int Point_Point2(lua_State *L) {
  */
 static int Point_Point3(lua_State *L) {
   try {
-    const Point2i *pt = *((const Point2i **)luaL_checkudata(L, 1, "cv.Point2i"));
+    const Point2i *pt = *((const Point2i **)dubL_checkudata(L, 1, "cv.Point2i"));
     Point * retval__ = new Point(*pt);
     lua_pushclass<Point>(L, retval__, "cv.Point");
     return 1;
@@ -116,7 +116,7 @@ static int Point_Point3(lua_State *L) {
  */
 static int Point_Point4(lua_State *L) {
   try {
-    const CvPoint *pt = *((const CvPoint **)luaL_checkudata(L, 1, "cv.CvPoint"));
+    const CvPoint *pt = *((const CvPoint **)dubL_checkudata(L, 1, "cv.CvPoint"));
     Point * retval__ = new Point(*pt);
     lua_pushclass<Point>(L, retval__, "cv.Point");
     return 1;
@@ -150,7 +150,7 @@ static int Point_Point4(lua_State *L) {
  */
 static int Point_Point5(lua_State *L) {
   try {
-    const CvPoint2D32f *pt = *((const CvPoint2D32f **)luaL_checkudata(L, 1, "cv.CvPoint2D32f"));
+    const CvPoint2D32f *pt = *((const CvPoint2D32f **)dubL_checkudata(L, 1, "cv.CvPoint2D32f"));
     Point * retval__ = new Point(*pt);
     lua_pushclass<Point>(L, retval__, "cv.Point");
     return 1;
@@ -184,7 +184,7 @@ static int Point_Point5(lua_State *L) {
  */
 static int Point_Point6(lua_State *L) {
   try {
-    const Size *sz = *((const Size **)luaL_checkudata(L, 1, "cv.Size"));
+    const Size *sz = *((const Size **)dubL_checkudata(L, 1, "cv.Size"));
     Point * retval__ = new Point(*sz);
     lua_pushclass<Point>(L, retval__, "cv.Point");
     return 1;
@@ -218,7 +218,7 @@ static int Point_Point6(lua_State *L) {
  */
 static int Point_Point7(lua_State *L) {
   try {
-    const Vec2i *v = *((const Vec2i **)luaL_checkudata(L, 1, "cv.Vec2i"));
+    const Vec2i *v = *((const Vec2i **)dubL_checkudata(L, 1, "cv.Vec2i"));
     Point * retval__ = new Point(*v);
     lua_pushclass<Point>(L, retval__, "cv.Point");
     return 1;
@@ -275,7 +275,7 @@ static int Point_Point(lua_State *L) {
 /* ============================ Destructor       ====================== */
 
 static int Point_destructor(lua_State *L) {
-  Point **userdata = (Point**)luaL_checkudata(L, 1, "cv.Point");
+  Point **userdata = (Point**)dubL_checkudata(L, 1, "cv.Point");
   if (*userdata) delete *userdata;
   *userdata = NULL;
   return 0;
@@ -284,7 +284,7 @@ static int Point_destructor(lua_State *L) {
 /* ============================ tostring         ====================== */
 
 static int Point__tostring(lua_State *L) {
-  Point **userdata = (Point**)luaL_checkudata(L, 1, "cv.Point");
+  Point **userdata = (Point**)dubL_checkudata(L, 1, "cv.Point");
 
   lua_pushfstring(L, "<cv.Point: %p>", *userdata);
 
@@ -299,9 +299,9 @@ static int Point__tostring(lua_State *L) {
  */
 static int Point_ddot(lua_State *L) {
   try {
-    Point *self__ = *((Point**)luaL_checkudata(L, 1, "cv.Point"));
+    Point *self__ = *((Point**)dubL_checkudata(L, 1, "cv.Point"));
     lua_remove(L, 1);
-    const Point2i *pt = *((const Point2i **)luaL_checkudata(L, 1, "cv.Point2i"));
+    const Point2i *pt = *((const Point2i **)dubL_checkudata(L, 1, "cv.Point2i"));
     double  retval__ = self__->ddot(*pt);
     lua_pushnumber(L, retval__);
     return 1;
@@ -335,9 +335,9 @@ static int Point_ddot(lua_State *L) {
  */
 static int Point_dot(lua_State *L) {
   try {
-    Point *self__ = *((Point**)luaL_checkudata(L, 1, "cv.Point"));
+    Point *self__ = *((Point**)dubL_checkudata(L, 1, "cv.Point"));
     lua_remove(L, 1);
-    const Point2i *pt = *((const Point2i **)luaL_checkudata(L, 1, "cv.Point2i"));
+    const Point2i *pt = *((const Point2i **)dubL_checkudata(L, 1, "cv.Point2i"));
     int  retval__ = self__->dot(*pt);
     lua_pushnumber(L, retval__);
     return 1;
@@ -371,9 +371,9 @@ static int Point_dot(lua_State *L) {
  */
 static int Point_inside(lua_State *L) {
   try {
-    Point *self__ = *((Point**)luaL_checkudata(L, 1, "cv.Point"));
+    Point *self__ = *((Point**)dubL_checkudata(L, 1, "cv.Point"));
     lua_remove(L, 1);
-    const Rect *r = *((const Rect **)luaL_checkudata(L, 1, "cv.Rect"));
+    const Rect *r = *((const Rect **)dubL_checkudata(L, 1, "cv.Rect"));
     bool  retval__ = self__->inside(*r);
     lua_pushnumber(L, retval__);
     return 1;

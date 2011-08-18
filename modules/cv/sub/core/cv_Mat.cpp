@@ -47,9 +47,9 @@ static int Mat_Mat1(lua_State *L) {
  */
 static int Mat_Mat2(lua_State *L) {
   try {
-    int _rows = luaL_checkint(L, 1);
-    int _cols = luaL_checkint(L, 2);
-    int _type = luaL_checkint(L, 3);
+    int _rows = dubL_checkint(L, 1);
+    int _cols = dubL_checkint(L, 2);
+    int _type = dubL_checkint(L, 3);
     Mat * retval__ = new Mat(_rows, _cols, _type);
     lua_pushclass<Mat>(L, retval__, "cv.Mat");
     return 1;
@@ -83,8 +83,8 @@ static int Mat_Mat2(lua_State *L) {
  */
 static int Mat_Mat3(lua_State *L) {
   try {
-    Size *_size = *((Size **)luaL_checkudata(L, 1, "cv.Size"));
-    int _type = luaL_checkint(L, 2);
+    Size *_size = *((Size **)dubL_checkudata(L, 1, "cv.Size"));
+    int _type = dubL_checkint(L, 2);
     Mat * retval__ = new Mat(*_size, _type);
     lua_pushclass<Mat>(L, retval__, "cv.Mat");
     return 1;
@@ -118,10 +118,10 @@ static int Mat_Mat3(lua_State *L) {
  */
 static int Mat_Mat4(lua_State *L) {
   try {
-    int _rows = luaL_checkint(L, 1);
-    int _cols = luaL_checkint(L, 2);
-    int _type = luaL_checkint(L, 3);
-    const Scalar *_s = *((const Scalar **)luaL_checkudata(L, 4, "cv.Scalar"));
+    int _rows = dubL_checkint(L, 1);
+    int _cols = dubL_checkint(L, 2);
+    int _type = dubL_checkint(L, 3);
+    const Scalar *_s = *((const Scalar **)dubL_checkudata(L, 4, "cv.Scalar"));
     Mat * retval__ = new Mat(_rows, _cols, _type, *_s);
     lua_pushclass<Mat>(L, retval__, "cv.Mat");
     return 1;
@@ -155,9 +155,9 @@ static int Mat_Mat4(lua_State *L) {
  */
 static int Mat_Mat5(lua_State *L) {
   try {
-    Size *_size = *((Size **)luaL_checkudata(L, 1, "cv.Size"));
-    int _type = luaL_checkint(L, 2);
-    const Scalar *_s = *((const Scalar **)luaL_checkudata(L, 3, "cv.Scalar"));
+    Size *_size = *((Size **)dubL_checkudata(L, 1, "cv.Size"));
+    int _type = dubL_checkint(L, 2);
+    const Scalar *_s = *((const Scalar **)dubL_checkudata(L, 3, "cv.Scalar"));
     Mat * retval__ = new Mat(*_size, _type, *_s);
     lua_pushclass<Mat>(L, retval__, "cv.Mat");
     return 1;
@@ -191,7 +191,7 @@ static int Mat_Mat5(lua_State *L) {
  */
 static int Mat_Mat6(lua_State *L) {
   try {
-    const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *m = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
     Mat * retval__ = new Mat(*m);
     lua_pushclass<Mat>(L, retval__, "cv.Mat");
     return 1;
@@ -225,9 +225,9 @@ static int Mat_Mat6(lua_State *L) {
  */
 static int Mat_Mat9(lua_State *L) {
   try {
-    const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Range *rowRange = *((const Range **)luaL_checkudata(L, 2, "cv.Range"));
-    const Range *colRange = *((const Range **)luaL_checkudata(L, 3, "cv.Range"));
+    const Mat *m = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Range *rowRange = *((const Range **)dubL_checkudata(L, 2, "cv.Range"));
+    const Range *colRange = *((const Range **)dubL_checkudata(L, 3, "cv.Range"));
     Mat * retval__ = new Mat(*m, *rowRange, *colRange);
     lua_pushclass<Mat>(L, retval__, "cv.Mat");
     return 1;
@@ -261,8 +261,8 @@ static int Mat_Mat9(lua_State *L) {
  */
 static int Mat_Mat10(lua_State *L) {
   try {
-    const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Rect *roi = *((const Rect **)luaL_checkudata(L, 2, "cv.Rect"));
+    const Mat *m = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Rect *roi = *((const Rect **)dubL_checkudata(L, 2, "cv.Rect"));
     Mat * retval__ = new Mat(*m, *roi);
     lua_pushclass<Mat>(L, retval__, "cv.Mat");
     return 1;
@@ -298,7 +298,7 @@ static int Mat_Mat11(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     Mat * retval__;
-    const CvMat *m = *((const CvMat **)luaL_checkudata(L, 1, "cv.CvMat"));
+    const CvMat *m = *((const CvMat **)dubL_checkudata(L, 1, "cv.CvMat"));
     if (top__ < 2) {
       retval__ = new Mat(m);
     } else {
@@ -339,7 +339,7 @@ static int Mat_Mat12(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     Mat * retval__;
-    const IplImage *img = *((const IplImage **)luaL_checkudata(L, 1, "cv.IplImage"));
+    const IplImage *img = *((const IplImage **)dubL_checkudata(L, 1, "cv.IplImage"));
     if (top__ < 2) {
       retval__ = new Mat(img);
     } else {
@@ -378,7 +378,7 @@ static int Mat_Mat12(lua_State *L) {
  */
 static int Mat_Mat13(lua_State *L) {
   try {
-    const MatExpr_Base *expr = *((const MatExpr_Base **)luaL_checkudata(L, 1, "cv.MatExpr_Base"));
+    const MatExpr_Base *expr = *((const MatExpr_Base **)dubL_checkudata(L, 1, "cv.MatExpr_Base"));
     Mat * retval__ = new Mat(*expr);
     lua_pushclass<Mat>(L, retval__, "cv.Mat");
     return 1;
@@ -479,7 +479,7 @@ static int Mat_Mat(lua_State *L) {
 /* ============================ Destructor       ====================== */
 
 static int Mat_destructor(lua_State *L) {
-  Mat **userdata = (Mat**)luaL_checkudata(L, 1, "cv.Mat");
+  Mat **userdata = (Mat**)dubL_checkudata(L, 1, "cv.Mat");
   if (*userdata) delete *userdata;
   *userdata = NULL;
   return 0;
@@ -488,7 +488,7 @@ static int Mat_destructor(lua_State *L) {
 /* ============================ tostring         ====================== */
 
 static int Mat__tostring(lua_State *L) {
-  Mat **userdata = (Mat**)luaL_checkudata(L, 1, "cv.Mat");
+  Mat **userdata = (Mat**)dubL_checkudata(L, 1, "cv.Mat");
 
   lua_pushfstring(L, "<cv.Mat: %p %dx%d>", *userdata, (*userdata)->rows, (*userdata)->cols);
 
@@ -503,7 +503,7 @@ static int Mat__tostring(lua_State *L) {
  */
 static int Mat_addref(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
     self__->addref();
     return 0;
@@ -537,12 +537,12 @@ static int Mat_addref(lua_State *L) {
  */
 static int Mat_adjustROI(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
-    int dtop = luaL_checkint(L, 1);
-    int dbottom = luaL_checkint(L, 2);
-    int dleft = luaL_checkint(L, 3);
-    int dright = luaL_checkint(L, 4);
+    int dtop = dubL_checkint(L, 1);
+    int dbottom = dubL_checkint(L, 2);
+    int dleft = dubL_checkint(L, 3);
+    int dright = dubL_checkint(L, 4);
     Mat  retval__ = self__->adjustROI(dtop, dbottom, dleft, dright);
     lua_pushclass<Mat>(L, retval__, "cv.Mat");
     return 1;
@@ -576,14 +576,14 @@ static int Mat_adjustROI(lua_State *L) {
  */
 static int Mat_assignTo(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
     int top__ = lua_gettop(L);
-    Mat *m = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *m = *((Mat **)dubL_checkudata(L, 1, "cv.Mat"));
     if (top__ < 2) {
       self__->assignTo(*m);
     } else {
-      int type = luaL_checkint(L, 2);
+      int type = dubL_checkint(L, 2);
       self__->assignTo(*m, type);
     }
     return 0;
@@ -617,7 +617,7 @@ static int Mat_assignTo(lua_State *L) {
  */
 static int Mat_channels(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
     int  retval__ = self__->channels();
     lua_pushnumber(L, retval__);
@@ -652,7 +652,7 @@ static int Mat_channels(lua_State *L) {
  */
 static int Mat_clone(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
     Mat  retval__ = self__->clone();
     lua_pushclass<Mat>(L, retval__, "cv.Mat");
@@ -687,9 +687,9 @@ static int Mat_clone(lua_State *L) {
  */
 static int Mat_col(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
-    int x = luaL_checkint(L, 1);
+    int x = dubL_checkint(L, 1);
     Mat  retval__ = self__->col(x);
     lua_pushclass<Mat>(L, retval__, "cv.Mat");
     return 1;
@@ -724,10 +724,10 @@ static int Mat_col(lua_State *L) {
  */
 static int Mat_colRange1(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
-    int startcol = luaL_checkint(L, 1);
-    int endcol = luaL_checkint(L, 2);
+    int startcol = dubL_checkint(L, 1);
+    int endcol = dubL_checkint(L, 2);
     Mat  retval__ = self__->colRange(startcol, endcol);
     lua_pushclass<Mat>(L, retval__, "cv.Mat");
     return 1;
@@ -761,9 +761,9 @@ static int Mat_colRange1(lua_State *L) {
  */
 static int Mat_colRange2(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
-    const Range *r = *((const Range **)luaL_checkudata(L, 1, "cv.Range"));
+    const Range *r = *((const Range **)dubL_checkudata(L, 1, "cv.Range"));
     Mat  retval__ = self__->colRange(*r);
     lua_pushclass<Mat>(L, retval__, "cv.Mat");
     return 1;
@@ -812,19 +812,19 @@ static int Mat_colRange(lua_State *L) {
  */
 static int Mat_convertTo(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
     int top__ = lua_gettop(L);
-    Mat *m = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    int rtype = luaL_checkint(L, 2);
+    Mat *m = *((Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    int rtype = dubL_checkint(L, 2);
     if (top__ < 3) {
       self__->convertTo(*m, rtype);
     } else {
-      double alpha = luaL_checknumber(L, 3);
+      double alpha = dubL_checknumber(L, 3);
       if (top__ < 4) {
         self__->convertTo(*m, rtype, alpha);
       } else {
-        double beta = luaL_checknumber(L, 4);
+        double beta = dubL_checknumber(L, 4);
         self__->convertTo(*m, rtype, alpha, beta);
       }
     }
@@ -860,9 +860,9 @@ static int Mat_convertTo(lua_State *L) {
  */
 static int Mat_copyTo1(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
-    Mat *m = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *m = *((Mat **)dubL_checkudata(L, 1, "cv.Mat"));
     self__->copyTo(*m);
     return 0;
   } catch (cv::Exception &e) {
@@ -895,10 +895,10 @@ static int Mat_copyTo1(lua_State *L) {
  */
 static int Mat_copyTo2(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
-    Mat *m = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *mask = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    Mat *m = *((Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *mask = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     self__->copyTo(*m, *mask);
     return 0;
   } catch (cv::Exception &e) {
@@ -954,11 +954,11 @@ static int Mat_copyTo(lua_State *L) {
  */
 static int Mat_create1(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
-    int _rows = luaL_checkint(L, 1);
-    int _cols = luaL_checkint(L, 2);
-    int _type = luaL_checkint(L, 3);
+    int _rows = dubL_checkint(L, 1);
+    int _cols = dubL_checkint(L, 2);
+    int _type = dubL_checkint(L, 3);
     self__->create(_rows, _cols, _type);
     return 0;
   } catch (cv::Exception &e) {
@@ -991,10 +991,10 @@ static int Mat_create1(lua_State *L) {
  */
 static int Mat_create2(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
-    Size *_size = *((Size **)luaL_checkudata(L, 1, "cv.Size"));
-    int _type = luaL_checkint(L, 2);
+    Size *_size = *((Size **)dubL_checkudata(L, 1, "cv.Size"));
+    int _type = dubL_checkint(L, 2);
     self__->create(*_size, _type);
     return 0;
   } catch (cv::Exception &e) {
@@ -1042,9 +1042,9 @@ static int Mat_create(lua_State *L) {
  */
 static int Mat_cross(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
-    const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *m = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
     Mat  retval__ = self__->cross(*m);
     lua_pushclass<Mat>(L, retval__, "cv.Mat");
     return 1;
@@ -1078,7 +1078,7 @@ static int Mat_cross(lua_State *L) {
  */
 static int Mat_depth(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
     int  retval__ = self__->depth();
     lua_pushnumber(L, retval__);
@@ -1114,14 +1114,14 @@ static int Mat_depth(lua_State *L) {
  */
 static int Mat_diag1(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
     int top__ = lua_gettop(L);
     Mat  retval__;
     if (top__ < 1) {
       retval__ = self__->diag();
     } else {
-      int d = luaL_checkint(L, 1);
+      int d = dubL_checkint(L, 1);
       retval__ = self__->diag(d);
     }
     lua_pushclass<Mat>(L, retval__, "cv.Mat");
@@ -1156,7 +1156,7 @@ static int Mat_diag1(lua_State *L) {
  */
 static int Mat_diag2(lua_State *L) {
   try {
-    const Mat *d = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *d = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
     Mat  retval__ = Mat::diag(*d);
     lua_pushclass<Mat>(L, retval__, "cv.Mat");
     return 1;
@@ -1205,9 +1205,9 @@ static int Mat_diag(lua_State *L) {
  */
 static int Mat_dot(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
-    const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *m = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
     double  retval__ = self__->dot(*m);
     lua_pushnumber(L, retval__);
     return 1;
@@ -1241,7 +1241,7 @@ static int Mat_dot(lua_State *L) {
  */
 static int Mat_elemSize(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
     size_t  retval__ = self__->elemSize();
     lua_pushnumber(L, retval__);
@@ -1276,7 +1276,7 @@ static int Mat_elemSize(lua_State *L) {
  */
 static int Mat_elemSize1(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
     size_t  retval__ = self__->elemSize1();
     lua_pushnumber(L, retval__);
@@ -1311,7 +1311,7 @@ static int Mat_elemSize1(lua_State *L) {
  */
 static int Mat_empty(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
     bool  retval__ = self__->empty();
     lua_pushnumber(L, retval__);
@@ -1347,9 +1347,9 @@ static int Mat_empty(lua_State *L) {
  */
 static int Mat_eye1(lua_State *L) {
   try {
-    int rows = luaL_checkint(L, 1);
-    int cols = luaL_checkint(L, 2);
-    int type = luaL_checkint(L, 3);
+    int rows = dubL_checkint(L, 1);
+    int cols = dubL_checkint(L, 2);
+    int type = dubL_checkint(L, 3);
     MatExpr_Initializer  retval__ = Mat::eye(rows, cols, type);
     lua_pushclass<MatExpr_Initializer>(L, retval__, "cv.MatExpr_Initializer");
     return 1;
@@ -1383,8 +1383,8 @@ static int Mat_eye1(lua_State *L) {
  */
 static int Mat_eye2(lua_State *L) {
   try {
-    Size *size = *((Size **)luaL_checkudata(L, 1, "cv.Size"));
-    int type = luaL_checkint(L, 2);
+    Size *size = *((Size **)dubL_checkudata(L, 1, "cv.Size"));
+    int type = dubL_checkint(L, 2);
     MatExpr_Initializer  retval__ = Mat::eye(*size, type);
     lua_pushclass<MatExpr_Initializer>(L, retval__, "cv.MatExpr_Initializer");
     return 1;
@@ -1433,7 +1433,7 @@ static int Mat_eye(lua_State *L) {
  */
 static int Mat_isContinuous(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
     bool  retval__ = self__->isContinuous();
     lua_pushnumber(L, retval__);
@@ -1468,10 +1468,10 @@ static int Mat_isContinuous(lua_State *L) {
  */
 static int Mat_locateROI(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
-    Size *wholeSize = *((Size **)luaL_checkudata(L, 1, "cv.Size"));
-    Point *ofs = *((Point **)luaL_checkudata(L, 2, "cv.Point"));
+    Size *wholeSize = *((Size **)dubL_checkudata(L, 1, "cv.Size"));
+    Point *ofs = *((Point **)dubL_checkudata(L, 2, "cv.Point"));
     self__->locateROI(*wholeSize, *ofs);
     return 0;
   } catch (cv::Exception &e) {
@@ -1505,9 +1505,9 @@ static int Mat_locateROI(lua_State *L) {
  */
 static int Mat_ones1(lua_State *L) {
   try {
-    int rows = luaL_checkint(L, 1);
-    int cols = luaL_checkint(L, 2);
-    int type = luaL_checkint(L, 3);
+    int rows = dubL_checkint(L, 1);
+    int cols = dubL_checkint(L, 2);
+    int type = dubL_checkint(L, 3);
     MatExpr_Initializer  retval__ = Mat::ones(rows, cols, type);
     lua_pushclass<MatExpr_Initializer>(L, retval__, "cv.MatExpr_Initializer");
     return 1;
@@ -1541,8 +1541,8 @@ static int Mat_ones1(lua_State *L) {
  */
 static int Mat_ones2(lua_State *L) {
   try {
-    Size *size = *((Size **)luaL_checkudata(L, 1, "cv.Size"));
-    int type = luaL_checkint(L, 2);
+    Size *size = *((Size **)dubL_checkudata(L, 1, "cv.Size"));
+    int type = dubL_checkint(L, 2);
     MatExpr_Initializer  retval__ = Mat::ones(*size, type);
     lua_pushclass<MatExpr_Initializer>(L, retval__, "cv.MatExpr_Initializer");
     return 1;
@@ -1591,7 +1591,7 @@ static int Mat_ones(lua_State *L) {
  */
 static int Mat_release(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
     self__->release();
     return 0;
@@ -1625,15 +1625,15 @@ static int Mat_release(lua_State *L) {
  */
 static int Mat_reshape(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
     int top__ = lua_gettop(L);
     Mat  retval__;
-    int _cn = luaL_checkint(L, 1);
+    int _cn = dubL_checkint(L, 1);
     if (top__ < 2) {
       retval__ = self__->reshape(_cn);
     } else {
-      int _rows = luaL_checkint(L, 2);
+      int _rows = dubL_checkint(L, 2);
       retval__ = self__->reshape(_cn, _rows);
     }
     lua_pushclass<Mat>(L, retval__, "cv.Mat");
@@ -1668,9 +1668,9 @@ static int Mat_reshape(lua_State *L) {
  */
 static int Mat_row(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
-    int y = luaL_checkint(L, 1);
+    int y = dubL_checkint(L, 1);
     Mat  retval__ = self__->row(y);
     lua_pushclass<Mat>(L, retval__, "cv.Mat");
     return 1;
@@ -1705,10 +1705,10 @@ static int Mat_row(lua_State *L) {
  */
 static int Mat_rowRange1(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
-    int startrow = luaL_checkint(L, 1);
-    int endrow = luaL_checkint(L, 2);
+    int startrow = dubL_checkint(L, 1);
+    int endrow = dubL_checkint(L, 2);
     Mat  retval__ = self__->rowRange(startrow, endrow);
     lua_pushclass<Mat>(L, retval__, "cv.Mat");
     return 1;
@@ -1742,9 +1742,9 @@ static int Mat_rowRange1(lua_State *L) {
  */
 static int Mat_rowRange2(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
-    const Range *r = *((const Range **)luaL_checkudata(L, 1, "cv.Range"));
+    const Range *r = *((const Range **)dubL_checkudata(L, 1, "cv.Range"));
     Mat  retval__ = self__->rowRange(*r);
     lua_pushclass<Mat>(L, retval__, "cv.Mat");
     return 1;
@@ -1793,15 +1793,15 @@ static int Mat_rowRange(lua_State *L) {
  */
 static int Mat_setTo(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
     int top__ = lua_gettop(L);
     Mat  retval__;
-    const Scalar *s = *((const Scalar **)luaL_checkudata(L, 1, "cv.Scalar"));
+    const Scalar *s = *((const Scalar **)dubL_checkudata(L, 1, "cv.Scalar"));
     if (top__ < 2) {
       retval__ = self__->setTo(*s);
     } else {
-      const Mat *mask = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+      const Mat *mask = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
       retval__ = self__->setTo(*s, *mask);
     }
     lua_pushclass<Mat>(L, retval__, "cv.Mat");
@@ -1836,7 +1836,7 @@ static int Mat_setTo(lua_State *L) {
  */
 static int Mat_size(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
     Size  retval__ = self__->size();
     lua_pushclass<Size>(L, retval__, "cv.Size");
@@ -1871,7 +1871,7 @@ static int Mat_size(lua_State *L) {
  */
 static int Mat_step1(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
     size_t  retval__ = self__->step1();
     lua_pushnumber(L, retval__);
@@ -1906,7 +1906,7 @@ static int Mat_step1(lua_State *L) {
  */
 static int Mat_type(lua_State *L) {
   try {
-    Mat *self__ = *((Mat**)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *self__ = *((Mat**)dubL_checkudata(L, 1, "cv.Mat"));
     lua_remove(L, 1);
     int  retval__ = self__->type();
     lua_pushnumber(L, retval__);
@@ -1942,9 +1942,9 @@ static int Mat_type(lua_State *L) {
  */
 static int Mat_zeros1(lua_State *L) {
   try {
-    int rows = luaL_checkint(L, 1);
-    int cols = luaL_checkint(L, 2);
-    int type = luaL_checkint(L, 3);
+    int rows = dubL_checkint(L, 1);
+    int cols = dubL_checkint(L, 2);
+    int type = dubL_checkint(L, 3);
     MatExpr_Initializer  retval__ = Mat::zeros(rows, cols, type);
     lua_pushclass<MatExpr_Initializer>(L, retval__, "cv.MatExpr_Initializer");
     return 1;
@@ -1978,8 +1978,8 @@ static int Mat_zeros1(lua_State *L) {
  */
 static int Mat_zeros2(lua_State *L) {
   try {
-    Size *size = *((Size **)luaL_checkudata(L, 1, "cv.Size"));
-    int type = luaL_checkint(L, 2);
+    Size *size = *((Size **)dubL_checkudata(L, 1, "cv.Size"));
+    int type = dubL_checkint(L, 2);
     MatExpr_Initializer  retval__ = Mat::zeros(*size, type);
     lua_pushclass<MatExpr_Initializer>(L, retval__, "cv.MatExpr_Initializer");
     return 1;

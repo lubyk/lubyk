@@ -26,13 +26,13 @@ list(REMOVE_ITEM MODULES ${CMAKE_CURRENT_SOURCE_DIR}/bind.rb)
 
 # ==============================================================================
 #
-#  Update bindings with 'dub'
+#  Update all bindings with 'dub' target
 #
 # ==============================================================================
 
 
 # Build files from dub
-add_custom_target(dub ALL
+add_custom_target(dub
    COMMAND ruby ${LUBYK_SOURCE_DIR}/modules/bind.rb
    DEPENDS ${DOXYGEN_OUTPUT})
 

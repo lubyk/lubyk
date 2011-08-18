@@ -13,7 +13,7 @@ using namespace mimas;
  */
 static int FileObserver_FileObserver(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
     FileObserver * retval__ = new FileObserver(worker);
     lua_pushclass<FileObserver>(L, retval__, "mimas.FileObserver");
     return 1;
@@ -23,6 +23,7 @@ static int FileObserver_FileObserver(lua_State *L) {
     return luaL_error(L, "mimas.FileObserver.FileObserver: Unknown exception");
   }
 }
+
 
 
 /* ============================ Destructor       ====================== */
@@ -58,7 +59,7 @@ static int FileObserver__tostring(lua_State *L) {
  */
 static int FileObserver___newindex(lua_State *L) {
   try {
-    FileObserver *self__ = *((FileObserver**)luaL_checkudata(L, 1, "mimas.FileObserver"));
+    FileObserver *self__ = *((FileObserver**)dubL_checkudata(L, 1, "mimas.FileObserver"));
     
     self__->__newindex(L);
     return 0;
@@ -70,13 +71,14 @@ static int FileObserver___newindex(lua_State *L) {
 }
 
 
+
 /** void mimas::FileObserver::addPath(const char *path)
  * include/mimas/FileObserver.h:94
  */
 static int FileObserver_addPath(lua_State *L) {
   try {
-    FileObserver *self__ = *((FileObserver**)luaL_checkudata(L, 1, "mimas.FileObserver"));
-    const char *path = luaL_checkstring(L, 2);
+    FileObserver *self__ = *((FileObserver**)dubL_checkudata(L, 1, "mimas.FileObserver"));
+    const char *path = dubL_checkstring(L, 2);
     self__->addPath(path);
     return 0;
   } catch (std::exception &e) {
@@ -87,13 +89,14 @@ static int FileObserver_addPath(lua_State *L) {
 }
 
 
+
 /** void mimas::FileObserver::removePath(const char *path)
  * include/mimas/FileObserver.h:98
  */
 static int FileObserver_removePath(lua_State *L) {
   try {
-    FileObserver *self__ = *((FileObserver**)luaL_checkudata(L, 1, "mimas.FileObserver"));
-    const char *path = luaL_checkstring(L, 2);
+    FileObserver *self__ = *((FileObserver**)dubL_checkudata(L, 1, "mimas.FileObserver"));
+    const char *path = dubL_checkstring(L, 2);
     self__->removePath(path);
     return 0;
   } catch (std::exception &e) {
@@ -102,6 +105,7 @@ static int FileObserver_removePath(lua_State *L) {
     return luaL_error(L, "mimas.FileObserver.removePath: Unknown exception");
   }
 }
+
 
 
 

@@ -25,6 +25,7 @@ static int Brush_Brush1(lua_State *L) {
 }
 
 
+
 /** mimas::Brush::Brush(const Color &color, int style=Qt::SolidPattern)
  * include/mimas/Brush.h:48
  */
@@ -32,11 +33,11 @@ static int Brush_Brush2(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     Brush * retval__;
-    const Color *color = *((const Color **)luaL_checkudata(L, 1, "mimas.Color"));
+    const Color *color = *((const Color **)dubL_checkudata(L, 1, "mimas.Color"));
     if (top__ < 2) {
       retval__ = new Brush(*color);
     } else {
-      int style = luaL_checkint(L, 2);
+      int style = dubL_checkint(L, 2);
       retval__ = new Brush(*color, style);
     }
     lua_pushclass<Brush>(L, retval__, "mimas.Brush");
@@ -49,6 +50,7 @@ static int Brush_Brush2(lua_State *L) {
 }
 
 
+
 /** mimas::Brush::Brush(float h, float s=1.0, float v=1.0, float a=1.0, int style=Qt::SolidPattern)
  * include/mimas/Brush.h:50
  */
@@ -56,23 +58,23 @@ static int Brush_Brush3(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     Brush * retval__;
-    float h = luaL_checknumber(L, 1);
+    float h = dubL_checknumber(L, 1);
     if (top__ < 2) {
       retval__ = new Brush(h);
     } else {
-      float s = luaL_checknumber(L, 2);
+      float s = dubL_checknumber(L, 2);
       if (top__ < 3) {
         retval__ = new Brush(h, s);
       } else {
-        float v = luaL_checknumber(L, 3);
+        float v = dubL_checknumber(L, 3);
         if (top__ < 4) {
           retval__ = new Brush(h, s, v);
         } else {
-          float a = luaL_checknumber(L, 4);
+          float a = dubL_checknumber(L, 4);
           if (top__ < 5) {
             retval__ = new Brush(h, s, v, a);
           } else {
-            int style = luaL_checkint(L, 5);
+            int style = dubL_checkint(L, 5);
             retval__ = new Brush(h, s, v, a, style);
           }
         }
@@ -86,6 +88,7 @@ static int Brush_Brush3(lua_State *L) {
     return luaL_error(L, "mimas.Brush.Brush: Unknown exception");
   }
 }
+
 
 
 
@@ -139,8 +142,8 @@ static int Brush__tostring(lua_State *L) {
  */
 static int Brush_setColor(lua_State *L) {
   try {
-    Brush *self__ = *((Brush**)luaL_checkudata(L, 1, "mimas.Brush"));
-    const Color *color = *((const Color **)luaL_checkudata(L, 2, "mimas.Color"));
+    Brush *self__ = *((Brush**)dubL_checkudata(L, 1, "mimas.Brush"));
+    const Color *color = *((const Color **)dubL_checkudata(L, 2, "mimas.Color"));
     self__->setColor(*color);
     return 0;
   } catch (std::exception &e) {
@@ -151,13 +154,14 @@ static int Brush_setColor(lua_State *L) {
 }
 
 
+
 /** void mimas::Brush::setStyle(int style)
  * include/mimas/Brush.h:56
  */
 static int Brush_setStyle(lua_State *L) {
   try {
-    Brush *self__ = *((Brush**)luaL_checkudata(L, 1, "mimas.Brush"));
-    int style = luaL_checkint(L, 2);
+    Brush *self__ = *((Brush**)dubL_checkudata(L, 1, "mimas.Brush"));
+    int style = dubL_checkint(L, 2);
     self__->setStyle(style);
     return 0;
   } catch (std::exception &e) {
@@ -166,6 +170,7 @@ static int Brush_setStyle(lua_State *L) {
     return luaL_error(L, "mimas.Brush.setStyle: Unknown exception");
   }
 }
+
 
 
 

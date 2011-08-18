@@ -11,9 +11,9 @@ using namespace cv;
  */
 static int cv_CamShift(lua_State *L) {
   try {
-    const Mat *probImage = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Rect *window = *((Rect **)luaL_checkudata(L, 2, "cv.Rect"));
-    TermCriteria *criteria = *((TermCriteria **)luaL_checkudata(L, 3, "cv.TermCriteria"));
+    const Mat *probImage = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Rect *window = *((Rect **)dubL_checkudata(L, 2, "cv.Rect"));
+    TermCriteria *criteria = *((TermCriteria **)dubL_checkudata(L, 3, "cv.TermCriteria"));
     RotatedRect  retval__ = CamShift(*probImage, *window, *criteria);
     lua_pushclass<RotatedRect>(L, retval__, "cv.RotatedRect");
     return 1;
@@ -49,14 +49,14 @@ static int cv_CamShift(lua_State *L) {
 static int cv_Canny(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *image = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *edges = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    double threshold1 = luaL_checknumber(L, 3);
-    double threshold2 = luaL_checknumber(L, 4);
+    const Mat *image = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *edges = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    double threshold1 = dubL_checknumber(L, 3);
+    double threshold2 = dubL_checknumber(L, 4);
     if (top__ < 5) {
       Canny(*image, *edges, threshold1, threshold2);
     } else {
-      int apertureSize = luaL_checkint(L, 5);
+      int apertureSize = dubL_checkint(L, 5);
       if (top__ < 6) {
         Canny(*image, *edges, threshold1, threshold2, apertureSize);
       } else {
@@ -97,18 +97,18 @@ static int cv_Canny(lua_State *L) {
 static int cv_GaussianBlur(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Size *ksize = *((Size **)luaL_checkudata(L, 3, "cv.Size"));
-    double sigma1 = luaL_checknumber(L, 4);
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Size *ksize = *((Size **)dubL_checkudata(L, 3, "cv.Size"));
+    double sigma1 = dubL_checknumber(L, 4);
     if (top__ < 5) {
       GaussianBlur(*src, *dst, *ksize, sigma1);
     } else {
-      double sigma2 = luaL_checknumber(L, 5);
+      double sigma2 = dubL_checknumber(L, 5);
       if (top__ < 6) {
         GaussianBlur(*src, *dst, *ksize, sigma1, sigma2);
       } else {
-        int borderType = luaL_checkint(L, 6);
+        int borderType = dubL_checkint(L, 6);
         GaussianBlur(*src, *dst, *ksize, sigma1, sigma2, borderType);
       }
     }
@@ -144,9 +144,9 @@ static int cv_GaussianBlur(lua_State *L) {
  */
 static int cv_LUT(lua_State *L) {
   try {
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *lut = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *b = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *lut = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *b = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     LUT(*a, *lut, *b);
     return 0;
   } catch (cv::Exception &e) {
@@ -181,25 +181,25 @@ static int cv_LUT(lua_State *L) {
 static int cv_Laplacian(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    int ddepth = luaL_checkint(L, 3);
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    int ddepth = dubL_checkint(L, 3);
     if (top__ < 4) {
       Laplacian(*src, *dst, ddepth);
     } else {
-      int ksize = luaL_checkint(L, 4);
+      int ksize = dubL_checkint(L, 4);
       if (top__ < 5) {
         Laplacian(*src, *dst, ddepth, ksize);
       } else {
-        double scale = luaL_checknumber(L, 5);
+        double scale = dubL_checknumber(L, 5);
         if (top__ < 6) {
           Laplacian(*src, *dst, ddepth, ksize, scale);
         } else {
-          double delta = luaL_checknumber(L, 6);
+          double delta = dubL_checknumber(L, 6);
           if (top__ < 7) {
             Laplacian(*src, *dst, ddepth, ksize, scale, delta);
           } else {
-            int borderType = luaL_checkint(L, 7);
+            int borderType = dubL_checkint(L, 7);
             Laplacian(*src, *dst, ddepth, ksize, scale, delta, borderType);
           }
         }
@@ -237,9 +237,9 @@ static int cv_Laplacian(lua_State *L) {
  */
 static int cv_Mahalanobis(lua_State *L) {
   try {
-    const Mat *v1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *v2 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    const Mat *icovar = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *v1 = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *v2 = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    const Mat *icovar = *((const Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     double  retval__ = Mahalanobis(*v1, *v2, *icovar);
     lua_pushnumber(L, retval__);
     return 1;
@@ -274,9 +274,9 @@ static int cv_Mahalanobis(lua_State *L) {
  */
 static int cv_Mahalonobis(lua_State *L) {
   try {
-    const Mat *v1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *v2 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    const Mat *icovar = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *v1 = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *v2 = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    const Mat *icovar = *((const Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     double  retval__ = Mahalonobis(*v1, *v2, *icovar);
     lua_pushnumber(L, retval__);
     return 1;
@@ -312,9 +312,9 @@ static int cv_Mahalonobis(lua_State *L) {
  */
 static int cv_RQDecomp3x31(lua_State *L) {
   try {
-    const Mat *M = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *R = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *Q = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *M = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *R = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *Q = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     RQDecomp3x3(*M, *R, *Q);
     return 0;
   } catch (cv::Exception &e) {
@@ -347,12 +347,12 @@ static int cv_RQDecomp3x31(lua_State *L) {
  */
 static int cv_RQDecomp3x32(lua_State *L) {
   try {
-    const Mat *M = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *R = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *Q = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    Mat *Qx = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-    Mat *Qy = *((Mat **)luaL_checkudata(L, 5, "cv.Mat"));
-    Mat *Qz = *((Mat **)luaL_checkudata(L, 6, "cv.Mat"));
+    const Mat *M = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *R = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *Q = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    Mat *Qx = *((Mat **)dubL_checkudata(L, 4, "cv.Mat"));
+    Mat *Qy = *((Mat **)dubL_checkudata(L, 5, "cv.Mat"));
+    Mat *Qz = *((Mat **)dubL_checkudata(L, 6, "cv.Mat"));
     Vec3d  retval__ = RQDecomp3x3(*M, *R, *Q, *Qx, *Qy, *Qz);
     lua_pushclass<Vec3d>(L, retval__, "cv.Vec3d");
     return 1;
@@ -422,8 +422,8 @@ static int cv_RQDecomp3x3(lua_State *L) {
  */
 static int cv_Rodrigues1(lua_State *L) {
   try {
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     Rodrigues(*src, *dst);
     return 0;
   } catch (cv::Exception &e) {
@@ -456,9 +456,9 @@ static int cv_Rodrigues1(lua_State *L) {
  */
 static int cv_Rodrigues2(lua_State *L) {
   try {
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *jacobian = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *jacobian = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     Rodrigues(*src, *dst, *jacobian);
     return 0;
   } catch (cv::Exception &e) {
@@ -521,23 +521,23 @@ static int cv_Rodrigues(lua_State *L) {
 static int cv_Scharr(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    int ddepth = luaL_checkint(L, 3);
-    int dx = luaL_checkint(L, 4);
-    int dy = luaL_checkint(L, 5);
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    int ddepth = dubL_checkint(L, 3);
+    int dx = dubL_checkint(L, 4);
+    int dy = dubL_checkint(L, 5);
     if (top__ < 6) {
       Scharr(*src, *dst, ddepth, dx, dy);
     } else {
-      double scale = luaL_checknumber(L, 6);
+      double scale = dubL_checknumber(L, 6);
       if (top__ < 7) {
         Scharr(*src, *dst, ddepth, dx, dy, scale);
       } else {
-        double delta = luaL_checknumber(L, 7);
+        double delta = dubL_checknumber(L, 7);
         if (top__ < 8) {
           Scharr(*src, *dst, ddepth, dx, dy, scale, delta);
         } else {
-          int borderType = luaL_checkint(L, 8);
+          int borderType = dubL_checkint(L, 8);
           Scharr(*src, *dst, ddepth, dx, dy, scale, delta, borderType);
         }
       }
@@ -575,27 +575,27 @@ static int cv_Scharr(lua_State *L) {
 static int cv_Sobel(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    int ddepth = luaL_checkint(L, 3);
-    int dx = luaL_checkint(L, 4);
-    int dy = luaL_checkint(L, 5);
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    int ddepth = dubL_checkint(L, 3);
+    int dx = dubL_checkint(L, 4);
+    int dy = dubL_checkint(L, 5);
     if (top__ < 6) {
       Sobel(*src, *dst, ddepth, dx, dy);
     } else {
-      int ksize = luaL_checkint(L, 6);
+      int ksize = dubL_checkint(L, 6);
       if (top__ < 7) {
         Sobel(*src, *dst, ddepth, dx, dy, ksize);
       } else {
-        double scale = luaL_checknumber(L, 7);
+        double scale = dubL_checknumber(L, 7);
         if (top__ < 8) {
           Sobel(*src, *dst, ddepth, dx, dy, ksize, scale);
         } else {
-          double delta = luaL_checknumber(L, 8);
+          double delta = dubL_checknumber(L, 8);
           if (top__ < 9) {
             Sobel(*src, *dst, ddepth, dx, dy, ksize, scale, delta);
           } else {
-            int borderType = luaL_checkint(L, 9);
+            int borderType = dubL_checkint(L, 9);
             Sobel(*src, *dst, ddepth, dx, dy, ksize, scale, delta, borderType);
           }
         }
@@ -634,9 +634,9 @@ static int cv_Sobel(lua_State *L) {
  */
 static int cv_absdiff1(lua_State *L) {
   try {
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     absdiff(*a, *b, *c);
     return 0;
   } catch (cv::Exception &e) {
@@ -669,9 +669,9 @@ static int cv_absdiff1(lua_State *L) {
  */
 static int cv_absdiff2(lua_State *L) {
   try {
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Scalar *s = *((const Scalar **)dubL_checkudata(L, 2, "cv.Scalar"));
+    Mat *c = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     absdiff(*a, *s, *c);
     return 0;
   } catch (cv::Exception &e) {
@@ -704,9 +704,9 @@ static int cv_absdiff2(lua_State *L) {
  */
 static int cv_absdiff3(lua_State *L) {
   try {
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    const MatND *b = *((const MatND **)dubL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)dubL_checkudata(L, 3, "cv.MatND"));
     absdiff(*a, *b, *c);
     return 0;
   } catch (cv::Exception &e) {
@@ -739,9 +739,9 @@ static int cv_absdiff3(lua_State *L) {
  */
 static int cv_absdiff4(lua_State *L) {
   try {
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    const Scalar *s = *((const Scalar **)dubL_checkudata(L, 2, "cv.Scalar"));
+    MatND *c = *((MatND **)dubL_checkudata(L, 3, "cv.MatND"));
     absdiff(*a, *s, *c);
     return 0;
   } catch (cv::Exception &e) {
@@ -807,12 +807,12 @@ static int cv_absdiff(lua_State *L) {
 static int cv_accumulate(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     if (top__ < 3) {
       accumulate(*src, *dst);
     } else {
-      const Mat *mask = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+      const Mat *mask = *((const Mat **)dubL_checkudata(L, 3, "cv.Mat"));
       accumulate(*src, *dst, *mask);
     }
     return 0;
@@ -848,13 +848,13 @@ static int cv_accumulate(lua_State *L) {
 static int cv_accumulateProduct(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *src2 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *src1 = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *src2 = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     if (top__ < 4) {
       accumulateProduct(*src1, *src2, *dst);
     } else {
-      const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+      const Mat *mask = *((const Mat **)dubL_checkudata(L, 4, "cv.Mat"));
       accumulateProduct(*src1, *src2, *dst, *mask);
     }
     return 0;
@@ -890,12 +890,12 @@ static int cv_accumulateProduct(lua_State *L) {
 static int cv_accumulateSquare(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     if (top__ < 3) {
       accumulateSquare(*src, *dst);
     } else {
-      const Mat *mask = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+      const Mat *mask = *((const Mat **)dubL_checkudata(L, 3, "cv.Mat"));
       accumulateSquare(*src, *dst, *mask);
     }
     return 0;
@@ -931,13 +931,13 @@ static int cv_accumulateSquare(lua_State *L) {
 static int cv_accumulateWeighted(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    double alpha = luaL_checknumber(L, 3);
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    double alpha = dubL_checknumber(L, 3);
     if (top__ < 4) {
       accumulateWeighted(*src, *dst, alpha);
     } else {
-      const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+      const Mat *mask = *((const Mat **)dubL_checkudata(L, 4, "cv.Mat"));
       accumulateWeighted(*src, *dst, alpha, *mask);
     }
     return 0;
@@ -972,13 +972,13 @@ static int cv_accumulateWeighted(lua_State *L) {
  */
 static int cv_adaptiveThreshold(lua_State *L) {
   try {
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    double maxValue = luaL_checknumber(L, 3);
-    int adaptiveMethod = luaL_checkint(L, 4);
-    int thresholdType = luaL_checkint(L, 5);
-    int blockSize = luaL_checkint(L, 6);
-    double C = luaL_checknumber(L, 7);
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    double maxValue = dubL_checknumber(L, 3);
+    int adaptiveMethod = dubL_checkint(L, 4);
+    int thresholdType = dubL_checkint(L, 5);
+    int blockSize = dubL_checkint(L, 6);
+    double C = dubL_checknumber(L, 7);
     adaptiveThreshold(*src, *dst, maxValue, adaptiveMethod, thresholdType, blockSize, C);
     return 0;
   } catch (cv::Exception &e) {
@@ -1013,10 +1013,10 @@ static int cv_adaptiveThreshold(lua_State *L) {
  */
 static int cv_add1(lua_State *L) {
   try {
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    const Mat *mask = *((const Mat **)dubL_checkudata(L, 4, "cv.Mat"));
     add(*a, *b, *c, *mask);
     return 0;
   } catch (cv::Exception &e) {
@@ -1049,9 +1049,9 @@ static int cv_add1(lua_State *L) {
  */
 static int cv_add2(lua_State *L) {
   try {
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     add(*a, *b, *c);
     return 0;
   } catch (cv::Exception &e) {
@@ -1085,13 +1085,13 @@ static int cv_add2(lua_State *L) {
 static int cv_add3(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Scalar *s = *((const Scalar **)dubL_checkudata(L, 2, "cv.Scalar"));
+    Mat *c = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     if (top__ < 4) {
       add(*a, *s, *c);
     } else {
-      const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+      const Mat *mask = *((const Mat **)dubL_checkudata(L, 4, "cv.Mat"));
       add(*a, *s, *c, *mask);
     }
     return 0;
@@ -1125,10 +1125,10 @@ static int cv_add3(lua_State *L) {
  */
 static int cv_add4(lua_State *L) {
   try {
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-    const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    const MatND *b = *((const MatND **)dubL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)dubL_checkudata(L, 3, "cv.MatND"));
+    const MatND *mask = *((const MatND **)dubL_checkudata(L, 4, "cv.MatND"));
     add(*a, *b, *c, *mask);
     return 0;
   } catch (cv::Exception &e) {
@@ -1161,9 +1161,9 @@ static int cv_add4(lua_State *L) {
  */
 static int cv_add5(lua_State *L) {
   try {
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    const MatND *b = *((const MatND **)dubL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)dubL_checkudata(L, 3, "cv.MatND"));
     add(*a, *b, *c);
     return 0;
   } catch (cv::Exception &e) {
@@ -1197,13 +1197,13 @@ static int cv_add5(lua_State *L) {
 static int cv_add6(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    const Scalar *s = *((const Scalar **)dubL_checkudata(L, 2, "cv.Scalar"));
+    MatND *c = *((MatND **)dubL_checkudata(L, 3, "cv.MatND"));
     if (top__ < 4) {
       add(*a, *s, *c);
     } else {
-      const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+      const MatND *mask = *((const MatND **)dubL_checkudata(L, 4, "cv.MatND"));
       add(*a, *s, *c, *mask);
     }
     return 0;
@@ -1299,12 +1299,12 @@ static int cv_add(lua_State *L) {
  */
 static int cv_addWeighted1(lua_State *L) {
   try {
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    double alpha = luaL_checknumber(L, 2);
-    const Mat *b = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    double beta = luaL_checknumber(L, 4);
-    double gamma = luaL_checknumber(L, 5);
-    Mat *c = *((Mat **)luaL_checkudata(L, 6, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    double alpha = dubL_checknumber(L, 2);
+    const Mat *b = *((const Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    double beta = dubL_checknumber(L, 4);
+    double gamma = dubL_checknumber(L, 5);
+    Mat *c = *((Mat **)dubL_checkudata(L, 6, "cv.Mat"));
     addWeighted(*a, alpha, *b, beta, gamma, *c);
     return 0;
   } catch (cv::Exception &e) {
@@ -1337,12 +1337,12 @@ static int cv_addWeighted1(lua_State *L) {
  */
 static int cv_addWeighted2(lua_State *L) {
   try {
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    double alpha = luaL_checknumber(L, 2);
-    const MatND *b = *((const MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-    double beta = luaL_checknumber(L, 4);
-    double gamma = luaL_checknumber(L, 5);
-    MatND *c = *((MatND **)luaL_checkudata(L, 6, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    double alpha = dubL_checknumber(L, 2);
+    const MatND *b = *((const MatND **)dubL_checkudata(L, 3, "cv.MatND"));
+    double beta = dubL_checknumber(L, 4);
+    double gamma = dubL_checknumber(L, 5);
+    MatND *c = *((MatND **)dubL_checkudata(L, 6, "cv.MatND"));
     addWeighted(*a, alpha, *b, beta, gamma, *c);
     return 0;
   } catch (cv::Exception &e) {
@@ -1391,8 +1391,8 @@ static int cv_addWeighted(lua_State *L) {
  */
 static int cv_alignSize(lua_State *L) {
   try {
-    size_t sz = luaL_checkint(L, 1);
-    int n = luaL_checkint(L, 2);
+    size_t sz = dubL_checkint(L, 1);
+    int n = dubL_checkint(L, 2);
     size_t  retval__ = alignSize(sz, n);
     lua_pushnumber(L, retval__);
     return 1;
@@ -1427,7 +1427,7 @@ static int cv_alignSize(lua_State *L) {
  */
 static int cv_arcLength(lua_State *L) {
   try {
-    const Mat *curve = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *curve = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
     bool closed = lua_toboolean(L, 2);
     double  retval__ = arcLength(*curve, closed);
     lua_pushnumber(L, retval__);
@@ -1464,15 +1464,15 @@ static int cv_arcLength(lua_State *L) {
 static int cv_bilateralFilter(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    int d = luaL_checkint(L, 3);
-    double sigmaColor = luaL_checknumber(L, 4);
-    double sigmaSpace = luaL_checknumber(L, 5);
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    int d = dubL_checkint(L, 3);
+    double sigmaColor = dubL_checknumber(L, 4);
+    double sigmaSpace = dubL_checknumber(L, 5);
     if (top__ < 6) {
       bilateralFilter(*src, *dst, d, sigmaColor, sigmaSpace);
     } else {
-      int borderType = luaL_checkint(L, 6);
+      int borderType = dubL_checkint(L, 6);
       bilateralFilter(*src, *dst, d, sigmaColor, sigmaSpace, borderType);
     }
     return 0;
@@ -1509,13 +1509,13 @@ static int cv_bilateralFilter(lua_State *L) {
 static int cv_bitwise_and1(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     if (top__ < 4) {
       bitwise_and(*a, *b, *c);
     } else {
-      const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+      const Mat *mask = *((const Mat **)dubL_checkudata(L, 4, "cv.Mat"));
       bitwise_and(*a, *b, *c, *mask);
     }
     return 0;
@@ -1550,13 +1550,13 @@ static int cv_bitwise_and1(lua_State *L) {
 static int cv_bitwise_and2(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Scalar *s = *((const Scalar **)dubL_checkudata(L, 2, "cv.Scalar"));
+    Mat *c = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     if (top__ < 4) {
       bitwise_and(*a, *s, *c);
     } else {
-      const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+      const Mat *mask = *((const Mat **)dubL_checkudata(L, 4, "cv.Mat"));
       bitwise_and(*a, *s, *c, *mask);
     }
     return 0;
@@ -1591,13 +1591,13 @@ static int cv_bitwise_and2(lua_State *L) {
 static int cv_bitwise_and3(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    const MatND *b = *((const MatND **)dubL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)dubL_checkudata(L, 3, "cv.MatND"));
     if (top__ < 4) {
       bitwise_and(*a, *b, *c);
     } else {
-      const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+      const MatND *mask = *((const MatND **)dubL_checkudata(L, 4, "cv.MatND"));
       bitwise_and(*a, *b, *c, *mask);
     }
     return 0;
@@ -1632,13 +1632,13 @@ static int cv_bitwise_and3(lua_State *L) {
 static int cv_bitwise_and4(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    const Scalar *s = *((const Scalar **)dubL_checkudata(L, 2, "cv.Scalar"));
+    MatND *c = *((MatND **)dubL_checkudata(L, 3, "cv.MatND"));
     if (top__ < 4) {
       bitwise_and(*a, *s, *c);
     } else {
-      const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+      const MatND *mask = *((const MatND **)dubL_checkudata(L, 4, "cv.MatND"));
       bitwise_and(*a, *s, *c, *mask);
     }
     return 0;
@@ -1705,8 +1705,8 @@ static int cv_bitwise_and(lua_State *L) {
  */
 static int cv_bitwise_not1(lua_State *L) {
   try {
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *c = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *c = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     bitwise_not(*a, *c);
     return 0;
   } catch (cv::Exception &e) {
@@ -1739,8 +1739,8 @@ static int cv_bitwise_not1(lua_State *L) {
  */
 static int cv_bitwise_not2(lua_State *L) {
   try {
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    MatND *c = *((MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    MatND *c = *((MatND **)dubL_checkudata(L, 2, "cv.MatND"));
     bitwise_not(*a, *c);
     return 0;
   } catch (cv::Exception &e) {
@@ -1791,13 +1791,13 @@ static int cv_bitwise_not(lua_State *L) {
 static int cv_bitwise_or1(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     if (top__ < 4) {
       bitwise_or(*a, *b, *c);
     } else {
-      const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+      const Mat *mask = *((const Mat **)dubL_checkudata(L, 4, "cv.Mat"));
       bitwise_or(*a, *b, *c, *mask);
     }
     return 0;
@@ -1832,13 +1832,13 @@ static int cv_bitwise_or1(lua_State *L) {
 static int cv_bitwise_or2(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Scalar *s = *((const Scalar **)dubL_checkudata(L, 2, "cv.Scalar"));
+    Mat *c = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     if (top__ < 4) {
       bitwise_or(*a, *s, *c);
     } else {
-      const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+      const Mat *mask = *((const Mat **)dubL_checkudata(L, 4, "cv.Mat"));
       bitwise_or(*a, *s, *c, *mask);
     }
     return 0;
@@ -1873,13 +1873,13 @@ static int cv_bitwise_or2(lua_State *L) {
 static int cv_bitwise_or3(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    const MatND *b = *((const MatND **)dubL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)dubL_checkudata(L, 3, "cv.MatND"));
     if (top__ < 4) {
       bitwise_or(*a, *b, *c);
     } else {
-      const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+      const MatND *mask = *((const MatND **)dubL_checkudata(L, 4, "cv.MatND"));
       bitwise_or(*a, *b, *c, *mask);
     }
     return 0;
@@ -1914,13 +1914,13 @@ static int cv_bitwise_or3(lua_State *L) {
 static int cv_bitwise_or4(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    const Scalar *s = *((const Scalar **)dubL_checkudata(L, 2, "cv.Scalar"));
+    MatND *c = *((MatND **)dubL_checkudata(L, 3, "cv.MatND"));
     if (top__ < 4) {
       bitwise_or(*a, *s, *c);
     } else {
-      const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+      const MatND *mask = *((const MatND **)dubL_checkudata(L, 4, "cv.MatND"));
       bitwise_or(*a, *s, *c, *mask);
     }
     return 0;
@@ -1988,13 +1988,13 @@ static int cv_bitwise_or(lua_State *L) {
 static int cv_bitwise_xor1(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     if (top__ < 4) {
       bitwise_xor(*a, *b, *c);
     } else {
-      const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+      const Mat *mask = *((const Mat **)dubL_checkudata(L, 4, "cv.Mat"));
       bitwise_xor(*a, *b, *c, *mask);
     }
     return 0;
@@ -2029,13 +2029,13 @@ static int cv_bitwise_xor1(lua_State *L) {
 static int cv_bitwise_xor2(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Scalar *s = *((const Scalar **)dubL_checkudata(L, 2, "cv.Scalar"));
+    Mat *c = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     if (top__ < 4) {
       bitwise_xor(*a, *s, *c);
     } else {
-      const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+      const Mat *mask = *((const Mat **)dubL_checkudata(L, 4, "cv.Mat"));
       bitwise_xor(*a, *s, *c, *mask);
     }
     return 0;
@@ -2070,13 +2070,13 @@ static int cv_bitwise_xor2(lua_State *L) {
 static int cv_bitwise_xor3(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    const MatND *b = *((const MatND **)dubL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)dubL_checkudata(L, 3, "cv.MatND"));
     if (top__ < 4) {
       bitwise_xor(*a, *b, *c);
     } else {
-      const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+      const MatND *mask = *((const MatND **)dubL_checkudata(L, 4, "cv.MatND"));
       bitwise_xor(*a, *b, *c, *mask);
     }
     return 0;
@@ -2111,13 +2111,13 @@ static int cv_bitwise_xor3(lua_State *L) {
 static int cv_bitwise_xor4(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    const Scalar *s = *((const Scalar **)dubL_checkudata(L, 2, "cv.Scalar"));
+    MatND *c = *((MatND **)dubL_checkudata(L, 3, "cv.MatND"));
     if (top__ < 4) {
       bitwise_xor(*a, *s, *c);
     } else {
-      const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+      const MatND *mask = *((const MatND **)dubL_checkudata(L, 4, "cv.MatND"));
       bitwise_xor(*a, *s, *c, *mask);
     }
     return 0;
@@ -2184,17 +2184,17 @@ static int cv_bitwise_xor(lua_State *L) {
 static int cv_blur(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Size *ksize = *((Size **)luaL_checkudata(L, 3, "cv.Size"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Size *ksize = *((Size **)dubL_checkudata(L, 3, "cv.Size"));
     if (top__ < 4) {
       blur(*src, *dst, *ksize);
     } else {
-      Point *anchor = *((Point **)luaL_checkudata(L, 4, "cv.Point"));
+      Point *anchor = *((Point **)dubL_checkudata(L, 4, "cv.Point"));
       if (top__ < 5) {
         blur(*src, *dst, *ksize, *anchor);
       } else {
-        int borderType = luaL_checkint(L, 5);
+        int borderType = dubL_checkint(L, 5);
         blur(*src, *dst, *ksize, *anchor, borderType);
       }
     }
@@ -2230,9 +2230,9 @@ static int cv_blur(lua_State *L) {
  */
 static int cv_borderInterpolate(lua_State *L) {
   try {
-    int p = luaL_checkint(L, 1);
-    int len = luaL_checkint(L, 2);
-    int borderType = luaL_checkint(L, 3);
+    int p = dubL_checkint(L, 1);
+    int len = dubL_checkint(L, 2);
+    int borderType = dubL_checkint(L, 3);
     int  retval__ = borderInterpolate(p, len, borderType);
     lua_pushnumber(L, retval__);
     return 1;
@@ -2267,7 +2267,7 @@ static int cv_borderInterpolate(lua_State *L) {
  */
 static int cv_boundingRect(lua_State *L) {
   try {
-    const Mat *points = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *points = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
     Rect  retval__ = boundingRect(*points);
     lua_pushclass<Rect>(L, retval__, "cv.Rect");
     return 1;
@@ -2303,14 +2303,14 @@ static int cv_boundingRect(lua_State *L) {
 static int cv_boxFilter(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    int ddepth = luaL_checkint(L, 3);
-    Size *ksize = *((Size **)luaL_checkudata(L, 4, "cv.Size"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    int ddepth = dubL_checkint(L, 3);
+    Size *ksize = *((Size **)dubL_checkudata(L, 4, "cv.Size"));
     if (top__ < 5) {
       boxFilter(*src, *dst, ddepth, *ksize);
     } else {
-      Point *anchor = *((Point **)luaL_checkudata(L, 5, "cv.Point"));
+      Point *anchor = *((Point **)dubL_checkudata(L, 5, "cv.Point"));
       if (top__ < 6) {
         boxFilter(*src, *dst, ddepth, *ksize, *anchor);
       } else {
@@ -2318,7 +2318,7 @@ static int cv_boxFilter(lua_State *L) {
         if (top__ < 7) {
           boxFilter(*src, *dst, ddepth, *ksize, *anchor, normalize);
         } else {
-          int borderType = luaL_checkint(L, 7);
+          int borderType = dubL_checkint(L, 7);
           boxFilter(*src, *dst, ddepth, *ksize, *anchor, normalize, borderType);
         }
       }
@@ -2357,14 +2357,14 @@ static int cv_boxFilter(lua_State *L) {
 static int cv_calcCovarMatrix2(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *samples = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *covar = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *mean = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    int flags = luaL_checkint(L, 4);
+    const Mat *samples = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *covar = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *mean = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    int flags = dubL_checkint(L, 4);
     if (top__ < 5) {
       calcCovarMatrix(*samples, *covar, *mean, flags);
     } else {
-      int ctype = luaL_checkint(L, 5);
+      int ctype = dubL_checkint(L, 5);
       calcCovarMatrix(*samples, *covar, *mean, flags, ctype);
     }
     return 0;
@@ -2412,11 +2412,11 @@ static int cv_calcCovarMatrix(lua_State *L) {
  */
 static int cv_calcGlobalOrientation(lua_State *L) {
   try {
-    const Mat *orientation = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *mask = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    const Mat *mhi = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    double timestamp = luaL_checknumber(L, 4);
-    double duration = luaL_checknumber(L, 5);
+    const Mat *orientation = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *mask = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    const Mat *mhi = *((const Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    double timestamp = dubL_checknumber(L, 4);
+    double duration = dubL_checknumber(L, 5);
     double  retval__ = calcGlobalOrientation(*orientation, *mask, *mhi, timestamp, duration);
     lua_pushnumber(L, retval__);
     return 1;
@@ -2452,15 +2452,15 @@ static int cv_calcGlobalOrientation(lua_State *L) {
 static int cv_calcMotionGradient(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *mhi = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *mask = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *orientation = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    double delta1 = luaL_checknumber(L, 4);
-    double delta2 = luaL_checknumber(L, 5);
+    const Mat *mhi = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *mask = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *orientation = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    double delta1 = dubL_checknumber(L, 4);
+    double delta2 = dubL_checknumber(L, 5);
     if (top__ < 6) {
       calcMotionGradient(*mhi, *mask, *orientation, delta1, delta2);
     } else {
-      int apertureSize = luaL_checkint(L, 6);
+      int apertureSize = dubL_checkint(L, 6);
       calcMotionGradient(*mhi, *mask, *orientation, delta1, delta2, apertureSize);
     }
     return 0;
@@ -2495,16 +2495,16 @@ static int cv_calcMotionGradient(lua_State *L) {
  */
 static int cv_calcOpticalFlowFarneback(lua_State *L) {
   try {
-    const Mat *prev0 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *next0 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *flow0 = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    double pyr_scale = luaL_checknumber(L, 4);
-    int levels = luaL_checkint(L, 5);
-    int winsize = luaL_checkint(L, 6);
-    int iterations = luaL_checkint(L, 7);
-    int poly_n = luaL_checkint(L, 8);
-    double poly_sigma = luaL_checknumber(L, 9);
-    int flags = luaL_checkint(L, 10);
+    const Mat *prev0 = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *next0 = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *flow0 = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    double pyr_scale = dubL_checknumber(L, 4);
+    int levels = dubL_checkint(L, 5);
+    int winsize = dubL_checkint(L, 6);
+    int iterations = dubL_checkint(L, 7);
+    int poly_n = dubL_checkint(L, 8);
+    double poly_sigma = dubL_checknumber(L, 9);
+    int flags = dubL_checkint(L, 10);
     calcOpticalFlowFarneback(*prev0, *next0, *flow0, pyr_scale, levels, winsize, iterations, poly_n, poly_sigma, flags);
     return 0;
   } catch (cv::Exception &e) {
@@ -2538,15 +2538,15 @@ static int cv_calcOpticalFlowFarneback(lua_State *L) {
  */
 static int cv_calibrationMatrixValues(lua_State *L) {
   try {
-    const Mat *cameraMatrix = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Size *imageSize = *((Size **)luaL_checkudata(L, 2, "cv.Size"));
-    double apertureWidth = luaL_checknumber(L, 3);
-    double apertureHeight = luaL_checknumber(L, 4);
-    double fovx = luaL_checknumber(L, 5);
-    double fovy = luaL_checknumber(L, 6);
-    double focalLength = luaL_checknumber(L, 7);
-    Point2d *principalPoint = *((Point2d **)luaL_checkudata(L, 8, "cv.Point2d"));
-    double aspectRatio = luaL_checknumber(L, 9);
+    const Mat *cameraMatrix = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Size *imageSize = *((Size **)dubL_checkudata(L, 2, "cv.Size"));
+    double apertureWidth = dubL_checknumber(L, 3);
+    double apertureHeight = dubL_checknumber(L, 4);
+    double fovx = dubL_checknumber(L, 5);
+    double fovy = dubL_checknumber(L, 6);
+    double focalLength = dubL_checknumber(L, 7);
+    Point2d *principalPoint = *((Point2d **)dubL_checkudata(L, 8, "cv.Point2d"));
+    double aspectRatio = dubL_checknumber(L, 9);
     calibrationMatrixValues(*cameraMatrix, *imageSize, apertureWidth, apertureHeight, fovx, fovy, focalLength, *principalPoint, aspectRatio);
     return 0;
   } catch (cv::Exception &e) {
@@ -2581,10 +2581,10 @@ static int cv_calibrationMatrixValues(lua_State *L) {
 static int cv_cartToPolar(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *x = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *y = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *magnitude = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    Mat *angle = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    const Mat *x = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *y = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *magnitude = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    Mat *angle = *((Mat **)dubL_checkudata(L, 4, "cv.Mat"));
     if (top__ < 5) {
       cartToPolar(*x, *y, *magnitude, *angle);
     } else {
@@ -2626,7 +2626,7 @@ static int cv_checkRange2(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     bool  retval__;
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
     if (top__ < 2) {
       retval__ = checkRange(*a);
     } else {
@@ -2640,11 +2640,11 @@ static int cv_checkRange2(lua_State *L) {
         if (top__ < 4) {
           retval__ = checkRange(*a, quiet, idx);
         } else {
-          double minVal = luaL_checknumber(L, 4);
+          double minVal = dubL_checknumber(L, 4);
           if (top__ < 5) {
             retval__ = checkRange(*a, quiet, idx, minVal);
           } else {
-            double maxVal = luaL_checknumber(L, 5);
+            double maxVal = dubL_checknumber(L, 5);
             retval__ = checkRange(*a, quiet, idx, minVal, maxVal);
           }
         }
@@ -2697,22 +2697,22 @@ static int cv_checkRange(lua_State *L) {
 static int cv_circle(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    Mat *img = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Point *center = *((Point **)luaL_checkudata(L, 2, "cv.Point"));
-    int radius = luaL_checkint(L, 3);
-    const Scalar *color = *((const Scalar **)luaL_checkudata(L, 4, "cv.Scalar"));
+    Mat *img = *((Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Point *center = *((Point **)dubL_checkudata(L, 2, "cv.Point"));
+    int radius = dubL_checkint(L, 3);
+    const Scalar *color = *((const Scalar **)dubL_checkudata(L, 4, "cv.Scalar"));
     if (top__ < 5) {
       circle(*img, *center, radius, *color);
     } else {
-      int thickness = luaL_checkint(L, 5);
+      int thickness = dubL_checkint(L, 5);
       if (top__ < 6) {
         circle(*img, *center, radius, *color, thickness);
       } else {
-        int lineType = luaL_checkint(L, 6);
+        int lineType = dubL_checkint(L, 6);
         if (top__ < 7) {
           circle(*img, *center, radius, *color, thickness, lineType);
         } else {
-          int shift = luaL_checkint(L, 7);
+          int shift = dubL_checkint(L, 7);
           circle(*img, *center, radius, *color, thickness, lineType, shift);
         }
       }
@@ -2750,9 +2750,9 @@ static int cv_circle(lua_State *L) {
  */
 static int cv_clipLine1(lua_State *L) {
   try {
-    Size *imgSize = *((Size **)luaL_checkudata(L, 1, "cv.Size"));
-    Point *pt1 = *((Point **)luaL_checkudata(L, 2, "cv.Point"));
-    Point *pt2 = *((Point **)luaL_checkudata(L, 3, "cv.Point"));
+    Size *imgSize = *((Size **)dubL_checkudata(L, 1, "cv.Size"));
+    Point *pt1 = *((Point **)dubL_checkudata(L, 2, "cv.Point"));
+    Point *pt2 = *((Point **)dubL_checkudata(L, 3, "cv.Point"));
     bool  retval__ = clipLine(*imgSize, *pt1, *pt2);
     lua_pushnumber(L, retval__);
     return 1;
@@ -2786,9 +2786,9 @@ static int cv_clipLine1(lua_State *L) {
  */
 static int cv_clipLine2(lua_State *L) {
   try {
-    Rect *img_rect = *((Rect **)luaL_checkudata(L, 1, "cv.Rect"));
-    Point *pt1 = *((Point **)luaL_checkudata(L, 2, "cv.Point"));
-    Point *pt2 = *((Point **)luaL_checkudata(L, 3, "cv.Point"));
+    Rect *img_rect = *((Rect **)dubL_checkudata(L, 1, "cv.Rect"));
+    Point *pt1 = *((Point **)dubL_checkudata(L, 2, "cv.Point"));
+    Point *pt2 = *((Point **)dubL_checkudata(L, 3, "cv.Point"));
     bool  retval__ = clipLine(*img_rect, *pt1, *pt2);
     lua_pushnumber(L, retval__);
     return 1;
@@ -2839,10 +2839,10 @@ static int cv_clipLine(lua_State *L) {
  */
 static int cv_compare1(lua_State *L) {
   try {
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    int cmpop = luaL_checkint(L, 4);
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    int cmpop = dubL_checkint(L, 4);
     compare(*a, *b, *c, cmpop);
     return 0;
   } catch (cv::Exception &e) {
@@ -2875,10 +2875,10 @@ static int cv_compare1(lua_State *L) {
  */
 static int cv_compare2(lua_State *L) {
   try {
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    double s = luaL_checknumber(L, 2);
-    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    int cmpop = luaL_checkint(L, 4);
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    double s = dubL_checknumber(L, 2);
+    Mat *c = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    int cmpop = dubL_checkint(L, 4);
     compare(*a, s, *c, cmpop);
     return 0;
   } catch (cv::Exception &e) {
@@ -2911,10 +2911,10 @@ static int cv_compare2(lua_State *L) {
  */
 static int cv_compare3(lua_State *L) {
   try {
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-    int cmpop = luaL_checkint(L, 4);
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    const MatND *b = *((const MatND **)dubL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)dubL_checkudata(L, 3, "cv.MatND"));
+    int cmpop = dubL_checkint(L, 4);
     compare(*a, *b, *c, cmpop);
     return 0;
   } catch (cv::Exception &e) {
@@ -2947,10 +2947,10 @@ static int cv_compare3(lua_State *L) {
  */
 static int cv_compare4(lua_State *L) {
   try {
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    double s = luaL_checknumber(L, 2);
-    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-    int cmpop = luaL_checkint(L, 4);
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    double s = dubL_checknumber(L, 2);
+    MatND *c = *((MatND **)dubL_checkudata(L, 3, "cv.MatND"));
+    int cmpop = dubL_checkint(L, 4);
     compare(*a, s, *c, cmpop);
     return 0;
   } catch (cv::Exception &e) {
@@ -3016,9 +3016,9 @@ static int cv_compare(lua_State *L) {
  */
 static int cv_compareHist1(lua_State *L) {
   try {
-    const MatND *H1 = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    const MatND *H2 = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-    int method = luaL_checkint(L, 3);
+    const MatND *H1 = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    const MatND *H2 = *((const MatND **)dubL_checkudata(L, 2, "cv.MatND"));
+    int method = dubL_checkint(L, 3);
     double  retval__ = compareHist(*H1, *H2, method);
     lua_pushnumber(L, retval__);
     return 1;
@@ -3052,9 +3052,9 @@ static int cv_compareHist1(lua_State *L) {
  */
 static int cv_compareHist2(lua_State *L) {
   try {
-    const SparseMat *H1 = *((const SparseMat **)luaL_checkudata(L, 1, "cv.SparseMat"));
-    const SparseMat *H2 = *((const SparseMat **)luaL_checkudata(L, 2, "cv.SparseMat"));
-    int method = luaL_checkint(L, 3);
+    const SparseMat *H1 = *((const SparseMat **)dubL_checkudata(L, 1, "cv.SparseMat"));
+    const SparseMat *H2 = *((const SparseMat **)dubL_checkudata(L, 2, "cv.SparseMat"));
+    int method = dubL_checkint(L, 3);
     double  retval__ = compareHist(*H1, *H2, method);
     lua_pushnumber(L, retval__);
     return 1;
@@ -3105,7 +3105,7 @@ static int cv_compareHist(lua_State *L) {
 static int cv_completeSymm(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    Mat *a = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *a = *((Mat **)dubL_checkudata(L, 1, "cv.Mat"));
     if (top__ < 2) {
       completeSymm(*a);
     } else {
@@ -3145,12 +3145,12 @@ static int cv_completeSymm(lua_State *L) {
  */
 static int cv_composeRT1(lua_State *L) {
   try {
-    const Mat *rvec1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *tvec1 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    const Mat *rvec2 = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    const Mat *tvec2 = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-    Mat *rvec3 = *((Mat **)luaL_checkudata(L, 5, "cv.Mat"));
-    Mat *tvec3 = *((Mat **)luaL_checkudata(L, 6, "cv.Mat"));
+    const Mat *rvec1 = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *tvec1 = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    const Mat *rvec2 = *((const Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    const Mat *tvec2 = *((const Mat **)dubL_checkudata(L, 4, "cv.Mat"));
+    Mat *rvec3 = *((Mat **)dubL_checkudata(L, 5, "cv.Mat"));
+    Mat *tvec3 = *((Mat **)dubL_checkudata(L, 6, "cv.Mat"));
     composeRT(*rvec1, *tvec1, *rvec2, *tvec2, *rvec3, *tvec3);
     return 0;
   } catch (cv::Exception &e) {
@@ -3183,20 +3183,20 @@ static int cv_composeRT1(lua_State *L) {
  */
 static int cv_composeRT2(lua_State *L) {
   try {
-    const Mat *rvec1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *tvec1 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    const Mat *rvec2 = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    const Mat *tvec2 = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-    Mat *rvec3 = *((Mat **)luaL_checkudata(L, 5, "cv.Mat"));
-    Mat *tvec3 = *((Mat **)luaL_checkudata(L, 6, "cv.Mat"));
-    Mat *dr3dr1 = *((Mat **)luaL_checkudata(L, 7, "cv.Mat"));
-    Mat *dr3dt1 = *((Mat **)luaL_checkudata(L, 8, "cv.Mat"));
-    Mat *dr3dr2 = *((Mat **)luaL_checkudata(L, 9, "cv.Mat"));
-    Mat *dr3dt2 = *((Mat **)luaL_checkudata(L, 10, "cv.Mat"));
-    Mat *dt3dr1 = *((Mat **)luaL_checkudata(L, 11, "cv.Mat"));
-    Mat *dt3dt1 = *((Mat **)luaL_checkudata(L, 12, "cv.Mat"));
-    Mat *dt3dr2 = *((Mat **)luaL_checkudata(L, 13, "cv.Mat"));
-    Mat *dt3dt2 = *((Mat **)luaL_checkudata(L, 14, "cv.Mat"));
+    const Mat *rvec1 = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *tvec1 = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    const Mat *rvec2 = *((const Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    const Mat *tvec2 = *((const Mat **)dubL_checkudata(L, 4, "cv.Mat"));
+    Mat *rvec3 = *((Mat **)dubL_checkudata(L, 5, "cv.Mat"));
+    Mat *tvec3 = *((Mat **)dubL_checkudata(L, 6, "cv.Mat"));
+    Mat *dr3dr1 = *((Mat **)dubL_checkudata(L, 7, "cv.Mat"));
+    Mat *dr3dt1 = *((Mat **)dubL_checkudata(L, 8, "cv.Mat"));
+    Mat *dr3dr2 = *((Mat **)dubL_checkudata(L, 9, "cv.Mat"));
+    Mat *dr3dt2 = *((Mat **)dubL_checkudata(L, 10, "cv.Mat"));
+    Mat *dt3dr1 = *((Mat **)dubL_checkudata(L, 11, "cv.Mat"));
+    Mat *dt3dt1 = *((Mat **)dubL_checkudata(L, 12, "cv.Mat"));
+    Mat *dt3dr2 = *((Mat **)dubL_checkudata(L, 13, "cv.Mat"));
+    Mat *dt3dt2 = *((Mat **)dubL_checkudata(L, 14, "cv.Mat"));
     composeRT(*rvec1, *tvec1, *rvec2, *tvec2, *rvec3, *tvec3, *dr3dr1, *dr3dt1, *dr3dr2, *dr3dt2, *dt3dr1, *dt3dt1, *dt3dr2, *dt3dt2);
     return 0;
   } catch (cv::Exception &e) {
@@ -3282,7 +3282,7 @@ static int cv_composeRT(lua_State *L) {
  */
 static int cv_contourArea(lua_State *L) {
   try {
-    const Mat *contour = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *contour = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
     double  retval__ = contourArea(*contour);
     lua_pushnumber(L, retval__);
     return 1;
@@ -3318,11 +3318,11 @@ static int cv_contourArea(lua_State *L) {
 static int cv_convertMaps(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *map1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *map2 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *dstmap1 = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    Mat *dstmap2 = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-    int dstmap1type = luaL_checkint(L, 5);
+    const Mat *map1 = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *map2 = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *dstmap1 = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    Mat *dstmap2 = *((Mat **)dubL_checkudata(L, 4, "cv.Mat"));
+    int dstmap1type = dubL_checkint(L, 5);
     if (top__ < 6) {
       convertMaps(*map1, *map2, *dstmap1, *dstmap2, dstmap1type);
     } else {
@@ -3362,16 +3362,16 @@ static int cv_convertMaps(lua_State *L) {
 static int cv_convertScaleAbs(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *c = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *c = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     if (top__ < 3) {
       convertScaleAbs(*a, *c);
     } else {
-      double alpha = luaL_checknumber(L, 3);
+      double alpha = dubL_checknumber(L, 3);
       if (top__ < 4) {
         convertScaleAbs(*a, *c, alpha);
       } else {
-        double beta = luaL_checknumber(L, 4);
+        double beta = dubL_checknumber(L, 4);
         convertScaleAbs(*a, *c, alpha, beta);
       }
     }
@@ -3408,17 +3408,17 @@ static int cv_convertScaleAbs(lua_State *L) {
 static int cv_copyMakeBorder(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    int top = luaL_checkint(L, 3);
-    int bottom = luaL_checkint(L, 4);
-    int left = luaL_checkint(L, 5);
-    int right = luaL_checkint(L, 6);
-    int borderType = luaL_checkint(L, 7);
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    int top = dubL_checkint(L, 3);
+    int bottom = dubL_checkint(L, 4);
+    int left = dubL_checkint(L, 5);
+    int right = dubL_checkint(L, 6);
+    int borderType = dubL_checkint(L, 7);
     if (top__ < 8) {
       copyMakeBorder(*src, *dst, top, bottom, left, right, borderType);
     } else {
-      const Scalar *value = *((const Scalar **)luaL_checkudata(L, 8, "cv.Scalar"));
+      const Scalar *value = *((const Scalar **)dubL_checkudata(L, 8, "cv.Scalar"));
       copyMakeBorder(*src, *dst, top, bottom, left, right, borderType, *value);
     }
     return 0;
@@ -3454,14 +3454,14 @@ static int cv_copyMakeBorder(lua_State *L) {
 static int cv_cornerEigenValsAndVecs(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    int blockSize = luaL_checkint(L, 3);
-    int ksize = luaL_checkint(L, 4);
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    int blockSize = dubL_checkint(L, 3);
+    int ksize = dubL_checkint(L, 4);
     if (top__ < 5) {
       cornerEigenValsAndVecs(*src, *dst, blockSize, ksize);
     } else {
-      int borderType = luaL_checkint(L, 5);
+      int borderType = dubL_checkint(L, 5);
       cornerEigenValsAndVecs(*src, *dst, blockSize, ksize, borderType);
     }
     return 0;
@@ -3497,15 +3497,15 @@ static int cv_cornerEigenValsAndVecs(lua_State *L) {
 static int cv_cornerHarris(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    int blockSize = luaL_checkint(L, 3);
-    int ksize = luaL_checkint(L, 4);
-    double k = luaL_checknumber(L, 5);
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    int blockSize = dubL_checkint(L, 3);
+    int ksize = dubL_checkint(L, 4);
+    double k = dubL_checknumber(L, 5);
     if (top__ < 6) {
       cornerHarris(*src, *dst, blockSize, ksize, k);
     } else {
-      int borderType = luaL_checkint(L, 6);
+      int borderType = dubL_checkint(L, 6);
       cornerHarris(*src, *dst, blockSize, ksize, k, borderType);
     }
     return 0;
@@ -3541,17 +3541,17 @@ static int cv_cornerHarris(lua_State *L) {
 static int cv_cornerMinEigenVal(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    int blockSize = luaL_checkint(L, 3);
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    int blockSize = dubL_checkint(L, 3);
     if (top__ < 4) {
       cornerMinEigenVal(*src, *dst, blockSize);
     } else {
-      int ksize = luaL_checkint(L, 4);
+      int ksize = dubL_checkint(L, 4);
       if (top__ < 5) {
         cornerMinEigenVal(*src, *dst, blockSize, ksize);
       } else {
-        int borderType = luaL_checkint(L, 5);
+        int borderType = dubL_checkint(L, 5);
         cornerMinEigenVal(*src, *dst, blockSize, ksize, borderType);
       }
     }
@@ -3588,7 +3588,7 @@ static int cv_cornerMinEigenVal(lua_State *L) {
  */
 static int cv_countNonZero1(lua_State *L) {
   try {
-    const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *m = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
     int  retval__ = countNonZero(*m);
     lua_pushnumber(L, retval__);
     return 1;
@@ -3622,7 +3622,7 @@ static int cv_countNonZero1(lua_State *L) {
  */
 static int cv_countNonZero2(lua_State *L) {
   try {
-    const MatND *m = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    const MatND *m = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
     int  retval__ = countNonZero(*m);
     lua_pushnumber(L, retval__);
     return 1;
@@ -3672,7 +3672,7 @@ static int cv_countNonZero(lua_State *L) {
  */
 static int cv_cubeRoot(lua_State *L) {
   try {
-    float val = luaL_checknumber(L, 1);
+    float val = dubL_checknumber(L, 1);
     float  retval__ = cubeRoot(val);
     lua_pushnumber(L, retval__);
     return 1;
@@ -3708,13 +3708,13 @@ static int cv_cubeRoot(lua_State *L) {
 static int cv_cvtColor(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    int code = luaL_checkint(L, 3);
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    int code = dubL_checkint(L, 3);
     if (top__ < 4) {
       cvtColor(*src, *dst, code);
     } else {
-      int dstCn = luaL_checkint(L, 4);
+      int dstCn = dubL_checkint(L, 4);
       cvtColor(*src, *dst, code, dstCn);
     }
     return 0;
@@ -3750,12 +3750,12 @@ static int cv_cvtColor(lua_State *L) {
 static int cv_dct(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     if (top__ < 3) {
       dct(*src, *dst);
     } else {
-      int flags = luaL_checkint(L, 3);
+      int flags = dubL_checkint(L, 3);
       dct(*src, *dst, flags);
     }
     return 0;
@@ -3791,10 +3791,10 @@ static int cv_dct(lua_State *L) {
  */
 static int cv_decomposeProjectionMatrix1(lua_State *L) {
   try {
-    const Mat *projMatrix = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *cameraMatrix = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *rotMatrix = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    Mat *transVect = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    const Mat *projMatrix = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *cameraMatrix = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *rotMatrix = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    Mat *transVect = *((Mat **)dubL_checkudata(L, 4, "cv.Mat"));
     decomposeProjectionMatrix(*projMatrix, *cameraMatrix, *rotMatrix, *transVect);
     return 0;
   } catch (cv::Exception &e) {
@@ -3827,14 +3827,14 @@ static int cv_decomposeProjectionMatrix1(lua_State *L) {
  */
 static int cv_decomposeProjectionMatrix2(lua_State *L) {
   try {
-    const Mat *projMatrix = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *cameraMatrix = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *rotMatrix = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    Mat *transVect = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-    Mat *rotMatrixX = *((Mat **)luaL_checkudata(L, 5, "cv.Mat"));
-    Mat *rotMatrixY = *((Mat **)luaL_checkudata(L, 6, "cv.Mat"));
-    Mat *rotMatrixZ = *((Mat **)luaL_checkudata(L, 7, "cv.Mat"));
-    Vec3d *eulerAngles = *((Vec3d **)luaL_checkudata(L, 8, "cv.Vec3d"));
+    const Mat *projMatrix = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *cameraMatrix = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *rotMatrix = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    Mat *transVect = *((Mat **)dubL_checkudata(L, 4, "cv.Mat"));
+    Mat *rotMatrixX = *((Mat **)dubL_checkudata(L, 5, "cv.Mat"));
+    Mat *rotMatrixY = *((Mat **)dubL_checkudata(L, 6, "cv.Mat"));
+    Mat *rotMatrixZ = *((Mat **)dubL_checkudata(L, 7, "cv.Mat"));
+    Vec3d *eulerAngles = *((Vec3d **)dubL_checkudata(L, 8, "cv.Vec3d"));
     decomposeProjectionMatrix(*projMatrix, *cameraMatrix, *rotMatrix, *transVect, *rotMatrixX, *rotMatrixY, *rotMatrixZ, *eulerAngles);
     return 0;
   } catch (cv::Exception &e) {
@@ -3908,7 +3908,7 @@ static int cv_decomposeProjectionMatrix(lua_State *L) {
  */
 static int cv_determinant(lua_State *L) {
   try {
-    const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *m = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
     double  retval__ = determinant(*m);
     lua_pushnumber(L, retval__);
     return 1;
@@ -3944,16 +3944,16 @@ static int cv_determinant(lua_State *L) {
 static int cv_dft(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     if (top__ < 3) {
       dft(*src, *dst);
     } else {
-      int flags = luaL_checkint(L, 3);
+      int flags = dubL_checkint(L, 3);
       if (top__ < 4) {
         dft(*src, *dst, flags);
       } else {
-        int nonzeroRows = luaL_checkint(L, 4);
+        int nonzeroRows = dubL_checkint(L, 4);
         dft(*src, *dst, flags, nonzeroRows);
       }
     }
@@ -3990,25 +3990,25 @@ static int cv_dft(lua_State *L) {
 static int cv_dilate(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    const Mat *kernel = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    const Mat *kernel = *((const Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     if (top__ < 4) {
       dilate(*src, *dst, *kernel);
     } else {
-      Point *anchor = *((Point **)luaL_checkudata(L, 4, "cv.Point"));
+      Point *anchor = *((Point **)dubL_checkudata(L, 4, "cv.Point"));
       if (top__ < 5) {
         dilate(*src, *dst, *kernel, *anchor);
       } else {
-        int iterations = luaL_checkint(L, 5);
+        int iterations = dubL_checkint(L, 5);
         if (top__ < 6) {
           dilate(*src, *dst, *kernel, *anchor, iterations);
         } else {
-          int borderType = luaL_checkint(L, 6);
+          int borderType = dubL_checkint(L, 6);
           if (top__ < 7) {
             dilate(*src, *dst, *kernel, *anchor, iterations, borderType);
           } else {
-            const Scalar *borderValue = *((const Scalar **)luaL_checkudata(L, 7, "cv.Scalar"));
+            const Scalar *borderValue = *((const Scalar **)dubL_checkudata(L, 7, "cv.Scalar"));
             dilate(*src, *dst, *kernel, *anchor, iterations, borderType, *borderValue);
           }
         }
@@ -4047,11 +4047,11 @@ static int cv_dilate(lua_State *L) {
  */
 static int cv_distanceTransform1(lua_State *L) {
   try {
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *labels = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    int distanceType = luaL_checkint(L, 4);
-    int maskSize = luaL_checkint(L, 5);
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *labels = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    int distanceType = dubL_checkint(L, 4);
+    int maskSize = dubL_checkint(L, 5);
     distanceTransform(*src, *dst, *labels, distanceType, maskSize);
     return 0;
   } catch (cv::Exception &e) {
@@ -4084,10 +4084,10 @@ static int cv_distanceTransform1(lua_State *L) {
  */
 static int cv_distanceTransform2(lua_State *L) {
   try {
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    int distanceType = luaL_checkint(L, 3);
-    int maskSize = luaL_checkint(L, 4);
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    int distanceType = dubL_checkint(L, 3);
+    int maskSize = dubL_checkint(L, 4);
     distanceTransform(*src, *dst, distanceType, maskSize);
     return 0;
   } catch (cv::Exception &e) {
@@ -4150,13 +4150,13 @@ static int cv_distanceTransform(lua_State *L) {
 static int cv_divide1(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     if (top__ < 4) {
       divide(*a, *b, *c);
     } else {
-      double scale = luaL_checknumber(L, 4);
+      double scale = dubL_checknumber(L, 4);
       divide(*a, *b, *c, scale);
     }
     return 0;
@@ -4190,9 +4190,9 @@ static int cv_divide1(lua_State *L) {
  */
 static int cv_divide2(lua_State *L) {
   try {
-    double scale = luaL_checknumber(L, 1);
-    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    double scale = dubL_checknumber(L, 1);
+    const Mat *b = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     divide(scale, *b, *c);
     return 0;
   } catch (cv::Exception &e) {
@@ -4226,13 +4226,13 @@ static int cv_divide2(lua_State *L) {
 static int cv_divide3(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    const MatND *b = *((const MatND **)dubL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)dubL_checkudata(L, 3, "cv.MatND"));
     if (top__ < 4) {
       divide(*a, *b, *c);
     } else {
-      double scale = luaL_checknumber(L, 4);
+      double scale = dubL_checknumber(L, 4);
       divide(*a, *b, *c, scale);
     }
     return 0;
@@ -4266,9 +4266,9 @@ static int cv_divide3(lua_State *L) {
  */
 static int cv_divide4(lua_State *L) {
   try {
-    double scale = luaL_checknumber(L, 1);
-    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    double scale = dubL_checknumber(L, 1);
+    const MatND *b = *((const MatND **)dubL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)dubL_checkudata(L, 3, "cv.MatND"));
     divide(scale, *b, *c);
     return 0;
   } catch (cv::Exception &e) {
@@ -4327,9 +4327,9 @@ static int cv_divide(lua_State *L) {
  */
 static int cv_drawChessboardCorners(lua_State *L) {
   try {
-    Mat *image = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Size *patternSize = *((Size **)luaL_checkudata(L, 2, "cv.Size"));
-    const Mat *corners = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    Mat *image = *((Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Size *patternSize = *((Size **)dubL_checkudata(L, 2, "cv.Size"));
+    const Mat *corners = *((const Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     bool patternWasFound = lua_toboolean(L, 4);
     drawChessboardCorners(*image, *patternSize, *corners, patternWasFound);
     return 0;
@@ -4367,16 +4367,16 @@ static int cv_eigen1(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     bool  retval__;
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *eigenvalues = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *eigenvalues = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     if (top__ < 3) {
       retval__ = eigen(*a, *eigenvalues);
     } else {
-      int lowindex = luaL_checkint(L, 3);
+      int lowindex = dubL_checkint(L, 3);
       if (top__ < 4) {
         retval__ = eigen(*a, *eigenvalues, lowindex);
       } else {
-        int highindex = luaL_checkint(L, 4);
+        int highindex = dubL_checkint(L, 4);
         retval__ = eigen(*a, *eigenvalues, lowindex, highindex);
       }
     }
@@ -4414,17 +4414,17 @@ static int cv_eigen2(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     bool  retval__;
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *eigenvalues = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *eigenvectors = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *eigenvalues = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *eigenvectors = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     if (top__ < 4) {
       retval__ = eigen(*a, *eigenvalues, *eigenvectors);
     } else {
-      int lowindex = luaL_checkint(L, 4);
+      int lowindex = dubL_checkint(L, 4);
       if (top__ < 5) {
         retval__ = eigen(*a, *eigenvalues, *eigenvectors, lowindex);
       } else {
-        int highindex = luaL_checkint(L, 5);
+        int highindex = dubL_checkint(L, 5);
         retval__ = eigen(*a, *eigenvalues, *eigenvectors, lowindex, highindex);
       }
     }
@@ -4490,25 +4490,25 @@ static int cv_eigen(lua_State *L) {
 static int cv_ellipse1(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    Mat *img = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Point *center = *((Point **)luaL_checkudata(L, 2, "cv.Point"));
-    Size *axes = *((Size **)luaL_checkudata(L, 3, "cv.Size"));
-    double angle = luaL_checknumber(L, 4);
-    double startAngle = luaL_checknumber(L, 5);
-    double endAngle = luaL_checknumber(L, 6);
-    const Scalar *color = *((const Scalar **)luaL_checkudata(L, 7, "cv.Scalar"));
+    Mat *img = *((Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Point *center = *((Point **)dubL_checkudata(L, 2, "cv.Point"));
+    Size *axes = *((Size **)dubL_checkudata(L, 3, "cv.Size"));
+    double angle = dubL_checknumber(L, 4);
+    double startAngle = dubL_checknumber(L, 5);
+    double endAngle = dubL_checknumber(L, 6);
+    const Scalar *color = *((const Scalar **)dubL_checkudata(L, 7, "cv.Scalar"));
     if (top__ < 8) {
       ellipse(*img, *center, *axes, angle, startAngle, endAngle, *color);
     } else {
-      int thickness = luaL_checkint(L, 8);
+      int thickness = dubL_checkint(L, 8);
       if (top__ < 9) {
         ellipse(*img, *center, *axes, angle, startAngle, endAngle, *color, thickness);
       } else {
-        int lineType = luaL_checkint(L, 9);
+        int lineType = dubL_checkint(L, 9);
         if (top__ < 10) {
           ellipse(*img, *center, *axes, angle, startAngle, endAngle, *color, thickness, lineType);
         } else {
-          int shift = luaL_checkint(L, 10);
+          int shift = dubL_checkint(L, 10);
           ellipse(*img, *center, *axes, angle, startAngle, endAngle, *color, thickness, lineType, shift);
         }
       }
@@ -4545,17 +4545,17 @@ static int cv_ellipse1(lua_State *L) {
 static int cv_ellipse2(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    Mat *img = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const RotatedRect *box = *((const RotatedRect **)luaL_checkudata(L, 2, "cv.RotatedRect"));
-    const Scalar *color = *((const Scalar **)luaL_checkudata(L, 3, "cv.Scalar"));
+    Mat *img = *((Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const RotatedRect *box = *((const RotatedRect **)dubL_checkudata(L, 2, "cv.RotatedRect"));
+    const Scalar *color = *((const Scalar **)dubL_checkudata(L, 3, "cv.Scalar"));
     if (top__ < 4) {
       ellipse(*img, *box, *color);
     } else {
-      int thickness = luaL_checkint(L, 4);
+      int thickness = dubL_checkint(L, 4);
       if (top__ < 5) {
         ellipse(*img, *box, *color, thickness);
       } else {
-        int lineType = luaL_checkint(L, 5);
+        int lineType = dubL_checkint(L, 5);
         ellipse(*img, *box, *color, thickness, lineType);
       }
     }
@@ -4612,8 +4612,8 @@ static int cv_ellipse(lua_State *L) {
  */
 static int cv_equalizeHist(lua_State *L) {
   try {
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     equalizeHist(*src, *dst);
     return 0;
   } catch (cv::Exception &e) {
@@ -4648,25 +4648,25 @@ static int cv_equalizeHist(lua_State *L) {
 static int cv_erode(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    const Mat *kernel = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    const Mat *kernel = *((const Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     if (top__ < 4) {
       erode(*src, *dst, *kernel);
     } else {
-      Point *anchor = *((Point **)luaL_checkudata(L, 4, "cv.Point"));
+      Point *anchor = *((Point **)dubL_checkudata(L, 4, "cv.Point"));
       if (top__ < 5) {
         erode(*src, *dst, *kernel, *anchor);
       } else {
-        int iterations = luaL_checkint(L, 5);
+        int iterations = dubL_checkint(L, 5);
         if (top__ < 6) {
           erode(*src, *dst, *kernel, *anchor, iterations);
         } else {
-          int borderType = luaL_checkint(L, 6);
+          int borderType = dubL_checkint(L, 6);
           if (top__ < 7) {
             erode(*src, *dst, *kernel, *anchor, iterations, borderType);
           } else {
-            const Scalar *borderValue = *((const Scalar **)luaL_checkudata(L, 7, "cv.Scalar"));
+            const Scalar *borderValue = *((const Scalar **)dubL_checkudata(L, 7, "cv.Scalar"));
             erode(*src, *dst, *kernel, *anchor, iterations, borderType, *borderValue);
           }
         }
@@ -4704,7 +4704,7 @@ static int cv_erode(lua_State *L) {
  */
 static int cv_error(lua_State *L) {
   try {
-    const Exception *exc = *((const Exception **)luaL_checkudata(L, 1, "cv.Exception"));
+    const Exception *exc = *((const Exception **)dubL_checkudata(L, 1, "cv.Exception"));
     error(*exc);
     return 0;
   } catch (cv::Exception &e) {
@@ -4738,8 +4738,8 @@ static int cv_error(lua_State *L) {
  */
 static int cv_estimateRigidTransform(lua_State *L) {
   try {
-    const Mat *A = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *B = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *A = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *B = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     bool fullAffine = lua_toboolean(L, 3);
     Mat  retval__ = estimateRigidTransform(*A, *B, fullAffine);
     lua_pushclass<Mat>(L, retval__, "cv.Mat");
@@ -4776,8 +4776,8 @@ static int cv_estimateRigidTransform(lua_State *L) {
  */
 static int cv_exp1(lua_State *L) {
   try {
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *b = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *b = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     exp(*a, *b);
     return 0;
   } catch (cv::Exception &e) {
@@ -4810,8 +4810,8 @@ static int cv_exp1(lua_State *L) {
  */
 static int cv_exp2(lua_State *L) {
   try {
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    MatND *b = *((MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    MatND *b = *((MatND **)dubL_checkudata(L, 2, "cv.MatND"));
     exp(*a, *b);
     return 0;
   } catch (cv::Exception &e) {
@@ -4860,8 +4860,8 @@ static int cv_exp(lua_State *L) {
  */
 static int cv_fastAtan2(lua_State *L) {
   try {
-    float y = luaL_checknumber(L, 1);
-    float x = luaL_checknumber(L, 2);
+    float y = dubL_checknumber(L, 1);
+    float x = dubL_checknumber(L, 2);
     float  retval__ = fastAtan2(y, x);
     lua_pushnumber(L, retval__);
     return 1;
@@ -4897,22 +4897,22 @@ static int cv_fastAtan2(lua_State *L) {
 static int cv_filter2D(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    int ddepth = luaL_checkint(L, 3);
-    const Mat *kernel = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    int ddepth = dubL_checkint(L, 3);
+    const Mat *kernel = *((const Mat **)dubL_checkudata(L, 4, "cv.Mat"));
     if (top__ < 5) {
       filter2D(*src, *dst, ddepth, *kernel);
     } else {
-      Point *anchor = *((Point **)luaL_checkudata(L, 5, "cv.Point"));
+      Point *anchor = *((Point **)dubL_checkudata(L, 5, "cv.Point"));
       if (top__ < 6) {
         filter2D(*src, *dst, ddepth, *kernel, *anchor);
       } else {
-        double delta = luaL_checknumber(L, 6);
+        double delta = dubL_checknumber(L, 6);
         if (top__ < 7) {
           filter2D(*src, *dst, ddepth, *kernel, *anchor, delta);
         } else {
-          int borderType = luaL_checkint(L, 7);
+          int borderType = dubL_checkint(L, 7);
           filter2D(*src, *dst, ddepth, *kernel, *anchor, delta, borderType);
         }
       }
@@ -4949,11 +4949,11 @@ static int cv_filter2D(lua_State *L) {
  */
 static int cv_filterSpeckles(lua_State *L) {
   try {
-    Mat *img = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    double newVal = luaL_checknumber(L, 2);
-    int maxSpeckleSize = luaL_checkint(L, 3);
-    double maxDiff = luaL_checknumber(L, 4);
-    Mat *buf = *((Mat **)luaL_checkudata(L, 5, "cv.Mat"));
+    Mat *img = *((Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    double newVal = dubL_checknumber(L, 2);
+    int maxSpeckleSize = dubL_checkint(L, 3);
+    double maxDiff = dubL_checknumber(L, 4);
+    Mat *buf = *((Mat **)dubL_checkudata(L, 5, "cv.Mat"));
     filterSpeckles(*img, newVal, maxSpeckleSize, maxDiff, *buf);
     return 0;
   } catch (cv::Exception &e) {
@@ -4990,20 +4990,20 @@ static int cv_findFundamentalMat2(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     Mat  retval__;
-    const Mat *points1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *points2 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *points1 = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *points2 = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     if (top__ < 3) {
       retval__ = findFundamentalMat(*points1, *points2);
     } else {
-      int method = luaL_checkint(L, 3);
+      int method = dubL_checkint(L, 3);
       if (top__ < 4) {
         retval__ = findFundamentalMat(*points1, *points2, method);
       } else {
-        double param1 = luaL_checknumber(L, 4);
+        double param1 = dubL_checknumber(L, 4);
         if (top__ < 5) {
           retval__ = findFundamentalMat(*points1, *points2, method, param1);
         } else {
-          double param2 = luaL_checknumber(L, 5);
+          double param2 = dubL_checknumber(L, 5);
           retval__ = findFundamentalMat(*points1, *points2, method, param1, param2);
         }
       }
@@ -5054,7 +5054,7 @@ static int cv_findFundamentalMat(lua_State *L) {
  */
 static int cv_fitEllipse(lua_State *L) {
   try {
-    const Mat *points = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *points = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
     RotatedRect  retval__ = fitEllipse(*points);
     lua_pushclass<RotatedRect>(L, retval__, "cv.RotatedRect");
     return 1;
@@ -5089,12 +5089,12 @@ static int cv_fitEllipse(lua_State *L) {
  */
 static int cv_fitLine(lua_State *L) {
   try {
-    const Mat *points = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Vec4f *line = *((Vec4f **)luaL_checkudata(L, 2, "cv.Vec4f"));
-    int distType = luaL_checkint(L, 3);
-    double param = luaL_checknumber(L, 4);
-    double reps = luaL_checknumber(L, 5);
-    double aeps = luaL_checknumber(L, 6);
+    const Mat *points = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Vec4f *line = *((Vec4f **)dubL_checkudata(L, 2, "cv.Vec4f"));
+    int distType = dubL_checkint(L, 3);
+    double param = dubL_checknumber(L, 4);
+    double reps = dubL_checknumber(L, 5);
+    double aeps = dubL_checknumber(L, 6);
     fitLine(*points, *line, distType, param, reps, aeps);
     return 0;
   } catch (cv::Exception &e) {
@@ -5128,9 +5128,9 @@ static int cv_fitLine(lua_State *L) {
  */
 static int cv_flip(lua_State *L) {
   try {
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *b = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    int flipCode = luaL_checkint(L, 3);
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *b = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    int flipCode = dubL_checkint(L, 3);
     flip(*a, *b, flipCode);
     return 0;
   } catch (cv::Exception &e) {
@@ -5164,7 +5164,7 @@ static int cv_flip(lua_State *L) {
  */
 static int cv_fromUtf16(lua_State *L) {
   try {
-    const WString *str = *((const WString **)luaL_checkudata(L, 1, "cv.WString"));
+    const WString *str = *((const WString **)dubL_checkudata(L, 1, "cv.WString"));
     string  retval__ = fromUtf16(*str);
     lua_pushclass<string>(L, retval__, "cv.string");
     return 1;
@@ -5200,16 +5200,16 @@ static int cv_fromUtf16(lua_State *L) {
 static int cv_gemm(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    double alpha = luaL_checknumber(L, 3);
-    const Mat *c = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-    double gamma = luaL_checknumber(L, 5);
-    Mat *d = *((Mat **)luaL_checkudata(L, 6, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    double alpha = dubL_checknumber(L, 3);
+    const Mat *c = *((const Mat **)dubL_checkudata(L, 4, "cv.Mat"));
+    double gamma = dubL_checknumber(L, 5);
+    Mat *d = *((Mat **)dubL_checkudata(L, 6, "cv.Mat"));
     if (top__ < 7) {
       gemm(*a, *b, alpha, *c, gamma, *d);
     } else {
-      int flags = luaL_checkint(L, 7);
+      int flags = dubL_checkint(L, 7);
       gemm(*a, *b, alpha, *c, gamma, *d, flags);
     }
     return 0;
@@ -5280,11 +5280,11 @@ static int cv_getDefaultNewCameraMatrix(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     Mat  retval__;
-    const Mat *cameraMatrix = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *cameraMatrix = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
     if (top__ < 2) {
       retval__ = getDefaultNewCameraMatrix(*cameraMatrix);
     } else {
-      Size *imgsize = *((Size **)luaL_checkudata(L, 2, "cv.Size"));
+      Size *imgsize = *((Size **)dubL_checkudata(L, 2, "cv.Size"));
       if (top__ < 3) {
         retval__ = getDefaultNewCameraMatrix(*cameraMatrix, *imgsize);
       } else {
@@ -5326,11 +5326,11 @@ static int cv_getDefaultNewCameraMatrix(lua_State *L) {
 static int cv_getDerivKernels(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    Mat *kx = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *ky = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    int dx = luaL_checkint(L, 3);
-    int dy = luaL_checkint(L, 4);
-    int ksize = luaL_checkint(L, 5);
+    Mat *kx = *((Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *ky = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    int dx = dubL_checkint(L, 3);
+    int dy = dubL_checkint(L, 4);
+    int ksize = dubL_checkint(L, 5);
     if (top__ < 6) {
       getDerivKernels(*kx, *ky, dx, dy, ksize);
     } else {
@@ -5338,7 +5338,7 @@ static int cv_getDerivKernels(lua_State *L) {
       if (top__ < 7) {
         getDerivKernels(*kx, *ky, dx, dy, ksize, normalize);
       } else {
-        int ktype = luaL_checkint(L, 7);
+        int ktype = dubL_checkint(L, 7);
         getDerivKernels(*kx, *ky, dx, dy, ksize, normalize, ktype);
       }
     }
@@ -5374,7 +5374,7 @@ static int cv_getDerivKernels(lua_State *L) {
  */
 static int cv_getElemSize(lua_State *L) {
   try {
-    int type = luaL_checkint(L, 1);
+    int type = dubL_checkint(L, 1);
     size_t  retval__ = getElemSize(type);
     lua_pushnumber(L, retval__);
     return 1;
@@ -5411,12 +5411,12 @@ static int cv_getGaussianKernel(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     Mat  retval__;
-    int ksize = luaL_checkint(L, 1);
-    double sigma = luaL_checknumber(L, 2);
+    int ksize = dubL_checkint(L, 1);
+    double sigma = dubL_checknumber(L, 2);
     if (top__ < 3) {
       retval__ = getGaussianKernel(ksize, sigma);
     } else {
-      int ktype = luaL_checkint(L, 3);
+      int ktype = dubL_checkint(L, 3);
       retval__ = getGaussianKernel(ksize, sigma, ktype);
     }
     lua_pushclass<Mat>(L, retval__, "cv.Mat");
@@ -5452,8 +5452,8 @@ static int cv_getGaussianKernel(lua_State *L) {
  */
 static int cv_getKernelType(lua_State *L) {
   try {
-    const Mat *kernel = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Point *anchor = *((Point **)luaL_checkudata(L, 2, "cv.Point"));
+    const Mat *kernel = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Point *anchor = *((Point **)dubL_checkudata(L, 2, "cv.Point"));
     int  retval__ = getKernelType(*kernel, *anchor);
     lua_pushnumber(L, retval__);
     return 1;
@@ -5522,7 +5522,7 @@ static int cv_getNumThreads(lua_State *L) {
  */
 static int cv_getOptimalDFTSize(lua_State *L) {
   try {
-    int vecsize = luaL_checkint(L, 1);
+    int vecsize = dubL_checkint(L, 1);
     int  retval__ = getOptimalDFTSize(vecsize);
     lua_pushnumber(L, retval__);
     return 1;
@@ -5558,14 +5558,14 @@ static int cv_getOptimalDFTSize(lua_State *L) {
 static int cv_getRectSubPix(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *image = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Size *patchSize = *((Size **)luaL_checkudata(L, 2, "cv.Size"));
-    Point2f *center = *((Point2f **)luaL_checkudata(L, 3, "cv.Point2f"));
-    Mat *patch = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    const Mat *image = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Size *patchSize = *((Size **)dubL_checkudata(L, 2, "cv.Size"));
+    Point2f *center = *((Point2f **)dubL_checkudata(L, 3, "cv.Point2f"));
+    Mat *patch = *((Mat **)dubL_checkudata(L, 4, "cv.Mat"));
     if (top__ < 5) {
       getRectSubPix(*image, *patchSize, *center, *patch);
     } else {
-      int patchType = luaL_checkint(L, 5);
+      int patchType = dubL_checkint(L, 5);
       getRectSubPix(*image, *patchSize, *center, *patch, patchType);
     }
     return 0;
@@ -5600,9 +5600,9 @@ static int cv_getRectSubPix(lua_State *L) {
  */
 static int cv_getRotationMatrix2D(lua_State *L) {
   try {
-    Point2f *center = *((Point2f **)luaL_checkudata(L, 1, "cv.Point2f"));
-    double angle = luaL_checknumber(L, 2);
-    double scale = luaL_checknumber(L, 3);
+    Point2f *center = *((Point2f **)dubL_checkudata(L, 1, "cv.Point2f"));
+    double angle = dubL_checknumber(L, 2);
+    double scale = dubL_checknumber(L, 3);
     Mat  retval__ = getRotationMatrix2D(*center, angle, scale);
     lua_pushclass<Mat>(L, retval__, "cv.Mat");
     return 1;
@@ -5639,12 +5639,12 @@ static int cv_getStructuringElement(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     Mat  retval__;
-    int shape = luaL_checkint(L, 1);
-    Size *ksize = *((Size **)luaL_checkudata(L, 2, "cv.Size"));
+    int shape = dubL_checkint(L, 1);
+    Size *ksize = *((Size **)dubL_checkudata(L, 2, "cv.Size"));
     if (top__ < 3) {
       retval__ = getStructuringElement(shape, *ksize);
     } else {
-      Point *anchor = *((Point **)luaL_checkudata(L, 3, "cv.Point"));
+      Point *anchor = *((Point **)dubL_checkudata(L, 3, "cv.Point"));
       retval__ = getStructuringElement(shape, *ksize, *anchor);
     }
     lua_pushclass<Mat>(L, retval__, "cv.Mat");
@@ -5680,10 +5680,10 @@ static int cv_getStructuringElement(lua_State *L) {
  */
 static int cv_getTextSize(lua_State *L) {
   try {
-    const string *text = *((const string **)luaL_checkudata(L, 1, "cv.string"));
-    int fontFace = luaL_checkint(L, 2);
-    double fontScale = luaL_checknumber(L, 3);
-    int thickness = luaL_checkint(L, 4);
+    const string *text = *((const string **)dubL_checkudata(L, 1, "cv.string"));
+    int fontFace = dubL_checkint(L, 2);
+    double fontScale = dubL_checknumber(L, 3);
+    int thickness = dubL_checkint(L, 4);
 
     DubArgPointer<int> ptr_baseLine;
     int *baseLine = ptr_baseLine(L, 5);
@@ -5824,16 +5824,16 @@ static int cv_getTickFrequency(lua_State *L) {
 static int cv_grabCut(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *img = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *mask = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Rect *rect = *((Rect **)luaL_checkudata(L, 3, "cv.Rect"));
-    Mat *bgdModel = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-    Mat *fgdModel = *((Mat **)luaL_checkudata(L, 5, "cv.Mat"));
-    int iterCount = luaL_checkint(L, 6);
+    const Mat *img = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *mask = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Rect *rect = *((Rect **)dubL_checkudata(L, 3, "cv.Rect"));
+    Mat *bgdModel = *((Mat **)dubL_checkudata(L, 4, "cv.Mat"));
+    Mat *fgdModel = *((Mat **)dubL_checkudata(L, 5, "cv.Mat"));
+    int iterCount = dubL_checkint(L, 6);
     if (top__ < 7) {
       grabCut(*img, *mask, *rect, *bgdModel, *fgdModel, iterCount);
     } else {
-      int mode = luaL_checkint(L, 7);
+      int mode = dubL_checkint(L, 7);
       grabCut(*img, *mask, *rect, *bgdModel, *fgdModel, iterCount, mode);
     }
     return 0;
@@ -5869,12 +5869,12 @@ static int cv_grabCut(lua_State *L) {
 static int cv_idct(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     if (top__ < 3) {
       idct(*src, *dst);
     } else {
-      int flags = luaL_checkint(L, 3);
+      int flags = dubL_checkint(L, 3);
       idct(*src, *dst, flags);
     }
     return 0;
@@ -5910,16 +5910,16 @@ static int cv_idct(lua_State *L) {
 static int cv_idft(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     if (top__ < 3) {
       idft(*src, *dst);
     } else {
-      int flags = luaL_checkint(L, 3);
+      int flags = dubL_checkint(L, 3);
       if (top__ < 4) {
         idft(*src, *dst, flags);
       } else {
-        int nonzeroRows = luaL_checkint(L, 4);
+        int nonzeroRows = dubL_checkint(L, 4);
         idft(*src, *dst, flags, nonzeroRows);
       }
     }
@@ -5956,10 +5956,10 @@ static int cv_idft(lua_State *L) {
  */
 static int cv_inRange1(lua_State *L) {
   try {
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *lowerb = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    const Mat *upperb = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *lowerb = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    const Mat *upperb = *((const Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 4, "cv.Mat"));
     inRange(*src, *lowerb, *upperb, *dst);
     return 0;
   } catch (cv::Exception &e) {
@@ -5992,10 +5992,10 @@ static int cv_inRange1(lua_State *L) {
  */
 static int cv_inRange2(lua_State *L) {
   try {
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Scalar *lowerb = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-    const Scalar *upperb = *((const Scalar **)luaL_checkudata(L, 3, "cv.Scalar"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Scalar *lowerb = *((const Scalar **)dubL_checkudata(L, 2, "cv.Scalar"));
+    const Scalar *upperb = *((const Scalar **)dubL_checkudata(L, 3, "cv.Scalar"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 4, "cv.Mat"));
     inRange(*src, *lowerb, *upperb, *dst);
     return 0;
   } catch (cv::Exception &e) {
@@ -6028,10 +6028,10 @@ static int cv_inRange2(lua_State *L) {
  */
 static int cv_inRange3(lua_State *L) {
   try {
-    const MatND *src = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    const MatND *lowerb = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-    const MatND *upperb = *((const MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-    MatND *dst = *((MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+    const MatND *src = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    const MatND *lowerb = *((const MatND **)dubL_checkudata(L, 2, "cv.MatND"));
+    const MatND *upperb = *((const MatND **)dubL_checkudata(L, 3, "cv.MatND"));
+    MatND *dst = *((MatND **)dubL_checkudata(L, 4, "cv.MatND"));
     inRange(*src, *lowerb, *upperb, *dst);
     return 0;
   } catch (cv::Exception &e) {
@@ -6064,10 +6064,10 @@ static int cv_inRange3(lua_State *L) {
  */
 static int cv_inRange4(lua_State *L) {
   try {
-    const MatND *src = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    const Scalar *lowerb = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-    const Scalar *upperb = *((const Scalar **)luaL_checkudata(L, 3, "cv.Scalar"));
-    MatND *dst = *((MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+    const MatND *src = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    const Scalar *lowerb = *((const Scalar **)dubL_checkudata(L, 2, "cv.Scalar"));
+    const Scalar *upperb = *((const Scalar **)dubL_checkudata(L, 3, "cv.Scalar"));
+    MatND *dst = *((MatND **)dubL_checkudata(L, 4, "cv.MatND"));
     inRange(*src, *lowerb, *upperb, *dst);
     return 0;
   } catch (cv::Exception &e) {
@@ -6132,14 +6132,14 @@ static int cv_inRange(lua_State *L) {
  */
 static int cv_initUndistortRectifyMap(lua_State *L) {
   try {
-    const Mat *cameraMatrix = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *distCoeffs = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    const Mat *R = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    const Mat *newCameraMatrix = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-    Size *size = *((Size **)luaL_checkudata(L, 5, "cv.Size"));
-    int m1type = luaL_checkint(L, 6);
-    Mat *map1 = *((Mat **)luaL_checkudata(L, 7, "cv.Mat"));
-    Mat *map2 = *((Mat **)luaL_checkudata(L, 8, "cv.Mat"));
+    const Mat *cameraMatrix = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *distCoeffs = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    const Mat *R = *((const Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    const Mat *newCameraMatrix = *((const Mat **)dubL_checkudata(L, 4, "cv.Mat"));
+    Size *size = *((Size **)dubL_checkudata(L, 5, "cv.Size"));
+    int m1type = dubL_checkint(L, 6);
+    Mat *map1 = *((Mat **)dubL_checkudata(L, 7, "cv.Mat"));
+    Mat *map2 = *((Mat **)dubL_checkudata(L, 8, "cv.Mat"));
     initUndistortRectifyMap(*cameraMatrix, *distCoeffs, *R, *newCameraMatrix, *size, m1type, *map1, *map2);
     return 0;
   } catch (cv::Exception &e) {
@@ -6173,11 +6173,11 @@ static int cv_initUndistortRectifyMap(lua_State *L) {
  */
 static int cv_inpaint(lua_State *L) {
   try {
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *inpaintMask = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    double inpaintRange = luaL_checknumber(L, 4);
-    int flags = luaL_checkint(L, 5);
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *inpaintMask = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    double inpaintRange = dubL_checknumber(L, 4);
+    int flags = dubL_checkint(L, 5);
     inpaint(*src, *inpaintMask, *dst, inpaintRange, flags);
     return 0;
   } catch (cv::Exception &e) {
@@ -6213,12 +6213,12 @@ static int cv_inpaint(lua_State *L) {
 static int cv_integral1(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *sum = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *sum = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     if (top__ < 3) {
       integral(*src, *sum);
     } else {
-      int sdepth = luaL_checkint(L, 3);
+      int sdepth = dubL_checkint(L, 3);
       integral(*src, *sum, sdepth);
     }
     return 0;
@@ -6253,13 +6253,13 @@ static int cv_integral1(lua_State *L) {
 static int cv_integral2(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *sum = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *sqsum = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *sum = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *sqsum = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     if (top__ < 4) {
       integral(*src, *sum, *sqsum);
     } else {
-      int sdepth = luaL_checkint(L, 4);
+      int sdepth = dubL_checkint(L, 4);
       integral(*src, *sum, *sqsum, sdepth);
     }
     return 0;
@@ -6294,14 +6294,14 @@ static int cv_integral2(lua_State *L) {
 static int cv_integral3(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *sum = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *sqsum = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    Mat *tilted = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *sum = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *sqsum = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    Mat *tilted = *((Mat **)dubL_checkudata(L, 4, "cv.Mat"));
     if (top__ < 5) {
       integral(*src, *sum, *sqsum, *tilted);
     } else {
-      int sdepth = luaL_checkint(L, 5);
+      int sdepth = dubL_checkint(L, 5);
       integral(*src, *sum, *sqsum, *tilted, sdepth);
     }
     return 0;
@@ -6373,12 +6373,12 @@ static int cv_invert(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     double  retval__;
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *c = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *c = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     if (top__ < 3) {
       retval__ = invert(*a, *c);
     } else {
-      int flags = luaL_checkint(L, 3);
+      int flags = dubL_checkint(L, 3);
       retval__ = invert(*a, *c, flags);
     }
     lua_pushnumber(L, retval__);
@@ -6414,8 +6414,8 @@ static int cv_invert(lua_State *L) {
  */
 static int cv_invertAffineTransform(lua_State *L) {
   try {
-    const Mat *M = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *iM = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *M = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *iM = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     invertAffineTransform(*M, *iM);
     return 0;
   } catch (cv::Exception &e) {
@@ -6449,7 +6449,7 @@ static int cv_invertAffineTransform(lua_State *L) {
  */
 static int cv_isContourConvex(lua_State *L) {
   try {
-    const Mat *contour = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *contour = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
     bool  retval__ = isContourConvex(*contour);
     lua_pushnumber(L, retval__);
     return 1;
@@ -6485,22 +6485,22 @@ static int cv_isContourConvex(lua_State *L) {
 static int cv_line(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    Mat *img = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Point *pt1 = *((Point **)luaL_checkudata(L, 2, "cv.Point"));
-    Point *pt2 = *((Point **)luaL_checkudata(L, 3, "cv.Point"));
-    const Scalar *color = *((const Scalar **)luaL_checkudata(L, 4, "cv.Scalar"));
+    Mat *img = *((Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Point *pt1 = *((Point **)dubL_checkudata(L, 2, "cv.Point"));
+    Point *pt2 = *((Point **)dubL_checkudata(L, 3, "cv.Point"));
+    const Scalar *color = *((const Scalar **)dubL_checkudata(L, 4, "cv.Scalar"));
     if (top__ < 5) {
       line(*img, *pt1, *pt2, *color);
     } else {
-      int thickness = luaL_checkint(L, 5);
+      int thickness = dubL_checkint(L, 5);
       if (top__ < 6) {
         line(*img, *pt1, *pt2, *color, thickness);
       } else {
-        int lineType = luaL_checkint(L, 6);
+        int lineType = dubL_checkint(L, 6);
         if (top__ < 7) {
           line(*img, *pt1, *pt2, *color, thickness, lineType);
         } else {
-          int shift = luaL_checkint(L, 7);
+          int shift = dubL_checkint(L, 7);
           line(*img, *pt1, *pt2, *color, thickness, lineType, shift);
         }
       }
@@ -6538,8 +6538,8 @@ static int cv_line(lua_State *L) {
  */
 static int cv_log1(lua_State *L) {
   try {
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *b = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *b = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     log(*a, *b);
     return 0;
   } catch (cv::Exception &e) {
@@ -6572,8 +6572,8 @@ static int cv_log1(lua_State *L) {
  */
 static int cv_log2(lua_State *L) {
   try {
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    MatND *b = *((MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    MatND *b = *((MatND **)dubL_checkudata(L, 2, "cv.MatND"));
     log(*a, *b);
     return 0;
   } catch (cv::Exception &e) {
@@ -6622,9 +6622,9 @@ static int cv_log(lua_State *L) {
  */
 static int cv_magnitude(lua_State *L) {
   try {
-    const Mat *x = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *y = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *arg_magnitude = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *x = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *y = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *arg_magnitude = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     magnitude(*x, *y, *arg_magnitude);
     return 0;
   } catch (cv::Exception &e) {
@@ -6658,10 +6658,10 @@ static int cv_magnitude(lua_State *L) {
  */
 static int cv_matMulDeriv(lua_State *L) {
   try {
-    const Mat *A = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *B = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *dABdA = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    Mat *dABdB = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    const Mat *A = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *B = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *dABdA = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    Mat *dABdB = *((Mat **)dubL_checkudata(L, 4, "cv.Mat"));
     matMulDeriv(*A, *B, *dABdA, *dABdB);
     return 0;
   } catch (cv::Exception &e) {
@@ -6695,10 +6695,10 @@ static int cv_matMulDeriv(lua_State *L) {
  */
 static int cv_matchShapes(lua_State *L) {
   try {
-    const Mat *contour1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *contour2 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    int method = luaL_checkint(L, 3);
-    double parameter = luaL_checknumber(L, 4);
+    const Mat *contour1 = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *contour2 = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    int method = dubL_checkint(L, 3);
+    double parameter = dubL_checknumber(L, 4);
     double  retval__ = matchShapes(*contour1, *contour2, method, parameter);
     lua_pushnumber(L, retval__);
     return 1;
@@ -6733,10 +6733,10 @@ static int cv_matchShapes(lua_State *L) {
  */
 static int cv_matchTemplate(lua_State *L) {
   try {
-    const Mat *image = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *templ = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *result = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    int method = luaL_checkint(L, 4);
+    const Mat *image = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *templ = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *result = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    int method = dubL_checkint(L, 4);
     matchTemplate(*image, *templ, *result, method);
     return 0;
   } catch (cv::Exception &e) {
@@ -6771,9 +6771,9 @@ static int cv_matchTemplate(lua_State *L) {
  */
 static int cv_max1(lua_State *L) {
   try {
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     max(*a, *b, *c);
     return 0;
   } catch (cv::Exception &e) {
@@ -6806,9 +6806,9 @@ static int cv_max1(lua_State *L) {
  */
 static int cv_max2(lua_State *L) {
   try {
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    double alpha = luaL_checknumber(L, 2);
-    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    double alpha = dubL_checknumber(L, 2);
+    Mat *c = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     max(*a, alpha, *c);
     return 0;
   } catch (cv::Exception &e) {
@@ -6841,9 +6841,9 @@ static int cv_max2(lua_State *L) {
  */
 static int cv_max3(lua_State *L) {
   try {
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    const MatND *b = *((const MatND **)dubL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)dubL_checkudata(L, 3, "cv.MatND"));
     max(*a, *b, *c);
     return 0;
   } catch (cv::Exception &e) {
@@ -6876,9 +6876,9 @@ static int cv_max3(lua_State *L) {
  */
 static int cv_max4(lua_State *L) {
   try {
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    double alpha = luaL_checknumber(L, 2);
-    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    double alpha = dubL_checknumber(L, 2);
+    MatND *c = *((MatND **)dubL_checkudata(L, 3, "cv.MatND"));
     max(*a, alpha, *c);
     return 0;
   } catch (cv::Exception &e) {
@@ -6944,7 +6944,7 @@ static int cv_max(lua_State *L) {
  */
 static int cv_mean1(lua_State *L) {
   try {
-    const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *m = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
     Scalar  retval__ = mean(*m);
     lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
     return 1;
@@ -6978,8 +6978,8 @@ static int cv_mean1(lua_State *L) {
  */
 static int cv_mean2(lua_State *L) {
   try {
-    const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *mask = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *m = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *mask = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     Scalar  retval__ = mean(*m, *mask);
     lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
     return 1;
@@ -7013,7 +7013,7 @@ static int cv_mean2(lua_State *L) {
  */
 static int cv_mean3(lua_State *L) {
   try {
-    const MatND *m = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    const MatND *m = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
     Scalar  retval__ = mean(*m);
     lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
     return 1;
@@ -7047,8 +7047,8 @@ static int cv_mean3(lua_State *L) {
  */
 static int cv_mean4(lua_State *L) {
   try {
-    const MatND *m = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    const MatND *mask = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    const MatND *m = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    const MatND *mask = *((const MatND **)dubL_checkudata(L, 2, "cv.MatND"));
     Scalar  retval__ = mean(*m, *mask);
     lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
     return 1;
@@ -7115,9 +7115,9 @@ static int cv_mean(lua_State *L) {
  */
 static int cv_meanShift(lua_State *L) {
   try {
-    const Mat *probImage = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Rect *window = *((Rect **)luaL_checkudata(L, 2, "cv.Rect"));
-    TermCriteria *criteria = *((TermCriteria **)luaL_checkudata(L, 3, "cv.TermCriteria"));
+    const Mat *probImage = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Rect *window = *((Rect **)dubL_checkudata(L, 2, "cv.Rect"));
+    TermCriteria *criteria = *((TermCriteria **)dubL_checkudata(L, 3, "cv.TermCriteria"));
     int  retval__ = meanShift(*probImage, *window, *criteria);
     lua_pushnumber(L, retval__);
     return 1;
@@ -7154,13 +7154,13 @@ static int cv_meanShift(lua_State *L) {
 static int cv_meanStdDev1(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Scalar *mean = *((Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-    Scalar *stddev = *((Scalar **)luaL_checkudata(L, 3, "cv.Scalar"));
+    const Mat *m = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Scalar *mean = *((Scalar **)dubL_checkudata(L, 2, "cv.Scalar"));
+    Scalar *stddev = *((Scalar **)dubL_checkudata(L, 3, "cv.Scalar"));
     if (top__ < 4) {
       meanStdDev(*m, *mean, *stddev);
     } else {
-      const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+      const Mat *mask = *((const Mat **)dubL_checkudata(L, 4, "cv.Mat"));
       meanStdDev(*m, *mean, *stddev, *mask);
     }
     return 0;
@@ -7195,13 +7195,13 @@ static int cv_meanStdDev1(lua_State *L) {
 static int cv_meanStdDev2(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const MatND *m = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    Scalar *mean = *((Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-    Scalar *stddev = *((Scalar **)luaL_checkudata(L, 3, "cv.Scalar"));
+    const MatND *m = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    Scalar *mean = *((Scalar **)dubL_checkudata(L, 2, "cv.Scalar"));
+    Scalar *stddev = *((Scalar **)dubL_checkudata(L, 3, "cv.Scalar"));
     if (top__ < 4) {
       meanStdDev(*m, *mean, *stddev);
     } else {
-      const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+      const MatND *mask = *((const MatND **)dubL_checkudata(L, 4, "cv.MatND"));
       meanStdDev(*m, *mean, *stddev, *mask);
     }
     return 0;
@@ -7251,9 +7251,9 @@ static int cv_meanStdDev(lua_State *L) {
  */
 static int cv_medianBlur(lua_State *L) {
   try {
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    int ksize = luaL_checkint(L, 3);
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    int ksize = dubL_checkint(L, 3);
     medianBlur(*src, *dst, ksize);
     return 0;
   } catch (cv::Exception &e) {
@@ -7288,9 +7288,9 @@ static int cv_medianBlur(lua_State *L) {
  */
 static int cv_min1(lua_State *L) {
   try {
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     min(*a, *b, *c);
     return 0;
   } catch (cv::Exception &e) {
@@ -7323,9 +7323,9 @@ static int cv_min1(lua_State *L) {
  */
 static int cv_min2(lua_State *L) {
   try {
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    double alpha = luaL_checknumber(L, 2);
-    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    double alpha = dubL_checknumber(L, 2);
+    Mat *c = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     min(*a, alpha, *c);
     return 0;
   } catch (cv::Exception &e) {
@@ -7358,9 +7358,9 @@ static int cv_min2(lua_State *L) {
  */
 static int cv_min3(lua_State *L) {
   try {
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    const MatND *b = *((const MatND **)dubL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)dubL_checkudata(L, 3, "cv.MatND"));
     min(*a, *b, *c);
     return 0;
   } catch (cv::Exception &e) {
@@ -7393,9 +7393,9 @@ static int cv_min3(lua_State *L) {
  */
 static int cv_min4(lua_State *L) {
   try {
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    double alpha = luaL_checknumber(L, 2);
-    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    double alpha = dubL_checknumber(L, 2);
+    MatND *c = *((MatND **)dubL_checkudata(L, 3, "cv.MatND"));
     min(*a, alpha, *c);
     return 0;
   } catch (cv::Exception &e) {
@@ -7460,7 +7460,7 @@ static int cv_min(lua_State *L) {
  */
 static int cv_minAreaRect(lua_State *L) {
   try {
-    const Mat *points = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *points = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
     RotatedRect  retval__ = minAreaRect(*points);
     lua_pushclass<RotatedRect>(L, retval__, "cv.RotatedRect");
     return 1;
@@ -7495,9 +7495,9 @@ static int cv_minAreaRect(lua_State *L) {
  */
 static int cv_minEnclosingCircle(lua_State *L) {
   try {
-    const Mat *points = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Point2f *center = *((Point2f **)luaL_checkudata(L, 2, "cv.Point2f"));
-    float radius = luaL_checknumber(L, 3);
+    const Mat *points = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Point2f *center = *((Point2f **)dubL_checkudata(L, 2, "cv.Point2f"));
+    float radius = dubL_checknumber(L, 3);
     minEnclosingCircle(*points, *center, radius);
     return 0;
   } catch (cv::Exception &e) {
@@ -7533,7 +7533,7 @@ static int cv_minEnclosingCircle(lua_State *L) {
 static int cv_minMaxLoc2(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
 
     DubArgPointer<double> ptr_minVal;
     double *minVal = ptr_minVal(L, 2);
@@ -7555,7 +7555,7 @@ static int cv_minMaxLoc2(lua_State *L) {
         if (top__ < 6) {
           minMaxLoc(*a, minVal, maxVal, minIdx, maxIdx);
         } else {
-          const MatND *mask = *((const MatND **)luaL_checkudata(L, 6, "cv.MatND"));
+          const MatND *mask = *((const MatND **)dubL_checkudata(L, 6, "cv.MatND"));
           minMaxLoc(*a, minVal, maxVal, minIdx, maxIdx, *mask);
         }
       }
@@ -7592,7 +7592,7 @@ static int cv_minMaxLoc2(lua_State *L) {
 static int cv_minMaxLoc3(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const SparseMat *a = *((const SparseMat **)luaL_checkudata(L, 1, "cv.SparseMat"));
+    const SparseMat *a = *((const SparseMat **)dubL_checkudata(L, 1, "cv.SparseMat"));
 
     DubArgPointer<double> ptr_minVal;
     double *minVal = ptr_minVal(L, 2);
@@ -7663,7 +7663,7 @@ static int cv_moments(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     Moments  retval__;
-    const Mat *array = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *array = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
     if (top__ < 2) {
       retval__ = moments(*array);
     } else {
@@ -7738,26 +7738,26 @@ static int cv_morphologyDefaultBorderValue(lua_State *L) {
 static int cv_morphologyEx(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    int op = luaL_checkint(L, 3);
-    const Mat *kernel = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    int op = dubL_checkint(L, 3);
+    const Mat *kernel = *((const Mat **)dubL_checkudata(L, 4, "cv.Mat"));
     if (top__ < 5) {
       morphologyEx(*src, *dst, op, *kernel);
     } else {
-      Point *anchor = *((Point **)luaL_checkudata(L, 5, "cv.Point"));
+      Point *anchor = *((Point **)dubL_checkudata(L, 5, "cv.Point"));
       if (top__ < 6) {
         morphologyEx(*src, *dst, op, *kernel, *anchor);
       } else {
-        int iterations = luaL_checkint(L, 6);
+        int iterations = dubL_checkint(L, 6);
         if (top__ < 7) {
           morphologyEx(*src, *dst, op, *kernel, *anchor, iterations);
         } else {
-          int borderType = luaL_checkint(L, 7);
+          int borderType = dubL_checkint(L, 7);
           if (top__ < 8) {
             morphologyEx(*src, *dst, op, *kernel, *anchor, iterations, borderType);
           } else {
-            const Scalar *borderValue = *((const Scalar **)luaL_checkudata(L, 8, "cv.Scalar"));
+            const Scalar *borderValue = *((const Scalar **)dubL_checkudata(L, 8, "cv.Scalar"));
             morphologyEx(*src, *dst, op, *kernel, *anchor, iterations, borderType, *borderValue);
           }
         }
@@ -7796,10 +7796,10 @@ static int cv_morphologyEx(lua_State *L) {
 static int cv_mulSpectrums(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    int flags = luaL_checkint(L, 4);
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    int flags = dubL_checkint(L, 4);
     if (top__ < 5) {
       mulSpectrums(*a, *b, *c, flags);
     } else {
@@ -7839,21 +7839,21 @@ static int cv_mulSpectrums(lua_State *L) {
 static int cv_mulTransposed(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *c = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *c = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     bool aTa = lua_toboolean(L, 3);
     if (top__ < 4) {
       mulTransposed(*a, *c, aTa);
     } else {
-      const Mat *delta = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+      const Mat *delta = *((const Mat **)dubL_checkudata(L, 4, "cv.Mat"));
       if (top__ < 5) {
         mulTransposed(*a, *c, aTa, *delta);
       } else {
-        double scale = luaL_checknumber(L, 5);
+        double scale = dubL_checknumber(L, 5);
         if (top__ < 6) {
           mulTransposed(*a, *c, aTa, *delta, scale);
         } else {
-          int rtype = luaL_checkint(L, 6);
+          int rtype = dubL_checkint(L, 6);
           mulTransposed(*a, *c, aTa, *delta, scale, rtype);
         }
       }
@@ -7892,13 +7892,13 @@ static int cv_mulTransposed(lua_State *L) {
 static int cv_multiply1(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     if (top__ < 4) {
       multiply(*a, *b, *c);
     } else {
-      double scale = luaL_checknumber(L, 4);
+      double scale = dubL_checknumber(L, 4);
       multiply(*a, *b, *c, scale);
     }
     return 0;
@@ -7933,13 +7933,13 @@ static int cv_multiply1(lua_State *L) {
 static int cv_multiply2(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    const MatND *b = *((const MatND **)dubL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)dubL_checkudata(L, 3, "cv.MatND"));
     if (top__ < 4) {
       multiply(*a, *b, *c);
     } else {
-      double scale = luaL_checknumber(L, 4);
+      double scale = dubL_checknumber(L, 4);
       multiply(*a, *b, *c, scale);
     }
     return 0;
@@ -7992,11 +7992,11 @@ static int cv_norm1(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     double  retval__;
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
     if (top__ < 2) {
       retval__ = norm(*a);
     } else {
-      int normType = luaL_checkint(L, 2);
+      int normType = dubL_checkint(L, 2);
       retval__ = norm(*a, normType);
     }
     lua_pushnumber(L, retval__);
@@ -8033,12 +8033,12 @@ static int cv_norm2(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     double  retval__;
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     if (top__ < 3) {
       retval__ = norm(*a, *b);
     } else {
-      int normType = luaL_checkint(L, 3);
+      int normType = dubL_checkint(L, 3);
       retval__ = norm(*a, *b, normType);
     }
     lua_pushnumber(L, retval__);
@@ -8073,9 +8073,9 @@ static int cv_norm2(lua_State *L) {
  */
 static int cv_norm3(lua_State *L) {
   try {
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    int normType = luaL_checkint(L, 2);
-    const Mat *mask = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    int normType = dubL_checkint(L, 2);
+    const Mat *mask = *((const Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     double  retval__ = norm(*a, normType, *mask);
     lua_pushnumber(L, retval__);
     return 1;
@@ -8109,10 +8109,10 @@ static int cv_norm3(lua_State *L) {
  */
 static int cv_norm4(lua_State *L) {
   try {
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    int normType = luaL_checkint(L, 3);
-    const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    int normType = dubL_checkint(L, 3);
+    const Mat *mask = *((const Mat **)dubL_checkudata(L, 4, "cv.Mat"));
     double  retval__ = norm(*a, *b, normType, *mask);
     lua_pushnumber(L, retval__);
     return 1;
@@ -8148,15 +8148,15 @@ static int cv_norm5(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     double  retval__;
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
     if (top__ < 2) {
       retval__ = norm(*a);
     } else {
-      int normType = luaL_checkint(L, 2);
+      int normType = dubL_checkint(L, 2);
       if (top__ < 3) {
         retval__ = norm(*a, normType);
       } else {
-        const MatND *mask = *((const MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+        const MatND *mask = *((const MatND **)dubL_checkudata(L, 3, "cv.MatND"));
         retval__ = norm(*a, normType, *mask);
       }
     }
@@ -8194,16 +8194,16 @@ static int cv_norm6(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     double  retval__;
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    const MatND *b = *((const MatND **)dubL_checkudata(L, 2, "cv.MatND"));
     if (top__ < 3) {
       retval__ = norm(*a, *b);
     } else {
-      int normType = luaL_checkint(L, 3);
+      int normType = dubL_checkint(L, 3);
       if (top__ < 4) {
         retval__ = norm(*a, *b, normType);
       } else {
-        const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+        const MatND *mask = *((const MatND **)dubL_checkudata(L, 4, "cv.MatND"));
         retval__ = norm(*a, *b, normType, *mask);
       }
     }
@@ -8239,8 +8239,8 @@ static int cv_norm6(lua_State *L) {
  */
 static int cv_norm7(lua_State *L) {
   try {
-    const SparseMat *src = *((const SparseMat **)luaL_checkudata(L, 1, "cv.SparseMat"));
-    int normType = luaL_checkint(L, 2);
+    const SparseMat *src = *((const SparseMat **)dubL_checkudata(L, 1, "cv.SparseMat"));
+    int normType = dubL_checkint(L, 2);
     double  retval__ = norm(*src, normType);
     lua_pushnumber(L, retval__);
     return 1;
@@ -8333,28 +8333,28 @@ static int cv_norm(lua_State *L) {
 static int cv_normalize1(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *b = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *b = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     if (top__ < 3) {
       normalize(*a, *b);
     } else {
-      double alpha = luaL_checknumber(L, 3);
+      double alpha = dubL_checknumber(L, 3);
       if (top__ < 4) {
         normalize(*a, *b, alpha);
       } else {
-        double beta = luaL_checknumber(L, 4);
+        double beta = dubL_checknumber(L, 4);
         if (top__ < 5) {
           normalize(*a, *b, alpha, beta);
         } else {
-          int norm_type = luaL_checkint(L, 5);
+          int norm_type = dubL_checkint(L, 5);
           if (top__ < 6) {
             normalize(*a, *b, alpha, beta, norm_type);
           } else {
-            int rtype = luaL_checkint(L, 6);
+            int rtype = dubL_checkint(L, 6);
             if (top__ < 7) {
               normalize(*a, *b, alpha, beta, norm_type, rtype);
             } else {
-              const Mat *mask = *((const Mat **)luaL_checkudata(L, 7, "cv.Mat"));
+              const Mat *mask = *((const Mat **)dubL_checkudata(L, 7, "cv.Mat"));
               normalize(*a, *b, alpha, beta, norm_type, rtype, *mask);
             }
           }
@@ -8393,28 +8393,28 @@ static int cv_normalize1(lua_State *L) {
 static int cv_normalize2(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    MatND *b = *((MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    MatND *b = *((MatND **)dubL_checkudata(L, 2, "cv.MatND"));
     if (top__ < 3) {
       normalize(*a, *b);
     } else {
-      double alpha = luaL_checknumber(L, 3);
+      double alpha = dubL_checknumber(L, 3);
       if (top__ < 4) {
         normalize(*a, *b, alpha);
       } else {
-        double beta = luaL_checknumber(L, 4);
+        double beta = dubL_checknumber(L, 4);
         if (top__ < 5) {
           normalize(*a, *b, alpha, beta);
         } else {
-          int norm_type = luaL_checkint(L, 5);
+          int norm_type = dubL_checkint(L, 5);
           if (top__ < 6) {
             normalize(*a, *b, alpha, beta, norm_type);
           } else {
-            int rtype = luaL_checkint(L, 6);
+            int rtype = dubL_checkint(L, 6);
             if (top__ < 7) {
               normalize(*a, *b, alpha, beta, norm_type, rtype);
             } else {
-              const MatND *mask = *((const MatND **)luaL_checkudata(L, 7, "cv.MatND"));
+              const MatND *mask = *((const MatND **)dubL_checkudata(L, 7, "cv.MatND"));
               normalize(*a, *b, alpha, beta, norm_type, rtype, *mask);
             }
           }
@@ -8452,10 +8452,10 @@ static int cv_normalize2(lua_State *L) {
  */
 static int cv_normalize3(lua_State *L) {
   try {
-    const SparseMat *src = *((const SparseMat **)luaL_checkudata(L, 1, "cv.SparseMat"));
-    SparseMat *dst = *((SparseMat **)luaL_checkudata(L, 2, "cv.SparseMat"));
-    double alpha = luaL_checknumber(L, 3);
-    int normType = luaL_checkint(L, 4);
+    const SparseMat *src = *((const SparseMat **)dubL_checkudata(L, 1, "cv.SparseMat"));
+    SparseMat *dst = *((SparseMat **)dubL_checkudata(L, 2, "cv.SparseMat"));
+    double alpha = dubL_checknumber(L, 3);
+    int normType = dubL_checkint(L, 4);
     normalize(*src, *dst, alpha, normType);
     return 0;
   } catch (cv::Exception &e) {
@@ -8506,9 +8506,9 @@ static int cv_normalize(lua_State *L) {
  */
 static int cv_perspectiveTransform(lua_State *L) {
   try {
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    const Mat *m = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    const Mat *m = *((const Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     perspectiveTransform(*src, *dst, *m);
     return 0;
   } catch (cv::Exception &e) {
@@ -8543,9 +8543,9 @@ static int cv_perspectiveTransform(lua_State *L) {
 static int cv_phase(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *x = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *y = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *angle = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *x = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *y = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *angle = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     if (top__ < 4) {
       phase(*x, *y, *angle);
     } else {
@@ -8584,8 +8584,8 @@ static int cv_phase(lua_State *L) {
  */
 static int cv_pointPolygonTest(lua_State *L) {
   try {
-    const Mat *contour = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Point2f *pt = *((Point2f **)luaL_checkudata(L, 2, "cv.Point2f"));
+    const Mat *contour = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Point2f *pt = *((Point2f **)dubL_checkudata(L, 2, "cv.Point2f"));
     bool measureDist = lua_toboolean(L, 3);
     double  retval__ = pointPolygonTest(*contour, *pt, measureDist);
     lua_pushnumber(L, retval__);
@@ -8622,10 +8622,10 @@ static int cv_pointPolygonTest(lua_State *L) {
 static int cv_polarToCart(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *magnitude = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *angle = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *x = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    Mat *y = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    const Mat *magnitude = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *angle = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *x = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    Mat *y = *((Mat **)dubL_checkudata(L, 4, "cv.Mat"));
     if (top__ < 5) {
       polarToCart(*magnitude, *angle, *x, *y);
     } else {
@@ -8665,9 +8665,9 @@ static int cv_polarToCart(lua_State *L) {
  */
 static int cv_pow1(lua_State *L) {
   try {
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    double power = luaL_checknumber(L, 2);
-    Mat *b = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    double power = dubL_checknumber(L, 2);
+    Mat *b = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     pow(*a, power, *b);
     return 0;
   } catch (cv::Exception &e) {
@@ -8700,9 +8700,9 @@ static int cv_pow1(lua_State *L) {
  */
 static int cv_pow2(lua_State *L) {
   try {
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    double power = luaL_checknumber(L, 2);
-    MatND *b = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    double power = dubL_checknumber(L, 2);
+    MatND *b = *((MatND **)dubL_checkudata(L, 3, "cv.MatND"));
     pow(*a, power, *b);
     return 0;
   } catch (cv::Exception &e) {
@@ -8752,13 +8752,13 @@ static int cv_pow(lua_State *L) {
 static int cv_preCornerDetect(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    int ksize = luaL_checkint(L, 3);
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    int ksize = dubL_checkint(L, 3);
     if (top__ < 4) {
       preCornerDetect(*src, *dst, ksize);
     } else {
-      int borderType = luaL_checkint(L, 4);
+      int borderType = dubL_checkint(L, 4);
       preCornerDetect(*src, *dst, ksize, borderType);
     }
     return 0;
@@ -8794,20 +8794,20 @@ static int cv_preCornerDetect(lua_State *L) {
 static int cv_putText(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    Mat *img = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const string *text = *((const string **)luaL_checkudata(L, 2, "cv.string"));
-    Point *org = *((Point **)luaL_checkudata(L, 3, "cv.Point"));
-    int fontFace = luaL_checkint(L, 4);
-    double fontScale = luaL_checknumber(L, 5);
-    Scalar *color = *((Scalar **)luaL_checkudata(L, 6, "cv.Scalar"));
+    Mat *img = *((Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const string *text = *((const string **)dubL_checkudata(L, 2, "cv.string"));
+    Point *org = *((Point **)dubL_checkudata(L, 3, "cv.Point"));
+    int fontFace = dubL_checkint(L, 4);
+    double fontScale = dubL_checknumber(L, 5);
+    Scalar *color = *((Scalar **)dubL_checkudata(L, 6, "cv.Scalar"));
     if (top__ < 7) {
       putText(*img, *text, *org, fontFace, fontScale, *color);
     } else {
-      int thickness = luaL_checkint(L, 7);
+      int thickness = dubL_checkint(L, 7);
       if (top__ < 8) {
         putText(*img, *text, *org, fontFace, fontScale, *color, thickness);
       } else {
-        int linetype = luaL_checkint(L, 8);
+        int linetype = dubL_checkint(L, 8);
         if (top__ < 9) {
           putText(*img, *text, *org, fontFace, fontScale, *color, thickness, linetype);
         } else {
@@ -8849,12 +8849,12 @@ static int cv_putText(lua_State *L) {
 static int cv_pyrDown(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     if (top__ < 3) {
       pyrDown(*src, *dst);
     } else {
-      const Size *dstsize = *((const Size **)luaL_checkudata(L, 3, "cv.Size"));
+      const Size *dstsize = *((const Size **)dubL_checkudata(L, 3, "cv.Size"));
       pyrDown(*src, *dst, *dstsize);
     }
     return 0;
@@ -8890,12 +8890,12 @@ static int cv_pyrDown(lua_State *L) {
 static int cv_pyrUp(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     if (top__ < 3) {
       pyrUp(*src, *dst);
     } else {
-      const Size *dstsize = *((const Size **)luaL_checkudata(L, 3, "cv.Size"));
+      const Size *dstsize = *((const Size **)dubL_checkudata(L, 3, "cv.Size"));
       pyrUp(*src, *dst, *dstsize);
     }
     return 0;
@@ -8930,9 +8930,9 @@ static int cv_pyrUp(lua_State *L) {
  */
 static int cv_randn(lua_State *L) {
   try {
-    Mat *dst = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Scalar *mean = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-    const Scalar *stddev = *((const Scalar **)luaL_checkudata(L, 3, "cv.Scalar"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Scalar *mean = *((const Scalar **)dubL_checkudata(L, 2, "cv.Scalar"));
+    const Scalar *stddev = *((const Scalar **)dubL_checkudata(L, 3, "cv.Scalar"));
     randn(*dst, *mean, *stddev);
     return 0;
   } catch (cv::Exception &e) {
@@ -8966,9 +8966,9 @@ static int cv_randn(lua_State *L) {
  */
 static int cv_randu(lua_State *L) {
   try {
-    Mat *dst = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Scalar *low = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-    const Scalar *high = *((const Scalar **)luaL_checkudata(L, 3, "cv.Scalar"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Scalar *low = *((const Scalar **)dubL_checkudata(L, 2, "cv.Scalar"));
+    const Scalar *high = *((const Scalar **)dubL_checkudata(L, 3, "cv.Scalar"));
     randu(*dst, *low, *high);
     return 0;
   } catch (cv::Exception &e) {
@@ -9004,22 +9004,22 @@ static int cv_randu(lua_State *L) {
 static int cv_rectangle1(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    Mat *img = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Point *pt1 = *((Point **)luaL_checkudata(L, 2, "cv.Point"));
-    Point *pt2 = *((Point **)luaL_checkudata(L, 3, "cv.Point"));
-    const Scalar *color = *((const Scalar **)luaL_checkudata(L, 4, "cv.Scalar"));
+    Mat *img = *((Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Point *pt1 = *((Point **)dubL_checkudata(L, 2, "cv.Point"));
+    Point *pt2 = *((Point **)dubL_checkudata(L, 3, "cv.Point"));
+    const Scalar *color = *((const Scalar **)dubL_checkudata(L, 4, "cv.Scalar"));
     if (top__ < 5) {
       rectangle(*img, *pt1, *pt2, *color);
     } else {
-      int thickness = luaL_checkint(L, 5);
+      int thickness = dubL_checkint(L, 5);
       if (top__ < 6) {
         rectangle(*img, *pt1, *pt2, *color, thickness);
       } else {
-        int lineType = luaL_checkint(L, 6);
+        int lineType = dubL_checkint(L, 6);
         if (top__ < 7) {
           rectangle(*img, *pt1, *pt2, *color, thickness, lineType);
         } else {
-          int shift = luaL_checkint(L, 7);
+          int shift = dubL_checkint(L, 7);
           rectangle(*img, *pt1, *pt2, *color, thickness, lineType, shift);
         }
       }
@@ -9056,21 +9056,21 @@ static int cv_rectangle1(lua_State *L) {
 static int cv_rectangle2(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    Mat *img = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Rect *rec = *((Rect **)luaL_checkudata(L, 2, "cv.Rect"));
-    const Scalar *color = *((const Scalar **)luaL_checkudata(L, 3, "cv.Scalar"));
+    Mat *img = *((Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Rect *rec = *((Rect **)dubL_checkudata(L, 2, "cv.Rect"));
+    const Scalar *color = *((const Scalar **)dubL_checkudata(L, 3, "cv.Scalar"));
     if (top__ < 4) {
       rectangle(*img, *rec, *color);
     } else {
-      int thickness = luaL_checkint(L, 4);
+      int thickness = dubL_checkint(L, 4);
       if (top__ < 5) {
         rectangle(*img, *rec, *color, thickness);
       } else {
-        int lineType = luaL_checkint(L, 5);
+        int lineType = dubL_checkint(L, 5);
         if (top__ < 6) {
           rectangle(*img, *rec, *color, thickness, lineType);
         } else {
-          int shift = luaL_checkint(L, 6);
+          int shift = dubL_checkint(L, 6);
           rectangle(*img, *rec, *color, thickness, lineType, shift);
         }
       }
@@ -9129,14 +9129,14 @@ static int cv_rectangle(lua_State *L) {
 static int cv_reduce(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    int dim = luaL_checkint(L, 3);
-    int rtype = luaL_checkint(L, 4);
+    const Mat *m = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    int dim = dubL_checkint(L, 3);
+    int rtype = dubL_checkint(L, 4);
     if (top__ < 5) {
       reduce(*m, *dst, dim, rtype);
     } else {
-      int dtype = luaL_checkint(L, 5);
+      int dtype = dubL_checkint(L, 5);
       reduce(*m, *dst, dim, rtype, dtype);
     }
     return 0;
@@ -9172,19 +9172,19 @@ static int cv_reduce(lua_State *L) {
 static int cv_remap(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    const Mat *map1 = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    const Mat *map2 = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-    int interpolation = luaL_checkint(L, 5);
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    const Mat *map1 = *((const Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    const Mat *map2 = *((const Mat **)dubL_checkudata(L, 4, "cv.Mat"));
+    int interpolation = dubL_checkint(L, 5);
     if (top__ < 6) {
       remap(*src, *dst, *map1, *map2, interpolation);
     } else {
-      int borderMode = luaL_checkint(L, 6);
+      int borderMode = dubL_checkint(L, 6);
       if (top__ < 7) {
         remap(*src, *dst, *map1, *map2, interpolation, borderMode);
       } else {
-        const Scalar *borderValue = *((const Scalar **)luaL_checkudata(L, 7, "cv.Scalar"));
+        const Scalar *borderValue = *((const Scalar **)dubL_checkudata(L, 7, "cv.Scalar"));
         remap(*src, *dst, *map1, *map2, interpolation, borderMode, *borderValue);
       }
     }
@@ -9221,10 +9221,10 @@ static int cv_remap(lua_State *L) {
  */
 static int cv_repeat1(lua_State *L) {
   try {
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    int ny = luaL_checkint(L, 2);
-    int nx = luaL_checkint(L, 3);
-    Mat *b = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    int ny = dubL_checkint(L, 2);
+    int nx = dubL_checkint(L, 3);
+    Mat *b = *((Mat **)dubL_checkudata(L, 4, "cv.Mat"));
     repeat(*a, ny, nx, *b);
     return 0;
   } catch (cv::Exception &e) {
@@ -9257,9 +9257,9 @@ static int cv_repeat1(lua_State *L) {
  */
 static int cv_repeat2(lua_State *L) {
   try {
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    int ny = luaL_checkint(L, 2);
-    int nx = luaL_checkint(L, 3);
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    int ny = dubL_checkint(L, 2);
+    int nx = dubL_checkint(L, 3);
     Mat  retval__ = repeat(*src, ny, nx);
     lua_pushclass<Mat>(L, retval__, "cv.Mat");
     return 1;
@@ -9329,9 +9329,9 @@ static int cv_repeat(lua_State *L) {
 static int cv_reprojectImageTo3D(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *disparity = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *_3dImage = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    const Mat *Q = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *disparity = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *_3dImage = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    const Mat *Q = *((const Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     if (top__ < 4) {
       reprojectImageTo3D(*disparity, *_3dImage, *Q);
     } else {
@@ -9371,21 +9371,21 @@ static int cv_reprojectImageTo3D(lua_State *L) {
 static int cv_resize(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Size *dsize = *((Size **)luaL_checkudata(L, 3, "cv.Size"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Size *dsize = *((Size **)dubL_checkudata(L, 3, "cv.Size"));
     if (top__ < 4) {
       resize(*src, *dst, *dsize);
     } else {
-      double fx = luaL_checknumber(L, 4);
+      double fx = dubL_checknumber(L, 4);
       if (top__ < 5) {
         resize(*src, *dst, *dsize, fx);
       } else {
-        double fy = luaL_checknumber(L, 5);
+        double fy = dubL_checknumber(L, 5);
         if (top__ < 6) {
           resize(*src, *dst, *dsize, fx, fy);
         } else {
-          int interpolation = luaL_checkint(L, 6);
+          int interpolation = dubL_checkint(L, 6);
           resize(*src, *dst, *dsize, fx, fy, interpolation);
         }
       }
@@ -9423,10 +9423,10 @@ static int cv_resize(lua_State *L) {
  */
 static int cv_scaleAdd1(lua_State *L) {
   try {
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    double alpha = luaL_checknumber(L, 2);
-    const Mat *b = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    Mat *c = *((Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    double alpha = dubL_checknumber(L, 2);
+    const Mat *b = *((const Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    Mat *c = *((Mat **)dubL_checkudata(L, 4, "cv.Mat"));
     scaleAdd(*a, alpha, *b, *c);
     return 0;
   } catch (cv::Exception &e) {
@@ -9459,10 +9459,10 @@ static int cv_scaleAdd1(lua_State *L) {
  */
 static int cv_scaleAdd2(lua_State *L) {
   try {
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    double alpha = luaL_checknumber(L, 2);
-    const MatND *b = *((const MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-    MatND *c = *((MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    double alpha = dubL_checknumber(L, 2);
+    const MatND *b = *((const MatND **)dubL_checkudata(L, 3, "cv.MatND"));
+    MatND *c = *((MatND **)dubL_checkudata(L, 4, "cv.MatND"));
     scaleAdd(*a, alpha, *b, *c);
     return 0;
   } catch (cv::Exception &e) {
@@ -9512,23 +9512,23 @@ static int cv_scaleAdd(lua_State *L) {
 static int cv_sepFilter2D(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    int ddepth = luaL_checkint(L, 3);
-    const Mat *kernelX = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-    const Mat *kernelY = *((const Mat **)luaL_checkudata(L, 5, "cv.Mat"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    int ddepth = dubL_checkint(L, 3);
+    const Mat *kernelX = *((const Mat **)dubL_checkudata(L, 4, "cv.Mat"));
+    const Mat *kernelY = *((const Mat **)dubL_checkudata(L, 5, "cv.Mat"));
     if (top__ < 6) {
       sepFilter2D(*src, *dst, ddepth, *kernelX, *kernelY);
     } else {
-      Point *anchor = *((Point **)luaL_checkudata(L, 6, "cv.Point"));
+      Point *anchor = *((Point **)dubL_checkudata(L, 6, "cv.Point"));
       if (top__ < 7) {
         sepFilter2D(*src, *dst, ddepth, *kernelX, *kernelY, *anchor);
       } else {
-        double delta = luaL_checknumber(L, 7);
+        double delta = dubL_checknumber(L, 7);
         if (top__ < 8) {
           sepFilter2D(*src, *dst, ddepth, *kernelX, *kernelY, *anchor, delta);
         } else {
-          int borderType = luaL_checkint(L, 8);
+          int borderType = dubL_checkint(L, 8);
           sepFilter2D(*src, *dst, ddepth, *kernelX, *kernelY, *anchor, delta, borderType);
         }
       }
@@ -9601,11 +9601,11 @@ static int cv_setBreakOnError(lua_State *L) {
 static int cv_setIdentity(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    Mat *c = *((Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    Mat *c = *((Mat **)dubL_checkudata(L, 1, "cv.Mat"));
     if (top__ < 2) {
       setIdentity(*c);
     } else {
-      const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
+      const Scalar *s = *((const Scalar **)dubL_checkudata(L, 2, "cv.Scalar"));
       setIdentity(*c, *s);
     }
     return 0;
@@ -9640,7 +9640,7 @@ static int cv_setIdentity(lua_State *L) {
  */
 static int cv_setNumThreads(lua_State *L) {
   try {
-    int arg1 = luaL_checkint(L, 1);
+    int arg1 = dubL_checkint(L, 1);
     setNumThreads(arg1);
     return 0;
   } catch (cv::Exception &e) {
@@ -9710,13 +9710,13 @@ static int cv_solve(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     bool  retval__;
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *x = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *x = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     if (top__ < 4) {
       retval__ = solve(*a, *b, *x);
     } else {
-      int flags = luaL_checkint(L, 4);
+      int flags = dubL_checkint(L, 4);
       retval__ = solve(*a, *b, *x, flags);
     }
     lua_pushnumber(L, retval__);
@@ -9752,8 +9752,8 @@ static int cv_solve(lua_State *L) {
  */
 static int cv_solveCubic(lua_State *L) {
   try {
-    const Mat *coeffs = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *roots = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *coeffs = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *roots = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     int  retval__ = solveCubic(*coeffs, *roots);
     lua_pushnumber(L, retval__);
     return 1;
@@ -9789,12 +9789,12 @@ static int cv_solveCubic(lua_State *L) {
 static int cv_solvePnP(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *objectPoints = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *imagePoints = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    const Mat *cameraMatrix = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    const Mat *distCoeffs = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-    Mat *rvec = *((Mat **)luaL_checkudata(L, 5, "cv.Mat"));
-    Mat *tvec = *((Mat **)luaL_checkudata(L, 6, "cv.Mat"));
+    const Mat *objectPoints = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *imagePoints = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    const Mat *cameraMatrix = *((const Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    const Mat *distCoeffs = *((const Mat **)dubL_checkudata(L, 4, "cv.Mat"));
+    Mat *rvec = *((Mat **)dubL_checkudata(L, 5, "cv.Mat"));
+    Mat *tvec = *((Mat **)dubL_checkudata(L, 6, "cv.Mat"));
     if (top__ < 7) {
       solvePnP(*objectPoints, *imagePoints, *cameraMatrix, *distCoeffs, *rvec, *tvec);
     } else {
@@ -9835,12 +9835,12 @@ static int cv_solvePoly(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     double  retval__;
-    const Mat *coeffs = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *roots = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *coeffs = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *roots = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     if (top__ < 3) {
       retval__ = solvePoly(*coeffs, *roots);
     } else {
-      int maxIters = luaL_checkint(L, 3);
+      int maxIters = dubL_checkint(L, 3);
       retval__ = solvePoly(*coeffs, *roots, maxIters);
     }
     lua_pushnumber(L, retval__);
@@ -9876,9 +9876,9 @@ static int cv_solvePoly(lua_State *L) {
  */
 static int cv_sort(lua_State *L) {
   try {
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *b = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    int flags = luaL_checkint(L, 3);
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *b = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    int flags = dubL_checkint(L, 3);
     sort(*a, *b, flags);
     return 0;
   } catch (cv::Exception &e) {
@@ -9912,9 +9912,9 @@ static int cv_sort(lua_State *L) {
  */
 static int cv_sortIdx(lua_State *L) {
   try {
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *b = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    int flags = luaL_checkint(L, 3);
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *b = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    int flags = dubL_checkint(L, 3);
     sortIdx(*a, *b, flags);
     return 0;
   } catch (cv::Exception &e) {
@@ -9949,8 +9949,8 @@ static int cv_sortIdx(lua_State *L) {
  */
 static int cv_sqrt1(lua_State *L) {
   try {
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *b = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *b = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     sqrt(*a, *b);
     return 0;
   } catch (cv::Exception &e) {
@@ -9983,8 +9983,8 @@ static int cv_sqrt1(lua_State *L) {
  */
 static int cv_sqrt2(lua_State *L) {
   try {
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    MatND *b = *((MatND **)luaL_checkudata(L, 2, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    MatND *b = *((MatND **)dubL_checkudata(L, 2, "cv.MatND"));
     sqrt(*a, *b);
     return 0;
   } catch (cv::Exception &e) {
@@ -10035,22 +10035,22 @@ static int cv_sqrt(lua_State *L) {
 static int cv_stereoRectify1(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *cameraMatrix1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *distCoeffs1 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    const Mat *cameraMatrix2 = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    const Mat *distCoeffs2 = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
-    Size *imageSize = *((Size **)luaL_checkudata(L, 5, "cv.Size"));
-    const Mat *R = *((const Mat **)luaL_checkudata(L, 6, "cv.Mat"));
-    const Mat *T = *((const Mat **)luaL_checkudata(L, 7, "cv.Mat"));
-    Mat *R1 = *((Mat **)luaL_checkudata(L, 8, "cv.Mat"));
-    Mat *R2 = *((Mat **)luaL_checkudata(L, 9, "cv.Mat"));
-    Mat *P1 = *((Mat **)luaL_checkudata(L, 10, "cv.Mat"));
-    Mat *P2 = *((Mat **)luaL_checkudata(L, 11, "cv.Mat"));
-    Mat *Q = *((Mat **)luaL_checkudata(L, 12, "cv.Mat"));
+    const Mat *cameraMatrix1 = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *distCoeffs1 = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    const Mat *cameraMatrix2 = *((const Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    const Mat *distCoeffs2 = *((const Mat **)dubL_checkudata(L, 4, "cv.Mat"));
+    Size *imageSize = *((Size **)dubL_checkudata(L, 5, "cv.Size"));
+    const Mat *R = *((const Mat **)dubL_checkudata(L, 6, "cv.Mat"));
+    const Mat *T = *((const Mat **)dubL_checkudata(L, 7, "cv.Mat"));
+    Mat *R1 = *((Mat **)dubL_checkudata(L, 8, "cv.Mat"));
+    Mat *R2 = *((Mat **)dubL_checkudata(L, 9, "cv.Mat"));
+    Mat *P1 = *((Mat **)dubL_checkudata(L, 10, "cv.Mat"));
+    Mat *P2 = *((Mat **)dubL_checkudata(L, 11, "cv.Mat"));
+    Mat *Q = *((Mat **)dubL_checkudata(L, 12, "cv.Mat"));
     if (top__ < 13) {
       stereoRectify(*cameraMatrix1, *distCoeffs1, *cameraMatrix2, *distCoeffs2, *imageSize, *R, *T, *R1, *R2, *P1, *P2, *Q);
     } else {
-      int flags = luaL_checkint(L, 13);
+      int flags = dubL_checkint(L, 13);
       stereoRectify(*cameraMatrix1, *distCoeffs1, *cameraMatrix2, *distCoeffs2, *imageSize, *R, *T, *R1, *R2, *P1, *P2, *Q, flags);
     }
     return 0;
@@ -10100,16 +10100,16 @@ static int cv_stereoRectifyUncalibrated(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     bool  retval__;
-    const Mat *points1 = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *points2 = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    const Mat *F = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    Size *imgSize = *((Size **)luaL_checkudata(L, 4, "cv.Size"));
-    Mat *H1 = *((Mat **)luaL_checkudata(L, 5, "cv.Mat"));
-    Mat *H2 = *((Mat **)luaL_checkudata(L, 6, "cv.Mat"));
+    const Mat *points1 = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *points2 = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    const Mat *F = *((const Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    Size *imgSize = *((Size **)dubL_checkudata(L, 4, "cv.Size"));
+    Mat *H1 = *((Mat **)dubL_checkudata(L, 5, "cv.Mat"));
+    Mat *H2 = *((Mat **)dubL_checkudata(L, 6, "cv.Mat"));
     if (top__ < 7) {
       retval__ = stereoRectifyUncalibrated(*points1, *points2, *F, *imgSize, *H1, *H2);
     } else {
-      double threshold = luaL_checknumber(L, 7);
+      double threshold = dubL_checknumber(L, 7);
       retval__ = stereoRectifyUncalibrated(*points1, *points2, *F, *imgSize, *H1, *H2, threshold);
     }
     lua_pushnumber(L, retval__);
@@ -10146,10 +10146,10 @@ static int cv_stereoRectifyUncalibrated(lua_State *L) {
  */
 static int cv_subtract1(lua_State *L) {
   try {
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    const Mat *mask = *((const Mat **)dubL_checkudata(L, 4, "cv.Mat"));
     subtract(*a, *b, *c, *mask);
     return 0;
   } catch (cv::Exception &e) {
@@ -10182,9 +10182,9 @@ static int cv_subtract1(lua_State *L) {
  */
 static int cv_subtract2(lua_State *L) {
   try {
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Mat *b = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Mat *b = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     subtract(*a, *b, *c);
     return 0;
   } catch (cv::Exception &e) {
@@ -10218,13 +10218,13 @@ static int cv_subtract2(lua_State *L) {
 static int cv_subtract3(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    const Scalar *s = *((const Scalar **)luaL_checkudata(L, 2, "cv.Scalar"));
-    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    const Scalar *s = *((const Scalar **)dubL_checkudata(L, 2, "cv.Scalar"));
+    Mat *c = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     if (top__ < 4) {
       subtract(*a, *s, *c);
     } else {
-      const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+      const Mat *mask = *((const Mat **)dubL_checkudata(L, 4, "cv.Mat"));
       subtract(*a, *s, *c, *mask);
     }
     return 0;
@@ -10259,13 +10259,13 @@ static int cv_subtract3(lua_State *L) {
 static int cv_subtract4(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Scalar *s = *((const Scalar **)luaL_checkudata(L, 1, "cv.Scalar"));
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    Mat *c = *((Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Scalar *s = *((const Scalar **)dubL_checkudata(L, 1, "cv.Scalar"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    Mat *c = *((Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     if (top__ < 4) {
       subtract(*s, *a, *c);
     } else {
-      const Mat *mask = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+      const Mat *mask = *((const Mat **)dubL_checkudata(L, 4, "cv.Mat"));
       subtract(*s, *a, *c, *mask);
     }
     return 0;
@@ -10299,10 +10299,10 @@ static int cv_subtract4(lua_State *L) {
  */
 static int cv_subtract5(lua_State *L) {
   try {
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
-    const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    const MatND *b = *((const MatND **)dubL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)dubL_checkudata(L, 3, "cv.MatND"));
+    const MatND *mask = *((const MatND **)dubL_checkudata(L, 4, "cv.MatND"));
     subtract(*a, *b, *c, *mask);
     return 0;
   } catch (cv::Exception &e) {
@@ -10335,9 +10335,9 @@ static int cv_subtract5(lua_State *L) {
  */
 static int cv_subtract6(lua_State *L) {
   try {
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
-    const MatND *b = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
+    const MatND *b = *((const MatND **)dubL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)dubL_checkudata(L, 3, "cv.MatND"));
     subtract(*a, *b, *c);
     return 0;
   } catch (cv::Exception &e) {
@@ -10371,13 +10371,13 @@ static int cv_subtract6(lua_State *L) {
 static int cv_subtract7(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Scalar *s = *((const Scalar **)luaL_checkudata(L, 1, "cv.Scalar"));
-    const MatND *a = *((const MatND **)luaL_checkudata(L, 2, "cv.MatND"));
-    MatND *c = *((MatND **)luaL_checkudata(L, 3, "cv.MatND"));
+    const Scalar *s = *((const Scalar **)dubL_checkudata(L, 1, "cv.Scalar"));
+    const MatND *a = *((const MatND **)dubL_checkudata(L, 2, "cv.MatND"));
+    MatND *c = *((MatND **)dubL_checkudata(L, 3, "cv.MatND"));
     if (top__ < 4) {
       subtract(*s, *a, *c);
     } else {
-      const MatND *mask = *((const MatND **)luaL_checkudata(L, 4, "cv.MatND"));
+      const MatND *mask = *((const MatND **)dubL_checkudata(L, 4, "cv.MatND"));
       subtract(*s, *a, *c, *mask);
     }
     return 0;
@@ -10481,7 +10481,7 @@ static int cv_subtract(lua_State *L) {
  */
 static int cv_sum1(lua_State *L) {
   try {
-    const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *m = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
     Scalar  retval__ = sum(*m);
     lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
     return 1;
@@ -10515,7 +10515,7 @@ static int cv_sum1(lua_State *L) {
  */
 static int cv_sum2(lua_State *L) {
   try {
-    const MatND *m = *((const MatND **)luaL_checkudata(L, 1, "cv.MatND"));
+    const MatND *m = *((const MatND **)dubL_checkudata(L, 1, "cv.MatND"));
     Scalar  retval__ = sum(*m);
     lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
     return 1;
@@ -10599,11 +10599,11 @@ static int cv_theRNG(lua_State *L) {
  */
 static int cv_threshold(lua_State *L) {
   try {
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    double thresh = luaL_checknumber(L, 3);
-    double maxval = luaL_checknumber(L, 4);
-    int type = luaL_checkint(L, 5);
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    double thresh = dubL_checknumber(L, 3);
+    double maxval = dubL_checknumber(L, 4);
+    int type = dubL_checkint(L, 5);
     double  retval__ = threshold(*src, *dst, thresh, maxval, type);
     lua_pushnumber(L, retval__);
     return 1;
@@ -10638,7 +10638,7 @@ static int cv_threshold(lua_State *L) {
  */
 static int cv_toUtf16(lua_State *L) {
   try {
-    const string *str = *((const string **)luaL_checkudata(L, 1, "cv.string"));
+    const string *str = *((const string **)dubL_checkudata(L, 1, "cv.string"));
     WString  retval__ = toUtf16(*str);
     lua_pushclass<WString>(L, retval__, "cv.WString");
     return 1;
@@ -10673,7 +10673,7 @@ static int cv_toUtf16(lua_State *L) {
  */
 static int cv_trace(lua_State *L) {
   try {
-    const Mat *m = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
+    const Mat *m = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
     Scalar  retval__ = trace(*m);
     lua_pushclass<Scalar>(L, retval__, "cv.Scalar");
     return 1;
@@ -10708,9 +10708,9 @@ static int cv_trace(lua_State *L) {
  */
 static int cv_transform(lua_State *L) {
   try {
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    const Mat *m = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    const Mat *m = *((const Mat **)dubL_checkudata(L, 3, "cv.Mat"));
     transform(*src, *dst, *m);
     return 0;
   } catch (cv::Exception &e) {
@@ -10744,8 +10744,8 @@ static int cv_transform(lua_State *L) {
  */
 static int cv_transpose(lua_State *L) {
   try {
-    const Mat *a = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *b = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *a = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *b = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     transpose(*a, *b);
     return 0;
   } catch (cv::Exception &e) {
@@ -10780,14 +10780,14 @@ static int cv_transpose(lua_State *L) {
 static int cv_undistort(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    const Mat *cameraMatrix = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    const Mat *distCoeffs = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    const Mat *cameraMatrix = *((const Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    const Mat *distCoeffs = *((const Mat **)dubL_checkudata(L, 4, "cv.Mat"));
     if (top__ < 5) {
       undistort(*src, *dst, *cameraMatrix, *distCoeffs);
     } else {
-      const Mat *newCameraMatrix = *((const Mat **)luaL_checkudata(L, 5, "cv.Mat"));
+      const Mat *newCameraMatrix = *((const Mat **)dubL_checkudata(L, 5, "cv.Mat"));
       undistort(*src, *dst, *cameraMatrix, *distCoeffs, *newCameraMatrix);
     }
     return 0;
@@ -10824,18 +10824,18 @@ static int cv_undistort(lua_State *L) {
 static int cv_undistortPoints2(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    const Mat *cameraMatrix = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    const Mat *distCoeffs = *((const Mat **)luaL_checkudata(L, 4, "cv.Mat"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    const Mat *cameraMatrix = *((const Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    const Mat *distCoeffs = *((const Mat **)dubL_checkudata(L, 4, "cv.Mat"));
     if (top__ < 5) {
       undistortPoints(*src, *dst, *cameraMatrix, *distCoeffs);
     } else {
-      const Mat *R = *((const Mat **)luaL_checkudata(L, 5, "cv.Mat"));
+      const Mat *R = *((const Mat **)dubL_checkudata(L, 5, "cv.Mat"));
       if (top__ < 6) {
         undistortPoints(*src, *dst, *cameraMatrix, *distCoeffs, *R);
       } else {
-        const Mat *P = *((const Mat **)luaL_checkudata(L, 6, "cv.Mat"));
+        const Mat *P = *((const Mat **)dubL_checkudata(L, 6, "cv.Mat"));
         undistortPoints(*src, *dst, *cameraMatrix, *distCoeffs, *R, *P);
       }
     }
@@ -10884,10 +10884,10 @@ static int cv_undistortPoints(lua_State *L) {
  */
 static int cv_updateMotionHistory(lua_State *L) {
   try {
-    const Mat *silhouette = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *mhi = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    double timestamp = luaL_checknumber(L, 3);
-    double duration = luaL_checknumber(L, 4);
+    const Mat *silhouette = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *mhi = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    double timestamp = dubL_checknumber(L, 3);
+    double duration = dubL_checknumber(L, 4);
     updateMotionHistory(*silhouette, *mhi, timestamp, duration);
     return 0;
   } catch (cv::Exception &e) {
@@ -10956,22 +10956,22 @@ static int cv_useOptimized(lua_State *L) {
 static int cv_warpAffine(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    const Mat *M = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    Size *dsize = *((Size **)luaL_checkudata(L, 4, "cv.Size"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    const Mat *M = *((const Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    Size *dsize = *((Size **)dubL_checkudata(L, 4, "cv.Size"));
     if (top__ < 5) {
       warpAffine(*src, *dst, *M, *dsize);
     } else {
-      int flags = luaL_checkint(L, 5);
+      int flags = dubL_checkint(L, 5);
       if (top__ < 6) {
         warpAffine(*src, *dst, *M, *dsize, flags);
       } else {
-        int borderMode = luaL_checkint(L, 6);
+        int borderMode = dubL_checkint(L, 6);
         if (top__ < 7) {
           warpAffine(*src, *dst, *M, *dsize, flags, borderMode);
         } else {
-          const Scalar *borderValue = *((const Scalar **)luaL_checkudata(L, 7, "cv.Scalar"));
+          const Scalar *borderValue = *((const Scalar **)dubL_checkudata(L, 7, "cv.Scalar"));
           warpAffine(*src, *dst, *M, *dsize, flags, borderMode, *borderValue);
         }
       }
@@ -11009,22 +11009,22 @@ static int cv_warpAffine(lua_State *L) {
 static int cv_warpPerspective(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
-    const Mat *src = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *dst = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
-    const Mat *M = *((const Mat **)luaL_checkudata(L, 3, "cv.Mat"));
-    Size *dsize = *((Size **)luaL_checkudata(L, 4, "cv.Size"));
+    const Mat *src = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *dst = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
+    const Mat *M = *((const Mat **)dubL_checkudata(L, 3, "cv.Mat"));
+    Size *dsize = *((Size **)dubL_checkudata(L, 4, "cv.Size"));
     if (top__ < 5) {
       warpPerspective(*src, *dst, *M, *dsize);
     } else {
-      int flags = luaL_checkint(L, 5);
+      int flags = dubL_checkint(L, 5);
       if (top__ < 6) {
         warpPerspective(*src, *dst, *M, *dsize, flags);
       } else {
-        int borderMode = luaL_checkint(L, 6);
+        int borderMode = dubL_checkint(L, 6);
         if (top__ < 7) {
           warpPerspective(*src, *dst, *M, *dsize, flags, borderMode);
         } else {
-          const Scalar *borderValue = *((const Scalar **)luaL_checkudata(L, 7, "cv.Scalar"));
+          const Scalar *borderValue = *((const Scalar **)dubL_checkudata(L, 7, "cv.Scalar"));
           warpPerspective(*src, *dst, *M, *dsize, flags, borderMode, *borderValue);
         }
       }
@@ -11061,8 +11061,8 @@ static int cv_warpPerspective(lua_State *L) {
  */
 static int cv_watershed(lua_State *L) {
   try {
-    const Mat *image = *((const Mat **)luaL_checkudata(L, 1, "cv.Mat"));
-    Mat *markers = *((Mat **)luaL_checkudata(L, 2, "cv.Mat"));
+    const Mat *image = *((const Mat **)dubL_checkudata(L, 1, "cv.Mat"));
+    Mat *markers = *((Mat **)dubL_checkudata(L, 2, "cv.Mat"));
     watershed(*image, *markers);
     return 0;
   } catch (cv::Exception &e) {
@@ -11095,7 +11095,7 @@ static int cv_watershed(lua_State *L) {
 //  */
 // static int cv_LoadImage(lua_State *L) {
 //   try {
-//     const char *path = luaL_checkstring(L, 1);
+//     const char *path = dubL_checkstring(L, 1);
 //     cv::Mat  retval__ = LoadImage(path);
 //     lua_pushclass<cv::Mat>(L, retval__, "cv.Mat");
 //     return 1;

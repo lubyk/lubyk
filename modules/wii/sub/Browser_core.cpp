@@ -13,7 +13,7 @@ using namespace wii;
  */
 static int Browser_Browser(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
     Browser * retval__ = new Browser(worker);
     lua_pushclass<Browser>(L, retval__, "wii.Browser");
     return 1;
@@ -23,6 +23,7 @@ static int Browser_Browser(lua_State *L) {
     return luaL_error(L, "wii.Browser.Browser: Unknown exception");
   }
 }
+
 
 
 /* ============================ Destructor       ====================== */
@@ -58,7 +59,7 @@ static int Browser__tostring(lua_State *L) {
  */
 static int Browser___newindex(lua_State *L) {
   try {
-    Browser *self__ = *((Browser**)luaL_checkudata(L, 1, "wii.Browser"));
+    Browser *self__ = *((Browser**)dubL_checkudata(L, 1, "wii.Browser"));
     
     self__->__newindex(L);
     return 0;
@@ -70,12 +71,13 @@ static int Browser___newindex(lua_State *L) {
 }
 
 
+
 /** void wii::Browser::find()
  * include/wii/Browser.h:58
  */
 static int Browser_find(lua_State *L) {
   try {
-    Browser *self__ = *((Browser**)luaL_checkudata(L, 1, "wii.Browser"));
+    Browser *self__ = *((Browser**)dubL_checkudata(L, 1, "wii.Browser"));
     self__->find();
     return 0;
   } catch (std::exception &e) {
@@ -84,6 +86,7 @@ static int Browser_find(lua_State *L) {
     return luaL_error(L, "wii.Browser.find: Unknown exception");
   }
 }
+
 
 
 

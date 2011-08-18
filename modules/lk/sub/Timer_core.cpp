@@ -13,8 +13,8 @@ using namespace lk;
  */
 static int Timer_Timer(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
-    float interval = luaL_checknumber(L, 2);
+    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
+    float interval = dubL_checknumber(L, 2);
     Timer * retval__ = new Timer(worker, interval);
     lua_pushclass<Timer>(L, retval__, "lk.Timer");
     return 1;
@@ -24,6 +24,7 @@ static int Timer_Timer(lua_State *L) {
     return luaL_error(L, "lk.Timer.Timer: Unknown exception");
   }
 }
+
 
 
 /* ============================ Destructor       ====================== */
@@ -59,7 +60,7 @@ static int Timer__tostring(lua_State *L) {
  */
 static int Timer___newindex(lua_State *L) {
   try {
-    Timer *self__ = *((Timer**)luaL_checkudata(L, 1, "lk.Timer"));
+    Timer *self__ = *((Timer**)dubL_checkudata(L, 1, "lk.Timer"));
     
     self__->__newindex(L);
     return 0;
@@ -71,12 +72,13 @@ static int Timer___newindex(lua_State *L) {
 }
 
 
+
 /** time_t lk::Timer::interval()
  * include/lk/Timer.h:72
  */
 static int Timer_interval(lua_State *L) {
   try {
-    Timer *self__ = *((Timer**)luaL_checkudata(L, 1, "lk.Timer"));
+    Timer *self__ = *((Timer**)dubL_checkudata(L, 1, "lk.Timer"));
     time_t  retval__ = self__->interval();
     lua_pushnumber(L, retval__);
     return 1;
@@ -88,12 +90,13 @@ static int Timer_interval(lua_State *L) {
 }
 
 
+
 /** void lk::Timer::join()
  * include/lk/Timer.h:63
  */
 static int Timer_join(lua_State *L) {
   try {
-    Timer *self__ = *((Timer**)luaL_checkudata(L, 1, "lk.Timer"));
+    Timer *self__ = *((Timer**)dubL_checkudata(L, 1, "lk.Timer"));
     self__->join();
     return 0;
   } catch (std::exception &e) {
@@ -104,12 +107,13 @@ static int Timer_join(lua_State *L) {
 }
 
 
+
 /** bool lk::Timer::running()
  * include/lk/Timer.h:68
  */
 static int Timer_running(lua_State *L) {
   try {
-    Timer *self__ = *((Timer**)luaL_checkudata(L, 1, "lk.Timer"));
+    Timer *self__ = *((Timer**)dubL_checkudata(L, 1, "lk.Timer"));
     bool  retval__ = self__->running();
     lua_pushboolean(L, retval__);
     return 1;
@@ -121,13 +125,14 @@ static int Timer_running(lua_State *L) {
 }
 
 
+
 /** void lk::Timer::setInterval(float interval)
  * include/lk/Timer.h:76
  */
 static int Timer_setInterval(lua_State *L) {
   try {
-    Timer *self__ = *((Timer**)luaL_checkudata(L, 1, "lk.Timer"));
-    float interval = luaL_checknumber(L, 2);
+    Timer *self__ = *((Timer**)dubL_checkudata(L, 1, "lk.Timer"));
+    float interval = dubL_checknumber(L, 2);
     self__->setInterval(interval);
     return 0;
   } catch (std::exception &e) {
@@ -138,12 +143,13 @@ static int Timer_setInterval(lua_State *L) {
 }
 
 
+
 /** void lk::Timer::start(bool trigger_on_start=true)
  * include/lk/Timer.h:58
  */
 static int Timer_start(lua_State *L) {
   try {
-    Timer *self__ = *((Timer**)luaL_checkudata(L, 1, "lk.Timer"));
+    Timer *self__ = *((Timer**)dubL_checkudata(L, 1, "lk.Timer"));
     int top__ = lua_gettop(L);
     if (top__ < 2) {
       self__->start();
@@ -160,12 +166,13 @@ static int Timer_start(lua_State *L) {
 }
 
 
+
 /** void lk::Timer::stop()
  * include/lk/Timer.h:54
  */
 static int Timer_stop(lua_State *L) {
   try {
-    Timer *self__ = *((Timer**)luaL_checkudata(L, 1, "lk.Timer"));
+    Timer *self__ = *((Timer**)dubL_checkudata(L, 1, "lk.Timer"));
     self__->stop();
     return 0;
   } catch (std::exception &e) {
@@ -174,6 +181,7 @@ static int Timer_stop(lua_State *L) {
     return luaL_error(L, "lk.Timer.stop: Unknown exception");
   }
 }
+
 
 
 

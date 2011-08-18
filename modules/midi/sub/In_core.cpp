@@ -13,7 +13,7 @@ using namespace midi;
  */
 static int In_In(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
     In * retval__ = new In(worker);
     lua_pushclass<In>(L, retval__, "midi.In");
     return 1;
@@ -23,6 +23,7 @@ static int In_In(lua_State *L) {
     return luaL_error(L, "midi.In.In: Unknown exception");
   }
 }
+
 
 
 /* ============================ Destructor       ====================== */
@@ -58,7 +59,7 @@ static int In__tostring(lua_State *L) {
  */
 static int In___newindex(lua_State *L) {
   try {
-    In *self__ = *((In**)luaL_checkudata(L, 1, "midi.In"));
+    In *self__ = *((In**)dubL_checkudata(L, 1, "midi.In"));
     
     self__->__newindex(L);
     return 0;
@@ -71,13 +72,14 @@ static int In___newindex(lua_State *L) {
 
 
 
+
 /** void midi::In::open_port(int port, lua_State *L)
  * include/midi/In.h:73
  */
 static int In_open_port1(lua_State *L) {
   try {
-    In *self__ = *((In**)luaL_checkudata(L, 1, "midi.In"));
-    int port = luaL_checkint(L, 2);
+    In *self__ = *((In**)dubL_checkudata(L, 1, "midi.In"));
+    int port = dubL_checkint(L, 2);
     
     self__->open_port(port, L);
     return 0;
@@ -89,13 +91,14 @@ static int In_open_port1(lua_State *L) {
 }
 
 
+
 /** void midi::In::open_port(const char *port_name, lua_State *L)
  * include/midi/In.h:91
  */
 static int In_open_port2(lua_State *L) {
   try {
-    In *self__ = *((In**)luaL_checkudata(L, 1, "midi.In"));
-    const char *port_name = luaL_checkstring(L, 2);
+    In *self__ = *((In**)dubL_checkudata(L, 1, "midi.In"));
+    const char *port_name = dubL_checkstring(L, 2);
     
     self__->open_port(port_name, L);
     return 0;
@@ -105,6 +108,7 @@ static int In_open_port2(lua_State *L) {
     return luaL_error(L, "midi.In.open_port: Unknown exception");
   }
 }
+
 
 
 
@@ -127,7 +131,7 @@ static int In_open_port(lua_State *L) {
  */
 static int In_port(lua_State *L) {
   try {
-    In *self__ = *((In**)luaL_checkudata(L, 1, "midi.In"));
+    In *self__ = *((In**)dubL_checkudata(L, 1, "midi.In"));
     int  retval__ = self__->port();
     lua_pushnumber(L, retval__);
     return 1;
@@ -139,12 +143,13 @@ static int In_port(lua_State *L) {
 }
 
 
+
 /** const char* midi::In::port_name() const 
  * include/midi/In.h:69
  */
 static int In_port_name(lua_State *L) {
   try {
-    In *self__ = *((In**)luaL_checkudata(L, 1, "midi.In"));
+    In *self__ = *((In**)dubL_checkudata(L, 1, "midi.In"));
     const char * retval__ = self__->port_name();
     lua_pushstring(L, retval__);
     return 1;
@@ -156,13 +161,14 @@ static int In_port_name(lua_State *L) {
 }
 
 
+
 /** void midi::In::virtual_port(const char *port_name, lua_State *L)
  * include/midi/In.h:106
  */
 static int In_virtual_port(lua_State *L) {
   try {
-    In *self__ = *((In**)luaL_checkudata(L, 1, "midi.In"));
-    const char *port_name = luaL_checkstring(L, 2);
+    In *self__ = *((In**)dubL_checkudata(L, 1, "midi.In"));
+    const char *port_name = dubL_checkstring(L, 2);
     
     self__->virtual_port(port_name, L);
     return 0;
@@ -172,6 +178,7 @@ static int In_virtual_port(lua_State *L) {
     return luaL_error(L, "midi.In.virtual_port: Unknown exception");
   }
 }
+
 
 
 

@@ -13,8 +13,8 @@ using namespace lk;
  */
 static int Socket_Socket(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
-    int socket_type = luaL_checkint(L, 2);
+    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
+    int socket_type = dubL_checkint(L, 2);
     Socket * retval__ = new Socket(worker, socket_type);
     lua_pushclass<Socket>(L, retval__, "lk.Socket");
     return 1;
@@ -24,6 +24,7 @@ static int Socket_Socket(lua_State *L) {
     return luaL_error(L, "lk.Socket.Socket: Unknown exception");
   }
 }
+
 
 
 /* ============================ Destructor       ====================== */
@@ -59,7 +60,7 @@ static int Socket__tostring(lua_State *L) {
  */
 static int Socket_accept(lua_State *L) {
   try {
-    Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "lk.Socket"));
+    Socket *self__ = *((Socket**)dubL_checkudata(L, 1, "lk.Socket"));
     
     LuaStackSize  retval__ = self__->accept(L);
     return retval__;
@@ -71,22 +72,23 @@ static int Socket_accept(lua_State *L) {
 }
 
 
+
 /** int lk::Socket::bind(const char *localhost=NULL, int port=0)
  * include/lk/Socket.h:127
  */
 static int Socket_bind(lua_State *L) {
   try {
-    Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "lk.Socket"));
+    Socket *self__ = *((Socket**)dubL_checkudata(L, 1, "lk.Socket"));
     int top__ = lua_gettop(L);
     int  retval__;
     if (top__ < 2) {
       retval__ = self__->bind();
     } else {
-      const char *localhost = luaL_checkstring(L, 2);
+      const char *localhost = dubL_checkstring(L, 2);
       if (top__ < 3) {
         retval__ = self__->bind(localhost);
       } else {
-        int port = luaL_checkint(L, 3);
+        int port = dubL_checkint(L, 3);
         retval__ = self__->bind(localhost, port);
       }
     }
@@ -100,12 +102,13 @@ static int Socket_bind(lua_State *L) {
 }
 
 
+
 /** void lk::Socket::close()
  * include/lk/Socket.h:116
  */
 static int Socket_close(lua_State *L) {
   try {
-    Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "lk.Socket"));
+    Socket *self__ = *((Socket**)dubL_checkudata(L, 1, "lk.Socket"));
     self__->close();
     return 0;
   } catch (std::exception &e) {
@@ -116,14 +119,15 @@ static int Socket_close(lua_State *L) {
 }
 
 
+
 /** void lk::Socket::connect(const char *host, int port)
  * include/lk/Socket.h:129
  */
 static int Socket_connect(lua_State *L) {
   try {
-    Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "lk.Socket"));
-    const char *host = luaL_checkstring(L, 2);
-    int port = luaL_checkint(L, 3);
+    Socket *self__ = *((Socket**)dubL_checkudata(L, 1, "lk.Socket"));
+    const char *host = dubL_checkstring(L, 2);
+    int port = dubL_checkint(L, 3);
     self__->connect(host, port);
     return 0;
   } catch (std::exception &e) {
@@ -134,12 +138,13 @@ static int Socket_connect(lua_State *L) {
 }
 
 
+
 /** void lk::Socket::kill()
  * include/lk/Socket.h:194
  */
 static int Socket_kill(lua_State *L) {
   try {
-    Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "lk.Socket"));
+    Socket *self__ = *((Socket**)dubL_checkudata(L, 1, "lk.Socket"));
     self__->kill();
     return 0;
   } catch (std::exception &e) {
@@ -150,12 +155,13 @@ static int Socket_kill(lua_State *L) {
 }
 
 
+
 /** void lk::Socket::listen()
  * include/lk/Socket.h:133
  */
 static int Socket_listen(lua_State *L) {
   try {
-    Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "lk.Socket"));
+    Socket *self__ = *((Socket**)dubL_checkudata(L, 1, "lk.Socket"));
     self__->listen();
     return 0;
   } catch (std::exception &e) {
@@ -166,12 +172,13 @@ static int Socket_listen(lua_State *L) {
 }
 
 
+
 /** const char* lk::Socket::localHost() const 
  * include/lk/Socket.h:199
  */
 static int Socket_localHost(lua_State *L) {
   try {
-    Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "lk.Socket"));
+    Socket *self__ = *((Socket**)dubL_checkudata(L, 1, "lk.Socket"));
     const char * retval__ = self__->localHost();
     lua_pushstring(L, retval__);
     return 1;
@@ -183,12 +190,13 @@ static int Socket_localHost(lua_State *L) {
 }
 
 
+
 /** int lk::Socket::localPort() const 
  * include/lk/Socket.h:203
  */
 static int Socket_localPort(lua_State *L) {
   try {
-    Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "lk.Socket"));
+    Socket *self__ = *((Socket**)dubL_checkudata(L, 1, "lk.Socket"));
     int  retval__ = self__->localPort();
     lua_pushnumber(L, retval__);
     return 1;
@@ -200,12 +208,13 @@ static int Socket_localPort(lua_State *L) {
 }
 
 
+
 /** void lk::Socket::loop(lua_State *L)
  * include/lk/Socket.h:180
  */
 static int Socket_loop(lua_State *L) {
   try {
-    Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "lk.Socket"));
+    Socket *self__ = *((Socket**)dubL_checkudata(L, 1, "lk.Socket"));
     
     self__->loop(L);
     return 0;
@@ -217,12 +226,13 @@ static int Socket_loop(lua_State *L) {
 }
 
 
+
 /** int lk::Socket::port() const 
  * include/lk/Socket.h:215
  */
 static int Socket_port(lua_State *L) {
   try {
-    Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "lk.Socket"));
+    Socket *self__ = *((Socket**)dubL_checkudata(L, 1, "lk.Socket"));
     int  retval__ = self__->port();
     lua_pushnumber(L, retval__);
     return 1;
@@ -234,12 +244,13 @@ static int Socket_port(lua_State *L) {
 }
 
 
+
 /** void lk::Socket::quit()
  * include/lk/Socket.h:187
  */
 static int Socket_quit(lua_State *L) {
   try {
-    Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "lk.Socket"));
+    Socket *self__ = *((Socket**)dubL_checkudata(L, 1, "lk.Socket"));
     self__->quit();
     return 0;
   } catch (std::exception &e) {
@@ -250,12 +261,13 @@ static int Socket_quit(lua_State *L) {
 }
 
 
+
 /** LuaStackSize lk::Socket::recv(lua_State *L)
  * include/lk/Socket.h:158
  */
 static int Socket_recv(lua_State *L) {
   try {
-    Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "lk.Socket"));
+    Socket *self__ = *((Socket**)dubL_checkudata(L, 1, "lk.Socket"));
     
     LuaStackSize  retval__ = self__->recv(L);
     return retval__;
@@ -267,12 +279,13 @@ static int Socket_recv(lua_State *L) {
 }
 
 
+
 /** LuaStackSize lk::Socket::recvMsg(lua_State *L)
  * include/lk/Socket.h:152
  */
 static int Socket_recvMsg(lua_State *L) {
   try {
-    Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "lk.Socket"));
+    Socket *self__ = *((Socket**)dubL_checkudata(L, 1, "lk.Socket"));
     
     LuaStackSize  retval__ = self__->recvMsg(L);
     return retval__;
@@ -284,12 +297,13 @@ static int Socket_recvMsg(lua_State *L) {
 }
 
 
+
 /** const char* lk::Socket::remoteHost() const 
  * include/lk/Socket.h:207
  */
 static int Socket_remoteHost(lua_State *L) {
   try {
-    Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "lk.Socket"));
+    Socket *self__ = *((Socket**)dubL_checkudata(L, 1, "lk.Socket"));
     const char * retval__ = self__->remoteHost();
     lua_pushstring(L, retval__);
     return 1;
@@ -301,12 +315,13 @@ static int Socket_remoteHost(lua_State *L) {
 }
 
 
+
 /** int lk::Socket::remotePort() const 
  * include/lk/Socket.h:211
  */
 static int Socket_remotePort(lua_State *L) {
   try {
-    Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "lk.Socket"));
+    Socket *self__ = *((Socket**)dubL_checkudata(L, 1, "lk.Socket"));
     int  retval__ = self__->remotePort();
     lua_pushnumber(L, retval__);
     return 1;
@@ -318,12 +333,13 @@ static int Socket_remotePort(lua_State *L) {
 }
 
 
+
 /** LuaStackSize lk::Socket::request(lua_State *L)
  * include/lk/Socket.h:173
  */
 static int Socket_request(lua_State *L) {
   try {
-    Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "lk.Socket"));
+    Socket *self__ = *((Socket**)dubL_checkudata(L, 1, "lk.Socket"));
     
     LuaStackSize  retval__ = self__->request(L);
     return retval__;
@@ -335,12 +351,13 @@ static int Socket_request(lua_State *L) {
 }
 
 
+
 /** void lk::Socket::send(lua_State *L)
  * include/lk/Socket.h:163
  */
 static int Socket_send(lua_State *L) {
   try {
-    Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "lk.Socket"));
+    Socket *self__ = *((Socket**)dubL_checkudata(L, 1, "lk.Socket"));
     
     self__->send(L);
     return 0;
@@ -352,12 +369,13 @@ static int Socket_send(lua_State *L) {
 }
 
 
+
 /** void lk::Socket::sendMsg(lua_State *L)
  * include/lk/Socket.h:168
  */
 static int Socket_sendMsg(lua_State *L) {
   try {
-    Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "lk.Socket"));
+    Socket *self__ = *((Socket**)dubL_checkudata(L, 1, "lk.Socket"));
     
     self__->sendMsg(L);
     return 0;
@@ -369,13 +387,14 @@ static int Socket_sendMsg(lua_State *L) {
 }
 
 
+
 /** void lk::Socket::setRecvTimeout(int timeout)
  * include/lk/Socket.h:140
  */
 static int Socket_setRecvTimeout(lua_State *L) {
   try {
-    Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "lk.Socket"));
-    int timeout = luaL_checkint(L, 2);
+    Socket *self__ = *((Socket**)dubL_checkudata(L, 1, "lk.Socket"));
+    int timeout = dubL_checkint(L, 2);
     self__->setRecvTimeout(timeout);
     return 0;
   } catch (std::exception &e) {
@@ -386,13 +405,14 @@ static int Socket_setRecvTimeout(lua_State *L) {
 }
 
 
+
 /** void lk::Socket::setSendTimeout(int timeout)
  * include/lk/Socket.h:144
  */
 static int Socket_setSendTimeout(lua_State *L) {
   try {
-    Socket *self__ = *((Socket**)luaL_checkudata(L, 1, "lk.Socket"));
-    int timeout = luaL_checkint(L, 2);
+    Socket *self__ = *((Socket**)dubL_checkudata(L, 1, "lk.Socket"));
+    int timeout = dubL_checkint(L, 2);
     self__->setSendTimeout(timeout);
     return 0;
   } catch (std::exception &e) {
@@ -401,6 +421,7 @@ static int Socket_setSendTimeout(lua_State *L) {
     return luaL_error(L, "lk.Socket.setSendTimeout: Unknown exception");
   }
 }
+
 
 
 

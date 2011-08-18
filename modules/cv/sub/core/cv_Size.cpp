@@ -47,8 +47,8 @@ static int Size_Size1(lua_State *L) {
  */
 static int Size_Size2(lua_State *L) {
   try {
-    int _width = luaL_checkint(L, 1);
-    int _height = luaL_checkint(L, 2);
+    int _width = dubL_checkint(L, 1);
+    int _height = dubL_checkint(L, 2);
     Size * retval__ = new Size(_width, _height);
     lua_pushclass<Size>(L, retval__, "cv.Size");
     return 1;
@@ -82,7 +82,7 @@ static int Size_Size2(lua_State *L) {
  */
 static int Size_Size3(lua_State *L) {
   try {
-    const Size2i *sz = *((const Size2i **)luaL_checkudata(L, 1, "cv.Size2i"));
+    const Size2i *sz = *((const Size2i **)dubL_checkudata(L, 1, "cv.Size2i"));
     Size * retval__ = new Size(*sz);
     lua_pushclass<Size>(L, retval__, "cv.Size");
     return 1;
@@ -116,7 +116,7 @@ static int Size_Size3(lua_State *L) {
  */
 static int Size_Size4(lua_State *L) {
   try {
-    const CvSize *sz = *((const CvSize **)luaL_checkudata(L, 1, "cv.CvSize"));
+    const CvSize *sz = *((const CvSize **)dubL_checkudata(L, 1, "cv.CvSize"));
     Size * retval__ = new Size(*sz);
     lua_pushclass<Size>(L, retval__, "cv.Size");
     return 1;
@@ -150,7 +150,7 @@ static int Size_Size4(lua_State *L) {
  */
 static int Size_Size5(lua_State *L) {
   try {
-    const CvSize2D32f *sz = *((const CvSize2D32f **)luaL_checkudata(L, 1, "cv.CvSize2D32f"));
+    const CvSize2D32f *sz = *((const CvSize2D32f **)dubL_checkudata(L, 1, "cv.CvSize2D32f"));
     Size * retval__ = new Size(*sz);
     lua_pushclass<Size>(L, retval__, "cv.Size");
     return 1;
@@ -184,7 +184,7 @@ static int Size_Size5(lua_State *L) {
  */
 static int Size_Size6(lua_State *L) {
   try {
-    const Point *pt = *((const Point **)luaL_checkudata(L, 1, "cv.Point"));
+    const Point *pt = *((const Point **)dubL_checkudata(L, 1, "cv.Point"));
     Size * retval__ = new Size(*pt);
     lua_pushclass<Size>(L, retval__, "cv.Size");
     return 1;
@@ -239,7 +239,7 @@ static int Size_Size(lua_State *L) {
 /* ============================ Destructor       ====================== */
 
 static int Size_destructor(lua_State *L) {
-  Size **userdata = (Size**)luaL_checkudata(L, 1, "cv.Size");
+  Size **userdata = (Size**)dubL_checkudata(L, 1, "cv.Size");
   if (*userdata) delete *userdata;
   *userdata = NULL;
   return 0;
@@ -248,7 +248,7 @@ static int Size_destructor(lua_State *L) {
 /* ============================ tostring         ====================== */
 
 static int Size__tostring(lua_State *L) {
-  Size **userdata = (Size**)luaL_checkudata(L, 1, "cv.Size");
+  Size **userdata = (Size**)dubL_checkudata(L, 1, "cv.Size");
 
   lua_pushfstring(L, "<cv.Size: %p %dx%d>", *userdata, (*userdata)->width, (*userdata)->height);
 
@@ -263,7 +263,7 @@ static int Size__tostring(lua_State *L) {
  */
 static int Size_area(lua_State *L) {
   try {
-    Size *self__ = *((Size**)luaL_checkudata(L, 1, "cv.Size"));
+    Size *self__ = *((Size**)dubL_checkudata(L, 1, "cv.Size"));
     lua_remove(L, 1);
     int  retval__ = self__->area();
     lua_pushnumber(L, retval__);

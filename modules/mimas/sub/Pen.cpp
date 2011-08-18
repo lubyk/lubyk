@@ -25,6 +25,7 @@ static int Pen_Pen1(lua_State *L) {
 }
 
 
+
 /** mimas::Pen::Pen(float width, const Color &color, int style=Qt::SolidLine, int cap=Qt::SquareCap, int join=Qt::MiterJoin)
  * include/mimas/Pen.h:49
  */
@@ -32,20 +33,20 @@ static int Pen_Pen2(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     Pen * retval__;
-    float width = luaL_checknumber(L, 1);
-    const Color *color = *((const Color **)luaL_checkudata(L, 2, "mimas.Color"));
+    float width = dubL_checknumber(L, 1);
+    const Color *color = *((const Color **)dubL_checkudata(L, 2, "mimas.Color"));
     if (top__ < 3) {
       retval__ = new Pen(width, *color);
     } else {
-      int style = luaL_checkint(L, 3);
+      int style = dubL_checkint(L, 3);
       if (top__ < 4) {
         retval__ = new Pen(width, *color, style);
       } else {
-        int cap = luaL_checkint(L, 4);
+        int cap = dubL_checkint(L, 4);
         if (top__ < 5) {
           retval__ = new Pen(width, *color, style, cap);
         } else {
-          int join = luaL_checkint(L, 5);
+          int join = dubL_checkint(L, 5);
           retval__ = new Pen(width, *color, style, cap, join);
         }
       }
@@ -60,6 +61,7 @@ static int Pen_Pen2(lua_State *L) {
 }
 
 
+
 /** mimas::Pen::Pen(float width, float h, float s=1.0, float v=1.0, float a=1.0)
  * include/mimas/Pen.h:52
  */
@@ -67,20 +69,20 @@ static int Pen_Pen3(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     Pen * retval__;
-    float width = luaL_checknumber(L, 1);
-    float h = luaL_checknumber(L, 2);
+    float width = dubL_checknumber(L, 1);
+    float h = dubL_checknumber(L, 2);
     if (top__ < 3) {
       retval__ = new Pen(width, h);
     } else {
-      float s = luaL_checknumber(L, 3);
+      float s = dubL_checknumber(L, 3);
       if (top__ < 4) {
         retval__ = new Pen(width, h, s);
       } else {
-        float v = luaL_checknumber(L, 4);
+        float v = dubL_checknumber(L, 4);
         if (top__ < 5) {
           retval__ = new Pen(width, h, s, v);
         } else {
-          float a = luaL_checknumber(L, 5);
+          float a = dubL_checknumber(L, 5);
           retval__ = new Pen(width, h, s, v, a);
         }
       }
@@ -93,6 +95,7 @@ static int Pen_Pen3(lua_State *L) {
     return luaL_error(L, "mimas.Pen.Pen: Unknown exception");
   }
 }
+
 
 
 
@@ -152,8 +155,8 @@ static int Pen__tostring(lua_State *L) {
  */
 static int Pen_setCapStyle(lua_State *L) {
   try {
-    Pen *self__ = *((Pen**)luaL_checkudata(L, 1, "mimas.Pen"));
-    int style = luaL_checkint(L, 2);
+    Pen *self__ = *((Pen**)dubL_checkudata(L, 1, "mimas.Pen"));
+    int style = dubL_checkint(L, 2);
     self__->setCapStyle(style);
     return 0;
   } catch (std::exception &e) {
@@ -164,13 +167,14 @@ static int Pen_setCapStyle(lua_State *L) {
 }
 
 
+
 /** void mimas::Pen::setColor(const Color &color)
  * include/mimas/Pen.h:66
  */
 static int Pen_setColor(lua_State *L) {
   try {
-    Pen *self__ = *((Pen**)luaL_checkudata(L, 1, "mimas.Pen"));
-    const Color *color = *((const Color **)luaL_checkudata(L, 2, "mimas.Color"));
+    Pen *self__ = *((Pen**)dubL_checkudata(L, 1, "mimas.Pen"));
+    const Color *color = *((const Color **)dubL_checkudata(L, 2, "mimas.Color"));
     self__->setColor(*color);
     return 0;
   } catch (std::exception &e) {
@@ -181,26 +185,27 @@ static int Pen_setColor(lua_State *L) {
 }
 
 
+
 /** void mimas::Pen::setHsva(float h, float s=1.0, float v=1.0, float a=1.0)
  * include/mimas/Pen.h:70
  */
 static int Pen_setHsva(lua_State *L) {
   try {
-    Pen *self__ = *((Pen**)luaL_checkudata(L, 1, "mimas.Pen"));
+    Pen *self__ = *((Pen**)dubL_checkudata(L, 1, "mimas.Pen"));
     int top__ = lua_gettop(L);
-    float h = luaL_checknumber(L, 2);
+    float h = dubL_checknumber(L, 2);
     if (top__ < 3) {
       self__->setHsva(h);
     } else {
-      float s = luaL_checknumber(L, 3);
+      float s = dubL_checknumber(L, 3);
       if (top__ < 4) {
         self__->setHsva(h, s);
       } else {
-        float v = luaL_checknumber(L, 4);
+        float v = dubL_checknumber(L, 4);
         if (top__ < 5) {
           self__->setHsva(h, s, v);
         } else {
-          float a = luaL_checknumber(L, 5);
+          float a = dubL_checknumber(L, 5);
           self__->setHsva(h, s, v, a);
         }
       }
@@ -214,13 +219,14 @@ static int Pen_setHsva(lua_State *L) {
 }
 
 
+
 /** void mimas::Pen::setJoinStyle(int style)
  * include/mimas/Pen.h:84
  */
 static int Pen_setJoinStyle(lua_State *L) {
   try {
-    Pen *self__ = *((Pen**)luaL_checkudata(L, 1, "mimas.Pen"));
-    int style = luaL_checkint(L, 2);
+    Pen *self__ = *((Pen**)dubL_checkudata(L, 1, "mimas.Pen"));
+    int style = dubL_checkint(L, 2);
     self__->setJoinStyle(style);
     return 0;
   } catch (std::exception &e) {
@@ -231,20 +237,21 @@ static int Pen_setJoinStyle(lua_State *L) {
 }
 
 
+
 /** void mimas::Pen::setRgba(float r, float g, float b, float a=1.0)
  * include/mimas/Pen.h:62
  */
 static int Pen_setRgba(lua_State *L) {
   try {
-    Pen *self__ = *((Pen**)luaL_checkudata(L, 1, "mimas.Pen"));
+    Pen *self__ = *((Pen**)dubL_checkudata(L, 1, "mimas.Pen"));
     int top__ = lua_gettop(L);
-    float r = luaL_checknumber(L, 2);
-    float g = luaL_checknumber(L, 3);
-    float b = luaL_checknumber(L, 4);
+    float r = dubL_checknumber(L, 2);
+    float g = dubL_checknumber(L, 3);
+    float b = dubL_checknumber(L, 4);
     if (top__ < 5) {
       self__->setRgba(r, g, b);
     } else {
-      float a = luaL_checknumber(L, 5);
+      float a = dubL_checknumber(L, 5);
       self__->setRgba(r, g, b, a);
     }
     return 0;
@@ -256,13 +263,14 @@ static int Pen_setRgba(lua_State *L) {
 }
 
 
+
 /** void mimas::Pen::setStyle(int style)
  * include/mimas/Pen.h:76
  */
 static int Pen_setStyle(lua_State *L) {
   try {
-    Pen *self__ = *((Pen**)luaL_checkudata(L, 1, "mimas.Pen"));
-    int style = luaL_checkint(L, 2);
+    Pen *self__ = *((Pen**)dubL_checkudata(L, 1, "mimas.Pen"));
+    int style = dubL_checkint(L, 2);
     self__->setStyle(style);
     return 0;
   } catch (std::exception &e) {
@@ -273,13 +281,14 @@ static int Pen_setStyle(lua_State *L) {
 }
 
 
+
 /** void mimas::Pen::setWidth(float w)
  * include/mimas/Pen.h:58
  */
 static int Pen_setWidth(lua_State *L) {
   try {
-    Pen *self__ = *((Pen**)luaL_checkudata(L, 1, "mimas.Pen"));
-    float w = luaL_checknumber(L, 2);
+    Pen *self__ = *((Pen**)dubL_checkudata(L, 1, "mimas.Pen"));
+    float w = dubL_checknumber(L, 2);
     self__->setWidth(w);
     return 0;
   } catch (std::exception &e) {
@@ -288,6 +297,7 @@ static int Pen_setWidth(lua_State *L) {
     return luaL_error(L, "mimas.Pen.setWidth: Unknown exception");
   }
 }
+
 
 
 

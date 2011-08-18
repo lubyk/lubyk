@@ -13,7 +13,7 @@ using namespace mimas;
  */
 static int Callback_Callback(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
     Callback * retval__ = new Callback(worker);
     lua_pushclass<Callback>(L, retval__, "mimas.Callback");
     return 1;
@@ -23,6 +23,7 @@ static int Callback_Callback(lua_State *L) {
     return luaL_error(L, "mimas.Callback.Callback: Unknown exception");
   }
 }
+
 
 
 /* ============================ Destructor       ====================== */
@@ -58,10 +59,10 @@ static int Callback__tostring(lua_State *L) {
  */
 static int Callback_connect(lua_State *L) {
   try {
-    Callback *self__ = *((Callback**)luaL_checkudata(L, 1, "mimas.Callback"));
-    QObject *obj = *((QObject **)luaL_checkudata(L, 2, "mimas.QObject"));
-    const char *method = luaL_checkstring(L, 3);
-    const char *callback = luaL_checkstring(L, 4);
+    Callback *self__ = *((Callback**)dubL_checkudata(L, 1, "mimas.Callback"));
+    QObject *obj = *((QObject **)dubL_checkudata(L, 2, "mimas.QObject"));
+    const char *method = dubL_checkstring(L, 3);
+    const char *callback = dubL_checkstring(L, 4);
     self__->connect(obj, method, callback);
     return 0;
   } catch (std::exception &e) {
@@ -72,12 +73,13 @@ static int Callback_connect(lua_State *L) {
 }
 
 
+
 /** void mimas::Callback::set_callback(lua_State *L)
  * include/mimas/Callback.h:86
  */
 static int Callback_set_callback(lua_State *L) {
   try {
-    Callback *self__ = *((Callback**)luaL_checkudata(L, 1, "mimas.Callback"));
+    Callback *self__ = *((Callback**)dubL_checkudata(L, 1, "mimas.Callback"));
     
     self__->set_callback(L);
     return 0;
@@ -87,6 +89,7 @@ static int Callback_set_callback(lua_State *L) {
     return luaL_error(L, "mimas.Callback.set_callback: Unknown exception");
   }
 }
+
 
 
 

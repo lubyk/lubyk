@@ -15,15 +15,15 @@ static int LineEdit_LineEdit(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     LineEdit * retval__;
-    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
     if (top__ < 2) {
       retval__ = new LineEdit(worker);
     } else {
-      const char *content = luaL_checkstring(L, 2);
+      const char *content = dubL_checkstring(L, 2);
       if (top__ < 3) {
         retval__ = new LineEdit(worker, content);
       } else {
-        QWidget *parent = *((QWidget **)luaL_checkudata(L, 3, "mimas.QWidget"));
+        QWidget *parent = *((QWidget **)dubL_checkudata(L, 3, "mimas.QWidget"));
         retval__ = new LineEdit(worker, content, parent);
       }
     }
@@ -35,6 +35,7 @@ static int LineEdit_LineEdit(lua_State *L) {
     return luaL_error(L, "mimas.LineEdit.LineEdit: Unknown exception");
   }
 }
+
 
 
 /* ============================ Destructor       ====================== */
@@ -84,7 +85,7 @@ static int LineEdit__tostring(lua_State *L) {
  */
 static int LineEdit___newindex(lua_State *L) {
   try {
-    LineEdit *self__ = *((LineEdit**)luaL_checkudata(L, 1, "mimas.LineEdit"));
+    LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
     if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in __newindex");
     
     self__->__newindex(L);
@@ -97,12 +98,13 @@ static int LineEdit___newindex(lua_State *L) {
 }
 
 
+
 /** QString mimas::LineEdit::cssClass() const 
  * include/mimas/LineEdit.h:88
  */
 static int LineEdit_cssClass(lua_State *L) {
   try {
-    LineEdit *self__ = *((LineEdit**)luaL_checkudata(L, 1, "mimas.LineEdit"));
+    LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
     if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in cssClass");
     QString  retval__ = self__->cssClass();
     lua_pushclass<QString>(L, retval__, "mimas.QString");
@@ -115,15 +117,16 @@ static int LineEdit_cssClass(lua_State *L) {
 }
 
 
+
 /** void mimas::LineEdit::globalMove(float x, float y)
  * include/mimas/LineEdit.h:116
  */
 static int LineEdit_globalMove(lua_State *L) {
   try {
-    LineEdit *self__ = *((LineEdit**)luaL_checkudata(L, 1, "mimas.LineEdit"));
+    LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
     if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in globalMove");
-    float x = luaL_checknumber(L, 2);
-    float y = luaL_checknumber(L, 3);
+    float x = dubL_checknumber(L, 2);
+    float y = dubL_checknumber(L, 3);
     self__->globalMove(x, y);
     return 0;
   } catch (std::exception &e) {
@@ -134,12 +137,13 @@ static int LineEdit_globalMove(lua_State *L) {
 }
 
 
+
 /** LuaStackSize mimas::LineEdit::globalPosition(lua_State *L)
  * include/mimas/LineEdit.h:107
  */
 static int LineEdit_globalPosition(lua_State *L) {
   try {
-    LineEdit *self__ = *((LineEdit**)luaL_checkudata(L, 1, "mimas.LineEdit"));
+    LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
     if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in globalPosition");
     
     LuaStackSize  retval__ = self__->globalPosition(L);
@@ -152,12 +156,13 @@ static int LineEdit_globalPosition(lua_State *L) {
 }
 
 
+
 /** int mimas::LineEdit::height()
  * include/mimas/LineEdit.h:153
  */
 static int LineEdit_height(lua_State *L) {
   try {
-    LineEdit *self__ = *((LineEdit**)luaL_checkudata(L, 1, "mimas.LineEdit"));
+    LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
     if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in height");
     int  retval__ = self__->height();
     lua_pushnumber(L, retval__);
@@ -170,12 +175,13 @@ static int LineEdit_height(lua_State *L) {
 }
 
 
+
 /** void mimas::LineEdit::hide()
  * include/mimas/LineEdit.h:170
  */
 static int LineEdit_hide(lua_State *L) {
   try {
-    LineEdit *self__ = *((LineEdit**)luaL_checkudata(L, 1, "mimas.LineEdit"));
+    LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
     if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in hide");
     self__->hide();
     return 0;
@@ -187,12 +193,13 @@ static int LineEdit_hide(lua_State *L) {
 }
 
 
+
 /** float mimas::LineEdit::hue()
  * include/mimas/LineEdit.h:166
  */
 static int LineEdit_hue(lua_State *L) {
   try {
-    LineEdit *self__ = *((LineEdit**)luaL_checkudata(L, 1, "mimas.LineEdit"));
+    LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
     if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in hue");
     float  retval__ = self__->hue();
     lua_pushnumber(L, retval__);
@@ -205,15 +212,16 @@ static int LineEdit_hue(lua_State *L) {
 }
 
 
+
 /** void mimas::LineEdit::move(int x, int y)
  * include/mimas/LineEdit.h:133
  */
 static int LineEdit_move(lua_State *L) {
   try {
-    LineEdit *self__ = *((LineEdit**)luaL_checkudata(L, 1, "mimas.LineEdit"));
+    LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
     if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in move");
-    int x = luaL_checkint(L, 2);
-    int y = luaL_checkint(L, 3);
+    int x = dubL_checkint(L, 2);
+    int y = dubL_checkint(L, 3);
     self__->move(x, y);
     return 0;
   } catch (std::exception &e) {
@@ -224,12 +232,13 @@ static int LineEdit_move(lua_State *L) {
 }
 
 
+
 /** LuaStackSize mimas::LineEdit::name(lua_State *L)
  * include/mimas/LineEdit.h:122
  */
 static int LineEdit_name(lua_State *L) {
   try {
-    LineEdit *self__ = *((LineEdit**)luaL_checkudata(L, 1, "mimas.LineEdit"));
+    LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
     if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in name");
     
     LuaStackSize  retval__ = self__->name(L);
@@ -242,12 +251,13 @@ static int LineEdit_name(lua_State *L) {
 }
 
 
+
 /** QObject* mimas::LineEdit::object()
  * include/mimas/LineEdit.h:100
  */
 static int LineEdit_object(lua_State *L) {
   try {
-    LineEdit *self__ = *((LineEdit**)luaL_checkudata(L, 1, "mimas.LineEdit"));
+    LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
     if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in object");
     QObject * retval__ = self__->object();
     lua_pushclass<QObject>(L, retval__, "mimas.QObject");
@@ -260,15 +270,16 @@ static int LineEdit_object(lua_State *L) {
 }
 
 
+
 /** void mimas::LineEdit::resize(int w, int h)
  * include/mimas/LineEdit.h:137
  */
 static int LineEdit_resize(lua_State *L) {
   try {
-    LineEdit *self__ = *((LineEdit**)luaL_checkudata(L, 1, "mimas.LineEdit"));
+    LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
     if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in resize");
-    int w = luaL_checkint(L, 2);
-    int h = luaL_checkint(L, 3);
+    int w = dubL_checkint(L, 2);
+    int h = dubL_checkint(L, 3);
     self__->resize(w, h);
     return 0;
   } catch (std::exception &e) {
@@ -279,12 +290,13 @@ static int LineEdit_resize(lua_State *L) {
 }
 
 
+
 /** void mimas::LineEdit::selectAll()
  * include/mimas/LineEdit.h:189
  */
 static int LineEdit_selectAll(lua_State *L) {
   try {
-    LineEdit *self__ = *((LineEdit**)luaL_checkudata(L, 1, "mimas.LineEdit"));
+    LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
     if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in selectAll");
     self__->selectAll();
     return 0;
@@ -296,12 +308,13 @@ static int LineEdit_selectAll(lua_State *L) {
 }
 
 
+
 /** void mimas::LineEdit::setFocus()
  * include/mimas/LineEdit.h:193
  */
 static int LineEdit_setFocus(lua_State *L) {
   try {
-    LineEdit *self__ = *((LineEdit**)luaL_checkudata(L, 1, "mimas.LineEdit"));
+    LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
     if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in setFocus");
     self__->setFocus();
     return 0;
@@ -313,14 +326,15 @@ static int LineEdit_setFocus(lua_State *L) {
 }
 
 
+
 /** void mimas::LineEdit::setHue(float hue)
  * include/mimas/LineEdit.h:161
  */
 static int LineEdit_setHue(lua_State *L) {
   try {
-    LineEdit *self__ = *((LineEdit**)luaL_checkudata(L, 1, "mimas.LineEdit"));
+    LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
     if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in setHue");
-    float hue = luaL_checknumber(L, 2);
+    float hue = dubL_checknumber(L, 2);
     self__->setHue(hue);
     return 0;
   } catch (std::exception &e) {
@@ -331,14 +345,15 @@ static int LineEdit_setHue(lua_State *L) {
 }
 
 
+
 /** void mimas::LineEdit::setName(const char *name)
  * include/mimas/LineEdit.h:129
  */
 static int LineEdit_setName(lua_State *L) {
   try {
-    LineEdit *self__ = *((LineEdit**)luaL_checkudata(L, 1, "mimas.LineEdit"));
+    LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
     if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in setName");
-    const char *name = luaL_checkstring(L, 2);
+    const char *name = dubL_checkstring(L, 2);
     self__->setName(name);
     return 0;
   } catch (std::exception &e) {
@@ -349,14 +364,15 @@ static int LineEdit_setName(lua_State *L) {
 }
 
 
+
 /** void mimas::LineEdit::setParent(QWidget *parent)
  * include/mimas/LineEdit.h:96
  */
 static int LineEdit_setParent(lua_State *L) {
   try {
-    LineEdit *self__ = *((LineEdit**)luaL_checkudata(L, 1, "mimas.LineEdit"));
+    LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
     if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in setParent");
-    QWidget *parent = *((QWidget **)luaL_checkudata(L, 2, "mimas.QWidget"));
+    QWidget *parent = *((QWidget **)dubL_checkudata(L, 2, "mimas.QWidget"));
     self__->setParent(parent);
     return 0;
   } catch (std::exception &e) {
@@ -367,15 +383,16 @@ static int LineEdit_setParent(lua_State *L) {
 }
 
 
+
 /** void mimas::LineEdit::setSelection(int start, int length)
  * include/mimas/LineEdit.h:185
  */
 static int LineEdit_setSelection(lua_State *L) {
   try {
-    LineEdit *self__ = *((LineEdit**)luaL_checkudata(L, 1, "mimas.LineEdit"));
+    LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
     if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in setSelection");
-    int start = luaL_checkint(L, 2);
-    int length = luaL_checkint(L, 3);
+    int start = dubL_checkint(L, 2);
+    int length = dubL_checkint(L, 3);
     self__->setSelection(start, length);
     return 0;
   } catch (std::exception &e) {
@@ -386,14 +403,15 @@ static int LineEdit_setSelection(lua_State *L) {
 }
 
 
+
 /** void mimas::LineEdit::setStyle(const char *text)
  * include/mimas/LineEdit.h:157
  */
 static int LineEdit_setStyle(lua_State *L) {
   try {
-    LineEdit *self__ = *((LineEdit**)luaL_checkudata(L, 1, "mimas.LineEdit"));
+    LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
     if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in setStyle");
-    const char *text = luaL_checkstring(L, 2);
+    const char *text = dubL_checkstring(L, 2);
     self__->setStyle(text);
     return 0;
   } catch (std::exception &e) {
@@ -404,14 +422,15 @@ static int LineEdit_setStyle(lua_State *L) {
 }
 
 
+
 /** void mimas::LineEdit::setText(const char *text)
  * include/mimas/LineEdit.h:176
  */
 static int LineEdit_setText(lua_State *L) {
   try {
-    LineEdit *self__ = *((LineEdit**)luaL_checkudata(L, 1, "mimas.LineEdit"));
+    LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
     if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in setText");
-    const char *text = luaL_checkstring(L, 2);
+    const char *text = dubL_checkstring(L, 2);
     self__->setText(text);
     return 0;
   } catch (std::exception &e) {
@@ -422,12 +441,13 @@ static int LineEdit_setText(lua_State *L) {
 }
 
 
+
 /** const char* mimas::LineEdit::text() const 
  * include/mimas/LineEdit.h:181
  */
 static int LineEdit_text(lua_State *L) {
   try {
-    LineEdit *self__ = *((LineEdit**)luaL_checkudata(L, 1, "mimas.LineEdit"));
+    LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
     if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in text");
     const char * retval__ = self__->text();
     lua_pushstring(L, retval__);
@@ -440,12 +460,13 @@ static int LineEdit_text(lua_State *L) {
 }
 
 
+
 /** QWidget* mimas::LineEdit::widget()
  * include/mimas/LineEdit.h:92
  */
 static int LineEdit_widget(lua_State *L) {
   try {
-    LineEdit *self__ = *((LineEdit**)luaL_checkudata(L, 1, "mimas.LineEdit"));
+    LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
     if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in widget");
     QWidget * retval__ = self__->widget();
     lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
@@ -458,12 +479,13 @@ static int LineEdit_widget(lua_State *L) {
 }
 
 
+
 /** int mimas::LineEdit::width()
  * include/mimas/LineEdit.h:149
  */
 static int LineEdit_width(lua_State *L) {
   try {
-    LineEdit *self__ = *((LineEdit**)luaL_checkudata(L, 1, "mimas.LineEdit"));
+    LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
     if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in width");
     int  retval__ = self__->width();
     lua_pushnumber(L, retval__);
@@ -476,12 +498,13 @@ static int LineEdit_width(lua_State *L) {
 }
 
 
+
 /** int mimas::LineEdit::x()
  * include/mimas/LineEdit.h:141
  */
 static int LineEdit_x(lua_State *L) {
   try {
-    LineEdit *self__ = *((LineEdit**)luaL_checkudata(L, 1, "mimas.LineEdit"));
+    LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
     if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in x");
     int  retval__ = self__->x();
     lua_pushnumber(L, retval__);
@@ -494,12 +517,13 @@ static int LineEdit_x(lua_State *L) {
 }
 
 
+
 /** int mimas::LineEdit::y()
  * include/mimas/LineEdit.h:145
  */
 static int LineEdit_y(lua_State *L) {
   try {
-    LineEdit *self__ = *((LineEdit**)luaL_checkudata(L, 1, "mimas.LineEdit"));
+    LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
     if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in y");
     int  retval__ = self__->y();
     lua_pushnumber(L, retval__);
@@ -510,6 +534,7 @@ static int LineEdit_y(lua_State *L) {
     return luaL_error(L, "mimas.LineEdit.y: Unknown exception");
   }
 }
+
 
 
 

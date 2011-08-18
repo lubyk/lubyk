@@ -13,7 +13,7 @@ using namespace mimas;
  */
 static int DataSource_DataSource(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
     DataSource * retval__ = new DataSource(worker);
     lua_pushclass2<DataSource>(L, retval__, "mimas.DataSource");
     return 1;
@@ -23,6 +23,7 @@ static int DataSource_DataSource(lua_State *L) {
     return luaL_error(L, "mimas.DataSource.DataSource: Unknown exception");
   }
 }
+
 
 
 /* ============================ Destructor       ====================== */
@@ -72,7 +73,7 @@ static int DataSource__tostring(lua_State *L) {
  */
 static int DataSource___newindex(lua_State *L) {
   try {
-    DataSource *self__ = *((DataSource**)luaL_checkudata(L, 1, "mimas.DataSource"));
+    DataSource *self__ = *((DataSource**)dubL_checkudata(L, 1, "mimas.DataSource"));
     if (!self__) return luaL_error(L, "Using deleted mimas.DataSource in __newindex");
     
     self__->__newindex(L);
@@ -85,12 +86,13 @@ static int DataSource___newindex(lua_State *L) {
 }
 
 
+
 /** void mimas::DataSource::emitLayoutChanged()
  * include/mimas/DataSource.h:139
  */
 static int DataSource_emitLayoutChanged(lua_State *L) {
   try {
-    DataSource *self__ = *((DataSource**)luaL_checkudata(L, 1, "mimas.DataSource"));
+    DataSource *self__ = *((DataSource**)dubL_checkudata(L, 1, "mimas.DataSource"));
     if (!self__) return luaL_error(L, "Using deleted mimas.DataSource in emitLayoutChanged");
     self__->emitLayoutChanged();
     return 0;
@@ -102,12 +104,13 @@ static int DataSource_emitLayoutChanged(lua_State *L) {
 }
 
 
+
 /** LuaStackSize mimas::DataSource::getCallback(lua_State *L)
  * include/mimas/DataSource.h:114
  */
 static int DataSource_getCallback(lua_State *L) {
   try {
-    DataSource *self__ = *((DataSource**)luaL_checkudata(L, 1, "mimas.DataSource"));
+    DataSource *self__ = *((DataSource**)dubL_checkudata(L, 1, "mimas.DataSource"));
     if (!self__) return luaL_error(L, "Using deleted mimas.DataSource in getCallback");
     
     LuaStackSize  retval__ = self__->getCallback(L);
@@ -120,12 +123,13 @@ static int DataSource_getCallback(lua_State *L) {
 }
 
 
+
 /** void mimas::DataSource::reset()
  * include/mimas/DataSource.h:134
  */
 static int DataSource_reset(lua_State *L) {
   try {
-    DataSource *self__ = *((DataSource**)luaL_checkudata(L, 1, "mimas.DataSource"));
+    DataSource *self__ = *((DataSource**)dubL_checkudata(L, 1, "mimas.DataSource"));
     if (!self__) return luaL_error(L, "Using deleted mimas.DataSource in reset");
     self__->reset();
     return 0;
@@ -135,6 +139,7 @@ static int DataSource_reset(lua_State *L) {
     return luaL_error(L, "mimas.DataSource.reset: Unknown exception");
   }
 }
+
 
 
 

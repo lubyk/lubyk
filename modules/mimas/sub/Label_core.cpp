@@ -19,7 +19,7 @@ static int Label_Label1(lua_State *L) {
     if (top__ < 1) {
       retval__ = new Label();
     } else {
-      const char *title = luaL_checkstring(L, 1);
+      const char *title = dubL_checkstring(L, 1);
       retval__ = new Label(title);
     }
     lua_pushclass2<Label>(L, retval__, "mimas.Label");
@@ -32,13 +32,14 @@ static int Label_Label1(lua_State *L) {
 }
 
 
+
 /** mimas::Label::Label(const char *title, QWidget *parent)
  * include/mimas/Label.h:54
  */
 static int Label_Label2(lua_State *L) {
   try {
-    const char *title = luaL_checkstring(L, 1);
-    QWidget *parent = *((QWidget **)luaL_checkudata(L, 2, "mimas.QWidget"));
+    const char *title = dubL_checkstring(L, 1);
+    QWidget *parent = *((QWidget **)dubL_checkudata(L, 2, "mimas.QWidget"));
     Label * retval__ = new Label(title, parent);
     lua_pushclass2<Label>(L, retval__, "mimas.Label");
     return 1;
@@ -48,6 +49,7 @@ static int Label_Label2(lua_State *L) {
     return luaL_error(L, "mimas.Label.Label: Unknown exception");
   }
 }
+
 
 
 
@@ -119,7 +121,7 @@ static int Label__tostring(lua_State *L) {
  */
 static int Label_cssClass(lua_State *L) {
   try {
-    Label *self__ = *((Label**)luaL_checkudata(L, 1, "mimas.Label"));
+    Label *self__ = *((Label**)dubL_checkudata(L, 1, "mimas.Label"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Label in cssClass");
     QString  retval__ = self__->cssClass();
     lua_pushclass<QString>(L, retval__, "mimas.QString");
@@ -132,12 +134,13 @@ static int Label_cssClass(lua_State *L) {
 }
 
 
+
 /** int mimas::Label::height()
  * include/mimas/Label.h:107
  */
 static int Label_height(lua_State *L) {
   try {
-    Label *self__ = *((Label**)luaL_checkudata(L, 1, "mimas.Label"));
+    Label *self__ = *((Label**)dubL_checkudata(L, 1, "mimas.Label"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Label in height");
     int  retval__ = self__->height();
     lua_pushnumber(L, retval__);
@@ -150,12 +153,13 @@ static int Label_height(lua_State *L) {
 }
 
 
+
 /** float mimas::Label::hue()
  * include/mimas/Label.h:124
  */
 static int Label_hue(lua_State *L) {
   try {
-    Label *self__ = *((Label**)luaL_checkudata(L, 1, "mimas.Label"));
+    Label *self__ = *((Label**)dubL_checkudata(L, 1, "mimas.Label"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Label in hue");
     float  retval__ = self__->hue();
     lua_pushnumber(L, retval__);
@@ -168,15 +172,16 @@ static int Label_hue(lua_State *L) {
 }
 
 
+
 /** void mimas::Label::move(int x, int y)
  * include/mimas/Label.h:87
  */
 static int Label_move(lua_State *L) {
   try {
-    Label *self__ = *((Label**)luaL_checkudata(L, 1, "mimas.Label"));
+    Label *self__ = *((Label**)dubL_checkudata(L, 1, "mimas.Label"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Label in move");
-    int x = luaL_checkint(L, 2);
-    int y = luaL_checkint(L, 3);
+    int x = dubL_checkint(L, 2);
+    int y = dubL_checkint(L, 3);
     self__->move(x, y);
     return 0;
   } catch (std::exception &e) {
@@ -187,12 +192,13 @@ static int Label_move(lua_State *L) {
 }
 
 
+
 /** LuaStackSize mimas::Label::name(lua_State *L)
  * include/mimas/Label.h:76
  */
 static int Label_name(lua_State *L) {
   try {
-    Label *self__ = *((Label**)luaL_checkudata(L, 1, "mimas.Label"));
+    Label *self__ = *((Label**)dubL_checkudata(L, 1, "mimas.Label"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Label in name");
     
     LuaStackSize  retval__ = self__->name(L);
@@ -205,12 +211,13 @@ static int Label_name(lua_State *L) {
 }
 
 
+
 /** QObject* mimas::Label::object()
  * include/mimas/Label.h:70
  */
 static int Label_object(lua_State *L) {
   try {
-    Label *self__ = *((Label**)luaL_checkudata(L, 1, "mimas.Label"));
+    Label *self__ = *((Label**)dubL_checkudata(L, 1, "mimas.Label"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Label in object");
     QObject * retval__ = self__->object();
     lua_pushclass<QObject>(L, retval__, "mimas.QObject");
@@ -223,15 +230,16 @@ static int Label_object(lua_State *L) {
 }
 
 
+
 /** void mimas::Label::resize(int w, int h)
  * include/mimas/Label.h:91
  */
 static int Label_resize(lua_State *L) {
   try {
-    Label *self__ = *((Label**)luaL_checkudata(L, 1, "mimas.Label"));
+    Label *self__ = *((Label**)dubL_checkudata(L, 1, "mimas.Label"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Label in resize");
-    int w = luaL_checkint(L, 2);
-    int h = luaL_checkint(L, 3);
+    int w = dubL_checkint(L, 2);
+    int h = dubL_checkint(L, 3);
     self__->resize(w, h);
     return 0;
   } catch (std::exception &e) {
@@ -242,14 +250,15 @@ static int Label_resize(lua_State *L) {
 }
 
 
+
 /** void mimas::Label::setHue(float hue)
  * include/mimas/Label.h:119
  */
 static int Label_setHue(lua_State *L) {
   try {
-    Label *self__ = *((Label**)luaL_checkudata(L, 1, "mimas.Label"));
+    Label *self__ = *((Label**)dubL_checkudata(L, 1, "mimas.Label"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Label in setHue");
-    float hue = luaL_checknumber(L, 2);
+    float hue = dubL_checknumber(L, 2);
     self__->setHue(hue);
     return 0;
   } catch (std::exception &e) {
@@ -260,14 +269,15 @@ static int Label_setHue(lua_State *L) {
 }
 
 
+
 /** void mimas::Label::setName(const char *name)
  * include/mimas/Label.h:83
  */
 static int Label_setName(lua_State *L) {
   try {
-    Label *self__ = *((Label**)luaL_checkudata(L, 1, "mimas.Label"));
+    Label *self__ = *((Label**)dubL_checkudata(L, 1, "mimas.Label"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Label in setName");
-    const char *name = luaL_checkstring(L, 2);
+    const char *name = dubL_checkstring(L, 2);
     self__->setName(name);
     return 0;
   } catch (std::exception &e) {
@@ -278,14 +288,15 @@ static int Label_setName(lua_State *L) {
 }
 
 
+
 /** void mimas::Label::setStyle(const char *text)
  * include/mimas/Label.h:111
  */
 static int Label_setStyle(lua_State *L) {
   try {
-    Label *self__ = *((Label**)luaL_checkudata(L, 1, "mimas.Label"));
+    Label *self__ = *((Label**)dubL_checkudata(L, 1, "mimas.Label"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Label in setStyle");
-    const char *text = luaL_checkstring(L, 2);
+    const char *text = dubL_checkstring(L, 2);
     self__->setStyle(text);
     return 0;
   } catch (std::exception &e) {
@@ -296,14 +307,15 @@ static int Label_setStyle(lua_State *L) {
 }
 
 
+
 /** void mimas::Label::setStyleSheet(const char *text)
  * include/mimas/Label.h:115
  */
 static int Label_setStyleSheet(lua_State *L) {
   try {
-    Label *self__ = *((Label**)luaL_checkudata(L, 1, "mimas.Label"));
+    Label *self__ = *((Label**)dubL_checkudata(L, 1, "mimas.Label"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Label in setStyleSheet");
-    const char *text = luaL_checkstring(L, 2);
+    const char *text = dubL_checkstring(L, 2);
     self__->setStyleSheet(text);
     return 0;
   } catch (std::exception &e) {
@@ -314,14 +326,15 @@ static int Label_setStyleSheet(lua_State *L) {
 }
 
 
+
 /** void mimas::Label::setText(const char *text)
  * include/mimas/Label.h:130
  */
 static int Label_setText(lua_State *L) {
   try {
-    Label *self__ = *((Label**)luaL_checkudata(L, 1, "mimas.Label"));
+    Label *self__ = *((Label**)dubL_checkudata(L, 1, "mimas.Label"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Label in setText");
-    const char *text = luaL_checkstring(L, 2);
+    const char *text = dubL_checkstring(L, 2);
     self__->setText(text);
     return 0;
   } catch (std::exception &e) {
@@ -332,12 +345,13 @@ static int Label_setText(lua_State *L) {
 }
 
 
+
 /** QWidget* mimas::Label::widget()
  * include/mimas/Label.h:66
  */
 static int Label_widget(lua_State *L) {
   try {
-    Label *self__ = *((Label**)luaL_checkudata(L, 1, "mimas.Label"));
+    Label *self__ = *((Label**)dubL_checkudata(L, 1, "mimas.Label"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Label in widget");
     QWidget * retval__ = self__->widget();
     lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
@@ -350,12 +364,13 @@ static int Label_widget(lua_State *L) {
 }
 
 
+
 /** int mimas::Label::width()
  * include/mimas/Label.h:103
  */
 static int Label_width(lua_State *L) {
   try {
-    Label *self__ = *((Label**)luaL_checkudata(L, 1, "mimas.Label"));
+    Label *self__ = *((Label**)dubL_checkudata(L, 1, "mimas.Label"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Label in width");
     int  retval__ = self__->width();
     lua_pushnumber(L, retval__);
@@ -368,12 +383,13 @@ static int Label_width(lua_State *L) {
 }
 
 
+
 /** int mimas::Label::x()
  * include/mimas/Label.h:95
  */
 static int Label_x(lua_State *L) {
   try {
-    Label *self__ = *((Label**)luaL_checkudata(L, 1, "mimas.Label"));
+    Label *self__ = *((Label**)dubL_checkudata(L, 1, "mimas.Label"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Label in x");
     int  retval__ = self__->x();
     lua_pushnumber(L, retval__);
@@ -386,12 +402,13 @@ static int Label_x(lua_State *L) {
 }
 
 
+
 /** int mimas::Label::y()
  * include/mimas/Label.h:99
  */
 static int Label_y(lua_State *L) {
   try {
-    Label *self__ = *((Label**)luaL_checkudata(L, 1, "mimas.Label"));
+    Label *self__ = *((Label**)dubL_checkudata(L, 1, "mimas.Label"));
     if (!self__) return luaL_error(L, "Using deleted mimas.Label in y");
     int  retval__ = self__->y();
     lua_pushnumber(L, retval__);
@@ -402,6 +419,7 @@ static int Label_y(lua_State *L) {
     return luaL_error(L, "mimas.Label.y: Unknown exception");
   }
 }
+
 
 
 

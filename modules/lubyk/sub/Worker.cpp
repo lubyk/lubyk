@@ -25,6 +25,7 @@ static int Worker_Worker(lua_State *L) {
 }
 
 
+
 /* ============================ Destructor       ====================== */
 
 static int Worker_destructor(lua_State *L) {
@@ -58,7 +59,7 @@ static int Worker__tostring(lua_State *L) {
  */
 static int Worker_execPath(lua_State *L) {
   try {
-    Worker *self__ = *((Worker**)luaL_checkudata(L, 1, "lubyk.Worker"));
+    Worker *self__ = *((Worker**)dubL_checkudata(L, 1, "lubyk.Worker"));
     
     LuaStackSize  retval__ = self__->execPath(L);
     return retval__;
@@ -70,13 +71,14 @@ static int Worker_execPath(lua_State *L) {
 }
 
 
+
 /** void lubyk::Worker::exit(int status)
  * include/lubyk/worker.h:107
  */
 static int Worker_exit(lua_State *L) {
   try {
-    Worker *self__ = *((Worker**)luaL_checkudata(L, 1, "lubyk.Worker"));
-    int status = luaL_checkint(L, 2);
+    Worker *self__ = *((Worker**)dubL_checkudata(L, 1, "lubyk.Worker"));
+    int status = dubL_checkint(L, 2);
     self__->exit(status);
     return 0;
   } catch (std::exception &e) {
@@ -87,12 +89,13 @@ static int Worker_exit(lua_State *L) {
 }
 
 
+
 /** double lubyk::Worker::now()
  * include/lubyk/worker.h:125
  */
 static int Worker_now(lua_State *L) {
   try {
-    Worker *self__ = *((Worker**)luaL_checkudata(L, 1, "lubyk.Worker"));
+    Worker *self__ = *((Worker**)dubL_checkudata(L, 1, "lubyk.Worker"));
     double  retval__ = self__->now();
     lua_pushnumber(L, retval__);
     return 1;
@@ -104,12 +107,13 @@ static int Worker_now(lua_State *L) {
 }
 
 
+
 /** void lubyk::Worker::run()
  * include/lubyk/worker.h:123
  */
 static int Worker_run(lua_State *L) {
   try {
-    Worker *self__ = *((Worker**)luaL_checkudata(L, 1, "lubyk.Worker"));
+    Worker *self__ = *((Worker**)dubL_checkudata(L, 1, "lubyk.Worker"));
     self__->run();
     return 0;
   } catch (std::exception &e) {
@@ -120,13 +124,14 @@ static int Worker_run(lua_State *L) {
 }
 
 
+
 /** void lubyk::Worker::sleep(double duration)
  * include/lubyk/worker.h:85
  */
 static int Worker_sleep(lua_State *L) {
   try {
-    Worker *self__ = *((Worker**)luaL_checkudata(L, 1, "lubyk.Worker"));
-    double duration = luaL_checknumber(L, 2);
+    Worker *self__ = *((Worker**)dubL_checkudata(L, 1, "lubyk.Worker"));
+    double duration = dubL_checknumber(L, 2);
     self__->sleep(duration);
     return 0;
   } catch (std::exception &e) {
@@ -137,13 +142,14 @@ static int Worker_sleep(lua_State *L) {
 }
 
 
+
 /** LuaStackSize lubyk::Worker::spawn(const char *script, lua_State *L)
  * include/lubyk/worker.h:99
  */
 static int Worker_spawn(lua_State *L) {
   try {
-    Worker *self__ = *((Worker**)luaL_checkudata(L, 1, "lubyk.Worker"));
-    const char *script = luaL_checkstring(L, 2);
+    Worker *self__ = *((Worker**)dubL_checkudata(L, 1, "lubyk.Worker"));
+    const char *script = dubL_checkstring(L, 2);
     
     LuaStackSize  retval__ = self__->spawn(script, L);
     return retval__;
@@ -155,12 +161,13 @@ static int Worker_spawn(lua_State *L) {
 }
 
 
+
 /** void lubyk::Worker::test_lock()
  * include/lubyk/worker.h:114
  */
 static int Worker_test_lock(lua_State *L) {
   try {
-    Worker *self__ = *((Worker**)luaL_checkudata(L, 1, "lubyk.Worker"));
+    Worker *self__ = *((Worker**)dubL_checkudata(L, 1, "lubyk.Worker"));
     self__->test_lock();
     return 0;
   } catch (std::exception &e) {
@@ -171,12 +178,13 @@ static int Worker_test_lock(lua_State *L) {
 }
 
 
+
 /** void lubyk::Worker::test_unlock()
  * include/lubyk/worker.h:119
  */
 static int Worker_test_unlock(lua_State *L) {
   try {
-    Worker *self__ = *((Worker**)luaL_checkudata(L, 1, "lubyk.Worker"));
+    Worker *self__ = *((Worker**)dubL_checkudata(L, 1, "lubyk.Worker"));
     self__->test_unlock();
     return 0;
   } catch (std::exception &e) {
@@ -187,13 +195,14 @@ static int Worker_test_unlock(lua_State *L) {
 }
 
 
+
 /** void lubyk::Worker::wait(double duration)
  * include/lubyk/worker.h:92
  */
 static int Worker_wait(lua_State *L) {
   try {
-    Worker *self__ = *((Worker**)luaL_checkudata(L, 1, "lubyk.Worker"));
-    double duration = luaL_checknumber(L, 2);
+    Worker *self__ = *((Worker**)dubL_checkudata(L, 1, "lubyk.Worker"));
+    double duration = dubL_checknumber(L, 2);
     self__->wait(duration);
     return 0;
   } catch (std::exception &e) {
@@ -204,13 +213,14 @@ static int Worker_wait(lua_State *L) {
 }
 
 
+
 /** int lubyk::Worker::waitpid(int pid)
  * include/lubyk/worker.h:103
  */
 static int Worker_waitpid(lua_State *L) {
   try {
-    Worker *self__ = *((Worker**)luaL_checkudata(L, 1, "lubyk.Worker"));
-    int pid = luaL_checkint(L, 2);
+    Worker *self__ = *((Worker**)dubL_checkudata(L, 1, "lubyk.Worker"));
+    int pid = dubL_checkint(L, 2);
     int  retval__ = self__->waitpid(pid);
     lua_pushnumber(L, retval__);
     return 1;
@@ -220,6 +230,7 @@ static int Worker_waitpid(lua_State *L) {
     return luaL_error(L, "lubyk.Worker.waitpid: Unknown exception");
   }
 }
+
 
 
 

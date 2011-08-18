@@ -13,7 +13,7 @@ using namespace mimas;
  */
 static int TableView_TableView(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)luaL_checkudata(L, 1, "lubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
     TableView * retval__ = new TableView(worker);
     lua_pushclass2<TableView>(L, retval__, "mimas.TableView");
     return 1;
@@ -23,6 +23,7 @@ static int TableView_TableView(lua_State *L) {
     return luaL_error(L, "mimas.TableView.TableView: Unknown exception");
   }
 }
+
 
 
 /* ============================ Destructor       ====================== */
@@ -72,7 +73,7 @@ static int TableView__tostring(lua_State *L) {
  */
 static int TableView___newindex(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in __newindex");
     
     self__->__newindex(L);
@@ -85,12 +86,13 @@ static int TableView___newindex(lua_State *L) {
 }
 
 
+
 /** bool mimas::TableView::close()
  * include/mimas/TableView.h:245
  */
 static int TableView_close(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in close");
     bool  retval__ = self__->close();
     lua_pushboolean(L, retval__);
@@ -103,12 +105,13 @@ static int TableView_close(lua_State *L) {
 }
 
 
+
 /** QString mimas::TableView::cssClass() const 
  * include/mimas/TableView.h:125
  */
 static int TableView_cssClass(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in cssClass");
     QString  retval__ = self__->cssClass();
     lua_pushclass<QString>(L, retval__, "mimas.QString");
@@ -121,12 +124,13 @@ static int TableView_cssClass(lua_State *L) {
 }
 
 
+
 /** void mimas::TableView::dataChanged()
  * include/mimas/TableView.h:197
  */
 static int TableView_dataChanged(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in dataChanged");
     self__->dataChanged();
     return 0;
@@ -138,15 +142,16 @@ static int TableView_dataChanged(lua_State *L) {
 }
 
 
+
 /** void mimas::TableView::globalMove(float x, float y)
  * include/mimas/TableView.h:273
  */
 static int TableView_globalMove(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in globalMove");
-    float x = luaL_checknumber(L, 2);
-    float y = luaL_checknumber(L, 3);
+    float x = dubL_checknumber(L, 2);
+    float y = dubL_checknumber(L, 3);
     self__->globalMove(x, y);
     return 0;
   } catch (std::exception &e) {
@@ -157,12 +162,13 @@ static int TableView_globalMove(lua_State *L) {
 }
 
 
+
 /** LuaStackSize mimas::TableView::globalPosition(lua_State *L)
  * include/mimas/TableView.h:264
  */
 static int TableView_globalPosition(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in globalPosition");
     
     LuaStackSize  retval__ = self__->globalPosition(L);
@@ -175,12 +181,13 @@ static int TableView_globalPosition(lua_State *L) {
 }
 
 
+
 /** int mimas::TableView::height()
  * include/mimas/TableView.h:170
  */
 static int TableView_height(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in height");
     int  retval__ = self__->height();
     lua_pushnumber(L, retval__);
@@ -193,12 +200,13 @@ static int TableView_height(lua_State *L) {
 }
 
 
+
 /** void mimas::TableView::hide()
  * include/mimas/TableView.h:257
  */
 static int TableView_hide(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in hide");
     self__->hide();
     return 0;
@@ -210,12 +218,13 @@ static int TableView_hide(lua_State *L) {
 }
 
 
+
 /** float mimas::TableView::hue()
  * include/mimas/TableView.h:187
  */
 static int TableView_hue(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in hue");
     float  retval__ = self__->hue();
     lua_pushnumber(L, retval__);
@@ -228,12 +237,13 @@ static int TableView_hue(lua_State *L) {
 }
 
 
+
 /** bool mimas::TableView::isVisible() const 
  * include/mimas/TableView.h:249
  */
 static int TableView_isVisible(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in isVisible");
     bool  retval__ = self__->isVisible();
     lua_pushboolean(L, retval__);
@@ -246,12 +256,13 @@ static int TableView_isVisible(lua_State *L) {
 }
 
 
+
 /** void mimas::TableView::layoutChanged()
  * include/mimas/TableView.h:203
  */
 static int TableView_layoutChanged(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in layoutChanged");
     self__->layoutChanged();
     return 0;
@@ -263,12 +274,13 @@ static int TableView_layoutChanged(lua_State *L) {
 }
 
 
+
 /** void mimas::TableView::lower()
  * include/mimas/TableView.h:279
  */
 static int TableView_lower(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in lower");
     self__->lower();
     return 0;
@@ -280,15 +292,16 @@ static int TableView_lower(lua_State *L) {
 }
 
 
+
 /** void mimas::TableView::move(int x, int y)
  * include/mimas/TableView.h:150
  */
 static int TableView_move(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in move");
-    int x = luaL_checkint(L, 2);
-    int y = luaL_checkint(L, 3);
+    int x = dubL_checkint(L, 2);
+    int y = dubL_checkint(L, 3);
     self__->move(x, y);
     return 0;
   } catch (std::exception &e) {
@@ -299,12 +312,13 @@ static int TableView_move(lua_State *L) {
 }
 
 
+
 /** LuaStackSize mimas::TableView::name(lua_State *L)
  * include/mimas/TableView.h:139
  */
 static int TableView_name(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in name");
     
     LuaStackSize  retval__ = self__->name(L);
@@ -317,12 +331,13 @@ static int TableView_name(lua_State *L) {
 }
 
 
+
 /** QObject* mimas::TableView::object()
  * include/mimas/TableView.h:133
  */
 static int TableView_object(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in object");
     QObject * retval__ = self__->object();
     lua_pushclass<QObject>(L, retval__, "mimas.QObject");
@@ -335,12 +350,13 @@ static int TableView_object(lua_State *L) {
 }
 
 
+
 /** void mimas::TableView::raise()
  * include/mimas/TableView.h:285
  */
 static int TableView_raise(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in raise");
     self__->raise();
     return 0;
@@ -352,15 +368,16 @@ static int TableView_raise(lua_State *L) {
 }
 
 
+
 /** void mimas::TableView::resize(int w, int h)
  * include/mimas/TableView.h:154
  */
 static int TableView_resize(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in resize");
-    int w = luaL_checkint(L, 2);
-    int h = luaL_checkint(L, 3);
+    int w = dubL_checkint(L, 2);
+    int h = dubL_checkint(L, 3);
     self__->resize(w, h);
     return 0;
   } catch (std::exception &e) {
@@ -371,14 +388,15 @@ static int TableView_resize(lua_State *L) {
 }
 
 
+
 /** virtual void mimas::TableView::selectColumn(int row)
  * include/mimas/TableView.h:119
  */
 static int TableView_selectColumn(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in selectColumn");
-    int row = luaL_checkint(L, 2);
+    int row = dubL_checkint(L, 2);
     self__->selectColumn(row);
     return 0;
   } catch (std::exception &e) {
@@ -389,14 +407,15 @@ static int TableView_selectColumn(lua_State *L) {
 }
 
 
+
 /** virtual void mimas::TableView::selectRow(int row)
  * include/mimas/TableView.h:115
  */
 static int TableView_selectRow(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in selectRow");
-    int row = luaL_checkint(L, 2);
+    int row = dubL_checkint(L, 2);
     self__->selectRow(row);
     return 0;
   } catch (std::exception &e) {
@@ -407,12 +426,13 @@ static int TableView_selectRow(lua_State *L) {
 }
 
 
+
 /** void mimas::TableView::setAlternatingRowColors(bool should_enable)
  * include/mimas/TableView.h:111
  */
 static int TableView_setAlternatingRowColors(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in setAlternatingRowColors");
     bool should_enable = lua_toboolean(L, 2);
     self__->setAlternatingRowColors(should_enable);
@@ -425,14 +445,15 @@ static int TableView_setAlternatingRowColors(lua_State *L) {
 }
 
 
+
 /** void mimas::TableView::setGridStyle(int style)
  * include/mimas/TableView.h:105
  */
 static int TableView_setGridStyle(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in setGridStyle");
-    int style = luaL_checkint(L, 2);
+    int style = dubL_checkint(L, 2);
     self__->setGridStyle(style);
     return 0;
   } catch (std::exception &e) {
@@ -443,14 +464,15 @@ static int TableView_setGridStyle(lua_State *L) {
 }
 
 
+
 /** void mimas::TableView::setHue(float hue)
  * include/mimas/TableView.h:182
  */
 static int TableView_setHue(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in setHue");
-    float hue = luaL_checknumber(L, 2);
+    float hue = dubL_checknumber(L, 2);
     self__->setHue(hue);
     return 0;
   } catch (std::exception &e) {
@@ -461,15 +483,16 @@ static int TableView_setHue(lua_State *L) {
 }
 
 
+
 /** void mimas::TableView::setMinimumSize(float w, float h)
  * include/mimas/TableView.h:231
  */
 static int TableView_setMinimumSize(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in setMinimumSize");
-    float w = luaL_checknumber(L, 2);
-    float h = luaL_checknumber(L, 3);
+    float w = dubL_checknumber(L, 2);
+    float h = dubL_checknumber(L, 3);
     self__->setMinimumSize(w, h);
     return 0;
   } catch (std::exception &e) {
@@ -480,12 +503,13 @@ static int TableView_setMinimumSize(lua_State *L) {
 }
 
 
+
 /** void mimas::TableView::setMouseTracking(bool enable)
  * include/mimas/TableView.h:237
  */
 static int TableView_setMouseTracking(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in setMouseTracking");
     bool enable = lua_toboolean(L, 2);
     self__->setMouseTracking(enable);
@@ -498,14 +522,15 @@ static int TableView_setMouseTracking(lua_State *L) {
 }
 
 
+
 /** void mimas::TableView::setName(const char *name)
  * include/mimas/TableView.h:146
  */
 static int TableView_setName(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in setName");
-    const char *name = luaL_checkstring(L, 2);
+    const char *name = dubL_checkstring(L, 2);
     self__->setName(name);
     return 0;
   } catch (std::exception &e) {
@@ -516,15 +541,16 @@ static int TableView_setName(lua_State *L) {
 }
 
 
+
 /** void mimas::TableView::setSizeHint(float w, float h)
  * include/mimas/TableView.h:218
  */
 static int TableView_setSizeHint(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in setSizeHint");
-    float w = luaL_checknumber(L, 2);
-    float h = luaL_checknumber(L, 3);
+    float w = dubL_checknumber(L, 2);
+    float h = dubL_checknumber(L, 3);
     self__->setSizeHint(w, h);
     return 0;
   } catch (std::exception &e) {
@@ -535,15 +561,16 @@ static int TableView_setSizeHint(lua_State *L) {
 }
 
 
+
 /** void mimas::TableView::setSizePolicy(int horizontal, int vertical)
  * include/mimas/TableView.h:225
  */
 static int TableView_setSizePolicy(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in setSizePolicy");
-    int horizontal = luaL_checkint(L, 2);
-    int vertical = luaL_checkint(L, 3);
+    int horizontal = dubL_checkint(L, 2);
+    int vertical = dubL_checkint(L, 3);
     self__->setSizePolicy(horizontal, vertical);
     return 0;
   } catch (std::exception &e) {
@@ -554,14 +581,15 @@ static int TableView_setSizePolicy(lua_State *L) {
 }
 
 
+
 /** void mimas::TableView::setStyle(const char *text)
  * include/mimas/TableView.h:174
  */
 static int TableView_setStyle(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in setStyle");
-    const char *text = luaL_checkstring(L, 2);
+    const char *text = dubL_checkstring(L, 2);
     self__->setStyle(text);
     return 0;
   } catch (std::exception &e) {
@@ -572,14 +600,15 @@ static int TableView_setStyle(lua_State *L) {
 }
 
 
+
 /** void mimas::TableView::setStyleSheet(const char *text)
  * include/mimas/TableView.h:178
  */
 static int TableView_setStyleSheet(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in setStyleSheet");
-    const char *text = luaL_checkstring(L, 2);
+    const char *text = dubL_checkstring(L, 2);
     self__->setStyleSheet(text);
     return 0;
   } catch (std::exception &e) {
@@ -590,14 +619,15 @@ static int TableView_setStyleSheet(lua_State *L) {
 }
 
 
+
 /** void mimas::TableView::setVisibleHeaders(int orientation, bool visible)
  * include/mimas/TableView.h:88
  */
 static int TableView_setVisibleHeaders(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in setVisibleHeaders");
-    int orientation = luaL_checkint(L, 2);
+    int orientation = dubL_checkint(L, 2);
     bool visible = lua_toboolean(L, 3);
     self__->setVisibleHeaders(orientation, visible);
     return 0;
@@ -609,12 +639,13 @@ static int TableView_setVisibleHeaders(lua_State *L) {
 }
 
 
+
 /** void mimas::TableView::show()
  * include/mimas/TableView.h:253
  */
 static int TableView_show(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in show");
     self__->show();
     return 0;
@@ -626,14 +657,15 @@ static int TableView_show(lua_State *L) {
 }
 
 
+
 /** LuaStackSize mimas::TableView::textSize(const char *text, lua_State *L)
  * include/mimas/TableView.h:209
  */
 static int TableView_textSize(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in textSize");
-    const char *text = luaL_checkstring(L, 2);
+    const char *text = dubL_checkstring(L, 2);
     
     LuaStackSize  retval__ = self__->textSize(text, L);
     return retval__;
@@ -645,12 +677,13 @@ static int TableView_textSize(lua_State *L) {
 }
 
 
+
 /** void mimas::TableView::update()
  * include/mimas/TableView.h:191
  */
 static int TableView_update(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in update");
     self__->update();
     return 0;
@@ -662,12 +695,13 @@ static int TableView_update(lua_State *L) {
 }
 
 
+
 /** QWidget* mimas::TableView::widget()
  * include/mimas/TableView.h:129
  */
 static int TableView_widget(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in widget");
     QWidget * retval__ = self__->widget();
     lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
@@ -680,12 +714,13 @@ static int TableView_widget(lua_State *L) {
 }
 
 
+
 /** int mimas::TableView::width()
  * include/mimas/TableView.h:166
  */
 static int TableView_width(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in width");
     int  retval__ = self__->width();
     lua_pushnumber(L, retval__);
@@ -698,12 +733,13 @@ static int TableView_width(lua_State *L) {
 }
 
 
+
 /** int mimas::TableView::x()
  * include/mimas/TableView.h:158
  */
 static int TableView_x(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in x");
     int  retval__ = self__->x();
     lua_pushnumber(L, retval__);
@@ -716,12 +752,13 @@ static int TableView_x(lua_State *L) {
 }
 
 
+
 /** int mimas::TableView::y()
  * include/mimas/TableView.h:162
  */
 static int TableView_y(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)luaL_checkudata(L, 1, "mimas.TableView"));
+    TableView *self__ = *((TableView**)dubL_checkudata(L, 1, "mimas.TableView"));
     if (!self__) return luaL_error(L, "Using deleted mimas.TableView in y");
     int  retval__ = self__->y();
     lua_pushnumber(L, retval__);
@@ -732,6 +769,7 @@ static int TableView_y(lua_State *L) {
     return luaL_error(L, "mimas.TableView.y: Unknown exception");
   }
 }
+
 
 
 

@@ -64,7 +64,7 @@ modules = {
   },
   'wii'   => %w{Browser Remote},
 }.each do |mod_name, opts|
-  next unless modules_to_bind.nil? || modules_to_bind.include?(mod_name)
+  next unless modules_to_bind.empty? || modules_to_bind.include?(mod_name)
   puts "Binding #{mod_name}"
   if !opts.kind_of?(Hash)
     opts = {'class' => opts}
