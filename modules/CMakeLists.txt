@@ -36,9 +36,6 @@ add_custom_target(dub
    COMMAND ruby ${LUBYK_SOURCE_DIR}/modules/bind.rb
    DEPENDS ${DOXYGEN_OUTPUT})
 
-add_dependencies(modules dub)
-
-
 # ==============================================================================
 #
 #  Macro to create a single module.
