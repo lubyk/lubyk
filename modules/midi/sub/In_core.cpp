@@ -18,10 +18,11 @@ static int In_In(lua_State *L) {
     lua_pushclass<In>(L, retval__, "midi.In");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "midi.In.In: %s", e.what());
+    lua_pushfstring(L, "midi.In.In: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "midi.In.In: Unknown exception");
+    lua_pushfstring(L, "midi.In.In: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -64,10 +65,11 @@ static int In___newindex(lua_State *L) {
     self__->__newindex(L);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "midi.In.__newindex: %s", e.what());
+    lua_pushfstring(L, "midi.In.__newindex: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "midi.In.__newindex: Unknown exception");
+    lua_pushfstring(L, "midi.In.__newindex: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -84,10 +86,11 @@ static int In_open_port1(lua_State *L) {
     self__->open_port(port, L);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "midi.In.open_port: %s", e.what());
+    lua_pushfstring(L, "midi.In.open_port: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "midi.In.open_port: Unknown exception");
+    lua_pushfstring(L, "midi.In.open_port: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -103,10 +106,11 @@ static int In_open_port2(lua_State *L) {
     self__->open_port(port_name, L);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "midi.In.open_port: %s", e.what());
+    lua_pushfstring(L, "midi.In.open_port: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "midi.In.open_port: Unknown exception");
+    lua_pushfstring(L, "midi.In.open_port: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -136,10 +140,11 @@ static int In_port(lua_State *L) {
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "midi.In.port: %s", e.what());
+    lua_pushfstring(L, "midi.In.port: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "midi.In.port: Unknown exception");
+    lua_pushfstring(L, "midi.In.port: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -154,10 +159,11 @@ static int In_port_name(lua_State *L) {
     lua_pushstring(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "midi.In.port_name: %s", e.what());
+    lua_pushfstring(L, "midi.In.port_name: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "midi.In.port_name: Unknown exception");
+    lua_pushfstring(L, "midi.In.port_name: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -173,10 +179,11 @@ static int In_virtual_port(lua_State *L) {
     self__->virtual_port(port_name, L);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "midi.In.virtual_port: %s", e.what());
+    lua_pushfstring(L, "midi.In.virtual_port: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "midi.In.virtual_port: Unknown exception");
+    lua_pushfstring(L, "midi.In.virtual_port: Unknown exception");
   }
+  return lua_error(L);
 }
 
 

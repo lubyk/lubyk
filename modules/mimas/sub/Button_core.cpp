@@ -30,10 +30,11 @@ static int Button_Button(lua_State *L) {
     lua_pushclass2<Button>(L, retval__, "mimas.Button");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Button.Button: %s", e.what());
+    lua_pushfstring(L, "mimas.Button.Button: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Button.Button: Unknown exception");
+    lua_pushfstring(L, "mimas.Button.Button: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -86,15 +87,16 @@ static int Button__tostring(lua_State *L) {
 static int Button___newindex(lua_State *L) {
   try {
     Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Button in __newindex");
+    if (!self__) throw dub::Exception("Using deleted mimas.Button in __newindex");
     
     self__->__newindex(L);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Button.__newindex: %s", e.what());
+    lua_pushfstring(L, "mimas.Button.__newindex: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Button.__newindex: Unknown exception");
+    lua_pushfstring(L, "mimas.Button.__newindex: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -105,15 +107,16 @@ static int Button___newindex(lua_State *L) {
 static int Button_cssClass(lua_State *L) {
   try {
     Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Button in cssClass");
+    if (!self__) throw dub::Exception("Using deleted mimas.Button in cssClass");
     QString  retval__ = self__->cssClass();
     lua_pushclass<QString>(L, retval__, "mimas.QString");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Button.cssClass: %s", e.what());
+    lua_pushfstring(L, "mimas.Button.cssClass: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Button.cssClass: Unknown exception");
+    lua_pushfstring(L, "mimas.Button.cssClass: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -124,15 +127,16 @@ static int Button_cssClass(lua_State *L) {
 static int Button_height(lua_State *L) {
   try {
     Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Button in height");
+    if (!self__) throw dub::Exception("Using deleted mimas.Button in height");
     int  retval__ = self__->height();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Button.height: %s", e.what());
+    lua_pushfstring(L, "mimas.Button.height: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Button.height: Unknown exception");
+    lua_pushfstring(L, "mimas.Button.height: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -143,15 +147,16 @@ static int Button_height(lua_State *L) {
 static int Button_hue(lua_State *L) {
   try {
     Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Button in hue");
+    if (!self__) throw dub::Exception("Using deleted mimas.Button in hue");
     float  retval__ = self__->hue();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Button.hue: %s", e.what());
+    lua_pushfstring(L, "mimas.Button.hue: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Button.hue: Unknown exception");
+    lua_pushfstring(L, "mimas.Button.hue: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -162,16 +167,17 @@ static int Button_hue(lua_State *L) {
 static int Button_move(lua_State *L) {
   try {
     Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Button in move");
+    if (!self__) throw dub::Exception("Using deleted mimas.Button in move");
     int x = dubL_checkint(L, 2);
     int y = dubL_checkint(L, 3);
     self__->move(x, y);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Button.move: %s", e.what());
+    lua_pushfstring(L, "mimas.Button.move: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Button.move: Unknown exception");
+    lua_pushfstring(L, "mimas.Button.move: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -182,15 +188,16 @@ static int Button_move(lua_State *L) {
 static int Button_name(lua_State *L) {
   try {
     Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Button in name");
+    if (!self__) throw dub::Exception("Using deleted mimas.Button in name");
     
     LuaStackSize  retval__ = self__->name(L);
     return retval__;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Button.name: %s", e.what());
+    lua_pushfstring(L, "mimas.Button.name: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Button.name: Unknown exception");
+    lua_pushfstring(L, "mimas.Button.name: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -201,15 +208,16 @@ static int Button_name(lua_State *L) {
 static int Button_object(lua_State *L) {
   try {
     Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Button in object");
+    if (!self__) throw dub::Exception("Using deleted mimas.Button in object");
     QObject * retval__ = self__->object();
     lua_pushclass<QObject>(L, retval__, "mimas.QObject");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Button.object: %s", e.what());
+    lua_pushfstring(L, "mimas.Button.object: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Button.object: Unknown exception");
+    lua_pushfstring(L, "mimas.Button.object: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -220,16 +228,17 @@ static int Button_object(lua_State *L) {
 static int Button_resize(lua_State *L) {
   try {
     Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Button in resize");
+    if (!self__) throw dub::Exception("Using deleted mimas.Button in resize");
     int w = dubL_checkint(L, 2);
     int h = dubL_checkint(L, 3);
     self__->resize(w, h);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Button.resize: %s", e.what());
+    lua_pushfstring(L, "mimas.Button.resize: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Button.resize: Unknown exception");
+    lua_pushfstring(L, "mimas.Button.resize: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -240,15 +249,16 @@ static int Button_resize(lua_State *L) {
 static int Button_setHue(lua_State *L) {
   try {
     Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Button in setHue");
+    if (!self__) throw dub::Exception("Using deleted mimas.Button in setHue");
     float hue = dubL_checknumber(L, 2);
     self__->setHue(hue);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Button.setHue: %s", e.what());
+    lua_pushfstring(L, "mimas.Button.setHue: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Button.setHue: Unknown exception");
+    lua_pushfstring(L, "mimas.Button.setHue: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -259,15 +269,16 @@ static int Button_setHue(lua_State *L) {
 static int Button_setName(lua_State *L) {
   try {
     Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Button in setName");
+    if (!self__) throw dub::Exception("Using deleted mimas.Button in setName");
     const char *name = dubL_checkstring(L, 2);
     self__->setName(name);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Button.setName: %s", e.what());
+    lua_pushfstring(L, "mimas.Button.setName: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Button.setName: Unknown exception");
+    lua_pushfstring(L, "mimas.Button.setName: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -278,15 +289,16 @@ static int Button_setName(lua_State *L) {
 static int Button_setStyle(lua_State *L) {
   try {
     Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Button in setStyle");
+    if (!self__) throw dub::Exception("Using deleted mimas.Button in setStyle");
     const char *text = dubL_checkstring(L, 2);
     self__->setStyle(text);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Button.setStyle: %s", e.what());
+    lua_pushfstring(L, "mimas.Button.setStyle: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Button.setStyle: Unknown exception");
+    lua_pushfstring(L, "mimas.Button.setStyle: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -297,15 +309,16 @@ static int Button_setStyle(lua_State *L) {
 static int Button_setStyleSheet(lua_State *L) {
   try {
     Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Button in setStyleSheet");
+    if (!self__) throw dub::Exception("Using deleted mimas.Button in setStyleSheet");
     const char *text = dubL_checkstring(L, 2);
     self__->setStyleSheet(text);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Button.setStyleSheet: %s", e.what());
+    lua_pushfstring(L, "mimas.Button.setStyleSheet: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Button.setStyleSheet: Unknown exception");
+    lua_pushfstring(L, "mimas.Button.setStyleSheet: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -316,15 +329,16 @@ static int Button_setStyleSheet(lua_State *L) {
 static int Button_widget(lua_State *L) {
   try {
     Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Button in widget");
+    if (!self__) throw dub::Exception("Using deleted mimas.Button in widget");
     QWidget * retval__ = self__->widget();
     lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Button.widget: %s", e.what());
+    lua_pushfstring(L, "mimas.Button.widget: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Button.widget: Unknown exception");
+    lua_pushfstring(L, "mimas.Button.widget: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -335,15 +349,16 @@ static int Button_widget(lua_State *L) {
 static int Button_width(lua_State *L) {
   try {
     Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Button in width");
+    if (!self__) throw dub::Exception("Using deleted mimas.Button in width");
     int  retval__ = self__->width();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Button.width: %s", e.what());
+    lua_pushfstring(L, "mimas.Button.width: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Button.width: Unknown exception");
+    lua_pushfstring(L, "mimas.Button.width: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -354,15 +369,16 @@ static int Button_width(lua_State *L) {
 static int Button_x(lua_State *L) {
   try {
     Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Button in x");
+    if (!self__) throw dub::Exception("Using deleted mimas.Button in x");
     int  retval__ = self__->x();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Button.x: %s", e.what());
+    lua_pushfstring(L, "mimas.Button.x: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Button.x: Unknown exception");
+    lua_pushfstring(L, "mimas.Button.x: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -373,15 +389,16 @@ static int Button_x(lua_State *L) {
 static int Button_y(lua_State *L) {
   try {
     Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Button in y");
+    if (!self__) throw dub::Exception("Using deleted mimas.Button in y");
     int  retval__ = self__->y();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Button.y: %s", e.what());
+    lua_pushfstring(L, "mimas.Button.y: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Button.y: Unknown exception");
+    lua_pushfstring(L, "mimas.Button.y: Unknown exception");
   }
+  return lua_error(L);
 }
 
 

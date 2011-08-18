@@ -17,10 +17,11 @@ static int Mutex_Mutex(lua_State *L) {
     lua_pushclass<Mutex>(L, retval__, "lk.Mutex");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Mutex.Mutex: %s", e.what());
+    lua_pushfstring(L, "lk.Mutex.Mutex: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Mutex.Mutex: Unknown exception");
+    lua_pushfstring(L, "lk.Mutex.Mutex: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -62,10 +63,11 @@ static int Mutex_lock(lua_State *L) {
     self__->lock();
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Mutex.lock: %s", e.what());
+    lua_pushfstring(L, "lk.Mutex.lock: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Mutex.lock: Unknown exception");
+    lua_pushfstring(L, "lk.Mutex.lock: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -80,10 +82,11 @@ static int Mutex_lockCount(lua_State *L) {
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Mutex.lockCount: %s", e.what());
+    lua_pushfstring(L, "lk.Mutex.lockCount: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Mutex.lockCount: Unknown exception");
+    lua_pushfstring(L, "lk.Mutex.lockCount: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -97,10 +100,11 @@ static int Mutex_unlock(lua_State *L) {
     self__->unlock();
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Mutex.unlock: %s", e.what());
+    lua_pushfstring(L, "lk.Mutex.unlock: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Mutex.unlock: Unknown exception");
+    lua_pushfstring(L, "lk.Mutex.unlock: Unknown exception");
   }
+  return lua_error(L);
 }
 
 

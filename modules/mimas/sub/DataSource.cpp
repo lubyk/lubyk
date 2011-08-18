@@ -18,10 +18,11 @@ static int DataSource_DataSource(lua_State *L) {
     lua_pushclass2<DataSource>(L, retval__, "mimas.DataSource");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.DataSource.DataSource: %s", e.what());
+    lua_pushfstring(L, "mimas.DataSource.DataSource: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.DataSource.DataSource: Unknown exception");
+    lua_pushfstring(L, "mimas.DataSource.DataSource: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -74,15 +75,16 @@ static int DataSource__tostring(lua_State *L) {
 static int DataSource___newindex(lua_State *L) {
   try {
     DataSource *self__ = *((DataSource**)dubL_checkudata(L, 1, "mimas.DataSource"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.DataSource in __newindex");
+    if (!self__) throw dub::Exception("Using deleted mimas.DataSource in __newindex");
     
     self__->__newindex(L);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.DataSource.__newindex: %s", e.what());
+    lua_pushfstring(L, "mimas.DataSource.__newindex: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.DataSource.__newindex: Unknown exception");
+    lua_pushfstring(L, "mimas.DataSource.__newindex: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -93,14 +95,15 @@ static int DataSource___newindex(lua_State *L) {
 static int DataSource_emitLayoutChanged(lua_State *L) {
   try {
     DataSource *self__ = *((DataSource**)dubL_checkudata(L, 1, "mimas.DataSource"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.DataSource in emitLayoutChanged");
+    if (!self__) throw dub::Exception("Using deleted mimas.DataSource in emitLayoutChanged");
     self__->emitLayoutChanged();
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.DataSource.emitLayoutChanged: %s", e.what());
+    lua_pushfstring(L, "mimas.DataSource.emitLayoutChanged: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.DataSource.emitLayoutChanged: Unknown exception");
+    lua_pushfstring(L, "mimas.DataSource.emitLayoutChanged: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -111,15 +114,16 @@ static int DataSource_emitLayoutChanged(lua_State *L) {
 static int DataSource_getCallback(lua_State *L) {
   try {
     DataSource *self__ = *((DataSource**)dubL_checkudata(L, 1, "mimas.DataSource"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.DataSource in getCallback");
+    if (!self__) throw dub::Exception("Using deleted mimas.DataSource in getCallback");
     
     LuaStackSize  retval__ = self__->getCallback(L);
     return retval__;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.DataSource.getCallback: %s", e.what());
+    lua_pushfstring(L, "mimas.DataSource.getCallback: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.DataSource.getCallback: Unknown exception");
+    lua_pushfstring(L, "mimas.DataSource.getCallback: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -130,14 +134,15 @@ static int DataSource_getCallback(lua_State *L) {
 static int DataSource_reset(lua_State *L) {
   try {
     DataSource *self__ = *((DataSource**)dubL_checkudata(L, 1, "mimas.DataSource"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.DataSource in reset");
+    if (!self__) throw dub::Exception("Using deleted mimas.DataSource in reset");
     self__->reset();
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.DataSource.reset: %s", e.what());
+    lua_pushfstring(L, "mimas.DataSource.reset: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.DataSource.reset: Unknown exception");
+    lua_pushfstring(L, "mimas.DataSource.reset: Unknown exception");
   }
+  return lua_error(L);
 }
 
 

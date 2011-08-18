@@ -18,10 +18,11 @@ static int Painter_Painter(lua_State *L) {
     lua_pushclass2<Painter>(L, retval__, "mimas.Painter");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Painter.Painter: %s", e.what());
+    lua_pushfstring(L, "mimas.Painter.Painter: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Painter.Painter: Unknown exception");
+    lua_pushfstring(L, "mimas.Painter.Painter: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -74,7 +75,7 @@ static int Painter__tostring(lua_State *L) {
 static int Painter_drawChord(lua_State *L) {
   try {
     Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Painter in drawChord");
+    if (!self__) throw dub::Exception("Using deleted mimas.Painter in drawChord");
     int x = dubL_checkint(L, 2);
     int y = dubL_checkint(L, 3);
     int width = dubL_checkint(L, 4);
@@ -84,10 +85,11 @@ static int Painter_drawChord(lua_State *L) {
     self__->drawChord(x, y, width, height, startAngle, spanAngle);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Painter.drawChord: %s", e.what());
+    lua_pushfstring(L, "mimas.Painter.drawChord: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Painter.drawChord: Unknown exception");
+    lua_pushfstring(L, "mimas.Painter.drawChord: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -98,7 +100,7 @@ static int Painter_drawChord(lua_State *L) {
 static int Painter_drawEllipse(lua_State *L) {
   try {
     Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Painter in drawEllipse");
+    if (!self__) throw dub::Exception("Using deleted mimas.Painter in drawEllipse");
     int x = dubL_checkint(L, 2);
     int y = dubL_checkint(L, 3);
     int width = dubL_checkint(L, 4);
@@ -106,10 +108,11 @@ static int Painter_drawEllipse(lua_State *L) {
     self__->drawEllipse(x, y, width, height);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Painter.drawEllipse: %s", e.what());
+    lua_pushfstring(L, "mimas.Painter.drawEllipse: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Painter.drawEllipse: Unknown exception");
+    lua_pushfstring(L, "mimas.Painter.drawEllipse: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -120,7 +123,7 @@ static int Painter_drawEllipse(lua_State *L) {
 static int Painter_drawLine(lua_State *L) {
   try {
     Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Painter in drawLine");
+    if (!self__) throw dub::Exception("Using deleted mimas.Painter in drawLine");
     int x1 = dubL_checkint(L, 2);
     int y1 = dubL_checkint(L, 3);
     int x2 = dubL_checkint(L, 4);
@@ -128,10 +131,11 @@ static int Painter_drawLine(lua_State *L) {
     self__->drawLine(x1, y1, x2, y2);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Painter.drawLine: %s", e.what());
+    lua_pushfstring(L, "mimas.Painter.drawLine: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Painter.drawLine: Unknown exception");
+    lua_pushfstring(L, "mimas.Painter.drawLine: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -142,15 +146,16 @@ static int Painter_drawLine(lua_State *L) {
 static int Painter_drawPath(lua_State *L) {
   try {
     Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Painter in drawPath");
+    if (!self__) throw dub::Exception("Using deleted mimas.Painter in drawPath");
     const Path *path = *((const Path **)dubL_checkudata(L, 2, "mimas.Path"));
     self__->drawPath(*path);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Painter.drawPath: %s", e.what());
+    lua_pushfstring(L, "mimas.Painter.drawPath: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Painter.drawPath: Unknown exception");
+    lua_pushfstring(L, "mimas.Painter.drawPath: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -161,16 +166,17 @@ static int Painter_drawPath(lua_State *L) {
 static int Painter_drawPoint(lua_State *L) {
   try {
     Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Painter in drawPoint");
+    if (!self__) throw dub::Exception("Using deleted mimas.Painter in drawPoint");
     int x = dubL_checkint(L, 2);
     int y = dubL_checkint(L, 3);
     self__->drawPoint(x, y);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Painter.drawPoint: %s", e.what());
+    lua_pushfstring(L, "mimas.Painter.drawPoint: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Painter.drawPoint: Unknown exception");
+    lua_pushfstring(L, "mimas.Painter.drawPoint: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -181,7 +187,7 @@ static int Painter_drawPoint(lua_State *L) {
 static int Painter_drawRect(lua_State *L) {
   try {
     Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Painter in drawRect");
+    if (!self__) throw dub::Exception("Using deleted mimas.Painter in drawRect");
     float x = dubL_checknumber(L, 2);
     float y = dubL_checknumber(L, 3);
     float w = dubL_checknumber(L, 4);
@@ -189,10 +195,11 @@ static int Painter_drawRect(lua_State *L) {
     self__->drawRect(x, y, w, h);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Painter.drawRect: %s", e.what());
+    lua_pushfstring(L, "mimas.Painter.drawRect: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Painter.drawRect: Unknown exception");
+    lua_pushfstring(L, "mimas.Painter.drawRect: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -203,7 +210,7 @@ static int Painter_drawRect(lua_State *L) {
 static int Painter_drawRoundedRect(lua_State *L) {
   try {
     Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Painter in drawRoundedRect");
+    if (!self__) throw dub::Exception("Using deleted mimas.Painter in drawRoundedRect");
     float x = dubL_checknumber(L, 2);
     float y = dubL_checknumber(L, 3);
     float w = dubL_checknumber(L, 4);
@@ -213,10 +220,11 @@ static int Painter_drawRoundedRect(lua_State *L) {
     self__->drawRoundedRect(x, y, w, h, xRadius, L);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Painter.drawRoundedRect: %s", e.what());
+    lua_pushfstring(L, "mimas.Painter.drawRoundedRect: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Painter.drawRoundedRect: Unknown exception");
+    lua_pushfstring(L, "mimas.Painter.drawRoundedRect: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -227,7 +235,7 @@ static int Painter_drawRoundedRect(lua_State *L) {
 static int Painter_drawText(lua_State *L) {
   try {
     Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Painter in drawText");
+    if (!self__) throw dub::Exception("Using deleted mimas.Painter in drawText");
     float x = dubL_checknumber(L, 2);
     float y = dubL_checknumber(L, 3);
     float w = dubL_checknumber(L, 4);
@@ -237,10 +245,11 @@ static int Painter_drawText(lua_State *L) {
     self__->drawText(x, y, w, h, flags, text);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Painter.drawText: %s", e.what());
+    lua_pushfstring(L, "mimas.Painter.drawText: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Painter.drawText: Unknown exception");
+    lua_pushfstring(L, "mimas.Painter.drawText: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -251,7 +260,7 @@ static int Painter_drawText(lua_State *L) {
 static int Painter_fillRect(lua_State *L) {
   try {
     Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Painter in fillRect");
+    if (!self__) throw dub::Exception("Using deleted mimas.Painter in fillRect");
     int x = dubL_checkint(L, 2);
     int y = dubL_checkint(L, 3);
     int width = dubL_checkint(L, 4);
@@ -260,10 +269,11 @@ static int Painter_fillRect(lua_State *L) {
     self__->fillRect(x, y, width, height, *color);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Painter.fillRect: %s", e.what());
+    lua_pushfstring(L, "mimas.Painter.fillRect: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Painter.fillRect: Unknown exception");
+    lua_pushfstring(L, "mimas.Painter.fillRect: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -275,15 +285,16 @@ static int Painter_fillRect(lua_State *L) {
 static int Painter_setBrush1(lua_State *L) {
   try {
     Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Painter in setBrush");
+    if (!self__) throw dub::Exception("Using deleted mimas.Painter in setBrush");
     const Brush *brush = *((const Brush **)dubL_checkudata(L, 2, "mimas.Brush"));
     self__->setBrush(*brush);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Painter.setBrush: %s", e.what());
+    lua_pushfstring(L, "mimas.Painter.setBrush: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Painter.setBrush: Unknown exception");
+    lua_pushfstring(L, "mimas.Painter.setBrush: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -294,15 +305,16 @@ static int Painter_setBrush1(lua_State *L) {
 static int Painter_setBrush2(lua_State *L) {
   try {
     Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Painter in setBrush");
+    if (!self__) throw dub::Exception("Using deleted mimas.Painter in setBrush");
     const Color *color = *((const Color **)dubL_checkudata(L, 2, "mimas.Color"));
     self__->setBrush(*color);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Painter.setBrush: %s", e.what());
+    lua_pushfstring(L, "mimas.Painter.setBrush: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Painter.setBrush: Unknown exception");
+    lua_pushfstring(L, "mimas.Painter.setBrush: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -313,7 +325,7 @@ static int Painter_setBrush2(lua_State *L) {
 static int Painter_setBrush3(lua_State *L) {
   try {
     Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Painter in setBrush");
+    if (!self__) throw dub::Exception("Using deleted mimas.Painter in setBrush");
     int top__ = lua_gettop(L);
     float h = dubL_checknumber(L, 2);
     if (top__ < 3) {
@@ -334,10 +346,11 @@ static int Painter_setBrush3(lua_State *L) {
     }
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Painter.setBrush: %s", e.what());
+    lua_pushfstring(L, "mimas.Painter.setBrush: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Painter.setBrush: Unknown exception");
+    lua_pushfstring(L, "mimas.Painter.setBrush: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -346,15 +359,15 @@ static int Painter_setBrush3(lua_State *L) {
 /** Overloaded function chooser for setBrush(...) */
 static int Painter_setBrush(lua_State *L) {
   int type__ = lua_type(L, 2);
-  if (type__ == LUA_TNUMBER) {
-    return Painter_setBrush3(L);
-  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.Color")) {
+  if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.Color")) {
     return Painter_setBrush2(L);
   } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.Brush")) {
     return Painter_setBrush1(L);
+  } else if (type__ == LUA_TNUMBER) {
+    return Painter_setBrush3(L);
   } else {
     // use any to raise errors
-    return Painter_setBrush1(L);
+    return Painter_setBrush3(L);
   }
 }
 
@@ -366,15 +379,16 @@ static int Painter_setBrush(lua_State *L) {
 static int Painter_setPen1(lua_State *L) {
   try {
     Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Painter in setPen");
+    if (!self__) throw dub::Exception("Using deleted mimas.Painter in setPen");
     const Pen *pen = *((const Pen **)dubL_checkudata(L, 2, "mimas.Pen"));
     self__->setPen(*pen);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Painter.setPen: %s", e.what());
+    lua_pushfstring(L, "mimas.Painter.setPen: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Painter.setPen: Unknown exception");
+    lua_pushfstring(L, "mimas.Painter.setPen: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -385,16 +399,17 @@ static int Painter_setPen1(lua_State *L) {
 static int Painter_setPen2(lua_State *L) {
   try {
     Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Painter in setPen");
+    if (!self__) throw dub::Exception("Using deleted mimas.Painter in setPen");
     float width = dubL_checknumber(L, 2);
     const Color *color = *((const Color **)dubL_checkudata(L, 3, "mimas.Color"));
     self__->setPen(width, *color);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Painter.setPen: %s", e.what());
+    lua_pushfstring(L, "mimas.Painter.setPen: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Painter.setPen: Unknown exception");
+    lua_pushfstring(L, "mimas.Painter.setPen: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -405,7 +420,7 @@ static int Painter_setPen2(lua_State *L) {
 static int Painter_setPen3(lua_State *L) {
   try {
     Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Painter in setPen");
+    if (!self__) throw dub::Exception("Using deleted mimas.Painter in setPen");
     int top__ = lua_gettop(L);
     float width = dubL_checknumber(L, 2);
     float h = dubL_checknumber(L, 3);
@@ -427,10 +442,11 @@ static int Painter_setPen3(lua_State *L) {
     }
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Painter.setPen: %s", e.what());
+    lua_pushfstring(L, "mimas.Painter.setPen: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Painter.setPen: Unknown exception");
+    lua_pushfstring(L, "mimas.Painter.setPen: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -439,21 +455,21 @@ static int Painter_setPen3(lua_State *L) {
 /** Overloaded function chooser for setPen(...) */
 static int Painter_setPen(lua_State *L) {
   int type__ = lua_type(L, 2);
-  if (type__ == LUA_TNUMBER) {
+  if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.Pen")) {
+    return Painter_setPen1(L);
+  } else if (type__ == LUA_TNUMBER) {
     type__ = lua_type(L, 3);
-    if (type__ == LUA_TNUMBER) {
-      return Painter_setPen3(L);
-    } else if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "mimas.Color")) {
+    if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "mimas.Color")) {
       return Painter_setPen2(L);
+    } else if (type__ == LUA_TNUMBER) {
+      return Painter_setPen3(L);
     } else {
       // use any to raise errors
-      return Painter_setPen2(L);
+      return Painter_setPen3(L);
     }
-  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.Pen")) {
-    return Painter_setPen1(L);
   } else {
     // use any to raise errors
-    return Painter_setPen1(L);
+    return Painter_setPen3(L);
   }
 }
 

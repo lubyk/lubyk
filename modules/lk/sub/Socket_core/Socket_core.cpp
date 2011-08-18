@@ -19,10 +19,11 @@ static int Socket_Socket(lua_State *L) {
     lua_pushclass<Socket>(L, retval__, "lk.Socket");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Socket.Socket: %s", e.what());
+    lua_pushfstring(L, "lk.Socket.Socket: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Socket.Socket: Unknown exception");
+    lua_pushfstring(L, "lk.Socket.Socket: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -65,10 +66,11 @@ static int Socket_accept(lua_State *L) {
     LuaStackSize  retval__ = self__->accept(L);
     return retval__;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Socket.accept: %s", e.what());
+    lua_pushfstring(L, "lk.Socket.accept: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Socket.accept: Unknown exception");
+    lua_pushfstring(L, "lk.Socket.accept: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -95,10 +97,11 @@ static int Socket_bind(lua_State *L) {
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Socket.bind: %s", e.what());
+    lua_pushfstring(L, "lk.Socket.bind: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Socket.bind: Unknown exception");
+    lua_pushfstring(L, "lk.Socket.bind: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -112,10 +115,11 @@ static int Socket_close(lua_State *L) {
     self__->close();
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Socket.close: %s", e.what());
+    lua_pushfstring(L, "lk.Socket.close: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Socket.close: Unknown exception");
+    lua_pushfstring(L, "lk.Socket.close: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -131,10 +135,11 @@ static int Socket_connect(lua_State *L) {
     self__->connect(host, port);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Socket.connect: %s", e.what());
+    lua_pushfstring(L, "lk.Socket.connect: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Socket.connect: Unknown exception");
+    lua_pushfstring(L, "lk.Socket.connect: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -148,10 +153,11 @@ static int Socket_kill(lua_State *L) {
     self__->kill();
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Socket.kill: %s", e.what());
+    lua_pushfstring(L, "lk.Socket.kill: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Socket.kill: Unknown exception");
+    lua_pushfstring(L, "lk.Socket.kill: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -165,10 +171,11 @@ static int Socket_listen(lua_State *L) {
     self__->listen();
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Socket.listen: %s", e.what());
+    lua_pushfstring(L, "lk.Socket.listen: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Socket.listen: Unknown exception");
+    lua_pushfstring(L, "lk.Socket.listen: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -183,10 +190,11 @@ static int Socket_localHost(lua_State *L) {
     lua_pushstring(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Socket.localHost: %s", e.what());
+    lua_pushfstring(L, "lk.Socket.localHost: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Socket.localHost: Unknown exception");
+    lua_pushfstring(L, "lk.Socket.localHost: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -201,10 +209,11 @@ static int Socket_localPort(lua_State *L) {
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Socket.localPort: %s", e.what());
+    lua_pushfstring(L, "lk.Socket.localPort: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Socket.localPort: Unknown exception");
+    lua_pushfstring(L, "lk.Socket.localPort: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -219,10 +228,11 @@ static int Socket_loop(lua_State *L) {
     self__->loop(L);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Socket.loop: %s", e.what());
+    lua_pushfstring(L, "lk.Socket.loop: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Socket.loop: Unknown exception");
+    lua_pushfstring(L, "lk.Socket.loop: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -237,10 +247,11 @@ static int Socket_port(lua_State *L) {
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Socket.port: %s", e.what());
+    lua_pushfstring(L, "lk.Socket.port: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Socket.port: Unknown exception");
+    lua_pushfstring(L, "lk.Socket.port: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -254,10 +265,11 @@ static int Socket_quit(lua_State *L) {
     self__->quit();
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Socket.quit: %s", e.what());
+    lua_pushfstring(L, "lk.Socket.quit: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Socket.quit: Unknown exception");
+    lua_pushfstring(L, "lk.Socket.quit: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -272,10 +284,11 @@ static int Socket_recv(lua_State *L) {
     LuaStackSize  retval__ = self__->recv(L);
     return retval__;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Socket.recv: %s", e.what());
+    lua_pushfstring(L, "lk.Socket.recv: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Socket.recv: Unknown exception");
+    lua_pushfstring(L, "lk.Socket.recv: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -290,10 +303,11 @@ static int Socket_recvMsg(lua_State *L) {
     LuaStackSize  retval__ = self__->recvMsg(L);
     return retval__;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Socket.recvMsg: %s", e.what());
+    lua_pushfstring(L, "lk.Socket.recvMsg: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Socket.recvMsg: Unknown exception");
+    lua_pushfstring(L, "lk.Socket.recvMsg: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -308,10 +322,11 @@ static int Socket_remoteHost(lua_State *L) {
     lua_pushstring(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Socket.remoteHost: %s", e.what());
+    lua_pushfstring(L, "lk.Socket.remoteHost: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Socket.remoteHost: Unknown exception");
+    lua_pushfstring(L, "lk.Socket.remoteHost: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -326,10 +341,11 @@ static int Socket_remotePort(lua_State *L) {
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Socket.remotePort: %s", e.what());
+    lua_pushfstring(L, "lk.Socket.remotePort: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Socket.remotePort: Unknown exception");
+    lua_pushfstring(L, "lk.Socket.remotePort: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -344,10 +360,11 @@ static int Socket_request(lua_State *L) {
     LuaStackSize  retval__ = self__->request(L);
     return retval__;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Socket.request: %s", e.what());
+    lua_pushfstring(L, "lk.Socket.request: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Socket.request: Unknown exception");
+    lua_pushfstring(L, "lk.Socket.request: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -362,10 +379,11 @@ static int Socket_send(lua_State *L) {
     self__->send(L);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Socket.send: %s", e.what());
+    lua_pushfstring(L, "lk.Socket.send: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Socket.send: Unknown exception");
+    lua_pushfstring(L, "lk.Socket.send: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -380,10 +398,11 @@ static int Socket_sendMsg(lua_State *L) {
     self__->sendMsg(L);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Socket.sendMsg: %s", e.what());
+    lua_pushfstring(L, "lk.Socket.sendMsg: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Socket.sendMsg: Unknown exception");
+    lua_pushfstring(L, "lk.Socket.sendMsg: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -398,10 +417,11 @@ static int Socket_setRecvTimeout(lua_State *L) {
     self__->setRecvTimeout(timeout);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Socket.setRecvTimeout: %s", e.what());
+    lua_pushfstring(L, "lk.Socket.setRecvTimeout: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Socket.setRecvTimeout: Unknown exception");
+    lua_pushfstring(L, "lk.Socket.setRecvTimeout: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -416,10 +436,11 @@ static int Socket_setSendTimeout(lua_State *L) {
     self__->setSendTimeout(timeout);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Socket.setSendTimeout: %s", e.what());
+    lua_pushfstring(L, "lk.Socket.setSendTimeout: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Socket.setSendTimeout: Unknown exception");
+    lua_pushfstring(L, "lk.Socket.setSendTimeout: Unknown exception");
   }
+  return lua_error(L);
 }
 
 

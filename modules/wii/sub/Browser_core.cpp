@@ -18,10 +18,11 @@ static int Browser_Browser(lua_State *L) {
     lua_pushclass<Browser>(L, retval__, "wii.Browser");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "wii.Browser.Browser: %s", e.what());
+    lua_pushfstring(L, "wii.Browser.Browser: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "wii.Browser.Browser: Unknown exception");
+    lua_pushfstring(L, "wii.Browser.Browser: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -64,10 +65,11 @@ static int Browser___newindex(lua_State *L) {
     self__->__newindex(L);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "wii.Browser.__newindex: %s", e.what());
+    lua_pushfstring(L, "wii.Browser.__newindex: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "wii.Browser.__newindex: Unknown exception");
+    lua_pushfstring(L, "wii.Browser.__newindex: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -81,10 +83,11 @@ static int Browser_find(lua_State *L) {
     self__->find();
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "wii.Browser.find: %s", e.what());
+    lua_pushfstring(L, "wii.Browser.find: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "wii.Browser.find: Unknown exception");
+    lua_pushfstring(L, "wii.Browser.find: Unknown exception");
   }
+  return lua_error(L);
 }
 
 

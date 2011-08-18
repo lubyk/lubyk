@@ -19,10 +19,11 @@ static int Dummy_Dummy1(lua_State *L) {
     lua_pushclass<Dummy>(L, retval__, "dummy.Dummy");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "dummy.Dummy.Dummy: %s", e.what());
+    lua_pushfstring(L, "dummy.Dummy.Dummy: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "dummy.Dummy.Dummy: Unknown exception");
+    lua_pushfstring(L, "dummy.Dummy.Dummy: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -37,10 +38,11 @@ static int Dummy_Dummy2(lua_State *L) {
     lua_pushclass<Dummy>(L, retval__, "dummy.Dummy");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "dummy.Dummy.Dummy: %s", e.what());
+    lua_pushfstring(L, "dummy.Dummy.Dummy: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "dummy.Dummy.Dummy: Unknown exception");
+    lua_pushfstring(L, "dummy.Dummy.Dummy: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -104,10 +106,11 @@ static int Dummy___newindex1(lua_State *L) {
     self__->__newindex(L);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "dummy.Dummy.__newindex: %s", e.what());
+    lua_pushfstring(L, "dummy.Dummy.__newindex: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "dummy.Dummy.__newindex: Unknown exception");
+    lua_pushfstring(L, "dummy.Dummy.__newindex: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -122,10 +125,11 @@ static int Dummy___newindex2(lua_State *L) {
     self__->__newindex(L);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "dummy.Dummy.__newindex: %s", e.what());
+    lua_pushfstring(L, "dummy.Dummy.__newindex: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "dummy.Dummy.__newindex: Unknown exception");
+    lua_pushfstring(L, "dummy.Dummy.__newindex: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -160,10 +164,11 @@ static int Dummy_callback1(lua_State *L) {
     self__->callback();
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "dummy.Dummy.callback: %s", e.what());
+    lua_pushfstring(L, "dummy.Dummy.callback: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "dummy.Dummy.callback: Unknown exception");
+    lua_pushfstring(L, "dummy.Dummy.callback: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -177,10 +182,11 @@ static int Dummy_callback2(lua_State *L) {
     self__->callback();
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "dummy.Dummy.callback: %s", e.what());
+    lua_pushfstring(L, "dummy.Dummy.callback: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "dummy.Dummy.callback: Unknown exception");
+    lua_pushfstring(L, "dummy.Dummy.callback: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -209,10 +215,11 @@ static int Dummy_plat1(lua_State *L) {
     lua_pushstring(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "dummy.Dummy.plat: %s", e.what());
+    lua_pushfstring(L, "dummy.Dummy.plat: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "dummy.Dummy.plat: Unknown exception");
+    lua_pushfstring(L, "dummy.Dummy.plat: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -226,10 +233,11 @@ static int Dummy_plat2(lua_State *L) {
     lua_pushstring(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "dummy.Dummy.plat: %s", e.what());
+    lua_pushfstring(L, "dummy.Dummy.plat: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "dummy.Dummy.plat: Unknown exception");
+    lua_pushfstring(L, "dummy.Dummy.plat: Unknown exception");
   }
+  return lua_error(L);
 }
 
 

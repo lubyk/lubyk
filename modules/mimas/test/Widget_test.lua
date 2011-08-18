@@ -142,7 +142,7 @@ function should.openFileDialog(t)
   local basedir, filename = lk.directory(path)
   t.win = mimas.Window()
   t.win:show()
-  assertEqual(path, t.win:getOpenFileName(string.format('Select "%s"', filename), basedir, 'Lua files (*.lua)'))
+  assertMatch(path..'$', t.win:getOpenFileName(string.format('Select "%s"', filename), basedir, 'Lua files (*.lua)'))
   t.win:close()
 end
 
@@ -151,7 +151,7 @@ function should.getExistingDirectory(t)
   local basedir, dirname = lk.directory(path)
   t.win = mimas.Window()
   t.win:show()
-  assertEqual(path, t.win:getExistingDirectory(string.format('Select "%s"', dirname), basedir))
+  assertMatch(path..'$', t.win:getExistingDirectory(string.format('Select "%s"', dirname), basedir))
   t.win:close()
 end
 

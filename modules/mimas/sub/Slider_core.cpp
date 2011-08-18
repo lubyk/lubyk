@@ -30,10 +30,11 @@ static int Slider_Slider(lua_State *L) {
     lua_pushclass2<Slider>(L, retval__, "mimas.Slider");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Slider.Slider: %s", e.what());
+    lua_pushfstring(L, "mimas.Slider.Slider: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Slider.Slider: Unknown exception");
+    lua_pushfstring(L, "mimas.Slider.Slider: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -86,15 +87,16 @@ static int Slider__tostring(lua_State *L) {
 static int Slider_borderWidth(lua_State *L) {
   try {
     Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Slider in borderWidth");
+    if (!self__) throw dub::Exception("Using deleted mimas.Slider in borderWidth");
     int  retval__ = self__->borderWidth();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Slider.borderWidth: %s", e.what());
+    lua_pushfstring(L, "mimas.Slider.borderWidth: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Slider.borderWidth: Unknown exception");
+    lua_pushfstring(L, "mimas.Slider.borderWidth: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -105,15 +107,16 @@ static int Slider_borderWidth(lua_State *L) {
 static int Slider_callback(lua_State *L) {
   try {
     Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Slider in callback");
+    if (!self__) throw dub::Exception("Using deleted mimas.Slider in callback");
     double value = dubL_checknumber(L, 2);
     self__->callback(value);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Slider.callback: %s", e.what());
+    lua_pushfstring(L, "mimas.Slider.callback: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Slider.callback: Unknown exception");
+    lua_pushfstring(L, "mimas.Slider.callback: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -124,15 +127,16 @@ static int Slider_callback(lua_State *L) {
 static int Slider_cssClass(lua_State *L) {
   try {
     Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Slider in cssClass");
+    if (!self__) throw dub::Exception("Using deleted mimas.Slider in cssClass");
     QString  retval__ = self__->cssClass();
     lua_pushclass<QString>(L, retval__, "mimas.QString");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Slider.cssClass: %s", e.what());
+    lua_pushfstring(L, "mimas.Slider.cssClass: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Slider.cssClass: Unknown exception");
+    lua_pushfstring(L, "mimas.Slider.cssClass: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -143,15 +147,16 @@ static int Slider_cssClass(lua_State *L) {
 static int Slider_height(lua_State *L) {
   try {
     Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Slider in height");
+    if (!self__) throw dub::Exception("Using deleted mimas.Slider in height");
     int  retval__ = self__->height();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Slider.height: %s", e.what());
+    lua_pushfstring(L, "mimas.Slider.height: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Slider.height: Unknown exception");
+    lua_pushfstring(L, "mimas.Slider.height: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -162,15 +167,16 @@ static int Slider_height(lua_State *L) {
 static int Slider_hue(lua_State *L) {
   try {
     Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Slider in hue");
+    if (!self__) throw dub::Exception("Using deleted mimas.Slider in hue");
     float  retval__ = self__->hue();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Slider.hue: %s", e.what());
+    lua_pushfstring(L, "mimas.Slider.hue: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Slider.hue: Unknown exception");
+    lua_pushfstring(L, "mimas.Slider.hue: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -181,16 +187,17 @@ static int Slider_hue(lua_State *L) {
 static int Slider_move(lua_State *L) {
   try {
     Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Slider in move");
+    if (!self__) throw dub::Exception("Using deleted mimas.Slider in move");
     int x = dubL_checkint(L, 2);
     int y = dubL_checkint(L, 3);
     self__->move(x, y);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Slider.move: %s", e.what());
+    lua_pushfstring(L, "mimas.Slider.move: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Slider.move: Unknown exception");
+    lua_pushfstring(L, "mimas.Slider.move: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -201,15 +208,16 @@ static int Slider_move(lua_State *L) {
 static int Slider_name(lua_State *L) {
   try {
     Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Slider in name");
+    if (!self__) throw dub::Exception("Using deleted mimas.Slider in name");
     
     LuaStackSize  retval__ = self__->name(L);
     return retval__;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Slider.name: %s", e.what());
+    lua_pushfstring(L, "mimas.Slider.name: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Slider.name: Unknown exception");
+    lua_pushfstring(L, "mimas.Slider.name: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -220,15 +228,16 @@ static int Slider_name(lua_State *L) {
 static int Slider_object(lua_State *L) {
   try {
     Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Slider in object");
+    if (!self__) throw dub::Exception("Using deleted mimas.Slider in object");
     QObject * retval__ = self__->object();
     lua_pushclass<QObject>(L, retval__, "mimas.QObject");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Slider.object: %s", e.what());
+    lua_pushfstring(L, "mimas.Slider.object: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Slider.object: Unknown exception");
+    lua_pushfstring(L, "mimas.Slider.object: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -239,16 +248,17 @@ static int Slider_object(lua_State *L) {
 static int Slider_resize(lua_State *L) {
   try {
     Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Slider in resize");
+    if (!self__) throw dub::Exception("Using deleted mimas.Slider in resize");
     int w = dubL_checkint(L, 2);
     int h = dubL_checkint(L, 3);
     self__->resize(w, h);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Slider.resize: %s", e.what());
+    lua_pushfstring(L, "mimas.Slider.resize: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Slider.resize: Unknown exception");
+    lua_pushfstring(L, "mimas.Slider.resize: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -259,15 +269,16 @@ static int Slider_resize(lua_State *L) {
 static int Slider_setBorderWidth(lua_State *L) {
   try {
     Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Slider in setBorderWidth");
+    if (!self__) throw dub::Exception("Using deleted mimas.Slider in setBorderWidth");
     int width = dubL_checkint(L, 2);
     self__->setBorderWidth(width);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Slider.setBorderWidth: %s", e.what());
+    lua_pushfstring(L, "mimas.Slider.setBorderWidth: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Slider.setBorderWidth: Unknown exception");
+    lua_pushfstring(L, "mimas.Slider.setBorderWidth: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -278,15 +289,16 @@ static int Slider_setBorderWidth(lua_State *L) {
 static int Slider_setHue(lua_State *L) {
   try {
     Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Slider in setHue");
+    if (!self__) throw dub::Exception("Using deleted mimas.Slider in setHue");
     float hue = dubL_checknumber(L, 2);
     self__->setHue(hue);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Slider.setHue: %s", e.what());
+    lua_pushfstring(L, "mimas.Slider.setHue: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Slider.setHue: Unknown exception");
+    lua_pushfstring(L, "mimas.Slider.setHue: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -297,15 +309,16 @@ static int Slider_setHue(lua_State *L) {
 static int Slider_setName(lua_State *L) {
   try {
     Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Slider in setName");
+    if (!self__) throw dub::Exception("Using deleted mimas.Slider in setName");
     const char *name = dubL_checkstring(L, 2);
     self__->setName(name);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Slider.setName: %s", e.what());
+    lua_pushfstring(L, "mimas.Slider.setName: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Slider.setName: Unknown exception");
+    lua_pushfstring(L, "mimas.Slider.setName: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -316,15 +329,16 @@ static int Slider_setName(lua_State *L) {
 static int Slider_setStyle(lua_State *L) {
   try {
     Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Slider in setStyle");
+    if (!self__) throw dub::Exception("Using deleted mimas.Slider in setStyle");
     const char *text = dubL_checkstring(L, 2);
     self__->setStyle(text);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Slider.setStyle: %s", e.what());
+    lua_pushfstring(L, "mimas.Slider.setStyle: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Slider.setStyle: Unknown exception");
+    lua_pushfstring(L, "mimas.Slider.setStyle: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -335,15 +349,16 @@ static int Slider_setStyle(lua_State *L) {
 static int Slider_setStyleSheet(lua_State *L) {
   try {
     Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Slider in setStyleSheet");
+    if (!self__) throw dub::Exception("Using deleted mimas.Slider in setStyleSheet");
     const char *text = dubL_checkstring(L, 2);
     self__->setStyleSheet(text);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Slider.setStyleSheet: %s", e.what());
+    lua_pushfstring(L, "mimas.Slider.setStyleSheet: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Slider.setStyleSheet: Unknown exception");
+    lua_pushfstring(L, "mimas.Slider.setStyleSheet: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -354,15 +369,16 @@ static int Slider_setStyleSheet(lua_State *L) {
 static int Slider_setValue(lua_State *L) {
   try {
     Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Slider in setValue");
+    if (!self__) throw dub::Exception("Using deleted mimas.Slider in setValue");
     double remote_value = dubL_checknumber(L, 2);
     self__->setValue(remote_value);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Slider.setValue: %s", e.what());
+    lua_pushfstring(L, "mimas.Slider.setValue: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Slider.setValue: Unknown exception");
+    lua_pushfstring(L, "mimas.Slider.setValue: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -373,15 +389,16 @@ static int Slider_setValue(lua_State *L) {
 static int Slider_set_callback(lua_State *L) {
   try {
     Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Slider in set_callback");
+    if (!self__) throw dub::Exception("Using deleted mimas.Slider in set_callback");
     
     self__->set_callback(L);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Slider.set_callback: %s", e.what());
+    lua_pushfstring(L, "mimas.Slider.set_callback: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Slider.set_callback: Unknown exception");
+    lua_pushfstring(L, "mimas.Slider.set_callback: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -392,15 +409,16 @@ static int Slider_set_callback(lua_State *L) {
 static int Slider_sizeHint(lua_State *L) {
   try {
     Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Slider in sizeHint");
+    if (!self__) throw dub::Exception("Using deleted mimas.Slider in sizeHint");
     QSize  retval__ = self__->sizeHint();
     lua_pushclass<QSize>(L, retval__, "mimas.QSize");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Slider.sizeHint: %s", e.what());
+    lua_pushfstring(L, "mimas.Slider.sizeHint: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Slider.sizeHint: Unknown exception");
+    lua_pushfstring(L, "mimas.Slider.sizeHint: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -411,15 +429,16 @@ static int Slider_sizeHint(lua_State *L) {
 static int Slider_widget(lua_State *L) {
   try {
     Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Slider in widget");
+    if (!self__) throw dub::Exception("Using deleted mimas.Slider in widget");
     QWidget * retval__ = self__->widget();
     lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Slider.widget: %s", e.what());
+    lua_pushfstring(L, "mimas.Slider.widget: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Slider.widget: Unknown exception");
+    lua_pushfstring(L, "mimas.Slider.widget: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -430,15 +449,16 @@ static int Slider_widget(lua_State *L) {
 static int Slider_width(lua_State *L) {
   try {
     Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Slider in width");
+    if (!self__) throw dub::Exception("Using deleted mimas.Slider in width");
     int  retval__ = self__->width();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Slider.width: %s", e.what());
+    lua_pushfstring(L, "mimas.Slider.width: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Slider.width: Unknown exception");
+    lua_pushfstring(L, "mimas.Slider.width: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -449,15 +469,16 @@ static int Slider_width(lua_State *L) {
 static int Slider_x(lua_State *L) {
   try {
     Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Slider in x");
+    if (!self__) throw dub::Exception("Using deleted mimas.Slider in x");
     int  retval__ = self__->x();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Slider.x: %s", e.what());
+    lua_pushfstring(L, "mimas.Slider.x: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Slider.x: Unknown exception");
+    lua_pushfstring(L, "mimas.Slider.x: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -468,15 +489,16 @@ static int Slider_x(lua_State *L) {
 static int Slider_y(lua_State *L) {
   try {
     Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Slider in y");
+    if (!self__) throw dub::Exception("Using deleted mimas.Slider in y");
     int  retval__ = self__->y();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Slider.y: %s", e.what());
+    lua_pushfstring(L, "mimas.Slider.y: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Slider.y: Unknown exception");
+    lua_pushfstring(L, "mimas.Slider.y: Unknown exception");
   }
+  return lua_error(L);
 }
 
 

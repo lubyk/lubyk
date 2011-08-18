@@ -25,10 +25,11 @@ static int Widget_Widget(lua_State *L) {
     lua_pushclass2<Widget>(L, retval__, "mimas.Widget");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.Widget: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.Widget: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.Widget: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.Widget: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -81,15 +82,16 @@ static int Widget__tostring(lua_State *L) {
 static int Widget___newindex(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in __newindex");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in __newindex");
     
     self__->__newindex(L);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.__newindex: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.__newindex: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.__newindex: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.__newindex: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -100,14 +102,15 @@ static int Widget___newindex(lua_State *L) {
 static int Widget_activateWindow(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in activateWindow");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in activateWindow");
     self__->activateWindow();
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.activateWindow: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.activateWindow: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.activateWindow: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.activateWindow: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -118,7 +121,7 @@ static int Widget_activateWindow(lua_State *L) {
 static int Widget_addWidget(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in addWidget");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in addWidget");
     int top__ = lua_gettop(L);
     QWidget *widget = *((QWidget **)dubL_checkudata(L, 2, "mimas.QWidget"));
     if (top__ < 3) {
@@ -134,10 +137,11 @@ static int Widget_addWidget(lua_State *L) {
     }
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.addWidget: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.addWidget: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.addWidget: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.addWidget: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -148,15 +152,16 @@ static int Widget_addWidget(lua_State *L) {
 static int Widget_close(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in close");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in close");
     bool  retval__ = self__->close();
     lua_pushboolean(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.close: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.close: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.close: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.close: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -167,15 +172,16 @@ static int Widget_close(lua_State *L) {
 static int Widget_cssClass(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in cssClass");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in cssClass");
     QString  retval__ = self__->cssClass();
     lua_pushclass<QString>(L, retval__, "mimas.QString");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.cssClass: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.cssClass: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.cssClass: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.cssClass: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -186,7 +192,7 @@ static int Widget_cssClass(lua_State *L) {
 static int Widget_getExistingDirectory(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in getExistingDirectory");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in getExistingDirectory");
     const char *caption = dubL_checkstring(L, 2);
     const char *base_dir = dubL_checkstring(L, 3);
     int options = dubL_checkint(L, 4);
@@ -194,10 +200,11 @@ static int Widget_getExistingDirectory(lua_State *L) {
     LuaStackSize  retval__ = self__->getExistingDirectory(caption, base_dir, options, L);
     return retval__;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.getExistingDirectory: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.getExistingDirectory: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.getExistingDirectory: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.getExistingDirectory: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -208,7 +215,7 @@ static int Widget_getExistingDirectory(lua_State *L) {
 static int Widget_getOpenFileName(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in getOpenFileName");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in getOpenFileName");
     const char *caption = dubL_checkstring(L, 2);
     const char *base_dir = dubL_checkstring(L, 3);
     const char *filter = dubL_checkstring(L, 4);
@@ -217,10 +224,11 @@ static int Widget_getOpenFileName(lua_State *L) {
     LuaStackSize  retval__ = self__->getOpenFileName(caption, base_dir, filter, options, L);
     return retval__;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.getOpenFileName: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.getOpenFileName: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.getOpenFileName: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.getOpenFileName: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -231,16 +239,17 @@ static int Widget_getOpenFileName(lua_State *L) {
 static int Widget_globalMove(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in globalMove");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in globalMove");
     float x = dubL_checknumber(L, 2);
     float y = dubL_checknumber(L, 3);
     self__->globalMove(x, y);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.globalMove: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.globalMove: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.globalMove: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.globalMove: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -251,15 +260,16 @@ static int Widget_globalMove(lua_State *L) {
 static int Widget_globalPosition(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in globalPosition");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in globalPosition");
     
     LuaStackSize  retval__ = self__->globalPosition(L);
     return retval__;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.globalPosition: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.globalPosition: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.globalPosition: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.globalPosition: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -270,15 +280,16 @@ static int Widget_globalPosition(lua_State *L) {
 static int Widget_height(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in height");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in height");
     int  retval__ = self__->height();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.height: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.height: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.height: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.height: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -289,14 +300,15 @@ static int Widget_height(lua_State *L) {
 static int Widget_hide(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in hide");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in hide");
     self__->hide();
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.hide: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.hide: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.hide: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.hide: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -307,15 +319,16 @@ static int Widget_hide(lua_State *L) {
 static int Widget_hue(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in hue");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in hue");
     float  retval__ = self__->hue();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.hue: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.hue: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.hue: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.hue: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -326,15 +339,16 @@ static int Widget_hue(lua_State *L) {
 static int Widget_isFullScreen(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in isFullScreen");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in isFullScreen");
     bool  retval__ = self__->isFullScreen();
     lua_pushboolean(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.isFullScreen: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.isFullScreen: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.isFullScreen: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.isFullScreen: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -345,15 +359,16 @@ static int Widget_isFullScreen(lua_State *L) {
 static int Widget_isVisible(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in isVisible");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in isVisible");
     bool  retval__ = self__->isVisible();
     lua_pushboolean(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.isVisible: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.isVisible: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.isVisible: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.isVisible: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -364,14 +379,15 @@ static int Widget_isVisible(lua_State *L) {
 static int Widget_lower(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in lower");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in lower");
     self__->lower();
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.lower: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.lower: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.lower: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.lower: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -382,16 +398,17 @@ static int Widget_lower(lua_State *L) {
 static int Widget_move(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in move");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in move");
     int x = dubL_checkint(L, 2);
     int y = dubL_checkint(L, 3);
     self__->move(x, y);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.move: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.move: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.move: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.move: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -402,15 +419,16 @@ static int Widget_move(lua_State *L) {
 static int Widget_name(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in name");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in name");
     
     LuaStackSize  retval__ = self__->name(L);
     return retval__;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.name: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.name: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.name: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.name: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -421,15 +439,16 @@ static int Widget_name(lua_State *L) {
 static int Widget_object(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in object");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in object");
     QObject * retval__ = self__->object();
     lua_pushclass<QObject>(L, retval__, "mimas.QObject");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.object: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.object: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.object: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.object: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -440,14 +459,15 @@ static int Widget_object(lua_State *L) {
 static int Widget_raise(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in raise");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in raise");
     self__->raise();
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.raise: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.raise: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.raise: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.raise: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -458,16 +478,17 @@ static int Widget_raise(lua_State *L) {
 static int Widget_resize(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in resize");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in resize");
     int w = dubL_checkint(L, 2);
     int h = dubL_checkint(L, 3);
     self__->resize(w, h);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.resize: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.resize: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.resize: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.resize: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -478,15 +499,16 @@ static int Widget_resize(lua_State *L) {
 static int Widget_setHue(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in setHue");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in setHue");
     float hue = dubL_checknumber(L, 2);
     self__->setHue(hue);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.setHue: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.setHue: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.setHue: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.setHue: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -497,16 +519,17 @@ static int Widget_setHue(lua_State *L) {
 static int Widget_setMinimumSize(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in setMinimumSize");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in setMinimumSize");
     float w = dubL_checknumber(L, 2);
     float h = dubL_checknumber(L, 3);
     self__->setMinimumSize(w, h);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.setMinimumSize: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.setMinimumSize: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.setMinimumSize: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.setMinimumSize: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -517,15 +540,16 @@ static int Widget_setMinimumSize(lua_State *L) {
 static int Widget_setMouseTracking(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in setMouseTracking");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in setMouseTracking");
     bool enable = lua_toboolean(L, 2);
     self__->setMouseTracking(enable);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.setMouseTracking: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.setMouseTracking: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.setMouseTracking: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.setMouseTracking: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -536,15 +560,16 @@ static int Widget_setMouseTracking(lua_State *L) {
 static int Widget_setName(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in setName");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in setName");
     const char *name = dubL_checkstring(L, 2);
     self__->setName(name);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.setName: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.setName: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.setName: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.setName: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -555,15 +580,16 @@ static int Widget_setName(lua_State *L) {
 static int Widget_setParent(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in setParent");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in setParent");
     QWidget *parent = *((QWidget **)dubL_checkudata(L, 2, "mimas.QWidget"));
     self__->setParent(parent);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.setParent: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.setParent: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.setParent: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.setParent: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -574,16 +600,17 @@ static int Widget_setParent(lua_State *L) {
 static int Widget_setSizeHint(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in setSizeHint");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in setSizeHint");
     float w = dubL_checknumber(L, 2);
     float h = dubL_checknumber(L, 3);
     self__->setSizeHint(w, h);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.setSizeHint: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.setSizeHint: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.setSizeHint: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.setSizeHint: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -594,16 +621,17 @@ static int Widget_setSizeHint(lua_State *L) {
 static int Widget_setSizePolicy(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in setSizePolicy");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in setSizePolicy");
     int horizontal = dubL_checkint(L, 2);
     int vertical = dubL_checkint(L, 3);
     self__->setSizePolicy(horizontal, vertical);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.setSizePolicy: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.setSizePolicy: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.setSizePolicy: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.setSizePolicy: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -614,15 +642,16 @@ static int Widget_setSizePolicy(lua_State *L) {
 static int Widget_setStyle(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in setStyle");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in setStyle");
     const char *text = dubL_checkstring(L, 2);
     self__->setStyle(text);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.setStyle: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.setStyle: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.setStyle: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.setStyle: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -633,15 +662,16 @@ static int Widget_setStyle(lua_State *L) {
 static int Widget_setStyleSheet(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in setStyleSheet");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in setStyleSheet");
     const char *text = dubL_checkstring(L, 2);
     self__->setStyleSheet(text);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.setStyleSheet: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.setStyleSheet: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.setStyleSheet: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.setStyleSheet: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -652,14 +682,15 @@ static int Widget_setStyleSheet(lua_State *L) {
 static int Widget_show(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in show");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in show");
     self__->show();
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.show: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.show: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.show: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.show: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -670,7 +701,7 @@ static int Widget_show(lua_State *L) {
 static int Widget_showFullScreen(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in showFullScreen");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in showFullScreen");
     int top__ = lua_gettop(L);
     if (top__ < 2) {
       self__->showFullScreen();
@@ -680,10 +711,11 @@ static int Widget_showFullScreen(lua_State *L) {
     }
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.showFullScreen: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.showFullScreen: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.showFullScreen: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.showFullScreen: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -694,15 +726,16 @@ static int Widget_showFullScreen(lua_State *L) {
 static int Widget_size(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in size");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in size");
     
     LuaStackSize  retval__ = self__->size(L);
     return retval__;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.size: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.size: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.size: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.size: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -713,14 +746,15 @@ static int Widget_size(lua_State *L) {
 static int Widget_swapFullScreen(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in swapFullScreen");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in swapFullScreen");
     self__->swapFullScreen();
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.swapFullScreen: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.swapFullScreen: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.swapFullScreen: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.swapFullScreen: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -731,16 +765,17 @@ static int Widget_swapFullScreen(lua_State *L) {
 static int Widget_textSize(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in textSize");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in textSize");
     const char *text = dubL_checkstring(L, 2);
     
     LuaStackSize  retval__ = self__->textSize(text, L);
     return retval__;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.textSize: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.textSize: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.textSize: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.textSize: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -751,14 +786,15 @@ static int Widget_textSize(lua_State *L) {
 static int Widget_update(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in update");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in update");
     self__->update();
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.update: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.update: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.update: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.update: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -769,15 +805,16 @@ static int Widget_update(lua_State *L) {
 static int Widget_widget(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in widget");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in widget");
     QWidget * retval__ = self__->widget();
     lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.widget: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.widget: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.widget: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.widget: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -788,15 +825,16 @@ static int Widget_widget(lua_State *L) {
 static int Widget_width(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in width");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in width");
     int  retval__ = self__->width();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.width: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.width: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.width: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.width: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -807,15 +845,16 @@ static int Widget_width(lua_State *L) {
 static int Widget_x(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in x");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in x");
     int  retval__ = self__->x();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.x: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.x: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.x: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.x: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -826,15 +865,16 @@ static int Widget_x(lua_State *L) {
 static int Widget_y(lua_State *L) {
   try {
     Widget *self__ = *((Widget**)dubL_checkudata(L, 1, "mimas.Widget"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.Widget in y");
+    if (!self__) throw dub::Exception("Using deleted mimas.Widget in y");
     int  retval__ = self__->y();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Widget.y: %s", e.what());
+    lua_pushfstring(L, "mimas.Widget.y: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Widget.y: Unknown exception");
+    lua_pushfstring(L, "mimas.Widget.y: Unknown exception");
   }
+  return lua_error(L);
 }
 
 

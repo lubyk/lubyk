@@ -25,10 +25,11 @@ static int Remote_Remote(lua_State *L) {
     lua_pushclass<Remote>(L, retval__, "wii.Remote");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "wii.Remote.Remote: %s", e.what());
+    lua_pushfstring(L, "wii.Remote.Remote: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "wii.Remote.Remote: Unknown exception");
+    lua_pushfstring(L, "wii.Remote.Remote: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -71,10 +72,11 @@ static int Remote___newindex(lua_State *L) {
     self__->__newindex(L);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "wii.Remote.__newindex: %s", e.what());
+    lua_pushfstring(L, "wii.Remote.__newindex: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "wii.Remote.__newindex: Unknown exception");
+    lua_pushfstring(L, "wii.Remote.__newindex: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -88,10 +90,11 @@ static int Remote_connected(lua_State *L) {
     self__->connected();
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "wii.Remote.connected: %s", e.what());
+    lua_pushfstring(L, "wii.Remote.connected: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "wii.Remote.connected: Unknown exception");
+    lua_pushfstring(L, "wii.Remote.connected: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -105,10 +108,11 @@ static int Remote_disconnect(lua_State *L) {
     self__->disconnect();
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "wii.Remote.disconnect: %s", e.what());
+    lua_pushfstring(L, "wii.Remote.disconnect: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "wii.Remote.disconnect: Unknown exception");
+    lua_pushfstring(L, "wii.Remote.disconnect: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -123,10 +127,11 @@ static int Remote_name(lua_State *L) {
     lua_pushstring(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "wii.Remote.name: %s", e.what());
+    lua_pushfstring(L, "wii.Remote.name: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "wii.Remote.name: Unknown exception");
+    lua_pushfstring(L, "wii.Remote.name: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -144,10 +149,11 @@ static int Remote_set_leds(lua_State *L) {
     self__->set_leds(led1, led2, led3, led4);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "wii.Remote.set_leds: %s", e.what());
+    lua_pushfstring(L, "wii.Remote.set_leds: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "wii.Remote.set_leds: Unknown exception");
+    lua_pushfstring(L, "wii.Remote.set_leds: Unknown exception");
   }
+  return lua_error(L);
 }
 
 

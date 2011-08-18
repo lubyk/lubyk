@@ -19,10 +19,11 @@ static int Timer_Timer(lua_State *L) {
     lua_pushclass<Timer>(L, retval__, "lk.Timer");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Timer.Timer: %s", e.what());
+    lua_pushfstring(L, "lk.Timer.Timer: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Timer.Timer: Unknown exception");
+    lua_pushfstring(L, "lk.Timer.Timer: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -59,16 +60,10 @@ static int Timer__tostring(lua_State *L) {
  * include/lk/Timer.h:83
  */
 static int Timer___newindex(lua_State *L) {
-  try {
-    Timer *self__ = *((Timer**)dubL_checkudata(L, 1, "lk.Timer"));
-    
-    self__->__newindex(L);
-    return 0;
-  } catch (std::exception &e) {
-    return luaL_error(L, "lk.Timer.__newindex: %s", e.what());
-  } catch (...) {
-    return luaL_error(L, "lk.Timer.__newindex: Unknown exception");
-  }
+  Timer *self__ = *((Timer**)luaL_checkudata(L, 1, "lk.Timer"));
+  
+  self__->__newindex(L);
+  return 0;
 }
 
 
@@ -83,10 +78,11 @@ static int Timer_interval(lua_State *L) {
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Timer.interval: %s", e.what());
+    lua_pushfstring(L, "lk.Timer.interval: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Timer.interval: Unknown exception");
+    lua_pushfstring(L, "lk.Timer.interval: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -100,10 +96,11 @@ static int Timer_join(lua_State *L) {
     self__->join();
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Timer.join: %s", e.what());
+    lua_pushfstring(L, "lk.Timer.join: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Timer.join: Unknown exception");
+    lua_pushfstring(L, "lk.Timer.join: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -118,10 +115,11 @@ static int Timer_running(lua_State *L) {
     lua_pushboolean(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Timer.running: %s", e.what());
+    lua_pushfstring(L, "lk.Timer.running: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Timer.running: Unknown exception");
+    lua_pushfstring(L, "lk.Timer.running: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -136,10 +134,11 @@ static int Timer_setInterval(lua_State *L) {
     self__->setInterval(interval);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Timer.setInterval: %s", e.what());
+    lua_pushfstring(L, "lk.Timer.setInterval: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Timer.setInterval: Unknown exception");
+    lua_pushfstring(L, "lk.Timer.setInterval: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -159,10 +158,11 @@ static int Timer_start(lua_State *L) {
     }
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Timer.start: %s", e.what());
+    lua_pushfstring(L, "lk.Timer.start: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Timer.start: Unknown exception");
+    lua_pushfstring(L, "lk.Timer.start: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -176,10 +176,11 @@ static int Timer_stop(lua_State *L) {
     self__->stop();
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "lk.Timer.stop: %s", e.what());
+    lua_pushfstring(L, "lk.Timer.stop: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lk.Timer.stop: Unknown exception");
+    lua_pushfstring(L, "lk.Timer.stop: Unknown exception");
   }
+  return lua_error(L);
 }
 
 

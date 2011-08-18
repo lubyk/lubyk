@@ -80,7 +80,7 @@ public:
   /** Set a callback function.
    *
    */
-  void __newindex(lua_State *L) {
+  void __newindex(lua_State *L) throw() {
     // Stack should be ... <self> <key> <value>
     std::string key(luaL_checkstring(L, -2));
     luaL_checktype(L, -1, LUA_TFUNCTION);

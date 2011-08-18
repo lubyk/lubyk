@@ -30,10 +30,11 @@ static int LineEdit_LineEdit(lua_State *L) {
     lua_pushclass2<LineEdit>(L, retval__, "mimas.LineEdit");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.LineEdit.LineEdit: %s", e.what());
+    lua_pushfstring(L, "mimas.LineEdit.LineEdit: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.LineEdit.LineEdit: Unknown exception");
+    lua_pushfstring(L, "mimas.LineEdit.LineEdit: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -86,15 +87,16 @@ static int LineEdit__tostring(lua_State *L) {
 static int LineEdit___newindex(lua_State *L) {
   try {
     LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in __newindex");
+    if (!self__) throw dub::Exception("Using deleted mimas.LineEdit in __newindex");
     
     self__->__newindex(L);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.LineEdit.__newindex: %s", e.what());
+    lua_pushfstring(L, "mimas.LineEdit.__newindex: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.LineEdit.__newindex: Unknown exception");
+    lua_pushfstring(L, "mimas.LineEdit.__newindex: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -105,15 +107,16 @@ static int LineEdit___newindex(lua_State *L) {
 static int LineEdit_cssClass(lua_State *L) {
   try {
     LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in cssClass");
+    if (!self__) throw dub::Exception("Using deleted mimas.LineEdit in cssClass");
     QString  retval__ = self__->cssClass();
     lua_pushclass<QString>(L, retval__, "mimas.QString");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.LineEdit.cssClass: %s", e.what());
+    lua_pushfstring(L, "mimas.LineEdit.cssClass: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.LineEdit.cssClass: Unknown exception");
+    lua_pushfstring(L, "mimas.LineEdit.cssClass: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -124,16 +127,17 @@ static int LineEdit_cssClass(lua_State *L) {
 static int LineEdit_globalMove(lua_State *L) {
   try {
     LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in globalMove");
+    if (!self__) throw dub::Exception("Using deleted mimas.LineEdit in globalMove");
     float x = dubL_checknumber(L, 2);
     float y = dubL_checknumber(L, 3);
     self__->globalMove(x, y);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.LineEdit.globalMove: %s", e.what());
+    lua_pushfstring(L, "mimas.LineEdit.globalMove: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.LineEdit.globalMove: Unknown exception");
+    lua_pushfstring(L, "mimas.LineEdit.globalMove: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -144,15 +148,16 @@ static int LineEdit_globalMove(lua_State *L) {
 static int LineEdit_globalPosition(lua_State *L) {
   try {
     LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in globalPosition");
+    if (!self__) throw dub::Exception("Using deleted mimas.LineEdit in globalPosition");
     
     LuaStackSize  retval__ = self__->globalPosition(L);
     return retval__;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.LineEdit.globalPosition: %s", e.what());
+    lua_pushfstring(L, "mimas.LineEdit.globalPosition: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.LineEdit.globalPosition: Unknown exception");
+    lua_pushfstring(L, "mimas.LineEdit.globalPosition: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -163,15 +168,16 @@ static int LineEdit_globalPosition(lua_State *L) {
 static int LineEdit_height(lua_State *L) {
   try {
     LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in height");
+    if (!self__) throw dub::Exception("Using deleted mimas.LineEdit in height");
     int  retval__ = self__->height();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.LineEdit.height: %s", e.what());
+    lua_pushfstring(L, "mimas.LineEdit.height: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.LineEdit.height: Unknown exception");
+    lua_pushfstring(L, "mimas.LineEdit.height: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -182,14 +188,15 @@ static int LineEdit_height(lua_State *L) {
 static int LineEdit_hide(lua_State *L) {
   try {
     LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in hide");
+    if (!self__) throw dub::Exception("Using deleted mimas.LineEdit in hide");
     self__->hide();
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.LineEdit.hide: %s", e.what());
+    lua_pushfstring(L, "mimas.LineEdit.hide: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.LineEdit.hide: Unknown exception");
+    lua_pushfstring(L, "mimas.LineEdit.hide: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -200,15 +207,16 @@ static int LineEdit_hide(lua_State *L) {
 static int LineEdit_hue(lua_State *L) {
   try {
     LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in hue");
+    if (!self__) throw dub::Exception("Using deleted mimas.LineEdit in hue");
     float  retval__ = self__->hue();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.LineEdit.hue: %s", e.what());
+    lua_pushfstring(L, "mimas.LineEdit.hue: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.LineEdit.hue: Unknown exception");
+    lua_pushfstring(L, "mimas.LineEdit.hue: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -219,16 +227,17 @@ static int LineEdit_hue(lua_State *L) {
 static int LineEdit_move(lua_State *L) {
   try {
     LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in move");
+    if (!self__) throw dub::Exception("Using deleted mimas.LineEdit in move");
     int x = dubL_checkint(L, 2);
     int y = dubL_checkint(L, 3);
     self__->move(x, y);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.LineEdit.move: %s", e.what());
+    lua_pushfstring(L, "mimas.LineEdit.move: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.LineEdit.move: Unknown exception");
+    lua_pushfstring(L, "mimas.LineEdit.move: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -239,15 +248,16 @@ static int LineEdit_move(lua_State *L) {
 static int LineEdit_name(lua_State *L) {
   try {
     LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in name");
+    if (!self__) throw dub::Exception("Using deleted mimas.LineEdit in name");
     
     LuaStackSize  retval__ = self__->name(L);
     return retval__;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.LineEdit.name: %s", e.what());
+    lua_pushfstring(L, "mimas.LineEdit.name: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.LineEdit.name: Unknown exception");
+    lua_pushfstring(L, "mimas.LineEdit.name: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -258,15 +268,16 @@ static int LineEdit_name(lua_State *L) {
 static int LineEdit_object(lua_State *L) {
   try {
     LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in object");
+    if (!self__) throw dub::Exception("Using deleted mimas.LineEdit in object");
     QObject * retval__ = self__->object();
     lua_pushclass<QObject>(L, retval__, "mimas.QObject");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.LineEdit.object: %s", e.what());
+    lua_pushfstring(L, "mimas.LineEdit.object: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.LineEdit.object: Unknown exception");
+    lua_pushfstring(L, "mimas.LineEdit.object: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -277,16 +288,17 @@ static int LineEdit_object(lua_State *L) {
 static int LineEdit_resize(lua_State *L) {
   try {
     LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in resize");
+    if (!self__) throw dub::Exception("Using deleted mimas.LineEdit in resize");
     int w = dubL_checkint(L, 2);
     int h = dubL_checkint(L, 3);
     self__->resize(w, h);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.LineEdit.resize: %s", e.what());
+    lua_pushfstring(L, "mimas.LineEdit.resize: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.LineEdit.resize: Unknown exception");
+    lua_pushfstring(L, "mimas.LineEdit.resize: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -297,14 +309,15 @@ static int LineEdit_resize(lua_State *L) {
 static int LineEdit_selectAll(lua_State *L) {
   try {
     LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in selectAll");
+    if (!self__) throw dub::Exception("Using deleted mimas.LineEdit in selectAll");
     self__->selectAll();
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.LineEdit.selectAll: %s", e.what());
+    lua_pushfstring(L, "mimas.LineEdit.selectAll: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.LineEdit.selectAll: Unknown exception");
+    lua_pushfstring(L, "mimas.LineEdit.selectAll: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -315,14 +328,15 @@ static int LineEdit_selectAll(lua_State *L) {
 static int LineEdit_setFocus(lua_State *L) {
   try {
     LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in setFocus");
+    if (!self__) throw dub::Exception("Using deleted mimas.LineEdit in setFocus");
     self__->setFocus();
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.LineEdit.setFocus: %s", e.what());
+    lua_pushfstring(L, "mimas.LineEdit.setFocus: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.LineEdit.setFocus: Unknown exception");
+    lua_pushfstring(L, "mimas.LineEdit.setFocus: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -333,15 +347,16 @@ static int LineEdit_setFocus(lua_State *L) {
 static int LineEdit_setHue(lua_State *L) {
   try {
     LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in setHue");
+    if (!self__) throw dub::Exception("Using deleted mimas.LineEdit in setHue");
     float hue = dubL_checknumber(L, 2);
     self__->setHue(hue);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.LineEdit.setHue: %s", e.what());
+    lua_pushfstring(L, "mimas.LineEdit.setHue: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.LineEdit.setHue: Unknown exception");
+    lua_pushfstring(L, "mimas.LineEdit.setHue: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -352,15 +367,16 @@ static int LineEdit_setHue(lua_State *L) {
 static int LineEdit_setName(lua_State *L) {
   try {
     LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in setName");
+    if (!self__) throw dub::Exception("Using deleted mimas.LineEdit in setName");
     const char *name = dubL_checkstring(L, 2);
     self__->setName(name);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.LineEdit.setName: %s", e.what());
+    lua_pushfstring(L, "mimas.LineEdit.setName: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.LineEdit.setName: Unknown exception");
+    lua_pushfstring(L, "mimas.LineEdit.setName: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -371,15 +387,16 @@ static int LineEdit_setName(lua_State *L) {
 static int LineEdit_setParent(lua_State *L) {
   try {
     LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in setParent");
+    if (!self__) throw dub::Exception("Using deleted mimas.LineEdit in setParent");
     QWidget *parent = *((QWidget **)dubL_checkudata(L, 2, "mimas.QWidget"));
     self__->setParent(parent);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.LineEdit.setParent: %s", e.what());
+    lua_pushfstring(L, "mimas.LineEdit.setParent: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.LineEdit.setParent: Unknown exception");
+    lua_pushfstring(L, "mimas.LineEdit.setParent: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -390,16 +407,17 @@ static int LineEdit_setParent(lua_State *L) {
 static int LineEdit_setSelection(lua_State *L) {
   try {
     LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in setSelection");
+    if (!self__) throw dub::Exception("Using deleted mimas.LineEdit in setSelection");
     int start = dubL_checkint(L, 2);
     int length = dubL_checkint(L, 3);
     self__->setSelection(start, length);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.LineEdit.setSelection: %s", e.what());
+    lua_pushfstring(L, "mimas.LineEdit.setSelection: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.LineEdit.setSelection: Unknown exception");
+    lua_pushfstring(L, "mimas.LineEdit.setSelection: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -410,15 +428,16 @@ static int LineEdit_setSelection(lua_State *L) {
 static int LineEdit_setStyle(lua_State *L) {
   try {
     LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in setStyle");
+    if (!self__) throw dub::Exception("Using deleted mimas.LineEdit in setStyle");
     const char *text = dubL_checkstring(L, 2);
     self__->setStyle(text);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.LineEdit.setStyle: %s", e.what());
+    lua_pushfstring(L, "mimas.LineEdit.setStyle: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.LineEdit.setStyle: Unknown exception");
+    lua_pushfstring(L, "mimas.LineEdit.setStyle: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -429,15 +448,16 @@ static int LineEdit_setStyle(lua_State *L) {
 static int LineEdit_setText(lua_State *L) {
   try {
     LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in setText");
+    if (!self__) throw dub::Exception("Using deleted mimas.LineEdit in setText");
     const char *text = dubL_checkstring(L, 2);
     self__->setText(text);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.LineEdit.setText: %s", e.what());
+    lua_pushfstring(L, "mimas.LineEdit.setText: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.LineEdit.setText: Unknown exception");
+    lua_pushfstring(L, "mimas.LineEdit.setText: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -448,15 +468,16 @@ static int LineEdit_setText(lua_State *L) {
 static int LineEdit_text(lua_State *L) {
   try {
     LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in text");
+    if (!self__) throw dub::Exception("Using deleted mimas.LineEdit in text");
     const char * retval__ = self__->text();
     lua_pushstring(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.LineEdit.text: %s", e.what());
+    lua_pushfstring(L, "mimas.LineEdit.text: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.LineEdit.text: Unknown exception");
+    lua_pushfstring(L, "mimas.LineEdit.text: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -467,15 +488,16 @@ static int LineEdit_text(lua_State *L) {
 static int LineEdit_widget(lua_State *L) {
   try {
     LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in widget");
+    if (!self__) throw dub::Exception("Using deleted mimas.LineEdit in widget");
     QWidget * retval__ = self__->widget();
     lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.LineEdit.widget: %s", e.what());
+    lua_pushfstring(L, "mimas.LineEdit.widget: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.LineEdit.widget: Unknown exception");
+    lua_pushfstring(L, "mimas.LineEdit.widget: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -486,15 +508,16 @@ static int LineEdit_widget(lua_State *L) {
 static int LineEdit_width(lua_State *L) {
   try {
     LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in width");
+    if (!self__) throw dub::Exception("Using deleted mimas.LineEdit in width");
     int  retval__ = self__->width();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.LineEdit.width: %s", e.what());
+    lua_pushfstring(L, "mimas.LineEdit.width: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.LineEdit.width: Unknown exception");
+    lua_pushfstring(L, "mimas.LineEdit.width: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -505,15 +528,16 @@ static int LineEdit_width(lua_State *L) {
 static int LineEdit_x(lua_State *L) {
   try {
     LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in x");
+    if (!self__) throw dub::Exception("Using deleted mimas.LineEdit in x");
     int  retval__ = self__->x();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.LineEdit.x: %s", e.what());
+    lua_pushfstring(L, "mimas.LineEdit.x: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.LineEdit.x: Unknown exception");
+    lua_pushfstring(L, "mimas.LineEdit.x: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -524,15 +548,16 @@ static int LineEdit_x(lua_State *L) {
 static int LineEdit_y(lua_State *L) {
   try {
     LineEdit *self__ = *((LineEdit**)dubL_checkudata(L, 1, "mimas.LineEdit"));
-    if (!self__) return luaL_error(L, "Using deleted mimas.LineEdit in y");
+    if (!self__) throw dub::Exception("Using deleted mimas.LineEdit in y");
     int  retval__ = self__->y();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.LineEdit.y: %s", e.what());
+    lua_pushfstring(L, "mimas.LineEdit.y: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.LineEdit.y: Unknown exception");
+    lua_pushfstring(L, "mimas.LineEdit.y: Unknown exception");
   }
+  return lua_error(L);
 }
 
 

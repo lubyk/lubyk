@@ -18,10 +18,11 @@ static int Path_Path1(lua_State *L) {
     lua_pushclass<Path>(L, retval__, "mimas.Path");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Path.Path: %s", e.what());
+    lua_pushfstring(L, "mimas.Path.Path: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Path.Path: Unknown exception");
+    lua_pushfstring(L, "mimas.Path.Path: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -36,10 +37,11 @@ static int Path_Path2(lua_State *L) {
     lua_pushclass<Path>(L, retval__, "mimas.Path");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Path.Path: %s", e.what());
+    lua_pushfstring(L, "mimas.Path.Path: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Path.Path: Unknown exception");
+    lua_pushfstring(L, "mimas.Path.Path: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -101,10 +103,11 @@ static int Path_addRect(lua_State *L) {
     self__->addRect(x, y, w, h);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Path.addRect: %s", e.what());
+    lua_pushfstring(L, "mimas.Path.addRect: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Path.addRect: Unknown exception");
+    lua_pushfstring(L, "mimas.Path.addRect: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -121,10 +124,11 @@ static int Path_contains(lua_State *L) {
     lua_pushboolean(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Path.contains: %s", e.what());
+    lua_pushfstring(L, "mimas.Path.contains: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Path.contains: Unknown exception");
+    lua_pushfstring(L, "mimas.Path.contains: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -144,10 +148,11 @@ static int Path_cubicTo(lua_State *L) {
     self__->cubicTo(c1X, c1Y, c2X, c2Y, endPointX, endPointY);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Path.cubicTo: %s", e.what());
+    lua_pushfstring(L, "mimas.Path.cubicTo: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Path.cubicTo: Unknown exception");
+    lua_pushfstring(L, "mimas.Path.cubicTo: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -163,10 +168,11 @@ static int Path_lineTo(lua_State *L) {
     self__->lineTo(x, y);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Path.lineTo: %s", e.what());
+    lua_pushfstring(L, "mimas.Path.lineTo: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Path.lineTo: Unknown exception");
+    lua_pushfstring(L, "mimas.Path.lineTo: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -182,10 +188,11 @@ static int Path_moveTo(lua_State *L) {
     self__->moveTo(x, y);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Path.moveTo: %s", e.what());
+    lua_pushfstring(L, "mimas.Path.moveTo: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Path.moveTo: Unknown exception");
+    lua_pushfstring(L, "mimas.Path.moveTo: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -201,10 +208,11 @@ static int Path_outlineForWidth(lua_State *L) {
     lua_pushclass<Path>(L, retval__, "mimas.Path");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Path.outlineForWidth: %s", e.what());
+    lua_pushfstring(L, "mimas.Path.outlineForWidth: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Path.outlineForWidth: Unknown exception");
+    lua_pushfstring(L, "mimas.Path.outlineForWidth: Unknown exception");
   }
+  return lua_error(L);
 }
 
 

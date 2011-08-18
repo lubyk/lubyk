@@ -18,10 +18,11 @@ static int Callback_Callback(lua_State *L) {
     lua_pushclass<Callback>(L, retval__, "mimas.Callback");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Callback.Callback: %s", e.what());
+    lua_pushfstring(L, "mimas.Callback.Callback: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Callback.Callback: Unknown exception");
+    lua_pushfstring(L, "mimas.Callback.Callback: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -66,10 +67,11 @@ static int Callback_connect(lua_State *L) {
     self__->connect(obj, method, callback);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Callback.connect: %s", e.what());
+    lua_pushfstring(L, "mimas.Callback.connect: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Callback.connect: Unknown exception");
+    lua_pushfstring(L, "mimas.Callback.connect: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -84,10 +86,11 @@ static int Callback_set_callback(lua_State *L) {
     self__->set_callback(L);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.Callback.set_callback: %s", e.what());
+    lua_pushfstring(L, "mimas.Callback.set_callback: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.Callback.set_callback: Unknown exception");
+    lua_pushfstring(L, "mimas.Callback.set_callback: Unknown exception");
   }
+  return lua_error(L);
 }
 
 

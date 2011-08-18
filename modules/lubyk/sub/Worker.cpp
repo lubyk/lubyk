@@ -18,10 +18,11 @@ static int Worker_Worker(lua_State *L) {
     lua_pushclass<Worker>(L, retval__, "lubyk.Worker");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "lubyk.Worker.Worker: %s", e.what());
+    lua_pushfstring(L, "lubyk.Worker.Worker: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lubyk.Worker.Worker: Unknown exception");
+    lua_pushfstring(L, "lubyk.Worker.Worker: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -64,10 +65,11 @@ static int Worker_execPath(lua_State *L) {
     LuaStackSize  retval__ = self__->execPath(L);
     return retval__;
   } catch (std::exception &e) {
-    return luaL_error(L, "lubyk.Worker.execPath: %s", e.what());
+    lua_pushfstring(L, "lubyk.Worker.execPath: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lubyk.Worker.execPath: Unknown exception");
+    lua_pushfstring(L, "lubyk.Worker.execPath: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -82,10 +84,11 @@ static int Worker_exit(lua_State *L) {
     self__->exit(status);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "lubyk.Worker.exit: %s", e.what());
+    lua_pushfstring(L, "lubyk.Worker.exit: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lubyk.Worker.exit: Unknown exception");
+    lua_pushfstring(L, "lubyk.Worker.exit: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -100,10 +103,11 @@ static int Worker_now(lua_State *L) {
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "lubyk.Worker.now: %s", e.what());
+    lua_pushfstring(L, "lubyk.Worker.now: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lubyk.Worker.now: Unknown exception");
+    lua_pushfstring(L, "lubyk.Worker.now: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -117,10 +121,11 @@ static int Worker_run(lua_State *L) {
     self__->run();
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "lubyk.Worker.run: %s", e.what());
+    lua_pushfstring(L, "lubyk.Worker.run: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lubyk.Worker.run: Unknown exception");
+    lua_pushfstring(L, "lubyk.Worker.run: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -135,10 +140,11 @@ static int Worker_sleep(lua_State *L) {
     self__->sleep(duration);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "lubyk.Worker.sleep: %s", e.what());
+    lua_pushfstring(L, "lubyk.Worker.sleep: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lubyk.Worker.sleep: Unknown exception");
+    lua_pushfstring(L, "lubyk.Worker.sleep: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -154,10 +160,11 @@ static int Worker_spawn(lua_State *L) {
     LuaStackSize  retval__ = self__->spawn(script, L);
     return retval__;
   } catch (std::exception &e) {
-    return luaL_error(L, "lubyk.Worker.spawn: %s", e.what());
+    lua_pushfstring(L, "lubyk.Worker.spawn: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lubyk.Worker.spawn: Unknown exception");
+    lua_pushfstring(L, "lubyk.Worker.spawn: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -171,10 +178,11 @@ static int Worker_test_lock(lua_State *L) {
     self__->test_lock();
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "lubyk.Worker.test_lock: %s", e.what());
+    lua_pushfstring(L, "lubyk.Worker.test_lock: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lubyk.Worker.test_lock: Unknown exception");
+    lua_pushfstring(L, "lubyk.Worker.test_lock: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -188,10 +196,11 @@ static int Worker_test_unlock(lua_State *L) {
     self__->test_unlock();
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "lubyk.Worker.test_unlock: %s", e.what());
+    lua_pushfstring(L, "lubyk.Worker.test_unlock: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lubyk.Worker.test_unlock: Unknown exception");
+    lua_pushfstring(L, "lubyk.Worker.test_unlock: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -206,10 +215,11 @@ static int Worker_wait(lua_State *L) {
     self__->wait(duration);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "lubyk.Worker.wait: %s", e.what());
+    lua_pushfstring(L, "lubyk.Worker.wait: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lubyk.Worker.wait: Unknown exception");
+    lua_pushfstring(L, "lubyk.Worker.wait: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -225,10 +235,11 @@ static int Worker_waitpid(lua_State *L) {
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "lubyk.Worker.waitpid: %s", e.what());
+    lua_pushfstring(L, "lubyk.Worker.waitpid: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "lubyk.Worker.waitpid: Unknown exception");
+    lua_pushfstring(L, "lubyk.Worker.waitpid: Unknown exception");
   }
+  return lua_error(L);
 }
 
 

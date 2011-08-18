@@ -18,10 +18,11 @@ static int FileObserver_FileObserver(lua_State *L) {
     lua_pushclass<FileObserver>(L, retval__, "mimas.FileObserver");
     return 1;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.FileObserver.FileObserver: %s", e.what());
+    lua_pushfstring(L, "mimas.FileObserver.FileObserver: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.FileObserver.FileObserver: Unknown exception");
+    lua_pushfstring(L, "mimas.FileObserver.FileObserver: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -64,10 +65,11 @@ static int FileObserver___newindex(lua_State *L) {
     self__->__newindex(L);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.FileObserver.__newindex: %s", e.what());
+    lua_pushfstring(L, "mimas.FileObserver.__newindex: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.FileObserver.__newindex: Unknown exception");
+    lua_pushfstring(L, "mimas.FileObserver.__newindex: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -82,10 +84,11 @@ static int FileObserver_addPath(lua_State *L) {
     self__->addPath(path);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.FileObserver.addPath: %s", e.what());
+    lua_pushfstring(L, "mimas.FileObserver.addPath: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.FileObserver.addPath: Unknown exception");
+    lua_pushfstring(L, "mimas.FileObserver.addPath: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -100,10 +103,11 @@ static int FileObserver_removePath(lua_State *L) {
     self__->removePath(path);
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mimas.FileObserver.removePath: %s", e.what());
+    lua_pushfstring(L, "mimas.FileObserver.removePath: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mimas.FileObserver.removePath: Unknown exception");
+    lua_pushfstring(L, "mimas.FileObserver.removePath: Unknown exception");
   }
+  return lua_error(L);
 }
 
 

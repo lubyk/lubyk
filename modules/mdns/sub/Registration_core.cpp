@@ -52,10 +52,11 @@ static int Registration_MakeInstance(lua_State *L) {
     LuaStackSize  retval__ = Registration::MakeInstance(worker, service_type, name, port, L);
     return retval__;
   } catch (std::exception &e) {
-    return luaL_error(L, "mdns.Registration.MakeInstance: %s", e.what());
+    lua_pushfstring(L, "mdns.Registration.MakeInstance: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mdns.Registration.MakeInstance: Unknown exception");
+    lua_pushfstring(L, "mdns.Registration.MakeInstance: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
@@ -69,10 +70,11 @@ static int Registration_registration_done(lua_State *L) {
     self__->registration_done();
     return 0;
   } catch (std::exception &e) {
-    return luaL_error(L, "mdns.Registration.registration_done: %s", e.what());
+    lua_pushfstring(L, "mdns.Registration.registration_done: %s", e.what());
   } catch (...) {
-    return luaL_error(L, "mdns.Registration.registration_done: Unknown exception");
+    lua_pushfstring(L, "mdns.Registration.registration_done: Unknown exception");
   }
+  return lua_error(L);
 }
 
 
