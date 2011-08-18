@@ -1,9 +1,82 @@
-#ifndef LUBYK_INCLUDE_LUA_CPP_HELPER_H_
-#define LUBYK_INCLUDE_LUA_CPP_HELPER_H_
+/*                                     
+Copyright (c) 2011 by Gaspard Bucher (http://teti.ch).
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+#ifndef DOXY_GENERATOR_LIB_DOXY_GENERATOR_INCLUDE_LUA_DOXY_HELPER_H_
+#define DOXY_GENERATOR_LIB_DOXY_GENERATOR_INCLUDE_LUA_DOXY_HELPER_H_
 
 #include <stdlib.h> // malloc
+#include <string> // std::string for Exception
+#include <exception> // std::exception
 
-#include "lubyk.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+// We need C linkage because lua lib is compiled as C code
+#include "lua.h"
+#include "lauxlib.h"
+
+#ifdef __cplusplus
+}
+#endif
+/** Try/catch safe versions of luaL_checknumber, luaL_checkudata, .. */
+                       
+namespace dub {
+class Exception : public std::exception
+{
+  std::string message_;
+public:
+  explicit Exception(const char *format, ...);
+
+  ~Exception() throw();
+
+  const char* what() const throw();
+};
+
+class TypeException : public Exception
+{
+public:
+  explicit TypeException(lua_State *L, int narg, const char *type);
+};
+
+} // dub
+
+
+// ================================================== dubL_check... try/catch safe
+// these provide the same funcionality of their equivalent luaL_check... but they
+// throw std::exception which can be caught (eventually to call lua_error)
+
+lua_Number dubL_checknumber(lua_State *L, int narg) throw(dub::TypeException);
+lua_Number dubL_checkint(lua_State *L, int narg) throw(dub::TypeException);
+
+const char *dubL_checklstring(lua_State *L, int narg, size_t *len) throw(dub::TypeException);
+
+lua_Integer dubL_checkinteger(lua_State *L, int narg) throw(dub::TypeException);
+
+void *dubL_checkudata(lua_State *L, int ud, const char *tname) throw(dub::TypeException);
+
+#define dubL_checkstring(L,n) (dubL_checklstring(L, (n), NULL))
+#define dubL_checkint(L,n) ((int)dubL_checkinteger(L, (n)))
+
 /** ======================================== lua_pushclass          */
 
 /** Push a custom type on the stack.
@@ -32,13 +105,38 @@ void lua_pushclass2(lua_State *L, T *ptr, const char *type_name) {
   T **userdata = (T**)lua_newuserdata(L, sizeof(T*));
   *userdata = ptr;
 
+  // store pointer in class so that it can set it to NULL on destroy with
+  // *userdata = NULL
   ptr->set_userdata_ptr((void**)userdata);
+
   // the userdata is now on top of the stack
 
   // set metatable (contains methods)
   luaL_getmetatable(L, type_name);
   lua_setmetatable(L, -2);
 }
+
+/** Classes that can be deleted out of Lua should inherit from this class or
+ * implement 'set_userdata_ptr' (and manage the userdata_ptr...)
+ */
+class DeletableOutOfLua {
+  void **userdata_ptr_;
+public:
+  DeletableOutOfLua();
+
+  virtual ~DeletableOutOfLua();
+
+  virtual void dub_destroy();
+
+  /** @internal
+   */
+  void set_userdata_ptr(void **ptr);
+
+protected:
+  /** MUST be called from the custom destructor.
+   */
+  void dub_cleanup();
+};
 
 /** Push a custom type on the stack.
  * Since the value is passed by value, we have to allocate a copy
@@ -49,42 +147,6 @@ void lua_pushclass(lua_State *L, T &val, const char *type_name) {
   T *val_ptr = new T(val);
   lua_pushclass<T>(L, val_ptr, type_name);
 }
-
-/** Classes that can be deleted out of Lua should inherit from this class or
- * implement 'set_userdata_ptr' (and manage the userdata_ptr...)
- */
-class DeletableOutOfLua {
-  void **userdata_ptr_;
-public:
-  DeletableOutOfLua()
-   : userdata_ptr_(NULL) {}
-  virtual ~DeletableOutOfLua() {
-    if (userdata_ptr_) {
-      *userdata_ptr_ = NULL;
-      userdata_ptr_ = NULL;
-    }
-  }
-
-  virtual void dub_destroy() {
-    dub_cleanup();
-    delete this;
-  }
-
-  /** @internal
-   */
-  void set_userdata_ptr(void **ptr) {
-    userdata_ptr_ = ptr;
-  }
-
-protected:
-  /** MUST be called from the custom destructor.
-   */
-  void dub_cleanup() {
-    // so that it is not changed in ~DeletableOutOfLua
-    userdata_ptr_ = NULL;
-  }
-};
-
 
 /** ======================================== DubArgPointer */
 
@@ -130,78 +192,20 @@ private:
 
 /** ======================================== is_userdata */
 
-inline bool is_userdata(lua_State *L, int index, const char *tname) {
-  void *p = lua_touserdata(L, index);
-  if (p != NULL) {  /* value is a userdata? */
-    if (lua_getmetatable(L, index)) {  /* does it have a metatable? */
-      lua_getfield(L, LUA_REGISTRYINDEX, tname);  /* get correct metatable */
-      if (lua_rawequal(L, -1, -2)) {  /* does it have the correct mt? */
-        lua_pop(L, 2);  /* remove both metatables */
-        // type match
-        return true;
-      }
-    }
-  }
-  // type does not match
-  return false;
-}
+bool is_userdata(lua_State *L, int index, const char *tname);
 
 /** ======================================== register_constants */
-
 
 typedef struct lua_constants_Reg {
   const char *name;
   double constant;
 } lua_constants_Reg;
 
-inline int libsize (const lua_constants_Reg *l) {
-  int size = 0;
-  for (; l->name; l++) size++;
-  return size;
-}
+int libsize (const lua_constants_Reg *l);
 
-inline void register_constants(lua_State *L, const char *name_space, const lua_constants_Reg *l) {
-  if (name_space) {
-    /* compute size hint for new table. */
-    int size = libsize(l);
-
-    /* try global variable (and create one if it does not exist) */
-    if (luaL_findtable(L, LUA_GLOBALSINDEX, name_space, size) != NULL) {
-      // create global table
-      assert(false); //TODO
-    }
-
-    /* found name_space in global index ==> stack -1 */
-  }
-  for (; l->name; l++) {
-    /* push each constant into the name_space (stack position = -1)*/
-    lua_pushnumber(L, l->constant);
-    lua_setfield(L, -2, l->name);
-  }
-  /* pop name_space */
-  lua_pop(L, 1);
-}
+void register_constants(lua_State *L, const char *name_space, const lua_constants_Reg *l);
 
 // The metatable lives in libname.ClassName_
-inline void register_mt(lua_State *L, const char *libname, const char *class_name) {
-  size_t len = strlen(class_name) + 2;
-  char *buffer = (char*)malloc(sizeof(char) * len);
-  snprintf(buffer, len, "%s_", class_name); // we could save in libname.mt.ClassName (easy transfer from
-                                            // 'mimas_core' to 'mimas' table for example.)
+void register_mt(lua_State *L, const char *libname, const char *class_name);
 
-  // meta-table should be on top
-  // <mt>
-  lua_getglobal(L, libname);
-  // <mt> <lib>
-  lua_pushstring(L, buffer);
-  // <mt> <lib> "Foobar_"
-  lua_pushvalue(L, -3);
-  // <mt> <lib> "Foobar_" <mt>
-  lua_settable(L, -3);
-  // <mt> <lib>
-  lua_pop(L, 1);
-  // <mt>
-  free(buffer);
-}
-
-#endif // LUBYK_INCLUDE_LUA_CPP_HELPER_H_
+#endif // DOXY_GENERATOR_LIB_DOXY_GENERATOR_INCLUDE_LUA_DOXY_HELPER_H_
