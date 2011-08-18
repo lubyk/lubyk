@@ -71,11 +71,26 @@ function lk.readall(basepath, path)
 end
 
 function lk.absolutizePath(path)
-  if string.match(path, '^/') then
-    return path
-  else
-    return string.format('%s/%s', lfs.currentdir(), path)
+  if not string.match(path, '^/') then
+    path = string.format('%s/%s', lfs.currentdir(), path)
   end
+  -- resolve '/./' and '/../'
+  local parts = lk.split(path, '/')
+  local path = {}
+  for i, part in ipairs(parts) do
+    if part == '.' then
+      -- ignore
+    elseif part == '..' then
+      -- move back
+      -- 1 = '', 2 = 'xxx', 3 = '..' ==> 1 = ''
+      if i > 2 then
+        table.remove(path, #path)
+      end
+    else
+      table.insert(path, part)
+    end
+  end
+  return lk.join(path, '/')
 end
 
 local function makePathPart(path, fullpath)
@@ -162,6 +177,20 @@ function lk.split(str, pat)
   return t
 end
 
+-------------------------------- lk.join(list, sep)
+-- Join elements of a table with a separator
+function lk.join(list, sep)
+  local res = nil
+  for _, part in ipairs(list) do
+    if not res then
+      res = part
+    else
+      res = res .. sep .. part
+    end
+  end
+  return res
+end
+
 -------------------------------- lk.absToRel(abs_string, base)
 -- Transform an absolute url to a relative with given base
 function lk.absToRel(abs_string, base)
@@ -198,7 +227,7 @@ end
 
 -------------------------------- lk.dir()
 -- Find the directory of the current file or the
--- direcotyr of the file up x levels in the call
+-- directory of the file up x levels in the call
 -- chain (-1 = up one level).
 function lk.dir(level)
   local level = level or 0

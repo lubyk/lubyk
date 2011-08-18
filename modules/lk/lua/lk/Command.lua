@@ -27,28 +27,36 @@ setmetatable(lib, {
     -- private flag to find more processes
     find_more = true,
   }
-  if url then
-    local target, cmd = getTarget(url)
-    if target ~= '*' then
-      -- just find this target, execute command and quit
-      self.target = target
-      self.cmd = {url, ...}
-    elseif cmd then
-      -- star based url (run on many processes)
-      self.on_load = {url, ...}
-    end
-  end
   setmetatable(self, lib)
   self.zones[zone] = {}
   self.current = self.zones[zone]
 
-  self.process_watch = lk.ProcessWatch():addDelegate(self)
-  while(self.find_more) do
-    self.find_more = nil
-    if self.abort then
-      break
+  if url then
+    url = self:specialCommand(url, ...)
+    if not url then
+      -- done
     else
-      sleep(1000) -- let the processes resolve
+      local target, cmd = getTarget(url)
+      if target ~= '*' then
+        -- just find this target, execute command and quit
+        self.target = target
+        self.cmd = {url, ...}
+      elseif cmd then
+        -- star based url (run on many processes)
+        self.on_load = {url, ...}
+      end
+    end
+  end
+
+  if self.find_more then
+    self.process_watch = lk.ProcessWatch():addDelegate(self)
+    while(self.find_more) do
+      self.find_more = nil
+      if self.abort then
+        break
+      else
+        sleep(1000) -- let the processes resolve
+      end
     end
   end
 
@@ -64,6 +72,27 @@ function getTarget(url)
   return string.match(url, '^/([^/]*)(.*)$')
 end
 
+-- TODO: Transform this to a command line that we could use to do everything that
+-- we can do with the GUI.
+--
+-- For now simply enable the "-e" (exec) mode with the command to halt all local processes related to
+-- lubyk:
+-- > lubyk --zone default '/*/lk/quit'
+-- Which is the same as
+-- > lubyk --zone default quit
+-- Or (by using .lubykrc for default zone)
+-- > lubyk quit
+--
+-- To stop only process "a"
+-- > lubyk --zone default /a/lk/quit
+-- > lubyk --zone default quit a
+--
+-- Command format:
+-- /[URL] {arg, ...}
+--
+-- CMD {target (default=*)} {arg, ...}
+-- ==
+-- /target/lk/CMD {arg, ...}
 function lib:call(url, ...)
   local target_name, cmd = getTarget(url)
   if target_name == '*' then
@@ -105,3 +134,36 @@ function lib:removeService(service)
   end
 end
 
+--================================================== Special commands
+function lib:specialCommand(cmd, ...)
+  if cmd == '--test' then
+    local all = test.all
+    test.all = function() end -- dummy
+    test.loadAll(...)
+    all()
+    return nil
+  elseif cmd == '--testInstall' then
+    app = mimas.Application()
+    dlg = editor.SimpleDialog {
+      message = 'Lubyk works!',
+--      cancel = 'Test more',
+      ok = 'Ok',
+    }
+    function dlg.ok()
+      dlg:close()
+      self.find_more = false
+    end
+--    function dlg.cancel()
+--      self:specialCommand('--test')
+--    end
+    dlg:resize(200,200)
+    dlg:move(10, 10)
+    dlg:show()
+    app:exec()
+    return nil
+  elseif action == 'halt' then
+    return '/*/lk/quit'
+  else
+    return cmd
+  end
+end

@@ -50,13 +50,20 @@ function lib:glob(pattern)
   end
 end
 
-
+local function list_files(self)
+  local base = self.path
+  for file in lfs.dir(base) do
+    if not string.match(file, self.ignore_pattern) then
+      coroutine.yield(base..self.sep..file)
+    end
+	end
+end
 --- Return a table with a list of paths in the directory.
 -- The returned values are paths, not just filenames.
 function lib:list()
   local co = coroutine.create(list_files)
   return function()
-    local ok, value = coroutine.resume(co, self.path)
+    local ok, value = coroutine.resume(co, self)
     if ok then
       return value
     else
@@ -65,10 +72,3 @@ function lib:list()
   end
 end
 
-function list_files(base)
-  for file in lfs.dir(base) do
-    if not string.match(file, lib.ignore_pattern) then
-      coroutine.yield(base..lib.sep..file)
-    end
-	end
-end

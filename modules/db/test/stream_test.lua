@@ -18,7 +18,7 @@ ROWS = {
   [15] = {t=15, a=5, b=3}
 }
 
-local function setup_basic_data(t)
+local function setupBasicData(t)
   t.stream = db.Stream('tmp.db')
   -- set data at event time '10'
   t.stream:set{t=10, a=1.1, b=2.0}
@@ -34,48 +34,48 @@ end
 
 function should.open(t)
   t.stream = db.Stream('tmp2.db')
-  assert_true(t.stream:is_open())
+  assertTrue(t.stream:is_open())
 end
 
-function should.get_first_timestamp(t)
-  setup_basic_data(t)
+function should.getFirstTimestamp(t)
+  setupBasicData(t)
   -- get first event time
-  assert_equal(10, t.stream:first())
-  assert_equal(10, t.stream:first())
+  assertEqual(10, t.stream:first())
+  assertEqual(10, t.stream:first())
 end
 
-function should.write_strings(t)
-  setup_basic_data(t)
+function should.writeStrings(t)
+  setupBasicData(t)
   t.stream:set({t=25, name='hello'})
-  assert_table_equal({t=25, name='hello'}, t.stream:at(25))
+  assertTableEqual({t=25, name='hello'}, t.stream:at(25))
 end
 
-function should.get_next_timestamp(t)
-  setup_basic_data(t)
+function should.getNextTimestamp(t)
+  setupBasicData(t)
   -- get first event time
-  assert_equal(10, t.stream:next(0))
+  assertEqual(10, t.stream:next(0))
   -- get next event time
-  assert_equal(12, t.stream:next(10))
+  assertEqual(12, t.stream:next(10))
   -- no next event after 15
-  assert_nil(t.stream:next(15))
+  assertNil(t.stream:next(15))
 end
 
-function should.get_data_with_at(t)
-  setup_basic_data(t)
+function should.getDataWithAt(t)
+  setupBasicData(t)
   -- get all data at event time '10'
-  assert_table_equal({a=1.1, b=2, c=3}, t.stream:at(10))
+  assertTableEqual({a=1.1, b=2, c=3}, t.stream:at(10))
   -- get all data at event time '15'
-  assert_table_equal({a=5, b=3}, t.stream:at(15))
+  assertTableEqual({a=5, b=3}, t.stream:at(15))
   -- no data at event time '123'
-  assert_nil(t.stream:at(123))
+  assertNil(t.stream:at(123))
 end
 
 function should.record(t)
   t.stream = db.Stream('tmp.db')
   local now = worker:now()
   t.stream:recStart()
-  assert_true(t.stream.recording)
-  assert_equal(now, t.stream.rec_offset)
+  assertTrue(t.stream.recording)
+  assertEqual(now, t.stream.rec_offset)
   t.stream.recording = true
   t.stream:rec({a = 1})
   worker:sleep(10)
@@ -83,25 +83,25 @@ function should.record(t)
   worker:sleep(10)
   t.stream:rec({a = 1})
   local first_event = t.stream:first()
-  assert_in_range(first_event + 10, first_event + 12, t.stream:next(first_event))
+  assertInRange(first_event + 10, first_event + 12, t.stream:next(first_event))
 end
 
 function should.play(t)
-  setup_basic_data(t)
+  setupBasicData(t)
   local start = worker:now()
   function t.stream.playback(row)
-    assert_table_equal(ROWS[row.t], row)
-    assert_in_range(start + row.t, start + row.t + 3, worker:now())
+    assertValueEqual(ROWS[row.t], row)
+    assertInRange(start + row.t, start + row.t + 3, worker:now())
   end
   t.stream:play()
   while t.stream.playing do
     worker:sleep(25)
   end
-  assert_false(t.stream.playing)
+  assertFalse(t.stream.playing)
 end
 
-function should.not_drift(t)
-  setup_basic_data(t)
+function should.notDrift(t)
+  setupBasicData(t)
   for i = 1,100 do
     local j = i * 10 + math.floor(math.random() * 5)
     t.stream:set({t = j, a = i})
@@ -109,72 +109,72 @@ function should.not_drift(t)
   local now = worker:now()
   function t.stream.playback(row)
     -- no cumulated drift
-    assert_in_range(now + row.t, now + row.t + 3, worker:now())
+    assertInRange(now + row.t, now + row.t + 3, worker:now())
   end
   t.stream:play()
   while t.stream.playing do
     worker:sleep(10)
   end
-  assert_false(t.stream.playing)
+  assertFalse(t.stream.playing)
 end
 
-function should.get_track(t)
-  setup_basic_data(t)
+function should.getTrack(t)
+  setupBasicData(t)
   local track = t.stream:track('b')
-  assert_equal('b', track.name)
+  assertEqual('b', track.name)
   -- always return the same track object
-  assert_true(t.stream:track('b') == track)
-  assert_equal(2, track.id)
+  assertTrue(t.stream:track('b') == track)
+  assertEqual(2, track.id)
 end
 
-function should.get_first_timestamp(t)
-  setup_basic_data(t)
+function should.getFirstTimestamp(t)
+  setupBasicData(t)
   local track = t.stream:track('d')
   t.stream:set({t=22, d=5})
   -- get first event time
-  assert_equal(22, track:first())
+  assertEqual(22, track:first())
 end
 
-function should.get_next_track_timestamp(t)
-  setup_basic_data(t)
+function should.getNextTrackTimestamp(t)
+  setupBasicData(t)
   local track = t.stream:track('b')
   -- get first event time
-  assert_equal(10, track:first())
+  assertEqual(10, track:first())
   -- get next event time
-  assert_equal(15, track:next(10))
+  assertEqual(15, track:next(10))
   -- no next event after 15
-  assert_nil(track:next(15))
+  assertNil(track:next(15))
 end
 
-function should.get_track_data_at(t)
-  setup_basic_data(t)
+function should.getTrackDataAt(t)
+  setupBasicData(t)
   local track = t.stream:track('b')
   -- get data at event time '10' for track 'b'
-  assert_equal(ROWS[10].b, track:at(10))
+  assertEqual(ROWS[10].b, track:at(10))
   -- get all data at event time '12'
-  assert_equal(ROWS[15].b, track:at(15))
+  assertEqual(ROWS[15].b, track:at(15))
   -- no data at event time '123'
-  assert_nil(track:at(12))
+  assertNil(track:at(12))
 end
 
-function should.get_data_range(t)
-  setup_basic_data(t)
+function should.getDataRange(t)
+  setupBasicData(t)
   local track = t.stream:track('a')
   -- get all data in range [a,b[
   for row in track:range(10,15) do
     if row[1] == 10 then
-      assert_equal(ROWS[10].a, row[2])
+      assertEqual(ROWS[10].a, row[2])
     elseif row[1] == 12 then
-      assert_equal(ROWS[12].a, row[2])
+      assertEqual(ROWS[12].a, row[2])
     else
       -- error
-      assert_equal(nil, row[1])
+      assertEqual(nil, row[1])
     end
   end
   -- last event only
   for row in track:range(15,15) do
     -- should not return any row: range means [a, b[ (b not included)
-    assert_true(false)
+    assertTrue(false)
   end
 end
 

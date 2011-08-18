@@ -69,13 +69,24 @@ function lib.gui()
   lib.report()
 end
 
-function lib.load_all(...)
+function lib.loadAll(...)
+  local arg = {...}
   if not arg[1] then
-    arg = {'modules'}
-  end
-  for _, mod in ipairs(arg) do
-    for file in lk.Dir(mod):glob('test/.+_test[.]lua$') do
-      dofile(file)
+    -- load all
+    for mod in lk.Dir('modules'):list() do
+      print('Loading tests for', mod)
+      if lk.fileType(mod) == 'directory' then
+        for file in lk.Dir(mod):glob('test/.+_test[.]lua$') do
+          dofile(file)
+        end
+      end
+    end
+  else
+    for _, mod in ipairs(arg) do
+      print('Loading tests for', mod)
+      for file in lk.Dir('modules'..lk.Dir.sep..mod):glob('test/.+_test[.]lua$') do
+        dofile(file)
+      end
     end
   end
 end
