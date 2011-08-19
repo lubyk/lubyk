@@ -9,6 +9,8 @@ license: MIT
 
 author: Gaspard Bucher - Buma (http://feature-space.com)
 
+See the "CREDITS" file for the list of included open source projects.
+
 == History
 
 This is the 3rd incarnation of Lubyk (without counting the early Ruby prototype). The first version was a
