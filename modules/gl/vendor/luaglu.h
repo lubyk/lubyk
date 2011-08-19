@@ -22,14 +22,14 @@
 * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ******************************************************************************/
 
-#ifndef __LUAGL_H__
-#define __LUAGL_H__
+#ifndef __LUAGLU_H__
+#define __LUAGLU_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-int luaopen_luagl(lua_State *L);
+int luaopen_luaglu(lua_State *L);
 
 #ifdef __cplusplus
 }

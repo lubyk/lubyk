@@ -1,11 +1,13 @@
 --[[------------------------------------------------------
 
-  gl
-  --
+  glu
+  ---
 
-  OpenGL bindings
+  OpenGL glu bindings
   TODO: LuaJIT bindings
 
 --]]------------------------------------------------------
-require 'gl.luagl'
-return gl
+-- make sure gl is loaded first
+require 'gl'
+require 'gl.luaglu'
+return glu

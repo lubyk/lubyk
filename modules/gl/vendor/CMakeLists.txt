@@ -3,15 +3,15 @@
 #  [lubyk]
 # ----------------------------------------------------------------------------------
 
-include_directories(src)
+#include_directories(CMAKE_CURRENT_DIR)
 
-file(GLOB SUB_MODULE_SOURCES *.c)
-set(SUB_MODULE_NAME "vendor")
+#set(SUB_MODULE_NAME "luagl")
 find_package(OpenGL REQUIRED)
 
-build_sub_module("vendor" ${SUB_MODULE_SOURCES})
+build_sub_module("luagl"  luagl.c luagl_util.c)
+build_sub_module("luaglu" luaglu.c)
 
-target_link_libraries("${MODULE_NAME}_vendor" ${OPENGL_LIBRARIES})
+target_link_libraries("${MODULE_NAME}_luagl" ${OPENGL_LIBRARIES})
 
 # ----------------------------------------------------------------------------------
 #  [/lubyk]

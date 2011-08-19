@@ -13,7 +13,7 @@ using namespace mimas;
  */
 static int GLWidget_GLWidget(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checksdata(L, 1, "lubyk.Worker"));
     GLWidget * retval__ = new GLWidget(worker);
     lua_pushclass2<GLWidget>(L, retval__, "mimas.GLWidget");
     return 1;
@@ -30,7 +30,7 @@ static int GLWidget_GLWidget(lua_State *L) {
 /* ============================ Destructor       ====================== */
 
 static int GLWidget_destructor(lua_State *L) {
-  GLWidget **userdata = (GLWidget**)luaL_checkudata(L, 1, "mimas.GLWidget");
+  GLWidget **userdata = (GLWidget**)dubL_checksdata_n(L, 1, "mimas.GLWidget");
 
   
   // custom destructor
@@ -45,7 +45,7 @@ static int GLWidget_destructor(lua_State *L) {
 
 // test if class is deleted
 static int GLWidget_deleted(lua_State *L) {
-  GLWidget **userdata = (GLWidget**)luaL_checkudata(L, 1, "mimas.GLWidget");
+  GLWidget **userdata = (GLWidget**)dubL_checksdata_n(L, 1, "mimas.GLWidget");
   lua_pushboolean(L, *userdata == NULL);
   return 1;
 }
@@ -53,7 +53,7 @@ static int GLWidget_deleted(lua_State *L) {
 /* ============================ tostring         ====================== */
 
 static int GLWidget__tostring(lua_State *L) {
-  GLWidget **userdata = (GLWidget**)luaL_checkudata(L, 1, "mimas.GLWidget");
+  GLWidget **userdata = (GLWidget**)dubL_checksdata_n(L, 1, "mimas.GLWidget");
   
   if (!*userdata) {
     lua_pushstring(L, "<mimas.GLWidget: NULL>");
@@ -74,7 +74,7 @@ static int GLWidget__tostring(lua_State *L) {
  */
 static int GLWidget___newindex(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checkudata(L, 1, "mimas.GLWidget"));
+    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in __newindex");
     
     self__->__newindex(L);
@@ -94,7 +94,7 @@ static int GLWidget___newindex(lua_State *L) {
  */
 static int GLWidget_activateWindow(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checkudata(L, 1, "mimas.GLWidget"));
+    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in activateWindow");
     self__->activateWindow();
     return 0;
@@ -113,7 +113,7 @@ static int GLWidget_activateWindow(lua_State *L) {
  */
 static int GLWidget_close(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checkudata(L, 1, "mimas.GLWidget"));
+    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in close");
     bool  retval__ = self__->close();
     lua_pushboolean(L, retval__);
@@ -133,7 +133,7 @@ static int GLWidget_close(lua_State *L) {
  */
 static int GLWidget_cssClass(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checkudata(L, 1, "mimas.GLWidget"));
+    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in cssClass");
     QString  retval__ = self__->cssClass();
     lua_pushclass<QString>(L, retval__, "mimas.QString");
@@ -153,7 +153,7 @@ static int GLWidget_cssClass(lua_State *L) {
  */
 static int GLWidget_height(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checkudata(L, 1, "mimas.GLWidget"));
+    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in height");
     int  retval__ = self__->height();
     lua_pushnumber(L, retval__);
@@ -173,7 +173,7 @@ static int GLWidget_height(lua_State *L) {
  */
 static int GLWidget_isVisible(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checkudata(L, 1, "mimas.GLWidget"));
+    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in isVisible");
     bool  retval__ = self__->isVisible();
     lua_pushboolean(L, retval__);
@@ -193,7 +193,7 @@ static int GLWidget_isVisible(lua_State *L) {
  */
 static int GLWidget_move(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checkudata(L, 1, "mimas.GLWidget"));
+    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in move");
     int x = dubL_checkint(L, 2);
     int y = dubL_checkint(L, 3);
@@ -214,7 +214,7 @@ static int GLWidget_move(lua_State *L) {
  */
 static int GLWidget_name(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checkudata(L, 1, "mimas.GLWidget"));
+    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in name");
     
     LuaStackSize  retval__ = self__->name(L);
@@ -234,7 +234,7 @@ static int GLWidget_name(lua_State *L) {
  */
 static int GLWidget_object(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checkudata(L, 1, "mimas.GLWidget"));
+    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in object");
     QObject * retval__ = self__->object();
     lua_pushclass<QObject>(L, retval__, "mimas.QObject");
@@ -254,7 +254,7 @@ static int GLWidget_object(lua_State *L) {
  */
 static int GLWidget_resize(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checkudata(L, 1, "mimas.GLWidget"));
+    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in resize");
     int w = dubL_checkint(L, 2);
     int h = dubL_checkint(L, 3);
@@ -275,7 +275,7 @@ static int GLWidget_resize(lua_State *L) {
  */
 static int GLWidget_setName(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checkudata(L, 1, "mimas.GLWidget"));
+    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in setName");
     const char *name = dubL_checkstring(L, 2);
     self__->setName(name);
@@ -295,7 +295,7 @@ static int GLWidget_setName(lua_State *L) {
  */
 static int GLWidget_show(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checkudata(L, 1, "mimas.GLWidget"));
+    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in show");
     self__->show();
     return 0;
@@ -314,7 +314,7 @@ static int GLWidget_show(lua_State *L) {
  */
 static int GLWidget_updateGL(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checkudata(L, 1, "mimas.GLWidget"));
+    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in updateGL");
     self__->updateGL();
     return 0;
@@ -333,7 +333,7 @@ static int GLWidget_updateGL(lua_State *L) {
  */
 static int GLWidget_widget(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checkudata(L, 1, "mimas.GLWidget"));
+    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in widget");
     QWidget * retval__ = self__->widget();
     lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
@@ -353,7 +353,7 @@ static int GLWidget_widget(lua_State *L) {
  */
 static int GLWidget_width(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checkudata(L, 1, "mimas.GLWidget"));
+    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in width");
     int  retval__ = self__->width();
     lua_pushnumber(L, retval__);
@@ -373,7 +373,7 @@ static int GLWidget_width(lua_State *L) {
  */
 static int GLWidget_x(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checkudata(L, 1, "mimas.GLWidget"));
+    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in x");
     int  retval__ = self__->x();
     lua_pushnumber(L, retval__);
@@ -393,7 +393,7 @@ static int GLWidget_x(lua_State *L) {
  */
 static int GLWidget_y(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checkudata(L, 1, "mimas.GLWidget"));
+    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
     if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in y");
     int  retval__ = self__->y();
     lua_pushnumber(L, retval__);

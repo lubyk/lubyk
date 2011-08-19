@@ -42,7 +42,7 @@ function should.display_window(t)
     -- reset
     gl.LoadIdentity()
     -- Calculate the aspect ratio of the view
-    gl.Perspective(
+    glu.Perspective(
       45,               -- Field of view angle
       width / height,   -- Aspect ration
       1,                -- zNear

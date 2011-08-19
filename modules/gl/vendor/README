@@ -1,0 +1,10 @@
+README for LuaGL
+
+  It’s a library that provides access to all of the OpenGL functionality from Lua.
+
+  Build instructions and usage are available in the LuaGL documentation.
+
+  For complete information, visit LuaGL's web site at http://luagl.sourceforge.net
+  or access its documentation in the HTML folder.
+
+(end of README)
