@@ -35,13 +35,13 @@ github (http://github.com/lubyk/lubyk) or clone and download if you feel like co
 
 In order to build everything, you need to have Qt SDK 4.7 and CMake installed.
 
-...> mkdir build
-...> cd build
-.../build> cmake ..
-.../build> make
- takes some time... please wait
-.../build> cd ../deploy
-.../deploy> lua install.lua
+  ...> mkdir build
+  ...> cd build
+  .../build> cmake ..
+  .../build> make
+   takes some time... please wait
+  .../build> cd ../deploy
+  .../deploy> lua install.lua
 
 The install script installs a single lua file in '/usr/local/lib/lua/5.1/lubyk.lua' and a '.lubykrc' file
 that informs lubyk where to search for libraries (.../lib).
@@ -49,7 +49,7 @@ that informs lubyk where to search for libraries (.../lib).
 Now you can use lubyk in lua scripts by simply doing a "require 'lubyk'". You can test the mimas graphical
 interface with with:
 
-...> lua Mimas/Resources/mimas_app.lua
+  ...> lua Mimas/Resources/mimas_app.lua
 
 === File organization
 
