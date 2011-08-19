@@ -14,7 +14,7 @@ using namespace mimas;
 /* ============================ Destructor       ====================== */
 
 static int Application_destructor(lua_State *L) {
-  Application **userdata = (Application**)luaL_checkudata(L, 1, "mimas.Application");
+  Application **userdata = (Application**)dubL_checksdata_n(L, 1, "mimas.Application");
 
   
   // custom destructor
@@ -29,7 +29,7 @@ static int Application_destructor(lua_State *L) {
 
 // test if class is deleted
 static int Application_deleted(lua_State *L) {
-  Application **userdata = (Application**)luaL_checkudata(L, 1, "mimas.Application");
+  Application **userdata = (Application**)dubL_checksdata_n(L, 1, "mimas.Application");
   lua_pushboolean(L, *userdata == NULL);
   return 1;
 }
@@ -37,7 +37,7 @@ static int Application_deleted(lua_State *L) {
 /* ============================ tostring         ====================== */
 
 static int Application__tostring(lua_State *L) {
-  Application **userdata = (Application**)luaL_checkudata(L, 1, "mimas.Application");
+  Application **userdata = (Application**)dubL_checksdata_n(L, 1, "mimas.Application");
   
   if (!*userdata) {
     lua_pushstring(L, "<mimas.Application: NULL>");
@@ -58,7 +58,7 @@ static int Application__tostring(lua_State *L) {
  */
 static int Application_MakeApplication(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checksdata(L, 1, "lubyk.Worker"));
     
     LuaStackSize  retval__ = Application::MakeApplication(worker, L);
     return retval__;
@@ -77,7 +77,7 @@ static int Application_MakeApplication(lua_State *L) {
  */
 static int Application_exec(lua_State *L) {
   try {
-    Application *self__ = *((Application**)dubL_checkudata(L, 1, "mimas.Application"));
+    Application *self__ = *((Application**)dubL_checksdata(L, 1, "mimas.Application"));
     if (!self__) throw dub::Exception("Using deleted mimas.Application in exec");
     int  retval__ = self__->exec();
     lua_pushnumber(L, retval__);
@@ -97,7 +97,7 @@ static int Application_exec(lua_State *L) {
  */
 static int Application_post(lua_State *L) {
   try {
-    Application *self__ = *((Application**)dubL_checkudata(L, 1, "mimas.Application"));
+    Application *self__ = *((Application**)dubL_checksdata(L, 1, "mimas.Application"));
     if (!self__) throw dub::Exception("Using deleted mimas.Application in post");
     
     self__->post(L);
@@ -117,7 +117,7 @@ static int Application_post(lua_State *L) {
  */
 static int Application_quit(lua_State *L) {
   try {
-    Application *self__ = *((Application**)dubL_checkudata(L, 1, "mimas.Application"));
+    Application *self__ = *((Application**)dubL_checksdata(L, 1, "mimas.Application"));
     if (!self__) throw dub::Exception("Using deleted mimas.Application in quit");
     self__->quit();
     return 0;
@@ -136,7 +136,7 @@ static int Application_quit(lua_State *L) {
  */
 static int Application_screenSize(lua_State *L) {
   try {
-    Application *self__ = *((Application**)dubL_checkudata(L, 1, "mimas.Application"));
+    Application *self__ = *((Application**)dubL_checksdata(L, 1, "mimas.Application"));
     if (!self__) throw dub::Exception("Using deleted mimas.Application in screenSize");
     
     LuaStackSize  retval__ = self__->screenSize(L);
@@ -156,7 +156,7 @@ static int Application_screenSize(lua_State *L) {
  */
 static int Application_setStyleSheet(lua_State *L) {
   try {
-    Application *self__ = *((Application**)dubL_checkudata(L, 1, "mimas.Application"));
+    Application *self__ = *((Application**)dubL_checksdata(L, 1, "mimas.Application"));
     if (!self__) throw dub::Exception("Using deleted mimas.Application in setStyleSheet");
     const char *text = dubL_checkstring(L, 2);
     self__->setStyleSheet(text);

@@ -13,7 +13,7 @@ using namespace mimas;
  */
 static int Painter_Painter(lua_State *L) {
   try {
-    QWidget *widget = *((QWidget **)dubL_checkudata(L, 1, "mimas.QWidget"));
+    QWidget *widget = *((QWidget **)dubL_checksdata(L, 1, "mimas.QWidget"));
     Painter * retval__ = new Painter(widget);
     lua_pushclass2<Painter>(L, retval__, "mimas.Painter");
     return 1;
@@ -30,7 +30,7 @@ static int Painter_Painter(lua_State *L) {
 /* ============================ Destructor       ====================== */
 
 static int Painter_destructor(lua_State *L) {
-  Painter **userdata = (Painter**)luaL_checkudata(L, 1, "mimas.Painter");
+  Painter **userdata = (Painter**)dubL_checksdata_n(L, 1, "mimas.Painter");
 
   
   // custom destructor
@@ -45,7 +45,7 @@ static int Painter_destructor(lua_State *L) {
 
 // test if class is deleted
 static int Painter_deleted(lua_State *L) {
-  Painter **userdata = (Painter**)luaL_checkudata(L, 1, "mimas.Painter");
+  Painter **userdata = (Painter**)dubL_checksdata_n(L, 1, "mimas.Painter");
   lua_pushboolean(L, *userdata == NULL);
   return 1;
 }
@@ -53,7 +53,7 @@ static int Painter_deleted(lua_State *L) {
 /* ============================ tostring         ====================== */
 
 static int Painter__tostring(lua_State *L) {
-  Painter **userdata = (Painter**)luaL_checkudata(L, 1, "mimas.Painter");
+  Painter **userdata = (Painter**)dubL_checksdata_n(L, 1, "mimas.Painter");
   
   if (!*userdata) {
     lua_pushstring(L, "<mimas.Painter: NULL>");
@@ -74,7 +74,7 @@ static int Painter__tostring(lua_State *L) {
  */
 static int Painter_drawChord(lua_State *L) {
   try {
-    Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
+    Painter *self__ = *((Painter**)dubL_checksdata(L, 1, "mimas.Painter"));
     if (!self__) throw dub::Exception("Using deleted mimas.Painter in drawChord");
     int x = dubL_checkint(L, 2);
     int y = dubL_checkint(L, 3);
@@ -99,7 +99,7 @@ static int Painter_drawChord(lua_State *L) {
  */
 static int Painter_drawEllipse(lua_State *L) {
   try {
-    Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
+    Painter *self__ = *((Painter**)dubL_checksdata(L, 1, "mimas.Painter"));
     if (!self__) throw dub::Exception("Using deleted mimas.Painter in drawEllipse");
     int x = dubL_checkint(L, 2);
     int y = dubL_checkint(L, 3);
@@ -122,7 +122,7 @@ static int Painter_drawEllipse(lua_State *L) {
  */
 static int Painter_drawLine(lua_State *L) {
   try {
-    Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
+    Painter *self__ = *((Painter**)dubL_checksdata(L, 1, "mimas.Painter"));
     if (!self__) throw dub::Exception("Using deleted mimas.Painter in drawLine");
     int x1 = dubL_checkint(L, 2);
     int y1 = dubL_checkint(L, 3);
@@ -145,9 +145,9 @@ static int Painter_drawLine(lua_State *L) {
  */
 static int Painter_drawPath(lua_State *L) {
   try {
-    Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
+    Painter *self__ = *((Painter**)dubL_checksdata(L, 1, "mimas.Painter"));
     if (!self__) throw dub::Exception("Using deleted mimas.Painter in drawPath");
-    const Path *path = *((const Path **)dubL_checkudata(L, 2, "mimas.Path"));
+    const Path *path = *((const Path **)dubL_checksdata(L, 2, "mimas.Path"));
     self__->drawPath(*path);
     return 0;
   } catch (std::exception &e) {
@@ -165,7 +165,7 @@ static int Painter_drawPath(lua_State *L) {
  */
 static int Painter_drawPoint(lua_State *L) {
   try {
-    Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
+    Painter *self__ = *((Painter**)dubL_checksdata(L, 1, "mimas.Painter"));
     if (!self__) throw dub::Exception("Using deleted mimas.Painter in drawPoint");
     int x = dubL_checkint(L, 2);
     int y = dubL_checkint(L, 3);
@@ -186,7 +186,7 @@ static int Painter_drawPoint(lua_State *L) {
  */
 static int Painter_drawRect(lua_State *L) {
   try {
-    Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
+    Painter *self__ = *((Painter**)dubL_checksdata(L, 1, "mimas.Painter"));
     if (!self__) throw dub::Exception("Using deleted mimas.Painter in drawRect");
     float x = dubL_checknumber(L, 2);
     float y = dubL_checknumber(L, 3);
@@ -209,7 +209,7 @@ static int Painter_drawRect(lua_State *L) {
  */
 static int Painter_drawRoundedRect(lua_State *L) {
   try {
-    Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
+    Painter *self__ = *((Painter**)dubL_checksdata(L, 1, "mimas.Painter"));
     if (!self__) throw dub::Exception("Using deleted mimas.Painter in drawRoundedRect");
     float x = dubL_checknumber(L, 2);
     float y = dubL_checknumber(L, 3);
@@ -234,7 +234,7 @@ static int Painter_drawRoundedRect(lua_State *L) {
  */
 static int Painter_drawText(lua_State *L) {
   try {
-    Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
+    Painter *self__ = *((Painter**)dubL_checksdata(L, 1, "mimas.Painter"));
     if (!self__) throw dub::Exception("Using deleted mimas.Painter in drawText");
     float x = dubL_checknumber(L, 2);
     float y = dubL_checknumber(L, 3);
@@ -259,13 +259,13 @@ static int Painter_drawText(lua_State *L) {
  */
 static int Painter_fillRect(lua_State *L) {
   try {
-    Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
+    Painter *self__ = *((Painter**)dubL_checksdata(L, 1, "mimas.Painter"));
     if (!self__) throw dub::Exception("Using deleted mimas.Painter in fillRect");
     int x = dubL_checkint(L, 2);
     int y = dubL_checkint(L, 3);
     int width = dubL_checkint(L, 4);
     int height = dubL_checkint(L, 5);
-    const Color *color = *((const Color **)dubL_checkudata(L, 6, "mimas.Color"));
+    const Color *color = *((const Color **)dubL_checksdata(L, 6, "mimas.Color"));
     self__->fillRect(x, y, width, height, *color);
     return 0;
   } catch (std::exception &e) {
@@ -284,9 +284,9 @@ static int Painter_fillRect(lua_State *L) {
  */
 static int Painter_setBrush1(lua_State *L) {
   try {
-    Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
+    Painter *self__ = *((Painter**)dubL_checksdata(L, 1, "mimas.Painter"));
     if (!self__) throw dub::Exception("Using deleted mimas.Painter in setBrush");
-    const Brush *brush = *((const Brush **)dubL_checkudata(L, 2, "mimas.Brush"));
+    const Brush *brush = *((const Brush **)dubL_checksdata(L, 2, "mimas.Brush"));
     self__->setBrush(*brush);
     return 0;
   } catch (std::exception &e) {
@@ -304,9 +304,9 @@ static int Painter_setBrush1(lua_State *L) {
  */
 static int Painter_setBrush2(lua_State *L) {
   try {
-    Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
+    Painter *self__ = *((Painter**)dubL_checksdata(L, 1, "mimas.Painter"));
     if (!self__) throw dub::Exception("Using deleted mimas.Painter in setBrush");
-    const Color *color = *((const Color **)dubL_checkudata(L, 2, "mimas.Color"));
+    const Color *color = *((const Color **)dubL_checksdata(L, 2, "mimas.Color"));
     self__->setBrush(*color);
     return 0;
   } catch (std::exception &e) {
@@ -324,7 +324,7 @@ static int Painter_setBrush2(lua_State *L) {
  */
 static int Painter_setBrush3(lua_State *L) {
   try {
-    Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
+    Painter *self__ = *((Painter**)dubL_checksdata(L, 1, "mimas.Painter"));
     if (!self__) throw dub::Exception("Using deleted mimas.Painter in setBrush");
     int top__ = lua_gettop(L);
     float h = dubL_checknumber(L, 2);
@@ -378,9 +378,9 @@ static int Painter_setBrush(lua_State *L) {
  */
 static int Painter_setPen1(lua_State *L) {
   try {
-    Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
+    Painter *self__ = *((Painter**)dubL_checksdata(L, 1, "mimas.Painter"));
     if (!self__) throw dub::Exception("Using deleted mimas.Painter in setPen");
-    const Pen *pen = *((const Pen **)dubL_checkudata(L, 2, "mimas.Pen"));
+    const Pen *pen = *((const Pen **)dubL_checksdata(L, 2, "mimas.Pen"));
     self__->setPen(*pen);
     return 0;
   } catch (std::exception &e) {
@@ -398,10 +398,10 @@ static int Painter_setPen1(lua_State *L) {
  */
 static int Painter_setPen2(lua_State *L) {
   try {
-    Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
+    Painter *self__ = *((Painter**)dubL_checksdata(L, 1, "mimas.Painter"));
     if (!self__) throw dub::Exception("Using deleted mimas.Painter in setPen");
     float width = dubL_checknumber(L, 2);
-    const Color *color = *((const Color **)dubL_checkudata(L, 3, "mimas.Color"));
+    const Color *color = *((const Color **)dubL_checksdata(L, 3, "mimas.Color"));
     self__->setPen(width, *color);
     return 0;
   } catch (std::exception &e) {
@@ -419,7 +419,7 @@ static int Painter_setPen2(lua_State *L) {
  */
 static int Painter_setPen3(lua_State *L) {
   try {
-    Painter *self__ = *((Painter**)dubL_checkudata(L, 1, "mimas.Painter"));
+    Painter *self__ = *((Painter**)dubL_checksdata(L, 1, "mimas.Painter"));
     if (!self__) throw dub::Exception("Using deleted mimas.Painter in setPen");
     int top__ = lua_gettop(L);
     float width = dubL_checknumber(L, 2);

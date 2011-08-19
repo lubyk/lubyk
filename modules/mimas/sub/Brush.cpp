@@ -34,7 +34,7 @@ static int Brush_Brush2(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     Brush * retval__;
-    const Color *color = *((const Color **)dubL_checkudata(L, 1, "mimas.Color"));
+    const Color *color = *((const Color **)dubL_checksdata(L, 1, "mimas.Color"));
     if (top__ < 2) {
       retval__ = new Brush(*color);
     } else {
@@ -115,7 +115,7 @@ static int Brush_Brush(lua_State *L) {
 /* ============================ Destructor       ====================== */
 
 static int Brush_destructor(lua_State *L) {
-  Brush **userdata = (Brush**)luaL_checkudata(L, 1, "mimas.Brush");
+  Brush **userdata = (Brush**)dubL_checksdata_n(L, 1, "mimas.Brush");
 
   
   if (*userdata) delete *userdata;
@@ -129,7 +129,7 @@ static int Brush_destructor(lua_State *L) {
 /* ============================ tostring         ====================== */
 
 static int Brush__tostring(lua_State *L) {
-  Brush **userdata = (Brush**)luaL_checkudata(L, 1, "mimas.Brush");
+  Brush **userdata = (Brush**)dubL_checksdata_n(L, 1, "mimas.Brush");
   
   
   lua_pushfstring(L, "<mimas.Brush: %p>", *userdata);
@@ -145,8 +145,8 @@ static int Brush__tostring(lua_State *L) {
  */
 static int Brush_setColor(lua_State *L) {
   try {
-    Brush *self__ = *((Brush**)dubL_checkudata(L, 1, "mimas.Brush"));
-    const Color *color = *((const Color **)dubL_checkudata(L, 2, "mimas.Color"));
+    Brush *self__ = *((Brush**)dubL_checksdata(L, 1, "mimas.Brush"));
+    const Color *color = *((const Color **)dubL_checksdata(L, 2, "mimas.Color"));
     self__->setColor(*color);
     return 0;
   } catch (std::exception &e) {
@@ -164,7 +164,7 @@ static int Brush_setColor(lua_State *L) {
  */
 static int Brush_setStyle(lua_State *L) {
   try {
-    Brush *self__ = *((Brush**)dubL_checkudata(L, 1, "mimas.Brush"));
+    Brush *self__ = *((Brush**)dubL_checksdata(L, 1, "mimas.Brush"));
     int style = dubL_checkint(L, 2);
     self__->setStyle(style);
     return 0;

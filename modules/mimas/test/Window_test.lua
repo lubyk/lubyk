@@ -28,6 +28,24 @@ function should.displayWindow(t)
   end)
 end
 
+function should.accessUserdataWithSuper(t)
+  -- we use the test env to protect from gc
+  t.win = {super = mimas.Window()}
+  setmetatable(t.win, mimas.Window_)
+  t.layout = mimas.HBoxLayout(t.win)
+  t.win:move(10, 10)
+  t.win:show()
+  -- callbacks
+  t.label = mimas.Label("Super closes in 200ms")
+  t.layout:addWidget(t.label)
+
+  t.thread = lk.Thread(function()
+    sleep(200)
+    t.win:close()
+    assertTrue(true)
+  end)
+end
+
 function should.displayRoundedWindow(t)
   -- we use the test env to protect from gc
   t.win = mimas.SplashScreen()

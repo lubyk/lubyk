@@ -13,7 +13,7 @@ using namespace mimas;
  */
 static int FileObserver_FileObserver(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checksdata(L, 1, "lubyk.Worker"));
     FileObserver * retval__ = new FileObserver(worker);
     lua_pushclass<FileObserver>(L, retval__, "mimas.FileObserver");
     return 1;
@@ -30,7 +30,7 @@ static int FileObserver_FileObserver(lua_State *L) {
 /* ============================ Destructor       ====================== */
 
 static int FileObserver_destructor(lua_State *L) {
-  FileObserver **userdata = (FileObserver**)luaL_checkudata(L, 1, "mimas.FileObserver");
+  FileObserver **userdata = (FileObserver**)dubL_checksdata_n(L, 1, "mimas.FileObserver");
 
   
   if (*userdata) delete *userdata;
@@ -44,7 +44,7 @@ static int FileObserver_destructor(lua_State *L) {
 /* ============================ tostring         ====================== */
 
 static int FileObserver__tostring(lua_State *L) {
-  FileObserver **userdata = (FileObserver**)luaL_checkudata(L, 1, "mimas.FileObserver");
+  FileObserver **userdata = (FileObserver**)dubL_checksdata_n(L, 1, "mimas.FileObserver");
   
   
   lua_pushfstring(L, "<mimas.FileObserver: %p>", *userdata);
@@ -60,7 +60,7 @@ static int FileObserver__tostring(lua_State *L) {
  */
 static int FileObserver___newindex(lua_State *L) {
   try {
-    FileObserver *self__ = *((FileObserver**)dubL_checkudata(L, 1, "mimas.FileObserver"));
+    FileObserver *self__ = *((FileObserver**)dubL_checksdata(L, 1, "mimas.FileObserver"));
     
     self__->__newindex(L);
     return 0;
@@ -79,7 +79,7 @@ static int FileObserver___newindex(lua_State *L) {
  */
 static int FileObserver_addPath(lua_State *L) {
   try {
-    FileObserver *self__ = *((FileObserver**)dubL_checkudata(L, 1, "mimas.FileObserver"));
+    FileObserver *self__ = *((FileObserver**)dubL_checksdata(L, 1, "mimas.FileObserver"));
     const char *path = dubL_checkstring(L, 2);
     self__->addPath(path);
     return 0;
@@ -98,7 +98,7 @@ static int FileObserver_addPath(lua_State *L) {
  */
 static int FileObserver_removePath(lua_State *L) {
   try {
-    FileObserver *self__ = *((FileObserver**)dubL_checkudata(L, 1, "mimas.FileObserver"));
+    FileObserver *self__ = *((FileObserver**)dubL_checksdata(L, 1, "mimas.FileObserver"));
     const char *path = dubL_checkstring(L, 2);
     self__->removePath(path);
     return 0;

@@ -32,7 +32,7 @@ static int Path_Path1(lua_State *L) {
  */
 static int Path_Path2(lua_State *L) {
   try {
-    const QPainterPath *path = *((const QPainterPath **)dubL_checkudata(L, 1, "mimas.QPainterPath"));
+    const QPainterPath *path = *((const QPainterPath **)dubL_checksdata(L, 1, "mimas.QPainterPath"));
     Path * retval__ = new Path(*path);
     lua_pushclass<Path>(L, retval__, "mimas.Path");
     return 1;
@@ -65,7 +65,7 @@ static int Path_Path(lua_State *L) {
 /* ============================ Destructor       ====================== */
 
 static int Path_destructor(lua_State *L) {
-  Path **userdata = (Path**)luaL_checkudata(L, 1, "mimas.Path");
+  Path **userdata = (Path**)dubL_checksdata_n(L, 1, "mimas.Path");
 
   
   if (*userdata) delete *userdata;
@@ -79,7 +79,7 @@ static int Path_destructor(lua_State *L) {
 /* ============================ tostring         ====================== */
 
 static int Path__tostring(lua_State *L) {
-  Path **userdata = (Path**)luaL_checkudata(L, 1, "mimas.Path");
+  Path **userdata = (Path**)dubL_checksdata_n(L, 1, "mimas.Path");
   
   
   lua_pushfstring(L, "<mimas.Path: %p>", *userdata);
@@ -95,7 +95,7 @@ static int Path__tostring(lua_State *L) {
  */
 static int Path_addRect(lua_State *L) {
   try {
-    Path *self__ = *((Path**)dubL_checkudata(L, 1, "mimas.Path"));
+    Path *self__ = *((Path**)dubL_checksdata(L, 1, "mimas.Path"));
     float x = dubL_checknumber(L, 2);
     float y = dubL_checknumber(L, 3);
     float w = dubL_checknumber(L, 4);
@@ -117,7 +117,7 @@ static int Path_addRect(lua_State *L) {
  */
 static int Path_contains(lua_State *L) {
   try {
-    Path *self__ = *((Path**)dubL_checkudata(L, 1, "mimas.Path"));
+    Path *self__ = *((Path**)dubL_checksdata(L, 1, "mimas.Path"));
     float x = dubL_checknumber(L, 2);
     float y = dubL_checknumber(L, 3);
     bool  retval__ = self__->contains(x, y);
@@ -138,7 +138,7 @@ static int Path_contains(lua_State *L) {
  */
 static int Path_cubicTo(lua_State *L) {
   try {
-    Path *self__ = *((Path**)dubL_checkudata(L, 1, "mimas.Path"));
+    Path *self__ = *((Path**)dubL_checksdata(L, 1, "mimas.Path"));
     float c1X = dubL_checknumber(L, 2);
     float c1Y = dubL_checknumber(L, 3);
     float c2X = dubL_checknumber(L, 4);
@@ -162,7 +162,7 @@ static int Path_cubicTo(lua_State *L) {
  */
 static int Path_lineTo(lua_State *L) {
   try {
-    Path *self__ = *((Path**)dubL_checkudata(L, 1, "mimas.Path"));
+    Path *self__ = *((Path**)dubL_checksdata(L, 1, "mimas.Path"));
     float x = dubL_checknumber(L, 2);
     float y = dubL_checknumber(L, 3);
     self__->lineTo(x, y);
@@ -182,7 +182,7 @@ static int Path_lineTo(lua_State *L) {
  */
 static int Path_moveTo(lua_State *L) {
   try {
-    Path *self__ = *((Path**)dubL_checkudata(L, 1, "mimas.Path"));
+    Path *self__ = *((Path**)dubL_checksdata(L, 1, "mimas.Path"));
     float x = dubL_checknumber(L, 2);
     float y = dubL_checknumber(L, 3);
     self__->moveTo(x, y);
@@ -202,7 +202,7 @@ static int Path_moveTo(lua_State *L) {
  */
 static int Path_outlineForWidth(lua_State *L) {
   try {
-    Path *self__ = *((Path**)dubL_checkudata(L, 1, "mimas.Path"));
+    Path *self__ = *((Path**)dubL_checksdata(L, 1, "mimas.Path"));
     float width = dubL_checknumber(L, 2);
     Path  retval__ = self__->outlineForWidth(width);
     lua_pushclass<Path>(L, retval__, "mimas.Path");

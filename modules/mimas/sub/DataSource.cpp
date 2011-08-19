@@ -13,7 +13,7 @@ using namespace mimas;
  */
 static int DataSource_DataSource(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checksdata(L, 1, "lubyk.Worker"));
     DataSource * retval__ = new DataSource(worker);
     lua_pushclass2<DataSource>(L, retval__, "mimas.DataSource");
     return 1;
@@ -30,7 +30,7 @@ static int DataSource_DataSource(lua_State *L) {
 /* ============================ Destructor       ====================== */
 
 static int DataSource_destructor(lua_State *L) {
-  DataSource **userdata = (DataSource**)luaL_checkudata(L, 1, "mimas.DataSource");
+  DataSource **userdata = (DataSource**)dubL_checksdata_n(L, 1, "mimas.DataSource");
 
   
   // custom destructor
@@ -45,7 +45,7 @@ static int DataSource_destructor(lua_State *L) {
 
 // test if class is deleted
 static int DataSource_deleted(lua_State *L) {
-  DataSource **userdata = (DataSource**)luaL_checkudata(L, 1, "mimas.DataSource");
+  DataSource **userdata = (DataSource**)dubL_checksdata_n(L, 1, "mimas.DataSource");
   lua_pushboolean(L, *userdata == NULL);
   return 1;
 }
@@ -53,7 +53,7 @@ static int DataSource_deleted(lua_State *L) {
 /* ============================ tostring         ====================== */
 
 static int DataSource__tostring(lua_State *L) {
-  DataSource **userdata = (DataSource**)luaL_checkudata(L, 1, "mimas.DataSource");
+  DataSource **userdata = (DataSource**)dubL_checksdata_n(L, 1, "mimas.DataSource");
   
   if (!*userdata) {
     lua_pushstring(L, "<mimas.DataSource: NULL>");
@@ -74,7 +74,7 @@ static int DataSource__tostring(lua_State *L) {
  */
 static int DataSource___newindex(lua_State *L) {
   try {
-    DataSource *self__ = *((DataSource**)dubL_checkudata(L, 1, "mimas.DataSource"));
+    DataSource *self__ = *((DataSource**)dubL_checksdata(L, 1, "mimas.DataSource"));
     if (!self__) throw dub::Exception("Using deleted mimas.DataSource in __newindex");
     
     self__->__newindex(L);
@@ -94,7 +94,7 @@ static int DataSource___newindex(lua_State *L) {
  */
 static int DataSource_emitLayoutChanged(lua_State *L) {
   try {
-    DataSource *self__ = *((DataSource**)dubL_checkudata(L, 1, "mimas.DataSource"));
+    DataSource *self__ = *((DataSource**)dubL_checksdata(L, 1, "mimas.DataSource"));
     if (!self__) throw dub::Exception("Using deleted mimas.DataSource in emitLayoutChanged");
     self__->emitLayoutChanged();
     return 0;
@@ -113,7 +113,7 @@ static int DataSource_emitLayoutChanged(lua_State *L) {
  */
 static int DataSource_getCallback(lua_State *L) {
   try {
-    DataSource *self__ = *((DataSource**)dubL_checkudata(L, 1, "mimas.DataSource"));
+    DataSource *self__ = *((DataSource**)dubL_checksdata(L, 1, "mimas.DataSource"));
     if (!self__) throw dub::Exception("Using deleted mimas.DataSource in getCallback");
     
     LuaStackSize  retval__ = self__->getCallback(L);
@@ -133,7 +133,7 @@ static int DataSource_getCallback(lua_State *L) {
  */
 static int DataSource_reset(lua_State *L) {
   try {
-    DataSource *self__ = *((DataSource**)dubL_checkudata(L, 1, "mimas.DataSource"));
+    DataSource *self__ = *((DataSource**)dubL_checksdata(L, 1, "mimas.DataSource"));
     if (!self__) throw dub::Exception("Using deleted mimas.DataSource in reset");
     self__->reset();
     return 0;

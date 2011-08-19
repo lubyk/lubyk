@@ -35,7 +35,7 @@ static int Pen_Pen2(lua_State *L) {
     int top__ = lua_gettop(L);
     Pen * retval__;
     float width = dubL_checknumber(L, 1);
-    const Color *color = *((const Color **)dubL_checkudata(L, 2, "mimas.Color"));
+    const Color *color = *((const Color **)dubL_checksdata(L, 2, "mimas.Color"));
     if (top__ < 3) {
       retval__ = new Pen(width, *color);
     } else {
@@ -128,7 +128,7 @@ static int Pen_Pen(lua_State *L) {
 /* ============================ Destructor       ====================== */
 
 static int Pen_destructor(lua_State *L) {
-  Pen **userdata = (Pen**)luaL_checkudata(L, 1, "mimas.Pen");
+  Pen **userdata = (Pen**)dubL_checksdata_n(L, 1, "mimas.Pen");
 
   
   if (*userdata) delete *userdata;
@@ -142,7 +142,7 @@ static int Pen_destructor(lua_State *L) {
 /* ============================ tostring         ====================== */
 
 static int Pen__tostring(lua_State *L) {
-  Pen **userdata = (Pen**)luaL_checkudata(L, 1, "mimas.Pen");
+  Pen **userdata = (Pen**)dubL_checksdata_n(L, 1, "mimas.Pen");
   
   
   lua_pushfstring(L, "<mimas.Pen: %p>", *userdata);
@@ -158,7 +158,7 @@ static int Pen__tostring(lua_State *L) {
  */
 static int Pen_setCapStyle(lua_State *L) {
   try {
-    Pen *self__ = *((Pen**)dubL_checkudata(L, 1, "mimas.Pen"));
+    Pen *self__ = *((Pen**)dubL_checksdata(L, 1, "mimas.Pen"));
     int style = dubL_checkint(L, 2);
     self__->setCapStyle(style);
     return 0;
@@ -177,8 +177,8 @@ static int Pen_setCapStyle(lua_State *L) {
  */
 static int Pen_setColor(lua_State *L) {
   try {
-    Pen *self__ = *((Pen**)dubL_checkudata(L, 1, "mimas.Pen"));
-    const Color *color = *((const Color **)dubL_checkudata(L, 2, "mimas.Color"));
+    Pen *self__ = *((Pen**)dubL_checksdata(L, 1, "mimas.Pen"));
+    const Color *color = *((const Color **)dubL_checksdata(L, 2, "mimas.Color"));
     self__->setColor(*color);
     return 0;
   } catch (std::exception &e) {
@@ -196,7 +196,7 @@ static int Pen_setColor(lua_State *L) {
  */
 static int Pen_setHsva(lua_State *L) {
   try {
-    Pen *self__ = *((Pen**)dubL_checkudata(L, 1, "mimas.Pen"));
+    Pen *self__ = *((Pen**)dubL_checksdata(L, 1, "mimas.Pen"));
     int top__ = lua_gettop(L);
     float h = dubL_checknumber(L, 2);
     if (top__ < 3) {
@@ -231,7 +231,7 @@ static int Pen_setHsva(lua_State *L) {
  */
 static int Pen_setJoinStyle(lua_State *L) {
   try {
-    Pen *self__ = *((Pen**)dubL_checkudata(L, 1, "mimas.Pen"));
+    Pen *self__ = *((Pen**)dubL_checksdata(L, 1, "mimas.Pen"));
     int style = dubL_checkint(L, 2);
     self__->setJoinStyle(style);
     return 0;
@@ -250,7 +250,7 @@ static int Pen_setJoinStyle(lua_State *L) {
  */
 static int Pen_setRgba(lua_State *L) {
   try {
-    Pen *self__ = *((Pen**)dubL_checkudata(L, 1, "mimas.Pen"));
+    Pen *self__ = *((Pen**)dubL_checksdata(L, 1, "mimas.Pen"));
     int top__ = lua_gettop(L);
     float r = dubL_checknumber(L, 2);
     float g = dubL_checknumber(L, 3);
@@ -277,7 +277,7 @@ static int Pen_setRgba(lua_State *L) {
  */
 static int Pen_setStyle(lua_State *L) {
   try {
-    Pen *self__ = *((Pen**)dubL_checkudata(L, 1, "mimas.Pen"));
+    Pen *self__ = *((Pen**)dubL_checksdata(L, 1, "mimas.Pen"));
     int style = dubL_checkint(L, 2);
     self__->setStyle(style);
     return 0;
@@ -296,7 +296,7 @@ static int Pen_setStyle(lua_State *L) {
  */
 static int Pen_setWidth(lua_State *L) {
   try {
-    Pen *self__ = *((Pen**)dubL_checkudata(L, 1, "mimas.Pen"));
+    Pen *self__ = *((Pen**)dubL_checksdata(L, 1, "mimas.Pen"));
     float w = dubL_checknumber(L, 2);
     self__->setWidth(w);
     return 0;

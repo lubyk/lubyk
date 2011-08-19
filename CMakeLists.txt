@@ -22,9 +22,10 @@ set(QT_SRC_PATH "" CACHE STRING    "Use static qt build (provide qt src path)")
 #
 # ==============================================================================
 if(UNIX)
+  add_definitions(-DLUA_USE_LINUX)
   if(APPLE)
     set(PLAT "macosx")
-    add_definitions(-DLUA_USE_MACOSX)
+    # add_definitions(-DLUA_USE_MACOSX)
     add_definitions(-D__MACOSX_CORE__)
     # CoreFoundation needed by Midi and cannot be added in dylib
     set(PLAT_LINK "-all_load -flat_namespace -lreadline -framework Accelerate -framework CoreFoundation -framework OpenGL -framework GLUT -framework Cocoa -lobjc") # -framework Cocoa -lobjc ===> planet_gui.mm

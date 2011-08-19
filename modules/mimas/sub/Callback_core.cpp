@@ -13,7 +13,7 @@ using namespace mimas;
  */
 static int Callback_Callback(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checksdata(L, 1, "lubyk.Worker"));
     Callback * retval__ = new Callback(worker);
     lua_pushclass<Callback>(L, retval__, "mimas.Callback");
     return 1;
@@ -30,7 +30,7 @@ static int Callback_Callback(lua_State *L) {
 /* ============================ Destructor       ====================== */
 
 static int Callback_destructor(lua_State *L) {
-  Callback **userdata = (Callback**)luaL_checkudata(L, 1, "mimas.Callback");
+  Callback **userdata = (Callback**)dubL_checksdata_n(L, 1, "mimas.Callback");
 
   
   if (*userdata) delete *userdata;
@@ -44,7 +44,7 @@ static int Callback_destructor(lua_State *L) {
 /* ============================ tostring         ====================== */
 
 static int Callback__tostring(lua_State *L) {
-  Callback **userdata = (Callback**)luaL_checkudata(L, 1, "mimas.Callback");
+  Callback **userdata = (Callback**)dubL_checksdata_n(L, 1, "mimas.Callback");
   
   
   lua_pushfstring(L, "<mimas.Callback: %p>", *userdata);
@@ -60,8 +60,8 @@ static int Callback__tostring(lua_State *L) {
  */
 static int Callback_connect(lua_State *L) {
   try {
-    Callback *self__ = *((Callback**)dubL_checkudata(L, 1, "mimas.Callback"));
-    QObject *obj = *((QObject **)dubL_checkudata(L, 2, "mimas.QObject"));
+    Callback *self__ = *((Callback**)dubL_checksdata(L, 1, "mimas.Callback"));
+    QObject *obj = *((QObject **)dubL_checksdata(L, 2, "mimas.QObject"));
     const char *method = dubL_checkstring(L, 3);
     const char *callback = dubL_checkstring(L, 4);
     self__->connect(obj, method, callback);
@@ -81,7 +81,7 @@ static int Callback_connect(lua_State *L) {
  */
 static int Callback_set_callback(lua_State *L) {
   try {
-    Callback *self__ = *((Callback**)dubL_checkudata(L, 1, "mimas.Callback"));
+    Callback *self__ = *((Callback**)dubL_checksdata(L, 1, "mimas.Callback"));
     
     self__->set_callback(L);
     return 0;

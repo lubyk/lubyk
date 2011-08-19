@@ -15,7 +15,7 @@ static int Slider_Slider(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     Slider * retval__;
-    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checksdata(L, 1, "lubyk.Worker"));
     if (top__ < 2) {
       retval__ = new Slider(worker);
     } else {
@@ -23,7 +23,7 @@ static int Slider_Slider(lua_State *L) {
       if (top__ < 3) {
         retval__ = new Slider(worker, type);
       } else {
-        QWidget *parent = *((QWidget **)dubL_checkudata(L, 3, "mimas.QWidget"));
+        QWidget *parent = *((QWidget **)dubL_checksdata(L, 3, "mimas.QWidget"));
         retval__ = new Slider(worker, type, parent);
       }
     }
@@ -42,7 +42,7 @@ static int Slider_Slider(lua_State *L) {
 /* ============================ Destructor       ====================== */
 
 static int Slider_destructor(lua_State *L) {
-  Slider **userdata = (Slider**)luaL_checkudata(L, 1, "mimas.Slider");
+  Slider **userdata = (Slider**)dubL_checksdata_n(L, 1, "mimas.Slider");
 
   
   // custom destructor
@@ -57,7 +57,7 @@ static int Slider_destructor(lua_State *L) {
 
 // test if class is deleted
 static int Slider_deleted(lua_State *L) {
-  Slider **userdata = (Slider**)luaL_checkudata(L, 1, "mimas.Slider");
+  Slider **userdata = (Slider**)dubL_checksdata_n(L, 1, "mimas.Slider");
   lua_pushboolean(L, *userdata == NULL);
   return 1;
 }
@@ -65,7 +65,7 @@ static int Slider_deleted(lua_State *L) {
 /* ============================ tostring         ====================== */
 
 static int Slider__tostring(lua_State *L) {
-  Slider **userdata = (Slider**)luaL_checkudata(L, 1, "mimas.Slider");
+  Slider **userdata = (Slider**)dubL_checksdata_n(L, 1, "mimas.Slider");
   
   if (!*userdata) {
     lua_pushstring(L, "<mimas.Slider: NULL>");
@@ -86,7 +86,7 @@ static int Slider__tostring(lua_State *L) {
  */
 static int Slider_borderWidth(lua_State *L) {
   try {
-    Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
+    Slider *self__ = *((Slider**)dubL_checksdata(L, 1, "mimas.Slider"));
     if (!self__) throw dub::Exception("Using deleted mimas.Slider in borderWidth");
     int  retval__ = self__->borderWidth();
     lua_pushnumber(L, retval__);
@@ -106,7 +106,7 @@ static int Slider_borderWidth(lua_State *L) {
  */
 static int Slider_callback(lua_State *L) {
   try {
-    Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
+    Slider *self__ = *((Slider**)dubL_checksdata(L, 1, "mimas.Slider"));
     if (!self__) throw dub::Exception("Using deleted mimas.Slider in callback");
     double value = dubL_checknumber(L, 2);
     self__->callback(value);
@@ -126,7 +126,7 @@ static int Slider_callback(lua_State *L) {
  */
 static int Slider_cssClass(lua_State *L) {
   try {
-    Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
+    Slider *self__ = *((Slider**)dubL_checksdata(L, 1, "mimas.Slider"));
     if (!self__) throw dub::Exception("Using deleted mimas.Slider in cssClass");
     QString  retval__ = self__->cssClass();
     lua_pushclass<QString>(L, retval__, "mimas.QString");
@@ -146,7 +146,7 @@ static int Slider_cssClass(lua_State *L) {
  */
 static int Slider_height(lua_State *L) {
   try {
-    Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
+    Slider *self__ = *((Slider**)dubL_checksdata(L, 1, "mimas.Slider"));
     if (!self__) throw dub::Exception("Using deleted mimas.Slider in height");
     int  retval__ = self__->height();
     lua_pushnumber(L, retval__);
@@ -166,7 +166,7 @@ static int Slider_height(lua_State *L) {
  */
 static int Slider_hue(lua_State *L) {
   try {
-    Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
+    Slider *self__ = *((Slider**)dubL_checksdata(L, 1, "mimas.Slider"));
     if (!self__) throw dub::Exception("Using deleted mimas.Slider in hue");
     float  retval__ = self__->hue();
     lua_pushnumber(L, retval__);
@@ -186,7 +186,7 @@ static int Slider_hue(lua_State *L) {
  */
 static int Slider_move(lua_State *L) {
   try {
-    Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
+    Slider *self__ = *((Slider**)dubL_checksdata(L, 1, "mimas.Slider"));
     if (!self__) throw dub::Exception("Using deleted mimas.Slider in move");
     int x = dubL_checkint(L, 2);
     int y = dubL_checkint(L, 3);
@@ -207,7 +207,7 @@ static int Slider_move(lua_State *L) {
  */
 static int Slider_name(lua_State *L) {
   try {
-    Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
+    Slider *self__ = *((Slider**)dubL_checksdata(L, 1, "mimas.Slider"));
     if (!self__) throw dub::Exception("Using deleted mimas.Slider in name");
     
     LuaStackSize  retval__ = self__->name(L);
@@ -227,7 +227,7 @@ static int Slider_name(lua_State *L) {
  */
 static int Slider_object(lua_State *L) {
   try {
-    Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
+    Slider *self__ = *((Slider**)dubL_checksdata(L, 1, "mimas.Slider"));
     if (!self__) throw dub::Exception("Using deleted mimas.Slider in object");
     QObject * retval__ = self__->object();
     lua_pushclass<QObject>(L, retval__, "mimas.QObject");
@@ -247,7 +247,7 @@ static int Slider_object(lua_State *L) {
  */
 static int Slider_resize(lua_State *L) {
   try {
-    Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
+    Slider *self__ = *((Slider**)dubL_checksdata(L, 1, "mimas.Slider"));
     if (!self__) throw dub::Exception("Using deleted mimas.Slider in resize");
     int w = dubL_checkint(L, 2);
     int h = dubL_checkint(L, 3);
@@ -268,7 +268,7 @@ static int Slider_resize(lua_State *L) {
  */
 static int Slider_setBorderWidth(lua_State *L) {
   try {
-    Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
+    Slider *self__ = *((Slider**)dubL_checksdata(L, 1, "mimas.Slider"));
     if (!self__) throw dub::Exception("Using deleted mimas.Slider in setBorderWidth");
     int width = dubL_checkint(L, 2);
     self__->setBorderWidth(width);
@@ -288,7 +288,7 @@ static int Slider_setBorderWidth(lua_State *L) {
  */
 static int Slider_setHue(lua_State *L) {
   try {
-    Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
+    Slider *self__ = *((Slider**)dubL_checksdata(L, 1, "mimas.Slider"));
     if (!self__) throw dub::Exception("Using deleted mimas.Slider in setHue");
     float hue = dubL_checknumber(L, 2);
     self__->setHue(hue);
@@ -308,7 +308,7 @@ static int Slider_setHue(lua_State *L) {
  */
 static int Slider_setName(lua_State *L) {
   try {
-    Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
+    Slider *self__ = *((Slider**)dubL_checksdata(L, 1, "mimas.Slider"));
     if (!self__) throw dub::Exception("Using deleted mimas.Slider in setName");
     const char *name = dubL_checkstring(L, 2);
     self__->setName(name);
@@ -328,7 +328,7 @@ static int Slider_setName(lua_State *L) {
  */
 static int Slider_setStyle(lua_State *L) {
   try {
-    Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
+    Slider *self__ = *((Slider**)dubL_checksdata(L, 1, "mimas.Slider"));
     if (!self__) throw dub::Exception("Using deleted mimas.Slider in setStyle");
     const char *text = dubL_checkstring(L, 2);
     self__->setStyle(text);
@@ -348,7 +348,7 @@ static int Slider_setStyle(lua_State *L) {
  */
 static int Slider_setStyleSheet(lua_State *L) {
   try {
-    Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
+    Slider *self__ = *((Slider**)dubL_checksdata(L, 1, "mimas.Slider"));
     if (!self__) throw dub::Exception("Using deleted mimas.Slider in setStyleSheet");
     const char *text = dubL_checkstring(L, 2);
     self__->setStyleSheet(text);
@@ -368,7 +368,7 @@ static int Slider_setStyleSheet(lua_State *L) {
  */
 static int Slider_setValue(lua_State *L) {
   try {
-    Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
+    Slider *self__ = *((Slider**)dubL_checksdata(L, 1, "mimas.Slider"));
     if (!self__) throw dub::Exception("Using deleted mimas.Slider in setValue");
     double remote_value = dubL_checknumber(L, 2);
     self__->setValue(remote_value);
@@ -388,7 +388,7 @@ static int Slider_setValue(lua_State *L) {
  */
 static int Slider_set_callback(lua_State *L) {
   try {
-    Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
+    Slider *self__ = *((Slider**)dubL_checksdata(L, 1, "mimas.Slider"));
     if (!self__) throw dub::Exception("Using deleted mimas.Slider in set_callback");
     
     self__->set_callback(L);
@@ -408,7 +408,7 @@ static int Slider_set_callback(lua_State *L) {
  */
 static int Slider_sizeHint(lua_State *L) {
   try {
-    Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
+    Slider *self__ = *((Slider**)dubL_checksdata(L, 1, "mimas.Slider"));
     if (!self__) throw dub::Exception("Using deleted mimas.Slider in sizeHint");
     QSize  retval__ = self__->sizeHint();
     lua_pushclass<QSize>(L, retval__, "mimas.QSize");
@@ -428,7 +428,7 @@ static int Slider_sizeHint(lua_State *L) {
  */
 static int Slider_widget(lua_State *L) {
   try {
-    Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
+    Slider *self__ = *((Slider**)dubL_checksdata(L, 1, "mimas.Slider"));
     if (!self__) throw dub::Exception("Using deleted mimas.Slider in widget");
     QWidget * retval__ = self__->widget();
     lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
@@ -448,7 +448,7 @@ static int Slider_widget(lua_State *L) {
  */
 static int Slider_width(lua_State *L) {
   try {
-    Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
+    Slider *self__ = *((Slider**)dubL_checksdata(L, 1, "mimas.Slider"));
     if (!self__) throw dub::Exception("Using deleted mimas.Slider in width");
     int  retval__ = self__->width();
     lua_pushnumber(L, retval__);
@@ -468,7 +468,7 @@ static int Slider_width(lua_State *L) {
  */
 static int Slider_x(lua_State *L) {
   try {
-    Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
+    Slider *self__ = *((Slider**)dubL_checksdata(L, 1, "mimas.Slider"));
     if (!self__) throw dub::Exception("Using deleted mimas.Slider in x");
     int  retval__ = self__->x();
     lua_pushnumber(L, retval__);
@@ -488,7 +488,7 @@ static int Slider_x(lua_State *L) {
  */
 static int Slider_y(lua_State *L) {
   try {
-    Slider *self__ = *((Slider**)dubL_checkudata(L, 1, "mimas.Slider"));
+    Slider *self__ = *((Slider**)dubL_checksdata(L, 1, "mimas.Slider"));
     if (!self__) throw dub::Exception("Using deleted mimas.Slider in y");
     int  retval__ = self__->y();
     lua_pushnumber(L, retval__);

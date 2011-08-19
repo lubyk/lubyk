@@ -13,7 +13,7 @@ using namespace mimas;
  */
 static int ListView_ListView(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checksdata(L, 1, "lubyk.Worker"));
     ListView * retval__ = new ListView(worker);
     lua_pushclass2<ListView>(L, retval__, "mimas.ListView");
     return 1;
@@ -30,7 +30,7 @@ static int ListView_ListView(lua_State *L) {
 /* ============================ Destructor       ====================== */
 
 static int ListView_destructor(lua_State *L) {
-  ListView **userdata = (ListView**)luaL_checkudata(L, 1, "mimas.ListView");
+  ListView **userdata = (ListView**)dubL_checksdata_n(L, 1, "mimas.ListView");
 
   
   // custom destructor
@@ -45,7 +45,7 @@ static int ListView_destructor(lua_State *L) {
 
 // test if class is deleted
 static int ListView_deleted(lua_State *L) {
-  ListView **userdata = (ListView**)luaL_checkudata(L, 1, "mimas.ListView");
+  ListView **userdata = (ListView**)dubL_checksdata_n(L, 1, "mimas.ListView");
   lua_pushboolean(L, *userdata == NULL);
   return 1;
 }
@@ -53,7 +53,7 @@ static int ListView_deleted(lua_State *L) {
 /* ============================ tostring         ====================== */
 
 static int ListView__tostring(lua_State *L) {
-  ListView **userdata = (ListView**)luaL_checkudata(L, 1, "mimas.ListView");
+  ListView **userdata = (ListView**)dubL_checksdata_n(L, 1, "mimas.ListView");
   
   if (!*userdata) {
     lua_pushstring(L, "<mimas.ListView: NULL>");
@@ -74,7 +74,7 @@ static int ListView__tostring(lua_State *L) {
  */
 static int ListView___newindex(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in __newindex");
     
     self__->__newindex(L);
@@ -94,7 +94,7 @@ static int ListView___newindex(lua_State *L) {
  */
 static int ListView_close(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in close");
     bool  retval__ = self__->close();
     lua_pushboolean(L, retval__);
@@ -114,7 +114,7 @@ static int ListView_close(lua_State *L) {
  */
 static int ListView_cssClass(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in cssClass");
     QString  retval__ = self__->cssClass();
     lua_pushclass<QString>(L, retval__, "mimas.QString");
@@ -134,7 +134,7 @@ static int ListView_cssClass(lua_State *L) {
  */
 static int ListView_dataChanged(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in dataChanged");
     self__->dataChanged();
     return 0;
@@ -153,7 +153,7 @@ static int ListView_dataChanged(lua_State *L) {
  */
 static int ListView_globalMove(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in globalMove");
     float x = dubL_checknumber(L, 2);
     float y = dubL_checknumber(L, 3);
@@ -174,7 +174,7 @@ static int ListView_globalMove(lua_State *L) {
  */
 static int ListView_globalPosition(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in globalPosition");
     
     LuaStackSize  retval__ = self__->globalPosition(L);
@@ -194,7 +194,7 @@ static int ListView_globalPosition(lua_State *L) {
  */
 static int ListView_height(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in height");
     int  retval__ = self__->height();
     lua_pushnumber(L, retval__);
@@ -214,7 +214,7 @@ static int ListView_height(lua_State *L) {
  */
 static int ListView_hide(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in hide");
     self__->hide();
     return 0;
@@ -233,7 +233,7 @@ static int ListView_hide(lua_State *L) {
  */
 static int ListView_hue(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in hue");
     float  retval__ = self__->hue();
     lua_pushnumber(L, retval__);
@@ -253,7 +253,7 @@ static int ListView_hue(lua_State *L) {
  */
 static int ListView_indexAt(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in indexAt");
     float x = dubL_checknumber(L, 2);
     float y = dubL_checknumber(L, 3);
@@ -275,7 +275,7 @@ static int ListView_indexAt(lua_State *L) {
  */
 static int ListView_isVisible(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in isVisible");
     bool  retval__ = self__->isVisible();
     lua_pushboolean(L, retval__);
@@ -295,7 +295,7 @@ static int ListView_isVisible(lua_State *L) {
  */
 static int ListView_lower(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in lower");
     self__->lower();
     return 0;
@@ -314,7 +314,7 @@ static int ListView_lower(lua_State *L) {
  */
 static int ListView_move(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in move");
     int x = dubL_checkint(L, 2);
     int y = dubL_checkint(L, 3);
@@ -335,7 +335,7 @@ static int ListView_move(lua_State *L) {
  */
 static int ListView_name(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in name");
     
     LuaStackSize  retval__ = self__->name(L);
@@ -355,7 +355,7 @@ static int ListView_name(lua_State *L) {
  */
 static int ListView_object(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in object");
     QObject * retval__ = self__->object();
     lua_pushclass<QObject>(L, retval__, "mimas.QObject");
@@ -375,7 +375,7 @@ static int ListView_object(lua_State *L) {
  */
 static int ListView_raise(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in raise");
     self__->raise();
     return 0;
@@ -394,7 +394,7 @@ static int ListView_raise(lua_State *L) {
  */
 static int ListView_resize(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in resize");
     int w = dubL_checkint(L, 2);
     int h = dubL_checkint(L, 3);
@@ -415,7 +415,7 @@ static int ListView_resize(lua_State *L) {
  */
 static int ListView_selectRow(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in selectRow");
     int row = dubL_checkint(L, 2);
     self__->selectRow(row);
@@ -435,7 +435,7 @@ static int ListView_selectRow(lua_State *L) {
  */
 static int ListView_setHue(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in setHue");
     float hue = dubL_checknumber(L, 2);
     self__->setHue(hue);
@@ -455,7 +455,7 @@ static int ListView_setHue(lua_State *L) {
  */
 static int ListView_setMinimumSize(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in setMinimumSize");
     float w = dubL_checknumber(L, 2);
     float h = dubL_checknumber(L, 3);
@@ -476,13 +476,13 @@ static int ListView_setMinimumSize(lua_State *L) {
  */
 static int ListView_setModel(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in setModel");
     int top__ = lua_gettop(L);
     if (top__ < 2) {
       self__->setModel();
     } else {
-      DataSource *model = *((DataSource **)dubL_checkudata(L, 2, "mimas.DataSource"));
+      DataSource *model = *((DataSource **)dubL_checksdata(L, 2, "mimas.DataSource"));
       self__->setModel(model);
     }
     return 0;
@@ -501,7 +501,7 @@ static int ListView_setModel(lua_State *L) {
  */
 static int ListView_setMouseTracking(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in setMouseTracking");
     bool enable = lua_toboolean(L, 2);
     self__->setMouseTracking(enable);
@@ -521,7 +521,7 @@ static int ListView_setMouseTracking(lua_State *L) {
  */
 static int ListView_setName(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in setName");
     const char *name = dubL_checkstring(L, 2);
     self__->setName(name);
@@ -541,7 +541,7 @@ static int ListView_setName(lua_State *L) {
  */
 static int ListView_setSizeHint(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in setSizeHint");
     float w = dubL_checknumber(L, 2);
     float h = dubL_checknumber(L, 3);
@@ -562,7 +562,7 @@ static int ListView_setSizeHint(lua_State *L) {
  */
 static int ListView_setSizePolicy(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in setSizePolicy");
     int horizontal = dubL_checkint(L, 2);
     int vertical = dubL_checkint(L, 3);
@@ -583,7 +583,7 @@ static int ListView_setSizePolicy(lua_State *L) {
  */
 static int ListView_setStyle(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in setStyle");
     const char *text = dubL_checkstring(L, 2);
     self__->setStyle(text);
@@ -603,7 +603,7 @@ static int ListView_setStyle(lua_State *L) {
  */
 static int ListView_setStyleSheet(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in setStyleSheet");
     const char *text = dubL_checkstring(L, 2);
     self__->setStyleSheet(text);
@@ -623,7 +623,7 @@ static int ListView_setStyleSheet(lua_State *L) {
  */
 static int ListView_show(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in show");
     self__->show();
     return 0;
@@ -642,7 +642,7 @@ static int ListView_show(lua_State *L) {
  */
 static int ListView_textSize(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in textSize");
     const char *text = dubL_checkstring(L, 2);
     
@@ -663,7 +663,7 @@ static int ListView_textSize(lua_State *L) {
  */
 static int ListView_update(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in update");
     self__->update();
     return 0;
@@ -682,7 +682,7 @@ static int ListView_update(lua_State *L) {
  */
 static int ListView_widget(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in widget");
     QWidget * retval__ = self__->widget();
     lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
@@ -702,7 +702,7 @@ static int ListView_widget(lua_State *L) {
  */
 static int ListView_width(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in width");
     int  retval__ = self__->width();
     lua_pushnumber(L, retval__);
@@ -722,7 +722,7 @@ static int ListView_width(lua_State *L) {
  */
 static int ListView_x(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in x");
     int  retval__ = self__->x();
     lua_pushnumber(L, retval__);
@@ -742,7 +742,7 @@ static int ListView_x(lua_State *L) {
  */
 static int ListView_y(lua_State *L) {
   try {
-    ListView *self__ = *((ListView**)dubL_checkudata(L, 1, "mimas.ListView"));
+    ListView *self__ = *((ListView**)dubL_checksdata(L, 1, "mimas.ListView"));
     if (!self__) throw dub::Exception("Using deleted mimas.ListView in y");
     int  retval__ = self__->y();
     lua_pushnumber(L, retval__);

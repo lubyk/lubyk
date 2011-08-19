@@ -9,6 +9,7 @@
 local constr = mimas_core.Widget
 local worker = worker
 local mt     = mimas_core.Widget_
+mimas.Widget_ = mt
 local close  = mt.close
 
 local addWidget = mt.addWidget
@@ -45,10 +46,13 @@ end
 
 function mt:close()
   -- close is like delete: ensure it only runs in GUI thread
-  if not self:deleted() then
+  if self:deleted() then
+    return false
+  else
     app:post(function()
       close(self)
     end)
+    return true
   end
 end
 

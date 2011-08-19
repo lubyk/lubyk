@@ -15,7 +15,7 @@ static int Button_Button(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     Button * retval__;
-    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checksdata(L, 1, "lubyk.Worker"));
     if (top__ < 2) {
       retval__ = new Button(worker);
     } else {
@@ -23,7 +23,7 @@ static int Button_Button(lua_State *L) {
       if (top__ < 3) {
         retval__ = new Button(worker, title);
       } else {
-        QWidget *parent = *((QWidget **)dubL_checkudata(L, 3, "mimas.QWidget"));
+        QWidget *parent = *((QWidget **)dubL_checksdata(L, 3, "mimas.QWidget"));
         retval__ = new Button(worker, title, parent);
       }
     }
@@ -42,7 +42,7 @@ static int Button_Button(lua_State *L) {
 /* ============================ Destructor       ====================== */
 
 static int Button_destructor(lua_State *L) {
-  Button **userdata = (Button**)luaL_checkudata(L, 1, "mimas.Button");
+  Button **userdata = (Button**)dubL_checksdata_n(L, 1, "mimas.Button");
 
   
   // custom destructor
@@ -57,7 +57,7 @@ static int Button_destructor(lua_State *L) {
 
 // test if class is deleted
 static int Button_deleted(lua_State *L) {
-  Button **userdata = (Button**)luaL_checkudata(L, 1, "mimas.Button");
+  Button **userdata = (Button**)dubL_checksdata_n(L, 1, "mimas.Button");
   lua_pushboolean(L, *userdata == NULL);
   return 1;
 }
@@ -65,7 +65,7 @@ static int Button_deleted(lua_State *L) {
 /* ============================ tostring         ====================== */
 
 static int Button__tostring(lua_State *L) {
-  Button **userdata = (Button**)luaL_checkudata(L, 1, "mimas.Button");
+  Button **userdata = (Button**)dubL_checksdata_n(L, 1, "mimas.Button");
   
   if (!*userdata) {
     lua_pushstring(L, "<mimas.Button: NULL>");
@@ -86,7 +86,7 @@ static int Button__tostring(lua_State *L) {
  */
 static int Button___newindex(lua_State *L) {
   try {
-    Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
+    Button *self__ = *((Button**)dubL_checksdata(L, 1, "mimas.Button"));
     if (!self__) throw dub::Exception("Using deleted mimas.Button in __newindex");
     
     self__->__newindex(L);
@@ -106,7 +106,7 @@ static int Button___newindex(lua_State *L) {
  */
 static int Button_cssClass(lua_State *L) {
   try {
-    Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
+    Button *self__ = *((Button**)dubL_checksdata(L, 1, "mimas.Button"));
     if (!self__) throw dub::Exception("Using deleted mimas.Button in cssClass");
     QString  retval__ = self__->cssClass();
     lua_pushclass<QString>(L, retval__, "mimas.QString");
@@ -126,7 +126,7 @@ static int Button_cssClass(lua_State *L) {
  */
 static int Button_height(lua_State *L) {
   try {
-    Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
+    Button *self__ = *((Button**)dubL_checksdata(L, 1, "mimas.Button"));
     if (!self__) throw dub::Exception("Using deleted mimas.Button in height");
     int  retval__ = self__->height();
     lua_pushnumber(L, retval__);
@@ -146,7 +146,7 @@ static int Button_height(lua_State *L) {
  */
 static int Button_hue(lua_State *L) {
   try {
-    Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
+    Button *self__ = *((Button**)dubL_checksdata(L, 1, "mimas.Button"));
     if (!self__) throw dub::Exception("Using deleted mimas.Button in hue");
     float  retval__ = self__->hue();
     lua_pushnumber(L, retval__);
@@ -166,7 +166,7 @@ static int Button_hue(lua_State *L) {
  */
 static int Button_move(lua_State *L) {
   try {
-    Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
+    Button *self__ = *((Button**)dubL_checksdata(L, 1, "mimas.Button"));
     if (!self__) throw dub::Exception("Using deleted mimas.Button in move");
     int x = dubL_checkint(L, 2);
     int y = dubL_checkint(L, 3);
@@ -187,7 +187,7 @@ static int Button_move(lua_State *L) {
  */
 static int Button_name(lua_State *L) {
   try {
-    Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
+    Button *self__ = *((Button**)dubL_checksdata(L, 1, "mimas.Button"));
     if (!self__) throw dub::Exception("Using deleted mimas.Button in name");
     
     LuaStackSize  retval__ = self__->name(L);
@@ -207,7 +207,7 @@ static int Button_name(lua_State *L) {
  */
 static int Button_object(lua_State *L) {
   try {
-    Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
+    Button *self__ = *((Button**)dubL_checksdata(L, 1, "mimas.Button"));
     if (!self__) throw dub::Exception("Using deleted mimas.Button in object");
     QObject * retval__ = self__->object();
     lua_pushclass<QObject>(L, retval__, "mimas.QObject");
@@ -227,7 +227,7 @@ static int Button_object(lua_State *L) {
  */
 static int Button_resize(lua_State *L) {
   try {
-    Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
+    Button *self__ = *((Button**)dubL_checksdata(L, 1, "mimas.Button"));
     if (!self__) throw dub::Exception("Using deleted mimas.Button in resize");
     int w = dubL_checkint(L, 2);
     int h = dubL_checkint(L, 3);
@@ -248,7 +248,7 @@ static int Button_resize(lua_State *L) {
  */
 static int Button_setHue(lua_State *L) {
   try {
-    Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
+    Button *self__ = *((Button**)dubL_checksdata(L, 1, "mimas.Button"));
     if (!self__) throw dub::Exception("Using deleted mimas.Button in setHue");
     float hue = dubL_checknumber(L, 2);
     self__->setHue(hue);
@@ -268,7 +268,7 @@ static int Button_setHue(lua_State *L) {
  */
 static int Button_setName(lua_State *L) {
   try {
-    Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
+    Button *self__ = *((Button**)dubL_checksdata(L, 1, "mimas.Button"));
     if (!self__) throw dub::Exception("Using deleted mimas.Button in setName");
     const char *name = dubL_checkstring(L, 2);
     self__->setName(name);
@@ -288,7 +288,7 @@ static int Button_setName(lua_State *L) {
  */
 static int Button_setStyle(lua_State *L) {
   try {
-    Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
+    Button *self__ = *((Button**)dubL_checksdata(L, 1, "mimas.Button"));
     if (!self__) throw dub::Exception("Using deleted mimas.Button in setStyle");
     const char *text = dubL_checkstring(L, 2);
     self__->setStyle(text);
@@ -308,7 +308,7 @@ static int Button_setStyle(lua_State *L) {
  */
 static int Button_setStyleSheet(lua_State *L) {
   try {
-    Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
+    Button *self__ = *((Button**)dubL_checksdata(L, 1, "mimas.Button"));
     if (!self__) throw dub::Exception("Using deleted mimas.Button in setStyleSheet");
     const char *text = dubL_checkstring(L, 2);
     self__->setStyleSheet(text);
@@ -328,7 +328,7 @@ static int Button_setStyleSheet(lua_State *L) {
  */
 static int Button_widget(lua_State *L) {
   try {
-    Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
+    Button *self__ = *((Button**)dubL_checksdata(L, 1, "mimas.Button"));
     if (!self__) throw dub::Exception("Using deleted mimas.Button in widget");
     QWidget * retval__ = self__->widget();
     lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
@@ -348,7 +348,7 @@ static int Button_widget(lua_State *L) {
  */
 static int Button_width(lua_State *L) {
   try {
-    Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
+    Button *self__ = *((Button**)dubL_checksdata(L, 1, "mimas.Button"));
     if (!self__) throw dub::Exception("Using deleted mimas.Button in width");
     int  retval__ = self__->width();
     lua_pushnumber(L, retval__);
@@ -368,7 +368,7 @@ static int Button_width(lua_State *L) {
  */
 static int Button_x(lua_State *L) {
   try {
-    Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
+    Button *self__ = *((Button**)dubL_checksdata(L, 1, "mimas.Button"));
     if (!self__) throw dub::Exception("Using deleted mimas.Button in x");
     int  retval__ = self__->x();
     lua_pushnumber(L, retval__);
@@ -388,7 +388,7 @@ static int Button_x(lua_State *L) {
  */
 static int Button_y(lua_State *L) {
   try {
-    Button *self__ = *((Button**)dubL_checkudata(L, 1, "mimas.Button"));
+    Button *self__ = *((Button**)dubL_checksdata(L, 1, "mimas.Button"));
     if (!self__) throw dub::Exception("Using deleted mimas.Button in y");
     int  retval__ = self__->y();
     lua_pushnumber(L, retval__);

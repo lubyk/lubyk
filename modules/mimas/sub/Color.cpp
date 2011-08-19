@@ -82,7 +82,7 @@ static int Color_Color(lua_State *L) {
 /* ============================ Destructor       ====================== */
 
 static int Color_destructor(lua_State *L) {
-  Color **userdata = (Color**)luaL_checkudata(L, 1, "mimas.Color");
+  Color **userdata = (Color**)dubL_checksdata_n(L, 1, "mimas.Color");
 
   
   if (*userdata) delete *userdata;
@@ -96,7 +96,7 @@ static int Color_destructor(lua_State *L) {
 /* ============================ tostring         ====================== */
 
 static int Color__tostring(lua_State *L) {
-  Color **userdata = (Color**)luaL_checkudata(L, 1, "mimas.Color");
+  Color **userdata = (Color**)dubL_checksdata_n(L, 1, "mimas.Color");
   
   
   lua_pushfstring(L, "<mimas.Color: %p>", *userdata);
@@ -112,7 +112,7 @@ static int Color__tostring(lua_State *L) {
  */
 static int Color_alpha(lua_State *L) {
   try {
-    Color *self__ = *((Color**)dubL_checkudata(L, 1, "mimas.Color"));
+    Color *self__ = *((Color**)dubL_checksdata(L, 1, "mimas.Color"));
     float  retval__ = self__->alpha();
     lua_pushnumber(L, retval__);
     return 1;
@@ -131,7 +131,7 @@ static int Color_alpha(lua_State *L) {
  */
 static int Color_colorWithAlpha(lua_State *L) {
   try {
-    Color *self__ = *((Color**)dubL_checkudata(L, 1, "mimas.Color"));
+    Color *self__ = *((Color**)dubL_checksdata(L, 1, "mimas.Color"));
     float a = dubL_checknumber(L, 2);
     Color * retval__ = self__->colorWithAlpha(a);
     lua_pushclass<Color>(L, retval__, "mimas.Color");
@@ -151,7 +151,7 @@ static int Color_colorWithAlpha(lua_State *L) {
  */
 static int Color_colorWithHue(lua_State *L) {
   try {
-    Color *self__ = *((Color**)dubL_checkudata(L, 1, "mimas.Color"));
+    Color *self__ = *((Color**)dubL_checksdata(L, 1, "mimas.Color"));
     float h = dubL_checknumber(L, 2);
     Color * retval__ = self__->colorWithHue(h);
     lua_pushclass<Color>(L, retval__, "mimas.Color");
@@ -171,7 +171,7 @@ static int Color_colorWithHue(lua_State *L) {
  */
 static int Color_colorWithSaturation(lua_State *L) {
   try {
-    Color *self__ = *((Color**)dubL_checkudata(L, 1, "mimas.Color"));
+    Color *self__ = *((Color**)dubL_checksdata(L, 1, "mimas.Color"));
     float s = dubL_checknumber(L, 2);
     Color * retval__ = self__->colorWithSaturation(s);
     lua_pushclass<Color>(L, retval__, "mimas.Color");
@@ -191,7 +191,7 @@ static int Color_colorWithSaturation(lua_State *L) {
  */
 static int Color_colorWithValue(lua_State *L) {
   try {
-    Color *self__ = *((Color**)dubL_checkudata(L, 1, "mimas.Color"));
+    Color *self__ = *((Color**)dubL_checksdata(L, 1, "mimas.Color"));
     float v = dubL_checknumber(L, 2);
     Color * retval__ = self__->colorWithValue(v);
     lua_pushclass<Color>(L, retval__, "mimas.Color");
@@ -211,7 +211,7 @@ static int Color_colorWithValue(lua_State *L) {
  */
 static int Color_hue(lua_State *L) {
   try {
-    Color *self__ = *((Color**)dubL_checkudata(L, 1, "mimas.Color"));
+    Color *self__ = *((Color**)dubL_checksdata(L, 1, "mimas.Color"));
     float  retval__ = self__->hue();
     lua_pushnumber(L, retval__);
     return 1;
@@ -230,7 +230,7 @@ static int Color_hue(lua_State *L) {
  */
 static int Color_saturation(lua_State *L) {
   try {
-    Color *self__ = *((Color**)dubL_checkudata(L, 1, "mimas.Color"));
+    Color *self__ = *((Color**)dubL_checksdata(L, 1, "mimas.Color"));
     float  retval__ = self__->saturation();
     lua_pushnumber(L, retval__);
     return 1;
@@ -249,7 +249,7 @@ static int Color_saturation(lua_State *L) {
  */
 static int Color_setAlpha(lua_State *L) {
   try {
-    Color *self__ = *((Color**)dubL_checkudata(L, 1, "mimas.Color"));
+    Color *self__ = *((Color**)dubL_checksdata(L, 1, "mimas.Color"));
     float a = dubL_checknumber(L, 2);
     self__->setAlpha(a);
     return 0;
@@ -268,7 +268,7 @@ static int Color_setAlpha(lua_State *L) {
  */
 static int Color_setHsva(lua_State *L) {
   try {
-    Color *self__ = *((Color**)dubL_checkudata(L, 1, "mimas.Color"));
+    Color *self__ = *((Color**)dubL_checksdata(L, 1, "mimas.Color"));
     int top__ = lua_gettop(L);
     float h = dubL_checknumber(L, 2);
     if (top__ < 3) {
@@ -303,7 +303,7 @@ static int Color_setHsva(lua_State *L) {
  */
 static int Color_setHue(lua_State *L) {
   try {
-    Color *self__ = *((Color**)dubL_checkudata(L, 1, "mimas.Color"));
+    Color *self__ = *((Color**)dubL_checksdata(L, 1, "mimas.Color"));
     float h = dubL_checknumber(L, 2);
     self__->setHue(h);
     return 0;
@@ -322,7 +322,7 @@ static int Color_setHue(lua_State *L) {
  */
 static int Color_setRgba(lua_State *L) {
   try {
-    Color *self__ = *((Color**)dubL_checkudata(L, 1, "mimas.Color"));
+    Color *self__ = *((Color**)dubL_checksdata(L, 1, "mimas.Color"));
     int top__ = lua_gettop(L);
     float r = dubL_checknumber(L, 2);
     float g = dubL_checknumber(L, 3);
@@ -349,7 +349,7 @@ static int Color_setRgba(lua_State *L) {
  */
 static int Color_setSaturation(lua_State *L) {
   try {
-    Color *self__ = *((Color**)dubL_checkudata(L, 1, "mimas.Color"));
+    Color *self__ = *((Color**)dubL_checksdata(L, 1, "mimas.Color"));
     float s = dubL_checknumber(L, 2);
     self__->setSaturation(s);
     return 0;
@@ -368,7 +368,7 @@ static int Color_setSaturation(lua_State *L) {
  */
 static int Color_setValue(lua_State *L) {
   try {
-    Color *self__ = *((Color**)dubL_checkudata(L, 1, "mimas.Color"));
+    Color *self__ = *((Color**)dubL_checksdata(L, 1, "mimas.Color"));
     float v = dubL_checknumber(L, 2);
     self__->setValue(v);
     return 0;
@@ -387,7 +387,7 @@ static int Color_setValue(lua_State *L) {
  */
 static int Color_value(lua_State *L) {
   try {
-    Color *self__ = *((Color**)dubL_checkudata(L, 1, "mimas.Color"));
+    Color *self__ = *((Color**)dubL_checksdata(L, 1, "mimas.Color"));
     float  retval__ = self__->value();
     lua_pushnumber(L, retval__);
     return 1;

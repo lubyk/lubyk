@@ -7,3 +7,4 @@
 
 --]]------------------------------------------------------
 mimas.Window = mimas.Widget
+mimas.Window_ = mimas.Widget_
