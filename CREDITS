@@ -1,0 +1,164 @@
+Here is a summary of the copyrights and licensing terms for the code
+in the modules.
+
+Thanks to all of these great projects for releasing their code as open
+source and letting us build on top of their hard work !
+======================================================================
+
+bit (Lua BitOp)
+---
+  version:   1.0.1
+  copyright: 2008-2009 Mike Pall.
+  license:   MIT/X
+  url:       http://bitop.luajit.org
+
+crypto (LuaCrypto)
+------
+  version:   2010-05-27
+  info:      Fork by Michal Kottman.
+  copyright: 2006 Keith Howe.
+  license:   MIT/X
+  url:       https://github.com/mkottman/luacrypto
+
+cv (OpenCV)
+--
+  version:   ~2008
+  copyright: Willow Garage Inc
+  license:   MIT/X
+  url:       http://opencv.willowgarage.com
+
+db
+--
+  copyright: lubyk
+  license:   MIT/X
+
+docm
+----
+  copyright: lubyk
+  license:   MIT/X
+
+dummy
+-----
+  copyright: lubyk
+  license:   MIT/X
+
+editor
+------
+  copyright: lubyk
+  license:   MIT/X
+
+gl/glu (LuaGL)
+------
+  version:   1.6 (2011-08)
+  copyright: 2003 Fabio Guerra, Cleyde Marlyse
+  license:   MIT/X
+  url:       luagl.sourceforge.net
+
+glut
+----
+  copyright: lubyk
+  license:   MIT/X
+
+lfs (LuaFileSystem)
+---
+  version:   1.4.2 (2009-02)
+  copyright: 2003 Kepler Project
+  license:   MIT/X
+  url:       http://keplerproject.github.com/luafilesystem
+
+lk
+--
+  copyright: lubyk
+  license:   MIT/X
+
+lua
+---
+  version:   5.1.4 (2008-08)
+  copyright: 1994-2008 Lua.org, PUC-Rio.
+  license:   MIT/X
+  url:       lua.org
+
+lubyk
+-----
+  copyright: lubyk
+  license:   MIT/X
+
+mdns
+----
+  copyright: lubyk
+  license:   MIT/X
+
+midi (RtMidi)
+----
+  version:   1.0.7 (2007)
+  copyright: 2003-2007 Gary P. Scavone
+  license:   MIT/X
+  url:       https://ccrma.stanford.edu/software/stk/classRtMidi.html
+
+mimas
+-----
+  copyright: lubyk
+  license:   MIT/X
+  info:      binary distribution contains Qt
+  Qt:
+    version:   4.7 (2011)
+    copyright: Qt
+    license:   LGPL
+    info:      binary distribution contains Qt (LGPL)
+    url:       http://qt.nokia.com/products/
+
+msgpack
+-------
+  version:   0.5.4 (2010-08)
+  copyright: 2008-2010 Sadayuki Furuhashi
+  license:   Apache License 2.0
+  url:       msgpack.org
+
+sqlite3
+-------
+  version:   3.7.4 (2010-12)
+  copyright: -
+  license:   public domain
+  url:       sqlite.org
+
+test
+----
+  copyright: lubyk
+  license:   MIT/X
+
+video
+-----
+  info:      Work in progress: code not finished
+  copyright: lubyk
+  license:   MIT/X
+
+wii
+---
+  Mac OS X:
+    version:   0.5 (2007-03) 
+    copyright: 2006 Hiroaki Kimura
+    license:   MIT/X
+    url:       http://sourceforge.net/projects/darwiin-remote
+
+xml (LuaXML)
+---
+  version:   1.7.4 (2010-10)
+  copyright: Gerald Franz, www.viremo.de
+  license:   MIT/X
+  url:       http://viremo.eludi.net/LuaXML/
+
+yaml
+----
+  info:      uses Kirill Simonov's YAML 1.1
+  version:   0.2 (2009-11)
+  copyright: 2009 Andrew Danforth
+  license:   MIT/X
+  url:       yaml.luaforge.net
+
+zmq
+---
+  version:   2.1.7 (2011-05)
+  copyright: 2007-2011 iMatix Corporation
+  license:   LGPL
+  url:       zeromq.org
+
