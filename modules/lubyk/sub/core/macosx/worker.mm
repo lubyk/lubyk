@@ -52,7 +52,7 @@ public:
 
   void run(Thread *thread) {
     //  release calling thread semaphore
-    thread_ready();
+    threadReady();
     ScopedPool pool;
     printf("Run Loop\n");
     [NSApplication sharedApplication];
@@ -62,16 +62,10 @@ public:
   }
 };                            
 
-Worker::Worker(lua_State *L)
- : lua_(L),
+Worker::Worker() :
   zmq_context_(NULL),
   zmq_context_refcount_(0) {
   //impl_ = new Worker::Implementation;
-
-  // since we receive lua_State in constructor, we have to push
-  // or userdata on the stack ourselves.
-  lua_pushclass<Worker>(L, this, "lubyk.Worker");
-  // <userdata>
   lock();
 }
 

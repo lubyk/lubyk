@@ -61,7 +61,7 @@ Thread::~Thread() {
 }
 
 /** Called by commands and other low priority threads. */
-void Thread::normal_priority()
+void Thread::normalPriority()
 {
   pthread_t id = pthread_self();
 
@@ -71,7 +71,7 @@ void Thread::normal_priority()
 }
 
 /** Called during startup to increase thread priority. */
-void Thread::high_priority() {
+void Thread::highPriority() {
   struct sched_param param;
   int policy;
   pthread_t id = pthread_self();
@@ -91,12 +91,12 @@ void Thread::high_priority() {
 }
 
 
-void Thread::millisleep(float milliseconds) {
+void Thread::millisleep(double milliseconds) {
   struct timespec sleeper;
   time_t seconds = milliseconds / 1000;
   sleeper.tv_sec  = seconds;
   sleeper.tv_nsec = (unsigned int)((milliseconds - seconds * 1000) * 1000000.0);
-  nanosleep (&sleeper, NULL);
+  nanosleep(&sleeper, NULL);
 }
 
 } // core

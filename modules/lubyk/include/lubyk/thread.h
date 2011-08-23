@@ -54,7 +54,7 @@ class Thread : public Mutex {
   template<void(*Tmethod)(Thread*)>
   void startThread(void *parameter = NULL) {
     ScopedSLock lock(condition_);
-    if (is_running()) {
+    if (isRunning()) {
       fprintf(stderr, "Trying to start thread when it is already running ! (in Thread::start)");
       return;
     }
@@ -75,7 +75,7 @@ class Thread : public Mutex {
   /** Start a new thread with a static function. */
   void startThread(void (*static_method)(Thread*), void *parameter = NULL) {
     ScopedSLock lock(condition_);
-    if (is_running()) {
+    if (isRunning()) {
      fprintf(stderr, "Trying to start thread when it is already running ! (in Thread::start)");
      return;
     }
@@ -97,7 +97,7 @@ class Thread : public Mutex {
   template<class T, void(T::*Tmethod)(Thread*)>
   void startThread(T *owner, void *parameter = NULL) {
     ScopedSLock lock(condition_);
-    if (is_running()) {
+    if (isRunning()) {
       fprintf(stderr, "Trying to start thread when it is already running ! (in Thread::start)");
       return;
     }
@@ -118,7 +118,7 @@ class Thread : public Mutex {
   template<class T, void(T::*Tmethod)()>
   void startThread(T *owner, void *parameter = NULL) {
     ScopedSLock lock(condition_);
-    if (is_running()) {
+    if (isRunning()) {
       fprintf(stderr, "Trying to start thread when it is already running ! (in Thread::start)");
       return;
     }
@@ -153,12 +153,12 @@ class Thread : public Mutex {
 
   /** Send a signal to the running thread.
    */
-  void send_signal(int sig) {
+  void sendSignal(int sig) {
     assert(!pthread_equal(thread_id_, pthread_self()));
     pthread_kill(thread_id_, sig);
   }
 
-  void register_signal(int sig) {
+  void registerSignal(int sig) {
     // we cannot use the assertion because thread_id_ might not be set yet (race condition)
     // assert(pthread_equal(thread_id_, pthread_self()));
     signal(sig, terminate);
@@ -181,25 +181,25 @@ class Thread : public Mutex {
 
   /** Return true if the thread is running.
    */
-  bool is_running() {
+  bool isRunning() {
     return thread_id_ != NULL;
   }
 
   /** Set thread priority to high. */
-  void high_priority();
+  void highPriority();
 
   /** Set thread priority to normal. */
-  void normal_priority();
+  void normalPriority();
 
   /** Sleep for a given number of milliseconds.
    */
-  static void millisleep(float milliseconds);
+  static void millisleep(double milliseconds);
 
   /** This method should be called by started thread when it has
    * properly started an it is ready. The creating thread locks until
    * this method is called.
    */
-  void thread_ready() {
+  void threadReady() {
     // signals installed, we can free parent thread
     condition_.signal();
   }
@@ -221,7 +221,7 @@ class Thread : public Mutex {
   /** Set 'this' value for the current thread so we can
    * find our object back.
    */
-  static void set_thread_this(Thread *thread) {
+  static void setThreadThis(Thread *thread) {
    pthread_setspecific(sThisKey, (void*)thread);
   }
 
@@ -231,10 +231,10 @@ class Thread : public Mutex {
   static void * s_start_static_thread(void *thread_ptr) {
     Thread * thread = (Thread*)thread_ptr;
      // begin of new thread
-    set_thread_this(thread);
+    setThreadThis(thread);
 
-    thread->register_signal(SIGTERM); // register a SIGTERM handler
-    thread->register_signal(SIGINT);
+    thread->registerSignal(SIGTERM); // register a SIGTERM handler
+    thread->registerSignal(SIGINT);
     pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
     // removing comment below = force cancelation to occur NOW, whatever the program is doing.
     // pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
@@ -252,10 +252,10 @@ class Thread : public Mutex {
   static void *s_startThread(void *thread_ptr) {
     Thread * thread = (Thread*)thread_ptr;
      // begin of new thread
-    set_thread_this(thread);
+    setThreadThis(thread);
 
-    thread->register_signal(SIGTERM); // register a SIGTERM handler
-    thread->register_signal(SIGINT);
+    thread->registerSignal(SIGTERM); // register a SIGTERM handler
+    thread->registerSignal(SIGINT);
     pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
     //pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 
@@ -273,10 +273,10 @@ class Thread : public Mutex {
   static void * s_startThread(void *thread_ptr) {
     Thread * thread = (Thread*)thread_ptr;
      // begin of new thread
-    set_thread_this(thread);
+    setThreadThis(thread);
 
-    thread->register_signal(SIGTERM); // register a SIGTERM handler
-    thread->register_signal(SIGINT);
+    thread->registerSignal(SIGTERM); // register a SIGTERM handler
+    thread->registerSignal(SIGINT);
 
     T *owner = (T*)thread->owner_;
     thread->should_run_ = true;

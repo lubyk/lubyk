@@ -43,13 +43,13 @@ public:
       : owner_(owner),
         interval_(interval),
         last_interval_(interval),
-        running_(false),
+        is_running_(false),
         trigger_on_start_(true) {}
 
   ~Timer() {
     // we could let Thread cancel the loop in ~Thread, but we
     // prefer to ensure we don't access stale data.
-    if (running_) {
+    if (is_running_) {
       should_run_ = false;
       interrupt();
     }
@@ -60,7 +60,7 @@ public:
     trigger_on_start_ = trigger_on_start;
     last_interval_ = interval_;
     interval_ = interval;
-    if (running_) {
+    if (is_running_) {
       should_run_ = false;
       interrupt();
       thread_.join();
@@ -71,7 +71,7 @@ public:
   void start(bool trigger_on_start = true) {
     ScopedLock lock(mutex_);
     trigger_on_start_ = trigger_on_start;
-    if (running_) {
+    if (is_running_) {
       should_run_ = false;
       interrupt();
       thread_.join();
@@ -81,7 +81,7 @@ public:
 
   void stop() {
     ScopedLock lock(mutex_);
-    if (running_) {
+    if (is_running_) {
       should_run_ = false;
       interrupt();
       thread_.join();
@@ -89,7 +89,7 @@ public:
   }
 
   void join() {
-    if (running_)
+    if (is_running_)
       thread_.join();
   }
 
@@ -103,7 +103,7 @@ public:
     ScopedLock lock(mutex_);
     last_interval_ = interval_;
     interval_ = interval;
-    if (running_) {
+    if (is_running_) {
       interrupt();
     }
   }
@@ -117,8 +117,8 @@ public:
     interval_ = interval;
   }
 
-  bool running() const {
-    return running_;
+  bool isRunning() const {
+    return is_running_;
   }
 
 private:
@@ -177,7 +177,7 @@ private:
       nanosleep(&sleeper, NULL);
     }
 
-    running_ = false;
+    is_running_ = false;
   }
 
   static void interruptSleep(int sig) {
@@ -190,15 +190,15 @@ private:
   /** Must be called within a loop lock.
    */
   void interrupt() {
-    thread_.send_signal(SIGUSR1);
+    thread_.sendSignal(SIGUSR1);
   }
 
   void startThread(Thread *runner) {
     signal(SIGUSR1, Timer::interruptSleep);
     should_run_ = true;
-    running_ = true;
-    runner->high_priority();
-    runner->thread_ready();
+    is_running_ = true;
+    runner->highPriority();
+    runner->threadReady();
     run();
   }
 
@@ -230,7 +230,7 @@ private:
 
   /** Flag indicating if the thread is actually running.
    */
-  bool running_;
+  bool is_running_;
 
   /** Flag indicating that we want the timer to fire or die.
    */

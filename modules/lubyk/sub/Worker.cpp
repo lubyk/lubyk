@@ -8,14 +8,13 @@ using namespace lubyk;
 
 /* ============================ Constructors     ====================== */
 
-/** lubyk::Worker::Worker(lua_State *L)
- * include/lubyk/worker.h:79
+/** lubyk::Worker::Worker()
+ * include/lubyk/worker.h:75
  */
 static int Worker_Worker(lua_State *L) {
   try {
-    
-    new Worker(L);
-    // the class receives lua_State in ctor: userdata already on stack
+    Worker * retval__ = new Worker();
+    lua_pushclass<Worker>(L, retval__, "lubyk.Worker");
     return 1;
   } catch (std::exception &e) {
     lua_pushfstring(L, "lubyk.Worker.Worker: %s", e.what());
@@ -56,7 +55,7 @@ static int Worker__tostring(lua_State *L) {
 
 
 /** LuaStackSize lubyk::Worker::execPath(lua_State *L)
- * include/lubyk/worker.h:111
+ * include/lubyk/worker.h:107
  */
 static int Worker_execPath(lua_State *L) {
   try {
@@ -75,7 +74,7 @@ static int Worker_execPath(lua_State *L) {
 
 
 /** void lubyk::Worker::exit(int status)
- * include/lubyk/worker.h:107
+ * include/lubyk/worker.h:103
  */
 static int Worker_exit(lua_State *L) {
   try {
@@ -93,8 +92,27 @@ static int Worker_exit(lua_State *L) {
 
 
 
-/** double lubyk::Worker::now()
+/** static Worker* lubyk::Worker::getWorker(lua_State *L)
  * include/lubyk/worker.h:125
+ */
+static int Worker_getWorker(lua_State *L) {
+  try {
+    
+    Worker * retval__ = Worker::getWorker(L);
+    lua_pushclass<Worker>(L, retval__, "lubyk.Worker");
+    return 1;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "lubyk.Worker.getWorker: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "lubyk.Worker.getWorker: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
+/** double lubyk::Worker::now()
+ * include/lubyk/worker.h:121
  */
 static int Worker_now(lua_State *L) {
   try {
@@ -113,7 +131,7 @@ static int Worker_now(lua_State *L) {
 
 
 /** void lubyk::Worker::run()
- * include/lubyk/worker.h:123
+ * include/lubyk/worker.h:119
  */
 static int Worker_run(lua_State *L) {
   try {
@@ -131,7 +149,7 @@ static int Worker_run(lua_State *L) {
 
 
 /** void lubyk::Worker::sleep(double duration)
- * include/lubyk/worker.h:85
+ * include/lubyk/worker.h:81
  */
 static int Worker_sleep(lua_State *L) {
   try {
@@ -150,7 +168,7 @@ static int Worker_sleep(lua_State *L) {
 
 
 /** LuaStackSize lubyk::Worker::spawn(const char *script, lua_State *L)
- * include/lubyk/worker.h:99
+ * include/lubyk/worker.h:95
  */
 static int Worker_spawn(lua_State *L) {
   try {
@@ -170,7 +188,7 @@ static int Worker_spawn(lua_State *L) {
 
 
 /** void lubyk::Worker::test_lock()
- * include/lubyk/worker.h:114
+ * include/lubyk/worker.h:110
  */
 static int Worker_test_lock(lua_State *L) {
   try {
@@ -188,7 +206,7 @@ static int Worker_test_lock(lua_State *L) {
 
 
 /** void lubyk::Worker::test_unlock()
- * include/lubyk/worker.h:119
+ * include/lubyk/worker.h:115
  */
 static int Worker_test_unlock(lua_State *L) {
   try {
@@ -206,7 +224,7 @@ static int Worker_test_unlock(lua_State *L) {
 
 
 /** void lubyk::Worker::wait(double duration)
- * include/lubyk/worker.h:92
+ * include/lubyk/worker.h:88
  */
 static int Worker_wait(lua_State *L) {
   try {
@@ -225,7 +243,7 @@ static int Worker_wait(lua_State *L) {
 
 
 /** int lubyk::Worker::waitpid(int pid)
- * include/lubyk/worker.h:103
+ * include/lubyk/worker.h:99
  */
 static int Worker_waitpid(lua_State *L) {
   try {
@@ -266,6 +284,7 @@ static const struct luaL_Reg Worker_member_methods[] = {
 
 static const struct luaL_Reg Worker_namespace_methods[] = {
   {"Worker"            , Worker_Worker},
+  {"Worker_getWorker"  , Worker_getWorker},
   {NULL, NULL},
 };
 

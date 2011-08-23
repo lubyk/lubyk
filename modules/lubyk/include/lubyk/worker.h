@@ -61,10 +61,6 @@ public:
    */
   TimeRef time_ref_;
 
-  /** Main Lua state in which the worker was required.
-   */
-  lua_State *lua_;
-
   /** Context use by zmq::Socket.
    */
   void *zmq_context_;
@@ -76,7 +72,7 @@ public:
 
 public:
 
-  Worker(lua_State *L);
+  Worker();
 
   ~Worker();
 
