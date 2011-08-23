@@ -8,20 +8,25 @@
 --]]------------------------------------------------------
 require 'lubyk'
 
+local SLEEP = 40
 local should = test.Suite('lk.Timer')
 
 function should.loopTimerInExternalThread()
   local counter = 0
-  local timer = lk.Timer(10, function()
+  local timer = lk.Timer(SLEEP, function()
     counter = counter + 1
     -- continue until 'timer' is gc or stopped.
   end)
   timer:start() -- default = trigger on start
   -- first trigger now
-  sleep(91)
+  now = worker:now()
+  sleep(4 * SLEEP + 10)
+  -- 00, 20, 40, 60, 80
+  assertEqual(5, counter)
+  now = worker:now()
+  sleep(5 * SLEEP)
+  --                   , 100, 120, 140, 160, 180
   assertEqual(10, counter)
-  sleep(100)
-  assertEqual(20, counter)
   counter = 0
   timer:stop()
 end
@@ -33,15 +38,15 @@ function should.setInterval()
     -- continue until 'timer' is gc or stopped.
   end)
   timer:start(false) -- do not trigger on start
-  sleep(10)
+  sleep(SLEEP - 10) -- 10
   assertEqual(0, counter)
-  timer:setInterval(10)
+  timer:setInterval(SLEEP)
   assertEqual(0, counter)
-  sleep(91) -- triggers:
-  -- 10, 20, 30, 40, 50, 60, 70, 80, 90
-  assertEqual(10, counter)
-  sleep(100)
-  assertEqual(20, counter)
+  sleep(4 * SLEEP) -- triggers:
+  -- 20, 40, 60, 80
+  assertEqual(4, counter)
+  sleep(5 * SLEEP)
+  assertEqual(9, counter)
   counter = 0
   timer:stop()
 end
@@ -49,20 +54,20 @@ end
 function should.setCallback()
   local counter = 0
   local timer = lk.Timer(10000)
-  function timer.tick()
+  function timer:tick()
     counter = counter + 1
     -- continue until 'timer' is gc or stopped.
   end
   timer:start(false) -- do not trigger on start
-  sleep(10)
+  sleep(SLEEP - 10)
   assertEqual(0, counter)
-  timer:setInterval(10)
+  timer:setInterval(SLEEP)
   assertEqual(0, counter)
-  sleep(91) -- triggers:
-  -- 10, 20, 30, 40, 50, 60, 70, 80, 90
-  assertEqual(10, counter)
-  sleep(100)
-  assertEqual(20, counter)
+  sleep(4 * SLEEP) -- triggers:
+  -- 20, 40, 60, 80
+  assertEqual(4, counter)
+  sleep(5 * SLEEP)
+  assertEqual(9, counter)
   counter = 0
   timer:stop()
 end

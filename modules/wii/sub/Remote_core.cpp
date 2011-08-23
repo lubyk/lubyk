@@ -15,7 +15,7 @@ static int Remote_Remote(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     Remote * retval__;
-    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checksdata(L, 1, "lubyk.Worker"));
     if (top__ < 2) {
       retval__ = new Remote(worker);
     } else {
@@ -37,7 +37,7 @@ static int Remote_Remote(lua_State *L) {
 /* ============================ Destructor       ====================== */
 
 static int Remote_destructor(lua_State *L) {
-  Remote **userdata = (Remote**)luaL_checkudata(L, 1, "wii.Remote");
+  Remote **userdata = (Remote**)dubL_checksdata_n(L, 1, "wii.Remote");
 
   
   if (*userdata) delete *userdata;
@@ -51,7 +51,7 @@ static int Remote_destructor(lua_State *L) {
 /* ============================ tostring         ====================== */
 
 static int Remote__tostring(lua_State *L) {
-  Remote **userdata = (Remote**)luaL_checkudata(L, 1, "wii.Remote");
+  Remote **userdata = (Remote**)dubL_checksdata_n(L, 1, "wii.Remote");
   
   
   lua_pushfstring(L, "<wii.Remote: %p %s>", *userdata, (*userdata)->name());
@@ -67,7 +67,7 @@ static int Remote__tostring(lua_State *L) {
  */
 static int Remote___newindex(lua_State *L) {
   try {
-    Remote *self__ = *((Remote**)dubL_checkudata(L, 1, "wii.Remote"));
+    Remote *self__ = *((Remote**)dubL_checksdata(L, 1, "wii.Remote"));
     
     self__->__newindex(L);
     return 0;
@@ -86,7 +86,7 @@ static int Remote___newindex(lua_State *L) {
  */
 static int Remote_connected(lua_State *L) {
   try {
-    Remote *self__ = *((Remote**)dubL_checkudata(L, 1, "wii.Remote"));
+    Remote *self__ = *((Remote**)dubL_checksdata(L, 1, "wii.Remote"));
     self__->connected();
     return 0;
   } catch (std::exception &e) {
@@ -104,7 +104,7 @@ static int Remote_connected(lua_State *L) {
  */
 static int Remote_disconnect(lua_State *L) {
   try {
-    Remote *self__ = *((Remote**)dubL_checkudata(L, 1, "wii.Remote"));
+    Remote *self__ = *((Remote**)dubL_checksdata(L, 1, "wii.Remote"));
     self__->disconnect();
     return 0;
   } catch (std::exception &e) {
@@ -122,7 +122,7 @@ static int Remote_disconnect(lua_State *L) {
  */
 static int Remote_name(lua_State *L) {
   try {
-    Remote *self__ = *((Remote**)dubL_checkudata(L, 1, "wii.Remote"));
+    Remote *self__ = *((Remote**)dubL_checksdata(L, 1, "wii.Remote"));
     const char * retval__ = self__->name();
     lua_pushstring(L, retval__);
     return 1;
@@ -141,7 +141,7 @@ static int Remote_name(lua_State *L) {
  */
 static int Remote_set_leds(lua_State *L) {
   try {
-    Remote *self__ = *((Remote**)dubL_checkudata(L, 1, "wii.Remote"));
+    Remote *self__ = *((Remote**)dubL_checksdata(L, 1, "wii.Remote"));
     bool led1 = lua_toboolean(L, 2);
     bool led2 = lua_toboolean(L, 3);
     bool led3 = lua_toboolean(L, 4);

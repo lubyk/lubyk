@@ -1,7 +1,6 @@
 project(luabin C)
 set(target "lua")
 
-add_definitions(-DLUA_USE_LINUX)
 include_directories(vendor/lua5.1/src)
 
 file(GLOB MODULE_SOURCES vendor/lua5.1/src/*.c)

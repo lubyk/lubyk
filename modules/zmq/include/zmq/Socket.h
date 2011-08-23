@@ -43,7 +43,7 @@ using namespace lubyk;
 
 namespace zmq {
 
-/** Listen for incoming messages on a given port.
+/** ZeroMQ Socket.
  *
  * @dub lib_name:'Socket_core'
         string_format:'%%s (%%s)'
@@ -53,7 +53,6 @@ class Socket : public LuaCallback2
 {
   void *socket_;
   std::string location_;
-  Thread *thread_;
   int type_;
   /** Mutex used to enable zmq.REQ sharing between threads.
    */
@@ -68,7 +67,6 @@ public:
    * to set the zmq context, so we pass it as argument.
    */
   Socket(int type, lubyk::Worker *worker) :
-   thread_(NULL),
    type_(type) {
 
     if (!worker->zmq_context_) {
@@ -97,11 +95,6 @@ public:
   }
 
   ~Socket() {
-    if (thread_) {
-      kill();
-      delete thread_;
-    }
-
     zmq_close(socket_);
     if (!--worker_->zmq_context_refcount_) {
       zmq_term(worker_->zmq_context_);
@@ -335,40 +328,6 @@ public:
       default: return "???";
     }
   }
-  /* =========================== Threading ====================
-   * We add the threading code inside the Socket to ease memory
-   * management and make sure Thread is killed before Socket is
-   * garbage collected.
-   */
-
-  /** @internal: DO NOT USE.
-  */
-  void start() {
-    if (thread_) throw Exception("Cannot start thread (already running).");
-    thread_   = new Thread();
-    thread_->startThread<Socket, &Socket::run>(this, NULL);
-  }
-
-  void quit() {
-    if (thread_) thread_->quit();
-  }
-
-  void kill() {
-    { ScopedSLock lock(req_mutex_);
-      // just to make sure we are not in zmq_poll
-    }
-    if (thread_) thread_->kill();
-  }
-
-  void join() {
-    ScopedUnlock unlock(worker_);
-    if (thread_) thread_->join();
-  }
-
-  bool shouldRun() {
-    if (thread_) return thread_->shouldRun();
-    return false;
-  }
 
 private:
 
@@ -433,24 +392,6 @@ private:
     default:
       throw Exception("The provided context was not valid (NULL).");
     }
-  }
-
-  void run(Thread *runner) {
-
-   runner->thread_ready();
-
-   ScopedLock lock(worker_);
-
-   pushLuaCallback("run", 3);
-
-   // lua_ = LuaCallback's thread state
-   // first argument is self
-   int status = lua_pcall(lua_, 1, 0, 0);
-
-
-   if (status) {
-     fprintf(stderr, "Error starting Socket function: %s\n", lua_tostring(lua_, -1));
-   }
   }
 };
 } // zmq

@@ -13,7 +13,7 @@ using namespace wii;
  */
 static int Browser_Browser(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checksdata(L, 1, "lubyk.Worker"));
     Browser * retval__ = new Browser(worker);
     lua_pushclass<Browser>(L, retval__, "wii.Browser");
     return 1;
@@ -30,7 +30,7 @@ static int Browser_Browser(lua_State *L) {
 /* ============================ Destructor       ====================== */
 
 static int Browser_destructor(lua_State *L) {
-  Browser **userdata = (Browser**)luaL_checkudata(L, 1, "wii.Browser");
+  Browser **userdata = (Browser**)dubL_checksdata_n(L, 1, "wii.Browser");
 
   
   if (*userdata) delete *userdata;
@@ -44,7 +44,7 @@ static int Browser_destructor(lua_State *L) {
 /* ============================ tostring         ====================== */
 
 static int Browser__tostring(lua_State *L) {
-  Browser **userdata = (Browser**)luaL_checkudata(L, 1, "wii.Browser");
+  Browser **userdata = (Browser**)dubL_checksdata_n(L, 1, "wii.Browser");
   
   
   lua_pushfstring(L, "<wii.Browser: %p>", *userdata);
@@ -60,7 +60,7 @@ static int Browser__tostring(lua_State *L) {
  */
 static int Browser___newindex(lua_State *L) {
   try {
-    Browser *self__ = *((Browser**)dubL_checkudata(L, 1, "wii.Browser"));
+    Browser *self__ = *((Browser**)dubL_checksdata(L, 1, "wii.Browser"));
     
     self__->__newindex(L);
     return 0;
@@ -79,7 +79,7 @@ static int Browser___newindex(lua_State *L) {
  */
 static int Browser_find(lua_State *L) {
   try {
-    Browser *self__ = *((Browser**)dubL_checkudata(L, 1, "wii.Browser"));
+    Browser *self__ = *((Browser**)dubL_checksdata(L, 1, "wii.Browser"));
     self__->find();
     return 0;
   } catch (std::exception &e) {

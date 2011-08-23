@@ -8,16 +8,15 @@ using namespace lk;
 
 /* ============================ Constructors     ====================== */
 
-/** lk::Timer::Timer(lubyk::Worker *worker, float interval)
- * include/lk/Timer.h:48
+/** lk::Timer::Timer(float interval)
+ * include/lk/Timer.h:47
  */
 static int Timer_Timer(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
-    float interval = dubL_checknumber(L, 2);
-    Timer * retval__ = new Timer(worker, interval);
-    lua_pushclass<Timer>(L, retval__, "lk.Timer");
-    return 1;
+    float interval = dubL_checknumber(L, 1);
+    Timer * retval__ = new Timer(interval);
+    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
+    return retval__->lua_init(L, "lk.Timer");
   } catch (std::exception &e) {
     lua_pushfstring(L, "lk.Timer.Timer: %s", e.what());
   } catch (...) {
@@ -31,7 +30,7 @@ static int Timer_Timer(lua_State *L) {
 /* ============================ Destructor       ====================== */
 
 static int Timer_destructor(lua_State *L) {
-  Timer **userdata = (Timer**)luaL_checkudata(L, 1, "lk.Timer");
+  Timer **userdata = (Timer**)dubL_checksdata_n(L, 1, "lk.Timer");
 
   
   if (*userdata) delete *userdata;
@@ -45,10 +44,10 @@ static int Timer_destructor(lua_State *L) {
 /* ============================ tostring         ====================== */
 
 static int Timer__tostring(lua_State *L) {
-  Timer **userdata = (Timer**)luaL_checkudata(L, 1, "lk.Timer");
+  Timer **userdata = (Timer**)dubL_checksdata_n(L, 1, "lk.Timer");
   
   
-  lua_pushfstring(L, "<lk.Timer: %p %f (%f)>", *userdata, (float)(*userdata)->interval(), (float)(*userdata)->running());
+  lua_pushfstring(L, "<lk.Timer: %p %f (%s)>", *userdata, (float)(*userdata)->interval(), (float)(*userdata)->isRunning() ? "ON" : "OFF");
   
   return 1;
 }
@@ -56,24 +55,12 @@ static int Timer__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
-/** void lk::Timer::__newindex(lua_State *L)
- * include/lk/Timer.h:83
- */
-static int Timer___newindex(lua_State *L) {
-  Timer *self__ = *((Timer**)luaL_checkudata(L, 1, "lk.Timer"));
-  
-  self__->__newindex(L);
-  return 0;
-}
-
-
-
 /** time_t lk::Timer::interval()
- * include/lk/Timer.h:72
+ * include/lk/Timer.h:70
  */
 static int Timer_interval(lua_State *L) {
   try {
-    Timer *self__ = *((Timer**)dubL_checkudata(L, 1, "lk.Timer"));
+    Timer *self__ = *((Timer**)dubL_checksdata(L, 1, "lk.Timer"));
     time_t  retval__ = self__->interval();
     lua_pushnumber(L, retval__);
     return 1;
@@ -87,12 +74,31 @@ static int Timer_interval(lua_State *L) {
 
 
 
+/** bool lk::Timer::isRunning()
+ * include/lk/Timer.h:66
+ */
+static int Timer_isRunning(lua_State *L) {
+  try {
+    Timer *self__ = *((Timer**)dubL_checksdata(L, 1, "lk.Timer"));
+    bool  retval__ = self__->isRunning();
+    lua_pushboolean(L, retval__);
+    return 1;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "lk.Timer.isRunning: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "lk.Timer.isRunning: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** void lk::Timer::join()
- * include/lk/Timer.h:63
+ * include/lk/Timer.h:61
  */
 static int Timer_join(lua_State *L) {
   try {
-    Timer *self__ = *((Timer**)dubL_checkudata(L, 1, "lk.Timer"));
+    Timer *self__ = *((Timer**)dubL_checksdata(L, 1, "lk.Timer"));
     self__->join();
     return 0;
   } catch (std::exception &e) {
@@ -105,31 +111,12 @@ static int Timer_join(lua_State *L) {
 
 
 
-/** bool lk::Timer::running()
- * include/lk/Timer.h:68
- */
-static int Timer_running(lua_State *L) {
-  try {
-    Timer *self__ = *((Timer**)dubL_checkudata(L, 1, "lk.Timer"));
-    bool  retval__ = self__->running();
-    lua_pushboolean(L, retval__);
-    return 1;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "lk.Timer.running: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "lk.Timer.running: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
 /** void lk::Timer::setInterval(float interval)
- * include/lk/Timer.h:76
+ * include/lk/Timer.h:74
  */
 static int Timer_setInterval(lua_State *L) {
   try {
-    Timer *self__ = *((Timer**)dubL_checkudata(L, 1, "lk.Timer"));
+    Timer *self__ = *((Timer**)dubL_checksdata(L, 1, "lk.Timer"));
     float interval = dubL_checknumber(L, 2);
     self__->setInterval(interval);
     return 0;
@@ -144,11 +131,11 @@ static int Timer_setInterval(lua_State *L) {
 
 
 /** void lk::Timer::start(bool trigger_on_start=true)
- * include/lk/Timer.h:58
+ * include/lk/Timer.h:57
  */
 static int Timer_start(lua_State *L) {
   try {
-    Timer *self__ = *((Timer**)dubL_checkudata(L, 1, "lk.Timer"));
+    Timer *self__ = *((Timer**)dubL_checksdata(L, 1, "lk.Timer"));
     int top__ = lua_gettop(L);
     if (top__ < 2) {
       self__->start();
@@ -168,11 +155,11 @@ static int Timer_start(lua_State *L) {
 
 
 /** void lk::Timer::stop()
- * include/lk/Timer.h:54
+ * include/lk/Timer.h:53
  */
 static int Timer_stop(lua_State *L) {
   try {
-    Timer *self__ = *((Timer**)dubL_checkudata(L, 1, "lk.Timer"));
+    Timer *self__ = *((Timer**)dubL_checksdata(L, 1, "lk.Timer"));
     self__->stop();
     return 0;
   } catch (std::exception &e) {
@@ -190,10 +177,9 @@ static int Timer_stop(lua_State *L) {
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg Timer_member_methods[] = {
-  {"__newindex"        , Timer___newindex},
   {"interval"          , Timer_interval},
+  {"isRunning"         , Timer_isRunning},
   {"join"              , Timer_join},
-  {"running"           , Timer_running},
   {"setInterval"       , Timer_setInterval},
   {"start"             , Timer_start},
   {"stop"              , Timer_stop},

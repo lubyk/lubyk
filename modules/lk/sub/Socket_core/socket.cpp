@@ -186,10 +186,9 @@ LuaStackSize lk::Socket::accept(lua_State *L) {
     throw Exception("Could not get remote host name (%s).", strerror(errno));
   }
 
-  Socket *new_socket = new Socket(worker_, fd, local_host_.c_str(), remote_host, remote_port);
+  Socket *new_socket = new Socket(fd, local_host_.c_str(), remote_host, remote_port);
 
-  lua_pushclass<Socket>(L, new_socket, "lk.Socket");
-  return 1;
+  return new_socket->lua_init(lua_, "lk.Socket");
 }
 
 
@@ -363,26 +362,6 @@ int lk::Socket::get_port(int fd) {
     return ntohs(((struct sockaddr_in *)&sa)->sin_port);
   } else {
     return ntohs(((struct sockaddr_in6 *)&sa)->sin6_port);
-  }
-}
-
-void lk::Socket::run(Thread *runner) {
-  // lua_ = LuaCallback's lua thread context
-  runner->thread_ready();
-
-  // trigger callback
-
-  lubyk::ScopedLock lock(worker_);
-
-  push_lua_callback();
-
-  // lua_ = LuaCallback's thread state
-  // first argument is self
-  int status = lua_pcall(lua_, 1, 0, 0);
-
-  if (status) {
-    printf("Error in Socket callback: %s.\n", lua_tostring(lua_, -1));
-    return;
   }
 }
 

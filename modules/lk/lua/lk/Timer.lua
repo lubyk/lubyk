@@ -12,16 +12,10 @@ require 'lk.Timer_core'
 require 'worker'
 
 local constr = lk.Timer
-local worker = worker
-local function dummy_func()
-end
-
 function lk.Timer(interval, func)
-  local instance = constr(worker, interval)
+  local self = constr(interval)
   if func then
-    instance.tick = func
-  else
-    instance.tick = dummy_func
+    self.tick = func
   end
-  return instance
+  return self
 end

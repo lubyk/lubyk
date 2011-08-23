@@ -10,15 +10,49 @@
 
 --]]------------------------------------------------------
 require 'zmq'
--- Do we need this require ?
 require 'zmq.Socket_core'
+
 local worker = worker
 local constr = zmq.Socket
+local mt = zmq.Socket_
+
+local function checkLoop(self)
+  if not self.loop then
+    error("Loop not set")
+  end
+end
+
+function mt:shouldRun()
+  checkLoop(self)
+  return self.loop:shouldRun()
+end
+
+function mt:start()
+  checkLoop(self)
+  self.loop:start()
+end
+
+function mt:quit()
+  checkLoop(self)
+  self.loop:quit()
+end
+
+function mt:kill()
+  checkLoop(self)
+  self.loop:kill()
+end
+
+function mt:join()
+  checkLoop(self)
+  self.loop:join()
+end
+
 function zmq.Socket(type, func)
   local self = constr(type, worker)
   if func then
-    self.run = func
-    self:start()
+    self.loop = lk.Thread(function()
+      func(self)
+    end)
   end
   return self
 end

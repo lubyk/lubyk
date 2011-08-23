@@ -37,11 +37,10 @@ namespace lk {
 /** Starts a new OS Thread with a given function.
  * @dub lib_name:'Thread_core'
  */
-class Thread : public lubyk::LuaCallback, public lubyk::Thread
+class Thread : public lubyk::LuaCallback2, public lubyk::Thread
 {
 public:
-  Thread(lubyk::Worker *worker)
-    : lubyk::LuaCallback(worker) {}
+  Thread() {}
 
   ~Thread() {
     kill();
@@ -62,24 +61,23 @@ public:
   }
 
   bool shouldRun() {
-    return lubyk::Thread::should_run();
+    return lubyk::Thread::shouldRun();
   }
 
-  void start(lua_State *L) {
-    set_lua_callback(L);
+  void start() {
     startThread<Thread, &Thread::run>(this, NULL);
   }
 
 private:
   void run(lubyk::Thread *runner) {
 
-    runner->thread_ready();
+    runner->threadReady();
 
     lubyk::ScopedLock lock(worker_);
     // we may get a kill before even starting
-    if (!should_run()) return;
+    if (!shouldRun()) return;
 
-    push_lua_callback();
+    pushLuaCallback("run", 3);
 
     // lua_ = LuaCallback's thread state
     // first argument is self

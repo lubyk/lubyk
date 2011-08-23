@@ -29,7 +29,7 @@ static int Mutex_Mutex(lua_State *L) {
 /* ============================ Destructor       ====================== */
 
 static int Mutex_destructor(lua_State *L) {
-  Mutex **userdata = (Mutex**)luaL_checkudata(L, 1, "lk.Mutex");
+  Mutex **userdata = (Mutex**)dubL_checksdata_n(L, 1, "lk.Mutex");
 
   
   if (*userdata) delete *userdata;
@@ -43,7 +43,7 @@ static int Mutex_destructor(lua_State *L) {
 /* ============================ tostring         ====================== */
 
 static int Mutex__tostring(lua_State *L) {
-  Mutex **userdata = (Mutex**)luaL_checkudata(L, 1, "lk.Mutex");
+  Mutex **userdata = (Mutex**)dubL_checksdata_n(L, 1, "lk.Mutex");
   
   
   lua_pushfstring(L, "<lk.Mutex: %p>", *userdata);
@@ -59,7 +59,7 @@ static int Mutex__tostring(lua_State *L) {
  */
 static int Mutex_lock(lua_State *L) {
   try {
-    Mutex *self__ = *((Mutex**)dubL_checkudata(L, 1, "lk.Mutex"));
+    Mutex *self__ = *((Mutex**)dubL_checksdata(L, 1, "lk.Mutex"));
     self__->lock();
     return 0;
   } catch (std::exception &e) {
@@ -77,7 +77,7 @@ static int Mutex_lock(lua_State *L) {
  */
 static int Mutex_lockCount(lua_State *L) {
   try {
-    Mutex *self__ = *((Mutex**)dubL_checkudata(L, 1, "lk.Mutex"));
+    Mutex *self__ = *((Mutex**)dubL_checksdata(L, 1, "lk.Mutex"));
     int  retval__ = self__->lockCount();
     lua_pushnumber(L, retval__);
     return 1;
@@ -96,7 +96,7 @@ static int Mutex_lockCount(lua_State *L) {
  */
 static int Mutex_unlock(lua_State *L) {
   try {
-    Mutex *self__ = *((Mutex**)dubL_checkudata(L, 1, "lk.Mutex"));
+    Mutex *self__ = *((Mutex**)dubL_checksdata(L, 1, "lk.Mutex"));
     self__->unlock();
     return 0;
   } catch (std::exception &e) {

@@ -12,9 +12,10 @@ require 'worker'
 local constr = lk.Thread
 local worker = worker
 function lk.Thread(func)
-  local instance = constr(worker)
+  local self = constr()
   if func then
-    instance:start(func)
+    self.run = func
+    self:start()
   end
-  return instance
+  return self
 end

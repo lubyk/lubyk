@@ -14,7 +14,7 @@ using namespace mdns;
 /* ============================ Destructor       ====================== */
 
 static int Browser_destructor(lua_State *L) {
-  Browser **userdata = (Browser**)luaL_checkudata(L, 1, "mdns.Browser");
+  Browser **userdata = (Browser**)dubL_checksdata_n(L, 1, "mdns.Browser");
 
   
   if (*userdata) delete *userdata;
@@ -28,7 +28,7 @@ static int Browser_destructor(lua_State *L) {
 /* ============================ tostring         ====================== */
 
 static int Browser__tostring(lua_State *L) {
-  Browser **userdata = (Browser**)luaL_checkudata(L, 1, "mdns.Browser");
+  Browser **userdata = (Browser**)dubL_checksdata_n(L, 1, "mdns.Browser");
   
   
   lua_pushfstring(L, "<mdns.Browser: %p %s>", *userdata, (*userdata)->service_type());
@@ -44,7 +44,7 @@ static int Browser__tostring(lua_State *L) {
  */
 static int Browser_MakeInstance(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checksdata(L, 1, "lubyk.Worker"));
     const char *service_type = dubL_checkstring(L, 2);
     
     LuaStackSize  retval__ = Browser::MakeInstance(worker, service_type, L);
@@ -64,8 +64,8 @@ static int Browser_MakeInstance(lua_State *L) {
  */
 static int Browser_add_device(lua_State *L) {
   try {
-    Browser *self__ = *((Browser**)dubL_checkudata(L, 1, "mdns.Browser"));
-    const Location *location = *((const Location **)dubL_checkudata(L, 2, "mdns.Location"));
+    Browser *self__ = *((Browser**)dubL_checksdata(L, 1, "mdns.Browser"));
+    const Location *location = *((const Location **)dubL_checksdata(L, 2, "mdns.Location"));
     self__->add_device(*location);
     return 0;
   } catch (std::exception &e) {
@@ -83,7 +83,7 @@ static int Browser_add_device(lua_State *L) {
  */
 static int Browser_remove_device(lua_State *L) {
   try {
-    Browser *self__ = *((Browser**)dubL_checkudata(L, 1, "mdns.Browser"));
+    Browser *self__ = *((Browser**)dubL_checksdata(L, 1, "mdns.Browser"));
     const char *name = dubL_checkstring(L, 2);
     self__->remove_device(name);
     return 0;
@@ -102,7 +102,7 @@ static int Browser_remove_device(lua_State *L) {
  */
 static int Browser_service_type(lua_State *L) {
   try {
-    Browser *self__ = *((Browser**)dubL_checkudata(L, 1, "mdns.Browser"));
+    Browser *self__ = *((Browser**)dubL_checksdata(L, 1, "mdns.Browser"));
     const char * retval__ = self__->service_type();
     lua_pushstring(L, retval__);
     return 1;

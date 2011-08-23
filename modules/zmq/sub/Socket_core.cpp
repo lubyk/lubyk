@@ -9,7 +9,7 @@ using namespace zmq;
 /* ============================ Constructors     ====================== */
 
 /** zmq::Socket::Socket(int type, lubyk::Worker *worker)
- * include/zmq/Socket.h:72
+ * include/zmq/Socket.h:70
  */
 static int Socket_Socket(lua_State *L) {
   try {
@@ -58,7 +58,7 @@ static int Socket__tostring(lua_State *L) {
 
 
 /** void zmq::Socket::bind(const char *location)
- * include/zmq/Socket.h:152
+ * include/zmq/Socket.h:145
  */
 static int Socket_bind1(lua_State *L) {
   try {
@@ -77,7 +77,7 @@ static int Socket_bind1(lua_State *L) {
 
 
 /** int zmq::Socket::bind(int min_port=2000, int max_port=20000, int retries=100)
- * include/zmq/Socket.h:162
+ * include/zmq/Socket.h:155
  */
 static int Socket_bind2(lua_State *L) {
   try {
@@ -131,7 +131,7 @@ static int Socket_bind(lua_State *L) {
 
 
 /** void zmq::Socket::connect(const char *location)
- * include/zmq/Socket.h:185
+ * include/zmq/Socket.h:178
  */
 static int Socket_connect(lua_State *L) {
   try {
@@ -149,44 +149,8 @@ static int Socket_connect(lua_State *L) {
 
 
 
-/** void zmq::Socket::join()
- * include/zmq/Socket.h:363
- */
-static int Socket_join(lua_State *L) {
-  try {
-    Socket *self__ = *((Socket**)dubL_checksdata(L, 1, "zmq.Socket"));
-    self__->join();
-    return 0;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "zmq.Socket.join: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "zmq.Socket.join: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
-/** void zmq::Socket::kill()
- * include/zmq/Socket.h:356
- */
-static int Socket_kill(lua_State *L) {
-  try {
-    Socket *self__ = *((Socket**)dubL_checksdata(L, 1, "zmq.Socket"));
-    self__->kill();
-    return 0;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "zmq.Socket.kill: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "zmq.Socket.kill: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
 /** const char* zmq::Socket::location()
- * include/zmq/Socket.h:309
+ * include/zmq/Socket.h:302
  */
 static int Socket_location(lua_State *L) {
   try {
@@ -205,7 +169,7 @@ static int Socket_location(lua_State *L) {
 
 
 /** int zmq::Socket::port()
- * include/zmq/Socket.h:313
+ * include/zmq/Socket.h:306
  */
 static int Socket_port(lua_State *L) {
   try {
@@ -223,26 +187,8 @@ static int Socket_port(lua_State *L) {
 
 
 
-/** void zmq::Socket::quit()
- * include/zmq/Socket.h:352
- */
-static int Socket_quit(lua_State *L) {
-  try {
-    Socket *self__ = *((Socket**)dubL_checksdata(L, 1, "zmq.Socket"));
-    self__->quit();
-    return 0;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "zmq.Socket.quit: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "zmq.Socket.quit: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
 /** LuaStackSize zmq::Socket::recv(lua_State *L)
- * include/zmq/Socket.h:197
+ * include/zmq/Socket.h:190
  */
 static int Socket_recv(lua_State *L) {
   try {
@@ -261,7 +207,7 @@ static int Socket_recv(lua_State *L) {
 
 
 /** LuaStackSize zmq::Socket::request(lua_State *L)
- * include/zmq/Socket.h:237
+ * include/zmq/Socket.h:230
  */
 static int Socket_request(lua_State *L) {
   try {
@@ -280,7 +226,7 @@ static int Socket_request(lua_State *L) {
 
 
 /** void zmq::Socket::send(lua_State *L)
- * include/zmq/Socket.h:220
+ * include/zmq/Socket.h:213
  */
 static int Socket_send(lua_State *L) {
   try {
@@ -299,7 +245,7 @@ static int Socket_send(lua_State *L) {
 
 
 /** void zmq::Socket::setsockopt(int type, lua_State *L)
- * include/zmq/Socket.h:115
+ * include/zmq/Socket.h:108
  */
 static int Socket_setsockopt(lua_State *L) {
   try {
@@ -318,45 +264,8 @@ static int Socket_setsockopt(lua_State *L) {
 
 
 
-/** bool zmq::Socket::shouldRun()
- * include/zmq/Socket.h:368
- */
-static int Socket_shouldRun(lua_State *L) {
-  try {
-    Socket *self__ = *((Socket**)dubL_checksdata(L, 1, "zmq.Socket"));
-    bool  retval__ = self__->shouldRun();
-    lua_pushboolean(L, retval__);
-    return 1;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "zmq.Socket.shouldRun: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "zmq.Socket.shouldRun: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
-/** void zmq::Socket::start()
- * include/zmq/Socket.h:346
- */
-static int Socket_start(lua_State *L) {
-  try {
-    Socket *self__ = *((Socket**)dubL_checksdata(L, 1, "zmq.Socket"));
-    self__->start();
-    return 0;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "zmq.Socket.start: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "zmq.Socket.start: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
 /** const char* zmq::Socket::type() const 
- * include/zmq/Socket.h:324
+ * include/zmq/Socket.h:317
  */
 static int Socket_type(lua_State *L) {
   try {
@@ -381,17 +290,12 @@ static int Socket_type(lua_State *L) {
 static const struct luaL_Reg Socket_member_methods[] = {
   {"bind"              , Socket_bind},
   {"connect"           , Socket_connect},
-  {"join"              , Socket_join},
-  {"kill"              , Socket_kill},
   {"location"          , Socket_location},
   {"port"              , Socket_port},
-  {"quit"              , Socket_quit},
   {"recv"              , Socket_recv},
   {"request"           , Socket_request},
   {"send"              , Socket_send},
   {"setsockopt"        , Socket_setsockopt},
-  {"shouldRun"         , Socket_shouldRun},
-  {"start"             , Socket_start},
   {"type"              , Socket_type},
   {"__tostring"        , Socket__tostring},
   {"__gc"              , Socket_destructor},

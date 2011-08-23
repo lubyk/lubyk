@@ -64,9 +64,8 @@ namespace lk {
  *      string_format:'%%s:%%d --> %%s:%%d'
  *      string_args:'(*userdata)->localHost(), (*userdata)->localPort(), (*userdata)->remoteHost(), (*userdata)->remotePort()'
  */
-class Socket : public LuaCallback
+class Socket : public LuaCallback2
 {
-  Thread thread_;
   int socket_fd_;
   int socket_type_;
   std::string local_host_;
@@ -94,8 +93,7 @@ public:
     UDP = SOCK_DGRAM,
   };
 
-  Socket(lubyk::Worker *worker, int socket_type)
-    : LuaCallback(worker),
+  Socket(int socket_type) :
       // When changing this, also change the private
       // constructor.
       socket_fd_(-1),
@@ -109,7 +107,6 @@ public:
   }
 
   ~Socket() {
-    kill();
     close();
   }
 
@@ -175,27 +172,6 @@ public:
     return recvMsg(L);
   }
 
-  /** Execute a loop in a new thread.
-   */
-  void loop(lua_State *L) {
-    set_lua_callback(L);
-    thread_.startThread<Socket, &Socket::run>(this, NULL);
-  }
-
-  /** Halt loop.
-   */
-  void quit() {
-    // sets should_run to false but does not interrupt
-    thread_.quit();
-  }
-
-  /** Interrupt loop.
-   */
-  void kill() {
-    // get out of blocking recv
-    thread_.send_signal(SIGINT);
-  }
-
   const char *localHost() const {
     return local_host_.c_str();
   }
@@ -220,8 +196,7 @@ private:
    /** Create a socket with an existing file descriptor.
     * This is used as the result of an 'accept()' call.
     */
-   Socket(lubyk::Worker *worker, int fd, const char *local_host, const char *remote_host, int remote_port)
-    : LuaCallback(worker),
+   Socket(int fd, const char *local_host, const char *remote_host, int remote_port) :
       socket_fd_(fd),
       local_host_(local_host),
       local_port_(get_port(fd)),

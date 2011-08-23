@@ -8,15 +8,14 @@ using namespace lk;
 
 /* ============================ Constructors     ====================== */
 
-/** lk::Thread::Thread(lubyk::Worker *worker)
- * include/lk/Thread.h:44
+/** lk::Thread::Thread()
+ * include/lk/Thread.h:43
  */
 static int Thread_Thread(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
-    Thread * retval__ = new Thread(worker);
-    lua_pushclass<Thread>(L, retval__, "lk.Thread");
-    return 1;
+    Thread * retval__ = new Thread();
+    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
+    return retval__->lua_init(L, "lk.Thread");
   } catch (std::exception &e) {
     lua_pushfstring(L, "lk.Thread.Thread: %s", e.what());
   } catch (...) {
@@ -30,7 +29,7 @@ static int Thread_Thread(lua_State *L) {
 /* ============================ Destructor       ====================== */
 
 static int Thread_destructor(lua_State *L) {
-  Thread **userdata = (Thread**)luaL_checkudata(L, 1, "lk.Thread");
+  Thread **userdata = (Thread**)dubL_checksdata_n(L, 1, "lk.Thread");
 
   
   if (*userdata) delete *userdata;
@@ -44,7 +43,7 @@ static int Thread_destructor(lua_State *L) {
 /* ============================ tostring         ====================== */
 
 static int Thread__tostring(lua_State *L) {
-  Thread **userdata = (Thread**)luaL_checkudata(L, 1, "lk.Thread");
+  Thread **userdata = (Thread**)dubL_checksdata_n(L, 1, "lk.Thread");
   
   
   lua_pushfstring(L, "<lk.Thread: %p>", *userdata);
@@ -56,11 +55,11 @@ static int Thread__tostring(lua_State *L) {
 
 
 /** void lk::Thread::join()
- * include/lk/Thread.h:59
+ * include/lk/Thread.h:58
  */
 static int Thread_join(lua_State *L) {
   try {
-    Thread *self__ = *((Thread**)dubL_checkudata(L, 1, "lk.Thread"));
+    Thread *self__ = *((Thread**)dubL_checksdata(L, 1, "lk.Thread"));
     self__->join();
     return 0;
   } catch (std::exception &e) {
@@ -74,11 +73,11 @@ static int Thread_join(lua_State *L) {
 
 
 /** void lk::Thread::kill()
- * include/lk/Thread.h:54
+ * include/lk/Thread.h:53
  */
 static int Thread_kill(lua_State *L) {
   try {
-    Thread *self__ = *((Thread**)dubL_checkudata(L, 1, "lk.Thread"));
+    Thread *self__ = *((Thread**)dubL_checksdata(L, 1, "lk.Thread"));
     self__->kill();
     return 0;
   } catch (std::exception &e) {
@@ -92,11 +91,11 @@ static int Thread_kill(lua_State *L) {
 
 
 /** void lk::Thread::quit()
- * include/lk/Thread.h:50
+ * include/lk/Thread.h:49
  */
 static int Thread_quit(lua_State *L) {
   try {
-    Thread *self__ = *((Thread**)dubL_checkudata(L, 1, "lk.Thread"));
+    Thread *self__ = *((Thread**)dubL_checksdata(L, 1, "lk.Thread"));
     self__->quit();
     return 0;
   } catch (std::exception &e) {
@@ -110,11 +109,11 @@ static int Thread_quit(lua_State *L) {
 
 
 /** bool lk::Thread::shouldRun()
- * include/lk/Thread.h:64
+ * include/lk/Thread.h:63
  */
 static int Thread_shouldRun(lua_State *L) {
   try {
-    Thread *self__ = *((Thread**)dubL_checkudata(L, 1, "lk.Thread"));
+    Thread *self__ = *((Thread**)dubL_checksdata(L, 1, "lk.Thread"));
     bool  retval__ = self__->shouldRun();
     lua_pushboolean(L, retval__);
     return 1;
@@ -128,14 +127,13 @@ static int Thread_shouldRun(lua_State *L) {
 
 
 
-/** void lk::Thread::start(lua_State *L)
- * include/lk/Thread.h:68
+/** void lk::Thread::start()
+ * include/lk/Thread.h:67
  */
 static int Thread_start(lua_State *L) {
   try {
-    Thread *self__ = *((Thread**)dubL_checkudata(L, 1, "lk.Thread"));
-    
-    self__->start(L);
+    Thread *self__ = *((Thread**)dubL_checksdata(L, 1, "lk.Thread"));
+    self__->start();
     return 0;
   } catch (std::exception &e) {
     lua_pushfstring(L, "lk.Thread.start: %s", e.what());

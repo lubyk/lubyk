@@ -13,7 +13,7 @@ using namespace midi;
  */
 static int Out_Out(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checksdata(L, 1, "lubyk.Worker"));
     Out * retval__ = new Out(worker);
     lua_pushclass<Out>(L, retval__, "midi.Out");
     return 1;
@@ -30,7 +30,7 @@ static int Out_Out(lua_State *L) {
 /* ============================ Destructor       ====================== */
 
 static int Out_destructor(lua_State *L) {
-  Out **userdata = (Out**)luaL_checkudata(L, 1, "midi.Out");
+  Out **userdata = (Out**)dubL_checksdata_n(L, 1, "midi.Out");
 
   
   if (*userdata) delete *userdata;
@@ -44,7 +44,7 @@ static int Out_destructor(lua_State *L) {
 /* ============================ tostring         ====================== */
 
 static int Out__tostring(lua_State *L) {
-  Out **userdata = (Out**)luaL_checkudata(L, 1, "midi.Out");
+  Out **userdata = (Out**)dubL_checksdata_n(L, 1, "midi.Out");
   
   
   lua_pushfstring(L, "<midi.Out: %p %s (%f)>", *userdata, (*userdata)->port_name(), (*userdata)->port());
@@ -61,7 +61,7 @@ static int Out__tostring(lua_State *L) {
  */
 static int Out_open_port1(lua_State *L) {
   try {
-    Out *self__ = *((Out**)dubL_checkudata(L, 1, "midi.Out"));
+    Out *self__ = *((Out**)dubL_checksdata(L, 1, "midi.Out"));
     int port = dubL_checkint(L, 2);
     
     self__->open_port(port, L);
@@ -81,7 +81,7 @@ static int Out_open_port1(lua_State *L) {
  */
 static int Out_open_port2(lua_State *L) {
   try {
-    Out *self__ = *((Out**)dubL_checkudata(L, 1, "midi.Out"));
+    Out *self__ = *((Out**)dubL_checksdata(L, 1, "midi.Out"));
     const char *port_name = dubL_checkstring(L, 2);
     
     self__->open_port(port_name, L);
@@ -116,7 +116,7 @@ static int Out_open_port(lua_State *L) {
  */
 static int Out_port(lua_State *L) {
   try {
-    Out *self__ = *((Out**)dubL_checkudata(L, 1, "midi.Out"));
+    Out *self__ = *((Out**)dubL_checksdata(L, 1, "midi.Out"));
     int  retval__ = self__->port();
     lua_pushnumber(L, retval__);
     return 1;
@@ -135,7 +135,7 @@ static int Out_port(lua_State *L) {
  */
 static int Out_port_name(lua_State *L) {
   try {
-    Out *self__ = *((Out**)dubL_checkudata(L, 1, "midi.Out"));
+    Out *self__ = *((Out**)dubL_checksdata(L, 1, "midi.Out"));
     const char * retval__ = self__->port_name();
     lua_pushstring(L, retval__);
     return 1;
@@ -154,7 +154,7 @@ static int Out_port_name(lua_State *L) {
  */
 static int Out_send(lua_State *L) {
   try {
-    Out *self__ = *((Out**)dubL_checkudata(L, 1, "midi.Out"));
+    Out *self__ = *((Out**)dubL_checksdata(L, 1, "midi.Out"));
     int a = dubL_checkint(L, 2);
     int b = dubL_checkint(L, 3);
     int c = dubL_checkint(L, 4);
@@ -175,7 +175,7 @@ static int Out_send(lua_State *L) {
  */
 static int Out_virtual_port(lua_State *L) {
   try {
-    Out *self__ = *((Out**)dubL_checkudata(L, 1, "midi.Out"));
+    Out *self__ = *((Out**)dubL_checksdata(L, 1, "midi.Out"));
     const char *port_name = dubL_checkstring(L, 2);
     
     self__->virtual_port(port_name, L);

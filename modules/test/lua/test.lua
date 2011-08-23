@@ -77,15 +77,23 @@ function lib.loadAll(...)
       print('Loading tests for', mod)
       if lk.fileType(mod) == 'directory' then
         for file in lk.Dir(mod):glob('test/.+_test[.]lua$') do
+          print(file)
           dofile(file)
         end
       end
     end
   else
     for _, mod in ipairs(arg) do
+      if not string.match(mod, '^modules/') then
+        mod = 'modules' .. lk.Dir.sep .. mod
+      end
       print('Loading tests for', mod)
-      for file in lk.Dir('modules'..lk.Dir.sep..mod):glob('test/.+_test[.]lua$') do
-        dofile(file)
+      if lk.fileType(mod) == 'directory' then
+        for file in lk.Dir(mod):glob('test/.+_test[.]lua$') do
+          dofile(file)
+        end
+      else
+        print(string.format("Module '%s' is not a directory.", mod))
       end
     end
   end

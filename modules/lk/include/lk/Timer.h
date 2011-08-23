@@ -36,16 +36,15 @@
 namespace lk {
 /** Calls a lua function back at regular intervals. If the called function returns
  * a number, the number sets the new interval (0 = stop).
- * @dub string_format:'%%f (%%f)'
- *      string_args:'(float)(*userdata)->interval(), (float)(*userdata)->running()'
+ * @dub string_format:'%%f (%%s)'
+ *      string_args:'(float)(*userdata)->interval(), (float)(*userdata)->isRunning() ? "ON" : "OFF"'
  *      lib_name:'Timer_core'
  */
-class Timer : public lubyk::LuaCallback
+class Timer : public lubyk::LuaCallback2
 {
 public:
-  Timer(lubyk::Worker *worker, float interval)
-    : lubyk::LuaCallback(worker),
-      timer_(this, interval) {}
+  Timer(float interval) :
+    timer_(this, interval) {}
 
   ~Timer() {
     stop();
@@ -56,7 +55,6 @@ public:
   }
 
   void start(bool trigger_on_start = true) {
-    if (!lua_) throw lubyk::Exception("Starting timer without a callback.");
     timer_.start(trigger_on_start);
   }
 
@@ -65,8 +63,8 @@ public:
     timer_.join();
   }
 
-  bool running() {
-    return timer_.running();
+  bool isRunning() {
+    return timer_.isRunning();
   }
 
   time_t interval() {
@@ -77,27 +75,6 @@ public:
     timer_.setInterval(interval);
   }
 
-  /** Set a callback function.
-   *
-   */
-  void __newindex(lua_State *L) throw() {
-    // Stack should be ... <self> <key> <value>
-    std::string key(luaL_checkstring(L, -2));
-    luaL_checktype(L, -1, LUA_TFUNCTION);
-    lua_pushvalue(L, -3);
-    // ... <self> <key> <value> <self>
-    lua_pushvalue(L, -2);
-    // ... <self> <key> <value> <self> <value>
-    if (key == "tick") {
-      set_lua_callback(L);
-    } else {
-      luaL_error(L, "Invalid function name '%s' (should be 'tick').", key.c_str());
-    }
-
-    lua_pop(L, 2);
-    // ... <self> <key> <value>
-  }
-
 private:
   void tick() {
     // lua_ = LuaCallback's thread state
@@ -105,12 +82,11 @@ private:
     // find function and call
     lubyk::ScopedLock lock(worker_);
 
-
-    push_lua_callback(false);
+    pushLuaCallback("tick", 4);
 
     // lua_ = LuaCallback's thread state
     // @return new interval or 0 to stop or nil to not change interval
-    int status = lua_pcall(lua_, 0, 1, 0);
+    int status = lua_pcall(lua_, 1, 1, 0);
 
     if (status) {
       printf("Error triggering timer: %s\n", lua_tostring(lua_, -1));

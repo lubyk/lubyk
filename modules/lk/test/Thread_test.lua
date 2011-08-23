@@ -16,15 +16,17 @@ function should.runThread()
     while true do
       counter = counter + 1
       -- continue until 'timer' is gc or stopped.
-      sleep(10)
+      sleep(40)
     end
   end)
 
   -- first trigger now
-  sleep(98)
-  assertEqual(10, counter)
   sleep(100)
-  assertEqual(20, counter)
+  -- 00, 40, 80
+  assertEqual(3, counter)
+  sleep(90)
+  -- 20, 60
+  assertEqual(5, counter)
 end
 
 function should.joinThreads()

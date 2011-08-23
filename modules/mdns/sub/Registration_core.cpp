@@ -14,7 +14,7 @@ using namespace mdns;
 /* ============================ Destructor       ====================== */
 
 static int Registration_destructor(lua_State *L) {
-  Registration **userdata = (Registration**)luaL_checkudata(L, 1, "mdns.Registration");
+  Registration **userdata = (Registration**)dubL_checksdata_n(L, 1, "mdns.Registration");
 
   
   if (*userdata) delete *userdata;
@@ -28,7 +28,7 @@ static int Registration_destructor(lua_State *L) {
 /* ============================ tostring         ====================== */
 
 static int Registration__tostring(lua_State *L) {
-  Registration **userdata = (Registration**)luaL_checkudata(L, 1, "mdns.Registration");
+  Registration **userdata = (Registration**)dubL_checksdata_n(L, 1, "mdns.Registration");
   
   
   lua_pushfstring(L, "<mdns.Registration: %p %s>", *userdata, (*userdata)->name());
@@ -44,7 +44,7 @@ static int Registration__tostring(lua_State *L) {
  */
 static int Registration_MakeInstance(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checkudata(L, 1, "lubyk.Worker"));
+    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checksdata(L, 1, "lubyk.Worker"));
     const char *service_type = dubL_checkstring(L, 2);
     const char *name = dubL_checkstring(L, 3);
     uint port = dubL_checkint(L, 4);
@@ -66,7 +66,7 @@ static int Registration_MakeInstance(lua_State *L) {
  */
 static int Registration_registration_done(lua_State *L) {
   try {
-    Registration *self__ = *((Registration**)dubL_checkudata(L, 1, "mdns.Registration"));
+    Registration *self__ = *((Registration**)dubL_checksdata(L, 1, "mdns.Registration"));
     self__->registration_done();
     return 0;
   } catch (std::exception &e) {

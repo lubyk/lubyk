@@ -7,14 +7,47 @@
 
 --]]------------------------------------------------------
 require 'lk.Socket_core'
-require 'worker'
 
 local constr = lk.Socket
-local worker = worker
-function lk.Socket(func)
-  local instance = constr(worker, lk.Socket_const.TCP)
-  if func then
-    instance:loop(func)
+local mt = lk.Socket_
+
+local function checkLoop(self)
+  if not self.loop then
+    error("Loop not set")
   end
-  return instance
+end
+
+function mt:shouldRun()
+  checkLoop(self)
+  return self.loop:shouldRun()
+end
+
+function mt:start()
+  checkLoop(self)
+  self.loop:start()
+end
+
+function mt:quit()
+  checkLoop(self)
+  self.loop:quit()
+end
+
+function mt:kill()
+  checkLoop(self)
+  self.loop:kill()
+end
+
+function mt:join()
+  checkLoop(self)
+  self.loop:join()
+end
+
+function lk.Socket(func)
+  local self = constr(lk.Socket_const.TCP)
+  if func then
+    self.loop = lk.Thread(function()
+      func(self)
+    end)
+  end
+  return self
 end
