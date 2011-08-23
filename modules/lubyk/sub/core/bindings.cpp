@@ -45,6 +45,7 @@ static void print_lua_value(lua_State *L, int i, bool inspect_tables) {
         lua_pushvalue(L, i);
         for (lua_pushnil(L); lua_next(L, -2); lua_pop(L, 1)) {
           // inspect table content
+          print_lua_value(L, -2, false);
           print_lua_value(L, -1, false);
         }
         lua_pop(L, 1);

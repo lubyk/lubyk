@@ -34,53 +34,42 @@ using namespace lubyk;
 
 namespace dummy {
 
-/** Dummy.
+/** Dummy (a simple class to test bindings).
+ *
  * @dub lib_name: 'Dummy_core'
  *      filename: 'Dummy_core/Dummy'
  */
-class Dummy
+class Dummy : public LuaCallback2
 {
-  LuaCallback callback_;
-  Worker *worker_;
 public:
-  Dummy(lubyk::Worker *worker)
-   : callback_(worker),
-     worker_(worker) {}
-
-  /** Set a callback function.
-   *
-   */
-  void __newindex(lua_State *L) {
-    // Stack should be ... <self> <key> <value>
-    std::string key(luaL_checkstring(L, -2));
-    luaL_checktype(L, -1, LUA_TFUNCTION);
-    lua_pushvalue(L, -3);
-    // ... <self> <key> <value> <self>
-    lua_pushvalue(L, -2);
-    // ... <self> <key> <value> <self> <value>
-    callback_.set_lua_callback(L);
-
-    lua_pop(L, 2);
-    // ... <self> <key> <value>
-  }
+  Dummy(lua_State *L) :
+    LuaCallback2(L, "dummy.Dummy") {}
 
   /** Used to test if the callback is properly set.
    * In a normal class, the callback method is called from a C context and should
    * protect the worker_ with ScopedLock lock(worker_);
    */
-  void callback() {
-    lua_State *L = callback_.lua_;
-    if (!L) return;
+  float callback(const char *func, float value) {
+    // lua_ = LuaCallback's thread
+    lua_State *L = lua_;
 
-    callback_.push_lua_callback(false);
+    pushLuaCallback(func, strlen(func));
+    lua_pushnumber(L, value);
 
-    // lua_ = LuaCallback's thread state
     // first argument is self
-    int status = lua_pcall(L, 0, 0, 0);
+    int status = lua_pcall(L, 2, 1, 0);
 
     if (status) {
-      printf("Error in initGL function: %s\n", lua_tostring(L, -1));
+      throw dub::Exception("Error in callback function: %s\n", lua_tostring(L, -1));
     }
+    return lua_tonumber(L, -1);
+  }
+
+  /** This method becomes a lua binding to C and will be
+   * overloaded in Lua.
+   */
+  float addSomething(float value) {
+    return value + 123.0;
   }
 
   static const char *plat();
@@ -89,3 +78,4 @@ public:
 } // dummy
 
 #endif // LUBYK_INCLUDE_DUMMY_DUMMY_H_
+

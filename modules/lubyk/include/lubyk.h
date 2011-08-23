@@ -29,6 +29,7 @@
 #include "lubyk/lua.h"
 #include "lubyk/worker.h"
 #include "lubyk/lua_callback.h"
+#include "lubyk/lua_callback2.h"
 #include "lubyk/lua_userdata_env.h"
 #include "lubyk/exception.h"
 #include "lua_cpp_helper.h"

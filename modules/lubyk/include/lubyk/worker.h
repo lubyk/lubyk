@@ -125,6 +125,10 @@ public:
   double now() {
     return time_ref_.elapsed();
   }
+
+  /** Where the worker is registered in the global index.
+   */
+  static int s_lua_worker_idx_;
 };
 
 } // lubyk

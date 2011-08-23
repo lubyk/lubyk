@@ -29,12 +29,17 @@
 #include "lubyk/worker.h"
 #include "lubyk/cocoa.h"
 #include "lubyk/lua.h"
+#include "lua_cpp_helper.h"
 
 using namespace lubyk;
 
+int Worker::s_lua_worker_idx_ = LUA_NOREF;
+
 #include <mach-o/dyld.h> // _NSGetExecutablePath
 
-
+/** Could be used instead of mimas Application when we do not have/need a GUI.
+ *  Currently not enabled.
+ */
 class Worker::Implementation : public lubyk::Thread {
 public:
   Implementation() {
@@ -57,18 +62,30 @@ public:
     //[[NSRunLoop currentRunLoop] configureAsServer];
     //[[NSRunLoop currentRunLoop] run];
   }
-};
+};                            
 
 Worker::Worker(lua_State *L)
  : lua_(L),
   zmq_context_(NULL),
   zmq_context_refcount_(0) {
   //impl_ = new Worker::Implementation;
+
+  // since we receive lua_State in constructor, we have to push
+  // or userdata on the stack ourselves.
+  lua_pushclass<Worker>(L, this, "lubyk.Worker");
+  // register in global index
+  // <userdata>
+  lua_pushvalue(L, -1);
+  // <userdata> <userdata>
+  s_lua_worker_idx_ = luaL_ref(L, LUA_REGISTRYINDEX);
+  // <userdata>
   lock();
 }
 
 Worker::~Worker() {
   //delete impl_;
+  luaL_unref(lua_, LUA_REGISTRYINDEX, s_lua_worker_idx_);
+  s_lua_worker_idx_ = LUA_NOREF;
   unlock();
 }
 

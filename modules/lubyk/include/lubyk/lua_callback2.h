@@ -26,8 +26,8 @@
 
   ==============================================================================
 */
-#ifndef LUBYK_INCLUDE_LUBYK_LUA_CALLBACK_H_
-#define LUBYK_INCLUDE_LUBYK_LUA_CALLBACK_H_
+#ifndef LUBYK_INCLUDE_LUBYK_LUA_CALLBACK2_H_
+#define LUBYK_INCLUDE_LUBYK_LUA_CALLBACK2_H_
 
 #include "lubyk.h"
 
@@ -37,110 +37,34 @@ namespace lubyk {
 class LuaCallback2
 {
 public:
-  // ... <self>   (self is a table used for callbacks)
-  LuaCallback2(lua_State *L) :
-    worker_(NULL),
-    lua_(NULL) {
-    worker_ = getWorker(L);
-    // ... <self>
-
-  }
-
-  virtual ~LuaCallback2() {
-  }
-
-  /** Set a callback. The top of the stack should be
-   * -2. userdata from lk.Thread / lk.Socket / mimas.Callback / etc
-   * -1. function()
-   *
-   * Thanks to Robert G. Jakabosky for the idea to use lua_xmove
-   * instead of weak tables to store the function reference.
+  /** Prepare tables to work with the table based self idion.
+   * expects stack to be:
+   * ... self
+   * if self (last argument) is a table, it is used as self. 
+   * Otherwise, a new table is created.
+   * The method leaves "self" on top of the stack, with self.super = this.
    */
-  void set_lua_callback(lua_State *L) {
-    // ... <self> <func>
-    luaL_checktype(L, -1, LUA_TFUNCTION);
+  LuaCallback2(lua_State *L, const char *type_name) throw(dub::Exception);
 
-    // ... <self> <func>
-    lua_getfenv(L, -2);
-    // ... <self> <func> <env>
-    lua_pushstring(L, ".");
-    // ... <self> <func> <env> "."
-    lua_rawget(L, -2);
-    if (!lua_rawequal(L, -1, -4)) {
-      // ... <self> <func> <env> <nil>
-      // does not have it's own env table
-      lua_pop(L, 2);
-      // ... <self> <func>
-      // Create env table
-      lua_newtable(L);
-      // ... <self> <func> <env>
-      lua_pushstring(L, ".");
-      // ... <self> <func> <env> "."
-      lua_pushvalue(L, -4);
-      // ... <self> <func> <env> "." <self>
-      lua_rawset(L, -3); // env["."] = self
-      // ... <self> <func> <env>
-      lua_pushvalue(L, -1);
-      // ... <self> <func> <env> <env>
-      if (!lua_setfenv(L, -4)) {
-        throw Exception("Could not set userdata env on '%s'.", lua_typename(L, lua_type(L, -4)));
-      }
-      // ... <self> <func> <env>
-    } else {
-      // ... <self> <func> <env> <self>
-      // has its own env table
-      lua_pop(L, 1);
-      // ... <self> <func> <env>
-    }
-
-    // ... <self> <func> <env>
-    if (lua_) {
-      // remove from env
-      luaL_unref(L, -1, thread_in_env_idx_);
-    }
-
-    lua_ = lua_newthread(L);
-    // ... <self> <func> <env> <thread>
-
-    // Store the thread in the Thread/Socket's environment table so it is not GC too soon
-    thread_in_env_idx_ = luaL_ref(L, -2);
-    // ... <self> <func> <env>
-
-    lua_pop(L, 1);
-    // ... <self> <func>
-
-    // Transfer copies of <self> and <func> to thread stack
-    lua_pushvalue(L, -1);
-    // ... <self> <func> <func>
-    lua_pushvalue(L, -3);
-    // ... <self> <func> <func> <self>
-    lua_xmove(L, lua_, 2);
-    // ... <self> <func>
-
-    // lua_ stack is now
-    // <func> <self>
-  }
+  virtual ~LuaCallback2() {}
 
   /** The caller should lock before calling this.
+   * TODO: The 'const' stuff is stupid: can't we remove it ?
    */
-  void push_lua_callback(bool push_self = true) const {
-    if (!callback_set()) throw Exception("Callback function not set.");
-
-    // <func> <self>
-    lua_pushvalue(lua_, 1);
-    if (push_self) lua_pushvalue(lua_, 2);
-  }
+  void pushLuaCallback(const char *method, int len) const;
 
   lubyk::Worker *worker_;
   lua_State *lua_;
 
-  bool callback_set() const {
-    return lua_ != NULL;
-  }
+  static lubyk::Worker *getWorker(lua_State *L) throw(dub::Exception);
 private:
   int thread_in_env_idx_;
+
+  void setupSuper(lua_State *L) throw(dub::Exception);
+  void setupMetatable(lua_State *L, const char *type_name);
+  void setupLuaThread(lua_State *L) throw(dub::Exception);
 };
 
 } // lubyk
 
-#endif // LUBYK_INCLUDE_LUBYK_LUA_CALLBACK_H_
+#endif // LUBYK_INCLUDE_LUBYK_LUA_CALLBACK2_H_

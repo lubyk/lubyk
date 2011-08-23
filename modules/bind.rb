@@ -9,20 +9,6 @@ modules_to_bind = ARGV
 
 HtmlDecode = HTMLEntities.new
 
-def get_dub_info(xml)
-  (xml/'simplesect').each do |x|
-    if (x/'title').inner_html == 'Bindings info:'
-      (x/'title').remove()
-      (x/'ref').each do |r|
-        r.swap(r.inner_html)
-      end
-      code = HtmlDecode.decode((x/'para').inner_html)
-      return eval(code)
-    end
-  end
-  nil
-end
-
 XML_DOC_PATH  = (Pathname(__FILE__).dirname + '../build/doc/xml/').expand_path
 BINDINGS_PATH = (Pathname(__FILE__).dirname + '..').expand_path
 
@@ -90,10 +76,6 @@ modules = {
       next
     end
 
-    if dub_info = get_dub_info(klass.xml)
-      # Set custom tostring formats and ignore methods
-      klass.opts.merge!(dub_info)
-    end
     klass.header = "#{mod_name}/#{class_name}.h"
 
     dir = BINDINGS_PATH + "modules/#{mod_name}/sub"

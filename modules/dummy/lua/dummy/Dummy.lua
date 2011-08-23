@@ -1,17 +1,10 @@
 --[[------------------------------------------------------
 
-  lk.Socket
-  ---------
+  dummy.Dummy
+  -----------
 
-  BSD Socket.
+  This class could be used to do some more lua work when
+  loading the Dummy class.
 
 --]]------------------------------------------------------
 require 'dummy.Dummy_core'
-require 'worker'
-
-local constr = dummy.Dummy
-local worker = worker
-function dummy.Dummy()
-  local instance = constr(worker)
-  return instance
-end
