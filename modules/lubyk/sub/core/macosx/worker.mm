@@ -33,8 +33,6 @@
 
 using namespace lubyk;
 
-int Worker::s_lua_worker_idx_ = LUA_NOREF;
-
 #include <mach-o/dyld.h> // _NSGetExecutablePath
 
 /** Could be used instead of mimas Application when we do not have/need a GUI.
@@ -73,19 +71,24 @@ Worker::Worker(lua_State *L)
   // since we receive lua_State in constructor, we have to push
   // or userdata on the stack ourselves.
   lua_pushclass<Worker>(L, this, "lubyk.Worker");
-  // register in global index
-  // <userdata>
-  lua_pushvalue(L, -1);
-  // <userdata> <userdata>
-  s_lua_worker_idx_ = luaL_ref(L, LUA_REGISTRYINDEX);
   // <userdata>
   lock();
 }
 
+Worker *Worker::getWorker(lua_State *L) {
+  // ...
+  lua_pushlstring(L, "worker", 6);
+  // ... <'worker'>
+  lua_gettable(L, LUA_GLOBALSINDEX);
+  // ... <worker>
+  Worker **userdata = (Worker**)dubL_checksdata_n(L, -1, "lubyk.Worker");
+  lua_pop(L, 1);
+  // ...
+  return *userdata;
+}
+
 Worker::~Worker() {
   //delete impl_;
-  luaL_unref(lua_, LUA_REGISTRYINDEX, s_lua_worker_idx_);
-  s_lua_worker_idx_ = LUA_NOREF;
   unlock();
 }
 

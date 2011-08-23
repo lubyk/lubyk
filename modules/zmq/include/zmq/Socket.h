@@ -49,7 +49,7 @@ namespace zmq {
         string_format:'%%s (%%s)'
  *      string_args:'(*userdata)->location(), (*userdata)->type()'
  */
-class Socket : LuaCallback
+class Socket : public LuaCallback2
 {
   void *socket_;
   std::string location_;
@@ -63,10 +63,13 @@ class Socket : LuaCallback
    */
   TimeRef time_ref_;
 public:
-  Socket(lubyk::Worker *worker, int type)
-   : LuaCallback(worker),
-     thread_(NULL),
-     type_(type) {
+  /** The worker is not provided by LuaCallback2 before lua_init is called.
+   * This call happens after full object construction. We need the worker
+   * to set the zmq context, so we pass it as argument.
+   */
+  Socket(int type, lubyk::Worker *worker) :
+   thread_(NULL),
+   type_(type) {
 
     if (!worker->zmq_context_) {
       // initialize zmq context
@@ -77,6 +80,10 @@ public:
     socket_ = zmq_socket(worker->zmq_context_, type_);
 
     if (!socket_) {
+      if (!--worker->zmq_context_refcount_) {
+        zmq_term(worker->zmq_context_);
+        worker->zmq_context_ = NULL;
+      }
       switch (errno) {
       case EINVAL:
         throw Exception("Invalid socket type: %i).", type_);
@@ -336,8 +343,8 @@ public:
 
   /** @internal: DO NOT USE.
   */
-  void set_callback(lua_State *L) {
-    set_lua_callback(L);
+  void start() {
+    if (thread_) throw Exception("Cannot start thread (already running).");
     thread_   = new Thread();
     thread_->startThread<Socket, &Socket::run>(this, NULL);
   }
@@ -358,8 +365,8 @@ public:
     if (thread_) thread_->join();
   }
 
-  bool should_run() {
-    if (thread_) return thread_->should_run();
+  bool shouldRun() {
+    if (thread_) return thread_->shouldRun();
     return false;
   }
 
@@ -434,11 +441,12 @@ private:
 
    ScopedLock lock(worker_);
 
-   push_lua_callback();
+   pushLuaCallback("run", 3);
 
    // lua_ = LuaCallback's thread state
    // first argument is self
    int status = lua_pcall(lua_, 1, 0, 0);
+
 
    if (status) {
      fprintf(stderr, "Error starting Socket function: %s\n", lua_tostring(lua_, -1));

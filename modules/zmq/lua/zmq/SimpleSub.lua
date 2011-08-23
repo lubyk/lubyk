@@ -15,7 +15,7 @@ function zmq.SimpleSub(filter, func)
     filter = nil
   end
   return zmq.Sub(filter, function(server)
-    while server:should_run() do
+    while server:shouldRun() do
       func(server:recv())
     end
   end)

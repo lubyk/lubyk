@@ -44,7 +44,9 @@ public:
    * Otherwise, a new table is created.
    * The method leaves "self" on top of the stack, with self.super = this.
    */
-  LuaCallback2(lua_State *L, const char *type_name) throw(dub::Exception);
+  LuaCallback2() throw();
+  
+  int lua_init(lua_State *L, const char *type_name) throw();
 
   virtual ~LuaCallback2() {}
 
@@ -56,13 +58,13 @@ public:
   lubyk::Worker *worker_;
   lua_State *lua_;
 
-  static lubyk::Worker *getWorker(lua_State *L) throw(dub::Exception);
 private:
+
   int thread_in_env_idx_;
 
-  void setupSuper(lua_State *L) throw(dub::Exception);
-  void setupMetatable(lua_State *L, const char *type_name);
-  void setupLuaThread(lua_State *L) throw(dub::Exception);
+  void setupSuper(lua_State *L) throw();
+  void setupMetatable(lua_State *L, const char *type_name) throw() ;
+  void setupLuaThread(lua_State *L) throw();
 };
 
 } // lubyk

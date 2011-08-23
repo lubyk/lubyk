@@ -3,11 +3,13 @@
 
 using namespace lubyk;
 
-LuaCallback2::LuaCallback2(lua_State *L, const char *type_name) throw (dub::Exception) :
+LuaCallback2::LuaCallback2() throw () :
   worker_(NULL),
   lua_(NULL) {
+}
 
-  worker_ = getWorker(L);
+int LuaCallback2::lua_init(lua_State *L, const char *type_name) throw() {
+  worker_ = Worker::getWorker(L);
 
   // ... <self> or new table
   setupSuper(L); // creates self if there is no table (without a 'super' field)
@@ -19,9 +21,10 @@ LuaCallback2::LuaCallback2(lua_State *L, const char *type_name) throw (dub::Exce
   
   setupLuaThread(L);
   // <self>
+  return 1;
 }
 
-void LuaCallback2::setupSuper(lua_State *L) throw (dub::Exception) {
+void LuaCallback2::setupSuper(lua_State *L) throw() {
   if (!lua_istable(L, -1)) {
     lua_newtable(L);
   }
@@ -38,7 +41,7 @@ void LuaCallback2::setupSuper(lua_State *L) throw (dub::Exception) {
   // ... <self> <udata>
 }
 
-void LuaCallback2::setupMetatable(lua_State *L, const char *type_name) {
+void LuaCallback2::setupMetatable(lua_State *L, const char *type_name) throw() {
   // set metatable
   luaL_getmetatable(L, type_name);
   // ... <self> <udata> <mt>
@@ -55,7 +58,7 @@ void LuaCallback2::setupMetatable(lua_State *L, const char *type_name) {
 //
 //   Thanks to Robert G. Jakabosky for the idea to use lua_xmove
 //   instead of weak tables to store the function reference.
-void LuaCallback2::setupLuaThread(lua_State *L) throw(dub::Exception) {
+void LuaCallback2::setupLuaThread(lua_State *L) throw() {
   // ... <self> <udata>
   lua_getfenv(L, -1);
   // ... <self> <udata> <env>
@@ -80,7 +83,7 @@ void LuaCallback2::setupLuaThread(lua_State *L) throw(dub::Exception) {
     lua_pushvalue(L, -1);
     // ... <self> <udata> <env> <env>
     if (!lua_setfenv(L, -3)) {
-      throw dub::Exception("Could not set userdata env on '%s'.", lua_typename(L, lua_type(L, -3)));
+      luaL_error(L, "Could not set userdata env on '%s'.", lua_typename(L, lua_type(L, -3)));
     }
     // ... <self> <udata> <env>
   } else {
@@ -127,12 +130,4 @@ void LuaCallback2::pushLuaCallback(const char *method, int len) const {
   // <self> <?>
   lua_pushvalue(lua_, 1);
   // <self> <?> <self>
-}
-
-Worker *LuaCallback2::getWorker(lua_State *L) throw(dub::Exception) {
-  lua_rawgeti(L, LUA_REGISTRYINDEX, lubyk::Worker::s_lua_worker_idx_);
-  // <worker>
-  Worker *ptr = (Worker*)dubL_checkudata(L, -1, "lubyk.Worker");
-  lua_pop(L, 1);
-  return ptr;
 }

@@ -133,7 +133,7 @@ class Thread : public Mutex {
     condition_.wait();
   }
 
-  inline bool should_run() {
+  inline bool shouldRun() {
     return should_run_;
   }
 

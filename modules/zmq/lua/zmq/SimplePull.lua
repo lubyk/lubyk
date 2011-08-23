@@ -14,7 +14,7 @@ function zmq.SimplePull(location, func)
     location = nil
   end
   return zmq.Pull(location, function(server)
-    while server:should_run() do
+    while server:shouldRun() do
       func(server:recv())
     end
   end)

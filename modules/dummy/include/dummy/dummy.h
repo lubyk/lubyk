@@ -42,8 +42,7 @@ namespace dummy {
 class Dummy : public LuaCallback2
 {
 public:
-  Dummy(lua_State *L) :
-    LuaCallback2(L, "dummy.Dummy") {}
+  Dummy() {}
 
   /** Used to test if the callback is properly set.
    * In a normal class, the callback method is called from a C context and should

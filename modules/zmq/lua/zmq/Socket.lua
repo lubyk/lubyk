@@ -11,17 +11,14 @@
 --]]------------------------------------------------------
 require 'zmq'
 -- Do we need this require ?
---require 'lk' -- we use lk::Thread internally
 require 'zmq.Socket_core'
-require 'worker'
-
-local constr = zmq.Socket
 local worker = worker
+local constr = zmq.Socket
 function zmq.Socket(type, func)
-  -- if func exists: do not create socket yet (wait for set_callback)
-  local instance = constr(worker, type)
+  local self = constr(type, worker)
   if func then
-    instance:set_callback(func)
+    self.run = func
+    self:start()
   end
-  return instance
+  return self
 end
