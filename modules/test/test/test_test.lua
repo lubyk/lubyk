@@ -23,4 +23,10 @@ function should.compareTables()
   )
 end
 
+function should.compareWithResolution()
+  assertValueEqual(1, 1.5, 0.5)
+  assertEqual(1, 1.5, 0.5)
+  assertValueEqual({1, 2}, {1.5, 1.5}, 0.5)
+end
+
 test.all()

@@ -254,26 +254,31 @@ function assertTrue(ok, msg)
 end
 
 -- Test raw equality (same table)
-function assertEqual(expected, value)
-  lib.assert(value == expected, string.format('Expected %s but found %s.', formatArg(expected), formatArg(value)))
+function assertEqual(expected, value, resolution)
+  if resolution and type(expected) == 'number' then
+    local ok = (value >= expected - resolution) and (value <= expected + resolution)
+    lib.assert(ok, string.format('Expected %s but found %s (resolution: %f).', formatArg(expected), formatArg(value), resolution))
+  else
+    lib.assert(value == expected, string.format('Expected %s but found %s.', formatArg(expected), formatArg(value)))
+  end
 end
 
 -- Test value equality (same table content)
-function assertValueEqual(expected, value)
+function assertValueEqual(expected, value, resolution)
   if type(expected) == 'table' then
-    assertTableEqual(expected, value)
+    assertTableEqual(expected, value, resolution)
   else
-    assertEqual(expected, value)
+    assertEqual(expected, value, resolution)
   end
 end
 
-function assertTableEqual(expected, value)
+function assertTableEqual(expected, value, resolution)
   assertEqual('table', type(value))
   for i, v in ipairs(expected) do
-    assertValueEqual(v, value[i])
+    assertValueEqual(v, value[i], resolution)
   end
   for k, v in pairs(expected) do
-    assertValueEqual(v, value[k])
+    assertValueEqual(v, value[k], resolution)
   end
 end
 
