@@ -39,7 +39,7 @@ namespace dummy {
  * @dub lib_name: 'Dummy_core'
  *      filename: 'Dummy_core/Dummy'
  */
-class Dummy : public LuaCallback2
+class Dummy : public LuaObject
 {
 public:
   Dummy() {}

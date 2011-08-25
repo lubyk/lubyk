@@ -151,6 +151,8 @@ void lk::Socket::listen() {
  * @return a new lk.Socket connected to the remote end.
  */
 LuaStackSize lk::Socket::accept(lua_State *L) {
+  // <self>
+  lua_pop(L, 1);
 
   if (local_port_ == -1)
     throw Exception("Accept called before bind.");
@@ -165,7 +167,7 @@ LuaStackSize lk::Socket::accept(lua_State *L) {
   { ScopedUnlock unlock(worker_);
     fd = ::accept(socket_fd_, &sa, &sa_len);
 
-    // printf("accept(%i) --> %i\n", socket_fd_, fd);
+    // printf("[%p] accept(%i) --> %i\n", this, socket_fd_, fd);
   }
 
   if (fd == -1) {
@@ -188,7 +190,7 @@ LuaStackSize lk::Socket::accept(lua_State *L) {
 
   Socket *new_socket = new Socket(fd, local_host_.c_str(), remote_host, remote_port);
 
-  return new_socket->lua_init(lua_, "lk.Socket");
+  return new_socket->luaInit(L, new_socket, "lk.Socket");
 }
 
 

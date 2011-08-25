@@ -4,7 +4,7 @@ srv = lk.DavServer(1024)
 cache = {}
 
 local function mockResource(path, body)
-  local self = {davProperty = rawget, path = path, body = body or ''}
+  local self = {davProperty = rawget, path = path, body = body or 'This is file ' .. path}
   if path == '/' then
     self.resourcetype = {xml = 'collection'}
     self.getlastmodified = 9298347

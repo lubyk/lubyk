@@ -40,7 +40,7 @@ namespace lk {
  *      string_args:'(float)(*userdata)->interval(), (float)(*userdata)->isRunning() ? "ON" : "OFF"'
  *      lib_name:'Timer_core'
  */
-class Timer : public lubyk::LuaCallback2
+class Timer : public lubyk::LuaObject
 {
 public:
   Timer(float interval) :

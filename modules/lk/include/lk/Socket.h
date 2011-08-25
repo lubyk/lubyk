@@ -64,7 +64,7 @@ namespace lk {
  *      string_format:'%%s:%%d --> %%s:%%d'
  *      string_args:'(*userdata)->localHost(), (*userdata)->localPort(), (*userdata)->remoteHost(), (*userdata)->remotePort()'
  */
-class Socket : public LuaCallback2
+class Socket : public LuaObject
 {
   int socket_fd_;
   int socket_type_;

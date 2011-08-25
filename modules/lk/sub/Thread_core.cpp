@@ -15,7 +15,7 @@ static int Thread_Thread(lua_State *L) {
   try {
     Thread * retval__ = new Thread();
     // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
-    return retval__->lua_init(L, "lk.Thread");
+    return retval__->luaInit(L, retval__, "lk.Thread");
   } catch (std::exception &e) {
     lua_pushfstring(L, "lk.Thread.Thread: %s", e.what());
   } catch (...) {

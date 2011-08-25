@@ -1,18 +1,18 @@
-#include "lubyk/lua_callback2.h"
+#include "lubyk/lua_object.h"
 #include "lua_cpp_helper.h"
 
 using namespace lubyk;
 
-LuaCallback2::LuaCallback2() throw () :
+LuaObject::LuaObject() throw () :
   worker_(NULL),
   lua_(NULL) {
 }
 
-int LuaCallback2::lua_init(lua_State *L, const char *type_name) throw() {
+int LuaObject::luaInit(lua_State *L, void *ptr, const char *type_name) throw() {
   worker_ = Worker::getWorker(L);
 
   // ... <self> or new table
-  setupSuper(L); // creates self if there is no table (without a 'super' field)
+  setupSuper(L, ptr); // creates self if there is no table (without a 'super' field)
   // ... <self>.super = userdata
   // ... <self> <udata>
 
@@ -24,13 +24,13 @@ int LuaCallback2::lua_init(lua_State *L, const char *type_name) throw() {
   return 1;
 }
 
-void LuaCallback2::setupSuper(lua_State *L) throw() {
+void LuaObject::setupSuper(lua_State *L, void *ptr) throw() {
   if (!lua_istable(L, -1)) {
     lua_newtable(L);
   }
   // ... <self>
-  LuaCallback2 **userdata = (LuaCallback2**)lua_newuserdata(L, sizeof(LuaCallback2*));
-  *userdata = this;
+  void **userdata = (void**)lua_newuserdata(L, sizeof(LuaObject*));
+  *userdata = ptr;
   // ... <self> <udata>
   lua_pushlstring(L, "super", 5);
   // ... <self> <udata> <"super">
@@ -41,7 +41,7 @@ void LuaCallback2::setupSuper(lua_State *L) throw() {
   // ... <self> <udata>
 }
 
-void LuaCallback2::setupMetatable(lua_State *L, const char *type_name) throw() {
+void LuaObject::setupMetatable(lua_State *L, const char *type_name) throw() {
   // set metatable
   luaL_getmetatable(L, type_name);
   // ... <self> <udata> <mt>
@@ -58,7 +58,7 @@ void LuaCallback2::setupMetatable(lua_State *L, const char *type_name) throw() {
 //
 //   Thanks to Robert G. Jakabosky for the idea to use lua_xmove
 //   instead of weak tables to store the function reference.
-void LuaCallback2::setupLuaThread(lua_State *L) throw() {
+void LuaObject::setupLuaThread(lua_State *L) throw() {
   // ... <self> <udata>
   lua_getfenv(L, -1);
   // ... <self> <udata> <env>
@@ -122,7 +122,7 @@ void LuaCallback2::setupLuaThread(lua_State *L) throw() {
   // <self>
 }
 
-void LuaCallback2::pushLuaCallback(const char *method, int len) const {
+void LuaObject::pushLuaCallback(const char *method, int len) const {
   // <self>
   lua_pushlstring(lua_, method, len);
   // <self> <"method">

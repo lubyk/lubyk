@@ -37,7 +37,7 @@ namespace lk {
 /** Starts a new OS Thread with a given function.
  * @dub lib_name:'Thread_core'
  */
-class Thread : public lubyk::LuaCallback2, public lubyk::Thread
+class Thread : public lubyk::LuaObject, public lubyk::Thread
 {
 public:
   Thread() {}

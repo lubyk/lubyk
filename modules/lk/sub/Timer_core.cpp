@@ -16,7 +16,7 @@ static int Timer_Timer(lua_State *L) {
     float interval = dubL_checknumber(L, 1);
     Timer * retval__ = new Timer(interval);
     // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
-    return retval__->lua_init(L, "lk.Timer");
+    return retval__->luaInit(L, retval__, "lk.Timer");
   } catch (std::exception &e) {
     lua_pushfstring(L, "lk.Timer.Timer: %s", e.what());
   } catch (...) {

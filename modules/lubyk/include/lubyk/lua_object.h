@@ -26,15 +26,15 @@
 
   ==============================================================================
 */
-#ifndef LUBYK_INCLUDE_LUBYK_LUA_CALLBACK2_H_
-#define LUBYK_INCLUDE_LUBYK_LUA_CALLBACK2_H_
+#ifndef LUBYK_INCLUDE_LUBYK_LUA_OBJECT_H_
+#define LUBYK_INCLUDE_LUBYK_LUA_OBJECT_H_
 
 #include "lubyk.h"
 
 namespace lubyk {
 /** Calls a lua function back.
  */
-class LuaCallback2
+class LuaObject
 {
 public:
   /** Prepare tables to work with the table based self idion.
@@ -44,11 +44,11 @@ public:
    * Otherwise, a new table is created.
    * The method leaves "self" on top of the stack, with self.super = this.
    */
-  LuaCallback2() throw();
+  LuaObject() throw();
   
-  int lua_init(lua_State *L, const char *type_name) throw();
+  int luaInit(lua_State *L, void *ptr, const char *type_name) throw();
 
-  virtual ~LuaCallback2() {}
+  virtual ~LuaObject() {}
 
   /** The caller should lock before calling this.
    * TODO: The 'const' stuff is stupid: can't we remove it ?
@@ -62,11 +62,11 @@ private:
 
   int thread_in_env_idx_;
 
-  void setupSuper(lua_State *L) throw();
+  void setupSuper(lua_State *L, void *ptr) throw();
   void setupMetatable(lua_State *L, const char *type_name) throw() ;
   void setupLuaThread(lua_State *L) throw();
 };
 
 } // lubyk
 
-#endif // LUBYK_INCLUDE_LUBYK_LUA_CALLBACK2_H_
+#endif // LUBYK_INCLUDE_LUBYK_LUA_OBJECT_H_

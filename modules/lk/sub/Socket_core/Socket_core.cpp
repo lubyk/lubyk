@@ -16,7 +16,7 @@ static int Socket_Socket(lua_State *L) {
     int socket_type = dubL_checkint(L, 1);
     Socket * retval__ = new Socket(socket_type);
     // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
-    return retval__->lua_init(L, "lk.Socket");
+    return retval__->luaInit(L, retval__, "lk.Socket");
   } catch (std::exception &e) {
     lua_pushfstring(L, "lk.Socket.Socket: %s", e.what());
   } catch (...) {

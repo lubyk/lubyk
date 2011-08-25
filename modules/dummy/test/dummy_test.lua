@@ -76,4 +76,12 @@ function should.overloadCallback()
   assertEqual(148, obj:addSomething(15))
 end
 
+function should.initializeWithTable()
+  local obj = dummy.Dummy {
+    name = "Muad'Dib"
+  }
+
+  assertEqual("Muad'Dib", obj.name)
+end
+
 test.all()
