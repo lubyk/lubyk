@@ -17,7 +17,7 @@ static int Socket_Socket(lua_State *L) {
     lubyk::Worker *worker = *((lubyk::Worker **)dubL_checksdata(L, 2, "lubyk.Worker"));
     Socket * retval__ = new Socket(type, worker);
     // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
-    return retval__->lua_init(L, "zmq.Socket");
+    return retval__->luaInit(L, retval__, "zmq.Socket");
   } catch (std::exception &e) {
     lua_pushfstring(L, "zmq.Socket.Socket: %s", e.what());
   } catch (...) {

@@ -49,7 +49,7 @@ namespace zmq {
         string_format:'%%s (%%s)'
  *      string_args:'(*userdata)->location(), (*userdata)->type()'
  */
-class Socket : public LuaCallback2
+class Socket : public LuaObject
 {
   void *socket_;
   std::string location_;
@@ -62,7 +62,7 @@ class Socket : public LuaCallback2
    */
   TimeRef time_ref_;
 public:
-  /** The worker is not provided by LuaCallback2 before lua_init is called.
+  /** The worker is not provided by LuaObject before luaInit is called.
    * This call happens after full object construction. We need the worker
    * to set the zmq context, so we pass it as argument.
    */

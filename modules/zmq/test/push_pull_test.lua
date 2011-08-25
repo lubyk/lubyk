@@ -80,5 +80,11 @@ function should.push_pull_many_messages()
   receiver:kill()
 end
 
+function should.enableCustomProperties()
+  local sender = zmq.Push()
+  sender.foo = 'bar'
+  assertEqual('bar', sender.foo)
+end
+
 
 test.all()
