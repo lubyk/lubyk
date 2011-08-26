@@ -44,27 +44,13 @@ namespace mimas {
  *
  * @dub destructor: 'dub_destroy'
  */
-class GLWidget : public QGLWidget, public DeletableOutOfLua
+class GLWidget : public QGLWidget, public DeletableOutOfLua, public LuaObject
 {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
 
-  LuaCallback initializeGL_clbk_;
-  LuaCallback resizeGL_clbk_;
-  LuaCallback paintGL_clbk_;
-  LuaCallback keyboard_clbk_;
-
-  /** Set to true while we are already holding the worker
-   * lock (avoids deadlock).
-   */
-  lubyk::Worker *worker_;
 public:
-  GLWidget(lubyk::Worker *worker)
-   : initializeGL_clbk_(worker),
-     resizeGL_clbk_(worker),
-     paintGL_clbk_(worker),
-     keyboard_clbk_(worker),
-     worker_(worker) {
+  GLWidget(lubyk::Worker *worker) {
     setAttribute(Qt::WA_DeleteOnClose);
     // get focus on tab and click
     setFocusPolicy(Qt::StrongFocus);
@@ -149,43 +135,14 @@ public:
     QGLWidget::updateGL();
   }
 
-  /** Set a callback function.
-   *
-   */
-  void __newindex(lua_State *L) {
-    // Stack should be ... <self> <key> <value>
-    std::string key(luaL_checkstring(L, -2));
-
-    luaL_checktype(L, -1, LUA_TFUNCTION);
-    lua_pushvalue(L, -3);
-    // ... <self> <key> <value> <self>
-    lua_pushvalue(L, -2);
-    // ... <self> <key> <value> <self> <value>
-    if (key == "initializeGL") {
-      initializeGL_clbk_.set_lua_callback(L);
-    } else if (key == "resizeGL") {
-      resizeGL_clbk_.set_lua_callback(L);
-    } else if (key == "paintGL") {
-      paintGL_clbk_.set_lua_callback(L);
-    } else if (key == "keyboard") {
-      keyboard_clbk_.set_lua_callback(L);
-    } else {
-      luaL_error(L, "Invalid callback name '%s' (valid names are 'initializeGL', 'resizeGL', 'paintGL', 'keyboard').", key.c_str());
-    }
-
-    lua_pop(L, 2);
-    // ... <self> <key> <value>
-  }
-
 protected:
   virtual void initializeGL() {
-    lua_State *L = initializeGL_clbk_.lua_;
-    if (!L) return;
+    lua_State *L = lua_;
     ScopedLock lock(worker_);
 
-    initializeGL_clbk_.push_lua_callback(false);
-
-    int status = lua_pcall(L, 0, 0, 0);
+    pushLuaCallback("initializeGL");
+    // <func> <self>
+    int status = lua_pcall(L, 1, 0, 0);
 
     if (status) {
       fprintf(stderr, "Error in 'initializeGL' callback: %s\n", lua_tostring(L, -1));
@@ -193,15 +150,14 @@ protected:
   }
 
   virtual void resizeGL(int width, int height) {
-    lua_State *L = resizeGL_clbk_.lua_;
-    if (!L) return;
+    lua_State *L = lua_;
     ScopedLock lock(worker_);
 
-    resizeGL_clbk_.push_lua_callback(false);
+    pushLuaCallback("resizeGL");
     lua_pushnumber(L, width);
     lua_pushnumber(L, height);
-
-    int status = lua_pcall(L, 2, 0, 0);
+    // <func> <self> <width> <height>
+    int status = lua_pcall(L, 3, 0, 0);
 
     if (status) {
       fprintf(stderr, "Error in 'resizeGL' callback: %s\n", lua_tostring(L, -1));
@@ -209,13 +165,12 @@ protected:
   }
 
   virtual void paintGL() {
-    lua_State *L = paintGL_clbk_.lua_;
-    if (!L) return;
+    lua_State *L = lua_;
     ScopedLock lock(worker_);
 
-    paintGL_clbk_.push_lua_callback(false);
-
-    int status = lua_pcall(L, 0, 0, 0);
+    pushLuaCallback("paintGL");
+    // <func> <self>
+    int status = lua_pcall(L, 1, 0, 0);
 
     if (status) {
       fprintf(stderr, "Error in 'paintGL' callback: %s\n", lua_tostring(L, -1));
@@ -236,15 +191,15 @@ protected:
 
 private:
   void keyboard(QKeyEvent *event, bool isPressed) {
-    lua_State *L = keyboard_clbk_.lua_;
-    if (!L) return;
+    lua_State *L = lua_;
     ScopedLock lock(worker_);
 
-    keyboard_clbk_.push_lua_callback(false);
+    pushLuaCallback("keyboard");
     lua_pushnumber(L, event->key());
     lua_pushboolean(L, isPressed);
     lua_pushstring(L, event->text().toUtf8());
-    int status = lua_pcall(L, 3, 0, 0);
+    // <func> <self> <key> <on/off> <utf8>
+    int status = lua_pcall(L, 4, 0, 0);
 
     if (status) {
       fprintf(stderr, "Error in 'keyboard' callback: %s\n", lua_tostring(L, -1));

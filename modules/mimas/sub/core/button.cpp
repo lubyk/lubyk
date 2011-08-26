@@ -32,12 +32,12 @@
 namespace mimas {
 
 void Button::click(QMouseEvent *event, int type) {
-  lua_State *L = click_clbk_.lua_;
+  lua_State *L = lua_;
   if (!L) return;
 
   ScopedLock lock(worker_);
 
-  click_clbk_.push_lua_callback(false);
+  pushLuaCallback("click");
 
   lua_pushnumber(L, event->x());
   lua_pushnumber(L, event->y());

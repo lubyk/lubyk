@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'DataSource.h'
 **
-** Created: Tue Aug 9 08:18:46 2011
+** Created: Fri Aug 26 21:59:55 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.3)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -56,6 +56,8 @@ void *mimas::DataSource::qt_metacast(const char *_clname)
     if (!_clname) return 0;
     if (!strcmp(_clname, qt_meta_stringdata_mimas__DataSource))
         return static_cast<void*>(const_cast< DataSource*>(this));
+    if (!strcmp(_clname, "LuaObject"))
+        return static_cast< LuaObject*>(const_cast< DataSource*>(this));
     if (!strcmp(_clname, "DeletableOutOfLua"))
         return static_cast< DeletableOutOfLua*>(const_cast< DataSource*>(this));
     return QAbstractItemModel::qt_metacast(_clname);

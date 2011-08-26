@@ -8,15 +8,14 @@ using namespace mimas;
 
 /* ============================ Constructors     ====================== */
 
-/** mimas::DataSource::DataSource(lubyk::Worker *worker)
- * include/mimas/DataSource.h:71
+/** mimas::DataSource::DataSource()
+ * include/mimas/DataSource.h:57
  */
 static int DataSource_DataSource(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checksdata(L, 1, "lubyk.Worker"));
-    DataSource * retval__ = new DataSource(worker);
-    lua_pushclass2<DataSource>(L, retval__, "mimas.DataSource");
-    return 1;
+    DataSource * retval__ = new DataSource();
+    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
+    return retval__->luaInit(L, retval__, "mimas.DataSource");
   } catch (std::exception &e) {
     lua_pushfstring(L, "mimas.DataSource.DataSource: %s", e.what());
   } catch (...) {
@@ -69,28 +68,8 @@ static int DataSource__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
-/** void mimas::DataSource::__newindex(lua_State *L)
- * include/mimas/DataSource.h:81
- */
-static int DataSource___newindex(lua_State *L) {
-  try {
-    DataSource *self__ = *((DataSource**)dubL_checksdata(L, 1, "mimas.DataSource"));
-    if (!self__) throw dub::Exception("Using deleted mimas.DataSource in __newindex");
-    
-    self__->__newindex(L);
-    return 0;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.DataSource.__newindex: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "mimas.DataSource.__newindex: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
 /** void mimas::DataSource::emitLayoutChanged()
- * include/mimas/DataSource.h:139
+ * include/mimas/DataSource.h:68
  */
 static int DataSource_emitLayoutChanged(lua_State *L) {
   try {
@@ -108,28 +87,8 @@ static int DataSource_emitLayoutChanged(lua_State *L) {
 
 
 
-/** LuaStackSize mimas::DataSource::getCallback(lua_State *L)
- * include/mimas/DataSource.h:114
- */
-static int DataSource_getCallback(lua_State *L) {
-  try {
-    DataSource *self__ = *((DataSource**)dubL_checksdata(L, 1, "mimas.DataSource"));
-    if (!self__) throw dub::Exception("Using deleted mimas.DataSource in getCallback");
-    
-    LuaStackSize  retval__ = self__->getCallback(L);
-    return retval__;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.DataSource.getCallback: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "mimas.DataSource.getCallback: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
 /** void mimas::DataSource::reset()
- * include/mimas/DataSource.h:134
+ * include/mimas/DataSource.h:63
  */
 static int DataSource_reset(lua_State *L) {
   try {
@@ -152,9 +111,7 @@ static int DataSource_reset(lua_State *L) {
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg DataSource_member_methods[] = {
-  {"__newindex"        , DataSource___newindex},
   {"emitLayoutChanged" , DataSource_emitLayoutChanged},
-  {"getCallback"       , DataSource_getCallback},
   {"reset"             , DataSource_reset},
   {"__tostring"        , DataSource__tostring},
   {"__gc"              , DataSource_destructor},

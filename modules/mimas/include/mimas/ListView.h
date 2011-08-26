@@ -49,30 +49,19 @@ namespace mimas {
 /** The ListView is used to display data as a list.
  *
  * @dub destructor: 'dub_destroy'
+ *      ignore: luaInit
  */
-class ListView : public QListView, public DeletableOutOfLua
+class ListView : public QListView, public DeletableOutOfLua, public LuaObject
 {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
   Q_PROPERTY(float hue READ hue WRITE setHue)
 
-  Worker *worker_;
-  LuaCallback mouse_clbk_;
-  LuaCallback click_clbk_;
-  LuaCallback select_clbk_;
   QSize size_hint_;
-
-  DataSource  data_source_;
-public:
-  ListView(lubyk::Worker *worker) :
-   worker_(worker),
-   mouse_clbk_(worker),
-   click_clbk_(worker),
-   select_clbk_(worker),
-   data_source_(worker) {
+ public:
+  ListView(lubyk::Worker *worker)  {
     setAttribute(Qt::WA_DeleteOnClose);
     setSelectionMode(QAbstractItemView::SingleSelection);
-    QListView::setModel(&data_source_);
     // Not editable
     setEditTriggers(QAbstractItemView::NoEditTriggers);
 
@@ -260,50 +249,31 @@ public:
         selectionModel()->select( index, QItemSelectionModel::ClearAndSelect );
   }
 
-  /** Call this method to reload view when data changes.
-   */
-  void dataChanged() {
-    data_source_.reset();
-  }
-
   /** Use an external model instead of the default one.
    */
-  void setModel(DataSource *model = NULL) {
-    if (model) {
-      QListView::setModel(model);
-    } else {
-      QListView::setModel(&data_source_);
-    }
+  void setModel(DataSource *model) {
+    QListView::setModel(model);
   }
 
-  /** Set a callback function.
-   *
-   */
-  void __newindex(lua_State *L) {
-    // Stack should be ... <self> <key> <value>
-    std::string key(luaL_checkstring(L, -2));
-
-    luaL_checktype(L, -1, LUA_TFUNCTION);
-    lua_pushvalue(L, -3);
-    // ... <self> <key> <value> <self>
-    lua_pushvalue(L, -2);
-    // ... <self> <key> <value> <self> <value>
-    if (key == "click") {
-      click_clbk_.set_lua_callback(L);
-    } else if (key == "select") {
-      select_clbk_.set_lua_callback(L);
-    } else if (key == "mouse") {
-      mouse_clbk_.set_lua_callback(L);
-    } else if (key == "data" || key == "header" || key == "rowCount" || key == "columnCount" || key == "index") {
-      lua_pop(L, 2);
-      data_source_.__newindex(L);
-      return;
-    } else {
-      luaL_error(L, "Invalid function name '%s' (valid names are 'data', 'header', 'rowCount', 'columnCount' and 'index').", key.c_str());
-    }
-
-    lua_pop(L, 2);
-    // ... <self> <key> <value>
+  int luaInit(lua_State *L, ListView *obj, const char *class_name) {
+    LuaObject::luaInit(L, obj, class_name);
+    // <self>
+    lua_pushlstring("data_source", 5);
+    // <self> <'data_source'>
+    // <self>
+    DataSource *data = new DataSource();
+    data->luaInit(L, data, "mimas.DataSource");
+    // <self> <'data_source'> <data>
+    lua_settable(L, -3); // self.data_source = data
+    // <self>
+    // make DataSource look in <self> for callbacks
+    lua_pushvalue(L, -1);
+    // <self> <self>
+    lua_pop(data->lua_, 1);
+    lua_xmove(L, data->lua_, 1);
+    // data: <self>
+    // <self>
+    return 1;
   }
 
 protected:

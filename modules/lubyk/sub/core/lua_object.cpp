@@ -122,7 +122,7 @@ void LuaObject::setupLuaThread(lua_State *L) throw() {
   // <self>
 }
 
-void LuaObject::pushLuaCallback(const char *method, int len) const {
+void LuaObject::pushLuaCallbackl(const char *method, int len) const {
   // <self>
   lua_pushlstring(lua_, method, len);
   // <self> <"method">

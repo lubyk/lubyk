@@ -38,12 +38,12 @@ namespace mimas {
 
 void Widget::paint(Painter &p)
 {
-  lua_State *L = paint_clbk_.lua_;
+  lua_State *L = lua_;
   if (!L) return;
 
   ScopedLock lock(worker_);
 
-  paint_clbk_.push_lua_callback(false);
+  pushLuaCallback("paint");
 
   // Deletable out of Lua
   lua_pushclass2<Painter>(L, &p, "mimas.Painter");
@@ -60,12 +60,12 @@ void Widget::paint(Painter &p)
 
 void Widget::resizeEvent(QResizeEvent *event)
 {
-  lua_State *L = resized_clbk_.lua_;
+  lua_State *L = lua_;
   if (!L) return;
 
   ScopedLock lock(worker_);
 
-  resized_clbk_.push_lua_callback(false);
+  pushLuaCallback("resized");
 
   lua_pushnumber(L, width());
   lua_pushnumber(L, height());
@@ -80,12 +80,12 @@ void Widget::resizeEvent(QResizeEvent *event)
 
 void Widget::mouseMoveEvent(QMouseEvent *event)
 {
-  lua_State *L = mouse_clbk_.lua_;
+  lua_State *L = lua_;
   if (!L) return;
 
   ScopedLock lock(worker_);
 
-  mouse_clbk_.push_lua_callback(false);
+  pushLuaCallback("mouse");
 
   lua_pushnumber(L, event->x());
   lua_pushnumber(L, event->y());
@@ -105,12 +105,12 @@ void Widget::mouseMoveEvent(QMouseEvent *event)
 
 void Widget::click(QMouseEvent *event, int type)
 {
-  lua_State *L = click_clbk_.lua_;
+  lua_State *L = lua_;
   if (!L) return;
 
   ScopedLock lock(worker_);
 
-  click_clbk_.push_lua_callback(false);
+  pushLuaCallback("click");
 
   lua_pushnumber(L, event->x());
   lua_pushnumber(L, event->y());
@@ -134,11 +134,11 @@ void Widget::click(QMouseEvent *event, int type)
 
 void Widget::keyboard(QKeyEvent *event, bool isPressed)
 {
-  lua_State *L = keyboard_clbk_.lua_;
+  lua_State *L = lua_;
   if (!L) return;
   ScopedLock lock(worker_);
 
-  keyboard_clbk_.push_lua_callback(false);
+  pushLuaCallback("keyboard");
   lua_pushnumber(L, event->key());
   lua_pushboolean(L, isPressed);
   lua_pushstring(L, event->text().toUtf8());

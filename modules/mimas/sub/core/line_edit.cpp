@@ -33,18 +33,18 @@
 namespace mimas {
 
 bool LineEdit::keyboard(QKeyEvent *event, bool isPressed) {
-  lua_State *L = keyboard_clbk_.lua_;
-  if (!L) return false;
+  lua_State *L = lua_;
   ScopedLock lock(worker_);
 
-  keyboard_clbk_.push_lua_callback(false);
+  pushLuaCallback("keyboard");
   lua_pushnumber(L, event->key());
   lua_pushboolean(L, isPressed);
   lua_pushstring(L, event->text().toUtf8());
-  int status = lua_pcall(L, 3, 1, 0);
+  // <func> <self> <key> <on/off> <utf8>
+  int status = lua_pcall(L, 4, 1, 0);
 
   if (status) {
-    fprintf(stderr, "Error in keyboard callback: %s\n", lua_tostring(L, -1));
+    fprintf(stderr, "Error in 'keyboard' callback: %s\n", lua_tostring(L, -1));
   }
 
   if (!lua_isnil(L, -1)) {
@@ -57,18 +57,14 @@ bool LineEdit::keyboard(QKeyEvent *event, bool isPressed) {
 
 
 void LineEdit::moveEvent(QMoveEvent * event) {
-  lua_State *L = moved_clbk_.lua_;
-  if (!L) return;
-
+  lua_State *L = lua_;
   ScopedLock lock(worker_);
 
-  moved_clbk_.push_lua_callback(false);
-
+  pushLuaCallback("moved");
   lua_pushnumber(L, event->pos().x());
   lua_pushnumber(L, event->pos().y());
-
-  // <func> <Painter> <width> <height>
-  int status = lua_pcall(L, 2, 0, 0);
+  // <func> <self> <x> <y>
+  int status = lua_pcall(L, 3, 0, 0);
 
   if (status) {
     fprintf(stderr, "Error in 'moved' callback: %s\n", lua_tostring(L, -1));
@@ -76,17 +72,13 @@ void LineEdit::moveEvent(QMoveEvent * event) {
 }
 
 void LineEdit::resizeEvent(QResizeEvent *event) {
-  lua_State *L = resized_clbk_.lua_;
-  if (!L) return;
-
+  lua_State *L = lua_;
   ScopedLock lock(worker_);
 
-  resized_clbk_.push_lua_callback(false);
-
+  pushLuaCallback("resized");
   lua_pushnumber(L, width());
   lua_pushnumber(L, height());
-
-  // <func> <Painter> <width> <height>
+  // <func> <self> <width> <height>
   int status = lua_pcall(L, 2, 0, 0);
 
   if (status) {
@@ -95,22 +87,17 @@ void LineEdit::resizeEvent(QResizeEvent *event) {
 }
 
 bool LineEdit::click(QMouseEvent *event, int type) {
-  lua_State *L = click_clbk_.lua_;
-
-  if (!L) return false;
-
+  lua_State *L = lua_;
   ScopedLock lock(worker_);
 
-  click_clbk_.push_lua_callback(false);
-
+  pushLuaCallback("initializeGL");
   lua_pushnumber(L, event->x());
   lua_pushnumber(L, event->y());
   lua_pushnumber(L, type);
   lua_pushnumber(L, event->button());
   lua_pushnumber(L, event->modifiers());
-
-  // <func> <x> <y> <type> <btn> <modifiers>
-  int status = lua_pcall(L, 5, 1, 0);
+  // <func> <self> <x> <y> <type> <btn> <modifiers>
+  int status = lua_pcall(L, 6, 1, 0);
 
   if (status) {
     fprintf(stderr, "Error in 'click' callback: %s\n", lua_tostring(L, -1));
@@ -123,5 +110,38 @@ bool LineEdit::click(QMouseEvent *event, int type) {
   }
 
   return true;
+}
+
+void LineEdit::editingFinished() {
+  // get data from Lua
+  lua_State *L = lua_;
+  ScopedLock lock(worker_);
+
+  pushLuaCallback("initializeGL");
+  lua_pushstring(L, text());
+  // <func> <self> <text>
+  int status = lua_pcall(L, 2, 0, 0);
+
+  if (status) {
+    // cannot raise an error here...
+    fprintf(stderr, "Error in 'editingFinished' callback: %s\n", lua_tostring(L, -1));
+  }
+}
+
+// connected to the textEdited signal
+void LineEdit::textEdited(const QString &text) {
+  // get data from Lua
+  lua_State *L = lua_;
+  ScopedLock lock(worker_);
+
+  pushLuaCallback("initializeGL");
+  lua_pushstring(L, text.toUtf8().data());
+  // <func> <self> <text>
+  int status = lua_pcall(L, 2, 0, 0);
+
+  if (status) {
+    // cannot raise an error here...
+    fprintf(stderr, "Error in 'textEdited' callback: %s\n", lua_tostring(L, -1));
+  }
 }
 } // mimas

@@ -1,8 +1,8 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'ListView.h'
 **
-** Created: Tue Aug 2 15:01:01 2011
-**      by: The Qt Meta Object Compiler version 62 (Qt 4.7.1)
+** Created: Fri Aug 26 22:49:09 2011
+**      by: The Qt Meta Object Compiler version 62 (Qt 4.7.3)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -11,7 +11,7 @@
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'ListView.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 62
-#error "This file was generated using the moc from 4.7.1. It"
+#error "This file was generated using the moc from 4.7.3. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
@@ -63,6 +63,8 @@ void *mimas::ListView::qt_metacast(const char *_clname)
         return static_cast<void*>(const_cast< ListView*>(this));
     if (!strcmp(_clname, "DeletableOutOfLua"))
         return static_cast< DeletableOutOfLua*>(const_cast< ListView*>(this));
+    if (!strcmp(_clname, "LuaObject"))
+        return static_cast< LuaObject*>(const_cast< ListView*>(this));
     return QListView::qt_metacast(_clname);
 }
 

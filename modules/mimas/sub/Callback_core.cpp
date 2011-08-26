@@ -8,15 +8,14 @@ using namespace mimas;
 
 /* ============================ Constructors     ====================== */
 
-/** mimas::Callback::Callback(lubyk::Worker *worker)
- * include/mimas/Callback.h:60
+/** mimas::Callback::Callback()
+ * include/mimas/Callback.h:59
  */
 static int Callback_Callback(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checksdata(L, 1, "lubyk.Worker"));
-    Callback * retval__ = new Callback(worker);
-    lua_pushclass<Callback>(L, retval__, "mimas.Callback");
-    return 1;
+    Callback * retval__ = new Callback();
+    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
+    return retval__->luaInit(L, retval__, "mimas.Callback");
   } catch (std::exception &e) {
     lua_pushfstring(L, "mimas.Callback.Callback: %s", e.what());
   } catch (...) {
@@ -56,7 +55,7 @@ static int Callback__tostring(lua_State *L) {
 
 
 /** void mimas::Callback::connect(QObject *obj, const char *method, const char *callback)
- * include/mimas/Callback.h:66
+ * include/mimas/Callback.h:65
  */
 static int Callback_connect(lua_State *L) {
   try {
@@ -76,32 +75,12 @@ static int Callback_connect(lua_State *L) {
 
 
 
-/** void mimas::Callback::set_callback(lua_State *L)
- * include/mimas/Callback.h:86
- */
-static int Callback_set_callback(lua_State *L) {
-  try {
-    Callback *self__ = *((Callback**)dubL_checksdata(L, 1, "mimas.Callback"));
-    
-    self__->set_callback(L);
-    return 0;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Callback.set_callback: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "mimas.Callback.set_callback: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
 
 
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg Callback_member_methods[] = {
   {"connect"           , Callback_connect},
-  {"set_callback"      , Callback_set_callback},
   {"__tostring"        , Callback__tostring},
   {"__gc"              , Callback_destructor},
   {NULL, NULL},

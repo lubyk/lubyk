@@ -31,6 +31,7 @@
 
 #include "lubyk.h"
 
+#define pushLuaCallback(s) pushLuaCallbackl(s, sizeof(s))
 namespace lubyk {
 /** Calls a lua function back.
  */
@@ -53,7 +54,7 @@ public:
   /** The caller should lock before calling this.
    * TODO: The 'const' stuff is stupid: can't we remove it ?
    */
-  void pushLuaCallback(const char *method, int len) const;
+  void pushLuaCallbackl(const char *method, int len) const;
 
   lubyk::Worker *worker_;
   lua_State *lua_;

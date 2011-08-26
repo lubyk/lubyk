@@ -47,16 +47,12 @@ namespace mimas {
  * TreeView.
  *
  */
-class FileObserver : public QFileSystemWatcher
+class FileObserver : public QFileSystemWatcher, public LuaObject
 {
   Q_OBJECT
 
-  Worker *worker_;
-  LuaCallback path_changed_clbk_;
 public:
-  FileObserver(lubyk::Worker *worker) :
-   worker_(worker),
-   path_changed_clbk_(worker) {
+  FileObserver() {
     QObject::connect(this, SIGNAL(fileChanged(QString)),
                      this, SLOT(pathChangedSlot(QString)));
 
@@ -66,29 +62,6 @@ public:
 
   ~FileObserver() {
     MIMAS_DEBUG_GC
-  }
-
-  /** Set a callback function.
-   *
-   */
-  void __newindex(lua_State *L) {
-    // Stack should be ... <self> <key> <value>
-    std::string key(luaL_checkstring(L, -2));
-
-    luaL_checktype(L, -1, LUA_TFUNCTION);
-    lua_pushvalue(L, -3);
-    // ... <self> <key> <value> <self>
-    lua_pushvalue(L, -2);
-    // ... <self> <key> <value> <self> <value>
-    if (key == "pathChanged") {
-      path_changed_clbk_.set_lua_callback(L);
-    } else {
-      lua_pop(L, 2);
-      luaL_error(L, "Invalid function name '%s' (valid name is 'pathChanged').", key.c_str());
-    }
-
-    lua_pop(L, 2);
-    // ... <self> <key> <value>
   }
 
   void addPath(const char *path) {
@@ -102,17 +75,13 @@ public:
 private slots:
   // connected to the pathChanged signal
 	void pathChangedSlot(const QString &path) {
-    // get data from Lua
-    lua_State *L = path_changed_clbk_.lua_;
-    if (!L) return;
-
+    lua_State *L = lua_;
     ScopedLock lock(worker_);
 
-    path_changed_clbk_.push_lua_callback(false);
-
+    pushLuaCallback("pathChanged");
     lua_pushstring(L, path.toUtf8().data());
-    // <func> <path>
-    int status = lua_pcall(L, 1, 0, 0);
+    // <func> <self> <path>
+    int status = lua_pcall(L, 2, 0, 0);
 
     if (status) {
       // cannot raise an error here...

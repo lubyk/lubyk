@@ -48,16 +48,15 @@ class Slider;
  * @dub lib_name:'Callback_core'
  *      ignore: 'callback'
  */
-class Callback : public QObject, public lubyk::LuaCallback
+class Callback : public QObject, public lubyk::LuaObject
 {
   Q_OBJECT
 public:
   // Our own custom event id
   static const QEvent::Type EventType;
 
-  Callback(lubyk::Worker *worker)
-   : lubyk::LuaCallback(worker),
-     self_in_app_env_(-1) {}
+  Callback() :
+    self_in_app_(-1) {}
 
   virtual ~Callback() {
     MIMAS_DEBUG_GC
@@ -81,54 +80,43 @@ public:
           callback_(clbk) {}
   };
 
-  /** Set callback function.
-   */
-  void set_callback(lua_State *L) {
-    set_lua_callback(L);
-  }
 public slots:
   void callback() {
-    if (!callback_set()) {
-      fprintf(stderr, "Callback triggered when function not set.");
-      return;
-    }
+    // lua_ = own Lua thread
+    lua_State *L = lua_;
 
     lubyk::ScopedLock lock(worker_);
 
-    // do not push self
-    push_lua_callback(false);
+    pushLuaCallback("callback");
+    // <func> <self>
 
-    // lua_ = LuaCallback's thread state
-    int status = lua_pcall(lua_, 0, 0, 0);
+    int status = lua_pcall(L, 1, 0, 0);
     if (status) {
-      printf("Error in callback: %s\n", lua_tostring(lua_, -1));
+      printf("Error in callback: %s\n", lua_tostring(L, -1));
     }
 
-    delete_on_call();
+    deleteOnCall();
   }
 
   void callback(double value) {
-    if (!callback_set()) {
-      fprintf(stderr, "Callback triggered when function not set.");
-      return;
-    }
+    // lua_ = own Lua thread
+    lua_State *L = lua_;
 
     lubyk::ScopedLock lock(worker_);
 
-    // do not push self
-    push_lua_callback(false);
+    pushLuaCallback("callback");
+    // <func> <self>
 
-    // 1 number param
-    lua_pushnumber(lua_, value);
+    lua_pushnumber(L, value);
+    // <func> <self> <number>
 
-    // lua_ = LuaCallback's thread state
-    int status = lua_pcall(lua_, 1, 0, 0);
+    int status = lua_pcall(L, 2, 0, 0);
 
     if (status) {
       fprintf(stderr, "Error in receive callback: %s\n", lua_tostring(lua_, -1));
     }
 
-    delete_on_call();
+    deleteOnCall();
   }
 
   void callback(int value) {
@@ -139,53 +127,52 @@ private:
   friend class Application;
   friend class Slider;
 
-  /** When called from Application, the stack is
-   * 1. app or widget
-   * 2. function
+  /** Define a callback and store a reference inside the application
+   * so that it is not garbage collected too soon.
    */
-  void set_callback_from_app(lua_State *L) {
-    // push self
-    // ... <app> <func>
-    lua_getfenv(L, -2);
-    // ... <app> <func> <env>
-    lua_pushclass<Callback>(L, this, "mimas.Callback");
-    // ... <app> <func> <env> <clbk>
+  void setCallbackFromApp(lua_State *L) {
+    // ... <app> <func> <clbk>
+    lua_pushvalue(L, -2);
+    // ... <app> <func> <clbk> <func>
+    lua_pushlstring(L, "callback", 8);
+    // ... <app> <func> <clbk> <func> <'callback'>
+    lua_settable(L, -3);  // clbk.callback = func
+    // ... <app> <func> <clbk>
     lua_pushvalue(L, -1);
-    // ... <app> <func> <env> <clbk> <clbk>
-    self_in_app_env_ = luaL_ref(L, -3);
-    // ... <app> <func> <env> <clbk>
+    // ... <app> <func> <clbk> <clbk>
+    self_in_app_ = luaL_ref(L, -4);
+    // ... <app> <func> <clbk>
+
+
+    // Now store 'app' in the callback to remove oneself on delete.
     lua_pushvalue(L, -3);
-    // ... <app> <func> <env> <clbk> <func>
-    set_callback(L);
-    // ... <app> <func> <env> <clbk> <func>
-    lua_pushvalue(L, -3);
-    // ... <app> <func> <env> <clbk> <func> <env>
+    // L    = ... <app> <func> <clbk> <app>
     lua_xmove(L, lua_, 1);
-    // L = <app> <func> <env> <clbk> <func>
-    // lua_ = ... <env>
-    app_env_in_thread_ = luaL_ref(lua_, LUA_REGISTRYINDEX);
+    // L    = ... <app> <func> <clbk>
+    // lua_ = ... <app>
+    app_in_thread_ = luaL_ref(lua_, LUA_REGISTRYINDEX);
     // lua_ = ...
-    lua_settop(L, -4);
-    // ... <app> <func>
+    // L    = ... <app> <func> <clbk>
   }
 
-  void delete_on_call() {
-    if (self_in_app_env_ != -1) {
-      lua_rawgeti(lua_, LUA_REGISTRYINDEX, app_env_in_thread_);
-      // ... <env>
-      luaL_unref(lua_, -1, self_in_app_env_);
-      // Lua will GC this
-      self_in_app_env_ = -1;
+  void deleteOnCall() {
+    if (self_in_app_ != -1) {
+      lua_rawgeti(lua_, LUA_REGISTRYINDEX, app_in_thread_);
+      // ... <app>
+      // cut link from app to callback: app->clbk
+      luaL_unref(lua_, -1, self_in_app_);
+      // Now the callback is not reachable and will be GC
+      self_in_app_ = -1;
     }
   }
 
   /** To protect from garbage collection before app is deleted.
    */
-  int self_in_app_env_;
+  int self_in_app_;
 
   /** To unprotect self from garbage collection when deleted.
    */
-  int app_env_in_thread_;
+  int app_in_thread_;
 };
 
 } // mimas

@@ -52,7 +52,7 @@ public:
     // lua_ = LuaCallback's thread
     lua_State *L = lua_;
 
-    pushLuaCallback(func, strlen(func));
+    pushLuaCallbackl(func, strlen(func));
     lua_pushnumber(L, value);
 
     // first argument is self

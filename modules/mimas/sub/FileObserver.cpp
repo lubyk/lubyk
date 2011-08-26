@@ -8,15 +8,14 @@ using namespace mimas;
 
 /* ============================ Constructors     ====================== */
 
-/** mimas::FileObserver::FileObserver(lubyk::Worker *worker)
- * include/mimas/FileObserver.h:59
+/** mimas::FileObserver::FileObserver()
+ * include/mimas/FileObserver.h:55
  */
 static int FileObserver_FileObserver(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checksdata(L, 1, "lubyk.Worker"));
-    FileObserver * retval__ = new FileObserver(worker);
-    lua_pushclass<FileObserver>(L, retval__, "mimas.FileObserver");
-    return 1;
+    FileObserver * retval__ = new FileObserver();
+    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
+    return retval__->luaInit(L, retval__, "mimas.FileObserver");
   } catch (std::exception &e) {
     lua_pushfstring(L, "mimas.FileObserver.FileObserver: %s", e.what());
   } catch (...) {
@@ -55,27 +54,8 @@ static int FileObserver__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
-/** void mimas::FileObserver::__newindex(lua_State *L)
- * include/mimas/FileObserver.h:74
- */
-static int FileObserver___newindex(lua_State *L) {
-  try {
-    FileObserver *self__ = *((FileObserver**)dubL_checksdata(L, 1, "mimas.FileObserver"));
-    
-    self__->__newindex(L);
-    return 0;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.FileObserver.__newindex: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "mimas.FileObserver.__newindex: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
 /** void mimas::FileObserver::addPath(const char *path)
- * include/mimas/FileObserver.h:94
+ * include/mimas/FileObserver.h:67
  */
 static int FileObserver_addPath(lua_State *L) {
   try {
@@ -94,7 +74,7 @@ static int FileObserver_addPath(lua_State *L) {
 
 
 /** void mimas::FileObserver::removePath(const char *path)
- * include/mimas/FileObserver.h:98
+ * include/mimas/FileObserver.h:71
  */
 static int FileObserver_removePath(lua_State *L) {
   try {
@@ -117,7 +97,6 @@ static int FileObserver_removePath(lua_State *L) {
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg FileObserver_member_methods[] = {
-  {"__newindex"        , FileObserver___newindex},
   {"addPath"           , FileObserver_addPath},
   {"removePath"        , FileObserver_removePath},
   {"__tostring"        , FileObserver__tostring},

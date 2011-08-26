@@ -33,18 +33,14 @@
 namespace mimas {
 
 void ListView::mouseMoveEvent(QMouseEvent *event) {
-  lua_State *L = mouse_clbk_.lua_;
-  if (!L) return;
-
+  lua_State *L = lua_;
   ScopedLock lock(worker_);
 
-  mouse_clbk_.push_lua_callback(false);
-
+  pushLuaCallback("mouse");
   lua_pushnumber(L, event->x());
   lua_pushnumber(L, event->y());
-
-  // <func> <x> <y>
-  int status = lua_pcall(L, 2, 1, 0);
+  // <func> <self> <x> <y>
+  int status = lua_pcall(L, 3, 1, 0);
 
   if (status) {
     fprintf(stderr, "Error in 'mouse' callback: %s\n", lua_tostring(L, -1));

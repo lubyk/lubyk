@@ -46,33 +46,21 @@ namespace mimas {
 class Painter;
 
 /** The Widget is used to display custom elements or windows.
+ * The Widget uses the following callbacks:  paint, mouse,
+ * click, keyboard, move and resized.
  *
  * @dub destructor: 'dub_destroy'
  */
-class Widget : public QWidget, public DeletableOutOfLua
+class Widget : public QWidget, public LuaObject, public DeletableOutOfLua
 {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
   Q_PROPERTY(float hue READ hue WRITE setHue)
 
-  Worker *worker_;
-  LuaCallback paint_clbk_;
-  LuaCallback resized_clbk_;
-  LuaCallback moved_clbk_;
-  LuaCallback mouse_clbk_;
-  LuaCallback click_clbk_;
-  LuaCallback keyboard_clbk_;
   QSize size_hint_;
 public:
-  Widget(lubyk::Worker *worker, int window_flags = 0) :
-   QWidget(NULL, (Qt::WindowFlags)window_flags),
-   worker_(worker),
-   paint_clbk_(worker),
-   resized_clbk_(worker),
-   moved_clbk_(worker),
-   mouse_clbk_(worker),
-   click_clbk_(worker),
-   keyboard_clbk_(worker) {
+  Widget(int window_flags = 0) :
+    QWidget(NULL, (Qt::WindowFlags)window_flags) {
     setAttribute(Qt::WA_DeleteOnClose);
   }
 
@@ -277,38 +265,6 @@ public:
     QWidget::raise();
   }
 
-  /** Set a callback function.
-   *
-   */
-  void __newindex(lua_State *L) {
-    // Stack should be ... <self> <key> <value>
-    std::string key(luaL_checkstring(L, -2));
-
-    luaL_checktype(L, -1, LUA_TFUNCTION);
-    lua_pushvalue(L, -3);
-    // ... <self> <key> <value> <self>
-    lua_pushvalue(L, -2);
-    // ... <self> <key> <value> <self> <value>
-    if (key == "paint") {
-      paint_clbk_.set_lua_callback(L);
-    } else if (key == "resized") {
-      resized_clbk_.set_lua_callback(L);
-    } else if (key == "moved") {
-      moved_clbk_.set_lua_callback(L);
-    } else if (key == "mouse") {
-      mouse_clbk_.set_lua_callback(L);
-    } else if (key == "click") {
-      click_clbk_.set_lua_callback(L);
-    } else if (key == "keyboard") {
-      keyboard_clbk_.set_lua_callback(L);
-    } else {
-      luaL_error(L, "Invalid function name '%s' (valid names are 'paint', 'mouse', 'click', 'keyboard', 'moved' and 'resized').", key.c_str());
-    }
-
-    lua_pop(L, 2);
-    // ... <self> <key> <value>
-  }
-
   // ============================================================ Dialog
   LuaStackSize getOpenFileName(const char *caption,
                           const char *base_dir,
@@ -344,7 +300,7 @@ protected:
 
     ScopedLock lock(worker_);
 
-    moved_clbk_.push_lua_callback(false);
+    pushLuaCallback("moved");
 
     lua_pushnumber(L, event->pos().x());
     lua_pushnumber(L, event->pos().y());

@@ -9,7 +9,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::Button::Button(lubyk::Worker *worker, const char *title=NULL, QWidget *parent=NULL)
- * include/mimas/Button.h:62
+ * include/mimas/Button.h:58
  */
 static int Button_Button(lua_State *L) {
   try {
@@ -27,8 +27,8 @@ static int Button_Button(lua_State *L) {
         retval__ = new Button(worker, title, parent);
       }
     }
-    lua_pushclass2<Button>(L, retval__, "mimas.Button");
-    return 1;
+    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
+    return retval__->luaInit(L, retval__, "mimas.Button");
   } catch (std::exception &e) {
     lua_pushfstring(L, "mimas.Button.Button: %s", e.what());
   } catch (...) {
@@ -81,28 +81,8 @@ static int Button__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
-/** void mimas::Button::__newindex(lua_State *L)
- * include/mimas/Button.h:142
- */
-static int Button___newindex(lua_State *L) {
-  try {
-    Button *self__ = *((Button**)dubL_checksdata(L, 1, "mimas.Button"));
-    if (!self__) throw dub::Exception("Using deleted mimas.Button in __newindex");
-    
-    self__->__newindex(L);
-    return 0;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Button.__newindex: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "mimas.Button.__newindex: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
 /** QString mimas::Button::cssClass() const 
- * include/mimas/Button.h:70
+ * include/mimas/Button.h:66
  */
 static int Button_cssClass(lua_State *L) {
   try {
@@ -122,7 +102,7 @@ static int Button_cssClass(lua_State *L) {
 
 
 /** int mimas::Button::height()
- * include/mimas/Button.h:115
+ * include/mimas/Button.h:111
  */
 static int Button_height(lua_State *L) {
   try {
@@ -142,7 +122,7 @@ static int Button_height(lua_State *L) {
 
 
 /** float mimas::Button::hue()
- * include/mimas/Button.h:132
+ * include/mimas/Button.h:128
  */
 static int Button_hue(lua_State *L) {
   try {
@@ -162,7 +142,7 @@ static int Button_hue(lua_State *L) {
 
 
 /** void mimas::Button::move(int x, int y)
- * include/mimas/Button.h:95
+ * include/mimas/Button.h:91
  */
 static int Button_move(lua_State *L) {
   try {
@@ -183,7 +163,7 @@ static int Button_move(lua_State *L) {
 
 
 /** LuaStackSize mimas::Button::name(lua_State *L)
- * include/mimas/Button.h:84
+ * include/mimas/Button.h:80
  */
 static int Button_name(lua_State *L) {
   try {
@@ -203,7 +183,7 @@ static int Button_name(lua_State *L) {
 
 
 /** QObject* mimas::Button::object()
- * include/mimas/Button.h:78
+ * include/mimas/Button.h:74
  */
 static int Button_object(lua_State *L) {
   try {
@@ -223,7 +203,7 @@ static int Button_object(lua_State *L) {
 
 
 /** void mimas::Button::resize(int w, int h)
- * include/mimas/Button.h:99
+ * include/mimas/Button.h:95
  */
 static int Button_resize(lua_State *L) {
   try {
@@ -244,7 +224,7 @@ static int Button_resize(lua_State *L) {
 
 
 /** void mimas::Button::setHue(float hue)
- * include/mimas/Button.h:127
+ * include/mimas/Button.h:123
  */
 static int Button_setHue(lua_State *L) {
   try {
@@ -264,7 +244,7 @@ static int Button_setHue(lua_State *L) {
 
 
 /** void mimas::Button::setName(const char *name)
- * include/mimas/Button.h:91
+ * include/mimas/Button.h:87
  */
 static int Button_setName(lua_State *L) {
   try {
@@ -284,7 +264,7 @@ static int Button_setName(lua_State *L) {
 
 
 /** void mimas::Button::setStyle(const char *text)
- * include/mimas/Button.h:119
+ * include/mimas/Button.h:115
  */
 static int Button_setStyle(lua_State *L) {
   try {
@@ -304,7 +284,7 @@ static int Button_setStyle(lua_State *L) {
 
 
 /** void mimas::Button::setStyleSheet(const char *text)
- * include/mimas/Button.h:123
+ * include/mimas/Button.h:119
  */
 static int Button_setStyleSheet(lua_State *L) {
   try {
@@ -324,7 +304,7 @@ static int Button_setStyleSheet(lua_State *L) {
 
 
 /** QWidget* mimas::Button::widget()
- * include/mimas/Button.h:74
+ * include/mimas/Button.h:70
  */
 static int Button_widget(lua_State *L) {
   try {
@@ -344,7 +324,7 @@ static int Button_widget(lua_State *L) {
 
 
 /** int mimas::Button::width()
- * include/mimas/Button.h:111
+ * include/mimas/Button.h:107
  */
 static int Button_width(lua_State *L) {
   try {
@@ -364,7 +344,7 @@ static int Button_width(lua_State *L) {
 
 
 /** int mimas::Button::x()
- * include/mimas/Button.h:103
+ * include/mimas/Button.h:99
  */
 static int Button_x(lua_State *L) {
   try {
@@ -384,7 +364,7 @@ static int Button_x(lua_State *L) {
 
 
 /** int mimas::Button::y()
- * include/mimas/Button.h:107
+ * include/mimas/Button.h:103
  */
 static int Button_y(lua_State *L) {
   try {
@@ -408,7 +388,6 @@ static int Button_y(lua_State *L) {
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg Button_member_methods[] = {
-  {"__newindex"        , Button___newindex},
   {"cssClass"          , Button_cssClass},
   {"height"            , Button_height},
   {"hue"               , Button_hue},

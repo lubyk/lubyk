@@ -7,10 +7,8 @@
 
 --]]------------------------------------------------------
 local constr = mimas_core.Widget
-local worker = worker
 local mt     = mimas_core.Widget_
 mimas.Widget_ = mt
-local close  = mt.close
 
 local addWidget = mt.addWidget
 function mt:addWidget(other, ...)
@@ -27,23 +25,20 @@ function mt:addLayout(other)
   addLayout(self, other:layout())
 end
 
-function mimas.Widget(...)
-  local win = constr(worker, ...)
-  -- default keyboard action
-  -- TODO: add CMD+W
-  function win.keyboard(key, on)
-    if on then
-      if key == mimas.ESC then
-        -- ESC
-        win:close()
-      elseif key == mimas.Space then
-        win:swapFullScreen()
-      end
+-- default keyboard action
+-- TODO: add CMD+W
+function mt:keyboard(key, on)
+  if on then
+    if key == mimas.ESC then
+      -- ESC
+      self:close()
+    elseif key == mimas.Space then
+      self:swapFullScreen()
     end
   end
-  return win
 end
 
+local close  = mt.close
 function mt:close()
   -- close is like delete: ensure it only runs in GUI thread
   if self:deleted() then

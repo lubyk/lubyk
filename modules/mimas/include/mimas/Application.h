@@ -96,11 +96,13 @@ public:
   static void terminate(int sig);
 
   /** Create a callback to execute events in the GUI thread.
-   * Arguments should be 1. self, 2. function
    */
   void post(lua_State *L) {
-    Callback *clbk = new Callback(worker_);
-    clbk->set_callback_from_app(L);
+    // <app> <func>
+    Callback *clbk = new Callback();
+    clbk->luaInit(L, clbk, "mimas.Callback");
+    // <app> <func> <clbk>
+    clbk->setCallbackFromApp(L);
     postEvent(&lua_events_processor_, new Callback::Event(clbk));
   }
 

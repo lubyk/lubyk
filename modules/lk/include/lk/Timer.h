@@ -82,7 +82,7 @@ private:
     // find function and call
     lubyk::ScopedLock lock(worker_);
 
-    pushLuaCallback("tick", 4);
+    pushLuaCallback("tick");
 
     // lua_ = LuaCallback's thread state
     // @return new interval or 0 to stop or nil to not change interval

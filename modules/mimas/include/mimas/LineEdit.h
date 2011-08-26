@@ -44,39 +44,22 @@ namespace mimas {
  * @dub lib_name:'LineEdit_core'
  *      destructor: 'dub_destroy'
  */
-class LineEdit : public QLineEdit, public DeletableOutOfLua
+class LineEdit : public QLineEdit, public DeletableOutOfLua, public LuaObject
 {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
 
-  Worker *worker_;
-  LuaCallback editing_finished_clbk_;
-  LuaCallback text_edited_clbk_;
-  LuaCallback keyboard_clbk_;
-  LuaCallback click_clbk_;
-  LuaCallback resized_clbk_;
-  LuaCallback moved_clbk_;
   /** The component's color.
    */
   float hue_;
 public:
-  LineEdit(lubyk::Worker *worker, const char *content = NULL, QWidget *parent = NULL)
-   : QLineEdit(content, parent),
-     worker_(worker),
-     editing_finished_clbk_(worker),
-     text_edited_clbk_(worker),
-     keyboard_clbk_(worker),
-     click_clbk_(worker),
-     resized_clbk_(worker),
-     moved_clbk_(worker),
-     hue_(-1) {
+  LineEdit(const char *content = NULL, QWidget *parent = NULL)
+     : QLineEdit(content, parent), hue_(-1) {
     QObject::connect(this, SIGNAL(editingFinished()),
-                     this, SLOT(editingFinished())
-    );
+                     this, SLOT(editingFinished()));
 
     QObject::connect(this, SIGNAL(textEdited(QString)),
-                     this, SLOT(textEdited(QString))
-    );
+                     this, SLOT(textEdited(QString)));
   }
 
   ~LineEdit() {
@@ -194,38 +177,6 @@ public:
     QWidget::setFocus(Qt::OtherFocusReason);
   }
 
-  /** Set a callback function.
-   *
-   */
-  void __newindex(lua_State *L) {
-    // Stack should be ... <self> <key> <value>
-    std::string key(luaL_checkstring(L, -2));
-
-    luaL_checktype(L, -1, LUA_TFUNCTION);
-    lua_pushvalue(L, -3);
-    // ... <self> <key> <value> <self>
-    lua_pushvalue(L, -2);
-    // ... <self> <key> <value> <self> <value>
-    if (key == "editingFinished") {
-      editing_finished_clbk_.set_lua_callback(L);
-    } else if (key == "textEdited") {
-      text_edited_clbk_.set_lua_callback(L);
-    } else if (key == "click") {
-      click_clbk_.set_lua_callback(L);
-    } else if (key == "keyboard") {
-      keyboard_clbk_.set_lua_callback(L);
-    } else if (key == "resized") {
-      resized_clbk_.set_lua_callback(L);
-    } else if (key == "moved") {
-      moved_clbk_.set_lua_callback(L);
-    } else {
-      luaL_error(L, "Invalid function name '%s' (valid names are 'editingFinished', 'textEdited', 'keyboard', 'resized', 'moved').", key.c_str());
-    }
-
-    lua_pop(L, 2);
-    // ... <self> <key> <value>
-  }
-
 protected:
 
   virtual void keyPressEvent(QKeyEvent *event) {
@@ -269,44 +220,10 @@ private slots:
   // textChanged(const QString & text)
 
   // connected to the pathChanged signal
-	void editingFinished() {
-    // get data from Lua
-    lua_State *L = editing_finished_clbk_.lua_;
-    if (!L) return;
-
-    ScopedLock lock(worker_);
-
-    editing_finished_clbk_.push_lua_callback(false);
-
-    lua_pushstring(L, text());
-    // <func> <text>
-    int status = lua_pcall(L, 1, 0, 0);
-
-    if (status) {
-      // cannot raise an error here...
-      fprintf(stderr, "Error in 'editingFinished' callback: %s\n", lua_tostring(L, -1));
-    }
-  }
+	void editingFinished();
 
   // connected to the textEdited signal
-	void textEdited(const QString &text) {
-    // get data from Lua
-    lua_State *L = text_edited_clbk_.lua_;
-    if (!L) return;
-
-    ScopedLock lock(worker_);
-
-    text_edited_clbk_.push_lua_callback(false);
-
-    lua_pushstring(L, text.toUtf8().data());
-    // <func> <text>
-    int status = lua_pcall(L, 1, 0, 0);
-
-    if (status) {
-      // cannot raise an error here...
-      fprintf(stderr, "Error in 'textEdited' callback: %s\n", lua_tostring(L, -1));
-    }
-  }
+	void textEdited(const QString &text);
 };
 
 } // mimas

@@ -77,7 +77,7 @@ private:
     // we may get a kill before even starting
     if (!shouldRun()) return;
 
-    pushLuaCallback("run", 3);
+    pushLuaCallback("run");
 
     // lua_ = LuaCallback's thread state
     // first argument is self

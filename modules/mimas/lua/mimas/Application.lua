@@ -3,7 +3,12 @@
   mimas.Application
   --------------
 
-  GUI Application.
+  GUI Application. The object returned by
+  mimas.Application() is a table that will contain
+  callbacks (stored as references in the numerical index).
+  This means that storing things in the application with
+  app[4] = 'xxx' is very bad. Doing app.foo = 'yyy' is
+  good.
 
 --]]------------------------------------------------------
 require 'worker'

@@ -93,7 +93,7 @@ static int Application_exec(lua_State *L) {
 
 
 /** void mimas::Application::post(lua_State *L)
- * include/mimas/Application.h:101
+ * include/mimas/Application.h:100
  */
 static int Application_post(lua_State *L) {
   try {
@@ -113,7 +113,7 @@ static int Application_post(lua_State *L) {
 
 
 /** void mimas::Application::quit()
- * include/mimas/Application.h:107
+ * include/mimas/Application.h:109
  */
 static int Application_quit(lua_State *L) {
   try {
@@ -132,7 +132,7 @@ static int Application_quit(lua_State *L) {
 
 
 /** LuaStackSize mimas::Application::screenSize(lua_State *L)
- * include/mimas/Application.h:117
+ * include/mimas/Application.h:119
  */
 static int Application_screenSize(lua_State *L) {
   try {
@@ -152,7 +152,7 @@ static int Application_screenSize(lua_State *L) {
 
 
 /** void mimas::Application::setStyleSheet(const char *text)
- * include/mimas/Application.h:111
+ * include/mimas/Application.h:113
  */
 static int Application_setStyleSheet(lua_State *L) {
   try {

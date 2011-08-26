@@ -6,3 +6,5 @@
   * create process (mkdir)
   * change process script (edit [process].lua file)
   * change patch (edit _patch.yml)
+* LuaObject should accept a table as parameter (need to fix dub)
+* Create a method to ease subclassing of LuaObjects or simply fix WidgetClass()

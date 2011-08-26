@@ -49,86 +49,15 @@ namespace mimas {
  * @dub destructor: 'dub_destroy'
  *      ignore: 'index'
  */
-class DataSource : public QAbstractItemModel, public DeletableOutOfLua
+class DataSource : public QAbstractItemModel, public LuaObject, public DeletableOutOfLua
 {
   Q_OBJECT
 
-  Worker *worker_;
-  LuaCallback index_clbk_;
-  LuaCallback parent_clbk_;
-  LuaCallback row_count_clbk_;
-  LuaCallback column_count_clbk_;
-  LuaCallback data_clbk_;
-  LuaCallback header_clbk_;
 public:
-  DataSource(lubyk::Worker *worker) :
-   worker_(worker),
-   index_clbk_(worker),
-   parent_clbk_(worker),
-   row_count_clbk_(worker),
-   column_count_clbk_(worker),
-   data_clbk_(worker),
-   header_clbk_(worker) {
-  }
+  DataSource() {}
 
   ~DataSource() {
     MIMAS_DEBUG_GC
-  }
-
-  /** Set a callback function.
-   *
-   */
-  void __newindex(lua_State *L) {
-    // Stack should be ... <self> <key> <value>
-    std::string key(luaL_checkstring(L, -2));
-
-    luaL_checktype(L, -1, LUA_TFUNCTION);
-    lua_pushvalue(L, -3);
-    // ... <self> <key> <value> <self>
-    lua_pushvalue(L, -2);
-    // ... <self> <key> <value> <self> <value>
-    if (key == "index") {
-      // not used for the moment
-      index_clbk_.set_lua_callback(L);
-    } else if (key == "parent") {
-      // not used for the moment
-      parent_clbk_.set_lua_callback(L);
-    } else if (key == "rowCount") {
-      row_count_clbk_.set_lua_callback(L);
-    } else if (key == "columnCount") {
-      column_count_clbk_.set_lua_callback(L);
-    } else if (key == "data") {
-      data_clbk_.set_lua_callback(L);
-    } else if (key == "header") {
-      header_clbk_.set_lua_callback(L);
-    } else {
-      lua_pop(L, 2);
-      luaL_error(L, "Invalid function name '%s' (valid names are 'index', 'parent', 'rowCount', 'columnCount', 'data' and 'header').", key.c_str());
-    }
-
-    lua_pop(L, 2);
-    // ... <self> <key> <value>
-  }
-
-  // get a callback
-  LuaStackSize getCallback(lua_State *L) {
-    // <self> <key>
-    std::string key(luaL_checkstring(L, -1));
-    lua_pop(L, 2);
-    //
-    if (key == "data") {
-      lua_State *dL = data_clbk_.lua_;
-      if (dL) {
-        data_clbk_.push_lua_callback(false);
-        lua_xmove(dL, L, 1);
-        // <fun>
-        return 1;
-      } else {
-        return 0;
-      }
-    } else {
-      return 0;
-    } 
   }
 
   void reset() {
@@ -146,21 +75,19 @@ public:
     return createIndex(row, column);
   }
 protected:
-  virtual QModelIndex parent (const QModelIndex &child) const {
+  virtual QModelIndex parent(const QModelIndex &child) const {
     return QModelIndex(); // no parent
   }
 
-  virtual int rowCount (const QModelIndex &parent = QModelIndex()) const {
-    // get data from Lua
-    lua_State *L = row_count_clbk_.lua_;
-    if (!L) return 0;
+  virtual int rowCount(const QModelIndex &parent = QModelIndex()) const {
+    lua_State *L = lua_;
 
     ScopedLock lock(worker_);
 
-    row_count_clbk_.push_lua_callback(false);
+    pushLuaCallback("rowCount");
 
-    // <func>
-    int status = lua_pcall(L, 0, 1, 0);
+    // <func> <self>
+    int status = lua_pcall(L, 1, 1, 0);
 
     if (status) {
       fprintf(stderr, "Error in 'rowCount' callback: %s\n", lua_tostring(L, -1));
@@ -175,17 +102,15 @@ protected:
     return count < 0 ? 0 : count;
   }
 
-  virtual int columnCount (const QModelIndex &parent = QModelIndex()) const {
-    // get data from Lua
-    lua_State *L = column_count_clbk_.lua_;
-    if (!L) return 0;
+  virtual int columnCount(const QModelIndex &parent = QModelIndex()) const {
+    lua_State *L = lua_;
 
     ScopedLock lock(worker_);
 
-    column_count_clbk_.push_lua_callback(false);
+    pushLuaCallback("columnCount");
 
-    // <func>
-    int status = lua_pcall(L, 0, 1, 0);
+    // <func> <self>
+    int status = lua_pcall(L, 1, 1, 0);
 
     if (status) {
       fprintf(stderr, "Error in 'columnCount' callback: %s\n", lua_tostring(L, -1));
@@ -202,20 +127,18 @@ protected:
   }
 
   virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const {
+    lua_State *L = lua_;
     if (role != Qt::DisplayRole) return QVariant();
-    // get data from Lua
-    lua_State *L = data_clbk_.lua_;
-    if (!L) return QVariant();
 
     ScopedLock lock(worker_);
 
-    data_clbk_.push_lua_callback(false);
+    pushLuaCallback("data");
 
     lua_pushnumber(L, index.row() + 1);
     lua_pushnumber(L, index.column() + 1);
 
-    // <func> <row> <column>
-    int status = lua_pcall(L, 2, 1, 0);
+    // <func> <self> <row> <column>
+    int status = lua_pcall(L, 3, 1, 0);
 
     if (status) {
       fprintf(stderr, "Error in 'data' callback: %s\n", lua_tostring(L, -1));
@@ -227,34 +150,26 @@ protected:
 
   virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const {
     if (role != Qt::DisplayRole) return QVariant();
-    // get data from Lua
-    lua_State *L = header_clbk_.lua_;
-    if (!L) return QVariant();
+
+    lua_State *L = lua_;
 
     ScopedLock lock(worker_);
 
-    // FIXME: all callbacks should push 'self' so that we can define generic callbacks
-    // in a sub-class without redefinition in each instance with a closure on self ?
-    // function self.super.mouse(x, y)
-    //   self:mouse(x, y)
-    // end
-    header_clbk_.push_lua_callback(false);
+    pushLuaCallback("header");
 
     lua_pushnumber(L, section + 1);
     lua_pushnumber(L, orientation);
 
-    // <func> <section> <orientation>
-    int status = lua_pcall(L, 2, 1, 0);
+    // <func> <self> <section> <orientation>
+    int status = lua_pcall(L, 3, 1, 0);
 
     if (status) {
-      fprintf(stderr, "Error in 'data' callback: %s\n", lua_tostring(L, -1));
+      fprintf(stderr, "Error in 'header' callback: %s\n", lua_tostring(L, -1));
       return QVariant();
     }
 
     return variantFromLua(L, -1);
   }
-
-private:
 };
 
 } // mimas

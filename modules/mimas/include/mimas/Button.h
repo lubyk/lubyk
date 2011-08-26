@@ -47,19 +47,15 @@ namespace mimas {
  * @dub lib_name:'Button_core'
  *      destructor: 'dub_destroy'
  */
-class Button : public QPushButton, public DeletableOutOfLua, public LuaUserdataEnv
+class Button : public QPushButton, public DeletableOutOfLua, public LuaObject
 {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
   Q_PROPERTY(float hue READ hue WRITE setHue)
 
-  Worker *worker_;
-  LuaCallback click_clbk_;
 public:
-  Button(lubyk::Worker *worker, const char *title = NULL, QWidget *parent = NULL)
-   : QPushButton(title, parent),
-     worker_(worker),
-     click_clbk_(worker) {}
+  Button(lubyk::Worker *worker, const char *title = NULL, QWidget *parent = NULL) :
+    QPushButton(title, parent) {}
 
   ~Button() {
     MIMAS_DEBUG_GC
@@ -133,30 +129,6 @@ public:
     return hue_;
   }
 
-  // =============================================================
-
-
-  /** Set a callback function.
-   *
-   */
-  void __newindex(lua_State *L) {
-    // Stack should be ... <self> <key> <value>
-    std::string key(luaL_checkstring(L, -2));
-
-    luaL_checktype(L, -1, LUA_TFUNCTION);
-    lua_pushvalue(L, -3);
-    // ... <self> <key> <value> <self>
-    lua_pushvalue(L, -2);
-    // ... <self> <key> <value> <self> <value>
-    if (key == "click") {
-      click_clbk_.set_lua_callback(L);
-    } else {
-      luaL_error(L, "Invalid function name '%s' (valid names are 'click').", key.c_str());
-    }
-
-    lua_pop(L, 2);
-    // ... <self> <key> <value>
-  }
 protected:
 
   virtual void mousePressEvent(QMouseEvent *event) {
@@ -171,14 +143,6 @@ protected:
     click(event, MouseRelease);
   }
 
-  /// What is this ????
-
-  // This method inserts the given object to this environment table
-  // Stack should be
-  // ... <self> <value>
-  void add_to_env(lua_State *L) {
-    LuaUserdataEnv::add_to_env(L);
-  }
 private:
   void click(QMouseEvent *event, int type);
 
