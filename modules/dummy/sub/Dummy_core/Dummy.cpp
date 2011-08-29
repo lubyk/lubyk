@@ -15,7 +15,7 @@ static int Dummy_Dummy(lua_State *L) {
   try {
     Dummy * retval__ = new Dummy();
     // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
-    return retval__->lua_init(L, "dummy.Dummy");
+    return retval__->luaInit(L, retval__, "dummy.Dummy");
   } catch (std::exception &e) {
     lua_pushfstring(L, "dummy.Dummy.Dummy: %s", e.what());
   } catch (...) {
@@ -55,7 +55,7 @@ static int Dummy__tostring(lua_State *L) {
 
 
 /** float dummy::Dummy::addSomething(float value)
- * include/dummy/dummy.h:70
+ * include/dummy/dummy.h:72
  */
 static int Dummy_addSomething(lua_State *L) {
   try {
@@ -96,7 +96,7 @@ static int Dummy_callback(lua_State *L) {
 
 
 /** static const char* dummy::Dummy::plat()
- * include/dummy/dummy.h:74
+ * include/dummy/dummy.h:76
  */
 static int Dummy_plat(lua_State *L) {
   try {

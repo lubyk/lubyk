@@ -81,11 +81,9 @@ protected:
 
   virtual int rowCount(const QModelIndex &parent = QModelIndex()) const {
     lua_State *L = lua_;
-
     ScopedLock lock(worker_);
 
-    pushLuaCallback("rowCount");
-
+    if (!pushLuaCallback("rowCount")) return 0;
     // <func> <self>
     int status = lua_pcall(L, 1, 1, 0);
 
@@ -94,21 +92,16 @@ protected:
       return 0;
     }
 
-    if (!lua_isnumber(L, -1)) {
-      // No data
-      return 0;
-    }
     int count = lua_tonumber(L, -1);
+    lua_pop(L, 1);
     return count < 0 ? 0 : count;
   }
 
   virtual int columnCount(const QModelIndex &parent = QModelIndex()) const {
     lua_State *L = lua_;
-
     ScopedLock lock(worker_);
 
-    pushLuaCallback("columnCount");
-
+    if (!pushLuaCallback("columnCount")) return 0;
     // <func> <self>
     int status = lua_pcall(L, 1, 1, 0);
 
@@ -117,26 +110,19 @@ protected:
       return 0;
     }
 
-    if (!lua_isnumber(L, -1)) {
-      // No data
-      return 0;
-    }
-
     int count = lua_tonumber(L, -1);
+    lua_pop(L, 1);
     return count < 0 ? 0 : count;
   }
 
   virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const {
-    lua_State *L = lua_;
     if (role != Qt::DisplayRole) return QVariant();
-
+    lua_State *L = lua_;
     ScopedLock lock(worker_);
 
-    pushLuaCallback("data");
-
+    if (!pushLuaCallback("data")) return QVariant();
     lua_pushnumber(L, index.row() + 1);
     lua_pushnumber(L, index.column() + 1);
-
     // <func> <self> <row> <column>
     int status = lua_pcall(L, 3, 1, 0);
 
@@ -144,22 +130,19 @@ protected:
       fprintf(stderr, "Error in 'data' callback: %s\n", lua_tostring(L, -1));
       return QVariant();
     }
-
-    return variantFromLua(L, -1);
+    QVariant res = variantFromLua(L, -1);
+    lua_pop(L, 1);
+    return res;
   }
 
   virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const {
     if (role != Qt::DisplayRole) return QVariant();
-
     lua_State *L = lua_;
-
     ScopedLock lock(worker_);
 
-    pushLuaCallback("header");
-
+    if (!pushLuaCallback("header")) return QVariant();
     lua_pushnumber(L, section + 1);
     lua_pushnumber(L, orientation);
-
     // <func> <self> <section> <orientation>
     int status = lua_pcall(L, 3, 1, 0);
 
@@ -167,8 +150,9 @@ protected:
       fprintf(stderr, "Error in 'header' callback: %s\n", lua_tostring(L, -1));
       return QVariant();
     }
-
-    return variantFromLua(L, -1);
+    QVariant res = variantFromLua(L, -1);
+    lua_pop(L, 1);
+    return res;
   }
 };
 

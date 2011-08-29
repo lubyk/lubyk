@@ -4,21 +4,21 @@
 using namespace lubyk;
 
 LuaObject::LuaObject() throw () :
-  worker_(NULL),
-  lua_(NULL) {
+    thread_in_env_idx_(0),
+    class_name_("??"),
+    worker_(NULL),
+    lua_(NULL) {
 }
 
 int LuaObject::luaInit(lua_State *L, void *ptr, const char *type_name) throw() {
   worker_ = Worker::getWorker(L);
-
+  printf("%s %p: worker = %p\n", type_name, ptr, worker_);
   // ... <self> or new table
   setupSuper(L, ptr); // creates self if there is no table (without a 'super' field)
   // ... <self>.super = userdata
   // ... <self> <udata>
-
   setupMetatable(L, type_name);
   // ... <self> <udata>
-  
   setupLuaThread(L);
   // <self>
   return 1;
@@ -43,6 +43,7 @@ void LuaObject::setupSuper(lua_State *L, void *ptr) throw() {
 
 void LuaObject::setupMetatable(lua_State *L, const char *type_name) throw() {
   // set metatable
+  class_name_ = type_name;
   luaL_getmetatable(L, type_name);
   // ... <self> <udata> <mt>
   lua_pushvalue(L, -1);
@@ -101,11 +102,9 @@ void LuaObject::setupLuaThread(lua_State *L) throw() {
 
   lua_ = lua_newthread(L);
   // ... <self> <udata> <env> <thread>
-
   // Store the thread in the Thread/Socket's environment table so it is not GC too soon
   thread_in_env_idx_ = luaL_ref(L, -2);
   // ... <self> <udata> <env>
-
   lua_pop(L, 2);
   // ... <self>
 
@@ -113,21 +112,24 @@ void LuaObject::setupLuaThread(lua_State *L) throw() {
   lua_pushvalue(L, -1);
   // ... <self> <self>
   lua_xmove(L, lua_, 1);
-  // ... <self>
-
-  // lua_ stack is now
-  // <self>
-
-  // L is now
-  // <self>
+  // lua_: <self>
+  // L:    <self>
 }
 
-void LuaObject::pushLuaCallbackl(const char *method, int len) const {
+bool LuaObject::pushLuaCallbackl(const char *method, int len) const {
+  lua_State *L = lua_;
   // <self>
-  lua_pushlstring(lua_, method, len);
+  lua_pushlstring(L, method, len);
   // <self> <"method">
-  lua_gettable(lua_, -2);
+  lua_gettable(L, 1);
   // <self> <?>
-  lua_pushvalue(lua_, 1);
-  // <self> <?> <self>
+  if (lua_isnil(L, -1)) {
+    lua_pop(L, 1);
+    // printf("%s '%s' callback not set.\n", class_name_, method);
+    return false;
+  } else {
+    lua_pushvalue(L, 1);
+    // <self> <func> <self>
+    return true;
+  }
 }

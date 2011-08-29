@@ -48,29 +48,22 @@ namespace mimas {
  *      constructor: 'MakeApplication'
  *      destructor: 'dub_destroy'
  */
-class Application : public QApplication, public DeletableOutOfLua
-{
+class Application : public QApplication, public DeletableOutOfLua, public LuaObject {
   Q_OBJECT
-
-  lubyk::Worker *worker_;
 public:
   /** Private constructor. Use MakeApplication instead.
    */
-  Application(lubyk::Worker *worker);
+  Application();
 
   /** Custom constructor so that we can set the env table that is
    * needed by mimas.Callback.
    */
-  static LuaStackSize MakeApplication(lubyk::Worker *worker, lua_State *L) {
+  static LuaStackSize MakeApplication(lua_State *L) {
     // avoid qt_menu.nib loading
     QApplication::setAttribute(Qt::AA_MacPluginApplication, true);
-    Application *app = new Application(worker);
-
-    lua_pushclass2<Application>(L, app, "mimas.Application");
-    // new env table
-    lua_newtable(L);
-    // ... <app> <env>
-    lua_setfenv(L, -2);
+    Application *app = new Application();
+    app->luaInit(L, app, "mimas.Application");
+    // <app>
     return 1;
   }
 
@@ -126,10 +119,8 @@ public:
 private:
   class LuaEventsProcessor : public QObject
   {
-    lubyk::Worker *worker_;
   public:
-    LuaEventsProcessor(lubyk::Worker *worker)
-      : worker_(worker) {}
+    LuaEventsProcessor() {}
 
     virtual bool event(QEvent *e) {
       if (e->type() == Callback::EventType) {

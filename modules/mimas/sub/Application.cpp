@@ -13,10 +13,8 @@ using namespace mimas;
 
 pthread_key_t Application::sAppKey = NULL;
 
-Application::Application(lubyk::Worker *worker)
- : QApplication(app_argc, app_argv),
-   worker_(worker),
-   lua_events_processor_(worker) {
+Application::Application()
+   : QApplication(app_argc, app_argv) {
   // create a key to find 'app' object in current thread
   if (!sAppKey) pthread_key_create(&sAppKey, NULL);
 }

@@ -105,8 +105,10 @@ public:
 
     if (lua_type(lua_, -1) == LUA_TNIL) {
       // no wii.Remote.. cannot link
+      lua_pop(L, 1);
       return NULL;
     } else {
+      lua_pop(L, 1);
       return *((wii::Remote **)luaL_checkudata(L, -1, "wii.Remote"));
     }
   }

@@ -36,7 +36,7 @@ bool LineEdit::keyboard(QKeyEvent *event, bool isPressed) {
   lua_State *L = lua_;
   ScopedLock lock(worker_);
 
-  pushLuaCallback("keyboard");
+  if (!pushLuaCallback("keyboard")) return false;
   lua_pushnumber(L, event->key());
   lua_pushboolean(L, isPressed);
   lua_pushstring(L, event->text().toUtf8());
@@ -47,10 +47,12 @@ bool LineEdit::keyboard(QKeyEvent *event, bool isPressed) {
     fprintf(stderr, "Error in 'keyboard' callback: %s\n", lua_tostring(L, -1));
   }
 
-  if (!lua_isnil(L, -1)) {
+  if (lua_isfalse(L, -1)) {
     // Pass to LineEdit
+    lua_pop(L, 1);
     return false;
   } else {
+    lua_pop(L, 1);
     return true;
   }
 }
@@ -60,7 +62,7 @@ void LineEdit::moveEvent(QMoveEvent * event) {
   lua_State *L = lua_;
   ScopedLock lock(worker_);
 
-  pushLuaCallback("moved");
+  if (!pushLuaCallback("moved")) return;
   lua_pushnumber(L, event->pos().x());
   lua_pushnumber(L, event->pos().y());
   // <func> <self> <x> <y>
@@ -75,7 +77,7 @@ void LineEdit::resizeEvent(QResizeEvent *event) {
   lua_State *L = lua_;
   ScopedLock lock(worker_);
 
-  pushLuaCallback("resized");
+  if (!pushLuaCallback("resized")) return;
   lua_pushnumber(L, width());
   lua_pushnumber(L, height());
   // <func> <self> <width> <height>
@@ -90,7 +92,7 @@ bool LineEdit::click(QMouseEvent *event, int type) {
   lua_State *L = lua_;
   ScopedLock lock(worker_);
 
-  pushLuaCallback("initializeGL");
+  if (!pushLuaCallback("initializeGL")) return false;
   lua_pushnumber(L, event->x());
   lua_pushnumber(L, event->y());
   lua_pushnumber(L, type);
@@ -104,11 +106,13 @@ bool LineEdit::click(QMouseEvent *event, int type) {
   }
   // FIXME: find another way to remove the dotted lines around text after click.
   clearFocus();
-  if (!lua_isnil(L, -1)) {
+  if (lua_isfalse(L, -1)) {
     // Pass to ListView
+    lua_pop(L, 1);
     return false;
   }
 
+  lua_pop(L, 1);
   return true;
 }
 
@@ -117,7 +121,7 @@ void LineEdit::editingFinished() {
   lua_State *L = lua_;
   ScopedLock lock(worker_);
 
-  pushLuaCallback("initializeGL");
+  if (!pushLuaCallback("initializeGL")) return;
   lua_pushstring(L, text());
   // <func> <self> <text>
   int status = lua_pcall(L, 2, 0, 0);
@@ -134,7 +138,7 @@ void LineEdit::textEdited(const QString &text) {
   lua_State *L = lua_;
   ScopedLock lock(worker_);
 
-  pushLuaCallback("initializeGL");
+  if (!pushLuaCallback("initializeGL")) return;
   lua_pushstring(L, text.toUtf8().data());
   // <func> <self> <text>
   int status = lua_pcall(L, 2, 0, 0);

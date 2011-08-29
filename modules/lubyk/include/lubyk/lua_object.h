@@ -31,12 +31,14 @@
 
 #include "lubyk.h"
 
-#define pushLuaCallback(s) pushLuaCallbackl(s, sizeof(s))
+#define pushLuaCallback(s) pushLuaCallbackl(s, strlen(s))
 namespace lubyk {
 /** Calls a lua function back.
  */
 class LuaObject
 {
+  int thread_in_env_idx_;
+  const char *class_name_;
 public:
   /** Prepare tables to work with the table based self idion.
    * expects stack to be:
@@ -52,17 +54,16 @@ public:
   virtual ~LuaObject() {}
 
   /** The caller should lock before calling this.
-   * TODO: The 'const' stuff is stupid: can't we remove it ?
+   * @todo: The 'const' stuff is stupid: can't we remove it ?
+   * @fixme: OPTIMIZATION: Register the keys and pass a ref in the registry.
+   * @return: true if the callback is set, false otherwise.
    */
-  void pushLuaCallbackl(const char *method, int len) const;
+  bool pushLuaCallbackl(const char *method, int len) const;
 
   lubyk::Worker *worker_;
   lua_State *lua_;
 
 private:
-
-  int thread_in_env_idx_;
-
   void setupSuper(lua_State *L, void *ptr) throw();
   void setupMetatable(lua_State *L, const char *type_name) throw() ;
   void setupLuaThread(lua_State *L) throw();

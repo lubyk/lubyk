@@ -37,7 +37,7 @@ void Button::click(QMouseEvent *event, int type) {
 
   ScopedLock lock(worker_);
 
-  pushLuaCallback("click");
+  if (!pushLuaCallback("click")) return;
 
   lua_pushnumber(L, event->x());
   lua_pushnumber(L, event->y());
@@ -52,11 +52,11 @@ void Button::click(QMouseEvent *event, int type) {
     fprintf(stderr, "Error in 'click' callback: %s\n", lua_tostring(L, -1));
   }
 
-  if (!lua_isnil(L, -1)) {
+  if (lua_isfalse(L, -1)) {
     // Pass up
     event->ignore();
   }
-
+  lua_pop(L, 1);
 }
 
 } // mimas

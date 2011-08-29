@@ -140,7 +140,7 @@ protected:
     lua_State *L = lua_;
     ScopedLock lock(worker_);
 
-    pushLuaCallback("initializeGL");
+    if (!pushLuaCallback("initializeGL")) return;
     // <func> <self>
     int status = lua_pcall(L, 1, 0, 0);
 
@@ -153,7 +153,7 @@ protected:
     lua_State *L = lua_;
     ScopedLock lock(worker_);
 
-    pushLuaCallback("resizeGL");
+    if (!pushLuaCallback("resizeGL")) return;
     lua_pushnumber(L, width);
     lua_pushnumber(L, height);
     // <func> <self> <width> <height>
@@ -168,7 +168,7 @@ protected:
     lua_State *L = lua_;
     ScopedLock lock(worker_);
 
-    pushLuaCallback("paintGL");
+    if (!pushLuaCallback("paintGL")) return;
     // <func> <self>
     int status = lua_pcall(L, 1, 0, 0);
 
@@ -194,7 +194,7 @@ private:
     lua_State *L = lua_;
     ScopedLock lock(worker_);
 
-    pushLuaCallback("keyboard");
+    if (!pushLuaCallback("keyboard")) return;
     lua_pushnumber(L, event->key());
     lua_pushboolean(L, isPressed);
     lua_pushstring(L, event->text().toUtf8());

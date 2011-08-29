@@ -48,33 +48,17 @@ namespace mimas {
 /** The TableView is used to display data in a table.
  *
  * @dub destructor: 'dub_destroy'
+ *      ignore: 'luaInit'
  */
-class TableView : public QTableView, public DeletableOutOfLua
-{
+class TableView : public QTableView, public DeletableOutOfLua, public LuaObject {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
   Q_PROPERTY(float hue READ hue WRITE setHue)
 
-  Worker *worker_;
-  //LuaCallback paint_clbk_;
-  //LuaCallback resized_clbk_;
-  //LuaCallback mouse_clbk_;
-  //LuaCallback click_clbk_;
-  //LuaCallback keyboard_clbk_;
   QSize size_hint_;
-
-  DataSource  data_source_;
 public:
-  TableView(lubyk::Worker *worker) :
-   worker_(worker),
-   // paint_clbk_(worker),
-   // resized_clbk_(worker),
-   // mouse_clbk_(worker),
-   // click_clbk_(worker),
-   // keyboard_clbk_(worker),
-   data_source_(worker) {
+  TableView(lubyk::Worker *worker) {
     setAttribute(Qt::WA_DeleteOnClose);
-    setModel(&data_source_);
     // Not editable
     setEditTriggers(QAbstractItemView::NoEditTriggers);
   }
@@ -192,18 +176,6 @@ public:
     QWidget::update();
   }
 
-  /** Call this method to reload view when data changes.
-   */
-  void dataChanged() {
-    data_source_.reset();
-  }
-
-  /** Call this method to force view update when data layout changes (column count, headers).
-   */
-  void layoutChanged() {
-    data_source_.emitLayoutChanged();
-  }
-
   /** Get size of text with current widget font.
    */
   LuaStackSize textSize(const char *text, lua_State *L) {
@@ -286,41 +258,31 @@ public:
     QWidget::raise();
   }
 
-  /** Set a callback function.
-   *
+  /** Use an external model instead of the default one.
    */
-  void __newindex(lua_State *L) {
-    // Stack should be ... <self> <key> <value>
-    std::string key(luaL_checkstring(L, -2));
+  void setModel(DataSource *model) {
+    QTableView::setModel(model);
+  }
 
-    luaL_checktype(L, -1, LUA_TFUNCTION);
-    lua_pushvalue(L, -3);
-    // ... <self> <key> <value> <self>
-    lua_pushvalue(L, -2);
-    // ... <self> <key> <value> <self> <value>
-    /*
-    if (key == "paint") {
-      paint_clbk_.set_lua_callback(L);
-    } else if (key == "resized") {
-      resized_clbk_.set_lua_callback(L);
-    } else if (key == "mouse") {
-      mouse_clbk_.set_lua_callback(L);
-    } else if (key == "click") {
-      click_clbk_.set_lua_callback(L);
-    } else if (key == "keyboard") {
-      keyboard_clbk_.set_lua_callback(L);
-    } else if (key == "data") {
-    */
-    if (key == "data" || key == "header" || key == "rowCount" || key == "columnCount" || key == "index") {
-      lua_pop(L, 2);
-      data_source_.__newindex(L);
-      return;
-    } else {
-      luaL_error(L, "Invalid function name '%s' (valid names are 'data', 'header', 'rowCount', 'columnCount' and 'index').", key.c_str());
-    }
-
-    lua_pop(L, 2);
-    // ... <self> <key> <value>
+  int luaInit(lua_State *L, TableView *obj, const char *class_name) {
+    LuaObject::luaInit(L, obj, class_name);
+    // <self>
+    lua_pushlstring(L, "data_source", 5);
+    // <self> <'data_source'>
+    // <self>
+    DataSource *data = new DataSource();
+    data->luaInit(L, data, "mimas.DataSource");
+    // <self> <'data_source'> <data>
+    lua_settable(L, -3); // self.data_source = data
+    // <self>
+    // make DataSource look in <self> for callbacks
+    lua_pushvalue(L, -1);
+    // <self> <self>
+    lua_pop(data->lua_, 1);
+    lua_xmove(L, data->lua_, 1);
+    // data: <self>
+    // <self>
+    return 1;
   }
 protected:
   virtual QSize sizeHint() const {

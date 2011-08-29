@@ -36,14 +36,13 @@ namespace mimas {
 
 // Widget::paintEvent is in paint.cpp
 
-void Widget::paint(Painter &p)
-{
+void Widget::paint(Painter &p) {
   lua_State *L = lua_;
   if (!L) return;
 
   ScopedLock lock(worker_);
 
-  pushLuaCallback("paint");
+  if (!pushLuaCallback("paint")) return;
 
   // Deletable out of Lua
   lua_pushclass2<Painter>(L, &p, "mimas.Painter");
@@ -58,14 +57,13 @@ void Widget::paint(Painter &p)
   }
 }
 
-void Widget::resizeEvent(QResizeEvent *event)
-{
+void Widget::resizeEvent(QResizeEvent *event) {
   lua_State *L = lua_;
   if (!L) return;
 
   ScopedLock lock(worker_);
 
-  pushLuaCallback("resized");
+  if (!pushLuaCallback("resized")) return;
 
   lua_pushnumber(L, width());
   lua_pushnumber(L, height());
@@ -78,18 +76,13 @@ void Widget::resizeEvent(QResizeEvent *event)
   }
 }
 
-void Widget::mouseMoveEvent(QMouseEvent *event)
-{
+void Widget::mouseMoveEvent(QMouseEvent *event) {
   lua_State *L = lua_;
-  if (!L) return;
-
   ScopedLock lock(worker_);
 
-  pushLuaCallback("mouse");
-
+  if (!pushLuaCallback("mouse")) return;
   lua_pushnumber(L, event->x());
   lua_pushnumber(L, event->y());
-
   // <func> <x> <y>
   int status = lua_pcall(L, 2, 1, 0);
 
@@ -97,27 +90,23 @@ void Widget::mouseMoveEvent(QMouseEvent *event)
     fprintf(stderr, "Error in 'mouse' callback: %s\n", lua_tostring(L, -1));
   }
 
-  if (!lua_isnil(L, -1)) {
+  if (lua_isfalse(L, -1)) {
     // Pass up
     event->ignore();
   }
+  lua_pop(L, 1);
 }
 
-void Widget::click(QMouseEvent *event, int type)
-{
+void Widget::click(QMouseEvent *event, int type) {
   lua_State *L = lua_;
-  if (!L) return;
-
   ScopedLock lock(worker_);
 
-  pushLuaCallback("click");
-
+  if (!pushLuaCallback("click")) return;
   lua_pushnumber(L, event->x());
   lua_pushnumber(L, event->y());
   lua_pushnumber(L, type);
   lua_pushnumber(L, event->button());
   lua_pushnumber(L, event->modifiers());
-
   // <func> <x> <y> <type> <btn> <modifiers>
   int status = lua_pcall(L, 5, 1, 0);
 
@@ -125,20 +114,19 @@ void Widget::click(QMouseEvent *event, int type)
     fprintf(stderr, "Error in 'click' callback: %s\n", lua_tostring(L, -1));
   }
 
-  if (!lua_isnil(L, -1)) {
+  if (lua_isfalse(L, -1)) {
     // Pass up
     event->ignore();
   }
-
+  lua_pop(L, 1);
 }
 
-void Widget::keyboard(QKeyEvent *event, bool isPressed)
-{
+void Widget::keyboard(QKeyEvent *event, bool isPressed) {
   lua_State *L = lua_;
   if (!L) return;
   ScopedLock lock(worker_);
 
-  pushLuaCallback("keyboard");
+  if (!pushLuaCallback("keyboard")) return;
   lua_pushnumber(L, event->key());
   lua_pushboolean(L, isPressed);
   lua_pushstring(L, event->text().toUtf8());
@@ -153,8 +141,7 @@ LuaStackSize Widget::getOpenFileName(const char *caption,
                         const char *the_base_dir,
                         const char *the_filter,
                         int options,
-                        lua_State *L)
-{
+                        lua_State *L) {
   QString base_dir(the_base_dir);
   if (base_dir.isEmpty()) base_dir = QString();
 
@@ -169,7 +156,6 @@ LuaStackSize Widget::getOpenFileName(const char *caption,
     return 1;
   }
 }
-
 
 LuaStackSize Widget::getExistingDirectory(const char *caption,
                         const char *the_base_dir,

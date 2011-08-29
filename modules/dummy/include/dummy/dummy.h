@@ -39,8 +39,7 @@ namespace dummy {
  * @dub lib_name: 'Dummy_core'
  *      filename: 'Dummy_core/Dummy'
  */
-class Dummy : public LuaObject
-{
+class Dummy : public LuaObject {
 public:
   Dummy() {}
 
@@ -51,17 +50,19 @@ public:
   float callback(const char *func, float value) {
     // lua_ = LuaCallback's thread
     lua_State *L = lua_;
+    // ScopedLock lock(worker_); // <--- this is needed in a real callback (not called from Lua).
 
-    pushLuaCallbackl(func, strlen(func));
+    if (!pushLuaCallback(func)) return 0;
     lua_pushnumber(L, value);
-
-    // first argument is self
+    // <func> <self> <number>
     int status = lua_pcall(L, 2, 1, 0);
 
     if (status) {
       throw dub::Exception("Error in callback function: %s\n", lua_tostring(L, -1));
     }
-    return lua_tonumber(L, -1);
+    float res = lua_tonumber(L, -1);
+    lua_pop(L, 1);
+    return res;
   }
 
   /** This method becomes a lua binding to C and will be

@@ -8,27 +8,26 @@ using namespace mimas;
 
 /* ============================ Constructors     ====================== */
 
-/** mimas::Slider::Slider(lubyk::Worker *worker, int type=(int) VerticalSliderType, QWidget *parent=0)
- * include/mimas/Slider.h:73
+/** mimas::Slider::Slider(int type=(int) VerticalSliderType, QWidget *parent=0)
+ * include/mimas/Slider.h:71
  */
 static int Slider_Slider(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     Slider * retval__;
-    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checksdata(L, 1, "lubyk.Worker"));
-    if (top__ < 2) {
-      retval__ = new Slider(worker);
+    if (top__ < 1) {
+      retval__ = new Slider();
     } else {
-      int type = dubL_checkint(L, 2);
-      if (top__ < 3) {
-        retval__ = new Slider(worker, type);
+      int type = dubL_checkint(L, 1);
+      if (top__ < 2) {
+        retval__ = new Slider(type);
       } else {
-        QWidget *parent = *((QWidget **)dubL_checksdata(L, 3, "mimas.QWidget"));
-        retval__ = new Slider(worker, type, parent);
+        QWidget *parent = *((QWidget **)dubL_checksdata(L, 2, "mimas.QWidget"));
+        retval__ = new Slider(type, parent);
       }
     }
-    lua_pushclass2<Slider>(L, retval__, "mimas.Slider");
-    return 1;
+    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
+    return retval__->luaInit(L, retval__, "mimas.Slider");
   } catch (std::exception &e) {
     lua_pushfstring(L, "mimas.Slider.Slider: %s", e.what());
   } catch (...) {
@@ -82,7 +81,7 @@ static int Slider__tostring(lua_State *L) {
 
 
 /** int mimas::Slider::borderWidth() const 
- * include/mimas/Slider.h:171
+ * include/mimas/Slider.h:172
  */
 static int Slider_borderWidth(lua_State *L) {
   try {
@@ -101,28 +100,8 @@ static int Slider_borderWidth(lua_State *L) {
 
 
 
-/** void mimas::Slider::callback(double value)
- * include/mimas/Slider.h:200
- */
-static int Slider_callback(lua_State *L) {
-  try {
-    Slider *self__ = *((Slider**)dubL_checksdata(L, 1, "mimas.Slider"));
-    if (!self__) throw dub::Exception("Using deleted mimas.Slider in callback");
-    double value = dubL_checknumber(L, 2);
-    self__->callback(value);
-    return 0;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Slider.callback: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "mimas.Slider.callback: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
 /** QString mimas::Slider::cssClass() const 
- * include/mimas/Slider.h:92
+ * include/mimas/Slider.h:93
  */
 static int Slider_cssClass(lua_State *L) {
   try {
@@ -142,7 +121,7 @@ static int Slider_cssClass(lua_State *L) {
 
 
 /** int mimas::Slider::height()
- * include/mimas/Slider.h:137
+ * include/mimas/Slider.h:138
  */
 static int Slider_height(lua_State *L) {
   try {
@@ -162,7 +141,7 @@ static int Slider_height(lua_State *L) {
 
 
 /** float mimas::Slider::hue()
- * include/mimas/Slider.h:154
+ * include/mimas/Slider.h:155
  */
 static int Slider_hue(lua_State *L) {
   try {
@@ -182,7 +161,7 @@ static int Slider_hue(lua_State *L) {
 
 
 /** void mimas::Slider::move(int x, int y)
- * include/mimas/Slider.h:117
+ * include/mimas/Slider.h:118
  */
 static int Slider_move(lua_State *L) {
   try {
@@ -203,7 +182,7 @@ static int Slider_move(lua_State *L) {
 
 
 /** LuaStackSize mimas::Slider::name(lua_State *L)
- * include/mimas/Slider.h:106
+ * include/mimas/Slider.h:107
  */
 static int Slider_name(lua_State *L) {
   try {
@@ -223,7 +202,7 @@ static int Slider_name(lua_State *L) {
 
 
 /** QObject* mimas::Slider::object()
- * include/mimas/Slider.h:100
+ * include/mimas/Slider.h:101
  */
 static int Slider_object(lua_State *L) {
   try {
@@ -243,7 +222,7 @@ static int Slider_object(lua_State *L) {
 
 
 /** void mimas::Slider::resize(int w, int h)
- * include/mimas/Slider.h:121
+ * include/mimas/Slider.h:122
  */
 static int Slider_resize(lua_State *L) {
   try {
@@ -264,7 +243,7 @@ static int Slider_resize(lua_State *L) {
 
 
 /** void mimas::Slider::setBorderWidth(int width)
- * include/mimas/Slider.h:167
+ * include/mimas/Slider.h:168
  */
 static int Slider_setBorderWidth(lua_State *L) {
   try {
@@ -284,7 +263,7 @@ static int Slider_setBorderWidth(lua_State *L) {
 
 
 /** void mimas::Slider::setHue(float hue)
- * include/mimas/Slider.h:149
+ * include/mimas/Slider.h:150
  */
 static int Slider_setHue(lua_State *L) {
   try {
@@ -304,7 +283,7 @@ static int Slider_setHue(lua_State *L) {
 
 
 /** void mimas::Slider::setName(const char *name)
- * include/mimas/Slider.h:113
+ * include/mimas/Slider.h:114
  */
 static int Slider_setName(lua_State *L) {
   try {
@@ -324,7 +303,7 @@ static int Slider_setName(lua_State *L) {
 
 
 /** void mimas::Slider::setStyle(const char *text)
- * include/mimas/Slider.h:141
+ * include/mimas/Slider.h:142
  */
 static int Slider_setStyle(lua_State *L) {
   try {
@@ -344,7 +323,7 @@ static int Slider_setStyle(lua_State *L) {
 
 
 /** void mimas::Slider::setStyleSheet(const char *text)
- * include/mimas/Slider.h:145
+ * include/mimas/Slider.h:146
  */
 static int Slider_setStyleSheet(lua_State *L) {
   try {
@@ -364,7 +343,7 @@ static int Slider_setStyleSheet(lua_State *L) {
 
 
 /** void mimas::Slider::setValue(double remote_value)
- * include/mimas/Slider.h:191
+ * include/mimas/Slider.h:180
  */
 static int Slider_setValue(lua_State *L) {
   try {
@@ -383,28 +362,8 @@ static int Slider_setValue(lua_State *L) {
 
 
 
-/** void mimas::Slider::set_callback(lua_State *L)
- * include/mimas/Slider.h:179
- */
-static int Slider_set_callback(lua_State *L) {
-  try {
-    Slider *self__ = *((Slider**)dubL_checksdata(L, 1, "mimas.Slider"));
-    if (!self__) throw dub::Exception("Using deleted mimas.Slider in set_callback");
-    
-    self__->set_callback(L);
-    return 0;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Slider.set_callback: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "mimas.Slider.set_callback: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
 /** virtual QSize mimas::Slider::sizeHint() const 
- * include/mimas/Slider.h:159
+ * include/mimas/Slider.h:160
  */
 static int Slider_sizeHint(lua_State *L) {
   try {
@@ -423,8 +382,28 @@ static int Slider_sizeHint(lua_State *L) {
 
 
 
+/** void mimas::Slider::sliderChangedSlot(double value)
+ * include/mimas/Slider.h:189
+ */
+static int Slider_sliderChangedSlot(lua_State *L) {
+  try {
+    Slider *self__ = *((Slider**)dubL_checksdata(L, 1, "mimas.Slider"));
+    if (!self__) throw dub::Exception("Using deleted mimas.Slider in sliderChangedSlot");
+    double value = dubL_checknumber(L, 2);
+    self__->sliderChangedSlot(value);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "mimas.Slider.sliderChangedSlot: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "mimas.Slider.sliderChangedSlot: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** QWidget* mimas::Slider::widget()
- * include/mimas/Slider.h:96
+ * include/mimas/Slider.h:97
  */
 static int Slider_widget(lua_State *L) {
   try {
@@ -444,7 +423,7 @@ static int Slider_widget(lua_State *L) {
 
 
 /** int mimas::Slider::width()
- * include/mimas/Slider.h:133
+ * include/mimas/Slider.h:134
  */
 static int Slider_width(lua_State *L) {
   try {
@@ -464,7 +443,7 @@ static int Slider_width(lua_State *L) {
 
 
 /** int mimas::Slider::x()
- * include/mimas/Slider.h:125
+ * include/mimas/Slider.h:126
  */
 static int Slider_x(lua_State *L) {
   try {
@@ -484,7 +463,7 @@ static int Slider_x(lua_State *L) {
 
 
 /** int mimas::Slider::y()
- * include/mimas/Slider.h:129
+ * include/mimas/Slider.h:130
  */
 static int Slider_y(lua_State *L) {
   try {
@@ -509,7 +488,6 @@ static int Slider_y(lua_State *L) {
 
 static const struct luaL_Reg Slider_member_methods[] = {
   {"borderWidth"       , Slider_borderWidth},
-  {"callback"          , Slider_callback},
   {"cssClass"          , Slider_cssClass},
   {"height"            , Slider_height},
   {"hue"               , Slider_hue},
@@ -523,8 +501,8 @@ static const struct luaL_Reg Slider_member_methods[] = {
   {"setStyle"          , Slider_setStyle},
   {"setStyleSheet"     , Slider_setStyleSheet},
   {"setValue"          , Slider_setValue},
-  {"set_callback"      , Slider_set_callback},
   {"sizeHint"          , Slider_sizeHint},
+  {"sliderChangedSlot" , Slider_sliderChangedSlot},
   {"widget"            , Slider_widget},
   {"width"             , Slider_width},
   {"x"                 , Slider_x},

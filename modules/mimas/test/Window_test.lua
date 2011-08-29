@@ -13,8 +13,8 @@ require 'lubyk'
 local should = test.Suite('mimas.Window')
 
 function should.displayWindow(t)
-  -- we use the test env to protect from gc
-  t.win = mimas.Window()
+  -- direct call to userdata
+  t.win = mimas.Window().super
   t.layout = mimas.HBoxLayout(t.win)
   t.win:move(100, 100)
   t.win:show()
@@ -29,9 +29,8 @@ function should.displayWindow(t)
 end
 
 function should.accessUserdataWithSuper(t)
-  -- we use the test env to protect from gc
-  t.win = {super = mimas.Window()}
-  setmetatable(t.win, mimas.Window_)
+  t.win = mimas.Window()
+  assertType('table', t.win)
   t.layout = mimas.HBoxLayout(t.win)
   t.win:move(10, 10)
   t.win:show()

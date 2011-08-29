@@ -46,10 +46,10 @@ void Slider::mouseMoveEvent(QMouseEvent *event) {
   if (range_.isDragged()) {
     if (slider_type_ == HorizontalSliderType) {
       if (range_.setPosition(event->x(), width()))
-        emit valueChanged(range_.value());
+        emit sliderChanged(range_.value());
     } else {
       if (range_.setPosition(height() - event->y(), height()))
-        emit valueChanged(range_.value());
+        emit sliderChanged(range_.value());
     }
     update();
   }

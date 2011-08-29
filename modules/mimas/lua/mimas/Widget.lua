@@ -6,8 +6,8 @@
   ...
 
 --]]------------------------------------------------------
-local constr = mimas_core.Widget
-local mt     = mimas_core.Widget_
+mimas.Widget  = mimas_core.Widget
+local mt      = mimas_core.Widget_
 mimas.Widget_ = mt
 
 local addWidget = mt.addWidget

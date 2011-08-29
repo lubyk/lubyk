@@ -46,8 +46,7 @@ namespace mimas {
  * @dub lib_name:'Slider_core'
  *      destructor: 'dub_destroy'
  */
-class Slider : public QWidget, public LuaCallback, public DeletableOutOfLua
-{
+class Slider : public QWidget, public DeletableOutOfLua, public LuaObject {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
   Q_PROPERTY(float hue READ hue WRITE setHue)
@@ -64,13 +63,15 @@ public:
     VerticalSliderType = 2,
   };
 
-
-  Slider(lubyk::Worker *worker, int type = (int)VerticalSliderType, QWidget *parent = 0)
-   : QWidget(parent),
-     LuaCallback(worker),
-     slider_type_((SliderType)type),
-     hue_(-1),
-     border_width_(2) {}
+  Slider(int type = (int)VerticalSliderType, QWidget *parent = 0)
+      : QWidget(parent),
+        slider_type_((SliderType)type),
+        hue_(-1),
+        border_width_(2) {
+    QObject::connect(
+      this,  SIGNAL(sliderChanged(double)),
+      this,  SLOT(sliderChangedSlot(double)));
+  }
 
   virtual ~Slider() {
     MIMAS_DEBUG_GC
@@ -82,7 +83,6 @@ public:
     if (parent()) {
       // the callback function is now dead, make sure it is never called
       QObject::disconnect(this, 0, this, 0);
-      lua_ = NULL;
     }
     delete this;
   }
@@ -172,18 +172,6 @@ public:
     return border_width_;
   }
 
-  /** Stack is
-   * 1. self
-   * 2. func
-   */
-  void set_callback(lua_State *L) {
-    set_lua_callback(L);
-
-    QObject::connect(
-      this,  SIGNAL(valueChanged(double)),
-      this,  SLOT(callback(double)));
-  }
-
 public slots:
   /** Update slider when remote changes.
    * This is called by zmq when it receives a value change notification.
@@ -197,25 +185,17 @@ public slots:
   /** Lua method to trigger on
    * value changed.
    */
-  void callback(double value) {
-    if (!callback_set()) {
-      printf("Slider callback called without a function set.");
-      return;
-    }
-
+  void sliderChangedSlot(double value) {
+    lua_State *L = lua_;
     lubyk::ScopedLock lock(worker_);
 
-    // push self
-    push_lua_callback();
-
-    // 1 number param
+    if (!pushLuaCallback("sliderChanged")) return;
     lua_pushnumber(lua_, value);
-
-    // lua_ = LuaCallback's thread state
-    int status = lua_pcall(lua_, 2, 0, 0);
+    // <self> <sliderChanged> <value>
+    int status = lua_pcall(L, 3, 0, 0);
 
     if (status) {
-      fprintf(stderr, "Error in receive callback: %s\n", lua_tostring(lua_, -1));
+      fprintf(stderr, "Error in 'sliderChanged' callback: %s\n", lua_tostring(L, -1));
     }
   }
 
@@ -223,7 +203,7 @@ signals:
 
   /** Emit when the user drags and changes the value.
    */
-  void valueChanged(double);
+  void sliderChanged(double);
 
 protected:
   virtual void mousePressEvent(QMouseEvent *event);

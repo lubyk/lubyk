@@ -49,10 +49,9 @@ namespace mimas {
 /** The ListView is used to display data as a list.
  *
  * @dub destructor: 'dub_destroy'
- *      ignore: luaInit
+ *      ignore: 'luaInit'
  */
-class ListView : public QListView, public DeletableOutOfLua, public LuaObject
-{
+class ListView : public QListView, public DeletableOutOfLua, public LuaObject {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
   Q_PROPERTY(float hue READ hue WRITE setHue)
@@ -258,7 +257,7 @@ class ListView : public QListView, public DeletableOutOfLua, public LuaObject
   int luaInit(lua_State *L, ListView *obj, const char *class_name) {
     LuaObject::luaInit(L, obj, class_name);
     // <self>
-    lua_pushlstring("data_source", 5);
+    lua_pushlstring(L, "data_source", 5);
     // <self> <'data_source'>
     // <self>
     DataSource *data = new DataSource();

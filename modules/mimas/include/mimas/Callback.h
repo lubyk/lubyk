@@ -82,34 +82,26 @@ public:
 
 public slots:
   void callback() {
-    // lua_ = own Lua thread
     lua_State *L = lua_;
-
     lubyk::ScopedLock lock(worker_);
 
-    pushLuaCallback("callback");
+    if (!pushLuaCallback("callback")) return;
     // <func> <self>
-
     int status = lua_pcall(L, 1, 0, 0);
     if (status) {
-      printf("Error in callback: %s\n", lua_tostring(L, -1));
+      printf("Error in 'callback': %s\n", lua_tostring(L, -1));
     }
 
     deleteOnCall();
   }
 
   void callback(double value) {
-    // lua_ = own Lua thread
     lua_State *L = lua_;
-
     lubyk::ScopedLock lock(worker_);
 
-    pushLuaCallback("callback");
-    // <func> <self>
-
+    if (!pushLuaCallback("callback")) return;
     lua_pushnumber(L, value);
     // <func> <self> <number>
-
     int status = lua_pcall(L, 2, 0, 0);
 
     if (status) {
@@ -132,10 +124,10 @@ private:
    */
   void setCallbackFromApp(lua_State *L) {
     // ... <app> <func> <clbk>
-    lua_pushvalue(L, -2);
-    // ... <app> <func> <clbk> <func>
     lua_pushlstring(L, "callback", 8);
-    // ... <app> <func> <clbk> <func> <'callback'>
+    // ... <app> <func> <clbk> <'callback'>
+    lua_pushvalue(L, -3);
+    // ... <app> <func> <clbk> <'callback'> <func>
     lua_settable(L, -3);  // clbk.callback = func
     // ... <app> <func> <clbk>
     lua_pushvalue(L, -1);

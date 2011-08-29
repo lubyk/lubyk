@@ -43,8 +43,10 @@ extern "C" {
 
   /** Output debugging information on the current lua stack.
    */
-  void dump_lua_stack(lua_State *L, const char *msg, bool inspect_tables = true);
+  void luaDump(lua_State *L, const char *msg, bool inspect_tables = true);
 }
 
+// We often check for 'false' return value, this helps
+#define lua_isfalse(L,i) (lua_isboolean(L,i) && !lua_toboolean(L,i))
 
 #endif // CORE_INCLUDE_CORE_LUA_H_

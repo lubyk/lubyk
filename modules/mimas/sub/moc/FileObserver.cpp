@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'FileObserver.h'
 **
-** Created: Fri Aug 26 22:14:26 2011
+** Created: Sun Aug 28 20:24:37 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.3)
 **
 ** WARNING! All changes made in this file will be lost!

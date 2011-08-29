@@ -103,7 +103,7 @@ void *dubL_checksdata(lua_State *L, int ud, const char *tname) throw(dub::TypeEx
     }
     // get p from super
     // ... <ud> ...
-    // TODO: optimize by storing key in registry ?
+    // FIXME: OPTIMIZATION store 'super' in registry ?
     lua_pushlstring(L, "super", 5);
     // ... <ud> ... <'super'>
     lua_rawget(L, ud);

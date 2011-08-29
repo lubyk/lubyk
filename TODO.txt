@@ -8,3 +8,21 @@
   * change patch (edit _patch.yml)
 * LuaObject should accept a table as parameter (need to fix dub)
 * Create a method to ease subclassing of LuaObjects or simply fix WidgetClass()
+
+* lk.Service/lk.Client should enable this:
+================================================================================
+serv = lk.Service('Mars')
+-- start sending jobs to workers
+i = 0
+while true do
+  i = i + 1
+  serv:push(i, 'do something')
+end
+
+--- other thread
+cli = lk.Client(function(count, msg)
+  print('handling', count, msg)
+end
+cli:pull('Mars')
+================================================================================
+

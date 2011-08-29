@@ -10,8 +10,8 @@ require 'worker'
 local worker = worker
 local constr = mimas_core.Callback
 local mt = mimas_core.Callback_
-
 local connect = mt.connect
+
 function mt.connect(self, other, target)
   local callback = nil
   if string.match(target, '%(double%)') then
@@ -29,9 +29,13 @@ function mt.connect(self, other, target)
   connect(self, other:object(), target, callback)
 end
 
+function mt:callback()
+  print('dummy callback')
+end
+
 function mimas.Callback(func)
-  local instance = constr(worker)
-  instance:set_callback(func)
-  return instance
+  local self = constr()
+  self.callback = func
+  return self
 end
 

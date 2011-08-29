@@ -28,47 +28,65 @@
 */
 #include "lubyk.h"
 
-static void print_lua_value(lua_State *L, int i, bool inspect_tables) {
+static void print_lua_value(lua_State *L, int i, bool inspect_tables, int flags = 3) {
+    // print initial number
+  if (flags & 1) {
+    printf("%3i: ", i);
+  } else if (flags == 0) {
+    // print key
+    printf("     ");
+  }
+
   switch (lua_type(L, i)) {
     case LUA_TSTRING:
-      printf("%3i: '%s'\n", i, lua_tostring(L, i));
+      if (flags & 2) {
+        printf("'%s'", lua_tostring(L, i));
+      } else {
+        // printing key
+        printf("  %-12s", lua_tostring(L, i));
+      }
       break;
     case LUA_TBOOLEAN:
-      printf("%3i: %s\n", i, lua_toboolean(L, i) ? "true" : "false");
+      printf("%s", lua_toboolean(L, i) ? "true" : "false");
       break;
     case LUA_TNUMBER:
-      printf("%3i: %g\n", i, lua_tonumber(L, i));
+      printf("%g", lua_tonumber(L, i));
       break;
     case LUA_TTABLE:
       if (inspect_tables) {
-        printf("%3i: {\n", i);
+        printf("{\n");
         lua_pushvalue(L, i);
         for (lua_pushnil(L); lua_next(L, -2); lua_pop(L, 1)) {
           // inspect table content
-          print_lua_value(L, -2, false);
-          print_lua_value(L, -1, false);
+          print_lua_value(L, -2, false, 0);
+          print_lua_value(L, -1, false, 2);
         }
         lua_pop(L, 1);
-        printf("%3i: }\n", i);
+        printf("     }");
       } else {
-        printf("%3i: {}\n", i);
+        printf("{}");
       }
 
       break;
     case LUA_TNONE:
-      printf("%3i: --\n", i);
-    case LUA_TNIL:
-      printf("%3i: nil\n", i);
+      printf("--");
       break;
-    case LUA_TFUNCTION:
-      printf("%3i: function\n", i);
+    case LUA_TNIL:
+      printf("nil");
       break;
     default:
-      printf("%3i: %s\n", i, lua_typename(L, lua_type(L, i)));
+      printf("%s:%p", luaL_typename(L,i), lua_topointer(L,i));
+  }
+  if (flags & 2) {
+    // printing value
+    printf("\n");
+  } else {
+    // printing key
+    printf(" = ");
   }
 }
 
-extern "C" void dump_lua_stack(lua_State *L, const char *msg, bool inspect_tables) {
+extern "C" void luaDump(lua_State *L, const char *msg, bool inspect_tables) {
   int i;
   int top = lua_gettop(L);
 

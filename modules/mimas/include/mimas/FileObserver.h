@@ -78,7 +78,7 @@ private slots:
     lua_State *L = lua_;
     ScopedLock lock(worker_);
 
-    pushLuaCallback("pathChanged");
+    if (!pushLuaCallback("pathChanged")) return;
     lua_pushstring(L, path.toUtf8().data());
     // <func> <self> <path>
     int status = lua_pcall(L, 2, 0, 0);

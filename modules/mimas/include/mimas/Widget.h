@@ -51,8 +51,7 @@ class Painter;
  *
  * @dub destructor: 'dub_destroy'
  */
-class Widget : public QWidget, public LuaObject, public DeletableOutOfLua
-{
+class Widget : public QWidget, public DeletableOutOfLua, public LuaObject {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
   Q_PROPERTY(float hue READ hue WRITE setHue)
@@ -295,18 +294,15 @@ protected:
   virtual void resizeEvent(QResizeEvent *event);
 
   virtual void moveEvent(QMoveEvent * event) {
-    lua_State *L = moved_clbk_.lua_;
-    if (!L) return;
-
+    lua_State *L = lua_;
     ScopedLock lock(worker_);
 
-    pushLuaCallback("moved");
-
+    if (!pushLuaCallback("moved")) return;
     lua_pushnumber(L, event->pos().x());
     lua_pushnumber(L, event->pos().y());
-
-    // <func> <Painter> <width> <height>
-    int status = lua_pcall(L, 2, 0, 0);
+    // <func> <self> <x> <y>
+    luaDump(L, "moved");
+    int status = lua_pcall(L, 3, 0, 0);
 
     if (status) {
       fprintf(stderr, "Error in 'moved' callback: %s\n", lua_tostring(L, -1));

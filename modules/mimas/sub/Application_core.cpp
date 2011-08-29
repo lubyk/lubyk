@@ -53,14 +53,13 @@ static int Application__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
-/** static LuaStackSize mimas::Application::MakeApplication(lubyk::Worker *worker, lua_State *L)
- * include/mimas/Application.h:64
+/** static LuaStackSize mimas::Application::MakeApplication(lua_State *L)
+ * include/mimas/Application.h:66
  */
 static int Application_MakeApplication(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checksdata(L, 1, "lubyk.Worker"));
     
-    LuaStackSize  retval__ = Application::MakeApplication(worker, L);
+    LuaStackSize  retval__ = Application::MakeApplication(L);
     return retval__;
   } catch (std::exception &e) {
     lua_pushfstring(L, "mimas.Application.MakeApplication: %s", e.what());
@@ -73,7 +72,7 @@ static int Application_MakeApplication(lua_State *L) {
 
 
 /** int mimas::Application::exec()
- * include/mimas/Application.h:89
+ * include/mimas/Application.h:87
  */
 static int Application_exec(lua_State *L) {
   try {
@@ -93,7 +92,7 @@ static int Application_exec(lua_State *L) {
 
 
 /** void mimas::Application::post(lua_State *L)
- * include/mimas/Application.h:100
+ * include/mimas/Application.h:98
  */
 static int Application_post(lua_State *L) {
   try {
@@ -172,7 +171,7 @@ static int Application_setStyleSheet(lua_State *L) {
 
 
 /** static void mimas::Application::terminate(int sig)
- * include/mimas/Application.h:96
+ * include/mimas/Application.h:94
  */
 static int Application_terminate(lua_State *L) {
   try {
