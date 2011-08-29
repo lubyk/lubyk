@@ -3,16 +3,34 @@
 
 using namespace lubyk;
 
-LuaObject::LuaObject() throw () :
-    thread_in_env_idx_(0),
-    class_name_("??"),
-    worker_(NULL),
-    lua_(NULL) {
+LuaObject::LuaObject() throw ()
+    : thread_in_env_idx_(0),
+      class_name_("??"),
+      userdata_(NULL),
+      worker_(NULL),
+      lua_(NULL) {
+}
+
+LuaObject::~LuaObject() {
+  if (userdata_) {
+    *userdata_ = NULL;
+    userdata_ = NULL;
+  }
+}
+
+/** Deleting from Lua.
+ */
+void LuaObject::luaDestroy() {
+  luaCleanup();
+  delete this;
+}
+
+void LuaObject::luaCleanup() {
+  userdata_ = NULL;
 }
 
 int LuaObject::luaInit(lua_State *L, void *ptr, const char *type_name) throw() {
   worker_ = Worker::getWorker(L);
-  printf("%s %p: worker = %p\n", type_name, ptr, worker_);
   // ... <self> or new table
   setupSuper(L, ptr); // creates self if there is no table (without a 'super' field)
   // ... <self>.super = userdata
@@ -29,8 +47,8 @@ void LuaObject::setupSuper(lua_State *L, void *ptr) throw() {
     lua_newtable(L);
   }
   // ... <self>
-  void **userdata = (void**)lua_newuserdata(L, sizeof(LuaObject*));
-  *userdata = ptr;
+  userdata_ = (void**)lua_newuserdata(L, sizeof(LuaObject*));
+  *userdata_ = ptr;
   // ... <self> <udata>
   lua_pushlstring(L, "super", 5);
   // ... <self> <udata> <"super">
@@ -133,3 +151,5 @@ bool LuaObject::pushLuaCallbackl(const char *method, int len) const {
     return true;
   }
 }
+
+

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'Application.h'
 **
-** Created: Sun Aug 28 08:41:05 2011
+** Created: Mon Aug 29 17:56:52 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.3)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -56,8 +56,6 @@ void *mimas::Application::qt_metacast(const char *_clname)
     if (!_clname) return 0;
     if (!strcmp(_clname, qt_meta_stringdata_mimas__Application))
         return static_cast<void*>(const_cast< Application*>(this));
-    if (!strcmp(_clname, "DeletableOutOfLua"))
-        return static_cast< DeletableOutOfLua*>(const_cast< Application*>(this));
     if (!strcmp(_clname, "LuaObject"))
         return static_cast< LuaObject*>(const_cast< Application*>(this));
     return QApplication::qt_metacast(_clname);

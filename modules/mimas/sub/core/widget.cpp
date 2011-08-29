@@ -38,8 +38,6 @@ namespace mimas {
 
 void Widget::paint(Painter &p) {
   lua_State *L = lua_;
-  if (!L) return;
-
   ScopedLock lock(worker_);
 
   if (!pushLuaCallback("paint")) return;
@@ -48,9 +46,8 @@ void Widget::paint(Painter &p) {
   lua_pushclass2<Painter>(L, &p, "mimas.Painter");
   lua_pushnumber(L, width());
   lua_pushnumber(L, height());
-
-  // <func> <Painter> <width> <height>
-  int status = lua_pcall(L, 3, 0, 0);
+  // <func> <self> <Painter> <width> <height>
+  int status = lua_pcall(L, 4, 0, 0);
 
   if (status) {
     fprintf(stderr, "Error in 'paint' callback: %s\n", lua_tostring(L, -1));
@@ -59,17 +56,13 @@ void Widget::paint(Painter &p) {
 
 void Widget::resizeEvent(QResizeEvent *event) {
   lua_State *L = lua_;
-  if (!L) return;
-
   ScopedLock lock(worker_);
 
   if (!pushLuaCallback("resized")) return;
-
   lua_pushnumber(L, width());
   lua_pushnumber(L, height());
-
-  // <func> <Painter> <width> <height>
-  int status = lua_pcall(L, 2, 0, 0);
+  // <func> <self> <width> <height>
+  int status = lua_pcall(L, 3, 0, 0);
 
   if (status) {
     fprintf(stderr, "Error in 'resized' callback: %s\n", lua_tostring(L, -1));
@@ -83,8 +76,8 @@ void Widget::mouseMoveEvent(QMouseEvent *event) {
   if (!pushLuaCallback("mouse")) return;
   lua_pushnumber(L, event->x());
   lua_pushnumber(L, event->y());
-  // <func> <x> <y>
-  int status = lua_pcall(L, 2, 1, 0);
+  // <func> <self> <x> <y>
+  int status = lua_pcall(L, 3, 1, 0);
 
   if (status) {
     fprintf(stderr, "Error in 'mouse' callback: %s\n", lua_tostring(L, -1));
@@ -107,8 +100,8 @@ void Widget::click(QMouseEvent *event, int type) {
   lua_pushnumber(L, type);
   lua_pushnumber(L, event->button());
   lua_pushnumber(L, event->modifiers());
-  // <func> <x> <y> <type> <btn> <modifiers>
-  int status = lua_pcall(L, 5, 1, 0);
+  // <func> <self> <x> <y> <type> <btn> <modifiers>
+  int status = lua_pcall(L, 6, 1, 0);
 
   if (status) {
     fprintf(stderr, "Error in 'click' callback: %s\n", lua_tostring(L, -1));
@@ -130,7 +123,8 @@ void Widget::keyboard(QKeyEvent *event, bool isPressed) {
   lua_pushnumber(L, event->key());
   lua_pushboolean(L, isPressed);
   lua_pushstring(L, event->text().toUtf8());
-  int status = lua_pcall(L, 3, 0, 0);
+  // <fun> <self> <key> <state> <utf8>
+  int status = lua_pcall(L, 4, 0, 0);
 
   if (status) {
     fprintf(stderr, "Error in keyboard callback: %s\n", lua_tostring(L, -1));

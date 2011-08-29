@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'TableView.h'
 **
-** Created: Sat Aug 27 16:06:33 2011
+** Created: Mon Aug 29 17:38:02 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.3)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -61,8 +61,6 @@ void *mimas::TableView::qt_metacast(const char *_clname)
     if (!_clname) return 0;
     if (!strcmp(_clname, qt_meta_stringdata_mimas__TableView))
         return static_cast<void*>(const_cast< TableView*>(this));
-    if (!strcmp(_clname, "DeletableOutOfLua"))
-        return static_cast< DeletableOutOfLua*>(const_cast< TableView*>(this));
     if (!strcmp(_clname, "LuaObject"))
         return static_cast< LuaObject*>(const_cast< TableView*>(this));
     return QTableView::qt_metacast(_clname);

@@ -46,10 +46,10 @@ namespace mimas {
 /** The DataSource is used to provide data to Views such as TableView, ListView or
  * TreeView.
  *
- * @dub destructor: 'dub_destroy'
+ * @dub destructor: 'luaDestroy'
  *      ignore: 'index'
  */
-class DataSource : public QAbstractItemModel, public LuaObject, public DeletableOutOfLua
+class DataSource : public QAbstractItemModel, public LuaObject
 {
   Q_OBJECT
 

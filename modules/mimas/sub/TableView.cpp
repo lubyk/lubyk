@@ -9,7 +9,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::TableView::TableView(lubyk::Worker *worker)
- * include/mimas/TableView.h:61
+ * include/mimas/TableView.h:60
  */
 static int TableView_TableView(lua_State *L) {
   try {
@@ -34,7 +34,7 @@ static int TableView_destructor(lua_State *L) {
 
   
   // custom destructor
-  if (*userdata) (*userdata)->dub_destroy();
+  if (*userdata) (*userdata)->luaDestroy();
   
   *userdata = NULL;
   return 0;
@@ -70,7 +70,7 @@ static int TableView__tostring(lua_State *L) {
 
 
 /** bool mimas::TableView::close()
- * include/mimas/TableView.h:218
+ * include/mimas/TableView.h:217
  */
 static int TableView_close(lua_State *L) {
   try {
@@ -90,7 +90,7 @@ static int TableView_close(lua_State *L) {
 
 
 /** QString mimas::TableView::cssClass() const 
- * include/mimas/TableView.h:110
+ * include/mimas/TableView.h:109
  */
 static int TableView_cssClass(lua_State *L) {
   try {
@@ -110,7 +110,7 @@ static int TableView_cssClass(lua_State *L) {
 
 
 /** void mimas::TableView::globalMove(float x, float y)
- * include/mimas/TableView.h:246
+ * include/mimas/TableView.h:245
  */
 static int TableView_globalMove(lua_State *L) {
   try {
@@ -131,7 +131,7 @@ static int TableView_globalMove(lua_State *L) {
 
 
 /** LuaStackSize mimas::TableView::globalPosition(lua_State *L)
- * include/mimas/TableView.h:237
+ * include/mimas/TableView.h:236
  */
 static int TableView_globalPosition(lua_State *L) {
   try {
@@ -151,7 +151,7 @@ static int TableView_globalPosition(lua_State *L) {
 
 
 /** int mimas::TableView::height()
- * include/mimas/TableView.h:155
+ * include/mimas/TableView.h:154
  */
 static int TableView_height(lua_State *L) {
   try {
@@ -171,7 +171,7 @@ static int TableView_height(lua_State *L) {
 
 
 /** void mimas::TableView::hide()
- * include/mimas/TableView.h:230
+ * include/mimas/TableView.h:229
  */
 static int TableView_hide(lua_State *L) {
   try {
@@ -190,7 +190,7 @@ static int TableView_hide(lua_State *L) {
 
 
 /** float mimas::TableView::hue()
- * include/mimas/TableView.h:172
+ * include/mimas/TableView.h:171
  */
 static int TableView_hue(lua_State *L) {
   try {
@@ -210,7 +210,7 @@ static int TableView_hue(lua_State *L) {
 
 
 /** bool mimas::TableView::isVisible() const 
- * include/mimas/TableView.h:222
+ * include/mimas/TableView.h:221
  */
 static int TableView_isVisible(lua_State *L) {
   try {
@@ -230,7 +230,7 @@ static int TableView_isVisible(lua_State *L) {
 
 
 /** void mimas::TableView::lower()
- * include/mimas/TableView.h:252
+ * include/mimas/TableView.h:251
  */
 static int TableView_lower(lua_State *L) {
   try {
@@ -249,7 +249,7 @@ static int TableView_lower(lua_State *L) {
 
 
 /** void mimas::TableView::move(int x, int y)
- * include/mimas/TableView.h:135
+ * include/mimas/TableView.h:134
  */
 static int TableView_move(lua_State *L) {
   try {
@@ -270,7 +270,7 @@ static int TableView_move(lua_State *L) {
 
 
 /** LuaStackSize mimas::TableView::name(lua_State *L)
- * include/mimas/TableView.h:124
+ * include/mimas/TableView.h:123
  */
 static int TableView_name(lua_State *L) {
   try {
@@ -290,7 +290,7 @@ static int TableView_name(lua_State *L) {
 
 
 /** QObject* mimas::TableView::object()
- * include/mimas/TableView.h:118
+ * include/mimas/TableView.h:117
  */
 static int TableView_object(lua_State *L) {
   try {
@@ -310,7 +310,7 @@ static int TableView_object(lua_State *L) {
 
 
 /** void mimas::TableView::raise()
- * include/mimas/TableView.h:258
+ * include/mimas/TableView.h:257
  */
 static int TableView_raise(lua_State *L) {
   try {
@@ -329,7 +329,7 @@ static int TableView_raise(lua_State *L) {
 
 
 /** void mimas::TableView::resize(int w, int h)
- * include/mimas/TableView.h:139
+ * include/mimas/TableView.h:138
  */
 static int TableView_resize(lua_State *L) {
   try {
@@ -350,7 +350,7 @@ static int TableView_resize(lua_State *L) {
 
 
 /** virtual void mimas::TableView::selectColumn(int row)
- * include/mimas/TableView.h:104
+ * include/mimas/TableView.h:103
  */
 static int TableView_selectColumn(lua_State *L) {
   try {
@@ -370,7 +370,7 @@ static int TableView_selectColumn(lua_State *L) {
 
 
 /** virtual void mimas::TableView::selectRow(int row)
- * include/mimas/TableView.h:100
+ * include/mimas/TableView.h:99
  */
 static int TableView_selectRow(lua_State *L) {
   try {
@@ -390,7 +390,7 @@ static int TableView_selectRow(lua_State *L) {
 
 
 /** void mimas::TableView::setAlternatingRowColors(bool should_enable)
- * include/mimas/TableView.h:96
+ * include/mimas/TableView.h:95
  */
 static int TableView_setAlternatingRowColors(lua_State *L) {
   try {
@@ -410,7 +410,7 @@ static int TableView_setAlternatingRowColors(lua_State *L) {
 
 
 /** void mimas::TableView::setGridStyle(int style)
- * include/mimas/TableView.h:90
+ * include/mimas/TableView.h:89
  */
 static int TableView_setGridStyle(lua_State *L) {
   try {
@@ -430,7 +430,7 @@ static int TableView_setGridStyle(lua_State *L) {
 
 
 /** void mimas::TableView::setHue(float hue)
- * include/mimas/TableView.h:167
+ * include/mimas/TableView.h:166
  */
 static int TableView_setHue(lua_State *L) {
   try {
@@ -450,7 +450,7 @@ static int TableView_setHue(lua_State *L) {
 
 
 /** void mimas::TableView::setMinimumSize(float w, float h)
- * include/mimas/TableView.h:204
+ * include/mimas/TableView.h:203
  */
 static int TableView_setMinimumSize(lua_State *L) {
   try {
@@ -471,7 +471,7 @@ static int TableView_setMinimumSize(lua_State *L) {
 
 
 /** void mimas::TableView::setModel(DataSource *model)
- * include/mimas/TableView.h:264
+ * include/mimas/TableView.h:263
  */
 static int TableView_setModel(lua_State *L) {
   try {
@@ -491,7 +491,7 @@ static int TableView_setModel(lua_State *L) {
 
 
 /** void mimas::TableView::setMouseTracking(bool enable)
- * include/mimas/TableView.h:210
+ * include/mimas/TableView.h:209
  */
 static int TableView_setMouseTracking(lua_State *L) {
   try {
@@ -511,7 +511,7 @@ static int TableView_setMouseTracking(lua_State *L) {
 
 
 /** void mimas::TableView::setName(const char *name)
- * include/mimas/TableView.h:131
+ * include/mimas/TableView.h:130
  */
 static int TableView_setName(lua_State *L) {
   try {
@@ -531,7 +531,7 @@ static int TableView_setName(lua_State *L) {
 
 
 /** void mimas::TableView::setSizeHint(float w, float h)
- * include/mimas/TableView.h:191
+ * include/mimas/TableView.h:190
  */
 static int TableView_setSizeHint(lua_State *L) {
   try {
@@ -552,7 +552,7 @@ static int TableView_setSizeHint(lua_State *L) {
 
 
 /** void mimas::TableView::setSizePolicy(int horizontal, int vertical)
- * include/mimas/TableView.h:198
+ * include/mimas/TableView.h:197
  */
 static int TableView_setSizePolicy(lua_State *L) {
   try {
@@ -573,7 +573,7 @@ static int TableView_setSizePolicy(lua_State *L) {
 
 
 /** void mimas::TableView::setStyle(const char *text)
- * include/mimas/TableView.h:159
+ * include/mimas/TableView.h:158
  */
 static int TableView_setStyle(lua_State *L) {
   try {
@@ -593,7 +593,7 @@ static int TableView_setStyle(lua_State *L) {
 
 
 /** void mimas::TableView::setStyleSheet(const char *text)
- * include/mimas/TableView.h:163
+ * include/mimas/TableView.h:162
  */
 static int TableView_setStyleSheet(lua_State *L) {
   try {
@@ -613,7 +613,7 @@ static int TableView_setStyleSheet(lua_State *L) {
 
 
 /** void mimas::TableView::setVisibleHeaders(int orientation, bool visible)
- * include/mimas/TableView.h:73
+ * include/mimas/TableView.h:72
  */
 static int TableView_setVisibleHeaders(lua_State *L) {
   try {
@@ -634,7 +634,7 @@ static int TableView_setVisibleHeaders(lua_State *L) {
 
 
 /** void mimas::TableView::show()
- * include/mimas/TableView.h:226
+ * include/mimas/TableView.h:225
  */
 static int TableView_show(lua_State *L) {
   try {
@@ -653,7 +653,7 @@ static int TableView_show(lua_State *L) {
 
 
 /** LuaStackSize mimas::TableView::textSize(const char *text, lua_State *L)
- * include/mimas/TableView.h:182
+ * include/mimas/TableView.h:181
  */
 static int TableView_textSize(lua_State *L) {
   try {
@@ -674,7 +674,7 @@ static int TableView_textSize(lua_State *L) {
 
 
 /** void mimas::TableView::update()
- * include/mimas/TableView.h:176
+ * include/mimas/TableView.h:175
  */
 static int TableView_update(lua_State *L) {
   try {
@@ -693,7 +693,7 @@ static int TableView_update(lua_State *L) {
 
 
 /** QWidget* mimas::TableView::widget()
- * include/mimas/TableView.h:114
+ * include/mimas/TableView.h:113
  */
 static int TableView_widget(lua_State *L) {
   try {
@@ -713,7 +713,7 @@ static int TableView_widget(lua_State *L) {
 
 
 /** int mimas::TableView::width()
- * include/mimas/TableView.h:151
+ * include/mimas/TableView.h:150
  */
 static int TableView_width(lua_State *L) {
   try {
@@ -733,7 +733,7 @@ static int TableView_width(lua_State *L) {
 
 
 /** int mimas::TableView::x()
- * include/mimas/TableView.h:143
+ * include/mimas/TableView.h:142
  */
 static int TableView_x(lua_State *L) {
   try {
@@ -753,7 +753,7 @@ static int TableView_x(lua_State *L) {
 
 
 /** int mimas::TableView::y()
- * include/mimas/TableView.h:147
+ * include/mimas/TableView.h:146
  */
 static int TableView_y(lua_State *L) {
   try {

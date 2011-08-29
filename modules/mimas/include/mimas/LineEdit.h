@@ -42,9 +42,9 @@ namespace mimas {
 
 /** Label widget.
  * @dub lib_name:'LineEdit_core'
- *      destructor: 'dub_destroy'
+ *      destructor: 'luaDestroy'
  */
-class LineEdit : public QLineEdit, public DeletableOutOfLua, public LuaObject
+class LineEdit : public QLineEdit, public LuaObject
 {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)

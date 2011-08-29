@@ -44,9 +44,9 @@ namespace mimas {
 /** Slider (async slider).
  *
  * @dub lib_name:'Slider_core'
- *      destructor: 'dub_destroy'
+ *      destructor: 'luaDestroy'
  */
-class Slider : public QWidget, public DeletableOutOfLua, public LuaObject {
+class Slider : public QWidget, public LuaObject {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
   Q_PROPERTY(float hue READ hue WRITE setHue)
@@ -78,8 +78,8 @@ public:
   }
 
   // Destructor method called when the object goes out of Lua scope
-  void dub_destroy() {
-    dub_cleanup();
+  void luaDestroy() {
+    luaCleanup();
     if (parent()) {
       // the callback function is now dead, make sure it is never called
       QObject::disconnect(this, 0, this, 0);

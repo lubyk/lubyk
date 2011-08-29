@@ -168,28 +168,29 @@ void *dubL_checksdata_n(lua_State *L, int ud, const char *tname) throw() {
 
 // ==================================================
 
-DeletableOutOfLua::DeletableOutOfLua() :
-   userdata_ptr_(NULL) {}
+DeletableOutOfLua::DeletableOutOfLua()
+   : userdata_(NULL) {
+}
 
 DeletableOutOfLua::~DeletableOutOfLua() {
-  if (userdata_ptr_) {
-    *userdata_ptr_ = NULL;
-    userdata_ptr_ = NULL;
+  if (userdata_) {
+    *userdata_ = NULL;
+    userdata_ = NULL;
   }
 }
 
-void DeletableOutOfLua::dub_destroy() {
-  dub_cleanup();
+void DeletableOutOfLua::luaDestroy() {
+  luaCleanup();
   delete this;
 }
 
-void DeletableOutOfLua::set_userdata_ptr(void **ptr) {
-  userdata_ptr_ = ptr;
+void DeletableOutOfLua::setupDeletable(void **obj) {
+  userdata_ = obj;
 }
 
-void DeletableOutOfLua::dub_cleanup() {
+void DeletableOutOfLua::luaCleanup() {
   // so that it is not changed in ~DeletableOutOfLua
-  userdata_ptr_ = NULL;
+  userdata_ = NULL;
 }
 
 /** ======================================== is_userdata */

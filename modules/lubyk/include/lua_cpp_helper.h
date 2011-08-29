@@ -115,7 +115,7 @@ void lua_pushclass2(lua_State *L, T *ptr, const char *type_name) {
 
   // store pointer in class so that it can set it to NULL on destroy with
   // *userdata = NULL
-  ptr->set_userdata_ptr((void**)userdata);
+  ptr->setupDeletable((void**)userdata);
 
   // the userdata is now on top of the stack
 
@@ -124,26 +124,23 @@ void lua_pushclass2(lua_State *L, T *ptr, const char *type_name) {
   lua_setmetatable(L, -2);
 }
 
-/** Classes that can be deleted out of Lua should inherit from this class or
- * implement 'set_userdata_ptr' (and manage the userdata_ptr...)
+/** Classes that can be deleted out of Lua should inherit from this class.
  */
 class DeletableOutOfLua {
-  void **userdata_ptr_;
+  void **userdata_;
 public:
   DeletableOutOfLua();
 
   virtual ~DeletableOutOfLua();
 
-  virtual void dub_destroy();
+  virtual void luaDestroy();
 
-  /** @internal
-   */
-  void set_userdata_ptr(void **ptr);
+  void setupDeletable(void **ptr);
 
 protected:
   /** MUST be called from the custom destructor.
    */
-  void dub_cleanup();
+  void luaCleanup();
 };
 
 /** Push a custom type on the stack.

@@ -44,7 +44,7 @@ namespace mimas {
 
 /** Painter.
  *
- * @dub destructor: 'dub_destroy'
+ * @dub destructor: 'luaDestroy'
  */
 class Painter : public QPainter, public DeletableOutOfLua
 {

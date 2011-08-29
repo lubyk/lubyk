@@ -34,7 +34,7 @@ static int Painter_destructor(lua_State *L) {
 
   
   // custom destructor
-  if (*userdata) (*userdata)->dub_destroy();
+  if (*userdata) (*userdata)->luaDestroy();
   
   *userdata = NULL;
   return 0;

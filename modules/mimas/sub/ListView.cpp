@@ -9,7 +9,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::ListView::ListView(lubyk::Worker *worker)
- * include/mimas/ListView.h:62
+ * include/mimas/ListView.h:61
  */
 static int ListView_ListView(lua_State *L) {
   try {
@@ -34,7 +34,7 @@ static int ListView_destructor(lua_State *L) {
 
   
   // custom destructor
-  if (*userdata) (*userdata)->dub_destroy();
+  if (*userdata) (*userdata)->luaDestroy();
   
   *userdata = NULL;
   return 0;
@@ -70,7 +70,7 @@ static int ListView__tostring(lua_State *L) {
 
 
 /** bool mimas::ListView::close()
- * include/mimas/ListView.h:184
+ * include/mimas/ListView.h:183
  */
 static int ListView_close(lua_State *L) {
   try {
@@ -90,7 +90,7 @@ static int ListView_close(lua_State *L) {
 
 
 /** QString mimas::ListView::cssClass() const 
- * include/mimas/ListView.h:78
+ * include/mimas/ListView.h:77
  */
 static int ListView_cssClass(lua_State *L) {
   try {
@@ -110,7 +110,7 @@ static int ListView_cssClass(lua_State *L) {
 
 
 /** void mimas::ListView::globalMove(float x, float y)
- * include/mimas/ListView.h:212
+ * include/mimas/ListView.h:211
  */
 static int ListView_globalMove(lua_State *L) {
   try {
@@ -131,7 +131,7 @@ static int ListView_globalMove(lua_State *L) {
 
 
 /** LuaStackSize mimas::ListView::globalPosition(lua_State *L)
- * include/mimas/ListView.h:203
+ * include/mimas/ListView.h:202
  */
 static int ListView_globalPosition(lua_State *L) {
   try {
@@ -151,7 +151,7 @@ static int ListView_globalPosition(lua_State *L) {
 
 
 /** int mimas::ListView::height()
- * include/mimas/ListView.h:123
+ * include/mimas/ListView.h:122
  */
 static int ListView_height(lua_State *L) {
   try {
@@ -171,7 +171,7 @@ static int ListView_height(lua_State *L) {
 
 
 /** void mimas::ListView::hide()
- * include/mimas/ListView.h:196
+ * include/mimas/ListView.h:195
  */
 static int ListView_hide(lua_State *L) {
   try {
@@ -190,7 +190,7 @@ static int ListView_hide(lua_State *L) {
 
 
 /** float mimas::ListView::hue()
- * include/mimas/ListView.h:140
+ * include/mimas/ListView.h:139
  */
 static int ListView_hue(lua_State *L) {
   try {
@@ -210,7 +210,7 @@ static int ListView_hue(lua_State *L) {
 
 
 /** LuaStackSize mimas::ListView::indexAt(float x, float y, lua_State *L)
- * include/mimas/ListView.h:234
+ * include/mimas/ListView.h:233
  */
 static int ListView_indexAt(lua_State *L) {
   try {
@@ -232,7 +232,7 @@ static int ListView_indexAt(lua_State *L) {
 
 
 /** bool mimas::ListView::isVisible() const 
- * include/mimas/ListView.h:188
+ * include/mimas/ListView.h:187
  */
 static int ListView_isVisible(lua_State *L) {
   try {
@@ -252,7 +252,7 @@ static int ListView_isVisible(lua_State *L) {
 
 
 /** void mimas::ListView::lower()
- * include/mimas/ListView.h:218
+ * include/mimas/ListView.h:217
  */
 static int ListView_lower(lua_State *L) {
   try {
@@ -271,7 +271,7 @@ static int ListView_lower(lua_State *L) {
 
 
 /** void mimas::ListView::move(int x, int y)
- * include/mimas/ListView.h:103
+ * include/mimas/ListView.h:102
  */
 static int ListView_move(lua_State *L) {
   try {
@@ -292,7 +292,7 @@ static int ListView_move(lua_State *L) {
 
 
 /** LuaStackSize mimas::ListView::name(lua_State *L)
- * include/mimas/ListView.h:92
+ * include/mimas/ListView.h:91
  */
 static int ListView_name(lua_State *L) {
   try {
@@ -312,7 +312,7 @@ static int ListView_name(lua_State *L) {
 
 
 /** QObject* mimas::ListView::object()
- * include/mimas/ListView.h:86
+ * include/mimas/ListView.h:85
  */
 static int ListView_object(lua_State *L) {
   try {
@@ -332,7 +332,7 @@ static int ListView_object(lua_State *L) {
 
 
 /** void mimas::ListView::raise()
- * include/mimas/ListView.h:224
+ * include/mimas/ListView.h:223
  */
 static int ListView_raise(lua_State *L) {
   try {
@@ -351,7 +351,7 @@ static int ListView_raise(lua_State *L) {
 
 
 /** void mimas::ListView::resize(int w, int h)
- * include/mimas/ListView.h:107
+ * include/mimas/ListView.h:106
  */
 static int ListView_resize(lua_State *L) {
   try {
@@ -372,7 +372,7 @@ static int ListView_resize(lua_State *L) {
 
 
 /** void mimas::ListView::selectRow(int row)
- * include/mimas/ListView.h:246
+ * include/mimas/ListView.h:245
  */
 static int ListView_selectRow(lua_State *L) {
   try {
@@ -392,7 +392,7 @@ static int ListView_selectRow(lua_State *L) {
 
 
 /** void mimas::ListView::setHue(float hue)
- * include/mimas/ListView.h:135
+ * include/mimas/ListView.h:134
  */
 static int ListView_setHue(lua_State *L) {
   try {
@@ -412,7 +412,7 @@ static int ListView_setHue(lua_State *L) {
 
 
 /** void mimas::ListView::setMinimumSize(float w, float h)
- * include/mimas/ListView.h:172
+ * include/mimas/ListView.h:171
  */
 static int ListView_setMinimumSize(lua_State *L) {
   try {
@@ -433,7 +433,7 @@ static int ListView_setMinimumSize(lua_State *L) {
 
 
 /** void mimas::ListView::setModel(DataSource *model)
- * include/mimas/ListView.h:254
+ * include/mimas/ListView.h:253
  */
 static int ListView_setModel(lua_State *L) {
   try {
@@ -453,7 +453,7 @@ static int ListView_setModel(lua_State *L) {
 
 
 /** void mimas::ListView::setMouseTracking(bool enable)
- * include/mimas/ListView.h:178
+ * include/mimas/ListView.h:177
  */
 static int ListView_setMouseTracking(lua_State *L) {
   try {
@@ -473,7 +473,7 @@ static int ListView_setMouseTracking(lua_State *L) {
 
 
 /** void mimas::ListView::setName(const char *name)
- * include/mimas/ListView.h:99
+ * include/mimas/ListView.h:98
  */
 static int ListView_setName(lua_State *L) {
   try {
@@ -493,7 +493,7 @@ static int ListView_setName(lua_State *L) {
 
 
 /** void mimas::ListView::setSizeHint(float w, float h)
- * include/mimas/ListView.h:159
+ * include/mimas/ListView.h:158
  */
 static int ListView_setSizeHint(lua_State *L) {
   try {
@@ -514,7 +514,7 @@ static int ListView_setSizeHint(lua_State *L) {
 
 
 /** void mimas::ListView::setSizePolicy(int horizontal, int vertical)
- * include/mimas/ListView.h:166
+ * include/mimas/ListView.h:165
  */
 static int ListView_setSizePolicy(lua_State *L) {
   try {
@@ -535,7 +535,7 @@ static int ListView_setSizePolicy(lua_State *L) {
 
 
 /** void mimas::ListView::setStyle(const char *text)
- * include/mimas/ListView.h:127
+ * include/mimas/ListView.h:126
  */
 static int ListView_setStyle(lua_State *L) {
   try {
@@ -555,7 +555,7 @@ static int ListView_setStyle(lua_State *L) {
 
 
 /** void mimas::ListView::setStyleSheet(const char *text)
- * include/mimas/ListView.h:131
+ * include/mimas/ListView.h:130
  */
 static int ListView_setStyleSheet(lua_State *L) {
   try {
@@ -575,7 +575,7 @@ static int ListView_setStyleSheet(lua_State *L) {
 
 
 /** void mimas::ListView::show()
- * include/mimas/ListView.h:192
+ * include/mimas/ListView.h:191
  */
 static int ListView_show(lua_State *L) {
   try {
@@ -594,7 +594,7 @@ static int ListView_show(lua_State *L) {
 
 
 /** LuaStackSize mimas::ListView::textSize(const char *text, lua_State *L)
- * include/mimas/ListView.h:150
+ * include/mimas/ListView.h:149
  */
 static int ListView_textSize(lua_State *L) {
   try {
@@ -615,7 +615,7 @@ static int ListView_textSize(lua_State *L) {
 
 
 /** void mimas::ListView::update()
- * include/mimas/ListView.h:144
+ * include/mimas/ListView.h:143
  */
 static int ListView_update(lua_State *L) {
   try {
@@ -634,7 +634,7 @@ static int ListView_update(lua_State *L) {
 
 
 /** QWidget* mimas::ListView::widget()
- * include/mimas/ListView.h:82
+ * include/mimas/ListView.h:81
  */
 static int ListView_widget(lua_State *L) {
   try {
@@ -654,7 +654,7 @@ static int ListView_widget(lua_State *L) {
 
 
 /** int mimas::ListView::width()
- * include/mimas/ListView.h:119
+ * include/mimas/ListView.h:118
  */
 static int ListView_width(lua_State *L) {
   try {
@@ -674,7 +674,7 @@ static int ListView_width(lua_State *L) {
 
 
 /** int mimas::ListView::x()
- * include/mimas/ListView.h:111
+ * include/mimas/ListView.h:110
  */
 static int ListView_x(lua_State *L) {
   try {
@@ -694,7 +694,7 @@ static int ListView_x(lua_State *L) {
 
 
 /** int mimas::ListView::y()
- * include/mimas/ListView.h:115
+ * include/mimas/ListView.h:114
  */
 static int ListView_y(lua_State *L) {
   try {

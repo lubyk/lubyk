@@ -47,10 +47,10 @@ namespace mimas {
 
 /** The TableView is used to display data in a table.
  *
- * @dub destructor: 'dub_destroy'
+ * @dub destructor: 'luaDestroy'
  *      ignore: 'luaInit'
  */
-class TableView : public QTableView, public DeletableOutOfLua, public LuaObject {
+class TableView : public QTableView, public LuaObject {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
   Q_PROPERTY(float hue READ hue WRITE setHue)

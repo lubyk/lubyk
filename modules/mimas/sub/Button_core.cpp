@@ -9,7 +9,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::Button::Button(lubyk::Worker *worker, const char *title=NULL, QWidget *parent=NULL)
- * include/mimas/Button.h:58
+ * include/mimas/Button.h:57
  */
 static int Button_Button(lua_State *L) {
   try {
@@ -46,7 +46,7 @@ static int Button_destructor(lua_State *L) {
 
   
   // custom destructor
-  if (*userdata) (*userdata)->dub_destroy();
+  if (*userdata) (*userdata)->luaDestroy();
   
   *userdata = NULL;
   return 0;
@@ -82,7 +82,7 @@ static int Button__tostring(lua_State *L) {
 
 
 /** QString mimas::Button::cssClass() const 
- * include/mimas/Button.h:66
+ * include/mimas/Button.h:65
  */
 static int Button_cssClass(lua_State *L) {
   try {
@@ -102,7 +102,7 @@ static int Button_cssClass(lua_State *L) {
 
 
 /** int mimas::Button::height()
- * include/mimas/Button.h:111
+ * include/mimas/Button.h:110
  */
 static int Button_height(lua_State *L) {
   try {
@@ -122,7 +122,7 @@ static int Button_height(lua_State *L) {
 
 
 /** float mimas::Button::hue()
- * include/mimas/Button.h:128
+ * include/mimas/Button.h:127
  */
 static int Button_hue(lua_State *L) {
   try {
@@ -142,7 +142,7 @@ static int Button_hue(lua_State *L) {
 
 
 /** void mimas::Button::move(int x, int y)
- * include/mimas/Button.h:91
+ * include/mimas/Button.h:90
  */
 static int Button_move(lua_State *L) {
   try {
@@ -163,7 +163,7 @@ static int Button_move(lua_State *L) {
 
 
 /** LuaStackSize mimas::Button::name(lua_State *L)
- * include/mimas/Button.h:80
+ * include/mimas/Button.h:79
  */
 static int Button_name(lua_State *L) {
   try {
@@ -183,7 +183,7 @@ static int Button_name(lua_State *L) {
 
 
 /** QObject* mimas::Button::object()
- * include/mimas/Button.h:74
+ * include/mimas/Button.h:73
  */
 static int Button_object(lua_State *L) {
   try {
@@ -203,7 +203,7 @@ static int Button_object(lua_State *L) {
 
 
 /** void mimas::Button::resize(int w, int h)
- * include/mimas/Button.h:95
+ * include/mimas/Button.h:94
  */
 static int Button_resize(lua_State *L) {
   try {
@@ -224,7 +224,7 @@ static int Button_resize(lua_State *L) {
 
 
 /** void mimas::Button::setHue(float hue)
- * include/mimas/Button.h:123
+ * include/mimas/Button.h:122
  */
 static int Button_setHue(lua_State *L) {
   try {
@@ -244,7 +244,7 @@ static int Button_setHue(lua_State *L) {
 
 
 /** void mimas::Button::setName(const char *name)
- * include/mimas/Button.h:87
+ * include/mimas/Button.h:86
  */
 static int Button_setName(lua_State *L) {
   try {
@@ -264,7 +264,7 @@ static int Button_setName(lua_State *L) {
 
 
 /** void mimas::Button::setStyle(const char *text)
- * include/mimas/Button.h:115
+ * include/mimas/Button.h:114
  */
 static int Button_setStyle(lua_State *L) {
   try {
@@ -284,7 +284,7 @@ static int Button_setStyle(lua_State *L) {
 
 
 /** void mimas::Button::setStyleSheet(const char *text)
- * include/mimas/Button.h:119
+ * include/mimas/Button.h:118
  */
 static int Button_setStyleSheet(lua_State *L) {
   try {
@@ -304,7 +304,7 @@ static int Button_setStyleSheet(lua_State *L) {
 
 
 /** QWidget* mimas::Button::widget()
- * include/mimas/Button.h:70
+ * include/mimas/Button.h:69
  */
 static int Button_widget(lua_State *L) {
   try {
@@ -324,7 +324,7 @@ static int Button_widget(lua_State *L) {
 
 
 /** int mimas::Button::width()
- * include/mimas/Button.h:107
+ * include/mimas/Button.h:106
  */
 static int Button_width(lua_State *L) {
   try {
@@ -344,7 +344,7 @@ static int Button_width(lua_State *L) {
 
 
 /** int mimas::Button::x()
- * include/mimas/Button.h:99
+ * include/mimas/Button.h:98
  */
 static int Button_x(lua_State *L) {
   try {
@@ -364,7 +364,7 @@ static int Button_x(lua_State *L) {
 
 
 /** int mimas::Button::y()
- * include/mimas/Button.h:103
+ * include/mimas/Button.h:102
  */
 static int Button_y(lua_State *L) {
   try {

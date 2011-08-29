@@ -40,7 +40,7 @@ static int HBoxLayout_destructor(lua_State *L) {
 
   
   // custom destructor
-  if (*userdata) (*userdata)->dub_destroy();
+  if (*userdata) (*userdata)->luaDestroy();
   
   *userdata = NULL;
   return 0;
@@ -76,7 +76,7 @@ static int HBoxLayout__tostring(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::addLayout(QLayout *layout)
- * include/mimas/HBoxLayout.h:63
+ * include/mimas/HBoxLayout.h:65
  */
 static int HBoxLayout_addLayout(lua_State *L) {
   try {
@@ -96,7 +96,7 @@ static int HBoxLayout_addLayout(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::addSpacing(int size)
- * include/mimas/HBoxLayout.h:75
+ * include/mimas/HBoxLayout.h:77
  */
 static int HBoxLayout_addSpacing(lua_State *L) {
   try {
@@ -116,7 +116,7 @@ static int HBoxLayout_addSpacing(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::addStretch(int stretch=0)
- * include/mimas/HBoxLayout.h:69
+ * include/mimas/HBoxLayout.h:71
  */
 static int HBoxLayout_addStretch(lua_State *L) {
   try {
@@ -141,7 +141,7 @@ static int HBoxLayout_addStretch(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::addWidget(QWidget *widget, int stretch=0, int alignment=0)
- * include/mimas/HBoxLayout.h:59
+ * include/mimas/HBoxLayout.h:61
  */
 static int HBoxLayout_addWidget(lua_State *L) {
   try {
@@ -172,7 +172,7 @@ static int HBoxLayout_addWidget(lua_State *L) {
 
 
 /** QLayout* mimas::HBoxLayout::layout()
- * include/mimas/HBoxLayout.h:89
+ * include/mimas/HBoxLayout.h:91
  */
 static int HBoxLayout_layout(lua_State *L) {
   try {
@@ -192,7 +192,7 @@ static int HBoxLayout_layout(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::setContentsMargins(int left, int top, int right, int bottom)
- * include/mimas/HBoxLayout.h:85
+ * include/mimas/HBoxLayout.h:87
  */
 static int HBoxLayout_setContentsMargins(lua_State *L) {
   try {
@@ -215,7 +215,7 @@ static int HBoxLayout_setContentsMargins(lua_State *L) {
 
 
 /** void mimas::HBoxLayout::setSpacing(int space)
- * include/mimas/HBoxLayout.h:81
+ * include/mimas/HBoxLayout.h:83
  */
 static int HBoxLayout_setSpacing(lua_State *L) {
   try {

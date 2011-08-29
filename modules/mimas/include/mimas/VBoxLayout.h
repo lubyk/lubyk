@@ -42,7 +42,7 @@ namespace mimas {
 /** VBoxLayout (arrange widgets vertically).
  *
  * @dub lib_name:'VBoxLayout_core'
- *      destructor: 'dub_destroy'
+ *      destructor: 'luaDestroy'
  */
 class VBoxLayout : public QVBoxLayout, public DeletableOutOfLua
 {

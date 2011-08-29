@@ -42,7 +42,7 @@ namespace mimas {
 /** HBoxLayout (arrange widgets horizontally).
  *
  * @dub lib_name:'HBoxLayout_core'
- *      destructor: 'dub_destroy'
+ *      destructor: 'luaDestroy'
  */
 class HBoxLayout : public QHBoxLayout, public DeletableOutOfLua
 {
@@ -50,7 +50,8 @@ class HBoxLayout : public QHBoxLayout, public DeletableOutOfLua
 
 public:
   HBoxLayout(QWidget *parent = NULL)
-   : QHBoxLayout(parent) {}
+      : QHBoxLayout(parent) {
+  }
 
   ~HBoxLayout() {
     MIMAS_DEBUG_GC

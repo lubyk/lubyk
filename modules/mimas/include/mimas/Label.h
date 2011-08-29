@@ -38,7 +38,7 @@ namespace mimas {
 
 /** Label widget.
  * @dub lib_name:'Label_core'
- *      destructor: 'dub_destroy'
+ *      destructor: 'luaDestroy'
  */
 class Label : public QLabel, public DeletableOutOfLua
 {

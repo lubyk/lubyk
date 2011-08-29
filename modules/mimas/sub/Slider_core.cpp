@@ -9,7 +9,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::Slider::Slider(int type=(int) VerticalSliderType, QWidget *parent=0)
- * include/mimas/Slider.h:71
+ * include/mimas/Slider.h:70
  */
 static int Slider_Slider(lua_State *L) {
   try {
@@ -45,7 +45,7 @@ static int Slider_destructor(lua_State *L) {
 
   
   // custom destructor
-  if (*userdata) (*userdata)->dub_destroy();
+  if (*userdata) (*userdata)->luaDestroy();
   
   *userdata = NULL;
   return 0;
@@ -81,7 +81,7 @@ static int Slider__tostring(lua_State *L) {
 
 
 /** int mimas::Slider::borderWidth() const 
- * include/mimas/Slider.h:172
+ * include/mimas/Slider.h:171
  */
 static int Slider_borderWidth(lua_State *L) {
   try {
@@ -101,7 +101,7 @@ static int Slider_borderWidth(lua_State *L) {
 
 
 /** QString mimas::Slider::cssClass() const 
- * include/mimas/Slider.h:93
+ * include/mimas/Slider.h:92
  */
 static int Slider_cssClass(lua_State *L) {
   try {
@@ -121,7 +121,7 @@ static int Slider_cssClass(lua_State *L) {
 
 
 /** int mimas::Slider::height()
- * include/mimas/Slider.h:138
+ * include/mimas/Slider.h:137
  */
 static int Slider_height(lua_State *L) {
   try {
@@ -141,7 +141,7 @@ static int Slider_height(lua_State *L) {
 
 
 /** float mimas::Slider::hue()
- * include/mimas/Slider.h:155
+ * include/mimas/Slider.h:154
  */
 static int Slider_hue(lua_State *L) {
   try {
@@ -161,7 +161,7 @@ static int Slider_hue(lua_State *L) {
 
 
 /** void mimas::Slider::move(int x, int y)
- * include/mimas/Slider.h:118
+ * include/mimas/Slider.h:117
  */
 static int Slider_move(lua_State *L) {
   try {
@@ -182,7 +182,7 @@ static int Slider_move(lua_State *L) {
 
 
 /** LuaStackSize mimas::Slider::name(lua_State *L)
- * include/mimas/Slider.h:107
+ * include/mimas/Slider.h:106
  */
 static int Slider_name(lua_State *L) {
   try {
@@ -202,7 +202,7 @@ static int Slider_name(lua_State *L) {
 
 
 /** QObject* mimas::Slider::object()
- * include/mimas/Slider.h:101
+ * include/mimas/Slider.h:100
  */
 static int Slider_object(lua_State *L) {
   try {
@@ -222,7 +222,7 @@ static int Slider_object(lua_State *L) {
 
 
 /** void mimas::Slider::resize(int w, int h)
- * include/mimas/Slider.h:122
+ * include/mimas/Slider.h:121
  */
 static int Slider_resize(lua_State *L) {
   try {
@@ -243,7 +243,7 @@ static int Slider_resize(lua_State *L) {
 
 
 /** void mimas::Slider::setBorderWidth(int width)
- * include/mimas/Slider.h:168
+ * include/mimas/Slider.h:167
  */
 static int Slider_setBorderWidth(lua_State *L) {
   try {
@@ -263,7 +263,7 @@ static int Slider_setBorderWidth(lua_State *L) {
 
 
 /** void mimas::Slider::setHue(float hue)
- * include/mimas/Slider.h:150
+ * include/mimas/Slider.h:149
  */
 static int Slider_setHue(lua_State *L) {
   try {
@@ -283,7 +283,7 @@ static int Slider_setHue(lua_State *L) {
 
 
 /** void mimas::Slider::setName(const char *name)
- * include/mimas/Slider.h:114
+ * include/mimas/Slider.h:113
  */
 static int Slider_setName(lua_State *L) {
   try {
@@ -303,7 +303,7 @@ static int Slider_setName(lua_State *L) {
 
 
 /** void mimas::Slider::setStyle(const char *text)
- * include/mimas/Slider.h:142
+ * include/mimas/Slider.h:141
  */
 static int Slider_setStyle(lua_State *L) {
   try {
@@ -323,7 +323,7 @@ static int Slider_setStyle(lua_State *L) {
 
 
 /** void mimas::Slider::setStyleSheet(const char *text)
- * include/mimas/Slider.h:146
+ * include/mimas/Slider.h:145
  */
 static int Slider_setStyleSheet(lua_State *L) {
   try {
@@ -343,7 +343,7 @@ static int Slider_setStyleSheet(lua_State *L) {
 
 
 /** void mimas::Slider::setValue(double remote_value)
- * include/mimas/Slider.h:180
+ * include/mimas/Slider.h:179
  */
 static int Slider_setValue(lua_State *L) {
   try {
@@ -363,7 +363,7 @@ static int Slider_setValue(lua_State *L) {
 
 
 /** virtual QSize mimas::Slider::sizeHint() const 
- * include/mimas/Slider.h:160
+ * include/mimas/Slider.h:159
  */
 static int Slider_sizeHint(lua_State *L) {
   try {
@@ -383,7 +383,7 @@ static int Slider_sizeHint(lua_State *L) {
 
 
 /** void mimas::Slider::sliderChangedSlot(double value)
- * include/mimas/Slider.h:189
+ * include/mimas/Slider.h:188
  */
 static int Slider_sliderChangedSlot(lua_State *L) {
   try {
@@ -403,7 +403,7 @@ static int Slider_sliderChangedSlot(lua_State *L) {
 
 
 /** QWidget* mimas::Slider::widget()
- * include/mimas/Slider.h:97
+ * include/mimas/Slider.h:96
  */
 static int Slider_widget(lua_State *L) {
   try {
@@ -423,7 +423,7 @@ static int Slider_widget(lua_State *L) {
 
 
 /** int mimas::Slider::width()
- * include/mimas/Slider.h:134
+ * include/mimas/Slider.h:133
  */
 static int Slider_width(lua_State *L) {
   try {
@@ -443,7 +443,7 @@ static int Slider_width(lua_State *L) {
 
 
 /** int mimas::Slider::x()
- * include/mimas/Slider.h:126
+ * include/mimas/Slider.h:125
  */
 static int Slider_x(lua_State *L) {
   try {
@@ -463,7 +463,7 @@ static int Slider_x(lua_State *L) {
 
 
 /** int mimas::Slider::y()
- * include/mimas/Slider.h:130
+ * include/mimas/Slider.h:129
  */
 static int Slider_y(lua_State *L) {
   try {

@@ -39,6 +39,10 @@ class LuaObject
 {
   int thread_in_env_idx_;
   const char *class_name_;
+  /** This is used to invalidate the userdata in case the object is deleted
+   * out of Lua.
+   */
+  void **userdata_;
 public:
   /** Prepare tables to work with the table based self idion.
    * expects stack to be:
@@ -51,7 +55,9 @@ public:
   
   int luaInit(lua_State *L, void *ptr, const char *type_name) throw();
 
-  virtual ~LuaObject() {}
+  virtual ~LuaObject();
+
+  void luaDestroy();
 
   /** The caller should lock before calling this.
    * @todo: The 'const' stuff is stupid: can't we remove it ?
@@ -62,6 +68,12 @@ public:
 
   lubyk::Worker *worker_;
   lua_State *lua_;
+
+protected:
+  /** When using a custom destructor, this method must be called
+   * from within the custom destructor.
+   */
+  void luaCleanup();
 
 private:
   void setupSuper(lua_State *L, void *ptr) throw();

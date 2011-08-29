@@ -18,7 +18,7 @@ static int Application_destructor(lua_State *L) {
 
   
   // custom destructor
-  if (*userdata) (*userdata)->dub_destroy();
+  if (*userdata) (*userdata)->luaDestroy();
   
   *userdata = NULL;
   return 0;
@@ -54,7 +54,7 @@ static int Application__tostring(lua_State *L) {
 
 
 /** static LuaStackSize mimas::Application::MakeApplication(lua_State *L)
- * include/mimas/Application.h:66
+ * include/mimas/Application.h:61
  */
 static int Application_MakeApplication(lua_State *L) {
   try {
@@ -71,8 +71,27 @@ static int Application_MakeApplication(lua_State *L) {
 
 
 
+/** virtual void mimas::Application::dub_destroy()
+ * include/mimas/Application.h:75
+ */
+static int Application_dub_destroy(lua_State *L) {
+  try {
+    Application *self__ = *((Application**)dubL_checksdata(L, 1, "mimas.Application"));
+    if (!self__) throw dub::Exception("Using deleted mimas.Application in dub_destroy");
+    self__->dub_destroy();
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "mimas.Application.dub_destroy: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "mimas.Application.dub_destroy: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** int mimas::Application::exec()
- * include/mimas/Application.h:87
+ * include/mimas/Application.h:82
  */
 static int Application_exec(lua_State *L) {
   try {
@@ -92,7 +111,7 @@ static int Application_exec(lua_State *L) {
 
 
 /** void mimas::Application::post(lua_State *L)
- * include/mimas/Application.h:98
+ * include/mimas/Application.h:93
  */
 static int Application_post(lua_State *L) {
   try {
@@ -112,7 +131,7 @@ static int Application_post(lua_State *L) {
 
 
 /** void mimas::Application::quit()
- * include/mimas/Application.h:109
+ * include/mimas/Application.h:102
  */
 static int Application_quit(lua_State *L) {
   try {
@@ -131,7 +150,7 @@ static int Application_quit(lua_State *L) {
 
 
 /** LuaStackSize mimas::Application::screenSize(lua_State *L)
- * include/mimas/Application.h:119
+ * include/mimas/Application.h:112
  */
 static int Application_screenSize(lua_State *L) {
   try {
@@ -151,7 +170,7 @@ static int Application_screenSize(lua_State *L) {
 
 
 /** void mimas::Application::setStyleSheet(const char *text)
- * include/mimas/Application.h:113
+ * include/mimas/Application.h:106
  */
 static int Application_setStyleSheet(lua_State *L) {
   try {
@@ -171,7 +190,7 @@ static int Application_setStyleSheet(lua_State *L) {
 
 
 /** static void mimas::Application::terminate(int sig)
- * include/mimas/Application.h:94
+ * include/mimas/Application.h:89
  */
 static int Application_terminate(lua_State *L) {
   try {
@@ -193,6 +212,7 @@ static int Application_terminate(lua_State *L) {
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg Application_member_methods[] = {
+  {"dub_destroy"       , Application_dub_destroy},
   {"exec"              , Application_exec},
   {"post"              , Application_post},
   {"quit"              , Application_quit},

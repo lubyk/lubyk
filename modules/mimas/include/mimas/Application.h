@@ -46,9 +46,9 @@ namespace mimas {
  *
  * @dub lib_name:'Application_core'
  *      constructor: 'MakeApplication'
- *      destructor: 'dub_destroy'
+ *      destructor: 'luaDestroy'
  */
-class Application : public QApplication, public DeletableOutOfLua, public LuaObject {
+class Application : public QApplication, public LuaObject {
   Q_OBJECT
 public:
   /** Private constructor. Use MakeApplication instead.
@@ -73,7 +73,7 @@ public:
 
   // Destructor method called when the object goes out of Lua scope
   virtual void dub_destroy() {
-    dub_cleanup();
+    luaCleanup();
     deleteLater();
   }
 
