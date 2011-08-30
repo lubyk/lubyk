@@ -10,7 +10,8 @@
 --]]------------------------------------------------------
 require 'lubyk'
 
-local should = test.Suite('mimas.Widget')
+local should   = test.Suite('mimas.Widget')
+local withUser = test.UserSuite('mimas.Widget')
 
 --==================== Widget sub-class example =======
 
@@ -107,10 +108,10 @@ local function modName(mod)
   end
 end
 
-function should.respondToClick(t)
+function withUser.should.respondToClick(t)
   -- we use the test env to protect from gc
   t.win = mimas.Window()
-  function t.win.click(x, y, op, btn, mod)
+  function t.win:click(x, y, op, btn, mod)
     t.label:setText(
       string.format('x:%i y:%i op:%s btn:%i mod:%s',
         x,
@@ -122,22 +123,15 @@ function should.respondToClick(t)
     )
   end
 
-
   t.lay = mimas.VBoxLayout(t.win)
-  t.label = mimas.Label('Click on window (not on me)')
+  t.label = mimas.Label('Click on window (not on me, press ESC to close)')
   t.lay:addWidget(t.label)
   t.win:move(100, 300)
   t.win:resize(400, 400)
   t.win:show()
-
-  t.thread = lk.Thread(function()
-    sleep(2000)
-    t.win:close()
-    assertTrue(true)
-  end)
 end
 
-function should.openFileDialog(t)
+function withUser.should.openFileDialog(t)
   local path = lk.file()
   local basedir, filename = lk.directory(path)
   t.win = mimas.Window()
@@ -146,7 +140,7 @@ function should.openFileDialog(t)
   t.win:close()
 end
 
-function should.getExistingDirectory(t)
+function withUser.should.getExistingDirectory(t)
   local path = lk.directory(lk.file())
   local basedir, dirname = lk.directory(path)
   t.win = mimas.Window()

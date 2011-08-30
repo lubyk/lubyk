@@ -1,6 +1,6 @@
 require 'debug'
 
-local lib = {suites = {}}
+local lib = {suites = {}, file_count = 0}
 test = lib
 
 function lib.run(tests)
@@ -10,6 +10,19 @@ end
 
 function lib.Suite(name)
   local suite = {_info = {name = name, tests = {}, errors = {}}}
+  table.insert(lib.suites, suite)
+  -- default setup and teardown functions
+  suite.setup    = function() end
+  suite.teardown = function() end
+  return suite
+end
+
+--- Test suite requiring user interaction/visual feedback. These
+-- tests are turned off when running more then a single file.
+function lib.UserSuite(name)
+  local suite = {_info = {name = name .. '[ux]', tests = {}, errors = {}, user_suite = true}}
+  -- this is to enable syntax like: withUser.should.receiveClick()
+  suite.should = suite
   table.insert(lib.suites, suite)
   -- default setup and teardown functions
   suite.setup    = function() end
@@ -33,8 +46,8 @@ function lib.all()
     lib.gui()
   else
     for i, suite in ipairs(lib.suites) do
-      lib.run_suite(suite)
-      lib.report_suite(suite)
+      lib.runSuite(suite)
+      lib.reportSuite(suite)
     end
     lib.report()
   end
@@ -48,8 +61,8 @@ function lib.gui()
     -- test threads first (or they fail because of mimas widgets creation)
     for i, suite in ipairs(lib.suites) do
       if string.match('lk.Thread', suite._info.name) then
-        lib.run_suite(suite)
-        lib.report_suite(suite)
+        lib.runSuite(suite)
+        lib.reportSuite(suite)
         table.remove(lib.suites, i)
         break
       end
@@ -58,8 +71,8 @@ function lib.gui()
     app = mimas.Application()
     app:post(function()
       for i, suite in ipairs(lib.suites) do
-        lib.run_suite(suite)
-        lib.report_suite(suite)
+        lib.runSuite(suite)
+        lib.reportSuite(suite)
       end
     end)
 
@@ -77,6 +90,7 @@ function lib.loadAll(...)
       print('Loading tests for', mod)
       if lk.fileType(mod) == 'directory' then
         for file in lk.Dir(mod):glob('test/.+_test[.]lua$') do
+          lib.file_count = lib.file_count + 1
           print(file)
           dofile(file)
         end
@@ -90,6 +104,7 @@ function lib.loadAll(...)
       print('Loading tests for', mod)
       if lk.fileType(mod) == 'directory' then
         for file in lk.Dir(mod):glob('test/.+_test[.]lua$') do
+          lib.file_count = lib.file_count + 1
           dofile(file)
         end
       else
@@ -133,9 +148,10 @@ function lib.trace(fun, ...)
   end
 end
 
-function lib.run_suite(suite)
+function lib.runSuite(suite)
   local test_count = 0
   local fail_count = 0
+  local skip_count = 0
   local errors = suite._info.errors
   local test_var
   local test_func
@@ -146,6 +162,7 @@ function lib.run_suite(suite)
   suite._info.gc_protect = {}
   local gc_protect = suite._info.gc_protect
   -- run all tests in the current file
+  local skip = suite._info.user_suite and lib.file_count > 1
   for name,func in pairs(suite) do
     if type(func) == 'function' then
       -- make sure it's a test
@@ -154,35 +171,48 @@ function lib.run_suite(suite)
         gc_protect[name] = {}
         test_var  = gc_protect[name]
         test_func = func
-        suite.setup(gc_protect[name])
-          local ok, err = xpcall(pass_args, error_handler)
-          --local ok, err = pcall(pass_args)
-          if not ok then
-            fail_count = fail_count + 1
-            --local file, line, message = string.match(err, "([^/\.]+\.lua):(%d+): (.+)")
-            --if message then
-            --  errors[name] = message
-            --else
-              errors[name] = err
-            --end
-          end
-        suite.teardown(gc_protect[name])
+        if skip then
+          -- skip user tests
+          skip_count = skip_count + 1
+        else
+          suite.setup(gc_protect[name])
+            local ok, err = xpcall(pass_args, error_handler)
+            --local ok, err = pcall(pass_args)
+            if not ok then
+              fail_count = fail_count + 1
+              --local file, line, message = string.match(err, "([^/\.]+\.lua):(%d+): (.+)")
+              --if message then
+              --  errors[name] = message
+              --else
+                errors[name] = err
+              --end
+            end
+          suite.teardown(gc_protect[name])
+        end
       end
     end
   end
 
   suite._info.test_count = test_count
   suite._info.fail_count = fail_count
+  suite._info.skip_count = skip_count
 end
 
-function lib.report_suite(suite)
-  lib.ok_message = ''
+function lib.reportSuite(suite)
+  local ok_message, skip_message = '', ''
   if suite._info.fail_count == 0 then
     ok_message = 'OK'
   else
     ok_message = string.format('%i Failure(s)', suite._info.fail_count)
   end
-  print(string.format('==== %-18s (%2i tests): %s', suite._info.name, suite._info.test_count, ok_message))
+  if suite._info.skip_count > 0 then
+    if suite._info.skip_count == suite._info.test_count then
+      ok_message = '-- skip'
+    else
+      skip_message = string.format(' / skipped %i', suite._info.skip_count)
+    end
+  end
+  print(string.format('==== %-18s (%2i tests%s): %s', suite._info.name, suite._info.test_count, skip_message, ok_message))
   lib.total_test = lib.total_test + suite._info.test_count
   lib.total_asrt = lib.total_asrt + suite._info.assert_count
   if suite._info.fail_count > 0 then
@@ -198,7 +228,7 @@ function lib.report()
   print('\n')
 
   if lib.total_test == 0 then
-    print(string.format('No tests defined. Test functions must end with "_test.lua"'))
+    print(string.format('No tests defined. Test files must end with "_test.lua"'))
   elseif lib.total_fail == 0 then
     if lib.total_test == 1 then
       print(string.format('Success! %i test passes (%i assertions).', lib.total_test, lib.total_asrt))
