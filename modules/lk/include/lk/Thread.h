@@ -34,6 +34,7 @@
 #include "lubyk/worker.h"
 
 namespace lk {
+
 /** Starts a new OS Thread with a given function.
  * @dub lib_name:'Thread_core'
  */
@@ -77,7 +78,7 @@ private:
     // we may get a kill before even starting
     if (!shouldRun()) return;
 
-    if (!pushLuaCallback("tick")) return;
+    if (!pushLuaCallback("run")) return;
 
     // lua_ = LuaCallback's thread state
     // first argument is self

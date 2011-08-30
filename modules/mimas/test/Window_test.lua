@@ -45,30 +45,12 @@ function should.accessUserdataWithSuper(t)
   end)
 end
 
-function should.displayRoundedWindow(t)
-  -- we use the test env to protect from gc
-  t.win = mimas.SplashScreen()
-  t.layout = mimas.HBoxLayout(t.win)
-  t.win:move(100, 100)
-  t.win:resize(300, 100)
-  t.win:roundedCorners(30)
-  t.win:show()
-  t.label = mimas.Label("Window closes in 200ms")
-  t.layout:addWidget(t.label)
-
-  t.thread = lk.Thread(function()
-    sleep(12200)
-    t.win:close()
-    assertTrue(true)
-  end)
-end
-
-function should.use_custom_paint(t)
+function should.useCustomPaint(t)
   -- we use the test env to protect from gc
   t.win = mimas.Window()
   t.win:move(300, 100)
   t.win:resize(100, 100)
-  function t.win.paint(p)
+  function t.win:paint(p)
     for i=0,40,10 do
       p:fillRect(10+i, 10+i, 80-2*i, 80-2*i, mimas.Color(0.2 + i/50, 0.5, 0.8, 0.5))
     end
@@ -82,11 +64,11 @@ function should.use_custom_paint(t)
   end)
 end
 
-function should.set_resized_callback(t)
+function should.setResizedCallback(t)
   t.win = mimas.Window()
   t.win:move(100, 170)
   t.ok = false
-  function t.win.resized(w, h)
+  function t.win:resized(w, h)
     assertEqual(10, w)
     assertEqual(20, h)
     t.ok = true
@@ -103,7 +85,7 @@ function should.set_resized_callback(t)
   end)
 end
 
-function should.accept_destroy_from_gui(t)
+function should.acceptDestroyFromGui(t)
   t.win = mimas.Window()
   t.win:move(100, 170)
   t.win:resize(50, 50)
@@ -120,7 +102,7 @@ function should.accept_destroy_from_gui(t)
   end)
 end
 
-function should.accept_destroy_from_Lua()
+function should.acceptDestroyFromLua()
   local win = mimas.Window()
   win:move(100, 240)
   win:resize(50, 50)
@@ -136,7 +118,7 @@ function should.accept_destroy_from_Lua()
   end)
 end
 
-function should.compute_text_size()
+function should.computeTextSize()
   local win = mimas.Window()
   assertEqual(78, win:textSize("Hello Lubyk!"))
 end

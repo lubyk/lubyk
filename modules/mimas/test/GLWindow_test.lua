@@ -12,10 +12,10 @@ require 'lubyk'
 
 local should = test.Suite('mimas.GLWindow')
 
-function should.display_window(t)
+function should.displayGLWindow(t)
   -- we use the test env to protect from gc
   t.win = mimas.GLWindow()
-  function t.win.initializeGL()
+  function t.win:initializeGL()
     gl.Enable("POINT_SMOOTH")
     gl.Enable("SMOOTH")
     gl.Enable("BLEND")                                -- Enable alpha blending
@@ -24,16 +24,16 @@ function should.display_window(t)
     gl.ClearDepth(1.0)
     gl.DepthFunc("LEQUAL");
 
-    -- glEnable(GL_CULL_FACE);
-    -- glEnable(GL_DEPTH_TEST);
+    -- gl.Enable('GL_CULL_FACE')
+    -- gl.Enable('GL_DEPTH_TEST')
 
     gl.Hint("PERSPECTIVE_CORRECTION_HINT", "NICEST") -- Really nice perspective
     gl.ClearColor(0.2,0.2,0.2,0.5)
   end
 
-  function t.win.resizeGL(width, height)
+  function t.win:resizeGL(width, height)
     gl.Enable("BLEND")
-    gl.Disable("DEPTH_TEST")
+    --gl.Disable("DEPTH_TEST")
     gl.BlendFunc("SRC_ALPHA", "ONE_MINUS_SRC_ALPHA")
 
     gl.Enable("LINE_SMOOTH")
@@ -62,7 +62,7 @@ function should.display_window(t)
     t.y = math.sin(t.n / 0.7) * 360 / math.pi
     t.z = math.sin(t.n) * 360 / math.pi
     t.win:updateGL()
-    if worker:now() > t.now + 1500 then
+    if worker:now() > t.now + 11500 then
       app:post(function()
         t.timer:stop()
         -- proves that the window was open and all is fine
@@ -72,7 +72,7 @@ function should.display_window(t)
   end)
   t.timer:start()
 
-  function t.win.paintGL()
+  function t.win:paintGL()
     gl.Clear( "COLOR_BUFFER_BIT, DEPTH_BUFFER_BIT")
     gl.MatrixMode("MODELVIEW")
     gl.LoadIdentity()
@@ -94,7 +94,7 @@ function should.display_window(t)
   t.win:show()
 end
 
-function should.accept_destroy_from_gui(t)
+function should.acceptDestroyFromGui(t)
   t.win = mimas.GLWindow()
   t.win:move(100, 170)
   t.win:resize(50, 50)
@@ -111,7 +111,7 @@ function should.accept_destroy_from_gui(t)
   end)
 end
 
-function should.accept_destroy_from_Lua()
+function should.acceptDestroyFromLua()
   local win = mimas.GLWindow()
   win:move(100, 240)
   win:resize(50, 50)
