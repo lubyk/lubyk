@@ -47,7 +47,7 @@ class AbstractRegistration : public Mutex {
 
   virtual ~AbstractRegistration();
 
-  virtual void registration_done() = 0;
+  virtual void registrationDone() = 0;
 
   const char *name() {
     return name_.c_str();

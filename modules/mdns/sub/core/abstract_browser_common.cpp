@@ -36,7 +36,7 @@
 
 namespace mdns {
 
-void AbstractBrowser::get_protocol_from_service_type() {
+void AbstractBrowser::setProtocolFromServiceType() {
   size_t dot_index = service_type_.find(".");
   if (dot_index != std::string::npos) {
     protocol_ = service_type_.substr(1, dot_index - 1);

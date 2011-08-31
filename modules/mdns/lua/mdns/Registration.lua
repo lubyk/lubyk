@@ -9,16 +9,18 @@
   registration).
 
 --]]------------------------------------------------------
-require 'mdns'
 require 'mdns.Registration_core'
-require 'worker'
-local worker = worker
-
 local constr = mdns.Registration
-local function dummy_callback()
+local mt = mdns.Registration_
+
+function mt:callback()
+  -- noop
 end
+
 function mdns.Registration(service_type, name, port, func)
-  print('Registration...', service_type, name)
-  func = func or dummy_callback
-  return constr(worker, service_type, name, port, func)
+  local self = constr(service_type, name, port)
+  if func then
+    self.registrationDone = func
+  end
+  return self
 end

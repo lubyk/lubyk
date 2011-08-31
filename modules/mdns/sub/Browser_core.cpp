@@ -8,6 +8,22 @@ using namespace mdns;
 
 /* ============================ Constructors     ====================== */
 
+/** mdns::Browser::Browser(const char *service_type)
+ * include/mdns/browser.h:50
+ */
+static int Browser_Browser(lua_State *L) {
+  try {
+    const char *service_type = dubL_checkstring(L, 1);
+    Browser * retval__ = new Browser(service_type);
+    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
+    return retval__->luaInit(L, retval__, "mdns.Browser");
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "mdns.Browser.Browser: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "mdns.Browser.Browser: Unknown exception");
+  }
+  return lua_error(L);
+}
 
 
 
@@ -31,7 +47,7 @@ static int Browser__tostring(lua_State *L) {
   Browser **userdata = (Browser**)dubL_checksdata_n(L, 1, "mdns.Browser");
   
   
-  lua_pushfstring(L, "<mdns.Browser: %p %s>", *userdata, (*userdata)->service_type());
+  lua_pushfstring(L, "<mdns.Browser: %p %s>", *userdata, (*userdata)->serviceType());
   
   return 1;
 }
@@ -39,77 +55,19 @@ static int Browser__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
-/** static LuaStackSize mdns::Browser::MakeInstance(lubyk::Worker *worker, const char *service_type, lua_State *L)
+/** const char* mdns::Browser::serviceType()
  * include/mdns/browser.h:62
  */
-static int Browser_MakeInstance(lua_State *L) {
-  try {
-    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checksdata(L, 1, "lubyk.Worker"));
-    const char *service_type = dubL_checkstring(L, 2);
-    
-    LuaStackSize  retval__ = Browser::MakeInstance(worker, service_type, L);
-    return retval__;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Browser.MakeInstance: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "mdns.Browser.MakeInstance: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
-/** virtual void mdns::Browser::add_device(const Location &location)
- * include/mdns/browser.h:75
- */
-static int Browser_add_device(lua_State *L) {
+static int Browser_serviceType(lua_State *L) {
   try {
     Browser *self__ = *((Browser**)dubL_checksdata(L, 1, "mdns.Browser"));
-    const Location *location = *((const Location **)dubL_checksdata(L, 2, "mdns.Location"));
-    self__->add_device(*location);
-    return 0;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Browser.add_device: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "mdns.Browser.add_device: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
-/** virtual void mdns::Browser::remove_device(const char *name)
- * include/mdns/browser.h:127
- */
-static int Browser_remove_device(lua_State *L) {
-  try {
-    Browser *self__ = *((Browser**)dubL_checksdata(L, 1, "mdns.Browser"));
-    const char *name = dubL_checkstring(L, 2);
-    self__->remove_device(name);
-    return 0;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Browser.remove_device: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "mdns.Browser.remove_device: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
-/** const char* mdns::Browser::service_type()
- * include/mdns/browser.h:154
- */
-static int Browser_service_type(lua_State *L) {
-  try {
-    Browser *self__ = *((Browser**)dubL_checksdata(L, 1, "mdns.Browser"));
-    const char * retval__ = self__->service_type();
+    const char * retval__ = self__->serviceType();
     lua_pushstring(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Browser.service_type: %s", e.what());
+    lua_pushfstring(L, "mdns.Browser.serviceType: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mdns.Browser.service_type: Unknown exception");
+    lua_pushfstring(L, "mdns.Browser.serviceType: Unknown exception");
   }
   return lua_error(L);
 }
@@ -121,16 +79,14 @@ static int Browser_service_type(lua_State *L) {
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg Browser_member_methods[] = {
-  {"add_device"        , Browser_add_device},
-  {"remove_device"     , Browser_remove_device},
-  {"service_type"      , Browser_service_type},
+  {"serviceType"       , Browser_serviceType},
   {"__tostring"        , Browser__tostring},
   {"__gc"              , Browser_destructor},
   {NULL, NULL},
 };
 
 static const struct luaL_Reg Browser_namespace_methods[] = {
-  {"Browser"           , Browser_MakeInstance},
+  {"Browser"           , Browser_Browser},
   {NULL, NULL},
 };
 

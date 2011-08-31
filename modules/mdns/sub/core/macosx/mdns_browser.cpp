@@ -80,7 +80,7 @@ public:
 
   void browse(Thread *thread) {
     //  release calling thread semaphore
-    thread_ready();
+    threadReady();
 
     DNSServiceErrorType error;
     DNSServiceRef       service;
@@ -91,7 +91,7 @@ public:
       0,                     // all network interfaces
       browser_->service_type_.c_str(), // service type
       NULL,                  // default domain(s)
-      Implementation::browser_callback,    // callback function
+      Implementation::browserCallback,    // callback function
       (void*)browser_);       // context
 
     if (error == kDNSServiceErr_NoError) {
@@ -110,7 +110,7 @@ public:
     struct timeval tv;
     int result;
 
-    while (should_run()) {
+    while (shouldRun()) {
       FD_ZERO(&readfds);
       FD_SET(dns_sd_fd, &readfds);
       tv.tv_sec = LONG_TIME;
@@ -150,7 +150,7 @@ public:
     BrowsedDevice *device = (BrowsedDevice*)context;
 
     if (device->flags_ & kDNSServiceFlagsAdd) {
-      device->browser_->add_device(Location(
+      device->browser_->addDevice(Location(
                                device->browser_->protocol_.c_str(),
                                device->name_.c_str(),
                                hostname,
@@ -158,11 +158,11 @@ public:
                                interface_index
                                ));
     } else {
-      device->browser_->remove_device(device->name_.c_str());
+      device->browser_->removeDevice(device->name_.c_str());
     }
   }
 
-  static void browser_callback(DNSServiceRef service,
+  static void browserCallback(DNSServiceRef service,
                                DNSServiceFlags flags,
                                uint32_t interface_index,
                                DNSServiceErrorType error,
@@ -204,9 +204,9 @@ public:
 };
 
 AbstractBrowser::AbstractBrowser(const char *service_type)
-    : running_(false),
-      service_type_(service_type) {
-  get_protocol_from_service_type();
+      : running_(false),
+        service_type_(service_type) {
+  setProtocolFromServiceType();
   impl_ = new AbstractBrowser::Implementation(this);
 }
 

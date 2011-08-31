@@ -8,6 +8,24 @@ using namespace mdns;
 
 /* ============================ Constructors     ====================== */
 
+/** mdns::Registration::Registration(const char *service_type, const char *name, uint port)
+ * include/mdns/registration.h:50
+ */
+static int Registration_Registration(lua_State *L) {
+  try {
+    const char *service_type = dubL_checkstring(L, 1);
+    const char *name = dubL_checkstring(L, 2);
+    uint port = dubL_checkint(L, 3);
+    Registration * retval__ = new Registration(service_type, name, port);
+    // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
+    return retval__->luaInit(L, retval__, "mdns.Registration");
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "mdns.Registration.Registration: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "mdns.Registration.Registration: Unknown exception");
+  }
+  return lua_error(L);
+}
 
 
 
@@ -39,59 +57,18 @@ static int Registration__tostring(lua_State *L) {
 /* ============================ Member Methods   ====================== */
 
 
-/** static LuaStackSize mdns::Registration::MakeInstance(lubyk::Worker *worker, const char *service_type, const char *name, uint port, lua_State *L)
- * include/mdns/registration.h:58
- */
-static int Registration_MakeInstance(lua_State *L) {
-  try {
-    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checksdata(L, 1, "lubyk.Worker"));
-    const char *service_type = dubL_checkstring(L, 2);
-    const char *name = dubL_checkstring(L, 3);
-    uint port = dubL_checkint(L, 4);
-    
-    LuaStackSize  retval__ = Registration::MakeInstance(worker, service_type, name, port, L);
-    return retval__;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Registration.MakeInstance: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "mdns.Registration.MakeInstance: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
-/** virtual void mdns::Registration::registration_done()
- * include/mdns/registration.h:70
- */
-static int Registration_registration_done(lua_State *L) {
-  try {
-    Registration *self__ = *((Registration**)dubL_checksdata(L, 1, "mdns.Registration"));
-    self__->registration_done();
-    return 0;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "mdns.Registration.registration_done: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "mdns.Registration.registration_done: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
 
 
 /* ============================ Lua Registration ====================== */
 
 static const struct luaL_Reg Registration_member_methods[] = {
-  {"registration_done" , Registration_registration_done},
   {"__tostring"        , Registration__tostring},
   {"__gc"              , Registration_destructor},
   {NULL, NULL},
 };
 
 static const struct luaL_Reg Registration_namespace_methods[] = {
-  {"Registration"      , Registration_MakeInstance},
+  {"Registration"      , Registration_Registration},
   {NULL, NULL},
 };
 

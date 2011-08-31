@@ -40,17 +40,17 @@ namespace mdns {
  * when devices are added or removed.
  *
  * @dub string_format:'%%s'
- *      string_args:'(*userdata)->service_type()'
+ *      string_args:'(*userdata)->serviceType()'
  *      lib_name:'Browser_core'
- *      constructor: 'MakeInstance'
  */
-class Browser : public AbstractBrowser, public LuaCallback
+class Browser : public AbstractBrowser, public LuaObject
 {
 public:
-  Browser(lubyk::Worker *worker, const char *service_type) :
-    AbstractBrowser(service_type),
-    LuaCallback(worker) {
-    lua_ = NULL;
+  Browser(const char *service_type)
+      : AbstractBrowser(service_type) {
+    // We can start now because we know the worker lock will not be
+    // released before 'self' is created and the callback is set (ctor in
+    // Lua)
     start();
   }
 
@@ -59,100 +59,78 @@ public:
     stop();
   }
 
-  static LuaStackSize MakeInstance(lubyk::Worker *worker, const char *service_type, lua_State *L) {
-    Browser *instance = new Browser(worker, service_type);
-    luaL_checktype(L, -1, LUA_TFUNCTION);
-    lua_pushclass<Browser>(L, instance, "mdns.Browser");
-    lua_pushvalue(L, -2);
-    // ... <self> <func>
-    instance->set_lua_callback(L);
-    instance->start();
-    lua_pop(L, 1);
-    // ... <self>
-    return 1;
+  const char *serviceType() {
+    return service_type_.c_str();
   }
 
-  virtual void add_device(const Location &location) {
-    if (!lua_) {
-      fprintf(stderr, "Browser callback not set while adding '%s' (%s:%i)!\n", location.name(), location.host(), location.port());
-      return;
-    }
-
+protected:
+  virtual void addDevice(const Location &location) {
     lua_State *L = lua_;
     ScopedLock lock(worker_);
 
-    // do not push self
-    push_lua_callback(false);
+    if (!pushLuaCallback("addDevice")) {
+      fprintf(stderr, "Browser 'addDevice' not set while adding '%s' (%s:%i)!\n", location.name(), location.host(), location.port());
+      return;
+    }
 
     // create table {op = 'add', name = 'x', host = '10.0.0.34', port = 7500, interface = 2}
     lua_newtable(L);
-
     // op = 'add'
     lua_pushstring(L, "op");
     lua_pushstring(L, "add");
     lua_settable(L, -3);
-
     // name = 'xxxx'
     lua_pushstring(L, "name");
     lua_pushstring(L, location.name());
     lua_settable(L, -3);
-
     // host = 'gaspard.local' / '10.3.4.5'
     lua_pushstring(L, "host");
     lua_pushstring(L, location.host());
     lua_settable(L, -3);
-
     // ip = '10.3.4.5' / 'localhost'
     lua_pushstring(L, "ip");
     lua_pushstring(L, location.name_from_ip(location.ip()).c_str());
     lua_settable(L, -3);
-
     // port = 7500
     lua_pushstring(L, "port");
     lua_pushnumber(L, location.port());
     lua_settable(L, -3);
-
     // interface = 2
     lua_pushstring(L, "interface");
     lua_pushnumber(L, location.interface());
     lua_settable(L, -3);
-
-    int status = lua_pcall(L, 1, 0, 0);
+    // ... <fun> <self> <table>
+    int status = lua_pcall(L, 2, 0, 0);
 
     if (status) {
-      printf("Error in add_device: %s\n", lua_tostring(L, -1));
+      printf("Error in 'addDevice': %s\n", lua_tostring(L, -1));
     }
   }
 
-  virtual void remove_device(const char *name) {
+  virtual void removeDevice(const char *name) {
     lua_State *L = lua_;
     ScopedLock lock(worker_);
 
-    // do not push self
-    push_lua_callback(false);
-
+    if (!pushLuaCallback("removeDevice")) {
+      fprintf(stderr, "Browser 'removeDevice' not set while removing '%s' !\n", name);
+      return;
+    }
     // create table {op = 'remove', name = 'x'}
     lua_newtable(L);
-
     // op = 'remove'
     lua_pushstring(L, "op");
     lua_pushstring(L, "remove");
     lua_settable(L, -3);
-
     // name = 'xxxx'
     lua_pushstring(L, "name");
     lua_pushstring(L, name);
     lua_settable(L, -3);
-
-    int status = lua_pcall(L, 1, 0, 0);
+    // ... <fun> <self> <table>
+    int status = lua_pcall(L, 2, 0, 0);
 
     if (status) {
-      printf("Error in remove_device: %s\n", lua_tostring(L, -1));
+      printf("Error in 'removeDevice': %s\n", lua_tostring(L, -1));
     }
-  }
-
-  const char *service_type() {
-    return service_type_.c_str();
   }
 };
 } // mdns

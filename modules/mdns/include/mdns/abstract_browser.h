@@ -62,11 +62,11 @@ public:
 
   /** This method is called just after a new proxy has been added to the list.
    */
-  virtual void add_device(const Location &location) = 0;
+  virtual void addDevice(const Location &location) = 0;
 
   /** This method is called so that you have an opportunity to delete it cleanly.
    */
-  virtual void remove_device(const char *name) = 0;
+  virtual void removeDevice(const char *name) = 0;
 
 protected:
 
@@ -75,22 +75,22 @@ protected:
   virtual void start();
 
   /** This method *must* be called from sub-classes in their destructors to
-   * make sure the callbacks (add_device, remove_device) are not called in the
+   * make sure the callbacks (addDevice, removeDevice) are not called in the
 	 * middle of a class destruction.
 	 */
   virtual void stop();
 
   /** Return true if the browser is running (searching for devices).
    */
-  bool is_running() {
+  bool isRunning() {
     return running_;
   }
 
-  void set_running(bool is_running) {
+  void setRunning(bool is_running) {
     running_ = is_running;
   }
 
-  void get_protocol_from_service_type();
+  void setProtocolFromServiceType();
 
 };
 

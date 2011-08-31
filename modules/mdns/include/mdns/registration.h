@@ -42,60 +42,47 @@ namespace mdns {
  * @dub string_format:'%%s'
  *      string_args:'(*userdata)->name()'
  *      lib_name:'Registration_core'
- *      constructor:'MakeInstance'
  */
-class Registration : public AbstractRegistration, public LuaCallback
+class Registration : public AbstractRegistration, public LuaObject
 {
 public:
-  Registration(lubyk::Worker *worker, const char *service_type, const char *name, uint port) :
-    AbstractRegistration(service_type, name, port),
-    LuaCallback(worker) {}
+  Registration(const char *service_type, const char *name, uint port)
+      : AbstractRegistration(service_type, name, port) {
+  }
 
   ~Registration() {
     stop();
   }
 
-  static LuaStackSize MakeInstance(lubyk::Worker *worker, const char *service_type, const char *name, uint port, lua_State *L) {
-    Registration *instance = new Registration(worker, service_type, name, port);
-    luaL_checktype(L, -1, LUA_TFUNCTION);
-    lua_pushclass<Registration>(L, instance, "mdns.Registration");
-    lua_pushvalue(L, -2);
-    // ... <self> <func>
-    instance->set_lua_callback(L);
-    lua_pop(L, 1);
-    // ... <self>
-    return 1;
-  }
-
-  virtual void registration_done() {
+protected:
+  virtual void registrationDone() {
     lua_State *L = lua_;
     ScopedLock lock(worker_);
 
     // do not push self
-    push_lua_callback(false);
+    if (!pushLuaCallback("registrationDone")) {
+      return;
+    }
 
     // create table {name = 'x', host = '10.0.0.34', port = 7500}
     lua_newtable(L);
-
     // name = 'xxxxx'
     lua_pushstring(L, "name");
     lua_pushstring(L, name_.c_str());
     lua_settable(L, -3);
-
     // host = 'xxxx'
     lua_pushstring(L, "host");
     lua_pushstring(L, host_.c_str());
     lua_settable(L, -3);
-
     // port = 7500
     lua_pushstring(L, "port");
     lua_pushnumber(L, port_);
     lua_settable(L, -3);
-
-    int status = lua_pcall(L, 1, 0, 0);
+    // ... <fun> <self> <table>
+    int status = lua_pcall(L, 2, 0, 0);
 
     if (status) {
-      printf("Error in registration_done: %s\n", lua_tostring(L, -1));
+      printf("Error in 'registrationDone': %s\n", lua_tostring(L, -1));
     }
   }
 };

@@ -31,22 +31,27 @@ function should.browse()
   local hostname    = nil
   local device_list = {}
   -- register a service at port 12345
-  local registration = mdns.Registration(lubyk.service_type, 'Service for browse', 12346, function(service)
+  local registration = mdns.Registration(lubyk.service_type, 'Service for browse', 12346)
+  function registration:registrationDone(service)
     hostname = service.host
     continue = true
-  end)
+  end
 
   -- wait (and give time for callback to enter Lua State)
-  while not continue do
+  local now = worker:now()
+  while not continue and worker:now() < now + timeout do
     sleep(10)
   end
   continue = false
 
-  local browser = mdns.Browser(lubyk.service_type, function(service)
+  local browser = mdns.Browser(lubyk.service_type)
+  function browser:addDevice(service)
     if service.op == should_op and service.name == 'Service for browse' then
       continue = true
     end
-  end)
+  end
+  browser.removeDevice = browser.addDevice
+
   -- wait (and give time for callback to enter Lua State)
   local now = worker:now()
   while not continue and worker:now() < now + timeout do

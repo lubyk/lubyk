@@ -68,14 +68,14 @@ public:
     startThread<Implementation, &Implementation::registration>(this, NULL);
   }
 
-  void register_service(DNSServiceRef service) {
+  void registerService(DNSServiceRef service) {
     // Run until break.
     int dns_sd_fd = DNSServiceRefSockFD(service);
     fd_set readfds;
     struct timeval tv;
     int result;
 
-    while (should_run()) {
+    while (shouldRun()) {
       FD_ZERO(&readfds);
       FD_SET(dns_sd_fd, &readfds);
       tv.tv_sec = LONG_TIME;
@@ -102,7 +102,7 @@ public:
 
   void registration(Thread *thread) {
     //  release calling thread semaphore
-    thread->thread_ready();
+    thread->threadReady();
 
     DNSServiceErrorType error;
     DNSServiceRef service;
@@ -117,12 +117,12 @@ public:
       htons(master_->port_),// port number
       0,                    // length of TXT record
       NULL,                 // no TXT record
-      Implementation::register_callback,  // callback function
+      Implementation::registerCallback,  // callback function
       (void*)master_);         // context
 
     if (error == kDNSServiceErr_NoError) {
       pthread_cleanup_push(registration_cleanup, &service);
-        register_service(service);
+        registerService(service);
       pthread_cleanup_pop(0); // 0 = do not execute on pop
     } else {
       fprintf(stderr,"Could not register service %s.%s on port %u (error %d)\n", master_->name_.c_str(), master_->service_type_.c_str(), master_->port_, error);//, strerror(errno));
@@ -132,13 +132,13 @@ public:
   }
 
   /** Callback called after registration. */
-  static void register_callback(DNSServiceRef ref,
-                                DNSServiceFlags flags,
-                                DNSServiceErrorType error,
-                                const char *name,
-                                const char *service_type,
-                                const char *host,
-                                void *context) {
+  static void registerCallback(DNSServiceRef ref,
+                               DNSServiceFlags flags,
+                               DNSServiceErrorType error,
+                               const char *name,
+                               const char *service_type,
+                               const char *host,
+                               void *context) {
 
     if (error != kDNSServiceErr_NoError) {
       fprintf(stderr, "DNSServiceRegister error (%d).\n", error);
@@ -146,7 +146,7 @@ public:
       AbstractRegistration *reg = (AbstractRegistration*)context;
       reg->name_ = name;
       reg->host_ = host;
-      reg->registration_done();
+      reg->registrationDone();
     }
   }
   AbstractRegistration *master_;
