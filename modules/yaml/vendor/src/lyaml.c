@@ -81,6 +81,22 @@ struct lua_yaml_dumper {
 
 static int l_null(lua_State *);
 
+// [[lubyk
+// custom lua_isnumber to avoid relying on the locale (through strtod) to detect
+// floating point numbers.
+
+// Uses the same strtod as ruby from
+// Copyright (c) 1988-1993 The Regents of the University of California.
+// Copyright (c) 1994 Sun Microsystems, Inc.
+double strtod_no_locale(const char *string, char **endPtr);
+
+static int lua_isnumber_no_locale(const char *str, int len, lua_Number *nb) {
+  char *endptr;
+  *nb = strtod_no_locale(str, &endptr);
+  return endptr != str;
+}
+// lubyk]]
+
 static void generate_error_message(struct lua_yaml_loader *loader) {
    char buf[256];
    luaL_Buffer b;
@@ -223,12 +239,12 @@ static void load_scalar(struct lua_yaml_loader *loader) {
    }
 
    lua_pushlstring(loader->L, str, length);
+   lua_Number n;
 
    /* plain scalar and Lua can convert it to a number?  make it so... */
    if (Load_Numeric_Scalars
       && loader->event.data.scalar.style == YAML_PLAIN_SCALAR_STYLE
-      && lua_isnumber(loader->L, -1)) {
-      lua_Number n = lua_tonumber(loader->L, -1);
+      && lua_isnumber_no_locale(str, length, &n)) {
       lua_pop(loader->L, 1);
       lua_pushnumber(loader->L, n);
    }
