@@ -53,8 +53,8 @@ class Button : public QPushButton, public LuaObject {
   Q_PROPERTY(float hue READ hue WRITE setHue)
 
 public:
-  Button(lubyk::Worker *worker, const char *title = NULL, QWidget *parent = NULL) :
-    QPushButton(title, parent) {}
+  Button(const char *title = NULL, QWidget *parent = NULL)
+      : QPushButton(title, parent) {}
 
   ~Button() {
     MIMAS_DEBUG_GC
@@ -129,21 +129,26 @@ public:
   }
 
 protected:
-
   virtual void mousePressEvent(QMouseEvent *event) {
-    click(event, MousePress);
+    if (!click(event, MousePress)) {
+      QPushButton::mousePressEvent(event);
+    }
   }
 
   virtual void mouseDoubleClickEvent(QMouseEvent *event) {
-    click(event, DoubleClick);
+    if (!click(event, DoubleClick)) {
+      QPushButton::mouseDoubleClickEvent(event);
+    }
   }
 
   virtual void mouseReleaseEvent(QMouseEvent *event) {
-    click(event, MouseRelease);
+    if (!click(event, MouseRelease)) {
+      QPushButton::mouseReleaseEvent(event);
+    }
   }
 
 private:
-  void click(QMouseEvent *event, int type);
+  bool click(QMouseEvent *event, int type);
 
   float hue_;
 };

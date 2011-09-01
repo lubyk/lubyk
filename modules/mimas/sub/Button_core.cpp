@@ -8,23 +8,22 @@ using namespace mimas;
 
 /* ============================ Constructors     ====================== */
 
-/** mimas::Button::Button(lubyk::Worker *worker, const char *title=NULL, QWidget *parent=NULL)
+/** mimas::Button::Button(const char *title=NULL, QWidget *parent=NULL)
  * include/mimas/Button.h:57
  */
 static int Button_Button(lua_State *L) {
   try {
     int top__ = lua_gettop(L);
     Button * retval__;
-    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checksdata(L, 1, "lubyk.Worker"));
-    if (top__ < 2) {
-      retval__ = new Button(worker);
+    if (top__ < 1) {
+      retval__ = new Button();
     } else {
-      const char *title = dubL_checkstring(L, 2);
-      if (top__ < 3) {
-        retval__ = new Button(worker, title);
+      const char *title = dubL_checkstring(L, 1);
+      if (top__ < 2) {
+        retval__ = new Button(title);
       } else {
-        QWidget *parent = *((QWidget **)dubL_checksdata(L, 3, "mimas.QWidget"));
-        retval__ = new Button(worker, title, parent);
+        QWidget *parent = *((QWidget **)dubL_checksdata(L, 2, "mimas.QWidget"));
+        retval__ = new Button(title, parent);
       }
     }
     // The class inherits from 'LuaCallback', use lua_init instead of pushclass.

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'LineEdit.h'
 **
-** Created: Mon Aug 29 17:38:02 2011
+** Created: Thu Sep 1 15:21:49 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.3)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -32,17 +32,18 @@ static const uint qt_meta_data_mimas__LineEdit[] = {
 
  // slots: signature, parameters, type, tag, flags
       17,   16,   16,   16, 0x08,
-      40,   35,   16,   16, 0x08,
+      44,   39,   16,   16, 0x08,
 
  // properties: name, type, flags
-      68,   60, 0x0a095001,
+      76,   68, 0x0a095001,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_mimas__LineEdit[] = {
-    "mimas::LineEdit\0\0editingFinished()\0"
-    "text\0textEdited(QString)\0QString\0class\0"
+    "mimas::LineEdit\0\0editingFinishedSlot()\0"
+    "text\0textEditedSlot(QString)\0QString\0"
+    "class\0"
 };
 
 const QMetaObject mimas::LineEdit::staticMetaObject = {
@@ -76,8 +77,8 @@ int mimas::LineEdit::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: editingFinished(); break;
-        case 1: textEdited((*reinterpret_cast< const QString(*)>(_a[1]))); break;
+        case 0: editingFinishedSlot(); break;
+        case 1: textEditedSlot((*reinterpret_cast< const QString(*)>(_a[1]))); break;
         default: ;
         }
         _id -= 2;

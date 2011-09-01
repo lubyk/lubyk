@@ -8,6 +8,7 @@
 --]]------------------------------------------------------
 require 'lubyk'
 local should = test.Suite('editor.SimpleDialog')
+local withUser = test.UserSuite('editor.SimpleDialog')
 
 local function mockList(data)
   local self = mimas.DataSource()
@@ -26,7 +27,7 @@ function should.loadCode()
   assertTrue(editor.SimpleDialog)
 end
 
-function should.displayDialog(t)
+function withUser.should.displayDialog(t)
   t.data = mockList()
   t.dlg = editor.SimpleDialog {
     data    = t.data,
@@ -53,7 +54,7 @@ function should.displayDialog(t)
 end
 
 
-function should.displayDialogWithoutButtons(t)
+function withUser.should.displayDialogWithoutButtons(t)
   t.data = mockList()
   t.dlg = editor.SimpleDialog {
     data    = t.data,
@@ -73,7 +74,7 @@ function should.displayDialogWithoutButtons(t)
   end)
 end
 
-function should.displayNextView(t)
+function withUser.should.displayNextView(t)
   t.win = mimas.Window()
   t.lay = mimas.VBoxLayout(t.win)
   t.dlg = editor.SimpleDialog {

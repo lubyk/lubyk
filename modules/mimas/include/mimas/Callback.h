@@ -55,17 +55,14 @@ public:
   // Our own custom event id
   static const QEvent::Type EventType;
 
-  Callback() :
-    self_in_app_(-1) {}
+  Callback() : self_in_app_(-1) {}
 
   virtual ~Callback() {
     MIMAS_DEBUG_GC
   }
 
   void connect(QObject *obj, const char *method, const char *callback) {
-    QObject::connect(
-      obj,  method,
-      this, callback);
+    QObject::connect(obj, method, this, callback);
   }
 
   /** Simple event that should execute a callback on reception.

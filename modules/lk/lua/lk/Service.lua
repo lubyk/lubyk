@@ -37,7 +37,6 @@ setmetatable(lib, {
 
   --======================================= REP server (sync)
   self.rep = zmq.SimpleRep(function(...)
-    print(name, "RECEIVED REQUEST", ...)
     if ... == lubyk.info_url then
       -- get other ports from service
       if not self.info.pub then
@@ -68,7 +67,6 @@ setmetatable(lib, {
   end)
 
   --======================================= announce REP server
-  print('Service', service_type, name, self.pull:port())
   self.registration = mdns.Registration(service_type, name, self.rep:port())
 
   setmetatable(self, lib)

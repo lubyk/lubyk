@@ -11,43 +11,48 @@
 require 'lubyk'
 
 local should = test.Suite('mimas.Button')
+local withUser = should:testWithUser()
 
-function should.drawButton(t)
+function withUser.should.connectToCallback(t)
   t.win = mimas.Window()
   t.win:move(100, 100)
   t.win:resize(200,200)
 
-  t.btn = mimas.Button("Button without layout", t.win)
+  t.btn = mimas.Button("click me", t.win)
   t.callback = mimas.Callback(function()
-    assertTrue(true)
-    t.win:close()
+    t.continue = true
   end)
 
   t.callback:connect(t.btn, 'clicked')
   t.win:show()
-  t.timeout = lk.Thread(function()
-    sleep(2000)
-    t.win:close()
+  t:timeout(function(done)
+    if done or t.continue then
+      t.win:close()
+      assertTrue(t.continue)
+      return true -- done
+    end
   end)
 end
 
-function should.createWithCallback(t)
+function withUser.should.createWithFunction(t)
   t.win = mimas.Window()
   t.win:move(200, 200)
   t.win:resize(200,200)
   t.lay = mimas.HBoxLayout(t.win)
-  t.btn = mimas.Button("Button with layout", function()
-    assertTrue(true)
-    t.win:close()
+  t.btn = mimas.Button("click me", function()
+    t.continue = true
   end)
   collectgarbage('collect')
   -- should not remove the callback because it is saved with
   -- the button's env
   t.lay:addWidget(t.btn)
   t.win:show()
-  t.timeout = lk.Thread(function()
-    sleep(2500)
-    t.win:close()
+  t:timeout(function(done)
+    if done or t.continue then
+      t.win:close()
+      assertTrue(t.continue)
+      return true
+    end
   end)
 end
 

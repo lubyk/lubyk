@@ -117,25 +117,26 @@ function lib:init(library)
   --============ ListView ===============
   -- Display list of found prototypes
   self.list_view = mimas.ListView()
-  self.super:addWidget(self.list_view)
-  function self.list_view.rowCount()
+  self.list_view.lib_view = self
+  self:addWidget(self.list_view)
+  function self.list_view:rowCount()
     return library:nodeCount()
   end
 
-  function self.list_view.data(row_i)
+  function self.list_view:data(row_i)
     return library:node(row_i).name
   end
 
-  function self.list_view.click(x, y, type, btn, mod)
-    local row_i, node_def = self.list_view:indexAt(x, y)
+  function self.list_view:click(x, y, type, btn, mod)
+    local row_i, node_def = self:indexAt(x, y)
     if row_i then
       node_def = library:node(row_i)
     end
-    return clickInList(self, node_def, x, y, type, btn, mod)
+    return clickInList(self.lib_view, node_def, x, y, type, btn, mod)
   end
 
-  function self.list_view.mouse(x, y)
-    mouseInList(self, x, y)
+  function self.list_view:mouse(x, y)
+    mouseInList(self.lib_view, x, y)
   end
   --=====================================
 

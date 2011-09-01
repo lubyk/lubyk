@@ -92,7 +92,7 @@ bool LineEdit::click(QMouseEvent *event, int type) {
   lua_State *L = lua_;
   ScopedLock lock(worker_);
 
-  if (!pushLuaCallback("initializeGL")) return false;
+  if (!pushLuaCallback("click")) return false;
   lua_pushnumber(L, event->x());
   lua_pushnumber(L, event->y());
   lua_pushnumber(L, type);
@@ -116,12 +116,12 @@ bool LineEdit::click(QMouseEvent *event, int type) {
   return true;
 }
 
-void LineEdit::editingFinished() {
+void LineEdit::editingFinishedSlot() {
   // get data from Lua
   lua_State *L = lua_;
   ScopedLock lock(worker_);
 
-  if (!pushLuaCallback("initializeGL")) return;
+  if (!pushLuaCallback("editingFinished")) return;
   lua_pushstring(L, text());
   // <func> <self> <text>
   int status = lua_pcall(L, 2, 0, 0);
@@ -132,13 +132,12 @@ void LineEdit::editingFinished() {
   }
 }
 
-// connected to the textEdited signal
-void LineEdit::textEdited(const QString &text) {
+void LineEdit::textEditedSlot(const QString &text) {
   // get data from Lua
   lua_State *L = lua_;
   ScopedLock lock(worker_);
 
-  if (!pushLuaCallback("initializeGL")) return;
+  if (!pushLuaCallback("textEdited")) return;
   lua_pushstring(L, text.toUtf8().data());
   // <func> <self> <text>
   int status = lua_pcall(L, 2, 0, 0);

@@ -6,8 +6,6 @@
   GUI event callback (can be connected to widget signals).
 
 --]]------------------------------------------------------
-require 'worker'
-local worker = worker
 local constr = mimas_core.Callback
 local mt = mimas_core.Callback_
 local connect = mt.connect

@@ -1,6 +1,7 @@
 require 'debug'
 
-local lib = {suites = {}, file_count = 0}
+local lib = {suites = {}, file_count = 0, TIMEOUT = 35000}
+lib.__index = lib
 test = lib
 
 function lib.run(tests)
@@ -8,8 +9,22 @@ function lib.run(tests)
   lunit.main()
 end
 
+function lib:testWithUser()
+  return lib.UserSuite(self._info.name)
+end
+
+function lib:timeout(func)
+  self.timeout = lk.Thread(function()
+    local now = worker:now()
+    while not func(worker:now() >= now + self.TIMEOUT) do
+      sleep(100)
+    end
+  end)
+end
+
 function lib.Suite(name)
   local suite = {_info = {name = name, tests = {}, errors = {}}}
+  setmetatable(suite, lib)
   table.insert(lib.suites, suite)
   -- default setup and teardown functions
   suite.setup    = function() end
@@ -168,8 +183,8 @@ function lib.runSuite(suite)
       -- make sure it's a test
       if name ~= '_info' and name ~= 'setup' and name ~= 'teardown' then
         test_count = test_count + 1
-        gc_protect[name] = {}
-        test_var  = gc_protect[name]
+        test_var = setmetatable({}, lib)
+        gc_protect[name] = test_var
         test_func = func
         if skip then
           -- skip user tests

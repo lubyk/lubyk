@@ -56,10 +56,10 @@ public:
   LineEdit(const char *content = NULL, QWidget *parent = NULL)
      : QLineEdit(content, parent), hue_(-1) {
     QObject::connect(this, SIGNAL(editingFinished()),
-                     this, SLOT(editingFinished()));
+                     this, SLOT(editingFinishedSlot()));
 
     QObject::connect(this, SIGNAL(textEdited(QString)),
-                     this, SLOT(textEdited(QString)));
+                     this, SLOT(textEditedSlot(QString)));
   }
 
   ~LineEdit() {
@@ -192,18 +192,21 @@ protected:
   }
 
   virtual void mousePressEvent(QMouseEvent *event) {
-    if (!click(event, MousePress))
+    if (!click(event, MousePress)) {
       QLineEdit::mousePressEvent(event);
+    }
   }
 
   virtual void mouseDoubleClickEvent(QMouseEvent *event) {
-    if (!click(event, DoubleClick))
+    if (!click(event, DoubleClick)) {
       QLineEdit::mouseDoubleClickEvent(event);
+    }
   }
 
   virtual void mouseReleaseEvent(QMouseEvent *event) {
-    if (!click(event, MouseRelease))
+    if (!click(event, MouseRelease)) {
       QLineEdit::mouseReleaseEvent(event);
+    }
   }
 
   virtual void moveEvent(QMoveEvent * event);
@@ -219,11 +222,11 @@ private slots:
   // set function to call on text change
   // textChanged(const QString & text)
 
-  // connected to the pathChanged signal
-	void editingFinished();
+  // connected to the editingFinished signal
+	void editingFinishedSlot();
 
   // connected to the textEdited signal
-	void textEdited(const QString &text);
+	void textEditedSlot(const QString &text);
 };
 
 } // mimas

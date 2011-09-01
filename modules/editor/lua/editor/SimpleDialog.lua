@@ -30,7 +30,7 @@ function lib:init(opts)
     ---------------------------- List
     w.list = mimas.ListView()
     w.list:setModel(opts.data)
-    function w.list.select(...)
+    function w.list.select(list, ...)
       self:select(...)
     end
 
@@ -50,7 +50,7 @@ function lib:init(opts)
     --- LineEdit
     w.line     = mimas.LineEdit(opts.line_value or '')
     if opts.ok then
-      function w.line.keyboard(key, on)
+      function w.line.keyboard(line, key, on)
         if key == mimas.Key_Enter and on then
           self:ok()
         else
@@ -72,7 +72,7 @@ function lib:init(opts)
     --- LineEdit
     w.line2     = mimas.LineEdit(opts.line2_value or '')
     if opts.ok then
-      function w.line2.keyboard(key, on)
+      function w.line2.keyboard(line2, key, on)
         if key == mimas.Key_Enter and on then
           self:ok()
         else
@@ -100,6 +100,7 @@ function lib:init(opts)
     ---------------------------- 'Cancel' button
     w.cancel = mimas.Button(opts.cancel)
     function w.cancel.click()
+      print('cancel')
       self:cancel()
     end
     w.btn_lay:addWidget(w.cancel)
@@ -112,6 +113,7 @@ function lib:init(opts)
       background-color:#EAA844;
     ]]
     function w.ok.click()
+      print('ok...')
       self:ok()
     end
     w.btn_lay:addWidget(w.ok)

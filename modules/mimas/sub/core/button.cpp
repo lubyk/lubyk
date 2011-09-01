@@ -31,22 +31,19 @@
 
 namespace mimas {
 
-void Button::click(QMouseEvent *event, int type) {
+bool Button::click(QMouseEvent *event, int type) {
   lua_State *L = lua_;
-  if (!L) return;
-
   ScopedLock lock(worker_);
 
-  if (!pushLuaCallback("click")) return;
+  if (!pushLuaCallback("click")) return false;
 
   lua_pushnumber(L, event->x());
   lua_pushnumber(L, event->y());
   lua_pushnumber(L, type);
   lua_pushnumber(L, event->button());
   lua_pushnumber(L, event->modifiers());
-
-  // <func> <x> <y> <type> <btn> <modifiers>
-  int status = lua_pcall(L, 5, 1, 0);
+  // <func> <self> <x> <y> <type> <btn> <modifiers>
+  int status = lua_pcall(L, 6, 1, 0);
 
   if (status) {
     fprintf(stderr, "Error in 'click' callback: %s\n", lua_tostring(L, -1));
@@ -57,6 +54,8 @@ void Button::click(QMouseEvent *event, int type) {
     event->ignore();
   }
   lua_pop(L, 1);
+  // We do not ask QPushButton to deal with the click.
+  return true;
 }
 
 } // mimas

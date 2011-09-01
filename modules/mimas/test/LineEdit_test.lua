@@ -9,6 +9,7 @@
 require 'lubyk'
 
 local should = test.Suite('mimas.LineEdit')
+local withUser = should:testWithUser()
 
 local pos = 10
 local function stack(win)
@@ -48,24 +49,29 @@ function should.acceptDestroyFromLua(t)
   end)
 end
 
-function should.callback(t)
+function withUser.should.callback(t)
   t.win = mimas.Window()
   stack(t.win)
   t.lb = mimas.LineEdit("Change this to close")
+  t.lb2 = mimas.LineEdit("")
   t.lb:selectAll()
   t.lay = mimas.VBoxLayout(t.win)
   t.lay:addWidget(t.lb)
-  function t.lb.editingFinished(text)
+  t.lay:addWidget(t.lb2)
+  function t.lb:editingFinished(text)
     t.lb:setText(string.format("You wrote '%s'.", text))
-    t.win:close()
+    t.continue = true
   end
 
   -- visual check
   assertTrue(true)
   t.win:show()
-  t.thread = lk.Thread(function()
-    sleep(2000)
-    t.win:close()
+  t:timeout(function(done)
+    if done or t.continue then
+      t.win:close()
+      assertTrue(t.continue)
+      return true
+    end
   end)
 end
 
@@ -80,42 +86,48 @@ function should.respondToSetText()
   assertEqual("Goodbye Mimas", lb:text())
 end
 
-function should.haveKeyboardCallback(t)
+function withUser.should.haveKeyboardCallback(t)
   t.win = mimas.Window()
   stack(t.win)
   t.lb = mimas.LineEdit("type up key to close")
   t.lb:selectAll()
   t.lay = mimas.VBoxLayout(t.win)
   t.lay:addWidget(t.lb)
-  function t.lb.keyboard(key, on)
+  function t.lb:keyboard(key, on)
     if key == mimas.Key_Up then
       t.lb:setText('UP')
-      t.win:close()
+      t.continue = true
     else
       return false
     end
   end
   t.win:show()
-  t.thread = lk.Thread(function()
-    sleep(10000)
-    t.win:close()
+  t:timeout(function(done)
+    if done or t.continue then
+      t.win:close()
+      assertTrue(t.continue)
+      return true
+    end
   end)
 end
 
-function should.haveClickCallback(t)
+function withUser.should.haveClickCallback(t)
   t.win = mimas.Window()
   stack(t.win)
   t.lb = mimas.LineEdit("click to close")
   t.lb:selectAll()
   t.lay = mimas.VBoxLayout(t.win)
   t.lay:addWidget(t.lb)
-  function t.lb.click(x, y, type, btn, mod)
-    t.win:close()
+  function t.lb:click(x, y, type, btn, mod)
+    t.continue = true
   end
   t.win:show()
-  t.thread = lk.Thread(function()
-    sleep(10000)
-    t.win:close()
+  t:timeout(function(done)
+    if done or t.continue then
+      t.win:close()
+      assertTrue(t.continue)
+      return true
+    end
   end)
 end
 
@@ -165,5 +177,3 @@ function should.styleLineEdits(t)
 end
 
 test.all()
-
-print('done')
