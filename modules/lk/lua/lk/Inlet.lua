@@ -20,7 +20,6 @@ setmetatable(lib, {
   local self
   if type(node) == 'string' then
     self = {name = node}
-    print('pending', name)
     -- pending inlet
     setmetatable(self, lib)
   else

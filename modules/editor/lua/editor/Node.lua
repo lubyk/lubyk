@@ -31,9 +31,9 @@ setmetatable(lib, {
     hue            = 0.2,
     x              = 100,
     y              = 100,
-    inlets         = {},
+    inlets         = setmetatable({}, {__mode = 'v'}),
     sorted_inlets  = {},
-    outlets        = {},
+    outlets        = setmetatable({}, {__mode = 'v'}),
     sorted_outlets = {},
     process        = process,
     parent         = process,
@@ -69,6 +69,7 @@ function lib:set(def)
       setCode(self, v)
     elseif k == 'hue' or
            k == 'inlets' or
+           k == 'has_all_slots' or
            k == 'outlets' then
       -- skip
     else
@@ -79,11 +80,11 @@ function lib:set(def)
   self:setHue(def.hue or self.hue)
 
   if def.inlets then
-    self:setInlets(def.inlets)
+    self:setInlets(def.inlets, def.has_all_slots)
   end
 
   if def.outlets then
-    self:setOutlets(def.outlets)
+    self:setOutlets(def.outlets, def.has_all_slots)
   end
 
   if self.process.view then
@@ -112,15 +113,22 @@ function lib:setHue(hue)
 end
 
 --- Create inlets from a list of defined slots.
-function lib:setInlets(list)
+function lib:setInlets(list, has_all_slots)
   local sorted_inlets = self.sorted_inlets
   local inlets        = self.inlets
+  if has_all_slots then
+    self.sorted_inlets = {}
+    sorted_inlets = self.sorted_inlets
+  end
 
   for _, def in ipairs(list) do
     local name = def.name
     if inlets[name] then
       -- update ?
       inlets[name]:set(def)
+      if has_all_slots then
+        table.insert(sorted_inlets, inlet)
+      end
     else
       local inlet = editor.Inlet(self, name, def)
       table.insert(sorted_inlets, inlet)
@@ -141,12 +149,19 @@ end
 function lib:setOutlets(list)
   local sorted_outlets = self.sorted_outlets
   local outlets        = self.outlets
+  if has_all_slots then
+    self.sorted_outlets = {}
+    sorted_outlets = self.sorted_outlets
+  end
 
   for _, def in ipairs(list) do
     local name = def.name
     if outlets[name] then
       -- update ?
       outlets[name]:set(def)
+      if has_all_slots then
+        table.insert(sorted_outlets, outlet)
+      end
     else
       local outlet = editor.Outlet(self, name, def)
       table.insert(sorted_outlets, outlet)

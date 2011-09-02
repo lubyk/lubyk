@@ -21,10 +21,10 @@ setmetatable(lib, {
     instance = {node = node, connections = {}}
     setmetatable(instance, lib)
     node.outlets[name] = instance
-    table.insert(node.sorted_outlets, instance)
-    function instance.send(...)
-      lib.send(instance, ...)
-    end
+  end
+  table.insert(node.sorted_outlets, instance)
+  function instance.send(...)
+    lib.send(instance, ...)
   end
   instance:set(name, ...)
   return instance.send

@@ -21,9 +21,11 @@ setmetatable(lib, {
   local env  = {}
   -- new node
   local self = {
-    inlets         = {},
+    -- inlets not in sorted_inlets are removed on gc
+    inlets         = setmetatable({}, {__mode = 'v'}),
     sorted_inlets  = {},
-    outlets        = {},
+    -- outlets not in sorted_outlets are removed on gc
+    outlets        = setmetatable({}, {__mode = 'v'}),
     sorted_outlets = {},
     env            = env,
     errors         = {},
@@ -68,12 +70,16 @@ end
 
 -- function to reload code
 function lib:eval(code_str)
-  -- FIXME: remove slots that are not declared (mark and sweep)
-  -- 1. mark inlets/outlets
-  -- 2. eval
-  -- 3. remove dirty slots
+  -- hold to all current outlets
+  local old_outlets = self.sorted_outlets
+  local old_inlets  = self.sorted_inlets
+  self.sorted_outlets = {}
+  self.sorted_inlets  = {}
+
   local code, err = loadstring(code_str)
   if not code then
+    self.sorted_outlets = old_outlets
+    self.sorted_inlets  = old_inlets
     self:error(err)
     return
   end
@@ -81,9 +87,12 @@ function lib:eval(code_str)
   setfenv(code, self.env)
   local ok, err = pcall(code)
   if not ok then
+    self.sorted_outlets = old_outlets
+    self.sorted_inlets  = old_inlets
     self:error(err)
   else
     self.code = code_str
+    -- Unused inlets and outlets will be collected by the GC.
   end
 end
 
@@ -225,6 +234,7 @@ end
 
 function lib:dump()
   return {
+    name = self.name,
     hue  = self.hue,
     x    = self.x,
     y    = self.y,
@@ -245,6 +255,7 @@ function lib:partialDump(data)
 
   if data.code or data.links then
     -- code changes can alter slots: dump them
+    res.has_all_slots = true
     res.inlets  = dumpSlots(self.sorted_inlets)
     res.outlets = dumpSlots(self.sorted_outlets, data.links)
   end

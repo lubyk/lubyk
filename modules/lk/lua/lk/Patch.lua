@@ -14,11 +14,12 @@ lk.Patch    = lib
 -- PRIVATE
 local ALLOWED_KEYS = {
   nodes = true,
-  x = true,
-  y = true,
-  w = true,
-  h = true,
-  hue = true,
+  x     = true,
+  y     = true,
+  w     = true,
+  h     = true,
+  hue   = true,
+  name  = true,
 }
 
 local function loadFromYaml(self, yaml_code)
@@ -26,17 +27,6 @@ local function loadFromYaml(self, yaml_code)
   -- clear before loading (yaml contains a full definition)
   self.nodes = {}
   self:set(data)
-end
-
-local function setFilePath(self, filepath)
-  self.filepath = filepath
-  -- [work_dir]/PatchName/patch_file.[lua|yml]
-  local patch_base = lk.directory(filepath)
-  if patch_base == '.' then
-    patch_base = lfs.currentdir()
-  end
-  self.name = string.match(patch_base, '([^%./]+)$')
-  self.work_dir = lk.directory(patch_base)
 end
 
 -- PUBLIC
@@ -60,9 +50,6 @@ setmetatable(lib, {
   --       We could make the Process without Morph some specialized version
   --       of this one by reimplementing some kind of 'getCode' callback.
   --
-  -- TODO: Cleanup so that the only way to start it is with a table that
-  -- can contain 'patch' (patch information), 'zone' (zone name)
-  -- or 'name' (the name of the process).
   if self.zone then
     -- Create processes watch before loading code (to resolve remote
     -- processes).
@@ -79,14 +66,11 @@ setmetatable(lib, {
       -- this is a process
       -- When we load from morph, we must set file loader to be the
       -- remote morph server. (find code)
-      setFilePath(self, lk.file(-2))
       self.is_process = true
-    else
-      setFilePath(self, lk.file(-1))
     end
 
     -- store full script in filepath
-    self.inline   = true
+    --- ??? self.inline   = true
     loadFromYaml(self, opts.patch)
   end
   return self

@@ -55,7 +55,7 @@ setmetatable(lib, {
 
   setupView(self)
 
-  function self.file_observer.pathChanged(path)
+  function self.file_observer:pathChanged(path)
     self:pathChanged(path)
   end
   return self

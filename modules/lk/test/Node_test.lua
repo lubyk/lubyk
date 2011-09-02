@@ -11,7 +11,8 @@ require 'lubyk'
 local should = test.Suite('lk.Node')
 
 local function makePatch()
-  return lk.Patch(fixture.path('foo.yml'))
+  local code = lk.readall(fixture.path('foo.yml'))
+  return lk.Patch{ patch = code }
 end
 
 local function makeNode(patch, name)
@@ -32,12 +33,12 @@ local function makeNode(patch, name)
   ]])
 end
 
-function should.run_code()
+function should.runCode()
   local node = makeNode()
   assertEqual(1, node.env.scale)
 end
 
-function should.mergeParams_in_env()
+function should.mergeParamsInEnv()
   local node = makeNode()
   node:setParams{scale=2.0}
   assertEqual(2.0, node.env.scale)
@@ -51,7 +52,7 @@ function should.set()
   assertEqual(30, node.y)
 end
 
-function should.declare_inlets()
+function should.declareInlets()
   local node = makeNode()
   assertEqual('raw', node.inlets.raw.name)
 end
@@ -77,7 +78,7 @@ function should.partialDump()
   assertValueEqual({foo = 5}, dump)
 end
 
-function should.read_global_env()
+function should.readGlobalEnv()
   local node = lk.Node(makePatch(), 'foo', [[
     function test(x)
       assertEqual(x, node_test_global)
@@ -119,8 +120,8 @@ function should.respondToUrl()
   local b = makeNode(nil, 'b')
   b.parent = a
   -- absolute path contains patch name
-  assertEqual('/fixtures/a', a:url())
-  assertEqual('/fixtures/a/b', b:url())
+  assertEqual('/foo/a', a:url())
+  assertEqual('/foo/a/b', b:url())
 end
 
 function should.respondToMakeAbsoluteUrl()
@@ -128,9 +129,9 @@ function should.respondToMakeAbsoluteUrl()
   local b = makeNode(nil, 'b')
   b.parent = a
   -- absolute path contains patch name
-  assertEqual('/fixtures/bar/baz', a:makeAbsoluteUrl('bar/baz'))
+  assertEqual('/foo/bar/baz', a:makeAbsoluteUrl('bar/baz'))
   assertEqual('/bar/baz', a:makeAbsoluteUrl('/bar/baz'))
-  assertEqual('/fixtures/a/bar/baz', b:makeAbsoluteUrl('bar/baz'))
+  assertEqual('/foo/a/bar/baz', b:makeAbsoluteUrl('bar/baz'))
 end
 
 function should.connectSlots()

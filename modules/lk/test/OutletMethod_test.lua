@@ -14,6 +14,7 @@ local function mockNode()
   return {
     outlets        = {},
     sorted_outlets = {},
+    env            = {},
   }
 end
 
@@ -38,4 +39,19 @@ function should.createNewOutletOnCall()
   assertEqual('Send bang.', bang.info)
 end
 
+function should.createOutletFunction()
+  local node = mockNode()
+  local outlet = lk.OutletMethod(node)
+  outlet('draw', 'Connect drawing methods.')
+  -- TODO:
+  -- outlet.draw:setLocalOnly()
+  assertType('function', node.env.draw)
+end
+
+function should.accessOutletOnIndex()
+  local node = mockNode()
+  local outlet = lk.OutletMethod(node)
+  outlet('doom')
+  assertEqual('lk.Outlet', outlet.doom.type)
+end
 test.all()

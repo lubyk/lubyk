@@ -15,8 +15,9 @@ lk.Process  = lib
 
 setmetatable(lib, {
   -- new method
- __call = function(lib, filepath_or_code, zone)
-  local self = lk.Patch(filepath_or_code, zone or 'default')
+ __call = function(lib, opts)
+  opts.zone = opts.zone or 'default'
+  local self = lk.Patch(opts)
   local opts = {
     callback = function(...)
       return self:callback(...)

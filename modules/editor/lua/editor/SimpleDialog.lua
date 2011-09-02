@@ -100,7 +100,6 @@ function lib:init(opts)
     ---------------------------- 'Cancel' button
     w.cancel = mimas.Button(opts.cancel)
     function w.cancel.click()
-      print('cancel')
       self:cancel()
     end
     w.btn_lay:addWidget(w.cancel)
@@ -113,7 +112,6 @@ function lib:init(opts)
       background-color:#EAA844;
     ]]
     function w.ok.click()
-      print('ok...')
       self:ok()
     end
     w.btn_lay:addWidget(w.ok)

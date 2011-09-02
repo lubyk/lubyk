@@ -37,7 +37,6 @@ function lib:init(delegate)
   self:resize(WIDTH, HEIGHT)
   self:setStyle 'background:transparent;'
   self:show()
-  self:center()
 end
 
 function lib:paint(p, w, h)

@@ -98,7 +98,6 @@ function lib:hostsDataSource()
 end
 
 function lib:selectZone(zone_name)
-  print('selected', zone_name)
   local zone = editor.Zone(zone_name, self.process_watch)
   self.zones[zone_name] = zone
   self.splash_view:close()

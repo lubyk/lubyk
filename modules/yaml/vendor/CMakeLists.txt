@@ -8,6 +8,8 @@ include_directories(src)
 file(GLOB SUB_MODULE_SOURCES src/*.c)
 build_sub_module("vendor" ${SUB_MODULE_SOURCES})
 
+# The file lyaml.c has been edited to fix a float parsing bug
+
 # ----------------------------------------------------------------------------------
 #  [/lubyk]
 # ----------------------------------------------------------------------------------
