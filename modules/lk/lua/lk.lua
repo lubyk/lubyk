@@ -34,7 +34,7 @@ lubyk.rem_service_url = '/lk/rem_service'
 
 -------------------------------- lubyk.core
 require 'lubyk.core'
-require 'worker' -- declares global 'sleep'
+require 'worker' -- declares global 'sleep' and creates worker
 
 -------------------------------- pack/unpack (msgpack.vendor)
 require 'msgpack.vendor'

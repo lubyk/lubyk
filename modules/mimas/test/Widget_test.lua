@@ -11,12 +11,13 @@
 require 'lubyk'
 
 local should   = test.Suite('mimas.Widget')
-local withUser = test.UserSuite('mimas.Widget')
+local withUser = should:testWithUser()
 
 --==================== Widget sub-class example =======
 
 -- This is how you create a sub-class of mimas.Widget
-local lib = mimas.WidgetClass('test.MyWidget')
+local lib = lk.SubClass(mimas, 'Widget')
+lib.type  = 'test.MyWidget'
 MyWidget  = lib
 
 function lib:init(name)

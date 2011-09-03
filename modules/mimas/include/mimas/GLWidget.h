@@ -50,7 +50,7 @@ class GLWidget : public QGLWidget, public LuaObject
   Q_PROPERTY(QString class READ cssClass)
 
 public:
-  GLWidget(lubyk::Worker *worker) {
+  GLWidget() {
     setAttribute(Qt::WA_DeleteOnClose);
     // get focus on tab and click
     setFocusPolicy(Qt::StrongFocus);

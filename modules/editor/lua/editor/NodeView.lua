@@ -6,7 +6,7 @@
   The NodeView show a single node with inlets and outlets.
 
 --]]------------------------------------------------------
-local lib = mimas.WidgetClass('editor.NodeView')
+local lib = lk.SubClass(mimas, 'Widget')
 editor.NodeView = lib
 
 --============================================= PRIVATE
@@ -221,6 +221,10 @@ function lib:mouse(x, y)
 end
 
 function lib:delete()
+  self:hide()
+  if self.edit then
+    self.edit:hide()
+  end
   if self.selected then
     -- remove ghost from selection my selecting only self
     self.delegate:selectNodeView(self)

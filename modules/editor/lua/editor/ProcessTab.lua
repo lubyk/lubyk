@@ -12,7 +12,7 @@
    - alerts
 
 --]]------------------------------------------------------
-local lib = mimas.WidgetClass('editor.ProcessTab')
+local lib = lk.SubClass(mimas, 'Widget')
 editor.ProcessTab = lib
 
 -- constants

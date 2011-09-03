@@ -6,8 +6,10 @@
   ...
 
 --]]------------------------------------------------------
-local constr = mimas_core.Button
-local mt = nil
+local constr  = mimas_core.Button
+local mt      = mimas_core.Button_
+mimas.Button_ = mt
+
 function mimas.Button(title, parent, func)
   local self
   if not func then

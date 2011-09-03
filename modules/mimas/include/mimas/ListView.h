@@ -257,7 +257,7 @@ class ListView : public QListView, public LuaObject {
   int luaInit(lua_State *L, ListView *obj, const char *class_name) {
     LuaObject::luaInit(L, obj, class_name);
     // <self>
-    lua_pushlstring(L, "data_source", 5);
+    lua_pushlstring(L, "data_source", 11);
     // <self> <'data_source'>
     // <self>
     DataSource *data = new DataSource();
@@ -272,6 +272,7 @@ class ListView : public QListView, public LuaObject {
     lua_xmove(L, data->lua_, 1);
     // data: <self>
     // <self>
+    setModel(data);
     return 1;
   }
 

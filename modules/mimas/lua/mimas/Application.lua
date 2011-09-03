@@ -14,6 +14,9 @@
 require 'worker'
 local worker = worker
 local constr = mimas_core.Application
+local mt     = mimas_core.Application_
+mimas.Application_ = mt
+
 function mimas.Application()
   local instance = constr(worker)
   instance:setStyleSheet [[

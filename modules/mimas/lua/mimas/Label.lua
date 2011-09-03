@@ -7,7 +7,9 @@
 
 --]]------------------------------------------------------
 local constr = mimas_core.Label
-local mt = nil
+local mt     = mimas_core.Label_
+mimas.Label_ = mt
+
 function mimas.Label(title, parent)
   title = title or ''
   local self

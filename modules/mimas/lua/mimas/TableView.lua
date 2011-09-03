@@ -6,10 +6,9 @@
   Display tabular data
 
 --]]------------------------------------------------------
-require 'worker'
-local worker = worker
-local constr = mimas_core.TableView
-local mt     = mimas_core.TableView_
+local constr     = mimas_core.TableView
+local mt         = mimas_core.TableView_
+mimas.TableView_ = mt
 local close  = mt.cloase
 
 function mimas.TableView(parent)
@@ -29,4 +28,9 @@ function mt:close()
       close(self)
     end)
   end
+end
+
+-- refresh
+function mt:reset()
+  self.data_source:reset()
 end

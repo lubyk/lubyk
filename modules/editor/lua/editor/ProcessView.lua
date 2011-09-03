@@ -7,7 +7,7 @@
   displayed and edited.
 
 --]]------------------------------------------------------
-local lib = mimas.WidgetClass('editor.ProcessView')
+local lib = lk.SubClass(mimas, 'Widget')
 editor.ProcessView = lib
 
 -- constants
@@ -181,27 +181,14 @@ function lib:click(x, y, type, btn, mod)
       ghost.gy = vy + node_def.y
       ghost:globalMove(ghost.gx, ghost.gy)
       ghost:openEditor(function()
-        local text = ghost.edit:text()
-        local name, proto = string.match(text, '^(.*)= *(.*)$')
-        if name then
-          node_def.name  = name
-          local code = self.delegate.library:code(proto)
-          if code then
-            node_def.code = code
-          else
-            -- error
-            node_def.code  = string.format('-- Could not find code for "%s"\n\n', proto)
-          end
-        else
-          node_def.name = text
-        end
+        node_def.name = ghost.name
+        node_def.code = ghost.code
         -- create node
         self.process:newNode(node_def)
         self:update()
 
         -- clear
-        ghost.edit.line:hide()
-        ghost:hide()
+        ghost:delete()
         self.ghost_node = nil
       end)
     end

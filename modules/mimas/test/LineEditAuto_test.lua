@@ -9,12 +9,13 @@
 require 'lubyk'
 
 local should = test.Suite('mimas.LineEditAuto')
+local withUser = should:testWithUser()
 
 function should.loadCoad()
   assertType('table', mimas.LineEditAuto)
 end
 
-function should.callback(t)
+function withUser.should.callback(t)
   t.win = mimas.Window()
   t.win:move(100, 120)
   t.win:resize(200, 200)
@@ -52,6 +53,11 @@ function should.callback(t)
     else
       return nil
     end
+  end
+
+  function t.lb:editingFinished(text)
+    self:autoFinished()
+    assertEqual('m=lubyk.Value', text)
   end
   -- ====================================================
 

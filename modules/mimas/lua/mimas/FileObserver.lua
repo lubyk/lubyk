@@ -6,9 +6,9 @@
   ...
 
 --]]------------------------------------------------------
-local constr = mimas_core.FileObserver
-local worker = worker
-local mt     = mimas_core.FileObserver_
+local constr        = mimas_core.FileObserver
+local mt            = mimas_core.FileObserver_
+mimas.FileObserver_ = mt
 
 local addPath = mt.addPath
 function mt:addPath(path)
@@ -21,7 +21,7 @@ function mt:removePath(path)
 end
 
 function mimas.FileObserver(file_or_files)
-  local instance = constr(worker)
+  local instance = constr()
   if file_or_files then
     if type(file_or_files) == 'table' then
       for file in ipairs(file_or_files) do

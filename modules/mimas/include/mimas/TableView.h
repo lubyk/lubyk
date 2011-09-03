@@ -282,6 +282,7 @@ public:
     lua_xmove(L, data->lua_, 1);
     // data: <self>
     // <self>
+    setModel(data);
     return 1;
   }
 protected:

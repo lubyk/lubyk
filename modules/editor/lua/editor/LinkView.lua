@@ -7,7 +7,7 @@
   inlet.
 
 --]]------------------------------------------------------
-local lib = mimas.WidgetClass('editor.LinkView')
+local lib = lk.SubClass(mimas, 'Widget')
 editor.LinkView = lib
 -- constants
 local HPEN_WIDTH = 1 -- half pen width

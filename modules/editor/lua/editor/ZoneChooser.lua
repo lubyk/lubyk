@@ -20,7 +20,7 @@
     +- [Quit] quit application
 
 --]]------------------------------------------------------
-local lib = mimas.WidgetClass('editor.ZoneChooser')
+local lib = lk.SubClass(mimas, 'Widget')
 editor.ZoneChooser = lib
 
 --============================================= PRIVATE

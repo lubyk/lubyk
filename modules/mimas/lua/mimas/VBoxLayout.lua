@@ -6,8 +6,9 @@
   Vertical layout of GUI widgets.
 
 --]]------------------------------------------------------
-local constr = mimas_core.VBoxLayout
-local mt     = mimas_core.VBoxLayout_
+local constr      = mimas_core.VBoxLayout
+local mt          = mimas_core.VBoxLayout_
+mimas.VBoxLayout_ = mt
 
 local addWidget = mt.addWidget
 local addLayout = mt.addLayout

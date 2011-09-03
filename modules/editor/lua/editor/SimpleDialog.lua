@@ -7,7 +7,7 @@
   list of input field with buttons.
 
 --]]------------------------------------------------------
-local lib = mimas.WidgetClass('editor.SimpleDialog')
+local lib = lk.SubClass(mimas, 'Widget')
 editor.SimpleDialog = lib
 
 --============================================= PRIVATE

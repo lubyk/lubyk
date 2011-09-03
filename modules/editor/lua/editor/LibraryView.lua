@@ -6,7 +6,7 @@
   Displays the LibraryView.
 
 --]]------------------------------------------------------
-local lib = mimas.WidgetClass('editor.LibraryView')
+local lib = lk.SubClass(mimas, 'Widget')
 editor.LibraryView = lib
 
 -------------------------------------------------------- PRIVATE
@@ -46,7 +46,8 @@ local function clickInList(self, node_def, x, y, type, btn, mod)
       -- drop
       self.ghost:openEditor(function()
         local node_def = self.click_position.node_def
-        node_def.name = self.ghost.edit:text()
+        node_def.name = self.ghost.name
+        node_def.code = self.ghost.code or node_def.code
         local process_view = self.delegate.process_view_under
         if process_view then
           local process = process_view.process

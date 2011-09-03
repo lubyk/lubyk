@@ -6,9 +6,9 @@
   Horizontal layout of GUI widgets.
 
 --]]------------------------------------------------------
-local constr = mimas_core.HBoxLayout
-local mt = mimas_core.HBoxLayout_
-local worker = worker
+local constr      = mimas_core.HBoxLayout
+local mt          = mimas_core.HBoxLayout_
+mimas.HBoxLayout_ = mt
 
 local addWidget = mt.addWidget
 local addLayout = mt.addLayout

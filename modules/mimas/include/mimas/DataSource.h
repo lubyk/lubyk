@@ -62,6 +62,7 @@ public:
 
   void reset() {
     // reload all data
+    // ??? Does not work
     QAbstractItemModel::reset();
   }
 
@@ -83,7 +84,9 @@ protected:
     lua_State *L = lua_;
     ScopedLock lock(worker_);
 
-    if (!pushLuaCallback("rowCount")) return 0;
+    if (!pushLuaCallback("rowCount")) {
+      return 0;
+    }
     // <func> <self>
     int status = lua_pcall(L, 1, 1, 0);
 

@@ -9,7 +9,7 @@ using namespace mimas;
 /* ============================ Constructors     ====================== */
 
 /** mimas::Callback::Callback()
- * include/mimas/Callback.h:59
+ * include/mimas/Callback.h:58
  */
 static int Callback_Callback(lua_State *L) {
   try {
@@ -55,7 +55,7 @@ static int Callback__tostring(lua_State *L) {
 
 
 /** void mimas::Callback::connect(QObject *obj, const char *method, const char *callback)
- * include/mimas/Callback.h:65
+ * include/mimas/Callback.h:64
  */
 static int Callback_connect(lua_State *L) {
   try {

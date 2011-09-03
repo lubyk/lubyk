@@ -6,10 +6,10 @@
   A context to draw OpenGL content.
 
 --]]------------------------------------------------------
-local constr = mimas_core.GLWidget
-local mt = mimas_core.GLWidget_
+local constr    = mimas_core.GLWidget
+local mt        = mimas_core.GLWidget_
+mimas.GLWidget_ = mt
 local close  = mt.close
-local worker = worker
 
 local addWidget = mt.addWidget
 function mt:addWidget(self, other, ...)
@@ -22,7 +22,7 @@ function mt:addLayout(self, other)
 end
 
 function mimas.GLWidget()
-  return constr(worker)
+  return constr()
 end
 
 function mt:close()

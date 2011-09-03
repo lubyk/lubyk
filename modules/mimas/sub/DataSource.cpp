@@ -69,7 +69,7 @@ static int DataSource__tostring(lua_State *L) {
 
 
 /** void mimas::DataSource::emitLayoutChanged()
- * include/mimas/DataSource.h:68
+ * include/mimas/DataSource.h:69
  */
 static int DataSource_emitLayoutChanged(lua_State *L) {
   try {

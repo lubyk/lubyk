@@ -8,13 +8,12 @@ using namespace mimas;
 
 /* ============================ Constructors     ====================== */
 
-/** mimas::GLWidget::GLWidget(lubyk::Worker *worker)
+/** mimas::GLWidget::GLWidget()
  * include/mimas/GLWidget.h:53
  */
 static int GLWidget_GLWidget(lua_State *L) {
   try {
-    lubyk::Worker *worker = *((lubyk::Worker **)dubL_checksdata(L, 1, "lubyk.Worker"));
-    GLWidget * retval__ = new GLWidget(worker);
+    GLWidget * retval__ = new GLWidget();
     // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
     return retval__->luaInit(L, retval__, "mimas.GLWidget");
   } catch (std::exception &e) {

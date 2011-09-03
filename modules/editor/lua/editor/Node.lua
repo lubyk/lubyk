@@ -248,16 +248,31 @@ function lib.makeGhost(node_def, delegate)
   -- or when it appears after double-click
   function ghost:openEditor(finish_func)
     -- add a LineEdit on top of self
-    self.edit = editor.NodeLineEdit(delegate.main_view, node.name, delegate.library)
-    self.edit:resize(math.max(self.width, MINW), self.height)
-    self.edit:selectAll()
-    delegate.main_view:addWidget(self.edit)
-    self.edit:globalMove(self.super:globalPosition())
-    self.edit:setFocus()
-    self.edit.editingFinished = function()
+    local edit = editor.NodeLineEdit(delegate.main_view, node.name, delegate.library)
+    self.edit = edit
+    edit:resize(math.max(self.width, MINW), self.height)
+    edit:selectAll()
+    delegate.main_view:addWidget(edit)
+    edit:globalMove(self:globalPosition())
+    edit:setFocus()
+    function edit.editingFinished(edit, text)
+      local name, proto = string.match(text, '^(.*)= *(.*)$')
+      if name then
+        self.name  = name
+        local code = self.delegate.library:code(proto)
+        if code then
+          self.code = code
+        else
+          -- error
+          self.code  = string.format('-- Could not find code for "%s"\n\n', proto)
+        end
+      else
+        self.name = text
+      end
       -- call cleanup
-      self.edit:autoFinished()
-      self.edit.editingFinished = nil
+      edit:autoFinished()
+      -- avoid double call ?
+      edit.editingFinished = nil
       app:post(finish_func)
     end
   end

@@ -7,7 +7,7 @@
   (LibraryView, HelpView, PatchView and ControlView).
 
 --]]------------------------------------------------------
-local lib = mimas.WidgetClass('editor.ZoneView')
+local lib = lk.SubClass(mimas, 'Widget')
 editor.ZoneView = lib
 
 -- constants

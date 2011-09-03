@@ -7,12 +7,12 @@
   ListView, TableView and friends.
 
 --]]------------------------------------------------------
-require 'worker'
-local worker = worker
-local constr = mimas_core.DataSource
+local constr      = mimas_core.DataSource
+local mt          = mimas_core.DataSource_
+mimas.DataSource_ = mt
 
 function mimas.DataSource(data)
-  local self = constr(worker)
+  local self = constr()
   function self.columnCount()
     -- default useful for ListView
     return 1

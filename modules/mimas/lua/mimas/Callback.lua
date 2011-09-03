@@ -6,8 +6,9 @@
   GUI event callback (can be connected to widget signals).
 
 --]]------------------------------------------------------
-local constr = mimas_core.Callback
-local mt = mimas_core.Callback_
+local constr    = mimas_core.Callback
+local mt        = mimas_core.Callback_
+mimas.Callback_ = mt
 local connect = mt.connect
 
 function mt.connect(self, other, target)
