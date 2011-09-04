@@ -3,6 +3,9 @@
 #include "lua_cpp_helper.h"
 
 
+
+
+
 using namespace mimas;
 
 
@@ -25,9 +28,9 @@ static int Label_Label1(lua_State *L) {
     lua_pushclass2<Label>(L, retval__, "mimas.Label");
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Label.Label: %s", e.what());
+    lua_pushfstring(L, "Label: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Label.Label: Unknown exception");
+    lua_pushfstring(L, "Label: Unknown exception");
   }
   return lua_error(L);
 }
@@ -45,9 +48,9 @@ static int Label_Label2(lua_State *L) {
     lua_pushclass2<Label>(L, retval__, "mimas.Label");
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Label.Label: %s", e.what());
+    lua_pushfstring(L, "Label: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Label.Label: Unknown exception");
+    lua_pushfstring(L, "Label: Unknown exception");
   }
   return lua_error(L);
 }
@@ -125,15 +128,15 @@ static int Label__tostring(lua_State *L) {
  */
 static int Label_cssClass(lua_State *L) {
   try {
-    Label *self__ = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
-    if (!self__) throw dub::Exception("Using deleted mimas.Label in cssClass");
-    QString  retval__ = self__->cssClass();
+    Label *self = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
+    if (!self) throw dub::Exception("Using deleted mimas.Label in cssClass");
+    QString  retval__ = self->cssClass();
     lua_pushclass<QString>(L, retval__, "mimas.QString");
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Label.cssClass: %s", e.what());
+    lua_pushfstring(L, "cssClass: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Label.cssClass: Unknown exception");
+    lua_pushfstring(L, "cssClass: Unknown exception");
   }
   return lua_error(L);
 }
@@ -145,15 +148,15 @@ static int Label_cssClass(lua_State *L) {
  */
 static int Label_height(lua_State *L) {
   try {
-    Label *self__ = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
-    if (!self__) throw dub::Exception("Using deleted mimas.Label in height");
-    int  retval__ = self__->height();
+    Label *self = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
+    if (!self) throw dub::Exception("Using deleted mimas.Label in height");
+    int  retval__ = self->height();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Label.height: %s", e.what());
+    lua_pushfstring(L, "height: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Label.height: Unknown exception");
+    lua_pushfstring(L, "height: Unknown exception");
   }
   return lua_error(L);
 }
@@ -165,15 +168,15 @@ static int Label_height(lua_State *L) {
  */
 static int Label_hue(lua_State *L) {
   try {
-    Label *self__ = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
-    if (!self__) throw dub::Exception("Using deleted mimas.Label in hue");
-    float  retval__ = self__->hue();
+    Label *self = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
+    if (!self) throw dub::Exception("Using deleted mimas.Label in hue");
+    float  retval__ = self->hue();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Label.hue: %s", e.what());
+    lua_pushfstring(L, "hue: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Label.hue: Unknown exception");
+    lua_pushfstring(L, "hue: Unknown exception");
   }
   return lua_error(L);
 }
@@ -185,16 +188,16 @@ static int Label_hue(lua_State *L) {
  */
 static int Label_move(lua_State *L) {
   try {
-    Label *self__ = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
-    if (!self__) throw dub::Exception("Using deleted mimas.Label in move");
+    Label *self = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
+    if (!self) throw dub::Exception("Using deleted mimas.Label in move");
     int x = dubL_checkint(L, 2);
     int y = dubL_checkint(L, 3);
-    self__->move(x, y);
+    self->move(x, y);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Label.move: %s", e.what());
+    lua_pushfstring(L, "move: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Label.move: Unknown exception");
+    lua_pushfstring(L, "move: Unknown exception");
   }
   return lua_error(L);
 }
@@ -206,15 +209,15 @@ static int Label_move(lua_State *L) {
  */
 static int Label_name(lua_State *L) {
   try {
-    Label *self__ = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
-    if (!self__) throw dub::Exception("Using deleted mimas.Label in name");
+    Label *self = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
+    if (!self) throw dub::Exception("Using deleted mimas.Label in name");
     
-    LuaStackSize  retval__ = self__->name(L);
+    LuaStackSize  retval__ = self->name(L);
     return retval__;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Label.name: %s", e.what());
+    lua_pushfstring(L, "name: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Label.name: Unknown exception");
+    lua_pushfstring(L, "name: Unknown exception");
   }
   return lua_error(L);
 }
@@ -226,15 +229,15 @@ static int Label_name(lua_State *L) {
  */
 static int Label_object(lua_State *L) {
   try {
-    Label *self__ = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
-    if (!self__) throw dub::Exception("Using deleted mimas.Label in object");
-    QObject * retval__ = self__->object();
+    Label *self = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
+    if (!self) throw dub::Exception("Using deleted mimas.Label in object");
+    QObject * retval__ = self->object();
     lua_pushclass<QObject>(L, retval__, "mimas.QObject");
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Label.object: %s", e.what());
+    lua_pushfstring(L, "object: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Label.object: Unknown exception");
+    lua_pushfstring(L, "object: Unknown exception");
   }
   return lua_error(L);
 }
@@ -246,16 +249,16 @@ static int Label_object(lua_State *L) {
  */
 static int Label_resize(lua_State *L) {
   try {
-    Label *self__ = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
-    if (!self__) throw dub::Exception("Using deleted mimas.Label in resize");
+    Label *self = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
+    if (!self) throw dub::Exception("Using deleted mimas.Label in resize");
     int w = dubL_checkint(L, 2);
     int h = dubL_checkint(L, 3);
-    self__->resize(w, h);
+    self->resize(w, h);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Label.resize: %s", e.what());
+    lua_pushfstring(L, "resize: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Label.resize: Unknown exception");
+    lua_pushfstring(L, "resize: Unknown exception");
   }
   return lua_error(L);
 }
@@ -267,15 +270,15 @@ static int Label_resize(lua_State *L) {
  */
 static int Label_setHue(lua_State *L) {
   try {
-    Label *self__ = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
-    if (!self__) throw dub::Exception("Using deleted mimas.Label in setHue");
+    Label *self = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
+    if (!self) throw dub::Exception("Using deleted mimas.Label in setHue");
     float hue = dubL_checknumber(L, 2);
-    self__->setHue(hue);
+    self->setHue(hue);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Label.setHue: %s", e.what());
+    lua_pushfstring(L, "setHue: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Label.setHue: Unknown exception");
+    lua_pushfstring(L, "setHue: Unknown exception");
   }
   return lua_error(L);
 }
@@ -287,15 +290,15 @@ static int Label_setHue(lua_State *L) {
  */
 static int Label_setName(lua_State *L) {
   try {
-    Label *self__ = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
-    if (!self__) throw dub::Exception("Using deleted mimas.Label in setName");
+    Label *self = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
+    if (!self) throw dub::Exception("Using deleted mimas.Label in setName");
     const char *name = dubL_checkstring(L, 2);
-    self__->setName(name);
+    self->setName(name);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Label.setName: %s", e.what());
+    lua_pushfstring(L, "setName: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Label.setName: Unknown exception");
+    lua_pushfstring(L, "setName: Unknown exception");
   }
   return lua_error(L);
 }
@@ -307,15 +310,15 @@ static int Label_setName(lua_State *L) {
  */
 static int Label_setStyle(lua_State *L) {
   try {
-    Label *self__ = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
-    if (!self__) throw dub::Exception("Using deleted mimas.Label in setStyle");
+    Label *self = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
+    if (!self) throw dub::Exception("Using deleted mimas.Label in setStyle");
     const char *text = dubL_checkstring(L, 2);
-    self__->setStyle(text);
+    self->setStyle(text);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Label.setStyle: %s", e.what());
+    lua_pushfstring(L, "setStyle: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Label.setStyle: Unknown exception");
+    lua_pushfstring(L, "setStyle: Unknown exception");
   }
   return lua_error(L);
 }
@@ -327,15 +330,15 @@ static int Label_setStyle(lua_State *L) {
  */
 static int Label_setStyleSheet(lua_State *L) {
   try {
-    Label *self__ = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
-    if (!self__) throw dub::Exception("Using deleted mimas.Label in setStyleSheet");
+    Label *self = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
+    if (!self) throw dub::Exception("Using deleted mimas.Label in setStyleSheet");
     const char *text = dubL_checkstring(L, 2);
-    self__->setStyleSheet(text);
+    self->setStyleSheet(text);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Label.setStyleSheet: %s", e.what());
+    lua_pushfstring(L, "setStyleSheet: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Label.setStyleSheet: Unknown exception");
+    lua_pushfstring(L, "setStyleSheet: Unknown exception");
   }
   return lua_error(L);
 }
@@ -347,15 +350,15 @@ static int Label_setStyleSheet(lua_State *L) {
  */
 static int Label_setText(lua_State *L) {
   try {
-    Label *self__ = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
-    if (!self__) throw dub::Exception("Using deleted mimas.Label in setText");
+    Label *self = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
+    if (!self) throw dub::Exception("Using deleted mimas.Label in setText");
     const char *text = dubL_checkstring(L, 2);
-    self__->setText(text);
+    self->setText(text);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Label.setText: %s", e.what());
+    lua_pushfstring(L, "setText: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Label.setText: Unknown exception");
+    lua_pushfstring(L, "setText: Unknown exception");
   }
   return lua_error(L);
 }
@@ -367,15 +370,15 @@ static int Label_setText(lua_State *L) {
  */
 static int Label_widget(lua_State *L) {
   try {
-    Label *self__ = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
-    if (!self__) throw dub::Exception("Using deleted mimas.Label in widget");
-    QWidget * retval__ = self__->widget();
+    Label *self = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
+    if (!self) throw dub::Exception("Using deleted mimas.Label in widget");
+    QWidget * retval__ = self->widget();
     lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Label.widget: %s", e.what());
+    lua_pushfstring(L, "widget: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Label.widget: Unknown exception");
+    lua_pushfstring(L, "widget: Unknown exception");
   }
   return lua_error(L);
 }
@@ -387,15 +390,15 @@ static int Label_widget(lua_State *L) {
  */
 static int Label_width(lua_State *L) {
   try {
-    Label *self__ = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
-    if (!self__) throw dub::Exception("Using deleted mimas.Label in width");
-    int  retval__ = self__->width();
+    Label *self = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
+    if (!self) throw dub::Exception("Using deleted mimas.Label in width");
+    int  retval__ = self->width();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Label.width: %s", e.what());
+    lua_pushfstring(L, "width: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Label.width: Unknown exception");
+    lua_pushfstring(L, "width: Unknown exception");
   }
   return lua_error(L);
 }
@@ -407,15 +410,15 @@ static int Label_width(lua_State *L) {
  */
 static int Label_x(lua_State *L) {
   try {
-    Label *self__ = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
-    if (!self__) throw dub::Exception("Using deleted mimas.Label in x");
-    int  retval__ = self__->x();
+    Label *self = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
+    if (!self) throw dub::Exception("Using deleted mimas.Label in x");
+    int  retval__ = self->x();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Label.x: %s", e.what());
+    lua_pushfstring(L, "x: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Label.x: Unknown exception");
+    lua_pushfstring(L, "x: Unknown exception");
   }
   return lua_error(L);
 }
@@ -427,15 +430,15 @@ static int Label_x(lua_State *L) {
  */
 static int Label_y(lua_State *L) {
   try {
-    Label *self__ = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
-    if (!self__) throw dub::Exception("Using deleted mimas.Label in y");
-    int  retval__ = self__->y();
+    Label *self = *((Label**)dubL_checksdata(L, 1, "mimas.Label"));
+    if (!self) throw dub::Exception("Using deleted mimas.Label in y");
+    int  retval__ = self->y();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Label.y: %s", e.what());
+    lua_pushfstring(L, "y: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Label.y: Unknown exception");
+    lua_pushfstring(L, "y: Unknown exception");
   }
   return lua_error(L);
 }

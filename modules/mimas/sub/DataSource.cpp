@@ -3,6 +3,9 @@
 #include "lua_cpp_helper.h"
 
 
+
+
+
 using namespace mimas;
 
 
@@ -17,9 +20,9 @@ static int DataSource_DataSource(lua_State *L) {
     // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
     return retval__->luaInit(L, retval__, "mimas.DataSource");
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.DataSource.DataSource: %s", e.what());
+    lua_pushfstring(L, "DataSource: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.DataSource.DataSource: Unknown exception");
+    lua_pushfstring(L, "DataSource: Unknown exception");
   }
   return lua_error(L);
 }
@@ -73,14 +76,14 @@ static int DataSource__tostring(lua_State *L) {
  */
 static int DataSource_emitLayoutChanged(lua_State *L) {
   try {
-    DataSource *self__ = *((DataSource**)dubL_checksdata(L, 1, "mimas.DataSource"));
-    if (!self__) throw dub::Exception("Using deleted mimas.DataSource in emitLayoutChanged");
-    self__->emitLayoutChanged();
+    DataSource *self = *((DataSource**)dubL_checksdata(L, 1, "mimas.DataSource"));
+    if (!self) throw dub::Exception("Using deleted mimas.DataSource in emitLayoutChanged");
+    self->emitLayoutChanged();
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.DataSource.emitLayoutChanged: %s", e.what());
+    lua_pushfstring(L, "emitLayoutChanged: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.DataSource.emitLayoutChanged: Unknown exception");
+    lua_pushfstring(L, "emitLayoutChanged: Unknown exception");
   }
   return lua_error(L);
 }
@@ -92,14 +95,14 @@ static int DataSource_emitLayoutChanged(lua_State *L) {
  */
 static int DataSource_reset(lua_State *L) {
   try {
-    DataSource *self__ = *((DataSource**)dubL_checksdata(L, 1, "mimas.DataSource"));
-    if (!self__) throw dub::Exception("Using deleted mimas.DataSource in reset");
-    self__->reset();
+    DataSource *self = *((DataSource**)dubL_checksdata(L, 1, "mimas.DataSource"));
+    if (!self) throw dub::Exception("Using deleted mimas.DataSource in reset");
+    self->reset();
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.DataSource.reset: %s", e.what());
+    lua_pushfstring(L, "reset: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.DataSource.reset: Unknown exception");
+    lua_pushfstring(L, "reset: Unknown exception");
   }
   return lua_error(L);
 }

@@ -41,7 +41,7 @@ modules = {
   'mdns'  => %w{Browser Registration},
   'midi'  => %w{In Out},
   'mimas' => {
-    'class' => %w{Application Brush Button Callback Color DataSource FileObserver GLWidget HBoxLayout Label LineEdit ListView Path Painter Pen Slider TableView VBoxLayout Widget},
+    'class' => %w{Application Brush Button Callback Color DataSource FileObserver GLWidget HBoxLayout Label LineEdit ListView MainWindow Path Painter Pen Slider TableView VBoxLayout Widget},
     'const' => true,
   },
   'zmq'   => {
@@ -83,8 +83,14 @@ modules = {
       FileUtils::mkdir(dir)
     end
 
-    File.open(dir + "#{klass.opts[:filename] || klass.lib_name}.cpp", 'wb') do |f|
-      f.puts klass
+    # Only write if there are changes
+    path = dir + "#{klass.opts[:filename] || klass.lib_name}.cpp"
+    res = klass.to_s
+    current = File.read(path)
+    if current != res
+      File.open(path, 'wb') do |f|
+        f.puts klass
+      end
     end
 
     if mod_name == 'mimas'

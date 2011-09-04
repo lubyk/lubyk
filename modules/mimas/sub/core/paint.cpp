@@ -40,22 +40,6 @@
 namespace mimas {
 
 // =============================================
-// ==             Widget                      ==
-// =============================================
-
-void Widget::paintEvent(QPaintEvent *event) {
-  // has to be on the heap
-  Painter *p = new Painter(this);
-  if (!parent()) {
-    // window
-    p->QPainter::fillRect(rect(), palette().color(QPalette::Window));
-  }
-  paint(*p);
-  delete p;
-  QWidget::paintEvent(event);
-}
-
-// =============================================
 // ==             Label                       ==
 // =============================================
 void Label::paintEvent(QPaintEvent *event) {

@@ -3,6 +3,9 @@
 #include "lua_cpp_helper.h"
 
 
+
+
+
 using namespace mimas;
 
 
@@ -24,9 +27,9 @@ static int VBoxLayout_VBoxLayout(lua_State *L) {
     lua_pushclass2<VBoxLayout>(L, retval__, "mimas.VBoxLayout");
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.VBoxLayout.VBoxLayout: %s", e.what());
+    lua_pushfstring(L, "VBoxLayout: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.VBoxLayout.VBoxLayout: Unknown exception");
+    lua_pushfstring(L, "VBoxLayout: Unknown exception");
   }
   return lua_error(L);
 }
@@ -80,15 +83,15 @@ static int VBoxLayout__tostring(lua_State *L) {
  */
 static int VBoxLayout_addLayout(lua_State *L) {
   try {
-    VBoxLayout *self__ = *((VBoxLayout**)dubL_checksdata(L, 1, "mimas.VBoxLayout"));
-    if (!self__) throw dub::Exception("Using deleted mimas.VBoxLayout in addLayout");
+    VBoxLayout *self = *((VBoxLayout**)dubL_checksdata(L, 1, "mimas.VBoxLayout"));
+    if (!self) throw dub::Exception("Using deleted mimas.VBoxLayout in addLayout");
     QLayout *layout = *((QLayout **)dubL_checksdata(L, 2, "mimas.QLayout"));
-    self__->addLayout(layout);
+    self->addLayout(layout);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.VBoxLayout.addLayout: %s", e.what());
+    lua_pushfstring(L, "addLayout: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.VBoxLayout.addLayout: Unknown exception");
+    lua_pushfstring(L, "addLayout: Unknown exception");
   }
   return lua_error(L);
 }
@@ -100,15 +103,15 @@ static int VBoxLayout_addLayout(lua_State *L) {
  */
 static int VBoxLayout_addSpacing(lua_State *L) {
   try {
-    VBoxLayout *self__ = *((VBoxLayout**)dubL_checksdata(L, 1, "mimas.VBoxLayout"));
-    if (!self__) throw dub::Exception("Using deleted mimas.VBoxLayout in addSpacing");
+    VBoxLayout *self = *((VBoxLayout**)dubL_checksdata(L, 1, "mimas.VBoxLayout"));
+    if (!self) throw dub::Exception("Using deleted mimas.VBoxLayout in addSpacing");
     int size = dubL_checkint(L, 2);
-    self__->addSpacing(size);
+    self->addSpacing(size);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.VBoxLayout.addSpacing: %s", e.what());
+    lua_pushfstring(L, "addSpacing: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.VBoxLayout.addSpacing: Unknown exception");
+    lua_pushfstring(L, "addSpacing: Unknown exception");
   }
   return lua_error(L);
 }
@@ -120,20 +123,20 @@ static int VBoxLayout_addSpacing(lua_State *L) {
  */
 static int VBoxLayout_addStretch(lua_State *L) {
   try {
-    VBoxLayout *self__ = *((VBoxLayout**)dubL_checksdata(L, 1, "mimas.VBoxLayout"));
-    if (!self__) throw dub::Exception("Using deleted mimas.VBoxLayout in addStretch");
+    VBoxLayout *self = *((VBoxLayout**)dubL_checksdata(L, 1, "mimas.VBoxLayout"));
+    if (!self) throw dub::Exception("Using deleted mimas.VBoxLayout in addStretch");
     int top__ = lua_gettop(L);
     if (top__ < 2) {
-      self__->addStretch();
+      self->addStretch();
     } else {
       int stretch = dubL_checkint(L, 2);
-      self__->addStretch(stretch);
+      self->addStretch(stretch);
     }
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.VBoxLayout.addStretch: %s", e.what());
+    lua_pushfstring(L, "addStretch: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.VBoxLayout.addStretch: Unknown exception");
+    lua_pushfstring(L, "addStretch: Unknown exception");
   }
   return lua_error(L);
 }
@@ -145,26 +148,26 @@ static int VBoxLayout_addStretch(lua_State *L) {
  */
 static int VBoxLayout_addWidget(lua_State *L) {
   try {
-    VBoxLayout *self__ = *((VBoxLayout**)dubL_checksdata(L, 1, "mimas.VBoxLayout"));
-    if (!self__) throw dub::Exception("Using deleted mimas.VBoxLayout in addWidget");
+    VBoxLayout *self = *((VBoxLayout**)dubL_checksdata(L, 1, "mimas.VBoxLayout"));
+    if (!self) throw dub::Exception("Using deleted mimas.VBoxLayout in addWidget");
     int top__ = lua_gettop(L);
     QWidget *widget = *((QWidget **)dubL_checksdata(L, 2, "mimas.QWidget"));
     if (top__ < 3) {
-      self__->addWidget(widget);
+      self->addWidget(widget);
     } else {
       int stretch = dubL_checkint(L, 3);
       if (top__ < 4) {
-        self__->addWidget(widget, stretch);
+        self->addWidget(widget, stretch);
       } else {
         int alignment = dubL_checkint(L, 4);
-        self__->addWidget(widget, stretch, alignment);
+        self->addWidget(widget, stretch, alignment);
       }
     }
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.VBoxLayout.addWidget: %s", e.what());
+    lua_pushfstring(L, "addWidget: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.VBoxLayout.addWidget: Unknown exception");
+    lua_pushfstring(L, "addWidget: Unknown exception");
   }
   return lua_error(L);
 }
@@ -176,15 +179,15 @@ static int VBoxLayout_addWidget(lua_State *L) {
  */
 static int VBoxLayout_layout(lua_State *L) {
   try {
-    VBoxLayout *self__ = *((VBoxLayout**)dubL_checksdata(L, 1, "mimas.VBoxLayout"));
-    if (!self__) throw dub::Exception("Using deleted mimas.VBoxLayout in layout");
-    QLayout * retval__ = self__->layout();
+    VBoxLayout *self = *((VBoxLayout**)dubL_checksdata(L, 1, "mimas.VBoxLayout"));
+    if (!self) throw dub::Exception("Using deleted mimas.VBoxLayout in layout");
+    QLayout * retval__ = self->layout();
     lua_pushclass<QLayout>(L, retval__, "mimas.QLayout");
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.VBoxLayout.layout: %s", e.what());
+    lua_pushfstring(L, "layout: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.VBoxLayout.layout: Unknown exception");
+    lua_pushfstring(L, "layout: Unknown exception");
   }
   return lua_error(L);
 }
@@ -196,18 +199,18 @@ static int VBoxLayout_layout(lua_State *L) {
  */
 static int VBoxLayout_setContentsMargins(lua_State *L) {
   try {
-    VBoxLayout *self__ = *((VBoxLayout**)dubL_checksdata(L, 1, "mimas.VBoxLayout"));
-    if (!self__) throw dub::Exception("Using deleted mimas.VBoxLayout in setContentsMargins");
+    VBoxLayout *self = *((VBoxLayout**)dubL_checksdata(L, 1, "mimas.VBoxLayout"));
+    if (!self) throw dub::Exception("Using deleted mimas.VBoxLayout in setContentsMargins");
     int left = dubL_checkint(L, 2);
     int top = dubL_checkint(L, 3);
     int right = dubL_checkint(L, 4);
     int bottom = dubL_checkint(L, 5);
-    self__->setContentsMargins(left, top, right, bottom);
+    self->setContentsMargins(left, top, right, bottom);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.VBoxLayout.setContentsMargins: %s", e.what());
+    lua_pushfstring(L, "setContentsMargins: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.VBoxLayout.setContentsMargins: Unknown exception");
+    lua_pushfstring(L, "setContentsMargins: Unknown exception");
   }
   return lua_error(L);
 }
@@ -219,15 +222,15 @@ static int VBoxLayout_setContentsMargins(lua_State *L) {
  */
 static int VBoxLayout_setSpacing(lua_State *L) {
   try {
-    VBoxLayout *self__ = *((VBoxLayout**)dubL_checksdata(L, 1, "mimas.VBoxLayout"));
-    if (!self__) throw dub::Exception("Using deleted mimas.VBoxLayout in setSpacing");
+    VBoxLayout *self = *((VBoxLayout**)dubL_checksdata(L, 1, "mimas.VBoxLayout"));
+    if (!self) throw dub::Exception("Using deleted mimas.VBoxLayout in setSpacing");
     int space = dubL_checkint(L, 2);
-    self__->setSpacing(space);
+    self->setSpacing(space);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.VBoxLayout.setSpacing: %s", e.what());
+    lua_pushfstring(L, "setSpacing: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.VBoxLayout.setSpacing: Unknown exception");
+    lua_pushfstring(L, "setSpacing: Unknown exception");
   }
   return lua_error(L);
 }

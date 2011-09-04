@@ -3,6 +3,9 @@
 #include "lua_cpp_helper.h"
 
 
+
+
+
 using namespace mimas;
 
 
@@ -17,9 +20,9 @@ static int Callback_Callback(lua_State *L) {
     // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
     return retval__->luaInit(L, retval__, "mimas.Callback");
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Callback.Callback: %s", e.what());
+    lua_pushfstring(L, "Callback: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Callback.Callback: Unknown exception");
+    lua_pushfstring(L, "Callback: Unknown exception");
   }
   return lua_error(L);
 }
@@ -59,16 +62,16 @@ static int Callback__tostring(lua_State *L) {
  */
 static int Callback_connect(lua_State *L) {
   try {
-    Callback *self__ = *((Callback**)dubL_checksdata(L, 1, "mimas.Callback"));
+    Callback *self = *((Callback**)dubL_checksdata(L, 1, "mimas.Callback"));
     QObject *obj = *((QObject **)dubL_checksdata(L, 2, "mimas.QObject"));
     const char *method = dubL_checkstring(L, 3);
     const char *callback = dubL_checkstring(L, 4);
-    self__->connect(obj, method, callback);
+    self->connect(obj, method, callback);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Callback.connect: %s", e.what());
+    lua_pushfstring(L, "connect: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Callback.connect: Unknown exception");
+    lua_pushfstring(L, "connect: Unknown exception");
   }
   return lua_error(L);
 }

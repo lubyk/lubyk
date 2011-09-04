@@ -9,6 +9,10 @@
 
   TODO: automatic versioning of saved changes (git)
 
+  Usage: a morph process is started with a path to a lubyk
+  project file (*.lkp, yaml content). The lkp file contains
+  information on machine assignement of the processes.
+
 --]]------------------------------------------------------
 
 local lib = {type='lk.Morph'}

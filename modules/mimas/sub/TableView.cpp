@@ -3,6 +3,9 @@
 #include "lua_cpp_helper.h"
 
 
+
+
+
 using namespace mimas;
 
 
@@ -18,9 +21,9 @@ static int TableView_TableView(lua_State *L) {
     // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
     return retval__->luaInit(L, retval__, "mimas.TableView");
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.TableView: %s", e.what());
+    lua_pushfstring(L, "TableView: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.TableView: Unknown exception");
+    lua_pushfstring(L, "TableView: Unknown exception");
   }
   return lua_error(L);
 }
@@ -74,15 +77,15 @@ static int TableView__tostring(lua_State *L) {
  */
 static int TableView_close(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in close");
-    bool  retval__ = self__->close();
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in close");
+    bool  retval__ = self->close();
     lua_pushboolean(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.close: %s", e.what());
+    lua_pushfstring(L, "close: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.close: Unknown exception");
+    lua_pushfstring(L, "close: Unknown exception");
   }
   return lua_error(L);
 }
@@ -94,15 +97,15 @@ static int TableView_close(lua_State *L) {
  */
 static int TableView_cssClass(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in cssClass");
-    QString  retval__ = self__->cssClass();
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in cssClass");
+    QString  retval__ = self->cssClass();
     lua_pushclass<QString>(L, retval__, "mimas.QString");
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.cssClass: %s", e.what());
+    lua_pushfstring(L, "cssClass: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.cssClass: Unknown exception");
+    lua_pushfstring(L, "cssClass: Unknown exception");
   }
   return lua_error(L);
 }
@@ -114,16 +117,16 @@ static int TableView_cssClass(lua_State *L) {
  */
 static int TableView_globalMove(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in globalMove");
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in globalMove");
     float x = dubL_checknumber(L, 2);
     float y = dubL_checknumber(L, 3);
-    self__->globalMove(x, y);
+    self->globalMove(x, y);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.globalMove: %s", e.what());
+    lua_pushfstring(L, "globalMove: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.globalMove: Unknown exception");
+    lua_pushfstring(L, "globalMove: Unknown exception");
   }
   return lua_error(L);
 }
@@ -135,15 +138,15 @@ static int TableView_globalMove(lua_State *L) {
  */
 static int TableView_globalPosition(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in globalPosition");
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in globalPosition");
     
-    LuaStackSize  retval__ = self__->globalPosition(L);
+    LuaStackSize  retval__ = self->globalPosition(L);
     return retval__;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.globalPosition: %s", e.what());
+    lua_pushfstring(L, "globalPosition: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.globalPosition: Unknown exception");
+    lua_pushfstring(L, "globalPosition: Unknown exception");
   }
   return lua_error(L);
 }
@@ -155,15 +158,15 @@ static int TableView_globalPosition(lua_State *L) {
  */
 static int TableView_height(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in height");
-    int  retval__ = self__->height();
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in height");
+    int  retval__ = self->height();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.height: %s", e.what());
+    lua_pushfstring(L, "height: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.height: Unknown exception");
+    lua_pushfstring(L, "height: Unknown exception");
   }
   return lua_error(L);
 }
@@ -175,14 +178,14 @@ static int TableView_height(lua_State *L) {
  */
 static int TableView_hide(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in hide");
-    self__->hide();
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in hide");
+    self->hide();
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.hide: %s", e.what());
+    lua_pushfstring(L, "hide: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.hide: Unknown exception");
+    lua_pushfstring(L, "hide: Unknown exception");
   }
   return lua_error(L);
 }
@@ -194,15 +197,15 @@ static int TableView_hide(lua_State *L) {
  */
 static int TableView_hue(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in hue");
-    float  retval__ = self__->hue();
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in hue");
+    float  retval__ = self->hue();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.hue: %s", e.what());
+    lua_pushfstring(L, "hue: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.hue: Unknown exception");
+    lua_pushfstring(L, "hue: Unknown exception");
   }
   return lua_error(L);
 }
@@ -214,15 +217,15 @@ static int TableView_hue(lua_State *L) {
  */
 static int TableView_isVisible(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in isVisible");
-    bool  retval__ = self__->isVisible();
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in isVisible");
+    bool  retval__ = self->isVisible();
     lua_pushboolean(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.isVisible: %s", e.what());
+    lua_pushfstring(L, "isVisible: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.isVisible: Unknown exception");
+    lua_pushfstring(L, "isVisible: Unknown exception");
   }
   return lua_error(L);
 }
@@ -234,14 +237,14 @@ static int TableView_isVisible(lua_State *L) {
  */
 static int TableView_lower(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in lower");
-    self__->lower();
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in lower");
+    self->lower();
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.lower: %s", e.what());
+    lua_pushfstring(L, "lower: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.lower: Unknown exception");
+    lua_pushfstring(L, "lower: Unknown exception");
   }
   return lua_error(L);
 }
@@ -253,16 +256,16 @@ static int TableView_lower(lua_State *L) {
  */
 static int TableView_move(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in move");
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in move");
     int x = dubL_checkint(L, 2);
     int y = dubL_checkint(L, 3);
-    self__->move(x, y);
+    self->move(x, y);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.move: %s", e.what());
+    lua_pushfstring(L, "move: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.move: Unknown exception");
+    lua_pushfstring(L, "move: Unknown exception");
   }
   return lua_error(L);
 }
@@ -274,15 +277,15 @@ static int TableView_move(lua_State *L) {
  */
 static int TableView_name(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in name");
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in name");
     
-    LuaStackSize  retval__ = self__->name(L);
+    LuaStackSize  retval__ = self->name(L);
     return retval__;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.name: %s", e.what());
+    lua_pushfstring(L, "name: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.name: Unknown exception");
+    lua_pushfstring(L, "name: Unknown exception");
   }
   return lua_error(L);
 }
@@ -294,15 +297,15 @@ static int TableView_name(lua_State *L) {
  */
 static int TableView_object(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in object");
-    QObject * retval__ = self__->object();
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in object");
+    QObject * retval__ = self->object();
     lua_pushclass<QObject>(L, retval__, "mimas.QObject");
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.object: %s", e.what());
+    lua_pushfstring(L, "object: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.object: Unknown exception");
+    lua_pushfstring(L, "object: Unknown exception");
   }
   return lua_error(L);
 }
@@ -314,14 +317,14 @@ static int TableView_object(lua_State *L) {
  */
 static int TableView_raise(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in raise");
-    self__->raise();
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in raise");
+    self->raise();
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.raise: %s", e.what());
+    lua_pushfstring(L, "raise: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.raise: Unknown exception");
+    lua_pushfstring(L, "raise: Unknown exception");
   }
   return lua_error(L);
 }
@@ -333,16 +336,16 @@ static int TableView_raise(lua_State *L) {
  */
 static int TableView_resize(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in resize");
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in resize");
     int w = dubL_checkint(L, 2);
     int h = dubL_checkint(L, 3);
-    self__->resize(w, h);
+    self->resize(w, h);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.resize: %s", e.what());
+    lua_pushfstring(L, "resize: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.resize: Unknown exception");
+    lua_pushfstring(L, "resize: Unknown exception");
   }
   return lua_error(L);
 }
@@ -354,15 +357,15 @@ static int TableView_resize(lua_State *L) {
  */
 static int TableView_selectColumn(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in selectColumn");
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in selectColumn");
     int row = dubL_checkint(L, 2);
-    self__->selectColumn(row);
+    self->selectColumn(row);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.selectColumn: %s", e.what());
+    lua_pushfstring(L, "selectColumn: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.selectColumn: Unknown exception");
+    lua_pushfstring(L, "selectColumn: Unknown exception");
   }
   return lua_error(L);
 }
@@ -374,15 +377,15 @@ static int TableView_selectColumn(lua_State *L) {
  */
 static int TableView_selectRow(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in selectRow");
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in selectRow");
     int row = dubL_checkint(L, 2);
-    self__->selectRow(row);
+    self->selectRow(row);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.selectRow: %s", e.what());
+    lua_pushfstring(L, "selectRow: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.selectRow: Unknown exception");
+    lua_pushfstring(L, "selectRow: Unknown exception");
   }
   return lua_error(L);
 }
@@ -394,15 +397,15 @@ static int TableView_selectRow(lua_State *L) {
  */
 static int TableView_setAlternatingRowColors(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in setAlternatingRowColors");
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in setAlternatingRowColors");
     bool should_enable = lua_toboolean(L, 2);
-    self__->setAlternatingRowColors(should_enable);
+    self->setAlternatingRowColors(should_enable);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.setAlternatingRowColors: %s", e.what());
+    lua_pushfstring(L, "setAlternatingRowColors: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.setAlternatingRowColors: Unknown exception");
+    lua_pushfstring(L, "setAlternatingRowColors: Unknown exception");
   }
   return lua_error(L);
 }
@@ -414,15 +417,15 @@ static int TableView_setAlternatingRowColors(lua_State *L) {
  */
 static int TableView_setGridStyle(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in setGridStyle");
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in setGridStyle");
     int style = dubL_checkint(L, 2);
-    self__->setGridStyle(style);
+    self->setGridStyle(style);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.setGridStyle: %s", e.what());
+    lua_pushfstring(L, "setGridStyle: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.setGridStyle: Unknown exception");
+    lua_pushfstring(L, "setGridStyle: Unknown exception");
   }
   return lua_error(L);
 }
@@ -434,15 +437,15 @@ static int TableView_setGridStyle(lua_State *L) {
  */
 static int TableView_setHue(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in setHue");
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in setHue");
     float hue = dubL_checknumber(L, 2);
-    self__->setHue(hue);
+    self->setHue(hue);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.setHue: %s", e.what());
+    lua_pushfstring(L, "setHue: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.setHue: Unknown exception");
+    lua_pushfstring(L, "setHue: Unknown exception");
   }
   return lua_error(L);
 }
@@ -454,16 +457,16 @@ static int TableView_setHue(lua_State *L) {
  */
 static int TableView_setMinimumSize(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in setMinimumSize");
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in setMinimumSize");
     float w = dubL_checknumber(L, 2);
     float h = dubL_checknumber(L, 3);
-    self__->setMinimumSize(w, h);
+    self->setMinimumSize(w, h);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.setMinimumSize: %s", e.what());
+    lua_pushfstring(L, "setMinimumSize: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.setMinimumSize: Unknown exception");
+    lua_pushfstring(L, "setMinimumSize: Unknown exception");
   }
   return lua_error(L);
 }
@@ -475,15 +478,15 @@ static int TableView_setMinimumSize(lua_State *L) {
  */
 static int TableView_setModel(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in setModel");
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in setModel");
     DataSource *model = *((DataSource **)dubL_checksdata(L, 2, "mimas.DataSource"));
-    self__->setModel(model);
+    self->setModel(model);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.setModel: %s", e.what());
+    lua_pushfstring(L, "setModel: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.setModel: Unknown exception");
+    lua_pushfstring(L, "setModel: Unknown exception");
   }
   return lua_error(L);
 }
@@ -495,15 +498,15 @@ static int TableView_setModel(lua_State *L) {
  */
 static int TableView_setMouseTracking(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in setMouseTracking");
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in setMouseTracking");
     bool enable = lua_toboolean(L, 2);
-    self__->setMouseTracking(enable);
+    self->setMouseTracking(enable);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.setMouseTracking: %s", e.what());
+    lua_pushfstring(L, "setMouseTracking: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.setMouseTracking: Unknown exception");
+    lua_pushfstring(L, "setMouseTracking: Unknown exception");
   }
   return lua_error(L);
 }
@@ -515,15 +518,15 @@ static int TableView_setMouseTracking(lua_State *L) {
  */
 static int TableView_setName(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in setName");
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in setName");
     const char *name = dubL_checkstring(L, 2);
-    self__->setName(name);
+    self->setName(name);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.setName: %s", e.what());
+    lua_pushfstring(L, "setName: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.setName: Unknown exception");
+    lua_pushfstring(L, "setName: Unknown exception");
   }
   return lua_error(L);
 }
@@ -535,16 +538,16 @@ static int TableView_setName(lua_State *L) {
  */
 static int TableView_setSizeHint(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in setSizeHint");
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in setSizeHint");
     float w = dubL_checknumber(L, 2);
     float h = dubL_checknumber(L, 3);
-    self__->setSizeHint(w, h);
+    self->setSizeHint(w, h);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.setSizeHint: %s", e.what());
+    lua_pushfstring(L, "setSizeHint: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.setSizeHint: Unknown exception");
+    lua_pushfstring(L, "setSizeHint: Unknown exception");
   }
   return lua_error(L);
 }
@@ -556,16 +559,16 @@ static int TableView_setSizeHint(lua_State *L) {
  */
 static int TableView_setSizePolicy(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in setSizePolicy");
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in setSizePolicy");
     int horizontal = dubL_checkint(L, 2);
     int vertical = dubL_checkint(L, 3);
-    self__->setSizePolicy(horizontal, vertical);
+    self->setSizePolicy(horizontal, vertical);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.setSizePolicy: %s", e.what());
+    lua_pushfstring(L, "setSizePolicy: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.setSizePolicy: Unknown exception");
+    lua_pushfstring(L, "setSizePolicy: Unknown exception");
   }
   return lua_error(L);
 }
@@ -577,15 +580,15 @@ static int TableView_setSizePolicy(lua_State *L) {
  */
 static int TableView_setStyle(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in setStyle");
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in setStyle");
     const char *text = dubL_checkstring(L, 2);
-    self__->setStyle(text);
+    self->setStyle(text);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.setStyle: %s", e.what());
+    lua_pushfstring(L, "setStyle: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.setStyle: Unknown exception");
+    lua_pushfstring(L, "setStyle: Unknown exception");
   }
   return lua_error(L);
 }
@@ -597,15 +600,15 @@ static int TableView_setStyle(lua_State *L) {
  */
 static int TableView_setStyleSheet(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in setStyleSheet");
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in setStyleSheet");
     const char *text = dubL_checkstring(L, 2);
-    self__->setStyleSheet(text);
+    self->setStyleSheet(text);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.setStyleSheet: %s", e.what());
+    lua_pushfstring(L, "setStyleSheet: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.setStyleSheet: Unknown exception");
+    lua_pushfstring(L, "setStyleSheet: Unknown exception");
   }
   return lua_error(L);
 }
@@ -617,16 +620,16 @@ static int TableView_setStyleSheet(lua_State *L) {
  */
 static int TableView_setVisibleHeaders(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in setVisibleHeaders");
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in setVisibleHeaders");
     int orientation = dubL_checkint(L, 2);
     bool visible = lua_toboolean(L, 3);
-    self__->setVisibleHeaders(orientation, visible);
+    self->setVisibleHeaders(orientation, visible);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.setVisibleHeaders: %s", e.what());
+    lua_pushfstring(L, "setVisibleHeaders: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.setVisibleHeaders: Unknown exception");
+    lua_pushfstring(L, "setVisibleHeaders: Unknown exception");
   }
   return lua_error(L);
 }
@@ -638,14 +641,14 @@ static int TableView_setVisibleHeaders(lua_State *L) {
  */
 static int TableView_show(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in show");
-    self__->show();
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in show");
+    self->show();
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.show: %s", e.what());
+    lua_pushfstring(L, "show: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.show: Unknown exception");
+    lua_pushfstring(L, "show: Unknown exception");
   }
   return lua_error(L);
 }
@@ -657,16 +660,16 @@ static int TableView_show(lua_State *L) {
  */
 static int TableView_textSize(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in textSize");
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in textSize");
     const char *text = dubL_checkstring(L, 2);
     
-    LuaStackSize  retval__ = self__->textSize(text, L);
+    LuaStackSize  retval__ = self->textSize(text, L);
     return retval__;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.textSize: %s", e.what());
+    lua_pushfstring(L, "textSize: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.textSize: Unknown exception");
+    lua_pushfstring(L, "textSize: Unknown exception");
   }
   return lua_error(L);
 }
@@ -678,14 +681,14 @@ static int TableView_textSize(lua_State *L) {
  */
 static int TableView_update(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in update");
-    self__->update();
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in update");
+    self->update();
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.update: %s", e.what());
+    lua_pushfstring(L, "update: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.update: Unknown exception");
+    lua_pushfstring(L, "update: Unknown exception");
   }
   return lua_error(L);
 }
@@ -697,15 +700,15 @@ static int TableView_update(lua_State *L) {
  */
 static int TableView_widget(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in widget");
-    QWidget * retval__ = self__->widget();
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in widget");
+    QWidget * retval__ = self->widget();
     lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.widget: %s", e.what());
+    lua_pushfstring(L, "widget: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.widget: Unknown exception");
+    lua_pushfstring(L, "widget: Unknown exception");
   }
   return lua_error(L);
 }
@@ -717,15 +720,15 @@ static int TableView_widget(lua_State *L) {
  */
 static int TableView_width(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in width");
-    int  retval__ = self__->width();
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in width");
+    int  retval__ = self->width();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.width: %s", e.what());
+    lua_pushfstring(L, "width: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.width: Unknown exception");
+    lua_pushfstring(L, "width: Unknown exception");
   }
   return lua_error(L);
 }
@@ -737,15 +740,15 @@ static int TableView_width(lua_State *L) {
  */
 static int TableView_x(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in x");
-    int  retval__ = self__->x();
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in x");
+    int  retval__ = self->x();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.x: %s", e.what());
+    lua_pushfstring(L, "x: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.x: Unknown exception");
+    lua_pushfstring(L, "x: Unknown exception");
   }
   return lua_error(L);
 }
@@ -757,15 +760,15 @@ static int TableView_x(lua_State *L) {
  */
 static int TableView_y(lua_State *L) {
   try {
-    TableView *self__ = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
-    if (!self__) throw dub::Exception("Using deleted mimas.TableView in y");
-    int  retval__ = self__->y();
+    TableView *self = *((TableView**)dubL_checksdata(L, 1, "mimas.TableView"));
+    if (!self) throw dub::Exception("Using deleted mimas.TableView in y");
+    int  retval__ = self->y();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.TableView.y: %s", e.what());
+    lua_pushfstring(L, "y: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.TableView.y: Unknown exception");
+    lua_pushfstring(L, "y: Unknown exception");
   }
   return lua_error(L);
 }

@@ -3,6 +3,9 @@
 #include "lua_cpp_helper.h"
 
 
+
+
+
 using namespace mimas;
 
 
@@ -18,9 +21,9 @@ static int Path_Path1(lua_State *L) {
     lua_pushclass<Path>(L, retval__, "mimas.Path");
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Path.Path: %s", e.what());
+    lua_pushfstring(L, "Path: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Path.Path: Unknown exception");
+    lua_pushfstring(L, "Path: Unknown exception");
   }
   return lua_error(L);
 }
@@ -37,9 +40,9 @@ static int Path_Path2(lua_State *L) {
     lua_pushclass<Path>(L, retval__, "mimas.Path");
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Path.Path: %s", e.what());
+    lua_pushfstring(L, "Path: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Path.Path: Unknown exception");
+    lua_pushfstring(L, "Path: Unknown exception");
   }
   return lua_error(L);
 }
@@ -95,17 +98,17 @@ static int Path__tostring(lua_State *L) {
  */
 static int Path_addRect(lua_State *L) {
   try {
-    Path *self__ = *((Path**)dubL_checksdata(L, 1, "mimas.Path"));
+    Path *self = *((Path**)dubL_checksdata(L, 1, "mimas.Path"));
     float x = dubL_checknumber(L, 2);
     float y = dubL_checknumber(L, 3);
     float w = dubL_checknumber(L, 4);
     float h = dubL_checknumber(L, 5);
-    self__->addRect(x, y, w, h);
+    self->addRect(x, y, w, h);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Path.addRect: %s", e.what());
+    lua_pushfstring(L, "addRect: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Path.addRect: Unknown exception");
+    lua_pushfstring(L, "addRect: Unknown exception");
   }
   return lua_error(L);
 }
@@ -117,16 +120,16 @@ static int Path_addRect(lua_State *L) {
  */
 static int Path_contains(lua_State *L) {
   try {
-    Path *self__ = *((Path**)dubL_checksdata(L, 1, "mimas.Path"));
+    Path *self = *((Path**)dubL_checksdata(L, 1, "mimas.Path"));
     float x = dubL_checknumber(L, 2);
     float y = dubL_checknumber(L, 3);
-    bool  retval__ = self__->contains(x, y);
+    bool  retval__ = self->contains(x, y);
     lua_pushboolean(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Path.contains: %s", e.what());
+    lua_pushfstring(L, "contains: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Path.contains: Unknown exception");
+    lua_pushfstring(L, "contains: Unknown exception");
   }
   return lua_error(L);
 }
@@ -138,19 +141,19 @@ static int Path_contains(lua_State *L) {
  */
 static int Path_cubicTo(lua_State *L) {
   try {
-    Path *self__ = *((Path**)dubL_checksdata(L, 1, "mimas.Path"));
+    Path *self = *((Path**)dubL_checksdata(L, 1, "mimas.Path"));
     float c1X = dubL_checknumber(L, 2);
     float c1Y = dubL_checknumber(L, 3);
     float c2X = dubL_checknumber(L, 4);
     float c2Y = dubL_checknumber(L, 5);
     float endPointX = dubL_checknumber(L, 6);
     float endPointY = dubL_checknumber(L, 7);
-    self__->cubicTo(c1X, c1Y, c2X, c2Y, endPointX, endPointY);
+    self->cubicTo(c1X, c1Y, c2X, c2Y, endPointX, endPointY);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Path.cubicTo: %s", e.what());
+    lua_pushfstring(L, "cubicTo: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Path.cubicTo: Unknown exception");
+    lua_pushfstring(L, "cubicTo: Unknown exception");
   }
   return lua_error(L);
 }
@@ -162,15 +165,15 @@ static int Path_cubicTo(lua_State *L) {
  */
 static int Path_lineTo(lua_State *L) {
   try {
-    Path *self__ = *((Path**)dubL_checksdata(L, 1, "mimas.Path"));
+    Path *self = *((Path**)dubL_checksdata(L, 1, "mimas.Path"));
     float x = dubL_checknumber(L, 2);
     float y = dubL_checknumber(L, 3);
-    self__->lineTo(x, y);
+    self->lineTo(x, y);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Path.lineTo: %s", e.what());
+    lua_pushfstring(L, "lineTo: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Path.lineTo: Unknown exception");
+    lua_pushfstring(L, "lineTo: Unknown exception");
   }
   return lua_error(L);
 }
@@ -182,15 +185,15 @@ static int Path_lineTo(lua_State *L) {
  */
 static int Path_moveTo(lua_State *L) {
   try {
-    Path *self__ = *((Path**)dubL_checksdata(L, 1, "mimas.Path"));
+    Path *self = *((Path**)dubL_checksdata(L, 1, "mimas.Path"));
     float x = dubL_checknumber(L, 2);
     float y = dubL_checknumber(L, 3);
-    self__->moveTo(x, y);
+    self->moveTo(x, y);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Path.moveTo: %s", e.what());
+    lua_pushfstring(L, "moveTo: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Path.moveTo: Unknown exception");
+    lua_pushfstring(L, "moveTo: Unknown exception");
   }
   return lua_error(L);
 }
@@ -202,15 +205,15 @@ static int Path_moveTo(lua_State *L) {
  */
 static int Path_outlineForWidth(lua_State *L) {
   try {
-    Path *self__ = *((Path**)dubL_checksdata(L, 1, "mimas.Path"));
+    Path *self = *((Path**)dubL_checksdata(L, 1, "mimas.Path"));
     float width = dubL_checknumber(L, 2);
-    Path  retval__ = self__->outlineForWidth(width);
+    Path  retval__ = self->outlineForWidth(width);
     lua_pushclass<Path>(L, retval__, "mimas.Path");
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Path.outlineForWidth: %s", e.what());
+    lua_pushfstring(L, "outlineForWidth: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Path.outlineForWidth: Unknown exception");
+    lua_pushfstring(L, "outlineForWidth: Unknown exception");
   }
   return lua_error(L);
 }

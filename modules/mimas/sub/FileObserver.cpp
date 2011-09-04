@@ -3,6 +3,9 @@
 #include "lua_cpp_helper.h"
 
 
+
+
+
 using namespace mimas;
 
 
@@ -17,9 +20,9 @@ static int FileObserver_FileObserver(lua_State *L) {
     // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
     return retval__->luaInit(L, retval__, "mimas.FileObserver");
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.FileObserver.FileObserver: %s", e.what());
+    lua_pushfstring(L, "FileObserver: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.FileObserver.FileObserver: Unknown exception");
+    lua_pushfstring(L, "FileObserver: Unknown exception");
   }
   return lua_error(L);
 }
@@ -59,14 +62,14 @@ static int FileObserver__tostring(lua_State *L) {
  */
 static int FileObserver_addPath(lua_State *L) {
   try {
-    FileObserver *self__ = *((FileObserver**)dubL_checksdata(L, 1, "mimas.FileObserver"));
+    FileObserver *self = *((FileObserver**)dubL_checksdata(L, 1, "mimas.FileObserver"));
     const char *path = dubL_checkstring(L, 2);
-    self__->addPath(path);
+    self->addPath(path);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.FileObserver.addPath: %s", e.what());
+    lua_pushfstring(L, "addPath: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.FileObserver.addPath: Unknown exception");
+    lua_pushfstring(L, "addPath: Unknown exception");
   }
   return lua_error(L);
 }
@@ -78,14 +81,14 @@ static int FileObserver_addPath(lua_State *L) {
  */
 static int FileObserver_removePath(lua_State *L) {
   try {
-    FileObserver *self__ = *((FileObserver**)dubL_checksdata(L, 1, "mimas.FileObserver"));
+    FileObserver *self = *((FileObserver**)dubL_checksdata(L, 1, "mimas.FileObserver"));
     const char *path = dubL_checkstring(L, 2);
-    self__->removePath(path);
+    self->removePath(path);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.FileObserver.removePath: %s", e.what());
+    lua_pushfstring(L, "removePath: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.FileObserver.removePath: Unknown exception");
+    lua_pushfstring(L, "removePath: Unknown exception");
   }
   return lua_error(L);
 }

@@ -26,15 +26,15 @@
 
   ==============================================================================
 */
-#ifndef LUBYK_INCLUDE_MIMAS_WIDGET_H_
-#define LUBYK_INCLUDE_MIMAS_WIDGET_H_
+#ifndef LUBYK_INCLUDE_MIMAS_MAIN_WINDOW_H_
+#define LUBYK_INCLUDE_MIMAS_MAIN_WINDOW_H_
 
 #include "mimas/mimas.h"
 #include "mimas/constants.h"
 
 using namespace lubyk;
 
-#include <QtGui/QWidget>
+#include <QtGui/QMainWindow>
 #include <QtGui/QMouseEvent>
 #include <QtCore/QPoint>
 
@@ -42,44 +42,33 @@ namespace mimas {
 
 class Painter;
 
-/** The Widget is used to display custom elements or windows.
- * The Widget uses the following callbacks:  paint, mouse,
- * click, keyboard, move and resized.
+/** The MimasWindow is used to display the main window of an application. This
+ * is better then Widget because we have access to the menu bar and such
+ * items.
+ *
+ * @see QWidget
+ * @see QObject
  *
  * @dub destructor: 'luaDestroy'
- *      super: 'QWidget, QObject'
+ *      super: 'QObject, QWidget'
  */
-class Widget : public QWidget, public LuaObject {
+class MainWindow : public QMainWindow, public LuaObject {
   Q_OBJECT
   Q_PROPERTY(QString class READ cssClass)
-  Q_PROPERTY(float hue READ hue WRITE setHue)
 
 public:
-  Widget(int window_flags = 0) :
-    QWidget(NULL, (Qt::WindowFlags)window_flags) {
+  MainWindow() {
     setAttribute(Qt::WA_DeleteOnClose);
   }
 
-  ~Widget() {
+  ~MainWindow() {
     MIMAS_DEBUG_GC
   }
 
   QString cssClass() const {
-    return parent() ? QString("window") : QString("widget");
+    return QString("main_window");
   }
-
-  /** Is this used ???
-   */
-  void setHue(float hue) {
-    hue_ = hue;
-    update();
-  }
-
-  float hue() {
-    return hue_;
-  }
-
-  QSize size_hint_;
+  
   // ============================================================ Dialog
   LuaStackSize getOpenFileName(const char *caption,
                           const char *base_dir,
@@ -91,6 +80,8 @@ public:
                           const char *base_dir,
                           int options,
                           lua_State *L);
+
+  QSize size_hint_;
 protected:
   virtual void mouseMoveEvent(QMouseEvent *event);
 
@@ -137,10 +128,6 @@ protected:
     return size_hint_;
   }
 
-  /** The component's color.
-   */
-  float hue_;
-
 private:
   void paint(Painter &p);
   void keyboard(QKeyEvent *event, bool isPressed);
@@ -148,4 +135,4 @@ private:
 };
 
 } // mimas
-#endif // LUBYK_INCLUDE_MIMAS_WIDGET_H_
+#endif // LUBYK_INCLUDE_MIMAS_MAIN_WINDOW_H_

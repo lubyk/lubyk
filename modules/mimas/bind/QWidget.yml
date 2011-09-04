@@ -1,0 +1,93 @@
+lua:
+# Example on how yml based bindings could work: we let dub generate the try/
+# catch and getting 'self_'. We then take over up to the return (we must
+# raise en error and avoid luaL_error in this code.
+  widget: |
+    QWidget* retval__ = self;
+    lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
+    return 1;
+
+# There are default values, we have to get the actual ones ourselves.
+# void addWidget(QWidget *widget, float x=0, float y=0)
+  addWidget: |
+    int top__ = lua_gettop(L);
+    QWidget *widget = *((QWidget **)dubL_checksdata(L, 2, "mimas.QWidget"));
+    float x = 0;
+    float y = 0;
+    if (top__ >= 3) {
+      x = dubL_checknumber(L, 3);
+      if (top__ >= 4) {
+        y = dubL_checknumber(L, 4);
+      }
+    }
+    widget->setParent(self);
+    widget->move(x, y);
+    widget->show();
+    return 0;
+
+  size: |
+    QRect rect = self->geometry();
+    lua_pushnumber(L, rect.width());
+    lua_pushnumber(L, rect.height());
+    return 2;
+
+  setStyle: |
+    self->setStyleSheet(QString(".%1 { %2 }").arg(self->cssClass()).arg(text));
+    return 0;
+
+  setStyleSheet: |
+    self->setStyleSheet(text);
+    return 0;
+
+  textSize: |
+    lua_pushnumber(L, self->fontMetrics().width(text));
+    lua_pushnumber(L, self->fontMetrics().height());
+    return 2;
+                              
+  setSizeHint: |
+    self->size_hint_ = QSize(w, h);
+    self->updateGeometry();
+    return 0;
+
+  setSizePolicy: |
+    self->setSizePolicy((QSizePolicy::Policy)horizontal, (QSizePolicy::Policy)vertical);
+    self->updateGeometry();
+
+  showFullScreen: |
+    int top__ = lua_gettop(L);
+    bool enable;
+    if (top__ >= 2) {
+      enable = lua_toboolean(L, 2);
+    } else {
+      enable = true;
+    }
+    if (enable) {
+      self->showFullScreen();
+    } else {
+      self->showNormal();
+    }
+    return 0;
+
+  swapFullScreen: |
+    bool enable = !self->isFullScreen();
+    if (enable) {
+      self->showFullScreen();
+    } else {
+      self->showNormal();
+    }
+    return 0;
+
+  globalPosition: |
+    QPoint pt = self->mapToGlobal(QPoint(0, 0));
+    lua_pushnumber(L, pt.x());
+    lua_pushnumber(L, pt.y());
+    return 2;
+
+  globalMove: |
+    self->move(
+      self->mapToParent(
+        self->mapFromGlobal(QPoint(x, y))
+      )
+    );
+    return 0;
+

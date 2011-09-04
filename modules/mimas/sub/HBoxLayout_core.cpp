@@ -3,6 +3,9 @@
 #include "lua_cpp_helper.h"
 
 
+
+
+
 using namespace mimas;
 
 
@@ -24,9 +27,9 @@ static int HBoxLayout_HBoxLayout(lua_State *L) {
     lua_pushclass2<HBoxLayout>(L, retval__, "mimas.HBoxLayout");
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.HBoxLayout.HBoxLayout: %s", e.what());
+    lua_pushfstring(L, "HBoxLayout: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.HBoxLayout.HBoxLayout: Unknown exception");
+    lua_pushfstring(L, "HBoxLayout: Unknown exception");
   }
   return lua_error(L);
 }
@@ -80,15 +83,15 @@ static int HBoxLayout__tostring(lua_State *L) {
  */
 static int HBoxLayout_addLayout(lua_State *L) {
   try {
-    HBoxLayout *self__ = *((HBoxLayout**)dubL_checksdata(L, 1, "mimas.HBoxLayout"));
-    if (!self__) throw dub::Exception("Using deleted mimas.HBoxLayout in addLayout");
+    HBoxLayout *self = *((HBoxLayout**)dubL_checksdata(L, 1, "mimas.HBoxLayout"));
+    if (!self) throw dub::Exception("Using deleted mimas.HBoxLayout in addLayout");
     QLayout *layout = *((QLayout **)dubL_checksdata(L, 2, "mimas.QLayout"));
-    self__->addLayout(layout);
+    self->addLayout(layout);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.HBoxLayout.addLayout: %s", e.what());
+    lua_pushfstring(L, "addLayout: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.HBoxLayout.addLayout: Unknown exception");
+    lua_pushfstring(L, "addLayout: Unknown exception");
   }
   return lua_error(L);
 }
@@ -100,15 +103,15 @@ static int HBoxLayout_addLayout(lua_State *L) {
  */
 static int HBoxLayout_addSpacing(lua_State *L) {
   try {
-    HBoxLayout *self__ = *((HBoxLayout**)dubL_checksdata(L, 1, "mimas.HBoxLayout"));
-    if (!self__) throw dub::Exception("Using deleted mimas.HBoxLayout in addSpacing");
+    HBoxLayout *self = *((HBoxLayout**)dubL_checksdata(L, 1, "mimas.HBoxLayout"));
+    if (!self) throw dub::Exception("Using deleted mimas.HBoxLayout in addSpacing");
     int size = dubL_checkint(L, 2);
-    self__->addSpacing(size);
+    self->addSpacing(size);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.HBoxLayout.addSpacing: %s", e.what());
+    lua_pushfstring(L, "addSpacing: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.HBoxLayout.addSpacing: Unknown exception");
+    lua_pushfstring(L, "addSpacing: Unknown exception");
   }
   return lua_error(L);
 }
@@ -120,20 +123,20 @@ static int HBoxLayout_addSpacing(lua_State *L) {
  */
 static int HBoxLayout_addStretch(lua_State *L) {
   try {
-    HBoxLayout *self__ = *((HBoxLayout**)dubL_checksdata(L, 1, "mimas.HBoxLayout"));
-    if (!self__) throw dub::Exception("Using deleted mimas.HBoxLayout in addStretch");
+    HBoxLayout *self = *((HBoxLayout**)dubL_checksdata(L, 1, "mimas.HBoxLayout"));
+    if (!self) throw dub::Exception("Using deleted mimas.HBoxLayout in addStretch");
     int top__ = lua_gettop(L);
     if (top__ < 2) {
-      self__->addStretch();
+      self->addStretch();
     } else {
       int stretch = dubL_checkint(L, 2);
-      self__->addStretch(stretch);
+      self->addStretch(stretch);
     }
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.HBoxLayout.addStretch: %s", e.what());
+    lua_pushfstring(L, "addStretch: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.HBoxLayout.addStretch: Unknown exception");
+    lua_pushfstring(L, "addStretch: Unknown exception");
   }
   return lua_error(L);
 }
@@ -145,26 +148,26 @@ static int HBoxLayout_addStretch(lua_State *L) {
  */
 static int HBoxLayout_addWidget(lua_State *L) {
   try {
-    HBoxLayout *self__ = *((HBoxLayout**)dubL_checksdata(L, 1, "mimas.HBoxLayout"));
-    if (!self__) throw dub::Exception("Using deleted mimas.HBoxLayout in addWidget");
+    HBoxLayout *self = *((HBoxLayout**)dubL_checksdata(L, 1, "mimas.HBoxLayout"));
+    if (!self) throw dub::Exception("Using deleted mimas.HBoxLayout in addWidget");
     int top__ = lua_gettop(L);
     QWidget *widget = *((QWidget **)dubL_checksdata(L, 2, "mimas.QWidget"));
     if (top__ < 3) {
-      self__->addWidget(widget);
+      self->addWidget(widget);
     } else {
       int stretch = dubL_checkint(L, 3);
       if (top__ < 4) {
-        self__->addWidget(widget, stretch);
+        self->addWidget(widget, stretch);
       } else {
         int alignment = dubL_checkint(L, 4);
-        self__->addWidget(widget, stretch, alignment);
+        self->addWidget(widget, stretch, alignment);
       }
     }
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.HBoxLayout.addWidget: %s", e.what());
+    lua_pushfstring(L, "addWidget: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.HBoxLayout.addWidget: Unknown exception");
+    lua_pushfstring(L, "addWidget: Unknown exception");
   }
   return lua_error(L);
 }
@@ -176,15 +179,15 @@ static int HBoxLayout_addWidget(lua_State *L) {
  */
 static int HBoxLayout_layout(lua_State *L) {
   try {
-    HBoxLayout *self__ = *((HBoxLayout**)dubL_checksdata(L, 1, "mimas.HBoxLayout"));
-    if (!self__) throw dub::Exception("Using deleted mimas.HBoxLayout in layout");
-    QLayout * retval__ = self__->layout();
+    HBoxLayout *self = *((HBoxLayout**)dubL_checksdata(L, 1, "mimas.HBoxLayout"));
+    if (!self) throw dub::Exception("Using deleted mimas.HBoxLayout in layout");
+    QLayout * retval__ = self->layout();
     lua_pushclass<QLayout>(L, retval__, "mimas.QLayout");
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.HBoxLayout.layout: %s", e.what());
+    lua_pushfstring(L, "layout: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.HBoxLayout.layout: Unknown exception");
+    lua_pushfstring(L, "layout: Unknown exception");
   }
   return lua_error(L);
 }
@@ -196,18 +199,18 @@ static int HBoxLayout_layout(lua_State *L) {
  */
 static int HBoxLayout_setContentsMargins(lua_State *L) {
   try {
-    HBoxLayout *self__ = *((HBoxLayout**)dubL_checksdata(L, 1, "mimas.HBoxLayout"));
-    if (!self__) throw dub::Exception("Using deleted mimas.HBoxLayout in setContentsMargins");
+    HBoxLayout *self = *((HBoxLayout**)dubL_checksdata(L, 1, "mimas.HBoxLayout"));
+    if (!self) throw dub::Exception("Using deleted mimas.HBoxLayout in setContentsMargins");
     int left = dubL_checkint(L, 2);
     int top = dubL_checkint(L, 3);
     int right = dubL_checkint(L, 4);
     int bottom = dubL_checkint(L, 5);
-    self__->setContentsMargins(left, top, right, bottom);
+    self->setContentsMargins(left, top, right, bottom);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.HBoxLayout.setContentsMargins: %s", e.what());
+    lua_pushfstring(L, "setContentsMargins: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.HBoxLayout.setContentsMargins: Unknown exception");
+    lua_pushfstring(L, "setContentsMargins: Unknown exception");
   }
   return lua_error(L);
 }
@@ -219,15 +222,15 @@ static int HBoxLayout_setContentsMargins(lua_State *L) {
  */
 static int HBoxLayout_setSpacing(lua_State *L) {
   try {
-    HBoxLayout *self__ = *((HBoxLayout**)dubL_checksdata(L, 1, "mimas.HBoxLayout"));
-    if (!self__) throw dub::Exception("Using deleted mimas.HBoxLayout in setSpacing");
+    HBoxLayout *self = *((HBoxLayout**)dubL_checksdata(L, 1, "mimas.HBoxLayout"));
+    if (!self) throw dub::Exception("Using deleted mimas.HBoxLayout in setSpacing");
     int space = dubL_checkint(L, 2);
-    self__->setSpacing(space);
+    self->setSpacing(space);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.HBoxLayout.setSpacing: %s", e.what());
+    lua_pushfstring(L, "setSpacing: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.HBoxLayout.setSpacing: Unknown exception");
+    lua_pushfstring(L, "setSpacing: Unknown exception");
   }
   return lua_error(L);
 }

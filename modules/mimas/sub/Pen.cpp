@@ -3,6 +3,9 @@
 #include "lua_cpp_helper.h"
 
 
+
+
+
 using namespace mimas;
 
 
@@ -18,9 +21,9 @@ static int Pen_Pen1(lua_State *L) {
     lua_pushclass<Pen>(L, retval__, "mimas.Pen");
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Pen.Pen: %s", e.what());
+    lua_pushfstring(L, "Pen: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Pen.Pen: Unknown exception");
+    lua_pushfstring(L, "Pen: Unknown exception");
   }
   return lua_error(L);
 }
@@ -55,9 +58,9 @@ static int Pen_Pen2(lua_State *L) {
     lua_pushclass<Pen>(L, retval__, "mimas.Pen");
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Pen.Pen: %s", e.what());
+    lua_pushfstring(L, "Pen: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Pen.Pen: Unknown exception");
+    lua_pushfstring(L, "Pen: Unknown exception");
   }
   return lua_error(L);
 }
@@ -92,9 +95,9 @@ static int Pen_Pen3(lua_State *L) {
     lua_pushclass<Pen>(L, retval__, "mimas.Pen");
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Pen.Pen: %s", e.what());
+    lua_pushfstring(L, "Pen: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Pen.Pen: Unknown exception");
+    lua_pushfstring(L, "Pen: Unknown exception");
   }
   return lua_error(L);
 }
@@ -106,21 +109,21 @@ static int Pen_Pen3(lua_State *L) {
 static int Pen_Pen(lua_State *L) {
   int type__ = lua_type(L, 1);
   int top__  = lua_gettop(L);
-  if (top__ < 1) {
-    return Pen_Pen1(L);
-  } else if (type__ == LUA_TNUMBER) {
+  if (type__ == LUA_TNUMBER) {
     type__ = lua_type(L, 2);
-    if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.Color")) {
-      return Pen_Pen2(L);
-    } else if (type__ == LUA_TNUMBER) {
+    if (type__ == LUA_TNUMBER) {
       return Pen_Pen3(L);
+    } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.Color")) {
+      return Pen_Pen2(L);
     } else {
       // use any to raise errors
-      return Pen_Pen3(L);
+      return Pen_Pen2(L);
     }
+  } else if (top__ < 1) {
+    return Pen_Pen1(L);
   } else {
     // use any to raise errors
-    return Pen_Pen3(L);
+    return Pen_Pen1(L);
   }
 }
 
@@ -158,14 +161,14 @@ static int Pen__tostring(lua_State *L) {
  */
 static int Pen_setCapStyle(lua_State *L) {
   try {
-    Pen *self__ = *((Pen**)dubL_checksdata(L, 1, "mimas.Pen"));
+    Pen *self = *((Pen**)dubL_checksdata(L, 1, "mimas.Pen"));
     int style = dubL_checkint(L, 2);
-    self__->setCapStyle(style);
+    self->setCapStyle(style);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Pen.setCapStyle: %s", e.what());
+    lua_pushfstring(L, "setCapStyle: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Pen.setCapStyle: Unknown exception");
+    lua_pushfstring(L, "setCapStyle: Unknown exception");
   }
   return lua_error(L);
 }
@@ -177,14 +180,14 @@ static int Pen_setCapStyle(lua_State *L) {
  */
 static int Pen_setColor(lua_State *L) {
   try {
-    Pen *self__ = *((Pen**)dubL_checksdata(L, 1, "mimas.Pen"));
+    Pen *self = *((Pen**)dubL_checksdata(L, 1, "mimas.Pen"));
     const Color *color = *((const Color **)dubL_checksdata(L, 2, "mimas.Color"));
-    self__->setColor(*color);
+    self->setColor(*color);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Pen.setColor: %s", e.what());
+    lua_pushfstring(L, "setColor: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Pen.setColor: Unknown exception");
+    lua_pushfstring(L, "setColor: Unknown exception");
   }
   return lua_error(L);
 }
@@ -196,30 +199,30 @@ static int Pen_setColor(lua_State *L) {
  */
 static int Pen_setHsva(lua_State *L) {
   try {
-    Pen *self__ = *((Pen**)dubL_checksdata(L, 1, "mimas.Pen"));
+    Pen *self = *((Pen**)dubL_checksdata(L, 1, "mimas.Pen"));
     int top__ = lua_gettop(L);
     float h = dubL_checknumber(L, 2);
     if (top__ < 3) {
-      self__->setHsva(h);
+      self->setHsva(h);
     } else {
       float s = dubL_checknumber(L, 3);
       if (top__ < 4) {
-        self__->setHsva(h, s);
+        self->setHsva(h, s);
       } else {
         float v = dubL_checknumber(L, 4);
         if (top__ < 5) {
-          self__->setHsva(h, s, v);
+          self->setHsva(h, s, v);
         } else {
           float a = dubL_checknumber(L, 5);
-          self__->setHsva(h, s, v, a);
+          self->setHsva(h, s, v, a);
         }
       }
     }
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Pen.setHsva: %s", e.what());
+    lua_pushfstring(L, "setHsva: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Pen.setHsva: Unknown exception");
+    lua_pushfstring(L, "setHsva: Unknown exception");
   }
   return lua_error(L);
 }
@@ -231,14 +234,14 @@ static int Pen_setHsva(lua_State *L) {
  */
 static int Pen_setJoinStyle(lua_State *L) {
   try {
-    Pen *self__ = *((Pen**)dubL_checksdata(L, 1, "mimas.Pen"));
+    Pen *self = *((Pen**)dubL_checksdata(L, 1, "mimas.Pen"));
     int style = dubL_checkint(L, 2);
-    self__->setJoinStyle(style);
+    self->setJoinStyle(style);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Pen.setJoinStyle: %s", e.what());
+    lua_pushfstring(L, "setJoinStyle: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Pen.setJoinStyle: Unknown exception");
+    lua_pushfstring(L, "setJoinStyle: Unknown exception");
   }
   return lua_error(L);
 }
@@ -250,22 +253,22 @@ static int Pen_setJoinStyle(lua_State *L) {
  */
 static int Pen_setRgba(lua_State *L) {
   try {
-    Pen *self__ = *((Pen**)dubL_checksdata(L, 1, "mimas.Pen"));
+    Pen *self = *((Pen**)dubL_checksdata(L, 1, "mimas.Pen"));
     int top__ = lua_gettop(L);
     float r = dubL_checknumber(L, 2);
     float g = dubL_checknumber(L, 3);
     float b = dubL_checknumber(L, 4);
     if (top__ < 5) {
-      self__->setRgba(r, g, b);
+      self->setRgba(r, g, b);
     } else {
       float a = dubL_checknumber(L, 5);
-      self__->setRgba(r, g, b, a);
+      self->setRgba(r, g, b, a);
     }
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Pen.setRgba: %s", e.what());
+    lua_pushfstring(L, "setRgba: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Pen.setRgba: Unknown exception");
+    lua_pushfstring(L, "setRgba: Unknown exception");
   }
   return lua_error(L);
 }
@@ -277,14 +280,14 @@ static int Pen_setRgba(lua_State *L) {
  */
 static int Pen_setStyle(lua_State *L) {
   try {
-    Pen *self__ = *((Pen**)dubL_checksdata(L, 1, "mimas.Pen"));
+    Pen *self = *((Pen**)dubL_checksdata(L, 1, "mimas.Pen"));
     int style = dubL_checkint(L, 2);
-    self__->setStyle(style);
+    self->setStyle(style);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Pen.setStyle: %s", e.what());
+    lua_pushfstring(L, "setStyle: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Pen.setStyle: Unknown exception");
+    lua_pushfstring(L, "setStyle: Unknown exception");
   }
   return lua_error(L);
 }
@@ -296,14 +299,14 @@ static int Pen_setStyle(lua_State *L) {
  */
 static int Pen_setWidth(lua_State *L) {
   try {
-    Pen *self__ = *((Pen**)dubL_checksdata(L, 1, "mimas.Pen"));
+    Pen *self = *((Pen**)dubL_checksdata(L, 1, "mimas.Pen"));
     float w = dubL_checknumber(L, 2);
-    self__->setWidth(w);
+    self->setWidth(w);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Pen.setWidth: %s", e.what());
+    lua_pushfstring(L, "setWidth: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Pen.setWidth: Unknown exception");
+    lua_pushfstring(L, "setWidth: Unknown exception");
   }
   return lua_error(L);
 }

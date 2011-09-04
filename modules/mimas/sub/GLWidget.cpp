@@ -3,6 +3,9 @@
 #include "lua_cpp_helper.h"
 
 
+
+
+
 using namespace mimas;
 
 
@@ -17,9 +20,9 @@ static int GLWidget_GLWidget(lua_State *L) {
     // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
     return retval__->luaInit(L, retval__, "mimas.GLWidget");
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.GLWidget.GLWidget: %s", e.what());
+    lua_pushfstring(L, "GLWidget: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.GLWidget.GLWidget: Unknown exception");
+    lua_pushfstring(L, "GLWidget: Unknown exception");
   }
   return lua_error(L);
 }
@@ -73,14 +76,14 @@ static int GLWidget__tostring(lua_State *L) {
  */
 static int GLWidget_activateWindow(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
-    if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in activateWindow");
-    self__->activateWindow();
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in activateWindow");
+    self->activateWindow();
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.GLWidget.activateWindow: %s", e.what());
+    lua_pushfstring(L, "activateWindow: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.GLWidget.activateWindow: Unknown exception");
+    lua_pushfstring(L, "activateWindow: Unknown exception");
   }
   return lua_error(L);
 }
@@ -92,15 +95,15 @@ static int GLWidget_activateWindow(lua_State *L) {
  */
 static int GLWidget_close(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
-    if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in close");
-    bool  retval__ = self__->close();
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in close");
+    bool  retval__ = self->close();
     lua_pushboolean(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.GLWidget.close: %s", e.what());
+    lua_pushfstring(L, "close: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.GLWidget.close: Unknown exception");
+    lua_pushfstring(L, "close: Unknown exception");
   }
   return lua_error(L);
 }
@@ -112,15 +115,15 @@ static int GLWidget_close(lua_State *L) {
  */
 static int GLWidget_cssClass(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
-    if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in cssClass");
-    QString  retval__ = self__->cssClass();
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in cssClass");
+    QString  retval__ = self->cssClass();
     lua_pushclass<QString>(L, retval__, "mimas.QString");
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.GLWidget.cssClass: %s", e.what());
+    lua_pushfstring(L, "cssClass: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.GLWidget.cssClass: Unknown exception");
+    lua_pushfstring(L, "cssClass: Unknown exception");
   }
   return lua_error(L);
 }
@@ -132,15 +135,15 @@ static int GLWidget_cssClass(lua_State *L) {
  */
 static int GLWidget_height(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
-    if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in height");
-    int  retval__ = self__->height();
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in height");
+    int  retval__ = self->height();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.GLWidget.height: %s", e.what());
+    lua_pushfstring(L, "height: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.GLWidget.height: Unknown exception");
+    lua_pushfstring(L, "height: Unknown exception");
   }
   return lua_error(L);
 }
@@ -152,15 +155,15 @@ static int GLWidget_height(lua_State *L) {
  */
 static int GLWidget_isVisible(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
-    if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in isVisible");
-    bool  retval__ = self__->isVisible();
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in isVisible");
+    bool  retval__ = self->isVisible();
     lua_pushboolean(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.GLWidget.isVisible: %s", e.what());
+    lua_pushfstring(L, "isVisible: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.GLWidget.isVisible: Unknown exception");
+    lua_pushfstring(L, "isVisible: Unknown exception");
   }
   return lua_error(L);
 }
@@ -172,16 +175,16 @@ static int GLWidget_isVisible(lua_State *L) {
  */
 static int GLWidget_move(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
-    if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in move");
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in move");
     int x = dubL_checkint(L, 2);
     int y = dubL_checkint(L, 3);
-    self__->move(x, y);
+    self->move(x, y);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.GLWidget.move: %s", e.what());
+    lua_pushfstring(L, "move: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.GLWidget.move: Unknown exception");
+    lua_pushfstring(L, "move: Unknown exception");
   }
   return lua_error(L);
 }
@@ -193,15 +196,15 @@ static int GLWidget_move(lua_State *L) {
  */
 static int GLWidget_name(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
-    if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in name");
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in name");
     
-    LuaStackSize  retval__ = self__->name(L);
+    LuaStackSize  retval__ = self->name(L);
     return retval__;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.GLWidget.name: %s", e.what());
+    lua_pushfstring(L, "name: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.GLWidget.name: Unknown exception");
+    lua_pushfstring(L, "name: Unknown exception");
   }
   return lua_error(L);
 }
@@ -213,15 +216,15 @@ static int GLWidget_name(lua_State *L) {
  */
 static int GLWidget_object(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
-    if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in object");
-    QObject * retval__ = self__->object();
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in object");
+    QObject * retval__ = self->object();
     lua_pushclass<QObject>(L, retval__, "mimas.QObject");
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.GLWidget.object: %s", e.what());
+    lua_pushfstring(L, "object: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.GLWidget.object: Unknown exception");
+    lua_pushfstring(L, "object: Unknown exception");
   }
   return lua_error(L);
 }
@@ -233,16 +236,16 @@ static int GLWidget_object(lua_State *L) {
  */
 static int GLWidget_resize(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
-    if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in resize");
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in resize");
     int w = dubL_checkint(L, 2);
     int h = dubL_checkint(L, 3);
-    self__->resize(w, h);
+    self->resize(w, h);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.GLWidget.resize: %s", e.what());
+    lua_pushfstring(L, "resize: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.GLWidget.resize: Unknown exception");
+    lua_pushfstring(L, "resize: Unknown exception");
   }
   return lua_error(L);
 }
@@ -254,15 +257,15 @@ static int GLWidget_resize(lua_State *L) {
  */
 static int GLWidget_setName(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
-    if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in setName");
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in setName");
     const char *name = dubL_checkstring(L, 2);
-    self__->setName(name);
+    self->setName(name);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.GLWidget.setName: %s", e.what());
+    lua_pushfstring(L, "setName: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.GLWidget.setName: Unknown exception");
+    lua_pushfstring(L, "setName: Unknown exception");
   }
   return lua_error(L);
 }
@@ -274,14 +277,14 @@ static int GLWidget_setName(lua_State *L) {
  */
 static int GLWidget_show(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
-    if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in show");
-    self__->show();
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in show");
+    self->show();
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.GLWidget.show: %s", e.what());
+    lua_pushfstring(L, "show: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.GLWidget.show: Unknown exception");
+    lua_pushfstring(L, "show: Unknown exception");
   }
   return lua_error(L);
 }
@@ -293,14 +296,14 @@ static int GLWidget_show(lua_State *L) {
  */
 static int GLWidget_updateGL(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
-    if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in updateGL");
-    self__->updateGL();
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in updateGL");
+    self->updateGL();
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.GLWidget.updateGL: %s", e.what());
+    lua_pushfstring(L, "updateGL: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.GLWidget.updateGL: Unknown exception");
+    lua_pushfstring(L, "updateGL: Unknown exception");
   }
   return lua_error(L);
 }
@@ -312,15 +315,15 @@ static int GLWidget_updateGL(lua_State *L) {
  */
 static int GLWidget_widget(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
-    if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in widget");
-    QWidget * retval__ = self__->widget();
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in widget");
+    QWidget * retval__ = self->widget();
     lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.GLWidget.widget: %s", e.what());
+    lua_pushfstring(L, "widget: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.GLWidget.widget: Unknown exception");
+    lua_pushfstring(L, "widget: Unknown exception");
   }
   return lua_error(L);
 }
@@ -332,15 +335,15 @@ static int GLWidget_widget(lua_State *L) {
  */
 static int GLWidget_width(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
-    if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in width");
-    int  retval__ = self__->width();
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in width");
+    int  retval__ = self->width();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.GLWidget.width: %s", e.what());
+    lua_pushfstring(L, "width: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.GLWidget.width: Unknown exception");
+    lua_pushfstring(L, "width: Unknown exception");
   }
   return lua_error(L);
 }
@@ -352,15 +355,15 @@ static int GLWidget_width(lua_State *L) {
  */
 static int GLWidget_x(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
-    if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in x");
-    int  retval__ = self__->x();
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in x");
+    int  retval__ = self->x();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.GLWidget.x: %s", e.what());
+    lua_pushfstring(L, "x: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.GLWidget.x: Unknown exception");
+    lua_pushfstring(L, "x: Unknown exception");
   }
   return lua_error(L);
 }
@@ -372,15 +375,15 @@ static int GLWidget_x(lua_State *L) {
  */
 static int GLWidget_y(lua_State *L) {
   try {
-    GLWidget *self__ = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
-    if (!self__) throw dub::Exception("Using deleted mimas.GLWidget in y");
-    int  retval__ = self__->y();
+    GLWidget *self = *((GLWidget**)dubL_checksdata(L, 1, "mimas.GLWidget"));
+    if (!self) throw dub::Exception("Using deleted mimas.GLWidget in y");
+    int  retval__ = self->y();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.GLWidget.y: %s", e.what());
+    lua_pushfstring(L, "y: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.GLWidget.y: Unknown exception");
+    lua_pushfstring(L, "y: Unknown exception");
   }
   return lua_error(L);
 }

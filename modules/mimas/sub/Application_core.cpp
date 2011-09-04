@@ -3,6 +3,9 @@
 #include "lua_cpp_helper.h"
 
 
+
+
+
 using namespace mimas;
 
 
@@ -62,9 +65,9 @@ static int Application_MakeApplication(lua_State *L) {
     LuaStackSize  retval__ = Application::MakeApplication(L);
     return retval__;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Application.MakeApplication: %s", e.what());
+    lua_pushfstring(L, "MakeApplication: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Application.MakeApplication: Unknown exception");
+    lua_pushfstring(L, "MakeApplication: Unknown exception");
   }
   return lua_error(L);
 }
@@ -76,14 +79,14 @@ static int Application_MakeApplication(lua_State *L) {
  */
 static int Application_dub_destroy(lua_State *L) {
   try {
-    Application *self__ = *((Application**)dubL_checksdata(L, 1, "mimas.Application"));
-    if (!self__) throw dub::Exception("Using deleted mimas.Application in dub_destroy");
-    self__->dub_destroy();
+    Application *self = *((Application**)dubL_checksdata(L, 1, "mimas.Application"));
+    if (!self) throw dub::Exception("Using deleted mimas.Application in dub_destroy");
+    self->dub_destroy();
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Application.dub_destroy: %s", e.what());
+    lua_pushfstring(L, "dub_destroy: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Application.dub_destroy: Unknown exception");
+    lua_pushfstring(L, "dub_destroy: Unknown exception");
   }
   return lua_error(L);
 }
@@ -95,15 +98,15 @@ static int Application_dub_destroy(lua_State *L) {
  */
 static int Application_exec(lua_State *L) {
   try {
-    Application *self__ = *((Application**)dubL_checksdata(L, 1, "mimas.Application"));
-    if (!self__) throw dub::Exception("Using deleted mimas.Application in exec");
-    int  retval__ = self__->exec();
+    Application *self = *((Application**)dubL_checksdata(L, 1, "mimas.Application"));
+    if (!self) throw dub::Exception("Using deleted mimas.Application in exec");
+    int  retval__ = self->exec();
     lua_pushnumber(L, retval__);
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Application.exec: %s", e.what());
+    lua_pushfstring(L, "exec: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Application.exec: Unknown exception");
+    lua_pushfstring(L, "exec: Unknown exception");
   }
   return lua_error(L);
 }
@@ -115,15 +118,15 @@ static int Application_exec(lua_State *L) {
  */
 static int Application_post(lua_State *L) {
   try {
-    Application *self__ = *((Application**)dubL_checksdata(L, 1, "mimas.Application"));
-    if (!self__) throw dub::Exception("Using deleted mimas.Application in post");
+    Application *self = *((Application**)dubL_checksdata(L, 1, "mimas.Application"));
+    if (!self) throw dub::Exception("Using deleted mimas.Application in post");
     
-    self__->post(L);
+    self->post(L);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Application.post: %s", e.what());
+    lua_pushfstring(L, "post: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Application.post: Unknown exception");
+    lua_pushfstring(L, "post: Unknown exception");
   }
   return lua_error(L);
 }
@@ -135,14 +138,14 @@ static int Application_post(lua_State *L) {
  */
 static int Application_quit(lua_State *L) {
   try {
-    Application *self__ = *((Application**)dubL_checksdata(L, 1, "mimas.Application"));
-    if (!self__) throw dub::Exception("Using deleted mimas.Application in quit");
-    self__->quit();
+    Application *self = *((Application**)dubL_checksdata(L, 1, "mimas.Application"));
+    if (!self) throw dub::Exception("Using deleted mimas.Application in quit");
+    self->quit();
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Application.quit: %s", e.what());
+    lua_pushfstring(L, "quit: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Application.quit: Unknown exception");
+    lua_pushfstring(L, "quit: Unknown exception");
   }
   return lua_error(L);
 }
@@ -154,15 +157,15 @@ static int Application_quit(lua_State *L) {
  */
 static int Application_screenSize(lua_State *L) {
   try {
-    Application *self__ = *((Application**)dubL_checksdata(L, 1, "mimas.Application"));
-    if (!self__) throw dub::Exception("Using deleted mimas.Application in screenSize");
+    Application *self = *((Application**)dubL_checksdata(L, 1, "mimas.Application"));
+    if (!self) throw dub::Exception("Using deleted mimas.Application in screenSize");
     
-    LuaStackSize  retval__ = self__->screenSize(L);
+    LuaStackSize  retval__ = self->screenSize(L);
     return retval__;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Application.screenSize: %s", e.what());
+    lua_pushfstring(L, "screenSize: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Application.screenSize: Unknown exception");
+    lua_pushfstring(L, "screenSize: Unknown exception");
   }
   return lua_error(L);
 }
@@ -174,15 +177,15 @@ static int Application_screenSize(lua_State *L) {
  */
 static int Application_setStyleSheet(lua_State *L) {
   try {
-    Application *self__ = *((Application**)dubL_checksdata(L, 1, "mimas.Application"));
-    if (!self__) throw dub::Exception("Using deleted mimas.Application in setStyleSheet");
+    Application *self = *((Application**)dubL_checksdata(L, 1, "mimas.Application"));
+    if (!self) throw dub::Exception("Using deleted mimas.Application in setStyleSheet");
     const char *text = dubL_checkstring(L, 2);
-    self__->setStyleSheet(text);
+    self->setStyleSheet(text);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Application.setStyleSheet: %s", e.what());
+    lua_pushfstring(L, "setStyleSheet: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Application.setStyleSheet: Unknown exception");
+    lua_pushfstring(L, "setStyleSheet: Unknown exception");
   }
   return lua_error(L);
 }
@@ -198,9 +201,9 @@ static int Application_terminate(lua_State *L) {
     Application::terminate(sig);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Application.terminate: %s", e.what());
+    lua_pushfstring(L, "terminate: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Application.terminate: Unknown exception");
+    lua_pushfstring(L, "terminate: Unknown exception");
   }
   return lua_error(L);
 }

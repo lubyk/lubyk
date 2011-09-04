@@ -3,6 +3,9 @@
 #include "lua_cpp_helper.h"
 
 
+
+
+
 using namespace mimas;
 
 
@@ -18,9 +21,9 @@ static int Brush_Brush1(lua_State *L) {
     lua_pushclass<Brush>(L, retval__, "mimas.Brush");
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Brush.Brush: %s", e.what());
+    lua_pushfstring(L, "Brush: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Brush.Brush: Unknown exception");
+    lua_pushfstring(L, "Brush: Unknown exception");
   }
   return lua_error(L);
 }
@@ -44,9 +47,9 @@ static int Brush_Brush2(lua_State *L) {
     lua_pushclass<Brush>(L, retval__, "mimas.Brush");
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Brush.Brush: %s", e.what());
+    lua_pushfstring(L, "Brush: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Brush.Brush: Unknown exception");
+    lua_pushfstring(L, "Brush: Unknown exception");
   }
   return lua_error(L);
 }
@@ -85,9 +88,9 @@ static int Brush_Brush3(lua_State *L) {
     lua_pushclass<Brush>(L, retval__, "mimas.Brush");
     return 1;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Brush.Brush: %s", e.what());
+    lua_pushfstring(L, "Brush: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Brush.Brush: Unknown exception");
+    lua_pushfstring(L, "Brush: Unknown exception");
   }
   return lua_error(L);
 }
@@ -99,15 +102,15 @@ static int Brush_Brush3(lua_State *L) {
 static int Brush_Brush(lua_State *L) {
   int type__ = lua_type(L, 1);
   int top__  = lua_gettop(L);
-  if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "mimas.Color")) {
+  if (type__ == LUA_TNUMBER) {
+    return Brush_Brush3(L);
+  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 1, "mimas.Color")) {
     return Brush_Brush2(L);
   } else if (top__ < 1) {
     return Brush_Brush1(L);
-  } else if (type__ == LUA_TNUMBER) {
-    return Brush_Brush3(L);
   } else {
     // use any to raise errors
-    return Brush_Brush3(L);
+    return Brush_Brush1(L);
   }
 }
 
@@ -145,14 +148,14 @@ static int Brush__tostring(lua_State *L) {
  */
 static int Brush_setColor(lua_State *L) {
   try {
-    Brush *self__ = *((Brush**)dubL_checksdata(L, 1, "mimas.Brush"));
+    Brush *self = *((Brush**)dubL_checksdata(L, 1, "mimas.Brush"));
     const Color *color = *((const Color **)dubL_checksdata(L, 2, "mimas.Color"));
-    self__->setColor(*color);
+    self->setColor(*color);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Brush.setColor: %s", e.what());
+    lua_pushfstring(L, "setColor: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Brush.setColor: Unknown exception");
+    lua_pushfstring(L, "setColor: Unknown exception");
   }
   return lua_error(L);
 }
@@ -164,14 +167,14 @@ static int Brush_setColor(lua_State *L) {
  */
 static int Brush_setStyle(lua_State *L) {
   try {
-    Brush *self__ = *((Brush**)dubL_checksdata(L, 1, "mimas.Brush"));
+    Brush *self = *((Brush**)dubL_checksdata(L, 1, "mimas.Brush"));
     int style = dubL_checkint(L, 2);
-    self__->setStyle(style);
+    self->setStyle(style);
     return 0;
   } catch (std::exception &e) {
-    lua_pushfstring(L, "mimas.Brush.setStyle: %s", e.what());
+    lua_pushfstring(L, "setStyle: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "mimas.Brush.setStyle: Unknown exception");
+    lua_pushfstring(L, "setStyle: Unknown exception");
   }
   return lua_error(L);
 }

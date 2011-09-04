@@ -27,14 +27,14 @@
   ==============================================================================
 */
 
-#include "mimas/Widget.h"
+#include "mimas/MainWindow.h"
 #include "mimas/Painter.h"
 
 #include <QtGui/QFileDialog>
 
 namespace mimas {
 
-void Widget::paintEvent(QPaintEvent *event) {
+void MainWindow::paintEvent(QPaintEvent *event) {
   // has to be on the heap
   Painter *p = new Painter(this);
   if (!parent()) {
@@ -43,10 +43,10 @@ void Widget::paintEvent(QPaintEvent *event) {
   }
   paint(*p);
   delete p;
-  QWidget::paintEvent(event);
+  QMainWindow::paintEvent(event);
 }
 
-void Widget::paint(Painter &p) {
+void MainWindow::paint(Painter &p) {
   lua_State *L = lua_;
   ScopedLock lock(worker_);
 
@@ -64,7 +64,7 @@ void Widget::paint(Painter &p) {
   }
 }
 
-void Widget::resizeEvent(QResizeEvent *event) {
+void MainWindow::resizeEvent(QResizeEvent *event) {
   lua_State *L = lua_;
   ScopedLock lock(worker_);
 
@@ -79,7 +79,7 @@ void Widget::resizeEvent(QResizeEvent *event) {
   }
 }
 
-void Widget::mouseMoveEvent(QMouseEvent *event) {
+void MainWindow::mouseMoveEvent(QMouseEvent *event) {
   lua_State *L = lua_;
   ScopedLock lock(worker_);
 
@@ -100,7 +100,7 @@ void Widget::mouseMoveEvent(QMouseEvent *event) {
   lua_pop(L, 1);
 }
 
-void Widget::click(QMouseEvent *event, int type) {
+void MainWindow::click(QMouseEvent *event, int type) {
   lua_State *L = lua_;
   ScopedLock lock(worker_);
 
@@ -124,7 +124,7 @@ void Widget::click(QMouseEvent *event, int type) {
   lua_pop(L, 1);
 }
 
-void Widget::keyboard(QKeyEvent *event, bool isPressed) {
+void MainWindow::keyboard(QKeyEvent *event, bool isPressed) {
   lua_State *L = lua_;
   if (!L) return;
   ScopedLock lock(worker_);
@@ -141,7 +141,7 @@ void Widget::keyboard(QKeyEvent *event, bool isPressed) {
   }
 }
 
-LuaStackSize Widget::getOpenFileName(const char *caption,
+LuaStackSize MainWindow::getOpenFileName(const char *caption,
                         const char *the_base_dir,
                         const char *the_filter,
                         int options,
@@ -161,7 +161,7 @@ LuaStackSize Widget::getOpenFileName(const char *caption,
   }
 }
 
-LuaStackSize Widget::getExistingDirectory(const char *caption,
+LuaStackSize MainWindow::getExistingDirectory(const char *caption,
                         const char *the_base_dir,
                         int options,
                         lua_State *L) {
