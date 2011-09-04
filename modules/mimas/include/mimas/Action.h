@@ -26,27 +26,59 @@
 
   ==============================================================================
 */
-#ifndef LUBYK_INCLUDE_MIMAS_MIMAS_H_
-#define LUBYK_INCLUDE_MIMAS_MIMAS_H_
+#ifndef LUBYK_INCLUDE_MIMAS_ACTION_H_
+#define LUBYK_INCLUDE_MIMAS_ACTION_H_
 
-#if 0
-#define MIMAS_DEBUG_GC printf("[%p] ~%s\n", this, this->metaObject()->className());
-#else
-#define MIMAS_DEBUG_GC
-#endif
+#include "mimas/mimas.h"
+#include <QtGui/QAction>
 
-#include "lubyk.h"
-using namespace lubyk;
-
-#include <QtGui/QWidget>
-
-// All descendants from QWidget can have actions attached
-#include "mimas/Action.h"
+#include <iostream>
 
 namespace mimas {
 
-void setHue(QPalette &palette, float hue);
-QVariant variantFromLua(lua_State *L, int index);
+/** An Action can be connected to a menu or and will trigger it's
+ * callback on call (or shortcut).
+ *
+ * @see QAction
+ * @dub destructor: 'luaDestroy'
+ *      super: 'QAction'
+ */
+class Action : public QAction, public LuaObject {
+  Q_OBJECT
+public:
+  Action(const char *name, QObject *parent = 0)
+      : QAction(QString(name), parent) {
+    QObject::connect(this, SIGNAL(triggered()),
+                     this, SLOT(triggeredSlot()));
+  }
+
+  /** A sequence can contain multiple shortcuts and the format is:
+   * "Ctrl+O,Alt+O,Q"
+   */
+  void setShortcut(const char *sequence) {
+    QAction::setShortcut(QKeySequence(QString(sequence)));
+  }
+
+  ~Action() {
+    MIMAS_DEBUG_GC
+  }
+
+private slots:
+  void triggeredSlot() {
+    lua_State *L = lua_;
+    ScopedLock lock(worker_);
+
+    if (!pushLuaCallback("trigger")) return;
+    // <func> <self>
+    int status = lua_pcall(L, 1, 0, 0);
+
+    if (status) {
+      // cannot raise an error here...
+      fprintf(stderr, "Error in 'trigger' callback: %s\n", lua_tostring(L, -1));
+    }
+  }
+};
 
 } // mimas
-#endif // LUBYK_INCLUDE_MIMAS_MIMAS_H_
+#endif // LUBYK_INCLUDE_MIMAS_ACTION_H_
+

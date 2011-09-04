@@ -11,6 +11,7 @@ HtmlDecode = HTMLEntities.new
 
 XML_DOC_PATH  = (Pathname(__FILE__).dirname + '../build/doc/xml/').expand_path
 BINDINGS_PATH = (Pathname(__FILE__).dirname + '..').expand_path
+MODULES_PATH  = Pathname(__FILE__).dirname.expand_path
 
 Dub.logger.level = Logger::WARN
 
@@ -31,6 +32,14 @@ end
 mimas_declare = []
 mimas_load = []
 
+mimas_classes = []
+Dir[MODULES_PATH + 'mimas/include/mimas/*.h'].each do |p|
+  if p =~ /\/([A-Z][A-Za-z]+)\.h$/
+    mimas_classes << $1
+  end
+end
+mimas_classes.sort!
+
 modules = {
   'dummy' => %w{Dummy},
   'lk' => {
@@ -41,7 +50,7 @@ modules = {
   'mdns'  => %w{Browser Registration},
   'midi'  => %w{In Out},
   'mimas' => {
-    'class' => %w{Application Brush Button Callback Color DataSource FileObserver GLWidget HBoxLayout Label LineEdit ListView MainWindow Path Painter Pen Slider TableView VBoxLayout Widget},
+    'class' => mimas_classes,
     'const' => true,
   },
   'zmq'   => {
@@ -86,7 +95,11 @@ modules = {
     # Only write if there are changes
     path = dir + "#{klass.opts[:filename] || klass.lib_name}.cpp"
     res = klass.to_s
-    current = File.read(path)
+    if File.exist?(path)
+      current = File.read(path)
+    else
+      current = nil
+    end
     if current != res
       File.open(path, 'wb') do |f|
         f.puts klass

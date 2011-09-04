@@ -31,6 +31,8 @@
 
 #include "mimas/mimas.h"
 #include "mimas/constants.h"
+#include "mimas/Menu.h"
+#include "mimas/MenuBar.h"
 
 using namespace lubyk;
 
@@ -46,11 +48,9 @@ class Painter;
  * is better then Widget because we have access to the menu bar and such
  * items.
  *
- * @see QWidget
- * @see QObject
- *
+ * @see QMainWindow
  * @dub destructor: 'luaDestroy'
- *      super: 'QObject, QWidget'
+ *      super: 'QMainWindow'
  */
 class MainWindow : public QMainWindow, public LuaObject {
   Q_OBJECT
@@ -68,7 +68,7 @@ public:
   QString cssClass() const {
     return QString("main_window");
   }
-  
+
   // ============================================================ Dialog
   LuaStackSize getOpenFileName(const char *caption,
                           const char *base_dir,

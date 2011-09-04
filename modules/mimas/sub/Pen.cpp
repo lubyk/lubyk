@@ -109,21 +109,21 @@ static int Pen_Pen3(lua_State *L) {
 static int Pen_Pen(lua_State *L) {
   int type__ = lua_type(L, 1);
   int top__  = lua_gettop(L);
-  if (type__ == LUA_TNUMBER) {
+  if (top__ < 1) {
+    return Pen_Pen1(L);
+  } else if (type__ == LUA_TNUMBER) {
     type__ = lua_type(L, 2);
-    if (type__ == LUA_TNUMBER) {
-      return Pen_Pen3(L);
-    } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.Color")) {
+    if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.Color")) {
       return Pen_Pen2(L);
+    } else if (type__ == LUA_TNUMBER) {
+      return Pen_Pen3(L);
     } else {
       // use any to raise errors
-      return Pen_Pen2(L);
+      return Pen_Pen3(L);
     }
-  } else if (top__ < 1) {
-    return Pen_Pen1(L);
   } else {
     // use any to raise errors
-    return Pen_Pen1(L);
+    return Pen_Pen3(L);
   }
 }
 

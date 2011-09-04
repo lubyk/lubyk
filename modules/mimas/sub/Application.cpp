@@ -3,7 +3,7 @@
 
 #include <QtGui/QFileDialog>
 
-static char arg0[] = "mimas";
+static char arg0[] = "Lubyk";
 static char arg1[] = "-style";
 static char arg2[] = "Plastique";
 static char *app_argv[] = {&arg0[0], &arg1[0], &arg2[0], NULL};

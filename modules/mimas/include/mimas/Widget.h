@@ -46,8 +46,9 @@ class Painter;
  * The Widget uses the following callbacks:  paint, mouse,
  * click, keyboard, move and resized.
  *
+ * @see QWidget
  * @dub destructor: 'luaDestroy'
- *      super: 'QWidget, QObject'
+ *      super: 'QWidget'
  */
 class Widget : public QWidget, public LuaObject {
   Q_OBJECT

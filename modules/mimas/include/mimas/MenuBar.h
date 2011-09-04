@@ -26,27 +26,40 @@
 
   ==============================================================================
 */
-#ifndef LUBYK_INCLUDE_MIMAS_MIMAS_H_
-#define LUBYK_INCLUDE_MIMAS_MIMAS_H_
+#ifndef LUBYK_INCLUDE_MIMAS_MENU_BAR_H_
+#define LUBYK_INCLUDE_MIMAS_MENU_BAR_H_
 
-#if 0
-#define MIMAS_DEBUG_GC printf("[%p] ~%s\n", this, this->metaObject()->className());
-#else
-#define MIMAS_DEBUG_GC
-#endif
+#include "mimas/mimas.h"
+#include "mimas/Color.h"
+#include "mimas/Menu.h"
 
-#include "lubyk.h"
-using namespace lubyk;
-
-#include <QtGui/QWidget>
-
-// All descendants from QWidget can have actions attached
-#include "mimas/Action.h"
+#include <QtGui/QMenuBar>
 
 namespace mimas {
 
-void setHue(QPalette &palette, float hue);
-QVariant variantFromLua(lua_State *L, int index);
+/** MenuBar used by Painter.
+ *
+ * @see Menu
+ * @see QMenuBar
+ * @dub destructor: 'luaDestroy'
+ *      super: 'QMenuBar'
+ */
+class MenuBar : public QMenuBar, public LuaObject {
+  Q_OBJECT
+public:
+  MenuBar()
+      : QMenuBar(0) {}
+
+  ~MenuBar() {
+    MIMAS_DEBUG_GC
+  }
+
+  QString cssClass() const {
+    return QString("menu_bar");
+  }
+
+  QSize size_hint_;
+};
 
 } // mimas
-#endif // LUBYK_INCLUDE_MIMAS_MIMAS_H_
+#endif // LUBYK_INCLUDE_MIMAS_MENU_BAR_H_

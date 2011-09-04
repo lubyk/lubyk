@@ -73,7 +73,7 @@ static int Painter__tostring(lua_State *L) {
 
 
 /** void mimas::Painter::drawChord(int x, int y, int width, int height, float startAngle, float spanAngle)
- * include/mimas/Painter.h:121
+ * include/mimas/Painter.h:116
  */
 static int Painter_drawChord(lua_State *L) {
   try {
@@ -98,7 +98,7 @@ static int Painter_drawChord(lua_State *L) {
 
 
 /** void mimas::Painter::drawEllipse(int x, int y, int width, int height)
- * include/mimas/Painter.h:140
+ * include/mimas/Painter.h:135
  */
 static int Painter_drawEllipse(lua_State *L) {
   try {
@@ -121,7 +121,7 @@ static int Painter_drawEllipse(lua_State *L) {
 
 
 /** void mimas::Painter::drawLine(int x1, int y1, int x2, int y2)
- * include/mimas/Painter.h:114
+ * include/mimas/Painter.h:109
  */
 static int Painter_drawLine(lua_State *L) {
   try {
@@ -144,7 +144,7 @@ static int Painter_drawLine(lua_State *L) {
 
 
 /** void mimas::Painter::drawPath(const Path &path)
- * include/mimas/Painter.h:70
+ * include/mimas/Painter.h:65
  */
 static int Painter_drawPath(lua_State *L) {
   try {
@@ -164,7 +164,7 @@ static int Painter_drawPath(lua_State *L) {
 
 
 /** void mimas::Painter::drawPoint(int x, int y)
- * include/mimas/Painter.h:108
+ * include/mimas/Painter.h:103
  */
 static int Painter_drawPoint(lua_State *L) {
   try {
@@ -185,7 +185,7 @@ static int Painter_drawPoint(lua_State *L) {
 
 
 /** void mimas::Painter::drawRect(float x, float y, float w, float h)
- * include/mimas/Painter.h:127
+ * include/mimas/Painter.h:122
  */
 static int Painter_drawRect(lua_State *L) {
   try {
@@ -208,7 +208,7 @@ static int Painter_drawRect(lua_State *L) {
 
 
 /** void mimas::Painter::drawRoundedRect(float x, float y, float w, float h, float xRadius, lua_State *L)
- * include/mimas/Painter.h:133
+ * include/mimas/Painter.h:128
  */
 static int Painter_drawRoundedRect(lua_State *L) {
   try {
@@ -233,7 +233,7 @@ static int Painter_drawRoundedRect(lua_State *L) {
 
 
 /** void mimas::Painter::drawText(float x, float y, float w, float h, int flags, const char *text)
- * include/mimas/Painter.h:146
+ * include/mimas/Painter.h:141
  */
 static int Painter_drawText(lua_State *L) {
   try {
@@ -258,7 +258,7 @@ static int Painter_drawText(lua_State *L) {
 
 
 /** void mimas::Painter::fillRect(int x, int y, int width, int height, const Color &color)
- * include/mimas/Painter.h:66
+ * include/mimas/Painter.h:61
  */
 static int Painter_fillRect(lua_State *L) {
   try {
@@ -283,7 +283,7 @@ static int Painter_fillRect(lua_State *L) {
 
 
 /** void mimas::Painter::setBrush(const Brush &brush)
- * include/mimas/Painter.h:86
+ * include/mimas/Painter.h:81
  */
 static int Painter_setBrush1(lua_State *L) {
   try {
@@ -303,7 +303,7 @@ static int Painter_setBrush1(lua_State *L) {
 
 
 /** void mimas::Painter::setBrush(const Color &color)
- * include/mimas/Painter.h:90
+ * include/mimas/Painter.h:85
  */
 static int Painter_setBrush2(lua_State *L) {
   try {
@@ -323,7 +323,7 @@ static int Painter_setBrush2(lua_State *L) {
 
 
 /** void mimas::Painter::setBrush(float h, float s=1.0, float v=1.0, float a=1.0)
- * include/mimas/Painter.h:102
+ * include/mimas/Painter.h:97
  */
 static int Painter_setBrush3(lua_State *L) {
   try {
@@ -362,22 +362,22 @@ static int Painter_setBrush3(lua_State *L) {
 /** Overloaded function chooser for setBrush(...) */
 static int Painter_setBrush(lua_State *L) {
   int type__ = lua_type(L, 2);
-  if (type__ == LUA_TNUMBER) {
-    return Painter_setBrush3(L);
-  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.Color")) {
+  if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.Color")) {
     return Painter_setBrush2(L);
   } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.Brush")) {
     return Painter_setBrush1(L);
+  } else if (type__ == LUA_TNUMBER) {
+    return Painter_setBrush3(L);
   } else {
     // use any to raise errors
-    return Painter_setBrush1(L);
+    return Painter_setBrush3(L);
   }
 }
 
 
 
 /** void mimas::Painter::setPen(const Pen &pen)
- * include/mimas/Painter.h:74
+ * include/mimas/Painter.h:69
  */
 static int Painter_setPen1(lua_State *L) {
   try {
@@ -397,7 +397,7 @@ static int Painter_setPen1(lua_State *L) {
 
 
 /** void mimas::Painter::setPen(float width, const Color &color)
- * include/mimas/Painter.h:78
+ * include/mimas/Painter.h:73
  */
 static int Painter_setPen2(lua_State *L) {
   try {
@@ -418,7 +418,7 @@ static int Painter_setPen2(lua_State *L) {
 
 
 /** void mimas::Painter::setPen(float width, float h, float s=1.0, float v=1.0, float a=1.0)
- * include/mimas/Painter.h:82
+ * include/mimas/Painter.h:77
  */
 static int Painter_setPen3(lua_State *L) {
   try {
@@ -458,21 +458,21 @@ static int Painter_setPen3(lua_State *L) {
 /** Overloaded function chooser for setPen(...) */
 static int Painter_setPen(lua_State *L) {
   int type__ = lua_type(L, 2);
-  if (type__ == LUA_TNUMBER) {
+  if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.Pen")) {
+    return Painter_setPen1(L);
+  } else if (type__ == LUA_TNUMBER) {
     type__ = lua_type(L, 3);
-    if (type__ == LUA_TNUMBER) {
-      return Painter_setPen3(L);
-    } else if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "mimas.Color")) {
+    if (type__ == LUA_TUSERDATA && is_userdata(L, 3, "mimas.Color")) {
       return Painter_setPen2(L);
+    } else if (type__ == LUA_TNUMBER) {
+      return Painter_setPen3(L);
     } else {
       // use any to raise errors
-      return Painter_setPen2(L);
+      return Painter_setPen3(L);
     }
-  } else if (type__ == LUA_TUSERDATA && is_userdata(L, 2, "mimas.Pen")) {
-    return Painter_setPen1(L);
   } else {
     // use any to raise errors
-    return Painter_setPen1(L);
+    return Painter_setPen3(L);
   }
 }
 

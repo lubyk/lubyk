@@ -26,27 +26,43 @@
 
   ==============================================================================
 */
-#ifndef LUBYK_INCLUDE_MIMAS_MIMAS_H_
-#define LUBYK_INCLUDE_MIMAS_MIMAS_H_
+#ifndef LUBYK_INCLUDE_MIMAS_MENU_H_
+#define LUBYK_INCLUDE_MIMAS_MENU_H_
 
-#if 0
-#define MIMAS_DEBUG_GC printf("[%p] ~%s\n", this, this->metaObject()->className());
-#else
-#define MIMAS_DEBUG_GC
-#endif
+#include "mimas/mimas.h"
+#include "mimas/Color.h"
+#include <QtGui/QMenu>
 
-#include "lubyk.h"
-using namespace lubyk;
-
-#include <QtGui/QWidget>
-
-// All descendants from QWidget can have actions attached
-#include "mimas/Action.h"
+#include <iostream>
 
 namespace mimas {
 
-void setHue(QPalette &palette, float hue);
-QVariant variantFromLua(lua_State *L, int index);
+/** A Menu is an element from a MenuBar.
+ * FIXME: The Menu does not need to have lua_ and worker_ set: what is the
+ * cost of this lua thread ? Should we remove it ?
+ *
+ * @see MenuBar
+ * @see QMenu
+ * @dub destructor: 'luaDestroy'
+ *      super: 'QMenu'
+ */
+class Menu : public QMenu, public LuaObject {
+  Q_OBJECT
+public:
+  Menu(const char *name)
+      : QMenu(QString(name)) {}
+
+  ~Menu() {
+    MIMAS_DEBUG_GC
+  }
+
+  QString cssClass() const {
+    return QString("menu");
+  }
+
+  QSize size_hint_;
+};
 
 } // mimas
-#endif // LUBYK_INCLUDE_MIMAS_MIMAS_H_
+#endif // LUBYK_INCLUDE_MIMAS_MENU_H_
+

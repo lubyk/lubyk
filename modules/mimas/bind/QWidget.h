@@ -3,7 +3,10 @@ namespace mimas {
 /** This is a dummy class to create bindings for objects inheriting from Qt's
  * QWidget.
  *
+ * @see Widget
+ * @see QObject
  * @dub bind: 'QWidget.yml'
+ *      super: 'QObject'
  */
 class QWidget {
  public:
@@ -28,6 +31,7 @@ class QWidget {
   void raise();
   void activateWindow();
   bool isFullScreen();
+  void addAction(Action *action);
 
   // ==============================================
   // === custom (implementation in QWidget.yml)

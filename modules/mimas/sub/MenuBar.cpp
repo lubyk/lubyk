@@ -1,4 +1,4 @@
-#include "mimas/MainWindow.h"
+#include "mimas/MenuBar.h"
 
 #include "lua_cpp_helper.h"
 
@@ -11,18 +11,18 @@ using namespace mimas;
 
 /* ============================ Constructors     ====================== */
 
-/** mimas::MainWindow::MainWindow()
- * include/mimas/MainWindow.h:60
+/** mimas::MenuBar::MenuBar()
+ * include/mimas/MenuBar.h:51
  */
-static int MainWindow_MainWindow(lua_State *L) {
+static int MenuBar_MenuBar(lua_State *L) {
   try {
-    MainWindow * retval__ = new MainWindow();
+    MenuBar * retval__ = new MenuBar();
     // The class inherits from 'LuaCallback', use lua_init instead of pushclass.
-    return retval__->luaInit(L, retval__, "mimas.MainWindow");
+    return retval__->luaInit(L, retval__, "mimas.MenuBar");
   } catch (std::exception &e) {
-    lua_pushfstring(L, "MainWindow: %s", e.what());
+    lua_pushfstring(L, "MenuBar: %s", e.what());
   } catch (...) {
-    lua_pushfstring(L, "MainWindow: Unknown exception");
+    lua_pushfstring(L, "MenuBar: Unknown exception");
   }
   return lua_error(L);
 }
@@ -31,8 +31,8 @@ static int MainWindow_MainWindow(lua_State *L) {
 
 /* ============================ Destructor       ====================== */
 
-static int MainWindow_destructor(lua_State *L) {
-  MainWindow **userdata = (MainWindow**)dubL_checksdata_n(L, 1, "mimas.MainWindow");
+static int MenuBar_destructor(lua_State *L) {
+  MenuBar **userdata = (MenuBar**)dubL_checksdata_n(L, 1, "mimas.MenuBar");
 
   
   // custom destructor
@@ -46,24 +46,24 @@ static int MainWindow_destructor(lua_State *L) {
 
 
 // test if class is deleted
-static int MainWindow_deleted(lua_State *L) {
-  MainWindow **userdata = (MainWindow**)dubL_checksdata_n(L, 1, "mimas.MainWindow");
+static int MenuBar_deleted(lua_State *L) {
+  MenuBar **userdata = (MenuBar**)dubL_checksdata_n(L, 1, "mimas.MenuBar");
   lua_pushboolean(L, *userdata == NULL);
   return 1;
 }
 
 /* ============================ tostring         ====================== */
 
-static int MainWindow__tostring(lua_State *L) {
-  MainWindow **userdata = (MainWindow**)dubL_checksdata_n(L, 1, "mimas.MainWindow");
+static int MenuBar__tostring(lua_State *L) {
+  MenuBar **userdata = (MenuBar**)dubL_checksdata_n(L, 1, "mimas.MenuBar");
   
   if (!*userdata) {
-    lua_pushstring(L, "<mimas.MainWindow: NULL>");
+    lua_pushstring(L, "<mimas.MenuBar: NULL>");
     return 1;
   }
   
   
-  lua_pushfstring(L, "<mimas.MainWindow: %p>", *userdata);
+  lua_pushfstring(L, "<mimas.MenuBar: %p>", *userdata);
   
   return 1;
 }
@@ -76,7 +76,7 @@ static int MainWindow__tostring(lua_State *L) {
  */
 static int QWidget_activateWindow(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     self->activateWindow();
     return 0;
   } catch (std::exception &e) {
@@ -94,7 +94,7 @@ static int QWidget_activateWindow(lua_State *L) {
  */
 static int QWidget_addAction(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     Action *action = *((Action **)dubL_checksdata(L, 2, "mimas.Action"));
     self->addAction(action);
     return 0;
@@ -108,12 +108,31 @@ static int QWidget_addAction(lua_State *L) {
 
 
 
+/** void mimas::QMenuBar::addMenu(Menu *menu)
+ * mimas/bind/QMenuBar.h:12
+ */
+static int QMenuBar_addMenu(lua_State *L) {
+  try {
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
+    Menu *menu = *((Menu **)dubL_checksdata(L, 2, "mimas.Menu"));
+    self->addMenu(menu);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "addMenu: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "addMenu: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** void mimas::QWidget::addWidget(QWidget *widget, float x=0, float y=0)
  * mimas/bind/QWidget.h:41
  */
 static int QWidget_addWidget(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     int top__ = lua_gettop(L);
     QWidget *widget = *((QWidget **)dubL_checksdata(L, 2, "mimas.QWidget"));
     float x = 0;
@@ -144,7 +163,7 @@ static int QWidget_addWidget(lua_State *L) {
  */
 static int QWidget_close(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     bool  retval__ = self->close();
     lua_pushboolean(L, retval__);
     return 1;
@@ -158,13 +177,13 @@ static int QWidget_close(lua_State *L) {
 
 
 
-/** QString mimas::MainWindow::cssClass() const 
- * include/mimas/MainWindow.h:68
+/** QString mimas::MenuBar::cssClass() const 
+ * include/mimas/MenuBar.h:57
  */
-static int MainWindow_cssClass(lua_State *L) {
+static int MenuBar_cssClass(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
-    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in cssClass");
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
+    if (!self) throw dub::Exception("Using deleted mimas.MenuBar in cssClass");
     QString  retval__ = self->cssClass();
     lua_pushclass<QString>(L, retval__, "mimas.QString");
     return 1;
@@ -178,59 +197,12 @@ static int MainWindow_cssClass(lua_State *L) {
 
 
 
-/** LuaStackSize mimas::MainWindow::getExistingDirectory(const char *caption, const char *base_dir, int options, lua_State *L)
- * include/mimas/MainWindow.h:82
- */
-static int MainWindow_getExistingDirectory(lua_State *L) {
-  try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
-    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in getExistingDirectory");
-    const char *caption = dubL_checkstring(L, 2);
-    const char *base_dir = dubL_checkstring(L, 3);
-    int options = dubL_checkint(L, 4);
-    
-    LuaStackSize  retval__ = self->getExistingDirectory(caption, base_dir, options, L);
-    return retval__;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "getExistingDirectory: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "getExistingDirectory: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
-/** LuaStackSize mimas::MainWindow::getOpenFileName(const char *caption, const char *base_dir, const char *filter, int options, lua_State *L)
- * include/mimas/MainWindow.h:77
- */
-static int MainWindow_getOpenFileName(lua_State *L) {
-  try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
-    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in getOpenFileName");
-    const char *caption = dubL_checkstring(L, 2);
-    const char *base_dir = dubL_checkstring(L, 3);
-    const char *filter = dubL_checkstring(L, 4);
-    int options = dubL_checkint(L, 5);
-    
-    LuaStackSize  retval__ = self->getOpenFileName(caption, base_dir, filter, options, L);
-    return retval__;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "getOpenFileName: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "getOpenFileName: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
 /** void mimas::QWidget::globalMove(float x, float y)
  * mimas/bind/QWidget.h:70
  */
 static int QWidget_globalMove(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     float x = dubL_checknumber(L, 2);
     float y = dubL_checknumber(L, 3);
     self->move(
@@ -255,7 +227,7 @@ static int QWidget_globalMove(lua_State *L) {
  */
 static int QWidget_globalPosition(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     QPoint pt = self->mapToGlobal(QPoint(0, 0));
     lua_pushnumber(L, pt.x());
     lua_pushnumber(L, pt.y());
@@ -276,7 +248,7 @@ static int QWidget_globalPosition(lua_State *L) {
  */
 static int QWidget_height(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     int  retval__ = self->height();
     lua_pushnumber(L, retval__);
     return 1;
@@ -295,7 +267,7 @@ static int QWidget_height(lua_State *L) {
  */
 static int QWidget_hide(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     self->hide();
     return 0;
   } catch (std::exception &e) {
@@ -313,7 +285,7 @@ static int QWidget_hide(lua_State *L) {
  */
 static int QWidget_isFullScreen(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     bool  retval__ = self->isFullScreen();
     lua_pushboolean(L, retval__);
     return 1;
@@ -332,7 +304,7 @@ static int QWidget_isFullScreen(lua_State *L) {
  */
 static int QWidget_isVisible(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     bool  retval__ = self->isVisible();
     lua_pushboolean(L, retval__);
     return 1;
@@ -351,7 +323,7 @@ static int QWidget_isVisible(lua_State *L) {
  */
 static int QWidget_lower(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     self->lower();
     return 0;
   } catch (std::exception &e) {
@@ -369,7 +341,7 @@ static int QWidget_lower(lua_State *L) {
  */
 static int QWidget_move(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     int x = dubL_checkint(L, 2);
     int y = dubL_checkint(L, 3);
     self->move(x, y);
@@ -389,7 +361,7 @@ static int QWidget_move(lua_State *L) {
  */
 static int QObject_name(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     lua_pushstring(L, self->objectName().toUtf8().data());
     return 1;
 
@@ -408,7 +380,7 @@ static int QObject_name(lua_State *L) {
  */
 static int QObject_object(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     QObject * retval__ = self;
     lua_pushclass<QObject>(L, retval__, "mimas.QObject");
     return 1;
@@ -428,7 +400,7 @@ static int QObject_object(lua_State *L) {
  */
 static int QWidget_raise(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     self->raise();
     return 0;
   } catch (std::exception &e) {
@@ -446,7 +418,7 @@ static int QWidget_raise(lua_State *L) {
  */
 static int QWidget_resize(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     int w = dubL_checkint(L, 2);
     int h = dubL_checkint(L, 3);
     self->resize(w, h);
@@ -461,31 +433,12 @@ static int QWidget_resize(lua_State *L) {
 
 
 
-/** mimas::QMainWindow::setMenuBar(MenuBar *bar)
- * mimas/bind/QMainWindow.h:12
- */
-static int QMainWindow_setMenuBar(lua_State *L) {
-  try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
-    MenuBar *bar = *((MenuBar **)dubL_checksdata(L, 2, "mimas.MenuBar"));
-    self->setMenuBar(bar);
-    return 0;
-  } catch (std::exception &e) {
-    lua_pushfstring(L, "setMenuBar: %s", e.what());
-  } catch (...) {
-    lua_pushfstring(L, "setMenuBar: Unknown exception");
-  }
-  return lua_error(L);
-}
-
-
-
 /** void mimas::QWidget::setMinimumSize(float w, float h)
  * mimas/bind/QWidget.h:22
  */
 static int QWidget_setMinimumSize(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     float w = dubL_checknumber(L, 2);
     float h = dubL_checknumber(L, 3);
     self->setMinimumSize(w, h);
@@ -505,7 +458,7 @@ static int QWidget_setMinimumSize(lua_State *L) {
  */
 static int QWidget_setMouseTracking(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     bool enable = lua_toboolean(L, 2);
     self->setMouseTracking(enable);
     return 0;
@@ -524,7 +477,7 @@ static int QWidget_setMouseTracking(lua_State *L) {
  */
 static int QObject_setName(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     const char *name = dubL_checkstring(L, 2);
     self->setObjectName(QString(name));
     return 0;
@@ -544,7 +497,7 @@ static int QObject_setName(lua_State *L) {
  */
 static int QWidget_setParent(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     QWidget *parent = *((QWidget **)dubL_checksdata(L, 2, "mimas.QWidget"));
     self->setParent(parent);
     return 0;
@@ -563,7 +516,7 @@ static int QWidget_setParent(lua_State *L) {
  */
 static int QWidget_setSizeHint(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     float w = dubL_checknumber(L, 2);
     float h = dubL_checknumber(L, 3);
     self->size_hint_ = QSize(w, h);
@@ -585,7 +538,7 @@ static int QWidget_setSizeHint(lua_State *L) {
  */
 static int QWidget_setSizePolicy(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     int horizontal = dubL_checkint(L, 2);
     int vertical = dubL_checkint(L, 3);
     self->setSizePolicy((QSizePolicy::Policy)horizontal, (QSizePolicy::Policy)vertical);
@@ -606,7 +559,7 @@ static int QWidget_setSizePolicy(lua_State *L) {
  */
 static int QWidget_setStyle(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     const char *text = dubL_checkstring(L, 2);
     self->setStyleSheet(QString(".%1 { %2 }").arg(self->cssClass()).arg(text));
     return 0;
@@ -626,7 +579,7 @@ static int QWidget_setStyle(lua_State *L) {
  */
 static int QWidget_setStyleSheet(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     const char *text = dubL_checkstring(L, 2);
     self->setStyleSheet(text);
     return 0;
@@ -646,7 +599,7 @@ static int QWidget_setStyleSheet(lua_State *L) {
  */
 static int QWidget_show(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     self->show();
     return 0;
   } catch (std::exception &e) {
@@ -664,7 +617,7 @@ static int QWidget_show(lua_State *L) {
  */
 static int QWidget_showFullScreen(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     int top__ = lua_gettop(L);
     bool enable;
     if (top__ >= 2) {
@@ -694,7 +647,7 @@ static int QWidget_showFullScreen(lua_State *L) {
  */
 static int QWidget_size(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     QRect rect = self->geometry();
     lua_pushnumber(L, rect.width());
     lua_pushnumber(L, rect.height());
@@ -715,7 +668,7 @@ static int QWidget_size(lua_State *L) {
  */
 static int QWidget_swapFullScreen(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     bool enable = !self->isFullScreen();
     if (enable) {
       self->showFullScreen();
@@ -739,7 +692,7 @@ static int QWidget_swapFullScreen(lua_State *L) {
  */
 static int QWidget_textSize(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     const char *text = dubL_checkstring(L, 2);
     lua_pushnumber(L, self->fontMetrics().width(text));
     lua_pushnumber(L, self->fontMetrics().height());
@@ -760,7 +713,7 @@ static int QWidget_textSize(lua_State *L) {
  */
 static int QWidget_update(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     self->update();
     return 0;
   } catch (std::exception &e) {
@@ -778,7 +731,7 @@ static int QWidget_update(lua_State *L) {
  */
 static int QWidget_widget(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     QWidget* retval__ = self;
     lua_pushclass<QWidget>(L, retval__, "mimas.QWidget");
     return 1;
@@ -798,7 +751,7 @@ static int QWidget_widget(lua_State *L) {
  */
 static int QWidget_width(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     int  retval__ = self->width();
     lua_pushnumber(L, retval__);
     return 1;
@@ -817,7 +770,7 @@ static int QWidget_width(lua_State *L) {
  */
 static int QWidget_x(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     int  retval__ = self->x();
     lua_pushnumber(L, retval__);
     return 1;
@@ -836,7 +789,7 @@ static int QWidget_x(lua_State *L) {
  */
 static int QWidget_y(lua_State *L) {
   try {
-    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    MenuBar *self = *((MenuBar**)dubL_checksdata(L, 1, "mimas.MenuBar"));
     int  retval__ = self->y();
     lua_pushnumber(L, retval__);
     return 1;
@@ -854,14 +807,13 @@ static int QWidget_y(lua_State *L) {
 
 /* ============================ Lua Registration ====================== */
 
-static const struct luaL_Reg MainWindow_member_methods[] = {
+static const struct luaL_Reg MenuBar_member_methods[] = {
   {"activateWindow"    , QWidget_activateWindow},
   {"addAction"         , QWidget_addAction},
+  {"addMenu"           , QMenuBar_addMenu},
   {"addWidget"         , QWidget_addWidget},
   {"close"             , QWidget_close},
-  {"cssClass"          , MainWindow_cssClass},
-  {"getExistingDirectory", MainWindow_getExistingDirectory},
-  {"getOpenFileName"   , MainWindow_getOpenFileName},
+  {"cssClass"          , MenuBar_cssClass},
   {"globalMove"        , QWidget_globalMove},
   {"globalPosition"    , QWidget_globalPosition},
   {"height"            , QWidget_height},
@@ -874,7 +826,6 @@ static const struct luaL_Reg MainWindow_member_methods[] = {
   {"object"            , QObject_object},
   {"raise"             , QWidget_raise},
   {"resize"            , QWidget_resize},
-  {"setMenuBar"        , QMainWindow_setMenuBar},
   {"setMinimumSize"    , QWidget_setMinimumSize},
   {"setMouseTracking"  , QWidget_setMouseTracking},
   {"setName"           , QObject_setName},
@@ -893,38 +844,38 @@ static const struct luaL_Reg MainWindow_member_methods[] = {
   {"width"             , QWidget_width},
   {"x"                 , QWidget_x},
   {"y"                 , QWidget_y},
-  {"__tostring"        , MainWindow__tostring},
-  {"__gc"              , MainWindow_destructor},
-  {"deleted"           , MainWindow_deleted},
+  {"__tostring"        , MenuBar__tostring},
+  {"__gc"              , MenuBar_destructor},
+  {"deleted"           , MenuBar_deleted},
   {NULL, NULL},
 };
 
-static const struct luaL_Reg MainWindow_namespace_methods[] = {
-  {"MainWindow"        , MainWindow_MainWindow},
+static const struct luaL_Reg MenuBar_namespace_methods[] = {
+  {"MenuBar"           , MenuBar_MenuBar},
   {NULL, NULL},
 };
 
 
 
 #ifdef DUB_LUA_NO_OPEN
-int luaload_mimas_MainWindow(lua_State *L) {
+int luaload_mimas_MenuBar(lua_State *L) {
 #else
-extern "C" int luaopen_mimas_MainWindow(lua_State *L) {
+extern "C" int luaopen_mimas_MenuBar(lua_State *L) {
 #endif
   // Create the metatable which will contain all the member methods
-  luaL_newmetatable(L, "mimas.MainWindow");
+  luaL_newmetatable(L, "mimas.MenuBar");
 
   // metatable.__index = metatable (find methods in the table itself)
   lua_pushvalue(L, -1);
   lua_setfield(L, -2, "__index");
 
   // register member methods
-  luaL_register(L, NULL, MainWindow_member_methods);
-  // save meta-table in mimas.MainWindow_
-  register_mt(L, "mimas", "MainWindow");
+  luaL_register(L, NULL, MenuBar_member_methods);
+  // save meta-table in mimas.MenuBar_
+  register_mt(L, "mimas", "MenuBar");
 
   // register class methods in a global namespace table
-  luaL_register(L, "mimas", MainWindow_namespace_methods);
+  luaL_register(L, "mimas", MenuBar_namespace_methods);
 
 
 	return 1;

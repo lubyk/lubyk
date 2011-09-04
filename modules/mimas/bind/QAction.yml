@@ -1,0 +1,6 @@
+lua:
+  text: |
+    lua_pushstring(L, self->text().toUtf8().data());
+    return 1;
+#setText: |
+#    self->setText(QString(name));
