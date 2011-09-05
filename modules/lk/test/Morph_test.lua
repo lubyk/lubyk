@@ -14,6 +14,16 @@ function should.loadCode()
   assertTrue(lk.Morph)
 end
 
--- TODO: write tests ?
+function should.createEmptyFile()
+  local lkp = fixture.path('empty.lkp')
+  lk.rmFile(lkp)
+  assertFalse(lk.exist(lkp))
+  local morph = lk.Morph(lkp)
+  assertTrue(lk.exist(lkp))
+  lk.rmFile(lkp)
+end
 
+function should.readLKPFile()
+  local lkp = fixture.path('project/example.lkp')
+  local morph = lk.Morph(lkp)
 test.all()

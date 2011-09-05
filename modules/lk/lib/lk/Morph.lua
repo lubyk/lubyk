@@ -7,6 +7,8 @@
   "Morpheus" name. It's role is to provide save and restore
   functionality to a processing network.
 
+  The Morph server relies on the Lubyk.zone global setting.
+
   TODO: automatic versioning of saved changes (git)
 
   Usage: a morph process is started with a path to a lubyk
@@ -24,7 +26,7 @@ processProxy.__index = processProxy
 
 setmetatable(lib, {
   -- new method
- __call = function(lib, opts)
+ __call = function(lib, filepath)
   local self = {
     zone = opts.zone,
     -- Holds the list of all the processes that need to be running
@@ -36,8 +38,6 @@ setmetatable(lib, {
   -- processes that are not local) and we need to know which processes
   -- are already running and which ones we need to create.
   --
-  -- TODO: implement callbacks before enabling
-  -- self.process_watch = lk.ProcessWatch():addDelegate(self)
   -- This is similar to a file open...
   local srv_opts = {
     callback = function(...)
@@ -45,13 +45,19 @@ setmetatable(lib, {
     end,
   }
 
-  self.service = lk.Service(self.zone .. ':', srv_opts)
-  -- let service properly start.... ?
-  -- FIXME: use a 'started' callback
-  sleep(1000)
-  self:openProject(opts.path)
+  self:open(opts.filepath)
   return self
 end})
+
+--- Start services and processes.
+function lib:start()
+  -- TODO: implement callbacks before enabling
+  -- self.process_watch = lk.ProcessWatch():addDelegate(self)
+  -- TODO: If registration returns something else the 'zone:' = there is
+  -- another lk.Morph for the same zone and we should either change zone or
+  -- quit...
+  self.service = lk.Service(self.zone .. ':', srv_opts)
+end
 
 function lib:openProject(path)
   -- TODO: close currently opened project (stop remote processes)

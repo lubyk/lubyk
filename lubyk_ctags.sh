@@ -1,1 +1,1 @@
-ctags -R --exclude=vendor --exclude=build --exclude=tmp --exclude=zcpp --exclude=ideas --exclude=lib
+ctags -R --exclude=vendor modules

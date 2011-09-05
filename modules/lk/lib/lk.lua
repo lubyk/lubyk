@@ -1,6 +1,6 @@
 --[[------------------------------------------------------
 
-  rk
+  lk
   -----
 
   This file is loaded just after the load paths have been
@@ -8,13 +8,39 @@
 
 --]]------------------------------------------------------
 require 'Autoload'
-lk = Autoload('lk')
+lk    = Autoload('lk')
+-- Add defaults to user settings
+Lubyk = lk.Lubyk(Lubyk)
+
+-- =========  SETUP LOAD PATHS ===========================
+-- These paths already come loaded with lubyk lib path
+-- through the lubyk loader "require 'lubyk'"
+local lua_paths  = package.path
+local lua_cpaths = package.cpath
+
+-- 1. local lib (foo.lua or lib/foo.lua)
+package.path  = './?.lua;./lib/?.lua;'
+package.cpath = './?.so;./lib/?.so;'
+
+-- 2. user libs
+for _, path in ipairs(Lubyk.paths or {}) do
+  package.path = package.path .. path .. ';'
+end
+
+for _, cpath in ipairs(Lubyk.cpaths or {}) do
+  package.cpath = package.cpath .. cpath .. ';'
+end
+-- 3. Installed lubyk libs and lua paths
+package.path  = package.path  .. lua_paths
+package.cpath = package.cpath .. lua_cpaths
+
+-- =========  LOAD MINIMAL LIBS ==========================
+lubyk = Autoload('lubyk')
 -- autoload stuff in _G
 Autoload.global()
 
-lubyk = Autoload('lubyk')
 -------------------------------- CONSTANTS
-lubyk.service_type    = '_lubyk._tcp'
+lubyk.service_type    = Lubyk.service_type
 
 -- Get content at path (used with lk.Morph)
 lubyk.get_url         = '/lk/get'
@@ -42,6 +68,8 @@ require 'msgpack.vendor'
 -------------------------------- lk.findFile
 require 'lk.constants'
 
+
+-- FIXME: Do we need to load all these now ?
 
 --- Return the parent folder and filename from a filepath.
 -- FIXME: rename this to lk.basePath (directory seems like isDirectory)

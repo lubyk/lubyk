@@ -1,32 +1,52 @@
 --[[------------------------------------------------------
 
-  editor.Main
-  -----------
+  editor.Application
+  ------------------
 
   Singleton to start splash screen and open editor
   windows (editor.Zone). This class has no public methods.
 
 --]]------------------------------------------------------
 
-local lib   = {type='editor.Main'}
-lib.__index = lib
-editor.Main  = lib
+local lib          = lk.SubClass(mimas, 'Application')
+lib.type           = 'editor.Application'
+lib.__index        = lib
+editor.Application = lib
 
--- PUBLIC
-setmetatable(lib, {
-  -- new method
- __call = function(lib)
-  local self = {
-    -- editing windows' models
-    zones     = {},
-    -- list of found zones
-    zone_list = {},
-    -- found morph by zone name
-    morphs     = {},
-    -- hosts
-    host_list = {'localhost'},
-  }
-  setmetatable(self, lib)
+local function testApp(self)
+  self.win = mimas.MainWindow()
+  self.win:testMenus(true)
+  --[[
+  win.menu_bar = mimas.MenuBar(win)
+  win.menu_bar:addMenu('File')
+  win.menu_bar.File:addAction('Quit', 'Ctrl+Q', function()
+    app:quit()
+  end)
+  --]]
+
+  function self.win:paint(p, w, h)
+    local steps=5
+    for i=1,steps do
+      p:fillRect((i-1)*w/steps, 0, w/steps, h, mimas.Color(i/steps))
+    end
+  end
+  self.win:show()
+end  
+
+function lib:init()
+  -- editing windows' models
+  self.zones     = {}
+  -- list of found zones
+  self.zone_list = {}
+  -- found morph by zone name
+  self.morphs     = {}
+  -- hosts
+  self.host_list = {'localhost'}
+
+  if true then
+    testApp(self)
+    return
+  end
 
   -- Start listening for processes and zones on the network
   self.process_watch = lk.ProcessWatch():addDelegate(self)
@@ -39,9 +59,7 @@ setmetatable(lib, {
 
   self.splash_view = editor.SplashScreen(self)
   self.splash_view:show()
-  return self
-end})
-
+end
 
 --=============================================== ProcessWatch delegate
 local function addZone(self, remote_service)
