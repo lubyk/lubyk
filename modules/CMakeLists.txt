@@ -104,7 +104,7 @@ endmacro(build_module)
 
 # ==============================================================================
 #
-#  Create all targets for module (lua, core, sub, vendor)
+#  Create all targets for module (lib, core, sub, vendor)
 #
 # ==============================================================================
 
@@ -161,17 +161,17 @@ foreach (MODULE ${MODULES})
 
 
     # ----------------------------------------------------------------------------------
-    #  module_lua
+    #  module_lib
     # ----------------------------------------------------------------------------------
-    if(EXISTS ${MODULE}/lua)
-      file (GLOB MODULE_SOURCES ${MODULE}/lua/*)
+    if(EXISTS ${MODULE}/lib)
+      file (GLOB MODULE_SOURCES ${MODULE}/lib/*)
 
-      add_custom_target("${MODULE_NAME}_lua" ALL
-         COMMAND ${CMAKE_COMMAND} -E copy_directory ${MODULE}/lua ${LUBYK_SOURCE_DIR}/lib)
+      add_custom_target("${MODULE_NAME}_lib" ALL
+         COMMAND ${CMAKE_COMMAND} -E copy_directory ${MODULE}/lib ${LUBYK_SOURCE_DIR}/lib)
 
-      add_dependencies(${MODULE_NAME} "${MODULE_NAME}_lua")
+      add_dependencies(${MODULE_NAME} "${MODULE_NAME}_lib")
 
-    endif(EXISTS ${MODULE}/lua)
+    endif(EXISTS ${MODULE}/lib)
 
 
   endif(EXISTS ${MODULE}/CMakeLists.txt)

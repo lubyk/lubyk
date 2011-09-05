@@ -55,12 +55,29 @@ public:
    */
   Application();
 
-  /** Custom constructor so that we can set the env table that is
-   * needed by mimas.Callback.
+  enum ApplicationType {
+    Desktop,
+    Plugin,
+  };
+
+  /** Custom constructor so that we can define some constants needed before
+   * the application object is built (type of application).
    */
   static LuaStackSize MakeApplication(lua_State *L) {
-    // avoid qt_menu.nib loading
-    QApplication::setAttribute(Qt::AA_MacPluginApplication, true);
+    // <'type'>
+    ApplicationType type = Desktop;
+    if (lua_isstring(L, 1)) {
+      std::string str(lua_tostring(L, 1));
+      if (str == "plugin") {
+        type = Plugin;
+      }
+    }
+
+    if (type == Plugin) {
+      // avoid qt_menu.nib loading
+      QApplication::setAttribute(Qt::AA_MacPluginApplication, true);
+    }
+
     Application *app = new Application();
     app->luaInit(L, app, "mimas.Application");
     // <app>

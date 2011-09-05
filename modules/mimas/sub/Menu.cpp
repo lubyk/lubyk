@@ -159,6 +159,24 @@ static int QWidget_addWidget(lua_State *L) {
 
 
 
+/** void mimas::QMenu::clear()
+ * mimas/bind/QMenu.h:15
+ */
+static int QMenu_clear(lua_State *L) {
+  try {
+    Menu *self = *((Menu**)dubL_checksdata(L, 1, "mimas.Menu"));
+    self->clear();
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "clear: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "clear: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** bool mimas::QWidget::close()
  * mimas/bind/QWidget.h:26
  */
@@ -813,6 +831,7 @@ static const struct luaL_Reg Menu_member_methods[] = {
   {"addAction"         , QMenu_addAction},
   {"addAction"         , QWidget_addAction},
   {"addWidget"         , QWidget_addWidget},
+  {"clear"             , QMenu_clear},
   {"close"             , QWidget_close},
   {"cssClass"          , Menu_cssClass},
   {"globalMove"        , QWidget_globalMove},

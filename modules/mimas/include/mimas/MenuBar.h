@@ -37,7 +37,7 @@
 
 namespace mimas {
 
-/** MenuBar used by Painter.
+/** This lets us define menus.
  *
  * @see Menu
  * @see QMenuBar
@@ -47,8 +47,8 @@ namespace mimas {
 class MenuBar : public QMenuBar, public LuaObject {
   Q_OBJECT
 public:
-  MenuBar()
-      : QMenuBar(0) {}
+  MenuBar(QWidget *parent = 0)
+      : QMenuBar(parent) {}
 
   ~MenuBar() {
     MIMAS_DEBUG_GC

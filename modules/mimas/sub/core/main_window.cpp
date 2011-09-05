@@ -34,6 +34,33 @@
 
 namespace mimas {
 
+
+void MainWindow::testMenus(bool inplace, lua_State *L) {
+  if (inplace) {
+    printf("in place\n");
+    QMenuBar *bar = menuBar();
+    QMenu *main = bar->findChild<QMenu *>();
+    main->setTitle("Bolomey");
+
+
+
+
+    QAction *foobar = new QAction(QString("Foobar"), this);
+    foobar->setShortcut(QKeySequence("Ctrl+W"));
+    QObject::connect(foobar, SIGNAL(triggered()), this, SLOT(close()));
+    QMenu *foo = bar->addMenu(QString("foo"));
+    foo->addAction(foobar);
+  } else {
+    MenuBar *bar = new MenuBar(this);
+    bar->luaInit(L, bar, "mimas.MenuBar");
+    QAction *foobar = new QAction(QString("Foobar"), this);
+    foobar->setShortcut(QKeySequence("Ctrl+W"));
+    QObject::connect(foobar, SIGNAL(triggered()), this, SLOT(close()));
+    QMenu *foo = bar->addMenu(QString("foo"));
+    foo->addAction(foobar);
+    setMenuBar(bar);
+  }
+}
 void MainWindow::paintEvent(QPaintEvent *event) {
   // has to be on the heap
   Painter *p = new Painter(this);

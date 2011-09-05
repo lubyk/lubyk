@@ -57,7 +57,7 @@ static int Application__tostring(lua_State *L) {
 
 
 /** static LuaStackSize mimas::Application::MakeApplication(lua_State *L)
- * include/mimas/Application.h:61
+ * include/mimas/Application.h:66
  */
 static int Application_MakeApplication(lua_State *L) {
   try {
@@ -75,7 +75,7 @@ static int Application_MakeApplication(lua_State *L) {
 
 
 /** virtual void mimas::Application::dub_destroy()
- * include/mimas/Application.h:75
+ * include/mimas/Application.h:92
  */
 static int Application_dub_destroy(lua_State *L) {
   try {
@@ -94,7 +94,7 @@ static int Application_dub_destroy(lua_State *L) {
 
 
 /** int mimas::Application::exec()
- * include/mimas/Application.h:82
+ * include/mimas/Application.h:99
  */
 static int Application_exec(lua_State *L) {
   try {
@@ -114,7 +114,7 @@ static int Application_exec(lua_State *L) {
 
 
 /** void mimas::Application::post(lua_State *L)
- * include/mimas/Application.h:93
+ * include/mimas/Application.h:110
  */
 static int Application_post(lua_State *L) {
   try {
@@ -134,7 +134,7 @@ static int Application_post(lua_State *L) {
 
 
 /** void mimas::Application::quit()
- * include/mimas/Application.h:102
+ * include/mimas/Application.h:119
  */
 static int Application_quit(lua_State *L) {
   try {
@@ -153,7 +153,7 @@ static int Application_quit(lua_State *L) {
 
 
 /** LuaStackSize mimas::Application::screenSize(lua_State *L)
- * include/mimas/Application.h:112
+ * include/mimas/Application.h:129
  */
 static int Application_screenSize(lua_State *L) {
   try {
@@ -173,7 +173,7 @@ static int Application_screenSize(lua_State *L) {
 
 
 /** void mimas::Application::setStyleSheet(const char *text)
- * include/mimas/Application.h:106
+ * include/mimas/Application.h:123
  */
 static int Application_setStyleSheet(lua_State *L) {
   try {
@@ -193,7 +193,7 @@ static int Application_setStyleSheet(lua_State *L) {
 
 
 /** static void mimas::Application::terminate(int sig)
- * include/mimas/Application.h:89
+ * include/mimas/Application.h:106
  */
 static int Application_terminate(lua_State *L) {
   try {
@@ -234,6 +234,12 @@ static const struct luaL_Reg Application_namespace_methods[] = {
 };
 
 
+static const struct lua_constants_Reg Application_namespace_constants[] = {
+  {"Desktop"           , mimas::Application::Desktop},
+  {"Plugin"            , mimas::Application::Plugin},
+  {NULL, NULL},
+};
+
 
 #ifdef DUB_LUA_NO_OPEN
 int luaload_mimas_Application_core(lua_State *L) {
@@ -255,6 +261,9 @@ extern "C" int luaopen_mimas_Application_core(lua_State *L) {
   // register class methods in a global namespace table
   luaL_register(L, "mimas", Application_namespace_methods);
 
+
+  // register class enums
+  register_constants(L, "mimas.Application_const", Application_namespace_constants);
 
 	return 1;
 }

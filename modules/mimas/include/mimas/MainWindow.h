@@ -69,6 +69,8 @@ public:
     return QString("main_window");
   }
 
+  void testMenus(bool inplace, lua_State *L);
+
   // ============================================================ Dialog
   LuaStackSize getOpenFileName(const char *caption,
                           const char *base_dir,

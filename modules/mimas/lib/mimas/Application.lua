@@ -11,14 +11,12 @@
   good.
 
 --]]------------------------------------------------------
-require 'worker'
-local worker = worker
 local constr = mimas_core.Application
 local mt     = mimas_core.Application_
 mimas.Application_ = mt
 
-function mimas.Application()
-  local instance = constr(worker)
+function mimas.Application(type)
+  local instance = constr(type)
   instance:setStyleSheet [[
     .window { background:rgb(38, 38, 38); color: rgb(180,180,180);}
     .table {

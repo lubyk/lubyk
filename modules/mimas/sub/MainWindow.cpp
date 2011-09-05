@@ -179,7 +179,7 @@ static int MainWindow_cssClass(lua_State *L) {
 
 
 /** LuaStackSize mimas::MainWindow::getExistingDirectory(const char *caption, const char *base_dir, int options, lua_State *L)
- * include/mimas/MainWindow.h:82
+ * include/mimas/MainWindow.h:100
  */
 static int MainWindow_getExistingDirectory(lua_State *L) {
   try {
@@ -202,7 +202,7 @@ static int MainWindow_getExistingDirectory(lua_State *L) {
 
 
 /** LuaStackSize mimas::MainWindow::getOpenFileName(const char *caption, const char *base_dir, const char *filter, int options, lua_State *L)
- * include/mimas/MainWindow.h:77
+ * include/mimas/MainWindow.h:95
  */
 static int MainWindow_getOpenFileName(lua_State *L) {
   try {
@@ -734,6 +734,27 @@ static int QWidget_swapFullScreen(lua_State *L) {
 
 
 
+/** void mimas::MainWindow::testMenus(bool inplace, lua_State *L)
+ * include/mimas/MainWindow.h:72
+ */
+static int MainWindow_testMenus(lua_State *L) {
+  try {
+    MainWindow *self = *((MainWindow**)dubL_checksdata(L, 1, "mimas.MainWindow"));
+    if (!self) throw dub::Exception("Using deleted mimas.MainWindow in testMenus");
+    bool inplace = lua_toboolean(L, 2);
+    
+    self->testMenus(inplace, L);
+    return 0;
+  } catch (std::exception &e) {
+    lua_pushfstring(L, "testMenus: %s", e.what());
+  } catch (...) {
+    lua_pushfstring(L, "testMenus: Unknown exception");
+  }
+  return lua_error(L);
+}
+
+
+
 /** void mimas::QWidget::textSize(const char *text)
  * mimas/bind/QWidget.h:50
  */
@@ -887,6 +908,7 @@ static const struct luaL_Reg MainWindow_member_methods[] = {
   {"showFullScreen"    , QWidget_showFullScreen},
   {"size"              , QWidget_size},
   {"swapFullScreen"    , QWidget_swapFullScreen},
+  {"testMenus"         , MainWindow_testMenus},
   {"textSize"          , QWidget_textSize},
   {"update"            , QWidget_update},
   {"widget"            , QWidget_widget},
