@@ -30,6 +30,17 @@ function should.makePath()
   lk.rmTree('foo')
 end
 
+function should.rmFile()
+  local path = fixture.path('tmp.txt')
+  lk.writeall(path, 'Hello')
+  assertTrue(lk.exist(path))
+  assertPass(function()
+    lk.rmFile(path)
+    lk.rmFile(path)
+  end)
+  assertFalse(lk.exist(path))
+end
+
 function should.writeall()
   lk.rmTree('foo')
   local tmp_path = 'foo/bar/lk_test_writeall.txt'
@@ -87,14 +98,14 @@ function should.provideFile()
 end
 
 function should.testFileExistence()
-  assertEqual('file', lk.fileType(fixture.path('simple.yml')))
+  assertEqual('file', lk.fileType(fixture.path('foo.yml')))
   assertEqual(nil, lk.fileType(fixture.path('complex.yml')))
   assertEqual('directory', lk.fileType(lk.dir()))
   assertEqual(nil, lk.fileType(nil))
 end
 
 function should.findCodeLocally()
-  assertMatch('Passes input values to output', lk.findCode(fixture.path(), 'pass'))
+  assertMatch('adagio', lk.findCode(fixture.path(), 'pass'))
 end
 
 function should.findCodeInLibs()

@@ -12,25 +12,34 @@ mimas.FileObserver_ = mt
 
 local addPath = mt.addPath
 function mt:addPath(path)
-  addPath(self, lk.absolutizePath(path))
+  path = lk.absolutizePath(path)
+  if not self.paths[path] then
+    addPath(self, path)
+    self.paths[path] = true
+  end
 end
 
 local removePath = mt.removePath
 function mt:removePath(path)
-  removePath(self, lk.absolutizePath(path))
+  path = lk.absolutizePath(path)
+  if self.paths[path] then
+    removePath(self, lk.absolutizePath(path))
+    self.paths[path] = nil
+  end
 end
 
 function mimas.FileObserver(file_or_files)
-  local instance = constr()
+  local self = constr()
+  self.paths = {}
   if file_or_files then
     if type(file_or_files) == 'table' then
       for file in ipairs(file_or_files) do
-        instance:addPath(file)
+        self:addPath(file)
       end
     else
-      instance:addPath(file_or_files)
+      self:addPath(file_or_files)
     end
   end
-  return instance
+  return self
 end
 

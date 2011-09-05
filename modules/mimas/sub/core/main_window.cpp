@@ -37,19 +37,27 @@ namespace mimas {
 
 void MainWindow::testMenus(bool inplace, lua_State *L) {
   if (inplace) {
+    // we do not have access to the "App" OS X menu: it is not in the menuBar.
     printf("in place\n");
     QMenuBar *bar = menuBar();
-    QMenu *main = bar->findChild<QMenu *>();
-    main->setTitle("Bolomey");
 
 
 
 
-    QAction *foobar = new QAction(QString("Foobar"), this);
+    QAction *foobar = new QAction(QString("settings"), this);
     foobar->setShortcut(QKeySequence("Ctrl+W"));
     QObject::connect(foobar, SIGNAL(triggered()), this, SLOT(close()));
     QMenu *foo = bar->addMenu(QString("foo"));
     foo->addAction(foobar);
+
+    QObjectList list = bar->children();
+    for (QObjectList::iterator it = list.begin(); it != list.end(); ++it) {
+      QObject *main = *it;
+      if (main) {
+        printf("This is a '%s'\n", main->metaObject()->className());
+        //main->setTitle("Bolomey");
+      }
+    }
   } else {
     MenuBar *bar = new MenuBar(this);
     bar->luaInit(L, bar, "mimas.MenuBar");

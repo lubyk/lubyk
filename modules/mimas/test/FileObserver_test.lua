@@ -15,35 +15,35 @@ function should.autoLoad()
 end
 
 function should.observeFiles(t)
-  local filepath = 'foo/bar/baz.txt'
-  local continue = false
+  local filepath = lk.absolutizePath(fixture.path('baz.txt'))
+  -- just because mimas needs a window to start and quit
+  local win = mimas.Window()
+  win:show()
 
   lk.writeall(filepath, 'Hello')
   t.observer = mimas.FileObserver(filepath)
-  -- DUMMY WINDOW TO STOP TEST ON CLOSE
-  t.win = mimas.Window()
-  t.label = mimas.Label('Please edit file')
-  t.win:addWidget(t.label)
-  t.win:show()
-  t.win:move(100,100)
-  t.win:resize(100,100)
-  ---------------------------------------
+  assertTrue(t.observer.paths[filepath])
 
+  function t.observer:pathChanged(path)
+    if path == filepath then
+      t.continue = true
+      t.observer:removePath(filepath)
+    end
+  end
   -- adding path twice should not raise
   assertPass(function()
     t.observer:addPath(filepath)
   end)
-
-  function t.observer.pathChanged(path)
-    print(path, 'changed')
-    if path == filepath then
-      assertTrue(true)
-      t.observer:removePath(filepath)
-      lk.rmTree('foo')
+  -- we edit the file
+  lk.writeall(filepath, 'World!')
+  t:timeout(function(done)
+    if done or t.continue then
+      assertTrue(t.continue)
+      return true
     end
-  end
-
-  os.execute(string.format("%s '%s'", 'mate', filepath))
+  end)
+  lk.rmFile(filepath)
+  win:close()
 end
 
 test.gui()
