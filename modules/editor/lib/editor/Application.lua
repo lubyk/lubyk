@@ -138,3 +138,13 @@ function lib:startZone(zone_name, host_name, path)
   -- Maybe we should make sure it started ok before selecting the zone.
   self:selectZone(zone_name)
 end
+
+--=============================================== Receive an openFile event
+
+function lib:openFile(path)
+  if string.match(path, '.lkp$') then
+    print("open file in editor", path)
+  else
+    print("junk", path)
+  end
+end

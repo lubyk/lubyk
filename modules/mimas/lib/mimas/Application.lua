@@ -16,8 +16,8 @@ local mt     = mimas_core.Application_
 mimas.Application_ = mt
 
 function mimas.Application(type)
-  local instance = constr(type)
-  instance:setStyleSheet [[
+  local self = constr(type)
+  self:setStyleSheet [[
     .window { background:rgb(38, 38, 38); color: rgb(180,180,180);}
     .table {
       background:rgb(38, 38, 38);
@@ -59,5 +59,5 @@ function mimas.Application(type)
   ]]
 
   -- TODO: rewrite 'post' to keep a pool of Callback objects (or accept an existing Callback).
-  return instance
+  return self
 end

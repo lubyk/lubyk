@@ -47,6 +47,7 @@ namespace mimas {
  * @dub lib_name:'Application_core'
  *      constructor: 'MakeApplication'
  *      destructor: 'luaDestroy'
+ *      ignore: 'event'
  */
 class Application : public QApplication, public LuaObject {
   Q_OBJECT
@@ -133,6 +134,7 @@ public:
     return 2;
   }
 
+  virtual bool event(QEvent *event);
 private:
   class LuaEventsProcessor : public QObject
   {
